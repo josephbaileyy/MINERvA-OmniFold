@@ -1142,3 +1142,44 @@ claim. Batch 1 takes the items that don't touch the paragraphs Codex's caption r
 - The registry: ALIASES rows 39 and 48 and ATTRIBUTION row 17 cited paper_body.tex:68, which the §3.1 split changed; re-cited by
   hand to :103 (the five-observable estimator, its joint-test use) and :100 (the refinement capacity).
 - The pairs (`interim/batch1-pairs/pairs.tsv`) go to the director's meaning read.
+
+### Batch 1's meaning read (the director, 2026-11-10)
+
+`interim-b1-read/out-b1.txt` over `interim-b1-read/pairs.tsv` (40 rows): 3 flags (M026, M037, M038), all the intended A10
+relabelling. The paper's selection, λ/λmax > 1e-4, keeps the largest eigenvalues of the covariance, so "best-determined"
+was the mislabel. The director accepted bd08582ee, the hand re-cites of ALIASES and ATTRIBUTION included.
+
+## The caption repair's integration (Codex 3045fcbb5, 5406ceee7, 7815eaa73; the director, 2026-11-10)
+
+- Merged at a0d69f5b6. The one conflict is §4's benchmark paragraph: Codex's inserted sentence ("The two bands in
+  figure~\ref{fig:validation} are correlated, …") is kept with batch 1's A10 wording.
+- Codex's later 1a3b175ba ("caption-first") is not integrated. Against 7815eaa73 it differs only in Fig 3's caption,
+  which drops "not the reported estimator" ahead of A1, and it lacks 5406ceee7's panel compaction. The director accepted
+  the 3045/5406/7815 set, and journal-editor asked that the four words stay until panel (a) moves.
+- The director's read of the repair (`caption-read/out-caps2.txt`, 4 flags) and journal-editor's review gave eight fixes:
+  - journal-editor 1: the stability paragraph of §6.1 is back to its text before the repair (equal at 5bfb8185c,
+    d53af941a and bd08582ee). The 153 quantities and the perturbations return to Fig 5's caption.
+  - journal-editor 2: Fig 3's lead reads "per (E_avail,W) cell, at the changed truth, with backgrounds".
+  - journal-editor 3: Fig 4 uses \fvval{f0b-all-truths} (prints 12).
+  - journal-editor 4: Fig 3(a) reads "(refinement 100 trees, 8 leaves; the configuration of the generator-sized-change
+    study)".
+  - director 1: Fig 2 reads "C the published covariance".
+  - director 2: Fig 4's numbers. The producer (make_figures.py bias_figure) prints signed z, to two decimals, at each row's
+    largest-|z| cell, only in rows with an outline. The caption reads "in each row with an outline, z of the cell with
+    the largest |z|, to two decimals".
+  - director 3: Fig 5's denominator is "the study's data-bootstrap statistical standard deviation". It is the s5e
+    candidate-R assessment's 100 data replicas (make_figures.py: boot_b1..b100; assess_receipt data_boot_replicas = 100).
+    - §6.1's 0.37% is a different estimate: the median J-cell σ_boot of the s5p paired study
+      (s5p/stage2/stage2_receipt.json study_N/N1_data: n_replicas 50, J median_sigma_boot_pct 0.3677; its b1 and b2
+      equal s5e boot_b1 and b2).
+    - The caption says so: "the 0.37% quoted in that section is a 50-replica median over joint cells".
+  - director 4: the markers are drawn at the exact values and labelled with .1f, the text's 0.8 and 2.6, so the
+    caption reads "Markers: the observed median and largest shift, labelled at the text's precision".
+- captions-short.tex is regenerated from paper_body's six figure captions (nothing reads it; it is Codex's copy).
+- Checks:
+  - the rater copy PASS; no Overfull;
+  - check_round with the fill test PASS; make_values --check PASS (3843);
+  - registry, sec4 (16/16, 17 passed) and pointers (37/0) PASS;
+  - check_restyle against a0d69f5b6 fails only on the intended changes (f0b-all-truths, the \ref moved into the
+    caption, \SI{0.37}).
+- The typeset captions of Figs 2–5 were read back from the PDF.
