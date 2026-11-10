@@ -143,7 +143,7 @@ MINERvA's MAT framework (\texttt{PlotUtils/\allowbreak MnvVertErrorBand::\allowb
 \;}
 \label{eq:matcov}
 \end{equation}
-uniformly for all $N_{u}\ge 2$, with no special $\pm1\sigma$ pair formula. At $N_{u}=2$ it reduces to rank-1 $\tfrac14(\mathbf{X}_{+}-\mathbf{X}_{-})(\mathbf{X}_{+}-\mathbf{X}_{-})\T$. Mean-centering removes the symmetric component, correctly giving near-zero variance for a one-sided or asymmetric pair where naive CV-centering would give rank 2 (\S\ref{app:pair}). The $1.4\%$ target-nucleon normalization uncertainty (Aliaga NIM, arXiv:1305.5199) lies outside \texttt{MnvVertErrorBand} and is added as a fully-correlated rank-1 outer product. Bands are assumed independent, with different physics sources and RNGs,
+uniformly for all $N_{u}\ge 2$, with no special $\pm1\sigma$ pair formula. At $N_{u}=2$ it reduces to rank-1 $\tfrac14(\mathbf{X}_{+}-\mathbf{X}_{-})(\mathbf{X}_{+}-\mathbf{X}_{-})\T$. Mean-centering removes a common offset from the central value. The half-difference remains and need not be small. For a one-sided or asymmetric pair, CV-centering adds that offset as a second direction (\S\ref{app:pair}). The $1.4\%$ target-nucleon normalization uncertainty (Aliaga NIM, arXiv:1305.5199) lies outside \texttt{MnvVertErrorBand} and is added as a fully-correlated rank-1 outer product. Bands are assumed independent, with different physics sources and RNGs,
 \begin{align}
 \mathbf{C}^{\text{norm}} \;&=\; (\sigma_{N}\,\mathbf{X}^{\CV})(\sigma_{N}\,\mathbf{X}^{\CV})\T,
 \qquad \sigma_{N} = 0.014,
