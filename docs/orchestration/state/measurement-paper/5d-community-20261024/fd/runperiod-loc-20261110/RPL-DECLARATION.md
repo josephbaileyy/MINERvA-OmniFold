@@ -69,10 +69,30 @@ M6, :116-123) asks for basic localization:
 | **(ii-b) configuration** | RPD-RECO's per-playlist step s_obs,X and σ_X (d2's data-side statistics), and the conditions table above | local, once RPD-RECO's record lands | 0 |
 | **(iii) published analysis** | Ruterbories et al., Phys. Rev. D 104, 092007 (2021), arXiv:2106.16210 (`docs/analysis-note/technote.bib`, `MINERvA:2021owq`), with its supplemental material and the release's public pages already copied under `data-survey-20261022/outputs/pages/` | local document read | 0 |
 
-**Sequencing.** RPD-RECO's pre-registration requires that no data/MC comparison be read from its dumps first.
-- So **(i) and (ii-b) run only after RPD-RECO's d1/d2 record is committed**, or they are folded into RPD-RECO by its
-  owner with the director's ruling.
-- (ii-a)'s inventory reads branch names only. (iii) reads no data. Either can go first.
+**Sequencing** (the director's rulings, 2026-11-10).
+
+**Precondition P-RPD, for (i)'s fit and for (ii-b).** RPD-RECO's d1/d2 record is committed on main, and is named here
+by its sha256 before either runs. Until then this line reads "not yet". RPL stays its own declaration; it is not
+folded into RPD-RECO.
+
+**What can go first,** because none of it reads RPD-RECO's inputs or forms a data/MC comparison from them
+(limitation-resolver's answer, 2026-11-10):
+- **RPD-RECO's pins.** RPD-RECO reads only its 24 dumps (`fd/rpd-reco/INPUTS.sha256`) and, for d2, MAT's flux files.
+  No RPD-RECO gate checks the zero loops, the per-playlist universe files or the May CV files.
+- **(ii-a)'s inventory** reads branch names only. Its dry run, which prices the join, reads AnaTuple flags for one
+  file per tier. Each comes to the director with its sha256 before it runs. If the keys are absent, (ii-a) is reported
+  as not made; a new event-loop pass needs its own decision.
+  - The MP-1 zero loops were noted with purge exposure around 2026-12-15. That is re-checked by stat first, and
+    O_NOATIME reads do not refresh it.
+- **(i)'s band-size measurement** is MC only. limitation-resolver's condition is kept: the band sizes are not printed
+  beside, or compared with, any per-playlist data step until P-RPD holds.
+  - **Before that read,** the per-playlist `_universes_full.root` files are checked against the cov2d session's
+    protected list, and `cov2d_fence.sh` runs. RPD-RECO's policy lists the pooled
+    `runEventLoopOmniFold_MEFHC_universes_full.root` and the CFS `runEventLoopOmniFold_MEFHC.root` as COV2D-protected
+    (`fd/rpd-reco/prologue5-20261108/policy-config.json`). The per-playlist files sit in the same directory, so the
+    cov2d session is asked first.
+  - Every read is an O_NOATIME copy.
+- **(iii)** reads a published paper and depends on nothing else. It has run: see `iii/README.md`.
 
 ## (i) The scale fit, fixed
 
