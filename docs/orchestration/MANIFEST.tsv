@@ -6280,6 +6280,8 @@ docs/orchestration/state/2d-closeout/valid-region-20261107/v-half/INPUTS.sha256	
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half/PRR-READOUT.sha256	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half/mutants.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half/mutate_v_half.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/valid-region-20261107/v-half/rebin-assessment-20261109/README.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
+docs/orchestration/state/2d-closeout/valid-region-20261107/v-half/rebin-assessment-20261109/SOURCES.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half/receipts/code-lows/README.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half/receipts/code-lows/mutation.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half/receipts/code-lows/refusal.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
