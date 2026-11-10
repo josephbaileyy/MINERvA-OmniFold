@@ -161,7 +161,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Finding:* `sec_method.tex:150` describes training-seed band as controlling ML stochasticity, but for configuration (e) training-seed block is zero while rounding shifts results up to 2.6σ_stat.  
   *Record:* `DECISION-20261106-joseph-b0-reconciliation-sentence.md:8`.  
   *Target:* `docs/analysis-note/sec_method.tex:150`.  
-  *Resolution:* Clarify distinction between seed variance and floating-point rounding sensitivity.
+  *Resolution:* This row authorizes no tex edit. The method sentence describes the training-seed band of the quoted 2D result, configuration (f). Configuration (e) is already said to have a training-seed block of zero in every cell, and the rounding shifts are already stated in the five-dimensional stability paragraph. Do not add a second account. Do not type 2.6. Do not copy the paper's reconciliation sentences into the note. Do not edit "40 fresh pseudo-experiments."
 
 ---
 
