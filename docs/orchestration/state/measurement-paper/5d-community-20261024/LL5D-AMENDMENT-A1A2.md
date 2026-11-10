@@ -1,8 +1,9 @@
 # AMENDMENT A1a.2: vi keyed at one precision on both sides, the test that would have caught it, and a real-data preflight (2026-11-10)
 
 **By** the `cov2d` session, at the director's request, for `coverage-5b-audit` to audit and the director to bind as an
-addendum to LL5D binding 2. **DRAFT: nothing has run.** Any rerun waits for Joseph's decision at the STOP (#939) and
-for the director's go on each step.
+addendum to LL5D binding 2. **DRAFT: nothing has run.** Joseph has decided the relaunch
+(`DECISION-20261110-joseph-ll5d-rerun-16-cells.md`, #1018): once this amendment is audited and bound, the gates rerun
+on R00–R15, the sixteen reporting cells. Each step still takes the director's go on its connect's sha256.
 
 **Under:**
 - **The STOP of both LL5D gates** (ll5d_gate_G18 61040163, ll5d_gate_AR23 61040235; receipts `fd/receipts-ll5d/gate-g18/`
@@ -14,8 +15,14 @@ for the director's go on each step.
 - **LL5D BINDING 2** (A1a, now at A1a.1 `a95cc39f7437170af0b65ba042934fad079e0ee2`) and **BINDING 3** (A1b). Each file
   this amendment changes is named in §1.
 
+**The cells.** R00–R15 are the sixteen cells the gates already read (`N_CELLS = 16` at `s1_assemble.py:51`, through
+the H2 definition's map). This amendment changes no cell, and a merged-cell run is outside it (#1018 item 2).
+
 **MEASURES:** nothing. **CANNOT AUTHORIZE:**
-- any rerun (the preflight, the calibration or the gates) before Joseph's decision and the director's go on each;
+- any step (the preflight, the calibration or the gates) before this amendment is bound and the director gives the go
+  on that step's connect;
+- the preflight (§5) under #1018 alone. #1018 authorizes the rerun "and nothing beyond it", so whether `vicheck`
+  counts as part of that rerun or needs its own decision is the director's call;
 - any change to the gate's rule, thresholds or mismatch bound;
 - opening the sealed clip-prep files.
 
@@ -38,11 +45,14 @@ for the director's go on each step.
 | `nd-unfolding/tests/test_ll5d_b.py` | RealUnfold nulls the newly inherited preflight test, as it already nulls RealChain's other tests |
 | `nd-unfolding/tests/ll5d_a1a_mutation.py` | eight A1a.2 mutants (§3); `EXPECTED_TESTS` 72 → 82 |
 
-Digests (sha256) at the draft head:
+Digests (sha256) at the code commit `9d906bf40994e9814ee63a2386e7fd7e14da5b4e`, the commit the receipts were made at:
 
 | file | sha256 |
 |---|---|
-| `nd-unfolding/ll5d.py` | (to fill from git at the receipt head) |
+| `nd-unfolding/ll5d.py` | `2b0224c6fe52c5bb2d3fe64d461ac9edb80ebd191b0ab2f892dec605a0b56a14` |
+| `nd-unfolding/tests/test_ll5d.py` | `6fa5510efd8fde01b1879cd8a1ec984f5e28699445a022450d2166af7c6c493c` |
+| `nd-unfolding/tests/test_ll5d_b.py` | `5391a42f82d5690c488a7b7d1309f5298ad2b55730d559d26da003779266f5d7` |
+| `nd-unfolding/tests/ll5d_a1a_mutation.py` | `584216348761248026734ada1ad3d25eab355cdbfab20db66416cf9a518346c1` |
 | `nd-unfolding/ll5d_b.py` (unchanged) | `24312ca86f9e70ed86699772d634c19d9bcacb2bb87bff5aaa8c9f7c2661f3cb` |
 | `nd-unfolding/fd_1b_c2.py` (unchanged) | `522d7edd71643df61d0c5ef5a7488834e664eb36d20c3e0c0b46e10a5808f02f` |
 
@@ -167,6 +177,9 @@ STOP is a genuine mismatch, and it goes to Joseph.
 
 ## 6. What reruns, and its price
 
+Under #1018 the rerun is the two gates on R00–R15, preceded by the calibration that A1a.2's code change requires. The
+preflight is optional and listed first.
+
 | step | why | measured, run 2 / gates | reserved |
 |---|---|---|---|
 | vicheck (§5) | the fix on the real inputs and the 2,801 terms | about 0.3 node-h (INFERENCE) | 1.0 |
@@ -183,6 +196,12 @@ STOP is a genuine mismatch, and it goes to Joseph.
 
 ## 7. Results
 
-**Receipts** (`fd/receipts-ll5d/a1a2/`, from a clean checkout of the PR head): both suites at numpy 1.26 (seeds 0, 1
-and 2) and numpy 2; both mutation checks; and the run of the REQUIRED test against a95cc39f's `ll5d.py`. (to fill from
-the receipt commit)
+**Receipts:** `fd/receipts-ll5d/a1a2/`, made at `9d906bf40994e9814ee63a2386e7fd7e14da5b4e` from a clean checkout.
+- **The suites:** test_ll5d.py, 82 tests, OK, and test_ll5d_b.py, 29 tests, OK, each at numpy 1.26 (seeds 0, 1 and 2)
+  and at numpy 2.
+- **The mutation checks:**
+  - `ll5d_a1a_mutation.py`: the control passes (82 tests), and 58 mutants are all killed, 8 of them A1a.2's;
+  - `ll5d_a1b_mutation.py`: the control passes (29 tests), and 27 mutants are all killed.
+- **At a95cc39f** the REQUIRED test fails, `(2980, 2980) != (0, 0)`, as it should on the code that ran the gates.
+- **A disclosure** (the receipt README): a first set of numpy 1.26 suite runs did not import its module, so no test
+  ran. Those outputs were discarded and the suites remade.
