@@ -1,0 +1,161 @@
+ssh rc=0
+node login21 staged sha256 609dbea234b2ccc753353e9e24819351796f9755822c3d8148c2651762402ae0
+status host=login21 utc=2026-11-10T18:07:47Z
+== my processes (capture/connect/readout)
+(none)
+== /dev/shm work paths (stat)
+stat: cannot statx '/dev/shm/josephrb-cov2d-s-AR23': No such file or directory
+stat: cannot statx '/dev/shm/josephrb-cov2d-s-G18': No such file or directory
+== $OUT
+/pscratch/sd/j/josephrb/t2a-20261110 directory 2026-11-10 09:38:48.000000000 -0800
+/pscratch/sd/j/josephrb/t2a-20261110:
+total 1084
+drwx------   5 josephrb josephrb    4096 Nov 10 09:38 .
+drwx------ 392 josephrb josephrb   69632 Nov 10 09:37 ..
+drwx------   2 josephrb josephrb    4096 Nov 10 09:38 AR23
+drwx------   2 josephrb josephrb    4096 Nov 10 09:38 G18
+drwx------   2 josephrb josephrb    4096 Nov 10 09:38 logs
+-rw-------   1 josephrb josephrb 1018483 Nov 10 09:38 post.tar.gz
+
+/pscratch/sd/j/josephrb/t2a-20261110/AR23:
+total 616
+drwx------ 2 josephrb josephrb   4096 Nov 10 09:38 .
+drwx------ 5 josephrb josephrb   4096 Nov 10 09:38 ..
+-rw------- 1 josephrb josephrb   2800 Nov 10 09:38 blobs.after
+-rw------- 1 josephrb josephrb   2800 Nov 10 09:37 blobs.before
+-rw------- 1 josephrb josephrb   1164 Nov 10 09:38 capture_AR23.json
+-rw------- 1 josephrb josephrb   5115 Nov 10 09:38 capture_AR23.log
+-rw------- 1 josephrb josephrb 495550 Nov 10 09:38 E_AR23.npz
+-rw------- 1 josephrb josephrb    243 Nov 10 09:38 out.sha256
+-rw------- 1 josephrb josephrb 101696 Nov 10 09:38 score_AR23.json
+
+/pscratch/sd/j/josephrb/t2a-20261110/G18:
+total 616
+drwx------ 2 josephrb josephrb   4096 Nov 10 09:38 .
+drwx------ 5 josephrb josephrb   4096 Nov 10 09:38 ..
+-rw------- 1 josephrb josephrb   2800 Nov 10 09:38 blobs.after
+-rw------- 1 josephrb josephrb   2800 Nov 10 09:38 blobs.before
+-rw------- 1 josephrb josephrb   1161 Nov 10 09:38 capture_G18.json
+-rw------- 1 josephrb josephrb   5108 Nov 10 09:38 capture_G18.log
+-rw------- 1 josephrb josephrb 495546 Nov 10 09:38 E_G18.npz
+-rw------- 1 josephrb josephrb    240 Nov 10 09:38 out.sha256
+-rw------- 1 josephrb josephrb 101840 Nov 10 09:38 score_G18.json
+
+/pscratch/sd/j/josephrb/t2a-20261110/logs:
+total 32
+drwx------ 2 josephrb josephrb 4096 Nov 10 09:38 .
+drwx------ 5 josephrb josephrb 4096 Nov 10 09:38 ..
+-rw------- 1 josephrb josephrb    2 Nov 10 09:38 connect.done
+-rw------- 1 josephrb josephrb 5398 Nov 10 09:38 connect.log
+-rw------- 1 josephrb josephrb 8893 Nov 10 09:37 t2a_connect.sh
+== connect.done
+0
+== AR23/out.sha256
+e30f6b9301a3a7db94953e1a8e2a5b767483e80b4f8cca637caf5c3381e0600c  capture_AR23.json
+ccda9c50c6bb1cbbdd2206c8954652f4f77c6cf2b4451e8488601e9896b0a85e  E_AR23.npz
+6727758d6b1c5681dd7d55aabba51c39da5b146ed7089e618775442e666b8374  score_AR23.json
+== G18/out.sha256
+3e954247c48115c953c6aa62bb33f47cbaca2193bf75ca3169e022fc40bc1da4  capture_G18.json
+846b9d852218b531d605bd955ca9a9037d187e74723077bdfff4557efafc3ba6  E_G18.npz
+6c15965907955cceb9c5f2d1b27e8c232a5bd424e783320f872b9dda6f583b1d  score_G18.json
+== connect.log (ROOT rootmap warnings filtered)
+node login21 nproc=244 loadavg 22.03 19.88 18.98 start=2026-11-10T17:37:28Z
+connect script sha256 b2e39ada378f2fe53c01315cd7234d559c7355d6aed2d6e1cd8e0949f6935257
+squeue --me before:
+  61078463|ll5d_gate_G18|PENDING
+  61078506|ll5d_gate_AR23|PENDING
+== AR23: M=ac25b66533788ceb18b1d4e5add259c53b216669 D=80274e52c23365e5c6f84fad977576e54507bf186e1d04a8da8d596a75b0ac76
+toys present and non-empty: 300 of 300
+porcelain_before_lines=0 head=ac25b66533788ceb18b1d4e5add259c53b216669
+READOUT-SHA OK d1a3cff9768cb3913c9b95c9c6c1bb7402c5a14103f1dd22f5131c16aacda297
+origin/main=badf525b6fc501a99bf665695684cbb66a0353f2
+NULL-ON-MAIN OK 80274e52c23365e5c6f84fad977576e54507bf186e1d04a8da8d596a75b0ac76
+SCORE-ON-MAIN OK fe5263e904f65892ce26b75fb279441230713c38675c2a3615c59d561c4f5ce1
+CAPTURE-SHA OK dfee305eb95a64ab8033a1b44808b53cf778552f19b9f30402959003ed61ae7b
+{"mat_setup_scripts": 6, "mismatches": 0}
+python=/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python TMPDIR=/dev/shm/josephrb-cov2d-s-AR23/tmp
+3.11.14 numpy 1.26.4 ROOT 6.28/12
+MAT preflight file: /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_1A.root sha256 d54d2a2c6e0454b035c69d82aff3d3ac2c8cb5e589fea09f2b439804854b1107
+MAT preflight: MnvH1D PlotUtils::MnvH1D 14 bins
+COV2D-SCORE AR23 UNDER-COVERS
+T2A-CAPTURE AR23 OK rc=0: A0 EQUAL; E written
+	Command being timed: "python -B /dev/shm/josephrb-cov2d-s-AR23/tool/capture_e.py --cov2d-dir /dev/shm/josephrb-cov2d-s-AR23/deploy/2d-unfolding/cov2d --truth AR23 --null-digest 80274e52c23365e5c6f84fad977576e54507bf186e1d04a8da8d596a75b0ac76 --out /dev/shm/josephrb-cov2d-s-AR23/out --ref-score /dev/shm/josephrb-cov2d-s-AR23/ref/score_AR23.json --ref-score-sha256 fe5263e904f65892ce26b75fb279441230713c38675c2a3615c59d561c4f5ce1"
+	User time (seconds): 9.72
+	System time (seconds): 0.96
+	Percent of CPU this job got: 97%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:10.96
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 403512
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 128257
+	Voluntary context switches: 2459
+	Involuntary context switches: 87
+	Swaps: 0
+	File system inputs: 50744
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+CAPTURE AR23 rc=0 T2A-CAPTURE AR23 OK rc=0: A0 EQUAL; E written
+porcelain_after_lines=0 head=ac25b66533788ceb18b1d4e5add259c53b216669
+blobs unchanged
+COPY AR23 verified (3 files)
+removal: host=login21 2026-11-10T17:38:11Z 1.3G /dev/shm/josephrb-cov2d-s-AR23
+rm rc=0
+TUNE AR23 rc=0
+== G18: M=b1d56e4f08e62983784e34b2278f38a09a68eca0 D=6bd5259d61b062af7b3a8b09af78fc544e3eba48e35a062a28fdcd923b90f6e0
+toys present and non-empty: 300 of 300
+porcelain_before_lines=0 head=b1d56e4f08e62983784e34b2278f38a09a68eca0
+READOUT-SHA OK 0c3ad137be128691cce7bbe3ec72493b76791e761e6cd897f75aaf0a4fc7444f
+origin/main=badf525b6fc501a99bf665695684cbb66a0353f2
+NULL-ON-MAIN OK 6bd5259d61b062af7b3a8b09af78fc544e3eba48e35a062a28fdcd923b90f6e0
+SCORE-ON-MAIN OK 849766942b3ecd9e6e72fd5db9d1a59815796b3f917875f8d0122b0c639088ec
+CAPTURE-SHA OK dfee305eb95a64ab8033a1b44808b53cf778552f19b9f30402959003ed61ae7b
+{"mat_setup_scripts": 6, "mismatches": 0}
+python=/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python TMPDIR=/dev/shm/josephrb-cov2d-s-G18/tmp
+3.11.14 numpy 1.26.4 ROOT 6.28/12
+MAT preflight file: /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_1A.root sha256 d54d2a2c6e0454b035c69d82aff3d3ac2c8cb5e589fea09f2b439804854b1107
+MAT preflight: MnvH1D PlotUtils::MnvH1D 14 bins
+COV2D-SCORE G18 UNDER-COVERS
+T2A-CAPTURE G18 OK rc=0: A0 EQUAL; E written
+	Command being timed: "python -B /dev/shm/josephrb-cov2d-s-G18/tool/capture_e.py --cov2d-dir /dev/shm/josephrb-cov2d-s-G18/deploy/2d-unfolding/cov2d --truth G18 --null-digest 6bd5259d61b062af7b3a8b09af78fc544e3eba48e35a062a28fdcd923b90f6e0 --out /dev/shm/josephrb-cov2d-s-G18/out --ref-score /dev/shm/josephrb-cov2d-s-G18/ref/score_G18.json --ref-score-sha256 849766942b3ecd9e6e72fd5db9d1a59815796b3f917875f8d0122b0c639088ec"
+	User time (seconds): 10.19
+	System time (seconds): 1.12
+	Percent of CPU this job got: 98%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:11.53
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 400176
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 128057
+	Voluntary context switches: 2381
+	Involuntary context switches: 111
+	Swaps: 0
+	File system inputs: 49362
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+CAPTURE G18 rc=0 T2A-CAPTURE G18 OK rc=0: A0 EQUAL; E written
+porcelain_after_lines=0 head=b1d56e4f08e62983784e34b2278f38a09a68eca0
+blobs unchanged
+COPY G18 verified (3 files)
+removal: host=login21 2026-11-10T17:38:48Z 1.3G /dev/shm/josephrb-cov2d-s-G18
+rm rc=0
+TUNE G18 rc=0
+SUMMARY AR23 rc=0 G18 rc=0
+72d9ef4dd96db1ace99591b77b9a5beda9b21c79ee0867d7eed10ea5fc19f1a4  post.tar.gz
+t2a connect rc=0
+2026-11-10T17:38:48Z
+script rc=0
