@@ -245,6 +245,14 @@ The committed search output is re-read under this rule; no new search is run (th
 **Each is a STOP that reports the check as not made; nothing is repaired.**
 - the input pins (RPD-RECO's `INPUTS.sha256`; `ZERO_LOOPS`);
 - O_NOATIME on every pinned read;
+- **The environment for every reproduction to 10⁻¹²:**
+  - (i), (ii-a) and (ii-b) run in RPD-RECO's pinned environment (`FD-RPD-RECO-DECLARATION.md:247`): its numpy, thread
+    caps of 1 (OMP, OPENBLAS, MKL, NUMEXPR) and nice 19, on a login node;
+  - the reason is limitation-resolver's caution (2026-11-10): RPD-RECO's record keeps full float64
+    (`fd_rpd_reco.py:344-350` at `9634aadf`), but a different BLAS threading or numpy can change the summation order
+    of large sums beyond 10⁻¹².
+  - If the environment cannot be matched, the run returns to the director before it starts, with a tolerance and its
+    reason; it is not widened after a failure.
 - (i): at α = 0 the code reproduces RPD-RECO's R-d1.0 s_PB to 10⁻¹² relative;
 - (i): **the planted scale** (audit M2). The pseudo-data are built as the data are:
   - RPD-RECO's own C-0 recipe splits PB's pooled MC rows at random into a pseudo-data half and a prediction half, with
