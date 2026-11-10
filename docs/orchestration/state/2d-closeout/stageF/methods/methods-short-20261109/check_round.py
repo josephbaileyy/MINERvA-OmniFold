@@ -37,6 +37,9 @@
      is reported, without failing. arXiv's 1,920 characters apply to a separate metadata abstract, written at
      submission (REPORT.md, "Follow-up: before submission"). No rendered case may print a phrase of ABSTRACT_BANNED
      (" only at ", which attaches a restriction to the tunes rather than to the noun).
+  11. FREE TEXT (journal-editor, 2026-11-09). A filled free-text value (a PENDING key with no class set, such as
+     ll5d-clip-record or ll5d-route-record) prints inside prose, so it may not contain a FREE_TEXT_BANNED term: gate,
+     record, readout, receipt, lane, binding, declaration, a DECISION/OUTCOME name, a date, an .md file, or a PR number.
 NOTE (printed on every run; not checked here). The figures sit where the blind rater copy passes its hold-diff check
 (rater-calibration/make_rater_copy.sh). A float near section 7 split the long section 7 hold ("A citable home ...")
 across a page break, and the copy failed. Any reflow of sections 6-7 (a float moved, a caption or paragraph
@@ -242,7 +245,8 @@ def run(wt, base):
              + check_numerals(cur, old) + check_once_gone(cur)
              + check_printed_names((wt / NOTE / "values_fived16.tex").read_text())
              + check_dates({**cur, "supplemental_body.tex": supp})
-             + check_sec4_tests(wt) + check_figures(wt) + check_abstract(wt))
+             + check_sec4_tests(wt) + check_figures(wt) + check_abstract(wt)
+             + check_free_text(mv.PENDING, mv.VERDICTS))
     return fails
 
 
@@ -292,6 +296,23 @@ def style_report_text(text):
     mod = importlib.util.module_from_spec(sm)
     sm.loader.exec_module(mod)
     return {k: e["count"] for k, e in mod.score(text)["patterns"].items()}
+
+
+# words a free-text value may not print (journal-editor, 2026-11-09: they are internal, and the value prints inside prose)
+FREE_TEXT_BANNED = (r"\bgates?\b", r"\brecords?\b", r"\breadouts?\b", r"\breceipts?\b", r"\blanes?\b", r"\bbindings?\b",
+                    r"\bdeclar\w*", r"DECISION-", r"\b20\d\d-\d\d-\d\d\b", r"\bOUTCOME-", r"\.md\b", r"\bPR\s*#?\d+", r"#\d{3,}")
+
+
+def check_free_text(pending, verdicts):
+    """Every filled free-text value (a PENDING key with no class set) prints no FREE_TEXT_BANNED term."""
+    out = []
+    for k, (g, classes) in pending.items():
+        if classes is None and k in verdicts:
+            for pat in FREE_TEXT_BANNED:
+                m = re.search(pat, str(verdicts[k]), re.I)
+                if m:
+                    out.append(f"the free-text value {k} prints {m.group(0)!r}: {str(verdicts[k])[:80]!r}")
+    return out
 
 
 def check_figures(wt):
@@ -497,6 +518,12 @@ def self_test():
                         capture_output=True, text=True)
     if ms.returncode:
         print("self-test: the rater copy's multiset_check.py fails its own self-test:", ms.stdout.strip()[-200:]); ok = False
+    fp = {"x-record": ("g", None), "x-class": ("g", ("a",))}
+    for planted in ("the gate sample", "the readout says", "see DECISION-20261109-joseph-x.md", "on 2026-11-09", "the lane's receipt"):
+        if not check_free_text(fp, {"x-record": planted}):
+            print("self-test: NOT CAUGHT a banned term in a free-text value:", repr(planted)); ok = False
+    if check_free_text(fp, {"x-record": "the largest offset, 0.04 in R06, below its bound of 0.10", "x-class": "a"}):
+        print("self-test: the free-text check flags clean journal prose"); ok = False
     del EMPTY["e"]
     print("self-test:", "PASS" if ok else "FAIL")
     return 0 if ok else 1

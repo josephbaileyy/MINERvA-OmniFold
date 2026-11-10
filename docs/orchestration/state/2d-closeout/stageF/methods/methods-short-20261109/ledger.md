@@ -703,3 +703,9 @@ Checks:
   clipping sentence is in the pending ll5d group.
 - `check_round.py`: PASS, its style report run on the new blind Supplement. `check_registry.py`: PASS.
 - `check_supp_pointers.py`: 35 pointers, 0 failures.
+- **After journal-editor's check of 069370826:**
+  - check_round check 11 (FREE TEXT) fails any filled free-text value that prints gate, record, readout, receipt,
+    lane, binding, declaration, a DECISION/OUTCOME name, a date, an .md file or a PR number. It is self-tested with
+    five planted values and one clean one.
+  - "the ratio's statistical gate" is kept. It is the note's own wording (sec_fived16.tex :99, :251), with no more
+    specific name to point to.
