@@ -97,7 +97,7 @@ The grading rules and their timing are stated with the individual tests; compari
 \caption{The tests and their results: each test, the estimator it tests (2D: the two-observable estimator; 5D: the five-observable estimator, the baseline), the section that reports it, its result and its status. Status words. \textit{Pass}, \textit{Fail}: the test's criterion is or is not met. \textit{Flagged}: the fake-data bias meets the flagging criterion of section~\ref{sec:strategy} under the reported covariance. \textit{Agree}: the two results agree within the test's noise. \textit{Differ}: a difference is detectable at the test's noise; its size is not graded. \textit{Partial}: the truth change is recovered only in part. \textit{Graded}: the criteria fixed in advance were applied, and the Result column gives one entry for each tune and variant, the primary variant (without the GEANT4 neutron and proton bands) first: \textit{no under-coverage detected}, \textit{under-coverage flagged} (in a cell or jointly) or \textit{invalid} (a control of the test fails). \textit{Under-covers}: fewer pseudo-experiments lie within the intervals than the test's threshold requires. \textit{Invalid}: a control of the test fails at every tune and variant. \textit{Stopped}: the test stopped before it gave a coverage result. \textit{Not adopted}: the variant was tested and is not used. \textit{Reproducible}: repeated unfolds give bitwise-identical results. \textit{In data}: the effect is present in the reconstructed data before unfolding. \textit{Descriptive}: no criterion applies; for the second five-observable coverage test, the criteria fixed in advance were applied, but the run continued, or was repaired, by a decision made after a check was seen. \textit{Pending}: the result has not yet been reported.}
 \label{tab:outcomes}
 \centering\footnotesize\setlength{\tabcolsep}{3pt}
-\begin{tabular}{@{}p{5.0cm}llp{8.6cm}l@{}} \toprule
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}>{\raggedright\arraybackslash}p{5.0cm}lr>{\raggedright\arraybackslash}p{9.0cm}>{\raggedright\arraybackslash}p{1.8cm}@{}} \toprule
 Test & Est. & Sec. & Result & Status \\ \midrule
 \multicolumn{5}{@{}l}{\textit{Benchmark against the published measurement}} \\
 Comparison with the published $(\pT,\pPar)$ result & 2D & \ref{sec:repro2d} & Integral ratio $\ratioTot$; $\chi^2/\mathrm{ndf}=\chiPaper$ (ndf $=205$) against a covariance of condition number $1.5\times10^{12}$ & Descriptive \\
@@ -124,7 +124,7 @@ Coverage of the two-dimensional covariance at two held-out tunes & 2D & \ref{sec
 First five-observable coverage test & 5D & \ref{sec:calib} & A preliminary check compared unlike quantities & Stopped \\
 Second five-observable coverage test & 5D & \ref{sec:ll5d} & \fvgroup{ll5d}{\fvcase{ll5d-campaign}{graded}{primary, without the two bands: \fvval{f1-tune-g18}, \fvval{ll5d-g18-minus2}; \fvval{f1-tune-ar23}, \fvval{ll5d-ar23-minus2}. With them: \fvval{f1-tune-g18}, \fvval{ll5d-g18-all}; \fvval{f1-tune-ar23}, \fvval{ll5d-ar23-all}\fvcase{ll5d-route}{offset-proceeded}{. The run continued past a check by a later decision}\fvcase{ll5d-route}{repaired}{. The run was repaired after a stop}\fvcase{ll5d-anyover}{some}{. Some cells over-cover}}\fvcase{ll5d-campaign}{gate-failed}{Stopped at an entry condition fixed in advance, \fvval{ll5d-stop-what}}\fvcase{ll5d-campaign}{offset-stopped}{Stopped by a decision made after a check was exceeded}\fvcase{ll5d-campaign}{stop}{Stopped at a check fixed in advance, \fvval{ll5d-stop-what}}} & \fvgroupalt{ll5d}{Pending}{\fvgroup{ll5d}{\fvcase{ll5d-status}{graded}{Graded}\fvcase{ll5d-status}{descriptive}{Descriptive}\fvcase{ll5d-status}{invalid}{Invalid}\fvcase{ll5d-status}{stopped}{Stopped}}} \\
 Run-period consistency & 5D; 2D & \ref{sec:closure2d} & A step of $+6.10\,\%$ at reconstruction level & In data \\ \bottomrule
-\end{tabular}
+\end{tabular*}
 \end{table*}
 
 \section{Benchmark against the published two-dimensional measurement}
@@ -214,7 +214,7 @@ In figure~\ref{fig:bias-cells}, $z$ is the mean fractional residual, (unfolded $
 \caption{Fake-data tests on the sixteen cells: $\chi^2$ (16 degrees of freedom), $p$, the cells with $|z|>\fvval{trig-z}$ and, under the reported covariance, the largest $|z|$. The reported covariance $C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}$ is primary; the readings without the run-period block ($C_{\mathrm{total}}+C_{\mathrm{resp}}$) and under $C_{\mathrm{total}}$ alone are shown for sensitivity. Each covariance omits the truth's own generator component where the second column says so ($-$). $^{*}$Closure test: the truth is the simulation's own.}
 \label{tab:fd16}
 \centering\footnotesize\setlength{\tabcolsep}{2pt}
-  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.3cm}>{\raggedright\arraybackslash}p{1.45cm}rrlrrrlrrl@{}} \toprule
+  \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}>{\raggedright\arraybackslash}p{3.1cm}>{\raggedright\arraybackslash}p{1.65cm}rr>{\raggedright\arraybackslash}p{1.25cm}rrr>{\raggedright\arraybackslash}p{1.25cm}rr>{\raggedright\arraybackslash}p{1.25cm}@{}} \toprule
 & & \multicolumn{4}{c}{reported: $C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}$} & \multicolumn{3}{c}{$C_{\mathrm{total}}+C_{\mathrm{resp}}$} & \multicolumn{3}{c}{$C_{\mathrm{total}}$} \\ \cmidrule(lr){3-6}\cmidrule(lr){7-9}\cmidrule(l){10-12}
 Truth & Cov. & $\chi^2$ & $p$ & cells & max $|z|$ & $\chi^2$ & $p$ & cells & $\chi^2$ & $p$ & cells \\ \midrule
 simulation prior$^{*}$ & full & \fvval{f0b-nominal-chi2int} & $\fvval{f0b-nominal-pr}$ & \fvval{f0b-nominal-cells} & \fvval{f0b-nominal-zmax} & \fvval{f0b-nominal-chi2int-nopl} & $\fvval{f0b-nominal-pr-nopl}$ & \fvval{f0b-nominal-cells-nopl} & \fvval{f0-nominal-chi2int} & $\fvval{f0-nominal-pr}$ & \fvval{f0-nominal-cells} \\
@@ -229,7 +229,7 @@ NuWro shape, noise-free closure & $-$NuWro & \fvval{f0b-closure_nuwro-chi2int} &
 GiBUU, $\Eavail$ shape & $-$GiBUU & \fvval{f0b-stage0c_gibuu-chi2int} & $\fvval{f0b-stage0c_gibuu-pr}$ & \fvval{f0b-stage0c_gibuu-cells} & \fvval{f0b-stage0c_gibuu-zmax} & \fvval{f0b-stage0c_gibuu-chi2int-nopl} & $\fvval{f0b-stage0c_gibuu-pr-nopl}$ & \fvval{f0b-stage0c_gibuu-cells-nopl} & \fvval{f0-stage0c_gibuu-chi2int} & $\fvval{f0-stage0c_gibuu-pr}$ & \fvval{f0-stage0c_gibuu-cells} \\
 GiBUU, hybrid & $-$GiBUU & \fvval{f0b-A7_gibuu-chi2int} & $\fvval{f0b-A7_gibuu-pr}$ & \fvval{f0b-A7_gibuu-cells} & \fvval{f0b-A7_gibuu-zmax} & \fvval{f0b-A7_gibuu-chi2int-nopl} & $\fvval{f0b-A7_gibuu-pr-nopl}$ & \fvval{f0b-A7_gibuu-cells-nopl} & \fvval{f0-A7_gibuu-chi2int} & $\fvval{f0-A7_gibuu-pr}$ & \fvval{f0-A7_gibuu-cells} \\
 synthetic $q_3$ tilt & full & \fvval{f0b-q3-chi2int} & $\fvval{f0b-q3-pr}$ & \fvval{f0b-q3-cells} & \fvval{f0b-q3-zmax} & \fvval{f0b-q3-chi2int-nopl} & $\fvval{f0b-q3-pr-nopl}$ & \fvval{f0b-q3-cells-nopl} & \fvval{f0-q3-chi2int} & $\fvval{f0-q3-pr}$ & \fvval{f0-q3-cells} \\ \bottomrule
-\end{tabular}
+\end{tabular*}
 \end{table*}
 
 % r5:272, unchanged (make_values_fived16.py LISTED_CLAIMS anchors its four sentences).
