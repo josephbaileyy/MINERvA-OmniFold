@@ -971,3 +971,25 @@ layout.
   - check_round with the fill test (check 9 included) PASS, and the self-test PASS;
   - make_values `--check` PASS; registry, sec4 and pointers PASS;
   - check_restyle against d1d60e74f PASS; no Overfull \hbox.
+- **Captions (the lane's d53af941a, merged as 86ac751e3).** The six captions are shortened.
+  - TeXcount, before -> after: Fig 1 87->52, Fig 2 46->35, Fig 3 163->64, Fig 4 167->51, Fig 5 152->65, Fig 6
+    152->65. My prose-token count on paper_body: 96->61, 54->36, 169->69, 185->61, 158->67, 158->70.
+  - Each dropped sentence's disposition is in `figures/methods_short/presentation/captions/REPORT.md` and
+    `pairs.json`.
+  - My check of the moved clauses in the merged source; each prints exactly once:
+    - Fig 1: "so their overlap is not a compatibility test" (§4).
+    - Fig 3: "Neither panel of figure …"; "… were not used while the estimator was chosen".
+    - Fig 4: the z and N definition, reworded in §5.2; "The noise-free closure uses its single residual and $N=0$";
+      "The bias is identical in both panels; only the covariance differs".
+    - Fig 5: the 109 J / 42 EW / two totals population and the edge-safe definition (§6.1); "Points are different
+      quantities, not repeated experiments" (in the caption).
+    - Fig 6, in §7: "not a measured bias of the data result"; "The correlation supplies no per-cell bias bound";
+      "The points of figure 6 are cells, not independent repeated experiments".
+  - check_restyle against c8757e9f2 fails only where a caption cut is expected to: one tab:fd16 ref left Fig 4's
+    caption with its p-value flag sentence, which §5.2's protected paragraph states; five \ref{fig:…} were added in
+    the citing text; \chi and one \Eavail went with the dropped text.
+  - The rater copy, check_round with the fill test, make_values `--check`, registry, sec4 and pointers pass.
+  - My export of every changed sentence (55 rows) and the lane's pairs.json went to the director's meaning read and
+    to journal-editor. Not accepted until they report.
+- **Tables:** held. be76b8310 meets journal-editor's five constraints, but their review found five zero-word
+  defects, and the lane is making a repair pass. c8a29cdbc is only Table 1's tabcolsep overflow fix.
