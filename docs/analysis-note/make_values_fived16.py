@@ -179,9 +179,9 @@ def paper_prec(k, x):
     return {base: pr, base[:i] + "-prel" + base[i + 3:]: pr if pr.startswith("<") else "=" + pr}
 # the figures the note and the paper print, copied into figures/: each must equal its committed source (with the block)
 # and the digest its sidecar records (FD-G-FIGURES-REPORT.md section 1; FD-CT-5B-ADDITION-REPORT.md section 3)
-# Both are E-1's with-arm figures as addendum E-A2 redrew them, from the same readouts, without the hydrogen flags on
-# the legend (FD-GENCMP-AMENDMENT-E-ADDENDUM-EA2-REPORT.md, #712; the caveat cut list's move MV07F)
-FIGURES = {"fd_g_fig_ratio.pdf": ("fd/gencmp-e/rerun1/chain/chdefs/with/figures-a2", "6214ed78"),
+# The ratio uses carbon-only NuWro and GiBUU analysis predictions (fd/gencmp/carbon-figure/REPORT.md).
+# The modes retain E-A2's with-arm source (FD-GENCMP-AMENDMENT-E-ADDENDUM-EA2-REPORT.md).
+FIGURES = {"fd_g_fig_ratio.pdf": ("fd/gencmp/carbon-figure", "1e6d550e"),
            "fd_g_fig_modes.pdf": ("fd/gencmp-e/rerun1/chain/chdefs/with/figures-a2", "0d6fe57c")}
 # the readouts that are text receipts, not JSON
 TEXT_READOUTS = {"gprobe", "e2sens", "s1code", "s5cpseudo", "f1prep", "cov2ddecl", "ll5ddecl", "nullcode", "stabdecl", "fd1bdecl"}
