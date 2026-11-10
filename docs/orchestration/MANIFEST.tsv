@@ -13380,6 +13380,7 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/stab/gatesim
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/stab/gatesim/sweep.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/stab/gatesim/sweep.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/stab/no-ratio.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/tier2-20261110/T2-BINDING-1.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/tier2-20261110/T2A-COV2D-SPLIT-DECLARATION.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/tier2-20261110/T2B-FD-GRADE-VARIANTS-DECLARATION.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/tier2-20261110/T2C-ENS1-DEFICIT-LICENCE-NOTE.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
