@@ -13,15 +13,18 @@ file changes none of its lines.
 - item 3, three clarifications before audit and binding;
 - item 4, the run order.
 
+And `DECISION-20261110-joseph-vhalfr-a33-a82.md` (#1047), which settles A3.3 and A8.2.
+
 **Inputs to this amendment.**
 - the packet, `CHOICES-FOR-JOSEPH-20261110.md` (**P**);
-- the independent consult, `consult-sol-20261110/answer.txt` (**S**);
+- the independent consult, `consult-sol-20261110/answer.txt` (**S**), and the second one on A3.3 and A8.2,
+  `consult-sol-a1-20261110/answer.txt` (**S2**);
 - the declaration at #1016's head `b7d7ac2dc` (**D**);
 - **H**, `nd-unfolding/pv-ladder/h2_definition.py`;
 - **G**, `nd-unfolding/s5p_stage1_inspect.py`.
 
 Other paths are at main `7c1e5440d`, relative to `docs/orchestration/` unless they start with `nd-unfolding/`.
-[JOSEPH] marks the two items that still need his (or Ben's) confirmation, A3.3 and A8.2.
+Every choice is now decided. Joseph settled A3.3 and A8.2 in the second decision.
 
 ## A1. What this amendment fixes
 
@@ -36,7 +39,7 @@ Other paths are at main `7c1e5440d`, relative to `docs/orchestration/` unless th
 | new | the graded estimator frozen by name and digest | decision item 3 (c); A8.1 |
 | new | the reserved-truth confirmatory step, specified now | decision item 3 (c); A8.2 |
 | §6 code | the tests these changes need | A9 |
-| §7 | every choice is decided except A3.3 and A8.2 | decision items 1-3 |
+| §7 | every choice is decided | both decisions |
 
 ## A2. The domain and its boundary (D §1.1; clarification (b))
 
@@ -92,14 +95,13 @@ each of the candidate's two axes within Ω.
 
 **A3.2 Fixed edge for C6 (binding).** C6 keeps the edge p_∥ = 4.5 GeV/c (A5).
 
-**A3.3 A physics edge for C7 [JOSEPH or Ben to confirm before the binding].**
-- Proposed: C7 keeps one q3 edge that separates the low-momentum-transfer region from the rest, at q3 = 0.8 GeV or
-  at q3 = 1.2 GeV. Both are fine-grid edges (`G:42`).
-- The reason [inference, to be confirmed]: the E_avail–q3 contrast Joseph confirmed (decision item 1) is read as the
-  E_avail distribution at fixed q3, and the low-q3 region is where the quasielastic, 2p2h and Δ contributions to
-  E_avail are usually compared.
-- If neither edge is confirmed, C7 has A3.1 alone. The choice must be made before the binding, from physics, and
-  without any C7 binning computed.
+**A3.3 No fixed q3 edge for C7 (decided, `DECISION-20261110-joseph-vhalfr-a33-a82.md` item 1).**
+- C7's binning is set by A4's criterion, the floor and A3.1 alone.
+- **Landmarks, printed as a description only.** The record prints where each of C7's final q3 edges falls relative to
+  q3 = 0.8 GeV and 1.2 GeV, the published low-recoil limits. Both are fine-grid edges (`G:42`).
+- No edge is added, moved or removed after the binning is seen.
+- The consult recommended a fixed edge at 1.2 GeV (S2:13). Joseph judged the published limits specific to their
+  analyses, and the decision records that.
 
 **The floors stay** (D:107-111): 3 bins in 1D, 6 in 2D, and 8 for C0 with 4 on each side of p_∥.
 
@@ -212,14 +214,33 @@ The rules for the listing:
 
 1. **Who it applies to.** Each candidate that reaches R in the development read, and the required pair, whatever its
    development outcome. The confirmatory read reports C6 and C7 either way.
-2. **The reserved truths [JOSEPH to confirm the list before the binding].** Proposed:
-   - (i) three synthetic tilts of the nominal truth, r = 1 + a·z with a = 0.3, z the cell-standardized coordinate
-     clipped to [−2, 2] and re-centred to weighted mean zero. This is the form of the declared q3 tilt
-     (`nd-unfolding/s5c_pseudo.py:54-91`), applied along p_T, along p_∥ and along W.
-   - (ii) the two GENIE v3 tunes, G18 and AR23, as their gated ratios.
-   - **Status of each.** The (i) truths have never been generated. The (ii) truths' sixteen-cell fake-data grades are
-     known (F1) and are disclosed beside any result. No candidate-level bias at any of them has been formed.
+2. **The reserved truths (decided, option (a), `DECISION-20261110-joseph-vhalfr-a33-a82.md` item 2).**
+   - **The confirming set:** three new synthetic tilts of the nominal truth, T_pT, T_p∥ and T_W, frozen in item 2a.
+     None has been generated.
+   - **A disclosed descriptive extra:** the two GENIE v3 tunes, G18 and AR23, as their gated ratios. Their sixteen-cell
+     fake-data grades are known (F1), and they share their CCQE model (S2:21). Their results are reported prominently
+     beside the tilts', and they cannot rescue a failed tilt.
+   - No candidate-level bias at any of these truths has been formed.
      <!-- absence-ok: scoped to the reserved truths named here; V-HALF-R has formed no candidate-level quantity -->
+
+2a. **Each tilt, frozen here before it is generated** (decision item 2, "frozen before any tilt is generated").
+   - **Coordinate.** The true p_T (GeV/c), p_∥ (GeV/c) or W (GeV) of the row, from `MCgen`.
+   - **Standardization population: global over Ω.** The rows whose true coordinates lie inside the fine grid on every
+     axis and whose true fine cell is in Ω (A2), weighted by w_truth. μ and σ are that population's weighted mean and
+     standard deviation of the coordinate.
+     - The reason: each tilt then changes its own axis's distribution across the whole domain, which is what C1, C2,
+       C5 and the 2D candidates resolve.
+     - The other axes change only through their correlations with the tilted one. In particular, the p_T, p_∥ and W
+       tilts reach C7 only that way (S2:19), and the record says so.
+     - The q3 tilt's within-cell form (`nd-unfolding/s5c_pseudo.py:54-95`) is not used for these three.
+   - **The weight.** z = clip((x − μ)/σ, −2, 2), and then z′ = z − z̄. Here z̄ is z's w_truth-weighted mean over the
+     same population, and r = 1 + 0.3·z′. The sign is + for all three tilts.
+   - **Normalization.** The recentring keeps the population's w_truth-weighted total in Ω exactly. A control STOPs if
+     the total changes by more than 1e-12 relative, or if any r ≤ 0.
+   - **Domain.** r applies to the rows of the population only. Rows outside Ω or outside the grid, including the
+     −9999 gen sentinels, keep r = 1, as the q3 tilt treats out-of-grid rows (`nd-unfolding/s5c_pseudo.py:60-62`). So
+     migration into Ω from outside it is the nominal simulation's at every tilt, and the record states this.
+   - These definitions are bound with this amendment. A tilt that needs any change is a new declaration.
 3. **Order.**
    - The development read and every candidate's binning are committed first.
    - Then this step's addendum is bound, with its code, its digests, d's construction at these truths and its price.
@@ -227,21 +248,30 @@ The rules for the listing:
    - Nobody reads a reserved truth's unfold, bias or departure before the confirmatory read.
 4. **The rule.** V-HALF as bound: the same floor, HALF 0.5, K = 2, the same noise treatment and classes (D:157-164).
    It is applied to each frozen binning, with no re-binning.
-5. **Acceptance.**
-   - A candidate is **confirmed at the reserved truths** when every bin is V-HALF-valid at every reserved truth where
-     the rule applies. Otherwise it is **not confirmed**, and every bin's class is listed.
-   - The required pair is reported jointly ("both confirmed", or which one is not). A not-confirmed candidate is not
-     reported as a measurement candidate.
-   - No multiplicity correction is declared. Every outcome is reported.
-6. **What it licenses.** "Confirmed at the reserved truths" for the frozen binning, beside the development result. It
-   licenses neither coverage nor a measurement.
+5. **Acceptance, over the three confirming tilts only** (decision item 2):
+   - **Not confirmed:** any frozen bin that fails, or is unresolved, at an applicable confirming tilt, or that lacks
+     departure information at a confirming tilt.
+   - **Untested:** a bin with no applicable reserved departure at any confirming tilt. An untested bin does not count
+     as a pass. A candidate with an untested bin is reported as untested in that bin, and it is not confirmed.
+     <!-- absence-ok: "untested" names an outcome class of this step, not a claim that a result does not exist -->
+   - **Confirmed:** every frozen bin is V-HALF-valid at every applicable confirming tilt, and no bin is untested.
+   - **G18 and AR23** are classified and reported beside the tilts by the same rule. They change no candidate's
+     confirmation class.
+   - **C6 and C7 each confirm separately.** Both are reported whatever their classes. No rebinning follows the
+     confirmation read.
+   - A candidate that is not confirmed is not reported as a measurement candidate. Every outcome is reported, and no
+     multiplicity correction is declared.
+6. **What it licenses.** "Confirmed at the three tested tilts" for the frozen binning, beside the development result,
+   and reported as limited to those tested truths. The tilts are a substantial stress at amplitude 0.3 on a
+   standardized coordinate. They are not a realistic generator envelope (decision item 2). The step licenses neither
+   coverage nor a measurement.
 
 ## A9. Code and tests this amendment adds to D §6
 
 - **The builder:**
   - the mask Ω and A2's four populations, with the "in" and "out" shares printed;
   - A4's criterion, join order and final requirement;
-  - A3.1's refusal and A5's edge as join constraints, with A3.3's edge if confirmed.
+  - A3.1's refusal and A5's edge as join constraints; A3.3's landmark print for C7.
 - **Tests:**
   - R00-R15 reproduce from the H2 boxes in purity-only mode at τ = 0.1 (D:264).
   - Each population on a fixture where:
@@ -254,6 +284,12 @@ The rules for the listing:
     ratios differs from the ratio of sums.
 - **Mutants** for each refusal and for the join ordering, as D:264 requires.
 - **Before grading:** the estimator pin of A8.1, with a refusal test.
+- **The confirmation step's addendum** carries A8.2 2a's tilt code, with tests:
+  - the Ω total is unchanged to 1e-12, and the STOP fires on a planted drift;
+  - rows outside Ω keep r = 1;
+  - r ≤ 0 STOPs;
+  - the "untested" and "missing departure" classes are each reachable on a fixture.
+  <!-- absence-ok: "untested" names an outcome class of the confirmation step, not a claim that a result does not exist -->
 
 ## A10. Unchanged
 
