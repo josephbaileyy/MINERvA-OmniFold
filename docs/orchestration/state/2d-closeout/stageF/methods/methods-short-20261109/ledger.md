@@ -531,3 +531,40 @@ Checks after these changes:
 - `check_restyle.py` against e97d2b20 fails only on the figure additions, as above, plus the numerals 27 and 39 and
   the one `\pubhold` removed.
 
+
+## Figure 3 of the figures lane (rounding shifts; the director, 2026-11-09), integrated
+
+The lane's 631f8ec2c is merged as f83a42256. The lane's branch carries main to 13d714bfc (#1006, #1007, #1008), and
+the merge brings that in. journal-editor's seven items on cdc14205b are closed at 631f8ec2c.
+
+| Item | Where | Source |
+|---|---|---|
+| Fig. `fig:rounding-shifts` (prints as FIG. 5) | section 6.1, after the RS1 cross-fitting paragraph, `figure` `[tb]` at `0.75\linewidth`; cited in "Over the 153 quantities ... statistical standard deviations (figure 5)" | `a3_rounding_shifts.csv` (PR #1008, sha256 9ac8f7d8b74f090c, pinned in inputs.json) |
+| 153 = 109 J + 42 EW + two totals | the caption | the CSV's rows, counted: J 109, EW 42, EW_all_ones 1, total_integrated 1 |
+| 42 | the caption | that count; in check_round's NEW_NUMERALS with this source |
+| median 0.8, maximum 2.6 (J145) | the figure's labels, at the text's precision | the CSV: 0.7829505732456221 and 2.5837789197284393 |
+
+- **Provenance (journal-editor's Fig. 3 item 7).** The CSV is not the original in-memory array. The receipt's own
+  producer recomputed it from the 103 committed inputs (HANDOVER.md, "Rounding figure delivered from committed
+  CSV"; the receipt's README.md). The recomputation reproduces the assess receipt's median, maximum and argmax bit
+  for bit.
+- **The caption** is the lane's, with one change: journal-editor's optional "the reference is the same input
+  values represented in float64" -> "the reference is the unperturbed inputs in float64".
+- **The 0.75 width is set by the blind rater copy.** At `\linewidth` and at 0.85 the normal build ran to 15 pages,
+  with references 17-21 pushed over by the hold text, while the rater copy stayed at 14. The extra page number
+  then failed `multiset_check.py`, whose letter multisets must match. The placements tried at full width were
+  `[!tb]`/`[htb]` after the RS1 paragraph, `[!t]` at the head of 6.1 and `[tb]` at the head of section 6; all
+  failed. At 0.75 both builds are 14 pages, multiset VERDICT PASS, and the blind copy prints FIGS. 1-6. I read the
+  rendered page (page 10): the figure is legible at this size.
+- **HANDOVER.md is stale on one point.** It still says the median and maximum "are labeled at two decimals"; the
+  figure and caption now label them at the text's precision. That is the lane's file, so I have not edited it.
+- **The same fragility as Figures 1 and 2.** Any later growth of the text, the fill included, can change the
+  page count of one build and not the other. Rebuild the rater copy after it (check_round's NOTE).
+
+Checks at this commit:
+- `make_rater_copy.sh`: PASS, 14 pages in both builds.
+- `check_round.py . --fill-test`: PASS, with check 9 against the lane's updated `check_against`. `--self-test`:
+  PASS.
+- `check_registry.py`: PASS. `check_sec4_receipts.py`: 16/16, and its pytest: 17 passed.
+- `check_supp_pointers.py`: 35 pointers, 0 failures.
+- The producer reruns with no change to any committed asset.
