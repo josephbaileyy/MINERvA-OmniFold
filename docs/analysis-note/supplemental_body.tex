@@ -463,46 +463,46 @@ The data are unfolded once, with the full simulation. The Monte Carlo $p$ value 
   \caption{Generative model of the calibration.  Left: the flow of one test, repeated over $B$ pseudo-experiments.  Right: what each element of a pseudo-experiment does, and the corresponding element of the data analysis.  Nuisance draws act on the pseudo-data source only.}
   \label{tab:joint5d-genmodel}
   \centering\small
-  \begin{minipage}[t]{0.40\textwidth}
+  \begin{minipage}[t]{0.48\textwidth}
     \vspace{0pt}
-    \setlength{\unitlength}{1pt}
-    \begin{picture}(170,176)(0,0)
-      \put(10,160){\framebox(158,16){\parbox{154pt}{\centering\scriptsize $H_{0}(G)$: $\sigma=G$ on every fine cell}}}
-      \put(52,160){\vector(0,-1){7}}
-      \put(10,123){\framebox(92,30){\parbox{88pt}{\centering\scriptsize source half reweighted to $G$; nuisance draws; Poisson pseudo-data and background}}}
-      \put(112,123){\framebox(56,30){\parbox{52pt}{\centering\scriptsize data}}}
-      \put(56,123){\vector(0,-1){7}}
-      \put(140,123){\vector(0,-1){7}}
-      \put(10,92){\framebox(92,24){\parbox{88pt}{\centering\scriptsize unfold with the other half (five-observable estimator)}}}
-      \put(112,92){\framebox(56,24){\parbox{52pt}{\centering\scriptsize unfold with the full simulation}}}
-      \put(56,92){\vector(0,-1){7}}
-      \put(140,92){\vector(0,-1){7}}
-      \put(10,61){\framebox(92,24){\parbox{88pt}{\centering\scriptsize add lateral, normalization, rounding, prediction terms: $T_{\mathrm{null}}$}}}
-      \put(112,61){\framebox(56,24){\parbox{52pt}{\centering\scriptsize $T_{\mathrm{obs}}$}}}
-      \put(56,61){\vector(0,-1){7}}
-      \put(140,61){\vector(0,-1){7}}
-      \put(10,30){\framebox(158,24){\parbox{154pt}{\centering\scriptsize $k$ of $B$ with $T_{\mathrm{null}}\ge T_{\mathrm{obs}}$; largest $p$ over the shifted nulls}}}
-      \put(89,30){\vector(0,-1){7}}
-      \put(10,0){\framebox(158,23){\parbox{154pt}{\centering\scriptsize Holm steps with the 95\% Clopper--Pearson interval; batches of \jtBatch{}, $B\le\jtBcap$}}}
-      \put(10,42){\line(-1,0){8}}
-      \put(2,42){\line(0,1){96}}
-      \put(2,138){\vector(1,0){8}}
-    \end{picture}
+    \begin{tikzpicture}[
+      flow/.style={draw, align=center, font={\scriptsize\hyphenpenalty=10000\relax\exhyphenpenalty=10000\relax}, inner sep=3pt, outer sep=0pt},
+      >={Stealth[length=3pt, width=3pt]}, line width=0.4pt]
+      \node[flow, text width=200pt] (null) {$H_{0}(G)$: $\sigma=G$ on every fine cell};
+      \matrix (steps) [matrix of nodes, nodes={flow}, below=9pt of null,
+        column sep=8pt, row sep=9pt,
+        column 1/.style={nodes={text width=122pt}},
+        column 2/.style={nodes={text width=65pt}}] {
+        source half reweighted to $G$; nuisance draws; Poisson pseudo-data and background & data \\
+        unfold with the other half (five-observable estimator) & unfold with the full simulation \\
+        add lateral, normalization, rounding, prediction terms: $T_{\mathrm{null}}$ & $T_{\mathrm{obs}}$ \\
+      };
+      \node[flow, text width=200pt, below=9pt of steps] (count) {$k$ of $B$ with $T_{\mathrm{null}}\ge T_{\mathrm{obs}}$; largest $p$ over the shifted nulls};
+      \node[flow, text width=200pt, below=9pt of count] (decision) {Holm steps with the 95\% Clopper--Pearson interval; batches of \jtBatch{}, $B\le\jtBcap$};
+      \draw[->] (null.south -| steps-1-1.north) -- (steps-1-1.north);
+      \foreach \col in {1,2} {
+        \draw[->] (steps-1-\col.south) -- (steps-2-\col.north);
+        \draw[->] (steps-2-\col.south) -- (steps-3-\col.north);
+        \draw[->] (steps-3-\col.south) -- (count.north -| steps-3-\col.south);
+      }
+      \draw[->] (count.south) -- (decision.north);
+      \draw[->] (count.west) -- ++(-8pt,0) |- (steps-1-1.west);
+    \end{tikzpicture}
   \end{minipage}\hfill
-  \begin{minipage}[t]{0.57\textwidth}
-    \vspace{0pt}\scriptsize
+  \begin{minipage}[t]{0.49\textwidth}
+    \vspace{0pt}\scriptsize\hyphenpenalty=10000\exhyphenpenalty=10000\setlength{\tabcolsep}{4pt}\renewcommand{\arraystretch}{1.12}
     \begin{tabular}{@{}lll@{}}
       \toprule
-      \pcell{0.15\textwidth}{Element} & \pcell{0.24\textwidth}{Pseudo-experiment} & \pcell{0.14\textwidth}{Data analysis} \\
+      \pcell{0.20\linewidth}{Element} & \pcell{0.43\linewidth}{Pseudo-experiment} & \pcell{0.29\linewidth}{Data analysis} \\
       \midrule
-      \pcell{0.15\textwidth}{Truth} & \pcell{0.24\textwidth}{source half reweighted per fine cell to $G$} & \pcell{0.14\textwidth}{unknown} \\
-      \pcell{0.15\textwidth}{Unfolding simulation} & \pcell{0.24\textwidth}{other half at Tune~v1 weights (the prior)} & \pcell{0.14\textwidth}{full simulation at Tune~v1 weights} \\
-      \pcell{0.15\textwidth}{Background} & \pcell{0.24\textwidth}{Poisson source and template from disjoint halves; Tune~v1 with its bands} & \pcell{0.14\textwidth}{full background template} \\
-      \pcell{0.15\textwidth}{Flux} & \pcell{0.24\textwidth}{one of \jtFluxUniverses{} universes on the source (changes the rate, not $\sigma$)} & \pcell{0.14\textwidth}{central flux} \\
-      \pcell{0.15\textwidth}{Interaction model} & \pcell{0.24\textwidth}{\jtModelBands{} bands, one universe each; signal renormalized per fine truth cell; two bands clipped} & \pcell{0.14\textwidth}{Tune~v1} \\
-      \pcell{0.15\textwidth}{Detector} & \pcell{0.24\textwidth}{four weight bands at $\pm1\sigma$; lateral bands by linear surrogate} & \pcell{0.14\textwidth}{nominal} \\
-      \pcell{0.15\textwidth}{Added terms} & \pcell{0.24\textwidth}{\SI{1.4}{\percent} normalization; rounding noise; prediction residual} & \pcell{0.14\textwidth}{none} \\
-      \pcell{0.15\textwidth}{Statistic} & \pcell{0.24\textwidth}{$T_{\mathrm{tot}}$, $T_{\mathrm{sh}}$ with fixed $\Sigma$} & \pcell{0.14\textwidth}{the same} \\
+      \pcell{0.20\linewidth}{Truth} & \pcell{0.43\linewidth}{source half reweighted per fine cell to $G$} & \pcell{0.29\linewidth}{unknown} \\
+      \pcell{0.20\linewidth}{Unfolding simulation} & \pcell{0.43\linewidth}{other half at Tune~v1 weights (the prior)} & \pcell{0.29\linewidth}{full simulation at Tune~v1 weights} \\
+      \pcell{0.20\linewidth}{Background} & \pcell{0.43\linewidth}{Poisson source and template from disjoint halves; Tune~v1 with its bands} & \pcell{0.29\linewidth}{full background template} \\
+      \pcell{0.20\linewidth}{Flux} & \pcell{0.43\linewidth}{one of \jtFluxUniverses{} universes on the source (changes the rate, not $\sigma$)} & \pcell{0.29\linewidth}{central flux} \\
+      \pcell{0.20\linewidth}{Interaction model} & \pcell{0.43\linewidth}{\jtModelBands{} bands, one universe each; signal renormalized per fine truth cell; two bands clipped} & \pcell{0.29\linewidth}{Tune~v1} \\
+      \pcell{0.20\linewidth}{Detector} & \pcell{0.43\linewidth}{four weight bands at $\pm1\sigma$; lateral bands by linear surrogate} & \pcell{0.29\linewidth}{nominal} \\
+      \pcell{0.20\linewidth}{Added terms} & \pcell{0.43\linewidth}{\SI{1.4}{\percent} normalization; rounding noise; prediction residual} & \pcell{0.29\linewidth}{none} \\
+      \pcell{0.20\linewidth}{Statistic} & \pcell{0.43\linewidth}{$T_{\mathrm{tot}}$, $T_{\mathrm{sh}}$ with fixed $\Sigma$} & \pcell{0.29\linewidth}{the same} \\
       \bottomrule
     \end{tabular}
   \end{minipage}
