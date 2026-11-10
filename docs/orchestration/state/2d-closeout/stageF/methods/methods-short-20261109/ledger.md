@@ -1034,3 +1034,33 @@ layout.
     layout macros.
 - **Correction:** the "caption meaning read" bullet above says the director's reader "adds five flags"; it lists six
   that do not overlap journal-editor's (M010, M011, M018, M026, M032, M035).
+
+## The note's round-2 blind reads, mapped onto the Supplement (the director, 2026-11-10)
+
+The note's round-2 reads (#1023: `secondary-results/note-round2-blind-reads-20261110/gpt.txt` and `gemini.txt`) found
+errors in the note. The Supplement copies 58 paragraphs from 16 note sections. Each GPT §3 accuracy and §6 support item,
+and each Gemini accuracy and support item, was searched in the Supplement by its quoted phrases and topic terms, and
+each hit was read against its record. The mapping table went to the director, who approved the three fixes:
+- **GPT §3.16 (S, line ~291):** C_model is "a fractional covariance; in cross-section units it is diag(x) C_model
+  diag(x), with x the cell-integrated cross sections". The record is cmodel_5d.json's `form`: "C_model = sum_k s_k
+  s_k^T … fractional. C_abs = diag(x) C_model diag(x)".
+- **GPT §3.26 (S, ~266):** "(|t|>3.6, a fixed threshold at about the two-sided 5% level for a normal reference,
+  Bonferroni-corrected over the 153)". The record is nd-unfolding/s5n_analyze_dev.py:35, `T_CRIT = 3.6`, "two-sided
+  0.05/153 Bonferroni"; the normal value is about 3.59.
+- **GPT §6.4 (S, ~238):** "The simulation prior differs from the measured distributions mainly in normalization: the
+  data exceed it by about 12%, and the data/MC ratio rises with p_T from 0.88 to about 1.2 (Ref. [note], Sec.
+  controlplots)". This replaces "already describes the measured shapes well … the data mainly require a normalization
+  correction". The record is sec_experiment.tex controlplots.
+- Each fixed paragraph's source comment now says "adapted 2026-11-10, one content fix" (two had said verbatim) or
+  "fixed 2026-11-10", naming the item.
+- **Not applied, already correct in the Supplement:** GPT §3.4, 3.5, 3.7, 3.8, 3.11, 6.12, 6.13, 6.14; Gemini §3.7,
+  3.8, 3.9, 6.3, 6.5. Every other item has no counterpart in the Supplement. The director relays the three matching
+  fixes to the note lane.
+- **One printed sentence opens the Supplement:** "Several sections reproduce or adapt text from the companion analysis
+  note [note]." I had proposed adding "each such passage gives its source section"; the director dropped that clause,
+  because the source comments don't print and the clause would be false.
+- **Checks:**
+  - check_restyle against e543ce1e4 fails only on the additions (0.88, one \cite, the matrix macros), and the 23 #981
+    quotes count as before;
+  - the Supplement's rater copy rc 0, 25 pages, 8 of 8 captions, and each change prints;
+  - check_supp_pointers: 35 pointers, 0 failures; check_round PASS.
