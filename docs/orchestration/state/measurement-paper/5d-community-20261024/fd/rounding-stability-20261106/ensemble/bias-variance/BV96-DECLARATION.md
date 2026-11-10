@@ -1,7 +1,7 @@
 # BV96 DECLARATION: the bias–variance (mean-squared-error) trade-off of E₉₆ against configuration (e), at two reserved truths (DRAFT, 2026-11-10)
 
-**DRAFT, for the director's review, then audit by `coverage-5b-audit` and binding by the director.** Nothing has run,
-and nothing runs before the binding.
+**For audit by `coverage-5b-audit` (after the director's review of 2026-11-10, §12) and binding by the director.**
+Nothing has run, and nothing runs before the binding.
 
 **Written by** the `limitation-resolver` lane (a Claude session), at the director's request of 2026-11-10 (in
 correspondence). All repository citations are at `origin/main` `fd107364` unless stated.
@@ -147,7 +147,15 @@ is neither G18_10a nor AR23. The committed records list these ready spline sets:
 - `GDNu2001a00000`'s configuration is not established in any committed record, and its `k120-e200` differs from
   every other set's `k250-e1000`. It is excluded.
 
-**R2 is therefore G18_10a_02_11a, disclosed as above.** The alternatives, priced beside it:
+**Every candidate for R2 shares a model family with a held-out tune of F1, LL5D and COV2D.**
+- G18_10a_02_11a shares G18_10a with G18_10a_02_11b.
+- The `AR2520i` and `AR2522i` sets share AR23's prefix.
+- G18_02a, the only other family with ready splines, is R1's.
+- A truth from a fresh family needs a spline build, which is unpriced (R2″ below).
+
+**R2 is G18_10a_02_11a (the director's ruling O3, 2026-11-10).** Its splines are ready and probed at v3_04_00, F1's own
+software stack, so its generation repeats F1's measured chain. R2′ would add an unprobed software stack without being
+cleaner. The alternatives, priced beside it:
 
 | alternative | what it needs | price |
 |---|---|---|
@@ -235,6 +243,8 @@ seeds 808001–808030 (R1) or 809001–809030 (R2). Per pseudo-experiment m:
   one-sided claims (two truths, two directions) share a familywise 0.05.
 - **Materiality margin m = 0.05 σ_rel².** That is 5 % of a functional's statistical variance, about one seventh of the
   median functional's rounding variance (§1.2). A smaller difference is not material, even when resolved.
+  **A-priori ground:** a 5 % change in mean squared error is a change of under 2.5 % in the root-mean-square error
+  (√1.05 = 1.025). That is below what an uncertainty quoted to two significant figures resolves.
 
 **6.3 The harm guard, on the 16 cells.**
 - **Harm** means that E₉₆ makes a reported cell's mean squared error worse than F's by more than a quarter of that cell's
@@ -246,6 +256,9 @@ seeds 808001–808030 (R1) or 809001–809030 (R2). Per pseudo-experiment m:
     16 cells.
 - By §1.1, the rounding gain in a cell is at most 4.5 % of its variance. The guard can therefore trigger only on a bias
   increase that matters at the statistical level, and never on the rounding term.
+- **A-priori ground:** a 25 % increase in a cell's mean squared error is a 12 % increase in its root-mean-square error
+  (√1.25 = 1.118), large enough to change the cell's quoted uncertainty visibly. The one-sided 0.05/32 keeps the chance
+  of a false harm flag at any of the 32 truth-cells at or below 5 %.
 
 **6.4 The verdict.**
 - At truth T: **E-better** if U_T < −m; **F-better** if L_T > +m; otherwise **unresolved**.
@@ -404,20 +417,25 @@ unfold** (`ensemble/receipts/stage2-a1/README.md:135`; `timing.unfolds` 1626 at 
 
 ## 12. Open items for the director's review and the audit
 
-- **O1, the power simulation (§8).** It needs a read-only login read of FD-STAB's control closures on pscratch, at the
-  director's go. It is committed before the audit closes, and M returns to the director if the power is below 0.8.
-- **O2, the code.** `gen5d_v3.TUNES` and `SPLINE_PINS` (`3d-unfolding/genie/gen5d_v3.py:48-56`) are F1's bound tables
-  and hold only F1's two tunes. BV96 needs R1 and R2 there, or a wrapper that extends them at call time. The lane stops
-  and asks the director which, as ENS1 §9 requires for any change to a bound module. Likewise, the Poisson-mode jitter
-  of §5.3 is a new rebinding point.
-- **O3, R2.** Keep G18_10a_02_11a, disclosed (§3.3), or take R2′ (an unprobed software stack, not cleaner on the
-  records) or R2″ (a spline-build pilot first). §3.4 has both.
-- **O5, the truth's entry.** F1's ratio is relative to GENIE CV. §3.2 enters it on the nominal hypothesis through
-  `s5p_nullexp`'s alternative, where F1 used `s5e_candidate` and LL5D `fd_1b_toys.truth_ratio`. The audit confirms that
-  the weight equals F1's on the truth sample, as FD-STAB's addendum A1 did for `closure_nuwro`
-  (`estimator_stability_probe.py:614`). A REQUIRED test compares the two weights on a fixture.
-- **O4, the margin and the guard.** m = 0.05 σ_rel² (§6.2) and h = 0.25 of a cell's variance (§6.3) are fixed here. The
-  review may set them differently, but only before the binding.
+The director's rulings of 2026-11-10 (in correspondence; recorded with the binding):
+
+- **O1, the power simulation (§8).** The read-only login read of FD-STAB's control closures on pscratch is approved,
+  under O_NOATIME, with the script's sha256 sent to the director first. If P(E-better at both) is below 0.8 at M = 30,
+  M returns to the director with the price at the M that reaches 0.8.
+- **O2, the code.** F1's bound tables `gen5d_v3.TUNES` and `SPLINE_PINS` (`3d-unfolding/genie/gen5d_v3.py:48-56`) are
+  not changed. A BV96 wrapper extends them at call time with R1 and R2. **REQUIRED test:** F1's tables, and the bytes of
+  `gen5d_v3.py`, are identical after any BV96 run. The Poisson-mode jitter of §5.3 is a new rebinding point, with its
+  test and mutant.
+- **O3, R2.** G18_10a_02_11a, disclosed (§3.3, §3.4).
+- **O4, the margin and the guard.** m = 0.05 σ_rel² (§6.2) and h = 0.25 of a cell's variance at one-sided 0.05/32
+  (§6.3) go to audit as drafted, each with its a-priori ground.
+- **O5, the truth's entry.** Accepted. F1's ratio is relative to GENIE CV. §3.2 enters it on the nominal hypothesis
+  through `s5p_nullexp`'s alternative, where F1 used `s5e_candidate` and LL5D `fd_1b_toys.truth_ratio`. **REQUIRED
+  test:** the weight equals F1's definition on a fixture, as FD-STAB's addendum A1 checked for `closure_nuwro`
+  (`estimator_stability_probe.py:614`).
+- **Sequencing.** BV96 goes to `coverage-5b-audit` after LL5D's fix A1a.2, routed by the director. Per item 4, it is
+  bound and launched only after LL5D ends. Its cap is under half the balance, so the launch is the director's after the
+  binding, with Joseph told first.
 
 ## 13. Code plan (for the audit; the code follows the binding)
 
@@ -429,8 +447,8 @@ the director (O2).
 | `nd-unfolding/bv96_probe.py` | `closure --truth T --k LIST` and `pe --truth T --seed S --k LIST\|F`, through ENS1's `ensemble_estimator_probe` installs with §5.3's post-draw jitter in Poisson mode; `tasks`: the queue, shards and dry list |
 | `nd-unfolding/bv96_analyze.py` | gates E1–E10; §6's A_T, SE_T, bounds, harm guard and verdict; §7's readouts |
 | `nd-unfolding/sbatch_bv96.sh` | one node, modes `dry` and `shard <i>`; ENS1's refusals |
-| `3d-unfolding/genie/` (per O2) | R1's and R2's spline pins and generation, by F1's scripts |
-| `nd-unfolding/tests/test_bv96.py` | §5.3's pairing test, the seed scan of §4, the z readout, and a test in each direction for every gate and criterion |
+| `3d-unfolding/genie/bv96_gen5d.py` (O2) | a wrapper that extends `gen5d_v3.TUNES` and `SPLINE_PINS` at call time with R1 and R2, then runs F1's scripts; `gen5d_v3.py` is unchanged |
+| `nd-unfolding/tests/test_bv96.py` | §5.3's pairing test, the seed scan of §4, O2's byte-identity test of F1's tables, O5's weight-equality test against F1's definition, the z readout, and a test in each direction for every gate and criterion |
 | `nd-unfolding/tests/bv96_mutation.py` | the mutation harness: REQUIRED mutants for §5.3 (a jitter before `build`), for the verdict's four branches, for the harm guard's sign and threshold, and for a σ_rel that is not the pinned receipt |
 
 Nothing is submitted, deposited or tagged.
