@@ -1,0 +1,29 @@
+host=nid004828 job=61075496 start=2026-11-10T06:23:51Z
+deploy head=639ef907250a2a7909b7b9ba89b2e85e70c9b767 porcelain_lines=0
+nd-unfolding/ll5d.py: OK
+nd-unfolding/fd_1b_c2.py: OK
+nd-unfolding/fd_1b_mc.py: OK
+nd-unfolding/fd_1b_toys.py: OK
+nd-unfolding/fd_1b_inv.py: OK
+nd-unfolding/s1_assemble.py: OK
+nd-unfolding/s5p_universe.py: OK
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/clip/clip_probe2.py: OK
+2d-unfolding/cov2d/cov2d.py: OK
+docs/orchestration/state/2d-closeout/stageF/methods/sf1/manifest/inputs-sha256.txt: OK
+nd-unfolding/pv-ladder/readouts/h2_definition.json: OK
+setup_salloc_env.sh: OK
+nd-unfolding/s5e_candidate.py: OK
+nd-unfolding/s5e_deform.py: OK
+threads OMP=1 OPENBLAS=1 MKL=1 NUMEXPR=1
+calib rc=0
+{"calibration": "timing", "fine_cells_kept": 10693, "set_seconds_measured": 4.148597002029419, "workers": 64, "projected_seconds": 2626.4106762111187, "budget_seconds": 16200.0, "projection_line_seconds": 16200.0}
+LL5D-CALIBRATION verdict=CALIBRATED
+	Percent of CPU this job got: 4598%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:10:01
+	Maximum resident set size (kbytes): 10024880
+	Exit status: 0
+e9584339098c98ff9059279299329b1e84efca4f81583f4ebc71417b2fdb571b  /pscratch/sd/j/josephrb/ll5d-calib-3-20261110/calibration.json
+b31ddd12d050163396b4811705777fc1fa28f77757575af73c8dc5976b3c1a7c  /pscratch/sd/j/josephrb/ll5d-calib-3-20261110/calibration.npz
+2718b4453e1d9bf118738240817e9efcc960df45b5f76fe7d9ca7ab583d3fec5  /pscratch/sd/j/josephrb/ll5d-calib-3-20261110/calibration.out
+5b2b0be4f088999ccace507aadf7d1c6ea9727c6a1fb2c48985c05c758a41e6b  /pscratch/sd/j/josephrb/ll5d-calib-3-20261110/calibration.time
+end=2026-11-10T07:34:00Z
