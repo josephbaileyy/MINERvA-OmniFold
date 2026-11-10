@@ -86,7 +86,8 @@ ONCE = [
     "That test is a next step.",
     "The grading rules and their timing are stated with the individual tests; comparisons without a grading rule are descriptive.",
 ]
-GONE = [r"stabili[sz]ed variant", r"validat\w* the (full|five-observable) distribution", r"detector[- ]inadequa",
+# validat...: the affirmative claim decision item 6 (:74) forbids; its denial, "does not validate ...", is allowed
+GONE = [r"stabili[sz]ed variant", r"(?<!not )validat\w* the (full|five-observable) distribution", r"detector[- ]inadequa",
         r"locali[sz]ed in", r"\bE_?\{?96", r"\bFD-PRR\b", r"\bLL5D\b", r"\bV-HALF\b", r"\bV-ATLAS\b", r"\bV-PRIOR\b",
         r"\bCOV2D\b", r"\bRS1\b", r"\bENS1\b", r"\bFD-STAB\b", r"BIAS_WORSE", r"Stage~?0c", r"\bPR-[123]",
         r"\bdeclared\b", r"joint-test estimator", r"\\chi\^\{2\}/205", r"tracks the same bias", r"natural next step"]
@@ -491,6 +492,10 @@ def self_test():
         print("self-test: NOT CAUGHT an internal label in a printed group name"); ok = False
     if not check_dates({"f": "until 2026-10-11; "}) or check_dates({"f": "% 2026-10-11 in a comment"}):
         print("self-test: the date check is wrong"); ok = False
+    if not check_once_gone({"f": "the benchmark validates the five-observable distribution " + " ".join(ONCE)}):
+        print("self-test: NOT CAUGHT an affirmative validation claim"); ok = False
+    if check_once_gone({"f": "it does not validate the five-observable distribution. " + " ".join(ONCE)}):
+        print("self-test: GONE flags the denial that decision item 6 asks for"); ok = False
     if not check_once_gone({"f": " ".join(ONCE[1:])}):
         print("self-test: NOT CAUGHT a missing ONCE sentence"); ok = False
     class _MV:

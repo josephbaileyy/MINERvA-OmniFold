@@ -771,3 +771,14 @@ Checks:
   - Item 4 (optional "deformations") not applied: it is the base wording, restored by M009.
   - Checks: the rater copy, check_round with the fill test, registry, sec4, pointers, and check_restyle against
     000f13805 all pass.
+- **W-5, a wording change resting on §4.1 (the director, 2026-11-09, on journal-editor's item 2).** §7's benchmark
+  exclusion (L-22) now reads "The benchmark shows agreement in normalization and a shape difference of unidentified
+  source in two dimensions; it does not validate the five-observable distribution."
+  - Its record is §4.1's "The source of the shape difference has not been identified", the sentence #981 quotes.
+    "Qualified" was undefined.
+  - Decision item 6's exclusion (:74, "that 5D validates the full distribution") survives as the denial.
+  - **check_round's GONE guard changed with it.** `validat\w* the (full|five-observable) distribution` matched the
+    denial. It is now `(?<!not )validat...`, so it still refuses the affirmative claim that item 6 forbids. Its
+    self-test plants both forms: the affirmative is caught, and the denial passes.
+  - Checks: the rater copy PASS (the denial prints once), check_round with the fill test PASS, the self-test PASS,
+    and registry, sec4, pointers, and check_restyle against 1bf524e53 PASS.
