@@ -1047,7 +1047,7 @@ Scope: Index of referee findings for Round 3 resolution. Resolution column remai
 | Item | Source (#1023) | Referee Claim (One Sentence) | Note Target (1a167633) | Resolution |
 | :--- | :--- | :--- | :--- | :--- |
 | **GPT-3.1** | `gpt.txt:11` | Table 1 5D covariance row cites non-resolving '§6.4 exception' for adoption. | `docs/analysis-note/sec_execsummary.tex:25` | Replaced "Adopted under the \S6.4 exception" with "Used in this note" in sec_execsummary.tex:25. |
-| **GPT-3.2** | `gpt.txt:13` | Table 1 transfers companion covariances' stability failure to adopted covariance C_Z where criterion was uncomputed. | `docs/analysis-note/sec_execsummary.tex:25` | pending |
+| **GPT-3.2** | `gpt.txt:13` | Table 1 transfers companion covariances' stability failure to adopted covariance C_Z where criterion was uncomputed. | `docs/analysis-note/sec_execsummary.tex:25` | Clarified in sec_execsummary.tex:25 that the estimator-seed criterion has not been computed for this covariance, and removed parenthetical comparison reference. |
 | **GPT-3.3** | `gpt.txt:15` | Table 1 incorrectly labels configuration-(a) central value as 'unregularized'. | `docs/analysis-note/sec_execsummary.tex:23` | pending |
 | **GPT-3.4** | `gpt.txt:17` | Table 1 assigns passing injected-shape closures to configuration (e) when tested under (a) without threshold. | `docs/analysis-note/sec_execsummary.tex:21` | pending |
 | **GPT-3.5** | `gpt.txt:19` | Main text claims negative-weight injection targets identical continuous density (D-B)/S contrary to App. C.1. | `docs/analysis-note/app_negweight.tex:36` | pending |
