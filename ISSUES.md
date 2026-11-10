@@ -226,7 +226,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-ACC-7 [T]** — **Executive summary marginalization claim (1–2%) vs body.**  
   *Finding:* Executive summary claims 4D and 5D marginalization passes to 1–2%, but §8.1 gives 0.11% total and 0.3–1.5% median per axis; §7.8 gives no number for 4D→3D.  
   *Evidence:* `docs/analysis-note/sec_execsummary.tex:15`, `sec_eavailw.tex:110`, `sec_3d.tex:170`.  
-  *Resolution:* Replace vague "1–2%" in executive summary with exact numbers from §8.1; add exact 4D→3D marginal closure number.
+  *Resolution:* This row authorizes no tex edit. The executive summary no longer says the marginal checks pass to 1 to 2 percent. It says the 4D and 5D checks pass, and it gives the 3D marginal agreement as 0.141 percent in the total. Do not add 0.11 percent, 0.3 to 1.5 percent, 3.7 percent, or 4.52. Do not add a 4D-to-3D number.
 
 * **S1-ACC-8 [D]** — **Band count in cross-covariance at `sec_fived16.tex:66-72`.**  
   *Finding:* Referee asserts §10.2 / `sec_fived16.tex:66-72` has a typo: it names four failing weight checks (AGKYxF1pi, AhtBY, BhtBY, MinosEfficiency) and then writes "These five enter as...", so referee proposes changing "five" to "four".  
