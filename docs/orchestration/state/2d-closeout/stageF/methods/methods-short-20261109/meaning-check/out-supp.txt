@@ -1,0 +1,8 @@
+M252 | MORE | "do not, by themselves, provide five independent constraints" -> "provide fewer than five independent constraints" | Drops the "by themselves" qualifier and turns it into an unconditional count claim.
+M280 | MORE | (nothing) -> "(the joint-test estimator of Ref.~\cite{AnalysisNote2026})" | Adds an identification of configuration (e) as the joint-test estimator that no base sentence states.
+M293 | LESS | "Non-negativity is structural, while the value at the floor follows..." -> "The value at the floor follows..." | The claim that non-negativity is structural is dropped.
+M339 | LESS | "The null calibration below, not the metric, sets each test's size" -> "the null calibration below sets each test's size" | Drops the explicit statement that the metric does not set the size.
+M379 | LOST | "checks fixed in advance bound the effect of the clipping" -> "checks fixed in advance test the effect of the clipping" | "Bound" (a limit on the effect) becomes the weaker "test", so the bounding claim is not restated.
+M381 | NEWCLAIM | "checks ... test the effect of the clipping before the main run, on a sample whose first 300 draws are the coverage pseudo-experiments' draws" | Merging the two sentences newly says the clipping checks were run on the gate sample, which no base sentence states.
+
+FLAGGED 6 of 148 rows

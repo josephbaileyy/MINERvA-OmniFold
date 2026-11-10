@@ -709,3 +709,54 @@ Checks:
     five planted values and one clean one.
   - "the ratio's statistical gate" is kept. It is the note's own wording (sec_fived16.tex :99, :251), with no more
     specific name to point to.
+
+## The meaning check of both restyles (the director, 2026-11-09)
+
+This check catches what check_restyle's inventories cannot. `meaning-check/export_pairs.py` exported every changed
+sentence pair:
+- the paper, cb87c1832 -> 32cf5c5fe's tex: 239 rows;
+- the Supplement, 531fefe42 -> 32cf5c5fe's tex: 148 rows;
+- the result, `meaning-check/pairs.tsv`, sha256 a299909c30412188.
+
+The director ran two fresh readers, one for each file, with a strict "claims more" brief
+(`meaning-check/prompt.txt`). They flagged 17 of 239 paper rows and 6 of 148 Supplement rows
+(`meaning-check/out-paper.txt`, `out-supp.txt`). The director's triage gave 11 FIX, 9 DISMISS and 3 VERIFY. I
+checked each dismissal and verify below against the record.
+
+| Row | Decision | What was done, or why dismissed |
+|---|---|---|
+| M009 | FIX | §1: "for the observables, configurations and deformations tested, not of multidimensional OmniFold in general" restored |
+| M084 | FIX | §4: "It is a correlated shape difference, not a normalization difference" (the eigenmode analysis) |
+| M090 | FIX | §4: "…is descriptive, not a blind validation" (the director's earlier ruling) |
+| M091 | FIX | §4: "test … against" -> "compare … with" |
+| M131 | FIX | §5.2: "only event counts fluctuate, with the systematic parameters fixed" |
+| M212, M213 | FIX | §7: both exclusions restored once, before "Whether the two-dimensional shape difference …" (W-5 option 1; decision item 6) |
+| M228 | FIX | Limitation 1: "…, not the stronger simultaneous coverage of all of them" |
+| M252 | FIX | S1: the note's verbatim sentence (sec_eavailw.tex:67) restored, "do not, by themselves, provide five independent constraints: the result is five simultaneous observables, not five independent measurements". This also reverts my earlier "The result is in five …" (journal-editor item 10), since the paragraph is labelled verbatim |
+| M293 | FIX | S2: "Non-negativity is structural, while the value at the floor follows …" |
+| M339 | FIX | S7: the note's verbatim sentences (sec_joint.tex:34), "…, and so it affects power. The null calibration below, not the metric, sets each test's size." |
+| M111 | VERIFY -> FIX | §5.1 is the E_avail shape reweighted by the GiBUU-to-GENIE ratio (its paragraph, the f0b-stage0c_gibuu key), and S8 names it "the GiBUU-to-GENIE $\Eavail$ change". So it now reads "the GiBUU-to-GENIE $\Eavail$ change", as in §7 (P-27) |
+| M223 | VERIFY -> DISMISS | The COV2D scope fact prints in §6.2 (:296) and in §6.3 (:309): "The result concerns the procedure's covariance at those tunes, not the reported intervals at the data." |
+| M381 | VERIFY -> KEEP | LL5D-DECLARATION.md §3.6 (the seeds table): "the gate sample (§5.2), whose first 300 are the toys' draws". §5.2 :365-366 evaluates the clipping gate on that sample, and §5.3 :432-436's clipcheck uses the 300 declared draws, which are its first 300. The merged sentence is supported |
+| M069 | DISMISS | #1002 item 3: Invalid only when every entry is invalid (ledger :383-389) |
+| M075, M194, M195 | DISMISS | R5 ruling 1: the clipping detail moved to S9 (ledger :306-311). M075 is a mis-paired caption row, base status words against the #1002 statuses |
+| M196 | DISMISS | R5 ruling 3: no "does not establish" clause (ledger :321) |
+| M192 | DISMISS | #1002 item 1: the carry-over sentence with the rank-16 condition (DECISION-20261109-joseph-coverage-case-wording.md :36-37; ledger :381) |
+| M236 | DISMISS | journal-editor item 4, the director's ruling: the body's "over 20 rounding-level perturbations" (ledger :603) |
+| M280 | DISMISS | the joint-test-estimator pointer the director approved (ledger :691) |
+| M379 | DISMISS | "bound" -> "test", journal-editor's correction (ledger :671) |
+
+That is 11 slips of meaning, all of which passed check_restyle. Two of them (M252, M339) were inside paragraphs
+still labelled "verbatim" from the note.
+
+A sweep of every "verbatim"-labelled Supplement paragraph against the note's sources was too noisy to use: 128 of its
+sentences differ, mostly through the Supplement's pointer rewrites (\ref -> Ref.~\cite…\ref*{N-…}). So I rely on
+the readers' base-against-current read here, not on that sweep.
+
+Checks:
+- `make_rater_copy.sh`: PASS (15 and 14 pages). `make_supp_rater_copy.sh`: rc 0, 8 of 8 captions. Every FIX prints
+  in the blind copies.
+- `check_round.py . --fill-test`: PASS. `--self-test`: PASS.
+- `check_registry.py`: PASS. `check_sec4_receipts.py`: 16/16, and its pytest: 17 passed.
+- `check_supp_pointers.py`: 35 pointers, 0 failures.
+- `check_restyle.py` against 32cf5c5fe fails only on the one added `\Eavail` (M111). The #981 quotes hold.
