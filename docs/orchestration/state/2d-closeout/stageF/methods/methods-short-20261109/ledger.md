@@ -1064,3 +1064,33 @@ each hit was read against its record. The mapping table went to the director, wh
     quotes count as before;
   - the Supplement's rater copy rc 0, 25 pages, 8 of 8 captions, and each change prints;
   - check_supp_pointers: 35 pointers, 0 failures; check_round PASS.
+
+### The Supplement-note sync check (the director, 2026-11-10)
+
+- **The check.** `check_supp_sync.py` (check_round check 12; report only) pairs each of the 58 note-copied Supplement
+  paragraphs with its note source.
+  - It runs three-way, against the Supplement's seed commit 9680db24e. Each difference is attributed to the side that
+    moved: same, seed-adapted, explained (a restyled/adapted/fixed comment), UNEXPLAINED (an edit under a comment
+    that still says verbatim), NOTE-CHANGED (the note's paragraph changed since the seed), or synced (the Supplement
+    has followed the note's change).
+  - Paragraphs are counted from 0. The pair is the best match among n-2..n+2, and cross-references are reduced to one
+    token on both sides.
+- **First run, against the worktree's note:** 24 UNEXPLAINED. These were stale "verbatim" labels over wording edits:
+  - 17 were edits after 531fefe42, which the meaning check of 2026-11-10 read;
+  - 7 were edits of rounds 5-6, before 531fefe42 (supp lines 82, 123, 188, 201, 288, 427, 442), which no reader has
+    checked. They are the estimator rename to "five-observable", the acronym and date edits, and two pre-read fixes.
+    They went to the director's meaning read (`sync-pairs.tsv`, Y01-Y07).
+  - All 24 comments now say "adapted since seeding" and name which read covers them.
+- **Against #952's head (06ce7b5e0):** two note paragraphs had changed since the seed, both narrowings, and the
+  Supplement now follows them:
+  - "reduces … bias … at least fifteen-fold" -> "by about an order of magnitude". The quoted ranges, 3.5-4.1% to
+    0.11-0.24%, give a ratio of 14.6 at worst.
+  - "reproduces an independently published binned measurement" -> "reproduces the integrated cross section of an
+    independently published binned measurement", which matches the paper's benchmark finding.
+  These are sync-pairs Y08-Y09.
+- **Now:** against the worktree, explained 43, same 14, seed-adapted 1; against 06ce7b5e0, explained 41, same 14,
+  seed-adapted 1, synced 2. Nothing is unexplained. Rerun with `check_round.py . --note-rev <the note's head>` when
+  the note's round 3 lands.
+- **Checks:** check_restyle against 99575b29e PASS (the 23 #981 quotes, the 35 pointers; no paragraph left under a
+  stale verbatim label); the Supplement's rater copy rc 0, 25 pages; registry PASS; check_round PASS, and its
+  self-test PASS.

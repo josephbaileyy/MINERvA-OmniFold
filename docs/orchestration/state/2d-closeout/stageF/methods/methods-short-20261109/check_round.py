@@ -38,6 +38,10 @@
      independent read of 74db4ea97). arXiv's 1,920 characters apply to a separate metadata abstract, written at
      submission (REPORT.md, "Follow-up: before submission"). No rendered case may print a phrase of ABSTRACT_BANNED
      (" only at ", which attaches a restriction to the tunes rather than to the noun).
+  12. SUPPLEMENT-NOTE SYNC (report only; the director, 2026-11-10). check_supp_sync.py pairs each note-copied Supplement
+     paragraph (its "% source:" comment) with its note source, three-way against the Supplement's seed commit, and
+     reports any difference that no restyled/adapted/fixed comment explains, or a note paragraph that changed since the
+     seed (--note-rev REV compares against the note lane's head).
   11. FREE TEXT (journal-editor, 2026-11-09). A filled free-text value (a PENDING key with no class set, such as
      ll5d-clip-record or ll5d-route-record) prints inside prose, so it may not contain a FREE_TEXT_BANNED term: gate,
      record, readout, receipt, lane, binding, declaration, a DECISION/OUTCOME name, a date, an .md file, or a PR number.
@@ -45,7 +49,7 @@ NOTE (printed on every run; not checked here). The figures sit where the blind r
 (rater-calibration/make_rater_copy.sh). A float near section 7 split the long section 7 hold ("A citable home ...")
 across a page break, and the copy failed. Any reflow of sections 6-7 (a float moved, a caption or paragraph
 lengthened) can split it again: rebuild the rater copy after one (ledger.md, "Figures 1 and 2").
-usage: check_round.py <worktree> [--base SHA] [--fill-test] [--printed FILE ...]   (exit 1 on any failure)
+usage: check_round.py <worktree> [--base SHA] [--fill-test] [--printed FILE ...] [--note-rev REV]   (exit 1 on any failure)
        check_round.py <worktree> --self-test                  (each planted defect must be caught)"""
 import importlib.util
 import json
@@ -581,6 +585,13 @@ def main(argv):
         printed = [po / "manuscript.blind.txt", po / "supplement.blind.txt", po / "VARIANTS.txt"]
     for line in style_report([p for p in printed if Path(p).exists()]):
         print(line)
+    try:                    # the Supplement-note sync report (check_supp_sync.py; the director, 2026-11-10): never a failure
+        spec = importlib.util.spec_from_file_location("check_supp_sync", HERE / "check_supp_sync.py")
+        sync = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(sync)
+        sync.run(wt, argv[argv.index("--note-rev") + 1] if "--note-rev" in argv else None)
+    except Exception as exc:
+        print(f"SUPP-SYNC :: not run ({exc})")
     if "--fill-test" in argv:
         fails += fill_test(wt)
     print("NOTE a reflow of sections 6-7 can split the section 7 hold across a page break and fail the blind rater"
