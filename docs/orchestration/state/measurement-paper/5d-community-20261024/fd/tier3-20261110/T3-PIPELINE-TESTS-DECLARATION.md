@@ -1,4 +1,4 @@
-# T3 DECLARATION: where configuration (e)'s retained prior stops falling — noise-free pipeline tests at the two flagged truths (2026-11-10, rev 1, DRAFT for coverage-5b-audit and the director's binding; nothing runs)
+# T3 DECLARATION: where configuration (e)'s retained prior stops falling — noise-free pipeline tests at the two flagged truths (2026-11-10, rev 2, DRAFT for coverage-5b-audit and the director's binding; nothing runs)
 
 **By:** session tier3-design, at the director's brief and ruling of 2026-11-10.
 
@@ -11,9 +11,10 @@
   balance. The director checks the balance at binding.
 
 **Status.**
-- Rev 1 fixes the question, the arms, the quantities, the readings, the controls, the price and the licences.
-- **No code is written yet.** Following FD-PRR's sequence, the code, its digests, its tests and a mutation receipt
-  come in rev 2, after the director rules on rev 1's §12 questions. Design and code are then audited together.
+- Rev 1 fixed the question, the arms, the quantities, the readings, the controls, the price and the licences.
+- **Rev 2 records the director's rulings on rev 1's §12 (§12) and adds the code (§13)**, with its digests, its tests
+  and a mutation receipt, as FD-PRR rev 2 did. It also corrects what the code showed rev 1 got wrong. Each change is
+  listed in §14. Design and code are audited together.
 - Nothing runs before the audit, the binding **and** the director's go after the LL5D readout.
 - Paths are relative to `docs/orchestration/` unless they start with `nd-unfolding/` or `docs/analysis-note/`. Every
   `file:line` is at main `4231b14d` unless another commit is named.
@@ -355,12 +356,14 @@ printed as a description. The arms' classes and TR-1 are the test.
 ### 5.4 Where the departure is lost (descriptive, one class per arm and truth, at k = 50)
 
 With δ_R = 0.05:
-- **"step 1 does not match the pseudo-data"** if ρᴿ₁(50) ≥ δ_R;
-- **"the pull-back or step 2 loses it"** if ρᴿ₁(50) < δ_R and ρᴿ₂(50) ≥ δ_R;
-- **"reco matched, truth not"** if both are < δ_R and ρ(50) ≥ δ. The remaining truth departure then has almost no reco
+- **"step 1 does not match the pseudo-data"** if |ρᴿ₁(50)| ≥ δ_R;
+- **"the pull-back or step 2 loses it"** if |ρᴿ₁(50)| < δ_R and |ρᴿ₂(50)| ≥ δ_R;
+- **"reco matched, truth not"** if both are < δ_R and |ρ(50)| ≥ δ. The remaining truth departure then has almost no reco
   image under this response and these observables. No pipeline component is implicated, and the label is §5.5's
   "consistent with weakly constrained directions";
-- **"closed"** if all three are < δ.
+- **"closed"** if all three are < δ in absolute value.
+- **Absolute values (rev 2):** a negative retained fraction is an overshoot, at reco or truth level, and is as far from
+  "matched" as a positive one. OP is classed at its last iteration, k = 2.
 
 ρᴿ_D is printed beside each class. If ρᴿ_D ≥ δ_R, the measured side lacks part of the truth's reco image before any
 unfold, and the arm's class is read with that disclosed.
@@ -397,11 +400,12 @@ arm lowers ρ but raises RMS b_⊥ or the χ², that is printed beside the label
 
 | control | check |
 |---|---|
-| **C-PINS** | every bound module equals its digest before the runner is imported: FD-PRR's 15 `prr_probe.CODE_PINS`, plus `s5e_trace.py` and the rev-2 wrapper module. Each product records them |
-| **C-TRACE** | `s5e_trace`'s own checks pass on every arm: the bitwise rebuild of w_pull and w_push at every iteration, one factory call, 50 traced iterations (2 for OP), and the final unfold recomputed from the last w_push (`s5e_trace.py:200-233`, `:256-259`). For MO, MW and OP, the rebuild uses the overridden values, which the wrapper records |
+| **C-PINS** | every bound module equals its digest before the runner is imported: FD-PRR's 15 `prr_probe.CODE_PINS` (`s5e_trace.py` among them) and `prr_probe.py` itself, which `t3p_probe` imports (`t3p_probe.CODE_PINS`). Each product records the digests of `t3p_probe.py` and `t3p_arms.py`, and the reader refuses a product whose digests are not the files it runs with |
+| **C-TRACE** | `s5e_trace`'s own checks pass on every arm: the bitwise rebuild of w_pull and w_push at every iteration, one factory call, 50 traced iterations (2 for OP), and the final unfold recomputed from the last w_push (`s5e_trace.py:200-233`, `:256-259`). For MO, MW and OP, the rebuild uses the overridden values, which the wrapper records. **In the reader (rev 2):** the recorded R00–R15 at k equals M16 times the production extraction at k (the final unfold and each stored k), to 10⁻¹² relative |
 | **C-PAIR** | **B0's trace reproduces FD-PRR bitwise:** its unfold at k = 5, 10, 20 and 50, at A7 GiBUU and q3 on split 991000, equals `xsec_flat` of FD-PRR's `prr_{B0,K10,K20,K50}_{A7_gibuu,q3}_s991000.npz` (8 comparisons). At the floor splits, its k = 5 and k = 20 equal FD-PRR's `prr_B0_A7_gibuu_s99400[1-4].npz` and `prr_K20_A7_gibuu_s99400[1-4].npz` (8 more). Each FD-PRR product is staged once and checked against its committed digest (`fd/receipts-prr/{dry,iter,cap,misc}/cluster/log-*/SHA256SUMS`). The dry job runs A7's four comparisons first. A mismatch stops the study, since without it the trajectory is not FD-PRR's estimator |
-| **C-ARM** | each intervention is shown to have acted, and nothing else: MU, every miss fill is 1; MW, the regressor received a `sample_weight` equal to w_push·w_truth on the reco-passing rows, bitwise, and the same target y; MO, w_pull on misses equals r to 10⁻¹² relative at every k, and the reco-passing rows' new_w equals the classifier's; SO, zero template rows, the refinement evidence reads `ran: False`, and zero background events; OP, w_pull equals r to 10⁻¹² relative at both iterations, and w_push(1) equals w_push(2) bitwise |
-| **C-P** | P at each split, from `build`'s x_true at the nominal truth, equals M16 · `xtrue_flat` of FD-PRR's `prr_B0_nominal_s<seed>.npz`, bitwise |
+| **C-ARM** | each intervention is shown to have acted, and nothing else: MU, every miss fill is 1; MW, the regressor received a `sample_weight` equal to w_push·w_truth on the reco-passing rows, bitwise, and the same target y; MO, w_pull on misses equals r to 10⁻¹² relative at every k; SO, zero template rows, the refinement evidence reads `ran: False`, and zero background events (and every other arm's refinement ran); OP, w_pull equals r to 10⁻¹² relative at both iterations. **OP's repeat is recorded, not gated (rev 2):** w_pull = r holds only to the p/(1−p) round trip (about 10⁻¹⁶), so step 2's inputs repeat to that level and its output need not repeat bitwise; the largest relative change of w_push between the two iterations is printed |
+| **C-P** | P at each split is M16 · `xtrue_flat` of FD-PRR's `prr_B0_nominal_s<seed>.npz`, read from its staged copy, which must carry its committed digest (rev 2: read, not recomputed) |
+| **C-X** | every arm's truth `xtrue_flat` equals FD-PRR's B0 product's at the same truth and split, bitwise. SO's too: the truth does not depend on the background (`s5n_pseudo.py:156`) |
 | **C-CT** | FD-PRR's control: the grade matrices reproduce F0b's committed relative sigmas and its noise-free `closure_nuwro` grade (`prr_read.grade_matrices`) |
 | **C-RECO** | the reco cells lose no row: Σ_c Fᴾ_c equals the reco-passing half-A weight inside the cells' fine bins, and D's sum equals the measured side's weight in the same bins, to 10⁻¹² relative |
 | **C-SPLIT** | each product's split key is `s5c_pseudo.split_key_for(seed)` |
@@ -500,13 +504,16 @@ shorter `t3_` gives 118, so it is not used. The director tells every fenced lane
   copy per file through REF-G1's `copy_noatime`. The digest is taken in the same pass and the copy is refused unless
   it equals the pin. Each file's own stat is recorded before and after, and no directory atime is read (FD-PRR §10.4).
 - **What is staged:**
-  - FD-PRR's six inputs, with FD-PRR's pins: `of_inputs_5d`, `bkg_dump`, `bank_cv`, the closure ratio and the two
-    FD-STAB controls;
-  - the fine-ratio rho arrays FD-PRR addendum A4 staged;
+  - FD-PRR's four inputs, with FD-PRR's pins: `of_inputs_5d`, `bkg_dump`, `bank_cv` and the closure ratio (FD-PRR's
+    two FD-STAB controls are not needed: C-PAIR here is against FD-PRR's own products);
+  - the fine-ratio rho array that A7 GiBUU's hypothesis names, with the committed json's sha256. The runner's
+    `s5p_truths.load_fine_rho` reads the staged copy by that sha256 and refuses any other (FD-PRR addendum A4's rule;
+    FD-PRR's own jobs read it in place, `OUTCOME-20261109-fd-prr-104-plain-reads.md`);
   - **the FD-PRR products C-PAIR and C-P read** (21 files: 16 for C-PAIR, 5 for C-P), each against its committed digest.
 - After staging, every task reads only the staged copies. Each later job re-verifies every copy before its queue.
-- **Sharing with LL5D and any other lane running then:** the director's go names the window, and the dry job refuses
-  while any job of a family the director names is queued or running (`squeue`), as `prr_dry` did for `ens1_`.
+- **Sharing with LL5D and any other lane running then:** the director's go names the window and the fenced families.
+  They are written one prefix per line to `<OUT>/fence.txt`. The dry job refuses without that file, if `squeue`
+  cannot answer, or while any job whose name starts with a listed prefix is queued or running.
 - **The pscratch survival of FD-PRR's products** is not guaranteed. The 2026-11-10 existence check found all 181
   present (CATALOG, V-HALF rebin assessment purge check). If any staged product is missing at the dry run, C-PAIR
   cannot run and the study comes back to the director before any unfold.
@@ -529,8 +536,8 @@ shorter `t3_` gives 118, so it is not used. The director tells every fenced lane
 - **The oracles use per-event truth weights that the MC defines.** MO and OP show what the pipeline would do with
   that information. They do not show what any data-driven fill could reach.
 - **The clip, renormalization and in-sample training are recorded, not replaced** (§3.3).
-- **MW's weights are one choice** (w_push·w_truth, the population being reweighted). w_push·w_reco is the other
-  natural choice. It is not run, and a rev-2 question asks the director (§12).
+- **MW's weights are one choice** (w_push·w_truth; why, §12 ruling 2). w_push·w_reco is not run. It is a declared
+  follow-up if MW is ambiguous (§12).
 - **The tracer overhead is unmeasured,** so the conservative unit carries a 1.25 allowance, measured by the dry run.
 <!-- absence-ok: disclosures of this study's own scope and design choices, not claims that a result does not exist -->
 
@@ -542,19 +549,85 @@ shorter `t3_` gives 118, so it is not used. The director tells every fenced lane
 - **Nothing is run, submitted, deposited or tagged.**
 <!-- absence-ok: a statement about this declaration's own status -->
 
-## 12. For the director: questions on rev 1
+## 12. The director's rulings on rev 1 (2026-11-10)
 
-1. **OP (the oracle pull control).** It is not one of the referee's four tests. I added it because, without it, an MO
-   "no effect" cannot separate "the misses are cleared" from "step 2 is the bound" (§5.2). It costs 6 short tasks,
-   about 3,600 lane-seconds at the conservative unit (2% of the study). Keep it, or drop it?
-2. **MW's weights:** w_push·w_truth (declared), or w_push·w_reco, or both? Both adds 6 traces. The cap does not
-   change: the two primary jobs stay within 8 lanes, and the floor job's longest lane goes from 18,000 s to 18,600 s,
-   still inside 5:45:00. The expected charge rises by about 0.1 node-h, since every node is charged by its wall.
-3. **MU.** The `--missed unity` probe is bound and costs one trace per truth and split (6 traces). s5e found it did
-   not help E_avail at J (§1.5), but not on R00–R15. Keep it?
-4. **The floor at five splits** is 24 of the 36 tasks. FD-PRR's floor sat far below its 0.05 bar (9.03 · s ≤ 0.021,
-   `readings.floor`). A two-split floor would cut the cap to 6.25 node-h, but its t quantile on 1 degree of
-   freedom (about 636.6 at 0.01/10) would make the bar depend on s much more than the floor does. I recommend keeping five.
-5. **Code next.** On your rulings, rev 2 adds `nd-unfolding/tier3/` (the wrappers, the runner, the reader, the job
-   script, tests and a mutation receipt), as FD-PRR rev 2 did. It is written only as usage allows and is not run.
-   <!-- absence-ok: a statement about this declaration's own status -->
+1. **OP: kept.** It is the interpretive anchor: whether step 2 carries the truth when every pull weight is the
+   oracle's. Without it an MO "no effect" cannot be placed (§5.2).
+2. **MW: w_push·w_truth only; w_push·w_reco not run.** One weighted arm keeps the readings and the multiplicity down.
+   - **Why w_push·w_truth.** The regressor's target is the step-1 update new_w as a function of the truth observables.
+     The events whose weights it fills, the misses, enter step 2 at w_push·w_truth·new_w, against the same population
+     at w_truth (`omnifold_nn_core.py:263-265`). So the conditional mean that keeps the filled misses consistent with
+     the reco-passing events is the one taken over the population step 2 compares: w_push·w_truth. w_reco is a
+     reco-level weight that only step 1's MC class carries (`:253`), and a miss has no reco record.
+   - **Declared follow-up:** w_push·w_reco, run only if MW is ambiguous. Ambiguous means: at either flagged truth,
+     TR-1 reads MW "no effect" while MO "lowers the limit". A feasible fill then failed where the oracle succeeded, and
+     the weighting is the first thing to vary. It would need its own addendum and binding.
+3. **MU: kept.** With MO it brackets the miss treatment, from no reweighting to the oracle, and it is already bound.
+4. **The five-split floor: kept.**
+5. **Rev 2 code under `nd-unfolding/tier3/`: yes, as usage allows** (§13). This covers the tracer, the arms, the
+   readouts, C-PAIR with a REQUIRED test that it fails on a one-ulp change, the tests and the mutation checks. Nothing
+   runs on the cluster.
+- **Then:** declaration and code to coverage-5b-audit for audit, then to the director for binding. The jobs (family
+  `t3p_`, cap 10.0 node-h) run only after the LL5D readout, on the director's go for each connect, and every fenced
+  lane is told of the new family before the first submit.
+
+## 13. Code
+
+### 13.1 The files
+
+All under `nd-unfolding/tier3/`. **No production or bound module is edited.** Each rebinding acts for one invocation
+and is restored on exit, as FD-PRR's do.
+
+| file | role |
+|---|---|
+| `t3p_arms.py` | the arms: `ArmTracer` and `ArmWrapped` (subclasses of `s5e_trace.Tracer` and `_Wrapped`; the bitwise rebuild is inherited), the per-iteration C-ARM checks, the clip counts; `ArmRecorder` (`s5e_trace.Recorder` with U = M16, the reco cells by S1's fine map, the normalizations, the miss shares and the unfold at k = 5, 10, 20, 50); `traced_unfold_arm` |
+| `t3p_probe.py` | the 36 tasks, the three jobs, the price; the queue lines (FD-PRR's K50 line with `--iters`, `--tag` and `--out` set); the namespace check on the runner's own parse; `install` (the build with SO's `no_background` and the capture of r on the unfolding half, the traced `unfold_one`, the staged rho loader, the writer with the trace arrays and the `tier3` block); `sources` (26 staged files; the 21 FD-PRR digests read from FD-PRR's committed SHA256SUMS, never retyped); C-PAIR and C-X (`pair`); the gate |
+| `t3p_read.py` | completeness; the product checks (C-SPLIT, C-PINS, C-ARM); C-TRACE, C-RECO, C-FIN, C-P, C-CT; §4's quantities; §5's readings and classes; F0b's `LeakGuard` on the readout |
+| `sbatch_t3p.sh` | the three jobs. It refuses unless the deploy is the pin, the job is named `t3p_<mode>` and Slurm's TimeLimit (every form, FD-PRR A3's parser) is at most the declared limit; the dry job refuses without `fence.txt`, if `squeue` fails, or while a fenced family runs; every job runs its own C-PAIR and C-X and writes DONE only if they pass |
+| `test_t3p.py` | 62 tests (§13.2) |
+| `t3p_mutation.py` | 59 planted defects, each to be killed by a named test, in a mirrored tree (§13.2) |
+
+**Digests** (sha256 of the files at the code commit named in the receipt README; the binding pins them):
+
+| file | sha256 |
+|---|---|
+| `t3p_arms.py` | `4a685bde238dcc6dc25e9b1121029994f33becafab486cbec1a7bf846206bf84` |
+| `t3p_probe.py` | `ab795a664e014b4c74183902a0699df4acd89d8140da63b1e3a2ba4f41d11c0b` |
+| `t3p_read.py` | `7bac63859c29253e4d5d32037022acddca0411ff9b0db2aa0dc10c880dceeac3` |
+| `sbatch_t3p.sh` | `83d9a30f06c86cb14001225bfb0a6c14d3442d6f0f3589faac42b259bd679839` |
+| `test_t3p.py` | `314d980c90961d4d89ad9abab3c393699cd8a903ced2986eefdc1156a34a5564` |
+| `t3p_mutation.py` | `f818fad3679982221e0d350f87358fbc22b0667f030369c97b501010acc87e64` |
+
+### 13.2 Tests and the mutation receipt
+
+- **Where the receipts were made:** in a clean clone at the code commit, one serial process under `nice -n 19`, every
+  BLAS and OpenMP thread cap at 1. Each log's header carries the six files' digests and the clone's HEAD. The next
+  commit adds only the receipt files, under `fd/tier3-20261110/rev2/`.
+- **The tests run without LightGBM, ROOT or the cluster:** deterministic stand-in estimators (one records every fit's
+  sample weight), FD-STAB's synthetic rows on the real 5D fine grid, the real `omnifold_nn_core.omnifold_loop`,
+  `s5c_unfold.unfold` and `s5n_pseudo.build_pseudo`.
+- **They include:**
+  - every queue line through the real runner's parser and the namespace check, all 36;
+  - **REQUIRED:** C-PAIR fails on a one-ulp change in one cell, on our side and on the reference side (its pin
+    recomputed, so only the comparison can catch it), and names the one cell;
+  - **REQUIRED:** B0's trace at k equals the plain production unfold at K = k, bitwise (C-PAIR's premise);
+  - each arm's intervention acting, and C-ARM refusing a wrong weight or a wrong oracle;
+  - the readings and classes in the direction each acts and the other; an end-to-end read of planted products, with
+    each control refusing; the job script's refusals on a stand-in deploy.
+- **Mutation, `python3 -B nd-unfolding/tier3/t3p_mutation.py`:** 59 mutants, each killed by its named test,
+  and the unmutated suite passes with 62 tests in the mirrored tree (`rev2/mutation.txt`).
+- **Not testable here:** LightGBM, the real inputs, `squeue` on the cluster and O_NOATIME (macOS has none, so the tests
+  read with a zero flag). The dry run is the first run with each. One rev-1 control could not be met and is now a
+  record (C-ARM OP, §6), found when a weight-sensitive stand-in replaced one that ignored weights.
+
+## 14. What rev 2 changes from rev 1
+
+| § | change | why |
+|---|---|---|
+| §12 | the director's rulings recorded; MW's weights justified; w_push·w_reco a declared follow-up with its trigger | rulings 1–5 |
+| §13 | the code, its digests, 62 tests and the mutation receipt | ruling 5 |
+| §5.4 | the location classes compare \|ρᴿ₁\|, \|ρᴿ₂\| and \|ρ\| with their bars; OP is classed at k = 2 | a reco or truth overshoot is not "matched" |
+| §6 C-ARM | OP's step-2 repeat is recorded, not gated; MO's "new_w equals the classifier's" dropped | the repeat holds only to the round trip's ~1e-16; the MO check compared the tracer's rebuild with itself |
+| §6 C-P, C-X | P read from FD-PRR's staged nominal products, not recomputed; C-X added (every arm's truth is FD-PRR's) | one source for P; the truth must not move between arms |
+| §6 C-PINS, C-TRACE | `prr_probe.py` pinned; the reader checks the products' T3 digests and the recorded R00–R15 against the production extraction | the code imports FD-PRR's probe; the readout must describe the unfolds |
+| §9.4 | four FD-PRR inputs (no FD-STAB controls); the A7 GiBUU rho array staged and read by sha256; the fence as `fence.txt` | as built |
