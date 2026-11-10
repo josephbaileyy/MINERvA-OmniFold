@@ -86,8 +86,8 @@ def main() -> None:
                          "legend.fontsize": 8.3})
     # Layout (methods rewrite, fix round 1, REVIEW-1 P3): the nominal-truth row is not drawn; its maxima are in the
     # numbers file and the caption (the (d) nominal squares are Fig. 2(a)'s refinement arm).
-    fig, (a_ng, a_rw) = plt.subplots(2, 1, figsize=(508 / 72, 6.9), sharex=True)
-    fig.subplots_adjust(left=0.085, right=0.99, top=0.80, bottom=0.12, hspace=1.2)
+    fig, (a_ng, a_rw) = plt.subplots(2, 1, figsize=(508 / 72, 5.2), sharex=True)
+    fig.subplots_adjust(left=0.085, right=0.99, top=0.86, bottom=0.13, hspace=0.55)
     x = np.arange(mc.N_EW)
     for ax in (a_ng, a_rw):
         ax.axhline(0, color="k", lw=0.6)
@@ -108,17 +108,17 @@ def main() -> None:
     for ax in (a_ng, a_rw):
         ax.set_ylim(-40, 100)
         ax.set_yticks(np.arange(-40, 101, 20))
-    a_ng.legend(loc="lower left", bbox_to_anchor=(0, 1.10), borderaxespad=0, frameon=False)
-    a_rw.legend(loc="lower left", bbox_to_anchor=(0, 1.10), borderaxespad=0, frameon=False)
-    a_ng.set_ylabel("(unfolded $-$ truth)/truth (%)")
-    a_rw.tick_params(labelleft=True)
+    a_ng.legend(loc="upper left", frameon=False)
+    a_rw.legend(loc="upper left", frameon=False)
     for ax in (a_ng, a_rw):
-        ax.set_xlabel(r"$(E_{\rm avail},W)$ cell: $W$ bin 1–6 within each" + "\n"
-                      + r"$E_{\rm avail}$ bin (GeV, top)", fontsize=9.3)
+        ax.set_ylabel("(unfolded $-$ truth)/truth (%)")
+    a_rw.tick_params(labelleft=True)
+    a_rw.set_xlabel(r"$(E_{\rm avail},W)$ cell: $W$ bin 1–6 within each $E_{\rm avail}$ bin (GeV, top)",
+                    fontsize=9.3)
     a_ng.set_title("(a) with unbinned background refinement,\nrefinement classifier 100 trees, 8 leaves",
-                   fontsize=8.3, loc="left", y=1.55, pad=0)
+                   fontsize=8.3, loc="left", y=1.16, pad=0)
     a_rw.set_title("(b) five-observable estimator: as (a), with refinement\nclassifier 400 trees, 31 leaves",
-                   fontsize=8.3, loc="left", y=1.55, pad=0)
+                   fontsize=8.3, loc="left", y=1.16, pad=0)
     # (X5 Gm9: the in-plot estimator header moved to the article caption.)
     mc.save(fig, a.outdir, "m3_fig2_deformation")
     (a.outdir / "m3_fig2_deformation_numbers.json").write_text(json.dumps(nums, indent=1) + "\n")
