@@ -242,6 +242,24 @@ def check_sec4_tests(wt):
     return [] if r.returncode == 0 else [f"test_check_sec4_receipts.py fails: {r.stdout.strip().splitlines()[-1]}"]
 
 
+# Typed literals that a protected span keeps but a build-checked key also prints (the director, 2026-11-10, on the
+# interim round's batch 2): the B0 sentences' "the quoted 2.6 statistical standard deviations" is protected by
+# check_restyle, so it stays typed, and must equal the key that §6.1's observation and Table 2 print.
+LITERAL_KEYS = [("paper_body.tex", r"the quoted ([0-9.]+) statistical standard deviations is the largest shift", "s5e-round-max")]
+
+
+def check_literal_keys(texts, values_tex):
+    have = dict(re.findall(r"\\@namedef\{fv@([^}]+)\}\{([^{}]*)\}", values_tex))
+    fails = []
+    for f, pat, key in LITERAL_KEYS:
+        got = re.findall(pat, re.sub(r"\s+", " ", strip_comments(texts[f])))
+        if len(got) != 1:
+            fails.append(f"{f}: the literal for {key} is found {len(got)} times (expected 1)")
+        elif key not in have or got[0] != have[key]:
+            fails.append(f"{f}: the typed {got[0]} differs from \\fvval{{{key}}} = {have.get(key)!r}")
+    return fails
+
+
 def run(wt, base):
     mv = load_mv(wt)
     cur = {f: (wt / NOTE / f).read_text() for f in FILES}
@@ -254,7 +272,8 @@ def run(wt, base):
              + check_printed_names((wt / NOTE / "values_fived16.tex").read_text())
              + check_dates({**cur, "supplemental_body.tex": supp})
              + check_sec4_tests(wt) + check_figures(wt) + check_abstract(wt)
-             + check_free_text(mv.PENDING, mv.VERDICTS))
+             + check_free_text(mv.PENDING, mv.VERDICTS)
+             + check_literal_keys(cur, (wt / NOTE / "values_fived16.tex").read_text()))
     return fails
 
 
@@ -522,6 +541,11 @@ def self_test():
         print("self-test: NOT CAUGHT an internal label in a printed group name"); ok = False
     if not check_dates({"f": "until 2026-10-11; "}) or check_dates({"f": "% 2026-10-11 in a comment"}):
         print("self-test: the date check is wrong"); ok = False
+    vt = "\\@namedef{fv@s5e-round-max}{2.6}"
+    lit = "the quoted %s statistical standard deviations is the largest shift"
+    if check_literal_keys({"paper_body.tex": lit % "2.6"}, vt) or not check_literal_keys({"paper_body.tex": lit % "2.5"}, vt) \
+            or not check_literal_keys({"paper_body.tex": "no literal"}, vt):
+        print("self-test: the literal-key check is wrong"); ok = False
     if not check_once_gone({"f": "the benchmark validates the five-observable distribution " + " ".join(ONCE)}):
         print("self-test: NOT CAUGHT an affirmative validation claim"); ok = False
     if not check_once_gone({"f": "the test not only validates the five-observable distribution " + " ".join(ONCE)}):

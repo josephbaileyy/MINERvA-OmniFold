@@ -100,6 +100,8 @@ READOUTS = {
     "ens1s2": (f"{FD}/fd/rounding-stability-20261106/ensemble/receipts/stage2-a1-analysis/ens1_stage2.json", "c2ee701d"),
     # s5e's assessment of candidate R, the reported estimator (e): the generator-sized change and the rounding probe
     "s5e": ("docs/orchestration/state/s5e/cand/assess_receipt.json", "84266e30"),
+    # s5n's development receipt: the lower-capacity variant's GiBUU-to-GENIE experiments (the Supplement's figure S1)
+    "s5ndev": ("docs/orchestration/state/s5n/stage1/dev_receipt.json", "1ef4096c"),
 }
 # the committed readouts without the run-period block, for the "-nopl" keys
 NOPL_READOUTS = dict(READOUTS, **{
@@ -1423,6 +1425,12 @@ def values(d, arm="with"):
     assert eg["ew_argmax"] == lc["ew_argmax"] == "EW29"
     assert -10 < 100 * eg["per_functional"]["mean_rel"][7] < -2
     v["s5e-gibuu-ewmax"], v["s5e-gibuu-ewmax-lowcap"] = f"{eg['ew_max_abs_pct']:.0f}", f"{lc['ew_max_abs_pct']:.0f}"
+    assert eg["n"] == 20 and lc["n"] == 60
+    # the figures' standard errors of the mean, largest over the 42 (E_avail,W) cells (the director's ruling on the batch 2
+    # read, M019/M089): Fig 3's three shapes for (e), and Fig S1's GiBUU-to-GENIE experiments for the variant
+    se_e = max(100 * x for w in ("W1", "W2", "W3") for x in a["points"][w]["per_functional"]["se_rel"][:42])
+    se_lc = max(100 * x for x in d["s5ndev"]["grid"]["C4_eavail_shape"]["per_functional"]["se_rel"][:42])
+    v["s5e-shapes-semax"], v["s5n-gibuu-semax"] = f"{se_e:.2f}", f"{se_lc:.2f}"
     rp = a["A3"]["data_rounding_probe_over_data_sigma"]
     v["s5e-round-median"], v["s5e-round-max"] = f"{rp['median']:.1f}", f"{rp['max']:.1f}"
     return v

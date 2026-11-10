@@ -1254,3 +1254,49 @@ was the mislabel. The director accepted bd08582ee, the hand re-cites of ALIASES 
   - check_restyle against 8320315bd fails only on the moves and additions above.
 - Meaning read: `interim-b2-read/pairs-read.tsv` (37 rows) and `moved-verbatim.tsv` (58 rows, identical base-only and
   current-only sentences).
+
+### Batch 2's meaning read and journal-editor's review (2026-11-10)
+
+- The director's read ran a fresh Sonnet over `interim-b2-read/pairs-read.tsv` (7768d47c): 5 flags.
+  - The director checked `moved-verbatim.tsv` (095b9d0d) mechanically: 29 base-only and 29 current-only sentences,
+    identical multisets.
+  - M002 and M023 (Table 2's row; §5.1's lead with (e)'s 74%): intended and sourced; accepted.
+  - M019 and M089 ("smaller than the markers"): a perceptual claim. make_figures/fig_m3_deformation.py does not compute
+    the marker radius in data units, so the captions now give the bound from keys: "Standard errors of the mean: at
+    most 0.22 %" (s5e-shapes-semax: (e), W1–W3, 42 (E_avail,W) cells) and "at most 0.12 %" (s5n-gibuu-semax: the
+    variant, s5n dev_receipt C4; new READOUTS "s5ndev", 1ef4096c).
+  - M086 (the detector-response item) was broader than its source. It is rewritten clause by clause from the paper:
+    - "The simulated detector response is not varied in the closure, deformation and fake-data tests": §3.3 "keeps the
+      detector response at fixed truth"; §5.2 "The simulated detector response is not varied in these tests".
+    - "beyond the descriptive closures with a shifted recoil response": §5.2, the same sentence.
+    - "the coverage tests vary it only through the detector-systematic uncertainties they draw": §6.2 "the
+      uncertainties propagated linearly as in the covariance's construction"; §6.3 "each drawn uncertainty group's
+      pseudo-data built as its covariance block is built", with one variant adding the GEANT4 neutron and proton bands.
+    - "All use simulated pseudo-data, so none tests the detector model against data": §3.3 "the simulated events used
+      as pseudo-data"; "Every study uses the analysis simulation's detector response".
+  - The B0 literal 2.6 stays typed. check_round gains LITERAL_KEYS and check_literal_keys, which fail if the protected
+    "the quoted 2.6 statistical standard deviations" differs from \fvval{s5e-round-max}. Self-tested.
+- journal-editor's review of 8ff849bf6, items 1–7:
+  1. §5.1's first sentence no longer cites Fig 3, which shows no injected change. Fig 3 is cited at the 16–31 %
+     sentence, with "does not show the sixteen-cell result …" and "The three shape changes it shows were not used …"
+     after it.
+  2. "These deviations occur with or without background" is now scoped to the variant ("The lower-capacity variant's
+     deviations …, its residual"). The background-free runs are s5n's (the note's sec_5d.tex:61, "Signal-only
+     experiments with the same seeds reproduce both results"), and s5e's receipt has no background-free run for (e).
+     This narrows the director's "keep the background clause as is"; flagged to the director.
+  3. The detector-response item: as M086 above.
+  4. "(20 pseudo-experiments)" for (e)'s 74 %, with eavail_gibuu.n == 20 and the variant's 60 asserted in make_values.
+     "For the reported estimator at the same truth, we report the result on the sixteen cells: the bias satisfies …"
+     becomes "On the sixteen reported cells, the same truth's bias satisfies …".
+  5. §5.3: "A tested level clears a flagged truth if …" moves ahead of the outcome cases.
+  6. §6.1's order (probe after the ensemble, two "retained" conclusions back to back) is not changed. The director's
+     A3 asks for "the ensemble right after the mechanism"; the question goes to the director.
+  7. Fig S1's caption names "the companion note's generator-sized-change study, Ref. [note], Sec. N-sec:val-negweight".
+- The c8 table repair (Codex cf925029d) is not merged: its paper_body.tex is byte-identical to 06a3438f1's (sha256
+  7f1d6ff757c2), which #977 already has.
+- Table S6 (Codex 4035c769f) is merged at dd4d7d781. The Supplement's word multiset is unchanged, apart from
+  extraction effects ("Pseudo-experiment" without line-break hyphenation; "χ²₁₆" extracted as one token). Its Overfull
+  is gone (0).
+- Checks: the rater copy PASS; no Overfull in the paper or the Supplement; check_round with the fill test PASS (and
+  its self-test); make_values --check PASS (3849); registry, sec4 (17/17) and pointers (37) PASS.
+- Re-read: `interim-b2-read/fix-pairs-read.tsv` (12 rows, 26bec5eb) against dd4d7d781.
