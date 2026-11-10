@@ -1,0 +1,57 @@
+**I recommend option 1 for this methods paper: report V-HALF prominently, retain the sixteen cells, and leave the rule unchanged.** The scientific finding is that this estimator does not satisfy the half-departure requirement across its reporting domain. A methods paper can report that failure usefully; a paper claiming an adequately validated measurement would face a different obligation. Joseph’s decision fixes the methods baseline and makes the measurement a separate, conditional objective. (`docs/orchestration/DECISION-20261109-joseph-methods-baseline-and-plan.md:44–58`.)
+
+For compact citations below, `V/` means `docs/orchestration/state/2d-closeout/valid-region-20261107/v-half/`; `P/` means `docs/orchestration/state/measurement-paper/5d-community-20261024/`.
+
+This recommendation does not waive an adopted requirement to rebin. Joseph explicitly reserved that consequence for a decision after seeing the result. Conversely, reporting the failure must not become a way to retain measurement claims that the methods framing was supposed to relinquish. (`docs/orchestration/DECISION-20261109-joseph-bias-half-rule.md:43–51`.)
+
+**The main-paper files contradict the intended scope, as your brief anticipates:** the title says “Simultaneous measurement,” the abstract begins “We measure,” and the conclusion calls the cross section the principal result. Those passages need substantive replacement before my recommendation applies. I cannot assess the unavailable working draft. (`docs/analysis-note/main_paper.tex:36,47`; `docs/analysis-note/paper_body.tex:284`.)
+
+The paper should give the unchanged formula, applicability floor, noise treatment, counts, and a map explicitly labelled **“V-HALF classification at the tested simulated truths.”** It may report five valid, nine not valid, and two unresolved cells. It may not turn those labels into coverage, correctness of the data result, detector inadequacy, exclusion of cells, or performance on held-out truths. The licence also requires the PRD-referee read and Joseph before paper wording. Moreover, **h* and the sensitivity sections are expressly print-only and not citable under the present licence**; their discussion below is advice to Joseph, not permission to insert them into the paper. (`V/receipts/read/readout.txt:10–28`; `V/DECLARATION.md:300–324`.)
+
+I would not change the threshold or floor now to obtain more passing cells. That would answer a different question selected after seeing the answer.
+
+The failures are broad, but structured. Here is the complete failed-cell inventory; h* is the largest point-value \(|b|/|d|\) among applicable truths, not a noise-adjusted acceptance threshold. (`V/DECLARATION.md:175–178`; `V/receipts/read/readout.txt:14–26`.)
+
+| Cell | Truths with resolved failures | h* |
+|---|---|---:|
+| R03 | W3, A7_nuwro | 0.907 |
+| R05 | A7_genie_mec | 1.616 |
+| R07 | closure_nuwro, A7_nuwro | 1.307 |
+| R08 | W1, A7_genie_cv, A7_gibuu | 2.203 |
+| R10 | q3, A7_nuwro | 5.437 |
+| R11 | closure_nuwro, A7_nuwro, A7_gibuu | 1.228 |
+| R12 | W1, W3, closure_nuwro | 1.425 |
+| R13 | W3, closure_nuwro, A7_gibuu | 1.605 |
+| R15 | q3 | 11.253 |
+
+NuWro-related truths recur, but the failures also include GENIE and the synthetic q3 deformation. They cannot fairly be presented as a GiBUU-only problem. R01, R02, R04, R09 and R14 pass. R00 is unresolved at W1; R06 is unresolved at A7_genie_cv. R13 also contains an unresolved pair, but its resolved failures determine its cell classification. (`V/receipts/read/readout.txt:11–26`; `V/DECLARATION.md:160–168`.)
+
+This is not simply the earlier failure map becoming more severe. V-ATLAS failed R02 and R06; V-PRIOR failed R08 and R15. V-HALF passes R02 and leaves R06 unresolved for a different truth. The criteria compare bias with different reference quantities, so “14 passed before” does not rebut the new result. (`docs/orchestration/OUTCOME-20261107-valid-region.md:45–60,92–94`; `V/receipts/read/readout.txt:13,17`.)
+
+A referee should ask about small departures. At R05/A7_genie_mec, \(d=+1.206\%\) and \(b=+1.949\%\). At R15/q3, \(d=-1.131\%\) and \(b=+12.722\%\). At R10/q3, \(d=+1.943\%\) and \(b=+10.566\%\). These percentages all use the prior as denominator. The small departures amplify the ratios, but the last two biases are substantial even without division by \(d\). (`V/receipts/read/readout.json:855–866,1652–1663,2357–2368`.)
+
+Nor are all failures near the floor: A7_nuwro fails in R03 and R07 at departures of about 13.6% and 16.3%, respectively. And “close to 1%” must be distinguished from “uncertain whether applicable”: the declared near-floor noise check lists no pairs. That statement is conditional on its noise model. (`V/receipts/read/readout.json:609–620,1169–1180,2392–2408`.)
+
+**My interpretation is that V-HALF is an interpretable improvement-over-prior requirement, but an incomplete validation standard.** Algebraically, its point criterion demands an error no more than half the error of simply reporting the prior. It says nothing by itself about interval coverage or acceptable absolute precision. Near the floor, it demands roughly half-percent bias relative to the prior. Its discontinuous applicability boundary deserves scientific justification, but a disappointing result does not establish that the boundary is wrong. These are deductions from the declared formula. (`V/DECLARATION.md:50–59,127–149`.)
+
+The signs also matter. R10/q3 has positive departure and positive bias: the estimate overshoots the truth away from the prior. R15/q3 crosses back beyond the prior. Thus h* is not generally a “fraction of prior retained.” Those are arithmetic descriptions, not explanations of the failure mechanism. (`V/receipts/read/readout.json:1652–1663,2357–2368`.)
+
+There are important limits to the strength of the diagnosis. Bias and departure come from different sampled products; departure noise is estimated at A7_gibuu and applied to every truth. The truths are not held out, and the declaration discloses prior knowledge of the R02/R06 GiBUU pulls. I would call this a declared calculation on previously studied truths, not blind confirmation. (`V/DECLARATION.md:35–46,304–322`.)
+
+The prior-retention study gives no demonstrated quick repair: its tested settings do not clear the flagged truths, while its IBU comparison reports less retention at A7_gibuu and q3. That motivates further methodological work, not immediate substitution of IBU or a causal conclusion. Its own licence forbids both adoption and held-out performance claims. (`P/fd/receipts-prr/read/cluster/readout.txt:3–18`; `P/FD-PRR-DECLARATION.md:41–50`.)
+
+For a later paper, I would require the following procedure:
+
+1. **Define the scientific resolution worth preserving.** Specify allowed merges, protected boundaries, minimum information requirements, and a deterministic selection rule. “Keep merging until everything passes” is insufficient.
+2. **Treat these results as development evidence.** Freeze the selected binning before evaluating genuinely reserved truth deformations and independent samples. Fresh random seeds alone do not make familiar truth shapes held out.
+3. **Freeze the whole acceptance procedure:** threshold, floor, truth domain, noise treatment, treatment of unresolved cells, and the consequence of any failure. Include an explicit terminal outcome of “no acceptable binning.”
+4. **Check cancellation.** Summed signed biases can cancel when bins merge; truth departures can cancel too. A coarse-bin pass establishes performance for that coarse integral, not recovery of the lost structure.
+5. **Validate the resulting product separately.** Propagate covariance consistently and test bias, stability and coverage for the intended claims. For pure merging with an unchanged estimator, assess whether existing products permit exact aggregation, including \(C_{\rm new}=ACA^\mathsf{T}\), before assuming retraining is necessary. Changed estimators or observables require broader reassessment.
+
+These are my proposed safeguards, not claims that such a procedure has already been authorized or shown feasible.
+
+I would put it to the advisor directly:
+
+> Your suggested requirement exposes a substantial limitation: with our declared floor and noise treatment, only five cells pass, nine fail, and two remain unresolved. We will preserve that result and make it central to the methods paper. We propose retaining the current cells as an illustration of the studied estimator, while reserving a measurement for a redesigned, independently assessed procedure. For that later objective, we should agree in advance what resolution is scientifically useful and what happens if no binning qualifies.
+
+That acknowledges the advisor’s substantive concern without pretending the full suggestion was implemented: the floor, noise treatment and hybrid inputs were project additions, and the rebinning consequence remains undecided. (`V/DECLARATION.md:308–309`; `V/BINDING-1.md:54–55`.)
