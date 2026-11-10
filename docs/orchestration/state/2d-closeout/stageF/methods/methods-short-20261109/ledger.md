@@ -454,3 +454,494 @@ The rest stay above the field by design or for structural reasons:
 - the triads are lists.
 They are not pushed further, to avoid overfitting the metric.
 - **:174:** "No effective sample size of the unfolded ensemble is computed" is restored, since the hook flagged the draft's "is not computed" as a bare absence claim. <!-- absence-ok: quotes the restored method-scope sentence (what is computed); states no finding that a result does not exist -->
+
+## Figures 1 and 2 of the figures lane (the director, 2026-11-09), integrated
+
+The figures lane's branch (06ba96d12, after its repair cycle) is merged as aec48fb91. Its producer,
+`figures/methods_short/make_figures.py`, reproduces the committed PDFs byte for byte. The paper prints both
+figures with the lane's captions (`captions.tex`). `captions.tex` itself is the lane's file and is not edited.
+(Corrected below: the first version of this paragraph, at a97e6e10c, said the only change was "Colour" -> "Color".
+That was false.)
+
+| Item | Where | Source |
+|---|---|---|
+| Fig. `fig:bias-cells` | section 5.2, cited after Table 2's lead sentence, placed `[tb]` before the table | F0b readouts with and without C_PL,5D (make_values READOUTS / NOPL_READOUTS); HANDOVER.md "Bias by reported cell" |
+| Fig. `fig:prior-response` | end of section 6.1, `[t]`; cited in section 7 ("these shifts measure the result's sensitivity to the prior") | the note's gbdt_prior_response diagnostic (sec_5d.tex:196-204) |
+| 5.17, printed in the figure only | the bias figure's right panel, GiBUU hybrid truth | `f0b-A7_gibuu-zmax-nopl` (values_fived16.tex:1171), from the pinned NOPL readout; numbers.json max_abs_z 5.172...; Table 2 does not print this key |
+| 109 / 27 / 39 supported cells | the prior-response caption | app_statmethods_nd.tex:25 ("109 J, 27 H2 and 39 EW cells") |
+
+Placement. The prior-response figure was first placed before section 7. There the normal build's long section 7
+hold ("A citable home for records ...") crossed a page break with the figure's text extracted inside it, and the
+blind rater copy failed its hold-diff check (`make_rater_copy.sh`: "differs from the normal build in more than
+hold text"). `[b]` before section 7 and `[p]` also failed. Before section 6.2, `[t]` passes: multiset VERDICT
+PASS, 14 pages in both builds, and the blind copy prints FIG. 4 (bias) and FIG. 5 (prior response) in full.
+
+`check_round.py` gains check 9, `check_figures`, which calls the producer's `check_against(paper_body,
+values_fived16)`: Table 2's truth order, `trig-z` and the plotted maxima. It passes on this tree and fails on a
+swapped truth order or a changed `trig-z`.
+
+Checks at this commit: `check_round.py . --fill-test` PASS (0 failures; 16 fill builds), `--self-test` PASS,
+`check_registry.py` PASS, `check_sec4_receipts.py` 16/16 and its pytest 17 passed, `check_supp_pointers.py` 35
+pointers and 0 failures. `check_restyle.py` against e97d2b20 fails only on the additions this commit makes
+(labels `fig:bias-cells` and `fig:prior-response`, their refs and the captions' refs, one `\fvval{trig-z}`, the
+caption macros). No protected span, LISTED_CLAIMS anchor, numeral or Supplement inventory changed. Check 8 (report
+only) on the new blind manuscript: 7,649 words, against 7,595 in the pack's blind copy (531fefe42). Triads are 41 in
+both (5.36 and 5.40 per 1,000 words). Semicolon chains are now 6, against 5 (0.78 per 1,000 words), just above the field
+maximum of 0.67. The captions are not restyled here.
+
+Fig. 3 (rounding shifts) is not in this commit. It waits on director-helper-2's extraction of r2_cache.npz, with
+provenance pinned and the reproduction of median 0.8, maximum 2.6 and argmax J145. It is then integrated in its
+own commit.
+
+### Corrections and follow-up (journal-editor's read of a97e6e10c, item 1; the director, 2026-11-09)
+
+- **My error at a97e6e10c.** The paper's prior-response caption dropped the lane's limiting clause ", not a measured
+  bias of the data result" (licensed by sec_5d.tex:204, "shifts do not measure unknown real-data bias"), and the
+  paragraph above misstated the changes. The caption is now the lane's final caption, verbatim.
+- **The lane's last commit is merged.** 532f079b0 adds the J/H2/EW counts (109/27/39, app_statmethods_nd.tex:25) to
+  the prior-response caption, so the table row above is now true. 39 is in check_round's NEW_NUMERALS with that
+  source; 109 and 27 are in the base.
+- **The bias caption's changes, all recorded.**
+  - "Colour" -> "Color".
+  - "to two decimals as in the table" -> "to two decimals; in the left panel they are those of table 2". Table 2
+    prints max |z| for all 12 truths under the reported covariance, and only there. The right panel's maxima
+    (without C_PL,5D) are figure-only: one of them is the 5.17 above.
+- **The section 7 hold item, dropped.** The item read "Fig. 3 for the reported estimator: its per-cell fake-data
+  residuals against C_total+C_resp+C_PL,5D are not yet drawn". It was added in 0de103f7d, beside the deformation
+  figure, which plotted a development variant. The director asked whether "residuals" there means fractional
+  residuals or any per-cell view.
+  - My read: "against C" is the paper's usage for grading under that covariance (section 5.2, "the estimator's bias
+    against the reported covariance"). So the item asked for the per-cell residuals graded under that covariance.
+    That is the per-cell z that Fig. bias-cells plots, at every graded truth.
+  - The item is dropped. Its "Fig. 3" also clashed with the printed numbering (the bias figure prints as FIG. 4).
+  - The long section 7 hold, "A citable home ...", is Joseph's banked item and stays.
+- **The placement note.** check_round now prints a NOTE on every run: a reflow of sections 6-7 can split the
+  section 7 hold across a page break and fail the blind rater copy; rebuild it after any such change.
+- **Semicolon chains (the director's item 3).** The one new chain against the pack's blind copy that came with the
+  figures is not prose. It is the bias figure's y-axis tick labels, which pdftotext extracts as "(Eavail ; W)" and
+  "(pT ; p∥ ; Eavail)". Nothing is split. The other new chain is section 6.1's rounding sentence (:264), which
+  predates the figures.
+
+Checks after these changes:
+- `make_rater_copy.sh`: multiset VERDICT PASS, 14 pages in both builds. The blind copy prints FIG. 4 and FIG. 5,
+  with "not a measured bias of the data result", "J, 109" and "those of table 2".
+- `check_round.py . --fill-test`: PASS. `--self-test`: PASS.
+- `check_registry.py`: PASS. `check_sec4_receipts.py`: 16/16, and its pytest: 17 passed.
+- `check_supp_pointers.py`: 35 pointers, 0 failures.
+- `check_restyle.py` against e97d2b20 fails only on the figure additions, as above, plus the numerals 27 and 39 and
+  the one `\pubhold` removed.
+
+
+## Figure 3 of the figures lane (rounding shifts; the director, 2026-11-09), integrated
+
+The lane's 631f8ec2c is merged as f83a42256. The lane's branch carries main to 13d714bfc (#1006, #1007, #1008), and
+the merge brings that in. journal-editor's seven items on cdc14205b are closed at 631f8ec2c.
+
+| Item | Where | Source |
+|---|---|---|
+| Fig. `fig:rounding-shifts` (prints as FIG. 5) | section 6.1, after the RS1 cross-fitting paragraph, `figure` `[tb]` at `0.75\linewidth`; cited in "Over the 153 quantities ... statistical standard deviations (figure 5)" | `a3_rounding_shifts.csv` (PR #1008, sha256 9ac8f7d8b74f090c, pinned in inputs.json) |
+| 153 = 109 J + 42 EW + two totals | the caption | the CSV's rows, counted: J 109, EW 42, EW_all_ones 1, total_integrated 1 |
+| 42 | the caption | that count; in check_round's NEW_NUMERALS with this source |
+| median 0.8, maximum 2.6 (J145) | the figure's labels, at the text's precision | the CSV: 0.7829505732456221 and 2.5837789197284393 |
+
+- **Provenance (journal-editor's Fig. 3 item 7).** The CSV is not the original in-memory array. The receipt's own
+  producer recomputed it from the 103 committed inputs (HANDOVER.md, "Rounding figure delivered from committed
+  CSV"; the receipt's README.md). The recomputation reproduces the assess receipt's median, maximum and argmax bit
+  for bit.
+- **The caption** is the lane's, with one change: journal-editor's optional "the reference is the same input
+  values represented in float64" -> "the reference is the unperturbed inputs in float64".
+- **The 0.75 width is set by the blind rater copy.** At `\linewidth` and at 0.85 the normal build ran to 15 pages,
+  with references 17-21 pushed over by the hold text, while the rater copy stayed at 14. The extra page number
+  then failed `multiset_check.py`, whose letter multisets must match. The placements tried at full width were
+  `[!tb]`/`[htb]` after the RS1 paragraph, `[!t]` at the head of 6.1 and `[tb]` at the head of section 6; all
+  failed. At 0.75 both builds are 14 pages, multiset VERDICT PASS, and the blind copy prints FIGS. 1-6. I read the
+  rendered page (page 10): the figure is legible at this size.
+- **HANDOVER.md is stale on one point.** It still says the median and maximum "are labeled at two decimals"; the
+  figure and caption now label them at the text's precision. That is the lane's file, so I have not edited it.
+- **The same fragility as Figures 1 and 2.** Any later growth of the text, the fill included, can change the
+  page count of one build and not the other. Rebuild the rater copy after it (check_round's NOTE).
+
+Checks at this commit:
+- `make_rater_copy.sh`: PASS, 14 pages in both builds.
+- `check_round.py . --fill-test`: PASS, with check 9 against the lane's updated `check_against`. `--self-test`:
+  PASS.
+- `check_registry.py`: PASS. `check_sec4_receipts.py`: 16/16, and its pytest: 17 passed.
+- `check_supp_pointers.py`: 35 pointers, 0 failures.
+- The producer reruns with no change to any committed asset.
+
+## The abstract's compression and journal-editor's items 4, 5, 7, 8 and 9a (the director, 2026-11-09)
+
+On journal-editor's read of a97e6e10c, the director's rulings, after my measurement showed that the first ruling (the
+longest case under 1,920 characters by compressing prr and ll5d only) could not be met:
+- **Length: options (C) and (A).** The compression is committed. It is wording only, and the coverage clauses stay
+  pending Joseph (#993 item 4).
+  - check_round check 10 gates the printed abstract once it is filled: it fails above 2,000 characters until Joseph
+    sets a limit. Before the fill, it reports the range over every consistent case. Now: 10,848 cases, 1,802 to
+    2,343 characters.
+  - The 1,920 characters apply to a separate arXiv metadata abstract, written at submission (REPORT.md, "Follow-up:
+    before submission").
+  - Joseph also decides whether the abstract cuts content at the fill (the director's option B).
+- **The measurement.** `abstract_text` renders the source with `\fvgroup`/`\fvcase` resolved and `\fvval` from the
+  values. On a built long case (prr same-more, ll5d uc-ujc in both variants, offset-proceeded) it gave 2,286
+  characters against pdftotext's 2,287. The letters are identical; the difference is the space in "0.133 %".
+- **V-A1 (prr-abs):** one sentence per class, generated from one phrase table. Every class keeps:
+  - the comparator, "a binned iterative unfolding of noise-free pseudo-data at five iterations";
+  - the direction at each truth;
+  - "a threshold fixed in advance";
+  - for "undefined", "the retained fraction is undefined, and no comparison is made".
+- **V-A2 (ll5d), graded:** one sentence. It names the object ("grades the procedure's covariance at the same tunes"),
+  and keeps the scope clause (where the bias tests pass; pseudo-data that do not draw the model, response and
+  run-period terms), the primary variant, both per-variant pairs and the route clause, which is now a clause after a
+  semicolon.
+  - "under-coverage in some cells, but not jointly" -> "under-coverage in some cells only".
+  - "joint under-coverage, with no cell flagged" -> "joint under-coverage only".
+  - "under-coverage in some cells at both tunes, and jointly at one" (uc-ujc) and "joint under-coverage at both
+    tunes, and under-coverage in some cells at one" (uj-ujc) now take the general one-tune/other-tune form. They say
+    the same.
+  - My first draft dropped the verb and object ("grades the procedure's covariance"), and its short forms "in cells
+    only" and "per-cell" lost "some". I restored both before this commit.
+- **Item 4:** "On the 16 reported cells, these changes move the results by a median of 0.133%" -> "On the 16
+  reported cells, the spread under 20 such perturbations is a median of 0.133% of the cross section" (the body,
+  sec:cov5d: "over 20 rounding-level perturbations of the data, it is a median 0.133%"). This adds the numeral 20 to
+  the abstract.
+- **Item 5:** "A second five-observable test" -> "A five-observable test built the same way as the two-dimensional
+  one", in the graded case and the three stop cases. Table 1 and sections 6.2-6.3 keep first and second.
+- **Item 7:** the abstract keeps its terms, which are a LISTED_CLAIMS anchor. Section 3, after its list of truths,
+  now says "The abstract calls the GiBUU hybrid truth GiBUU-like and the $q_3$ tilt the synthetic momentum-transfer
+  tilt."
+- **Item 8:** Table 1, "Its gate compared unlike objects" -> "A preliminary check compared unlike quantities".
+- **Item 9a:** section 6.1, "Over the 153 quantities defined below" -> "Over 153 quantities (the joint cells, the
+  $(\Eavail,W)$ cells and two totals)". The B0 sentences, which repeat the definition, are protected and unchanged.
+
+Checks:
+- `make_rater_copy.sh`: PASS, 14 pages in both builds, FIGS. 1-6.
+- `check_round.py . --fill-test`: PASS. `--self-test`: PASS, with check 10's three planted cases.
+- `check_registry.py`: PASS. `check_sec4_receipts.py`: 16/16, and its pytest: 17 passed.
+- `check_supp_pointers.py`: 35 pointers, 0 failures.
+- `check_restyle.py` against 0bc36ce87 fails only on `\Eavail` (item 9a) and the numeral 20 (item 4). No protected
+  span, anchor or Supplement inventory changed.
+- **Superseded (the director, 2026-11-09):** after the multiset check's page-number fix (REPORT.md, "The rater
+  copy's multiset check"), Fig. 3 is back at `\linewidth`. The rater copy passes at 15 and 14 pages.
+
+### journal-editor's read of ce565239d, applied (wording only; the coverage clauses stay pending Joseph)
+
+- **Item 1, a misreading I introduced.** "only" before the tune phrase attached to the tunes: for example uc-ujc
+  printed "under-coverage in some cells only at one tune", although the cells under-cover at both. My ledger's
+  "they say the same" above was false as printed.
+  - The pair words are now "per-cell but not joint under-coverage", "joint but not per-cell under-coverage", "joint
+    and per-cell under-coverage", "no under-coverage" and "fails its own controls".
+  - check 10 now fails any rendered case that prints " only at " (ABSTRACT_BANNED). It fails the ce565239d abstract
+    and passes this one, and its self-test plants the phrase.
+- **Item 2.** The prr "same" classes read as equality, and "within it" had no referent. They now say "differs from
+  the [five-observable] estimator's retained fraction of the prior by less than a threshold fixed in advance", or
+  "... by less than that threshold" after a threshold is named.
+- **Item 3.** The gate-failed case reads "stopped at an entry condition fixed in advance" in the abstract, Table 1 and
+  section 6.3, which keeps it distinct from the stop case's "a check fixed in advance". Section 6.2's "one of its
+  gates" (the first test, r5:283) and the section 7 hold are unchanged.
+- **Item 4.** "where the bias tests pass" -> "where the estimator's fake-data bias is not flagged". This is the
+  wording of section 6.3 ("at tunes where the bias is not flagged"), and section 5.2 (:233) supports it: "Both tunes
+  satisfy the bias criteria", under the reported covariance.
+- **Item 5:** "with them, it" -> "with those bands, it".
+- **Item 6:** the abstract's first "estimator" is now "the five-observable estimator", in every prr class.
+- **Item 8 (optional):** not applied. The section 3 sentence is already the body's first use of both names.
+- **Length.** These fixes lengthen the worst case from 2,343 to 2,420 characters (prr same-more, ll5d uc-uj in both
+  variants, offset-proceeded). The cut is Joseph's decision (option B) before any filled case can pass check 10.
+
+Checks:
+- `make_rater_copy.sh`: PASS (15 and 14 pages).
+- `check_round.py . --fill-test`: PASS. `--self-test`: PASS.
+- `check_registry.py`: PASS. `check_sec4_receipts.py`: 16/16, and its pytest: 17 passed.
+- `check_supp_pointers.py`: 35 pointers, 0 failures.
+- `check_restyle.py` against 7960906a2: PASS.
+
+- **journal-editor's residue at 506c74581:** section 6.2's "one of its gates, which compared ..." -> "one of its
+  preliminary checks, which compared ...", to match Table 1. No current check protects the sentence (ONCE,
+  LISTED_CLAIMS, the sec4 receipts, the restyle spans). The blind copy now prints no "gate". The section 7 hold's
+  "pre-check's gate" leaves with the hold. Checks: the rater copy, check_round with the fill test, the self-test,
+  registry, sec4 (16/16, 17 passed), pointers (35/0) and check_restyle against 506c74581 all pass.
+
+## journal-editor's JINST read of the Supplement (f51d22c8b -> 8cc26c0ee), applied
+
+The Supplement's restyle, which I integrated as wording only, changed meaning in these hunks. That was my integration
+error: check_restyle guards the inventories, not the sense of a sentence. Each fix below is a revert to the base or
+a narrowing.
+1. **Timing:** "fixed before any test was evaluated" -> "fixed before any of the tests was graded against them"
+   (base). "A truth fails when" -> "A truth is flagged when" (the paper's term).
+2. **S9 clipping paragraph.**
+   - "checks fixed in advance bound the effect of the clipping" -> "test the effect". "Bound" asserts that the
+     checks succeeded, which is false if the offset-proceeded route continued past a clipping check.
+   - "The gate sample's first 300 draws are ..." -> "..., on a sample whose first 300 draws are the coverage
+     pseudo-experiments' draws, at the same seeds". This keeps the fact that Joseph's #1002 item 2 requires (the
+     shared first 300 seeds).
+   - "Its clipping record, from the readout:" -> "The clipping checks gave the following:".
+   - The two values, `ll5d-clip-record` and `ll5d-route-record`, are free text written at the fill. Their declared
+     content: the passes weakened by clipping, the flags meeting the clipping-artefact condition, and the largest
+     clipping offset with its cell; and the exceeded quantity and its bound, what was visible, the reason, and every
+     repair. Their printed sentences get a read at the fill.
+3. **"Gate".**
+   - S6 diagnosis: "the departure from the gate" -> "the departure from the window" (the preliminary check's window,
+     named in that paragraph).
+   - The two remaining printed uses (S4 :291 and S6 :551, "the ratio's statistical gate") are the note's statistical
+     requirement on the reweighting ratio, a different object, and are in the base. They are kept. Defining them as
+     "the preliminary check of section 6.2" would be false.
+4. "..., so the distance depends on the estimator" -> "and the distance ..." (base).
+5. "flags three failures, all attributed to bias" -> "raises three flags, each attributed to bias" (paper :237).
+6. "The audit establishes neither" -> "Passing the audit establishes neither" (base).
+7. "Production retains the inherited constant." -> "The analysis code retains the inherited constant."
+8. At (e)'s definition: "(e), the five-observable estimator (the joint-test estimator of Ref. [note])", so readers
+   following the \nsec pointers find the note's name. This adds one \cite, check_restyle's only failure. The paper
+   still never prints "joint-test estimator" (GONE).
+9. **The director's W-batch sentences (S7), copy only.** "conditionally on" -> "conditional on"; "They are not
+   physical exclusions" -> "The rejections are not physical exclusions"; "(this section)" dropped.
+10. S1: "comprises" -> "is in". S2: "by construction rather than by truncation" restored. S4: "is appropriate for" ->
+    "the natural treatment for" (base).
+
+Checks:
+- `check_restyle.py` against 8cc26c0ee fails only on item 8's \cite. The 23 #981 quotes and the 35 paper pointers
+  hold.
+- `make_supp_rater_copy.sh`: rc 0, 25 pages, 8 of 8 table captions. Every fix prints in the blind Supplement; the S9
+  clipping sentence is in the pending ll5d group.
+- `check_round.py`: PASS, its style report run on the new blind Supplement. `check_registry.py`: PASS.
+- `check_supp_pointers.py`: 35 pointers, 0 failures.
+- **After journal-editor's check of 069370826:**
+  - check_round check 11 (FREE TEXT) fails any filled free-text value that prints gate, record, readout, receipt,
+    lane, binding, declaration, a DECISION/OUTCOME name, a date, an .md file or a PR number. It is self-tested with
+    five planted values and one clean one.
+  - "the ratio's statistical gate" is kept. It is the note's own wording (sec_fived16.tex :99, :251), with no more
+    specific name to point to.
+
+## The meaning check of both restyles (the director, 2026-11-09)
+
+This check catches what check_restyle's inventories cannot. `meaning-check/export_pairs.py` exported every changed
+sentence pair:
+- the paper, cb87c1832 -> 32cf5c5fe's tex: 239 rows;
+- the Supplement, 531fefe42 -> 32cf5c5fe's tex: 148 rows;
+- the result, `meaning-check/pairs.tsv`, sha256 a299909c30412188.
+
+The director ran two fresh readers, one for each file, with a strict "claims more" brief
+(`meaning-check/prompt.txt`). They flagged 17 of 239 paper rows and 6 of 148 Supplement rows
+(`meaning-check/out-paper.txt`, `out-supp.txt`). The director's triage gave 11 FIX, 9 DISMISS and 3 VERIFY. I
+checked each dismissal and verify below against the record.
+
+| Row | Decision | What was done, or why dismissed |
+|---|---|---|
+| M009 | FIX | §1: "for the observables, configurations and deformations tested, not of multidimensional OmniFold in general" restored |
+| M084 | FIX | §4: "It is a correlated shape difference, not a normalization difference" (the eigenmode analysis) |
+| M090 | FIX | §4: "…is descriptive, not a blind validation" (the director's earlier ruling) |
+| M091 | FIX | §4: "test … against" -> "compare … with" |
+| M131 | FIX | §5.2: "only event counts fluctuate, with the systematic parameters fixed" |
+| M212, M213 | FIX | §7: both exclusions restored once, before "Whether the two-dimensional shape difference …" (W-5 option 1; decision item 6) |
+| M228 | FIX | Limitation 1: "…, not the stronger simultaneous coverage of all of them" |
+| M252 | FIX | S1: the note's verbatim sentence (sec_eavailw.tex:67) restored, "do not, by themselves, provide five independent constraints: the result is five simultaneous observables, not five independent measurements". This also reverts my earlier "The result is in five …" (journal-editor item 10), since the paragraph is labelled verbatim |
+| M293 | FIX | S2: "Non-negativity is structural, while the value at the floor follows …" |
+| M339 | FIX | S7: the note's verbatim sentences (sec_joint.tex:34), "…, and so it affects power. The null calibration below, not the metric, sets each test's size." |
+| M111 | VERIFY -> FIX | §5.1 is the E_avail shape reweighted by the GiBUU-to-GENIE ratio (its paragraph, the f0b-stage0c_gibuu key), and S8 names it "the GiBUU-to-GENIE $\Eavail$ change". So it now reads "the GiBUU-to-GENIE $\Eavail$ change", as in §7 (P-27) |
+| M223 | VERIFY -> DISMISS | The COV2D scope fact prints in §6.2 (:296) and in §6.3 (:309): "The result concerns the procedure's covariance at those tunes, not the reported intervals at the data." |
+| M381 | VERIFY -> KEEP | LL5D-DECLARATION.md §3.6 (the seeds table): "the gate sample (§5.2), whose first 300 are the toys' draws". §5.2 :365-366 evaluates the clipping gate on that sample, and §5.3 :432-436's clipcheck uses the 300 declared draws, which are its first 300. The merged sentence is supported |
+| M069 | DISMISS | #1002 item 3: Invalid only when every entry is invalid (ledger :383-389) |
+| M075, M194, M195 | DISMISS | R5 ruling 1: the clipping detail moved to S9 (ledger :306-311). M075 is a mis-paired caption row, base status words against the #1002 statuses |
+| M196 | DISMISS | R5 ruling 3: no "does not establish" clause (ledger :321) |
+| M192 | DISMISS | #1002 item 1: the carry-over sentence with the rank-16 condition (DECISION-20261109-joseph-coverage-case-wording.md :36-37; ledger :381) |
+| M236 | DISMISS | journal-editor item 4, the director's ruling: the body's "over 20 rounding-level perturbations" (ledger :603) |
+| M280 | DISMISS | the joint-test-estimator pointer the director approved (ledger :691) |
+| M379 | DISMISS | "bound" -> "test", journal-editor's correction (ledger :671) |
+
+That is 11 slips of meaning, all of which passed check_restyle. Two of them (M252, M339) were inside paragraphs
+still labelled "verbatim" from the note.
+
+A sweep of every "verbatim"-labelled Supplement paragraph against the note's sources was too noisy to use: 128 of its
+sentences differ, mostly through the Supplement's pointer rewrites (\ref -> Ref.~\cite…\ref*{N-…}). So I rely on
+the readers' base-against-current read here, not on that sweep.
+
+Checks:
+- `make_rater_copy.sh`: PASS (15 and 14 pages). `make_supp_rater_copy.sh`: rc 0, 8 of 8 captions. Every FIX prints
+  in the blind copies.
+- `check_round.py . --fill-test`: PASS. `--self-test`: PASS.
+- `check_registry.py`: PASS. `check_sec4_receipts.py`: 16/16, and its pytest: 17 passed.
+- `check_supp_pointers.py`: 35 pointers, 0 failures.
+- `check_restyle.py` against 32cf5c5fe fails only on the one added `\Eavail` (M111). The #981 quotes hold.
+- **journal-editor's read of 000f13805.**
+  - Item 1 applied. §4.1: "It is a correlated shape difference" -> "The difference is a correlated shape
+    difference", since "It" pointed back to the χ²/ndf value.
+  - Item 3 applied as the base sentence (cb87c1832), "These tests assess bias, not coverage: only event counts
+    fluctuate, with the systematic parameters fixed." The editor's wording would have dropped the "only" that M131
+    restored.
+  - Item 2 (rewording §7's restored benchmark exclusion as "a shape difference of unidentified source") changes
+    content in a sentence held by W-5 option 1 and decision item 6, so it went to the director, not applied.
+  - Item 4 (optional "deformations") not applied: it is the base wording, restored by M009.
+  - Checks: the rater copy, check_round with the fill test, registry, sec4, pointers, and check_restyle against
+    000f13805 all pass.
+- **W-5, a wording change resting on §4.1 (the director, 2026-11-09, on journal-editor's item 2).** §7's benchmark
+  exclusion (L-22) now reads "The benchmark shows agreement in normalization and a shape difference of unidentified
+  source in two dimensions; it does not validate the five-observable distribution."
+  - Its record is §4.1's "The source of the shape difference has not been identified", the sentence #981 quotes.
+    "Qualified" was undefined.
+  - Decision item 6's exclusion (:74, "that 5D validates the full distribution") survives as the denial.
+  - **check_round's GONE guard changed with it.** `validat\w* the (full|five-observable) distribution` matched the
+    denial. It is now `(?<!not )validat...`, so it still refuses the affirmative claim that item 6 forbids. Its
+    self-test plants both forms: the affirmative is caught, and the denial passes.
+  - Checks: the rater copy PASS (the denial prints once), check_round with the fill test PASS, the self-test PASS,
+    and registry, sec4, pointers, and check_restyle against 1bf524e53 PASS.
+  - The director's addition: the self-test also plants "not only validates the five-observable distribution", which
+    is caught (an affirmative claim behind a "not"). Measured on the guard: "not only validates" is caught, "does
+    not validate" passes, "validates" is caught, and "never validates" is caught, a safe false positive.
+
+## The 200-250-word abstract (Joseph, 2026-11-09, via the director), draft for an independent read
+
+Joseph's decision: the typical length, 200-250 words, and content may be cut if it still makes sense. The director's
+structure, kept in order: the method; the benchmark; the prior-retention finding; the stability finding with the
+ensemble in one clause; W-11; the coverage test per variant only; the illustration line.
+- **Cut:** "Three findings follow."; the observables list (section 1 keeps it); the seed sentence (section 6.1 keeps
+  it); the 0.133% sentence (section 6.1 keeps it); "medium-energy" (sections 1-2).
+- **The prior-retention comparison (prr-abs) is now one clause of the fake-data sentence:** binned iterative unfolding
+  of noise-free pseudo-data at five iterations "retains less / more / a similar share of the prior" at each truth, or
+  an undefined share. The threshold's detail ("by more than a threshold fixed in advance") is in section 5.3. This is
+  the director's "detail beyond one clause waits for the fill".
+- **The coverage test (ll5d), per variant only:**
+  - one sentence: "The same coverage test, applied to the procedure's five-observable covariance at those tunes, where
+    the fake-data bias is not flagged, without drawing the model, response and run-period terms, finds X (primary
+    variant, without two detector bands) and Y (with them); [the route disclosure]";
+  - X and Y in Table 1's per-tune terms: no under-coverage, under-coverage or an invalid reading, at one tune, both
+    or either. The per-cell and joint detail is in section 6.3.
+  - "The same coverage test" replaces "A five-observable test built the same way as the two-dimensional one" (item
+    5's antecedent), to fit the limit. The R5 object, "the procedure's ... covariance", is kept.
+  - The stop cases read "The same coverage test of the procedure's five-observable covariance stopped ...".
+- **Kept verbatim:** the benchmark, W-11 and the illustration line.
+- **The LISTED_CLAIMS anchor** "at a GiBUU-like truth and at a synthetic momentum-transfer tilt find" is kept verbatim
+  and does not move. The rest of that sentence is shortened ("residual bias beyond uncertainty-based criteria fixed
+  before grading"). `make_values_fived16.py --check` passes: 10 listed-truth sentences agree.
+- **The stability sentence:** "The five-observable estimator is numerically unstable: rounding-level input changes
+  shift results by up to 2.6 statistical standard deviations, beyond a requirement fixed in advance; an average of 96
+  fits meets it but has greater bias at one of 17 truths." This is now the abstract's first "estimator", so it names
+  it.
+- **check 10 is now a word limit.** Every rendered case (all 10,848 before the fill, the built one after) must be at
+  most 250 words, and characters are reported. Now: 181 to 250 words, 1,248 to 1,660 characters. The 36 cases under
+  200 are all stopped campaigns. The ce565239d-era abstract fails the new limit in all 10,848 cases (longest 367
+  words). The self-test plants a 260-word case.
+- **Checks:**
+  - the rater copy PASS (14 and 14 pages);
+  - check_round with the fill test PASS, and the self-test PASS;
+  - registry, sec4 and pointers PASS;
+  - make_values `--check` and `--self-test` PASS;
+  - check_restyle against 58fdb8cf2 fails only on the cut 0.133% sentence (the numerals 0.133 and 20, and its
+    \SI{}{\percent}).
+- The coverage clauses stay pending Joseph. The director runs a fresh reader on the longest and shortest cases.
+
+## The prior-retention fill (FD-PRR; DECISION-20261109-joseph-abstract-length-prr-fill.md item 2, #1010)
+
+- **The readout.** `fd/receipts-prr/read/cluster/readout.json` (#1006), sha256 9238f22bfe29685e…, is pinned in
+  make_values' READOUTS as `prr`. Its verdict is COMPLETE, schema prr-readout/1.
+- **The mapping.** `prr_verdicts()` maps readout keys only to the declared classes. It uses prr_read.py's own strings
+  at db0e801f1: factor_class :300-306, ibu_class :309-312, ibu_k_class :315-318, labels_for :321-333, clears :336-340.
+  VERDICTS holds the result, and `make_values --check` now fails if VERDICTS differs from a fresh mapping of the
+  pinned readout.
+- **The classes**, at A7_gibuu and q3, both flagged truths:
+  - PR-1: F1 no effect / increases; F2 increases / increases; F3 no effect / no effect; F4 increases / increases.
+  - PR-2a: "IBU retains less" at both, so less. PR-2b: falls at both.
+  - The labels: "consistent with an implementation-specific share" and "sensitive to the observable set" at both
+    (impl and obs hold; fir, info, stat and unattr do not).
+  - PR-3: every level, IBU_K5 included, "does not clear at these truths", so prr-pr3-any and prr-pr3-ibu are not.
+  - prr-pr3-levels is "none". It is not printed anywhere.
+  - prr-ibu-bar is 0.05, the readout's floor.bars.IBU.
+  - prr-abs, from prr_derived: less-less.
+  These agree with the director's report of the readout.
+- **What prints.**
+  - §5.3: the pre-written cases, unchanged as the decision requires. The readings are descriptive and no level is
+    adopted (FD-PRR BINDING 1 rulings 2-3).
+  - Table 1's row: the PR-1 classes per truth, status Descriptive.
+  - The abstract's clause: "binned iterative unfolding of noise-free pseudo-data at five iterations retains less of
+    the prior at both".
+  - The Supplement prints no prr group.
+- **Checks:**
+  - the rater copy PASS (15 and 14 pages); the Supplement's rater copy rc 0, 25 pages, 8 of 8 captions;
+  - the blind copies print no prr placeholder and no class name, and the manuscript no GONE term;
+  - check 11 finds no internal term in the filled values;
+  - check_round with the fill test PASS, and the self-test PASS;
+  - check 10 over the 678 cases still open (the coverage test's): 183-239 words;
+  - make_values `--check` and `--self-test` PASS;
+  - registry, sec4 (16/16, 17 passed) and pointers (35/0) PASS;
+  - check_restyle against the pre-fill head 74db4ea97 PASS (no .tex source changed).
+- **Style, for the director.** §5.3's four label sentences read repetitively as filled ("At the GiBUU hybrid truth,
+  the results are consistent with … At the GiBUU hybrid truth, the retained prior is …"). They are kept as
+  pre-written.
+- The director's five abstract fixes are not in this commit. As ruled, with the run-period clause dropped first, 261
+  of the 678 open cases still exceed 250 words. That went to the director for a decision.
+- **The independent abstract read (the director, 2026-11-09).** The director ran a fresh Gemini on the longest and
+  shortest cases of 74db4ea97's abstract against the full body. Its record is `abstract-read/`: `gemini.txt`, the
+  output; `prompt.txt`; `input.txt`, the prompt with the cases and the body. Verdict: the claims are honest, but the
+  longest case's coverage sentence is a 76-word run-on with duplicated text. The director's five rulings on it wait
+  on one further cut (see the prior-retention fill section above).
+
+### The fill's meaning read and the abstract rulings, applied (the director, 2026-11-09)
+
+The director's fresh reader saw the fill's three pairs (`prr-fill-pairs.tsv`) against the readout summary and the
+declaration's reading and label definitions (:290-335). The rulings:
+- **§5.3's threshold of 0.05 is correct (dismissed).** The IBU's threshold is max(0.05, 9.03 s_IBU). The readout gives
+  s_IBU = 0.0011129, so 9.03 s_IBU = 0.0100 < 0.05 and the threshold is 0.05. The readout's floor.bars.IBU = 0.05 is
+  that value.
+- **§5.3, PR-3:** the declaration's text, "does not clear at these truths". It now reads "No tested level clears at
+  these truths. The IBU at five iterations does not clear at these truths." The clears case reads "Some tested levels,
+  …, clear at these truths; …".
+- **§5.3, the labels: merged per truth, wording only.**
+  - Each truth's labels print in one sentence, "At the GiBUU hybrid truth, ⟨label⟩; ⟨label⟩." Each label keeps its
+    exact pre-written words, one \fvcase per label class.
+  - The separators come from `\fvlist` and `\fvitem`, new in values_fived16.tex's generated header (make_values
+    render()). They print "; " between whichever items print, so any subset of labels reads correctly.
+- **Table 1's row:** "GiBUU hybrid, $q_3$ tilt:" now heads the result, so each value's truth is stated. On the
+  rendered page (page 5, read as an image) the test name stays in its cell. The reader's "scrambled" row was
+  pdftotext's reading order.
+- **The abstract's prr clause** names its comparator: "retains less of the prior than the five-observable estimator
+  at both". "Noise-free pseudo-data" stays (FD-PRR BINDING 1 ruling 1: route 2 runs on the same noise-free closures).
+- **The abstract, on the independent read of 74db4ea97** (`abstract-read/`):
+  - "the two-observable unfolding" in the benchmark;
+  - the stability median, "by a median of 0.8 and up to 2.6";
+  - "A corresponding five-observable test of the procedure's covariance at those tunes";
+  - the bands named once, "the detector's neutron and proton interaction bands";
+  - one clause when both variants read the same ("… in each variant, with and without …");
+  - the IBU-on-data sentence (§5.4's "differs", "depend on the unfolding algorithm");
+  - the ensemble clause and the run-period clause dropped, both in the body, as the director chose.
+  The scope clause "where the fake-data bias is not flagged" is kept. To keep any 8-word clause from repeating,
+  the coverage entries are stated once as per tune ("finds, for its two tunes, A and B …").
+- **check 10 gains the repeated-clause check.** No rendered case may repeat a run of 8 words. It is self-tested on a
+  planted repeat and a 7-word near-repeat, and it fails 74db4ea97's abstract ("at one tune and an invalid reading
+  at", 7 runs). Over the 678 open cases: 195-243 words, 1,384-1,689 characters, no repeat.
+- **Checks:**
+  - the rater copy PASS (15 and 15 pages);
+  - check_round with the fill test PASS, and the self-test PASS;
+  - the blind copy prints no class name or GONE term, and no internal term in a free-text value;
+  - make_values `--check` PASS; registry, sec4 (16/16, 17 passed) and pointers (35/0) PASS;
+  - check_restyle against a1129402e fails only on the changes above: \fvlist/\fvitem, the dropped ensemble keys
+    ens1-n and ens1-ntruths, the nested \fvcase, and 0.8.
+
+### The second reads of 3290ae70e, applied (the director, 2026-11-09)
+
+The director's readers: Sonnet on the fill's pairs (`prr-fill-read/out2.txt`, its input `in2.txt`) and Gemini on the
+abstract against a fresh build of the body (`abstract-read/gemini2.txt`, `prompt2.txt`, `input2.txt`). The first
+round's fill read is in the same record (`prr-fill-read/in.txt`, `out.txt`, the pairs files, `readout-summary.json`,
+`decl-readings.txt`). The rulings:
+- **The prr clause.** The reader read the noise-freeness as belonging to the IBU analogue. The director proposed "the
+  same noise-free pseudo-data", but in the abstract "the same" would point back to the fake-data studies, which are
+  graded on Poisson pseudo-experiments as well as noise-free pseudo-data (§3). So the condition now leads the
+  comparison instead: "; on noise-free pseudo-data, binned iterative unfolding at five iterations retains less of the
+  prior than the five-observable estimator at both". This scopes both methods, with no antecedent.
+- **§5.3:** "by more than its threshold (0.05 at these truths)", and likewise in the "same" case, so that 0.05 reads
+  as the value and not the definition. The arithmetic above stands.
+- **The abstract:**
+  - "As a descriptive benchmark" (§4.1, "descriptive, not a blind validation"), not the reader's "tuned";
+  - "the sixteen reported cells". "Its" would point back to binned unfolding in that sentence, so it is not used;
+  - "a failed test control" (Table 1's caption) for "an invalid reading";
+  - "with pseudo-data that omit the model, response and run-period variations";
+  - "where the fake-data bias is not flagged" kept, already right after "at those tunes";
+  - "We test unbinned OmniFold unfolding of MINERvA open data …" (one word, to stay within 250).
+  The readers' coverage rewrites ("failed pre-check", "exploratory study", "pre-specified validation check") are not
+  used: the director ruled them inaccurate.
+- **Over the 678 open cases:** 196-248 words, 1,400-1,727 characters, no 8-word repeat.
+- **The run-period step** is decided at the fill, on the one built case: add "The data also show a run-period step
+  present before unfolding (section 4.2)" if it keeps the built abstract at 250 words or fewer. The built abstract
+  then gets its own read, and its coverage sentence may be rephrased within the approved content before Joseph signs
+  off.
+- **Checks:**
+  - the rater copy PASS (15 and 15 pages), and each change prints;
+  - check_round with the fill test PASS, and the self-test PASS;
+  - make_values `--check` PASS; registry, sec4 and pointers PASS;
+  - check_restyle against 3290ae70e PASS.

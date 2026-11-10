@@ -1,0 +1,26 @@
+You are checking a copy-edit of a physics paper for changes of MEANING. Style is not your concern.
+
+Below is a tab-separated table with columns: id, file, section, base, current. "base" is a sentence before the edit;
+"current" is the sentence after it. A row with an empty base is NEW text; a row with an empty current is REMOVED text.
+The text is LaTeX source: \fvval{...} and other macros stand for numbers or terms and are the same on both sides;
+\fvcase{key}{class}{TEXT} gives alternative versions, and each class's TEXT is a separate claim.
+
+For each row, decide:
+- PAIR rows (both sides present): OK if the current sentence makes the same claim with the same strength, scope,
+  quantifiers, conditions, tense, attribution and hedging. Otherwise flag it:
+    MORE  - it claims more (stronger, broader, more certain, drops a condition, qualifier or limit, implies causation
+            or timing the base did not state);
+    LESS  - it claims less (drops a fact, weakens a stated result);
+    DIFF  - it states something different (changes the subject, object, quantity, direction or attribution).
+- REMOVED rows: flag LOST if the sentence states a distinct fact, condition or limit that you cannot find restated in
+  any current sentence in the table; otherwise OK.
+- NEW rows: flag NEWCLAIM only if it states a factual claim (a result, a number's meaning, a timing, a cause) that does
+  not appear in any base sentence in the table; definitions, pointers and captions describing a figure are OK.
+
+Be strict on MORE: that is the dangerous direction. Ignore pure rewording, sentence splits and merges, and spelling.
+
+OUTPUT: only the flagged rows, one per line, as
+  <id> | MORE|LESS|DIFF|LOST|NEWCLAIM | the exact words that differ (base -> current) | one-line reason
+then a final line "FLAGGED n of N rows". If nothing is flagged, say so.
+
+TABLE:

@@ -47,6 +47,8 @@ READOUTS = {
     # the two tunes' generation records, for their names; their digests are the F1c pin's f1b3-SHA256SUMS
     "f1meta-g18": (f"{FD}/fd/receipts-f1/run/cluster/f1b3/gen5d/genie_v3_g18_xsec5d.meta.json", "4fe333b8"),
     "f1meta-ar23": (f"{FD}/fd/receipts-f1/run/cluster/f1b3/gen5d/genie_v3_ar23_xsec5d.meta.json", "d7d136e5"),
+    # FD-PRR read (#1006, verdict COMPLETE); filled into the short paper by DECISION-20261109-joseph-abstract-length-prr-fill.md item 2
+    "prr": (f"{FD}/fd/receipts-prr/read/cluster/readout.json", "9238f22b"),
     # the pion-constant departure of Eq. (1), as full-covariance norms of its first-order shift under each arm's matrix
     # (ASSESSMENT-20261031-eavail-charged-pion-mass-switch-pricing.md section 7.3; JSON despite the suffix)
     "eav": ("docs/orchestration/state/eavail-switch-pricing-20261031/step0/step0_metric.txt", "3e8bd546"),
@@ -279,7 +281,21 @@ WORDS = {
            "na": ""} for k, (_, c) in PENDING.items() if c is LL5D_T},
 }
 # filled when a record lands: key -> class (or printed value); a group is filled only when every key has one
-VERDICTS = {}
+# The prior-retention group, from the FD-PRR readout (READOUTS["prr"]) by prr_verdicts() below; main() refuses any
+# difference between these and a fresh mapping of the pinned readout. DECISION-20261109-joseph-abstract-length-prr-fill.md
+# item 2: filled from the pre-written cases; the readings are descriptive and no level is adopted (BINDING 1 rulings 2-3).
+VERDICTS = {
+    "prr-pr1-F1-gibuu": "no-effect", "prr-pr1-F2-gibuu": "increases", "prr-pr1-F3-gibuu": "no-effect",
+    "prr-pr1-F4-gibuu": "increases",
+    "prr-pr1-F1-q3": "increases", "prr-pr1-F2-q3": "increases", "prr-pr1-F3-q3": "no-effect", "prr-pr1-F4-q3": "increases",
+    "prr-pr2a-gibuu": "less", "prr-pr2a-q3": "less", "prr-pr2b-gibuu": "falls", "prr-pr2b-q3": "falls",
+    "prr-label-fir-gibuu": "not", "prr-label-info-gibuu": "not", "prr-label-impl-gibuu": "holds",
+    "prr-label-obs-gibuu": "holds", "prr-label-stat-gibuu": "not", "prr-label-unattr-gibuu": "not",
+    "prr-label-fir-q3": "not", "prr-label-info-q3": "not", "prr-label-impl-q3": "holds",
+    "prr-label-obs-q3": "holds", "prr-label-stat-q3": "not", "prr-label-unattr-q3": "not",
+    "prr-pr3-any": "not", "prr-pr3-ibu": "not", "prr-pr3-levels": "none", "prr-ibu-bar": "0.05",
+    "prr-abs": "less-less",
+}
 DERIVED = {"prr": ("prr-abs",),
            "ll5d": ("ll5d-abs-minus2", "ll5d-abs-all", "ll5d-abs-close", "ll5d-anypass", "ll5d-cellflags",
                     "ll5d-anyweak", "ll5d-anyover", "ll5d-status")}
@@ -288,6 +304,50 @@ DERIVED = {"prr": ("prr-abs",),
 def prr_derived(v):
     """The prior-retention group's derived key: the abstract's class, from both flagged truths' PR-2a classes."""
     return {"prr-abs": f"{v['prr-pr2a-gibuu']}-{v['prr-pr2a-q3']}"}
+
+
+# prr_read's strings (nd-unfolding/prior_retention/prr_read.py @ db0e801f1: factor_class :300-306, ibu_class :309-312,
+# ibu_k_class :315-318, labels_for :321-333, clears :336-340) -> the declared classes of PR1, PR2A, PR2B, LABEL, PR3
+PRR_TRUTHS = {"gibuu": "A7_gibuu", "q3": "q3"}
+PRR_LABELS = {"fir": "consistent with finite-iteration regularization",
+              "info": "consistent with an information limit at these settings",
+              "impl": "consistent with an implementation-specific share",
+              "obs": "sensitive to the observable set", "stat": "sensitive to training statistics", "unattr": "unattributed"}
+PRR_PR2A = {"IBU retains less": "less", "IBU retains more": "more", "same": "same", "undefined": "undefined"}
+PRR_PR3 = {"clears at these truths": "clears", "does not clear at these truths": "not"}
+
+
+def prr_verdicts(r):
+    """Every key of the prior-retention group from the FD-PRR readout alone (readout keys only; no number is computed)."""
+    assert r["schema"] == "prr-readout/1" and r["verdict"] == "COMPLETE", "the FD-PRR readout is not a COMPLETE prr-readout/1"
+    rd, v = r["readings"], {}
+    for t, T in PRR_TRUTHS.items():
+        for f in ("F1", "F2", "F3", "F4"):
+            v[f"prr-pr1-{f}-{t}"] = rd["PR-1"][T][f].replace(" ", "-")
+        v[f"prr-pr2a-{t}"] = PRR_PR2A[rd["PR-2a"][T]]
+        v[f"prr-pr2b-{t}"] = rd["PR-2b"][T]
+        got = set(rd["labels"][T])
+        assert got <= set(PRR_LABELS.values()), f"an unknown label at {T}: {got}"
+        for k, text in PRR_LABELS.items():
+            v[f"prr-label-{k}-{t}"] = "holds" if text in got else "not"
+    levels = {k: PRR_PR3[x["reading"]] for k, x in rd["PR-3"].items()}
+    v["prr-pr3-ibu"] = levels.pop("IBU_K5")
+    v["prr-pr3-any"] = "clears" if "clears" in levels.values() else "not"
+    v["prr-pr3-levels"] = ", ".join(k for k, c in levels.items() if c == "clears") or "none"
+    v["prr-ibu-bar"] = f"{rd['floor']['bars']['IBU']:g}"
+    v.update(prr_derived(v))
+    for k, x in v.items():
+        cls = PENDING[k][1]
+        assert cls is None or x in cls, f"{k}: {x!r} is not a declared class {cls}"
+    return v
+
+
+def check_prr_verdicts(d):
+    """VERDICTS' prior-retention keys equal a fresh mapping of the pinned readout."""
+    want = prr_verdicts(d["prr"])
+    have = {k: x for k, x in VERDICTS.items() if PENDING.get(k, ("",))[0] == "prr"}
+    return [f"{k}: VERDICTS {have.get(k)!r}, the readout {want.get(k)!r}" for k in sorted(set(want) | set(have))
+            if have.get(k) != want.get(k)]
 
 
 def ll5d_derived(v):
@@ -1348,6 +1408,10 @@ def render(v):
              "% \\fvgroup{group}{text} prints text once the group's record has landed, else one [PENDING: ...]; inside it,",
              "% \\fvcase{key}{class}{text} prints text only when key has that class (methods-short-20261109/variants.md).",
              "% \\fvgroupalt{group}{pending text}{filled text} prints the first while the group is pending, with no marker.",
+             "% \\fvlist{...\\fvitem{a}...\\fvitem{b}...} prints the items that print, separated by '; ' (a list of \\fvcase items).",
+             r"\newif\iffv@listfirst",
+             r"\providecommand{\fvlist}[1]{\fv@listfirsttrue#1}",
+             r"\providecommand{\fvitem}[1]{\iffv@listfirst\fv@listfirstfalse\else; \fi#1}",
              r"\def\fv@PENDING{PENDING}",
              r"\providecommand{\fvgroup}[2]{\@ifundefined{fvg@#1}{\errmessage{values_fived16: no group '#1'}}{\expandafter\ifx\csname fvg@#1\endcsname\fv@PENDING\fvpending{\@nameuse{fvgd@#1}}\else#2\fi}}",
              r"\providecommand{\fvgroupalt}[3]{\@ifundefined{fvg@#1}{\errmessage{values_fived16: no group '#1'}}{\expandafter\ifx\csname fvg@#1\endcsname\fv@PENDING#2\else#3\fi}}",
@@ -1688,6 +1752,10 @@ def main(argv):
     if argv[:1] == ["--self-test"]:
         return self_test()
     d = load()
+    bad = check_prr_verdicts(d)
+    if bad:
+        sys.exit("VALUES-FIVED16 :: FAIL (VERDICTS' prior-retention keys differ from the pinned FD-PRR readout)\n  "
+                 + "\n  ".join(bad))
     text = render(all_values(d))
     bad = check_listed_claims(d["f0b"], read_claim_texts())
     if bad:

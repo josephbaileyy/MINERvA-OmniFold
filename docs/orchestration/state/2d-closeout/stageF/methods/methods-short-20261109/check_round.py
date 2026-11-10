@@ -27,6 +27,24 @@
      field's per-paper maximum in style-baseline.json (11 human-written papers before November 2022, 78,599 words).
      A pattern above the field maximum is marked ABOVE. It runs on the round's blind manuscript, the blind Supplement and VARIANTS.txt
      (preread-outcomes/, or --printed FILE ...).
+  9. FIGURES. The bias-by-cell figure agrees with the current paper: figures/methods_short/make_figures.py's
+     check_against(paper_body, values_tex), the figures lane's own function, checks Table 2's truth order, the
+     outline threshold (trig-z) and every plotted maximum |z| against values_fived16.tex. A changed figure input
+     (its sha256 pins) fails too.
+  10. ABSTRACT LENGTH (Joseph, 2026-11-09, via the director: the typical length, 200-250 words). Every rendered case of
+     the abstract (abstract_text: the source with \\fvgroup/\\fvcase resolved and \\fvval from the values), all of them
+     before the fill and the built one after it, must print at most ABSTRACT_MAX_WORDS = 250 words. The range in words
+     and characters is reported, and no case may repeat a run of ABSTRACT_REPEAT = 8 words (the director, on the
+     independent read of 74db4ea97). arXiv's 1,920 characters apply to a separate metadata abstract, written at
+     submission (REPORT.md, "Follow-up: before submission"). No rendered case may print a phrase of ABSTRACT_BANNED
+     (" only at ", which attaches a restriction to the tunes rather than to the noun).
+  11. FREE TEXT (journal-editor, 2026-11-09). A filled free-text value (a PENDING key with no class set, such as
+     ll5d-clip-record or ll5d-route-record) prints inside prose, so it may not contain a FREE_TEXT_BANNED term: gate,
+     record, readout, receipt, lane, binding, declaration, a DECISION/OUTCOME name, a date, an .md file, or a PR number.
+NOTE (printed on every run; not checked here). The figures sit where the blind rater copy passes its hold-diff check
+(rater-calibration/make_rater_copy.sh). A float near section 7 split the long section 7 hold ("A citable home ...")
+across a page break, and the copy failed. Any reflow of sections 6-7 (a float moved, a caption or paragraph
+lengthened) can split it again: rebuild the rater copy after one (ledger.md, "Figures 1 and 2").
 usage: check_round.py <worktree> [--base SHA] [--fill-test] [--printed FILE ...]   (exit 1 on any failure)
        check_round.py <worktree> --self-test                  (each planted defect must be caught)"""
 import importlib.util
@@ -51,7 +69,9 @@ EMPTY = {**{f"prr-label-{l}-{t}": {"not"} for l in ("fir", "info", "impl", "obs"
          "ll5d-abs-minus2": {"na"}, "ll5d-abs-all": {"na"}, "ll5d-abs-close": {"scope", "na"},
          **{f"ll5d-{x}": {"none", "na"} for x in ("anypass", "cellflags", "anyweak", "anyover")}}
 # numerals the paper prints that the base does not, each with its source (ledger rows)
-NEW_NUMERALS = {"285": "L-12b: re2 partc-r2 receipts/figs/tension_report.txt:55, 1.391 x 205 = 285.2 (in [285.05, 285.26])",
+NEW_NUMERALS = {"42": "ledger Figure 3: a3_rounding_shifts.csv (PR #1008, sha256 9ac8f7d8), 42 EW rows of its 153 (109 J, 42 EW, two totals)",
+                "39": "ledger Figures: app_statmethods_nd.tex:25, the 39 EW cells of the prior-response figure (J 109 and H2 27 are in the base)",
+                "285": "L-12b: re2 partc-r2 receipts/figs/tension_report.txt:55, 1.391 x 205 = 285.2 (in [285.05, 285.26])",
                 "136": "L-12b: the note's sec_results.tex:128 (chi2 = 136 on the 73 best-determined directions)",
                 "0.05": "L-27: FD-PRR-DECLARATION.md:281-286, the bar delta_F = max(0.05, 9.03 s_F)",
                 "9.03": "L-27: FD-PRR-DECLARATION.md:281-286 (the two-sided Student-t quantile on 4 degrees of freedom at 0.01/12)",
@@ -67,7 +87,8 @@ ONCE = [
     "That test is a next step.",
     "The grading rules and their timing are stated with the individual tests; comparisons without a grading rule are descriptive.",
 ]
-GONE = [r"stabili[sz]ed variant", r"validat\w* the (full|five-observable) distribution", r"detector[- ]inadequa",
+# validat...: the affirmative claim decision item 6 (:74) forbids; its denial, "does not validate ...", is allowed
+GONE = [r"stabili[sz]ed variant", r"(?<!not )validat\w* the (full|five-observable) distribution", r"detector[- ]inadequa",
         r"locali[sz]ed in", r"\bE_?\{?96", r"\bFD-PRR\b", r"\bLL5D\b", r"\bV-HALF\b", r"\bV-ATLAS\b", r"\bV-PRIOR\b",
         r"\bCOV2D\b", r"\bRS1\b", r"\bENS1\b", r"\bFD-STAB\b", r"BIAS_WORSE", r"Stage~?0c", r"\bPR-[123]",
         r"\bdeclared\b", r"joint-test estimator", r"\\chi\^\{2\}/205", r"tracks the same bias", r"natural next step"]
@@ -226,7 +247,8 @@ def run(wt, base):
              + check_numerals(cur, old) + check_once_gone(cur)
              + check_printed_names((wt / NOTE / "values_fived16.tex").read_text())
              + check_dates({**cur, "supplemental_body.tex": supp})
-             + check_sec4_tests(wt))
+             + check_sec4_tests(wt) + check_figures(wt) + check_abstract(wt)
+             + check_free_text(mv.PENDING, mv.VERDICTS))
     return fails
 
 
@@ -276,6 +298,140 @@ def style_report_text(text):
     mod = importlib.util.module_from_spec(sm)
     sm.loader.exec_module(mod)
     return {k: e["count"] for k, e in mod.score(text)["patterns"].items()}
+
+
+# words a free-text value may not print (journal-editor, 2026-11-09: they are internal, and the value prints inside prose)
+FREE_TEXT_BANNED = (r"\bgates?\b", r"\brecords?\b", r"\breadouts?\b", r"\breceipts?\b", r"\blanes?\b", r"\bbindings?\b",
+                    r"\bdeclar\w*", r"DECISION-", r"\b20\d\d-\d\d-\d\d\b", r"\bOUTCOME-", r"\.md\b", r"\bPR\s*#?\d+", r"#\d{3,}")
+
+
+def check_free_text(pending, verdicts):
+    """Every filled free-text value (a PENDING key with no class set) prints no FREE_TEXT_BANNED term."""
+    out = []
+    for k, (g, classes) in pending.items():
+        if classes is None and k in verdicts:
+            for pat in FREE_TEXT_BANNED:
+                m = re.search(pat, str(verdicts[k]), re.I)
+                if m:
+                    out.append(f"the free-text value {k} prints {m.group(0)!r}: {str(verdicts[k])[:80]!r}")
+    return out
+
+
+def check_figures(wt):
+    """Check 9: the figures lane's check of its plotted data against the current paper."""
+    path = wt / NOTE / "figures/methods_short/make_figures.py"
+    if not path.exists():
+        return ["figures/methods_short/make_figures.py is missing"]
+    try:
+        spec = importlib.util.spec_from_file_location("make_figures", path)
+        mf = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mf)
+        return [f"figures: {f}" for f in mf.check_against((wt / NOTE / "paper_body.tex").read_text(),
+                                                          (wt / NOTE / "values_fived16.tex").read_text())]
+    except Exception as exc:                       # a changed pinned input raises ValueError
+        return [f"figures: {exc}"]
+
+
+ABSTRACT_MAX_WORDS = 250  # words, on every rendered case (Joseph, 2026-11-09, via the director: the typical length, 200-250 words)
+ARXIV_ABSTRACT_MAX = 1920  # arXiv's metadata field: a separate abstract written at submission (REPORT.md, before submission)
+ABSTRACT_REPEAT = 8   # no rendered case may repeat a run of this many words (the director, 2026-11-09, on the 74db4ea97 read)
+
+
+def repeated_clauses(text, n=None):
+    """Every run of n (ABSTRACT_REPEAT) words, case and punctuation ignored, that occurs twice or more in text."""
+    n = n or ABSTRACT_REPEAT
+    w = re.findall(r"[a-z0-9%.]+(?:[-'’][a-z0-9]+)*", text.lower())
+    seen, out = set(), set()
+    for i in range(len(w) - n + 1):
+        g = " ".join(w[i:i + n])
+        (out if g in seen else seen).add(g)
+    return out
+
+
+# phrases no rendered case may print: "only at" attaches the restriction to the tunes, not the noun (journal-editor, 2026-11-09)
+ABSTRACT_BANNED = (" only at ",)
+
+
+def abstract_text(main_tex, values_tex, ver):
+    """The abstract as it prints for the classes ver: \\fvgroup and \\fvcase resolved, \\fvval from ver or values."""
+    vals = dict(re.findall(r"\\@namedef\{fv@([^}]+)\}\{(.*)\}\s*$", values_tex, re.M))
+    s = strip_comments(main_tex)
+    s = s[s.index(r"\begin{abstract}") + len(r"\begin{abstract}"):s.index(r"\end{abstract}")]
+    assert r"\fvgroupalt" not in s, "abstract_text does not resolve \\fvgroupalt"
+    pat = re.compile(r"\\(fvgroup|fvcase|fvval)(?![A-Za-z])")
+
+    def render(t):
+        out, i = [], 0
+        while True:
+            m = pat.search(t, i)
+            if not m:
+                return "".join(out + [t[i:]])
+            out.append(t[i:m.start()])
+            j, args = m.end(), []
+            for _ in range({"fvgroup": 2, "fvcase": 3, "fvval": 1}[m.group(1)]):
+                a, j = braced(t, j)
+                args.append(a)
+            if m.group(1) == "fvgroup":
+                out.append(render(args[1]))
+            elif m.group(1) == "fvcase":
+                out.append(render(args[2]) if ver[args[0]] == args[1] else "")
+            else:
+                out.append(str(ver.get(args[0], vals[args[0]])))
+            i = j
+
+    t = render(s)
+    t = re.sub(r"\\SI\{([^}]*)\}\{\\percent\}", r"\1%", t).replace(r"\%", "%").replace("~", " ")
+    t = re.sub(r"\\[A-Za-z]+\*?", "", t).replace("{", "").replace("}", "")
+    return re.sub(r"\s+", " ", t).strip()
+
+
+def abstract_cases(mv):
+    """Every consistent filling of the abstract's pending keys: each PR-2a pair; each ll5d campaign, and on a graded
+    campaign each route and each pair of per-variant pairs (ll5d-abs-close derived as ll5d_derived derives it)."""
+    pairs = [p for p in mv.LL5D_PAIR if p != "na"]
+    ll5d = [{"ll5d-campaign": c, "ll5d-route": "na", "ll5d-abs-minus2": "na", "ll5d-abs-all": "na", "ll5d-abs-close": "na"}
+            for c in mv.LL5D_C if c != "graded"]
+    for route in (r for r in mv.LL5D_ROUTE if r != "na"):
+        for a in pairs:
+            for b in pairs:
+                ll5d.append({"ll5d-campaign": "graded", "ll5d-route": route, "ll5d-abs-minus2": a, "ll5d-abs-all": b,
+                             "ll5d-abs-close": "none" if a == b == "i-i" else "scope"})
+    return [{"prr-abs": p, **v} for p in mv.PRR_ABS for v in ll5d]
+
+
+def abstract_gate(main_tex, values_tex, cases, verdicts):
+    """(failures, report lines). Every rendered case consistent with what is filled (all of them before the fill, the
+    one built case after it) must print at most ABSTRACT_MAX_WORDS words and no ABSTRACT_BANNED phrase. The report
+    gives the range in words and characters."""
+    s = strip_comments(main_tex)
+    keys = {a[0] for _, _, a in macro_calls(s[s.index(r"\begin{abstract}"):s.index(r"\end{abstract}")], "fvcase", 3)}
+    live = [verdicts] if keys <= set(verdicts) else [c for c in cases if all(verdicts.get(k, v) == v for k, v in c.items())]
+    texts = [abstract_text(main_tex, values_tex, c) for c in live]
+    fails = sorted({f"a rendered abstract case contains {p!r}" for x in texts for p in ABSTRACT_BANNED if p in x})
+    rep = sorted({g for x in texts for g in repeated_clauses(x)})
+    if rep:
+        fails.append(f"a rendered abstract case repeats a clause of {ABSTRACT_REPEAT} or more words: {rep[0]!r}"
+                     + (f" (and {len(rep) - 1} more)" if len(rep) > 1 else ""))
+    w = [len(x.split()) for x in texts]
+    ch = [len(x) for x in texts]
+    over = [i for i, n in enumerate(w) if n > ABSTRACT_MAX_WORDS]
+    if over:
+        k = max(over, key=lambda i: w[i])
+        fails.append(f"{len(over)} rendered abstract case(s) over {ABSTRACT_MAX_WORDS} words; the longest, {w[k]} words: {live[k]}")
+    k = max(range(len(w)), key=lambda i: w[i])
+    state = "filled" if keys <= set(verdicts) else f"pending: {', '.join(sorted(keys - set(verdicts)))}"
+    return fails, [f"ABSTRACT ({state}) over {len(live)} rendered case(s): {min(w)} to {max(w)} words, {min(ch)} to "
+                   f"{max(ch)} characters (fails above {ABSTRACT_MAX_WORDS} words; the longest is {live[k]}). The arXiv "
+                   f"metadata abstract ({ARXIV_ABSTRACT_MAX} characters) is written at submission."]
+
+
+def check_abstract(wt):
+    mv = load_mv(wt)
+    fails, lines = abstract_gate((wt / NOTE / "main_paper.tex").read_text(), (wt / NOTE / "values_fived16.tex").read_text(),
+                                 abstract_cases(mv), dict(mv.VERDICTS))
+    for line in lines:
+        print(line)
+    return fails
 
 
 def fill_test(wt):
@@ -356,6 +512,12 @@ def self_test():
         print("self-test: NOT CAUGHT an internal label in a printed group name"); ok = False
     if not check_dates({"f": "until 2026-10-11; "}) or check_dates({"f": "% 2026-10-11 in a comment"}):
         print("self-test: the date check is wrong"); ok = False
+    if not check_once_gone({"f": "the benchmark validates the five-observable distribution " + " ".join(ONCE)}):
+        print("self-test: NOT CAUGHT an affirmative validation claim"); ok = False
+    if not check_once_gone({"f": "the test not only validates the five-observable distribution " + " ".join(ONCE)}):
+        print("self-test: NOT CAUGHT 'not only validates', an affirmative claim behind a 'not'"); ok = False
+    if check_once_gone({"f": "it does not validate the five-observable distribution. " + " ".join(ONCE)}):
+        print("self-test: GONE flags the denial that decision item 6 asks for"); ok = False
     if not check_once_gone({"f": " ".join(ONCE[1:])}):
         print("self-test: NOT CAUGHT a missing ONCE sentence"); ok = False
     class _MV:
@@ -369,6 +531,33 @@ def self_test():
     sr = style_report_text("The test grades bias, not coverage. It holds.")
     if sr.get("1_comma_not") != 1:
         print("self-test: the style report misses a ', not' contrast"); ok = False
+    am = r"\begin{abstract}A test. \fvgroup{g}{\fvcase{k}{a}{" + "word " * 260 + r"}\fvcase{k}{b}{short}} \fvval{v} fits.\end{abstract}"
+    av = r"\@namedef{fv@v}{96}"
+    if not abstract_gate(am, av, [{"k": "a"}, {"k": "b"}], {"k": "a"})[0]:
+        print("self-test: NOT CAUGHT a filled abstract over the limit"); ok = False
+    if abstract_gate(am, av, [{"k": "a"}, {"k": "b"}], {"k": "b"})[0]:
+        print("self-test: the abstract gate fails a short filled case"); ok = False
+    if not abstract_gate(am, av, [{"k": "a"}, {"k": "b"}], {})[0]:
+        print("self-test: NOT CAUGHT an unfilled case over the word limit"); ok = False
+    if not abstract_gate(am.replace("{short}", "{cells only at one tune}"), av, [{"k": "a"}, {"k": "b"}], {})[0]:
+        print("self-test: NOT CAUGHT an 'only at' in a rendered case"); ok = False
+    rp = r"\begin{abstract}It finds no under-coverage at one tune and an invalid reading here and no under-coverage at one tune and an invalid reading there.\end{abstract}"
+    if not abstract_gate(rp, av, [{}], {})[0]:
+        print("self-test: NOT CAUGHT a repeated 8-word clause"); ok = False
+    if repeated_clauses("one two three four five six seven, then one two three four five six eight"):
+        print("self-test: the repeated-clause check flags a 7-word repeat"); ok = False
+    if abstract_text(am, av, {"k": "b"}) != "A test. short 96 fits.":
+        print("self-test: abstract_text misrenders:", repr(abstract_text(am, av, {"k": "b"}))); ok = False
+    ms = subprocess.run([sys.executable, "-I", str(HERE.parent / "rater-calibration/tools/multiset_check.py"), "--self-test"],
+                        capture_output=True, text=True)
+    if ms.returncode:
+        print("self-test: the rater copy's multiset_check.py fails its own self-test:", ms.stdout.strip()[-200:]); ok = False
+    fp = {"x-record": ("g", None), "x-class": ("g", ("a",))}
+    for planted in ("the gate sample", "the readout says", "see DECISION-20261109-joseph-x.md", "on 2026-11-09", "the lane's receipt"):
+        if not check_free_text(fp, {"x-record": planted}):
+            print("self-test: NOT CAUGHT a banned term in a free-text value:", repr(planted)); ok = False
+    if check_free_text(fp, {"x-record": "the largest offset, 0.04 in R06, below its bound of 0.10", "x-class": "a"}):
+        print("self-test: the free-text check flags clean journal prose"); ok = False
     del EMPTY["e"]
     print("self-test:", "PASS" if ok else "FAIL")
     return 0 if ok else 1
@@ -389,6 +578,8 @@ def main(argv):
         print(line)
     if "--fill-test" in argv:
         fails += fill_test(wt)
+    print("NOTE a reflow of sections 6-7 can split the section 7 hold across a page break and fail the blind rater"
+          " copy's hold-diff check: rebuild it (make_rater_copy.sh) after any such change")
     for f in fails:
         print("FAIL", f)
     print(f"CHECK-ROUND methods-short :: {'PASS' if not fails else 'FAIL'} ({len(fails)} failures)")
