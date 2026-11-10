@@ -654,3 +654,8 @@ Checks:
 - `check_supp_pointers.py`: 35 pointers, 0 failures.
 - `check_restyle.py` against 7960906a2: PASS.
 
+- **journal-editor's residue at 506c74581:** section 6.2's "one of its gates, which compared ..." -> "one of its
+  preliminary checks, which compared ...", to match Table 1. No current check protects the sentence (ONCE,
+  LISTED_CLAIMS, the sec4 receipts, the restyle spans). The blind copy now prints no "gate". The section 7 hold's
+  "pre-check's gate" leaves with the hold. Checks: the rater copy, check_round with the fill test, the self-test,
+  registry, sec4 (16/16, 17 passed), pointers (35/0) and check_restyle against 506c74581 all pass.
