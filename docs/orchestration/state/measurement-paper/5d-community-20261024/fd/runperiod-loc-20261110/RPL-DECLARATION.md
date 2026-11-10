@@ -168,6 +168,9 @@ common to all playlists.
 - **The join check** (recheck R2). This runs with the join, before P-RPD, and forms no data/MC quantity.
   - For every joined pair, the AnaTuple's `MasterAnaDev_muon_P` must agree with the zero loop's reconstructed muon
     momentum, |p| = √(p_T² + p_∥²) from `measured`/`measured_pz` (data) or `sim`/`sim_pz` (MC), to 10⁻³ relative.
+  - The units: the zero loop's |p| is in GeV/c (`GetPmu()/1000`), and `MasterAnaDev_muon_P` is in MeV/c, so the
+    comparison is `MasterAnaDev_muon_P / 1000` against |p| (recheck n1). That factor is part of the check, not an
+    offset.
   - At least 99.9 % of the pairs' weight must pass, in data and MC separately. Otherwise it is a STOP and (ii-a) is not
     made.
   - A mis-join scrambles the flags and pulls Δ toward 0. The reproduction control below cannot see that, because it
@@ -270,9 +273,14 @@ The committed search output is re-read under this rule; no new search is run (th
 - the input pins (RPD-RECO's `INPUTS.sha256`; `ZERO_LOOPS`);
 - O_NOATIME on every pinned read;
 - **The environment for every reproduction to 10⁻¹²:**
-  - (i), (ii-a) and (ii-b) run in RPD-RECO's pinned environment (`FD-RPD-RECO-DECLARATION.md:247`): its numpy, thread
-    caps of 1 (OMP, OPENBLAS, MKL, NUMEXPR) and nice 19, on a login node;
-  - the reason is limitation-resolver's caution (2026-11-10): RPD-RECO's record keeps full float64
+  - (i), (ii-a) and (ii-b) run in RPD-RECO's pinned environment: thread caps of 1 (OMP, OPENBLAS, MKL, NUMEXPR),
+    nice 19 and O_NOATIME (`FD-RPD-RECO-DECLARATION.md:247`), on a login node, with the numpy version that
+    RPD-RECO's committed record or its receipt header names.
+    - That version is quoted when P-RPD is named. If the record names none, the run returns to the director before
+      it starts (recheck n3).
+  - The code and the environment are RPD-RECO's **at its record's commit** (recheck n2). The draft `9634aadf` cited
+    here is on `origin/code/rpd-reco-d1-d2-20261106`, not on main.
+  - The reason is limitation-resolver's caution (2026-11-10): RPD-RECO's record keeps full float64
     (`fd_rpd_reco.py:344-350` at `9634aadf`), but a different BLAS threading or numpy can change the summation order
     of large sums beyond 10⁻¹².
   - If the environment cannot be matched, the run returns to the director before it starts, with a tolerance and its
@@ -336,7 +344,9 @@ are folded in:
 - **R8:** the note on 1L's power.
 - **R9:** RPL calls RPD-RECO's own functions.
 
-limitation-resolver's caution on arithmetic order is in the Controls section.
+limitation-resolver's caution on arithmetic order is in the Controls section. The recheck of revision 3 resolved R1–R4,
+with no blocking or major findings, and its minors n1–n3 (units, the commit's branch, the numpy pin's source) are folded
+in.
 
 ## Revision 2 (2026-11-10): the audit and the director's rulings
 
