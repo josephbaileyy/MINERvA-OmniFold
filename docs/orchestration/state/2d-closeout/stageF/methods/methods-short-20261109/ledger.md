@@ -760,3 +760,14 @@ Checks:
 - `check_registry.py`: PASS. `check_sec4_receipts.py`: 16/16, and its pytest: 17 passed.
 - `check_supp_pointers.py`: 35 pointers, 0 failures.
 - `check_restyle.py` against 32cf5c5fe fails only on the one added `\Eavail` (M111). The #981 quotes hold.
+- **journal-editor's read of 000f13805.**
+  - Item 1 applied. §4.1: "It is a correlated shape difference" -> "The difference is a correlated shape
+    difference", since "It" pointed back to the χ²/ndf value.
+  - Item 3 applied as the base sentence (cb87c1832), "These tests assess bias, not coverage: only event counts
+    fluctuate, with the systematic parameters fixed." The editor's wording would have dropped the "only" that M131
+    restored.
+  - Item 2 (rewording §7's restored benchmark exclusion as "a shape difference of unidentified source") changes
+    content in a sentence held by W-5 option 1 and decision item 6, so it went to the director, not applied.
+  - Item 4 (optional "deformations") not applied: it is the base wording, restored by M009.
+  - Checks: the rater copy, check_round with the fill test, registry, sec4, pointers, and check_restyle against
+    000f13805 all pass.
