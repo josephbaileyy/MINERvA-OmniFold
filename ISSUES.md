@@ -63,7 +63,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Finding:* Add the per-period 2D benchmark combined sentence from `readout.json` and the R5-bar sentence after `sec_results.tex:134`.  
   *Record:* `OUTCOME-20261107-per-period-2d-benchmark.md:13-16`, `:152`.  
   *Target:* `docs/analysis-note/sec_results.tex:134`.  
-  *Status:* Drafted in round 1.
+  *Resolution:* This row authorizes no tex edit. The combined sentence and the R5-bar sentence are already in sec_results.tex. The combined sentence prints the licensed statement that the run-period step does not account for the distance in the best-determined directions, at the resolved size. The following sentence states the 132 poorly determined directions, the 0.69 difference, the 0.31 fraction, and the 10 replicas. The paragraph already says the noise is a lower bound and that neither reading identifies a cause or which period is right. Do not add a second copy. Do not add the 0.29 resolved-size figure. Do not say which period is right, that 1G-1M is wrong, or that the published result is right. Do not edit app_statmethods.tex under this row.
 
 * **AUD-E6 [R]** — **RS1 rounding mechanism.**  
   *Finding:* Report numerical precision / float32 rounding findings (shifts up to 2.6σ_stat, median 0.8σ; separate tie-break vs refinement legs).  
