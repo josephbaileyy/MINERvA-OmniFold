@@ -196,7 +196,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-ACC-1 [T]** — **Tune v1 in quasielastic-Δ dip inconsistency.**  
   *Finding:* Executive summary and §7.6 assert all four generators under-predict data in the dip ($0.1 \\le E_{\\text{avail}} < 0.4\\text{ GeV}$), but §7.8 states the $E_{\\text{avail}}$-marginal data/Tune v1 ratio dips to 1.01, and Fig. 23 shows cells dipping to 0.66.  
   *Evidence:* `docs/analysis-note/sec_execsummary.tex:13`, `sec_3d.tex:140`, `sec_eavailw.tex:151`.  
-  *Resolution:* Reconcile executive summary and §7.6 with §7.8 by removing contradictions. The rewrite adds no sentence claiming where the data–Tune difference sits; strip any localization wording per `OUTCOME-20261107-valid-region.md:36` and AUD-L1.
+  *Resolution:* The executive summary no longer says that all four generators under-predict the dip. The 4D paragraph already states the marginal ratios, including the dip to 1.01 and the cell ratio down to 0.66, and it already distinguishes Tune v1 from untuned GENIE. The clause that the data excess concentrates at low E_avail and toward high q3 is removed. Do not add a sentence about where the difference sits. Do not add the word exploratory.
 
 * **S1-ACC-2 [R]** — **Tune v1 normalization deficit quoted four ways.**  
   *Finding:* Deficit quoted as ~9% (ratio 0.91) in §6.5; 0.883 (10–28%) in §7.6; integrated data/Tune = 1.13 (0.885) in §7.8; ~12% in §2.5.  
