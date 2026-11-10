@@ -11,7 +11,7 @@ HOW EACH VALUE IS CHECKED
   summary, and the pT and p_par projection uncertainties.
 
 CODE (sha256)
-  eba9e45370a86b17a01eff1a1cfee9702013009fe49e15c94595d5965fa2729c  docs/orchestration/state/2d-closeout/stageF/methods/result-package-20261109/build_package.py
+  28d4f0b077aaa349f659dd7b6a3a079c6b6700f7800cd181165efba93febe47e  docs/orchestration/state/2d-closeout/stageF/methods/result-package-20261109/build_package.py
   5414b123eaebc426ce7cd2dc9acc897c8c679b0349332c9d9dc056d46d2bfcec  docs/analysis-note/make_values_fived16.py
   2d7744155df3e802ce9ec4619931bea8b5d442e8eb5c857e9f03a6ac3bc3dada  docs/analysis-note/values_fived16.tex
   168d9b569d572daef5a862b7039426cf0e348a7452d5b8392c99b1bfef4ec4c9  docs/analysis-note/values.tex

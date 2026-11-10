@@ -721,6 +721,11 @@ PENDING = [
 ENS1_PENDING = ("ENS1", "the data file for the ensemble-averaged variant of the estimator (96 fits), whose result is final "
                         "and reported in the paper")
 ENS1_RECORD = "docs/orchestration/OUTCOME-20261109-ens1-stab-pass-bias-worse.md"
+# the order in which the pending files fill (the director's ruling of 2026-11-10): the producer and its values are read
+# from this checkout, and the keys the re-pin needs exist only on the paper's branch until it merges
+PENDING_ORDER = ("These fill in one step, in this order: the paper's source branch (PR #977) merges to main after its "
+                 "last coverage test (LL5D) and its final review round; this package's branch then takes main by a merge "
+                 "commit and re-pins the paper to that merged version.")
 
 
 def pending_text(what):
@@ -1233,6 +1238,8 @@ def readme(c, out, pending):
         for name, what in pending:
             for i, l_ in enumerate(wrap(f"{name}.txt: {what}.", 108)):
                 w(f"  {'- ' if i == 0 else '  '}{l_}")
+        for l_ in wrap(PENDING_ORDER, 106):
+            w(f"  {l_}")
     w("")
     w("REBUILD AND CHECK")
     w("  From the root of the source repository, at the version that holds this package:")

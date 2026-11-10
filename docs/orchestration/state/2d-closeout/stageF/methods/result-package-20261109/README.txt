@@ -336,6 +336,9 @@ NOT YET AVAILABLE (pending/)
     unfolding (IBU) on the same fake data.
   - LL5D.txt: the like-for-like five-observable coverage test at the two held-out GENIE v3 tunes.
   - V-HALF.txt: a per-cell validity rule: the bias at most half of the truth's departure from the prior.
+  These fill in one step, in this order: the paper's source branch (PR #977) merges to main after its last
+  coverage test (LL5D) and its final review round; this package's branch then takes main by a merge commit
+  and re-pins the paper to that merged version.
 
 REBUILD AND CHECK
   From the root of the source repository, at the version that holds this package:
