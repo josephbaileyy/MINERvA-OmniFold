@@ -1052,7 +1052,7 @@ Scope: Index of referee findings for Round 3 resolution. Resolution column remai
 | **GPT-3.4** | `gpt.txt:17` | Table 1 assigns passing injected-shape closures to configuration (e) when tested under (a) without threshold. | `docs/analysis-note/sec_execsummary.tex:21` | pending |
 | **GPT-3.5** | `gpt.txt:19` | Main text claims negative-weight injection targets identical continuous density (D-B)/S contrary to App. C.1. | `docs/analysis-note/app_negweight.tex:36` | pending |
 | **GPT-3.6** | `gpt.txt:21` | Section 2.3 asserts 'neither prediction carries an uncertainty' while background variation is propagated in ensembles. | `docs/analysis-note/sec_experiment.tex:26` | pending |
-| **GPT-3.7** | `gpt.txt:23` | Section 3.5 describes reconstructed q3 as built from Eavail rather than calorimetric recoil estimate q0_reco. | `docs/analysis-note/sec_3d.tex:197` | pending |
+| **GPT-3.7** | `gpt.txt:23` | Section 3.5 describes reconstructed q3 as built from Eavail rather than calorimetric recoil estimate q0_reco. | `docs/analysis-note/sec_method.tex:198` | pending |
 | **GPT-3.8** | `gpt.txt:25` | Figure 3 and §3.5 label truth-bin-conditional reconstruction probabilities as purity rather than stability. | `docs/analysis-note/sec_method.tex:196-203` | pending |
 | **GPT-3.9** | `gpt.txt:27` | Flux extraction formula includes 10^4 factor for m^-2 without indicating how higher-dimensional cm^-2 flux enters. | `docs/analysis-note/sec_method.tex:181-188` | pending |
 | **GPT-3.10** | `gpt.txt:29` | Section 7.4 quotes Eavail-marginal recovered/truth ratio spread (0.0006) alongside 1.84% residual without defining the latter. | `docs/analysis-note/sec_3d.tex:104` | pending |
@@ -1089,17 +1089,17 @@ Scope: Index of referee findings for Round 3 resolution. Resolution column remai
 | **GPT-4.15** | `gpt.txt:93` | Clarify joint-test shift uncertainty set and whether simultaneous simulation-size and below-grid shifts were evaluated. | `docs/analysis-note/sec_joint.tex:178` | pending |
 | **GPT-4.16** | `gpt.txt:95` | Disclose malformed third truth in 5D coverage experiment up front in text and define Bonferroni family scope. | `docs/analysis-note/sec_5d.tex:221` | pending |
 | **GPT-4.17** | `gpt.txt:97` | Reconcile generator normalization between MEC event fraction (2.87%) and no-catch-bin deficit shift (7.2% to 2.7%). | `docs/analysis-note/sec_3d.tex:161` | pending |
-| **GPT-4.18** | `gpt.txt:99` | Complete extended-fiducial reporting definitions including grid, anchor mask, partially accepted cells, and tier metrics. | `docs/analysis-note/sec_fps.tex:14` | pending |
+| **GPT-4.18** | `gpt.txt:99` | Complete extended-fiducial reporting definitions including grid, anchor mask, partially accepted cells, and tier metrics. | `not stated` | pending |
 | **GPT-4.19** | `gpt.txt:101` | Provide full GBDT and Keras-MLP learner configurations, architectures, determinism settings, and tie handling. | `docs/analysis-note/sec_method.tex:150` | pending |
 | **GPT-4.20** | `gpt.txt:103` | Distinguish genuine background from out-of-phase-space subtraction quantitatively across full analysis sample. | `docs/analysis-note/sec_experiment.tex:26` | pending |
 | **GPT-5.1** | `gpt.txt:107` | Ensure standard literature citations adequately ground foundational methods and external tools. | `docs/analysis-note/sec_intro.tex:10` | pending |
-| **GPT-5.2** | `gpt.txt:109` | Embed indispensable scientific definitions directly in note rather than delegating them to internal repository records. | `docs/analysis-note/sec_5d.tex:84` | pending |
+| **GPT-5.2** | `gpt.txt:109` | Embed indispensable scientific definitions directly in note rather than delegating them to internal repository records. | `not stated` | pending |
 | **GPT-5.3** | `gpt.txt:111` | Fully describe learned-estimator configurations rather than delegating specifications to code names. | `docs/analysis-note/sec_method.tex:150` | pending |
 | **GPT-5.4** | `gpt.txt:113` | Provide complete operational definition of reconstructed calorimetric recoil estimator q0_reco. | `docs/analysis-note/sec_3d.tex:24` | pending |
 | **GPT-5.5** | `gpt.txt:115` | Define or replace internal control labels (C08, B3, Stage 0, natures) with self-contained scientific descriptions. | `docs/analysis-note/sec_validation.tex:206` | pending |
 | **GPT-5.6** | `gpt.txt:117` | Embed necessary recovery figures or evidence locally rather than relying solely on companion paper. | `docs/analysis-note/sec_5d.tex:142` | pending |
-| **GPT-5.7** | `gpt.txt:119` | Provide in-note mathematical construction of data-derived lateral surrogate and its draw law. | `docs/analysis-note/sec_joint.tex:118` | pending |
-| **GPT-5.8** | `gpt.txt:121` | Accompany recomputation claims with precise targets and boundaries in note text rather than bare checksums. | `docs/analysis-note/main_note.tex:74` | pending |
+| **GPT-5.7** | `gpt.txt:119` | Provide in-note mathematical construction of data-derived lateral surrogate and its draw law. | `docs/analysis-note/sec_joint.tex:47` | pending |
+| **GPT-5.8** | `gpt.txt:121` | Accompany recomputation claims with precise targets and boundaries in note text rather than bare checksums. | `not stated` | pending |
 | **GPT-6.1** | `gpt.txt:125` | Align abstract caveats with body text regarding 2.6 sigma rounding shifts and malformed third coverage truth. | `docs/analysis-note/main_note.tex:74` | pending |
 | **GPT-6.2** | `gpt.txt:127` | Narrow broad 'validated' and 'pass' language to performance on specific diagnostic tests. | `docs/analysis-note/sec_method.tex:150` | pending |
 | **GPT-6.3** | `gpt.txt:129` | Restrict five-iteration justification to stability of tested diagnostics rather than asserting general convergence. | `docs/analysis-note/sec_method.tex:152` | pending |
@@ -1109,13 +1109,13 @@ Scope: Index of referee findings for Round 3 resolution. Resolution column remai
 | **GPT-6.7** | `gpt.txt:137` | Restrict higher-dimensional validation language to measured marginal normalization checks rather than full distribution recovery. | `docs/analysis-note/sec_execsummary.tex:21` | pending |
 | **GPT-6.8** | `gpt.txt:139` | Reframe background-covariance agreement as close aggregate size rather than absence of method bias. | `docs/analysis-note/app_negweight.tex:153` | pending |
 | **GPT-6.9** | `gpt.txt:141` | Narrow claim of cross-estimator subtraction robustness to removal of tested pathology on evaluated backends. | `docs/analysis-note/app_negweight.tex:40` | pending |
-| **GPT-6.10** | `gpt.txt:143` | Reframe comparable seed-scan and split-varied band sizes as comparable magnitudes rather than seed dominance. | `docs/analysis-note/sec_systematics.tex:156` | pending |
-| **GPT-6.11** | `gpt.txt:145` | Qualify exact-versus-histogram difference as backend-associated difference among available runs rather than ruling out seed effects. | `docs/analysis-note/app_statmethods.tex:347` | pending |
+| **GPT-6.10** | `gpt.txt:143` | Reframe comparable seed-scan and split-varied band sizes as comparable magnitudes rather than seed dominance. | `docs/analysis-note/sec_systematics.tex:299` | pending |
+| **GPT-6.11** | `gpt.txt:145` | Qualify exact-versus-histogram difference as backend-associated difference among available runs rather than ruling out seed effects. | `docs/analysis-note/app_statmethods.tex:554` | pending |
 | **GPT-6.12** | `gpt.txt:147` | Preserve restrictions of binned-response diagnostic to eligible residuals and signal-only calculation in summaries. | `docs/analysis-note/sec_5d.tex:84` | pending |
 | **GPT-6.13** | `gpt.txt:149` | State familywise error guarantee as conditional on stated assumptions rather than experimentally demonstrated validity. | `docs/analysis-note/app_statmethods.tex:500` | pending |
 | **GPT-6.14** | `gpt.txt:151` | Restrict ten joint-test rejections to original hybrid hypotheses rather than physical generator exclusions. | `docs/analysis-note/sec_joint.tex:168` | pending |
 | **GPT-6.15** | `gpt.txt:153` | Limit response robustness claim to sensitivity under coherent variation rather than full calibration robustness. | `docs/analysis-note/sec_joint.tex:272` | pending |
-| **GPT-6.16** | `gpt.txt:155` | Designate extended-fiducial tier 1 as an acceptance-supported central estimate rather than a qualified measurement. | `docs/analysis-note/sec_fps.tex:14` | pending |
+| **GPT-6.16** | `gpt.txt:155` | Designate extended-fiducial tier 1 as an acceptance-supported central estimate rather than a qualified measurement. | `docs/analysis-note/sec_fps.tex:58` | pending |
 | **GPT-6.17** | `gpt.txt:157` | Narrow appendicial claims regarding alternative-model robustness and small standardized differences to direct test metrics. | `docs/analysis-note/app_statmethods.tex:593` | pending |
 
 ### Section 7.2: Gemini Report Findings (§3, §6, and Structural Requests)
