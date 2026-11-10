@@ -1,0 +1,35 @@
+{
+ "A0": {
+  "compared": 22,
+  "differing_fields": [],
+  "differing_leaves": [],
+  "equal": true,
+  "excepted": [
+   "utc",
+   "host"
+  ],
+  "n_differing_leaves": 0
+ },
+ "M": "b1d56e4f08e62983784e34b2278f38a09a68eca0",
+ "e_npz_sha256": "846b9d852218b531d605bd955ca9a9037d187e74723077bdfff4557efafc3ba6",
+ "e_shape": [
+  300,
+  205
+ ],
+ "null_digest": "6bd5259d61b062af7b3a8b09af78fc544e3eba48e35a062a28fdcd923b90f6e0",
+ "phase_s_rc": 0,
+ "readout_sha256": "0c3ad137be128691cce7bbe3ec72493b76791e761e6cd897f75aaf0a4fc7444f",
+ "ref_score": "/dev/shm/josephrb-cov2d-s-G18/ref/score_G18.json",
+ "ref_score_sha256": "849766942b3ecd9e6e72fd5db9d1a59815796b3f917875f8d0122b0c639088ec",
+ "ref_score_sha256_declared": "849766942b3ecd9e6e72fd5db9d1a59815796b3f917875f8d0122b0c639088ec",
+ "regen_score_sha256": "6c15965907955cceb9c5f2d1b27e8c232a5bd424e783320f872b9dda6f583b1d",
+ "score_module_sha256": "6616e14ef32699ac38297382372cb697185212449963b96aed4f40be0b21fe8c",
+ "seeds_first_last": [
+  5720000,
+  5720299
+ ],
+ "status": "OK",
+ "truth": "G18",
+ "why": "A0 EQUAL; E written",
+ "wrapper_sha256": "dfee305eb95a64ab8033a1b44808b53cf778552f19b9f30402959003ed61ae7b"
+}
