@@ -465,10 +465,11 @@ The data are unfolded once, with the full simulation. The Monte Carlo $p$ value 
   \centering\small
   \begin{minipage}[t]{0.48\textwidth}
     \vspace{0pt}
+    % Each relation is in an \mbox: align=center with a text width stretches math glue (journal-editor's read of dd4d7d781).
     \begin{tikzpicture}[
       flow/.style={draw, align=center, font={\scriptsize\hyphenpenalty=10000\relax\exhyphenpenalty=10000\relax}, inner sep=3pt, outer sep=0pt},
       >={Stealth[length=3pt, width=3pt]}, line width=0.4pt]
-      \node[flow, text width=200pt] (null) {$H_{0}(G)$: $\sigma=G$ on every fine cell};
+      \node[flow, text width=200pt] (null) {$H_{0}(G)$: \mbox{$\sigma=G$} on every fine cell};
       \matrix (steps) [matrix of nodes, nodes={flow}, below=9pt of null,
         column sep=8pt, row sep=9pt,
         column 1/.style={nodes={text width=122pt}},
@@ -477,8 +478,8 @@ The data are unfolded once, with the full simulation. The Monte Carlo $p$ value 
         unfold with the other half (five-observable estimator) & unfold with the full simulation \\
         add lateral, normalization, rounding, prediction terms: $T_{\mathrm{null}}$ & $T_{\mathrm{obs}}$ \\
       };
-      \node[flow, text width=200pt, below=9pt of steps] (count) {$k$ of $B$ with $T_{\mathrm{null}}\ge T_{\mathrm{obs}}$; largest $p$ over the shifted nulls};
-      \node[flow, text width=200pt, below=9pt of count] (decision) {Holm steps with the 95\% Clopper--Pearson interval; batches of \jtBatch{}, $B\le\jtBcap$};
+      \node[flow, text width=200pt, below=9pt of steps] (count) {$k$ of $B$ with \mbox{$T_{\mathrm{null}}\ge T_{\mathrm{obs}}$}; largest $p$ over the shifted nulls};
+      \node[flow, text width=200pt, below=9pt of count] (decision) {Holm steps with the 95\% Clopper--Pearson interval; batches of \jtBatch{}, \mbox{$B\le\jtBcap$}};
       \draw[->] (null.south -| steps-1-1.north) -- (steps-1-1.north);
       \foreach \col in {1,2} {
         \draw[->] (steps-1-\col.south) -- (steps-2-\col.north);

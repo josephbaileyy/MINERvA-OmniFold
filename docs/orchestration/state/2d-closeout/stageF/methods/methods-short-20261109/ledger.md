@@ -1300,3 +1300,18 @@ was the mislabel. The director accepted bd08582ee, the hand re-cites of ALIASES 
 - Checks: the rater copy PASS; no Overfull in the paper or the Supplement; check_round with the fill test PASS (and
   its self-test); make_values --check PASS (3849); registry, sec4 (17/17) and pointers (37) PASS.
 - Re-read: `interim-b2-read/fix-pairs-read.tsv` (12 rows, 26bec5eb) against dd4d7d781.
+
+### The re-read of ef7ac93ad and the director's rulings (2026-11-10)
+
+- The director's every-row read of `interim-b2-read/fix-pairs-read.tsv` (26bec5eb): all accepted except M007. After
+  the variant clause, "the same truth's bias" could read as the variant's. Restored: "On the sixteen reported cells, the
+  reported estimator's bias at the same truth satisfies both criteria …" (paper_body.tex:239).
+- JE 2: the director keeps the scoped background sentence (the variant's; only s5n has background-free runs).
+- JE 6: applied. §6.1 runs observation → B0 sentences (contiguous) → mechanism (RS1, verbatim) → the cross-fitting and
+  regularization probe → the ensemble average. That is the order they ran in; the two "retained" conclusions are no
+  longer adjacent.
+- Table S6 (journal-editor's read of dd4d7d781): the relations in three TikZ nodes set with wide gaps. A minimal test
+  (scratchpad s6test/t2.tex) shows that align=center with a text width stretches math glue, and \mbox restores normal
+  spacing. The three relations are now in \mbox; the rendered page was checked.
+- Checks: the rater copy PASS; no Overfull in either build; check_round with the fill test, sec4 (17/17) and registry
+  PASS; check_restyle against ef7ac93ad fails only on the three \mbox.
