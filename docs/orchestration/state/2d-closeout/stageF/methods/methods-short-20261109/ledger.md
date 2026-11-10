@@ -1094,3 +1094,10 @@ each hit was read against its record. The mapping table went to the director, wh
 - **Checks:** check_restyle against 99575b29e PASS (the 23 #981 quotes, the 35 pointers; no paragraph left under a
   stale verbatim label); the Supplement's rater copy rc 0, 25 pages; registry PASS; check_round PASS, and its
   self-test PASS.
+- **The meaning read of the sync pairs** (the director, 2026-11-10; `sync-read/out-sync.txt`, pairs
+  `sync-read/sync-pairs.tsv`) flagged 3 of 9, all LESS and all intended:
+  - Y03: the ISO date was removed by the round-6 fix (the rule against printing dates);
+  - Y08: "at least fifteen-fold" -> "by about an order of magnitude", a correction (14.6 at worst);
+  - Y09: the narrowing to the integrated cross section, which matches the paper's benchmark.
+  No MORE or DIFF flags. The 7 pre-531fefe42 edits (Y01-Y07) are thereby read, and their source comments now say
+  so. d61bb9ad1 is accepted.
