@@ -155,7 +155,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Finding:* `sec_validation.tex:41` at base `b1da7ba8` claims "The five-dimensional estimator is validated", which conflicts with 1B STOP and unvalidated coverage.  
   *Record:* `OUTCOME-20261106-1b-stage1-receipt-stop.md`.  
   *Target:* `docs/analysis-note/sec_validation.tex:41`.  
-  *Resolution:* Change "is validated" to "is evaluated under technical closure checks; coverage is unvalidated".
+  *Resolution:* This row authorizes no tex edit. The sentence in sec_validation.tex already says the five-dimensional estimator is evaluated under the technical closure checks and that its coverage is unvalidated. Do not change it again. Do not run a global replacement of "validates". Do not edit sec_5d.tex under this row. Do not add a coverage statement in either direction.
 
 * **AUD-L4 [T]** — **Training-seed band description.**  
   *Finding:* `sec_method.tex:150` describes training-seed band as controlling ML stochasticity, but for configuration (e) training-seed block is zero while rounding shifts results up to 2.6σ_stat.  
