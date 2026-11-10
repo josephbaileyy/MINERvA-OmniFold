@@ -1,0 +1,27 @@
+host=nid004635 job=61075015 start=2026-11-10T05:58:42Z
+deploy head=639ef907250a2a7909b7b9ba89b2e85e70c9b767 porcelain_lines=0
+nd-unfolding/ll5d.py: OK
+nd-unfolding/fd_1b_c2.py: OK
+nd-unfolding/fd_1b_mc.py: OK
+nd-unfolding/fd_1b_toys.py: OK
+nd-unfolding/fd_1b_inv.py: OK
+nd-unfolding/s1_assemble.py: OK
+nd-unfolding/s5p_universe.py: OK
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/clip/clip_probe2.py: OK
+2d-unfolding/cov2d/cov2d.py: OK
+docs/orchestration/state/2d-closeout/stageF/methods/sf1/manifest/inputs-sha256.txt: OK
+nd-unfolding/pv-ladder/readouts/h2_definition.json: OK
+setup_salloc_env.sh: OK
+nd-unfolding/s5e_candidate.py: OK
+nd-unfolding/s5e_deform.py: OK
+threads OMP=1 OPENBLAS=1 MKL=1 NUMEXPR=1
+vicheck rc=0
+LL5D-VICHECK verdict=PASS
+	Percent of CPU this job got: 96%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:24.13
+	Maximum resident set size (kbytes): 11238108
+	Exit status: 0
+0b8a4b487fd33fb5d34c66be0f9fd5381d5c71ae9c9d8aca323435c6a987c0d7  /pscratch/sd/j/josephrb/ll5d-vicheck-20261110/vicheck.json
+b147fb080e93cb9973b59cd6077038cb70edcacc76ab88f5ecb040b972ead885  /pscratch/sd/j/josephrb/ll5d-vicheck-20261110/vicheck.out
+6c722b48c1b6b45a23bbe1c16d8019644de78e3f4560e3c2d554f8d072b78f63  /pscratch/sd/j/josephrb/ll5d-vicheck-20261110/vicheck.time
+end=2026-11-10T06:00:13Z
