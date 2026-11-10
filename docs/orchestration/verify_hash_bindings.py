@@ -512,8 +512,8 @@ FIXTURE_SET_SHA256 = "36355204b4b82fa4f901740b75667ee1efd0152864067196f17e23e3ed
 #:   ADDED   nd-unfolding/s5e_analyze_candidate.py cc00829e
 #: Power-tested after the bump: one flipped hex digit in that pin gives MISMATCH on that path, rc 1.
 #: Delta and controls: docs/orchestration/state/s5e/cand/a3-rounding-shifts-20261109/binding-delta.txt.
-#: 167 -> 169, digest 18818a17 -> a9f3a844 (2026-11-09, the V-HALF read, branch receipts/v-half-read-20261109; the
-#: director's ruling, as in PR #1008). Its record
+#: 167 -> 169, digest 18818a17 -> a9f3a844 (2026-11-09, the V-HALF read, PR #1009; the director's ruling, as in
+#: PR #1008). Its record
 #: (state/2d-closeout/valid-region-20261107/v-half/receipts/read/readout.json, v_half.py's output) pins the two inputs
 #: it checked, H1 and H2. Enumerated before the constant moved (receipt_inventory() rows with and without that record on
 #: the branch): two ADDED, nothing removed or repointed, both OK:

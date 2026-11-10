@@ -43,6 +43,7 @@ LICENCE (DECLARATION.md §10) allows.
     to 169, and its digest from 18818a17 to a9f3a844.
   - The delta and the power test (each pin flipped, MISMATCH, restored and cmp-verified) are in `binding-delta.txt`.
     Their outputs are in `lane/`.
-- **The rerun at the head.** The rerun is from a fresh clone at this receipt's commit, which adds only this directory,
-  the four index files, the CATALOG and overrides rows and MANIFEST.tsv. It gives byte-identical outputs
-  (`rerun-at-head.txt`).
+- **The rerun at the head.** The rerun is from a fresh clone at this receipt's commit 35577ba6. That commit adds only
+  this directory, the four index files, the binding constants, the CATALOG and overrides rows and MANIFEST.tsv. The rerun
+  had empty porcelain before and after, and its outputs are byte-identical to the first read: readout.json e7423390… and
+  readout.txt d1b91a42… (`rerun-at-head.txt`).
