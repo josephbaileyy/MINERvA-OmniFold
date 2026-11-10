@@ -1315,3 +1315,92 @@ was the mislabel. The director accepted bd08582ee, the hand re-cites of ALIASES 
   spacing. The three relations are now in \mbox; the rendered page was checked.
 - Checks: the rater copy PASS; no Overfull in either build; check_round with the fill test, sec4 (17/17) and registry
   PASS; check_restyle against ef7ac93ad fails only on the three \mbox.
+
+## Group B (#1025; Joseph approved the director's plan, 2026-11-10)
+
+### B5: no prediction corrected with a sample that failed its own check (director-helper-3's item; the director's rulings (a)–(e))
+
+- **Swept by claim.** The keys and sentences whose value uses a CH-corrected NuWro or GiBUU prediction are all in S10
+  (Supplement), except V-PRIOR (below). The paper, the abstract and tab:outcomes print no generator-comparison key.
+- **Removed:**
+  - Table S7's CH-corrected NuWro and GiBUU rows and their footnotes a and b. These are #981 quotes Q11–Q13;
+    check_restyle reports them, and the re-pin is limitation-resolver's, by the director's ruling.
+  - S10's correction sentence; "On carbon, NuWro gives …"; "For GiBUU, the effect of the CH correction …"; "A native CH
+    generation of NuWro agrees with the combination …".
+  - tab:cmodel16's "ratios from CH" column and its NuWro and GiBUU rows. Nominal C_model reads the carbon ratios:
+    make_values e2_values ("The reported covariance keeps C_model on carbon (x1)"); pv-ladder config.json:58-65, the C12
+    products nuwro_cv_xsec5d_full.npz and gibuu_cv_xsec5d_fluxfix.npz.
+- **Kept, labelled carbon only:**
+  - Table S7's NuWro and GiBUU rows on carbon, in the analysis definitions, both arms. Source: defs.json (544f4f43)
+    generators.{nuwro,gibuu}.carbon.analysis_definitions.chi2.{reported,without_C_PL5D}.
+  - New keys label-{nuwro,gibuu}-carbon and g-{nuwro,gibuu}-carbon-*-ndf.
+- **The reason, as each generator's record states it** (S10 :602):
+  - NuWro: "in NuWro's free-proton sample, the events lost to generator aborts in the supplement generated at neutrino
+    energies of 50–100 GeV were not shown to be negligible". The note's sec_joint.tex sec:joint5d-ch: the
+    supplement's 95% upper bound of 1.8e-4 exceeds the 1e-4 level set for it, "flagged rather than assumed negligible".
+  - GiBUU: "GiBUU's free-proton sample failed its sampling-closure check" (the same section: "the sampling-closure
+    check failed on the hydrogen sample").
+- **Ranges re-keyed over the remaining predictions**, each from a committed readout's per-prediction values. No range
+  is dropped; no new compute.
+  - gdef-dmax → gdef-b5-dmax: defs.json generators[genie_cv, genie_mec].CH.delta_over_sigma and [nuwro, gibuu].carbon
+    .delta_over_sigma. The value is unchanged, 0.063 (bound 0.07).
+  - pl-chi2fall-* → pl-chi2fall-b5-*: Table IV's chi2 for GENIE CV, GENIE + MEC and Tune v1 (both arms), plus NuWro and
+    GiBUU carbon. Total 3.6–30.6 % (was 3.6–29.3); shape-only 7.4–39.7 % (was 7.4–40.4).
+  - sens-flux-fall-*, sens-detlat-fall-max, sens-joint-chi2-min → sens-b5-*: the sens2 and fup records with
+    prediction ≠ nuwro, 16 cells. 23–38 %, ≤ 18 %, ≥ 41: unchanged. The readouts hold no carbon-only NuWro record, so
+    the sentence names "the GENIE CV, GENIE + MEC and Tune v1 predictions".
+  - fb-edge-max, fb-offset-relmax → fb-b5-*: fboot bands for genie_cv, genie_mec, mnvtune_v1. 3.8 % and 0.4 %:
+    unchanged.
+- **fig:ratio16:** Codex regenerates it through the printed figure's producer (nd-unfolding/fd_gencmp_ea2.py, a24d7c421)
+  with NuWro and GiBUU on carbon only, from defs.json's per-cell carbon g_over_f_minus_1, if f and σ/f match the printed
+  figure. Otherwise the two curves are removed. PENDING: this commit is not pushed until the figure and its caption land.
+- **V-PRIOR (S11 rule 2; the paper's §5.4 "14 of the 16 cells valid and 12 under both")** uses the CH-corrected
+  predictions. valid-region-20261107/DECLARATION.md:120 names I3 as fd_g_readout.json, "with NuWro and GiBUU corrected
+  to CH"; :137 gives the generators. Not changed. Raised with the director for a ruling.
+- check 12 (SUPP-SYNC): S10's paragraphs are "Moved from the paper", not note-copied, so the sync check pairs none of
+  them. The report is unchanged (58 note-copied paragraphs: explained 43, same 14, seed-adapted 1). The intended
+  divergence from the note, which keeps the CH-corrected comparison, is recorded here.
+
+### B6, B4a, B4b, B3a, B3b, B2, B1 (limitation-resolver's drafts in its scratchpad bdraft/, the director's group B rulings)
+
+- **Symbols** (the director's ruling 2: ρ is only the retained fraction; one meaning each across both documents):
+  - ρ: the retained fraction (paper §5.3; S9 supp:prr and the B4b paragraph and table).
+  - κ: the IBU-to-2D distance ratio. Paper §4.1 (was r) and S8 (was ρ); per replica κ_b (B6).
+  - φ₁: the weighted density of class 1 in S4's background derivation (was ρ₁; 5 uses).
+  - η: V-PRIOR's spread ratio S_b/S_g in S11 (was ρ).
+  - ω: the synthetic q3 tilt's event weight (B3a; the draft's r). ω_c = k t_c and ω_T: a held-out tune's reweighting
+    (B3b, B2; the draft's r_c, r_T).
+  - t_c: a tune's gated ratio to the GENIE CV reference (B3b; the draft's ρ_c).
+  - r is not given a new meaning. Its existing uses (S4's r = p/(1-p); S7's residual r = F - μ_G; S9's r_b) are not
+    touched.
+- **Every number is a build-checked key** (make_values groupb_values) except where noted. New pins: c2c1 (0ee21301),
+  refg1 (4db170d3), refg1bars (ba4b6985), s5ntruth (14ee2800), f1config (b0c7a0d9), cov2dar23 (fe5263e9), cov2dg18
+  (84976694), s5econtract (f6d3791c). Text pins: s5cpseudo (d81d4f46), f1prep (f31a996a), cov2ddecl (0328c916),
+  ll5ddecl (6748d418), nullcode (ec1402db), stabdecl (6c91c0cc), fd1bdecl (50d9e883).
+  - Declaration and code numbers are read by anchored patterns that must match exactly once.
+  - The paper's own sentences that print the same numbers now use the same keys: §4.1 (T, q95, max, n, κ and its
+    interval, T₁, n₁, 4 %, q95₁), §5.1 and tab:outcomes (2.7, 0.09, 40, 16–31) and §5.4 (194.4, 28.12, 39.04).
+  - Not keyed:
+    - B1 row 1's 187 universes, 300 replicas, three period groups and five seed settings: the paper's own §3.2
+      literals, with no committed record of the counts found (round 5 printed them without a source comment). Flagged
+      to the director.
+    - Structural counts printed as literals elsewhere (16 cells, 205 bins, 0.5 in the V-HALF rule).
+- **Placement:**
+  - B6 follows S8's κ definition.
+  - B4a (tab:ibu16-cells) follows the sixteen-cell comparison.
+  - B4b (supp:prr's results paragraph and tab:prr-rho) follows S9's thresholds.
+  - B3a (supp:q3tilt) and B3b (supp:tunes, tab:tune-gate) follow S9's held-out-tunes paragraph.
+  - B2 (supp:covdesign, tab:cov-design) precedes the second test's paragraph. Its Truths row points to supp:tunes.
+  - B1 opens S9. It is split into four [p] tables (tests 1–5 and 6–10, each table), because each table exceeded a page
+    and the rater copy counts table environments.
+- **Rulings applied:**
+  - No Δ in cross-section or σ units (B4a as drafted).
+  - No "CV-positive": the region is "the cells where the central value and both predictions are positive".
+  - B1 row 9's result is the paper's §6.2 sentence. B1 row 10 is wired to tab:outcomes' LL5D group through
+    \fvgroupalt{ll5d}{pending}{…}.
+  - §6.3's carry-over sentence agrees with B2's last paragraph (one-sided, fd_1b_null.py:111-122; "the same n" = 16).
+- **Checks on the working tree:**
+  - the paper's rater copy PASS; the Supplement's rater copy PASS (16 of 16 table captions);
+  - no Overfull in either build;
+  - check_round with the fill test PASS; make_values --check PASS (4026 values) and its self-test PASS;
+  - sec4 17/17 (17 passed); pointers 37; registry PASS.

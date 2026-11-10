@@ -102,6 +102,27 @@ READOUTS = {
     "s5e": ("docs/orchestration/state/s5e/cand/assess_receipt.json", "84266e30"),
     # s5n's development receipt: the lower-capacity variant's GiBUU-to-GENIE experiments (the Supplement's figure S1)
     "s5ndev": ("docs/orchestration/state/s5n/stage1/dev_receipt.json", "1ef4096c"),
+    # group B (#1025): the two-dimensional comparisons' read (REF-C2C1, read 2) and the sixteen-cell IBU comparison (REF-G1)
+    "c2c1": (f"{FD}/fd/receipts-ref-c2c1/step2/read-2/readout.json", "0ee21301"),
+    "refg1": (f"{FD}/fd/receipts-ref-g1/a1-read/readout.json", "4db170d3"),
+    # group B3a: the synthetic q3 tilt's truth check (s5n stage 1) and its weight function (read as text, never imported)
+    "s5ntruth": ("docs/orchestration/state/s5n/stage1/truth_check.json", "14ee2800"),
+    "s5cpseudo": ("nd-unfolding/s5c_pseudo.py", "d81d4f46"),
+    # group B3b: the held-out tunes' ratio gate (F1's prep config and its log of the gate's tiers and k, a text receipt)
+    "f1config": (f"{FD}/fd/receipts-f1/run/cluster/f1b3/prep/config-f1.json", "b0c7a0d9"),
+    "f1prep": (f"{FD}/fd/receipts-f1/run/cluster/f1b3/logs/prep.log", "f31a996a"),
+    # group B2: the two coverage tests' designs, from their declarations, and the null's constants from its code (text)
+    "cov2ddecl": (f"{FD}/COV2D-DECLARATION.md", "0328c916"),
+    "ll5ddecl": (f"{FD}/LL5D-DECLARATION.md", "6748d418"),
+    "nullcode": ("nd-unfolding/fd_1b_null.py", "ec1402db"),
+    # group B1: the headline tests' tables. s5e's contract (C3's |t| cut), REF-G1's bars, the two-dimensional coverage
+    # test's score records, and the declarations that alone state FD-STAB's pairs and the first 5D test's toys (text)
+    "s5econtract": ("docs/orchestration/state/s5e/contract-amendment-3-candidate-R-and-assessment.json", "f6d3791c"),
+    "refg1bars": (f"{FD}/fd/receipts-ref-g1/a1-connect1/bars.json", "ba4b6985"),
+    "cov2dar23": (f"{FD}/fd/receipts-cov2d/readout/AR23/score_AR23.json", "fe5263e9"),
+    "cov2dg18": (f"{FD}/fd/receipts-cov2d/readout/G18/score_G18.json", "84976694"),
+    "stabdecl": (f"{FD}/FD-STAB-DECLARATION.md", "6c91c0cc"),
+    "fd1bdecl": (f"{FD}/FD-1B-STAGED-DECLARATION.md", "50d9e883"),
 }
 # the committed readouts without the run-period block, for the "-nopl" keys
 NOPL_READOUTS = dict(READOUTS, **{
@@ -153,7 +174,7 @@ def paper_prec(k, x):
 FIGURES = {"fd_g_fig_ratio.pdf": ("fd/gencmp-e/rerun1/chain/chdefs/with/figures-a2", "6214ed78"),
            "fd_g_fig_modes.pdf": ("fd/gencmp-e/rerun1/chain/chdefs/with/figures-a2", "0d6fe57c")}
 # the readouts that are text receipts, not JSON
-TEXT_READOUTS = {"gprobe", "e2sens", "s1code"}
+TEXT_READOUTS = {"gprobe", "e2sens", "s1code", "s5cpseudo", "f1prep", "cov2ddecl", "ll5ddecl", "nullcode", "stabdecl", "fd1bdecl"}
 CELLS = [f"R{i:02d}" for i in range(16)]
 BLOCK = {"stat": "statistical", "interaction": "interaction", "flux": "flux", "detector": "detector",
          "lateral": "lateral", "normalization": "normalization", "seed": "training seed", "C_resp": r"$C_{\mathrm{resp}}$",
@@ -608,6 +629,12 @@ def gencmp_values(d, arm):
     v["gdef-dmax"], v["gdef-dmax-bound"] = f"{dmax:.3f}", f"{math.ceil(100 * dmax) / 100:.2f}"
     assert (v["gdef-dmax"], v["gdef-dmax-bound"]) == ("0.063", "0.07"), "the method sentence's figures changed"
     assert not any(gd["generators"][n]["CH"]["seed_spread_flag"] for n in GENCMP4)
+    # group B5 (#1025; the director's ruling (b)): the same bound over the predictions the Supplement's comparison keeps,
+    # GENIE CV and GENIE + MEC on CH (as generated) and NuWro and GiBUU on carbon only, from the same readout's fields
+    b5 = [x for n in ("genie_cv", "genie_mec") for x in gd["generators"][n]["CH"]["delta_over_sigma"]] + \
+         [x for n in ("nuwro", "gibuu") for x in gd["generators"][n]["carbon"]["delta_over_sigma"]]
+    d5 = max(abs(x) for x in b5)
+    v["gdef-b5-dmax"], v["gdef-b5-dmax-bound"] = f"{d5:.3f}", f"{math.ceil(100 * d5) / 100:.2f}"
     v["gdef-seedmax"] = f"{max(x for n in GENCMP4 for x in gd['generators'][n]['CH']['seed_spread_over_sigma']):.3f}"
     # Q08: NuWro and GiBUU on carbon in the analysis definitions (the text and the note), and the change to CH
     ana = {(n, t): gd["generators"][n][t]["analysis_definitions"]["chi2"][mat] for n in ("nuwro", "gibuu")
@@ -617,6 +644,7 @@ def gencmp_values(d, arm):
             x = ana[n, "carbon"][part]["chi2"]
             v[f"g-{PRED[n]}-carbon-{part}-chi2"], v[f"g-{PRED[n]}-carbon-{part}-chi2int"] = f"{x:.2f}", f"{x:.0f}"
             v[f"g-{PRED[n]}-carbon-{part}-chi2r1"] = f"{x:.1f}"
+            v[f"g-{PRED[n]}-carbon-{part}-ndf"] = str(ana[n, "carbon"][part]["ndf"])   # group B5: Table S7's block headings
     rise = ana["gibuu", "CH"]["total"]["chi2"] - ana["gibuu", "carbon"]["total"]["chi2"]
     assert rise > 0 and ana["gibuu", "CH"]["shape_only"]["chi2"] < ana["gibuu", "carbon"]["shape_only"]["chi2"], \
         "the clause says GiBUU's total chi2 rises with the correction and its shape-only chi2 falls"
@@ -1070,6 +1098,8 @@ def values(d, arm="with"):
         base = short_label(next(q for q in d["g"]["predictions"] if q["name"] == name))
         assert base == v[f"gs-label-{PRED[name]}"], f"{name}: the readouts name the prediction differently"
         v[f"label-{PRED[name]}"] = base + (" (CH)" if name in ("nuwro", "gibuu") else "")
+        if name in ("nuwro", "gibuu"):   # group B5 (#1025): the Supplement shows them on carbon only
+            v[f"label-{PRED[name]}-carbon"] = base + " (carbon only)"
         v[f"{k}-ncells"] = str(len(p["cells"]))
         WORDS = {7: "seven", 8: "eight", 9: "nine", 16: "sixteen"}   # the abstracts print the count in words
         v[f"{k}-ncells-word"] = WORDS[len(p["cells"])]
@@ -1093,6 +1123,19 @@ def values(d, arm="with"):
     joint = [r["chi2"] for r in recs if r["family"] == "c_e_systematic" and r["alpha"] == 1.0 and len(r["cells"]) == 16]
     assert len(joint) == 4
     v["sens-joint-chi2-min"] = f"{math.floor(min(joint)):.0f}"
+    # group B5 (#1025; the director's ruling (b)): the same bounds over the 16-cell predictions without the CH-corrected
+    # NuWro (GENIE CV, GENIE + MEC, Tune v1), from the same records; the readouts hold no carbon-only NuWro record
+    def ratios5(fam, alpha):
+        return [r["chi2"] / r["chi2_at_alpha_0"] for r in recs if r["family"] == fam and abs(r["alpha"] - alpha) < 1e-12
+                and len(r["cells"]) == 16 and r["prediction"] != "nuwro"]
+    fl5, other5 = ratios5("flux", 0.1), ratios5("detector", 0.1) + ratios5("lateral", 0.1)
+    assert len(fl5) == 3 and len(other5) == 6
+    v["sens-b5-flux-fall-lo"], v["sens-b5-flux-fall-hi"] = f"{100 * (1 - max(fl5)):.0f}", f"{100 * (1 - min(fl5)):.0f}"
+    v["sens-b5-detlat-fall-max"] = f"{math.ceil(100 * (1 - min(other5))):.0f}"
+    joint5 = [r["chi2"] for r in recs if r["family"] == "c_e_systematic" and r["alpha"] == 1.0 and len(r["cells"]) == 16
+              and r["prediction"] != "nuwro"]
+    assert len(joint5) == 3
+    v["sens-b5-joint-chi2-min"] = f"{math.floor(min(joint5)):.0f}"
     # C_resp by species, the sigma ratio, and the trace shares
     for sp in ("C_resp_proton", "C_resp_meson", "C_resp_em", "C_resp_other", "C_resp_xtalk"):
         vals = [cr[sp][c] for c in CELLS] if isinstance(cr[sp], dict) else cr[sp]
@@ -1296,6 +1339,12 @@ def values(d, arm="with"):
     v["fb-edge-min"] = f"{math.floor(1000 * min(edge)) / 10:.1f}"
     v["fb-edge-max"] = f"{math.ceil(1000 * max(edge)) / 10:.1f}"
     v["fb-offset-relmax"] = f"{math.ceil(1000 * max(off)) / 10:.1f}"
+    # group B5 (#1025; the director's ruling (b)): over the 16-cell predictions without the CH-corrected NuWro
+    e5 = [max(band[n]["chi2_stage_g"] - band[n]["total"]["percentiles"]["16"], band[n]["total"]["percentiles"]["84"]
+              - band[n]["chi2_stage_g"]) / band[n]["chi2_stage_g"] for n in ("genie_cv", "genie_mec", "mnvtune_v1")]
+    o5 = [band[n]["total"]["offset_median_minus_centre"] / band[n]["chi2_stage_g"] for n in ("genie_cv", "genie_mec", "mnvtune_v1")]
+    assert all(band[n]["ndf"] == 16 for n in ("genie_cv", "genie_mec", "mnvtune_v1")) and min(o5) > 0
+    v["fb-b5-edge-max"], v["fb-b5-offset-relmax"] = f"{math.ceil(1000 * max(e5)) / 10:.1f}", f"{math.ceil(1000 * max(o5)) / 10:.1f}"
     v["fb-replicates"] = str(fb["constants"]["replicates"])
     v["fb-universes"] = str(fb["constants"]["universes"])
     pcts = fb["constants"]["percentiles"]
@@ -1431,8 +1480,175 @@ def values(d, arm="with"):
     se_e = max(100 * x for w in ("W1", "W2", "W3") for x in a["points"][w]["per_functional"]["se_rel"][:42])
     se_lc = max(100 * x for x in d["s5ndev"]["grid"]["C4_eavail_shape"]["per_functional"]["se_rel"][:42])
     v["s5e-shapes-semax"], v["s5n-gibuu-semax"] = f"{se_e:.2f}", f"{se_lc:.2f}"
+    v.update(groupb_values(d))
     rp = a["A3"]["data_rounding_probe_over_data_sigma"]
     v["s5e-round-median"], v["s5e-round-max"] = f"{rp['median']:.1f}", f"{rp['max']:.1f}"
+    return v
+
+
+def groupb_values(d):
+    """Group B of the interim round (#1025): the numbers limitation-resolver's drafts print, each from its record.
+    B6 and section 4.1: the IBU-to-2D distance ratio kappa (the readout's rho; renamed so that rho is only the retained
+    fraction), its interval over the paired replicas and the comparisons' statistics (REF-C2C1 read 2). B4a: IBU at five
+    iterations against (e), Delta = f_IBU - f_(e) (REF-G1-DECLARATION.md:76), per cell as a fraction of f_(e) and in units
+    of sqrt((C_Delta)_cc) (printed_beside_R1, the declared fold_K5). B4b: the retained fractions at the two flagged
+    truths (the FD-PRR readout, B0 and IBU K5 and K200 at split s991000) and the noise floor."""
+    v = {}
+    c = d["c2c1"]
+    assert c["schema"] == "ref-c2c1-readout/1" and c["controls"]["done"]["pass"]
+    k10, c1 = c["K10"], c["C1-R1"]
+    assert k10["C2-R1"]["reading"] == "differ" and c1["reading"] == "equivalent"
+    v["c2c1-kappa"] = f"{k10['rho']:.3f}"
+    v["c2c1-kappa-lo"], v["c2c1-kappa-hi"] = (f"{x:.3f}" for x in k10["rho_interval"])
+    assert k10["rho"] < k10["rho_interval"][0], "the text says the point estimate lies below the interval"
+    v["c2c1-nrep"] = str(k10["C2-R1"]["n_replicas"])
+    v["c2c1-T"], v["c2c1-q95"], v["c2c1-max"] = (f"{k10['C2-R1'][x]:.1f}" for x in ("T", "q95", "max"))
+    v["c1-T"], v["c1-q95"] = f"{c1['T']:.2f}", f"{c1['q95']:.2f}"
+    v["c1-nrep"] = str(c1["n_replicas"])
+    v["c1-below-pct"] = f"{100 * (1 - c1['T'] / c1['q95']):.0f}"
+    g = d["refg1"]
+    assert g["schema"] == "ref-g1-readout/1" and g["R1"]["reading"] == "differ"
+    pb = g["printed_beside_R1"]
+    assert pb["delta_over_e"] == pb["every_k_and_variant_delta_over_e"]["fold_K5"] and len(pb["pulls"]) == 16
+    for i, (x, z) in enumerate(zip(pb["delta_over_e"], pb["pulls"])):
+        v[f"ibu16-dof-R{i:02d}"], v[f"ibu16-pull-R{i:02d}"] = f"{100 * x:+.1f}", f"{z:+.2f}"
+    v["ibu16-T"] = f"{g['R1']['T']:.1f}"
+    r = d["prr"]
+    for t, T in PRR_TRUTHS.items():
+        e, i5, i200 = r["table"][f"B0/{T}/s991000"], r["ibu"][f"K5/{T}/s991000"], r["ibu"][f"K200/{T}/s991000"]
+        assert e["n_S"] == 16
+        v[f"prr-rho-e-{t}"], v[f"prr-rho-ibu-{t}"], v[f"prr-rho-ibu200-{t}"] = (f"{x['rho']:.3f}" for x in (e, i5, i200))
+        v[f"prr-rms-e-{t}"], v[f"prr-rms-ibu-{t}"] = f"{e['rms_b']:.3f}", f"{i5['rms_b']:.3f}"
+        v[f"prr-chi2-e-{t}"], v[f"prr-chi2-ibu-{t}"] = f"{e['grade']['chi2']:.1f}", f"{i5['grade']['chi2']:.1f}"
+        assert i5["rho"] < e["rho"], "the text says IBU at five iterations retains less"
+    # B3a: the synthetic q3 tilt, r = 1 + a z~ (s5c_pseudo.py truth_weight "q3_given_eavail_w"); a and the clip from the
+    # code, the event count, the range and in-cell spread of the weight and the two preservation checks from the truth check
+    q = d["s5ntruth"]["departures"]["q3_given_eavail_w"]
+    m = re.search(r"z = np\.clip\(\(q - mu\[cell\]\) / np\.sqrt\(np\.where\(var > 0, var, 1\.0\)\)\[cell\], -([0-9.]+), ([0-9.]+)\)",
+                  d["s5cpseudo"])
+    assert m and m.group(1) == m.group(2), "the q3 tilt's clip changed"
+    v["q3tilt-clip"] = f"{float(m.group(1)):g}"
+    v["q3tilt-a"] = f"{q['amplitude']:g}"
+    assert q["rows_outside_grid_with_r_not_1"] == 0 and q["weight_marginal_preserved_1e-6"]
+    n = d["s5ntruth"]["rows_in_grid"]
+    v["q3tilt-nrows"] = rf"{n / 10 ** 7:.2f}\times10^{{7}}"
+    assert 1e7 <= n < 1e8
+    v["q3tilt-rmin"], v["q3tilt-rmax"] = f"{q['r_min']:.3f}", f"{q['r_max']:.3f}"
+    v["q3tilt-std-lo"], v["q3tilt-std-hi"], v["q3tilt-std-med"] = (f"{q[k]:.2f}" for k in ("in_cell_r_std_min", "in_cell_r_std_max",
+                                                                                   "in_cell_r_std_median"))
+    def sci(x):
+        e = math.floor(math.log10(x)); return rf"{x / 10 ** e:.0f}\times10^{{{e}}}" if round(x / 10 ** e) < 10 else rf"1\times10^{{{e + 1}}}"
+    def sci1(x):
+        e = math.floor(math.log10(x)); return rf"{x / 10 ** e:.1f}\times10^{{{e}}}"
+    v["q3tilt-ewdev"] = sci(q["weight_marginal_EW_ratio_max_abs_dev"])
+    m1 = [abs(x - 1) for x in q["M1_ratio"][:42]]
+    assert len(q["M1_ratio"]) == 43
+    v["q3tilt-m1dev"], v["q3tilt-nfunc"] = sci1(max(m1)), str(len(m1))
+    # B3b: the held-out tunes' gated shape ratio (pvl_ratios.py, run unchanged by F1's prep): the gate (stat_max), each
+    # tune's events, its tiers and prior-weight shares and the normalization k, as the prep logged them; the region is the
+    # sum of the tiers, the same for both tunes
+    v["f1-statmax"] = f"{d['f1config']['ratio']['stat_max']:g}"
+    nev = {d[f"f1meta-{t}"]["normalisation"]["N_events_in_file"] for t in ("g18", "ar23")}
+    assert len(nev) == 1
+    v["f1-nevents"] = rf"{nev.pop() / 10 ** 6:.2f}\times10^{{6}}"
+    region = set()
+    for t in ("g18", "ar23"):
+        lm = re.search(r"genie_v3_%s: tiers (\{.*\}), k=([0-9.]+)," % t, d["f1prep"])
+        tiers, k = json.loads(lm.group(1)), float(lm.group(2))
+        cells = [tiers[x]["cells"] for x in ("own ratio", "coarse cell", "r = 1")]
+        share = [tiers[x]["prior_weight_share"] for x in ("own ratio", "coarse cell", "r = 1")]
+        assert abs(sum(share) - 1) < 1e-9
+        region.add(sum(cells))
+        for x, c, sh in zip(("own", "pooled", "one"), cells, share):
+            v[f"f1-{t}-tier-{x}"], v[f"f1-{t}-share-{x}"] = f"{c:,}".replace(",", "{,}"), f"{sh:.3f}"
+        v[f"f1-{t}-k"] = f"{k:.5f}"
+    assert len(region) == 1
+    v["f1-region-cells"] = f"{region.pop():,}".replace(",", "{,}")
+    # B2: each design number from its declaration's table row, each null constant from fd_1b_null.py (unchanged since
+    # cf0505d9); a declaration or code edit that moves one stops here
+    def one(pat, txt, what):
+        m = re.findall(pat, txt)
+        assert len(m) == 1, f"{what}: found {len(m)} times"
+        return m[0]
+    c2, l5, nc = d["cov2ddecl"], d["ll5ddecl"], d["nullcode"]
+    nb, nu, fx, pp, tp = one(r"(\d+) bands, (\d+) universes \(Flux (\d+), 2p2h (\d+), (\d+) bands at 2\)", c2, "COV2D's bank")
+    assert int(nb) == 2 + int(tp) and int(nu) == int(fx) + int(pp) + 2 * int(tp)
+    v["cov2d-nbands"], v["cov2d-fluxu"], v["cov2d-2p2h"], v["cov2d-twopt"] = nb, fx, pp, tp
+    v["cov2d-statrep"] = one(r"\| statistical \| (\d+) three-stream bootstrap replicas", c2, "COV2D's statistical block")
+    nrm = {one(r"x̂ × \(1 \+ ([0-9.]+) z\), z ~ N\(0, 1\)", t, w) for t, w in ((c2, "COV2D"), (l5, "LL5D"))}
+    assert len(nrm) == 1
+    v["cov-norm"] = nrm.pop()
+    wk = {one(r"variance ratio from C2 is below ([0-9.]+)", c2, "COV2D weakened"),
+          one(r"a pass in a cell whose clipped variance ratio is below ([0-9.]+)", l5, "LL5D weakened")}
+    assert len(wk) == 1
+    v["cov-weak"] = wk.pop()
+    v["ll5d-nint"] = one(r"\| \*\*interaction\*\* \| each of the (\d+) bands", l5, "LL5D interaction")
+    v["ll5d-ndet"] = one(r"\| \*\*detector\*\* \| each of the (\d+) bands", l5, "LL5D detector")
+    v["ll5d-statrep"] = one(r"replicas b = 1–(\d+) by `s5n_pseudo\.bootstrap_replica`", l5, "LL5D statistical block")
+    const = {}
+    for k in ("P0", "N_TOYS", "ALPHA_CELLS", "ALPHA_JOINT", "N_MC", "SE_MARGIN", "MATCH_TOL"):
+        m = re.findall(r"^%s = ([^#\n]+)" % k, nc, re.M)
+        assert len(m) == 1, f"fd_1b_null.py's {k}: found {len(m)} times"
+        const[k] = m[0].strip()
+    assert const["P0"] == "math.erf(1 / math.sqrt(2))"
+    v["null-p0"] = f"{math.erf(1 / math.sqrt(2)):.4f}"
+    v["null-ntoys"] = str(int(const["N_TOYS"]))
+    a_c, a_j = float(const["ALPHA_CELLS"]), float(const["ALPHA_JOINT"])
+    assert a_c == a_j
+    v["null-alpha"], v["null-size"] = f"{a_c:g}", f"{a_c + a_j:g}"
+    nmc = int(const["N_MC"].replace("_", ""))
+    assert nmc == 2 * 10 ** 6
+    v["null-nmc"] = rf"{nmc // 10 ** 6}\times10^{{6}}"
+    se = float(const["SE_MARGIN"])
+    v["null-se-word"] = {3.0: "three"}[se]
+    tol = float(const["MATCH_TOL"])
+    v["null-tol"] = rf"10^{{{round(math.log10(tol))}}}"
+    # B1 (and the paper's sentences that print the same numbers): s5e's closure at the prior and its changed truths
+    a = d["s5e"]
+    pts, ct = a["points"], d["s5econtract"]["criteria"]["C3"]
+    assert pts["nominal"]["n_abs_t_gt_3.6"] == 0 and ct["t_crit"] == 3.6
+    v["s5e-tcrit"] = f"{ct['t_crit']:g}"
+    v["s5e-nom-n"] = str(pts["nominal"]["n"])
+    assert {pts[w]["n"] for w in ("W1", "W2", "W3", "q3", "eavail_gibuu")} == {20}
+    v["s5e-shape-n"] = "20"
+    v["s5e-nquant"] = str(len(a["functional_names"]))
+    v["s5e-nom-tmax"], v["s5e-nom-ewmax"] = f"{pts['nominal']['max_abs_t']:.1f}", f"{pts['nominal']['ew_max_abs_pct']:.2f}"
+    sh = [pts[w]["ew_max_abs_pct"] for w in ("W1", "W2", "W3")]
+    v["s5e-shapes-ewmax-lo"], v["s5e-shapes-ewmax-hi"] = f"{min(sh):.0f}", f"{max(sh):.0f}"
+    v["s5e-q3-ewmax"] = f"{pts['q3']['ew_max_abs_pct']:.1f}"
+    # REF-G1's thresholds (bars.json: the parametric bootstrap's 0.95 and 0.997 quantiles) and replicas
+    b = d["refg1bars"]
+    assert b["schema"] == "ref-g1-bars/1" and b["quantile_levels"] == [0.95, 0.997] and b["norm_fraction"] == 0.014
+    v["ibu16-q95"], v["ibu16-q997"] = (f"{x:.2f}" for x in b["bars"])
+    v["ibu16-nrep"] = str(b["n_replicas"])
+    # FD-PRR's tested levels per factor (PR-3's levels: iterations K*, capacity C*, statistics MC*, observables O*)
+    lv = set(r["readings"]["PR-3"]) - {"B0", "IBU_K5"}       # the tested levels (the table also holds O5, F4's baseline)
+    for f, pre in (("iter", "K"), ("cap", "C"), ("stat", "MC"), ("obs", "O")):
+        v[f"prr-nlev-{f}"] = str(sum(1 for x in lv if x.startswith(pre)))
+    assert sum(int(v[f"prr-nlev-{f}"]) for f in ("iter", "cap", "stat", "obs")) == len(lv)
+    # FD-STAB's disjoint pairs (its declaration) and ENS1's pairs (its stage-1 readout)
+    v["stab-npairs"] = one(r"form (\d+) disjoint pairs", d["stabdecl"], "FD-STAB's pairs")
+    v["ens1-pairs"] = str(d["ens1s1"]["pairs"])
+    # the two-dimensional coverage test: each tune's joint count and flagged cells (score records), its ndf
+    for t, key in (("ar23", "cov2dar23"), ("g18", "cov2dg18")):
+        gr = d[key]["grade"]
+        assert gr["joint_flag"] if "joint_flag" in gr else True
+        v[f"cov2d-joint-{t}"] = str(gr["joint_count"])
+        fc = gr["flagged_cells"]
+        v[f"cov2d-flags-{t}"] = " and ".join(str(c) for c in fc) if len(fc) <= 2 else ", ".join(str(c) for c in fc)
+        v[f"cov2d-nflags-{t}"] = {1: "one", 2: "two", 3: "three"}[len(fc)]
+    # the first five-observable coverage test's declared toys
+    v["fd1b-ntoys"] = one(r"\*\*Toys:\*\* (\d+) per truth", d["fd1bdecl"], "FD-1B's toys")
+    v["cov2d-ntoys"] = one(r"### 5\.1 Statistics per tune, over its (\d+) toys", d["cov2ddecl"], "COV2D's toys")
+    assert {d[k]["grade"]["joint_count"] for k in ("cov2dar23", "cov2dg18")} == {0}, "B1 row 8 says no error lies in the region"
+    v["prr-floor"] = f"{r['readings']['floor']['bar_floor']:g}"
+    # F0b's repetitions as B1 row 3a states them: 20 at each shape change and the q3 tilt, 16 at each hybrid
+    f0t = {t["name"]: t["n_experiments"] for t in d["f0b"]["truths"]}
+    assert {f0t[t] for t in ("W1", "W2", "W3", "stage0c_gibuu", "q3")} == {20}
+    assert {f0t[t] for t in f0t if t.startswith("A7_")} == {16} and len([t for t in f0t if t.startswith("A7_")]) == 5
+    fl = r["readings"]["floor"]
+    v["prr-sibu"], v["prr-tq"] = f"{fl['s_IBU']:.4f}", f"{fl['T_Q']:.2f}"
+    assert f"{fl['bars']['IBU']:g}" == f"{max(fl['bar_floor'], fl['T_Q'] * fl['s_IBU']):g}" and "a transfer" in fl["transfer"]
     return v
 
 
@@ -1456,6 +1672,13 @@ def all_values(d=None, d_nopl=None):
         fall = [1 - gw[n][part]["chi2"] / go[n][part]["chi2"] for n in PRED]
         assert min(fall) > 0, f"a {part} chi2 rises with the block"
         v[f"pl-chi2fall-{part}-lo"], v[f"pl-chi2fall-{part}-hi"] = f"{100 * min(fall):.1f}", f"{100 * max(fall):.1f}"
+    # group B5 (#1025; the director's ruling (b)): the same falls over Table S7's rows after B5, GENIE CV, GENIE + MEC and
+    # Tune v1 (Table IV's chi2, both arms) and NuWro and GiBUU on carbon only (defs.json, reported and without_C_PL5D)
+    for part in ("total", "shape_only"):
+        fall5 = [1 - gw[n][part]["chi2"] / go[n][part]["chi2"] for n in ("genie_cv", "genie_mec", "mnvtune_v1")]
+        fall5 += [1 - float(v[f"g-{k}-carbon-{part}-chi2"]) / float(v[f"g-{k}-carbon-{part}-chi2-nopl"]) for k in ("nuwro", "gibuu")]
+        assert min(fall5) > 0, f"a {part} chi2 rises with the block"
+        v[f"pl-chi2fall-b5-{part}-lo"], v[f"pl-chi2fall-b5-{part}-hi"] = f"{100 * min(fall5):.1f}", f"{100 * max(fall5):.1f}"
     for k in sorted(k for k in v if PAPER_PREC.match(k)):
         for nk, x in paper_prec(k, v[k]).items():
             assert v.get(nk, x) == x, f"{nk}: {v[nk]!r} against the paper form {x!r}"
