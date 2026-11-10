@@ -1,0 +1,37 @@
+V-HALF read, rerun at the receipt commit (README 'The rerun at the head')
+V-HALF read: date_utc 2026-11-10T00:06:48Z host DN0a256165
+clone HEAD 35577ba6ea106416b9aadfeb1c8d42c6c9aa8310; 28a59eed an ancestor: yes
+porcelain --ignored lines before: 0
+python 3.12.2 numpy 1.26.4; threads 1; nice 19; PYTHONHASHSEED=0
+594851a2a83256dced70f73d476e23b09c24da8bef9ad3a651524e956230f570  docs/orchestration/state/2d-closeout/valid-region-20261107/v-half/DECLARATION.md
+8a1cdbe7da7d8af4cbf50f941a40ac0754255e19ced04e913ad5d3ddb107932d  docs/orchestration/state/2d-closeout/valid-region-20261107/v-half/v_half.py
+d2d28b9f38f422c9e350c407d76c1307795a0ac1348e0f232b87520ebfbd1df7  docs/orchestration/state/2d-closeout/valid-region-20261107/v-half/test_v_half.py
+09a10bc79152f1988ca4eb8cb81488080e6fa3d5613e92794bb9a4a4a34f99e7  docs/orchestration/state/2d-closeout/valid-region-20261107/v-half/mutate_v_half.py
+36696b3920deed16a0f2a2919f8f0f22555d175156bad67d0eef965f01224eba  docs/orchestration/state/2d-closeout/valid-region-20261107/v-half/mutants.txt
+7ee797131963da0e11838a4b3fdb09d863d9631a1a3564626af630cd300f76cc  docs/orchestration/state/2d-closeout/valid-region-20261107/v-half/INPUTS.sha256
+0ff14ff64fbf17ef71d7fc74f72c0611626a7498d54531e7f9c83fc7bf7107e5  docs/orchestration/state/2d-closeout/valid-region-20261107/v-half/PRR-READOUT.sha256
+b67907615fe2e903e60ae6caa1c141fa007676c0a1b3ae9f42490d331bfdda89  nd-unfolding/pv-ladder/readouts/h2_definition.json
+9238f22bfe29685e33c1d5bb46da3938a3ebfdc93a54575a4fe99de3a7af9ead  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/read/cluster/readout.json
+5f542830561731b567f2b97d78e5e9677a9802a35ef9c21855828bf184e6f3d6  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/readout/fd_f0b_readout.json
+INPUTS.sha256:
+5f542830561731b567f2b97d78e5e9677a9802a35ef9c21855828bf184e6f3d6  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/readout/fd_f0b_readout.json
+PRR-READOUT.sha256:
+9238f22bfe29685e33c1d5bb46da3938a3ebfdc93a54575a4fe99de3a7af9ead  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/read/cluster/readout.json
+command: nice -n 19 python3 -B v_half.py read --repo <clone> --out <out>
+----
+readings written
+----
+rc=0
+total 168
+drwxr-xr-x@ 4 josephbailey  wheel    128 Nov  9 16:06 .
+drwxr-xr-x@ 5 josephbailey  wheel    160 Nov  9 16:06 ..
+-rw-r--r--@ 1 josephbailey  wheel  80756 Nov  9 16:06 readout.json
+-rw-r--r--@ 1 josephbailey  wheel   3291 Nov  9 16:06 readout.txt
+e74233901038bd71496a8859aaf76997e253fad9a8bd0ebda9f183453723492e  readout.json
+d1b91a42b217089fbacc1f24499a107e895f75f56852d02643ba216b017ccff7  readout.txt
+porcelain --ignored lines after: 0
+date_utc 2026-11-10T00:06:48Z
+----
+comparison with the first read (read.log.txt):
+  readout.json byte-identical
+  readout.txt byte-identical

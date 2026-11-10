@@ -1,0 +1,28 @@
+V-HALF readout (DECLARATION.md; print-only sections change no class)
+  C-PIN: PASS
+  C-CELLS: PASS
+  C-TRUTHS: PASS
+  C-PRR: PASS
+  C-DOMAIN: PASS
+  C-FINITE: PASS
+  C-FORM: PASS
+  C-HAND: PASS
+counts: {'valid': 5, 'not valid': 9, 'no d': 0, 'unresolved (noise)': 2, 'rule applies at no truth': 0}
+R00: unresolved (noise)  (applies at 10; fail []; unresolved ['W1']; no d [])  | print-only: A unresolved (noise); GiBUU-excluded unresolved (noise); h* 0.4585417755798553
+R01: valid  (applies at 10; fail []; unresolved []; no d [])  | print-only: A unresolved (noise); GiBUU-excluded valid; h* 0.2947960743926891
+R02: valid  (applies at 10; fail []; unresolved []; no d [])  | print-only: A valid; GiBUU-excluded valid; h* 0.4019811062868675
+R03: not valid  (applies at 9; fail ['W3', 'A7_nuwro']; unresolved []; no d [])  | print-only: A not valid; GiBUU-excluded not valid; h* 0.9066843980231687
+R04: valid  (applies at 10; fail []; unresolved []; no d [])  | print-only: A valid; GiBUU-excluded valid; h* 0.13513657120087968
+R05: not valid  (applies at 10; fail ['A7_genie_mec']; unresolved []; no d [])  | print-only: A not valid; GiBUU-excluded not valid; h* 1.6157993561895005
+R06: unresolved (noise)  (applies at 10; fail []; unresolved ['A7_genie_cv']; no d [])  | print-only: A unresolved (noise); GiBUU-excluded unresolved (noise); h* 0.5004623395627578
+R07: not valid  (applies at 9; fail ['closure_nuwro', 'A7_nuwro']; unresolved []; no d [])  | print-only: A not valid; GiBUU-excluded not valid; h* 1.3073014003257768
+R08: not valid  (applies at 9; fail ['W1', 'A7_genie_cv', 'A7_gibuu']; unresolved []; no d [])  | print-only: A not valid; GiBUU-excluded not valid; h* 2.2030454954353393
+R09: valid  (applies at 10; fail []; unresolved []; no d [])  | print-only: A valid; GiBUU-excluded valid; h* 0.2778173087264227
+R10: not valid  (applies at 10; fail ['q3', 'A7_nuwro']; unresolved []; no d [])  | print-only: A not valid; GiBUU-excluded not valid; h* 5.437434202401142
+R11: not valid  (applies at 10; fail ['closure_nuwro', 'A7_nuwro', 'A7_gibuu']; unresolved []; no d [])  | print-only: A not valid; GiBUU-excluded not valid; h* 1.2280806829792106
+R12: not valid  (applies at 10; fail ['W1', 'W3', 'closure_nuwro']; unresolved []; no d [])  | print-only: A not valid; GiBUU-excluded not valid; h* 1.42481236065421
+R13: not valid  (applies at 10; fail ['W3', 'closure_nuwro', 'A7_gibuu']; unresolved ['A7_nuwro']; no d [])  | print-only: A not valid; GiBUU-excluded not valid; h* 1.604687880190719
+R14: valid  (applies at 10; fail []; unresolved []; no d [])  | print-only: A valid; GiBUU-excluded valid; h* 0.19500561985670006
+R15: not valid  (applies at 10; fail ['q3']; unresolved []; no d [])  | print-only: A not valid; GiBUU-excluded not valid; h* 11.25344341113555
+CITABLE FOR: each cell's V-HALF class, with its inputs, as declared
+NOT CITABLE FOR: coverage; a measurement; the cause of any failure; V-HALF as ATLAS's rule, or as the advisor's exact formulation (the 1 % floor, the noise treatment and the hybrid source of d are this record's additions); a failing cell as excluded, wrong or unreported; held-out truths (the truths are not held out); any paper or note sentence without the PRD-referee read and Joseph; the print-only sections, which change no class
