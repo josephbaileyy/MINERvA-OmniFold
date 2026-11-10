@@ -178,7 +178,8 @@ def check_keys(texts, values_tex):
 
 def numerals(t):
     t = strip_comments(t)
-    t = "\n".join(l for l in t.split("\n") if not l.lstrip().startswith(r"\begin{tabular}"))   # column widths
+    t = "\n".join(l for l in t.split("\n") if not re.match(r"\s*\\begin\{tabular\*?\}", l))   # column widths
+    t = re.sub(r"\d+(?:\.\d+)?\s*(?:pt|cm|mm|em|ex|in|bp)\b", " ", t)     # TeX lengths (\tabcolsep{2.25pt}, \hspace{5pt})
     t = re.sub(r"\\(fvval|ref\*?|nsec|napp|cite|label|eqref|includegraphics|fvpending|fvgroup|ssecc?|stab)(\[[^]]*\])?\{[^}]*\}(\{[^}]*\})?", " ", t)
     t = re.sub(r"\\fvcase\{[^}]*\}\{[^}]*\}", " ", t)
     t = re.sub(r"\\(begin|end)\{[^}]*\}(\{[^}]*\})?", " ", t)
@@ -506,6 +507,10 @@ def self_test():
         print("self-test: NOT CAUGHT an undefined key"); ok = False
     if not check_numerals({"f": "a 7.77 here"}, {"f": "a 7.7 here"}):
         print("self-test: NOT CAUGHT a new numeral"); ok = False
+    if check_numerals({"f": "\\setlength{\\tabcolsep}{2.25pt}\n  \\begin{tabular*}{\\textwidth}{p{3.0cm}l}\nx"}, {"f": "x"}):
+        print("self-test: a TeX length or a tabular* column spec was taken for a printed numeral"); ok = False
+    if not check_numerals({"f": "a 2.25 here, \\hspace{5pt}"}, {"f": "here"}):
+        print("self-test: NOT CAUGHT a printed numeral beside a length"); ok = False
     if not check_once_gone({"f": "the stabilised variant " + " ".join(ONCE)}):
         print("self-test: NOT CAUGHT a GONE phrase"); ok = False
     if not check_printed_names(r"\@namedef{fvgd@x}{LL5D, the test}"):

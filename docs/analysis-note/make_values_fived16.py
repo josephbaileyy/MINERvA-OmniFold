@@ -49,6 +49,8 @@ READOUTS = {
     "f1meta-ar23": (f"{FD}/fd/receipts-f1/run/cluster/f1b3/gen5d/genie_v3_ar23_xsec5d.meta.json", "d7d136e5"),
     # FD-PRR read (#1006, verdict COMPLETE); filled into the short paper by DECISION-20261109-joseph-abstract-length-prr-fill.md item 2
     "prr": (f"{FD}/fd/receipts-prr/read/cluster/readout.json", "9238f22b"),
+    # V-HALF read (#1009); filled into the short paper as a diagnostic (the director, 2026-11-10: Joseph confirmed it)
+    "vhalf": ("docs/orchestration/state/2d-closeout/valid-region-20261107/v-half/receipts/read/readout.json", "e7423390"),
     # the pion-constant departure of Eq. (1), as full-covariance norms of its first-order shift under each arm's matrix
     # (ASSESSMENT-20261031-eavail-charged-pion-mass-switch-pricing.md section 7.3; JSON despite the suffix)
     "eav": ("docs/orchestration/state/eavail-switch-pricing-20261031/step0/step0_metric.txt", "3e8bd546"),
@@ -295,6 +297,10 @@ VERDICTS = {
     "prr-label-obs-q3": "holds", "prr-label-stat-q3": "not", "prr-label-unattr-q3": "not",
     "prr-pr3-any": "not", "prr-pr3-ibu": "not", "prr-pr3-levels": "none", "prr-ibu-bar": "0.05",
     "prr-abs": "less-less",
+    # the per-cell bias-half rule, from the V-HALF readout (READOUTS["vhalf"]) by vhalf_verdicts(); main() refuses any
+    # difference from a fresh mapping of the pinned readout
+    "vhalf-outcome": "some-fail", "vhalf-n-valid": "5", "vhalf-n-notvalid": "9", "vhalf-n-notassessed": "0",
+    "vhalf-n-unresolved": "2", "vhalf-cells-notvalid": "R03, R05, R07, R08, R10, R11, R12, R13, R15",
 }
 DERIVED = {"prr": ("prr-abs",),
            "ll5d": ("ll5d-abs-minus2", "ll5d-abs-all", "ll5d-abs-close", "ll5d-anypass", "ll5d-cellflags",
@@ -340,6 +346,37 @@ def prr_verdicts(r):
         cls = PENDING[k][1]
         assert cls is None or x in cls, f"{k}: {x!r} is not a declared class {cls}"
     return v
+
+
+# the V-HALF readout's per-cell classes (readings.cells[c].class, counts) -> the paper's printed keys
+VHALF_CLASSES = {"valid": "valid", "not valid": "notvalid", "rule applies at no truth": "notassessed",
+                 "unresolved (noise)": "unresolved"}
+
+
+def vhalf_verdicts(r):
+    """Every key of the bias-half group from the V-HALF readout alone (its per-cell classes; no number computed)."""
+    assert r["schema"] == "v-half-readout/1", "the V-HALF readout is not a v-half-readout/1"
+    cells = r["readings"]["cells"]
+    assert len(cells) == 16, f"the V-HALF readout has {len(cells)} cells"
+    cls = {c: x["class"] for c, x in cells.items()}
+    bad = sorted(c for c, k in cls.items() if k not in VHALF_CLASSES)
+    assert not bad, f"V-HALF cells with a class the paper does not print: {[(c, cls[c]) for c in bad]}"
+    n = {v: sum(1 for k in cls.values() if VHALF_CLASSES[k] == v) for v in VHALF_CLASSES.values()}
+    counts = r["readings"]["counts"]
+    assert all(counts.get(k, 0) == n[v] for k, v in VHALF_CLASSES.items()) and counts.get("no d", 0) == 0, \
+        f"the V-HALF readout's counts {counts} disagree with its cells"
+    notvalid = sorted(c for c, k in cls.items() if k == "not valid")
+    return {"vhalf-outcome": "some-fail" if notvalid else "none-fail",
+            **{f"vhalf-n-{v}": str(n[v]) for v in ("valid", "notvalid", "notassessed", "unresolved")},
+            "vhalf-cells-notvalid": ", ".join(notvalid) if notvalid else "none"}
+
+
+def check_vhalf_verdicts(d):
+    """VERDICTS' bias-half keys equal a fresh mapping of the pinned V-HALF readout."""
+    want = vhalf_verdicts(d["vhalf"])
+    have = {k: x for k, x in VERDICTS.items() if PENDING.get(k, ("",))[0] == "vhalf"}
+    return [f"{k}: VERDICTS {have.get(k)!r}, the readout {want.get(k)!r}" for k in sorted(set(want) | set(have))
+            if have.get(k) != want.get(k)]
 
 
 def check_prr_verdicts(d):
@@ -1752,9 +1789,9 @@ def main(argv):
     if argv[:1] == ["--self-test"]:
         return self_test()
     d = load()
-    bad = check_prr_verdicts(d)
+    bad = check_prr_verdicts(d) + check_vhalf_verdicts(d)
     if bad:
-        sys.exit("VALUES-FIVED16 :: FAIL (VERDICTS' prior-retention keys differ from the pinned FD-PRR readout)\n  "
+        sys.exit("VALUES-FIVED16 :: FAIL (VERDICTS differ from a pinned readout (FD-PRR or V-HALF))\n  "
                  + "\n  ".join(bad))
     text = render(all_values(d))
     bad = check_listed_claims(d["f0b"], read_claim_texts())

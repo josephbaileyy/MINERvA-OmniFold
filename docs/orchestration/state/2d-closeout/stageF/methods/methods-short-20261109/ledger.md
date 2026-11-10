@@ -1002,3 +1002,35 @@ layout.
   M035; M021, M024 and M036 overlap the editor's). journal-editor found four clauses lost outright; my spot check
   had missed two of them (Fig. 4's outline note and the q3 tilt's p-value flag). All of these went to the lane for a
   caption repair commit. The captions are not accepted until the rerun read.
+
+## V-HALF filled, and the tables (the director; DECISION-20261110-joseph-paper-asap-vhalf-diagnostic.md, #1024)
+
+- **V-HALF is a diagnostic on R00-R15, filled from its pinned readout.** The readout is
+  `valid-region-20261107/v-half/receipts/read/readout.json` (#1009), sha256 e74233901038bd71…, pinned in READOUTS as
+  `vhalf`; main was merged at 308eb66dc to bring it in.
+  - `vhalf_verdicts()` maps the readout's per-cell classes and counts only: 5 valid, 9 not valid (R03, R05, R07, R08,
+    R10, R11, R12, R13, R15), 0 not assessed, 2 unresolved (noise). It refuses an unknown class, a cell count other
+    than 16, or a "no d" cell.
+  - make_values `--check` refuses any drift from the readout.
+  - The decision record resolves item 5 of the bias-half decision (no rebinning) for this paper.
+- **What prints.** §5.4: "Of the 16 cells, 5 are valid under it, 9 are not (R03, …, R15), 0 are not assessed and 2
+  are unresolved." <!-- absence-ok: quotes the printed V-HALF class count ("not assessed" is a declared class of the rule), not a claim that a study does not exist --> Table 1: "5 of 16 cells valid, 9 not valid, 2 unresolved", status Descriptive.
+  - The director's meaning read (`vhalffill/out.txt`) found V1 clean. For V2 it asked for the 2 unresolved cells;
+    they are added, in the paper's own term "unresolved".
+  - The reader's misplaced "departure from the prior" was pdftotext's reading order. The rendered row, read as an
+    image, is correct.
+- **The tables** are the lane's be76b8310 and 06a3438f1, merged; journal-editor reviewed them as typeset. I added
+  their χ²/p gap fix: r@{\hspace{5pt}}l in Table 2's three groups. At 6pt the table was 1.76pt overfull; at 5pt there
+  is no Overfull.
+- **check_round's numeral scan** counted table column widths and \tabcolsep as printed numerals (2.25, 3.0, 5.0,
+  9.0), because the new tables use tabular* and a TeX length. It now skips \begin{tabular*} lines and any number
+  followed by a TeX length unit. The self-test plants both forms and confirms that a printed numeral is still caught.
+- **Checks:**
+  - the rater copy PASS (16 and 15 pages); no Overfull;
+  - check_round with the fill test PASS, and the self-test PASS;
+  - the blind copy prints no class name or GONE term, and no internal term in a free-text value;
+  - make_values `--check` PASS; registry, sec4 and pointers PASS;
+  - check_restyle against cc3e56c92 fails only on the ruled additions: the vhalf-n-unresolved key, and the tables'
+    layout macros.
+- **Correction:** the "caption meaning read" bullet above says the director's reader "adds five flags"; it lists six
+  that do not overlap journal-editor's (M010, M011, M018, M026, M032, M035).
