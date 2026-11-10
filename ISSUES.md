@@ -216,7 +216,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-ACC-5 [T]** — **"Fresh" versus reused pseudo-experiments.**  
   *Finding:* §9.3 and App. C.8 say "40 fresh pseudo-experiments", while §9.4 states they "were used during development".  
   *Evidence:* `docs/analysis-note/sec_5d.tex:145`, `app_statmethods_nd.tex:112`.  
-  *Resolution:* Replace "fresh" with "developmental pseudo-experiments".
+  *Resolution:* This row authorizes no tex edit. Do not replace "fresh" with "developmental". The 40 fresh pseudo-experiments and the experiments used during development have not been shown to be the same set. The negative-weight appendix already counts 20 development and 40 fresh separately. Leave "40 fresh pseudo-experiments" as written.
 
 * **S1-ACC-6 [T]** — **Unusable covariance used as a benchmark yardstick.**  
   *Finding:* Configuration-(a) 5D covariance is marked "not to be used" (§9.6), yet is used as a scale in §5.1, §8.4, §9.2, §9.3, Table 5, App. G.2.  
