@@ -630,6 +630,7 @@ class RealUnfold(tl.RealChain):
     test_truths_r_runs_the_real_truth_weight_after_the_install = None
     test_calib_main_runs_the_real_chain = None
     test_gate_main_runs_the_real_chain = None
+    test_the_vi_preflight_over_the_real_chain = None    # A1a.2's preflight is A1a's (test_ll5d.py)
 
     def test_run_unfold_runs_every_role_over_the_real_chain(self):
         g = self.gate()
