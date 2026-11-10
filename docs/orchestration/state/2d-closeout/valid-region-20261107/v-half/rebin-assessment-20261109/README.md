@@ -11,7 +11,8 @@ NOT CITABLE FOR: any rebinning decision, any V-HALF class, any cell's validity.
 **Unverified dependency.** pscratch purges files by access time (`nd-unfolding/ref_g1/ref_g1.py:132`). Every
 "re-aggregates at 0 node-h" below assumes that the pscratch fine-grid products still exist. That had not been checked
 when this was written. A stat-only existence check is the follow-up; its result is recorded beside this file when it
-runs.
+runs. **Checked 2026-11-10T04:16Z** (`purge-check/README.md`): all 8,795 listed files present, 0 missing; the oldest
+access was 10.6 days earlier. The check does not guarantee that the files survive later.
 <!-- absence-ok: a stated dependency, not a claim that a file is absent; the check is the follow-up -->
 
 ## Bottom line
