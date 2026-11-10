@@ -87,7 +87,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Finding:* Include Joseph's response-only sensitivity, median 1.65× interaction block σ (range 0.42–6.50), grid-dependent and not a bound.  
   *Record:* `DECISION-20261101-joseph-1b-keep-block-redesign-test.md:38-40`.  
   *Target:* `docs/analysis-note/sec_fived16.tex`.  
-  *Status:* Drafted in round 1 as E9.
+  *Resolution:* This row authorizes no tex edit. The response-only sensitivity is already in sec_fived16.tex. It prints, through the existing macros, a median of 1.65 times the reported interaction block, with range 0.42 to 6.50, and it says the quantity depends on the fine-cell grid and is not a bound. Do not type those numbers. Do not add a coverage statement. Do not say the intervals should carry the response-only spread. Do not add a second sentence. AUD-N3 is a later row.
 
 * **AUD-E10 [T]** — **Second post hoc choice ($N_7$) in Executive Summary.**  
   *Finding:* Executive summary must state background-treatment choice beside learner choice.  
