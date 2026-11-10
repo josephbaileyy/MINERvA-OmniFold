@@ -230,6 +230,14 @@ def rounding_figure() -> dict:
                 "argmax": names[int(shifts.argmax())]}
     expected = assessment["A3"]["data_rounding_probe_over_data_sigma"]
     assert measured == expected == record["computed"]
+    study_replicas = assessment["data"]["data_boot_replicas"]
+    reported_replicas = read(
+        "docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json"
+    )["meta"]["stat_replicas"]
+    assert study_replicas == 100 and reported_replicas == 50
+    definition = read("nd-unfolding/gbdt_model_dependence/definition.json")
+    assert len(definition["reported"]["EW"]) == 42
+    assert sum(definition["reported"]["EW"]) == 39
     criteria = contract["criteria"]
     median_limit = criteria["rounding_median_max_sigma"]
     maximum_limit = criteria["rounding_max_sigma"]
@@ -243,23 +251,24 @@ def rounding_figure() -> dict:
                label=f"Maximum requirement: ≤ {maximum_limit:.1f}")
     middle = len(shifts) // 2
     ax.plot(ordered[middle], fraction[middle], "o", color="#2878a5", ms=4)
-    ax.annotate(f"Median {measured['median']:.2f}",
+    ax.annotate(f"Median {measured['median']:.1f}",
                 xy=(ordered[middle], fraction[middle]), xytext=(16, -29),
                 textcoords="offset points", fontsize=8,
                 arrowprops={"arrowstyle": "-", "color": "0.4", "lw": .6})
     ax.plot(measured["max"], 1, "o", color="#2878a5", ms=4)
-    ax.annotate(f"Largest shift: {measured['argmax']}\n{measured['max']:.2f}",
+    ax.annotate(f"Largest shift\n{measured['max']:.1f}",
                 xy=(measured["max"], 1), xytext=(-8, -39),
                 textcoords="offset points", ha="right", fontsize=8,
                 arrowprops={"arrowstyle": "-", "color": "0.4", "lw": .6})
     ax.set(xlim=(0, measured["max"] * 1.15), ylim=(0, 1.055),
-           xlabel="Maximum absolute shift / statistical σ",
+           xlabel="Larger absolute shift of two perturbations / statistical σ",
            ylabel="Fraction of 153 quantities")
     ax.legend(loc="upper left", fontsize=7, frameon=True,
               facecolor="white", edgecolor="none", framealpha=.95)
     ax.grid(alpha=.15)
     save(fig, "paper_rounding_shifts")
-    return {"summary": measured, "median_limit": median_limit,
+    return {"summary": measured, "study_bootstrap_replicas": study_replicas,
+            "reported_stat_replicas": reported_replicas, "median_limit": median_limit,
             "maximum_limit": maximum_limit, "names": names,
             "shift_over_data_sigma": shifts.tolist()}
 

@@ -190,3 +190,17 @@ Deliverables: paper_rounding_shifts.pdf, PNG preview, added rounding block in nu
 new pins, producer function and final captions.tex snippet. Proposed citation position is §6.1
 immediately after the median/max instability statement. director-helper-3 chooses float placement,
 runs integrated/blinded checks, and owns standalone note synchronization/remote-head record.
+
+
+## Rounding figure referee repair
+
+Caption now distinguishes the study's sigma (100 refitted replicas; assess_receipt.json data.data_boot_replicas)
+from the reported statistical block (50; S1 s1_assembly.json meta.stat_replicas), both checked by producer and
+pinned as data. EW population is explicitly all 42, including the three not supported for the prior-response
+plot; the pinned diagnostic definition checks 42 flags with 39 true. The 109 J cells are named supported.
+Median/maximum labels now match the protected text's one decimal (0.8/2.6); full precision stays in numbers.json.
+The plot drops the undefined J145 label, while retaining its exact argmax check in the numerical audit.
+Axis now distinguishes each quantity's larger of TWO shifts from the maximum over quantities.
+Caption describes shifts rather than opening with a conclusion; it states edge-safe behavior exactly as
+s5e_trace.jitter_coords implements it (grid-edge values fixed, other inputs moved within half a float32 ULP).
+Ledger provenance must say recomputed, reproducing the receipt, not original array; no r2_cache was read.

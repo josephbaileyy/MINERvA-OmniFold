@@ -941,6 +941,8 @@
       "max": 2.5837789197284393,
       "argmax": "J145"
     },
+    "study_bootstrap_replicas": 100,
+    "reported_stat_replicas": 50,
     "median_limit": 0.3,
     "maximum_limit": 1.0,
     "names": [
