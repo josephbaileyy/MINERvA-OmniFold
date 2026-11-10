@@ -75,7 +75,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Finding:* Note called 2D comparison a validation (`sec_intro.tex:18`, `:30`, `sec_method.tex:25`, `sec_results.tex:1`, `sec_execsummary.tex:3`, `tab:validation-questions`).  
   *Record:* `AUDIT.txt` row E7; `CAMPAIGN-REVIEW-20260929.md:27-28`; `VALIDATION_LEDGER.md:175`.  
   *Target:* `docs/analysis-note/sec_intro.tex`, `sec_method.tex`, `sec_results.tex`, `sec_execsummary.tex`.  
-  *Resolution:* Replace "validates" with "descriptive comparison" or "benchmark comparison against publication".
+  *Resolution:* This row authorizes no tex edit. Do not run a global replacement of "validates". The audit's three sentences already use its wording. The introduction says the comparison is descriptive, not a blind validation. The analysis-strategy paragraph says the published 2D cross section provides a quantitative, descriptive comparison. The method paragraph says the unfolded result reproduces the integrated cross section of an independently published binned measurement. Do not add a further sentence. Do not copy article text into the note. Do not change the validation-section title. Do not edit sec_5d.tex under this row.
 
 * **AUD-E8 [T]** — **The CH correction's scope.**  
   *Finding:* Executive summary stated CH correction without restricting it to joint cells.  
