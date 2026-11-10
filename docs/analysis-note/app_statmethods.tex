@@ -58,7 +58,7 @@ Poisson bootstrap (stat) & Data- and MC-statistical variance, propagated coheren
   $N=300$ &
   median $0.676\%$; Table~\ref{tab:combine} \\
 Universes (syst) & Flux, detector and interaction-model uncertainty, by re-unfolding under reweighted MC &
-  The event loop writes truth and reco weights per (band $B$, universe $u$); each $(B,u)$ is re-unfolded with a fixed seed against a matched CV job (same event-loop output file, backend, seed, iteration count and flux, so ML noise cancels); MAT per-band covariance, Eq.~\eqref{eq:matcov}, plus a rank-1 normalization &
+  The event loop writes truth and reco weights per (band $B$, universe $u$); each $(B,u)$ is re-unfolded with a fixed seed against a matched CV job (same event-loop output file, backend, seed, iteration count and flux; a common seed correlates the training noise and does not cancel it, \S\ref{sec:uq-2d-scope}); MAT per-band covariance, Eq.~\eqref{eq:matcov}, plus a rank-1 normalization &
   Quoted sweep: $187$ universes, $44$ bands; band sum $43$ bands $+$ norm &
   median $5.935\%$; Table~\ref{tab:band-medians} \\
 Run period & Inconsistency between the run periods' results &
@@ -631,7 +631,7 @@ Same-ensemble $|r|\leq1$: $68.71\%$ & \S\ref{sec:val-other} &
 
 \begin{enumerate}[nosep]
   \item Pulls and $\chi^{2}$ approximate bins as Gaussian: weighted sums of $\mathcal{O}(10^{4})$ MC events justify the central-limit approximation.
-  \item \textbf{Independence of error sources.} Eq.~\eqref{eq:blocksum} requires no cross-correlations between ML, statistical, systematic and run-period blocks. The bootstrap pins the GBDT seed (so ML noise cancels at first order); universes pin the seed too; the training-seed block averages the same $20$ bootstrap replicas at each seed setting and includes the bootstrap\,$\times$\,seed interaction at its $1/20$ share. Among the first three, cross-terms are higher-order. The run-period block is built from separate unfolds of the same data, and its noise share is not subtracted (\S\ref{sec:uq-combine}).
+  \item \textbf{Independence of error sources.} Eq.~\eqref{eq:blocksum} requires no cross-correlations between ML, statistical, systematic and run-period blocks. The bootstrap pins the GBDT seed, and universes pin the seed too. A common seed correlates the training noise and does not cancel it (\S\ref{sec:uq-2d-scope}); the training-seed block averages the same $20$ bootstrap replicas at each seed setting and includes the bootstrap\,$\times$\,seed interaction at its $1/20$ share. Among the first three, cross-terms are higher-order. The run-period block is built from separate unfolds of the same data, and its noise share is not subtracted (\S\ref{sec:uq-combine}).
         % Review m7: playlist-term/DESIGN.md §3 (noise share not subtracted). No stat x C_PL cross-term is
         % measured or bounded. J3/J4 provisional (DECISION-20261018, packet W3: D5).
         % J3/J4 provisional (DECISION-20261018, packet W3: D11). stageC/production/DESIGN.md §S5 c08 row; X02/X03 reported, not added (DECISION-20261017 §2).
