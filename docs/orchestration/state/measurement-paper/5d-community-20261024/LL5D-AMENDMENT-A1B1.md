@@ -42,7 +42,7 @@ digest of a committed file.
 | `nd-unfolding/tests/ll5d_a1b1_mutation.py` | **new.** 12 mutants (§3). |
 | `nd-unfolding/ll5d_b.py`, `nd-unfolding/ll5d.py` | **unchanged**: `24312ca86f9e70ed86699772d634c19d9bcacb2bb87bff5aaa8c9f7c2661f3cb` and `2b0224c6fe52c5bb2d3fe64d461ac9edb80ebd191b0ab2f892dec605a0b56a14`. |
 
-Digests (sha256) at the code commit (to fill from git), the commit the receipts were made at:
+Digests (sha256) at the code commit `dd90a0d702e0016f9a45b523f88dd899eb3ec4ae`, the commit the receipts were made at:
 
 | file | sha256 |
 |---|---|
