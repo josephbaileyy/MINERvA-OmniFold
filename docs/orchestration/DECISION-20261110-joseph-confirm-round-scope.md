@@ -53,3 +53,21 @@ On scope:
 - **Not citable for:** any Tier 2 or Tier 3 result, any paper sentence, or a release decision.
 
 Nothing is submitted, deposited or tagged.
+
+## Correction (director, 2026-11-10, after the decision): Tier 3's question
+
+"What led to it" describes Tier 3 as testing "why more iterations and capacity raise the retained fraction". That
+premise came from the Claude referee (`claude.txt:53`) and is wrong. In FD-PRR's readout
+(`fd/receipts-prr/read/cluster/readout.json`, sha256 `9238f22b…`, `table["<level>/<truth>/s991000"].rho`), every move
+to more iterations or more capacity **lowers** ρ of configuration (e) at both flagged truths:
+- **A7 GiBUU:** iterations K2 → K50, 0.168 → 0.094; capacity C25 → C1000, 0.355 → 0.102;
+- **q3 tilt:** 0.235 → 0.163, and 0.499 → 0.163, with one rise of +0.005 from C400 to C1000.
+
+PR-1's class "increases" (FD-PRR §5.1) means that **some tested level raises ρ relative to B0**; the levels that do
+are the lower ones. The paper prints the bare class, and both referees read it as a direction. The tier3-design
+session found the error, and the director re-measured it.
+
+**The corrected question** for Tier 3: why (e)'s ρ at the two flagged truths stays well above 0 and changes little as
+iterations and capacity grow, when exact IBU on the same pseudo-data passes the truth within a few iterations, and
+which pipeline component sets that limit. The four test arms are unchanged. The decision itself (items 1–4) stands:
+Joseph's scope ruled on which tiers run, not on this description of the question.
