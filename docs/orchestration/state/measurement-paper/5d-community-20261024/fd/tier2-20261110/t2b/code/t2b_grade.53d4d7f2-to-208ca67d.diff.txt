@@ -1,0 +1,26 @@
+--- analysis/t2b_grade.py	2026-11-10 09:27:39
++++ analysis-2/t2b_grade.py	2026-11-10 09:32:15
+@@ -33,6 +33,13 @@
+     f"{D}/data-product/fd_data_product.json": "b79556f0538c81942c0ddd3770ae55e5c6fe9ad53df47e470d306f727d7e7072",
+ }
+ REGRADE_SHA = "0dfa722c2b74abed09fb255ccb7c0e80e6c55eb922ea1326dd74e6c880697aa2"
++FETCHED_FROM = {   # T2B §2: where each fetched file lives (recorded so the receipt names each file by its full path)
++    "s1_assembly.npz": "/pscratch/sd/j/josephrb/s1-20261024/s1_assembly.npz",
++    "cmodel_5d.npz": "/pscratch/sd/j/josephrb/cmodel5d-20261024/out/cmodel_5d.npz",
++    "cresp.npz": "/pscratch/sd/j/josephrb/cresp-20261026/out/cresp.npz",
++    "fd_f1_experiments.npz": "/pscratch/sd/j/josephrb/fd-f1-20261027/grade/fd_f1_experiments.npz",
++    "fd_f0b_experiments.npz": "/pscratch/sd/j/josephrb/fd-f0b-20261026/fd_f0b_experiments.npz",
++}
+ F0B_TWELVE = ["nominal", "W1", "W2", "W3", "q3", "stage0c_gibuu", "closure_nuwro", "A7_mnvtune", "A7_genie_cv",
+               "A7_genie_mec", "A7_nuwro", "A7_gibuu"]
+ F1_FOUR = ["F1_genie_v3_g18", "F1_closure_genie_v3_g18", "F1_genie_v3_ar23", "F1_closure_genie_v3_ar23"]
+@@ -89,7 +96,8 @@
+         return rc
+ 
+     rec = {"schema": "t2b/1", "declaration": "T2B-FD-GRADE-VARIANTS-DECLARATION.md", "binding": "T2-BINDING-1.md",
+-           "inputs_sha256": {}, "label": "descriptive only: no criterion, trigger or grade changes; no p-value"}
++           "inputs_sha256": {}, "inputs_paths": FETCHED_FROM,
++           "label": "descriptive only: no criterion, trigger or grade changes; no p-value"}
+     # input pins
+     for n, s in FETCHED.items():
+         got = sha(a.files / n)
