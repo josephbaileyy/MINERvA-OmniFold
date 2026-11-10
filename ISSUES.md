@@ -1139,3 +1139,43 @@ Scope: Index of referee findings for Round 3 resolution. Resolution column remai
 | **GEM-REQ-1** | `gemini.txt:161` | State scope and technical rationale for distinct estimator configurations (a)-(f) rather than unifying analysis. | `docs/analysis-note/sec_method.tex:96` | Rebutted. The configuration section says the six estimators are not combined and states which result uses which configuration, including why the five-observable central value stayed on configuration (a). No sentence was changed. |
 | **GEM-REQ-2** | `gemini.txt:73` | State scope and diagnostic status of higher-dimensional uncertainty covariances rather than constructing new 3D/4D matrices. | `docs/analysis-note/sec_3d.tex:10` | Rebutted. The three- and four-observable section says no covariance is quoted there, and Table 1 says none is constructed. The five-observable covariance is stated as a technical diagnostic, not an uncertainty product. No sentence was changed. |
 | **GEM-REQ-3** | `gemini.txt:162` | State scope, hybrid-null framing, and material-correction sensitivity of generator tests rather than retracting them. | `docs/analysis-note/sec_joint.tex:168` | Rebutted. The executive summary states the hybrid-null scope, says the rejections are not physical exclusions, and states the carbon-only decisions and the NuWro CH limitation. sec_joint.tex:168 reports the ten decisions. No sentence was changed. |
+
+## Round 3 continuation closeout (2026-11-10)
+
+Codex continued the drafting role from `ad82b41d2ef25a8168d6a508b5f15a6837fcde6e`;
+Grok remained the read-only sentence/evidence checker. The decision for each row
+was a correction within the cited record's licence or a rebuttal with its reason.
+The scope was the fixed 88-row Part 7 index, one finding per commit and one check
+of the assigned change; requests needing new analysis were not expanded into
+compute or a new review campaign.
+
+All 88 rows have dispositions at `fc1ce3f9c49d26ab3fb146fb123770c9f238d437`.
+Grok passed the continuation's changes, including that final GEM-REQ-3 commit.
+Joseph relayed the final verdict when the bridge could not deliver it. These are
+text/source checks, not independent numerical recomputations. No director status
+was sent: Joseph moved its checkpoint to item 100, and the index ends at 88.
+No rows were added to manufacture that checkpoint.
+
+### Director-specified carry-through
+
+The ESS correction is committed at `0d515f8d948a863fd6e039cb6ceb928d8663d101`.
+It replaces the outdated absence statement in sec_method.tex with a description
+of configuration (e)'s final unfolded simulated-event weights on the sixteen
+reported cells. It cites the [immutable ESS receipt](https://github.com/josephbaileyy/MINERvA-OmniFold/blob/b18426156335b7d2848d141358e7bc6dc4561462/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ess/README.md),
+whose ess.json digest is
+`d4f1268d6eea9d9e19defe60890f815f44ed31bdfb48f4c8d3e0ca2caa9aae65`.
+No ESS value is printed, no other product is covered, and no uncertainty,
+coverage, validity, result or covariance change is claimed. Grok passed the exact
+sec_method.tex and technote.bib file pins before the commit; Joseph relayed that
+verdict. The bibliography prints the pinned link using the existing record
+reference format because the shared style suppresses ordinary URL fields.
+
+The note's V-PRIOR text is unchanged. The [withholding decision](https://github.com/josephbaileyy/MINERvA-OmniFold/blob/fc847d825e229ce74c4289b81ef085a94e426c34/docs/orchestration/DECISION-20261110-joseph-vprior-withhold.md),
+item 5, excludes the companion note from the methods-paper change. AUD-N4 and
+AUD-N5 remain held. PR #952 remains draft and unmerged.
+
+All five documents built and passed containment from the committed ESS source
+bytes. The corresponding standalone draft had all 161 source files byte-identical
+to those sources, passed its five builds, and matched all five canonical PDFs in
+extracted text. The standalone sync must also be committed and pushed before
+this note work is declared complete; both remote heads are recorded at delivery.
