@@ -132,22 +132,22 @@ def bias_figure() -> dict:
         arrays.append(data)
     for k, _ in TRUTHS:
         np.testing.assert_array_equal(selected[0][k]["bias"], selected[1][k]["bias"])
-    fig, axes = plt.subplots(1, 2, figsize=(10.0, 4.9), sharey=True, layout="constrained")
+    fig, axes = plt.subplots(1, 2, figsize=(508 / 72, 5.8), sharey=True, layout="constrained")
     limit = max(float(np.abs(a).max()) for a in arrays)
     for ax, data, title in zip(axes, arrays, (
-        r"Reported: $C_{\rm total}+C_{\rm resp}+C_{\rm PL,5D}$",
-        r"Without run-period block: $C_{\rm total}+C_{\rm resp}$"), strict=True):
+        "Reported covariance\n" + r"$C_{\rm total}+C_{\rm resp}+C_{\rm PL,5D}$",
+        "Without run-period block\n" + r"$C_{\rm total}+C_{\rm resp}$"), strict=True):
         artist = ax.imshow(data, cmap="RdBu_r", vmin=-limit, vmax=limit, aspect="auto")
         for row, col in np.argwhere(np.abs(data) > threshold):
             ax.add_patch(Rectangle((col-.5, row-.5), 1, 1, fill=False, ec="black", lw=1.4))
-        ax.set_title(title, fontsize=9)
+        ax.set_title(title, fontsize=8.6)
         for row, col in enumerate(np.argmax(np.abs(data), axis=1)):
             if abs(data[row, col]) > threshold:
                 ax.text(col, row, f"{data[row, col]:.2f}", ha="center", va="center",
-                        fontsize=5.5, color="white" if abs(data[row, col]) > 3 else "black")
-        ax.set_xticks(range(16), [f"R{i:02}" for i in range(16)], rotation=90)
+                        fontsize=8.2, rotation=90, color="white" if abs(data[row, col]) > 3 else "black")
+        ax.set_xticks(range(0, 16, 2), [f"R{i:02}" for i in range(0, 16, 2)])
         ax.set_xlabel("Reported cell")
-    axes[0].set_yticks(range(12), [label for _, label in TRUTHS])
+    axes[0].set_yticks(range(12), [label.replace(", ", ",\n", 1) for _, label in TRUTHS])
     fig.colorbar(artist, ax=axes, label="z: signed mean fractional residual / uncertainty", shrink=.85)
     save(fig, "paper_bias_cells")
     return {"checks": checks, "z_reported": arrays[0].tolist(), "z_without_period": arrays[1].tolist()}
@@ -173,7 +173,7 @@ def prior_figure() -> dict:
         assert (row["map"], row["functional"]) == (frozen["map"], frozen["functional"])
         for key in ("W3_bias_pct", "d4_shift_pct"):
             np.testing.assert_equal(row[key], float(frozen[key]))
-    fig, axes = plt.subplots(1, 3, figsize=(7.2, 2.7), layout="constrained")
+    fig, axes = plt.subplots(1, 3, figsize=(508 / 72, 3.1), layout="constrained")
     result = {}
     for ax, group, label in zip(axes, ("J", "H2", "EW"), ("(a) Joint cells", "(b) Coarser joint cells", r"(c) $(E_{\rm avail},W)$ cells"), strict=True):
         use = [r for r in rows if r["map"] == group]
@@ -181,9 +181,9 @@ def prior_figure() -> dict:
         y = np.array([r["d4_shift_pct"] for r in use])
         ax.scatter(x, y, s=10, color="#2878a5", alpha=.7)
         lo, hi = min(x.min(), y.min()), max(x.max(), y.max())
-        ax.plot([lo, hi], [lo, hi], color=".4", ls=":", lw=.8, label=r"Reference $y=x$, not a fit")
-        ax.legend(fontsize=6, frameon=False, loc="lower right")
-        ax.set_title(label, fontsize=8)
+        ax.plot([lo, hi], [lo, hi], color=".4", ls=":", lw=.8, label=r"$y=x$")
+        ax.legend(fontsize=8.3, frameon=False, loc="lower right")
+        ax.set_title(label, fontsize=8.6)
         ax.set_xlabel("Minus noise-free residual (%)")
         ax.grid(alpha=.15)
         result[group] = {"minus_residual_pct": x.tolist(), "prior_shift_pct": y.tolist(), "correlation": float(np.corrcoef(x,y)[0,1]), "fraction_shift_ge_residual": float(np.mean(abs(y) >= abs(x)))}
@@ -243,7 +243,7 @@ def rounding_figure() -> dict:
     maximum_limit = criteria["rounding_max_sigma"]
     ordered = np.sort(shifts)
     fraction = np.arange(1, len(shifts) + 1) / len(shifts)
-    fig, ax = plt.subplots(figsize=(4.4, 3.2), layout="constrained")
+    fig, ax = plt.subplots(figsize=(245 / 72, 3.6), layout="constrained")
     ax.step(np.r_[0, ordered], np.r_[0, fraction], where="post", color="#2878a5", lw=1.3)
     ax.axvline(median_limit, color="#a85420", ls="--", lw=1,
                label=f"Median requirement: ≤ {median_limit:g}")
@@ -252,18 +252,19 @@ def rounding_figure() -> dict:
     middle = len(shifts) // 2
     ax.plot(ordered[middle], fraction[middle], "o", color="#2878a5", ms=4)
     ax.annotate(f"Median {measured['median']:.1f}",
-                xy=(ordered[middle], fraction[middle]), xytext=(16, -29),
-                textcoords="offset points", fontsize=8,
+                xy=(ordered[middle], fraction[middle]), xytext=(1.3, .36),
+                textcoords="data", fontsize=8.5,
                 arrowprops={"arrowstyle": "-", "color": "0.4", "lw": .6})
     ax.plot(measured["max"], 1, "o", color="#2878a5", ms=4)
     ax.annotate(f"Largest shift\n{measured['max']:.1f}",
                 xy=(measured["max"], 1), xytext=(-8, -39),
-                textcoords="offset points", ha="right", fontsize=8,
+                textcoords="offset points", ha="right", fontsize=8.5,
                 arrowprops={"arrowstyle": "-", "color": "0.4", "lw": .6})
     ax.set(xlim=(0, measured["max"] * 1.15), ylim=(0, 1.055),
-           xlabel="Larger absolute shift of two perturbations / statistical σ",
+           xlabel="Larger absolute shift of two perturbations\n/ statistical σ",
            ylabel="Fraction of 153 quantities")
-    ax.legend(loc="upper left", fontsize=7, frameon=True,
+    ax.legend(loc="lower left", bbox_to_anchor=(0, 1.01),
+              borderaxespad=0, fontsize=8.3, frameon=True,
               facecolor="white", edgecolor="none", framealpha=.95)
     ax.grid(alpha=.15)
     save(fig, "paper_rounding_shifts")
@@ -283,11 +284,14 @@ def main() -> None:
     )
     if failures:
         raise ValueError("; ".join(failures))
-    plt.rcParams.update({"font.family": "serif", "mathtext.fontset": "cm", "font.size": 8,
-                         "axes.labelsize": 8, "xtick.labelsize": 7, "ytick.labelsize": 8,
+    plt.rcParams.update({"font.family": "serif", "mathtext.fontset": "cm", "font.size": 8.5,
+                         "axes.labelsize": 9.3, "xtick.labelsize": 8.3, "ytick.labelsize": 8.3,
                          "axes.linewidth": .6, "pdf.fonttype": 42})
     numbers = {"bias": bias_figure(), "prior": prior_figure(), "rounding": rounding_figure()}
     (OUT / "numbers.json").write_text(json.dumps(numbers, indent=2) + "\n")
+    presentation = read("docs/analysis-note/figures/methods_short/presentation_original_arrays.json")
+    assert hashlib.sha256((OUT / "numbers.json").read_bytes()).hexdigest() == presentation["methods_short_numbers_sha256"], "presentation changed numerical audit"
+
 
 
 if __name__ == "__main__":

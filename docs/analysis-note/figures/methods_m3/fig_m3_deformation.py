@@ -17,6 +17,7 @@ Residual = mean over experiments of (unfolded - truth) / truth, truth = the defo
 """
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 
@@ -69,15 +70,31 @@ def main() -> None:
     nums.append({"claim": "R nominal (A1): max |residual| over EW, %", "value": amax(rn)})
     nums.append({"claim": "family N GiBUU: median |residual| over EW, %", "value": round(float(np.median(np.abs(ng))), 2)})
 
+    reference_path = Path(__file__).parents[1] / "methods_short/presentation_original_arrays.json"
+    reference_pins = json.loads(reference_path.with_name("inputs.json").read_text())
+    reference_key = "docs/analysis-note/figures/methods_short/presentation_original_arrays.json"
+    assert hashlib.sha256(reference_path.read_bytes()).hexdigest() == reference_pins[reference_key]
+    original = json.loads(reference_path.read_text())["deformation"]
+    current = {"left_residual_se_pct": [ng.tolist(), ng_se.tolist()],
+               "injected_change_pct": inj.tolist(),
+               "right_residual_se_pct": {w: [m.tolist(), se.tolist()] for w, (m, se) in rw.items()}}
+    assert current == original, "deformation numerical arrays changed from presentation baseline"
+    (a.outdir / "m3_fig2_deformation_arrays.json").write_text(json.dumps(current, indent=2) + "\n")
     mc.style()
+    plt.rcParams.update({"font.size": 8.5, "axes.labelsize": 9.3,
+                         "xtick.labelsize": 8.3, "ytick.labelsize": 8.3,
+                         "legend.fontsize": 8.3})
     # Layout (methods rewrite, fix round 1, REVIEW-1 P3): the nominal-truth row is not drawn; its maxima are in the
     # numbers file and the caption (the (d) nominal squares are Fig. 2(a)'s refinement arm).
-    fig, (a_ng, a_rw) = plt.subplots(1, 2, figsize=(7.0, 2.9), sharex=True, gridspec_kw={"wspace": 0.16})
-    fig.subplots_adjust(left=0.075, right=0.99, top=0.82, bottom=0.17)
+    fig, (a_ng, a_rw) = plt.subplots(2, 1, figsize=(508 / 72, 6.9), sharex=True)
+    fig.subplots_adjust(left=0.085, right=0.99, top=0.80, bottom=0.12, hspace=1.2)
     x = np.arange(mc.N_EW)
     for ax in (a_ng, a_rw):
         ax.axhline(0, color="k", lw=0.6)
         mc.ew_axis(ax, label_rows=True)
+        ax.tick_params(axis="x", labelsize=8.3, labelbottom=True)
+        for label in ax.texts:
+            label.set_fontsize(8.3)
     a_ng.stairs(inj, np.arange(mc.N_EW + 1) - 0.5, color=mc.GREY, lw=0.9,
                 label=r"injected truth change (deformed/nominal $-$ 1)")
     a_ng.errorbar(x, ng, ng_se, fmt="o", ms=3.0, color=mc.PURPLE, lw=0.7,
@@ -88,18 +105,20 @@ def main() -> None:
                                        (-0.22, 0.0, 0.22)):
         m, se = rw[w]
         a_rw.errorbar(x + dx, m, se, fmt=fmt, ms=2.6, color=col, lw=0.7, label=f"{lab} (20 exp.)")
-    a_ng.set_ylim(-40, 100)
-    a_rw.set_ylim(-40, 100)
-    a_ng.legend(loc="upper left", frameon=False)
-    a_rw.legend(loc="upper left", frameon=False)
+    for ax in (a_ng, a_rw):
+        ax.set_ylim(-40, 100)
+        ax.set_yticks(np.arange(-40, 101, 20))
+    a_ng.legend(loc="lower left", bbox_to_anchor=(0, 1.10), borderaxespad=0, frameon=False)
+    a_rw.legend(loc="lower left", bbox_to_anchor=(0, 1.10), borderaxespad=0, frameon=False)
     a_ng.set_ylabel("(unfolded $-$ truth)/truth (%)")
     a_rw.tick_params(labelleft=True)
     for ax in (a_ng, a_rw):
-        ax.set_xlabel(r"$(E_{\rm avail},W)$ cell: $W$ bin 1–6 within each $E_{\rm avail}$ bin (GeV, top)", fontsize=7.2)
+        ax.set_xlabel(r"$(E_{\rm avail},W)$ cell: $W$ bin 1–6 within each" + "\n"
+                      + r"$E_{\rm avail}$ bin (GeV, top)", fontsize=9.3)
     a_ng.set_title("(a) with unbinned background refinement,\nrefinement classifier 100 trees, 8 leaves",
-                   fontsize=7.2, loc="left", pad=11)
+                   fontsize=8.3, loc="left", y=1.55, pad=0)
     a_rw.set_title("(b) five-observable estimator: as (a), with refinement\nclassifier 400 trees, 31 leaves",
-                   fontsize=7.2, loc="left", pad=11)
+                   fontsize=8.3, loc="left", y=1.55, pad=0)
     # (X5 Gm9: the in-plot estimator header moved to the article caption.)
     mc.save(fig, a.outdir, "m3_fig2_deformation")
     (a.outdir / "m3_fig2_deformation_numbers.json").write_text(json.dumps(nums, indent=1) + "\n")
