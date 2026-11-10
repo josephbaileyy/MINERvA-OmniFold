@@ -1552,3 +1552,47 @@ was the mislabel. The director accepted bd08582ee, the hand re-cites of ALIASES 
   - sec4 17/17; pointers 37; registry PASS;
   - check_restyle against 716ce04ca fails only on the caption's key and ref, and on #981's quotes Q11–Q13 (B5) and
     Q20–Q22 (V-PRIOR), which the decision removes; the re-pin is limitation-resolver's.
+
+## 2026-11-10 — batch 3 (the interim round's group A item 9): S9 as labelled studies, S4's history table
+
+- **S9** is reorganized into separately labelled subsections. The text is moved, with the three exceptions marked
+  below.
+  - The overview tables (S8–S11 numbering unchanged) stay at the top.
+  - Then come six subsections:
+    - supp:study-band, "The superseded two-dimensional band test": the note's sec:coverage paragraphs.
+    - supp:study-fd, "The fake-data bias tests": the fake-data paragraphs, the q3 tilt, the held-out tunes and
+      tab:tune-gate, and the eight-cell GiBUU reading.
+    - supp:study-prr, "The prior-retention study": its thresholds and tab:prr-rho. This is a sixth label beside the
+      five the director listed, because the study is neither a coverage test nor one of the fake-data bias tests.
+    - supp:study-cov2d, "The two-dimensional coverage test": the coverage design (supp:covdesign, tab:cov-design),
+      which is shared with the second test.
+    - supp:study-cov1, "The stopped first five-observable coverage test": the diagnosis.
+    - supp:study-ll5d, "The second five-observable coverage test": the clipping record.
+  - The three new wordings:
+    - (i) The stopped test's subsection opens with the paper's §6.2 sentence on the stop (r5:223, copied). Its former
+      opening "The diagnostic study gave the following results." now reads "The diagnostic study of that check gave
+      the following results."
+    - (ii) The second test's \paragraph heading became its subsection. One sentence points to the shared design.
+    - (iii) The subsection titles.
+  - Every existing label is kept. The paper's six \ssec{S9}{supp:tests} pointers still resolve, with 37 pointers
+    checked.
+- **S4: the history table.** The estimator-configuration paragraph keeps (e) and (f), the two reported
+  configurations, as items, with their text unchanged. Three facts that sat in the following paragraph are folded
+  into those items: the sixteen-cell result and its covariance pointer; the 3D and 4D regeneration with no
+  covariance; and the 2D rebuild after the closure with backgrounds, with its timing. tab:estimators-matrix becomes a
+  four-row history table of (a)–(d): learner and background treatment, used for, and history.
+  - The history column carries the old paragraph's facts: (a)'s central value and covariance were "produced before
+    the purity bias was found and the refinement was developed"; (b) was "the quoted 2D central value in an earlier
+    version …; studies labeled exact-split use it and have not been recomputed", under its existing % Search line.
+    (c) and (d) have no history; they show "---".
+  - The table's (e) and (f) rows repeated the items, so they are dropped.
+  - (d)'s row gains a pointer to Fig. S1, which shows configuration (d).
+  - check_restyle reports 11 note citations and refs lost. Each one was a duplicate: every N-* target still occurs at
+    least once (counted at 535147409 and now).
+- **Pairs** (base 535147409): batch3-read/pairs-read.tsv (27 rows) and batch3-read/moved-verbatim.tsv (56 rows). A row is
+  moved-verbatim when its sentence occurs word for word on the other side.
+- **Checks:**
+  - both rater copies PASS (16 of 16 captions); 0 Overfull and 0 undefined in both;
+  - check_round with the fill test PASS; make_values PASS (4050); sec4 17/17; pointers 37; registry PASS;
+  - check 12 reports 58 paragraphs, explained 43, same 14, seed-adapted 1. The two sec:method-config paragraphs are
+    "adapted 2026-11-10", so they are explained.
