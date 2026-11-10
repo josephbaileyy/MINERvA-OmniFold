@@ -250,7 +250,10 @@ LITERAL_KEYS = [("paper_body.tex", r"the quoted ([0-9.]+) statistical standard d
                 # T1-1: the protected B0 span's sixteen-cell rounding spread, typed, against RS1 R0's keys (rs1_r0.json 724f0c3a)
                 ("paper_body.tex", r"it is a median \\SI\{([0-9.]+)\}\{\\percent\} of the cross section", "rnd16-median"),
                 ("paper_body.tex", r"of the cross section \(\\SIrange\{([0-9.]+)\}\{[0-9.]+\}\{\\percent\}\)", "rnd16-min"),
-                ("paper_body.tex", r"of the cross section \(\\SIrange\{[0-9.]+\}\{([0-9.]+)\}\{\\percent\}\)", "rnd16-max")]
+                ("paper_body.tex", r"of the cross section \(\\SIrange\{[0-9.]+\}\{([0-9.]+)\}\{\\percent\}\)", "rnd16-max"),
+                # T1-3: S6's 132-direction reading, typed because #981's quote Q23 quotes it, against the per-period read
+                ("supplemental_body.tex", r"In the ([0-9]+) poorly determined directions, the combination of the other two", "pp-kbar"),
+                ("supplemental_body.tex", r"than the three-group combination, by ([0-9.]+) per direction", "pp-dbar")]
 
 
 def check_literal_keys(texts, values_tex, entries=None):
@@ -278,7 +281,7 @@ def run(wt, base):
              + check_dates({**cur, "supplemental_body.tex": supp})
              + check_sec4_tests(wt) + check_figures(wt) + check_abstract(wt)
              + check_free_text(mv.PENDING, mv.VERDICTS)
-             + check_literal_keys(cur, (wt / NOTE / "values_fived16.tex").read_text()))
+             + check_literal_keys({**cur, "supplemental_body.tex": supp}, (wt / NOTE / "values_fived16.tex").read_text()))
     return fails
 
 

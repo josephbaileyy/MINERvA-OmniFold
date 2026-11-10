@@ -126,6 +126,10 @@ READOUTS = {
     "cov2dnullar23": (f"{FD}/fd/receipts-cov2d/readout/AR23/null_AR23.json", "80274e52"),
     "cov2dnullg18": (f"{FD}/fd/receipts-cov2d/readout/G18/null_G18.json", "6bd5259d"),
     # T1-2: Tier 2 (a), the descriptive split of the two-dimensional test's chi2 (#1041; T2A declaration, T2-BINDING-1)
+    # T1-3: Tier 2 (b), the fake-data biases against smaller matrices (#1039; T2B declaration, T2-BINDING-1: descriptive)
+    "t2b": (f"{FD}/fd/tier2-20261110/t2b/t2b.json", "0e281a61"),
+    # T1-3: the per-period two-dimensional benchmark's read (OUTCOME-20261107-per-period-2d-benchmark.md, #879)
+    "ppbench": ("docs/orchestration/state/2d-closeout/per-period-benchmark-20261106/receipts/read/readout.json", "4872df32"),
     "t2aar23": (f"{FD}/fd/tier2-20261110/t2a/t2a_AR23.json", "33b7fd40"),
     "t2ag18": (f"{FD}/fd/tier2-20261110/t2a/t2a_G18.json", "6757055e"),
     "stabdecl": (f"{FD}/FD-STAB-DECLARATION.md", "6c91c0cc"),
@@ -1545,6 +1549,8 @@ def groupb_values(d):
         assert i5["rho"] < e["rho"], "the text says IBU at five iterations retains less"
     v.update(tier1_values(d))
     v.update(t2a_values(d))
+    v.update(period_values(d))
+    v.update(t2b_values(d))
     # B3a: the synthetic q3 tilt, r = 1 + a z~ (s5c_pseudo.py truth_weight "q3_given_eavail_w"); a and the clip from the
     # code, the event count, the range and in-cell spread of the weight and the two preservation checks from the truth check
     q = d["s5ntruth"]["departures"]["q3_given_eavail_w"]
@@ -1910,6 +1916,61 @@ def t2a_values(d):
     v["t2a-r1"], v["t2a-r2"] = "73", "139"
     m, e = f"{max(dmax):.1e}".split("e")
     v["t2a-dmax"] = f"{m}\\times10^{{{int(e)}}}"
+    return v
+
+
+def period_values(d):
+    """T1-3: the per-period benchmark's two readings of the run-period groups against the published result. R5: in the
+    73 best-determined directions, removing 1G-1M changes nothing beyond noise (3 sigma resolved, and its share of the
+    three-group distance). R5bar: in the other 132, the combination without 1G-1M is farther, by delta per direction (a
+    fraction of the three-group value). Both noise models must print the same figures. The licensed "about 15 %" share
+    of the resolved change stays typed: it is 14 % or 15 % by noise model (OUTCOME-20261107-per-period-2d-benchmark.md)."""
+    r = d["ppbench"]
+    assert r["verdict"] == "READ" and r["readings"]["n_replicas"] == 10
+    out = []
+    for m, x in r["readings"]["by_model"].items():
+        a, b = x["R5"], x["R5bar"]
+        assert a["class"] == "no change" and b["class"] == "farther without 1G-1M" and b["delta"] < 0
+        out.append({"pp-k": str(a["ABC"]["k"]), "pp-kbar": str(b["ABC"]["k"]), "pp-res": f"{a['resolved_3sigma']:.2f}",
+                    "pp-dbar": f"{-b['delta']:.2f}",
+                    "pp-fbar": f"{-b['fraction']:.2f}"})
+    assert all(o == out[0] for o in out), out
+    v = dict(out[0])
+    v["pp-nrep"] = str(r["readings"]["n_replicas"])
+    assert int(v["pp-k"]) + int(v["pp-kbar"]) == r["readings"]["n_cells"]
+    return v
+
+
+def t2b_values(d):
+    """Tier 2 (b): each of the 16 fake-data records' mean bias against M1 = C_e + C_resp (no C_model), M2 = the statistical
+    block and M3 = the statistical block + C_resp, each with the record's own noise of its mean, beside the existing grade's
+    matrix. Descriptive: no p-value, no grade or criterion changes. The two closures at the prior (the simulation prior and
+    the Tune v1 hybrid, group "prior") are named apart, as the record's own rows."""
+    t = d["t2b"]
+    assert t["schema"] == "t2b/1" and all(c.get("pass") for c in t["controls"].values())
+    R = t["records"]
+    assert len(R) == 16
+    prior = [k for k, r in R.items() if r["group"] == "prior"]
+    assert sorted(prior) == ["A7_mnvtune", "nominal"]
+    v = {}
+    dz = {k: r["M1"]["max_abs_z"] - r["existing"]["max_abs_z"] for k, r in R.items()}
+    kz = max(dz, key=dz.get)
+    assert kz == "F1_genie_v3_g18", kz          # the text names the tune
+    v["t2b-dz-max"] = f"{dz[kz]:.2f}"
+    v["t2b-dz-from"], v["t2b-dz-to"] = f"{R[kz]['existing']['max_abs_z']:.2f}", f"{R[kz]['M1']['max_abs_z']:.2f}"
+    moved = {k: (set(r["M1"]["cells_abs_z_gt_2"]), set(r["existing"]["cells_abs_z_gt_2"])) for k, r in R.items()}
+    moved = {k: (a, b) for k, (a, b) in moved.items() if a != b}
+    assert list(moved) == ["q3"] and moved["q3"][0] - moved["q3"][1] == {"R15"} and moved["q3"][1] <= moved["q3"][0]
+    v["t2b-n2-cell"] = "R15"
+    for m in ("M2", "M3"):
+        x = {k: r[m]["chi2"] for k, r in R.items() if k not in prior}
+        lo, hi = min(x, key=x.get), max(x, key=x.get)
+        assert (lo, hi) == ("W2", "A7_gibuu"), (m, lo, hi)
+        v[f"t2b-{m.lower()}-lo"] = f"{x[lo]:,.0f}".replace(",", "\\,")
+        v[f"t2b-{m.lower()}-hi"] = f"{x[hi]:,.0f}".replace(",", "\\,")
+    v["t2b-lo-name"], v["t2b-hi-name"] = TRUTH_LABEL["W2"][0], TRUTH_LABEL["A7_gibuu"][0]
+    assert all(R[k][m]["chi2"] < 0.5 for k in prior for m in ("existing", "M1", "M2", "M3"))
+    v["t2b-prior-max"] = "0.5"
     return v
 
 

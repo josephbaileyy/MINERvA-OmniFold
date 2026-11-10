@@ -1820,3 +1820,60 @@ was the mislabel. The director accepted bd08582ee, the hand re-cites of ALIASES 
     them; neither edit touches the Supplement.
   - make_values PASS (4117); sec4 17/17; pointers 40; registry PASS; check 12 unchanged.
   - check_restyle against d6c1cd7b0: only the intended additions and keyed numerals, and Q11–Q22 as before.
+
+## 2026-11-10 — Tier 1 batch T1-3 (structure and run-period, with Tier 2 (b))
+
+- **§4.2 split** (item 7): "Run periods" (sec:closure2d) and "The five-observable quadrant sums" (new sec:quad). Table
+  2's quadrant row points to sec:quad.
+- **Both readings of the run-period benchmark** (item 6). Source: the per-period read, readout.json 4872df32 (pin
+  "ppbench"), under OUTCOME-20261107-per-period-2d-benchmark.md's licensed R5 and R5bar sentences and its NOT CITABLE
+  FOR (which period is right; the cause of the shape difference or of the step; dropping 1G-1M).
+  - Keys pp-k (73), pp-kbar (132), pp-res (0.29), pp-dbar (0.69), pp-fbar (0.31) and pp-nrep (10), each asserted equal
+    under both noise models ("replica" and "replica+seed"); classes asserted "no change" and "farther without 1G-1M".
+  - The licensed "about 15 %" share of the resolved change stays typed: it is 14 % or 15 % depending on the noise
+    model.
+  - §4.2 now also prints the 132-direction reading and closes with "Neither reading establishes which period is right
+    or the cause of the step", with an absence-ok waiver scoped to the licence. Table 2's run-period row gives both.
+  - In S6 the reading's fraction and replica count are keys. Its 132 and 0.69 stay typed, because #981's quote Q23
+    quotes them, and check_round's LITERAL_KEYS (now also reading the Supplement) tests them against pp-kbar and
+    pp-dbar.
+- **§5.1's long paragraph** is split in three: the GiBUU-to-GENIE result; the variant, background and IBU comparison
+  with "no single cause"; and the other shapes and the figure. These are paragraph breaks only.
+- **§7 leads with the practical recommendations** (item 7; Claude's referee report section 3). r5:322's checklist sentence
+  becomes the opening paragraph: five checks, each paired with what this paper's own section found.
+  - Closure with backgrounds (§5.1).
+  - Recovery of generator-sized changes measured as a retained fraction (§5.1, §5.3).
+  - Coverage jointly as well as per cell and read in the eigenbasis: here 2 and 1 of 205 cells are flagged while the
+    joint test fails, with mean bias in the poorly determined directions (§6.2; keys cov2d-nunder-*; T2a's licensed
+    wording).
+  - Rounding as well as seeds: bitwise seed-independent but not stable, acting on the pseudo-experiment studied
+    through float32 ties (§6.1).
+  - Run periods before and after unfolding: a step present before unfolding that survives it (§4.2).
+  - No check rests on a result not shown in the paper. The pubhold stays where it was, as its own paragraph, so the
+    section-7 hold is unchanged.
+- **Table 2's placement** (item 7). It is already as early as the ruling "after the test definitions" allows. Defined at
+  the end of §3.3 (p. 4), it floats to the top of p. 5, before §4. Defining it before §3.2 puts it on p. 4 but pushes
+  §3.3 to p. 5, so the table would print before the definitions. Reverted, byte for byte. Unchanged.
+- **Tier 2 (b)** (the director's reading; fd/tier2-20261110/t2b/t2b.json 0e281a61, #1039; keys t2b-*, make_values
+  t2b_values).
+  - S9's fake-data subsection gains "The fake-data biases against smaller matrices":
+    - without C_model the largest |z| rises by at most 0.45 (0.62 → 1.07 at G18), and the |z| > 2 count changes only at
+      the q3 tilt (+1, R15);
+    - against the statistical block alone, χ² runs from 124 (the GENIE + MEC (E_avail,W) shape) to 37,993 (the GiBUU
+      hybrid truth), and with C_resp from 13 to 23,229;
+    - the two closures at the prior stay below 0.5;
+    - it ends with the licensed sentence ("small next to the reported covariance and large next to the statistical
+      block"), "changes no grade or criterion" and "does not show whether C_model is needed or correctly sized", with an
+      absence-ok waiver.
+  - §5.2 gains one pointer sentence in the same terms.
+  - Asserted: every control passes; 16 records; the prior group is {nominal, A7_mnvtune}; the argmax |z| rise is
+    F1_genie_v3_g18; only q3's |z| > 2 set changes, by {R15}; the M2 and M3 extremes are W2 and A7_gibuu; every prior
+    closure is below 0.5 under every matrix.
+  - The optional table is not added.
+- **Pairs** (base 74affb297): t1-3-read/pairs.tsv (22 rows).
+- **Checks:**
+  - both rater copies PASS; 0 Overfull and 0 undefined in both;
+  - make_values PASS (4134); sec4 17/17; pointers 41; registry PASS; check 12 unchanged; check_round's self-test PASS;
+  - check_restyle against 74affb297 shows only the intended additions, the keyed numerals, and Q11–Q22 as before. Q23
+    matches.
+  - check_round with the fill test runs on the committed head before the push.
