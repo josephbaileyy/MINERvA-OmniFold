@@ -548,12 +548,15 @@ def prepare(r: Any, config_path: Path, config_sha: str, run: Path) -> Json:
             )
             result: Json = files[key]
             return result
+        # UTC wall time around the stat bracket: places this staging for atime receipts.
+        started_utc_ns = time.time_ns()
         before = source_stat(path)
         checksum = expected if expected is not None else noatime_digest(r, path)
         label = hashlib.sha256(key.encode()).hexdigest()[:16]
         target = destination or run / "original-inputs" / f"{label}-{path.name}"
         r.stage_copy(path, target, checksum)
         after = source_stat(path)
+        ended_utc_ns = time.time_ns()
         require(
             before == after,
             "source stat or atime changed during fresh stage: " + key,
@@ -565,6 +568,7 @@ def prepare(r: Any, config_path: Path, config_sha: str, run: Path) -> Json:
             "sha256": checksum,
             "stat_before": before,
             "stat_after": after,
+            "staging_utc_ns": {"started": started_utc_ns, "ended": ended_utc_ns},
         }
         files[key] = item
         return item

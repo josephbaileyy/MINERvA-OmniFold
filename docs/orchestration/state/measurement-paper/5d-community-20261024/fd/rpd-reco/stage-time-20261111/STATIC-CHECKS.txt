@@ -1,0 +1,5 @@
+== black (26.10.1) --check
+All done! ✨ 🍰 ✨
+2 files would be left unchanged.
+== ruff (0.17.4) check
+All checks passed!
