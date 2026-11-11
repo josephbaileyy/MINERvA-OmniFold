@@ -31,6 +31,9 @@ authoring lane (this lane, by the director's routing of 2026-11-11), only after 
 
 ## Rulings (director, 2026-11-11) and the open items
 
+coverage-5b-audit: **GO as a proposal** at `2d3c6a0f` (2026-11-11), with no blocking or major findings. READY stays gated
+on items 1-8.
+
 The authoring stays with this lane. Codex2's loop is now Joseph's note work. The proposal goes to coverage-5b-audit.
 
 1. **The run directory: ruled.** It is a new `/pscratch/sd/j/josephrb/rpd-reco-flux-<date>/run`, outside CFS. The
@@ -45,7 +48,13 @@ The authoring stays with this lane. Codex2's loop is now Joseph's note work. The
      - The histogram is `flux_E_cvweighted`, or `flux_E_unweighted` for the generated flux (`:942`).
      - `playlistString` (`:1936-1976`) maps 1A–1F to `minervame1D`, 1G, 1L and 1M to `minervame1M`, and 1N–1P to
        `minervame1N`.
-     - `MAT-DATA-DEPENDENCIES.json` (`b056487e…`) lists exactly these `$PLOTUTILSROOT` paths.
+     - The constructor (`:371-430`) opens a closed set of 15 paths, which `MAT-DATA-DEPENDENCIES.json` (`b056487e…`) lists
+       and custody's `MAT_INVENTORY` guard fixes (audit c3):
+       - 12 flux files: `flux-{gen2thin,g4numiv6}-pdg{14,-14}-minervame<PL>_rearrangedUniverses.root` under
+         `$PLOTUTILSROOT/data/flux`;
+       - `lowNuReweight.root`;
+       - a `data/flux/sys` file;
+       - `$MPARAMFILES/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt`.
    - **How the config is bound to them.** The config's `flux_selection` must name the C-N inventory's rows, because
      `fd_rpd_reco.py:1092-1110` refuses a selection that is not one of them. Those rows sit under `flux_root`, at
      sha256 `951a400e…` (1D), `3c76ed6f…` (1M) and `bfe5e3c5…` (1N).
@@ -53,8 +62,12 @@ The authoring stays with this lane. Codex2's loop is now Joseph's note work. The
        sha256 measured under O_NOATIME.
      - It refuses (`NATIVE_SELECTION`, `fd_rpd_reco_custody.py:607-612`) unless that sha256 equals the selected C-N
        file's.
-     - So a READY config can only run when the files FluxReweighter opens are byte-identical to the named ones. That is
-       the ruling, checked by stat and sha256 under O_NOATIME at run time.
+     - So a READY config can only run when the constrained numerators FluxReweighter opens are byte-identical to the
+       named C-N files. That is the ruling, checked by stat and sha256 under O_NOATIME at run time. The director confirmed
+       on 2026-11-11 that the guard meets it.
+     - **What is not bound by content (audit c1).** Only those three pdg 14 numerators (1D, 1M, 1N) are compared by
+       sha256. The other 12 MAT files are bound by path (`MAT_INVENTORY`) and recorded at `prepare`, but compared with
+       nothing. That includes the g4numiv6 generation denominators, although their inventory rows carry sha256s.
    - **Not done: setting `flux_root` to `$PLOTUTILSROOT`.** An earlier draft of this proposal did that. It would break
      the inventory match. It would also make all of `…/opt/lib` a protected root (`fd_rpd_reco_custody.py:1321-1326`),
      including MAT's own libraries.
@@ -71,14 +84,22 @@ The authoring stays with this lane. Codex2's loop is now Joseph's note work. The
    - **Listed one by one.** `_under` matches a root exactly or as a directory prefix (`fd_rpd_reco_custody.py:673-674`).
      So the `$P/ll5d-` prefix cov2d offered would protect nothing, and each directory is listed.
    - **`flux_universes.npz` is a flux file.** RPD-RECO's flux extract reads the C-N and native MAT flux files of item 2,
-     not that file, so protecting it refuses nothing RPD-RECO needs. cov2d asks that the director confirm this before
-     READY.
+     not that file, so protecting it refuses nothing RPD-RECO needs. **The director confirmed on 2026-11-11 that it
+     stays protected.**
    - **For the run lane.** A plain read of an LL5D input moves its atime while LL5D runs. RPD-RECO's reads are
      O_NOATIME, and these paths are protected.
 5. **`premise`:** runtime by design. It is measured at P0 (BINDING-1 A1 item 3).
 6. **The clone root: ruled.** The flux connect clones to exactly `/dev/shm/limres-rpd-flux1/repo`.
 7. **Also open, from the draft itself.** `mat_constructor.analysis_arguments_citation` reads "short source revision
    f4cd8f8b verified; full SHA must be measured before READY".
+8. **Required before READY (coverage-5b-audit, 2026-11-11): no placeholder anywhere.**
+   - `${RUN_DATE}` must be literal.
+   - No code refuses an unexpanded `${` in `flux_extract` or `flux_custody`: the `${` check at
+     `fd_rpd_reco_custody.py:1049` covers `trace_platform_roots` only.
+   - So READY needs a check that no `${` remains anywhere in the config.
+9. **A departure from the draft template (audit c2).** `trace_instrument_directories` lists
+   `/pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/build`, the pscratch tree prologue5 used. The draft had
+   `${BOUND_CHECKOUT}/unbinned_unfolding/build`.
 
 ## What happens next
 
