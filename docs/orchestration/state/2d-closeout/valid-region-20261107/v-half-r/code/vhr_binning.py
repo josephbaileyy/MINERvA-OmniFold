@@ -51,6 +51,7 @@ VETO = 1.0 - SHARE    # A3.4: a join is refused if a touched line's largest piec
 PZ_SPLIT = s1.FINE["pz"].index(4.5)   # fine p∥ index of the 4.5 GeV/c edge (A5)
 FLOOR = {1: 3, 2: 6}  # D:107-111
 C0_FLOOR, C0_PER_SIDE = 8, 4
+REPRO_TAU = 0.1       # D:264: the H2 rule's τ (H:35)
 
 # id: (axes, p∥ edge frozen (A5), two-dimensional rules A3.1 and A3.4)
 CANDIDATES = {
@@ -70,7 +71,8 @@ def require(ok, msg):
 
 
 # ---------------------------------------------------------------------------------------------------- the mask Ω
-def h2_definition(path=H2_DEF, expect=H2_DEF_SHA256):
+def h2_definition(path=None, expect=None):
+    path, expect = (H2_DEF if path is None else path), (H2_DEF_SHA256 if expect is None else expect)
     raw = Path(path).read_bytes()
     require(hashlib.sha256(raw).hexdigest() == expect, "h2_definition.json's sha256 differs from the pin")
     return json.loads(raw)
@@ -373,6 +375,45 @@ def landmarks_c7(geom, bins):
              "vs_1.2": "equal" if e == 1.2 else ("below" if e < 1.2 else "above")} for e in edges]
 
 
+def reproduce(arrays, h2def, h2_of_fine):
+    """D:264 (audit V1): the reproduction-mode merge on the 32 H2 boxes, unmasked, must give h2_definition.json's
+    reported boxes, unreported boxes, flags and fine map exactly. Any mismatch STOPs before a candidate is built."""
+    require(h2def["tau"] == REPRO_TAU, "h2_definition.json's tau is not the reproduction's 0.1")
+    resp = Response.from_events(*(arrays[k] for k in MC_KEYS), base_of_fine=np.asarray(h2_of_fine), n=32)
+    boxes, steps, flagged = merge(resp, Boxes([[c] for c in range(32)], freeze_pz=False), mode="repro", tau=REPRO_TAU)
+    reported = [b for b in boxes if resp.of(list(b))["supported"]]
+    lut = -np.ones(32, np.int64)
+    for r, b in enumerate(reported):
+        lut[list(b)] = r
+    fmap = lut[np.asarray(h2_of_fine)].astype("<i4")
+    sha = hashlib.sha256(fmap.tobytes()).hexdigest()
+    checks = {
+        "reported boxes": [list(b) for b in reported] == [list(c["h2_cells"]) for c in h2def["reporting_cells"]],
+        "unreported boxes": sorted(list(b) for b in boxes if b not in reported)
+        == sorted(list(b) for b in h2def["unreported_boxes"]),
+        "flags": flagged == list(h2def["flagged_no_partner"]),
+        "fine map": sha == h2def["fine_map_sha256_int32le"]}
+    rec = {"reproduction": "R00-R15 from the H2 boxes (D:264; AMENDMENT-1 A4.5)", "checks": checks,
+           "reported_boxes": [list(b) for b in reported], "flags": flagged, "fine_map_sha256_int32le": sha,
+           "steps": steps}
+    require(all(checks.values()), "the reproduction of R00-R15 failed: "
+            + ", ".join(k for k, v in checks.items() if not v))
+    return rec
+
+
+def excluded_region(h2def):
+    """A2: the region Ω leaves out, named from the unreported H2 boxes (audit w5): each axis on which all of them share
+    one H2 interval, with that interval."""
+    boxes = [c for grp in h2def["unreported_boxes"] for c in grp]
+    out = {}
+    for k, a in enumerate(AXES):
+        bits = {Boxes.bits(c)[k] for c in boxes}
+        if len(bits) == 1:
+            b = bits.pop()
+            out[a] = [s1.H2_EDGES[a][b], s1.H2_EDGES[a][b + 1]]
+    return {"h2_boxes": sorted(boxes), "region": out}
+
+
 def build(cid, arrays, omega, h2_of_fine, h2def):
     """One candidate's binning and its outcome so far. arrays: the six MC keys."""
     if cid == "C0":
@@ -398,7 +439,8 @@ def build(cid, arrays, omega, h2_of_fine, h2def):
     rec = {"candidate": cid, "bins": [dict(geom.describe(b), **resp.of(geom.cells(b))) for b in bins],
            "n_bins": len(bins), "flagged": flagged, "steps": steps, "outcome": outcome(resp, geom, bins, cid,
                                                                                          structural, final2d),
-           "empty_lines": empty, "fine_map_sha256_int32le": hashlib.sha256(fmap.tobytes()).hexdigest()}
+           "empty_lines": empty, "fine_map_sha256_int32le": hashlib.sha256(fmap.tobytes()).hexdigest(),
+           "domain": excluded_region(h2def)}
     rec["status"] = "terminal (binning alone)" if rec["outcome"] else "proceeds to grading"
     if cid == "C7":
         rec["q3_landmarks"] = landmarks_c7(geom, bins)
@@ -406,7 +448,8 @@ def build(cid, arrays, omega, h2_of_fine, h2def):
 
 
 # -------------------------------------------------------------------------------------------------------- input
-def load_mc(npz_path, expect=NPZ_SHA256):
+def load_mc(npz_path, expect=None):
+    expect = NPZ_SHA256 if expect is None else expect
     fd = os.open(npz_path, os.O_RDONLY | NOATIME)
     with os.fdopen(fd, "rb") as fh:
         h = hashlib.sha256()
@@ -436,6 +479,19 @@ def check_weights(arrays, omega):
     require(bool(np.all(np.isfinite(wr[pr & (t_in | r_in)]))), "a counted w_reco is not finite")
 
 
+def file_sha256(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def provenance():
+    """Each record's inputs, code and constants (audit w4)."""
+    return {"npz_sha256": NPZ_SHA256, "h2_definition_sha256": H2_DEF_SHA256,
+            "code": {"vhr_binning.py": file_sha256(__file__), "s5p_stage1_inspect.py": file_sha256(s1.__file__)},
+            "constants": {"criterion": CRIT, "support_min": SUPPORT_MIN, "share": SHARE, "veto": VETO,
+                          "pz_split_index": PZ_SPLIT, "floor": {str(k): v for k, v in FLOOR.items()},
+                          "c0_floor": C0_FLOOR, "c0_per_side": C0_PER_SIDE, "repro_tau": REPRO_TAU}}
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--npz", required=True)
@@ -446,21 +502,35 @@ def main(argv=None):
         print("STOP: O_NOATIME is unavailable on this Linux build")
         return 2
     try:
+        require(not a.out.exists(), f"{a.out} exists")
         h2def = h2_definition()
         omega, h2_of_fine = omega_mask(h2def)
         arrays = load_mc(a.npz)
         check_weights(arrays, omega)
-        a.out.mkdir()
-        summary = {}
+        repro = reproduce(arrays, h2def, h2_of_fine)        # D:264: STOPs before any candidate on a mismatch
+        prov = provenance()
+        repro["inputs"] = prov
+        out = {"reproduction_R00-R15.json": repro}
+        maps, summary = {}, {}
         for cid in a.candidates.split(","):
             require(cid == "C0" or cid in CANDIDATES, f"unknown candidate {cid}")
             rec, fmap = build(cid, arrays, omega, h2_of_fine, h2def)
-            with (a.out / f"binning_{cid}.json").open("x") as f:
-                json.dump(rec, f, indent=1, sort_keys=True, allow_nan=False)
-                f.write("\n")
-            np.save(a.out / f"fine_map_{cid}.npy", fmap)
+            rec["inputs"] = prov
+            out[f"binning_{cid}.json"], maps[f"fine_map_{cid}.npy"] = rec, fmap
             summary[cid] = {"n_bins": rec["n_bins"], "status": rec["status"],
                             "outcome": [next(iter(o)) + ": " + str(next(iter(o.values())))[:60] for o in rec["outcome"]]}
+        text = {}
+        for name, rec in out.items():                        # every record is validated before anything is written
+            try:
+                text[name] = json.dumps(rec, indent=1, sort_keys=True, allow_nan=False) + "\n"
+            except ValueError as e:
+                raise Stop(f"{name} holds a non-finite figure: {e}")
+        a.out.mkdir()
+        for name, t in text.items():
+            with (a.out / name).open("x") as f:
+                f.write(t)
+        for name, fmap in maps.items():
+            np.save(a.out / name, fmap)
         print(json.dumps(summary, indent=1))
     except Stop as e:
         print(f"STOP: {e}")

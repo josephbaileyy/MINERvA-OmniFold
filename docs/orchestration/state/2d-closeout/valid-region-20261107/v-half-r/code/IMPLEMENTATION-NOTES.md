@@ -38,8 +38,13 @@ a definition, and it waives nothing else.
 ## 3. Flagged bins (A4.2, following `h2_definition.merge`)
 
 A low bin with no allowed partner is flagged by its first index, and the loop skips flagged first indices, exactly as
-`h2_definition.merge` does (`nd-unfolding/pv-ladder/h2_definition.py:90-117`). A flagged bin can still be taken as another bin's partner. Whatever remains low
-at the end is caught by the final requirement as T3, because `outcome` evaluates every final bin regardless of flags.
+`h2_definition.merge` does (`nd-unfolding/pv-ladder/h2_definition.py:90-117`). That has two consequences (audit w1):
+- A union that takes a flagged bin as its partner keeps that first index. It inherits the flag and is never tested as
+  low again during the merge.
+- A flagged bin is not retried after its neighbours change shape.
+<!-- absence-ok: these describe the merge algorithm's control flow, not a claim that a result does not exist -->
+Either way, whatever remains low at the end is caught by the final requirement as T3: `outcome` evaluates every final
+bin, regardless of flags.
 
 ## 4. Tie-breaks (A4.2)
 
@@ -49,18 +54,47 @@ at the end is caught by the final requirement as T3, because `outcome` evaluates
 - A grid bin's first index is the flat index of its lowest corner. A C0 bin's first index is its lowest H2 cell. Both
   match `h2_definition.merge`'s keys.
 
+**Tests** (audit V3). `TieBreaks` covers:
+- equal lows, where the lowest first index goes first;
+- the lowest low going first;
+- partner ties, settled by the lower axis, then the lower first index;
+- value-0 ties on an empty-corner C6 and C8, where many bins have reco_all = 0. Those two are pinned by their fine-map
+  sha256. The C6 pin equals coverage-5b-audit's head value.
+
 ## 5. Weights (A3.4)
 
-`check_weights` STOPs on a negative or non-finite w_truth on any row a share counts (pass_truth, true fine cell in Ω). It
-also STOPs on a non-finite w_reco on any counted pass_reco row. The w_reco condition is an addition: it keeps the
-fractions finite. The first build's precondition check passed on the pinned npz (`receipts/wtruth-20261111/`).
+`check_weights` STOPs on a negative or non-finite w_truth on any row a share counts (pass_truth, true fine cell in Ω).
+It also STOPs on a non-finite w_reco on any counted pass_reco row, with the truth or the reco in Ω. The w_reco condition
+is an addition that keeps the fractions finite.
+- The first build's precondition check (`receipts/wtruth-20261111/`) covered w_truth only.
+- The w_reco condition is checked by the builder itself, at the first build, before the reproduction or any candidate
+  (audit w2).
 
-## 6. The reproduction mode (A4.5; audit M1)
+## 6. The reproduction of R00–R15 (D:264; A4.5; audit M1 and V1)
 
-`merge(..., mode="repro", tau=0.1)` with `Boxes` on the 32 H2 boxes is `h2_definition.merge`'s rule exactly: only a
-supported bin can be low, and unsupported boxes are never merged.
-`test_repro_equals_h2_merge` compares the two on 40 random responses with support failures, and the final boxes and
-flags are identical. The real reproduction of R00–R15 (D:264) runs at the first build on the pinned npz, where the
-fine map must equal h2_definition.json's `930326a3…`.
+`reproduce` runs at the first build, after the weight check and before any candidate is built.
+- It runs `merge(..., mode="repro", tau=0.1)` with `Boxes` on the 32 H2 boxes, unmasked, on the pinned npz. That is
+  `h2_definition.merge`'s rule exactly: only a supported bin can be low.
+- The reported boxes are numbered in order, and unsupported boxes map to −1, as `h2_definition.fine_map` does.
+- **The STOP.** The run STOPs, writing nothing, unless all four of these equal `h2_definition.json`'s: the reported
+  boxes, the unreported boxes, the flags (`flagged_no_partner`), and the fine map's sha256 (`930326a3…`). τ must also
+  be the record's 0.1.
+- The result is written as `reproduction_R00-R15.json`.
+- **Tests.** `test_repro_equals_h2_merge` compares the rule with `h2_definition.merge` on 40 random responses.
+  `Reproduction` runs `reproduce` against a record that `h2_definition`'s own functions made from synthetic events,
+  and checks that each mismatched field STOPs. `Main.test_failed_reproduction_writes_nothing` checks the STOP end to end.
+
+## 7. Records (audit w4, w5, w7)
+
+- Each record carries `inputs`: the npz and h2_definition sha256, the sha256 of `vhr_binning.py` and
+  `s5p_stage1_inspect.py`, and the constants.
+- Each candidate's `domain` names the region Ω leaves out, derived from the unreported H2 boxes: p_T < 0.7 GeV/c,
+  q3 ≥ 2.0 GeV and W < 1.8 GeV (A2).
+- Every record is serialized and checked before any file is written. A non-finite figure STOPs with nothing written.
+
+## 8. C0's floors
+
+C0's total floor of 8 is implied by its 4 bins on each side of p_∥ = 4.5. So the total check is kept but cannot fire
+alone, and a mutant of it is equivalent (audit w6).
 
 Nothing is submitted, deposited or tagged.

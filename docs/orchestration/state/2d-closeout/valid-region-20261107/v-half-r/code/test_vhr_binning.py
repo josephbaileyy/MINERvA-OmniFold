@@ -384,5 +384,271 @@ class EndToEnd(unittest.TestCase):
         self.assertLessEqual(rec0["n_bins"], 16)
 
 
+# ------------------------------------------------------------------------------------------- audit V1, V2, V3
+def events_on(cells, fixed, axes, weight_of):
+    """One event per cell of a candidate's axes, at cell centres, reco = gen; the other axes at the fixed indices."""
+    rows = []
+    w = []
+    for idx in cells:
+        ix = dict(fixed)
+        ix.update(dict(zip(axes, idx)))
+        rows.append(point(ix["pt"], ix["pz"], ix["eavail"], ix["q3"], ix["W"]))
+        w.append(weight_of(idx))
+    rows, w = np.asarray(rows), np.asarray(w, float)
+    keep = w > 0
+    rows, w = rows[keep], w[keep]
+    n = len(w)
+    return {"MCgen": rows, "MCreco": rows.copy(), "pass_reco": np.ones(n, bool), "pass_truth": np.ones(n, bool),
+            "w_truth": w, "w_reco": w.copy()}
+
+
+FIX = {"pt": 9, "pz": 8, "eavail": 2, "q3": 3, "W": 3}     # pT >= 0.7 and W >= 1.8: inside Ω on every axis
+
+
+def c7_arrays(row_j, row_weights, empty_row=None):
+    def wt(idx):
+        e, q = idx
+        if q == empty_row:
+            return 0.0
+        return row_weights[e] if q == row_j else 2000.0
+    return events_on([(e, q) for e in range(7) for q in range(7)], FIX, ("eavail", "q3"), wt)
+
+
+def synthetic_h2def(arrays):
+    stats = h2.stats_from_rows(arrays)
+    boxes, steps, flagged = h2.merge(stats)
+    reported = {tuple(b): stats.of(b)["reported"] for b in boxes}
+    lut, _, sha = h2.fine_map(boxes, reported)
+    return {"tau": 0.1, "reporting_cells": [{"h2_cells": b} for b in boxes if reported[tuple(b)]],
+            "unreported_boxes": [b for b in boxes if not reported[tuple(b)]], "flagged_no_partner": flagged,
+            "h2_to_reporting_cell": lut.tolist(), "fine_map_sha256_int32le": sha, "steps": steps}
+
+
+def random_arrays(seed, n=60000):
+    rng = np.random.default_rng(seed)
+    idx = np.stack([rng.integers(0, vb.NFINE[a], n) for a in vb.AXES], axis=1)
+    gen = np.array([[centre(a, i) for a, i in zip(vb.AXES, r)] for r in idx])
+    reco = gen.copy()
+    box25 = H2_OF_FINE[np.ravel_multi_index(idx.T, tuple(vb.NFINE[a] for a in vb.AXES))] == 25
+    into25 = ~box25 & (rng.uniform(size=n) < 0.3)
+    reco[into25] = point(9, 8, 1, 2, 3)                     # 30 % of other events reconstruct in box 25: its purity is
+    reco[box25] = gen[rng.permutation(n)][box25]            # far below 0.1, so the H2 rule merges it
+    return {"MCgen": gen, "MCreco": reco, "pass_reco": np.ones(n, bool), "pass_truth": np.ones(n, bool),
+            "w_truth": np.full(n, 3.0), "w_reco": np.full(n, 3.0)}
+
+
+class Reproduction(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.arrays = random_arrays(5)
+        cls.h2def = synthetic_h2def(cls.arrays)
+        h2_of_fine, _ = S1.coarse_map(S1.H2_EDGES)
+        cls.h2_of_fine = h2_of_fine
+
+    def test_reproduces_the_synthetic_record(self):
+        self.assertTrue(self.h2def["steps"], "the fixture must make the H2 rule merge")
+        rec = vb.reproduce(self.arrays, self.h2def, self.h2_of_fine)
+        self.assertTrue(all(rec["checks"].values()))
+
+    def test_each_mismatch_stops(self):
+        for field, bad in (("fine_map_sha256_int32le", "0" * 64), ("flagged_no_partner", [99]),
+                           ("unreported_boxes", [[0]]), ("reporting_cells", [{"h2_cells": [0]}]), ("tau", 0.2)):
+            d = dict(self.h2def)
+            d[field] = bad
+            with self.assertRaises(vb.Stop, msg=field):
+                vb.reproduce(self.arrays, d, self.h2_of_fine)
+
+
+class Main(unittest.TestCase):
+    """main() end to end on a synthetic npz and a synthetic H2 record, with the module's pins patched to them."""
+
+    def setUp(self):
+        import tempfile
+        self.tmp = tempfile.TemporaryDirectory()
+        self.d = Path(self.tmp.name)
+        self.saved = (vb.NPZ_SHA256, vb.H2_DEF, vb.H2_DEF_SHA256)
+
+    def tearDown(self):
+        vb.NPZ_SHA256, vb.H2_DEF, vb.H2_DEF_SHA256 = self.saved
+        self.tmp.cleanup()
+
+    def prepare(self, arrays, h2def=None):
+        import hashlib
+        npz = self.d / "in.npz"
+        np.savez(npz, **arrays)
+        h2p = self.d / "h2.json"
+        h2p.write_text(json.dumps(h2def or synthetic_h2def(arrays)))
+        vb.NPZ_SHA256 = hashlib.sha256(npz.read_bytes()).hexdigest()
+        vb.H2_DEF, vb.H2_DEF_SHA256 = h2p, hashlib.sha256(h2p.read_bytes()).hexdigest()
+        return npz
+
+    def test_writes_reproduction_and_candidates_with_provenance(self):
+        npz = self.prepare(random_arrays(6))
+        out = self.d / "out"
+        self.assertEqual(vb.main(["--npz", str(npz), "--out", str(out), "--candidates", "C3,C0"]), 0)
+        rec = json.loads((out / "binning_C3.json").read_text())
+        self.assertEqual(rec["inputs"]["npz_sha256"], vb.NPZ_SHA256)
+        self.assertEqual(rec["inputs"]["code"]["vhr_binning.py"], vb.file_sha256(vb.__file__))
+        self.assertTrue(json.loads((out / "reproduction_R00-R15.json").read_text())["checks"]["fine map"])
+
+    def test_failed_reproduction_writes_nothing(self):
+        arrays = random_arrays(6)
+        d = synthetic_h2def(arrays)
+        d["flagged_no_partner"] = [31]
+        npz = self.prepare(arrays, d)
+        out = self.d / "out"
+        self.assertEqual(vb.main(["--npz", str(npz), "--out", str(out)]), 2)
+        self.assertFalse(out.exists())
+
+    def test_negative_weight_stops_main(self):
+        arrays = random_arrays(6)
+        arrays["w_truth"][0] = -1.0
+        npz = self.prepare(arrays, synthetic_h2def(random_arrays(6)))
+        self.assertEqual(vb.main(["--npz", str(npz), "--out", str(self.d / "out")]), 2)
+
+    def test_pins_refuse(self):
+        npz = self.prepare(random_arrays(6))
+        with self.assertRaises(vb.Stop):
+            vb.load_mc(npz, expect="0" * 64)
+        with self.assertRaises(vb.Stop):
+            vb.h2_definition(expect="0" * 64)
+        bad = dict(H2DEF)
+        bad["h2_to_reporting_cell"] = list(bad["h2_to_reporting_cell"])
+        bad["h2_to_reporting_cell"][2] = 0
+        with self.assertRaises(vb.Stop):
+            vb.omega_mask(bad)
+
+
+class BuildLevel(unittest.TestCase):
+    def test_candidate_table(self):
+        self.assertEqual(vb.CANDIDATES, {
+            "C1": (("pt",), False, False), "C2": (("pz",), True, False), "C3": (("eavail",), False, False),
+            "C4": (("q3",), False, False), "C5": (("W",), False, False), "C6": (("pt", "pz"), True, True),
+            "C7": (("eavail", "q3"), False, True), "C8": (("eavail", "W"), False, False)})
+
+    def test_c7_structural_ends_at_t2(self):
+        rec, _ = vb.build("C7", c7_arrays(2, [500, 500, 500, 7000, 500, 500, 500]), OMEGA, H2_OF_FINE, H2DEF)
+        t2 = [o for o in rec["outcome"] if o.get("T2") == "two-dimensional resolution: structural"]
+        self.assertTrue(t2)
+        self.assertIn("row q3[2]", [x["line"] for x in t2[0]["lines"]])
+        self.assertEqual(rec["status"], "terminal (binning alone)")
+
+    def test_c7_final_failure_ends_at_t2(self):
+        rec, _ = vb.build("C7", c7_arrays(2, [6500, 500, 500, 500, 500, 500, 1000]), OMEGA, H2_OF_FINE, H2DEF)
+        struct = [x["line"] for o in rec["outcome"] if o.get("T2") == "two-dimensional resolution: structural"
+                  for x in o["lines"]]
+        final = [x["line"] for o in rec["outcome"] if o.get("T2") == "two-dimensional resolution: final"
+                 for x in o["lines"]]
+        self.assertNotIn("row q3[2]", struct)
+        self.assertIn("row q3[2]", final)
+        self.assertEqual(rec["status"], "terminal (binning alone)")
+
+    def test_c7_empty_row_is_exempt_and_guarded(self):
+        rec, _ = vb.build("C7", c7_arrays(2, [2000] * 7, empty_row=5), OMEGA, H2_OF_FINE, H2DEF)
+        self.assertIn("row q3[5]", rec["empty_lines"])
+        final = [x["line"] for o in rec["outcome"] if o.get("T2") == "two-dimensional resolution: final"
+                 for x in o["lines"]]
+        self.assertNotIn("row q3[5]", final)
+
+    def test_c2_keeps_the_pz_edge(self):
+        def wt(idx):
+            return 500.0 if idx[0] == 5 else 5000.0
+        arr = events_on([(z,) for z in range(16)], FIX, ("pz",), wt)
+        mig = events_on([(3,)], FIX, ("pz",), lambda i: 3000.0)       # truth in p_par bin 3, reco in bin 4
+        mig["MCreco"] = np.asarray([point(FIX["pt"], 4, FIX["eavail"], FIX["q3"], FIX["W"])])
+        arr = {k: np.concatenate([arr[k], mig[k]]) for k in arr}
+        rec, _ = vb.build("C2", arr, OMEGA, H2_OF_FINE, H2DEF)
+        edges = [b["pz"] for b in rec["bins"]]
+        self.assertIn([S1.FINE["pz"][4], S1.FINE["pz"][6]], edges)
+        self.assertFalse(any(lo < 4.5 < hi for lo, hi in edges))
+
+    def test_c6_keeps_the_pz_edge(self):
+        arr = events_on([(t, z) for t in range(14) for z in range(16)], FIX, ("pt", "pz"),
+                        lambda i: 0.0 if (i[0] >= 10 and i[1] <= 3) else (300.0 if i[1] in (5, 6) else 3000.0))
+        rec, _ = vb.build("C6", arr, OMEGA, H2_OF_FINE, H2DEF)
+        self.assertFalse(any(lo < 4.5 < hi for lo, hi in (b["pz"] for b in rec["bins"])))
+
+    def test_2d_floor(self):
+        g = vb.Grid(("eavail", "W"), False, False, dims=(6, 1))
+        r = vb.Response(np.diag(np.full(6, 9000.0)), np.full(6, 1e4), np.full(6, 1e4), np.full(6, 5000.0))
+        five = [((i, i), (0, 0)) for i in range(4)] + [((4, 5), (0, 0))]
+        six = [((i, i), (0, 0)) for i in range(6)]
+        self.assertEqual(vb.outcome(r, g, five, "C8", [], [])[0]["T2"], "minimum")
+        self.assertEqual(vb.outcome(r, g, six, "C8", [], []), [])
+
+    def test_c0_mask(self):
+        rec, fmap = vb.build("C0", random_arrays(7, n=20000), OMEGA, H2_OF_FINE, H2DEF)
+        self.assertTrue(np.all(fmap[~OMEGA] == -1))
+        self.assertEqual(rec["domain"]["h2_boxes"], [2, 6, 10, 14])
+
+    def test_c0_in_share_counts_truth_outside_omega(self):
+        # audit w3: the in share of C0's bin holding H2 box 25 equals the reco weight there whose truth is outside Ω
+        arr = random_arrays(7, n=20000)
+        rec, _ = vb.build("C0", arr, OMEGA, H2_OF_FINE, H2DEF)
+        b = next(x for x in rec["bins"] if 25 in x["h2_cells"])
+        ft, fr = S1.fine_index(arr["MCgen"]), S1.fine_index(arr["MCreco"])
+        reco_in = (fr >= 0) & np.isin(H2_OF_FINE[np.maximum(fr, 0)], b["h2_cells"]) & arr["pass_reco"]
+        truth_out = (ft < 0) | ~OMEGA[np.maximum(ft, 0)] | ~arr["pass_truth"]
+        want = arr["w_reco"][reco_in & truth_out].sum() / arr["w_reco"][reco_in].sum()
+        self.assertGreater(want, 0.0)
+        self.assertAlmostEqual(b["in_share"], want, places=12)
+
+    def test_excluded_region_named(self):
+        self.assertEqual(vb.excluded_region(H2DEF)["region"], {"pt": [0.0, 0.7], "q3": [2.0, 100.0], "W": [0.0, 1.8]})
+
+    def test_w_reco_on_a_truth_side_row_stops(self):
+        a = {"MCgen": np.asarray([point(3, 2, 2, 2, 1)]), "MCreco": np.asarray([point(3, 2, 2, 6, 1)]),
+             "pass_reco": np.ones(1, bool), "pass_truth": np.ones(1, bool), "w_truth": np.ones(1),
+             "w_reco": np.asarray([np.inf])}
+        with self.assertRaises(vb.Stop):
+            vb.check_weights(a, OMEGA)
+
+
+class TieBreaks(unittest.TestCase):
+    """A4.2 (audit V3)."""
+
+    @staticmethod
+    def line(same, ra, tr):
+        return vb.Response(np.diag(np.asarray(same, float)), np.asarray(ra, float), np.asarray(tr, float),
+                           np.full(len(same), 5000.0))
+
+    def test_equal_lows_take_the_lowest_first_index(self):
+        # bins 1 and 2 are low at the same value 0.4; bin 1 goes first, joins 0; then bin 2 joins 3
+        r = self.line([900, 400, 400, 5000], [1000, 421, 421, 5263], [1000, 1000, 1000, 5100])
+        bins, _, _ = vb.merge(r, vb.Grid(("pt",), False, False, dims=(4,)))
+        self.assertEqual(bins, [((0, 1),), ((2, 3),)])
+
+    def test_the_lowest_low_goes_first(self):
+        # bin 2 (0.40) goes before bin 1 (0.45): bin 2 joins 3, then bin 1 joins (2,3)
+        r = self.line([900, 450, 400, 5000], [1000, 474, 421, 5263], [1000, 1000, 1000, 5100])
+        bins, _, _ = vb.merge(r, vb.Grid(("pt",), False, False, dims=(4,)))
+        self.assertEqual(bins, [((0, 0),), ((1, 3),)])
+
+    def test_partner_ties_take_the_lowest_axis_then_first_index(self):
+        g = vb.Grid(("eavail", "W"), False, False, dims=(3, 3))
+        n = 9
+        same = np.full(n, 5000.0)
+        ra = same.copy()
+        ra[4] = same[4] = 500.0                                  # the centre is unsupported; every union is pure
+        r = vb.Response(np.diag(same), ra, ra.copy(), ra.copy())
+        bins, _, _ = vb.merge(r, g)
+        self.assertIn(((0, 1), (1, 1)), bins)                    # axis 0, the lower first index
+
+    def test_value_zero_ties_on_empty_corners(self):
+        # the empty corners make many bins tie at value 0 (reco_all = 0); the tie-breaks fix the fine map
+        c8 = events_on([(e, w) for e in range(7) for w in range(6)], FIX, ("eavail", "W"),
+                       lambda i: 0.0 if (i[0] >= 3 and i[1] >= 2) else 2000.0)
+        rec8, _ = vb.build("C8", c8, OMEGA, H2_OF_FINE, H2DEF)
+        c6 = events_on([(t, z) for t in range(14) for z in range(16)], FIX, ("pt", "pz"),
+                       lambda i: 0.0 if (i[0] >= 10 and i[1] <= 3) else 3000.0)
+        rec6, _ = vb.build("C6", c6, OMEGA, H2_OF_FINE, H2DEF)
+        self.assertEqual((rec8["n_bins"], rec8["fine_map_sha256_int32le"][:16]), PIN_C8)
+        self.assertEqual((rec6["n_bins"], rec6["fine_map_sha256_int32le"][:16]), PIN_C6)
+
+
+PIN_C8 = (26, "4b608bf34eb08ff6")     # the head's binning, pinned: a changed tie-break changes it (audit V3)
+PIN_C6 = (208, "8184cc2e9bfcf48e")    # equal to coverage-5b-audit's head value for an empty-corner C6
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
