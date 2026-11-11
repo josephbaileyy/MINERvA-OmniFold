@@ -336,8 +336,8 @@ The rules for the listing:
      same population, and r = 1 + 0.3·z′. The sign is + for all three tilts.
    - **Normalization.** The recentring keeps the population's w_truth-weighted total in Ω exactly. A control STOPs if
      the total changes by more than 1e-12 relative, or if any r ≤ 0.
-   - **Application.** r multiplies both w_truth and w_reco of each row, as the existing truths apply it
-     (`nd-unfolding/s5c_pseudo.py:125-128`).
+   - **Application.** r multiplies both w_truth and w_reco of each row, as the existing truths apply it: w_reco at
+     `nd-unfolding/s5c_pseudo.py:125-128` and w_truth at :149-152.
    - **Domain.** r applies to the rows of the population only. Rows outside Ω or outside the grid, including the
      −9999 gen sentinels, keep r = 1, as the q3 tilt treats out-of-grid rows (`nd-unfolding/s5c_pseudo.py:60-62`). So
      migration into Ω from outside it is the nominal simulation's at every tilt, and the record states this.
