@@ -408,8 +408,12 @@ def _load(path: Path, key: str) -> np.ndarray:
 
 
 def same(a: np.ndarray, b: np.ndarray) -> dict:
-    ok = bool(a.dtype == b.dtype and a.shape == b.shape and np.array_equal(a, b))
-    return {"pass": ok, "cells": int(b.size), "cells_differing": int(np.sum(a != b)) if a.shape == b.shape else None}
+    """Bitwise: the same dtype, shape and bytes (as LL5D A1b.1). Value equality would pass -0.0 against +0.0."""
+    if a.dtype != b.dtype or a.shape != b.shape:
+        return {"pass": False, "cells": int(b.size), "cells_differing": None}
+    ab, bb = (np.ascontiguousarray(x).reshape(-1).view(np.uint8).reshape(x.size, x.itemsize) for x in (a, b))
+    return {"pass": bool(a.tobytes() == b.tobytes()), "cells": int(b.size),
+            "cells_differing": int(np.any(ab != bb, axis=1).sum())}
 
 
 def pair(stage_rec: dict, runs: Path, job: str) -> dict:

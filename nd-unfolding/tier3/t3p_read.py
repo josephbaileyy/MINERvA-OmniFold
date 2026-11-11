@@ -48,6 +48,7 @@ PRR_READOUT = "docs/orchestration/state/measurement-paper/5d-community-20261024/
 INPUT_PINS = {PRR_READOUT: "9238f22bfe29685e33c1d5bb46da3938a3ebfdc93a54575a4fe99de3a7af9ead"}
 TR1_ARMS = ("MU", "MW", "MO", "SO")
 TRAJ_ARMS = ("B0", "MU", "MW", "MO", "SO")
+STEP2_BOUNDED = ("MU", "MW", "MO")  # §5.2: the TR-1 arms that OP's rho bounds
 LABELS = {"what": "T3: (e)'s retained prior per iteration under one replaced pipeline component, at the two flagged "
                   "truths; noise-free, one MC split, simulation only",
           "not": ["a cause beyond 'consistent with'", "an estimator change (MO and OP use the truth)",
@@ -270,12 +271,13 @@ def tr2_class(rho_op: float | None, bar: float) -> str:
 
 
 def trajectory_class(rhos: list[float | None], dt: float, delta: float = DELTA) -> str:
-    """§5.3, on rho(1..50): crosses, reaches 0, slow approach, plateau or rises (one class)."""
+    """§5.3, on rho(1..50), in the declared order; the conditions partition the trajectories, so one class holds:
+    crosses, crosses and returns, reaches 0, slow approach, rises or plateau."""
     if len(rhos) < 50 or any(r is None for r in rhos):
         return "undefined"
     r25, r50 = rhos[24], rhos[49]
     if min(rhos) <= -delta:
-        return "crosses"
+        return "crosses" if r50 < delta else "crosses and returns"
     if r50 < delta:
         return "reaches 0"
     if r25 - r50 >= dt:
@@ -331,20 +333,29 @@ def readings(q: dict, prr: dict) -> dict:
     dt = delta_t(prr)
     out = {"floor": {"s": s, "bars": bars, "T_Q": T_Q, "dof": len(seeds) - 1, "delta_t": dt,
                      "transfer": f"s is measured at {FT} and applied at q3 (a transfer); delta_t from FD-PRR's s_F1"},
-           "TR-1": {}, "TR-1_k5": {}, "TR-2": {}, "rho_OP": {}, "trajectory": {}, "location": {}, "labels": {},
-           "beside": {}}
+           "TR-1": {}, "TR-1_k5": {}, "resolution": {}, "TR-2": {}, "rho_OP": {}, "trajectory": {}, "location": {},
+           "labels": {}, "beside": {}}
     for t in T.TRUTHS:
         b50 = rho_at(q[("B0", t, S0)], 50)
         b5 = rho_at(q[("B0", t, S0)], 5)
-        tr1, k5 = {}, {}
-        for arm in TR1_ARMS:
-            a50, a5 = rho_at(q[(arm, t, S0)], 50), rho_at(q[(arm, t, S0)], 5)
-            tr1[arm] = tr1_class(None if a50 is None or b50 is None else a50 - b50, bars[arm])
-            k5[arm] = None if a5 is None or b5 is None else a5 - b5
         op = rho_at(q[("OP", t, S0)], 2)
         tr2 = tr2_class(op, bars["OP"])
-        if tr1["MO"] == "no effect" and tr2 == "step 2 does not carry the truth":
-            tr1["MO"] = "no effect (bounded by step 2)"
+        # §5.2: MU, MW and MO keep step 2 and FD-PRR's pseudo-data, so none can go much below rho_OP(2). Where B0's
+        # limit is within the arm's bar of rho_OP(2), the arm had no room to read "lowers", and its "no effect" says
+        # nothing about its component. SO changes the pseudo-data, so OP does not bound it.
+        headroom = None if op is None or b50 is None else b50 - op
+        tr1, k5, res = {}, {}, {}
+        for arm in TR1_ARMS:
+            a50, a5 = rho_at(q[(arm, t, S0)], 50), rho_at(q[(arm, t, S0)], 5)
+            d50 = None if a50 is None or b50 is None else a50 - b50
+            tr1[arm] = tr1_class(d50, bars[arm])
+            if arm in STEP2_BOUNDED and tr1[arm] == "no effect" and headroom is not None and headroom < bars[arm]:
+                tr1[arm] = "no effect (bounded by step 2)"
+            k5[arm] = None if a5 is None or b5 is None else a5 - b5
+            res[arm] = {"Delta": d50, "bar": bars[arm], "rho_B0_50": b50,
+                        "bar_over_rho_B0_50": None if not b50 else bars[arm] / b50,
+                        "headroom_B0_50_minus_OP_2": headroom}
+        out["resolution"][t] = res
         traj = {arm: trajectory_class([r["rho"] for r in q[(arm, t, S0)]["per_k"]], dt) for arm in TRAJ_ARMS}
         loc = {}
         for arm in A.ARMS:
@@ -400,6 +411,9 @@ def text(out: dict) -> str:
     lines = [f"verdict COMPLETE; floor s {rd['floor']['s']}, bars {rd['floor']['bars']}, delta_t {rd['floor']['delta_t']:.4f}"]
     for t in T.TRUTHS:
         lines.append(f"{t}: TR-1 {rd['TR-1'][t]}; TR-2 {rd['TR-2'][t]} (rho_OP {rd['rho_OP'][t]})")
+        for arm, r in rd["resolution"][t].items():  # §5.1: every TR-1 class is printed with what its bar can see
+            lines.append(f"{t}: {arm} {rd['TR-1'][t][arm]}: Delta {r['Delta']}, bar {r['bar']}, bar/rho_B0(50) "
+                         f"{r['bar_over_rho_B0_50']}, rho_B0(50) - rho_OP(2) {r['headroom_B0_50_minus_OP_2']}")
         lines.append(f"{t}: trajectory {rd['trajectory'][t]}")
         lines.append(f"{t}: location {rd['location'][t]}")
         lines.append(f"{t}: labels {rd['labels'][t]}")

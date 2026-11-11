@@ -20,15 +20,13 @@ ND = HERE.parent
 REPO = ND.parent
 FILES = ("t3p_arms.py", "t3p_probe.py", "t3p_read.py", "sbatch_t3p.sh", "test_t3p.py")
 AR, PB, RD, SB = FILES[:4]
-EXPECTED_TESTS = 62
+EXPECTED_TESTS = 66
 MUTATIONS = [
     # --- REQUIRED: C-PAIR fails on a one-ulp change, and the trace at k is the plain unfold at k
     ("REQUIRED C-PAIR compares within a tolerance", PB,
-     "ok = bool(a.dtype == b.dtype and a.shape == b.shape and np.array_equal(a, b))",
-     "ok = bool(a.shape == b.shape and np.allclose(a, b))", "test_one_ulp_in_our_trace_fails_c_pair"),
+     '"pass": bool(a.tobytes() == b.tobytes())', '"pass": bool(np.allclose(a, b))', "test_one_ulp_in_our_trace_fails_c_pair"),
     ("REQUIRED C-PAIR compares within a tolerance (reference side)", PB,
-     "ok = bool(a.dtype == b.dtype and a.shape == b.shape and np.array_equal(a, b))",
-     "ok = bool(a.shape == b.shape and np.allclose(a, b))", "test_one_ulp_in_the_reference_fails_c_pair"),
+     '"pass": bool(a.tobytes() == b.tobytes())', '"pass": bool(np.allclose(a, b))', "test_one_ulp_in_the_reference_fails_c_pair"),
     ("REQUIRED stored k unfold from w_pull", AR,
      'self.xs_at[k] = xs_from_push(self.unf_in, w_push).ravel(order="C")',
      'self.xs_at[k] = xs_from_push(self.unf_in, w_pull).ravel(order="C")',
@@ -74,8 +72,10 @@ MUTATIONS = [
     ("r length unchecked", PB, 'if state["r_A"] is None or len(state["r_A"]) != len(exp["MCgen"]):',
      'if state["r_A"] is None:', "test_unfold_one_refuses_a_missing_r_a_mismatched_r_or_a_substitute"),
     # --- the probe: C-PAIR, C-X and the gate
-    ("C-PAIR dtype ignored", PB, "ok = bool(a.dtype == b.dtype and a.shape == b.shape and np.array_equal(a, b))",
-     "ok = bool(a.shape == b.shape and np.array_equal(a, b))", "test_a_dtype_change_fails"),
+    ("C-PAIR dtype ignored", PB, "if a.dtype != b.dtype or a.shape != b.shape:", "if a.shape != b.shape:",
+     "test_a_dtype_change_fails"),
+    ("C-PAIR by value", PB, '"pass": bool(a.tobytes() == b.tobytes())', '"pass": bool(np.array_equal(a, b))',
+     "test_a_signed_zero_fails_c_pair"),
     ("C-PAIR pin unchecked", PB,
      'if ref is None or sha256_path(ref) != pin:\n            out["C-PAIR"][key]',
      'if ref is None:\n            out["C-PAIR"][key]', "test_a_reference_that_is_not_its_pin_fails"),
@@ -110,8 +110,21 @@ MUTATIONS = [
     ("TR-1 boundary open", RD, "if delta <= -bar:", "if delta < -bar:", "test_tr1_and_tr2"),
     ("TR-2 sign", RD, 'return "step 2 carries the truth" if abs(rho_op) < bar else',
      'return "step 2 carries the truth" if rho_op < bar else', "test_tr1_and_tr2"),
-    ("bounded by step 2 dropped", RD, 'if tr1["MO"] == "no effect" and tr2 == "step 2 does not carry the truth":',
+    ("bounded by step 2 dropped", RD,
+     'if arm in STEP2_BOUNDED and tr1[arm] == "no effect" and headroom is not None and headroom < bars[arm]:',
      "if False:", "test_mo_bounded_by_step_2"),
+    ("bounded by step 2 from TR-2's class", RD,
+     'if arm in STEP2_BOUNDED and tr1[arm] == "no effect" and headroom is not None and headroom < bars[arm]:',
+     'if arm == "MO" and tr1[arm] == "no effect" and tr2 == "step 2 does not carry the truth":',
+     "test_bounded_by_step_2_is_decided_from_the_numbers"),
+    ("bounded by step 2 ignores the headroom", RD, "headroom is not None and headroom < bars[arm]:",
+     "headroom is not None:", "test_no_effect_with_headroom_stands_whatever_tr2"),
+    ("SO bounded by OP", RD, 'STEP2_BOUNDED = ("MU", "MW", "MO")', "STEP2_BOUNDED = TR1_ARMS",
+     "test_mo_bounded_by_step_2"),
+    ("resolution not printed", RD, '"bar_over_rho_B0_50": None if not b50 else bars[arm] / b50,',
+     '"bar_over_rho_B0_50": None,', "test_bounded_by_step_2_is_decided_from_the_numbers"),
+    ("crosses and returns folded", RD, 'return "crosses" if r50 < delta else "crosses and returns"',
+     'return "crosses"', "test_trajectory_classes"),
     ("unattributed dropped", RD, 'return out or ["unattributed"]', "return out", "test_labels"),
     ("b_par outside S", RD, "par = np.where(S, -rho * d, 0.0)", "par = -rho * d", "test_bias_split_is_exact"),
     ("bar floor dropped", RD, "bars[arm] = max(BAR_FLOOR, T_Q * s[arm])", "bars[arm] = T_Q * s[arm]",
@@ -144,6 +157,8 @@ MUTATIONS = [
     ("squeue failure tolerated", SB, "sq=$(squeue -h -u \"${USER:-josephrb}\" -o '%j|%T' 2>/dev/null) ||",
      "sq=$(squeue -h -u \"${USER:-josephrb}\" -o '%j|%T' 2>/dev/null) ; true ||",
      "test_the_dry_run_refuses_without_a_fence_and_on_a_fenced_job"),
+    ("fence in the dry job only", SB, "fi\nfence_check\n", 'fi\n[ "$MODE" != dry ] || fence_check\n',
+     "test_a_full_job_checks_the_fence_too"),
     ("full job without the dry DONE", SB, '[ -s "$OUT/log-dry/DONE" ] && [ ! -e "$OUT/log-dry/STOP" ] ||', "true ||",
      "test_a_full_job_refuses_without_the_dry_runs_done_and_an_existing_log"),
 ]

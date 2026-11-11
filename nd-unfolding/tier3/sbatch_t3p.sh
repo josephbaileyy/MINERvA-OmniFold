@@ -9,8 +9,9 @@
 # T3 (state/measurement-paper/5d-community-20261024/fd/tier3-20261110/T3-PIPELINE-TESTS-DECLARATION.md §9). One node,
 # 8 lanes x 32 threads, CPU only. Runs only after the LL5D readout, on the director's go for each connect.
 #   sbatch --job-name=t3p_<mode> --time=<t3p_probe.py limit <mode>> sbatch_t3p.sh <mode> <deploy> <pin> <OUT>
-#   dry:   refuses unless <OUT>/fence.txt names the job-name prefixes the director fenced and none of them is queued
-#          or running; stages every shared input once through O_NOATIME (t3p_probe.py stage), runs the six A7 GiBUU
+#   every job refuses unless <OUT>/fence.txt names the job-name prefixes the director fenced and none of them is
+#          queued or running.
+#   dry:   stages every shared input once through O_NOATIME (t3p_probe.py stage), runs the six A7 GiBUU
 #          arms on the primary split, then C-PAIR and C-X (t3p_probe.py pair --job dry). DONE only if both pass.
 #   q3, floor: after a clean dry run only; the staged copies are re-verified, the dry run's timings copied in, every
 #          task starts through the gate (every arm priced at its dry-run rate), then the job's own C-PAIR and C-X.
@@ -69,11 +70,10 @@ trc=$?
 LIMIT_H=$(python3 -c "import sys; h,m,s=(int(x) for x in sys.argv[1].split(':')); print(h+m/60+s/3600)" "$LIMIT")
 L="$OUT/log-$MODE"
 [ ! -e "$L" ] || { echo "[t3p] refusing: $L exists" >&2; exit 2; }
-if [ "$MODE" = dry ]; then
-    [ -s "$OUT/manifest.json" ] || { echo "[t3p] refusing: no $OUT/manifest.json" >&2; exit 2; }
-    [ ! -e "$OUT/stage" ] || { echo "[t3p] refusing: $OUT/stage exists" >&2; exit 2; }
-    # §9.4: the director's go names the fenced families; nothing is staged or written while any is queued or running.
-    # Fails closed: no fence file, an empty one, or a squeue that cannot answer refuses.
+# §9.4: the director's go names the window and the fenced families; no job stages, writes or runs while any is queued
+# or running (every job, so that T3 does not overlap a fenced lane in time). Fails closed: no fence file, an empty
+# one, or a squeue that cannot answer refuses.
+fence_check() {
     [ -s "$OUT/fence.txt" ] || { echo "[t3p] refusing: no $OUT/fence.txt naming the fenced job-name prefixes" >&2; exit 2; }
     sq=$(squeue -h -u "${USER:-josephrb}" -o '%j|%T' 2>/dev/null) || { echo "[t3p] refusing: squeue failed" >&2; exit 2; }
     while IFS= read -r pre; do
@@ -81,12 +81,17 @@ if [ "$MODE" = dry ]; then
         hit=$(printf '%s\n' "$sq" | grep -F -- "$pre" | awk -F'|' -v p="$pre" 'index($1, p) == 1')
         [ -z "$hit" ] || { echo "[t3p] refusing: fenced jobs ($pre*) are queued or running: $hit" >&2; exit 2; }
     done < "$OUT/fence.txt"
+}
+if [ "$MODE" = dry ]; then
+    [ -s "$OUT/manifest.json" ] || { echo "[t3p] refusing: no $OUT/manifest.json" >&2; exit 2; }
+    [ ! -e "$OUT/stage" ] || { echo "[t3p] refusing: $OUT/stage exists" >&2; exit 2; }
 else
     [ -s "$OUT/log-dry/DONE" ] && [ ! -e "$OUT/log-dry/STOP" ] || { echo "[t3p] refusing: no DONE receipt from the dry run" >&2; exit 2; }
     for id in $(grep -v '^#' "$OUT/queues/dry.tsv" | cut -f1); do
         [ -e "$OUT/log-dry/$id.end" ] || { echo "[t3p] refusing: dry-run task $id never ended" >&2; exit 2; }
     done
 fi
+fence_check
 Q="$OUT/queues/$MODE.tsv"
 [ -s "$Q" ] || { echo "[t3p] refusing: no queue $Q" >&2; exit 2; }
 mkdir -p "$L/tasks"

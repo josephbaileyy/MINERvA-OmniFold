@@ -509,6 +509,20 @@ class Pair(unittest.TestCase):
         self.assertFalse(res["C-PAIR"]["A7_gibuu/s991000/k50"]["pass"])
         self.assertFalse(res["pass"])
 
+    def test_a_signed_zero_fails_c_pair(self):
+        """Bitwise, not value equality: +0.0 in our cell against -0.0 in FD-PRR's fails, and names one cell."""
+        e = next(f for f in self.stage["files"] if f["role"] == "prr_K20_A7_gibuu_s991000")
+        ours, ref = self.xs[20].copy(), self.xs[20].copy()
+        ours[4], ref[4] = 0.0, -0.0
+        self.assertTrue(np.array_equal(ours, ref))
+        self.rewrite(self.b0(), xs_k20=ours)
+        self.rewrite(Path(e["copy"]), xsec_flat=ref)
+        e["sha256"] = T.sha256_path(Path(e["copy"]))
+        res = T.pair(self.stage, self.runs, "dry")
+        self.assertFalse(res["C-PAIR"]["A7_gibuu/s991000/k20"]["pass"])
+        self.assertEqual(res["C-PAIR"]["A7_gibuu/s991000/k20"]["cells_differing"], 1)
+        self.assertFalse(res["pass"])
+
     def test_a_reference_that_is_not_its_pin_fails(self):
         e = next(f for f in self.stage["files"] if f["role"] == "prr_B0_A7_gibuu_s991000")
         e["sha256"] = "0" * 64
@@ -524,6 +538,9 @@ class Pair(unittest.TestCase):
         self.rewrite(self.b0(), xs_k10=x32)
         self.assertTrue(np.array_equal(x32, x32.astype(np.float64)))
         self.assertFalse(T.pair(self.stage, self.runs, "dry")["C-PAIR"]["A7_gibuu/s991000/k10"]["pass"])
+        # the same bytes under another dtype: int64 zeros and float64 zeros
+        self.assertEqual(np.zeros(3, np.int64).tobytes(), np.zeros(3).tobytes())
+        self.assertFalse(T.same(np.zeros(3, np.int64), np.zeros(3))["pass"])
 
     def test_one_ulp_in_an_arms_truth_fails_c_x(self):
         p = T.product_path(self.runs, "SO", "A7_gibuu", T.PRIMARY_SEED)
@@ -585,6 +602,9 @@ class Readings(unittest.TestCase):
     def test_trajectory_classes(self):
         C = RT.trajectory_class
         self.assertEqual(C(self.traj(lambda k: 0.3 - 0.02 * k), self.dt), "crosses")
+        self.assertEqual(C(self.traj(lambda k: 0.3 - 0.02 * k if k <= 20 else 0.1), self.dt), "crosses and returns")
+        # the audit's overlap: rho(25) = -0.04, rho(50) = 0.0 is "reaches 0" only (rises needs rho(50) >= delta)
+        self.assertEqual(C(self.traj(lambda k: -0.04 if k <= 25 else 0.0), self.dt), "reaches 0")
         self.assertEqual(C(self.traj(lambda k: 0.2 * 0.8 ** k), self.dt), "reaches 0")
         self.assertEqual(C(self.traj(lambda k: 0.3 - 0.003 * k), self.dt), "slow approach")
         self.assertEqual(C(self.traj(lambda k: 0.12 + 0.05 * 0.5 ** k), self.dt), "plateau")
@@ -623,6 +643,10 @@ class Readings(unittest.TestCase):
         got = L({"MO": "lowers the limit", "MW": "no effect", "MU": "lowers the limit", "SO": "lowers the limit"},
                 "step 2 does not carry the truth", "slow approach", "reco matched, truth not")
         self.assertEqual(len(got), 6)
+        self.assertNotIn("consistent with slow convergence, not a fixed point",
+                         L({}, "step 2 carries the truth", "crosses and returns", "closed"))
+        self.assertIn("consistent with slow convergence, not a fixed point",
+                      L({}, "step 2 carries the truth", "crosses", "closed"))
 
     def test_bias_split_is_exact(self):
         rng = np.random.default_rng(3)
@@ -752,8 +776,37 @@ class EndToEnd(unittest.TestCase):
             return 0.12 + 0.001 * (s % 3)
         self.build(plant)
         out, _ = RT.read(self.run, REPO)
-        self.assertEqual(out["readings"]["TR-1"]["q3"]["MO"], "no effect (bounded by step 2)")
+        self.assertEqual(out["readings"]["TR-1"]["q3"], {"MU": "no effect (bounded by step 2)",
+                                                         "MW": "no effect (bounded by step 2)",
+                                                         "MO": "no effect (bounded by step 2)", "SO": "no effect"})
         self.assertEqual(out["readings"]["TR-2"]["q3"], "step 2 does not carry the truth")
+
+    def test_bounded_by_step_2_is_decided_from_the_numbers(self):
+        """TR-2 reads "carries" (rho_OP 0.045 < 0.05), yet B0's limit 0.08 is within 0.05 of it: bounded."""
+        def plant(arm, t, s, k):
+            j = 0.0001 * (s % 3)
+            return (0.045 if arm == "OP" else 0.08) + j
+        self.build(plant)
+        rd = RT.read(self.run, REPO)[0]["readings"]
+        self.assertEqual(rd["TR-2"]["A7_gibuu"], "step 2 carries the truth")
+        self.assertEqual(rd["TR-1"]["A7_gibuu"]["MO"], "no effect (bounded by step 2)")
+        self.assertEqual(rd["TR-1"]["A7_gibuu"]["SO"], "no effect")
+        r = rd["resolution"]["A7_gibuu"]["MO"]
+        self.assertAlmostEqual(r["bar"], 0.05)
+        self.assertAlmostEqual(r["rho_B0_50"], 0.0801)  # split 991000's jitter is +0.0001
+        self.assertAlmostEqual(r["bar_over_rho_B0_50"], 0.05 / 0.0801)
+        self.assertAlmostEqual(r["headroom_B0_50_minus_OP_2"], 0.035)
+        self.assertIn("MO no effect (bounded by step 2): Delta", RT.text(RT.read(self.run, REPO)[0]))
+
+    def test_no_effect_with_headroom_stands_whatever_tr2(self):
+        """TR-2 reads "does not carry" (rho_OP 0.10), but B0's limit 0.20 leaves 0.10 of room: "no effect" stands."""
+        def plant(arm, t, s, k):
+            j = 0.0001 * (s % 3)
+            return (0.10 if arm == "OP" else 0.20) + j
+        self.build(plant)
+        rd = RT.read(self.run, REPO)[0]["readings"]
+        self.assertEqual(rd["TR-2"]["A7_gibuu"], "step 2 does not carry the truth")
+        self.assertEqual(rd["TR-1"]["A7_gibuu"]["MO"], "no effect")
 
     def test_incomplete_without_a_done(self):
         self.build(self.plant)
@@ -882,6 +935,22 @@ class JobScript(unittest.TestCase):
         rc, err = self.sh("dry")
         self.assertNotIn("fenced jobs", err)
         self.assertIn("queue", err)  # refused later: no queue (nothing was staged or run)
+
+    def test_a_full_job_checks_the_fence_too(self):
+        log = self.out / "log-dry"
+        log.mkdir()
+        (log / "DONE").write_text("{}")
+        (self.out / "queues").mkdir()
+        (self.out / "queues" / "dry.tsv").write_text("t1\trun\n")
+        (log / "t1.end").write_text("0")
+        rc, err = self.sh("q3")
+        self.assertEqual(rc, 2)
+        self.assertIn("naming the fenced job-name prefixes", err)
+        (self.out / "fence.txt").write_text("ll5d_\n")
+        self.squeue("ll5d_bulk_03|PENDING")
+        rc, err = self.sh("q3")
+        self.assertEqual(rc, 2)
+        self.assertIn("fenced jobs (ll5d_*)", err)
 
     def test_a_full_job_refuses_without_the_dry_runs_done_and_an_existing_log(self):
         rc, err = self.sh("q3")
