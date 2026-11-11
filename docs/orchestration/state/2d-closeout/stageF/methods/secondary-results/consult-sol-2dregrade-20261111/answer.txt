@@ -1,0 +1,34 @@
+**A. I recommend (a+).** It corrects the propagation and tests the corrected procedure at the truths where the paper makes its coverage claim. The expected total is about 10 node-hours, with a stated combined cap of 26.25—small against 1500 available. Its main benefit is a consistent scientific result: the published covariance procedure and the procedure graded for coverage agree. Reuse the stored pseudo-experiment errors only if their generation was unaffected by the approximation; the supplied text does not establish that.
+
+Option **(a)** adequately answers the referee’s explicit *correction* alternative for the reported covariance, but leaves the coverage results grading the earlier implementation. Comparing the correction at the data with failing tune directions is informative, but does not establish its size at those tunes. Option **(b)** is not an adequate bound as specified: the 25 universes most important *before correction* need not have the largest correction, two seeds do not bound the omitted universes, and representative/adverse band coverage is unspecified. It could answer the referee only with a justified bound on the untested contributions, using the actual band covariance prescriptions.
+
+**B. A reversal looks unlikely, but the supplied numbers cannot establish a probability or exclude it.**
+
+The mean-error terms alone are 13.6 and 21.0 per degree of freedom. The spread terms are 2.94 and 3.21. Thus, fixing a roughly threefold spread mismatch would not obviously resolve the much larger total discrepancy. For illustration, if the *entire covariance* were uniformly enlarged by factors 2.94 and 3.21, while keeping the errors fixed, the mean chi-square per degree of freedom would become approximately
+\[
+16.55/2.94=5.63,\qquad 24.17/3.21=7.53.
+\]
+These are illustrative rescalings, not predictions of the correction.
+
+However, **mean-error dominance does not make the verdict immune to a covariance correction**: the mean-error term itself uses the covariance inverse. A correction aligned with weak directions could substantially reduce it without changing the mean error. The concentration beyond the 73 largest modes makes that concern relevant; continued failure after truncation makes a correction affecting only the weakest modes less persuasive as a complete explanation. Neither the correction’s magnitude nor its alignment is supplied. Also, mean chi-square values alone do not determine joint-region counts under this discrete null. Bias-related under-coverage is an established unfolding concern, but that does not identify its cause here. [Kuusela and Panaretos](https://arxiv.org/abs/1505.04768)
+
+**C. Pre-specify a conservative escalation rule for (a).**
+
+One concrete rule is: **require (a+) if the correction changes covariance by more than 10% in any covariance-normalized direction, changes the retained rank, or cannot be resolved sufficiently well to establish that bound.** The 10% is a proposed decision tolerance, not a significance threshold derived from the paper.
+
+Operationally, let \(\Delta C=C_{\rm corrected}-C_{\rm old}\). For the data covariance and each existing tune covariance, write its retained eigensystem as \(U\Lambda U^\top\), and calculate
+\[
+\epsilon=\left\|\Lambda^{-1/2}U^\top\Delta C\,U\Lambda^{-1/2}\right\|_2.
+\]
+Trigger (a+) if any \(\epsilon>0.10\). Use common bin definitions and units, include off-diagonal changes, and explicitly inspect coupling to discarded directions. This tests all combinations of retained directions, including those driving failure.
+
+Crucially, applying the **data-level** \(\Delta C\) to the tune bases is only a screening diagnostic. Passing it does not bound the actual tune-level correction. If the authors want to claim coverage of the corrected procedure, rather than retain a clearly labelled historical coverage result, they still need a tune-level justification or (a+).
+
+**D. Whichever option they choose, the paper should state:**
+
+- Exactly which propagation was corrected or bounded, at which truths, and which covariance and coverage results use each implementation.
+- The comparison with the **final total covariance**, including directional and off-diagonal effects, rank changes, and changes in marginal and integrated uncertainties.
+- Whether pseudo-experiment generation used the approximation. If affected, correct that propagation too; changing only the grading covariance would not constitute a consistent regrade.
+- For (a+), update the matched null calibration, counts, decomposition, and truncation results as needed under the existing test rule.
+- For (b), identify selected bands/universes and justify the bound on everything untested.
+- Preserve the conditional scope: these tests do not establish coverage at the data or isolate the cause of failure. Successful correction also leaves the separately stated learner, regularization, and other limitations to be addressed on their own terms.

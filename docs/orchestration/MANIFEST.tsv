@@ -280,6 +280,7 @@ docs/orchestration/DECISION-20261110-joseph-vhalfr-choices.md	tracked	LIVE	docum
 docs/orchestration/DECISION-20261110-joseph-vprior-withhold.md	tracked	LIVE	document		20261110	open		route-only	no
 docs/orchestration/DECISION-20261111-joseph-1a-anatuples-cfs.md	tracked	LIVE	document		20261111	open		route-only	no
 docs/orchestration/DECISION-20261111-joseph-bv-sentence-cut.md	tracked	LIVE	document		20261111	open		route-only	no
+docs/orchestration/DECISION-20261111-joseph-ibu-distance-and-zenodo.md	tracked	LIVE	document		20261111	open		route-only	no
 docs/orchestration/DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md	tracked	LIVE	document		20260911	open		route-only	no
 docs/orchestration/DECISION-PACKET-20260918-scalar5d-publication-blockers.md	tracked	LIVE	document		20260918	open		route-only	no
 docs/orchestration/DECISION-PACKET-20261029-oi53-clm-row-ownership.md	tracked	ARCHIVAL	document	fe-fps-campaign	20261029	terminal		exact-path-only	yes
@@ -5923,6 +5924,10 @@ docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/consult-as
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/consult-astra-vhalf-20261109/answer.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/consult-astra-vhalf-20261109/prompt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/consult-astra-vhalf-20261109/run-header.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/consult-sol-2dregrade-20261111/README.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/consult-sol-2dregrade-20261111/SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/consult-sol-2dregrade-20261111/answer.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/consult-sol-2dregrade-20261111/prompt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/consult-sol-vprior-20261110/README.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/consult-sol-vprior-20261110/SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/consult-sol-vprior-20261110/answer.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
