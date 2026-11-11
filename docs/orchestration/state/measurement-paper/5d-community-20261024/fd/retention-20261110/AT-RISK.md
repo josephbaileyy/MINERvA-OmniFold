@@ -82,6 +82,15 @@ exposure dates computed by the rule below.
   - **Added 2026-11-11:** ten groups (zero_loops, cpl, s1_cmodel_cresp_tables, f0b, rpd_dumps, tier3_inputs, cstat,
     central, shared_inputs, prr) are on HPSS at `/home/j/josephrb/mnv-at-risk-20261111/`, verified, with the sources'
     atimes unmoved ([`hpss-20261111/README.md`](hpss-20261111/README.md)).
+  - **Added 2026-11-11 (director, after the fact):** the 294 playlist 1A AnaTuples already had sha256-verified CFS
+    copies from October, which this record did not search for: data (253) in
+    `/global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/anatuple-data-20261009/`
+    (`docs/publication/corrections-20261008/RECORD-20261009-anatuple-data-cfs-copy.md`) and MC (41) in
+    `/global/cfs/cdirs/m3246/josephrb/mc-1A-preservation-20261014/`
+    (`state/2d-closeout/preservation-20261014/cfs-copy-1A-mc/REPORT.md`). A stat-only check on 2026-11-11 found all 294
+    present, with size and mtime equal to the manifest ([`cfs-1a-check-20261111/`](cfs-1a-check-20261111/), PR #1057).
+    So the purge of 1A on pscratch would be recoverable from CFS. The "not replaceable from the release" point above
+    still holds; the CFS copies are the same bytes.
   - Every other group's copies were not checked.
 - **HPSS space.**
   - **Joseph, 2026-11-11 (relayed by the director):** "HPSS usage is 449.3 GB of 512 GB", so about 62.7 GB is free.

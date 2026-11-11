@@ -278,6 +278,7 @@ docs/orchestration/DECISION-20261110-joseph-vhalfr-a33-a82.md	tracked	LIVE	docum
 docs/orchestration/DECISION-20261110-joseph-vhalfr-a34.md	tracked	LIVE	document		20261110	open		route-only	no
 docs/orchestration/DECISION-20261110-joseph-vhalfr-choices.md	tracked	LIVE	document		20261110	open		route-only	no
 docs/orchestration/DECISION-20261110-joseph-vprior-withhold.md	tracked	LIVE	document		20261110	open		route-only	no
+docs/orchestration/DECISION-20261111-joseph-1a-anatuples-cfs.md	tracked	LIVE	document		20261111	open		route-only	no
 docs/orchestration/DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md	tracked	LIVE	document		20260911	open		route-only	no
 docs/orchestration/DECISION-PACKET-20260918-scalar5d-publication-blockers.md	tracked	LIVE	document		20260918	open		route-only	no
 docs/orchestration/DECISION-PACKET-20261029-oi53-clm-row-ownership.md	tracked	ARCHIVAL	document	fe-fps-campaign	20261029	terminal		exact-path-only	yes
@@ -6316,6 +6317,7 @@ docs/orchestration/state/2d-closeout/valid-region-20261107/test_valid_region.py	
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/AMENDMENT-1.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/CHOICES-FOR-JOSEPH-20261110.md	tracked	LIVE	state-artifact	2d-closeout	20261110	open		route-only	no
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/DECLARATION.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
+docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/V-HALF-R-BINDING-1.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/code/IMPLEMENTATION-NOTES.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/code/mutate_vhr_binning.out.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/code/mutate_vhr_binning.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
@@ -12474,6 +12476,13 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts/pre
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts/preserve.out	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts/stage0-inputs.tar.sha256	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/retention-20261110/AT-RISK.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/retention-20261110/cfs-1a-check-20261111/README.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/retention-20261110/cfs-1a-check-20261111/cluster/session.err.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/retention-20261110/cfs-1a-check-20261111/cluster/session.out.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/retention-20261110/cfs-1a-check-20261111/connect/cfs_1a_check.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/retention-20261110/cfs-1a-check-20261111/connect/cfs_1a_launch.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/retention-20261110/cfs-1a-check-20261111/connect/launch.console.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/retention-20261110/cfs-1a-check-20261111/connect/make_cfs_check.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/retention-20261110/hpss-20261111/README.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/retention-20261110/hpss-20261111/cluster/logs/archive.done.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/retention-20261110/hpss-20261111/cluster/logs/archive.log.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes

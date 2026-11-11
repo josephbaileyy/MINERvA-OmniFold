@@ -277,6 +277,7 @@ docs/orchestration/DECISION-20261110-joseph-vhalfr-a33-a82.md	LIVE	open	""
 docs/orchestration/DECISION-20261110-joseph-vhalfr-a34.md	LIVE	open	""
 docs/orchestration/DECISION-20261110-joseph-vhalfr-choices.md	LIVE	open	""
 docs/orchestration/DECISION-20261110-joseph-vprior-withhold.md	LIVE	open	""
+docs/orchestration/DECISION-20261111-joseph-1a-anatuples-cfs.md	LIVE	open	""
 docs/orchestration/DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md	LIVE	open	
 docs/orchestration/DECISION-PACKET-20260918-scalar5d-publication-blockers.md	LIVE	open	
 docs/orchestration/DECISION-PACKET-20261029-oi53-clm-row-ownership.md	ARCHIVAL	terminal	""
@@ -1121,6 +1122,7 @@ docs/orchestration/state/2d-closeout/valid-region-20261107/SCOPING.md	LIVE	open	
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/AMENDMENT-1.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/CHOICES-FOR-JOSEPH-20261110.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/DECLARATION.md	LIVE	open	""
+docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/V-HALF-R-BINDING-1.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/code/IMPLEMENTATION-NOTES.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/code/receipts/wtruth-20261111/README.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half/BINDING-1.md	LIVE	open	""
@@ -1340,6 +1342,7 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/read/README.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/stage-a4/README.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/retention-20261110/AT-RISK.md	LIVE	open	""
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/retention-20261110/cfs-1a-check-20261111/README.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/retention-20261110/hpss-20261111/README.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rounding-stability-20261106/RS1-ADDENDUM-A1.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rounding-stability-20261106/RS1-BINDING-1.md	LIVE	open	""
