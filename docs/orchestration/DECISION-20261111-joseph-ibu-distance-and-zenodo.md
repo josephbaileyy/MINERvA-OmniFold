@@ -36,6 +36,13 @@ is not decided here: an independent consult is under way, and its decision will 
    method is much closer to the published shape, so the difference arises mainly in the unfolding step. The mechanism
    stays unestablished, and without the cross-covariance the comparison stays descriptive. A PRD-referee read of the
    paragraph comes before it is final, and no other sentence may still imply that the inputs cause the difference.
+   - **The PRD-referee read** (helper-3's `methods-short-20261109/dibu-read/referee-read.md`, #977) accepted it with
+     changes. "Arises mainly" is a quantitative claim nobody measured, and the IBU distance moves more with its iteration
+     count (3.95 at K = 1, 0.83 at K = 5, 2.16 at K = 20) than the OmniFold–IBU gap. The director adopted the read's
+     comparative wording: with the inputs held fixed, changing only the unfolding method brings the result much closer
+     to the published shape, and input differences from the publication are not excluded as a contributor. That keeps
+     Joseph's substance without the unmeasured "mainly"; Joseph may restore it.
+     <!-- absence-ok: a wording ruling about an unmeasured quantitative claim, not a claim that a result does not exist -->
 2. **The reproduction package's venue is Zenodo.** The paper's availability text says what will be released.
    **Nothing is deposited** until Joseph gives the final go on the package's contents and timing.
 
