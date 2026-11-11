@@ -673,8 +673,16 @@ def collect_truth_denom_arrays(t_truth_denom, pt_lo, pt_hi, pz_lo, pz_hi,
 def collect_signal_arrays_2d(t_sig, pt_lo, pt_hi, pz_lo, pz_hi,
                               pot_scale, use_weights=False, verbose=False,
                               universe_branch=None,
-                              alt_universe_branch=None):
+                              alt_universe_branch=None,
+                              miss_weight_override=None):  # G2R
     """Read mc_signal_reco TTree, return dict of 2D arrays for OmniFold.
+
+    COV2D-G2R (P5's patch, carried over): when `miss_weight_override` is an
+    array of length t_sig.GetEntries(), every entry with a finite value
+    replaces BOTH w_truth and w_reco of that row (before the POT scale). It is
+    finite only on the appended truth-only miss rows, carrying the universe
+    truth weight of the same event from mc_truth_denom (--miss-map); NaN
+    elsewhere. None (the default) leaves the loader on its production path.
 
     When `universe_branch` is set to a (band, idx) tuple, the per-event
     weights are read from `w_truth_<sanitized_band>_<idx>` and
@@ -762,6 +770,11 @@ def collect_signal_arrays_2d(t_sig, pt_lo, pt_hi, pz_lo, pz_hi,
     w_truth_list, w_reco_list = [], []
     w_truth_alt_list, w_reco_alt_list = [], []
     dropped, bad_w = 0, 0
+    n_override = 0  # G2R
+    if miss_weight_override is not None and len(miss_weight_override) != t_sig.GetEntries():  # G2R
+        raise RuntimeError(  # G2R
+            f"[FAIL] miss_weight_override has {len(miss_weight_override)} entries, "  # G2R
+            f"mc_signal_reco has {t_sig.GetEntries()}")  # G2R
 
     for i in range(t_sig.GetEntries()):
         t_sig.GetEntry(i)
@@ -773,6 +786,14 @@ def collect_signal_arrays_2d(t_sig, pt_lo, pt_hi, pz_lo, pz_hi,
 
         wt = float(wt_arr[0]) if use_weights else 1.0
         wr = float(wr_arr[0]) if use_weights else wt
+        if miss_weight_override is not None:  # G2R
+            o = float(miss_weight_override[i])  # G2R
+            if math.isfinite(o):  # G2R
+                if passed:  # G2R
+                    raise RuntimeError(f"[FAIL] miss_weight_override is finite on "  # G2R
+                                       f"entry {i}, which has sim_pass=1")  # G2R
+                wt = wr = o  # G2R
+                n_override += 1  # G2R
         if not (math.isfinite(wt) and math.isfinite(wr) and
                 0 <= wt < 1e4 and 0 <= wr < 1e4):
             bad_w += 1
@@ -816,6 +837,12 @@ def collect_signal_arrays_2d(t_sig, pt_lo, pt_hi, pz_lo, pz_hi,
 
     if verbose:
         print(f"[INFO] signal: kept={len(truth_pt_list)}, dropped={dropped}, bad_w={bad_w}")
+    if miss_weight_override is not None:  # G2R
+        n_finite = int(np.isfinite(np.asarray(miss_weight_override, dtype=float)).sum())  # G2R
+        print(f"[INFO] G2R miss_weight_override: replaced {n_override} of {n_finite} "  # G2R
+              f"finite entries")  # G2R
+        if n_override != n_finite:  # G2R
+            raise RuntimeError("[FAIL] miss_weight_override: not every finite entry was applied")  # G2R
 
     out = {
         "truth_pt": np.asarray(truth_pt_list, dtype=float),
@@ -1384,6 +1411,44 @@ def file_sha256(path):
         return "unavailable"
 
 
+def g2r_miss_override(map_path, omnifile, t_sig, t_truth_denom, universe_branch, use_weights):  # G2R
+    """COV2D-G2R: the per-entry override for collect_signal_arrays_2d from the miss map and the universe's own
+    truth-weight column of mc_truth_denom (P5's w_override, built here instead of stored per universe). Refuses unless
+    the map was built from this omnifile (realpath and size) with these entry counts, in universe mode with weights.
+    Returns (override, provenance record)."""
+    import os
+    if universe_branch is None or not use_weights:
+        raise RuntimeError("[FAIL] --miss-map needs --universe and --use-weights")
+    if t_truth_denom is None:
+        raise RuntimeError("[FAIL] --miss-map needs mc_truth_denom")
+    with np.load(map_path, allow_pickle=False) as z:
+        mp = {k: z[k] for k in ("miss_rows", "truth_rows", "n_signal", "n_truth", "omnifile", "omnifile_size")}
+    if int(mp["n_signal"]) != t_sig.GetEntries() or int(mp["n_truth"]) != t_truth_denom.GetEntries():
+        raise RuntimeError(f"[FAIL] miss map entry counts {int(mp['n_signal'])}/{int(mp['n_truth'])} != "
+                           f"{t_sig.GetEntries()}/{t_truth_denom.GetEntries()}")
+    if (str(mp["omnifile"]) != os.path.realpath(omnifile)
+            or int(mp["omnifile_size"]) != os.path.getsize(omnifile)):
+        raise RuntimeError(f"[FAIL] miss map was built from {mp['omnifile']} ({int(mp['omnifile_size'])} B), "
+                           f"not --omnifile {omnifile}")
+    miss, truth = np.asarray(mp["miss_rows"], np.int64), np.asarray(mp["truth_rows"], np.int64)
+    if miss.shape != truth.shape or miss.ndim != 1:
+        raise RuntimeError("[FAIL] miss map: miss_rows and truth_rows must be one-dimensional and equal in length")
+    branch = _universe_truth_branch(universe_branch)
+    if not t_truth_denom.GetBranch(branch):
+        raise RuntimeError(f"[FAIL] universe branch '{branch}' missing from mc_truth_denom")
+    col = np.asarray(ROOT.RDataFrame(t_truth_denom).AsNumpy([branch])[branch], dtype=np.float64)
+    if col.shape != (t_truth_denom.GetEntries(),):
+        raise RuntimeError(f"[FAIL] {branch}: {col.shape[0]} values for {t_truth_denom.GetEntries()} entries")
+    override = np.full(t_sig.GetEntries(), np.nan)
+    override[miss] = col[truth]
+    prov = {"path": str(map_path), "sha256": file_sha256(map_path), "universe": f"{universe_branch[0]}:"
+            f"{int(universe_branch[1])}", "branch": branch, "n_miss": int(miss.size),
+            "n_finite": int(np.isfinite(override).sum())}
+    print(f"[INFO] G2R: miss-row weights from {branch} via {map_path} (sha256 {prov['sha256']}), "
+          f"{prov['n_miss']} miss rows")
+    return override, prov
+
+
 def run_provenance(args, helper_module, driver_sha256):
     """(name, value) records that identify the settings and code behind an output.
 
@@ -1604,6 +1669,11 @@ def main():
                           "The simulation trees and the POT metadata still come from --omnifile, "
                           "and the file's dataPOTUsed must equal the omnifile's. Absent, the "
                           "driver reads --omnifile's own data tree, as before.")
+    ap.add_argument("--miss-map", default=None, metavar="NPZ",  # G2R
+                     help="COV2D-G2R: the miss map from g2r_prepare.py (the appended truth-only miss rows of "
+                          "mc_signal_reco and their mc_truth_denom rows). Each miss row's w_truth and w_reco are "
+                          "replaced by the universe's own truth weight of the same event, read from "
+                          "mc_truth_denom. Requires --universe and --use-weights. Default: off.")
     ap.add_argument("--verbose", action="store_true")
     args = ap.parse_args()
 
@@ -1868,12 +1938,16 @@ def main():
     p1_bkg_rows = bkg_out[3] if p1_on else None
 
     # --- Read signal MC arrays ---
+    g2r_kw, g2r_prov = {}, None  # G2R
+    if args.miss_map is not None:  # G2R
+        g2r_kw["miss_weight_override"], g2r_prov = g2r_miss_override(  # G2R
+            args.miss_map, args.omnifile, t_sig, t_truth_denom, universe_branch, args.use_weights)  # G2R
     sig = call_loader(collect_signal_arrays_2d,
                       t_sig, pt_lo, pt_hi, pz_lo, pz_hi,
                       pot_scale, use_weights=args.use_weights,
                       verbose=args.verbose,
                       universe_branch=universe_branch,
-                      alt_universe_branch=alt_universe_branch, **loader_select)
+                      alt_universe_branch=alt_universe_branch, **g2r_kw, **loader_select)
     if sig["truth_pt"].size == 0:
         raise RuntimeError("No signal events for OmniFold")
     if meas_pt.size == 0:
@@ -2236,6 +2310,8 @@ def main():
     provenance = run_provenance(args, sys.modules.get("omnifold"), driver_sha256)
     if args.data_file is not None:  # COV2D
         provenance.append(("dataFileSha256", file_sha256(args.data_file)))
+    if g2r_prov is not None:  # G2R
+        provenance.append(("g2rMissMap", json.dumps(g2r_prov, sort_keys=True)))  # G2R
     if args.bkg_mode == "negweight-refined":  # RE-2
         import json
         provenance.append(("re2Refinement", json.dumps(re2_refinement, sort_keys=True)))
