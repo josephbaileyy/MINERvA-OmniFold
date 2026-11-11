@@ -1963,3 +1963,30 @@ was the mislabel. The director accepted bd08582ee, the hand re-cites of ALIASES 
   - make_values PASS; sec4 17/17; pointers 42; registry PASS;
   - check_restyle against 93cbe7d86 shows only the synced text's new citations, refs and the numeral 128 (the note's
     MLP layer sizes), and Q11–Q22 as before.
+
+## 2026-11-10 — Tier 1 batch T1-5 (S7's joint tests to the note)
+
+- **Scope** (the director's ruling of 2026-11-10, item 8): S7 only. tab:gen16 and tab:cmodel16 stay, because #981
+  anchors two files on them and Fig. S2 and S10 cite tab:gen16. S9.4's diagnosis stays: the note at acf934d71 does not
+  carry it (its numbers 0.986–1.015, 2.72 (0.49–6.51) and MaRES/MaCCQE/MvRES occur in no note .tex there).
+- **S7.** It keeps its heading and supp:joint, followed by one pointer sentence to the note's joint-test sections
+  (sec:joint5d-design, -calibration, -conditions) and the paragraph moved from the paper (the former Limitation 3 and
+  the 11.5 sentence, W-18/W-12), which the note lacks. The note-copied paragraphs and the generative-model table
+  (tab:joint5d-genmodel, the old Table S6) are removed; the note carries both (sec_joint.tex at acf934d71). Every
+  removed citation and ref was S7's own; the LedoitWolf citation was cited only there. limitation-resolver confirmed
+  that #981 has no dependency in S7.
+- **Pointers.**
+  - S2's \ref{sec:joint5d-design} becomes Ref. [note], Sec. \ref*{N-sec:joint5d-design}.
+  - The paper's two \ssec{S7}{supp:joint} pointers stay, as ruled.
+  - Removing Table S6 renumbers the later tables down by one. The paper's \stab{S13}{tab:prr-rho} becomes
+    \stab{S12}{tab:prr-rho}; check_supp_pointers caught it.
+- **For the note lane** (the director sends the list): the S9.4 diagnosis paragraph, the uq-combine Search line, and
+  S7's paper-moved paragraph.
+- **Pairs** (base ba3dd2138): t1-5-read/pairs.tsv (106 rows). Almost all are base-only removals of the note-copied
+  paragraphs.
+- **Checks:**
+  - both rater copies PASS (15 of 15 table captions); 0 Overfull and 0 undefined in both;
+  - check_round PASS (the fill test runs on the committed head before the push);
+  - make_values PASS; sec4 17/17; pointers 42; registry PASS;
+  - check 12: 47 note-copied paragraphs (S7's eleven are gone), explained 38, same 8, seed-adapted 1;
+  - check_restyle shows only the removals and the renumbered pointer.
