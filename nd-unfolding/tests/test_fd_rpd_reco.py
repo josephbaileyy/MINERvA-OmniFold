@@ -2573,6 +2573,44 @@ def test_fresh_prepare_stages_closed_inventory(
         custody.prepare(R, fixture.config_path, fixture.config_sha, run)
 
 
+STAT_FIELDS = {"device", "inode", "bytes", "mtime_ns", "atime_ns"}
+
+
+def test_prepare_records_stat_bracket_and_staging_time(
+    fixture: Fixture, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Every staged original carries both stats (five fields) and its UTC staging time.
+
+    The flux connect's one protected-path exception (the MPARAMFILES constraint file) relies on
+    this record: a missing stat field or staging time must fail here.
+    """
+    custody, run, _ = _prepare_fixture(fixture, monkeypatch)
+    _add_prepare_platform_mapping(custody, fixture, monkeypatch)
+    prepared = custody.prepare(R, fixture.config_path, fixture.config_sha, run)
+    items = list(prepared["files"].values()) + list(prepared["mat_dependencies"])
+    assert len(prepared["mat_dependencies"]) == 15 and len(items) > 15
+    for item in items:
+        for side in ("stat_before", "stat_after"):
+            assert set(item[side]) == STAT_FIELDS, (item["original"], side)
+            assert all(isinstance(value, int) for value in item[side].values())
+        assert item["stat_before"] == item["stat_after"]
+        window = item["staging_utc_ns"]
+        assert set(window) == {"started", "ended"}, item["original"]
+        assert isinstance(window["started"], int) and isinstance(window["ended"], int)
+        assert 0 < window["started"] <= window["ended"] <= prepared["prepare_time_ns"]
+    constraint = next(
+        item
+        for item in prepared["mat_dependencies"]
+        if item["environment_key"] == "MPARAMFILES"
+    )
+    assert constraint["relative_path"] == (
+        "FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt"
+    )
+    assert prepared["files"][constraint["original"]]["staging_utc_ns"] == (
+        constraint["staging_utc_ns"]
+    )
+
+
 def test_pf_common_binning_silent_and_firing(fixture: Fixture) -> None:
     spectra = json.loads(json.dumps(fixture.fixture_flux_spectra))
     assert R.common_flux_units(spectra)["identical_binning"] is True
