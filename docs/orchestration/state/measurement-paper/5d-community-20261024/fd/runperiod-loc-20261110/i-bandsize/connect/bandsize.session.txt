@@ -1,0 +1,4 @@
+ssh rc=0
+node login27 staged sha256 b13c9437280f0e06a6f51a95fd646b8f986261a678d94fdce26f10e58caa463a
+detached pid 366676, output /dev/shm/rplb-bandsize.366167.sh.out
+script rc=0
