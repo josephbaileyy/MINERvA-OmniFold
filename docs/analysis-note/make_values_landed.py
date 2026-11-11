@@ -180,6 +180,21 @@ def build(R):
     record("keepblock", 38, f"median {med:.2f}×")
     record("keepblock", 39, f"{lo:.2f}–{hi:.2f}")
     V["i2-resp-med"], V["i2-resp-lo"], V["i2-resp-hi"] = f"{med:.2f}", f"{lo:.2f}", f"{hi:.2f}"
+    # The nominal-truth ratio is response-only B over full-universe A, distinct from B/M above.
+    response_over_universe = sorted(
+        math.sqrt(response / universe)
+        for response, universe in zip(i2["B"], i2["A"])
+    )
+    universe_med = (response_over_universe[7] + response_over_universe[8]) / 2
+    universe_lo, universe_hi = response_over_universe[0], response_over_universe[-1]
+    record(
+        "i2report",
+        15,
+        f"median {universe_med:.2f} and range {universe_lo:.2f}–{universe_hi:.2f}",
+    )
+    V["i2-univ-med"] = f"{universe_med:.2f}"
+    V["i2-univ-lo"] = f"{universe_lo:.2f}"
+    V["i2-univ-hi"] = f"{universe_hi:.2f}"
     # --- REF-G1, the sixteen-cell binned head-to-head (OUTCOME-20261106-ref-g1-r1-differ.md; a stated limitation,
     # DECISION-20261108-joseph-note-framing-and-estimator-dependence.md item 3)
     g1 = R["rg1"]
