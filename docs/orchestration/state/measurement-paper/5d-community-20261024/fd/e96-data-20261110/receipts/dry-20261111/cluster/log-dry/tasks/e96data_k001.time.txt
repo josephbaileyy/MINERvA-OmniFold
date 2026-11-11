@@ -1,0 +1,23 @@
+	Command being timed: "python3 nd-unfolding/ensemble_estimator_data.py ensemble --k 1 --runs /pscratch/sd/j/josephrb/e96data-20261111/runs -- --npz /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz --bkg /pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz --expect-npz-sha256 07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f --expect-bkg-sha256 2addac8f26055c5ed69862e7afe29e12ac51dbe23a8d6eeed79d71bec9d82955 --config R --iters 5 --threads 32 --construction data --pairs=-:0"
+	User time (seconds): 13232.46
+	System time (seconds): 51.38
+	Percent of CPU this job got: 1460%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 15:09.71
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 22583276
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 257
+	Minor (reclaiming a frame) page faults: 1771657
+	Voluntary context switches: 356407
+	Involuntary context switches: 24892
+	Swaps: 0
+	File system inputs: 1143488
+	File system outputs: 1112
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
