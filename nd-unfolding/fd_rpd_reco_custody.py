@@ -477,6 +477,24 @@ def cov2d_fence() -> Json:
     return {**record, "status": "PASS", "exit_code": 0, "terminal_states": states}
 
 
+def closed_mat_inventory() -> set[tuple[str, str]]:
+    """The closed fifteen-path set FluxReweighter's string constructor opens (MAT 35097b65, FluxReweighter.cxx
+    :372-435, :907, :933-938, :956-957, :1062; the Constrainer at :492-506)."""
+    return {
+        (
+            "PLOTUTILSROOT",
+            f"data/flux/flux-{family}-pdg{pdg}-minervame{group}_rearrangedUniverses.root",
+        )
+        for group in ("1D", "1M", "1N")
+        for pdg in (14, -14)
+        for family in ("gen2thin", "g4numiv6")
+    } | {
+        ("PLOTUTILSROOT", "data/lowNuReweight/lowNuReweight.root"),
+        ("PLOTUTILSROOT", "data/flux/sys/Muon_Energy_MnvH1D.root"),
+        ("MPARAMFILES", "FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt"),
+    }
+
+
 def prepare(r: Any, config_path: Path, config_sha: str, run: Path) -> Json:
     """Freshly stage all bound inputs and the fifteen static MAT dependencies."""
     r.require_output_root(run)
@@ -487,6 +505,12 @@ def prepare(r: Any, config_path: Path, config_sha: str, run: Path) -> Json:
     require(
         config.get("configuration_status") == "READY",
         "production config is still DRAFT",
+    )
+    unresolved = r.placeholder_paths(config)
+    require(
+        not unresolved,
+        f"unexpanded runtime fields remain in the production config: {unresolved[:8]}",
+        guard="PREPARE_PLACEHOLDER",
     )
     require(
         bool(os.environ.get("FD_RPD_RECO_CONNECT_ID")), "explicit connect ID required"
@@ -567,19 +591,7 @@ def prepare(r: Any, config_path: Path, config_sha: str, run: Path) -> Json:
             files[str(Path(config["mat_dependencies"]["path"]).resolve())]["staged"]
         ).read_text()
     )
-    expected = {
-        (
-            "PLOTUTILSROOT",
-            f"data/flux/flux-{family}-pdg{pdg}-minervame{group}_rearrangedUniverses.root",
-        )
-        for group in ("1D", "1M", "1N")
-        for pdg in (14, -14)
-        for family in ("gen2thin", "g4numiv6")
-    } | {
-        ("PLOTUTILSROOT", "data/lowNuReweight/lowNuReweight.root"),
-        ("PLOTUTILSROOT", "data/flux/sys/Muon_Energy_MnvH1D.root"),
-        ("MPARAMFILES", "FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt"),
-    }
+    expected = closed_mat_inventory()
     entries = inventory["entries"]
     require(
         len(entries) == 15
@@ -1743,6 +1755,11 @@ def main() -> int:
 
     try:
         r.require_output_root(a.run)
+        require(
+            not any(r.PLACEHOLDER in item for item in sys.argv[1:]),
+            "unexpanded ${...} field in the command arguments",
+            guard="CUSTODY_ARGV_PLACEHOLDER",
+        )
         if a.step == "prepare":
             require(
                 a.config is not None and a.config_sha256 is not None,

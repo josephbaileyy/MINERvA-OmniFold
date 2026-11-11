@@ -45,6 +45,9 @@ CUSTODY_GUARD_TESTS = {
     "TRACE_EXTRACT_IDENTITY": "test_trace_extract_identity_guard",
     "PREPARE_FENCE": "test_prepare_firing_guards and fence_status",
     "INSTRUMENT_DIRECTORIES": "test_instrument_directories_required",
+    # #1064, the director's before-READY requirements (2026-11-11)
+    "PREPARE_PLACEHOLDER": "test_prepare_placeholder_refuses",
+    "CUSTODY_ARGV_PLACEHOLDER": "test_custody_argv_placeholder_refuses",
 }
 GUARD_TESTS = {
     "MAT_PLATFORM_LIBRARIES": "test_platform_guard_on_production_path",
@@ -73,6 +76,10 @@ GUARD_TESTS = {
     "MAT_ROOT_FILE": "test_pyroot_reader_protocol_guards",
     "MAT_TFILE_STAGE": "test_tfile_guard_both_entries",
     "CONFIG_READY": "test_draft_configuration_refuses",
+    # #1064, the director's before-READY requirements (2026-11-11)
+    "CONFIG_PLACEHOLDER": "test_config_placeholder_refuses",
+    "ARGV_PLACEHOLDER": "test_argv_placeholder_refuses",
+    "MAT_DEPENDENCY_RECEIPT": "test_mat_dependency_receipt_all_fifteen",
     "WALL_BUDGET": "test_priced_wall_budget_limits",
     "PRICED_TIMING_PAIR": "test_priced_timing_pair_refuses",
     "MEASURED_RATE": "test_measured_rate_refuses",

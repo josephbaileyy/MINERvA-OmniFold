@@ -123,6 +123,34 @@ def require(condition: bool, guard: str, message: str) -> None:
         raise Refused(guard, message)
 
 
+PLACEHOLDER = "${"
+
+
+def placeholder_paths(value: Any, where: str = "$") -> list[str]:
+    """Every location in a JSON value whose key or string still holds an unexpanded ``${...}`` field.
+
+    A READY configuration must be literal throughout, including the ``flux_custody`` and ``flux_extract``
+    entries that no other check reads for placeholders (coverage-5b-audit on #1064, 2026-11-11).
+    """
+    if isinstance(value, str):
+        return [where] if PLACEHOLDER in value else []
+    if isinstance(value, dict):
+        found: list[str] = []
+        for key, item in value.items():
+            child = f"{where}.{key}"
+            if PLACEHOLDER in str(key):
+                found.append(child)
+            found.extend(placeholder_paths(item, child))
+        return found
+    if isinstance(value, list):
+        return [
+            p
+            for index, item in enumerate(value)
+            for p in placeholder_paths(item, f"{where}[{index}]")
+        ]
+    return []
+
+
 def require_output_root(run: Path) -> None:
     """Refuse CFS output before creating any file or directory."""
     resolved = run.resolve()
@@ -404,6 +432,12 @@ class Inputs:
             self.config.get("configuration_status", "READY") == "READY",
             "CONFIG_READY",
             "draft configuration has unresolved runtime fields",
+        )
+        unresolved = placeholder_paths(self.config)
+        require(
+            not unresolved,
+            "CONFIG_PLACEHOLDER",
+            f"unexpanded runtime fields remain in the configuration: {unresolved[:8]}",
         )
         self.prestage: Json | None = None
         if "prestage" in self.config:
@@ -1757,6 +1791,39 @@ def histogram_spectrum(hist: Any) -> Json:
     )
 
 
+def mat_dependency_receipt(dependencies: Sequence[Json]) -> Json:
+    """The O_NOATIME sha256 that prepare measured once for each MAT file FluxReweighter opens.
+
+    The list is the closed fifteen-path set fixed by custody's MAT_INVENTORY guard, never one discovered here. A
+    missing, extra, duplicated or malformed entry refuses (the director's ruling on #1064, 2026-11-11).
+    """
+    expected = {
+        f"{key}/{relative}"
+        for key, relative in load_custody_instrument().closed_mat_inventory()
+    }
+    receipt = {
+        f"{item.get('environment_key')}/{item.get('relative_path')}": {
+            "original": item.get("original"),
+            "sha256": item.get("sha256"),
+        }
+        for item in dependencies
+    }
+    require(
+        len(dependencies) == len(expected)
+        and set(receipt) == expected
+        and all(
+            isinstance(entry["sha256"], str)
+            and len(entry["sha256"]) == 64
+            and all(c in "0123456789abcdef" for c in entry["sha256"])
+            and isinstance(entry["original"], str)
+            for entry in receipt.values()
+        ),
+        "MAT_DEPENDENCY_RECEIPT",
+        "the receipt must carry one O_NOATIME sha256 for each of the fifteen MAT files",
+    )
+    return dict(sorted(receipt.items()))
+
+
 def flux_extract(inputs: Inputs, argv: Sequence[str]) -> Json:
     """Evaluate constrained MAT fluxes and full-row factors in the pinned MAT process."""
     root, environment = checked_mat_environment(inputs)
@@ -1880,6 +1947,9 @@ def flux_extract(inputs: Inputs, argv: Sequence[str]) -> Json:
         "keys_read": inputs.keys_read,
         "mat_environment": environment,
         "final_mat_environment": final_environment,
+        "mat_dependency_sha256": mat_dependency_receipt(
+            inputs.prestage["mat_dependencies"]
+        ),
         "dependency_units_metadata": units,
         "descriptive_ALL_unit_cross_check": {
             "status": "SKIPPED",
@@ -3121,6 +3191,11 @@ def main(argv: Sequence[str] | None = None) -> int:
     command = list(argv) if argv is not None else sys.argv[1:]
     try:
         require_output_root(arguments.run)
+        require(
+            not any(PLACEHOLDER in item for item in command),
+            "ARGV_PLACEHOLDER",
+            "unexpanded ${...} field in the command arguments",
+        )
         wall_budget_seconds(
             arguments.priced_wall_seconds, arguments.measured_seconds_per_draw
         )
