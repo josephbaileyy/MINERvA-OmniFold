@@ -182,8 +182,10 @@ CHECKS = [
      r"by up to \\SI\{([0-9.]+)\}\{\\percent\} at high \$W\$", e_gibuu_max, "round"),
     ("regularization bias at high W, the lower-capacity variant (VL151)", "paper_body.tex",
      r"gives the same \\SI\{([0-9.]+)\}\{\\percent\} in that cell", regularization_max, "round"),
-    ("an earlier estimator's 68% coverage under the rate reduction (s5c tier S)", "paper_body.tex",
-     r"with coverage as low as ([0-9.]+) for 68\\% intervals", tilt_coverage68_min, "round"),
+    # The referee recheck of 2026-11-11 (RESPONSE.md s8; the director's ruling): the paper's sentence is cut because the note
+    # carries it at its release revision (acf934d71, and 4219869a2): sec_5d.tex sec:coverage-5d, "coverage as low as 0.060".
+    ("an earlier estimator's 68% coverage under the rate reduction (s5c tier S)", "sec_5d.tex",
+     r"with coverage as low as ([0-9.]+), and 42 of the 153 fail at 95", tilt_coverage68_min, "round"),
     ("other fixed shapes, most affected cell (VL154)", "paper_body.tex", r"(?:it|the residual) is \\SIrange\{([0-9.]+)\}\{([0-9.]+)\}\{\\percent\} in the most affected",
      shapes_range, "round"),
 ]

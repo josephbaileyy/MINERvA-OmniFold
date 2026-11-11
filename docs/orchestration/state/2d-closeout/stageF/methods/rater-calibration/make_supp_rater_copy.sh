@@ -8,7 +8,8 @@
 #   <out>.blind.txt   blinded copy: no title, authors or reference list
 # The Supplement has no \pubhold, so there is one build. Exit 0 only if both builds succeed with no unresolved
 # reference or citation, the text holds no "??" or "[HOLD", check_supp_pointers.py passes on the source, every table
-# environment of the source prints its "Table S<n>:" caption somewhere in the text (pdftotext may not start a line with it), and no identifying text survives blinding.
+# environment of the source prints its "Table S<n>:" caption somewhere in the text (pdftotext may not start a line with it), every figure
+# environment its "Figure S<n>:" caption, both before and after blinding, and no identifying text survives blinding.
 set -euo pipefail
 WT=$(cd "$1" && pwd); OUT=$2
 CAL=$(cd "$(dirname "$0")" && pwd); TOOLS=$CAL/tools
@@ -44,10 +45,19 @@ n_env=$(grep -v '^[[:space:]]*%' "$SRC/supplemental_body.tex" | grep -c '\\begin
 n_cap=$(grep -oE 'Table S[0-9]+:' "$OUT" | sort -u | wc -l | tr -d ' ')
 [ "$n_env" = "$n_cap" ] || { echo "FAIL: $n_env table environments in the source, $n_cap 'Table S<n>:' captions in the text"; exit 1; }
 echo "tables: $n_cap of $n_env captions present"
+# Figures too (the referee recheck of 2026-11-11, RESPONSE.md m10): Figure S2's float printed after the references, and
+# blinding, which cuts there, dropped its caption while the table count passed. Every figure environment must print its
+# "Figure S<n>:" caption, before blinding and after it.
+n_fenv=$(grep -v '^[[:space:]]*%' "$SRC/supplemental_body.tex" | grep -c '\\begin{figure' || true)
+n_fcap=$(grep -oE 'Figure S[0-9]+:' "$OUT" | sort -u | wc -l | tr -d ' ')
+[ "$n_fenv" = "$n_fcap" ] || { echo "FAIL: $n_fenv figure environments in the source, $n_fcap 'Figure S<n>:' captions in the text"; exit 1; }
+echo "figures: $n_fcap of $n_fenv captions present"
 python3 -I "$TOOLS/blind.py" "$OUT" "${OUT%.txt}.blind.txt" --start '^Joseph Bailey and Benjamin Nachman$' --start-after \
   --refs '^References$' > "${OUT%.txt}.blind.log"
 tail -1 "${OUT%.txt}.blind.log"
 grep -nE 'HOLD|Bailey|Nachman|Stanford|stanford\.edu|SLAC' "${OUT%.txt}.blind.txt" && { echo "FAIL: identifying text survives blinding"; exit 1; } || true
 n_cap_b=$(grep -oE 'Table S[0-9]+:' "${OUT%.txt}.blind.txt" | sort -u | wc -l | tr -d ' ')
 [ "$n_cap_b" = "$n_cap" ] || { echo "FAIL: blinding dropped a table: $n_cap_b of $n_cap captions left"; exit 1; }
+n_fcap_b=$(grep -oE 'Figure S[0-9]+:' "${OUT%.txt}.blind.txt" | sort -u | wc -l | tr -d ' ')
+[ "$n_fcap_b" = "$n_fcap" ] || { echo "FAIL: blinding dropped a figure: $n_fcap_b of $n_fcap captions left"; exit 1; }
 echo "wrote $OUT and ${OUT%.txt}.blind.txt ($(wc -w < "${OUT%.txt}.blind.txt" | tr -d ' ') words)"

@@ -2135,3 +2135,66 @@ was the mislabel. The director accepted bd08582ee, the hand re-cites of ALIASES 
   command did not wait on the test's exit status. The hold now names those three records by subject ("the decision
   withholding the prior-spread results", "its decision record"), and the source comment beside it gives the exact file
   names. Pushes from now on are gated on the fill test's exit status in the same command.
+
+## 2026-11-11 — The referee recheck's T batch (gpt-6.1-sol, 5/10, on 2bfb1410c)
+
+- **The work order.** The director: Joseph wants every issue resolved, and text fixes are approved under the director's
+  authority. RESPONSE.md triages 73 rows (T 61, L 5, A 2, X 1, no action 4) and records the director's rulings and each
+  row's status.
+- **This batch** is every T row except s7's W-4 sentence (held for Joseph) and the declined s11i and s11k. The paper:
+  - eq:xsec, with c ≡ 1;
+  - the regressor's equal weights;
+  - the 5D universes' weights for unmatched events;
+  - C_model as an implementation-specific shape sensitivity;
+  - a reference tail area for the fake-data χ², a score;
+  - one design sentence;
+  - Table 2 reduced to the principal findings, with "No difference detected";
+  - §4.1 split, with a new §4.2 "Paired comparisons with other unfoldings";
+  - κ dropped;
+  - the per-period readings moved to §4.1;
+  - §5.1's exact-binned discussion moved to §5.3 with a grid warning;
+  - §5.3 reordered, its taxonomy moved to S9.2;
+  - "overshoots the truth along the prior-to-truth direction";
+  - §5.4 and §5.5 split;
+  - physical-unit IBU differences;
+  - §6.1 led by the released cells;
+  - the ensemble's floor accounting moved to S4;
+  - §6.2's conditional-test list;
+  - tab:cov2d;
+  - the GEANT bands' restriction;
+  - the 6 % sentence cut, since the note carries it;
+  - §7: the ll5d-status sentence, shortened, with ONCE byte-identical;
+  - limitation 8;
+  - "sections 6.2 and 6.2" fixed.
+- **The Supplement:**
+  - tab:bookkeeping;
+  - W redundancy;
+  - CSV terms;
+  - S4's history table as sentences;
+  - the regressor;
+  - m11b;
+  - the lower-capacity background sentence;
+  - the ensemble's criterion;
+  - tab:construction;
+  - the shape-only identity;
+  - Fig. S2 (the tension map) and Fig. S3 (prior response) moved in;
+  - κ unused;
+  - the null's flux block and thresholds;
+  - S9.1 removed, with a note pointer;
+  - the q3 stress tilt named;
+  - S9.2's classes and labels;
+  - the S9.5 GEANT sentence;
+  - the S10 diagonal fraction;
+  - \clearpage before the references.
+- **Tools:**
+  - check_supp_pointers.py now checks subsection pointers. It used to match whole numbers only; the fix caught four
+    stale pointers in the hold.
+  - check_sec4_receipts.py's anchor moved to sec_5d.tex (17/17).
+  - make_supp_rater_copy.sh counts figure captions; it fails on 2bfb1410c's sources, as it should.
+  - The abstract's longest case is 248 words.
+- **Meaning read** (referee4-read/pairs.tsv, 233 rows: 60 verbatim moves, the rest read). It caught three defects of my
+  own, all fixed:
+  - an inserted comment in S8 swallowed two sentences ("No step of the bootstrap uses the realized Δ" and the Hotelling
+    self-check);
+  - §5.3's IBU test lost its "or rises";
+  - S4's folded history dropped (b)'s "exact-split studies have not been recomputed".

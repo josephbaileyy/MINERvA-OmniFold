@@ -21,8 +21,11 @@ def supp_maps(body):
         if not part.startswith("\\section{"):
             continue
         n += 1
-        for lab in re.findall(r"\\label\{([^}]+)\}", part):
-            secs.setdefault(lab, n)
+        # a label inside a subsection is numbered "n.m" (the referee recheck, 2026-11-11: the pointer pattern used to
+        # match only whole numbers, so every subsection pointer such as \ssec{S9.4}{...} went unchecked)
+        for m, sub in enumerate(re.split(r"(?=\\subsection\{)", part)):
+            for lab in re.findall(r"\\label\{([^}]+)\}", sub):
+                secs.setdefault(lab, f"{n}.{m}" if m else str(n))
     tabs = {}
     for k, env in enumerate(re.findall(r"\\begin\{table\}.*?\\end\{table\}", body, flags=re.S), 1):
         for lab in re.findall(r"\\label\{([^}]+)\}", env):
@@ -37,13 +40,13 @@ def supp_maps(body):
 def check(paper, body):
     secs, tabs, figs = supp_maps(body)
     paper = "\n".join(re.sub(r"(?<!\\)%.*$", "", ln) for ln in paper.split("\n"))
-    ptrs = re.findall(r"\\(ssecc?|stab|sfig)\{S(\d+)\}\{([^}]+)\}", paper)
+    ptrs = re.findall(r"\\(ssecc?|stab|sfig)\{S(\d+(?:\.\d+)?)\}\{([^}]+)\}", paper)
     errs = []
     for kind, num, lab in ptrs:
         want = {"stab": tabs, "sfig": figs}.get(kind, secs).get(lab)
         if want is None:
             errs.append(f"{kind}{{S{num}}}{{{lab}}}: label not in the Supplement")
-        elif int(num) != want:
+        elif (num != want if kind in ("ssec", "ssecc") else int(num) != want):
             errs.append(f"{kind}{{S{num}}}{{{lab}}}: the Supplement numbers it S{want}")
     if not ptrs:
         errs.append("no Supplement pointer found in paper_body.tex")
@@ -51,8 +54,12 @@ def check(paper, body):
 
 
 if "--self-test" in sys.argv:
-    body = ("\\section{A}\\label{supp:a}\n\\section{B}\\label{supp:b}\n\\begin{table}\\label{tab:x}\\end{table}\n"
+    body = ("\\section{A}\\label{supp:a}\n\\section{B}\\label{supp:b}\n\\subsection{B1}\\label{supp:b1}\n\\subsection{B2}\\label{supp:b2}\n"
+            "\\begin{table}\\label{tab:x}\\end{table}\n"
             "\\begin{figure}\\label{fig:y}\\end{figure}\n\\begin{figure}\\label{fig:z}\\end{figure}\n")
+    _, s1 = check("\\ssec{S2.2}{supp:b2}", body)
+    _, s2 = check("\\ssec{S2.1}{supp:b2}", body)
+    assert not s1 and s2, (s1, s2)
     ok, e1 = check("\\ssec{S2}{supp:b} \\stab{S1}{tab:x} \\sfig{S2}{fig:z}", body)
     _, e5 = check("\\sfig{S1}{fig:z}", body)
     _, e6 = check("\\sfig{S1}{tab:x}", body)
