@@ -25,14 +25,14 @@
   "uproot": "5.6.9"
  },
  "flux_custody": {
-  "path": "${RUN_LANE_EXTRACT_RUN}/flux-custody.json",
+  "path": "/pscratch/sd/j/josephrb/rpd-reco-flux-${RUN_DATE}/run/flux-custody.json",
   "sha256": null
  },
  "flux_extract": {
-  "path": "${RUN_LANE_EXTRACT_RUN}/flux-extract.json",
+  "path": "/pscratch/sd/j/josephrb/rpd-reco-flux-${RUN_DATE}/run/flux-extract.json",
   "sha256": null
  },
- "flux_root": "/pscratch/sd/j/josephrb/minerva/minerva_large_files",
+ "flux_root": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib",
  "flux_selection": {
   "1D": {
    "constraint_source_citation": {
@@ -47,7 +47,7 @@
    "family": "gen2thin",
    "histogram": "flux_E_cvweighted",
    "proposal_status": "DRAFT_FOR_AUDIT; C-N candidate status unchanged",
-   "relative_path": "MATFluxAndReweightFiles/flux/flux-gen2thin-pdg14-minervame1D_rearrangedUniverses.root",
+   "relative_path": "data/flux/flux-gen2thin-pdg14-minervame1D_rearrangedUniverses.root",
    "retention": "AWAITING_RUNTIME_STAT_AND_STAGED_RETENTION_RECORD",
    "source_citation": {
     "file": "PlotUtils/FluxReweighter.cxx",
@@ -73,7 +73,7 @@
    "family": "gen2thin",
    "histogram": "flux_E_cvweighted",
    "proposal_status": "DRAFT_FOR_AUDIT; C-N candidate status unchanged",
-   "relative_path": "MATFluxAndReweightFiles/flux/flux-gen2thin-pdg14-minervame1M_rearrangedUniverses.root",
+   "relative_path": "data/flux/flux-gen2thin-pdg14-minervame1M_rearrangedUniverses.root",
    "retention": "AWAITING_RUNTIME_STAT_AND_STAGED_RETENTION_RECORD",
    "source_citation": {
     "file": "PlotUtils/FluxReweighter.cxx",
@@ -99,7 +99,7 @@
    "family": "gen2thin",
    "histogram": "flux_E_cvweighted",
    "proposal_status": "DRAFT_FOR_AUDIT; C-N candidate status unchanged",
-   "relative_path": "MATFluxAndReweightFiles/flux/flux-gen2thin-pdg14-minervame1N_rearrangedUniverses.root",
+   "relative_path": "data/flux/flux-gen2thin-pdg14-minervame1N_rearrangedUniverses.root",
    "retention": "AWAITING_RUNTIME_STAT_AND_STAGED_RETENTION_RECORD",
    "source_citation": {
     "file": "PlotUtils/FluxReweighter.cxx",
