@@ -20,7 +20,7 @@ ND = HERE.parent
 REPO = ND.parent
 FILES = ("t3p_arms.py", "t3p_probe.py", "t3p_read.py", "sbatch_t3p.sh", "test_t3p.py")
 AR, PB, RD, SB = FILES[:4]
-EXPECTED_TESTS = 66
+EXPECTED_TESTS = 68
 MUTATIONS = [
     # --- REQUIRED: C-PAIR fails on a one-ulp change, and the trace at k is the plain unfold at k
     ("REQUIRED C-PAIR compares within a tolerance", PB,
@@ -123,6 +123,20 @@ MUTATIONS = [
      "test_mo_bounded_by_step_2"),
     ("resolution not printed", RD, '"bar_over_rho_B0_50": None if not b50 else bars[arm] / b50,',
      '"bar_over_rho_B0_50": None,', "test_bounded_by_step_2_is_decided_from_the_numbers"),
+    ("R1a: the bound rewrites a lowers", RD, 'tr1[arm] == "no effect" and headroom',
+     'tr1[arm] in ("no effect", "lowers the limit") and headroom', "test_a_lowers_is_never_rewritten_to_bounded"),
+    ("R1b: the headroom takes OP at k = 1", RD, 'op = rho_at(q[("OP", t, S0)], 2)', 'op = rho_at(q[("OP", t, S0)], 1)',
+     "test_the_headroom_operands_are_rho_op_at_2_and_rho_b0_at_50"),
+    ("R1c: the headroom takes B0 at k = 5", RD, "headroom = None if op is None or b50 is None else b50 - op",
+     "headroom = None if op is None or b50 is None else b5 - op",
+     "test_the_headroom_operands_are_rho_op_at_2_and_rho_b0_at_50"),
+    ("resolution Delta dropped", RD, 'res[arm] = {"Delta": d50,', 'res[arm] = {"Delta": None,',
+     "test_a_lowers_is_never_rewritten_to_bounded"),
+    ("crossing boundary open", RD, "if min(rhos) <= -delta:", "if min(rhos) < -delta:", "test_trajectory_classes"),
+    ("crosses keeps rho(50) = delta", RD, 'return "crosses" if r50 < delta else', 'return "crosses" if r50 <= delta else',
+     "test_trajectory_classes"),
+    ("C-PAIR shape ignored", PB, "if a.dtype != b.dtype or a.shape != b.shape:", "if a.dtype != b.dtype:",
+     "test_a_dtype_change_fails"),
     ("crosses and returns folded", RD, 'return "crosses" if r50 < delta else "crosses and returns"',
      'return "crosses"', "test_trajectory_classes"),
     ("unattributed dropped", RD, 'return out or ["unattributed"]', "return out", "test_labels"),

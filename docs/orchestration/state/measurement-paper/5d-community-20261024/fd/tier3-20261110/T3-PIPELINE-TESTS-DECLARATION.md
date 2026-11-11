@@ -1,4 +1,4 @@
-# T3 DECLARATION: where configuration (e)'s retained prior stops falling — noise-free pipeline tests at the two flagged truths (2026-11-10, rev 3, DRAFT for coverage-5b-audit and the director's binding; nothing runs)
+# T3 DECLARATION: where configuration (e)'s retained prior stops falling — noise-free pipeline tests at the two flagged truths (2026-11-10, rev 4, DRAFT for coverage-5b-audit and the director's binding; nothing runs)
 
 **By:** session tier3-design, at the director's brief and ruling of 2026-11-10.
 
@@ -17,6 +17,8 @@
   listed in §14. Design and code are audited together.
 - **Rev 3 answers coverage-5b-audit's audit of rev 2** (no blockers; majors T1 and T2, minors t1–t4, which the director
   made required before binding). Each change is listed in §15.
+- **Rev 4 answers the recheck of rev 3** (major R1: three of the auditor's mutants on the new rule's direction and operands survived rev 3's suite; minors u1–u3).
+  It adds tests and mutants and scopes one sentence in §3 (§16). The rule itself is unchanged.
 - Nothing runs before the audit, the binding **and** the director's go after the LL5D readout.
 - Paths are relative to `docs/orchestration/` unless they start with `nd-unfolding/` or `docs/analysis-note/`. Every
   `file:line` is at main `4231b14d` unless another commit is named.
@@ -170,8 +172,9 @@ answers them here:
   and 0.9993), "a property of the estimator, not of the background method" (`state/measurement-scoping/SCOPING.md:183`;
   also `:56`). At J, D-ID found signal-only close to the noise-free trace (FD-PRR §9).
 - **What they do not measure:** ρ on R00–R15, the flagged truths under (e) with its 400/31 refinement, a per-iteration
-  reco closure, or oracle and weighted miss weights. If SO or MU show "no effect" here, that agrees with these records.
-  It is not a new finding.
+  reco closure, or oracle and weighted miss weights. If SO or MU show "no effect" here, that is consistent with these
+  records at δ_A only, read with the §5.1 resolution: it does not exonerate the component below δ_A, and it is not a
+  new finding.
 <!-- absence-ok: scoped to the search below and the hits read; not a claim that no result exists elsewhere -->
 Search: signal-only; weighted regress; oracle miss; missed unity|--missed (`git grep -l -i -E`, over
 docs/orchestration and docs/analysis-note) @ 4231b14d, intersected with retained fraction|retained prior|R00.R15|rho|ρ:
@@ -440,7 +443,7 @@ arm lowers ρ but raises RMS b_⊥ or the χ², that is printed beside the label
 
 ## 7. How the results are read, once
 
-- **After every job has completed,** one reader run (`t3p_read.py`, rev 3) in a clean clone at the bound commit
+- **After every job has completed,** one reader run (`t3p_read.py`, rev 4) in a clean clone at the bound commit
   reads every product, applies §6, computes §4 and writes `readout.json` and `readout.txt`, under F0b's `LeakGuard`
   as FD-PRR's reader does.
 - **No reading before that.** An incomplete study is reported as INCOMPLETE, and nothing in it is read.
@@ -618,10 +621,10 @@ and is restored on exit, as FD-PRR's do.
 | `t3p_probe.py` | the 36 tasks, the three jobs, the price; the queue lines (FD-PRR's K50 line with `--iters`, `--tag` and `--out` set); the namespace check on the runner's own parse; `install` (the build with SO's `no_background` and the capture of r on the unfolding half, the traced `unfold_one`, the staged rho loader, the writer with the trace arrays and the `tier3` block); `sources` (26 staged files; the 21 FD-PRR digests read from FD-PRR's committed SHA256SUMS, never retyped); C-PAIR and C-X (`pair`); the gate |
 | `t3p_read.py` | completeness; the product checks (C-SPLIT, C-PINS, C-ARM); C-TRACE, C-RECO, C-FIN, C-P, C-CT; §4's quantities; §5's readings and classes; F0b's `LeakGuard` on the readout |
 | `sbatch_t3p.sh` | the three jobs. It refuses unless the deploy is the pin, the job is named `t3p_<mode>` and Slurm's TimeLimit (every form, FD-PRR A3's parser) is at most the declared limit; the dry job refuses without `fence.txt`, if `squeue` fails, or while a fenced family runs; every job runs its own C-PAIR and C-X and writes DONE only if they pass |
-| `test_t3p.py` | 66 tests (§13.2) |
-| `t3p_mutation.py` | 66 planted defects, each to be killed by a named test, in a mirrored tree (§13.2) |
+| `test_t3p.py` | 68 tests (§13.2) |
+| `t3p_mutation.py` | 73 planted defects, each to be killed by a named test, in a mirrored tree (§13.2) |
 
-**Digests** (rev 3; sha256 of the files at the code commit named in the receipt README; the binding pins them):
+**Digests** (rev 4; sha256 of the files at the code commit named in the receipt README; the binding pins them):
 
 | file | sha256 |
 |---|---|
@@ -629,15 +632,15 @@ and is restored on exit, as FD-PRR's do.
 | `t3p_probe.py` | `e27bf07a3e2c60320a749355eaedceed5a36574d2d8fa83675bd4b4721985bd2` |
 | `t3p_read.py` | `f4c221dda95fbbdf2318f7fcdde57b9e1b7fb265e85b13e1dea15341cf069295` |
 | `sbatch_t3p.sh` | `a21ad29f35a71e46c1b286ca6ae96128f01c482cbd30aac5133d3e4729d2de3c` |
-| `test_t3p.py` | `735c12a4afdbcb6aca67c7bb8a28f038dcdbf95e6b4aa6b3cc04e7c3ed97a118` |
-| `t3p_mutation.py` | `1de6a2c366ec17a20e33a76a03a3cb874b9e3e399ea8a8d6cb352f43e5f0c65f` |
+| `test_t3p.py` | `69621cb52deb2f965056ed219ad557fa34dc590586038f411975043f21fbc454` |
+| `t3p_mutation.py` | `3b532709e8d1b6d69e6ed69a54bc369e45a849e2ccfc52266b2f5131a060b7c0` |
 
 ### 13.2 Tests and the mutation receipt
 
 - **Where the receipts were made:** in a clean clone at the code commit, one serial process under `nice -n 19`, every
   BLAS and OpenMP thread cap at 1. Each log's header carries the six files' digests and the clone's HEAD. The next
-  commit adds only the receipt files, under `fd/tier3-20261110/rev3/` (rev 3's code). `rev2/` keeps rev 2's receipts
-  for the code at `6eb5627e`, which rev 3 supersedes.
+  commit adds only the receipt files, under `fd/tier3-20261110/rev4/` (rev 4's code). `rev2/` and `rev3/` keep the
+  receipts for the superseded code at `6eb5627e` and `624f5416`.
 - **The tests run without LightGBM, ROOT or the cluster:** deterministic stand-in estimators (one records every fit's
   sample weight), FD-STAB's synthetic rows on the real 5D fine grid, the real `omnifold_nn_core.omnifold_loop`,
   `s5c_unfold.unfold` and `s5n_pseudo.build_pseudo`.
@@ -646,15 +649,17 @@ and is restored on exit, as FD-PRR's do.
   - **REQUIRED:** C-PAIR fails on a one-ulp change in one cell, on our side and on the reference side (its pin
     recomputed, so only the comparison can catch it), and names the one cell;
   - C-PAIR fails on +0.0 against −0.0 in one cell, and on the same bytes under another dtype (int64 against float64
-    zeros) (rev 3);
+    zeros), and on the same bytes in another shape (rev 3, rev 4);
   - **REQUIRED:** B0's trace at k equals the plain production unfold at K = k, bitwise (C-PAIR's premise);
   - each arm's intervention acting, and C-ARM refusing a wrong weight or a wrong oracle;
   - the readings and classes in the direction each acts and the other, including the rev-3 rules: "crosses and
-    returns", the audit's overlap case, "bounded by step 2" decided from the headroom whatever TR-2 reads, SO not
-    bounded, and the resolution printed; an end-to-end read of planted products, with
+    returns", the audit's overlap case and the two class boundaries, "bounded by step 2" decided from the headroom
+    whatever TR-2 reads, SO not bounded, and the resolution printed; and (rev 4) the rule in each direction it acts:
+    a "lowers" is never rewritten and keeps its label, and the headroom's operands are ρ_OP(2) and ρ_B0(50), on
+    planted runs where OP differs between k = 1 and 2 and B0 between k = 5 and 50; an end-to-end read of planted products, with
     each control refusing; the job script's refusals on a stand-in deploy, the fence in a later job among them.
-- **Mutation, `python3 -B nd-unfolding/tier3/t3p_mutation.py`:** 66 mutants, each killed by its named test,
-  and the unmutated suite passes with 66 tests in the mirrored tree (`rev3/mutation.txt`).
+- **Mutation, `python3 -B nd-unfolding/tier3/t3p_mutation.py`:** 73 mutants, each killed by its named test,
+  and the unmutated suite passes with 68 tests in the mirrored tree (`rev4/mutation.txt`).
 - **Not testable here:** LightGBM, the real inputs, `squeue` on the cluster and O_NOATIME (macOS has none, so the tests
   read with a zero flag). The dry run is the first run with each. One rev-1 control could not be met and is now a
   record (C-ARM OP, §6), found when a weight-sensitive stand-in replaced one that ignored weights.
@@ -683,3 +688,12 @@ and is restored on exit, as FD-PRR's do.
 | §9.1 | each wall row names its population; K = 20 over all 16 logs (1,557 / 1,734 s) is added and labelled unused | t3 |
 | §9.3 | staging and the job's own C-PAIR and C-X are outside the gate's projection; a timeout there leaves no DONE and fails closed | t4 |
 | §13 | rev 3 digests; 66 tests and 66 mutants; receipts under `rev3/` | the above |
+
+## 16. What rev 4 changes from rev 3 (the recheck of rev 3)
+
+| § | change | finding |
+|---|---|---|
+| §13; `test_t3p.py`, `t3p_mutation.py` | tests on planted runs that pin §5.2's rule in each direction it acts: a "lowers" is never rewritten to "bounded" and keeps "consistent with a limit set at the misses" (OP 0.045, B0 0.08, MO 0.02); the headroom's operands are ρ_OP(2) and ρ_B0(50) (OP 0 at k = 1 and 0.045 at k = 2; B0 0.20 at k ≤ 5, falling to 0.08 at k = 50). Mutants: the bound rewrites a "lowers", OP taken at k = 1, B0 taken at k = 5 | R1 |
+| §3 | "If SO or MU show 'no effect' here" is scoped to "consistent with these records at δ_A only, read with the §5.1 resolution", and no longer reads as an exoneration | R1 |
+| §13; tests and mutants | the trajectory boundaries (min = −δ crosses; ρ(50) = δ after a crossing returns); `same()` on equal bytes in another shape; the resolution's Δ | u1, u2, u3 |
+| §13 | rev 4 digests; 68 tests and 73 mutants; receipts under `rev4/` | the above |

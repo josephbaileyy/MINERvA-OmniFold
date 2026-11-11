@@ -541,6 +541,8 @@ class Pair(unittest.TestCase):
         # the same bytes under another dtype: int64 zeros and float64 zeros
         self.assertEqual(np.zeros(3, np.int64).tobytes(), np.zeros(3).tobytes())
         self.assertFalse(T.same(np.zeros(3, np.int64), np.zeros(3))["pass"])
+        # the same bytes in another shape
+        self.assertFalse(T.same(np.zeros((2, 3)), np.zeros(6))["pass"])
 
     def test_one_ulp_in_an_arms_truth_fails_c_x(self):
         p = T.product_path(self.runs, "SO", "A7_gibuu", T.PRIMARY_SEED)
@@ -605,6 +607,9 @@ class Readings(unittest.TestCase):
         self.assertEqual(C(self.traj(lambda k: 0.3 - 0.02 * k if k <= 20 else 0.1), self.dt), "crosses and returns")
         # the audit's overlap: rho(25) = -0.04, rho(50) = 0.0 is "reaches 0" only (rises needs rho(50) >= delta)
         self.assertEqual(C(self.traj(lambda k: -0.04 if k <= 25 else 0.0), self.dt), "reaches 0")
+        # the boundaries: min = -delta crosses; rho(50) = delta after a crossing returns
+        self.assertEqual(C(self.traj(lambda k: -0.05 if k == 10 else 0.01), self.dt), "crosses")
+        self.assertEqual(C(self.traj(lambda k: -0.1 if k <= 20 else 0.05), self.dt), "crosses and returns")
         self.assertEqual(C(self.traj(lambda k: 0.2 * 0.8 ** k), self.dt), "reaches 0")
         self.assertEqual(C(self.traj(lambda k: 0.3 - 0.003 * k), self.dt), "slow approach")
         self.assertEqual(C(self.traj(lambda k: 0.12 + 0.05 * 0.5 ** k), self.dt), "plateau")
@@ -797,6 +802,35 @@ class EndToEnd(unittest.TestCase):
         self.assertAlmostEqual(r["bar_over_rho_B0_50"], 0.05 / 0.0801)
         self.assertAlmostEqual(r["headroom_B0_50_minus_OP_2"], 0.035)
         self.assertIn("MO no effect (bounded by step 2): Delta", RT.text(RT.read(self.run, REPO)[0]))
+
+    def test_a_lowers_is_never_rewritten_to_bounded(self):
+        """R1(a): OP 0.045, B0 0.08, MO 0.02: MO lowers the limit and keeps its label; MU, with no effect, is bounded."""
+        def plant(arm, t, s, k):
+            j = 0.0001 * (s % 3)
+            return {"OP": 0.045, "MO": 0.02}.get(arm, 0.08) + j
+        self.build(plant)
+        rd = RT.read(self.run, REPO)[0]["readings"]
+        self.assertEqual(rd["TR-1"]["A7_gibuu"]["MO"], "lowers the limit")
+        self.assertIn("consistent with a limit set at the misses", rd["labels"]["A7_gibuu"])
+        self.assertEqual(rd["TR-1"]["A7_gibuu"]["MU"], "no effect (bounded by step 2)")
+        self.assertAlmostEqual(rd["resolution"]["A7_gibuu"]["MO"]["Delta"], -0.06)
+        self.assertAlmostEqual(rd["resolution"]["A7_gibuu"]["MU"]["Delta"], 0.0)
+
+    def test_the_headroom_operands_are_rho_op_at_2_and_rho_b0_at_50(self):
+        """R1(b, c): OP is 0 at k = 1 and 0.045 at k = 2; B0 and the arms fall from 0.20 (k <= 5) to 0.0801 at k = 50.
+        The headroom is 0.0801 - 0.045 = 0.0351 < 0.05, so MU, MW and MO are bounded. With OP at k = 1 it would be
+        0.0801, and with B0 at k = 5 it would be 0.155: neither bounded."""
+        def plant(arm, t, s, k):
+            j = 0.0001 * (s % 3)
+            if arm == "OP":
+                return (0.0 if k == 1 else 0.045) + j
+            return (0.20 if k <= 5 else 0.20 - (0.20 - 0.0801) * (k - 5) / 45) + j
+        self.build(plant)
+        rd = RT.read(self.run, REPO)[0]["readings"]
+        self.assertAlmostEqual(rd["resolution"]["A7_gibuu"]["MO"]["headroom_B0_50_minus_OP_2"], 0.0351)
+        self.assertAlmostEqual(rd["resolution"]["A7_gibuu"]["MO"]["rho_B0_50"], 0.0802)
+        for arm in ("MU", "MW", "MO"):
+            self.assertEqual(rd["TR-1"]["A7_gibuu"][arm], "no effect (bounded by step 2)", arm)
 
     def test_no_effect_with_headroom_stands_whatever_tr2(self):
         """TR-2 reads "does not carry" (rho_OP 0.10), but B0's limit 0.20 leaves 0.10 of room: "no effect" stands."""
