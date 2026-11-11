@@ -14,6 +14,10 @@ What it does, per candidate:
     proceeds to grading, which this module does not do.
 The reproduction mode (A4.5) is h2_definition.merge's rule exactly: purity < τ among supported bins only.
 
+The 80 % veto is read, as the director ruled (2026-11-11), as refusing a join that takes a touched line's largest piece
+from at most 0.8 to above it. A line already above 0.8 is a structural failure, which ends its candidate at T2. See
+IMPLEMENTATION-NOTES.md, note 1, for the reading and its monotonicity argument.
+
 Inputs: MCgen, MCreco, pass_reco, pass_truth, w_truth and w_reco of the pinned 5D npz, read through O_NOATIME after its
 sha256. No data array, unfold product, bias, departure or V-HALF quantity is read.
 MEASURES: simulation response on candidate bins. CANNOT AUTHORIZE: a reported binning, a class or any claim.
