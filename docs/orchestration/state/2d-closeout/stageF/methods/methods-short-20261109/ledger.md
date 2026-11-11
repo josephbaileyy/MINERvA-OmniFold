@@ -2080,3 +2080,21 @@ was the mislabel. The director accepted bd08582ee, the hand re-cites of ALIASES 
   the acknowledgments and their tail, ahead of DATA AVAILABILITY, which no case of fix_da_order.py described. Case 7
   moves that fragment to before the rest of [8]. It is entered only where the tool exited FAIL before, so no layout that
   passed changes.
+
+## 2026-11-11 — The style batch's fixes (the director's independent meaning read of 9ccb84f6c)
+
+- **Rulings** (the director's Sonnet read of all 122 rows flagged 4; the batch is accepted with them):
+  - M013. The paper's lower-capacity variant is now "a lower-capacity development variant with a 100-tree, 8-leaf
+    refinement, which gives none of the reported results". The last clause is tab:estimators-matrix's caption. Fig.
+    S1's caption is back to its 2f32b7c73 text, with "not the reported estimator", which journal-editor asked to keep.
+  - M016. Figure 4's caption again gives the q3 tilt as a truth flagged by its χ² p value under the reported
+    covariance.
+  - M018. Figure 4's caption again says "The bias is the same in both panels; only the covariance differs."
+  - M114. NuWro's reason is back in its record's terms: the abort losses "were not shown to be negligible". "Has not
+    been bounded" claimed more than the record does.
+  - The named release revision stays acf934d71 until the note loop reports its final head.
+- **Meaning read** of the 5 pairs against 9ccb84f6c (style-fix-read/pairs.tsv). M004 and M005 restore the base wording
+  exactly; M002 and M003 restore the ruled sentences; M001 is as ruled. No other change.
+- **Rates after the fixes** (per 1,000 words). Paper unchanged: 0.10 / 0 / 0.59. Supplement: ", not X" 0.21 (3),
+  corrective 0.07 (1), semicolon chains 0.07 (1, Fig. S1's restored caption). All are under the field maximum.
+- **Checks:** both rater copies PASS. check_round with the fill test runs on the committed head before the push.
