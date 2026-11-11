@@ -265,7 +265,8 @@ def fake_meta(mode, k, moved=0, coords=None, digest=None, **over):
     j = eed.PAIR[mode][1]
     m = {"construction": "data", "input_npz_sha256": d["npz_sha256"], "bkg_dump_sha256": d["bkg_sha256"],
          "bootstrap_seed": None, "jitter_seed": j, "coords": coords or ("float32" if mode == "control" else "float64"),
-         "estimator_seed": d["estimator_seed"], "threads": d["threads"], "iters": d["iters"], "seconds_unfold": 600.0,
+         "estimator_seed": d["estimator_seed"], "threads": d["threads"], "iters": d["iters"], "seconds_unfold": 585.0,
+         "seconds_load": 15.0,
          "code_sha256": dict(CODE[2]),
          "e96_data": {"schema": eed.SCHEMA, "mode": mode, "k": k, "code_sha256": CODE[0], "ens1_probe_sha256": CODE[1],
                       "moved_rows": {"MCgen": moved, "MCreco": 0, "measured": 0, "bkg_reco": 0},
@@ -318,7 +319,7 @@ class Analysis(unittest.TestCase):
             if defect == "fit_code" and k == 9:
                 over["block_code"] = "y" * 64
             if defect == "slow" and k == 1:
-                over["seconds_unfold"] = 900.0
+                over["seconds_unfold"] = 885.0
             meta = fake_meta("ensemble", k, moved=1 if (defect == "moved" and k == 7) else 0,
                              coords="float32" if (defect == "fit_coords" and k == 11) else None,
                              digest={"MCgen": "same"} if defect == "dup" else None, **over)
@@ -430,7 +431,10 @@ class Analysis(unittest.TestCase):
             a.full_queue, a.pin, a.out = d / "full.tsv", "p" * 40, d / "GATE.json"
             with contextlib.redirect_stdout(io.StringIO()):
                 rc = eed.gate(a, e_sha=hashlib.sha256((d / "e.npz").read_bytes()).hexdigest())
-            return rc, json.loads((d / "GATE.json").read_text())
+            self.gate_dir = d
+            g = json.loads((d / "GATE.json").read_text())
+            self.gate_queue_sha = hashlib.sha256((d / "full.tsv").read_bytes()).hexdigest()
+            return rc, g
 
     def test_the_gate_passes_the_declared_dry_run_and_records_the_pin(self):
         rc, g = self.run_gate()
@@ -438,7 +442,8 @@ class Analysis(unittest.TestCase):
         self.assertIs(g["pass"], True)
         self.assertEqual(g["pin"], "p" * 40)
         det = g["controls"]["G the projection fits the full run's limit: lane_max x t + 300 s <= 0.9 x the limit"]["detail"]
-        self.assertEqual((det["lane_max"], det["t_seconds"]), (14, 600.0))
+        self.assertEqual((det["lane_max"], det["t_seconds"]), (14, 600.0))     # load 15 s + unfold 585 s (audit r1)
+        self.assertEqual(g["full_queue_sha256"], self.gate_queue_sha)
 
     def test_the_gate_fails_on_a_control_defect_a_slow_unfold_or_a_missing_k1(self):
         """REQUIRED (audit E1): the full run is gated on A-D0, A-D1, k = 1 and the projection, before it spends."""
@@ -461,7 +466,9 @@ if argv[:1] == ["expect"]:
     sys.exit(0)
 if argv[:1] == ["gate"]:
     ok = os.environ.get("STUB_GATE", "pass") == "pass"
-    Path(argv[argv.index("--out") + 1]).write_text(json.dumps({"pass": ok, "pin": argv[argv.index("--pin") + 1]}))
+    import hashlib
+    q = hashlib.sha256(Path(argv[argv.index("--full-queue") + 1]).read_bytes()).hexdigest()
+    Path(argv[argv.index("--out") + 1]).write_text(json.dumps({"pass": ok, "pin": argv[argv.index("--pin") + 1], "full_queue_sha256": q}))
     sys.exit(0 if ok else 8)
 out = Path(argv[argv.index("--runs") + 1]); out.mkdir(parents=True, exist_ok=True)
 (out / f"{argv[0]}.out").write_text(json.dumps(argv))
@@ -539,6 +546,17 @@ class JobScript(unittest.TestCase):
         p = self.run_script("full", str(self.D), self.pin, str(self.OUT))
         self.assertEqual(p.returncode, 2, p.stderr)
         self.assertIn("no passing GATE.json", p.stderr)
+
+    def test_full_refuses_a_queue_other_than_the_gated_one(self):
+        """Audit r2: the gate pins full.tsv's sha256; a changed queue is refused before anything is written."""
+        p = self.run_script("dry", str(self.D), self.pin, str(self.OUT))
+        self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
+        with open(self.OUT / "full.tsv", "a") as f:
+            f.write(f"e96data_extra\t1\tensemble_estimator_data.py\tbase\t--runs\t{self.OUT}/runs\t--\t--y\n")
+        p = self.run_script("full", str(self.D), self.pin, str(self.OUT))
+        self.assertEqual(p.returncode, 2, p.stderr)
+        self.assertIn("is not the queue the gate projected", p.stderr)
+        self.assertFalse((self.OUT / "log-full").exists())
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

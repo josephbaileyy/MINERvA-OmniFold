@@ -342,6 +342,13 @@ def check_control(runs: Path, x_e: np.ndarray, chk: Checks) -> dict | None:
     return m_c
 
 
+def per_unfold_seconds(meta: dict) -> float | None:
+    """One task's time per unfold: s5p_numerics' load plus unfold seconds, since each k is its own runner call that
+    reloads the inputs (audit r1)."""
+    lo, un = meta.get("seconds_load"), meta.get("seconds_unfold")
+    return float(lo) + float(un) if isinstance(lo, (int, float)) and isinstance(un, (int, float)) else None
+
+
 def gate(a, e_sha: str = E_PRODUCT_SHA256) -> int:
     """The dry run's gate (audit E1): A-D0, A-D1, k = 1's declared call and the projection, on the dry products, before
     any full run. Writes <out> (GATE.json) with pass and pin; ``sbatch_e96data.sh full`` refuses without pass at its pin."""
@@ -357,9 +364,9 @@ def gate(a, e_sha: str = E_PRODUCT_SHA256) -> int:
             _, m1 = load_product(p1)
             probs = product_problems(m1, "ensemble", 1)
             chk("G k = 1 is the declared call", not probs, {"problems": probs})
-            times["k1"] = m1.get("seconds_unfold")
+            times["k1"] = per_unfold_seconds(m1)
             if m_c is not None:
-                times["control"] = m_c.get("seconds_unfold")
+                times["control"] = per_unfold_seconds(m_c)
                 chk("G the control and k = 1 ran one code", code_of(m_c) == code_of(m1))
     # the projection: the largest lane load of full.tsv under list scheduling on LANES lanes, bounded by
     # sum / LANES + max_task * (1 - 1 / LANES), times the dry run's slowest per-unfold time, plus 300 s of setup
@@ -370,6 +377,7 @@ def gate(a, e_sha: str = E_PRODUCT_SHA256) -> int:
     chk("G the projection fits the full run's limit: lane_max x t + 300 s <= 0.9 x the limit",
         proj is not None and proj <= 0.9 * FULL_TIME_S,
         {"lane_max": lane_max, "t_seconds": t, "projected_s": proj, "limit_s": FULL_TIME_S, "times": times})
+    rec["full_queue_sha256"] = sha256_path(a.full_queue)     # audit r2: the queue projected; full refuses another
     rec["pass"] = not chk.fail
     a.out.write_text(json.dumps(rec, indent=1) + "\n")
     print(f"E96-DATA gate {'PASS' if rec['pass'] else 'FAIL'}; controls failed: {chk.fail}")

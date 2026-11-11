@@ -41,6 +41,9 @@ if [ "$MODE" = full ]; then  # checked before anything is written, so a refusal 
     [ "$dry_pin" = "$PIN" ] || { echo "[e96data] refusing: the dry run ran at pin '$dry_pin', not $PIN" >&2; exit 2; }
     gate_ok=$(python3 -c 'import json,sys; g=json.load(open(sys.argv[1])); print("yes" if g.get("pass") is True and g.get("pin") == sys.argv[2] else "no")' "$OUT/log-dry/GATE.json" "$PIN" 2>/dev/null)
     [ "$gate_ok" = yes ] || { echo "[e96data] refusing: no passing GATE.json from the dry run at this pin" >&2; exit 2; }
+    q_sha=$(sha256sum "$Q" | cut -d' ' -f1)
+    g_sha=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1])).get("full_queue_sha256", ""))' "$OUT/log-dry/GATE.json" 2>/dev/null)
+    [ "$q_sha" = "$g_sha" ] || { echo "[e96data] refusing: full.tsv ($q_sha) is not the queue the gate projected ($g_sha)" >&2; exit 2; }
 fi
 mkdir -p "$L/tasks"
 source "$D/setup_salloc_env.sh" > "$L/env.log" 2>&1

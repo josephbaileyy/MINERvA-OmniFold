@@ -71,6 +71,9 @@ threads.
   - **the projection:** the full queue's largest lane load under list scheduling on 8 lanes, bounded by
     ⌈Σ/8 + max_task × 7/8⌉ = 14 unfolds, × the dry run's slowest per-unfold time t, + 300 s, must be at most
     0.9 × 3.5 h. That is t ≤ 789 s.
+    - t is the product's `seconds_load` + `seconds_unfold`, because each k is its own runner call that reloads the
+      inputs (recheck r1).
+  - **The queue is pinned:** `GATE.json` records `full.tsv`'s sha256, and `full` refuses any other queue (recheck r2).
   - **`sbatch_e96data.sh full` refuses** without a passing `GATE.json` at its pin, and still needs the director's go.
 - **The cap was raised from 3.5 to 4.0** because the repeat adds an unfold and the full limit rises to 3:30 for the
   projection's margin. It binds through the two `--time` limits on exclusive single-node jobs.
@@ -87,6 +90,14 @@ threads.
   - **On a task failure** (audit e6): a task exits 1, so xargs keeps launching the rest of the queue, as ENS1's guard
     does. The run then ends FAILED with no DONE receipt, and nothing downstream reads it.
 - **The balance check:** the cap is at most half the group balance, by iris, at the connect.
+- **(e)'s product, if purged** (recheck r3). The run comes after LL5D and Tier 3, and the pscratch copy of
+  `data_b-_j-.npz` may be exposed to purge by then (AT-RISK.md: central, from 2026-12-31). The gate fails closed on a
+  missing or different file.
+  - The recovery route is the CFS archive copy,
+    `/global/cfs/cdirs/m3246/josephrb/s5p-archive-20261006/runs/s2/num/data/data_b-_j-.npz`, recorded as `match`
+    (`state/2d-closeout/stageF/methods/m2-archive/inputs_sha256.tsv:33`).
+  - Before the dry run, it is re-staged to the pscratch path by an O_NOATIME copy, checked against `fb5cc679…`. That
+    copy comes to the director as its own script first.
 
 ## Controls (each a STOP; the result is reported as not made, nothing repaired)
 
