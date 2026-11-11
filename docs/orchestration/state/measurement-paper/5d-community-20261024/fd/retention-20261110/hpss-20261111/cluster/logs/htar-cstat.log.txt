@@ -1,0 +1,67 @@
+HTAR: a   SHA256SUMS.cstat
+HTAR: a   pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b21_j121.npz
+HTAR: a   pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b22_j122.npz
+HTAR: a   pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b23_j123.npz
+HTAR: a   pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b24_j124.npz
+HTAR: a   pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b25_j125.npz
+HTAR: a   pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b26_j126.npz
+HTAR: a   pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b27_j127.npz
+HTAR: a   pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b28_j128.npz
+HTAR: a   pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b29_j129.npz
+HTAR: a   pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b30_j130.npz
+HTAR: a   pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b31_j131.npz
+HTAR: a   pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b32_j132.npz
+HTAR: a   pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b33_j133.npz
+HTAR: a   pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b34_j134.npz
+HTAR: a   pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b35_j135.npz
+HTAR: a   pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b36_j136.npz
+HTAR: a   pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b37_j137.npz
+HTAR: a   pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b38_j138.npz
+HTAR: a   pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b39_j139.npz
+HTAR: a   pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b40_j140.npz
+HTAR: a   pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b41_j141.npz
+HTAR: a   pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b42_j142.npz
+HTAR: a   pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b43_j143.npz
+HTAR: a   pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b44_j144.npz
+HTAR: a   pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b45_j145.npz
+HTAR: a   pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b46_j146.npz
+HTAR: a   pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b47_j147.npz
+HTAR: a   pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b48_j148.npz
+HTAR: a   pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b49_j149.npz
+HTAR: a   pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b50_j150.npz
+HTAR: a   /tmp/HTAR_CF_CHK_581939_1794365638
+HTAR Create complete for /home/j/josephrb/mnv-at-risk-20261111/cstat.tar. 2849280 bytes written for 31 member files, max threads: 32 Transfer time: 0.015 seconds (196.284 MB/s) wallclock/user/sys: 0.267 0.035 0.000 seconds
+HTAR: v SHA256SUMS.cstat, 4140 bytes, 10 media blocks
+HTAR: v pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b21_j121.npz, 94143 bytes, 185 media blocks
+HTAR: v pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b22_j122.npz, 94164 bytes, 185 media blocks
+HTAR: v pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b23_j123.npz, 94065 bytes, 185 media blocks
+HTAR: v pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b24_j124.npz, 94025 bytes, 185 media blocks
+HTAR: v pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b25_j125.npz, 93986 bytes, 185 media blocks
+HTAR: v pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b26_j126.npz, 94050 bytes, 185 media blocks
+HTAR: v pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b27_j127.npz, 94160 bytes, 185 media blocks
+HTAR: v pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b28_j128.npz, 94060 bytes, 185 media blocks
+HTAR: v pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b29_j129.npz, 94034 bytes, 185 media blocks
+HTAR: v pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b30_j130.npz, 94060 bytes, 185 media blocks
+HTAR: v pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b31_j131.npz, 93996 bytes, 185 media blocks
+HTAR: v pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b32_j132.npz, 94077 bytes, 185 media blocks
+HTAR: v pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b33_j133.npz, 93999 bytes, 185 media blocks
+HTAR: v pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b34_j134.npz, 94037 bytes, 185 media blocks
+HTAR: v pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b35_j135.npz, 94023 bytes, 185 media blocks
+HTAR: v pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b36_j136.npz, 94004 bytes, 185 media blocks
+HTAR: v pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b37_j137.npz, 94105 bytes, 185 media blocks
+HTAR: v pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b38_j138.npz, 94027 bytes, 185 media blocks
+HTAR: v pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b39_j139.npz, 94173 bytes, 185 media blocks
+HTAR: v pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b40_j140.npz, 94002 bytes, 185 media blocks
+HTAR: v pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b41_j141.npz, 94036 bytes, 185 media blocks
+HTAR: v pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b42_j142.npz, 94038 bytes, 185 media blocks
+HTAR: v pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b43_j143.npz, 94220 bytes, 186 media blocks
+HTAR: v pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b44_j144.npz, 94129 bytes, 185 media blocks
+HTAR: v pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b45_j145.npz, 93920 bytes, 185 media blocks
+HTAR: v pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b46_j146.npz, 93985 bytes, 185 media blocks
+HTAR: v pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b47_j147.npz, 93976 bytes, 185 media blocks
+HTAR: v pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b48_j148.npz, 93897 bytes, 185 media blocks
+HTAR: v pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b49_j149.npz, 93945 bytes, 185 media blocks
+HTAR: v pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b50_j150.npz, 93930 bytes, 185 media blocks
+HTAR: v /tmp/HTAR_CF_CHK_581939_1794365638, 256 bytes, 2 media blocks
+HTAR: Verify complete. 0 total errors, 32 total objects (32 Files,0 Dirs,0 Hard Links,0 symlinks) wallclock/user/sys: 0.260 0.020 0.000 seconds
+HTAR: HTAR SUCCESSFUL

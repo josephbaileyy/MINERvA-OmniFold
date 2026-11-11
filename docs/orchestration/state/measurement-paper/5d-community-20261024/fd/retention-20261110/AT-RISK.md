@@ -79,6 +79,9 @@ exposure dates computed by the rule below.
     2D universe files (FD-CT-RETENTION §2);
   - MP-1 S1, which includes the zero loops, has no HPSS or CFS copy (FD-CT-RETENTION §0, §2).
   <!-- absence-ok: each "no copy" here is FD-CT-RETENTION's own covering search (its §2 Search line), cited, not re-run -->
+  - **Added 2026-11-11:** ten groups (zero_loops, cpl, s1_cmodel_cresp_tables, f0b, rpd_dumps, tier3_inputs, cstat,
+    central, shared_inputs, prr) are on HPSS at `/home/j/josephrb/mnv-at-risk-20261111/`, verified, with the sources'
+    atimes unmoved ([`hpss-20261111/README.md`](hpss-20261111/README.md)).
   - Every other group's copies were not checked.
 - **HPSS space.**
   - **Joseph, 2026-11-11 (relayed by the director):** "HPSS usage is 449.3 GB of 512 GB", so about 62.7 GB is free.

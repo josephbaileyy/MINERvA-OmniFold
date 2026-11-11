@@ -1,0 +1,9 @@
+HTAR: a   SHA256SUMS.central
+HTAR: a   pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j-.npz
+HTAR: a   /tmp/HTAR_CF_CHK_582235_1794365640
+HTAR Create complete for /home/j/josephrb/mnv-at-risk-20261111/central.tar. 99328 bytes written for 2 member files, max threads: 4 Transfer time: 0.005 seconds (18.256 MB/s) wallclock/user/sys: 0.278 0.001 0.007 seconds
+HTAR: v SHA256SUMS.central, 135 bytes, 2 media blocks
+HTAR: v pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j-.npz, 95564 bytes, 188 media blocks
+HTAR: v /tmp/HTAR_CF_CHK_582235_1794365640, 256 bytes, 2 media blocks
+HTAR: Verify complete. 0 total errors, 3 total objects (3 Files,0 Dirs,0 Hard Links,0 symlinks) wallclock/user/sys: 0.260 0.000 0.001 seconds
+HTAR: HTAR SUCCESSFUL
