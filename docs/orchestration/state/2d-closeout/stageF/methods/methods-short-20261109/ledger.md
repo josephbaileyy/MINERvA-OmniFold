@@ -1925,3 +1925,41 @@ was the mislabel. The director accepted bd08582ee, the hand re-cites of ALIASES 
   - make_values PASS (4134); sec4 17/17; pointers 42; registry PASS; check 12 unchanged;
   - check_restyle against f433cd9f7: only the additions (the code line numbers and settings are new numerals in the
     Supplement), and Q11–Q22 as before.
+
+## 2026-11-10 — T1-4's C_model-size ruling; the round-3 note sync (check 12)
+
+- **T1-4 accepted** (the director's read, e00a1176, 18 rows, 3 flagged, all intended). The ruling on C_model's
+  carbon-component size: leave it out. E2's CH ratios use the free-proton samples the paper withholds (B5;
+  DECISION-20261110-joseph-vprior-withhold.md), so a number built on them would contradict both. S5's qualitative
+  sentence stays. Its source comment's "pending the director" now records that reason. GENIE CV's target stays
+  unstated; no record found states it.
+- **The round-3 sync** (the director's rulings on check 12 against acf934d71). Six Supplement paragraphs now carry the
+  note's round-3 text at acf934d71 (#952):
+  - item 1: sec:selection #2 (genuine backgrounds);
+  - item 3: sec:method-config #7 (hyperparameter choice), the note's paragraph 6 there;
+  - item 4: sec:fived16-cov #3 (C_resp);
+  - item 5: sec:fived16-pl #0 (C_PL,5D's construction);
+  - item 6: sec:fived16-pl #3 (the audit's stopping condition);
+  - item 7: sec:uq-combine #0 (the unified throw).
+  
+  How it was done:
+  - The tool is sync3-read/apply_sync3.py. It takes each note paragraph with its comments out of the printed text and
+    converts the cross-references to the Supplement's form: a label the Supplement carries (sec:method-algo,
+    sec:uq-combine, tab:fived16-groups) stays a local \ref; every other becomes Ref. [note], Sec./App./Table \ref*{N-…}.
+  - Each source comment now begins "adapted 2026-11-10: synced to the note's round-3 text at acf934d71, #952, …". It
+    has no inner parenthesis, so check 12 reads it as explained against #977's own copy of the note.
+  - Every value the note keys is the same key here (\fvval pl-*, sigmed-*, sigratio-*, trace-resp-*). No #981 quote
+    lies in the six paragraphs, and the paper's protected spans are untouched.
+  - **Item 7's absence sentences** carry an absence-ok waiver: "as the note reports (sec_systematics.tex sec:uq-combine
+    at acf934d71); implementation unified_throw_cov.py; …". The note's own copy has no Search line for them; the
+    director passes that to the note lane.
+  - Items 2 (supp:176, the ESS sentence) and 8 (supp:477, S7's joint throws) are explained by ruling and not synced;
+    item 8 moves to the note in T1-5.
+  - Check 12 now reads explained 45 against #977's tree; against acf934d71, synced 10 and NOTE-CHANGED 2 (items 2 and 8).
+- **Pairs** (base 93cbe7d86): sync3-read/pairs.tsv.
+- **Checks:**
+  - the Supplement's rater copy PASS, with 0 Overfull and 0 undefined; the paper is unchanged;
+  - check_round PASS (the fill test runs on the committed head before the push);
+  - make_values PASS; sec4 17/17; pointers 42; registry PASS;
+  - check_restyle against 93cbe7d86 shows only the synced text's new citations, refs and the numeral 128 (the note's
+    MLP layer sizes), and Q11–Q22 as before.
