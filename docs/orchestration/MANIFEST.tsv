@@ -275,6 +275,7 @@ docs/orchestration/DECISION-20261110-joseph-ens1-deficit-licence.md	tracked	LIVE
 docs/orchestration/DECISION-20261110-joseph-ll5d-rerun-16-cells.md	tracked	LIVE	document		20261110	open		route-only	no
 docs/orchestration/DECISION-20261110-joseph-paper-asap-vhalf-diagnostic.md	tracked	LIVE	document		20261110	open		route-only	no
 docs/orchestration/DECISION-20261110-joseph-vhalfr-a33-a82.md	tracked	LIVE	document		20261110	open		route-only	no
+docs/orchestration/DECISION-20261110-joseph-vhalfr-a34.md	tracked	LIVE	document		20261110	open		route-only	no
 docs/orchestration/DECISION-20261110-joseph-vhalfr-choices.md	tracked	LIVE	document		20261110	open		route-only	no
 docs/orchestration/DECISION-20261110-joseph-vprior-withhold.md	tracked	LIVE	document		20261110	open		route-only	no
 docs/orchestration/DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md	tracked	LIVE	document		20260911	open		route-only	no
@@ -6322,6 +6323,11 @@ docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/consult-sol-
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/consult-sol-a1-20261110/answer.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/consult-sol-a1-20261110/prompt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/consult-sol-a1-20261110/run-header.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/consult-sol-a34-20261110/README.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/consult-sol-a34-20261110/SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/consult-sol-a34-20261110/answer.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/consult-sol-a34-20261110/prompt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/consult-sol-a34-20261110/run-header.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half/BINDING-1.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half/DECLARATION.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half/INPUTS.sha256	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
