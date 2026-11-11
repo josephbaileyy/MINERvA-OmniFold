@@ -48,3 +48,24 @@ at M_T3.
 5. **Each result is read once** from its committed record.
 
 Nothing is submitted, deposited or tagged.
+
+## Binding 1, addendum V1: the equality-boundary test (director, 2026-11-11)
+
+**Binds** [`T3-ADDENDUM-V1.md`](T3-ADDENDUM-V1.md) (`3998708a91dde4b0`) and its test-only change, as merged in PR #1067
+at **M_V1 = `8bb4e3b0e1028d960e39de0c202569a08a1218a0`**, byte-identical to its audited head `444993d1`. It closes
+ruling 4's low v1.
+
+| file | sha256 (prefix) | was |
+|---|---|---|
+| `test_t3p.py` | `4879178f4f9783f0` | `69621cb52deb2f96` |
+| `t3p_mutation.py` | `ae9667bc71819f09` | `3b532709e8d1b6d6` |
+
+- **The bound code is unchanged:** `t3p_probe.py`, `t3p_read.py` and `sbatch_t3p.sh` are byte-identical to M_T3, at
+  the prefixes in the table above.
+- **The test** pins both sides of §5.2's strict "<": not bounded at headroom = bar = 0.05 exactly, and bounded one ulp
+  below. Its mutant (`<` → `<=`) is killed.
+- **coverage-5b-audit's OK:** 69 tests OK at seeds 0 and 1; 74 of 74 mutants killed, line-identical to the receipt
+  (`addendum-v1/`); all 13 of the audit's own mutants are killed.
+- **Every connect** checks the two new test digests in place of the old ones. Rulings 1, 2, 3 and 5 stand.
+
+Nothing is submitted, deposited or tagged.
