@@ -2203,3 +2203,19 @@ was the mislabel. The director accepted bd08582ee, the hand re-cites of ALIASES 
   - 1.4: the C_resp factors are in S5. Both checks passed: the readout's code pin equals main's build_cresp.py, and xtalk is a variant.
   - m7: λ⁻¹/(fᵀC⁻¹f) < 3×10⁻⁵, in S5.
   - The pscratch L rows wait for Perlmutter (RESPONSE.md, "Second batch").
+
+## 2026-11-11 — The fresh referee read's T batch (gpt-6.1-sol, 5/10, on 9ab00ec9)
+
+- **RESPONSE.md section F:** 58 rows plus 8 §4 rows (T 46, L 6, A 5, X 1), with the prices of F1, F2 and F3 and each
+  row's status.
+- **New keys:** c2c1-dibu (1.03), c2c1-dibu-k5 (0.83), c2c1-der (2.27), from read-2/readout.json (0ee21301);
+  rnd16-r0a-median, -min and -max (0.51, 0.39–0.82), from rs1_r0.json (724f0c3a).
+- **Structure:**
+  - S7 is folded into S3, so S8–S11 are now S7–S10.
+  - In §6.2 the second test precedes the first.
+  - §7 leads with the findings; §7.1 is grouped.
+  - §5.5 becomes a paragraph of §5.2, with sec:vhalf on §5.2.
+- **Meaning read** (fresh-read/pairs.tsv, 142 rows, 34 verbatim moves). It caught three defects of mine, all fixed:
+  - "It was background to the second test." said nothing; it now says what the first test's checks led to.
+  - The S5 interval sentences preceded the block's introduction.
+  - The masking-convention phrase attached to the wrong clause.

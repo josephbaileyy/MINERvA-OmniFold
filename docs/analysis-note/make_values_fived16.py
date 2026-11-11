@@ -1530,6 +1530,11 @@ def groupb_values(d):
     v["c2c1-nrep"] = str(k10["C2-R1"]["n_replicas"])
     v["c2c1-T"], v["c2c1-q95"], v["c2c1-max"] = (f"{k10['C2-R1'][x]:.1f}" for x in ("T", "q95", "max"))
     v["c1-T"], v["c1-q95"] = f"{c1['T']:.2f}", f"{c1['q95']:.2f}"
+    # the fresh referee read (2026-11-11, RESPONSE.md F4.2): the IBU's own distance from the published result, beside the
+    # 2D result's, as the record prints them ("printed and read by nothing"; descriptive, no attribution)
+    v["c2c1-dibu"], v["c2c1-dibu-k5"], v["c2c1-der"] = f"{k10['D_IBU']:.2f}", f"{c['K5']['D_IBU']:.2f}", f"{c['D_E_R']:.2f}"
+    assert abs(k10["D_IBU"] / c["D_E_R"] - k10["rho"]) < 1e-9, "D_IBU / D_E_R is the record's rho"
+    assert v["c2c1-der"] == "2.27", "D_E_R is the paper's chi2/ndf against the published covariance"
     v["c1-nrep"] = str(c1["n_replicas"])
     v["c1-below-pct"] = f"{100 * (1 - c1['T'] / c1['q95']):.0f}"
     g = d["refg1"]
@@ -1865,6 +1870,10 @@ def tier1_values(d):
     # (iii) RS1 R0
     r0 = d["rs1r0"]
     assert r0["controls"]["sigma_J_over_f_pct_reproduces"] == [0.133, 0.055, 0.252] and len(r0["sigma_J_over_f"]) == 16
+    # the fresh referee read (RESPONSE.md F6.1): the sixteen cells' rounding spread over each cell's statistical sigma (R0a)
+    ra = r0["R0a_summary"]
+    v["rnd16-r0a-median"], v["rnd16-r0a-min"], v["rnd16-r0a-max"] = (f"{ra[k]:.2f}" for k in ("median", "min", "max"))
+    assert sorted(r0["R0a"])[0] == ra["min"] and len(r0["R0a"]) == 16
     sj = sorted(r0["sigma_J_over_f"])
     v["rnd16-median"] = f"{100 * (sj[7] + sj[8]) / 2:.3f}"
     v["rnd16-min"], v["rnd16-max"] = f"{100 * sj[0]:.3f}", f"{100 * sj[-1]:.3f}"

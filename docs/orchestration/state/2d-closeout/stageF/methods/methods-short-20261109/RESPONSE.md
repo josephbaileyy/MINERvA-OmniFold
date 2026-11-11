@@ -213,3 +213,111 @@ Needing your ruling inside the T batch:
 | m7 | done (L) | S5: fᵀC⁻¹f under the reported covariance, without V_g, is 584.2 on the 16 cells and 438.8 on GiBUU's 8, so λ⁻¹ = 0.01 is below 3×10⁻⁵ of it. Inputs: supplemental/xsec16_cross_section.csv (adfb17d7…) and xsec16_covariance.csv (f7e25107…); λ = 100 on absolute f (fd_g_compare.py:51, :153). |
 | 3.3, 4.2, 4.3, 1.5, m5, s11c | waiting on Perlmutter | The director's ruling: one read-only login-node session after the maintenance, after the cov2d fence and Joseph's cert renewal, with the script's sha sent to the director before it runs. For s11c and m5, the existing products are fetched if present; otherwise the A is priced. |
 | 3.1, 3.2, 1.2 (A) | with tier3-design | The declaration (three arms). |
+
+# F. The fresh referee read (gpt-6.1-sol, 5/10, on 9ab00ec9)
+
+**Report:** `secondary-results/referee-methods-fresh-20261111/gpt.txt` (PR #1076). Rows are named F<major>.<sub>,
+F§4-<n>, Fm<n> and Fs<n>. "= 1.2" etc. cross-references a recheck row above. Classes and rules are as above.
+
+## Majors
+
+| # | Request | Class | Source / inputs / cost | Proposed resolution | Misreading? |
+|---|---|---|---|---|---|
+| F1.1 | The equal-weight misses regression against a physically weighted one: nominal closure, the principal deformed truths and data, on cell integrals and the failing covariance directions | A (= 1.2, widened) | 1.2's arm grows from a data refit to four unfolds of (e): data, nominal closure, and the GiBUU and q3 truths noise-free. About 0.15 node-h each (pv-ladder/BINDING.md:15: three 5D unfolds ≈ 0.45 node-h), so about 0.6 node-h; wall under 1 h; does not wait for LL5D | Report the cell and eigen-direction changes in §3.1 and S4 when it runs; limitation 8 stays until then | no |
+| F1.2 | Whether residual dependence on reconstruction acceptance or omitted truth information matters | A (a new arm) | Design: (i) refit with the regressor's inputs widened by truth quantities outside the five (the neutrino energy, the vertex position and the leading-proton kinetic energy), at the same four points as F1.1; (ii) a transfer test in simulation: mask a random subset of matched events as if missed and compare the regressor's prediction with their known step-1 weight, overall and against those omitted quantities. (i) costs about 0.6 node-h; (ii) is one fit on one iteration's stored weights, about 0.15 node-h. In all, about 0.75 node-h; wall under 1 h; does not wait for LL5D | As F1.1 | no |
+| F1.3 | Report changes on data, including the covariance-weighted directions | A | the output of F1.1 and F1.2 | As F1.1 | no |
+| F2.1 | Account compactly for what pseudo-data and simulation side do: truth and reconstruction weights, flux denominators, simulation resampling, clipping | T | LL5D-DECLARATION.md §2 (the like-for-like construction, group by group); Supp tab:cov-design rows; OUTCOME-20261108-1b-precheck-part1.md:41-42, :70 | A column in S9.3's design table for the first test's checks, against the second test's like-for-like construction, built from those records | no |
+| F2.2 | Resolve the GEANT4 neutron and proton mismatch before any coverage claim involving those bands | A (priced below), with T meanwhile | Design: for each band's two universes, rebuild the pre-check's three objects (the pseudo-data side, the simulation side and the nominal-truth Dnom) with the operations switched on one at a time: truth weights, reconstruction weights, the flux and denominator recomputation, simulation resampling and clipping. Which switch moves the 6+4 departing cells (R00, R02, R08, R09, R10, R11; R01, R05, R07, R08) into [0.9, 1.1] identifies the mismatch. Items: 2 bands × 2 universes × 3 objects × 6 switch settings = 72 unfolds, plus 3 CV controls = 75. Unit: 0.027–0.029 node-h per item (FD-1B-PRECHECK-FD-DECLARATION.md:229-230; 327 items cost 9.35 node-h, OUTCOME-20261108-1b-precheck-part1.md:29), so about 2.1 node-h expected. Cap 4.0 node-h with the pre-check's 2.5 h job limit. Wall about 3 h with the pilot gate; does not wait for LL5D | Until it runs, every coverage statement on these bands stays restricted: the paper says the primary reading excludes them, and that an excluded band's treatment is not validated by the restricted test | no |
+| F2.3 | The pending test's four outcomes: no under-coverage, under-coverage, invalid or stopped, and repaired or continued after a check | T | ll5d variants (V-L1 to V-L3); §6.2, §7, Table 2 | Already implemented. Add to §6.2 that a repaired or continued run is descriptive unless an independent confirmation follows | partly: already implemented |
+| F2.4 | Excluding bands defines a restricted test and cannot validate the omitted treatment | T | as F2.2 | One sentence in §6.2 and S9.4 | no |
+| F3.1 | Correct the 2D universes' misses approximation, or bound it against the final covariance and the failing eigenmodes | A (priced below; Joseph's) | Note sec_systematics.tex sec:uq-2d-scope: a missed event keeps the CV weight divided by the universe's completeness; tested in MaRES_0 and Flux:23 only, against an earlier ten-seed σ about 3.7× the current block. **(a) Consistent rebuild:** rerun the 185 weight universes with each missed event at its universe truth weight, rebuild the systematic block, and compare with the reported 2D covariance in the T2A eigenbasis beyond the 73 largest directions. Unit: the stage-C grant priced the universe set at 35 jobs × 0.25 node-h cap = 8.75 node-h (AUTHORIZATION-20261015 §2), with expected/cap 44.9/117.9 there, so about 3.3 node-h expected; wall about 1–2 h. **(a+) Also rebuild C_T at the two tunes** with the corrected procedure and regrade the 300 stored errors per tune: about 2 × 8.75 node-h more cap (about 6.7 expected), plus a login regrade if the errors are stored, else a rerun of the 300 per tune (COV2D cap 165.8 node-h, COV2D-AMENDMENT-1:184). **(b) Bound only:** rerun the 25 universes with the largest weight in the failing directions at two seeds each, with both treatments, about 10 jobs × 0.25 = 2.5 node-h cap (about 1 expected), giving a band-level bound against the final covariance's eigenvalues. Recommended: (a), since its cost is close to (b) and it removes the approximation rather than bounding it; (a+) if the coverage verdict itself is to be re-graded. None waits for LL5D | Until it runs, limitation 7 states the approximation and the earlier test's weakness plainly | no |
+| F4.1 | Call the integral a normalization benchmark | T | §4.1 | Reword. | no |
+| F4.2 | Give the IBU-to-publication distance beside OmniFold's | L (local, done) | read-2/readout.json (0ee21301…): D_E_R = 2.270; D_IBU = 1.027 at K = 10 (primary) and 0.830 at K = 5; D_IBU at K = 1, 2, 3, 4, 5, 10, 15, 20 is 3.95, 1.59, 1.08, 0.90, 0.83, 1.03, 1.52, 2.16. OUTCOME-20261106-ref-c2c1-read.md: "printed and read by nothing"; the record licenses no attribution and leaves "the source of the shape difference has not been identified" standing | Print D_IBU at K = 10 and K = 5 beside D_E_R in §4.2, descriptively, keyed through make_values, with the record's no-attribution scope | no |
+| F4.3 | Full-sample background and out-of-phase-space yields | L (= 4.2, pscratch) | — | — | no |
+| F4.4 | Which inputs can be checked against the publication; unavailable inputs identified | T | tab:bookkeeping | Keep "not compared", which is what this analysis did. Whether the publication releases an input is not a claim the records support either way | no |
+| F4.5 | Keep the distance descriptive | T | §4.1 already | Done as is. | no |
+| F5.1 | State truth W's Q² convention (massless muon, fixed beam axis) in the main text, against q3's exact four-vectors | T | Supp S2 (:34-36: truth W uses the massless-muon Q² with θ_μ from the beam axis) | One clause in §2's W definition | no |
+| F5.2 | State the acceptance boundary behind "no underflow nor overflow" | T | Supp S3 :141-150 | One sentence: reconstructed events outside the window are excluded, and their truth contribution enters through the misses | no |
+| F5.3 | Weighted fractions excluded by the window and by negative W² | L (pscratch) for the window; T for W² | negative W² = 4.9×10⁻⁵ of the weight, already in S2 :80 | Join the read-only session | no |
+| F5.4 | The four unreported boxes' contribution | L (pscratch) | h2_definition.json lists them ([2], [6], [10], [14]) but not their content | Join the read-only session | no |
+| F6.1 | The sixteen cells' standardized rounding shifts and their size against the statistical σ | L (local, done) | rs1_r0.json (READOUTS rs1r0 724f0c3a): R0a = σ_J/σ_stat per cell has median 0.512, min 0.385, max 0.819; R0b (variances subtracted) has median 0.596, max 1.43 | Print R0a's median and range in §6.1 (keys from rs1r0); two-perturbation shifts on the sixteen cells are not in a record (pscratch, if wanted) | no |
+| F6.2 | The perturbation law; what the statistical block estimates | T | note app_statmethods_nd.tex:37 (uniform within half a float32 ulp, edge-safe); paper §3.2 | §3.2: the law in one clause, and that the block estimates the spread of the randomized procedure (data resampling with a fresh rounding perturbation per replica), which for the deterministic output adds a numerical-variability term to the sampling variance | no |
+| F6.3 | Show the ensemble trade-off quantitatively | T | keys ens1-g-rms, ens1-g-rmsc (0.056467 against 0.055955), ens1-median/max against s5e-round-* | §6.1: the two RMS values beside the stability gain; "not adopted" keeps its rule | no |
+| F6.4 | If advocated as a mitigation, test it on data | T | §6.1 already: "evaluated only on simulated pseudo-data"; it is not advocated | Done as is. | no |
+| F7.1 | The run-period block as an empirical sensitivity allowance | T | §3.2 and S5 | One sentence. | no |
+| F7.2 | The 68 % interval: its stochastic model, or call it an illustration | T | FD-CT-5B-AUDIT-DECLARATION.md:276-282: the three groups as draws of one Gaussian period effect, ν = 1.82 Satterthwaite effective degrees of freedom for the exposure-weighted spread, χ²_ν interval [0.73, 2.56]; known before the data, not calibrated | State that model in §3.2, call the interval a scale illustration under it, and say it says nothing about the block's orientation | no |
+| F8.1 | A route from accessible inputs and versions to the principal findings | X (the deposit); T (the description) | note app_release.tex (the candidate release package and its reproduction limits) | S3's "Machine-readable files" gains a paragraph on what the package contains and reproduces, as the note's App. G states it, with no claim of deposit. The Data availability section (protected) is unchanged | no |
+| F8.2 | Essential evidence in the manuscript or Supplement, not only the note | T | this round's moves | The F rows bring the like-for-like accounting (F2.1), the misses role (1.1/1.2) and the conventions (F5) in | no |
+<!-- absence-ok: the F rows' "until it runs" and "not yet identified" scope pending analyses (F1, F2, F3) that are priced here; they are not claims that a result does not exist -->
+
+## The report's §4 rows marked (a) or (c)
+
+| Row | Class | Resolution |
+|---|---|---|
+| (a) GEANT neutron/proton discrepancies | = F2.2 | A priced; restricted claim meanwhile |
+| (c) Chronology of the stopped test and redesign | T | The paper keeps the mismatched-estimand explanation in one sentence, and the "staged redesign" clause moves to S9.4. S9.4 keeps the controls' outcomes |
+| (a) Equal-weight misses regression | = F1.1, F1.2 | A |
+| (a) Approximate misses weighting in the 2D universes | = F3.1 | A, Joseph's |
+| (a) The numerical 68 % run-block scale interval | = F7.2 | T: a stated-model illustration |
+| (c) Abort and sampling-validation history of unused samples | T, done as is | S10.1 keeps one clause per generator as each record states it; no history |
+| (a) Reproducibility package and essentials on the note | = F8 | X and T |
+| (c) Superseded configurations, unused classifications, decision chronology | T, done as is (recheck (c) rows) | S4's history is four sentences; the class taxonomy is in S9.2 |
+
+## Minors
+
+| # | Request | Class | Resolution / note |
+|---|---|---|---|
+| Fm1 | The abstract is overloaded | T, partly | It conflicts with the recheck's m3, which asked for both rounding summaries in the abstract. Proposal: keep the principal failures and the illustrative status, and cut the stability numbers to "beyond a requirement fixed in advance, also on the sixteen released cells". For the director's ruling |
+| Fm2 | Avoid certification language: "bias-screening rule", "passes this rule" | T | §5.5 → "Per-cell bias-screening rules"; "valid" → "pass" wherever not protected. #981's Q19 ("Fourteen cells are valid under it") and Q09 stay verbatim in S11 |
+| Fm3 | "Simultaneous unfolding of five correlated observables"; reserve "five-dimensional" | T | Sweep the paper's "five-dimensional" |
+| Fm4 | One covariance notation: C_reported | T | Define $C_{\mathrm{rep}}=C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}$ in §3.2 and use it in the paper's text and captions. Table headings keep the explicit sums |
+| Fm5 | "The five-observable training-seed block" | T, **protected** | The phrase sits in the B0 sentences (check_restyle's protected span). For the director: a one-word change to a protected span, or a clarifying sentence before it (proposed: before it) |
+| Fm6 | Relate the 20-perturbation spread to the two-perturbation grading | T | One sentence in §6.1 |
+| Fm7 | Figure 2's injected departures, unsupported cells and populations | L (= m5, pscratch) | — |
+| Fm8 | Non-detection 13.87 < 14.46 is not equivalence | T | §4.2: "no difference detected in the tested subspace (rank 12) at that resolution" (the record: rank 12, OUTCOME-20261106-ref-c2c1-read.md) |
+| Fm9 | Drop the Gaussian expected flag counts in S9 | T | Remove the Gaussian reference counts from S9.1's group paragraph and the tunes paragraph |
+| Fm10 | The run-period step's ±0.41 %: which fluctuations; the reference without 1F | T | period-unfold-20261014/REPORT.md:55-66 (10 paired bootstrap draws) and :113 (the unfold reference P_A includes 1F, while the reconstruction-level reference was 1A–1E) |
+| Fm11 | "small next to the reported covariance" needs the flagged truths' exception | T | S9.1's smaller-matrices paragraph |
+| Fm12 | Typography | T (check) | Check the figures in the PDF; the damaged glyphs are pdftotext artifacts of math in figure text |
+
+## Structure
+
+| # | Request | Class | Resolution / conflict |
+|---|---|---|---|
+| Fs1 | The final five-observable result leads §6.2's five-observable part; the stopped test follows as background | T | Move the second test's two paragraphs and its variant group before "The first five-observable test." |
+| Fs2a | §3.1: a short disclosure of the two choices; the numerical history to §4.1 and S4 | T, a compromise | The recheck asked for the reverse (history out of §4.1). Both agree on S4: §3.1 keeps one disclosure sentence, the χ² values move to S4, and §4.1 keeps its "descriptive; not a blind validation" sentence |
+| Fs2b | §3.2 opens with a compact definition of both covariances | T | One opening sentence |
+| Fs3a | §4.1's removal-of-1G–1M discussion → §4.3, a conclusion in §4.1 | T, a compromise | The recheck asked the reverse. Details to S6 (which the recheck allowed), one conclusion sentence in §4.1 with a pointer |
+| Fs3b | The IBU-to-publication benchmark in §4.2; C1 shortened | T + L | = F4.2; C1 to one sentence |
+| Fs4a | §5.3 leads with the projections and total biases; ρ defined right after | T | Reorder |
+| Fs4b | The 109-joint-cell exact-binned comparison → S8, with a short context in §5.3 | T, a compromise | The recheck moved it into §5.3. S8 already carries its per-truth numbers; §5.3 keeps one sentence with the grid warning |
+| Fs4c | Merge §5.5 into §5.2 as auxiliary bias diagnostics | T | A \paragraph at §5.2's end; sec:vhalf kept |
+| Fs5 | §6.1 order and repeated range | T, constrained | The B0 sentences (protected) say "quoted above" of the rounding numbers, so they must follow them. The repeated sixteen-cell range in the lead is replaced by F6.1's ratio |
+| Fs6a | §7 begins with the findings; the checklist follows | T | Swap |
+| Fs6b | §7.1 grouped: bias, numerical, calibration, data/response | T | Regroup the list |
+| Fs7a | Split §3.2's run-period paragraph and §4.1's condition-number paragraph | T | Split |
+| Fs7b | §5.3's closing sentence joins the preceding paragraph; S7 is too thin | T | Join; fold S7 into S3 as a paragraph, renumbering S8–S11 to S7–S10 |
+| Fs8 | The main paper gains the W convention, misses, coverage assumptions and control outcomes | T | F5.1, 1.1/1.2, 2.1, F2.1 |
+| Fs9 | Figure placement (Fig. 1 near §4.1) | T (layout) | Try the float's placement; check in the PDF |
+| Fs10a | Table 1 not to interrupt the estimator description | T (layout) | Place before §3 |
+| Fs10b | Table 2's status dictionary: only the statuses used | T | Trim |
+| Fs10c | Table 3's third covariance reading to the Supplement | T, declined | As s11i: LISTED_CLAIMS anchors the paragraph that reads Table 3's right-hand columns |
+| Fs11a | Fig. S2 with the published-result comparison | T (layout) | Place in S6 earlier |
+| Fs11b | Fig. S3 is not a bound on data bias | T | Caption clause |
+| Fs11c | Fig. S4 and the generator tables optional; Tables S8–S11 consolidated | T, declined in part | As s11k and s10 (#981; one page per five tests) |
+
+## F batch status (the T batch for the fresh read)
+
+| Rows | Status |
+|---|---|
+| F2.1, F2.3, F2.4, F4.1, F4.2 (L, local), F5.1, F5.2, F6.1 (L, local), F6.2, F6.3, F7.1, F7.2, F8.1, F8.2 | done. F4.2's keys c2c1-dibu, c2c1-dibu-k5 and c2c1-der come from read-2/readout.json, and make_values asserts D_IBU/D_E_R = ρ and D_E_R = 2.27. F6.1's keys rnd16-r0a-* come from rs1_r0.json R0a_summary |
+| F2.2, F3.1, F1.* | A, priced above, for the director (F3 for Joseph) |
+| F4.3, F5.3 (window), F5.4, Fm7 | L, joining the pscratch session |
+| F§4 (c) stopped-test chronology | done: the "staged redesign" clause leaves the paper; S8.4 keeps it |
+| Fm2, Fm3 (no "five-dimensional" in the paper text), Fm4 (C_rep defined in §3.2), Fm6, Fm8, Fm9, Fm10, Fm11 | done |
+| Fm1, Fm5 | waiting for the director's rulings (the abstract conflict; the protected B0 span) |
+| Fm12 | checked: 0 Overfull in both builds; the damaged glyphs are figure text in pdftotext, not the PDF |
+| Fs1, Fs2a, Fs2b, Fs3a, Fs4a, Fs4b, Fs4c, Fs5 (as constrained), Fs6a, Fs6b, Fs7a, Fs7b, Fs8, Fs11b | done. S7 is folded into S3, so S8–S11 are now S7–S10; check_supp_pointers caught and fixed all 30 affected pointers |
+| Fs9, Fs10a, Fs11a | layout left to the floats; checked in the build |
+| Fs10b | done as is (Table 2's statuses are those used) |
+| Fs10c, Fs11c | declined, as s11i and s11k |
