@@ -1,10 +1,10 @@
 % ====================================================================
 % Supplemental Material of the methods paper (main_paper.tex). Round-5 draft, 2026-11-08: Joseph asked for referee
 % rounds on the paper, the Supplement and the note (the round-4 referees' self-containment item, referee-methods-
-% round4-20261106/README.md item 5). Build: latexmk -pdf main_note.tex, then latexmk -pdf main_supplement.tex.
+% round4-20261106/README.md item 5). Build: latexmk -pdf main_supplement.tex.
 % The Supplement takes the definitions the paper needs from the analysis note's own text
-% (supplemental_body.tex names each block's source); pointers it keeps into the note resolve through xr-hyper
-% from main_note.aux with the prefix N-, as the paper's do. No wording is approved: draft for the referee reads
+% (supplemental_body.tex names each block's source); pointers it keeps into the note resolve, with the prefix N-,
+% through note_release_labels.tex, the labels of the note revision named for release, as the paper's do. No wording is approved: draft for the referee reads
 % and Joseph.
 % ====================================================================
 \documentclass[11pt]{article}
@@ -17,7 +17,7 @@
 \input{values_inference}
 \input{values_fived16}
 \addbibresource{publication.bib}
-\externaldocument[N-]{main_note}
+\input{note_release_labels}
 \newcommand{\pubhold}[1]{\textcolor{red}{[HOLD: #1]}}
 % Short paper (methods-short-20261109): the pointers of the text moved here from the paper print as in the Supplement's own text.
 \providecommand{\nsec}[1]{Ref.~\cite{AnalysisNote2026}, Sec.~\ref*{N-#1}}

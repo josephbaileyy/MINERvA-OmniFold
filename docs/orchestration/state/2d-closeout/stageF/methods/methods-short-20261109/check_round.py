@@ -45,6 +45,13 @@
   11. FREE TEXT (journal-editor, 2026-11-09). A filled free-text value (a PENDING key with no class set, such as
      ll5d-clip-record or ll5d-route-record) prints inside prose, so it may not contain a FREE_TEXT_BANNED term: gate,
      record, readout, receipt, lane, binding, declaration, a DECISION/OUTCOME name, a date, an .md file, or a PR number.
+  13. NOTE RELEASE (the director, 2026-11-10, journal-editor's cross-document review X1). The paper's and the Supplement's
+     pointers into the note print the numbers of note_release_labels.tex (make_note_labels.py), not of this branch's own
+     copy of the note. The file must name NOTE_RELEASE_REV, the note revision named for release; main_paper.tex and
+     main_supplement.tex must \\input it and load no \\externaldocument[N-]; and every note label they and the two bodies
+     cite must be in it. The fill test also rebuilds the file from the note at NOTE_RELEASE_REV (make_note_labels.py
+     --check) and fails unless it is byte-identical. Changing the release revision means changing NOTE_RELEASE_REV and
+     rerunning make_note_labels.py --rev, in one commit.
 NOTE (printed on every run; not checked here). The figures sit where the blind rater copy passes its hold-diff check
 (rater-calibration/make_rater_copy.sh). A float near section 7 split the long section 7 hold ("A citable home ...")
 across a page break, and the copy failed. Any reflow of sections 6-7 (a float moved, a caption or paragraph
@@ -63,6 +70,7 @@ from pathlib import Path
 BASE = "bc8673186"
 HERE = Path(__file__).resolve().parent
 NOTE = "docs/analysis-note"
+ROOT = HERE.parents[6]          # the worktree that holds this file (check 13's self-test copies its drivers)
 FILES = ["paper_body.tex", "main_paper.tex"]
 # classes that print nothing by design (variants.md, the rows marked EMPTY)
 EMPTY = {**{f"prr-label-{l}-{t}": {"not"} for l in ("fir", "info", "impl", "obs", "stat", "unattr") for t in ("gibuu", "q3")},
@@ -268,6 +276,41 @@ def check_literal_keys(texts, values_tex, entries=None):
     return fails
 
 
+# The note revision named for release (the director, 2026-11-10: "building against #952's note (acf934d71)"); #952's head
+# moved to 3257d7c61 the same day with no change to any label (all 217 compared), so the named revision stands until the
+# director names another.
+NOTE_RELEASE_REV = "acf934d71fce0e4805615b9b9aceb4ea3bdae444"
+
+
+def check_note_release(d, release=None):
+    """Check 13 on the directory d (a docs/analysis-note): the label file names the release revision, the two drivers
+    read it and no main_note.aux, and every cited note label is in it."""
+    release = release or NOTE_RELEASE_REV
+    fails = []
+    lab = d / "note_release_labels.tex"
+    if not lab.exists():
+        return ["note release: note_release_labels.tex is missing (make_note_labels.py --rev " + release[:12] + ")"]
+    text = lab.read_text()
+    m = re.match(r"% note revision: ([0-9a-f]{40})", text)
+    if not m or m.group(1) != release:
+        fails.append(f"note release: note_release_labels.tex is from the note at {m.group(1)[:12] if m else '?'}, "
+                     f"but the revision named for release is {release[:12]}")
+    for f in ("main_paper.tex", "main_supplement.tex"):
+        s = strip_comments((d / f).read_text())
+        if r"\input{note_release_labels}" not in s:
+            fails.append(f"note release: {f} does not \\input{{note_release_labels}}")
+        if re.search(r"\\externaldocument\[N-\]", s):
+            fails.append(f"note release: {f} still reads the note's labels through \\externaldocument[N-]")
+    have = set(re.findall(r"\\newlabel\{N-([^}]+)\}", text))
+    spec = importlib.util.spec_from_file_location("make_note_labels", d / "make_note_labels.py")
+    mnl = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mnl)
+    missing = sorted(mnl.cited(d) - have)
+    if missing:
+        fails.append(f"note release: cited note labels missing from note_release_labels.tex: {missing}")
+    return fails
+
+
 def run(wt, base):
     mv = load_mv(wt)
     cur = {f: (wt / NOTE / f).read_text() for f in FILES}
@@ -281,7 +324,8 @@ def run(wt, base):
              + check_dates({**cur, "supplemental_body.tex": supp})
              + check_sec4_tests(wt) + check_figures(wt) + check_abstract(wt)
              + check_free_text(mv.PENDING, mv.VERDICTS)
-             + check_literal_keys({**cur, "supplemental_body.tex": supp}, (wt / NOTE / "values_fived16.tex").read_text()))
+             + check_literal_keys({**cur, "supplemental_body.tex": supp}, (wt / NOTE / "values_fived16.tex").read_text())
+             + check_note_release(wt / NOTE))
     return fails
 
 
@@ -477,10 +521,12 @@ def fill_test(wt):
         shutil.copytree(wt / NOTE, d, ignore=shutil.ignore_patterns("archive", "main_*.pdf", "*.aux", "*.log", "*.fls", "*.fdb_latexmk"))
         (Path(td) / "docs/orchestration").mkdir(parents=True)
         (Path(td) / "docs/orchestration/state").symlink_to(wt / "docs/orchestration/state")
-        r = subprocess.run(["latexmk", "-pdf", "-g", "-interaction=nonstopmode", "-halt-on-error", "main_note.tex"], cwd=d,
-                           capture_output=True, text=True, errors="replace")
+        r = subprocess.run([sys.executable, "-I", str(wt / NOTE / "make_note_labels.py"), "--check", NOTE_RELEASE_REV],
+                           capture_output=True, text=True, errors="replace")   # check 13: the note at the release revision
+        print(r.stdout.strip()[-300:])
         if r.returncode:
-            return [f"fill test: main_note build failed ({r.returncode})"]
+            fails.append("note release: note_release_labels.tex is not what make_note_labels.py --rev "
+                         f"{NOTE_RELEASE_REV[:12]} writes")
         base_vals = (d / "values_fived16.tex").read_text()
         head = base_vals.split("\n")
         ll5d, prr = mv.ll5d_fill_cases(), mv.prr_fill_cases()
@@ -601,6 +647,25 @@ def self_test():
             print("self-test: NOT CAUGHT a banned term in a free-text value:", repr(planted)); ok = False
     if check_free_text(fp, {"x-record": "the largest offset, 0.04 in R06, below its bound of 0.10", "x-class": "a"}):
         print("self-test: the free-text check flags clean journal prose"); ok = False
+    with tempfile.TemporaryDirectory() as td:          # check 13: each planted defect in a copy of the four drivers
+        d = Path(td)
+        for f in ("make_note_labels.py", "note_release_labels.tex", "main_paper.tex", "main_supplement.tex",
+                  "paper_body.tex", "supplemental_body.tex"):
+            shutil.copy(ROOT / NOTE / f, d / f)
+        if check_note_release(d):
+            print("self-test: check 13 flags the committed note labels:", check_note_release(d)); ok = False
+        lab = (d / "note_release_labels.tex").read_text()
+        plants = [("another revision named", lambda: check_note_release(d, "0" * 40)),
+                  ("a driver back on main_note.aux", lambda: ((d / "main_paper.tex").write_text(
+                      (ROOT / NOTE / "main_paper.tex").read_text().replace(r"\input{note_release_labels}",
+                                                                           r"\externaldocument[N-]{main_note}")),
+                      check_note_release(d))[1]),
+                  ("a cited label missing", lambda: ((d / "main_paper.tex").write_text((ROOT / NOTE / "main_paper.tex").read_text()),
+                      (d / "note_release_labels.tex").write_text(re.sub(r"\\newlabel\{N-tab:pl-added\}.*\n", "", lab)),
+                      check_note_release(d))[2])]
+        for name, fn in plants:
+            if not fn():
+                print("self-test: check 13 NOT CAUGHT:", name); ok = False
     del EMPTY["e"]
     print("self-test:", "PASS" if ok else "FAIL")
     return 0 if ok else 1

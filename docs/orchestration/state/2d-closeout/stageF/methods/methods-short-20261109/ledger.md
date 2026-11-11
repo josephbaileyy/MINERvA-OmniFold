@@ -2005,3 +2005,78 @@ was the mislabel. The director accepted bd08582ee, the hand re-cites of ALIASES 
 - **Tier 1 is accepted** (T1-0 to T1-5, the round-3 sync and the T2a/T2b additions). #977 waits for the LL5D fill.
 - **Checks:** the Supplement's rater copy PASS, with 0 Overfull and 0 undefined; pointers 42; check 12 unchanged. The
   fill test runs on the committed head before the push.
+
+## 2026-11-10 — The style batch (journal-editor's style review; Joseph's decision via the director)
+
+- **The work order** (the director, 2026-11-10). Bring the paper and the Supplement close to the field baseline on the
+  excess patterns of journal-editor's review (report_paper.md, report_supplement.md, report_crossdoc.md in its
+  scratchpad). Keep every scope limit the records require, said positively or once in the right place. check_restyle's
+  protected spans stay verbatim. Cut the repeated coverage caveat, remove the duplicate sentence, name the validity
+  rules, split section 6.2 by test and every paragraph over 250 words, trim figures 4 and 6 toward 80 words, and build
+  the note pointers against #952's note with a check. The "full record" wording is left alone, pending a consult.
+- **Rates per 1,000 words** (style_metrics.py, sha256 8bf224280556ea41, on the PDF text; style-read/metrics-before-after.json):
+
+  | pattern | paper before → after | Supplement before → after | field pooled / max |
+  |---|---|---|---|
+  | ", not X" | 0.89 (9) → 0.10 (1) | 0.55 (8) → 0.14 (2) | 0.04 / 0.30 |
+  | corrective | 0.69 (7) → 0 | 0.27 (4) → 0 | 0.01 / 0.12 |
+  | semicolon chains | 0.89 (9) → 0.59 (6) | 1.85 (27) → 0 | 0.17 / 0.67 |
+
+  - What remains in the paper. ", not X": the B0 sentences' "not the typical one" (protected). Semicolon chains: the B0
+    sentences and RS1's mechanism paragraph (both protected); the section 7 \pubhold, which a submission does not
+    print (2); and two figure legends' "(pT; p∥; Eavail)" labels in the deformation figure, figure text that no source
+    edit reaches (2).
+  - What remains in the Supplement. ", not X": S2's "five simultaneous observables, not five independent measurements"
+    (the review keeps it as a definition) and #981's quote Q09, "The second rule is ours, not taken from Ref. [ATLAS]"
+    (protected by check_restyle).
+  - Sentences of five words or fewer rose in the paper from 8 to 11. These are the new run-in headings of section 6.2
+    and the prior-retention row's short entries, not prose.
+- **Scope limits kept.**
+  - Coverage. The coverage statement is now said once in the introduction (the third finding), once in section 6.2's
+    opening paragraph for every test there ("Each such test grades the procedure's covariance as rebuilt at its truths;
+    none grades the reported intervals at the data."), in the abstract and in the limitations. That is four places,
+    down from six including the duplicate.
+  - Every changed scope sentence was read in the meaning read (style-read/pairs.tsv, 122 rows, base 2f32b7c73).
+- **Meaning read** (every pair). Three of my own first drafts were changed by it:
+  - M011 "neither choice was blind to it" was wrong for the background treatment, which was chosen before the
+    comparison was computed. Now: "it is not a blind validation".
+  - M041 "at the held-out tunes" was too narrow for the first five-observable test, which also had a plug-in truth.
+    Now: "as rebuilt at its truths".
+  - M066 "the total correction is larger" added a comparison. Now: "refers to the genuine-background fraction alone".
+- **Named rules.** In the paper: the usage-recommendation rule and the bias-half rule. In S11, under the new title "The
+  usage-recommendation and prior-spread rules": the usage-recommendation rule (the first), the prior-spread rule (the
+  second) and the bias-half rule. #981's Q09 ("The second rule is ours, …") and Q19 ("Fourteen cells are valid under it;
+  R02 and R06 fail") stay verbatim, so S11's opening names the second rule before Q09 uses its number. Q09 is listed for
+  the director.
+- **Structure.**
+  - Section 6.2 is split by test, under the headings "The two-dimensional test.", "Earlier five-observable tests." and
+    "The second five-observable test.". The two-dimensional test is split into design, joint result and per-cell
+    result; the second test into design and grading.
+  - Paper paragraphs split: the introduction (the three findings), section 5.3 (before the IBU), and section 6.1 (the
+    probe, then the ensemble average). Section 5.3's three labels are set as a list.
+  - Supplement paragraphs split: S4's hyperparameter paragraph, S8's two comparison paragraphs, S9.2's held-out tunes,
+    S9.4's design (three paragraphs), S9.5 (three), S10.1 and S11 (three). Lists replace the semicolon chains: C_e's
+    terms, the fake-data truths, the audit's four questions, the truth groups and the smaller matrices.
+  - In the four test-index tables and the configuration history table, \newline replaces "; " between entries. The
+    LL5D row's copy of the paper's Table 2 cell keeps its semicolons.
+- **Captions.** Figure 4: 123 → about 88 words; its q3-tilt flag, the identical bias and "assess only bias" are in the
+  text. Figure 6: 145 → about 100 words; the 0.37 % median's 50 replicas moved to section 6.1's text, and the
+  definition of the 153 quantities is kept.
+- **The note pointers (check 13, new).**
+  - make_note_labels.py writes note_release_labels.tex: the 50 note labels the paper and the Supplement cite, from the
+    main_note.aux of the note at a named revision, built from git archive in a temporary directory.
+  - main_paper.tex and main_supplement.tex \input it in place of \externaldocument[N-]{main_note}.
+  - check_round.py check 13 fails unless the file names NOTE_RELEASE_REV (acf934d71), the drivers read it and no
+    main_note.aux, and every cited label is in it. The fill test rebuilds the file from that revision and compares it
+    byte for byte. The self-test plants three defects: another revision named, a driver back on main_note.aux, and a
+    cited label missing.
+  - Printed now: Table 4 twice (was 3), Table 19 (was 17), Sec. 10.8 (was 10.7) and Sec. 10.7 (was 10.6). The review
+    and the work order said 16 → 18; the Supplement printed 17, and the note at acf934d71 numbers the table 19.
+  - #952 moved to 3257d7c61 during the batch. Its 217 labels are identical to acf934d71's, so the named revision stands
+    until the director names another.
+- **Check 12 at #952's new head 3257d7c61** (before the batch): NOTE-CHANGED 1 (supp:176, ruled explained), explained
+  27, same 8, seed-adapted 1, synced 10; the same at acf934d71. Unexplained: none.
+- **The rater copy.** The shorter paper reflowed its last page. pdftotext emitted reference [1] to part of [8] between
+  the acknowledgments and their tail, ahead of DATA AVAILABILITY, which no case of fix_da_order.py described. Case 7
+  moves that fragment to before the rest of [8]. It is entered only where the tool exited FAIL before, so no layout that
+  passed changes.
