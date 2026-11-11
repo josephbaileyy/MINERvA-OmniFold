@@ -274,6 +274,8 @@ docs/orchestration/DECISION-20261110-joseph-confirm-round-scope.md	tracked	LIVE	
 docs/orchestration/DECISION-20261110-joseph-ens1-deficit-licence.md	tracked	LIVE	document		20261110	open		route-only	no
 docs/orchestration/DECISION-20261110-joseph-ll5d-rerun-16-cells.md	tracked	LIVE	document		20261110	open		route-only	no
 docs/orchestration/DECISION-20261110-joseph-paper-asap-vhalf-diagnostic.md	tracked	LIVE	document		20261110	open		route-only	no
+docs/orchestration/DECISION-20261110-joseph-vhalfr-a33-a82.md	tracked	LIVE	document		20261110	open		route-only	no
+docs/orchestration/DECISION-20261110-joseph-vhalfr-choices.md	tracked	LIVE	document		20261110	open		route-only	no
 docs/orchestration/DECISION-20261110-joseph-vprior-withhold.md	tracked	LIVE	document		20261110	open		route-only	no
 docs/orchestration/DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md	tracked	LIVE	document		20260911	open		route-only	no
 docs/orchestration/DECISION-PACKET-20260918-scalar5d-publication-blockers.md	tracked	LIVE	document		20260918	open		route-only	no
@@ -6310,6 +6312,16 @@ docs/orchestration/state/2d-closeout/valid-region-20261107/source/README.txt	tra
 docs/orchestration/state/2d-closeout/valid-region-20261107/source/SM_section2_lines25-75.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/valid-region-20261107/source/arXiv-2405.20041v3_letter_excerpts.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/valid-region-20261107/test_valid_region.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/consult-sol-20261110/README.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/consult-sol-20261110/SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/consult-sol-20261110/answer.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/consult-sol-20261110/prompt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/consult-sol-20261110/run-header.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/consult-sol-a1-20261110/README.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/consult-sol-a1-20261110/SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/consult-sol-a1-20261110/answer.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/consult-sol-a1-20261110/prompt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/consult-sol-a1-20261110/run-header.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half/BINDING-1.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half/DECLARATION.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half/INPUTS.sha256	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
@@ -13388,6 +13400,7 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/stab/gatesim
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/stab/gatesim/sweep.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/stab/gatesim/sweep.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/stab/no-ratio.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/tier2-20261110/READING-T2-20261110.md	tracked	LIVE	state-artifact	measurement-paper	20261110	open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/tier2-20261110/T2-BINDING-1.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/tier2-20261110/T2A-COV2D-SPLIT-DECLARATION.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/tier2-20261110/T2B-FD-GRADE-VARIANTS-DECLARATION.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
