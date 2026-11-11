@@ -6313,6 +6313,8 @@ docs/orchestration/state/2d-closeout/valid-region-20261107/source/README.txt	tra
 docs/orchestration/state/2d-closeout/valid-region-20261107/source/SM_section2_lines25-75.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/valid-region-20261107/source/arXiv-2405.20041v3_letter_excerpts.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/valid-region-20261107/test_valid_region.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/AMENDMENT-1.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
+docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/CHOICES-FOR-JOSEPH-20261110.md	tracked	LIVE	state-artifact	2d-closeout	20261110	open		route-only	no
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/DECLARATION.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/consult-astra/answer.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/consult-astra/prompt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
