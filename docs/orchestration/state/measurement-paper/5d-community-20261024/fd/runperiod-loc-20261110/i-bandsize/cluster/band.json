@@ -1,0 +1,182 @@
+{
+ "schema": "rpl-bandsize/1",
+ "n_rows_per_playlist": 500000,
+ "rows": "the first entries of mc_signal_reco, in file order",
+ "uproot": "5.6.9",
+ "numpy": "2.2.6",
+ "files": {
+  "1A": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1A_universes_full.root",
+   "bytes": 13967417576,
+   "atime_ns": 1792019500000000000,
+   "stat_unchanged": true,
+   "rows_read": 500000,
+   "Muon_Energy_MINOS_0_median": 0.008452983434705352,
+   "Muon_Energy_MINOS_1_median": 0.008452983434705352,
+   "Muon_Energy_MINOS_median": 0.008452983434705352,
+   "Muon_Energy_MINERvA_0_median": 0.006240668866564714,
+   "Muon_Energy_MINERvA_1_median": 0.006240668866564603,
+   "Muon_Energy_MINERvA_median": 0.006240668866564714
+  },
+  "1B": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1B_universes_full.root",
+   "bytes": 3754793236,
+   "atime_ns": 1792019556000000000,
+   "stat_unchanged": true,
+   "rows_read": 500000,
+   "Muon_Energy_MINOS_0_median": 0.00844264003686468,
+   "Muon_Energy_MINOS_1_median": 0.00844264003686468,
+   "Muon_Energy_MINOS_median": 0.00844264003686468,
+   "Muon_Energy_MINERvA_0_median": 0.0062425621189449165,
+   "Muon_Energy_MINERvA_1_median": 0.0062425621189448055,
+   "Muon_Energy_MINERvA_median": 0.0062425621189448055
+  },
+  "1C": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1C_universes_full.root",
+   "bytes": 7169588316,
+   "atime_ns": 1792019606000000000,
+   "stat_unchanged": true,
+   "rows_read": 500000,
+   "Muon_Energy_MINOS_0_median": 0.008445886628281829,
+   "Muon_Energy_MINOS_1_median": 0.00844588662828194,
+   "Muon_Energy_MINOS_median": 0.00844588662828194,
+   "Muon_Energy_MINERvA_0_median": 0.006243112184702304,
+   "Muon_Energy_MINERvA_1_median": 0.006243112184702193,
+   "Muon_Energy_MINERvA_median": 0.006243112184702193
+  },
+  "1D": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1D_universes_full.root",
+   "bytes": 20851499421,
+   "atime_ns": 1792020165000000000,
+   "stat_unchanged": true,
+   "rows_read": 500000,
+   "Muon_Energy_MINOS_0_median": 0.008447006759804476,
+   "Muon_Energy_MINOS_1_median": 0.008447006759804587,
+   "Muon_Energy_MINOS_median": 0.008447006759804587,
+   "Muon_Energy_MINERvA_0_median": 0.006235431629230459,
+   "Muon_Energy_MINERvA_1_median": 0.006235431629230348,
+   "Muon_Energy_MINERvA_median": 0.006235431629230348
+  },
+  "1E": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1E_universes_full.root",
+   "bytes": 17441223965,
+   "atime_ns": 1792019717000000000,
+   "stat_unchanged": true,
+   "rows_read": 500000,
+   "Muon_Energy_MINOS_0_median": 0.008453976491102133,
+   "Muon_Energy_MINOS_1_median": 0.008453976491102244,
+   "Muon_Energy_MINOS_median": 0.008453976491102133,
+   "Muon_Energy_MINERvA_0_median": 0.006228279855763574,
+   "Muon_Energy_MINERvA_1_median": 0.006228279855763352,
+   "Muon_Energy_MINERvA_median": 0.006228279855763574
+  },
+  "1F": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1F_universes_full.root",
+   "bytes": 24243358082,
+   "atime_ns": 1792019773000000000,
+   "stat_unchanged": true,
+   "rows_read": 500000,
+   "Muon_Energy_MINOS_0_median": 0.008467784257347621,
+   "Muon_Energy_MINOS_1_median": 0.008467784257347732,
+   "Muon_Energy_MINOS_median": 0.008467784257347732,
+   "Muon_Energy_MINERvA_0_median": 0.006210662416739732,
+   "Muon_Energy_MINERvA_1_median": 0.00621066241673951,
+   "Muon_Energy_MINERvA_median": 0.006210662416739732
+  },
+  "1G": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1G_universes_full.root",
+   "bytes": 20516184032,
+   "atime_ns": 1792019831000000000,
+   "stat_unchanged": true,
+   "rows_read": 500000,
+   "Muon_Energy_MINOS_0_median": 0.008518978513720965,
+   "Muon_Energy_MINOS_1_median": 0.008518978513720965,
+   "Muon_Energy_MINOS_median": 0.008518978513720965,
+   "Muon_Energy_MINERvA_0_median": 0.0061572143947074,
+   "Muon_Energy_MINERvA_1_median": 0.006157214394707511,
+   "Muon_Energy_MINERvA_median": 0.006157214394707511
+  },
+  "1L": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1L_universes_full.root",
+   "bytes": 2004991684,
+   "atime_ns": 1792019888000000000,
+   "stat_unchanged": true,
+   "rows_read": 383848,
+   "Muon_Energy_MINOS_0_median": 0.008528518589714484,
+   "Muon_Energy_MINOS_1_median": 0.008528518589714595,
+   "Muon_Energy_MINOS_median": 0.008528518589714484,
+   "Muon_Energy_MINERvA_0_median": 0.0061403386873389865,
+   "Muon_Energy_MINERvA_1_median": 0.0061403386873390975,
+   "Muon_Energy_MINERvA_median": 0.0061403386873389865
+  },
+  "1M": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1M_universes_full.root",
+   "bytes": 30899666424,
+   "atime_ns": 1792020286000000000,
+   "stat_unchanged": true,
+   "rows_read": 500000,
+   "Muon_Energy_MINOS_0_median": 0.008538609907759787,
+   "Muon_Energy_MINOS_1_median": 0.008538609907759787,
+   "Muon_Energy_MINOS_median": 0.008538609907759787,
+   "Muon_Energy_MINERvA_0_median": 0.006130706962451549,
+   "Muon_Energy_MINERvA_1_median": 0.00613070696245166,
+   "Muon_Energy_MINERvA_median": 0.006130706962451549
+  },
+  "1N": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1N_universes_full.root",
+   "bytes": 17753623260,
+   "atime_ns": 1792020288000000000,
+   "stat_unchanged": true,
+   "rows_read": 500000,
+   "Muon_Energy_MINOS_0_median": 0.008484546998644538,
+   "Muon_Energy_MINOS_1_median": 0.008484546998644316,
+   "Muon_Energy_MINOS_median": 0.008484546998644316,
+   "Muon_Energy_MINERvA_0_median": 0.006190452945401326,
+   "Muon_Energy_MINERvA_1_median": 0.006190452945401104,
+   "Muon_Energy_MINERvA_median": 0.006190452945401326
+  },
+  "1O": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1O_universes_full.root",
+   "bytes": 5408394362,
+   "atime_ns": 1792020036000000000,
+   "stat_unchanged": true,
+   "rows_read": 500000,
+   "Muon_Energy_MINOS_0_median": 0.008517749128699292,
+   "Muon_Energy_MINOS_1_median": 0.008517749128699181,
+   "Muon_Energy_MINOS_median": 0.008517749128699181,
+   "Muon_Energy_MINERvA_0_median": 0.006149322365116894,
+   "Muon_Energy_MINERvA_1_median": 0.006149322365117005,
+   "Muon_Energy_MINERvA_median": 0.006149322365117005
+  },
+  "1P": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1P_universes_full.root",
+   "bytes": 7125876607,
+   "atime_ns": 1792020089000000000,
+   "stat_unchanged": true,
+   "rows_read": 500000,
+   "Muon_Energy_MINOS_0_median": 0.008509497006600864,
+   "Muon_Energy_MINOS_1_median": 0.008509497006600864,
+   "Muon_Energy_MINOS_median": 0.008509497006600864,
+   "Muon_Energy_MINERvA_0_median": 0.006151431060659629,
+   "Muon_Energy_MINERvA_1_median": 0.006151431060659851,
+   "Muon_Energy_MINERvA_median": 0.006151431060659629
+  }
+ },
+ "stop": [],
+ "sigma_band": {
+  "Muon_Energy_MINOS": {
+   "overall": 0.008482265633139363,
+   "p_par_lt_8": 0.007879601041099193,
+   "p_par_ge_8": 0.010264221651482108,
+   "rows": 9895766,
+   "role": "deciding (overall)"
+  },
+  "Muon_Energy_MINERvA": {
+   "overall": 0.006195481709967088,
+   "p_par_lt_8": 0.006788056129192865,
+   "p_par_ge_8": 0.002641174951667269,
+   "rows": 9895766,
+   "role": "descriptive only"
+  }
+ }
+}

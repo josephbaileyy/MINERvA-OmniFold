@@ -1,0 +1,990 @@
+{
+ "schema": "rpl-inventory/1",
+ "files": {
+  "1A": {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1A_zero.root",
+   "bytes": 398375296,
+   "sha256": "2745e38c45a50fa644e32913c6d8bc9763edc96e21b6d058cde4dbee6714c192",
+   "pin_ok": true,
+   "stat_unchanged": true,
+   "atime_ns": 1793349376000000000,
+   "trees": {
+    "mc_truth_denom": {
+     "entries": 2217328,
+     "n_branches": 9,
+     "branches": [
+      "MC",
+      "MC_pz",
+      "MC_eavail",
+      "MC_q3",
+      "MC_W",
+      "MC_nproton",
+      "MC_npip",
+      "MC_hadangle",
+      "w_truth"
+     ],
+     "index_branches": []
+    },
+    "mc_signal_reco": {
+     "entries": 2489136,
+     "n_branches": 16,
+     "branches": [
+      "sim",
+      "sim_pz",
+      "sim_eavail",
+      "sim_q3",
+      "sim_W",
+      "sim_pass",
+      "w_reco",
+      "MC",
+      "MC_pz",
+      "MC_eavail",
+      "MC_q3",
+      "MC_W",
+      "MC_nproton",
+      "MC_npip",
+      "MC_hadangle",
+      "w_truth"
+     ],
+     "index_branches": []
+    },
+    "mc_background": {
+     "entries": 52626,
+     "n_branches": 13,
+     "branches": [
+      "sim_background",
+      "sim_background_pz",
+      "sim_background_eavail",
+      "sim_background_q3",
+      "sim_background_W",
+      "sim_background_pass",
+      "w_bkg",
+      "bkg_nuPDG",
+      "bkg_current",
+      "bkg_inttype",
+      "bkg_vtx_x",
+      "bkg_vtx_y",
+      "bkg_vtx_z"
+     ],
+     "index_branches": []
+    },
+    "data": {
+     "entries": 360123,
+     "n_branches": 6,
+     "branches": [
+      "measured",
+      "measured_pz",
+      "measured_eavail",
+      "measured_q3",
+      "measured_W",
+      "measured_pass"
+     ],
+     "index_branches": []
+    }
+   }
+  },
+  "1B": {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1B_zero.root",
+   "bytes": 106517598,
+   "sha256": "a2b7e413f8ab727577eb70cf00881c9dedfaf3401c18e37c866f6dc296639948",
+   "pin_ok": true,
+   "stat_unchanged": true,
+   "atime_ns": 1793349376000000000,
+   "trees": {
+    "mc_truth_denom": {
+     "entries": 554332,
+     "n_branches": 9,
+     "branches": [
+      "MC",
+      "MC_pz",
+      "MC_eavail",
+      "MC_q3",
+      "MC_W",
+      "MC_nproton",
+      "MC_npip",
+      "MC_hadangle",
+      "w_truth"
+     ],
+     "index_branches": []
+    },
+    "mc_signal_reco": {
+     "entries": 622284,
+     "n_branches": 16,
+     "branches": [
+      "sim",
+      "sim_pz",
+      "sim_eavail",
+      "sim_q3",
+      "sim_W",
+      "sim_pass",
+      "w_reco",
+      "MC",
+      "MC_pz",
+      "MC_eavail",
+      "MC_q3",
+      "MC_W",
+      "MC_nproton",
+      "MC_npip",
+      "MC_hadangle",
+      "w_truth"
+     ],
+     "index_branches": []
+    },
+    "mc_background": {
+     "entries": 14182,
+     "n_branches": 13,
+     "branches": [
+      "sim_background",
+      "sim_background_pz",
+      "sim_background_eavail",
+      "sim_background_q3",
+      "sim_background_W",
+      "sim_background_pass",
+      "w_bkg",
+      "bkg_nuPDG",
+      "bkg_current",
+      "bkg_inttype",
+      "bkg_vtx_x",
+      "bkg_vtx_y",
+      "bkg_vtx_z"
+     ],
+     "index_branches": []
+    },
+    "data": {
+     "entries": 75192,
+     "n_branches": 6,
+     "branches": [
+      "measured",
+      "measured_pz",
+      "measured_eavail",
+      "measured_q3",
+      "measured_W",
+      "measured_pass"
+     ],
+     "index_branches": []
+    }
+   }
+  },
+  "1C": {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1C_zero.root",
+   "bytes": 204230889,
+   "sha256": "7985c0f1ae44d99be3bf180748c9553672bc8f107b512310c961d728d9c62d34",
+   "pin_ok": true,
+   "stat_unchanged": true,
+   "atime_ns": 1793349376000000000,
+   "trees": {
+    "mc_truth_denom": {
+     "entries": 1108664,
+     "n_branches": 9,
+     "branches": [
+      "MC",
+      "MC_pz",
+      "MC_eavail",
+      "MC_q3",
+      "MC_W",
+      "MC_nproton",
+      "MC_npip",
+      "MC_hadangle",
+      "w_truth"
+     ],
+     "index_branches": []
+    },
+    "mc_signal_reco": {
+     "entries": 1244568,
+     "n_branches": 16,
+     "branches": [
+      "sim",
+      "sim_pz",
+      "sim_eavail",
+      "sim_q3",
+      "sim_W",
+      "sim_pass",
+      "w_reco",
+      "MC",
+      "MC_pz",
+      "MC_eavail",
+      "MC_q3",
+      "MC_W",
+      "MC_nproton",
+      "MC_npip",
+      "MC_hadangle",
+      "w_truth"
+     ],
+     "index_branches": []
+    },
+    "mc_background": {
+     "entries": 26898,
+     "n_branches": 13,
+     "branches": [
+      "sim_background",
+      "sim_background_pz",
+      "sim_background_eavail",
+      "sim_background_q3",
+      "sim_background_W",
+      "sim_background_pass",
+      "w_bkg",
+      "bkg_nuPDG",
+      "bkg_current",
+      "bkg_inttype",
+      "bkg_vtx_x",
+      "bkg_vtx_y",
+      "bkg_vtx_z"
+     ],
+     "index_branches": []
+    },
+    "data": {
+     "entries": 173122,
+     "n_branches": 6,
+     "branches": [
+      "measured",
+      "measured_pz",
+      "measured_eavail",
+      "measured_q3",
+      "measured_W",
+      "measured_pass"
+     ],
+     "index_branches": []
+    }
+   }
+  },
+  "1D": {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1D_zero.root",
+   "bytes": 596287802,
+   "sha256": "52da8f2245be7f4529d6c24960fa56f3063db5368bf33e7640604d716742797d",
+   "pin_ok": true,
+   "stat_unchanged": true,
+   "atime_ns": 1793349376000000000,
+   "trees": {
+    "mc_truth_denom": {
+     "entries": 3880324,
+     "n_branches": 9,
+     "branches": [
+      "MC",
+      "MC_pz",
+      "MC_eavail",
+      "MC_q3",
+      "MC_W",
+      "MC_nproton",
+      "MC_npip",
+      "MC_hadangle",
+      "w_truth"
+     ],
+     "index_branches": []
+    },
+    "mc_signal_reco": {
+     "entries": 3733704,
+     "n_branches": 16,
+     "branches": [
+      "sim",
+      "sim_pz",
+      "sim_eavail",
+      "sim_q3",
+      "sim_W",
+      "sim_pass",
+      "w_reco",
+      "MC",
+      "MC_pz",
+      "MC_eavail",
+      "MC_q3",
+      "MC_W",
+      "MC_nproton",
+      "MC_npip",
+      "MC_hadangle",
+      "w_truth"
+     ],
+     "index_branches": []
+    },
+    "mc_background": {
+     "entries": 78987,
+     "n_branches": 13,
+     "branches": [
+      "sim_background",
+      "sim_background_pz",
+      "sim_background_eavail",
+      "sim_background_q3",
+      "sim_background_W",
+      "sim_background_pass",
+      "w_bkg",
+      "bkg_nuPDG",
+      "bkg_current",
+      "bkg_inttype",
+      "bkg_vtx_x",
+      "bkg_vtx_y",
+      "bkg_vtx_z"
+     ],
+     "index_branches": []
+    },
+    "data": {
+     "entries": 580834,
+     "n_branches": 6,
+     "branches": [
+      "measured",
+      "measured_pz",
+      "measured_eavail",
+      "measured_q3",
+      "measured_W",
+      "measured_pass"
+     ],
+     "index_branches": []
+    }
+   }
+  },
+  "1E": {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1E_zero.root",
+   "bytes": 495761736,
+   "sha256": "7f9293a6ce7a0aee7e9549b93d86b4d201bb0db9da088bace988403a7a0faea5",
+   "pin_ok": true,
+   "stat_unchanged": true,
+   "atime_ns": 1793349376000000000,
+   "trees": {
+    "mc_truth_denom": {
+     "entries": 3325992,
+     "n_branches": 9,
+     "branches": [
+      "MC",
+      "MC_pz",
+      "MC_eavail",
+      "MC_q3",
+      "MC_W",
+      "MC_nproton",
+      "MC_npip",
+      "MC_hadangle",
+      "w_truth"
+     ],
+     "index_branches": []
+    },
+    "mc_signal_reco": {
+     "entries": 3111420,
+     "n_branches": 16,
+     "branches": [
+      "sim",
+      "sim_pz",
+      "sim_eavail",
+      "sim_q3",
+      "sim_W",
+      "sim_pass",
+      "w_reco",
+      "MC",
+      "MC_pz",
+      "MC_eavail",
+      "MC_q3",
+      "MC_W",
+      "MC_nproton",
+      "MC_npip",
+      "MC_hadangle",
+      "w_truth"
+     ],
+     "index_branches": []
+    },
+    "mc_background": {
+     "entries": 66077,
+     "n_branches": 13,
+     "branches": [
+      "sim_background",
+      "sim_background_pz",
+      "sim_background_eavail",
+      "sim_background_q3",
+      "sim_background_W",
+      "sim_background_pass",
+      "w_bkg",
+      "bkg_nuPDG",
+      "bkg_current",
+      "bkg_inttype",
+      "bkg_vtx_x",
+      "bkg_vtx_y",
+      "bkg_vtx_z"
+     ],
+     "index_branches": []
+    },
+    "data": {
+     "entries": 408075,
+     "n_branches": 6,
+     "branches": [
+      "measured",
+      "measured_pz",
+      "measured_eavail",
+      "measured_q3",
+      "measured_W",
+      "measured_pass"
+     ],
+     "index_branches": []
+    }
+   }
+  },
+  "1F": {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1F_zero.root",
+   "bytes": 689044069,
+   "sha256": "7481c94751a5df774e1c18cd453e92322d789d5568785ed8c026f6ef15778b4e",
+   "pin_ok": true,
+   "stat_unchanged": true,
+   "atime_ns": 1793349376000000000,
+   "trees": {
+    "mc_truth_denom": {
+     "entries": 4434656,
+     "n_branches": 9,
+     "branches": [
+      "MC",
+      "MC_pz",
+      "MC_eavail",
+      "MC_q3",
+      "MC_W",
+      "MC_nproton",
+      "MC_npip",
+      "MC_hadangle",
+      "w_truth"
+     ],
+     "index_branches": []
+    },
+    "mc_signal_reco": {
+     "entries": 4410728,
+     "n_branches": 16,
+     "branches": [
+      "sim",
+      "sim_pz",
+      "sim_eavail",
+      "sim_q3",
+      "sim_W",
+      "sim_pass",
+      "w_reco",
+      "MC",
+      "MC_pz",
+      "MC_eavail",
+      "MC_q3",
+      "MC_W",
+      "MC_nproton",
+      "MC_npip",
+      "MC_hadangle",
+      "w_truth"
+     ],
+     "index_branches": []
+    },
+    "mc_background": {
+     "entries": 92219,
+     "n_branches": 13,
+     "branches": [
+      "sim_background",
+      "sim_background_pz",
+      "sim_background_eavail",
+      "sim_background_q3",
+      "sim_background_W",
+      "sim_background_pass",
+      "w_bkg",
+      "bkg_nuPDG",
+      "bkg_current",
+      "bkg_inttype",
+      "bkg_vtx_x",
+      "bkg_vtx_y",
+      "bkg_vtx_z"
+     ],
+     "index_branches": []
+    },
+    "data": {
+     "entries": 642737,
+     "n_branches": 6,
+     "branches": [
+      "measured",
+      "measured_pz",
+      "measured_eavail",
+      "measured_q3",
+      "measured_W",
+      "measured_pass"
+     ],
+     "index_branches": []
+    }
+   }
+  },
+  "1G": {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1G_zero.root",
+   "bytes": 581501093,
+   "sha256": "259aa1952e7586eb2f301ec7960f3003d4b995f7f59b36b32a68b47a31ca2821",
+   "pin_ok": true,
+   "stat_unchanged": true,
+   "atime_ns": 1793349376000000000,
+   "trees": {
+    "mc_truth_denom": {
+     "entries": 3854340,
+     "n_branches": 9,
+     "branches": [
+      "MC",
+      "MC_pz",
+      "MC_eavail",
+      "MC_q3",
+      "MC_W",
+      "MC_nproton",
+      "MC_npip",
+      "MC_hadangle",
+      "w_truth"
+     ],
+     "index_branches": []
+    },
+    "mc_signal_reco": {
+     "entries": 3733704,
+     "n_branches": 16,
+     "branches": [
+      "sim",
+      "sim_pz",
+      "sim_eavail",
+      "sim_q3",
+      "sim_W",
+      "sim_pass",
+      "w_reco",
+      "MC",
+      "MC_pz",
+      "MC_eavail",
+      "MC_q3",
+      "MC_W",
+      "MC_nproton",
+      "MC_npip",
+      "MC_hadangle",
+      "w_truth"
+     ],
+     "index_branches": []
+    },
+    "mc_background": {
+     "entries": 76742,
+     "n_branches": 13,
+     "branches": [
+      "sim_background",
+      "sim_background_pz",
+      "sim_background_eavail",
+      "sim_background_q3",
+      "sim_background_W",
+      "sim_background_pass",
+      "w_bkg",
+      "bkg_nuPDG",
+      "bkg_current",
+      "bkg_inttype",
+      "bkg_vtx_x",
+      "bkg_vtx_y",
+      "bkg_vtx_z"
+     ],
+     "index_branches": []
+    },
+    "data": {
+     "entries": 538406,
+     "n_branches": 6,
+     "branches": [
+      "measured",
+      "measured_pz",
+      "measured_eavail",
+      "measured_q3",
+      "measured_W",
+      "measured_pass"
+     ],
+     "index_branches": []
+    }
+   }
+  },
+  "1L": {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1L_zero.root",
+   "bytes": 56587445,
+   "sha256": "d2b4dafc61d1756554d1c7ff3085410faaa2266cd14a260175bc0e533fe2030c",
+   "pin_ok": true,
+   "stat_unchanged": true,
+   "atime_ns": 1793349376000000000,
+   "trees": {
+    "mc_signal_reco": {
+     "entries": 335076,
+     "n_branches": 16,
+     "branches": [
+      "sim",
+      "sim_pz",
+      "sim_eavail",
+      "sim_q3",
+      "sim_W",
+      "sim_pass",
+      "w_reco",
+      "MC",
+      "MC_pz",
+      "MC_eavail",
+      "MC_q3",
+      "MC_W",
+      "MC_nproton",
+      "MC_npip",
+      "MC_hadangle",
+      "w_truth"
+     ],
+     "index_branches": []
+    },
+    "mc_truth_denom": {
+     "entries": 383848,
+     "n_branches": 9,
+     "branches": [
+      "MC",
+      "MC_pz",
+      "MC_eavail",
+      "MC_q3",
+      "MC_W",
+      "MC_nproton",
+      "MC_npip",
+      "MC_hadangle",
+      "w_truth"
+     ],
+     "index_branches": []
+    },
+    "mc_background": {
+     "entries": 7820,
+     "n_branches": 13,
+     "branches": [
+      "sim_background",
+      "sim_background_pz",
+      "sim_background_eavail",
+      "sim_background_q3",
+      "sim_background_W",
+      "sim_background_pass",
+      "w_bkg",
+      "bkg_nuPDG",
+      "bkg_current",
+      "bkg_inttype",
+      "bkg_vtx_x",
+      "bkg_vtx_y",
+      "bkg_vtx_z"
+     ],
+     "index_branches": []
+    },
+    "data": {
+     "entries": 49872,
+     "n_branches": 6,
+     "branches": [
+      "measured",
+      "measured_pz",
+      "measured_eavail",
+      "measured_q3",
+      "measured_W",
+      "measured_pass"
+     ],
+     "index_branches": []
+    }
+   }
+  },
+  "1M": {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1M_zero.root",
+   "bytes": 862899975,
+   "sha256": "f80bb016e78701dde9faf5faf53d0d906430525abaafa753c1a051e2f860cb45",
+   "pin_ok": true,
+   "stat_unchanged": true,
+   "atime_ns": 1793349376000000000,
+   "trees": {
+    "mc_truth_denom": {
+     "entries": 5506200,
+     "n_branches": 9,
+     "branches": [
+      "MC",
+      "MC_pz",
+      "MC_eavail",
+      "MC_q3",
+      "MC_W",
+      "MC_nproton",
+      "MC_npip",
+      "MC_hadangle",
+      "w_truth"
+     ],
+     "index_branches": []
+    },
+    "mc_signal_reco": {
+     "entries": 5672358,
+     "n_branches": 16,
+     "branches": [
+      "sim",
+      "sim_pz",
+      "sim_eavail",
+      "sim_q3",
+      "sim_W",
+      "sim_pass",
+      "w_reco",
+      "MC",
+      "MC_pz",
+      "MC_eavail",
+      "MC_q3",
+      "MC_W",
+      "MC_nproton",
+      "MC_npip",
+      "MC_hadangle",
+      "w_truth"
+     ],
+     "index_branches": []
+    },
+    "mc_background": {
+     "entries": 120642,
+     "n_branches": 13,
+     "branches": [
+      "sim_background",
+      "sim_background_pz",
+      "sim_background_eavail",
+      "sim_background_q3",
+      "sim_background_W",
+      "sim_background_pass",
+      "w_bkg",
+      "bkg_nuPDG",
+      "bkg_current",
+      "bkg_inttype",
+      "bkg_vtx_x",
+      "bkg_vtx_y",
+      "bkg_vtx_z"
+     ],
+     "index_branches": []
+    },
+    "data": {
+     "entries": 591031,
+     "n_branches": 6,
+     "branches": [
+      "measured",
+      "measured_pz",
+      "measured_eavail",
+      "measured_q3",
+      "measured_W",
+      "measured_pass"
+     ],
+     "index_branches": []
+    }
+   }
+  },
+  "1N": {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1N_zero.root",
+   "bytes": 499729347,
+   "sha256": "9e9875ec37cd3354650d0c27a042389d86408f0ded08389f1c2ff38ca49e219c",
+   "pin_ok": true,
+   "stat_unchanged": true,
+   "atime_ns": 1793349376000000000,
+   "trees": {
+    "mc_truth_denom": {
+     "entries": 3325992,
+     "n_branches": 9,
+     "branches": [
+      "MC",
+      "MC_pz",
+      "MC_eavail",
+      "MC_q3",
+      "MC_W",
+      "MC_nproton",
+      "MC_npip",
+      "MC_hadangle",
+      "w_truth"
+     ],
+     "index_branches": []
+    },
+    "mc_signal_reco": {
+     "entries": 3151310,
+     "n_branches": 16,
+     "branches": [
+      "sim",
+      "sim_pz",
+      "sim_eavail",
+      "sim_q3",
+      "sim_W",
+      "sim_pass",
+      "w_reco",
+      "MC",
+      "MC_pz",
+      "MC_eavail",
+      "MC_q3",
+      "MC_W",
+      "MC_nproton",
+      "MC_npip",
+      "MC_hadangle",
+      "w_truth"
+     ],
+     "index_branches": []
+    },
+    "mc_background": {
+     "entries": 70774,
+     "n_branches": 13,
+     "branches": [
+      "sim_background",
+      "sim_background_pz",
+      "sim_background_eavail",
+      "sim_background_q3",
+      "sim_background_W",
+      "sim_background_pass",
+      "w_bkg",
+      "bkg_nuPDG",
+      "bkg_current",
+      "bkg_inttype",
+      "bkg_vtx_x",
+      "bkg_vtx_y",
+      "bkg_vtx_z"
+     ],
+     "index_branches": []
+    },
+    "data": {
+     "entries": 415928,
+     "n_branches": 6,
+     "branches": [
+      "measured",
+      "measured_pz",
+      "measured_eavail",
+      "measured_q3",
+      "measured_W",
+      "measured_pass"
+     ],
+     "index_branches": []
+    }
+   }
+  },
+  "1O": {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1O_zero.root",
+   "bytes": 150945068,
+   "sha256": "22064448cb42b960e8066882ce6a3dc0fc8a5650eb1fb70f82626222708e6237",
+   "pin_ok": true,
+   "stat_unchanged": true,
+   "atime_ns": 1793349376000000000,
+   "trees": {
+    "mc_truth_denom": {
+     "entries": 554332,
+     "n_branches": 9,
+     "branches": [
+      "MC",
+      "MC_pz",
+      "MC_eavail",
+      "MC_q3",
+      "MC_W",
+      "MC_nproton",
+      "MC_npip",
+      "MC_hadangle",
+      "w_truth"
+     ],
+     "index_branches": []
+    },
+    "mc_signal_reco": {
+     "entries": 945393,
+     "n_branches": 16,
+     "branches": [
+      "sim",
+      "sim_pz",
+      "sim_eavail",
+      "sim_q3",
+      "sim_W",
+      "sim_pass",
+      "w_reco",
+      "MC",
+      "MC_pz",
+      "MC_eavail",
+      "MC_q3",
+      "MC_W",
+      "MC_nproton",
+      "MC_npip",
+      "MC_hadangle",
+      "w_truth"
+     ],
+     "index_branches": []
+    },
+    "mc_background": {
+     "entries": 22038,
+     "n_branches": 13,
+     "branches": [
+      "sim_background",
+      "sim_background_pz",
+      "sim_background_eavail",
+      "sim_background_q3",
+      "sim_background_W",
+      "sim_background_pass",
+      "w_bkg",
+      "bkg_nuPDG",
+      "bkg_current",
+      "bkg_inttype",
+      "bkg_vtx_x",
+      "bkg_vtx_y",
+      "bkg_vtx_z"
+     ],
+     "index_branches": []
+    },
+    "data": {
+     "entries": 110836,
+     "n_branches": 6,
+     "branches": [
+      "measured",
+      "measured_pz",
+      "measured_eavail",
+      "measured_q3",
+      "measured_W",
+      "measured_pass"
+     ],
+     "index_branches": []
+    }
+   }
+  },
+  "1P": {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1P_zero.root",
+   "bytes": 199848958,
+   "sha256": "5efe83f95e9822ff0dbf0780668e187d4857fd97aade631ae6ba19bf917123a1",
+   "pin_ok": true,
+   "stat_unchanged": true,
+   "atime_ns": 1793349376000000000,
+   "trees": {
+    "mc_truth_denom": {
+     "entries": 1108664,
+     "n_branches": 9,
+     "branches": [
+      "MC",
+      "MC_pz",
+      "MC_eavail",
+      "MC_q3",
+      "MC_W",
+      "MC_nproton",
+      "MC_npip",
+      "MC_hadangle",
+      "w_truth"
+     ],
+     "index_branches": []
+    },
+    "mc_signal_reco": {
+     "entries": 1260524,
+     "n_branches": 16,
+     "branches": [
+      "sim",
+      "sim_pz",
+      "sim_eavail",
+      "sim_q3",
+      "sim_W",
+      "sim_pass",
+      "w_reco",
+      "MC",
+      "MC_pz",
+      "MC_eavail",
+      "MC_q3",
+      "MC_W",
+      "MC_nproton",
+      "MC_npip",
+      "MC_hadangle",
+      "w_truth"
+     ],
+     "index_branches": []
+    },
+    "mc_background": {
+     "entries": 29222,
+     "n_branches": 13,
+     "branches": [
+      "sim_background",
+      "sim_background_pz",
+      "sim_background_eavail",
+      "sim_background_q3",
+      "sim_background_W",
+      "sim_background_pass",
+      "w_bkg",
+      "bkg_nuPDG",
+      "bkg_current",
+      "bkg_inttype",
+      "bkg_vtx_x",
+      "bkg_vtx_y",
+      "bkg_vtx_z"
+     ],
+     "index_branches": []
+    },
+    "data": {
+     "entries": 173641,
+     "n_branches": 6,
+     "branches": [
+      "measured",
+      "measured_pz",
+      "measured_eavail",
+      "measured_q3",
+      "measured_W",
+      "measured_pass"
+     ],
+     "index_branches": []
+    }
+   }
+  }
+ },
+ "stop": []
+}

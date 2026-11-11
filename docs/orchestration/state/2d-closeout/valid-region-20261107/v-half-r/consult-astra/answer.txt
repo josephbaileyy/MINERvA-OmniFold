@@ -1,0 +1,48 @@
+**I would support a revised V-HALF-R as a bounded development study, not as independent validation of a rescued measurement.** Its safeguards limit tuning, but do not remove the consequences of designing the rule after seeing the failures. I would prepare it now and reserve its scientific payoff for the follow-up paper.
+
+Reviewed at `dec8b86c`, read-only; no jobs, tests, writes or network access.
+
+For compact file:line citations below:
+
+- **R** = `docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/DECLARATION.md`
+- **V** = `docs/orchestration/state/2d-closeout/valid-region-20261107/v-half/DECLARATION.md`
+- **A** = `docs/orchestration/state/2d-closeout/valid-region-20261107/v-half/rebin-assessment-20261109/README.md`
+- **H** = `nd-unfolding/pv-ladder/readouts/h2_definition.json`
+- **L** = `docs/orchestration/state/measurement-paper/5d-community-20261024/LL5D-DECLARATION.md`
+- **C** = `docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/consult-astra-vhalf-20261109/answer.txt`
+
+**The procedure is prospective only relative to the merged readout.** The draft discloses knowledge of the original classes, excludes bias quantities from the builder, freezes the merged definition before regrading, and allows unsuccessful terminal outcomes. Those are meaningful protections against choosing merges by their observed V-HALF performance. They do not make the rule independent of the evidence that motivated it. (`R:19–31,89–92,114–119`.)
+
+A referee can reasonably ask whether the threshold, allowed axes and minimum count were chosen because they seemed likely to repair familiar failures. “Simulation-only” does not answer that objection: the human design choices remain informed. Nor does not tabulating purities establish blindness. Original-cell purities are already committed—for example, R02 has purity 0.392 and R08 0.510—although the full migration matrix is needed to evaluate general union purities. (`H:287–318,493–525`; `nd-unfolding/pv-ladder/h2_definition.py:68–74`.) This does not refute the author’s account of what they inspected; it does weaken the draft’s broad suggestion that nothing about the merges could be anticipated. (`R:24–27`.)
+
+The largest missing protection is **reserved validation**. The draft retains the same twelve truths; the original declaration explicitly says they are not held out. The previous consult’s safeguard requiring reserved deformations and independent samples therefore remains unmet. Fresh seeds on familiar shapes would not fully address it. (`R:96–102`; `V:304–318`; `C:45–49`.)
+
+My recommendations on the seven decisions are:
+
+1. **Use purity alone at 0.5 for this limited development exercise, but remove “a-priori” as a claim about its timing.** “At least half the reconstructed signal originates inside the reported truth region” is an intelligible design convention. It is not a demonstrated threshold for unfolding validity, and exactly 0.5 is half, not strictly a majority. Purity also depends on the simulated population and migrations, not just detector resolution. (`R:44–49`; `nd-unfolding/pv-ladder/h2_definition.py:68–86`.) I would print stability and support alongside it, without introducing another adjustable acceptance rule now. The code’s stability denominator is reconstructed, truth-selected signal; it is not total truth efficiency. (`nd-unfolding/pv-ladder/h2_definition.py:72–86`.)
+
+2. **Use unions of R-cells.** This preserves a clear relationship to the original result and permits exact aggregation of linear quantities. Restarting from individual H2 boxes could produce a different, nonnested partition and expands the redesign unnecessarily. (`R:53–60`.)
+
+3. **Keep the prohibition on \(p_\parallel\) joins.** Preserving the existing GiBUU domain boundary is a defensible constraint, though it is a domain-consistency argument rather than proof of optimal physics resolution. GiBUU must remain graded everywhere under the main rule; the domain exclusion remains print-only. (`R:68–72`; `V:122,179–180`.)
+
+4. **Exclude unreported boxes.** Otherwise this becomes a change in reported phase space as well as resolution. The proposed exclusion preserves the original domain and the interpretation of the aggregation matrix. (`R:73–75`.)
+
+5. **Keep eight cells, four per side, only as an operational floor.** Reject the assertion that this alone preserves useful five-dimensional shape information. Eight boxes can retain little discrimination along particular axes. Before binding, specify the physical contrasts or boundaries the follow-up measurement must resolve; judge the resulting partition against that requirement without looking at its biases. The present justification supplies a count, not that scientific requirement. (`R:83–85`; `C:45`.)
+
+6. **Choose LL5D option (i) now; conditionally add the merged test later.** Preserve the original-cell study rather than replacing it with option (ii). If a scientifically useful merged candidate survives, testing both is appropriate, with separate claims and a declared comparison—not selection of whichever passes. The draft estimates roughly twice the gate cost for both and additional pilot/bulk costs per definition. (`R:149–163`.) Also, LL5D does not certify the reported data covariance: its stated transfer is to the procedure’s covariance at the tested truth. (`L:317–324,758–769`.)
+
+7. **Require the disclosure wherever merged results appear.** Add explicitly that the same development truths were reused and that passing coarse integrals does not validate their constituent cells. Tighten “one shot”: a new declaration after an unsuccessful outcome must be labelled another development attempt, not a fresh confirmatory test. The current text permits a changed rule through a new declaration. (`R:17–31,89–92`; `V:311`.)
+
+**Several substantive details need amendment before audit.**
+
+First, specify whether residual low-purity cells prohibit acceptance. The algorithm keeps and flags cells without partners, but outcome A requires only that every cell be V-HALF-valid. Thus A can, as written, accept cells below the advertised purity threshold. Either purity is merely the merge trigger, or it is a final requirement; choose explicitly. Also replace “no acceptable binning” with “this declared rule produced no acceptable binning.” A greedy search has not excluded other partitions. (`R:65–81,114–119`.)
+
+Second, report cancellation. For consistent underlying integrals, a merged bias is the sum of signed absolute biases divided by the summed prior; the departure is aggregated analogously. Opposite biases can cancel, genuinely improving the coarse integral while concealing incorrect internal structure. Departures can cancel too, taking a formerly informative truth below the 1% applicability floor. These follow directly from the declared definitions. (`V:50–55`.) Require constituent signed contributions, absolute-contribution totals, and the truths lost from applicability. The “no applicable truth” safeguard catches complete loss, but not selective disappearance of challenging truths. (`V:160–168`.)
+
+Third, covariance and noise need different treatment. The assessment correctly distinguishes absolute covariance aggregation \(ACA^\mathsf{T}\), re-fractionalization of the model covariance, and reconstruction of the ratio-based playlist block. (`A:82–96`.) F0b bias and noise must be rebuilt from each experiment’s merged integrals, not averaged from cell ratios; likewise, recompute each split’s merged departure before estimating its spread. (`A:73–76`; `V:128–142`.) Preserve the hybrid-source and single-truth noise limitations. The noise formula has no bias–departure covariance term; its adequacy needs justification, and its two-sigma band must not be described as calibrated coverage. (`V:139–142,315–321`.)
+
+Fourth, the implementation audit must go beyond replacing `16`. **There is a concrete compatibility issue:** F0b’s chi-square survival function rejects odd degrees of freedom, and grading passes the selected cell count into it. The proposed minimum allows odd totals and odd domain subsets. Fix that calculation; do not force even binning to accommodate software. (`nd-unfolding/fd_f0_regrade.py:194–197,225–232`; `R:83–85`.) LL5D also contains dimension-dependent multiplicity and clipping rules requiring explicit reconsideration, including “2 of 16” and the per-cell \(0.025/16\) allocation. (`L:365–378,469–483`.)
+
+Finally, retain the narrow licence: **V-HALF classification of the specified coarse integrals at the tested truths**, not coverage, restored fine structure, failure mechanism or a validated measurement. The original binding already makes these distinctions. (`docs/orchestration/state/2d-closeout/valid-region-20261107/v-half/BINDING-1.md:48–55`.) FD-PRR’s other diagnostics must not acquire renewed claims merely because its readout is regenerated. (`R:103–109`.)
+
+**This is worth developing for the follow-up paper, but not worth rushing into the methods paper.** Coarsening asks a useful question about achievable reporting resolution. Its value depends on preserving useful physics information and subsequently testing the frozen candidate independently. Complete the declaration now; retain the original methods result and LL5D path. The draft itself anticipates several days of implementation and review, beyond the small direct compute charge. (`R:159–184`.) Before later execution, recheck inputs: the purge receipt establishes historical existence only, not content integrity or continued availability. (`A:14–15`; `A`’s `purge-check/README.md:8–11`.)
