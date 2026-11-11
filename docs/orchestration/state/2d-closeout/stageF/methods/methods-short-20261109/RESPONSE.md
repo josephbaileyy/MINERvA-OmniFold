@@ -360,3 +360,19 @@ F§4-<n>, Fm<n> and Fs<n>. "= 1.2" etc. cross-references a recheck row above. Cl
   - that the cause lies inside the estimator and is unclassified;
   - that the primary reading excludes the bands.
 - F2.2's A row and its price are withdrawn.
+
+## F2 and F3: the records cited (2026-11-11)
+
+- **F2:** docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/geant-np-records/GEANT-NP-REFEREE-MAP.md
+  (#1081, main 05a74e7c; sha256 05421836…).
+  - The text (S8.4, and §6.2 in brief) states, in the director's record-true phrases:
+    - truth weights "change the σ ratio between the two simulation-side blocks by at most 2×10⁻⁷" (Part 1's readout
+      8e05ca9b: 6.0×10⁻⁸ for neutron, 1.6×10⁻⁷ for proton);
+    - flux and denominator "unchanged for these bands";
+    - resampling "not part of either compared object";
+    - clipping "not exercised";
+    - #971's EQUAL sentence for the reconstruction weights.
+  - The conclusion is #971's: the constructions match in each listed operation, what separates them lies inside the
+    estimator and is unclassified, and the primary reading excludes the bands.
+  - The channel split is not printed (NOT CITABLE).
+- **F3:** the corrected price's binding is COV2D-G2R-BINDING-1.md (#1080): 73.6–93.7 node-h expected, cap 110 node-h.
