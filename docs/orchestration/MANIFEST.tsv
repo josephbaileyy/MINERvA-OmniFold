@@ -12453,6 +12453,13 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts/pre
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts/preserve.out	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts/stage0-inputs.tar.sha256	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/retention-20261110/AT-RISK.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/retention-20261110/cfs-1a-check-20261111/README.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/retention-20261110/cfs-1a-check-20261111/cluster/session.err.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/retention-20261110/cfs-1a-check-20261111/cluster/session.out.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/retention-20261110/cfs-1a-check-20261111/connect/cfs_1a_check.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/retention-20261110/cfs-1a-check-20261111/connect/cfs_1a_launch.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/retention-20261110/cfs-1a-check-20261111/connect/launch.console.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/retention-20261110/cfs-1a-check-20261111/connect/make_cfs_check.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/retention-20261110/hpss-20261111/README.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/retention-20261110/hpss-20261111/cluster/logs/archive.done.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/retention-20261110/hpss-20261111/cluster/logs/archive.log.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
