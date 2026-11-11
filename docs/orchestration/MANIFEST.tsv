@@ -275,6 +275,7 @@ docs/orchestration/DECISION-20261110-joseph-ens1-deficit-licence.md	tracked	LIVE
 docs/orchestration/DECISION-20261110-joseph-ll5d-rerun-16-cells.md	tracked	LIVE	document		20261110	open		route-only	no
 docs/orchestration/DECISION-20261110-joseph-paper-asap-vhalf-diagnostic.md	tracked	LIVE	document		20261110	open		route-only	no
 docs/orchestration/DECISION-20261110-joseph-vhalfr-a33-a82.md	tracked	LIVE	document		20261110	open		route-only	no
+docs/orchestration/DECISION-20261110-joseph-vhalfr-a34.md	tracked	LIVE	document		20261110	open		route-only	no
 docs/orchestration/DECISION-20261110-joseph-vhalfr-choices.md	tracked	LIVE	document		20261110	open		route-only	no
 docs/orchestration/DECISION-20261110-joseph-vprior-withhold.md	tracked	LIVE	document		20261110	open		route-only	no
 docs/orchestration/DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md	tracked	LIVE	document		20260911	open		route-only	no
@@ -6324,6 +6325,11 @@ docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/consult-sol-
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/consult-sol-a1-20261110/answer.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/consult-sol-a1-20261110/prompt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/consult-sol-a1-20261110/run-header.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/consult-sol-a34-20261110/README.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/consult-sol-a34-20261110/SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/consult-sol-a34-20261110/answer.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/consult-sol-a34-20261110/prompt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/consult-sol-a34-20261110/run-header.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half/BINDING-1.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half/DECLARATION.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half/INPUTS.sha256	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
@@ -7115,6 +7121,7 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/deposit-cand
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/deposit-candidate/covariance.csv	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/deposit-candidate/deposit.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/deposit-candidate/predictions-reference.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/e96-data-20261110/E96D-DECLARATION.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/figures/fd_g_fig_modes.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/figures/fd_g_fig_modes.pdf	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/figures/fd_g_fig_ratio.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
@@ -13390,6 +13397,12 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/tim
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/timing-20261106/timing.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/timing-20261106/uproot-run.out	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/timing-20261106/uproot.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/runperiod-loc-20261110/RPL-BINDING-1.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/runperiod-loc-20261110/RPL-DECLARATION.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/runperiod-loc-20261110/iii/README.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/runperiod-loc-20261110/iii/arxiv_anc_README.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/runperiod-loc-20261110/iii/iii_hit_counts.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/runperiod-loc-20261110/iii/iii_search.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/stab/gatesim/a1_dry_tasks.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/stab/gatesim/a1_dry_tasks.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/stab/gatesim/gatesim2.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
