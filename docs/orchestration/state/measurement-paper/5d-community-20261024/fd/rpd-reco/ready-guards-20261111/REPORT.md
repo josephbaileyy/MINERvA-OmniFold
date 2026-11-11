@@ -50,7 +50,12 @@ refusal, and the guard's test must kill it.
 | black / ruff | clean on the five files | `STATIC-CHECKS.txt` |
 | mypy --strict | one error, identical at the baseline (numpy stubs in this venv) | `STATIC-CHECKS.txt` |
 
-All runs were serial, with the five thread caps at 1. `SOURCE-SHA256SUMS` holds the four changed files' sha256. They
+All runs were serial, with the five thread caps at 1.
+
+`MUTATIONS.json` is the harness's raw report (sha256 `a400d5732bce1a79…`, recorded in its `receipt_annotation`) with
+two annotations added, as in #848's `negative-exit-test-repair-20261108`: that annotation, and the precedent's
+`disposable_fixture_artifact_paths`. The second lets the receipt checker resolve fixture names printed in test output
+(such as `staged.root`) as disposable paths, so they are not read as citations of committed files. `SOURCE-SHA256SUMS` holds the four changed files' sha256. They
 were equal before and after the suite and harness runs.
 
 Nothing is submitted, deposited or tagged.
