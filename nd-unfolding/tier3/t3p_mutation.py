@@ -20,7 +20,7 @@ ND = HERE.parent
 REPO = ND.parent
 FILES = ("t3p_arms.py", "t3p_probe.py", "t3p_read.py", "sbatch_t3p.sh", "test_t3p.py")
 AR, PB, RD, SB = FILES[:4]
-EXPECTED_TESTS = 68
+EXPECTED_TESTS = 69
 MUTATIONS = [
     # --- REQUIRED: C-PAIR fails on a one-ulp change, and the trace at k is the plain unfold at k
     ("REQUIRED C-PAIR compares within a tolerance", PB,
@@ -119,6 +119,8 @@ MUTATIONS = [
      "test_bounded_by_step_2_is_decided_from_the_numbers"),
     ("bounded by step 2 ignores the headroom", RD, "headroom is not None and headroom < bars[arm]:",
      "headroom is not None:", "test_no_effect_with_headroom_stands_whatever_tr2"),
+    ("v1: the bound includes equality", RD, "headroom is not None and headroom < bars[arm]:",
+     "headroom is not None and headroom <= bars[arm]:", "test_the_bound_is_strict_at_equality"),
     ("SO bounded by OP", RD, 'STEP2_BOUNDED = ("MU", "MW", "MO")', "STEP2_BOUNDED = TR1_ARMS",
      "test_mo_bounded_by_step_2"),
     ("resolution not printed", RD, '"bar_over_rho_B0_50": None if not b50 else bars[arm] / b50,',
