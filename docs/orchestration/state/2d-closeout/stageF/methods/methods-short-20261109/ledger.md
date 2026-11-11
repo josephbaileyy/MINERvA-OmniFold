@@ -1990,3 +1990,18 @@ was the mislabel. The director accepted bd08582ee, the hand re-cites of ALIASES 
   - make_values PASS; sec4 17/17; pointers 42; registry PASS;
   - check 12: 47 note-copied paragraphs (S7's eleven are gone), explained 38, same 8, seed-adapted 1;
   - check_restyle shows only the removals and the renumbered pointer.
+
+## 2026-11-10 — T1-5's removal check (M050); Tier 1 complete
+
+- **The director's removal check.** A fresh Sonnet reader took the 39 removed rows that matched the note poorly by word
+  shingles, together with the note's sec_joint.tex at acf934d71. It found 36 of 37 fully present in the note. The other
+  64 removals matched by shingles.
+  - The PARTIAL is M050: "The flux universe and the band universes are drawn independently, and their weight ratios
+    multiply." The note states the bands' independence and multiplication, but not the flux universe's independence
+    of them.
+  - Ruling: keep that one fact in S7. It is now one clause after the pointer sentence, from S7's copy of sec_joint.tex
+    sec:joint5d-calibration paragraph 2 (verbatim at ba3dd2138), with its source comment, until the note carries it.
+    The director adds it to the note lane's list.
+- **Tier 1 is accepted** (T1-0 to T1-5, the round-3 sync and the T2a/T2b additions). #977 waits for the LL5D fill.
+- **Checks:** the Supplement's rater copy PASS, with 0 Overfull and 0 undefined; pointers 42; check 12 unchanged. The
+  fill test runs on the committed head before the push.
