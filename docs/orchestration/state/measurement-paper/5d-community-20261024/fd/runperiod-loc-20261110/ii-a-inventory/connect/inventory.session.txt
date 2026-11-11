@@ -1,0 +1,4 @@
+ssh rc=0
+node login27 staged sha256 b8a9058ce9da0d807ea1317e58bcb97f760982bd01da63b4427b34e6f31c2299
+detached pid 316970, output /dev/shm/rpl-inventory.316488.sh.out
+script rc=0

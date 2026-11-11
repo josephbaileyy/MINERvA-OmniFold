@@ -1,0 +1,33 @@
+node login27 loadavg 15.06 22.50 25.86 start=2026-11-11T02:15:32Z
+script sha256 b8a9058ce9da0d807ea1317e58bcb97f760982bd01da63b4427b34e6f31c2299
+squeue --me:
+  61078463|ll5d_gate_G18|PENDING
+  61078506|ll5d_gate_AR23|PENDING
+python=/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+1A ok {'mc_truth_denom': (2217328, [], []), 'mc_signal_reco': (2489136, [], []), 'mc_background': (52626, [], []), 'data': (360123, [], [])}
+1B ok {'mc_truth_denom': (554332, [], []), 'mc_signal_reco': (622284, [], []), 'mc_background': (14182, [], []), 'data': (75192, [], [])}
+1C ok {'mc_truth_denom': (1108664, [], []), 'mc_signal_reco': (1244568, [], []), 'mc_background': (26898, [], []), 'data': (173122, [], [])}
+1D ok {'mc_truth_denom': (3880324, [], []), 'mc_signal_reco': (3733704, [], []), 'mc_background': (78987, [], []), 'data': (580834, [], [])}
+1E ok {'mc_truth_denom': (3325992, [], []), 'mc_signal_reco': (3111420, [], []), 'mc_background': (66077, [], []), 'data': (408075, [], [])}
+1F ok {'mc_truth_denom': (4434656, [], []), 'mc_signal_reco': (4410728, [], []), 'mc_background': (92219, [], []), 'data': (642737, [], [])}
+1G ok {'mc_truth_denom': (3854340, [], []), 'mc_signal_reco': (3733704, [], []), 'mc_background': (76742, [], []), 'data': (538406, [], [])}
+1L ok {'mc_signal_reco': (335076, [], []), 'mc_truth_denom': (383848, [], []), 'mc_background': (7820, [], []), 'data': (49872, [], [])}
+1M ok {'mc_truth_denom': (5506200, [], []), 'mc_signal_reco': (5672358, [], []), 'mc_background': (120642, [], []), 'data': (591031, [], [])}
+1N ok {'mc_truth_denom': (3325992, [], []), 'mc_signal_reco': (3151310, [], []), 'mc_background': (70774, [], []), 'data': (415928, [], [])}
+1O ok {'mc_truth_denom': (554332, [], []), 'mc_signal_reco': (945393, [], []), 'mc_background': (22038, [], []), 'data': (110836, [], [])}
+1P ok {'mc_truth_denom': (1108664, [], []), 'mc_signal_reco': (1260524, [], []), 'mc_background': (29222, [], []), 'data': (173641, [], [])}
+INVENTORY OK []
+c4945f9e8012419e435d589a0f41f84d0bb23bbf617e76bf4610487d98b7e29e  inventory.json
+be4db2933c274a06d23c75db8accfc1716dbc19d241eaeb4d5f71d15c0ee86fb  logs/inventory.log
+1ca0074b152d486263d09b1edecae69fb7ba1dad9feadf0656bb43343e71d24d  post.tar.gz
+removal of /dev/shm/josephrb-rpl-inv rc=0 ; present after: no
+rpl inventory rc=0 2026-11-11T02:15:51Z

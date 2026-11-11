@@ -13390,6 +13390,17 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/tim
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/timing-20261106/uproot.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/runperiod-loc-20261110/RPL-BINDING-1.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/runperiod-loc-20261110/RPL-DECLARATION.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/runperiod-loc-20261110/ii-a-inventory/README.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/runperiod-loc-20261110/ii-a-inventory/cluster/inventory.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/runperiod-loc-20261110/ii-a-inventory/cluster/inventory.log.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/runperiod-loc-20261110/ii-a-inventory/cluster/rpl_inventory.cluster-copy.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/runperiod-loc-20261110/ii-a-inventory/connect/cov2d_fence.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/runperiod-loc-20261110/ii-a-inventory/connect/fence.session.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/runperiod-loc-20261110/ii-a-inventory/connect/fetch.sha256.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/runperiod-loc-20261110/ii-a-inventory/connect/inventory.session.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/runperiod-loc-20261110/ii-a-inventory/connect/login-survey.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/runperiod-loc-20261110/ii-a-inventory/connect/rpl_inventory.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/runperiod-loc-20261110/ii-a-inventory/connect/rpl_launch.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/runperiod-loc-20261110/iii/README.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/runperiod-loc-20261110/iii/arxiv_anc_README.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/runperiod-loc-20261110/iii/iii_hit_counts.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
