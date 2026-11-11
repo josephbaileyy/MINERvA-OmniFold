@@ -13494,6 +13494,8 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/pym
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/pymon-fetch-20261107/fetch.out	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/pymon-fetch-20261107/pymon_fetch_login.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/pymon-fetch-20261107/survey.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/ready-config-proposal-20261111/PROPOSAL.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/ready-config-proposal-20261111/production-config.proposed.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/real-mnv-check-20261106/README.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/real-mnv-check-20261106/SHA256SUMS.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/real-mnv-check-20261106/cleanup-check.out	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
