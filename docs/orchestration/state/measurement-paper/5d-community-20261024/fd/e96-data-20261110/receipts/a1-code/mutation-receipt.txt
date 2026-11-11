@@ -1,0 +1,46 @@
+# E96D-AMENDMENT-1 (a): the mutation check at branch decl/e96d-a1-20261111 (working tree before commit), python3 -B, Python 3.12.2, 2026-11-11T11:42:15Z
+UNMUTATED SUITE: 31 tests, rc 0
+KILLED    REQ the full run without the dry DONE          by test_full_needs_the_dry_done_at_this_pin_and_dry_then_full_run
+KILLED    the deploy pin unchecked                       by test_it_refuses_a_deploy_off_the_pin_and_a_bad_mode
+KILLED    an existing log resumed                        by test_full_needs_the_dry_done_at_this_pin_and_dry_then_full_run
+KILLED    REQ a pseudo construction admitted             by test_a_pseudo_construction_is_refused
+KILLED    REQ the base takes a protocol jitter at seed 0 by test_the_base_is_the_float64_copy
+KILLED    REQ a write without the check                  by test_a_write_without_the_namespace_check_is_refused
+KILLED    REQ the control passes when one ulp differs    by test_a_control_one_ulp_off_stops
+KILLED    REQ the control runs the float64 path          by test_the_control_takes_no_jitter_and_the_base_no_protocol_seed
+KILLED    any pair accepted                              by test_undeclared_pairs_are_refused_and_the_declared_ones_are_not
+KILLED    threads unchecked                              by test_each_namespace_check_refuses
+KILLED    capacity admitted                              by test_each_namespace_check_refuses
+KILLED    eavail ratio admitted                          by test_each_namespace_check_refuses
+KILLED    truth unchecked                                by test_each_namespace_check_refuses
+KILLED    inputs unchecked                               by test_each_namespace_check_refuses
+KILLED    protocol seed admitted                         by test_the_control_takes_no_jitter_and_the_base_no_protocol_seed
+KILLED    the ensemble without delta_k                   by test_the_ensemble_fits_carry_delta_k_and_differ_across_k
+KILLED    moved rows not recorded                        by test_the_ensemble_fits_carry_delta_k_and_differ_across_k
+KILLED    install takes any k                            by test_install_arguments
+KILLED    CLI accepts an undeclared k                    by test_cli_refuses_an_undeclared_k_before_any_runner
+KILLED    queue misses the last pair                     by test_the_queue
+KILLED    the full run repeats the dry k                 by test_the_queue
+KILLED    REQ the full run without a passing gate        by test_full_refuses_a_failing_or_missing_gate
+KILLED    the gate's queue sha unchecked                 by test_full_refuses_a_queue_other_than_the_gated_one
+KILLED    the projection without the load time           by test_the_gate_passes_the_declared_dry_run_and_records_the_pin
+KILLED    REQ the 3:30:00 limit restored (E96D-AMENDMENT-1) by test_the_amended_limit_admits_the_measured_t_and_stops_above_962
+KILLED    the amended limit raised further               by test_the_amended_limit_admits_the_measured_t_and_stops_above_962
+KILLED    REQ the gate's projection removed              by test_the_gate_fails_on_a_control_defect_a_slow_unfold_or_a_missing_k1
+KILLED    REQ the gate skips the control                 by test_the_gate_fails_on_a_control_defect_a_slow_unfold_or_a_missing_k1
+KILLED    REQ the repeat not compared                    by test_the_repeat_must_equal_k1_bitwise
+KILLED    the repeat takes any k                         by test_install_arguments
+KILLED    REQ seed/threads/iters unchecked post hoc      by test_each_post_hoc_meta_check_stops
+KILLED    REQ the control's meta ignored                 by test_each_post_hoc_meta_check_stops
+KILLED    REQ the base's meta ignored                    by test_each_post_hoc_meta_check_stops
+KILLED    REQ one code unchecked                         by test_each_post_hoc_meta_check_stops
+KILLED    REQ coords unchecked                           by test_each_post_hoc_meta_check_stops
+KILLED    the control's code outside the set             by test_each_post_hoc_meta_check_stops
+KILLED    dtype ignored in the bitwise comparison        by test_a_missing_control_dtype_or_e_sha_is_a_stop_record
+KILLED    A-D0's digest unchecked                        by test_a_missing_control_dtype_or_e_sha_is_a_stop_record
+KILLED    A-D0 f unchecked                               by test_an_f_that_is_not_es_stops
+KILLED    A-D2 a missing fit accepted                    by test_each_a_d2_defect_stops
+KILLED    A-D2 moved rows accepted                       by test_each_a_d2_defect_stops
+KILLED    E96 is the first fit, not the mean             by test_the_result_is_the_hand_computation
+KILLED    the sd of the mean without sqrt(96)            by test_the_result_is_the_hand_computation
+MUTATION CHECK :: PASS (43 mutations)

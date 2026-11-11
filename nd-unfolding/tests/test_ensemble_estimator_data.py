@@ -319,7 +319,9 @@ class Analysis(unittest.TestCase):
             if defect == "fit_code" and k == 9:
                 over["block_code"] = "y" * 64
             if defect == "slow" and k == 1:
-                over["seconds_unfold"] = 885.0
+                over["seconds_unfold"] = 950.0             # t = 965 s > 962.1 s, the amended bound (E96D-AMENDMENT-1)
+            if isinstance(defect, tuple) and defect[0] == "t" and k == 1:
+                over["seconds_unfold"] = defect[1] - 15.0  # t = seconds_load 15 s + seconds_unfold (audit r1)
             meta = fake_meta("ensemble", k, moved=1 if (defect == "moved" and k == 7) else 0,
                              coords="float32" if (defect == "fit_coords" and k == 11) else None,
                              digest={"MCgen": "same"} if defect == "dup" else None, **over)
@@ -444,6 +446,20 @@ class Analysis(unittest.TestCase):
         det = g["controls"]["G the projection fits the full run's limit: lane_max x t + 300 s <= 0.9 x the limit"]["detail"]
         self.assertEqual((det["lane_max"], det["t_seconds"]), (14, 600.0))     # load 15 s + unfold 585 s (audit r1)
         self.assertEqual(g["full_queue_sha256"], self.gate_queue_sha)
+
+    def test_the_amended_limit_admits_the_measured_t_and_stops_above_962(self):
+        """REQUIRED (E96D-AMENDMENT-1 (a)): the full limit is 4:15:00, so the gate's bound is t <= (0.9 x 15,300 - 300) / 14
+        = 962.1 s. The 2026-11-11 dry run's measured t (907.572 s, which failed at 3:30:00) passes; 962 s passes, 963 s
+        stops."""
+        self.assertEqual(eed.FULL_TIME_S, 4.25 * 3600)
+        name = "G the projection fits the full run's limit: lane_max x t + 300 s <= 0.9 x the limit"
+        for t, want in ((907.572, True), (962.0, True), (963.0, False)):
+            rc, g = self.run_gate(("t", t))
+            det = g["controls"][name]["detail"]
+            self.assertEqual((det["lane_max"], det["limit_s"]), (14, 15300.0), t)
+            self.assertAlmostEqual(det["t_seconds"], t, places=6)
+            self.assertIs(g["controls"][name]["pass"], want, t)
+            self.assertEqual(rc, 0 if want else 8, t)
 
     def test_the_gate_fails_on_a_control_defect_a_slow_unfold_or_a_missing_k1(self):
         """REQUIRED (audit E1): the full run is gated on A-D0, A-D1, k = 1 and the projection, before it spends."""
