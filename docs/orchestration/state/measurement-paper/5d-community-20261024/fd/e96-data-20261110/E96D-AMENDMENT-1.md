@@ -6,6 +6,61 @@
 E96D-BINDING-1. **Nothing runs** until this amendment is audited and bound, and not before NERSC's maintenance of
 2026-11-11 ends.
 
+## The director's rulings (2026-11-11), written in
+
+1. **Option (a) is chosen:** one full job at `--time=4:15:00`, with the gate's bound t ≤ 962.1 s. The cap is
+   **5.1 node-h**, which is 0.3 % of the 1525.6 node-h balance read on 2026-11-11, so it is within the director's
+   authority.
+2. **The 2026-11-11 dry products stay as the STOP record.** They are not read, carried in or deleted.
+3. **A new dry run at M_A1 is required** before any full run (§Common to both options).
+4. **A t above 962.1 s STOPs again** at the gate, unrepaired. There is no further amendment for time in this study
+   unless the director rules one.
+   - **The trigger:** a second time-STOP (the projection control failing at M_A1) comes to the director as a
+     decision, not as a re-price. The lane reports it and drafts nothing.
+5. **The slower-unfold cause is left unmeasured,** as the dry receipt leaves it.
+   <!-- absence-ok: the director's ruling on this study's scope; no cause measurement is declared or run -->
+
+6. **Scheduling:** E96D's new dry run and full run wait until LL5D's two gate jobs, 61078463 and 61078506, have ended
+   and their receipts hold their atime readings.
+   - **Why:** LL5D is the paper's critical path, and its gate compares the atimes of the same two inputs E96D reads
+     plainly.
+   - **The fence** runs before each connect.
+   - **If the LL5D gates are still PENDING a day after the maintenance ends,** the lane tells the director rather than
+     going ahead.
+
+## The code (option (a)), on this branch
+
+| file | change | sha256 |
+|---|---|---|
+| `nd-unfolding/ensemble_estimator_data.py` | `FULL_TIME_S = 4.25 * 3600`, was `3.5 * 3600`, with its comment | `414f7d352560b1cd310666af8e363fe294fda6ebb13239309887cb96c5f0b33a` |
+| `nd-unfolding/sbatch_e96data.sh` | the header's full line reads `--time=4:15:00` (a comment; no executed line changes) | `72680b62d48e07554e1c8ac07dc6bd7289798892bdfaa08f0733068c8d17ec7e` |
+| `nd-unfolding/tests/test_ensemble_estimator_data.py` | see below | `186d881a29fc51c1941bd9a3d575061f4b841692c198b437ea02ff40abb35469` |
+| `nd-unfolding/tests/ensemble_estimator_data_mutation.py` | see below | `2a7187422715599f3186e29ee2902c46ab50ce3ce08cea8356f8dc19a0f3cdbd` |
+
+**The test changes:**
+- **The "slow" fixture** now has t = 965 s (seconds_unfold 950 + seconds_load 15). The old 900 s would pass the
+  amended bound.
+- **A new REQUIRED test,** `test_the_amended_limit_admits_the_measured_t_and_stops_above_962`:
+  - FULL_TIME_S is 4.25 h;
+  - the gate records lane_max 14 and limit_s 15,300;
+  - t = 907.572 s (the 2026-11-11 measured value) and 962 s pass;
+  - 963 s fails with rc 8.
+
+**The mutation changes:**
+- **A new REQUIRED mutant,** "the 3:30:00 limit restored", which puts `3.5 * 3600` back.
+- **A second mutant,** "the amended limit raised further", which sets `4.5 * 3600`.
+- Both are killed by the new test.
+- EXPECTED_TESTS is now 31.
+
+**The local run** (2026-11-11, this branch, python3 -B):
+- `unittest` ran 31 tests, OK.
+- The mutation check gave `UNMUTATED SUITE: 31 tests, rc 0` and `MUTATION CHECK :: PASS (43 mutations)`, 16 of them
+  REQUIRED, every one killed by its named test.
+- The receipt is `receipts/a1-code/mutation-receipt.txt`.
+
+The bound ENS1 probe, FD-STAB's refusals and every other line of the four files are unchanged (`git diff` against
+M_E96D `1d25f8e7`).
+
 ## Why
 
 - **The dry run's gate failed on its projection** (the receipt is PR #1065,
@@ -85,7 +140,7 @@ and the full queue (50 tasks, 97 unfolds: F₆₄ 1, the repeat 1, k = 2–95 in
 | **A1's runs** | **4.0–4.5** | | **7.50** |
 | with 2026-11-11's dry run (0.26, spent) | 4.2–4.7 | | **cap 7.8** |
 
-## Recommendation: (a)
+## Recommendation: (a) (chosen by the director, ruling 1)
 
 - **The smallest code change:** one constant, a header line and its tests. The queue, the task lines, the job
   script's refusals and `analyze` are unchanged, so the audit is short.
@@ -106,7 +161,7 @@ window. That matters only if a 4:15 job queues much worse than two 3:30 jobs, wh
   queued, and they read the same two inputs. Their receipts compare those files' atimes before and after.
 - **If E96D runs while they do,** its plain reads move the same atimes. The stat-only readings before and after
   (2026-11-11's dry receipt) would then be repeated around each E96D job.
-- **Whether to wait for LL5D's gates to end first** is the director's call.
+- **Whether to wait for LL5D's gates to end first** was the director's call. It is ruling 6: E96D waits.
 
 ## Licence
 

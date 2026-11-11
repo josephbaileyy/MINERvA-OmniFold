@@ -60,7 +60,7 @@ REPEAT_K = 1                             # the full run recomputes k = 1 (audit 
 E_PRODUCT_PATH = "/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j-.npz"
 DEFINITION_REL = "nd-unfolding/pv-ladder/readouts/h2_definition.json"
 DATA_PRODUCT_REL = "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/data-product/fd_data_product.json"
-FULL_TIME_S = 3.5 * 3600                 # sbatch full --time=3:30:00
+FULL_TIME_S = 4.25 * 3600                # sbatch full --time=4:15:00 (E96D-AMENDMENT-1 (a); was 3:30:00)
 LANES = 8
 def declared() -> dict:
     """The declared data call: (e)'s own inputs and settings (docs/orchestration/state/s5p/s2-num-tasks.tsv:2,
