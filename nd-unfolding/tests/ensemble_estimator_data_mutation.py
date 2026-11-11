@@ -18,7 +18,7 @@ ND = Path(__file__).resolve().parents[1]
 TEST = ND / "tests" / "test_ensemble_estimator_data.py"
 M = "ensemble_estimator_data.py"
 S = "sbatch_e96data.sh"
-EXPECTED_TESTS = 30
+EXPECTED_TESTS = 31
 
 # (label, old, new, the test that must fail[, file]); the file is the module unless named
 MUTATIONS = [
@@ -74,6 +74,10 @@ MUTATIONS = [
     ("the gate's queue sha unchecked", '    [ "$q_sha" = "$g_sha" ] ||', "    true ||", "test_full_refuses_a_queue_other_than_the_gated_one", S),
     ("the projection without the load time", "    return float(lo) + float(un) if", "    return float(un) if",
      "test_the_gate_passes_the_declared_dry_run_and_records_the_pin"),
+    ("REQ the 3:30:00 limit restored (E96D-AMENDMENT-1)", "FULL_TIME_S = 4.25 * 3600", "FULL_TIME_S = 3.5 * 3600",
+     "test_the_amended_limit_admits_the_measured_t_and_stops_above_962"),
+    ("the amended limit raised further", "FULL_TIME_S = 4.25 * 3600", "FULL_TIME_S = 4.5 * 3600",
+     "test_the_amended_limit_admits_the_measured_t_and_stops_above_962"),
     ("REQ the gate's projection removed", "        proj is not None and proj <= 0.9 * FULL_TIME_S,", "        True,",
      "test_the_gate_fails_on_a_control_defect_a_slow_unfold_or_a_missing_k1"),
     ("REQ the gate skips the control", "        m_c = check_control(a.runs, x_e, chk)\n        p1 = product_path(a.runs, \"ensemble\", 1)",

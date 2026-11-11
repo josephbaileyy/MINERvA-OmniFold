@@ -832,6 +832,29 @@ class EndToEnd(unittest.TestCase):
         for arm in ("MU", "MW", "MO"):
             self.assertEqual(rd["TR-1"]["A7_gibuu"][arm], "no effect (bounded by step 2)", arm)
 
+    def test_the_bound_is_strict_at_equality(self):
+        """v1 (addendum): §5.2 bounds a "no effect" only when the headroom is below the bar. At headroom exactly
+        equal to the bar (rho_B0(50) = 0.1, rho_OP(2) = 0.05, bar 0.05) it is not bounded; one ulp less headroom is."""
+        self.assertEqual(0.1 - 0.05, 0.05)  # exact in binary, so the boundary is reached exactly
+
+        def q_for(op):
+            q = {}
+            for arm, t, s in T.all_tasks():
+                r = op if arm == "OP" else 0.1
+                q[(arm, t, s)] = {"per_k": [{"rho": r, "rho_R1": 0.0, "rho_R2": 0.0, "rms_b": 0.0, "rms_perp": 0.0,
+                                             "chi2": 0.0} for _ in range(A.ITERS[arm])]}
+            return q
+        prr = {"T_FD": 9.02937, "s_F1": 0.0023377}
+        rd = RT.readings(q_for(0.05), prr)
+        r = rd["resolution"]["A7_gibuu"]["MO"]
+        self.assertEqual((r["bar"], r["headroom_B0_50_minus_OP_2"]), (0.05, 0.05))
+        for arm in ("MU", "MW", "MO"):
+            self.assertEqual(rd["TR-1"]["A7_gibuu"][arm], "no effect", arm)
+        rd = RT.readings(q_for(float(np.nextafter(0.05, 1.0))), prr)
+        self.assertLess(rd["resolution"]["A7_gibuu"]["MO"]["headroom_B0_50_minus_OP_2"], 0.05)
+        for arm in ("MU", "MW", "MO"):
+            self.assertEqual(rd["TR-1"]["A7_gibuu"][arm], "no effect (bounded by step 2)", arm)
+
     def test_no_effect_with_headroom_stands_whatever_tr2(self):
         """TR-2 reads "does not carry" (rho_OP 0.10), but B0's limit 0.20 leaves 0.10 of room: "no effect" stands."""
         def plant(arm, t, s, k):

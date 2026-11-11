@@ -1,0 +1,166 @@
+{
+  "baseline": "d38a4fdf34cf7f20a51a0b6527c390ba6b6d5712",
+  "tested_head": "0fbbbf8448f16e9e18741a330e1dd9d8cb35f88b",
+  "scope": "C1 only: fixed exit-library inventory, mapped subset and full-exit checks. Entire producer, environment guard, C3, reused instruments and wrappers retain bytes/AST as recorded.",
+  "files": {
+    "nd-unfolding/fd_rpd_reco.py": {
+      "byte_equal": true,
+      "changed_existing_functions": [],
+      "unchanged_existing_functions": [
+        "Inputs",
+        "PreparedMatContext",
+        "Refused",
+        "Sample",
+        "_audit_open",
+        "_c0",
+        "_d1",
+        "_d2",
+        "_double_step",
+        "_json_value",
+        "_load_histograms",
+        "_rate_summary",
+        "_read_record",
+        "_save_histograms",
+        "_sigma",
+        "aggregate",
+        "axis_assignments",
+        "bin_indices",
+        "bracket_outcome",
+        "calibration_gate",
+        "check_prepare_receipt",
+        "checked_mat_environment",
+        "checked_prepared_mat",
+        "checked_root_file",
+        "classify_flux_swap",
+        "common_flux_integral_ratio",
+        "common_flux_units",
+        "digest",
+        "energy_controls",
+        "energy_statistics",
+        "evaluate_energy_controls",
+        "execution_fields",
+        "extracted_flux",
+        "flux_extract",
+        "flux_selection_digest",
+        "flux_units_metadata",
+        "group_step",
+        "guarded_tfile",
+        "hadronic_reading",
+        "histogram_directory_ownership",
+        "histogram_spectrum",
+        "leave_one_out",
+        "load_custody_instrument",
+        "load_mat_instrument",
+        "main",
+        "mat_flux_swap",
+        "noatime_flag",
+        "observed_steps",
+        "p0",
+        "pinned_flux_factors",
+        "predicted_steps",
+        "prediction_controls",
+        "read_flux_histogram",
+        "read_guards",
+        "reconstructed_energy",
+        "reporting_cells",
+        "require",
+        "require_output_root",
+        "require_predecessors",
+        "run_stage",
+        "runtime_environment",
+        "runtime_estimate",
+        "score_axes",
+        "selected_flux_files",
+        "shape_score",
+        "stage_copy",
+        "staged_mat_prefixes",
+        "step0",
+        "step_reading",
+        "validate_flux_spectrum",
+        "wall_budget_seconds",
+        "weighted_quantiles",
+        "write_json",
+        "zero_pattern_counts"
+      ],
+      "added_functions": [],
+      "all_earlier_global_statements_preserved": true
+    },
+    "nd-unfolding/fd_rpd_reco_custody.py": {
+      "byte_equal": false,
+      "changed_existing_functions": [
+        "build_trace_policy",
+        "classify_successful_open",
+        "classify_trace",
+        "classify_trace_with_stop",
+        "pin_platform_libraries",
+        "platform_library_record",
+        "prepare"
+      ],
+      "unchanged_existing_functions": [
+        "CustodyRefused",
+        "_trace_pid_body",
+        "_trace_violation",
+        "_under",
+        "check_trace",
+        "complete_trace_calls",
+        "cov2d_fence",
+        "environment_diff",
+        "environment_record",
+        "environment_snapshot",
+        "executable_mapped_files",
+        "main",
+        "mapped_instrument_violations",
+        "missing_dependency_check",
+        "module_paths",
+        "native_environment",
+        "noatime_digest",
+        "parse_executable_maps",
+        "platform_identity",
+        "platform_mapping_snapshot",
+        "platform_settings",
+        "private_prepare_path",
+        "public_record",
+        "publish_prepare_view",
+        "read_private_prepare",
+        "require",
+        "root_import_record",
+        "source_stat",
+        "trace_cwd",
+        "write_private_prepare",
+        "write_trace_record"
+      ],
+      "added_functions": [
+        "check_trace_libraries",
+        "platform_late_library_paths",
+        "platform_prepared_mappings"
+      ],
+      "all_earlier_global_statements_preserved": true
+    },
+    "nd-unfolding/fd_rpd_reco_prologue.py": {
+      "byte_equal": false,
+      "changed_existing_functions": [
+        "prepare"
+      ],
+      "unchanged_existing_functions": [
+        "main"
+      ],
+      "added_functions": [],
+      "all_earlier_global_statements_preserved": true
+    },
+    "nd-unfolding/fd_rpd_reco_flux_connect.sh": {
+      "byte_equal": true
+    },
+    "nd-unfolding/fd_rpd_reco_prologue_connect.sh": {
+      "byte_equal": true
+    },
+    "nd-unfolding/tests/fd_rpd_reco_mat_check.py": {
+      "byte_equal": true
+    },
+    "nd-unfolding/fd_rpd_inputs.py": {
+      "byte_equal": true
+    },
+    "nd-unfolding/fd_ct_period_inputs.py": {
+      "byte_equal": true
+    }
+  }
+}

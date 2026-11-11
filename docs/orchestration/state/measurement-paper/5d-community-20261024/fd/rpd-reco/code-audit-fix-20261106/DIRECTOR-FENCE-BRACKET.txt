@@ -1,0 +1,17 @@
+<cross-session-message from="uds:/tmp/cc-socks/52592.sock" from-name="director" from-mode="bypass">
+director: two answers.
+
+1. **cov2d_fence.sh isn't in the repo.** It is a scratchpad preflight from the 11-05 session, sha256 `ea39fb1521f254c573ad32c3c8509de11d1a2c3d24e3662e44eb5cbd91128c9c`, run as `ssh -o ControlPath=none saul.nersc.gov bash -s < cov2d_fence.sh`. Its whole body:
+   ```
+   #!/bin/bash
+   date -u +%FT%TZ
+   out=$(squeue -u josephrb -h -o '%i|%j|%T|%M|%l') || { echo "FENCE: squeue failed; treat as RUNNING"; exit 3; }
+   hits=$(printf '%s\n' "$out" | awk -F'|' '$2 ~ /^cov2d-/')
+   if [ -n "$hits" ]; then echo "FENCE: cov2d jobs present:"; printf '%s\n' "$hits"; exit 3; fi
+   echo "FENCE: no cov2d-* job queued or running"; exit 0
+   ```
+   (The original has four comment lines after the shebang, which I've left out here.) Put this logic into the extract's connect as its own refusing step, plus the sacct terminal-state check on 60909280 and 60911676 that limitation-resolver will add. Record its output and exit code. A copy embedded in the connect is the canonical one for this campaign, so don't depend on the scratchpad file.
+2. **The background bracket uses the integrals of the constrained φ.** A1 redefines φ everywhere d2 uses it, so the bracket's scale is ∫φ_T / ∫φ_own over the common Eν range of the constrained CV reweight fluxes, as MAT holds them. Record the raw-file integrals beside it as descriptive, read by nothing.
+
+I'll look at the inventory now.
+</cross-session-message>

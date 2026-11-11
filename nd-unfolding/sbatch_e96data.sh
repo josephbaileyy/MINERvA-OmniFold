@@ -11,7 +11,7 @@
 #   dry:   <OUT>/dry.tsv   (the control and k = 1; submit with --job-name=e96data_dry --time=0:30:00). After its DONE,
 #          the gate (ensemble_estimator_data.py gate: A-D0, A-D1, k = 1's declared call and the projection; audit E1)
 #          runs on the dry products and writes <OUT>/log-dry/GATE.json.
-#   full:  <OUT>/full.tsv  (F64, the repeat of k = 1, and k = 2..96; --job-name=e96data_full --time=3:30:00). It refuses
+#   full:  <OUT>/full.tsv  (F64, the repeat of k = 1, and k = 2..96; --job-name=e96data_full --time=4:15:00, E96D-AMENDMENT-1). It refuses
 #          without the dry DONE and a passing GATE.json, both at this pin, and still needs the director's go.
 # Nothing runs before the LL5D readout and the director's go. The cap binds through Slurm's --time on one exclusive
 # node. A failed task exits 1, so xargs keeps launching the rest of the queue (ENS1's guard, unchanged; audit e6); the
