@@ -80,8 +80,11 @@ exposure dates computed by the rule below.
   - MP-1 S1, which includes the zero loops, has no HPSS or CFS copy (FD-CT-RETENTION §0, §2).
   <!-- absence-ok: each "no copy" here is FD-CT-RETENTION's own covering search (its §2 Search line), cited, not re-run -->
   - Every other group's copies were not checked.
-- **HPSS space:** 89.2 GiB was free on 2026-10-28 (FD-CT-RETENTION §3). The 2D per-playlist universe files (171.1 GB)
-  and 1A's AnaTuples (787.5 GB) do not fit **(arithmetic)**. The zero loops (4.8 GB) and every small npz group would.
+- **HPSS space.**
+  - **Joseph, 2026-11-11 (relayed by the director):** "HPSS usage is 449.3 GB of 512 GB", so about 62.7 GB is free.
+    That is less than the 89.2 GiB FD-CT-RETENTION §3 measured on 2026-10-28, which this figure supersedes.
+  - The 2D per-playlist universe files (171.1 GB) and 1A's AnaTuples (787.5 GB) do not fit **(arithmetic)**.
+  - The small and medium groups Joseph has decided to archive (about 13 GB) do fit, with margin.
 
 ## 3. Not covered
 

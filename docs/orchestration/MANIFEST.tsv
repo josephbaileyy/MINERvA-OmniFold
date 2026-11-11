@@ -13400,6 +13400,12 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/tim
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/timing-20261106/timing.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/timing-20261106/uproot-run.out	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/timing-20261106/uproot.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/runperiod-loc-20261110/RPL-BINDING-1.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/runperiod-loc-20261110/RPL-DECLARATION.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/runperiod-loc-20261110/iii/README.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/runperiod-loc-20261110/iii/arxiv_anc_README.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/runperiod-loc-20261110/iii/iii_hit_counts.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/runperiod-loc-20261110/iii/iii_search.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/stab/gatesim/a1_dry_tasks.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/stab/gatesim/a1_dry_tasks.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/stab/gatesim/gatesim2.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
