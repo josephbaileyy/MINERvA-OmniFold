@@ -51,3 +51,21 @@ here from Ben directly.
   preservation copy of the same bytes.
 
 Nothing is submitted, deposited or tagged.
+
+## Correction (director, 2026-11-11, after the decision): the copy already exists, and no new copy is made
+
+This decision rested on the at-risk record's account, which did not search for existing copies of 1A
+(`AT-RISK.md`: "Every other group's copies were not checked"). The valid-region lane then found, in committed records,
+that all 294 1A AnaTuples already have sha256-verified copies in m3246's CFS:
+- **data (253):** in `prd-release-preservation-20261008/anatuple-data-20261009/`, verified 2026-10-09
+  (`docs/publication/corrections-20261008/RECORD-20261009-anatuple-data-cfs-copy.md`);
+- **MC (41):** in `mc-1A-preservation-20261014/`, verified on dtn01 2026-10-15 on Joseph's "yes you can copy them"
+  (`state/2d-closeout/preservation-20261014/cfs-copy-1A-mc/REPORT.md`).
+A local cross-check matched all 294 by size and mtime to the pscratch files. A stat-only check from dtn01 on 2026-11-11
+then found all 294 CFS copies present, with size and mtime equal to the manifest
+(`fd/retention-20261110/cfs-1a-check-20261111/`, PR #1057).
+
+**So item 2's copy is not made.** No copy script was written or run. The preservation goal of item 1 is already met
+by the October copies. A second copy would add 0.79 TB of duplicate bytes to the shared space. Items 3 and 4 stand as
+written. The data copy is mode 640, readable only by Joseph's own group; making it group-readable is Joseph's call, as
+the 10-09 record says.
