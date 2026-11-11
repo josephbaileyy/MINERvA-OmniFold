@@ -194,7 +194,7 @@ def numerals(t):
     t = strip_comments(t)
     t = "\n".join(l for l in t.split("\n") if not re.match(r"\s*\\begin\{tabular\*?\}", l))   # column widths
     t = re.sub(r"\d+(?:\.\d+)?\s*(?:pt|cm|mm|em|ex|in|bp)\b", " ", t)     # TeX lengths (\tabcolsep{2.25pt}, \hspace{5pt})
-    t = re.sub(r"\\(fvval|ref\*?|nsec|napp|cite|label|eqref|includegraphics|fvpending|fvgroup|ssecc?|stab)(\[[^]]*\])?\{[^}]*\}(\{[^}]*\})?", " ", t)
+    t = re.sub(r"\\(fvval|ref\*?|nsec|napp|cite|label|eqref|includegraphics|fvpending|fvgroup|ssecc?|stab|holdrec)(\[[^]]*\])?\{[^}]*\}(\{[^}]*\})?", " ", t)   # holdrec: a record path in a draft-only hold (2026-11-11)
     t = re.sub(r"\\fvcase\{[^}]*\}\{[^}]*\}", " ", t)
     t = re.sub(r"\\(begin|end)\{[^}]*\}(\{[^}]*\})?", " ", t)
     t = re.sub(r"\\[A-Za-z]+", " ", t)

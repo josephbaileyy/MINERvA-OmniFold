@@ -2098,3 +2098,35 @@ was the mislabel. The director accepted bd08582ee, the hand re-cites of ALIASES 
 - **Rates after the fixes** (per 1,000 words). Paper unchanged: 0.10 / 0 / 0.59. Supplement: ", not X" 0.21 (3),
   corrective 0.07 (1), semicolon chains 0.07 (1, Fig. S1's restored caption). All are under the field maximum.
 - **Checks:** both rater copies PASS. check_round with the fill test runs on the committed head before the push.
+
+## 2026-11-11 — "Full record" reworded (Joseph's adoption of the independent consult's recommendation, via the director)
+
+- **Paper, section 1's last sentence.** "The supplementary material gives the definitions, and the companion analysis
+  note gives the full record" now reads: "The supplementary material provides additional definitions, test designs and
+  results. The companion analysis note documents the analysis's development and provides further technical detail in
+  the sections cited here." The director's text says "The Supplement". The paper calls it "supplementary material"
+  everywhere else, and its \ssec pointers print that form, so the paper's own term is kept. The note's \cite is kept.
+- **Supplement opening.** The blanket claim ("Its text is taken from the companion analysis note, which gives the full
+  record; …") and supplemental_body.tex's one sentence on shared text are replaced, once, in main_supplement.tex by the
+  director's three sentences.
+- **The section 7 hold.** Its checklist now lists each record's published place and its record, with the note at
+  NOTE_RELEASE_REV (acf934d71). The note carries:
+  - the sixteen-cell IBU (10.6);
+  - the 2D held-out-tune coverage (5.3);
+  - the rounding floor, the probe and the mechanism study (9.3, App. B.2);
+  - the two validity rules (10.5). The hold says that this section also prints the prior-spread results the paper
+    withholds.
+  - Items marked "only" have no counterpart in the note at that revision. The Search line beside the hold gives what was
+    searched.
+  - The records are printed through \holdrec (\url). check_round's numerals() skips its argument, since the hold prints
+    only in drafts.
+  - FD-PRR's and LL5D's own record names would print GONE tokens, so the hold cites the prior-retention readout and
+    DECISION-20261110-joseph-ll5d-rerun-16-cells.md.
+  - The note pointers inside the hold use "the note's section \ref*{N-…}", not \nsec: holddiff.py's hold span ends at
+    the first "]", which \nsec's "[14]" would print.
+  - note_release_labels.tex is regenerated at acf934d71 (53 labels; --check PASS).
+- **Meaning read** (fullrecord-read/pairs.tsv, 22 rows, base 4b02f445d). It caught one defect of my own, which is
+  fixed: M003 had kept "The supplementary material gives the definitions," before the new sentence. Every hold item was
+  checked against the note at acf934d71.
+- **Checks:** both rater copies PASS, with 0 Overfull; pointers 49 (7 new, in the hold); check_round PASS. The paper's
+  rates are 0.10 / 0 / 0.49. The fill test runs on the committed head before the push.
