@@ -1,12 +1,13 @@
 #!/bin/bash
-# emulate only: find . -printf '%M %s %P\n'
-if [ "$2" = -printf ]; then
+# emulate only the fetch's listing: find . [-path ./clone -prune -o] -printf '%M %s %P\n'
+for a in "$@"; do if [ "$a" = -printf ]; then
   exec python3 -I -c '
-import os, stat, sys
-for d, ds, fs in os.walk(".", followlinks=False):
+import os, stat
+print(stat.filemode(os.lstat(".").st_mode), os.lstat(".").st_size, "")
+for d, ds, fs in os.walk("."):
+    if d == ".": ds[:] = [x for x in ds if x != "clone"]
     for n in ds + fs:
         p = os.path.join(d, n); st = os.lstat(p)
-        print(stat.filemode(st.st_mode), st.st_size, os.path.relpath(p, "."))
-st = os.lstat("."); print(stat.filemode(st.st_mode), st.st_size, "")'
-fi
+        print(stat.filemode(st.st_mode), st.st_size, os.path.relpath(p, "."))'
+fi; done
 exec /usr/bin/find "$@"

@@ -1,11 +1,11 @@
 #!/bin/bash
-# RPD-RECO flux connect 1: the Mac-side launcher, in rpd_mnv_check2_launch.sh's pattern. One ssh session per call,
+# RPD-RECO flux connect 1 (revision 2): the Mac-side launcher, in rpd_mnv_check2_launch.sh's pattern. One ssh session per call,
 # entering at saul.nersc.gov and hopping to NODE. For fence, connect and fetch, stdin carries the script through both
 # hops. On NODE the /dev/shm copy's sha256 must equal the approved one, or NODE deletes the copy and exits 8 before
 # anything runs. ssh's rc is read unpiped.
 # Usage: bash rpd_flux1_launch.sh survey  <new empty session dir> <node> [<node> ...]   (read-only load survey)
 #        bash rpd_flux1_launch.sh fence   <new empty session dir> <login node>   (the committed cov2d_fence.sh)
-#        bash rpd_flux1_launch.sh connect <new empty session dir> <login node>   (launches the detached runner)
+#        bash rpd_flux1_launch.sh connect <new empty session dir> <login node>   (prepares and submits job rpd_flux1)
 #        bash rpd_flux1_launch.sh fetch   <new empty session dir> <login node>   (any login node; exit 10 if unfinished)
 MODE=${1:?survey|fence|connect|fetch}; F=${2:?session dir}; shift 2
 HERE=$(cd "$(dirname "$0")" && pwd)
@@ -17,7 +17,7 @@ if [ "$MODE" = survey ]; then
   R=""
   for n in "$@"; do
     case "$n" in login[0-9][0-9]) ;; *) echo "STOP: '$n' is not a login node name"; exit 9 ;; esac
-    R="$R echo \"== $n\"; ssh -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no $n 'cat /proc/loadavg; nproc; free -g | sed -n 2p; test -e /dev/shm/limres-rpd-flux1 && echo WORKDIR-EXISTS || echo workdir-absent; test -e /pscratch/sd/j/josephrb/rpd-reco-flux-20261111 && echo ROOT-EXISTS || echo root-absent';"
+    R="$R echo \"== $n\"; ssh -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no $n 'cat /proc/loadavg; nproc; test -e /pscratch/sd/j/josephrb/rpd-reco-flux-20261111 && echo ROOT-EXISTS || echo root-absent';"
   done
   $SSH saul.nersc.gov "$R" > "$F/survey.out" 2> "$F/survey.err"
   rc=$?; echo "ssh rc=$rc"; cat "$F/survey.out"; exit $rc

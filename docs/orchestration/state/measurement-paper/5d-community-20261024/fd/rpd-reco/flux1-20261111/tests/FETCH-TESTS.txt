@@ -1,15 +1,53 @@
 MODE unfinished rc=10 tar=0 self_removed=yes shm_left=
-   NOT FINISHED: no connect.rc. connect.log       60 bytes,        3 lines, modified 2026-11-11T13:44:08Z
-MODE full rc=0 tar=1 self_removed=yes shm_left=
-   send files 12, bytes 999
-   C3 CHECK: PASS
-   c3 check rc=0
-   REDACTION CHECK: PASS
+   NOT FINISHED: no job.rc; squeue:
+MODE timeout rc=0 tar=1 self_removed=yes shm_left=
+   FINISHED WITHOUT job.rc: sacct state TIMEOUT
+   factor products recorded 0 differing 0
+   PROTECTED READ: not applicable (no private record)
+   send files 17, bytes 548
+   C3 not applicable: custody wrote no private record (no .rpd-private, no run/prestage-reference.json)
+   REDACTION CHECK not applicable: no private record exists
    check rc=0
+   sent 19 files, 76 KiB; factor products sent: 0
    sent: ./c3-check.txt
    sent: ./connect.log
-   sent: ./connect.rc
+   sent: ./exception-stat-outer.txt
+   sent: ./fence-overlap.txt
+   sent: ./job-host.txt
+   sent: ./job.err
+   sent: ./job.id
+   sent: ./job.out
+   sent: ./protected-read.json
    sent: ./redaction-check.txt
+   sent: ./rpd_flux1_job.sh
+   sent: ./run/cov2d-fence.json
+   sent: ./run/extract-config.json
+   sent: ./run/flux-custody.json
+   sent: ./run/flux-extract.json
+   sent: ./run/flux-extract.strace
+   sent: ./run/real-mnv-check/real-mnv-check.json
+   sent: ./run/trace-policy.json
+   sent: ./strace-probe.txt
+MODE full rc=0 tar=1 self_removed=yes shm_left=
+   factor products recorded 12 differing 0
+   PROTECTED READ: PASS
+   send files 19, bytes 6601
+   C3 CHECK: PASS
+   REDACTION CHECK: PASS
+   check rc=0
+   sent 21 files, 84 KiB; factor products sent: 0
+   sent: ./c3-check.txt
+   sent: ./connect.log
+   sent: ./exception-stat-outer.txt
+   sent: ./fence-overlap.txt
+   sent: ./job-host.txt
+   sent: ./job.err
+   sent: ./job.id
+   sent: ./job.out
+   sent: ./job.rc
+   sent: ./protected-read.json
+   sent: ./redaction-check.txt
+   sent: ./rpd_flux1_job.sh
    sent: ./run/cov2d-fence.json
    sent: ./run/extract-config.json
    sent: ./run/flux-custody.json
@@ -18,27 +56,38 @@ MODE full rc=0 tar=1 self_removed=yes shm_left=
    sent: ./run/prestage-reference.json
    sent: ./run/real-mnv-check/real-mnv-check.json
    sent: ./run/trace-policy.json
-   sent: ./runner.sh
    sent: ./strace-probe.txt
 MODE leak rc=7 tar=0 self_removed=yes shm_left=
-   send files 12, bytes 1043
+   factor products recorded 0 differing 0
+   PROTECTED READ: PASS
+   send files 19, bytes 3359
    C3 CHECK: PASS
-   c3 check rc=0
    REDACTION CHECK: FAIL
    check rc=1
    STOP: the redaction check did not pass; nothing is sent
 MODE orphan rc=7 tar=0 self_removed=yes shm_left=
-   send files 11, bytes 319
+   factor products recorded 0 differing 0
    STOP: .rpd-private exists without run/prestage-reference.json; nothing is sent
 MODE nopriv rc=0 tar=1 self_removed=yes shm_left=
-   send files 11, bytes 319
+   factor products recorded 0 differing 0
+   PROTECTED READ: not applicable (no private record)
+   send files 18, bytes 608
    C3 not applicable: custody wrote no private record (no .rpd-private, no run/prestage-reference.json)
    REDACTION CHECK not applicable: no private record exists
    check rc=0
+   sent 20 files, 80 KiB; factor products sent: 0
    sent: ./c3-check.txt
    sent: ./connect.log
-   sent: ./connect.rc
+   sent: ./exception-stat-outer.txt
+   sent: ./fence-overlap.txt
+   sent: ./job-host.txt
+   sent: ./job.err
+   sent: ./job.id
+   sent: ./job.out
+   sent: ./job.rc
+   sent: ./protected-read.json
    sent: ./redaction-check.txt
+   sent: ./rpd_flux1_job.sh
    sent: ./run/cov2d-fence.json
    sent: ./run/extract-config.json
    sent: ./run/flux-custody.json
@@ -46,14 +95,79 @@ MODE nopriv rc=0 tar=1 self_removed=yes shm_left=
    sent: ./run/flux-extract.strace
    sent: ./run/real-mnv-check/real-mnv-check.json
    sent: ./run/trace-policy.json
-   sent: ./runner.sh
    sent: ./strace-probe.txt
 MODE fpword rc=7 tar=0 self_removed=yes shm_left=
-   send files 11, bytes 310
+   factor products recorded 0 differing 0
+   PROTECTED READ: not applicable (no private record)
+   send files 18, bytes 599
    C3 not applicable: custody wrote no private record (no .rpd-private, no run/prestage-reference.json)
    REDACTION CHECK not applicable: no private record exists
    check rc=1
    STOP: the redaction check did not pass; nothing is sent
 MODE big rc=7 tar=0 self_removed=yes shm_left=
-   send files 12, bytes 73401285
+   factor products recorded 0 differing 0
+   PROTECTED READ: PASS
+   send files 19, bytes 73403599
    STOP: over 64 MiB; nothing is sent
+MODE preadmissing rc=11 tar=1 self_removed=yes shm_left=
+   factor products recorded 12 differing 0
+   PROTECTED READ: FAIL
+     problem: staging_utc_ns is missing or malformed
+   send files 19, bytes 6614
+   C3 CHECK: PASS
+   REDACTION CHECK: PASS
+   check rc=0
+   PROTECTED READ FAILED: the records were sent; the failure is in protected-read.json
+   sent 21 files, 84 KiB; factor products sent: 0
+   sent: ./c3-check.txt
+   sent: ./connect.log
+   sent: ./exception-stat-outer.txt
+   sent: ./fence-overlap.txt
+   sent: ./job-host.txt
+   sent: ./job.err
+   sent: ./job.id
+   sent: ./job.out
+   sent: ./job.rc
+   sent: ./protected-read.json
+   sent: ./redaction-check.txt
+   sent: ./rpd_flux1_job.sh
+   sent: ./run/cov2d-fence.json
+   sent: ./run/extract-config.json
+   sent: ./run/flux-custody.json
+   sent: ./run/flux-extract.json
+   sent: ./run/flux-extract.strace
+   sent: ./run/prestage-reference.json
+   sent: ./run/real-mnv-check/real-mnv-check.json
+   sent: ./run/trace-policy.json
+   sent: ./strace-probe.txt
+MODE otheroverlap rc=11 tar=1 self_removed=yes shm_left=
+   factor products recorded 12 differing 0
+   PROTECTED READ: FAIL
+     problem: other staged originals overlap protected paths: ['$SP/flux1/t/protected/other/x.npz']
+   send files 19, bytes 7100
+   C3 CHECK: PASS
+   REDACTION CHECK: PASS
+   check rc=0
+   PROTECTED READ FAILED: the records were sent; the failure is in protected-read.json
+   sent 21 files, 84 KiB; factor products sent: 0
+   sent: ./c3-check.txt
+   sent: ./connect.log
+   sent: ./exception-stat-outer.txt
+   sent: ./fence-overlap.txt
+   sent: ./job-host.txt
+   sent: ./job.err
+   sent: ./job.id
+   sent: ./job.out
+   sent: ./job.rc
+   sent: ./protected-read.json
+   sent: ./redaction-check.txt
+   sent: ./rpd_flux1_job.sh
+   sent: ./run/cov2d-fence.json
+   sent: ./run/extract-config.json
+   sent: ./run/flux-custody.json
+   sent: ./run/flux-extract.json
+   sent: ./run/flux-extract.strace
+   sent: ./run/prestage-reference.json
+   sent: ./run/real-mnv-check/real-mnv-check.json
+   sent: ./run/trace-policy.json
+   sent: ./strace-probe.txt

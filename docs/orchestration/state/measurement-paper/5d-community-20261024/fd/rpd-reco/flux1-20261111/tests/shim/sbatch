@@ -1,0 +1,5 @@
+#!/bin/bash
+# stub: record the script and run it in the background as the "job"; print a jobid
+echo "$*" > "$PWD/.sbatch-args"
+SLURM_JOB_ID=4242 nohup bash "${@: -1}" > "$PWD/job.out" 2> "$PWD/job.err" < /dev/null &
+echo 4242

@@ -1,11 +1,11 @@
 #!/bin/bash
-# RPD-RECO flux connect 1: the Mac-side launcher, in rpd_mnv_check2_launch.sh's pattern. One ssh session per call,
+# RPD-RECO flux connect 1 (revision 2): the Mac-side launcher, in rpd_mnv_check2_launch.sh's pattern. One ssh session per call,
 # entering at saul.nersc.gov and hopping to NODE. For fence, connect and fetch, stdin carries the script through both
 # hops. On NODE the /dev/shm copy's sha256 must equal the approved one, or NODE deletes the copy and exits 8 before
 # anything runs. ssh's rc is read unpiped.
 # Usage: bash rpd_flux1_launch.sh survey  <new empty session dir> <node> [<node> ...]   (read-only load survey)
 #        bash rpd_flux1_launch.sh fence   <new empty session dir> <login node>   (the committed cov2d_fence.sh)
-#        bash rpd_flux1_launch.sh connect <new empty session dir> <login node>   (launches the detached runner)
+#        bash rpd_flux1_launch.sh connect <new empty session dir> <login node>   (prepares and submits job rpd_flux1)
 #        bash rpd_flux1_launch.sh fetch   <new empty session dir> <login node>   (any login node; exit 10 if unfinished)
 MODE=${1:?survey|fence|connect|fetch}; F=${2:?session dir}; shift 2
 HERE=$(cd "$(dirname "$0")" && pwd)
@@ -17,7 +17,7 @@ if [ "$MODE" = survey ]; then
   R=""
   for n in "$@"; do
     case "$n" in login[0-9][0-9]) ;; *) echo "STOP: '$n' is not a login node name"; exit 9 ;; esac
-    R="$R echo \"== $n\"; ssh -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no $n 'cat /proc/loadavg; nproc; free -g | sed -n 2p; test -e /dev/shm/limres-rpd-flux1 && echo WORKDIR-EXISTS || echo workdir-absent; test -e /pscratch/sd/j/josephrb/rpd-reco-flux-20261111 && echo ROOT-EXISTS || echo root-absent';"
+    R="$R echo \"== $n\"; ssh -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no $n 'cat /proc/loadavg; nproc; test -e /pscratch/sd/j/josephrb/rpd-reco-flux-20261111 && echo ROOT-EXISTS || echo root-absent';"
   done
   $SSH saul.nersc.gov "$R" > "$F/survey.out" 2> "$F/survey.err"
   rc=$?; echo "ssh rc=$rc"; cat "$F/survey.out"; exit $rc
@@ -26,8 +26,8 @@ NODE=${1:-}
 case "$MODE" in
   fence)   S="$TOP/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/tier2-20261110/t2a/code/cov2d_fence.sh"
            SHA=16a2a5cd5e36f0a3d48577afd3c4b1d4adebe6baf72fcf228d7c85275739754a ;;
-  connect) S="$HERE/rpd_flux1_connect.sh"; SHA=d5bc3b0be4235c4dca04b0317342bef2d903299d5affdf43c924520557d30119 ;;
-  fetch)   S="$HERE/rpd_flux1_fetch.sh"; SHA=fc2a780bcdea5c4567d297a6297eff055b531015cc4265b88b0138744edf491d ;;
+  connect) S="$HERE/rpd_flux1_connect.sh"; SHA=f5bc999483bc2c2151b96361c526fc4dad98c8986eda569c9fb37710b48908d0 ;;
+  fetch)   S="$HERE/rpd_flux1_fetch.sh"; SHA=58079f4824de9c0aaecdbc2cb54617bd4153f1210edc3ca0354e72fc0ebb7445 ;;
   *) echo "STOP: mode $MODE"; exit 9 ;;
 esac
 case "$NODE" in login[0-9][0-9]) ;; *) echo "STOP: '$NODE' is not a login node name"; exit 9 ;; esac

@@ -1,0 +1,18 @@
+e2e connect rc=0
+job.rc: rc=7 end=2026-11-11T14:15:16Z
+job /dev/shm entries left: []
+e2e fetch rc=0
+== refusal: an rpd job queued
+rpd-queued connect rc=3
+STOP: a cov2d/t2a/rpd job is queued or running
+== rpd-flux1-connect rc=3 2026-11-11T14:15:17Z
+== refusal: TimeLimit differs
+timelimit connect rc=6
+MISMATCH: TimeLimit=03:00:00 not in scontrol's record
+scancel rc=0 for 4242
+STOP: the job's record differs; cancelled
+scancel shim log: scancel 4242
+== refusal: second connect on the same root
+second connect rc=9
+STOP: $SP/flux1/te/main/root exists
+== rpd-flux1-connect rc=9 2026-11-11T14:16:02Z
