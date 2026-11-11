@@ -13408,6 +13408,14 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/runperiod-lo
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/runperiod-loc-20261110/i-bandsize/connect/login-survey.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/runperiod-loc-20261110/i-bandsize/connect/rpl_band_launch.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/runperiod-loc-20261110/i-bandsize/connect/rpl_bandsize.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/runperiod-loc-20261110/i-bandsize/matsrc/MuonSystematics.cxx.numbered.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/runperiod-loc-20261110/i-bandsize/matsrc/fetch.session.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/runperiod-loc-20261110/i-bandsize/matsrc/matsrc.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/runperiod-loc-20261110/i-bandsize/matsrc/matsrc.log.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/runperiod-loc-20261110/i-bandsize/matsrc/matsrc.session.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/runperiod-loc-20261110/i-bandsize/matsrc/rpl_mat_launch.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/runperiod-loc-20261110/i-bandsize/matsrc/rpl_matsrc.cluster-copy.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/runperiod-loc-20261110/i-bandsize/matsrc/rpl_matsrc.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/runperiod-loc-20261110/iii/README.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/runperiod-loc-20261110/iii/arxiv_anc_README.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/runperiod-loc-20261110/iii/iii_hit_counts.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes

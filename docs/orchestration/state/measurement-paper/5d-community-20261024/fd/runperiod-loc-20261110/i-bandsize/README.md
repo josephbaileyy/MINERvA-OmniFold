@@ -56,23 +56,65 @@ playlists, with p = √(p_T² + p_∥²) from `sim` / `sim_pz`. It is computed o
   - The per-playlist values are in `cluster/band.json` `files.<PL>`.
 - **The p_∥ strata are descriptions.** Only the overall MINOS value enters (i)'s outcomes, after P-RPD.
 
+## MAT-MINERvA's source of the shifts (`matsrc/`)
+
+**The quote the declaration asks for** (`RPL-DECLARATION.md` inputs row "(i) the band's size") was made under the
+director's GO of 2026-11-11, at exactly `rpl_matsrc.sh` `a35c07f0` and `rpl_mat_launch.sh` `2f595e6b`.
+- **The run:** login27, 2026-11-11T02:37:03Z, `MATSRC OK []`, rc 0 (`matsrc/matsrc.log.txt`).
+  - The cluster's copy of the script is byte-identical to the approved one.
+  - The fetch's `post.tar.gz` is `721e0446…` (`matsrc/fetch.session.txt`).
+- **The one file read:**
+  `/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/MAT-MINERvA/universes/MuonSystematics.cxx`.
+  - 9,150 bytes, sha256 `85780aeed6ce8af2b033f2c78d475fc39ed3c8c530d39b804140da96264143af`.
+  - It was read by O_NOATIME with stat unchanged (`matsrc/matsrc.json`).
+- **The checkout's commit:** `50d7631416d1c93edd4db6886a2ca29da64fee60`, from `.git/HEAD` (`ref: refs/heads/main`)
+  and `.git/refs/heads/main`, both read the same way. No git command ran.
+- **The full file, line-numbered:** `matsrc/MuonSystematics.cxx.numbered.txt`. Below, `MuonSystematics.cxx` means
+  that file at sha256 `85780aee…`.
+
+**What that file shows:**
+- **The bands' members.** `Muon_Energy_MINOS` holds `MuonUniverseMinos` at nsigma −1 and +1 (`MuonSystematics.cxx:50-51`).
+  `Muon_Energy_MINERvA` holds `MuonUniverseMinerva` at −1 and +1 (`:26-27`).
+- **The MINOS shift** (`GetMuonMomentumShiftMinos`, `:121-152`):
+  - It is applied to the MINOS component of the muon momentum, `GetPmuMinos` (`:134`, `:155-160`), not to the total.
+  - The range term is `minosCVMomentum*NSFDefaults::MinosMuonPRange_Err` (`:136`).
+  - A curvature term is added in quadrature only when `<AnaTool>_minos_used_curvature` is true (`:130-131`,
+    `:140-147`). It is `NSFDefaults::MinosMuonHighPCurvature_Err` when `minosCVMomentum` exceeds 1000 (in `GetPmuMinos`'s units, which this file does
+    not state) and
+    `NSFDefaults::MinosMuonLowPCurvature_Err` below (`:141`).
+  - The shift is `m_nsigma` × that quadrature sum (`:149`).
+- **The MINERvA shift** (`GetMuonMomentumShiftMinerva`, `:68-95`):
+  - It is the quadrature sum of `NSFDefaults::dEdxUncertainty` and `NSFDefaults::MaterialAssayUncertainty`, or their
+    `NoNuke` values outside the nuclear targets (`:80-90`).
+  - It is applied to the MINERvA component, `GetPmuMinerva` (`:98-103`).
+- **The MINOS band's flux weight.** The band also carries a flux-weight change in ME playlists
+  (`GetFluxAndCVWeight` `:163-186`, `GetWeightRatioToCV` `:189-204`, via `GetSysUniFluxWeightCorrection` `:184`,
+  `:202`). σ_band measures only the lateral shift.
+
+**The magnitudes are not in this file.** The five `NSFDefaults::` constants are defined elsewhere in MAT-MINERvA.
+Under the GO's terms ("If the magnitude is defined in another file, say so and stop; a second file needs its own go"),
+they are not quoted here.
+- So the quote stands as **the construction** only: which component, which flag and which terms.
+- It does not give the error values.
+
 ## Not done here
 
-- **MAT-MINERvA's source of the shifts,** quoted by file:line@sha from the cluster checkout (`RPL-DECLARATION.md`
-  inputs row "(i) the band's size"). This script does not read that source, so that quote remains to be made.
+- **The `NSFDefaults::` values** behind the shifts, which live in a second MAT file. Reading it needs its own go.
 - **Check (i)'s scale fit α̂ ± σ_α,** and the published 1 % muon-energy scale placed beside σ_band. These wait for
   P-RPD.
 
 ## Licence
 
 **CITABLE FOR:** the size of the Muon_Energy_MINOS and Muon_Energy_MINERvA ±1σ fractional muon-momentum shifts in our
-MC (the weighted median over the read rows, overall and in the two p_∥ strata), as the comparator check (i) declares.
+MC (the weighted median over the read rows, overall and in the two p_∥ strata), as the comparator check (i) declares;
+and how MAT-MINERvA builds those shifts, at `MuonSystematics.cxx` sha256 `85780aee…`, checkout commit `50d76314`.
 
 **NOT CITABLE FOR:**
 - any statement about the data, or about the per-playlist data step;
 - check (i)'s outcome, or whether a per-period scale lies within the band;
 - that the band covers or explains the step (the band shifts every playlist alike: `RPL-DECLARATION.md`, audit M3);
 - a random-sample estimate over the whole MC (the rows are the first in file order);
-- the universe files' integrity (no digest was taken).
+- the universe files' integrity (no digest was taken);
+- the values of the `NSFDefaults::` error constants (not read).
 
 Nothing is submitted, deposited or tagged.
