@@ -1,4 +1,4 @@
-node login99 2026-11-11T14:28:34Z; connect script sha256 2bc77d543f40740924feec1cd6643ccd94f969df5136508ea2817f46a347d4e0
+node login99 2026-11-11T14:40:39Z; connect script sha256 7eb6cc8550740f2837d30b70a0c6a36a9672ce33b0478aaceddd28aff9b9abd5
 == 2. the fence (cov2d*, t2a*, rpd* refuse)
 squeue: 61078463|ll5d_gate_G18|PENDING
 FENCE: clear
@@ -27,8 +27,8 @@ FENCE allowed exception: MAT MPARAMFILES /pscratch/sd/j/josephrb/MINERvA-OmniFol
 FENCE OVERLAP: CLEAR (allowed 1, stops 0)
 overlap fence rc=0
 == 6. the job
-job script sha256 3eb2aa2b4d77ecc2992c1bf969e3dd666c30834306811575b07915a3a923c718
-sbatch rc=0 jobid [4242] 2026-11-11T14:28:51Z
+job script sha256 343c6aebbe808cee5b8bc519b7b8a40346972603610991ee085f847745e1169c
+sbatch rc=0 jobid [4242] 2026-11-11T14:40:58Z
 JobId=4242
 JobName=rpd_flux1
 UserId=josephrb(1)
@@ -41,4 +41,4 @@ NumCPUs=4
 MinMemoryNode=16G
 JobState=PENDING
 job 4242 submitted and checked; the fetch reports it
-== rpd-flux1-connect rc=0 2026-11-11T14:28:51Z
+== rpd-flux1-connect rc=0 2026-11-11T14:40:58Z

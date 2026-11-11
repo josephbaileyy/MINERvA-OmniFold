@@ -13376,6 +13376,7 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flu
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/tests/FETCH-TESTS.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/tests/build_fixture.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/tests/check_candidate.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/tests/shim-fork/setsid	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/tests/shim/base64	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/tests/shim/fakestrace	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/tests/shim/find	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes

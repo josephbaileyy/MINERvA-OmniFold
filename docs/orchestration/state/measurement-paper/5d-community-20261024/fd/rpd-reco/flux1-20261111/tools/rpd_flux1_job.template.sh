@@ -78,13 +78,32 @@ outer() {  # stat only (no open): the exception file, for the whole job window
 outer before
 echo "== the wrapper $(date -u +%FT%TZ)"
 # In its own process group (setsid), in the background, so the trap runs during wait and can stop the whole group.
-setsid bash /dev/shm/limres-rpd-flux1/repo/nd-unfolding/fd_rpd_reco_flux_connect.sh /dev/shm/limres-rpd-flux1/repo \
+# The pgid check (f3): the child holds at a gate until this shell has seen its process group id equal its pid ($!),
+# that is, setsid ran in place. A mismatch (setsid forked) STOPs with cause=pgid-check before the wrapper starts. The
+# gate gives up when /dev/shm/limres-rpd-flux1 is removed or after 30 s, so a forked waiter cannot linger.
+setsid bash -c 'for _ in $(seq 1 150); do [ -e /dev/shm/limres-rpd-flux1/wrapper.go ] && exec bash "$@"; [ -d /dev/shm/limres-rpd-flux1 ] || exit 1; sleep 0.2; done; exit 1' rpd_flux1_gate \
+  /dev/shm/limres-rpd-flux1/repo/nd-unfolding/fd_rpd_reco_flux_connect.sh /dev/shm/limres-rpd-flux1/repo \
   /dev/shm/limres-rpd-flux1/production-config.ready.json \
   cde8d02904b0257d82745b03fd61c1aef1a50270f14f36ad7f38c8b3f235f50b \
   /pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run \
   /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3 > /pscratch/sd/j/josephrb/rpd-reco-flux-20261111/connect.log 2>&1 &
 child=$!
-echo "wrapper pid/pgid $child"
+pg=""
+for _ in $(seq 1 25); do  # up to 5 s for setsid() to take effect; stop early if the process is gone
+  pg=$(ps -o pgid= -p "$child" 2>/dev/null | tr -d ' ')
+  [ "$pg" = "$child" ] && break
+  kill -0 "$child" 2>/dev/null || break
+  sleep 0.2
+done
+echo "wrapper pid $child; its process group [$pg]"
+if [ "$pg" != "$child" ]; then
+  echo "STOP: the wrapper's process group [$pg] is not its pid $child (setsid did not run in place); the wrapper was not started"
+  cause=pgid-check
+  kill -TERM -- "$child" 2>/dev/null
+  fin 8
+fi
+echo "wrapper pid/pgid $child (checked)"
+touch /dev/shm/limres-rpd-flux1/wrapper.go
 wait "$child"
 rc=$?
 echo "== wrapper rc=$rc $(date -u +%FT%TZ)"

@@ -5,7 +5,9 @@
 # job and refuses at check-mat-setup (no MAT here). Then three refusals: an rpd job queued (rc 3), a TimeLimit that
 # differs from 03:00:00 (scancel, rc 6), and a second connect on an existing root (rc 9). Last, the dummy TERM: a
 # stand-in MAT_PYTHON (shim/hangpython) hangs at the wrapper's first call; TERM to the job shell must stop the
-# wrapper's process group, remove the job's /dev/shm directory and write job.rc with cause=signal-TERM.
+# wrapper's process group, remove the job's /dev/shm directory and write job.rc with cause=signal-TERM. Then the
+# forced fork (f3): a setsid that forks (shim-fork/setsid) must STOP the job with cause=pgid-check, rc 8, before the
+# wrapper starts (connect.log empty, no run directory), remove /dev/shm and leave no gate process behind.
 SP=/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/7e3f49f7-e8e4-452d-b380-399d4f6c529e/scratchpad
 D=$SP/wtrc/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111
 SHIM=$D/tests/shim
@@ -47,7 +49,7 @@ cp "$W5/connect.sh" "$W5/self.sh"
 HANG_REAL_PY=$PY PATH=$SHIM:$PATH bash "$W5/connect.sh" "$W5/self.sh" > "$W5/connect-out.txt" 2>&1; echo "term-case connect rc=$?"
 for i in $(seq 1 90); do grep -q 'wrapper pid/pgid' "$W5/root/job.out" 2>/dev/null && break; sleep 1; done
 sleep 3
-jp=$(cat "$W5/root/.job.pid"); child=$(awk '/wrapper pid\/pgid/ {print $NF}' "$W5/root/job.out")
+jp=$(cat "$W5/root/.job.pid"); child=$(awk '/wrapper pid\/pgid/ {print $3}' "$W5/root/job.out")
 echo "job shell pid $jp; wrapper pgid $child; processes in the wrapper's group before TERM: $(pgrep -g "$child" | wc -l | tr -d ' ')"
 echo "/dev/shm entries before TERM: [$(ls -A "$W5/shm")]"
 t0=$(python3 -c 'import time; print(time.time())')
@@ -58,3 +60,12 @@ echo "processes in the wrapper's group after: $(pgrep -g "$child" | wc -l | tr -
 echo "/dev/shm entries after TERM: [$(ls -A "$W5/shm")]"
 echo "job-host.txt:"; cat "$W5/root/job-host.txt"
 grep -E '^== caught|removed ' "$W5/root/job.out"
+echo "== the forced fork (f3)"
+W6=$T/fork; mkdir -p "$W6/shm"; mk "$W6"; cp "$W6/connect.sh" "$W6/self.sh"
+PATH=$D/tests/shim-fork:$SHIM:$PATH bash "$W6/connect.sh" "$W6/self.sh" > "$W6/connect-out.txt" 2>&1; echo "fork-case connect rc=$?"
+for i in $(seq 1 90); do [ -f "$W6/root/job.rc" ] && break; sleep 1; done
+sleep 2
+echo "job.rc: $(cat "$W6/root/job.rc" 2>&1)"
+grep -E '^wrapper pid|^STOP|removed ' "$W6/root/job.out"
+echo "connect.log bytes: $(wc -c < "$W6/root/connect.log" | tr -d ' '); run directory: $([ -e "$W6/root/run" ] && echo present || echo absent)"
+echo "/dev/shm entries after: [$(ls -A "$W6/shm")]; gate processes left: $(pgrep -f rpd_flux1_gate | wc -l | tr -d ' ')"

@@ -26,7 +26,7 @@ NODE=${1:-}
 case "$MODE" in
   fence)   S="$TOP/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/tier2-20261110/t2a/code/cov2d_fence.sh"
            SHA=16a2a5cd5e36f0a3d48577afd3c4b1d4adebe6baf72fcf228d7c85275739754a ;;
-  connect) S="$HERE/rpd_flux1_connect.sh"; SHA=d7a73172aa280a5775db45f8a45223655650ef219d416a63bace846b38298b0e ;;
+  connect) S="$HERE/rpd_flux1_connect.sh"; SHA=34694c0d90fa09b4d93c123cdd191043216dc02261b8de5d3076af1eeda0cb6a ;;
   fetch)   S="$HERE/rpd_flux1_fetch.sh"; SHA=dfade48a535e722cc5febdbe7749f9d4435d3a83403d8158b74beefb797f67ea ;;
   *) echo "STOP: mode $MODE"; exit 9 ;;
 esac

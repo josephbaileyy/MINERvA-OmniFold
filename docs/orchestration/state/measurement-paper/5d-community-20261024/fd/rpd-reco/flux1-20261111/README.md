@@ -1,4 +1,4 @@
-# RPD-RECO flux connect 1: the READY candidate and the batch-job connect (revision 3, DRAFT for coverage-5b-audit, 2026-11-11)
+# RPD-RECO flux connect 1: the READY candidate and the batch-job connect (revision 4, DRAFT for coverage-5b-audit, 2026-11-11)
 
 **By** the limitation-resolver lane, at the director's request of 2026-11-11. **Draft only.** Nothing here has run on
 Perlmutter. The connect runs only on the director's go for its exact sha256, after these four steps:
@@ -10,7 +10,11 @@ Perlmutter. The connect runs only on the director's go for its exact sha256, aft
 P-RPD stays closed.
 <!-- absence-ok: the document's own status (a draft that has not run), not a claim that a result does not exist -->
 
-**Revision 3** answers the audit of revision 2 (`be222966`): R1 (major) and f1 (promoted to required by the director).
+**Revision 4** adds f3 (the audit's minor on revision 3, which was a GO; the director chose to fix it now). The job
+checks, before the wrapper starts, that the wrapper's process group id equals its pid. A forked `setsid` STOPs it with
+rc 8 and `cause=pgid-check`. See the traps in section 2.
+
+**Revision 3** answered the audit of revision 2 (`be222966`): R1 (major) and f1 (promoted to required by the director).
 - R1: the job's traps, described in section 2. TERM/INT and EXIT handlers remove its `/dev/shm` copy and write the cause.
 - f1: a factor product whose sha256 differs from `flux-extract.json` makes the fetch exit 12.
 - f2 (the fence uses prologue 5's recorded MAT prefixes) is on the follow-up list, in section 7.
@@ -115,6 +119,11 @@ outside the root and the job's `/dev/shm`.
   to about 1.3 GB. ROOT and MAT add about 1 GB, so the estimated peak is about 2.5 GB. 16G is about 6× that.
 - **Traps (R1).**
   - The wrapper runs in its own process group (`setsid`, in the background, with `wait`), so a trap runs at once.
+  - **The pgid check (f3).** The setsid'd child holds at a gate. The job shell polls, for up to 5 s, until the child's
+    process group id equals its pid (`ps -o pgid=`), then opens the gate (`wrapper.go` in the job's `/dev/shm`
+    directory), and only then does the child `exec` #848's wrapper. On a mismatch, as when `setsid` forked, the job
+    STOPs before the wrapper starts, with rc 8 and `cause=pgid-check`. The gate gives up when the directory is removed
+    or after 30 s, so a forked waiter cannot linger.
   - **TERM/INT.** These come from scancel, or from Slurm 300 s before the TimeLimit. The handler sends TERM to the
     wrapper's group, waits up to 10 s, sends KILL, then calls `fin` with rc 143 and `cause=signal-TERM` (or `-INT`).
   - **EXIT.** Any exit that did not pass through `fin` calls it with that rc and `cause=exit-trap`. The script's own
@@ -214,10 +223,10 @@ The job removes its own `/dev/shm` directory.
 
 | file | sha256 |
 |---|---|
-| [`rpd_flux1_connect.sh`](rpd_flux1_connect.sh) | `d7a73172aa280a5775db45f8a45223655650ef219d416a63bace846b38298b0e` |
+| [`rpd_flux1_connect.sh`](rpd_flux1_connect.sh) | `34694c0d90fa09b4d93c123cdd191043216dc02261b8de5d3076af1eeda0cb6a` |
 | [`rpd_flux1_fetch.sh`](rpd_flux1_fetch.sh) | `dfade48a535e722cc5febdbe7749f9d4435d3a83403d8158b74beefb797f67ea` |
-| [`rpd_flux1_launch.sh`](rpd_flux1_launch.sh) | `f0aa7c4be3ee26430ed7b9ca27714a0cd6627ca1fd777360729a20fcb300e700` |
-| `rpd_flux1_job.sh`, as the connect writes it (a literal heredoc) | `5d7e618a4923bf3c4379e4b5bd474b82ebc25d7b30fed46a2e8fb75d4af04441` |
+| [`rpd_flux1_launch.sh`](rpd_flux1_launch.sh) | `8354aece1061e783c4d970cfc86b298f5be956c1b3cec319cc250040ef316b35` |
+| `rpd_flux1_job.sh`, as the connect writes it (a literal heredoc) | `4198103b3a1d94eb7ccaf9b255c273371da73ea5268d08df38a390530081c699` |
 | [`tools/fence_overlap.py`](tools/fence_overlap.py) | `baa7630936db399abf57aa6edf9af1ffc053a3ee80c3730981a806fd8598a202` |
 | [`tools/protected_read.py`](tools/protected_read.py) | `309f59d46a4f200d924c98cd6beeece9a8c9a2b92cd493fb2e84f6b5693aa7f9` |
 | [`tools/c3_check.py`](tools/c3_check.py) | `aed41794b72d8b8de6580d75e0fc4467cad3bc73c5b11dfac44075783b461192` |
@@ -278,6 +287,10 @@ node-side tools in base64, and asserts the config's and the redaction check's sh
     job shell then left 0 of 2 processes in the wrapper's group. The job removed its `/dev/shm` copy and wrote `job.rc`
     `rc=143 cause=signal-TERM`, plus `job-host.txt`'s end line, in about 3 s. macOS has no `setsid`, so its shim calls
     `os.setsid()`, and the process-group kill is real.
+  - **The forced fork (f3).** `tests/shim-fork/setsid` forks, and its parent exits at once. The job STOPped with
+    `rc=8 cause=pgid-check` before the wrapper started: `connect.log` was empty and no run directory existed. It
+    removed its `/dev/shm` copy and left no gate process.
+    <!-- absence-ok: an observation of the local forced-fork test, as E2E.txt records it, not a claim that a result does not exist -->
 - **Shims and substitutions.**
   - Shims in `tests/shim/` stand in for `hostname`, `squeue`, `sbatch`, `scontrol`, `scancel`, `sacct`, `setsid`
     and strace.
