@@ -2130,3 +2130,8 @@ was the mislabel. The director accepted bd08582ee, the hand re-cites of ALIASES 
   checked against the note at acf934d71.
 - **Checks:** both rater copies PASS, with 0 Overfull; pointers 49 (7 new, in the hold); check_round PASS. The paper's
   rates are 0.10 / 0 / 0.49. The fill test runs on the committed head before the push.
+- **Correction (2026-11-11).** afdb26f35 was pushed before its fill test had passed, and the test failed: all 31 builds
+  printed "joseph" (check 8), from three DECISION file names in the hold. The push was my error, because the push
+  command did not wait on the test's exit status. The hold now names those three records by subject ("the decision
+  withholding the prior-spread results", "its decision record"), and the source comment beside it gives the exact file
+  names. Pushes from now on are gated on the fill test's exit status in the same command.
