@@ -1,0 +1,15 @@
+You are an independent senior reviewer: an experimental neutrino physicist who knows unfolding, response-matrix binning and pre-specified validation. Joseph Bailey asks for your recommendation on one open design rule before he decides it. Give your own judgement. The working directory is a read-only checkout at 1083258f (PR #1043), with #1016's DECLARATION.md added. Read files; do not write, run jobs or use the network. Cite file:line for every fact you rely on.
+
+CONTEXT: V-HALF-R, a pre-specified rebinning study for a follow-up paper (docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/: DECLARATION.md, AMENDMENT-1.md, and the two consult folders; decisions docs/orchestration/DECISION-20261110-joseph-vhalfr-choices.md and DECISION-20261110-joseph-vhalfr-a33-a82.md). Required candidates C6 (p_T, p_parallel) and C7 (E_avail, q3); bins must have min(purity, diagonal fraction) >= 0.5 as a final requirement and meet a minimum bin count (six for 2D); joins are greedy. Joseph decided C7 has NO fixed q3 edge. An audit blocked on the two-dimensional resolution rule: A3.1 (refusing joins that span a whole axis) lets a near-strip (a strip missing one fine cell) pass, and for C7 it is now the only 2D guarantee.
+
+THE DECISION: AMENDMENT-1's A3.4 [JOSEPH], three options:
+(i) a share per row and column, s = 0.2 (or 0.25): every fine row and column keeps at least two pieces each holding >= s of its truth_sel; joins that would push a touched row's largest piece above 1 - s are refused; rows whose largest single fine cell already exceeds 1 - s are exempt and listed.
+(ii) a balanced product structure (k = 1, s = 0.2): each axis keeps one domain-spanning interior edge with >= s of the total on each side (a balanced 2x2 frame).
+(iii) A3.1 as written, plus disclosure and per-row largest-piece shares printed.
+The drafter recommends (i) at 0.2, with (ii) as the fallback.
+
+WHAT TO ANSWER (about 700 words, plain language)
+1. Which option (or a variant) best guarantees that C6 and C7 carry genuine two-dimensional information, and why. Is the rule well defined and monotone under greedy merging, so the procedure cannot paint itself into a corner unpredictably?
+2. The cost: how likely is each to make C6 or C7 end with no reportable binning, and is that an acceptable price for a follow-up whose required observables then report failure? Is s = 0.2 defensible a priori, against 0.25?
+3. Any interaction with the purity/diagonal-fraction criterion, the floor, the fixed p_parallel = 4.5 edge for C6, or the exemption rule that the drafter missed.
+Be direct.
