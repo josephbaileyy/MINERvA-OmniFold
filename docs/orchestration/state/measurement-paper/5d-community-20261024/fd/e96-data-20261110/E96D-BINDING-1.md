@@ -67,3 +67,48 @@ should run now, he answered "Yes, run them now" (`c690934f020431a1`).
 - the result is read once, and enters the paper or note only by Joseph's decision.
 
 Nothing is submitted, deposited or tagged.
+
+## Binding 1, addendum A1: the full run's time limit after the dry STOP (director, 2026-11-11)
+
+**Binds** [`E96D-AMENDMENT-1.md`](E96D-AMENDMENT-1.md) and its code change, as merged in PR #1066 at
+**M_A1 = `b438ab2710b2dcfd30238107187caa3628393b11`**. The audited head is `98100cc5`. Every file below is
+byte-identical at both commits; the PR's merge of main brought in only the index rows and #1065's receipts.
+
+| file | sha256 (prefix) |
+|---|---|
+| `E96D-AMENDMENT-1.md` | `16c1fd2f58fcd5a8` |
+| `nd-unfolding/ensemble_estimator_data.py` | `414f7d352560b1cd` |
+| `nd-unfolding/sbatch_e96data.sh` | `72680b62d48e0755` |
+| `nd-unfolding/tests/test_ensemble_estimator_data.py` | `186d881a29fc51c1` |
+| `nd-unfolding/tests/ensemble_estimator_data_mutation.py` | `2a7187422715599f` |
+| `receipts/a1-code/mutation-receipt.txt` | `7f59b9a830dc132f` |
+
+**Why:** the dry run at M_E96D stopped at its gate on the projection (`receipts/dry-20261111/`, PR #1065):
+lane_max 14 × t 907.572 s + 300 s = 13,006 s against 0.9 × 12,600 s. Every other gate control passed.
+
+**What the director checked:**
+- **coverage-5b-audit's GO** at `98100cc5`, with no blocking or major findings. The change is exactly
+  FULL_TIME_S 3.5 → 4.25 h, the job script's header comment, one REQUIRED boundary test and two mutants.
+- **The audit's reruns:** 31 tests OK on numpy 1.26 (seeds 0 and 1) and on numpy 2; MUTATION CHECK PASS (43),
+  line-identical to the receipt.
+- **The bound:** (0.9 × 15,300 − 300) / 14 = 962.14 s. The REQUIRED test passes 907.572 s and 962 s and STOPs 963 s
+  with rc 8; the mutant restoring 3:30:00 is killed.
+- **The price,** re-derived by the audit from the dry receipt's `full.tsv`: 3.36–3.61 node-h expected at
+  t = 907.572 s; ceiling 4.75 node-h, plus the 0.26 already spent = 5.01, within the cap.
+
+**Rulings:**
+1. **Amendment 1's §"The director's rulings" binds as written:** option (a); the cap is raised to **5.1 node-h**
+   for the study, the 0.26 spent included; the 11-11 dry products stay the STOP record; a new dry run at M_A1 is
+   required; a t above 962.1 s STOPs again, and a second time-STOP comes to the director as a decision; the cause
+   stays unmeasured; E96D waits for LL5D's gate jobs 61078463 and 61078506 to end and for their atime readings.
+   <!-- absence-ok: the director's ruling on this study's scope; no cause measurement is declared or run -->
+2. **The submit's limit (the audit's minor a1).** Nothing in code ties FULL_TIME_S to the full submit's TLIMIT, so:
+   - the full submit is regenerated at M_A1 with `TLIMIT_ARG=4:15:00` and `TLIMIT=04:15:00`, equal to
+     FULL_TIME_S = 15,300 s;
+   - the 2026-11-11 `e96d_full_submit.sh` (TLIMIT 03:30:00) is not reused;
+   - at the full connect's go, the director checks the literal against the constant.
+3. **Each new connect** (the dry run at M_A1, then the full run) comes to the director with its sha256s before it
+   runs. Any `--deadline` is stated in the connect and read in the cluster's local time. Base ruling 5 stands: the
+   result is read once and enters the paper or note only by Joseph's decision.
+
+Nothing is submitted, deposited or tagged.
