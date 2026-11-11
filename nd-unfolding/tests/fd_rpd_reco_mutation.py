@@ -284,6 +284,21 @@ RECORD_MUTATIONS = (
 
 REQUIRED = tuple(
     [
+        # #1069 follow-up (coverage-5b-audit g1, 2026-11-11): each receipt clause on its own
+        Mutation(
+            "REQUIRED_RECEIPT_ORIGINAL_IS_STR",
+            "producer_r3",
+            "mat_dependency_receipt",
+            "test_mat_dependency_receipt_clauses",
+            ("isinstance(entry['original'], str)", "True"),
+        ),
+        Mutation(
+            "REQUIRED_RECEIPT_SHA_LENGTH",
+            "producer_r3",
+            "mat_dependency_receipt",
+            "test_mat_dependency_receipt_clauses",
+            ("len(entry['sha256']) == 64", "True"),
+        ),
         Mutation(
             "REQUIRED_NEGATIVE_AFTER_EXIT_CHECK",
             "custody_r3",
@@ -788,7 +803,7 @@ class Mutator(ast.NodeTransformer):
     def visit(self, node: ast.AST) -> Any:
         mutation = self.mutation
         if (
-            mutation.kind in {"custody_r3", "prologue_r3"}
+            mutation.kind in {"custody_r3", "prologue_r3", "producer_r3"}
             and self.function == mutation.target
             and ast.unparse(node) == mutation.replacement[0]
         ):
@@ -1523,6 +1538,7 @@ def run(output: Path, selected: set[str] | None = None) -> dict[str, Any]:
                     "custody_r3",
                     "custody_r3_stop",
                     "prologue_r3",
+                    "producer_r3",
                 }
                 or mutation in RECORD_MUTATIONS
             ) and transformer.changed != 1:

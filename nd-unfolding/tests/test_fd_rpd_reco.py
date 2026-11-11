@@ -2957,6 +2957,29 @@ def test_mat_dependency_receipt_all_fifteen(
         R.mat_dependency_receipt(bad)
 
 
+def test_mat_dependency_receipt_clauses(
+    fixture: Fixture, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Each receipt clause refuses on its own: a non-string original, and a sha256 of the wrong length (g1)."""
+    custody, run, _roots = _prepare_fixture(fixture, monkeypatch)
+    dependencies = custody.prepare(R, fixture.config_path, fixture.config_sha, run)[
+        "mat_dependencies"
+    ]
+    assert len(R.mat_dependency_receipt(dependencies)) == 15
+    no_original = [dict(item) for item in dependencies]
+    no_original[0]["original"] = None
+    with pytest.raises(R.Refused, match="MAT_DEPENDENCY_RECEIPT"):
+        R.mat_dependency_receipt(no_original)
+    short = [dict(item) for item in dependencies]
+    short[0]["sha256"] = short[0]["sha256"][:63]
+    with pytest.raises(R.Refused, match="MAT_DEPENDENCY_RECEIPT"):
+        R.mat_dependency_receipt(short)
+    long = [dict(item) for item in dependencies]
+    long[0]["sha256"] = long[0]["sha256"] + "a"
+    with pytest.raises(R.Refused, match="MAT_DEPENDENCY_RECEIPT"):
+        R.mat_dependency_receipt(long)
+
+
 def test_run_overlaps_protected_guard(
     fixture: Fixture, monkeypatch: pytest.MonkeyPatch
 ) -> None:

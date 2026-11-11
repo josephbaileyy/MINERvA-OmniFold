@@ -16,6 +16,11 @@ still holds `${`. Four guards use it:
 - `PREPARE_PLACEHOLDER` (custody `prepare`, after its READY check): the same, before any staging.
 - `ARGV_PLACEHOLDER` (the producer's CLI, including `flux-extract`) and `CUSTODY_ARGV_PLACEHOLDER` (custody's CLI):
   any `${` in the command arguments.
+- **What these guards do not cover (audit g2).** `placeholder_paths` detects only the `${` form. The draft's other
+  unresolved markers are left to `CONFIG_READY` and to each field's own runtime check:
+  - `flux_selection.*.retention`'s `AWAITING_RUNTIME_STAT_AND_STAGED_RETENTION_RECORD`;
+  - the null `premise` booleans measured at P0.
+  So a reader should not take the `${` check as covering every draft marker.
 
 **(2) The extract receipt pins all 15 MAT files.** `flux-extract.json` gains `mat_dependency_sha256`: for each file
 FluxReweighter opens, its original path and the sha256 that `prepare` measured under O_NOATIME.
@@ -57,5 +62,15 @@ two annotations added, as in #848's `negative-exit-test-repair-20261108`: that a
 `disposable_fixture_artifact_paths`. The second lets the receipt checker resolve fixture names printed in test output
 (such as `staged.root`) as disposable paths, so they are not read as citations of committed files. `SOURCE-SHA256SUMS` holds the four changed files' sha256. They
 were equal before and after the suite and harness runs.
+
+## Follow-up after #1069's merge (audit g1 and g2; director, 2026-11-11)
+
+- **g1.** `test_mat_dependency_receipt_clauses` tests two receipt clauses on their own: a non-string `original`, and a
+  sha256 of 63 or 65 characters. Before, dropping either clause survived the suite. Neither clause is reachable from a
+  pinned prestage.
+  - The harness gains a `producer_r3` expression mutant kind, the same mechanism as `custody_r3`, and two mutants:
+    `REQUIRED_RECEIPT_ORIGINAL_IS_STR` and `REQUIRED_RECEIPT_SHA_LENGTH`. Each replaces one clause with `True`.
+- **g2.** The paragraph above under (1).
+- Counts for this follow-up are in `SUITE-2.txt`, `MUTATIONS-2.txt`, `MUTATIONS-2.json` and `SOURCE-SHA256SUMS-2`.
 
 Nothing is submitted, deposited or tagged.
