@@ -12,7 +12,29 @@
   "/pscratch/sd/j/josephrb/cov2d-run-20261104",
   "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux",
   "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root",
-  "/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root"
+  "/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz",
+  "/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware",
+  "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector",
+  "/pscratch/sd/j/josephrb/fd-1b-20261030/pins.json",
+  "/pscratch/sd/j/josephrb/fd-1b-staged-20261102/stage1/in/flux_universes.npz",
+  "/pscratch/sd/j/josephrb/fd-f1-20261027/f1b3/prep",
+  "/pscratch/sd/j/josephrb/fd-1b-inv-20261101/i0/in",
+  "/pscratch/sd/j/josephrb/ll5d-calib-20261108",
+  "/pscratch/sd/j/josephrb/ll5d-calib-2-20261109",
+  "/pscratch/sd/j/josephrb/ll5d-calib-3-20261110",
+  "/pscratch/sd/j/josephrb/ll5d-gate-g18-20261108",
+  "/pscratch/sd/j/josephrb/ll5d-gate-ar23-20261108",
+  "/pscratch/sd/j/josephrb/ll5d-gate-2-g18-20261110",
+  "/pscratch/sd/j/josephrb/ll5d-gate-2-ar23-20261110",
+  "/pscratch/sd/j/josephrb/ll5d-vicheck-20261110",
+  "/pscratch/sd/j/josephrb/ll5d-pilot-r1",
+  "/pscratch/sd/j/josephrb/ll5d-unfolds-r1",
+  "/pscratch/sd/j/josephrb/ll5d-bulk-r1",
+  "/pscratch/sd/j/josephrb/ll5d-null-r1",
+  "/pscratch/sd/j/josephrb/ll5d-readout-r1",
+  "/pscratch/sd/j/josephrb/cov2d-inputs-20261104"
  ],
  "data_rows_estimate": 4091707,
  "dump_root": "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps",
@@ -32,7 +54,7 @@
   "path": "/pscratch/sd/j/josephrb/rpd-reco-flux-${RUN_DATE}/run/flux-extract.json",
   "sha256": null
  },
- "flux_root": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib",
+ "flux_root": "/pscratch/sd/j/josephrb/minerva/minerva_large_files",
  "flux_selection": {
   "1D": {
    "constraint_source_citation": {
@@ -47,7 +69,7 @@
    "family": "gen2thin",
    "histogram": "flux_E_cvweighted",
    "proposal_status": "DRAFT_FOR_AUDIT; C-N candidate status unchanged",
-   "relative_path": "data/flux/flux-gen2thin-pdg14-minervame1D_rearrangedUniverses.root",
+   "relative_path": "MATFluxAndReweightFiles/flux/flux-gen2thin-pdg14-minervame1D_rearrangedUniverses.root",
    "retention": "AWAITING_RUNTIME_STAT_AND_STAGED_RETENTION_RECORD",
    "source_citation": {
     "file": "PlotUtils/FluxReweighter.cxx",
@@ -73,7 +95,7 @@
    "family": "gen2thin",
    "histogram": "flux_E_cvweighted",
    "proposal_status": "DRAFT_FOR_AUDIT; C-N candidate status unchanged",
-   "relative_path": "data/flux/flux-gen2thin-pdg14-minervame1M_rearrangedUniverses.root",
+   "relative_path": "MATFluxAndReweightFiles/flux/flux-gen2thin-pdg14-minervame1M_rearrangedUniverses.root",
    "retention": "AWAITING_RUNTIME_STAT_AND_STAGED_RETENTION_RECORD",
    "source_citation": {
     "file": "PlotUtils/FluxReweighter.cxx",
@@ -99,7 +121,7 @@
    "family": "gen2thin",
    "histogram": "flux_E_cvweighted",
    "proposal_status": "DRAFT_FOR_AUDIT; C-N candidate status unchanged",
-   "relative_path": "data/flux/flux-gen2thin-pdg14-minervame1N_rearrangedUniverses.root",
+   "relative_path": "MATFluxAndReweightFiles/flux/flux-gen2thin-pdg14-minervame1N_rearrangedUniverses.root",
    "retention": "AWAITING_RUNTIME_STAT_AND_STAGED_RETENTION_RECORD",
    "source_citation": {
     "file": "PlotUtils/FluxReweighter.cxx",
