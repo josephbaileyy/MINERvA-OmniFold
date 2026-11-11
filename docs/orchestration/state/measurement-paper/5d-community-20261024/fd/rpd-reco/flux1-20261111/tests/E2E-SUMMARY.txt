@@ -1,0 +1,12 @@
+e2e connect rc=0
+e2e fetch rc=0
+== a second connect on the same roots (must refuse, rc 9)
+second connect rc=9
+STOP: $SP/flux1/tc/shm/flux1 exists
+== rpd-flux1-connect rc=9 2026-11-11T13:46:36Z
+== a failing strace probe on fresh roots (must refuse, rc 6)
+strace-fail connect rc=6
+strace probe rc=1; lines 
+STOP: strace probe
+== rpd-flux1-connect rc=6 2026-11-11T13:46:59Z
+runner written: no

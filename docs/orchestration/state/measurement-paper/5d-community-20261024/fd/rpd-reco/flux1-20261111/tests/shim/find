@@ -1,0 +1,12 @@
+#!/bin/bash
+# emulate only: find . -printf '%M %s %P\n'
+if [ "$2" = -printf ]; then
+  exec python3 -I -c '
+import os, stat, sys
+for d, ds, fs in os.walk(".", followlinks=False):
+    for n in ds + fs:
+        p = os.path.join(d, n); st = os.lstat(p)
+        print(stat.filemode(st.st_mode), st.st_size, os.path.relpath(p, "."))
+st = os.lstat("."); print(stat.filemode(st.st_mode), st.st_size, "")'
+fi
+exec /usr/bin/find "$@"

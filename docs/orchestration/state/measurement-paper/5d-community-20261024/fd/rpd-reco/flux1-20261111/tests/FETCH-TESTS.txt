@@ -1,0 +1,59 @@
+MODE unfinished rc=10 tar=0 self_removed=yes shm_left=
+   NOT FINISHED: no connect.rc. connect.log       60 bytes,        3 lines, modified 2026-11-11T13:44:08Z
+MODE full rc=0 tar=1 self_removed=yes shm_left=
+   send files 12, bytes 999
+   C3 CHECK: PASS
+   c3 check rc=0
+   REDACTION CHECK: PASS
+   check rc=0
+   sent: ./c3-check.txt
+   sent: ./connect.log
+   sent: ./connect.rc
+   sent: ./redaction-check.txt
+   sent: ./run/cov2d-fence.json
+   sent: ./run/extract-config.json
+   sent: ./run/flux-custody.json
+   sent: ./run/flux-extract.json
+   sent: ./run/flux-extract.strace
+   sent: ./run/prestage-reference.json
+   sent: ./run/real-mnv-check/real-mnv-check.json
+   sent: ./run/trace-policy.json
+   sent: ./runner.sh
+   sent: ./strace-probe.txt
+MODE leak rc=7 tar=0 self_removed=yes shm_left=
+   send files 12, bytes 1043
+   C3 CHECK: PASS
+   c3 check rc=0
+   REDACTION CHECK: FAIL
+   check rc=1
+   STOP: the redaction check did not pass; nothing is sent
+MODE orphan rc=7 tar=0 self_removed=yes shm_left=
+   send files 11, bytes 319
+   STOP: .rpd-private exists without run/prestage-reference.json; nothing is sent
+MODE nopriv rc=0 tar=1 self_removed=yes shm_left=
+   send files 11, bytes 319
+   C3 not applicable: custody wrote no private record (no .rpd-private, no run/prestage-reference.json)
+   REDACTION CHECK not applicable: no private record exists
+   check rc=0
+   sent: ./c3-check.txt
+   sent: ./connect.log
+   sent: ./connect.rc
+   sent: ./redaction-check.txt
+   sent: ./run/cov2d-fence.json
+   sent: ./run/extract-config.json
+   sent: ./run/flux-custody.json
+   sent: ./run/flux-extract.json
+   sent: ./run/flux-extract.strace
+   sent: ./run/real-mnv-check/real-mnv-check.json
+   sent: ./run/trace-policy.json
+   sent: ./runner.sh
+   sent: ./strace-probe.txt
+MODE fpword rc=7 tar=0 self_removed=yes shm_left=
+   send files 11, bytes 310
+   C3 not applicable: custody wrote no private record (no .rpd-private, no run/prestage-reference.json)
+   REDACTION CHECK not applicable: no private record exists
+   check rc=1
+   STOP: the redaction check did not pass; nothing is sent
+MODE big rc=7 tar=0 self_removed=yes shm_left=
+   send files 12, bytes 73401285
+   STOP: over 64 MiB; nothing is sent

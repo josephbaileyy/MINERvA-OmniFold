@@ -115,6 +115,9 @@ The authoring stays with this lane. Codex2's loop is now Joseph's note work. The
 
 ## What happens next
 
+**The READY candidate and the drafted flux connect (2026-11-11):** [`../flux1-20261111/README.md`](../flux1-20261111/README.md),
+on #848's head `a4c3e556`, for coverage-5b-audit. The connect runs only on the director's go for its exact sha256.
+
 The authoring lane (this one) revises these values on the audit's findings. coverage-5b-audit reads them together with #848's code. The
 director writes binding 2 with #848's merge. Only then does a READY config's sha go into a flux connect, whose own
 sha goes to the director for a go.

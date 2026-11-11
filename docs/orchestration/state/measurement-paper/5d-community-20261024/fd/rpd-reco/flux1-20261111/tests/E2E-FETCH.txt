@@ -1,0 +1,40 @@
+node login99 2026-11-11T13:46:36Z; fetch script sha256 dcb8127b832b21bedc3ee5e38d428e16e37246c392da3691d56afc9746833b6e
+connect.rc present
+== 1. listing of the root
+drwx------ 192 
+-rw------- 974 connect.log
+-rw------- 30 connect.rc
+-rw------- 1648 runner.sh
+-rw------- 61 strace-probe.txt
+== 2. the send list
+send 1648 runner.sh
+send 974 connect.log
+send 30 connect.rc
+send 61 strace-probe.txt
+send files 4, bytes 2713
+sha256 aed41794b72d8b8de6580d75e0fc4467cad3bc73c5b11dfac44075783b461192 (expected aed41794b72d8b8de6580d75e0fc4467cad3bc73c5b11dfac44075783b461192) $SP/flux1/tc/shm/fetch/c3_check.py
+sha256 992be729a3604cf8bae7ea04dfab93aeae9e259b647d3a4d598fd287b2736316 (expected 992be729a3604cf8bae7ea04dfab93aeae9e259b647d3a4d598fd287b2736316) $SP/flux1/tc/shm/fetch/check_redaction.py
+== 3. C3
+C3 not applicable: custody wrote no private record (no .rpd-private, no run/prestage-reference.json)
+== 4. the redaction check
+REDACTION CHECK not applicable: no private record exists
+files naming fingerprints: []
+check rc=0
+== 5. connect.rc and connect.log (checked)
+rc=7 end=2026-11-11T13:46:28Z
+== connect.log
+== runner start 2026-11-11T13:46:28Z host login99 pid 8803
+[rpd-inputs] refusing: the MAT setup scripts are not the pinned ones: /pscratch/sd/j/josephrb/MINERvA-OmniFold/setup_salloc_env.sh: unreadable through O_NOATIME (missing, or not the owner's); /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/build/setup.sh: unreadable through O_NOATIME (missing, or not the owner's); /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup.sh: unreadable through O_NOATIME (missing, or not the owner's); /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup_MAT.sh: unreadable through O_NOATIME (missing, or not the owner's); /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup_MAT-MINERvA.sh: unreadable through O_NOATIME (missing, or not the owner's); /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup_UnfoldUtils.sh: unreadable through O_NOATIME (missing, or not the owner's)
+== runner end rc=7 2026-11-11T13:46:28Z
+== end connect.log
+sha256 a639194ee3324e60f6e1f35cc6a01db87da59f3ca64b4d595833ecd83400f649 runner.sh
+sha256 9239aeac724f8aa81f64667ae5c8ca788d7618cd9f35c412f9d90fe8620b066d connect.log
+sha256 593b4889907ae287453ff5b2274c13af8834ef2aa95b55f88cbbc9e785c91140 connect.rc
+sha256 d7d1083a8071fa06c1a3f6048fd708d957e4e61e34775e5af7ac795952efab98 strace-probe.txt
+sha256 f9e425ded417aa53ae2fd66d6632fdcfadaa00a9e125e2d1685b6a263ffb2dc7 c3-check.txt
+sha256 8a43b1472e61bcab07e31249b64d704980252e923491f7ab3d910eeab293e2c6 redaction-check.txt
+== TAR BEGIN
+[base64 tar body removed from this receipt: the six files listed above, each with its sha256]
+== TAR END tar rc=0
+left in place for the post-merge deletion: $SP/flux1/tc/root and, on the connect's node, /dev/shm/limres-rpd-flux1
+== rpd-flux1-fetch rc=0 2026-11-11T13:46:36Z
