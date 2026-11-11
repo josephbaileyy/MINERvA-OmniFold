@@ -1,0 +1,7 @@
+#!/bin/bash
+# the forced-fork case: a setsid that forks (its parent exits at once) and runs the command in a new session in the child
+exec python3 -I -c 'import os, sys
+if os.fork():
+    os._exit(0)
+os.setsid()
+os.execvp(sys.argv[1], sys.argv[1:])' "$@"

@@ -1472,6 +1472,7 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/env
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/environment-private-native-20261108/STATIC-CHECKS.txt	MACHINE	open	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/environment-private-native-20261108/SUITE.txt	MACHINE	open	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/environment-private-native-20261108/VERIFICATION.json	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/README.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/import-pin-paths-repair-20261108/GUARD-COVERAGE.json	MACHINE	open	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/import-pin-paths-repair-20261108/MUTATIONS.json	MACHINE	open	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/import-pin-paths-repair-20261108/MUTATIONS.txt	MACHINE	open	
@@ -1506,6 +1507,7 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/neg
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/negative-exit-test-repair-20261108/STATIC-CHECKS.txt	MACHINE	open	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/negative-exit-test-repair-20261108/SUITE.txt	MACHINE	open	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/negative-exit-test-repair-20261108/VERIFICATION.json	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/ready-config-proposal-20261111/PROPOSAL.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/ready-guards-20261111/REPORT.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/real-mnv-check2-20261111/README.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/stage-time-20261111/REPORT.md	LIVE	open	""

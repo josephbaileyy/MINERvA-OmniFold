@@ -1,0 +1,72 @@
+node login99 2026-11-11T14:41:23Z; fetch script sha256 712f254f45d7267c2b52952baeee3991a5833f2cb29fb7d18c0d0e9323263bc8
+job 4242; sacct rc=0; state [COMPLETED]
+sacct: 4242|rpd_flux1|COMPLETED|0:0|00:01:00|2026-11-11T00:00:00|2026-11-11T00:01:00|nid001|1G|4|16G|03:00:00
+== job-host.txt
+jobid=4242 host=login99 start=2026-11-11T14:40:58Z
+end=2026-11-11T14:41:23Z rc=7 cause=exit
+job.rc: rc=7 cause=exit end=2026-11-11T14:41:23Z
+== 1. listing of the root
+drwx------ 544 
+-rw------- 6 .job.pid
+-rw------- 28 .sbatch-args
+-rw------- 875 connect.log
+-rw------- 0 exception-stat-outer.txt
+-rw------- 405 fence-overlap.txt
+-rw------- 92 job-host.txt
+-rw------- 524 job.err
+-rw------- 5 job.id
+-rw------- 2113 job.out
+-rw------- 41 job.rc
+-rw------- 15004 production-config.ready.json
+-rw------- 11932 rpd_flux1_job.sh
+-rw------- 61 strace-probe.txt
+drwx------ 96 tools
+-rw------- 4676 tools/fence_overlap.py
+sha256 aed41794b72d8b8de6580d75e0fc4467cad3bc73c5b11dfac44075783b461192 (expected aed41794b72d8b8de6580d75e0fc4467cad3bc73c5b11dfac44075783b461192) $SP/flux1/te/main/shm/fetch/c3_check.py
+sha256 992be729a3604cf8bae7ea04dfab93aeae9e259b647d3a4d598fd287b2736316 (expected 992be729a3604cf8bae7ea04dfab93aeae9e259b647d3a4d598fd287b2736316) $SP/flux1/te/main/shm/fetch/check_redaction.py
+sha256 309f59d46a4f200d924c98cd6beeece9a8c9a2b92cd493fb2e84f6b5693aa7f9 (expected 309f59d46a4f200d924c98cd6beeece9a8c9a2b92cd493fb2e84f6b5693aa7f9) $SP/flux1/te/main/shm/fetch/protected_read.py
+== 2. the factor products (kept on pscratch)
+no factor products
+== 3. the protected read
+PROTECTED READ: not applicable (no private record)
+{"schema": "rpd-flux1-protected-read/1", "status": "NOT_APPLICABLE", "problems": ["no private prestage record: prepare did not complete"]}
+== 4. the send list
+send 5 job.id
+send 92 job-host.txt
+send 41 job.rc
+send 2113 job.out
+send 524 job.err
+send 11932 rpd_flux1_job.sh
+send 875 connect.log
+send 61 strace-probe.txt
+send 405 fence-overlap.txt
+send 0 exception-stat-outer.txt
+send 139 protected-read.json
+send files 11, bytes 16187
+== 5. C3
+C3 not applicable: custody wrote no private record (no .rpd-private, no run/prestage-reference.json)
+== 6. the redaction check
+REDACTION CHECK not applicable: no private record exists
+files naming fingerprints: []
+check rc=0
+== 7. connect.log (checked)
+[rpd-inputs] refusing: the MAT setup scripts are not the pinned ones: /pscratch/sd/j/josephrb/MINERvA-OmniFold/setup_salloc_env.sh: unreadable through O_NOATIME (missing, or not the owner's); /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/build/setup.sh: unreadable through O_NOATIME (missing, or not the owner's); /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup.sh: unreadable through O_NOATIME (missing, or not the owner's); /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup_MAT.sh: unreadable through O_NOATIME (missing, or not the owner's); /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup_MAT-MINERvA.sh: unreadable through O_NOATIME (missing, or not the owner's); /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup_UnfoldUtils.sh: unreadable through O_NOATIME (missing, or not the owner's)
+== end connect.log
+sha256 859f0b154fdb2d630f45e1ecae4a862915435e663248bb8461d914696fc047cd job.id
+sha256 669d6e173d0feae0dd157d037693659800d847f11ef55b9a9504df53cb2d28bd job-host.txt
+sha256 0cf58ffa0a85289d8e0f2434a8e545ef5ccc466bab4e47b69e047f54d1014c6b job.rc
+sha256 fabffa87397eb536852b0a1b7266c2454eec6497bb622aba9259b956f5e134b0 job.out
+sha256 b833b26a1de48850ddca5fcfe4ff7d657a2a34cd6f6bf5aeb00f38a682a15f9a job.err
+sha256 343c6aebbe808cee5b8bc519b7b8a40346972603610991ee085f847745e1169c rpd_flux1_job.sh
+sha256 caaf493514a3dbbae7f484ab18d2d96d9e590298a6da2f844b9f657052c432b6 connect.log
+sha256 d7d1083a8071fa06c1a3f6048fd708d957e4e61e34775e5af7ac795952efab98 strace-probe.txt
+sha256 dad9d7c8f412ee289f22a5c3168df9d3c4ca13792347c2cff8e81c28c6b21b0b fence-overlap.txt
+sha256 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 exception-stat-outer.txt
+sha256 6ef7ab57e542ae44cbe0fe84ee2d7b5ee8143cefd51814accd6dcd0a44d4b659 protected-read.json
+sha256 f9e425ded417aa53ae2fd66d6632fdcfadaa00a9e125e2d1685b6a263ffb2dc7 c3-check.txt
+sha256 8a43b1472e61bcab07e31249b64d704980252e923491f7ab3d910eeab293e2c6 redaction-check.txt
+== TAR BEGIN
+[base64 tar body removed from this receipt: the files listed above, each with its sha256]
+== TAR END tar rc=0
+left in place for the post-merge deletion: $SP/flux1/te/main/root (the factor products, the staged copies, the clone, the private record)
+== rpd-flux1-fetch rc=0 2026-11-11T14:41:23Z
