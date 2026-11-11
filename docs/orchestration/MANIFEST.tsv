@@ -6319,6 +6319,8 @@ docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/DECLARATION.
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/code/test_vhr_wtruth_check.out.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/code/test_vhr_wtruth_check.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/code/vhr_wtruth_check.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/code/vhr_wtruth_connect.sh	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/code/vhr_wtruth_launch.sh	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/consult-astra/answer.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/consult-astra/prompt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/consult-astra/run-header.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
