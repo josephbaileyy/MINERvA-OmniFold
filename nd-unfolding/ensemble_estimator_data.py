@@ -15,6 +15,8 @@ calls the bound runner ``s5p_numerics.main`` directly with ``--construction data
     ensemble_estimator_data.py ensemble --k K[,K...] --runs DIR -- <..., --pairs=-:0>     F(y + delta_k(y)), k in 1..96
     ensemble_estimator_data.py tasks --out-dir DIR --runs DIR --npz P --bkg P
     ensemble_estimator_data.py expect <a task's argv>
+    ensemble_estimator_data.py repeat   --runs DIR -- <..., --pairs=-:0>                     k = 1 again, in the full run
+    ensemble_estimator_data.py gate --runs DIR --e-product P --definition P --data-product P --full-queue P --pin H --out P
     ensemble_estimator_data.py analyze --runs DIR --e-product P --definition P --data-product P --out P
 
 Rebindings for one runner call, each restored on exit:
@@ -51,9 +53,15 @@ SCHEMA = "e96-data/1"
 FAMILY = "e96data"                       # the job-name family (no repo hits for "e96data" at origin/main 1f37b251)
 N_ENS = eep.N_ENS                        # 96
 BASE_SEED = eep.BASE_SEED                # 0
-MODES = ("control", "base", "ensemble")
-PAIR = {"control": (None, None), "base": (None, BASE_SEED), "ensemble": (None, BASE_SEED)}
-PAIR_TEXT = {"control": "-:-", "base": f"-:{BASE_SEED}", "ensemble": f"-:{BASE_SEED}"}
+MODES = ("control", "base", "ensemble", "repeat")
+PAIR = {"control": (None, None), "base": (None, BASE_SEED), "ensemble": (None, BASE_SEED), "repeat": (None, BASE_SEED)}
+PAIR_TEXT = {m: "-:-" if j is None else f"-:{j}" for m, (_, j) in PAIR.items()}
+REPEAT_K = 1                             # the full run recomputes k = 1 (audit E2): it must equal the dry run's bitwise
+E_PRODUCT_PATH = "/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j-.npz"
+DEFINITION_REL = "nd-unfolding/pv-ladder/readouts/h2_definition.json"
+DATA_PRODUCT_REL = "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/data-product/fd_data_product.json"
+FULL_TIME_S = 3.5 * 3600                 # sbatch full --time=3:30:00
+LANES = 8
 def declared() -> dict:
     """The declared data call: (e)'s own inputs and settings (docs/orchestration/state/s5p/s2-num-tasks.tsv:2,
     n1_data_ctrl: of_inputs_5d.npz 07fccc1a, bkg_dump.npz 2addac8f, config R, 5 iterations, 32 threads, estimator
@@ -111,8 +119,8 @@ def install(mode: str, k: int | None):
     """Rebind for one runner call: 'control' ((e)'s path), 'base' (F64) or 'ensemble' (internal seed k)."""
     if mode not in MODES:
         raise ValueError(f"unknown mode {mode!r}")
-    if (mode == "ensemble") != (k is not None):
-        raise ValueError("only the ensemble takes an internal seed")
+    if (mode in ("ensemble", "repeat")) != (k is not None) or (mode == "repeat" and k != REPEAT_K):
+        raise ValueError("only the ensemble takes an internal seed, and the repeat takes k = 1")
     here, probe = sha256_path(Path(__file__).resolve()), sha256_path(Path(eep.__file__).resolve())
     st = {"checked": False}
     item: dict = {}
@@ -170,7 +178,7 @@ def _replace(argv: list[str], opt: str, value: str) -> list[str]:
 
 
 def tag_of(mode: str, k: int | None) -> str:
-    return {"control": f"{FAMILY}_E", "base": f"{FAMILY}_F64"}.get(mode) or f"{FAMILY}_k{k:03d}"
+    return {"control": f"{FAMILY}_E", "base": f"{FAMILY}_F64"}.get(mode) or f"{FAMILY}_k{k:03d}"   # repeat: runs/repeat/
 
 
 def run(mode: str, ks: list[int | None], rest: list[str], runs: Path) -> int:
@@ -211,7 +219,8 @@ def task_lines(a) -> tuple[list[str], list[str]]:
         return line(f"{FAMILY}_k{grp[0]:03d}", len(grp), ["ensemble", "--k", ",".join(map(str, grp)), *common,
                                                           "--", *data_args(a, "ensemble")])
     dry = [line(f"{FAMILY}_E", 1, ["control", *common, "--", *data_args(a, "control")])] + [ens([k]) for k in DRY_KS]
-    full = [line(f"{FAMILY}_F64", 1, ["base", *common, "--", *data_args(a, "base")])]
+    full = [line(f"{FAMILY}_F64", 1, ["base", *common, "--", *data_args(a, "base")]),
+            line(f"{FAMILY}_repeat", 1, ["repeat", *common, "--", *data_args(a, "repeat")])]
     ks = [k for k in range(1, N_ENS + 1) if k not in DRY_KS]
     for i in range(0, len(ks), CHUNK):
         full.append(ens(ks[i:i + CHUNK]))
@@ -227,7 +236,8 @@ def parse_task(argv: list[str]):
     if mode == "ensemble":
         ap.add_argument("--k", required=True)
     a = ap.parse_args(argv[1:cut])
-    ks: list[int | None] = [int(v) for v in a.k.split(",")] if mode == "ensemble" else [None]
+    ks: list[int | None] = [int(v) for v in a.k.split(",")] if mode == "ensemble" else \
+        [REPEAT_K] if mode == "repeat" else [None]
     if mode == "ensemble" and (len(set(ks)) != len(ks) or any(k not in range(1, N_ENS + 1) for k in ks)):
         raise ValueError(f"--k must be distinct values in 1-{N_ENS}")
     return mode, ks, argv[cut + 1:], a.runs
@@ -244,6 +254,26 @@ def expected_outputs(argv: list[str]) -> list[Path]:
 def load_product(p: Path) -> tuple[np.ndarray, dict]:
     with np.load(p, allow_pickle=False) as z:
         return np.asarray(z["xsec_flat"], np.float64), json.loads(str(z["meta"]))
+
+
+def raw_xsec(p: Path) -> np.ndarray:
+    """xsec_flat as stored: its own dtype and shape, for a bitwise comparison (audit e4)."""
+    with np.load(p, allow_pickle=False) as z:
+        return np.array(z["xsec_flat"])
+
+
+def same_array(a: np.ndarray, b: np.ndarray) -> bool:
+    return a.dtype == b.dtype and a.shape == b.shape and a.tobytes() == b.tobytes()
+
+
+def product_path(runs: Path, mode: str, k: int | None) -> Path:
+    b, j = PAIR[mode]
+    return runs / mode / s5p_numerics.product_name(tag_of(mode, k), b, j)
+
+
+def code_of(meta: dict) -> tuple:
+    blk = meta.get("e96_data") or {}
+    return (blk.get("code_sha256"), blk.get("ens1_probe_sha256"), json.dumps(meta.get("code_sha256"), sort_keys=True))
 
 
 def product_problems(meta: dict, mode: str, k: int | None) -> list[str]:
@@ -270,84 +300,157 @@ def product_problems(meta: dict, mode: str, k: int | None) -> list[str]:
     return out
 
 
-def analyze(a, e_sha: str = E_PRODUCT_SHA256) -> int:
-    """The controls (A-D0 .. A-D2), then E_96's sixteen cells beside (e)'s and F64's. Exit 8 on a failed control."""
+class Checks:
+    """The recorded controls; each failure is a STOP (nothing is repaired)."""
+
+    def __init__(self, rec: dict):
+        self.rec, self.fail = rec, []
+        rec.setdefault("controls", {})
+
+    def __call__(self, name, ok, detail=None):
+        self.rec["controls"][name] = {"pass": bool(ok), **({"detail": detail} if detail is not None else {})}
+        if not ok:
+            self.fail.append(name)
+        return bool(ok)
+
+
+def check_inputs(a, chk: Checks, e_sha: str):
+    """A-D0: (e)'s product at its pin, and U @ its xsec_flat equal to the committed data product's f. Returns (x_e raw, U, dp)."""
     sys.path.insert(0, str(_ND))
     import s1_assemble as sa
-    rec = {"schema": SCHEMA + "/analysis", "controls": {}, "label":
-           "descriptive (E96D-DECLARATION.md): a statement about the real data; no adoption, no uncertainty, "
-           "no change to (e)"}
-    fail = []
+    if not chk("A-D0 (e)'s product is fb5cc679", a.e_product.is_file() and sha256_path(a.e_product) == e_sha):
+        return None
+    dp = json.loads(a.data_product.read_text())
+    x_e = raw_xsec(a.e_product)
+    U = sa.functional_matrix(sa.fine_map(a.definition))
+    f_dp = np.asarray(dp["f"], np.float64)
+    f_e = U @ np.asarray(x_e, np.float64)
+    chk("A-D0 U @ (e)'s xsec_flat equals the data product's f to 1e-12",
+        bool(np.allclose(f_e, f_dp, rtol=1e-12, atol=0)), {"max_rel": float(np.max(np.abs(f_e / f_dp - 1)))})
+    return x_e, U, dp
 
-    def control(name, ok, detail=None):
-        rec["controls"][name] = {"pass": bool(ok), **({"detail": detail} if detail is not None else {})}
-        if not ok:
-            fail.append(name)
+
+def check_control(runs: Path, x_e: np.ndarray, chk: Checks) -> dict | None:
+    """A-D1: the control rerun is (e)'s product bitwise (dtype, shape, bytes) and the declared call."""
+    pc = product_path(runs, "control", None)
+    if not chk("A-D1 the control product exists", pc.is_file()):
+        return None
+    _, m_c = load_product(pc)
+    probs = product_problems(m_c, "control", None)
+    chk("A-D1 the control equals (e)'s xsec_flat bitwise, and is the declared call",
+        same_array(raw_xsec(pc), x_e) and not probs, {"problems": probs})
+    return m_c
+
+
+def gate(a, e_sha: str = E_PRODUCT_SHA256) -> int:
+    """The dry run's gate (audit E1): A-D0, A-D1, k = 1's declared call and the projection, on the dry products, before
+    any full run. Writes <out> (GATE.json) with pass and pin; ``sbatch_e96data.sh full`` refuses without pass at its pin."""
+    rec = {"schema": SCHEMA + "/gate", "pin": a.pin}
+    chk = Checks(rec)
+    got = check_inputs(a, chk, e_sha)
+    times = {}
+    if got is not None:
+        x_e, _, _ = got
+        m_c = check_control(a.runs, x_e, chk)
+        p1 = product_path(a.runs, "ensemble", 1)
+        if chk("G k = 1's product exists", p1.is_file()):
+            _, m1 = load_product(p1)
+            probs = product_problems(m1, "ensemble", 1)
+            chk("G k = 1 is the declared call", not probs, {"problems": probs})
+            times["k1"] = m1.get("seconds_unfold")
+            if m_c is not None:
+                times["control"] = m_c.get("seconds_unfold")
+                chk("G the control and k = 1 ran one code", code_of(m_c) == code_of(m1))
+    # the projection: the largest lane load of full.tsv under list scheduling on LANES lanes, bounded by
+    # sum / LANES + max_task * (1 - 1 / LANES), times the dry run's slowest per-unfold time, plus 300 s of setup
+    sizes = [int(l.split("\t")[1]) for l in a.full_queue.read_text().splitlines() if l and not l.startswith("#")]
+    lane_max = int(np.ceil(sum(sizes) / LANES + max(sizes) * (1 - 1 / LANES))) if sizes else 0
+    t = max([v for v in times.values() if isinstance(v, (int, float))], default=None)
+    proj = None if t is None else lane_max * t + 300.0
+    chk("G the projection fits the full run's limit: lane_max x t + 300 s <= 0.9 x the limit",
+        proj is not None and proj <= 0.9 * FULL_TIME_S,
+        {"lane_max": lane_max, "t_seconds": t, "projected_s": proj, "limit_s": FULL_TIME_S, "times": times})
+    rec["pass"] = not chk.fail
+    a.out.write_text(json.dumps(rec, indent=1) + "\n")
+    print(f"E96-DATA gate {'PASS' if rec['pass'] else 'FAIL'}; controls failed: {chk.fail}")
+    return 0 if rec["pass"] else 8
+
+
+def analyze(a, e_sha: str = E_PRODUCT_SHA256) -> int:
+    """The controls (A-D0 .. A-D3), then E_96's sixteen cells beside (e)'s and F64's. Exit 8 on a failed control."""
+    rec = {"schema": SCHEMA + "/analysis", "label":
+           "descriptive (E96D-DECLARATION.md): the first statement about real data from E96; no adoption, no coverage, "
+           "no uncertainty, no change to (e)"}
+    chk = Checks(rec)
 
     def finish(rc):
         p = a.out if rc == 0 else a.out.with_name(a.out.stem + ".STOP.json")
         p.write_text(json.dumps(rec, indent=1) + "\n")
-        print(f"E96-DATA analysis {'OK' if rc == 0 else 'STOP'} rc={rc}; controls failed: {fail}")
+        print(f"E96-DATA analysis {'OK' if rc == 0 else 'STOP'} rc={rc}; controls failed: {chk.fail}")
         return rc
 
-    # A-D0: the inputs. (e)'s product and the committed data product
-    control("A-D0 (e)'s product is fb5cc679", sha256_path(a.e_product) == e_sha)
-    dp = json.loads(a.data_product.read_text())
-    if fail:
+    got = check_inputs(a, chk, e_sha)
+    if got is None or chk.fail:
         return finish(8)
-    x_e, _ = load_product(a.e_product)
-    U = sa.functional_matrix(sa.fine_map(a.definition))
-    f_dp = np.asarray(dp["f"], np.float64)
-    f_e = U @ x_e
-    control("A-D0 U @ (e)'s xsec_flat equals the data product's f to 1e-12",
-            bool(np.allclose(f_e, f_dp, rtol=1e-12, atol=0)), {"max_rel": float(np.max(np.abs(f_e / f_dp - 1)))})
+    x_e, U, dp = got
+    m_c = check_control(a.runs, x_e, chk)
 
-    # A-D1: the control rerun is (e)'s product bitwise (the deploy, threads and runner reproduce (e))
-    pc = a.runs / "control" / s5p_numerics.product_name(tag_of("control", None), None, None)
-    x_c, m_c = load_product(pc)
-    pc_probs = product_problems(m_c, "control", None)
-    control("A-D1 the control equals (e)'s xsec_flat bitwise, and is the declared call",
-            x_c.tobytes() == x_e.tobytes() and not pc_probs, {"problems": pc_probs})
-
-    # A-D2: F64 and the 96 fits, complete, each the declared call, one code, distinct jitters
-    pb = a.runs / "base" / s5p_numerics.product_name(tag_of("base", None), None, BASE_SEED)
+    # A-D2: F64 and the 96 fits, complete, each the declared call; one code over the control, F64, the fits and the
+    # repeat (audit e1); 96 distinct jitters
+    pb = product_path(a.runs, "base", None)
+    if not chk("A-D2 the F64 product exists", pb.is_file()):
+        return finish(8)
     x_b, m_b = load_product(pb)
     probs = product_problems(m_b, "base", None)
-    X, codes, digests, missing = [], set(), set(), []
+    codes = {code_of(m_b)} | ({code_of(m_c)} if m_c is not None else set())
+    X, digests, missing = [], set(), []
     for k in range(1, N_ENS + 1):
-        p = a.runs / "ensemble" / s5p_numerics.product_name(tag_of("ensemble", k), None, BASE_SEED)
+        p = product_path(a.runs, "ensemble", k)
         if not p.is_file():
             missing.append(k)
             continue
         x, m = load_product(p)
         probs += [f"k{k}: {q}" for q in product_problems(m, "ensemble", k)]
-        blk = m.get("e96_data") or {}
-        codes.add((blk.get("code_sha256"), blk.get("ens1_probe_sha256"), json.dumps(m.get("code_sha256"), sort_keys=True)))
-        digests.add(json.dumps(blk.get("coord_sha256"), sort_keys=True))
+        codes.add(code_of(m))
+        digests.add(json.dumps((m.get("e96_data") or {}).get("coord_sha256"), sort_keys=True))
         X.append(x)
-    control("A-D2 F64 and 96 fits, each the declared call, one code, 96 distinct jitters",
-            not missing and not probs and len(codes) == 1 and len(digests) == N_ENS,
-            {"missing": missing, "problems": probs[:20], "codes": len(codes), "distinct_jitters": len(digests)})
-    if fail:
+    # A-D3: the full run's repeat of k = 1 equals the dry run's k = 1 bitwise (audit E2), and is the declared call
+    pr, p1 = product_path(a.runs, "repeat", REPEAT_K), product_path(a.runs, "ensemble", REPEAT_K)
+    if chk("A-D3 the repeat product exists", pr.is_file()):
+        _, m_r = load_product(pr)
+        r_probs = product_problems(m_r, "repeat", REPEAT_K)
+        codes.add(code_of(m_r))
+        chk("A-D3 the full run's repeat of k = 1 equals the dry run's k = 1 bitwise, and is the declared call",
+            p1.is_file() and same_array(raw_xsec(pr), raw_xsec(p1)) and not r_probs, {"problems": r_probs})
+    chk("A-D2 F64 and 96 fits, each the declared call, one code, 96 distinct jitters",
+        not missing and not probs and len(codes) == 1 and len(digests) == N_ENS,
+        {"missing": missing, "problems": probs[:20], "codes": len(codes), "distinct_jitters": len(digests)})
+    if chk.fail:
         return finish(8)
 
     # the results
     X = np.stack(X)
     x_E = X.mean(axis=0)
     F = X @ U.T                                     # the 96 fits' sixteen cells
+    f_e = U @ np.asarray(x_e, np.float64)
     f_E, f_B = U @ x_E, U @ x_b
     sd_mean = F.std(axis=0, ddof=1) / np.sqrt(N_ENS)
     sig_e = np.asarray(dp["relative_sigma"]["C_e"], np.float64)
     rel = lambda a_, b_: (a_ / b_ - 1.0)            # noqa: E731
+    zE, zB = rel(f_E, f_e) / sig_e, rel(f_B, f_e) / sig_e
     rec["cells"] = dp["cells"]
     rec["sixteen"] = {
         "E96_over_e_minus_1": rel(f_E, f_e).tolist(), "F64_over_e_minus_1": rel(f_B, f_e).tolist(),
         "E96_over_F64_minus_1": rel(f_E, f_B).tolist(),
         "E96_mean_sd_over_e": (sd_mean / f_e).tolist(),
-        "E96_minus_e_over_sigma_Ce": (rel(f_E, f_e) / sig_e).tolist(),
-        "F64_minus_e_over_sigma_Ce": (rel(f_B, f_e) / sig_e).tolist(),
-        "label": "relative to (e)'s f (the committed data product); sigma_Ce is the data product's relative_sigma.C_e; "
-                 "the sd of the mean is over the 96 fits / sqrt(96)"}
+        "E96_minus_e_over_sigma_Ce": zE.tolist(), "F64_minus_e_over_sigma_Ce": zB.tolist(),
+        "label": "relative to (e)'s f (the committed data product); sigma_Ce is the data product's relative_sigma.C_e "
+                 "alone, without the sd of the mean; the sd of the mean is over the 96 fits / sqrt(96)"}
+    kE, kB = int(np.argmax(np.abs(zE))), int(np.argmax(np.abs(zB)))
+    rec["quotable"] = {   # audit e7: the summary a sentence may quote, fixed before the read
+        "E96_max_abs_over_sigma_Ce": {"value": float(abs(zE[kE])), "cell": dp["cells"][kE]},
+        "F64_max_abs_over_sigma_Ce": {"value": float(abs(zB[kB])), "cell": dp["cells"][kB]},
+        "label": "with the sixteen-cell table; sigma_Ce alone (C_e's relative sigma), no threshold, no outcome"}
     rec["inputs_sha256"] = {"e_product": sha256_path(a.e_product), "data_product": sha256_path(a.data_product),
                             "definition": sha256_path(a.definition)}
     return finish(0)
@@ -375,6 +478,12 @@ def main(argv=None) -> int:
             print(f"refusing: {exc}", file=sys.stderr)
             return 2
         return 0
+    if argv[:1] == ["gate"]:
+        ap = argparse.ArgumentParser(prog="ensemble_estimator_data.py gate", allow_abbrev=False)
+        for opt in ("--runs", "--e-product", "--definition", "--data-product", "--full-queue", "--out"):
+            ap.add_argument(opt, type=Path, required=True)
+        ap.add_argument("--pin", required=True)
+        return gate(ap.parse_args(argv[1:]))
     if argv[:1] == ["analyze"]:
         ap = argparse.ArgumentParser(prog="ensemble_estimator_data.py analyze", allow_abbrev=False)
         for opt in ("--runs", "--e-product", "--definition", "--data-product", "--out"):

@@ -65,14 +65,15 @@ class DataRun(trm.Fixture):
         with trm.standins(cls.d):
             cls.rc = {"control": run_mode(cls.d, cls.shas, "control", [None], "-:-")[0],
                       "base": run_mode(cls.d, cls.shas, "base", [None], "-:0")[0],
-                      "ensemble": run_mode(cls.d, cls.shas, "ensemble", [1, 2], "-:0")[0]}
+                      "ensemble": run_mode(cls.d, cls.shas, "ensemble", [1, 2], "-:0")[0],
+                      "repeat": run_mode(cls.d, cls.shas, "repeat", [1], "-:0")[0]}
             # (e)'s own path, run directly by the bound runner without any E96-DATA rebinding
             with contextlib.redirect_stderr(io.StringIO()), contextlib.redirect_stdout(io.StringIO()):
                 cls.rc_direct = s5p_numerics.main(data_args(cls.d, cls.shas, "-:-", **{"--tag": "direct",
                                                                                            "--out": str(cls.d / "direct")}))
 
     def test_every_call_ran(self):
-        self.assertEqual(self.rc, {"control": 0, "base": 0, "ensemble": 0})
+        self.assertEqual(self.rc, {"control": 0, "base": 0, "ensemble": 0, "repeat": 0})
         self.assertEqual(self.rc_direct, 0)
 
     def test_the_control_is_es_own_path_bitwise(self):
@@ -116,6 +117,15 @@ class DataRun(trm.Fixture):
         for key in eep.COORDS:
             np.testing.assert_array_equal(ji[key], want[key])
         np.testing.assert_array_equal(jb["bkg_reco"], wantb["bkg_reco"])
+
+    def test_the_repeat_is_k1_again_bitwise(self):
+        """The repeat mode reruns k = 1 through the same path; on the same arithmetic it is bitwise k = 1's product."""
+        x1, _ = product(self.d, "ensemble", "e96data_k001", 0)
+        xr, mr = product(self.d, "repeat", "e96data_k001", 0)
+        np.testing.assert_array_equal(xr, x1)
+        self.assertEqual((mr["e96_data"]["mode"], mr["e96_data"]["k"]), ("repeat", 1))
+        with trm.standins(self.d):
+            self.assertEqual(eed.product_problems(mr, "repeat", 1), [])
 
     def test_names_restored(self):
         self.assertEqual(s5p_numerics.jittered.__module__, "s5p_numerics")
@@ -188,7 +198,7 @@ class Refusals(trm.Fixture):
         np.testing.assert_array_equal(bb["bkg_reco"], np.asarray(bkg["bkg_reco"], np.float64))
 
     def test_install_arguments(self):
-        for mode, k in (("base", 1), ("control", 1), ("ensemble", None), ("stability", 1)):
+        for mode, k in (("base", 1), ("control", 1), ("ensemble", None), ("stability", 1), ("repeat", 2), ("repeat", None)):
             with self.assertRaises(ValueError):
                 with eed.install(mode, k):
                     pass
@@ -227,9 +237,9 @@ class Declared(unittest.TestCase):
     def test_the_queue(self):
         a = type("A", (), {"runs": Path("/R"), "npz": Path("/n.npz"), "bkg": Path("/b.npz")})()
         dry, full = eed.task_lines(a)
-        self.assertEqual((len(dry), len(full)), (2, 49))
+        self.assertEqual((len(dry), len(full)), (2, 50))
         n = lambda ls: sum(int(l.split("\t")[1]) for l in ls)  # noqa: E731
-        self.assertEqual((n(dry), n(full)), (2, 96))
+        self.assertEqual((n(dry), n(full)), (2, 97))
         self.assertTrue(all(l.split("\t")[0].startswith(eed.FAMILY) for l in dry + full))
         ks = []
         for l in dry + full:
@@ -239,23 +249,33 @@ class Declared(unittest.TestCase):
         self.assertEqual(sorted(ks), list(range(1, eed.N_ENS + 1)))      # every k exactly once over dry and full
         self.assertIn("--pairs=-:-", dry[0])
         self.assertIn("--pairs=-:0", full[0])
-        argv = full[1].split("\t")[3:]
+        self.assertEqual(eed.expected_outputs(full[1].split("\t")[3:]), [Path("/R/repeat/e96data_k001_b-_j0.npz")])
+        argv = full[2].split("\t")[3:]
         self.assertEqual(eed.expected_outputs(argv), [Path("/R/ensemble/e96data_k002_b-_j0.npz"),
                                                       Path("/R/ensemble/e96data_k003_b-_j0.npz")])
         self.assertEqual(eed.expected_outputs(dry[0].split("\t")[3:]), [Path("/R/control/e96data_E_b-_j-.npz")])
 
 
 # --------------------------------------------------------------------------------------------- the analysis
-def fake_meta(mode, k, moved=0, coords=None, digest=None):
+CODE = ("d" * 64, "e" * 64, {"s5p_numerics.py": "c" * 64})
+
+
+def fake_meta(mode, k, moved=0, coords=None, digest=None, **over):
     d = eed.declared()
     j = eed.PAIR[mode][1]
-    return {"construction": "data", "input_npz_sha256": d["npz_sha256"], "bkg_dump_sha256": d["bkg_sha256"],
-            "bootstrap_seed": None, "jitter_seed": j, "coords": coords or ("float32" if mode == "control" else "float64"),
-            "estimator_seed": d["estimator_seed"], "threads": d["threads"], "iters": d["iters"],
-            "code_sha256": {"s5p_numerics.py": "c" * 64},
-            "e96_data": {"schema": eed.SCHEMA, "mode": mode, "k": k, "code_sha256": "d" * 64, "ens1_probe_sha256": "e" * 64,
-                         "moved_rows": {"MCgen": moved, "MCreco": 0, "measured": 0, "bkg_reco": 0},
-                         "coord_sha256": digest if digest is not None else (None if k is None else {"MCgen": f"{k:064d}"})}}
+    m = {"construction": "data", "input_npz_sha256": d["npz_sha256"], "bkg_dump_sha256": d["bkg_sha256"],
+         "bootstrap_seed": None, "jitter_seed": j, "coords": coords or ("float32" if mode == "control" else "float64"),
+         "estimator_seed": d["estimator_seed"], "threads": d["threads"], "iters": d["iters"], "seconds_unfold": 600.0,
+         "code_sha256": dict(CODE[2]),
+         "e96_data": {"schema": eed.SCHEMA, "mode": mode, "k": k, "code_sha256": CODE[0], "ens1_probe_sha256": CODE[1],
+                      "moved_rows": {"MCgen": moved, "MCreco": 0, "measured": 0, "bkg_reco": 0},
+                      "coord_sha256": digest if digest is not None else (None if k is None else {"MCgen": f"{k:064d}"})}}
+    for key, v in over.items():
+        if key == "block_code":
+            m["e96_data"]["code_sha256"] = v
+        else:
+            m[key] = v
+    return m
 
 
 class Analysis(unittest.TestCase):
@@ -263,10 +283,12 @@ class Analysis(unittest.TestCase):
     def setUpClass(cls):
         cls.U = sa.functional_matrix(sa.fine_map(DEFINITION))
 
-    def build(self, d: Path, defect=None):
+    def build(self, d: Path, defect=None, dry_only=False):
         rng = np.random.default_rng(11)
         n = self.U.shape[1]
         x_e = rng.uniform(1.0, 2.0, n) * 1e-40
+        if defect == "dtype":                          # float32-representable values, so only the dtype differs below
+            x_e = x_e.astype(np.float32).astype(np.float64)
         np.savez(d / "e.npz", xsec_flat=x_e, meta=json.dumps({}))
         f = self.U @ x_e
         if defect == "f":
@@ -279,30 +301,56 @@ class Analysis(unittest.TestCase):
         x_c = x_e.copy()
         if defect == "ulp":
             x_c[123] = np.nextafter(x_c[123], 1.0)
-        np.savez(runs / "control" / "e96data_E_b-_j-.npz", xsec_flat=x_c, meta=json.dumps(fake_meta("control", None)))
-        x_b = x_e * (1 + 1e-3 * rng.normal(size=n))
-        np.savez(runs / "base" / "e96data_F64_b-_j0.npz", xsec_flat=x_b, meta=json.dumps(fake_meta("base", None)))
+        if defect == "dtype":
+            x_c = x_e.astype(np.float32)               # the same values exactly, as float32: only the dtype differs
+        mc = fake_meta("control", None, **({"threads": 16} if defect == "control_threads" else {}),
+                       **({"block_code": "z" * 64} if defect == "control_code" else {}))
+        if defect != "no_control":
+            np.savez(runs / "control" / "e96data_E_b-_j-.npz", xsec_flat=x_c, meta=json.dumps(mc))
         X = []
         for k in range(1, eed.N_ENS + 1):
-            if defect == "missing" and k == 40:
+            if (defect == "missing" and k == 40) or (dry_only and k > 1) or (defect == "no_k1" and k == 1):
                 continue
             x = x_e * (1 + 2e-3 * rng.normal(size=n))
-            X.append(x)
+            over = {}
+            if defect == "fit_threads" and k == 5:
+                over["threads"] = 16
+            if defect == "fit_code" and k == 9:
+                over["block_code"] = "y" * 64
+            if defect == "slow" and k == 1:
+                over["seconds_unfold"] = 900.0
             meta = fake_meta("ensemble", k, moved=1 if (defect == "moved" and k == 7) else 0,
-                             digest={"MCgen": "same"} if defect == "dup" else None)
+                             coords="float32" if (defect == "fit_coords" and k == 11) else None,
+                             digest={"MCgen": "same"} if defect == "dup" else None, **over)
             np.savez(runs / "ensemble" / f"e96data_k{k:03d}_b-_j0.npz", xsec_flat=x, meta=json.dumps(meta))
+            X.append(x)
+        if dry_only:
+            return x_e, None, None
+        x_b = x_e * (1 + 1e-3 * rng.normal(size=n))
+        mb = fake_meta("base", None, **({"construction": "pseudo"} if defect == "base_pseudo" else {}))
+        np.savez(runs / "base" / "e96data_F64_b-_j0.npz", xsec_flat=x_b, meta=json.dumps(mb))
+        x_r = X[0].copy()
+        if defect == "repeat_ulp":
+            x_r[77] = np.nextafter(x_r[77], 1.0)
+        if defect != "no_repeat":
+            np.savez(runs / "repeat" / "e96data_k001_b-_j0.npz", xsec_flat=x_r, meta=json.dumps(fake_meta("repeat", 1)))
         return x_e, x_b, np.stack(X)
 
-    def run_analysis(self, defect=None):
+    def args(self, d):
+        return type("A", (), {"runs": d / "runs", "e_product": d / "e.npz", "definition": DEFINITION,
+                              "data_product": d / "dp.json", "out": d / "out.json"})()
+
+    def run_analysis(self, defect=None, e_sha=None):
         with tempfile.TemporaryDirectory() as t:
             d = Path(t)
             x_e, x_b, X = self.build(d, defect)
-            a = type("A", (), {"runs": d / "runs", "e_product": d / "e.npz", "definition": DEFINITION,
-                               "data_product": d / "dp.json", "out": d / "out.json"})()
             with contextlib.redirect_stdout(io.StringIO()):
-                rc = eed.analyze(a, e_sha=hashlib.sha256((d / "e.npz").read_bytes()).hexdigest())
+                rc = eed.analyze(self.args(d), e_sha=e_sha or hashlib.sha256((d / "e.npz").read_bytes()).hexdigest())
             rec = json.loads((d / ("out.json" if rc == 0 else "out.STOP.json")).read_text())
             return rc, rec, (x_e, x_b, X)
+
+    def failed(self, rec):
+        return [k for k, v in rec["controls"].items() if not v["pass"]]
 
     def test_the_result_is_the_hand_computation(self):
         rc, rec, (x_e, x_b, X) = self.run_analysis()
@@ -314,7 +362,11 @@ class Analysis(unittest.TestCase):
         np.testing.assert_allclose(s["F64_over_e_minus_1"], f_b / f_e - 1, rtol=1e-12, atol=1e-15)
         np.testing.assert_allclose(s["E96_over_F64_minus_1"], f_E / f_b - 1, rtol=1e-12, atol=1e-15)
         np.testing.assert_allclose(s["E96_mean_sd_over_e"], F.std(axis=0, ddof=1) / np.sqrt(96) / f_e, rtol=1e-12)
-        np.testing.assert_allclose(s["E96_minus_e_over_sigma_Ce"], (f_E / f_e - 1) / 0.05, rtol=1e-12, atol=1e-13)
+        z = (f_E / f_e - 1) / 0.05
+        np.testing.assert_allclose(s["E96_minus_e_over_sigma_Ce"], z, rtol=1e-12, atol=1e-13)
+        q = rec["quotable"]["E96_max_abs_over_sigma_Ce"]
+        self.assertEqual(q["cell"], f"R{int(np.argmax(np.abs(z))):02d}")
+        self.assertAlmostEqual(q["value"], float(np.max(np.abs(z))), places=12)
 
     def test_a_control_one_ulp_off_stops(self):
         """REQUIRED: the control must equal (e)'s product bitwise; one ulp in one fine cell is a STOP."""
@@ -331,20 +383,86 @@ class Analysis(unittest.TestCase):
             self.assertFalse(rec["controls"][name]["pass"], defect)
             self.assertNotIn("sixteen", rec)
 
+    def test_each_post_hoc_meta_check_stops(self):
+        """Audit E3 (and e1): each post-hoc declared-call check acts, and writes no result, on the input it catches."""
+        A1 = "A-D1 the control equals (e)'s xsec_flat bitwise, and is the declared call"
+        A2 = "A-D2 F64 and 96 fits, each the declared call, one code, 96 distinct jitters"
+        for defect, name in (("fit_threads", A2), ("control_threads", A1), ("base_pseudo", A2), ("fit_code", A2),
+                             ("fit_coords", A2), ("control_code", A2)):
+            rc, rec, _ = self.run_analysis(defect)
+            self.assertEqual(rc, 8, defect)
+            self.assertIn(name, self.failed(rec), defect)
+            self.assertNotIn("sixteen", rec, defect)
+
+    def test_the_repeat_must_equal_k1_bitwise(self):
+        """REQUIRED (audit E2): the full run's repeat of k = 1 equals the dry run's k = 1 byte for byte."""
+        for defect in ("repeat_ulp", "no_repeat"):
+            rc, rec, _ = self.run_analysis(defect)
+            self.assertEqual(rc, 8, defect)
+            self.assertTrue(any(k.startswith("A-D3") for k in self.failed(rec)), defect)
+            self.assertNotIn("sixteen", rec)
+
+    def test_a_missing_control_dtype_or_e_sha_is_a_stop_record(self):
+        """Audit e2, e3, e4: a missing control, a float32 control of equal values, a wrong (e) digest."""
+        rc, rec, _ = self.run_analysis("no_control")
+        self.assertEqual(rc, 8)
+        self.assertIn("A-D1 the control product exists", self.failed(rec))
+        rc, rec, _ = self.run_analysis("dtype")
+        self.assertEqual(rc, 8)
+        self.assertIn("A-D1 the control equals (e)'s xsec_flat bitwise, and is the declared call", self.failed(rec))
+        rc, rec, _ = self.run_analysis(None, e_sha="0" * 64)
+        self.assertEqual(rc, 8)
+        self.assertIn("A-D0 (e)'s product is fb5cc679", self.failed(rec))
+
     def test_an_f_that_is_not_es_stops(self):
         rc, rec, _ = self.run_analysis("f")
         self.assertEqual(rc, 8)
         self.assertFalse(rec["controls"]["A-D0 U @ (e)'s xsec_flat equals the data product's f to 1e-12"]["pass"])
 
+    # ----------------------------------------------------------------------------- the dry run's gate (audit E1)
+    def run_gate(self, defect=None):
+        with tempfile.TemporaryDirectory() as t:
+            d = Path(t)
+            self.build(d, defect, dry_only=True)
+            a = self.args(d)
+            dry, full = eed.task_lines(type("A", (), {"runs": d / "runs", "npz": Path("/n"), "bkg": Path("/b")})())
+            (d / "full.tsv").write_text("# q\n" + "\n".join(full) + "\n")
+            a.full_queue, a.pin, a.out = d / "full.tsv", "p" * 40, d / "GATE.json"
+            with contextlib.redirect_stdout(io.StringIO()):
+                rc = eed.gate(a, e_sha=hashlib.sha256((d / "e.npz").read_bytes()).hexdigest())
+            return rc, json.loads((d / "GATE.json").read_text())
+
+    def test_the_gate_passes_the_declared_dry_run_and_records_the_pin(self):
+        rc, g = self.run_gate()
+        self.assertEqual(rc, 0, g["controls"])
+        self.assertIs(g["pass"], True)
+        self.assertEqual(g["pin"], "p" * 40)
+        det = g["controls"]["G the projection fits the full run's limit: lane_max x t + 300 s <= 0.9 x the limit"]["detail"]
+        self.assertEqual((det["lane_max"], det["t_seconds"]), (14, 600.0))
+
+    def test_the_gate_fails_on_a_control_defect_a_slow_unfold_or_a_missing_k1(self):
+        """REQUIRED (audit E1): the full run is gated on A-D0, A-D1, k = 1 and the projection, before it spends."""
+        for defect, name in (("ulp", "A-D1 the control equals (e)'s xsec_flat bitwise, and is the declared call"),
+                             ("slow", "G the projection fits the full run's limit: lane_max x t + 300 s <= 0.9 x the limit"),
+                             ("no_k1", "G k = 1's product exists"), ("f", "A-D0 U @ (e)'s xsec_flat equals the data product's f to 1e-12")):
+            rc, g = self.run_gate(defect)
+            self.assertEqual(rc, 8, defect)
+            self.assertIs(g["pass"], False, defect)
+            self.assertIn(name, [k for k, v in g["controls"].items() if not v["pass"]], defect)
+
 
 # --------------------------------------------------------------------------------------------- the job script
 SBATCH = Path(__import__("os").environ.get("E96D_SBATCH") or ND / "sbatch_e96data.sh")   # the mutation check substitutes a copy
-STUB_TASK = """import json, sys
+STUB_TASK = """import json, os, sys
 from pathlib import Path
 argv = sys.argv[1:]
 if argv[:1] == ["expect"]:
     print(Path(argv[argv.index("--runs") + 1]) / f"{argv[1]}.out")
     sys.exit(0)
+if argv[:1] == ["gate"]:
+    ok = os.environ.get("STUB_GATE", "pass") == "pass"
+    Path(argv[argv.index("--out") + 1]).write_text(json.dumps({"pass": ok, "pin": argv[argv.index("--pin") + 1]}))
+    sys.exit(0 if ok else 8)
 out = Path(argv[argv.index("--runs") + 1]); out.mkdir(parents=True, exist_ok=True)
 (out / f"{argv[0]}.out").write_text(json.dumps(argv))
 sys.exit(0)
@@ -380,8 +498,8 @@ class JobScript(unittest.TestCase):
     def tearDown(self):
         self.tmp.cleanup()
 
-    def run_script(self, *args):
-        return self.sp.run(["bash", str(SBATCH), *args], capture_output=True, text=True, env=self.env)
+    def run_script(self, *args, **env):
+        return self.sp.run(["bash", str(SBATCH), *args], capture_output=True, text=True, env={**self.env, **env})
 
     def test_it_refuses_a_deploy_off_the_pin_and_a_bad_mode(self):
         p = self.run_script("dry", str(self.D), "0" * 40, str(self.OUT))
@@ -400,6 +518,7 @@ class JobScript(unittest.TestCase):
         self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
         done = json.loads((self.OUT / "log-dry" / "DONE").read_text())
         self.assertEqual((done["mode"], done["tasks"], done["ended"], done["pin"]), ("dry", 1, 1, self.pin))
+        self.assertIs(json.loads((self.OUT / "log-dry" / "GATE.json").read_text())["pass"], True)
         p = self.run_script("dry", str(self.D), self.pin, str(self.OUT))
         self.assertEqual(p.returncode, 2)
         self.assertIn("exists", p.stderr)
@@ -407,6 +526,19 @@ class JobScript(unittest.TestCase):
         self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
         self.assertTrue((self.OUT / "runs" / "base.out").exists())
 
+    def test_full_refuses_a_failing_or_missing_gate(self):
+        """REQUIRED (audit E1): a dry DONE without a passing GATE.json at this pin does not admit the full run."""
+        p = self.run_script("dry", str(self.D), self.pin, str(self.OUT), STUB_GATE="fail")
+        self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
+        self.assertIs(json.loads((self.OUT / "log-dry" / "GATE.json").read_text())["pass"], False)
+        p = self.run_script("full", str(self.D), self.pin, str(self.OUT))
+        self.assertEqual(p.returncode, 2, p.stderr)
+        self.assertIn("no passing GATE.json", p.stderr)
+        self.assertFalse((self.OUT / "log-full").exists())
+        (self.OUT / "log-dry" / "GATE.json").unlink()
+        p = self.run_script("full", str(self.D), self.pin, str(self.OUT))
+        self.assertEqual(p.returncode, 2, p.stderr)
+        self.assertIn("no passing GATE.json", p.stderr)
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

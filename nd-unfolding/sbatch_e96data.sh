@@ -8,12 +8,15 @@
 #SBATCH --export=ALL,HOME=/global/homes/j/josephrb
 # E96-DATA (state/measurement-paper/5d-community-20261024/fd/e96-data-20261110/E96D-DECLARATION.md, draft), adapted
 # from nd-unfolding/sbatch_ens1.sh: the same lanes, teardown guard, receipts and refusals; one queue per stage.
-#   dry:   <OUT>/dry.tsv   (the control and k = 1; submit with --job-name=e96data_dry --time=0:30:00)
-#   full:  <OUT>/full.tsv  (F64 and k = 2..96; --job-name=e96data_full --time=3:00:00; only after the director accepts
-#                           the dry run's projection, and never without the dry DONE at this pin)
+#   dry:   <OUT>/dry.tsv   (the control and k = 1; submit with --job-name=e96data_dry --time=0:30:00). After its DONE,
+#          the gate (ensemble_estimator_data.py gate: A-D0, A-D1, k = 1's declared call and the projection; audit E1)
+#          runs on the dry products and writes <OUT>/log-dry/GATE.json.
+#   full:  <OUT>/full.tsv  (F64, the repeat of k = 1, and k = 2..96; --job-name=e96data_full --time=3:30:00). It refuses
+#          without the dry DONE and a passing GATE.json, both at this pin, and still needs the director's go.
 # Nothing runs before the LL5D readout and the director's go. The cap binds through Slurm's --time on one exclusive
-# node. A failed task exits 255, so xargs starts nothing further. Only a run whose every task ended with rc 0 writes its
-# DONE receipt. Writes only under <OUT>; refuses if this run's log exists (no resume without the director). Runs only
+# node. A failed task exits 1, so xargs keeps launching the rest of the queue (ENS1's guard, unchanged; audit e6); the
+# run then ends FAILED with no DONE, and nothing downstream reads it. Only a run whose every task ended with rc 0 writes
+# its DONE receipt. Writes only under <OUT>; refuses if this run's log exists (no resume without the director). Runs only
 # from a clean deploy at <pin>.
 set -o pipefail   # NOT set -u
 MODE="${1:?dry|full}"
@@ -29,12 +32,15 @@ case "$MODE" in
     *)    echo "[e96data] refusing: mode $MODE" >&2; exit 2 ;;
 esac
 P=8
+E_PRODUCT=/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j-.npz   # (e)'s product; the gate checks its sha
 [ -s "$Q" ] || { echo "[e96data] refusing: no queue $Q" >&2; exit 2; }
 [ ! -e "$L" ] || { echo "[e96data] refusing: $L exists" >&2; exit 2; }
 if [ "$MODE" = full ]; then  # checked before anything is written, so a refusal leaves no trace
     [ -s "$OUT/log-dry/DONE" ] && [ ! -e "$OUT/log-dry/FAILED" ] || { echo "[e96data] refusing: no DONE receipt from the dry run" >&2; exit 2; }
     dry_pin=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1])).get("pin", ""))' "$OUT/log-dry/DONE" 2>/dev/null)
     [ "$dry_pin" = "$PIN" ] || { echo "[e96data] refusing: the dry run ran at pin '$dry_pin', not $PIN" >&2; exit 2; }
+    gate_ok=$(python3 -c 'import json,sys; g=json.load(open(sys.argv[1])); print("yes" if g.get("pass") is True and g.get("pin") == sys.argv[2] else "no")' "$OUT/log-dry/GATE.json" "$PIN" 2>/dev/null)
+    [ "$gate_ok" = yes ] || { echo "[e96data] refusing: no passing GATE.json from the dry run at this pin" >&2; exit 2; }
 fi
 mkdir -p "$L/tasks"
 source "$D/setup_salloc_env.sh" > "$L/env.log" 2>&1
@@ -88,3 +94,10 @@ n_q=$(grep -vc '^#' "$Q"); n_end=0
 for id in $(grep -v '^#' "$Q" | cut -f1); do [ -e "$L/$id.end" ] && n_end=$((n_end + 1)); done
 [ "$n_end" -eq "$n_q" ] || { echo "ended=$n_end of $n_q" > "$L/FAILED"; echo "[e96data] STOP: $n_end of $n_q tasks ended" >&2; exit 1; }
 echo "{\"mode\": \"$MODE\", \"tasks\": $n_q, \"ended\": $n_end, \"rc\": 0, \"job\": \"$SLURM_JOB_ID\", \"pin\": \"$PIN\", \"teardown\": \"$teardown\"}" > "$L/DONE"
+if [ "$MODE" = dry ]; then   # the gate (audit E1); its failure leaves GATE.json pass false, which full mode refuses
+    ( cd "$D" && python3 nd-unfolding/ensemble_estimator_data.py gate --runs "$OUT/runs" --e-product "$E_PRODUCT" \
+        --definition "$D/nd-unfolding/pv-ladder/readouts/h2_definition.json" \
+        --data-product "$D/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/data-product/fd_data_product.json" \
+        --full-queue "$OUT/full.tsv" --pin "$PIN" --out "$L/GATE.json" ) >> "$L/gate.log" 2>&1
+    echo "[e96data] gate rc=$? ($L/GATE.json)"
+fi

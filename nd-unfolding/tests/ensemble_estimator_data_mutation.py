@@ -18,7 +18,7 @@ ND = Path(__file__).resolve().parents[1]
 TEST = ND / "tests" / "test_ensemble_estimator_data.py"
 M = "ensemble_estimator_data.py"
 S = "sbatch_e96data.sh"
-EXPECTED_TESTS = 22
+EXPECTED_TESTS = 29
 
 # (label, old, new, the test that must fail[, file]); the file is the module unless named
 MUTATIONS = [
@@ -36,8 +36,9 @@ MUTATIONS = [
      'ji, jb = o["jittered"](inputs, bkg, seed)', "test_the_base_is_the_float64_copy"),
     ("REQ a write without the check", '        if not st["checked"]:\n            raise Refusal("refusing to write',
      '        if False:\n            raise Refusal("refusing to write', "test_a_write_without_the_namespace_check_is_refused"),
-    ("REQ the control passes when one ulp differs", "x_c.tobytes() == x_e.tobytes() and not pc_probs",
-     "bool(np.allclose(x_c, x_e, rtol=1e-12, atol=0)) and not pc_probs", "test_a_control_one_ulp_off_stops"),
+    ("REQ the control passes when one ulp differs", "        same_array(raw_xsec(pc), x_e) and not probs,",
+     "        bool(np.allclose(np.asarray(raw_xsec(pc), float), np.asarray(x_e, float), rtol=1e-12, atol=0)) and not probs,",
+     "test_a_control_one_ulp_off_stops"),
     ("REQ the control runs the float64 path", '        if mode == "control":\n            raise Refusal("the control is',
      '        if False:\n            raise Refusal("the control is', "test_the_control_takes_no_jitter_and_the_base_no_protocol_seed"),
     # --- the namespace
@@ -59,7 +60,7 @@ MUTATIONS = [
      "test_the_ensemble_fits_carry_delta_k_and_differ_across_k"),
     ("moved rows not recorded", '"moved_rows": item.get("moved_rows"),', '"moved_rows": None,',
      "test_the_ensemble_fits_carry_delta_k_and_differ_across_k"),
-    ("install takes any k", '    if (mode == "ensemble") != (k is not None):', "    if False:", "test_install_arguments"),
+    ("install takes any k", '    if (mode in ("ensemble", "repeat")) != (k is not None) or', "    if False or", "test_install_arguments"),
     ("CLI accepts an undeclared k", 'if mode == "ensemble" and (len(set(ks)) != len(ks) or',
      'if False and (len(set(ks)) != len(ks) or', "test_cli_refuses_an_undeclared_k_before_any_runner"),
     # --- the queue
@@ -67,10 +68,38 @@ MUTATIONS = [
      "test_the_queue"),
     ("the full run repeats the dry k", "    ks = [k for k in range(1, N_ENS + 1) if k not in DRY_KS]",
      "    ks = list(range(1, N_ENS + 1))", "test_the_queue"),
+    # --- the dry run's gate and the repeat (audit E1, E2), REQUIRED
+    ("REQ the full run without a passing gate", '    [ "$gate_ok" = yes ] ||', "    true ||",
+     "test_full_refuses_a_failing_or_missing_gate", S),
+    ("REQ the gate's projection removed", "        proj is not None and proj <= 0.9 * FULL_TIME_S,", "        True,",
+     "test_the_gate_fails_on_a_control_defect_a_slow_unfold_or_a_missing_k1"),
+    ("REQ the gate skips the control", "        m_c = check_control(a.runs, x_e, chk)\n        p1 = product_path(a.runs, \"ensemble\", 1)",
+     "        m_c = None\n        p1 = product_path(a.runs, \"ensemble\", 1)",
+     "test_the_gate_fails_on_a_control_defect_a_slow_unfold_or_a_missing_k1"),
+    ("REQ the repeat not compared", "            p1.is_file() and same_array(raw_xsec(pr), raw_xsec(p1)) and not r_probs,",
+     "            not r_probs,", "test_the_repeat_must_equal_k1_bitwise"),
+    ("the repeat takes any k", 'or (mode == "repeat" and k != REPEAT_K):', ":", "test_install_arguments"),
+    # --- the post-hoc meta checks (audit E3, e1, e4)
+    ("REQ seed/threads/iters unchecked post hoc", '    if (meta.get("estimator_seed"), meta.get("threads"), meta.get("iters")) != \\\n            (DATA["estimator_seed"], DATA["threads"], DATA["iters"]):',
+     "    if False:", "test_each_post_hoc_meta_check_stops"),
+    ("REQ the control's meta ignored", "        same_array(raw_xsec(pc), x_e) and not probs, {\"problems\": probs})",
+     "        same_array(raw_xsec(pc), x_e), {\"problems\": probs})", "test_each_post_hoc_meta_check_stops"),
+    ("REQ the base's meta ignored", '    probs = product_problems(m_b, "base", None)\n    codes', "    probs = []\n    codes",
+     "test_each_post_hoc_meta_check_stops"),
+    ("REQ one code unchecked", "        not missing and not probs and len(codes) == 1 and len(digests) == N_ENS,",
+     "        not missing and not probs and len(digests) == N_ENS,", "test_each_post_hoc_meta_check_stops"),
+    ("REQ coords unchecked", '    if meta.get("coords") != ("float32" if mode == "control" else "float64"):', "    if False:",
+     "test_each_post_hoc_meta_check_stops"),
+    ("the control's code outside the set", "    codes = {code_of(m_b)} | ({code_of(m_c)} if m_c is not None else set())",
+     "    codes = {code_of(m_b)}", "test_each_post_hoc_meta_check_stops"),
+    ("dtype ignored in the bitwise comparison", "    return a.dtype == b.dtype and a.shape == b.shape and a.tobytes() == b.tobytes()",
+     "    return np.array_equal(np.asarray(a, np.float64), np.asarray(b, np.float64))", "test_a_missing_control_dtype_or_e_sha_is_a_stop_record"),
+    ("A-D0's digest unchecked", "a.e_product.is_file() and sha256_path(a.e_product) == e_sha", "a.e_product.is_file()",
+     "test_a_missing_control_dtype_or_e_sha_is_a_stop_record"),
     # --- the analysis
     ("A-D0 f unchecked", 'bool(np.allclose(f_e, f_dp, rtol=1e-12, atol=0))', "True", "test_an_f_that_is_not_es_stops"),
-    ("A-D2 a missing fit accepted", "            not missing and not probs and len(codes) == 1 and len(digests) == N_ENS,",
-     "            not probs and len(codes) == 1,", "test_each_a_d2_defect_stops"),
+    ("A-D2 a missing fit accepted", "        not missing and not probs and len(codes) == 1 and len(digests) == N_ENS,",
+     "        not probs and len(codes) == 1,", "test_each_a_d2_defect_stops"),
     ("A-D2 moved rows accepted", '    if mode != "control" and any((blk.get("moved_rows") or {"_": 1}).values()):',
      "    if False:", "test_each_a_d2_defect_stops"),
     ("E96 is the first fit, not the mean", "    x_E = X.mean(axis=0)", "    x_E = X[0]",
