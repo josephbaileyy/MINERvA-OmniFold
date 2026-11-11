@@ -1,0 +1,15 @@
+# RPD-RECO C4: MAT activation before checked postconditions
+
+The data-free prologue at `4ea4a113` stopped during conda activation on an unset ADDR2LINE variable, before its worker or trace ran. The platform receipt is [PR #870](https://github.com/josephbaileyy/MINERvA-OmniFold/pull/870). This report extends the C1–C3 repair packet; it does not turn that STOP into a passing platform result.
+
+Executable commit `36ab485167c78ffc9268260b6439935bba9b5866` changes only the two live MAT connect wrappers and their contract tests. Each wrapper suspends nounset across MAT setup sourcing, captures the source status without gating on it, restores nounset, and prints the status to the connect log. Source stderr remains visible. The existing checked environment, MnvH1D dictionary and mapped-library checks remain the readiness postconditions. Errexit and pipefail remain enabled outside activation.
+
+The static suite check inspects every live `*_connect.sh` under nd-unfolding and rejects MAT sourcing with nounset enabled. Four shell cases execute each wrapper's activation block against a stub that references an unset variable and returns either 0 or 7. They verify status recording, visible stderr, continuation to postconditions, restored nounset, preserved pipefail and subsequent errexit. A counterfactual test independently restores each original wrapper and confirms the static check rejects it.
+
+At the executable commit, the full suite printed **158 passed in 177.56s**. The focused check printed **5 passed, 153 deselected in 0.19s**. Black, Ruff and both shell syntax checks passed. The executable commit passed all 21 repository hooks. C4-SOURCE-IDENTITIES.json binds all eight executable files and identifies the three changed files. C4-VERIFICATION.json and the runner outputs record this scope.
+
+The prior **149/149 required mutants killed** and full comment-only custody control remain measurements at `4ea4a113`, preserved in MUTATIONS.json and VERIFICATION.json. They were not rerun for C4. The producer, custody module, prologue, real-class checker and mutation harness are byte-identical to that head; C4 adds shell coverage and changes the two wrappers. The prior scientific AST comparison remains scoped to its recorded heads.
+
+The receipt also integrates the current main route records so GitHub can form a merge commit. The two generated manifest conflicts are resolved by retaining both branches' independent entries and regenerating MANIFEST.tsv. The eight executable files are checked against C4-SOURCE-IDENTITIES.json after integration; their tested bytes remain unchanged.
+
+Owner remains Codex2 for code and local fixtures, independent reviewer coverage-5b-audit, platform executor limitation-resolver. This bounded repair ends with the small executable commit, committed verification and the combined C1–C4 delta re-audit. The ordered platform checks remain data-free trace, then real-MnvH1D clean close/teardown, followed by the director's full-connect decision. The production config stays DRAFT. The existing commands in REPORT.md are unchanged. No cluster contact or production run was performed in this lane.

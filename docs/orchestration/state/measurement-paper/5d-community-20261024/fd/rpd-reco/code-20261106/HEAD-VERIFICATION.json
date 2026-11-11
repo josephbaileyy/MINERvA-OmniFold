@@ -1,0 +1,39 @@
+{
+  "schema": "fd-rpd-reco-head-verification/1",
+  "tested_head": "98a1fea4e4fe550420f0fa3c01fe2f1346484d59",
+  "source_identities": {
+    "nd-unfolding/fd_rpd_reco.py": {
+      "sha256": "353085b37a9076ee9adaa23cc8cb40b8db80904c110b964be6fc14c78fb4dd3c",
+      "git_blob": "51c40c7e1b9709610898801b3e43785f6151e563"
+    },
+    "nd-unfolding/tests/test_fd_rpd_reco.py": {
+      "sha256": "8e0f8cfb89488b6e37ed99cae58597e6c6c6c69adf42f33fd16f4a8922479c36",
+      "git_blob": "f2efd97d5e735d9d3d5138b035fb80c7c6d0e3ea"
+    },
+    "nd-unfolding/tests/fd_rpd_reco_mutation.py": {
+      "sha256": "341d8ea983bfef625f1675728144d3eaa73551ae24e5bcbe74d7a76f86dd0746",
+      "git_blob": "fa642695d84e393165f5b5579081badd95654cd8"
+    }
+  },
+  "suite": {
+    "passed": 71,
+    "returncode": 0,
+    "output": "SUITE.txt",
+    "output_sha256": "360352e9b7f7a3926b531bda49af3002b7553daf9140001bcf128a7f080725ef"
+  },
+  "mutation": {
+    "required": 87,
+    "killed": 87,
+    "complete": true,
+    "returncode": 0,
+    "output": "MUTATIONS.txt",
+    "outcomes": "MUTATIONS.json",
+    "output_sha256": "e6d643bf58a7762cf1f91612026b7e9e71a06e5798359b26dfe33625611a4d36",
+    "normalized_outcomes_sha256": "6dc7f048a05542abde89913a45fb81cc8c4a2028a80fee0e8c714d9aaff87e74"
+  },
+  "ci_at_tested_head": {
+    "record-checks": "SUCCESS",
+    "run_url": "https://github.com/josephbaileyy/MINERvA-OmniFold/actions/runs/42244789984"
+  },
+  "scope": "Local fixtures only. This receipt commit changes verification output and documentation, not executable producer/test/harness bytes. It does not authorize binding 2 or production compute."
+}

@@ -1,0 +1,133 @@
+{
+  "tested_head": "477d51ead59943af7286ddee3258814f846fa865",
+  "prior_required": 196,
+  "new_required": 21,
+  "new_outcomes": [
+    {
+      "name": "REQUIRED_PLATFORM_PREPARE_PINS",
+      "status": "KILLED",
+      "selector": "test_fresh_prepare_stages_closed_inventory",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_PLATFORM_PROLOGUE_PINS",
+      "status": "KILLED",
+      "selector": "test_prologue_prepare_opens_no_declared_data",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_TRACE_UNFINISHED_RETAINED",
+      "status": "KILLED",
+      "selector": "test_trace_unpaired_calls_refuse and unfinished",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_TRACE_PAIRS_SAME_PID",
+      "status": "KILLED",
+      "selector": "test_trace_interleaving_keeps_pid_and_every_line",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_TRACE_DISJOINT_EXCLUSIONS",
+      "status": "KILLED",
+      "selector": "test_trace_policy_disjoint_under_system_run",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_PLATFORM_WORKER_PIN_DIGEST",
+      "status": "KILLED",
+      "selector": "test_platform_worker_exact_pins",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_PLATFORM_WORKER_EXACT_SET",
+      "status": "KILLED",
+      "selector": "test_platform_worker_exact_pins and (added or removed)",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_PLATFORM_WORKER_PROTECTED_FIRST",
+      "status": "KILLED",
+      "selector": "test_platform_worker_exact_pins and protected",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_TRACE_CLONE_CHDIR_ONLY",
+      "status": "KILLED",
+      "selector": "test_trace_exact_clone_chdir_and_other_refusal",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_TRACE_STOP_PUBLIC_EXPORT",
+      "status": "KILLED",
+      "selector": "test_trace_stop_record_is_complete_public_and_cfs_first",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_TRACE_STOP_WRITTEN",
+      "status": "KILLED",
+      "selector": "test_trace_stop_record_is_complete_public_and_cfs_first",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_TRACE_CHILD_CWD",
+      "status": "KILLED",
+      "selector": "test_prologue_child_environment_boundary",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_CUSTODY_PLATFORM_CONFIG",
+      "status": "KILLED",
+      "selector": "test_platform_config_closed_roles_and_reasons",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_CUSTODY_PLATFORM_MAP_IDENTITY",
+      "status": "KILLED",
+      "selector": "test_platform_executable_maps_identity",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_CUSTODY_PLATFORM_MAP_SET",
+      "status": "KILLED",
+      "selector": "test_platform_prepare_pins_and_protected_first and set",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_CUSTODY_PLATFORM_PROTECTED",
+      "status": "KILLED",
+      "selector": "test_platform_prepare_pins_and_protected_first and protected",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_CUSTODY_PLATFORM_MAP_FILE",
+      "status": "KILLED",
+      "selector": "test_platform_prepare_pins_and_protected_first and inode",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_CUSTODY_PLATFORM_PIN_CHANGED",
+      "status": "KILLED",
+      "selector": "test_platform_prepare_pins_and_protected_first and unstable",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_CUSTODY_TRACE_CWD",
+      "status": "KILLED",
+      "selector": "test_trace_policy_disjoint_under_system_run",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_CUSTODY_TRACE_RECORD_NAME",
+      "status": "KILLED",
+      "selector": "test_trace_stop_record_is_complete_public_and_cfs_first",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_GUARD_MAT_PLATFORM_LIBRARIES",
+      "status": "KILLED",
+      "selector": "test_platform_guard_on_production_path",
+      "returncode": 1
+    }
+  ]
+}

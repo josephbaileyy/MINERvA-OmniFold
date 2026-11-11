@@ -1,0 +1,11 @@
+== black (26.10.1) --check
+All done! ✨ 🍰 ✨
+5 files would be left unchanged.
+== ruff (0.17.4) check
+All checks passed!
+== mypy (2.4.1) --strict --ignore-missing-imports (this branch)
+fd_rpd_reco.py:1924: error: Argument 2 to "savez" has incompatible type "**dict[str, ndarray[tuple[Any, ...], dtype[Any]]]"; expected "bool"  [arg-type]
+Found 1 error in 1 file (checked 3 source files)
+== the same mypy at 9634aadf (baseline, same venv)
+fd_rpd_reco.py:1857: error: Argument 2 to "savez" has incompatible type "**dict[str, ndarray[tuple[Any, ...], dtype[Any]]]"; expected "bool"  [arg-type]
+Found 1 error in 1 file (checked 3 source files)

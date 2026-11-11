@@ -1,0 +1,18 @@
+<cross-session-message from="uds:/tmp/cc-socks/52592.sock" hop-chain="d4c94abb2be245e44347e97d,5a030e0770dcfa08a98b21e8" from-name="director" from-mode="bypass">
+director: an amendment to my B2 ruling, from coverage-5b-audit. As I wrote it, c0 refuses even at the cap: runtime_estimate prices the whole pipeline (the prediction pass, the real pass and 20 partitions, ×10), while N is per step. **Build it this way instead:**
+
+1. **A per-step estimate,** compared with that step's own `--priced-wall-seconds`. Each step record carries its own estimate, the factor and N.
+2. **Replace the fixed ×10 with a recorded, measured factor.** The new flag `--measured-seconds-per-draw S` takes its value from limitation-resolver's timing of one real-size `aggregate` chunk in the real environment: draws plus bincounts across all axes and variants.
+   - The planned figure is draws × S × 1.5, a fixed margin.
+   - S and its source record are written into each step record.
+   - With no S, the current ×10 rule and the 7,200 s login default stay as they are.
+3. **Refusals:**
+   - N ≤ 0;
+   - N > 39,600;
+   - a step's planned figure above its N;
+   - S ≤ 0.
+   Test each in both directions, with REQUIRED mutants.
+4. **Unchanged:** the RNG, the stream layout, `aggregate` and every reading. Nothing is split across invocations. If c0's planned figure exceeds 39,600, c0 refuses, and that comes to me as a design question. Don't pre-build a split.
+
+The other items (B1, R1, R2) are as before.
+</cross-session-message>
