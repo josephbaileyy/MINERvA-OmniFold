@@ -1197,3 +1197,58 @@ without that restoration; the frozen inventory and production probe rules are
 unchanged. The repaired self-test passes: the delivered move is silent, all 41
 planted defects fire their required probes, all four controls stay silent, and
 the digest-message check prints two distinct full digests.
+
+## B5 and V-PRIOR alignment (2026-11-11)
+
+Under the director's new work order, relayed by Joseph, the note keeps the
+CH-corrected comparison and the V-PRIOR counts as the recorded results and states
+explicitly that the methods paper withholds them. The free-proton sampling and
+energy-conservation problems, and the NuWro supplement's unresolved abort losses,
+remain the stated reasons. This follows the order's labelled-retention option;
+it supplies no new qualification of those inputs or classification of V-PRIOR as
+right or wrong.
+
+Codex drafted and Grok checked each assigned change read-only, one commit followed
+by its check. The bounded decision was how to make the printed comparison and its
+dependent claims consistent with the methods paper's withholding. The claim sweep
+is closed at the eight passed commits below; no numerical investigation was added.
+
+| passed commit | change |
+|---|---|
+| `1b45ca668bd9a873fcb7dc5ee1b4d63896a35fce` | Calibration: explicit independent draws of the flux and band universes, with multiplying weight ratios. |
+| `48b13ade3811a3cfe49dfaecc406f465164c0f2c` | Search comment for the existing two-dimensional joint-throw and mean-shift-norm absence sentence; rendered prose unchanged. |
+| `3257d7c6145aaf52750dbd2be42534b63b9edf36` | First stopped coverage-test diagnosis: generated response-only/full-universe spread ratio, checked against the existing I2 record. The existing response-only/reported-block sensitivity stays unchanged. |
+| `b59af23f5c6d4cdf7436f59756dd23e4a6ce333e` | Main sixteen-cell table caption and introduction distinguish the note's recorded CH comparison from the methods paper's carbon-only comparison and state the withholding reason. |
+| `f03c1e72e96771237d62f24fd83adc105c31bd95` | V-PRIOR paragraph states that the paper withholds the counts because its generator spread uses CH-corrected NuWro and GiBUU, and identifies them as the recorded classification. |
+| `cf53d9d5c371a3f199b376d804cd880f0c6551ef` | C_model caption identifies the CH column as the note's sensitivity omitted by the paper and distinguishes the reported carbon-based shape ratios. |
+| `24255bb4bc04c6dfab4cff7398b321016527c8ad` | Joint target-correction section states that the paper compares NuWro and GiBUU on carbon only and that the section records the correction. |
+| `da422b35fbc3c85c5eff18575a662ff69c4743f3` | Executive summary states that the methods paper does not report the correction; the original carbon-based decisions stay unchanged. |
+
+Inherited scope, with no further edit, was checked by Grok for each dependent use:
+
+| use retained | reason no further sentence was added |
+|---|---|
+| Per-cell pulls | Display of the recorded comparison; the caption cites the main comparison whose introduction and caption now state the withholding. |
+| Correlation-shrinkage table | Sensitivity of that same recorded comparison, under its stated scope. |
+| Eigenmode figure and table | Breakdowns of the recorded comparison, with its prediction definitions and qualifications. |
+| Target-variant table | Recorded variants of the target correction, with the generation-check qualifications in the referenced section. |
+| Carbon Stage-G table | The distinct carbon comparison in the generators' definitions; its target is already explicit. |
+| R04 detail | Detail of the reported covariance and the recorded comparison, without a new target correction. |
+| Flux-bootstrap bands | Estimation-scatter sensitivities of the recorded comparison, conditional on the specified universes. |
+| C_model body quantities | Target sensitivities; the body already identifies the reported shape ratios as carbon and the caption identifies the CH column omitted by the paper. |
+| sec_eavailw target pointer | Points to the recorded re-evaluation; it makes no claim that the paper uses the correction. |
+| V-ATLAS | A distinct rule whose existing scope and counts are unchanged. |
+
+No existing number was changed and no carbon-only V-PRIOR was computed. The added
+spread-ratio values are the existing I2 result, printed through the generator;
+they do not replace its separate response-only/reported-block sensitivity.
+In particular, 127.69 and 47.78 are the CH-corrected prediction chi-squared values
+under a covariance whose reported C_model ratios remain carbon; they are distinct
+from the existing carbon-prediction values. The original ten joint decisions,
+which used the carbon predictions, remain unchanged. No coverage, uncertainty
+adoption or bound on the free-proton samples' effect is inferred.
+
+The primer, paper sources, LL5D text and release appendix were not edited. AUD-N4
+and AUD-N5 remain held, and PR #952 remains draft and unmerged. The hold on wording
+about the note's overall role remains in force. No director completion report has
+been sent.
