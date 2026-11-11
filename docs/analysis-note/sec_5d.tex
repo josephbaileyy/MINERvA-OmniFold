@@ -181,7 +181,7 @@ The study set its total-width target, a median 68\% half-width of at most \SI{10
 \centering
 \includegraphics[width=\linewidth]{figures/gbdt_recovery.pdf}
 
-\caption{Noise-free five-dimensional recovery of historical truths at fixed simulated response. Solid curves use 100 trees/8 leaves; dashed use 400/31 for OmniFold estimators. D1 and W1 extend to 40 iterations, $q_3$ stress to 30, W3 to 200, and capacity probes to 10; some baseline traces end at their last saved checkpoint. The upper row gives median $|\hat f/f_{\rm true}-1|$ over supported cells. The lower row gives the study's residual proxy $\operatorname{median}(|\hat f/f_{\rm true}-1|/|f_{\rm true}/f_0-1|)$ for departures above 1\%, with the required bound 0.25 dotted. Different denominators prevent interpreting one minus the proxy as an exact recovered fraction. The $q_3$ stress has no eligible EW departure. These traces measure no repeat variance.}
+\caption{Noise-free 5D recovery: historical truths, fixed simulated response. Solid/dashed OmniFold curves: 100 trees/8 leaves and 400/31. Iteration maxima: D1/W1 40, $q_3$ 30, W3 200, capacity probes 10. Some baseline traces end at their last saved checkpoint. Top: median $|\hat f/f_{\rm true}-1|$ over supported cells. Bottom: residual proxy $\operatorname{median}(|\hat f/f_{\rm true}-1|/|f_{\rm true}/f_0-1|)$ for departures above 1\%, dotted bound 0.25. Different denominators prevent reading one minus this proxy as an exact recovered fraction. The $q_3$ stress has no eligible EW departure. These traces measure no repeat variance.}
 
 \label{fig:gbdt-recovery}
 \end{figure}
