@@ -1,0 +1,33 @@
+FD-PRR addendum A1: the JobScript class alone, after the other run ended (its script runs xargs -P 8 briefly)
+date_utc: 2026-11-09T00:02:31Z  host: DN0a1f6baa
+clone: a clean clone, HEAD b2cbaab89e294184ba214fb518d90aa337a161b4, porcelain lines before: 0
+python: 3.12.2  numpy: 1.26.4  scipy: 1.15.2  bash: GNU bash, version 3.2.57(1)-release (arm64-apple-darwin25)
+thread caps: OMP=1 MKL=1 OPENBLAS=1 NUMEXPR=1 VECLIB=1; nice -n 19; one serial process
+files (sha256):
+f87ee90c58d2b8904fe881931edc61966a6adda8be7eb503da6644797a3d1232  prr_probe.py
+17acad82bad7c43f45c423e41039eb81381f5acab15ecdf983ad0d023848d046  prr_ibu.py
+f35bc3282b50215dd583b76b0d6a747f90185e4b96b6e3f5b693d42c01166372  prr_read.py
+10290087cdd57d972a4df5289f1910161373e8def3f44c15ba0682f9d14a0b85  sbatch_prr.sh
+44223143a6982fb876e742fd910c3de46e48fb419da351b9ad9693186f791746  test_prr.py
+4666aa0654dccbe999972642090cfc18ccac8d14d7fa4c5057be6e745520ef25  prr_mutation.py
+---
+collected 104 tests; selected 10 (the JobScript class only)
+test_a_failed_pair_stops_the_dry_run_and_every_full_job (test_prr.JobScript.test_a_failed_pair_stops_the_dry_run_and_every_full_job) ... ok
+test_a_failed_task_leaves_no_done (test_prr.JobScript.test_a_failed_task_leaves_no_done) ... ok
+test_a_full_job_refuses_a_changed_stage (test_prr.JobScript.test_a_full_job_refuses_a_changed_stage) ... ok
+test_a_limit_above_the_declared_is_refused (test_prr.JobScript.test_a_limit_above_the_declared_is_refused) ... ok
+test_a_refused_staging_stops_before_any_task (test_prr.JobScript.test_a_refused_staging_stops_before_any_task) ... ok
+test_a_wrong_pin_or_a_rerun_is_refused (test_prr.JobScript.test_a_wrong_pin_or_a_rerun_is_refused) ... ok
+test_an_ens1_job_queued_or_running_refuses_the_dry_run (test_prr.JobScript.test_an_ens1_job_queued_or_running_refuses_the_dry_run) ... ok
+test_dry_then_a_full_job_then_ibu (test_prr.JobScript.test_dry_then_a_full_job_then_ibu) ... ok
+test_every_python3_call_runs_after_the_environment_is_sourced (test_prr.JobScript.test_every_python3_call_runs_after_the_environment_is_sourced)
+REQUIRED (Addendum A1). The job starts with the login node's python3, 3.6.15 on the cluster, which cannot ... ok
+test_outside_slurm_without_the_smoke_flag_it_refuses (test_prr.JobScript.test_outside_slurm_without_the_smoke_flag_it_refuses) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 26.012s
+
+OK
+rc=0
+porcelain lines after: 0
+date_utc_end: 2026-11-09T00:02:58Z

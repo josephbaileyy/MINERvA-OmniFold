@@ -1,0 +1,41 @@
+# ll5d_a1b_mutation.py
+# date 2026-11-09T01:32:36Z  made at HEAD eeed15993831f4f2b352595b98842ed05f62097c, a clean checkout (porcelain 0)
+# python 3.12.2 numpy 1.26.4
+# b49f5d5f793265ef0cf569abe1912838cce9280e692f4dd61100d05c133aec1f  ll5d.py
+# 24312ca86f9e70ed86699772d634c19d9bcacb2bb87bff5aaa8c9f7c2661f3cb  ll5d_b.py
+# 9ef0f23838e5dd0eb3bffca9ed02c702281ba103174518cb245393650bc0aa35  tests/test_ll5d.py
+# 918d75bfd9c2c89faa0250918e52fdbccb2e9dd2e83bc2353b5d4b86ddebc0c2  tests/test_ll5d_b.py
+# b5849b1d9a9a795b4975f177ba737aaa76fbfdb9bfebee48b09d36a2db3c544d  tests/ll5d_a1a_mutation.py
+# 1b09bf22969b26984cac245d30d734e654088e61af43bedd3add341911389f61  tests/ll5d_a1b_mutation.py
+ll5d_b.py sha256 24312ca86f9e70ed86699772d634c19d9bcacb2bb87bff5aaa8c9f7c2661f3cb
+test_ll5d_b.py sha256 918d75bfd9c2c89faa0250918e52fdbccb2e9dd2e83bc2353b5d4b86ddebc0c2
+UNMUTATED PASS tests=29 expected=29 skipped=False rc=0
+MUTATION KILLED WK <= in place of < [Weakened.test_strictly_below_0_9] sha256=943e8b153ab41c98
+MUTATION KILLED WK 0.85 [Weakened.test_strictly_below_0_9] sha256=eafbbccb72f558cd
+MUTATION KILLED WK 0.95 [Weakened.test_strictly_below_0_9] sha256=b31af2a66ee2f0ac
+MUTATION KILLED WK a wrong evaluation's r_c [Pipeline.test_each_reading_takes_its_own_ratio_for_the_weakened_label] sha256=718e5f972604de7b
+MUTATION KILLED WK the label moves the verdict [Pipeline.test_the_weakened_label_moves_no_verdict] sha256=61efd05dc03d5d8a
+MUTATION KILLED WK another gate key read [Pipeline.test_the_gate_record_is_read_only_through_its_allowlist] sha256=2bd0cc99386807a8
+MUTATION KILLED NA the reference dropped [Nature.test_compose_order_and_each_tree_clipped_on_its_own_composite] sha256=aabbfec5cedd4c1f
+MUTATION KILLED NA a detector's tdw not tdw_ref [Nature.test_k1_gives_universe_inputs_arrays_bitwise] sha256=d47b55ba73e86375
+MUTATION KILLED NA the truth tree unclipped [Nature.test_compose_order_and_each_tree_clipped_on_its_own_composite] sha256=67f6c6afb3787ea2
+MUTATION KILLED NA the truth takes Phi_CV [Nature.test_the_toys_truth_is_the_receipts_and_takes_phi_u] sha256=98d96e30911e73ab
+MUTATION KILLED NA a toy ignores its reading [Unfold.test_each_role_writes_its_arrays] sha256=e30e025ec487d18d
+MUTATION KILLED NA the stat seed is 1B's [Unfold.test_each_role_writes_its_arrays] sha256=bc6c88931e4ee1df
+MUTATION KILLED NA r_T unchecked [Unfold.test_r_t_must_be_positive_everywhere] sha256=7aaf0509a7723817
+MUTATION KILLED CM the mean is a sum [Unfold.test_the_clipmean_adds_the_mean_clipped_mass_and_reads_only_the_sealed_digest] sha256=c56d98cbf07cc8ed
+MUTATION KILLED CM the seal's digest unchecked [Unfold.test_the_clipmean_adds_the_mean_clipped_mass_and_reads_only_the_sealed_digest] sha256=5577217189e5aa9d
+MUTATION KILLED CM the seal read plainly [NoAtime.test_the_clip_prep_the_gate_and_the_products_are_read_with_o_noatime_only] sha256=a99360d93bccd4d5
+MUTATION KILLED CC tau added [ClipOffset.test_the_offset_is_the_unfolds_shift_less_the_truths] sha256=82710c15269b601c
+MUTATION KILLED CC delta* strict [ClipOffset.test_delta_star_is_at_or_above] sha256=ebe7737ac65dd35d
+MUTATION KILLED WA the unit strict [Walls.test_the_unit_and_the_limit_both_ways] sha256=5e8b0ead4492e4f8
+MUTATION KILLED BL minus2 keeps every band [Pipeline.test_minus2_rebuilds_without_the_two_bands_and_the_removal_is_exact] sha256=d5c02257f2c8d617
+MUTATION KILLED BL the removal tolerance loosened [Pipeline.test_minus2_rebuilds_without_the_two_bands_and_the_removal_is_exact] sha256=b5c5c23c1828d2b4
+MUTATION KILLED NU 1B's null seed [Pipeline.test_the_null_is_per_reading_at_the_declared_seeds] sha256=c0cb8a197d6a4f2c
+MUTATION KILLED GR the reading rule's bound doubled [CholeskyRule.test_the_rule_both_ways] sha256=6aec84e8a9659d46
+MUTATION KILLED GR the grade's own tol unchecked [CholeskyRule.test_the_rule_both_ways] sha256=036120369963f059
+MUTATION KILLED EX a refusal is not INVALID [ExitCodes.test_a_refusal_is_invalid_with_its_record] sha256=4f8f317ae8192fee
+MUTATION KILLED A1a.1 run_unfold installs no candidate [RealUnfold.test_run_unfold_runs_every_role_over_the_real_chain] sha256=a25f9f578951d292
+MUTATION KILLED GR A5's tolerance without its factor 10 [CholeskyRule.test_the_tolerance_is_a5s] sha256=4212c006cd51d3b7
+ALL-KILLED
+# rc=0

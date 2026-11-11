@@ -1,0 +1,31 @@
+node login21 nproc=244 loadavg 325.17 331.37 327.35
+2026-11-08T17:25:53Z
+connect script sha256 f6d16c501f645b7c284a2a1a01721a972412225c3ad93c7f37443d12f377f6de
+job 61004211
+== the fence (only rs1_* and ens1_* pass)
+FENCE: pass
+== the job
+61004211|ens1_a1_s2_dry|COMPLETED|0:0|00:11:45|705|1|256|2026-11-08T09:10:53|2026-11-08T09:22:38|nid004330
+name=ens1_a1_s2_dry state=COMPLETED elapsed_raw=705 nnodes=1
+charge node_h=0.1958; stage 2 spend 0 + 0.1958 = 0.1958 of 46.0
+== the run
+{"mode": "dry", "stage": 2, "shard": "-", "tasks": 7, "ended": 7, "rc": 0, "job": "61004211", "pin": "f4d2d7f3833834390b7b031df61ba1a5765e9900", "teardown": ""}
+
+HEAD f4d2d7f3833834390b7b031df61ba1a5765e9900; modified tracked files: 0
+== the seven products (the bound probe's expect)
+ens1_nominal_k001	/pscratch/sd/j/josephrb/ens1-a1-20261108/runs/closure/nominal/ens1_nominal_k001_s991000.npz
+ens1_nominal_k002	/pscratch/sd/j/josephrb/ens1-a1-20261108/runs/closure/nominal/ens1_nominal_k002_s991000.npz
+ens1_nominal_k003	/pscratch/sd/j/josephrb/ens1-a1-20261108/runs/closure/nominal/ens1_nominal_k003_s991000.npz
+ens1_nominal_k004	/pscratch/sd/j/josephrb/ens1-a1-20261108/runs/closure/nominal/ens1_nominal_k004_s991000.npz
+ens1_W1_k001	/pscratch/sd/j/josephrb/ens1-a1-20261108/runs/closure/W1/ens1_W1_k001_s991000.npz
+ens1_W1_k002	/pscratch/sd/j/josephrb/ens1-a1-20261108/runs/closure/W1/ens1_W1_k002_s991000.npz
+ens1_A7_mnvtune_k001	/pscratch/sd/j/josephrb/ens1-a1-20261108/runs/closure/A7_mnvtune/ens1_A7_mnvtune_k001_s991000.npz
+products: 7
+== the blocks, the logs, the determinism control, the truth vectors, the projection (sourced environment)
+read.py sha256 f0a5713776c73e2d2bd08dfdcb432bf72e042655b0f3f226d6270e81505a5442
+Python 3.11.14
+{"verdict": "PASS", "failures": [], "compare": {"determinism": {"xsec_flat": {"dtype": ["float64", "float64"], "shape": [[65856], [65856]], "bitwise_identical": true}, "xtrue_flat": {"dtype": ["float64", "float64"], "shape": [[65856], [65856]], "bitwise_identical": true}}, "truth_vectors": {"W1": {"k": [1, 2], "bitwise_identical": true}, "nominal": {"k": [1, 2, 3, 4], "bitwise_identical": true}}}, "projection": {"t_max_seconds": 603.117, "task_wall_max": 634.5, "lane_unfolds": 34, "bound_t": 705, "limit_h": 6.75, "shard_wall_h_from_t": 5.779, "shard_wall_h_from_wall": 6.076}, "timing": {"ens1_nominal_k001": {"seconds": [572.788], "seconds_unfold_meta": 572.788, "wall": 603.2}, "ens1_nominal_k002": {"seconds": [514.646], "seconds_unfold_meta": 514.646, "wall": 544.1}, "ens1_nominal_k003": {"seconds": [523.244], "seconds_unfold_meta": 523.244, "wall": 553.8}, "ens1_nominal_k004": {"seconds": [503.558], "seconds_unfold_meta": 503.558, "wall": 533.1}, "ens1_W1_k001": {"seconds": [603.117], "seconds_unfold_meta": 603.117, "wall": 634.5}, "ens1_W1_k002": {"seconds": [533.075], "seconds_unfold_meta": 533.075, "wall": 564.9}, "ens1_A7_mnvtune_k001": {"seconds": [487.76], "seconds_unfold_meta": 487.76, "wall": 517.3}}, "dtype_requested": {"ens1_nominal_k001": "float32", "ens1_nominal_k002": "float32", "ens1_nominal_k003": "float32", "ens1_nominal_k004": "float32", "ens1_W1_k001": "float32", "ens1_W1_k002": "float32", "ens1_A7_mnvtune_k001": "float32"}}
+read rc=0
+b5f7127f39087aa3f8b1141dd1bea7088df39becc4d73155995056a11943e5b2  /pscratch/sd/j/josephrb/ens1-a1-20261108/post-s2-dry/s2-dry-read.json
+ens1 a1 stage-2 dry postrun rc=0
+2026-11-08T17:26:18Z

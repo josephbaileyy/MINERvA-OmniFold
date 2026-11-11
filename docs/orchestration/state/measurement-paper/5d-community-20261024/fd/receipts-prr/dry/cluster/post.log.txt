@@ -1,0 +1,50 @@
+node login30
+2026-11-09T05:56:46Z
+post script sha256 9a957fb8d002a79aefda87d8a73e935f1133781ba1e026a222b6ff1851e203d4
+job 61022062 state COMPLETED
+JobID|JobName|State|ExitCode|Elapsed|ElapsedRaw|NNodes|AllocCPUS|Start|End|TimelimitRaw|Timelimit
+61022062|prr_dry|COMPLETED|0:0|01:00:48|3648|1|256|2026-11-08T20:55:14|2026-11-08T21:56:02|315|05:15:00
+61022062.batch|batch|COMPLETED|0:0|01:00:48|3648|1|256|2026-11-08T20:55:14|2026-11-08T21:56:02||
+61022062.extern|extern|COMPLETED|0:0|01:00:48|3648|1|256|2026-11-08T20:55:14|2026-11-08T21:56:02||
+charge_node_h=1.0133 (ElapsedRaw x NNodes / 3600; the dry limit is 5.25)
+copied: 87 files
+total 156
+drwx------ 3 josephrb josephrb 4096 Nov  8 21:56 .
+drwx------ 9 josephrb josephrb 4096 Nov  8 21:56 ..
+-rw------- 1 josephrb josephrb   70 Nov  8 21:56 DONE
+-rw------- 1 josephrb josephrb  364 Nov  8 20:55 env.log
+-rw------- 1 josephrb josephrb  247 Nov  8 21:56 pair.json
+-rw------- 1 josephrb josephrb   15 Nov  8 21:56 pair.log
+-rw------- 1 josephrb josephrb   19 Nov  8 21:04 prr_B0_A7_gibuu_s991000.end
+-rw------- 1 josephrb josephrb   18 Nov  8 20:56 prr_B0_A7_gibuu_s991000.start
+-rw------- 1 josephrb josephrb   19 Nov  8 21:04 prr_B0_nominal_s991000.end
+-rw------- 1 josephrb josephrb   19 Nov  8 20:56 prr_B0_nominal_s991000.start
+-rw------- 1 josephrb josephrb   19 Nov  8 21:38 prr_C1000_nominal_s991000.end
+-rw------- 1 josephrb josephrb   18 Nov  8 20:56 prr_C1000_nominal_s991000.start
+-rw------- 1 josephrb josephrb   19 Nov  8 21:15 prr_C25_nominal_s991000.end
+-rw------- 1 josephrb josephrb   19 Nov  8 21:11 prr_C25_nominal_s991000.start
+-rw------- 1 josephrb josephrb   17 Nov  8 21:16 prr_C400_nominal_s991000.end
+-rw------- 1 josephrb josephrb   18 Nov  8 20:56 prr_C400_nominal_s991000.start
+-rw------- 1 josephrb josephrb   18 Nov  8 21:10 prr_K10_nominal_s991000.end
+-rw------- 1 josephrb josephrb   19 Nov  8 20:56 prr_K10_nominal_s991000.start
+-rw------- 1 josephrb josephrb   19 Nov  8 21:19 prr_K20_nominal_s991000.end
+-rw------- 1 josephrb josephrb   19 Nov  8 20:56 prr_K20_nominal_s991000.start
+-rw------- 1 josephrb josephrb   19 Nov  8 21:15 prr_K2_nominal_s991000.end
+-rw------- 1 josephrb josephrb   19 Nov  8 21:12 prr_K2_nominal_s991000.start
+-rw------- 1 josephrb josephrb   17 Nov  8 21:55 prr_K50_nominal_s991000.end
+-rw------- 1 josephrb josephrb   18 Nov  8 20:56 prr_K50_nominal_s991000.start
+-rw------- 1 josephrb josephrb   19 Nov  8 21:00 prr_MCq_nominal_s991000.end
+-rw------- 1 josephrb josephrb   18 Nov  8 20:56 prr_MCq_nominal_s991000.start
+-rw------- 1 josephrb josephrb   19 Nov  8 21:09 prr_O2_nominal_s991000.end
+-rw------- 1 josephrb josephrb   19 Nov  8 21:00 prr_O2_nominal_s991000.start
+-rw------- 1 josephrb josephrb   19 Nov  8 21:11 prr_O3_nominal_s991000.end
+-rw------- 1 josephrb josephrb   19 Nov  8 21:04 prr_O3_nominal_s991000.start
+-rw------- 1 josephrb josephrb   19 Nov  8 21:12 prr_O4_nominal_s991000.end
+-rw------- 1 josephrb josephrb   19 Nov  8 21:05 prr_O4_nominal_s991000.start
+-rw------- 1 josephrb josephrb   19 Nov  8 21:15 prr_O4r_nominal_s991000.end
+-rw------- 1 josephrb josephrb   19 Nov  8 21:09 prr_O4r_nominal_s991000.start
+-rw------- 1 josephrb josephrb   18 Nov  8 21:17 prr_O5_nominal_s991000.end
+-rw------- 1 josephrb josephrb   18 Nov  8 21:10 prr_O5_nominal_s991000.start
+-rw------- 1 josephrb josephrb 1659 Nov  8 21:55 SHA256SUMS
+-rw------- 1 josephrb josephrb   14 Nov  8 20:55 stage.log
+drwx------ 2 josephrb josephrb 4096 Nov  8 21:12 tasks

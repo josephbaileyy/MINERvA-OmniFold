@@ -1,0 +1,7 @@
+role	sha256_ok	stat_unmoved	size	atime_before_ns	atime_after_ns	src
+of_inputs_5d	True	True	1548438020	1794179838000000000	1794179838000000000	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz
+bkg_dump	True	True	16017201	1794179838000000000	1794179838000000000	/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz
+bank_cv	True	True	2163648810	1794179841000000000	1794179841000000000	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/cv.npz
+closure_ratio_nuwro	True	True	547429	1794169508000000000	1794169508000000000	/pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV/nuwro.json
+fd_stab_control_nominal	True	True	184571	1793873922000000000	1793873922000000000	/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/closure/nominal/stab_control_nominal_s991000.npz
+fd_stab_control_A7_gibuu	True	True	184716	1793873922000000000	1793873922000000000	/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/closure/A7_gibuu/stab_control_A7_gibuu_s991000.npz

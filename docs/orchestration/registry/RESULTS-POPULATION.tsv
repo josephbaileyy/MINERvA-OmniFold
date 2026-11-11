@@ -26,6 +26,7 @@ docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/re
 docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/results/s3.json	included	10	
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/diagnosis-three-items-20261104/recheck.json	included	10	
 docs/orchestration/state/2d-closeout/valid-region-20261107/receipts/read/readout.json	included	16	
+docs/orchestration/state/2d-closeout/valid-region-20261107/v-half/receipts/read/readout.json	included	28	
 docs/orchestration/state/GRADE-20260920-cause3-two-member.json	included	1	
 docs/orchestration/state/RECEIPT-20260823-oi126-r4-preanneal-lr-sensitivity.json	included	6	
 docs/orchestration/state/RECEIPT-20260824-oi126-c-permutation-ensemble.json	included	2	
@@ -54,10 +55,13 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-f1/
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-f1/run/cluster/f1a/pilot/G18_10a_02_11b/pilot_xsec5d.meta.json	included	3	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-f1/run/cluster/f1b3/gen5d/genie_v3_ar23_xsec5d.meta.json	included	3	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-f1/run/cluster/f1b3/gen5d/genie_v3_g18_xsec5d.meta.json	included	3	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/read/cluster/readout.json	included	6	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ref-g1/a1-read/readout.json	included	5	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/mwdiag/mw_1A_1M.json	included	6	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/readout/fd_rpd.json	included	4	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-stab-a1r/readout/readout-2/fd_stab.json	included	3	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rounding-stability-20261106/ensemble/receipts/stage1-a1-analysis/ens1_stage1.json	included	2	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rounding-stability-20261106/ensemble/receipts/stage2-a1-analysis/ens1_stage2.json	included	1	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/readout/fd_f0b_readout.json	included	25	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/readout/fd_f1_readout.json	included	35	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/readout/fd_g_readout.json	included	10	

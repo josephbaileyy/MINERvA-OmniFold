@@ -1,0 +1,30 @@
+host=nid005989 job=61040163 truth=g18 start=2026-11-09T16:32:31Z
+deploy head=a95cc39f7437170af0b65ba042934fad079e0ee2 porcelain_lines=0
+nd-unfolding/ll5d.py: OK
+nd-unfolding/fd_1b_c2.py: OK
+nd-unfolding/fd_1b_mc.py: OK
+nd-unfolding/fd_1b_toys.py: OK
+nd-unfolding/fd_1b_inv.py: OK
+nd-unfolding/s1_assemble.py: OK
+nd-unfolding/s5p_universe.py: OK
+nd-unfolding/fd_1b_score.py: OK
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/clip/clip_probe2.py: OK
+2d-unfolding/cov2d/cov2d.py: OK
+docs/orchestration/state/2d-closeout/stageF/methods/sf1/manifest/inputs-sha256.txt: OK
+nd-unfolding/pv-ladder/readouts/h2_definition.json: OK
+setup_salloc_env.sh: OK
+nd-unfolding/s5e_candidate.py: OK
+nd-unfolding/s5e_deform.py: OK
+threads OMP=1 OPENBLAS=1 MKL=1 NUMEXPR=1
+gate rc=3
+LL5D-GATE g18 verdict=STOP
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 10:51:55
+	Maximum resident set size (kbytes): 285712092
+	Exit status: 3
+3c3044529927f0969fdf7cab4dffc947c84ec5b1c8f01a3d39d4efa7d250ee4f  /pscratch/sd/j/josephrb/ll5d-gate-g18-20261108/gate-g18.json
+8689e050451dfa09bf41cab5873e3a701b6b7668dfd7321c9ee6d28eac29fe3b  /pscratch/sd/j/josephrb/ll5d-gate-g18-20261108/gate-g18.receipt.npz
+bb7032bb649980b76e011b83e6473ed542f53ae1fd627ed32f404b52db907ff6  /pscratch/sd/j/josephrb/ll5d-gate-g18-20261108/gate.out
+6993e497fa9422e5e825d6c5512dde20089cdd1e7b3f7b5d3d98e839408e4a9b  /pscratch/sd/j/josephrb/ll5d-gate-g18-20261108/gate.time
+SEALED gate-g18.clipprep.npz bytes=535686808 sha256=76154b205691bcd5e19b0c0e2274f35615dec4dd857a6033b976aaf2f30aacba
+end=2026-11-10T03:24:34Z

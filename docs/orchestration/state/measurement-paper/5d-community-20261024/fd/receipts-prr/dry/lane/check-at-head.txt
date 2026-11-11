@@ -1,0 +1,95 @@
+# FD-PRR dry receipt: checks rerun in a clean clone at 41b8434d7c3da24a3f6b2830e613e458c0db7f8c, 2026-11-09T06:04:19Z
+# one serial process, nice -n 19, OMP/MKL/OPENBLAS/NUMEXPR/VECLIB threads 1; porcelain before: 0
+## 1. python3 -I lane/verify_receipts.py <dry>
+OK  charge_node_h.txt -> cluster/charge_node_h.txt
+OK  log-dry/DONE -> cluster/log-dry/DONE
+OK  log-dry/env.log -> cluster/log-dry/env.log.txt
+OK  log-dry/pair.json -> cluster/log-dry/pair.json
+OK  log-dry/pair.log -> cluster/log-dry/pair.log.txt
+OK  log-dry/prr_B0_A7_gibuu_s991000.end -> cluster/log-dry/prr_B0_A7_gibuu_s991000.end
+OK  log-dry/prr_B0_A7_gibuu_s991000.start -> cluster/log-dry/prr_B0_A7_gibuu_s991000.start
+OK  log-dry/prr_B0_nominal_s991000.end -> cluster/log-dry/prr_B0_nominal_s991000.end
+OK  log-dry/prr_B0_nominal_s991000.start -> cluster/log-dry/prr_B0_nominal_s991000.start
+OK  log-dry/prr_C1000_nominal_s991000.end -> cluster/log-dry/prr_C1000_nominal_s991000.end
+OK  log-dry/prr_C1000_nominal_s991000.start -> cluster/log-dry/prr_C1000_nominal_s991000.start
+OK  log-dry/prr_C25_nominal_s991000.end -> cluster/log-dry/prr_C25_nominal_s991000.end
+OK  log-dry/prr_C25_nominal_s991000.start -> cluster/log-dry/prr_C25_nominal_s991000.start
+OK  log-dry/prr_C400_nominal_s991000.end -> cluster/log-dry/prr_C400_nominal_s991000.end
+OK  log-dry/prr_C400_nominal_s991000.start -> cluster/log-dry/prr_C400_nominal_s991000.start
+OK  log-dry/prr_K10_nominal_s991000.end -> cluster/log-dry/prr_K10_nominal_s991000.end
+OK  log-dry/prr_K10_nominal_s991000.start -> cluster/log-dry/prr_K10_nominal_s991000.start
+OK  log-dry/prr_K20_nominal_s991000.end -> cluster/log-dry/prr_K20_nominal_s991000.end
+OK  log-dry/prr_K20_nominal_s991000.start -> cluster/log-dry/prr_K20_nominal_s991000.start
+OK  log-dry/prr_K2_nominal_s991000.end -> cluster/log-dry/prr_K2_nominal_s991000.end
+OK  log-dry/prr_K2_nominal_s991000.start -> cluster/log-dry/prr_K2_nominal_s991000.start
+OK  log-dry/prr_K50_nominal_s991000.end -> cluster/log-dry/prr_K50_nominal_s991000.end
+OK  log-dry/prr_K50_nominal_s991000.start -> cluster/log-dry/prr_K50_nominal_s991000.start
+OK  log-dry/prr_MCq_nominal_s991000.end -> cluster/log-dry/prr_MCq_nominal_s991000.end
+OK  log-dry/prr_MCq_nominal_s991000.start -> cluster/log-dry/prr_MCq_nominal_s991000.start
+OK  log-dry/prr_O2_nominal_s991000.end -> cluster/log-dry/prr_O2_nominal_s991000.end
+OK  log-dry/prr_O2_nominal_s991000.start -> cluster/log-dry/prr_O2_nominal_s991000.start
+OK  log-dry/prr_O3_nominal_s991000.end -> cluster/log-dry/prr_O3_nominal_s991000.end
+OK  log-dry/prr_O3_nominal_s991000.start -> cluster/log-dry/prr_O3_nominal_s991000.start
+OK  log-dry/prr_O4_nominal_s991000.end -> cluster/log-dry/prr_O4_nominal_s991000.end
+OK  log-dry/prr_O4_nominal_s991000.start -> cluster/log-dry/prr_O4_nominal_s991000.start
+OK  log-dry/prr_O4r_nominal_s991000.end -> cluster/log-dry/prr_O4r_nominal_s991000.end
+OK  log-dry/prr_O4r_nominal_s991000.start -> cluster/log-dry/prr_O4r_nominal_s991000.start
+OK  log-dry/prr_O5_nominal_s991000.end -> cluster/log-dry/prr_O5_nominal_s991000.end
+OK  log-dry/prr_O5_nominal_s991000.start -> cluster/log-dry/prr_O5_nominal_s991000.start
+OK  log-dry/stage.log -> cluster/log-dry/stage.log.txt
+OK  log-dry/tasks/prr_B0_A7_gibuu_s991000.log -> cluster/log-dry/tasks/prr_B0_A7_gibuu_s991000.log.txt
+OK  log-dry/tasks/prr_B0_A7_gibuu_s991000.time -> cluster/log-dry/tasks/prr_B0_A7_gibuu_s991000.time
+OK  log-dry/tasks/prr_B0_nominal_s991000.log -> cluster/log-dry/tasks/prr_B0_nominal_s991000.log.txt
+OK  log-dry/tasks/prr_B0_nominal_s991000.time -> cluster/log-dry/tasks/prr_B0_nominal_s991000.time
+OK  log-dry/tasks/prr_C1000_nominal_s991000.log -> cluster/log-dry/tasks/prr_C1000_nominal_s991000.log.txt
+OK  log-dry/tasks/prr_C1000_nominal_s991000.time -> cluster/log-dry/tasks/prr_C1000_nominal_s991000.time
+OK  log-dry/tasks/prr_C25_nominal_s991000.log -> cluster/log-dry/tasks/prr_C25_nominal_s991000.log.txt
+OK  log-dry/tasks/prr_C25_nominal_s991000.time -> cluster/log-dry/tasks/prr_C25_nominal_s991000.time
+OK  log-dry/tasks/prr_C400_nominal_s991000.log -> cluster/log-dry/tasks/prr_C400_nominal_s991000.log.txt
+OK  log-dry/tasks/prr_C400_nominal_s991000.time -> cluster/log-dry/tasks/prr_C400_nominal_s991000.time
+OK  log-dry/tasks/prr_K10_nominal_s991000.log -> cluster/log-dry/tasks/prr_K10_nominal_s991000.log.txt
+OK  log-dry/tasks/prr_K10_nominal_s991000.time -> cluster/log-dry/tasks/prr_K10_nominal_s991000.time
+OK  log-dry/tasks/prr_K20_nominal_s991000.log -> cluster/log-dry/tasks/prr_K20_nominal_s991000.log.txt
+OK  log-dry/tasks/prr_K20_nominal_s991000.time -> cluster/log-dry/tasks/prr_K20_nominal_s991000.time
+OK  log-dry/tasks/prr_K2_nominal_s991000.log -> cluster/log-dry/tasks/prr_K2_nominal_s991000.log.txt
+OK  log-dry/tasks/prr_K2_nominal_s991000.time -> cluster/log-dry/tasks/prr_K2_nominal_s991000.time
+OK  log-dry/tasks/prr_K50_nominal_s991000.log -> cluster/log-dry/tasks/prr_K50_nominal_s991000.log.txt
+OK  log-dry/tasks/prr_K50_nominal_s991000.time -> cluster/log-dry/tasks/prr_K50_nominal_s991000.time
+OK  log-dry/tasks/prr_MCq_nominal_s991000.log -> cluster/log-dry/tasks/prr_MCq_nominal_s991000.log.txt
+OK  log-dry/tasks/prr_MCq_nominal_s991000.time -> cluster/log-dry/tasks/prr_MCq_nominal_s991000.time
+OK  log-dry/tasks/prr_O2_nominal_s991000.log -> cluster/log-dry/tasks/prr_O2_nominal_s991000.log.txt
+OK  log-dry/tasks/prr_O2_nominal_s991000.time -> cluster/log-dry/tasks/prr_O2_nominal_s991000.time
+OK  log-dry/tasks/prr_O3_nominal_s991000.log -> cluster/log-dry/tasks/prr_O3_nominal_s991000.log.txt
+OK  log-dry/tasks/prr_O3_nominal_s991000.time -> cluster/log-dry/tasks/prr_O3_nominal_s991000.time
+OK  log-dry/tasks/prr_O4_nominal_s991000.log -> cluster/log-dry/tasks/prr_O4_nominal_s991000.log.txt
+OK  log-dry/tasks/prr_O4_nominal_s991000.time -> cluster/log-dry/tasks/prr_O4_nominal_s991000.time
+OK  log-dry/tasks/prr_O4r_nominal_s991000.log -> cluster/log-dry/tasks/prr_O4r_nominal_s991000.log.txt
+OK  log-dry/tasks/prr_O4r_nominal_s991000.time -> cluster/log-dry/tasks/prr_O4r_nominal_s991000.time
+OK  log-dry/tasks/prr_O5_nominal_s991000.log -> cluster/log-dry/tasks/prr_O5_nominal_s991000.log.txt
+OK  log-dry/tasks/prr_O5_nominal_s991000.time -> cluster/log-dry/tasks/prr_O5_nominal_s991000.time
+OK  logs/clone.log -> cluster/logs/clone.log.txt
+OK  logs/connect-dry.done -> cluster/logs/connect-dry.done
+OK  logs/connect-dry.log -> cluster/logs/connect-dry.log.txt
+OK  logs/connect-source.log -> cluster/logs/connect-source.log.txt
+OK  logs/dry.jobid -> cluster/logs/dry.jobid
+OK  logs/env-precheck.log -> cluster/logs/env-precheck.log.txt
+OK  logs/pins.tsv -> cluster/logs/pins.tsv
+OK  logs/prr_dry_61022062.out -> cluster/logs/prr_dry_61022062.out.txt
+OK  logs/prr_dry_submit.sh -> cluster/logs/prr_dry_submit.sh
+OK  logs/sourced-python.err -> cluster/logs/sourced-python.err.txt
+OK  logs/submit-dry.out -> cluster/logs/submit-dry.out.txt
+OK  manifest.json -> cluster/manifest.json
+OK  prr_dry_post.sh -> cluster/prr_dry_post.sh
+OK  queues/cap.tsv -> cluster/queues/cap.tsv
+OK  queues/dry.tsv -> cluster/queues/dry.tsv
+OK  queues/iter.tsv -> cluster/queues/iter.tsv
+OK  queues/misc.tsv -> cluster/queues/misc.tsv
+OK  sacct.txt -> cluster/sacct.txt
+OK  stage.json -> cluster/stage.json
+85 files in cluster/SHA256SUMS, 85 match, 26 renamed
+rc=0
+## 2. python3 lane/project_full.py <clone> <dry>/cluster, compared byte for byte with lane/projection.json
+rc=0
+identical: sha256 0d72cd541baac7fd45e61df991e49be1656009a3920b4d9e08784193e61d471a
+# porcelain after: 0
+# nd-unfolding/prior_retention/ files differing between M_A1 6727020a and this head: 0 (git diff --name-only)

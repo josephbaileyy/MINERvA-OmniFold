@@ -1,0 +1,101 @@
+# BINDING 1: the GEANT_Neutron and GEANT_Proton band diagnosis (director, 2026-11-08)
+
+**Binds** [`FD-1B-BAND-DIAGNOSIS-DECLARATION.md`](FD-1B-BAND-DIAGNOSIS-DECLARATION.md) and its code, as merged in PR
+#935 at **M = `83ac32fb5024026ac6c51c0621d5ae9ff9073370`**. The audited head is `931ba8bd`. The declaration, the module
+and its tests are identical at the two commits.
+
+| file | sha256 (prefix) |
+|---|---|
+| `FD-1B-BAND-DIAGNOSIS-DECLARATION.md` | `541bf3fe4373c7db` |
+| `nd-unfolding/fd_1b_band_diag.py` | `658ca91849a8151a` |
+| `nd-unfolding/tests/test_fd_1b_band_diag.py` | `c567aaf6c8ac4060` |
+| `fd/receipts-1b/band-diag/code/mutation.py` | `35b4efb7024b1004` |
+| `fd/receipts-1b/band-diag/code/mutation.out` | `8b29415afb9cec1a` |
+
+**Under:** `DECISION-20261108-joseph-5d-coverage-and-parallel-studies.md` (#934), item 2: the departure is diagnosed
+under a new declaration, in parallel. It does not gate the like-for-like coverage test (LL5D) and cannot change its
+primary reading.
+
+## What the director checked
+
+- **The audit.** coverage-5b-audit's NO-GO at `f28f2215` on one text item (C1, the HK record presented as a finding),
+  then its GO at `931ba8bd` (https://github.com/josephbaileyy/MINERvA-OmniFold/pull/935#issuecomment-6724475055):
+  - 60 of 60 single-site mutants killed, reproduced line for line;
+  - 49 tests passing at three hash seeds;
+  - the disclosed HK arithmetic reproduced from readout.json `8e05ca9b`;
+  - §3 and §4.7 now call the HK reading a record of committed products, not a test.
+- **The tests.** At M, the director ran `tests/test_fd_1b_band_diag.py` from a `git archive` of M (`-B`, own
+  TMPDIR): 49 passed.
+
+## Rulings
+
+1. **The design is bound as declared at M:** HB0 to HB3, the descriptive channel and out-of-window readouts, and §4.7's
+   licences. HK stays a record, not a test. Gate D's FAIL, Part 0, Part 1, 1B's rule (iii) and every earlier record
+   stand in every outcome. No repair, and no study of the truth dependence (item c), follows from this campaign.
+2. **The steps and the price** are bound as in §7:
+   - **P0:** stat-only connect; **P1:** login, `nice -n 19`;
+   - **P2, the pilot:** one node, `--time=01:30:00`, 1.5 node-h reserved. Its rebuild controls, §4.3 and its walls
+     gate P3, and coverage-5b-audit sees its readout before P3;
+   - **P3, the bulk:** 3 jobs at `--time=02:30:00`;
+   - **the cap is 9.0 CPU node-h,** with about 4.5 expected. `iris` is read before P2 and before P3 (the last reading,
+     2026-11-08 17:10Z, was a balance of 1,698.3 node-h, half 849.1). A REPRICE from the pilot comes back to the
+     director.
+3. **The job-name family `fd1b_bdg_`** (`fd1b_bdg_p2`, `fd1b_bdg_p3`) is new. The director names it to every lane with
+   a live fence before P2's go: ENS1 (`director-helper-3`), RPD-RECO's prologue (Codex2), LL5D (cov2d) and FD-PRR
+   (`director-helper-2`).
+4. **Shared inputs, checked by real path at P0.** The in-place reads (§6: the inputs npz, the background dump, the 8
+   detector-dump weight sets) may share files with ENS1 stage 2, whose tasks read their inputs plainly. The stage-2
+   inputs are listed in ENS1's committed `stage2-inputs-stat.txt` (#940). P0 records the realpath of every source and
+   compares it with that list.
+   - **If any realpath is shared,** this campaign's P1-to-P3 window does not overlap any `ens1_*` job. The connects'
+     fence then allows `fd1b_bdg_*` only, and the director sequences the two lanes' gos. §5's atime comparison is not
+     narrowed.
+   - **If none is shared,** the connects' fence allows `fd1b_bdg_*`, `ens1_*` and `rs1_*`, and the two campaigns may
+     run together.
+   - P0's receipt states which branch applies.
+5. **Each connect** sends its sha256 and path to the director before launch, from a fresh clone at M with empty
+   porcelain. `cov2d_fence.sh` runs from the Mac before every connect. ssh's rc is read unpiped. Every `--time` is
+   HH:MM:SS, with scontrol's TimeLimit checked. Each receipt goes in as a PR.
+6. **The report** gives the readings per §4.4–§4.6 with §4.7's licences, and the cost measured. It goes to the
+   director, then to Joseph. No paper or note text.
+
+Nothing is submitted, deposited or tagged.
+
+## Binding 1, addendum A1: the P2 and P3 fence after ENS1 (director, 2026-11-09)
+
+**What led to it.** P0 read BRANCH SHARED on all 34 ruling-4 sources (#944), so ruling 4 sequenced this campaign after
+ENS1, whose tasks read those files plainly. ENS1's stage 2, its post-run and its analysis have now ended
+(analysis 23:54:11Z, 2026-11-08). P1 ran after that (#955) with its before-stat at 23:58Z, and its re-stat was
+byte-identical. The other campaigns that share these files read them without moving atimes: LL5D through O_NOATIME
+(overlap receipt #949), FD-PRR only through `dd iflag=noatime` copies with per-file stat before and after
+(FD-PRR-BINDING-1 ruling 5).
+
+**Rulings:**
+1. **P2's and P3's connects allow `fd1b_bdg_*`, `ll5d_*` and `prr_*`** in the queue; any other name refuses, `ens1_*`
+   and `rs1_*` included. Ruling 4's sequencing against ENS1 is discharged by ENS1's end.
+2. **§5's atime comparison is unchanged**: P3's after-stat against P1's before-stat (`stat-before.txt`, sha256
+   `7986e2bf…`), byte for byte, atime included. If any lane moves a shared file's atime, P3 STOPs. That is fail-safe, and
+   the STOP comes to the director unrepaired.
+3. **No two lanes' connects copy the shared files at the same time.** P2's and P3's connects log their copy or read
+   window to the second; the director names each launch window.
+4. Everything else in binding 1 stands.
+
+## Binding 1, addendum A2: P3's job layout, repriced (director, 2026-11-09)
+
+**What led to it.** limitation-resolver found, while preparing P3, that §7's "112 other items on 3 nodes × 8 lanes, at
+most 5 per lane" cannot be realized. A table line is one `fd_1b_band_diag.py unfold` call with a single mode, seed, ε
+and channel, so a lane holds only items of one group. `bulk_items()` at M has 16 groups: 12 of 8 universes ((E, B) ×
+seeds 45, 48, 51, 54 and ε ½, 2 at seed 42) and 4 of 4 ((E, B) × signal, background). At most 5 per lane needs at least
+28 lines, which 24 lanes cannot hold without queued lines breaking the unit-time wall bound (about 11,620 s against
+02:30:00). The lane reported it as its own declaration's error, before any P3 submission.
+
+**Rulings:**
+1. **P3 is 4 jobs × 7 lanes × 4 items:** 28 lines, each of 4 distinct universes from one group (the 12 groups of 8
+   split 4 + 4; the 4 channel groups whole). Job j runs lines 7j to 7j+6.
+2. **`--time=01:40:00` per job** (6,000 s against a worst lane at the unit of 4 × (1,370 + 75) + 60 = 5,840 s).
+   Reserved 4 × 1.667 = 6.67 node-h; with P2's 1.5, 8.17, inside the **unchanged 9.0 cap**.
+3. **P3's table generator refuses** unless the 28 lines carry exactly `bulk_items()`, each line is one group, no item is
+   in `pilot_items()`, and every item is in `items()`. It is gated by sha256 in the connect.
+4. **Unchanged:** the items, the controls, the gates (P2's PASS and EQUAL, the identical re-stat, coverage-5b-audit's
+   read of P2's readout), the fence of addendum A1, 32 threads per lane, and the family `fd1b_bdg_p3`. This replaces only
+   binding ruling 2's "P3, the bulk: 3 jobs at `--time=02:30:00`".

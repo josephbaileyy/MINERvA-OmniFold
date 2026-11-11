@@ -1,0 +1,42 @@
+You are an independent senior reviewer: an experimental physicist with a statistician's view of estimator comparison
+and pre-specified studies. Joseph Bailey, the project's author, asks what to do with a planned study after its power
+check came back negative. Give your own judgement; you are not bound by any recommendation in the files. The working
+directory is a clean, read-only checkout at b738074e. Read files; do not write, run jobs or use the network. Cite
+file:line for every fact you rely on, and check the arithmetic yourself where you can.
+
+THE STUDY: docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rounding-stability-20261106/ensemble/
+bias-variance/BV96-DECLARATION.md (DRAFT): a bias-variance (MSE) comparison of the reported estimator, configuration
+(e), with a 96-fit ensemble average E96, at two reserved generator truths, on 153 functionals in sigma_rel units, M = 30
+pseudo-experiments per truth.
+
+THE POWER CHECK: power/receipts-o1/ and power/bv96_power_sim.out.txt beside the declaration. P(E96 detectably better
+at both truths) is about 0.001 at M = 30 and stays far below 0.8 for M from 20 to 60. The lane's reason: at
+generator-shape truths (e)'s noise-free bias on the functionals is large (median |b| 4.5 to 62 sigma_rel), so MSE is
+bias-dominated; E96's rounding-variance gain is at most about 0.78 sigma^2, and the paired MSE difference's noise
+(about 2|b| sd per experiment) swamps it.
+
+CONTEXT: why the study exists — docs/orchestration/DECISION-20261109-joseph-methods-baseline-and-plan.md item 4;
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/consult-astra-publishable-path-20261109/answer.txt
+(the earlier recommendation of "a declared bias-variance (mean-squared-error) trade-off study at reserved truths").
+What was already measured: docs/orchestration/OUTCOME-20261109-ens1-stab-pass-bias-worse.md (E96 passes the stability
+bars; BIAS_WORSE at one of 17 truths) and the ENS1 declaration it cites.
+
+THE OPTIONS ON THE TABLE:
+(a) Stop BV96 as an MSE study; record the scale finding (MSE at generator-shape truths is bias-dominated, so the
+    trade-off cannot be decided by MSE at affordable M; E96's merit is stability, already measured).
+(b) Re-target it as a held-out bias comparison: the paired first-order bias difference E96 minus (e) at the two
+    reserved truths, resolvable at M = 30 to about 0.1 sigma_rel per functional, plus a variance readout. About 122
+    node-h expected, cap 175.
+(c) Restrict to small-bias (nominal-like) truths, where MSE is resolvable but the trade-off is near-trivial.
+The director recommended (a) plus (b).
+
+WHAT TO ANSWER (about 1,000 words, plain language)
+1. Is the power analysis sound? Check its logic and arithmetic against the files; say if the MSE framing was
+   mis-specified (for example, should variance be the per-experiment spread rather than rounding alone; is "MSE at a
+   truth with large bias" the right object for an adoption decision at all?).
+2. Which option, or another, best serves the actual decision (whether a future measurement should adopt E96), and what
+   exactly it should test and claim. If (b), say what result would change the adoption decision and what would not.
+3. The GiBUU question: the power simulation used two GiBUU-truth closures as planning inputs only, while earlier
+   licences keep GiBUU magnitudes out of criteria. Is that use acceptable, and should it be disclosed?
+4. Anything the draft misses.
+Be direct.

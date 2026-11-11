@@ -1,0 +1,59 @@
+{
+  "fine_cells": 65856,
+  "gated_sets": [
+    "shares",
+    "tilt"
+  ],
+  "inputs": {
+    "fine_map_sha256_int32le": "930326a3a7c0852d4047b5468d8ea3b63d046b896e4a4de1557e29f95102e18c",
+    "h2_definition_sha256": "b67907615fe2e903e60ae6caa1c141fa007676c0a1b3ae9f42490d331bfdda89",
+    "keys_read": [
+      "MCgen",
+      "pass_truth",
+      "w_truth"
+    ],
+    "npz_sha256": "07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f"
+  },
+  "o_noatime": true,
+  "omega_fine_cells": 63168,
+  "schema": "vhr-wtruth-check/1",
+  "sets": {
+    "all": {
+      "max": 3.895271731713644,
+      "min": 0.00027560029276517135,
+      "negative": 0,
+      "nonfinite": 0,
+      "rows": 32849103,
+      "sum": 5779535.6838463005,
+      "zero": 0
+    },
+    "pass_truth": {
+      "max": 3.895271731713644,
+      "min": 0.00027560029276517135,
+      "negative": 0,
+      "nonfinite": 0,
+      "rows": 32849103,
+      "sum": 5779535.6838463005,
+      "zero": 0
+    },
+    "shares": {
+      "max": 3.895271731713644,
+      "min": 0.00027560029276517135,
+      "negative": 0,
+      "nonfinite": 0,
+      "rows": 32846301,
+      "sum": 5778935.958533636,
+      "zero": 0
+    },
+    "tilt": {
+      "max": 3.895271731713644,
+      "min": 0.00027560029276517135,
+      "negative": 0,
+      "nonfinite": 0,
+      "rows": 32846301,
+      "sum": 5778935.958533636,
+      "zero": 0
+    }
+  },
+  "verdict": "PASS"
+}

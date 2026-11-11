@@ -1,0 +1,33 @@
+{
+ "files": {
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz": {
+   "atime_ns_first": 1794179838000000000,
+   "atime_ns_now": 1794179838000000000
+  },
+  "/pscratch/sd/j/josephrb/fd-1b-20261030/pins.json": {
+   "atime_ns_first": 1793496788000000000,
+   "atime_ns_now": 1793496788000000000
+  },
+  "/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz": {
+   "atime_ns_first": 1794179838000000000,
+   "atime_ns_now": 1794179838000000000
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/MinosEfficiency_1_bkgw.npy": {
+   "atime_ns_first": 1793890146000000000,
+   "atime_ns_now": 1793890146000000000
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/MinosEfficiency_1_denom_nd.npy": {
+   "atime_ns_first": 1793890146000000000,
+   "atime_ns_now": 1793890146000000000
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/MinosEfficiency_1_wr.npy": {
+   "atime_ns_first": 1793890146000000000,
+   "atime_ns_now": 1793890146000000000
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/MinosEfficiency_1_wt.npy": {
+   "atime_ns_first": 1793890145000000000,
+   "atime_ns_now": 1793890145000000000
+  }
+ },
+ "moved": []
+}

@@ -1,0 +1,33 @@
+node login24 2026-11-09T23:22:39Z
+staged sha256 7b598fec73795244ea2d63e46d8c5da02743ce6d001bb47ad9e4a229c60302c7
+post rc=0; staged copy removed: yes
+== post.done
+0
+== post.log
+node login24
+2026-11-09T23:22:39Z
+post script sha256 7b598fec73795244ea2d63e46d8c5da02743ce6d001bb47ad9e4a229c60302c7
+job 61057142 state COMPLETED
+JobID|JobName|State|ExitCode|Elapsed|ElapsedRaw|NNodes|AllocCPUS|Start|End|TimelimitRaw|Timelimit
+61057142|prr_ibu|COMPLETED|0:0|00:09:06|546|1|256|2026-11-09T15:03:45|2026-11-09T15:12:51|30|00:30:00
+61057142.batch|batch|COMPLETED|0:0|00:09:06|546|1|256|2026-11-09T15:03:45|2026-11-09T15:12:51||
+61057142.extern|extern|COMPLETED|0:0|00:09:06|546|1|256|2026-11-09T15:03:45|2026-11-09T15:12:51||
+charge_node_h=0.1517 (ElapsedRaw x NNodes / 3600; the ibu limit is 0.5)
+61022062|prr_dry|COMPLETED|3648|1
+61024185|prr_iter|COMPLETED|9038|1
+61028298|prr_cap|COMPLETED|5220|1
+61030122|prr_misc|COMPLETED|8657|1
+61035510|prr_ibu|FAILED|41|1
+61043652|prr_ibu|FAILED|132|1
+61057142|prr_ibu|COMPLETED|546|1
+study_charged_node_h=7.5783 (cap 27.0)
+copied: 43 files
+total 28
+drwx------  3 josephrb josephrb 4096 Nov  9 15:12 .
+drwx------ 26 josephrb josephrb 4096 Nov  9 15:22 ..
+-rw-------  1 josephrb josephrb   44 Nov  9 15:12 DONE
+-rw-------  1 josephrb josephrb  388 Nov  9 15:04 env.log
+log-ibu entries: 6; tasks/: 0
+c07245467564cca6bda0d4c5146eeb77dff41f61fddfde15f4266981f0748a8c  post-ibu.tar.gz
+prr ibu post rc=0
+2026-11-09T23:22:39Z

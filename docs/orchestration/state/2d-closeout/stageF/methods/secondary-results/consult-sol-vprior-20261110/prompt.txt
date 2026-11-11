@@ -1,0 +1,27 @@
+You are an independent senior reviewer: an experimental neutrino physicist who knows unfolding, generator comparisons and pre-specified validation. Joseph Bailey, the project's author, asks for your recommendation on one decision for a methods paper about to be finalized. Give your own judgement. The working directory is a clean, read-only checkout at 78ab386e0. Read files; do not write, run jobs or use the network. Cite file:line for every fact you rely on, and check numbers yourself where you can (python3 is available for reading JSON).
+
+THE DECISION. The paper has a per-cell validity rule, V-PRIOR. A reporting cell is valid when the spread of the reported estimator's bias over the graded test truths is less than half the spread of the generator predictions about the prior (the analysis simulation). Read:
+- the rule's declaration: docs/orchestration/state/2d-closeout/valid-region-20261107/DECLARATION.md, especially input I3 at :120, the generator set at :135-139, the departure delta_G at :222, the spreads at :236-246;
+- its outcome: docs/orchestration/OUTCOME-20261107-valid-region.md;
+- where it prints: docs/analysis-note/paper_body.tex:320 (section 5.4) and docs/analysis-note/supplemental_body.tex:661 onward (S11).
+Currently 14 of 16 cells are valid under V-PRIOR (R08 at 0.522-0.534 and R15 at 0.564-0.565 miss), and 12 under both of the paper's rules.
+
+THE PROBLEM. The generator spread S_g uses NuWro (all 16 cells) and GiBUU (8 cells) "corrected to CH": carbon predictions plus each generator's own free-proton prediction at weight 1/13 per nucleon. The interim referee wrote (verbatim):
+  "Table S7's footnotes state that GiBUU's free-proton sample failed its sampling-closure check and that its deep-inelastic events, comprising 46% of that sample, do not conserve energy. The NuWro hydrogen supplement also has unbounded losses from generator aborts. These are stronger problems than the otherwise acceptable carbon-versus-CH qualification. The authors should repair and validate these samples, quantitatively bound their effect on the displayed quantities, or remove the affected corrected predictions and chi^2 values. The hydrogen weight of 1/13 does not itself bound distortions in individual cells."
+The footnotes are at supplemental_body.tex:628. The author has accepted removing the CH-corrected NuWro and GiBUU predictions from the generator comparison (S10), keeping NuWro and GiBUU on carbon only, labelled. V-PRIOR depends on the same CH-corrected predictions.
+
+WHAT IS AVAILABLE. docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp/readout/defs.json holds, for NuWro and GiBUU, both carbon and CH predictions in the analysis definitions per cell (generators.<g>.<carbon|CH>.analysis_definitions.chi2.reported: g, f, sigma_Vg_over_f, cells). The director measured carbon/CH - 1 per cell at 0 to +4.7% for NuWro and -0.8 to +5.5% for GiBUU, the largest in R08 (+4.7%, +5.5%). Verify this yourself. The prior and the GENIE predictions are on CH and unaffected.
+
+THE OPTIONS ON THE TABLE (costs as estimated by the director):
+(1) Withhold V-PRIOR's results from this paper: section 5.4 reports the other two rules (V-ATLAS, 14 of 16; V-HALF), plus one sentence saying why V-PRIOR's results are withheld. A V-PRIOR on repaired free-proton samples goes to the follow-up paper. No compute, about an hour of editing.
+(2) Rerun V-PRIOR with NuWro and GiBUU on carbon: a local recomputation from defs.json under a declared amendment, read once, with no cluster time and about half a day of process. Disclose the carbon-versus-CH difference. R08 is borderline and has the largest carbon-CH gap, so it could flip either way.
+(3) Keep the current V-PRIOR results, labelled as using the CH-corrected predictions.
+(4) Repair and validate the free-proton samples (new generator runs, cost not estimated) before the paper goes out.
+You may propose another option, for example reporting V-PRIOR under both carbon and CH predictions as a sensitivity, or using a quantitative bound.
+
+WHAT TO ANSWER (about 800 words, plain language)
+1. Which option you recommend for the methods paper, and why. Address the referee's three routes (repair, bound, remove) directly.
+2. If (2) or a variant: is swapping carbon predictions into a spread about a CH prior a fair input to this rule, or a target mismatch that inflates or deflates S_g? Can the direction be read from the files without running the rule (do not compute V-PRIOR itself)? What would you require be declared before the rerun so that changing an input after the result is known is not tuning?
+3. If (1): what exactly should the paper say, and does removing V-PRIOR weaken the paper's claims in a way a referee would object to?
+4. Anything the options miss.
+Be direct.

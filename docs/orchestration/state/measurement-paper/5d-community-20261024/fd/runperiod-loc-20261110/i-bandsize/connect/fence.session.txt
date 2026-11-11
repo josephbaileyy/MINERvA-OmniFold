@@ -1,0 +1,9 @@
+ssh rc=0
+node login27 staged sha256 16a2a5cd5e36f0a3d48577afd3c4b1d4adebe6baf72fcf228d7c85275739754a
+detached pid 365075, output /dev/shm/rplb-fence.364687.sh.out
+fence host=login27 utc=2026-11-11T02:22:30Z
+squeue: 61078463|ll5d_gate_G18|PENDING
+squeue: 61078506|ll5d_gate_AR23|PENDING
+sacct cov2d/t2a rows (14 days): 28, none unended
+FENCE CLEAR
+script rc=0

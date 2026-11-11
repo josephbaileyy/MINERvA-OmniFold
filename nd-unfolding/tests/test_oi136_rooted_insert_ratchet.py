@@ -90,6 +90,10 @@ _R = {
     # red unnoticed. Classification only: no file below changed.
     'closeout_bound':
         "HASH-BOUND 2D CLOSE-OUT DRIVER (2026-10-12..17). Its sha256 is pinned by the stage B/C records and authorizations named at its entry, so editing it voids those bindings; the insert changes only with the next re-issue of those bindings.",
+    # ADDED 2026-11-10 by the valid-region lane on the director's ruling (#1027). Classification only:
+    # no file below changed; the named set moves 21 -> 23 (the docstring's 10 is its 2026-09-03 figure).
+    'ess_record':
+        "FALSE POSITIVE BY SCOPE: RUN RECORD, the ESS rerun (job 61082774, the director's go on these bytes, 4755681f). The scanner reaches the insert at :243 through a scope-blind name collision: the canonical literal at :48 is a DATA path (SHARED, read only through O_NOATIME by stage()), it roots cfg (:456) and run()'s local argv (:280), and main()'s unrelated parameter argv (:455) then roots a, deploy (:232) and p (:242). The insert's actual target is the required --deploy clone, whose HEAD and producer digests are checked before the insert (:236-241) and whose modules must all have loaded after the run (:293-298). Editing it would falsify the run record; classified, never patched.",
 }
 
 KNOWN_UNREPAIRED = {
@@ -213,6 +217,12 @@ KNOWN_UNREPAIRED = {
         _R['closeout_bound'],
     '2d-unfolding/driver_p1.py':
         _R['closeout_bound'],
+    # --- ess_record: the ESS rerun's tool, approved and run at these bytes (sha256 4755681f…), and its
+    # byte-identical receipt copy fetched from the cluster. Named set 21 -> 23.
+    'nd-unfolding/ess_e/ess_capture.py':
+        _R['ess_record'],
+    'docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ess/cluster/tool/ess_capture.py':
+        _R['ess_record'],
 }
 
 def _canonical_form(value):

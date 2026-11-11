@@ -1,0 +1,95 @@
+# T3 addendum V1 receipt: tests
+# clone HEAD: b1c66821354ec748acd8ba57d39c427e19ba5604  dirty tracked files: 0
+# command: python3 -B -m unittest -v nd-unfolding/tier3/test_t3p.py
+# python: 3.12.2 numpy 1.26.4  host: Darwin arm64  threads: 1 (OMP/OPENBLAS/MKL/VECLIB/NUMEXPR)  nice: 19
+# start: 2026-11-11T08:19:09Z
+# sha256 4a685bde238dcc6dc25e9b1121029994f33becafab486cbec1a7bf846206bf84  t3p_arms.py
+# sha256 e27bf07a3e2c60320a749355eaedceed5a36574d2d8fa83675bd4b4721985bd2  t3p_probe.py
+# sha256 f4c221dda95fbbdf2318f7fcdde57b9e1b7fb265e85b13e1dea15341cf069295  t3p_read.py
+# sha256 a21ad29f35a71e46c1b286ca6ae96128f01c482cbd30aac5133d3e4729d2de3c  sbatch_t3p.sh
+# sha256 4879178f4f9783f011f8a5992273e0b34a3d022bb822edf688051f038e642aa8  test_t3p.py
+# sha256 ae9667bc71819f092a7f61ae6d58ed4e7659ea4b0fea08de299c10462d738001  t3p_mutation.py
+test_b0_trace_at_k_equals_the_plain_unfold_at_k (nd-unfolding.tier3.test_t3p.Arms.test_b0_trace_at_k_equals_the_plain_unfold_at_k)
+REQUIRED (C-PAIR's premise): the loop's state after iteration k does not depend on the total count. ... ok
+test_mo_and_op_refuse_a_wrong_oracle (nd-unfolding.tier3.test_t3p.Arms.test_mo_and_op_refuse_a_wrong_oracle) ... ok
+test_mo_gives_misses_the_true_weight (nd-unfolding.tier3.test_t3p.Arms.test_mo_gives_misses_the_true_weight) ... ok
+test_mu_fills_misses_with_one (nd-unfolding.tier3.test_t3p.Arms.test_mu_fills_misses_with_one) ... ok
+test_mw_refuses_a_wrong_weight (nd-unfolding.tier3.test_t3p.Arms.test_mw_refuses_a_wrong_weight) ... ok
+test_mw_weights_reach_the_regressor (nd-unfolding.tier3.test_t3p.Arms.test_mw_weights_reach_the_regressor) ... ok
+test_op_gives_every_event_the_true_weight_and_records_the_repeat (nd-unfolding.tier3.test_t3p.Arms.test_op_gives_every_event_the_true_weight_and_records_the_repeat) ... ok
+test_the_clip_is_counted (nd-unfolding.tier3.test_t3p.Arms.test_the_clip_is_counted) ... ok
+test_the_trace_records_r00_r15_from_the_production_extraction (nd-unfolding.tier3.test_t3p.Arms.test_the_trace_records_r00_r15_from_the_production_extraction) ... ok
+test_unknown_arm_and_bad_r_refuse (nd-unfolding.tier3.test_t3p.Arms.test_unknown_arm_and_bad_r_refuse) ... ok
+test_arms_and_iterations (nd-unfolding.tier3.test_t3p.Constants.test_arms_and_iterations) ... ok
+test_delta_t_from_fd_prr (nd-unfolding.tier3.test_t3p.Constants.test_delta_t_from_fd_prr) ... ok
+test_limit_strings (nd-unfolding.tier3.test_t3p.Constants.test_limit_strings) ... ok
+test_pins_hold_and_include_the_imported_probe (nd-unfolding.tier3.test_t3p.Constants.test_pins_hold_and_include_the_imported_probe) ... ok
+test_price_limits_and_cap (nd-unfolding.tier3.test_t3p.Constants.test_price_limits_and_cap) ... ok
+test_t_quantile (nd-unfolding.tier3.test_t3p.Constants.test_t_quantile) ... ok
+test_tasks_and_jobs (nd-unfolding.tier3.test_t3p.Constants.test_tasks_and_jobs) ... ok
+test_a_lowers_is_never_rewritten_to_bounded (nd-unfolding.tier3.test_t3p.EndToEnd.test_a_lowers_is_never_rewritten_to_bounded)
+R1(a): OP 0.045, B0 0.08, MO 0.02: MO lowers the limit and keeps its label; MU, with no effect, is bounded. ... ok
+test_a_prior_not_its_pin_stops (nd-unfolding.tier3.test_t3p.EndToEnd.test_a_prior_not_its_pin_stops) ... ok
+test_a_product_check_stops (nd-unfolding.tier3.test_t3p.EndToEnd.test_a_product_check_stops) ... ok
+test_bounded_by_step_2_is_decided_from_the_numbers (nd-unfolding.tier3.test_t3p.EndToEnd.test_bounded_by_step_2_is_decided_from_the_numbers)
+TR-2 reads "carries" (rho_OP 0.045 < 0.05), yet B0's limit 0.08 is within 0.05 of it: bounded. ... ok
+test_c_reco_stops (nd-unfolding.tier3.test_t3p.EndToEnd.test_c_reco_stops) ... ok
+test_c_trace_stops (nd-unfolding.tier3.test_t3p.EndToEnd.test_c_trace_stops) ... ok
+test_incomplete_when_a_pair_record_failed (nd-unfolding.tier3.test_t3p.EndToEnd.test_incomplete_when_a_pair_record_failed) ... ok
+test_incomplete_without_a_done (nd-unfolding.tier3.test_t3p.EndToEnd.test_incomplete_without_a_done) ... ok
+test_mo_bounded_by_step_2 (nd-unfolding.tier3.test_t3p.EndToEnd.test_mo_bounded_by_step_2) ... ok
+test_no_effect_with_headroom_stands_whatever_tr2 (nd-unfolding.tier3.test_t3p.EndToEnd.test_no_effect_with_headroom_stands_whatever_tr2)
+TR-2 reads "does not carry" (rho_OP 0.10), but B0's limit 0.20 leaves 0.10 of room: "no effect" stands. ... ok
+test_planted_classes (nd-unfolding.tier3.test_t3p.EndToEnd.test_planted_classes) ... ok
+test_so_with_the_refinement_running_stops (nd-unfolding.tier3.test_t3p.EndToEnd.test_so_with_the_refinement_running_stops) ... ok
+test_the_bound_is_strict_at_equality (nd-unfolding.tier3.test_t3p.EndToEnd.test_the_bound_is_strict_at_equality)
+v1 (addendum): §5.2 bounds a "no effect" only when the headroom is below the bar. At headroom exactly ... ok
+test_the_headroom_operands_are_rho_op_at_2_and_rho_b0_at_50 (nd-unfolding.tier3.test_t3p.EndToEnd.test_the_headroom_operands_are_rho_op_at_2_and_rho_b0_at_50)
+R1(b, c): OP is 0 at k = 1 and 0.045 at k = 2; B0 and the arms fall from 0.20 (k <= 5) to 0.0801 at k = 50. ... ok
+test_a_full_job_refuses_an_unmeasured_arm_and_uses_a_measured_one (nd-unfolding.tier3.test_t3p.Gate.test_a_full_job_refuses_an_unmeasured_arm_and_uses_a_measured_one) ... ok
+test_a_projection_above_the_limit_stops (nd-unfolding.tier3.test_t3p.Gate.test_a_projection_above_the_limit_stops) ... ok
+test_an_ended_task_is_skipped_and_an_unknown_one_stops (nd-unfolding.tier3.test_t3p.Gate.test_an_ended_task_is_skipped_and_an_unknown_one_stops) ... ok
+test_dry_starts_within_the_limit_and_records_the_start (nd-unfolding.tier3.test_t3p.Gate.test_dry_starts_within_the_limit_and_records_the_start) ... ok
+test_a_development_option_from_the_runner_is_refused (nd-unfolding.tier3.test_t3p.Install.test_a_development_option_from_the_runner_is_refused) ... ok
+test_names_are_restored_after_an_error (nd-unfolding.tier3.test_t3p.Install.test_names_are_restored_after_an_error) ... ok
+test_no_product_without_the_check_or_the_steps (nd-unfolding.tier3.test_t3p.Install.test_no_product_without_the_check_or_the_steps) ... ok
+test_so_builds_signal_only_and_r_is_captured (nd-unfolding.tier3.test_t3p.Install.test_so_builds_signal_only_and_r_is_captured) ... ok
+test_the_rho_loader_reads_only_a_staged_copy (nd-unfolding.tier3.test_t3p.Install.test_the_rho_loader_reads_only_a_staged_copy) ... ok
+test_unfold_one_refuses_a_missing_r_a_mismatched_r_or_a_substitute (nd-unfolding.tier3.test_t3p.Install.test_unfold_one_refuses_a_missing_r_a_mismatched_r_or_a_substitute) ... ok
+test_a_deploy_not_at_its_pin_refuses (nd-unfolding.tier3.test_t3p.JobScript.test_a_deploy_not_at_its_pin_refuses) ... ok
+test_a_fence_prefix_matches_only_at_the_start (nd-unfolding.tier3.test_t3p.JobScript.test_a_fence_prefix_matches_only_at_the_start) ... ok
+test_a_full_job_checks_the_fence_too (nd-unfolding.tier3.test_t3p.JobScript.test_a_full_job_checks_the_fence_too) ... ok
+test_a_full_job_refuses_without_the_dry_runs_done_and_an_existing_log (nd-unfolding.tier3.test_t3p.JobScript.test_a_full_job_refuses_without_the_dry_runs_done_and_an_existing_log) ... ok
+test_a_limit_above_the_declared_refuses_and_an_unreadable_one_says_so (nd-unfolding.tier3.test_t3p.JobScript.test_a_limit_above_the_declared_refuses_and_an_unreadable_one_says_so) ... ok
+test_a_wrong_job_name_refuses (nd-unfolding.tier3.test_t3p.JobScript.test_a_wrong_job_name_refuses) ... ok
+test_every_slurm_form_of_a_limit_within_passes_the_check (nd-unfolding.tier3.test_t3p.JobScript.test_every_slurm_form_of_a_limit_within_passes_the_check) ... ok
+test_the_dry_run_refuses_without_a_fence_and_on_a_fenced_job (nd-unfolding.tier3.test_t3p.JobScript.test_the_dry_run_refuses_without_a_fence_and_on_a_fenced_job) ... ok
+test_a_dtype_change_fails (nd-unfolding.tier3.test_t3p.Pair.test_a_dtype_change_fails) ... ok
+test_a_reference_that_is_not_its_pin_fails (nd-unfolding.tier3.test_t3p.Pair.test_a_reference_that_is_not_its_pin_fails) ... ok
+test_a_signed_zero_fails_c_pair (nd-unfolding.tier3.test_t3p.Pair.test_a_signed_zero_fails_c_pair)
+Bitwise, not value equality: +0.0 in our cell against -0.0 in FD-PRR's fails, and names one cell. ... ok
+test_identical_arrays_pass (nd-unfolding.tier3.test_t3p.Pair.test_identical_arrays_pass) ... ok
+test_one_ulp_in_an_arms_truth_fails_c_x (nd-unfolding.tier3.test_t3p.Pair.test_one_ulp_in_an_arms_truth_fails_c_x) ... ok
+test_one_ulp_in_our_trace_fails_c_pair (nd-unfolding.tier3.test_t3p.Pair.test_one_ulp_in_our_trace_fails_c_pair)
+REQUIRED: one ulp in one cell of B0's k = 5 unfold fails C-PAIR, and names one cell. ... ok
+test_one_ulp_in_the_reference_fails_c_pair (nd-unfolding.tier3.test_t3p.Pair.test_one_ulp_in_the_reference_fails_c_pair)
+REQUIRED: one ulp in the staged FD-PRR product (its pin recomputed, so only the comparison can catch it). ... ok
+test_every_line_passes_the_runners_parse_and_the_check (nd-unfolding.tier3.test_t3p.Queues.test_every_line_passes_the_runners_parse_and_the_check) ... ok
+test_lines_are_fd_prrs_k50_line_but_for_three_fields (nd-unfolding.tier3.test_t3p.Queues.test_lines_are_fd_prrs_k50_line_but_for_three_fields) ... ok
+test_queue_columns (nd-unfolding.tier3.test_t3p.Queues.test_queue_columns) ... ok
+test_the_refusals_fire_on_the_runners_parse (nd-unfolding.tier3.test_t3p.Queues.test_the_refusals_fire_on_the_runners_parse) ... ok
+test_bias_split_is_exact (nd-unfolding.tier3.test_t3p.Readings.test_bias_split_is_exact) ... ok
+test_labels (nd-unfolding.tier3.test_t3p.Readings.test_labels) ... ok
+test_location_classes (nd-unfolding.tier3.test_t3p.Readings.test_location_classes) ... ok
+test_the_tail_bar_is_delta_t (nd-unfolding.tier3.test_t3p.Readings.test_the_tail_bar_is_delta_t) ... ok
+test_tr1_and_tr2 (nd-unfolding.tier3.test_t3p.Readings.test_tr1_and_tr2) ... ok
+test_trajectory_classes (nd-unfolding.tier3.test_t3p.Readings.test_trajectory_classes) ... ok
+test_disagreeing_listings_refuse (nd-unfolding.tier3.test_t3p.Sources.test_disagreeing_listings_refuse) ... ok
+test_pair_refs (nd-unfolding.tier3.test_t3p.Sources.test_pair_refs) ... ok
+test_sources (nd-unfolding.tier3.test_t3p.Sources.test_sources) ... ok
+
+----------------------------------------------------------------------
+Ran 69 tests in 13.650s
+
+OK
+# exit: 0  end: 2026-11-11T08:19:23Z
