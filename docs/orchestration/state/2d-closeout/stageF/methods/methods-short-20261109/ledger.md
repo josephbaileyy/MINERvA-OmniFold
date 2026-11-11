@@ -2198,3 +2198,8 @@ was the mislabel. The director accepted bd08582ee, the hand re-cites of ALIASES 
     self-check);
   - §5.3's IBU test lost its "or rises";
   - S4's folded history dropped (b)'s "exact-split studies have not been recomputed".
+- **Second batch (2026-11-11).**
+  - s7: the W-4 sentence is cut, by Joseph's decision ("Cut it (Recommended)"; DECISION-20261111-joseph-bv-sentence-cut.md, to merge).
+  - 1.4: the C_resp factors are in S5. Both checks passed: the readout's code pin equals main's build_cresp.py, and xtalk is a variant.
+  - m7: λ⁻¹/(fᵀC⁻¹f) < 3×10⁻⁵, in S5.
+  - The pscratch L rows wait for Perlmutter (RESPONSE.md, "Second batch").
