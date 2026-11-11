@@ -1,0 +1,29 @@
+unmutated: PASS (rc 0)
+killed   criterion 0.5 -> 0.4
+killed   share 0.2 -> 0.25
+killed   veto crossing: before <= -> <
+killed   veto crossing: after > -> >=
+killed   veto skips untouched -> skips touched
+killed   structural & -> |
+killed   final two pieces -> one
+killed   strip refusal off
+killed   p_par edge: <= -> <
+killed   C0 refuses pt instead of pz
+killed   candidate low: or -> and
+killed   repro low ignores support
+killed   join order: best -> worst union
+killed   value: min -> max
+killed   reco_all needs pass_truth
+killed   truth_reco ignores pass_reco
+killed   truth_sel weight w_truth -> w_reco
+killed   support: and -> or
+killed   T3 diagonal fraction dropped
+killed   1D floor 3 -> 2
+killed   C0 per side 4 -> 3
+killed   weights: negative allowed
+killed   in_share uses the row sums
+killed   Ω: every fine cell
+killed   grid adjacency one-sided
+killed   landmark 0.8 -> 0.4
+killed   veto off in merge
+MUTANTS: 27/27 killed

@@ -1,0 +1,43 @@
+test_19_62_19_is_structural (__main__.A34.test_19_62_19_is_structural) ... ok
+test_70_10_10_10_fails_the_final_check (__main__.A34.test_70_10_10_10_fails_the_final_check) ... ok
+test_balanced_line_passes_structural (__main__.A34.test_balanced_line_passes_structural) ... ok
+test_empty_line_listed_not_failed (__main__.A34.test_empty_line_listed_not_failed) ... ok
+test_largest_share_never_falls_under_joins (__main__.A34.test_largest_share_never_falls_under_joins) ... ok
+test_line_already_above_80_does_not_veto (__main__.A34.test_line_already_above_80_does_not_veto) ... ok
+test_one_cell_above_80_is_structural (__main__.A34.test_one_cell_above_80_is_structural) ... ok
+test_two_pieces_pass_the_final_check (__main__.A34.test_two_pieces_pass_the_final_check) ... ok
+test_veto_in_merge (__main__.A34.test_veto_in_merge) ... ok
+test_veto_refuses_a_push_from_exactly_80 (__main__.A34.test_veto_refuses_a_push_from_exactly_80) ... ok
+test_veto_refuses_largest_above_80 (__main__.A34.test_veto_refuses_largest_above_80) ... ok
+test_low_uses_the_smaller_fraction (__main__.Criterion.test_low_uses_the_smaller_fraction) ... ok
+test_union_is_chosen_by_the_smaller_fraction (__main__.Criterion.test_union_is_chosen_by_the_smaller_fraction) ... ok
+test_unsupported_bin_is_low_in_candidate_mode (__main__.Criterion.test_unsupported_bin_is_low_in_candidate_mode) ... ok
+test_veto_allows_exactly_80 (__main__.Criterion.test_veto_allows_exactly_80) ... ok
+test_build_c3_and_c0 (__main__.EndToEnd.test_build_c3_and_c0) ... ok
+test_c0_refuses_pz_joins (__main__.Geometry.test_c0_refuses_pz_joins) ... ok
+test_pz_edge_in_merge (__main__.Geometry.test_pz_edge_in_merge) ... ok
+test_pz_edge_refused_for_c2 (__main__.Geometry.test_pz_edge_refused_for_c2) ... ok
+test_strip_refused (__main__.Geometry.test_strip_refused) ... ok
+test_in_share_counts_truth_outside_the_base_cells (__main__.Mask.test_in_share_counts_truth_outside_the_base_cells) ... ok
+test_reco_outside_omega_enters_truth_reco_only (__main__.Mask.test_reco_outside_omega_enters_truth_reco_only) ... ok
+test_same_needs_both_passes (__main__.Mask.test_same_needs_both_passes) ... ok
+test_shares_count_truth_sel_within_omega_only (__main__.Mask.test_shares_count_truth_sel_within_omega_only) ... ok
+test_truth_outside_omega_enters_reco_all_only (__main__.Mask.test_truth_outside_omega_enters_reco_all_only) ... ok
+test_truth_reco_needs_pass_reco (__main__.Mask.test_truth_reco_needs_pass_reco) ... ok
+test_c7_landmarks (__main__.Outcomes.test_c7_landmarks) ... ok
+test_each_t3_quantity (__main__.Outcomes.test_each_t3_quantity) ... ok
+test_floor_1d (__main__.Outcomes.test_floor_1d) ... ok
+test_floor_c0_per_side (__main__.Outcomes.test_floor_c0_per_side) ... ok
+test_repro_equals_h2_merge (__main__.Repro.test_repro_equals_h2_merge) ... ok
+test_response_matches_h2_stats (__main__.Repro.test_response_matches_h2_stats) ... ok
+test_unsupported_bins_are_never_low_in_repro (__main__.Repro.test_unsupported_bins_are_never_low_in_repro) ... ok
+test_negative_w_truth_stops (__main__.Weights.test_negative_w_truth_stops) ... ok
+test_nonfinite_w_reco_stops (__main__.Weights.test_nonfinite_w_reco_stops) ... ok
+test_nonfinite_w_truth_stops (__main__.Weights.test_nonfinite_w_truth_stops) ... ok
+test_outside_omega_is_not_counted (__main__.Weights.test_outside_omega_is_not_counted) ... ok
+test_small_negative_w_truth_stops (__main__.Weights.test_small_negative_w_truth_stops) ... ok
+
+----------------------------------------------------------------------
+Ran 38 tests in 3.502s
+
+OK

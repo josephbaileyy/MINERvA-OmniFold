@@ -6316,6 +6316,8 @@ docs/orchestration/state/2d-closeout/valid-region-20261107/test_valid_region.py	
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/AMENDMENT-1.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/CHOICES-FOR-JOSEPH-20261110.md	tracked	LIVE	state-artifact	2d-closeout	20261110	open		route-only	no
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/DECLARATION.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
+docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/code/mutate_vhr_binning.out.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/code/mutate_vhr_binning.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/code/receipts/wtruth-20261111/README.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/code/receipts/wtruth-20261111/SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/code/receipts/wtruth-20261111/connect/launcher.out.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
@@ -6328,8 +6330,11 @@ docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/code/receipt
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/code/receipts/wtruth-20261111/survey/survey.err	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/code/receipts/wtruth-20261111/survey/survey.out	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/code/receipts/wtruth-20261111/wtruth.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/code/test_vhr_binning.out.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/code/test_vhr_binning.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/code/test_vhr_wtruth_check.out.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/code/test_vhr_wtruth_check.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/code/vhr_binning.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/code/vhr_wtruth_check.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/code/vhr_wtruth_connect.sh	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/code/vhr_wtruth_launch.sh	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
