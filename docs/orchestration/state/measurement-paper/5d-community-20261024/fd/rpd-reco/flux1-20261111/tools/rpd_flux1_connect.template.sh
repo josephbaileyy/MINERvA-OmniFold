@@ -19,8 +19,10 @@
 #      checked, and the job is cancelled if any differs.
 # The job (rpd_flux1_job.sh, on its compute node): copies the clone to /dev/shm/limres-rpd-flux1/repo (the path the
 # config binds) and rechecks HEAD, porcelain and the pins; the strace probe; an outer stat of the exception file before
-# and after; #848's wrapper unchanged; job.rc and job-host.txt (jobid, host, start and end UTC) under the root; then it
-# removes its /dev/shm directory. Shared QOS, 4 CPUs, 16G, --time 03:00:00.
+# and after; #848's wrapper unchanged, in its own process group. On every exit it can catch (its own exits, an EXIT
+# trap, and TERM/INT: scancel, or Slurm's TERM 300 s before the TimeLimit) it removes its /dev/shm directory, then
+# writes job-host.txt's end line and job.rc (rc and cause). An uncatchable kill (SIGKILL, OOM) skips that; the fetch
+# then reports the cleanup as unverified. Shared QOS, 4 CPUs, 16G, --time 03:00:00, --signal=B:TERM@300.
 # Writes only under the root on pscratch (and the job's /dev/shm). Nothing is written to CFS. umask 077. No set -u.
 # Launched from a /dev/shm copy of itself ($1), which it deletes.
 umask 077

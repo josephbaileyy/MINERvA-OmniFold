@@ -2,6 +2,7 @@ MODE unfinished rc=10 tar=0 self_removed=yes shm_left=
    NOT FINISHED: no job.rc; squeue:
 MODE timeout rc=0 tar=1 self_removed=yes shm_left=
    FINISHED WITHOUT job.rc: sacct state TIMEOUT
+   /dev/shm CLEANUP UNVERIFIED: the job wrote no job.rc, so its trap did not finish (an uncatchable kill); /dev/shm/limres-rpd-flux1 may remain on node(s) [nid001]
    factor products recorded 0 differing 0
    PROTECTED READ: not applicable (no private record)
    send files 17, bytes 548
@@ -149,6 +150,37 @@ MODE otheroverlap rc=11 tar=1 self_removed=yes shm_left=
    REDACTION CHECK: PASS
    check rc=0
    PROTECTED READ FAILED: the records were sent; the failure is in protected-read.json
+   sent 21 files, 84 KiB; factor products sent: 0
+   sent: ./c3-check.txt
+   sent: ./connect.log
+   sent: ./exception-stat-outer.txt
+   sent: ./fence-overlap.txt
+   sent: ./job-host.txt
+   sent: ./job.err
+   sent: ./job.id
+   sent: ./job.out
+   sent: ./job.rc
+   sent: ./protected-read.json
+   sent: ./redaction-check.txt
+   sent: ./rpd_flux1_job.sh
+   sent: ./run/cov2d-fence.json
+   sent: ./run/extract-config.json
+   sent: ./run/flux-custody.json
+   sent: ./run/flux-extract.json
+   sent: ./run/flux-extract.strace
+   sent: ./run/prestage-reference.json
+   sent: ./run/real-mnv-check/real-mnv-check.json
+   sent: ./run/trace-policy.json
+   sent: ./strace-probe.txt
+MODE productdiffers rc=12 tar=1 self_removed=yes shm_left=
+   recorded 1M 8565a714dca840f8652c5bae9249ab05f5fb5a4f9f13fbe23304b10f68252da2 DIFFERS (d27711942d495e8f33f1ea49fbdb3acbf46ee1bee5aabb9e179e3287aa5cc1d2) $SP/flux1/t/productdiffers/root/run/flux-factors-1M.npz
+   factor products recorded 12 differing 1
+   PROTECTED READ: PASS
+   send files 19, bytes 6761
+   C3 CHECK: PASS
+   REDACTION CHECK: PASS
+   check rc=0
+   FACTOR PRODUCT MISMATCH: a product's sha256 differs from flux-extract.json, or a product is unreadable; the records were sent
    sent 21 files, 84 KiB; factor products sent: 0
    sent: ./c3-check.txt
    sent: ./connect.log

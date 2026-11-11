@@ -8,19 +8,44 @@
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=16G
 #SBATCH --time=03:00:00
+#SBATCH --signal=B:TERM@300
 #SBATCH --chdir=/pscratch/sd/j/josephrb/rpd-reco-flux-20261111
 #SBATCH --output=/pscratch/sd/j/josephrb/rpd-reco-flux-20261111/job.out
 #SBATCH --error=/pscratch/sd/j/josephrb/rpd-reco-flux-20261111/job.err
 # rpd_flux1: RPD-RECO flux connect 1, the job half, written by rpd_flux1_connect.sh. #848's wrapper runs unchanged.
+# Traps: Slurm sends TERM to this shell 300 s before the TimeLimit (--signal=B:TERM@300) and on scancel. The TERM/INT
+# trap stops the wrapper's own process group (TERM, up to 10 s, then KILL) and calls fin. The EXIT trap calls fin on
+# any exit that did not pass through it. fin removes /dev/shm/limres-rpd-flux1, then writes job-host.txt's end line and
+# job.rc (rc and cause). A SIGKILL to this shell (Slurm after KillWait, or the OOM killer) cannot be caught: then no
+# job.rc is written, the fetch reads sacct's state and reports the /dev/shm cleanup as unverified.
 umask 077
 made=0
+child=0
+cause=exit
+finished=0
 fin() {  # job.rc is written last: its presence means the job's own steps, the /dev/shm removal included, are done
+  [ "$finished" -eq 1 ] && exit "$1"
+  finished=1
+  trap '' TERM INT
   [ "$made" -eq 1 ] && { rm -rf -- /dev/shm/limres-rpd-flux1; echo "removed /dev/shm/limres-rpd-flux1 rc=$?"; }
-  echo "end=$(date -u +%FT%TZ) rc=$1" >> /pscratch/sd/j/josephrb/rpd-reco-flux-20261111/job-host.txt
-  echo "rc=$1 end=$(date -u +%FT%TZ)" > /pscratch/sd/j/josephrb/rpd-reco-flux-20261111/job.rc.partial
+  echo "end=$(date -u +%FT%TZ) rc=$1 cause=$cause" >> /pscratch/sd/j/josephrb/rpd-reco-flux-20261111/job-host.txt
+  echo "rc=$1 cause=$cause end=$(date -u +%FT%TZ)" > /pscratch/sd/j/josephrb/rpd-reco-flux-20261111/job.rc.partial
   mv -- /pscratch/sd/j/josephrb/rpd-reco-flux-20261111/job.rc.partial /pscratch/sd/j/josephrb/rpd-reco-flux-20261111/job.rc
   exit "$1"
 }
+on_signal() {
+  cause=signal-$1
+  echo "== caught $1 $(date -u +%FT%TZ); stopping the wrapper's process group [$child]"
+  if [ "$child" -gt 0 ]; then
+    kill -TERM -- "-$child" 2>/dev/null
+    for _ in $(seq 1 10); do kill -0 "$child" 2>/dev/null || break; sleep 1; done
+    kill -KILL -- "-$child" 2>/dev/null
+  fi
+  fin 143
+}
+trap 'on_signal TERM' TERM
+trap 'on_signal INT' INT
+trap 'r=$?; [ "$finished" -eq 1 ] || { cause=exit-trap; fin "$r"; }' EXIT
 echo "jobid=$SLURM_JOB_ID host=$(hostname) start=$(date -u +%FT%TZ)" > /pscratch/sd/j/josephrb/rpd-reco-flux-20261111/job-host.txt
 echo "== rpd_flux1 job $SLURM_JOB_ID on $(hostname) $(date -u +%FT%TZ)"
 [ ! -e /dev/shm/limres-rpd-flux1 ] || { echo "STOP: /dev/shm/limres-rpd-flux1 exists on this node"; fin 9; }
@@ -52,11 +77,15 @@ outer() {  # stat only (no open): the exception file, for the whole job window
 }
 outer before
 echo "== the wrapper $(date -u +%FT%TZ)"
-bash /dev/shm/limres-rpd-flux1/repo/nd-unfolding/fd_rpd_reco_flux_connect.sh /dev/shm/limres-rpd-flux1/repo \
+# In its own process group (setsid), in the background, so the trap runs during wait and can stop the whole group.
+setsid bash /dev/shm/limres-rpd-flux1/repo/nd-unfolding/fd_rpd_reco_flux_connect.sh /dev/shm/limres-rpd-flux1/repo \
   /dev/shm/limres-rpd-flux1/production-config.ready.json \
   cde8d02904b0257d82745b03fd61c1aef1a50270f14f36ad7f38c8b3f235f50b \
   /pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run \
-  /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3 > /pscratch/sd/j/josephrb/rpd-reco-flux-20261111/connect.log 2>&1
+  /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3 > /pscratch/sd/j/josephrb/rpd-reco-flux-20261111/connect.log 2>&1 &
+child=$!
+echo "wrapper pid/pgid $child"
+wait "$child"
 rc=$?
 echo "== wrapper rc=$rc $(date -u +%FT%TZ)"
 outer after

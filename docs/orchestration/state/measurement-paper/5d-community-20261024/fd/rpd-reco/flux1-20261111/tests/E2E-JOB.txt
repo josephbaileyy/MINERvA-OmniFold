@@ -1,6 +1,6 @@
 == job.out
-== rpd_flux1 job 4242 on login99 2026-11-11T14:14:57Z
-HEAD 2d05eb7fdf7fddaae8d482130e67ad039d517c6c; porcelain lines        0
+== rpd_flux1 job 4242 on login99 2026-11-11T14:28:51Z
+HEAD 763ab4ddcea2d2d3dce56138f8aa7ae7fab4bbe6; porcelain lines        0
 sha256 7302cc1df71758cfae6bdcfba031d37cc78902beaf454b29e12f3e053d44f141 nd-unfolding/fd_rpd_reco.py
 sha256 867822e3cbf7063088717565d2be4e68ae3625cb24ce468255d98ba8fd59bdb5 nd-unfolding/fd_rpd_reco_custody.py
 sha256 6e4ed0f1d7f55b7bfe2f26752eeb28bb9cbe33325a9d91cc7c06d9494a0b0a70 nd-unfolding/fd_rpd_inputs.py
@@ -14,8 +14,9 @@ sha256 900d7368d6184d503399bd99c0fd30085212df0327b8be374182495b85a3677d MINERvA1
 sha256 b056487e592e7704c2a98c14243b26f44c82821382837a263b75c169859cce0b docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-audit-fix-20261106/MAT-DATA-DEPENDENCIES.json
 config sha256 cde8d02904b0257d82745b03fd61c1aef1a50270f14f36ad7f38c8b3f235f50b
 strace probe rc=0
-== the wrapper 2026-11-11T14:15:14Z
-== wrapper rc=7 2026-11-11T14:15:14Z
+== the wrapper 2026-11-11T14:29:10Z
+wrapper pid/pgid 32520
+== wrapper rc=7 2026-11-11T14:29:11Z
 removed $SP/flux1/te/main/shm/flux1 rc=0
 == job.err
 Traceback (most recent call last):
@@ -25,5 +26,29 @@ Traceback (most recent call last):
   File "<string>", line 1, in <module>
 FileNotFoundError: [Errno 2] No such file or directory: '/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt'
 == job-host.txt
-jobid=4242 host=login99 start=2026-11-11T14:14:57Z
-end=2026-11-11T14:15:16Z rc=7
+jobid=4242 host=login99 start=2026-11-11T14:28:51Z
+end=2026-11-11T14:29:13Z rc=7 cause=exit
+
+== the dummy TERM case: job.out
+== rpd_flux1 job 4242 on login99 2026-11-11T14:30:12Z
+HEAD 763ab4ddcea2d2d3dce56138f8aa7ae7fab4bbe6; porcelain lines        0
+sha256 7302cc1df71758cfae6bdcfba031d37cc78902beaf454b29e12f3e053d44f141 nd-unfolding/fd_rpd_reco.py
+sha256 867822e3cbf7063088717565d2be4e68ae3625cb24ce468255d98ba8fd59bdb5 nd-unfolding/fd_rpd_reco_custody.py
+sha256 6e4ed0f1d7f55b7bfe2f26752eeb28bb9cbe33325a9d91cc7c06d9494a0b0a70 nd-unfolding/fd_rpd_inputs.py
+sha256 32db52355a4811bd4bf5f8b8cc0b5c397c7b403a0996048bcafd8c8c665cc76e nd-unfolding/fd_rpd_reco_flux_connect.sh
+sha256 06360100038f0203b0d994f71c171b12cd955697edf32d1d744c4ce271ceb26d nd-unfolding/tests/fd_rpd_reco_mat_check.py
+sha256 d9704aa45c016b044284d9e3cfc8c6d5c07cda0835a445866d5f792c8ac82840 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/timing-20261106/flux-gen2thin-pdg-14-minervame1M_rearrangedUniverses.root
+sha256 7638f94f56ad0471769445cffe68ff538c9b68158f48415e7c3cafa7ee95a295 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/INPUTS.sha256
+sha256 b67907615fe2e903e60ae6caa1c141fa007676c0a1b3ae9f42490d331bfdda89 nd-unfolding/pv-ladder/readouts/h2_definition.json
+sha256 e60609e756e35fbc9846ae5983c1d848999bc17c7504e3ca876c22c9bcc0e88f docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/flux-pot-provenance-20261104/energy-spectrum-candidates.tsv
+sha256 900d7368d6184d503399bd99c0fd30085212df0327b8be374182495b85a3677d MINERvA101/MINERvA-101-Cross-Section/event/CVUniverse.h
+sha256 b056487e592e7704c2a98c14243b26f44c82821382837a263b75c169859cce0b docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-audit-fix-20261106/MAT-DATA-DEPENDENCIES.json
+config sha256 cde8d02904b0257d82745b03fd61c1aef1a50270f14f36ad7f38c8b3f235f50b
+strace probe rc=0
+== the wrapper 2026-11-11T14:30:32Z
+wrapper pid/pgid 33095
+== caught TERM 2026-11-11T14:30:35Z; stopping the wrapper's process group [33095]
+removed $SP/flux1/te/term/shm/flux1 rc=0
+== job.rc
+rc=143 cause=signal-TERM end=2026-11-11T14:30:38Z
+== connect.log (the wrapper, hung at its first call, then stopped)

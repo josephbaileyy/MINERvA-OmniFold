@@ -3,7 +3,7 @@
 usage: build_fixture.py ROOT MODE ND_UNFOLDING PROTECTED
   PROTECTED: the fixture's protected tree; PROTECTED/MParamFiles/data/FluxConstraints/<constraint file> plays the
   listed exception and PROTECTED/other a second protected path.
-modes: unfinished timeout full leak orphan nopriv fpword big preadmissing otheroverlap
+modes: unfinished timeout full leak orphan nopriv fpword big preadmissing otheroverlap productdiffers
 """
 
 import hashlib
@@ -49,12 +49,15 @@ for n in ("cov2d-fence.json", "trace-policy.json", "extract-config.json", "flux-
 (run / "real-mnv-check/real-mnv-check.json").write_text('{"status": "PASS"}\n')
 
 products = {}
-if mode in ("full", "preadmissing", "otheroverlap"):
+if mode in ("full", "preadmissing", "otheroverlap", "productdiffers"):
     for playlist in PLAYLISTS:  # 12 x 50 MiB, sparse: the real products total about 590 MB
         path = run / f"flux-factors-{playlist}.npz"
         with open(path, "wb") as handle:
             handle.truncate(50 * 1024 * 1024)
         products[playlist] = {"path": str(path), "sha256": r.digest(path), "rows": 1}
+if mode == "productdiffers":  # one product changed after flux-extract recorded its sha256
+    with open(run / "flux-factors-1M.npz", "r+b") as handle:
+        handle.write(b"changed")
 (run / "flux-extract.json").write_text(json.dumps({"schema": "fd-rpd-reco-flux-extract/2", "factor_products": products}) + "\n")
 
 
@@ -79,7 +82,7 @@ def staged_item(original: Path, staged: Path) -> dict:
 
 os.environ["FD_RPD_RECO_CONNECT_ID"] = str(uuid.uuid4())
 snapshot = c.environment_snapshot()
-if mode in ("full", "leak", "orphan", "big", "preadmissing", "otheroverlap"):
+if mode in ("full", "leak", "orphan", "big", "preadmissing", "otheroverlap", "productdiffers"):
     item = staged_item(exception, run / "original-inputs/abcd-sorted_NuEConstraint_FHC_RHC_IMD.txt")
     native = dict(item)
     native["staged"] = str((run / "mat-data/MPARAMFILES/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt").resolve())

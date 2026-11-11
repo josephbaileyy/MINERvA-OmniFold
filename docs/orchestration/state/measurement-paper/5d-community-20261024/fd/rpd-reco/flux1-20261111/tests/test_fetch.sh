@@ -13,8 +13,8 @@ cp "$D"/tools/c3_check.py "$D"/tools/check_redaction.py "$D"/tools/fence_overlap
 sed "s#/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/#$T/protected/MParamFiles/data/FluxConstraints/#" \
   "$D/tools/protected_read.py" > "$T/gen/tools/protected_read.py"
 cp "$D"/tools/*.template.sh "$D/tools/gen_flux1.py" "$T/gen/"
-python3 -I "$T/gen/gen_flux1.py" "$T/gen" a4c3e556e7ccf915d103eaeba77ab31ed06b98cc "$SP/wtrc" "$T/gen/tools" > "$T/gen/gen.out" || { echo "gen failed"; exit 9; }
-for mode in unfinished timeout full leak orphan nopriv fpword big preadmissing otheroverlap; do
+python3 -I "$T/gen/gen_flux1.py" "$T/gen" 763ab4ddcea2d2d3dce56138f8aa7ae7fab4bbe6 "$SP/wtrc" "$T/gen/tools" > "$T/gen/gen.out" || { echo "gen failed"; exit 9; }
+for mode in unfinished timeout full leak orphan nopriv fpword big preadmissing otheroverlap productdiffers; do
   W=$T/$mode; mkdir -p "$W/shm"
   $PY -I "$D/tests/build_fixture.py" "$W/root" $mode "$ND" "$T/protected" > "$W/build.out" 2>&1 || { echo "build failed $mode"; cat "$W/build.out"; continue; }
   sed -e "s#/pscratch/sd/j/josephrb/rpd-reco-flux-20261111#$W/root#g" -e "s#/dev/shm/limres-rpd-flux1-fetch#$W/shm/fetch#g" \
@@ -25,7 +25,7 @@ for mode in unfinished timeout full leak orphan nopriv fpword big preadmissing o
   rc=$?
   tb=$(grep -c '== TAR BEGIN' "$W/out.txt")
   echo "MODE $mode rc=$rc tar=$tb self_removed=$([ -e "$W/self.sh" ] && echo no || echo yes) shm_left=$(ls "$W/shm")"
-  grep -E '^(STOP|NOT FINISHED|FINISHED WITHOUT|C3 CHECK|REDACTION CHECK|PROTECTED READ|  problem|check rc|send files|C3 not|factor products|PROTECTED READ FAILED)' "$W/out.txt" | sed 's/^/   /'
+  grep -E '^(STOP|NOT FINISHED|FINISHED WITHOUT|/dev/shm CLEANUP|C3 CHECK|REDACTION CHECK|PROTECTED READ|  problem|check rc|send files|C3 not|factor products|PROTECTED READ FAILED|FACTOR PRODUCT|recorded .* DIFFERS)' "$W/out.txt" | sed 's/^/   /'
   if [ "$tb" -eq 1 ]; then
     mkdir "$W/untar"; sed -n '/== TAR BEGIN/,/== TAR END/p' "$W/out.txt" | sed '1d;$d' | /usr/bin/base64 -d | tar -x -C "$W/untar"
     echo "   sent $(cd "$W/untar" && /usr/bin/find . -type f | wc -l | tr -d ' ') files, $(du -sk "$W/untar" | cut -f1) KiB; factor products sent: $(cd "$W/untar" && /usr/bin/find . -name 'flux-factors-*' | wc -l | tr -d ' ')"

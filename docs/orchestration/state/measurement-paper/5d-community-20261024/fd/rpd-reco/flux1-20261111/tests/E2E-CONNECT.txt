@@ -1,10 +1,11 @@
-node login99 2026-11-11T14:14:40Z; connect script sha256 c4318d093a23b3c262862c49aa25c9af1826b8d74fa3c87fa96388e5979b3aa3
+node login99 2026-11-11T14:28:34Z; connect script sha256 2bc77d543f40740924feec1cd6643ccd94f969df5136508ea2817f46a347d4e0
 == 2. the fence (cov2d*, t2a*, rpd* refuse)
 squeue: 61078463|ll5d_gate_G18|PENDING
 FENCE: clear
-== 3. fresh clone at 2d05eb7fdf7fddaae8d482130e67ad039d517c6c
+== 3. fresh clone at 763ab4ddcea2d2d3dce56138f8aa7ae7fab4bbe6
 warning: filtering not recognized by server, ignoring
-HEAD 2d05eb7fdf7fddaae8d482130e67ad039d517c6c; porcelain lines        0
+warning: filtering not recognized by server, ignoring
+HEAD 763ab4ddcea2d2d3dce56138f8aa7ae7fab4bbe6; porcelain lines        0
 sha256 7302cc1df71758cfae6bdcfba031d37cc78902beaf454b29e12f3e053d44f141 nd-unfolding/fd_rpd_reco.py
 sha256 867822e3cbf7063088717565d2be4e68ae3625cb24ce468255d98ba8fd59bdb5 nd-unfolding/fd_rpd_reco_custody.py
 sha256 6e4ed0f1d7f55b7bfe2f26752eeb28bb9cbe33325a9d91cc7c06d9494a0b0a70 nd-unfolding/fd_rpd_inputs.py
@@ -26,8 +27,8 @@ FENCE allowed exception: MAT MPARAMFILES /pscratch/sd/j/josephrb/MINERvA-OmniFol
 FENCE OVERLAP: CLEAR (allowed 1, stops 0)
 overlap fence rc=0
 == 6. the job
-job script sha256 af416ec13b63f4a419ebd5f73be04648be22c6711fa495273ef6daeed52a85d2
-sbatch rc=0 jobid [4242] 2026-11-11T14:14:56Z
+job script sha256 3eb2aa2b4d77ecc2992c1bf969e3dd666c30834306811575b07915a3a923c718
+sbatch rc=0 jobid [4242] 2026-11-11T14:28:51Z
 JobId=4242
 JobName=rpd_flux1
 UserId=josephrb(1)
@@ -40,4 +41,4 @@ NumCPUs=4
 MinMemoryNode=16G
 JobState=PENDING
 job 4242 submitted and checked; the fetch reports it
-== rpd-flux1-connect rc=0 2026-11-11T14:14:57Z
+== rpd-flux1-connect rc=0 2026-11-11T14:28:51Z

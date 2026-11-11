@@ -26,8 +26,8 @@ NODE=${1:-}
 case "$MODE" in
   fence)   S="$TOP/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/tier2-20261110/t2a/code/cov2d_fence.sh"
            SHA=16a2a5cd5e36f0a3d48577afd3c4b1d4adebe6baf72fcf228d7c85275739754a ;;
-  connect) S="$HERE/rpd_flux1_connect.sh"; SHA=f5bc999483bc2c2151b96361c526fc4dad98c8986eda569c9fb37710b48908d0 ;;
-  fetch)   S="$HERE/rpd_flux1_fetch.sh"; SHA=58079f4824de9c0aaecdbc2cb54617bd4153f1210edc3ca0354e72fc0ebb7445 ;;
+  connect) S="$HERE/rpd_flux1_connect.sh"; SHA=d7a73172aa280a5775db45f8a45223655650ef219d416a63bace846b38298b0e ;;
+  fetch)   S="$HERE/rpd_flux1_fetch.sh"; SHA=dfade48a535e722cc5febdbe7749f9d4435d3a83403d8158b74beefb797f67ea ;;
   *) echo "STOP: mode $MODE"; exit 9 ;;
 esac
 case "$NODE" in login[0-9][0-9]) ;; *) echo "STOP: '$NODE' is not a login node name"; exit 9 ;; esac

@@ -3,12 +3,14 @@
 # process), then the fetch. Test copies substitute the literal root, the job's /dev/shm directory, MAT_PYTHON, the
 # clone URL (a local repository holding the commit), /usr/bin/strace and /bin/true. #848's real wrapper runs in the
 # job and refuses at check-mat-setup (no MAT here). Then three refusals: an rpd job queued (rc 3), a TimeLimit that
-# differs from 03:00:00 (scancel, rc 6), and a second connect on an existing root (rc 9).
+# differs from 03:00:00 (scancel, rc 6), and a second connect on an existing root (rc 9). Last, the dummy TERM: a
+# stand-in MAT_PYTHON (shim/hangpython) hangs at the wrapper's first call; TERM to the job shell must stop the
+# wrapper's process group, remove the job's /dev/shm directory and write job.rc with cause=signal-TERM.
 SP=/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/7e3f49f7-e8e4-452d-b380-399d4f6c529e/scratchpad
 D=$SP/wtrc/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111
 SHIM=$D/tests/shim
 PY=$SP/venvlint/bin/python
-S=${E2E_S:-2d05eb7fdf7fddaae8d482130e67ad039d517c6c}
+S=${E2E_S:-763ab4ddcea2d2d3dce56138f8aa7ae7fab4bbe6}
 T=$SP/flux1/te; mkdir -p "$T/gen" || exit 9
 cp "$D/production-config.ready.json" "$T/gen/"; cp -R "$D/tools" "$T/gen/tools"; cp "$D"/tools/*.template.sh "$D/tools/gen_flux1.py" "$T/gen/"
 python3 -I "$T/gen/gen_flux1.py" "$T/gen" "$S" "$SP/wtrc" > "$T/gen/gen.out" || { echo "gen failed"; exit 9; }
@@ -35,3 +37,24 @@ grep -E 'MISMATCH|scancel|STOP' "$W3/out.txt"; echo "scancel shim log: $(cat "$W
 for i in $(seq 1 120); do [ -f "$W3/root/job.rc" ] && break; sleep 1; done
 echo "== refusal: second connect on the same root"
 cp "$W/connect.sh" "$W/self2.sh"; PATH=$SHIM:$PATH bash "$W/connect.sh" "$W/self2.sh" > "$W/connect2-out.txt" 2>&1; echo "second connect rc=$?"; tail -2 "$W/connect2-out.txt"
+echo "== the dummy TERM"
+W5=$T/term; mkdir -p "$W5/shm"
+sed -e "s#/pscratch/sd/j/josephrb/rpd-reco-flux-20261111#$W5/root#g" -e "s#/dev/shm/limres-rpd-flux1#$W5/shm/flux1#g" \
+    -e "s#/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3#$SHIM/hangpython#g" \
+    -e "s#https://github.com/josephbaileyy/MINERvA-OmniFold.git#file://$SP/wtrc#" -e "s#/usr/bin/strace#$SHIM/fakestrace#g" \
+    -e "s# /bin/true# /usr/bin/true#" "$T/gen/rpd_flux1_connect.sh" > "$W5/connect.sh"
+cp "$W5/connect.sh" "$W5/self.sh"
+HANG_REAL_PY=$PY PATH=$SHIM:$PATH bash "$W5/connect.sh" "$W5/self.sh" > "$W5/connect-out.txt" 2>&1; echo "term-case connect rc=$?"
+for i in $(seq 1 90); do grep -q 'wrapper pid/pgid' "$W5/root/job.out" 2>/dev/null && break; sleep 1; done
+sleep 3
+jp=$(cat "$W5/root/.job.pid"); child=$(awk '/wrapper pid\/pgid/ {print $NF}' "$W5/root/job.out")
+echo "job shell pid $jp; wrapper pgid $child; processes in the wrapper's group before TERM: $(pgrep -g "$child" | wc -l | tr -d ' ')"
+echo "/dev/shm entries before TERM: [$(ls -A "$W5/shm")]"
+t0=$(python3 -c 'import time; print(time.time())')
+kill -TERM "$jp"
+for i in $(seq 1 60); do [ -f "$W5/root/job.rc" ] && break; sleep 1; done
+echo "job.rc after TERM: $(cat "$W5/root/job.rc" 2>&1) (seconds $(python3 -c "import time; print('%.1f' % (time.time() - $t0))"))"
+echo "processes in the wrapper's group after: $(pgrep -g "$child" | wc -l | tr -d ' '); job shell alive: $(kill -0 "$jp" 2>/dev/null && echo yes || echo no)"
+echo "/dev/shm entries after TERM: [$(ls -A "$W5/shm")]"
+echo "job-host.txt:"; cat "$W5/root/job-host.txt"
+grep -E '^== caught|removed ' "$W5/root/job.out"

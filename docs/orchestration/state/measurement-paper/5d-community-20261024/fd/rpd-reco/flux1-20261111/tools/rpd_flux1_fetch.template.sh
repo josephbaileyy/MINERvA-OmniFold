@@ -19,7 +19,8 @@
 #   6. The redaction check (tools/check_redaction.py, prologue 5's, byte-identical), VIEW NONE; with no private
 #      record, any file on the send list holding the string "fingerprints" refuses.
 #   7. Only if those pass: connect.log printed, the sha256 of each file sent, and a base64 tar of the list. A FAIL in
-#      the protected read does not stop the send (it is the finding); the fetch then exits 11.
+#      the protected read or a factor product whose sha256 differs from flux-extract.json does not stop the send (it is
+#      the finding); the fetch then exits 11 (protected read), 12 (product mismatch) or 13 (both).
 # Writes: protected-read.json and the two check outputs under the root, and three tools under
 # /dev/shm/limres-rpd-flux1-fetch (refused if it exists, removed at exit). Nothing is written to CFS. umask 077.
 # Launched from a /dev/shm copy of itself ($1), which it deletes.
@@ -46,7 +47,8 @@ echo "== job-host.txt"; cat job-host.txt 2>/dev/null || echo "(absent)"
 if [ ! -f job.rc ]; then
   case "$state" in
     COMPLETED|FAILED|CANCELLED|TIMEOUT|OUT_OF_MEMORY|NODE_FAIL|PREEMPTED|BOOT_FAIL|DEADLINE)
-      echo "FINISHED WITHOUT job.rc: sacct state $state" ;;
+      echo "FINISHED WITHOUT job.rc: sacct state $state"
+      echo "/dev/shm CLEANUP UNVERIFIED: the job wrote no job.rc, so its trap did not finish (an uncatchable kill); /dev/shm/limres-rpd-flux1 may remain on node(s) [$(printf '%s\n' "$acct" | awk -F'|' -v j="$jid" '$1 == j {print $8}')]" ;;
     *)
       echo "NOT FINISHED: no job.rc; squeue:"; squeue -h -j "$jid" -o '%i|%j|%T|%M|%l|%N' 2>&1
       rm -f -- "$SELF"; exit 10 ;;
@@ -68,6 +70,7 @@ for pair in "/dev/shm/limres-rpd-flux1-fetch/c3_check.py:$C3_SHA" "/dev/shm/limr
   [ "$got" = "$want" ] || { echo "STOP: digest of $f"; finish 5; }
 done
 echo "== 2. the factor products (kept on pscratch)"
+mrc=0
 for f in run/flux-factors-*.npz; do
   [ -f "$f" ] || { echo "no factor products"; break; }
   echo "product $(stat -c %s "$f") bytes sha256 $(sha256sum "$f" | cut -d' ' -f1) $f"
@@ -86,7 +89,9 @@ for playlist, item in sorted(products.items()):
     bad += not ok
     print("recorded", playlist, item.get("sha256"), "equal" if ok else "DIFFERS (" + got + ")", item.get("path"))
 print("factor products recorded", len(products), "differing", bad)
+sys.exit(1 if bad else 0)
 ' run/flux-extract.json
+  mrc=$?
 fi
 echo "== 3. the protected read"
 raw=NONE
@@ -149,5 +154,9 @@ echo "== TAR BEGIN"
 tar -cf - "${send[@]}" | base64 -w 76
 echo "== TAR END tar rc=${PIPESTATUS[0]}"
 echo "left in place for the post-merge deletion: /pscratch/sd/j/josephrb/rpd-reco-flux-20261111 (the factor products, the staged copies, the clone, the private record)"
-[ "$prc" -eq 0 ] || { echo "PROTECTED READ FAILED: the records were sent; the failure is in protected-read.json"; finish 11; }
-finish 0
+[ "$mrc" -eq 0 ] || echo "FACTOR PRODUCT MISMATCH: a product's sha256 differs from flux-extract.json, or a product is unreadable; the records were sent"
+[ "$prc" -eq 0 ] || echo "PROTECTED READ FAILED: the records were sent; the failure is in protected-read.json"
+[ "$mrc" -eq 0 ] && [ "$prc" -eq 0 ] && finish 0
+[ "$mrc" -ne 0 ] && [ "$prc" -ne 0 ] && finish 13
+[ "$mrc" -ne 0 ] && finish 12
+finish 11

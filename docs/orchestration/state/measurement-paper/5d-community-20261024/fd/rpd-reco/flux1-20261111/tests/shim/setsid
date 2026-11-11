@@ -1,0 +1,3 @@
+#!/bin/bash
+# macOS has no setsid(1): start the command in a new session and process group, as util-linux setsid does
+exec python3 -I -c 'import os, sys; os.setsid(); os.execvp(sys.argv[1], sys.argv[1:])' "$@"

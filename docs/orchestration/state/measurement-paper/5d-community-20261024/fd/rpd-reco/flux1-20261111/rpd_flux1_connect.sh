@@ -1,13 +1,13 @@
 #!/bin/bash
 # RPD-RECO flux connect 1 (revision 2): the login-node half. It prepares and submits ONE Slurm batch job, rpd_flux1,
-# which runs #848's fd_rpd_reco_flux_connect.sh at 2d05eb7f with the READY config production-config.ready.json
+# which runs #848's fd_rpd_reco_flux_connect.sh at 763ab4dd with the READY config production-config.ready.json
 # (sha256 cde8d029..., "20261111" a fixed label naming this config, not the run's date). DRAFT for coverage-5b-audit;
 # it runs only on the director's go for its exact sha256, after the director announces the job name rpd_flux1.
 # On the login node (light: no input read, no MAT, no ROOT), in order:
 #   1. refuses unless on a login node with the literal root /pscratch/sd/j/josephrb/rpd-reco-flux-20261111 absent;
 #   2. the fence: any queued or running job of ours named cov2d*, t2a* or rpd* refuses (ruling (a)); LL5D and E96D
 #      jobs pass (director, 2026-11-11). The launcher's fence mode runs cov2d_fence.sh first;
-#   3. a fresh clone at 2d05eb7f into the root, HEAD and porcelain checked, and 11 sha256s;
+#   3. a fresh clone at 763ab4dd into the root, HEAD and porcelain checked, and 11 sha256s;
 #   4. the READY config, written from this script and checked against its sha256;
 #   5. the overlap fence, tools/fence_overlap.py (rulings (b) and (c)): STOP if either write root overlaps any of
 #      cov2d's 30 protected paths, or if any original prepare stages overlaps one, except exactly
@@ -19,13 +19,15 @@
 #      checked, and the job is cancelled if any differs.
 # The job (rpd_flux1_job.sh, on its compute node): copies the clone to /dev/shm/limres-rpd-flux1/repo (the path the
 # config binds) and rechecks HEAD, porcelain and the pins; the strace probe; an outer stat of the exception file before
-# and after; #848's wrapper unchanged; job.rc and job-host.txt (jobid, host, start and end UTC) under the root; then it
-# removes its /dev/shm directory. Shared QOS, 4 CPUs, 16G, --time 03:00:00.
+# and after; #848's wrapper unchanged, in its own process group. On every exit it can catch (its own exits, an EXIT
+# trap, and TERM/INT: scancel, or Slurm's TERM 300 s before the TimeLimit) it removes its /dev/shm directory, then
+# writes job-host.txt's end line and job.rc (rc and cause). An uncatchable kill (SIGKILL, OOM) skips that; the fetch
+# then reports the cleanup as unverified. Shared QOS, 4 CPUs, 16G, --time 03:00:00, --signal=B:TERM@300.
 # Writes only under the root on pscratch (and the job's /dev/shm). Nothing is written to CFS. umask 077. No set -u.
 # Launched from a /dev/shm copy of itself ($1), which it deletes.
 umask 077
 SELF=$1
-S=2d05eb7fdf7fddaae8d482130e67ad039d517c6c
+S=763ab4ddcea2d2d3dce56138f8aa7ae7fab4bbe6
 CFG_SHA=cde8d02904b0257d82745b03fd61c1aef1a50270f14f36ad7f38c8b3f235f50b
 FENCE_SHA=baa7630936db399abf57aa6edf9af1ffc053a3ee80c3730981a806fd8598a202
 MAT_PYTHON=/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3
@@ -94,19 +96,44 @@ cat > /pscratch/sd/j/josephrb/rpd-reco-flux-20261111/rpd_flux1_job.sh <<'JOB'
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=16G
 #SBATCH --time=03:00:00
+#SBATCH --signal=B:TERM@300
 #SBATCH --chdir=/pscratch/sd/j/josephrb/rpd-reco-flux-20261111
 #SBATCH --output=/pscratch/sd/j/josephrb/rpd-reco-flux-20261111/job.out
 #SBATCH --error=/pscratch/sd/j/josephrb/rpd-reco-flux-20261111/job.err
 # rpd_flux1: RPD-RECO flux connect 1, the job half, written by rpd_flux1_connect.sh. #848's wrapper runs unchanged.
+# Traps: Slurm sends TERM to this shell 300 s before the TimeLimit (--signal=B:TERM@300) and on scancel. The TERM/INT
+# trap stops the wrapper's own process group (TERM, up to 10 s, then KILL) and calls fin. The EXIT trap calls fin on
+# any exit that did not pass through it. fin removes /dev/shm/limres-rpd-flux1, then writes job-host.txt's end line and
+# job.rc (rc and cause). A SIGKILL to this shell (Slurm after KillWait, or the OOM killer) cannot be caught: then no
+# job.rc is written, the fetch reads sacct's state and reports the /dev/shm cleanup as unverified.
 umask 077
 made=0
+child=0
+cause=exit
+finished=0
 fin() {  # job.rc is written last: its presence means the job's own steps, the /dev/shm removal included, are done
+  [ "$finished" -eq 1 ] && exit "$1"
+  finished=1
+  trap '' TERM INT
   [ "$made" -eq 1 ] && { rm -rf -- /dev/shm/limres-rpd-flux1; echo "removed /dev/shm/limres-rpd-flux1 rc=$?"; }
-  echo "end=$(date -u +%FT%TZ) rc=$1" >> /pscratch/sd/j/josephrb/rpd-reco-flux-20261111/job-host.txt
-  echo "rc=$1 end=$(date -u +%FT%TZ)" > /pscratch/sd/j/josephrb/rpd-reco-flux-20261111/job.rc.partial
+  echo "end=$(date -u +%FT%TZ) rc=$1 cause=$cause" >> /pscratch/sd/j/josephrb/rpd-reco-flux-20261111/job-host.txt
+  echo "rc=$1 cause=$cause end=$(date -u +%FT%TZ)" > /pscratch/sd/j/josephrb/rpd-reco-flux-20261111/job.rc.partial
   mv -- /pscratch/sd/j/josephrb/rpd-reco-flux-20261111/job.rc.partial /pscratch/sd/j/josephrb/rpd-reco-flux-20261111/job.rc
   exit "$1"
 }
+on_signal() {
+  cause=signal-$1
+  echo "== caught $1 $(date -u +%FT%TZ); stopping the wrapper's process group [$child]"
+  if [ "$child" -gt 0 ]; then
+    kill -TERM -- "-$child" 2>/dev/null
+    for _ in $(seq 1 10); do kill -0 "$child" 2>/dev/null || break; sleep 1; done
+    kill -KILL -- "-$child" 2>/dev/null
+  fi
+  fin 143
+}
+trap 'on_signal TERM' TERM
+trap 'on_signal INT' INT
+trap 'r=$?; [ "$finished" -eq 1 ] || { cause=exit-trap; fin "$r"; }' EXIT
 echo "jobid=$SLURM_JOB_ID host=$(hostname) start=$(date -u +%FT%TZ)" > /pscratch/sd/j/josephrb/rpd-reco-flux-20261111/job-host.txt
 echo "== rpd_flux1 job $SLURM_JOB_ID on $(hostname) $(date -u +%FT%TZ)"
 [ ! -e /dev/shm/limres-rpd-flux1 ] || { echo "STOP: /dev/shm/limres-rpd-flux1 exists on this node"; fin 9; }
@@ -116,7 +143,7 @@ cp -a /pscratch/sd/j/josephrb/rpd-reco-flux-20261111/clone /dev/shm/limres-rpd-f
 head=$(git -C /dev/shm/limres-rpd-flux1/repo rev-parse HEAD)
 porc=$(git -C /dev/shm/limres-rpd-flux1/repo status --porcelain | wc -l)
 echo "HEAD $head; porcelain lines $porc"
-[ "$head" = "2d05eb7fdf7fddaae8d482130e67ad039d517c6c" ] && [ "$porc" -eq 0 ] || { echo "STOP: the copy is not clean at the pinned head"; fin 5; }
+[ "$head" = "763ab4ddcea2d2d3dce56138f8aa7ae7fab4bbe6" ] && [ "$porc" -eq 0 ] || { echo "STOP: the copy is not clean at the pinned head"; fin 5; }
 while read -r want f; do
   got=$(sha256sum "/dev/shm/limres-rpd-flux1/repo/$f" | cut -d' ' -f1)
   echo "sha256 $got $f"
@@ -148,11 +175,15 @@ outer() {  # stat only (no open): the exception file, for the whole job window
 }
 outer before
 echo "== the wrapper $(date -u +%FT%TZ)"
-bash /dev/shm/limres-rpd-flux1/repo/nd-unfolding/fd_rpd_reco_flux_connect.sh /dev/shm/limres-rpd-flux1/repo \
+# In its own process group (setsid), in the background, so the trap runs during wait and can stop the whole group.
+setsid bash /dev/shm/limres-rpd-flux1/repo/nd-unfolding/fd_rpd_reco_flux_connect.sh /dev/shm/limres-rpd-flux1/repo \
   /dev/shm/limres-rpd-flux1/production-config.ready.json \
   cde8d02904b0257d82745b03fd61c1aef1a50270f14f36ad7f38c8b3f235f50b \
   /pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run \
-  /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3 > /pscratch/sd/j/josephrb/rpd-reco-flux-20261111/connect.log 2>&1
+  /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3 > /pscratch/sd/j/josephrb/rpd-reco-flux-20261111/connect.log 2>&1 &
+child=$!
+echo "wrapper pid/pgid $child"
+wait "$child"
 rc=$?
 echo "== wrapper rc=$rc $(date -u +%FT%TZ)"
 outer after

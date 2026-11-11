@@ -1,4 +1,4 @@
-# RPD-RECO flux connect 1: the READY candidate and the batch-job connect (revision 2, DRAFT for coverage-5b-audit, 2026-11-11)
+# RPD-RECO flux connect 1: the READY candidate and the batch-job connect (revision 3, DRAFT for coverage-5b-audit, 2026-11-11)
 
 **By** the limitation-resolver lane, at the director's request of 2026-11-11. **Draft only.** Nothing here has run on
 Perlmutter. The connect runs only on the director's go for its exact sha256, after these four steps:
@@ -10,7 +10,12 @@ Perlmutter. The connect runs only on the director's go for its exact sha256, aft
 P-RPD stays closed.
 <!-- absence-ok: the document's own status (a draft that has not run), not a claim that a result does not exist -->
 
-**Revision 2** answers the audit's NO-GO at `cb9f3e00` (F1 blocker, F2 major) and the director's rulings of 2026-11-11:
+**Revision 3** answers the audit of revision 2 (`be222966`): R1 (major) and f1 (promoted to required by the director).
+- R1: the job's traps, described in section 2. TERM/INT and EXIT handlers remove its `/dev/shm` copy and write the cause.
+- f1: a factor product whose sha256 differs from `flux-extract.json` makes the fetch exit 12.
+- f2 (the fence uses prologue 5's recorded MAT prefixes) is on the follow-up list, in section 7.
+
+**Revision 2** answered the audit's NO-GO at `cb9f3e00` (F1 blocker, F2 major) and the director's rulings of 2026-11-11:
 - F1: the factor products stay on pscratch;
 - F2: the run is a Slurm batch job, not a login-node process;
 - point 3: the fixed label;
@@ -23,7 +28,7 @@ runs. The receipt records the actual run times separately (`job-host.txt`, sacct
 ## The code it runs
 
 #848's flux wrapper and producers, unchanged except for one addition this revision makes for cov2d's condition. The
-addition is proposed into #848's branch as its own PR, #1072, `code/rpd-reco-stage-time-20261111` at `2d05eb7fdf7fddaae8d482130e67ad039d517c6c`:
+addition was merged into #848's branch as #1072 (`2d05eb7f`) after the audit verified it:
 - custody `prepare`'s `copy()` records `staging_utc_ns` (`started`, `ended`, the UTC wall time around its stat
   bracket) beside the `stat_before` and `stat_after` it already records;
 - the new test `test_prepare_records_stat_bracket_and_staging_time` fails if any staged item, the MPARAMFILES exception
@@ -31,9 +36,9 @@ addition is proposed into #848's branch as its own PR, #1072, `code/rpd-reco-sta
 
 Its receipts are in `fd/rpd-reco/stage-time-20261111/` on that branch.
 
-The connect pins that head by sha. When the director merges it into #848, `tools/gen_flux1.py` regenerates the three
-scripts at the merged head in one command, and their new shas go to the director. The files the job pins, at
-`2d05eb7f`:
+The connect pins #848's head after that merge, `763ab4ddcea2d2d3dce56138f8aa7ae7fab4bbe6`. Its tree is identical to
+`2d05eb7f`'s (`git diff --stat` is empty), so the 11 pins are those of revision 2. The files the job pins, at
+`763ab4dd`:
 
 | file | sha256 |
 |---|---|
@@ -77,7 +82,7 @@ needs its own READY config with both measured.
 |---|---|
 | login node, [`rpd_flux1_connect.sh`](rpd_flux1_connect.sh) | 1. refuses unless `/pscratch/sd/j/josephrb/rpd-reco-flux-20261111` is absent |
 | | 2. **fence (a):** a queued or running job of ours named `cov2d*`, `t2a*` or `rpd*` refuses. LL5D and E96D jobs pass. The launcher's `fence` mode runs the committed `cov2d_fence.sh` (`16a2a5cd…`) first |
-| | 3. fresh clone at `2d05eb7f` into `<root>/clone`, with HEAD, porcelain and the 11 pins checked |
+| | 3. fresh clone at `763ab4dd` into `<root>/clone`, with HEAD, porcelain and the 11 pins checked |
 | | 4. the READY config, written from the script into `<root>/`, sha256-checked |
 | | 5. **fences (b) and (c):** [`tools/fence_overlap.py`](tools/fence_overlap.py), described below |
 | | 6. the job script, written from the script; `sbatch`; then scontrol's `JobName=rpd_flux1`, `TimeLimit=03:00:00`, `QOS=shared` and `Account=m3246` are checked, and the job is cancelled on any difference |
@@ -86,14 +91,14 @@ needs its own READY config with both measured.
 | | 3. the strace probe |
 | | 4. an outer `stat` of the exception file (no open) before and after the wrapper, in `exception-stat-outer.txt` |
 | | 5. #848's `fd_rpd_reco_flux_connect.sh` unchanged, writing `connect.log`. Its steps: `check-mat-setup`; the MAT setup; the real-MnvH1D check; custody `prepare` (staging, its COV2D fence, NATIVE_SELECTION, the 15-file MAT inventory, the exception's read); the missing-dependency check; `flux-extract` under strace; `trace-check` |
-| | 6. removes its `/dev/shm` directory, then writes `job.rc` and `job-host.txt` (jobid, host, start and end UTC) |
+| | 6. on every exit it can catch, removes its `/dev/shm` directory, then writes `job-host.txt`'s end line (jobid, host, start and end UTC) and `job.rc` (rc and cause). See the traps below |
 | login node, [`rpd_flux1_fetch.sh`](rpd_flux1_fetch.sh) | reports and sends the records (section 4) |
 
 The login steps read no input, load no MAT or ROOT and run no producer. The clone and the overlap fence are file
 metadata and git only.
 
-**The job.** It runs in the shared QOS with 4 CPUs, `--mem=16G` and `--time=03:00:00`, on `-C cpu` under account
-m3246. Its output goes to `job.out` and `job.err` under the root. Nothing is written to CFS, and nothing is written
+**The job.** It runs in the shared QOS with 4 CPUs, `--mem=16G`, `--time=03:00:00` and `--signal=B:TERM@300`, on
+`-C cpu` under account m3246. Its output goes to `job.out` and `job.err` under the root. Nothing is written to CFS, and nothing is written
 outside the root and the job's `/dev/shm`.
 - **Wall basis.** Prologue 5's data-free wrapper ran in 29 s (`../prologue5-20261108/connect5.out`, 23:43:21Z to
   23:43:50Z). That covers the MAT setup, ROOT's start and the traced worker, with no input staged.
@@ -108,6 +113,21 @@ outside the root and the job's `/dev/shm`.
 - **Memory basis.** The largest playlist is 1M, at 5,916,895 MC rows. In `flux-extract`, the five-column `MCgen`
   (237 MB), the energy arrays (about 0.3 GB) and `mat_flux_swap`'s 3×N and 2×N float64 work arrays (about 0.25 GB) come
   to about 1.3 GB. ROOT and MAT add about 1 GB, so the estimated peak is about 2.5 GB. 16G is about 6× that.
+- **Traps (R1).**
+  - The wrapper runs in its own process group (`setsid`, in the background, with `wait`), so a trap runs at once.
+  - **TERM/INT.** These come from scancel, or from Slurm 300 s before the TimeLimit. The handler sends TERM to the
+    wrapper's group, waits up to 10 s, sends KILL, then calls `fin` with rc 143 and `cause=signal-TERM` (or `-INT`).
+  - **EXIT.** Any exit that did not pass through `fin` calls it with that rc and `cause=exit-trap`. The script's own
+    exits call `fin` with `cause=exit`.
+  - **`fin`.** It runs once (a guard). It removes `/dev/shm/limres-rpd-flux1` only if this job created it, then writes
+    `job-host.txt`'s end line, and writes `job.rc` last.
+  - **The lead time.** The measured cleanup is 2.35 s for `rm -rf` of a 1.2G, 24,279-entry copy of the clone, on APFS,
+    which is slower than tmpfs. Adding the 10 s group stop gives about 13 s ([`tests/CLEANUP-COST.txt`](tests/CLEANUP-COST.txt)).
+    The lead is 300 s, the director's minimum, about 23× that. The 10 s stop also keeps a scancel's cleanup inside
+    Slurm's default 30 s KillWait.
+  - **What a trap cannot catch.** A SIGKILL to the job shell cannot be trapped: Slurm sends one after KillWait, and the
+    OOM killer may. Then no `job.rc` is written, the `/dev/shm` copy may remain on that node, and the fetch says so
+    (section 4).
 - **Price.** At most 3 h × 1/32 node ≈ **0.094 node-h**. 1/32 is the larger of 4 of 256 CPU threads and 16 of 512 GB.
   If the shared QOS were charged as a whole node, the bound is 3 node-h. sacct's Elapsed sets the charge.
 
@@ -134,7 +154,7 @@ it still STOPs.
 Overlap is equality or containment. It is tested on paths as written and after `realpath`, which reads symlinks and
 never file contents.
 
-**How custody stages the exception at `2d05eb7f`: one stat-bracketed staging, with two O_NOATIME reads.**
+**How custody stages the exception at `763ab4dd`: one stat-bracketed staging, with two O_NOATIME reads.**
 - `copy(source, None)` takes `source_stat` (device, inode, bytes, mtime_ns, atime_ns; no open).
 - It reads the file through `noatime_digest`, then through `stage_copy`, both read-only under O_NOATIME.
 - It takes `source_stat` again. STAGE_SOURCE_STAT STOPs the run unless the two stats are equal.
@@ -155,22 +175,25 @@ is sent, with these contents:
 - every staged original that overlaps a protected path.
 
 It FAILs if any field is missing or malformed, if the stats differ, if a copy's sha256 differs, or if any other staged
-original overlaps a protected path. A FAIL is sent as the finding, and the fetch exits 11.
+original overlaps a protected path. A FAIL is sent as the finding, and the fetch exits 11. If both a protected-read FAIL
+and a product mismatch occur, it exits 13.
 
 `exception-stat-outer.txt` adds a stat of the same file before and after the whole wrapper, for LL5D's atime
 attribution.
 
 ## 4. The fetch
 
-`rpd_flux1_fetch.sh` (`58079f4824de9c0aaecdbc2cb54617bd4153f1210edc3ca0354e72fc0ebb7445`), on any login node.
+`rpd_flux1_fetch.sh` (`dfade48a535e722cc5febdbe7749f9d4435d3a83403d8158b74beefb797f67ea`), on any login node.
 - **When the job counts as finished.** It is finished when `job.rc` exists, or when sacct gives the jobid a terminal
-  state. A job killed at its limit or out of memory writes no `job.rc`.
+  state. A job killed uncatchably (SIGKILL, OOM) writes no `job.rc`. The fetch then prints `/dev/shm CLEANUP
+  UNVERIFIED`, with sacct's node list.
 - **Until then** it prints `job.id`, `job-host.txt`, sacct's and squeue's rows, writes nothing and exits 10.
 - **Once finished, it prints:**
   - sacct's row (State, ExitCode, Elapsed, Start, End, NodeList, MaxRSS, AllocCPUS, ReqMem, Timelimit);
   - a listing of the root, without the clone;
   - for each `run/flux-factors-<PL>.npz`, its size and sha256, compared with the sha256 `flux-extract.json` records.
-    **The factor products are never sent (F1).**
+    **The factor products are never sent (F1).** A differing or unreadable product is printed as `DIFFERS`, and the
+    fetch exits 12 after sending (f1).
 - **The send list:**
   - the root's records: `job.id`, `job-host.txt`, `job.rc`, `job.out`, `job.err`, `rpd_flux1_job.sh`, `connect.log`,
     `strace-probe.txt`, `fence-overlap.txt`, `exception-stat-outer.txt`, `protected-read.json`;
@@ -191,10 +214,10 @@ The job removes its own `/dev/shm` directory.
 
 | file | sha256 |
 |---|---|
-| [`rpd_flux1_connect.sh`](rpd_flux1_connect.sh) | `f5bc999483bc2c2151b96361c526fc4dad98c8986eda569c9fb37710b48908d0` |
-| [`rpd_flux1_fetch.sh`](rpd_flux1_fetch.sh) | `58079f4824de9c0aaecdbc2cb54617bd4153f1210edc3ca0354e72fc0ebb7445` |
-| [`rpd_flux1_launch.sh`](rpd_flux1_launch.sh) | `9f6daccb60524b915a22767c117a56b367d112f1b3e5b35c2a4cab2c50f73c27` |
-| `rpd_flux1_job.sh`, as the connect writes it (a literal heredoc) | `bc2327b1d38c09bca30491df95111676d82300cda7d3aa7cbcdc4ee4228605c6` |
+| [`rpd_flux1_connect.sh`](rpd_flux1_connect.sh) | `d7a73172aa280a5775db45f8a45223655650ef219d416a63bace846b38298b0e` |
+| [`rpd_flux1_fetch.sh`](rpd_flux1_fetch.sh) | `dfade48a535e722cc5febdbe7749f9d4435d3a83403d8158b74beefb797f67ea` |
+| [`rpd_flux1_launch.sh`](rpd_flux1_launch.sh) | `f0aa7c4be3ee26430ed7b9ca27714a0cd6627ca1fd777360729a20fcb300e700` |
+| `rpd_flux1_job.sh`, as the connect writes it (a literal heredoc) | `5d7e618a4923bf3c4379e4b5bd474b82ebc25d7b30fed46a2e8fb75d4af04441` |
 | [`tools/fence_overlap.py`](tools/fence_overlap.py) | `baa7630936db399abf57aa6edf9af1ffc053a3ee80c3730981a806fd8598a202` |
 | [`tools/protected_read.py`](tools/protected_read.py) | `309f59d46a4f200d924c98cd6beeece9a8c9a2b92cd493fb2e84f6b5693aa7f9` |
 | [`tools/c3_check.py`](tools/c3_check.py) | `aed41794b72d8b8de6580d75e0fc4467cad3bc73c5b11dfac44075783b461192` |
@@ -208,7 +231,7 @@ node-side tools in base64, and asserts the config's and the redaction check's sh
 ## 6. Tested locally (macOS), on these bytes
 
 - **The fetch,** in [`tests/FETCH-TESTS.txt`](tests/FETCH-TESTS.txt) from [`tests/test_fetch.sh`](tests/test_fetch.sh).
-  It runs ten fixtures, built with `a4c3e556`'s own `write_private_prepare`. The fixture's exception path is
+  It runs eleven fixtures, built with `a4c3e556`'s own `write_private_prepare`. The fixture's exception path is
   substituted into a tools copy for the test.
 
   | fixture | rc | what happened |
@@ -223,6 +246,9 @@ node-side tools in base64, and asserts the config's and the redaction check's sh
   | a 70 MiB non-product file | 7 | refused |
   | the exception without `staging_utc_ns` | 11 | protected read FAIL, sent |
   | another staged original under a protected path | 11 | protected read FAIL, sent |
+  | one product changed after `flux-extract.json` recorded it | 12 | `DIFFERS` printed, sent |
+
+  The timeout fixture also prints `/dev/shm CLEANUP UNVERIFIED` with the node.
 
 - **The fence,** in [`tests/FENCE-TESTS.txt`](tests/FENCE-TESTS.txt) from [`tests/test_fence.sh`](tests/test_fence.sh).
   It runs seven cases on the READY config and variants of its protected list:
@@ -240,7 +266,7 @@ node-side tools in base64, and asserts the config's and the redaction check's sh
 - **End to end,** in [`tests/E2E.txt`](tests/E2E.txt) from [`tests/test_e2e.sh`](tests/test_e2e.sh), with the detail in
   [`tests/E2E-CONNECT.txt`](tests/E2E-CONNECT.txt), [`tests/E2E-JOB.txt`](tests/E2E-JOB.txt) and
   [`tests/E2E-FETCH.txt`](tests/E2E-FETCH.txt) (the job script's sha256 there is the test copy's).
-  - The connect ran with a local repository as the clone URL, at `2d05eb7f`. Its 11 pins matched, the config
+  - The connect ran with a local repository as the clone URL, at `763ab4dd`. Its 11 pins matched, the config
     matched, and the fence was CLEAR at 57 originals.
   - The `sbatch` shim ran the job script locally. The job copied the clone, rechecked the pins, ran the strace probe
     and ran #848's real wrapper, which refused at `check-mat-setup` (no MAT here). It wrote `job.rc` rc=7 and removed
@@ -248,8 +274,13 @@ node-side tools in base64, and asserts the config's and the redaction check's sh
   - The fetch then sent the records.
   - Three refusals: an `rpd` job queued gave rc 3; a TimeLimit other than 03:00:00 gave scancel and rc 6; a second
     connect on the same root gave rc 9.
+  - **The dummy TERM.** A stand-in MAT_PYTHON (`tests/shim/hangpython`) hangs at the wrapper's first call. A TERM to the
+    job shell then left 0 of 2 processes in the wrapper's group. The job removed its `/dev/shm` copy and wrote `job.rc`
+    `rc=143 cause=signal-TERM`, plus `job-host.txt`'s end line, in about 3 s. macOS has no `setsid`, so its shim calls
+    `os.setsid()`, and the process-group kill is real.
 - **Shims and substitutions.**
-  - Shims in `tests/shim/` stand in for `hostname`, `squeue`, `sbatch`, `scontrol`, `scancel`, `sacct` and strace.
+  - Shims in `tests/shim/` stand in for `hostname`, `squeue`, `sbatch`, `scontrol`, `scancel`, `sacct`, `setsid`
+    and strace.
   - Three more stand in for GNU forms macOS lacks: `find -printf`, `stat -c %s` and `base64 -w`.
   - The test copies substitute only the literal roots, MAT_PYTHON, the clone URL, `/usr/bin/strace` and `/bin/true`.
 
@@ -260,6 +291,12 @@ node-side tools in base64, and asserts the config's and the redaction check's sh
 
 The launcher's lines are `rpd_mnv_check2_launch.sh`'s, which ran on 2026-11-11 (#1062).
 <!-- absence-ok: the scope of the local tests, stated so no reader takes them for an on-node run -->
+
+## 7. Follow-up list
+
+- **f2 (audit, director, 2026-11-11).** Fence (c) computes the 15 MAT originals from prologue 5's recorded prefixes.
+  The job's prefixes come from the pinned setup at run time. The post-run backstop is `protected_read.py`'s check over
+  the staged originals the private record actually lists.
 
 Nothing is submitted, deposited or tagged.
 <!-- absence-ok: the document's own status line -->

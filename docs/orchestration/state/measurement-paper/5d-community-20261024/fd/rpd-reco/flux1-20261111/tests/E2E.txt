@@ -1,11 +1,11 @@
 e2e connect rc=0
-job.rc: rc=7 end=2026-11-11T14:15:16Z
+job.rc: rc=7 cause=exit end=2026-11-11T14:29:13Z
 job /dev/shm entries left: []
 e2e fetch rc=0
 == refusal: an rpd job queued
 rpd-queued connect rc=3
 STOP: a cov2d/t2a/rpd job is queued or running
-== rpd-flux1-connect rc=3 2026-11-11T14:15:17Z
+== rpd-flux1-connect rc=3 2026-11-11T14:29:14Z
 == refusal: TimeLimit differs
 timelimit connect rc=6
 MISMATCH: TimeLimit=03:00:00 not in scontrol's record
@@ -15,4 +15,16 @@ scancel shim log: scancel 4242
 == refusal: second connect on the same root
 second connect rc=9
 STOP: $SP/flux1/te/main/root exists
-== rpd-flux1-connect rc=9 2026-11-11T14:16:02Z
+== rpd-flux1-connect rc=9 2026-11-11T14:29:51Z
+== the dummy TERM
+term-case connect rc=0
+job shell pid 32980; wrapper pgid 33095; processes in the wrapper's group before TERM: 2
+/dev/shm entries before TERM: [flux1]
+job.rc after TERM: rc=143 cause=signal-TERM end=2026-11-11T14:30:38Z (seconds 3.0)
+processes in the wrapper's group after: 0; job shell alive: no
+/dev/shm entries after TERM: []
+job-host.txt:
+jobid=4242 host=login99 start=2026-11-11T14:30:12Z
+end=2026-11-11T14:30:38Z rc=143 cause=signal-TERM
+== caught TERM 2026-11-11T14:30:35Z; stopping the wrapper's process group [33095]
+removed $SP/flux1/te/term/shm/flux1 rc=0
