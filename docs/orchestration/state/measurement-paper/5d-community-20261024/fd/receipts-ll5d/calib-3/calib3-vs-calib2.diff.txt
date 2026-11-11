@@ -1,0 +1,46 @@
+2,17c2,11
+< # LL5D section 11 step 3: ll5d_calib RUN 2, the INVALID rerun of job 61014290 (LL5D BINDING 2 ruling 5 and its addendum,
+< # #987: A1a.1 at M_A1a.1 = a95cc39f, the candidate installed at calib_main's entry). The same declared seeds and N.
+< # One exclusive regular CPU node,
+< # --time 05:00:00 (5.0 node-h reserved, section 9; 0.9 line 16,200 s), 64 single-threaded workers (A2.1's), N = 3,000,
+< # 10,000 replicate sets per truth, both readings. Login-node steps, in order:
+< #   1. refuse if ll5d_calib is queued or $W exists; record squeue and any unended cov2d-* (the flux constraint is a
+< #      COV2D input: section 9's fence), refusing on the latter;
+< #   2. iris: the cap 148.0 node-h must be at most half the m3246 balance (R11);
+< #   3. section 9's projection gate: charged so far over every ll5d_* job (sacct, ended: ElapsedRaw x NNodes), plus the
+< #      full --time x nodes of every ll5d_* job submitted and not ended (squeue, which sacct lags), plus this job's
+< #      5.0, must be at most 148.0;
+< #   4. a fresh clone at M_A1a in a new pscratch directory, porcelain 0, the bound blobs checked;
+< #   5. the job script written from this file (its sha256 printed), an atime snapshot of the declared inputs;
+< #   6. sbatch, and scontrol's TimeLimit must read 05:00:00 or the job is cancelled.
+< # Nothing to CFS; writes only under $W. Not under set -u (it aborts the root_6_28 activation). Run detached.
+< M=a95cc39f7437170af0b65ba042934fad079e0ee2
+---
+> # LL5D A1a.2 section 6: ll5d_calib RUN 3, required because read_calibration ties the calibration to the code's digests
+> # (ll5d.py:920) and A1a.2 changes ll5d.py. vi plays no part in the calibration, so its numbers should reproduce run 2's
+> # bitwise under the same declared seeds, N = 3,000 and one BLAS thread (reported either way, the director's 2026-11-10
+> # instruction). It runs after ll5d_vicheck PASSes, under the rerun #1018 authorizes. Otherwise as connect-calib-2.sh:
+> # one exclusive regular CPU node, --time 05:00:00 (5.0 node-h reserved; 0.9 line 16,200 s), 64 single-threaded workers,
+> # 10,000 replicate sets per truth, both readings; the fence, iris, the projection gate, a fresh clone at M_A1a.2 with the
+> # bound blobs, the job script and an atime snapshot, sbatch, TimeLimit. Nothing to CFS; writes only under $W. Not under
+> # set -u. Run detached. M and the ll5d.py digest are filled from git after A1a.2 is bound; the placeholders refuse.
+> M=639ef907250a2a7909b7b9ba89b2e85e70c9b767
+> L5=2b0224c6fe52c5bb2d3fe64d461ac9edb80ebd191b0ab2f892dec605a0b56a14        # ll5d.py's sha256 at M
+19c13
+< W=$P/ll5d-calib-2-20261109; DD=$W/deploy
+---
+> W=$P/ll5d-calib-3-20261110; DD=$W/deploy
+21a16
+> [[ $M =~ ^[0-9a-f]{40}$ && $L5 =~ ^[0-9a-f]{64}$ ]] || { echo "STOP the A1a.2 placeholders are not filled"; exit 2; }
+24c19
+< exec >> "$W/logs/connect-calib-2.log" 2>&1
+---
+> exec >> "$W/logs/connect-calib-3.log" 2>&1
+43c38
+< b49f5d5f793265ef0cf569abe1912838cce9280e692f4dd61100d05c133aec1f  nd-unfolding/ll5d.py
+---
+> $L5  nd-unfolding/ll5d.py
+93c88
+< exit $rc      # A1a.1 round: sacct's state is the step's (run 1 read COMPLETED 0:0 on rc 1)
+---
+> exit $rc      # sacct's state is the step's

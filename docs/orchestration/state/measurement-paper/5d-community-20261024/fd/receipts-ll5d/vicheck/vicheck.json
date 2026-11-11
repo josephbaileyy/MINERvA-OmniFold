@@ -1,0 +1,221 @@
+{
+ "atime": {
+  "files": {
+   "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/GEANT_Neutron_0_tdw.npy": {
+    "atime_ns_first": 1792889220000000000,
+    "atime_ns_now": 1792889220000000000
+   },
+   "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/GEANT_Neutron_1_tdw.npy": {
+    "atime_ns_first": 1792889222000000000,
+    "atime_ns_now": 1792889222000000000
+   },
+   "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/GEANT_Pion_0_tdw.npy": {
+    "atime_ns_first": 1792889224000000000,
+    "atime_ns_now": 1792889224000000000
+   },
+   "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/GEANT_Pion_1_tdw.npy": {
+    "atime_ns_first": 1792889226000000000,
+    "atime_ns_now": 1792889226000000000
+   },
+   "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/GEANT_Proton_0_tdw.npy": {
+    "atime_ns_first": 1792889228000000000,
+    "atime_ns_now": 1792889228000000000
+   },
+   "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/GEANT_Proton_1_tdw.npy": {
+    "atime_ns_first": 1792889229000000000,
+    "atime_ns_now": 1792889229000000000
+   },
+   "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/cv.npz": {
+    "atime_ns_first": 1794179841000000000,
+    "atime_ns_now": 1794179841000000000
+   },
+   "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz": {
+    "atime_ns_first": 1794179838000000000,
+    "atime_ns_now": 1794179838000000000
+   },
+   "/pscratch/sd/j/josephrb/fd-1b-20261030/pins.json": {
+    "atime_ns_first": 1793496788000000000,
+    "atime_ns_now": 1793496788000000000
+   },
+   "/pscratch/sd/j/josephrb/fd-1b-staged-20261102/stage1/in/flux_universes.npz": {
+    "atime_ns_first": 1793647540000000000,
+    "atime_ns_now": 1793647540000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-vicheck-20261110/deploy/docs/orchestration/state/2d-closeout/stageF/methods/sf1/manifest/inputs-sha256.txt": {
+    "atime_ns_first": 1794290325000000000,
+    "atime_ns_now": 1794290325000000000
+   },
+   "/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz": {
+    "atime_ns_first": 1794179838000000000,
+    "atime_ns_now": 1794179838000000000
+   }
+  },
+  "moved": []
+ },
+ "code_sha256": {
+  "clip_probe2.py": "b95c562916091b910a5ca8d874d83296035690cb8784db3d318b2f07fed28182",
+  "cov2d.py": "76cbceba395bc6bbf8fc5cce9cf44fc0f21354dff8591cbdee578e0fddcaf8ed",
+  "fd_1b_c2.py": "522d7edd71643df61d0c5ef5a7488834e664eb36d20c3e0c0b46e10a5808f02f",
+  "fd_1b_inv.py": "71b3903aa1329807af7e48b29b4ffd3336ad637d4b8c7e43ae0a6cbe28bcdf1f",
+  "fd_1b_mc.py": "936e1957d330e24d3eaab5f6c53d30b5be42a96f76daac07d527be97c0af30e2",
+  "fd_1b_toys.py": "869a65c3bcce1a3b56ecd197ecdf3b6cf2741e0611f91b582c3064f67967bc08",
+  "ll5d.py": "2b0224c6fe52c5bb2d3fe64d461ac9edb80ebd191b0ab2f892dec605a0b56a14",
+  "s1_assemble.py": "b157250af21a2ef74e4164db6009a40ac596e225f33ac655475798ef49f613f7",
+  "s5p_universe.py": "805a00063a6136e25c6f8f57d228ec996c85a9bc997981632643baeee6c13d80"
+ },
+ "d1": {
+  "differ": [],
+  "digests": {
+   "GEANT_Neutron_0": "c0ae3c18b7dde9261509e4b6f1007d7578f028e9bee4fc3619291565b601524b",
+   "GEANT_Neutron_1": "c0ae3c18b7dde9261509e4b6f1007d7578f028e9bee4fc3619291565b601524b",
+   "GEANT_Pion_0": "c0ae3c18b7dde9261509e4b6f1007d7578f028e9bee4fc3619291565b601524b",
+   "GEANT_Pion_1": "c0ae3c18b7dde9261509e4b6f1007d7578f028e9bee4fc3619291565b601524b",
+   "GEANT_Proton_0": "c0ae3c18b7dde9261509e4b6f1007d7578f028e9bee4fc3619291565b601524b",
+   "GEANT_Proton_1": "c0ae3c18b7dde9261509e4b6f1007d7578f028e9bee4fc3619291565b601524b"
+  },
+  "passes": true,
+  "reference": "GEANT_Neutron_0",
+  "tags": [
+   "GEANT_Neutron_0",
+   "GEANT_Neutron_1",
+   "GEANT_Pion_0",
+   "GEANT_Pion_1",
+   "GEANT_Proton_0",
+   "GEANT_Proton_1"
+  ]
+ },
+ "float32_exact": {
+  "tdw_ref": 1.0,
+  "w_truth": 0.0
+ },
+ "inputs": {
+  "bkg_sha256": "2addac8f26055c5ed69862e7afe29e12ac51dbe23a8d6eeed79d71bec9d82955",
+  "flux_table_sha256": "cdc3da788c385da72826b2a74b1987320bbe399af212722826914df4d2fe15a5",
+  "manifest_sha256": "3a50f502b5a425bc4d116245c36f79bbc279cbd876b87aa72bd0298b001b5031",
+  "npz_sha256": "07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f",
+  "pins_sha256": "5adcd576eb46f443fe4133b05044cd315c0eeb0f281e21acee5f2318b4bab248",
+  "tdw_ref_sha256": "c0ae3c18b7dde9261509e4b6f1007d7578f028e9bee4fc3619291565b601524b"
+ },
+ "mismatch_bound": 0.05,
+ "npz_dtypes": {
+  "MCgen": "float32",
+  "td_pt": "float32",
+  "w_truth": "float64"
+ },
+ "peak_rss_kib": 11238108,
+ "schema": "ll5d-vicheck/1",
+ "seconds": 81.4,
+ "step": "ll5d-vicheck",
+ "terms": {
+  "in_phase_space": 32846302,
+  "inside_cells_not_pass_truth": 0,
+  "pass_truth": 32849103,
+  "pass_truth_outside_by_axis_alone": {
+   "W": 1474,
+   "eavail": 0,
+   "pt": 0,
+   "pz": 0,
+   "q3": 1327
+  },
+  "pass_truth_outside_cells": 2801,
+  "pass_truth_outside_on_two_or_more_axes": 0,
+  "signal_rows": 32849103,
+  "truth_rows": 32849103,
+  "truth_rows_outside_cells": 2801
+ },
+ "threads": {
+  "MKL_NUM_THREADS": "1",
+  "NUMEXPR_NUM_THREADS": "1",
+  "OMP_NUM_THREADS": "1",
+  "OPENBLAS_NUM_THREADS": "1",
+  "VECLIB_MAXIMUM_THREADS": null
+ },
+ "verdict": "PASS",
+ "vi": {
+  "largest_cell_unmatched_share": 0.0,
+  "signal_rows_in_phase_space": 32846302,
+  "signal_rows_unmatched": 0,
+  "signal_unmatched_share_per_cell": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "truth_rows": 32849103,
+  "truth_rows_unmatched": 2801,
+  "truth_unmatched_share_per_cell": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ]
+ },
+ "vi_unrounded": {
+  "largest_cell_unmatched_share": 1.0,
+  "signal_rows_in_phase_space": 32846302,
+  "signal_rows_unmatched": 32846302,
+  "signal_unmatched_share_per_cell": [
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0
+  ],
+  "truth_rows": 32849103,
+  "truth_rows_unmatched": 32849103,
+  "truth_unmatched_share_per_cell": [
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0
+  ]
+ },
+ "why": null
+}

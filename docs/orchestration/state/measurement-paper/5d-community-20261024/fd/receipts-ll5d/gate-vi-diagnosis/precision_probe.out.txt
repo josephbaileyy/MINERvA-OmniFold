@@ -1,0 +1,7 @@
+# command: /opt/homebrew/bin/python3.13 -I precision_probe.py /Users/josephbailey/cov2d-work/wt-diag/nd-unfolding
+# checkout /Users/josephbailey/cov2d-work/wt-diag at HEAD a95cc39f7437170af0b65ba042934fad079e0ee2 (porcelain 0); python numpy: 3.13.7 2.4.4; date 2026-11-10T04:40:23Z
+LL5D's storage: signal w float64, denominator w float32    signal_unmatched=200000/200000 truth_unmatched=200000/200000 largest_share=1.0
+control: both weights float64                              signal_unmatched=0/200000 truth_unmatched=0/200000 largest_share=0.0
+control: both weights float32                              signal_unmatched=0/200000 truth_unmatched=0/200000 largest_share=0.0
+rows whose float64 weight is exactly float32-representable: 0
+# rc=0
