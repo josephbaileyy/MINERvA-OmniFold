@@ -2219,3 +2219,8 @@ was the mislabel. The director accepted bd08582ee, the hand re-cites of ALIASES 
   - "It was background to the second test." said nothing; it now says what the first test's checks led to.
   - The S5 interval sentences preceded the block's introduction.
   - The masking-convention phrase attached to the wrong clause.
+- **D_IBU, Fm1, Fm5 (2026-11-11).**
+  - The PRD-referee read of the D_IBU paragraph (dibu-read/referee-read.md) returned ACCEPT WITH CHANGES; the director ruled the read's wording, under Joseph's decision.
+  - New keys c2c1-dibu-k1, -k20, -mid-lo and -mid-hi (D_IBU_every_K; make_values asserts the K = 2–15 range stays below D_E_R).
+  - "source" → "mechanism" in §1, §4.1, §7, Table 2 and the abstract; the abstract's longest case is 244 words.
+  - Meaning read: dibu-read/pairs.tsv, 16 rows, as ruled.

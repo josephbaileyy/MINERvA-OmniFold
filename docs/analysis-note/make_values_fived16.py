@@ -1535,6 +1535,13 @@ def groupb_values(d):
     v["c2c1-dibu"], v["c2c1-dibu-k5"], v["c2c1-der"] = f"{k10['D_IBU']:.2f}", f"{c['K5']['D_IBU']:.2f}", f"{c['D_E_R']:.2f}"
     assert abs(k10["D_IBU"] / c["D_E_R"] - k10["rho"]) < 1e-9, "D_IBU / D_E_R is the record's rho"
     assert v["c2c1-der"] == "2.27", "D_E_R is the paper's chi2/ndf against the published covariance"
+    # the K scan (the director's ruling on the PRD read of the D_IBU paragraph, 2026-11-11): K = 1, 2-15 and 20
+    ek = {int(k): x for k, x in c["D_IBU_every_K"].items()}
+    assert sorted(ek) == [1, 2, 3, 4, 5, 10, 15, 20] and abs(ek[10] - k10["D_IBU"]) < 1e-12
+    mid = [ek[k] for k in ek if 2 <= k <= 15]
+    v["c2c1-dibu-k1"], v["c2c1-dibu-k20"] = f"{ek[1]:.2f}", f"{ek[20]:.2f}"
+    v["c2c1-dibu-mid-lo"], v["c2c1-dibu-mid-hi"] = f"{min(mid):.2f}", f"{max(mid):.2f}"
+    assert max(mid) < c["D_E_R"], "the text says IBU stays below the 2D result's distance for two to fifteen iterations"
     v["c1-nrep"] = str(c1["n_replicas"])
     v["c1-below-pct"] = f"{100 * (1 - c1['T'] / c1['q95']):.0f}"
     g = d["refg1"]

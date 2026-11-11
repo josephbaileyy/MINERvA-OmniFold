@@ -321,3 +321,12 @@ F§4-<n>, Fm<n> and Fs<n>. "= 1.2" etc. cross-references a recheck row above. Cl
 | Fs9, Fs10a, Fs11a | layout left to the floats; checked in the build |
 | Fs10b | done as is (Table 2's statuses are those used) |
 | Fs10c, Fs11c | declined, as s11i and s11k |
+
+## F rulings applied (2026-11-11)
+
+| Rows | Status |
+|---|---|
+| Fm1 | done: the abstract drops the stability numbers and keeps "its results are sensitive to rounding-level changes of its inputs, beyond a requirement fixed in advance"; the numbers are in §6.1 |
+| Fm5 | done: a clarifying sentence precedes the B0 span; the span is verbatim (check_restyle reports no protected-text failure) |
+| F4.2 | done, by Joseph's decision with the director's ruling on its PRD read (dibu-read/referee-read.md, ACCEPT WITH CHANGES; the read's wording). §4.2 prints IBU on the same inputs at χ²/ndf 1.03 (K = 10), 0.83–1.59 (K = 2–15), 2.16 (K = 20) and 3.95 (K = 1), against 2.27. The keys c2c1-dibu-* come from D_IBU_every_K. The inputs are not excluded as a contributor, the mechanism is not established, and the values are descriptive. Table 2's IBU row, §1, §4.1, §7 and the abstract now say "mechanism" and state the comparison. §4.1's sentence changed; #981 re-sources build_package.py:848 and PROVENANCE.txt:185 at its re-pin |
+| The claim sweep | no other sentence implies the inputs cause the difference. §5.4's "leave open whether these inputs equal the publication's", S1's selected-sample scope and Table S1's "not compared" are consistent with "not excluded as a contributor"; S6's flux-band sentence concerns the band's size |
