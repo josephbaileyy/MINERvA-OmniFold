@@ -500,6 +500,23 @@ class Main(unittest.TestCase):
         self.assertEqual(vb.main(["--npz", str(npz), "--out", str(out)]), 2)
         self.assertFalse(out.exists())
 
+    def test_non_finite_figure_stops_and_writes_nothing(self):
+        # audit x1: a record with a non-finite figure STOPs main before any file is written
+        npz = self.prepare(random_arrays(6))
+        real = vb.build
+
+        def poisoned(cid, *a, **k):
+            rec, fmap = real(cid, *a, **k)
+            rec["bins"][0]["purity"] = float("nan")
+            return rec, fmap
+        vb.build = poisoned
+        try:
+            out = self.d / "out"
+            self.assertEqual(vb.main(["--npz", str(npz), "--out", str(out), "--candidates", "C3"]), 2)
+            self.assertFalse(out.exists())
+        finally:
+            vb.build = real
+
     def test_negative_weight_stops_main(self):
         arrays = random_arrays(6)
         arrays["w_truth"][0] = -1.0

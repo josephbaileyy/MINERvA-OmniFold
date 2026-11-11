@@ -80,6 +80,7 @@ MUTANTS = [
     ("w_reco set narrowed", "np.isfinite(wr[pr & (t_in | r_in)])", "np.isfinite(wr[pr & r_in])"),
     ("excluded region over-named", "        if len(bits) == 1:", "        if len(bits) >= 1:"),
     ("C0 unmasked", "base = np.where(omega, h2_of_fine, -1)", "base = np.asarray(h2_of_fine)"),
+    ("non-finite record skipped (audit x1)", 'raise Stop(f"{name} holds a non-finite figure: {e}")', "continue"),
 ]
 
 

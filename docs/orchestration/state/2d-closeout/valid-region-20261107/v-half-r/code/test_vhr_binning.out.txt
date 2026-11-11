@@ -31,6 +31,7 @@ test_pz_edge_refused_for_c2 (__main__.Geometry.test_pz_edge_refused_for_c2) ... 
 test_strip_refused (__main__.Geometry.test_strip_refused) ... ok
 test_failed_reproduction_writes_nothing (__main__.Main.test_failed_reproduction_writes_nothing) ... ok
 test_negative_weight_stops_main (__main__.Main.test_negative_weight_stops_main) ... ok
+test_non_finite_figure_stops_and_writes_nothing (__main__.Main.test_non_finite_figure_stops_and_writes_nothing) ... ok
 test_pins_refuse (__main__.Main.test_pins_refuse) ... ok
 test_writes_reproduction_and_candidates_with_provenance (__main__.Main.test_writes_reproduction_and_candidates_with_provenance) ... ok
 test_in_share_counts_truth_outside_the_base_cells (__main__.Mask.test_in_share_counts_truth_outside_the_base_cells) ... ok
@@ -59,11 +60,12 @@ test_outside_omega_is_not_counted (__main__.Weights.test_outside_omega_is_not_co
 test_small_negative_w_truth_stops (__main__.Weights.test_small_negative_w_truth_stops) ... ok
 
 ----------------------------------------------------------------------
-Ran 59 tests in 3.174s
+Ran 60 tests in 3.367s
 
 OK
 STOP: the reproduction of R00-R15 failed: flags
 STOP: a counted w_truth is negative or not finite
+STOP: binning_C3.json holds a non-finite figure: Out of range float values are not JSON compliant: nan
 {
  "C3": {
   "n_bins": 6,

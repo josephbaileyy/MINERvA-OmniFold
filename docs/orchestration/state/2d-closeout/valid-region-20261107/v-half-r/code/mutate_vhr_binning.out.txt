@@ -50,4 +50,5 @@ killed   partner ties: highest first index
 killed   w_reco set narrowed
 killed   excluded region over-named
 killed   C0 unmasked
-MUTANTS: 51/51 killed
+killed   non-finite record skipped (audit x1)
+MUTANTS: 52/52 killed
