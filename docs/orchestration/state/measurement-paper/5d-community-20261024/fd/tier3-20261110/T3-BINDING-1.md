@@ -52,8 +52,9 @@ Nothing is submitted, deposited or tagged.
 ## Binding 1, addendum V1: the equality-boundary test (director, 2026-11-11)
 
 **Binds** [`T3-ADDENDUM-V1.md`](T3-ADDENDUM-V1.md) (`3998708a91dde4b0`) and its test-only change, as merged in PR #1067
-at **M_V1 = `8bb4e3b0e1028d960e39de0c202569a08a1218a0`**, byte-identical to its audited head `444993d1`. It closes
-ruling 4's low v1.
+at **M_V1 = `8bb4e3b0e1028d960e39de0c202569a08a1218a0`**. Under `nd-unfolding/tier3/` and `fd/tier3-20261110/`, M_V1
+is byte-identical to the audited head `444993d1`; the rest of the merge brought in only E96D's #1066 and #1068 from
+main. It closes ruling 4's low v1.
 
 | file | sha256 (prefix) | was |
 |---|---|---|
