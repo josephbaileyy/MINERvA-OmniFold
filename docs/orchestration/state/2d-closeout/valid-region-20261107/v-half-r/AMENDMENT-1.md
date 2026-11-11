@@ -17,15 +17,16 @@ And `DECISION-20261110-joseph-vhalfr-a33-a82.md` (#1047), which settles A3.3 and
 
 **Inputs to this amendment.**
 - the packet, `CHOICES-FOR-JOSEPH-20261110.md` (**P**);
-- the independent consult, `consult-sol-20261110/answer.txt` (**S**), and the second one on A3.3 and A8.2,
-  `consult-sol-a1-20261110/answer.txt` (**S2**);
+- the independent consult, `consult-sol-20261110/answer.txt` (**S**); the second, on A3.3 and A8.2,
+  `consult-sol-a1-20261110/answer.txt` (**S2**); and the third, on A3.4, `consult-sol-a34-20261110/answer.txt`
+  (**S3**);
 - the declaration at #1016's head `b7d7ac2dc` (**D**);
 - **H**, `nd-unfolding/pv-ladder/h2_definition.py`;
 - **G**, `nd-unfolding/s5p_stage1_inspect.py`.
 
 Other paths are at main `7c1e5440d`, relative to `docs/orchestration/` unless they start with `nd-unfolding/`.
-Joseph settled A3.3 and A8.2 in the second decision. One item remains his (or Ben's): **A3.4 [JOSEPH]**, the rule
-that closes the near-strip case for C6 and C7 (audit B1). Nothing goes to the binding until he decides it.
+Joseph settled A3.3 and A8.2 in the second decision and A3.4 in the third (`DECISION-20261110-joseph-vhalfr-a34.md`,
+#1050). Every choice is now decided.
 
 ## A1. What this amendment fixes
 
@@ -35,13 +36,13 @@ that closes the near-strip case for C6 and C7 (audit B1). Nothing goes to the bi
 | §1.1 phase space | the domain is a fixed 5D mask; the boundary accounting is explicit | decision item 2 (4), item 3 (b); A2 |
 | §1.2 binning rule | one criterion, min(purity, diagonal fraction) ≥ 0.5, for the test, the join order and the final requirement | decision item 2 (1), (6); A4 |
 | §1.3 candidates | C0-C8 frozen; C2 and C6 keep the p_∥ = 4.5 GeV/c edge; C6 and C7 keep two-dimensional resolution | decision item 2 (2), item 3 (a), (c); A3, A5 |
-| §1.3, 2D resolution | the near-strip rule for C6 and C7, three options [JOSEPH] | audit B1; A3.4 |
+| §1.3, 2D resolution | the near-strip rule for C6 and C7: option (i) at s = 0.2, structural failures recorded, no exemption | audit B1; third decision; A3.4 |
 | §1.4 must-include | C6 and C7, decided | decision item 1 |
 | §4 outcomes | the table restated with both fractions and support; the cancellation listing specified and reconciled | decision item 2 (6), (7); S:33, :37; A7 |
 | new | the graded estimator frozen by name and digest | decision item 3 (c); A8.1 |
 | new | the reserved-truth confirmatory step, specified now | decision item 3 (c); A8.2 |
 | §6 code | the tests these changes need | A9 |
-| §7 | every choice is decided except A3.4 [JOSEPH] | both decisions; audit B1 |
+| §7 | every choice is decided | the three decisions |
 
 ## A2. The domain and its boundary (D §1.1; clarification (b))
 
@@ -109,79 +110,62 @@ each of the candidate's two axes within Ω.
 - The consult recommended a fixed edge at 1.2 GeV (S2:13). Joseph judged the published limits specific to their
   analyses, and the decision records that.
 
-**A3.4 Closing the near-strip case [JOSEPH or Ben to decide before the binding; audit B1].**
+**A3.4 The near-strip rule for C6 and C7 (decided: option (i) at s = 0.2, with no exemption;
+`DECISION-20261110-joseph-vhalfr-a34.md`, consult `consult-sol-a34-20261110/answer.txt`, S3).**
 
-A3.1 excludes full strips only, and it accepts near-strips. Take a C7 partition whose main bins each span all of
-E_avail except its first fine bin [0, 0.1) GeV, with slivers at E_avail < 0.1 GeV that are split in q3. Every row and
-every column crosses two bins, but where a sliver holds a small share of its row, the partition carries little E_avail
-information there. For C6, A5's p_∥ = 4.5 GeV/c edge is a real retained boundary on p_∥. For C7, A3.1 is the only
-two-dimensional guarantee once A3.3 removed a fixed q3 edge.
+**Why.** A3.1 excludes full strips only, and it accepts near-strips (audit B1). Take a C7 partition whose main bins each
+span all of E_avail except its first fine bin [0, 0.1) GeV, with slivers at E_avail < 0.1 GeV split in q3. Every row
+and every column crosses two bins, but where a sliver holds a small share of its row, that row carries little E_avail
+information. For C6, A5's p_∥ = 4.5 GeV/c edge is a fixed boundary, but it does not ensure balanced population in every
+column (S3:17). For C7, A3.1 was the only two-dimensional guarantee once A3.3 removed a fixed q3 edge.
 
-**Definitions shared by the options.**
-- For a two-dimensional candidate with axes (x, y), a **row** is one fine interval of y. Its cells are the fine
-  (x, y) cells in that interval within Ω, each integrated over the other three axes within Ω. A **column** is the same
-  for one fine interval of x.
-- A **piece** is the part of a row or column inside one final bin. Its weight is truth_sel (A2), summed over the row's
-  or column's cells in that bin.
-- Rows and columns with zero truth_sel are skipped.
-- Every quantity here is simulation-only and reads no bias, departure or V-HALF quantity.
+**Definitions.**
+- For a two-dimensional candidate with axes (x, y), a **row** is one fine interval of y. Its cells are the fine (x, y)
+  cells in that interval within Ω, each integrated over the other three axes within Ω, in the order of x. A **column**
+  is the same for one fine interval of x, in the order of y.
+- A **piece** is the part of a row or column inside one final bin. A bin is a rectangle, so a piece is a contiguous run
+  of the row's or column's cells.
+- A piece's **share** is its truth_sel (A2) divided by its row's or column's truth_sel. Every share is computed within
+  Ω only.
+- **Weights.** Every w_truth entering a share must be finite and nonnegative. The code STOPs otherwise. The monotone
+  veto below depends on this.
+- A row or column with zero truth_sel within Ω holds no signal to resolve. It is listed and carries no requirement.
+  This is the only case without a share, and it waives nothing else.
 
-**Option (i): a share in every row and every column (s = 0.2, or 0.25).**
-- **Rule.** In every row and every column, at least two pieces each hold at least s of that row's or column's
-  truth_sel.
-- **Enforcement.**
-  - During merging, a join is refused if afterwards any row or column it touches would have a largest piece above
-    1 − s. This half is monotone, because pieces only grow.
-  - After merging, the two-piece condition is checked. A failure ends the candidate at T2 (A7.1).
-  - A row or column whose largest single fine cell already holds more than 1 − s cannot meet the rule under any
-    partition. It is exempt from both halves and listed with its share. The exemption reads only the fine grid's
-    truth_sel.
-- **Cost:** the strongest of the three.
-  - C6 and C7 become likelier to end at T2 or T3. The losses would concentrate where the two axes are strongly
-    correlated or the weight is low: C7's high-q3 rows, where E_avail is confined to a narrow band, and the tails of
-    both candidates [inference; no binning has been built].
-  - Joins that would repair a low bin are refused more often, so more low bins stay flagged.
-- **Rejects, where A3.1 accepts:**
-  - the near-strip above, wherever a sliver holds less than s of its row;
-  - any C6 partition in which some p_∥ column has more than 1 − s of its weight in one bin.
+**The rule.** In every row and every column of C6 and C7, at least two pieces each hold a share of at least 0.2.
 
-**Option (ii): a balanced product structure (k = 1, s = 0.2).**
-- **Rule.** Each axis keeps at least one interior fine edge that no final bin crosses, with at least s of the
-  candidate's total truth_sel within Ω on each side. So the partition refines a balanced 2 × 2 grid.
-- **Enforcement.**
-  - During merging, a join is refused if afterwards no edge of that axis would remain both uncrossed and balanced.
-    This is monotone, because a crossed edge stays crossed.
-  - For C6, p_∥ = 4.5 GeV/c counts as the p_∥ edge if it is balanced. If it is not, another balanced p_∥ edge must
-    also survive.
-- **Cost:** milder than (i).
-  - It refuses fewer joins, so C6 and C7 end at T2 or T3 less often [inference].
-  - Local near-strips survive. Inside the balanced 2 × 2 frame, a row can still hold almost all its weight in one bin
-    where the axes are correlated, which is the likely case for C7 [inference].
-- **Rejects, where A3.1 accepts:**
-  - the near-strip above, when its only uncrossed E_avail edge is 0.1 GeV with less than s of the total below it;
-  - a staircase partition, in which every interior edge of one axis is crossed by some bin. A3.1 accepts it whenever
-    no bin spans a full axis, and (i) can accept it too.
+**How it is applied, in three parts:**
+1. **Structural check, before merging.** A row or column admits the rule only if some cut between two of its adjacent
+   cells leaves at least 0.2 of its truth_sel on each side.
+   - A row with one cell above 0.8 fails this. So does a contiguous structure such as 19/62/19, which has no cell
+     above 0.8 but no cut with 0.2 on both sides (S3:11).
+   - Each failing row or column is recorded as a **structural failure**, with its shares.
+   - The check is necessary only: passing it does not ensure the final partition will meet the rule.
+2. **The 80 % veto, during merging (monotone).** A join is refused if, afterwards, any row or column it touches would
+   have a largest piece with a share above 0.8.
+   - With fixed denominators and nonnegative weights, a row's largest-piece share cannot fall under merging, so the
+     veto never has to be undone.
+3. **The two-piece check, at the end (a final requirement).** After merging, every row and column must hold two pieces
+   with a share of at least 0.2 each.
+   - The veto does not imply this. A row at 70/10/10/10 passes the veto and fails the check. The condition can also
+     become true as small pieces merge and false again when two qualifying pieces merge (S3:7).
+   - So greedy construction under the veto does not guarantee that a partition meeting the check will be reached.
+     A failure is a failure of this declared procedure, as D:216-217 states for every terminal outcome.
 
-**Option (iii): A3.1 as written, with the near-strip case disclosed.**
-- **Rule.** A3.1 only.
-- **Cost.** None beyond A3.1.
-- **Disclosure,** printed wherever C6 or C7 prints:
-  > The rule excludes bins that span the whole range of either axis. It does not ensure that each axis is resolved
-  > into populated parts at every value of the other.
-  Each row's and column's largest-piece share is printed beside it, as a description.
-- **Rejects** nothing that A3.1 accepts.
+**The outcome.** A candidate with any structural failure, or with a final two-piece failure, ends with no reportable
+binning (T2, A7.1). That is its reported outcome. There is no exemption. The binning is still built and printed, with
+its structural and final failures listed per row and column.
 
-**Recommendation: (i) at s = 0.2.**
-- It states the requirement where the information is used, at every value of each axis, which is the case the audit
-  names.
-- Its monotone half acts during merging, so greedy joins cannot build a near-strip.
-- The exemption keeps an impossibility in the fine grid itself from deciding the outcome.
-- 0.2 rather than 0.25: with A4's response requirement, a 25–75 bound on two-piece rows refuses more joins
-  [inference].
-- If Joseph prefers fewer terminations, (ii) is the fallback. (iii) gives up the two-dimensional resolution that the
-  must-include decision rests on.
+**Every other requirement stands** (decision item 3; S3:17): min(purity, diagonal fraction) ≥ 0.5 as a final
+requirement, support of at least 1000 in both populations, the bin floor, and C6's fixed p_∥ = 4.5 GeV/c edge. The
+rule waives none of them.
 
-Whichever option is chosen applies to C6 and C7 only and is fixed before any binning is built.
+**0.2 is a stated convention.** It asks for a substantial minority population on each side, and it is not calibrated.
+0.25 demands more balance without a demonstrated physics benefit (S3:15). The disclosure says so (A6).
+
+**Applies to C6 and C7 only,** fixed before any binning is built. The alternatives considered were a balanced
+product structure and A3.1 with disclosure. Joseph chose this rule, on the consult's advice that (ii) preserves only
+balanced marginals and that (iii) leaves the defect in place (S3:5).
 
 **The floors stay** (D:107-111): 3 bins in 1D, 6 in 2D, and 8 for C0 with 4 on each side of p_∥.
 
@@ -192,8 +176,8 @@ Whichever option is chosen applies to C6 and C7 only and is fixed before any bin
 2. **Join order.** While a low bin exists, take the one with the lowest min(purity, diagonal fraction). Ties go to
    the lowest first fine index. Merge it with the allowed neighbour whose union has the highest min(purity, diagonal
    fraction). Ties go to the lowest axis, then the lowest first index. This replaces D:91-92.
-   - "Allowed" means: a box on the candidate's axes (D:93-94), plus A3.1 and A3.4's join refusal (if the chosen
-     option has one) for C6 and C7, plus A5 for C0, C2 and C6.
+   - "Allowed" means: a box on the candidate's axes (D:93-94), plus A3.1 and A3.4's 80 % veto for C6 and C7, plus
+     A5 for C0, C2 and C6.
 3. **Final requirement.** A candidate is reportable only if every final bin has min(purity, diagonal fraction) ≥ 0.5
    and passes the support rule, as well as being V-HALF-valid (A7.1). This replaces D:104-106.
 4. **The meaning of 0.5.** It is a design convention: at least half of what is reconstructed in a bin was generated
@@ -225,8 +209,12 @@ Its first sentence becomes:
 > The candidate list, its binning rules and the binning threshold were set after the 16-cell V-HALF result was known,
 > and after the methods paper's referees remarked that its cells were formed without a stability criterion.
 
-The rest of D:49-52 follows unchanged. If Tier 3 leads to a changed estimator, the disclosure also names the graded
-estimator (A8.1).
+The rest of D:49-52 follows unchanged. It adds one sentence for C6 and C7 (third decision, item 4):
+
+> C6 and C7 require every row and column to hold two pieces of at least 20 % of its simulated signal. The 20 % is a
+> stated convention, chosen in informed development, and it is not calibrated.
+
+If Tier 3 leads to a changed estimator, the disclosure also names the graded estimator (A8.1).
 
 ## A7. Outcomes and the cancellation listing (D §4; decision item 2 (6), (7))
 
@@ -234,7 +222,7 @@ estimator (A8.1).
 
 | outcome | when | reported as |
 |---|---|---|
-| **T2: below the floor, or below the 2D requirement** | fewer final bins than A3's floor, or (C6, C7) a final partition that fails A3.4's chosen rule | "this declared rule produced no acceptable binning for <candidate> (minimum)", or "(two-dimensional resolution)"; known from the binning alone |
+| **T2: below the floor, or below the 2D requirement** | fewer final bins than A3's floor, or (C6, C7) any structural failure or final two-piece failure under A3.4 | "this declared rule produced no acceptable binning for <candidate> (minimum)", "(two-dimensional resolution: structural)" or "(two-dimensional resolution: final)", with the failing rows and columns; known from the binning alone |
 | **T3: a bin fails the response or support requirement** | a final bin with purity < 0.5, diagonal fraction < 0.5, reco_all < 1000 or truth_sel < 1000 | "this declared rule produced no acceptable binning for <candidate> (a bin below the response or support requirement)", naming each failing quantity per bin; known from the binning alone |
 | **T1: not every bin valid** | the binning meets T2's and T3's requirements, and some bin's V-HALF class is other than "valid" | "this declared rule produced no acceptable binning for <candidate>", with every bin's class |
 | **R: reportable** | every final bin has min(purity, diagonal fraction) ≥ 0.5, passes the support rule and is V-HALF-valid | the candidate, its binning, both fractions, its support and its bins' classes |
@@ -383,9 +371,15 @@ The rules for the listing:
     - a truth-outside-Ω event reconstructs inside a bin, which enters reco_all and not same;
     - a truth-inside event reconstructs outside Ω, which enters truth_reco and not same.
   - A C6 fixture whose only box-forming partner would be a full p_T strip is refused and ends flagged.
-  - A3.4's chosen rule:
+  - A3.4's rule:
     - a near-strip fixture (the A3.4 example) that the rule rejects and A3.1 accepts;
-    - for option (i), a fixture for each half, and one for the fine-grid exemption.
+    - the structural check: a 19/62/19 row and a row with one cell above 0.8 are each recorded as structural
+      failures, and the candidate ends at T2;
+    - the monotone veto: a join that would push a touched row's or column's largest piece above 0.8 is refused, and
+      a property test shows that a row's largest-piece share never falls over a sequence of joins;
+    - the final check: a 70/10/10/10 row passes the veto, fails the two-piece check, and ends the candidate at T2;
+    - a negative or non-finite w_truth STOPs;
+    - shares within Ω: a fixture whose truth_sel outside Ω would change a share if it were counted.
   - A C2 or C6 fixture whose best partner crosses p_∥ = 4.5 is refused.
   - A T3 fixture for each failing quantity (purity, diagonal fraction, reco support, truth support).
   - A7.2's reconciliation control STOPs on a planted 1e-9 drift. Its fixture has bins where the mean of constituent
