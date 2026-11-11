@@ -9,17 +9,19 @@
 # RSN (state/measurement-paper/5d-community-20261024/fd/referee-sensitivity-20261111/RSN-DECLARATION.md §5-6): every
 # task of one declared job (rsn_tasks.tsv column 2) at once, one srun step each, through mnv_guarded_run.py from a clean
 # deploy at <pin>, as pv-ladder/sbatch_pvl.sh runs L-5D-PV. Runs only on the director's go for each connect.
-#   sbatch --job-name=rsn_<job> --time=0:19:00 --output=<OUT>/logs/%x_%j.out sbatch_rsn.sh <deploy> <pin> <OUT> <job>
-#   J1   the NC alone (rsn_nc).
-#   J2   G6, SM and WR, seven steps, only after <OUT>/nc.json records the NC's PASS and <OUT>/gates/J2.ok names <pin>.
-#   J2n  J2 without SM: only if the committed rsn-prep-SHA256SUMS lists no SM reweight.
+#   sbatch --job-name=rsn_<job> --time=<limit> --output=<OUT>/logs/%x_%j.out sbatch_rsn.sh <deploy> <pin> <OUT> <job>
+#   J1   the NC alone (rsn_nc); limit 0:19:00.
+#   J2   G6, SM, WR and TR, eight steps; limit 0:22:00. Only after <OUT>/nc.json records the NC's PASS and
+#        <OUT>/gates/J2.ok names <pin>.
+#   J2n  J2 without SM, five steps; limit 0:22:00. Only if the committed rsn-prep-SHA256SUMS lists no SM reweight.
+#   J3   the F1.1 closures at the A7 GiBUU hybrid and the q3 tilt, weighted and with equal weights, four steps;
+#        limit 0:19:00. Only after the NC's PASS and <OUT>/gates/J3.ok names <pin>.
 # Every job refuses before any step unless: the deploy is clean at <pin>; the job's name is rsn_<job> and its Slurm
-# TimeLimit is at most the declared 0:19:00; <OUT>/fence.txt names the fenced job-name prefixes and none of them is
+# TimeLimit is at most the job's declared limit; <OUT>/fence.txt names the fenced job-name prefixes and none of them is
 # queued or running; and every reweight matches its committed sha256 (pv-ladder's prep-SHA256SUMS for the frozen ones,
 # nd-unfolding/rsn/rsn-prep-SHA256SUMS for RSN's). With RSN_SMOKE set it stops after these checks and prints the steps.
 set -o pipefail   # NOT set -u (the environment's activation aborts under it)
 D="${1:?deploy}"; PIN="${2:?pin}"; OUT="${3:?out}"; JOB="${4:?job}"
-LIMIT=0:19:00
 PVL_PREP="${RSN_PVL_PREP:-/pscratch/sd/j/josephrb/pv-ladder-20261024/prep}"
 V="$D/nd-unfolding/pv-ladder"
 H="$D/nd-unfolding/rsn"
@@ -31,7 +33,8 @@ if [ "$head_sha" != "$PIN" ] || [ "$dirty" -ne 0 ] || [ "$stray" -ne 0 ]; then
     say "refusing: deploy HEAD=$head_sha (pinned $PIN), $dirty modified tracked files, $stray untracked"; exit 2
 fi
 case "$JOB" in
-    J1|J2|J2n) ;;
+    J1|J3) LIMIT=0:19:00 ;;
+    J2|J2n) LIMIT=0:22:00 ;;
     *) say "refusing: job $JOB"; exit 2 ;;
 esac
 if [ -n "$SLURM_JOB_ID" ]; then
@@ -82,6 +85,8 @@ if [ "$JOB" != J1 ]; then
     G="$OUT/gates/$JOB.ok"
     [ -f "$G" ] && grep -qx "pin=$PIN" "$G" || { say "refusing: $G is missing or does not name pin $PIN"; exit 2; }
     grep -q '"verdict": "PASS"' "$OUT/nc.json" 2>/dev/null || { say "refusing: $OUT/nc.json records no NC PASS"; exit 2; }
+fi
+if [ "$JOB" = J2 ] || [ "$JOB" = J2n ]; then
     [ -s "$RSUMS" ] || { say "refusing: no committed $RSUMS"; exit 2; }
     n_sm=$(grep -c ' \./SM/' "$RSUMS")
     if [ "$JOB" = J2 ] && [ "$n_sm" -ne 3 ]; then say "refusing: J2 needs the three SM reweights ($n_sm listed); use J2n"; exit 2; fi
@@ -103,7 +108,7 @@ cfg() {  # cfg <key: npz|bkg> <field: path|sha256>
 }
 # validate every task first, so a refusal never leaves steps running
 for line in "${LINES[@]}"; do
-    IFS=$'\t' read -r task _ _ ratio _ _ _ <<< "$line"
+    IFS=$'\t' read -r task _ _ ratio _ _ _ _ _ <<< "$line"
     read -r RF SHA <<< "$(ratio_of "$ratio")"
     [ -n "$SHA" ] && [ -f "$RF" ] && [ "$(sha256sum "$RF" | cut -d' ' -f1)" = "$SHA" ] \
         || { say "refusing: the reweight of $task ($ratio) is missing or differs from its committed sha256"; exit 2; }
@@ -128,11 +133,12 @@ if [ -z "$RSN_SMOKE" ]; then
 fi
 pids=(); names=()
 for line in "${LINES[@]}"; do
-    IFS=$'\t' read -r task _ _ ratio closure weight _ <<< "$line"
+    IFS=$'\t' read -r task _ _ ratio closure weight truth transfer _ <<< "$line"
     read -r RF SHA <<< "$(ratio_of "$ratio")"
     extra=(); [ "$closure" = yes ] && extra=(--closure)
+    [ "$transfer" = yes ] && extra+=(--transfer)
     cmd=(python "$D/nd-unfolding/mnv_guarded_run.py" --expect-root "$D" --inventory "$OUT/inventory/$task.jsonl"
-         --label "rsn:$task" -- "$H/rsn_unfold.py" --regressor-weight "$weight"
+         --label "rsn:$task" -- "$H/rsn_unfold.py" --regressor-weight "$weight" --truth "$truth"
          --rung L-5D-PV --arm e --features all --ratio "$RF" --expect-ratio-sha256 "$SHA" "${extra[@]}"
          --npz "$(cfg npz path)" --expect-npz-sha256 "$(cfg npz sha256)"
          --bkg "$(cfg bkg path)" --expect-bkg-sha256 "$(cfg bkg sha256)"

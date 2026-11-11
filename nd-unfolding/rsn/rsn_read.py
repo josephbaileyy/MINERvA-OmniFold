@@ -35,6 +35,12 @@ Q_SMALLER, Q_LARGER, Q_CELL = 0.8, 1.25, (0.5, 2.0)
 FLOOR_MULT, HALF_SIGMA = 2.0, 0.5
 RMS_LOWER, RMS_HIGHER = 0.9, 1.1
 FLOOR_CLOSURE_MAX = 1e-4
+# §3.3: at a principal deformed truth, the weighting is material if the noise-free closure's flag changes or its
+# chi2 moves by more than this fraction of the equal-weight chi2
+CHI2_FRACTION = 0.25
+DEFORMED = ("gibuu", "q3")
+# §3.5: the transfer diagnostic, read at the last iteration
+TRANSFER_POINTS = ("data", "gibuu", "q3")
 FLOOR_PRINTED = (0.133, 0.055, 0.252)   # FD-1B-INV-I0-REPORT.md:67, in %
 
 CONCLUSIONS = {
@@ -44,7 +50,8 @@ CONCLUSIONS = {
     "P4": "C_model is dominated by the GiBUU shift (0.890 of its trace)",
     "P5": "the reported per-cell relative uncertainty of the sixteen released cells",
     "P6": "the sixteen released central values, whose unmatched-event weights come from an unweighted regression",
-    "P7": "the noise-free closures at the prior and at NuWro's shape",
+    "P7": "the noise-free closures at the prior, at NuWro's shape, at the A7 GiBUU hybrid and at the q3 tilt",
+    "P8": "the misses' step-1 weights transfer from the reconstructed events at fixed truth (limitation 8)",
 }
 
 
@@ -95,6 +102,27 @@ def closure_class(b_w, b_0) -> str:
     if ratio > RMS_HIGHER:
         return "higher"
     return "comparable"
+
+
+def flagged(g: dict) -> bool:
+    return bool(g["cells_abs_z_gt_2"] or g["p_lt_0.01"])
+
+
+def deformed_class(rec: dict) -> str:
+    w, u = rec["weighted"], rec["equal_weights"]
+    if flagged(w) != flagged(u) or abs(w["chi2"] - u["chi2"]) > CHI2_FRACTION * u["chi2"]:
+        return "material"
+    return "immaterial"
+
+
+def transfer_class(cell_bias, floor, sigma) -> tuple[str, list]:
+    """T0 within twice the rounding floor in every cell, T1 within half the reported sigma, T2 otherwise (named);
+    a cell without masked rows counts as failing T0 and T1."""
+    t = np.array([np.inf if v is None else abs(v) for v in cell_bias])
+    if np.all(t <= FLOOR_MULT * np.asarray(floor, float)):
+        return "T0", []
+    big = [f"R{c:02d}" for c in np.flatnonzero(t > HALF_SIGMA * np.asarray(sigma, float))]
+    return ("T1", []) if not big else ("T2", big)
 
 
 def rounding_floor(i0: dict, cmodel: dict) -> np.ndarray:
@@ -148,18 +176,40 @@ def read(prep: dict, cm: dict, rg: dict, i0: dict, cmodel: dict, f1: dict) -> di
     phi = rounding_floor(i0, cmodel)
     delta = np.asarray(cm["wr"]["delta"], float)
     wc, cells = wr_class(delta, phi, sigma_rep)
-    cl = cm["wr"]["closures"]
+    cl, wd = cm["wr"]["closures"], rg["wr_directions"]
     floor_max = float(np.max(np.abs(cl["tune_v1"]["bias_weighted"])))
+    p7 = {"floor": {"max_abs_weighted": floor_max,
+                    "max_abs_equal_weights": float(np.max(np.abs(cl["tune_v1"]["bias_equal_weights"]))),
+                    "breaks_the_prior_closure": floor_max > FLOOR_CLOSURE_MAX}}
+    for t in ("nuwro",) + DEFORMED:
+        bw, bu = cl[t]["bias_weighted"], cl[t]["bias_equal_weights"]
+        p7[t] = {"rms_weighted": rms(bw), "rms_equal_weights": rms(bu),
+                 "max_abs_change": float(np.max(np.abs(np.subtract(bw, bu)))), "rms_class": closure_class(bw, bu),
+                 "chi2_weighted": wd[t]["weighted"]["chi2"], "chi2_equal_weights": wd[t]["equal_weights"]["chi2"],
+                 "flag_weighted": flagged(wd[t]["weighted"]), "flag_equal_weights": flagged(wd[t]["equal_weights"]),
+                 "change_along_equal_weight_bias": wd[t]["change_along_equal_weight_bias"],
+                 "change_top_directions": wd[t]["change"]["top"]}
+        if t in DEFORMED:
+            p7[t]["class"] = deformed_class(wd[t])
+    material = [t for t in DEFORMED if p7[t]["class"] == "material"]
+    p8 = {}
+    for pt in TRANSFER_POINTS:
+        last = cm["transfer"][pt][-1]
+        tc, tcells = transfer_class(last["cell_bias"], phi, sigma_rep)
+        dec = [v for v in last["acceptance_decile_rel_bias"] if v is not None]
+        p8[pt] = {"class": tc, "cells_beyond_half_sigma": tcells, "rel_bias": last["rel_bias"], "rel_rms": last["rel_rms"],
+                  "cell_bias": last["cell_bias"], "lowest_vs_highest_acceptance": [dec[0], dec[-1]] if dec else None}
     out["arms"]["WR"] = {
         "P6": {"delta": delta.tolist(), "delta_over_floor": (np.abs(delta) / phi).tolist(),
-               "delta_over_sigma": (np.abs(delta) / sigma_rep).tolist(), "class": wc, "cells_at_half_sigma": cells},
-        "P7": {"nuwro": {"rms_weighted": rms(cl["nuwro"]["bias_weighted"]), "rms_frozen": rms(cl["nuwro"]["bias_frozen"]),
-                         "max_abs_change": float(np.max(np.abs(np.subtract(cl["nuwro"]["bias_weighted"],
-                                                                           cl["nuwro"]["bias_frozen"])))),
-                         "class": closure_class(cl["nuwro"]["bias_weighted"], cl["nuwro"]["bias_frozen"])},
-               "floor": {"max_abs_weighted": floor_max,
-                         "max_abs_frozen": float(np.max(np.abs(cl["tune_v1"]["bias_frozen"]))),
-                         "breaks_the_prior_closure": floor_max > FLOOR_CLOSURE_MAX}}}
+               "delta_over_sigma": (np.abs(delta) / sigma_rep).tolist(), "class": wc, "cells_at_half_sigma": cells,
+               "chi2": wd["data"]["grade"]["chi2"], "top_directions": wd["data"]["directions"]["top"]},
+        "P7": p7,
+        "verdict": ("the equal-weight regression is immaterial at the A7 GiBUU hybrid and the q3 tilt, and the data "
+                    "move " + ("within the rounding floor" if wc == "W0" else "below half the reported sigma"))
+        if not material and wc in ("W0", "W1") else
+        ("the equal-weight regression is material: " + ", ".join(
+            ([f"at {t}" for t in material]) + ([f"on data ({wc}: {cells})"] if wc == "W2" else [])))}
+    out["arms"]["TR"] = {"P8": p8}
     return out
 
 
@@ -176,10 +226,16 @@ def text(out: dict) -> str:
                      f"{a['P4']['gibuu_trace_share']:.3f} vs {a['P4']['gibuu_trace_share_nominal']:.3f}); "
                      f"P5 reported sigma x{a['P5']['median']:.3f} median [{a['P5']['min']:.3f}, {a['P5']['max']:.3f}]")
     w = out["arms"]["WR"]
-    lines.append(f"WR: P6 {w['P6']['class']}" + (f" at {w['P6']['cells_at_half_sigma']}" if w['P6']['cells_at_half_sigma'] else "")
+    lines.append(f"WR: {w['verdict']}. P6 {w['P6']['class']}"
+                 + (f" at {w['P6']['cells_at_half_sigma']}" if w['P6']['cells_at_half_sigma'] else "")
                  + f" (max |delta|/floor {max(w['P6']['delta_over_floor']):.2f}, max |delta|/sigma "
-                 f"{max(w['P6']['delta_over_sigma']):.3f}); P7 NuWro closure {w['P7']['nuwro']['class']}, floor "
+                 f"{max(w['P6']['delta_over_sigma']):.3f}); P7 "
+                 + "; ".join(f"{t} {w['P7'][t]['class']} (chi2 {w['P7'][t]['chi2_equal_weights']:.1f} -> "
+                             f"{w['P7'][t]['chi2_weighted']:.1f})" for t in DEFORMED)
+                 + f"; NuWro {w['P7']['nuwro']['rms_class']}; floor "
                  + ("BROKEN" if w["P7"]["floor"]["breaks_the_prior_closure"] else "kept"))
+    lines.append("TR: P8 " + "; ".join(f"{pt} {v['class']}" + (f" at {v['cells_beyond_half_sigma']}" if v['cells_beyond_half_sigma'] else "")
+                                       + f" (rel bias {v['rel_bias']:+.4f})" for pt, v in out["arms"]["TR"]["P8"].items()))
     return "\n".join(lines)
 
 

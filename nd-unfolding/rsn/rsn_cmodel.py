@@ -16,7 +16,10 @@ build  Refuses, writing nothing, unless the NC holds again; the frozen products 
          G6: S^G6 = (s_genie_mec, s_nuwro, s'_gibuu), with s'_gibuu = X(G6_gibuu) / X_0 - 1 and the other two rows
              cmodel_5d.json's own;
          SM: S^SM = (X(SM_k) / X_0 - 1 for each k), only if the prep built SM;
-         WR: delta = X(WR_data) / X_0 - 1, and each WR closure's bias X / X_true - 1 beside the frozen closure's.
+         WR: delta = X(WR_data) / X_0 - 1, and each WR closure's bias X / X_true - 1 beside its equal-weight
+             reference: the frozen closure at the prior and at NuWro, the WU closure at the A7 GiBUU hybrid and q3;
+         TR: TR_data must equal rsn_nc bitwise (the transfer diagnostic leaves the loop untouched); the transfer
+             records of TR_data, WU_closure_gibuu and WU_closure_q3 are collected.
        C^V = S^V^T S^V. Writes S per arm, its per-cell sqrt-diagonal, trace and trace shares. It prints no absolute
        cell value.
 
@@ -48,7 +51,12 @@ CMODEL_JSON = _PVL / "readouts" / "cmodel_5d.json"
 STAGE1 = _ROOT / "docs/orchestration/state/s5p/stage1/stage1_inspect.json"
 FEATURES = list(L.AXES5)
 SEED, ITERS, THREADS = 42, 5, 32
-CLOSURES = {"tune_v1": "L-5D-PV_e_closure_tune_v1", "nuwro": "L-5D-PV_e_closure_nuwro"}
+# truth -> (the weighted closure, its equal-weight reference: a frozen product or an RSN task)
+CLOSURES = {"tune_v1": ("WR_closure_tune_v1", "frozen:L-5D-PV_e_closure_tune_v1"),
+            "nuwro": ("WR_closure_nuwro", "frozen:L-5D-PV_e_closure_nuwro"),
+            "gibuu": ("WR_closure_gibuu", "rsn:WU_closure_gibuu"),
+            "q3": ("WR_closure_q3", "rsn:WU_closure_q3")}
+TRANSFER_POINTS = {"data": "TR_data", "gibuu": "WU_closure_gibuu", "q3": "WU_closure_q3"}
 
 
 def tasks(path: Path = TASKS) -> dict:
@@ -56,10 +64,11 @@ def tasks(path: Path = TASKS) -> dict:
     for ln in path.read_text().splitlines():
         if not ln.strip() or ln.startswith("#"):
             continue
-        task, job, arm, ratio, closure, weight, _ = ln.split("\t")
+        task, job, arm, ratio, closure, weight, truth, transfer, _ = ln.split("\t")
         if job == "J2n":
             continue
-        out[task] = {"job": job, "arm": arm, "ratio": ratio, "closure": closure == "yes", "regressor_weight": weight}
+        out[task] = {"job": job, "arm": arm, "ratio": ratio, "closure": closure == "yes", "regressor_weight": weight,
+                     "truth": truth, "transfer": transfer == "yes"}
     return out
 
 
@@ -103,11 +112,15 @@ def meta_problems(meta: dict, spec: dict, want_ratio: str, ref: dict) -> list[st
     elif refine.get("classifier_params") != ref_refine.get("classifier_params") or refine.get("ran") is not True:
         bad.append("refinement parameters differ from the frozen tune_v1 product's")
     rsn = meta.get("rsn") or {}
-    if rsn.get("regressor_weight") != spec["regressor_weight"]:
-        bad.append(f"regressor weight {rsn.get('regressor_weight')!r} != {spec['regressor_weight']!r}")
-    want_calls = ITERS if spec["regressor_weight"] == "w_truth" else None
+    for k in ("regressor_weight", "truth", "transfer"):
+        if rsn.get(k) != spec[k]:
+            bad.append(f"{k} {rsn.get(k)!r} != {spec[k]!r}")
+    instrumented = spec["regressor_weight"] != "none" or spec["transfer"]
+    want_calls = ITERS if instrumented else None
     if rsn.get("fit_calls") != want_calls:
-        bad.append(f"weighted regressor fits {rsn.get('fit_calls')!r} != {want_calls!r}")
+        bad.append(f"instrumented regressor fits {rsn.get('fit_calls')!r} != {want_calls!r}")
+    if spec["transfer"] and len(rsn.get("transfer_records") or []) != ITERS:
+        bad.append("a transfer step must carry one transfer record per iteration")
     return bad
 
 
@@ -166,7 +179,7 @@ def run_build(a) -> dict:
     ref = json.loads(str(np.load(Path(a.products) / "L-5D-PV_e_tune_v1.npz", allow_pickle=True)["meta"]))
     T = tasks()
     sm_built = any(k.startswith("./SM/") for k in rsn_sums)
-    got, shas = {}, {}
+    got, shas, metas = {}, {}, {}
     for task, spec in T.items():
         if spec["arm"] == "SM" and not sm_built:
             continue
@@ -175,8 +188,10 @@ def run_build(a) -> dict:
         bad = meta_problems(meta, spec, ratio_sha(spec["ratio"], pvl_sums, rsn_sums), ref)
         if bad:
             raise SystemExit(f"[FAIL] {task}: {'; '.join(bad)}")
-        got[task], shas[task] = (x, xt), L.sha256_path(path)
+        got[task], shas[task], metas[task] = (x, xt), L.sha256_path(path), meta
     nc = nominal(got["rsn_nc"][0], p5, rmap, n)
+    if not np.array_equal(got["TR_data"][0], got["rsn_nc"][0]):
+        raise SystemExit("[FAIL] TR_data differs from rsn_nc: the transfer diagnostic moved the loop")
 
     def X(task):
         return B5.integrals(got[task][0], rmap, n)
@@ -187,14 +202,16 @@ def run_build(a) -> dict:
     if sm_built:
         arms["SM"] = np.vstack([P.rel_shift(X(f"SM_{v}"), X0) for v in VERTICES])
     wr = {"delta": P.rel_shift(X("WR_data"), X0).tolist(), "closures": {}}
-    for truth, name in CLOSURES.items():
-        task = f"WR_closure_{truth}"
+    for truth, (task, ref) in CLOSURES.items():
+        src, name = ref.split(":", 1)
+        x_ref, xt_ref = (prod[name]["x"], prod[name]["xtrue"]) if src == "frozen" else got[name]
         b_w = P.rel_shift(X(task), B5.integrals(got[task][1], rmap, n))
-        b_0 = P.rel_shift(B5.integrals(prod[name]["x"], rmap, n), B5.integrals(prod[name]["xtrue"], rmap, n))
-        wr["closures"][truth] = {"bias_weighted": b_w.tolist(), "bias_frozen": b_0.tolist()}
+        b_0 = P.rel_shift(B5.integrals(x_ref, rmap, n), B5.integrals(xt_ref, rmap, n))
+        wr["closures"][truth] = {"bias_weighted": b_w.tolist(), "bias_equal_weights": b_0.tolist(), "reference": ref}
     out = {"schema": "rsn-cmodel/1", "nominal_control": nc, "nc_s": "the frozen products rebuild cmodel_5d.json's S bitwise",
            "products_sha256": shas, "sm_built": sm_built, "vertices": list(VERTICES),
            "arms": {k: describe(S) for k, S in arms.items()}, "wr": wr,
+           "transfer": {pt: metas[t]["rsn"]["transfer_records"] for pt, t in TRANSFER_POINTS.items()},
            "inputs": {"cmodel_json": L.sha256_path(a.cmodel_json), "rsn_prep_sums": L.sha256_path(a.rsn_prep_sums)},
            "code_sha256": {"rsn_cmodel.py": L.sha256_path(__file__), "build_cmodel5d.py": L.sha256_path(B5.__file__)}}
     a.out_json.parent.mkdir(parents=True, exist_ok=True)

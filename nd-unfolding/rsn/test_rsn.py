@@ -275,9 +275,14 @@ class PrepRun(unittest.TestCase):
 # ---------------------------------------------------------------- the weighted regressor
 
 
+REWEIGHT = onc._reweight
+LO = np.array([L.FINE[a][0] for a in L.AXES5])
+HI = np.array([min(L.FINE[a][-1], c) for a, c in zip(L.AXES5, (4.5, 20.0, 3.0, 2.0, 3.0))])
+
+
 class StubClf:
-    def __init__(self):
-        self.params = {}
+    def __init__(self, **kw):
+        self.params = dict(kw)
 
     def set_params(self, **kw):
         self.params.update(kw)
@@ -300,21 +305,28 @@ class StubClf:
 
 
 class StubReg(StubClf):
+    """Records every fit: its row count, its sample weight and the w_push its loop had reached (from clf2)."""
     fits: list = []
+    GEN = None
 
     def fit(self, X, y, sample_weight=None):
-        StubReg.fits.append(None if sample_weight is None else np.array(sample_weight))
+        clf2 = self.params.get("_clf2")
+        push = None
+        if clf2 is not None and StubReg.GEN is not None:
+            push = REWEIGHT(StubReg.GEN, clf2) if hasattr(clf2, "cut") else np.ones(len(StubReg.GEN))
+        StubReg.fits.append({"n": len(y), "w": None if sample_weight is None else np.array(sample_weight), "push": push})
         w = np.ones(len(y)) if sample_weight is None else np.asarray(sample_weight, float)
-        lo = np.asarray(X)[:, 0] < 0.0
-        self.m = [float((w * y)[m].sum() / w[m].sum()) for m in (lo, ~lo)]
+        lo = np.asarray(X)[:, 0] < 1.0
+        self.m = [float((w * y)[m].sum() / w[m].sum()) if m.any() else 1.0 for m in (lo, ~lo)]
         return self
 
     def predict(self, X):
-        return np.where(np.asarray(X)[:, 0] < 0.0, self.m[0], self.m[1])
+        return np.where(np.asarray(X)[:, 0] < 1.0, self.m[0], self.m[1])
 
 
 def stub_make(kind, nvars, seed=None):
-    return StubClf(), StubClf(), StubReg()
+    clf2 = StubClf()
+    return StubClf(), clf2, StubReg(_clf2=clf2)
 
 
 def loop_unfold(d, cols, seed, threads, iters):
@@ -325,102 +337,220 @@ def loop_unfold(d, cols, seed, threads, iters):
     return wpush, []
 
 
-def toy(seed=5, n=600, uniform=False, all_reco=False):
+def toy(seed=5, n=3000, uniform=False, all_reco=False):
+    """A toy MC on the five truth features, inside the fine grid."""
     rng = np.random.default_rng(seed)
-    gen = rng.normal(size=(n, 2))
-    reco = gen + rng.normal(scale=0.3, size=(n, 2))
+    gen = LO + (HI - LO) * rng.random((n, 5))
+    reco = gen * rng.normal(1.0, 0.05, (n, 5))
     pt = rng.random(n) < 0.9
-    pr = np.ones(n, bool) if all_reco else rng.random(n) < 0.7
+    pr = np.ones(n, bool) if all_reco else rng.random(n) < (0.4 + 0.5 * (gen[:, 0] / HI[0]))
     w = np.ones(n) if uniform else rng.uniform(0.3, 3.0, n)
-    meas = rng.normal(loc=0.2, size=(300, 2))
+    meas = LO + (HI - LO) * rng.random((1500, 5)) ** 1.2
     return {"MCgen": gen, "MCreco": reco, "pass_truth": pt, "pass_reco": pr, "w_truth": w, "w_reco": w * 1.1,
-            "measured": meas, "measured_weights": np.ones(300)}
+            "measured": meas, "measured_weights": np.ones(1500)}
 
 
 class WeightedRegressor(unittest.TestCase):
     def setUp(self):
-        self.saved = (onc.make_estimators, PU.unfold, PU.main, s5n_pseudo.write_product)
+        self.saved = (onc.make_estimators, onc._reweight, PU.unfold, PU.main, s5n_pseudo.write_product, L.row_weight,
+                      UF.s5c_unfold.load_inputs, UF.s5p_truths.hypothesis_weight, UF.A7_HYPOTHESIS_SHA256)
         onc.make_estimators = stub_make
-        StubReg.fits = []
+        StubReg.fits, StubReg.GEN = [], None
 
     def tearDown(self):
-        onc.make_estimators, PU.unfold, PU.main, s5n_pseudo.write_product = self.saved
+        (onc.make_estimators, onc._reweight, PU.unfold, PU.main, s5n_pseudo.write_product, L.row_weight,
+         UF.s5c_unfold.load_inputs, UF.s5p_truths.hypothesis_weight, UF.A7_HYPOTHESIS_SHA256) = self.saved
 
-    def test_the_regressor_is_fitted_on_w_truth_of_the_reco_passing_truth_rows_every_iteration(self):
+    def test_the_regressor_is_fitted_on_w_push_times_w_truth_of_the_reco_passing_truth_rows(self):
         d = toy()
+        m = d["pass_truth"]
+        StubReg.GEN = d["MCgen"][m]
         ev = {}
-        UF.weighted(loop_unfold, ev)(d, None, 42, 32, 4)
-        want = d["w_truth"][d["pass_truth"]][d["pass_reco"][d["pass_truth"]]]
+        UF.instrument(loop_unfold, ev, True, False)(d, None, 42, 32, 4)
+        pr = d["pass_reco"][m]
+        wt = d["w_truth"][m][pr]
         self.assertEqual(len(StubReg.fits), 4)
-        for w in StubReg.fits:
-            self.assertTrue(np.array_equal(w, want))
-        self.assertEqual(ev, {"fit_calls": 4, "rows": int(want.size), "weight_sum": float(want.sum())})
+        self.assertTrue(np.all(StubReg.fits[0]["push"] == 1.0))
+        for f in StubReg.fits:
+            self.assertTrue(np.array_equal(f["w"], wt * f["push"][pr]))
+        self.assertFalse(np.array_equal(StubReg.fits[2]["w"], StubReg.fits[0]["w"]))
+        self.assertEqual(ev["fit_calls"], 4)
+        self.assertEqual(ev["weight_sums"], [float(f["w"].sum()) for f in StubReg.fits])
         self.assertIs(onc.make_estimators, stub_make)
+        self.assertIs(onc._reweight, REWEIGHT)
 
-    def test_unit_weights_reproduce_the_unweighted_loop_and_others_do_not(self):
-        for uniform, same in ((True, True), (False, False)):
-            d = toy(uniform=uniform)
-            plain, _ = loop_unfold(d, None, 42, 32, 3)
-            weighted, _ = UF.weighted(loop_unfold, {})(d, None, 42, 32, 3)
-            self.assertEqual(np.array_equal(plain, weighted), same)
+    def test_unit_weights_and_no_push_reproduce_nothing_but_the_weighting_changes_the_loop(self):
+        d = toy()
+        plain, _ = loop_unfold(d, None, 42, 32, 3)
+        weighted, _ = UF.instrument(loop_unfold, {}, True, False)(d, None, 42, 32, 3)
+        self.assertFalse(np.array_equal(plain, weighted))
+        same, _ = UF.instrument(loop_unfold, {}, False, False)(d, None, 42, 32, 3)
+        self.assertTrue(np.array_equal(plain, same))
+
+    def test_the_transfer_diagnostic_leaves_the_loop_untouched_and_records_every_iteration(self):
+        d = toy()
+        plain, _ = loop_unfold(d, None, 42, 32, 3)
+        StubReg.fits = []
+        ev = {}
+        out, _ = UF.instrument(loop_unfold, ev, False, True)(d, None, 42, 32, 3)
+        self.assertTrue(np.array_equal(plain, out))
+        m = d["pass_truth"]
+        n = int(d["pass_reco"][m].sum())
+        self.assertEqual([f["n"] for f in StubReg.fits], [n - int(UF.mask_of(n, k).sum()) if i % 2 == 0 else n
+                                                         for k in range(3) for i in range(2)])
+        self.assertTrue(all(f["w"] is None for f in StubReg.fits))
+        self.assertEqual([t["iteration"] for t in ev["transfer_records"]], [0, 1, 2])
+        self.assertTrue(all(t["n_masked"] == int(UF.mask_of(n, t["iteration"]).sum()) for t in ev["transfer_records"]))
+        self.assertTrue(np.array_equal(UF.mask_of(n, 1), UF.mask_of(n, 1)))
+        self.assertFalse(np.array_equal(UF.mask_of(n, 1), UF.mask_of(n, 2)))
+        self.assertEqual((UF.TRANSFER_SEED, UF.TRANSFER_FRACTION), (20261111, 0.2))
+        self.assertLess(abs(UF.mask_of(100000, 0).mean() - 0.2), 0.01)
+        self.assertEqual(len(ev["transfer_records"][0]["cell_bias"]), 16)
+        StubReg.fits = []
+        UF.instrument(loop_unfold, {}, True, True)(d, None, 42, 32, 2)
+        probe, loop = StubReg.fits[2], StubReg.fits[3]
+        mk = UF.mask_of(n, 1)
+        self.assertTrue(np.array_equal(probe["w"], loop["w"][~mk]))
+
+    def test_the_transfer_summary(self):
+        y = np.array([1.0, 2.0, 1.0, 4.0])
+        pred = np.array([1.5, 2.0, 0.5, 4.0])
+        w = np.array([1.0, 1.0, 2.0, 1.0])
+        cell = np.array([0, 0, 1, -1])
+        acc = np.array([0.1, 0.5, 0.9, np.nan])
+        s = UF.summarize(pred, y, w, cell, acc, 3)
+        self.assertEqual(s["iteration"], 3)
+        self.assertAlmostEqual(s["rel_bias"], (0.5 - 1.0) / 9.0)
+        self.assertAlmostEqual(s["rel_rms"], np.sqrt((0.25 + 2 * 0.25) / 5) / (9 / 5))
+        self.assertAlmostEqual(s["cell_bias"][0], 3.5 / 3.0 - 1)
+        self.assertAlmostEqual(s["cell_bias"][1], 1.0 / 2.0 - 1)
+        self.assertIsNone(s["cell_bias"][2])
+        self.assertEqual(len(s["acceptance_decile_rel_bias"]), 10)
+        self.assertAlmostEqual(s["acceptance_decile_rel_bias"][0], 0.5)
+        self.assertAlmostEqual(s["acceptance_decile_rel_bias"][-1], -0.5)
 
     def test_the_wrapper_refuses_extra_arguments_wrong_rows_missing_fits_and_bad_weights(self):
         d = toy()
 
         def extra_kw(d_, cols, seed, threads, iters):
-            onc.make_estimators("lgbm", 2)[2].fit(d_["MCgen"][:3], np.ones(3), sample_weight=np.ones(3))
+            onc.make_estimators("lgbm", 5)[2].fit(d_["MCgen"][:3], np.ones(3), sample_weight=np.ones(3))
 
         def wrong_rows(d_, cols, seed, threads, iters):
-            onc.make_estimators("lgbm", 2)[2].fit(d_["MCgen"][:3], np.ones(3))
+            onc.make_estimators("lgbm", 5)[2].fit(d_["MCgen"][:3], np.ones(3))
 
         for orig, msg in ((extra_kw, "beyond"), (wrong_rows, "rows")):
             with self.assertRaises(UF.WrapError) as cm:
-                UF.weighted(orig, {})(d, None, 42, 32, 2)
+                UF.instrument(orig, {}, True, False)(d, None, 42, 32, 2)
             self.assertIn(msg, str(cm.exception))
             self.assertIs(onc.make_estimators, stub_make)
+            self.assertIs(onc._reweight, REWEIGHT)
         with self.assertRaises(UF.WrapError) as cm:
-            UF.weighted(loop_unfold, {})(toy(all_reco=True), None, 42, 32, 2)
-        self.assertIn("0 weighted regressor fits for 2", str(cm.exception))
+            UF.instrument(loop_unfold, {}, True, False)(toy(all_reco=True), None, 42, 32, 2)
+        self.assertIn("0 instrumented regressor fits for 2", str(cm.exception))
         bad = toy()
         bad["w_truth"][np.flatnonzero(bad["pass_truth"] & bad["pass_reco"])[0]] = 0.0
         with self.assertRaises(UF.WrapError):
-            UF.weighted(loop_unfold, {})(bad, None, 42, 32, 2)
+            UF.instrument(loop_unfold, {}, True, False)(bad, None, 42, 32, 2)
         with self.assertRaises(UF.WrapError):
-            UF.weighted(lambda *a: onc.make_estimators("nn", 2), {})(d, None, 42, 32, 1)
+            UF.instrument(lambda *a: onc.make_estimators("nn", 2), {}, True, False)(d, None, 42, 32, 1)
+        with self.assertRaises(UF.WrapError):
+            UF.instrument(loop_unfold, {}, False, True)(d, [0, 1], 42, 32, 1)
 
-    def test_main_records_the_weight_and_restores_every_patch(self):
+    def main_with(self, argv, body):
+        """UF.main over a fake pvl_unfold.main that runs ``body`` and writes; returns the written meta."""
         written = {}
 
         def capture(out, arrays, meta):
             written["meta"] = meta
             return 0
 
+        PU.unfold, s5n_pseudo.write_product = loop_unfold, capture
+
+        def fake_main(rest):
+            written["argv"] = rest
+            written["wrapped"] = PU.unfold is not loop_unfold
+            body()
+            return s5n_pseudo.write_product(Path("x.npz"), {}, {"schema": "pvl-unfold/1"})
+
+        PU.main = fake_main
+        self.assertEqual(UF.main(argv), 0)
+        self.assertIs(PU.unfold, loop_unfold)
+        self.assertIs(s5n_pseudo.write_product, capture)
+        return written
+
+    def test_main_records_the_options_and_restores_every_patch(self):
         d = toy()
-        for weight, calls in (("w_truth", 3), ("none", None)):
-            PU.unfold, s5n_pseudo.write_product = loop_unfold, capture
-
-            def fake_main(argv):
-                written["argv"] = argv
-                written["wrapped"] = PU.unfold is not loop_unfold
-                PU.unfold(d, None, 42, 32, 3)
-                return s5n_pseudo.write_product(Path("x.npz"), {}, {"schema": "pvl-unfold/1"})
-
-            PU.main = fake_main
-            rc = UF.main(["--regressor-weight", weight, "--rung", "L-5D-PV", "--closure"])
-            self.assertEqual(rc, 0)
-            self.assertEqual(written["argv"], ["--rung", "L-5D-PV", "--closure"])
-            self.assertEqual(written["wrapped"], weight == "w_truth")
-            rsn = written["meta"]["rsn"]
-            self.assertEqual((rsn["regressor_weight"], rsn["fit_calls"]), (weight, calls))
+        for weight, transfer, calls in (("w_push_w_truth", False, 3), ("none", False, None), ("none", True, 3)):
+            StubReg.fits = []
+            argv = ["--regressor-weight", weight, "--rung", "L-5D-PV"] + (["--transfer"] if transfer else [])
+            w = self.main_with(argv, lambda: PU.unfold(d, None, 42, 32, 3))
+            self.assertEqual(w["argv"], ["--rung", "L-5D-PV"])
+            self.assertEqual(w["wrapped"], weight != "none" or transfer)
+            rsn = w["meta"]["rsn"]
+            self.assertEqual((rsn["regressor_weight"], rsn["fit_calls"], rsn["truth"], rsn["transfer"]),
+                             (weight, calls, "ratio", transfer))
+            self.assertEqual(len(rsn.get("transfer_records", [])), 3 if transfer else 0)
+            self.assertEqual(rsn.get("weight_sums") is not None, weight != "none")
             self.assertEqual(rsn["code_sha256"]["rsn_unfold.py"], L.sha256_path(HERE / "rsn_unfold.py"))
-            self.assertIs(PU.unfold, loop_unfold)
-            self.assertIs(s5n_pseudo.write_product, capture)
 
-    def test_w_truth_refuses_to_write_when_the_regressor_never_ran(self):
+    def test_an_instrumented_step_refuses_to_write_when_the_regressor_never_ran(self):
         s5n_pseudo.write_product = lambda out, arrays, meta: 0
         PU.main = lambda argv: s5n_pseudo.write_product(Path("x.npz"), {}, {})
+        for argv in (["--regressor-weight", "w_push_w_truth"], ["--regressor-weight", "none", "--transfer"]):
+            with self.assertRaises(UF.WrapError):
+                UF.main(argv)
+
+    def truth_inputs(self):
+        d = toy()
+        d["edges"] = [np.asarray(L.FINE[a], float) for a in L.AXES5]
+        identity = {"schema": L.RATIO_SCHEMA, "axes": list(L.AXES5), "r": [1.0] * NFINE, "identity": True}
+        return d, identity
+
+    def test_a_declared_truth_replaces_the_identity_reweight(self):
+        d, identity = self.truth_inputs()
+        fake_load = UF.s5c_unfold.load_inputs = lambda path: d
+        got = {}
+
+        def body():
+            inputs = UF.s5c_unfold.load_inputs("x.npz")
+            got["r"] = L.row_weight(inputs["MCgen"], L.AXES5, identity, inputs["pass_truth"])
+
+        w = self.main_with(["--regressor-weight", "none", "--truth", "q3", "--closure"], body)
+        want = UF.s5c_pseudo.truth_weight("q3_given_eavail_w", d["MCgen"], d["edges"], 0.3, w_truth=d["w_truth"])
+        self.assertTrue(np.array_equal(got["r"], want))
+        self.assertFalse(np.all(want == 1.0))
+        self.assertEqual(w["meta"]["rsn"]["truth"], "q3")
+        self.assertIs(UF.s5c_unfold.load_inputs, fake_load)
+        self.assertIs(L.row_weight, self.saved[5])
+        seen = {}
+
+        def hyp(gen, edges, w_truth, ratio, amplitude):
+            seen.update(ratio=ratio, amplitude=amplitude)
+            return np.full(len(gen), 0.9)
+
+        UF.s5c_unfold.load_inputs = lambda path: d
+        UF.s5p_truths.hypothesis_weight = hyp
+        w = self.main_with(["--regressor-weight", "none", "--truth", "a7_gibuu", "--closure"], body)
+        self.assertEqual(seen["ratio"], json.loads(UF.A7_HYPOTHESIS.read_text()))
+        self.assertEqual(seen["amplitude"], 1.0)
+        self.assertTrue(np.all(got["r"] == 0.9))
+        self.assertEqual(w["meta"]["rsn"]["a7_hypothesis_sha256"], UF.A7_HYPOTHESIS_SHA256)
+
+    def test_a_declared_truth_refuses_off_a_closure_a_non_identity_ratio_and_a_changed_hypothesis(self):
+        d, identity = self.truth_inputs()
         with self.assertRaises(UF.WrapError):
-            UF.main(["--regressor-weight", "w_truth"])
+            UF.main(["--regressor-weight", "none", "--truth", "q3"])
+        UF.s5c_unfold.load_inputs = lambda path: d
+        bad = dict(identity, identity=False)
+        PU.main = lambda rest: L.row_weight(UF.s5c_unfold.load_inputs("x")["MCgen"], L.AXES5, bad, d["pass_truth"])
+        with self.assertRaises(UF.WrapError) as cm:
+            UF.main(["--regressor-weight", "none", "--truth", "q3", "--closure"])
+        self.assertIn("identity", str(cm.exception))
+        UF.A7_HYPOTHESIS_SHA256 = "0" * 64
+        PU.main = lambda rest: L.row_weight(UF.s5c_unfold.load_inputs("x")["MCgen"], L.AXES5, identity, d["pass_truth"])
+        with self.assertRaises(UF.WrapError) as cm:
+            UF.main(["--regressor-weight", "none", "--truth", "a7_gibuu", "--closure"])
+        self.assertIn("pinned", str(cm.exception))
 
 
 # ---------------------------------------------------------------- C_model variants
@@ -458,8 +588,9 @@ class CModel(unittest.TestCase):
         self.prod = {"L-5D-PV_e_tune_v1": {"x": x0}}
         for v in B5.VERTICES:
             self.prod[f"L-5D-PV_e_{v}"] = {"x": x0 * rng.uniform(0.9, 1.1, NFINE)}
-        for name in CM.CLOSURES.values():
-            self.prod[name] = {"x": x0 * rng.uniform(0.99, 1.01, NFINE), "xtrue": x0}
+        for _, ref in CM.CLOSURES.values():
+            if ref.startswith("frozen:"):
+                self.prod[ref[7:]] = {"x": x0 * rng.uniform(0.99, 1.01, NFINE), "xtrue": x0 * rng.uniform(0.98, 1.02, NFINE)}
         self.S0 = B5.factor(self.prod, self.rmap, self.n)
         self.cmodel_json = d / "cmodel.json"
         self.cmodel_json.write_text(json.dumps({"S": self.S0.tolist()}))
@@ -469,9 +600,8 @@ class CModel(unittest.TestCase):
         self.rsn_x, self.rsn_xt = {}, {}
         for task, spec in CM.tasks().items():
             want = CM.ratio_sha(spec["ratio"], self.PVL, CM.sums(self.rsums))
-            m = dict(frozen_meta(spec["closure"], want), rsn={
-                "regressor_weight": spec["regressor_weight"], "fit_calls": 5 if spec["regressor_weight"] == "w_truth" else None})
-            x = x0 if task == "rsn_nc" else x0 * rng.uniform(0.95, 1.05, NFINE)
+            m = dict(frozen_meta(spec["closure"], want), rsn=self.rsn_meta(spec, task))
+            x = x0 if task in ("rsn_nc", "TR_data") else x0 * rng.uniform(0.95, 1.05, NFINE)
             xt = x0 * rng.uniform(0.98, 1.02, NFINE) if spec["closure"] else None
             self.rsn_x[task], self.rsn_xt[task] = x, xt
             save(self.rsn_dir / f"{task}.npz", x, m, xt)
@@ -481,6 +611,15 @@ class CModel(unittest.TestCase):
     def tearDown(self):
         CM.frozen = self.saved
         self.tmp.cleanup()
+
+    @staticmethod
+    def rsn_meta(spec, task):
+        inst = spec["regressor_weight"] != "none" or spec["transfer"]
+        rec = {"regressor_weight": spec["regressor_weight"], "truth": spec["truth"], "transfer": spec["transfer"],
+               "fit_calls": 5 if inst else None}
+        if spec["transfer"]:
+            rec["transfer_records"] = [{"iteration": k, "task": task} for k in range(5)]
+        return rec
 
     def args(self, **kw):
         d = Path(self.tmp.name)
@@ -506,7 +645,16 @@ class CModel(unittest.TestCase):
         self.assertTrue(np.array_equal(b["bias_weighted"], self.X(self.rsn_x["WR_closure_nuwro"])
                                        / self.X(self.rsn_xt["WR_closure_nuwro"]) - 1))
         fr = self.prod["L-5D-PV_e_closure_nuwro"]
-        self.assertTrue(np.array_equal(b["bias_frozen"], self.X(fr["x"]) / self.X(fr["xtrue"]) - 1))
+        self.assertTrue(np.array_equal(b["bias_equal_weights"], self.X(fr["x"]) / self.X(fr["xtrue"]) - 1))
+        for t in ("gibuu", "q3"):
+            b = out["wr"]["closures"][t]
+            self.assertEqual(b["reference"], f"rsn:WU_closure_{t}")
+            self.assertTrue(np.array_equal(b["bias_weighted"], self.X(self.rsn_x[f"WR_closure_{t}"])
+                                           / self.X(self.rsn_xt[f"WR_closure_{t}"]) - 1))
+            self.assertTrue(np.array_equal(b["bias_equal_weights"], self.X(self.rsn_x[f"WU_closure_{t}"])
+                                           / self.X(self.rsn_xt[f"WU_closure_{t}"]) - 1))
+        self.assertEqual({k: v[0]["task"] for k, v in out["transfer"].items()},
+                         {"data": "TR_data", "gibuu": "WU_closure_gibuu", "q3": "WU_closure_q3"})
         c = out["arms"]["G6"]
         C = S["G6"].T @ S["G6"]
         self.assertTrue(np.allclose(c["sqrt_diag"], np.sqrt(np.diag(C))))
@@ -525,7 +673,7 @@ class CModel(unittest.TestCase):
     def test_the_nc_and_nc_s_refuse(self):
         x = self.x0.copy()
         x[17] = np.nextafter(x[17], 3.0)
-        m = dict(frozen_meta(), rsn={"regressor_weight": "none", "fit_calls": None})
+        m = dict(frozen_meta(), rsn=self.rsn_meta(CM.tasks()["rsn_nc"], "rsn_nc"))
         save(self.rsn_dir / "rsn_nc.npz", x, m)
         with self.assertRaises(SystemExit) as cm:
             quiet(CM.run_build, self.args())
@@ -539,6 +687,16 @@ class CModel(unittest.TestCase):
             quiet(CM.run_build, self.args(cmodel_json=bad))
         self.assertIn("NC-S", str(cm.exception))
 
+    def test_a_transfer_step_that_moved_the_loop_refuses(self):
+        spec = CM.tasks()["TR_data"]
+        m = dict(frozen_meta(), rsn=self.rsn_meta(spec, "TR_data"))
+        x = self.x0.copy()
+        x[5] = np.nextafter(x[5], 0.0)
+        save(self.rsn_dir / "TR_data.npz", x, m)
+        with self.assertRaises(SystemExit) as cm:
+            quiet(CM.run_build, self.args())
+        self.assertIn("TR_data differs", str(cm.exception))
+
     def test_nc_alone_passes_and_refuses_a_differing_product(self):
         out = Path(self.tmp.name) / "nc.json"
         a = self.args(product=self.rsn_dir / "rsn_nc.npz", out=out)
@@ -546,38 +704,54 @@ class CModel(unittest.TestCase):
         self.assertEqual(json.loads(out.read_text())["verdict"], "PASS")
         x = self.x0.copy()
         x[0] *= 1 + 1e-15
-        save(self.rsn_dir / "other.npz", x, dict(frozen_meta(), rsn={"regressor_weight": "none", "fit_calls": None}))
+        save(self.rsn_dir / "other.npz", x, dict(frozen_meta(), rsn=self.rsn_meta(CM.tasks()["rsn_nc"], "rsn_nc")))
         with self.assertRaises(SystemExit):
             quiet(CM.run_nc, self.args(product=self.rsn_dir / "other.npz", out=Path(self.tmp.name) / "nc2.json"))
 
     def test_each_wrong_meta_field_refuses(self):
         ref = frozen_meta()
-        spec = {"closure": False, "regressor_weight": "w_truth"}
-        good = dict(frozen_meta(), rsn={"regressor_weight": "w_truth", "fit_calls": 5})
+        spec = {"closure": False, "regressor_weight": "w_push_w_truth", "truth": "ratio", "transfer": False}
+        good = dict(frozen_meta(), rsn=self.rsn_meta(spec, "x"))
         self.assertEqual(CM.meta_problems(good, spec, ref["ratio_sha256"], ref), [])
+        r = good["rsn"]
         for k, v in (("rung", "L-4D"), ("arm", "c"), ("features", ["pt"]), ("closure", True), ("ratio_sha256", "x"),
                      ("estimator_seed", 43), ("iters", 4), ("threads", 16), ("input_npz_sha256", "x"),
                      ("bkg_dump_sha256", "x"), ("estimator_params", []), ("refinement", {"ran": True}),
-                     ("rsn", {"regressor_weight": "none", "fit_calls": None}),
-                     ("rsn", {"regressor_weight": "w_truth", "fit_calls": 4})):
+                     ("rsn", dict(r, regressor_weight="none")), ("rsn", dict(r, fit_calls=4)),
+                     ("rsn", dict(r, truth="q3")), ("rsn", dict(r, transfer=True))):
             self.assertTrue(CM.meta_problems(dict(good, **{k: v}), spec, ref["ratio_sha256"], ref), k)
-        cl = dict(frozen_meta(True), rsn={"regressor_weight": "w_truth", "fit_calls": 5})
-        self.assertEqual(CM.meta_problems(cl, {"closure": True, "regressor_weight": "w_truth"}, ref["ratio_sha256"], ref), [])
-        self.assertTrue(CM.meta_problems(dict(cl, refinement={"ran": True}), {"closure": True, "regressor_weight": "w_truth"},
-                                         ref["ratio_sha256"], ref))
+        cspec = {"closure": True, "regressor_weight": "none", "truth": "q3", "transfer": True}
+        cl = dict(frozen_meta(True), rsn=self.rsn_meta(cspec, "x"))
+        self.assertEqual(CM.meta_problems(cl, cspec, ref["ratio_sha256"], ref), [])
+        self.assertTrue(CM.meta_problems(dict(cl, refinement={"ran": True}), cspec, ref["ratio_sha256"], ref))
+        short = dict(cl, rsn=dict(cl["rsn"], transfer_records=cl["rsn"]["transfer_records"][:4]))
+        self.assertTrue(CM.meta_problems(short, cspec, ref["ratio_sha256"], ref))
+        none = dict(cl, rsn=dict(cl["rsn"], fit_calls=None))
+        self.assertTrue(CM.meta_problems(none, cspec, ref["ratio_sha256"], ref))
 
     def test_the_task_table(self):
         T = CM.tasks()
         self.assertEqual(list(T), ["rsn_nc", "G6_gibuu", "SM_genie_mec", "SM_nuwro", "SM_gibuu", "WR_data",
-                                   "WR_closure_tune_v1", "WR_closure_nuwro"])
-        self.assertEqual([t for t, s in T.items() if s["regressor_weight"] == "w_truth"],
-                         ["WR_data", "WR_closure_tune_v1", "WR_closure_nuwro"])
-        self.assertEqual([t for t, s in T.items() if s["closure"]], ["WR_closure_tune_v1", "WR_closure_nuwro"])
+                                   "WR_closure_tune_v1", "WR_closure_nuwro", "TR_data", "WR_closure_gibuu",
+                                   "WR_closure_q3", "WU_closure_gibuu", "WU_closure_q3"])
+        self.assertEqual([t for t, s in T.items() if s["regressor_weight"] == "w_push_w_truth"],
+                         ["WR_data", "WR_closure_tune_v1", "WR_closure_nuwro", "WR_closure_gibuu", "WR_closure_q3"])
+        self.assertEqual([t for t, s in T.items() if s["closure"]],
+                         ["WR_closure_tune_v1", "WR_closure_nuwro", "WR_closure_gibuu", "WR_closure_q3",
+                          "WU_closure_gibuu", "WU_closure_q3"])
+        self.assertEqual([t for t, s in T.items() if s["transfer"]], ["TR_data", "WU_closure_gibuu", "WU_closure_q3"])
+        self.assertEqual({t: s["truth"] for t, s in T.items() if s["truth"] != "ratio"},
+                         {"WR_closure_gibuu": "a7_gibuu", "WR_closure_q3": "q3", "WU_closure_gibuu": "a7_gibuu",
+                          "WU_closure_q3": "q3"})
+        self.assertTrue(all(s["ratio"] == "frozen:tune_v1" for s in T.values() if s["truth"] != "ratio"))
         self.assertEqual(T["WR_closure_nuwro"]["ratio"], "frozen:nuwro")
-        self.assertEqual(T["rsn_nc"]["job"], "J1")
+        jobs = {}
+        for t, s in T.items():
+            jobs.setdefault(s["job"], []).append(t)
+        self.assertEqual({j: len(v) for j, v in jobs.items()}, {"J1": 1, "J2": 8, "J3": 4})
         rows = [ln.split("\t") for ln in (HERE / "rsn_tasks.tsv").read_text().splitlines() if ln and not ln.startswith("#")]
-        j2 = [r[:1] + r[2:6] for r in rows if r[1] == "J2" and r[2] != "SM"]
-        j2n = [r[:1] + r[2:6] for r in rows if r[1] == "J2n"]
+        j2 = [r[:1] + r[2:8] for r in rows if r[1] == "J2" and r[2] != "SM"]
+        j2n = [r[:1] + r[2:8] for r in rows if r[1] == "J2n"]
         self.assertEqual(j2, j2n)
 
 
@@ -726,15 +900,49 @@ class Regrade(unittest.TestCase):
             RG.invariant_g6(nom, bad)
         self.assertIn("C-INV", str(cm.exception))
 
-    def run_rg(self, out, arms, readout, **pins):
+    def cm_json(self, path, S=None):
+        rng = np.random.default_rng(21)
+        wr = {"delta": rng.normal(0, 0.01, 16).tolist(),
+              "closures": {t: {"bias_weighted": rng.normal(0, 0.02, 16).tolist(),
+                               "bias_equal_weights": rng.normal(0, 0.02, 16).tolist()}
+                           for t in ("tune_v1", "nuwro", "gibuu", "q3")}}
+        path.write_text(json.dumps({"arms": {"nominal": {"S": (self.fx.S0 if S is None else S).tolist()}}, "wr": wr}))
+        return path
+
+    def test_wr_directions_grade_each_vector_against_its_truth_s_matrix(self):
+        cm = json.loads(self.cm_json(Path(tempfile.mkdtemp(dir=self.tmp.name)) / "cm.json").read_text())
         fx = self.fx
+        out = RG.wr_directions(cm, fx.Ce_rel, fx.S0, fx.Cx_rel)
+        Z = np.zeros((16, 16))
+        own = {"tune_v1": None, "nuwro": "nuwro", "gibuu": "gibuu", "q3": None}
+        for t, o in own.items():
+            keep = [j for j, v in enumerate(R.VERTICES) if v != o]
+            M = fx.Ce_rel + fx.S0[keep].T @ fx.S0[keep] + fx.Cx_rel
+            bw, bu = (np.asarray(cm["wr"]["closures"][t][k]) for k in ("bias_weighted", "bias_equal_weights"))
+            self.assertEqual(out[t]["weighted"], R.grade(bw, Z, M), t)
+            self.assertEqual(out[t]["equal_weights"], R.grade(bu, Z, M), t)
+            self.assertAlmostEqual(out[t]["change"]["chi2"], R.grade(bw - bu, Z, M)["chi2"], places=9)
+            self.assertEqual(out[t]["own_vertex_left_out"], o)
+        M0 = fx.Ce_rel + fx.S0.T @ fx.S0 + fx.Cx_rel
+        d = np.asarray(cm["wr"]["delta"])
+        self.assertEqual(out["data"]["grade"], R.grade(d, Z, M0))
+        D = RG.directions(d, M0)
+        self.assertAlmostEqual(D["chi2"], R.grade(d, Z, M0)["chi2"], places=9)
+        self.assertEqual(len(D["top"]), 3)
+        self.assertGreaterEqual(abs(D["top"][0]["component"]), abs(D["top"][2]["component"]))
+        self.assertAlmostEqual(RG.along(d, d, M0), np.sqrt(R.grade(d, Z, M0)["chi2"]), places=9)
+        self.assertAlmostEqual(RG.along(-d, d, M0), -np.sqrt(R.grade(d, Z, M0)["chi2"]), places=9)
+
+    def run_rg(self, out, arms, readout, cm=None, **pins):
+        fx = self.fx
+        cm = cm or self.cm_json(out.with_suffix(".cm.json"))
         RG.PINS.update(table=R.sa.sha256(fx.table), f1_readout=R.sa.sha256(readout), s1_npz=R.sa.sha256(fx.s1),
                        extra_block=R.sa.sha256(fx.extra), cmodel_json=R.sa.sha256(fx.cmodel),
                        f1_prep_sums=self.saved[0]["f1_prep_sums"])
         RG.PINS.update(pins)
         argv = ["--table", str(fx.table), "--f1-readout", str(readout), "--s1-npz", str(fx.s1), "--extra-block",
                 str(fx.extra), "--flux-constraint", "x", "--cmodel-json", str(fx.cmodel), "--rsn-cmodel", str(arms),
-                "--out", str(out)]
+                "--rsn-cmodel-json", str(cm), "--out", str(out)]
         return quiet(RG.main, argv)
 
     def test_the_regrade_runs_end_to_end_and_refuses_a_wrong_pin_or_nominal_s(self):
@@ -748,6 +956,10 @@ class Regrade(unittest.TestCase):
         self.assertEqual(set(out["arms"]), {"nominal", "G6", "SM"})
         self.assertEqual(len(out["arms"]["G6"]["records"]), 22)
         self.assertIn("held-out", out["arms"]["SM"]["by_group"])
+        self.assertEqual(set(out["wr_directions"]), {"data", "tune_v1", "nuwro", "gibuu", "q3"})
+        with self.assertRaises(SystemExit) as cm:
+            self.run_rg(d / "o4.json", arms, ro, cm=self.cm_json(d / "cm4.json", S=self.fx.S0 * 1.001))
+        self.assertIn("rsn_cmodel.json's nominal S", str(cm.exception))
         with self.assertRaises(SystemExit) as cm:
             self.run_rg(d / "o2.json", arms, ro, f1_prep_sums="0" * 64)
         self.assertIn("sha256", str(cm.exception))
@@ -756,7 +968,7 @@ class Regrade(unittest.TestCase):
         with self.assertRaises(SystemExit) as cm:
             self.run_rg(d / "o3.json", bad, ro)
         self.assertIn("nominal S", str(cm.exception))
-        self.assertFalse((d / "o2.json").exists() or (d / "o3.json").exists())
+        self.assertFalse((d / "o2.json").exists() or (d / "o3.json").exists() or (d / "o4.json").exists())
 
 
 # ---------------------------------------------------------------- the readings
@@ -816,7 +1028,23 @@ class Readings(unittest.TestCase):
         with self.assertRaises(SystemExit):
             RD.rounding_floor(bad, self.CMJ)
 
-    def inputs(self, sm=True, listed=("A7_gibuu", "q3"), held=0, delta=0.0, floor_bias=3e-5):
+    def test_the_deformed_truth_classes(self):
+        g = lambda chi2, cells=(), p=False: {"chi2": chi2, "cells_abs_z_gt_2": list(cells), "p_lt_0.01": p}  # noqa: E731
+        self.assertEqual(RD.deformed_class({"weighted": g(125.0), "equal_weights": g(100.0)}), "immaterial")
+        self.assertEqual(RD.deformed_class({"weighted": g(75.0), "equal_weights": g(100.0)}), "immaterial")
+        self.assertEqual(RD.deformed_class({"weighted": g(125.0001), "equal_weights": g(100.0)}), "material")
+        self.assertEqual(RD.deformed_class({"weighted": g(74.999), "equal_weights": g(100.0)}), "material")
+        self.assertEqual(RD.deformed_class({"weighted": g(100.0, p=True), "equal_weights": g(100.0)}), "material")
+        self.assertEqual(RD.deformed_class({"weighted": g(100.0), "equal_weights": g(100.0, ("R02",))}), "material")
+
+    def test_the_transfer_classes(self):
+        fl, sg = np.full(16, 0.001), np.full(16, 0.07)
+        self.assertEqual(RD.transfer_class([0.002] * 16, fl, sg), ("T0", []))
+        self.assertEqual(RD.transfer_class([-0.0021] + [0.0] * 15, fl, sg), ("T1", []))
+        self.assertEqual(RD.transfer_class([0.0] * 15 + [0.0351], fl, sg), ("T2", ["R15"]))
+        self.assertEqual(RD.transfer_class([None] + [0.0] * 15, fl, sg), ("T2", ["R00"]))
+
+    def inputs(self, sm=True, listed=("A7_gibuu", "q3"), held=0, delta=0.0, floor_bias=3e-5, chi2_w=100.0, tbias=0.0):
         sd0 = self.CMJ["sqrt_diag"]
         by = {"held-out": {"truths": 4, "cells": 64, "cells_abs_z_gt_2": held, "truths_p_lt_0.01": 0}}
         sig = np.full(16, 0.07)
@@ -827,11 +1055,20 @@ class Readings(unittest.TestCase):
 
         rg = {"arms": {"nominal": arm(1.0, ("A7_gibuu", "q3")), "G6": arm(0.95, listed)}}
         share = {"genie_mec": 0.1, "nuwro": 0.2, "gibuu": 0.7}
+        closures = {t: {"bias_weighted": [0.01] * 16, "bias_equal_weights": [0.01] * 16} for t in ("nuwro", "gibuu", "q3")}
+        closures["tune_v1"] = {"bias_weighted": [floor_bias] * 16, "bias_equal_weights": [3e-5] * 16}
+        tr = [{"iteration": k, "rel_bias": 0.001, "rel_rms": 0.1, "cell_bias": [tbias if k == 4 else 0.0] * 16,
+               "acceptance_decile_rel_bias": [0.002] + [None] * 8 + [-0.001]} for k in range(5)]
         cm = {"arms": {"nominal": {"sqrt_diag": sd0, "trace": 1.0, "trace_share_by_vertex": dict(share, gibuu=0.89)},
                        "G6": {"sqrt_diag": (np.asarray(sd0) * 0.7).tolist(), "trace": 0.5, "trace_share_by_vertex": share}},
-              "wr": {"delta": (np.full(16, delta)).tolist(),
-                     "closures": {"nuwro": {"bias_weighted": [0.01] * 16, "bias_frozen": [0.01] * 16},
-                                  "tune_v1": {"bias_weighted": [floor_bias] * 16, "bias_frozen": [3e-5] * 16}}}}
+              "wr": {"delta": (np.full(16, delta)).tolist(), "closures": closures},
+              "transfer": {pt: tr for pt in ("data", "gibuu", "q3")}}
+        g = lambda chi2: {"chi2": chi2, "cells_abs_z_gt_2": [], "p_lt_0.01": False}  # noqa: E731
+        rg["wr_directions"] = {"data": {"grade": g(3.0), "directions": {"top": []}}}
+        for t in ("tune_v1", "nuwro", "gibuu", "q3"):
+            rg["wr_directions"][t] = {"weighted": g(chi2_w if t == "gibuu" else 100.0), "equal_weights": g(100.0),
+                                      "change": {"top": [{"rank": 0, "component": 1.0}]},
+                                      "change_along_equal_weight_bias": -0.5}
         prep = {"sm": {"radius": 1 if sm else None, "status": "built" if sm else "not built: both radii failed"}}
         if sm:
             rg["arms"]["SM"] = arm(1.0, ("A7_gibuu", "q3"))
@@ -841,7 +1078,7 @@ class Readings(unittest.TestCase):
 
     def test_the_readout_applies_the_tables(self):
         out = RD.read(*self.inputs())
-        g6, sm, wr = out["arms"]["G6"], out["arms"]["SM"], out["arms"]["WR"]
+        g6, sm, wr, tr = out["arms"]["G6"], out["arms"]["SM"], out["arms"]["WR"], out["arms"]["TR"]
         self.assertEqual(g6["verdict"], "the fake-data conclusions survive G6")
         self.assertEqual(g6["P4"]["class"], "C_model smaller")
         self.assertAlmostEqual(g6["P4"]["trace_ratio"], 0.5)
@@ -850,21 +1087,32 @@ class Readings(unittest.TestCase):
         self.assertEqual(sm["radius"], 1)
         self.assertEqual(wr["P6"]["class"], "W0")
         self.assertFalse(wr["P7"]["floor"]["breaks_the_prior_closure"])
-        self.assertEqual(wr["P7"]["nuwro"]["class"], "comparable")
+        self.assertEqual(wr["P7"]["nuwro"]["rms_class"], "comparable")
+        self.assertEqual((wr["P7"]["gibuu"]["class"], wr["P7"]["q3"]["class"]), ("immaterial", "immaterial"))
+        self.assertTrue(wr["verdict"].startswith("the equal-weight regression is immaterial"))
+        self.assertEqual({k: v["class"] for k, v in tr["P8"].items()}, {"data": "T0", "gibuu": "T0", "q3": "T0"})
+        self.assertEqual(tr["P8"]["q3"]["lowest_vs_highest_acceptance"], [0.002, -0.001])
         self.assertIn("not calibrated", out["label"])
-        self.assertIn("survive G6", RD.text(out))
+        txt = RD.text(out)
+        self.assertIn("survive G6", txt)
+        self.assertIn("TR: P8", txt)
         out = RD.read(*self.inputs(held=1))
         self.assertEqual(out["arms"]["G6"]["P1"]["class"], "unchanged")
         self.assertEqual(out["arms"]["G6"]["verdict"], "a fake-data conclusion changes under G6")
-        out = RD.read(*self.inputs(listed=("q3",), held=1, delta=0.05, floor_bias=2e-4, sm=False))
+        out = RD.read(*self.inputs(chi2_w=60.0))
+        self.assertEqual(out["arms"]["WR"]["P7"]["gibuu"]["class"], "material")
+        self.assertEqual(out["arms"]["WR"]["verdict"], "the equal-weight regression is material: at gibuu")
+        out = RD.read(*self.inputs(listed=("q3",), held=1, delta=0.05, floor_bias=2e-4, sm=False, tbias=0.05))
         g6 = out["arms"]["G6"]
         self.assertEqual(g6["P1"]["class"], "fewer flagged")
         self.assertFalse(g6["P3"]["both_criteria_met_at_the_four_held_out_records"])
         self.assertEqual(g6["verdict"], "a fake-data conclusion changes under G6")
         self.assertIn("not run", out["arms"]["SM"]["status"])
         self.assertEqual(out["arms"]["WR"]["P6"]["class"], "W2")
+        self.assertIn("on data (W2", out["arms"]["WR"]["verdict"])
         self.assertEqual(len(out["arms"]["WR"]["P6"]["cells_at_half_sigma"]), 16)
         self.assertTrue(out["arms"]["WR"]["P7"]["floor"]["breaks_the_prior_closure"])
+        self.assertEqual(out["arms"]["TR"]["P8"]["data"]["class"], "T2")
 
     def test_the_readout_refuses_a_nominal_that_is_not_the_committed_one(self):
         prep, cm, rg, i0, cmj, f1 = self.inputs()
@@ -950,8 +1198,8 @@ class Launcher(unittest.TestCase):
         rc, _, err = self.sh("J1", pin="0" * 40)
         self.assertEqual(rc, 2)
         self.assertIn("deploy HEAD", err)
-        rc, _, err = self.sh("J3")
-        self.assertIn("refusing: job J3", err)
+        rc, _, err = self.sh("J4")
+        self.assertIn("refusing: job J4", err)
         rc, _, err = self.sh("J1", RSN_NAME="rsn_J2")
         self.assertIn("job name rsn_J2 is not rsn_J1", err)
         rc, _, err = self.sh("J1", RSN_TIMELIMIT="19:01")
@@ -961,6 +1209,10 @@ class Launcher(unittest.TestCase):
         for tl in ("19:00", "0:19:00", "0-0:19:00", "18"):
             rc, out, err = self.sh("J1", RSN_TIMELIMIT=tl)
             self.assertEqual(rc, 0, tl + err)
+        for job, tl, over in (("J2", "22:00", False), ("J2n", "0:22:00", False), ("J2", "22:01", True),
+                              ("J3", "19:00", False), ("J3", "19:01", True)):
+            rc, _, err = self.sh(job, RSN_TIMELIMIT=tl)
+            self.assertEqual("exceeds" in err, over, job + tl + err)
         (self.deploy / "nd-unfolding" / "stray.py").write_text("")
         rc, _, err = self.sh("J1")
         self.assertIn("1 untracked", err)
@@ -1011,14 +1263,14 @@ class Launcher(unittest.TestCase):
         self.gate("J2n")
         rc, out, err = self.sh("J2n")
         self.assertEqual(rc, 0, err)
-        self.assertEqual(len([s for s in out.splitlines() if s.startswith("STEP ")]), 4)
+        self.assertEqual(len([s for s in out.splitlines() if s.startswith("STEP ")]), 5)
         self.commit(sm=True)
         self.gate("J2")
         self.gate("J2n")
         rc, _, err = self.sh("J2n")
         self.assertIn("only for a prep that built no SM", err)
 
-    def test_j2_runs_the_seven_declared_steps(self):
+    def test_j2_runs_the_eight_declared_steps(self):
         self.fence()
         self.commit(sm=True)
         self.gate("J2")
@@ -1026,14 +1278,36 @@ class Launcher(unittest.TestCase):
         self.assertEqual(rc, 0, err)
         steps = {ln.split()[1]: ln for ln in out.splitlines() if ln.startswith("STEP ")}
         self.assertEqual(list(steps), ["G6_gibuu", "SM_genie_mec", "SM_nuwro", "SM_gibuu", "WR_data",
-                                       "WR_closure_tune_v1", "WR_closure_nuwro"])
+                                       "WR_closure_tune_v1", "WR_closure_nuwro", "TR_data"])
         for t, s in steps.items():
-            self.assertIn("--regressor-weight " + ("w_truth" if t.startswith("WR") else "none"), s, t)
+            self.assertIn("--regressor-weight " + ("w_push_w_truth" if t.startswith("WR") else "none"), s, t)
             self.assertEqual("--closure" in s.split(), "closure" in t, t)
+            self.assertEqual("--transfer" in s.split(), t == "TR_data", t)
+            self.assertIn("--truth ratio", s, t)
         self.assertIn(str(self.out / "prep/G6/gibuu.json"), steps["G6_gibuu"])
         self.assertIn(str(self.out / "prep/SM/nuwro.json"), steps["SM_nuwro"])
         self.assertIn(str(self.pvl_prep / "ratios/L-5D-PV/nuwro.json"), steps["WR_closure_nuwro"])
         self.assertIn(str(self.pvl_prep / "ratios/L-5D-PV/tune_v1.json"), steps["WR_closure_tune_v1"])
+
+    def test_j3_runs_the_four_f1_closures_after_the_nc(self):
+        self.fence()
+        rc, _, err = self.sh("J3")
+        self.assertIn("gates/J3.ok is missing", err)
+        self.gate("J3", nc=False)
+        rc, _, err = self.sh("J3")
+        self.assertIn("records no NC PASS", err)
+        self.gate("J3")
+        rc, out, err = self.sh("J3")
+        self.assertEqual(rc, 0, err)
+        steps = {ln.split()[1]: ln for ln in out.splitlines() if ln.startswith("STEP ")}
+        self.assertEqual(list(steps), ["WR_closure_gibuu", "WR_closure_q3", "WU_closure_gibuu", "WU_closure_q3"])
+        for t, s in steps.items():
+            w = s.split()
+            self.assertIn("--closure", w)
+            self.assertEqual(w[w.index("--truth") + 1], "a7_gibuu" if t.endswith("gibuu") else "q3", t)
+            self.assertEqual(w[w.index("--regressor-weight") + 1], "w_push_w_truth" if t.startswith("WR") else "none")
+            self.assertEqual("--transfer" in w, t.startswith("WU"), t)
+            self.assertIn(str(self.pvl_prep / "ratios/L-5D-PV/tune_v1.json"), s)
 
     def test_a_changed_reweight_or_an_existing_product_refuses(self):
         self.fence()

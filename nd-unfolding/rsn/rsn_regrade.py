@@ -4,7 +4,8 @@ the four held-out GENIE v3 records), graded against the reported covariance with
 Numpy only; runs on a login node.
 
     rsn_regrade.py --table fd_f1_experiments.npz --s1-npz s1_assembly.npz --extra-block cpl_block.npz
-                   --flux-constraint <NuE constraint file> --rsn-cmodel <OUT>/cmodel/rsn_cmodel.npz --out <OUT>/regrade.json
+                   --flux-constraint <NuE constraint file> --rsn-cmodel <OUT>/cmodel/rsn_cmodel.npz \
+                   --rsn-cmodel-json <OUT>/cmodel/rsn_cmodel.json --out <OUT>/regrade.json
 
 Each record's bias b and the noise N of its mean are rebuilt from the committed per-experiment table, exactly as
 fd_f0_regrade.py builds them (its own functions: unweighted, weighted, the row-4 offsets and control 7). The matrices
@@ -18,6 +19,11 @@ Refuses, writing nothing, unless:
       p < 0.01 flag, graded, listed), control 7's verdict and the per-group counts reproduce the committed F1 readout;
   the arm file's nominal S is cmodel_5d.json's S bitwise;
   C-INV: under G6, which changes only GiBUU's row, every record whose own vertex is GiBUU grades bitwise as nominal.
+WR's covariance-weighted readings (F1.1): the data shift and each closure's bias, weighted and with equal weights, are
+graded noise-free (N = 0) against the reported matrix of that truth (fd_f0_regrade's leave-out rule: own vertex GiBUU
+for the A7 GiBUU hybrid, NuWro for the NuWro closure, none for the data, the prior and q3), and each change is
+resolved on that matrix's eigen-directions (whitened components, largest three) and along the whitened equal-weight
+bias, the direction in which the failing truths fail.
 Every output passes fd_f0_regrade.LeakGuard first.
 
 MEASURES: arithmetic on committed records and pinned matrices. CANNOT AUTHORIZE: any claim, or a change to a grade,
@@ -54,6 +60,7 @@ PINS = {
 EXTRA_KEY = "C_resp_plus_C_PL5D"
 SUBGRADES = ("grade", "model_only", "in_sample", "sensitivity", "p_parallel_lt_4p5")
 RTOL = 1e-10
+WR_OWN = {"data": None, "tune_v1": None, "nuwro": "nuwro", "gibuu": "gibuu", "q3": None}
 
 
 class Refuse(SystemExit):
@@ -169,6 +176,40 @@ def invariant_g6(nom: dict, g6: dict) -> None:
             raise Refuse(f"C-INV: {a['name']} (own vertex GiBUU) moved under G6")
 
 
+def directions(v: np.ndarray, M: np.ndarray) -> dict:
+    """v on M's eigen-directions: whitened components a_i = e_i . v / sqrt(lambda_i), ranked by eigenvalue (0 the
+    largest); their squares sum to v^T M^-1 v."""
+    lam, E = np.linalg.eigh(M)
+    order = np.argsort(lam)[::-1]
+    comp = ((E.T @ v) / np.sqrt(lam))[order]
+    top = np.argsort(-np.abs(comp))[:3]
+    return {"chi2": float(comp @ comp), "top": [{"rank": int(i), "component": float(comp[i])} for i in top]}
+
+
+def along(d: np.ndarray, b: np.ndarray, M: np.ndarray) -> float:
+    """The whitened change's component along the whitened equal-weight bias."""
+    Lc = np.linalg.cholesky(M)
+    yd, yb = np.linalg.solve(Lc, d), np.linalg.solve(Lc, b)
+    return float(yd @ yb / np.sqrt(yb @ yb))
+
+
+def wr_directions(cm: dict, Ce_rel, S0, Cx_rel) -> dict:
+    Z = np.zeros((R.N_CELLS, R.N_CELLS))
+
+    def matrix(own):
+        return R.leave_out(Ce_rel, S0, own) + Cx_rel
+
+    delta = np.asarray(cm["wr"]["delta"], float)
+    out = {"data": {"own_vertex_left_out": None, "grade": R.grade(delta, Z, matrix(None)),
+                    "directions": directions(delta, matrix(None))}}
+    for t, rec in cm["wr"]["closures"].items():
+        M = matrix(WR_OWN[t])
+        bw, bu = np.asarray(rec["bias_weighted"], float), np.asarray(rec["bias_equal_weights"], float)
+        out[t] = {"own_vertex_left_out": WR_OWN[t], "weighted": R.grade(bw, Z, M), "equal_weights": R.grade(bu, Z, M),
+                  "change": directions(bw - bu, M), "change_along_equal_weight_bias": along(bw - bu, bu, M)}
+    return out
+
+
 def run(a) -> dict:
     if a.out.exists():
         raise Refuse(f"refusing to overwrite {a.out}")
@@ -202,9 +243,14 @@ def run(a) -> dict:
     reproduce(out["nominal"], offset_pass, json.loads(Path(a.f1_readout).read_text()))
     if "G6" in out:
         invariant_g6(out["nominal"], out["G6"])
+    cm = json.loads(Path(a.rsn_cmodel_json).read_text())
+    if not np.array_equal(np.asarray(cm["arms"]["nominal"]["S"], float), S0):
+        raise Refuse("rsn_cmodel.json's nominal S is not cmodel_5d.json's")
     readout = {"schema": "rsn-regrade/1", "offset_control_7_pass": offset_pass, "arms": out,
+               "wr_directions": wr_directions(cm, Ce_rel, S0, Cx_rel),
                "controls": ["NC-R", "nominal S", "C-INV" if "G6" in out else None],
-               "inputs_sha256": {**PINS, "rsn_cmodel": R.sa.sha256(Path(a.rsn_cmodel))},
+               "inputs_sha256": {**PINS, "rsn_cmodel": R.sa.sha256(Path(a.rsn_cmodel)),
+                                 "rsn_cmodel_json": R.sa.sha256(Path(a.rsn_cmodel_json))},
                "code_sha256": {"rsn_regrade.py": R.sa.sha256(Path(__file__).resolve()),
                                "fd_f0_regrade.py": R.sa.sha256(Path(R.__file__).resolve())}}
     R.LeakGuard(f, []).check("the regrade JSON", readout)
@@ -226,6 +272,7 @@ def main(argv=None) -> int:
     ap.add_argument("--flux-constraint", type=Path, required=True)
     ap.add_argument("--cmodel-json", type=Path, default=CMODEL_JSON)
     ap.add_argument("--rsn-cmodel", type=Path, required=True)
+    ap.add_argument("--rsn-cmodel-json", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)
     run(ap.parse_args(argv))
     return 0

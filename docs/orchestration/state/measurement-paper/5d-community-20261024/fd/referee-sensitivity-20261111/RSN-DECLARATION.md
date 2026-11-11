@@ -1,52 +1,66 @@
-# RSN declaration: three referee sensitivity analyses (3.1, 3.2, 1.2), DRAFT
+# RSN declaration rev 2: referee sensitivity analyses (3.1, 3.2, 1.2; fresh F1.1, F1.2), DRAFT
 
-**Session:** tier3-design, 2026-11-11, at the director's brief. **For:** coverage-5b-audit's audit, then the director's
-binding. After the maintenance, a cluster lane runs it, and each connect's sha256s go to the director first.
+**Session:** tier3-design, 2026-11-11, at the director's brief and its rev 2 request. **For:** coverage-5b-audit's
+audit (one read of rev 2), then the director's binding. After the maintenance, a cluster lane runs it, and each
+connect's sha256s go to the director first.
 
-**Status:** draft. The code and tests are under `nd-unfolding/rsn/`, with receipts in `rev1/`. No job has been
-submitted and no connect made. The work does not wait for the LL5D readout.
+**Status:** draft. The code and tests are under `nd-unfolding/rsn/`, with receipts in `rev2/` (rev 1's are in `rev1/`).
+No job has been submitted and no connect made. The work does not wait for the LL5D readout. §10 lists what rev 2
+changes.
 
 ## 0. What this is
 
-**The request.** The recheck referee report asks for three analyses: `secondary-results/referee-methods-recheck-20261111/gpt.txt`
-(#1074), major issue 3 (:44-52) and major issue 1 (:17-19). helper-3 designed them in #977's `RESPONSE.md` at
-`d1d6f1ded`: rows 3.1 (:41), 3.2 (:42) and 1.2's optional A (:28). The director's rulings (:142-158) approve them in
-principle at about 0.75 node-h, with this chain.
+**The requests:**
+- The recheck referee report (`secondary-results/referee-methods-recheck-20261111/gpt.txt`, #1074): major issue 3
+  (:44-52) and major issue 1 (:17-19).
+- The fresh referee report (`secondary-results/referee-methods-fresh-20261111/gpt.txt`): major issue 1 (:11-21),
+  "the treatment of unreconstructed events needs a controlled validation".
+- helper-3's designs in #977's `RESPONSE.md`:
+  - rows 3.1, 3.2 and 1.2 at `d1d6f1ded` (:41, :42, :28);
+  - rows F1.1 and F1.2 at `39d0ff8c` (:226-227).
 
-**The arms.**
+**The arms:**
 
 | arm | referee | what changes | unfolds |
 |---|---|---|---|
 | **G6** | 3.1: a common supported phase space | GiBUU's reweight is restricted to p∥ < 6 GeV/c | 1 |
 | **SM** | 3.2: a less discontinuous ratio | the three reweights are smoothed by a local average | 3 |
-| **WR** | 1.2: the unmatched-event regressor | the regressor is fitted with the simulation's event weights | 1 data + 2 closures |
+| **WR** | 1.2 and F1.1: the misses regressor, physically weighted | the regressor is fitted with sample_weight = w_push · w_truth | data + 4 closures |
+| **WU** | F1.1: the equal-weight references at the deformed truths | none (nominal regressor) at the A7 GiBUU hybrid and the q3 tilt | 2 closures |
+| **TR** | F1.2(ii): a transfer test in simulation | a held-out regressor fit beside the loop, the loop untouched | rides on 3 steps |
 | **NC** | — | none: it must equal P5 bitwise after the maintenance | 1 |
+
+**F1.2(i) is not declared here:** the widened regressor inputs. Its inputs are not in the analysis sample, so it cannot
+be priced as a cheap arm (§2.7).
 
 **How the results enter the paper.** Each result enters only as a stated sensitivity of the construction named here,
 **never as a calibrated uncertainty.** No C^V, shift or δ is added to a reported covariance, and none replaces
-C_model in a reported result. Every reading below is fixed before any run (§3), with the paper conclusions it can
-and cannot change (§3.4).
+C_model or the estimator in a reported result. Every reading below is fixed before any run (§3), with the paper
+conclusions it can and cannot change (§3.4).
 
 ## 1. Inputs
 
-Every input is checked by its sha256 before it is read. A missing input or a different digest refuses, so a purged
-pscratch copy stops the arm. The pv-ladder `prep/` and `products/` copies are exposed from 2026-12-19
-(`FD-PSCRATCH-RETENTION-PROPOSAL.md:77`).
+Every input is checked by its sha256 before it is read. A missing input or a different digest refuses.
+- **pv-ladder `prep/` and `products/`:** exposed from 2026-12-19 (`FD-PSCRATCH-RETENTION-PROPOSAL.md:77`). Of them, HPSS
+  (`retention-20261110/hpss-20261111/manifests`) holds only nuwro.json and the two frozen closures. The run must
+  happen before 12-19 or after these are archived (§6, the HPSS recommendation).
+- **`cpl_block.npz`:** not in those manifests.
 
 | input | sha256 | role |
 |---|---|---|
 | pv-ladder `prep/ratios/L-5D-PV/` (pscratch), checked through the committed `nd-unfolding/pv-ladder/prep-SHA256SUMS` (`29ac6b7c…`) | per file: `925cbd8d…` ratios.json, `8d0e0f42…` genie_mec, `38e47eb6…` nuwro, `52438000…` gibuu, `13bb1eae…` tune_v1 | the frozen gated reweights, their ρ, labels and prior weights |
 | pv-ladder `products/` (pscratch): L-5D-PV_e_{tune_v1, genie_mec, nuwro, gibuu, closure_nuwro, closure_tune_v1} | `build_cmodel5d.py` EXPECT (`dbe9a95e…`, `bdff9193…`, `caf6eee7…`, `bdf33157…`, `fff9030e…`, `eb3e2188…`) | the frozen shifts and closures |
-| P5, `k1_p5_rerun.npz` | `e36f3b25…` | the NC's target |
-| `of_inputs_5d.npz`, `bkg_dump.npz` (pv-ladder `config.json`, L-5D-PV) | `07fccc1a…`, `2addac8f…` | the unfold's inputs, as L-5D-PV |
+| P5, `k1_p5_rerun.npz` (also tracked, `fd/receipts-f1/run/cluster/f1b3/prep/`) | `e36f3b25…` | the NC's target |
+| `of_inputs_5d.npz`, `bkg_dump.npz` (pv-ladder `config.json`, L-5D-PV; on HPSS) | `07fccc1a…`, `2addac8f…` | the unfold's inputs, as L-5D-PV |
+| `docs/orchestration/state/s5p/ratios/nullsF/null-gibuu_cv-F.json` (committed), with its `rho-gibuu_cv-F.npz` (pscratch `s5p-20260926`, on HPSS) | `0080495c…` (fd_f0_regrade HYP), `d8f52112…` | F0b's A7 GiBUU hybrid truth (§2.5) |
 | `readouts/cmodel_5d.json` (committed) | `3cfdc6a5…` | S and the nominal C_model (GiBUU 0.890 of the trace, NuWro 0.095, GENIE+MEC 0.014) |
-| `readouts/h2_definition_describe.json`, `readouts/gibuu_domain_cells.json` (committed) | `da7edae0…`, `855eeff6…` | the prep's reproduction controls |
+| `readouts/h2_definition.json`, `h2_definition_describe.json`, `gibuu_domain_cells.json` (committed) | `b6790761…`, `da7edae0…`, `855eeff6…` | the cells; the prep's reproduction controls |
 | `fd/with-cpl/readout/fd_f1_readout.json` (committed) | `5ccc89e5…` | the 22 records' committed grades (NC-R) and the reported σ |
-| `fd_f1_experiments.npz` (pscratch `fd-f1-20261027/grade/`; HPSS manifest `retention-20261110/hpss-20261111`) | `997c7dae…` | the per-experiment biases the noise of each mean is rebuilt from |
+| `fd_f1_experiments.npz` (pscratch `fd-f1-20261027/grade/`; on HPSS) | `997c7dae…` | the per-experiment biases the noise of each mean is rebuilt from |
 | `fd/receipts-f1/run/cluster/f1b3/prep/f1-prep-SHA256SUMS` (committed) | `981b188b…` | the two held-out truths' identities |
-| `s1_assembly.npz` (pscratch), `cpl_block.npz` key `C_resp_plus_C_PL5D` (pscratch) | `db000707…`, `d9aa32fd…` | C_e, the stat block, f and C_resp + C_PL,5D |
+| `s1_assembly.npz` (pscratch; on HPSS), `cpl_block.npz` key `C_resp_plus_C_PL5D` (pscratch) | `db000707…`, `d9aa32fd…` | C_e, the stat block, f and C_resp + C_PL,5D |
 | the NuE constraint file (`s1_assemble.CONSTRAINT_SHA256`) | `e38ad7d2…` | the row-6 and row-4 flux weights |
-| `fd/receipts-1b/inv/i0/i0.json` (committed) | `9a4142d3…` | WR's rounding floor σ_J (§3.3) |
+| `fd/receipts-1b/inv/i0/i0.json` (committed) | `9a4142d3…` | WR's and TR's rounding floor σ_J (§3.3) |
 
 ## 2. The arms
 
@@ -60,11 +74,11 @@ pz_max = 6. GENIE+MEC and NuWro keep their frozen ratios, so one unfold runs.
 
 **Why 6 GeV/c.** Below 6 GeV/c every sample holds the cross section. GiBUU's missing E_ν > 20 GeV part is 0.98 % of
 the cross section there in GENIE CV and 1.01 % in NuWro. At 6–10 GeV/c it is 4.88 % and 5.26 %
-(`gibuu_enu_coverage.json`, the addendum's §1 table). The paper's joint tests already use p∥ < 6. G6 removes the
-momentum-dependent application cut at 10 and the E_ν truncation from GiBUU's shift, and nothing else.
+(`gibuu_enu_coverage.json`, the addendum's §1 table). G6 removes the momentum-dependent application cut at 10 and the
+E_ν truncation from GiBUU's shift, and nothing else.
 
 **What G6 does not address.** It does not address the carbon-versus-CH difference, because no CH sample of NuWro or
-GiBUU is in this design (the referee: a validated free-proton sample "is not a prerequisite").
+GiBUU is in this design.
 
 ### 2.2 SM (referee 3.2): a less discontinuous ratio construction
 
@@ -81,40 +95,88 @@ union over the three vertices. SM is less discontinuous only if two conditions h
 - its share is at most the frozen share in at least 12 of the 16 cells.
 
 The frozen gate-or-cut share is 0.765–1.000 (`h2_definition_describe.json`); the prep reproduces it as a control.
-R = 1 is tried first, and R = 2 only if R = 1 fails. If both fail, the prep writes no SM reweight and SM does not
-run: J2n replaces J2 (§6). The result is then reported as "no construction of this family at R ≤ 2 was less
-discontinuous by the declared measure", and SM gives no reading of C_model.
+R = 1 is tried first, and R = 2 only if R = 1 fails. If both fail, the prep writes no SM reweight and J2n replaces J2
+(§6). The result is then reported as "no construction of this family at R ≤ 2 was less discontinuous by the declared
+measure", and SM gives no reading of C_model.
 
-### 2.3 WR (referee 1.2): the unmatched-event regressor with event weights
+### 2.3 WR (referee 1.2, fresh F1.1): the misses regressor, physically weighted
 
-**The change.** `omnifold_nn_core.omnifold_loop` fits its regressor with no sample weight (`:258-260` at `8f99b7ff`):
-`reg.fit(MCgen[pass_reco], new_w[pass_reco])`. WR fits it with `sample_weight` = w_truth of those rows, which is
-`MCgen_weights[pass_reco]` in the loop's own order. It is the weight under which step 2 sums the pull weights at
-truth level, so the fit estimates the w_truth-weighted mean of the step-1 weight at fixed truth.
+**The weight.** `omnifold_nn_core.omnifold_loop` fits its regressor with no sample weight (`:258-260` at `8f99b7ff`).
+WR fits it with `sample_weight` = w_push · w_truth on its rows, the truth-passing, reco-passing MC rows in the loop's
+own order. This is the population the loop is reweighting at that iteration.
 
-**Why w_push is not in the weight.** w_push depends on the truth features alone, so including it would change only the
-fit's emphasis, not the conditional mean it estimates.
+**Why this weight (rev 1 used w_truth alone).** It is the same weight as T3's MW arm (`tier3/t3p_arms.py:15-16`;
+`T3-PIPELINE-TESTS-DECLARATION.md` rev 4 :235), so the repository has one definition of "the weighted misses
+regressor". w_push is the loop's own value: the output of `omnifold_nn_core._reweight` for the loop's second
+classifier, which is ones before the first iteration.
 
 **What stays the same.** The classifiers, their weights, the seeds and the estimator parameters do not change.
-`omnifold_nn_core.py` is not edited. `rsn_unfold.py` wraps the regressor that `make_estimators` returns, one level
-inside `s5c_unfold.estimator_config`, and refuses to write unless every iteration fitted through the wrapper with
-exactly the expected rows.
+`omnifold_nn_core.py` is not edited. `rsn_unfold.py` wraps the regressor that `make_estimators` returns and reads
+w_push through `_reweight`. It refuses to write unless every iteration fitted through the wrapper with exactly the
+expected rows.
 
-**The three WR runs:**
+**The points (both sets, since packing makes them cheap; §5):**
 - the data;
-- the noise-free closure at the prior (the floor);
-- the noise-free closure at NuWro's shape (L-5D-PV's positive-control truth).
+- the noise-free closure at the prior (F1.1's nominal closure, and rev 1's floor);
+- the noise-free closure at NuWro's shape (rev 1);
+- the noise-free closures at the A7 GiBUU hybrid and at the q3 tilt (F1.1's principal deformed truths, §2.5).
 
 ### 2.4 NC
 
 `rsn_nc` is `rsn_unfold.py --regressor-weight none` on the data with the identity reweight. It must equal P5, and so
 the frozen L-5D-PV_e_tune_v1, bitwise on the full grid and on the 16 cells (`build_cmodel5d.nominal_control`). It runs
-alone first (J1). Without its PASS, J2 is not submitted, and the director decides any rerun of the frozen products in
-the new environment. Every shift below is taken from rsn_nc.
+alone first (J1). Without its PASS, J2 and J3 are not submitted, and the director decides any rerun of the frozen
+products in the new environment. Every shift below is taken from rsn_nc.
+
+### 2.5 WU and the deformed truths (fresh F1.1)
+
+**The truths.** Both are F0b's two flagged truths, built by their own code:
+- **the A7 GiBUU hybrid:** `s5p_truths.hypothesis_weight` with the committed `null-gibuu_cv-F.json` at amplitude 1;
+- **the q3 tilt:** `s5c_pseudo.truth_weight("q3_given_eavail_w", amplitude 0.3)`.
+
+`rsn_unfold.py --truth` replaces the identity reweight with them, for closures only.
+
+**The closures.** They are pv-ladder's noise-free signal-only closures on the full MC (`pvl_lib.closure_inputs`), as at
+the prior and at NuWro. They are not F0b's background-inclusive half-MC experiments. There is no frozen equal-weight
+closure at these two truths, so WU runs the nominal regressor at both as WR's reference. T3's B0 and MW arms (after
+LL5D) make the same comparison on FD-PRR's background-inclusive half-MC construction, with the same weight.
+
+### 2.6 TR (fresh F1.2(ii)): a transfer test in simulation
+
+**What is held out.** At every iteration, before the loop's own regressor fit, a seeded mask holds out 20 % of the
+matched rows: the regressor's rows, the truth-passing, reco-passing MC events. The mask is
+`numpy.random.default_rng([20261111, k]).random(n) < 0.2` for iteration k, fixed now.
+
+**The probe.** A separate regressor of the same class and parameters is fitted on the other 80 %, with the step's own
+sample weight, and predicts the held-out rows. Their known step-1 weight, the loop's own target for those rows, is
+compared with the prediction:
+- overall: the w_truth-weighted relative bias and RMS;
+- per reporting cell: t_c = Σ w ŷ / Σ w y − 1;
+- per decile of the fine truth cell's reconstruction acceptance (its w_truth share that is reconstructed).
+
+**The points.** The data (TR_data), and the A7 GiBUU hybrid and q3 closures (WU's two steps).
+
+**The control.** The probe is a separate object on read-only arrays, and the loop's fits, arrays and estimators are
+untouched. TR_data must therefore equal rsn_nc bitwise, and the build refuses otherwise.
+
+### 2.7 Not declared: F1.2(i), and TR against the omitted quantities
+
+**What F1.2(i) needs.** It widens the regressor's inputs with E_ν, the true vertex position and the leading-proton
+kinetic energy. These must be per-event columns aligned to the MC rows of `of_inputs_5d.npz`.
+
+**Why it is not declared.** The sample's writer, `nn_dump_inputs.py:89-103`, stores the five truth features (MCgen),
+the five reconstructed features and the weights. It stores no other truth column and no event identity, so no column
+can be joined to its rows afterwards.
+Search: `nn_dump_inputs.py` np.savez_compressed keys; `pet/` and `g2_fullevent` inventories for E_nu, vertex and proton fields @ 8f99b7ff
+
+**What would provide it.** A new dump of the event loop's trees with those branches, written in the same order as the
+analysis sample and checked against it (`pass_truth`, `pass_reco` and `w_truth` byte-equal). That is a separate
+production with its own declaration and price, not a cheap arm. The same input is what TR needs to bin its residual
+against the omitted quantities, so TR here reads its residual against acceptance and the five features only.
 
 ## 3. Readings and outcome tables (fixed before any run)
 
-The conclusions they bear on are P1–P7 in §3.4.
+The conclusions they bear on are P1–P8 in §3.4.
 
 ### 3.1 C^V for V ∈ {G6, SM}: what is graded and against what
 
@@ -171,22 +233,29 @@ together with the in-sample, sensitivity, eight-cell and model-only matrices. Th
 | different flagged | otherwise |
 
 **P2 and P3.** P2 is each group's counts beside the nominal's, with every record's χ² under both. P3 asks whether the
-four held-out records still meet both criteria (0 cells with |z| > 2, 0 truths with p < 0.01).
+four held-out records still meet both criteria.
 
 **Each arm's verdict:**
 - "the fake-data conclusions survive V" if P1 is unchanged and P3 holds;
 - otherwise "a fake-data conclusion changes under V", with the records named.
 
 **What G6 cannot move, stated before the run.** A7_gibuu and stage0c_gibuu are graded without GiBUU's shift, so G6
-cannot change either grade; C-INV enforces this. G6 can move only records graded with GiBUU's shift: q3, the prior
-truths, the GENIE CV hybrid, the NuWro and GENIE+MEC family, and the held-out records. SM can move every record.
+cannot change either grade (C-INV). Under G6, P1 can change only through q3.
 
-### 3.3 WR: what is graded, against what and at which truths
+### 3.3 WR and WU: what is graded, against what and at which truths
 
-**P6, the data.** P6 is δ_c = X_c(WR_data)/X_c(rsn_nc) − 1 on R00–R15, graded against two references:
-- the rounding floor φ_c = σ_J,c / x_c, from i0.json's data jitter spread over cmodel_5d.json's P5 integrals. It
+**The references.**
+- **The rounding floor:** φ_c = σ_J,c / x_c, from i0.json's data jitter spread over cmodel_5d.json's P5 integrals. It
   must reproduce the printed median 0.133 %, minimum 0.055 % and maximum 0.252 % (FD-1B-INV-I0-REPORT.md:67).
-- the reported σ_c, from the F1 readout's C_total + C_resp + C_PL,5D.
+- **The reported σ_c:** from the F1 readout's C_total + C_resp + C_PL,5D.
+- **The matrix M_T of each truth:** fd_f0_regrade's leave-out rule, M_T = C_e/(ff^T) + Σ_{j≠own(T)} s_j s_j^T +
+  C_x/(ff^T), with own = GiBUU for the A7 GiBUU hybrid, NuWro for the NuWro closure, and none for the data, the prior
+  and q3.
+- **The covariance-weighted directions:** every vector v is resolved on M_T's eigen-directions. The whitened components
+  a_i = e_i·v/√λ_i (largest three printed) satisfy Σ a_i² = v^T M_T^−1 v. The change is also resolved along the
+  whitened equal-weight bias, the direction in which a failing truth fails.
+
+**P6, the data.** P6 is δ_c = X_c(WR_data)/X_c(rsn_nc) − 1. Its χ² against M_data and its directions are printed.
 
 | class | rule |
 |---|---|
@@ -194,37 +263,68 @@ truths, the GENIE CV hybrid, the NuWro and GENIE+MEC family, and the held-out re
 | W1, above the floor and below half the reported σ | not W0, and max_c \|δ_c\|/σ_c ≤ 0.5 |
 | W2, at least half the reported σ | some \|δ_c\|/σ_c > 0.5; the cells are named |
 
-**P7, the two closures.** The truths are the prior (Tune v1) and NuWro's shape. Each bias is X/X_true − 1 on the 16
-cells, beside the frozen unweighted closure at the same truth.
-- **NuWro closure:** the RMS ratio RMS(b^W)/RMS(b) is "lower" below 0.9, "higher" above 1.1, and "comparable"
-  otherwise; the largest |b^W − b| is printed.
-- **Floor:** max |b^W| > 1e-4 flags "the weighted regressor breaks the prior's closure" (frozen: 3.2e-5).
+**P7, the closures.** Each bias is X/X_true − 1 on the 16 cells, weighted (WR) beside equal weights. The equal-weight
+references are the frozen closure at the prior and at NuWro, and WU at the two deformed truths.
+- **At the prior:** max |b^W| > 1e-4 flags "the weighted regressor breaks the prior's closure" (frozen: 3.2e-5).
+- **At NuWro:** the RMS ratio RMS(b^W)/RMS(b^U) is "lower" below 0.9, "higher" above 1.1, and "comparable" otherwise.
+- **At the A7 GiBUU hybrid and the q3 tilt:** both biases are graded noise-free (N = 0) against M_T. The weighting is
+  **material** at T if either holds:
+  - the noise-free flag differs between the two (any |z| > 2 or p < 0.01);
+  - |χ²_W − χ²_U| > 0.25 χ²_U.
 
-WR re-grades no fake-data truth beyond these two closures.
+  Otherwise it is **immaterial**. Each closure's χ², flags, directions and the change along the equal-weight bias are
+  printed.
+
+**WR's verdict (F1.1):**
+- "the equal-weight regression is immaterial at the A7 GiBUU hybrid and the q3 tilt, and the data move within the
+  rounding floor / below half the reported σ", if both deformed truths are immaterial and P6 is W0 or W1;
+- otherwise "the equal-weight regression is material", naming the truths and, for W2, the data's cells.
+
+The fresh referee's two outcomes map onto these: a negative result supports this implementation choice, and a
+material one means the affected findings are attributed to this approximation. Under no outcome is the estimator
+changed here.
 
 ### 3.4 Which paper conclusions each arm could change
 
-| | conclusion | G6 | SM | WR |
-|---|---|---|---|---|
-| P1 | the fake-data bias exceeds the criteria at two truths (A7_gibuu, the q3 tilt) | q3 only | yes | — |
-| P2 | the other truths meet the criteria only with the broader terms, C_model among them | yes | yes | — |
-| P3 | the four held-out records meet both criteria (R11 at G18 only with C_model) | yes | yes | — |
-| P4 | C_model is dominated by the GiBUU shift (0.890) | yes | yes | — |
-| P5 | the reported per-cell σ of the sixteen released cells | yes | yes | — |
-| P6 | the sixteen released central values | — | — | yes |
-| P7 | the noise-free closures at the prior and at NuWro | — | — | yes |
+| | conclusion | G6 | SM | WR, WU | TR |
+|---|---|---|---|---|---|
+| P1 | the fake-data bias exceeds the criteria at two truths (A7_gibuu, the q3 tilt) | q3 only | yes | attribution only (§3.3) | — |
+| P2 | the other truths meet the criteria only with the broader terms, C_model among them | yes | yes | — | — |
+| P3 | the four held-out records meet both criteria (R11 at G18 only with C_model) | yes | yes | — | — |
+| P4 | C_model is dominated by the GiBUU shift (0.890) | yes | yes | — | — |
+| P5 | the reported per-cell σ of the sixteen released cells | yes | yes | — | — |
+| P6 | the sixteen released central values | — | — | yes | — |
+| P7 | the noise-free closures at the prior, NuWro, the A7 GiBUU hybrid and the q3 tilt | — | — | yes | — |
+| P8 | the misses' step-1 weights transfer from the reconstructed events at fixed truth (limitation 8) | — | — | — | yes |
 
 **What no arm changes:**
-- the 2D benchmark, whose comparison uses no C_model;
+- the 2D benchmark, whose comparison uses no C_model, and whose unfolding these arms do not refit;
 - the prior-retention study;
 - the rounding study;
 - the 2D coverage results;
 - LL5D's test, whose design and covariance are its own declaration's and are not regraded here;
 - the Stage G generator χ² (S10, Tables S14–S15), which this design does not recompute.
 
-**The paper's wording under each outcome** is a stated sensitivity: "Under [G6/SM], [class]; the fake-data conclusions
-[survive / change for X]". It is never an uncertainty added to the result. The 3.x text that waits for these results
-must read correctly under every class above (RESPONSE.md, the director's rulings).
+**The paper's wording under each outcome** is a stated sensitivity, never an uncertainty added to the result. The 3.x
+and F1 text that waits for these results must read correctly under every class above.
+
+### 3.5 TR (P8): the transfer readings
+
+TR is read at the last iteration, at each point (the data, the A7 GiBUU hybrid, the q3 tilt), on t_c. It is set
+against the same φ_c and σ_c, conservatively: a held-out bias t on every miss would move a cell by at most t, since
+the misses carry 15.7–68.1 % of a cell.
+
+| class | rule |
+|---|---|
+| T0, transfers within twice the rounding floor | max_c \|t_c\| ≤ 2 φ_c |
+| T1, within half the reported σ | not T0, and max_c \|t_c\| ≤ 0.5 σ_c |
+| T2, at least half the reported σ | some \|t_c\| > 0.5 σ_c, or no held-out row in a cell; the cells are named |
+
+The overall relative bias and RMS, and the relative bias in the lowest and highest acceptance deciles, are printed
+beside the class as descriptions, with no threshold.
+
+**What TR can and cannot show.** A uniform random mask tests transfer among matched events at fixed truth. It cannot
+show that misses resemble matched events in what the five features omit, which is what §2.7's input would test.
 
 ## 4. Seeds
 
@@ -233,57 +333,67 @@ must read correctly under every class above (RESPONSE.md, the director's rulings
 | every unfold | LightGBM random_state 42 for both classifiers and the regressor; the refinement classifier 45 (s5e candidate R); deterministic, force_row_wise, 32 threads, all-row binning, 5 iterations; the same as L-5D-PV |
 | the data unfold | deterministic, so the training-seed block is zero |
 | the closures | noise-free, so no pseudo-data draw |
-| the regrade | re-reads the committed experiments at their recorded pseudo-seeds (rows 1–2, the A7 f4 seeds 970000–970015, the cal and pow sets, F1's 806000–806019 and 807000–807019); it draws nothing |
+| TR's mask | `default_rng([20261111, k])` at iteration k, fraction 0.2; the probe regressor takes the loop regressor's own parameters, random_state 42 among them |
+| the regrade | re-reads the committed experiments at their recorded pseudo-seeds; it draws nothing |
 
 ## 5. Price
 
 **The basis.** pv-ladder's `LEDGER.tsv` records two jobs on one exclusive node:
-- **J5, 60206336:** 5 L-5D-PV unfolds (3 data, 2 closures) in 811 s, 0.2253 node-h;
+- **J5, 60206336:** 5 L-5D-PV unfolds in 811 s, 0.2253 node-h;
 - **J1, 60202786:** 7 steps, the 5D NC among them, in 861 s, 0.2392 node-h. Its longest step took 13:45 and its
   MaxRSS was 16.5 GB or less.
 
-The charge is per node-time, so concurrent 5D steps share one job's price.
+The charge is per node-time, and a node holds at most 8 steps of 32 threads. `BINDING.md:15`'s "about 0.45 node-h" for
+three unfolds is a projection made before any job.
 
-**The director's figure.** It reads `BINDING.md:15`, a projection made before any job: "about 0.45 node-h" for three
-5D unfolds, 0.15 each. That basis prices the arms at 3.1 0.15, 3.2 0.45 and 1.2 0.15 (data only).
+**TR's added cost.** It adds one regressor fit per iteration to three steps. That is small beside the two classifier
+fits, and it is inside each step's wall time.
 
 | job | steps | projection | `--time` (1.25×) | maximum |
 |---|---|---|---|---|
 | J1 | rsn_nc alone | 15 min, 0.25 node-h | 0:19:00 | 0.32 |
-| J2 | G6 (1), SM (3), WR (3): 7 steps | 15 min, 0.25 node-h | 0:19:00 | 0.32 |
-| J2n (only instead of J2) | G6, WR: 4 steps | 15 min, 0.25 node-h | 0:19:00 | 0.32 |
+| J2 | G6 (1), SM (3), WR data and two closures (3), TR_data (1): 8 steps | 17 min, 0.28 node-h | 0:22:00 | 0.37 |
+| J2n (only instead of J2) | G6, WR (3), TR_data: 5 steps | 17 min, 0.28 node-h | 0:22:00 | 0.37 |
+| J3 | WR and WU at the A7 GiBUU hybrid and the q3 tilt: 4 steps | 15 min, 0.25 node-h | 0:19:00 | 0.32 |
 
-**Per arm,** with J2 shared by step:
+**Per arm,** sharing a job by step:
 
 | arm | price |
 |---|---|
-| G6 | 0.04 node-h |
-| SM | 0.11 node-h |
-| WR | 0.11 node-h |
 | NC (J1, shared by all) | 0.25 node-h |
+| G6 | 0.035 node-h |
+| SM | 0.105 node-h |
+| WR at the data, the prior and NuWro | 0.105 node-h |
+| TR on the data | 0.035 node-h |
+| F1.1 at the two deformed truths (J3: 2 WR and 2 WU, TR's two other points among them) | 0.25 node-h |
 
-Each arm alone would be one 15-minute job, 0.25 node-h.
-
-**The total.** It is projected at 0.50 node-h, with a hard maximum of 0.63 at the two time limits. The cap is the
-director's 0.75 CPU node-h. The prep, the build, the regrade and the readings run on a login node at 0 node-h.
+**The total.** It is projected at 0.78 node-h, with a hard maximum of 1.01 at the three time limits. **The cap is
+raised to 1.25 CPU node-h,** inside the director's approval of about 2. The prep, the build, the regrade and the
+readings run on a login node at 0 node-h.
 
 **The stop rule.** The scheduler enforces the 1.25× limit. A stopped job is reported to the director and is not
 resubmitted without the director's go.
 
 ## 6. Order and gates
 
-1. **Audit and binding.** coverage-5b-audit audits this draft, and the director binds the code digests of §7.
-2. **Connect 1, login node.**
+1. **Audit and binding.** coverage-5b-audit audits rev 2, and the director binds the code digests of §7.
+2. **Archive first, recommended.** The cluster lane archives the following to HPSS before connect 1, against their
+   committed sha256s:
+   - pv-ladder's `prep/` (22 MB) and `products/` (2.5 MB);
+   - `cpl_block.npz`.
+
+   Without the archive, the run must finish before 2026-12-19.
+3. **Connect 1, login node.**
    - Clone at the pin.
    - Run `rsn_prep.py --ratios <pvl prep>/ratios/L-5D-PV --out <OUT>/prep`.
    - Commit its printed `rsn-prep-SHA256SUMS` and `prep.json` in a receipt PR (the new pin).
    - Write `<OUT>/fence.txt`, after the director has announced the `rsn_` family to every fenced lane.
    - Submit J1.
-3. **After J1.**
+4. **After J1.**
    - Run `rsn_cmodel.py nc` on a login node and commit its PASS.
-   - Write `<OUT>/gates/J2.ok` (or J2n) naming the pin.
-   - Submit J2, or J2n if the prep built no SM.
-4. **After J2, login node:**
+   - Write `<OUT>/gates/J2.ok` (or J2n) and `J3.ok` naming the pin.
+   - Submit J2 (or J2n) and J3.
+5. **After J2 and J3, login node:**
    - `rsn_cmodel.py build`;
    - `rsn_regrade.py`;
    - `rsn_read.py`.
@@ -292,50 +402,45 @@ resubmitted without the director's go.
 **The launcher's refusals.** `sbatch_rsn.sh` refuses before any step if:
 - the deploy is not clean at the pin;
 - the job's name is not `rsn_<job>`;
-- its TimeLimit exceeds 0:19:00;
+- its TimeLimit exceeds the job's declared limit;
 - a fenced prefix is queued or running;
 - a reweight differs from its committed sha256;
 - a product exists;
-- for J2 or J2n, the gate, the NC PASS or the committed reweight list is missing.
+- for J2, J2n or J3, the gate or the NC PASS is missing; for J2 or J2n, also the committed reweight list.
 
-The inputs are read, not written, and the fence check covers any lane that writes them.
+The inputs are read, not written.
 
 ## 7. Code
 
 | file | sha256 |
 |---|---|
 | `nd-unfolding/rsn/rsn_prep.py` | `7b0fc567776d2016897173b1f8ab723fd99daedd34454537b36cd42bd03194be` |
-| `nd-unfolding/rsn/rsn_unfold.py` | `ab9aea66420c2bdeb05eab69a592846e369d68bf9681196010ea0d2043a3593c` |
-| `nd-unfolding/rsn/rsn_cmodel.py` | `ffbb440c6d2212c92a40854dba4d404ed494376ac8a074f8ffff661ce893c8b7` |
-| `nd-unfolding/rsn/rsn_regrade.py` | `7dc8039bdf7c4ab396cb3a7e730b6382124e6bf695cf580654e341d703ac40d9` |
-| `nd-unfolding/rsn/rsn_read.py` | `1c25f0bbb26203817f37e794c85f851ab502efebd0e08e19279019874c68f83e` |
-| `nd-unfolding/rsn/sbatch_rsn.sh` | `745ebc9b53920f4ab2528b5cd95912265da00f0c0a082074c8af12bde72c302b` |
-| `nd-unfolding/rsn/rsn_tasks.tsv` | `19cb58cd66f52705d56efaffa365a75af9fe64d001affe814ddfb33dff9cf5d7` |
-| `nd-unfolding/rsn/test_rsn.py` | `6116277057c37361b2ef240e0b8e0a5b9ad338b3f164dfc527be4d4cd6231ebf` |
-| `nd-unfolding/rsn/rsn_mutation.py` | `14a9a710c88d0e56e8c949f420a5f525e92bba1f163c7e9e38ce29e37ebe52ab` |
+| `nd-unfolding/rsn/rsn_unfold.py` | `5796bb6043a0ff646043206ef3ef623cbaf19d003875331da54a5642454e3690` |
+| `nd-unfolding/rsn/rsn_cmodel.py` | `ab63292122bffbc30e5d85efc2a5ae3f96c7f917891a856c48e2d26414848a48` |
+| `nd-unfolding/rsn/rsn_regrade.py` | `01d758c8010bad4fc451eec1fdf436328c947854cb63ba73392d3b89b5be7795` |
+| `nd-unfolding/rsn/rsn_read.py` | `f00a775a9d5904d7f0b9334f3e8c5922185fd4f0c85225d60cbbae43e8cf9223` |
+| `nd-unfolding/rsn/sbatch_rsn.sh` | `b4f7b02a2d6a5d3a8d052cf67e13d2b5977333f7c0e7f36b6f4da524e34f797e` |
+| `nd-unfolding/rsn/rsn_tasks.tsv` | `354bd16dd4d8b9dd5462f1daf6114e7beb467be3ab80e28b8ff212f51ea55616` |
+| `nd-unfolding/rsn/test_rsn.py` | `17d68e3c2cfdc8cb6996b827fb004299ec393dd7735f6e2f893b283241cc0da3` |
+| `nd-unfolding/rsn/rsn_mutation.py` | `5e4351bb8ede849bd66e21c7fe4af35595a5d4ce19c713a13bfb2e688f5486bb` |
 
 These files are used unchanged: `pvl_unfold.py` `59ab0e11…`, `pvl_lib.py` `f8a7d2c2…`, `omnifold_nn_core.py`
-`24f87f11…`, `fd_f0_regrade.py` `0dfa722c…`, `build_cmodel5d.py` `aaa81575…`.
+`24f87f11…`, `fd_f0_regrade.py` `0dfa722c…`, `build_cmodel5d.py` `aaa81575…`, `s5p_truths.py`, `s5c_pseudo.py`.
 
 ## 8. Tests and mutants
 
 `test_rsn.py` is numpy-only. The estimators are stubs, and the products and records are synthetic; the committed
-records the code pins are read from the checkout. It covers:
-- the box sum against a brute force;
-- the smoothing's weighted mean and normalization;
-- G6's cut and rescaling;
-- the step share;
-- the manipulation check's boundaries and the radius ladder;
-- each prep control's refusal;
-- the weighted regressor's rows, weights and fit count, and every refusal and patch restore;
-- the arms' rows and the WR biases;
-- the NC, NC-S and meta refusals;
-- the regrade's estimates and matrices against fd_f0_regrade's own functions;
-- NC-R refusing on each differing field, and C-INV;
-- every outcome table's boundaries;
-- the launcher's refusals and its seven declared steps, in smoke mode.
+records the code pins are read from the checkout. To rev 1's coverage it adds:
+- the regressor's weight equals w_push · w_truth at every iteration, with w_push recomputed from the loop's second
+  classifier;
+- the transfer diagnostic leaves the loop bitwise unchanged, with its mask, probe rows, weights and summary;
+- the declared truths replace only the identity reweight in a closure, with the A7 hypothesis pinned;
+- the closure references, TR_data's bitwise control and the transfer records;
+- WR's matrices, eigen-components and failing-direction projection;
+- the deformed-truth and transfer classes and WR's verdict;
+- J3 and the per-job limits.
 
-`rsn_mutation.py` plants 70 declared defects. Each must be killed by its named test. The receipts are in `rev1/`
+`rsn_mutation.py` plants 101 declared defects. Each must be killed by its named test. The receipts are in `rev2/`
 (clean clone, serial, nice 19, one thread).
 
 ## 9. CITABLE FOR / NOT CITABLE FOR
@@ -344,8 +449,25 @@ records the code pins are read from the checkout. It covers:
 - **Not citable for:**
   - any result;
   - a calibrated uncertainty;
-  - a change to C_model, to a grade or to a criterion;
+  - a change to C_model, to the estimator, to a grade or to a criterion;
   - the carbon-versus-CH difference;
+  - F1.2(i), or TR against the omitted truth quantities (§2.7);
   - LL5D's coverage under a changed C_model;
   - the Stage G χ²;
   - any paper sentence.
+
+## 10. Rev 2 changes (the director's request of 2026-11-11)
+
+**New arms and readings:**
+- **F1.1 (fresh major 1):** WR gains the A7 GiBUU hybrid and q3 closures, and WU their equal-weight references (§2.5).
+  Rev 1's prior and NuWro closures are kept (both sets). Rev 2 adds P7's deformed-truth classes and WR's verdict,
+  and the covariance-weighted directions F1.1 asks for (§3.3).
+- **F1.2(ii):** TR, the transfer test, with its seed and fraction fixed (§2.6, §3.5).
+- **F1.2(i):** not declared, for a missing input; what would provide it is stated (§2.7).
+
+**Changes to rev 1:**
+- **WR's weight** is now w_push · w_truth, T3's MW definition (rev 1: w_truth).
+- **J2** gains TR_data (8 steps, limit 0:22:00), and **J3** is new.
+- **The cap** is raised from 0.75 to 1.25 node-h (projected 0.78).
+- **The HPSS recommendation** is added (§6).
+- **Tests** grow from 41 to 50, and **mutants** from 70 to 101.
