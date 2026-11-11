@@ -1,0 +1,13 @@
+# task	job	arm	ratio	closure	regressor_weight	role (RSN-DECLARATION.md)
+rsn_nc	J1	NC	frozen:tune_v1	no	none	§2.4 NC: equals P5 and L-5D-PV_e_tune_v1 bitwise on the full grid; the zero of every shift
+G6_gibuu	J2	G6	rsn:G6/gibuu	no	none	§2.1 referee 3.1: GiBUU's shift on p_parallel < 6 GeV/c
+SM_genie_mec	J2	SM	rsn:SM/genie_mec	no	none	§2.2 referee 3.2: GENIE+MEC, smoothed reweight
+SM_nuwro	J2	SM	rsn:SM/nuwro	no	none	§2.2 referee 3.2: NuWro, smoothed reweight
+SM_gibuu	J2	SM	rsn:SM/gibuu	no	none	§2.2 referee 3.2: GiBUU, smoothed reweight
+WR_data	J2	WR	frozen:tune_v1	no	w_truth	§2.3 referee 1.2: the data, weighted regressor
+WR_closure_tune_v1	J2	WR	frozen:tune_v1	yes	w_truth	§2.3 referee 1.2: the closure floor, weighted regressor
+WR_closure_nuwro	J2	WR	frozen:nuwro	yes	w_truth	§2.3 referee 1.2: the NuWro closure, weighted regressor
+G6_gibuu	J2n	G6	rsn:G6/gibuu	no	none	§6: J2 without SM, only if the prep built no SM reweight
+WR_data	J2n	WR	frozen:tune_v1	no	w_truth	§6: as J2
+WR_closure_tune_v1	J2n	WR	frozen:tune_v1	yes	w_truth	§6: as J2
+WR_closure_nuwro	J2n	WR	frozen:nuwro	yes	w_truth	§6: as J2
