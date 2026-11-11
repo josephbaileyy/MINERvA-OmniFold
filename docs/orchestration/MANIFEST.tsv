@@ -13619,6 +13619,9 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/tier2-202611
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/tier2-20261110/t2b/t2b.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/tier3-20261110/T3-ADDENDUM-V1.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/tier3-20261110/T3-PIPELINE-TESTS-DECLARATION.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/tier3-20261110/addendum-v1/README.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/tier3-20261110/addendum-v1/mutation.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/tier3-20261110/addendum-v1/tests.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/tier3-20261110/rev2/README.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/tier3-20261110/rev2/mutation.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/tier3-20261110/rev2/tests.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
