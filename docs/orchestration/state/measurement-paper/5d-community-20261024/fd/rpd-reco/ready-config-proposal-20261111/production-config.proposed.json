@@ -151,12 +151,12 @@
  "mat_constructor": {
   "analysis_arguments_citation": {
    "file": "MINERvA101/MINERvA-101-Cross-Section/runEventLoopOmniFold.cpp",
-   "git_sha": "f4cd8f8b",
+   "git_sha": "f4cd8f8b6dcaef727b681d6c4963909945ceda24",
    "lines": [
     1698,
     1701
    ],
-   "status": "short source revision f4cd8f8b verified; full SHA must be measured before READY"
+   "status": "full SHA measured 2026-11-11 (git rev-parse f4cd8f8b in this repository); lines 1698-1701 set SetNuEConstraint(true), the playlist, SetAnalysisNuPDG(14) and SetNFluxUniverses(100); the file's sha256 at that commit is recorded in PROPOSAL.md item 7"
   },
   "apply_nue_constraint": true,
   "constraint_source_citation": {

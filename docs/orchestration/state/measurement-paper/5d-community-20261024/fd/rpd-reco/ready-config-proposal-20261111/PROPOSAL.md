@@ -32,7 +32,7 @@ authoring lane (this lane, by the director's routing of 2026-11-11), only after 
 ## Rulings (director, 2026-11-11) and the open items
 
 coverage-5b-audit: **GO as a proposal** at `2d3c6a0f` (2026-11-11), with no blocking or major findings. READY stays gated
-on items 1-8.
+on items 1-10.
 
 The authoring stays with this lane. Codex2's loop is now Joseph's note work. The proposal goes to coverage-5b-audit.
 
@@ -48,7 +48,7 @@ The authoring stays with this lane. Codex2's loop is now Joseph's note work. The
      - The histogram is `flux_E_cvweighted`, or `flux_E_unweighted` for the generated flux (`:942`).
      - `playlistString` (`:1936-1976`) maps 1A–1F to `minervame1D`, 1G, 1L and 1M to `minervame1M`, and 1N–1P to
        `minervame1N`.
-     - The constructor (`:371-430`) opens a closed set of 15 paths, which `MAT-DATA-DEPENDENCIES.json` (`b056487e…`) lists
+     - The string constructor (`:372-435`) opens a closed set of 15 paths, which `MAT-DATA-DEPENDENCIES.json` (`b056487e…`) lists
        and custody's `MAT_INVENTORY` guard fixes (audit c3):
        - 12 flux files: `flux-{gen2thin,g4numiv6}-pdg{14,-14}-minervame<PL>_rearrangedUniverses.root` under
          `$PLOTUTILSROOT/data/flux`;
@@ -90,13 +90,25 @@ The authoring stays with this lane. Codex2's loop is now Joseph's note work. The
      O_NOATIME, and these paths are protected.
 5. **`premise`:** runtime by design. It is measured at P0 (BINDING-1 A1 item 3).
 6. **The clone root: ruled.** The flux connect clones to exactly `/dev/shm/limres-rpd-flux1/repo`.
-7. **Also open, from the draft itself.** `mat_constructor.analysis_arguments_citation` reads "short source revision
-   f4cd8f8b verified; full SHA must be measured before READY".
+7. **The analysis source: resolved on 2026-11-11.** `mat_constructor.analysis_arguments_citation` had only the short
+   revision `f4cd8f8b`.
+   - The full sha is `f4cd8f8b6dcaef727b681d6c4963909945ceda24` (git rev-parse in this repository).
+   - `MINERvA101/MINERvA-101-Cross-Section/runEventLoopOmniFold.cpp` there has sha256 `57792e42…`, unchanged on main.
+   - Its lines 1698-1701 set `SetNuEConstraint(true)`, the playlist, `SetAnalysisNuPDG(14)` and `SetNFluxUniverses(100)`.
+   - The full sha is now in the proposed config. The file's sha256 is recorded only here. A sha256 beside the
+     config's `file` key would add a live receipt binding (the binding inventory moved from 169 to 170 and the hook
+     refused), and that needs a ruling.
 8. **Required before READY (coverage-5b-audit, 2026-11-11): no placeholder anywhere.**
    - `${RUN_DATE}` must be literal.
    - No code refuses an unexpanded `${` in `flux_extract` or `flux_custody`: the `${` check at
      `fd_rpd_reco_custody.py:1049` covers `trace_platform_roots` only.
    - So READY needs a check that no `${` remains anywhere in the config.
+   - **The director's requirement (2026-11-11).** The check fails loudly. It refuses any `${` left in the resolved
+     config or in the arguments to `flux_custody` and `flux_extract`, and a mutant tests it. This is a change to #848's
+     code.
+10. **Required before READY (director, 2026-11-11): the receipt pins all 15 MAT files by content.** The run's receipt
+    records an O_NOATIME sha256 of every file in the closed 15-path set FluxReweighter opens, not only the three
+    numerators NATIVE_SELECTION compares. This answers audit c1. It is a change to #848's code.
 9. **A departure from the draft template (audit c2).** `trace_instrument_directories` lists
    `/pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/build`, the pscratch tree prologue5 used. The draft had
    `${BOUND_CHECKOUT}/unbinned_unfolding/build`.
