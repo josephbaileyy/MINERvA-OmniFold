@@ -1726,6 +1726,56 @@ def test_measured_plan_and_price_stop_receipt(fixture: Fixture) -> None:
     assert stop["readings"] is None
 
 
+@pytest.mark.parametrize(
+    "where",
+    ["flux_custody", "flux_extract", "nested_list"],
+)
+def test_config_placeholder_refuses(fixture: Fixture, where: str) -> None:
+    """A READY config that still holds an unexpanded ${...} field refuses before any step (#1064)."""
+    assert fixture.execute("pins")["result"]["n_files"] == 24
+    # save_config rewrites flux_extract and flux_custody, so the placeholder goes into the saved file directly
+    fixture.save_config()
+    saved = json.loads(fixture.config_path.read_text())
+    if where == "nested_list":
+        saved["trace_note"] = ["literal", {"inner": "${RUN_DATE}"}]
+    else:
+        saved[where]["path"] = "/pscratch/x/rpd-reco-flux-${RUN_DATE}/run/x.json"
+    fixture.config_path.write_text(json.dumps(saved))
+    fixture.config_sha = R.digest(fixture.config_path)
+    fixture.config = saved
+    fixture.run = fixture.root / f"placeholder-{where}"
+    with pytest.raises(R.Refused, match="CONFIG_PLACEHOLDER"):
+        fixture.execute("pins")
+    assert R.placeholder_paths(fixture.config)
+
+
+def test_placeholder_paths_reports_each_location() -> None:
+    value = {"a": "plain", "b": {"c": "${X}/y", "${K}": 1}, "d": ["z", "${Q}"], "e": 3}
+    assert R.placeholder_paths(value) == ["$.b.c", "$.b.${K}", "$.d[1]"]
+    assert R.placeholder_paths({"a": ["$ not a placeholder", "{x}"]}) == []
+
+
+def test_argv_placeholder_refuses(fixture: Fixture) -> None:
+    run = fixture.root / "argv-run"
+    code = R.main(
+        [
+            "pins",
+            "--config",
+            str(fixture.config_path),
+            "--config-sha256",
+            fixture.config_sha,
+            "--run",
+            str(run),
+            "--timing-record",
+            "/pscratch/x/${RUN_DATE}/timing.json",
+        ]
+    )
+    assert code != 0
+    stop = json.loads((run / "pins.STOP.json").read_text())
+    assert stop["guard"] == "ARGV_PLACEHOLDER"
+    assert not (run / "pins.json").exists()
+
+
 def test_draft_configuration_refuses(fixture: Fixture) -> None:
     assert fixture.execute("pins")["result"]["n_files"] == 24
     fixture.config["configuration_status"] = "DRAFT_UNRESOLVED_RUNTIME"
@@ -2252,11 +2302,27 @@ def test_constrained_extract_protocol_roundtrip(
             "role": "constrained-numerator-input",
             "environment_key": "PLOTUTILSROOT",
             "relative_path": f"data/flux/flux-gen2thin-pdg14-minervame{group}_rearrangedUniverses.root",
+            "original": str(Path(item["original_path"])),
             "staged": copies[str(Path(item["original_path"]).resolve())]["staged"],
             "sha256": item["sha256"],
         }
         for group, item in selected.items()
     ]
+    # The other twelve of the closed fifteen-path set, as stand-ins with their own digests (the receipt pins all 15).
+    numerators = {(d["environment_key"], d["relative_path"]) for d in dependencies}
+    for key, relative in sorted(_custody_module().closed_mat_inventory() - numerators):
+        stand_in = fixture.run / "staged" / "mat-extra" / key / relative
+        stand_in.parent.mkdir(parents=True, exist_ok=True)
+        stand_in.write_bytes(f"stand-in {key}/{relative}".encode())
+        dependencies.append(
+            {
+                "environment_key": key,
+                "relative_path": relative,
+                "original": str(stand_in),
+                "staged": str(stand_in),
+                "sha256": R.digest(stand_in),
+            }
+        )
     listing = {
         path.name: {
             "name": path.name,
@@ -2309,6 +2375,16 @@ def test_constrained_extract_protocol_roundtrip(
         ),
     )
     result = R.flux_extract(inputs, ["unit protocol"])
+    pinned = result["mat_dependency_sha256"]
+    assert (
+        len(pinned) == 15
+        and {tuple(k.split("/", 1)) for k in pinned}
+        == _custody_module().closed_mat_inventory()
+    )
+    assert all(
+        pinned[f"{d['environment_key']}/{d['relative_path']}"]["sha256"] == d["sha256"]
+        for d in dependencies
+    )
     assert calls == [
         (14, True, "minervame" + group, 2, 1, 100) for group in ("1D", "1M", "1N")
     ]
@@ -2316,7 +2392,8 @@ def test_constrained_extract_protocol_roundtrip(
     assert len(result["factor_products"]) == 12
     assert result["spectra"]["1D"]["integral"] == 12
     assert result["spectra"]["1D"]["raw_file_integral_descriptive_only"] == 3
-    assert len(root.opened) == 6 and all(
+    # 6 opens of the numerator protocol, plus one units read of each of the 11 other .root files in the fifteen
+    assert len(root.opened) == 6 + 11 and all(
         Path(p).is_relative_to(fixture.run / "staged") for p in root.opened
     )
     extract = fixture.run / "flux-extract.json"
@@ -2343,7 +2420,7 @@ def test_constrained_extract_protocol_roundtrip(
     fixture.run = fixture.root / "numeric-protocol"
     fixture.execute("pins")
     p0 = fixture.execute("p0")["result"]
-    assert len(root.opened) == 6
+    assert len(root.opened) == 6 + 11  # p0 opens no further ROOT file
     assert p0["spectra"]["1D"]["integral"] == 12
     assert p0["background_scale"]["1M"]["1D"] == pytest.approx(12 / 16)
 
@@ -2811,6 +2888,73 @@ def test_prepare_firing_guards(
     if defect.startswith("fence"):
         assert not (run / "original-inputs").exists()
         assert not (run / "mat-data").exists()
+
+
+def test_prepare_placeholder_refuses(
+    fixture: Fixture, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    custody, run, _roots = _prepare_fixture(fixture, monkeypatch)
+    saved = json.loads(fixture.config_path.read_text())
+    saved["flux_extract"][
+        "path"
+    ] = "/pscratch/x/rpd-reco-flux-${RUN_DATE}/run/flux-extract.json"
+    fixture.config_path.write_text(json.dumps(saved))
+    fixture.config_sha = R.digest(fixture.config_path)
+    with pytest.raises(custody.CustodyRefused) as caught:
+        custody.prepare(R, fixture.config_path, fixture.config_sha, run)
+    assert caught.value.details["guard"] == "PREPARE_PLACEHOLDER"
+    assert not (run / "original-inputs").exists()
+
+
+def test_custody_argv_placeholder_refuses(
+    fixture: Fixture,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    custody, run, _roots = _prepare_fixture(fixture, monkeypatch)
+    monkeypatch.setitem(sys.modules, "fd_rpd_reco", R)
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "fd_rpd_reco_custody.py",
+            "trace-check",
+            "--run",
+            str(run),
+            "--trace",
+            "/pscratch/x/${RUN_DATE}/flux-extract.strace",
+            "--policy",
+            str(run / "trace-policy.json"),
+            "--policy-sha256",
+            "0" * 64,
+        ],
+    )
+    assert custody.main() == 4
+    assert "unexpanded ${...} field in the command arguments" in capsys.readouterr().err
+
+
+def test_mat_dependency_receipt_all_fifteen(
+    fixture: Fixture, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The receipt pins all fifteen MAT files by their prepare-time O_NOATIME sha256; any gap refuses."""
+    custody, run, _roots = _prepare_fixture(fixture, monkeypatch)
+    prepared = custody.prepare(R, fixture.config_path, fixture.config_sha, run)
+    dependencies = prepared["mat_dependencies"]
+    receipt = R.mat_dependency_receipt(dependencies)
+    assert len(receipt) == 15
+    assert {tuple(k.split("/", 1)) for k in receipt} == custody.closed_mat_inventory()
+    for item in dependencies:
+        entry = receipt[f"{item['environment_key']}/{item['relative_path']}"]
+        assert entry["sha256"] == item["sha256"] == R.digest(Path(item["original"]))
+    for index in range(len(dependencies)):
+        with pytest.raises(R.Refused, match="MAT_DEPENDENCY_RECEIPT"):
+            R.mat_dependency_receipt(dependencies[:index] + dependencies[index + 1 :])
+    with pytest.raises(R.Refused, match="MAT_DEPENDENCY_RECEIPT"):
+        R.mat_dependency_receipt(dependencies + dependencies[:1])
+    bad = [dict(item) for item in dependencies]
+    bad[0]["sha256"] = "z" * 64
+    with pytest.raises(R.Refused, match="MAT_DEPENDENCY_RECEIPT"):
+        R.mat_dependency_receipt(bad)
 
 
 def test_run_overlaps_protected_guard(
