@@ -12,7 +12,7 @@ We apply \emph{unbinned machine-learning unfolding} (OmniFold~\cite{Andreassen:2
 % Search: held-out simulation; held-out-MC re-test; S1 has not been coverage-tested; coverage statement about Q_R (the search of its home, sec_systematics.tex sec:uq-boot) @ ddf16f10
 \begin{tabular}{@{}p{0.18\textwidth}p{0.22\textwidth}p{0.28\textwidth}p{0.26\textwidth}@{}}
 \toprule
-Result component & Estimator / construction & Status \& validation checks & Citability \& limitations \\
+Result component & Estimator / construction & Status \& validation checks & Interpretation \& limits \\
 \midrule
 2D central value ($d^{2}\sigma/(d\pT\,d\pPar)$) & LightGBM, 5 iterations, seed 42, refined negative-weight subtraction (configuration~(f); exact-split cross-check) & The iteration comparison was measured for the exact-split cross-check. Completeness is a monitored self-check and makes no recovery claim. Closure passes depend on the deformation and the amplitude (\S\ref{sec:validation}). Both comparisons with publication known before learner choice (\S\ref{sec:method-config}). & Citable for reproduction of published integral within about one percent with correlated shape difference. Not citable as independent validation (\S\ref{sec:method-config}); readiness for publication as a measurement has not been established (\S\ref{sec:results}). \\
 \addlinespace
