@@ -47,3 +47,23 @@ paper's acceptance.
 5. **The result is read once** from its committed record. It enters the paper or the note only by Joseph's decision.
 
 Nothing is submitted, deposited or tagged.
+
+## Binding 1, addendum R1: run before the LL5D readout (director, 2026-11-11, on Joseph's decision)
+
+NERSC's maintenance reservation starts on 2026-11-11 at 14:00Z. Until then the cluster can run jobs that end before
+it, while the LL5D gates (about 28 h each) cannot. The director asked whether E96D should use that window, since it
+does not depend on LL5D. Joseph answered, verbatim:
+
+> Run E96D now (Recommended)
+
+(sha256 of the text plus a final newline begins `e12645da75b03c28`). Asked the same day whether RPD-RECO's next login steps
+should run now, he answered "Yes, run them now" (`c690934f020431a1`).
+
+**Ruling 1's "nothing runs before the LL5D readout" is lifted for E96D.** Everything else stands:
+- the dry run and its GATE first;
+- the full run only if the gate passes and it can end before the maintenance starts; otherwise it waits until after;
+- the job family is announced to cov2d, and cov2d_fence.sh runs first;
+- the cap is 4.0 node-h;
+- the result is read once, and enters the paper or note only by Joseph's decision.
+
+Nothing is submitted, deposited or tagged.
