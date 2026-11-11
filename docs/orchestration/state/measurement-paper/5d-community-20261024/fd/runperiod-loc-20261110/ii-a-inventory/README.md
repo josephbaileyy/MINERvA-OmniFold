@@ -56,6 +56,10 @@ not run. A new event-loop pass that carries the MINOS-method flag is outside RPL
 - **No AnaTuple was read in this connect.** The declaration's inventory row also names one data and one MC AnaTuple.
   The bound script reads only the zero loops. A join needs the key on both sides, and the zero loops carry none, so the
   AnaTuple side cannot change the outcome.
+- **The universe files encode the method split only in MC.** MAT adds the MINOS curvature term to the shift only when
+  `<AnaTool>_minos_used_curvature` is true (`i-bandsize/matsrc/MuonSystematics.cxx.numbered.txt:130-147`, sha256
+  `85780aee…`), so the MC's shifted branches carry the split implicitly. The data have no shifted branches, so this
+  cannot partition the data and does not make (ii-a).
 - **No physics column was read**, and no data/MC quantity was formed (ruling 5).
 
 ## Licence
