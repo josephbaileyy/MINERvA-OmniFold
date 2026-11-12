@@ -1,0 +1,75 @@
+## case pass rc=0
+GUARD REFUSED: RSN read-set guard: refusing to open <w>/p-pass/cov2d-run-20261104/rsn-guard-selftest-absent
+guard self-test rc=0
+rsn_cmodel.py build rc=0
+rsn_regrade.py rc=0
+rsn_read.py rc=0
+-- build:       30 paths
+-- regrade:       32 paths
+-- read:       29 paths
+READ SET HELD: every opened path is under the deploy, RSN's own out/, the frozen products or the environment
+POST PASS: cmodel build, regrade and read written under <w>/p-pass/rsn-20261112/out
+outputs: cmodel regrade.json rsn_readout.json ; self copy removed: yes
+## case rsnq rc=9
+REFUSED (nothing written): rsn_ jobs are queued or running: 61170761|rsn_J3|RUNNING
+outputs: ; self copy removed: yes
+## case host rc=9
+REFUSED (nothing written): host dtn01 is not a login node
+outputs: ; self copy removed: yes
+## case slurm rc=9
+REFUSED (nothing written): a Slurm job is set (1)
+outputs: ; self copy removed: yes
+## case j3fail rc=9
+REFUSED (nothing written): 61170761 is not rsn_J3 COMPLETED 0:0 (61170759|rsn_J2|COMPLETED|0:0|00:15:02
+outputs: ; self copy removed: yes
+## case j2rc rc=9
+REFUSED (nothing written): <w>/p-j2rc/rsn-20261112/out/logs/rsn_J2_61170759.out has no '[rsn] job=J2 rc=0' line
+outputs: ; self copy removed: yes
+## case prod rc=9
+REFUSED (nothing written): <w>/p-prod/rsn-20261112/out/products/WU_closure_q3.npz on disk is not J3's logged c0da7c4c6b9525546ebb53083f94d0a940d4f03aef95b4fb8654a9468eac5a91
+outputs: ; self copy removed: yes
+## case nonc rc=9
+REFUSED (nothing written): <w>/p-nonc/rsn-20261112/out/nc.json records no rsn-nc/1 PASS
+outputs: ; self copy removed: yes
+## case dirty rc=9
+REFUSED (nothing written): the deploy is not 5e43e509d08d9b294594988f2c21e50e281e7ad8 clean (HEAD=5e43e509d08d9b294594988f2c21e50e281e7ad8,        1 porcelain lines)
+outputs: ; self copy removed: yes
+## case stage rc=9
+REFUSED (nothing written): staged cpl_block.npz is not at its pin
+outputs: ; self copy removed: yes
+## case exists rc=9
+REFUSED (nothing written): <w>/p-exists/rsn-20261112/out/regrade.json exists
+outputs: regrade.json ; self copy removed: yes
+## case denybuild rc=8
+GUARD REFUSED: RSN read-set guard: refusing to open <w>/p-denybuild/cov2d-run-20261104/rsn-guard-selftest-absent
+guard self-test rc=0
+rsn_cmodel.py build rc=1
+    raise PermissionError(f"RSN read-set guard: refusing to open {p}")
+PermissionError: RSN read-set guard: refusing to open <w>/p-denybuild/s5c-20260924/runs/p2/bkg_dump.npz
+STOP: rsn_cmodel.py build rc=1
+outputs: ; self copy removed: yes
+## case denyread rc=8
+GUARD REFUSED: RSN read-set guard: refusing to open <w>/p-denyread/cov2d-run-20261104/rsn-guard-selftest-absent
+guard self-test rc=0
+rsn_cmodel.py build rc=0
+rsn_regrade.py rc=0
+rsn_read.py rc=1
+    raise PermissionError(f"RSN read-set guard: refusing to open {p}")
+PermissionError: RSN read-set guard: refusing to open <w>/p-denyread/s5c-20260924/runs/p2/bkg_dump.npz
+STOP: rsn_read.py rc=1
+outputs: cmodel regrade.json ; self copy removed: yes
+## case outside rc=8
+GUARD REFUSED: RSN read-set guard: refusing to open <w>/p-outside/cov2d-run-20261104/rsn-guard-selftest-absent
+guard self-test rc=0
+rsn_cmodel.py build rc=0
+rsn_regrade.py rc=0
+rsn_read.py rc=0
+-- build:       30 paths
+-- regrade:       33 paths
+  OUTSIDE <w>/p-outside/elsewhere/x.npz
+-- read:       29 paths
+STOP: a tool opened a path outside the declared read set (listed OUTSIDE above)
+outputs: cmodel regrade.json rsn_readout.json ; self copy removed: yes
+## the deny cases: the guard's refusals (it raises before the open, so the denied file is never opened)
+  denybuild: 1 refusal line(s) naming bkg_dump.npz
+  denyread: 1 refusal line(s) naming bkg_dump.npz
