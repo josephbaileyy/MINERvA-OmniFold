@@ -23,8 +23,8 @@
 # (S0's base_cv.root, S1's twelve zero loops, lat_zero.npz and lat_zero_bkg.npz) and STOPs if one is missing; checks
 # the step's read set against the pinned policy-config.json and RDX's never-read list. No set -u.
 SELF=$1; STEP=${2:?step}; PIN=${3:?pin}; LIMIT=${4:-}
-B=/pscratch/sd/j/josephrb/rdx-20261112
-D=$B/deploy; D3=$B/deploy3; OUT=$B/out; BUILD=$B/build
+B=/pscratch/sd/j/josephrb/rdx-20261112b   # rdx-20261112 is spent (s0 STOP, 2026-11-12); left in place
+D=$B/deploy; D3=$B/deploy3; OUT=$B/out; RDXBUILD=$B/build   # not BUILD: conda's activation sets BUILD
 CANON=/pscratch/sd/j/josephrb/MINERvA-OmniFold
 CANON_SRC=$CANON/MINERvA101/MINERvA-101-Cross-Section; OPT=$CANON/MINERvA101/opt
 MPARAM=$OPT/etc/MParamFiles/data
@@ -78,7 +78,7 @@ submit() {  # submit NAME LIMIT SCRIPT ARGS...
   echo "SUBMIT id=$jid name=$name limit=$lim utc=$(date -u +%FT%TZ)" | tee -a "$OUT/submissions.log"
   squeue -j "$jid" -o '%i|%j|%T|%l|%q' 2>&1
 }
-md5_of() { awk '$2 ~ /bld_'"$1"'\/runEventLoopOmniFold$/ && length($1) == 32 {print $1}' "$BUILD/MANIFEST.md5"; }
+md5_of() { awk '$2 ~ /bld_'"$1"'\/runEventLoopOmniFold$/ && length($1) == 32 {print $1}' "$RDXBUILD/MANIFEST.md5"; }
 
 case "$STEP" in
 gs2|gmerge|gs3a|gs3b)
@@ -88,46 +88,46 @@ gs2|gmerge|gs3a|gs3b)
   { echo "pin=$PIN"; [ "$STEP" = gmerge ] && echo "limit=$LIMIT"; echo "utc=$(date -u +%FT%TZ)"; } > "$G"; cat "$G"
   ;;
 s0)
-  [ ! -e "$BUILD" ] || stop "$BUILD exists"
+  [ ! -e "$RDXBUILD" ] || stop "$RDXBUILD exists"
   policy "$CANON_SRC" "$OPT/lib" "$S0MAN" "$MPARAM"
-  mkdir -p "$BUILD" || stop "mkdir $BUILD"
-  for v in base rdx; do rsync -a --exclude 'build' --exclude 'build.*' "$CANON_SRC/" "$BUILD/src_$v/" || stop "rsync $v"; done
-  (cd "$BUILD/src_rdx" && patch -p1 --forward < "$R/runEventLoopOmniFold-truthx.patch") || stop "the patch does not apply"
-  cmp -s "$BUILD/src_base/runEventLoopOmniFold.cpp" "$CANON_SRC/runEventLoopOmniFold.cpp" || stop "base source is not canonical"
-  diffs=$(diff -rq "$BUILD/src_base" "$BUILD/src_rdx" | sort)
-  [ "$diffs" = "Files $BUILD/src_base/runEventLoopOmniFold.cpp and $BUILD/src_rdx/runEventLoopOmniFold.cpp differ" ] \
+  mkdir -p "$RDXBUILD" || stop "mkdir $RDXBUILD"
+  for v in base rdx; do rsync -a --exclude 'build' --exclude 'build.*' "$CANON_SRC/" "$RDXBUILD/src_$v/" || stop "rsync $v"; done
+  (cd "$RDXBUILD/src_rdx" && patch -p1 --forward < "$R/runEventLoopOmniFold-truthx.patch") || stop "the patch does not apply"
+  cmp -s "$RDXBUILD/src_base/runEventLoopOmniFold.cpp" "$CANON_SRC/runEventLoopOmniFold.cpp" || stop "base source is not canonical"
+  diffs=$(diff -rq "$RDXBUILD/src_base" "$RDXBUILD/src_rdx" | sort)
+  [ "$diffs" = "Files $RDXBUILD/src_base/runEventLoopOmniFold.cpp and $RDXBUILD/src_rdx/runEventLoopOmniFold.cpp differ" ] \
     || stop "unexpected source differences: $diffs"
   $PY -I -B "$R/rdx_provenance.py" --s0-manifest "$S0MAN" --canon-src "$CANON_SRC" --opt-lib "$OPT/lib" \
-      --synced "$BUILD/src_base" --out "$BUILD/provenance.json" || stop "pre-build provenance failed (no build)"
-  $SYSPY -I -B "$R/rdx_paths.py" manifest --root "$MPARAM" --out "$BUILD/RUNTIME.sha256" > "$BUILD/runtime.json" \
+      --synced "$RDXBUILD/src_base" --out "$RDXBUILD/provenance.json" || stop "pre-build provenance failed (no build)"
+  $SYSPY -I -B "$R/rdx_paths.py" manifest --root "$MPARAM" --out "$RDXBUILD/RUNTIME.sha256" > "$RDXBUILD/runtime.json" \
     || stop "the runtime data manifest failed"
   ( source "$CANON/setup_salloc_env.sh" > /dev/null 2>&1
     { echo "# modules"; module list 2>&1; echo "# compiler"; c++ --version 2>&1 | head -1; echo "# ROOT"; root-config --version 2>&1
-    } > "$BUILD/environment.txt"
+    } > "$RDXBUILD/environment.txt"
     for v in base rdx; do
-      mkdir -p "$BUILD/bld_$v" && cd "$BUILD/bld_$v" || exit 6
-      cmake "$BUILD/src_$v" -DCMAKE_INSTALL_PREFIX="$BUILD/opt_$v" -DMAT_DIR="$OPT/lib/cmake/MAT" \
+      mkdir -p "$RDXBUILD/bld_$v" && cd "$RDXBUILD/bld_$v" || exit 6
+      cmake "$RDXBUILD/src_$v" -DCMAKE_INSTALL_PREFIX="$RDXBUILD/opt_$v" -DMAT_DIR="$OPT/lib/cmake/MAT" \
         -DMAT-MINERvA_DIR="$OPT/lib/cmake/MAT-MINERvA" -DUnfoldUtils_DIR="$OPT/lib/cmake/UnfoldUtils" \
         -DGENIEXSecExtract_DIR="$OPT/lib/cmake/GENIEXSecExtract" > cmake.log 2>&1 || exit 7
       make -j 8 runEventLoopOmniFold > make.log 2>&1 || exit 8
-    done ) || stop "the build failed (see $BUILD/bld_*/cmake.log, make.log)"
-  md5sum "$BUILD"/bld_base/runEventLoopOmniFold "$BUILD"/bld_rdx/runEventLoopOmniFold > "$BUILD/MANIFEST.md5"
-  sha256sum "$BUILD"/bld_base/runEventLoopOmniFold "$BUILD"/bld_rdx/runEventLoopOmniFold "$BUILD/provenance.json" \
-    "$BUILD/RUNTIME.sha256" "$BUILD/environment.txt" > "$BUILD/MANIFEST.sha256"
-  echo "== provenance"; cat "$BUILD/provenance.json"; echo "== environment"; cat "$BUILD/environment.txt"
-  echo "== binaries"; cat "$BUILD/MANIFEST.md5"; echo "base md5 beside S0's a6b85ec3068536b0cb278b68d6f40359 (reported, not gated)"
-  echo "== RUNTIME.sha256 $(sha256sum "$BUILD/RUNTIME.sha256" | cut -d' ' -f1) ($(wc -l < "$BUILD/RUNTIME.sha256") files)"
+    done ) || stop "the build failed (see $RDXBUILD/bld_*/cmake.log, make.log)"
+  md5sum "$RDXBUILD"/bld_base/runEventLoopOmniFold "$RDXBUILD"/bld_rdx/runEventLoopOmniFold > "$RDXBUILD/MANIFEST.md5"
+  sha256sum "$RDXBUILD"/bld_base/runEventLoopOmniFold "$RDXBUILD"/bld_rdx/runEventLoopOmniFold "$RDXBUILD/provenance.json" \
+    "$RDXBUILD/RUNTIME.sha256" "$RDXBUILD/environment.txt" > "$RDXBUILD/MANIFEST.sha256"
+  echo "== provenance"; cat "$RDXBUILD/provenance.json"; echo "== environment"; cat "$RDXBUILD/environment.txt"
+  echo "== binaries"; cat "$RDXBUILD/MANIFEST.md5"; echo "base md5 beside S0's a6b85ec3068536b0cb278b68d6f40359 (reported, not gated)"
+  echo "== RUNTIME.sha256 $(sha256sum "$RDXBUILD/RUNTIME.sha256" | cut -d' ' -f1) ($(wc -l < "$RDXBUILD/RUNTIME.sha256") files)"
   ;;
 s1)
   [[ "$LIMIT" =~ ^20[0-9]{2}-[01][0-9]-[0-3][0-9]T[0-2][0-9]:[0-5][0-9]:[0-5][0-9]Z$ ]] || stop "s1 needs cov2d's LL5D atime-post UTC time"
   [ "$(date -u +%Y%m%d%H%M%S)" -ge "$(echo "$LIMIT" | tr -d 'TZ:-')" ] || stop "cov2d's LL5D atime-post time $LIMIT is not yet past"
   mkdir -p "$OUT/gates"; [ -e "$OUT/gates/ll5d_atime_post.txt" ] || echo "ll5d_atime_post_utc=$LIMIT recorded=$(date -u +%FT%TZ)" > "$OUT/gates/ll5d_atime_post.txt"
-  MD5=$(md5_of rdx); [ -n "$MD5" ] || stop "no patched binary in $BUILD/MANIFEST.md5"
+  MD5=$(md5_of rdx); [ -n "$MD5" ] || stop "no patched binary in $RDXBUILD/MANIFEST.md5"
   policy "$CANON/2d-unfolding/playlist_manifests/1A_MC.txt" "$CANON/2d-unfolding/playlist_manifests/1A_Data.txt" \
-    /pscratch/sd/j/josephrb/minerva/minerva_large_files "$BUILD/bld_rdx/runEventLoopOmniFold"
+    /pscratch/sd/j/josephrb/minerva/minerva_large_files "$RDXBUILD/bld_rdx/runEventLoopOmniFold"
   fence
-  RDX_SMOKE=1 bash "$R/sbatch_rdx_evloop.sh" "$B" "$DEP" 1A "$BUILD/bld_rdx/runEventLoopOmniFold" "$MD5" || stop "the launcher's smoke failed"
-  submit rdx_s1_1A 2:15:00 "$R/sbatch_rdx_evloop.sh" "$B" "$DEP" 1A "$BUILD/bld_rdx/runEventLoopOmniFold" "$MD5"
+  RDX_SMOKE=1 bash "$R/sbatch_rdx_evloop.sh" "$B" "$DEP" 1A "$RDXBUILD/bld_rdx/runEventLoopOmniFold" "$MD5" || stop "the launcher's smoke failed"
+  submit rdx_s1_1A 2:15:00 "$R/sbatch_rdx_evloop.sh" "$B" "$DEP" 1A "$RDXBUILD/bld_rdx/runEventLoopOmniFold" "$MD5"
   ;;
 c1)
   F=$OUT/evloop/runEventLoopOmniFold_RDX_1A.root; [ -s "$F" ] || stop "no pilot output $F"
@@ -165,8 +165,8 @@ s2)
 1P 1:00:00
 EOF
 )
-    RDX_SMOKE=1 bash "$R/sbatch_rdx_evloop.sh" "$B" "$DEP" "$pl" "$BUILD/bld_rdx/runEventLoopOmniFold" "$MD5" || stop "smoke $pl"
-    submit "rdx_s2_$pl" "$lim" "$R/sbatch_rdx_evloop.sh" "$B" "$DEP" "$pl" "$BUILD/bld_rdx/runEventLoopOmniFold" "$MD5"
+    RDX_SMOKE=1 bash "$R/sbatch_rdx_evloop.sh" "$B" "$DEP" "$pl" "$RDXBUILD/bld_rdx/runEventLoopOmniFold" "$MD5" || stop "smoke $pl"
+    submit "rdx_s2_$pl" "$lim" "$R/sbatch_rdx_evloop.sh" "$B" "$DEP" "$pl" "$RDXBUILD/bld_rdx/runEventLoopOmniFold" "$MD5"
     sleep 5   # sacct lags sbatch; unlisted ids are counted from submissions.log anyway
   done
   ;;

@@ -234,20 +234,21 @@ the NuE overlap (cov2d's no-objection of 2026-11-12).
 
 | file | sha256 | role |
 |---|---|---|
-| `sbatch_rdx_evloop.sh` | `743b9e48cbeb36c39427aabba96514503b248c6faddc6947b95f5d3b331de6b5` | stages 1 and 2: one playlist's event loop |
+| `sbatch_rdx_evloop.sh` | `7ce210dcab5909fa590e75f3fc0371d958316e451de10dfd186398dde55ddc4e` | stages 1 and 2: one playlist's event loop |
 | `sbatch_rdx_merge.sh` | `742503fa085faa5f1fc5827bd43b247b9ca0cf76d1334d43637f05d3a675e483` | stage 2: merge, nn_dump, the dump and sidecar, K1 |
 | `sbatch_rdx_arms.sh` | `e3e031e75435184782f68f02639e0698ff9ab67d4173ce635209ca65420006c7` | stage 3: S3a or S3b |
 | `rdx_tasks.tsv` | `3ec5069127f5f937c84b4efdb34bdcc99d8acc4b20891f1b26b25e32d27f75b9` | §4's fifteen steps (a test requires equality with §4's table) |
-| `rdx_connect.sh` | `22159ebd99a836ff61791ce15b20b41c51ee8a353f8f2f67c16bf4b0c6d0c8ee` | the stepwise connect |
-| `rdx_connect_launch.sh` | `45949bc57f4e4248f3259afec4c9e58003ce4aecc590a9516a14d5bfebfac8d1` | its launcher: RSN connect 1's hop, passing the step, pin and limit |
+| `rdx_connect.sh` | `11e7ef921bcc227255200347277d7b976d927c5fee2824dd613d31896c968827` | the stepwise connect |
+| `rdx_connect_launch.sh` | `165fb98ebed89cf8fabd76d13c9bdc671c9ae5ca27c2377055c89d2760e0fb55` | its launcher: RSN connect 1's hop, passing the step, pin and limit |
 | `rdx_cap.py` | `457e89efa20b484cc0d54c1125636ee7e7d3f023cf3aa5462eb9771e3450e451` | the cap gate |
 | `rdx_merge.py` | `23dce7a447a830f5af1d3c6f708d2ec6de7f5d49cd4e9a4b7a7186aaaa3103e8` | the merge and K1 |
 | `rdx_paths.py` | `948c47e05f22396afafa20fbb2c89881dded027bd49e38c04fe76fdaf89e4dbe` | policy check, MP-1 stat, O_NOATIME staging and manifest |
 | `rdx_probe_walk.py` | `dedaa80e5fb108e4b96e61c901d101b4bd51d44d396b9f3d038d00e781c5b67e` | z3's probe: both walks on the pilot |
 | `rdx_dump.py` | `122702c647efc4518af51a7a4e99bba9d7d37332cbfbcc54f59734b2d28dde9b` | changed: adds `kept_walk_np` (z3); the loop stays the reference |
 | `test_rdx.py`, `rdx_mutation.py` | `8360dbf5…`, `270c251f…` | changed: 38 tests, 51 mutants (four for the vectorized walk) |
-| `test_rdx_stages.py`, `rdx_mutation_stages.py` | `5d93f345…`, `6190d0d7…` | 14 tests, 25 mutants |
-| `smoke_rdx_stages.sh` | `ce1ffb1915571f28e968909bd828ae59a94e1f54d05e02074036bbc44614b196` | 33 smoke cases (`launch/smoke.txt`) |
+| `test_rdx_stages.py`, `rdx_mutation_stages.py` | `d19068d1…`, `4bfea598…` | 16 tests, 28 mutants |
+| `setup_salloc_env.exports` | `e0d3b70088500bdced0a3f7dcf08eb179278aa85a501a165bef373fd20a7f51e` | the 82 variables `setup_salloc_env.sh` is measured to add (login27, 2026-11-12) |
+| `smoke_rdx_stages.sh` | `676bff5125548481b88a71986dc7625ea268ffb836b6ff845508d8502c3f1280` | 34 smoke cases (`launch/smoke.txt`) |
 
 **Job names.** One family, `rdx_<stage>_<playlist>`:
 - `rdx_s1_1A`;
@@ -358,7 +359,26 @@ deploy (`deploy3`) is cloned at it.
 **If s0 STOPs after its clone,** `$B/deploy` exists and a rerun of s0 refuses. The recovery is a new B name: a new
 connect sha, an audit delta and the director's go. Nothing is deleted, and the stopped deploy stays for diagnosis.
 
-**The smoke** (`launch/smoke.txt`, 33 cases) used a tiny git deploy, fake AnaTuples and gates, and stubs for
+**The s0 STOP of 2026-11-12 and its fix** (`run-s0-20261112/`; the director's rulings).
+- s0 passed provenance in full against S0's MANIFEST, then STOPped at the build. `source setup_salloc_env.sh` runs
+  conda's compiler activation, which exports `BUILD=x86_64-conda-linux-gnu` and so overwrote the connect's `$BUILD`.
+- **The fix:**
+  - the connect's build directory is `RDXBUILD`;
+  - B is `rdx-20261112b`. `rdx-20261112` is spent and left in place.
+- **A test** requires that no variable the connect or the three job scripts assign is on the measured list. That covers
+  plain assignments, `local`, `read` targets and loop variables. The measured list is `setup_salloc_env.exports`, the
+  82 names the setup adds, taken on login27 by the director's probe. A hand list (BUILD, HOST, PREFIX, the compilers
+  and their flags) is kept beneath it as a floor. Three mutants:
+  - the build directory named `BUILD` again;
+  - a job script assigning `CC`;
+  - the event-loop job still allowing the spent B.
+- **The smoke** now exports every measured name from its stub `setup_salloc_env.sh`, `BUILD` with conda's real value.
+  It runs s0 end to end in a fresh B: the clone, the patch, stubbed provenance, the O_NOATIME manifest and stubbed
+  builds. With the old name restored, the same case reproduces login27's failure exactly.
+- The stray `~/x86_64-conda-linux-gnu/` (s0's own three entries) was removed on the director's go, rc 0.
+- On the follow-up list: the setup also exports `CODEX_HOME`. That doesn't matter to RDX.
+
+**The smoke** (`launch/smoke.txt`, 34 cases) used a tiny git deploy, fake AnaTuples and gates, and stubs for
 hostname, squeue, sacct and sbatch. It never connects or submits. It covers:
 - **each job script's pass path and refusals:**
   - name, limit, fence (ll5d, rsn_), md5, an uncommitted manifest, an AnaTuple mtime, an existing output;
@@ -372,6 +392,7 @@ hostname, squeue, sacct and sbatch. It never connects or submits. It covers:
   - the cap gate;
   - the pilot's submit with its exact argv;
   - c1 with a failing walk probe, a probe that cannot run, a failing alignment, and a pass;
+  - s0 end to end, with the setup's measured exports in effect;
   - a dtn host and a bad pin.
 
 The smoke found one real defect, fixed here: the arms launcher's `python3 -c` import wrote `__pycache__` into the

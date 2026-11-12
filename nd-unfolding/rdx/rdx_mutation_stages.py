@@ -17,9 +17,10 @@ HERE = Path(__file__).resolve().parent
 ND = HERE.parent
 REPO = ND.parent
 FILES = ("rdx_cap.py", "rdx_merge.py", "rdx_paths.py", "sbatch_rdx_evloop.sh", "sbatch_rdx_merge.sh", "sbatch_rdx_arms.sh",
-         "rdx_connect.sh", "rdx_connect_launch.sh", "rdx_tasks.tsv", "rdx_common.py", "rdx_dump.py", "test_rdx_stages.py")
+         "rdx_connect.sh", "rdx_connect_launch.sh", "rdx_tasks.tsv", "rdx_common.py", "rdx_dump.py", "test_rdx_stages.py",
+         "setup_salloc_env.exports")
 CP, MG, PA, EV, SM, AR, CN, LA, TT = FILES[:9]
-EXPECTED_TESTS = 14
+EXPECTED_TESTS = 16
 MUTATIONS = [
     ("unlisted submissions ignored", CP, '        if kv["id"] not in listed:\n', "        if False:\n",
      "test_spent_held_unlisted_and_the_wanted_ceiling"),
@@ -62,6 +63,12 @@ MUTATIONS = [
      '  true \\\n    || stop', "test_c1_stops_on_the_walk_probe_and_s2_requires_its_pass"),
     ("s2 does not require the probe", CN, "for c in align_1A truthx_rows_1A walk_probe; do", "for c in align_1A truthx_rows_1A; do",
      "test_c1_stops_on_the_walk_probe_and_s2_requires_its_pass"),
+    ("the build directory named BUILD again", CN, "OUT=$B/out; RDXBUILD=$B/build", "OUT=$B/out; BUILD=$B/build",
+     "test_no_launcher_variable_is_one_the_env_setup_exports"),
+    ("a job script assigns CC", AR, 'OUT="${B}/out"\n', 'OUT="${B}/out"; CC=gcc\n',
+     "test_no_launcher_variable_is_one_the_env_setup_exports"),
+    ("the event-loop job still allows the spent B", EV, "== /pscratch/sd/j/josephrb/rdx-20261112b ||", "== /pscratch/sd/j/josephrb/rdx-20261112 ||",
+     "test_the_event_loop_job_allows_the_connects_b"),
     ("the connect changed under its pin", CN, "# RDX's connect (RDX-DECLARATION.md", "# RDX connect (RDX-DECLARATION.md",
      "test_the_launcher_pins_the_connect_script"),
 ]

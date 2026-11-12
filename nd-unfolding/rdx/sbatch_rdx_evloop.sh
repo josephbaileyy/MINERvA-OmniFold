@@ -23,7 +23,7 @@
 set -o pipefail   # NOT set -u: setup_salloc_env.sh references unset variables under nounset
 B="${1:?B}"; DEPLOY="${2:?deploy}"; PL="${3:?playlist}"; BIN="${4:?binary}"; EXPECT_MD5="${5:?md5}"
 say() { echo "[rdx-evloop] $*" >&2; }
-[[ "${B}" == /pscratch/sd/j/josephrb/rdx-20261112 || -n "${RDX_SMOKE}" ]] || { say "REFUSE: B is ${B}"; exit 2; }
+[[ "${B}" == /pscratch/sd/j/josephrb/rdx-20261112b || -n "${RDX_SMOKE}" ]] || { say "REFUSE: B is ${B}"; exit 2; }
 case "${PL}" in
   1A) LIMIT=2:15:00 ;; 1B) LIMIT=1:00:00 ;; 1C) LIMIT=1:15:00 ;; 1D) LIMIT=3:30:00 ;; 1E) LIMIT=2:45:00 ;;
   1F) LIMIT=3:45:00 ;; 1G) LIMIT=3:15:00 ;; 1L) LIMIT=1:00:00 ;; 1M) LIMIT=4:45:00 ;; 1N) LIMIT=2:45:00 ;;
