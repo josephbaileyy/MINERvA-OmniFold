@@ -2254,3 +2254,23 @@ was the mislabel. The director accepted bd08582ee, the hand re-cites of ALIASES 
   - m5/s11c's figure series, routed to the figure lane by the director;
   - the 4.2 split probe, whose script sha goes to the director first;
   - 1.5's CSVs, which are #981's release item.
+
+## 2026-11-12 — Figure 3: m5/Fm7 and s11c; the 4.2 split STOP; table S1's composition wording
+
+- **Split probe:** exit 6 (split-20261112/, 74cb1adc). None of the twelve May files carries the bkg_* branches.
+  Provenance search, read-only: the May files and the merged CV were made with the Phase-18 routing, run before
+  d1bc8813a was committed. The C++ behind $UNI was never committed. The run log says the out-of-phase-space set is
+  empty (2D_OMNIFOLD_RUN_LOG.md :1002-1009), and the template's composition is not settled. S2 :222, S1 :25 and table
+  S1's out-of-phase-space row are held for the director. Wording under three outcomes was sent.
+- **Table S1, new row:** now reads "its composition is not recorded" (the director's ruling).
+- **Figure 3**, by the director's routing ruling; the producer has no OWNER line, no other open PR touches it, and no
+  figures-lane session is live. It now draws the withheld shapes' injected changes from m5_injected.json, the reported
+  estimator at the GiBUU-to-GENIE change with its injected change, and the three unsupported cells shaded.
+  presentation_original_arrays.json gains two asserted arrays, with their sources recorded in its additions block, and
+  inputs.json re-pins it. New keys fm7-tw-lo and -hi; 4160 values.
+- **Bound fix:** s5e-shapes-semax printed a rounded-down upper bound ("at most 0.22" for 0.2246). Both semax keys now
+  round up, and make_values asserts each covers its maximum.
+- **Meaning read:** fig3-read/pairs.tsv, by an independent reader given the figure and sources. Two defects:
+  - :266's "three shape changes", now "three withheld … the GiBUU-to-GENIE change … is a development truth";
+  - the caption's "100 half samples" did not say which pseudo-experiments they are; it now names the 60 and the 40.
+  Fixed, and the re-read passed all five revised rows. Both rater copies were rebuilt (hold diff PASS).

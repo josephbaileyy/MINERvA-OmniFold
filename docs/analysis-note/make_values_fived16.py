@@ -1507,7 +1507,12 @@ def values(d, arm="with"):
     # read, M019/M089): Fig 3's three shapes for (e), and Fig S1's GiBUU-to-GENIE experiments for the variant
     se_e = max(100 * x for w in ("W1", "W2", "W3") for x in a["points"][w]["per_functional"]["se_rel"][:42])
     se_lc = max(100 * x for x in d["s5ndev"]["grid"]["C4_eavail_shape"]["per_functional"]["se_rel"][:42])
-    v["s5e-shapes-semax"], v["s5n-gibuu-semax"] = f"{se_e:.2f}", f"{se_lc:.2f}"
+    # an upper bound is rounded UP (#977 fig3-read: 0.2246 had printed as "at most 0.22")
+    up2 = lambda x: f"{math.ceil(100 * x - 1e-9) / 100:.2f}"  # noqa: E731
+    v["s5e-shapes-semax"], v["s5n-gibuu-semax"] = up2(se_e), up2(se_lc)
+    assert float(v["s5e-shapes-semax"]) >= se_e and float(v["s5n-gibuu-semax"]) >= se_lc
+    # #977 s11c: Fig 3 now also draws (e) at the GiBUU-to-GENIE change; its caption's one bound must cover that series too
+    assert max(100 * x for x in eg["per_functional"]["se_rel"][:42]) <= se_e
     v.update(groupb_values(d))
     v.update(ess_values(d))
     rp = a["A3"]["data_rounding_probe_over_data_sigma"]
@@ -1995,6 +2000,12 @@ def lrows_values(d):
     v["r33-dchi2-max"] = f"{q['chi2_rise_max']:.1f}"
     v["r33-z-from"], v["r33-z-to"] = (f"{z:.2f}" for z in q["q3_max_abs_z"])
     assert sorted(q["unchanged_own_gibuu"]) == ["A7_gibuu", "stage0c_gibuu"]
+    # Fm7: fig:deformation shades the (E_avail, W) cells failing the support rule; the caption names them by edges
+    # (EW11: E_avail 0.1-0.2 GeV, W >= 3 GeV; EW36, EW37: E_avail >= 3 GeV, W < 1.4 GeV) and gives their truth weights
+    m = r["m5"]
+    assert m["unsupported_EW"] == ["EW11", "EW36", "EW37"] and all(x < 1000 for x in m["unsupported_truth_weight"])
+    v["fm7-tw-lo"], v["fm7-tw-hi"] = f"{min(m['unsupported_truth_weight']):.0f}", f"{max(m['unsupported_truth_weight']):.0f}"
+    assert m["controls_pass"] == [True, True] and set(m["support_cells_empty_in_every_seed"].values()) == {0}
     return v
 
 

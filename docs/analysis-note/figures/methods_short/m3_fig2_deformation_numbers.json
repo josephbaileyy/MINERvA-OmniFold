@@ -36,6 +36,30 @@
   "value": 20
  },
  {
+  "claim": "R, GiBUU/GENIE E_avail (s11c): max |residual| over EW (paper s5e-gibuu-ewmax '73.86' at high W), %",
+  "value": [
+   73.86,
+   "EW29"
+  ]
+ },
+ {
+  "claim": "m5: max |injected change| W1, W2, W3 (m5_injected.json max_abs_injected_pct), %",
+  "value": [
+   [
+    21.39,
+    "EW6"
+   ],
+   [
+    14.84,
+    "EW37"
+   ],
+   [
+    27.51,
+    "EW7"
+   ]
+  ]
+ },
+ {
   "claim": "family N nominal (C3): max |residual| over EW, %",
   "value": [
    0.39,

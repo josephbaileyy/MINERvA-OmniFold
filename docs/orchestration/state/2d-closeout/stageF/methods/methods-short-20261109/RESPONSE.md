@@ -419,3 +419,29 @@ OUTCOME line is right for what it describes, so no records correction is listed.
 - **m5/s11c's figure series.** These go through the figure lane's producer, `fig_m3_deformation.py`, which asserts its
   arrays against the presentation baseline. The operands are ready: `derived/m5_injected.json` and
   `assess_receipt.json` points.eavail_gibuu, first 42 entries of mean_rel. Routing is the director's.
+
+## The L rows, continued (2026-11-12)
+
+**m5/Fm7 and s11c: done.** The director routed them to me after I checked the file's ownership: no OWNER line, no
+other open PR on these files, no figures-lane session live. Figure 3, the reported estimator, now draws:
+- each withheld shape's injected change as a dashed step in its own colour, from `pscr-20261112/derived/m5_injected.json`;
+- the reported estimator at the GiBUU-to-GENIE change (assess_receipt.json points.eavail_gibuu, red), with its
+  injected change, which is the lower-capacity panel's (the same truth, ratio file 45cc3e0a and amplitude 1.0);
+- the three unsupported cells shaded (EW11, EW36, EW37; keys fm7-tw-lo/hi give their truth weights, 246–777).
+
+The new arrays are asserted in `presentation_original_arrays.json`. Its additions block records their sources, and
+`inputs.json` re-pins it. The producer checks the GiBUU maximum (73.86 % at EW29, as s5e-gibuu-ewmax) and the three
+injected maxima. make_values asserts that the caption's "at most 0.22 %" covers the GiBUU series too (0.185 %). The
+caption states m5's not-checkable limit. The meaning read is in `fig3-read/`, and both rater copies were rebuilt.
+
+**4.2: open item.** The referee's split of the background into genuine background and out-of-phase-space signal
+cannot be measured from the May per-playlist files. The split probe (`split-20261112/`, exit 6) found that they lack
+the truth branches (bkg_nuPDG, bkg_current, bkg_vtx_*). Their mtimes also precede the Phase-18 commit d1bc8813a,
+before which the event loop left out of `mc_background` every event inside the signal definition, so the template's
+composition is not established. Table S1's row now says "its composition is not recorded". A re-run of the event
+loop would settle the split and is priced separately. The provenance search for the files behind the paper's template
+(the merged CV and $UNI) is under way. Until it reports, S2 :222 and S1 :25, both carried from the note, and table
+S1's out-of-phase-space row stay unchanged. Any change to the note's sentences goes to Joseph and the note loop.
+
+**Follow-up list (optional):** counting whether F5.3's 1,755 gen-outside-grid rows are only the −9999 sentinels
+(0 node-h, on OF5D). Printing that number would not help the paper (the director, 2026-11-12).

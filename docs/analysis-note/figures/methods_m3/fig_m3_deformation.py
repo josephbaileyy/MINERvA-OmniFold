@@ -47,6 +47,15 @@ def main() -> None:
     inj = 100 * (np.array(truth["departures"]["eavail_shape"]["M1_ratio"][: mc.N_EW]) - 1)
     rn, rn_se = per(r["nominal"])
     rw = {w: per(r[w]) for w in ("W1", "W2", "W3")}
+    # m5/Fm7 and s11c (#977): the withheld truths' injected changes (full-sample, M1 @ x(W) / M1 @ x(nominal) - 1) and the
+    # reported estimator at the GiBUU-to-GENIE E_avail change (assess_receipt points.eavail_gibuu, 20 experiments)
+    m5 = mc.load(a.repo, "m5_injected")
+    assert m5["control_W1"]["pass"] and m5["control_W2"]["pass"]
+    assert all(s["support_cells_empty_in_every_seed"] == 0 for s in m5["sets"].values())
+    inj_w = {w: np.array(m5["injected_change_pct"][w]) for w in ("W1", "W2", "W3")}
+    assert r["eavail_gibuu"]["n"] == 20
+    rg, rg_se = per(r["eavail_gibuu"])
+    UNSUPPORTED = (11, 36, 37)   # EW cells failing the support rule (stage1_inspect.json mc.EW reported, #977 Fm7)
     sig_adopt = np.array(s5e["A4"]["adopted_total_sigma_pct"])
     md = np.max(np.abs(np.array([rw[w][0] for w in rw])), axis=0)
 
@@ -67,6 +76,13 @@ def main() -> None:
                  int(np.sum(md <= sig_adopt + 1e-9)) == len(s5e["A4"]["cells_model_dependence_within_adopted_sigma"]) == 20,
                  int(np.sum(md <= sig_adopt + 1e-9))),
     ]
+    nums += [
+        mc.check("R, GiBUU/GENIE E_avail (s11c): max |residual| over EW (paper s5e-gibuu-ewmax '73.86' at high W), %",
+                 round(float(np.max(np.abs(rg))), 2) == 73.86 and amax(rg)[1] == "EW29", amax(rg)),
+        mc.check("m5: max |injected change| W1, W2, W3 (m5_injected.json max_abs_injected_pct), %",
+                 [amax(inj_w[w]) for w in ("W1", "W2", "W3")] == [(21.39, "EW6"), (14.84, "EW37"), (27.51, "EW7")],
+                 [amax(inj_w[w]) for w in ("W1", "W2", "W3")]),
+    ]
     nums.append({"claim": "family N nominal (C3): max |residual| over EW, %", "value": amax(nn)})
     nums.append({"claim": "R nominal (A1): max |residual| over EW, %", "value": amax(rn)})
     nums.append({"claim": "family N GiBUU: median |residual| over EW, %", "value": round(float(np.median(np.abs(ng))), 2)})
@@ -78,7 +94,9 @@ def main() -> None:
     original = json.loads(reference_path.read_text())["deformation"]
     current = {"left_residual_se_pct": [ng.tolist(), ng_se.tolist()],
                "injected_change_pct": inj.tolist(),
-               "right_residual_se_pct": {w: [m.tolist(), se.tolist()] for w, (m, se) in rw.items()}}
+               "right_residual_se_pct": {w: [m.tolist(), se.tolist()] for w, (m, se) in rw.items()},
+               "injected_change_pct_reported": {w: v.tolist() for w, v in inj_w.items()},
+               "right_gibuu_residual_se_pct": [rg.tolist(), rg_se.tolist()]}
     assert current == original, "deformation numerical arrays changed from presentation baseline"
     (a.outdir / "m3_fig2_deformation_arrays.json").write_text(json.dumps(current, indent=2) + "\n")
     mc.style()
@@ -100,17 +118,28 @@ def main() -> None:
                 label=r"injected truth change (deformed/nominal $-$ 1)")
     a_ng.errorbar(x, ng, ng_se, fmt="o", ms=3.0, color=mc.PURPLE, lw=0.7,
                   label=r"residual, GiBUU/GENIE $E_{\rm avail}$ (60 exp.)")
+    for c in UNSUPPORTED:
+        a_rw.axvspan(c - 0.5, c + 0.5, color="0.92", lw=0, zorder=0)
     for (w, lab, fmt, col), dx in zip((("W1", r"NuWro $E_{\rm avail}$", "o", mc.BLUE),
                                         ("W2", r"GENIE + MEC $(E_{\rm avail},W)$", "^", mc.GREEN),
                                         ("W3", r"NuWro $(p_T,p_\parallel,E_{\rm avail})$", "D", mc.PURPLE)),
-                                       (-0.22, 0.0, 0.22)):
+                                       (-0.27, -0.09, 0.09)):
         m, se = rw[w]
+        a_rw.stairs(inj_w[w], np.arange(mc.N_EW + 1) - 0.5, color=col, lw=0.6, ls=(0, (3, 1.5)), alpha=0.8)
         a_rw.errorbar(x + dx, m, se, fmt=fmt, ms=2.6, color=col, lw=0.7, label=f"{lab} (20 exp.)")
+    # the GiBUU case's injected change is the left panel's inj: the same truth (eavail_shape), ratio file
+    # (s5n/eavail-ratio-gibuu-over-genie.json, sha 45cc3e0a = truth_check.json eavail_ratio_sha256) and amplitude 1.0
+    # (s5e/cand-assess-tasks.tsv aeavail_gibuu_*)
+    assert truth["eavail_ratio_sha256"].startswith("45cc3e0a") and truth["departures"]["eavail_shape"]["amplitude"] == 1.0
+    a_rw.stairs(inj, np.arange(mc.N_EW + 1) - 0.5, color=mc.RED, lw=0.6, ls=(0, (3, 1.5)), alpha=0.8)
+    a_rw.errorbar(x + 0.27, rg, rg_se, fmt="s", ms=2.4, color=mc.RED, lw=0.7,
+                  label=r"GiBUU/GENIE $E_{\rm avail}$ (20 exp.)")
+    a_rw.plot([], [], color="0.3", lw=0.6, ls=(0, (3, 1.5)), label="injected truth change, same colour")
     for ax in (a_ng, a_rw):
         ax.set_ylim(-40, 100)
         ax.set_yticks(np.arange(-40, 101, 20))
     a_ng.legend(loc="upper left", frameon=False)
-    a_rw.legend(loc="upper left", frameon=False)
+    a_rw.legend(loc="upper left", frameon=False, ncol=2, columnspacing=0.4, handletextpad=0.3)
     for ax in (a_ng, a_rw):
         ax.set_ylabel("(unfolded $-$ truth)/truth (%)")
         ax.set_xlabel(
