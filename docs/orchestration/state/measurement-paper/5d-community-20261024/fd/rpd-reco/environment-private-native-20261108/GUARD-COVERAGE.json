@@ -1,0 +1,126 @@
+{
+  "tested_head": "c3c1330f834e6d68e4d100be510de88092c638e2",
+  "scope": "Seven private-boundary and thirteen native/import-boundary required mutants; earlier 175 remain required",
+  "outcomes": [
+    {
+      "name": "REQUIRED_PUBLIC_MODULE_NAME_NOT_ARTIFACT",
+      "status": "KILLED",
+      "selector": "test_public_module_names_are_not_artifacts",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_NATIVE_ENVIRONMENT",
+      "status": "KILLED",
+      "selector": "test_native_runtime_changes_refuse",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_RUNTIME_UUID_NOT_EXCLUDED",
+      "status": "KILLED",
+      "selector": "test_native_runtime_changes_refuse and NERSC_PYMON_UUID",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_IMPORT_SIXTH_KEY",
+      "status": "KILLED",
+      "selector": "test_import_diff_is_bounded",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_IMPORT_ROOTSYS_REALPATH",
+      "status": "KILLED",
+      "selector": "test_import_values_are_pinned and (ROOTSYS or unset_missing)",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_IMPORT_PIN_CLING_STANDARD_PCH",
+      "status": "KILLED",
+      "selector": "test_import_values_are_pinned and CLING_STANDARD_PCH",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_IMPORT_PIN_CPPYY_API_PATH",
+      "status": "KILLED",
+      "selector": "test_import_values_are_pinned and CPPYY_API_PATH",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_IMPORT_PIN_CPPYY_NO_ROOT_FILTER",
+      "status": "KILLED",
+      "selector": "test_import_values_are_pinned and CPPYY_NO_ROOT_FILTER",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_PROLOGUE_EXPLICIT_ENVIRONMENT",
+      "status": "KILLED",
+      "selector": "test_prologue_child_environment_boundary",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_WORKER_SNAPSHOT_BEFORE_ROOT",
+      "status": "KILLED",
+      "selector": "test_worker_snapshot_before_root_and_runtime_recheck",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_PRIVATE_PREPARE_LEAK",
+      "status": "KILLED",
+      "selector": "test_private_prepare_public_outputs",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_PRIVATE_PROTECTED",
+      "status": "KILLED",
+      "selector": "test_private_prepare_write_boundary and protected",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_PRIVATE_PERMISSIONS",
+      "status": "KILLED",
+      "selector": "test_private_prepare_write_boundary and permissions",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_PRIVATE_RAW_SHA",
+      "status": "KILLED",
+      "selector": "test_private_prepare_refuses and raw_sha",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_PRIVATE_REFERENCE_SHA",
+      "status": "KILLED",
+      "selector": "test_private_prepare_refuses and sha",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_PRIVATE_LOCATION",
+      "status": "KILLED",
+      "selector": "test_private_prepare_refuses and location",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_UNSAFE_EXCLUSION_ROOTSYS",
+      "status": "KILLED",
+      "selector": "test_environment_exclusions_are_reviewed",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_UNSAFE_EXCLUSION_CLING_PREBUILT_MODULE_PATH",
+      "status": "KILLED",
+      "selector": "test_environment_exclusions_are_reviewed",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_GUARD_MAT_IMPORT_ENVIRONMENT",
+      "status": "KILLED",
+      "selector": "test_import_diff_is_bounded or test_import_values_are_pinned",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_GUARD_MAT_RUNTIME_ENVIRONMENT",
+      "status": "KILLED",
+      "selector": "test_worker_snapshot_before_root_and_runtime_recheck",
+      "returncode": 1
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+# HEAD 33c0548f52f4e4d5f2831a6d1abdfe949657d065
+# clean clone /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/rsn-clean-1, serial, nice 19, OMP/MKL/OPENBLAS/NUMEXPR threads 1, Python 3.12.2, numpy 1.26.4, 2026-11-11T18:29:56Z
+# 7b0fc567776d2016897173b1f8ab723fd99daedd34454537b36cd42bd03194be  rsn_prep.py
+# ab9aea66420c2bdeb05eab69a592846e369d68bf9681196010ea0d2043a3593c  rsn_unfold.py
+# ffbb440c6d2212c92a40854dba4d404ed494376ac8a074f8ffff661ce893c8b7  rsn_cmodel.py
+# 7dc8039bdf7c4ab396cb3a7e730b6382124e6bf695cf580654e341d703ac40d9  rsn_regrade.py
+# 1c25f0bbb26203817f37e794c85f851ab502efebd0e08e19279019874c68f83e  rsn_read.py
+# 745ebc9b53920f4ab2528b5cd95912265da00f0c0a082074c8af12bde72c302b  sbatch_rsn.sh
+# 19cb58cd66f52705d56efaffa365a75af9fe64d001affe814ddfb33dff9cf5d7  rsn_tasks.tsv
+# 6116277057c37361b2ef240e0b8e0a5b9ad338b3f164dfc527be4d4cd6231ebf  test_rsn.py
+# 14a9a710c88d0e56e8c949f420a5f525e92bba1f163c7e9e38ce29e37ebe52ab  rsn_mutation.py
+# status: 0 changed files
+unmutated suite: 41 tests OK, in the mirrored tree
+KILLED    box radius one short                             by test_box_sum_matches_a_brute_force_box
+KILLED    smoothing averages over off cells                by test_smoothing_is_the_weighted_box_mean_renormalized
+KILLED    smoothing not renormalized                       by test_smoothing_a_constant_reweight_gives_one
+KILLED    G6 cut at 10 GeV/c                               by test_g6_is_off_above_6_and_the_frozen_rho_rescaled_below
+KILLED    G6 keeps the labels above 6                      by test_g6_is_off_above_6_and_the_frozen_rho_rescaled_below
+KILLED    step threshold doubled                           by test_a_step_marks_both_neighbours_and_a_small_one_marks_none
+KILLED    step marks one side                              by test_a_step_marks_both_neighbours_and_a_small_one_marks_none
+KILLED    manipulation check: median rule only             by test_the_manipulation_check_boundaries
+KILLED    manipulation check: 11 cells                     by test_the_manipulation_check_boundaries
+KILLED    manipulation check: 0.6 of the median            by test_the_manipulation_check_boundaries
+KILLED    no radius 2                                      by test_the_radius_ladder
+KILLED    describe control skipped                         by test_the_prep_refuses_on_each_control
+KILLED    domain k control skipped                         by test_the_prep_refuses_on_each_control
+KILLED    domain departure control skipped                 by test_the_prep_refuses_on_each_control
+KILLED    frozen reweight control skipped                  by test_a_frozen_reweight_that_normalize_does_not_reproduce_refuses
+KILLED    regressor weight w_reco                          by test_the_regressor_is_fitted_on_w_truth_of_the_reco_passing_truth_rows_every_iteration
+KILLED    regressor rows not reco-filtered                 by test_the_regressor_is_fitted_on_w_truth_of_the_reco_passing_truth_rows_every_iteration
+KILLED    sample_weight not passed                         by test_unit_weights_reproduce_the_unweighted_loop_and_others_do_not
+KILLED    fit count unchecked                              by test_the_wrapper_refuses_extra_arguments_wrong_rows_missing_fits_and_bad_weights
+KILLED    factory not restored                             by test_the_wrapper_refuses_extra_arguments_wrong_rows_missing_fits_and_bad_weights
+KILLED    extra fit arguments accepted                     by test_the_wrapper_refuses_extra_arguments_wrong_rows_missing_fits_and_bad_weights
+KILLED    non-positive weights accepted                    by test_the_wrapper_refuses_extra_arguments_wrong_rows_missing_fits_and_bad_weights
+KILLED    main wraps the wrong weight                      by test_main_records_the_weight_and_restores_every_patch
+KILLED    write not restored                               by test_main_records_the_weight_and_restores_every_patch
+KILLED    write without the regressor                      by test_w_truth_refuses_to_write_when_the_regressor_never_ran
+KILLED    G6 replaces NuWro's row                          by test_the_arms_are_built_from_the_declared_rows
+KILLED    WR closure against X0                            by test_the_arms_are_built_from_the_declared_rows
+KILLED    SM never built                                   by test_the_arms_are_built_from_the_declared_rows
+KILLED    NC skipped                                       by test_the_nc_and_nc_s_refuse
+KILLED    NC-S skipped                                     by test_the_nc_and_nc_s_refuse
+KILLED    ratio sha unchecked                              by test_each_wrong_meta_field_refuses
+KILLED    fit count in meta unchecked                      by test_each_wrong_meta_field_refuses
+KILLED    closure refinement unchecked                     by test_each_wrong_meta_field_refuses
+KILLED    own vertex not left out                          by test_each_grade_uses_the_arm_s_rows_with_the_own_vertex_left_out
+KILLED    model-only on C_e                                by test_each_grade_uses_the_arm_s_rows_with_the_own_vertex_left_out
+KILLED    row-6 offset not subtracted                      by test_the_estimates_are_fd_f0_regrade_s
+KILLED    NC-R bias unchecked                              by test_nc_r_reproduces_and_refuses_on_any_differing_field
+KILLED    NC-R grades unchecked                            by test_nc_r_reproduces_and_refuses_on_any_differing_field
+KILLED    NC-R groups unchecked                            by test_nc_r_reproduces_and_refuses_on_any_differing_field
+KILLED    NC-R control 7 unchecked                         by test_nc_r_reproduces_and_refuses_on_any_differing_field
+KILLED    NC-R order unchecked                             by test_nc_r_reproduces_and_refuses_on_any_differing_field
+KILLED    C-INV skipped                                    by test_c_inv_holds_for_a_gibuu_only_change_and_catches_any_other
+KILLED    nominal S unchecked                              by test_the_regrade_runs_end_to_end_and_refuses_a_wrong_pin_or_nominal_s
+KILLED    q smaller below 0.79                             by test_the_sigma_classes_and_their_boundaries
+KILLED    q cell bound 0.4                                 by test_the_sigma_classes_and_their_boundaries
+KILLED    floor multiple 3                                 by test_the_wr_classes_and_their_boundaries
+KILLED    half sigma 0.6                                   by test_the_wr_classes_and_their_boundaries
+KILLED    signed delta                                     by test_the_wr_classes_and_their_boundaries
+KILLED    rms lower bound 0.89                             by test_the_closure_classes
+KILLED    held-out count unchecked                         by test_the_held_out_reading
+KILLED    fewer and more swapped                           by test_the_listed_classes
+KILLED    verdict ignores the held-out records             by test_the_readout_applies_the_tables
+KILLED    floor closure bound 1e-3                         by test_the_readout_applies_the_tables
+KILLED    rounding floor unchecked                         by test_the_rounding_floor_reproduces_the_printed_figures_and_refuses_otherwise
+KILLED    nominal sigma unchecked                          by test_the_readout_refuses_a_nominal_that_is_not_the_committed_one
+KILLED    nominal C_model unchecked                        by test_the_readout_refuses_a_nominal_that_is_not_the_committed_one
+KILLED    job name unchecked                               by test_the_deploy_name_and_limit_checks
+KILLED    limit 0:20                                       by test_the_deploy_name_and_limit_checks
+KILLED    untracked files ignored                          by test_the_deploy_name_and_limit_checks
+KILLED    no fence file accepted                           by test_the_fence_fails_closed_and_matches_at_the_start_only
+KILLED    fence matches anywhere                           by test_the_fence_fails_closed_and_matches_at_the_start_only
+KILLED    squeue failure ignored                           by test_the_fence_fails_closed_and_matches_at_the_start_only
+KILLED    J2 gate unchecked                                by test_j2_needs_its_gate_the_nc_pass_and_the_committed_reweights
+KILLED    NC PASS unchecked                                by test_j2_needs_its_gate_the_nc_pass_and_the_committed_reweights
+KILLED    J2 without the SM reweights                      by test_j2_needs_its_gate_the_nc_pass_and_the_committed_reweights
+KILLED    reweight sha unchecked                           by test_a_changed_reweight_or_an_existing_product_refuses
+KILLED    existing product overwritten                     by test_a_changed_reweight_or_an_existing_product_refuses
+KILLED    every step unweighted                            by test_j2_runs_the_seven_declared_steps
+KILLED    closure flag inverted                            by test_j2_runs_the_seven_declared_steps
+KILLED    a WR step dropped from the task table            by test_the_task_table
+MUTATION CHECK :: PASS (70 mutations)
+# exit 0

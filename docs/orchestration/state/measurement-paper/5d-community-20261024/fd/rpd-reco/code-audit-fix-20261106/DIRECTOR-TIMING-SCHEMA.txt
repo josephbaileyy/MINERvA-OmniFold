@@ -1,0 +1,10 @@
+<cross-session-message from="uds:/tmp/cc-socks/52592.sock" hop-chain="d4c94abb2be245e44347e97d,5a030e0770dcfa08a98b21e8" from-name="director" from-mode="bypass">
+director: **your timing-record design is approved as proposed:**
+- `--timing-record PATH` and `--timing-record-sha256 SHA`, staged by O_NOATIME and embedded in every record;
+- the code checks that S equals the record's value, that the chunk shape is the full real-pass shape, and that the environment matches;
+- the planned figure is null with an explicit reason for early STOPs, while N, S and the source reference are still recorded.
+
+Add tests: a mismatched sha, a shape that isn't full, and an env mismatch each refuse.
+
+**What's coming from limitation-resolver** (I've sent it your schema): the timing record, the MAT FluxReweighter source path, commit and lines, and the env's interpreter and versions. I'll relay them when they arrive. Until then, leave the config's runtime slots explicitly unresolved, as you planned.
+</cross-session-message>

@@ -1,0 +1,237 @@
+1. Summary
+
+The paper presents a benchmark and diagnostic study of one OmniFold implementation applied simultaneously to five observables in MINERvA open data. Its two-observable result reproduces the published integrated cross section approximately, while exhibiting an unexplained shape difference whose significance cannot be established without the cross-covariance. Simulation studies demonstrate incomplete recovery of selected truth deformations, algorithm dependence, numerical sensitivity to rounding, and severe joint under-coverage of the two-dimensional covariance at two held-out tunes. The sixteen-cell five-observable data output is explicitly presented as an illustration rather than a measurement, with its coverage assessment conditional on the pending test.
+
+2. Recommendation: major revision
+
+This is potentially a useful JINST methods paper. Documented failures of an unfolding implementation can constitute a publishable contribution, and the authors generally distinguish descriptive comparisons, bias tests and coverage tests carefully. I would not require every diagnostic to pass, nor would I require this study to become a cross-section measurement. However, several unresolved implementation and validation questions prevent a sufficiently firm interpretation of the findings: the untested treatment of unreconstructed events, the approximation retained in the two-dimensional systematic propagation, unexplained failures of like-for-like uncertainty controls, and an incomplete reproducibility record. The manuscript also needs substantial compression and a clearer distinction between essential scientific qualifications and its development history. This recommendation does not penalize the pending result; the revisions required depend partly on what that result establishes.
+
+3. Major issues
+
+1. **The treatment of unreconstructed events needs a controlled validation.**
+
+   The paper states that their step-1 weights are predicted by a regression “fitted with equal event weights,” estimating a conditional mean over simulated records rather than over their physical weights. These events contribute **15.7–68.1%** of the final weight in a reporting cell. This is therefore central to the acceptance correction, not a small technical qualification.
+
+   Equal-weight regression is not necessarily biased: its adequacy depends on the relationship between physical weights, truth coordinates and reconstruction acceptance. That relationship is not established here. Moreover, extrapolating from reconstructed events to misses assumes that the chosen truth coordinates contain sufficient information for that transfer.
+
+   The authors should compare the current regression with an appropriately physically weighted regression, using nominal closure and the principal deformed truths, and report the resulting changes on data. They should also test whether residual dependence on reconstruction acceptance or omitted truth information matters. The comparison should include both cell integrals and the covariance-weighted directions implicated in the failures. A negative result would validate this implementation choice; a significant effect would require revising the estimator or attributing the affected findings to this approximation.
+
+2. **The coverage studies need an unambiguous account of which quantities are being compared.**
+
+   The stopped first five-observable test initially compared response-only pseudo-experiments with blocks containing changes to both the response and the truth distribution. Its failure therefore cannot itself establish a failure of the reported covariance. The Supplement appropriately identifies this mismatch and reports successful like-for-like interaction controls.
+
+   The unexplained neutron- and proton-band discrepancies are different: these remain failures of controls intended to compare corresponding constructions. Before interpreting a five-observable coverage outcome involving these bands, the authors must establish whether pseudo-data generation, simulation-side variation, truth definition and normalization represent the same perturbation. A compact accounting of these operations is needed, including truth/reconstruction weights, flux denominators, simulation resampling and clipping.
+
+   The pending result should be handled as follows:
+
+   - **No under-coverage detected:** report conditional evidence of adequacy at the tested tunes and resolution. This does not validate the released data intervals.
+   - **Under-coverage detected:** retain this as a substantive diagnostic finding; achieving a pass is not a publication requirement.
+   - **Invalid controls or another stopped test:** draw no coverage conclusion from it.
+   - **A repair or continuation chosen after inspecting a check:** label the resulting evidence descriptive, or perform an independent confirmation before presenting it as a prospectively graded result.
+
+   Excluding problematic bands can define a useful restricted test, but cannot validate the omitted uncertainty treatment.
+
+3. **The two-dimensional systematic-universe approximation must be corrected or bounded against the relevant uncertainty.**
+
+   The covariance omits an approximation affecting events that fail reconstruction. Its effect was examined in only two universes and bounded relative to an earlier training-seed spread. That is not a physically persuasive bound on its contribution to the final covariance, particularly when the coverage test finds spread contributions of approximately three per degree of freedom and still fails after substantial eigenmode truncation.
+
+   The authors should rebuild the affected universe propagation consistently, or demonstrate a sufficiently tight bound across representative and potentially adverse bands. The relevant comparison is with the final covariance and the directions driving under-coverage, rather than with a superseded seed variation.
+
+   This need not make the coverage failure disappear. It would establish that the published diagnostic concerns the intended covariance procedure rather than an avoidable propagation approximation. Agreement between eigensolvers, already documented, addresses numerical inversion accuracy but does not resolve this issue.
+
+4. **The published-result benchmark needs one additional comparison and more limited interpretation.**
+
+   Table S1 usefully distinguishes shared exposure and signal definition from inputs that have not been compared. Consequently, the approximately 1% integral agreement is a normalization benchmark, not validation that the unfolding reproduces the published analysis.
+
+   The paper reports that IBU and OmniFold differ on the present inputs, but does not give the direct IBU-to-publication distance alongside the OmniFold-to-publication distance. That comparison is especially informative: does the binned method on these inputs reproduce the published shape appreciably better, worse, or similarly? The Supplement indicates that related distances were calculated.
+
+   The authors should report this direct comparison, including the actual central distances. They should also provide full-sample background and out-of-phase-space yields and clarify which normalization and response inputs can actually be checked against the publication. Inputs unavailable from the release should be identified as unavailable; reconstructing inaccessible information is not required.
+
+   The unknown cross-covariance is an acceptable reason not to quote a compatibility probability. The present distance should remain explicitly descriptive.
+
+5. **Several definitions essential to interpreting the output need to be consolidated.**
+
+   The main text’s expression for truth \(W\) does not tell the reader that its \(Q^2\) uses the massless-muon, fixed-beam-axis convention described in S2, whereas truth \(q_3\) uses exact four-vectors. This distinction explains part of the near-dependence among the truth observables and belongs with their main definitions.
+
+   Similarly, “no underflow nor overflow” is a property of the defined reporting procedure: reconstructed events outside the window are excluded and their truth contribution is handled through the misses procedure. That acceptance boundary should be stated plainly rather than allowing “exhaustive” reporting grids to suggest that no relevant events are lost at reconstruction.
+
+   The authors should provide the weighted fractions excluded by these boundaries and by the negative-\(W^2\) convention. They should separately quantify the contribution omitted by the four unreported binary-grid boxes. The **0.47%** outside the 109 joint cells concerns a different partition and does not supply that number. These checks matter for interpreting the sixteen-cell quadrant sums.
+
+6. **The numerical-instability result needs a more direct connection to the released output and its uncertainty.**
+
+   The manuscript correctly distinguishes reproducibility from stability. However, its prominent standardized failure concerns 153 heterogeneous quantities, while the sixteen released cells are principally characterized by fractional shifts. Report the median and maximum standardized shifts for those sixteen cells themselves, together with the numerical contribution relative to their statistical uncertainty.
+
+   The statistical block combines data resampling with an artificial rounding perturbation. The authors should specify the perturbation law and explain whether this block estimates uncertainty for the deterministic baseline output, a randomized algorithm, or an approximation to a rounding-marginalized result. Including numerical variability can be sensible, but its interpretation is not automatically that of ordinary sampling uncertainty.
+
+   The ensemble decision also deserves a proportionate discussion. Its failing RMS-bias comparison is 0.056467 versus 0.055955: an increase of about **0.051 percentage points**, alongside a substantial improvement in the stability diagnostic. A prospectively specified rejection rule is legitimate, but the paper should show the tradeoff rather than imply that the threshold crossing settles its practical importance. The authors need not adopt the ensemble; if they advocate it as a practical mitigation, it should also be tested on data.
+
+7. **The run-period block must remain an empirical sensitivity allowance, with its scale interpretation qualified.**
+
+   The run-period inconsistency is a useful observation. Adding an empirical block after observing it is not intrinsically inappropriate for an illustrative output. Nevertheless, that block contains the observed differences by construction, retains noise and may overlap existing response uncertainties. The audit does not establish its coverage or identify a physical systematic source.
+
+   In particular, the quoted “68% interval” on the true-to-estimated size requires an explicit stochastic model for the period effects. Three chronological groups are not automatically independent realizations of one random systematic effect, and an uncertain scalar size does not describe uncertainty in the covariance’s orientation.
+
+   If this numerical interval is retained as an inferential statement, the authors should state its assumptions and demonstrate its calibration with heteroscedastic simulated periods. Otherwise, identify it as a model-dependent scale illustration. The paper can publish the unresolved period effect without identifying its cause, provided the empirical block is not presented as an independently established uncertainty.
+
+8. **The final scientific record must be reproducible without relying on an unavailable development narrative.**
+
+   The candidate package is “not yet deposited” and regenerates selected note figures; the text explicitly says that reproducing the paper’s numbers requires additional products and generator samples. The essential final configurations, input manifest, deformation construction, covariance construction and result-generating scripts need a stable, accessible release or equivalent reproducibility instructions.
+
+   I do not require redistribution of every large input already publicly archived. I do require a precise route from accessible inputs and identified software versions to the principal findings. The three stated CSV products are useful, but cannot reproduce the estimator diagnostics.
+
+   Information necessary to assess the present claims should be in the manuscript, Supplement or material supplied with the submission. A citation to the companion note is sufficient for optional development detail, not for essential evidence that the referee cannot inspect.
+
+4. Classification of the stated limitations
+
+Here, **(a)** means further analysis is needed for the affected claim; **(b)** means an acceptable limitation of this diagnostic paper; and **(c)** means development detail better placed in the companion note. Distinct aspects of a single topic sometimes warrant separate entries.
+
+| Limitation | Classification and reason |
+|---|---|
+| **Severe two-dimensional joint under-coverage** | **(b).** This is a potentially important negative result, not a requirement to obtain wider intervals until the test passes. It is publishable after the propagation and test-construction issues above are controlled. It prevents interpreting this covariance as validated. |
+| **No validated coverage for the released five-observable intervals** | **(b).** Acceptable because the output is explicitly illustrative and prohibited from model fitting. A measurement claim would require further coverage studies of the final estimator and interval procedure, including relevant truth and response changes. |
+| **Pending second five-observable test** | **(b).** Its absence is not itself a defect under the requested assessment. A pass, failure or invalid outcome changes the coverage statement as described above; none automatically changes the output into a measurement. |
+| **Unexplained like-for-like GEANT4 neutron/proton discrepancies** | **(a).** Resolve the mismatch in the corresponding pseudo-data and simulation-side constructions before making coverage claims involving those bands. Their exclusion permits only a restricted test. |
+| **The stopped first coverage test** | **(b).** Stopping on a failed prerequisite is appropriate, and the authors correctly claim no coverage result. A brief explanation should remain. |
+| **Detailed chronology of the stopped test and redesign** | **(c).** The sequence of stages and development decisions belongs primarily in the note. The Supplement should retain the essential mismatched-estimand explanation and unresolved controls. |
+| **Draw-matched contents, fixed tune-level covariance, surrogate laterals and undrawn blocks** | **(b).** These define conditional tests with useful but limited scope. A pass establishes no more than agreement with that specified ensemble; it does not establish uniform coverage over fixed nuisance parameters or validate the data covariance. |
+| **No simultaneous coverage of all pointwise intervals** | **(b).** The paper distinguishes pointwise intervals from the joint quadratic region. Simultaneous rectangular coverage is not obligatory unless claimed. |
+| **Fake-data bias exceeding thresholds at the GiBUU hybrid truth and synthetic tilt** | **(b).** These are central findings. They rule out a general claim of recovery within the reported uncertainty over the tested truths, but are publishable in a diagnostic study. |
+| **Large residuals in finer \((E_{\rm avail},W)\) cells** | **(b).** Acceptable evidence of limited recovery, provided support and injected deformation are shown and these cells are not confused with the sixteen reporting cells. A fractional residual alone does not measure statistical significance or information loss. |
+| **Five cells passing, nine failing and two unresolved under the bias-half rule** | **(b).** This is an auxiliary diagnostic, not a certification scheme. The rule should not define which cells constitute validated measurements. |
+| **Four low-diagonal-fraction cells** | **(b).** A diagonal fraction of 0.16–0.25 does not itself disqualify an unfolded result. It increases reliance on migration modelling and regularization. The association with flagged cells is informative, but does not establish causation. |
+| **Untested equal-weight misses regression** | **(a).** Its large contribution to final yields requires the weighted-regression and acceptance-transfer controls specified above. |
+| **Approximate misses weighting in two-dimensional universes** | **(a).** Correct it or bound its effect against the final covariance and relevant eigenmodes. The earlier seed-spread comparison is inadequate. |
+| **Rounding instability of the baseline estimator** | **(b).** Acceptable as a measured failure of this implementation, with its effect on the released cells clearly reported. It would require mitigation and renewed uncertainty validation for a measurement. |
+| **Non-adoption of the stable ensemble because of one bias criterion** | **(b).** The choice is permissible. Its small bias cost and large stability benefit should be presented quantitatively, without claiming that no mitigation is available. |
+| **Unidentified run-period inconsistency** | **(b).** A diagnostic paper may report this unresolved data feature. It must retain the uncertainty about which periods, if any, are correctly modelled. |
+| **Empirical, rank-two run-period block with unknown coverage and possible overlap** | **(b).** Acceptable as an explicitly unvalidated allowance attached to illustrative output. It cannot establish that the period effect is covered. |
+| **Numerical 68% true-to-estimated run-block scale interval** | **(a).** Its inferential interpretation requires an explicit random-effects model and a calibration demonstration. Without that analysis, restrict it to a model-dependent illustration. |
+| **Uncalibrated \(C_{\rm model}\)** | **(b).** The authors explicitly describe sensitivity rather than a bias bound. That qualification must accompany its use; adding this block does not by itself establish coverage. |
+| **Carbon/CH differences, GiBUU energy truncation, cuts and gate discontinuities inside \(C_{\rm model}\)** | **(b).** These make it construction-dependent sensitivity, not a clean estimate of interaction-model uncertainty. Controlled target-matched, adequately sampled and smoother alternatives would be necessary for a stronger physical interpretation. |
+| **Carbon-only NuWro and GiBUU comparisons with the data output** | **(b).** Acceptable as clearly labelled illustrations with no exclusions or model ranking inferred. Per-nucleon normalization does not remove the target difference, as the Supplement correctly explains. |
+| **Invalid free-proton samples and withheld prior-spread results** | **(b).** Withholding results dependent on invalid samples is correct. Repair is unnecessary unless those results are used. |
+| **Detailed abort and sampling-validation history of unused samples** | **(c).** Keep the reason for withholding in the Supplement; put the extensive technical history in the note. |
+| **Nonstandard \(E_{\rm avail}\), approximate truth \(W\), beam-axis conventions and tiny signal exclusions** | **(b).** Explicitly defined observables need not coincide with other publications’ conventions. Predictions must use the same definitions, and the main text must state the consequential conventions accurately. The first-order pion-mass check should not be described as a fully retrained result. |
+| **No general detector-response validation against data** | **(b).** The simulated tests establish conditional algorithm performance, not detector correctness. A methods paper may publish this limitation; a claim that the hadronic distribution is physically measured would require additional response validation. |
+| **Restricted recoil-response scale model** | **(b).** Acceptable as a defined partial sensitivity study. It cannot stand for a complete uncertainty in species composition, energy dependence, resolution or neutron response. |
+| **Training on the same events subsequently reweighted** | **(b).** This is not automatically invalid. It requires empirical bias and uncertainty checks, which the paper attempts. Cross-fitting is a tested alternative here, not an automatic cure. |
+| **Development truths not held out; held-out tunes related and heavily pooled by the ratio gate** | **(b).** These limit generalization. The tests concern the implemented gated deformations under the common response, not the full independent event-level predictions of two generators. |
+| **Learner and regularization dependence omitted from the two-dimensional covariance** | **(b).** Acceptable for an explicitly incomplete diagnostic covariance. It prevents presenting that covariance as a complete measurement uncertainty. |
+| **Unknown source of the published-result shape difference and unavailable cross-covariance** | **(b).** Acceptable if the distance remains descriptive and the direct binned benchmark is supplied. The authors need not invent an attribution that the released information cannot establish. |
+| **No demonstrated extra information from \(W\), practical advantage or additional discrimination** | **(b).** The paper correctly limits its claim to simultaneous observables. It should not imply five independent measured dimensions or demonstrated superiority over binned unfolding. |
+| **Reproducibility package not deposited and essentials dependent on the companion note** | **(a).** Provide the final accessible record described in major issue 8. |
+| **Superseded configurations, unused classifications and detailed decision chronology** | **(c).** Preserve these in the note where useful; retain only provenance needed to identify the final estimator and interpret its tests. |
+
+5. Resolve the limitations or move them?
+
+I prefer **resolution of the targeted implementation and validation gaps**, while retaining the scientifically consequential limitations prominently. Moving failed coverage, prior dependence, instability, run-period inconsistency or target differences into an inaccessible note would weaken the paper. These qualifications determine what its results mean.
+
+Conversely, the full development history need not occupy the main scientific argument. The distinction is between evidence needed to assess the final procedure and an audit trail of how the procedure evolved.
+
+The paper is **not ready for publication as submitted**, but it can be publishable in JINST as the benchmark and diagnostic paper it presents itself as. No individual performance failure listed here is intrinsically disqualifying for that genre. The combination would disqualify the sixteen-cell output as a validated cross-section measurement, and a successful restricted coverage test would not remove that distinction.
+
+6. Minor issues and presentation
+
+1. **The abstract is overloaded.** It contains many numerical diagnostics, qualifications and outcomes before the reader knows the two estimators or reporting partitions. Retain the scope, normalization benchmark, principal failures and illustrative status; move secondary numbers into the results.
+
+2. **Avoid certification language.** “Valid,” “validity rules” and “usage-recommendation rule” are stronger than warranted for bias-only diagnostics with no coverage validation. Prefer “bias-screening rule” and “passes this rule.”
+
+3. **Clarify the five-observable terminology early.** “Simultaneous unfolding of five correlated observables” is accurate. Reserve “five-dimensional” for a specified feature space or reporting partition, without implying five independent constraints.
+
+4. **Use one covariance notation consistently.** \(C_{\rm total}\) is not the full reported covariance. A notation such as \(C_{\rm reported}\), with a single component equation, would reduce mistakes.
+
+5. **Specify which estimator has zero seed variance.** Section 6.1’s reference to “the training-seed block of section 3.2” could be read as contradicting the nonzero two-dimensional seed block. State “five-observable training-seed block.”
+
+6. **Separate rounding experiment summaries.** Twenty perturbations characterize a spread, while Figure 4 grades the larger shift from two perturbations using a specified bootstrap denominator. Their relationship should be explained once.
+
+7. **Show injected departures in Figure 2.** Readers otherwise cannot judge whether a residual represents substantial recovery, negligible recovery or overshoot. Mark unsupported cells and give their relevant populations.
+
+8. **Do not overinterpret non-detection.** The statistic 13.87 lying below a threshold of 14.46 supports “no difference detected” in the tested subspace and at that resolution. It is not an equivalence result.
+
+9. **Retain the distinction between reference scores and probabilities.** The fake-data \(p\) values are explicitly uncalibrated reference scores. Gaussian expected flag counts in S9 add little and could encourage a contrary interpretation.
+
+10. **Clarify uncertainty on the run-period step.** State which fluctuations enter the quoted \(\pm0.41\%\), explain the reconstruction reference excluding 1F, and distinguish this from uncertainty in the physical cause.
+
+11. **Moderate broad summary language.** The Supplement’s statement that biases are “small next to the reported covariance” needs an explicit exception for the strongly flagged truths.
+
+12. **Check final graphical typography and legibility.** The supplied rendering contains crowded labels and damaged mathematical glyphs. These may be extraction artifacts; they should be checked in the final PDF rather than treated as analysis errors.
+
+6b. Structure
+
+1. **Overall section order**
+
+   The sequence—data, method, benchmark, truth recovery, stability/coverage, discussion—is defensible and follows the three findings announced in the introduction. I would retain that backbone.
+
+   The final five-observable coverage assessment should lead the corresponding subsection once available. The stopped design should then be summarized as background, with its development history in the Supplement or note. Readers need the current evidential position before the chronology.
+
+2. **Order within section 3**
+
+   Keep the final estimators and their operations together. The paragraph beginning “Two choices for the two-dimensional result were made…” interrupts the method with benchmark outcomes. Retain a short disclosure there, but move its numerical comparison history to section 4.1 and S4.
+
+   The covariance subsection should begin with a compact definition of both reported covariances, then discuss the five-observable construction and the two-dimensional construction separately. Its present switching between constructions makes later tests harder to track.
+
+3. **Order within section 4**
+
+   Section 4.1’s long discussion of whether removing 1G–1M explains the published-result distance belongs in section 4.3. Keep only its main conclusion and a cross-reference in 4.1.
+
+   Add the direct IBU-to-publication benchmark to section 4.2. The deterministic-versus-seeded comparison is useful but secondary and could be shortened or moved to S4.
+
+4. **Order within section 5**
+
+   Section 5.3 should lead with the principal result: positive retained-direction projections for the baseline, negative projections for IBU, and different total biases at the two truths. Define \(\rho\) immediately afterwards and then discuss setting changes.
+
+   Its opening comparison on the 109 joint cells concerns a different discretized problem and different deformations. Move the detailed account to S8, retaining a short contextual statement. The nearly identical concluding paragraphs for the two flagged truths should be combined.
+
+   Section 5.5 could be merged into section 5.2 as a short subsection on auxiliary bias diagnostics. Its present separate status gives the “validity” rules disproportionate weight.
+
+5. **Order within section 6.1**
+
+   Consolidate the opening paragraphs. The sixteen-cell rounding range is repeated, while the reader must distinguish several replica counts and denominators.
+
+   Present, in order: deterministic reproducibility; measured rounding sensitivity; its contribution to the uncertainty construction; mechanism evidence; tested mitigations. This would separate the observations from explanations and decisions.
+
+6. **Discussion order**
+
+   Section 7 should begin with the paper’s own findings and their scope. The checklist of recommended practices should follow. At present the recommendations precede the concise statement of what this study establishes.
+
+   Section 7.1 should remain, but group limitations into estimator bias, numerical behaviour, uncertainty calibration and data/response interpretation. Its present numbered inventory repeats material already stated several times.
+
+7. **Paragraph and section lengths**
+
+   The paragraphs beginning “The unfolded results of the three run-period groups…” in section 3.2 and “The published covariance has a condition number…” in section 4.1 each combine observation, construction, interpretation and sensitivity studies. Split them by function.
+
+   Section 5.3 is too long relative to its limited mechanistic conclusion: “no unique cause” is established. Section S4 likewise mixes final algorithm specification with extensive superseded-configuration history.
+
+   By contrast, the final sentence of section 5.3—“These results show…”—can close the preceding paragraph rather than stand alone. Section S7 is too skeletal to serve as a self-contained description of joint tests; either supply what the present paper actually needs or leave that separate programme to the note.
+
+8. **Main paper versus Supplement**
+
+   Bring into the main paper the actual truth-\(W\) convention, the important role of misses, a compact account of coverage assumptions and the outcome of like-for-like controls. These determine the interpretation.
+
+   Move most implementation history, detailed class-label definitions, secondary covariance sensitivities and the exhaustive test chronology out of the main text. The Supplement is the appropriate place for reproducible definitions and supporting results; the note is appropriate for development history.
+
+9. **Main figures**
+
+   Figure 1 belongs near section 4.1, rather than floating into the truth-recovery discussion. Figure 2 earns its place but needs injected deformations and support information. Figure 3 is valuable because it displays correlated-test failures that may not appear as individual \(2\sigma\) excursions. Figure 4 also earns its place, provided its caption clearly distinguishes quantities from repeated experiments.
+
+10. **Main tables**
+
+   Table 1 is first needed in section 2 and should not interrupt the estimator description. Its full box definitions could alternatively remain in the Supplement, with the main text retaining a compact summary of support and migration properties.
+
+   Table 2 is useful as an overview, but its status dictionary is too elaborate. Keep the principal outcomes and define only statuses used in the final version.
+
+   Table 3 and Figure 3 are complementary: joint scores versus cellwise patterns. The third covariance variant could move to the Supplement to improve readability. Table 4 is compact and informative. Table 5 should retain the expected-versus-observed joint counts, which communicate the coverage failure particularly clearly.
+
+11. **Supplementary figures and tables**
+
+   S3–S6 provide useful definitions and uncertainty documentation. Figure S2 should be placed with the published-result comparison rather than interrupting S8. Figure S3 supports prior sensitivity but should not be treated as a bound on data bias.
+
+   Figure S4 and the generator-comparison tables are optional illustrations. They may remain in the Supplement with their present prohibition on fitting or exclusion, but they are not needed to establish the paper’s principal contribution. Tables S8–S11 could be consolidated to avoid repeating the same tests across separate design and outcome inventories.
+
+7. Scores and final assessment
+
+SCORE: 5/10
+
+The main contribution is a data-based diagnostic study showing how one simultaneous five-observable OmniFold implementation retains prior dependence and exhibits numerical instability, while its associated two-dimensional uncertainty procedure fails conditional joint-coverage tests.
+
+JINST is an appropriate venue for a revised methods and diagnostic paper; another journal would not better address the present evidential gaps.

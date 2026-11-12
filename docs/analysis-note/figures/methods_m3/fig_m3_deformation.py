@@ -98,20 +98,24 @@ def main() -> None:
                "injected_change_pct_reported": {w: v.tolist() for w, v in inj_w.items()},
                "right_gibuu_residual_se_pct": [rg.tolist(), rg_se.tolist()]}
     assert current == original, "deformation numerical arrays changed from presentation baseline"
+    a.outdir.mkdir(parents=True, exist_ok=True)
     (a.outdir / "m3_fig2_deformation_arrays.json").write_text(json.dumps(current, indent=2) + "\n")
     mc.style()
     plt.rcParams.update({"font.size": 8.5, "axes.labelsize": 9.3,
                          "xtick.labelsize": 8.3, "ytick.labelsize": 8.3,
                          "legend.fontsize": 8.3})
-    fig_paper, a_rw = plt.subplots(figsize=(508 / 72, 2.8))
+    # small multiples (the director's Gm10 ruling, 2026-11-12, on the fresh referee's minor 10 and Joseph's overlap
+    # remark): one panel per truth, each with its own injected-change step, on one shared y scale; the plotted arrays
+    # are unchanged (asserted above against presentation_original_arrays.json)
+    fig_paper, a_rws = plt.subplots(4, 1, sharex=True, sharey=True, figsize=(508 / 72, 5.8))
+    fig_paper.subplots_adjust(left=43.18 / 508, right=0.99, top=0.915, bottom=0.075, hspace=0.12)
     fig_lowcap, a_ng = plt.subplots(figsize=(468 / 72, 2.8))
-    for fig, width_pt in ((fig_paper, 508), (fig_lowcap, 468)):
-        fig.subplots_adjust(left=43.18 / width_pt, right=0.99, top=0.77, bottom=0.20)
+    fig_lowcap.subplots_adjust(left=43.18 / 468, right=0.99, top=0.77, bottom=0.20)
     x = np.arange(mc.N_EW)
-    for ax in (a_ng, a_rw):
+    for ax in (a_ng, *a_rws):
         ax.axhline(0, color="k", lw=0.6)
-        mc.ew_axis(ax, label_rows=True)
-        ax.tick_params(axis="x", labelsize=8.3, labelbottom=True)
+        mc.ew_axis(ax, label_rows=ax is a_ng or ax is a_rws[0])
+        ax.tick_params(axis="x", labelsize=8.3, labelbottom=ax is a_ng or ax is a_rws[-1])
         for label in ax.texts:
             label.set_fontsize(8.3)
     a_ng.stairs(inj, np.arange(mc.N_EW + 1) - 0.5, color=mc.GREY, lw=0.9,
@@ -122,38 +126,37 @@ def main() -> None:
     # injected-change curve has its own dash pattern and legend sample, markers carry dark outlines, the shading is
     # stronger and hatched, and the legend sits above the axes; the green is darkened here only (m3_common keeps its own)
     GREEN_DK = "#0d7a52"
-    for c in UNSUPPORTED:
-        a_rw.axvspan(c - 0.5, c + 0.5, facecolor="0.86", edgecolor="0.6", hatch="////", lw=0, zorder=0)
+    for ax in a_rws:
+        for c in UNSUPPORTED:
+            ax.axvspan(c - 0.5, c + 0.5, facecolor="0.86", edgecolor="0.6", hatch="////", lw=0, zorder=0)
     # the GiBUU case's injected change is the left panel's inj: the same truth (eavail_shape), ratio file
     # (s5n/eavail-ratio-gibuu-over-genie.json, sha 45cc3e0a = truth_check.json eavail_ratio_sha256) and amplitude 1.0
     # (s5e/cand-assess-tasks.tsv aeavail_gibuu_*)
     assert truth["eavail_ratio_sha256"].startswith("45cc3e0a") and truth["departures"]["eavail_shape"]["amplitude"] == 1.0
-    series = (("W1", r"NuWro $E_{\rm avail}$", "o", mc.BLUE, (0, (4, 1.5)), rw["W1"], inj_w["W1"], -0.27),
-              ("W2", r"GENIE + MEC $(E_{\rm avail},W)$", "^", GREEN_DK, (0, (1, 1.2)), rw["W2"], inj_w["W2"], -0.09),
-              ("W3", r"NuWro $(p_T,p_\parallel,E_{\rm avail})$", "D", mc.PURPLE, (0, (5, 1.2, 1, 1.2)), rw["W3"], inj_w["W3"], 0.09),
-              ("GiBUU", r"GiBUU-to-GENIE $E_{\rm avail}$", "s", mc.RED, (0, (8, 2.5)), (rg, rg_se), inj, 0.27))
-    marks, steps = [], []
-    for w, lab, fmt, col, ls, (m, se), injc, dx in series:
-        steps.append(a_rw.stairs(injc, np.arange(mc.N_EW + 1) - 0.5, color=col, lw=0.9, ls=ls,
-                                 label="injected change"))
-        marks.append(a_rw.errorbar(x + dx, m, se, fmt=fmt, ms=3.1, mec="0.15", mew=0.35, color=col, lw=0.7,
-                                   label=lab))
-    for ax in (a_ng, a_rw):
-        ax.set_ylim(-40, 100)
-        ax.set_yticks(np.arange(-40, 101, 20))
+    series = (("W1", r"NuWro $E_{\rm avail}$ shape", "o", mc.BLUE, rw["W1"], inj_w["W1"]),
+              ("W2", r"GENIE + MEC $(E_{\rm avail},W)$ shape", "^", GREEN_DK, rw["W2"], inj_w["W2"]),
+              ("W3", r"NuWro $(p_T,p_\parallel,E_{\rm avail})$ shape", "D", mc.PURPLE, rw["W3"], inj_w["W3"]),
+              ("GiBUU", r"GiBUU-to-GENIE $E_{\rm avail}$ shape", "s", mc.RED, (rg, rg_se), inj))
+    for ax, (w, lab, fmt, col, (m, se), injc) in zip(a_rws, series):
+        step = ax.stairs(injc, np.arange(mc.N_EW + 1) - 0.5, color="0.25", lw=0.9, ls=(0, (4, 1.5)),
+                         label="injected truth change")
+        mark = ax.errorbar(x, m, se, fmt=fmt, ms=3.1, mec="0.15", mew=0.35, color=col, lw=0.7,
+                           label="residual (mean, s.e.)")
+        ax.text(0.006, 0.93, lab, transform=ax.transAxes, ha="left", va="top", fontsize=8.6, color=col, zorder=5,
+                bbox=dict(facecolor="white", edgecolor="none", alpha=0.9, pad=1.0))
+        if ax is a_rws[0]:
+            fig_paper.legend(handles=[mark, step], loc="upper right", bbox_to_anchor=(0.99, 1.0), ncol=2,
+                             frameon=False, fontsize=8.0, handlelength=2.6, columnspacing=1.6)
+    a_ng.set_ylim(-40, 100)
+    a_ng.set_yticks(np.arange(-40, 101, 20))
+    a_rws[0].set_ylim(-40, 80)
+    a_rws[0].set_yticks(np.arange(-40, 81, 40))
     a_ng.legend(loc="upper left", frameon=False)
-    # column-major fill: each column is one truth, its markers above its injected-change curve
-    a_rw.legend(handles=[h for pair in zip(marks, steps) for h in pair], loc="lower left", bbox_to_anchor=(0.0, 1.07),
-                ncol=4, frameon=False,
-                fontsize=7.4, columnspacing=1.0, handletextpad=0.4, handlelength=2.6, borderaxespad=0.0)
-    for ax in (a_ng, a_rw):
-        ax.set_ylabel("(unfolded $-$ truth)/truth (%)")
-        ax.set_xlabel(
-            r"$(E_{\rm avail},W)$ cell: $W$ bin 1–6 within each "
-            r"$E_{\rm avail}$ bin (GeV, top)",
-            fontsize=9.3,
-        )
-    a_rw.tick_params(labelleft=True)
+    a_ng.set_ylabel("(unfolded $-$ truth)/truth (%)")
+    fig_paper.supylabel("(unfolded $-$ truth)/truth and injected change (%)", fontsize=9.3, x=0.005)
+    xlabel = r"$(E_{\rm avail},W)$ cell: $W$ bin 1–6 within each $E_{\rm avail}$ bin (GeV, top)"
+    for ax in (a_ng, a_rws[-1]):
+        ax.set_xlabel(xlabel, fontsize=9.3)
     a_ng.set_title(
         "Lower-capacity variant with background refinement,\n"
         "refinement classifier 100 trees, 8 leaves",

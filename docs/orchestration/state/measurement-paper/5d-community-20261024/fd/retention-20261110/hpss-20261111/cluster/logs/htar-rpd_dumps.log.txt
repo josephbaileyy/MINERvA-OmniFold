@@ -1,0 +1,55 @@
+HTAR: a   SHA256SUMS.rpd_dumps
+HTAR: a   pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1A.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1A_bkg.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1B.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1B_bkg.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1C.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1C_bkg.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1D.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1D_bkg.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1E.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1E_bkg.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1F.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1F_bkg.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1G.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1G_bkg.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1L.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1L_bkg.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1M.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1M_bkg.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1N.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1N_bkg.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1O.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1O_bkg.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1P.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1P_bkg.npz
+HTAR: a   /tmp/HTAR_CF_CHK_575310_1794365572
+HTAR Create complete for /home/j/josephrb/mnv-at-risk-20261111/rpd_dumps.tar. 1577486336 bytes written for 25 member files, max threads: 4 Transfer time: 9.494 seconds (166.160 MB/s) wallclock/user/sys: 9.533 13.249 3.209 seconds
+HTAR: v SHA256SUMS.rpd_dumps, 3000 bytes, 7 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1A.npz, 127968221 bytes, 249939 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1A_bkg.npz, 2311555 bytes, 4516 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1B.npz, 33980383 bytes, 66369 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1B_bkg.npz, 638389 bytes, 1248 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1C.npz, 65471177 bytes, 127875 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1C_bkg.npz, 1194780 bytes, 2335 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1D.npz, 192006622 bytes, 375014 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1D_bkg.npz, 3448900 bytes, 6738 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1E.npz, 158814144 bytes, 310185 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1E_bkg.npz, 2888635 bytes, 5643 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1F.npz, 221027198 bytes, 431695 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1F_bkg.npz, 4027113 bytes, 7867 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1G.npz, 186899533 bytes, 365040 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1G_bkg.npz, 3360491 bytes, 6565 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1L.npz, 18061361 bytes, 35278 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1L_bkg.npz, 361915 bytes, 708 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1M.npz, 274076044 bytes, 535306 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1M_bkg.npz, 5283519 bytes, 10321 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1N.npz, 159089937 bytes, 310724 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1N_bkg.npz, 3119697 bytes, 6095 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1O.npz, 47673627 bytes, 93114 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1O_bkg.npz, 997512 bytes, 1950 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1P.npz, 63445665 bytes, 123919 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1P_bkg.npz, 1316555 bytes, 2573 media blocks
+HTAR: v /tmp/HTAR_CF_CHK_575310_1794365572, 256 bytes, 2 media blocks
+HTAR: Verify complete. 0 total errors, 26 total objects (26 Files,0 Dirs,0 Hard Links,0 symlinks) wallclock/user/sys: 9.198 9.306 1.131 seconds
+HTAR: HTAR SUCCESSFUL

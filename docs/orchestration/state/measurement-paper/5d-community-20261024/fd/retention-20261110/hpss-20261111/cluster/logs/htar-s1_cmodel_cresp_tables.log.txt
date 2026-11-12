@@ -1,0 +1,17 @@
+HTAR: a   SHA256SUMS.s1_cmodel_cresp_tables
+HTAR: a   pscratch/sd/j/josephrb/cmodel5d-20261024/out/cmodel_5d.npz
+HTAR: a   pscratch/sd/j/josephrb/cresp-20261026/out/cresp.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-f0b-20261026/fd_f0b_experiments.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-f1-20261027/grade/fd_f1_experiments.npz
+HTAR: a   pscratch/sd/j/josephrb/s1-20261024/s1_assembly.npz
+HTAR: a   /tmp/HTAR_CF_CHK_519630_1794365099
+HTAR Create complete for /home/j/josephrb/mnv-at-risk-20261111/s1_cmodel_cresp_tables.tar. 2289664 bytes written for 6 member files, max threads: 8 Transfer time: 0.009 seconds (262.550 MB/s) wallclock/user/sys: 0.273 0.015 0.011 seconds
+HTAR: v SHA256SUMS.s1_cmodel_cresp_tables, 625 bytes, 3 media blocks
+HTAR: v pscratch/sd/j/josephrb/cmodel5d-20261024/out/cmodel_5d.npz, 5956 bytes, 13 media blocks
+HTAR: v pscratch/sd/j/josephrb/cresp-20261026/out/cresp.npz, 12952 bytes, 27 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-f0b-20261026/fd_f0b_experiments.npz, 1068642 bytes, 2089 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-f1-20261027/grade/fd_f1_experiments.npz, 1075668 bytes, 2102 media blocks
+HTAR: v pscratch/sd/j/josephrb/s1-20261024/s1_assembly.npz, 119273 bytes, 234 media blocks
+HTAR: v /tmp/HTAR_CF_CHK_519630_1794365099, 256 bytes, 2 media blocks
+HTAR: Verify complete. 0 total errors, 7 total objects (7 Files,0 Dirs,0 Hard Links,0 symlinks) wallclock/user/sys: 0.260 0.014 0.002 seconds
+HTAR: HTAR SUCCESSFUL

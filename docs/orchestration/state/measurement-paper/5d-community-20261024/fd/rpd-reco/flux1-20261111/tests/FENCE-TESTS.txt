@@ -1,0 +1,21 @@
+CASE ready rc=0 FENCE OVERLAP: CLEAR (allowed 1, stops 0)
+   FENCE allowed exception: MAT MPARAMFILES /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt
+CASE dump_root_protected rc=3 FENCE OVERLAP: STOP (allowed 1, stops 24)
+   FENCE allowed exception: MAT MPARAMFILES /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt
+   FENCE STOP: (c) pin /pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1A.npz overlaps protected /pscratch/sd/j/josephrb/fd-rpd-20261103/dumps
+   FENCE STOP: (c) pin /pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1A_bkg.npz overlaps protected /pscratch/sd/j/josephrb/fd-rpd-20261103/dumps
+CASE write_root_inside_protected rc=3 FENCE OVERLAP: STOP (allowed 1, stops 53)
+   FENCE allowed exception: MAT MPARAMFILES /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt
+   FENCE STOP: (b) write root /pscratch/sd/j/josephrb/rpd-reco-flux-20261111 overlaps protected /pscratch/sd/j/josephrb
+   FENCE STOP: (c) flux_source /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/MAT/PlotUtils/FluxReweighter.cxx overlaps protected /pscratch/sd/j/josephrb
+CASE exception_directory_protected rc=3 FENCE OVERLAP: STOP (allowed 1, stops 1)
+   FENCE allowed exception: MAT MPARAMFILES /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt
+   FENCE STOP: (c) MAT MPARAMFILES /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt overlaps protected /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data
+CASE clone_protected rc=3 FENCE OVERLAP: STOP (allowed 1, stops 2)
+   FENCE allowed exception: MAT MPARAMFILES /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt
+   FENCE STOP: (b) write root /dev/shm/limres-rpd-flux1 overlaps protected /dev/shm/limres-rpd-flux1/repo/nd-unfolding
+   FENCE STOP: (c) h2 /dev/shm/limres-rpd-flux1/repo/nd-unfolding/pv-ladder/readouts/h2_definition.json overlaps protected /dev/shm/limres-rpd-flux1/repo/nd-unfolding
+CASE cn_file_protected rc=3 FENCE OVERLAP: STOP (allowed 1, stops 1)
+   FENCE allowed exception: MAT MPARAMFILES /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt
+   FENCE STOP: (c) flux_selection 1M /pscratch/sd/j/josephrb/minerva/minerva_large_files/MATFluxAndReweightFiles/flux/flux-gen2thin-pdg14-minervame1M_rearrangedUniverses.root overlaps protected /pscratch/sd/j/josephrb/minerva/minerva_large_files/MATFluxAndReweightFiles/flux/flux-gen2thin-pdg14-minervame1M_rearrangedUniverses.root
+CASE exception_not_listed rc=0 FENCE OVERLAP: CLEAR (allowed 0, stops 0)

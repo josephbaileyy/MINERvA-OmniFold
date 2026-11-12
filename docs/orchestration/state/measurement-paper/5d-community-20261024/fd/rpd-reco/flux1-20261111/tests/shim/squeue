@@ -1,0 +1,4 @@
+#!/bin/bash
+echo "61078463|ll5d_gate_G18|PENDING"
+[ -n "$FAKE_RPD" ] && echo "4241|rpd_flux1|RUNNING"
+exit 0

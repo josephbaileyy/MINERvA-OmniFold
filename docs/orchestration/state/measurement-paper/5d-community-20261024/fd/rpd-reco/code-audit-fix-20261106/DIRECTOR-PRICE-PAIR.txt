@@ -1,0 +1,7 @@
+<cross-session-message from="uds:/tmp/cc-socks/52592.sock" hop-chain="d4c94abb2be245e44347e97d,5a030e0770dcfa08a98b21e8" from-name="director" from-mode="bypass">
+director: two additions to B2, from coverage-5b-audit:
+1. **S comes from a full-shape chunk:** all variants and all axes, the shape of the real pass. That errs safe for c0's partition passes. Each record names the chunk shape S came from.
+2. **Exactly one of S and N given: refuse,** with a test for each of the two cases. Only both together, or neither, is valid.
+
+N, S and the planned figure go in every record, STOP records included. Everything else is as already sent.
+</cross-session-message>

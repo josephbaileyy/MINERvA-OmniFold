@@ -1,0 +1,87 @@
+# T3 rev 4 receipt: mutation
+# clone HEAD: ae0892add25c1fc9b074f4031a1aee91249aacf7  dirty tracked files: 0
+# command: python3 -B nd-unfolding/tier3/t3p_mutation.py
+# python: 3.12.2 numpy 1.26.4  host: Darwin arm64  threads: 1 (OMP/OPENBLAS/MKL/VECLIB/NUMEXPR)  nice: 19
+# start: 2026-11-11T07:19:26Z
+# sha256 4a685bde238dcc6dc25e9b1121029994f33becafab486cbec1a7bf846206bf84  t3p_arms.py
+# sha256 e27bf07a3e2c60320a749355eaedceed5a36574d2d8fa83675bd4b4721985bd2  t3p_probe.py
+# sha256 f4c221dda95fbbdf2318f7fcdde57b9e1b7fb265e85b13e1dea15341cf069295  t3p_read.py
+# sha256 a21ad29f35a71e46c1b286ca6ae96128f01c482cbd30aac5133d3e4729d2de3c  sbatch_t3p.sh
+# sha256 69621cb52deb2f965056ed219ad557fa34dc590586038f411975043f21fbc454  test_t3p.py
+# sha256 3b532709e8d1b6d69e6ed69a54bc369e45a849e2ccfc52266b2f5131a060b7c0  t3p_mutation.py
+unmutated suite: 68 tests OK, in the mirrored tree
+KILLED    REQUIRED C-PAIR compares within a tolerance      by test_one_ulp_in_our_trace_fails_c_pair
+KILLED    REQUIRED C-PAIR compares within a tolerance (reference side) by test_one_ulp_in_the_reference_fails_c_pair
+KILLED    REQUIRED stored k unfold from w_pull             by test_b0_trace_at_k_equals_the_plain_unfold_at_k
+KILLED    iters unchecked                                  by test_the_refusals_fire_on_the_runners_parse
+KILLED    capacity unchecked                               by test_the_refusals_fire_on_the_runners_parse
+KILLED    mc fraction unchecked                            by test_the_refusals_fire_on_the_runners_parse
+KILLED    undeclared task admitted                         by test_the_refusals_fire_on_the_runners_parse
+KILLED    tag unchecked                                    by test_the_refusals_fire_on_the_runners_parse
+KILLED    hypothesis unchecked                             by test_the_refusals_fire_on_the_runners_parse
+KILLED    iterations not set on the line                   by test_lines_are_fd_prrs_k50_line_but_for_three_fields
+KILLED    jobs swapped                                     by test_tasks_and_jobs
+KILLED    floor limit too low                              by test_price_limits_and_cap
+KILLED    trace unit changed                               by test_price_limits_and_cap
+KILLED    pairing levels shifted                           by test_sources
+KILLED    SO keeps the background                          by test_so_builds_signal_only_and_r_is_captured
+KILLED    r from the pseudo-data half                      by test_so_builds_signal_only_and_r_is_captured
+KILLED    runner's development option admitted             by test_a_development_option_from_the_runner_is_refused
+KILLED    write without the check                          by test_no_product_without_the_check_or_the_steps
+KILLED    write without the steps                          by test_no_product_without_the_check_or_the_steps
+KILLED    rho read in place                                by test_the_rho_loader_reads_only_a_staged_copy
+KILLED    substitute unfold admitted                       by test_unfold_one_refuses_a_missing_r_a_mismatched_r_or_a_substitute
+KILLED    r length unchecked                               by test_unfold_one_refuses_a_missing_r_a_mismatched_r_or_a_substitute
+KILLED    C-PAIR dtype ignored                             by test_a_dtype_change_fails
+KILLED    C-PAIR by value                                  by test_a_signed_zero_fails_c_pair
+KILLED    C-PAIR pin unchecked                             by test_a_reference_that_is_not_its_pin_fails
+KILLED    C-X not in the verdict                           by test_one_ulp_in_an_arms_truth_fails_c_x
+KILLED    full job starts unmeasured                       by test_a_full_job_refuses_an_unmeasured_arm_and_uses_a_measured_one
+KILLED    projection ignored                               by test_a_projection_above_the_limit_stops
+KILLED    rates from FD-PRR's ids                          by test_a_full_job_refuses_an_unmeasured_arm_and_uses_a_measured_one
+KILLED    MW weight not passed on                          by test_mw_weights_reach_the_regressor
+KILLED    MW weight on the reco population                 by test_mw_weights_reach_the_regressor
+KILLED    MW check disabled                                by test_mw_refuses_a_wrong_weight
+KILLED    MO oracle on the wrong side                      by test_mo_gives_misses_the_true_weight
+KILLED    oracle check disabled                            by test_mo_and_op_refuse_a_wrong_oracle
+KILLED    OP leaves step 1 alone                           by test_op_gives_every_event_the_true_weight_and_records_the_repeat
+KILLED    clip edges swapped                               by test_the_clip_is_counted
+KILLED    push and pull swapped                            by test_the_trace_records_r00_r15_from_the_production_extraction
+KILLED    crossing never classed                           by test_trajectory_classes
+KILLED    tail bar halved                                  by test_the_tail_bar_is_delta_t
+KILLED    reco overshoot ignored                           by test_location_classes
+KILLED    TR-1 boundary open                               by test_tr1_and_tr2
+KILLED    TR-2 sign                                        by test_tr1_and_tr2
+KILLED    bounded by step 2 dropped                        by test_mo_bounded_by_step_2
+KILLED    bounded by step 2 from TR-2's class              by test_bounded_by_step_2_is_decided_from_the_numbers
+KILLED    bounded by step 2 ignores the headroom           by test_no_effect_with_headroom_stands_whatever_tr2
+KILLED    SO bounded by OP                                 by test_mo_bounded_by_step_2
+KILLED    resolution not printed                           by test_bounded_by_step_2_is_decided_from_the_numbers
+KILLED    R1a: the bound rewrites a lowers                 by test_a_lowers_is_never_rewritten_to_bounded
+KILLED    R1b: the headroom takes OP at k = 1              by test_the_headroom_operands_are_rho_op_at_2_and_rho_b0_at_50
+KILLED    R1c: the headroom takes B0 at k = 5              by test_the_headroom_operands_are_rho_op_at_2_and_rho_b0_at_50
+KILLED    resolution Delta dropped                         by test_a_lowers_is_never_rewritten_to_bounded
+KILLED    crossing boundary open                           by test_trajectory_classes
+KILLED    crosses keeps rho(50) = delta                    by test_trajectory_classes
+KILLED    C-PAIR shape ignored                             by test_a_dtype_change_fails
+KILLED    crosses and returns folded                       by test_trajectory_classes
+KILLED    unattributed dropped                             by test_labels
+KILLED    b_par outside S                                  by test_bias_split_is_exact
+KILLED    bar floor dropped                                by test_planted_classes
+KILLED    a failed pair record read                        by test_incomplete_when_a_pair_record_failed
+KILLED    SO evidence unchecked                            by test_so_with_the_refinement_running_stops
+KILLED    oracle evidence unchecked                        by test_a_product_check_stops
+KILLED    C-TRACE disabled                                 by test_c_trace_stops
+KILLED    C-RECO disabled                                  by test_c_reco_stops
+KILLED    C-P pin unchecked                                by test_a_prior_not_its_pin_stops
+KILLED    T_Q from FD-PRR's family                         by test_t_quantile
+KILLED    deploy pin unchecked                             by test_a_deploy_not_at_its_pin_refuses
+KILLED    job name unchecked                               by test_a_wrong_job_name_refuses
+KILLED    limit above admitted                             by test_a_limit_above_the_declared_refuses_and_an_unreadable_one_says_so
+KILLED    no fence admitted                                by test_the_dry_run_refuses_without_a_fence_and_on_a_fenced_job
+KILLED    fence prefix anywhere                            by test_a_fence_prefix_matches_only_at_the_start
+KILLED    squeue failure tolerated                         by test_the_dry_run_refuses_without_a_fence_and_on_a_fenced_job
+KILLED    fence in the dry job only                        by test_a_full_job_checks_the_fence_too
+KILLED    full job without the dry DONE                    by test_a_full_job_refuses_without_the_dry_runs_done_and_an_existing_log
+MUTATION CHECK :: PASS (73 mutations)
+# exit: 0  end: 2026-11-11T07:36:35Z

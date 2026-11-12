@@ -1,0 +1,75 @@
+node login27 staged sha256 a9a98ac0e06fbf35e4055d11ff4a65ae307bed39f98189d7155a3a4f57d3835b
+node login27 2026-11-11T03:22:21Z; connect script sha256 a9a98ac0e06fbf35e4055d11ff4a65ae307bed39f98189d7155a3a4f57d3835b
+== fresh clone at f3d02e6de91c21fb71b43f4cdbd54ba4bcf86775
+HEAD f3d02e6de91c21fb71b43f4cdbd54ba4bcf86775; porcelain lines 0
+sha256 514488139bdc60e315eede3a3df269233199b1953a331b6bdc04bcd64afe1ade docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/code/vhr_wtruth_check.py
+sha256 26569afc0da46f21167e0908014712cd800c1e14ac63a4b245a0b493c76d3d71 nd-unfolding/s5p_stage1_inspect.py
+sha256 b67907615fe2e903e60ae6caa1c141fa007676c0a1b3ae9f42490d331bfdda89 nd-unfolding/pv-ladder/readouts/h2_definition.json
+npz stat before: 1548438020 1782610308 1794179838
+python Python 3.10.19; numpy 2.2.6
+VHR-WTRUTH PASS: all rows 32849103 nonfinite 0 negative 0; pass_truth rows 32849103 nonfinite 0 negative 0; shares rows 32846301 nonfinite 0 negative 0; tilt rows 32846301 nonfinite 0 negative 0
+checker rc=0
+npz stat after:  1548438020 1782610308 1794179838
+== FILE wtruth.json sha256 aa70534aa50686796979c2ffbf7f7d2a0340723cb6a0f0bfc4f5f8c4cce6c14c
+{
+  "fine_cells": 65856,
+  "gated_sets": [
+    "shares",
+    "tilt"
+  ],
+  "inputs": {
+    "fine_map_sha256_int32le": "930326a3a7c0852d4047b5468d8ea3b63d046b896e4a4de1557e29f95102e18c",
+    "h2_definition_sha256": "b67907615fe2e903e60ae6caa1c141fa007676c0a1b3ae9f42490d331bfdda89",
+    "keys_read": [
+      "MCgen",
+      "pass_truth",
+      "w_truth"
+    ],
+    "npz_sha256": "07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f"
+  },
+  "o_noatime": true,
+  "omega_fine_cells": 63168,
+  "schema": "vhr-wtruth-check/1",
+  "sets": {
+    "all": {
+      "max": 3.895271731713644,
+      "min": 0.00027560029276517135,
+      "negative": 0,
+      "nonfinite": 0,
+      "rows": 32849103,
+      "sum": 5779535.6838463005,
+      "zero": 0
+    },
+    "pass_truth": {
+      "max": 3.895271731713644,
+      "min": 0.00027560029276517135,
+      "negative": 0,
+      "nonfinite": 0,
+      "rows": 32849103,
+      "sum": 5779535.6838463005,
+      "zero": 0
+    },
+    "shares": {
+      "max": 3.895271731713644,
+      "min": 0.00027560029276517135,
+      "negative": 0,
+      "nonfinite": 0,
+      "rows": 32846301,
+      "sum": 5778935.958533636,
+      "zero": 0
+    },
+    "tilt": {
+      "max": 3.895271731713644,
+      "min": 0.00027560029276517135,
+      "negative": 0,
+      "nonfinite": 0,
+      "rows": 32846301,
+      "sum": 5778935.958533636,
+      "zero": 0
+    }
+  },
+  "verdict": "PASS"
+}
+== END wtruth.json
+== vhr-wtruth rc=0 2026-11-11T03:22:55Z
+script rc=0

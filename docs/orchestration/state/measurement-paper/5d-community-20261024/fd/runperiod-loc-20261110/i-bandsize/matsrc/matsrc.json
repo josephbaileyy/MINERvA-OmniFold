@@ -1,0 +1,27 @@
+{
+ "schema": "rpl-matsrc/1",
+ "stop": [],
+ "source": {
+  "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/MAT-MINERvA/universes/MuonSystematics.cxx",
+  "bytes": 9150,
+  "mtime_ns": 1766043005000000000,
+  "stat_unchanged": true,
+  "sha256": "85780aeed6ce8af2b033f2c78d475fc39ed3c8c530d39b804140da96264143af"
+ },
+ "git_HEAD": {
+  "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/MAT-MINERvA/.git/HEAD",
+  "bytes": 21,
+  "mtime_ns": 1766043005000000000,
+  "stat_unchanged": true,
+  "sha256": "28d25bf82af4c0e2b72f50959b2beb859e3e60b9630a5e8c603dad4ddb2b6e80",
+  "text": "ref: refs/heads/main"
+ },
+ "git_ref": {
+  "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/MAT-MINERvA/.git/refs/heads/main",
+  "bytes": 41,
+  "mtime_ns": 1766043005000000000,
+  "stat_unchanged": true,
+  "sha256": "3ea155477cc0d714b8adc26656582a1ecdfd54386d9319ed5ed7840d79ba4818"
+ },
+ "commit": "50d7631416d1c93edd4db6886a2ca29da64fee60"
+}

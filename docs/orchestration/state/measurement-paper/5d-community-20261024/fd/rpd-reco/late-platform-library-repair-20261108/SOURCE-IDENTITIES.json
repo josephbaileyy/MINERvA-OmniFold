@@ -1,0 +1,70 @@
+{
+  "tested_head": "0fbbbf8448f16e9e18741a330e1dd9d8cb35f88b",
+  "baseline": "d38a4fdf34cf7f20a51a0b6527c390ba6b6d5712",
+  "files_at_issue": {
+    "nd-unfolding/fd_rpd_reco.py": {
+      "sha256": "f748c8971919dfc39ecf111920bb01ef2479082e98134f26c83569d60d79627c",
+      "git_blob": "7d163c15c0d8dd9d316077b11ba5475b7e6ed848"
+    },
+    "nd-unfolding/fd_rpd_reco_custody.py": {
+      "sha256": "cd6df11fd53c187397f6ea4beae3e94067186cfd3cfe62545fef038f14c633a5",
+      "git_blob": "3eeab97ca36008220429179273083de5d008a541"
+    },
+    "nd-unfolding/fd_rpd_reco_prologue.py": {
+      "sha256": "33122fde093fce52e33a554431b4a6ab9fcdbb65b689405e5511f4b6323fbf5c",
+      "git_blob": "39c57a29b62fba1a1ac4fc0de25593211cfe07e3"
+    },
+    "nd-unfolding/fd_rpd_reco_flux_connect.sh": {
+      "sha256": "32db52355a4811bd4bf5f8b8cc0b5c397c7b403a0996048bcafd8c8c665cc76e",
+      "git_blob": "ecbe372a2d4e3c39942b261492f3cafc0a41b52d"
+    },
+    "nd-unfolding/fd_rpd_reco_prologue_connect.sh": {
+      "sha256": "c375e94a47b859ee57be9126ccc2aabb544374ac0ed528a095352164175d6dc5",
+      "git_blob": "b2872a6c0632f0ceb258f4c1cfbf4b23cbc51319"
+    },
+    "nd-unfolding/tests/test_fd_rpd_reco.py": {
+      "sha256": "9bc876e9da25f349cc0c63674161e5f640678d5ae716cb89ed2e124c349b27a2",
+      "git_blob": "a35408279d0692bb198f83fad67616288d760588"
+    },
+    "nd-unfolding/tests/fd_rpd_reco_mutation.py": {
+      "sha256": "ed0d6a5a4321328c64893750c2ff08c55c0375465cb7684eab04659be1d0feb8",
+      "git_blob": "2f6cea0b4c42e7c6d72c46214b1cebb4b6dd19a8"
+    },
+    "nd-unfolding/tests/fd_rpd_reco_mat_check.py": {
+      "sha256": "06360100038f0203b0d994f71c171b12cd955697edf32d1d744c4ce271ceb26d",
+      "git_blob": "00e6ff121401de5f216b411a97ee90ecefc4c0bc"
+    },
+    "nd-unfolding/fd_rpd_inputs.py": {
+      "sha256": "6e4ed0f1d7f55b7bfe2f26752eeb28bb9cbe33325a9d91cc7c06d9494a0b0a70",
+      "git_blob": "7c2e018f1169a9be0c5642daab991c664acbefcf"
+    },
+    "nd-unfolding/fd_ct_period_inputs.py": {
+      "sha256": "4d005f265ea6abf4ee7cfec988fe7c06553556ca7984387929f77409dfc244b1",
+      "git_blob": "81fc77890264e26ce38661a27e11c3da74c22284"
+    },
+    "nd-unfolding/tests/fixtures/fd_rpd_reco_trace/prologue4/exact_clone_chdir.strace.txt": {
+      "sha256": "02e16edd28165e2d7d5d3e26303827ab045326ceb1db41a19bdde4d749c416ad",
+      "git_blob": "7815af07279779ebfbea24718d03cedb80bdc837"
+    },
+    "nd-unfolding/tests/fixtures/fd_rpd_reco_trace/prologue4/interleaved_failures.strace.txt": {
+      "sha256": "1a0c0d56ff1d6e4e8ca6dc962f30cc1978a39c09dcaae2b1097bcdcd108c8a73",
+      "git_blob": "30d1bbfdc9902482e4bae1c16fd9f3a7fcd0ade9"
+    },
+    "nd-unfolding/tests/fixtures/fd_rpd_reco_trace/prologue4/late_ovis_loads.strace.txt": {
+      "sha256": "3b8deb0339f5d78bbb8bbfdf09d78020c3a4770010409f525c6542ba5a2a4412",
+      "git_blob": "68e85ef4d40a153b7956e2d2734fc25773226e31"
+    },
+    "nd-unfolding/tests/fixtures/fd_rpd_reco_trace/prologue4/manifest.json": {
+      "sha256": "37174b429cdb3461935e2f0552ebaa9de03649f12a092ea10f343feafb1568e2",
+      "git_blob": "c642703fc97b73b7d00074b748efe20423c86dc5"
+    },
+    "nd-unfolding/tests/fixtures/fd_rpd_reco_trace/prologue4/split_success.strace.txt": {
+      "sha256": "2514248361d316c20c5ade833643715e7e7805a96101147cd50594c6f3bed98d",
+      "git_blob": "804f0ed2e46c616a3ba9496a2538deae9dad9383"
+    },
+    "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/late-platform-library-repair-20261108/production-config.draft.json": {
+      "sha256": "697d0c04e9e6f6344b2a011b42c7a472ec0c39582deb737d18c956fd7e1e585b",
+      "git_blob": "909a4cf636c0050d6de9cd1c13f83df264442f32"
+    }
+  }
+}

@@ -54,6 +54,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 NOTE = "docs/analysis-note"
 METRICS = ("semi", "so", "median", "gt150", "wps")
+ABBREV = re.compile(r"\b(Secs?|Refs?|Figs?|Eqs?|Apps?|Tabs?|secs?|refs?|figs?|eqs?|apps?|tabs?|cf|al|vs|e\.g|i\.e)\.(?=\s)")
 
 
 def references(path=HERE / "style-references.tsv"):
@@ -100,7 +101,10 @@ def metrics(P):
     w = sum(L)
     semi = sum(p.count(";") for p in P)
     so = sum(len(re.findall(r",\s+so\s", p)) for p in P)
-    sent = sum(len(re.findall(r"[.?!]\s+[A-Z]", p)) + 1 for p in P)
+    # an abbreviation's full stop before a reference is not a sentence end (journal-editor, 2026-11-12: "Sec.~\ref",
+    # "Ref.~\cite", "ref.~\cite" and "Fig.~" became "Sec. X" after cleaning and counted as breaks); neutralised on both
+    # sides of every comparison, since the base is measured by this same function
+    sent = sum(len(re.findall(r"[.?!]\s+[A-Z]", ABBREV.sub(r"\1", p))) + 1 for p in P)
     return dict(words=w, paras=len(P), median=L[len(L) // 2], gt150=round(100 * sum(x > 150 for x in L) / len(L)),
                 semi=round(1000 * semi / w, 1), so=round(1000 * so / w, 1), wps=round(w / sent, 1),
                 n_semi=semi, n_so=so, long=[(x, p[:60]) for x, p in sorted(((len(p.split()), p) for p in P), reverse=True)
@@ -205,6 +209,9 @@ def self_test():
     hidden = good_p + "\n\n% a; comment; with; semicolons, so what\n\\begin{xltabular}{x}{y}\na; b; c; d, so e. F; g.\n\\end{xltabular}\n"
     if judge(metrics(paragraphs(hidden)), METRICS, T):
         print("self-test: a comment or an xltabular is measured as prose"); ok = False
+    ab = "\n\n".join(["See Sec.~\\ref{a} and ref.~\\cite{b} and Fig.~\\ref{c} and Eq.~(\\ref{d}) for these numbers, e.g. Here " + good] * 5)
+    if metrics(paragraphs(ab))["wps"] != round(metrics(paragraphs(ab))["words"] / 15, 1):     # three sentences per paragraph
+        print("self-test: an abbreviation before a reference counts as a sentence end:", metrics(paragraphs(ab))); ok = False
     am, _ = abstract_metrics([good, good.replace("for tests. This", "for tests; this", 1)])
     if am["semi"] == 0:
         print("self-test: NOT CAUGHT a semicolon in one abstract case of two"); ok = False

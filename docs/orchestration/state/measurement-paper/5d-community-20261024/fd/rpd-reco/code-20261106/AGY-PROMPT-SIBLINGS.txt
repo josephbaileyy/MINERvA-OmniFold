@@ -1,0 +1,9 @@
+Focused addendum after the director resolved the production-layout preflight.
+
+Your two full reads remain preserved. A new explicit director ruling arrived after the second read; this authorizes exactly twelve known nn_<PL>.npz siblings to coexist, stat-only, while the bound inputs remain exactly24 lat pairs. Any unknown file, including nn_2A.npz, still refuses. No glob exclusion. The nn siblings must never be opened or hashed.
+
+Review only this delta at 6b690fbc8 in the same isolated detached clean worktree ../MINERvA-OmniFold-rpd-reco-review-20261106. Confirm full HEAD and clean status before/after. Do not edit, stage, merge, contact a cluster, run production analysis or spawn agents.
+
+Inspect Inputs.load_pins, pins record metadata, test_known_siblings_are_stat_only (two fixture seeds, unknown-file and 13th-nn negative cases), and the three REQUIRED sibling mutants. Check exact closed name set, no added NPZ inputs, metadata fields name/bytes/mtime_ns, no open/hash path for siblings, and preservation of missing/digest/unknown-file refusal. The test audit hook must detect an attempted sibling open. Pure local targeted tests and the three new mutants are allowed; interpreter ~/miniconda3/bin/python. We are rerunning the entire suite/harness separately.
+
+Return a concise focused verdict, any blocking/major defect, exact test/mutant outcomes and clean-status observation. Preserve unverified native noatime/MAT runtime caveats. This is one targeted ruling addendum, not a new campaign or production authorization. Return exact answer by normal open-agent-bridge reply; prompt and answer are committed verbatim.

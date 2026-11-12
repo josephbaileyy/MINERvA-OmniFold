@@ -154,6 +154,17 @@ READOUTS = {
     # (MAT-MINERvA calculators/CCInclusiveSignal.h truth::Apothem/ZRange, read from source; port 1 identical)
     "cbkg2": ("docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/cbkg2-20261112/members/cbkg2_summary.json", "22bb7782"),
     "lrows": ("docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/l-rows-20261112/derived/l_rows.json", "dc3bf511"),
+    # the fresh referee round on 283f3044 (#977 RESPONSE.md section G), director-helper-2's lrows-g (PR #1102):
+    # G1, Clopper-Pearson 95 % intervals on the 2D coverage counts; G3, the rounding jitter's share of the bootstrap
+    # variance (diagonal only, under R0b's additivity)
+    "cpint": ("docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/lrows-g/cp_intervals.json", "73e25db3"),
+    "rdecomp": ("docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/lrows-g/rounding_decomp.json", "46c6f8f3"),
+    # G5 (minor 6): the period step after RE-2's refined background, the reported two-dimensional configuration
+    # (lrows-g/reconcile.json ecdb66a2 traces the paper's earlier 6.94 to the pre-RE-2 period unfold)
+    "re2per": ("docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/periods/analysis.json", "2ce5d5da"),
+    # G4 (major 8): the run-period figure's plotted values, both levels against 1A-1F (PR #1104; the director's ruling of
+    # 2026-11-12 adopts that single reference for the text); the installed PDF is asserted equal to its source below
+    "runper": ("docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/lrows-g/g4-runperiod/runperiod_values.json", "f63074b1"),
 }
 # the committed readouts without the run-period block, for the "-nopl" keys
 NOPL_READOUTS = dict(READOUTS, **{
@@ -332,7 +343,7 @@ PENDING["vhalf-cells-notvalid"] = ("vhalf", None)
 # The words \fvval prints for a class key (Table 1). A class key with no entry here cannot be printed by \fvval: its
 # value is an \errmessage, so no raw class name reaches a build (round 6 pre-read, NOTES item 24; the director's item 8).
 WORDS = {
-    **{k: {"reduces": "reduces", "increases": "increases", "both": "reduces and increases", "no-effect": "no effect",
+    **{k: {"reduces": "reduces", "increases": "increases", "both": "reduces and increases", "no-effect": "no detected change",
            "undefined": "undefined"} for k, (_, c) in PENDING.items() if c is PR1},
     # Table 1's entry per tune and variant (DECISION-20261109-joseph-coverage-case-wording.md item 3)
     **{k: {"covers": "no under-coverage detected", "under-cells": "under-coverage flagged",
@@ -1580,6 +1591,7 @@ def groupb_values(d):
     v.update(t2b_values(d))
     v.update(lrows_values(d))
     v.update(recov_values(d))
+    v.update(g_rows_values(d))
     v.update(cbkg2_values(d))
     # B3a: the synthetic q3 tilt, r = 1 + a z~ (s5c_pseudo.py truth_weight "q3_given_eavail_w"); a and the clip from the
     # code, the event count, the range and in-cell spread of the weight and the two preservation checks from the truth check
@@ -1906,6 +1918,11 @@ def tier1_values(d):
     # (iv) ENS1's one deficit
     bw = d["ens1s2"]["bias"]["stage0c_gibuu"]
     v["ens1-g-rms"], v["ens1-g-rmsc"] = f"{bw['rms']:.6f}", f"{bw['rms_control']:.6f}"
+    # the paper's rounded pair (the fresh referee round's minor 8, the director's Gm8 ruling of 2026-11-12); the
+    # six-decimal pair stays in the Supplement
+    v["ens1-g-rms-r"], v["ens1-g-rmsc-r"] = f"{bw['rms']:.4f}", f"{bw['rms_control']:.4f}"
+    v["ens1-g-rms-dpct"] = f"{100 * (bw['rms'] / bw['rms_control'] - 1):.0f}"
+    assert (v["ens1-g-rms-r"], v["ens1-g-rmsc-r"], v["ens1-g-rms-dpct"]) == ("0.0565", "0.0560", "1")
     v["ens1-g-drms"], v["ens1-g-floor"] = f"{bw['rms'] - bw['rms_control']:.6f}", f"{bw['delta_rms']:.6f}"
     v["ens1-g-ratio"] = f"{(bw['rms'] - bw['rms_control']) / bw['delta_rms']:.2f}"
     v["ens1-g-dmax"], v["ens1-g-maxfloor"] = f"{bw['max'] - bw['max_control']:.6f}", f"{bw['delta_max']:.6f}"
@@ -1983,6 +2000,52 @@ def cbkg2_values(d):
     assert s["port"] == "nd-unfolding/bkg_channel_split.py:58-70"
     v = {"cbkg2-oops-1a": f"{100 * s['frac_w_oops']:.0f}"}
     assert v["cbkg2-oops-1a"] == "10" and s["frac_w_cc_out_of_fiducial"] > 0.5   # "mostly out-of-fiducial nu_mu CC"
+    return v
+
+
+def g_rows_values(d):
+    """The fresh referee round on 283f3044 (#977 RESPONSE.md section G). G1: the Clopper-Pearson 95 % intervals on the
+    two-dimensional coverage test's joint fraction and flagged cells (two-sided, one fraction each; not the test's flag
+    rule). G3: the rounding jitter's share of each cell's bootstrap variance and the reported sigma's change without it
+    (diagonal only, under R0b's additivity). G5: the RE-2 period step. Descriptive."""
+    c, r, p = d["cpint"], d["rdecomp"], d["re2per"]
+    assert c["schema"] == "lrows-g1-cp/1" and c["level"] == 0.95 and r["schema"] == "lrows-g3-rounding/1"
+    T = c["tunes"]
+    v = {}
+    hi = {t: T[t]["joint"]["cp95"][1] for t in ("AR23", "G18")}
+    assert all(T[t]["joint"]["count"] == 0 and T[t]["joint"]["of"] == 300 and T[t]["joint"]["cp95"][0] == 0 for t in T)
+    assert f"{hi['AR23']:.3f}" == f"{hi['G18']:.3f}"
+    v["cp-joint-hi"] = f"{hi['AR23']:.3f}"
+    for t, tag in (("AR23", "ar23"), ("G18", "g18")):
+        v[f"cp-qnull-{tag}"] = f"{T[t]['joint']['q_null']:.3f}"
+        v[f"cp-nabove-{tag}"] = str(T[t]["cells"]["null_content_above_cp95"])
+        for f in T[t]["cells"]["flagged"]:
+            assert f["flagged"] and f["null_vs_cp"] == "above"
+            v[f"cp-{tag}-c{f['i']}-lo"], v[f"cp-{tag}-c{f['i']}-hi"] = f"{f['cp95'][0]:.3f}", f"{f['cp95'][1]:.3f}"
+    assert sorted(f["i"] for f in T["AR23"]["cells"]["flagged"]) == [29, 56] and [f["i"] for f in T["G18"]["cells"]["flagged"]] == [29]
+    js, rd = r["summary_jitter_share"], r["summary_reported_sigma_drop"]
+    v["rdec-share-med"], v["rdec-share-lo"], v["rdec-share-hi"] = (f"{100 * js['median']:.0f}", f"{100 * js['min']:.0f}",
+                                                                  f"{100 * js['max']:.0f}")
+    v["rdec-boot-drop-med"] = f"{100 * r['summary_bootstrap_sigma_drop']['median']:.0f}"
+    v["rdec-rep-drop-max"] = f"{math.ceil(1e4 * rd['max'] - 1e-9) / 100:.2f}"   # percent, an upper bound, rounded up
+    assert (v["rdec-share-med"], v["rdec-share-hi"], v["rdec-rep-drop-max"]) == ("26", "67", "0.05")
+    st = p["comparisons"]["dr_PB/PA"]["step"]
+    assert len(st["boot_draws"]) == 10
+    v["pp-step-re2"], v["pp-step-re2-se"] = f"{100 * st['value']:.2f}", f"{100 * st['noise_sigma']:.2f}"
+    assert (v["pp-step-re2"], v["pp-step-re2-se"]) == ("6.89", "0.46")
+    # G4: the run-period figure (figures/methods_short/paper_runperiod.pdf), its steps at 8 GeV/c against 1A-1F
+    rp = d["runper"]
+    for k, tag in (("PB", "pb"), ("PC", "pc")):
+        q = rp["panels"][k]
+        assert q["reference"] == "1A\u20131F"
+        v[f"rp-{tag}-reco"] = f"{q['reco_step_pct']:.2f}"
+        v[f"rp-{tag}-unf"], v[f"rp-{tag}-unf-se"] = f"{q['unfolded_step_pct']:.2f}", f"{q['unfolded_step_noise_pct']:.2f}"
+    assert (v["rp-pb-unf"], v["rp-pb-unf-se"]) == (v["pp-step-re2"], v["pp-step-re2-se"])
+    assert (v["rp-pb-reco"], v["rp-pc-reco"], v["rp-pc-unf"], v["rp-pc-unf-se"]) == ("5.99", "1.26", "1.85", "0.64")
+    src = ROOT / READOUTS["runper"][0].replace("runperiod_values.json", "runperiod.pdf")
+    got = OUT.parent / "figures" / "methods_short" / "paper_runperiod.pdf"
+    hs = {hashlib.sha256(x.read_bytes()).hexdigest() for x in (src, got)}
+    assert len(hs) == 1 and next(iter(hs)).startswith("242f7a36"), "paper_runperiod.pdf is not PR #1104's runperiod.pdf"
     return v
 
 

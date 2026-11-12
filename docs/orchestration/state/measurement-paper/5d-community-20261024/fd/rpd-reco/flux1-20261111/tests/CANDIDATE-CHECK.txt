@@ -1,0 +1,19 @@
+config sha256 cde8d02904b0257d82745b03fd61c1aef1a50270f14f36ad7f38c8b3f235f50b
+serializer reproduces the file: True
+'${' in the file: False
+changed from the proposal: $.configuration_status "PROPOSED_FOR_AUDIT_NOT_READY" -> "READY"
+changed from the proposal: $.flux_custody.path "/pscratch/sd/j/josephrb/rpd-reco-flux-${RUN_DATE}/run/flux-custody.json" -> "/pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run/flux-custody.json"
+changed from the proposal: $.flux_extract.path "/pscratch/sd/j/josephrb/rpd-reco-flux-${RUN_DATE}/run/flux-extract.json" -> "/pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run/flux-extract.json"
+fd_rpd_reco.py sha256 7302cc1df71758cfae6bdcfba031d37cc78902beaf454b29e12f3e053d44f141
+placeholder_paths: []
+configuration_status: READY
+bound pins: sha256 equal at a4c3e556: True docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/INPUTS.sha256
+bound h2: sha256 equal at a4c3e556: True nd-unfolding/pv-ladder/readouts/h2_definition.json
+bound inventory: sha256 equal at a4c3e556: True docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/flux-pot-provenance-20261104/energy-spectrum-candidates.tsv
+bound constants: sha256 equal at a4c3e556: True MINERvA101/MINERvA-101-Cross-Section/event/CVUniverse.h
+bound mat_dependencies: sha256 equal at a4c3e556: True docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-audit-fix-20261106/MAT-DATA-DEPENDENCIES.json
+selection 1D: inventory rows 1, sha256 951a400ea3aa9c62ab289119ac91b835fcb473ff8898d65065eb229fc2668ae5
+selection 1M: inventory rows 1, sha256 3c76ed6fbb2d0623c645b0192b720253843f37d015cfc4c1cfc10f283433db0f
+selection 1N: inventory rows 1, sha256 bfe5e3c5fb66252c64f1fde06f66dd0d656e2f69f5e5bd7cc159a537f31e5cfa
+flux_selection_digest 1c716c12b0ec80003cb2cbc394a5e6159959fd0b20112de2a2a94bb3427663ac
+run directory /pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run ; custody receipt in the same run: True
