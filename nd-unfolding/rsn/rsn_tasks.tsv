@@ -1,0 +1,19 @@
+# task	job	arm	ratio	closure	regressor_weight	truth	transfer	role (RSN-DECLARATION.md rev 2)
+rsn_nc	J1	NC	frozen:tune_v1	no	none	ratio	no	§2.4 NC: equals P5 and L-5D-PV_e_tune_v1 bitwise on the full grid; the zero of every shift
+G6_gibuu	J2	G6	rsn:G6/gibuu	no	none	ratio	no	§2.1 referee 3.1: GiBUU's shift on p_parallel < 6 GeV/c
+SM_genie_mec	J2	SM	rsn:SM/genie_mec	no	none	ratio	no	§2.2 referee 3.2: GENIE+MEC, smoothed reweight
+SM_nuwro	J2	SM	rsn:SM/nuwro	no	none	ratio	no	§2.2 referee 3.2: NuWro, smoothed reweight
+SM_gibuu	J2	SM	rsn:SM/gibuu	no	none	ratio	no	§2.2 referee 3.2: GiBUU, smoothed reweight
+WR_data	J2	WR	frozen:tune_v1	no	w_push_w_truth	ratio	no	§2.3 referee 1.2 and F1.1: the data, weighted regressor
+WR_closure_tune_v1	J2	WR	frozen:tune_v1	yes	w_push_w_truth	ratio	no	§2.3: the nominal closure, weighted regressor
+WR_closure_nuwro	J2	WR	frozen:nuwro	yes	w_push_w_truth	ratio	no	§2.3: the NuWro closure, weighted regressor
+TR_data	J2	TR	frozen:tune_v1	no	none	ratio	yes	§2.6 F1.2(ii): the data with the transfer diagnostic; must equal rsn_nc bitwise
+WR_closure_gibuu	J3	WR	frozen:tune_v1	yes	w_push_w_truth	a7_gibuu	no	§2.5 F1.1: the A7 GiBUU hybrid closure, weighted regressor
+WR_closure_q3	J3	WR	frozen:tune_v1	yes	w_push_w_truth	q3	no	§2.5 F1.1: the q3-tilt closure, weighted regressor
+WU_closure_gibuu	J3	WU	frozen:tune_v1	yes	none	a7_gibuu	yes	§2.5-2.6: the A7 GiBUU hybrid closure, equal weights, with the transfer diagnostic
+WU_closure_q3	J3	WU	frozen:tune_v1	yes	none	q3	yes	§2.5-2.6: the q3-tilt closure, equal weights, with the transfer diagnostic
+G6_gibuu	J2n	G6	rsn:G6/gibuu	no	none	ratio	no	§6: J2 without SM, only if the prep built no SM reweight
+WR_data	J2n	WR	frozen:tune_v1	no	w_push_w_truth	ratio	no	§6: as J2
+WR_closure_tune_v1	J2n	WR	frozen:tune_v1	yes	w_push_w_truth	ratio	no	§6: as J2
+WR_closure_nuwro	J2n	WR	frozen:nuwro	yes	w_push_w_truth	ratio	no	§6: as J2
+TR_data	J2n	TR	frozen:tune_v1	no	none	ratio	yes	§6: as J2
