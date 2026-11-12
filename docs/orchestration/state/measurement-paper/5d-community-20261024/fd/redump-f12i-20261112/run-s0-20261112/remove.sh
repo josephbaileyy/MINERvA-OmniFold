@@ -1,0 +1,1 @@
+rm -f -- /global/homes/j/josephrb/x86_64-conda-linux-gnu/bld_base/cmake.log && rmdir -- /global/homes/j/josephrb/x86_64-conda-linux-gnu/bld_base /global/homes/j/josephrb/x86_64-conda-linux-gnu; echo "removal rc=$?"; ls -la /global/homes/j/josephrb/x86_64-conda-linux-gnu 2>&1; hostname -s; date -u +%FT%TZ

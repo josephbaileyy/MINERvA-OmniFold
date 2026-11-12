@@ -1,0 +1,89 @@
+**coverage-5b-audit — RPD-RECO binding-2 code audit, PR #848 at 10731ed3 (code identical to 98a1fea4 and the 6b690fbc freeze: `fd_rpd_reco.py` 353085b3…, tests 8e0f8cfb…, harness 341d8ea9…). Verdict: NO-GO at 10731ed3 on B1, which needs a one-line fix and a test. B2 is the director's decision, and I measured it on Perlmutter. Everything else holds.**
+
+**B1 (blocking, reproduced): the CFS refusal is not the first check, so some STOP paths write to CFS.**
+- `require_output_root` runs only inside `Inputs.__init__` (`fd_rpd_reco.py:261`).
+- Three refusals are raised before it:
+  - THREADS and NICE, in `main` (`:1866-1876`);
+  - DRY_RUN_SCOPE (and OUTPUT_EXISTS), in `run_stage` (`:1752-1761`).
+- Each falls to the handler. The handler skips the CFS check unless the guard *is* OUTPUT_LOCATION, then runs `arguments.run.mkdir(...)` and writes `<step>.STOP.json` (`:1889-1911`).
+- **Probe** (module loaded, with `Path.mkdir` and `Path.open` intercepted for `/global/cfs`, and `--run /global/cfs/cdirs/probe/rpd-output`):
+  - control: `STOP OUTPUT_LOCATION`, rc 4, no mkdir;
+  - with `OMP_NUM_THREADS=4`: mkdir of the CFS run directory, then `open(.../pins.STOP.json, "x")`;
+  - with `d1 --dry-run`: mkdir, then `open(.../d1.STOP.json, "x")`.
+- REPORT.md says the guard "rejects CFS before mkdir, including before a STOP receipt could be written there." That is false for these paths.
+- `test_output_location_before_any_write` covers only the path through `Inputs`.
+- **Requirement:**
+  - call `require_output_root(arguments.run)` before anything else in `main`, and again in the handler before any mkdir;
+  - add a test where a THREADS-refused (or dry-run-scope-refused) CFS run makes no mkdir and no write;
+  - add a REQUIRED mutant for it.
+- It takes two operator errors at once, but "nothing written to CFS" is a hard rule, and the PR claims this exact coverage.
+
+**B2 (decision, measured on the real platform): the price route ends in a STOP, and no code path lets a director-priced run go on.**
+- **The estimate.** `runtime_estimate` (`:1421-1457`) prices draws = 200 × (mc + 21 × (mc + data)).
+  - With the declaration's 32.8M MC rows and 4,091,707 data rows, that is 1.615×10¹¹ draws. Background rows would add more.
+  - On Perlmutter login26 (`/usr/bin/python3`, numpy 1.17.3, OMP=1, nice 19), the minimum of 5 timings is 31.3 ns per draw. My Mac with numpy 1.26 gives 31.7 ns.
+  - So the Poisson-only time is ≈ 5,060 s, and the ×10 planning figure is ≈ 14 h, against 7,200 s.
+  - The figure stays under 2 h only below ~4.5 ns per draw.
+  - So `needs_director_price` is True, and `d2-predict` refuses PRICE_REVIEW (`:1766-1771`).
+- **No priced route.** Binding 1 ruling 3 then sends the run to a compute node, priced to the director. The code has no input that admits that price:
+  - PRICE_REVIEW reads only the estimate;
+  - WALL_CLOCK hard-codes 7,200 s per invocation (`:1088-1091`, `:1179-1183`).
+  - c0 runs 21 full aggregate passes in one invocation. Its Poisson draws alone are ≈ 1.3 h at 31 ns, before the per-axis, per-variant bincounts.
+- **Consequence.** As the code stands, step two can produce pins and p0 and then STOP. Readings need a code amendment and re-audit.
+- **The director's options:**
+  - (a) Bind a director-priced budget now: for example `--priced-wall-seconds N`, recorded in each record, which replaces both 7,200 s checks and lifts PRICE_REVIEW only when it is given. Test it both ways and give it a REQUIRED mutant.
+  - (b) Accept that step two stops at the p0 estimate, and bind the amendment afterwards.
+- The code fails closed, so this is not a correctness defect.
+
+**What holds:**
+1. **Steps.**
+   - `STEPS` (`:51`) is pins → p0 → d2-predict → step0 → c0 → d1 → d2. That is the director's resolution (reply 6711f520), recorded in REPORT.
+   - `require_predecessors` (`:1395-1418`) checks every predecessor for PASS, the same code sha256, the same config sha256, the dry-run class and the digest chain.
+   - **The only `measured` read** is `samples()` `:513`, through `key()` `:364-365`, through `require_prediction` (`:374-455`). That function requires all of:
+     - the prediction committed at HEAD (`git show`), with its bytes restaged by O_NOATIME;
+     - the bytes equal to this run's `d2-predict.json`;
+     - PASS, `simulation_only`, the same code and config, and no `measured` key read;
+     - the product's digest.
+   - p0's estimate reads only `w_reco` and `bkg_w`. Its data row count comes from config.
+   - c0 requires the data pass's P to equal the prediction product (PREDICTION_REPRODUCED, `:1466`).
+   - So d2-predict is fixed before any data read. REPORT's table maps each step, reading and licence to code and tests.
+2. **Read discipline.**
+   - `noatime_flag` refuses when O_NOATIME is absent. There is no `getattr(os, "O_NOATIME", 0)` (grep).
+   - `stage_copy` opens with O_NOATIME, writes with `xb`, hashes in the same pass, checks an fstat fingerprint before and after, and re-hashes the copy.
+   - The audit hook (`:131-144`) refuses opens under the declared roots that lack O_NOATIME, O_RDWR included.
+   - ROOT is not imported. uproot opens staged copies only.
+   - OPEN-CLOSURE.tsv has 419 hits, each with a disposition. No producer site opens a dumps/nn path.
+3. **The dump-root guard.**
+   - `load_pins` (`:325-358`) requires exactly the 24 `lat_` pins.
+   - The 12 `nn_<PL>.npz` names are built from PLAYLISTS and are stat-only.
+   - Any other file refuses, including `nn_2A.npz`.
+   - Tests: 24-only passes (`test_pins_bad_and_good`); 24+12 passes, and extra.npz and nn_2A each refuse, at seeds 17 and 43; an audit hook asserts no sibling open.
+   - The three sibling mutants are killed.
+   - **The real listing** (read-only `ls -A`, saul login03): 36 entries, exactly the 24 lat and 12 nn, no hidden files. The guard admits it.
+4. **CFS.**
+   - When the check runs, it is right. On Perlmutter `/global/cfs` is a real directory, and `/global/cfs/projectdirs` resolves into `/global/cfs/cdirs`.
+   - The positive and negative tests exist. B1 is the gap.
+5. **Tests and harness, re-run by me** (miniconda Python 3.12.2, numpy 1.26.4, scipy 1.15.2, uproot 5.6.2, pytest 8.3.4):
+   - the suite printed `71 passed in 99.38s`, rc 0;
+   - the harness printed 87 `KILLED` lines and no others, rc 0;
+   - its JSON: required 87, outcomes 87, complete, all_killed, producer sha256 353085b3, tests sha256 8e0f8cfb.
+   - The harness refuses any `require` guard missing from GUARD_TESTS.
+   - The fixtures are real-format NPZ with object `axes` and real TH1 ROOT spectra, at two seeds, with readback.
+6. **Price.** The mechanism is stated and enforced: threads = 1 and nice 19 (refused otherwise), PRICE_REVIEW and WALL_CLOCK. No production figure exists yet; see B2.
+7. **agy.** Three prompt/answer pairs are committed: two full reads and the siblings addendum.
+
+**Before the run (configuration and binding, not code defects):**
+- **R1: no production config.json is in the PR.**
+  - It will carry `flux_selection` (family, variant, histogram), the P-F line spans and the three premise booleans as hand-set values.
+  - C-N's `energy-spectrum-candidates.tsv` marks all 8 candidates CANDIDATE_NOT_RUNTIME_SELECTED: two families, g4numiv6 and gen2thin, and plain against rearrangedUniverses for 1D.
+  - The code does not read `runtime_status`.
+  - So P-F's truth and the file choice rest wholly on review of that config against the MAT source, before the p0 go.
+- **R2: name the run's Python environment.** It needs numpy, scipy and uproot. root_6_28 has no uproot.
+  - uproot reading MAT's flux histogram class (MnvH1D or TH1D) is unverified. It fails closed at P0.
+
+**Lows (follow-up list, not in the verdict):**
+- L1: `load_pins` counts only `is_file()` entries, so a subdirectory or broken symlink in dump_root does not refuse.
+- L2: 347 of 419 closure hits share one blanket disposition, "Dependency/stdlib general-purpose I/O". The runtime hook is the real guard.
+- L3: the prediction need only be committed at HEAD of some local worktree, not pushed.
+- L4: AGY-PROMPT-2 told the reviewer that the guard refuses "before writing a STOP receipt", which is the claim B1 refutes.
+

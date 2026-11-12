@@ -1,0 +1,22 @@
+{
+ "schema": "rsn-nc-r/1",
+ "verdict": "PASS",
+ "records": 22,
+ "offset_control_7": {
+  "pass": false,
+  "chi2": 245.7422835730337,
+  "p": 0.0
+ },
+ "inputs_sha256": {
+  "table": "997c7dae34ef9703291baece51eed05f3dd7d38a043630cac9667efaad2775bc",
+  "f1_readout": "5ccc89e58096a14ab8dc0e3e6f508ca4b2b546b629077560a09a4596cde40395",
+  "f1_prep_sums": "981b188b03a7e75b904489fa1bf15bd818ef4b72f93a8beba4a906eb3122a480",
+  "s1_npz": "db000707780d4d6da65389be9adedfd9a3ba6552a255f6ce81ccbdd0b8eb72a4",
+  "extra_block": "d9aa32fdb64357760348c9ccbc32fbea81d517f0f0786eedf17ab4946eaca59f",
+  "cmodel_json": "3cfdc6a5b8c6cea5f99b4678e27f6ca5f7973ee57a79b9d139798f0751cfcd60"
+ },
+ "code_sha256": {
+  "rsn_regrade.py": "661608d81ccf7ca0ab08aee853f5934d4c0dab89677e82f8292239fee60b7652",
+  "fd_f0_regrade.py": "0dfa722c2b74abed09fb255ccb7c0e80e6c55eb922ea1326dd74e6c880697aa2"
+ }
+}

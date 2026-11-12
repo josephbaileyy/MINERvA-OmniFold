@@ -1,0 +1,160 @@
+{
+  "baseline": "6a287e1ab6fb53bf3e1a42309202d5c28e04c4de",
+  "tested_head": "477d51ead59943af7286ddee3258814f846fa865",
+  "scope": "Only the named custody, platform pin and launch/classifier functions change. Existing scientific functions, environment guard and C3 privacy functions are AST-identical; both shell wrappers and the real-class check are byte-identical.",
+  "files": {
+    "nd-unfolding/fd_rpd_reco.py": {
+      "changed_existing_functions": [
+        "checked_prepared_mat"
+      ],
+      "unchanged_existing_functions": [
+        "Inputs",
+        "PreparedMatContext",
+        "Refused",
+        "Sample",
+        "_audit_open",
+        "_c0",
+        "_d1",
+        "_d2",
+        "_double_step",
+        "_json_value",
+        "_load_histograms",
+        "_rate_summary",
+        "_read_record",
+        "_save_histograms",
+        "_sigma",
+        "aggregate",
+        "axis_assignments",
+        "bin_indices",
+        "bracket_outcome",
+        "calibration_gate",
+        "check_prepare_receipt",
+        "checked_mat_environment",
+        "checked_root_file",
+        "classify_flux_swap",
+        "common_flux_integral_ratio",
+        "common_flux_units",
+        "digest",
+        "energy_controls",
+        "energy_statistics",
+        "evaluate_energy_controls",
+        "execution_fields",
+        "extracted_flux",
+        "flux_extract",
+        "flux_selection_digest",
+        "flux_units_metadata",
+        "group_step",
+        "guarded_tfile",
+        "hadronic_reading",
+        "histogram_directory_ownership",
+        "histogram_spectrum",
+        "leave_one_out",
+        "load_custody_instrument",
+        "load_mat_instrument",
+        "main",
+        "mat_flux_swap",
+        "noatime_flag",
+        "observed_steps",
+        "p0",
+        "pinned_flux_factors",
+        "predicted_steps",
+        "prediction_controls",
+        "read_flux_histogram",
+        "read_guards",
+        "reconstructed_energy",
+        "reporting_cells",
+        "require",
+        "require_output_root",
+        "require_predecessors",
+        "run_stage",
+        "runtime_environment",
+        "runtime_estimate",
+        "score_axes",
+        "selected_flux_files",
+        "shape_score",
+        "stage_copy",
+        "staged_mat_prefixes",
+        "step0",
+        "step_reading",
+        "validate_flux_spectrum",
+        "wall_budget_seconds",
+        "weighted_quantiles",
+        "write_json",
+        "zero_pattern_counts"
+      ],
+      "added_functions": [],
+      "all_earlier_global_statements_preserved": true
+    },
+    "nd-unfolding/fd_rpd_reco_custody.py": {
+      "changed_existing_functions": [
+        "build_trace_policy",
+        "check_trace",
+        "classify_successful_open",
+        "classify_trace",
+        "missing_dependency_check",
+        "prepare"
+      ],
+      "unchanged_existing_functions": [
+        "CustodyRefused",
+        "_under",
+        "cov2d_fence",
+        "environment_diff",
+        "environment_record",
+        "environment_snapshot",
+        "main",
+        "mapped_instrument_violations",
+        "module_paths",
+        "native_environment",
+        "noatime_digest",
+        "private_prepare_path",
+        "public_record",
+        "publish_prepare_view",
+        "read_private_prepare",
+        "require",
+        "root_import_record",
+        "source_stat",
+        "write_private_prepare"
+      ],
+      "added_functions": [
+        "_trace_pid_body",
+        "_trace_violation",
+        "classify_trace_with_stop",
+        "complete_trace_calls",
+        "executable_mapped_files",
+        "parse_executable_maps",
+        "pin_platform_libraries",
+        "platform_identity",
+        "platform_library_record",
+        "platform_mapping_snapshot",
+        "platform_settings",
+        "trace_cwd",
+        "write_trace_record"
+      ],
+      "all_earlier_global_statements_preserved": true
+    },
+    "nd-unfolding/fd_rpd_reco_prologue.py": {
+      "changed_existing_functions": [
+        "main",
+        "prepare"
+      ],
+      "unchanged_existing_functions": [],
+      "added_functions": [],
+      "all_earlier_global_statements_preserved": true
+    },
+    "nd-unfolding/fd_rpd_reco_flux_connect.sh": {
+      "byte_equal": true
+    },
+    "nd-unfolding/fd_rpd_reco_prologue_connect.sh": {
+      "byte_equal": true
+    },
+    "nd-unfolding/tests/fd_rpd_reco_mat_check.py": {
+      "byte_equal": true
+    },
+    "nd-unfolding/fd_rpd_inputs.py": {
+      "byte_equal": true
+    },
+    "nd-unfolding/fd_ct_period_inputs.py": {
+      "byte_equal": true
+    }
+  }
+}

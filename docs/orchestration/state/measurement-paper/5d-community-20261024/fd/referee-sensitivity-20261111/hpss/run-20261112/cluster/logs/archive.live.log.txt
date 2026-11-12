@@ -1,0 +1,59 @@
+node login27 loadavg 0.75 0.52 0.47 start=2026-11-12T00:39:07Z slurm_job=''
+script sha256 012a9618adf7e4b493700954747f5afd1ea4235907c1b2f794e754e2062311d8
+list sha256 0dafaac8e3664875f496974fb79f73e319ada7647eb5106dbe6626cefa9d99c6 rows 67
+tools: /usr/bin/hsi /usr/bin/htar /global/common/software/nersc/bin/hpssquota /usr/bin/timeout /usr/bin/sha256sum 
+home check hsi rc=0
+target check hsi rc=64 (HPSS_ENOENT)
+hpssquota before rc=0
+| josephrb usage on HPSS charged to m3246 |  460.23GiB |   512.00GiB |          89.9% |          - |           - |              - |
+preflight: used 494168199660 quota 549755813888 free 55587614228 files 67 source bytes 24749106 archive estimate 41661952 need (x1.2) 49994342
+PREFLIGHT OK
+hsi mkdir rc=0
+== group pvl_prep start 2026-11-12T00:39:08Z
+STAGE OK pvl_prep: 36 files, 22202197 bytes, every sha256 equal to its pin
+manifest pvl_prep sha256 5a035b4c86bb04bd7dbf8a41d9d7d44d4ab318f69226c696b274ad35197d0874 lines 36
+htar pvl_prep rc=0
+HTAR: Verify complete. 0 total errors, 38 total objects (38 Files,0 Dirs,0 Hard Links,0 symlinks) wallclock/user/sys: 0.268 0.116 0.020 seconds
+HTAR: HTAR SUCCESSFUL
+hashcreate pvl_prep rc=0
+hashverify pvl_prep rc=0: /home/j/josephrb/mnv-rsn-inputs-20261111/pvl_prep.tar: (md5) OK 
+retrieve pvl_prep rc=0
+RETRIEVE OK pvl_prep: 36 members re-read from HPSS, every sha256 equal to its manifest line and pin
+== group pvl_prep PASS 2026-11-12T00:39:11Z
+== group pvl_products start 2026-11-12T00:39:11Z
+STAGE OK pvl_products: 30 files, 2535113 bytes, every sha256 equal to its pin
+manifest pvl_products sha256 43afbbbdc56d2c83771981fcd2c3a27428de57d80a0b754d31c48d1da3247616 lines 30
+htar pvl_products rc=0
+HTAR: Verify complete. 0 total errors, 32 total objects (32 Files,0 Dirs,0 Hard Links,0 symlinks) wallclock/user/sys: 0.261 0.017 0.000 seconds
+HTAR: HTAR SUCCESSFUL
+hashcreate pvl_products rc=0
+hashverify pvl_products rc=0: /home/j/josephrb/mnv-rsn-inputs-20261111/pvl_products.tar: (md5) OK 
+retrieve pvl_products rc=0
+RETRIEVE OK pvl_products: 30 members re-read from HPSS, every sha256 equal to its manifest line and pin
+== group pvl_products PASS 2026-11-12T00:39:13Z
+== group cpl_block start 2026-11-12T00:39:13Z
+STAGE OK cpl_block: 1 files, 11796 bytes, every sha256 equal to its pin
+manifest cpl_block sha256 b984fcd8b3c7fa08d8eed485a05bde32056ed89b5b62d54c782ec15bdc387819 lines 1
+htar cpl_block rc=0
+HTAR: Verify complete. 0 total errors, 3 total objects (3 Files,0 Dirs,0 Hard Links,0 symlinks) wallclock/user/sys: 0.259 0.000 0.001 seconds
+HTAR: HTAR SUCCESSFUL
+hashcreate cpl_block rc=0
+hashverify cpl_block rc=0: /home/j/josephrb/mnv-rsn-inputs-20261111/cpl_block.tar: (md5) OK 
+retrieve cpl_block rc=0
+RETRIEVE OK cpl_block: 1 members re-read from HPSS, every sha256 equal to its manifest line and pin
+== group cpl_block PASS 2026-11-12T00:39:16Z
+hsi ls rc=0
+
+/home/j/josephrb/mnv-rsn-inputs-20261111:
+-rw-r-----    1 josephrb  josephrb       15872 Nov 11 16:39 cpl_block.tar
+-rw-r-----    1 josephrb  josephrb        2344 Nov 11 16:39 cpl_block.tar.idx
+-rw-r-----    1 josephrb  josephrb    22238208 Nov 11 16:39 pvl_prep.tar
+-rw-r-----    1 josephrb  josephrb       20776 Nov 11 16:39 pvl_prep.tar.idx
+-rw-r-----    1 josephrb  josephrb     2568192 Nov 11 16:39 pvl_products.tar
+-rw-r-----    1 josephrb  josephrb       17704 Nov 11 16:39 pvl_products.tar.idx
+hpssquota after rc=0
+| josephrb usage on HPSS charged to m3246 |  460.23GiB |   512.00GiB |          89.9% |          - |           - |              - |
+ARCHIVE PASS: all three groups archived, hash-verified and every member re-read from HPSS
+removal of /dev/shm/josephrb-hpss-rsn rc=0 ; present after: no
+hpss archive rc=0 2026-11-12T00:39:16Z
+919a6954b23f0d000398eadf59c2eb2bcc34922c9bdaee8ef1d564ba5dd29691  post.tar.gz

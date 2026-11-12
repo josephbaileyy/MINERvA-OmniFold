@@ -1,0 +1,18 @@
+{
+  "scope": "Python function structure, not native ROOT execution or a scientific result",
+  "baseline": "338a1bcbf7312b47068f0387da10f67b6a893483",
+  "head": "4ea4a113f72f32465f2a8c4eddd7bbaa2db5683c",
+  "all_equal": true,
+  "functions": [
+    "mat_flux_swap",
+    "zero_pattern_counts",
+    "aggregate",
+    "classify_flux_swap",
+    "_c0",
+    "_d1",
+    "_d2",
+    "prediction_controls",
+    "common_flux_integral_ratio",
+    "common_flux_units"
+  ]
+}

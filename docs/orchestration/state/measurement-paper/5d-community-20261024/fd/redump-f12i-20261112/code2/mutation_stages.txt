@@ -1,0 +1,58 @@
+# HEAD 48791bb1f2b9c535f29e3010930e48398ba25def
+# clean clone, serial, nice 19, OMP/MKL/OPENBLAS/NUMEXPR threads 1, Python 3.12.2, numpy 1.26.4, 2026-11-12T08:20:41Z
+# 9d71cf6d1935a00442dd58631957a83d95ef8a4cefddc3522811006a8e29ef3b  rdx_align.py
+# 457e89efa20b484cc0d54c1125636ee7e7d3f023cf3aa5462eb9771e3450e451  rdx_cap.py
+# 177259b8f8bc602319a16de7768ce1ca75c23a545fda144471c08629d50b9fde  rdx_common.py
+# 122702c647efc4518af51a7a4e99bba9d7d37332cbfbcc54f59734b2d28dde9b  rdx_dump.py
+# 23dce7a447a830f5af1d3c6f708d2ec6de7f5d49cd4e9a4b7a7186aaaa3103e8  rdx_merge.py
+# 4bfea59830bd707cfe68f2c7583ccbc2c386f07218ee5d88ca7e69e2109bf9e9  rdx_mutation_stages.py
+# 270c251fbb07a5f124cd2bd1af6a96c4e6a52e9373f1ddb48b2be74add1a71b0  rdx_mutation.py
+# 948c47e05f22396afafa20fbb2c89881dded027bd49e38c04fe76fdaf89e4dbe  rdx_paths.py
+# dedaa80e5fb108e4b96e61c901d101b4bd51d44d396b9f3d038d00e781c5b67e  rdx_probe_walk.py
+# 6a85d86bc371f1d6aa50caeb4fba84b9e95dc074dccf1ddb398b6acc758a3b23  rdx_provenance.py
+# 32372e2dfaa157a1799aada0aaaf06443974d4de4bda48a8b8b0c39cfc7ea560  rdx_truthx_npz.py
+# db9456c3954dee42eac8adca8206a754feac3626e352ad14f3a79226406ff5cf  rdx_truthx_rows.py
+# 83d585a490954987b3d9ca1595f9fe708012f76a9de740e2c6f3dc17357925db  rdx_unfold.py
+# d19068d15ae7d09c1343a4433e5d85e641809c70a5e0b1814358ebdc5878de5f  test_rdx_stages.py
+# 8360dbf536fefebd8a855fa6d36f2f6d39b72e5b485cd083518a33608b3c214d  test_rdx.py
+# 165fb98ebed89cf8fabd76d13c9bdc671c9ae5ca27c2377055c89d2760e0fb55  rdx_connect_launch.sh
+# 11e7ef921bcc227255200347277d7b976d927c5fee2824dd613d31896c968827  rdx_connect.sh
+# e3e031e75435184782f68f02639e0698ff9ab67d4173ce635209ca65420006c7  sbatch_rdx_arms.sh
+# 7ce210dcab5909fa590e75f3fc0371d958316e451de10dfd186398dde55ddc4e  sbatch_rdx_evloop.sh
+# 742503fa085faa5f1fc5827bd43b247b9ca0cf76d1334d43637f05d3a675e483  sbatch_rdx_merge.sh
+# 676bff5125548481b88a71986dc7625ea268ffb836b6ff845508d8502c3f1280  smoke_rdx_stages.sh
+# 3ec5069127f5f937c84b4efdb34bdcc99d8acc4b20891f1b26b25e32d27f75b9  rdx_tasks.tsv
+# 578c64ea600e6cba1ddd2de6c1abfa51839d4e163d4beb81b8aab9e9b052fb03  runEventLoopOmniFold-truthx.patch
+# e0d3b70088500bdced0a3f7dcf08eb179278aa85a501a165bef373fd20a7f51e  setup_salloc_env.exports
+# status: 0 changed files
+unmutated suite: 16 tests OK, in the mirrored tree
+KILLED    unlisted submissions ignored                     by test_spent_held_unlisted_and_the_wanted_ceiling
+KILLED    shared rate 0.03                                 by test_the_job_kinds
+KILLED    cap 3.0                                          by test_the_job_kinds
+KILLED    rdx_s1 allowed for any playlist                  by test_the_job_kinds
+KILLED    held unfinished jobs ignored                     by test_spent_held_unlisted_and_the_wanted_ceiling
+KILLED    the wanted ceiling not added                     by test_over_the_cap_and_unusable_inputs_refuse
+KILLED    sums set unchecked                               by test_the_sums_must_list_exactly_the_twelve_loops
+KILLED    k1 failures dropped                              by test_k1_passes_only_when_every_key_matches
+KILLED    k1 MP-1 pins unchecked                           by test_k1_passes_only_when_every_key_matches
+KILLED    policy: exact paths only                         by test_the_policy_check
+KILLED    policy: of_inputs_5d dropped                     by test_the_never_read_list_names_the_ll5d_inputs_and_cov2ds_cv
+KILLED    stage pin unchecked                              by test_atime_stage_and_manifest
+KILLED    atime: a missing file passes                     by test_atime_stage_and_manifest
+KILLED    1M limit 5:45                                    by test_the_event_loop_limits_are_the_declared_rule_everywhere
+KILLED    connect 1D limit 3:00                            by test_the_event_loop_limits_are_the_declared_rule_everywhere
+KILLED    event loop fence without rsn_                    by test_every_launcher_fences_the_six_prefixes
+KILLED    arms fence without e96data                       by test_every_launcher_fences_the_six_prefixes
+KILLED    X1p permute seed 20261114                        by test_the_task_table_is_the_declarations
+KILLED    X0t not a transfer                               by test_the_task_table_is_the_declarations
+KILLED    X1g at the q3 tilt                               by test_the_task_table_is_the_declarations
+KILLED    policy path misspelled                           by test_every_repo_path_the_launchers_name_exists_at_head
+KILLED    merge job's flux path misspelled                 by test_every_repo_path_the_launchers_name_exists_at_head
+KILLED    c1 ignores the walk probe                        by test_c1_stops_on_the_walk_probe_and_s2_requires_its_pass
+KILLED    s2 does not require the probe                    by test_c1_stops_on_the_walk_probe_and_s2_requires_its_pass
+KILLED    the build directory named BUILD again            by test_no_launcher_variable_is_one_the_env_setup_exports
+KILLED    a job script assigns CC                          by test_no_launcher_variable_is_one_the_env_setup_exports
+KILLED    the event-loop job still allows the spent B      by test_the_event_loop_job_allows_the_connects_b
+KILLED    the connect changed under its pin                by test_the_launcher_pins_the_connect_script
+MUTATION CHECK :: PASS (28 mutations)
+# exit 0

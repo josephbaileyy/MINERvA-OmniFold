@@ -1,0 +1,38 @@
+e2e connect rc=0
+job.rc: rc=7 cause=exit end=2026-11-11T14:41:23Z
+job /dev/shm entries left: []
+e2e fetch rc=0
+== refusal: an rpd job queued
+rpd-queued connect rc=3
+STOP: a cov2d/t2a/rpd job is queued or running
+== rpd-flux1-connect rc=3 2026-11-11T14:41:23Z
+== refusal: TimeLimit differs
+timelimit connect rc=6
+MISMATCH: TimeLimit=03:00:00 not in scontrol's record
+scancel rc=0 for 4242
+STOP: the job's record differs; cancelled
+scancel shim log: scancel 4242
+== refusal: second connect on the same root
+second connect rc=9
+STOP: $SP/flux1/te/main/root exists
+== rpd-flux1-connect rc=9 2026-11-11T14:42:06Z
+== the dummy TERM
+term-case connect rc=0
+job shell pid 39347; wrapper pgid 39479; processes in the wrapper's group before TERM: 2
+/dev/shm entries before TERM: [flux1]
+job.rc after TERM: rc=143 cause=signal-TERM end=2026-11-11T14:42:52Z (seconds 3.1)
+processes in the wrapper's group after: 0; job shell alive: no
+/dev/shm entries after TERM: []
+job-host.txt:
+jobid=4242 host=login99 start=2026-11-11T14:42:26Z
+end=2026-11-11T14:42:52Z rc=143 cause=signal-TERM
+== caught TERM 2026-11-11T14:42:49Z; stopping the wrapper's process group [39479]
+removed $SP/flux1/te/term/shm/flux1 rc=0
+== the forced fork (f3)
+fork-case connect rc=0
+job.rc: rc=8 cause=pgid-check end=2026-11-11T14:43:41Z
+wrapper pid 39935; its process group []
+STOP: the wrapper's process group [] is not its pid 39935 (setsid did not run in place); the wrapper was not started
+removed $SP/flux1/te/fork/shm/flux1 rc=0
+connect.log bytes: 0; run directory: absent
+/dev/shm entries after: []; gate processes left: 0

@@ -1,0 +1,40 @@
+{
+  "argv": [
+    "pins",
+    "--config",
+    "$FIXTURE/absent.json",
+    "--config-sha256",
+    "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "--run",
+    "$FIXTURE/run",
+    "--dry-run"
+  ],
+  "code_sha256": "6e5df35d48f398be18582e6635a5ffd6c977864a5663214babd9b697fc091847",
+  "config_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "details": null,
+  "estimate_status": "unavailable_before_input_metadata",
+  "guard": "NOATIME",
+  "input_sha256": {},
+  "measured_seconds_per_draw": null,
+  "message": "NOATIME: O_NOATIME is unavailable",
+  "planned_seconds": null,
+  "planning_factor": 10.0,
+  "priced_wall_seconds": null,
+  "readings": null,
+  "scheduler_request": {
+    "SLURM_CPUS_PER_TASK": null,
+    "SLURM_JOB_CPUS_PER_NODE": null,
+    "SLURM_JOB_ID": null,
+    "SLURM_JOB_QOS": null,
+    "SLURM_MEM_PER_CPU": null,
+    "SLURM_MEM_PER_NODE": null,
+    "SLURM_QOS": null
+  },
+  "schema": "fd-rpd-reco-stop/1",
+  "status": "STOP",
+  "step": "pins",
+  "step_estimate": null,
+  "timing_chunk_shape": null,
+  "timing_source": null,
+  "wall_budget_seconds": 7200
+}

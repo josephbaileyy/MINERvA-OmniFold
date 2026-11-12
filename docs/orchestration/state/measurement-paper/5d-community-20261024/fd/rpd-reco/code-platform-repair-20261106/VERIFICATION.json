@@ -1,0 +1,35 @@
+{
+  "schema": "fd-rpd-reco-platform-repair-verification/1",
+  "tested_head": "4ea4a113f72f32465f2a8c4eddd7bbaa2db5683c",
+  "scope": "local synthetic fixtures only; real silent trace and MnvH1D close/teardown remain unverified",
+  "source_identities": "SOURCE-IDENTITIES.json",
+  "suite": {
+    "passed": 153,
+    "seconds": 367.98,
+    "returncode": 0
+  },
+  "mutation": {
+    "required": 149,
+    "executed": 149,
+    "killed": 149,
+    "complete": true,
+    "all_killed": true,
+    "returncode": 0,
+    "raw_report_sha256": "ca51c5b69f179c7277d20e678f58c298c2082974580bbaa248c0731e08c2677f",
+    "raw_report_recovery": "Remove receipt_annotation and disposable_fixture_artifact_paths; json.dumps(indent=2) plus a newline reproduces raw_report_sha256 exactly."
+  },
+  "comment_only_custody_control": {
+    "passed": 153,
+    "seconds": 366.54,
+    "returncode": 0,
+    "meaning": "A byte-only helper change does not cause fixture digest refusals. Named guards are killed by their selected behaviour tests."
+  },
+  "static_checks": {
+    "black": "PASS",
+    "ruff": "PASS",
+    "mypy_strict": "PASS",
+    "optional_external_stubs": "ignore_missing_imports",
+    "bash_syntax_both_connects": "PASS"
+  },
+  "receipt_note": "The receipt commit changes none of the eight executable files. No native runtime PASS or full-connect permission is inferred."
+}

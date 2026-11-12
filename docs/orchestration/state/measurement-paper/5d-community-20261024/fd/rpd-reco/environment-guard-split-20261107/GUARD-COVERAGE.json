@@ -1,0 +1,72 @@
+{
+  "tested_head": "7a1b5d0cd415a739a2bef0588446593be185e95d",
+  "scope": "New sub-guards, protected exclusions and remaining legacy prepare guards",
+  "outcomes": [
+    {
+      "name": "REQUIRED_CUSTODY_ENVIRONMENT_EXCLUSIONS",
+      "status": "KILLED",
+      "selector": "test_environment_exclusions_reject_interpreter_keys",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_UNSAFE_EXCLUSION_LD_PRELOAD",
+      "status": "KILLED",
+      "selector": "test_environment_exclusions_are_reviewed",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_UNSAFE_EXCLUSION_PYTHONPATH",
+      "status": "KILLED",
+      "selector": "test_environment_exclusions_are_reviewed",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_UNSAFE_EXCLUSION_ROOT_INCLUDE_PATH",
+      "status": "KILLED",
+      "selector": "test_environment_exclusions_are_reviewed",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_GUARD_MAT_PREPARE",
+      "status": "KILLED",
+      "selector": "test_same_connect_prepare_receipt or test_legacy_prepare_presence_and_policy_guards",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_GUARD_MAT_PREPARE_PRESENT",
+      "status": "KILLED",
+      "selector": "test_prepare_receipt_named_guards",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_GUARD_MAT_PREPARE_RUN",
+      "status": "KILLED",
+      "selector": "test_prepare_receipt_named_guards",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_GUARD_MAT_PREPARE_CONNECT_PRESENT",
+      "status": "KILLED",
+      "selector": "test_prepare_receipt_named_guards",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_GUARD_MAT_PREPARE_CONNECT",
+      "status": "KILLED",
+      "selector": "test_prepare_receipt_named_guards",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_GUARD_MAT_PREPARE_AGE",
+      "status": "KILLED",
+      "selector": "test_prepare_receipt_named_guards",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_GUARD_MAT_PREPARE_ENVIRONMENT",
+      "status": "KILLED",
+      "selector": "test_prepare_receipt_named_guards",
+      "returncode": 1
+    }
+  ]
+}

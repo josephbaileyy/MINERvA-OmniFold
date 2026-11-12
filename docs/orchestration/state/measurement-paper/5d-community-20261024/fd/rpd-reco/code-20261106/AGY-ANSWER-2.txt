@@ -1,0 +1,43 @@
+### Second and Final Independent Review: RPD-RECO (d1/d2)
+
+**Review Commit:** `be373cebad2fe2dfad2999a33b8d567c31382431`  
+**Worktree:** `../MINERvA-OmniFold-rpd-reco-review-20261106` (verified clean detached HEAD at `be373cebad2fe2dfad2999a33b8d567c31382431` before and after review).  
+**Test Suite Execution:** 67/67 passed in 97.89s (`~/miniconda3/bin/python -m pytest nd-unfolding/tests/test_fd_rpd_reco.py`).  
+**Mutation Suite Execution:** 84/84 mutants KILLED (`all_killed: True`, exit code 0) via `~/miniconda3/bin/python nd-unfolding/tests/fd_rpd_reco_mutation.py --out /tmp/mutation_report_full.json`.
+
+---
+
+### 1. Resolution of Prior MAJOR Finding (`REQUIRED_GUARD_PREDICTION_SHA`)
+- **Prior Defect:** Mutator previously bypassed `require()` calls while leaving the explicit `raise Refused("PREDICTION_SHA", ...)` in line 375's `except` block intact, while `test_prediction_required_committed_and_exact` only tested mutated file content via `stage_copy`.
+- **Delta Verification:**
+  - `nd-unfolding/tests/test_fd_rpd_reco.py:310-319`: Distinct assertions now verify refusal on a missing committed prediction file (exercising line 359) and refusal on an altered local `d2-predict.json` against unmodified committed prediction (exercising line 381).
+  - `nd-unfolding/tests/fd_rpd_reco_mutation.py:237-251`: `Mutator.visit_Raise` now detects and replaces matching `raise Refused("PREDICTION_SHA", ...)` AST nodes with `pass`.
+- **Status:** **DISCHARGED.** `REQUIRED_GUARD_PREDICTION_SHA` is confirmed KILLED by test failure.
+
+---
+
+### 2. Audit of New `OUTPUT_LOCATION` Guard
+- **Implementation (`nd-unfolding/fd_rpd_reco.py:100-109, 261, 1871-1874`):**
+  - `require_output_root(run: Path)` resolves the path and forbids `/global/cfs` or any path where `/global/cfs in resolved.parents`.
+  - Invoked at `Inputs.__init__` line 261 before `self.run.mkdir(...)`.
+  - In `main()` lines 1871–1874, an exception with `guard == "OUTPUT_LOCATION"` prints `STOP OUTPUT_LOCATION: ...` to stderr and returns code 4 immediately, skipping the default `arguments.run.mkdir` and `step.STOP.json` creation that would write to CFS.
+- **Paths Verified:**
+  - **Positive Path:** Standard scratch/local directories resolve and pass without restriction.
+  - **Negative Path:** Any path under `/global/cfs` raises `Refused("OUTPUT_LOCATION")`. `main()` exits with code 4 without creating directories or files on CFS.
+  - **Test Coverage:** `test_output_location_before_any_write` (`test_fd_rpd_reco.py:1118-1148`) verifies both positive and negative paths, with monkeypatched `mkdir` confirming zero filesystem operations under CFS.
+- **Mutant Status:** `REQUIRED_GUARD_OUTPUT_LOCATION` is confirmed KILLED. No new defects introduced.
+
+---
+
+### 3. Material Unverified Preflight Dependencies
+1. **Production Dump Root Directory Layout (`PIN_SET`):**
+   - In `fd_rpd_reco.py:327-331`, `Inputs.load_pins()` enforces `actual == expected` over all files in `dump_root`.
+   - If production `/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/` contains co-located `nn_<PL>.npz` files alongside the 24 `lat_*` pairs, `PIN_SET` will refuse with an extra-files error. Preflight must ensure `dump_root` strictly exposes only the 24 declared `lat_*.npz` files (or uses a dedicated directory/symlink stage).
+2. **Cluster Runtime Environment:** Linux login environment with native `O_NOATIME` filesystem support and single-threaded execution (`nice 19`).
+3. **Data & Source Artifacts:** Pinned dump files matching `INPUTS.sha256`, 3 MAT flux ROOT files from the C-N candidates inventory, and `FluxReweighter.cxx` at pinned git commit.
+
+---
+
+### 4. Code-Readiness Verdict
+
+**VERDICT: Code implementation, contract tests, and mutation harness are fully verified and READY FOR BINDING 2 AUDIT APPROVAL (subject to preflight verification of the production `dump_root` file inventory).**

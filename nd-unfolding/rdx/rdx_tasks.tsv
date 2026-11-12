@@ -1,0 +1,16 @@
+# task	job	features	permute	weight	truth	transfer	closure	inputs	role (RDX-DECLARATION.md rev 3 §4)
+X0	S3a	std	-	none	ratio	no	no	rdx	the nominal on RDX's npz; NC-X's first half
+X0_lat	S3a	std	-	none	ratio	no	no	lat_zero	NC-X's partner: the same unfold on MP-1's lat_zero.npz
+X1	S3a	wide	-	none	ratio	no	no	rdx	R1, F1.2(i) proper: the five truthx columns added
+X1p	S3a	wide	20261113	none	ratio	no	no	rdx	R1p, the refit null: truthx permuted jointly
+X1w	S3a	wide	-	w_push_w_truth	ratio	no	no	rdx	R2, the weight on the widened regressor
+X1t	S3a	wide	-	none	ratio	yes	no	rdx	R3, the widened regressor's transfer
+X0c	S3a	std	-	none	ratio	no	yes	rdx	R4 at the prior (noise-free closure), std
+X1c	S3a	wide	-	none	ratio	no	yes	rdx	R4 at the prior, wide
+X1pc	S3b	wide	20261113	none	ratio	no	yes	rdx	R4's refit null at the prior
+X1wc	S3b	wide	-	w_push_w_truth	ratio	no	yes	rdx	R4: the weight at the prior
+X0t	S3b	std	-	none	ratio	yes	no	rdx	R3's partner (x3): the std regressor's transfer
+X0g	S3b	std	-	none	a7_gibuu	no	yes	rdx	R4 at the A7 GiBUU hybrid, std
+X1g	S3b	wide	-	none	a7_gibuu	no	yes	rdx	R4 at the A7 GiBUU hybrid, wide
+X0q	S3b	std	-	none	q3	no	yes	rdx	R4 at the q3 tilt, std
+X1q	S3b	wide	-	none	q3	no	yes	rdx	R4 at the q3 tilt, wide

@@ -1,0 +1,67 @@
+HTAR: a   SHA256SUMS.pvl_products
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-3D_e_closure_nuwro.npz
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-3D_e_closure_tune_v1.npz
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-3D_e_genie_mec.npz
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-3D_e_gibuu.npz
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-3D_e_nuwro.npz
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-3D_e_tune_v1.npz
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-4D_e_closure_nuwro.npz
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-4D_e_closure_tune_v1.npz
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-4D_e_genie_mec.npz
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-4D_e_gibuu.npz
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-4D_e_nuwro.npz
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-4D_e_tune_v1.npz
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-5D-PV_e_closure_nuwro.npz
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-5D-PV_e_closure_tune_v1.npz
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-5D-PV_e_genie_mec.npz
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-5D-PV_e_gibuu.npz
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-5D-PV_e_nuwro.npz
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-5D-PV_e_tune_v1.npz
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-EW_c_all_tune_v1.npz
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-EW_c_genie_mec.npz
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-EW_c_gibuu.npz
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-EW_c_nuwro.npz
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-EW_c_tune_v1.npz
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-EW_e_all_tune_v1.npz
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-EW_e_closure_nuwro.npz
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-EW_e_closure_tune_v1.npz
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-EW_e_genie_mec.npz
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-EW_e_gibuu.npz
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-EW_e_nuwro.npz
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-EW_e_tune_v1.npz
+HTAR: a   /tmp/HTAR_CF_CHK_527486_1794443951
+HTAR Create complete for /home/j/josephrb/mnv-rsn-inputs-20261111/pvl_products.tar. 2568192 bytes written for 31 member files, max threads: 32 Transfer time: 0.008 seconds (321.834 MB/s) wallclock/user/sys: 0.269 0.009 0.029 seconds
+HTAR: v SHA256SUMS.pvl_products, 4182 bytes, 10 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-3D_e_closure_nuwro.npz, 24785 bytes, 50 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-3D_e_closure_tune_v1.npz, 24780 bytes, 50 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-3D_e_genie_mec.npz, 14053 bytes, 29 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-3D_e_gibuu.npz, 14054 bytes, 29 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-3D_e_nuwro.npz, 14058 bytes, 29 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-3D_e_tune_v1.npz, 14022 bytes, 29 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-4D_e_closure_nuwro.npz, 82442 bytes, 163 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-4D_e_closure_tune_v1.npz, 82469 bytes, 163 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-4D_e_genie_mec.npz, 42913 bytes, 85 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-4D_e_gibuu.npz, 42906 bytes, 85 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-4D_e_nuwro.npz, 42862 bytes, 85 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-4D_e_tune_v1.npz, 42875 bytes, 85 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-5D-PV_e_closure_nuwro.npz, 188455 bytes, 370 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-5D-PV_e_closure_tune_v1.npz, 188532 bytes, 370 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-5D-PV_e_genie_mec.npz, 95841 bytes, 189 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-5D-PV_e_gibuu.npz, 95807 bytes, 189 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-5D-PV_e_nuwro.npz, 95849 bytes, 189 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-5D-PV_e_tune_v1.npz, 95831 bytes, 189 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-EW_c_all_tune_v1.npz, 95265 bytes, 188 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-EW_c_genie_mec.npz, 95308 bytes, 188 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-EW_c_gibuu.npz, 95280 bytes, 188 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-EW_c_nuwro.npz, 95270 bytes, 188 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-EW_c_tune_v1.npz, 95232 bytes, 187 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-EW_e_all_tune_v1.npz, 95821 bytes, 189 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-EW_e_closure_nuwro.npz, 188521 bytes, 370 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-EW_e_closure_tune_v1.npz, 188466 bytes, 370 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-EW_e_genie_mec.npz, 95857 bytes, 189 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-EW_e_gibuu.npz, 95884 bytes, 189 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-EW_e_nuwro.npz, 95836 bytes, 189 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-EW_e_tune_v1.npz, 95839 bytes, 189 media blocks
+HTAR: v /tmp/HTAR_CF_CHK_527486_1794443951, 256 bytes, 2 media blocks
+HTAR: Verify complete. 0 total errors, 32 total objects (32 Files,0 Dirs,0 Hard Links,0 symlinks) wallclock/user/sys: 0.261 0.017 0.000 seconds
+HTAR: HTAR SUCCESSFUL

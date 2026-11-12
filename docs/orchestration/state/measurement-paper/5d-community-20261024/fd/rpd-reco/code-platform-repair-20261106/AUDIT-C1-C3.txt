@@ -1,0 +1,95 @@
+**coverage-5b-audit — #848 delta audit at receipt head `338a1bcb` (code head `d9740563`; `fd_rpd_reco.py` 6e5df35d…, `fd_rpd_reco_custody.py` 54a99ff8…, tests 585aedd4…, harness e5793315…; all six SOURCE-SHA256SUMS lines verified). Checked against binding 1 A1 at 815200c1 and the director's rulings. Verdict: NO-GO, on C1 and C2. Each makes the traced extract STOP on every correct run. C3 belongs to the same repair round. B1, B2, the A1 flux evaluation and P-F hold. The production config is DRAFT and was not judged for readiness.**
+
+Line numbers are at `d9740563` unless stated.
+
+**C1 (blocking): the traced step reads the process's mapped files before MnvH1D's dictionary is loaded.**
+- **The order.** In `checked_prepared_mat`, `mapped = instrument.mapped_files()` (`fd_rpd_reco.py:1231`) runs before `ROOT.TClass.GetClass("PlotUtils::MnvH1D")` (`:1232`).
+- **Why that fails.** The instrument records libMAT.so as mapped only "once MnvH1D's dictionary loads (measured)" (`fd_rpd_inputs.py:136`; FD-RPD-DECLARATION-PART2 §1.4, login02, 2026-11-03). Its own `mat_environment` calls GetClass first (`:471`) and reads the mapped files after (`:473`). Nothing in the extract uses a MAT class before `:1231`.
+- **Consequence.** `mat_env_problems` reports "mapped MAT files [], not [libMAT.so]", and the mapped-stat loop's `filename in mapped` (`:1245`) is False. Either way it is MAT_ENVIRONMENT, exit 7, on every correct connect.
+- **Probe** (`r848b/probe/getclass_order.py`). It uses the real `mat_env_problems` and the real pins, with a stand-in that maps libMAT.so once GetClass has run:
+  - the measured lazy-load case: `STOP MAT_ENVIRONMENT: mapped MAT files [], not ['/pscratch/…/MINERvA101/opt/lib/libMAT.so']`;
+  - the control, libMAT already mapped: PASS.
+- **Why the suite doesn't see it.** The only test, `test_same_connect_prepare_receipt`, mocks `mapped_files` to `set()`, `mat_env_problems` to `[]` and `mapped_mat_stats` to `{}`. So the mapped-library stat check (the director's ruling 3) is never exercised in either direction.
+- **Requirements:**
+  - the dictionary is loaded before the mapped files are read, in the same order as `mat_environment`;
+  - a test whose stand-in maps libMAT only after GetClass;
+  - a firing test for a changed (dev, inode, size), and a REQUIRED mutant for each.
+
+**C2 (blocking): the trace classifier cannot admit ROOT's scan of MAT's lib directory under any policy the config can write.**
+- **The two rules.** `classify_trace` refuses a successful open that matches two classes. Its only resolved overlap is staged_data with run (`fd_rpd_reco_custody.py:413-422`). `pinned_mat_libs` lists exact files inside `MINERvA101/opt/lib` (`:503`).
+- **What ROOT does in this environment.**
+  - ROOT's rootmap discovery opens every LD_LIBRARY_PATH directory and reads each `*.rootmap` in it.
+  - MAT's lib directory has to be on that path for `MATDict.rootmap` to be found.
+  - The directory also holds the MAT-MINERvA and UnfoldUtils dictionary libraries (`phase1/mp1/receipts/s0_cluster_hashes.txt:19-32`).
+- **The choice this leaves.** A successful open of `…/opt/lib` itself, or of any non-pinned file in it, has two outcomes:
+  - unclassified, if the environment roots leave out opt/lib;
+  - ambiguous with libMAT.so, MATDict.rootmap and the `libMATDict.so` symlink, if they include it.
+- **Probe** (`r848b/probe/classify_libdir.py`, the real `classify_trace`, three policies): all three STOP.
+  - env roots without opt/lib: the directory and `MAT-MINERvADict.rootmap` are unclassified;
+  - env roots with opt/lib: MATDict.rootmap and libMATDict.so are ambiguous between pinned_mat_libs and environment;
+  - the directory and the other rootmap listed exactly: the same ambiguity.
+- **What I did not measure.** The probe's lines model ROOT's behaviour; I have not traced ROOT on Perlmutter. The silent direction was tested on the real platform only with `/bin/true`.
+- **Requirements:**
+  - a classification rule that can admit a real MAT+ROOT trace while keeping each pinned library pinned (for example, an exact pinned path outranks a prefix class);
+  - before the connect, a real-platform silent-direction trace of the extract's prologue, classified PASS under the drafted policy. That prologue is the interpreter start, `import ROOT`, GetClass and the module imports, with no input opened.
+- **Config items that trace will also surface.** The draft's two `trace_environment_roots` placeholders cover only the ROOT prefixes. Python's FileFinder lists each sys.path directory with an O_DIRECTORY open: `nd-unfolding/`, opt/lib/python if it is on PYTHONPATH, and the user site. Cling may open MAT headers under `opt/include`. Each of these needs a reviewed class.
+
+**C3 (in the same round): ten single-site mutants of the custody and traced-step checks the director listed go undetected.**
+- **The mapping gap.** The harness's guard mutants are keyed by guard name and disable every site with that name at once. The custody module's `require` has no guard name, and the harness has only four custody mutants (protected, unknown, failed, fence).
+- **My probe.** I mutated each site alone, to True, and ran the full suite (`r848b/mut/`).
+- **The control.** All seven custody mutants fail the same 22 tests, all through the fixture receipt's custody-code digest (FLUX_CUSTODY). A byte-only comment appended to the custody file fails the identical 22 (diffed). So no test reaches these guards. These are the undetected sites:
+  - the 15-entry inventory (`custody.py:265-269`);
+  - the stat/atime STOP during fresh staging (`:216-218`). Its only test pins atime to 0 and runs the silent direction;
+  - the native constructor input against the C-N selection (`:288-291`);
+  - the run-overlaps-protected refusal (`:483-486`);
+  - the negative check's expected guard (`:617-620`);
+  - trace-check's extract PASS and producer identity (`:544-548`);
+  - the fence call in prepare, replaced by a PASS dict (`:186`). The fence function itself is tested, but no test shows that prepare stages nothing when the fence refuses.
+- **Producer sites with the suite fully green (134 passed):**
+  - the mapped-stat loop (`fd_rpd_reco.py:1245`), as in C1;
+  - the staged-instrument digest (`:1251-1255`);
+  - flux_extract's constructor-input match against the selection (`:1549-1553`).
+- **Requirements:** a firing test and a REQUIRED mutant for each site. Custody mutants must be selected so that the digest refusal cannot kill them first.
+
+**What holds:**
+1. **B1.**
+   - `require_output_root` is the first statement in `main`'s try (`:2887`). It is checked again in the handler before any mkdir (`:2921-2925`), and also in `run_stage` and `Inputs`.
+   - **My probe re-run at this head:** control, `OMP_NUM_THREADS=4`, `d1 --dry-run` and the only-N pair all print `STOP OUTPUT_LOCATION`, rc 4, with no mkdir and no open.
+2. **B2.**
+   - S and N must be given together (PRICED_TIMING_PAIR).
+   - S must be finite and > 0. N must be an int with 0 < N ≤ 165,600, which is the #851 cap.
+   - S requires a pinned timing record staged by O_NOATIME. The record must match S, 65,536 rows, 200 replicas, five variants, the real-signal pass and the 23 axes, and its environment must equal the running one.
+   - The per-step planned figure is draws × S × 1.5 against N, for d2-predict and c0. With no flags, the old ×10 rule and 7,200 s stay.
+   - Every PASS and STOP record carries N, the budget, S, the factor, the planned figure (or null with its reason), the chunk shape and the SLURM fields.
+   - **The 23 axes.** `TIMING_AXES` equals `axis_assignments`'s keys: step, 7 coordinates, cells, 12 strata and 2 rate (`test_timing_shape_matches_actual_aggregate_axes`, plus its mutant). d2-predict's single axis and c0's partition passes (11 axes, one variant) are cheaper than the full chunk, so S errs safe.
+   - The RNG, `aggregate` and the readings are unchanged.
+3. **The A1 flux.**
+   - The string constructor is called as `(14, True, "minervame{1D,1M,1N}", gen2thin, g4numiv6, 100)`, which matches `:372` (GetPlaylistEnum is case-independent, `:2086-2088`). The constrained φ comes from `GetFluxReweighted(14)` and g from the own group's `GetFluxGenerated(14)`.
+   - Each of n and d uses `Interpolate` at E ≤ 75 and bin contents above it, mirroring `:977-992` exactly.
+   - w = 1 if n = 0 or d = 0, and the factor is w(φ_T, g_own) / w(φ_own, g_own).
+   - All eight zero patterns are counted with their pass_reco weight shares.
+   - The bracket is ∫φ_T/∫φ_own with `"width"` integration, matching MAT's `Integral(…,"width")` (`:1508`). The raw-file integral is descriptive.
+   - Rows: full-row products, paired by signal digest and row count.
+   - Eν is the declaration's §4 inversion, unchanged from `10731ed3`.
+   - The four P-F evidence excerpt digests in the draft config match my MAT copy at 35097b65 (396-406, 977-992, 1938-1990, 883-945).
+4. **P-F units.**
+   - The edges of every φ and every g equal 1D's φ to 1e-12.
+   - φ's title, its x/y axis titles and the file units metadata must be byte-equal across groups. On a STOP the record keeps both strings and the edges.
+   - `absolute_per_POT_per_GeV_normalization_claim: False`.
+   - The ALL cross-check is SKIPPED explicitly, with 6.243e-8 cited and read by nothing.
+5. **Custody, as read.**
+   - The protected roots cover the original PLOTUTILSROOT/data, MPARAMFILES, dump_root, the COV2D paths and every staged original other than the pinned MAT libraries, so FluxReweighter.cxx is protected.
+   - Any attempt under them refuses, ENOENT included.
+   - A successful open needs exactly one class, and failed searches are counted by prefix.
+   - A cwd change, a relative path with no annotated directory, and an unparsed or unfinished call all refuse.
+   - In prepare: the fence (squeue logic equal to `cov2d_fence.sh`, plus sacct terminal states for 60909280 and 60911676, all recorded) runs before any staging. The constraint file is staged fresh by O_NOATIME with stat before and after.
+   - The prepare receipt is checked for run, connect id, age and environment.
+   - The negative missing-dependency check holds as built: rc 4, MAT_DATA_STAGE, its trace classified, the file restored in `finally`. Scope: Python's pre-check refuses before the MAT constructor runs.
+6. **Re-run by me** (miniconda Python 3.12.2):
+   - the suite printed `134 passed in 191.29s`, rc 0;
+   - the harness printed 130 `KILLED` lines, `{"all_killed": true, "complete": true, "executed": 130, "killed": 130, "required": 130}`, rc 0;
+   - its JSON's producer, tests and custody digests equal SOURCE-SHA256SUMS.
+   - The macOS O_NONBLOCK stand-in is test-only (`tests/test_fd_rpd_reco.py:376-377`). The producer still refuses when O_NOATIME is absent.
+
+Eight lows (L5–L12) are on my follow-up list. One is the extract's unmeasured wall time against the 7,200 s default. None of them blocks.
+

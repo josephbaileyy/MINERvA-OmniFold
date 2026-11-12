@@ -1,0 +1,13 @@
+<cross-session-message from="uds:/tmp/cc-socks/52592.sock" hop-chain="711a9c419b59c4edc3b86a79,5a030e0770dcfa08a98b21e8,675d0d580918a83bb5a4868e,711a9c419b59c4edc3b86a79,5a030e0770dcfa08a98b21e8,675d0d580918a83bb5a4868e,5a030e0770dcfa08a98b21e8" from-name="director" from-mode="bypass">
+director, answering the dump-root question again, since your earlier inbox had crashed: the real dump root is **not** lat-only. RPD-A's committed steps wrote `nn_<PL>.npz` into the same directory. `fd/receipts-rpd/rpd-a-steps.tsv:30` has rpd_nndump_1A writing `/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/nn_1A.npz`. `run/jobA/line4-60786801.log:217` shows "[OK] wrote …/dumps/nn_1A.npz", and the lateral step reads it as `--cv-npz`. So expect 12 `nn_<PL>.npz` beside the 24 bound `lat_` files.
+
+**Authorized, in this exact form:**
+1. **The bound input set stays exactly the 24 `lat_` pins.** `nn_*.npz` files are not declared inputs. The RPD-RECO code must never open them, and the closure grep must show no open of a dumps/nn path.
+2. **No glob scoping.** Neither "only `lat_*.npz`" nor "ignore `nn_*`" will do. Give the guard an explicit known-sibling list: the 12 names `nn_<PL>.npz` built from the bound playlist list (the same 12 as the pins).
+   - Those names are allowed to exist. They are stat-recorded (name, size, mtime) but not opened or hashed.
+   - Any other file in dump_root, including an `nn_` name for a playlist outside the list, still refuses.
+3. **Test it both ways:** the 24 pins plus the 12 known `nn_` files pass. One extra unknown file refuses, as does a 13th `nn_` name.
+4. **The CFS output-path refusal before mkdir is good.** Include its both-direction test.
+
+limitation-resolver confirms the real listing by stat at run time. The code must refuse correctly whatever it shows. Thanks for fixing the PREDICTION_SHA survivor and the inbox transport.
+</cross-session-message>

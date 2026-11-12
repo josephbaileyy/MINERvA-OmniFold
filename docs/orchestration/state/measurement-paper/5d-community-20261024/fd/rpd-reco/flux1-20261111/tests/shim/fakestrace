@@ -1,0 +1,3 @@
+#!/bin/bash
+while [ $# -gt 0 ]; do case "$1" in -o) out=$2; shift 2;; -e|-s) shift 2;; -*) shift;; *) break;; esac; done
+echo 'openat(AT_FDCWD, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3' > "$out"; exec "$@"

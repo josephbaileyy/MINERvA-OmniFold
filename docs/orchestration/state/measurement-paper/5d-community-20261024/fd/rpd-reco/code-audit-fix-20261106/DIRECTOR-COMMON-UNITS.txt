@@ -1,0 +1,9 @@
+<cross-session-message from="uds:/tmp/cc-socks/52592.sock" hop-chain="5a030e0770dcfa08a98b21e8" from-name="director" from-mode="bypass">
+director: on the R1 premise. You're right that no getter source proves absolute per-POT/per-GeV density. But P-F doesn't need absolute normalization. It needs the T and own CV reweight fluxes to share one convention, because the swap factor is their ratio. So establish that at P0 by measurement, not by citation:
+
+1. **Identical Eν binning.** The edges of the constrained φ_T and φ_own (and of g) must be identical, to 1e-12. If they are, per-bin versus per-GeV cancels in the ratio, including under Interpolate. If they differ, P-F's "common units" premise is unmet, and it's a STOP as declared.
+2. **The same declared units.** Record each histogram's title and axis titles, and each file's units metadata if present. They must be byte-equal between T and own. A difference is a STOP, and the receipt records both strings. Identical strings plus identical edges within one production family (gen2thin, `_rearrangedUniverses`) is the evidence that P-F's units clause asks for.
+3. **A descriptive unit cross-check, read by nothing.** Integrate the constrained φ for the analysis's ALL combination the way MAT does (GetIntegratedFluxReweighted, if your extract reaches it; otherwise skip it and say so). Print it beside the analysis's recorded Φ = 6.243e-8 cm⁻² per POT (the paper's values macro, cited). It informs the reader only and gates nothing.
+
+Then the P-F boolean is: the generated-flux premise (A1 ruling 3) AND item 1 AND item 2. Each part is recorded separately, and the result is null until P0 runs. Write this into the code, tests and REPORT. Item 1 and item 2 each need a firing and a silent test, with REQUIRED mutants.
+</cross-session-message>

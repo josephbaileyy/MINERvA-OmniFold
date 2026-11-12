@@ -1,0 +1,383 @@
+{
+ "configuration_status": "PROPOSED_FOR_AUDIT_NOT_READY",
+ "constants": {
+  "path": "/dev/shm/limres-rpd-flux1/repo/MINERvA101/MINERvA-101-Cross-Section/event/CVUniverse.h",
+  "sha256": "900d7368d6184d503399bd99c0fd30085212df0327b8be374182495b85a3677d"
+ },
+ "cov2d_protected_paths": [
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/ER/xsec.root",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root",
+  "/pscratch/sd/j/josephrb/cov2d-run-20261104",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root",
+  "/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz",
+  "/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware",
+  "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector",
+  "/pscratch/sd/j/josephrb/fd-1b-20261030/pins.json",
+  "/pscratch/sd/j/josephrb/fd-1b-staged-20261102/stage1/in/flux_universes.npz",
+  "/pscratch/sd/j/josephrb/fd-f1-20261027/f1b3/prep",
+  "/pscratch/sd/j/josephrb/fd-1b-inv-20261101/i0/in",
+  "/pscratch/sd/j/josephrb/ll5d-calib-20261108",
+  "/pscratch/sd/j/josephrb/ll5d-calib-2-20261109",
+  "/pscratch/sd/j/josephrb/ll5d-calib-3-20261110",
+  "/pscratch/sd/j/josephrb/ll5d-gate-g18-20261108",
+  "/pscratch/sd/j/josephrb/ll5d-gate-ar23-20261108",
+  "/pscratch/sd/j/josephrb/ll5d-gate-2-g18-20261110",
+  "/pscratch/sd/j/josephrb/ll5d-gate-2-ar23-20261110",
+  "/pscratch/sd/j/josephrb/ll5d-vicheck-20261110",
+  "/pscratch/sd/j/josephrb/ll5d-pilot-r1",
+  "/pscratch/sd/j/josephrb/ll5d-unfolds-r1",
+  "/pscratch/sd/j/josephrb/ll5d-bulk-r1",
+  "/pscratch/sd/j/josephrb/ll5d-null-r1",
+  "/pscratch/sd/j/josephrb/ll5d-readout-r1",
+  "/pscratch/sd/j/josephrb/cov2d-inputs-20261104"
+ ],
+ "data_rows_estimate": 4091707,
+ "dump_root": "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps",
+ "expected_environment": {
+  "interpreter": "/global/homes/j/josephrb/.conda/envs/omnifold_py310/bin/python3",
+  "numpy": "2.2.6",
+  "python": "3.10.19",
+  "resolved_interpreter": "/global/u2/j/josephrb/.conda/envs/omnifold_py310/bin/python3.10",
+  "scipy": "1.15.3",
+  "uproot": "5.6.9"
+ },
+ "flux_custody": {
+  "path": "/pscratch/sd/j/josephrb/rpd-reco-flux-${RUN_DATE}/run/flux-custody.json",
+  "sha256": null
+ },
+ "flux_extract": {
+  "path": "/pscratch/sd/j/josephrb/rpd-reco-flux-${RUN_DATE}/run/flux-extract.json",
+  "sha256": null
+ },
+ "flux_root": "/pscratch/sd/j/josephrb/minerva/minerva_large_files",
+ "flux_selection": {
+  "1D": {
+   "constraint_source_citation": {
+    "file": "PlotUtils/FluxReweighter.cxx",
+    "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3",
+    "lines": [
+     372,
+     431
+    ],
+    "repository": "MinervaExpt/MAT"
+   },
+   "family": "gen2thin",
+   "histogram": "flux_E_cvweighted",
+   "proposal_status": "DRAFT_FOR_AUDIT; C-N candidate status unchanged",
+   "relative_path": "MATFluxAndReweightFiles/flux/flux-gen2thin-pdg14-minervame1D_rearrangedUniverses.root",
+   "retention": "AWAITING_RUNTIME_STAT_AND_STAGED_RETENTION_RECORD",
+   "source_citation": {
+    "file": "PlotUtils/FluxReweighter.cxx",
+    "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3",
+    "lines": [
+     883,
+     945
+    ],
+    "repository": "MinervaExpt/MAT"
+   },
+   "variant": "rearrangedUniverses"
+  },
+  "1M": {
+   "constraint_source_citation": {
+    "file": "PlotUtils/FluxReweighter.cxx",
+    "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3",
+    "lines": [
+     372,
+     431
+    ],
+    "repository": "MinervaExpt/MAT"
+   },
+   "family": "gen2thin",
+   "histogram": "flux_E_cvweighted",
+   "proposal_status": "DRAFT_FOR_AUDIT; C-N candidate status unchanged",
+   "relative_path": "MATFluxAndReweightFiles/flux/flux-gen2thin-pdg14-minervame1M_rearrangedUniverses.root",
+   "retention": "AWAITING_RUNTIME_STAT_AND_STAGED_RETENTION_RECORD",
+   "source_citation": {
+    "file": "PlotUtils/FluxReweighter.cxx",
+    "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3",
+    "lines": [
+     883,
+     945
+    ],
+    "repository": "MinervaExpt/MAT"
+   },
+   "variant": "rearrangedUniverses"
+  },
+  "1N": {
+   "constraint_source_citation": {
+    "file": "PlotUtils/FluxReweighter.cxx",
+    "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3",
+    "lines": [
+     372,
+     431
+    ],
+    "repository": "MinervaExpt/MAT"
+   },
+   "family": "gen2thin",
+   "histogram": "flux_E_cvweighted",
+   "proposal_status": "DRAFT_FOR_AUDIT; C-N candidate status unchanged",
+   "relative_path": "MATFluxAndReweightFiles/flux/flux-gen2thin-pdg14-minervame1N_rearrangedUniverses.root",
+   "retention": "AWAITING_RUNTIME_STAT_AND_STAGED_RETENTION_RECORD",
+   "source_citation": {
+    "file": "PlotUtils/FluxReweighter.cxx",
+    "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3",
+    "lines": [
+     883,
+     945
+    ],
+    "repository": "MinervaExpt/MAT"
+   },
+   "variant": "rearrangedUniverses"
+  }
+ },
+ "flux_source": {
+  "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3",
+  "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/MAT/PlotUtils/FluxReweighter.cxx",
+  "sha256": "4576346db5e7a9e3673253bfc89f38bd2ca1dc260f24ebe66df055069990bbbc"
+ },
+ "h2": {
+  "path": "/dev/shm/limres-rpd-flux1/repo/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+  "sha256": "b67907615fe2e903e60ae6caa1c141fa007676c0a1b3ae9f42490d331bfdda89"
+ },
+ "inventory": {
+  "path": "/dev/shm/limres-rpd-flux1/repo/docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/flux-pot-provenance-20261104/energy-spectrum-candidates.tsv",
+  "sha256": "e60609e756e35fbc9846ae5983c1d848999bc17c7504e3ca876c22c9bcc0e88f"
+ },
+ "mat_constructor": {
+  "analysis_arguments_citation": {
+   "file": "MINERvA101/MINERvA-101-Cross-Section/runEventLoopOmniFold.cpp",
+   "git_sha": "f4cd8f8b6dcaef727b681d6c4963909945ceda24",
+   "lines": [
+    1698,
+    1701
+   ],
+   "status": "full SHA measured 2026-11-11 (git rev-parse f4cd8f8b in this repository); lines 1698-1701 set SetNuEConstraint(true), the playlist, SetAnalysisNuPDG(14) and SetNFluxUniverses(100); the file's sha256 at that commit is recorded in PROPOSAL.md item 7"
+  },
+  "apply_nue_constraint": true,
+  "constraint_source_citation": {
+   "file": "PlotUtils/FluxReweighter.cxx",
+   "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3",
+   "lines": [
+    372,
+    431
+   ],
+   "repository": "MinervaExpt/MAT"
+  },
+  "flux_version": "gen2thin",
+  "generation_version": "g4numiv6",
+  "n_flux_universes": 100,
+  "nu_pdg": 14,
+  "playlist": "minervame + {1D,1M,1N}",
+  "source_citation": {
+   "file": "PlotUtils/FluxReweighter.cxx",
+   "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3",
+   "lines": [
+    42,
+    98
+   ],
+   "repository": "MinervaExpt/MAT"
+  }
+ },
+ "mat_dependencies": {
+  "path": "/dev/shm/limres-rpd-flux1/repo/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-audit-fix-20261106/MAT-DATA-DEPENDENCIES.json",
+  "sha256": "b056487e592e7704c2a98c14243b26f44c82821382837a263b75c169859cce0b"
+ },
+ "pins": {
+  "path": "/dev/shm/limres-rpd-flux1/repo/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/INPUTS.sha256",
+  "sha256": "7638f94f56ad0471769445cffe68ff538c9b68158f48415e7c3cafa7ee95a295"
+ },
+ "premise": {
+  "boolean_source_citations": {
+   "common_units_convention_measured_at_P0": {
+    "file": "PlotUtils/FluxReweighter.cxx",
+    "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3",
+    "lines": [
+     883,
+     945
+    ],
+    "repository": "MinervaExpt/MAT"
+   },
+   "cv_numerator_is_selected_spectrum": {
+    "file": "PlotUtils/FluxReweighter.cxx",
+    "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3",
+    "lines": [
+     396,
+     406
+    ],
+    "repository": "MinervaExpt/MAT"
+   },
+   "generation_denominator_is_common": {
+    "file": "PlotUtils/FluxReweighter.cxx",
+    "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3",
+    "lines": [
+     977,
+     992
+    ],
+    "repository": "MinervaExpt/MAT"
+   }
+  },
+  "common_units_convention_measured_at_P0": null,
+  "cv_numerator_is_selected_spectrum": null,
+  "evidence": {
+   "common_generation_denominator": {
+    "lines": [
+     977,
+     992
+    ],
+    "sha256": "397bef038910e1b86c2b4c701f237753d29af4838d82c4b108b4daa94f1d32d8",
+    "source_citation": {
+     "file": "PlotUtils/FluxReweighter.cxx",
+     "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3",
+     "lines": [
+      977,
+      992
+     ],
+     "repository": "MinervaExpt/MAT"
+    }
+   },
+   "common_units_convention": {
+    "lines": [
+     883,
+     945
+    ],
+    "sha256": "bf59c2d480e01c37da472ca8ee1c898f8533d1d15aad7729a43fb4edc9941432",
+    "source_citation": {
+     "file": "PlotUtils/FluxReweighter.cxx",
+     "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3",
+     "lines": [
+      883,
+      945
+     ],
+     "repository": "MinervaExpt/MAT"
+    }
+   },
+   "cv_numerator": {
+    "lines": [
+     396,
+     406
+    ],
+    "sha256": "2d4aa43c38cc1d40c38c200f913d088e68874f995c783c6030ce0814394893a0",
+    "source_citation": {
+     "file": "PlotUtils/FluxReweighter.cxx",
+     "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3",
+     "lines": [
+      396,
+      406
+     ],
+     "repository": "MinervaExpt/MAT"
+    }
+   },
+   "playlist_mapping": {
+    "lines": [
+     1938,
+     1990
+    ],
+    "sha256": "662a127db7033267012cbe50af93601036b7c8dca10cd6d449891b755720e2fd",
+    "source_citation": {
+     "file": "PlotUtils/FluxReweighter.cxx",
+     "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3",
+     "lines": [
+      1938,
+      1990
+     ],
+     "repository": "MinervaExpt/MAT"
+    }
+   }
+  },
+  "generation_denominator_is_common": null,
+  "interpretation": {
+   "common_units_convention_measured_at_P0": "P0 measures identical phi/g edges at 1e-12 absolute tolerance and byte-equal phi title, axis titles and available file units metadata, within gen2thin rearrangedUniverses. Absolute normalization is not inferred. This result remains null until P0.",
+   "cv_numerator_is_selected_spectrum": "selected input followed by MAT constraint, never the raw histogram substituted for constrained phi",
+   "generation_denominator_is_common": "common to the two w calls for a given MC row; it remains that row\u2019s own generated flux, not a common file across playlists"
+  }
+ },
+ "run_class": "diagnostic",
+ "selection_scope": "DRAFT ONLY. Proposed gen2thin rearranged choices follow the analysis string constructor; C-N candidate statuses stay unchanged until runtime P0. Nothing beyond the declaration and A1 is selected or authorized. Runtime roots, trace classes, retention, source premise acceptance and extract/custody digests await audit. P-F common units is measured at P0; the draft supplies no result.",
+ "trace_directory_policy": "Exact pinned files remain distinct from instrument-directory scans. Clone and sys.path directory listings are allowed; clone files require an explicit source/cache binding. System excludes run, clone, reviewed environment/platform/instrument roots and private records. Run excludes staged data. Generic double matches still STOP. Non-pinned mapped instrument or platform libraries STOP.",
+ "trace_environment_roots": [
+  "/global/homes/j/josephrb/.conda/envs/root_6_28",
+  "/global/u2/j/josephrb/.conda/envs/root_6_28"
+ ],
+ "trace_instrument_directories": [
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/include",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/build"
+ ],
+ "trace_platform_custody": "Prepare fixes the union of mapped platform code and the closed exit-hook inventory, by path/SHA/dev/inode/size/mtime. The instantaneous mapped subset is recorded separately. The complete child trace, including atexit, and post-exit pin checks must pass. Only instrument-code pins are hashed. A four-byte file-kind probe under reviewed platform/instrument roots catches suffixless ELF libraries; no probe bytes are exported. Protected roots refuse before reads. Data/source inputs retain O_NOATIME and no-original-open custody.",
+ "trace_platform_exit_inventory": {
+  "behavior": "Prepare resolves and pins these files without loading them. Inventory is separate from mapped subset. An additional unpinned library is a STOP, including at exit. Monitoring remains enabled.",
+  "relative_paths": [
+   "lib/libldms.so",
+   "lib/libovis_json.so.0",
+   "lib/libovis_event.so.0",
+   "lib/libmmalloc.so.0",
+   "lib/libzap.so.0",
+   "lib/libovis_thrstats.so.0",
+   "lib/libovis_log.so.0",
+   "lib/libovis_ev.so.0",
+   "lib/libcoll.so.0",
+   "lib/libovis_third.so.0",
+   "lib/libovis_util.so.0",
+   "lib/ovis-ldms/libzap_sock.so",
+   "lib/libldms_auth_munge.so"
+  ],
+  "role": "ovis_ldms",
+  "source": "prologue4/run/prologue.strace:2562-2692 @ 68a36cf8; pymon-fetch copies at d0d4cfd5"
+ },
+ "trace_platform_library_digest": "ordinary_instrument_code_only",
+ "trace_platform_roots": [
+  {
+   "path": "/opt/cray/pe",
+   "reason": "Cray programming-environment runtime and loader metadata observed in prologue4.",
+   "role": "cray_pe"
+  },
+  {
+   "path": "/opt/ovis-ldms",
+   "reason": "LDMS monitoring runtime libraries observed in prologue4.",
+   "role": "ovis_ldms"
+  },
+  {
+   "path": "/opt/nvidia/hpc_sdk",
+   "reason": "NVIDIA HPC runtime observed in prologue4.",
+   "role": "nvidia_hpc"
+  },
+  {
+   "path": "/opt/nersc/pymon",
+   "reason": "NERSC Python sitecustomize and monitoring modules observed in prologue4.",
+   "role": "nersc_pymon"
+  },
+  {
+   "path": "/opt/nersc/etc/nerscjson_client",
+   "reason": "LDMS client configuration observed in prologue4.",
+   "role": "nerscjson_client"
+  },
+  {
+   "path": "/var/lib/sss/mc",
+   "reason": "SSSD passwd cache observed in prologue4; non-executable mapping is descriptive, not a library pin.",
+   "role": "sss_cache"
+  },
+  {
+   "path": "/global/common/software/nersc9/darshan/default/lib",
+   "reason": "Darshan loader/rootmap scan; prologue4 resolves default to 3.4.6-gcc-13.2.1/lib. Policy records both lexical and resolved prefixes.",
+   "role": "darshan"
+  },
+  {
+   "path": "/opt/cray/libfabric/2.3.1/lib64",
+   "reason": "libfabric loader/rootmap scan directory observed in prologue4.",
+   "role": "libfabric"
+  }
+ ],
+ "trace_policy_evidence": {
+  "commit": "68a36cf8f013aab145faf3cf7ed8d64971a433d8",
+  "darshan_success_line": 1625,
+  "file": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/prologue4-20261108/run/prologue.strace",
+  "libfabric_success_line": 1632,
+  "revision": "68a36cf8f013aab145faf3cf7ed8d64971a433d8",
+  "sha256": "e925be68626e21f88d8ffb2dc5a2295bfe1b3047a00450b4a843ef307105d4ad"
+ }
+}

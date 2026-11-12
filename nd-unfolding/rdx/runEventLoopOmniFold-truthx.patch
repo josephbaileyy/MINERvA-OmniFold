@@ -1,0 +1,198 @@
+--- a/runEventLoopOmniFold.cpp	2026-11-11 21:36:35
++++ b/runEventLoopOmniFold.cpp	2026-11-11 21:36:35
+@@ -185,6 +185,21 @@
+ // on truthCV.isEfficiencyDenom membership, and miss-append can iterate the
+ // cache rather than re-walking the truth tree. See main() and
+ // AppendTruthOnlyMisses below.
++// RDX (F1.2(i), MNV101_DUMP_TRUTHX): the leading final-state proton's kinetic
++// energy (MeV), or 0 if there is none: the largest mc_FSPartE - 938.272 over
++// mc_FSPartPDG == 2212 (GetNProtonsTrue's mass and rule), read through
++// GetTruthFSHadrons, which keeps protons with mc_FSPartE unchanged.
++inline double RdxLeadingProtonKE(const CVUniverse* u)
++{
++  std::vector<double> E, px, py, pz;
++  std::vector<int> pdg;
++  u->GetTruthFSHadrons(E, px, py, pz, pdg);
++  double best = 0.0;
++  for(size_t i = 0; i < pdg.size(); ++i)
++    if(pdg[i] == 2212 && E[i] - 938.272 > best) best = E[i] - 938.272;
++  return best;
++}
++
+ struct TruthDenomEntry
+ {
+   double MC;
+@@ -214,6 +229,11 @@
+   // float to halve cache RAM over the per-playlist truth-denom cache.
+   std::vector<float> pg_E, pg_px, pg_py, pg_pz;
+   std::vector<int>   pg_pdg;
++  // RDX (MNV101_DUMP_TRUTHX): truth E_nu (MeV), true vertex (mm) and leading-
++  // proton KE (MeV), cached from the truth loop so a truth-only miss row carries
++  // its real values (the identity is the id_* above, always cached). Set only
++  // under the gate; brace-initialized to 0 otherwise.
++  double rdx_enu, rdx_vtx_x, rdx_vtx_y, rdx_vtx_z, rdx_kep;
+ };
+ 
+ // UQ Stage-1 #7 (2026-05-21): per-systematic-universe weight dump.
+@@ -448,6 +468,23 @@
+   // Gate truth-cloud caching: only compute/store the per-event FS-hadron cloud
+   // when the point-cloud dump is active (otherwise it is dead weight).
+   const bool dumpPointcloud = (getenv("MNV101_DUMP_POINTCLOUD") != nullptr);
++  // RDX (F1.2(i)): MNV101_DUMP_TRUTHX adds truth E_nu, the true vertex, the
++  // leading-proton KE and the MC identity under truthx_* names. With the
++  // variable unset nothing here runs and the schema is unchanged.
++  const bool dumpTruthx = (getenv("MNV101_DUMP_TRUTHX") != nullptr);
++  double rdx_enu = 0.0, rdx_vtx_x = 0.0, rdx_vtx_y = 0.0, rdx_vtx_z = 0.0, rdx_kep = 0.0;
++  int    rdx_run = 0, rdx_subrun = 0, rdx_evt = 0;
++  if(dumpTruthx)
++  {
++    out->Branch("truthx_enu",      &rdx_enu);     // MeV (true neutrino energy)
++    out->Branch("truthx_vtx_x",    &rdx_vtx_x);   // mm (true vertex)
++    out->Branch("truthx_vtx_y",    &rdx_vtx_y);   // mm
++    out->Branch("truthx_vtx_z",    &rdx_vtx_z);   // mm
++    out->Branch("truthx_kep_lead", &rdx_kep);     // MeV (leading proton KE, 0 if none)
++    out->Branch("truthx_run",      &rdx_run);     // MC event identity
++    out->Branch("truthx_subrun",   &rdx_subrun);
++    out->Branch("truthx_evt",      &rdx_evt);
++  }
+ 
+   // Full-event (G2) truth-side branches: truth muon 4-vector/phi (MeV/rad),
+   // true vertex (mm), and MC event identity (run/subrun/nth). Gated on
+@@ -633,6 +670,14 @@
+       const ROOT::Math::XYZTVector tv = truthCV->GetTrueVertex();
+       vtx_true_x = tv.X(); vtx_true_y = tv.Y(); vtx_true_z = tv.Z();
+     }
++    if(dumpTruthx)
++    {
++      rdx_enu = truthCV->GetEnuTrue();
++      const ROOT::Math::XYZTVector rdx_tv = truthCV->GetTrueVertex();
++      rdx_vtx_x = rdx_tv.X(); rdx_vtx_y = rdx_tv.Y(); rdx_vtx_z = rdx_tv.Z();
++      rdx_kep = RdxLeadingProtonKE(truthCV);
++      rdx_run = key_run; rdx_subrun = key_subrun; rdx_evt = key_nth;
++    }
+ 
+     out->Fill();
+ 
+@@ -644,6 +689,11 @@
+       // Full-event (G2): cache identity + truth muon/vertex so a truth-only miss
+       // row (AppendTruthOnlyMisses) carries its real truth identity/features.
+       tde.id_run = key_run; tde.id_subrun = key_subrun; tde.id_nth = key_nth;
++      if(dumpTruthx)
++      {
++        tde.rdx_enu = rdx_enu; tde.rdx_vtx_x = rdx_vtx_x; tde.rdx_vtx_y = rdx_vtx_y;
++        tde.rdx_vtx_z = rdx_vtx_z; tde.rdx_kep = rdx_kep;
++      }
+       if(dumpPointcloud)
+       {
+         tde.mu_true_px = mu_true_px; tde.mu_true_py = mu_true_py;
+@@ -752,6 +802,26 @@
+   std::vector<double>* p_reco_time = &e_reco_time;
+   const bool havePointcloud = (getenv("MNV101_DUMP_POINTCLOUD") != nullptr &&
+                                sigOut->GetBranch("part_gen_E") != nullptr);
++  // RDX (MNV101_DUMP_TRUTHX): truthx_* miss-row buffers, bound only when the
++  // signal loop wrote the branches, and filled per miss from the truth-denom
++  // cache below. Listed in explicitNames, so the KNOWN_ISSUES #12 rebind never
++  // sees them.
++  double miss_rdx_enu = 0.0, miss_rdx_vtx_x = 0.0, miss_rdx_vtx_y = 0.0,
++         miss_rdx_vtx_z = 0.0, miss_rdx_kep = 0.0;
++  int    miss_rdx_run = 0, miss_rdx_subrun = 0, miss_rdx_evt = 0;
++  const bool haveTruthx = (getenv("MNV101_DUMP_TRUTHX") != nullptr &&
++                           sigOut->GetBranch("truthx_enu") != nullptr);
++  if(haveTruthx)
++  {
++    sigOut->SetBranchAddress("truthx_enu",      &miss_rdx_enu);
++    sigOut->SetBranchAddress("truthx_vtx_x",    &miss_rdx_vtx_x);
++    sigOut->SetBranchAddress("truthx_vtx_y",    &miss_rdx_vtx_y);
++    sigOut->SetBranchAddress("truthx_vtx_z",    &miss_rdx_vtx_z);
++    sigOut->SetBranchAddress("truthx_kep_lead", &miss_rdx_kep);
++    sigOut->SetBranchAddress("truthx_run",      &miss_rdx_run);
++    sigOut->SetBranchAddress("truthx_subrun",   &miss_rdx_subrun);
++    sigOut->SetBranchAddress("truthx_evt",      &miss_rdx_evt);
++  }
+   if(havePointcloud)
+   {
+     sigOut->SetBranchAddress("part_gen_E",   &p_gen_E);
+@@ -819,7 +889,9 @@
+         "mu_reco_qp", "mu_reco_minos_ok", "vtx_reco_x", "vtx_reco_y", "vtx_reco_z",
+         "mu_true_px", "mu_true_py", "mu_true_pz", "mu_true_E", "mu_true_phi",
+         "vtx_true_x", "vtx_true_y", "vtx_true_z",
+-        "mc_run", "mc_subrun", "mc_nthEvtInFile"};
++        "mc_run", "mc_subrun", "mc_nthEvtInFile",
++        "truthx_enu", "truthx_vtx_x", "truthx_vtx_y", "truthx_vtx_z",
++        "truthx_kep_lead", "truthx_run", "truthx_subrun", "truthx_evt"};
+     TObjArray* brs = sigOut->GetListOfBranches();
+     std::vector<std::pair<std::string, MissCat>> pending;
+     for(int bi = 0; bi < brs->GetEntriesFast(); ++bi)
+@@ -907,6 +979,14 @@
+         miss_id_run = tde.id_run; miss_id_subrun = tde.id_subrun;
+         miss_id_nth = tde.id_nth;
+       }
++      if(haveTruthx)
++      {
++        miss_rdx_enu = tde.rdx_enu; miss_rdx_vtx_x = tde.rdx_vtx_x;
++        miss_rdx_vtx_y = tde.rdx_vtx_y; miss_rdx_vtx_z = tde.rdx_vtx_z;
++        miss_rdx_kep = tde.rdx_kep;
++        miss_rdx_run = tde.id_run; miss_rdx_subrun = tde.id_subrun;
++        miss_rdx_evt = tde.id_nth;
++      }
+       sigOut->Fill();
+       ++nTruthOnlyMisses;
+     }
+@@ -983,6 +1063,23 @@
+   // variable-length truth FS-hadron + reco-cluster vectors for the PET track.
+   // Off by default so the canonical / q3 / universe omnifiles stay lean.
+   const bool dumpPC = (getenv("MNV101_DUMP_POINTCLOUD") != nullptr);
++  // RDX (F1.2(i)): truthx_* on mc_signal_reco under MNV101_DUMP_TRUTHX (see the
++  // truth-denom tree); filled per reco row below and per miss row by
++  // AppendTruthOnlyMisses from the truth-denom cache.
++  const bool dumpTruthx = (getenv("MNV101_DUMP_TRUTHX") != nullptr);
++  double rdx_enu = 0.0, rdx_vtx_x = 0.0, rdx_vtx_y = 0.0, rdx_vtx_z = 0.0, rdx_kep = 0.0;
++  int    rdx_run = 0, rdx_subrun = 0, rdx_evt = 0;
++  if(dumpTruthx)
++  {
++    out->Branch("truthx_enu",      &rdx_enu);
++    out->Branch("truthx_vtx_x",    &rdx_vtx_x);
++    out->Branch("truthx_vtx_y",    &rdx_vtx_y);
++    out->Branch("truthx_vtx_z",    &rdx_vtx_z);
++    out->Branch("truthx_kep_lead", &rdx_kep);
++    out->Branch("truthx_run",      &rdx_run);
++    out->Branch("truthx_subrun",   &rdx_subrun);
++    out->Branch("truthx_evt",      &rdx_evt);
++  }
+   std::vector<double> pc_gen_E, pc_gen_px, pc_gen_py, pc_gen_pz;
+   std::vector<int>    pc_gen_pdg;
+   std::vector<double> pc_reco_E, pc_reco_pos, pc_reco_z;
+@@ -1293,6 +1390,18 @@
+         id_subrun = recoCV->GetInt("mc_subrun");
+         id_nth    = recoCV->GetInt("mc_nthEvtInFile");
+       }
++      if(dumpTruthx){
++        // Truth quantities in truth mode, as the point-cloud block reads them.
++        CVUniverse::SetTruth(true);
++        rdx_enu = recoCV->GetEnuTrue();
++        const ROOT::Math::XYZTVector rdx_tv = recoCV->GetTrueVertex();
++        rdx_vtx_x = rdx_tv.X(); rdx_vtx_y = rdx_tv.Y(); rdx_vtx_z = rdx_tv.Z();
++        rdx_kep = RdxLeadingProtonKE(recoCV);
++        CVUniverse::SetTruth(false);
++        rdx_run    = recoCV->GetInt("mc_run");
++        rdx_subrun = recoCV->GetInt("mc_subrun");
++        rdx_evt    = recoCV->GetInt("mc_nthEvtInFile");
++      }
+       out->Fill();
+       if(outRecoIDs) outRecoIDs->insert(key);
+     }
+@@ -1684,6 +1793,14 @@
+ 
+   const std::string mc_file_list = argv[2],
+                     data_file_list = argv[1];
++
++  // RDX (F1.2(i)): the truthx_* branches are distinct from the point-cloud
++  // ones, but the two gates are never combined (one schema per run).
++  if(getenv("MNV101_DUMP_TRUTHX") != nullptr && getenv("MNV101_DUMP_POINTCLOUD") != nullptr)
++  {
++    std::cerr << "MNV101_DUMP_TRUTHX and MNV101_DUMP_POINTCLOUD are both set; refusing.\n";
++    return badCmdLine;
++  }
+ 
+   std::string reco_tree_name;
+   if(!inferRecoTreeNameAndCheckTreeNames(mc_file_list, data_file_list, reco_tree_name))
