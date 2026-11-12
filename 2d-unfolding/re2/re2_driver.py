@@ -2311,7 +2311,8 @@ def main():
     if args.data_file is not None:  # COV2D
         provenance.append(("dataFileSha256", file_sha256(args.data_file)))
     if g2r_prov is not None:  # G2R
-        provenance.append(("g2rMissMap", json.dumps(g2r_prov, sort_keys=True)))  # G2R
+        import json as g2r_json  # G2R: main() binds `json` only in later branches, so it is local and unbound here
+        provenance.append(("g2rMissMap", g2r_json.dumps(g2r_prov, sort_keys=True)))  # G2R
     if args.bkg_mode == "negweight-refined":  # RE-2
         import json
         provenance.append(("re2Refinement", json.dumps(re2_refinement, sort_keys=True)))

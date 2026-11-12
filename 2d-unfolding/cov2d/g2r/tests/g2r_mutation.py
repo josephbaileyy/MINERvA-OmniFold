@@ -20,10 +20,12 @@ HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[3]
 G2R = REPO / "2d-unfolding/cov2d/g2r/g2r.py"
 READOUT = REPO / "2d-unfolding/cov2d/g2r/g2r_readout.py"
+PREPARE = REPO / "2d-unfolding/cov2d/g2r/g2r_prepare.py"
 DRIVER = REPO / "2d-unfolding/re2/re2_driver.py"
 T_G2R = REPO / "2d-unfolding/cov2d/g2r/tests/test_g2r.py"
 T_DRV = REPO / "2d-unfolding/re2/tests/test_re2_miss_map.py"
-EXPECTED = {T_G2R: 24, T_DRV: 8}
+T_GLUE = REPO / "2d-unfolding/cov2d/g2r/tests/test_g2r_glue.py"
+EXPECTED = {T_G2R: 27, T_DRV: 11, T_GLUE: 18}
 
 MUTATIONS = [
     # --- §9's required mutants
@@ -76,6 +78,31 @@ MUTATIONS = [
      T_DRV, "MissMapLoader.test_no_state_is_carried_between_universes"),
     ("G11 comparing the override with itself", G2R,
      "        b = p5_override(S, T, blocks, col)\n", "        b = a\n", T_G2R, "Map.test_the_spot_check_passes_and_refuses"),
+    # --- the auditor's B1 and the director's requirement: the provenance line run by a test
+    ("the g2rMissMap provenance line removed", DRIVER,
+     "        provenance.append((\"g2rMissMap\", g2r_json.dumps(g2r_prov, sort_keys=True)))  # G2R\n",
+     "        pass  # G2R\n", T_DRV, "MainWithMissMap.test_a_miss_map_run_reaches_training_with_its_provenance"),
+    ("the provenance line broken (B1 restored)", DRIVER,
+     "        import json as g2r_json  # G2R: main() binds `json` only in later branches, so it is local and unbound here\n"
+     "        provenance.append((\"g2rMissMap\", g2r_json.dumps(",
+     "        provenance.append((\"g2rMissMap\", json.dumps(", T_DRV,
+     "MainWithMissMap.test_a_miss_map_run_reaches_training_with_its_provenance"),
+    ("a product's universe unchecked", READOUT,
+     "or mm.get(\"universe\") != uni):", "or False):", T_G2R, "ReadProducts.test_the_rules"),
+    # --- the glue (the director's sweep after B1)
+    ("G6's result not enforced in phase_tune", READOUT,
+     "        for k in (\"G7\", \"G6\"):\n", "        for k in (\"G7\",):\n", T_GLUE,
+     "PhaseTuneTampered.test_a_failing_g6_is_invalid_before_the_products"),
+    ("G6's tolerance opened", READOUT, "G6_TOL = 1e-12 ", "G6_TOL = 1e+300 ", T_G2R,
+     "CTPrime.test_g6_tolerates_rounding_and_refuses_beyond_1e_12"),
+    ("the null at C_T' not written", READOUT,
+     "                            write_null=lambda nrec: (out", "                            write_null=lambda nrec: None if True else (out",
+     T_GLUE, "PhaseTune.test_the_null_rebuilt_at_c_t_prime_equals_the_committed_null"),
+    ("the prepare skipping G11", PREPARE,
+     "        rec[\"G11\"] = g2r.spot_check(S, T, sizes, miss, truth, spot)\n", "        rec[\"G11\"] = {}\n", T_GLUE,
+     "Prepare.test_the_prepare_end_to_end"),
+    ("a missing per-playlist file not a STOP", PREPARE, "    if missing:\n", "    if False:\n", T_GLUE,
+     "Prepare.test_a_missing_per_playlist_file_is_the_directors_stop"),
     ("part (a) not subtracting the old universe block", READOUT,
      "\"C_new\": np.asarray(Q, np.float64) - old + new}", "\"C_new\": np.asarray(Q, np.float64) + new}", T_G2R,
      "ReadoutCores.test_data_core_replaces_only_the_universe_bands"),
@@ -96,7 +123,7 @@ def head_bytes(path: Path) -> bytes:
 
 
 def main() -> int:
-    sources = (G2R, READOUT, DRIVER)
+    sources = (G2R, READOUT, DRIVER, PREPARE)
     for p in sources:
         if p.read_bytes() != head_bytes(p):
             print(f"REFUSED: {p.relative_to(REPO)} differs from HEAD; run in a clean checkout")

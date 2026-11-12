@@ -84,11 +84,19 @@ def old_bands(B: dict, order) -> dict:
     return {b: np.asarray(B[f"band__{b}"], np.float64) for b in order}
 
 
+G6_TOL = 1e-12            # the declaration §8: "to 10^-12 relative" (bitwise depends on the BLAS: see the receipts)
+
+
 def g6_tune(B: dict, rebuilt: dict) -> dict:
-    """G6 at a tune: c_t_prime on the OLD bands reproduces the committed blocks bitwise."""
+    """G6 at a tune: c_t_prime on the OLD bands reproduces the committed blocks to 1e-12 relative (max |diff| / max
+    |committed|), as the declaration's §8 states; whether it is also bitwise is recorded."""
     keys = ["C_univ", "C_T"] + (["C_T_minus"] if "C_T_minus" in B else [])
-    differ = [k for k in keys if not np.array_equal(np.asarray(rebuilt[k]), np.asarray(B[k]))]
-    return {"compared": keys, "differing": differ, "pass": not differ}
+    rel = {k: float(np.max(np.abs(np.asarray(rebuilt[k]) - np.asarray(B[k]))) / float(np.max(np.abs(np.asarray(B[k])))))
+           for k in keys}
+    bitwise = {k: bool(np.array_equal(np.asarray(rebuilt[k]), np.asarray(B[k]))) for k in keys}
+    differ = [k for k in keys if not rel[k] <= G6_TOL]
+    return {"compared": keys, "rel_diff": rel, "bitwise": bitwise, "tol": G6_TOL, "differing": differ,
+            "pass": not differ}
 
 
 def data_core(s5: dict, Q: np.ndarray, new_bands: dict, w_flux, band_cov, order, flux: str) -> dict:
@@ -174,6 +182,12 @@ def read_products(tsv: Path, map_sha: str, role_want: str, data_sha: str | None,
     return out
 
 
+def tsv_paths(tsv: Path) -> list[str]:
+    """Every product path the TSV names, for the atime ledger (G9)."""
+    with open(tsv, newline="") as fh:
+        return [row[1] for row in csv.reader(fh, delimiter="\t") if row and not row[0].startswith("#")]
+
+
 def stack_bands(products: dict, vec, order, bands_n) -> dict:
     want = {(b, i) for b in order for i in range(bands_n[b])}
     if set(products) != want:
@@ -222,6 +236,8 @@ def phase_tune(truth: str, tsv: Path, map_sha: str, out: Path) -> dict:
         if not np.array_equal(np.asarray(er.rep, bool), B["rep"].astype(bool)):
             raise c.Refusal("E_R's cells differ from blocks_<T>.npz's")
         real_sha = crd.data_shas(truth)[c.REALIZATION_SEED[truth]]
+        for p in tsv_paths(tsv):
+            run.watch(p)
         prods = read_products(tsv, map_sha, "g2r", real_sha, Path(td), crd.read_pinned, crd.read_provenance)
         new_bands = stack_bands(prods, er.vec, c.ORDER, c.BANDS)
         new = g2r.c_t_prime(B, new_bands, ro.universe_block, cells, c.ORDER, c.LATERAL_BANDS, cb.NORM_KEY, C_minus)
@@ -287,6 +303,8 @@ def phase_data(tsv: Path, map_sha: str, out: Path) -> dict:
         if rec["controls_failed"]:
             rec["verdict"] = "INVALID"
             return run.finish(out, "data_g2r.invalid.json")
+        for p in tsv_paths(tsv):
+            run.watch(p)
         prods = read_products(tsv, map_sha, "g2r", None, Path(td), crd.read_pinned, crd.read_provenance)
         new_bands = stack_bands(prods, er.vec, c.ORDER, c.BANDS)
         core = data_core(s5, Q, new_bands, w_flux, ro.band_cov, c.ORDER, c.FLUX)

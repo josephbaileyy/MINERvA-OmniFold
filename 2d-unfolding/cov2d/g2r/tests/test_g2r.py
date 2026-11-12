@@ -129,6 +129,7 @@ class Map(unittest.TestCase):
             "a tail w_reco not the proxy": (self.corrupt("w_reco", tail0, 9.0), self.T, self.blk),
             "a miss not in the truth tree": (self.corrupt("MC", tail0, 77.0), self.T, self.blk),
             "the block sizes": (self.S, self.T, [(self.blk[0][0], n0 + 1, m0), self.blk[1]]),
+            "more misses than entries": (self.S, self.T, [(self.blk[0][0], n0, n0 + 1), self.blk[1]]),
         }
         T_dup = {k: v.copy() for k, v in self.T.items()}
         for k in T_dup:
@@ -145,7 +146,7 @@ class Map(unittest.TestCase):
                   "a tail w_reco not the proxy": "tail_w_reco_eq_w_truth", "a miss not in the truth tree":
                   "every_miss_found", "the block sizes": "n_signal_eq_sum_blocks", "duplicate truth keys":
                   "truth_keys_unique", "misses out of order": "subsequence_order",
-                  "the complement": "complement_eq_reco_rows_cv"}
+                  "the complement": "complement_eq_reco_rows_cv", "more misses than entries": "misses_within_block"}
         self.assertEqual(set(expect), set(cases))
         for name, (S, T, blk) in cases.items():
             with self.subTest(name), self.assertRaisesRegex(g2r.Refusal, expect[name]):
@@ -280,14 +281,29 @@ class CTPrime(unittest.TestCase):
 
     def test_the_old_bands_reproduce_the_committed_blocks_bitwise(self):
         new = self.rebuild(gr.old_bands(self.B, self.c.ORDER))
-        self.assertTrue(gr.g6_tune(self.B, new)["pass"])
+        g6 = gr.g6_tune(self.B, new)
+        self.assertTrue(g6["pass"])
+        self.assertTrue(all(g6["bitwise"].values()))         # same process, same BLAS: bitwise here
+
+    def test_g6_tolerates_rounding_and_refuses_beyond_1e_12(self):
+        B = dict(self.B)
+        for k in ("C_univ", "C_T", "C_T_minus"):
+            B[k] = np.nextafter(self.B[k], np.inf)               # one ulp everywhere
+        new = self.rebuild(gr.old_bands(self.B, self.c.ORDER))
+        g6 = gr.g6_tune(B, new)
+        self.assertTrue(g6["pass"])
+        self.assertFalse(any(g6["bitwise"].values()))
+        B["C_univ"] = self.B["C_univ"] * (1 + 1e-9)
+        self.assertFalse(gr.g6_tune(B, new)["pass"])
 
     def test_a_changed_universe_band_moves_only_c_univ_and_c_t(self):
         bands = gr.old_bands(self.B, self.c.ORDER)
         bands["MaRES"] = bands["MaRES"] * 1.01
         new = self.rebuild(bands)
         self.assertFalse(np.array_equal(new["C_univ"], self.B["C_univ"]))
-        self.assertFalse(gr.g6_tune(self.B, new)["pass"])
+        g6 = gr.g6_tune(self.B, new)
+        self.assertFalse(g6["pass"])
+        self.assertGreater(g6["rel_diff"]["C_univ"], gr.G6_TOL)
         for k in ("C_lat", "C_norm", "C_stat", "C08", "C_model_abs"):
             np.testing.assert_array_equal(new[k], self.B[k])
         np.testing.assert_allclose(new["C_T"] - new["C_univ"], self.B["C_T"] - self.B["C_univ"], rtol=0, atol=1e-15)
@@ -417,6 +433,70 @@ class RegradeCore(unittest.TestCase):
         r = g2r.readings(self.B["C_T"], self.new["C_T"])
         self.assertEqual(self.core["tune_eps"]["eps"]["retained"], r["eps"]["retained"])
         self.assertGreater(r["eps"]["retained"]["eps"], 0)
+
+
+class ReadProducts(unittest.TestCase):
+    """read_products and stack_bands with the reads injected: the digest-pinned copy, the provenance rules per role,
+    the realization's dataFileSha256, a universe twice, and the exact universe set."""
+
+    def setUp(self):
+        import json
+        import tempfile
+        self.td = tempfile.TemporaryDirectory()
+        self.tmp = Path(self.td.name)
+        self.json = json
+        self.prov = {}
+        self.read = []
+
+    def tearDown(self):
+        self.td.cleanup()
+
+    def tsv(self, rows):
+        p = self.tmp / "products.tsv"
+        p.write_text("# label\tpath\tsha256\trole\tuniverse\n" + "".join("\t".join(r) + "\n" for r in rows))
+        return p
+
+    def read_pinned(self, path, digest):
+        self.read.append((path, digest))
+        return f"bytes of {path}".encode()
+
+    def read_provenance(self, dst):
+        return self.prov[Path(dst).stem]
+
+    def mm(self, uni, sha="M"):
+        return {"g2rMissMap": self.json.dumps({"sha256": sha, "universe": uni}), "dataFileSha256": "D"}
+
+    def test_the_rules(self):
+        rows = [("G_a", "/p/a", "da", "g2r", "MaRES:0"), ("G_b", "/p/b", "db", "g2r", "MaRES:1"),
+                ("O_a", "/p/oa", "doa", "off", "MaRES:0")]
+        self.prov = {"G_a": self.mm("MaRES:0"), "G_b": self.mm("MaRES:1"), "O_a": {"dataFileSha256": "D"}}
+        got = gr.read_products(self.tsv(rows), "M", "g2r", "D", self.tmp, self.read_pinned, self.read_provenance)
+        self.assertEqual(sorted(got), [("MaRES", 0), ("MaRES", 1)])
+        self.assertEqual(self.read, [("/p/a", "da"), ("/p/b", "db")])
+        off = gr.read_products(self.tsv(rows), "M", "off", "D", self.tmp, self.read_pinned, self.read_provenance)
+        self.assertEqual(sorted(off), [("MaRES", 0)])
+        bad = {"another map": ("G_a", self.mm("MaRES:0", sha="X")), "another universe": ("G_a", self.mm("MaRES:1")),
+               "no record": ("G_a", {"dataFileSha256": "D"}), "another realization": ("G_a", dict(self.mm("MaRES:0"),
+                                                                                            dataFileSha256="E"))}
+        for name, (lab, pv) in bad.items():
+            self.prov = {"G_a": self.mm("MaRES:0"), "G_b": self.mm("MaRES:1"), lab: pv}
+            with self.subTest(name), self.assertRaises(g2r.Refusal):
+                gr.read_products(self.tsv(rows[:2]), "M", "g2r", "D", self.tmp, self.read_pinned, self.read_provenance)
+        self.prov = {"O_a": self.mm("MaRES:0")}
+        with self.assertRaisesRegex(g2r.Refusal, "override-off"):
+            gr.read_products(self.tsv(rows[2:]), "M", "off", None, self.tmp, self.read_pinned, self.read_provenance)
+        self.prov = {"G_a": self.mm("MaRES:0"), "G_c": self.mm("MaRES:0")}
+        with self.assertRaisesRegex(g2r.Refusal, "twice"):
+            gr.read_products(self.tsv([rows[0], ("G_c", "/p/c", "dc", "g2r", "MaRES:0")]), "M", "g2r", "D", self.tmp,
+                             self.read_pinned, self.read_provenance)
+
+    def test_stack_bands_needs_exactly_the_declared_universes(self):
+        prods = {("A", 0): "a0", ("A", 1): "a1", ("F", 0): "f0"}
+        vec = {"a0": np.array([1.0]), "a1": np.array([2.0]), "f0": np.array([3.0])}.__getitem__
+        out = gr.stack_bands(prods, vec, ("F", "A"), {"F": 1, "A": 2})
+        np.testing.assert_array_equal(out["A"], [[1.0], [2.0]])
+        with self.assertRaises(g2r.Refusal):
+            gr.stack_bands({("A", 0): "a0"}, vec, ("F", "A"), {"F": 1, "A": 2})
 
 
 if __name__ == "__main__":
