@@ -506,7 +506,34 @@ S1's out-of-phase-space row stay unchanged. Any change to the note's sentences g
 - **Reading 4, RESPONSE.md only by the director's ruling:** the other-flavour, wrong-sign and NC class is 0.197 % of
   the selected 1A data, against the publication's 0.2 % (8655 events, which counts only those components). This is
   descriptive and untested, and the definitions may differ. <!-- absence-ok: scopes a descriptive comparison, by the director's ruling; not a claim that a result does not exist -->
-- **Table S1** keeps "its split … is not measured here" until the bracket is narrowed. <!-- absence-ok: quotes table S1's scope clause; the narrowed split awaits the fiducial-test source (the director, 2026-11-12) -->
+- **Table S1:** the clause "is not measured here" was replaced once the bracket was narrowed (below).
+
+**4.2: C-BKG-2, the composition measured with the analysis's own fiducial test (`cbkg2-20261112/`, 2a2af241).**
+- **The source:** truth::Apothem and truth::ZRange, read from MAT-MINERvA/calculators/CCInclusiveSignal.h (cf9ee8c4,
+  :103-104, :108, :122). The tree is at main 50d76314, as M4-W-RECORD.md:32 records. Port 1 (bkg_channel_split.py:58-70)
+  is identical to it line by line, so its fraction is the measured value.
+- **On 1A, weighted:**
+  - out-of-phase-space signal: 10.4 % (11.4 % raw);
+  - ν_μ CC with an out-of-fiducial vertex (genuine): 82.4 %;
+  - other flavour, wrong sign or NC (genuine): 7.2 %.
+  - The control is exact.
+- **±1 mm vertex-position sensitivity:** 2.5 % of the weight (1,333 rows) changes class when the fiducial limits move
+  by ±1 mm. The rule itself is exact, so this is not uncertainty in the definition; it stays in the receipt and here.
+- **The run log reconciled:** RUN_LOG :1061's "Set E" (~82 % of the 1A template) is ν_μ CC failing the truth-tree
+  phase space, which includes out-of-fiducial vertices. The measured split shows that most of that share is
+  out-of-fiducial ν_μ CC, which S1 counts as genuine background; out-of-phase-space signal is 10 %. ν_μ CC of any vertex
+  is 92.8 %, consistent with the record.
+- **Printed:** table S1 now reads "subtracted before unfolding. Composition measured on playlist 1A only: about 10 %
+  (weighted) is out-of-phase-space signal; the rest is genuine background, mostly ν_μ charged-current events with a
+  true vertex outside the fiducial volume".
+  - Key cbkg2-oops-1a; two significant figures, by the director's ruling; the PRD read's sentence split and "true
+    vertex".
+  - Both reads are in cbkg2-read/referee-read.md: PRD ACCEPT, meaning read OK.
+  - The meaning read noted that MAT's code places the fiducial cuts in phaseSpace. The Supplement's S1 :26 sets the
+    convention that out-of-fiducial ν_μ CC is genuine background, and the row follows it. Recorded here for a referee
+    question.
+
+**Follow-up list:** the docstrings of docs/…/m4-w/probe_mad.py:47 and playlist-spread-20261014/scripts/intensity.py:7 cite TargetUtils::IsInHexagon as the fiducial test. The event loop's truth::Apothem is a different function, which does not call it (cbkg2-20261112/README.md). Correct the docs; don't edit them now (the director, 2026-11-12).
 
 **Follow-up list (optional):** counting whether F5.3's 1,755 gen-outside-grid rows are only the −9999 sentinels
 (0 node-h, on OF5D). Printing that number would not help the paper (the director, 2026-11-12).

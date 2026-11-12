@@ -150,6 +150,9 @@ READOUTS = {
     # the figure referee read's check A: how far the unfolded (E_avail, W) cells follow each truth change (recovered
     # fraction f per supported cell, net of the nominal closure); a_recovery.py
     "recov": ("docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-figure-deformation-20261112/check-a/a_recovery.json", "75db95a1"),
+    # C-BKG-2 (#977 RESPONSE.md 4.2): the 1A background template's classes with the analysis's own fiducial test
+    # (MAT-MINERvA calculators/CCInclusiveSignal.h truth::Apothem/ZRange, read from source; port 1 identical)
+    "cbkg2": ("docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/cbkg2-20261112/members/cbkg2_summary.json", "22bb7782"),
     "lrows": ("docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/l-rows-20261112/derived/l_rows.json", "dc3bf511"),
 }
 # the committed readouts without the run-period block, for the "-nopl" keys
@@ -241,7 +244,8 @@ LISTED_CLAIMS = [
     ("sec_fived16.tex", "truths meet it: the GiBUU", {"kind": "without"}),
     ("sec_fived16.tex", "The fake-data bias therefore exceeds the stated thresholds", {"kind": "both"}),
     ("sec_fived16.tex", "so the GiBUU comparison carries that limitation", {"kind": "both", "family": "gibuu"}),
-    ("main_paper.tex", "at a GiBUU-like truth and at a synthetic momentum-transfer tilt find", {"kind": "count", "gibuu": 1, "also": ["q3"]}),
+    # the abstract read of 2026-11-12 dropped the second "at" (to fit "move opposite the change" at 250 words)
+    ("main_paper.tex", "at a GiBUU-like truth and a synthetic momentum-transfer tilt find", {"kind": "count", "gibuu": 1, "also": ["q3"]}),
     ("main_note.tex", "At a GiBUU-like truth and a synthetic momentum-transfer tilt", {"kind": "count", "gibuu": 1, "also": ["q3"]}),
 ]
 
@@ -1576,6 +1580,7 @@ def groupb_values(d):
     v.update(t2b_values(d))
     v.update(lrows_values(d))
     v.update(recov_values(d))
+    v.update(cbkg2_values(d))
     # B3a: the synthetic q3 tilt, r = 1 + a z~ (s5c_pseudo.py truth_weight "q3_given_eavail_w"); a and the clip from the
     # code, the event count, the range and in-cell spread of the weight and the two preservation checks from the truth check
     q = d["s5ntruth"]["departures"]["q3_given_eavail_w"]
@@ -1967,6 +1972,17 @@ def period_values(d):
     v = dict(out[0])
     v["pp-nrep"] = str(r["readings"]["n_replicas"])
     assert int(v["pp-k"]) + int(v["pp-kbar"]) == r["readings"]["n_cells"]
+    return v
+
+
+def cbkg2_values(d):
+    """C-BKG-2: the out-of-phase-space share of the 1A background template (weighted), with the analysis's own fiducial
+    test; one playlist of twelve, printed to two significant figures (the director, 2026-11-12)."""
+    s = d["cbkg2"]
+    assert s["control"]["pass"] and s["control"]["max_abs_diff_vs_work_proxy"] == 0.0 and s["closure_pass"]
+    assert s["port"] == "nd-unfolding/bkg_channel_split.py:58-70"
+    v = {"cbkg2-oops-1a": f"{100 * s['frac_w_oops']:.0f}"}
+    assert v["cbkg2-oops-1a"] == "10" and s["frac_w_cc_out_of_fiducial"] > 0.5   # "mostly out-of-fiducial nu_mu CC"
     return v
 
 
@@ -2420,8 +2436,8 @@ def self_test():
             ("omits a truth F0 lists", "paper_body.tex", r"Under $C_{\mathrm{total}}$ alone, the right-hand columns",
              lambda t: t.replace(r"the synthetic $q_3$ tilt and the NuWro $(\pT,\pPar,\Eavail)$ shape, the last by $p$ alone",
                                  r"and the synthetic $q_3$ tilt, the last by $p$ alone", 1)),
-            ("loses its anchor", "main_paper.tex", "at a GiBUU-like truth and at a synthetic momentum-transfer tilt find",
-             lambda t: t.replace("at a GiBUU-like truth and at a synthetic", "at GiBUU-like truths and at a synthetic", 1))):
+            ("loses its anchor", "main_paper.tex", "at a GiBUU-like truth and a synthetic momentum-transfer tilt find",
+             lambda t: t.replace("at a GiBUU-like truth and a synthetic", "at GiBUU-like truths and a synthetic", 1))):
         planted = dict(texts, **{name: edit(texts[name])})
         if planted[name] == texts[name]:
             print(f"  FAIL the plant that {what} did not apply"); ok = False

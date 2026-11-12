@@ -77,9 +77,12 @@ sample
 
 2.91 % of selected data events in the
 two-dimensional grid (2.72 % to 3.23 % per
-playlist), subtracted before unfolding; its split
-between genuine background and
-out-of-phase-space signal is not measured here
+playlist), subtracted before unfolding.
+Composition measured on playlist 1A only:
+about 10 % (weighted) is out-of-phase-space
+signal; the rest is genuine background, mostly
+νµ charged-current events with a true vertex
+outside the fiducial volume
 
 not compared
 
@@ -129,9 +132,6 @@ five independent constraints: the result is five simultaneous observables, not f
 measurements. The paper distinguishes the five classifier inputs, the lower-dimensional support they
 populate, and the five reported observables. Only reconstructed W is fixed by the other inputs;
 reconstructed Eavail comes from a separate calorimetric estimator and is not a function of them. The
-nearly degenerate correlation directions of the joint-test metric (Ref. [1], Sec. 11.1) are consistent
-with this redundancy, but this explanation has not been demonstrated and the information added by
-W has not been measured. A redundant input can change what a classifier of finite capacity learns
 
 Table S2: The five observables as implemented.
 Truth definition
@@ -191,6 +191,9 @@ fixed by (pT , p∥ , q3 )
 when reconstructed;
 nearly so at truth
 
+nearly degenerate correlation directions of the joint-test metric (Ref. [1], Sec. 11.1) are consistent
+with this redundancy, but this explanation has not been demonstrated and the information added by
+W has not been measured. A redundant input can change what a classifier of finite capacity learns
 without adding measured information; these are separate questions.
 The analysis excludes events with negative truth W 2 , a weight fraction of 4.9 × 10−5 , from its
 five-observable truth sample and normalization; Ref. [1], Sec. 8.1 gives the external predictions’
@@ -236,21 +239,21 @@ tracker
 tracker
 ECAL
 ECAL
-− Eµ-fuzz
-) ,
-(S2)
 Eavail
 = 1.17 (Eblob
 − Eµ-fuzz
 ) + (Eblob
+− Eµ-fuzz
+) ,
+(S2)
 implemented in the reconstruction function (CVUniverse::NewEavail()), with no final clamp to
 non-negative values.
 The charged-pion term subtracts the inherited constant 135 MeV rather than the charged-pion
 mass of about 139.57 MeV. The analysis code retains the inherited constant. Using this constant
+
 instead of the charged-pion mass moves 0.65 % of the simulated signal weight into another of the
 seven true-Eavail bins of the fine grid and changes no such bin by more than 0.97 %. This effect has
 not been assessed against the projection of the five-dimensional covariance of the configuration-(a)
-
 central value. On the sixteen-cell result of Ref. [1], Sec. 10, from configuration (e), to first order in
 the unfolding and without retraining, replacing the constant by the charged-pion mass moves the
 cross section by at most 0.19σ in any cell and by 0.42σ as one coherent shift, the norm of the shift
@@ -298,9 +301,6 @@ The joint tests. The joint tests of the generator predictions, with their grid, 
 calibration, generative model and conditions, are given in Ref. [1], Secs. 11.1, 11.2 and 11.4; in each
 calibration pseudo-experiment, the flux universe and the band universes are drawn independently,
 and their weight ratios multiply.
-The note’s calibrated tests reject hybrid nulls, conditional on the simulation’s hadronic response
-and on the simulated chain reproducing the analysis of the data. A rejection extends to a generator
-prediction only if the residual below the fine grid is bounded, and no such bound has been shown.
 
 Table S3: The sixteen reported cells: boxes (pT , p∥ and q3 in GeV/c; Eavail and W in GeV), cellintegrated cross section f in units of 10−40 cm2 /nucleon, and per-cell relative σ (%) under Ctotal ,
 under Cresp alone, under Ctotal + Cresp (the covariance without the run-period block), under CPL,5D
@@ -545,6 +545,9 @@ R15
 
 median
 
+The note’s calibrated tests reject hybrid nulls, conditional on the simulation’s hadronic response
+and on the simulated chain reproducing the analysis of the data. A rejection extends to a generator
+prediction only if the residual below the fine grid is bounded, and no such bound has been shown.
 The rejections are not physical exclusions, and show no evidence of additional discrimination beyond
 matched coarse projections. The null distributions of the note’s calibrated joint tests reproduce the
 estimator’s pull toward its prior (Ref. [1], Sec. 11.5).
@@ -568,9 +571,9 @@ ratios, without fixed histogram bins. Each iteration has two steps:
 1. Step 1 (detector space). A classifier separates measured data from reconstructed simulation
 weighted by the current push-weights. Its calibrated output p gives the likelihood-ratio reweight
 w = p/(1 − p) for each reconstructed simulated event. Each simulated event is a (truth, reco)
+
 pair, allowing the weight to be pulled back directly to its truth record. Truth events without
 a reconstructed partner (“misses”) receive step-1 weights from a regressor trained on the
-
 reconstructed subsample, w(truth features). OmniFold thus accounts for acceptance without
 a separate efficiency correction.
 2. Step 2 (truth space). A second classifier separates the original truth-level simulation from
@@ -611,9 +614,9 @@ method’s nominal-truth bias in the highest-W column by about an order of magni
 classifier removes most of the background-related bias that remains (Ref. [1], Sec. 9.2–Ref. [1],
 Sec. 9.3). It gives the 3D and 4D central values (Ref. [1], Sec. 7) and the sixteen-cell fivedimensional result (Ref. [1], Sec. 10). It is used for the generator tests (Ref. [1], Sec. 11), the
 study of generator shapes held out of its development (Ref. [1], Sec. 9.3) and the precision
+
 study (Ref. [1], Sec. 9.4). It was selected before the joint-test design was fixed (Ref. [1], Sec. 11).
 A refined five-dimensional data unfolding with it gives the sixteen-cell result, whose reported
-
 covariance on the sixteen cells is described in Sec. S5. The 3D and 4D central values have been
 regenerated with it, and no 3D or 4D covariance is quoted.
 • (f), the nominal LightGBM configuration above with refined negative-weight subtraction
@@ -655,7 +658,6 @@ events, not over their physical weights.
 coordinates weighted πi witruth , and ωi = p/(1 − p) at each event’s truth coordinates
 (:263–266).
 3. Cross section (s5c_unfold.py:136–146; xsec_nd.py:54). The truth coordinates of the truthselected events are histogrammed on the fine grid with weight ωi witruth and divided by the
-completeness, the flux, the exposure, the number of nucleons and the cell volume.
 
 (unfolded ¡ truth)/truth (%)
 
@@ -700,6 +702,7 @@ study, Ref. [1], Sec. 9.2): GiBUU/GENIE Eavail shape, 60 pseudo-experiments; gra
 change. Standard errors of the mean: at most 0.12 %; “exp.”: pseudo-experiments. W bin 6 is
 W ≥ 3 GeV. The reported estimator at this truth: the paper’s section on generator-sized truth
 changes, and the GiBUU Eavail shape row of its fake-data table.
+completeness, the flux, the exposure, the number of nucleons and the cell volume.
 4. Reported cells (s1_assemble.py:119–122 at fe5d79c61). Each reporting cell’s integral is the
 volume-weighted sum of the fine cells it contains.
 The lower-capacity variant at a generator-sized truth change. Figure S1 shows the

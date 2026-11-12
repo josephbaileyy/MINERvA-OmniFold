@@ -2335,3 +2335,18 @@ was the mislabel. The director accepted bd08582ee, the hand re-cites of ALIASES 
   - The prior-retention study's outcome-dependent clauses ("similar … at the tilt", "undefined") are variant wording
     by design. The pending fill selects one, so they are not compared with the current table 4 here.
   - "Retained fraction" in the abstract is not glossed. That is pre-existing; it goes to the director with the head.
+
+## 2026-11-12 — C-BKG and C-BKG-2: table S1's template composition
+
+- **C-BKG** (8b68bc79): base_cv's 1A template equals the paper's exactly. Out-of-phase-space signal is 9.6–32.0 %,
+  bracketed by radius.
+- **C-BKG-2** (2a2af241): the fiducial test was read from MAT-MINERvA calculators/CCInclusiveSignal.h (cf9ee8c4; main
+  50d76314, the recorded revision), and port 1 is identical to it. On 1A, weighted: 10.4 % out-of-phase-space, 82.4 %
+  out-of-fiducial ν_μ CC, 7.2 % other flavour/sign/NC.
+- **Table S1:** "Composition measured on playlist 1A only: about 10 % (weighted) is out-of-phase-space signal; the rest
+  is genuine background, mostly ν_μ charged-current events with a true vertex outside the fiducial volume". Key
+  cbkg2-oops-1a. Reads in cbkg2-read/: PRD ACCEPT, meaning OK.
+- **make_values anchor fixed:** the abstract edit (the dropped "at") had broken make_values' LISTED_CLAIMS anchor and
+  its self-test plant. Heads 800579be..2a2af241 carried a values producer that could not regenerate; the committed
+  values file was correct. Anchor and plant are updated, and the self-test passes.
+- **Follow-up list:** the IsInHexagon citation in probe_mad.py and intensity.py.
