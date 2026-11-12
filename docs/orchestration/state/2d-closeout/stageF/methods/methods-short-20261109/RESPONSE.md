@@ -704,3 +704,53 @@ The director's rulings of 2026-11-12. #981 is not edited now; its re-pin runs on
 - **Broken before this pass:** Q11, Q12, Q13, Q20, Q21 and Q22 count 0 at 60d144395, from earlier #977 edits
   (4580caf5, 716ce04c, 10b88ad9). The re-pin re-sources them.
 supp-quotes.tsv records Q09 and Q19 in comments beside their rows.
+
+## G rulings and the paper's structure batch (director-helper-3, 2026-11-12)
+
+**The director's rulings on section G:**
+- **Gs3:** the data-informed-choices paragraph moves whole to §4.1, with a pointer sentence left in §3.1. This
+  supersedes Fs2a's compromise.
+- **Gs6:** RS1's protected paragraph stays verbatim.
+- **Gm8:** rounded ensemble keys, asserted against the exact values.
+- **Gm10:** Fig. 2 as small multiples, a producer-only change.
+- **G7.2:** diagonal only; helper-2's jitter-free bootstrap check found 2 of 100 replicas, so there is no correlation
+  change to print.
+- **G3.3:** a scope sentence in §7.1, with the unpriced analysis on the follow-up list.
+- **G4/Gm6:** one reference, 1A–1F, at both levels.
+
+**The run-period reference, recorded.** Before this batch the paper printed two numbers against different references:
+- the reconstruction-level step as +6.10 % for 1G–1M against **1A–1E**, the reconstruction-level reference of
+  playlist-spread-20261014 (ref_shape.json);
+- the unfolded step as +(6.94 ± 0.41) %, the purity-background period unfold against 1A–1F, before RE-2.
+
+The text had to explain the mismatch ("the unfolding's reference group includes 1F, whereas the reconstruction-level
+reference does not"). The referee asked for a consistent reference (major 8), and the figure (lrows-g/g4-runperiod, PR
+#1104) draws both levels against 1A–1F. That matches the three groups the run-period block is built from. So the paper
+now prints keys rp-*: +5.99 % (reco) and +(6.89 ± 0.46) % (unfolded, RE-2's refined background, the reported 2D
+configuration) for 1G–1M, and +1.26 % and +(1.85 ± 0.64) % for 1N–1P. The 1F caveat sentence is gone. The figure's
+producer asserts that it reproduces the old 6.10 % against 1A–1E.
+
+**Status of the paper rows** (paper_body.tex and main_paper.tex, at the next push):
+
+| Rows | Status |
+|---|---|
+| Gs1 | done: the implementation's scope paragraph precedes the three findings |
+| Gs2 | done: the fine-grid paragraph moved to §3.3, with a pointer in §2 |
+| Gs3, Gm5, Stp1 | done, as ruled. §4.1 opens with the fixed learner settings and the two data-informed choices. §3.1's universe sentence rewritten. The registry's ALIASES row 39 and ATTRIBUTION row 17 re-cited by hand to the changed line |
+| Gs4 | done: §3.2's first paragraph split by block; the run-period interval paragraph moved to S5, which already states it, leaving a pointer |
+| G7.2 | done: the diagonal jitter share (keys rdec-*, READOUTS rdecomp 46c6f8f3), "diagonal elements only" |
+| Gs5, G6, Gm4, D2 | done. §5.3 leads with table 4's RMS bias and χ², with IBU named. ρ is a directional summary. The class machinery is cut to what the results use. "No detected change" in the text, table 2 and make_values' WORDS (the printed class label; key names kept). Table 4 moved to its first use |
+| Stp4 | done: the screening-rule fragment |
+| St4 (§5.2) | partial: the repeated "the bias is the same" remark is cut. The rest of that paragraph holds the four LISTED_CLAIMS anchors and stays |
+| Gs6, St4 (§6.1) | done. The scaffolding sentence is cut, so the B0 sentences open their paragraph verbatim. A one-sentence reproducibility/stability distinction opens §6.1. tab:stability lists the populations and ensembles in place of their prose |
+| Gm8, G7.4 | done: keys ens1-g-rms-r, ens1-g-rmsc-r, ens1-g-rms-dpct, plus a sentence that the decision follows the criterion and does not weigh gain against bias |
+| Gs7, G2.3, G3.1 | done. §6.2's conditional-test paragraph stands alone. The variants share their random draws, and the primary variant leaves the two bands out of its pseudo-data and covariance alike (LL5D-DECLARATION.md :170-172, :254, :550). Table 5 gains the joint fraction's 95 % Clopper–Pearson interval, and the flagged cells' intervals are in the text (keys cp-*, READOUTS cpint 73e25db3) |
+| Gs8, G3.3 | done: the hadronic-origin proposal in two sentences plus the ONCE sentence; the checks' scope; the finite-ensemble scope sentence |
+| St5 | done: table 2's key prints the Invalid, Stopped and LL5D-descriptive entries only when the second coverage test's status uses them |
+| St6 | done: "the withheld shapes" defined in §3.3 |
+| St7, Gm10 | done. Fig. 3 (formerly 2) is small multiples, with arrays asserted unchanged against presentation_original_arrays.json and the lower-capacity figure byte-identical. Its caption is shortened; the derivation is in supp:recovery (journal-editor, 20e4baab). Fig. 4's support-rule pointer now goes to section 2 |
+| G8.1 | done: fig:runperiod in §4.3, installed byte-identical to PR #1104's PDF (asserted in make_values) |
+| St1 | done, after its PRD and meaning reads (absread4, verdict MINOR, all four defects fixed). No rendered case has a semicolon. Worst words per sentence 33.0 → 20.2. The live cases run 195–249 words |
+| Gs10 | Fig. 1 moved into §4.1, Table 4 to its first use; the other floats checked in the PDF |
+| G2.1 | held for Joseph |
+| Stp3 | in the sentence pass |

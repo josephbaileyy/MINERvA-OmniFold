@@ -162,6 +162,9 @@ READOUTS = {
     # G5 (minor 6): the period step after RE-2's refined background, the reported two-dimensional configuration
     # (lrows-g/reconcile.json ecdb66a2 traces the paper's earlier 6.94 to the pre-RE-2 period unfold)
     "re2per": ("docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/periods/analysis.json", "2ce5d5da"),
+    # G4 (major 8): the run-period figure's plotted values, both levels against 1A-1F (PR #1104; the director's ruling of
+    # 2026-11-12 adopts that single reference for the text); the installed PDF is asserted equal to its source below
+    "runper": ("docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/lrows-g/g4-runperiod/runperiod_values.json", "f63074b1"),
 }
 # the committed readouts without the run-period block, for the "-nopl" keys
 NOPL_READOUTS = dict(READOUTS, **{
@@ -2030,6 +2033,19 @@ def g_rows_values(d):
     assert len(st["boot_draws"]) == 10
     v["pp-step-re2"], v["pp-step-re2-se"] = f"{100 * st['value']:.2f}", f"{100 * st['noise_sigma']:.2f}"
     assert (v["pp-step-re2"], v["pp-step-re2-se"]) == ("6.89", "0.46")
+    # G4: the run-period figure (figures/methods_short/paper_runperiod.pdf), its steps at 8 GeV/c against 1A-1F
+    rp = d["runper"]
+    for k, tag in (("PB", "pb"), ("PC", "pc")):
+        q = rp["panels"][k]
+        assert q["reference"] == "1A\u20131F"
+        v[f"rp-{tag}-reco"] = f"{q['reco_step_pct']:.2f}"
+        v[f"rp-{tag}-unf"], v[f"rp-{tag}-unf-se"] = f"{q['unfolded_step_pct']:.2f}", f"{q['unfolded_step_noise_pct']:.2f}"
+    assert (v["rp-pb-unf"], v["rp-pb-unf-se"]) == (v["pp-step-re2"], v["pp-step-re2-se"])
+    assert (v["rp-pb-reco"], v["rp-pc-reco"], v["rp-pc-unf"], v["rp-pc-unf-se"]) == ("5.99", "1.26", "1.85", "0.64")
+    src = ROOT / READOUTS["runper"][0].replace("runperiod_values.json", "runperiod.pdf")
+    got = OUT.parent / "figures" / "methods_short" / "paper_runperiod.pdf"
+    hs = {hashlib.sha256(x.read_bytes()).hexdigest() for x in (src, got)}
+    assert len(hs) == 1 and next(iter(hs)).startswith("242f7a36"), "paper_runperiod.pdf is not PR #1104's runperiod.pdf"
     return v
 
 
