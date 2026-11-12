@@ -460,7 +460,7 @@ The reported covariance is
 \end{equation*}
 The run-period block $C_{\mathrm{PL,5D}}$ is described in section~\ref{sec:fived16-pl}.
 
-\subsection{Covariance components}
+\subsection{Covariance components and the reported matrix}
 \label{supp:cov16-blocks}
 % Added 2026-11-12 (journal-editor, style2 ranked change 7): S5's covariance components
 $C_{\mathrm{e}}$ sums
@@ -561,7 +561,7 @@ Every $\chi^2$ in this section uses the inverse of the full covariance of the ce
 
 The covariance blocks have different constructions. Two are sample covariances of an ensemble: the statistical block, from \fvval{s1-stat-replicas} bootstrap replicas with the unbiased $1/(N-1)$ normalization, and the flux block, from \fvval{fb-universes} PPFX universes with constraint weights, normalized by the sum of the weights (the weighted analogue of $1/N$, with an effective number of universes of \fvval{s1-flux-neff}). The 2p2h band has three universes. The other bands and the lateral shifts are two-point shifts, the normalization is one outer product, $C_{\mathrm{model}}$ sums three chosen generator shifts, $C_{\mathrm{resp}}$ four $\pm1\sigma$ shifts, and $C_{\mathrm{PL,5D}}$ is built from three exposure-weighted periods. The training-seed block is zero. Each comparison with a prediction adds $V_g$, its diagonal sum of squared event weights, and each fake-data comparison the variance of the mean over its pseudo-experiments.
 
-No finite-ensemble correction is applied to any block. The standard correction is derived for a single unweighted sample covariance, and none of these sums has that form. The flux bootstrap below measures the scatter of the $\chi^2$ due to estimation of the flux block, without correcting it. Table~\ref{tab:construction} summarizes each block's construction.
+No finite-ensemble correction is applied to any block. The standard correction is derived for a single unweighted sample covariance, and none of these sums has that form. A bootstrap of the flux universes (\nsec{sec:fived16-gen}) measures the scatter of the $\chi^2$ due to estimation of the flux block, without correcting it. Table~\ref{tab:construction} summarizes each block's construction.
 
 By the Sherman--Morrison identity, the shape-only statistic is $\chi^2-(f^{\top}C^{-1}\Delta)^2/(\lambda^{-1}+f^{\top}C^{-1}f)$ with $\lambda=100$, where $\Delta$ is the difference compared. As $\lambda\to\infty$ it is the $\chi^2$ with the normalization along $f$ profiled out. At $\lambda=100$ it differs from that limit only through the term $\lambda^{-1}$ beside $f^{\top}C^{-1}f$. Under the reported covariance $f^{\top}C^{-1}f$ is 584 on the sixteen cells and 439 on GiBUU's eight. The term $\lambda^{-1}$ is therefore below $3\times10^{-5}$ of it.
 % Referee recheck (2026-11-11; RESPONSE.md rows 1.4 and m7): the four C_resp factors from the reported readout's meta.sizes (state/measurement-scoping/assigned-uncertainties/cresp/cresp.json, READOUTS cresp 19bb2ee1; primary proton, meson, em, other; xtalk is a variant, not in C_resp), whose code_sha256 build_cresp.py fe1aec8b equals nd-unfolding/build_cresp.py:38 on main. f^T C^-1 f from supplemental/xsec16_cross_section.csv (sha256 adfb17d7) and xsec16_covariance.csv (f7e25107), V_g left out: 584.2 (16 cells), 438.8 (8 cells with p_par <= 4.5 GeV/c); lambda = 100 on absolute f, fd_g_compare.py:51 and :153.
@@ -589,7 +589,7 @@ $C_{\mathrm{PL,5D}}$ & three exposure-weighted run-period groups, rank \fvval{pl
 \end{tabular}
 \end{table}
 
-\subsection{The run-period block}
+\subsection{The run-period block and the per-playlist test}
 \label{supp:cov16-pl}
 % Added 2026-11-12 (journal-editor, style2 ranked change 7): S5's run-period construction
 
@@ -621,7 +621,7 @@ Passing the audit establishes neither the block's size nor the absence of overla
 \section{The two-dimensional covariance}
 \label{supp:cov2d}
 
-\subsection{Construction}
+\subsection{Construction and the run-period block}
 \label{supp:cov2d-construction}
 % Added 2026-11-12 (journal-editor, style2 ranked change 7): S6's block construction
 
@@ -675,13 +675,6 @@ In the 132 poorly determined directions, the combination of the other two run-pe
 
 % Moved from the paper (methods-short-20261109): round 5's paper_body.tex:200 at bc8673186, restyled 2026-11-09 from that text, wording only (its sixth sentence onward); its evidence route is that line's source comment there.
 Adding the model-dependence block to the four-block covariance gives a total with a median of \SI{\qrCmodelMedian}{\percent} per bin. The comparison with the published uncertainty uses the covariance without $C_{\mathrm{model}}$, because neither has a component for the residual dependence on the prior's generator shape. For the published analysis, this is because it chose its ten iterations in a fake-data study and assigns no uncertainty to the remaining dependence~\cite{MINERvA:2021owq}. The iteration counts differ (ten there, five here). No conclusion is therefore drawn about the size of the published analysis's residual.
-
-\subsection{Coverage flags at the held-out tunes}
-\label{supp:cov2d-tunes}
-% Added 2026-11-12 (journal-editor, style2 ranked change 7): S6's coverage flags
-
-% Moved from the paper (methods-short-20261109): round 5's paper_body.tex:202 at bc8673186, restyled 2026-11-09 from that text, wording only (its per-cell flags); its evidence route is that line's source comment there.
-The per-cell coverage test of the two-dimensional covariance at the two held-out tunes raises three flags, each attributed to bias: cell 29 ($\pT=0.07$--0.15~GeV/$c$, $\pPar=15$--20~GeV/$c$) at both tunes, with under-coverage factors 1.165 (\fvval{f1-tune-ar23}) and 1.347 (\fvval{f1-tune-g18}) and pull means $-0.851$ and $-0.964$, and cell 56 ($\pT=0.25$--0.33~GeV/$c$, $\pPar=6$--7~GeV/$c$) at \fvval{f1-tune-ar23}, with factor 1.316 and pull mean $+1.039$. The pull widths are 0.636--0.709.
 
 \section{Comparisons with binned iterative Bayesian unfolding}
 \label{supp:ibu}
@@ -986,13 +979,18 @@ The covariance is fixed at each tune. It is not rebuilt for each pseudo-experime
 % Split (style batch 2026-11-10 (the director, on journal-editor's style review, report_supplement.md), A2): the null content and the thresholds.
 The nominal content of each per-cell interval $|e_c|\leq\sigma_c$ is $P_0=\fvval{null-p0}$ for a Gaussian error. Because the band draws are two-point or discrete, each test replaces $P_0$ with a draw-matched null content. The null error is the sum of one draw from each drawn band's centred discrete law at the tune (its universes' shifts with their draw probabilities) and one Gaussian with the remaining blocks' summed covariance, including $C_{\mathrm{model}}$. The components must reproduce $C_T$ to $\fvval{null-tol}$ of its scale. From $\fvval{null-nmc}$ simulated null errors, the null gives each cell's content $p_c$, the probability that $|e_c|\leq\sigma_c$, and the joint content $q$, the probability that $\chi^2=e^{\top}C_T^{+}e\leq F^{-1}_{\chi^2_{n}}(P_0)$, with $C_T^{+}$ the inverse on $C_T$'s non-null subspace and $n$ its dimension. The joint region is one-sided: it has an upper boundary only. Each content is lowered by \fvval{null-se-word} Monte Carlo standard errors before use.
 
-A cell under-covers when its count of the \fvval{null-ntoys} errors inside the interval is at most the largest $k$ with $P(\mathrm{Bin}(\fvval{null-ntoys},p_c)\leq k)<\fvval{null-alpha}/N_{\mathrm{cells}}$, and the joint region under-covers when its count is at most the largest $k$ with $P(\mathrm{Bin}(\fvval{null-ntoys},q)\leq k)<\fvval{null-alpha}$. The rule is one-sided: over-coverage is reported and is not a failure. The test size per tune (and, in the five-observable test, per reading) is at most \fvval{null-size}. A cell whose clipping narrows the drawn spread below \fvval{cov-weak} of its variance reads ``passes, weakened by clipping'' when it is not flagged.
+A cell under-covers when its count of the \fvval{null-ntoys} errors inside the interval is at most the largest $k$ with $P(\mathrm{Bin}(\fvval{null-ntoys},p_c)\leq k)<\fvval{null-alpha}/N_{\mathrm{cells}}$, and the joint region under-covers when its count is at most the largest $k$ with $P(\mathrm{Bin}(\fvval{null-ntoys},q)\leq k)<\fvval{null-alpha}$. The rule is one-sided: over-coverage is reported and is not a failure. The test size per tune (and, in the second five-observable test, per reading) is at most \fvval{null-size}. A cell whose clipping narrows the drawn spread below \fvval{cov-weak} of its variance reads ``passes, weakened by clipping'' when it is not flagged.
 
 % Split (style batch 2026-11-10 (the director, on journal-editor's style review, report_supplement.md), A2): what is not drawn.
-Neither test draws the run-period block, and the five-observable test also leaves out $C_{\mathrm{resp}}$. Both are positive semi-definite. Adding them can therefore only lower each $|e_c|/\sigma_c$ and each $\chi^2$: a cell that covers under $C_T$ also covers under the full covariance at the tune, and an error inside the joint region stays inside it when both matrices have the same $n$. Whether an under-coverage under $C_T$ persists under the full covariance is left open, and neither test relates $C_T$ to the covariance made at the data. % absence-ok: scopes what the two declared tests grade (COV2D and LL5D declarations), not a claim that a result does not exist
+Neither test draws the run-period block, and the second five-observable test also leaves out $C_{\mathrm{resp}}$. Both are positive semi-definite. Adding them can therefore only lower each $|e_c|/\sigma_c$ and each $\chi^2$: a cell that covers under $C_T$ also covers under the full covariance at the tune, and an error inside the joint region stays inside it when both matrices have the same $n$. Whether an under-coverage under $C_T$ persists under the full covariance is left open, and neither test relates $C_T$ to the covariance made at the data. % absence-ok: scopes what the two declared tests grade (COV2D and LL5D declarations), not a claim that a result does not exist
 
 \subsection{The two-dimensional coverage test}
 \label{supp:study-cov2d}
+% Moved 2026-11-12 from S6 (journal-editor; the flow read of round-2 B/C): the two-dimensional test's per-cell flags
+% now open the subsection on that test; the paper's pointer follows (S6 -> S8.4).
+% Moved from the paper (methods-short-20261109): round 5's paper_body.tex:202 at bc8673186, restyled 2026-11-09 from that text, wording only (its per-cell flags); its evidence route is that line's source comment there.
+The per-cell coverage test of the two-dimensional covariance at the two held-out tunes raises three flags, each attributed to bias: cell 29 ($\pT=0.07$--0.15~GeV/$c$, $\pPar=15$--20~GeV/$c$) at both tunes, with under-coverage factors 1.165 (\fvval{f1-tune-ar23}) and 1.347 (\fvval{f1-tune-g18}) and pull means $-0.851$ and $-0.964$, and cell 56 ($\pT=0.25$--0.33~GeV/$c$, $\pPar=6$--7~GeV/$c$) at \fvval{f1-tune-ar23}, with factor 1.316 and pull mean $+1.039$. The pull widths are 0.636--0.709.
+
 % T1-2, Tier 2 (a): fd/tier2-20261110/t2a/t2a_AR23.json (33b7fd40) and t2a_G18.json (6757055e), #1041, under the T2A declaration and
 % T2-BINDING-1 (descriptive only: no cause, no new verdict, no coverage statement at the data's point); keys t2a-* (make_values t2a_values),
 % the shares and per-rank means summed from by_rank.b_k and f_k, asserted to reproduce split.*.
@@ -1004,7 +1002,7 @@ In $C_T$'s eigenbasis, ordered by decreasing eigenvalue, the \fvval{t2a-ntop} la
 \subsection{The second five-observable coverage test}
 \label{supp:study-ll5d}
 % The director's option (a), 2026-11-09 (ledger.md "Style integration", ruling 1): the second test's clipping record is out of the paper's main text and here, in its own Supplement; reversible by Joseph, whose R5 (DECISION-20261102-joseph-1b-redesign.md:88) names the note. ll5d-clip-record is filled from the readout (ll5d_b @ ffbbb7455): each graded reading's weakened passes (weakened.weakened_cells), the flags meeting the clipping-artefact condition (clipping_artefact_reading), and clipcheck's largest |o_c| with its cell and the bound.
-Its design is the shared one of section~\ref{supp:covdesign} (table~\ref{tab:cov-design}). Its primary reading leaves out the GEANT4 neutron and proton bands, the two bands whose pseudo-experiment and simulation-side blocks disagreed in the first test's checks (section~\ref{supp:study-cov1}), for a reason not identified. The second reading includes them and is reported beside it. Negative expected counts in its pseudo-data are clipped to zero, and checks fixed in advance test the effect of the clipping before the main run, on a sample whose first 300 draws are the coverage pseudo-experiments' draws, at the same seeds. \fvgroup{ll5d}{The clipping checks gave the following: \fvval{ll5d-clip-record}.\fvcase{ll5d-route}{offset-proceeded}{ The run continued past a check fixed in advance by a decision made after the check was seen: \fvval{ll5d-route-record}.}\fvcase{ll5d-route}{repaired}{ The run was repaired after a stop, with the repair chosen after the stop was seen: \fvval{ll5d-route-record}.}}
+The second five-observable test's design is the shared one of section~\ref{supp:covdesign} (table~\ref{tab:cov-design}). Its primary reading leaves out the GEANT4 neutron and proton bands, the two bands whose pseudo-experiment and simulation-side blocks disagreed in the checks of the stopped first test (section~\ref{supp:study-cov1}, below), for a reason not identified. The second reading includes them and is reported beside it. Negative expected counts in its pseudo-data are clipped to zero, and checks fixed in advance test the effect of the clipping before the main run, on a sample whose first 300 draws are the coverage pseudo-experiments' draws, at the same seeds. \fvgroup{ll5d}{The clipping checks gave the following: \fvval{ll5d-clip-record}.\fvcase{ll5d-route}{offset-proceeded}{ The run continued past a check fixed in advance by a decision made after the check was seen: \fvval{ll5d-route-record}.}\fvcase{ll5d-route}{repaired}{ The run was repaired after a stop, with the repair chosen after the stop was seen: \fvval{ll5d-route-record}.}}
 
 % Batch 3 (the interim round #1025, group A item 9, 2026-11-10): S9 reorganized into separately labelled studies; its diagnosis, led by the paper's sentence on the stop.
 \subsection{The stopped first five-observable coverage test}
