@@ -443,5 +443,21 @@ loop would settle the split and is priced separately. The provenance search for 
 (the merged CV and $UNI) is under way. Until it reports, S2 :222 and S1 :25, both carried from the note, and table
 S1's out-of-phase-space row stay unchanged. Any change to the note's sentences goes to Joseph and the note loop.
 
+
+**4.2: the records disagree on what the template contains.**
+- The routing log says the out-of-phase-space set is empty under the reco cuts
+  (d1bc8813a:2d-unfolding/2D_OMNIFOLD_RUN_LOG.md:1003-1009), yet the template is 2.91 % against the 0.35 % genuine
+  background.
+- The two percentages are different templates. The 0.35 % is April's Phase-11 `hBkgReco2D` on 1A (1,256 events,
+  RUN_LOG :208), from the code that left every event inside the signal definition out of `mc_background`. The 2.91 %
+  is May's Phase-18 template, 2.735 % on 1A.
+- The counts reconcile exactly: the routing test's 4,277 (:1004) plus the 48,349 ν_μ CC events that Phase 18's
+  truth-tree gate drops from mc_signal_reco (:1016-1018) equal the May 1A file's n_bkg_pass of 52,626.
+- But the committed background loop does not route those events (d1bc8813a:…runEventLoopOmniFold.cpp:443-445, on the
+  reco tree). So whether they are in the template is not settled by any record.
+- An event-loop re-run with the truth branches is the only measurement. The director takes its price to Joseph if he
+  wants it before submission.
+- Until then the table S1 pair (0.35 %, 2.91 %) awaits the director's ruling on stating each one's definition.
+
 **Follow-up list (optional):** counting whether F5.3's 1,755 gen-outside-grid rows are only the −9999 sentinels
 (0 node-h, on OF5D). Printing that number would not help the paper (the director, 2026-11-12).
