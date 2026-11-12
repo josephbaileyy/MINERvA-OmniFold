@@ -1252,3 +1252,18 @@ The primer, paper sources, LL5D text and release appendix were not edited. AUD-N
 and AUD-N5 remain held, and PR #952 remains draft and unmerged. The hold on wording
 about the note's overall role remains in force. No director completion report has
 been sent.
+
+## Background template correction (2026-11-12)
+
+The director's correction, found while revising the methods paper's Supplement (#977 at `b86c387f8937d3205e5131c185b8cf430a85e16c`), replaces the selection paragraph's April template figure. The April run log at `d1bc8813a` records hBkgReco2D 1,256 as 0.35 percent of data on playlist 1A. That is not the template this result uses. The May template fractions are the bkg_42 row of l_rows.json (sha256 `dc3bf51171fbd180b218a750edf41848e299d3c5df0068574697a4a726c319f1`): 2.91 percent of selected data events in the two-dimensional grid over the full sample, 2.72-3.23 percent per playlist, and 2.74 percent on playlist 1A. Playlist 1A is the stored token 0.02735, rounded half up to two decimals. Out-of-phase-space signal is routed into the background template and subtracted with the genuine background. The per-bin sum enters the purity weight. The split is not measured in this note. The May event-loop files carry no truth branches for that split (split-20261112/README.md at b86c387f, probe exit 6). No component fraction from the run log is printed.
+
+| passed commit | change |
+|---|---|
+| `5942669c414865081e5fedb74fa1c0f46a55eb91` | Selection paragraph in sec_experiment.tex, with the one absence-ok line. |
+| `3ef8cdd0563663e11c7c5cde9962fdece41425e7` | Deletes the sub-percent genuine-background rationale in sec_method.tex. The approximately 3 percent correction and the negative-weight comparison stay. |
+| `914741ee7aa010dfc1639a4d7de8e61655b4fe38` | Deletes the same scale phrase from the histogram-backend agreement in app_negweight.tex. The median ratio and the backend limits stay. |
+| `997ca71cad2fbd525607e0fa3daec5af800b6443` | Deletes the same scale phrase from the 0.1 percent displacement sentence. The displacement, the 187-universe ratio, and the full-rebuild statement stay. |
+
+GPT-4.20 and GEM-3.7 are left as the dispositions of those reviews. They describe the selection paragraph before `5942669c`. They are not rewritten.
+
+The 2.91 percent figure is not substituted for the deleted scale phrases. No uncertainty, coverage, or validity claim is added. The primer, paper sources, LL5D text, and release appendix were not edited. AUD-N4 and AUD-N5 remain held, and PR #952 remains draft and unmerged. The hold on the note's role sentence remains. No director completion report has been sent.
