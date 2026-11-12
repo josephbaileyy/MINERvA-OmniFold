@@ -100,11 +100,13 @@ NEW_NUMERALS = {"4.5": "group A item 6 (#1025): the signal phase space, pT < 4.5
                 "1.8": "the figure referee read (2026-11-12, B5): fig:deformation's W-bin key, m3_common.py W_EDGES",
                 "2.2": "the figure referee read (2026-11-12, B5): fig:deformation's W-bin key, m3_common.py W_EDGES"}
 ONCE = [
-    "and their cross-covariance is unavailable, so the significance of their difference cannot be calibrated.",
+    # the two sentences below were reworded without their semicolon or ", so" (the director's ruling, 2026-11-12, on the
+    # paper body's sentence pass); each is still printed exactly once
+    "Because their cross-covariance is unavailable, the significance of their difference cannot be calibrated.",
     "The five-observable estimator is the baseline this study characterizes",
     "We report the ensemble average as a tested mitigation of the instability.",
     "That test is a next step.",
-    "The grading rules and their timing are stated with the individual tests; comparisons without a grading rule are descriptive.",
+    "The grading rules and their timing are stated with the individual tests. Comparisons without a grading rule are descriptive.",
 ]
 # validat...: the affirmative claim decision item 6 (:74) forbids; its denial, "does not validate ...", is allowed
 GONE = [r"stabili[sz]ed variant", r"(?<!not )validat\w* the (full|five-observable) distribution", r"detector[- ]inadequa",
