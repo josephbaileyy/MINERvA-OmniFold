@@ -569,3 +569,7 @@ f = [(1+r)(1+i) − (1+r₀)]/i, net of the nominal closure.
 | Supplement fig:supp-lowcap caption and its paragraph (:266-278) | descriptive | kept |
 | §5.4 heading and the ρ study (:324-354), §7's checklist (:487) | "retains part of its prior", ρ | kept: the sixteen-cell retained fraction ρ is a different, defined projection, and check A does not test it |
 | paper §3.3 (:155) | "how well the unfolding recovers a specified deformation" | a definition of a closure test; kept |
+
+## Housekeeping
+
+- 2026-11-12: heads 800579be through 2a2af241 carried a values producer (make_values_fived16.py) that refused to run. The abstract edit had broken a LISTED_CLAIMS anchor (:247) and its self-test plant (:2438). The committed values_fived16.tex was correct throughout, so nothing printed wrong. Fixed in dba7628c; make_values --self-test is now part of the push gate, which the director approved as standing practice.
