@@ -1,16 +1,17 @@
-#977 head 223c1431a32905e3cf80245bfa54273d343045dc; 24 rows
+#977 head fed85b6d626b9a7393b6654cac68173e7795e600; 25 rows
 OK  RP01   resource paper      count=1  The sixteen-cell cross section that the estimator gives on the data il
 OK  RP02   resource paper      count=1  These tests provide partial evidence on bias at truths held out of the
 OK  RP03   resource paper      count=1  The dependence on the prior's generator shape is reported separately a
 OK  RP04   resource paper      count=1  The model term $C_{\mathrm{model}}$ is constructed from the change in 
 OK  RP05   resource paper      count=1  The two-dimensional covariance is the sum of four blocks, each from Li
 OK  RP06   resource abstract   count=1  The reported five-observable intervals have no validated coverage.
-OK  RP07   resource paper      count=1  The mechanism of the shape difference has not been identified; a binne
-OK  RP07p  code     paper      count=1  The mechanism of the shape difference has not been identified; a binne
-OK  RP08   resource paper      count=1  the sixteen-cell result's, $C_{\mathrm{rep}}=C_{\mathrm{total}}+C_{\ma
+OK  RP07   resource paper      count=1  The mechanism of the shape difference has not been identified. A binne
+OK  RP07p  code     paper      count=1  The mechanism of the shape difference has not been identified. A binne
+OK  RP08   resource paper      count=1  C_{\mathrm{rep}}=C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D
+OK  RP08L  resource paper      count=1  \label{eq:crep}
 OK  RP08b  resource supplement count=1  The reported covariance is $C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\m
 OK  RP09   resource supplement count=1  The smallest change resolved is $3\sigma=\fvval{pp-res}$ per direction
-OK  RP10   resource paper      count=1  The term $C_{\mathrm{total}}$ is $C_{\mathrm{e}}+C_{\mathrm{model}}$, 
+OK  RP10   resource paper      count=1  $C_{\mathrm{e}}$ is the sum of the statistical, flux, interaction, det
 OK  RP10b  resource supplement count=1  $C_{\mathrm{e}}$ is the sum of the first six groups and the training-s
 OK  RP11   resource paper      count=1  The lateral uncertainties shift the reconstructed muon kinematics and 
 OK  RP12   resource supplement count=1  are generated on carbon, and the sixteen-cell comparison of Sec.~\ref{
