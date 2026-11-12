@@ -50,3 +50,4 @@ The director confirmed this mapping on 2026-11-12 and asked director-helper-3 to
 | #977 head | result |
 |---|---|
 | `223c1431a` | REPIN-CHECK PASS (24 rows). RP06 and RP09 were re-sourced for capitalization only, and the director accepted both on 2026-11-12. |
+| `fed85b6d6` | REPIN-CHECK PASS (25 rows), after five rows changed in the body's sentence pass and were proposed to the director: RP02 and RP07 are each split into two sentences, RP05's seed clause is reworded, RP08 moves into the display equation eq:crep (new row RP08L requires its label), and RP10 opens with "In eq.~(\ref{eq:crep}),". |
