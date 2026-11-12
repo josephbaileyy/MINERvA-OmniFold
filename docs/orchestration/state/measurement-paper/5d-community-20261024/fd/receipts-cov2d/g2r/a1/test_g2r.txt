@@ -1,9 +1,9 @@
 == PYTHONHASHSEED=0
-Ran 24 tests in 19.132s
+Ran 27 tests in 17.703s
 OK
 == PYTHONHASHSEED=1
-Ran 24 tests in 21.813s
+Ran 27 tests in 16.024s
 OK
 == PYTHONHASHSEED=2
-Ran 24 tests in 18.210s
+Ran 27 tests in 16.179s
 OK
