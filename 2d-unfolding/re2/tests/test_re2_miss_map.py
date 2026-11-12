@@ -11,7 +11,8 @@ every universe weight the CV w_truth), in universe mode, with every row inside t
 * C3, effect only on miss rows: the real override changes w_truth and w_reco exactly on the miss rows whose universe
   weight differs, to that weight times the POT scale, and every kinematic and pass array is bitwise equal;
 * the loader's guards: a finite override on a passing row, a length mismatch;
-* g2r_miss_override builds g2r.override's array from the map and the truth tree's column, and refuses a map from another
+* g2r_miss_override builds g2r.override's array from the map and the truth tree's column, carries no state from one
+  universe to the next (MaRES:0, the last universe, MaRES:0 again in one process), and refuses a map from another
   omnifile (realpath or size), other entry counts, or a run without --universe or --use-weights.
 
 The end-to-end controls (the whole driver against the pre-patch blob, every histogram bit for bit, as
@@ -35,6 +36,7 @@ G2R = REPO / "2d-unfolding" / "cov2d" / "g2r"
 sys.path[:0] = [str(G2R), str(G2R / "tests"), str(REPO / "2d-unfolding" / "cov2d")]
 PRE_PATCH_REF = "05a74e7cece590efdafeb537a2ce9e882f22d32e"     # origin/main when the patch was made
 UNI = ("MaRES", 0)
+LAST = ("VecFFCCQEshape", 1)          # the last of the 175 in cov2d's draw order
 POT = 0.25
 EDGES = (0.0, 4.5, 1.5, 60.0)
 
@@ -64,8 +66,10 @@ def write_omnifile(path: Path):
     sig = {"MC": S["MC"], "MC_pz": S["MC_pz"], "sim": S["sim"], "sim_pz": np.where(S["sim"] == -9999.0, -9999.0,
                                                                                    rng.uniform(2, 20, n)),
            "sim_pass": S["sim_pass"].astype(np.uint8), "w_truth": S["w_truth"], "w_reco": S["w_reco"],
-           f"w_truth_{UNI[0]}_{UNI[1]}": U["varied"][0], f"w_reco_{UNI[0]}_{UNI[1]}": U["varied"][1]}
-    den = {"MC": T["MC"], "MC_pz": T["MC_pz"], "w_truth": T["w_truth"], f"w_truth_{UNI[0]}_{UNI[1]}": U["varied"][2]}
+           f"w_truth_{UNI[0]}_{UNI[1]}": U["varied"][0], f"w_reco_{UNI[0]}_{UNI[1]}": U["varied"][1],
+           f"w_truth_{LAST[0]}_{LAST[1]}": U["last"][0], f"w_reco_{LAST[0]}_{LAST[1]}": U["last"][1]}
+    den = {"MC": T["MC"], "MC_pz": T["MC_pz"], "w_truth": T["w_truth"], f"w_truth_{UNI[0]}_{UNI[1]}": U["varied"][2],
+           f"w_truth_{LAST[0]}_{LAST[1]}": U["last"][2]}
     f = ROOT.TFile.Open(str(path), "RECREATE")
     for name, cols in (("mc_signal_reco", sig), ("mc_truth_denom", den)):
         t = ROOT.TTree(name, name)
@@ -167,6 +171,22 @@ class MissMapLoader(unittest.TestCase):
         np.testing.assert_array_equal(ov[self.miss], want[self.miss])
         self.assertEqual((prov["universe"], prov["n_miss"], prov["n_finite"]), ("MaRES:0", self.miss.size,
                                                                                 self.miss.size))
+
+    def test_no_state_is_carried_between_universes(self):
+        """The director's condition on amendment 1 §2: in one process, the override for MaRES:0, then the last universe,
+        then MaRES:0 again, each equals its own g2r.override, and the two universes' differ."""
+        N = len(self.S["MC"])
+        want = {UNI: self.g2r.override(self.miss, self.truth, self.U["varied"][2], N),
+                LAST: self.g2r.override(self.miss, self.truth, self.U["last"][2], N)}
+        got = []
+        for u in (UNI, LAST, UNI):
+            ov, prov = self.new.g2r_miss_override(str(self.map), str(self.omni), self.t_sig, self.t_den, u, True)
+            got.append(ov)
+            self.assertEqual(prov["universe"], f"{u[0]}:{u[1]}")
+            np.testing.assert_array_equal(ov[self.miss], want[u][self.miss], err_msg=str(u))
+            self.assertTrue(np.all(np.isnan(np.delete(ov, self.miss))))
+        self.assertFalse(np.array_equal(got[0][self.miss], got[1][self.miss]))
+        np.testing.assert_array_equal(got[0], got[2])
 
     def test_map_guards(self):
         d = Path(self.td.name)

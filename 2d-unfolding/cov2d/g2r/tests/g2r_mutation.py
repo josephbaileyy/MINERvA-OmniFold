@@ -23,7 +23,7 @@ READOUT = REPO / "2d-unfolding/cov2d/g2r/g2r_readout.py"
 DRIVER = REPO / "2d-unfolding/re2/re2_driver.py"
 T_G2R = REPO / "2d-unfolding/cov2d/g2r/tests/test_g2r.py"
 T_DRV = REPO / "2d-unfolding/re2/tests/test_re2_miss_map.py"
-EXPECTED = {T_G2R: 23, T_DRV: 7}
+EXPECTED = {T_G2R: 24, T_DRV: 8}
 
 MUTATIONS = [
     # --- §9's required mutants
@@ -68,6 +68,14 @@ MUTATIONS = [
     ("G7 ignoring the integer fields", READOUT,
      "    diff = [k for k in GRADE_EXACT if g_new.get(k) != g_old.get(k)]",
      "    diff = []", T_G2R, "ReadoutCores.test_grade_reproduction"),
+    # --- the director's conditions on amendment 1 §2
+    ("state carried between universes (a cached override)", DRIVER,
+     "    return override, prov\n",
+     "    if getattr(g2r_miss_override, \"_memo\", None) is None:\n        g2r_miss_override._memo = (override, prov)\n"
+     "    return g2r_miss_override._memo\n",
+     T_DRV, "MissMapLoader.test_no_state_is_carried_between_universes"),
+    ("G11 comparing the override with itself", G2R,
+     "        b = p5_override(S, T, blocks, col)\n", "        b = a\n", T_G2R, "Map.test_the_spot_check_passes_and_refuses"),
     ("part (a) not subtracting the old universe block", READOUT,
      "\"C_new\": np.asarray(Q, np.float64) - old + new}", "\"C_new\": np.asarray(Q, np.float64) + new}", T_G2R,
      "ReadoutCores.test_data_core_replaces_only_the_universe_bands"),

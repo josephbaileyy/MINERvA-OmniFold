@@ -29,11 +29,12 @@ def synthetic(blocks=((40, 12), (30, 9)), seed=3, universe_scale=None):
     rng = np.random.default_rng(seed)
     S = {k: [] for k in ("MC", "MC_pz", "w_truth", "w_reco", "sim", "sim_pass")}
     T = {k: [] for k in ("MC", "MC_pz", "w_truth")}
-    U = {"same": ([], [], []), "varied": ([], [], [])}
+    U = {"same": ([], [], []), "varied": ([], [], []), "last": ([], [], [])}
     blk = []
     for b, (n, m) in enumerate(blocks):
         mc, pz, wt = rng.uniform(0, 2, n), rng.uniform(1.5, 20, n), rng.uniform(0.5, 1.5, n)
         f_var = rng.uniform(0.8, 1.2, n)
+        f_last = rng.uniform(0.7, 1.3, n)
         miss = np.sort(rng.choice(n, m, replace=False))
         reco = np.setdiff1d(np.arange(n), miss)
         rng.shuffle(reco)
@@ -41,6 +42,7 @@ def synthetic(blocks=((40, 12), (30, 9)), seed=3, universe_scale=None):
             T[k].append(v)
         U["same"][2].append(wt)
         U["varied"][2].append(wt * f_var)
+        U["last"][2].append(wt * f_last)
         # reco rows, then misses
         S["MC"].append(np.r_[mc[reco], mc[miss]])
         S["MC_pz"].append(np.r_[pz[reco], pz[miss]])
@@ -53,6 +55,8 @@ def synthetic(blocks=((40, 12), (30, 9)), seed=3, universe_scale=None):
         U["same"][1].append(np.r_[S["w_reco"][-1][:reco.size], wt[miss]])
         U["varied"][0].append(np.r_[(wt * f_var)[reco], wt[miss]])        # misses carry the proxy
         U["varied"][1].append(np.r_[S["w_reco"][-1][:reco.size] * 1.1, wt[miss]])
+        U["last"][0].append(np.r_[(wt * f_last)[reco], wt[miss]])
+        U["last"][1].append(np.r_[S["w_reco"][-1][:reco.size] * 0.9, wt[miss]])
         blk.append((f"pl{b}", n, m))
     S = {k: np.concatenate(v) for k, v in S.items()}
     T = {k: np.concatenate(v) for k, v in T.items()}
@@ -89,11 +93,27 @@ class Map(unittest.TestCase):
         self.assertTrue(all(v["pass"] for v in rep["checks"].values()))
 
     def test_override_equals_p5_builder_semantics(self):
+        """For every universe column of the fixture (the identity one, a varied one and the last), the map's override
+        equals P5's builder loop bitwise, both as transcribed here and as g2r.p5_override (the prepare's G11)."""
         miss, truth, _ = g2r.build_map(self.S, self.T, self.blk)
-        got = g2r.override(miss, truth, self.U["varied"][2], len(self.S["MC"]))
-        want = p5_reference(self.S, self.T, self.blk, self.U["varied"][2])
-        np.testing.assert_array_equal(np.isnan(got), np.isnan(want))
-        np.testing.assert_array_equal(got[~np.isnan(got)], want[~np.isnan(want)])
+        for name in ("same", "varied", "last"):
+            with self.subTest(name):
+                got = g2r.override(miss, truth, self.U[name][2], len(self.S["MC"]))
+                for want in (p5_reference(self.S, self.T, self.blk, self.U[name][2]),
+                             g2r.p5_override(self.S, self.T, self.blk, self.U[name][2])):
+                    np.testing.assert_array_equal(np.isnan(got), np.isnan(want))
+                    np.testing.assert_array_equal(got[~np.isnan(got)], want[~np.isnan(want)])
+
+    def test_the_spot_check_passes_and_refuses(self):
+        miss, truth, _ = g2r.build_map(self.S, self.T, self.blk)
+        cols = {name: self.U[name][2] for name in ("same", "varied", "last")}
+        rec = g2r.spot_check(self.S, self.T, self.blk, miss, truth, cols)
+        self.assertEqual(sorted(rec), ["last", "same", "varied"])
+        self.assertTrue(all(r["equal"] for r in rec.values()))
+        bad = truth.copy()
+        bad[[0, 1]] = bad[[1, 0]]
+        with self.assertRaisesRegex(g2r.Refusal, "G11"):
+            g2r.spot_check(self.S, self.T, self.blk, miss, bad, cols)
 
     def corrupt(self, key, idx, value):
         S = {k: v.copy() for k, v in self.S.items()}

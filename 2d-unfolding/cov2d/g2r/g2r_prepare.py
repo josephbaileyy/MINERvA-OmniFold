@@ -9,8 +9,9 @@ Writes DIR/g2r_map.npz (miss_rows, truth_rows, n_signal, n_truth, omnifile, omni
 Exit 0 on PASS; 5 on a refusal (INVALID, the record says why); 7 if a per-playlist file is missing (the director's
 STOP: "a STOP to me if P5's per-playlist block-size files are gone"); 8 if an atime moved.
 
-Controls: G4 (P5's five alignment checks, in build_map and, per universe, universe_check) and G5 ($UNI's size by stat;
-the declaration §8). The per-universe count of miss rows whose weight changes is recorded (the cheaper variant's count,
+Controls: G4 (P5's five alignment checks, in build_map and, per universe, universe_check), G5 ($UNI's size by stat;
+the declaration §8) and G11 (the map's override equals P5's builder loop bitwise on the real arrays, for the first, the
+middle and the last universe and MaRES:0; amendment 1 §2's condition). The per-universe count of miss rows whose weight changes is recorded (the cheaper variant's count,
 §7); it gates nothing.
 """
 from __future__ import annotations
@@ -34,6 +35,14 @@ UNI_SIZE = 171_117_087_867        # COV2D-DECLARATION §7; P5's sbatch_p5.sh:61
 S_COLS = ("MC", "MC_pz", "w_truth", "w_reco", "sim", "sim_pass")
 T_COLS = ("MC", "MC_pz", "w_truth")
 RC_INVALID, RC_STOP_BLOCKS, RC_ATIME = 5, 7, 8
+
+
+def spot_universes() -> list[tuple[str, int]]:
+    """G11's universes (the director's condition on amendment 1 §2): the first, the middle and the last of the 175 in
+    draw order, and P5's own MaRES:0."""
+    u = universes()
+    out = [u[0], u[len(u) // 2], ("MaRES", 0), u[-1]]
+    return list(dict.fromkeys(out))
 
 
 def universes() -> list[tuple[str, int]]:
@@ -78,6 +87,10 @@ def run(omnifile: str, blocks: list[str], out: Path) -> tuple[dict, dict | None]
         S = read_tree(f, "mc_signal_reco", S_COLS)
         T = read_tree(f, "mc_truth_denom", T_COLS)
         miss, truth, rec["map"] = g2r.build_map(S, T, sizes)
+        spot = {f"{b}:{i}": f["mc_truth_denom"].arrays([c.column("w_truth", b, i)], library="np")[c.column("w_truth", b, i)]
+                for b, i in spot_universes()}
+        rec["G11"] = g2r.spot_check(S, T, sizes, miss, truth, spot)
+        del spot
         for b, i in universes():
             cols = {k: c.column(k, b, i) for k in ("w_truth", "w_reco")}
             s = f["mc_signal_reco"].arrays([cols["w_truth"], cols["w_reco"]], library="np")

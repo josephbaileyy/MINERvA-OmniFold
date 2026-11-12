@@ -133,6 +133,41 @@ def override(miss_rows, truth_rows, wt_truth_u, n_signal: int) -> np.ndarray:
     return out
 
 
+def p5_override(S: dict, T: dict, blocks: list, truth_u) -> np.ndarray:
+    """P5's build_miss_override.py loop (state/2d-closeout/stageB/diagnostics/p5/build_miss_override.py, blob
+    7f346e1a), transcribed without its checks: per block, the tail rows matched by exact key to the truth rows, and
+    w_override = the truth tree's universe column there. The reference the map's override is compared with (G11)."""
+    N = len(S["MC"])
+    w = np.full(N, np.nan)
+    truth_u = np.asarray(truth_u, np.float64)
+    o = 0
+    for _, n, m in blocks:
+        r = n - m
+        tk = keys([T["MC"][o:o + n], T["MC_pz"][o:o + n], T["w_truth"][o:o + n]])
+        sk = keys([S["MC"][o + r:o + n], S["MC_pz"][o + r:o + n], S["w_truth"][o + r:o + n]])
+        order = np.argsort(tk, kind="stable")
+        pos = np.minimum(np.searchsorted(tk[order], sk), max(n - 1, 0))
+        w[o + r:o + n] = truth_u[o:o + n][order[pos]]
+        o += n
+    return w
+
+
+def spot_check(S: dict, T: dict, blocks: list, miss_rows, truth_rows, columns: dict) -> dict:
+    """G11 (the director's condition on amendment 1 §2): for each named truth column, the map's override equals P5's
+    builder loop bitwise (the NaN pattern and every finite value). Raises Refusal on any difference."""
+    out = {}
+    N = len(S["MC"])
+    for name, col in columns.items():
+        a = override(miss_rows, truth_rows, col, N)
+        b = p5_override(S, T, blocks, col)
+        same_nan = bool(np.array_equal(np.isnan(a), np.isnan(b)))
+        equal = same_nan and bool(np.array_equal(a[~np.isnan(a)], b[~np.isnan(b)]))
+        out[name] = {"equal": equal, "n_finite": int(np.isfinite(a).sum())}
+        if not equal:
+            raise Refusal(f"G11: the map's override differs from P5's builder for {name}")
+    return out
+
+
 # ------------------------------------------------------------------------------------------------------ the readings
 def retained(C: np.ndarray, rel: float = RANK_REL) -> tuple[np.ndarray, np.ndarray]:
     """C's eigenpairs on its non-null subspace (eigenvalues above rel x the largest), by descending eigenvalue."""
