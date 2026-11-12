@@ -29,6 +29,10 @@ sha; OF5D = inputs-sha256.txt:1's 07fccc1a…; PSCR-977 OK.
 `np.savez_compressed`; `code/recompress_w_truth.py` re-reads it and checks all 12 arrays bitwise
 (`session/recompress.out.txt`). The fetched tar (fc445ee3…) is not committed.
 
+**Force-added.** `members/w_truth_z.npz` and `members/work_proxy.npz` are tracked by `git add -f` (`*.npz` is
+gitignored; .gitignore's exception covers only `docs/analysis-note/release-package-*/*.npz`). They are receipt
+members, not part of #981's release package, and must not be picked up by it.
+
 **Control.** The unweighted pair reproduces `docs/orchestration/state/s5n/stage1/review1/r4_migration.json`
 exactly (0.9999790240210246 / 0.9999139886843416); the session fails otherwise.
 
@@ -47,9 +51,14 @@ exactly (0.9999790240210246 / 0.9999139886843416); the session fails otherwise.
    (1 + injected)/rho_k one constant over all 42 cells; W2 ((E_avail, W)-cell reweight) gives (1 + injected)/rho
    one constant. Not checkable from these products: a fine cell populated in the full MC but empty in every one
    of the 100 halves.
-2. *Out-of-window weight.* The 428 pass_reco rows reconstructed outside the window carry w_reco 72.41 in total
-   (none with zero w_reco). OUTCOME-20260925-s5c-purity-background-bias-at-high-W.md:37 says "428 of 20.4 M, zero
-   weight". The count agrees; that line most likely refers to the estimator's treatment of those rows, not their
-   MC weight, but that has not been checked.
+2. *Out-of-window weight: resolved, no correction.* The 428 pass_reco rows reconstructed outside the window carry
+   w_reco 72.41 in total (none with zero w_reco). OUTCOME-20260925-s5c-purity-background-bias-at-high-W.md:37's
+   "428 of 20.4 M, zero weight" is the s5c construction's MEASURED weight, and the code bears it out: in
+   `nd-unfolding/s5c_pseudo.py` (origin/main 50402c0a3; file sha256 d81d4f46…, the `code_sha256` the assess products
+   record) `purity_weights` :104-112 sets `inside` from `np.digitize` over [first, last) on every axis and gives
+   every pseudo-data entry outside it `w = 0`. On the MC side the same rows are not masked: `s5c_unfold.unfold`
+   (`nd-unfolding/s5c_unfold.py` :124-127, sha256 510d749a…) passes `MCreco` with `MCreco_weights=w_reco` to
+   `omnifold_loop`. So the OUTCOME line is right for what it describes; the paper must not call those rows
+   "zero weight" without naming the measured side.
 3. *Gen outside the grid* counts 1755 pass_reco rows (w_reco 389.26), including the -9999 truth sentinels in
    q3 and W (r4_migration.json gen_min_per_col).

@@ -16,6 +16,13 @@
 \providecommand{\fvgroup}[2]{\@ifundefined{fvg@#1}{\errmessage{values_fived16: no group '#1'}}{\expandafter\ifx\csname fvg@#1\endcsname\fv@PENDING\fvpending{\@nameuse{fvgd@#1}}\else#2\fi}}
 \providecommand{\fvgroupalt}[3]{\@ifundefined{fvg@#1}{\errmessage{values_fived16: no group '#1'}}{\expandafter\ifx\csname fvg@#1\endcsname\fv@PENDING#2\else#3\fi}}
 \providecommand{\fvcase}[3]{\@ifundefined{fvc@#1}{\errmessage{values_fived16: no verdict key '#1'}}{\def\fv@tmp{#2}\expandafter\ifx\csname fvc@#1\endcsname\fv@tmp#3\fi}}
+\@namedef{fv@bkg42-frac}{2.91}
+\@namedef{fv@bkg42-pl-hi}{3.23}
+\@namedef{fv@bkg42-pl-lo}{2.72}
+\@namedef{fv@bkg43-frac}{3.08}
+\@namedef{fv@bkg43-n}{15}
+\@namedef{fv@bkg43-rho}{-0.09}
+\@namedef{fv@bkg43-share}{51}
 \@namedef{fv@box-R00-W}{0--100}
 \@namedef{fv@box-R00-eavail}{0--0.8}
 \@namedef{fv@box-R00-pt}{0--0.7}
@@ -2053,6 +2060,10 @@
 \@namedef{fv@f1-tune-g18-nopl}{\mbox{G18\_10a\_02\_11b}}
 \@namedef{fv@f1-zmax-ceil}{0.62}
 \@namedef{fv@f1-zmax-ceil-nopl}{0.65}
+\@namedef{fv@f53-grid}{1.1\times10^{-4}}
+\@namedef{fv@f53-win}{2.0\times10^{-5}}
+\@namedef{fv@f54-reco}{6.5\times10^{-8}}
+\@namedef{fv@f54-truth}{2.9\times10^{-8}}
 \@namedef{fv@fb-b5-edge-max}{3.8}
 \@namedef{fv@fb-b5-edge-max-nopl}{6.2}
 \@namedef{fv@fb-b5-offset-relmax}{0.4}
@@ -2874,6 +2885,9 @@
 \@namedef{fv@r04-sigma-total}{4.80}
 \@namedef{fv@r04-sigma-total-nopl}{4.20}
 \@namedef{fv@r10-nconfig}{11}
+\@namedef{fv@r33-dchi2-max}{9.7}
+\@namedef{fv@r33-z-from}{1.62}
+\@namedef{fv@r33-z-to}{2.02}
 \@namedef{fv@rnd16-max}{0.252}
 \@namedef{fv@rnd16-median}{0.133}
 \@namedef{fv@rnd16-min}{0.055}

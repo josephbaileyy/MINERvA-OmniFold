@@ -376,3 +376,46 @@ F§4-<n>, Fm<n> and Fs<n>. "= 1.2" etc. cross-references a recheck row above. Cl
     estimator and is unclassified, and the primary reading excludes the bands.
   - The channel split is not printed (NOT CITABLE).
 - **F3:** the corrected price's binding is COV2D-G2R-BINDING-1.md (#1080): 73.6–93.7 node-h expected, cap 110 node-h.
+
+## The L rows: the read-only pscratch session (2026-11-12)
+
+The session ran under the director's go for `pscr_remote.sh` 9513d080, `pscr_fetch.sh` 9401337b and
+`w_inventory.sha256` a08ae0eb. It ran on login27 at 00:08:59Z with the fence clear and 0 node-h. Its 102 inputs were
+read with O_NOATIME, stat unchanged and whole, and every sha matches its record. The receipt is `pscr-20261112/`
+(f70e805c). The derived numbers come from `l-rows-20261112/code/l_rows.py`, whose readout is
+`l-rows-20261112/derived/l_rows.json`, pinned as READOUTS `lrows`. The director accepted the receipt's recompressed
+member, the force-added npz, the hook fixes and m5's definition.
+
+| row | source | printed |
+|---|---|---|
+| 4.2/F4.3 | `work_proxy.npz` (42ce788b) and `proxy_hists_meta.json`'s POT. The template is k·B over D on the 14×16 grid: 2.906 % in the full sample, 2.72–3.23 % per playlist. Data in the grid is 4,091,707, equal to E_U's; the template is 118,895.5 against E_U's 119,132.37, 0.20 % lower | table S1's new row "Background template, full sample" (keys bkg42-*) |
+| 4.3 | fig:tension2d's per-bin contributions: the committed capture of the current figure (e3f12c5d), 205 bins summing to C-PUB's χ² 465.41527219152636. The cell set was fixed before the fractions were read: the largest contributors, until their sum first reaches χ²/2. That gives 15 bins and 51 %. The template is 3.08 % on them against 2.91 % overall, and its Spearman ρ with the contribution over the 205 is −0.09 | one sentence before fig:tension2d in S6 (keys bkg43-*) |
+| F5.3 | `f53.json`: weighted fractions of pass_reco w_reco, using r4_migration.py's masks (its unweighted control matched). 2.0×10⁻⁵ is outside the reco window and 1.1×10⁻⁴ has its truth outside the grid; those 1,755 gen rows include the −9999 q3/W sentinels | one sentence after the negative-W² paragraph in S2, the window fraction only (key f53-win). The gen-side 1.1×10⁻⁴ is not printed. The meaning read found that it contradicts S2's "the truth grids are exhaustive" and overlaps the negative-W² exclusion beside it. Whether its 1,755 rows are only the −9999 sentinels is not in a record. This goes back to the director |
+| F5.4 | `stage1_inspect.json` mc.H2 at h2_definition.json's unreported boxes [2], [6], [10], [14]. They hold 2.9×10⁻⁸ of the truth weight and 6.5×10⁻⁸ of the expected reconstructed signal | one sentence after the unreported-box sentence in §2 (keys f54-*) |
+| 3.3 | `r33_leave_gibuu.py`. T2B's B0–B3 re-pass, and the existing grade is reproduced on all 16 records. With only GiBUU left out of C_model, the \|z\| > 2 count moves only at q3, in R15, the same cell as T2B's M1 (max \|z\| 1.62 → 2.02). χ² rises by at most 9.7, at q3. The GiBUU truths' grades already leave that component out | one sentence in S8's T2B paragraph (keys r33-*) |
+| 1.5 | the table was done earlier (tab:construction). The optional per-block CSVs are not made; see below | — |
+| m5/Fm7 | `m5_injected.py`, using s5n_truth_check's full-sample definition, M1 @ x(W) / M1 @ x(nom) − 1. Max \|injected\| is 21.4 % for W1 (EW6), 14.8 % for W2 (EW37; 11.8 % at EW1 among supported cells) and 27.5 % for W3 (EW7). The W1 and W2 controls pass to 8×10⁻¹⁵. The unsupported cells are EW11, EW36 and EW37, with truth weight 777, 246 and 629. Not checkable: a fine cell populated in the full MC but empty in all 100 halves | waiting on the figure lane's producer (below) |
+| s11c | `assess_receipt.json` points.eavail_gibuu, the reported estimator over 20 experiments. The residuals are present: 73.86 % at EW29, as §5.1 prints (s5e-gibuu-ewmax), with a median \|residual\| of 10.8 %. No A is needed | waiting on the figure lane's producer (below) |
+
+**Meaning read** (lrows-read/pairs.tsv, 5 rows; an independent reader given the sources, not the conclusions). Every number re-derived. One defect: M003's gen-side clause, which is removed (above). Two wordings were tightened: S1's clause now names "genuine background and out-of-phase-space signal" instead of "the two rows above", so a reader does not subtract 0.35 % from 2.74 % on 1A; and S8's "moves" became "takes … past |z| = 2".
+
+**The 4.2 split.** The fraction printed is that of the combined background template, the `mc_background` tree's
+selected rows (sim_background_pass = 1, weight w_bkg), which the two-dimensional analysis subtracts before
+unfolding. No committed record divides that template into genuine background and out-of-phase-space signal. The 1A
+genuine-background figure of 0.35 % has no receipt (stageF referee-presentation REPORT.md:124-127), and whether the May
+files' `mc_background` includes out-of-phase-space signal at all is inferred from a driver comment, not verified. So
+table S1 gives the combined fraction and says its division between the two rows is not recorded. A read-only probe
+of the twelve per-playlist May files is approved in principle by the director, and would give the split if their
+bkg_* branches exist; a re-run of the event loop is a separate price.
+
+**F5.3, the out-of-window rows.** OUTCOME-20260925-s5c-purity-background-bias-at-high-W.md:37 says "428 of 20.4 M, zero
+weight". The code says this refers to the measured weight only. `nd-unfolding/s5c_pseudo.py` :104-112 (main 50402c0a3,
+sha256 d81d4f46…) gives every pseudo-data entry outside the [first, last) window measured weight 0, while
+`s5c_unfold.py` :124-127 (510d749a…) passes the same rows to `omnifold_loop` at their own w_reco, 72.41 in total. The
+OUTCOME line is right for what it describes, so no records correction is listed. The paper does not say "zero weight".
+
+**Not done:**
+- **1.5's optional CSVs.** Per-block matrices are a release item, and #981's lane owns the release package.
+- **m5/s11c's figure series.** These go through the figure lane's producer, `fig_m3_deformation.py`, which asserts its
+  arrays against the presentation baseline. The operands are ready: `derived/m5_injected.json` and
+  `assess_receipt.json` points.eavail_gibuu, first 42 entries of mean_rel. Routing is the director's.

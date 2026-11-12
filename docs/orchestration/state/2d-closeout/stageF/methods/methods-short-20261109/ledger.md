@@ -2224,3 +2224,33 @@ was the mislabel. The director accepted bd08582ee, the hand re-cites of ALIASES 
   - New keys c2c1-dibu-k1, -k20, -mid-lo and -mid-hi (D_IBU_every_K; make_values asserts the K = 2–15 range stays below D_E_R).
   - "source" → "mechanism" in §1, §4.1, §7, Table 2 and the abstract; the abstract's longest case is 244 words.
   - Meaning read: dibu-read/pairs.tsv, 16 rows, as ruled.
+
+## 2026-11-12 — The L rows: the read-only pscratch session and its fills
+
+- **Session:** run under the director's go on login27 (0 node-h, fence clear). Receipt `pscr-20261112/` (f70e805c).
+  The director accepted the recompressed truth member, the two force-added npz, the hook-key renames and m5's
+  definition (s5n_truth_check's full-sample M1 ratio).
+- **New keys (14):**
+  - f53-win, f53-grid (not printed);
+  - f54-truth, f54-reco;
+  - bkg42-frac, -pl-lo, -pl-hi;
+  - bkg43-n, -share, -frac, -rho;
+  - r33-dchi2-max, -z-from, -z-to.
+  - All come from `l-rows-20261112/derived/l_rows.json` (READOUTS lrows 9bd9afeb), and values_fived16.tex now holds
+    4158 values.
+- **Printed:**
+  - F5.4 in §2;
+  - F5.3, the window fraction only, in S2;
+  - 4.2/F4.3 as a new row of table S1 (the combined template; its split is not recorded);
+  - 4.3 before fig:tension2d in S6;
+  - 3.3 in S8's T2B paragraph.
+- **Meaning read:** lrows-read/pairs.tsv, 5 rows, by an independent reader given the sources. Every number was
+  re-derived. One defect: M003's gen-side clause contradicted S2 :148 and overlapped the negative-W² exclusion, so it
+  was removed and goes back to the director. Two wordings were tightened. The re-read passed all three revised rows.
+- **F5.3's "zero weight":** checked in code. In s5c_pseudo.py :104-112 (d81d4f46) the pseudo-data's measured weight
+  outside the window is 0, while the MC rows enter at w_reco. So OUTCOME-20260925 :37 is right for what it describes,
+  and no records correction is needed.
+- **Waiting:**
+  - m5/s11c's figure series, routed to the figure lane by the director;
+  - the 4.2 split probe, whose script sha goes to the director first;
+  - 1.5's CSVs, which are #981's release item.

@@ -145,6 +145,9 @@ READOUTS = {
     "s5q": ("docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/s5/s5.json.gz", "5c489837"),
     "budgetq": ("docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/outA/budget_Q.json.gz", "971e8a9d"),
     "plterm": ("docs/orchestration/state/2d-closeout/playlist-term/outputs/playlist_term.json", "5b023478"),
+    # #977's L rows (RESPONSE.md 4.2/F4.3, 4.3, F5.3, F5.4, 3.3, m5/Fm7, s11c): one derived readout (l_rows.py) from the
+    # read-only pscratch session's receipt (pscr-20261112, f70e805c) and committed sources
+    "lrows": ("docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/l-rows-20261112/derived/l_rows.json", "9bd9afeb"),
 }
 # the committed readouts without the run-period block, for the "-nopl" keys
 NOPL_READOUTS = dict(READOUTS, **{
@@ -1563,6 +1566,7 @@ def groupb_values(d):
     v.update(t2a_values(d))
     v.update(period_values(d))
     v.update(t2b_values(d))
+    v.update(lrows_values(d))
     # B3a: the synthetic q3 tilt, r = 1 + a z~ (s5c_pseudo.py truth_weight "q3_given_eavail_w"); a and the clip from the
     # code, the event count, the range and in-cell spread of the weight and the two preservation checks from the truth check
     q = d["s5ntruth"]["departures"]["q3_given_eavail_w"]
@@ -1954,6 +1958,43 @@ def period_values(d):
     v = dict(out[0])
     v["pp-nrep"] = str(r["readings"]["n_replicas"])
     assert int(v["pp-k"]) + int(v["pp-kbar"]) == r["readings"]["n_cells"]
+    return v
+
+
+def lrows_values(d):
+    """#977's L rows from l_rows.json (descriptive). F5.3: weighted fractions of the selected simulated signal (pass_reco,
+    w_reco) reconstructed outside the window and with truth outside the grid. F5.4: the four unreported H2 boxes' share
+    of the truth weight and of the expected reconstructed signal. 4.2/F4.3: the background template subtracted before
+    unfolding over the selected data in the 2D grid, full sample and per playlist (its split into genuine background
+    and out-of-phase-space signal is not recorded). 4.3: the same fraction on the largest contributors to the
+    published-covariance chi2 (the cells, in decreasing order, until their sum first reaches half of it), and its rank
+    correlation with the contribution over the 205 cells. 3.3: the fake-data grades with only GiBUU left out of
+    C_model."""
+    r = d["lrows"]
+    assert r["schema"] == "methods-short-l-rows/1"
+
+    def sci2(x):         # two significant figures, scientific
+        m, e = f"{x:.1e}".split("e")
+        return rf"{m}\times10^{{{int(e)}}}"
+    f, b, t, q, h = r["f53"], r["bkg_42"], r["bkg_43"], r["r33"], r["f54"]
+    v = {"f53-win": sci2(f["weighted_outside_reco_window"]), "f53-grid": sci2(f["weighted_gen_outside_grid"])}
+    assert (v["f53-win"], v["f53-grid"]) == (r"2.0\times10^{-5}", r"1.1\times10^{-4}")
+    assert h["boxes"] == [2, 6, 10, 14]
+    v["f54-truth"], v["f54-reco"] = sci2(h["share_truth_weight"]), sci2(h["share_expected_reco_signal"])
+    v["bkg42-frac"] = f"{100 * b['fraction_full_sample']:.2f}"
+    pl = b["per_playlist"].values()
+    v["bkg42-pl-lo"], v["bkg42-pl-hi"] = f"{100 * min(pl):.2f}", f"{100 * max(pl):.2f}"
+    assert b["compare_E_U"]["data_equal"] and abs(b["compare_E_U"]["background_rel_diff"]) < 0.005
+    assert f"{100 * b['compare_E_U']['E_U_fraction']:.2f}" == v["bkg42-frac"] == "2.91"
+    assert t["chi2"] == 465.41527219152636 and t["rule"].startswith("largest contributors")
+    v["bkg43-n"], v["bkg43-share"] = str(t["n_cells_T"]), f"{100 * t['chi2_share_T']:.0f}"
+    v["bkg43-frac"], v["bkg43-rho"] = f"{100 * t['fraction_T']:.2f}", f"{t['spearman_fraction_vs_contribution_205']:.2f}"
+    assert t["fraction_T"] > b["fraction_full_sample"] and abs(t["spearman_fraction_vs_contribution_205"]) < 0.2
+    assert q["records_count_moved"] == {"q3": [0, 1]} and q["chi2_rise_max_record"] == "q3"
+    assert q["q3_cells_abs_z_gt_2_added"] == ["R15"]   # the text: the same one cell as without C_model (t2b-n2-cell)
+    v["r33-dchi2-max"] = f"{q['chi2_rise_max']:.1f}"
+    v["r33-z-from"], v["r33-z-to"] = (f"{z:.2f}" for z in q["q3_max_abs_z"])
+    assert sorted(q["unchanged_own_gibuu"]) == ["A7_gibuu", "stage0c_gibuu"]
     return v
 
 
