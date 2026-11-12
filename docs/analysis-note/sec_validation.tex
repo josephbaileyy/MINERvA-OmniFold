@@ -180,7 +180,7 @@ The excess width lies in the data-statistics component. The per-bin pull RMS fal
 % plain-language pass, review fix N1 and N3 (DECISION-20261018-joseph-plain-language-pass): the route is restored in words (row 85); "fixed before it
 % ran" becomes "recorded before it ran" (the rule was committed before the run, 8eb40e5f).
 
-\textbf{Scope.} The test concerns the statistical band alone and changes no central value or quoted uncertainty. It tests the LightGBM statistical estimator at the band's training seed (seed~1), not at the quoted central value's seed~42, and does not address systematic, total or five-dimensional coverage. Its simulation-side scatter reuses the resampling that built the band, so only the data-side fluctuation is tested by an independent mechanism. Because $T$ equals the prior, the test cannot detect regularization bias toward the prior.
+\textbf{Scope.} The test concerns the statistical band alone and changes no central value or quoted uncertainty. It tests the LightGBM statistical estimator at the band's training seed (seed~1), while the quoted central value uses seed~42. Systematic, total and five-dimensional coverage are outside this test's scope. Its simulation-side scatter reuses the resampling that built the band, so only the data-side fluctuation is tested by an independent mechanism. Because $T$ equals the prior, the test cannot detect regularization bias toward the prior.
         % J3/J4 provisional (DECISION-20261018, packet W3: D2): true of the test; the quoted statistical block is at seed 42.
 
 \subsection{Held-out-tune coverage of the 2D covariance}
