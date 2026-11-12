@@ -775,3 +775,45 @@ Record: `secondary-results/style-methods-20261112/round2/`. The director approve
 | 8. Table 1 against S3 | Table 1 is purity and diagonal fraction in two columns of eight cells. The boxes are in table S3 |
 | [PENDING] | waits for LL5D's fill (ruled) |
 | The sentence pass | next |
+
+## The PRD flow batch, and a pre-existing defect (director-helper-3, 2026-11-12)
+
+**A pre-existing defect: a sentence swallowed by a comment.**
+- **What happened:** §4.2's sentence "The five-observable estimator, run on the two-dimensional inputs, reproduces the
+  two-dimensional central value within its paired noise: $T=\fvval{c1-T}$ …" had sat at the end of a source-comment
+  line since 2c0f6c5d1, so it never printed. 283f3044, which the fresh referee and both style rounds read, lacked it.
+  §4.2's "two other unfoldings" therefore described only one, as the PRD read noticed.
+- **The fix:** restored on its own line, as the director ruled. Its keys (c1-*) and source were already in place.
+- **The sweep the director asked for**, of paper_body.tex and supplemental_body.tex, covered three patterns:
+  - a comment line whose tail is a sentence with printing macros;
+  - the same with a broader opener set, excluding record citations;
+  - text after an inline % on a text line.
+
+  It found only this sentence. Nothing in the Supplement.
+
+**The ONCE sentences** (the director's ruling, 2026-11-12):
+- "…and their cross-covariance is unavailable, so the significance of their difference cannot be calibrated." became
+  "The two results share … systematics. Because their cross-covariance is unavailable, the significance of their
+  difference cannot be calibrated."
+- "…stated with the individual tests; comparisons without a grading rule are descriptive." became two sentences.
+
+check_round's ONCE list is updated in the same commit, with a comment naming the ruling.
+
+**The PRD read's local items** (sentence-read/README.md), applied by `prd_batch.py`:
+- section 1's shape-difference clause split;
+- section 2's sample-check sentence;
+- "Events without a reconstructed partner carry …";
+- the run-period block's "It" chain and its sentence that began with a lower-case pointer;
+- "Both figures are for the diagonal elements only";
+- section 3.3's count of distinct truths, and its estimator copy replaced by a pointer to tab:estimators;
+- the tunes' shared ingredients stated once in section 3.3, with pointers in sections 5.2 and 6.2;
+- section 4.4's compound subject split;
+- the per-period readings moved from section 4.1 into section 4.3, which removes the circular pointer;
+- section 5.1's orphan sentence folded into its paragraph, with one verdict verb ("is not flagged … It is flagged
+  without");
+- the repeated median clause cut;
+- section 5.2's notation defined in place;
+- section 5.3: ρ defined before its results, with the lead paragraph and table 4 moved after the definition;
+- section 6.2: the dangling "It", the conditional-test list as (i)–(v), and the restricted test's referents;
+- the repeated "The data result remains an illustration" cut;
+- "Both tunes pass the bias criteria".
