@@ -1,0 +1,29 @@
+--- /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/launch-ll5d.b86004df.sh	2026-11-12 10:26:30
++++ launch-ll5d.sh	2026-11-12 10:26:30
+@@ -1,6 +1,6 @@
+ #!/bin/bash
+ # Launch one LL5D connect, after the director's go on that connect's sha256 (LL5D BINDING 1 ruling 8, BINDING 2).
+-# Usage: launch-ll5d.sh ovl | calib | calib2 | gate-g18 | gate-ar23 | vicheck | calib3 | gate2-g18 | gate2-ar23 <sha256>
++# Usage: launch-ll5d.sh ovl | calib | calib2 | gate-g18 | gate-ar23 | vicheck | calib3 | gate2-g18 | gate2-ar23 | pilot <sha256>
+ #   ovl:   the read-only overlap check, run on login02 through bash -s; its output is the receipt.
+ #   other: the fence (read-only, recorded), the connect staged at /dev/shm/josephrb-ll5d-<name>.sh, its node sha256
+ #          compared with the local one AND with the sha256 given (the go's), launched detached, its connect log
+@@ -18,7 +18,8 @@
+   vicheck) SRC=$H/connect-vicheck.sh; ARG=""; LOGP=/pscratch/sd/j/josephrb/ll5d-vicheck-20261110/logs/connect-vicheck.log ;;
+   calib3) SRC=$H/connect-calib-3.sh; ARG=""; LOGP=/pscratch/sd/j/josephrb/ll5d-calib-3-20261110/logs/connect-calib-3.log ;;
+   gate2-g18|gate2-ar23) T=${N#gate2-}; SRC=$H/connect-gate-2.sh; ARG=$T; LOGP=/pscratch/sd/j/josephrb/ll5d-gate-2-$T-20261110/logs/connect-gate-2-$T.log ;;
+-  *) echo "usage: launch-ll5d.sh ovl|calib|calib2|gate-g18|gate-ar23|vicheck|calib3|gate2-g18|gate2-ar23 <sha256>"; exit 2 ;;
++  pilot) SRC=$H/connect-pilot.sh; ARG=""; LOGP=/pscratch/sd/j/josephrb/ll5d-pilot-r1/logs/connect-pilot.log ;;
++  *) echo "usage: launch-ll5d.sh ovl|calib|calib2|gate-g18|gate-ar23|vicheck|calib3|gate2-g18|gate2-ar23|pilot <sha256>"; exit 2 ;;
+ esac
+ have=$(shasum -a 256 "$SRC" | cut -c1-64)
+ [ "$have" = "$WANT" ] || { echo "REFUSED: $SRC is $have, not the go's $WANT"; exit 2; }
+@@ -33,7 +34,7 @@
+ cat > "$OUT/fence.sh" <<'FENCE'
+ echo "fence host=$(hostname) utc=$(date -u +%FT%TZ)"
+ echo "squeue:"; squeue -u josephrb -h -o '%i %j %T'
+-echo "sacct unended cov2d:"; sacct -X -n -P -S 2026-11-04 -u josephrb -o JobID,JobName,State | awk -F'|' '$2 ~ /^cov2d-/ && $3 !~ /^(COMPLETED|FAILED|CANCELLED|TIMEOUT|OUT_OF_MEMORY|NODE_FAIL|PREEMPTED|BOOT_FAIL|DEADLINE)/'
++echo "sacct unended cov2d:"; sacct -X -n -P -S 2026-11-04 -u josephrb -o JobID,JobName,State | awk -F'|' '$2 ~ /^cov2d/ && $3 !~ /^(COMPLETED|FAILED|CANCELLED|TIMEOUT|OUT_OF_MEMORY|NODE_FAIL|PREEMPTED|BOOT_FAIL|DEADLINE)/'
+ echo "fence end"
+ FENCE
+ r < "$OUT/fence.sh" > "$OUT/fence.txt" 2>&1; frc=$?
