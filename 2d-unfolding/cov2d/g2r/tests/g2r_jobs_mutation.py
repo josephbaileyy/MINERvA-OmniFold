@@ -22,7 +22,7 @@ J = REPO / "2d-unfolding/cov2d/g2r/jobs"
 PY, ENV, JOB, ENVT, PREP, SUB = (J / "g2r_jobs.py", J / "g2r_env.sh", J / "g2r_job.sbatch", J / "g2r_envtest.sbatch",
                                  J / "g2r_prepare.sbatch", J / "g2r_submit.sh")
 TEST = REPO / "2d-unfolding/cov2d/g2r/tests/test_g2r_jobs.py"
-EXPECTED = 51
+EXPECTED = 55
 
 MUTATIONS = [
     # --- the tables
@@ -64,10 +64,26 @@ MUTATIONS = [
      '    if want not in ("envtest", "prepare") and projection > CAP_NODE_H:\n', "    if False:\n",
      "Gate.test_the_projection_is_a_stop_for_unfold_jobs_only"),
     # --- the comparison
-    ("the histograms' contents not compared", PY, "a1.tobytes() != a2.tobytes() or ", "",
+    ("the envtest's tolerance back to bitwise (the audit's B1)", PY, "ENVTEST_TOL = 1e-8 ", "ENVTEST_TOL = 0.0 ",
+     "EnvTest.test_the_measured_rerun_noise_passes"),
+    ("the envtest's tolerance opened", PY, "ENVTEST_TOL = 1e-8 ", "ENVTEST_TOL = 1e-1 ",
      "EnvTest.test_each_difference_is_invalid"),
-    ("the histograms' errors not compared", PY, " or e1.tobytes() != e2.tobytes()", "",
+    ("the envtest's tolerance loosened to 3e-8 (the director's condition)", PY, "ENVTEST_TOL = 1e-8 ",
+     "ENVTEST_TOL = 3e-8 ", "EnvTest.test_the_tolerance_boundary"),
+    ("the envtest's tolerance tightened to 0.4e-8", PY, "ENVTEST_TOL = 1e-8 ", "ENVTEST_TOL = 0.4e-8 ",
+     "EnvTest.test_the_tolerance_boundary"),
+    ("the histograms' errors not compared", PY, "hist_rel[k] = max(rel_diff(a2, a1), rel_diff(e2, e1))",
+     "hist_rel[k] = rel_diff(a2, a1)", "EnvTest.test_each_difference_is_invalid"),
+    ("the histograms not held to the tolerance", PY, "        elif not hist_rel[k] <= tol:\n", "        elif False:\n",
      "EnvTest.test_each_difference_is_invalid"),
+    ("the TParameters not compared", PY,
+     "        if not abs(p1[k] - p2[k]) <= tol * max(abs(p1[k]), abs(p2[k])):\n", "        if False:\n",
+     "EnvTest.test_each_difference_is_invalid"),
+    ("the JSON records compared bitwise", PY, "        problems += json_problems(ja, jb, k, tol)\n",
+     "        problems += json_problems(ja, jb, k, 0.0)\n", "EnvTest.test_the_measured_rerun_noise_passes"),
+    ("the JSON integers given the tolerance", PY,
+     "    if isinstance(a, int) and isinstance(b, int):\n        return [] if a == b else",
+     "    if False:\n        return [] if a == b else", "EnvTest.test_each_difference_is_invalid"),
     ("a flag left on passes", PY, '    if rc2.get("miss_map") is not None:\n', "    if False:\n",
      "EnvTest.test_each_difference_is_invalid"),
     ("the set-aside widened to fluxSource", PY, '"omnifoldHelperFile", "runArgv")',

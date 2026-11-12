@@ -24,9 +24,13 @@ comparison (COV2D-G2R-DECLARATION.md sections 3, 4, 6-8; binding 1 addendum C1 r
   includes the limits of submitted ids that sacct does not list yet (the sacct-lag ruling). For an unfold job it also
   projects the whole campaign (spent + held + every job not yet submitted): over the cap is a STOP to the director (rc
   9), not a trim.
-* ``envtest``: the two products compared. Every histogram's contents and errors, and every TParameter, must be
-  bitwise equal. Every TNamed must be equal except ENVTEST_DIFFER, which records the code and paths that differ by
-  design. ``runConfig`` must be equal once ``out`` is set aside and the patched run's ``miss_map`` is null.
+* ``envtest``: the two products compared under RE-2's bound rule (ENVTEST_TOL), since configuration (a) is LightGBM's
+  non-deterministic mode and same-CPU reruns differ by up to 6.4e-13 (RE2-J0-REPORT.md:106-107). Every histogram's
+  contents and errors agree to max |a - b| / max |b| <= ENVTEST_TOL (RE-2's ``le`` metric), every TParameter to that
+  relative tolerance, and every JSON-valued TNamed leaf by leaf: floats to that relative tolerance, integers, booleans
+  and strings exactly. Every other TNamed must be equal, except ENVTEST_DIFFER, the code and paths that differ by
+  design. ``runConfig`` must agree once ``out`` is set aside and the patched run's ``miss_map`` is null. Whether each
+  object is also bitwise is recorded; it does not decide.
 * ``products``: the readout's products TSV for one point, from the tables and the jobs' SHA256SUMS files.
 
 MEASURES: tables, checks, the order, the gate and the comparison. CANNOT AUTHORIZE: a submission.
@@ -62,6 +66,7 @@ ENVTEST_RECORD = REC + "/envtest/envtest.json"
 PREPARE_RECORD = REC + "/prepare/g2r_prepare.json"
 FIRST = ("envtest", "prepare", "D_Ua")      # D_Ua needs only the prepare; every other unfold job also D_Ua's first run
 ENVTEST_DIFFER = ("driverFile", "driverSha256", "omnifoldHelperFile", "runArgv")
+ENVTEST_TOL = 1e-8                # RE-2's bound equality rule (RE2-DECLARATION.md:42; RE2-J0-REPORT.md:79)
 UNFINISHED = ("PENDING", "RUNNING", "REQUEUED", "CONFIGURING", "SUSPENDED", "COMPLETING", "RESIZING")
 
 
@@ -272,10 +277,40 @@ def gate(sacct_psv: str, limits: dict, want: str, submitted: dict) -> dict:
     return rec
 
 
-def envtest(pre: str, post: str) -> dict:
+def rel_diff(a, b) -> float:
+    """RE-2's ``le`` metric: max |a - b| / max |b|; 0 when both are all zero, inf when only b is."""
+    import numpy as np
+    a, b = np.asarray(a, np.float64), np.asarray(b, np.float64)
+    if a.shape != b.shape:
+        return float("inf")
+    d, m = float(np.max(np.abs(a - b), initial=0.0)), float(np.max(np.abs(b), initial=0.0))
+    return 0.0 if d == 0.0 else (d / m if m > 0.0 else float("inf"))
+
+
+def json_problems(a, b, path: str, tol: float) -> list[str]:
+    """Leaf-by-leaf agreement of two parsed JSON values: floats to ``tol`` relative, everything else exactly."""
+    if isinstance(a, bool) or isinstance(b, bool) or a is None or b is None or isinstance(a, str) or isinstance(b, str):
+        return [] if (type(a) is type(b) and a == b) else [f"{path}: {a!r} != {b!r}"]
+    if isinstance(a, dict) and isinstance(b, dict):
+        if set(a) != set(b):
+            return [f"{path}: keys differ {sorted(set(a) ^ set(b))}"]
+        return [p for k in sorted(a) for p in json_problems(a[k], b[k], f"{path}.{k}", tol)]
+    if isinstance(a, list) and isinstance(b, list):
+        if len(a) != len(b):
+            return [f"{path}: lengths {len(a)} != {len(b)}"]
+        return [p for i, (x, y) in enumerate(zip(a, b)) for p in json_problems(x, y, f"{path}[{i}]", tol)]
+    if isinstance(a, int) and isinstance(b, int):
+        return [] if a == b else [f"{path}: {a} != {b}"]
+    if isinstance(a, (int, float)) and isinstance(b, (int, float)):
+        return [] if abs(a - b) <= tol * max(abs(a), abs(b)) else [f"{path}: {a!r} != {b!r} beyond {tol}"]
+    return [f"{path}: {a!r} and {b!r} are not comparable"]
+
+
+def envtest(pre: str, post: str, tol: float = None) -> dict:
     """The two products compared (see the module docstring)."""
     import ROOT
     import numpy as np
+    tol = ENVTEST_TOL if tol is None else tol
 
     def objects(path):
         try:
@@ -299,30 +334,49 @@ def envtest(pre: str, post: str) -> dict:
         f.Close()
         return h, p, n
     (h1, p1, n1), (h2, p2, n2) = objects(pre), objects(post)
-    problems = []
+    problems, hist_rel, bitwise = [], {}, {}
     if set(h1) != set(h2):
         problems.append(f"histograms differ in name: {sorted(set(h1) ^ set(h2))}")
     for k in sorted(set(h1) & set(h2)):
         (a1, e1, t1), (a2, e2, t2) = h1[k], h2[k]
-        if t1 != t2 or a1.tobytes() != a2.tobytes() or e1.tobytes() != e2.tobytes():
-            problems.append(f"histogram {k} is not bitwise equal")
-    if p1 != p2:
-        problems.append(f"TParameters differ: {sorted(k for k in set(p1) | set(p2) if p1.get(k) != p2.get(k))}")
+        hist_rel[k] = max(rel_diff(a2, a1), rel_diff(e2, e1))
+        bitwise[k] = a1.tobytes() == a2.tobytes() and e1.tobytes() == e2.tobytes()
+        if t1 != t2:
+            problems.append(f"histogram {k} is a {t1} and a {t2}")
+        elif not hist_rel[k] <= tol:
+            problems.append(f"histogram {k} differs by {hist_rel[k]:.3g} relative, beyond {tol}")
+    if set(p1) != set(p2):
+        problems.append(f"TParameters differ in name: {sorted(set(p1) ^ set(p2))}")
+    for k in sorted(set(p1) & set(p2)):
+        bitwise[f"param:{k}"] = p1[k] == p2[k]
+        if not abs(p1[k] - p2[k]) <= tol * max(abs(p1[k]), abs(p2[k])):
+            problems.append(f"TParameter {k}: {p1[k]!r} != {p2[k]!r} beyond {tol}")
     rc1, rc2 = json.loads(n1.get("runConfig", "{}")), json.loads(n2.get("runConfig", "{}"))
     if rc2.get("miss_map") is not None:
         problems.append("the patched run's miss_map is not null: the flag was not off")
     for d in (rc1, rc2):
         d.pop("out", None)
     rc2.pop("miss_map", None)
-    if rc1 != rc2:
-        problems.append(f"runConfig differs: {sorted(k for k in set(rc1) | set(rc2) if rc1.get(k) != rc2.get(k))}")
+    problems += json_problems(rc1, rc2, "runConfig", tol)
     for k in sorted((set(n1) | set(n2)) - set(ENVTEST_DIFFER) - {"runConfig"}):
-        if n1.get(k) != n2.get(k):
-            problems.append(f"TNamed {k} differs")
+        a, b = n1.get(k), n2.get(k)
+        bitwise[f"named:{k}"] = a == b
+        if a is None or b is None:
+            problems.append(f"TNamed {k} is in one product only")
+            continue
+        try:
+            ja, jb = json.loads(a), json.loads(b)
+        except ValueError:
+            if a != b:
+                problems.append(f"TNamed {k} differs")
+            continue
+        problems += json_problems(ja, jb, k, tol)
     if "g2rMissMap" in n2:
         problems.append("the patched run records g2rMissMap with the flag off")
-    return {"schema": "cov2d-g2r-envtest-1", "pre": pre, "post": post, "histograms": len(h1), "parameters": len(p1),
-            "named": len(n1), "set_aside": list(ENVTEST_DIFFER) + ["runConfig.out", "runConfig.miss_map (null)"],
+    return {"schema": "cov2d-g2r-envtest-2", "pre": pre, "post": post, "tol": tol, "rule": "RE-2 le: max|a-b|/max|b|",
+            "histograms": len(h1), "parameters": len(p1), "named": len(n1), "hist_rel_diff": hist_rel,
+            "bitwise": bitwise, "all_bitwise": all(bitwise.values()),
+            "set_aside": list(ENVTEST_DIFFER) + ["runConfig.out", "runConfig.miss_map (null)"],
             "problems": problems, "verdict": "PASS" if not problems else "INVALID"}
 
 

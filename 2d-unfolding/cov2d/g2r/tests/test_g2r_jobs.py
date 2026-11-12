@@ -333,10 +333,14 @@ class Gate(unittest.TestCase):
                 self.assertEqual(gj.main(args + ["--want", "nope"]), 5)
 
 
-def write_product(path: Path, scale=1.0, err=None, param=1.5, named=None, run_config=None):
+REFINED = {"refined_sum": 123456.789, "refined_over_signed": 0.987654321, "refined_rows": 1234567890123,
+           "mode": "negweight-refined", "clipped": False}
+
+
+def write_product(path: Path, scale=1.0, err=None, param=1.5, named=None, run_config=None, refined=None, kind="TH2D"):
     import ROOT
     f = ROOT.TFile(str(path), "RECREATE")
-    h = ROOT.TH2D("hUnfold2D", "", 3, 0, 3, 2, 0, 2)
+    h = getattr(ROOT, kind)("hUnfold2D", "", 3, 0, 3, 2, 0, 2)
     for i in range(1, 4):
         for j in range(1, 3):
             h.SetBinContent(i, j, scale * (i + 10 * j) / 7.0)
@@ -345,7 +349,8 @@ def write_product(path: Path, scale=1.0, err=None, param=1.5, named=None, run_co
     ROOT.TParameter("double")("potScale", param).Write()
     rc = {"out": str(path), "seed": 42, "universe": "MaRES:0", **(run_config or {})}
     names = {"runConfig": json.dumps(rc, sort_keys=True), "driverFile": str(path), "driverSha256": str(path),
-             "fluxSource": "f", "omnifoldHelperSha256": "h", **(named or {})}
+             "fluxSource": "f", "omnifoldHelperSha256": "h",
+             "re2Refinement": json.dumps({**REFINED, **(refined or {})}, sort_keys=True), **(named or {})}
     for k, v in names.items():
         ROOT.TNamed(k, v).Write()
     f.Close()
@@ -368,16 +373,72 @@ class EnvTest(unittest.TestCase):
         rec = self.cmp()
         self.assertEqual(rec["verdict"], "PASS", rec["problems"])
         self.assertEqual((rec["histograms"], rec["parameters"]), (1, 1))
+        self.assertTrue(rec["all_bitwise"])
+        self.assertEqual(rec["tol"], 1e-8)
+
+    def test_the_measured_rerun_noise_passes(self):
+        """RE-2's same-CPU reruns (RE2-J0-REPORT.md:106-107): 1.88e-14 and 6.36e-13. Configuration (a) is LightGBM's
+        non-deterministic mode, so a bitwise rule would fail them (the audit's B1)."""
+        cases = {"CHK-det1": dict(scale=1 + 1.88e-14), "CHK-det2": dict(scale=1 + 6.36e-13),
+                 "errors": dict(err=0.1 * (1 + 3e-13)), "param": dict(param=1.5 * (1 + 2e-13)),
+                 "refined floats": dict(refined={"refined_sum": 123456.789 * (1 + 5e-13),
+                                                 "refined_over_signed": 0.987654321 * (1 - 4e-13)})}
+        for name, kw in cases.items():
+            rec = self.cmp(**kw)
+            self.assertEqual(rec["verdict"], "PASS", (name, rec["problems"]))
+            self.assertFalse(rec["all_bitwise"], name)
+
+    def test_the_tolerance_boundary(self):
+        """The director's condition: 0.5e-8 PASSES and 2e-8 is INVALID, for the histograms, a TParameter and a JSON leaf,
+        so a typo in the tolerance in either direction fails a test."""
+        for rel, want in ((0.5e-8, "PASS"), (0.99e-8, "PASS"), (2e-8, "INVALID")):
+            for name, kw in (("histogram", dict(scale=1 + rel)), ("param", dict(param=1.5 * (1 + rel))),
+                             ("refined", dict(refined={"refined_sum": 123456.789 * (1 + rel)}))):
+                self.assertEqual(self.cmp(**kw)["verdict"], want, (rel, name))
 
     def test_each_difference_is_invalid(self):
-        cases = {"histogram": dict(scale=1.0 + 2 ** -52), "error": dict(err=0.1 + 1e-17),
-                 "param": dict(param=1.5000000000000002), "named": dict(named={"fluxSource": "g"}),
+        """Power: P5 measured the override against the proxy at MaRES:0 as a per-cell change of median 1.6e-3, max
+        2.8e-2 (stageB/diagnostics/p5/result/report_s42.json); RE-2's power checks moved hXSec2D by 1e-2 to 2.2e-1."""
+        cases = {"P5 median": dict(scale=1 + 1.6e-3), "P5 max": dict(scale=1 + 2.8e-2),
+                 "just beyond": dict(scale=1 + 2e-8), "error": dict(err=0.1 * (1 + 1e-6)),
+                 "param": dict(param=1.5 * (1 + 1e-6)), "named": dict(named={"fluxSource": "g"}),
                  "config": dict(run_config={"miss_map": None, "seed": 43}),
                  "flag on": dict(run_config={"miss_map": "/x/map.npz"}),
                  "g2r record": dict(named={"g2rMissMap": "{}"}),
-                 "helper": dict(named={"omnifoldHelperSha256": "other"})}
+                 "helper": dict(named={"omnifoldHelperSha256": "other"}),
+                 "refined float": dict(refined={"refined_sum": 123456.789 * (1 + 1e-6)}),
+                 "refined integer by one": dict(refined={"refined_rows": 1234567890124}),
+                 "refined string": dict(refined={"mode": "purity"}),
+                 "refined boolean": dict(refined={"clipped": True}),
+                 "refined key": dict(refined={"extra": 1})}
         for name, kw in cases.items():
             self.assertEqual(self.cmp(**kw)["verdict"], "INVALID", name)
+
+    def test_json_leaves_and_the_metric(self):
+        self.assertEqual(gj.json_problems({"a": [1, 2.0, "x", None, True]}, {"a": [1, 2.0 * (1 + 1e-12), "x", None, True]},
+                                          "r", 1e-8), [])
+        self.assertTrue(gj.json_problems(True, 1, "r", 1e-8))
+        self.assertTrue(gj.json_problems([1, 2], [1], "r", 1e-8))
+        self.assertTrue(gj.json_problems(None, 0, "r", 1e-8))
+        self.assertTrue(gj.json_problems({"a": 1}, [1], "r", 1e-8))
+        self.assertEqual(gj.rel_diff([0.0, 0.0], [0.0, 0.0]), 0.0)
+        self.assertEqual(gj.rel_diff([1.0, 0.0], [0.0, 0.0]), float("inf"))
+        self.assertEqual(gj.rel_diff([1.0], [1.0, 2.0]), float("inf"))
+        self.assertAlmostEqual(gj.rel_diff([1.0, 4.0 + 4e-9], [1.0, 4.0]), 1e-9)
+
+    def test_a_record_in_one_product_only_and_a_parameter_missing(self):
+        import ROOT
+        write_product(self.d / "post.root", run_config={"miss_map": None}, named={"extraRecord": "x"})
+        self.assertTrue(any("in one product only" in p for p in
+                            gj.envtest(str(self.d / "pre.root"), str(self.d / "post.root"))["problems"]))
+        f = ROOT.TFile(str(self.d / "post.root"), "UPDATE")
+        ROOT.TParameter("double")("mcPOT", 2.0).Write()
+        f.Close()
+        self.assertTrue(any("TParameters differ in name" in p for p in
+                            gj.envtest(str(self.d / "pre.root"), str(self.d / "post.root"))["problems"]))
+        write_product(self.d / "post.root", run_config={"miss_map": None}, kind="TH2F")
+        self.assertTrue(any("is a TH2D and a TH2F" in p for p in
+                            gj.envtest(str(self.d / "pre.root"), str(self.d / "post.root"))["problems"]))
 
     def test_a_missing_histogram_and_an_unopenable_file(self):
         import ROOT

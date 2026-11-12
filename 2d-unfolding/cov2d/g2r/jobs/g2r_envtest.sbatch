@@ -9,9 +9,10 @@
 # COV2D-G2R's cluster-environment test (addendum J1; binding 1 addendum C1 ruling 2), before the prepare: MaRES:0 at
 # the data, part B's argv, through the pre-patch driver (the deploy $PRE at PRE_M, COV2D's) and through the patched
 # driver with the flag off (the deploy $C at $M), in two lanes of 128 CPUs on this node, the same environment for
-# both. Then g2r_jobs.py envtest compares the two products (every histogram and TParameter bitwise; the TNamed records
-# except those that name the code and paths). Each run goes through the OI-136 guard with its own deploy as the only
-# admitted tree. Exit 0 on PASS; 5 if the products differ; 4 if an input check fails; 6 if a run failed.
+# both. Then g2r_jobs.py envtest compares the two products under RE-2's rule, 1e-8 relative (histograms, TParameters
+# and JSON leaves; other TNamed records exactly, except those that name the code and paths). Each run goes through
+# the OI-136 guard with its own deploy as the only admitted tree. Exit 0 on PASS; 5 if the products differ; 4 if an
+# input check fails; 6 if a run failed.
 set -eo pipefail
 source "$C/2d-unfolding/cov2d/g2r/jobs/g2r_env.sh"
 RUNS=$O/tables/runs_g2r.tsv JOBS=$O/tables/jobs_g2r.tsv
