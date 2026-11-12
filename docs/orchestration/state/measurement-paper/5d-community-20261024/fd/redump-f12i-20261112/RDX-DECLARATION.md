@@ -1,4 +1,4 @@
-# RDX: the event-loop re-dump for F1.2(i) (DECLARATION, rev 4: the code, DRAFT)
+# RDX: the event-loop re-dump for F1.2(i) (DECLARATION, rev 5: the code and its launchers, DRAFT)
 
 **Session:** tier3-design, 2026-11-12. This is its own lane, as RSN-BINDING-1 ruling 6 directs. The F1.2(i) re-dump
 is approved in principle: a pilot on 1A first, and a cap of 2.5 node-h with the pilot included.
@@ -7,9 +7,10 @@ is approved in principle: a pilot on 1A first, and a cap of 2.5 node-h with the 
   D6, only, at the director's ruling. The re-read's lows y1–y4 are on the follow-up list (§8).
 - Joseph decided on 2026-11-12 that the methods paper does not wait for this re-dump. Results are folded in if they
   arrive in time (DECISION-20261112-joseph-1a-cfs-and-redump-timing.md, #1092).
-- Rev 4 adds the code (§2b), after RDX-BINDING-1 bound the design at M_RDX `e747fc6c` (#1094).
+- Rev 4 adds the code (§2b), after RDX-BINDING-1 bound the design at M_RDX `e747fc6c` (#1094); the director's code
+  addendum C1 bound it at M_RDXC `950a88ec` (#1096). Rev 5 adds the launcher tranche (§2c).
 
-**For:** coverage-5b-audit's code audit, then the director's code binding. **Nothing has run.**
+**For:** coverage-5b-audit's delta audit of the launcher tranche, then the director's addendum. **Nothing has run.**
 <!-- absence-ok: operational status of this lane's own runs, not a claim that a result does not exist -->
 
 ## 0. What this is
@@ -225,6 +226,128 @@ dump's float32 cast, and the join casts the omnifile's `MC` and `MC_pz` the same
 
 Each comes with its smoke and goes to the audit as a delta before any connect.
 <!-- absence-ok: the launchers are the next tranche of this lane's own code, not a claim that a result does not exist -->
+
+## 2c. The launcher tranche (rev 5, 2026-11-12)
+
+The stage launchers and the connect, with the director's rulings of 2026-11-12 on the second tranche, on z3 and on
+the NuE overlap (cov2d's no-objection of 2026-11-12).
+
+| file | sha256 | role |
+|---|---|---|
+| `sbatch_rdx_evloop.sh` | `743b9e48cbeb36c39427aabba96514503b248c6faddc6947b95f5d3b331de6b5` | stages 1 and 2: one playlist's event loop |
+| `sbatch_rdx_merge.sh` | `742503fa085faa5f1fc5827bd43b247b9ca0cf76d1334d43637f05d3a675e483` | stage 2: merge, nn_dump, the dump and sidecar, K1 |
+| `sbatch_rdx_arms.sh` | `6cba3dd475cd982e9c08ff3628267b16ec21d230e4c478835b62d7bf6733986c` | stage 3: S3a or S3b |
+| `rdx_tasks.tsv` | `3ec5069127f5f937c84b4efdb34bdcc99d8acc4b20891f1b26b25e32d27f75b9` | §4's fifteen steps (a test requires equality with §4's table) |
+| `rdx_connect.sh` | `ab5e7059f5a99c00878fa8b11aebae2f8b1373958d0a3d23e21b1c2a29dadc15` | the stepwise connect |
+| `rdx_connect_launch.sh` | `a695cd5b02f6595f49344031134dd60bb84a458f29341407f0eb4ee253f3755f` | its launcher: RSN connect 1's hop, passing the step, pin and limit |
+| `rdx_cap.py` | `457e89efa20b484cc0d54c1125636ee7e7d3f023cf3aa5462eb9771e3450e451` | the cap gate |
+| `rdx_merge.py` | `23dce7a447a830f5af1d3c6f708d2ec6de7f5d49cd4e9a4b7a7186aaaa3103e8` | the merge and K1 |
+| `rdx_paths.py` | `948c47e05f22396afafa20fbb2c89881dded027bd49e38c04fe76fdaf89e4dbe` | policy check, MP-1 stat, O_NOATIME staging and manifest |
+| `rdx_probe_walk.py` | `dedaa80e5fb108e4b96e61c901d101b4bd51d44d396b9f3d038d00e781c5b67e` | z3's probe: both walks on the pilot |
+| `rdx_dump.py` | `122702c647efc4518af51a7a4e99bba9d7d37332cbfbcc54f59734b2d28dde9b` | changed: adds `kept_walk_np` (z3); the loop stays the reference |
+| `test_rdx.py`, `rdx_mutation.py` | `8360dbf5…`, `270c251f…` | changed: 38 tests, 51 mutants (four for the vectorized walk) |
+| `test_rdx_stages.py`, `rdx_mutation_stages.py` | `f0028d04…`, `462b5934…` | 12 tests, 21 mutants |
+| `smoke_rdx_stages.sh` | `fa38c69588fe8aa25e4fe7e2cd59ffa1196afd36e7b7cb80a260527df242542c` | 29 smoke cases (`launch/smoke.txt`) |
+
+**Job names.** One family, `rdx_<stage>_<playlist>`:
+- `rdx_s1_1A`;
+- `rdx_s2_<PL>` for the other eleven;
+- `rdx_s2_merge`;
+- `rdx_s3_a` and `rdx_s3_b`.
+
+The prefix is **`rdx_`**. The director announces it to every fenced lane before the first submit.
+
+**The fence:** `cov2d`, `t2a`, `ll5d`, `e96data`, `rpd_` and `rsn_`.
+- Every job script checks it at its start.
+- The event-loop job checks it again immediately before its binary.
+- The connect checks it before every submit, and also refuses another `rdx_` job for s1 and m.
+
+**The cap gate** (`rdx_cap.py`, before every submit) adds three things and refuses unless the total is at most 2.5
+node-h:
+- the charge of every ended `rdx_` job sacct lists;
+- the ceiling of every unfinished one;
+- the ceiling of every logged submission sacct does not yet list (the sacct lag).
+
+Plus the wanted job's own ceiling. Exclusive jobs are charged at wall time × nodes; shared event-loop jobs at 0.0391
+node-h per hour, MP-1 S1's billed rate for the same request.
+
+**Every connect step:**
+- refuses unless the host is loginNN and no Slurm job is set;
+- requires the deploy to be clean at the step's pin;
+- records the stat of the purge-exposed MP-1 inputs (S0's `base_cv.root`, S1's twelve zero loops, `lat_zero.npz`,
+  `lat_zero_bkg.npz`), and STOPs if one is missing;
+- checks the step's read set against the pinned `policy-config.json` (prologue3) and RDX's never-read list. The list
+  holds `of_inputs_5d.npz` and its background dump, the 2D merged CV and `$UNI`, and the LL5D gate input roots cov2d
+  named.
+
+The director's gate files are written by the steps `gs2`, `gmerge`, `gs3a` and `gs3b`, on the director's go, and never
+overwritten.
+
+**Input overlap, by stage.** Nothing in this table is on the protected list, except the one exception below.
+
+| stage | reads | how |
+|---|---|---|
+| 0 | the canonical source tree, `opt/lib`, S0's MANIFEST, the MParamFiles data tree | the source tree by rsync; the MParamFiles manifest by O_NOATIME, the protected NuE file included |
+| 1, 2 (event loops) | the AnaTuples of S0's manifests; the patched binary; MParamFiles at run time | the binary reads them plainly; the AnaTuples' size and mtime are checked against `ANATUPLE-SHA256.tsv`'s rows |
+| c1, c2 | S0's `base_cv.root` and S1's zero loops; RDX's loops | the references by O_NOATIME copy, at their pinned sha256s |
+| merge | RDX's twelve loops (at the digests c2 wrote); 5B's committed ALL flux file; `lat_zero.npz`, `lat_zero_bkg.npz` | the lat_zero files by the connect's O_NOATIME copies |
+| 3 | RDX's npz, background dump and sidecar; the staged `lat_zero` copies; the frozen `tune_v1.json` | at the digests the stage-3 pin commits (`rdx-inputs-SHA256SUMS`) |
+
+**The NuE exception** (the director's ruling with cov2d's no-objection of 2026-11-12). The event loops read the
+cov2d-protected `MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt` (`e38ad7d2…`) plainly,
+once, at initialisation (`runEventLoopOmniFold.cpp:1698`, `SetNuEConstraint(true)`). Every event loop of the analysis
+does. The terms:
+1. The job checks the fence immediately before the binary.
+2. The connect checks the fence before each submit.
+3. The director's `rdx_` announcement asks the fenced lanes not to start an atime-checked gate while an `rdx_s1` or
+   `rdx_s2` job is pending or running.
+4. This section names the overlap.
+
+cov2d's conditions:
+- **(a)** The first `rdx_` job starts only after cov2d has taken the LL5D gates' atime-post. Step s1 takes that UTC
+  time, as the director passes it on, refuses unless it is given and already past, and records it in
+  `gates/ll5d_atime_post.txt`. Step s2 requires that record. squeue alone is never relied on.
+- **(b)** cov2d's atime-snapshot connects refuse while an `rdx_` job is queued or running. That is enforced on cov2d's
+  side.
+- **(c)** Each event-loop job logs the NuE file's `atime_ns` and `mtime_ns`, with the UTC time, before and after its
+  run. The logs go into the receipt.
+
+**z3, the merge's walk** (the director's ruling).
+- **The walk.** The dump walks with `kept_walk_np`, vectorized.
+  - Every comparison and product is the loop's, on the same float64 values.
+  - The one transcendental step, the muon-angle cut, is taken by numpy, and every row within 1e-12 rad of it is
+    re-decided by `in_truth_phase_space` itself.
+  - The loop `kept_walk` stays the reference. Tests require bitwise equality, border rows included. A flipped
+    reference function shows the border rule decides those rows.
+- **The probe.** Step c1 runs both walks on the 1A pilot output, requires them bitwise equal, and records the seconds
+  and peak memory of each.
+- **The merge limit** is 1.5 × the vectorized walk's ×12.25 projection, written into `gates/merge.ok` by `gmerge`.
+  If the resulting ceiling takes the total past 2.5, it STOPs to the director.
+
+**A departure from §3's wording:** the AnaTuple pins are checked by size and mtime, not by recomputing sha256. 1A alone
+is about 0.7 TB of MC. The sha256s stay the manifest's.
+
+**Stage 3's pin.** After the merge checks, the digests of RDX's npz, background dump and sidecar are committed as
+`nd-unfolding/rdx/rdx-inputs-SHA256SUMS`. That commit's merge is stage 3's pin, as RSN's M_P1 was, and the arms
+deploy (`deploy3`) is cloned at it.
+
+**The smoke** (`launch/smoke.txt`, 29 cases) used a tiny git deploy, fake AnaTuples and gates, and stubs for
+hostname, squeue, sacct and sbatch. It never connects or submits. It covers:
+- **each job script's pass path and refusals:**
+  - name, limit, fence (ll5d, rsn_), md5, an uncommitted manifest, an AnaTuple mtime, an existing output;
+  - the merge gate's limit, a missing `loops.sha256`, an existing merge;
+  - a tampered sidecar, k1 FAIL, a missing gate, a wrong pin;
+- **the arms' fifteen step lines,** with their flags;
+- **the connect:**
+  - the gate steps;
+  - condition (a)'s missing and future times;
+  - the fence (e96data);
+  - the cap gate;
+  - the pilot's submit with its exact argv;
+  - a dtn host and a bad pin.
+
+The smoke found one real defect, fixed here: the arms launcher's `python3 -c` import wrote `__pycache__` into the
+deploy and dirtied it for the next job. It now runs `python3 -B`.
 
 ## 3. Stages and gates
 
