@@ -372,7 +372,7 @@ Production uses $n=5$ iterations. Huang \emph{et al.}~\cite{Huang:2025omnifold} 
 % The figure referee read's check A (secondary-results/referee-figure-deformation-20261112; the director's ruling, 2026-11-12): docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-figure-deformation-20261112/check-a/a_recovery.json, a_recovery.py, keys rec-*. Definitions as in a_recovery.py's docstring; the standard error of f from the two ensembles' standard errors of the mean (i exact).
 \paragraph{How far the reported estimator's cells follow the truth changes.}
 \label{supp:recovery}
-For each truth change of the paper's figure on generator-sized truth changes, and for each $(\Eavail,W)$ cell that meets the support rule and has an injected change of magnitude $|i|$ above \SI{\fvval{rec-thr}}{\percent}, which keeps the standard error of $\psi$ small, the recovered fraction is $\psi=[(1+r)(1+i)-(1+r_{0})]/i$. Here $i$ is the injected change, $r$ the mean residual of the 20 pseudo-experiments against the changed truth and $r_{0}$ the mean residual of the 40 pseudo-experiments at the nominal truth, at most \SI{0.1}{\percent} in every supported cell.
+For each truth change of the paper's figure~\ref*{P-fig:deformation}, and for each $(\Eavail,W)$ cell that meets the support rule and has an injected change of magnitude $|i|$ above \SI{\fvval{rec-thr}}{\percent}, which keeps the standard error of $\psi$ small, the recovered fraction is $\psi=[(1+r)(1+i)-(1+r_{0})]/i$. Here $i$ is the injected change, $r$ the mean residual of the 20 pseudo-experiments against the changed truth and $r_{0}$ the mean residual of the 40 pseudo-experiments at the nominal truth, at most \SI{0.1}{\percent} in every supported cell.
 
 For the three historical shapes, the last three rows of table~\ref{tab:recovery}, $i$ is computed from the half-sample truths of their 60 pseudo-experiments (20 per shape) and of 40 at the nominal truth. These give it exactly, unless a fine cell populated in the full simulation is empty in all 100 half samples. For the GiBUU-to-GENIE change, $i$ is computed from the full simulation, for the same changed truth as its pseudo-experiments.
 
@@ -398,8 +398,7 @@ NuWro $(\pT,\pPar,\Eavail)$ & \fvval{rec-w3-n} & \fvval{rec-w3-opp} & \fvval{rec
 % "not the reported estimator". Producer: figures/methods_m3/fig_m3_deformation.py (Codex 12dbe081c), the s5n family N
 % of the dev receipt (state/s5n/stage1/dev_receipt.json C4), 60 experiments; the variant is configuration (d) above.
 \paragraph{The lower-capacity variant at a generator-sized truth change.} Figure~\ref{fig:supp-lowcap} shows the
-$(\Eavail,W)$ residuals of configuration~(d), the lower-capacity variant of the paper's section on generator-sized truth
-changes, when the true $\Eavail$ shape is reweighted by the GiBUU-to-GENIE ratio. Its deviations occur with or without background. Background subtraction alone therefore does not explain its residual.
+$(\Eavail,W)$ residuals of configuration~(d), the lower-capacity variant of the paper's \psec{sec:closure}, when the true $\Eavail$ shape is reweighted by the GiBUU-to-GENIE ratio. Its deviations occur with or without background. Background subtraction alone therefore does not explain its residual.
 \begin{figure}[tb]
 \centering
 \includegraphics[width=\textwidth]{figures/methods_short/m3_fig2_deformation_lowcap.pdf}
@@ -407,8 +406,8 @@ changes, when the true $\Eavail$ shape is reweighted by the GiBUU-to-GENIE ratio
 for the lower-capacity variant, configuration~(d), not the reported estimator (refinement 100 trees, 8 leaves; the
 configuration of the companion note's generator-sized-change study, ref.~\cite{AnalysisNote2026}, section~\ref*{N-sec:val-negweight}): GiBUU/GENIE $\Eavail$ shape, 60 pseudo-experiments. Gray step:
 injected change. Standard errors of the mean: at most \SI{\fvval{s5n-gibuu-semax}}{\percent}. ``exp.'': pseudo-experiments. $W$ bin 6 is
-$W\ge\SI{3}{GeV}$. The reported estimator at this truth: the paper's section on generator-sized truth changes, and the GiBUU
-$\Eavail$ shape row of its fake-data table.}
+$W\ge\SI{3}{GeV}$. The reported estimator at this truth: the paper's \psec{sec:closure}, and the GiBUU
+$\Eavail$ shape row of its table~\ref*{P-tab:fd16}.}
 \label{fig:supp-lowcap}
 \end{figure}
 
@@ -417,7 +416,7 @@ $\Eavail$ shape row of its fake-data table.}
 % absence-ok: scoping what RS1's declared tests cover (K1 and K5 are separate tests; the record's NOT CITABLE FOR), not a claim that a result does not exist
 
 % Referee recheck (gpt-6.1-sol, 2026-11-11; RESPONSE.md row s7): moved from the paper's section 6.1 (ENS1 keys ens1-g-*, OUTCOME-20261109-ens1-stab-pass-bias-worse.md).
-\paragraph{The ensemble average's bias criterion.} The ensemble average of the paper's section on reproducibility is worse than the reported estimator at one truth, the GiBUU-to-GENIE $\Eavail$ shape. There, its root-mean-square closure bias over the 16 cells exceeded the reported estimator's by \fvval{ens1-g-drms} (\fvval{ens1-g-rms} against \fvval{ens1-g-rmsc}), \fvval{ens1-g-ratio} times the floor fixed in advance, \fvval{ens1-g-floor}. The ensemble average's maximum-bias excess, \fvval{ens1-g-dmax}, was within its floor of \fvval{ens1-g-maxfloor}.
+\paragraph{The ensemble average's bias criterion.} The ensemble average of the paper's \psec{sec:cov5d} is worse than the reported estimator at one truth, the GiBUU-to-GENIE $\Eavail$ shape. There, its root-mean-square closure bias over the 16 cells exceeded the reported estimator's by \fvval{ens1-g-drms} (\fvval{ens1-g-rms} against \fvval{ens1-g-rmsc}), \fvval{ens1-g-ratio} times the floor fixed in advance, \fvval{ens1-g-floor}. The ensemble average's maximum-bias excess, \fvval{ens1-g-dmax}, was within its floor of \fvval{ens1-g-maxfloor}.
 
 % Group C (methods-short-20261109, the director's ruling 2 of 2026-11-10): from the ESS record of #1027,
 % fd/receipts-ess/cluster/ess/ess.json (sha256 d4f1268d..., pinned in make_values_fived16.py as "ess"; its README's
@@ -897,7 +896,7 @@ Against the statistical block alone, every record other than the two closures at
 % the retained-fraction paragraph), then the classes and labels; Fig. S3 is placed [!htbp] so that it stays in S8.2.
 % Group B4b (#1025; limitation-resolver's draft): the FD-PRR readout (9238f22b), table["B0/<t>/s991000"], ibu["K5/<t>/s991000"] and ibu["K200/<t>/s991000"]
 % (rho, rms_b, grade.chi2) and readings.floor (s_IBU, T_Q, bars.IBU; "a transfer"); FD-PRR-DECLARATION.md:217-226, :236-251, :253-266, :282, :297-300. Keys prr-rho-*, prr-rms-*, prr-chi2-*, prr-sibu, prr-tq.
-\paragraph{The retained fraction.} The prior-retention study of the paper's section on what moves the retained prior measures, at the two flagged truths, the retained fraction $\rho=-\sum_{c\in S}b_cd_c/\sum_{c\in S}d_c^2$ on the sixteen cells, where $d_c=(X_c-P_c)/P_c$ is the truth's relative departure from the prior, $b_c=(\hat X_c-X_c)/P_c$ the relative bias, and $S$ the cells with $|d_c|\geq0.01$. A result equal to the prior has $\rho=1$, a result equal to the truth has $\rho=0$, and a negative $\rho$ means that, along the prior-to-truth direction, the result overshoots the truth. A negative $\rho$ says nothing about the total bias. Each value is noise-free, on one simulation split.
+\paragraph{The retained fraction.} The prior-retention study of the paper's \psec{sec:prr} measures, at the two flagged truths, the retained fraction $\rho=-\sum_{c\in S}b_cd_c/\sum_{c\in S}d_c^2$ on the sixteen cells, where $d_c=(X_c-P_c)/P_c$ is the truth's relative departure from the prior, $b_c=(\hat X_c-X_c)/P_c$ the relative bias, and $S$ the cells with $|d_c|\geq0.01$. A result equal to the prior has $\rho=1$, a result equal to the truth has $\rho=0$, and a negative $\rho$ means that, along the prior-to-truth direction, the result overshoots the truth. A negative $\rho$ says nothing about the total bias. Each value is noise-free, on one simulation split.
 
 Table~\ref{tab:prr-rho} gives $\rho$, the root-mean-square relative bias over the sixteen cells, and the noise-free $\chi^2$ against the truth's grade matrix, for the five-observable estimator and for IBU at five iterations. At 200 iterations, IBU gives $\rho=\fvval{prr-rho-ibu200-gibuu}$ at the GiBUU hybrid truth and $\fvval{prr-rho-ibu200-q3}$ at the $q_3$ tilt. The retained fraction is undefined at a truth where fewer than two cells depart from the prior by at least \SI{1}{\percent}.
 \begin{table}[htbp]
@@ -1131,7 +1130,7 @@ Weakening only the flux correlations by \fvval{sens-alpha-pct}\,\% lowers the $\
 % reason (DECISION-20261110-joseph-vprior-withhold.md item 1); "grades one truth's closure pull", left from the two-rule
 % contrast that 716ce04ca removed ("the first one truth's closure pull and the second the size of the bias spread"), now
 % says what it meant: each graded truth's pull separately.
-The paper grades two per-cell bias-screening rules. This section defines the first, the usage-recommendation rule. The second, the bias-half rule, is graded in the paper's section on the fake-data tests of the sixteen-cell result and in table~\ref{tab:tests-result} (test 6).
+The paper grades two per-cell bias-screening rules. This section defines the first, the usage-recommendation rule. The second, the bias-half rule, is graded in the paper's \psec{sec:fd16} and in table~\ref{tab:tests-result} (test 6).
 
 % Split (style batch 2026-11-10 (the director, on journal-editor's style review, report_supplement.md), A2, and X3: the rules named in place of their numbers; #981's quotes Q09 and Q19 verbatim then; restyled 2026-11-12: Q09 removed and Q19 re-sourced, D3 and D4, and the house style).
 The usage-recommendation rule applies per cell the thresholds of the usage recommendations of ref.~\cite{ATLAS:2024jets}: (i) at least 5000 effective simulated events, here those of the simulation's weights, a deviation from that definition, (ii) a data statistical uncertainty below \SI{15}{\percent}, and (iii) $|z|\leq2$ at each of the 12 graded truths under the reported covariance.
