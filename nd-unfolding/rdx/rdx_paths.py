@@ -8,6 +8,12 @@
     rdx_paths.py atime PATH [PATH ...]
         prints size, mtime and atime (UTC) of each purge-exposed MP-1 input (S0's base_cv.root, S1's zero loops,
         lat_zero.npz and its background dump), by os.stat only, and refuses (exit 3) if one is missing.
+    rdx_paths.py stage --dest DIR SRC SHA256 [SRC SHA256 ...]
+        copies each source into DIR by os.open(O_RDONLY | O_NOATIME); refuses (exit 3) unless the copy's sha256 is
+        the pin and the source's size, mtime and atime are unchanged, and never overwrites;
+    rdx_paths.py manifest --root DIR --out FILE
+        the sha256 of every file under DIR, each read by O_NOATIME (so a protected file in the tree, such as the NuE
+        constraint file under MParamFiles/data, keeps its atime), written as "sha256  relative/path" lines.
 Exit 0 clear, 3 refused, 2 unusable input.
 """
 import argparse
@@ -61,6 +67,62 @@ def atime(paths):
     return {"files": rows, "missing": missing, "verdict": "PRESENT" if not missing else "MISSING"}
 
 
+def noatime_sha(src, dst=None):
+    """sha256 and size of src read once by O_NOATIME (copied to dst if given); size, mtime and atime must not move."""
+    import hashlib
+    s0 = os.stat(src)
+    h, n = hashlib.sha256(), 0
+    fi = os.open(src, os.O_RDONLY | os.O_NOATIME)
+    fo = open(dst, "xb") if dst else None
+    try:
+        while True:
+            b = os.read(fi, 1 << 24)
+            if not b:
+                break
+            h.update(b)
+            n += len(b)
+            if fo:
+                fo.write(b)
+    finally:
+        os.close(fi)
+        if fo:
+            fo.close()
+    s1 = os.stat(src)
+    if (s0.st_size, s0.st_mtime_ns, s0.st_atime_ns) != (s1.st_size, s1.st_mtime_ns, s1.st_atime_ns) or n != s0.st_size:
+        raise ValueError("%s: size, mtime or atime moved, or %d bytes read of %d" % (src, n, s0.st_size))
+    return h.hexdigest(), n
+
+
+def stage(dest, pairs):
+    os.makedirs(dest, exist_ok=True)
+    rows = []
+    for src, pin in pairs:
+        dst = os.path.join(dest, os.path.basename(src))
+        if os.path.exists(dst):
+            raise ValueError("refusing to overwrite %s" % dst)
+        sha, n = noatime_sha(src, dst)
+        if sha != pin:
+            os.remove(dst)
+            return {"staged": rows, "failed": {"src": src, "sha256": sha, "pin": pin}, "verdict": "REFUSED"}
+        os.chmod(dst, 0o444)
+        rows.append({"src": src, "dst": dst, "bytes": n, "sha256": sha})
+    return {"staged": rows, "verdict": "STAGED"}
+
+
+def manifest(root, out):
+    if os.path.exists(out):
+        raise ValueError("refusing to overwrite %s" % out)
+    lines = []
+    for d, _, files in sorted(os.walk(root)):
+        for f in sorted(files):
+            p = os.path.join(d, f)
+            if os.path.isfile(p) and not os.path.islink(p):
+                lines.append("%s  %s" % (noatime_sha(p)[0], os.path.relpath(p, root)))
+    with open(out, "x") as fh:
+        fh.write("\n".join(lines) + "\n")
+    return {"root": root, "files": len(lines), "out": out, "verdict": "PRESENT"}
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="cmd")
@@ -69,14 +131,29 @@ def main(argv=None):
     p.add_argument("--read", nargs="+", required=True)
     t = sub.add_parser("atime")
     t.add_argument("paths", nargs="+")
+    g = sub.add_parser("stage")
+    g.add_argument("--dest", required=True)
+    g.add_argument("pairs", nargs="+")
+    m = sub.add_parser("manifest")
+    m.add_argument("--root", required=True)
+    m.add_argument("--out", required=True)
     a = ap.parse_args(argv)
     try:
-        rec = policy(a.config, a.read) if a.cmd == "policy" else atime(a.paths)
+        if a.cmd == "policy":
+            rec = policy(a.config, a.read)
+        elif a.cmd == "atime":
+            rec = atime(a.paths)
+        elif a.cmd == "stage":
+            if len(a.pairs) % 2:
+                raise ValueError("stage takes SRC SHA256 pairs")
+            rec = stage(a.dest, list(zip(a.pairs[0::2], a.pairs[1::2])))
+        else:
+            rec = manifest(a.root, a.out)
     except (OSError, ValueError) as e:
         print(json.dumps({"error": str(e)}))
         return 2
     print(json.dumps(rec, indent=1))
-    return 0 if rec["verdict"] in ("CLEAR", "PRESENT") else 3
+    return 0 if rec["verdict"] in ("CLEAR", "PRESENT", "STAGED") else 3
 
 
 if __name__ == "__main__":
