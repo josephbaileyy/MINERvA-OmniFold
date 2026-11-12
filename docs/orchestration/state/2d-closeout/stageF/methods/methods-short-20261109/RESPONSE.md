@@ -829,8 +829,8 @@ check_round's ONCE list is updated in the same commit, with a comment naming the
 
 ## Pre-submission checklist (director-helper-3; items added as the director rules)
 
-- [ ] **If T3's MW reading lands, revise §7.1 item 3 and §3.1's last sentence on the misses regression** (the director,
-  2026-11-12). The RSN text, once applied, says the weighted regression's effect on the fake-data flags "was not
+- [ ] **If T3's MW reading lands, revise §7.1 item 3, §3.1's last sentence and Supplement S4's "do not test" paragraph on
+  the misses regression** (the director, 2026-11-12; S4 added from the consult, consult-b0rs1rsn/out.txt :67). The RSN text, once applied, says the weighted regression's effect on the fake-data flags "was not
   tested". That is true until T3's B0/MW reading (T3-BINDING-1.md :38, after LL5D) reads out. This is a recorded
   dependency, not a pending variant: no current plan has MW land before submission.
   <!-- absence-ok: records a pending dependency (T3 MW runs after LL5D, T3-BINDING-1.md :38); not a claim that a result does not exist -->
