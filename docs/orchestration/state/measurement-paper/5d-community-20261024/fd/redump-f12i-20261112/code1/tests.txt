@@ -1,0 +1,54 @@
+# HEAD f837f6a20a3eca2e6262198daacddb550a6e1c5c
+# clean clone, serial, nice 19, OMP/MKL/OPENBLAS/NUMEXPR threads 1, Python 3.12.2, numpy 1.26.4, 2026-11-12T05:55:33Z
+# 578c64ea600e6cba1ddd2de6c1abfa51839d4e163d4beb81b8aab9e9b052fb03  runEventLoopOmniFold-truthx.patch
+# 177259b8f8bc602319a16de7768ce1ca75c23a545fda144471c08629d50b9fde  rdx_common.py
+# 9c0878631e0be81569e7b4f2100c643c8337efc96449ab27fb981086d2d0b0d5  rdx_dump.py
+# 83d585a490954987b3d9ca1595f9fe708012f76a9de740e2c6f3dc17357925db  rdx_unfold.py
+# 9d71cf6d1935a00442dd58631957a83d95ef8a4cefddc3522811006a8e29ef3b  rdx_align.py
+# db9456c3954dee42eac8adca8206a754feac3626e352ad14f3a79226406ff5cf  rdx_truthx_rows.py
+# 32372e2dfaa157a1799aada0aaaf06443974d4de4bda48a8b8b0c39cfc7ea560  rdx_truthx_npz.py
+# 6a85d86bc371f1d6aa50caeb4fba84b9e95dc074dccf1ddb398b6acc758a3b23  rdx_provenance.py
+# ce8ed1c64ae38e6ff9d8e8c2bb062b7b3e789f2a07dfb9b6a81bec8f25e05c12  test_rdx.py
+# 11d9ae53c081baa3713adb4f9590aabfd438b6f847e19568f5843e3f4fc358ba  rdx_mutation.py
+# status: 0 changed files
+test_equal_with_exactly_c1s_extras_passes (nd-unfolding.rdx.test_rdx.Align.test_equal_with_exactly_c1s_extras_passes) ... ok
+test_the_align_refusals (nd-unfolding.rdx.test_rdx.Align.test_the_align_refusals) ... ok
+test_the_argument_refusals (nd-unfolding.rdx.test_rdx.Arguments.test_the_argument_refusals) ... ok
+test_a_replica_that_differs_from_the_npz_refuses (nd-unfolding.rdx.test_rdx.KeptRows.test_a_replica_that_differs_from_the_npz_refuses) ... ok
+test_the_playlist_index_and_its_refusals (nd-unfolding.rdx.test_rdx.KeptRows.test_the_playlist_index_and_its_refusals) ... ok
+test_the_replica_equals_the_collector_row_for_row (nd-unfolding.rdx.test_rdx.KeptRows.test_the_replica_equals_the_collector_row_for_row) ... ok
+test_packing_and_lookup (nd-unfolding.rdx.test_rdx.Keys.test_packing_and_lookup) ... ok
+test_an_ungated_fill_is_caught (nd-unfolding.rdx.test_rdx.Patch.test_an_ungated_fill_is_caught) ... ok
+test_every_added_line_is_gated_or_a_declared_declaration (nd-unfolding.rdx.test_rdx.Patch.test_every_added_line_is_gated_or_a_declared_declaration) ... ok
+test_the_patch_fills_denom_reco_and_miss_rows_and_refuses_both_gates (nd-unfolding.rdx.test_rdx.Patch.test_the_patch_fills_denom_reco_and_miss_rows_and_refuses_both_gates) ... ok
+test_the_patch_removes_only_the_explicit_names_line (nd-unfolding.rdx.test_rdx.Patch.test_the_patch_removes_only_the_explicit_names_line) ... ok
+test_the_tracked_source_is_s0s_pin_and_the_patch_applies_to_it (nd-unfolding.rdx.test_rdx.Patch.test_the_tracked_source_is_s0s_pin_and_the_patch_applies_to_it) ... ok
+test_the_permutation_is_joint_seeded_and_deterministic (nd-unfolding.rdx.test_rdx.Permutation.test_the_permutation_is_joint_seeded_and_deterministic) ... ok
+test_a_sidecar_for_another_npz_or_with_duplicate_ids_refuses (nd-unfolding.rdx.test_rdx.Pipeline.test_a_sidecar_for_another_npz_or_with_duplicate_ids_refuses) ... ok
+test_a_weight_or_coordinate_mismatch_fails_the_join (nd-unfolding.rdx.test_rdx.Pipeline.test_a_weight_or_coordinate_mismatch_fails_the_join) ... ok
+test_mutant_d6a_truthx_offset_by_one_row_fails_the_join (nd-unfolding.rdx.test_rdx.Pipeline.test_mutant_d6a_truthx_offset_by_one_row_fails_the_join) ... ok
+test_mutant_d6b_mask_on_truthx_alone_fails_the_join (nd-unfolding.rdx.test_rdx.Pipeline.test_mutant_d6b_mask_on_truthx_alone_fails_the_join) ... ok
+test_the_build_refuses_an_npz_the_replica_does_not_reproduce (nd-unfolding.rdx.test_rdx.Pipeline.test_the_build_refuses_an_npz_the_replica_does_not_reproduce) ... ok
+test_the_build_refuses_to_overwrite_and_refuses_a_non_finite_truthx (nd-unfolding.rdx.test_rdx.Pipeline.test_the_build_refuses_to_overwrite_and_refuses_a_non_finite_truthx) ... ok
+test_the_sidecar_joins_back_to_every_playlist_row (nd-unfolding.rdx.test_rdx.Pipeline.test_the_sidecar_joins_back_to_every_playlist_row) ... ok
+test_a_changed_pin_or_library_or_a_missing_library_fails (nd-unfolding.rdx.test_rdx.Provenance.test_a_changed_pin_or_library_or_a_missing_library_fails) ... ok
+test_a_matching_build_passes_and_lists_the_synced_difference (nd-unfolding.rdx.test_rdx.Provenance.test_a_matching_build_passes_and_lists_the_synced_difference) ... ok
+test_the_declared_pins_are_build_mp1_s0s (nd-unfolding.rdx.test_rdx.Provenance.test_the_declared_pins_are_build_mp1_s0s) ... ok
+test_a_good_sidecar_loads (nd-unfolding.rdx.test_rdx.Sidecar.test_a_good_sidecar_loads) ... ok
+test_the_sidecar_refusals (nd-unfolding.rdx.test_rdx.Sidecar.test_the_sidecar_refusals) ... ok
+test_a_zeroed_miss_row_a_partnerless_row_and_a_bad_enu_fail (nd-unfolding.rdx.test_rdx.TruthxRows.test_a_zeroed_miss_row_a_partnerless_row_and_a_bad_enu_fail) ... ok
+test_duplicate_identities_refuse (nd-unfolding.rdx.test_rdx.TruthxRows.test_duplicate_identities_refuse) ... ok
+test_the_rows_check_passes_and_counts (nd-unfolding.rdx.test_rdx.TruthxRows.test_the_rows_check_passes_and_counts) ... ok
+test_a_loop_that_predicts_on_other_rows_refuses (nd-unfolding.rdx.test_rdx.WideRegressor.test_a_loop_that_predicts_on_other_rows_refuses) ... ok
+test_a_sidecar_with_the_wrong_row_count_refuses (nd-unfolding.rdx.test_rdx.WideRegressor.test_a_sidecar_with_the_wrong_row_count_refuses) ... ok
+test_the_transfer_probe_uses_rdx_mask_and_the_widened_rows (nd-unfolding.rdx.test_rdx.WideRegressor.test_the_transfer_probe_uses_rdx_mask_and_the_widened_rows) ... ok
+test_the_weight_composes_with_the_wide_regressor (nd-unfolding.rdx.test_rdx.WideRegressor.test_the_weight_composes_with_the_wide_regressor) ... ok
+test_the_wide_regressor_sees_truthx_aligned_to_the_loops_fit_and_predict_rows (nd-unfolding.rdx.test_rdx.WideRegressor.test_the_wide_regressor_sees_truthx_aligned_to_the_loops_fit_and_predict_rows) ... ok
+test_without_truthx_the_wrapper_reproduces_the_plain_loop_and_widening_changes_it (nd-unfolding.rdx.test_rdx.WideRegressor.test_without_truthx_the_wrapper_reproduces_the_plain_loop_and_widening_changes_it) ... ok
+
+----------------------------------------------------------------------
+Ran 34 tests in 0.403s
+
+OK
+[INFO] signal: kept=3347 dropped_phase=613 bad_weight=20 excluded_nonfinite_truth_support=20
+# exit 0
