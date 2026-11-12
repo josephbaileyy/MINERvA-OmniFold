@@ -36,3 +36,24 @@
 - **Not citable for:** any re-dump result; any change to the re-dump lane's design or price.
 
 Nothing is submitted, deposited or tagged.
+
+## Addendum (2026-11-12): GEANT_Neutron and GEANT_Proton stay a follow-up
+
+**Context.** #971 left Joseph an open item (`OUTCOME-20261109-band-diagnosis.md:74-75`): "whether a further study of
+these two bands is worth declaring". The director explained the records' state (`GEANT-NP-REFEREE-MAP.md`, #1081):
+- the pseudo-data and simulation-side constructions differ for these two bands in 6 and 4 cells;
+- every listed input operation matches;
+- the departure is seed-stable and arises inside the estimator, with its mechanism unknown;
+- LL5D's primary reading excludes the two bands.
+
+The director recommended leaving it as a follow-up after the methods paper.
+
+**Joseph's words, verbatim:**
+
+> okay lets leave GEANT as a followup
+
+(`75ff40c3d06e9987`, sha256 of the text plus a final newline).
+
+**Decided.** No study of the two bands is declared before the methods paper. The item goes on the post-paper
+follow-up list. The paper keeps its restricted-test wording (fresh round F2.2 and F2.4). #971's CITABLE and NOT CITABLE
+rows are unchanged.
