@@ -1,13 +1,14 @@
-# RDX: the event-loop re-dump for F1.2(i) (DECLARATION, design rev 2, DRAFT)
+# RDX: the event-loop re-dump for F1.2(i) (DECLARATION, design rev 3, DRAFT)
 
 **Session:** tier3-design, 2026-11-12. This is its own lane, as RSN-BINDING-1 ruling 6 directs. The F1.2(i) re-dump
 is approved in principle: a pilot on 1A first, and a cap of 2.5 node-h with the pilot included.
 - Rev 1 took the director's rulings on rev 0. Rev 2 answers coverage-5b-audit's design read of rev 1 (five majors,
-  D1–D5, and lows x1–x6) under the director's rulings on it (§8).
+  D1–D5, and lows x1–x6) under the director's rulings on it. Rev 3 answers its re-read of rev 2: one new major,
+  D6, only, at the director's ruling. The re-read's lows y1–y4 are on the follow-up list (§8).
 - Joseph decided on 2026-11-12 that the methods paper does not wait for this re-dump. Results are folded in if they
   arrive in time (DECISION-20261112-joseph-1a-cfs-and-redump-timing.md, #1092).
 
-**For:** coverage-5b-audit's read of rev 2, then code and tests, then an audit delta, then the director's binding.
+**For:** coverage-5b-audit's D6 delta, then the director, then code and tests, then an audit delta, then the director's binding.
 **Nothing has run, and no code exists.**
 <!-- absence-ok: operational status of this lane's own runs and code, not a claim that a result does not exist -->
 
@@ -124,6 +125,14 @@ If C-ALIGN-1A fails, this provenance names the cause:
 
 Without the flag, the output is byte-identical to today's. This is tested.
 
+**The row mask (D6).** The dump builds MCgen through `und`'s collector, whose finite-observable contract drops the
+-9999 truth-sentinel rows (`s5p_input_dumps.py:94-103`, KNOWN_ISSUES 76).
+- `truthx` and `mc_id` are read in the same tree pass, in the same order.
+- They are subset by the **same** row mask, computed from the existing observables only, so the added columns can
+  never change which rows are kept.
+- C-TRUTHX-NPZ (§3) checks the association row by row. Two declared mutants must be killed by it: one that offsets
+  `truthx` by one row, and one that applies the mask to `truthx` alone (or drops it from `truthx` alone).
+
 ### C3. The arms' unfold
 
 RSN's `rsn_unfold.py` gains `--regressor-features std|wide` and `--truthx-permute SEED`.
@@ -139,6 +148,7 @@ RSN's `rsn_unfold.py` gains `--regressor-features std|wide` and `--truthx-permut
 - `rdx_align.py` applies W2's `equal` rule through `phase1/mp1/omnifile_io.py`'s highest-cycle reader. It runs on the
   intersection of branches, and requires that the only extra branches are C1's.
 - `rdx_truthx_rows.py` is C-TRUTHX (§3).
+- `rdx_truthx_npz.py` is C-TRUTHX-NPZ (§3, D6).
 
 Tests and a declared mutation list follow the RSN pattern. A smoke harness is committed with each connect script.
 
@@ -176,6 +186,15 @@ Tests and a declared mutation list follow the RSN pattern. A smoke harness is co
    - The merge, through 5B's per-period chain (`fd_ct_period_inputs.py merge`), then the dump with `--truthx`.
    - **C-ALIGN-ALL:** the dump equals `lat_zero.npz` on every common key, bitwise (5B's K1 rule), and the `truthx` and
      `mc_id` rows number exactly the MCgen rows. Any failure is a STOP.
+   - **C-TRUTHX-NPZ (D6), the per-row join, before stage 3:**
+     - every `mc_id` value (playlist, run, subrun, event) is unique;
+     - for every MCgen row, that event's `mc_signal_reco` row in the per-playlist omnifile has (`MC`, `MC_pz`,
+       `w_truth`) equal to the npz row's (`MCgen[:, :2]`, `w_truth`) bitwise at float32, as the dump casts them;
+     - its five `truthx` values equal the npz row's `truthx`, bitwise.
+
+     Any failure is a STOP. A count check alone would let a shifted or wrongly masked column through, with the
+     right count and marginals but no event association. That is the X1p null itself, and it would produce the
+     licensed "no effect" sentence falsely.
 4. **Stage 3, the arms (§4).** Two jobs, S3a (eight steps) and S3b (seven), each on one exclusive CPU node. They run
    after C-ALIGN-ALL PASSES and the director gives the go.
 
@@ -306,6 +325,15 @@ If NC-X fails, nothing is read.
 - **x4:** a playlist index in `mc_id`.
 - **x5:** per-playlist limits.
 - **x6:** the gate-unset sentence.
+
+## 8b. Rev 3 changes (coverage-5b-audit's re-read of rev 2, 2026-11-12; D6 only, at the director's ruling)
+
+- **D6:** `truthx` and `mc_id` go through the dump's exact row mask. C-TRUTHX-NPZ joins every npz row to its
+  omnifile row by `mc_id` (`MC`, `MC_pz`, `w_truth`, `truthx`, bitwise) before stage 3. Two mutants are declared: a
+  one-row offset, and the mask applied to `truthx` alone.
+- **On the follow-up list, not in this revision:** y1 (a second null draw), y2 (R4's GiBUU and q3 reads have no null
+  partner, so they are unadjusted), y3 (all quantities relative, in W1 units) and y4 (the C-TRUTHX cross-tree risk).
+- The price is unchanged: projected ≈ 1.40, ceiling ≈ 2.17.
 
 ## 9. CITABLE FOR / NOT CITABLE FOR
 
