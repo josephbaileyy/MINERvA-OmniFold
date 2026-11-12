@@ -22,7 +22,7 @@ J = REPO / "2d-unfolding/cov2d/g2r/jobs"
 PY, ENV, JOB, ENVT, PREP, SUB = (J / "g2r_jobs.py", J / "g2r_env.sh", J / "g2r_job.sbatch", J / "g2r_envtest.sbatch",
                                  J / "g2r_prepare.sbatch", J / "g2r_submit.sh")
 TEST = REPO / "2d-unfolding/cov2d/g2r/tests/test_g2r_jobs.py"
-EXPECTED = 55
+EXPECTED = 58
 
 MUTATIONS = [
     # --- the tables
@@ -76,8 +76,18 @@ MUTATIONS = [
      "hist_rel[k] = rel_diff(a2, a1)", "EnvTest.test_each_difference_is_invalid"),
     ("the histograms not held to the tolerance", PY, "        elif not hist_rel[k] <= tol:\n", "        elif False:\n",
      "EnvTest.test_each_difference_is_invalid"),
+    ("the histogram metric max-normalized (the audit's M1)", PY,
+     "    nz = y != 0.0\n    worst = float(np.max(np.abs(x[nz] / y[nz] - 1.0), initial=0.0))\n",
+     "    nz = y != 0.0\n    worst = float(np.max(np.abs(x - y))) / float(np.max(np.abs(b)))\n",
+     "EnvTest.test_a_change_confined_to_one_small_cell"),
+    ("the empty cells unconstrained, as RE-2 leaves them", PY, "    if np.any(~nz):\n", "    if False:\n",
+     "EnvTest.test_a_cell_empty_in_the_pre_patch_product"),
+    ("NaN on both sides a difference (the audit's j5)", PY, " | (np.isnan(a) & np.isnan(b))", "",
+     "EnvTest.test_nan_and_inf_in_the_same_place_agree"),
+    ("opposite infinities agreeing", PY, "    if not (math.isfinite(a) and math.isfinite(b)):\n        return False\n", "",
+     "EnvTest.test_nan_and_inf_in_the_same_place_agree"),
     ("the TParameters not compared", PY,
-     "        if not abs(p1[k] - p2[k]) <= tol * max(abs(p1[k]), abs(p2[k])):\n", "        if False:\n",
+     "        if not same_float(p1[k], p2[k], tol):\n", "        if False:\n",
      "EnvTest.test_each_difference_is_invalid"),
     ("the JSON records compared bitwise", PY, "        problems += json_problems(ja, jb, k, tol)\n",
      "        problems += json_problems(ja, jb, k, 0.0)\n", "EnvTest.test_the_measured_rerun_noise_passes"),

@@ -337,13 +337,16 @@ REFINED = {"refined_sum": 123456.789, "refined_over_signed": 0.987654321, "refin
            "mode": "negweight-refined", "clipped": False}
 
 
-def write_product(path: Path, scale=1.0, err=None, param=1.5, named=None, run_config=None, refined=None, kind="TH2D"):
+def write_product(path: Path, scale=1.0, err=None, param=1.5, named=None, run_config=None, refined=None, kind="TH2D",
+                  contents=None):
+    """``contents``: the six cells' values in (i, j) order, in place of the default (i + 10 j) / 7, each times ``scale``."""
     import ROOT
     f = ROOT.TFile(str(path), "RECREATE")
     h = getattr(ROOT, kind)("hUnfold2D", "", 3, 0, 3, 2, 0, 2)
+    cells = iter(contents) if contents is not None else None
     for i in range(1, 4):
         for j in range(1, 3):
-            h.SetBinContent(i, j, scale * (i + 10 * j) / 7.0)
+            h.SetBinContent(i, j, scale * (next(cells) if cells is not None else (i + 10 * j) / 7.0))
             h.SetBinError(i, j, (err or 0.1) * i)
     h.Write()
     ROOT.TParameter("double")("potScale", param).Write()
@@ -414,6 +417,41 @@ class EnvTest(unittest.TestCase):
         for name, kw in cases.items():
             self.assertEqual(self.cmp(**kw)["verdict"], "INVALID", name)
 
+    def test_a_change_confined_to_one_small_cell(self):
+        """The audit's M1: five cells at 1.0 and one at 1e-3 changed by 5e-6 relative. RE-2's per-cell rule (re2_k1.compare)
+        reads 5e-6 and fails it; a max-normalized metric would read 5e-9 and pass it."""
+        base = [1.0, 1.0, 1.0, 1.0, 1.0, 1e-3]
+        write_product(self.d / "pre.root", contents=base)
+        for small, want in ((1e-3 * (1 + 5e-6), "INVALID"), (1e-3 * (1 + 1e-6), "INVALID"),
+                            (1e-3 * (1 + 0.5e-8), "PASS"), (1e-3 * (1 + 6.36e-13), "PASS")):
+            rec = self.cmp(contents=base[:5] + [small])
+            self.assertEqual(rec["verdict"], want, (small, rec["problems"]))
+        self.assertAlmostEqual(gj.rel_diff([1.0, 1e-3 * (1 + 5e-6)], [1.0, 1e-3]), 5e-6, delta=1e-12)
+
+    def test_a_cell_empty_in_the_pre_patch_product(self):
+        """A b = 0 cell (RE-2 leaves it unconstrained): |a| <= 1e-8 x max |b| (the director's ruling)."""
+        base = [1.0, 2.0, 3.0, 4.0, 5.0, 0.0]
+        write_product(self.d / "pre.root", contents=base)
+        self.assertEqual(self.cmp(contents=base[:5] + [5.0 * 0.5e-8])["verdict"], "PASS")
+        self.assertEqual(self.cmp(contents=base[:5] + [5.0 * 2e-8])["verdict"], "INVALID")
+        self.assertEqual(self.cmp(contents=base)["verdict"], "PASS")
+
+    def test_nan_and_inf_in_the_same_place_agree(self):
+        """The audit's j5: a NaN (or the same infinity) on both sides is not a difference; on one side only it is."""
+        nan, inf = float("nan"), float("inf")
+        for bad in (nan, inf):
+            base = [1.0, 2.0, 3.0, 4.0, 5.0, bad]
+            write_product(self.d / "pre.root", contents=base, param=bad, refined={"refined_sum": bad})
+            rec = self.cmp(contents=base, param=bad, refined={"refined_sum": bad})
+            self.assertEqual(rec["verdict"], "PASS", (bad, rec["problems"]))
+            self.assertEqual(self.cmp(contents=base[:5] + [6.0], param=bad, refined={"refined_sum": bad})["verdict"],
+                             "INVALID", bad)
+        self.assertEqual(gj.rel_diff([1.0, nan], [1.0, 2.0]), float("inf"))
+        self.assertEqual(gj.rel_diff([inf], [-inf]), float("inf"))
+        self.assertTrue(gj.same_float(nan, nan, 1e-8))
+        self.assertFalse(gj.same_float(nan, 1.0, 1e-8))
+        self.assertFalse(gj.same_float(inf, -inf, 1e-8))
+
     def test_json_leaves_and_the_metric(self):
         self.assertEqual(gj.json_problems({"a": [1, 2.0, "x", None, True]}, {"a": [1, 2.0 * (1 + 1e-12), "x", None, True]},
                                           "r", 1e-8), [])
@@ -423,6 +461,7 @@ class EnvTest(unittest.TestCase):
         self.assertTrue(gj.json_problems({"a": 1}, [1], "r", 1e-8))
         self.assertEqual(gj.rel_diff([0.0, 0.0], [0.0, 0.0]), 0.0)
         self.assertEqual(gj.rel_diff([1.0, 0.0], [0.0, 0.0]), float("inf"))
+        self.assertEqual(gj.rel_diff([-2.0 * (1 + 1e-9)], [-2.0]), gj.rel_diff([2.0 * (1 + 1e-9)], [2.0]))  # b < 0 per cell
         self.assertEqual(gj.rel_diff([1.0], [1.0, 2.0]), float("inf"))
         self.assertAlmostEqual(gj.rel_diff([1.0, 4.0 + 4e-9], [1.0, 4.0]), 1e-9)
 

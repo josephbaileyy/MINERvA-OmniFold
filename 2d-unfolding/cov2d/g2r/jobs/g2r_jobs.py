@@ -26,9 +26,11 @@ comparison (COV2D-G2R-DECLARATION.md sections 3, 4, 6-8; binding 1 addendum C1 r
   9), not a trim.
 * ``envtest``: the two products compared under RE-2's bound rule (ENVTEST_TOL), since configuration (a) is LightGBM's
   non-deterministic mode and same-CPU reruns differ by up to 6.4e-13 (RE2-J0-REPORT.md:106-107). Every histogram's
-  contents and errors agree to max |a - b| / max |b| <= ENVTEST_TOL (RE-2's ``le`` metric), every TParameter to that
-  relative tolerance, and every JSON-valued TNamed leaf by leaf: floats to that relative tolerance, integers, booleans
-  and strings exactly. Every other TNamed must be equal, except ENVTEST_DIFFER, the code and paths that differ by
+  contents and errors agree cell by cell, as RE-2's ``le`` checks (re2_k1.compare, re2_k1.py:153-158): max |a/b - 1|
+  <= ENVTEST_TOL over the cells with b != 0, and |a| <= ENVTEST_TOL x max |b| in the cells with b = 0, which RE-2
+  leaves unconstrained (the director's ruling). Every TParameter agrees to that relative tolerance, and every JSON-valued
+  TNamed leaf by leaf: floats to that relative tolerance, integers, booleans and strings exactly. A NaN in the same
+  place on both sides, or the same infinity, agrees (the audit's j5). Every other TNamed must be equal, except ENVTEST_DIFFER, the code and paths that differ by
   design. ``runConfig`` must agree once ``out`` is set aside and the patched run's ``miss_map`` is null. Whether each
   object is also bitwise is recorded; it does not decide.
 * ``products``: the readout's products TSV for one point, from the tables and the jobs' SHA256SUMS files.
@@ -40,6 +42,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import os
 import sys
 from pathlib import Path
@@ -278,13 +281,36 @@ def gate(sacct_psv: str, limits: dict, want: str, submitted: dict) -> dict:
 
 
 def rel_diff(a, b) -> float:
-    """RE-2's ``le`` metric: max |a - b| / max |b|; 0 when both are all zero, inf when only b is."""
+    """RE-2's ``le`` metric, cell by cell (re2_k1.compare, re2_k1.py:153-158): max |a/b - 1| over the cells with b != 0
+    (RE-2's reported cells are all b > 0); a cell with b = 0 counts |a| / max |b| (the director's ruling: RE-2 leaves
+    such cells unconstrained). Cells equal on both sides count 0, a NaN in the same place on both sides included (the
+    audit's j5). Any other non-finite cell, a shape mismatch, or a nonzero a where b is all zero, gives inf."""
     import numpy as np
     a, b = np.asarray(a, np.float64), np.asarray(b, np.float64)
     if a.shape != b.shape:
         return float("inf")
-    d, m = float(np.max(np.abs(a - b), initial=0.0)), float(np.max(np.abs(b), initial=0.0))
-    return 0.0 if d == 0.0 else (d / m if m > 0.0 else float("inf"))
+    differ = ~((a == b) | (np.isnan(a) & np.isnan(b)))
+    x, y = a[differ], b[differ]
+    if x.size == 0:
+        return 0.0
+    if not (np.all(np.isfinite(x)) and np.all(np.isfinite(y))):
+        return float("inf")
+    nz = y != 0.0
+    worst = float(np.max(np.abs(x[nz] / y[nz] - 1.0), initial=0.0))
+    if np.any(~nz):
+        finite_b = np.abs(b[np.isfinite(b)])
+        m = float(finite_b.max()) if finite_b.size else 0.0
+        worst = max(worst, float(np.max(np.abs(x[~nz]))) / m if m > 0.0 else float("inf"))
+    return worst
+
+
+def same_float(a: float, b: float, tol: float) -> bool:
+    """|a - b| <= tol x max(|a|, |b|), with equal values (infinities included) and NaN on both sides agreeing (j5)."""
+    if a == b or (math.isnan(a) and math.isnan(b)):
+        return True
+    if not (math.isfinite(a) and math.isfinite(b)):
+        return False
+    return abs(a - b) <= tol * max(abs(a), abs(b))
 
 
 def json_problems(a, b, path: str, tol: float) -> list[str]:
@@ -302,7 +328,7 @@ def json_problems(a, b, path: str, tol: float) -> list[str]:
     if isinstance(a, int) and isinstance(b, int):
         return [] if a == b else [f"{path}: {a} != {b}"]
     if isinstance(a, (int, float)) and isinstance(b, (int, float)):
-        return [] if abs(a - b) <= tol * max(abs(a), abs(b)) else [f"{path}: {a!r} != {b!r} beyond {tol}"]
+        return [] if same_float(float(a), float(b), tol) else [f"{path}: {a!r} != {b!r} beyond {tol}"]
     return [f"{path}: {a!r} and {b!r} are not comparable"]
 
 
@@ -349,7 +375,7 @@ def envtest(pre: str, post: str, tol: float = None) -> dict:
         problems.append(f"TParameters differ in name: {sorted(set(p1) ^ set(p2))}")
     for k in sorted(set(p1) & set(p2)):
         bitwise[f"param:{k}"] = p1[k] == p2[k]
-        if not abs(p1[k] - p2[k]) <= tol * max(abs(p1[k]), abs(p2[k])):
+        if not same_float(p1[k], p2[k], tol):
             problems.append(f"TParameter {k}: {p1[k]!r} != {p2[k]!r} beyond {tol}")
     rc1, rc2 = json.loads(n1.get("runConfig", "{}")), json.loads(n2.get("runConfig", "{}"))
     if rc2.get("miss_map") is not None:
@@ -373,7 +399,7 @@ def envtest(pre: str, post: str, tol: float = None) -> dict:
         problems += json_problems(ja, jb, k, tol)
     if "g2rMissMap" in n2:
         problems.append("the patched run records g2rMissMap with the flag off")
-    return {"schema": "cov2d-g2r-envtest-2", "pre": pre, "post": post, "tol": tol, "rule": "RE-2 le: max|a-b|/max|b|",
+    return {"schema": "cov2d-g2r-envtest-2", "pre": pre, "post": post, "tol": tol, "rule": "RE-2 le per cell: max|a/b-1| over b!=0 (re2_k1.compare); b=0 cells |a|<=tol*max|b|",
             "histograms": len(h1), "parameters": len(p1), "named": len(n1), "hist_rel_diff": hist_rel,
             "bitwise": bitwise, "all_bitwise": all(bitwise.values()),
             "set_aside": list(ENVTEST_DIFFER) + ["runConfig.out", "runConfig.miss_map (null)"],
