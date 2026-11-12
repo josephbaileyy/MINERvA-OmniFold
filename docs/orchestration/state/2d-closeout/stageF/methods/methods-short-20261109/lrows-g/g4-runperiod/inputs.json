@@ -1,0 +1,23 @@
+{
+ "unfolded_refined": {
+  "path": "docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/periods/analysis.json",
+  "digest": "2ce5d5dab3e566590504ba0f186a90b0334e7e691dbda011403fc99a8c8d92cd"
+ },
+ "unfolded_purity": {
+  "path": "docs/orchestration/state/2d-closeout/period-unfold-20261014/outputs/analysis.json",
+  "digest": "05edff61673fed987f487f8c19ad25ec055db8118491815b9c263f3a7c3de72b"
+ },
+ "reco_reference": {
+  "path": "docs/orchestration/state/2d-closeout/playlist-spread-20261014/outputs/ref_shape.json",
+  "digest": "bb8f25220a28da5612acb6a1a909f37ce0d3a5ea4a4c2827d9c0c9f5ba544f04"
+ },
+ "proxy_meta": {
+  "path": "docs/orchestration/state/2d-closeout/playlist-spread-20261014/coverage/outputs/proxy_hists_meta.json",
+  "digest": "a71186e1c950f2059a1364ec61e3af4ebdf1bd74205f9cf7e0119862a351b9dd"
+ },
+ "work_proxy": {
+  "path": "docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/lrows-g/g4-runperiod/inputs/work_proxy.npz",
+  "digest": "42ce788bb28919c098041f14b5a4fb8b22aca06aa7f962ca38dd398149f23621",
+  "origin": "a byte-identical copy of the member work_proxy of #977's pscr-20261112 receipt (branch draft/methods-short-20261109 at 60d144395), coverage.json:9's sha"
+ }
+}
