@@ -573,3 +573,18 @@ f = [(1+r)(1+i) − (1+r₀)]/i, net of the nominal closure.
 ## Housekeeping
 
 - 2026-11-12: heads 800579be through 2a2af241 carried a values producer (make_values_fived16.py) that refused to run. The abstract edit had broken a LISTED_CLAIMS anchor (:247) and its self-test plant (:2438). The committed values_fived16.tex was correct throughout, so nothing printed wrong. Fixed in dba7628c; make_values --self-test is now part of the push gate, which the director approved as standing practice.
+
+## The #981 re-pin list from the Supplement style pass (journal-editor, 2026-11-12)
+
+The director's rulings of 2026-11-12. #981 is not edited now; its re-pin runs once, after #977 merges.
+
+- **Q19**, "Fourteen cells are valid under it; R02 and R06 fail", is re-sourced to "Fourteen cells pass it; R02 and R06
+  fail" (D3: "valid" -> "passes this rule"). build_package.py:440-443 at 91f9cb615 checks the printed sentence
+  "… cells are valid under it", so that check follows.
+- **Q09**, "The second rule is ours, not taken from Ref.~\cite{ATLAS:2024jets}", is gone from the Supplement (D4: the
+  prior-spread rule's definition moves to the note, sec:fived16-fd; one sentence keeps the withholding and its reason).
+  DECISION-20261110-joseph-vprior-withhold.md item 2 has #981 drop its V-PRIOR rows; it does not name Q09, so D4 is
+  the reason recorded here.
+- **Broken before this pass:** Q11, Q12, Q13, Q20, Q21 and Q22 count 0 at 60d144395, from earlier #977 edits
+  (4580caf5, 716ce04c, 10b88ad9). The re-pin re-sources them.
+supp-quotes.tsv records Q09 and Q19 in comments beside their rows.
