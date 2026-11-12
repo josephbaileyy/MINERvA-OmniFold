@@ -12531,6 +12531,9 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/referee-sens
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/referee-sensitivity-20261111/rev2/README.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/referee-sensitivity-20261111/rev2/mutation.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/referee-sensitivity-20261111/rev2/tests.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/referee-sensitivity-20261111/rev3/README.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/referee-sensitivity-20261111/rev3/mutation.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/referee-sensitivity-20261111/rev3/tests.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/retention-20261110/AT-RISK.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/retention-20261110/cfs-1a-check-20261111/README.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/retention-20261110/cfs-1a-check-20261111/cluster/session.err.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
