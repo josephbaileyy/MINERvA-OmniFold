@@ -1,0 +1,105 @@
+The paper has a useful organizing idea—three findings supported by distinct tests—and often states results precisely. However, the reader must work through repeated caveats, configuration history, status terminology, and dense numerical inventories to recover that argument. The introduction provides a better overview than the abstract; the supplement contains valuable reference material but frequently reads as an internal audit record. A substantial editorial restructuring would improve readability without changing any scientific claim. This assessment concerns the extracted text and captions; it does not judge visual layout or apparent extraction damage.
+
+**STYLE SCORE: 6/10**
+
+### Ranked changes
+
+1. **Simplify the abstract around the contribution and principal findings.**
+
+   **Location:** Abstract; introduction, third paragraph.
+
+   **Problem:** The abstract introduces technical distinctions before giving readers the framework needed to understand them: “though some cells move opposite the change,” “criteria fixed before grading,” and “overshoots the truth along the prior-to-truth direction at both.” The referent of “both” also requires backtracking. These details obscure the contribution.
+
+   **Fix:** Present application, benchmark, diagnostic findings, and interpretation in that order. For example:
+
+   > We apply OmniFold to MINERvA open data, unfolding five observables simultaneously. A two-observable benchmark reproduces the published cross-section integral within about 1%, with a shape difference that is smaller for binned unfolding of the same inputs. Controlled tests reveal residual prior dependence and sensitivity to rounding-level input changes. The two-dimensional covariance under-covers at both held-out generator tunes; coverage of the reported five-observable intervals remains unvalidated. The five-observable data output is therefore presented as an illustration.
+
+   Retain the introduction’s helpful “We report three findings” structure, but shorten its accompanying qualifications.
+
+2. **Separate the final method from the history of its development.**
+
+   **Location:** Main §§3.1, 6.1–6.2; supplement S4 and S8.4.
+
+   **Problem:** Readers repeatedly encounter how configurations were selected, replaced, tested, or retained before they have a stable picture of the reported procedure. S4’s “The reported estimator, step by step” embeds filenames, line numbers, and commits directly in the algorithm. S8.4, titled “The stopped first five-observable coverage test,” begins by explaining the second test.
+
+   **Fix:** Describe the reported procedure first. Give configurations in one compact table: observables, training mode, background treatment, and results using that configuration. Collect superseded configurations and selection chronology in a clearly labeled provenance subsection. Preserve relevant timing disclosures there, with short pointers from the paper. Move code-line mappings into a separate implementation table. Start S8.4 with the first test’s purpose and stopping outcome, then explain its relationship to the second.
+
+3. **Consolidate qualifications and remove repeated explanations of what each result means.**
+
+   **Location:** §§4.1–4.2, 5.2–5.4, 6.2, 7 and 7.1; supplement S5, S8 and S9.
+
+   **Problem:** Necessary qualifications recur so often that they compete with the findings. For example, §4.1 says the comparison’s significance “cannot be calibrated”; §4.2 again explains that the distances are descriptive and that a value near one does not establish reproduction. The illustrative status of the data output recurs throughout the abstract, introduction, coverage discussion, conclusions, limitations, and supplement.
+
+   **Fix:** Explain each limitation fully at its first substantive use; subsequently use a brief pointer. Keep a concise statement of scope in the abstract and conclusion. In §7, summarize the findings and their meaning; let §7.1 consolidate limitations rather than repeat the same findings with their numerical details.
+
+4. **Give dense paragraphs one function each, and let tables carry numerical inventories.**
+
+   **Location:** §§3.2, 5.2, 6.1–6.2 and 7.
+
+   **Problem:** Paragraphs mix definitions, construction details, numerical results, qualifications, and interpretation. Section 5.2’s paragraph beginning “Under the reported covariance…” walks through three covariance choices already tabulated. Section 6.1 repeatedly switches among 16 cells, 109 cells, 153 quantities, 20 perturbations, and bootstrap ensembles. This prevents a reliable one-pass reading.
+
+   **Fix:** Use the sequence **result → essential comparison → interpretation**. For §5.2:
+
+   > Under the reported covariance, two truths are flagged: the GiBUU hybrid and the synthetic \(q_3\) tilt. Removing covariance components flags additional truths, as listed in table 3. These changes reflect the covariance choice; the estimated biases are unchanged.
+
+   For §6.1, use separate paragraphs for reproducibility, the stability criterion and result, the mechanism, and the tested mitigation. Put the different populations and ensemble sizes in a small study-summary table.
+
+5. **Replace procedural labels with direct descriptions, and define metrics before interpreting them.**
+
+   **Location:** Table 2; §5.3; supplement S8.2 and S10.
+
+   **Problem:** The text asks readers to learn a classification system alongside the physics vocabulary. Table 2’s status key includes “Graded,” “Invalid,” “Stopped,” “Not adopted,” and several other labels, including labels unused in the displayed rows. Section 5.3 explains that “increases” names no direction of the setting—a sign that the label adds decoding work. It also discusses negative \(\rho\) before defining \(\rho\).
+
+   **Fix:** Define the retained fraction before its first numerical use. Replace labels with explicit statements such as “Lower capacity increases the retained fraction.” Keep the formal classification rules in S8.2. Reduce table 2 to the finding, estimator, and section reference, with only essential status definitions. Describe screening outcomes as “passes this rule,” avoiding the broader word “valid.”
+
+6. **Standardize terminology and notation across the paper and supplement.**
+
+   **Location:** §2; §§3.2 and 5.3; supplement S3–S5.
+
+   **Problem:** The same migration quantity is called “diagonal fraction” in the paper and “reconstruction stability” in S3, where “stability” can be confused with numerical stability. The symbol \(f\) denotes both a cell cross section and a recovered fraction. S5 calls \(C_{\mathrm{model}}\) a fractional covariance and then uses the same symbol in sums with covariances in cross-section units. “Withheld” shapes and “held-out” tunes also refer to different stages of development without consistently signaling that distinction.
+
+   **Fix:** Use “diagonal fraction” throughout. Assign distinct symbols to cross section and recovered fraction. Distinguish fractional and dimensional covariance explicitly. Define the two kinds of held-out samples once and use consistent names thereafter.
+
+7. **Shorten captions and improve the supplement’s lookup structure.**
+
+   **Location:** Figure 2; tables 2 and S9–S12; supplement S7–S8.
+
+   **Problem:** Figure 2’s caption contains a long derivational qualification beginning “for the first three shapes it is computed from the half-sample truths…”. That detail interrupts identification of the plotted quantities. Tables S9–S12 split each test’s design and outcome across separate tables, requiring repeated lookup. S7’s final two paragraphs repeat the same noise-free comparison.
+
+   **Fix:** Keep captions self-contained about quantities, samples, symbols, uncertainties, and exclusions; move construction exceptions into the relevant methods subsection. Combine or directly align each test’s design, criterion, and result. Delete S7’s duplicated summary. Give tables S3 and S7 priority as useful reference models: their purposes are immediately recognizable.
+
+8. **Complete an editorial consistency pass before treating this as submission text.**
+
+   **Location:** Abstract, table 2, §§6.2 and 7; supplement S8.5.
+
+   **Problem:** “[PENDING: the second five-observable coverage test]” appears in several prominent locations. Surrounding status definitions sometimes discuss outcomes or run histories that the text has not yet reported.
+
+   **Fix:** Replace every placeholder with consistent wording reflecting the status actually reported in the manuscript. Synchronize the abstract, summary table, results, conclusions, and supplement. This is a presentation requirement, independent of whether any further analysis is performed.
+
+### Smaller fixes: paper
+
+- **§3.1:** “its central value is the one its systematic-universe ensemble is built around” → “The systematic-universe ensemble uses the same estimator as the central value.”
+- **§4.2:** “Two comparisons compare…” → “We compare the two-dimensional result with two alternative unfoldings.”
+- **§4.2:** Break the sentence containing “0.83–1.59 for two to fifteen iterations…”; move the iteration scan into a table or the supplement.
+- **§5.2:** “The usage-recommendation rule, a per-cell bias-screening rule based on…” is a sentence fragment. Write “The usage-recommendation rule is a per-cell screening rule based on…”.
+- **§5.3:** “Its root-mean-square bias…” has an ambiguous antecedent and appears to compare the five-observable estimator with itself. Name **IBU** explicitly.
+- **§5.3:** Combine the nearly identical GiBUU and \(q_3\)-tilt interpretation sentences.
+- **§6.1:** Delete the metatext “The next sentences concern…”; begin “For the five-observable estimator, the training-seed covariance is zero…”.
+- **Figure 4 caption:** Check the reference to supplementary figure S3 for unsupported cells; S3 is the prior-sensitivity figure.
+
+The main sentence-level habit is clause stacking, especially with **“so,” “with,” semicolons, and appended qualifications**. Split sentences when they change from observation to interpretation or from method to limitation.
+
+### Smaller fixes: supplement
+
+- **Opening paragraph:** Replace the long inventory with a short contents guide grouped by definitions, implementation, uncertainties/tests, and data products.
+- **S2:** Define “configuration (a)” before using it, or refer directly to “the superseded estimator.”
+- **S4:** Clarify how configuration (a), described as “in two dimensions,” supplied a five-observable central value.
+- **S4:** Replace “the refinement is a sufficient entry” with “Perturbations applied only at the refinement stage reproduce the full spread.”
+- **S5:** State the 0.73–2.56 interval and its interpretation once; the paragraph repeats both.
+- **S8.3:** Replace the coined “draw of a ‘nature’” with “draw of the systematic parameters and event counts.”
+- **S9:** “Sec. S9 also gives…” → “We also give…”.
+- **S10:** Reconcile “grades one truth’s closure pull” with the preceding requirement at all 12 graded truths.
+
+### What would raise this to 9/10?
+
+A reader should be able to follow the contribution and three principal findings without learning the analysis’s development history. Reaching 9/10 requires substantial compression of repeated qualifications and numerical recitation, a clear separation of final methods from provenance, consistent terminology, and a supplement organized for direct lookup. Retain the precise definitions and candid scope statements, but state each where it does the most work. No additional scientific study is implied by this editorial assessment.
