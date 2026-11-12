@@ -689,3 +689,18 @@ main_paper.tex, make_values). "Supp" is journal-editor (supplemental_body.tex pr
    - Gm8, rounded ensemble keys;
    - Gm10, Fig. 2 as small multiples.
 4. **The order:** structure moves first (Gs1–Gs8, Gs10, St4, St5, G6), then the abstract (St1) with its read, then the sentence pass.
+
+## The #981 re-pin list from the Supplement style pass (journal-editor, 2026-11-12)
+
+The director's rulings of 2026-11-12. #981 is not edited now; its re-pin runs once, after #977 merges.
+
+- **Q19**, "Fourteen cells are valid under it; R02 and R06 fail", is re-sourced to "Fourteen cells pass it; R02 and R06
+  fail" (D3: "valid" -> "passes this rule"). build_package.py:440-443 at 91f9cb615 checks the printed sentence
+  "… cells are valid under it", so that check follows.
+- **Q09**, "The second rule is ours, not taken from Ref.~\cite{ATLAS:2024jets}", is gone from the Supplement (D4: the
+  prior-spread rule's definition moves to the note, sec:fived16-fd; one sentence keeps the withholding and its reason).
+  DECISION-20261110-joseph-vprior-withhold.md item 2 has #981 drop its V-PRIOR rows; it does not name Q09, so D4 is
+  the reason recorded here.
+- **Broken before this pass:** Q11, Q12, Q13, Q20, Q21 and Q22 count 0 at 60d144395, from earlier #977 edits
+  (4580caf5, 716ce04c, 10b88ad9). The re-pin re-sources them.
+supp-quotes.tsv records Q09 and Q19 in comments beside their rows.
