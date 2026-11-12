@@ -458,7 +458,12 @@ The reported covariance is
 \begin{equation*}
   C_{\mathrm{rep}}=C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}},\qquad C_{\mathrm{total}}=C_{\mathrm{e}}+C_{\mathrm{model}}.
 \end{equation*}
-The run-period block $C_{\mathrm{PL,5D}}$ is described in section~\ref{sec:fived16-pl}. $C_{\mathrm{e}}$ sums
+The run-period block $C_{\mathrm{PL,5D}}$ is described in section~\ref{sec:fived16-pl}.
+
+\subsection{Covariance components}
+\label{supp:cov16-blocks}
+% Added 2026-11-12 (journal-editor, style2 ranked change 7): S5's covariance components
+$C_{\mathrm{e}}$ sums
 \begin{itemize}[itemsep=0pt, topsep=1pt]
   \item the statistical bootstrap of configuration~(e), 50 replicas, each of which refits the whole unfolding with its own rounding-level perturbation of the inputs,
   \item the flux universes of the Package to Predict the Flux (PPFX), weighted by the neutrino--electron and inverse-muon-decay constraint,
@@ -547,6 +552,10 @@ R15 & \fvval{corr-R15-R00} & \fvval{corr-R15-R01} & \fvval{corr-R15-R02} & \fvva
 \end{tabular}
 \end{table}
 
+\subsection{Matrix conventions}
+\label{supp:cov16-conv}
+% Added 2026-11-12 (journal-editor, style2 ranked change 7): S5's matrix conventions
+
 % source: sec_fived16.tex, note label sec:fived16-cov, paragraph 7 (adapted 2026-11-12: DESYNCED, the director's D1, step 7's sentence pass (semicolons and ", so" split), restyled, wording only; earlier: restyled 2026-11-09, wording only; the note keeps the original; comments stripped; its search record or waiver carried from the note)
 Every $\chi^2$ in this section uses the inverse of the full covariance of the cells compared, $16\times16$ or $8\times8$ for GiBUU's cells, obtained by Cholesky decomposition without truncation. The inverted dimension $p$ equals the number of cells and is fixed in advance. The shape-only $\chi^2$ inverts the same matrix with $100\,f f^{T}$ added and has one degree of freedom fewer.
 
@@ -580,6 +589,10 @@ $C_{\mathrm{PL,5D}}$ & three exposure-weighted run-period groups, rank \fvval{pl
 \end{tabular}
 \end{table}
 
+\subsection{The run-period block}
+\label{supp:cov16-pl}
+% Added 2026-11-12 (journal-editor, style2 ranked change 7): S5's run-period construction
+
 % source: sec_fived16.tex, note label sec:fived16-pl, paragraph 0 (adapted 2026-11-12: DESYNCED, the director's D1, step 7's sentence pass (semicolons and ", so" split), restyled, wording only; earlier: adapted 2026-11-10: synced to the note's round-3 text at acf934d71, #952, by the director's ruling on check 12; the note's paragraph 0 there; cross-references in the Supplement's form; earlier: adapted since seeding: wording edits read in the meaning check of 2026-11-10 (ledger); comments stripped; its search record or waiver carried from the note)
 \label{sec:fived16-pl}
 On the sixteen cells, the unfolded results of the three run-period groups (playlists 1A--1F, 1G--1M and 1N--1P), each over its own simulated truth (the double ratio), differ from one another by more than the scatter of their bootstrap replicas. The offsets of the twelve playlists differ between the three period groups by more than expected from their playlist-to-playlist scatter. The cause is not known, and these data cannot establish which period, if any, is right.
@@ -596,6 +609,10 @@ Each of the twelve playlists was also unfolded on its own, with its own simulati
 
 The permutation is approximate: the playlists differ in exposure and hence in noise. Their labels are therefore not exchangeable, and the test's validity rests on a simulated null. In each of \fvval{rpd-datasets} simulated datasets the playlists' offsets are drawn independently from one covariance, estimated from the twelve playlists and scaled by 0, 0.5, 1 or 2, with each playlist's own bootstrap and simulation noise added. The share of datasets with $p<0.05$ is \fvval{rpd-alpha-lo}--\fvval{rpd-alpha-hi} over the four scales, within the bound of \fvval{rpd-alpha-gate}. For an alternative chronological division into groups of five, two, two and three playlists (1A--1E, 1F and 1G, 1L and 1M, and 1N--1P), the same statistic gives $p=\fvval{rpd-pera}$ over its \fvval{rpd-npart-era} divisions. This comparison is descriptive.
 
+\subsection{Selection history and decision rules}
+\label{supp:cov16-history}
+% Added 2026-11-12 (journal-editor, style2 ranked change 7): S5's decision history, after the construction
+
 % source: sec_fived16.tex, note label sec:fived16-pl, paragraph 3 (adapted 2026-11-12: DESYNCED, the director's D1, step 7's sentence pass (semicolons and ", so" split), restyled, wording only; earlier: adapted 2026-11-10: synced to the note's round-3 text at acf934d71, #952, by the director's ruling on check 12; the note's paragraph 3 there; cross-references in the Supplement's form; earlier: restyled 2026-11-09, wording only; the note keeps the original; comments stripped; its search record or waiver carried from the note)
 The block was chosen after the period differences had been seen. Before it was added, an audit examined (i) its overlap with the existing blocks, especially the flux and detector-response ones, (ii) its noise treatment, with bootstrap replicas of each period, (iii) why its cell pattern differs from the projection of the two-dimensional period offsets, although their sizes agree, and (iv) the stability of its rank-two construction. Before any of its numbers were read, the audit stated that the block would not be added if one existing component, within two standard deviations of its own size, explained at least half of both period-group patterns, if the replica spread of its median per-cell width exceeded half that width, or if less than half of a replica block's variance lay in the observed block's plane. None of those results occurred. The addition therefore followed the data.
 
@@ -603,6 +620,10 @@ Passing the audit establishes neither the block's size nor the absence of overla
 
 \section{The two-dimensional covariance}
 \label{supp:cov2d}
+
+\subsection{Construction}
+\label{supp:cov2d-construction}
+% Added 2026-11-12 (journal-editor, style2 ranked change 7): S6's block construction
 
 % source: sec_systematics.tex, note label sec:uq-combine, paragraph 0 (adapted 2026-11-12: DESYNCED, the director's D1, step 7's sentence pass (semicolons and ", so" split), restyled, wording only; earlier: adapted 2026-11-10: synced to the note's round-3 text at acf934d71, #952, by the director's ruling on check 12; the note's paragraph 0 there; cross-references in the Supplement's form; earlier: adapted since seeding: wording edits read in the meaning check of 2026-11-10 (ledger); comments stripped; its search record or waiver carried from the note)
 % absence-ok: as the note reports (sec_systematics.tex sec:uq-combine at acf934d71); implementation unified_throw_cov.py; scoped to the note's statement of its unified-throw study, not a claim that a result does not exist
@@ -619,6 +640,10 @@ The block is built from separate seed-42 unfoldings of three run periods, the pl
 
 % source: sec_systematics.tex, note label sec:uq-combine, paragraph 5 (adapted 2026-11-12: DESYNCED, the director's D1, step 7's sentence pass (semicolons and ", so" split), restyled, wording only; earlier: restyled 2026-11-09, wording only; the note keeps the original; comments stripped; its search record or waiver carried from the note)
 The block's interpretation is limited by the small number of period groups, by possible shrinkage from the regularization, and by the statistical and training noise it retains. The block contains the observed differences among periods by construction. It therefore carries no information about its coverage, that is, about whether its size is right. For the same reason, the double-ratio $\chi^{2}$ against any total that contains the block is bounded whatever the data and therefore does not test the block. The raw 1G--1M $\pPar$ $\chi^{2}$ is 34.8 against the other blocks alone and 2.59 with the block added. These values indicate sensitivity only.
+
+\subsection{Comparison with the published result}
+\label{supp:cov2d-bench}
+% Added 2026-11-12 (journal-editor, style2 ranked change 7): S6's benchmark-residual discussion in one subsection
 
 % Moved from the paper (methods-short-20261109): round 5's paper_body.tex:151 at bc8673186, verbatim then (its eigenmode sentences), restyled 2026-11-12 (house style: section, figure, ref.); its evidence route is that line's source comment there.
 In the eigenbasis of the published covariance, the largest standardized component is 4.8 and the next nine 3.4--3.8, and the ten smallest-eigenvalue modes carry \SI{9.6}{\percent} of the $\chi^{2}$. Of the six leading modes, three are poorly determined directions ($\lambda/\lambda_{\max}\lesssim4\times10^{-9}$) in the highest-$\pPar$ bins, and three are moderate-$\lambda$ modes ($4\times10^{-6}$ to $6\times10^{-5}$) below them (figure~\ref{fig:tension2d}; \nsec{sec:results-tension}).
@@ -650,6 +675,10 @@ In the 132 poorly determined directions, the combination of the other two run-pe
 
 % Moved from the paper (methods-short-20261109): round 5's paper_body.tex:200 at bc8673186, restyled 2026-11-09 from that text, wording only (its sixth sentence onward); its evidence route is that line's source comment there.
 Adding the model-dependence block to the four-block covariance gives a total with a median of \SI{\qrCmodelMedian}{\percent} per bin. The comparison with the published uncertainty uses the covariance without $C_{\mathrm{model}}$, because neither has a component for the residual dependence on the prior's generator shape. For the published analysis, this is because it chose its ten iterations in a fake-data study and assigns no uncertainty to the remaining dependence~\cite{MINERvA:2021owq}. The iteration counts differ (ten there, five here). No conclusion is therefore drawn about the size of the published analysis's residual.
+
+\subsection{Coverage flags at the held-out tunes}
+\label{supp:cov2d-tunes}
+% Added 2026-11-12 (journal-editor, style2 ranked change 7): S6's coverage flags
 
 % Moved from the paper (methods-short-20261109): round 5's paper_body.tex:202 at bc8673186, restyled 2026-11-09 from that text, wording only (its per-cell flags); its evidence route is that line's source comment there.
 The per-cell coverage test of the two-dimensional covariance at the two held-out tunes raises three flags, each attributed to bias: cell 29 ($\pT=0.07$--0.15~GeV/$c$, $\pPar=15$--20~GeV/$c$) at both tunes, with under-coverage factors 1.165 (\fvval{f1-tune-ar23}) and 1.347 (\fvval{f1-tune-g18}) and pull means $-0.851$ and $-0.964$, and cell 56 ($\pT=0.25$--0.33~GeV/$c$, $\pPar=6$--7~GeV/$c$) at \fvval{f1-tune-ar23}, with factor 1.316 and pull mean $+1.039$. The pull widths are 0.636--0.709.
