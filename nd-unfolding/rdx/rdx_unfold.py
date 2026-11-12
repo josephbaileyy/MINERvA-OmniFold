@@ -36,10 +36,11 @@ import numpy as np
 
 _HERE = Path(__file__).resolve().parent
 _ND = _HERE.parent
-for _p in (str(_ND / "rsn"), str(_ND / "pv-ladder"), str(_ND)):
+for _p in (str(_HERE), str(_ND / "rsn"), str(_ND / "pv-ladder"), str(_ND)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 import omnifold_nn_core as onc  # noqa: E402
+import rdx_common as C  # noqa: E402
 import pvl_lib as L  # noqa: E402
 import pvl_unfold as PU  # noqa: E402
 import rsn_unfold as RSN  # noqa: E402
@@ -47,9 +48,9 @@ import s5c_unfold  # noqa: E402
 import s5n_pseudo  # noqa: E402
 
 FEATURES = ("std", "wide")
-TRUTHX_NAMES = ("truthx_enu", "truthx_vtx_x", "truthx_vtx_y", "truthx_vtx_z", "truthx_kep_lead")
+TRUTHX_NAMES = C.TRUTHX
 TRANSFER_SEED, TRANSFER_FRACTION = 20261112, RSN.TRANSFER_FRACTION
-SIDECAR_SCHEMA = "rdx-truthx-sidecar/1"
+SIDECAR_SCHEMA = C.SIDECAR_SCHEMA
 
 
 class RdxError(RuntimeError):
