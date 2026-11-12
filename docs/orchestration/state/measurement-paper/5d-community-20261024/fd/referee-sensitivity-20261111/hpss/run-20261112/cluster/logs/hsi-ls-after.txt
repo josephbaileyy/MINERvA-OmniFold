@@ -1,0 +1,8 @@
+
+/home/j/josephrb/mnv-rsn-inputs-20261111:
+-rw-r-----    1 josephrb  josephrb       15872 Nov 11 16:39 cpl_block.tar
+-rw-r-----    1 josephrb  josephrb        2344 Nov 11 16:39 cpl_block.tar.idx
+-rw-r-----    1 josephrb  josephrb    22238208 Nov 11 16:39 pvl_prep.tar
+-rw-r-----    1 josephrb  josephrb       20776 Nov 11 16:39 pvl_prep.tar.idx
+-rw-r-----    1 josephrb  josephrb     2568192 Nov 11 16:39 pvl_products.tar
+-rw-r-----    1 josephrb  josephrb       17704 Nov 11 16:39 pvl_products.tar.idx
