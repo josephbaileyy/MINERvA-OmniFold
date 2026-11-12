@@ -1,17 +1,25 @@
 #!/bin/bash
 # HPSS archive of RSN's three unarchived inputs (the director's ruling on RSN rev 2, 2026-11-11): pv-ladder's prep/
-# (36 files) and products/ (30 files), and cpl_block.npz. One NERSC data-transfer node, never a Slurm job, 0 node-h,
-# nothing written to CFS, nothing deleted on pscratch or HPSS, nothing overwritten. hpss-20261111's discipline (#1054,
-# fd/retention-20261110/hpss-20261111/connect/hpss_atrisk.template.sh), with five changes, each marked [RSN]:
-#   [RSN-1] it refuses unless the host is a data-transfer node (dtnNN) and no Slurm job is set;
+# (36 files) and products/ (30 files), and cpl_block.npz. One Perlmutter login node, as #1054 ran, never a Slurm job,
+# 0 node-h, nothing written to CFS, nothing deleted on pscratch or HPSS, nothing overwritten. hpss-20261111's discipline
+# (#1054, fd/retention-20261110/hpss-20261111/connect/hpss_atrisk.template.sh), with six changes, each marked [RSN]
+# (kit rev 2, the director's ruling of 2026-11-12 after rev 1's DTN probe found no hsi, htar or hpssquota on dtn01):
+#   [RSN-1] it refuses unless the host is a login node (loginNN) and no Slurm job is set;
 #   [RSN-2] the list carries each file's committed sha256 pin (group<TAB>sha256<TAB>path: pv-ladder's prep-SHA256SUMS,
-#           its receipts/SHA256SUMS products rows, and F0b's --extra-block-sha256), and the bytes read must equal it;
+#           its receipts/SHA256SUMS products rows, and cpl_block.npz's output digest in CT-5B addition's
+#           fd/receipts-ct/5b/addition/run/chain.json:626), and the bytes read must equal it;
 #           each file's size and mtime are recorded in stat.<group>.tsv beside the manifest;
 #   [RSN-3] retrieval re-reads EVERY member from HPSS (htar -xf of the whole tar into /dev/shm), and each retrieved
 #           file's sha256 must equal its manifest line and its pin, with the member count equal to the list's;
-#   [RSN-4] no squeue fence: a data-transfer node is not a Slurm client, and these sources are read by O_NOATIME,
-#           never written; the director's go is the fence;
-#   [RSN-5] /dev/shm headroom is 2 x the group's bytes plus 256 MiB (the group is at most about 22 MB).
+#   [RSN-4] no squeue fence in the script: these sources are read by O_NOATIME, never written, and cov2d has reported
+#           no overlap with any gate it fences; the director's go, and the queue check the launcher's probe prints
+#           before it, are the fence;
+#   [RSN-5] /dev/shm headroom is 2 x the group's bytes plus 256 MiB (the group is at most about 22 MB);
+#   [RSN-6] every setup check runs before $OUT exists, so a setup failure cannot spend the one run: hsi, htar,
+#           hpssquota, timeout and sha256sum must be on PATH; hsi must list /home/j/josephrb (rc 0); and the target
+#           check must return hsi's own not-found, rc 64 with HPSS_ENOENT in its output (rc 0 = the target exists;
+#           any other rc, 127 and 124 included, refuses); hpssquota must return rc 0 with one "usage on HPSS" line,
+#           which the quota preflight then reads. A refusal prints its reason and exits 9, writing nothing.
 # The list is embedded after the __LIST__ line, its sha256 checked below. No directory is listed: every source is an
 # explicit path from that list.
 #
@@ -28,8 +36,8 @@
 #     sources' paths without the leading "/" (restore with cd / && htar -xf); the manifest is the first member;
 #   3 hsi hashcreate, then hsi hashverify, of $H/<group>.tar (its log must show "<tar>: (<hash>) OK");
 #   4 retrieval of every member into /dev/shm [RSN-3]; then removed.
-# Before any group: the HPSS target $H must not exist (nothing is overwritten); hpssquota's free space must be at least
-# 1.2 x the archive estimate, taking free = min(hpssquota's quota - used, Joseph's figure of 2026-11-11, 62.7e9 bytes),
+# Before any group: the HPSS target $H must not exist [RSN-6] (nothing is overwritten); hpssquota's free space must
+# be at least 1.2 x the archive estimate, taking free = min(hpssquota's quota - used, Joseph's figure of 2026-11-11, 62.7e9 bytes),
 # or STOP (exit 7). After: hsi ls -l of $H and hpssquota again. Writes only under $OUT (pscratch), /dev/shm/$W and $H
 # (HPSS); refuses if $OUT or $W exists. Threads 1, nice 19. Launched from a /dev/shm copy of itself, whose path is $1;
 # deletes it at exit.
@@ -42,14 +50,26 @@ GROUPS_IN_ORDER="pvl_prep pvl_products cpl_block"
 N_ROWS=67
 JOSEPH_FREE_BYTES=62700000000
 PY=/usr/bin/python3
-bail() { rm -f -- "$SELF"; exit 9; }
-case "$(hostname -s)" in dtn[0-9][0-9]) ;; *) bail ;; esac        # [RSN-1]
-[ -z "$SLURM_JOB_ID" ] || bail                                      # [RSN-1]
-[ -x "$PY" ] || bail
-[ -d /pscratch/sd/j/josephrb ] || bail
-[ ! -e "$OUT" ] || bail
-[ ! -e "$W" ] || bail
-mkdir -p "$OUT/logs" "$OUT/manifests" "$W" || bail
+bail() { echo "REFUSED (nothing written): $*"; rm -f -- "$SELF"; exit 9; }
+case "$(hostname -s)" in login[0-9][0-9]) ;; *) bail "host $(hostname -s) is not a login node" ;; esac   # [RSN-1]
+[ -z "$SLURM_JOB_ID" ] || bail "a Slurm job is set ($SLURM_JOB_ID)"                                      # [RSN-1]
+[ -x "$PY" ] || bail "no $PY"
+[ -d /pscratch/sd/j/josephrb ] || bail "no /pscratch/sd/j/josephrb"
+[ ! -e "$OUT" ] || bail "$OUT exists"
+[ ! -e "$W" ] || bail "$W exists"
+for t in hsi htar hpssquota timeout sha256sum; do                                                         # [RSN-6]
+  command -v "$t" > /dev/null || bail "$t is not on PATH"
+done
+PRE_HOME=$(timeout 300 hsi -q "ls -d /home/j/josephrb" 2>&1); r_home=$?                                  # [RSN-6]
+[ $r_home = 0 ] || bail "hsi ls -d /home/j/josephrb rc=$r_home: $PRE_HOME"
+PRE_TARGET=$(timeout 300 hsi -q "ls -d $H" 2>&1); r_target=$?                                             # [RSN-6]
+[ $r_target = 0 ] && bail "$H exists"
+{ [ $r_target = 64 ] && printf '%s\n' "$PRE_TARGET" | grep -q 'HPSS_ENOENT'; } \
+  || bail "target check hsi rc=$r_target is not hsi's not-found (rc 64, HPSS_ENOENT): $PRE_TARGET"
+PRE_QUOTA=$(timeout 300 hpssquota 2>&1); r_quota=$?                                                      # [RSN-6]
+[ $r_quota = 0 ] || bail "hpssquota rc=$r_quota: $PRE_QUOTA"
+[ "$(printf '%s\n' "$PRE_QUOTA" | grep -c 'usage on HPSS')" = 1 ] || bail "hpssquota has no single HPSS usage line"
+mkdir -p "$OUT/logs" "$OUT/manifests" "$W" || bail "mkdir rc=$?"
 exec > "$OUT/logs/archive.log" 2>&1
 finish() {
   cd / ; rm -rf -- "$W"; echo "removal of $W rc=$? ; present after: $([ -e "$W" ] && echo yes || echo no)"
@@ -72,16 +92,16 @@ echo "list sha256 $h rows $n"
 [ "$h" = "$LIST_SHA" ] || stop "embedded list sha256 is not $LIST_SHA"
 [ "$n" -eq "$N_ROWS" ] || stop "the list has $n rows, not $N_ROWS"
 
-# 1. the HPSS target must not exist (rc 124 = hsi did not answer in time: STOP)
-timeout 300 hsi -q "ls -d $H" > "$OUT/logs/target-check.txt" 2>&1; r=$?
-echo "target check hsi rc=$r"
-[ $r = 124 ] && stop "hsi did not answer within 300 s"
-[ $r = 0 ] && stop "$H exists"
+# 1. the setup checks, already passed before $OUT existed [RSN-6]; recorded here
+printf '%s\n' "$PRE_HOME" > "$OUT/logs/home-check.txt"
+printf '%s\n' "$PRE_TARGET" > "$OUT/logs/target-check.txt"
+echo "tools: $(for t in hsi htar hpssquota timeout sha256sum; do printf '%s ' "$(command -v "$t")"; done)"
+echo "home check hsi rc=$r_home"
+echo "target check hsi rc=$r_target (HPSS_ENOENT)"
 
 # 2. quota preflight
-timeout 300 hpssquota > "$OUT/logs/quota-before.txt" 2>&1; r=$?
-echo "hpssquota before rc=$r"; grep -i 'HPSS' "$OUT/logs/quota-before.txt"
-[ $r = 0 ] || stop "hpssquota rc=$r"
+printf '%s\n' "$PRE_QUOTA" > "$OUT/logs/quota-before.txt"                                               # [RSN-6]
+echo "hpssquota before rc=$r_quota"; grep -i 'HPSS' "$OUT/logs/quota-before.txt"
 nice -n 19 "$PY" -I - "$OUT/logs/quota-before.txt" "$OUT/archive_list.tsv" "$JOSEPH_FREE_BYTES" <<'PY'
 import math, os, re, sys
 q, lst, joseph = sys.argv[1], sys.argv[2], int(sys.argv[3])
