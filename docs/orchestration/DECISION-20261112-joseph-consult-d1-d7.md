@@ -57,3 +57,32 @@ recommendations with his own view beside each one.
 - **Not citable for:** any result; any paper sentence; the deposit having been made.
 
 Nothing is submitted, deposited or tagged.
+
+## Addendum (2026-11-12): Joseph approves the B0, RS1 and RSN wording
+
+**What was put to him:** the controlled-rewrite drafts.
+- **Paper B0 and RS1,** in director-helper-3's `b0rs1/DRAFT-v3.md`.
+- **The RSN readings' paper and Supplement text,** in `rsn_draft/DRAFT-v3.md`.
+- **Supplement S4.4 RS1,** revision 4, by journal-editor.
+
+**How they were checked:** each draft had a claim table against its records. A codex-school referee read the drafts
+(`secondary-results/consult-b0rs1rsn/`, session `01a1d14c`), its edits were applied, and a meaning read checked each
+change against its record.
+
+The director flagged one change in particular: the correction to RS1's "float64 inputs and a permutation … do not
+reduce the spread". The record reads K3 as bitwise equality of the unperturbed bases, and K4 as a permutation shift of
+about 10⁻¹⁰ of the spread.
+
+**Joseph's words, verbatim:**
+
+> i approve the draft
+
+(`ed67e4cb9e1e9f08`).
+
+**Decided:**
+1. The drafts are applied as approved, through the usual gate.
+2. check_restyle's B0 and RS1 spans and check_round's three B0 LITERAL_KEYS rows are removed in the same commit,
+   citing D3 and this addendum.
+3. **The paper's smoothing sentence:** "region cells" is defined only in the Supplement. It may be worded "the
+   neighbouring cells within two fine bins on every axis", with S5 keeping the definition, if a meaning read confirms
+   the meaning is identical. Otherwise it stays as drafted.
