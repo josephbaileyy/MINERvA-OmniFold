@@ -1,0 +1,41 @@
+# g2r_jobs_mutation.py, from the clean detached checkout of a14a08e50d5148b8b7b8a3b64718d1f15482ff6c (porcelain 0 before and after),
+# /opt/homebrew/bin/python3.13, OMP_NUM_THREADS=1; the run's exit status: rc=0 (task output 'mutation rc=0')
+2d-unfolding/cov2d/g2r/jobs/g2r_jobs.py sha256 655088e729d9407453d13f427ecc78dbc852beed69264d2da87d34581f344f14
+2d-unfolding/cov2d/g2r/jobs/g2r_env.sh sha256 b3ad1d04e6f665b79566fac43f520d2a0329c9d66026f7793f1ab4cf5eb52483
+2d-unfolding/cov2d/g2r/jobs/g2r_job.sbatch sha256 21e4f4ac7330250eb84af653c5a8a0cc8d7fb013489a36d7610025dd539351c8
+2d-unfolding/cov2d/g2r/jobs/g2r_envtest.sbatch sha256 687da97462023f5f13ded2e69549d658ffa1fb0f6fcbb84ccd6ab35e1e673049
+2d-unfolding/cov2d/g2r/jobs/g2r_prepare.sbatch sha256 3c129b3dd7abb6d47f821f0d61266474a4151dad180c187b8ac43b8730b97433
+2d-unfolding/cov2d/g2r/jobs/g2r_submit.sh sha256 a9b2a2ba2f8a902ac9914554e4508dd5dd4fd32ff9f6e291cfb74b3c767c3bc1
+UNMUTATED PASS test_g2r_jobs.py tests=51 expected=51 skipped=False rc=0
+MUTATION KILLED the off reruns carry the map [Tables.test_off_reruns_are_part_bs_rows_exactly_at_the_end_of_d_ud_2] sha256=5798ad296744e21c
+MUTATION KILLED the tune rows without the map [Tables.test_tune_rows_are_cov2ds_universe_rows_plus_the_map] sha256=9a8ddb7213adcda6
+MUTATION KILLED the data rows without the map [Tables.test_data_rows_are_part_bs_j2_rows_plus_the_map] sha256=5250c99779d6ed0e
+MUTATION KILLED the envtest priced at part B's per-run estimate [Tables.test_limits_and_the_price] sha256=f1cbe82bb0333977
+MUTATION KILLED part B's table not read at its digest [Tables.test_part_bs_table_is_read_at_its_digest_and_must_be_the_bank] sha256=1d4e60af63b502a7
+MUTATION KILLED the map not checked against the committed record [Check.test_the_map_must_be_the_committed_one] sha256=7175cfa016fdfced
+MUTATION KILLED G8 not compared [Check.test_the_realization_g8] sha256=c4f236819aaea99e
+MUTATION KILLED $UNI's stat not checked [Check.test_uni_and_pins] sha256=162bc78f66346dd3
+MUTATION KILLED each job not once [Order.test_each_job_once_and_records_must_pass] sha256=5d617e8d904b0445
+MUTATION KILLED the prepare without the envtest's PASS [Order.test_the_sequence] sha256=adcbab80f94bd8fc
+MUTATION KILLED the bulk before D_Ua's first --miss-map run [Order.test_the_sequence] sha256=4acab1b0cc6d225b
+MUTATION KILLED the first run counted whatever its rc [Order.test_first_run_done] sha256=e9627317db6ee382
+MUTATION KILLED the gate prices every name [Gate.test_unknown_names_refuse_and_others_are_ignored] sha256=731d68b2eaaf1f38
+MUTATION KILLED the sacct lag ignored [Gate.test_spent_held_lag_and_the_cap] sha256=f64dc3ffd043f058
+MUTATION KILLED the cap opened [Gate.test_the_cap_refuses] sha256=bad330c294324ca4
+MUTATION KILLED the projection never a STOP [Gate.test_the_projection_is_a_stop_for_unfold_jobs_only] sha256=ab06e9ba677e1427
+MUTATION KILLED the histograms' contents not compared [EnvTest.test_each_difference_is_invalid] sha256=2b25571d8768eaff
+MUTATION KILLED the histograms' errors not compared [EnvTest.test_each_difference_is_invalid] sha256=a4d6420f35fe2d9c
+MUTATION KILLED a flag left on passes [EnvTest.test_each_difference_is_invalid] sha256=d8f54dabe747459c
+MUTATION KILLED the set-aside widened to fluxSource [EnvTest.test_each_difference_is_invalid] sha256=b766dd5dbc4066d2
+MUTATION KILLED the hooks allowed on a NERSC machine [Shell.test_the_hooks_are_refused_on_a_nersc_machine] sha256=a2a35e7b9c095e66
+MUTATION KILLED the job script runs the envtest [Shell.test_the_job_script_refuses_the_envtest_and_prepare_and_mixed_points] sha256=cbc793f3549d18a5
+MUTATION KILLED the job script skips its check [Shell.test_a_real_run_stops_on_a_failed_check_and_the_wrong_limit] sha256=20c985323c9ff74e
+MUTATION KILLED a product overwritten [Shell.test_a_real_run_of_g18_ud_against_stubs] sha256=53f777a42854608d
+MUTATION KILLED the envtest's pre deploy unchecked [Shell.test_the_envtest_refuses_a_pre_deploy_not_at_pre_m] sha256=69d8b782cfb7aa25
+MUTATION KILLED the prepare's rc swallowed [Shell.test_the_prepare_passes_its_rc_through] sha256=7398c64246df9066
+MUTATION KILLED the submit takes several jobs [Shell.test_the_submit_refusals] sha256=f16493d52596a6e7
+MUTATION KILLED the binding's M_J1 line unchecked [Shell.test_the_binding_must_name_m_on_its_m_j1_line] sha256=eea8af16e5b65d2c
+MUTATION KILLED the STOP not honoured [Shell.test_the_submission_sequence] sha256=b41b44ecae1e8f8b
+MUTATION KILLED no wait for sacct [Shell.test_sacct_never_listing_the_id_is_rc_6] sha256=20660ee1c54a721a
+SOURCES RESTORED OK
+ALL-KILLED

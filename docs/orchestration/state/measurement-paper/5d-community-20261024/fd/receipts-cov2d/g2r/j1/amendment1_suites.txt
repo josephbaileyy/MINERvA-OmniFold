@@ -1,0 +1,24 @@
+# amendment 1's suites and its mutation check, at this commit
+# commit a14a08e50d5148b8b7b8a3b64718d1f15482ff6c porcelain 0 utc 2026-11-12T14:01:52Z
+# python 3.13.7 numpy 2.4.4 ROOT 6.36.000
+== test_g2r
+Ran 27 tests in 17.332s
+OK
+rc=0
+== test_re2_miss_map
+Ran 11 tests in 13.234s
+OK
+rc=0
+== test_g2r_glue
+Ran 18 tests in 74.024s
+OK
+rc=0
+== g2r_mutation.py
+UNMUTATED PASS test_g2r.py tests=27 expected=27 skipped=False rc=0
+UNMUTATED PASS test_re2_miss_map.py tests=11 expected=11 skipped=False rc=0
+UNMUTATED PASS test_g2r_glue.py tests=18 expected=18 skipped=False rc=0
+SOURCES RESTORED OK
+ALL-KILLED
+mutations killed: 23
+rc=0
+# porcelain after 0

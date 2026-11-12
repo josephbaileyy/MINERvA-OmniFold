@@ -1,0 +1,7 @@
+# coverage sweep of g2r_jobs.py under test_g2r_jobs.py (J1 tracer, through usercustomize, following subprocesses and the fixture deploy)
+# commit a14a08e50d5148b8b7b8a3b64718d1f15482ff6c porcelain 0 utc 2026-11-12T14:01:00Z
+# python 3.13.7 numpy 2.4.4 ROOT 6.36.000
+OK
+trace files: 47
+2d-unfolding/cov2d/g2r/jobs/g2r_jobs.py (sha256 655088e729d9407453d13f427ecc78dbc852beed69264d2da87d34581f344f14): 350 executable lines, 0 never executed (hits from 2 byte-identical copies)
+# porcelain after 0

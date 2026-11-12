@@ -1,0 +1,184 @@
+# test_g2r_jobs.py at PYTHONHASHSEED 0, 1, 2 (cd 2d-unfolding/cov2d/g2r/tests; python -B -m unittest -v test_g2r_jobs)
+# commit a14a08e50d5148b8b7b8a3b64718d1f15482ff6c porcelain 0 utc 2026-11-12T13:54:36Z
+# python 3.13.7 numpy 2.4.4 ROOT 6.36.000
+== PYTHONHASHSEED=0
+test_a_job_with_no_runs_or_mixed_points (test_g2r_jobs.Check.test_a_job_with_no_runs_or_mixed_points) ... ok
+test_clean_jobs_pass (test_g2r_jobs.Check.test_clean_jobs_pass) ... ok
+test_the_map_must_be_the_committed_one (test_g2r_jobs.Check.test_the_map_must_be_the_committed_one) ... ok
+test_the_realization_g8 (test_g2r_jobs.Check.test_the_realization_g8) ... ok
+test_uni_and_pins (test_g2r_jobs.Check.test_uni_and_pins) ... ok
+test_the_committed_records_name_each_realization (test_g2r_jobs.CommittedStepB.test_the_committed_records_name_each_realization) ... ok
+test_a_missing_histogram_and_an_unopenable_file (test_g2r_jobs.EnvTest.test_a_missing_histogram_and_an_unopenable_file) ... Error in <TFile::ReadBuffer>: error reading all requested bytes from file /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp99czfbtj/junk.root, got 8 of 300
+Error in <TFile::Init>: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp99czfbtj/junk.root failed to read the file type data.
+ok
+test_each_difference_is_invalid (test_g2r_jobs.EnvTest.test_each_difference_is_invalid) ... ok
+test_equal_products_pass_with_the_code_records_set_aside (test_g2r_jobs.EnvTest.test_equal_products_pass_with_the_code_records_set_aside) ... ok
+test_the_cli (test_g2r_jobs.EnvTest.test_the_cli) ... ok
+test_spent_held_lag_and_the_cap (test_g2r_jobs.Gate.test_spent_held_lag_and_the_cap) ... ok
+test_the_cap_refuses (test_g2r_jobs.Gate.test_the_cap_refuses) ... ok
+test_the_cli_exit_codes (test_g2r_jobs.Gate.test_the_cli_exit_codes) ... ok
+test_the_projection_is_a_stop_for_unfold_jobs_only (test_g2r_jobs.Gate.test_the_projection_is_a_stop_for_unfold_jobs_only) ... ok
+test_unknown_names_refuse_and_others_are_ignored (test_g2r_jobs.Gate.test_unknown_names_refuse_and_others_are_ignored) ... ok
+test_each_job_once_and_records_must_pass (test_g2r_jobs.Order.test_each_job_once_and_records_must_pass) ... ok
+test_first_run_done (test_g2r_jobs.Order.test_first_run_done) ... ok
+test_the_sequence (test_g2r_jobs.Order.test_the_sequence) ... ok
+test_rows_for_each_point (test_g2r_jobs.Products.test_rows_for_each_point) ... ok
+test_every_line_parses (test_g2r_jobs.RealParser.test_every_line_parses) ... ok
+test_a_dirty_deploy_is_refused (test_g2r_jobs.Shell.test_a_dirty_deploy_is_refused) ... ok
+test_a_failed_run_is_recorded_and_the_lane_goes_on (test_g2r_jobs.Shell.test_a_failed_run_is_recorded_and_the_lane_goes_on) ... ok
+test_a_missing_binding_is_refused (test_g2r_jobs.Shell.test_a_missing_binding_is_refused) ... ok
+test_a_real_run_of_g18_ud_against_stubs (test_g2r_jobs.Shell.test_a_real_run_of_g18_ud_against_stubs) ... ok
+test_a_real_run_stops_on_a_failed_check_and_the_wrong_limit (test_g2r_jobs.Shell.test_a_real_run_stops_on_a_failed_check_and_the_wrong_limit) ... ok
+test_dry_run_of_a_tune_job_reads_its_realization (test_g2r_jobs.Shell.test_dry_run_of_a_tune_job_reads_its_realization) ... ok
+test_dry_run_of_d_ud_prints_its_45_runs_with_the_off_reruns_unpatched (test_g2r_jobs.Shell.test_dry_run_of_d_ud_prints_its_45_runs_with_the_off_reruns_unpatched) ... ok
+test_more_submit_refusals (test_g2r_jobs.Shell.test_more_submit_refusals) ... ok
+test_sacct_never_listing_the_id_is_rc_6 (test_g2r_jobs.Shell.test_sacct_never_listing_the_id_is_rc_6) ... ok
+test_the_binding_must_name_m_on_its_m_j1_line (test_g2r_jobs.Shell.test_the_binding_must_name_m_on_its_m_j1_line) ... ok
+test_the_envtest_finds_a_difference_and_a_failed_run (test_g2r_jobs.Shell.test_the_envtest_finds_a_difference_and_a_failed_run) ... ok
+test_the_envtest_passes_and_refuses_a_rerun (test_g2r_jobs.Shell.test_the_envtest_passes_and_refuses_a_rerun) ... ok
+test_the_envtest_refuses_a_pre_deploy_not_at_pre_m (test_g2r_jobs.Shell.test_the_envtest_refuses_a_pre_deploy_not_at_pre_m) ... ok
+test_the_envtest_stops_on_its_limit_and_its_check (test_g2r_jobs.Shell.test_the_envtest_stops_on_its_limit_and_its_check) ... ok
+test_the_hooks_are_refused_on_a_nersc_machine (test_g2r_jobs.Shell.test_the_hooks_are_refused_on_a_nersc_machine) ... ok
+test_the_job_script_refuses_the_envtest_and_prepare_and_mixed_points (test_g2r_jobs.Shell.test_the_job_script_refuses_the_envtest_and_prepare_and_mixed_points) ... ok
+test_the_preflight_refusals (test_g2r_jobs.Shell.test_the_preflight_refusals) ... ok
+test_the_prepare_passes_its_rc_through (test_g2r_jobs.Shell.test_the_prepare_passes_its_rc_through) ... ok
+test_the_prepare_refuses (test_g2r_jobs.Shell.test_the_prepare_refuses) ... ok
+test_the_prepare_refuses_a_dirty_deploy (test_g2r_jobs.Shell.test_the_prepare_refuses_a_dirty_deploy) ... ok
+test_the_submission_sequence (test_g2r_jobs.Shell.test_the_submission_sequence) ... ok
+test_the_submit_refusals (test_g2r_jobs.Shell.test_the_submit_refusals) ... ok
+test_without_hooks_the_paths_are_the_clusters (test_g2r_jobs.Shell.test_without_hooks_the_paths_are_the_clusters) ... ok
+test_counts_roles_and_points (test_g2r_jobs.Tables.test_counts_roles_and_points) ... ok
+test_data_rows_are_part_bs_j2_rows_plus_the_map (test_g2r_jobs.Tables.test_data_rows_are_part_bs_j2_rows_plus_the_map) ... ok
+test_envtest_rows_are_part_bs_mares_0_both_unpatched (test_g2r_jobs.Tables.test_envtest_rows_are_part_bs_mares_0_both_unpatched) ... ok
+test_limits_and_the_price (test_g2r_jobs.Tables.test_limits_and_the_price) ... ok
+test_off_reruns_are_part_bs_rows_exactly_at_the_end_of_d_ud_2 (test_g2r_jobs.Tables.test_off_reruns_are_part_bs_rows_exactly_at_the_end_of_d_ud_2) ... ok
+test_part_bs_table_is_read_at_its_digest_and_must_be_the_bank (test_g2r_jobs.Tables.test_part_bs_table_is_read_at_its_digest_and_must_be_the_bank) ... ok
+test_tune_rows_are_cov2ds_universe_rows_plus_the_map (test_g2r_jobs.Tables.test_tune_rows_are_cov2ds_universe_rows_plus_the_map) ... ok
+test_written_tables_round_trip (test_g2r_jobs.Tables.test_written_tables_round_trip) ... ok
+
+----------------------------------------------------------------------
+Ran 51 tests in 19.746s
+
+OK
+rc=0
+== PYTHONHASHSEED=1
+test_a_job_with_no_runs_or_mixed_points (test_g2r_jobs.Check.test_a_job_with_no_runs_or_mixed_points) ... ok
+test_clean_jobs_pass (test_g2r_jobs.Check.test_clean_jobs_pass) ... ok
+test_the_map_must_be_the_committed_one (test_g2r_jobs.Check.test_the_map_must_be_the_committed_one) ... ok
+test_the_realization_g8 (test_g2r_jobs.Check.test_the_realization_g8) ... ok
+test_uni_and_pins (test_g2r_jobs.Check.test_uni_and_pins) ... ok
+test_the_committed_records_name_each_realization (test_g2r_jobs.CommittedStepB.test_the_committed_records_name_each_realization) ... ok
+test_a_missing_histogram_and_an_unopenable_file (test_g2r_jobs.EnvTest.test_a_missing_histogram_and_an_unopenable_file) ... Error in <TFile::ReadBuffer>: error reading all requested bytes from file /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpc68dquof/junk.root, got 8 of 300
+Error in <TFile::Init>: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpc68dquof/junk.root failed to read the file type data.
+ok
+test_each_difference_is_invalid (test_g2r_jobs.EnvTest.test_each_difference_is_invalid) ... ok
+test_equal_products_pass_with_the_code_records_set_aside (test_g2r_jobs.EnvTest.test_equal_products_pass_with_the_code_records_set_aside) ... ok
+test_the_cli (test_g2r_jobs.EnvTest.test_the_cli) ... ok
+test_spent_held_lag_and_the_cap (test_g2r_jobs.Gate.test_spent_held_lag_and_the_cap) ... ok
+test_the_cap_refuses (test_g2r_jobs.Gate.test_the_cap_refuses) ... ok
+test_the_cli_exit_codes (test_g2r_jobs.Gate.test_the_cli_exit_codes) ... ok
+test_the_projection_is_a_stop_for_unfold_jobs_only (test_g2r_jobs.Gate.test_the_projection_is_a_stop_for_unfold_jobs_only) ... ok
+test_unknown_names_refuse_and_others_are_ignored (test_g2r_jobs.Gate.test_unknown_names_refuse_and_others_are_ignored) ... ok
+test_each_job_once_and_records_must_pass (test_g2r_jobs.Order.test_each_job_once_and_records_must_pass) ... ok
+test_first_run_done (test_g2r_jobs.Order.test_first_run_done) ... ok
+test_the_sequence (test_g2r_jobs.Order.test_the_sequence) ... ok
+test_rows_for_each_point (test_g2r_jobs.Products.test_rows_for_each_point) ... ok
+test_every_line_parses (test_g2r_jobs.RealParser.test_every_line_parses) ... ok
+test_a_dirty_deploy_is_refused (test_g2r_jobs.Shell.test_a_dirty_deploy_is_refused) ... ok
+test_a_failed_run_is_recorded_and_the_lane_goes_on (test_g2r_jobs.Shell.test_a_failed_run_is_recorded_and_the_lane_goes_on) ... ok
+test_a_missing_binding_is_refused (test_g2r_jobs.Shell.test_a_missing_binding_is_refused) ... ok
+test_a_real_run_of_g18_ud_against_stubs (test_g2r_jobs.Shell.test_a_real_run_of_g18_ud_against_stubs) ... ok
+test_a_real_run_stops_on_a_failed_check_and_the_wrong_limit (test_g2r_jobs.Shell.test_a_real_run_stops_on_a_failed_check_and_the_wrong_limit) ... ok
+test_dry_run_of_a_tune_job_reads_its_realization (test_g2r_jobs.Shell.test_dry_run_of_a_tune_job_reads_its_realization) ... ok
+test_dry_run_of_d_ud_prints_its_45_runs_with_the_off_reruns_unpatched (test_g2r_jobs.Shell.test_dry_run_of_d_ud_prints_its_45_runs_with_the_off_reruns_unpatched) ... ok
+test_more_submit_refusals (test_g2r_jobs.Shell.test_more_submit_refusals) ... ok
+test_sacct_never_listing_the_id_is_rc_6 (test_g2r_jobs.Shell.test_sacct_never_listing_the_id_is_rc_6) ... ok
+test_the_binding_must_name_m_on_its_m_j1_line (test_g2r_jobs.Shell.test_the_binding_must_name_m_on_its_m_j1_line) ... ok
+test_the_envtest_finds_a_difference_and_a_failed_run (test_g2r_jobs.Shell.test_the_envtest_finds_a_difference_and_a_failed_run) ... ok
+test_the_envtest_passes_and_refuses_a_rerun (test_g2r_jobs.Shell.test_the_envtest_passes_and_refuses_a_rerun) ... ok
+test_the_envtest_refuses_a_pre_deploy_not_at_pre_m (test_g2r_jobs.Shell.test_the_envtest_refuses_a_pre_deploy_not_at_pre_m) ... ok
+test_the_envtest_stops_on_its_limit_and_its_check (test_g2r_jobs.Shell.test_the_envtest_stops_on_its_limit_and_its_check) ... ok
+test_the_hooks_are_refused_on_a_nersc_machine (test_g2r_jobs.Shell.test_the_hooks_are_refused_on_a_nersc_machine) ... ok
+test_the_job_script_refuses_the_envtest_and_prepare_and_mixed_points (test_g2r_jobs.Shell.test_the_job_script_refuses_the_envtest_and_prepare_and_mixed_points) ... ok
+test_the_preflight_refusals (test_g2r_jobs.Shell.test_the_preflight_refusals) ... ok
+test_the_prepare_passes_its_rc_through (test_g2r_jobs.Shell.test_the_prepare_passes_its_rc_through) ... ok
+test_the_prepare_refuses (test_g2r_jobs.Shell.test_the_prepare_refuses) ... ok
+test_the_prepare_refuses_a_dirty_deploy (test_g2r_jobs.Shell.test_the_prepare_refuses_a_dirty_deploy) ... ok
+test_the_submission_sequence (test_g2r_jobs.Shell.test_the_submission_sequence) ... ok
+test_the_submit_refusals (test_g2r_jobs.Shell.test_the_submit_refusals) ... ok
+test_without_hooks_the_paths_are_the_clusters (test_g2r_jobs.Shell.test_without_hooks_the_paths_are_the_clusters) ... ok
+test_counts_roles_and_points (test_g2r_jobs.Tables.test_counts_roles_and_points) ... ok
+test_data_rows_are_part_bs_j2_rows_plus_the_map (test_g2r_jobs.Tables.test_data_rows_are_part_bs_j2_rows_plus_the_map) ... ok
+test_envtest_rows_are_part_bs_mares_0_both_unpatched (test_g2r_jobs.Tables.test_envtest_rows_are_part_bs_mares_0_both_unpatched) ... ok
+test_limits_and_the_price (test_g2r_jobs.Tables.test_limits_and_the_price) ... ok
+test_off_reruns_are_part_bs_rows_exactly_at_the_end_of_d_ud_2 (test_g2r_jobs.Tables.test_off_reruns_are_part_bs_rows_exactly_at_the_end_of_d_ud_2) ... ok
+test_part_bs_table_is_read_at_its_digest_and_must_be_the_bank (test_g2r_jobs.Tables.test_part_bs_table_is_read_at_its_digest_and_must_be_the_bank) ... ok
+test_tune_rows_are_cov2ds_universe_rows_plus_the_map (test_g2r_jobs.Tables.test_tune_rows_are_cov2ds_universe_rows_plus_the_map) ... ok
+test_written_tables_round_trip (test_g2r_jobs.Tables.test_written_tables_round_trip) ... ok
+
+----------------------------------------------------------------------
+Ran 51 tests in 20.548s
+
+OK
+rc=0
+== PYTHONHASHSEED=2
+test_a_job_with_no_runs_or_mixed_points (test_g2r_jobs.Check.test_a_job_with_no_runs_or_mixed_points) ... ok
+test_clean_jobs_pass (test_g2r_jobs.Check.test_clean_jobs_pass) ... ok
+test_the_map_must_be_the_committed_one (test_g2r_jobs.Check.test_the_map_must_be_the_committed_one) ... ok
+test_the_realization_g8 (test_g2r_jobs.Check.test_the_realization_g8) ... ok
+test_uni_and_pins (test_g2r_jobs.Check.test_uni_and_pins) ... ok
+test_the_committed_records_name_each_realization (test_g2r_jobs.CommittedStepB.test_the_committed_records_name_each_realization) ... ok
+test_a_missing_histogram_and_an_unopenable_file (test_g2r_jobs.EnvTest.test_a_missing_histogram_and_an_unopenable_file) ... Error in <TFile::ReadBuffer>: error reading all requested bytes from file /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpgraxf2li/junk.root, got 8 of 300
+Error in <TFile::Init>: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpgraxf2li/junk.root failed to read the file type data.
+ok
+test_each_difference_is_invalid (test_g2r_jobs.EnvTest.test_each_difference_is_invalid) ... ok
+test_equal_products_pass_with_the_code_records_set_aside (test_g2r_jobs.EnvTest.test_equal_products_pass_with_the_code_records_set_aside) ... ok
+test_the_cli (test_g2r_jobs.EnvTest.test_the_cli) ... ok
+test_spent_held_lag_and_the_cap (test_g2r_jobs.Gate.test_spent_held_lag_and_the_cap) ... ok
+test_the_cap_refuses (test_g2r_jobs.Gate.test_the_cap_refuses) ... ok
+test_the_cli_exit_codes (test_g2r_jobs.Gate.test_the_cli_exit_codes) ... ok
+test_the_projection_is_a_stop_for_unfold_jobs_only (test_g2r_jobs.Gate.test_the_projection_is_a_stop_for_unfold_jobs_only) ... ok
+test_unknown_names_refuse_and_others_are_ignored (test_g2r_jobs.Gate.test_unknown_names_refuse_and_others_are_ignored) ... ok
+test_each_job_once_and_records_must_pass (test_g2r_jobs.Order.test_each_job_once_and_records_must_pass) ... ok
+test_first_run_done (test_g2r_jobs.Order.test_first_run_done) ... ok
+test_the_sequence (test_g2r_jobs.Order.test_the_sequence) ... ok
+test_rows_for_each_point (test_g2r_jobs.Products.test_rows_for_each_point) ... ok
+test_every_line_parses (test_g2r_jobs.RealParser.test_every_line_parses) ... ok
+test_a_dirty_deploy_is_refused (test_g2r_jobs.Shell.test_a_dirty_deploy_is_refused) ... ok
+test_a_failed_run_is_recorded_and_the_lane_goes_on (test_g2r_jobs.Shell.test_a_failed_run_is_recorded_and_the_lane_goes_on) ... ok
+test_a_missing_binding_is_refused (test_g2r_jobs.Shell.test_a_missing_binding_is_refused) ... ok
+test_a_real_run_of_g18_ud_against_stubs (test_g2r_jobs.Shell.test_a_real_run_of_g18_ud_against_stubs) ... ok
+test_a_real_run_stops_on_a_failed_check_and_the_wrong_limit (test_g2r_jobs.Shell.test_a_real_run_stops_on_a_failed_check_and_the_wrong_limit) ... ok
+test_dry_run_of_a_tune_job_reads_its_realization (test_g2r_jobs.Shell.test_dry_run_of_a_tune_job_reads_its_realization) ... ok
+test_dry_run_of_d_ud_prints_its_45_runs_with_the_off_reruns_unpatched (test_g2r_jobs.Shell.test_dry_run_of_d_ud_prints_its_45_runs_with_the_off_reruns_unpatched) ... ok
+test_more_submit_refusals (test_g2r_jobs.Shell.test_more_submit_refusals) ... ok
+test_sacct_never_listing_the_id_is_rc_6 (test_g2r_jobs.Shell.test_sacct_never_listing_the_id_is_rc_6) ... ok
+test_the_binding_must_name_m_on_its_m_j1_line (test_g2r_jobs.Shell.test_the_binding_must_name_m_on_its_m_j1_line) ... ok
+test_the_envtest_finds_a_difference_and_a_failed_run (test_g2r_jobs.Shell.test_the_envtest_finds_a_difference_and_a_failed_run) ... ok
+test_the_envtest_passes_and_refuses_a_rerun (test_g2r_jobs.Shell.test_the_envtest_passes_and_refuses_a_rerun) ... ok
+test_the_envtest_refuses_a_pre_deploy_not_at_pre_m (test_g2r_jobs.Shell.test_the_envtest_refuses_a_pre_deploy_not_at_pre_m) ... ok
+test_the_envtest_stops_on_its_limit_and_its_check (test_g2r_jobs.Shell.test_the_envtest_stops_on_its_limit_and_its_check) ... ok
+test_the_hooks_are_refused_on_a_nersc_machine (test_g2r_jobs.Shell.test_the_hooks_are_refused_on_a_nersc_machine) ... ok
+test_the_job_script_refuses_the_envtest_and_prepare_and_mixed_points (test_g2r_jobs.Shell.test_the_job_script_refuses_the_envtest_and_prepare_and_mixed_points) ... ok
+test_the_preflight_refusals (test_g2r_jobs.Shell.test_the_preflight_refusals) ... ok
+test_the_prepare_passes_its_rc_through (test_g2r_jobs.Shell.test_the_prepare_passes_its_rc_through) ... ok
+test_the_prepare_refuses (test_g2r_jobs.Shell.test_the_prepare_refuses) ... ok
+test_the_prepare_refuses_a_dirty_deploy (test_g2r_jobs.Shell.test_the_prepare_refuses_a_dirty_deploy) ... ok
+test_the_submission_sequence (test_g2r_jobs.Shell.test_the_submission_sequence) ... ok
+test_the_submit_refusals (test_g2r_jobs.Shell.test_the_submit_refusals) ... ok
+test_without_hooks_the_paths_are_the_clusters (test_g2r_jobs.Shell.test_without_hooks_the_paths_are_the_clusters) ... ok
+test_counts_roles_and_points (test_g2r_jobs.Tables.test_counts_roles_and_points) ... ok
+test_data_rows_are_part_bs_j2_rows_plus_the_map (test_g2r_jobs.Tables.test_data_rows_are_part_bs_j2_rows_plus_the_map) ... ok
+test_envtest_rows_are_part_bs_mares_0_both_unpatched (test_g2r_jobs.Tables.test_envtest_rows_are_part_bs_mares_0_both_unpatched) ... ok
+test_limits_and_the_price (test_g2r_jobs.Tables.test_limits_and_the_price) ... ok
+test_off_reruns_are_part_bs_rows_exactly_at_the_end_of_d_ud_2 (test_g2r_jobs.Tables.test_off_reruns_are_part_bs_rows_exactly_at_the_end_of_d_ud_2) ... ok
+test_part_bs_table_is_read_at_its_digest_and_must_be_the_bank (test_g2r_jobs.Tables.test_part_bs_table_is_read_at_its_digest_and_must_be_the_bank) ... ok
+test_tune_rows_are_cov2ds_universe_rows_plus_the_map (test_g2r_jobs.Tables.test_tune_rows_are_cov2ds_universe_rows_plus_the_map) ... ok
+test_written_tables_round_trip (test_g2r_jobs.Tables.test_written_tables_round_trip) ... ok
+
+----------------------------------------------------------------------
+Ran 51 tests in 19.510s
+
+OK
+rc=0
+# porcelain after 0
