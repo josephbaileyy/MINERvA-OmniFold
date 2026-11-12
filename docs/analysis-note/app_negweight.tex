@@ -164,6 +164,16 @@ On the data, the refined treatment moves the 2D result by at most $0.497\,\sigma
 
 The five-dimensional validation (\S\S\ref{sec:val-fiveaxis}--\ref{sec:val-departure}) reports end-to-end tests of both background treatments. They cover the purity bias in the highest-$W$ column at nominal truth, its reduction with refined negative-weight subtraction, the data difference, and the estimator with higher refinement capacity. That estimator is configuration (e), which gives the 3D and 4D central values and the sixteen-cell result (\S\ref{sec:fived16}) but not the configuration-(a) 5D central value; the quoted 2D central value uses the same refinement capacity, in configuration (f).
 
+The closure of the five-dimensional pseudo-experiments with backgrounds, under purity-based and refined negative-weight subtraction (\S\ref{sec:val-negweight}), is shown cell by cell in Fig.~\ref{fig:bkg-residual-note}.
+
+% Targeted round (DECISION-20261103-joseph-retire-density-gate.md item 3b): the methods paper's Fig. 2 and its caption, verbatim, moved here when the paper's background-closure paragraph (Sec. IV D) moved to the note. pointed to from sec:val-negweight. The same figure file the paper printed (figures/paper_fig_bkg_residual.pdf, unchanged).
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{paper_fig_bkg_residual}
+\caption{Nominal-truth fractional closure residual, (unfolded$-$truth)/truth, with backgrounds and deterministic LightGBM. Circles: purity subtraction (9 pseudo-experiments). Squares: unbinned negative-weight subtraction, 100-tree/8-leaf refinement (60). The pseudo-experiments are unpaired. (a)~42 $(\Eavail,W)$ cells grouped by $\Eavail$ bin. (b)~\jtNcells{} coarse joint cells indexed in the $3^{5}$ grid, followed by the integrated total. Bars: standard error of the mean.}
+\label{fig:bkg-residual-note}
+\end{figure}
+
 \paragraph{Purity bias.} Purity bias is 8--12 statistical standard deviations; signal-only experiments close. Subtraction is exact per reconstructed bin, but the widest bin ($W\ge\SI{3}{GeV}$, background \SI{13}{\percent} of signal) contains background shape resolved by the unbinned classifier and missed by bin-uniform purity. The within-bin shape term of \S\ref{sec:negweight-estimator} is therefore measurable, and it is direct evidence for revisiting the background treatment of the configuration-(a) five-dimensional central value (\S\ref{sec:negweight-footing}). The difference between five-dimensional purity and refined negative-weight subtraction on data is the least computationally expensive estimate of its size on data.
 % Source: docs/orchestration/OUTCOME-20260925-s5c-purity-background-bias-at-high-W.md; KNOWN_ISSUES 75.
 % Heading date (2026-09-25) and the numbers repeated in sec_validation.tex removed (lane 3 App. B #7):
