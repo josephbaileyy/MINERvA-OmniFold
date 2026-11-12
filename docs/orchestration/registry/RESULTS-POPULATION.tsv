@@ -64,6 +64,9 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ref
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/mwdiag/mw_1A_1M.json	included	6	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/readout/fd_rpd.json	included	4	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-stab-a1r/readout/readout-2/fd_stab.json	included	3	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/referee-sensitivity-20261111/connect-post/run-20261112/cmodel/rsn_cmodel.json	included	49	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/referee-sensitivity-20261111/connect-post/run-20261112/regrade.json	included	84	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/referee-sensitivity-20261111/connect-post/run-20261112/rsn_readout.json	included	30	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rounding-stability-20261106/ensemble/receipts/stage1-a1-analysis/ens1_stage1.json	included	2	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rounding-stability-20261106/ensemble/receipts/stage2-a1-analysis/ens1_stage2.json	included	1	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/readout/fd_f0b_readout.json	included	25	

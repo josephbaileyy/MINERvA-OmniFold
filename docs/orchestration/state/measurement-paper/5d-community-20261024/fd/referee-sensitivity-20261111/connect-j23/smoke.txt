@@ -1,0 +1,110 @@
+smoke: template cc01eca0bc1d673136e19999ea77d563fbd7b8da = M_P1 + synthetic reweight pins; bound files unchanged: nd-unfolding/pv-ladder/prep-SHA256SUMS nd-unfolding/rsn/rsn-prep-SHA256SUMS 
+## case pass nc rc=0
+[rsn] NC PASS: rsn_nc equals P5 and L-5D-PV_e_tune_v1 bitwise
+NC PASS: schema rsn-nc/1, product 6f0ac7506521a68075964ead10ec051bcf9900bd6a2c05a472723928068eef1c, rsn_cmodel.py ab63292122bffbc30e5d85efc2a5ae3f96c7f917891a856c48e2d26414848a48
+== FILE gates/J2.ok sha256 a55df79d8b3a97dcfb27808ff438cbbe77f8fe08de55079666e13d8085818a92
+pin=<smoke-pin>
+== FILE gates/J3.ok sha256 a55df79d8b3a97dcfb27808ff438cbbe77f8fe08de55079666e13d8085818a92
+pin=<smoke-pin>
+NC STEP PASS: J1 COMPLETED; NC PASS; deploy clean at <smoke-pin>; gates name it. J2 and J3 wait for the receipt and the director's go.
+sbatch called: no
+nc.json: yes; gates: yes; self copy removed: yes
+## case j1q nc rc=9
+REFUSED (nothing written): fenced or rsn_ jobs are queued or running: 61168780|rsn_J1|RUNNING
+sbatch called: no
+nc.json: no; gates: no; self copy removed: yes
+## case e96 nc rc=9
+REFUSED (nothing written): fenced or rsn_ jobs are queued or running: 61200000|e96data_full|PENDING
+sbatch called: no
+nc.json: no; gates: no; self copy removed: yes
+## case host nc rc=9
+REFUSED (nothing written): host dtn01 is not a login node
+sbatch called: no
+nc.json: no; gates: no; self copy removed: yes
+## case slurm nc rc=9
+REFUSED (nothing written): a Slurm job is set (1)
+sbatch called: no
+nc.json: no; gates: no; self copy removed: yes
+## case j1fail nc rc=9
+REFUSED (nothing written): J1 61168780 is not rsn_J1 COMPLETED 0:0
+sbatch called: no
+nc.json: no; gates: no; self copy removed: yes
+## case j1rc nc rc=9
+REFUSED (nothing written): <w>/b-j1rc/out/logs/rsn_J1_61168780.out has no '[rsn] job=J1 rc=0' line
+sbatch called: no
+nc.json: no; gates: no; self copy removed: yes
+## case prodsha nc rc=9
+REFUSED (nothing written): rsn_nc.npz on disk (92e78d0b032962f47792a9fa95fd981ef63e1e3ef074d536d6304c75eddbe29f) is not J1's logged 6f0ac7506521a68075964ead10ec051bcf9900bd6a2c05a472723928068eef1c
+sbatch called: no
+nc.json: no; gates: no; self copy removed: yes
+## case ncexists nc rc=9
+REFUSED (nothing written): <w>/b-ncexists/out/nc.json exists
+sbatch called: no
+nc.json: yes; gates: no; self copy removed: yes
+## case depexists nc rc=9
+REFUSED (nothing written): <w>/b-depexists/deploy-p1 exists
+sbatch called: no
+nc.json: no; gates: no; self copy removed: yes
+## case sums nc rc=8
+STOP: the committed rsn-prep-SHA256SUMS is not connect 1's <w>/b-sums/out/rsn-prep-SHA256SUMS
+sbatch called: no
+nc.json: no; gates: no; self copy removed: yes
+## case ncfail nc rc=8
+STOP: rsn_cmodel.py nc rc=1
+sbatch called: no
+nc.json: no; gates: no; self copy removed: yes
+## case badcode nc rc=8
+[rsn] NC PASS: rsn_nc equals P5 and L-5D-PV_e_tune_v1 bitwise
+STOP: nc.json is not an rsn-nc/1 PASS on J1's product by the bound rsn_cmodel.py
+sbatch called: no
+nc.json: yes; gates: no; self copy removed: yes
+## case badstep j9 rc=9
+REFUSED (nothing written): step 'j9' is not nc or submit
+sbatch called: no
+nc.json: no; gates: no; self copy removed: yes
+## case sub submit rc=0
+[rsn] smoke: checks passed, 8 steps
+smoke J2 rc=0
+[rsn] smoke: checks passed, 4 steps
+smoke J3 rc=0
+sbatch J2 rc=0 jobid=61300002
+sbatch J3 rc=0 jobid=61300003
+J2 J3 SUBMITTED: J2 61300002 (0:22:00), J3 61300003 (0:19:00), deploy <w>/b-sub/deploy-p1 at <smoke-pin>, out <w>/b-sub/out
+sbatch called: --parsable --job-name=rsn_J2 --time=0:22:00 --output=<w>/b-sub/out/logs/%x_%j.out <w>/b-sub/deploy-p1/nd-unfolding/rsn/sbatch_rsn.sh <w>/b-sub/deploy-p1 <smoke-pin> <w>/b-sub/out J2
+--parsable --job-name=rsn_J3 --time=0:19:00 --output=<w>/b-sub/out/logs/%x_%j.out <w>/b-sub/deploy-p1/nd-unfolding/rsn/sbatch_rsn.sh <w>/b-sub/deploy-p1 <smoke-pin> <w>/b-sub/out J3
+nc.json: yes; gates: yes; self copy removed: yes
+## case subgate submit rc=9
+REFUSED (nothing written): <w>/b-subgate/out/gates/J3.ok is not exactly pin=<smoke-pin>
+sbatch called: no
+nc.json: yes; gates: yes; self copy removed: yes
+## case subnonc submit rc=9
+REFUSED (nothing written): <w>/b-subnonc/out/nc.json records no rsn-nc/1 PASS
+sbatch called: no
+nc.json: no; gates: yes; self copy removed: yes
+## case subdirty submit rc=9
+REFUSED (nothing written): the deploy is not <smoke-pin> clean (HEAD=<smoke-pin>,        1 porcelain lines)
+sbatch called: no
+nc.json: yes; gates: yes; self copy removed: yes
+## case sube96 submit rc=9
+REFUSED (nothing written): fenced or rsn_ jobs are queued or running: 61200000|e96data_full|PENDING
+sbatch called: no
+nc.json: yes; gates: yes; self copy removed: yes
+## case subj2fail submit rc=8
+[rsn] smoke: checks passed, 8 steps
+smoke J2 rc=0
+[rsn] smoke: checks passed, 4 steps
+smoke J3 rc=0
+sbatch J2 rc=1 jobid=
+STOP: sbatch J2 failed; J3 not submitted
+sbatch called: no
+nc.json: yes; gates: yes; self copy removed: yes
+## case subj3fail submit rc=8
+[rsn] smoke: checks passed, 8 steps
+smoke J2 rc=0
+[rsn] smoke: checks passed, 4 steps
+smoke J3 rc=0
+sbatch J2 rc=0 jobid=61300002
+sbatch J3 rc=1 jobid=
+STOP: sbatch J3 failed; J2 61300002 IS submitted
+sbatch called: --parsable --job-name=rsn_J2 --time=0:22:00 --output=<w>/b-subj3fail/out/logs/%x_%j.out <w>/b-subj3fail/deploy-p1/nd-unfolding/rsn/sbatch_rsn.sh <w>/b-subj3fail/deploy-p1 <smoke-pin> <w>/b-subj3fail/out J2
+nc.json: yes; gates: yes; self copy removed: yes

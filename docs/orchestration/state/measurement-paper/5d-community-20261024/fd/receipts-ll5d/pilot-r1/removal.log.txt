@@ -1,0 +1,3 @@
+177f4f4d3be856b5dca0e8d084f5a18b6cd37a5deb2ce0ca90f34ddd52673cc9  /dev/shm/josephrb-ll5d-pilot.sh
+rm -f /dev/shm/josephrb-ll5d-pilot.sh rc=0
+ls: cannot access '/dev/shm/josephrb-ll5d-pilot.sh': No such file or directory
