@@ -1,0 +1,89 @@
+# RSN HPSS archive smoke (local, macOS; stubs for hsi, htar, hpssquota, timeout; synthetic sources with real sha256 pins)
+# template sha256 da7c418dc76cb95eb3ae031b8ac5465c8dd9157c39441364ef5848b96e5940a9
+## case pass
+target check hsi rc=1
+hpssquota before rc=0
+hsi mkdir rc=0
+STAGE STOP pvl_prep: <smoke>/src/pvl_prep/f0.bin: size, mtime or atime changed by the copy
+STOP: stage pvl_prep rc=8
+removal of <smoke>/shm-pass rc=0 ; present after: no
+hpss archive rc=8 2026-11-11T21:27:54Z
+## case badpin
+target check hsi rc=1
+hpssquota before rc=0
+hsi mkdir rc=0
+STAGE STOP pvl_prep: <smoke>/src/pvl_prep/f1.bin: size, mtime or atime changed by the copy
+STOP: stage pvl_prep rc=8
+removal of <smoke>/shm-badpin rc=0 ; present after: no
+hpss archive rc=8 2026-11-11T21:27:54Z
+## case exists
+target check hsi rc=0
+STOP: /home/j/josephrb/rsn-exists exists
+removal of <smoke>/shm-exists rc=0 ; present after: no
+hpss archive rc=8 2026-11-11T21:27:54Z
+## case host
+(refused before any log: rc 9)
+## case slurm
+(refused before any log: rc 9)
+## case pass2
+target check hsi rc=1
+hpssquota before rc=0
+hsi mkdir rc=0
+STAGE OK pvl_prep: 3 files, 3111 bytes, every sha256 equal to its pin
+htar pvl_prep rc=0
+hashcreate pvl_prep rc=0
+hashverify pvl_prep rc=0: /home/j/josephrb/rsn-pass2/pvl_prep.tar: (md5) OK 
+retrieve pvl_prep rc=0
+RETRIEVE OK pvl_prep: 3 members re-read from HPSS, every sha256 equal to its manifest line and pin
+== group pvl_prep PASS 2026-11-11T21:28:12Z
+STAGE OK pvl_products: 2 files, 2037 bytes, every sha256 equal to its pin
+htar pvl_products rc=0
+hashcreate pvl_products rc=0
+hashverify pvl_products rc=0: /home/j/josephrb/rsn-pass2/pvl_products.tar: (md5) OK 
+retrieve pvl_products rc=0
+RETRIEVE OK pvl_products: 2 members re-read from HPSS, every sha256 equal to its manifest line and pin
+== group pvl_products PASS 2026-11-11T21:28:12Z
+STAGE OK cpl_block: 1 files, 1000 bytes, every sha256 equal to its pin
+htar cpl_block rc=0
+hashcreate cpl_block rc=0
+hashverify cpl_block rc=0: /home/j/josephrb/rsn-pass2/cpl_block.tar: (md5) OK 
+retrieve cpl_block rc=0
+RETRIEVE OK cpl_block: 1 members re-read from HPSS, every sha256 equal to its manifest line and pin
+== group cpl_block PASS 2026-11-11T21:28:12Z
+hsi ls rc=0
+hpssquota after rc=0
+ARCHIVE PASS: all three groups archived, hash-verified and every member re-read from HPSS
+removal of <smoke>/shm-pass2 rc=0 ; present after: no
+hpss archive rc=0 2026-11-11T21:28:12Z
+## case badpin2
+target check hsi rc=1
+hpssquota before rc=0
+hsi mkdir rc=0
+STAGE OK pvl_prep: 3 files, 3111 bytes, every sha256 equal to its pin
+htar pvl_prep rc=0
+hashcreate pvl_prep rc=0
+hashverify pvl_prep rc=0: /home/j/josephrb/rsn-badpin2/pvl_prep.tar: (md5) OK 
+retrieve pvl_prep rc=0
+RETRIEVE OK pvl_prep: 3 members re-read from HPSS, every sha256 equal to its manifest line and pin
+== group pvl_prep PASS 2026-11-11T21:28:13Z
+STAGE STOP pvl_products: <smoke>/src/pvl_products/f0.bin: sha256 9275be2d7cc8d4b896c43181b7b6136905c3b7fdee139faaa9cbb658299365d7 is not its committed pin ffffbe2d7cc8d4b896c43181b7b6136905c3b7fdee139faaa9cbb658299365d7
+STOP: stage pvl_products rc=8
+removal of <smoke>/shm-badpin2 rc=0 ; present after: no
+hpss archive rc=8 2026-11-11T21:28:13Z
+## case corrupt
+target check hsi rc=1
+hpssquota before rc=0
+hsi mkdir rc=0
+STAGE OK pvl_prep: 3 files, 3111 bytes, every sha256 equal to its pin
+htar pvl_prep rc=0
+hashcreate pvl_prep rc=0
+hashverify pvl_prep rc=0: /home/j/josephrb/rsn-corrupt/pvl_prep.tar: (md5) OK 
+retrieve pvl_prep rc=0
+RETRIEVE STOP pvl_prep: 0 missing, 0 extra, 1 differing
+STOP: retrieved pvl_prep differs
+removal of <smoke>/shm-corrupt rc=0 ; present after: no
+hpss archive rc=8 2026-11-11T21:28:13Z
+## case rows
+STOP: the list has        6 rows, not 7
+removal of <smoke>/shm-rows rc=0 ; present after: no
+hpss archive rc=8 2026-11-11T21:28:13Z
