@@ -24,7 +24,7 @@ REPO = ND.parent
 FILES = ("runEventLoopOmniFold-truthx.patch", "rdx_unfold.py", "rdx_dump.py", "rdx_truthx_npz.py",
          "rdx_truthx_rows.py", "rdx_align.py", "rdx_provenance.py", "rdx_common.py", "test_rdx.py")
 P, UF, DP, TN, TR, AL, PV, RC = FILES[:8]
-EXPECTED_TESTS = 34
+EXPECTED_TESTS = 38
 MUTATIONS = [
     # --- C1, the event-loop patch (only '+' lines change, so every mutant still applies)
     ("miss rows keep truthx_enu at 0", P, "+        miss_rdx_enu = tde.rdx_enu; miss_rdx_vtx_x = tde.rdx_vtx_x;",
@@ -101,6 +101,15 @@ MUTATIONS = [
      "                pass", "test_the_playlist_index_and_its_refusals"),
     ("an unknown run allowed", DP, '            raise DumpError(f"row {i}: run {r} is in no per-playlist omnifile")',
      "            out[i] = -1\n            continue", "test_the_playlist_index_and_its_refusals"),
+    ("vectorized walk keeps bad reco weights", DP, "& (wr0 >= 0) & (wr0 < 1e4)", "& (wr0 >= 0)",
+     "test_the_vectorized_walk_equals_the_loop_bitwise"),
+    ("vectorized walk ignores the border rule", DP, "        for i in border.tolist():\n", "        for i in []:\n",
+     "test_rows_at_the_angle_cut_are_decided_by_the_reference_function"),
+    ("vectorized MCreco without the -9999 sentinel", DP,
+     '"MCreco": np.column_stack([np.where(s_k, b_pt[keep], -9999.0),',
+     '"MCreco": np.column_stack([b_pt[keep],', "test_the_vectorized_walk_equals_the_loop_bitwise"),
+    ("the dump walks with the loop", DP, "                 ex_t, ex_r, theta_max=u2d.MAX_MUON_THETA_RAD)",
+     "                 ex_t, ex_r)", "test_the_dump_uses_the_vectorized_walk"),
     # --- C-TRUTHX-NPZ, the per-row join (D6)
     ("join ignores truthx (offset)", TN,
      '**{k: int((np.asarray(c[k], np.float64)[jj] != tx[r, i]).sum()) for i, k in enumerate(C.TRUTHX)},', "",

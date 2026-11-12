@@ -1,0 +1,89 @@
+# HEAD 3ef52446d3ad48ff74e8dd7444915f4fbf54fb31
+# clean clone, serial, nice 19, OMP/MKL/OPENBLAS/NUMEXPR threads 1, Python 3.12.2, numpy 1.26.4, 2026-11-12T07:03:23Z
+# 9d71cf6d1935a00442dd58631957a83d95ef8a4cefddc3522811006a8e29ef3b  rdx_align.py
+# 457e89efa20b484cc0d54c1125636ee7e7d3f023cf3aa5462eb9771e3450e451  rdx_cap.py
+# 177259b8f8bc602319a16de7768ce1ca75c23a545fda144471c08629d50b9fde  rdx_common.py
+# 122702c647efc4518af51a7a4e99bba9d7d37332cbfbcc54f59734b2d28dde9b  rdx_dump.py
+# 23dce7a447a830f5af1d3c6f708d2ec6de7f5d49cd4e9a4b7a7186aaaa3103e8  rdx_merge.py
+# 6190d0d724ce140f2e8b96ceeef8770cd0492b102c767e199d00fc387b614836  rdx_mutation_stages.py
+# 270c251fbb07a5f124cd2bd1af6a96c4e6a52e9373f1ddb48b2be74add1a71b0  rdx_mutation.py
+# 948c47e05f22396afafa20fbb2c89881dded027bd49e38c04fe76fdaf89e4dbe  rdx_paths.py
+# dedaa80e5fb108e4b96e61c901d101b4bd51d44d396b9f3d038d00e781c5b67e  rdx_probe_walk.py
+# 6a85d86bc371f1d6aa50caeb4fba84b9e95dc074dccf1ddb398b6acc758a3b23  rdx_provenance.py
+# 32372e2dfaa157a1799aada0aaaf06443974d4de4bda48a8b8b0c39cfc7ea560  rdx_truthx_npz.py
+# db9456c3954dee42eac8adca8206a754feac3626e352ad14f3a79226406ff5cf  rdx_truthx_rows.py
+# 83d585a490954987b3d9ca1595f9fe708012f76a9de740e2c6f3dc17357925db  rdx_unfold.py
+# 5d93f3450146a65b74491452fb3d3c590a1fe0ef490a1b29188fd4a5f79fd981  test_rdx_stages.py
+# 8360dbf536fefebd8a855fa6d36f2f6d39b72e5b485cd083518a33608b3c214d  test_rdx.py
+# 45949bc57f4e4248f3259afec4c9e58003ce4aecc590a9516a14d5bfebfac8d1  rdx_connect_launch.sh
+# 22159ebd99a836ff61791ce15b20b41c51ee8a353f8f2f67c16bf4b0c6d0c8ee  rdx_connect.sh
+# e3e031e75435184782f68f02639e0698ff9ab67d4173ce635209ca65420006c7  sbatch_rdx_arms.sh
+# 743b9e48cbeb36c39427aabba96514503b248c6faddc6947b95f5d3b331de6b5  sbatch_rdx_evloop.sh
+# 742503fa085faa5f1fc5827bd43b247b9ca0cf76d1334d43637f05d3a675e483  sbatch_rdx_merge.sh
+# ce1ffb1915571f28e968909bd828ae59a94e1f54d05e02074036bbc44614b196  smoke_rdx_stages.sh
+# 3ec5069127f5f937c84b4efdb34bdcc99d8acc4b20891f1b26b25e32d27f75b9  rdx_tasks.tsv
+# 578c64ea600e6cba1ddd2de6c1abfa51839d4e163d4beb81b8aab9e9b052fb03  runEventLoopOmniFold-truthx.patch
+# status: 0 changed files
+test_equal_with_exactly_c1s_extras_passes (nd-unfolding.rdx.test_rdx.Align.test_equal_with_exactly_c1s_extras_passes) ... ok
+test_the_align_refusals (nd-unfolding.rdx.test_rdx.Align.test_the_align_refusals) ... ok
+test_the_argument_refusals (nd-unfolding.rdx.test_rdx.Arguments.test_the_argument_refusals) ... ok
+test_a_replica_that_differs_from_the_npz_refuses (nd-unfolding.rdx.test_rdx.KeptRows.test_a_replica_that_differs_from_the_npz_refuses) ... ok
+test_rows_at_the_angle_cut_are_decided_by_the_reference_function (nd-unfolding.rdx.test_rdx.KeptRows.test_rows_at_the_angle_cut_are_decided_by_the_reference_function) ... ok
+test_the_dump_uses_the_vectorized_walk (nd-unfolding.rdx.test_rdx.KeptRows.test_the_dump_uses_the_vectorized_walk) ... ok
+test_the_playlist_index_and_its_refusals (nd-unfolding.rdx.test_rdx.KeptRows.test_the_playlist_index_and_its_refusals) ... ok
+test_the_replica_equals_the_collector_row_for_row (nd-unfolding.rdx.test_rdx.KeptRows.test_the_replica_equals_the_collector_row_for_row) ... ok
+test_the_vectorized_walk_equals_the_loop_bitwise (nd-unfolding.rdx.test_rdx.KeptRows.test_the_vectorized_walk_equals_the_loop_bitwise) ... ok
+test_packing_and_lookup (nd-unfolding.rdx.test_rdx.Keys.test_packing_and_lookup) ... ok
+test_an_ungated_fill_is_caught (nd-unfolding.rdx.test_rdx.Patch.test_an_ungated_fill_is_caught) ... ok
+test_every_added_line_is_gated_or_a_declared_declaration (nd-unfolding.rdx.test_rdx.Patch.test_every_added_line_is_gated_or_a_declared_declaration) ... ok
+test_the_patch_fills_denom_reco_and_miss_rows_and_refuses_both_gates (nd-unfolding.rdx.test_rdx.Patch.test_the_patch_fills_denom_reco_and_miss_rows_and_refuses_both_gates) ... ok
+test_the_patch_removes_only_the_explicit_names_line (nd-unfolding.rdx.test_rdx.Patch.test_the_patch_removes_only_the_explicit_names_line) ... ok
+test_the_tracked_source_is_s0s_pin_and_the_patch_applies_to_it (nd-unfolding.rdx.test_rdx.Patch.test_the_tracked_source_is_s0s_pin_and_the_patch_applies_to_it) ... ok
+test_the_permutation_is_joint_seeded_and_deterministic (nd-unfolding.rdx.test_rdx.Permutation.test_the_permutation_is_joint_seeded_and_deterministic) ... ok
+test_a_sidecar_for_another_npz_or_with_duplicate_ids_refuses (nd-unfolding.rdx.test_rdx.Pipeline.test_a_sidecar_for_another_npz_or_with_duplicate_ids_refuses) ... ok
+test_a_weight_or_coordinate_mismatch_fails_the_join (nd-unfolding.rdx.test_rdx.Pipeline.test_a_weight_or_coordinate_mismatch_fails_the_join) ... ok
+test_mutant_d6a_truthx_offset_by_one_row_fails_the_join (nd-unfolding.rdx.test_rdx.Pipeline.test_mutant_d6a_truthx_offset_by_one_row_fails_the_join) ... ok
+test_mutant_d6b_mask_on_truthx_alone_fails_the_join (nd-unfolding.rdx.test_rdx.Pipeline.test_mutant_d6b_mask_on_truthx_alone_fails_the_join) ... ok
+test_the_build_refuses_an_npz_the_replica_does_not_reproduce (nd-unfolding.rdx.test_rdx.Pipeline.test_the_build_refuses_an_npz_the_replica_does_not_reproduce) ... ok
+test_the_build_refuses_to_overwrite_and_refuses_a_non_finite_truthx (nd-unfolding.rdx.test_rdx.Pipeline.test_the_build_refuses_to_overwrite_and_refuses_a_non_finite_truthx) ... ok
+test_the_sidecar_joins_back_to_every_playlist_row (nd-unfolding.rdx.test_rdx.Pipeline.test_the_sidecar_joins_back_to_every_playlist_row) ... ok
+test_the_vectorized_build_joins_too (nd-unfolding.rdx.test_rdx.Pipeline.test_the_vectorized_build_joins_too) ... ok
+test_a_changed_pin_or_library_or_a_missing_library_fails (nd-unfolding.rdx.test_rdx.Provenance.test_a_changed_pin_or_library_or_a_missing_library_fails) ... ok
+test_a_matching_build_passes_and_lists_the_synced_difference (nd-unfolding.rdx.test_rdx.Provenance.test_a_matching_build_passes_and_lists_the_synced_difference) ... ok
+test_the_declared_pins_are_build_mp1_s0s (nd-unfolding.rdx.test_rdx.Provenance.test_the_declared_pins_are_build_mp1_s0s) ... ok
+test_a_good_sidecar_loads (nd-unfolding.rdx.test_rdx.Sidecar.test_a_good_sidecar_loads) ... ok
+test_the_sidecar_refusals (nd-unfolding.rdx.test_rdx.Sidecar.test_the_sidecar_refusals) ... ok
+test_a_zeroed_miss_row_a_partnerless_row_and_a_bad_enu_fail (nd-unfolding.rdx.test_rdx.TruthxRows.test_a_zeroed_miss_row_a_partnerless_row_and_a_bad_enu_fail) ... ok
+test_duplicate_identities_refuse (nd-unfolding.rdx.test_rdx.TruthxRows.test_duplicate_identities_refuse) ... ok
+test_the_rows_check_passes_and_counts (nd-unfolding.rdx.test_rdx.TruthxRows.test_the_rows_check_passes_and_counts) ... ok
+test_a_loop_that_predicts_on_other_rows_refuses (nd-unfolding.rdx.test_rdx.WideRegressor.test_a_loop_that_predicts_on_other_rows_refuses) ... ok
+test_a_sidecar_with_the_wrong_row_count_refuses (nd-unfolding.rdx.test_rdx.WideRegressor.test_a_sidecar_with_the_wrong_row_count_refuses) ... ok
+test_the_transfer_probe_uses_rdx_mask_and_the_widened_rows (nd-unfolding.rdx.test_rdx.WideRegressor.test_the_transfer_probe_uses_rdx_mask_and_the_widened_rows) ... ok
+test_the_weight_composes_with_the_wide_regressor (nd-unfolding.rdx.test_rdx.WideRegressor.test_the_weight_composes_with_the_wide_regressor) ... ok
+test_the_wide_regressor_sees_truthx_aligned_to_the_loops_fit_and_predict_rows (nd-unfolding.rdx.test_rdx.WideRegressor.test_the_wide_regressor_sees_truthx_aligned_to_the_loops_fit_and_predict_rows) ... ok
+test_without_truthx_the_wrapper_reproduces_the_plain_loop_and_widening_changes_it (nd-unfolding.rdx.test_rdx.WideRegressor.test_without_truthx_the_wrapper_reproduces_the_plain_loop_and_widening_changes_it) ... ok
+test_over_the_cap_and_unusable_inputs_refuse (nd-unfolding.rdx.test_rdx_stages.Cap.test_over_the_cap_and_unusable_inputs_refuse) ... ok
+test_spent_held_unlisted_and_the_wanted_ceiling (nd-unfolding.rdx.test_rdx_stages.Cap.test_spent_held_unlisted_and_the_wanted_ceiling) ... ok
+test_the_job_kinds (nd-unfolding.rdx.test_rdx_stages.Cap.test_the_job_kinds) ... ok
+test_k1_passes_only_when_every_key_matches (nd-unfolding.rdx.test_rdx_stages.MergeAndK1.test_k1_passes_only_when_every_key_matches) ... [rdx_merge] REFUSE (2): MP-1's lat_zero files are not at their pinned digests
+ok
+test_the_sums_must_list_exactly_the_twelve_loops (nd-unfolding.rdx.test_rdx_stages.MergeAndK1.test_the_sums_must_list_exactly_the_twelve_loops) ... [rdx_merge] REFUSE (2): --sums must list exactly the twelve RDX loops, not ['runEventLoopOmniFold_RDX_1A.root', 'runEventLoopOmniFold_RDX_1B.root', 'runEventLoopOmniFold_RDX_1C.root', 'runEventLoopOmniFold_RDX_1D.root', 'runEventLoopOmniFold_RDX_1E.root', 'runEventLoopOmniFold_RDX_1F.root', 'runEventLoopOmniFold_RDX_1G.root', 'runEventLoopOmniFold_RDX_1L.root', 'runEventLoopOmniFold_RDX_1M.root', 'runEventLoopOmniFold_RDX_1N.root', 'runEventLoopOmniFold_RDX_1O.root']
+[rdx_merge] REFUSE (2): --sums must list exactly the twelve RDX loops, not ['extra.root', 'runEventLoopOmniFold_RDX_1A.root', 'runEventLoopOmniFold_RDX_1B.root', 'runEventLoopOmniFold_RDX_1C.root', 'runEventLoopOmniFold_RDX_1D.root', 'runEventLoopOmniFold_RDX_1E.root', 'runEventLoopOmniFold_RDX_1F.root', 'runEventLoopOmniFold_RDX_1G.root', 'runEventLoopOmniFold_RDX_1L.root', 'runEventLoopOmniFold_RDX_1M.root', 'runEventLoopOmniFold_RDX_1N.root', 'runEventLoopOmniFold_RDX_1O.root', 'runEventLoopOmniFold_RDX_1P.root']
+ok
+test_atime_stage_and_manifest (nd-unfolding.rdx.test_rdx_stages.Paths.test_atime_stage_and_manifest) ... ok
+test_the_never_read_list_names_the_ll5d_inputs_and_cov2ds_cv (nd-unfolding.rdx.test_rdx_stages.Paths.test_the_never_read_list_names_the_ll5d_inputs_and_cov2ds_cv) ... ok
+test_the_policy_check (nd-unfolding.rdx.test_rdx_stages.Paths.test_the_policy_check) ... ok
+test_c1_stops_on_the_walk_probe_and_s2_requires_its_pass (nd-unfolding.rdx.test_rdx_stages.Tables.test_c1_stops_on_the_walk_probe_and_s2_requires_its_pass) ... ok
+test_every_launcher_fences_the_six_prefixes (nd-unfolding.rdx.test_rdx_stages.Tables.test_every_launcher_fences_the_six_prefixes) ... ok
+test_every_repo_path_the_launchers_name_exists_at_head (nd-unfolding.rdx.test_rdx_stages.Tables.test_every_repo_path_the_launchers_name_exists_at_head)
+B1's root cause: a hard-coded repo path that does not exist (the smoke stubbed it into its own tiny repo). ... ok
+test_the_event_loop_limits_are_the_declared_rule_everywhere (nd-unfolding.rdx.test_rdx_stages.Tables.test_the_event_loop_limits_are_the_declared_rule_everywhere) ... ok
+test_the_launcher_pins_the_connect_script (nd-unfolding.rdx.test_rdx_stages.Tables.test_the_launcher_pins_the_connect_script) ... ok
+test_the_task_table_is_the_declarations (nd-unfolding.rdx.test_rdx_stages.Tables.test_the_task_table_is_the_declarations) ... ok
+
+----------------------------------------------------------------------
+Ran 52 tests in 1.875s
+
+OK
+[INFO] signal: kept=3347 dropped_phase=613 bad_weight=20 excluded_nonfinite_truth_support=20
+# exit 0

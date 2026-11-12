@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import re
 import subprocess
 import sys
@@ -339,6 +340,24 @@ def signal_columns(seed=11, n=4000, run0=110000):
     return c
 
 
+def with_border_rows(c: dict) -> dict:
+    """Append rows whose muon angle sits within a few ulps of the 20-degree cut, inside the box, reco-failing."""
+    theta = u2d.MAX_MUON_THETA_RAD
+    pz = np.linspace(2.0, 12.0, 40)
+    pt0 = pz * math.tan(theta)
+    pts = np.concatenate([pt0, np.nextafter(pt0, 0), np.nextafter(pt0, 9), np.nextafter(np.nextafter(pt0, 9), 9)])
+    pzs = np.tile(pz, 4)
+    n = len(pts)
+    out = {k: np.concatenate([np.asarray(v), np.asarray(v)[:n]]) for k, v in c.items()}
+    out["MC"][-n:], out["MC_pz"][-n:] = pts, pzs
+    out["sim_pass"][-n:] = 0
+    out["w_truth"][-n:] = out["w_reco"][-n:] = 1.0
+    for nm in EX_T:
+        out[nm][-n:] = 0.5
+    out["truthx_evt"][-n:] = np.arange(n) + 10**6
+    return out
+
+
 class KeptRows(unittest.TestCase):
     def test_the_replica_equals_the_collector_row_for_row(self):
         c = signal_columns()
@@ -353,6 +372,30 @@ class KeptRows(unittest.TestCase):
             self.assertTrue(np.array_equal(arr[k], v), k)
         self.assertTrue(np.array_equal(arr["MCgen"][:, 0], np.asarray(c["MC"])[ent].astype(np.float32)))
 
+    def test_the_vectorized_walk_equals_the_loop_bitwise(self):
+        c = with_border_rows(signal_columns())
+        ent0, arr0 = DP.kept_walk(c, EX_T, EX_R, BOUNDS, POT, u2d.in_truth_phase_space)
+        ent1, arr1 = DP.kept_walk_np(c, EX_T, EX_R, BOUNDS, POT, u2d.in_truth_phase_space, u2d.MAX_MUON_THETA_RAD)
+        self.assertTrue(np.array_equal(ent0, ent1))
+        for k in arr0:
+            self.assertEqual(arr0[k].dtype, arr1[k].dtype, k)
+            self.assertTrue(np.array_equal(arr0[k], arr1[k]), k)
+
+    def test_rows_at_the_angle_cut_are_decided_by_the_reference_function(self):
+        c = with_border_rows(signal_columns())
+        theta = u2d.MAX_MUON_THETA_RAD
+
+        def flipped(pt, pz, *box):  # disagrees with arctan2 on the border rows, as a last-bit libm difference would
+            ok = u2d.in_truth_phase_space(pt, pz, *box)
+            return (not ok) if ok is not None and abs(math.atan2(pt, pz) - theta) <= DP.BORDER else ok
+
+        ent0, arr0 = DP.kept_walk(c, EX_T, EX_R, BOUNDS, POT, flipped)
+        ent1, arr1 = DP.kept_walk_np(c, EX_T, EX_R, BOUNDS, POT, flipped, theta)
+        self.assertTrue(np.array_equal(ent0, ent1))
+        self.assertTrue(np.array_equal(arr0["pass_truth"], arr1["pass_truth"]))
+        plain, _ = DP.kept_walk_np(c, EX_T, EX_R, BOUNDS, POT, u2d.in_truth_phase_space, theta)
+        self.assertFalse(np.array_equal(ent1, plain))  # the border rows are present and do matter
+
     def test_a_replica_that_differs_from_the_npz_refuses(self):
         c = signal_columns()
         _, arr = DP.kept_walk(c, EX_T, EX_R, BOUNDS, POT, u2d.in_truth_phase_space)
@@ -366,6 +409,11 @@ class KeptRows(unittest.TestCase):
         bad = dict(arr, MCgen=arr["MCgen"].astype(np.float64))
         with self.assertRaises(DP.DumpError):
             DP.check_against_npz(bad, arr)
+
+    def test_the_dump_uses_the_vectorized_walk(self):
+        src = (HERE / "rdx_dump.py").read_text()
+        main = src[src.index("def main("):]
+        self.assertIn("theta_max=u2d.MAX_MUON_THETA_RAD", main)
 
     def test_the_playlist_index_and_its_refusals(self):
         per = [np.array([1, 1, 2]), np.array([5, 6])]
@@ -420,6 +468,16 @@ class Pipeline(unittest.TestCase):
         res = TN.check(self.npz, self.side, self.reader)
         self.assertEqual(res["verdict"], "PASS", res["failures"])
         self.assertEqual(sum(v["joined"] for v in res["per_playlist"].values()), len(self.arr["MCgen"]))
+
+    def test_the_vectorized_build_joins_too(self):
+        side = Path(self.td.name) / "truthx_np.npz"
+        meta = DP.build(self.paths["merged"], self.npz, [("1A", self.paths["1A"]), ("1B", self.paths["1B"])], side,
+                        self.reader, BOUNDS, POT, u2d.in_truth_phase_space, EX_T, EX_R, theta_max=u2d.MAX_MUON_THETA_RAD)
+        self.assertEqual(meta["walk"], "vectorized (kept_walk_np)")
+        with np.load(side) as a, np.load(self.side) as b:
+            self.assertTrue(np.array_equal(a["truthx"], b["truthx"]))
+            self.assertTrue(np.array_equal(a["mc_id"], b["mc_id"]))
+        self.assertEqual(TN.check(self.npz, side, self.reader)["verdict"], "PASS")
 
     def test_mutant_d6a_truthx_offset_by_one_row_fails_the_join(self):
         with np.load(self.side) as s:

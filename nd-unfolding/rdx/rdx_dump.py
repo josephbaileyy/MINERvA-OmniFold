@@ -105,6 +105,49 @@ def kept_walk(c: dict, ex_t: list, ex_r: list, bounds: tuple, pot_scale: float, 
     return np.asarray(ent, np.int64), arrays
 
 
+BORDER = 1e-12  # rad: rows this close to the muon-angle cut are decided by the reference function itself
+
+
+def kept_walk_np(c: dict, ex_t: list, ex_r: list, bounds: tuple, pot_scale: float, in_ps, theta_max: float
+                 ) -> tuple[np.ndarray, dict]:
+    """kept_walk, vectorized (the director's ruling on z3, 2026-11-12). Every comparison and product is the loop's on
+    the same float64 values; the one transcendental step, the muon-angle cut atan2(pt, pz) < theta_max, is taken with
+    numpy and then re-decided by in_ps itself on every row within BORDER of the cut, so the kept set cannot differ
+    from the loop's by a last-bit atan2 difference. kept_walk stays the reference; a test requires bitwise equality."""
+    pt_lo, pt_hi, pz_lo, pz_hi = bounds
+    f64 = lambda k: np.asarray(c[k], np.float64)  # noqa: E731
+    a_pt, a_pz, b_pt, b_pz = f64("MC"), f64("MC_pz"), f64("sim"), f64("sim_pz")
+    wt0, wr0 = f64("w_truth"), f64("w_reco")
+    tv = [f64(nm) for nm in ex_t]
+    rv = [f64(nm) for nm in ex_r]
+    passed = np.asarray(c["sim_pass"]) != 0
+    with np.errstate(invalid="ignore"):
+        good_w = np.isfinite(wt0) & np.isfinite(wr0) & (wt0 >= 0) & (wt0 < 1e4) & (wr0 >= 0) & (wr0 < 1e4)
+        t_fin = np.isfinite(a_pt) & np.isfinite(a_pz)
+        for v in tv:
+            t_fin &= np.isfinite(v)
+        box_t = (pt_lo <= a_pt) & (a_pt <= pt_hi) & (pz_lo <= a_pz) & (a_pz <= pz_hi)
+        ang = np.arctan2(a_pt, a_pz)
+        tru = t_fin & box_t & (ang < theta_max)
+        border = np.flatnonzero(t_fin & box_t & (np.abs(ang - theta_max) <= BORDER))
+        for i in border.tolist():
+            tru[i] = bool(in_ps(float(a_pt[i]), float(a_pz[i]), pt_lo, pt_hi, pz_lo, pz_hi))
+        rec = np.isfinite(b_pt) & np.isfinite(b_pz)
+        for v in rv:
+            rec &= np.isfinite(v)
+        rec &= (pt_lo <= b_pt) & (b_pt <= pt_hi) & (pz_lo <= b_pz) & (b_pz <= pz_hi)
+    sel = passed & rec
+    keep = good_w & t_fin & (tru | sel)
+    ent = np.flatnonzero(keep).astype(np.int64)
+    s_k = sel[keep]
+    arrays = {"MCgen": np.column_stack([a_pt[keep], a_pz[keep], *[v[keep] for v in tv]]).astype(np.float32),
+              "MCreco": np.column_stack([np.where(s_k, b_pt[keep], -9999.0), np.where(s_k, b_pz[keep], -9999.0),
+                                         *[np.where(s_k, v[keep], -9999.0) for v in rv]]).astype(np.float32),
+              "pass_reco": s_k.astype(bool), "pass_truth": tru[keep].astype(bool),
+              "w_truth": wt0[keep] * pot_scale, "w_reco": wr0[keep] * pot_scale}
+    return ent, arrays
+
+
 def check_against_npz(arrays: dict, z) -> None:
     for k in ("MCgen", "MCreco", "pass_reco", "pass_truth", "w_truth", "w_reco"):
         a, b = np.asarray(arrays[k]), np.asarray(z[k])
@@ -129,12 +172,16 @@ def playlist_index(runs: np.ndarray, per_playlist_runs: list[np.ndarray]) -> np.
 
 
 def build(omnifile: Path, npz: Path, playlists: list[tuple[str, Path]], sidecar: Path, reader, bounds, pot_scale,
-          in_ps, ex_t, ex_r) -> dict:
+          in_ps, ex_t, ex_r, theta_max: float | None = None) -> dict:
+    """theta_max given: the vectorized walk (the dump's path); None: the loop (the reference, as tests use it)."""
     if sidecar.exists():
         raise DumpError(f"refusing to overwrite {sidecar}")
     cols = ["MC", "MC_pz", "sim", "sim_pz", "sim_pass", "w_truth", "w_reco", *ex_t, *ex_r, *TRUTHX, *IDS]
     c = reader(omnifile, "mc_signal_reco", cols)
-    ent, arrays = kept_walk(c, ex_t, ex_r, bounds, pot_scale, in_ps)
+    if theta_max is None:
+        ent, arrays = kept_walk(c, ex_t, ex_r, bounds, pot_scale, in_ps)
+    else:
+        ent, arrays = kept_walk_np(c, ex_t, ex_r, bounds, pot_scale, in_ps, theta_max)
     with np.load(npz, allow_pickle=True) as z:
         check_against_npz(arrays, z)
     tx = np.column_stack([np.asarray(c[nm], np.float64)[ent] for nm in TRUTHX])
@@ -149,6 +196,7 @@ def build(omnifile: Path, npz: Path, playlists: list[tuple[str, Path]], sidecar:
             "truthx_dtype": "float64 (the omnifile's doubles, uncast)", "mc_id_names": list(MC_ID_NAMES),
             "row_check": "replica of collect_signal_nd's kept-row walk equals the npz's MCgen, MCreco, pass_reco, "
                          "pass_truth, w_truth and w_reco bitwise",
+            "walk": "loop (reference)" if theta_max is None else "vectorized (kept_walk_np)",
             "code_sha256": {"rdx_dump.py": sha256(Path(__file__).resolve())}}
     np.savez(sidecar, truthx=tx, truthx_names=np.array(TRUTHX), mc_id=mc_id, mc_id_names=np.array(MC_ID_NAMES),
              meta=json.dumps(meta))
@@ -196,7 +244,7 @@ def main(argv=None) -> int:
     ex_t = [und.EXTRA_AXES[x]["truth"] for x in AXES]
     ex_r = [und.EXTRA_AXES[x]["reco"] for x in AXES]
     meta = build(omnifile, npz, playlists, a.sidecar, root_reader, bounds, pot_scale, u2d.in_truth_phase_space,
-                 ex_t, ex_r)
+                 ex_t, ex_r, theta_max=u2d.MAX_MUON_THETA_RAD)
     print(json.dumps({"sidecar": str(a.sidecar), "sidecar_sha256": meta["sidecar_sha256"], "rows": meta["rows"],
                       "npz_sha256": meta["npz_sha256"]}))
     return 0

@@ -1,0 +1,127 @@
+# RDX launcher-tranche smoke (smoke_rdx_stages.sh; macOS bash 3.2; stubs; never connects or submits)
+# smoke_rdx_stages.sh sha256 ce1ffb1915571f28e968909bd828ae59a94e1f54d05e02074036bbc44614b196
+# sbatch_rdx_evloop.sh sha256 743b9e48cbeb36c39427aabba96514503b248c6faddc6947b95f5d3b331de6b5
+# sbatch_rdx_merge.sh sha256 742503fa085faa5f1fc5827bd43b247b9ca0cf76d1334d43637f05d3a675e483
+# sbatch_rdx_arms.sh sha256 e3e031e75435184782f68f02639e0698ff9ab67d4173ce635209ca65420006c7
+# rdx_connect.sh sha256 22159ebd99a836ff61791ce15b20b41c51ee8a353f8f2f67c16bf4b0c6d0c8ee
+# rdx_connect_launch.sh sha256 45949bc57f4e4248f3259afec4c9e58003ce4aecc590a9516a14d5bfebfac8d1
+## evloop pass
+[rdx-evloop] 4 AnaTuples checked by size and mtime; 0 differ
+[rdx-evloop] smoke: checks passed for 1A (rdx_s1_1A, 2:15:00)
+## evloop wrong name
+[rdx-evloop] REFUSE: job name rdx_s2_1A is not rdx_s1_1A
+## evloop limit too long
+[rdx-evloop] REFUSE: Slurm TimeLimit '3:00:00' is not within 2:15:00 (rc 4)
+## evloop fenced job
+[rdx-evloop] REFUSE: fenced jobs are queued or running: ll5d_gate_G18|RUNNING
+## evloop rsn job
+[rdx-evloop] REFUSE: fenced jobs are queued or running: rsn_J2|PENDING
+## evloop md5
+[rdx-evloop] REFUSE: <w>/rdx.bin md5 is not 0123456789abcdef0123456789abcdef
+## evloop manifest not committed
+[rdx-evloop] REFUSE: <w>/canon/2d-unfolding/playlist_manifests/1A_MC.txt is not the deploy's committed 2d-unfolding/playlist_manifests/1A_MC.txt
+## evloop AnaTuple mtime differs
+  <w>/ana/Data/Playlist1A/f2.root: 7 B 2020-01-01T08:00:00Z, manifest 7 B
+[rdx-evloop] REFUSE: an AnaTuple's size or mtime is not its manifest row's
+## evloop output exists
+[rdx-evloop] 4 AnaTuples checked by size and mtime; 0 differ
+[rdx-evloop] REFUSE: <w>/B/out/evloop/runEventLoopOmniFold_RDX_1A.root exists
+## merge pass
+STEP merge python <w>/deploy/nd-unfolding/rdx/rdx_merge.py merge --loops-dir <w>/B/out/evloop --sums <w>/B/out/loops.sha256 --flux <w>/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/5b/flux/runEventLoopMC_ALL.root --out <w>/B/out/merged/runEventLoopOmniFold_RDX_ALL.root
+STEP nndump python <w>/deploy/nd-unfolding/nn_dump_inputs.py --omnifile <w>/B/out/merged/runEventLoopOmniFold_RDX_ALL.root --mcfile <w>/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/5b/flux/runEventLoopMC_ALL.root --axes eavail,q3,W --out <w>/B/out/dumps/nn_RDX_ALL.npz
+STEP dump python <w>/deploy/nd-unfolding/rdx/rdx_dump.py --playlists 1A=<w>/B/out/evloop/runEventLoopOmniFold_RDX_1A.root,1B=<w>/B/out/evloop/runEventLoopOmniFold_RDX_1B.root,1C=<w>/B/out/evloop/runEventLoopOmniFold_RDX_1C.root,1D=<w>/B/out/evloop/runEventLoopOmniFold_RDX_1D.root,1E=<w>/B/out/evloop/runEventLoopOmniFold_RDX_1E.root,1F=<w>/B/out/evloop/runEventLoopOmniFold_RDX_1F.root,1G=<w>/B/out/evloop/runEventLoopOmniFold_RDX_1G.root,1L=<w>/B/out/evloop/runEventLoopOmniFold_RDX_1L.root,1M=<w>/B/out/evloop/runEventLoopOmniFold_RDX_1M.root,1N=<w>/B/out/evloop/runEventLoopOmniFold_RDX_1N.root,1O=<w>/B/out/evloop/runEventLoopOmniFold_RDX_1O.root,1P=<w>/B/out/evloop/runEventLoopOmniFold_RDX_1P.root --sidecar <w>/B/out/dumps/truthx_RDX_ALL.npz --omnifile <w>/B/out/merged/runEventLoopOmniFold_RDX_ALL.root --cv-npz <w>/B/out/dumps/nn_RDX_ALL.npz --mcfile <w>/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/5b/flux/runEventLoopMC_ALL.root --out <w>/B/out/dumps/lat_RDX_ALL.npz --out-bkg <w>/B/out/dumps/lat_RDX_ALL_bkg.npz
+STEP k1 python <w>/deploy/nd-unfolding/rdx/rdx_merge.py k1 --lat-npz <w>/B/out/dumps/lat_RDX_ALL.npz --lat-bkg <w>/B/out/dumps/lat_RDX_ALL_bkg.npz --mp1-lat-npz <w>/B/out/stage/lat_zero.npz --mp1-lat-bkg <w>/B/out/stage/lat_zero_bkg.npz --out <w>/B/out/checks/k1.json
+[rdx-merge] smoke: checks passed, 4 steps
+## merge gate limit mismatch
+[rdx-merge] refusing: <w>/B/out/gates/merge.ok is missing or does not name pin <pin> and limit 0:50:00
+## merge no loops.sha256
+[rdx-merge] refusing: no <w>/B/out/loops.sha256 (the stage-2 checks did not pass)
+## merge output exists
+[rdx-merge] refusing: <w>/B/out/merged/runEventLoopOmniFold_RDX_ALL.root exists
+## arms S3a pass
+[rdx-arms] smoke: checks passed, 8 steps
+STEP X0      
+STEP X0_lat    lat_zero  
+STEP X1     wide 
+STEP X1p permute    wide 
+STEP X1w     wide weighted
+STEP X1t  transfer   wide 
+STEP X0c   closure   
+STEP X1c   closure  wide 
+## arms S3b pass
+[rdx-arms] smoke: checks passed, 7 steps
+STEP X1pc permute    closure wide 
+STEP X1wc     closure wide weighted
+STEP X0t  transfer     
+STEP X0g   a7  closure  
+STEP X1g   a7  closure wide 
+STEP X0q    q3 closure  
+STEP X1q    q3 closure wide 
+## arms sidecar tampered
+[rdx-arms] refusing: sidecar (<w>/B/out/dumps/truthx_RDX_ALL.npz) is missing or not at its pinned sha256
+## arms k1 FAIL
+[rdx-arms] refusing: <w>/B/out/checks/k1.json records no PASS
+## arms gate missing
+[rdx-arms] refusing: <w>/B/out/gates/S3b.ok is missing or does not name pin <pin>
+## arms wrong pin
+[rdx-arms] refusing: deploy HEAD=<pin> (pinned <pin>),        0 porcelain lines
+## connect gs2 writes the gate
+pin=<pin>
+== rdx connect gs2 rc=0
+  sbatch called: no
+## connect gs2 refuses to overwrite
+STOP: <w>/B/out/gates/s2.ok exists
+== rdx connect gs2 rc=8
+  sbatch called: no
+## connect gmerge without a limit
+STOP: gmerge needs a limit
+== rdx connect gmerge rc=8
+  sbatch called: no
+## connect s1 without the LL5D time
+STOP: s1 needs cov2d's LL5D atime-post UTC time
+== rdx connect s1 rc=8
+  sbatch called: no
+## connect s1 with a future LL5D time
+STOP: cov2d's LL5D atime-post time 2099-01-01T00:00:00Z is not yet past
+== rdx connect s1 rc=8
+  sbatch called: no
+## connect s1 fenced
+STOP: fenced or rdx_ jobs are queued or running: e96data_full|PENDING
+== rdx connect s1 rc=8
+  sbatch called: no
+## connect s1 over the cap
+[rdx-evloop] smoke: checks passed for 1A (rdx_s1_1A, 2:15:00)
+STOP: the cap gate refuses rdx_s1_1A (2:15:00)
+== rdx connect s1 rc=8
+  sbatch called: no
+## connect s1 submits
+[rdx-evloop] smoke: checks passed for 1A (rdx_s1_1A, 2:15:00)
+SUBMIT id=70000001 name=rdx_s1_1A limit=2:15:00 utc=2026-11-12T07:00:00Z
+== rdx connect s1 rc=0
+  sbatch called: --parsable --job-name=rdx_s1_1A --time=2:15:00 --output=<w>/B/out/logs/%x_%j.out <w>/B/deploy/nd-unfolding/rdx/sbatch_rdx_evloop.sh <w>/B <w>/B/deploy 1A <w>/B/build/bld_rdx/runEventLoopOmniFold e894f2344aaa92289fb57bc8f597ffa9
+## connect c1 with a failing walk probe
+C-ALIGN-1A rc=0 C-TRUTHX rc=0 walk probe rc=1
+STOP: the walk probe did not pass (rc 1): the walks differ, or no timing for the merge limit
+== rdx connect c1 rc=8
+  sbatch called: no
+## connect c1 with a probe that cannot run
+C-ALIGN-1A rc=0 C-TRUTHX rc=0 walk probe rc=1
+STOP: the walk probe did not pass (rc 1): the walks differ, or no timing for the merge limit
+== rdx connect c1 rc=8
+  sbatch called: no
+## connect c1 with a failing alignment
+C-ALIGN-1A rc=1 C-TRUTHX rc=0 walk probe rc=0
+STOP: C-ALIGN-1A or C-TRUTHX did not pass
+== rdx connect c1 rc=8
+  sbatch called: no
+## connect c1 passes
+C-ALIGN-1A rc=0 C-TRUTHX rc=0 walk probe rc=0
+STAGE 1 CHECKS PASS
+== rdx connect c1 rc=0
+  sbatch called: no
+## connect dtn host
+REFUSED (nothing written): host dtn01 is not a login node
+  sbatch called: no
+## connect bad pin
+REFUSED (nothing written): pin notapin is not a 40-hex commit
+  sbatch called: no
