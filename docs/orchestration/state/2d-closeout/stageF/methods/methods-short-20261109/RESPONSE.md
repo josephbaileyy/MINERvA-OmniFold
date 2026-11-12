@@ -754,3 +754,20 @@ producer asserts that it reproduces the old 6.10 % against 1A–1E.
 | Gs10 | Fig. 1 moved into §4.1, Table 4 to its first use; the other floats checked in the PDF |
 | G2.1 | held for Joseph |
 | Stp3 | in the sentence pass |
+
+## Style round 2 (6/10 on 589cea41): the paper-body items (director-helper-3, 2026-11-12)
+
+Record: `secondary-results/style-methods-20261112/round2/`. The director approved items 1–8 for paper_body.tex.
+
+| Item | Status |
+|---|---|
+| 1. Early map | done. tab:estimators in §3.1, which states that the benchmark and the five-observable results use separate estimators. tab:grids in §3.3. ρ is defined before §5.3 quotes it, and the recovered fraction is contrasted with ρ there |
+| 2. One hierarchy | Table 2's columns are now test, estimator, principal result, interpretation, section. Its key prints only the statuses in use (St5). §5.3 states which setting changed ρ, in the director's example sentences plus the no-lowering condition (round2-read) |
+| 3. §3.2 slimmed | the full decomposition is displayed (eq:crep), C_total is not renamed, and the construction detail points to S5. C_model's symbols are agreed with journal-editor: the paper uses only the dimensional $C_{\mathrm{model}}$, and S5 adds $C_{\mathrm{model}}^{\mathrm{frac}}$ |
+| 4. Qualifications once | the bias/coverage distinction is stated in §3.3; §5.2 keeps a pointer; §7.1's consolidated list keeps its item |
+| 5. §7 against §7.1 | the five checks are a numbered list. The hadronic-origin text keeps its content in two sentences plus the ONCE sentence: the meaning read showed that a one-sentence cut drops the joint uncertainty and the response check |
+| 6. §5.3 example | applied after the meaning read against the FD-PRR classes |
+| 7. Line items | §2 ("we use the predictions"), §3.1, §4.2, §5.2, §5.3 (IBU named), §6.1 (rounded values), Fig. 4's pointer, §7's "bias-screening rules" |
+| 8. Table 1 against S3 | Table 1 is purity and diagonal fraction in two columns of eight cells. The boxes are in table S3 |
+| [PENDING] | waits for LL5D's fill (ruled) |
+| The sentence pass | next |
