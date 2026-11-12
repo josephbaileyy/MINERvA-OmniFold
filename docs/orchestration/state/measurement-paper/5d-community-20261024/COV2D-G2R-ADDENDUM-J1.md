@@ -11,7 +11,7 @@ requires a second addendum, J1, before any connect. J1 must carry:
 The director approved the design on 2026-11-12, items 1–5: namespace and names, the jobs, the gate, the environment
 test, and the docstring. §9 lists where this draft departs from that design, and why.
 
-**The code:** under `2d-unfolding/cov2d/g2r/jobs/` and `tests/`, at code commit `a0d43dcfff76dc8d8c36ab9c59307bc702e40a2a` (the envtest rule after the audit's B1; first draft `a14a08e5`):
+**The code:** under `2d-unfolding/cov2d/g2r/jobs/` and `tests/`, at code commit `796699578ffe852e595c9fba41f150eaed13b4fc` (the envtest rule after the audit's B1 and M1; earlier drafts `a14a08e5`, `a0d43dcf`):
 - `g2r_jobs.py`: the tables, the job-side check, the order, the gate, the environment test's comparison and the
   products TSV;
 - `g2r_env.sh`, `g2r_job.sbatch`, `g2r_envtest.sbatch`, `g2r_prepare.sbatch` and `g2r_submit.sh`;
@@ -105,8 +105,14 @@ The test comes before the prepare, and its cost is inside the 110.
   - both on one node, in the same environment, in two lanes of 128 CPUs.
 - **The comparison,** `g2r_jobs.envtest`, under RE-2's bound rule (`ENVTEST_TOL` = 1e-8). The director ruled it on
   2026-11-12, after the audit's B1:
-  - every histogram's contents and errors: max |a − b| / max |b| ≤ 1e-8, the metric of RE-2's `le` checks
-    (`RE2-J0-REPORT.md:79`);
+  - every histogram's contents and errors, cell by cell, as RE-2's `le` checks compute it (`re2_k1.compare`,
+    `re2_k1.py:153-158`; `RE2-J0-REPORT.md:79`):
+    - max |a/b − 1| ≤ 1e-8 over the cells with b ≠ 0. RE-2's reported cells all have b > 0, and a b < 0 cell is held
+      the same way;
+    - in a cell with b = 0, which RE-2 leaves unconstrained, |a| ≤ 1e-8 × max |b| (the director's ruling after the
+      audit's M1);
+    - a NaN in the same place on both sides, or the same infinity, agrees, as it does for the TParameters and JSON
+      floats below (the audit's j5); any other non-finite value fails;
   - every TParameter: |a − b| ≤ 1e-8 × max(|a|, |b|);
   - every TNamed whose value is JSON (`runConfig`, `re2Refinement`, `branchSelection`, and `p1Streams` if present),
     leaf by leaf: floats to 1e-8 relative, while integers, booleans, strings and keys must be exactly equal;
@@ -130,6 +136,11 @@ The test comes before the prepare, and its cost is inside the 110.
   - The tests hold the boundary (the director's condition): 0.5e-8 and 0.99e-8 PASS, and 2e-8 is INVALID, for a
     histogram, a TParameter and a JSON leaf. Mutants that loosen the tolerance to 3e-8 or tighten it to 0.4e-8 are
     killed, and so is one that puts it back to 0.
+  - **A change confined to one small cell** (the audit's M1): five cells at 1.0 and one at 1e-3, changed by 5e-6 or
+    1e-6 relative, is INVALID. A metric normalized by the histogram's largest entry would read it as 5e-9 and pass it,
+    and a mutant that reverts to that metric is killed by this test.
+  - In the same small cell, 0.5e-8 and 6.36e-13 PASS. The measured rerun noise passes under the per-cell metric, as it
+    must: RE-2 measured it with this metric.
 - The LightGBM end-to-end check **with** the override is D_Ua's first run, gating the rest (§2, step 4).
 
 ## 5. The P5 per-playlist file check
@@ -204,12 +215,12 @@ is run by a named test against stubs, listed in the receipts README.
 
 ## 11. Tests, mutants and coverage (`fd/receipts-cov2d/g2r/j1/`)
 
-From a clean detached checkout of the code commit `a0d43dcfff76dc8d8c36ab9c59307bc702e40a2a`, on macOS with
+From a clean detached checkout of the code commit `796699578ffe852e595c9fba41f150eaed13b4fc`, on macOS with
 `/opt/homebrew/bin/python3.13`, ROOT 6.36.000 and numpy 2.4.4:
-- `test_g2r_jobs.py`: 55 tests, OK, rc 0, at PYTHONHASHSEED 0, 1 and 2;
-- `g2r_jobs_mutation.py`: 37 mutations, all killed. They cover the tables, the check, the order, the gate, the comparison
+- `test_g2r_jobs.py`: 58 tests, OK, rc 0, at PYTHONHASHSEED 0, 1 and 2;
+- `g2r_jobs_mutation.py`: 41 mutations, all killed. They cover the tables, the check, the order, the gate, the comparison
   and the four shell scripts. The unmutated suite ran in full, and the sources were restored byte-identical;
-- the coverage sweep: 0 of 394 executable lines of `g2r_jobs.py` never executed, counting 2 byte-identical copies in the
+- the coverage sweep: 0 of 412 executable lines of `g2r_jobs.py` never executed, counting 2 byte-identical copies in the
   tests' fixture deploys. The README maps each shell path to its test;
 - amendment 1's suites at the same commit: `test_g2r` 27, `test_re2_miss_map` 11 and `test_g2r_glue` 18, OK, and
   `g2r_mutation.py` 23 of 23 killed.

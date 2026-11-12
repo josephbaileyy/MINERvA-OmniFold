@@ -1,15 +1,15 @@
 # COV2D-G2R addendum J1: test, mutation and coverage receipts (2026-11-12)
 
-**From** a clean detached checkout of the code commit `a0d43dcfff76dc8d8c36ab9c59307bc702e40a2a`, with porcelain 0 before and
+**From** a clean detached checkout of the code commit `796699578ffe852e595c9fba41f150eaed13b4fc`, with porcelain 0 before and
 after each run. The platform was macOS, with `/opt/homebrew/bin/python3.13`, ROOT 6.36.000 and numpy 2.4.4. There is no
 LightGBM here, so no test trains. The trained checks are the environment-test job and D_Ua's first run (J1 §2, §4).
 
 | file | what |
 |---|---|
-| `test_g2r_jobs.txt` | `test_g2r_jobs.py` at PYTHONHASHSEED 0, 1 and 2: 55 tests, OK, rc 0 each time |
-| `g2r_jobs_mutation.txt` | `g2r_jobs_mutation.py`: the unmutated suite full (55, none skipped); 37 mutations, all killed; sources restored byte-identical to HEAD; rc 0 |
+| `test_g2r_jobs.txt` | `test_g2r_jobs.py` at PYTHONHASHSEED 0, 1 and 2: 58 tests, OK, rc 0 each time |
+| `g2r_jobs_mutation.txt` | `g2r_jobs_mutation.py`: the unmutated suite full (58, none skipped); 41 mutations, all killed; sources restored byte-identical to HEAD; rc 0 |
 | `amendment1_suites.txt` | amendment 1's suites at this commit: `test_g2r` 27, `test_re2_miss_map` 11 and `test_g2r_glue` 18, OK each; `g2r_mutation.py` 23 of 23 killed, rc 0 |
-| `coverage_sweep.txt` | every executable line of `g2r_jobs.py` is run by `test_g2r_jobs.py`: 0 of 394 never executed |
+| `coverage_sweep.txt` | every executable line of `g2r_jobs.py` is run by `test_g2r_jobs.py`: 0 of 412 never executed |
 | `coverage_tracer_usercustomize.py`, `coverage_uncovered_j1.py` | the sweep's tracer and reader (see below) |
 
 **The tracer** is amendment 1's (`../a1/coverage_tracer_usercustomize.py`), changed in two ways:

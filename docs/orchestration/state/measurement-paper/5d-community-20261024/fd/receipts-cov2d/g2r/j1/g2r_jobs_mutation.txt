@@ -1,38 +1,42 @@
-# g2r_jobs_mutation.py, from the clean detached checkout of a0d43dcfff76dc8d8c36ab9c59307bc702e40a2a (porcelain 0 before), /opt/homebrew/bin/python3.13, OMP_NUM_THREADS=1, utc 2026-11-12T14:38:47Z
-2d-unfolding/cov2d/g2r/jobs/g2r_jobs.py sha256 cf234044ca23fe52610f687ee0b64ccad3a1205fc94a136330b1d430ea607dbf
+# g2r_jobs_mutation.py, from the clean detached checkout of 796699578ffe852e595c9fba41f150eaed13b4fc (porcelain 0 before), /opt/homebrew/bin/python3.13, OMP_NUM_THREADS=1, utc 2026-11-12T18:49:31Z
+2d-unfolding/cov2d/g2r/jobs/g2r_jobs.py sha256 7542a68dd344b4cb6252082bfa46d62f512f3c44875bb7d43f17c6368b04f880
 2d-unfolding/cov2d/g2r/jobs/g2r_env.sh sha256 b3ad1d04e6f665b79566fac43f520d2a0329c9d66026f7793f1ab4cf5eb52483
 2d-unfolding/cov2d/g2r/jobs/g2r_job.sbatch sha256 21e4f4ac7330250eb84af653c5a8a0cc8d7fb013489a36d7610025dd539351c8
 2d-unfolding/cov2d/g2r/jobs/g2r_envtest.sbatch sha256 3971fe8596574b4e2c479011a7de422aae3d4fea696a076d68a2dc9ce0189d3f
 2d-unfolding/cov2d/g2r/jobs/g2r_prepare.sbatch sha256 3c129b3dd7abb6d47f821f0d61266474a4151dad180c187b8ac43b8730b97433
 2d-unfolding/cov2d/g2r/jobs/g2r_submit.sh sha256 a9b2a2ba2f8a902ac9914554e4508dd5dd4fd32ff9f6e291cfb74b3c767c3bc1
-UNMUTATED PASS test_g2r_jobs.py tests=55 expected=55 skipped=False rc=0
-MUTATION KILLED the off reruns carry the map [Tables.test_off_reruns_are_part_bs_rows_exactly_at_the_end_of_d_ud_2] sha256=e833aee15e5ac482
-MUTATION KILLED the tune rows without the map [Tables.test_tune_rows_are_cov2ds_universe_rows_plus_the_map] sha256=f52c3096aa6eb66d
-MUTATION KILLED the data rows without the map [Tables.test_data_rows_are_part_bs_j2_rows_plus_the_map] sha256=3c1cc9e3489e1052
-MUTATION KILLED the envtest priced at part B's per-run estimate [Tables.test_limits_and_the_price] sha256=de9ac14a0b9dacc1
-MUTATION KILLED part B's table not read at its digest [Tables.test_part_bs_table_is_read_at_its_digest_and_must_be_the_bank] sha256=2883ecd96e1608bc
-MUTATION KILLED the map not checked against the committed record [Check.test_the_map_must_be_the_committed_one] sha256=0a57bb3b1412e216
-MUTATION KILLED G8 not compared [Check.test_the_realization_g8] sha256=ad5bb3ec174a5ec1
-MUTATION KILLED $UNI's stat not checked [Check.test_uni_and_pins] sha256=ceb01ec512e705c0
-MUTATION KILLED each job not once [Order.test_each_job_once_and_records_must_pass] sha256=ad594f5b60803701
-MUTATION KILLED the prepare without the envtest's PASS [Order.test_the_sequence] sha256=644bac62307bbb3f
-MUTATION KILLED the bulk before D_Ua's first --miss-map run [Order.test_the_sequence] sha256=e9e644c21a6b298d
-MUTATION KILLED the first run counted whatever its rc [Order.test_first_run_done] sha256=ec82611bfa4d40b9
-MUTATION KILLED the gate prices every name [Gate.test_unknown_names_refuse_and_others_are_ignored] sha256=f2d6617447523777
-MUTATION KILLED the sacct lag ignored [Gate.test_spent_held_lag_and_the_cap] sha256=aa461f487c1b8087
-MUTATION KILLED the cap opened [Gate.test_the_cap_refuses] sha256=1500f59d0d500696
-MUTATION KILLED the projection never a STOP [Gate.test_the_projection_is_a_stop_for_unfold_jobs_only] sha256=1d291abfee2376d3
-MUTATION KILLED the envtest's tolerance back to bitwise (the audit's B1) [EnvTest.test_the_measured_rerun_noise_passes] sha256=baef3012afabc9f2
-MUTATION KILLED the envtest's tolerance opened [EnvTest.test_each_difference_is_invalid] sha256=a2b052b8c46368db
-MUTATION KILLED the envtest's tolerance loosened to 3e-8 (the director's condition) [EnvTest.test_the_tolerance_boundary] sha256=ef136d79270af570
-MUTATION KILLED the envtest's tolerance tightened to 0.4e-8 [EnvTest.test_the_tolerance_boundary] sha256=4520022b30504578
-MUTATION KILLED the histograms' errors not compared [EnvTest.test_each_difference_is_invalid] sha256=58f510d04d54d985
-MUTATION KILLED the histograms not held to the tolerance [EnvTest.test_each_difference_is_invalid] sha256=e358caf7d458e23a
-MUTATION KILLED the TParameters not compared [EnvTest.test_each_difference_is_invalid] sha256=bd6a06cd76d295c3
-MUTATION KILLED the JSON records compared bitwise [EnvTest.test_the_measured_rerun_noise_passes] sha256=afbd11be46d6f4dc
-MUTATION KILLED the JSON integers given the tolerance [EnvTest.test_each_difference_is_invalid] sha256=1945732ee14caebb
-MUTATION KILLED a flag left on passes [EnvTest.test_each_difference_is_invalid] sha256=fab6e4d17990b0b6
-MUTATION KILLED the set-aside widened to fluxSource [EnvTest.test_each_difference_is_invalid] sha256=088908ff0ec7401f
+UNMUTATED PASS test_g2r_jobs.py tests=58 expected=58 skipped=False rc=0
+MUTATION KILLED the off reruns carry the map [Tables.test_off_reruns_are_part_bs_rows_exactly_at_the_end_of_d_ud_2] sha256=4a6bde8eab4d78b1
+MUTATION KILLED the tune rows without the map [Tables.test_tune_rows_are_cov2ds_universe_rows_plus_the_map] sha256=690bb60178bcab97
+MUTATION KILLED the data rows without the map [Tables.test_data_rows_are_part_bs_j2_rows_plus_the_map] sha256=432d77a0a0d49f97
+MUTATION KILLED the envtest priced at part B's per-run estimate [Tables.test_limits_and_the_price] sha256=499e87536ba3c5c9
+MUTATION KILLED part B's table not read at its digest [Tables.test_part_bs_table_is_read_at_its_digest_and_must_be_the_bank] sha256=ea4d3ab0e6e4b002
+MUTATION KILLED the map not checked against the committed record [Check.test_the_map_must_be_the_committed_one] sha256=9d5e85a823e3d601
+MUTATION KILLED G8 not compared [Check.test_the_realization_g8] sha256=881e8de9b23d5f67
+MUTATION KILLED $UNI's stat not checked [Check.test_uni_and_pins] sha256=96f06bf7ebb9eb91
+MUTATION KILLED each job not once [Order.test_each_job_once_and_records_must_pass] sha256=d1ba5215eced19c4
+MUTATION KILLED the prepare without the envtest's PASS [Order.test_the_sequence] sha256=3e5b27ff4573a8a6
+MUTATION KILLED the bulk before D_Ua's first --miss-map run [Order.test_the_sequence] sha256=aca3a8694341de2b
+MUTATION KILLED the first run counted whatever its rc [Order.test_first_run_done] sha256=561ed185bf06b343
+MUTATION KILLED the gate prices every name [Gate.test_unknown_names_refuse_and_others_are_ignored] sha256=ef69f3540216d7a8
+MUTATION KILLED the sacct lag ignored [Gate.test_spent_held_lag_and_the_cap] sha256=3a53683accb0642c
+MUTATION KILLED the cap opened [Gate.test_the_cap_refuses] sha256=fb4e59c1d5db6080
+MUTATION KILLED the projection never a STOP [Gate.test_the_projection_is_a_stop_for_unfold_jobs_only] sha256=737e04413d20d243
+MUTATION KILLED the envtest's tolerance back to bitwise (the audit's B1) [EnvTest.test_the_measured_rerun_noise_passes] sha256=ce26c132f3f9b233
+MUTATION KILLED the envtest's tolerance opened [EnvTest.test_each_difference_is_invalid] sha256=1b808efdefcc912c
+MUTATION KILLED the envtest's tolerance loosened to 3e-8 (the director's condition) [EnvTest.test_the_tolerance_boundary] sha256=21a7bb70d9efc41f
+MUTATION KILLED the envtest's tolerance tightened to 0.4e-8 [EnvTest.test_the_tolerance_boundary] sha256=62c062e1f7bc15f9
+MUTATION KILLED the histograms' errors not compared [EnvTest.test_each_difference_is_invalid] sha256=b0766ebff7c52cde
+MUTATION KILLED the histograms not held to the tolerance [EnvTest.test_each_difference_is_invalid] sha256=27e63b9e1708d0bc
+MUTATION KILLED the histogram metric max-normalized (the audit's M1) [EnvTest.test_a_change_confined_to_one_small_cell] sha256=da309933ea65d7d6
+MUTATION KILLED the empty cells unconstrained, as RE-2 leaves them [EnvTest.test_a_cell_empty_in_the_pre_patch_product] sha256=3f9d2f0aa7f2a540
+MUTATION KILLED NaN on both sides a difference (the audit's j5) [EnvTest.test_nan_and_inf_in_the_same_place_agree] sha256=af19c0e4dc39ce93
+MUTATION KILLED opposite infinities agreeing [EnvTest.test_nan_and_inf_in_the_same_place_agree] sha256=147aeff13c695759
+MUTATION KILLED the TParameters not compared [EnvTest.test_each_difference_is_invalid] sha256=64a1b4f48bc7c984
+MUTATION KILLED the JSON records compared bitwise [EnvTest.test_the_measured_rerun_noise_passes] sha256=3fd6d6def874c178
+MUTATION KILLED the JSON integers given the tolerance [EnvTest.test_each_difference_is_invalid] sha256=c23ef9691b401190
+MUTATION KILLED a flag left on passes [EnvTest.test_each_difference_is_invalid] sha256=a5e56551c0503665
+MUTATION KILLED the set-aside widened to fluxSource [EnvTest.test_each_difference_is_invalid] sha256=f14af6a1cda13bdc
 MUTATION KILLED the hooks allowed on a NERSC machine [Shell.test_the_hooks_are_refused_on_a_nersc_machine] sha256=a2a35e7b9c095e66
 MUTATION KILLED the job script runs the envtest [Shell.test_the_job_script_refuses_the_envtest_and_prepare_and_mixed_points] sha256=cbc793f3549d18a5
 MUTATION KILLED the job script skips its check [Shell.test_a_real_run_stops_on_a_failed_check_and_the_wrong_limit] sha256=20c985323c9ff74e

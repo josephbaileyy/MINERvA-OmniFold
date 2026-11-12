@@ -1,16 +1,16 @@
 # amendment 1's suites and its mutation check, at this commit
-# commit a0d43dcfff76dc8d8c36ab9c59307bc702e40a2a porcelain 0 utc 2026-11-12T14:33:30Z
+# commit 796699578ffe852e595c9fba41f150eaed13b4fc porcelain 0 utc 2026-11-12T18:43:47Z
 # python 3.13.7 numpy 2.4.4 ROOT 6.36.000
 == test_g2r
-Ran 27 tests in 16.585s
+Ran 27 tests in 19.413s
 OK
 rc=0
 == test_re2_miss_map
-Ran 11 tests in 13.134s
+Ran 11 tests in 14.612s
 OK
 rc=0
 == test_g2r_glue
-Ran 18 tests in 74.904s
+Ran 18 tests in 82.622s
 OK
 rc=0
 == g2r_mutation.py
