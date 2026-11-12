@@ -1,8 +1,10 @@
-# RDX: the event-loop re-dump for F1.2(i), with the C-BKG control (DECLARATION, design rev 0, DRAFT)
+# RDX: the event-loop re-dump for F1.2(i), with the C-BKG control (DECLARATION, design rev 1, DRAFT)
 
 **Session:** tier3-design, 2026-11-12. This is its own lane, as RSN-BINDING-1 ruling 6 directs. The F1.2(i) re-dump
 is approved in principle: a pilot on 1A first, and a cap of 2.5 node-h with the pilot included. The director's scope
-addition of 2026-11-12 adds C-BKG. **For:** coverage-5b-audit's design read, then code and tests, then an audit
+addition of 2026-11-12 adds C-BKG. Rev 1 takes the director's rulings on rev 0 (§8). Joseph decided on 2026-11-12
+that the methods paper does not wait for this re-dump; results are folded in if they arrive in time
+(DECISION-20261112-joseph-1a-cfs-and-redump-timing.md, #1092). **For:** coverage-5b-audit's design read, then code and tests, then an audit
 delta, then the director's binding. **Nothing has run.**
 <!-- absence-ok: operational status of this lane's own runs, not a claim that a result does not exist -->
 
@@ -100,7 +102,8 @@ Tests and a declared mutation list follow the RSN pattern. A smoke harness is co
    - The dump, with `--truthx`.
    - **C-ALIGN-ALL:** the dump equals `lat_zero.npz` on every common key, bitwise (5B's K1 rule), and the `truthx` and
      `mc_id` rows number exactly the MCgen rows. Any failure is a STOP.
-3. **Stage 3, the arms (§4).** One exclusive CPU node, after C-ALIGN-ALL PASSES and the director gives the go.
+3. **Stage 3, the arms (§4).** Two jobs on one exclusive CPU node each, S3a (eight steps) and S3b (four), after
+   C-ALIGN-ALL PASSES and the director gives the go.
 
 Every connect script's sha goes to the director before it runs. The job family is `rdx_`. The director announces it
 to every fenced lane before the first submit.
@@ -110,7 +113,7 @@ to every fenced lane before the first submit.
 
 ## 4. The arms and their readings (fixed before any run)
 
-There are eight steps in one job. All use `--estimator-seed 42`, 5 iterations and 32 threads, as RSN does.
+There are twelve steps in two jobs: S3a runs the first eight, and S3b the last four. All use `--estimator-seed 42`, 5 iterations and 32 threads, as RSN does.
 
 | step | regressor features | regressor weight | transfer | truth |
 |---|---|---|---|---|
@@ -122,6 +125,10 @@ There are eight steps in one job. All use `--estimator-seed 42`, 5 iterations an
 | X0c | std | none | no | noise-free closure at the prior (tune_v1) |
 | X1c | wide | none | no | the same closure |
 | X1wc | wide | w_push · w_truth | no | the same closure |
+| X0g | std | none | no | noise-free closure at the A7 GiBUU hybrid (S3b) |
+| X1g | wide | none | no | the same closure (S3b) |
+| X0q | std | none | no | noise-free closure at the q3 tilt (S3b) |
+| X1q | wide | none | no | the same closure (S3b) |
 
 **NC-X.** X0's product equals X0_lat's bitwise. The npz agree on every common key, and `std` never reads `truthx`.
 If NC-X fails, nothing is read.
@@ -134,10 +141,10 @@ rev 3 §3.4-3.5):
 | R1, the widened inputs (F1.2(i) proper) | δ_c = X1_c / X0_c − 1 | W0 (max \|δ\|/φ ≤ 2), W1 (≤ 0.5 σ), W2 (cells named) |
 | R2, the weight on the widened regressor | X1w_c / X1_c − 1 | W0, W1, W2 |
 | R3, the widened regressor's transfer | X1t's held-out transfer t_c | T0, T1, T2 |
-| R4, the closure | bias change (X1c − X0c), (X1wc − X1c) against the prior truth | W0, W1, W2 |
+| R4, the closures | the bias changes X1c − X0c and X1wc − X1c at the prior, X1g − X0g at the A7 GiBUU hybrid, and X1q − X0q at the q3 tilt, each against its own truth | W0, W1, W2, per truth |
 
 **The outcomes. In MP-1's chain:**
-- R1 in W0 or W1, with R4's X1c − X0c in W0 or W1: the five truth features suffice for the misses regressor at the
+- R1 in W0 or W1, with R4's X1 − X0 change in W0 or W1 at all three truths: the five truth features suffice for the misses regressor at the
   stated level. The paper may say so as a stated sensitivity.
 - R1 in W2: the omitted quantities matter in the named cells. That is reported as a sensitivity, with the cells.
   Whether the unfolding changes is a separate decision for Joseph.
@@ -183,8 +190,9 @@ guaranteed under current code. A C-BKG failure is a live possibility, and so is 
 | 1 | **C-BKG, marginal** | reads the pilot's `mc_background` only | **≤ 0.01** | 0.02 |
 | 2 | 11 event loops | as 1A; MP-1's 132 passes cost 3.913 node-h, about 0.03 each | 0.66 | 1.0 |
 | 2 | merge and dump | 5B job A's ALL lane: merge 3:00 and nn_dump 7:12 inside 0.577 node-h for four lanes (`fd/LEDGER.tsv:50`, `FD-CT-5B-REPORT.md:87`) | 0.20 | 0.30 |
-| 3 | eight arms, one node | RSN's basis, the pv-ladder ledger: J1 seven steps, 861 s, 0.2392 node-h | 0.28 | 0.35 |
-| | **total** | | **≈ 1.2** | **≈ 1.8** |
+| 3 | S3a: eight arms, one node | RSN's basis, the pv-ladder ledger: J1 seven steps, 861 s, 0.2392 node-h | 0.28 | 0.35 |
+| 3 | S3b: four closure arms, one node | as RSN's J3: four steps, 0.25 | 0.25 | 0.25 |
+| | **total** | | **≈ 1.45** | **≈ 2.05** |
 
 - A projection above 2.5 STOPs to the director.
 - **The main risks:**
@@ -200,12 +208,17 @@ guaranteed under current code. A C-BKG failure is a live possibility, and so is 
 The classifier and regressor seed is 42, as RSN. X1t's mask is `default_rng([20261112, k]).random(n) < 0.2` for
 iteration k. RSN's TR uses `[20261111, k]`.
 
-## 8. Open, for the director
+## 8. Rulings taken (the director, 2026-11-12)
 
-1. **Process.** This file is the design. It should go to coverage-5b-audit before C1–C4 are written, so that a design
-   defect costs no code. Then code, tests and mutants, an audit delta, and the binding.
-2. **The arms' closure truths.** I propose only the prior (tune_v1) for stage 3. Adding the A7 GiBUU hybrid and the q3
-   tilt, as RSN's WR closures do, costs four more steps: a second job, about 0.25 node-h, still inside the cap.
+1. **Process.** This design goes to coverage-5b-audit before C1–C4 are written, so that a design defect costs no
+   code. Then come code, tests and mutants, an audit delta, and the binding.
+2. **The reference.** MP-1's bitwise chain is accepted: S0's `base_cv` 1A, and `lat_zero.npz`. Each arm carries its
+   own nominal (X0 against X0_lat, bitwise). FD-CT-5B-INPUTS:41-43 and 53-55 are cited for why `of_inputs_5d.npz`
+   is not the reference.
+3. **The closure truths** are the prior, the A7 GiBUU hybrid and the q3 tilt, as in RSN's J3, so the two lanes stay
+   comparable. These are the four S3b steps.
+4. **C-BKG** at ≤ 0.01 node-h is accepted.
+5. **Timing.** The paper does not wait for RDX (#1092), so the lane takes the time it needs.
 
 ## 9. CITABLE FOR / NOT CITABLE FOR
 
