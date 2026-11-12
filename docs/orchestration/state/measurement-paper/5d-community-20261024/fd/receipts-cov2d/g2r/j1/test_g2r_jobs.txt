@@ -1,5 +1,5 @@
 # test_g2r_jobs.py at PYTHONHASHSEED 0, 1, 2 (cd 2d-unfolding/cov2d/g2r/tests; python -B -m unittest -v test_g2r_jobs)
-# commit a14a08e50d5148b8b7b8a3b64718d1f15482ff6c porcelain 0 utc 2026-11-12T13:54:36Z
+# commit a0d43dcfff76dc8d8c36ab9c59307bc702e40a2a porcelain 0 utc 2026-11-12T14:26:39Z
 # python 3.13.7 numpy 2.4.4 ROOT 6.36.000
 == PYTHONHASHSEED=0
 test_a_job_with_no_runs_or_mixed_points (test_g2r_jobs.Check.test_a_job_with_no_runs_or_mixed_points) ... ok
@@ -8,12 +8,19 @@ test_the_map_must_be_the_committed_one (test_g2r_jobs.Check.test_the_map_must_be
 test_the_realization_g8 (test_g2r_jobs.Check.test_the_realization_g8) ... ok
 test_uni_and_pins (test_g2r_jobs.Check.test_uni_and_pins) ... ok
 test_the_committed_records_name_each_realization (test_g2r_jobs.CommittedStepB.test_the_committed_records_name_each_realization) ... ok
-test_a_missing_histogram_and_an_unopenable_file (test_g2r_jobs.EnvTest.test_a_missing_histogram_and_an_unopenable_file) ... Error in <TFile::ReadBuffer>: error reading all requested bytes from file /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp99czfbtj/junk.root, got 8 of 300
-Error in <TFile::Init>: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp99czfbtj/junk.root failed to read the file type data.
+test_a_missing_histogram_and_an_unopenable_file (test_g2r_jobs.EnvTest.test_a_missing_histogram_and_an_unopenable_file) ... Error in <TFile::ReadBuffer>: error reading all requested bytes from file /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpgstn7efr/junk.root, got 8 of 300
+Error in <TFile::Init>: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpgstn7efr/junk.root failed to read the file type data.
 ok
-test_each_difference_is_invalid (test_g2r_jobs.EnvTest.test_each_difference_is_invalid) ... ok
+test_a_record_in_one_product_only_and_a_parameter_missing (test_g2r_jobs.EnvTest.test_a_record_in_one_product_only_and_a_parameter_missing) ... ok
+test_each_difference_is_invalid (test_g2r_jobs.EnvTest.test_each_difference_is_invalid)
+Power: P5 measured the override against the proxy at MaRES:0 as a per-cell change of median 1.6e-3, max ... ok
 test_equal_products_pass_with_the_code_records_set_aside (test_g2r_jobs.EnvTest.test_equal_products_pass_with_the_code_records_set_aside) ... ok
+test_json_leaves_and_the_metric (test_g2r_jobs.EnvTest.test_json_leaves_and_the_metric) ... ok
 test_the_cli (test_g2r_jobs.EnvTest.test_the_cli) ... ok
+test_the_measured_rerun_noise_passes (test_g2r_jobs.EnvTest.test_the_measured_rerun_noise_passes)
+RE-2's same-CPU reruns (RE2-J0-REPORT.md:106-107): 1.88e-14 and 6.36e-13. Configuration (a) is LightGBM's ... ok
+test_the_tolerance_boundary (test_g2r_jobs.EnvTest.test_the_tolerance_boundary)
+The director's condition: 0.5e-8 PASSES and 2e-8 is INVALID, for the histograms, a TParameter and a JSON leaf, ... ok
 test_spent_held_lag_and_the_cap (test_g2r_jobs.Gate.test_spent_held_lag_and_the_cap) ... ok
 test_the_cap_refuses (test_g2r_jobs.Gate.test_the_cap_refuses) ... ok
 test_the_cli_exit_codes (test_g2r_jobs.Gate.test_the_cli_exit_codes) ... ok
@@ -57,7 +64,7 @@ test_tune_rows_are_cov2ds_universe_rows_plus_the_map (test_g2r_jobs.Tables.test_
 test_written_tables_round_trip (test_g2r_jobs.Tables.test_written_tables_round_trip) ... ok
 
 ----------------------------------------------------------------------
-Ran 51 tests in 19.746s
+Ran 55 tests in 20.349s
 
 OK
 rc=0
@@ -68,12 +75,19 @@ test_the_map_must_be_the_committed_one (test_g2r_jobs.Check.test_the_map_must_be
 test_the_realization_g8 (test_g2r_jobs.Check.test_the_realization_g8) ... ok
 test_uni_and_pins (test_g2r_jobs.Check.test_uni_and_pins) ... ok
 test_the_committed_records_name_each_realization (test_g2r_jobs.CommittedStepB.test_the_committed_records_name_each_realization) ... ok
-test_a_missing_histogram_and_an_unopenable_file (test_g2r_jobs.EnvTest.test_a_missing_histogram_and_an_unopenable_file) ... Error in <TFile::ReadBuffer>: error reading all requested bytes from file /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpc68dquof/junk.root, got 8 of 300
-Error in <TFile::Init>: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpc68dquof/junk.root failed to read the file type data.
+test_a_missing_histogram_and_an_unopenable_file (test_g2r_jobs.EnvTest.test_a_missing_histogram_and_an_unopenable_file) ... Error in <TFile::ReadBuffer>: error reading all requested bytes from file /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmph0qzs5kw/junk.root, got 8 of 300
+Error in <TFile::Init>: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmph0qzs5kw/junk.root failed to read the file type data.
 ok
-test_each_difference_is_invalid (test_g2r_jobs.EnvTest.test_each_difference_is_invalid) ... ok
+test_a_record_in_one_product_only_and_a_parameter_missing (test_g2r_jobs.EnvTest.test_a_record_in_one_product_only_and_a_parameter_missing) ... ok
+test_each_difference_is_invalid (test_g2r_jobs.EnvTest.test_each_difference_is_invalid)
+Power: P5 measured the override against the proxy at MaRES:0 as a per-cell change of median 1.6e-3, max ... ok
 test_equal_products_pass_with_the_code_records_set_aside (test_g2r_jobs.EnvTest.test_equal_products_pass_with_the_code_records_set_aside) ... ok
+test_json_leaves_and_the_metric (test_g2r_jobs.EnvTest.test_json_leaves_and_the_metric) ... ok
 test_the_cli (test_g2r_jobs.EnvTest.test_the_cli) ... ok
+test_the_measured_rerun_noise_passes (test_g2r_jobs.EnvTest.test_the_measured_rerun_noise_passes)
+RE-2's same-CPU reruns (RE2-J0-REPORT.md:106-107): 1.88e-14 and 6.36e-13. Configuration (a) is LightGBM's ... ok
+test_the_tolerance_boundary (test_g2r_jobs.EnvTest.test_the_tolerance_boundary)
+The director's condition: 0.5e-8 PASSES and 2e-8 is INVALID, for the histograms, a TParameter and a JSON leaf, ... ok
 test_spent_held_lag_and_the_cap (test_g2r_jobs.Gate.test_spent_held_lag_and_the_cap) ... ok
 test_the_cap_refuses (test_g2r_jobs.Gate.test_the_cap_refuses) ... ok
 test_the_cli_exit_codes (test_g2r_jobs.Gate.test_the_cli_exit_codes) ... ok
@@ -117,7 +131,7 @@ test_tune_rows_are_cov2ds_universe_rows_plus_the_map (test_g2r_jobs.Tables.test_
 test_written_tables_round_trip (test_g2r_jobs.Tables.test_written_tables_round_trip) ... ok
 
 ----------------------------------------------------------------------
-Ran 51 tests in 20.548s
+Ran 55 tests in 19.201s
 
 OK
 rc=0
@@ -128,12 +142,19 @@ test_the_map_must_be_the_committed_one (test_g2r_jobs.Check.test_the_map_must_be
 test_the_realization_g8 (test_g2r_jobs.Check.test_the_realization_g8) ... ok
 test_uni_and_pins (test_g2r_jobs.Check.test_uni_and_pins) ... ok
 test_the_committed_records_name_each_realization (test_g2r_jobs.CommittedStepB.test_the_committed_records_name_each_realization) ... ok
-test_a_missing_histogram_and_an_unopenable_file (test_g2r_jobs.EnvTest.test_a_missing_histogram_and_an_unopenable_file) ... Error in <TFile::ReadBuffer>: error reading all requested bytes from file /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpgraxf2li/junk.root, got 8 of 300
-Error in <TFile::Init>: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpgraxf2li/junk.root failed to read the file type data.
+test_a_missing_histogram_and_an_unopenable_file (test_g2r_jobs.EnvTest.test_a_missing_histogram_and_an_unopenable_file) ... Error in <TFile::ReadBuffer>: error reading all requested bytes from file /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpm5bgibq8/junk.root, got 8 of 300
+Error in <TFile::Init>: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpm5bgibq8/junk.root failed to read the file type data.
 ok
-test_each_difference_is_invalid (test_g2r_jobs.EnvTest.test_each_difference_is_invalid) ... ok
+test_a_record_in_one_product_only_and_a_parameter_missing (test_g2r_jobs.EnvTest.test_a_record_in_one_product_only_and_a_parameter_missing) ... ok
+test_each_difference_is_invalid (test_g2r_jobs.EnvTest.test_each_difference_is_invalid)
+Power: P5 measured the override against the proxy at MaRES:0 as a per-cell change of median 1.6e-3, max ... ok
 test_equal_products_pass_with_the_code_records_set_aside (test_g2r_jobs.EnvTest.test_equal_products_pass_with_the_code_records_set_aside) ... ok
+test_json_leaves_and_the_metric (test_g2r_jobs.EnvTest.test_json_leaves_and_the_metric) ... ok
 test_the_cli (test_g2r_jobs.EnvTest.test_the_cli) ... ok
+test_the_measured_rerun_noise_passes (test_g2r_jobs.EnvTest.test_the_measured_rerun_noise_passes)
+RE-2's same-CPU reruns (RE2-J0-REPORT.md:106-107): 1.88e-14 and 6.36e-13. Configuration (a) is LightGBM's ... ok
+test_the_tolerance_boundary (test_g2r_jobs.EnvTest.test_the_tolerance_boundary)
+The director's condition: 0.5e-8 PASSES and 2e-8 is INVALID, for the histograms, a TParameter and a JSON leaf, ... ok
 test_spent_held_lag_and_the_cap (test_g2r_jobs.Gate.test_spent_held_lag_and_the_cap) ... ok
 test_the_cap_refuses (test_g2r_jobs.Gate.test_the_cap_refuses) ... ok
 test_the_cli_exit_codes (test_g2r_jobs.Gate.test_the_cli_exit_codes) ... ok
@@ -177,7 +198,7 @@ test_tune_rows_are_cov2ds_universe_rows_plus_the_map (test_g2r_jobs.Tables.test_
 test_written_tables_round_trip (test_g2r_jobs.Tables.test_written_tables_round_trip) ... ok
 
 ----------------------------------------------------------------------
-Ran 51 tests in 19.510s
+Ran 55 tests in 20.070s
 
 OK
 rc=0

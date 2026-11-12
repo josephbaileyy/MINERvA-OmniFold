@@ -11,7 +11,7 @@ requires a second addendum, J1, before any connect. J1 must carry:
 The director approved the design on 2026-11-12, items 1–5: namespace and names, the jobs, the gate, the environment
 test, and the docstring. §9 lists where this draft departs from that design, and why.
 
-**The code:** under `2d-unfolding/cov2d/g2r/jobs/` and `tests/`, at code commit `a14a08e50d5148b8b7b8a3b64718d1f15482ff6c`:
+**The code:** under `2d-unfolding/cov2d/g2r/jobs/` and `tests/`, at code commit `a0d43dcfff76dc8d8c36ab9c59307bc702e40a2a` (the envtest rule after the audit's B1; first draft `a14a08e5`):
 - `g2r_jobs.py`: the tables, the job-side check, the order, the gate, the environment test's comparison and the
   products TSV;
 - `g2r_env.sh`, `g2r_job.sbatch`, `g2r_envtest.sbatch`, `g2r_prepare.sbatch` and `g2r_submit.sh`;
@@ -103,15 +103,33 @@ The test comes before the prepare, and its cost is inside the 110.
     commit `PRE_M = a6054769…`, in a clean checkout `$O/deploy-pre`;
   - the same run through the patched driver with the flag off (M_C1's `e226daf3…`);
   - both on one node, in the same environment, in two lanes of 128 CPUs.
-- **The comparison,** `g2r_jobs.envtest`:
-  - every histogram's contents and errors must be bitwise equal, and so must every TParameter;
-  - every TNamed must be equal, except `driverFile`, `driverSha256`, `omnifoldHelperFile` and `runArgv`, which name the
-    code and the paths and differ by design;
-  - `runConfig` must be equal once `out` is set aside;
+- **The comparison,** `g2r_jobs.envtest`, under RE-2's bound rule (`ENVTEST_TOL` = 1e-8). The director ruled it on
+  2026-11-12, after the audit's B1:
+  - every histogram's contents and errors: max |a − b| / max |b| ≤ 1e-8, the metric of RE-2's `le` checks
+    (`RE2-J0-REPORT.md:79`);
+  - every TParameter: |a − b| ≤ 1e-8 × max(|a|, |b|);
+  - every TNamed whose value is JSON (`runConfig`, `re2Refinement`, `branchSelection`, and `p1Streams` if present),
+    leaf by leaf: floats to 1e-8 relative, while integers, booleans, strings and keys must be exactly equal;
+  - every other TNamed must be exactly equal, except `driverFile`, `driverSha256`, `omnifoldHelperFile` and `runArgv`,
+    which name the code and the paths and differ by design;
+  - `runConfig` must agree once `out` is set aside;
   - the patched run's `miss_map` must be null, and its file must carry no `g2rMissMap`;
   - the helper's sha256 must be equal.
 
-  This is G1 on the cluster, with real LightGBM.
+  Whether each object is also bitwise is recorded (`bitwise`, `all_bitwise`) and does not decide. This is G1 on the
+  cluster, with real LightGBM.
+- **Why not bitwise (the audit's B1).** Configuration (a) is LightGBM's non-deterministic mode
+  (`RE2-DECLARATION.md:42`). RE-2 measured same-CPU reruns of this driver at 1.88e-14 and 6.36e-13 (`CHK-det1`,
+  `CHK-det2`, `RE2-J0-REPORT.md:106-107`), and `re2Refinement` carries LightGBM outputs. A bitwise rule would have
+  spent the environment test on a STOP with no verdict on G1.
+- **The rule's power.**
+  - The tolerance sits about 4 orders above the measured rerun noise.
+  - It sits 5 to 6 orders below a real flag-off failure: P5 measured the override against the proxy at MaRES:0 as a
+    per-cell change of median 1.6e-3 and max 2.8e-2 (`stageB/diagnostics/p5/result/report_s42.json`).
+  - RE-2's power checks moved hXSec2D by 1e-2 to 2.2e-1 (`RE2-J0-REPORT.md:128`).
+  - The tests hold the boundary (the director's condition): 0.5e-8 and 0.99e-8 PASS, and 2e-8 is INVALID, for a
+    histogram, a TParameter and a JSON leaf. Mutants that loosen the tolerance to 3e-8 or tighten it to 0.4e-8 are
+    killed, and so is one that puts it back to 0.
 - The LightGBM end-to-end check **with** the override is D_Ua's first run, gating the rest (§2, step 4).
 
 ## 5. The P5 per-playlist file check
@@ -186,12 +204,12 @@ is run by a named test against stubs, listed in the receipts README.
 
 ## 11. Tests, mutants and coverage (`fd/receipts-cov2d/g2r/j1/`)
 
-From a clean detached checkout of the code commit `a14a08e50d5148b8b7b8a3b64718d1f15482ff6c`, on macOS with
+From a clean detached checkout of the code commit `a0d43dcfff76dc8d8c36ab9c59307bc702e40a2a`, on macOS with
 `/opt/homebrew/bin/python3.13`, ROOT 6.36.000 and numpy 2.4.4:
-- `test_g2r_jobs.py`: 51 tests, OK, rc 0, at PYTHONHASHSEED 0, 1 and 2;
-- `g2r_jobs_mutation.py`: 30 mutations, all killed. They cover the tables, the check, the order, the gate, the comparison
+- `test_g2r_jobs.py`: 55 tests, OK, rc 0, at PYTHONHASHSEED 0, 1 and 2;
+- `g2r_jobs_mutation.py`: 37 mutations, all killed. They cover the tables, the check, the order, the gate, the comparison
   and the four shell scripts. The unmutated suite ran in full, and the sources were restored byte-identical;
-- the coverage sweep: 0 of 350 executable lines of `g2r_jobs.py` never executed, counting 2 byte-identical copies in the
+- the coverage sweep: 0 of 394 executable lines of `g2r_jobs.py` never executed, counting 2 byte-identical copies in the
   tests' fixture deploys. The README maps each shell path to its test;
 - amendment 1's suites at the same commit: `test_g2r` 27, `test_re2_miss_map` 11 and `test_g2r_glue` 18, OK, and
   `g2r_mutation.py` 23 of 23 killed.
