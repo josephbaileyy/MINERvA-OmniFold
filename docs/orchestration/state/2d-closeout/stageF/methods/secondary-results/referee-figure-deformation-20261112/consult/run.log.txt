@@ -1,0 +1,80 @@
+Reading additional input from stdin...
+OpenAI Codex v0.166.0
+--------
+workdir: /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/figref-20261112/gptdir
+model: gpt-6.1-sol
+provider: openai
+approval: on-request
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 01a1ce03-e0d7-7243-8f7f-b41d3251360a
+--------
+user
+You are a referee for JINST (or Physical Review D) reviewing ONE figure of a methods paper on unbinned unfolding (OmniFold) applied to MINERvA neutrino data. The figure is attached as an image. Its caption and the two paragraphs that cite it are below. Values written as [value] are numbers that the printed paper fills in; do not comment on them.
+
+Review the figure as a figure: can a reader, at print size (full text width of a two-column journal page), see what the caption and text say it shows? Focus on:
+1. Whether the four estimator series (markers) are distinguishable, including in grayscale and for colour-blind readers.
+2. Whether the dashed "injected change" steps can be matched to their series, and whether they are legible where they overlap.
+3. Legend placement and whether it hides data.
+4. The shaded cells, the axis labels, the top bin labels, the two-line title, and tick labels.
+5. Whether anything in the caption is not visible in the figure, or anything visible is not explained in the caption.
+6. Whether the figure supports the two text paragraphs' claims as worded.
+
+Give: (a) an overall verdict (acceptable as is / minor changes / major changes); (b) a numbered list of concrete, specific changes, most important first, each with what to change and why; (c) anything you think is wrong rather than merely hard to read. Be concise. Do not rewrite the paper's prose beyond the caption.
+
+===== CAPTION =====
+Fractional residuals, (unfolded − truth)/truth, per (E_avail, W) cell, at the changed truth, with backgrounds, for the reported estimator: NuWro E_avail, GENIE + MEC (E_avail, W) and NuWro (p_T, p_∥, E_avail) shapes and the GiBUU-to-GENIE E_avail shape, 20 pseudo-experiments each (Sec. [ref]). Dashed lines: each truth's injected change, the fractional change of the cell's true cross section in the full simulation; for the first three shapes it is computed from the half-sample truths of these 60 pseudo-experiments and of 40 at the nominal truth, which give it exactly unless a fine cell populated in the full simulation is empty in all 100 half samples. Each point is measured against its own pseudo-experiment's half-sample truth. Shaded: the three cells that do not meet the support rule, E_avail = 0.1–0.2 GeV with W ≥ 3 GeV and E_avail ≥ 3 GeV with W < 1.4 GeV (W bins 1–2), with truth weights of [value]–[value] events. Standard errors of the mean: at most [value] %; "exp.": pseudo-experiments. W bin 6 is W ≥ 3 GeV. Sixteen-cell results at these truths: table [ref].
+
+===== TEXT PARAGRAPH 1 =====
+The unfolding recovers only part of a change of the E_avail shape as large as the difference between generators. When the true shape is reweighted by the GiBUU-to-GENIE ratio, the (E_avail, W) cells unfolded with the five-observable estimator (20 pseudo-experiments; figure [this figure]) deviate from the truth by several percent in the largest cells and by up to [value] % at high W, in the cell 0.8 ≤ E_avail < 1.5 GeV, W ≥ 3 GeV; a lower-capacity development variant with a 100-tree, 8-leaf refinement, which gives none of the reported results, gives the same [value] % in that cell (Supplement figure). On the sixteen reported cells, the reported estimator's bias at the same truth satisfies both criteria under the reported covariance, with a largest |z| of [value], and meets the flagging criterion without C_PL,5D (section [ref]).
+
+===== TEXT PARAGRAPH 2 =====
+For other fixed generator shapes tested with the reported five-observable estimator, the residual is [value]–[value] % in the most affected (E_avail, W) cell (figure [this figure]; Sec. [ref]). Figure [this figure] shows (E_avail, W) cells only, without the reported covariance. The three withheld shape changes it shows were not used while the estimator was chosen; the GiBUU-to-GENIE change, also shown, is a development truth.
+warning: Configured value for `windows.sandbox` is disallowed by requirements; falling back to required value Some(Elevated). Details: invalid value for `windows.sandbox`: `None` is not in the allowed set [Elevated] (set by enterprise-managed requirements Baseline (regulated-workspace-default-fallback))
+warning: Configured value for `windows.sandbox` is disallowed by requirements; falling back to required value Some(Elevated). Details: invalid value for `windows.sandbox`: `None` is not in the allowed set [Elevated] (set by enterprise-managed requirements Baseline (regulated-workspace-default-fallback))
+codex
+I’ll check the visual encodings and whether the caption and cited claims can be read from the figure at journal print size.
+codex
+**Verdict: minor changes.** At full text width, the marker series and main residual patterns are readable. The injected-change curves are substantially harder to identify, particularly in grayscale.
+
+1. **Give the four injected-change curves distinct line styles and individual legend samples.** “Same colour” is insufficient for grayscale readers, and the blue/purple curves are difficult to separate. Several steps coincide or nearly coincide, especially around −15% and in the highest-energy bin. Where distinct styles still conceal one another, annotate the coincidence or use separate panels.
+
+2. **Retain the four marker shapes, but strengthen their separation.** Circles, triangles, diamonds and squares provide useful redundant encoding. Slightly larger markers, contrasting outlines, and some open symbols would improve crowded cells and grayscale reproduction. Darken the pale green dashed curve.
+
+3. **Move or compact the legend.** It occupies much of the positive-residual plotting area. I see no clearly obscured marker, but the highest red square sits close to the legend’s right edge. Placing the legend above the axes would remove that ambiguity.
+
+4. **Clarify what a plotted point represents.** The caption should explicitly identify the markers as means over 20 pseudo-experiments and identify any error bars. Suggested caption wording: “Markers show mean fractional residuals over 20 pseudo-experiments, each evaluated against its own half-sample truth; error bars show standard errors of the mean.” Use the error-bar clause only if bars are actually drawn.
+
+5. **Provide the complete W-bin definition and simplify the header.** Repeated ticks 1–6 are readable, but most physical W boundaries cannot be recovered from this caption. Add a compact bin key or a precise reference. Move “400 trees, 31 leaves” into the caption and identify the reported estimator as five-observable there. The top energy labels and axis labels are otherwise legible.
+
+6. **Keep the support shading, but explain its consequence.** The three shaded cells match the caption and are visible. State whether their points remain diagnostic results excluded from reporting. A slightly stronger gray or light hatching would help print reproduction.
+
+7. **Limit the claims attributed to this figure.** It supports substantial cellwise residuals and identifies the conspicuous high-W GiBUU/GENIE discrepancy. It does not identify the “largest cells” by population or cross section, establish covariance-based criteria, or demonstrate the development/withholding history. Those claims need their cited supporting material.
+
+Two issues go beyond readability:
+
+- **The caption’s “Each point … its own pseudo-experiment” is misleading** if each marker is an ensemble mean. The normalization belongs to each constituent pseudo-experiment.
+- **“Recovers only part” is not established uniformly by this plot.** Assuming the injected change uses nominal truth as its denominator, the highlighted red cell has approximately a −30% injection and a +74% residual. An unchanged nominal estimate would give about +43%. Thus this cell does not illustrate simple partial recovery toward the changed truth. Qualify the interpretation or supply the nominal unfolding comparison needed to establish recovery.
+tokens used
+22,276
+**Verdict: minor changes.** At full text width, the marker series and main residual patterns are readable. The injected-change curves are substantially harder to identify, particularly in grayscale.
+
+1. **Give the four injected-change curves distinct line styles and individual legend samples.** “Same colour” is insufficient for grayscale readers, and the blue/purple curves are difficult to separate. Several steps coincide or nearly coincide, especially around −15% and in the highest-energy bin. Where distinct styles still conceal one another, annotate the coincidence or use separate panels.
+
+2. **Retain the four marker shapes, but strengthen their separation.** Circles, triangles, diamonds and squares provide useful redundant encoding. Slightly larger markers, contrasting outlines, and some open symbols would improve crowded cells and grayscale reproduction. Darken the pale green dashed curve.
+
+3. **Move or compact the legend.** It occupies much of the positive-residual plotting area. I see no clearly obscured marker, but the highest red square sits close to the legend’s right edge. Placing the legend above the axes would remove that ambiguity.
+
+4. **Clarify what a plotted point represents.** The caption should explicitly identify the markers as means over 20 pseudo-experiments and identify any error bars. Suggested caption wording: “Markers show mean fractional residuals over 20 pseudo-experiments, each evaluated against its own half-sample truth; error bars show standard errors of the mean.” Use the error-bar clause only if bars are actually drawn.
+
+5. **Provide the complete W-bin definition and simplify the header.** Repeated ticks 1–6 are readable, but most physical W boundaries cannot be recovered from this caption. Add a compact bin key or a precise reference. Move “400 trees, 31 leaves” into the caption and identify the reported estimator as five-observable there. The top energy labels and axis labels are otherwise legible.
+
+6. **Keep the support shading, but explain its consequence.** The three shaded cells match the caption and are visible. State whether their points remain diagnostic results excluded from reporting. A slightly stronger gray or light hatching would help print reproduction.
+
+7. **Limit the claims attributed to this figure.** It supports substantial cellwise residuals and identifies the conspicuous high-W GiBUU/GENIE discrepancy. It does not identify the “largest cells” by population or cross section, establish covariance-based criteria, or demonstrate the development/withholding history. Those claims need their cited supporting material.
+
+Two issues go beyond readability:
+
+- **The caption’s “Each point … its own pseudo-experiment” is misleading** if each marker is an ensemble mean. The normalization belongs to each constituent pseudo-experiment.
+- **“Recovers only part” is not established uniformly by this plot.** Assuming the injected change uses nominal truth as its denominator, the highlighted red cell has approximately a −30% injection and a +74% residual. An unchanged nominal estimate would give about +43%. Thus this cell does not illustrate simple partial recovery toward the changed truth. Qualify the interpretation or supply the nominal unfolding comparison needed to establish recovery.
