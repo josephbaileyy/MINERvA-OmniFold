@@ -113,7 +113,7 @@ Each section remains a separate commit. The comparison distinguishes sentence jo
 
 ## Commit messages
 
-The complete review sequence after `f632ae12159bcbab7b8ac9e98534e69a300694de` is listed below.
+The review sequence after `f632ae12159bcbab7b8ac9e98534e69a300694de` through the section-style pass is listed below.
 
 `cc1adc128e9f39aaaf4cb5139ec8127db29648de`
 
@@ -460,6 +460,16 @@ This register is committed with the following message:
 
 ```markdown
 [note] Record section metrics and pending reviews
+
+Review status: pending Grok review.
+```
+
+## Records-probe follow-up
+
+The final records-preservation self-test found two exact-text ledger probes still quoting the sentences before the style splits: `L-thin-C21` and `L-thin-C70`. Their N probes now quote the current statements. Both D probes, all other row fields, the note prose and the scientific limits are unchanged. This records-only follow-up changes none of the source-corpus metrics above. It remains pending Grok review. The records-preservation self-test passes: the real pair is silent, all 41 planted defects fire, and all four controls stay silent.
+
+```markdown
+[note] Refresh ledger probes for split qualifications
 
 Review status: pending Grok review.
 ```
