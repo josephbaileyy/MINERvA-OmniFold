@@ -1,0 +1,59 @@
+# rsn_connect_j1.sh local smoke (smoke_connect_j1.sh; macOS; stubs; never connects or submits)
+# rsn_connect_j1.sh sha256 b8f8c2af4b70384db4bb278d9d4ca11600b1fc1f2b1131e0c237b5a11fb0661e
+# rsn_connect_j1_launch.sh sha256 819be11134f1e61134a5429410541cf74470d8492525ef4411104d8426a6c04d
+# smoke_connect_j1.sh sha256 8517c8b24141c81bbdedbac7f3933e74eb9f146f58d111939c1219a033120c8c
+# run: bash smoke_connect_j1.sh <new empty dir> <local clone containing af711298> <connect 1's nc_r.json>
+## case pass rc=0
+fence.txt sha256 5934e32776a9142661188f2239bb91c1fb3f276f50afdbd666f1030d4cfa5894:
+STEP rsn_nc python <w>/b-pass/deploy/nd-unfolding/mnv_guarded_run.py --expect-root <w>/b-pass/deploy --inventory <w>/b-pass/out/inventory/rsn_nc.jsonl --label rsn:rsn_nc -- <w>/b-pass/deploy/nd-unfold
+[rsn] smoke: checks passed, 1 steps
+smoke rc=0
+sbatch rc=0 jobid=61234567
+J1 SUBMITTED: jobid 61234567, rsn_J1, limit 0:19:00, deploy <w>/b-pass/deploy at <smoke-pin>, out <w>/b-pass/out
+sbatch called: --parsable --job-name=rsn_J1 --time=0:19:00 --output=<w>/b-pass/out/logs/%x_%j.out <w>/b-pass/deploy/nd-unfolding/rsn/sbatch_rsn.sh <w>/b-pass/deploy <smoke-pin> <w>/b-pass/out J1
+self copy removed: yes
+## case ll5d rc=9
+REFUSED (nothing written): fenced or rsn_ jobs are queued or running: 61078463|ll5d_gate_G18|RUNNING
+sbatch called: no
+self copy removed: yes
+## case e96 rc=9
+REFUSED (nothing written): fenced or rsn_ jobs are queued or running: 61200000|e96data_full|PENDING
+sbatch called: no
+self copy removed: yes
+## case rsnq rc=9
+REFUSED (nothing written): fenced or rsn_ jobs are queued or running: 61200001|rsn_J1|PENDING
+sbatch called: no
+self copy removed: yes
+## case host rc=9
+REFUSED (nothing written): host dtn01 is not a login node
+sbatch called: no
+self copy removed: yes
+## case slurm rc=9
+REFUSED (nothing written): a Slurm job is set (1)
+sbatch called: no
+self copy removed: yes
+## case fence rc=9
+REFUSED (nothing written): <w>/b-fence/out/fence.txt exists
+sbatch called: no
+self copy removed: yes
+## case noncr rc=9
+REFUSED (nothing written): <w>/b-noncr/out/nc_r.json records no rsn-nc-r/1 PASS
+sbatch called: no
+self copy removed: yes
+## case r1bad rc=9
+REFUSED (nothing written): r1: recorded 0000000000000000000000000000000000000000000000000000000000000000, deployed 661608d81ccf7ca0ab08aee853f5934d4c0dab89677e82f8292239fee60b7652, bound 661608d81ccf7
+sbatch called: no
+self copy removed: yes
+## case dirty rc=9
+REFUSED (nothing written): the deploy is not <smoke-pin> clean (HEAD=<smoke-pin>,        1 porcelain lines)
+sbatch called: no
+self copy removed: yes
+## case product rc=9
+REFUSED (nothing written): <w>/b-product/out/products/rsn_nc.npz exists
+sbatch called: no
+self copy removed: yes
+## case badreweight rc=8
+[rsn] refusing: the reweight of rsn_nc (frozen:tune_v1) is missing or differs from its committed sha256
+smoke rc=2
+STOP: the launcher's smoke did not pass for J1
+sbatch called: no
