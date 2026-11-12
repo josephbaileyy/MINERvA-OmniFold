@@ -12549,6 +12549,7 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts/pre
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts/preserve.log	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts/preserve.out	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts/stage0-inputs.tar.sha256	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/redump-f12i-20261112/RDX-DECLARATION.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/referee-sensitivity-20261111/RSN-BINDING-1.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/referee-sensitivity-20261111/RSN-DECLARATION.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/referee-sensitivity-20261111/connect1/README.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
