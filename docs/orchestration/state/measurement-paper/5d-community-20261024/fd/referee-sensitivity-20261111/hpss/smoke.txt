@@ -2,7 +2,7 @@
 # stat, squeue, nproc; synthetic sources with real sha256 pins; the stub ssh runs each remote string locally, never connects)
 # template sha256 7aaa9a060e4acfa40f75fe46f7642954fb3b378bafd1652fe60f78fa2e2449a3
 # hpss_rsn.sh sha256 012a9618adf7e4b493700954747f5afd1ea4235907c1b2f794e754e2062311d8
-# launcher sha256 08588ac939a5e2404a869e1c8c9de7c36e0910bb3de401b3aeb933c44c6a8b40
+# launcher sha256 cd826dbde2acc571fab313c87d76c5be65df0dbaf2ca67589b14139d7ed49ab9 (the launcher cases re-run at this sha after the accept-new change; output equal but for timestamps)
 # exit codes:
 #   atime rc=8
 #   pass rc=0

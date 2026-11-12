@@ -1,8 +1,9 @@
 #!/bin/bash
 # RSN's HPSS archive: the Mac-side launcher, kit rev 2 (the director's ruling of 2026-11-12: run on a login node, as
-# #1054 did). Its hop is hpss-20261111's hpss_launch.sh (296ea772), unchanged: one ssh session per call enters at
-# saul.nersc.gov and hops to NODE (a loginNN; never a data-transfer node, never a Slurm job), with ServerAlive 15/8 on
-# both hops and StrictHostKeyChecking=no on the inner one, as #1054 ran. ssh's rc is read unpiped. Needs a current
+# #1054 did). Its hop is hpss-20261111's hpss_launch.sh (296ea772): one ssh session per call enters at saul.nersc.gov
+# and hops to NODE (a loginNN; never a data-transfer node, never a Slurm job), with ServerAlive 15/8 on both hops, as
+# #1054 ran, except StrictHostKeyChecking=accept-new on the inner hop (#1054 used =no; the director's ruling of
+# 2026-11-12: a first-seen login-node key is trusted, a changed one refused). ssh's rc is read unpiped. Needs a current
 # sshproxy certificate (Joseph renews it).
 # Modes, all writing only into the new empty local directory F, except archive:
 #   survey  read-only: for each named login node, its loadavg, nproc and /dev/shm line (#1054's survey, which chose
@@ -24,7 +25,7 @@ OUT=/pscratch/sd/j/josephrb/hpss-rsn-20261111
 H=/home/j/josephrb/mnv-rsn-inputs-20261111
 LIST="$HERE/hpss_rsn_list.tsv"; LIST_SHA=0dafaac8e3664875f496974fb79f73e319ada7647eb5106dbe6626cefa9d99c6
 SSH=(-o ControlPath=none -o BatchMode=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=8)
-HOP=(-o BatchMode=yes -o ConnectTimeout=10 -o ServerAliveInterval=15 -o ServerAliveCountMax=8 -o StrictHostKeyChecking=no)
+HOP=(-o BatchMode=yes -o ConnectTimeout=10 -o ServerAliveInterval=15 -o ServerAliveCountMax=8 -o StrictHostKeyChecking=accept-new)
 login() { case "$1" in login[0-9][0-9]) ;; *) echo "STOP: '$1' is not a login node name"; exit 9;; esac; }
 hop() {  # hop <node> <remote command> : stdin is passed through both hops
   ssh "${SSH[@]}" saul.nersc.gov "ssh ${HOP[*]} $1 $(printf '%q' "$2")" > "$F/session.out" 2> "$F/session.err"
@@ -34,7 +35,7 @@ case "$MODE" in
   survey)
     [ -n "$NODE" ] || { echo "STOP: no login nodes named"; exit 9; }
     for n in $NODE; do login "$n"; done
-    R='date -u +%FT%TZ; for n in '"$NODE"'; do ssh -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no $n '\''echo $(hostname -s) $(cut -d" " -f1-3 /proc/loadavg) $(nproc) $(df -h /dev/shm | tail -1)'\'' < /dev/null 2>&1; done'
+    R='date -u +%FT%TZ; for n in '"$NODE"'; do ssh -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=accept-new $n '\''echo $(hostname -s) $(cut -d" " -f1-3 /proc/loadavg) $(nproc) $(df -h /dev/shm | tail -1)'\'' < /dev/null 2>&1; done'
     ssh "${SSH[@]}" saul.nersc.gov "$R" < /dev/null > "$F/session.out" 2> "$F/session.err"
     rc=$?; echo "ssh rc=$rc"; cat "$F/session.out"; exit $rc ;;
   probe)

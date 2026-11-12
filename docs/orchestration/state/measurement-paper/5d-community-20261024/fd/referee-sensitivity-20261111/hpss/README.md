@@ -16,7 +16,7 @@ not started, so OUT and H are unspent. #1054 ran on login27, where all three wor
 | file | sha256 | role |
 |---|---|---|
 | `hpss_rsn.sh` | `012a9618adf7e4b493700954747f5afd1ea4235907c1b2f794e754e2062311d8` | the archive script: the template with its list embedded (what runs) |
-| `hpss_rsn_launch.sh` | `08588ac939a5e2404a869e1c8c9de7c36e0910bb3de401b3aeb933c44c6a8b40` | the Mac-side launcher: survey, probe, archive and fetch modes, through saul to a loginNN |
+| `hpss_rsn_launch.sh` | `cd826dbde2acc571fab313c87d76c5be65df0dbaf2ca67589b14139d7ed49ab9` | the Mac-side launcher: survey, probe, archive and fetch modes, through saul to a loginNN |
 | `hpss_rsn.template.sh` | `7aaa9a060e4acfa40f75fe46f7642954fb3b378bafd1652fe60f78fa2e2449a3` | the template; `make_hpss_script.py` fills in `LIST_SHA` and appends the list |
 | `hpss_rsn_list.tsv` | `0dafaac8e3664875f496974fb79f73e319ada7647eb5106dbe6626cefa9d99c6` | 67 rows, group<TAB>sha256<TAB>path (unchanged from rev 1) |
 | `make_hpss_script.py` | `d2f2a43a072c10621daa5d4fa3d81b64c7e84ee1b8643432a0315823b71780ee` | byte-identical to hpss-20261111's `connect/make_hpss_script.py` (unchanged) |
@@ -62,9 +62,11 @@ between the 67 sources and anything its fence or the running LL5D gates read, by
    - `hpssquota` must return rc 0 with one "usage on HPSS" line, which the preflight then reads from the capture.
    A refusal prints `REFUSED (nothing written): <reason>` and exits 9.
 
-**The launcher (rev 2).** Its hop is #1054's `hpss_launch.sh`, unchanged: saul.nersc.gov, then the login node, with
-ServerAlive 15/8 on both hops and `StrictHostKeyChecking=no` on the inner one. That inner setting also settles audit
-low k4: an unknown login-node key cannot fail the session at rc 255. Modes:
+**The launcher (rev 2).** Its hop is #1054's `hpss_launch.sh`: saul.nersc.gov, then the login node, with ServerAlive
+15/8 on both hops. One setting differs. The inner hop uses `StrictHostKeyChecking=accept-new` where #1054 used `=no`
+(the director's ruling, 2026-11-12). That settles audit low k4: a login-node key saul has not seen is accepted, so the
+session does not fail at rc 255, but a changed key is refused, so the hop fails (rc 255, before anything runs) rather
+than trusting it silently. Modes:
 - `survey <dir> "<loginNN> ..."`: read-only; each node's loadavg, nproc and /dev/shm line, as #1054's
   `connect/login-survey.txt`. The node with the lowest load and ample /dev/shm is chosen.
 - `probe <dir> <loginNN>`: read-only, on the chosen node. It prints the tools, /dev/shm, `hpssquota`, hsi's listing
