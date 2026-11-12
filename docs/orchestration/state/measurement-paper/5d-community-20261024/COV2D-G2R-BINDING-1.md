@@ -92,3 +92,55 @@ director re-hashed every file below at both commits, and each is byte-identical.
 3. **Reserved for Joseph,** as binding 1 ruling 5: adopting C_new and the wording of any changed coverage sentence.
 
 Nothing is submitted, deposited or tagged.
+
+## Binding 1, addendum J1: the jobs (director, 2026-11-12)
+
+**Binds** [`COV2D-G2R-ADDENDUM-J1.md`](COV2D-G2R-ADDENDUM-J1.md) and its job code, as merged in PR #1111 at
+
+**M_J1 = `401733bce290ce122cfbf38f1526e120f174b3ec`**
+
+The audited head is `5da0221e` (code `79669957`). The director re-hashed each file at both commits, and each is
+byte-identical:
+
+| file | sha256 (prefix) |
+|---|---|
+| `COV2D-G2R-ADDENDUM-J1.md` | `b22a486d6c78258b` |
+| `2d-unfolding/cov2d/g2r/jobs/g2r_jobs.py` | `7542a68dd344b4cb` |
+| `2d-unfolding/cov2d/g2r/jobs/g2r_env.sh` | `b3ad1d04e6f665b7` |
+| `2d-unfolding/cov2d/g2r/jobs/g2r_job.sbatch` | `21e4f4ac7330250e` |
+| `2d-unfolding/cov2d/g2r/jobs/g2r_envtest.sbatch` | `3971fe8596574b4e` |
+| `2d-unfolding/cov2d/g2r/jobs/g2r_prepare.sbatch` | `3c129b3dd7abb6d4` |
+| `2d-unfolding/cov2d/g2r/jobs/g2r_submit.sh` | `a9b2a2ba2f8a902a` |
+
+**What the director checked:**
+- **coverage-5b-audit's GO** at `5da0221e`, over three rounds:
+  - **B1**, at `ab2e1237`: the envtest demanded bitwise equality, which configuration (a) is measured not to give. It
+    is closed with RE-2's ≤ 1e-8 rule.
+  - **M1**, at `e3a429ea`: the histogram metric was labelled RE-2's but was weaker. It is closed with RE-2's per-cell
+    max |a/b − 1| over b ≠ 0, plus a b = 0 clause.
+  - **j5** (NaN and inf handling): closed.
+  - The final reruns gave 58 tests at seeds 0–2 and 41 of 41 mutants killed. Low j6 is held.
+- **The design departures,** accepted on 2026-11-12:
+  - the override-off reruns (Flux:23 and MaRES:0) join D_Ud warm, at 09:18:00;
+  - the envtest limit is 01:04:00;
+  - the LightGBM override end-to-end check is D_Ua's first run, and every other unfold job waits for it.
+- **The cap gate** projects the whole campaign and STOPs (rc 9) above 110 node-h, with unbilled jobs at their
+  ceiling. Held after the prepare: 107.2. The envtest and the prepare must actually charge ≤ 2.8 node-h together.
+
+**Rulings:**
+1. **The jobs are bound as merged at M_J1.**
+2. **Each connect comes to the director with its sha and its diff before it runs,** in this order:
+   - the envtest;
+   - the prepare;
+   - D_Ua (its first run is the override end-to-end check);
+   - the other unfold jobs;
+   - the readout.
+
+   Each one's slot is sequenced against E96D, LL5D and RDX by the fences and the director.
+3. **The P5 per-playlist files** must be read by the prepare before 2026-12-09T23:11Z, and `$UNI` before 2026-12-19.
+4. **Adoption:** Joseph decided on 2026-11-12 (`DECISION-20261112-joseph-consult-d1-d7.md` D1) that if part (a) is
+   VALID and the held-out constructions validate, the rebuilt covariance becomes the reported 2D covariance. The new
+   coverage counts are reported under the unchanged rule. The wording of any changed sentence still goes through a
+   PRD-referee read, and then to Joseph.
+
+Nothing is submitted, deposited or tagged.
