@@ -170,3 +170,40 @@ for it.
 5. **Lows** w1–w3, y1–y5 and z1, z2 and z4 go on the follow-up list.
 
 Nothing is submitted, deposited or tagged.
+
+## Binding 1, addendum J2: the s0 fix after the BUILD collision (director, 2026-11-12)
+
+**Binds** the s0 fix, as merged in PR #1099 at **M_RDXS = `ad0535c4a62ac0a20711a4a00f2266ddaf926d7c`**. The audited
+head is `13a0ef3d`. The director re-hashed each file at both commits, and each is byte-identical:
+
+| file | sha256 (prefix) |
+|---|---|
+| `nd-unfolding/rdx/rdx_connect.sh` | `11e7ef921bcc2272` |
+| `nd-unfolding/rdx/rdx_connect_launch.sh` | `165fb98ebed89cf8` |
+| `nd-unfolding/rdx/sbatch_rdx_evloop.sh` | `7ce210dcab5909fa` |
+| `nd-unfolding/rdx/setup_salloc_env.exports` | `e0d3b70088500bdc` |
+
+These supersede J1's digests for the first three files.
+
+**Why:**
+- s0 at M_RDXJ STOPped at its build on login27 at 07:37Z (receipt `run-s0-20261112/`). `setup_salloc_env.sh`'s conda
+  activation exports `BUILD=x86_64-conda-linux-gnu`, which overwrote the connect's own `BUILD`.
+- Provenance had passed in full before the build. The stray `~/x86_64-conda-linux-gnu/` (three entries, all s0's)
+  was removed with the director's exact command, rc 0.
+- `rdx-20261112` stays in place, spent.
+
+**What the director checked:**
+- **coverage-5b-audit's GO** at `13a0ef3d`:
+  - `RDXBUILD` replaces `BUILD`, and B is `rdx-20261112b` in the connect and the event-loop job;
+  - the collision test runs against the **measured** 82 exports plus the HOST/PREFIX floor;
+  - the smoke stub exports every measured name;
+  - 54 tests, and 51 + 28 mutants killed.
+- **Low w4:** the exports list is a one-node snapshot.
+
+**Rulings:**
+1. **Every later RDX step deploys at M_RDXS.** J1's order, cap and fences are otherwise unchanged.
+2. **w4 at each s0:** s0 is preceded by the director-approved export probe of 2026-11-12, re-run unchanged. If its
+   list contains any name absent from `setup_salloc_env.exports`, that is a STOP to the director before s0.
+3. **The s0 go** is given at this addendum.
+
+Nothing is submitted, deposited or tagged.
