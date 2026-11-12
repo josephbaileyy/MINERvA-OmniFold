@@ -1,0 +1,9 @@
+== PYTHONHASHSEED=0
+Ran 23 tests in 59.001s
+OK
+== PYTHONHASHSEED=1
+Ran 23 tests in 79.140s
+OK
+== PYTHONHASHSEED=2
+Ran 23 tests in 45.283s
+OK

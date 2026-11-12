@@ -1,0 +1,21 @@
+2d-unfolding/cov2d/g2r/g2r.py sha256 5463bd72aeb670f416254d0f0cdd1fff95e63910e773de1d4eb52a141fa928e1
+2d-unfolding/cov2d/g2r/g2r_readout.py sha256 7dd1b7eb2f971f7243f43b90d4d9aa51a836857390b7d464a4d39c362917c900
+2d-unfolding/re2/re2_driver.py sha256 8abee6347313105e5189031bdea78b78aa9f4bbc8f00a681e8871e272df3860e
+UNMUTATED PASS test_g2r.py tests=23 expected=23 skipped=False rc=0
+UNMUTATED PASS test_re2_miss_map.py tests=7 expected=7 skipped=False rc=0
+MUTATION KILLED the flag silently ignored (an all-NaN override) [MissMapLoader.test_the_override_from_the_map] sha256=b70672c799b90b0d
+MUTATION KILLED the override applied to a passing row [MissMapLoader.test_loader_guards] sha256=32c9d6b2c4462ae8
+MUTATION KILLED a universe's override from another column (the CV w_truth) [MissMapLoader.test_the_override_from_the_map] sha256=c23f8b6c2ff53122
+MUTATION KILLED eps on the full space, not the retained eigensystem [Readings.test_a_null_direction_does_not_enter_eps_and_coupling_sees_it] sha256=06e275d27881a6fb
+MUTATION KILLED the regrade reading the old C_T [RegradeCore.test_the_grade_reads_the_errors_against_c_t_prime] sha256=9f8b9b3df4cb2ed9
+MUTATION KILLED the null left at the old laws [RegradeCore.test_the_null_is_from_the_corrected_bands_and_c_t_prime] sha256=efec3e1ca9cda678
+MUTATION KILLED the subsequence order unchecked [Map.test_each_alignment_check_refuses] sha256=c2e5c749cddc72e1
+MUTATION KILLED the complement unchecked [Map.test_each_alignment_check_refuses] sha256=3a9c07d23b4f1fcd
+MUTATION KILLED a miss row's proxy unchecked per universe [Map.test_universe_check_refuses_a_non_proxy_miss_and_a_complement_mismatch] sha256=8c922eaac6565afc
+MUTATION KILLED the override at the wrong truth rows [Map.test_override_equals_p5_builder_semantics] sha256=420b962db333d1cc
+MUTATION KILLED C_T' with the lateral check dropped [CTPrime.test_a_tampered_lateral_block_refuses] sha256=f11ee4d49c390569
+MUTATION KILLED G7 ignoring the integer fields [ReadoutCores.test_grade_reproduction] sha256=9b4084a6644858a2
+MUTATION KILLED part (a) not subtracting the old universe block [ReadoutCores.test_data_core_replaces_only_the_universe_bands] sha256=c373a25cb4f9f5ae
+SOURCES RESTORED OK
+ALL-KILLED
+rc=0

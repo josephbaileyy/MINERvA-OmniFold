@@ -21,14 +21,17 @@ second addendum, each with the director's go, after LL5D's gates end. No change 
 | `2d-unfolding/cov2d/g2r/g2r_readout.py` | **new.** Phase `data` (part (a), §3) and phase `tune` (part (+), §4-§5), glue over the bound COV2D modules (`cov2d_blocks`, `cov2d_null`, `cov2d_score`, `cov2d_readouts`, `cov2d_readout`'s `Run`, `read_pinned`, `cholesky_tol`, `null_from_json`), the rollup (`universe_block`, `band_cov`) and `re2c_build_q.metrics`, all imported unchanged. |
 | tests | `2d-unfolding/cov2d/g2r/tests/test_g2r.py` (23 tests), `2d-unfolding/re2/tests/test_re2_miss_map.py` (7), `2d-unfolding/cov2d/g2r/tests/g2r_mutation.py` (13 mutants). |
 
-Digests (sha256) at the code commit (to fill from git):
+Digests (sha256) at the code commit `0f57c22abd5102c6643a2bb522b12a5da6ab6b4b`, the commit the receipts were made at:
 
 | file | sha256 |
 |---|---|
-| `2d-unfolding/re2/re2_driver.py` | (to fill from git) |
-| `2d-unfolding/cov2d/g2r/g2r.py` | (to fill from git) |
-| `2d-unfolding/cov2d/g2r/g2r_prepare.py` | (to fill from git) |
-| `2d-unfolding/cov2d/g2r/g2r_readout.py` | (to fill from git) |
+| `2d-unfolding/re2/re2_driver.py` | `8abee6347313105e5189031bdea78b78aa9f4bbc8f00a681e8871e272df3860e` |
+| `2d-unfolding/cov2d/g2r/g2r.py` | `5463bd72aeb670f416254d0f0cdd1fff95e63910e773de1d4eb52a141fa928e1` |
+| `2d-unfolding/cov2d/g2r/g2r_prepare.py` | `9a0ca8cfaa8778409872236d6ed72843d6d679a018e6d48b8edf82e8b1781f07` |
+| `2d-unfolding/cov2d/g2r/g2r_readout.py` | `7dd1b7eb2f971f7243f43b90d4d9aa51a836857390b7d464a4d39c362917c900` |
+| `2d-unfolding/cov2d/g2r/tests/test_g2r.py` | `3804e3ea54583906f626dc48dce5a956f1a804c59a6fecf2fa357942dfe33603` |
+| `2d-unfolding/re2/tests/test_re2_miss_map.py` | `b4bce307efa652210d4a032e95765c83a5d0b7b2bb025be03252db91bf23836e` |
+| `2d-unfolding/cov2d/g2r/tests/g2r_mutation.py` | `b3e5bab78cb1a689db9dfa3279a891a8343c469ce4bcad53202b8b7e7bbc17c8` |
 
 ## 2. One change from the declaration's §9, for the director
 
@@ -77,7 +80,11 @@ committed errors against C_T' (`RegradeCore.test_the_grade_reads_the_errors_agai
   universe; the override at the wrong truth rows; C_T' with the lateral check dropped; G7 ignoring the integer fields;
   part (a) not subtracting the old universe block.
 
-**Results** (from a clean checkout of the code commit): (to fill from the receipt run).
+**Results** (`fd/receipts-cov2d/g2r/a1/`, from a clean detached checkout of `0f57c22a`, python 3.13, ROOT 6.36.000, numpy 2.4.4):
+- `test_g2r.py`: 23 tests, OK, at PYTHONHASHSEED 0, 1 and 2.
+- `test_re2_miss_map.py`: 7 tests, OK.
+- `g2r_mutation.py`: both unmutated suites full (23 and 7, none skipped), 13 mutations all killed, the sources restored byte-identical to HEAD, rc 0.
+- Not run here: the cluster's numpy 1.26 under root_6_28, and the LightGBM end-to-end comparisons. Both are in the cluster-environment test of the job addendum.
 
 ## 5. For the auditor
 
