@@ -32,6 +32,26 @@ Extended-fiducial study & Unbinned unfolding with truth-muon cuts removed, retai
 \bottomrule
 \end{tabular}
 \end{table}
+
+\begin{table}[htbp]
+\centering\small
+\caption{Related note sections for the topics of the methods paper.}
+\label{tab:paper-note-map}
+\begin{tabular}{@{}p{0.32\textwidth}p{0.64\textwidth}@{}}
+\toprule
+Methods-paper topic & Related note sections \\
+\midrule
+Introduction & \S\ref{sec:intro} \\
+Data and observables & \S\ref{sec:experiment}, \S\ref{sec:method-binning} \\
+Unfolding method and test design & \S\ref{sec:method}, \S\ref{sec:systematics}, \S\ref{sec:fived16-cov}; App.~\ref{app:statmethods}, App.~\ref{app:statmethods-nd}, App.~\ref{app:negweight} \\
+Benchmark against the published two-dimensional measurement & \S\ref{sec:results}, \S\ref{sec:fived16-quadrants} \\
+Recovery of controlled truth changes & \S\ref{sec:closure-map}, \S\ref{sec:val-departure}, \S\ref{sec:fived16-fd}, \S\ref{sec:fived16-ibu} \\
+Reproducibility, stability and uncertainty calibration & \S\ref{sec:fived16-cov}, \S\ref{sec:gbdt-model-dependence}, \S\ref{sec:coverage}, \S\ref{sec:coverage-tunes}, \S\ref{sec:coverage-5d}, \S\ref{sec:fived16-fd} \\
+Discussion and conclusions & \S\ref{sec:summary} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 % Ruling of 2026-10-28 on the length conflict: (b)+(c). Each result is its headline sentence with a pointer to its body home; the limitations paragraph is the ES's pointer list as it stood at the base, with the frozen 2D sentence. Every limitation prints at its body home (note-n4/ledger.md, batch F).
 
 The unbinned result for $d^{2}\sigma/(d\pT\,d\pPar)$ reproduces the published integrated cross section~\cite{MINERvA:2021owq} within about one percent, with a correlated shape difference (\S\ref{sec:results}). Whether it is ready for publication as a measurement has not been established. LightGBM was chosen over the exact-split estimator, which is kept as a cross-check, after both comparisons with the publication were known (\S\ref{sec:method-config}). The background-subtraction treatment of the 2D result was decided on a closure test before the rebuilt result's distance from the published result was computed, and the rebuilt result was adopted after that distance was known (\S\ref{sec:method-config}); the comparison with the publication is therefore not an independent test of the method.
