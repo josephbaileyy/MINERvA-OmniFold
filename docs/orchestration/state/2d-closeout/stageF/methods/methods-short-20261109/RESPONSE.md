@@ -702,7 +702,11 @@ The director's rulings of 2026-11-12. #981 is not edited now; its re-pin runs on
   DECISION-20261110-joseph-vprior-withhold.md item 2 has #981 drop its V-PRIOR rows; it does not name Q09, so D4 is
   the reason recorded here.
 - **Broken before this pass:** Q11, Q12, Q13, Q20, Q21 and Q22 count 0 at 60d144395, from earlier #977 edits
-  (4580caf5, 716ce04c, 10b88ad9). The re-pin re-sources them.
+  (4580caf5, 716ce04c, 10b88ad9). **Corrected (the director, 2026-11-12, from limitation-resolver's re-pin list under the
+  11-10 rulings):** these six are not re-sourced. Q11–Q13 are replaced by one anchored P3 quote (RP12). Q20–Q22 drop
+  with V-PRIOR (RP15), together with the paper's "each leave 14 of the 16 cells valid and 12 under both" check (RP16).
+  Q09 drops (RP14), and Q19 is re-sourced (RP13). The authority is limitation-resolver's repin_list.tsv once it is
+  committed; this list does not restate it.
 supp-quotes.tsv records Q09 and Q19 in comments beside their rows.
 
 ## G rulings and the paper's structure batch (director-helper-3, 2026-11-12)
