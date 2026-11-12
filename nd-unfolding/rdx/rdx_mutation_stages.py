@@ -19,7 +19,7 @@ REPO = ND.parent
 FILES = ("rdx_cap.py", "rdx_merge.py", "rdx_paths.py", "sbatch_rdx_evloop.sh", "sbatch_rdx_merge.sh", "sbatch_rdx_arms.sh",
          "rdx_connect.sh", "rdx_connect_launch.sh", "rdx_tasks.tsv", "rdx_common.py", "rdx_dump.py", "test_rdx_stages.py")
 CP, MG, PA, EV, SM, AR, CN, LA, TT = FILES[:9]
-EXPECTED_TESTS = 12
+EXPECTED_TESTS = 14
 MUTATIONS = [
     ("unlisted submissions ignored", CP, '        if kv["id"] not in listed:\n', "        if False:\n",
      "test_spent_held_unlisted_and_the_wanted_ceiling"),
@@ -54,6 +54,14 @@ MUTATIONS = [
      "test_the_task_table_is_the_declarations"),
     ("X1g at the q3 tilt", TT, "X1g\tS3b\twide\t-\tnone\ta7_gibuu", "X1g\tS3b\twide\t-\tnone\tq3",
      "test_the_task_table_is_the_declarations"),
+    ("policy path misspelled", CN, "rpd-reco/prologue5-20261108/policy-config.json", "rpd-reco/prologue5-20261107/policy-config.json",
+     "test_every_repo_path_the_launchers_name_exists_at_head"),
+    ("merge job's flux path misspelled", SM, "receipts-ct/5b/flux/runEventLoopMC_ALL.root", "receipts-ct/5b/flux/runEventLoopMC_all.root",
+     "test_every_repo_path_the_launchers_name_exists_at_head"),
+    ("c1 ignores the walk probe", CN, '  [ $rp -eq 0 ] && grep -q \'"verdict": "PASS"\' "$OUT/checks/walk_probe.json" 2>/dev/null \\\n    || stop',
+     '  true \\\n    || stop', "test_c1_stops_on_the_walk_probe_and_s2_requires_its_pass"),
+    ("s2 does not require the probe", CN, "for c in align_1A truthx_rows_1A walk_probe; do", "for c in align_1A truthx_rows_1A; do",
+     "test_c1_stops_on_the_walk_probe_and_s2_requires_its_pass"),
     ("the connect changed under its pin", CN, "# RDX's connect (RDX-DECLARATION.md", "# RDX connect (RDX-DECLARATION.md",
      "test_the_launcher_pins_the_connect_script"),
 ]

@@ -1,10 +1,10 @@
 # RDX launcher-tranche smoke (smoke_rdx_stages.sh; macOS bash 3.2; stubs; never connects or submits)
-# smoke_rdx_stages.sh sha256 fa38c69588fe8aa25e4fe7e2cd59ffa1196afd36e7b7cb80a260527df242542c
+# smoke_rdx_stages.sh sha256 ce1ffb1915571f28e968909bd828ae59a94e1f54d05e02074036bbc44614b196
 # sbatch_rdx_evloop.sh sha256 743b9e48cbeb36c39427aabba96514503b248c6faddc6947b95f5d3b331de6b5
 # sbatch_rdx_merge.sh sha256 742503fa085faa5f1fc5827bd43b247b9ca0cf76d1334d43637f05d3a675e483
-# sbatch_rdx_arms.sh sha256 6cba3dd475cd982e9c08ff3628267b16ec21d230e4c478835b62d7bf6733986c
-# rdx_connect.sh sha256 ab5e7059f5a99c00878fa8b11aebae2f8b1373958d0a3d23e21b1c2a29dadc15
-# rdx_connect_launch.sh sha256 a695cd5b02f6595f49344031134dd60bb84a458f29341407f0eb4ee253f3755f
+# sbatch_rdx_arms.sh sha256 e3e031e75435184782f68f02639e0698ff9ab67d4173ce635209ca65420006c7
+# rdx_connect.sh sha256 22159ebd99a836ff61791ce15b20b41c51ee8a353f8f2f67c16bf4b0c6d0c8ee
+# rdx_connect_launch.sh sha256 45949bc57f4e4248f3259afec4c9e58003ce4aecc590a9516a14d5bfebfac8d1
 ## evloop pass
 [rdx-evloop] 4 AnaTuples checked by size and mtime; 0 differ
 [rdx-evloop] smoke: checks passed for 1A (rdx_s1_1A, 2:15:00)
@@ -96,9 +96,29 @@ STOP: the cap gate refuses rdx_s1_1A (2:15:00)
   sbatch called: no
 ## connect s1 submits
 [rdx-evloop] smoke: checks passed for 1A (rdx_s1_1A, 2:15:00)
-SUBMIT id=70000001 name=rdx_s1_1A limit=2:15:00 utc=2026-11-12T06:32:44Z
+SUBMIT id=70000001 name=rdx_s1_1A limit=2:15:00 utc=2026-11-12T07:00:00Z
 == rdx connect s1 rc=0
   sbatch called: --parsable --job-name=rdx_s1_1A --time=2:15:00 --output=<w>/B/out/logs/%x_%j.out <w>/B/deploy/nd-unfolding/rdx/sbatch_rdx_evloop.sh <w>/B <w>/B/deploy 1A <w>/B/build/bld_rdx/runEventLoopOmniFold e894f2344aaa92289fb57bc8f597ffa9
+## connect c1 with a failing walk probe
+C-ALIGN-1A rc=0 C-TRUTHX rc=0 walk probe rc=1
+STOP: the walk probe did not pass (rc 1): the walks differ, or no timing for the merge limit
+== rdx connect c1 rc=8
+  sbatch called: no
+## connect c1 with a probe that cannot run
+C-ALIGN-1A rc=0 C-TRUTHX rc=0 walk probe rc=1
+STOP: the walk probe did not pass (rc 1): the walks differ, or no timing for the merge limit
+== rdx connect c1 rc=8
+  sbatch called: no
+## connect c1 with a failing alignment
+C-ALIGN-1A rc=1 C-TRUTHX rc=0 walk probe rc=0
+STOP: C-ALIGN-1A or C-TRUTHX did not pass
+== rdx connect c1 rc=8
+  sbatch called: no
+## connect c1 passes
+C-ALIGN-1A rc=0 C-TRUTHX rc=0 walk probe rc=0
+STAGE 1 CHECKS PASS
+== rdx connect c1 rc=0
+  sbatch called: no
 ## connect dtn host
 REFUSED (nothing written): host dtn01 is not a login node
   sbatch called: no

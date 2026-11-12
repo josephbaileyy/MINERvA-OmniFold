@@ -93,23 +93,46 @@ echo cv > "$W/mp1/s0/evloop/base_cv.root"
 for pl in 1A 1B 1C 1D 1E 1F 1G 1L 1M 1N 1O 1P; do echo z > "$W/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_${pl}_zero.root"; done
 cp "$W/mp1lat/"*.npz "$W/mp1/s1/lateral/"
 echo "$MD5  $W/B/build/bld_rdx/runEventLoopOmniFold" > "$W/B/build/MANIFEST.md5"; mkdir -p "$W/B/build/bld_rdx"; cp "$W/rdx.bin" "$W/B/build/bld_rdx/runEventLoopOmniFold"
-POL=docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/prologue3-20261107/policy-config.json
-mkdir -p "$D/$(dirname "$POL")"; echo '{"cov2d_protected_paths": ["/pscratch/sd/j/josephrb/cov2d-run-20261104"]}' > "$D/$POL"
+# the policy file is the COMMITTED one at the path the connect names (stubs may override contents, never existence)
+POL=$(sed -n 's/^POLICY_REL=//p' "$HERE/rdx_connect.sh")
+mkdir -p "$D/$(dirname "$POL")"; git -C "$HERE/../.." show "HEAD:$POL" > "$D/$POL" || { echo "STOP: the connect's policy file $POL is not in the repo"; exit 9; }
 mkdir -p "$D/nd-unfolding/rdx"; for f in rdx_paths.py rdx_cap.py sbatch_rdx_evloop.sh sbatch_rdx_merge.sh sbatch_rdx_arms.sh; do cp "$HERE/$f" "$D/nd-unfolding/rdx/"; done
 git -C "$D" add -A && git -C "$D" -c user.name=s -c user.email=s@invalid commit -q -m "smoke 2"; PIN2=$(git -C "$D" rev-parse HEAD)
+# stub checkers for c1: the root_6_28 python (align, rows, the uproot check) and the salloc env's python (the probe)
+cat > "$W/pystub" <<'PYSTUB'
+#!/bin/bash
+out=""; prev=""; for a in "$@"; do [ "$prev" = --out ] && out="$a"; prev="$a"; done
+case "$*" in
+  *"import uproot"*) exit 0 ;;
+  *rdx_align.py*) echo '{"verdict": "'"$([ "${SMOKE_ALIGN_RC:-0}" = 0 ] && echo PASS || echo FAIL)"'"}' > "$out"; exit "${SMOKE_ALIGN_RC:-0}" ;;
+  *rdx_truthx_rows.py*) echo '{"verdict": "PASS"}' > "$out"; exit 0 ;;
+  *) exec python3 "$@" ;;
+esac
+PYSTUB
+cat > "$W/bin/python" <<'PROBESTUB'
+#!/bin/bash
+out=""; prev=""; for a in "$@"; do [ "$prev" = --out ] && out="$a"; prev="$a"; done
+case "$*" in
+  *rdx_probe_walk.py*) [ "${SMOKE_PROBE:-pass}" = norun ] && exit 1
+    echo '{"verdict": "'"$([ "${SMOKE_PROBE:-pass}" = pass ] && echo PASS || echo FAIL)"'"}' > "$out"
+    [ "${SMOKE_PROBE:-pass}" = pass ] ;;
+  *) exec python3 "$@" ;;
+esac
+PROBESTUB
+chmod +x "$W/pystub" "$W/bin/python"; : > "$W/canon/setup_salloc_env.sh"
 python3 - "$HERE/rdx_connect.sh" "$W/connect.sh" "$W" <<'EOF'
 import sys
 src, dst, w = sys.argv[1:4]
 s = open(src).read()
 for a, b in (("B=/pscratch/sd/j/josephrb/rdx-20261112", f"B={w}/B"), ("CANON=/pscratch/sd/j/josephrb/MINERvA-OmniFold", f"CANON={w}/canon"),
              ("MP1=/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1", f"MP1={w}/mp1"),
-             ("PY=/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3", "PY=python3"), ("SYSPY=/usr/bin/python3", "SYSPY=python3"),
+             ("PY=/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3", f"PY={w}/pystub"), ("SYSPY=/usr/bin/python3", "SYSPY=python3"),
              ('case "$(hostname -s)" in login[0-9][0-9])', 'case "${FAKE_HOST:-login27}" in login[0-9][0-9])')):
     assert s.count(a) == 1, a
     s = s.replace(a, b)
 open(dst, "w").write(s)
 EOF
-cn() { cp "$W/connect.sh" "$W/c.self.sh"; rm -f "$W/sbatch.argv"; env RDX_SMOKE= RDX_CANON="$W/canon" RDX_ANATUPLE_ROOT="$W/ana/" "$@" bash "$W/c.self.sh" "$W/c.self.sh" $CN_ARGS 2>&1 | sed -e "s|$W|<w>|g" -e "s|$PIN2|<pin>|g" | grep -E 'REFUSED|STOP|SUBMIT|rc=|^pin=|^limit=|smoke:' | tail -4; echo "  sbatch called: $([ -s "$W/sbatch.argv" ] && sed -e "s|$W|<w>|g" -e "s|$PIN2|<pin>|g" "$W/sbatch.argv" || echo no)"; }
+cn() { cp "$W/connect.sh" "$W/c.self.sh"; rm -f "$W/sbatch.argv"; env RDX_SMOKE= RDX_CANON="$W/canon" RDX_ANATUPLE_ROOT="$W/ana/" "$@" bash "$W/c.self.sh" "$W/c.self.sh" $CN_ARGS 2>&1 | sed -e "s|$W|<w>|g" -e "s|$PIN2|<pin>|g" | grep -E 'REFUSED|STOP|SUBMIT|rc=|^pin=|^limit=|smoke:|CHECKS PASS' | tail -4; echo "  sbatch called: $([ -s "$W/sbatch.argv" ] && sed -e "s|$W|<w>|g" -e "s|$PIN2|<pin>|g" "$W/sbatch.argv" || echo no)"; }
 echo "## connect gs2 writes the gate";        CN_ARGS="gs2 $PIN2" cn
 echo "## connect gs2 refuses to overwrite";   CN_ARGS="gs2 $PIN2" cn
 echo "## connect gmerge without a limit";     CN_ARGS="gmerge $PIN2" cn
@@ -118,5 +141,11 @@ echo "## connect s1 with a future LL5D time"; CN_ARGS="s1 $PIN2 2099-01-01T00:00
 echo "## connect s1 fenced";                  CN_ARGS="s1 $PIN2 2026-11-12T00:00:00Z" cn "SMOKE_SQUEUE=e96data_full|PENDING"
 echo "## connect s1 over the cap";            CN_ARGS="s1 $PIN2 2026-11-12T00:00:00Z" cn "SMOKE_SACCT=1|rdx_s3_a|COMPLETED|9000|1|22"
 echo "## connect s1 submits";                 CN_ARGS="s1 $PIN2 2026-11-12T00:00:00Z" cn
+mkdir -p "$W/B/out/stage" "$W/B/out/evloop"; cp "$W/mp1/s0/evloop/base_cv.root" "$W/B/out/stage/base_cv.root"
+echo out > "$W/B/out/evloop/runEventLoopOmniFold_RDX_1A.root"
+echo "## connect c1 with a failing walk probe";    CN_ARGS="c1 $PIN2" cn SMOKE_PROBE=fail
+echo "## connect c1 with a probe that cannot run"; rm -f "$W/B/out/checks/walk_probe.json"; CN_ARGS="c1 $PIN2" cn SMOKE_PROBE=norun
+echo "## connect c1 with a failing alignment";     CN_ARGS="c1 $PIN2" cn SMOKE_ALIGN_RC=1
+echo "## connect c1 passes";                       CN_ARGS="c1 $PIN2" cn
 echo "## connect dtn host";                   CN_ARGS="s1 $PIN2 2026-11-12T00:00:00Z" cn FAKE_HOST=dtn01
 echo "## connect bad pin";                    CN_ARGS="s1 notapin" cn

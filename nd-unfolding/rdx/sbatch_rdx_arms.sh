@@ -70,6 +70,7 @@ P_sidecar="${OUT}/dumps/truthx_RDX_ALL.npz"; S_sidecar=$(sum_of truthx_RDX_ALL.n
 MP1="${RDX_MP1_LATERAL:-${OUT}/stage}"   # the connect's O_NOATIME copies of MP-1's lat_zero files (step m), never the originals
 P_lat_npz="${MP1}/lat_zero.npz"; P_lat_bkg="${MP1}/lat_zero_bkg.npz"
 read -r S_lat_npz S_lat_bkg < <(python3 -B -c "import sys; sys.path.insert(0, sys.argv[1]); import fd_ct_period_inputs as C; print(C.MP1_ZERO['lat_npz'], C.MP1_ZERO['lat_bkg'])" "${D}/nd-unfolding" 2>/dev/null)
+[[ "${S_lat_npz}" =~ ^[0-9a-f]{64}$ && "${S_lat_bkg}" =~ ^[0-9a-f]{64}$ ]] || { say "refusing: could not read MP-1's lat_zero pins"; exit 2; }
 P_ratio="${PVL_PREP}/ratios/L-5D-PV/tune_v1.json"
 S_ratio=$(awk '$2 == "./ratios/L-5D-PV/tune_v1.json" {print $1}' "${D}/nd-unfolding/pv-ladder/prep-SHA256SUMS")
 for k in rdx_npz rdx_bkg sidecar lat_npz lat_bkg ratio; do

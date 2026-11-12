@@ -236,18 +236,18 @@ the NuE overlap (cov2d's no-objection of 2026-11-12).
 |---|---|---|
 | `sbatch_rdx_evloop.sh` | `743b9e48cbeb36c39427aabba96514503b248c6faddc6947b95f5d3b331de6b5` | stages 1 and 2: one playlist's event loop |
 | `sbatch_rdx_merge.sh` | `742503fa085faa5f1fc5827bd43b247b9ca0cf76d1334d43637f05d3a675e483` | stage 2: merge, nn_dump, the dump and sidecar, K1 |
-| `sbatch_rdx_arms.sh` | `6cba3dd475cd982e9c08ff3628267b16ec21d230e4c478835b62d7bf6733986c` | stage 3: S3a or S3b |
+| `sbatch_rdx_arms.sh` | `e3e031e75435184782f68f02639e0698ff9ab67d4173ce635209ca65420006c7` | stage 3: S3a or S3b |
 | `rdx_tasks.tsv` | `3ec5069127f5f937c84b4efdb34bdcc99d8acc4b20891f1b26b25e32d27f75b9` | §4's fifteen steps (a test requires equality with §4's table) |
-| `rdx_connect.sh` | `ab5e7059f5a99c00878fa8b11aebae2f8b1373958d0a3d23e21b1c2a29dadc15` | the stepwise connect |
-| `rdx_connect_launch.sh` | `a695cd5b02f6595f49344031134dd60bb84a458f29341407f0eb4ee253f3755f` | its launcher: RSN connect 1's hop, passing the step, pin and limit |
+| `rdx_connect.sh` | `22159ebd99a836ff61791ce15b20b41c51ee8a353f8f2f67c16bf4b0c6d0c8ee` | the stepwise connect |
+| `rdx_connect_launch.sh` | `45949bc57f4e4248f3259afec4c9e58003ce4aecc590a9516a14d5bfebfac8d1` | its launcher: RSN connect 1's hop, passing the step, pin and limit |
 | `rdx_cap.py` | `457e89efa20b484cc0d54c1125636ee7e7d3f023cf3aa5462eb9771e3450e451` | the cap gate |
 | `rdx_merge.py` | `23dce7a447a830f5af1d3c6f708d2ec6de7f5d49cd4e9a4b7a7186aaaa3103e8` | the merge and K1 |
 | `rdx_paths.py` | `948c47e05f22396afafa20fbb2c89881dded027bd49e38c04fe76fdaf89e4dbe` | policy check, MP-1 stat, O_NOATIME staging and manifest |
 | `rdx_probe_walk.py` | `dedaa80e5fb108e4b96e61c901d101b4bd51d44d396b9f3d038d00e781c5b67e` | z3's probe: both walks on the pilot |
 | `rdx_dump.py` | `122702c647efc4518af51a7a4e99bba9d7d37332cbfbcc54f59734b2d28dde9b` | changed: adds `kept_walk_np` (z3); the loop stays the reference |
 | `test_rdx.py`, `rdx_mutation.py` | `8360dbf5…`, `270c251f…` | changed: 38 tests, 51 mutants (four for the vectorized walk) |
-| `test_rdx_stages.py`, `rdx_mutation_stages.py` | `f0028d04…`, `462b5934…` | 12 tests, 21 mutants |
-| `smoke_rdx_stages.sh` | `fa38c69588fe8aa25e4fe7e2cd59ffa1196afd36e7b7cb80a260527df242542c` | 29 smoke cases (`launch/smoke.txt`) |
+| `test_rdx_stages.py`, `rdx_mutation_stages.py` | `5d93f345…`, `6190d0d7…` | 14 tests, 25 mutants |
+| `smoke_rdx_stages.sh` | `ce1ffb1915571f28e968909bd828ae59a94e1f54d05e02074036bbc44614b196` | 33 smoke cases (`launch/smoke.txt`) |
 
 **Job names.** One family, `rdx_<stage>_<playlist>`:
 - `rdx_s1_1A`;
@@ -276,9 +276,16 @@ node-h per hour, MP-1 S1's billed rate for the same request.
 - requires the deploy to be clean at the step's pin;
 - records the stat of the purge-exposed MP-1 inputs (S0's `base_cv.root`, S1's twelve zero loops, `lat_zero.npz`,
   `lat_zero_bkg.npz`), and STOPs if one is missing;
-- checks the step's read set against the pinned `policy-config.json` (prologue3) and RDX's never-read list. The list
+- checks the step's read set against the committed `policy-config.json` and RDX's never-read list. The list
   holds `of_inputs_5d.npz` and its background dump, the 2D merged CV and `$UNI`, and the LL5D gate input roots cov2d
   named.
+
+**The governing policy file** is `fd/rpd-reco/prologue5-20261108/policy-config.json`, the newest of the five committed
+prologue configs (committed 2026-11-08 15:47 PST). Its eight `cov2d_protected_paths` are the same as prologue3's and
+prologue4's. rev 5 as first sent named a prologue3 path that does not exist (coverage-5b-audit's B1). A test now
+requires every repo path the connect and the three job scripts name to exist at HEAD. The smoke copies the committed
+policy file and never writes one: a stub may override contents, never existence.
+<!-- absence-ok: a statement about a repository path, checked by git cat-file in test_every_repo_path_the_launchers_name_exists_at_head, not a claim that a result does not exist -->
 
 The director's gate files are written by the steps `gs2`, `gmerge`, `gs3a` and `gs3b`, on the director's go, and never
 overwritten.
@@ -320,7 +327,9 @@ cov2d's conditions:
   - The loop `kept_walk` stays the reference. Tests require bitwise equality, border rows included. A flipped
     reference function shows the border rule decides those rows.
 - **The probe.** Step c1 runs both walks on the 1A pilot output, requires them bitwise equal, and records the seconds
-  and peak memory of each.
+  and peak memory of each. c1 reads the probe's exit status unpiped. It STOPs before "STAGE 1 CHECKS PASS" on a
+  non-zero status, or on a missing or non-PASS `walk_probe.json` (coverage-5b-audit's M1). Step s2 requires that PASS,
+  as it requires C-ALIGN-1A's and C-TRUTHX's.
 - **The merge limit** is 1.5 × the vectorized walk's ×12.25 projection, written into `gates/merge.ok` by `gmerge`.
   If the resulting ceiling takes the total past 2.5, it STOPs to the director.
 
@@ -337,7 +346,19 @@ mtime, not by recomputing sha256. 1A alone is about 0.7 TB of MC, and all twelve
 `nd-unfolding/rdx/rdx-inputs-SHA256SUMS`. That commit's merge is stage 3's pin, as RSN's M_P1 was, and the arms
 deploy (`deploy3`) is cloned at it.
 
-**The smoke** (`launch/smoke.txt`, 29 cases) used a tiny git deploy, fake AnaTuples and gates, and stubs for
+**Every checker's exit status is read** (the director's sweep after M1).
+- c1's walk probe was the one ignored status, and it is fixed.
+- Two reads through process substitution, which failed closed downstream, now check their values explicitly:
+  - step m's read of MP-1's lat_zero pins;
+  - the arms launcher's read of the same pins.
+- Every other call already gates on its status: the provenance, manifest, staging, policy, atime, uproot,
+  align/rows, cap gate, launcher-smoke and sbatch calls in the connect; the TimeLimit and AnaTuple checks and the merge
+  steps in the job scripts.
+
+**If s0 STOPs after its clone,** `$B/deploy` exists and a rerun of s0 refuses. The recovery is a new B name: a new
+connect sha, an audit delta and the director's go. Nothing is deleted, and the stopped deploy stays for diagnosis.
+
+**The smoke** (`launch/smoke.txt`, 33 cases) used a tiny git deploy, fake AnaTuples and gates, and stubs for
 hostname, squeue, sacct and sbatch. It never connects or submits. It covers:
 - **each job script's pass path and refusals:**
   - name, limit, fence (ll5d, rsn_), md5, an uncommitted manifest, an AnaTuple mtime, an existing output;
@@ -350,6 +371,7 @@ hostname, squeue, sacct and sbatch. It never connects or submits. It covers:
   - the fence (e96data);
   - the cap gate;
   - the pilot's submit with its exact argv;
+  - c1 with a failing walk probe, a probe that cannot run, a failing alignment, and a pass;
   - a dtn host and a bad pin.
 
 The smoke found one real defect, fixed here: the arms launcher's `python3 -c` import wrote `__pycache__` into the

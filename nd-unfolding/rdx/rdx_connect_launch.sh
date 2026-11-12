@@ -11,7 +11,7 @@ case "$NODE" in login[0-9][0-9]) ;; *) echo "STOP: '$NODE' is not a login node n
 case "$STEP" in s0|s1|c1|s2|c2|m|cm|s3a|s3b|gs2|gmerge|gs3a|gs3b) ;; *) echo "STOP: step '$STEP'"; exit 9;; esac
 [[ "$PIN" =~ ^[0-9a-f]{40}$ ]] || { echo "STOP: pin '$PIN'"; exit 9; }
 [[ -z "$LIMIT" || "$LIMIT" =~ ^[0-9]+:[0-9]{2}:[0-9]{2}$ || "$LIMIT" =~ ^20[0-9]{2}-[01][0-9]-[0-3][0-9]T[0-2][0-9]:[0-5][0-9]:[0-5][0-9]Z$ ]] || { echo "STOP: limit or UTC time '$LIMIT'"; exit 9; }
-S="$HERE/rdx_connect.sh"; SHA=ab5e7059f5a99c00878fa8b11aebae2f8b1373958d0a3d23e21b1c2a29dadc15
+S="$HERE/rdx_connect.sh"; SHA=22159ebd99a836ff61791ce15b20b41c51ee8a353f8f2f67c16bf4b0c6d0c8ee
 [ "$(shasum -a 256 "$S" | cut -d' ' -f1)" = "$SHA" ] || { echo "STOP: the local connect script is not the approved one"; exit 8; }
 SSH=(-o ControlPath=none -o BatchMode=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=8)
 HOP=(-o BatchMode=yes -o ConnectTimeout=10 -o ServerAliveInterval=15 -o ServerAliveCountMax=8 -o StrictHostKeyChecking=accept-new)

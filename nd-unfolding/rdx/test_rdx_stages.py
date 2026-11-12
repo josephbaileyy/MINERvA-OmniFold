@@ -33,6 +33,8 @@ DECL = ROOT / "docs/orchestration/state/measurement-paper/5d-community-20261024/
 N_SIG = {"1A": 1736833, "1B": 469084, "1C": 894027, "1D": 2595088, "1E": 2165554, "1F": 2919699, "1G": 2484197,
          "1L": 232123, "1M": 3583806, "1N": 2042233, "1O": 593359, "1P": 782010}  # proxy_hists_meta.json
 FENCE = ("cov2d", "t2a", "ll5d", "e96data", "rpd_", "rsn_")
+POLICY_PATH_TOKEN = "<policy>"
+LATER = {"nd-unfolding/rdx/rdx-inputs-SHA256SUMS"}  # the one declared path that is written later, by stage 3's pin
 
 
 def sacct(*rows):
@@ -216,6 +218,45 @@ class Tables(unittest.TestCase):
             self.assertEqual(inputs == "lat_zero", "lat_zero" in d[5], task)
         self.assertEqual(sum(r[1] == "S3a" for r in rows), 8)
         self.assertEqual(sum(r[1] == "S3b" for r in rows), 7)
+
+    def test_every_repo_path_the_launchers_name_exists_at_head(self):
+        """B1's root cause: a hard-coded repo path that does not exist (the smoke stubbed it into its own tiny repo)."""
+        import subprocess
+        alias = {'"$R/': '"nd-unfolding/rdx/', "$R/": "nd-unfolding/rdx/", "${H}/": "nd-unfolding/rdx/", "$H/": "nd-unfolding/rdx/",
+                 "$DEP/$POLICY_REL": POLICY_PATH_TOKEN, "${D}/": "", "$D/": "", "$DEP/": "", "${DEPLOY}/": "", "$DEPLOY/": ""}
+        roots = r"(?:docs/orchestration|nd-unfolding|2d-unfolding|publication|measurement-paper|setup_salloc_env\.sh)"
+        found = set()
+        for f in ("rdx_connect.sh", "sbatch_rdx_evloop.sh", "sbatch_rdx_merge.sh", "sbatch_rdx_arms.sh"):
+            text = (HERE / f).read_text()
+            pol = re.search(r"^POLICY_REL=(\S+)$", text, re.M)
+            if pol:
+                found.add(pol.group(1))
+            for k, v in alias.items():
+                text = text.replace(k, v)
+            for m in re.finditer(r"(?<![A-Za-z0-9_./\-])(" + roots + r"[A-Za-z0-9_./\-]*)", text):
+                tok = m.group(1).rstrip(".")
+                if any(c in tok for c in "${}*") or tok.endswith("/"):
+                    continue
+                found.add(tok)
+        found |= {f"2d-unfolding/playlist_manifests/{pl}_{k}.txt" for pl in N_SIG for k in ("Data", "MC")}
+        self.assertIn("nd-unfolding/rdx/rdx_paths.py", found)
+        self.assertTrue(any("policy-config.json" in t for t in found))
+        exists = lambda t: subprocess.run(["git", "cat-file", "-e", f"HEAD:{t}"], cwd=ROOT,  # noqa: E731
+                                          capture_output=True).returncode == 0
+        missing = [t for t in sorted(found - LATER) if not exists(t)]
+        self.assertEqual(missing, [])
+        self.assertTrue(LATER <= found)
+        self.assertFalse(any(exists(t) for t in LATER))  # committed only at stage 3's pin (section 2c)
+
+    def test_c1_stops_on_the_walk_probe_and_s2_requires_its_pass(self):
+        con = (HERE / "rdx_connect.sh").read_text()
+        c1 = con[con.index("\nc1)\n"):con.index("\ns2)\n")]
+        probe = c1.index("rdx_probe_walk.py")
+        self.assertIn("rp=$?", c1[probe:probe + 200])
+        self.assertIn('[ $rp -eq 0 ] && grep -q \'"verdict": "PASS"\' "$OUT/checks/walk_probe.json"', c1)
+        self.assertLess(c1.index("[ $rp -eq 0 ]"), c1.index("STAGE 1 CHECKS PASS"))
+        s2 = con[con.index("\ns2)\n"):con.index("\nc2)\n")]
+        self.assertIn("for c in align_1A truthx_rows_1A walk_probe; do", s2)
 
     def test_the_launcher_pins_the_connect_script(self):
         sha = hashlib.sha256((HERE / "rdx_connect.sh").read_bytes()).hexdigest()

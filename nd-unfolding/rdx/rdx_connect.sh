@@ -36,7 +36,7 @@ PLS="1A 1B 1C 1D 1E 1F 1G 1L 1M 1N 1O 1P"
 PY=/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3
 SYSPY=/usr/bin/python3
 REPO=https://github.com/josephbaileyy/MINERvA-OmniFold.git
-POLICY_REL=docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/prologue3-20261107/policy-config.json
+POLICY_REL=docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/prologue5-20261108/policy-config.json
 FENCE='^(cov2d|t2a|ll5d|e96data|rpd_|rsn_|rdx_)'   # s1 and m: no other rdx_ job either
 case "$STEP" in s2|s3a|s3b) FENCE='^(cov2d|t2a|ll5d|e96data|rpd_|rsn_)' ;; esac   # several rdx_ jobs by design
 
@@ -136,13 +136,16 @@ c1)
   $PY -I -B -c "import uproot" || stop "the checker python has no uproot"
   $PY -I -B "$R/rdx_align.py" "$OUT/stage/base_cv.root" "$F" --out "$OUT/checks/align_1A.json"; ra=$?
   $PY -I -B "$R/rdx_truthx_rows.py" "$F" --out "$OUT/checks/truthx_rows_1A.json"; rt=$?
-  ( source "$CANON/setup_salloc_env.sh" > /dev/null 2>&1; python -I -B "$R/rdx_probe_walk.py" "$F" --out "$OUT/checks/walk_probe.json" )
-  echo "C-ALIGN-1A rc=$ra C-TRUTHX rc=$rt"; [ $ra -eq 0 ] && [ $rt -eq 0 ] || stop "C-ALIGN-1A or C-TRUTHX did not pass"
+  ( source "$CANON/setup_salloc_env.sh" > /dev/null 2>&1; python -I -B "$R/rdx_probe_walk.py" "$F" --out "$OUT/checks/walk_probe.json" ); rp=$?
+  echo "C-ALIGN-1A rc=$ra C-TRUTHX rc=$rt walk probe rc=$rp"
+  [ $ra -eq 0 ] && [ $rt -eq 0 ] || stop "C-ALIGN-1A or C-TRUTHX did not pass"
+  [ $rp -eq 0 ] && grep -q '"verdict": "PASS"' "$OUT/checks/walk_probe.json" 2>/dev/null \
+    || stop "the walk probe did not pass (rc $rp): the walks differ, or no timing for the merge limit"
   echo "STAGE 1 CHECKS PASS"
   ;;
 s2)
   [ -s "$OUT/gates/ll5d_atime_post.txt" ] || stop "no recorded LL5D atime-post time"
-  for c in align_1A truthx_rows_1A; do grep -q '"verdict": "PASS"' "$OUT/checks/$c.json" 2>/dev/null || stop "$c records no PASS"; done
+  for c in align_1A truthx_rows_1A walk_probe; do grep -q '"verdict": "PASS"' "$OUT/checks/$c.json" 2>/dev/null || stop "$c records no PASS"; done
   grep -qx "pin=$PIN" "$OUT/gates/s2.ok" 2>/dev/null || stop "no gates/s2.ok naming $PIN"
   MD5=$(md5_of rdx); [ -n "$MD5" ] || stop "no patched binary"
   policy "$CANON/2d-unfolding/playlist_manifests" /pscratch/sd/j/josephrb/minerva/minerva_large_files
@@ -189,6 +192,7 @@ m)
     || stop "no gates/merge.ok naming $PIN and limit $LIMIT"
   policy "$LATD/lat_zero.npz" "$LATD/lat_zero_bkg.npz" "$OUT/evloop"
   read -r LZ LB < <($SYSPY -I -B -c "import sys; sys.path.insert(0, sys.argv[1]); import fd_ct_period_inputs as C; print(C.MP1_ZERO['lat_npz'], C.MP1_ZERO['lat_bkg'])" "$DEP/nd-unfolding")
+  [[ "$LZ" =~ ^[0-9a-f]{64}$ && "$LB" =~ ^[0-9a-f]{64}$ ]] || stop "could not read MP-1's lat_zero pins"
   for pair in "lat_zero.npz $LZ" "lat_zero_bkg.npz $LB"; do
     set -- $pair; [ -e "$OUT/stage/$1" ] || $SYSPY -I -B "$R/rdx_paths.py" stage --dest "$OUT/stage" "$LATD/$1" "$2" || stop "staging $1"
   done
