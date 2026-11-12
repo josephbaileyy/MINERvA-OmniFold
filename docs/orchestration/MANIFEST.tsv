@@ -3872,6 +3872,14 @@ docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/lrows
 docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/lrows-g/g3-jitter-read/session/stat-after.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/lrows-g/g3-jitter-read/session/stat-before.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/lrows-g/g3-jitter-read/session/stat1.session.out.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/lrows-g/g3-setb-stat/README.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
+docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/lrows-g/g3-setb-stat/SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/lrows-g/g3-setb-stat/connect/jit_launch.sh	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/lrows-g/g3-setb-stat/connect/jit_statB.sh	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/lrows-g/g3-setb-stat/session/fence3.session.out.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/lrows-g/g3-setb-stat/session/statB1-refused.launch.out.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/lrows-g/g3-setb-stat/session/statB2.launch.out.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/lrows-g/g3-setb-stat/session/statB2.session.out.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/lrows-g/g4-runperiod/README.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/lrows-g/g4-runperiod/inputs.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/lrows-g/g4-runperiod/inputs/work_proxy.npz	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
