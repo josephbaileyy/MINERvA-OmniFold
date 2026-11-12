@@ -1,4 +1,4 @@
-# RDX: the event-loop re-dump for F1.2(i) (DECLARATION, design rev 3, DRAFT)
+# RDX: the event-loop re-dump for F1.2(i) (DECLARATION, rev 4: the code, DRAFT)
 
 **Session:** tier3-design, 2026-11-12. This is its own lane, as RSN-BINDING-1 ruling 6 directs. The F1.2(i) re-dump
 is approved in principle: a pilot on 1A first, and a cap of 2.5 node-h with the pilot included.
@@ -7,10 +7,10 @@ is approved in principle: a pilot on 1A first, and a cap of 2.5 node-h with the 
   D6, only, at the director's ruling. The re-read's lows y1–y4 are on the follow-up list (§8).
 - Joseph decided on 2026-11-12 that the methods paper does not wait for this re-dump. Results are folded in if they
   arrive in time (DECISION-20261112-joseph-1a-cfs-and-redump-timing.md, #1092).
+- Rev 4 adds the code (§2b), after RDX-BINDING-1 bound the design at M_RDX `e747fc6c` (#1094).
 
-**For:** coverage-5b-audit's D6 delta, then the director, then code and tests, then an audit delta, then the director's binding.
-**Nothing has run, and no code exists.**
-<!-- absence-ok: operational status of this lane's own runs and code, not a claim that a result does not exist -->
+**For:** coverage-5b-audit's code audit, then the director's code binding. **Nothing has run.**
+<!-- absence-ok: operational status of this lane's own runs, not a claim that a result does not exist -->
 
 ## 0. What this is
 
@@ -151,6 +151,80 @@ RSN's `rsn_unfold.py` gains `--regressor-features std|wide` and `--truthx-permut
 - `rdx_truthx_npz.py` is C-TRUTHX-NPZ (§3, D6).
 
 Tests and a declared mutation list follow the RSN pattern. A smoke harness is committed with each connect script.
+
+## 2b. The code as built (rev 4, 2026-11-12)
+
+**A departure from C2's and C3's wording (accepted by the director, 2026-11-12).** RDX adds only new files under
+`nd-unfolding/rdx/`. It edits no shared or bound file:
+- `unfold_nd_omnifold_unbinned.py`'s sha256 (`8a9bc84e…`) is pinned by RE1-AMENDMENT-DECLARATION.md;
+- `rsn_unfold.py` is bound by RSN-BINDING-1;
+- the tracked `runEventLoopOmniFold.cpp` stays at S0's pin `57792e42…`, which D5's provenance check requires.
+
+So:
+- **C1** is a patch file, applied at build time to a synced copy of the pinned source, as MP-1 kept its species
+  patch.
+- **C2** runs the unchanged `s5p_input_dumps.py lateral`, so its npz is that tool's output byte for byte, and writes
+  `truthx`, `truthx_names` and `mc_id` to a **sidecar npz** that names the npz's sha256.
+  - The sidecar's rows come from a replica of `collect_signal_nd`'s kept-row walk. A test runs it beside the real
+    collector on a fake tree.
+  - The dump refuses unless the replica equals the written npz bitwise.
+- **C3** wraps `pvl_unfold` through RSN's helpers instead of editing `rsn_unfold.py`.
+
+**y5 is settled:** `truthx` is float64, the omnifile's doubles uncast. The join compares them uncast. MCgen keeps the
+dump's float32 cast, and the join casts the omnifile's `MC` and `MC_pz` the same way.
+
+| file | sha256 | role |
+|---|---|---|
+| `runEventLoopOmniFold-truthx.patch` | `578c64ea600e6cba1ddd2de6c1abfa51839d4e163d4beb81b8aab9e9b052fb03` | C1: 118 lines added; one line changed (the `explicitNames` closing line) |
+| `rdx_common.py` | `177259b8f8bc602319a16de7768ce1ca75c23a545fda144471c08629d50b9fde` | constants; the packed event key and its lookup |
+| `rdx_dump.py` | `9c0878631e0be81569e7b4f2100c643c8337efc96449ab27fb981086d2d0b0d5` | C2: the lateral dump, then the sidecar |
+| `rdx_unfold.py` | `83d585a490954987b3d9ca1595f9fe708012f76a9de740e2c6f3dc17357925db` | C3: `--regressor-features std\|wide`, `--truthx-permute`, RSN's options |
+| `rdx_align.py` | `9d71cf6d1935a00442dd58631957a83d95ef8a4cefddc3522811006a8e29ef3b` | C-ALIGN-1A and C-ALIGN-PL |
+| `rdx_truthx_rows.py` | `db9456c3954dee42eac8adca8206a754feac3626e352ad14f3a79226406ff5cf` | C-TRUTHX |
+| `rdx_truthx_npz.py` | `32372e2dfaa157a1799aada0aaaf06443974d4de4bda48a8b8b0c39cfc7ea560` | C-TRUTHX-NPZ (D6) |
+| `rdx_provenance.py` | `6a85d86bc371f1d6aa50caeb4fba84b9e95dc074dccf1ddb398b6acc758a3b23` | stage 0's pre-build provenance (D5) |
+| `test_rdx.py` | `ce8ed1c64ae38e6ff9d8e8c2bb062b7b3e789f2a07dfb9b6a81bec8f25e05c12` | 34 tests |
+| `rdx_mutation.py` | `11d9ae53c081baa3713adb4f9590aabfd438b6f847e19568f5843e3f4fc358ba` | 47 declared mutants, each killed by its named test |
+
+**What the tests check:**
+- **C1:**
+  - the tracked source is S0's pin, and the patch applies to it;
+  - every line the patch adds is inside a `dumpTruthx` or `haveTruthx` block, the KE helper or the both-gates
+    refusal, or is a declared declaration. A static brace walk checks this, and an ungated-fill mutant fails it;
+  - the reco, denom and miss-row fills and the cache are present;
+  - KE uses 938.272;
+  - the reco fill runs in truth mode;
+  - the patch removes nothing but the `explicitNames` closing line.
+- **C2:**
+  - the replica equals the collector on rows built to hit every drop path;
+  - the build refuses an npz it does not reproduce, a non-finite truthx and an overwrite;
+  - the playlist-index refusals.
+- **C3:**
+  - the widened rows align with the loop's fit and predict rows;
+  - the joint, seeded permutation;
+  - RDX's transfer mask and the widened probe;
+  - the sidecar and argument refusals;
+  - without truthx, the path is unchanged.
+- **C4:**
+  - the join passes on a two-playlist toy;
+  - **D6's two mutants run through the sidecar path and fail the join:** a one-row offset, and truthx taken through
+    a different row mask;
+  - duplicate ids, another npz and a weight mismatch fail;
+  - C-TRUTHX catches a zeroed miss row, a partnerless row and a non-positive E_ν;
+  - the align and provenance refusals.
+
+**For the code audit, two checks in particular (the director's):**
+1. The patch applies to the pinned source byte-exactly and changes nothing outside the gate.
+2. The sidecar join cannot succeed when the rows are misaligned.
+
+**Not yet written:** the stage launchers and connects:
+- stage 0's build script;
+- the event-loop job;
+- the merge and dump job;
+- stage 3's arms launcher and task table.
+
+Each comes with its smoke and goes to the audit as a delta before any connect.
+<!-- absence-ok: the launchers are the next tranche of this lane's own code, not a claim that a result does not exist -->
 
 ## 3. Stages and gates
 
@@ -337,5 +411,5 @@ If NC-X fails, nothing is read.
 
 ## 9. CITABLE FOR / NOT CITABLE FOR
 
-- **Citable for:** the design and price of RDX as proposed.
-- **Not citable for:** any reading, or the claim that any code exists. Nothing has been written or run.
+- **Citable for:** the design and price of RDX as bound, and the code of §2b with its tests and mutants.
+- **Not citable for:** any reading. Nothing has run.
