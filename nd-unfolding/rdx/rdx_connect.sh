@@ -1,11 +1,13 @@
 #!/bin/bash
 # RDX's connect (RDX-DECLARATION.md §3, §5; the director's rulings of 2026-11-12), one step per go, on one Perlmutter
 # login node. Each step runs only on the director's go for this script's sha256, its launcher's and that step.
-#   bash rdx_connect.sh SELF STEP PIN [LIMIT]
+#   bash rdx_connect.sh SELF STEP PIN [LIMIT | LL5D_POST_UTC]
 # STEP  what it does (submit steps: the fence, the cap gate, the launcher's own smoke, then sbatch)
 #   s0  clone the deploy at PIN; pre-build provenance against S0's MANIFEST (a mismatch STOPs before any build); base
 #       and patched builds from one synced tree; recorded modules; the runtime data manifest by O_NOATIME.
-#   s1  submit the 1A pilot (rdx_s1_1A, 2:15:00).
+#   s1  submit the 1A pilot (rdx_s1_1A, 2:15:00). Its fourth argument is cov2d's LL5D atime-post UTC time, passed on by
+#       the director (cov2d's condition a, 2026-11-12): the step refuses unless that time is given and already past,
+#       and records it in gates/ll5d_atime_post.txt; no rdx_ job starts on squeue alone.
 #   c1  O_NOATIME copy of S0's base_cv.root; C-ALIGN-1A; C-TRUTHX; the z3 walk-timing probe.
 #   s2  submit the other eleven playlists (rdx_s2_<PL>), each behind its own cap gate; needs c1's PASSes and the
 #       director's gates/s2.ok naming PIN.
@@ -13,6 +15,8 @@
 #   m   O_NOATIME copies of lat_zero.npz and lat_zero_bkg.npz; submit the merge job (rdx_s2_merge, LIMIT from
 #       gates/merge.ok, set from the probe).
 #   cm  C-TRUTHX-NPZ on the merged dump and sidecar; requires k1.json's PASS.
+#   gs2, gmerge, gs3a, gs3b  write the director's gate file (gates/s2.ok, merge.ok, S3a.ok, S3b.ok) naming PIN (and,
+#       for gmerge, LIMIT), on the director's go; never overwrite one.
 #   s3a, s3b  submit stage 3's arms (rdx_s3_a, rdx_s3_b, 0:22:00) from the second deploy at PIN (the pin that commits
 #       nd-unfolding/rdx/rdx-inputs-SHA256SUMS), after gates/S3a.ok or S3b.ok.
 # Every step: refuses unless the host is loginNN and no Slurm job is set; prints the purge-exposed MP-1 inputs' stat
@@ -40,7 +44,7 @@ bail() { echo "REFUSED (nothing written): $*"; rm -f -- "$SELF"; exit 9; }
 stop() { echo "STOP: $*"; echo "== rdx connect $STEP rc=8 $(date -u +%FT%TZ)"; rm -f -- "$SELF"; exit 8; }
 case "$(hostname -s)" in login[0-9][0-9]) ;; *) bail "host $(hostname -s) is not a login node" ;; esac
 [ -z "$SLURM_JOB_ID" ] || bail "a Slurm job is set ($SLURM_JOB_ID)"
-case "$STEP" in s0|s1|c1|s2|c2|m|cm|s3a|s3b) ;; *) bail "step $STEP" ;; esac
+case "$STEP" in s0|s1|c1|s2|c2|m|cm|s3a|s3b|gs2|gmerge|gs3a|gs3b) ;; *) bail "step $STEP" ;; esac
 [[ "$PIN" =~ ^[0-9a-f]{40}$ ]] || bail "pin $PIN is not a 40-hex commit"
 DEP=$D; [[ "$STEP" == s3a || "$STEP" == s3b ]] && DEP=$D3
 if [ "$STEP" = s0 ] || { [[ "$STEP" == s3a ]] && [ ! -e "$D3" ]; }; then
@@ -77,6 +81,12 @@ submit() {  # submit NAME LIMIT SCRIPT ARGS...
 md5_of() { awk '$2 ~ /bld_'"$1"'\/runEventLoopOmniFold$/ && length($1) == 32 {print $1}' "$BUILD/MANIFEST.md5"; }
 
 case "$STEP" in
+gs2|gmerge|gs3a|gs3b)
+  name=${STEP#g}; [ "$name" = s3a ] && name=S3a; [ "$name" = s3b ] && name=S3b
+  mkdir -p "$OUT/gates"; G="$OUT/gates/$name.ok"; [ ! -e "$G" ] || stop "$G exists"
+  if [ "$STEP" = gmerge ]; then [[ "$LIMIT" =~ ^[0-9]+:[0-9]{2}:[0-9]{2}$ ]] || stop "gmerge needs a limit"; fi
+  { echo "pin=$PIN"; [ "$STEP" = gmerge ] && echo "limit=$LIMIT"; echo "utc=$(date -u +%FT%TZ)"; } > "$G"; cat "$G"
+  ;;
 s0)
   [ ! -e "$BUILD" ] || stop "$BUILD exists"
   policy "$CANON_SRC" "$OPT/lib" "$S0MAN" "$MPARAM"
@@ -109,6 +119,9 @@ s0)
   echo "== RUNTIME.sha256 $(sha256sum "$BUILD/RUNTIME.sha256" | cut -d' ' -f1) ($(wc -l < "$BUILD/RUNTIME.sha256") files)"
   ;;
 s1)
+  [[ "$LIMIT" =~ ^20[0-9]{2}-[01][0-9]-[0-3][0-9]T[0-2][0-9]:[0-5][0-9]:[0-5][0-9]Z$ ]] || stop "s1 needs cov2d's LL5D atime-post UTC time"
+  [ "$(date -u +%Y%m%d%H%M%S)" -ge "$(echo "$LIMIT" | tr -d 'TZ:-')" ] || stop "cov2d's LL5D atime-post time $LIMIT is not yet past"
+  mkdir -p "$OUT/gates"; [ -e "$OUT/gates/ll5d_atime_post.txt" ] || echo "ll5d_atime_post_utc=$LIMIT recorded=$(date -u +%FT%TZ)" > "$OUT/gates/ll5d_atime_post.txt"
   MD5=$(md5_of rdx); [ -n "$MD5" ] || stop "no patched binary in $BUILD/MANIFEST.md5"
   policy "$CANON/2d-unfolding/playlist_manifests/1A_MC.txt" "$CANON/2d-unfolding/playlist_manifests/1A_Data.txt" \
     /pscratch/sd/j/josephrb/minerva/minerva_large_files "$BUILD/bld_rdx/runEventLoopOmniFold"
@@ -128,6 +141,7 @@ c1)
   echo "STAGE 1 CHECKS PASS"
   ;;
 s2)
+  [ -s "$OUT/gates/ll5d_atime_post.txt" ] || stop "no recorded LL5D atime-post time"
   for c in align_1A truthx_rows_1A; do grep -q '"verdict": "PASS"' "$OUT/checks/$c.json" 2>/dev/null || stop "$c records no PASS"; done
   grep -qx "pin=$PIN" "$OUT/gates/s2.ok" 2>/dev/null || stop "no gates/s2.ok naming $PIN"
   MD5=$(md5_of rdx); [ -n "$MD5" ] || stop "no patched binary"

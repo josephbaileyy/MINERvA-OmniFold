@@ -13,6 +13,9 @@
 # 16 GB, shared), whose billing gives the price rate. sbatch runs a copy of this file, so every path is an argument.
 #   sbatch --job-name=rdx_s<1|2>_<PL> --time=<limit> --output=<B>/out/logs/%x_%j.out sbatch_rdx_evloop.sh \
 #          <B> <deploy> <PL> <binary> <binary md5>
+# The NuE flux-constraint file (cov2d-protected) is read by the binary plainly, once, at initialisation, under the
+# director's exception of 2026-11-12 (cov2d's no-objection): the fence is checked here, immediately before the binary,
+# and the file's atime_ns and mtime_ns are logged, with the UTC time, before and after the run.
 # Refuses before reading any AnaTuple unless: the job's name is rdx_s1_1A or rdx_s2_<PL> (PL not 1A) and its Slurm
 # TimeLimit is at most the playlist's declared limit (§5's rule); no fenced job is queued or running; the binary's md5
 # is the build's; the manifests are S0's (their sha256 below); every listed AnaTuple has the size and mtime of its row
@@ -67,10 +70,9 @@ for f in "${DATA}" "${MC}"; do
   [[ "$(sha256sum "${f}" | cut -d' ' -f1)" == "$(git -C "${DEPLOY}" show "HEAD:${rel}" | sha256sum | cut -d' ' -f1)" ]] \
     || { say "REFUSE: ${f} is not the deploy's committed ${rel}"; exit 2; }
 done
-python3 - "${DEPLOY}/publication/release/preservation/anatuple-checksums/ANATUPLE-SHA256.tsv" "${DATA}" "${MC}" <<'EOF' || { say "REFUSE: an AnaTuple's size or mtime is not its manifest row's"; exit 2; }
-import calendar, os, sys, time
-tsv, lists = sys.argv[1], sys.argv[2:]
-root = "/pscratch/sd/j/josephrb/minerva/minerva_large_files/"
+python3 - "${RDX_ANATUPLE_ROOT:-/pscratch/sd/j/josephrb/minerva/minerva_large_files/}" "${DEPLOY}/publication/release/preservation/anatuple-checksums/ANATUPLE-SHA256.tsv" "${DATA}" "${MC}" <<'EOF' || { say "REFUSE: an AnaTuple's size or mtime is not its manifest row's"; exit 2; }
+import os, sys, time
+root, tsv, lists = sys.argv[1], sys.argv[2], sys.argv[3:]
 rows = {}
 for ln in open(tsv):
     f = ln.rstrip("\n").split("\t")
@@ -106,8 +108,17 @@ WORK="${B}/work/${PL}_${SLURM_JOB_ID}_$$"
 mkdir -p "${WORK}" "$(dirname "${OUT}")" && cd "${WORK}" || exit 4
 echo "[rdx-evloop] ${PL} job=${SLURM_JOB_ID} host=$(hostname) bin=${BIN} md5=${EXPECT_MD5} start=$(date -u +%FT%TZ)"
 echo "[rdx-evloop] env: $(env | grep '^MNV101_' | sort | tr '\n' ' ')"
+# the NuE exception (the director's ruling with cov2d's no-objection, 2026-11-12, term 3 and condition c): this
+# file is read plainly, once, at the loop's initialisation; its atime_ns and mtime_ns are logged before and after
+NUE="${CANON}/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt"
+nue() { python3 -c "import os,sys,time; s=os.stat(sys.argv[1]); print('[rdx-evloop] NUE %s utc=%s atime_ns=%d mtime_ns=%d size=%d' % (sys.argv[2], time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()), s.st_atime_ns, s.st_mtime_ns, s.st_size))" "${NUE}" "$1"; }
+sq=$(squeue -h -u "${USER:-josephrb}" -o '%j|%T' 2>/dev/null) || { say "REFUSE: squeue failed"; exit 2; }
+hit=$(printf '%s\n' "${sq}" | awk -F'|' '$1 ~ /^(cov2d|t2a|ll5d|e96data|rpd_|rsn_)/')
+[[ -z "${hit}" ]] || { say "REFUSE: fenced jobs are queued or running (immediately before the binary): ${hit}"; exit 2; }
+nue before
 t0=$(date +%s)
 "${BIN}" "${DATA}" "${MC}"; rc=$?
+nue after
 echo "[rdx-evloop] rc=${rc} elapsed=$(( $(date +%s) - t0 ))s"
 [[ ${rc} -eq 0 && -s runEventLoopOmniFold.root ]] || exit 5
 mv runEventLoopOmniFold.root "${OUT}.partial" && mv "${OUT}.partial" "${OUT}" && chmod 0440 "${OUT}"
