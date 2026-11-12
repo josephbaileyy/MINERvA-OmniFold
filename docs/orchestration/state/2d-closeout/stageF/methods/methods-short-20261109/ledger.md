@@ -2321,3 +2321,17 @@ was the mislabel. The director accepted bd08582ee, the hand re-cites of ALIASES 
   - 4206 values.
 - **Reads:** recov-read/referee-read.md records two PRD reads and two meaning reads, ending ACCEPT and OK.
 - **Sweep:** RESPONSE.md, "The figure referee read and check A", lists every site and its disposition.
+
+## 2026-11-12 — The abstract qualifier (the director's approval) and its read
+
+- **Approved wording:** "…retains part of its prior, though some cells move opposite: …", 249 of 250 words.
+- **The abstract's own read:** a fresh Gemini, via agy, sandboxed and run from an empty directory. Its input was the
+  longest and shortest of the 678 rendered cases against the full body (`abstract-read/prompt3.txt`, verdict in
+  `gemini3.txt`).
+  - It found "move opposite" ambiguous after "retains part of its prior": it can read as overshooting.
+  - Its fix is adopted: "move opposite the change" (+2 words), with the second "at" dropped from "at a GiBUU-like truth
+    and at a synthetic … tilt". Net +1, so the longest case is 250 words, at the limit.
+- **Read points not acted on:**
+  - The prior-retention study's outcome-dependent clauses ("similar … at the tilt", "undefined") are variant wording
+    by design. The pending fill selects one, so they are not compared with the current table 4 here.
+  - "Retained fraction" in the abstract is not glossed. That is pre-existing; it goes to the director with the head.
