@@ -457,6 +457,13 @@ class Pipeline(unittest.TestCase):
         self.assertEqual(res["verdict"], "FAIL")
         self.assertTrue(any("w_truth" in f for f in res["failures"]))
 
+    def test_the_build_refuses_an_npz_the_replica_does_not_reproduce(self):
+        other = Path(self.td.name) / "other.npz"
+        write_npz(other, dict(self.arr, w_reco=self.arr["w_reco"] * 2))
+        with self.assertRaises(DP.DumpError):
+            DP.build(self.paths["merged"], other, [("1A", self.paths["1A"]), ("1B", self.paths["1B"])],
+                     Path(self.td.name) / "t3.npz", self.reader, BOUNDS, POT, u2d.in_truth_phase_space, EX_T, EX_R)
+
     def test_the_build_refuses_to_overwrite_and_refuses_a_non_finite_truthx(self):
         with self.assertRaises(DP.DumpError):
             DP.build(self.paths["merged"], self.npz, [("1A", self.paths["1A"]), ("1B", self.paths["1B"])], self.side,
@@ -722,6 +729,27 @@ class Patch(unittest.TestCase):
                           "    rdx_enu = truthCV->GetEnuTrue();\n    if(dumpTruthx)\n    {", 1)
         self.assertNotEqual(bad, new)
         self.assertTrue(ungated_added_lines(orig, bad))
+
+    def test_the_patch_fills_denom_reco_and_miss_rows_and_refuses_both_gates(self):
+        new = patched_text(SRC.read_text(), PATCH.read_text())
+        for stmt in ("rdx_enu = truthCV->GetEnuTrue();", "rdx_enu = recoCV->GetEnuTrue();",
+                     "rdx_kep = RdxLeadingProtonKE(truthCV);", "rdx_kep = RdxLeadingProtonKE(recoCV);",
+                     "tde.rdx_enu = rdx_enu; tde.rdx_vtx_x = rdx_vtx_x; tde.rdx_vtx_y = rdx_vtx_y;",
+                     "tde.rdx_vtx_z = rdx_vtx_z; tde.rdx_kep = rdx_kep;",
+                     "miss_rdx_enu = tde.rdx_enu; miss_rdx_vtx_x = tde.rdx_vtx_x;",
+                     "miss_rdx_vtx_y = tde.rdx_vtx_y; miss_rdx_vtx_z = tde.rdx_vtx_z;", "miss_rdx_kep = tde.rdx_kep;",
+                     "miss_rdx_run = tde.id_run; miss_rdx_subrun = tde.id_subrun;", "miss_rdx_evt = tde.id_nth;",
+                     "if(pdg[i] == 2212 && E[i] - 938.272 > best) best = E[i] - 938.272;",
+                     "rdx_run = key_run; rdx_subrun = key_subrun; rdx_evt = key_nth;"):
+            self.assertEqual(new.count(stmt), 1, stmt)
+        fill = new[new.index("      if(dumpTruthx){"):new.index("rdx_enu = recoCV->GetEnuTrue();")]
+        self.assertIn("CVUniverse::SetTruth(true);", fill)
+        names = new[new.index("const std::set<std::string> explicitNames"):]
+        names = names[:names.index("};")]
+        for b in RC.C1_BRANCHES:
+            self.assertIn(f'"{b}"', names)
+        refuse = new[new.index('if(getenv("MNV101_DUMP_TRUTHX") != nullptr && getenv("MNV101_DUMP_POINTCLOUD")'):]
+        self.assertIn("return badCmdLine;", refuse[:refuse.index("}")])
 
     def test_the_patch_removes_only_the_explicit_names_line(self):
         removed = [ln for ln in PATCH.read_text().splitlines() if ln.startswith("-") and not ln.startswith("---")]
