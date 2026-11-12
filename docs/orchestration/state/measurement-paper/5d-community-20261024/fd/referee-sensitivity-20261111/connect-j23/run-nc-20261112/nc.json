@@ -1,0 +1,19 @@
+{
+ "schema": "rsn-nc/1",
+ "product_sha256": "5d7ca77325af35f66b2fd6576e389f4bfbed810d69a9fae3da387558f4faa9c4",
+ "nominal_control": {
+  "a_full_grid_bitwise": true,
+  "b_cells_bitwise": true,
+  "b_cells": {
+   "max_rel_diff": 0.0,
+   "tol": 1e-05,
+   "bitwise": true,
+   "pass": true
+  },
+  "c_integration_routes_bitwise": true
+ },
+ "verdict": "PASS",
+ "code_sha256": {
+  "rsn_cmodel.py": "ab63292122bffbc30e5d85efc2a5ae3f96c7f917891a856c48e2d26414848a48"
+ }
+}
