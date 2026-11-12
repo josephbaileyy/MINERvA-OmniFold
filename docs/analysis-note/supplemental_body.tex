@@ -946,12 +946,14 @@ The results are combined into labels fixed in advance. \emph{Consistent with fin
 \label{fig:prior-response}
 \end{figure}
 
-\subsection{The two-dimensional coverage test}
-\label{supp:study-cov2d}
+\subsection{Design of the coverage tests}
+\label{supp:covdesign-sec}
+% Restructured 2026-11-12 (journal-editor, style2 ranked change 7): S8.3 is the design both coverage tests share,
+% then S8.4 the two-dimensional test, S8.5 the current five-observable test and S8.6 the stopped first test, as
+% history; text unchanged except the headings and the second test's pointer to the design.
 % Group B2 (#1025; limitation-resolver's draft; the director's rulings 1 and 6): COV2D-DECLARATION.md (0328c916) :106-300 and COV2D-ADDENDUM-A4.md:68, :93, :104;
 % LL5D-DECLARATION.md (6748d418) :76-486 and DECISION-20261110-joseph-ll5d-rerun-16-cells.md items 1-3; nd-unfolding/fd_1b_null.py (ec1402db) :42-52, :111-122, :146-148.
 % Every number is a key read from those files (make_values groupb_values, B2). The carry-over (last paragraph) is one-sided (fd_1b_null.py:111-122), as the paper's section 6.3 states.
-\paragraph{The coverage tests' design.}
 \label{supp:covdesign}
 % Restyled 2026-11-12 (style referee style1, Supplement item S8.3; journal-editor step 1): the coined "draw of a
 % nature" became "draw of the systematic parameters and event counts"; the ", so" sentence split in two.
@@ -989,12 +991,20 @@ A cell under-covers when its count of the \fvval{null-ntoys} errors inside the i
 % Split (style batch 2026-11-10 (the director, on journal-editor's style review, report_supplement.md), A2): what is not drawn.
 Neither test draws the run-period block, and the five-observable test also leaves out $C_{\mathrm{resp}}$. Both are positive semi-definite. Adding them can therefore only lower each $|e_c|/\sigma_c$ and each $\chi^2$: a cell that covers under $C_T$ also covers under the full covariance at the tune, and an error inside the joint region stays inside it when both matrices have the same $n$. Whether an under-coverage under $C_T$ persists under the full covariance is left open, and neither test relates $C_T$ to the covariance made at the data. % absence-ok: scopes what the two declared tests grade (COV2D and LL5D declarations), not a claim that a result does not exist
 
+\subsection{The two-dimensional coverage test}
+\label{supp:study-cov2d}
 % T1-2, Tier 2 (a): fd/tier2-20261110/t2a/t2a_AR23.json (33b7fd40) and t2a_G18.json (6757055e), #1041, under the T2A declaration and
 % T2-BINDING-1 (descriptive only: no cause, no new verdict, no coverage statement at the data's point); keys t2a-* (make_values t2a_values),
 % the shares and per-rank means summed from by_rank.b_k and f_k, asserted to reproduce split.*.
 \paragraph{Where the two-dimensional test's $\chi^2$ sits.} A descriptive decomposition of the test's pseudo-experiments, made after its result, splits the mean $\chi^2$ at each tune as $\bar e^{\top}C_T^{+}\bar e+\mathrm{tr}(C_T^{+}S)$, with $\bar e$ the mean error over the \fvval{cov2d-ntoys} pseudo-experiments and $S$ their covariance (divisor \fvval{cov2d-ntoys}). The mean-error part is \fvval{t2a-bias-share-ar23}\,\% of the mean at \fvval{f1-tune-ar23} and \fvval{t2a-bias-share-g18}\,\% at \fvval{f1-tune-g18} (\fvval{t2a-bias-ndf-ar23} and \fvval{t2a-bias-ndf-g18} per degree of freedom), and the spread part is \fvval{t2a-spread-ndf-ar23} and \fvval{t2a-spread-ndf-g18} per degree of freedom.
 
 In $C_T$'s eigenbasis, ordered by decreasing eigenvalue, the \fvval{t2a-ntop} largest directions carry under \SI{1}{\percent} of the mean-error part and the directions beyond the \fvval{t2a-r1} largest carry \fvval{t2a-beyond1-ar23}\,\% and \fvval{t2a-beyond1-g18}\,\%. The spread's mean square per component is \fvval{t2a-flow-ar23} and \fvval{t2a-flow-g18} over the \fvval{t2a-r1} largest directions, \fvval{t2a-fmid-ar23} and \fvval{t2a-fmid-g18} over the next ones to rank \fvval{t2a-r2}, and \fvval{t2a-fhigh-ar23} and \fvval{t2a-fhigh-g18} beyond, where 1 is the value if $C_T$ describes the spread. Truncated to the \fvval{t2a-r1} or \fvval{t2a-r2} largest directions, the joint test finds none of the pseudo-experiments in its region at either tune, against its truncated null's thresholds of \fvval{t2a-kj73-ar23} and \fvval{t2a-kj139-ar23} at \fvval{f1-tune-ar23} and \fvval{t2a-kj73-g18} and \fvval{t2a-kj139-g18} at \fvval{f1-tune-g18}. Two eigensolvers agree on every component to at most $\fvval{t2a-dmax}$ relative, no rank is unresolved, and the truncated counts agree. The decomposition locates the $\chi^2$ and leaves open why the test under-covers. It changes no verdict and says nothing about coverage at the data's point.
+
+% Batch 3 (the interim round #1025, group A item 9, 2026-11-10): S9 reorganized into separately labelled studies; its clipping record; the paragraph heading became this subsection, and one sentence points to the shared design.
+\subsection{The second five-observable coverage test}
+\label{supp:study-ll5d}
+% The director's option (a), 2026-11-09 (ledger.md "Style integration", ruling 1): the second test's clipping record is out of the paper's main text and here, in its own Supplement; reversible by Joseph, whose R5 (DECISION-20261102-joseph-1b-redesign.md:88) names the note. ll5d-clip-record is filled from the readout (ll5d_b @ ffbbb7455): each graded reading's weakened passes (weakened.weakened_cells), the flags meeting the clipping-artefact condition (clipping_artefact_reading), and clipcheck's largest |o_c| with its cell and the bound.
+Its design is the shared one of section~\ref{supp:covdesign} (table~\ref{tab:cov-design}). Its primary reading leaves out the GEANT4 neutron and proton bands, the two bands whose pseudo-experiment and simulation-side blocks disagreed in the first test's checks (section~\ref{supp:study-cov1}), for a reason not identified. The second reading includes them and is reported beside it. Negative expected counts in its pseudo-data are clipped to zero, and checks fixed in advance test the effect of the clipping before the main run, on a sample whose first 300 draws are the coverage pseudo-experiments' draws, at the same seeds. \fvgroup{ll5d}{The clipping checks gave the following: \fvval{ll5d-clip-record}.\fvcase{ll5d-route}{offset-proceeded}{ The run continued past a check fixed in advance by a decision made after the check was seen: \fvval{ll5d-route-record}.}\fvcase{ll5d-route}{repaired}{ The run was repaired after a stop, with the repair chosen after the stop was seen: \fvval{ll5d-route-record}.}}
 
 % Batch 3 (the interim round #1025, group A item 9, 2026-11-10): S9 reorganized into separately labelled studies; its diagnosis, led by the paper's sentence on the stop.
 \subsection{The stopped first five-observable coverage test}
@@ -1020,12 +1030,6 @@ For the detector group, in cells R03, R05 and R06 the dominant factor is the ful
 
 The pseudo-data and the simulation side carry the same factor on the same reconstructed rows inside the window, for every detector universe. What separates the two sides lies inside the estimator and is unclassified, and the second test's primary reading excludes the two bands.
 % Fresh referee read F2 (the director's ruling, 2026-11-11): each operation's phrase is the director's record-true wording, sourced to fd/receipts-1b/geant-np-records/GEANT-NP-REFEREE-MAP.md (#1081, main 05a74e7c; sha256 05421836...) section 2 and its readouts (Part 1's 8e05ca9b: F_side within 6.04e-8 neutron, 1.56e-7 proton; s5p_universe.py:116; s5p_nullexp.py:152), with the EQUAL sentence and the conclusion as #971 licenses them (OUTCOME-20261109-band-diagnosis.md:49-55, :69-73). The channel split is NOT CITABLE and is not printed.
-
-% Batch 3 (the interim round #1025, group A item 9, 2026-11-10): S9 reorganized into separately labelled studies; its clipping record; the paragraph heading became this subsection, and one sentence points to the shared design.
-\subsection{The second five-observable coverage test}
-\label{supp:study-ll5d}
-% The director's option (a), 2026-11-09 (ledger.md "Style integration", ruling 1): the second test's clipping record is out of the paper's main text and here, in its own Supplement; reversible by Joseph, whose R5 (DECISION-20261102-joseph-1b-redesign.md:88) names the note. ll5d-clip-record is filled from the readout (ll5d_b @ ffbbb7455): each graded reading's weakened passes (weakened.weakened_cells), the flags meeting the clipping-artefact condition (clipping_artefact_reading), and clipcheck's largest |o_c| with its cell and the bound.
-Its design is set out with the two-dimensional test's (section~\ref{supp:covdesign}, table~\ref{tab:cov-design}). Its primary reading leaves out the GEANT4 neutron and proton bands, the two bands whose pseudo-experiment and simulation-side blocks disagreed in the first test's checks (section~\ref{supp:study-cov1}), for a reason not identified. The second reading includes them and is reported beside it. Negative expected counts in its pseudo-data are clipped to zero, and checks fixed in advance test the effect of the clipping before the main run, on a sample whose first 300 draws are the coverage pseudo-experiments' draws, at the same seeds. \fvgroup{ll5d}{The clipping checks gave the following: \fvval{ll5d-clip-record}.\fvcase{ll5d-route}{offset-proceeded}{ The run continued past a check fixed in advance by a decision made after the check was seen: \fvval{ll5d-route-record}.}\fvcase{ll5d-route}{repaired}{ The run was repaired after a stop, with the repair chosen after the stop was seen: \fvval{ll5d-route-record}.}}
 
 \section{Illustrative output on data: not for fitting or for constraining models}
 \label{supp:output}
