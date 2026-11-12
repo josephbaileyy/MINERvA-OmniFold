@@ -19,19 +19,19 @@ second addendum, each with the director's go, after LL5D's gates end. No change 
 | `2d-unfolding/cov2d/g2r/g2r.py` | **new.** The pure functions: `build_map` (P5's alignment checks), `universe_check` (P5's per-universe checks), `override`, the readings (`epsilon`, `corr_change`, `rank`, `readings`) and `c_t_prime`. |
 | `2d-unfolding/cov2d/g2r/g2r_prepare.py` | **new.** §6 step 1: the map from `$UNI` and the per-universe checks for all 175 columns, every read through `O_NOATIME` (uproot over `cov2d_receipt.open_noatime`, as COV2D's step A reads `$UNI`). |
 | `2d-unfolding/cov2d/g2r/g2r_readout.py` | **new.** Phase `data` (part (a), §3) and phase `tune` (part (+), §4-§5), glue over the bound COV2D modules (`cov2d_blocks`, `cov2d_null`, `cov2d_score`, `cov2d_readouts`, `cov2d_readout`'s `Run`, `read_pinned`, `cholesky_tol`, `null_from_json`), the rollup (`universe_block`, `band_cov`) and `re2c_build_q.metrics`, all imported unchanged. |
-| tests | `2d-unfolding/cov2d/g2r/tests/test_g2r.py` (23 tests), `2d-unfolding/re2/tests/test_re2_miss_map.py` (7), `2d-unfolding/cov2d/g2r/tests/g2r_mutation.py` (13 mutants). |
+| tests | `2d-unfolding/cov2d/g2r/tests/test_g2r.py` (24 tests), `2d-unfolding/re2/tests/test_re2_miss_map.py` (8), `2d-unfolding/cov2d/g2r/tests/g2r_mutation.py` (15 mutants). |
 
-Digests (sha256) at the code commit `0f57c22abd5102c6643a2bb522b12a5da6ab6b4b`, the commit the receipts were made at:
+Digests (sha256) at the code commit `2f6dac56a2382f9decf098eb309ed6683af0caed`, the commit the receipts were made at:
 
 | file | sha256 |
 |---|---|
 | `2d-unfolding/re2/re2_driver.py` | `8abee6347313105e5189031bdea78b78aa9f4bbc8f00a681e8871e272df3860e` |
-| `2d-unfolding/cov2d/g2r/g2r.py` | `5463bd72aeb670f416254d0f0cdd1fff95e63910e773de1d4eb52a141fa928e1` |
-| `2d-unfolding/cov2d/g2r/g2r_prepare.py` | `9a0ca8cfaa8778409872236d6ed72843d6d679a018e6d48b8edf82e8b1781f07` |
+| `2d-unfolding/cov2d/g2r/g2r.py` | `dbcc416d35565c183d73d6ce03a9efa89dddf8cbda618fa3e6eb00bbe08d28ec` |
+| `2d-unfolding/cov2d/g2r/g2r_prepare.py` | `bb97fba12034e39c4b6dd5679b93f8259bcc4fab2b69890931c95c1311c7eb57` |
 | `2d-unfolding/cov2d/g2r/g2r_readout.py` | `7dd1b7eb2f971f7243f43b90d4d9aa51a836857390b7d464a4d39c362917c900` |
-| `2d-unfolding/cov2d/g2r/tests/test_g2r.py` | `3804e3ea54583906f626dc48dce5a956f1a804c59a6fecf2fa357942dfe33603` |
-| `2d-unfolding/re2/tests/test_re2_miss_map.py` | `b4bce307efa652210d4a032e95765c83a5d0b7b2bb025be03252db91bf23836e` |
-| `2d-unfolding/cov2d/g2r/tests/g2r_mutation.py` | `b3e5bab78cb1a689db9dfa3279a891a8343c469ce4bcad53202b8b7e7bbc17c8` |
+| `2d-unfolding/cov2d/g2r/tests/test_g2r.py` | `d635b33059d1f893a553400f645cced5949b091e06e39fcdd755af6e199486d2` |
+| `2d-unfolding/re2/tests/test_re2_miss_map.py` | `3b1b9b602535854a588f67f3b5ccb6e6dbea61d4fd1e73bdf1e63d325fb97583` |
+| `2d-unfolding/cov2d/g2r/tests/g2r_mutation.py` | `789688443b8e02ed5f5e10cb591a5022fa3c661324764e5bc078de867edef104` |
 
 ## 2. One change from the declaration's §9, for the director
 
@@ -48,8 +48,19 @@ run time from the map and the universe's own truth column. **Why:** 175 stored o
 - P5's check 5 (the complement equals the reco rows as exact multisets) runs on the CV columns in `build_map` and on
   every universe column in `universe_check`, all 175 in the prepare.
 
-If the director prefers the declaration's literal form, the map can be expanded into per-universe npz files with no
-change to the loader; the price is the pscratch space.
+**The director accepted this on 2026-11-11, pending the audit, on two conditions, both now met in code:**
+1. **bitwise equality on real universe indices, not only on a fixture, for more than one universe and the last.** On
+   the fixture, `Map.test_override_equals_p5_builder_semantics` covers three universe columns (an identity one, a varied
+   one and one named for the last universe). On the real arrays, the prepare's new control **G11**
+   (`g2r.spot_check`) compares the map's override with P5's builder loop (`g2r.p5_override`, the loop of
+   `build_miss_override.py` blob `7f346e1a` without its checks) bitwise, for the first (`Flux:0`), the middle
+   (`Flux:87`) and the last (`VecFFCCQEshape:1`) of the 175 in draw order, and P5's own `MaRES:0`. A difference is
+   INVALID before any unfold. G11 can only run on `$UNI`, so its result arrives with the prepare's receipt;
+2. **no state carried between universes.** `g2r_miss_override` loads the map and reads the column afresh on each call
+   and keeps nothing between calls. `MissMapLoader.test_no_state_is_carried_between_universes` calls it for `MaRES:0`,
+   then `VecFFCCQEshape:1`, then `MaRES:0` again in one process: each equals its own `g2r.override`, the two differ,
+   and the first and third are bitwise equal. The mutant "state carried between universes (a cached override)" is
+   killed by it. (Each unfold is also its own driver process in the job scripts.)
 
 ## 3. The controls, and where each is tested
 
@@ -64,6 +75,7 @@ change to the loader; the price is the pscratch space.
 | G7 grade reproduction | the committed errors against the committed C_T and null reproduce `score_<T>.json`'s grade | `ReadoutCores.test_grade_reproduction` (the rule); the committed records on the cluster |
 | G8 the realization | each product's `dataFileSha256` is the realization's | `read_products` (the cluster) |
 | G9 atime and reads | `O_NOATIME` everywhere outside the driver; `Run`'s atime ledger and open audit | the prepare's and readout's records |
+| G11 (new, §2's condition 1) the map against P5 on real arrays | first, middle, last universe and MaRES:0, bitwise | `Map.test_the_spot_check_passes_and_refuses` (the rule); `g2r_prepare.run` on `$UNI` |
 | G10 (new) the budget | `re2c_build_q.metrics` on Q_R reproduces `budget_Q.json`'s 6.4137 % and 4.7592 % | `phase_data` (the cluster) |
 
 **Part (+)'s order.** `regrade_core` computes the null at C_T' from the corrected bands and hands it out before any
@@ -72,18 +84,20 @@ committed errors against C_T' (`RegradeCore.test_the_grade_reads_the_errors_agai
 
 ## 4. The mutants
 
-13 mutants, each killed by a named test (`g2r_mutation.py`):
+15 mutants, each killed by a named test (`g2r_mutation.py`):
 - **the declaration's six:** the flag silently ignored; the override applied to a passing row; a universe's override from
   another column; eps on the full space, not the retained eigensystem; the regrade reading the old C_T; the null left at
   the old laws;
 - **the controls':** the subsequence order unchecked; the complement unchecked; a miss row's proxy unchecked per
   universe; the override at the wrong truth rows; C_T' with the lateral check dropped; G7 ignoring the integer fields;
-  part (a) not subtracting the old universe block.
+  part (a) not subtracting the old universe block;
+- **the director's conditions on §2:** state carried between universes (a cached override); G11 comparing the
+  override with itself.
 
-**Results** (`fd/receipts-cov2d/g2r/a1/`, from a clean detached checkout of `0f57c22a`, python 3.13, ROOT 6.36.000, numpy 2.4.4):
-- `test_g2r.py`: 23 tests, OK, at PYTHONHASHSEED 0, 1 and 2.
-- `test_re2_miss_map.py`: 7 tests, OK.
-- `g2r_mutation.py`: both unmutated suites full (23 and 7, none skipped), 13 mutations all killed, the sources restored byte-identical to HEAD, rc 0.
+**Results** (`fd/receipts-cov2d/g2r/a1/`, from a clean detached checkout of `2f6dac56`, python 3.13, ROOT 6.36.000, numpy 2.4.4):
+- `test_g2r.py`: 24 tests, OK, at PYTHONHASHSEED 0, 1 and 2.
+- `test_re2_miss_map.py`: 8 tests, OK.
+- `g2r_mutation.py`: both unmutated suites full (24 and 8, none skipped), 15 mutations all killed, the sources restored byte-identical to HEAD, rc 0.
 - Not run here: the cluster's numpy 1.26 under root_6_28, and the LightGBM end-to-end comparisons. Both are in the cluster-environment test of the job addendum.
 
 ## 5. For the auditor

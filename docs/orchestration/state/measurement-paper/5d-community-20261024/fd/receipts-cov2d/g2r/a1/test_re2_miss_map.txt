@@ -1,16 +1,19 @@
-.......
+........
 ----------------------------------------------------------------------
-Ran 7 tests in 2.367s
+Ran 8 tests in 1.745s
 
 OK
-[INFO] branch-select=derived: mc_signal_reco read 7 of 9 branches: MC, MC_pz, sim, sim_pz, sim_pass, w_truth_MaRES_0, w_reco_MaRES_0
-[INFO] branch-select=derived: mc_signal_reco read 7 of 9 branches: MC, MC_pz, sim, sim_pz, sim_pass, w_truth_MaRES_0, w_reco_MaRES_0
+[INFO] branch-select=derived: mc_signal_reco read 7 of 11 branches: MC, MC_pz, sim, sim_pz, sim_pass, w_truth_MaRES_0, w_reco_MaRES_0
+[INFO] branch-select=derived: mc_signal_reco read 7 of 11 branches: MC, MC_pz, sim, sim_pz, sim_pass, w_truth_MaRES_0, w_reco_MaRES_0
 [INFO] G2R miss_weight_override: replaced 33 of 33 finite entries
 [INFO] G2R miss_weight_override: replaced 33 of 33 finite entries
-[INFO] branch-select=derived: mc_signal_reco read 7 of 9 branches: MC, MC_pz, sim, sim_pz, sim_pass, w_truth_MaRES_0, w_reco_MaRES_0
-[INFO] branch-select=derived: mc_signal_reco read 7 of 9 branches: MC, MC_pz, sim, sim_pz, sim_pass, w_truth_MaRES_0, w_reco_MaRES_0
+[INFO] branch-select=derived: mc_signal_reco read 7 of 11 branches: MC, MC_pz, sim, sim_pz, sim_pass, w_truth_MaRES_0, w_reco_MaRES_0
+[INFO] branch-select=derived: mc_signal_reco read 7 of 11 branches: MC, MC_pz, sim, sim_pz, sim_pass, w_truth_MaRES_0, w_reco_MaRES_0
 [INFO] G2R miss_weight_override: replaced 33 of 33 finite entries
-[INFO] branch-select=derived: mc_signal_reco read 7 of 9 branches: MC, MC_pz, sim, sim_pz, sim_pass, w_truth_MaRES_0, w_reco_MaRES_0
-[INFO] branch-select=derived: mc_signal_reco read 7 of 9 branches: MC, MC_pz, sim, sim_pz, sim_pass, w_truth_MaRES_0, w_reco_MaRES_0
-[INFO] G2R: miss-row weights from w_truth_MaRES_0 via /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp140667s0/g2r_map.npz (sha256 bab27270bf1e01f74ab5db69d822f208cb982ee8c274e1f7c1ac6d6a58ddb5d9), 33 miss rows
+[INFO] branch-select=derived: mc_signal_reco read 7 of 11 branches: MC, MC_pz, sim, sim_pz, sim_pass, w_truth_MaRES_0, w_reco_MaRES_0
+[INFO] branch-select=derived: mc_signal_reco read 7 of 11 branches: MC, MC_pz, sim, sim_pz, sim_pass, w_truth_MaRES_0, w_reco_MaRES_0
+[INFO] G2R: miss-row weights from w_truth_MaRES_0 via /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpoe_83_3f/g2r_map.npz (sha256 9464fa155def8dd8f65f490523386f366ca6ee69dd9cc0cb0c89227e92b4d8d6), 33 miss rows
+[INFO] G2R: miss-row weights from w_truth_VecFFCCQEshape_1 via /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpoe_83_3f/g2r_map.npz (sha256 9464fa155def8dd8f65f490523386f366ca6ee69dd9cc0cb0c89227e92b4d8d6), 33 miss rows
+[INFO] G2R: miss-row weights from w_truth_MaRES_0 via /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpoe_83_3f/g2r_map.npz (sha256 9464fa155def8dd8f65f490523386f366ca6ee69dd9cc0cb0c89227e92b4d8d6), 33 miss rows
+[INFO] G2R: miss-row weights from w_truth_MaRES_0 via /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpoe_83_3f/g2r_map.npz (sha256 9464fa155def8dd8f65f490523386f366ca6ee69dd9cc0cb0c89227e92b4d8d6), 33 miss rows
 rc=0
