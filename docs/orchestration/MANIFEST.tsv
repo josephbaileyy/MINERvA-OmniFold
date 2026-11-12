@@ -12685,6 +12685,12 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/referee-sens
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/referee-sensitivity-20261111/connect-j23/run-nc-20261112/nc.session.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/referee-sensitivity-20261111/connect-j23/smoke.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/referee-sensitivity-20261111/connect-j23/smoke_connect_j23.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/referee-sensitivity-20261111/connect-post/README.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/referee-sensitivity-20261111/connect-post/rsn_connect_post.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/referee-sensitivity-20261111/connect-post/rsn_connect_post_launch.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/referee-sensitivity-20261111/connect-post/smoke-pass-readlog.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/referee-sensitivity-20261111/connect-post/smoke.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/referee-sensitivity-20261111/connect-post/smoke_connect_post.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/referee-sensitivity-20261111/connect1/README.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/referee-sensitivity-20261111/connect1/rsn_connect1.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/referee-sensitivity-20261111/connect1/rsn_connect1_launch.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
