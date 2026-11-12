@@ -97,18 +97,52 @@ here.
 - **CITABLE FOR:** nothing until Joseph rules. These are values for the readout.
 - **NOT CITABLE FOR:** the GEANT departure's cause, coverage, or any validation of the bands' treatment.
 
-**Draft sentences for Joseph's decision** (the director, 2026-11-12). They are not placed in the paper, and the
-director puts them to Joseph with the numbers. The framing is the referee's: "an unresolved implementation property,
-with its effect on the reported covariance quantified". Every value is from `geant_share.json` above.
+**D2: the full-covariance check** (DECISION-20261112-joseph-consult-d1-d7.md item 2). This comes before any GEANT
+sentence prints. The readout is `geant_full.py` / `.json` (`45fc4bcf` / `58d5ec50`).
+
+**G is the two bands' full 16 × 16 block,** off-diagonals included, as G2 built it from S1's committed universe
+unfolds (control: the detector relative σ is reproduced to 2.5e-14). Each band's block is mean-centred over two universes, so it has rank 1, and G has rank at most 2. Its weight lies
+in two directions across cells: 87 % of its absolute entries are off the diagonal, split evenly in sign (60 of the
+120 pairs negative), and 32 % of the pairs have |ρ| > 0.9. So the per-cell shares above understate its weight along correlated directions, as the
+consult said. G2's χ² changes already used the full G; only their N_T was diagonal.
+
+**The worst direction:** μ_max = max over a of (aᵀGa)/(aᵀMa), the largest generalized eigenvalue. It bounds every linear
+combination, M's smallest-eigenvalue modes included, and every χ² change from dropping G:
+χ²(M − G)/χ² ∈ [1, 1/(1 − μ_max)].
+
+| matrix M (fractional, R00–R15) | μ_max | χ² ratio bound | largest share on one eigenmode of M | its 4 smallest-variance modes |
+|---|---|---|---|---|
+| C_total = C_e + C_model_abs at the data (LL5D's matrix form) | 0.081 | ≤ 1.089 | 2.5 % | 0.75, 0.51, 2.46, 2.19 % |
+| the reported covariance C_total + C_resp + C_PL5D | 0.041 | ≤ 1.043 | 2.6 % | 0.68, 0.01, 0.16, 2.61 % |
+| F0b's 12 grade matrices (N_T diagonal) | 0.041–0.055 | ≤ 1.043 to 1.058 | (per truth in the JSON) | |
+
+**The bias tests' full-matrix χ² changes,** from dropping G, are between +0.03 % (A7_nuwro) and +1.82 % (A7_genie_mec).
+Each is inside its truth's bound, and the code asserts this. The largest absolute change is +0.57 (q3).
+
+**Scope:**
+- **Covered:** S1's GEANT blocks at the data, against the three matrix sets above, on R00–R15.
+- **Not covered:** the coverage test's own graded matrices. LL5D's C_T at G18 and AR23 rebuilds each GEANT block from
+  that truth's 8 detector-universe unfolds (LL5D-DECLARATION.md:291-307), and those blocks exist only once LL5D runs.
+  LL5D's primary reading (`minus2`) already grades without the two bands. The same μ_max, computed from LL5D's
+  rebuilt blocks against its `all` C_T, would close this in LL5D's own space at no extra unfold. That is cov2d's lane,
+  if the director wants it.
+
+**Draft sentences for Joseph's decision,** revised for D2 (the director, 2026-11-12). They are not placed in the
+paper, and the wording goes through helper-3's reads. The framing is the referee's: "an unresolved implementation
+property, with its effect on the reported covariance quantified". The values are from `geant_share.json` and
+`geant_full.json`.
 
 > For the GEANT4 neutron and proton bands, the pseudo-data-side and simulation-side constructions of the
 > like-for-like control differ by more than 10 % in σ in some cells, an unresolved implementation property of these
-> two bands. Together they carry at most 0.21 % of any reporting cell's variance in the reported covariance (median
-> 0.02 %); removing them from it changes the χ² of the fake-data bias tests by at most 0.6, at most 2 % of each
-> value, and leaves every cell's |z| > 2 classification unchanged.
+> two bands; the primary reading of the like-for-like coverage test excludes them. In the reported covariance they
+> carry at most 0.21 % of any reporting cell's variance, but, because their block is concentrated in two directions
+> across the cells, up to 4.1 % of its variance along the most affected direction (8.1 % of C_e + C_model). Removing them changes the χ² of the
+> fake-data bias tests by 0.03 % to 1.8 % (at most 5.8 % for any bias), with each truth's χ² taken against its
+> grade matrix with the noise of its mean taken as diagonal, which reproduces the committed χ² to within 0.76 %, and
+> leaves every cell's |z| > 2 classification unchanged.
 
-The χ² clause rests on the diagonal-N_T reproduction stated above, which is within 0.76 % for the graded truths.
-The director agreed (2026-11-12) to skip the exact read, because the conclusion does not depend on it.
+The 0.76 % reproduction is stated because the diagonal N_T is used, as D2 requires. The director agreed
+(2026-11-12) to skip the exact N_T read, because neither the bound nor the conclusion depends on it.
 
 ## G3, major 7: the rounding jitter inside the statistical bootstrap
 
