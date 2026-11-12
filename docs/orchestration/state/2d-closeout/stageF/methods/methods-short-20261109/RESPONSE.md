@@ -826,3 +826,13 @@ check_round's ONCE list is updated in the same commit, with a comment naming the
 - section 6.2: the dangling "It", the conditional-test list as (i)–(v), and the restricted test's referents;
 - the repeated "The data result remains an illustration" cut;
 - "Both tunes pass the bias criteria".
+
+## Pre-submission checklist (director-helper-3; items added as the director rules)
+
+- [ ] **If T3's MW reading lands, revise §7.1 item 3 and §3.1's last sentence on the misses regression** (the director,
+  2026-11-12). The RSN text, once applied, says the weighted regression's effect on the fake-data flags "was not
+  tested". That is true until T3's B0/MW reading (T3-BINDING-1.md :38, after LL5D) reads out. This is a recorded
+  dependency, not a pending variant: no current plan has MW land before submission.
+  <!-- absence-ok: records a pending dependency (T3 MW runs after LL5D, T3-BINDING-1.md :38); not a claim that a result does not exist -->
+- [ ] The [PENDING] placeholders resolve with LL5D's fill (ruled out of the style pass).
+- [ ] F1.2(i) is RDX's, still pending. The paper does not wait for it.
