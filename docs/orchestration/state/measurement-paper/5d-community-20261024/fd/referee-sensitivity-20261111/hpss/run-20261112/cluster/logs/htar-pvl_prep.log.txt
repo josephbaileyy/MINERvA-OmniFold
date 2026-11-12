@@ -1,0 +1,79 @@
+HTAR: a   SHA256SUMS.pvl_prep
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/prep/cells/L-3D.json
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/prep/cells/L-4D.json
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/prep/cells/L-5D-PV.json
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/prep/cells/L-EW.json
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-3D/genie_mec.json
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-3D/genie_mec_sq.json
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-3D/gibuu.json
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-3D/gibuu_sq.json
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-3D/nuwro.json
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-3D/nuwro_sq.json
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-3D/ratios.json
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-3D/tune_v1.json
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-4D/genie_mec.json
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-4D/genie_mec_sq.json
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-4D/gibuu.json
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-4D/gibuu_sq.json
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-4D/nuwro.json
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-4D/nuwro_sq.json
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-4D/ratios.json
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-4D/tune_v1.json
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV/genie_mec.json
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV/genie_mec_sq.json
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV/gibuu.json
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV/gibuu_sq.json
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV/nuwro.json
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV/nuwro_sq.json
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV/ratios.json
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV/tune_v1.json
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-EW/genie_mec.json
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-EW/genie_mec_sq.json
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-EW/gibuu.json
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-EW/gibuu_sq.json
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-EW/nuwro.json
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-EW/nuwro_sq.json
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-EW/ratios.json
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-EW/tune_v1.json
+HTAR: a   /tmp/HTAR_CF_CHK_527325_1794443948
+HTAR Create complete for /home/j/josephrb/mnv-rsn-inputs-20261111/pvl_prep.tar. 22238208 bytes written for 37 member files, max threads: 27 Transfer time: 0.090 seconds (246.560 MB/s) wallclock/user/sys: 0.272 0.155 0.036 seconds
+HTAR: v SHA256SUMS.pvl_prep, 5011 bytes, 11 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/prep/cells/L-3D.json, 9447 bytes, 20 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/prep/cells/L-4D.json, 10967 bytes, 23 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/prep/cells/L-5D-PV.json, 4130 bytes, 10 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/prep/cells/L-EW.json, 2330 bytes, 6 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-3D/genie_mec.json, 30931 bytes, 62 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-3D/genie_mec_sq.json, 30607 bytes, 61 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-3D/gibuu.json, 25738 bytes, 52 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-3D/gibuu_sq.json, 25282 bytes, 51 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-3D/nuwro.json, 30810 bytes, 62 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-3D/nuwro_sq.json, 30723 bytes, 62 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-3D/ratios.json, 646801 bytes, 1265 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-3D/tune_v1.json, 11562 bytes, 24 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-4D/genie_mec.json, 124996 bytes, 246 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-4D/genie_mec_sq.json, 125556 bytes, 247 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-4D/gibuu.json, 113905 bytes, 224 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-4D/gibuu_sq.json, 114304 bytes, 225 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-4D/nuwro.json, 126186 bytes, 248 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-4D/nuwro_sq.json, 126534 bytes, 249 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-4D/ratios.json, 3010711 bytes, 5882 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-4D/tune_v1.json, 77506 bytes, 153 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV/genie_mec.json, 544048 bytes, 1064 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV/genie_mec_sq.json, 545242 bytes, 1066 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV/gibuu.json, 525864 bytes, 1029 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV/gibuu_sq.json, 525737 bytes, 1028 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV/nuwro.json, 547429 bytes, 1071 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV/nuwro_sq.json, 548334 bytes, 1072 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV/ratios.json, 13790045 bytes, 26935 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV/tune_v1.json, 461744 bytes, 903 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-EW/genie_mec.json, 1506 bytes, 4 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-EW/genie_mec_sq.json, 1263 bytes, 4 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-EW/gibuu.json, 1646 bytes, 5 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-EW/gibuu_sq.json, 1398 bytes, 4 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-EW/nuwro.json, 1516 bytes, 4 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-EW/nuwro_sq.json, 1268 bytes, 4 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-EW/ratios.json, 25486 bytes, 51 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-EW/tune_v1.json, 645 bytes, 3 media blocks
+HTAR: v /tmp/HTAR_CF_CHK_527325_1794443948, 256 bytes, 2 media blocks
+HTAR: Verify complete. 0 total errors, 38 total objects (38 Files,0 Dirs,0 Hard Links,0 symlinks) wallclock/user/sys: 0.268 0.116 0.020 seconds
+HTAR: HTAR SUCCESSFUL

@@ -1,0 +1,9 @@
+HTAR: a   SHA256SUMS.cpl_block
+HTAR: a   pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/block/cpl_block.npz
+HTAR: a   /tmp/HTAR_CF_CHK_527610_1794443954
+HTAR Create complete for /home/j/josephrb/mnv-rsn-inputs-20261111/cpl_block.tar. 15872 bytes written for 2 member files, max threads: 4 Transfer time: 0.006 seconds (2.535 MB/s) wallclock/user/sys: 0.298 0.000 0.009 seconds
+HTAR: v SHA256SUMS.cpl_block, 142 bytes, 2 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/block/cpl_block.npz, 11796 bytes, 25 media blocks
+HTAR: v /tmp/HTAR_CF_CHK_527610_1794443954, 256 bytes, 2 media blocks
+HTAR: Verify complete. 0 total errors, 3 total objects (3 Files,0 Dirs,0 Hard Links,0 symlinks) wallclock/user/sys: 0.259 0.000 0.001 seconds
+HTAR: HTAR SUCCESSFUL

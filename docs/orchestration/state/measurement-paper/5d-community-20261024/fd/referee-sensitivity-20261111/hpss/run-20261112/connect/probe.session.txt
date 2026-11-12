@@ -1,0 +1,29 @@
+ssh rc=0
+host login27 2026-11-12T00:38:46Z slurm_job=''
+/usr/bin/hsi
+/usr/bin/htar
+/global/common/software/nersc/bin/hpssquota
+/usr/bin/timeout
+/usr/bin/setsid
+/usr/bin/sha256sum
+/usr/bin/python3
+tmpfs           353G   38M  352G   1% /dev/shm
+|                                pscratch |   17.79TiB |    20.00TiB |          88.9% |      4.63M |      10.00M |          46.3% |
+| josephrb usage on HPSS charged to m3246 |  460.23GiB |   512.00GiB |          89.9% |          - |           - |              - |
++-----------------------------------------+------------+-------------+----------------+------------+-------------+----------------+
+/home/j:
+josephrb/  
+home rc=0
+*** ls: No such file or directory [-2: HPSS_ENOENT] 
+    /home/j/josephrb/mnv-rsn-inputs-20261111
+target rc=64
+ls: cannot access '/pscratch/sd/j/josephrb/hpss-rsn-20261111': No such file or directory
+O_NOATIME True
+61078463 ll5d_gate_G18 RUNNING
+61078506 ll5d_gate_AR23 RUNNING
+squeue rc=0
+list rows 67
+stat pass 1
+     67 ok
+stat pass 2
+     67 ok
