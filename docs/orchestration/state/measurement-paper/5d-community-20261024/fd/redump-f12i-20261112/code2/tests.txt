@@ -1,11 +1,11 @@
-# HEAD 789b315008a5ce51e6d02f3731c60c01ae1a9333
-# clean clone, serial, nice 19, OMP/MKL/OPENBLAS/NUMEXPR threads 1, Python 3.12.2, numpy 1.26.4, 2026-11-12T06:34:59Z
+# HEAD 3ef52446d3ad48ff74e8dd7444915f4fbf54fb31
+# clean clone, serial, nice 19, OMP/MKL/OPENBLAS/NUMEXPR threads 1, Python 3.12.2, numpy 1.26.4, 2026-11-12T07:03:23Z
 # 9d71cf6d1935a00442dd58631957a83d95ef8a4cefddc3522811006a8e29ef3b  rdx_align.py
 # 457e89efa20b484cc0d54c1125636ee7e7d3f023cf3aa5462eb9771e3450e451  rdx_cap.py
 # 177259b8f8bc602319a16de7768ce1ca75c23a545fda144471c08629d50b9fde  rdx_common.py
 # 122702c647efc4518af51a7a4e99bba9d7d37332cbfbcc54f59734b2d28dde9b  rdx_dump.py
 # 23dce7a447a830f5af1d3c6f708d2ec6de7f5d49cd4e9a4b7a7186aaaa3103e8  rdx_merge.py
-# 462b5934d9c4475740bbc78df5d5b23ffcf19621d0c12ed47fac6fc3180df16e  rdx_mutation_stages.py
+# 6190d0d724ce140f2e8b96ceeef8770cd0492b102c767e199d00fc387b614836  rdx_mutation_stages.py
 # 270c251fbb07a5f124cd2bd1af6a96c4e6a52e9373f1ddb48b2be74add1a71b0  rdx_mutation.py
 # 948c47e05f22396afafa20fbb2c89881dded027bd49e38c04fe76fdaf89e4dbe  rdx_paths.py
 # dedaa80e5fb108e4b96e61c901d101b4bd51d44d396b9f3d038d00e781c5b67e  rdx_probe_walk.py
@@ -13,14 +13,14 @@
 # 32372e2dfaa157a1799aada0aaaf06443974d4de4bda48a8b8b0c39cfc7ea560  rdx_truthx_npz.py
 # db9456c3954dee42eac8adca8206a754feac3626e352ad14f3a79226406ff5cf  rdx_truthx_rows.py
 # 83d585a490954987b3d9ca1595f9fe708012f76a9de740e2c6f3dc17357925db  rdx_unfold.py
-# f0028d0417eddaff3713adabd0fd3036fc752d3ad1402fff7cb8492deb2ce1db  test_rdx_stages.py
+# 5d93f3450146a65b74491452fb3d3c590a1fe0ef490a1b29188fd4a5f79fd981  test_rdx_stages.py
 # 8360dbf536fefebd8a855fa6d36f2f6d39b72e5b485cd083518a33608b3c214d  test_rdx.py
-# a695cd5b02f6595f49344031134dd60bb84a458f29341407f0eb4ee253f3755f  rdx_connect_launch.sh
-# ab5e7059f5a99c00878fa8b11aebae2f8b1373958d0a3d23e21b1c2a29dadc15  rdx_connect.sh
-# 6cba3dd475cd982e9c08ff3628267b16ec21d230e4c478835b62d7bf6733986c  sbatch_rdx_arms.sh
+# 45949bc57f4e4248f3259afec4c9e58003ce4aecc590a9516a14d5bfebfac8d1  rdx_connect_launch.sh
+# 22159ebd99a836ff61791ce15b20b41c51ee8a353f8f2f67c16bf4b0c6d0c8ee  rdx_connect.sh
+# e3e031e75435184782f68f02639e0698ff9ab67d4173ce635209ca65420006c7  sbatch_rdx_arms.sh
 # 743b9e48cbeb36c39427aabba96514503b248c6faddc6947b95f5d3b331de6b5  sbatch_rdx_evloop.sh
 # 742503fa085faa5f1fc5827bd43b247b9ca0cf76d1334d43637f05d3a675e483  sbatch_rdx_merge.sh
-# fa38c69588fe8aa25e4fe7e2cd59ffa1196afd36e7b7cb80a260527df242542c  smoke_rdx_stages.sh
+# ce1ffb1915571f28e968909bd828ae59a94e1f54d05e02074036bbc44614b196  smoke_rdx_stages.sh
 # 3ec5069127f5f937c84b4efdb34bdcc99d8acc4b20891f1b26b25e32d27f75b9  rdx_tasks.tsv
 # 578c64ea600e6cba1ddd2de6c1abfa51839d4e163d4beb81b8aab9e9b052fb03  runEventLoopOmniFold-truthx.patch
 # status: 0 changed files
@@ -73,13 +73,16 @@ ok
 test_atime_stage_and_manifest (nd-unfolding.rdx.test_rdx_stages.Paths.test_atime_stage_and_manifest) ... ok
 test_the_never_read_list_names_the_ll5d_inputs_and_cov2ds_cv (nd-unfolding.rdx.test_rdx_stages.Paths.test_the_never_read_list_names_the_ll5d_inputs_and_cov2ds_cv) ... ok
 test_the_policy_check (nd-unfolding.rdx.test_rdx_stages.Paths.test_the_policy_check) ... ok
+test_c1_stops_on_the_walk_probe_and_s2_requires_its_pass (nd-unfolding.rdx.test_rdx_stages.Tables.test_c1_stops_on_the_walk_probe_and_s2_requires_its_pass) ... ok
 test_every_launcher_fences_the_six_prefixes (nd-unfolding.rdx.test_rdx_stages.Tables.test_every_launcher_fences_the_six_prefixes) ... ok
+test_every_repo_path_the_launchers_name_exists_at_head (nd-unfolding.rdx.test_rdx_stages.Tables.test_every_repo_path_the_launchers_name_exists_at_head)
+B1's root cause: a hard-coded repo path that does not exist (the smoke stubbed it into its own tiny repo). ... ok
 test_the_event_loop_limits_are_the_declared_rule_everywhere (nd-unfolding.rdx.test_rdx_stages.Tables.test_the_event_loop_limits_are_the_declared_rule_everywhere) ... ok
 test_the_launcher_pins_the_connect_script (nd-unfolding.rdx.test_rdx_stages.Tables.test_the_launcher_pins_the_connect_script) ... ok
 test_the_task_table_is_the_declarations (nd-unfolding.rdx.test_rdx_stages.Tables.test_the_task_table_is_the_declarations) ... ok
 
 ----------------------------------------------------------------------
-Ran 50 tests in 0.409s
+Ran 52 tests in 1.875s
 
 OK
 [INFO] signal: kept=3347 dropped_phase=613 bad_weight=20 excluded_nonfinite_truth_support=20
