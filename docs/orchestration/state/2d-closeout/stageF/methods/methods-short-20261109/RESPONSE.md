@@ -490,6 +490,24 @@ S1's out-of-phase-space row stay unchanged. Any change to the note's sentences g
     paragraph does not split …", and "treated separately" becomes "routed into the background template".
   - The note is unchanged. Its fix goes to Joseph.
 
+
+**4.2: C-BKG measured on 1A (`cbkg-20261112/`, 8b68bc79).**
+- **Input:** base_cv, MP-1 S0's 1A event loop. Its mc_background reproduces the paper's 1A template exactly, with a
+  largest difference of 0.0 against work_proxy's 1A__ana__B by the producer's rule.
+- **Composition,** weighted, over the passing rows in the grid:
+  - out-of-phase-space signal: 9.6–32.0 %;
+  - ν_μ CC with an out-of-fiducial vertex (genuine): 83.2–60.8 %;
+  - other flavour, wrong sign or NC (genuine): 7.2 %.
+- **The bracket** is the inner and outer radius bounds on the 850 mm hexagon; 22.4 % of the weight lies between them.
+  Narrowing it needs the analysis's own fiducial test (PlotUtils/CCInclusiveSignal.h truth::Apothem). That source is
+  in the MAT tree on the cluster only, so its read waits on the director.
+- **RUN_LOG :1061's ~82 %** lumps out-of-fiducial ν_μ CC with out-of-phase-space signal. Here ν_μ CC of any vertex is
+  92.8 %, so the two are consistent.
+- **Reading 4, RESPONSE.md only by the director's ruling:** the other-flavour, wrong-sign and NC class is 0.197 % of
+  the selected 1A data, against the publication's 0.2 % (8655 events, which counts only those components). This is
+  descriptive and untested, and the definitions may differ. <!-- absence-ok: scopes a descriptive comparison, by the director's ruling; not a claim that a result does not exist -->
+- **Table S1** keeps "its split … is not measured here" until the bracket is narrowed. <!-- absence-ok: quotes table S1's scope clause; the narrowed split awaits the fiducial-test source (the director, 2026-11-12) -->
+
 **Follow-up list (optional):** counting whether F5.3's 1,755 gen-outside-grid rows are only the −9999 sentinels
 (0 node-h, on OF5D). Printing that number would not help the paper (the director, 2026-11-12).
 
