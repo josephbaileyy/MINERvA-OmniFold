@@ -776,6 +776,15 @@ Record: `secondary-results/style-methods-20261112/round2/`. The director approve
 | [PENDING] | waits for LL5D's fill (ruled) |
 | The sentence pass | next |
 
+### S9.2's correlation-sensitivity details, no longer printed (journal-editor, 2026-11-12, 74c75cbef)
+
+The director's approval of referee6 6b.9: the Supplement keeps the flux-correlation fall for the three GENIE predictions
+(sens-alpha-pct, sens-b5-flux-fall-lo/-hi) and points to the note's sec:fived16-gen, which prints its own version over its
+pre-B5 predictions (sens-*, fb-*, tab:fived16-sens). No document now prints the Supplement's GENIE-only values of
+sens-b5-detlat-fall-max, sens-b5-joint-chi2-min, fb-plo, fb-phi, fb-b5-edge-max and fb-b5-offset-relmax. The keys stay in
+docs/analysis-note/values_fived16.tex (make_values_fived16.py, the b5 sensitivity block), with their -nopl variants.
+Table S17 (tab:cmodel16) stays: #981's Q06 and tab-cmodel16.csv anchor it.
+
 ## The PRD flow batch, and a pre-existing defect (director-helper-3, 2026-11-12)
 
 **A pre-existing defect: a sentence swallowed by a comment.**
