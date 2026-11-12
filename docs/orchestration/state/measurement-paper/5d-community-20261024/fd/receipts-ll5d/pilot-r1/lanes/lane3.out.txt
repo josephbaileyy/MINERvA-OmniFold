@@ -1,0 +1,2 @@
+{"out": "ll5d_data_control_GEANT_Pion_0.npz", "seconds_unfold": 681.768}
+lane 3 data control rc=0
