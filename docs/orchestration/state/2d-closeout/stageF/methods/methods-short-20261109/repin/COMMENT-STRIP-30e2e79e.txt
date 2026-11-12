@@ -1,0 +1,4 @@
+#981 tree 91f9cb615dfe3a19ec20150627d28419d2daafd8 ; #977 head 30e2e79e33637e6518a2f52c901aadfbedd280ba
+failures as read: 34 ; with comments stripped: 36
+ONLY WITH COMMENTS STRIPPED: scope quote not found in docs/analysis-note/paper_body.tex: 'The source of the shape difference has not been identified.'
+ONLY WITH COMMENTS STRIPPED: scope quote occurs 0 times in docs/analysis-note/paper_body.tex: 'The source of the shape difference has not been identified.'
