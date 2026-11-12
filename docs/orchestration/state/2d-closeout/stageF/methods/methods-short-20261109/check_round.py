@@ -535,6 +535,13 @@ def fill_test(wt):
         if r.returncode:
             fails.append("note release: note_release_labels.tex is not what make_note_labels.py --rev "
                          f"{NOTE_RELEASE_REV[:12]} writes")
+        # check 13b (the director's ruling (a), 2026-11-12): the paper's labels the Supplement cites (\psec, \ref*{P-})
+        # must be what this tree's paper gives, so that a paper renumbering without a rerun fails here
+        r = subprocess.run([sys.executable, "-I", str(wt / NOTE / "make_paper_labels.py"), "--check"],
+                           capture_output=True, text=True, errors="replace")
+        print(r.stdout.strip()[-300:])
+        if r.returncode:
+            fails.append("paper labels: paper_labels.tex is not what make_paper_labels.py writes from this tree's paper")
         base_vals = (d / "values_fived16.tex").read_text()
         head = base_vals.split("\n")
         ll5d, prr = mv.ll5d_fill_cases(), mv.prr_fill_cases()

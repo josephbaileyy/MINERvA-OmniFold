@@ -19,6 +19,10 @@
 \input{values_fived16}
 \addbibresource{publication.bib}
 \input{note_release_labels}
+% The paper's labels that the Supplement cites (make_paper_labels.py; check_round.py's fill test reruns it with --check):
+% \psec{<paper label>} prints the paper's section number (the director's ruling (a), 2026-11-12).
+\input{paper_labels}
+\providecommand{\psec}[1]{section~\ref*{P-#1}}
 \newcommand{\pubhold}[1]{\textcolor{red}{[HOLD: #1]}}
 % Short paper (methods-short-20261109): the pointers of the text moved here from the paper print as in the Supplement's own text.
 \providecommand{\nsec}[1]{ref.~\cite{AnalysisNote2026}, section~\ref*{N-#1}}
