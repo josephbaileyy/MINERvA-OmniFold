@@ -1,0 +1,11 @@
+# Style reference set (the director, 2026-11-12, on Joseph's correction: compare with relevant published papers).
+# Measured by check_style.py's metric on each paper's arXiv source, top-level *.tex concatenated in name order (the
+# director's measurement; identical to it). Ids and titles were checked with the arXiv API on 2026-11-12. Sources are
+# not committed; tex_sha256 is the sha256 of the concatenated measured text.
+arxiv	title	venue	files	tex_sha256	words	paras	semi	so	median	gt150	wps
+1911.09107	OmniFold: A Method to Simultaneously Unfold All Observables	Andreassen et al., Phys. Rev. Lett. 124, 182001 (2020)	main.tex	99fdef800f520ba9e826ad5a9b45e1f3a41e6066bd522610725039cc1e8f2305	2990	28	0.0	0.7	101	32	21.5
+1205.6201	TUnfold: an algorithm for correcting migration effects in high energy physics	Schmitt; arXiv journal_ref empty	tunfold_1205.6201v4.tex	818f27f1deae31aed34c3bed1c0789a7b0535265e4654d7ecab393fe5636124e	3744	47	1.1	0.0	64	6	19.1
+1705.03568	Data Unfolding with Wiener-SVD Method	Tang et al., JINST 12, P10002 (2017)	JINST.cls.tex discussion.tex intro.tex meta.tex program.tex reactor.tex unfolding.tex units.tex wiener.tex wiener_signal_processing.tex xs.tex	236895a788c20c40427e10aae4bb5f86c0541746bdabcbfea62a5cfc81021122	6412	62	0.6	0.3	74	23	15.9
+2109.13243	Presenting Unbinned Differential Cross Section Results	Arratia et al.; arXiv journal_ref empty	paper.tex	ae8fc17d3242598215855c2e10063e18778c035eac4185cfba2ce42cc9353633	5777	51	0.7	0.3	111	25	18.8
+2404.18807	The Landscape of Unfolding with Machine Learning	Huetsch et al., SciPost Phys. 18, 070 (2025)	incl_settings.tex incl_shortcuts.tex paper.tex tra_cfm.tex	aea25a929474dc95f63647bf585c27e7909fe8d35dfc8fe9a477755623e20e7e	7932	100	3.4	0.6	68	7	18.2
+2108.12376	Measurement of lepton-jet correlation in deep-inelastic scattering with the H1 detector using machine learning for unfolding	H1 Collaboration; arXiv journal_ref empty	desy21-130-with-supplement.tex desy21-130.H1authorlist.revtexnothanks.tex desy21-130.H1authorlist.revtexthanks.tex	5390e646c313129b11ebca5a64325a816f0afef784778cd376ede6a9f07fb6dc	4851	36	1.9	0.0	88	17	16.6
