@@ -1,0 +1,28 @@
+host=login02 start=2026-11-10T07:51:25Z pid=635118 truth=ar23
+squeue: [61078463 ll5d_gate_G18 PENDING 1-07:00:00 1;]
+== iris
+m3246               2457.6            10000.0     18417.5      20000.0
+balance_node_h=1582.5 half=791.2 cap=148.0
+projection charged=24.257 held=31.000 this=31.0 total=86.257 cap=148.0
+deploy porcelain_lines=0 head=639ef907250a2a7909b7b9ba89b2e85e70c9b767
+nd-unfolding/ll5d.py: OK
+nd-unfolding/fd_1b_c2.py: OK
+nd-unfolding/fd_1b_mc.py: OK
+nd-unfolding/fd_1b_toys.py: OK
+nd-unfolding/fd_1b_inv.py: OK
+nd-unfolding/s1_assemble.py: OK
+nd-unfolding/s5p_universe.py: OK
+nd-unfolding/fd_1b_score.py: OK
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/clip/clip_probe2.py: OK
+2d-unfolding/cov2d/cov2d.py: OK
+docs/orchestration/state/2d-closeout/stageF/methods/sf1/manifest/inputs-sha256.txt: OK
+nd-unfolding/pv-ladder/readouts/h2_definition.json: OK
+setup_salloc_env.sh: OK
+nd-unfolding/s5e_candidate.py: OK
+nd-unfolding/s5e_deform.py: OK
+job script sha256 77b4d88b424c94bfaf87d1fc9459689b55c96fd1056623b987396a155b6217b7
+atime-pre 1146 files at 2026-11-10T07:52:33Z
+Submitted batch job 61078506
+TimeLimit=1-07:00:00
+JobName=ll5d_gate_AR23 Account=m3246 QOS=regular_1 JobState=PENDING TimeLimit=1-07:00:00 Partition=regular_milan_ss11 NumNodes=1-1 OverSubscribe=NO 
+end=2026-11-10T07:52:34Z
