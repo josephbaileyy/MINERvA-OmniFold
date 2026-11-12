@@ -1,0 +1,76 @@
+== the read log (every path the three tools opened, realpath; the interpreter's own prefixes and /usr, /proc,
+   /sys, /dev, /etc are counted but not listed)
+-- build: 190 paths
+  /pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-5D-PV_e_closure_nuwro.npz
+  /pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-5D-PV_e_closure_tune_v1.npz
+  /pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-5D-PV_e_genie_mec.npz
+  /pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-5D-PV_e_gibuu.npz
+  /pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-5D-PV_e_nuwro.npz
+  /pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-5D-PV_e_tune_v1.npz
+  /pscratch/sd/j/josephrb/rsn-20261112/deploy-p1/2d-unfolding/pv2d/__pycache__/pv2d_lib.cpython-311.pyc
+  /pscratch/sd/j/josephrb/rsn-20261112/deploy-p1/2d-unfolding/pv2d/__pycache__/report_tables.cpython-311.pyc
+  /pscratch/sd/j/josephrb/rsn-20261112/deploy-p1/2d-unfolding/pv2d/cmodel/__pycache__/build_cmodel.cpython-311.pyc
+  /pscratch/sd/j/josephrb/rsn-20261112/deploy-p1/2d-unfolding/pv2d/cmodel/build_cmodel.py
+  /pscratch/sd/j/josephrb/rsn-20261112/deploy-p1/2d-unfolding/pv2d/pv2d_lib.py
+  /pscratch/sd/j/josephrb/rsn-20261112/deploy-p1/2d-unfolding/pv2d/report_tables.py
+  /pscratch/sd/j/josephrb/rsn-20261112/deploy-p1/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-f1/run/cluster/f1b3/prep/k1_p5_rerun.npz
+  /pscratch/sd/j/josephrb/rsn-20261112/deploy-p1/docs/orchestration/state/s5p/stage1/stage1_inspect.json
+  /pscratch/sd/j/josephrb/rsn-20261112/deploy-p1/nd-unfolding/__pycache__/s5p_stage1_inspect.cpython-311.pyc
+  /pscratch/sd/j/josephrb/rsn-20261112/deploy-p1/nd-unfolding/pv-ladder/__pycache__/build_cmodel5d.cpython-311.pyc
+  /pscratch/sd/j/josephrb/rsn-20261112/deploy-p1/nd-unfolding/pv-ladder/__pycache__/pvl_analyze.cpython-311.pyc
+  /pscratch/sd/j/josephrb/rsn-20261112/deploy-p1/nd-unfolding/pv-ladder/__pycache__/pvl_lib.cpython-311.pyc
+  /pscratch/sd/j/josephrb/rsn-20261112/deploy-p1/nd-unfolding/pv-ladder/build_cmodel5d.py
+  /pscratch/sd/j/josephrb/rsn-20261112/deploy-p1/nd-unfolding/pv-ladder/config.json
+  /pscratch/sd/j/josephrb/rsn-20261112/deploy-p1/nd-unfolding/pv-ladder/prep-SHA256SUMS
+  /pscratch/sd/j/josephrb/rsn-20261112/deploy-p1/nd-unfolding/pv-ladder/pvl_analyze.py
+  /pscratch/sd/j/josephrb/rsn-20261112/deploy-p1/nd-unfolding/pv-ladder/pvl_lib.py
+  /pscratch/sd/j/josephrb/rsn-20261112/deploy-p1/nd-unfolding/pv-ladder/readouts/cmodel_5d.json
+  /pscratch/sd/j/josephrb/rsn-20261112/deploy-p1/nd-unfolding/pv-ladder/readouts/h2_definition.json
+  /pscratch/sd/j/josephrb/rsn-20261112/deploy-p1/nd-unfolding/pv-ladder/tasks.tsv
+  /pscratch/sd/j/josephrb/rsn-20261112/deploy-p1/nd-unfolding/rsn/rsn-prep-SHA256SUMS
+  /pscratch/sd/j/josephrb/rsn-20261112/deploy-p1/nd-unfolding/rsn/rsn_cmodel.py
+  /pscratch/sd/j/josephrb/rsn-20261112/deploy-p1/nd-unfolding/rsn/rsn_tasks.tsv
+  /pscratch/sd/j/josephrb/rsn-20261112/deploy-p1/nd-unfolding/s5p_stage1_inspect.py
+  /pscratch/sd/j/josephrb/rsn-20261112/out/cmodel/rsn_cmodel.json
+  /pscratch/sd/j/josephrb/rsn-20261112/out/cmodel/rsn_cmodel.npz
+  /pscratch/sd/j/josephrb/rsn-20261112/out/products/G6_gibuu.npz
+  /pscratch/sd/j/josephrb/rsn-20261112/out/products/SM_genie_mec.npz
+  /pscratch/sd/j/josephrb/rsn-20261112/out/products/SM_gibuu.npz
+  /pscratch/sd/j/josephrb/rsn-20261112/out/products/SM_nuwro.npz
+  /pscratch/sd/j/josephrb/rsn-20261112/out/products/TR_data.npz
+  /pscratch/sd/j/josephrb/rsn-20261112/out/products/WR_closure_gibuu.npz
+  /pscratch/sd/j/josephrb/rsn-20261112/out/products/WR_closure_nuwro.npz
+  /pscratch/sd/j/josephrb/rsn-20261112/out/products/WR_closure_q3.npz
+  /pscratch/sd/j/josephrb/rsn-20261112/out/products/WR_closure_tune_v1.npz
+  /pscratch/sd/j/josephrb/rsn-20261112/out/products/WR_data.npz
+  /pscratch/sd/j/josephrb/rsn-20261112/out/products/WU_closure_gibuu.npz
+  /pscratch/sd/j/josephrb/rsn-20261112/out/products/WU_closure_q3.npz
+  /pscratch/sd/j/josephrb/rsn-20261112/out/products/rsn_nc.npz
+-- regrade: 163 paths
+  /pscratch/sd/j/josephrb/rsn-20261112/deploy-p1/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-f1/run/cluster/f1b3/prep/f1-prep-SHA256SUMS
+  /pscratch/sd/j/josephrb/rsn-20261112/deploy-p1/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/readout/fd_f1_readout.json
+  /pscratch/sd/j/josephrb/rsn-20261112/deploy-p1/nd-unfolding/__pycache__/fd_f0_regrade.cpython-311.pyc
+  /pscratch/sd/j/josephrb/rsn-20261112/deploy-p1/nd-unfolding/__pycache__/s1_assemble.cpython-311.pyc
+  /pscratch/sd/j/josephrb/rsn-20261112/deploy-p1/nd-unfolding/__pycache__/s5p_stage1_inspect.cpython-311.pyc
+  /pscratch/sd/j/josephrb/rsn-20261112/deploy-p1/nd-unfolding/fd_f0_regrade.py
+  /pscratch/sd/j/josephrb/rsn-20261112/deploy-p1/nd-unfolding/pv-ladder/readouts/cmodel_5d.json
+  /pscratch/sd/j/josephrb/rsn-20261112/deploy-p1/nd-unfolding/rsn/rsn_regrade.py
+  /pscratch/sd/j/josephrb/rsn-20261112/deploy-p1/nd-unfolding/s1_assemble.py
+  /pscratch/sd/j/josephrb/rsn-20261112/deploy-p1/nd-unfolding/s5p_stage1_inspect.py
+  /pscratch/sd/j/josephrb/rsn-20261112/out/cmodel/rsn_cmodel.json
+  /pscratch/sd/j/josephrb/rsn-20261112/out/cmodel/rsn_cmodel.npz
+  /pscratch/sd/j/josephrb/rsn-20261112/out/regrade.json
+  /pscratch/sd/j/josephrb/rsn-20261112/out/stage/cpl_block.npz
+  /pscratch/sd/j/josephrb/rsn-20261112/out/stage/fd_f1_experiments.npz
+  /pscratch/sd/j/josephrb/rsn-20261112/out/stage/s1_assembly.npz
+  /pscratch/sd/j/josephrb/rsn-20261112/out/stage/sorted_NuEConstraint_FHC_RHC_IMD.txt
+-- read: 151 paths
+  /pscratch/sd/j/josephrb/rsn-20261112/deploy-p1/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/inv/i0/i0.json
+  /pscratch/sd/j/josephrb/rsn-20261112/deploy-p1/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/readout/fd_f1_readout.json
+  /pscratch/sd/j/josephrb/rsn-20261112/deploy-p1/nd-unfolding/pv-ladder/readouts/cmodel_5d.json
+  /pscratch/sd/j/josephrb/rsn-20261112/deploy-p1/nd-unfolding/rsn/rsn_read.py
+  /pscratch/sd/j/josephrb/rsn-20261112/out/cmodel/rsn_cmodel.json
+  /pscratch/sd/j/josephrb/rsn-20261112/out/prep/prep.json
+  /pscratch/sd/j/josephrb/rsn-20261112/out/regrade.json
+  /pscratch/sd/j/josephrb/rsn-20261112/out/rsn_readout.json
+READ SET HELD: every opened path is under the deploy, RSN's own out/, the frozen products or the environment
