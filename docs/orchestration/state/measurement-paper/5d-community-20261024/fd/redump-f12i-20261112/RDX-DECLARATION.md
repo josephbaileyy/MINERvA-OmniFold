@@ -324,8 +324,14 @@ cov2d's conditions:
 - **The merge limit** is 1.5 × the vectorized walk's ×12.25 projection, written into `gates/merge.ok` by `gmerge`.
   If the resulting ceiling takes the total past 2.5, it STOPs to the director.
 
-**A departure from §3's wording:** the AnaTuple pins are checked by size and mtime, not by recomputing sha256. 1A alone
-is about 0.7 TB of MC. The sha256s stay the manifest's.
+**A departure from §3's wording (accepted by the director, 2026-11-12):** the AnaTuple pins are checked by size and
+mtime, not by recomputing sha256. 1A alone is about 0.7 TB of MC, and all twelve playlists about 10.7 TB.
+- **Why this is acceptable.** C-ALIGN-1A and C-ALIGN-PL compare each playlist's output bitwise against MP-1's S0 or S1
+  reference. Those references were built from the hash-pinned AnaTuples of `ANATUPLE-SHA256.tsv`. An input that
+  changed while keeping its size and mtime would therefore fail alignment, and could not produce a passing arm.
+  Re-hashing 10.7 TB would cost more than the lane.
+- **If any playlist's C-ALIGN fails,** the first diagnostic is a sha256 re-hash of that playlist's AnaTuples against
+  `ANATUPLE-SHA256.tsv`. That re-hash is priced and given its own go at that point, not now.
 
 **Stage 3's pin.** After the merge checks, the digests of RDX's npz, background dump and sidecar are committed as
 `nd-unfolding/rdx/rdx-inputs-SHA256SUMS`. That commit's merge is stage 3's pin, as RSN's M_P1 was, and the arms
