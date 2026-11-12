@@ -96,7 +96,7 @@ echo "$MD5  $W/B/build/bld_rdx/runEventLoopOmniFold" > "$W/B/build/MANIFEST.md5"
 # the policy file is the COMMITTED one at the path the connect names (stubs may override contents, never existence)
 POL=$(sed -n 's/^POLICY_REL=//p' "$HERE/rdx_connect.sh")
 mkdir -p "$D/$(dirname "$POL")"; git -C "$HERE/../.." show "HEAD:$POL" > "$D/$POL" || { echo "STOP: the connect's policy file $POL is not in the repo"; exit 9; }
-mkdir -p "$D/nd-unfolding/rdx"; for f in rdx_paths.py rdx_cap.py sbatch_rdx_evloop.sh sbatch_rdx_merge.sh sbatch_rdx_arms.sh; do cp "$HERE/$f" "$D/nd-unfolding/rdx/"; done
+mkdir -p "$D/nd-unfolding/rdx"; for f in rdx_paths.py rdx_cap.py rdx_provenance.py runEventLoopOmniFold-truthx.patch sbatch_rdx_evloop.sh sbatch_rdx_merge.sh sbatch_rdx_arms.sh; do cp "$HERE/$f" "$D/nd-unfolding/rdx/"; done
 git -C "$D" add -A && git -C "$D" -c user.name=s -c user.email=s@invalid commit -q -m "smoke 2"; PIN2=$(git -C "$D" rev-parse HEAD)
 # stub checkers for c1: the root_6_28 python (align, rows, the uproot check) and the salloc env's python (the probe)
 cat > "$W/pystub" <<'PYSTUB'
@@ -106,6 +106,7 @@ case "$*" in
   *"import uproot"*) exit 0 ;;
   *rdx_align.py*) echo '{"verdict": "'"$([ "${SMOKE_ALIGN_RC:-0}" = 0 ] && echo PASS || echo FAIL)"'"}' > "$out"; exit "${SMOKE_ALIGN_RC:-0}" ;;
   *rdx_truthx_rows.py*) echo '{"verdict": "PASS"}' > "$out"; exit 0 ;;
+  *rdx_provenance.py*) echo '{"verdict": "PASS", "stub": true}' > "$out"; exit 0 ;;
   *) exec python3 "$@" ;;
 esac
 PYSTUB
@@ -119,12 +120,19 @@ case "$*" in
   *) exec python3 "$@" ;;
 esac
 PROBESTUB
-chmod +x "$W/pystub" "$W/bin/python"; : > "$W/canon/setup_salloc_env.sh"
+chmod +x "$W/pystub" "$W/bin/python"
+# the env stub exports every name setup_salloc_env.sh is measured to add (setup_salloc_env.exports), BUILD with conda's
+# real value, so a launcher variable it would clobber fails here as it did on login27 (the s0 STOP of 2026-11-12)
+while read -r v; do
+  [ -n "$v" ] || continue
+  case "$v" in BUILD) val=x86_64-conda-linux-gnu ;; CONDA_PREFIX|ROOTSYS|MINERVA_PREFIX) val="$W/nowhere" ;; *) val="smoke-$v" ;; esac
+  printf 'export %s=%q\n' "$v" "$val"
+done < "$HERE/setup_salloc_env.exports" > "$W/canon/setup_salloc_env.sh"
 python3 - "$HERE/rdx_connect.sh" "$W/connect.sh" "$W" <<'EOF'
 import sys
 src, dst, w = sys.argv[1:4]
 s = open(src).read()
-for a, b in (("B=/pscratch/sd/j/josephrb/rdx-20261112", f"B={w}/B"), ("CANON=/pscratch/sd/j/josephrb/MINERvA-OmniFold", f"CANON={w}/canon"),
+for a, b in (("B=/pscratch/sd/j/josephrb/rdx-20261112b", f"B={w}/B"), ("CANON=/pscratch/sd/j/josephrb/MINERvA-OmniFold", f"CANON={w}/canon"),
              ("MP1=/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1", f"MP1={w}/mp1"),
              ("PY=/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3", f"PY={w}/pystub"), ("SYSPY=/usr/bin/python3", "SYSPY=python3"),
              ('case "$(hostname -s)" in login[0-9][0-9])', 'case "${FAKE_HOST:-login27}" in login[0-9][0-9])')):
@@ -147,5 +155,46 @@ echo "## connect c1 with a failing walk probe";    CN_ARGS="c1 $PIN2" cn SMOKE_P
 echo "## connect c1 with a probe that cannot run"; rm -f "$W/B/out/checks/walk_probe.json"; CN_ARGS="c1 $PIN2" cn SMOKE_PROBE=norun
 echo "## connect c1 with a failing alignment";     CN_ARGS="c1 $PIN2" cn SMOKE_ALIGN_RC=1
 echo "## connect c1 passes";                       CN_ARGS="c1 $PIN2" cn
+# s0, end to end, in a fresh B: the clone, the patch, provenance (stubbed), the O_NOATIME manifest, the builds (stubbed)
+CS="$W/canon/MINERvA101/MINERvA-101-Cross-Section"; OP="$W/canon/MINERvA101/opt"
+mkdir -p "$CS" "$OP/lib" "$OP/etc/MParamFiles/data/FluxConstraints" "$W/mp1/s0/build"
+cp "$HERE/../../MINERvA101/MINERvA-101-Cross-Section/runEventLoopOmniFold.cpp" "$CS/"; echo cm > "$CS/CMakeLists.txt"
+echo lib > "$OP/lib/libMAT.so"; echo nue > "$OP/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt"
+for f in "$OP/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt"; do
+  python3 -c "import os,sys; s=os.stat(sys.argv[1]); os.utime(sys.argv[1], (s.st_mtime + 10, s.st_mtime))" "$f"; done
+echo "# s0 MANIFEST stand-in" > "$W/mp1/s0/build/MANIFEST.sha256"
+cat > "$W/syspy" <<'SYSPY'
+#!/bin/bash
+# stands in for /usr/bin/python3: drops -I -B; on macOS gives os an O_NOATIME of 0 (Linux has the real flag)
+while [ "$1" = -I ] || [ "$1" = -B ]; do shift; done
+if [ "$1" = -c ]; then shift; exec python3 -c "$@"; fi
+exec python3 -c 'import os, runpy, sys; os.O_NOATIME = getattr(os, "O_NOATIME", 0); sys.argv = sys.argv[1:]; runpy.run_path(sys.argv[0], run_name="__main__")' "$@"
+SYSPY
+cat > "$W/bin/cmake" <<'CMK'
+#!/bin/bash
+echo "stub cmake $*"; [ -d "$1" ] || { echo "source dir $1 missing"; exit 1; }; touch CMakeCache.txt
+CMK
+cat > "$W/bin/make" <<'MK'
+#!/bin/bash
+[ -f CMakeCache.txt ] || exit 2; echo "binary built in $(pwd)" > runEventLoopOmniFold
+MK
+chmod +x "$W/syspy" "$W/bin/cmake" "$W/bin/make"
+python3 - "$HERE/rdx_connect.sh" "$W/connect_s0.sh" "$W" "$D" <<'EOF'
+import sys
+src, dst, w, d = sys.argv[1:5]
+s = open(src).read()
+for a, b in (("B=/pscratch/sd/j/josephrb/rdx-20261112b", f"B={w}/B0"), ("CANON=/pscratch/sd/j/josephrb/MINERvA-OmniFold", f"CANON={w}/canon"),
+             ("MP1=/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1", f"MP1={w}/mp1"),
+             ("PY=/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3", f"PY={w}/pystub"), ("SYSPY=/usr/bin/python3", f"SYSPY={w}/syspy"),
+             ("REPO=https://github.com/josephbaileyy/MINERvA-OmniFold.git", f"REPO={d}"),
+             ('case "$(hostname -s)" in login[0-9][0-9])', 'case "${FAKE_HOST:-login27}" in login[0-9][0-9])')):
+    assert s.count(a) == 1, a
+    s = s.replace(a, b)
+open(dst, "w").write(s)
+EOF
+cp "$W/connect_s0.sh" "$W/s0.self.sh"
+echo "## connect s0 end to end (the env stub exports BUILD=x86_64-conda-linux-gnu)"
+bash "$W/s0.self.sh" "$W/s0.self.sh" s0 "$PIN2" 2>&1 | sed -e "s|$W|<w>|g" -e "s|$PIN2|<pin>|g" | grep -E 'STOP|REFUSED|== binaries|bld_(base|rdx)/runEventLoopOmniFold|RUNTIME|rc=' | tail -6
+echo "  stray conda-named dir: $([ -e "$W/x86_64-conda-linux-gnu" ] || [ -e "$HOME/x86_64-conda-linux-gnu" ] && echo yes || echo no)"
 echo "## connect dtn host";                   CN_ARGS="s1 $PIN2 2026-11-12T00:00:00Z" cn FAKE_HOST=dtn01
 echo "## connect bad pin";                    CN_ARGS="s1 notapin" cn

@@ -1,0 +1,4 @@
+removal rc=0
+ls: cannot access '/global/homes/j/josephrb/x86_64-conda-linux-gnu': No such file or directory
+login27
+2026-11-12T08:14:03Z

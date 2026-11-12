@@ -34,7 +34,9 @@ N_SIG = {"1A": 1736833, "1B": 469084, "1C": 894027, "1D": 2595088, "1E": 2165554
          "1L": 232123, "1M": 3583806, "1N": 2042233, "1O": 593359, "1P": 782010}  # proxy_hists_meta.json
 FENCE = ("cov2d", "t2a", "ll5d", "e96data", "rpd_", "rsn_")
 POLICY_PATH_TOKEN = "<policy>"
-LATER = {"nd-unfolding/rdx/rdx-inputs-SHA256SUMS"}  # the one declared path that is written later, by stage 3's pin
+LATER = {"nd-unfolding/rdx/rdx-inputs-SHA256SUMS"}
+FLOOR = {"BUILD", "HOST", "CC", "CXX", "CPP", "AR", "LD", "NM", "RANLIB", "STRIP", "PREFIX", "CFLAGS", "CXXFLAGS",
+         "LDFLAGS", "CPPFLAGS"}  # the hand list, a floor under the measured setup_salloc_env.exports  # the one declared path that is written later, by stage 3's pin
 
 
 def sacct(*rows):
@@ -257,6 +259,33 @@ class Tables(unittest.TestCase):
         self.assertLess(c1.index("[ $rp -eq 0 ]"), c1.index("STAGE 1 CHECKS PASS"))
         s2 = con[con.index("\ns2)\n"):con.index("\nc2)\n")]
         self.assertIn("for c in align_1A truthx_rows_1A walk_probe; do", s2)
+
+    def test_no_launcher_variable_is_one_the_env_setup_exports(self):
+        """The s0 STOP of 2026-11-12: conda's activation (setup_salloc_env.sh) set BUILD, clobbering the connect's."""
+        measured = {ln.strip() for ln in (HERE / "setup_salloc_env.exports").read_text().splitlines() if ln.strip()}
+        self.assertIn("BUILD", measured)
+        self.assertGreaterEqual(len(measured), 80)
+        banned = measured | FLOOR
+        assign = re.compile(r"(?:^|[\s;(&|{])(?:local\s+|export\s+|declare\s+-?\w*\s+)?([A-Za-z_][A-Za-z0-9_]*)=")
+        hits = {}
+        for f in ("rdx_connect.sh", "sbatch_rdx_evloop.sh", "sbatch_rdx_merge.sh", "sbatch_rdx_arms.sh"):
+            names = set()
+            for ln in (HERE / f).read_text().splitlines():
+                code = ln.split("#", 1)[0] if not ln.lstrip().startswith("#!") else ""
+                names |= set(assign.findall(code))
+                for m in re.finditer(r"\bread\s+(?:-r\s+)?((?:[A-Za-z_][A-Za-z0-9_]*\s*)+)", code):
+                    names |= set(m.group(1).split())
+                names |= set(re.findall(r"\bfor\s+([A-Za-z_][A-Za-z0-9_]*)\s+in\b", code))
+            bad = sorted(names & banned)
+            if bad:
+                hits[f] = bad
+        self.assertEqual(hits, {})
+
+    def test_the_event_loop_job_allows_the_connects_b(self):
+        con = (HERE / "rdx_connect.sh").read_text()
+        b = re.search(r"^B=(\S+)", con, re.M).group(1)
+        self.assertTrue(b.endswith("rdx-20261112b"))
+        self.assertIn(f'[[ "${{B}}" == {b} || -n "${{RDX_SMOKE}}" ]]', (HERE / "sbatch_rdx_evloop.sh").read_text())
 
     def test_the_launcher_pins_the_connect_script(self):
         sha = hashlib.sha256((HERE / "rdx_connect.sh").read_bytes()).hexdigest()
