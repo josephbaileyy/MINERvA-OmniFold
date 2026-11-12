@@ -95,7 +95,10 @@ NEW_NUMERALS = {"4.5": "group A item 6 (#1025): the signal phase space, pT < 4.5
                 "99.7": "L-28: r5:176's bar 39.04 at the null's 0.997 quantile, printed as the 99.7th percentile (round 6, the editor's B8)",
                 "0.1": "Fm7 (#977, 2026-11-12): fig:deformation's unsupported cell EW11, E_avail 0.1-0.2 GeV (m3_common.py EAVAIL_EDGES = project_cov_nd.py AXIS_EDGES)",
                 "0.2": "Fm7 (#977, 2026-11-12): fig:deformation's unsupported cell EW11, E_avail 0.1-0.2 GeV (m3_common.py EAVAIL_EDGES)",
-                "1.4": "Fm7 (#977, 2026-11-12): fig:deformation's unsupported cells EW36, EW37, W < 1.4 GeV (m3_common.py W_EDGES 0, 1.1, 1.4)"}
+                "1.4": "Fm7 (#977, 2026-11-12): fig:deformation's unsupported cells EW36, EW37, W < 1.4 GeV (m3_common.py W_EDGES 0, 1.1, 1.4)",
+                "1.1": "the figure referee read (2026-11-12, B5): fig:deformation's W-bin key, m3_common.py W_EDGES 0, 1.1, 1.4, 1.8, 2.2, 3.0",
+                "1.8": "the figure referee read (2026-11-12, B5): fig:deformation's W-bin key, m3_common.py W_EDGES",
+                "2.2": "the figure referee read (2026-11-12, B5): fig:deformation's W-bin key, m3_common.py W_EDGES"}
 ONCE = [
     "and their cross-covariance is unavailable, so the significance of their difference cannot be calibrated.",
     "The five-observable estimator is the baseline this study characterizes",

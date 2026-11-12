@@ -2293,3 +2293,31 @@ was the mislabel. The director accepted bd08582ee, the hand re-cites of ALIASES 
 - **RESPONSE.md 4.2:** the Set E record (about 82 % weighted on 1A) is entered as a record, not a measurement.
   C-BKG in the F1.2(i) pilot measures it.
 - **Corrections:** two section labels in RESPONSE.md and the ledger: :222 is in S4, :148 is in S3.
+
+## 2026-11-12 — The figure referee read: check A, the median-framing rewrite and the figure fixes
+
+- **Record:** secondary-results/referee-figure-deformation-20261112/ (32ac4b76): the consult (gpt-6.1-sol, high) and
+  check A (a_recovery.py, READOUTS recov). In EW29 the unfolded cell moves opposite to the change for GiBUU, W1 and W3.
+  The median f is 56–88 %, and 0–12 cells are opposite and 1–10 overshoot per truth (supported cells with |i| > 2 %).
+  σ_f ≤ 0.04, and 7 cells lie within 3σ of a class boundary.
+- **Paper:**
+  - §5.1 paras 1–2 now state the median and the spread; EW29 is −30 % injected against +21 % unfolded.
+  - The withheld shapes' maximum is over supported cells, 9–31 % (the old 16 % was EW37, unsupported).
+  - Table 2's status word is "Mixed per cell".
+  - §5.4's first finding has a named IBU referent (S7 :588).
+  - §7.1's limitation is scoped to fig:deformation's four changes and the sixteen-cell grades.
+  - The introduction is qualified. The abstract is held for the director.
+- **Supplement:** supp:recovery gives the definitions, and tab:recovery the four truths with near f = 0 and near f = 1.
+  S4 :340 now reads "cell by cell".
+- **Figure (B1–B6):**
+  - four line patterns, each with its own legend sample;
+  - a darker green; outlined markers;
+  - the legend above the axes; hatched shading;
+  - the title moved to the caption; a W-bin key;
+  - the caption's marker and error-bar sentence replaced.
+- **Checks:**
+  - check_sec4_receipts recomputes the supported-cell range; its anchor and test mutation were updated, and 17 tests pass.
+  - NEW_NUMERALS has the W-bin edges 1.1, 1.8 and 2.2.
+  - 4206 values.
+- **Reads:** recov-read/referee-read.md records two PRD reads and two meaning reads, ending ACCEPT and OK.
+- **Sweep:** RESPONSE.md, "The figure referee read and check A", lists every site and its disposition.

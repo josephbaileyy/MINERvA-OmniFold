@@ -1,4 +1,4 @@
-GiBUU {'n_cells': 39, 'n_opposite': 12, 'n_partial': 17, 'n_overshoot': 10, 'f_median': 0.6286045051063016} EW29 {'injected': -0.3027844494636497, 'residual': 0.7386475370592414, 'unfolded_vs_nominal': 0.21221209973942856, 'f': -0.6994155689912596}
-W1 {'n_cells': 33, 'n_opposite': 10, 'n_partial': 22, 'n_overshoot': 1, 'f_median': 0.5626870058963279} EW29 {'injected': -0.16463400851126764, 'residual': 0.31315024704313893, 'unfolded_vs_nominal': 0.09696105809486544, 'f': -0.5862769013010745}
-W2 {'n_cells': 26, 'n_opposite': 0, 'n_partial': 17, 'n_overshoot': 9, 'f_median': 0.8834629428704811} EW29 {'injected': -0.006681257722171874, 'residual': -0.03365283648841857, 'unfolded_vs_nominal': -0.040109250936929186, 'f': None}
-W3 {'n_cells': 35, 'n_opposite': 8, 'n_partial': 23, 'n_overshoot': 4, 'f_median': 0.6124292850041295} EW29 {'injected': -0.13083294477125385, 'residual': 0.23665240657047965, 'unfolded_vs_nominal': 0.07485753056040578, 'f': -0.5687985465313155}
+GiBUU {'n_cells': 39, 'n_opposite': 12, 'n_partial': 17, 'n_overshoot': 10, 'f_median': 0.6286045051063016, 'n_within_3sigma_of_a_class_boundary': 1, 'within_3sigma_cells': ['EW34']}
+W1 {'n_cells': 33, 'n_opposite': 10, 'n_partial': 22, 'n_overshoot': 1, 'f_median': 0.5626870058963279, 'n_within_3sigma_of_a_class_boundary': 2, 'within_3sigma_cells': ['EW10', 'EW22']}
+W2 {'n_cells': 26, 'n_opposite': 0, 'n_partial': 17, 'n_overshoot': 9, 'f_median': 0.8834629428704811, 'n_within_3sigma_of_a_class_boundary': 2, 'within_3sigma_cells': ['EW7', 'EW26']}
+W3 {'n_cells': 35, 'n_opposite': 8, 'n_partial': 23, 'n_overshoot': 4, 'f_median': 0.6124292850041295, 'n_within_3sigma_of_a_class_boundary': 2, 'within_3sigma_cells': ['EW38', 'EW39']}

@@ -136,9 +136,12 @@ def e_gibuu_max():  # s5e: the reported estimator (e) at the GiBUU/GENIE E_avail
     return receipt("s5e/cand/assess_receipt.json")["points"]["eavail_gibuu"]["ew_max_abs_pct"]
 
 
-def shapes_range():  # VL154 A4: worst (E_avail, W) cell for each withheld shape, joint-test estimator
+def shapes_range():  # VL154 A4: worst SUPPORTED (E_avail, W) cell for each withheld shape, joint-test estimator
+    # (the figure referee read's meaning read, 2026-11-12: ew_max_abs_pct's W2 maximum is EW37, an unsupported cell; the
+    # paper now prints the supported-cell range, recomputed here from the assess receipt and the support rule)
     pts = receipt("s5e/cand/assess_receipt.json")["points"]
-    v = [pts[w]["ew_max_abs_pct"] for w in ("W1", "W2", "W3")]
+    rep = receipt("s5p/stage1/stage1_inspect.json")["mc"]["EW"]["reported"]
+    v = [max(abs(100 * x) for x, ok in zip(pts[w]["per_functional"]["mean_rel"][:42], rep) if ok) for w in ("W1", "W2", "W3")]
     return min(v), max(v)
 
 
@@ -178,15 +181,17 @@ CHECKS = [
      data_method_diff, "round"),
     # the interim round (#1025) A1: section 5.1 leads with the reported estimator (e) at this truth; the lower-capacity
     # variant of VL151 (the Supplement's figure) is one clause after it
+    # the figure referee read's check A (2026-11-12): the opening was rewritten around the median fraction followed; the
+    # same value is now printed as the cell's residual "reaches" (anchor moved, value and key unchanged)
     ("the reported estimator at the GiBUU/GENIE shape, high W (s5e)", "paper_body.tex",
-     r"by up to \\SI\{([0-9.]+)\}\{\\percent\} at high \$W\$", e_gibuu_max, "round"),
+     r"the residual against the changed truth reaches \\SI\{([0-9.]+)\}\{\\percent\}", e_gibuu_max, "round"),
     ("regularization bias at high W, the lower-capacity variant (VL151)", "paper_body.tex",
      r"gives the same \\SI\{([0-9.]+)\}\{\\percent\} in that cell", regularization_max, "round"),
     # The referee recheck of 2026-11-11 (RESPONSE.md s8; the director's ruling): the paper's sentence is cut because the note
     # carries it at its release revision (acf934d71, and 4219869a2): sec_5d.tex sec:coverage-5d, "coverage as low as 0.060".
     ("an earlier estimator's 68% coverage under the rate reduction (s5c tier S)", "sec_5d.tex",
      r"with coverage as low as ([0-9.]+), and 42 of the 153 fail at 95", tilt_coverage68_min, "round"),
-    ("other fixed shapes, most affected cell (VL154)", "paper_body.tex", r"(?:it|the residual) is \\SIrange\{([0-9.]+)\}\{([0-9.]+)\}\{\\percent\} in the most affected",
+    ("other fixed shapes, most affected cell (VL154)", "paper_body.tex", r"five-observable estimator is \\SIrange\{([0-9.]+)\}\{([0-9.]+)\}\{\\percent\} in the most affected supported",
      shapes_range, "round"),
 ]
 # The short methods paper (methods-short-20261109, W-15, the director's decision of 2026-11-09 on IR-sol, #988) dropped

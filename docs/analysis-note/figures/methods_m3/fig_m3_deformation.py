@@ -118,28 +118,34 @@ def main() -> None:
                 label=r"injected truth change (deformed/nominal $-$ 1)")
     a_ng.errorbar(x, ng, ng_se, fmt="o", ms=3.0, color=mc.PURPLE, lw=0.7,
                   label=r"residual, GiBUU/GENIE $E_{\rm avail}$ (60 exp.)")
+    # the figure referee read (secondary-results/referee-figure-deformation-20261112, the director's B1-B3, B6): each
+    # injected-change curve has its own dash pattern and legend sample, markers carry dark outlines, the shading is
+    # stronger and hatched, and the legend sits above the axes; the green is darkened here only (m3_common keeps its own)
+    GREEN_DK = "#0d7a52"
     for c in UNSUPPORTED:
-        a_rw.axvspan(c - 0.5, c + 0.5, color="0.92", lw=0, zorder=0)
-    for (w, lab, fmt, col), dx in zip((("W1", r"NuWro $E_{\rm avail}$", "o", mc.BLUE),
-                                        ("W2", r"GENIE + MEC $(E_{\rm avail},W)$", "^", mc.GREEN),
-                                        ("W3", r"NuWro $(p_T,p_\parallel,E_{\rm avail})$", "D", mc.PURPLE)),
-                                       (-0.27, -0.09, 0.09)):
-        m, se = rw[w]
-        a_rw.stairs(inj_w[w], np.arange(mc.N_EW + 1) - 0.5, color=col, lw=0.6, ls=(0, (3, 1.5)), alpha=0.8)
-        a_rw.errorbar(x + dx, m, se, fmt=fmt, ms=2.6, color=col, lw=0.7, label=f"{lab} (20 exp.)")
+        a_rw.axvspan(c - 0.5, c + 0.5, facecolor="0.86", edgecolor="0.6", hatch="////", lw=0, zorder=0)
     # the GiBUU case's injected change is the left panel's inj: the same truth (eavail_shape), ratio file
     # (s5n/eavail-ratio-gibuu-over-genie.json, sha 45cc3e0a = truth_check.json eavail_ratio_sha256) and amplitude 1.0
     # (s5e/cand-assess-tasks.tsv aeavail_gibuu_*)
     assert truth["eavail_ratio_sha256"].startswith("45cc3e0a") and truth["departures"]["eavail_shape"]["amplitude"] == 1.0
-    a_rw.stairs(inj, np.arange(mc.N_EW + 1) - 0.5, color=mc.RED, lw=0.6, ls=(0, (3, 1.5)), alpha=0.8)
-    a_rw.errorbar(x + 0.27, rg, rg_se, fmt="s", ms=2.4, color=mc.RED, lw=0.7,
-                  label=r"GiBUU/GENIE $E_{\rm avail}$ (20 exp.)")
-    a_rw.plot([], [], color="0.3", lw=0.6, ls=(0, (3, 1.5)), label="injected truth change, same colour")
+    series = (("W1", r"NuWro $E_{\rm avail}$", "o", mc.BLUE, (0, (4, 1.5)), rw["W1"], inj_w["W1"], -0.27),
+              ("W2", r"GENIE + MEC $(E_{\rm avail},W)$", "^", GREEN_DK, (0, (1, 1.2)), rw["W2"], inj_w["W2"], -0.09),
+              ("W3", r"NuWro $(p_T,p_\parallel,E_{\rm avail})$", "D", mc.PURPLE, (0, (5, 1.2, 1, 1.2)), rw["W3"], inj_w["W3"], 0.09),
+              ("GiBUU", r"GiBUU-to-GENIE $E_{\rm avail}$", "s", mc.RED, (0, (8, 2.5)), (rg, rg_se), inj, 0.27))
+    marks, steps = [], []
+    for w, lab, fmt, col, ls, (m, se), injc, dx in series:
+        steps.append(a_rw.stairs(injc, np.arange(mc.N_EW + 1) - 0.5, color=col, lw=0.9, ls=ls,
+                                 label="injected change"))
+        marks.append(a_rw.errorbar(x + dx, m, se, fmt=fmt, ms=3.1, mec="0.15", mew=0.35, color=col, lw=0.7,
+                                   label=lab))
     for ax in (a_ng, a_rw):
         ax.set_ylim(-40, 100)
         ax.set_yticks(np.arange(-40, 101, 20))
     a_ng.legend(loc="upper left", frameon=False)
-    a_rw.legend(loc="upper left", frameon=False, ncol=2, columnspacing=0.4, handletextpad=0.3)
+    # column-major fill: each column is one truth, its markers above its injected-change curve
+    a_rw.legend(handles=[h for pair in zip(marks, steps) for h in pair], loc="lower left", bbox_to_anchor=(0.0, 1.07),
+                ncol=4, frameon=False,
+                fontsize=7.4, columnspacing=1.0, handletextpad=0.4, handlelength=2.6, borderaxespad=0.0)
     for ax in (a_ng, a_rw):
         ax.set_ylabel("(unfolded $-$ truth)/truth (%)")
         ax.set_xlabel(
@@ -151,14 +157,6 @@ def main() -> None:
     a_ng.set_title(
         "Lower-capacity variant with background refinement,\n"
         "refinement classifier 100 trees, 8 leaves",
-        fontsize=8.3,
-        loc="left",
-        y=1.16,
-        pad=0,
-    )
-    a_rw.set_title(
-        "Reported estimator with background refinement,\n"
-        "refinement classifier 400 trees, 31 leaves",
         fontsize=8.3,
         loc="left",
         y=1.16,

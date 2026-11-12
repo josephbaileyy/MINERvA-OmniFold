@@ -492,3 +492,35 @@ S1's out-of-phase-space row stay unchanged. Any change to the note's sentences g
 
 **Follow-up list (optional):** counting whether F5.3's 1,755 gen-outside-grid rows are only the −9999 sentinels
 (0 node-h, on OF5D). Printing that number would not help the paper (the director, 2026-11-12).
+
+## The figure referee read and check A (2026-11-12)
+
+**The record:** `secondary-results/referee-figure-deformation-20261112/`. At Joseph's request the director ran a figure
+referee read of fig:deformation (gpt-6.1-sol, high). Check A tested the referee's point from the records
+(`check-a/a_recovery.py`). For each truth and supported (E_avail, W) cell with |i| > 2 %, the recovered fraction is
+f = [(1+r)(1+i) − (1+r₀)]/i, net of the nominal closure.
+- In EW29 (E_avail 0.8–1.5 GeV, W ≥ 3 GeV) the unfolded cell moves opposite to the change for GiBUU, W1 and W3.
+- Over the supported cells, the median f is 56–88 % (GiBUU 63 %). The numbers of opposite cells are 12/39 (GiBUU),
+  10/33 (W1), 0/26 (W2) and 8/35 (W3).
+- σ_f is at most 0.04. Seven cells lie within 3σ of a class boundary, so the "signs robust" statement is made with that
+  count, not as a blanket.
+- All of these are keys rec-* (READOUTS recov).
+
+**The sweep, by claim:** every sentence that says or implies that the unfolding partly recovers a shape change.
+
+| site | the claim | disposition (after the PRD and meaning reads of recov-read/) |
+|---|---|---|
+| paper §5.1 para 1 (:265) | "recovers only part of a change …" | rewritten: "the median unfolded (E_avail, W) cell moves by 56–88 % of the injected change, but individual cells range from moving opposite to it to overshooting it". GiBUU: median 63 %, with 12 of 39 opposite and 10 overshooting (cells with \|i\| > 2 %). EW29: −30 % injected, unfolded +21 % above nominal (residual 74 %). "Several percent in the largest cells" cut (B7) |
+| paper §5.1 para 2 (:268) | the withheld shapes' residuals | now over the most affected SUPPORTED cell, 9–31 %. The old 16 % was W2's unsupported EW37 (keys rec-w-supmax-*; check_sec4_receipts recomputes the range from the assess receipt and the support rule). Plus median 56–88 %, 0 to 10 opposite and 1 to 9 overshooting |
+| Table 2, the generator-sized row and its status word (:175, :191) | "Partial: the truth change is recovered only in part" | "Mixed per cell: the median unfolded cell moves by less than the full truth change, and individual cells range from moving opposite to it to overshooting it". The row gives the supported-cell maximum and the median range |
+| paper §5.4, the first finding (:330) | "the residual … an exact binned unfolding … leaves a similar residual there" | the median framing. The IBU comparison now names its population (the joint cells), the exact response matrix and five iterations (S7 :588), so "residual" has a referent |
+| paper §7.1, the limitation "Estimator bias" (:511) | "retains part of its prior" | scoped to the four changes of fig:deformation: median 56–88 %, up to 12 of 39 supported cells with \|i\| > 2 % opposite. "Retains part of its prior" is kept, as the sixteen-cell ρ result |
+| introduction (:20) | "retains part of its prior" | qualified, per the PRD read: "on the sixteen reporting cells, while individual (E_avail, W) cells can move opposite to a generator-sized change or overshoot it" |
+| abstract (main_paper.tex:62) | "In controlled studies the result retains part of its prior" | NOT changed. The PRD read asks for the same qualifier, which would take the abstract from 244 words past its 250-word limit. Sent to the director to rule |
+| Supplement S4 :340 | "the estimator does not follow generator-sized E_avail shape changes" (the earlier variants) | "does not fully follow … (for the reported estimator, Sec. supp:recovery)" |
+| Supplement S4, supp:recovery and tab:recovery (new) | the definitions | f with its numerator stated explicitly, the 2 % threshold and why, supported cells, σ_f ≤ 0.04 including r₀, and the near-boundary cells split into near f = 0 (which bounds the opposite count) and near f = 1 |
+| Supplement S7 :588, :590 | the IBU comparison's median residuals on the joint cells | kept: they are the referent now named at :330, a different population from tab:recovery |
+| fig:deformation caption | descriptive | revised under item B; no recovery claim |
+| Supplement fig:supp-lowcap caption and its paragraph (:266-278) | descriptive | kept |
+| §5.4 heading and the ρ study (:324-354), §7's checklist (:487) | "retains part of its prior", ρ | kept: the sixteen-cell retained fraction ρ is a different, defined projection, and check A does not test it |
+| paper §3.3 (:155) | "how well the unfolding recovers a specified deformation" | a definition of a closure test; kept |

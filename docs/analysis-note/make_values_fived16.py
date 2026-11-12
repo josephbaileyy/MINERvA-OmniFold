@@ -147,6 +147,9 @@ READOUTS = {
     "plterm": ("docs/orchestration/state/2d-closeout/playlist-term/outputs/playlist_term.json", "5b023478"),
     # #977's L rows (RESPONSE.md 4.2/F4.3, 4.3, F5.3, F5.4, 3.3, m5/Fm7, s11c): one derived readout (l_rows.py) from the
     # read-only pscratch session's receipt (pscr-20261112, f70e805c) and committed sources
+    # the figure referee read's check A: how far the unfolded (E_avail, W) cells follow each truth change (recovered
+    # fraction f per supported cell, net of the nominal closure); a_recovery.py
+    "recov": ("docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-figure-deformation-20261112/check-a/a_recovery.json", "75db95a1"),
     "lrows": ("docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/l-rows-20261112/derived/l_rows.json", "dc3bf511"),
 }
 # the committed readouts without the run-period block, for the "-nopl" keys
@@ -1572,6 +1575,7 @@ def groupb_values(d):
     v.update(period_values(d))
     v.update(t2b_values(d))
     v.update(lrows_values(d))
+    v.update(recov_values(d))
     # B3a: the synthetic q3 tilt, r = 1 + a z~ (s5c_pseudo.py truth_weight "q3_given_eavail_w"); a and the clip from the
     # code, the event count, the range and in-cell spread of the weight and the two preservation checks from the truth check
     q = d["s5ntruth"]["departures"]["q3_given_eavail_w"]
@@ -1963,6 +1967,47 @@ def period_values(d):
     v = dict(out[0])
     v["pp-nrep"] = str(r["readings"]["n_replicas"])
     assert int(v["pp-k"]) + int(v["pp-kbar"]) == r["readings"]["n_cells"]
+    return v
+
+
+def recov_values(d):
+    """The figure referee read's check A (secondary-results/referee-figure-deformation-20261112): per truth, over the
+    supported (E_avail, W) cells with |injected| > 2 %, the recovered fraction f = [(1+r)(1+i) - (1+r_nom)]/i and the
+    counts of cells moving opposite to the change (f < 0), partially (0 <= f <= 1) and overshooting (f > 1), with the
+    cells lying within three standard errors of a class boundary. Descriptive."""
+    r = d["recov"]
+    assert r["schema"] == "figure-referee-check-a/1"
+    S = r["shapes"]
+    v = {"rec-thr": "2"}
+    for k, tag in (("GiBUU", "g"), ("W1", "w1"), ("W2", "w2"), ("W3", "w3")):
+        s = S[k]
+        assert s["n_opposite"] + s["n_partial"] + s["n_overshoot"] == s["n_cells"]
+        v[f"rec-{tag}-n"], v[f"rec-{tag}-opp"] = str(s["n_cells"]), str(s["n_opposite"])
+        v[f"rec-{tag}-part"], v[f"rec-{tag}-over"] = str(s["n_partial"]), str(s["n_overshoot"])
+        v[f"rec-{tag}-fmed"], v[f"rec-{tag}-near"] = f"{100 * s['f_median']:.0f}", str(s["n_within_3sigma_of_a_class_boundary"])
+    # the text names EW29 (E_avail 0.8-1.5 GeV, W >= 3 GeV) as opposite at GiBUU and at W1 and W3
+    assert all("EW29" in S[k]["opposite_cells"] for k in ("GiBUU", "W1", "W3")) and S["W2"]["n_opposite"] == 0
+    w = [S[k] for k in ("W1", "W2", "W3")]
+    v["rec-w-fmed-lo"], v["rec-w-fmed-hi"] = f"{100 * min(s['f_median'] for s in w):.0f}", f"{100 * max(s['f_median'] for s in w):.0f}"
+    v["rec-w-opp-lo"], v["rec-w-opp-hi"] = str(min(s["n_opposite"] for s in w)), str(max(s["n_opposite"] for s in w))
+    v["rec-near-total"] = str(sum(s["n_within_3sigma_of_a_class_boundary"] for s in S.values()))
+    assert (v["rec-g-fmed"], v["rec-g-opp"], v["rec-g-n"], v["rec-w-fmed-lo"], v["rec-w-fmed-hi"], v["rec-w-opp-hi"]) == ("63", "12", "39", "56", "88", "10")
+    sfm = max(s["sigma_f_max"] for s in S.values())
+    v["rec-sigf-max"] = f"{math.ceil(100 * sfm - 1e-9) / 100:.2f}"      # an upper bound, rounded up
+    assert sfm < 0.05 and float(v["rec-sigf-max"]) >= sfm
+    v["rec-all-opp-max"] = str(max(s["n_opposite"] for s in S.values()))
+    assert max(S, key=lambda k: S[k]["n_opposite"]) == "GiBUU"   # the limitation prints "up to rec-all-opp-max of rec-g-n"
+    for k, tag in (("GiBUU", "g"), ("W1", "w1"), ("W2", "w2"), ("W3", "w3")):
+        v[f"rec-{tag}-near0"], v[f"rec-{tag}-near1"] = str(S[k]["n_within_3sigma_of_f0"]), str(S[k]["n_within_3sigma_of_f1"])
+        assert S[k]["n_within_3sigma_of_f0"] + S[k]["n_within_3sigma_of_f1"] == S[k]["n_within_3sigma_of_a_class_boundary"]
+    v["rec-w-over-lo"], v["rec-w-over-hi"] = str(min(s["n_overshoot"] for s in w)), str(max(s["n_overshoot"] for s in w))
+    # the withheld shapes' most affected SUPPORTED cell (the meaning read: s5e-shapes-ewmax-lo's 16 % is W2's EW37, unsupported)
+    sup = [100 * s["max_abs_residual_supported"] for s in w]
+    v["rec-w-supmax-lo"], v["rec-w-supmax-hi"] = f"{min(sup):.0f}", f"{max(sup):.0f}"
+    assert (v["rec-w-supmax-lo"], v["rec-w-supmax-hi"]) == ("9", "31")
+    e = S["GiBUU"]["EW29"]
+    v["rec-g-ew29-inj"], v["rec-g-ew29-unf"] = f"{100 * e['injected']:.0f}", f"{100 * e['unfolded_vs_nominal']:.0f}"
+    assert (v["rec-g-ew29-inj"], v["rec-g-ew29-unf"]) == ("-30", "21") and e["f"] < 0
     return v
 
 
