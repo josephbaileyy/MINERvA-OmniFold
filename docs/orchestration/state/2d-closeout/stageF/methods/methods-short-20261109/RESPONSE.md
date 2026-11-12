@@ -573,3 +573,119 @@ f = [(1+r)(1+i) − (1+r₀)]/i, net of the nominal closure.
 ## Housekeeping
 
 - 2026-11-12: heads 800579be through 2a2af241 carried a values producer (make_values_fived16.py) that refused to run. The abstract edit had broken a LISTED_CLAIMS anchor (:247) and its self-test plant (:2438). The committed values_fived16.tex was correct throughout, so nothing printed wrong. Fixed in dba7628c; make_values --self-test is now part of the push gate, which the director approved as standing practice.
+
+# G. The fresh referee read on 283f3044 (gpt-6.1-sol, 5/10), with the style-only round 1 (6/10)
+
+**Reports:**
+- `secondary-results/referee-methods-fresh-20261112/gpt.txt`. Its rows are G<major>.<sub>, G§4-<n>, Gm<n> and Gs<n>.
+- `secondary-results/style-methods-20261112/round1/gpt.txt`, the style-only read. Its eight ranked changes are rows St1
+  to St8, and its line-level fixes are Stp<n> (paper) and Sts<n> (Supplement).
+
+Classes and rules are as at the top of this file. **Lane:** "paper" is director-helper-3 (paper_body.tex,
+main_paper.tex, make_values). "Supp" is journal-editor (supplemental_body.tex prose, since the hand-off at 60d14439).
+
+**The L numbers** are director-helper-2's `lrows-g/` (PR #1102, a0e504d0, not yet merged): cp_intervals.json
+`73e25db3`, geant_share.json `4d93b3c9`, rounding_decomp.json `46c6f8f3`, reconcile.json `ecdb66a2`.
+
+**The director's rulings of 2026-11-12, already given:**
+- St1: the abstract is restructured as application, benchmark, findings, interpretation.
+- St8: out of scope.
+- St6: the terminology.
+- St4: the §6.1 study-summary table, if it replaces prose.
+- St7: Fig. 2's caption.
+- D2: "no effect" becomes "no detected change".
+- D3: "valid" becomes "passes this rule".
+
+## Majors
+
+| # | Request | Class | Source / inputs / cost | Proposed resolution | Lane | Misreading? |
+|---|---|---|---|---|---|---|
+| G1.1 | A compact specification of the two reported estimators, then a test-to-estimator map | T | Table 2 (paper); journal-editor's new S4 configuration table (tab:configs, step 2); Table S9's Estimator column | The paper's §3.1 opens with the common procedure and the two reported configurations, pointing to tab:configs for the full map (= Gs3) | paper + Supp | no |
+| G1.2 | For the headline setting scans: the tested levels, ρ and total bias at each, and the noise thresholds | L (local) | FD-PRR's committed readout (the prr keys; tab:prr-rho holds IBU's). Levels per factor are keys prr-nlev-*. 0 node-h | A table in S8.2 of level, ρ, RMS bias and threshold per factor and truth, keyed through make_values | Supp (table), paper (keys) | no |
+| G2.1 | Resolve the GEANT4 neutron and proton mismatch with matched single-band controls, or isolate it and quantify its effect on the reported covariance | L, the quantification (done); the mechanism study is **declined** (Joseph, 2026-11-12) | geant_share.json (`4d93b3c9`). Both bands' share of the reported covariance's diagonal: median 0.02 %, at most 0.21 % (R08). Removing both lowers the reported σ by a median 0.01 %, at most 0.11 %. Dropping them from the bias tests' χ² raises it by at most +0.57 (+1.8 % relative), and no graded truth's \|z\| > 2 cell list changes. The χ² is reproduced to 0.76 % on the graded truths, because only N_T's diagonal is committed. The channel split (#1081) is not used | **Joseph rules whether it prints.** If yes, one sentence in §6.2 and S8.4: "an unresolved implementation property, whose two bands contribute at most 0.21 % of any cell's variance in the reported covariance" | paper + Supp | no |
+| G2.2 | Say what each side holds fixed: truth, reco sample, nominal simulation, background, normalization, resampling, configuration | T | S8.4 "What each side does" (F2.1, the director's record-true wording; GEANT-NP-REFEREE-MAP.md) | Partly in place. Add "the estimator configuration is (e) on both sides" and "both subtract the varied truth" if the referee map states it, else nothing | Supp | partly: S8.4 already lists the operations |
+| G2.3 | "300 shared by the readings" (Table S10) against "300 in each variant" (§6.2): common random numbers, or identical pseudo-data? | T | LL5D-DECLARATION.md :170-172 (both readings consume identical random streams; the primary reading drops the two bands' universes from the composition), :254 (shared toy seeds), :550 (600 toys per truth, 300 per reading) | Table S10 row 10: "300 per tune in each reading, drawn with the same random streams". §6.2: "the primary reading leaves the two bands out of both its pseudo-data and its covariance". Both statements are true, so this is a wording fix | Supp (S10), paper (§6.2) | partly: both statements hold |
+| G3.1 | For each final test: expected content, observed count, threshold, clipping qualification, and an interval on the observed fraction | L (done) + T | cp_intervals.json (`73e25db3`): joint 0/300 at both tunes, CP 95 % [0, 0.0122], against a null content of 0.692 (AR23) and 0.697 (G18). Flagged cells: AR23 29, 164/300 [0.488, 0.604]; AR23 56 and G18 29, 148/300 [0.435, 0.551]. The cells' null contents are 0.684 to 0.687 | Table 5 (or its caption) gains the null content and the CP interval for the joint fraction and the flagged cells, keyed. The weakened-by-clipping counts are already in S8.3 | paper (Table 5) | no |
+| G3.2 | Controls: does the covariance describe the ensemble at nominal truth and group by group before the unfamiliar-truth term? | T | COV2D: "spread alone, against C_T without C_model" (OUTCOME-20261108 §3: median p̂ 0.673 and 0.653). The per-group draws reproduce within 10 % in σ (S8.4 :833, the first test's pre-check) | One sentence in §6.2 naming the spread-alone readout, and the per-group check where it exists | paper | partly: the readouts exist |
+| G3.3 | Sensitivity of the conclusion to finite covariance estimation (eigensolver agreement is not precision) | A, unpriced; T meanwhile | — | T: one sentence in §7.1's calibration group saying finite-ensemble precision of C_T was not estimated <!-- absence-ok: proposes a scope sentence for an unpriced analysis; not a claim about the records --> For an A arm, the director prices it | paper | no |
+| G3.4 | Read the pending result conditionally (five outcomes) | T, done | The ll5d variants (V-L1 to V-L3); F2.3's repaired/continued clause | Already implemented | — | yes: already implemented |
+| G4 | A direct sensitivity study of the equal-weight regression for unreconstructed events | A | **RSN's WR and WU arms** | Limitation 8 stays until they run | RSN | no |
+| G5 | C_model: robustness to gating, pooling, truncation and target, or consistently "recovery of these constructed deformations" | A + T | **RSN's G6, SM and TR arms** | T now: a sweep of the paper so every generator-derived truth reads as the specified construction, which the referee accepts as an alternative. The hydrogen clause already makes no model-agreement claim | RSN (A), paper (T) | no |
+| G6 | ρ is not a mechanism or a ranking: lead with the full bias results, call ρ a directional summary, and use "no change detected" | T | Table 4 (tab:prr-rho) | §5.3 leads with Table 4's RMS bias and χ², then ρ as a directional summary. "Consistent with a share specific to the implementation" is softened to "the tested settings change this projection; the cause of the total residual is not established". "No effect" becomes "no detected change" (D2). LISTED_CLAIMS anchors in §5.3 must be checked first | paper | no |
+| G7.1 | Present the reporting-cell and finer-grid stability results separately | T | §6.1 | St4's study-summary table (ruling 4) | paper | no |
+| G7.2 | How much the statistical covariance changes with and without the jitter | L (diagonal done); L (pscratch) for the off-diagonals | rounding_decomp.json (`46c6f8f3`), under R0b's additivity: the jitter is a median 26.2 % (14.9–67.0 %) of each cell's bootstrap variance. Without it the bootstrap σ falls by a median 14.1 % (7.7–42.6 %), and the reported σ by a median 0.009 % (at most 0.048 %). Off-diagonals: I0 kept per-cell spreads only. Either a 0 node-h login read of the 20 data-jitter unfolds, if they survive on pscratch, or a bootstrap rerun without jitter (priced in lrows-g G3) | §3.2 gains the decomposition in one sentence (keys from rounding_decomp.json). **For the director:** the off-diagonal read | paper | no |
+| G7.3 | Sensitivity to the perturbation prescription | T or A | The law is in §3.2 (F6.2) | T: name the law, and state that other prescriptions were not tested <!-- absence-ok: proposes a scope sentence; RS1-DECLARATION is the record to check before printing it --> after checking RS1-DECLARATION for any other scale | paper | no |
+| G7.4 | A scientific assessment of the ensemble trade-off | T | ens1 keys (F6.3 already prints the two RMS values) | One sentence: the practical cost (an RMS bias difference of 0.0005, about 1 %) against the stability gain. Six decimals go to the Supplement (= Gm8) | paper | partly: the numbers are printed |
+| G8.1 | A run-period figure of reconstructed and unfolded double ratios, with a consistent reference | L (local, 0 node-h; about 2–3 h) | lrows-g G4: all products are committed. Unfolded: period-unfold analysis.json (`05edff61`) and RE-2's partc-r2 periods analysis.json (`2ce5d5da`, the reported 2D configuration). Reco: work_proxy.npz on this branch (`42ce788b`) for the same P_A/P_B/P_C groups | **For the director:** a figures-lane producer, two panels (reco, unfolded) by p_∥ for P_B/P_A and P_C/P_A, on the RE-2 products, with the reference stated in the caption | figures | no |
+| G8.2 | An account of the checks on exposure, selection, backgrounds, flux and response | T | The note's period records (S5 carries the block); period-unfold REPORT.md | A short S5 paragraph listing what was checked and what remains unknown, each with its record | Supp | no |
+| G8.3 | Deposit the release; products to reproduce the headline diagnostics | X | — | Joseph's | Joseph | no |
+<!-- absence-ok: G rows' "not estimated", "not tested" and "until they run" scope proposed sentences and pending arms; each names the record to check first -->
+
+## The report's §4 rows marked (a)
+
+| Row | Class | Resolution |
+|---|---|---|
+| (a) The neutron and proton band mismatch | = G2.1 | L done; Joseph rules on printing; the mechanism study is declined |
+| (a) The equal-weight regression | = G4 | A: RSN's WR and WU |
+| (a) The 2D universes' approximate weighting of misses | A | **COV2D-G2R** |
+| (a) The undeposited release and access to the evidence | X (= G8.3) | Joseph's; the T part is G1.2, G3.1 and G8.1 |
+
+## Minors
+
+| # | Request | Class | Resolution | Lane |
+|---|---|---|---|---|
+| Gm1 | Reduce repeated qualification | T | The style pass (= St3): each limitation stated in full once, at its inference, with pointers elsewhere, plus the abstract and §7 | paper + Supp |
+| Gm2 | "Valid" → "passes this rule" | T (D3) | Paper: already "pass" (Table 2 :180, §5.4 :322); only the keys' names say valid. **#981's Q19 ("Fourteen cells are valid under it; R02 and R06 fail") is a protected quote:** journal-editor has taken it to the director | paper + Supp |
+| Gm3 | "No detected change" for a thresholded non-detection | T (D2) | The keys keep their names. The printed class label changes in make_values (mine), and the paper's Table 4 and §5.3 in the same commit. journal-editor matches S8.2 and Table S10 | paper + Supp |
+| Gm4 | §5.3's "Its root-mean-square bias": name IBU | T | Name IBU | paper |
+| Gm5 | "No learner setting was tuned on data" against the data-informed choices: explain once | T | One sentence where §4.1 qualifies the benchmark (= Gs3's move) | paper |
+| Gm6 | Reconcile 6.94 ± 0.41 % with 6.89 ± 0.46 %, and 9 % with 16 % | T | reconcile.json (`ecdb66a2`): the paper's :233 prints the pre-RE-2 period unfold (period-unfold analysis.json); the Supplement's :500 prints RE-2's refined regeneration (partc-r2, the reported 2D configuration), as the note does. **The paper switches to +(6.89 ± 0.46) %**, keyed, with that record. 9–31 % is over supported cells (rec-w-supmax) and 16–31 % over all cells (s5e-shapes-ewmax; W2's 16.4 % is the unsupported EW37). Table S10 row 2 names its population ("over all cells") | paper + Supp |
+| Gm7 | Configuration ambiguities in S4 | T | journal-editor's step 2 (S4 restructure) | Supp |
+| Gm8 | False precision: six decimals in the narrative | T | §6.1 prints the practical difference. The exact values stay in S8. Rounded keys come from make_values from the same readout, and **the director rules on adding them** | paper |
+| Gm9 | "Usage-recommendation rule" and status labels | T | = St5 | paper + Supp |
+| Gm10 | Fig. 4's pointer to Fig. S3; Fig. 2 as small multiples | T | Fig. 4's caption (:395) cites Fig. S3 for the support rule. The pass checks where the rule is defined (the referee reads S3 as the prior-sensitivity figure) and points there. Small multiples is a figure redesign: **for the director** (the figures lane; fig:deformation's producer) | paper / figures |
+
+## Structure
+
+| # | Request | Class | Resolution / conflict | Lane |
+|---|---|---|---|---|
+| Gs1 | The introduction states the final implementation's status before listing the tests; the abstract leads with the three findings | T | Intro paragraph order; the abstract = St1 | paper |
+| Gs2 | §2: the sixteen cells in one bounded subsection; the "fine grid is the analysis binning" paragraph moves to test design or the Supplement | T | The paragraph moves to §3.3 (test design), with a one-line pointer in §2 | paper |
+| Gs3 | §3.1: the final estimator first; the data-informed-choices paragraph moves to §4.1 | T, **conflict** | The recheck round (Fs2a) settled a compromise: one disclosure sentence in §3.1. This round asks for the full move. Proposed: move it to §4.1's opening and keep a half-sentence pointer in §3.1. For the director | paper |
+| Gs4 | §3.2: lead with a covariance map; move the run-period size interval and construction details to S5; the empirical run-period evidence to §4.3 | T | A compact list or table of the blocks, each with its physical meaning and omissions. The 0.73–2.56 interval to S5 (a Supplement merge with journal-editor) | paper + Supp |
+| Gs5 | §5: observation before interpretation; consolidate the screening-rule paragraph; §5.3's classification machinery to S8.2; merge the GiBUU and q3 paragraphs; lead with Table 4 | T | As G6. The LISTED_CLAIMS anchors in §5.2 and §5.3 are checked before any merge | paper + Supp |
+| Gs6 | §6.1: reproducibility, then the sixteen-cell scale, then the finer-grid failure, then covariance treatment, mechanism and mitigation. Delete the "next sentences concern" scaffolding; split the mechanism paragraph | T, **protected** | **RS1's paragraph (the mechanism study) is a protected span** (check_restyle), so it cannot be split. Proposed: keep it verbatim and move the scope and candidate-cause material around it into separate short paragraphs. The B0 sentences keep their "quoted above" order. For the director | paper |
+| Gs7 | §6.2: the common definition, then the 2D result, then the final five-observable design and outcome; the staged chronology to S8.4; split "These are conditional tests" | T | Reorder and split; the chronology already moved in F | paper + Supp |
+| Gs8 | §7 and §7.1 overlap; the hadronic-origin proposal shrinks to one sentence; general checks separated from implementation-specific criteria | T | Regroup | paper |
+| Gs9 | Rebalance: the scan settings (G1.2), run-period evidence (G8) and controls in; superseded configurations out of S4; combine S7's repeated paragraphs; the unused prior-spread rule out of S10; consider moving S17 and the correlation-perturbation studies | T | journal-editor (steps 1–2 under way). The prior-spread rule is Q09-adjacent (#981), so journal-editor has it with the director | Supp |
+| Gs10 | Placement at first use: Table 1 in §2, Fig. 1 in §4.1, Fig. 2 in §5.1, Fig. 3 with Table 3 in §5.2, Table 4 in §5.3, Table 5 in §6.2; Fig. S2 in S6; Fig. S4 in S9 | T (layout) | Float positions in the source, checked in the PDF. Fig. S2 has moved within S6 (journal-editor's step 1) | paper + Supp |
+
+## The style-only round 1 (6/10)
+
+| # | Change | Class | Resolution | Lane |
+|---|---|---|---|---|
+| St1 | The abstract: application → benchmark → findings → interpretation | T (ruled) | Restructured on its example. The pending-test clause stays the variant group, at most 250 words in every case. The abstract read comes first | paper |
+| St2 | The final method separate from its history (§§3.1, 6.1–6.2; S4, S8.4) | T | = Gs3, Gs6, Gs7 in the paper; journal-editor's S4 and S8.4 | paper + Supp |
+| St3 | Consolidate qualifications | T | = Gm1 | paper + Supp |
+| St4 | One function per paragraph; tables carry inventories (§§3.2, 5.2, 6.1–6.2, 7) | T (ruled) | §5.2's three-covariance walk-through goes to its example's three sentences, with Table 3 carrying the rest. §6.1's study-summary table replaces the population and ensemble prose | paper |
+| St5 | Direct descriptions in place of labels; define ρ before its first use; trim Table 2's status key | T | Labels such as "increases" become statements ("Lower capacity raises the retained fraction"), keeping the class keys. Table 2's key lists only the statuses the rows use (St8's pending statuses stay while LL5D is pending) | paper |
+| St6 | Terminology and notation | T (ruled) | "Diagonal fraction" everywhere (S3's "reconstruction stability" is journal-editor's). The recovered fraction becomes ψ, agreed with journal-editor; the paper names it in words. C_model is marked fractional or dimensional. "Withheld shapes" and "held-out tunes" are each defined once (§3.3) | paper + Supp |
+| St7 | Shorter captions; S7's duplicate | T (ruled) | Fig. 2: the derivation moves to supp:recovery, leaving one clause (a Supplement insertion, coordinated with journal-editor). S7's duplicate is journal-editor's | paper + Supp |
+| St8 | [PENDING] placeholders | out of scope (ruled) | They resolve with LL5D's fill | — |
+| Stp1–Stp8 | The eight paper line fixes: §3.1 universe sentence; §4.2 "Two comparisons compare"; §4.2's iteration-scan sentence (the scan to the Supplement); §5.2's fragment; §5.3 IBU (= Gm4); §5.3 GiBUU/q3 merge (= Gs5); §6.1 scaffolding (= Gs6); Fig. 4's S3 pointer (= Gm10) | T | Each in the sentence pass | paper |
+| Sts1–Sts8 | The Supplement line fixes | T | journal-editor's | Supp |
+
+## For the director before the text pass
+
+1. **The L prices:**
+   - G7.2's off-diagonal read (0 node-h login, if the J products survive);
+   - G8.1's figure (local, figures lane, about 2–3 h);
+   - G3.3, unpriced.
+2. **G2.1:** whether the GEANT quantification prints. That is Joseph's call, so the sentence is held.
+3. **Moves that cut or conflict:**
+   - Gs3, the full move of the data-informed-choices paragraph against Fs2a's compromise;
+   - Gs6, RS1's protected paragraph;
+   - Gm6, the paper's period step switching from 6.94 ± 0.41 to RE-2's 6.89 ± 0.46;
+   - Gm8, rounded ensemble keys;
+   - Gm10, Fig. 2 as small multiples.
+4. **The order:** structure moves first (Gs1–Gs8, Gs10, St4, St5, G6), then the abstract (St1) with its read, then the sentence pass.
