@@ -596,86 +596,69 @@ In the noise-free comparison of the joint cells, an exact binned iterative unfol
 % Every number is a key (make_values groupb_values, B1). Row 1's counts are keys from Q's records (cov2d_block_values): 185 universes in 43
 % bands, by the director's ruling of 2026-11-10 (option (i)); the 187 printed before was the July sweep's count, Rvp1pi included (ledger, group C). Row 9's result is the paper's section 6.2
 % sentence (the director's ruling 5). Row 10's result is tab:outcomes' LL5D group, copied, so it fills from the same keys.
-Tables~\ref{tab:tests-spec} and~\ref{tab:tests-spec2} specify each headline test, and Tables~\ref{tab:tests-result} and~\ref{tab:tests-result2} give its statistic, threshold and result, in the same order. ``The estimator'' is configuration~(e), the reported five-observable estimator; ``2D'' is the two-dimensional estimator, and IBU-$n$ is IBU at $n$ iterations. ``Half split'' means that the pseudo-data are drawn from one half of the simulation and unfolded with the other half as the unfolding simulation. The superseded test of a two-dimensional statistical band at a fixed truth is in \nsec{sec:coverage}.
+Table~\ref{tab:tests-spec} specifies each headline test, and Table~\ref{tab:tests-result} gives its statistic, threshold and result, in the same order. ``The estimator'' is configuration~(e), the reported five-observable estimator; ``2D'' is the two-dimensional estimator, and IBU-$n$ is IBU at $n$ iterations. ``Half split'' means that the pseudo-data are drawn from one half of the simulation and unfolded with the other half as the unfolding simulation. The superseded test of a two-dimensional statistical band at a fixed truth is in \nsec{sec:coverage}.
 
-\begin{table}[p]
-\centering
-\caption{The headline tests 1--5: what each tests and how it is built.}
-\label{tab:tests-spec}
-\vspace{4pt}
-\footnotesize\setlength{\tabcolsep}{3pt}
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.16\textwidth}>{\raggedright\arraybackslash}p{0.13\textwidth}>{\raggedright\arraybackslash}p{0.17\textwidth}>{\raggedright\arraybackslash}p{0.14\textwidth}>{\raggedright\arraybackslash}p{0.16\textwidth}>{\raggedright\arraybackslash}p{0.17\textwidth}@{}}
+% Tables S9-S12 merged into two (Joseph's read of 800579be, via the director, 2026-11-12): full-width, \small, X columns,
+% cell lists as comma-separated phrases. Each runs past a page even at \footnotesize, so each is an xltabular that breaks
+% across pages with its header repeated, in the text flow (a float that size takes whole pages; afterpage-landscape
+% reordered the table numbers). Every key, group and case is carried unchanged; row 9's
+% result is the paper's section 6.2 sentence and row 10's the LL5D group, both verbatim.
+\begingroup\small\setlength{\tabcolsep}{3pt}\setlength{\LTcapwidth}{\textwidth}
+\begin{xltabular}{\textwidth}{@{}>{\raggedright\arraybackslash\hsize=0.78\hsize}X>{\raggedright\arraybackslash\hsize=0.88\hsize}X>{\raggedright\arraybackslash\hsize=1.2\hsize}X>{\raggedright\arraybackslash\hsize=0.98\hsize}X>{\raggedright\arraybackslash\hsize=0.96\hsize}X>{\raggedright\arraybackslash\hsize=1.2\hsize}X@{}}
+\caption{The headline tests: what each tests and how it is built.}\label{tab:tests-spec}\\
 \toprule
 Test & Estimator & Truth(s) & Simulation & What is varied & Repetitions \\
 \midrule
-1. Two-dimensional benchmark & 2D & the data & the full simulation & --- (comparison with the published result) & covariance from \fvval{cov2d-nuniv} universes in \fvval{cov2d-nunivbands} bands plus the normalization, \fvval{cov2d-nstat} bootstrap replicas, \fvval{cov2d-nperiod-word} period groups, \fvval{cov2d-nseed-word} seed settings \\ \addlinespace
-2. Closure, generator-sized changes and the $q_3$ stress tilt & the estimator & the simulation's prior\newline GiBUU-to-GENIE and NuWro $\Eavail$ shapes, GENIE + MEC $(\Eavail,W)$ shape, NuWro $(\pT,\pPar,\Eavail)$ shape\newline the $q_3$ tilt & half split & the truth & \fvval{s5e-nom-n} at the prior, \fvval{s5e-shape-n} at each changed truth \\ \addlinespace
-3a. Fake-data bias on the sixteen cells & the estimator & the \fvval{f0b-all-truths} graded truths & half split & the truth & \fvval{f0b-nominal-n} at the prior\newline \fvval{f0b-W1-n} at each of four shape changes and the $q_3$ tilt\newline \fvval{f0b-A7_gibuu-n} at each of five hybrids\newline one noise-free closure \\ \addlinespace
-3b. Held-out tunes & the estimator & \fvval{f1-tune-g18}, \fvval{f1-tune-ar23} & half split & the truth & \fvval{f1-n} at each, and a noise-free closure \\ \addlinespace
-4. Prior retention & the estimator\newline IBU & the GiBUU hybrid truth and the $q_3$ tilt & half split, noise-free\newline four more splits for the noise floor & one factor at a time: iterations (\fvval{prr-nlev-iter} levels), capacity (\fvval{prr-nlev-cap}), training statistics (\fvval{prr-nlev-stat}), observables (\fvval{prr-nlev-obs})\newline IBU iterations & one noise-free unfold per level and truth \\ \addlinespace
-5. Algorithm dependence & the estimator against IBU-5\newline 2D against IBU-10\newline the estimator on the 2D inputs & the data & the same simulation, template and weight-only universes on both sides & the unfolding algorithm & \fvval{ibu16-nrep} paired replicas and the paired universes (sixteen cells)\newline \fvval{c2c1-nrep} paired replicas (two-dimensional IBU)\newline \fvval{c1-nrep} (the estimator in two dimensions) \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\begin{table}[p]
-\centering
-\caption{The headline tests 6--10: what each tests and how it is built.}
-\label{tab:tests-spec2}
-\vspace{4pt}
-\footnotesize\setlength{\tabcolsep}{3pt}
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.16\textwidth}>{\raggedright\arraybackslash}p{0.13\textwidth}>{\raggedright\arraybackslash}p{0.17\textwidth}>{\raggedright\arraybackslash}p{0.14\textwidth}>{\raggedright\arraybackslash}p{0.16\textwidth}>{\raggedright\arraybackslash}p{0.17\textwidth}@{}}
+\endfirsthead
+\multicolumn{6}{@{}l}{Table~\thetable, continued}\\
 \toprule
 Test & Estimator & Truth(s) & Simulation & What is varied & Repetitions \\
 \midrule
-6. Bias against half the departure & the estimator & the \fvval{f0b-all-truths} graded truths, where $|d_c|\geq\SI{1}{\percent}$ & bias from 3a\newline departure from 4's noise-free split & the truth & as 3a\newline the departure's noise from five splits \\ \addlinespace
-7. Stability and the ensemble & the estimator\newline cross-fitting and two tree regularizations\newline the average of \fvval{ens1-n} fits & the data (estimator)\newline a GiBUU-to-GENIE $\Eavail$ shape in simulation (variants, ensemble) & half split for the simulated input & rounding-level perturbations of the inputs & two perturbations of the data\newline \fvval{stab-npairs} disjoint perturbation pairs (variants)\newline \fvval{ens1-pairs} pairs (ensemble) \\ \addlinespace
-8. Two-dimensional coverage & 2D & \fvval{f1-tune-g18}, \fvval{f1-tune-ar23} & pseudo-experiments drawn from the full simulation's universes, unfolded with the nominal simulation & systematic universes, Poisson counts, lateral signs, normalization & \fvval{cov2d-ntoys} per tune \\ \addlinespace
-9. First five-observable coverage test & the estimator & \fvval{f1-tune-g18}, \fvval{f1-tune-ar23} and a plug-in truth & as 10 & as 10 & \fvval{fd1b-ntoys} per truth, specified in advance \\ \addlinespace
-10. Second five-observable coverage test & the estimator & \fvval{f1-tune-g18}, \fvval{f1-tune-ar23} & pseudo-experiments drawn from the full simulation's universes, unfolded with the nominal simulation, which is resampled & as 8\newline two readings, without and with the GEANT neutron and proton bands & \fvval{null-ntoys} per tune, shared by the readings \\
+\endhead
 \bottomrule
-\end{tabular}
-\end{table}
+\endlastfoot
+1. Two-dimensional benchmark & 2D & the data & the full simulation & --- (comparison with the published result) & covariance from \fvval{cov2d-nuniv} universes in \fvval{cov2d-nunivbands} bands plus the normalization, \fvval{cov2d-nstat} bootstrap replicas, \fvval{cov2d-nperiod-word} period groups, \fvval{cov2d-nseed-word} seed settings \\
+2. Closure, generator-sized changes and the $q_3$ stress tilt & the estimator & the simulation's prior, GiBUU-to-GENIE and NuWro $\Eavail$ shapes, a GENIE + MEC $(\Eavail,W)$ shape, a NuWro $(\pT,\pPar,\Eavail)$ shape, the $q_3$ tilt & half split & the truth & \fvval{s5e-nom-n} at the prior, \fvval{s5e-shape-n} at each changed truth \\
+3a. Fake-data bias on the sixteen cells & the estimator & the \fvval{f0b-all-truths} graded truths & half split & the truth & \fvval{f0b-nominal-n} at the prior, \fvval{f0b-W1-n} at each of four shape changes and the $q_3$ tilt, \fvval{f0b-A7_gibuu-n} at each of five hybrids, one noise-free closure \\
+3b. Held-out tunes & the estimator & \fvval{f1-tune-g18}, \fvval{f1-tune-ar23} & half split & the truth & \fvval{f1-n} at each, and a noise-free closure \\
+4. Prior retention & the estimator and IBU & the GiBUU hybrid truth and the $q_3$ tilt & half split, noise-free, four more splits for the noise floor & for the estimator, one factor at a time: iterations (\fvval{prr-nlev-iter} levels), capacity (\fvval{prr-nlev-cap}), training statistics (\fvval{prr-nlev-stat}), observables (\fvval{prr-nlev-obs}). For IBU, its iterations & one noise-free unfold per level and truth \\
+5. Algorithm dependence & the estimator against IBU-5, 2D against IBU-10, the estimator on the 2D inputs & the data & the same simulation, template and weight-only universes on both sides & the unfolding algorithm & \fvval{ibu16-nrep} paired replicas and the paired universes (sixteen cells), \fvval{c2c1-nrep} paired replicas (2D against IBU-10), \fvval{c1-nrep} (the estimator on the 2D inputs) \\
+6. Bias against half the departure & the estimator & the \fvval{f0b-all-truths} graded truths, where $|d_c|\geq\SI{1}{\percent}$ & bias from 3a, departure from 4's noise-free split & the truth & as 3a, with the departure's noise from five splits \\
+7. Stability and the ensemble & the estimator. Variants: cross-fitting and two tree regularizations. Ensemble: the average of \fvval{ens1-n} fits & the data (estimator), a GiBUU-to-GENIE $\Eavail$ shape in simulation (variants, ensemble) & half split for the simulated input & rounding-level perturbations of the inputs & two perturbations of the data, \fvval{stab-npairs} disjoint perturbation pairs (variants), \fvval{ens1-pairs} pairs (ensemble) \\
+8. Two-dimensional coverage & 2D & \fvval{f1-tune-g18}, \fvval{f1-tune-ar23} & pseudo-experiments drawn from the full simulation's universes, unfolded with the nominal simulation & systematic universes, Poisson counts, lateral signs, normalization & \fvval{cov2d-ntoys} per tune \\
+9. First five-observable coverage test & the estimator & \fvval{f1-tune-g18}, \fvval{f1-tune-ar23} and a plug-in truth & as 10 & as 10 & \fvval{fd1b-ntoys} per truth, specified in advance \\
+10. Second five-observable coverage test & the estimator & \fvval{f1-tune-g18}, \fvval{f1-tune-ar23} & as 8, with the nominal simulation resampled & as 8, in two readings, without and with the GEANT neutron and proton bands & \fvval{null-ntoys} per tune, shared by the readings \\
+\end{xltabular}
+\endgroup
 
-\begin{table}[p]
-\centering
-\caption{The headline tests 1--5: statistic, threshold and result. Thresholds were fixed before the results were read, except where the test is descriptive.}
-\label{tab:tests-result}
-\vspace{4pt}
-\footnotesize\setlength{\tabcolsep}{3pt}
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.16\textwidth}>{\raggedright\arraybackslash}p{0.26\textwidth}>{\raggedright\arraybackslash}p{0.24\textwidth}>{\raggedright\arraybackslash}p{0.27\textwidth}@{}}
+\begingroup\small\setlength{\tabcolsep}{3pt}\setlength{\LTcapwidth}{\textwidth}
+\begin{xltabular}{\textwidth}{@{}>{\raggedright\arraybackslash\hsize=0.72\hsize}X>{\raggedright\arraybackslash\hsize=0.96\hsize}X>{\raggedright\arraybackslash\hsize=0.83\hsize}X>{\raggedright\arraybackslash\hsize=1.49\hsize}X@{}}
+\caption{The headline tests: statistic, threshold and result. Thresholds were fixed before the results were read, except where the test is descriptive.}\label{tab:tests-result}\\
 \toprule
 Test & Statistic & Threshold & Result \\
 \midrule
-1. Two-dimensional benchmark & ratio of integrated cross sections, 2D to published\newline $\chi^2/\mathrm{ndf}$ against the published result under its covariance (ndf $=205$) & none (descriptive) & ratio $\ratioTot$\newline $\chi^2/\mathrm{ndf}=\chiPaper$ \\ \addlinespace
-2. Closure, generator-sized changes and the $q_3$ stress tilt & $|t|$ of the mean residual of each of \fvval{s5e-nquant} quantities\newline the largest $(\Eavail,W)$ residual & at the prior, no $|t|>\fvval{s5e-tcrit}$\newline changed truths descriptive & prior: largest $|t|=\fvval{s5e-nom-tmax}$, largest $(\Eavail,W)$ residual \SI{\fvval{s5e-nom-ewmax}}{\percent}\newline changed truths: largest $(\Eavail,W)$ residual \SIrange{\fvval{s5e-shapes-ewmax-lo}}{\fvval{s5e-shapes-ewmax-hi}}{\percent} (three shapes), \SI{\fvval{s5e-q3-ewmax}}{\percent} ($q_3$ tilt), \SI{\fvval{s5e-gibuu-ewmax}}{\percent} (GiBUU-to-GENIE $\Eavail$) \\ \addlinespace
-3a. Fake-data bias & $\chi^2_{16}$ of the mean bias against the reported covariance, without the truth's own $C_{\mathrm{model}}$ component, plus the noise of the mean\newline per-cell $z$ & flagged if $p<\fvval{trig-p}$ or any $|z|>\fvval{trig-z}$ & flagged: the GiBUU hybrid truth and the $q_3$ tilt \\ \addlinespace
-3b. Held-out tunes & as 3a, against the full reported covariance & as 3a & $\chi^2=\fvval{f1-g18-chi2int}$ at \fvval{f1-tune-g18} and \fvval{f1-ar23-chi2int} at \fvval{f1-tune-ar23}, for 16 degrees of freedom\newline none flagged \\ \addlinespace
-4. Prior retention & retained fraction $\rho$ (Sec.~\ref{supp:prr}) & a level changes $\rho$ if it moves it by at least $\max(\fvval{prr-floor},\,\fvval{prr-tq}\,s)$, with $s$ the paired difference's spread over five splits & \fvgroup{prr}{a reduced setting (\fvval{prr-pr1-reduced-kinds}) raises $\rho$ by more than the threshold, class \emph{increases}: \fvval{prr-pr1-increases}\newline no effect: \fvval{prr-pr1-noeffect}\newline every higher iteration count and capacity lowers $\rho$, by at most \fvval{prr-more-dmax}}\newline IBU at five iterations: $\rho<0$ at both truths, an overshoot along the prior-to-truth direction (Table~\ref{tab:prr-rho}) \\ \addlinespace
-5. Algorithm dependence & $T=\Delta^{\top}C_\Delta^{-1}\Delta$ (sixteen cells)\newline $T_\delta$ with a rank-truncated pseudo-inverse (two dimensions) & sixteen cells: the null's 95th and 99.7th percentiles, \fvval{ibu16-q95} and \fvval{ibu16-q997}\newline two dimensions: the leave-one-out null's 95th percentile and maximum & sixteen cells: $T=\fvval{ibu16-T}$, differ\newline 2D IBU: $T_\delta=\fvval{c2c1-T}$ against a maximum of \fvval{c2c1-max}, differ\newline the estimator in 2D: \fvval{c1-T} against \fvval{c1-q95}, no difference detected \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\begin{table}[p]
-\centering
-\caption{The headline tests 6--10: statistic, threshold and result, as in Table~\ref{tab:tests-result}.}
-\label{tab:tests-result2}
-\vspace{4pt}
-\footnotesize\setlength{\tabcolsep}{3pt}
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.16\textwidth}>{\raggedright\arraybackslash}p{0.26\textwidth}>{\raggedright\arraybackslash}p{0.24\textwidth}>{\raggedright\arraybackslash}p{0.27\textwidth}@{}}
+\endfirsthead
+\multicolumn{4}{@{}l}{Table~\thetable, continued}\\
 \toprule
 Test & Statistic & Threshold & Result \\
 \midrule
-6. Bias against half the departure & $|b_c|$ against $0.5\,|d_c|$ at each applicable truth & valid if every applicable pair passes\newline unresolved if a pair's class changes within its noise band & \fvgroup{vhalf}{\fvval{vhalf-n-valid} of 16 valid, \fvval{vhalf-n-notvalid} not valid, \fvval{vhalf-n-notassessed} not assessed, \fvval{vhalf-n-unresolved} unresolved} \\ \addlinespace
-7. Stability and the ensemble & median and maximum, over \fvval{s5e-nquant} quantities, of the shift in statistical standard deviations & median $\leq\fvval{ens1-bar-median}$, maximum $\leq\fvval{ens1-bar-max}$ & estimator on the data: \fvval{s5e-round-median} and \fvval{s5e-round-max}, fails\newline no variant passes\newline ensemble: \fvval{ens1-median} and \fvval{ens1-max}, passes, but is worse in bias at one of \fvval{ens1-ntruths} truths and is not adopted \\ \addlinespace
-8. Two-dimensional coverage & per cell, the count of errors with $|e_c|\leq\sigma_c$\newline jointly, the count with $\chi^2\leq F^{-1}_{\chi^2_n}(P_0)$ & one-sided binomial against the draw-matched null: $\fvval{null-alpha}/205$ per cell, \fvval{null-alpha} jointly & under-covers at both tunes: no pseudo-experiment of \fvval{cov2d-ntoys} lies in the joint region at either tune\newline \fvval{cov2d-nflags-ar23} cells flagged at \fvval{f1-tune-ar23} (cells \fvval{cov2d-flags-ar23}) and \fvval{cov2d-nflags-g18} at \fvval{f1-tune-g18} (cell \fvval{cov2d-flags-g18}) \\ \addlinespace
-9. First five-observable coverage test & as 10 & as 10 & no coverage result: a preliminary check, which compared pseudo-experiments that move only the detector response at fixed truth with blocks built from the prior and the response together, stopped it before any coverage pseudo-experiment ran, and a staged redesign stopped at its first stage under stopping rules fixed in advance \\ \addlinespace
+\endhead
+\bottomrule
+\endlastfoot
+1. Two-dimensional benchmark & ratio of integrated cross sections, 2D to published, and $\chi^2/\mathrm{ndf}$ against the published result under its covariance (ndf $=205$) & none (descriptive) & ratio $\ratioTot$, $\chi^2/\mathrm{ndf}=\chiPaper$ \\
+2. Closure, generator-sized changes and the $q_3$ stress tilt & $|t|$ of the mean residual of each of \fvval{s5e-nquant} quantities, and the largest $(\Eavail,W)$ residual & at the prior, no $|t|>\fvval{s5e-tcrit}$, changed truths descriptive & prior: largest $|t|=\fvval{s5e-nom-tmax}$, largest $(\Eavail,W)$ residual \SI{\fvval{s5e-nom-ewmax}}{\percent}. Changed truths: largest $(\Eavail,W)$ residual \SIrange{\fvval{s5e-shapes-ewmax-lo}}{\fvval{s5e-shapes-ewmax-hi}}{\percent} (three shapes), \SI{\fvval{s5e-q3-ewmax}}{\percent} ($q_3$ tilt), \SI{\fvval{s5e-gibuu-ewmax}}{\percent} (GiBUU-to-GENIE $\Eavail$) \\
+3a. Fake-data bias & $\chi^2_{16}$ of the mean bias against the reported covariance, without the truth's own $C_{\mathrm{model}}$ component, plus the noise of the mean. The per-cell $z$ & flagged if $p<\fvval{trig-p}$ or any $|z|>\fvval{trig-z}$ & flagged: the GiBUU hybrid truth and the $q_3$ tilt \\
+3b. Held-out tunes & as 3a, against the full reported covariance & as 3a & $\chi^2=\fvval{f1-g18-chi2int}$ at \fvval{f1-tune-g18} and \fvval{f1-ar23-chi2int} at \fvval{f1-tune-ar23}, for 16 degrees of freedom, none flagged \\
+4. Prior retention & retained fraction $\rho$ (Sec.~\ref{supp:prr}) & a level changes $\rho$ if it moves it by at least $\max(\fvval{prr-floor},\,\fvval{prr-tq}\,s)$, with $s$ the paired difference's spread over five splits & \fvgroup{prr}{a reduced setting (\fvval{prr-pr1-reduced-kinds}) raises $\rho$ by more than the threshold, class \emph{increases}: \fvval{prr-pr1-increases}. No effect: \fvval{prr-pr1-noeffect}. Every higher iteration count and capacity lowers $\rho$, by at most \fvval{prr-more-dmax}}. IBU at five iterations: $\rho<0$ at both truths, an overshoot along the prior-to-truth direction (Table~\ref{tab:prr-rho}) \\
+5. Algorithm dependence & $T=\Delta^{\top}C_\Delta^{-1}\Delta$ (sixteen cells), $T_\delta$ with a rank-truncated pseudo-inverse (two dimensions) & sixteen cells: the null's 95th and 99.7th percentiles, \fvval{ibu16-q95} and \fvval{ibu16-q997}. Two dimensions: the leave-one-out null's 95th percentile and maximum & sixteen cells: $T=\fvval{ibu16-T}$, differ. 2D IBU: $T_\delta=\fvval{c2c1-T}$ against a maximum of \fvval{c2c1-max}, differ. The estimator in 2D: \fvval{c1-T} against \fvval{c1-q95}, no difference detected \\
+6. Bias against half the departure & $|b_c|$ against $0.5\,|d_c|$ at each applicable truth & valid if every applicable pair passes, unresolved if a pair's class changes within its noise band & \fvgroup{vhalf}{\fvval{vhalf-n-valid} of 16 valid, \fvval{vhalf-n-notvalid} not valid, \fvval{vhalf-n-notassessed} not assessed, \fvval{vhalf-n-unresolved} unresolved} \\
+7. Stability and the ensemble & median and maximum, over \fvval{s5e-nquant} quantities, of the shift in statistical standard deviations & median $\leq\fvval{ens1-bar-median}$, maximum $\leq\fvval{ens1-bar-max}$ & estimator on the data: \fvval{s5e-round-median} and \fvval{s5e-round-max}, fails. No variant passes. Ensemble: \fvval{ens1-median} and \fvval{ens1-max}, passes, but is worse in bias at one of \fvval{ens1-ntruths} truths and is not adopted \\
+8. Two-dimensional coverage & per cell, the count of errors with $|e_c|\leq\sigma_c$, and jointly, the count with $\chi^2\leq F^{-1}_{\chi^2_n}(P_0)$ & one-sided binomial against the draw-matched null: $\fvval{null-alpha}/205$ per cell, \fvval{null-alpha} jointly & under-covers at both tunes: no pseudo-experiment of \fvval{cov2d-ntoys} lies in the joint region at either tune. Flagged cells: \fvval{cov2d-nflags-ar23} at \fvval{f1-tune-ar23} (cells \fvval{cov2d-flags-ar23}) and \fvval{cov2d-nflags-g18} at \fvval{f1-tune-g18} (cell \fvval{cov2d-flags-g18}) \\
+9. First five-observable coverage test & \multicolumn{3}{>{\raggedright\arraybackslash}p{0.81\textwidth}@{}}{Statistic and threshold as 10. No coverage result: a preliminary check, which compared pseudo-experiments that move only the detector response at fixed truth with blocks built from the prior and the response together, stopped it before any coverage pseudo-experiment ran, and a staged redesign stopped at its first stage under stopping rules fixed in advance} \\
 % Search: coverage of the sixteen-cell intervals; staged 1B coverage reading (OUTCOME-20261106-1b-stage1-receipt-stop.md: stage 1 ended, no coverage reading); COV2D readout (scope package sec. 5: not yet reported) @ 93741d58a (copied from the paper's section 6.2, whose sentence this row states)
 10. Second five-observable coverage test & as 8, on the sixteen cells & as 8, with $\fvval{null-alpha}/16$ per cell & \fvgroupalt{ll5d}{pending}{\fvgroup{ll5d}{\fvcase{ll5d-campaign}{graded}{primary, without the two bands: \fvval{f1-tune-g18}, \fvval{ll5d-g18-minus2}; \fvval{f1-tune-ar23}, \fvval{ll5d-ar23-minus2}. With them: \fvval{f1-tune-g18}, \fvval{ll5d-g18-all}; \fvval{f1-tune-ar23}, \fvval{ll5d-ar23-all}\fvcase{ll5d-route}{offset-proceeded}{. The run continued past a check by a later decision}\fvcase{ll5d-route}{repaired}{. The run was repaired after a stop}\fvcase{ll5d-anyover}{some}{. Some cells over-cover}}\fvcase{ll5d-campaign}{gate-failed}{Stopped at an entry condition fixed in advance, \fvval{ll5d-stop-what}}\fvcase{ll5d-campaign}{offset-stopped}{Stopped by a decision made after a check was exceeded}\fvcase{ll5d-campaign}{stop}{Stopped at a check fixed in advance, \fvval{ll5d-stop-what}}}} \\
-\bottomrule
-\end{tabular}
-\end{table}
+\end{xltabular}
+\endgroup
 
 % Referee recheck (gpt-6.1-sol, 2026-11-11; RESPONSE.md row (c) superseded band test): S9.1 (the note's sec:coverage paragraphs 0, 1, 2 and 10) removed; the note carries it at both release revisions.
 % Batch 3 (the interim round #1025, group A item 9, 2026-11-10): S9 reorganized into separately labelled studies; the fake-data paragraphs, the q3 tilt and the held-out tunes, and the eight-cell GiBUU reading, unchanged.
@@ -938,7 +921,7 @@ Weakening only the flux correlations by \fvval{sens-alpha-pct}\,\% lowers the $\
 % sensitivity, the "under both" count and the two-rule contrast removed; its one-line definition kept, because the
 % withholding sentence needs it. The note keeps V-PRIOR for now (check 12; ledger). The withholding sentence moved here from the
 % paper's section 5.4 (DECISION-20261110-joseph-confirm-round-scope.md, PR #1030), in journal-editor's item-3 wording.
-Two of the three per-cell bias-screening rules are defined here, the usage-recommendation rule (the first) and the prior-spread rule (the second); the third, the bias-half rule, is graded in the paper's section on per-cell validity and in Table~\ref{tab:tests-result2} (test 6). The results of the prior-spread rule are withheld.
+Two of the three per-cell bias-screening rules are defined here, the usage-recommendation rule (the first) and the prior-spread rule (the second); the third, the bias-half rule, is graded in the paper's section on per-cell validity and in Table~\ref{tab:tests-result} (test 6). The results of the prior-spread rule are withheld.
 
 % Split (style batch 2026-11-10 (the director, on journal-editor's style review, report_supplement.md), A2, and X3: the rules named in place of their numbers; #981's quotes Q09 and Q19 verbatim).
 The usage-recommendation rule applies per cell the thresholds of the usage recommendations of Ref.~\cite{ATLAS:2024jets}: (i) at least 5000 effective simulated events, here those of the simulation's weights, a deviation from that definition, (ii) a data statistical uncertainty below \SI{15}{\percent}, and (iii) $|z|\leq2$ at each of the 12 graded truths under the reported covariance. Conditions (i) and (ii) are met in every cell (the smallest effective number is \fvval{vatlas-neff-min}, in \fvval{vatlas-neff-min-cell}, and the largest statistical uncertainty \SI{\fvval{vatlas-stat-max}}{\percent}, in \fvval{vatlas-stat-max-cell}); the effective number of the final weights (Sec.~\ref{supp:estimators}) is at least \fvval{ess-neff-min} in every cell (the smallest, in \fvval{ess-neff-min-cell}), so condition (i) also holds under the definition of Ref.~\cite{ATLAS:2024jets}. The rule therefore rests on condition (iii), and its recommended test of correlation assumptions on pseudo-data is not met here. Fourteen cells are valid under it; R02 and R06 fail, each from the GiBUU hybrid truth alone, at $z=+4.19$ and $+4.53$.

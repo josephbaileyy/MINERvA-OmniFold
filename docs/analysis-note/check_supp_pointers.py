@@ -4,7 +4,7 @@
 paper_body.tex writes \\ssec{S<n>}{<label>}, \\ssecc{S<n>}{<label>}, \\stab{S<n>}{<label>} and \\sfig{S<n>}{<label>}. The printed number is
 typed, because the paper does not read the Supplement's .aux; this check makes the typed number fail loudly if the
 Supplement's order changes. A section label must be the n-th \\section of supplemental_body.tex (or a \\label inside
-it); a table label must be the n-th table environment's \\label, and a figure label the n-th figure's (\\sfig, the
+it); a table label must be the n-th table or xltabular environment's \\label, and a figure label the n-th figure's (\\sfig, the
 interim round #1025 A1).
 
 usage: check_supp_pointers.py [--self-test]     (run from docs/analysis-note)
@@ -27,7 +27,9 @@ def supp_maps(body):
             for lab in re.findall(r"\\label\{([^}]+)\}", sub):
                 secs.setdefault(lab, f"{n}.{m}" if m else str(n))
     tabs = {}
-    for k, env in enumerate(re.findall(r"\\begin\{table\}.*?\\end\{table\}", body, flags=re.S), 1):
+    # an xltabular (a table that breaks across pages, numbered as a table; Tables S9 and S10, 2026-11-12) counts in order
+    envs = [m.group(0) for m in re.finditer(r"\\begin\{(table|xltabular)\}.*?\\end\{\1\}", body, flags=re.S)]
+    for k, env in enumerate(envs, 1):
         for lab in re.findall(r"\\label\{([^}]+)\}", env):
             tabs[lab] = k
     figs = {}
@@ -67,6 +69,11 @@ if "--self-test" in sys.argv:
     _, e3 = check("\\stab{S1}{tab:missing}", body)
     _, e4 = check("no pointers", body)
     assert not e1 and e2 and e3 and e4 and e5 and e6, (e1, e2, e3, e4, e5, e6)
+    body2 = ("\\begin{table}\\label{tab:a}\\end{table}\n\\begin{xltabular}{x}{y}\\caption{c}\\label{tab:b}\\\\ r \\end{xltabular}\n"
+             "\\begin{table}\\label{tab:c}\\end{table}\n")
+    _, e7 = check("\\stab{S2}{tab:b} \\stab{S3}{tab:c}", body2)
+    _, e8 = check("\\stab{S2}{tab:c}", body2)
+    assert not e7 and e8, (e7, e8)
     print("self-test: PASS")
     sys.exit(0)
 ptrs, errs = check(open("paper_body.tex", encoding="utf-8").read(),

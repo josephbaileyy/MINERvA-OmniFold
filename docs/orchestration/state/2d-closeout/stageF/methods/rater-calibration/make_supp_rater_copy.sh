@@ -41,7 +41,8 @@ done
 pdftotext "$d/main_supplement.pdf" "$OUT"
 if grep -n '??' "$OUT"; then echo "FAIL: text contains '??' (unresolved reference)"; exit 1; fi
 if grep -n '\[HOLD' "$OUT"; then echo "FAIL: text contains '[HOLD'"; exit 1; fi
-n_env=$(grep -v '^[[:space:]]*%' "$SRC/supplemental_body.tex" | grep -c '\\begin{table}' || true)
+# a table that breaks across pages (xltabular, Tables S9 and S10 since 2026-11-12) is a table environment too
+n_env=$(grep -v '^[[:space:]]*%' "$SRC/supplemental_body.tex" | grep -cE '\\begin\{(table|xltabular)\}' || true)
 n_cap=$(grep -oE 'Table S[0-9]+:' "$OUT" | sort -u | wc -l | tr -d ' ')
 [ "$n_env" = "$n_cap" ] || { echo "FAIL: $n_env table environments in the source, $n_cap 'Table S<n>:' captions in the text"; exit 1; }
 echo "tables: $n_cap of $n_env captions present"
