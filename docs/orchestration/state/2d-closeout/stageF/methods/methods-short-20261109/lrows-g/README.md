@@ -97,6 +97,19 @@ here.
 - **CITABLE FOR:** nothing until Joseph rules. These are values for the readout.
 - **NOT CITABLE FOR:** the GEANT departure's cause, coverage, or any validation of the bands' treatment.
 
+**Draft sentences for Joseph's decision** (the director, 2026-11-12). They are not placed in the paper, and the
+director puts them to Joseph with the numbers. The framing is the referee's: "an unresolved implementation property,
+with its effect on the reported covariance quantified". Every value is from `geant_share.json` above.
+
+> For the GEANT4 neutron and proton bands, the pseudo-data-side and simulation-side constructions of the
+> like-for-like control differ by more than 10 % in σ in some cells, an unresolved implementation property of these
+> two bands. Together they carry at most 0.21 % of any reporting cell's variance in the reported covariance (median
+> 0.02 %); removing them from it changes the χ² of the fake-data bias tests by at most 0.6, at most 2 % of each
+> value, and leaves every cell's |z| > 2 classification unchanged.
+
+The χ² clause rests on the diagonal-N_T reproduction stated above, which is within 0.76 % for the graded truths.
+The director agreed (2026-11-12) to skip the exact read, because the conclusion does not depend on it.
+
 ## G3, major 7: the rounding jitter inside the statistical bootstrap
 
 **Inputs:**
@@ -123,6 +136,47 @@ change in the statistical covariance's correlations is not computed. Two ways to
 
 - **CITABLE FOR:** the diagonal decomposition, under R0b's additivity assumption.
 - **NOT CITABLE FOR:** correlations, or any statement that the jitter-free bootstrap was run.
+
+## G3b, major 7: the full jitter covariance (the director's go, 2026-11-12)
+
+**The read:** one 0 node-h login read on login27, 2026-11-12T09:28:44Z, of I0's 20 data-jitter products and their
+base, under the director's go for exactly `jit_read.sh` (`64e21f1a`) and `jit_launch.sh` (`f0503b5b`, read and
+fetch modes).
+- The cov2d fence ran first (FENCE CLEAR, 09:28:32Z).
+- Every source was opened once with O_NOATIME. The sources' stat was byte-identical before and after.
+- The receipt is in `g3-jitter-read/`, with its SHA256SUMS. The stat-only check before it (09:27:13Z, 21 of 21
+  present) used the launcher's earlier version, `dd97671c`, which had only the fence and stat modes.
+- The base copy's sha256 is `fb5cc679…`, (e)'s central product.
+
+**The readout:** `jitter_cov.py` / `.json` (`6b1fb2ee` / `f4711594`). The JSON carries the 20 jitters' 16-cell
+vectors, so `python3 -I jitter_cov.py` recomputes every value from committed data and refuses on any difference.
+
+**Control, passed:** the per-cell jitter SD reproduces I0's `sigma_J_data` and RS1's `sigma_J_over_f` to 9.1e-14.
+
+**Results:**
+- **C_J's structure:** the jitter covariance is not diagonal. Its off-diagonal correlations have median |ρ| 0.24 and
+  maximum 0.74.
+- **C_J's size:** its Frobenius norm is 2.4e-4 of the reported covariance's, both fractional.
+- **The statistical covariance without the jitter:** S1's C_stat uses set A's 50 replicas (S1-DECLARATION.md:66), and
+  20 of them are committed (`s1_assembly/data_b{1..20}_j{101..120}.npz`). From those 20:
+  - the per-cell σ is 0.81–1.18 times S1's committed stat σ (median 0.99);
+  - the jitter share of each cell's variance is a median 26 % (max 68 %), as G3 found from the committed diagonal.
+- **C_A20 − C_J is not a covariance:** its smallest fractional eigenvalue is −6.1e-6, and 4 of its 120 correlations
+  exceed 1 in magnitude (the largest is R05–R13, 0.30 → 1.12). With 20 replicas against 20 jitters the subtraction
+  is dominated by sampling noise (median standard error on ρ 0.21). The change in the statistical correlations is
+  therefore not measured by these products.
+
+**What would measure it:**
+- **S1's C_stat over all 50 replicas.** It is stored in the S1 assembly on pscratch (`s1_assembly.npz`, `db000707`;
+  staged in Part 1's stage). A 0 node-h login read would get it, though C_J's own 20-sample noise remains.
+- **Jitter-free replicas.** S1-DECLARATION.md:66 names a "set B (100, no jitter)" of s5p study N. Only two
+  jitter-free replicas, `data_b1_j-` and `data_b2_j-`, appear in any committed inventory
+  (`5d-design-20261023/stage0/INVENTORY.sha256:159,171`). A stat-only check of the named paths would show whether
+  the other 98 exist before anything is priced.
+
+- **CITABLE FOR:** C_J's correlation structure and its size against the reported covariance; the diagonal jitter
+  share.
+- **NOT CITABLE FOR:** any jitter-free statistical correlation matrix, or the size of its change.
 
 ## G4, major 8: a run-period figure of reconstructed and unfolded double ratios
 
