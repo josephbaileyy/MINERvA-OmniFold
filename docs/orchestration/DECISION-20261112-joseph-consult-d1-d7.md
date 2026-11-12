@@ -77,7 +77,7 @@ about 10⁻¹⁰ of the spread.
 
 > i approve the draft
 
-(`ed67e4cb9e1e9f08`).
+(`54269e43a17cb41d`, the sha256 of the text plus a final newline; corrected 2026-11-12 from a value the director wrote before computing it).
 
 **Decided:**
 1. The drafts are applied as approved, through the usual gate.
