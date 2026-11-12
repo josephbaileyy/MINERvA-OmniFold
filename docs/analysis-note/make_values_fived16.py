@@ -147,7 +147,7 @@ READOUTS = {
     "plterm": ("docs/orchestration/state/2d-closeout/playlist-term/outputs/playlist_term.json", "5b023478"),
     # #977's L rows (RESPONSE.md 4.2/F4.3, 4.3, F5.3, F5.4, 3.3, m5/Fm7, s11c): one derived readout (l_rows.py) from the
     # read-only pscratch session's receipt (pscr-20261112, f70e805c) and committed sources
-    "lrows": ("docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/l-rows-20261112/derived/l_rows.json", "9bd9afeb"),
+    "lrows": ("docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/l-rows-20261112/derived/l_rows.json", "dc3bf511"),
 }
 # the committed readouts without the run-period block, for the "-nopl" keys
 NOPL_READOUTS = dict(READOUTS, **{

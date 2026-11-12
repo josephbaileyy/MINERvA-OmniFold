@@ -81,17 +81,20 @@ def main() -> int:
     meta = json.loads((REPO / SRC["proxy_meta"][0]).read_text())
     assert sorted(meta) == sorted(PLS)
     B = D = 0
-    per = {}
+    per, sums = {}, {}
     for pl in PLS:
         k = meta[pl]["pot_data"] / meta[pl]["pot_mc"]
         b, d = k * w[f"{pl}__ana__B"], w[f"{pl}__ana__D"]
         per[pl] = round(float(b.sum() / d.sum()), 5)
+        sums[pl] = round(float(b.sum()), 2)   # the 1A value is checked against RUN_LOG :1061's hBkgReco2D 9,782
         B, D = B + b, D + d
     cells = D > 0
     frac = np.where(cells, B / np.where(cells, D, 1), np.nan)
     f_all = float(B.sum() / D.sum())
     rec["bkg_42"] = {"fraction_full_sample": f_all, "sum_background": float(B.sum()), "sum_data_in_grid": float(D.sum()),
                      "n_cells_with_data": int(cells.sum()), "per_playlist": per,
+                     "per_playlist_template_sum": sums,
+                     "run_log_1A_hBkgReco2D": 9782, "matches_run_log_1A": round(sums["1A"]) == 9782,
                      "per_cell_min": float(np.nanmin(frac)), "per_cell_median": float(np.nanmedian(frac)),
                      "per_cell_max": float(np.nanmax(frac)),
                      "per_cell_max_at_pt_pz_bin": [int(i) for i in np.unravel_index(np.nanargmax(frac), frac.shape)],

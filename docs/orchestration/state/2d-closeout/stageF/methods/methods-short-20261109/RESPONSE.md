@@ -390,7 +390,7 @@ member, the force-added npz, the hook fixes and m5's definition.
 |---|---|---|
 | 4.2/F4.3 | `work_proxy.npz` (42ce788b) and `proxy_hists_meta.json`'s POT. The template is k·B over D on the 14×16 grid: 2.906 % in the full sample, 2.72–3.23 % per playlist. Data in the grid is 4,091,707, equal to E_U's; the template is 118,895.5 against E_U's 119,132.37, 0.20 % lower | table S1's new row "Background template, full sample" (keys bkg42-*) |
 | 4.3 | fig:tension2d's per-bin contributions: the committed capture of the current figure (e3f12c5d), 205 bins summing to C-PUB's χ² 465.41527219152636. The cell set was fixed before the fractions were read: the largest contributors, until their sum first reaches χ²/2. That gives 15 bins and 51 %. The template is 3.08 % on them against 2.91 % overall, and its Spearman ρ with the contribution over the 205 is −0.09 | one sentence before fig:tension2d in S6 (keys bkg43-*) |
-| F5.3 | `f53.json`: weighted fractions of pass_reco w_reco, using r4_migration.py's masks (its unweighted control matched). 2.0×10⁻⁵ is outside the reco window and 1.1×10⁻⁴ has its truth outside the grid; those 1,755 gen rows include the −9999 q3/W sentinels | one sentence after the negative-W² paragraph in S2, the window fraction only (key f53-win). The gen-side 1.1×10⁻⁴ is not printed. The meaning read found that it contradicts S2's "the truth grids are exhaustive" and overlaps the negative-W² exclusion beside it. Whether its 1,755 rows are only the −9999 sentinels is not in a record. This goes back to the director |
+| F5.3 | `f53.json`: weighted fractions of pass_reco w_reco, using r4_migration.py's masks (its unweighted control matched). 2.0×10⁻⁵ is outside the reco window and 1.1×10⁻⁴ has its truth outside the grid; those 1,755 gen rows include the −9999 q3/W sentinels | one sentence after the negative-W² paragraph in S2, the window fraction only (key f53-win). The gen-side 1.1×10⁻⁴ is not printed. The meaning read found that it contradicts S3's "the truth grids are exhaustive" and overlaps the negative-W² exclusion beside it. Whether its 1,755 rows are only the −9999 sentinels is not in a record. This goes back to the director |
 | F5.4 | `stage1_inspect.json` mc.H2 at h2_definition.json's unreported boxes [2], [6], [10], [14]. They hold 2.9×10⁻⁸ of the truth weight and 6.5×10⁻⁸ of the expected reconstructed signal | one sentence after the unreported-box sentence in §2 (keys f54-*) |
 | 3.3 | `r33_leave_gibuu.py`. T2B's B0–B3 re-pass, and the existing grade is reproduced on all 16 records. With only GiBUU left out of C_model, the \|z\| > 2 count moves only at q3, in R15, the same cell as T2B's M1 (max \|z\| 1.62 → 2.02). χ² rises by at most 9.7, at q3. The GiBUU truths' grades already leave that component out | one sentence in S8's T2B paragraph (keys r33-*) |
 | 1.5 | the table was done earlier (tab:construction). The optional per-block CSVs are not made; see below | — |
@@ -440,7 +440,7 @@ the truth branches (bkg_nuPDG, bkg_current, bkg_vtx_*). Their mtimes also preced
 before which the event loop left out of `mc_background` every event inside the signal definition, so the template's
 composition is not established. Table S1's row now says "its composition is not recorded". A re-run of the event
 loop would settle the split and is priced separately. The provenance search for the files behind the paper's template
-(the merged CV and $UNI) is under way. Until it reports, S2 :222 and S1 :25, both carried from the note, and table
+(the merged CV and $UNI) is under way. Until it reports, S4 :222 and S1 :25, both carried from the note, and table
 S1's out-of-phase-space row stay unchanged. Any change to the note's sentences goes to Joseph and the note loop.
 
 
@@ -457,7 +457,38 @@ S1's out-of-phase-space row stay unchanged. Any change to the note's sentences g
   reco tree). So whether they are in the template is not settled by any record.
 - An event-loop re-run with the truth branches is the only measurement. The director takes its price to Joseph if he
   wants it before submission.
-- Until then the table S1 pair (0.35 %, 2.91 %) awaits the director's ruling on stating each one's definition.
+- On the count reading (raw counts; superseded by the weighted record below), the May template would be about 92 % ν_μ CC that the truth tree puts outside the phase
+  space (48,349 of 52,626, by raw count). Weighted shares are not recorded. This reading conflicts with
+  d1bc8813a:MINERvA101/MINERvA-101-Cross-Section/runEventLoopOmniFold.cpp:443-445, whose background skip is evaluated
+  on the reco tree and so does not route those events.
+- **Considered and declined:** an entry-count read of the May 1A file (0 node-h). Both counts are already in the
+  records, 2,682,267 = 2,730,616 − 48,349 in RUN_LOG :1051-1054 and 52,626 in proxy_hists_meta.json. The read cannot
+  tell routed events from dropped ones, so no outcome would change a decision (the director, 2026-11-12). Nothing was
+  run or committed. <!-- absence-ok: records that a declined read was not run, by the director's ruling; not a finding that a result does not exist -->
+- **Where it gets measured:** the F1.2(i) event-loop re-dump lane, owned by tier3-design. It runs current code, which
+  has carried the bkg_* branches since 3e855893b. The director asked it to keep mc_background with its truth branches
+  and to add a control that its 1A pass histogram reproduces work_proxy's 1A B.
+- **A later record (2026-11-12, found by the meaning read):** RUN_LOG :1052-1064, "Validation on 1A (2026-05-14)",
+  says "`hBkgReco2D` integral 1,788 → 9,782 (+8 k weighted; the 48 k "Set E" reco-fakes are now correctly subtracted
+  from data …)". The May 1A template summed from work_proxy (k·B in the grid) is 9,781.53, which rounds to that 9,782.
+  - **Composition, as a record and not a measurement:** on 1A, weighted and POT-scaled, about 82 % (7,994) is Set E,
+    ν_μ CC that fail the phase space on the truth tree, i.e. out-of-phase-space signal. About 18 % (1,788) is the
+    earlier background. This supersedes the empty-set sentence at :1003-1009, which predates the fix.
+  - **The conflict remains:** the committed background loop (d1bc8813a:443-445) does not show the routing. The same
+    log records a build trap at :1069-1072 ("existed at two paths on disk … silently used stale code").
+  - **The measurement:** C-BKG in the F1.2(i) re-dump pilot (tier3-design) measures this. If it passes, its 1A
+    fraction replaces table S1's "not measured here" clause. The 82 % is not printed (the director: a narrative-log
+    number with a code conflict does not meet the bar for a printed value).
+- **The text, per the director's rulings of 2026-11-12:**
+  - S4 :222 now reads "all selected simulated events other than signal inside the phase space (Sec. S1), that is,
+    genuine backgrounds and out-of-phase-space signal".
+  - Table S1: the 0.35 % row is deleted. The template row says its split "is not measured here". <!-- absence-ok: quotes table S1's scope clause; the split is unmeasured here because the May files lack the truth branches (split-20261112, exit 6), and C-BKG measures it --> The
+    out-of-phase-space row says "routed into the background template and subtracted with it". "Run period" replaces
+    "playlist" in this table and in the moved 1A sentence.
+  - The S1 paragraph is DESYNCED from the note, with the reason recorded at :24 (the note's 0.35 % describes the April
+    template). The 0.35 % sentence and the sentences resting on it are deleted, along with the self-referential "This
+    paragraph does not split …", and "treated separately" becomes "routed into the background template".
+  - The note is unchanged. Its fix goes to Joseph.
 
 **Follow-up list (optional):** counting whether F5.3's 1,755 gen-outside-grid rows are only the −9999 sentinels
 (0 node-h, on OF5D). Printing that number would not help the paper (the director, 2026-11-12).

@@ -2245,7 +2245,7 @@ was the mislabel. The director accepted bd08582ee, the hand re-cites of ALIASES 
   - 4.3 before fig:tension2d in S6;
   - 3.3 in S8's T2B paragraph.
 - **Meaning read:** lrows-read/pairs.tsv, 5 rows, by an independent reader given the sources. Every number was
-  re-derived. One defect: M003's gen-side clause contradicted S2 :148 and overlapped the negative-W² exclusion, so it
+  re-derived. One defect: M003's gen-side clause contradicted S3 :148 and overlapped the negative-W² exclusion, so it
   was removed and goes back to the director. Two wordings were tightened. The re-read passed all three revised rows.
 - **F5.3's "zero weight":** checked in code. In s5c_pseudo.py :104-112 (d81d4f46) the pseudo-data's measured weight
   outside the window is 0, while the MC rows enter at w_reco. So OUTCOME-20260925 :37 is right for what it describes,
@@ -2274,3 +2274,22 @@ was the mislabel. The director accepted bd08582ee, the hand re-cites of ALIASES 
   - :266's "three shape changes", now "three withheld … the GiBUU-to-GENIE change … is a development truth";
   - the caption's "100 half samples" did not say which pseudo-experiments they are; it now names the 60 and the 40.
   Fixed, and the re-read passed all five revised rows. Both rater copies were rebuilt (hold diff PASS).
+
+## 2026-11-12 — The background wording (the director's rulings on the provenance search and the reconciliation)
+
+- **S1 paragraph (:26):** DESYNCED from the note, with the reason at :24 (the note's 0.35 % describes the April template).
+  The 0.35 % sentence and the sentences resting on it are deleted, as is the self-referential "This paragraph does not
+  split …". Out-of-phase-space signal is now "routed into the background template", and their sum N_bkg(b) "enters
+  the purity weight". The note is unchanged; its fix goes to Joseph.
+- **Table S1:** <!-- absence-ok: quotes table S1's scope clause; the split is unmeasured here because the May files lack the truth branches (split-20261112, exit 6), and C-BKG measures it --> the 0.35 % row is deleted. The template row reads "2.91 % of selected data events … its split … is not
+  measured here". The out-of-phase-space row reads "routed into the background template and subtracted with it".
+- **S4 (:223, :229):** "background template comprises all selected simulated events other than signal inside the phase
+  space". :229's pointer to S1 is removed.
+- **Kept "playlist":** "run period" already names the three groups (:478, :481), so the twelve stay playlists.
+- **Readout:** l_rows.json bkg_42 gains per_playlist_template_sum. The 1A sum, 9,781.53, matches RUN_LOG :1061's 9,782,
+  and the values are unchanged.
+- **Reads:** bkg-read/referee-read.md records two PRD-referee reads and two meaning reads, with their defects and fixes.
+  The final confirmations are ACCEPT and OK.
+- **RESPONSE.md 4.2:** the Set E record (about 82 % weighted on 1A) is entered as a record, not a measurement.
+  C-BKG in the F1.2(i) pilot measures it.
+- **Corrections:** two section labels in RESPONSE.md and the ledger: :222 is in S4, :148 is in S3.
