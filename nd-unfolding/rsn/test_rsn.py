@@ -804,7 +804,7 @@ class RegradeFixture:
             table = {k: z[k] for k in z.files}
         est, op = RG.estimates(self.TR, table, self.w_all)
         g = RG.grade_all(self.TR, est, op, self.S0, self.Ce_rel, self.Cstat_rel, self.Cx_rel)
-        rec = {"truths": g["records"], "controls": {"offset_control_7": {"pass": op}},
+        rec = {"truths": g["records"], "controls": {"offset_control_7": {"pass": op["pass"], "chi2": op["chi2"], "p": op["p"]}},
                "triggers": {"by_group": g["by_group"]}}
         rec = json.loads(json.dumps(rec))
         if edit:
@@ -881,8 +881,12 @@ class Regrade(unittest.TestCase):
         def e_group(r): r["triggers"]["by_group"]["prior"]["cells_abs_z_gt_2"] += 1  # noqa: E704
         def e_order(r): r["truths"][0], r["truths"][1] = r["truths"][1], r["truths"][0]  # noqa: E704
         def e_ctrl(r): r["controls"]["offset_control_7"]["pass"] = not r["controls"]["offset_control_7"]["pass"]  # noqa: E704
+        def e_c7chi2(r): r["controls"]["offset_control_7"]["chi2"] *= 1 + 1e-8  # noqa: E704
+        def e_c7p(r): r["controls"]["offset_control_7"]["p"] = r["controls"]["offset_control_7"]["p"] * 1.01 + 1e-9  # noqa: E704
+        def e_family(r): next(iter(r["triggers"]["by_group"]["prior"]["by_family"].values()))["truths"] += 1  # noqa: E704
 
-        for i, e in enumerate((e_bias, e_chi2, e_flag, e_cells, e_sub, e_listed, e_group, e_order, e_ctrl)):
+        for i, e in enumerate((e_bias, e_chi2, e_flag, e_cells, e_sub, e_listed, e_group, e_order, e_ctrl,
+                               e_c7chi2, e_c7p, e_family)):
             with self.assertRaises(SystemExit, msg=e.__name__) as cm:
                 RG.reproduce(nom, self.op, json.loads(self.fx.readout(d / f"bad{i}.json", e).read_text()))
             self.assertIn("NC-R", str(cm.exception))
@@ -892,13 +896,48 @@ class Regrade(unittest.TestCase):
         S = self.fx.S0.copy()
         S[2] *= 0.5
         g6 = RG.grade_all(self.fx.TR, self.est, self.op, S, self.fx.Ce_rel, self.fx.Cstat_rel, self.fx.Cx_rel)
-        RG.invariant_g6(nom, g6)
+        RG.invariant_g6(nom, g6, self.fx.S0, S)
         self.assertNotEqual([r["grade"] for r in nom["records"]], [r["grade"] for r in g6["records"]])
-        S[0, 3] += 0.01
-        bad = RG.grade_all(self.fx.TR, self.est, self.op, S, self.fx.Ce_rel, self.fx.Cstat_rel, self.fx.Cx_rel)
+        own = [r for r in g6["records"] if r["own_vertex"] == "gibuu"]
+        self.assertTrue(own and all("p_parallel_lt_4p5" in r for r in own))
+        S2 = S.copy()
+        S2[0, 3] += 0.01
+        bad = RG.grade_all(self.fx.TR, self.est, self.op, S2, self.fx.Ce_rel, self.fx.Cstat_rel, self.fx.Cx_rel)
         with self.assertRaises(SystemExit) as cm:
-            RG.invariant_g6(nom, bad)
+            RG.invariant_g6(nom, bad, self.fx.S0, self.fx.S0)
         self.assertIn("C-INV", str(cm.exception))
+        with self.assertRaises(SystemExit) as cm:
+            RG.invariant_g6(nom, g6, self.fx.S0, S2)
+        self.assertIn("rows are not", str(cm.exception))
+        for k in ("model_only", "p_parallel_lt_4p5"):
+            moved = json.loads(json.dumps(g6))
+            r = next(r for r in moved["records"] if r["own_vertex"] == "gibuu")
+            r[k]["chi2"] += 1.0
+            with self.assertRaises(SystemExit, msg=k):
+                RG.invariant_g6(nom, moved, self.fx.S0, S)
+
+    def test_the_nominal_only_gate_needs_no_arm_file_and_refuses_a_mismatch(self):
+        fx = self.fx
+        d = Path(tempfile.mkdtemp(dir=self.tmp.name))
+        ro = fx.readout(d / "ro.json")
+        RG.PINS.update(table=R.sa.sha256(fx.table), f1_readout=R.sa.sha256(ro), s1_npz=R.sa.sha256(fx.s1),
+                       extra_block=R.sa.sha256(fx.extra), cmodel_json=R.sa.sha256(fx.cmodel))
+        argv = ["--nominal-only", "--table", str(fx.table), "--f1-readout", str(ro), "--s1-npz", str(fx.s1),
+                "--extra-block", str(fx.extra), "--flux-constraint", "x", "--cmodel-json", str(fx.cmodel)]
+        quiet(RG.main, argv + ["--out", str(d / "nc_r.json")])
+        rec = json.loads((d / "nc_r.json").read_text())
+        self.assertEqual((rec["schema"], rec["verdict"], rec["records"]), ("rsn-nc-r/1", "PASS", 22))
+
+        def edit(r):
+            r["truths"][7]["grade"]["chi2"] *= 1 + 1e-6
+        bad = fx.readout(d / "bad.json", edit)
+        RG.PINS["f1_readout"] = R.sa.sha256(bad)
+        argv[argv.index(str(ro))] = str(bad)
+        with self.assertRaises(SystemExit):
+            quiet(RG.main, argv + ["--out", str(d / "nc_r2.json")])
+        self.assertFalse((d / "nc_r2.json").exists())
+        with self.assertRaises(SystemExit):
+            quiet(RG.main, argv[1:] + ["--out", str(d / "nc_r3.json")])
 
     def cm_json(self, path, S=None):
         rng = np.random.default_rng(21)
@@ -1089,7 +1128,10 @@ class Readings(unittest.TestCase):
         self.assertFalse(wr["P7"]["floor"]["breaks_the_prior_closure"])
         self.assertEqual(wr["P7"]["nuwro"]["rms_class"], "comparable")
         self.assertEqual((wr["P7"]["gibuu"]["class"], wr["P7"]["q3"]["class"]), ("immaterial", "immaterial"))
-        self.assertTrue(wr["verdict"].startswith("the equal-weight regression is immaterial"))
+        self.assertTrue(wr["verdict"].startswith("in pvl's noise-free signal-only closures, the equal-weight "
+                                                 "regression is immaterial"))
+        self.assertIn("T3's B0/MW", wr["scope"])
+        self.assertIn("probe's own estimation noise", tr["scope"])
         self.assertEqual({k: v["class"] for k, v in tr["P8"].items()}, {"data": "T0", "gibuu": "T0", "q3": "T0"})
         self.assertEqual(tr["P8"]["q3"]["lowest_vs_highest_acceptance"], [0.002, -0.001])
         self.assertIn("not calibrated", out["label"])
@@ -1101,7 +1143,8 @@ class Readings(unittest.TestCase):
         self.assertEqual(out["arms"]["G6"]["verdict"], "a fake-data conclusion changes under G6")
         out = RD.read(*self.inputs(chi2_w=60.0))
         self.assertEqual(out["arms"]["WR"]["P7"]["gibuu"]["class"], "material")
-        self.assertEqual(out["arms"]["WR"]["verdict"], "the equal-weight regression is material: at gibuu")
+        self.assertEqual(out["arms"]["WR"]["verdict"],
+                         "in pvl's noise-free signal-only closures, the equal-weight regression is material: at gibuu")
         out = RD.read(*self.inputs(listed=("q3",), held=1, delta=0.05, floor_bias=2e-4, sm=False, tbias=0.05))
         g6 = out["arms"]["G6"]
         self.assertEqual(g6["P1"]["class"], "fewer flagged")
@@ -1146,6 +1189,7 @@ class Launcher(unittest.TestCase):
         (self.deploy / "nd-unfolding/pv-ladder/prep-SHA256SUMS").write_text("".join(lines))
         self.out.mkdir()
         (self.out / "prep").mkdir()
+        (self.out / "nc_r.json").write_text(json.dumps({"schema": "rsn-nc-r/1", "verdict": "PASS"}, indent=1))
         self.bin.mkdir()
         self.squeue("")
         self.commit()
@@ -1231,6 +1275,17 @@ class Launcher(unittest.TestCase):
         self.squeue("my_ll5d_x|RUNNING")
         rc, _, err = self.sh("J1")
         self.assertEqual(rc, 0, err)
+
+    def test_every_job_waits_on_the_nc_r_pass(self):
+        self.fence()
+        (self.out / "nc_r.json").unlink()
+        for job in ("J1", "J2", "J3"):
+            rc, _, err = self.sh(job)
+            self.assertEqual(rc, 2, job)
+            self.assertIn("no NC-R PASS", err, job)
+        (self.out / "nc_r.json").write_text(json.dumps({"schema": "rsn-nc/1", "verdict": "PASS"}, indent=1))
+        rc, _, err = self.sh("J1")
+        self.assertIn("no NC-R PASS", err)
 
     def test_j1_is_the_nc_alone(self):
         self.fence()

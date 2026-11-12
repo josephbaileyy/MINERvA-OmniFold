@@ -22,7 +22,7 @@ REPO = ND.parent
 FILES = ("rsn_prep.py", "rsn_unfold.py", "rsn_cmodel.py", "rsn_regrade.py", "rsn_read.py", "sbatch_rsn.sh",
          "rsn_tasks.tsv", "test_rsn.py")
 PR, UF, CM, RG, RD, SB = FILES[:6]
-EXPECTED_TESTS = 50
+EXPECTED_TESTS = 52
 MUTATIONS = [
     # --- prep: the smoothing, G6, the step share, the manipulation check and the controls
     ("box radius one short", PR, "hi = np.minimum(np.arange(n) + radius + 1, n)", "hi = np.minimum(np.arange(n) + radius, n)",
@@ -139,12 +139,24 @@ MUTATIONS = [
     ("NC-R groups unchecked", RG,
      'if any(mine.get(k) != g[k] for k in ("truths", "cells", "cells_abs_z_gt_2", "truths_p_lt_0.01")):', "if False:",
      "test_nc_r_reproduces_and_refuses_on_any_differing_field"),
-    ("NC-R control 7 unchecked", RG, 'if offset_pass != bool(readout["controls"]["offset_control_7"]["pass"]):', "if False:",
+    ("NC-R control 7 unchecked", RG, 'if ctrl["pass"] != bool(c7["pass"]):', "if False:",
+     "test_nc_r_reproduces_and_refuses_on_any_differing_field"),
+    ("NC-R control 7 chi2 and p unchecked", RG,
+     'if not np.isclose(ctrl["chi2"], c7["chi2"], rtol=RTOL, atol=0) or not np.isclose(ctrl["p"], c7["p"], rtol=1e-8, atol=1e-14):',
+     "if False:", "test_nc_r_reproduces_and_refuses_on_any_differing_field"),
+    ("NC-R by-family unchecked", RG, 'if mine.get("by_family") != g["by_family"]:', "if False:",
      "test_nc_r_reproduces_and_refuses_on_any_differing_field"),
     ("NC-R order unchecked", RG, 'if [r["name"] for r in nom["records"]] != [r["name"] for r in readout["truths"]]:',
      "if False:", "test_nc_r_reproduces_and_refuses_on_any_differing_field"),
-    ("C-INV skipped", RG, 'if a["own_vertex"] == "gibuu" and a["grade"] != b["grade"]:', "if False:",
+    ("C-INV skipped", RG, 'if a["own_vertex"] == "gibuu" and any(a.get(k) != b.get(k) for k in INVARIANT):', "if False:",
      "test_c_inv_holds_for_a_gibuu_only_change_and_catches_any_other"),
+    ("C-INV on the grade only", RG, 'INVARIANT = ("grade", "model_only", "p_parallel_lt_4p5")', 'INVARIANT = ("grade",)',
+     "test_c_inv_holds_for_a_gibuu_only_change_and_catches_any_other"),
+    ("S^G6's rows unchecked", RG, "if not np.array_equal(S6[:2], S0[:2]):", "if False:",
+     "test_c_inv_holds_for_a_gibuu_only_change_and_catches_any_other"),
+    ("the nominal-only gate skips NC-R", RG,
+     "        reproduce(nom, ctrl, json.loads(Path(a.f1_readout).read_text()))\n        rec = ",
+     "        rec = ", "test_the_nominal_only_gate_needs_no_arm_file_and_refuses_a_mismatch"),
     ("nominal S unchecked", RG, 'if "nominal" not in arms or not np.array_equal(arms["nominal"], S0):',
      'if "nominal" not in arms:', "test_the_regrade_runs_end_to_end_and_refuses_a_wrong_pin_or_nominal_s"),
     ("WR matrix without the leave-out", RG, "        M = matrix(WR_OWN[t])\n", "        M = matrix(None)\n",
@@ -187,6 +199,7 @@ MUTATIONS = [
     ("nominal C_model unchecked", RD,
      'if not np.allclose(cm["arms"]["nominal"]["sqrt_diag"], cmodel["sqrt_diag"], rtol=1e-12, atol=0):', "if False:",
      "test_the_readout_refuses_a_nominal_that_is_not_the_committed_one"),
+    ("WR's scope dropped", RD, '"scope": SCOPE_WR}', "}", "test_the_readout_applies_the_tables"),
     ("chi2 fraction 0.3", RD, "CHI2_FRACTION = 0.25", "CHI2_FRACTION = 0.3", "test_the_deformed_truth_classes"),
     ("flag change ignored", RD, 'if flagged(w) != flagged(u) or abs(w["chi2"] - u["chi2"]) > CHI2_FRACTION * u["chi2"]:',
      'if abs(w["chi2"] - u["chi2"]) > CHI2_FRACTION * u["chi2"]:', "test_the_deformed_truth_classes"),
@@ -199,6 +212,11 @@ MUTATIONS = [
     ("transfer read at the first iteration", RD, 'last = cm["transfer"][pt][-1]', 'last = cm["transfer"][pt][0]',
      "test_the_readout_applies_the_tables"),
     # --- the launcher
+    ("NC-R gate skipped", SB,
+     "grep -q '\"schema\": \"rsn-nc-r/1\"' \"$OUT/nc_r.json\" 2>/dev/null && grep -q '\"verdict\": \"PASS\"' \"$OUT/nc_r.json\" \\",
+     "true \\", "test_every_job_waits_on_the_nc_r_pass"),
+    ("NC-R schema unchecked", SB, "grep -q '\"schema\": \"rsn-nc-r/1\"' \"$OUT/nc_r.json\" 2>/dev/null && ", "",
+     "test_every_job_waits_on_the_nc_r_pass"),
     ("job name unchecked", SB, '[ "$NAME" = "rsn_$JOB" ] ||', "true ||", "test_the_deploy_name_and_limit_checks"),
     ("J1 limit 0:20", SB, "J1|J3) LIMIT=0:19:00 ;;", "J1|J3) LIMIT=0:20:00 ;;", "test_the_deploy_name_and_limit_checks"),
     ("J2 limit 0:23", SB, "J2|J2n) LIMIT=0:22:00 ;;", "J2|J2n) LIMIT=0:23:00 ;;", "test_the_deploy_name_and_limit_checks"),

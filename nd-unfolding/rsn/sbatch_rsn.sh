@@ -10,7 +10,7 @@
 # task of one declared job (rsn_tasks.tsv column 2) at once, one srun step each, through mnv_guarded_run.py from a clean
 # deploy at <pin>, as pv-ladder/sbatch_pvl.sh runs L-5D-PV. Runs only on the director's go for each connect.
 #   sbatch --job-name=rsn_<job> --time=<limit> --output=<OUT>/logs/%x_%j.out sbatch_rsn.sh <deploy> <pin> <OUT> <job>
-#   J1   the NC alone (rsn_nc); limit 0:19:00.
+#   J1   the NC alone (rsn_nc); limit 0:19:00. Every job waits on <OUT>/nc_r.json, the login-node NC-R PASS.
 #   J2   G6, SM, WR and TR, eight steps; limit 0:22:00. Only after <OUT>/nc.json records the NC's PASS and
 #        <OUT>/gates/J2.ok names <pin>.
 #   J2n  J2 without SM, five steps; limit 0:22:00. Only if the committed rsn-prep-SHA256SUMS lists no SM reweight.
@@ -80,6 +80,9 @@ while IFS= read -r pre; do
     hit=$(printf '%s\n' "$sq" | awk -F'|' -v p="$pre" 'index($1, p) == 1')
     [ -z "$hit" ] || { say "refusing: fenced jobs ($pre*) are queued or running: $hit"; exit 2; }
 done < "$OUT/fence.txt"
+# NC-R (§6): every job waits on the login-node regrade's reproduction of the committed F1 readout
+grep -q '"schema": "rsn-nc-r/1"' "$OUT/nc_r.json" 2>/dev/null && grep -q '"verdict": "PASS"' "$OUT/nc_r.json" \
+    || { say "refusing: $OUT/nc_r.json records no NC-R PASS"; exit 2; }
 RSUMS="$H/rsn-prep-SHA256SUMS"
 if [ "$JOB" != J1 ]; then
     G="$OUT/gates/$JOB.ok"

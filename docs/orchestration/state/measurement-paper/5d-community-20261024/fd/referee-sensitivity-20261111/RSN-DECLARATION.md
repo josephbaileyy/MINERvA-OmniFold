@@ -1,12 +1,12 @@
-# RSN declaration rev 2: referee sensitivity analyses (3.1, 3.2, 1.2; fresh F1.1, F1.2), DRAFT
+# RSN declaration rev 3: referee sensitivity analyses (3.1, 3.2, 1.2; fresh F1.1, F1.2), DRAFT
 
-**Session:** tier3-design, 2026-11-11, at the director's brief and its rev 2 request. **For:** coverage-5b-audit's
-audit (one read of rev 2), then the director's binding. After the maintenance, a cluster lane runs it, and each
+**Session:** tier3-design, 2026-11-11, at the director's brief, its rev 2 request and its rulings on the audit of
+rev 2. **For:** coverage-5b-audit's recheck, then the director's binding. After the maintenance, a cluster lane runs it, and each
 connect's sha256s go to the director first.
 
-**Status:** draft. The code and tests are under `nd-unfolding/rsn/`, with receipts in `rev2/` (rev 1's are in `rev1/`).
-No job has been submitted and no connect made. The work does not wait for the LL5D readout. §10 lists what rev 2
-changes.
+**Status:** draft. The code and tests are under `nd-unfolding/rsn/`, with receipts in `rev3/` (rev 1's and rev 2's are
+in `rev1/` and `rev2/`). No job has been submitted and no connect made. The work does not wait for the LL5D readout.
+§10 lists what rev 2 changed, and §11 what rev 3 changes.
 
 ## 0. What this is
 
@@ -105,10 +105,12 @@ measure", and SM gives no reading of C_model.
 WR fits it with `sample_weight` = w_push · w_truth on its rows, the truth-passing, reco-passing MC rows in the loop's
 own order. This is the population the loop is reweighting at that iteration.
 
-**Why this weight (rev 1 used w_truth alone).** It is the same weight as T3's MW arm (`tier3/t3p_arms.py:15-16`;
-`T3-PIPELINE-TESTS-DECLARATION.md` rev 4 :235), so the repository has one definition of "the weighted misses
-regressor". w_push is the loop's own value: the output of `omnifold_nn_core._reweight` for the loop's second
+**This weight supersedes rev 1's w_truth (the director's ruling, 2026-11-11).** It is the same weight as T3's MW arm
+(`tier3/t3p_arms.py:15-16`; `T3-PIPELINE-TESTS-DECLARATION.md` rev 4 :235), so the repository has one definition of "the
+weighted misses regressor". Two definitions in two lanes would make WR's and MW's readings incomparable at the same
+truths. w_truth alone is not run. w_push is the loop's own value: the output of `omnifold_nn_core._reweight` for the loop's second
 classifier, which is ones before the first iteration.
+<!-- absence-ok: scoping statement about RSN's declared arms (no w_truth-only arm), not a claim that a result does not exist -->
 
 **What stays the same.** The classifiers, their weights, the seeds and the estimator parameters do not change.
 `omnifold_nn_core.py` is not edited. `rsn_unfold.py` wraps the regressor that `make_estimators` returns and reads
@@ -157,7 +159,9 @@ compared with the prediction:
 **The points.** The data (TR_data), and the A7 GiBUU hybrid and q3 closures (WU's two steps).
 
 **The control.** The probe is a separate object on read-only arrays, and the loop's fits, arrays and estimators are
-untouched. TR_data must therefore equal rsn_nc bitwise, and the build refuses otherwise.
+untouched. TR_data must therefore equal rsn_nc bitwise, and the build refuses otherwise. WU's two closures carry the
+same probe and have no bitwise reference of their own, so for them the guarantee is the same mechanism, shown on the
+data by TR_data = rsn_nc.
 
 ### 2.7 Not declared: F1.2(i), and TR against the omitted quantities
 
@@ -239,8 +243,15 @@ four held-out records still meet both criteria.
 - "the fake-data conclusions survive V" if P1 is unchanged and P3 holds;
 - otherwise "a fake-data conclusion changes under V", with the records named.
 
-**What G6 cannot move, stated before the run.** A7_gibuu and stage0c_gibuu are graded without GiBUU's shift, so G6
-cannot change either grade (C-INV). Under G6, P1 can change only through q3.
+**What G6 can and cannot move, stated before the run.**
+- **It cannot move** A7_gibuu or stage0c_gibuu. They are the only records graded without GiBUU's shift
+  (fd_f0_regrade.TRUTHS: own = GiBUU), so neither grade can change (C-INV, which checks the grade, the model-only and
+  the eight-cell grades, after checking bitwise that S^G6's GENIE+MEC and NuWro rows are the nominal ones).
+- **Every other graded record can move.** These are the prior, W1–W3, q3, the NuWro closure, A7_mnvtune,
+  A7_genie_cv, A7_genie_mec, A7_nuwro and the four held-out records. Each is graded against a matrix that includes
+  GiBUU's row, which G6 changes in every region cell and which carries 0.890 of C_model's trace.
+- **So L can lose q3 or gain members.** In the committed readout W3 is at p = 0.037 and A7_nuwro at p = 0.093. All five
+  P1 classes are reachable under G6.
 
 ### 3.3 WR and WU: what is graded, against what and at which truths
 
@@ -275,20 +286,25 @@ references are the frozen closure at the prior and at NuWro, and WU at the two d
   Otherwise it is **immaterial**. Each closure's χ², flags, directions and the change along the equal-weight bias are
   printed.
 
-**WR's verdict (F1.1):**
-- "the equal-weight regression is immaterial at the A7 GiBUU hybrid and the q3 tilt, and the data move within the
-  rounding floor / below half the reported σ", if both deformed truths are immaterial and P6 is W0 or W1;
-- otherwise "the equal-weight regression is material", naming the truths and, for W2, the data's cells.
+**WR's verdict (F1.1), scoped to pvl's construction:**
+- "in pvl's noise-free signal-only closures, the equal-weight regression is immaterial at the A7 GiBUU hybrid and the
+  q3 tilt, and the data move within the rounding floor / below half the reported σ", if both deformed truths are
+  immaterial and P6 is W0 or W1;
+- otherwise "in pvl's noise-free signal-only closures, the equal-weight regression is material", naming the truths
+  and, for W2, the data's cells.
 
-The fresh referee's two outcomes map onto these: a negative result supports this implementation choice, and a
-material one means the affected findings are attributed to this approximation. Under no outcome is the estimator
-changed here.
+**What the verdict licenses (the director's ruling on audit R2).** A "material" or "immaterial" WR is a stated
+sensitivity of pvl's noise-free signal-only full-MC closure, WR against WU, graded alike.
+- **It does not attribute F0b's flags** at A7_gibuu and q3. Those were made in the background-inclusive half-MC
+  construction, with noise.
+- **That attribution is T3's B0/MW reading:** FD-PRR's construction, at the same weight, after LL5D.
+- **The estimator is not changed** here under any outcome.
 
 ### 3.4 Which paper conclusions each arm could change
 
 | | conclusion | G6 | SM | WR, WU | TR |
 |---|---|---|---|---|---|
-| P1 | the fake-data bias exceeds the criteria at two truths (A7_gibuu, the q3 tilt) | q3 only | yes | attribution only (§3.3) | — |
+| P1 | the fake-data bias exceeds the criteria at two truths (A7_gibuu, the q3 tilt) | yes: every record but A7_gibuu and stage0c_gibuu, so L can lose q3 or gain members (§3.2) | yes | no: a stated sensitivity in pvl's closure only; attribution is T3's MW (§3.3) | — |
 | P2 | the other truths meet the criteria only with the broader terms, C_model among them | yes | yes | — | — |
 | P3 | the four held-out records meet both criteria (R11 at G18 only with C_model) | yes | yes | — | — |
 | P4 | C_model is dominated by the GiBUU shift (0.890) | yes | yes | — | — |
@@ -322,6 +338,9 @@ the misses carry 15.7–68.1 % of a cell.
 
 The overall relative bias and RMS, and the relative bias in the lowest and highest acceptance deciles, are printed
 beside the class as descriptions, with no threshold.
+
+**What the classes bound.** t_c includes the 80 % probe's own estimation noise, and no noise reference is made. So
+the classes bound the transfer bias plus that noise, and T0 (2φ, 0.1–0.5 %) may be out of reach from the noise alone.
 
 **What TR can and cannot show.** A uniform random mask tests transfer among matched events at fixed truth. It cannot
 show that misses resemble matched events in what the five features omit, which is what §2.7's input would test.
@@ -376,7 +395,7 @@ resubmitted without the director's go.
 
 ## 6. Order and gates
 
-1. **Audit and binding.** coverage-5b-audit audits rev 2, and the director binds the code digests of §7.
+1. **Audit and binding.** coverage-5b-audit rechecks rev 3, and the director binds the code digests of §7.
 2. **Archive first, recommended.** The cluster lane archives the following to HPSS before connect 1, against their
    committed sha256s:
    - pv-ladder's `prep/` (22 MB) and `products/` (2.5 MB);
@@ -387,6 +406,10 @@ resubmitted without the director's go.
    - Clone at the pin.
    - Run `rsn_prep.py --ratios <pvl prep>/ratios/L-5D-PV --out <OUT>/prep`.
    - Commit its printed `rsn-prep-SHA256SUMS` and `prep.json` in a receipt PR (the new pin).
+   - **NC-R gate (0 node-h, login node):** run `rsn_regrade.py --nominal-only` with cmodel_5d.json's S on the pinned
+     F1 table, S1 and cpl block. It writes `<OUT>/nc_r.json` with `"verdict": "PASS"` only if all 22 records, control
+     7 (its verdict, χ² and p) and the group and by-family counts reproduce the committed F1 readout. Commit it with
+     the prep's receipt. **Every job refuses without it,** so a regrade mismatch is found before any node-hour.
    - Write `<OUT>/fence.txt`, after the director has announced the `rsn_` family to every fenced lane.
    - Submit J1.
 4. **After J1.**
@@ -406,6 +429,7 @@ resubmitted without the director's go.
 - a fenced prefix is queued or running;
 - a reweight differs from its committed sha256;
 - a product exists;
+- `<OUT>/nc_r.json` records no NC-R PASS (every job);
 - for J2, J2n or J3, the gate or the NC PASS is missing; for J2 or J2n, also the committed reweight list.
 
 The inputs are read, not written.
@@ -417,12 +441,12 @@ The inputs are read, not written.
 | `nd-unfolding/rsn/rsn_prep.py` | `7b0fc567776d2016897173b1f8ab723fd99daedd34454537b36cd42bd03194be` |
 | `nd-unfolding/rsn/rsn_unfold.py` | `5796bb6043a0ff646043206ef3ef623cbaf19d003875331da54a5642454e3690` |
 | `nd-unfolding/rsn/rsn_cmodel.py` | `ab63292122bffbc30e5d85efc2a5ae3f96c7f917891a856c48e2d26414848a48` |
-| `nd-unfolding/rsn/rsn_regrade.py` | `01d758c8010bad4fc451eec1fdf436328c947854cb63ba73392d3b89b5be7795` |
-| `nd-unfolding/rsn/rsn_read.py` | `f00a775a9d5904d7f0b9334f3e8c5922185fd4f0c85225d60cbbae43e8cf9223` |
-| `nd-unfolding/rsn/sbatch_rsn.sh` | `b4f7b02a2d6a5d3a8d052cf67e13d2b5977333f7c0e7f36b6f4da524e34f797e` |
+| `nd-unfolding/rsn/rsn_regrade.py` | `661608d81ccf7ca0ab08aee853f5934d4c0dab89677e82f8292239fee60b7652` |
+| `nd-unfolding/rsn/rsn_read.py` | `4dd37197f6aa6c7f013b3ffea5558fd8d8fd1bc124047f761269adafce87e484` |
+| `nd-unfolding/rsn/sbatch_rsn.sh` | `f889a0cf4de4a78aa7096bc01341ab6f3e6cdb41438267918519da7a527051d6` |
 | `nd-unfolding/rsn/rsn_tasks.tsv` | `354bd16dd4d8b9dd5462f1daf6114e7beb467be3ab80e28b8ff212f51ea55616` |
-| `nd-unfolding/rsn/test_rsn.py` | `17d68e3c2cfdc8cb6996b827fb004299ec393dd7735f6e2f893b283241cc0da3` |
-| `nd-unfolding/rsn/rsn_mutation.py` | `5e4351bb8ede849bd66e21c7fe4af35595a5d4ce19c713a13bfb2e688f5486bb` |
+| `nd-unfolding/rsn/test_rsn.py` | `887dbccd648e8648c03810e8d7ef335e09e5dfc7d97d4098c608db8de7bcaf29` |
+| `nd-unfolding/rsn/rsn_mutation.py` | `8075fe8c9befed9184924fbab614ed81bf8c46bcfa112c7420a8c1a34d33f483` |
 
 These files are used unchanged: `pvl_unfold.py` `59ab0e11…`, `pvl_lib.py` `f8a7d2c2…`, `omnifold_nn_core.py`
 `24f87f11…`, `fd_f0_regrade.py` `0dfa722c…`, `build_cmodel5d.py` `aaa81575…`, `s5p_truths.py`, `s5c_pseudo.py`.
@@ -440,8 +464,11 @@ records the code pins are read from the checkout. To rev 1's coverage it adds:
 - the deformed-truth and transfer classes and WR's verdict;
 - J3 and the per-job limits.
 
-`rsn_mutation.py` plants 101 declared defects. Each must be killed by its named test. The receipts are in `rev2/`
+`rsn_mutation.py` plants 109 declared defects. Each must be killed by its named test. The receipts are in `rev3/`
 (clean clone, serial, nice 19, one thread).
+
+Rev 3 adds tests for the NC-R gate (nominal only, before J1), control 7's χ² and p, the by-family counts,
+C-INV's full set and its row check, and every job's NC-R refusal: 52 tests in all.
 
 ## 9. CITABLE FOR / NOT CITABLE FOR
 
@@ -450,6 +477,7 @@ records the code pins are read from the checkout. To rev 1's coverage it adds:
   - any result;
   - a calibrated uncertainty;
   - a change to C_model, to the estimator, to a grade or to a criterion;
+  - attributing F0b's flags to the equal-weight regression (that is T3's MW reading);
   - the carbon-versus-CH difference;
   - F1.2(i), or TR against the omitted truth quantities (§2.7);
   - LL5D's coverage under a changed C_model;
@@ -471,3 +499,24 @@ records the code pins are read from the checkout. To rev 1's coverage it adds:
 - **The cap** is raised from 0.75 to 1.25 node-h (projected 0.78).
 - **The HPSS recommendation** is added (§6).
 - **Tests** grow from 41 to 50, and **mutants** from 70 to 101.
+
+## 11. Rev 3 changes (the audit of rev 2 and the director's rulings, 2026-11-11)
+
+**The two majors:**
+- **R1:** under G6, every record graded with GiBUU's row can move, W3 (p = 0.037) and A7_nuwro (p = 0.093) among them,
+  so L can gain members. Only A7_gibuu and stage0c_gibuu are invariant (§3.2, §3.4's P1 row).
+- **R2:** WR's verdict is scoped to pvl's noise-free signal-only closure, as a stated sensitivity. Attributing F0b's
+  flags stays with T3's B0/MW reading (§3.3, §3.4, §9).
+
+**The minors:**
+- **m4 (ruled):** NC-R runs on a login node before J1, at 0 node-h (`rsn_regrade.py --nominal-only`), and every job
+  waits on its PASS (§6, the launcher).
+- **m1:** NC-R also checks control 7's χ² and p, and each group's by-family counts.
+- **m2:** C-INV checks the model-only and eight-cell grades too, after a bitwise check that S^G6's GENIE+MEC and NuWro
+  rows are the nominal ones.
+- **m3:** TR's classes are stated to bound the transfer bias plus the probe's estimation noise (§3.5).
+- **m5:** WU's TR records rest on TR_data = rsn_nc for the mechanism (§2.6).
+
+**The rest:**
+- §2.3 states that w_push · w_truth supersedes rev 1's w_truth, and why.
+- 52 tests and 109 mutants.

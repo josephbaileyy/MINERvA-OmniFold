@@ -6,6 +6,10 @@ Numpy only; runs on a login node.
     rsn_regrade.py --table fd_f1_experiments.npz --s1-npz s1_assembly.npz --extra-block cpl_block.npz
                    --flux-constraint <NuE constraint file> --rsn-cmodel <OUT>/cmodel/rsn_cmodel.npz \
                    --rsn-cmodel-json <OUT>/cmodel/rsn_cmodel.json --out <OUT>/regrade.json
+    rsn_regrade.py --nominal-only <the same inputs, without --rsn-cmodel*> --out <OUT>/nc_r.json
+
+--nominal-only is the NC-R gate (RSN-DECLARATION.md §6): it runs on a login node before J1, at 0 node-h, with
+cmodel_5d.json's S alone, and writes {"verdict": "PASS"} only if NC-R holds. J1 is not submitted without it.
 
 Each record's bias b and the noise N of its mean are rebuilt from the committed per-experiment table, exactly as
 fd_f0_regrade.py builds them (its own functions: unweighted, weighted, the row-4 offsets and control 7). The matrices
@@ -78,8 +82,8 @@ def truths(f1_prep_sums: Path) -> tuple:
     return R.TRUTHS + R.f1_truths(R.sa.load_manifest(f1_prep_sums))
 
 
-def estimates(TR: tuple, table: dict, w_all: np.ndarray) -> tuple[dict, bool]:
-    """(b, N, B, how[, b uncorrected]) per record and control 7's verdict, as fd_f0_regrade.run builds them."""
+def estimates(TR: tuple, table: dict, w_all: np.ndarray) -> tuple[dict, dict]:
+    """(b, N, B, how[, b uncorrected]) per record, and control 7 (pass, chi2, p), as fd_f0_regrade.run builds them."""
     def r(name):
         return np.asarray(table[f"r_{name.replace(':', '_')}"], float)
 
@@ -101,23 +105,23 @@ def estimates(TR: tuple, table: dict, w_all: np.ndarray) -> tuple[dict, bool]:
     x, y = R.OFFSET_PAIR
     g = R.grade(offsets[x]["O"] - offsets[y]["O"], offsets[x]["N_O"] + offsets[y]["N_O"],
                 np.zeros((R.N_CELLS, R.N_CELLS)))
-    offset_pass = bool(g["p"] >= 0.01)
+    ctrl = {"pass": bool(g["p"] >= 0.01), "chi2": g["chi2"], "p": g["p"]}
     for t in R.TRUTHS:
         if t["row"] != 6:
             continue
         bw, Nw, Beff = R.weighted(r(t["name"]), w_all[flux(t["name"])])
         o = offsets[t["ref"]]
         est[t["name"]] = (bw - o["O"], Nw + o["N_O"], Beff, "offset-corrected", bw)
-    return est, offset_pass
+    return est, ctrl
 
 
-def grade_all(TR: tuple, est: dict, offset_pass: bool, S: np.ndarray, Ce_rel, Cstat_rel, Cx_rel) -> dict:
+def grade_all(TR: tuple, est: dict, ctrl: dict, S: np.ndarray, Ce_rel, Cstat_rel, Cx_rel) -> dict:
     mats = {"C_total": R.leave_out(Ce_rel, S, None)}
     mats.update({f"minus_{v}": R.leave_out(Ce_rel, S, v) for v in R.VERTICES})
     recs, by = [], {}
     for t in TR:
         b, N = est[t["name"]][:2]
-        graded = t["row"] != 6 or offset_pass
+        graded = t["row"] != 6 or ctrl["pass"]
         C = (mats["C_total"] if t["own"] is None else mats[f"minus_{t['own']}"]) + Cx_rel
         rec = {"name": t["name"], "row": t["row"], "group": t["group"], "own_vertex": t["own"], "graded": graded,
                "bias": np.asarray(b).tolist(), "grade": R.grade(b, N, C),
@@ -131,11 +135,16 @@ def grade_all(TR: tuple, est: dict, offset_pass: bool, S: np.ndarray, Ce_rel, Cs
         rec["listed"] = bool(graded and (rec["grade"]["cells_abs_z_gt_2"] or rec["grade"]["p_lt_0.01"]))
         recs.append(rec)
         if graded:
-            gr = by.setdefault(t["group"], {"truths": 0, "cells": 0, "cells_abs_z_gt_2": 0, "truths_p_lt_0.01": 0})
-            gr["truths"] += 1
+            gr = by.setdefault(t["group"], {"truths": 0, "cells": 0, "cells_abs_z_gt_2": 0, "truths_p_lt_0.01": 0,
+                                            "by_family": {}})
+            fam = gr["by_family"].setdefault(t["own"] or t["name"], {"truths": 0, "cells_abs_z_gt_2": 0,
+                                                                     "truths_p_lt_0.01": 0})
+            nz, pl = len(rec["grade"]["cells_abs_z_gt_2"]), int(rec["grade"]["p_lt_0.01"])
+            for d in (gr, fam):
+                d["truths"] += 1
+                d["cells_abs_z_gt_2"] += nz
+                d["truths_p_lt_0.01"] += pl
             gr["cells"] += R.N_CELLS
-            gr["cells_abs_z_gt_2"] += len(rec["grade"]["cells_abs_z_gt_2"])
-            gr["truths_p_lt_0.01"] += int(rec["grade"]["p_lt_0.01"])
     sigma = np.sqrt(np.diag(mats["C_total"] + Cx_rel))
     return {"records": recs, "by_group": by, "listed": [r["name"] for r in recs if r["listed"]],
             "reported_relative_sigma": sigma.tolist()}
@@ -147,13 +156,16 @@ def same_grade(a: dict, b: dict) -> bool:
             and a["p_lt_0.01"] == b["p_lt_0.01"])
 
 
-def reproduce(nom: dict, offset_pass: bool, readout: dict) -> None:
+def reproduce(nom: dict, ctrl: dict, readout: dict) -> None:
     """NC-R: the nominal regrade is the committed F1 readout, record for record."""
     old = {r["name"]: r for r in readout["truths"]}
     if [r["name"] for r in nom["records"]] != [r["name"] for r in readout["truths"]]:
         raise Refuse("NC-R: the records are not the committed readout's, in its order")
-    if offset_pass != bool(readout["controls"]["offset_control_7"]["pass"]):
+    c7 = readout["controls"]["offset_control_7"]
+    if ctrl["pass"] != bool(c7["pass"]):
         raise Refuse("NC-R: control 7's verdict differs from the committed one")
+    if not np.isclose(ctrl["chi2"], c7["chi2"], rtol=RTOL, atol=0) or not np.isclose(ctrl["p"], c7["p"], rtol=1e-8, atol=1e-14):
+        raise Refuse("NC-R: control 7's chi2 or p differs from the committed one")
     for rec in nom["records"]:
         o = old[rec["name"]]
         if not np.allclose(rec["bias"], o["bias"], rtol=1e-12, atol=1e-15):
@@ -167,12 +179,20 @@ def reproduce(nom: dict, offset_pass: bool, readout: dict) -> None:
         mine = nom["by_group"].get(gname, {})
         if any(mine.get(k) != g[k] for k in ("truths", "cells", "cells_abs_z_gt_2", "truths_p_lt_0.01")):
             raise Refuse(f"NC-R: group {gname}'s counts differ from the committed ones")
+        if mine.get("by_family") != g["by_family"]:
+            raise Refuse(f"NC-R: group {gname}'s by-family counts differ from the committed ones")
 
 
-def invariant_g6(nom: dict, g6: dict) -> None:
-    """C-INV: G6 changes GiBUU's row only, so a record graded without GiBUU's shift cannot move."""
+INVARIANT = ("grade", "model_only", "p_parallel_lt_4p5")
+
+
+def invariant_g6(nom: dict, g6: dict, S0: np.ndarray, S6: np.ndarray) -> None:
+    """C-INV: G6 changes GiBUU's row only (checked bitwise first), so a record graded without GiBUU's shift cannot
+    move in any matrix that leaves it out: the grade, the model-only and the eight-cell grades."""
+    if not np.array_equal(S6[:2], S0[:2]):
+        raise Refuse("C-INV: S^G6's GENIE+MEC and NuWro rows are not cmodel_5d.json's")
     for a, b in zip(nom["records"], g6["records"]):
-        if a["own_vertex"] == "gibuu" and a["grade"] != b["grade"]:
+        if a["own_vertex"] == "gibuu" and any(a.get(k) != b.get(k) for k in INVARIANT):
             raise Refuse(f"C-INV: {a['name']} (own vertex GiBUU) moved under G6")
 
 
@@ -234,19 +254,30 @@ def run(a) -> dict:
     ff = np.outer(f, f)
     Ce_rel, Cstat_rel, Cx_rel = Ce / ff, Cstat / ff, Cx / ff
     S0 = np.asarray(json.loads(Path(a.cmodel_json).read_text())["S"], float)
+    est, ctrl = estimates(TR, table, w_all)
+    if a.nominal_only:
+        nom = grade_all(TR, est, ctrl, S0, Ce_rel, Cstat_rel, Cx_rel)
+        reproduce(nom, ctrl, json.loads(Path(a.f1_readout).read_text()))
+        rec = {"schema": "rsn-nc-r/1", "verdict": "PASS", "records": len(nom["records"]), "offset_control_7": ctrl,
+               "inputs_sha256": dict(PINS),
+               "code_sha256": {"rsn_regrade.py": R.sa.sha256(Path(__file__).resolve()),
+                               "fd_f0_regrade.py": R.sa.sha256(Path(R.__file__).resolve())}}
+        R.LeakGuard(f, []).check("the NC-R JSON", rec)
+        a.out.write_text(json.dumps(rec, indent=1) + "\n")
+        print(f"[rsn] NC-R PASS: {len(nom['records'])} records reproduce the committed F1 readout")
+        return rec
     with np.load(a.rsn_cmodel, allow_pickle=False) as z:
         arms = {k[2:]: np.asarray(z[k], float) for k in z.files if k.startswith("S_")}
     if "nominal" not in arms or not np.array_equal(arms["nominal"], S0):
         raise Refuse("the arm file's nominal S is not cmodel_5d.json's")
-    est, offset_pass = estimates(TR, table, w_all)
-    out = {name: grade_all(TR, est, offset_pass, S, Ce_rel, Cstat_rel, Cx_rel) for name, S in arms.items()}
-    reproduce(out["nominal"], offset_pass, json.loads(Path(a.f1_readout).read_text()))
+    out = {name: grade_all(TR, est, ctrl, S, Ce_rel, Cstat_rel, Cx_rel) for name, S in arms.items()}
+    reproduce(out["nominal"], ctrl, json.loads(Path(a.f1_readout).read_text()))
     if "G6" in out:
-        invariant_g6(out["nominal"], out["G6"])
+        invariant_g6(out["nominal"], out["G6"], S0, arms["G6"])
     cm = json.loads(Path(a.rsn_cmodel_json).read_text())
     if not np.array_equal(np.asarray(cm["arms"]["nominal"]["S"], float), S0):
         raise Refuse("rsn_cmodel.json's nominal S is not cmodel_5d.json's")
-    readout = {"schema": "rsn-regrade/1", "offset_control_7_pass": offset_pass, "arms": out,
+    readout = {"schema": "rsn-regrade/1", "offset_control_7": ctrl, "arms": out,
                "wr_directions": wr_directions(cm, Ce_rel, S0, Cx_rel),
                "controls": ["NC-R", "nominal S", "C-INV" if "G6" in out else None],
                "inputs_sha256": {**PINS, "rsn_cmodel": R.sa.sha256(Path(a.rsn_cmodel)),
@@ -271,10 +302,14 @@ def main(argv=None) -> int:
     ap.add_argument("--extra-block", type=Path, required=True)
     ap.add_argument("--flux-constraint", type=Path, required=True)
     ap.add_argument("--cmodel-json", type=Path, default=CMODEL_JSON)
-    ap.add_argument("--rsn-cmodel", type=Path, required=True)
-    ap.add_argument("--rsn-cmodel-json", type=Path, required=True)
+    ap.add_argument("--rsn-cmodel", type=Path)
+    ap.add_argument("--rsn-cmodel-json", type=Path)
+    ap.add_argument("--nominal-only", action="store_true", help="the NC-R gate before J1")
     ap.add_argument("--out", type=Path, required=True)
-    run(ap.parse_args(argv))
+    a = ap.parse_args(argv)
+    if not a.nominal_only and (a.rsn_cmodel is None or a.rsn_cmodel_json is None):
+        ap.error("--rsn-cmodel and --rsn-cmodel-json are required unless --nominal-only")
+    run(a)
     return 0
 
 

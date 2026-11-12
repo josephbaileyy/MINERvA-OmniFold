@@ -41,6 +41,10 @@ CHI2_FRACTION = 0.25
 DEFORMED = ("gibuu", "q3")
 # §3.5: the transfer diagnostic, read at the last iteration
 TRANSFER_POINTS = ("data", "gibuu", "q3")
+SCOPE_WR = ("a stated sensitivity of pvl's noise-free signal-only full-MC closure, WR against WU; it does not attribute "
+            "F0b's flags, which were made in the background-inclusive half-MC construction: that attribution is T3's "
+            "B0/MW reading, at the same weight")
+SCOPE_TR = "the classes bound the transfer bias plus the 80 % probe's own estimation noise; no noise reference is made"
 FLOOR_PRINTED = (0.133, 0.055, 0.252)   # FD-1B-INV-I0-REPORT.md:67, in %
 
 CONCLUSIONS = {
@@ -204,12 +208,14 @@ def read(prep: dict, cm: dict, rg: dict, i0: dict, cmodel: dict, f1: dict) -> di
                "delta_over_sigma": (np.abs(delta) / sigma_rep).tolist(), "class": wc, "cells_at_half_sigma": cells,
                "chi2": wd["data"]["grade"]["chi2"], "top_directions": wd["data"]["directions"]["top"]},
         "P7": p7,
-        "verdict": ("the equal-weight regression is immaterial at the A7 GiBUU hybrid and the q3 tilt, and the data "
-                    "move " + ("within the rounding floor" if wc == "W0" else "below half the reported sigma"))
+        "verdict": ("in pvl's noise-free signal-only closures, the equal-weight regression is immaterial at the A7 "
+                    "GiBUU hybrid and the q3 tilt, and the data move "
+                    + ("within the rounding floor" if wc == "W0" else "below half the reported sigma"))
         if not material and wc in ("W0", "W1") else
-        ("the equal-weight regression is material: " + ", ".join(
-            ([f"at {t}" for t in material]) + ([f"on data ({wc}: {cells})"] if wc == "W2" else [])))}
-    out["arms"]["TR"] = {"P8": p8}
+        ("in pvl's noise-free signal-only closures, the equal-weight regression is material: " + ", ".join(
+            ([f"at {t}" for t in material]) + ([f"on data ({wc}: {cells})"] if wc == "W2" else []))),
+        "scope": SCOPE_WR}
+    out["arms"]["TR"] = {"P8": p8, "scope": SCOPE_TR}
     return out
 
 
