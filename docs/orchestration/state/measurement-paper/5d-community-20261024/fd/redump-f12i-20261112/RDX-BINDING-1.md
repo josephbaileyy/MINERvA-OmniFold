@@ -109,3 +109,64 @@ file below at both commits, and each is byte-identical.
    <!-- absence-ok: a scoping statement about a projected wall time, not a claim that a result does not exist -->
 
 Nothing is submitted, deposited or tagged.
+
+## Binding 1, addendum J1: the launcher tranche (director, 2026-11-12)
+
+**Binds** the RDX launcher tranche and declaration rev 5 (§2c), as merged in PR #1097 at
+**M_RDXJ = `3f74c36f8076e61d30c31220e4a45ec075c6a3e0`**. The audited head is `88c6543a`. The director re-hashed every
+file below at both commits, and each is byte-identical.
+
+| file | sha256 (prefix) |
+|---|---|
+| `RDX-DECLARATION.md` (rev 5) | `67b4e8a61f8591a5` |
+| `nd-unfolding/rdx/rdx_connect.sh` | `22159ebd99a836ff` |
+| `nd-unfolding/rdx/rdx_connect_launch.sh` | `45949bc57f4e4248` |
+| `nd-unfolding/rdx/sbatch_rdx_evloop.sh` | `743b9e48cbeb36c3` |
+| `nd-unfolding/rdx/sbatch_rdx_merge.sh` | `742503fa085faa5f` |
+| `nd-unfolding/rdx/sbatch_rdx_arms.sh` | `e3e031e754351847` |
+| `nd-unfolding/rdx/rdx_cap.py` | `457e89efa20b484c` |
+| `nd-unfolding/rdx/rdx_merge.py` | `23dce7a447a830f5` |
+| `nd-unfolding/rdx/rdx_dump.py` | `122702c647efc451` |
+| `nd-unfolding/rdx/rdx_probe_walk.py` | `dedaa80e5fb108e4` |
+| `nd-unfolding/rdx/rdx_paths.py` | `948c47e05f22396a` |
+| `nd-unfolding/rdx/rdx_tasks.tsv` | `3ec5069127f5f937` |
+
+`rdx_dump.py` changed in this tranche (the vectorized kept-row walk of z3), so this addendum supersedes C1's digest
+for it.
+
+**What the director checked:**
+- **coverage-5b-audit's GO** at `88c6543a`, after one blocker and one major at `033a3d82`:
+  - B1: `POLICY_REL` named a policy file absent from the repo (`prologue3-20261107`), and the smoke's stub at that path hid it. It now names
+    `prologue5-20261108`. A test checks that every hard-coded repo path exists at HEAD.
+    <!-- absence-ok: the audit's B1 finding about one named path, checked by git ls-files at 033a3d82 -->
+  - M1: c1 ignored the walk probe's exit status. It now STOPs before its PASS line, and s2 requires the PASS.
+  - The audit's reruns gave 52 tests OK and 51 + 25 mutants killed.
+- **z3:** the dump uses the vectorized walk, with the loop kept as the reference and bitwise equality tested. c1's
+  probe times both walks on the 1A pilot output, and the merge limit is set from it at step `gmerge`.
+- **The NuE flux-constraint exception** (§2c), granted on 2026-11-12 with cov2d's no-objection. Stages 1 and 2 read
+  `sorted_NuEConstraint_FHC_RHC_IMD.txt` plainly, once per loop at initialisation, under these terms:
+  - the job-start and pre-binary fence checks;
+  - the connect's fence check;
+  - the rdx_ announcement;
+  - the per-job atime and mtime log in ns, with UTC;
+  - cov2d's condition (a): s1 takes cov2d's LL5D atime-post UTC time and refuses before it.
+- **The AnaTuple check,** accepted: size and mtime against the manifest, with C-ALIGN's bitwise comparison against
+  MP-1's hash-pinned references as the guard. A C-ALIGN failure's first diagnostic is a priced sha256 re-hash.
+
+**Rulings:**
+1. **The launcher tranche is bound as merged at M_RDXJ.**
+2. **Order,** as §2c gives it:
+   - s0, then s1, then c1;
+   - gs2, then s2, then c2;
+   - gmerge, then m, then cm;
+   - the commit of `rdx-inputs-SHA256SUMS`, which gives stage 3's pin;
+   - gs3a and gs3b, then s3a and s3b.
+
+   **Each step's connect sha comes to the director, and each runs only on the director's go.**
+3. **Job family:** `rdx_`, announced to every fenced lane before s1. s1 waits for cov2d's LL5D atime-post time and
+   for the director's queue sequencing against E96D, RSN and COV2D-G2R.
+4. **Cap:** 2.5 node-h, enforced by `rdx_cap.py` before every submit, with unbilled submissions counted at their
+   ceiling. Any projection above the cap STOPs to the director.
+5. **Lows** w1–w3, y1–y5 and z1, z2 and z4 go on the follow-up list.
+
+Nothing is submitted, deposited or tagged.
