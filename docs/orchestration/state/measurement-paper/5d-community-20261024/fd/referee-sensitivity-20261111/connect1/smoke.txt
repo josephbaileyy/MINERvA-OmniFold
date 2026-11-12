@@ -1,0 +1,102 @@
+# rsn_connect1.sh local smoke (smoke_connect1.sh; macOS; stubs; never connects)
+# rsn_connect1.sh sha256 4fbb8f29384eeccb3f5b914ce1b76a47aa84ae89ca5c68095b3b51e0d592caac
+# smoke_connect1.sh sha256 ab00c5bb9abb1fd31096a68dddcc5e337bc07373583f8f3e58ff960af4bbb7f4
+# run: bash smoke_connect1.sh <new empty dir> <local clone containing af711298>
+## case pass rc=0
+HEAD af7112989417f180e846573c31d101e44e6b02f9; porcelain lines (untracked included)        0
+STAGE OK table: <w>/p-pass/fd-f1-20261027/grade/fd_f1_experiments.npz -> <w>/p-pass/rsn-20261112/out/stage/fd_f1_experiments.npz: 4096 bytes, sha256 5540d26db850d7291fa374cb5d5fdd46d631c4a5bc5204ac9d69dfa92fba4a21, size/mtime/atime unchanged (stat)
+STAGE OK s1_npz: <w>/p-pass/s1-20261024/s1_assembly.npz -> <w>/p-pass/rsn-20261112/out/stage/s1_assembly.npz: 4096 bytes, sha256 f37a06cf8ce2b00a5469ea77a45266b1db0d8ca2f5a746ea43e0a6b7c4f0b1b4, size/mtime/atime unchanged (stat)
+STAGE OK extra_block: <w>/p-pass/fd-ct-5b-addition-20261031/with/block/cpl_block.npz -> <w>/p-pass/rsn-20261112/out/stage/cpl_block.npz: 4096 bytes, sha256 468afb6141e7564f3c31577dcd79c7acaffcd3c58f210b91da4d8f4670ec379e, size/mtime/atime unchanged (stat)
+STAGE OK flux: <w>/p-pass/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt -> <w>/p-pass/rsn-20261112/out/stage/sorted_NuEConstraint_FHC_RHC_IMD.txt: 4096 bytes, sha256 1f86ed6f0432ab33b7073fb9e040da962c9d41fc52dc941db998bd7411a1fc5a, size/mtime/atime unchanged (stat)
+rsn_prep rc=0
+rsn_prep stdout:        3 lines,        3 of the sums form
+[rsn] NC-R PASS: 22 records reproduce the committed F1 readout
+== 5 ruling 4 (r1): nc_r.json's recorded rsn_regrade.py sha256 beside the deployed file's
+recorded 661608d81ccf7ca0ab08aee853f5934d4c0dab89677e82f8292239fee60b7652
+deployed 661608d81ccf7ca0ab08aee853f5934d4c0dab89677e82f8292239fee60b7652
+bound    661608d81ccf7ca0ab08aee853f5934d4c0dab89677e82f8292239fee60b7652
+R1 EQUAL
+deploy porcelain after (untracked included)        0
+fence.txt present: no (connect 1 never writes it)
+CONNECT 1 PASS: deploy clean at af7112989417f180e846573c31d101e44e6b02f9; prep built; NC-R PASS; r1 equal. fence.txt and J1 wait for the director.
+== rsn connect 1 rc=0
+self copy removed: yes
+## case atime rc=8
+HEAD af7112989417f180e846573c31d101e44e6b02f9; porcelain lines (untracked included)        0
+STAGE STOP table: <w>/p-atime/fd-f1-20261027/grade/fd_f1_experiments.npz: size, mtime or atime changed by the copy
+STOP: staging failed
+== rsn connect 1 rc=8
+self copy removed: yes
+## case badpin rc=8
+HEAD af7112989417f180e846573c31d101e44e6b02f9; porcelain lines (untracked included)        0
+STAGE OK table: <w>/p-badpin/fd-f1-20261027/grade/fd_f1_experiments.npz -> <w>/p-badpin/rsn-20261112/out/stage/fd_f1_experiments.npz: 4096 bytes, sha256 5540d26db850d7291fa374cb5d5fdd46d631c4a5bc5204ac9d69dfa92fba4a21, size/mtime/atime unchanged (stat)
+STAGE OK s1_npz: <w>/p-badpin/s1-20261024/s1_assembly.npz -> <w>/p-badpin/rsn-20261112/out/stage/s1_assembly.npz: 4096 bytes, sha256 f37a06cf8ce2b00a5469ea77a45266b1db0d8ca2f5a746ea43e0a6b7c4f0b1b4, size/mtime/atime unchanged (stat)
+STAGE OK extra_block: <w>/p-badpin/fd-ct-5b-addition-20261031/with/block/cpl_block.npz -> <w>/p-badpin/rsn-20261112/out/stage/cpl_block.npz: 4096 bytes, sha256 468afb6141e7564f3c31577dcd79c7acaffcd3c58f210b91da4d8f4670ec379e, size/mtime/atime unchanged (stat)
+STAGE STOP flux: <w>/p-badpin/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt: sha256 1f86ed6f0432ab33b7073fb9e040da962c9d41fc52dc941db998bd7411a1fc5a is not its pin ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+STOP: staging failed
+== rsn connect 1 rc=8
+self copy removed: yes
+## case r1bad rc=8
+HEAD af7112989417f180e846573c31d101e44e6b02f9; porcelain lines (untracked included)        0
+STAGE OK table: <w>/p-r1bad/fd-f1-20261027/grade/fd_f1_experiments.npz -> <w>/p-r1bad/rsn-20261112/out/stage/fd_f1_experiments.npz: 4096 bytes, sha256 5540d26db850d7291fa374cb5d5fdd46d631c4a5bc5204ac9d69dfa92fba4a21, size/mtime/atime unchanged (stat)
+STAGE OK s1_npz: <w>/p-r1bad/s1-20261024/s1_assembly.npz -> <w>/p-r1bad/rsn-20261112/out/stage/s1_assembly.npz: 4096 bytes, sha256 f37a06cf8ce2b00a5469ea77a45266b1db0d8ca2f5a746ea43e0a6b7c4f0b1b4, size/mtime/atime unchanged (stat)
+STAGE OK extra_block: <w>/p-r1bad/fd-ct-5b-addition-20261031/with/block/cpl_block.npz -> <w>/p-r1bad/rsn-20261112/out/stage/cpl_block.npz: 4096 bytes, sha256 468afb6141e7564f3c31577dcd79c7acaffcd3c58f210b91da4d8f4670ec379e, size/mtime/atime unchanged (stat)
+STAGE OK flux: <w>/p-r1bad/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt -> <w>/p-r1bad/rsn-20261112/out/stage/sorted_NuEConstraint_FHC_RHC_IMD.txt: 4096 bytes, sha256 1f86ed6f0432ab33b7073fb9e040da962c9d41fc52dc941db998bd7411a1fc5a, size/mtime/atime unchanged (stat)
+rsn_prep rc=0
+rsn_prep stdout:        3 lines,        3 of the sums form
+[rsn] NC-R PASS: 22 records reproduce the committed F1 readout
+== 5 ruling 4 (r1): nc_r.json's recorded rsn_regrade.py sha256 beside the deployed file's
+recorded 0000000000000000000000000000000000000000000000000000000000000000
+deployed 661608d81ccf7ca0ab08aee853f5934d4c0dab89677e82f8292239fee60b7652
+bound    661608d81ccf7ca0ab08aee853f5934d4c0dab89677e82f8292239fee60b7652
+STOP: r1: the recorded, deployed and bound sha256s are not all equal
+== rsn connect 1 rc=8
+self copy removed: yes
+## case prep_extra_line rc=0
+HEAD af7112989417f180e846573c31d101e44e6b02f9; porcelain lines (untracked included)        0
+STAGE OK table: <w>/p-prep_extra_line/fd-f1-20261027/grade/fd_f1_experiments.npz -> <w>/p-prep_extra_line/rsn-20261112/out/stage/fd_f1_experiments.npz: 4096 bytes, sha256 5540d26db850d7291fa374cb5d5fdd46d631c4a5bc5204ac9d69dfa92fba4a21, size/mtime/atime unchanged (stat)
+STAGE OK s1_npz: <w>/p-prep_extra_line/s1-20261024/s1_assembly.npz -> <w>/p-prep_extra_line/rsn-20261112/out/stage/s1_assembly.npz: 4096 bytes, sha256 f37a06cf8ce2b00a5469ea77a45266b1db0d8ca2f5a746ea43e0a6b7c4f0b1b4, size/mtime/atime unchanged (stat)
+STAGE OK extra_block: <w>/p-prep_extra_line/fd-ct-5b-addition-20261031/with/block/cpl_block.npz -> <w>/p-prep_extra_line/rsn-20261112/out/stage/cpl_block.npz: 4096 bytes, sha256 468afb6141e7564f3c31577dcd79c7acaffcd3c58f210b91da4d8f4670ec379e, size/mtime/atime unchanged (stat)
+STAGE OK flux: <w>/p-prep_extra_line/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt -> <w>/p-prep_extra_line/rsn-20261112/out/stage/sorted_NuEConstraint_FHC_RHC_IMD.txt: 4096 bytes, sha256 1f86ed6f0432ab33b7073fb9e040da962c9d41fc52dc941db998bd7411a1fc5a, size/mtime/atime unchanged (stat)
+rsn_prep rc=0
+rsn_prep stdout:        4 lines,        3 of the sums form
+[rsn] NC-R PASS: 22 records reproduce the committed F1 readout
+== 5 ruling 4 (r1): nc_r.json's recorded rsn_regrade.py sha256 beside the deployed file's
+recorded 661608d81ccf7ca0ab08aee853f5934d4c0dab89677e82f8292239fee60b7652
+deployed 661608d81ccf7ca0ab08aee853f5934d4c0dab89677e82f8292239fee60b7652
+bound    661608d81ccf7ca0ab08aee853f5934d4c0dab89677e82f8292239fee60b7652
+R1 EQUAL
+deploy porcelain after (untracked included)        0
+fence.txt present: no (connect 1 never writes it)
+CONNECT 1 PASS: deploy clean at af7112989417f180e846573c31d101e44e6b02f9; prep built; NC-R PASS; r1 equal. fence.txt and J1 wait for the director.
+== rsn connect 1 rc=0
+self copy removed: yes
+## case prep_unlisted rc=8
+HEAD af7112989417f180e846573c31d101e44e6b02f9; porcelain lines (untracked included)        0
+STAGE OK table: <w>/p-prep_unlisted/fd-f1-20261027/grade/fd_f1_experiments.npz -> <w>/p-prep_unlisted/rsn-20261112/out/stage/fd_f1_experiments.npz: 4096 bytes, sha256 5540d26db850d7291fa374cb5d5fdd46d631c4a5bc5204ac9d69dfa92fba4a21, size/mtime/atime unchanged (stat)
+STAGE OK s1_npz: <w>/p-prep_unlisted/s1-20261024/s1_assembly.npz -> <w>/p-prep_unlisted/rsn-20261112/out/stage/s1_assembly.npz: 4096 bytes, sha256 f37a06cf8ce2b00a5469ea77a45266b1db0d8ca2f5a746ea43e0a6b7c4f0b1b4, size/mtime/atime unchanged (stat)
+STAGE OK extra_block: <w>/p-prep_unlisted/fd-ct-5b-addition-20261031/with/block/cpl_block.npz -> <w>/p-prep_unlisted/rsn-20261112/out/stage/cpl_block.npz: 4096 bytes, sha256 468afb6141e7564f3c31577dcd79c7acaffcd3c58f210b91da4d8f4670ec379e, size/mtime/atime unchanged (stat)
+STAGE OK flux: <w>/p-prep_unlisted/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt -> <w>/p-prep_unlisted/rsn-20261112/out/stage/sorted_NuEConstraint_FHC_RHC_IMD.txt: 4096 bytes, sha256 1f86ed6f0432ab33b7073fb9e040da962c9d41fc52dc941db998bd7411a1fc5a, size/mtime/atime unchanged (stat)
+rsn_prep rc=0
+rsn_prep stdout:        3 lines,        3 of the sums form
+STOP:        4 files under <w>/p-prep_unlisted/rsn-20261112/out/prep but        3 listed
+== rsn connect 1 rc=8
+self copy removed: yes
+## case host rc=9
+REFUSED (nothing written): host dtn01 is not a login node
+self copy removed: yes
+## case slurm rc=9
+REFUSED (nothing written): a Slurm job is set (123)
+self copy removed: yes
+## case rsnqueued rc=9
+REFUSED (nothing written): an rsn_ job is queued or running: 61099999|rsn_J1|PENDING
+self copy removed: yes
+## case exists rc=9
+REFUSED (nothing written): <w>/p-exists/rsn-20261112 exists
+## case noinput rc=9
+REFUSED (nothing written): no s1_npz input <w>/p-noinput/s1-20261024/s1_assembly.npz
+## launcher (rsn_connect1_launch.sh sha256 f7cc3c8040c2cd7261c566c71fb17ba1108146a074f971156a4bc6f14f54ae4d), stub ssh running remote strings locally, /dev/shm mapped
+login27: ssh rc=0; staged sha256 4fbb8f29384eeccb3f5b914ce1b76a47aa84ae89ca5c68095b3b51e0d592caac (macOS has no setsid, so the detached run stops there)
+dtn01: STOP: 'dtn01' is not a login node name (rc 9)
+non-empty session dir: STOP (rc 9)
+inner hop argv: StrictHostKeyChecking=accept-new
