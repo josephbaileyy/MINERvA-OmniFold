@@ -9,10 +9,15 @@ committed, because the lane's scratch copy is lost to macOS cleanup after a few 
 
 | file | what it is |
 |---|---|
-| `repin_list.tsv` | One row per change the re-pin makes (RP01–RP26). Each row has the ruling date, the RESPONSE.md quote id if any (`supp-quotes.tsv`'s Q number), the sites in #981 at `91f9cb615`, the action, the source document and the exact new quote. |
+| `repin_list.tsv` | One row per change the re-pin makes (RP01–RP30). Each row has the ruling date, the RESPONSE.md quote id if any (`supp-quotes.tsv`'s Q number), the sites in #981 at `91f9cb615`, the action, the source document and the exact new quote. |
 | `repin_check.py` | Counts every new quote at a #977 head the way the re-pinned build will read it. |
 | `REPIN-CHECK.txt` | The checker's output at the latest #977 head checked. |
 | `comment_strip_measure.py`, `COMMENT-STRIP-30e2e79e.txt` | The measurement behind RP18 (strip LaTeX comments before every count). It runs #981's build in memory twice at #977 `30e2e79e`, once as read and once with comments stripped. Only the old §4.1 quote changes (34 failures against 36), and that quote was already ruled for re-source. The director asked for this in the re-pin's receipt. |
+| `dryrun.py`, `ruled_baseline.txt` | The dry run of #981's build at a #977 head, and the failures already ruled. See "The dry run and the merge simulation". |
+| `merge_sim.sh` | Builds the merge simulation: a worktree at the #977 head with #981's package checked out into it, then runs `dryrun.py` there. |
+| `DRYRUN-a87137996.txt`, `MERGE-SIM-a87137996.txt`, `MERGE-SIM-a87137996-RP27-RP28.txt` | Both runs at #977 `a87137996`, and the merge simulation again with RP27 and RP28 applied in its scratch tree. |
+| `READS-a87137996.tsv` | Every file the build and the values producer open in the merge simulation, with sizes, and the four files the build reads through git at `PAPER_REF`. The input to the S1 design. |
+| `PYTHON-VERSIONS-20261113.txt` | The S3 measurement: the build and the producer on Python 3.10, 3.11 and 3.12. |
 
 The actions are:
 - `resource`: the new quote must count 1 in its document.
@@ -35,8 +40,30 @@ branch (`draft/methods-short-20261109`):
 
     python3 -B docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/repin/repin_check.py <#977 head>
 
-The lane also runs a dry run of #981's build at each head (`PAPER_REF` patched in memory). That run checks #981's
-current quotes. This checker covers the ruled replacement quotes, which the dry run cannot see.
+This checker covers the ruled replacement quotes, which a dry run of #981's current build cannot see.
+
+## The dry run and the merge simulation
+
+`dryrun.py` runs #981's `assemble()` with `PAPER_REF` patched in memory to the #977 head and every check collected.
+Failures the director has ruled on are counted, and any other failure is printed as NEW FAILURE (exit 1). Run from
+the top of a checkout:
+
+    python3 -B <this directory>/dryrun.py <#977 head>
+
+**What the plain dry run does not see.** #981 reads the paper and Supplement at `PAPER_REF` through git. It reads
+`values_fived16.tex` and `values.tex`, and imports `make_values_fived16.py`, from its own tree. In #981's worktree
+those are #981's own copies, so the plain dry run checks only the quotes against the head. From `223c1431a` to
+`01bb9a7fe` the lane ran only the plain dry run. Two breaks in the head's values files were present at all of those
+heads and went unseen: RP27 and RP28. director-helper-2's D6 test found the first, and the merge simulation found the
+second.
+
+**The merge simulation** reads everything at the head. `merge_sim.sh` makes a worktree at the #977 head and checks
+#981's package directory out into it from #981's head, so the build reads the head's producer and values files, as it
+will after the re-pin. The lane runs both, the plain dry run and the merge simulation, at every head:
+
+    bash <this directory>/merge_sim.sh <new empty dir> <#977 head> <#981 head>
+    git worktree remove --force <that dir>
+
 
 ## Merge with RESPONSE.md's re-pin list
 
@@ -61,3 +88,4 @@ The director confirmed this mapping on 2026-11-12 and asked director-helper-3 to
 | `990aad756`, the director's rulings | REPIN-CHECK PASS (29 rows). The director ruled on 2026-11-13 that the 2D SCOPE line states the IBU difference. RP07 and RP07p therefore quote the adjacent pair "On this analysis's inputs, OmniFold and binned IBU, the publication's method, differ beyond paired replica noise (section~\ref{sec:paired2d}). The origin of the shape difference has not been identified." The pair counts 1, though its first sentence alone occurs twice. The new row RP25 changes "cause" to "origin" in #981's own scope sentence; the OUTCOME quote stays verbatim. RP11 is accepted. |
 | `01bb9a7fe` | REPIN-CHECK PASS (29 rows). Its output equals the run at the director's 990aad756 rulings except for the head line. Joseph's read of sections 5 to 6.1 moved none of #981's quotes, and the dry run flags only ruled failures. Tune names: the paper prints `\fvval{f1-tune-g18}` and `\fvval{f1-tune-ar23}` once each, at first use with the short names G18 and AR23 in parentheses, and the short keys after that (14 and 13 uses). #981's own 2D scope sentence (B765-766, R305) names the tunes "AR23 and G18_10a_02_11b", as its OUTCOME-20261108 quote does, and #981's tune column prints the full names. The lane proposes keeping that sentence as it is; the director rules. The seven ens1-* keys of RP23 keep their print counts. |
 | `01bb9a7fe`, the director's ruling | REPIN-CHECK PASS (30 rows). The director ruled on 2026-11-13 that #981's own 2D scope sentence names both tunes in full, "(AR23_20i_00_000 and G18_10a_02_11b)", because #981 defines no short names. The new code row RP26 makes that change at the re-pin. The OUTCOME-20261108 quote stays verbatim. |
+| `a87137996` | REPIN-CHECK PASS (34 rows). The plain dry run flags only ruled failures. The merge simulation, run here for the first time, flags three more: f1-tune-g18 and f1-tune-ar23 are `\mbox`-wrapped in values_fived16.tex (RP27, director-helper-2's D6 finding), and #981's freshness check compares the file with `all_values()` alone, while the file also holds the producer's 90 pending-group keys (RP28). With both applied in the simulation's scratch tree, the simulation flags only ruled failures. The director accepted RP27 and RP28 on 2026-11-13 and asked for the README rows RP29 (Python >= 3.12, measured) and RP30 (git). The S1 snapshot design and the S4 checksum for `connect/` are proposed to the director separately. |
