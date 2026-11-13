@@ -952,6 +952,8 @@ end of 5.2, it is necesary to say 0 are not assessed? Is the sentence in 5.3: "T
 - §6.2: "They do not validate the uncertainty of the data result." and "Its result does not validate the uncertainty of the data result." Proposal: keep the first. §7.1's coverage item holds the general statement.
 - §6.2: "A run continued or repaired after a check was seen is descriptive." Proposal: keep until LL5D's fill, which decides whether a route case prints. Then cut it if the direct route prints.
 - §3.3: "The note gives N further truths, which are descriptive." Proposal: keep, since it says why they are not graded.
+**Applied (the director, 2026-11-12): the first four** (meaning read `jc2b-read/`, MINOR; §4.1 says "No $p$-value is quoted for this distance"). Kept as proposed: the tilt's "set in advance", the LL5D route disclosure until the fill, and §3.3's note-truths sentence.
+
 - **Kept as substantive:** §1's "illustrates the method and is not a measurement"; §4.1's hadronic-distribution limit; §7's "does not validate the five-observable distribution" (ruled); the RSN WR scope; §4.2's descriptive-χ² caveat (Joseph's B).
 
 
