@@ -1,4 +1,4 @@
-#977 head 9c9203f41c74c25fdf964b5526e8b308daa3daa7; 27 rows
+#977 head f0c451a9d; 28 rows
 OK  RP01   resource paper      count=1  The sixteen-cell cross section that the estimator gives on the data il
 OK  RP02   resource paper      count=1  The held-out-tune tests provide partial evidence on bias at truths hel
 OK  RP03   resource paper      count=1  The dependence on the prior's generator shape is reported separately a
@@ -35,4 +35,5 @@ OK  RP23   keys     paper      printed=1  \fvval{ens1-bar-median}
 OK  RP23   keys     paper      printed=1  \fvval{ens1-bar-max}
 OK  RP23   keys     paper      printed=4  \fvval{ens1-ntruths}
 OK  RP23   keys     paper      printed=1  \fvval{ens1-nnoworse}
+OK  RP24   term     paper      old=0 new=13  reporting cells -> reported cells
 REPIN-CHECK PASS
