@@ -1,0 +1,51 @@
+# Meaning read: Joseph's 11-13 critique edits (methods-short worktree)
+
+**VERDICT: DEFECTS** (4 defects, all fixable in wording; no number is wrong)
+
+Read against: working tree of /Users/josephbailey/MINERvA-OmniFold-methods-short at HEAD f0c451a9d, uncommitted
+(paper_body.tex sha256 dfe7d5a76b80..., main_paper.tex cc0cfd832387...). scratchpad diff.txt matches the live diff (cmp).
+Records: values_fived16.tex:110-123; OUTCOME-20261106-ref-c2c1-read.md; REF-C2C1-DECLARATION.md (state/measurement-paper/
+5d-community-20261024/) :85, :186-190, :205-208; DECISION-20261111-joseph-ibu-distance-and-zenodo.md (HEAD) item 1;
+RESPONSE.md §J (Joseph verbatim, 11-13); note sec_intro.tex:8, sec_method.tex:176-186; s5c_unfold.py:135-144; supplemental_body.tex:265, :732.
+
+## Facts checked
+- Published method: binned D'Agostini IBU (note sec_intro.tex:8). Published K = 10: DECLARATION :85, "Confirmed against the
+  publication itself (arXiv:2106.16210v4 ... page 5 ...: 'the data was unfolded using 10 iterations')"; supplement :449, :732.
+- c2c1-dibu = 1.03, c2c1-der = 2.27, T = 382.8, q95 = 123.6, max = 138.5, N = 300 (values_fived16.tex:110-123). D_IBU over K:
+  3.95 (1), 1.59 (2), 1.08 (3), 0.90 (4), 0.83 (5), 1.03 (10), 1.52 (15), 2.16 (20) (OUTCOME :40-41).
+- Pre-declared read of this exact question: rho = 0.452, replica interval [0.701, 1.128], reading **unresolved**
+  (OUTCOME :26-36). DECLARATION :208: "unresolved | reporting rho, its interval and T_delta as measured | [does not license] any
+  sentence above", including the algorithm-side sentence (:206), which itself licenses only "closer" and never "the cause".
+
+## Rows
+
+| # | Where | Change | Verdict | Evidence / fix |
+|---|---|---|---|---|
+| 1 | Abstract, main_paper.tex:62 | "Its shape differs from the published binned result, while binned unfolding of the same inputs lies near it." | NOTE | "near" for 1.03 against 2.27 is a fair descriptive word at K = 10 (and K = 2-15: 0.83-1.59), but the abstract names no K and the K = 20 value (2.16) is not near. "binned result" is right for the publication (IBU, binned response). "Its" has "A descriptive two-dimensional benchmark" as antecedent; optional: "The result's shape ...". Optional K anchor: "while binned unfolding of the same inputs at the published iteration count lies near it". |
+| 2 | Abstract | "rounding-level input changes" | OK | Same meaning as "rounding-level changes of its inputs". |
+| 3 | Intro, paper_body.tex:26, s1 | "The published result is itself a binned D'Agostini IBU ... and a binned unfolding of the same inputs lies close to it." | OK | sec_intro.tex:8; 1.03 at the published K. No ranking. Same anchor NOTE as row 1 (no K stated; §4.2 states it). |
+| 4 | Intro :26, s2 | "The shape difference therefore goes with the change from binned to unbinned unfolding, and which feature ... has not been identified." | **DEFECT (A)** | "goes with" alone is an association the data show at K = 10: same inputs and grid, 1.03 vs 2.27, T = 382.8 > max 138.5. "therefore" turns it into an inference, and the record that tested this inference read unresolved (DECLARATION :208; the replica interval reaches 1.128, inside the "input side" class [0.75, 1.33] at :187). D_IBU also moves with K by more than the IBU-to-OmniFold gap (0.83 to 3.95 against a 1.24 gap; DECISION-20261111 item 1). Fix within Joseph's direction: "At the published ten iterations, a binned unfolding of the same inputs lies close to it, so on these inputs the shape difference goes with the change from binned to unbinned unfolding." Record a Joseph ruling that names DECLARATION §1.5's unresolved row. The 11-13 file supersedes DECISION-20261111 item 1, not the declaration. |
+| 5 | Eq. (1), :125 | c removed from denominator | OK | c is 1 by construction: note sec_method.tex:184 ("every truth event enters and c≡1 bin-by-bin"); sec_experiment.tex:36 (c = 1.000000). Code s5c_unfold.py:138-145 still divides by comp = ofin/dn, which is identical at c = 1. |
+| 6 | :128 | completeness definition removed; efficiency sentence (:117) kept | OK | :117 "no separate efficiency correction is applied" still explains why. No remaining c in paper_body or main_paper. |
+| 7 | :129 new comment / supplement S4.1 | "S4.1 keeps the definition" | **DEFECT (item 2)** | supplemental_body.tex:265 (S4.1) says "divided by the completeness, the flux, ..." with no definition anywhere in paper or supplement (grep -i completeness: only :265). It is now an undefined term, and the step does not appear in eq. (1). The comment is also false: S4.1 has a mention, not a definition. Fix: drop "the completeness," at :265, or add "(1 in every bin, because truth events without a reconstructed partner are included)", and correct the comment. |
+| 8 | RSN, :163 | "These are sensitivities of the stated construction. Neither is a calibrated uncertainty, and neither enters a reported covariance." | OK (item 3) | Same meaning. "Neither" = the two alternative matrices, as before. This is the p.4 top-right "X, not Y" Joseph flagged (main_paper.pdf p.4 l.7). |
+| 9 | Run period, :168 | "It is an empirical sensitivity allowance, and it has not been established independently as an uncertainty." | OK (item 3) | Same meaning. It reads slightly as "not yet" but is accurate. A residual "X, not Y" remains on p.3 (:117 "not over their physical weights"); Joseph named only p.4. NOTE. |
+| 10 | §4.1, :274 | "A binned unfolding of the same inputs lies close to the published shape, itself the result of a binned unfolding (sec. 4.2). Which feature of the unbinned method produces the difference has not been identified." | OK | The K is given at the cross-reference. No ranking and no input claim. Consistent with tab:outcomes :230 ("IBU lies closer ...; mechanism not resolved"). |
+| 11 | §4.2, :285, s3 | "A binned D'Agostini IBU ... at ten iterations, the method of the published result~\cite{}, differs from it: T = ..." | **DEFECT** | The inserted appositive makes "it" bind to "the published result". The sentence then says the IBU differs from the publication, with T, although T is IBU against OmniFold and the IBU lies at 1.03 from the publication. Fix: "... differs from the two-dimensional result: T = ...". |
+| 12 | §4.2, s6 | "With the inputs held fixed, the binned method lands close to the published binned result, and the unbinned method differs from both." | **DEFECT (C)** | The paragraph defines "differs" (s2): "a difference is detectable at this noise level". That holds for IBU (the paired test). Against the publication there is no test: 2.27 is descriptive, and §4.1 :271 says the significance "cannot be calibrated". Fix: "..., and the unbinned result lies farther from it (2.27) and differs from the binned one in the paired test." |
+| 13 | §4.2, s7-s8 | "The shape difference therefore goes with the change of unfolding method. Which feature ... is not established." | DEFECT (same as row 4) | Here K = 10 is in the paragraph, so the anchor holds. The record conflict of "therefore" remains (DECLARATION :208). Fix: "On these inputs, the shape difference thus goes with the change of unfolding method", or drop "therefore". |
+| 14 | §4.2, s9 (kept) | descriptive-χ² caveat and "a value near one does not by itself indicate reproduction" | OK / NOTE (B) | Kept verbatim, as Joseph asked. No changed sentence claims input agreement. But the "therefore" step uses IBU ≈ published as if it showed matching inputs, which s9 says a value near one does not show. Removing "therefore" (rows 4, 13) removes that tension. |
+| 15 | §7, :647 | "a shape difference in two dimensions that goes with the change from binned to unbinned unfolding. Which feature ... is unidentified." | OK / NOTE | Association only; no ranking. Sentences 6-7 are unchanged and now sit under a new subject: "Whether the ... shape difference arises in the hadronic observables is open ... a check that plausible changes of the unfolding ... cannot produce the pattern". They read in tension with "goes with the change of unfolding". Consider "plausible changes of the binned or unbinned unfolding's settings". Same K NOTE as row 1. |
+| 16 | removed §4.2 clause | "differences between these inputs and the publication's (Table S1) are not excluded as a contributor" | OK | Removed, as Joseph asked. NOTE: this was the paper's only reference to Table S1 (tab:bookkeeping; HEAD 1 hit, tree 0), whose rows are mostly "not compared". The table is now orphaned from the paper. |
+| 17 | source comments | §4.2 comment :286 still describes "the read's wording ... 'mainly' is dropped"; intro, abstract, §4.1-4.2 and §7 carry no 11-13 provenance | NOTE | Stale provenance. Add the RESPONSE.md §J route beside each rewritten sentence. |
+
+## Answers
+- **A.** "goes with" is an association. The records show it at K = 10: fixed inputs, 1.03 vs 2.27, and T > max. "therefore"
+  asserts an inference that the pre-declared read left unresolved, and the closeness depends on K (2.16 at K = 20). Anchor it at
+  the published ten iterations and drop "therefore", or record Joseph's ruling over DECLARATION §1.5.
+- **B.** No changed sentence ranks reliability or names inputs as a cause. None claims input agreement outright. The
+  "therefore" step implicitly leans on it, against the kept "near one does not by itself indicate reproduction".
+- **C.** Only half true under the paragraph's own definition of "differs": OmniFold differs from IBU by the test, and lies
+  farther from the publication only descriptively.
+- **D.** "near" is fair descriptively for 1.03 against 2.27 at the published count; it is unanchored in K. "binned result" is
+  correct for the publication.
