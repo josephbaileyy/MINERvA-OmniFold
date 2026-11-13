@@ -9,9 +9,10 @@ Refuses, per file, any change to (comments stripped):
   - the multiset of \\cite keys, and the sets of \\label and \\ref targets (any \\ref-like macro);
   - every numeral the file prints (check_round.numerals): a numeral may not appear or disappear;
   - every other macro name used (a dropped or added \\pubhold, \\SI, \\ssec... is reported);
-  - the protected text: Data availability (from its \\section* to the next \\section or \\end), the B0 sentences
-    (DECISION-20261106-joseph-b0-reconciliation-sentence.md; paper_body's sec:cov5d sentences 3-5), RS1's licensed
-    paragraph (the mechanism study), and every make_values LISTED_CLAIMS anchor and check_round ONCE sentence.
+  - the protected text: Data availability (from its \\section* to the next \\section or \\end), and every make_values
+    LISTED_CLAIMS anchor and check_round ONCE sentence. The B0 sentences and RS1's paragraph were protected until
+    Joseph approved their controlled rewrite (DECISION-20261112-joseph-consult-d1-d7.md D3 and its addendum, 2026-11-12),
+    which removes both spans.
 It reports, without failing, the sentences that changed, for the claim-by-claim read.
 
 With supplemental_body.tex in both directories (the director, 2026-11-09, for the Supplement's restyle) it also refuses:
@@ -70,15 +71,7 @@ def protected(base_main, base_body):
     m = re.search(r"\\section\*\{Data availability\}.*?(?=\\section|\\end\{document\}|\\bibliography)", base_main, re.S)
     if m:
         spans.append(("Data availability", strip(m.group(0)).strip()))
-    body = strip(base_body)
-    i = body.find("The training-seed block of section~\\ref{sec:cov16} is zero because")
-    j = body.find("not the typical one.", i)
-    if i >= 0 and j > i:
-        spans.append(("the B0 sentences", body[i:j + len("not the typical one.")]))
-    i = body.find("A study of the mechanism specified in advance")
-    j = body.find("\n", i)
-    if i >= 0:
-        spans.append(("RS1's paragraph", body[i:j].strip()))
+    # B0 and RS1 were protected here until DECISION-20261112-joseph-consult-d1-d7.md D3 and its addendum (2026-11-12)
     return spans
 
 

@@ -27,6 +27,7 @@ _top = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=Tr
 ROOT = Path(_top.stdout.strip()) if _top.returncode == 0 else Path(__file__).resolve().parents[2]
 OUT = Path(__file__).with_name("values_fived16.tex")
 FD = "docs/orchestration/state/measurement-paper/5d-community-20261024"
+RSN = "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/referee-sensitivity-20261111/connect-post/run-20261112"
 READOUTS = {
     "h2": ("nd-unfolding/pv-ladder/readouts/h2_definition.json", "b6790761"),
     "stage1": ("docs/orchestration/state/s5p/stage1/stage1_inspect.json", "def4c67c"),
@@ -165,6 +166,10 @@ READOUTS = {
     # G4 (major 8): the run-period figure's plotted values, both levels against 1A-1F (PR #1104; the director's ruling of
     # 2026-11-12 adopts that single reference for the text); the installed PDF is asserted equal to its source below
     "runper": ("docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/lrows-g/g4-runperiod/runperiod_values.json", "f63074b1"),
+    # the RSN referee sensitivities (RSN-DECLARATION.md rev 3; receipt #1114): G6, SM, WR and TR, and SM's and G6's
+    # regrade of the fake-data records; the text is Joseph's approval of 2026-11-12 (DECISION-20261112-joseph-consult-d1-d7.md, addendum)
+    "rsn": (f"{RSN}/rsn_readout.json", "6291f48d"),
+    "rsnregrade": (f"{RSN}/regrade.json", "cb5f5d17"),
 }
 # the committed readouts without the run-period block, for the "-nopl" keys
 NOPL_READOUTS = dict(READOUTS, **{
@@ -1593,6 +1598,7 @@ def groupb_values(d):
     v.update(recov_values(d))
     v.update(g_rows_values(d))
     v.update(cbkg2_values(d))
+    v.update(rsn_values(d, f'{d["cmodel"]["trace_share_by_vertex"]["gibuu"]:.3f}'))
     # B3a: the synthetic q3 tilt, r = 1 + a z~ (s5c_pseudo.py truth_weight "q3_given_eavail_w"); a and the clip from the
     # code, the event count, the range and in-cell spread of the weight and the two preservation checks from the truth check
     q = d["s5ntruth"]["departures"]["q3_given_eavail_w"]
@@ -2000,6 +2006,55 @@ def cbkg2_values(d):
     assert s["port"] == "nd-unfolding/bkg_channel_split.py:58-70"
     v = {"cbkg2-oops-1a": f"{100 * s['frac_w_oops']:.0f}"}
     assert v["cbkg2-oops-1a"] == "10" and s["frac_w_cc_out_of_fiducial"] > 0.5   # "mostly out-of-fiducial nu_mu CC"
+    return v
+
+
+def rsn_values(d, share_nominal):
+    """The RSN readings (RSN-DECLARATION.md rev 3, §2 and §9) as the approved text prints them: §3.1, §3.2, §5.2, Table 3's
+    caption, §7.1 item 3 and Supplement S4 and S5. The classes the text states in words are asserted here."""
+    a, rg = d["rsn"]["arms"], d["rsnregrade"]["arms"]
+    g6, sm, wr, tr = a["G6"], a["SM"], a["WR"], a["TR"]["P8"]
+    v = {}
+    # G6, GiBUU's ratio on the common phase space p_par < 6 GeV/c; SM, the radius-R prior-weighted moving average
+    for arm, x in (("g6", g6), ("sm", sm)):
+        assert f"{x['P4']['gibuu_trace_share_nominal']:.3f}" == share_nominal, "the nominal share is cmodel-trace-gibuu"
+        assert x["P3"]["both_criteria_met_at_the_four_held_out_records"], "the held-out tunes still satisfy both bias criteria"
+        q, s = x["P4"]["q"], x["P5"]
+        v[f"rsn-{arm}-share"] = f"{x['P4']['gibuu_trace_share']:.3f}"
+        v[f"rsn-{arm}-sig-med"], v[f"rsn-{arm}-sig-lo"], v[f"rsn-{arm}-sig-hi"] = (f"{s[k]:.3f}" for k in ("median", "min", "max"))
+        assert abs(sorted(s["reported_sigma_ratio"])[8] + sorted(s["reported_sigma_ratio"])[7] - 2 * s["median"]) < 1e-12
+    v["rsn-g6-trace"] = f"{g6['P4']['trace_ratio']:.2f}"
+    v["rsn-g6-qmed"], v["rsn-g6-qlo"], v["rsn-g6-qhi"] = (f"{x:.2f}" for x in (g6["P4"]["q_median"], min(g6["P4"]["q"]), max(g6["P4"]["q"])))
+    v["rsn-sm-trace"] = f"{sm['P4']['trace_ratio']:.3f}"
+    v["rsn-sm-qmed"] = f"{sm['P4']['q_median']:.2f}"
+    v["rsn-sm-qlo"], v["rsn-sm-qhi"] = f"{min(sm['P4']['q']):.2g}", f"{max(sm['P4']['q']):.3g}"
+    assert sm["radius"] == 2
+    v["rsn-sm-radius"] = "two"
+    # the flag lists: G6 unchanged; SM adds the NuWro hybrid truth, by p alone
+    assert g6["P1"]["class"] == "unchanged" and g6["P1"]["listed"] == g6["P1"]["listed_nominal"]
+    assert sm["P1"]["class"] == "more flagged" and set(sm["P1"]["listed"]) - set(sm["P1"]["listed_nominal"]) == {"A7_nuwro"}
+    nw = next(x for x in rg["SM"]["records"] if x["name"] == "A7_nuwro")["grade"]
+    assert nw["p_lt_0.01"] and not nw["cells_abs_z_gt_2"], "flagged by p alone, no cell beyond 2 sigma"
+    v["rsn-sm-nuwro-p"] = f"{nw['p']:.2g}"
+    # WR: the data shift (P6, class W1) and the four noise-free closures (P7)
+    p6, p7 = wr["P6"], wr["P7"]
+    fl, sg = [abs(x) for x in p6["delta_over_floor"]], [abs(x) for x in p6["delta_over_sigma"]]
+    assert p6["class"] == "W1" and max(sg) < 0.5 and any(x > 2 for x in fl), "at least one cell above 2 floors, every cell below half sigma"
+    v["rsn-wr-floor-max"], v["rsn-wr-sig-max"] = f"{max(fl):.1f}", f"{max(sg):.2f}"
+    assert not p7["floor"]["breaks_the_prior_closure"] and p7["nuwro"]["rms_class"] == "comparable"
+    for t in ("gibuu", "q3"):
+        c = p7[t]
+        assert c["class"] == "immaterial" and c["flag_weighted"] == c["flag_equal_weights"]
+        assert abs(c["chi2_weighted"] - c["chi2_equal_weights"]) <= 0.25 * c["chi2_equal_weights"], "within a quarter"
+    assert "does not attribute F0b's flags" in wr["scope"]
+    # TR: the matched-event transfer probe's classes (T1 within half sigma, T0 within twice the floor)
+    assert (tr["data"]["class"], tr["gibuu"]["class"], tr["q3"]["class"]) == ("T1", "T1", "T0")
+    approved = {"rsn-g6-trace": "1.41", "rsn-g6-share": "0.923", "rsn-g6-qmed": "1.12", "rsn-g6-qlo": "0.54",
+                "rsn-g6-qhi": "1.77", "rsn-g6-sig-med": "1.002", "rsn-g6-sig-lo": "0.864", "rsn-g6-sig-hi": "1.338",
+                "rsn-sm-radius": "two", "rsn-sm-trace": "0.112", "rsn-sm-share": "0.664", "rsn-sm-qmed": "0.50",
+                "rsn-sm-qlo": "0.098", "rsn-sm-qhi": "2.23", "rsn-sm-sig-med": "0.934", "rsn-sm-sig-lo": "0.595",
+                "rsn-sm-sig-hi": "1.028", "rsn-sm-nuwro-p": "0.0049", "rsn-wr-floor-max": "2.9", "rsn-wr-sig-max": "0.09"}
+    assert v == approved, f"the RSN values differ from the approved draft: {sorted(k for k in v if v[k] != approved.get(k))}"
     return v
 
 

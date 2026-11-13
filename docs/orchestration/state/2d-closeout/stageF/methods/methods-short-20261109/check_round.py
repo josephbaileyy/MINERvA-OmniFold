@@ -259,15 +259,11 @@ def check_sec4_tests(wt):
     return [] if r.returncode == 0 else [f"test_check_sec4_receipts.py fails: {r.stdout.strip().splitlines()[-1]}"]
 
 
-# Typed literals that a protected span keeps but a build-checked key also prints (the director, 2026-11-10, on the
-# interim round's batch 2): the B0 sentences' "the quoted 2.6 statistical standard deviations" is protected by
-# check_restyle, so it stays typed, and must equal the key that §6.1's observation and Table 2 print.
-LITERAL_KEYS = [("paper_body.tex", r"the quoted ([0-9.]+) statistical standard deviations is the largest shift", "s5e-round-max"),
-                # T1-1: the protected B0 span's sixteen-cell rounding spread, typed, against RS1 R0's keys (rs1_r0.json 724f0c3a)
-                ("paper_body.tex", r"it is a median \\SI\{([0-9.]+)\}\{\\percent\} of the cross section", "rnd16-median"),
-                ("paper_body.tex", r"of the cross section \(\\SIrange\{([0-9.]+)\}\{[0-9.]+\}\{\\percent\}\)", "rnd16-min"),
-                ("paper_body.tex", r"of the cross section \(\\SIrange\{[0-9.]+\}\{([0-9.]+)\}\{\\percent\}\)", "rnd16-max"),
-                # T1-3: S6's 132-direction reading, typed because #981's quote Q23 quotes it, against the per-period read
+# Typed literals that a protected text keeps but a build-checked key also prints (the director, 2026-11-10, on the
+# interim round's batch 2). The B0 sentences' four rows (s5e-round-max, rnd16-median, rnd16-min, rnd16-max) were
+# removed when Joseph approved their controlled rewrite (DECISION-20261112-joseph-consult-d1-d7.md D3 and its addendum,
+# 2026-11-12): B0 now prints those numbers through their keys.
+LITERAL_KEYS = [# T1-3: S6's 132-direction reading, typed because #981's quote Q23 quotes it, against the per-period read
                 ("supplemental_body.tex", r"In the ([0-9]+) poorly determined directions, the combination of the other two", "pp-kbar"),
                 ("supplemental_body.tex", r"than the three-group combination, by ([0-9.]+) per direction", "pp-dbar")]
 
@@ -612,7 +608,7 @@ def self_test():
         print("self-test: the date check is wrong"); ok = False
     vt = "\\@namedef{fv@s5e-round-max}{2.6}"
     lit = "the quoted %s statistical standard deviations is the largest shift"
-    one = LITERAL_KEYS[:1]
+    one = [("paper_body.tex", r"the quoted ([0-9.]+) statistical standard deviations is the largest shift", "s5e-round-max")]
     if check_literal_keys({"paper_body.tex": lit % "2.6"}, vt, one) or not check_literal_keys({"paper_body.tex": lit % "2.5"}, vt, one) \
             or not check_literal_keys({"paper_body.tex": "no literal"}, vt, one):
         print("self-test: the literal-key check is wrong"); ok = False
