@@ -1,4 +1,4 @@
-#977 head 01bb9a7fe; 30 rows
+#977 head a87137996; 34 rows
 OK  RP01   resource paper      count=1  The sixteen-cell cross section that the estimator gives on the data il
 OK  RP02   resource paper      count=1  The held-out-tune tests provide partial evidence on bias at truths hel
 OK  RP03   resource paper      count=1  The dependence on the prior's generator shape is reported separately a
@@ -38,4 +38,8 @@ OK  RP23   keys     paper      printed=1  \fvval{ens1-nnoworse}
 OK  RP24   term     paper      old=0 new=13  reporting cells -> reported cells
 --  RP25   code     B772 R311  #981's own run-period scope sentence "nor the cause of the shape difference" bec
 --  RP26   code     B765-766 R305  #981's own 2D scope sentence "At two held-out GENIE v3 tunes (AR23 and G18_10a_0
+--  RP27   code     B397  build_tunes: c.key for f1-tune-g18 and f1-tune-ar23 compares r"\mbox{" + name + 
+--  RP28   code     B1089-1090  assemble: the freshness check requires the values_fived16.tex text to equal mv.r
+--  RP29   code     B24 B1250 R349  S3: the README states Python >= 3.12 where it says Python 3; 3.10.20 and 3.11.15
+--  RP30   code     B4 B1250 R345-349  S2: the README names git only as the requirement of the optional git-based check
 REPIN-CHECK PASS
