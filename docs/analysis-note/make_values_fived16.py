@@ -183,6 +183,30 @@ READOUTS = {
     # 25 unsupported cells with signal (0.47% of signal) stay in the total. A re-count from partition_scan_2.json
     # reproduces 109 and 25"); the support rule is s5p_stage1_inspect.py:49 and :273
     "s5cscan": ("docs/orchestration/state/s5c/b1/partition_scan_2.json", "7b49b52d"),
+    # the Supplement's printed literals, keyed (the director's D6 item, 2026-11-13; journal-editor's supp_literal_values()):
+    # S1-S2 (the 1A copy; the W and axis conventions)
+    "q2agg": ("docs/orchestration/state/2d-closeout/stageD-inputs/q2-opendata-20261014/triage/outputs/agg_full.json", "262415aa"),
+    "m4womni": ("docs/orchestration/state/2d-closeout/stageF/methods/m4-w/probe_omni.json", "d1231bc9"),
+    "m4wmad": ("docs/orchestration/state/2d-closeout/stageF/methods/m4-w/probe_mad.json", "5e7573b3"),
+    "mp5": ("docs/orchestration/state/measurement-paper/phase1/mp5/out/eval/mp5_results.json", "7a8ed135"),
+    # S4 (the configurations, iterations and the background treatment)
+    "s5cd1": ("docs/orchestration/state/s5c/d1/d1_summary.json", "f5c802e3"),
+    "re1c2": ("docs/orchestration/state/2d-closeout/stageF/methods/re1/run2/readouts/c2_supplement.json", "445b630c"),
+    "partc": ("docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/partc_numbers.json", "46519daa"),
+    # S5 (the run-period block, RE-2's: budget_Q's provenance names its npz dbb067aa)
+    "ct5b": (f"{FD}/fd/readout/fd_ct_5b_audit.json", "6d34d7f8"),
+    "re2comb": ("docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/combination/combination.json", "c663eadb"),
+    # S5: the published flux median, computed from the release (stageB/verify-c04-x01/VERIFICATION.md:130: 4.014 %)
+    "pubflux": ("2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV_flux.txt", "a2ba53fd"),
+    "pubresult": ("2d-unfolding/minerva_paper_anc/data_result_ptpl_2D_minerva_inclusive_6GeV.txt", "02153e7a"),
+    "pubbins": ("2d-unfolding/minerva_paper_anc/bin_mapping.txt", "d21a41eb"),
+    # S7 (the noise-free comparison with exact binned unfolding: d-id's results; its tables.npz is read in supp_literal_values)
+    "didres": ("docs/orchestration/state/next-preparation-20261009/d-id/outputs/results.json", "2234c0c0"),
+    # S8.6 (the stopped first five-observable test: the source-swap factors and the like-for-like control)
+    "i2inv": (f"{FD}/fd/receipts-1b/inv/i2/i2.json", "a9d3dc9c"),
+    "fd1bstage0": (f"{FD}/fd/receipts-1b/staged/stage0/readout.json", "05be73ee"),
+    # S9 (GENIE's carbon-only over CH cross section per nucleon, W < 1.1 GeV; r5_genie_events.py:114, :126-127)
+    "r5genie": ("docs/orchestration/state/inelastic-high-region-20261011/results/r5_genie_events.json", "c2ce15ae"),
 }
 # the committed readouts without the run-period block, for the "-nopl" keys
 NOPL_READOUTS = dict(READOUTS, **{
@@ -235,6 +259,7 @@ FIGURES = {"fd_g_fig_ratio.pdf": ("fd/gencmp/carbon-figure", "1e6d550e"),
            "fd_g_fig_modes.pdf": ("fd/gencmp-e/rerun1/chain/chdefs/with/figures-a2", "0d6fe57c")}
 # the readouts that are text receipts, not JSON
 TEXT_READOUTS = {"tension", "gprobe", "e2sens", "s1code", "s5cpseudo", "f1prep", "cov2ddecl", "ll5ddecl", "nullcode", "stabdecl", "fd1bdecl"}
+TEXT_READOUTS |= {"pubflux", "pubresult", "pubbins"}     # the Supplement's release files (supp_literal_values)
 CELLS = [f"R{i:02d}" for i in range(16)]
 BLOCK = {"stat": "statistical", "interaction": "interaction", "flux": "flux", "detector": "detector",
          "lateral": "lateral", "normalization": "normalization", "seed": "training seed", "C_resp": r"$C_{\mathrm{resp}}$",
@@ -1619,6 +1644,9 @@ def groupb_values(d):
     v.update(cbkg2_values(d))
     v.update(e96d_values(d))
     v.update(literal_values(d))
+    s = supp_literal_values(d)
+    assert not s.keys() & v.keys(), sorted(s.keys() & v.keys())
+    v.update(s)
     v.update(rsn_values(d, f'{d["cmodel"]["trace_share_by_vertex"]["gibuu"]:.3f}'))
     # B3a: the synthetic q3 tilt, r = 1 + a z~ (s5c_pseudo.py truth_weight "q3_given_eavail_w"); a and the clip from the
     # code, the event count, the range and in-cell spread of the weight and the two preservation checks from the truth check
@@ -2083,6 +2111,278 @@ def literal_values(d):
             "rs1-ratio-v153": r"6.2\times10^{-7}", "rs1-ratio-v16": r"1.07\times10^{-6}", "rs1-k4-order": "10^{-10}",
             "jt-unsup-share": "0.47"}
     assert v == want, {k: v[k] for k in v if v[k] != want.get(k)}
+    return v
+
+
+# the Supplement's numbers whose only committed source is prose (the director's D6 ruling B, 2026-11-13): each is read
+# from an exact text anchor that must occur once in its committed file. These files are working documents, so they are
+# not sha-pinned; the anchor is the check.
+SUPP_PROSE = {
+    "ledger": "VALIDATION_LEDGER.md",
+    "status2d": "2d-unfolding/2D_OMNIFOLD_STUDY_STATUS.md",
+}
+# d-id's tables.npz, read without numpy (stdlib zip and .npy headers); pinned as its committed bytes
+SUPP_NPZ = {"didtab": ("docs/orchestration/state/next-preparation-20261009/d-id/outputs/tables.npz", "2aab2270")}
+
+
+def _prose_anchor(key, pattern):
+    """The groups of `pattern`, which must match exactly once in SUPP_PROSE[key]'s committed text."""
+    t = (ROOT / SUPP_PROSE[key]).read_text()
+    m = list(re.finditer(pattern, t))
+    assert len(m) == 1, (SUPP_PROSE[key], pattern, len(m))
+    return m[0].groups()
+
+
+def _npz(key, members):
+    """Members of a pinned .npz as {name: list}; each must be a 1-D little-endian <f8, <i8 or <U array."""
+    import struct
+    import zipfile
+    from io import BytesIO
+    rel, pin = SUPP_NPZ[key]
+    raw = (ROOT / rel).read_bytes()
+    sha = hashlib.sha256(raw).hexdigest()
+    if not sha.startswith(pin):
+        sys.exit(f"make_values_fived16: {rel} has sha256 {sha[:12]}, pinned {pin}: refusing")
+    out = {}
+    with zipfile.ZipFile(BytesIO(raw)) as z:
+        for name in members:
+            b = z.read(name + ".npy")
+            assert b[:6] == b"\x93NUMPY" and b[6] == 1, name
+            hl = struct.unpack("<H", b[8:10])[0]
+            h = ast.literal_eval(b[10:10 + hl].decode("latin1"))
+            assert h["fortran_order"] is False and len(h["shape"]) == 1, (name, h)
+            body, (n,) = b[10 + hl:], h["shape"]
+            if h["descr"] in ("<f8", "<i8"):
+                out[name] = list(struct.unpack(f"<{n}{'d' if h['descr'] == '<f8' else 'q'}", body))
+            else:
+                assert h["descr"].startswith("<U"), (name, h)
+                w = int(h["descr"][2:])
+                out[name] = [body[4 * w * i:4 * w * (i + 1)].decode("utf-32-le").rstrip("\x00") for i in range(n)]
+    return out
+
+
+def supp_literal_values(d):
+    """Numbers the Supplement printed as typed literals (the director's D6 item, 2026-11-13), now keyed with their
+    sources asserted. journal-editor's block; director-helper-3's literal_values() holds the paper's. The design
+    constants that stay typed are listed in methods-short-20261109/literals-20261112/supplement-constants.txt."""
+    from decimal import ROUND_HALF_UP, Decimal
+    # a dict literal keeps the last of two equal keys without a word: READOUTS' keys must be distinct
+    (rd,) = [n.value for n in ast.parse(Path(__file__).read_text()).body
+             if isinstance(n, ast.Assign) and [getattr(x, "id", None) for x in n.targets] == ["READOUTS"]]
+    rk = [k.value for k in rd.keys]
+    assert len(rk) == len(set(rk)), sorted({k for k in rk if rk.count(k) > 1})
+    v = {}
+
+    def r1(x):           # a two-sided 68 % (or 99.9 %) range [lo, hi] printed as one symmetric integer
+        assert round(-x[0]) == round(x[1]), x
+        return str(round(x[1]))
+
+    # S1: the re-downloaded 1A copy's selected yield per POT (the triage of q2-opendata-20261014), in units of 1e-5
+    a = d["q2agg"]
+    v["q2-selpot-data"], v["q2-selpot-mc"] = (f"{a[s]['sel_per_pot_rel_change'] / 1e-5:.1f}" for s in ("data", "mc"))
+    # S2: truth W from (pT, p||, q3) about the fixed beam axis (m4-w's probes; the two clauses are both weighted, the
+    # director's ruling A3), and the generators' own neutrino axis
+    t = d["m4womni"]["truth"]
+    v["m4w-resid68"] = r1(t["resid_Mbar_MeV"]["r68"])
+    lo, hi = t["resid_Mbar_MeV"]["r99.9"]
+    v["m4w-resid999-lo"], v["m4w-resid999-hi"] = f"{lo:+.0f}", f"{hi:+.0f}"
+    v["m4w-wbin-pct"] = f"{100 * t['bin_change']['J_frac_weighted_Mbar']:.2f}"
+    v["m4w-noreal-pct"] = f"{100 * t['q3sq_minus_pt2_negative_wfrac']:.3f}"
+    v["m4w-negw2"] = f"{t['w_frac_W_nonfinite_in_ps'] / 1e-5:.1f}"
+    v["m4w-axis68"] = r1(d["m4wmad"]["axis_choice_effect"]["pT_beam_minus_pT_nu_MeV"]["r68"])
+    a = d["mp5"]["a"]
+    rc, z = a["R_c"]["R"], a["GENIE_CV_native"]["z_on_domain"]["a_sd_null_result"]
+    v["mp5-rc-min"], v["mp5-rc-max"], v["mp5-rc-median"] = f"{rc['min']:.4f}", f"{rc['max']:.4f}", f"{rc['median']:.6f}"
+    v["mp5-z-min"], v["mp5-z-max"] = f"{z['min']:+.2f}", f"{z['max']:+.2f}"
+    # S4: the negative-weight treatment's highest-W column, the same six cells on both sides (the corner EW41 apart,
+    # the director's ruling A4): purity (s5c d1, split_F2) against refined (s5n stage 1, C3_nominal)
+    six = [f"EW{c}" for c in (5, 11, 17, 23, 29, 35)]
+    pur = {w["name"]: abs(w["mean_rel_pct"]) for w in d["s5cd1"]["groups"]["split_F2"]["worst"]}
+    hw = d["s5ndev"]["grid"]["C3_nominal"]["high_W"]
+    assert set(six) <= set(pur) and set(six) | {"EW41"} == set(hw), (sorted(pur), sorted(hw))
+    v["s5c-highw-pur-lo"], v["s5c-highw-pur-hi"] = f"{min(pur[c] for c in six):.1f}", f"{max(pur[c] for c in six):.1f}"
+    ref = [hw[c]["mean_rel_pct"] for c in six]
+    v["s5n-highw-ref-lo"], v["s5n-highw-ref-hi"] = f"{min(ref):.2f}", f"{max(ref):.2f}"
+    v["s5n-corner-pur"], v["s5n-corner-ref"] = f"{pur['EW41']:.2f}", f"{hw['EW41']['mean_rel_pct']:.2f}"
+    # S4: the refinement's signed total and clipping, each with its sample (the director's ruling A5): the data
+    # (control C7) to 3e-6; the simulation (C3_nominal's 60 products) to about 2e-5, clipping 0.01-0.05 %
+    dv = d["s5ndev"]
+    x = dv["controls"]["C7"]["refinement_data"]["refined_over_signed"] - 1
+    assert 1e-6 <= x < 1e-5
+    v["s5n-total-data"] = f"{x / 1e-6:.0f}"
+    rf = dv["grid"]["C3_nominal"]["refinement"]
+    x = max(abs(rf["refined_over_signed"][k] - 1) for k in ("min", "max"))
+    assert 1e-5 <= x < 1e-4
+    v["s5n-total-sim"] = f"{x / 1e-5:.0f}"
+    v["s5n-clip-lo"], v["s5n-clip-hi"] = (f"{100 * rf['clipped_fraction'][k]:.2f}" for k in ("min", "max"))
+    # S4.3: the prior against the data, and the exact-split iteration check (prose only: VALIDATION_LEDGER.md:1604-1605,
+    # 2D_OMNIFOLD_STUDY_STATUS.md:211)
+    (r,) = _prose_anchor("ledger", r"data/MC\(sig\+bkg\) = \*\*([0-9.]+)\*\*")
+    v["ledger-datamc-pct"] = f"{100 * (float(r) - 1):.0f}"
+    v["ledger-datamc-lo"], v["ledger-datamc-hi"] = _prose_anchor("ledger", r"pT from ([0-9.]+) to ~([0-9.]+)\)")
+    (v["status-iter-pct"],) = _prose_anchor("status2d", r"5-iter total σ within ([0-9.]+) % of 10-iter")
+    # S4.5: the five-observable estimator's iterations (s5p stage 2, study K, H2 measure)
+    k = d["s5p2"]["study_K"]
+    v["s5p-k5"] = f"{k['b0']['M']['H2']['5']['M']:.3f}"
+    v["s5p-k10plus"] = f"{min(k['b0']['M']['H2'][n]['M'] for n in ('10', '15', '20')):.3f}"
+    v["s5p-cap-gain"] = f"{100 * (1 - k['cap10']['M']['H2']['5']['M'] / k['b0']['M']['H2']['5']['M']):.0f}"
+    # S4.5: the histogram estimator's chi2/ndf, and LightGBM's at five and ten iterations, which is seed 1 (2.645 to
+    # 2.657), not \chiPaperPurity's seed 42 (prose only: 2D_OMNIFOLD_STUDY_STATUS.md:233-234)
+    (v["status-hgbt-chi2"],) = _prose_anchor("status2d", r"vs HistGBT ([0-9.]+)±")
+    it5, it10 = _prose_anchor("status2d", r"\(lgbm 5→10 iter: ([0-9.]+)→([0-9.]+)\)")
+    v["status-lgbm-it5"], v["status-lgbm-it10"] = (str(Decimal(s).quantize(Decimal("0.01"), ROUND_HALF_UP)) for s in (it5, it10))
+    # S4.5: the background treatment's closure (RE-1 run 2) and the exact-split learner difference (RE-2 part C)
+    c2 = d["re1c2"]
+    v["re1-pur-max"] = f"{c2['purity']['mean_residual_in_stat_sigma']['max_abs']:.1f}"
+    v["re1-ref-max"] = f"{c2['refined']['mean_residual_in_stat_sigma']['max_abs']:.2f}"
+    p = d["partc"]["learner_vs_E_C_pct"]
+    v["partc-learner-med"], v["partc-learner-max"] = f"{p['median_abs']:.2f}", f"{p['max_abs']:.1f}"
+    # S5.1: the three periods' effective degrees of freedom (the 5B audit, item 2)
+    v["ct5b-nu"] = f"{d['ct5b']['item2_stability']['three_periods']['nu_eff']:.2f}"
+    # S5.2: RE-2's period comparison and its run-period block (periods/analysis.json; budget_Q; combination; the
+    # 1A-1F reference block in RE-2's playlist_term.json, READOUTS["plterm"])
+    b = d["re2per"]["comparisons"]["bias_PB"]
+    assert max(b["pz_marg_z_max"], b["pt_marg_z_max"]) < 0.7           # printed as a bound ("every marginal z is below 0.7")
+    v["re2per-zmarg-bound"] = "0.7"
+    v["re2per-chi2-pz"], v["re2per-noise-pz"] = f"{b['chi2_pz_marginal']:.1f}", f"{b['noise']['expected_chi2']['pz']:.1f}"
+    c = d["budgetq"]["C_PL"]
+    v["bq-pl-med"], v["bq-pl-p84"], v["bq-pl-max"] = (f"{c[k]:.2f}" for k in ("median_pct", "p84_pct", "max_pct"))
+    v["bq-pl-pz-lo"], v["bq-pl-pz-hi"] = f"{min(c['pz_sigma_pct']):.2f}", f"{max(c['pz_sigma_pct']):.2f}"
+    v["bq-pl-int"] = f"{c['integral_sigma_pct']:.2f}"
+    v["bq-stat-med"] = f"{d['budgetq']['stat']['median_pct']:.3f}"
+    assert d["budgetq"]["provenance"]["inputs"]["playlist_npz"]["sha256"].startswith("dbb067aa")
+    cb = d["re2comb"]["report"]
+    v["re2comb-sigma-inc"] = f"{cb['effect_of_C_PL_on_S5']['cell_sigma_increase_pct']['median']:.1f}"
+    raw = cb["reference_scenario_algebraic"]["bias_PB_raw_frozen"]
+    v["re2comb-chi2-s5"], v["re2comb-chi2-s5pl"] = f"{raw['pz_vs_S5']:.1f}", f"{raw['pz_vs_S5_plus_C_PL']:.2f}"
+    s = d["plterm"]["report"]["S_ref"]
+    v["plref-med"], v["plref-int"] = f"{s['cell_rel_sigma_pct']['median']:.2f}", f"{s['integral_rel_sigma_pct']:.2f}"
+    # S5.3: the 2D benchmark's eigenmodes against the published covariance (the per-period benchmark's control 6 for
+    # the largest, 4.7467, the director's ruling A1; RE-2's tension report for the next nine and the ten smallest)
+    m0 = d["ppbench"]["controls"][5]["modes"][0]["abs_z"]
+    rows = [(int(g[0]), abs(float(g[1])))
+            for g in re.findall(r"^\s+(\d+)\s+[0-9.e+-]+\s+\d+/205\s+([+-][0-9.]+)\s+[0-9.]+\s+[0-9.]+\s*$", d["tension"], re.M)]
+    assert [n for n, _ in rows[:10]] == list(range(10)) and abs(rows[0][1] - m0) < 0.005
+    v["pp-mode-max"] = f"{m0:.1f}"
+    v["tension-next9-lo"], v["tension-next9-hi"] = f"{min(z for _, z in rows[1:10]):.1f}", f"{max(z for _, z in rows[1:10]):.1f}"
+    (sh,) = re.findall(r"chi2 share from the 10 smallest-lambda modes:\s+([0-9.]+)", d["tension"])
+    v["tension-small10-pct"] = f"{100 * float(sh):.1f}"
+    # S5.3: the published flux median, computed from the release's flux covariance and result (205 reported cells)
+    gid = {(int(a), int(b)): int(g) for g, a, b, *_ in (ln.split(",") for ln in d["pubbins"].splitlines()[1:] if ln)}
+    cv = {gid[(int(a), int(b))]: float(x) for a, b, x, *_ in (ln.split(",") for ln in d["pubresult"].splitlines()[1:] if ln)}
+    dg = {int(i): float(x) for i, j, x in (ln.split(",") for ln in d["pubflux"].splitlines()[1:] if ln) if i == j}
+    rel = sorted(100 * math.sqrt(dg[g]) / x for g, x in cv.items() if x != 0)
+    assert len(rel) == 205
+    med = rel[102]
+    assert f"{med:.3f}" == "4.014", med             # VERIFICATION.md:130's 4.014 %
+    v["pub-flux-med"] = f"{med:.2f}"
+    # S5.3: the per-period benchmark's published high-to-low ratio uncertainties (R4, by group)
+    sp = [x["R4"][g]["sigma_pub"] for x in d["ppbench"]["readings"]["by_model"].values() for g in ("PA", "PB", "PC")]
+    v["pp-sigpub-lo"], v["pp-sigpub-hi"] = f"{100 * min(sp):.1f}", f"{100 * max(sp):.1f}"
+    # S7: the alternative thresholds beside R1 (REF-G1's printed-beside list): chi2_16's 0.997 quantile for T, and the
+    # Hartlap-corrected T against its own 0.997 Hotelling limit (the director's ruling A2: the record's pairing)
+    pb = d["refg1"]["printed_beside_R1"]
+    v["refg1-chi2-q997"] = f"{pb['chi2_bars'][1]:.2f}"
+    v["refg1-hartlap-T"], v["refg1-hartlap-q997"] = f"{pb['hartlap']['T']:.1f}", f"{pb['hartlap']['F_bars'][1]:.2f}"
+    assert d["refg1"]["R1"]["T"] > pb["chi2_bars"][1] and pb["hartlap"]["T"] > pb["hartlap"]["F_bars"][1]
+    # S7: the noise-free comparison with exact binned unfolding on the 109 joint cells (d-id): medians of |r| at K = 5
+    # (exact T2 IBU, nominal weighting; the boosted trees) and of exact IBU at K = 200, per truth change
+    sm = d["didres"]["summaries"]
+    for dep in ("gibuu", "w1", "w3", "q3"):
+        j = sm[dep]["J"]
+        v[f"did-ibu5-{dep}"] = f"{100 * j['r_ibu_T2_nom_K5']['median']:.1f}"
+        v[f"did-gbdt5-{dep}"] = f"{100 * j['r_gbdt_K5']['median']:.1f}"
+        v[f"did-ibu200-{dep}"] = f"{100 * j['r_ibu_T2_nom_K200']['median']:.1f}"
+    # S7: the eligible residuals' labels (d-id's frozen classification, gbdt/comparator.py: eligible above 2 %;
+    # identified at or below 0.025; weakly identified above 0.10), and the weakly identified ones' T1 Cramer-Rao widths
+    mp, lab = d["didres"]["decision"]["maps"]["J"], d["didres"]["decision"]["labels"]
+    el = [(dep, x) for dep in lab for x in lab[dep]["J"] if x["eligible"]]
+    weak = [(dep, x) for dep, x in el if x["T2_nom"]["identifiability"] == "weakly-identified"]
+    ad = [x for _, x in el if x["T2_nom"]["iteration"] == "approximation-dominated"]
+    ad_id = [x for x in ad if x["T2_nom"]["identifiability"] == "identified-at-target"]
+    assert len(el) == mp["n_eligible"] and round(mp["shares"]["C"] * len(el)) == len(weak)
+    assert round(mp["shares"]["A"] * len(el)) == len(ad_id)
+    v["did-n-eligible"], v["did-n-weak"], v["did-n-approx"], v["did-n-approx-id"] = map(str, (len(el), len(weak), len(ad), len(ad_id)))
+    tb = _npz("didtab", ["names", "f183"] + sorted({f"T1/{dep}/widths_nom/sigma_rel" for dep, _ in weak}))
+    names = [tb["names"][i] for i in tb["f183"]]
+    w = sorted(tb[f"T1/{dep}/widths_nom/sigma_rel"][names.index(x["functional"])] for dep, x in weak)
+    assert all(math.isfinite(y) for y in w) and min(w) > 0.10 and len(w) % 2 == 1
+    v["did-weak-width-med"] = f"{100 * w[len(w) // 2]:.0f}"
+    # S8.4 (RS1 is S4.4): the rounding mechanism's median spread ratios to A0 (refinement-only, OmniFold-loop-only,
+    # finer binning), and the spread's growth to the fifth iteration (OUTCOME-20261108-rs1-rounding-mechanism.md)
+    st, ro = d["rs1read"]["statistics"]["ratio"], d["rs1read"]["readouts"]
+    for arm, tag in (("S_ref", "sref"), ("S_omni", "somni"), ("B1023", "b1023")):
+        v[f"rs1-ratio-{tag}-153"] = f"{st[arm]['functionals_153']['M']:.3f}"
+        v[f"rs1-ratio-{tag}-16"] = f"{st[arm]['cells_16']['M']:.3f}"
+    it = ro["per_iteration_spread_over_iteration_1"]
+    assert len(it) == 5 and it[0] == 1.0
+    v["rs1-iter5"] = f"{it[4]:.2f}"
+    # S8.4: the two-dimensional coverage test's flagged cells (COV2D score records, grade.s_c and grade.attribution)
+    pw = []
+    for tu, cells in (("ar23", (29, 56)), ("g18", (29,))):
+        g = d["cov2d" + tu]["grade"]
+        assert [i for i, f in enumerate(g["cell_flag"]) if f] == list(cells), (tu, g["flagged_cells"])
+        for cc in cells:
+            at = g["attribution"][f"R{cc}"]
+            assert at["driven_by"] == "bias"
+            v[f"cov2d-sc-{tu}-{cc}"] = f"{g['s_c'][cc]:.3f}"
+            v[f"cov2d-pm-{tu}-{cc}"] = f"{at['pull_mean']:+.3f}"
+            pw.append(at["pull_sd"])
+    v["cov2d-psd-lo"], v["cov2d-psd-hi"] = f"{min(pw):.3f}", f"{max(pw):.3f}"
+    # S8.5: the GiBUU hybrid truth on the eight p|| < 4.5 GeV/c cells (F0b's descriptive subset)
+    (tr,) = [x for x in d["f0b"]["truths"] if x["name"] == "A7_gibuu"]
+    e8 = tr["p_parallel_lt_4p5"]
+    assert e8["ndf"] == 8 and e8["cells"] == ["R00", "R01", "R02", "R03", "R08", "R09", "R10", "R11"]
+    v["f0b-gibuu-pz8-chisq"] = f"{e8['chi2']:.1f}"
+    # matrix-dependent (an f0b- key, so it also prints as -nopl): the Supplement prints the reported covariance's, to one
+    # decimal ("-chisq", not "-chi2", so PAPER_PREC's two-decimal fake-data form does not apply)
+    arm = {"C_total minus gibuu + C_resp + C_PL5D": "132.4", "C_total minus gibuu + C_resp": "133.9"}
+    assert v["f0b-gibuu-pz8-chisq"] == arm[tr["grade_matrix"]], (tr["grade_matrix"], v["f0b-gibuu-pz8-chisq"])
+    # S8.6: the source swap's factors (1B's I2: F_src = sqrt(E/B), F_prior = sqrt(B/A)), and the like-for-like
+    # control (stage 0, mode D) inside gate D's window in all 16 cells
+    fs, fp = d["i2inv"]["factors"]["F_src"], sorted(d["i2inv"]["factors"]["F_prior"])
+    assert len(fs) == len(fp) == 16
+    v["i2-fsrc-lo"], v["i2-fsrc-hi"] = f"{min(fs):.3f}", f"{max(fs):.3f}"
+    v["i2-fprior-med"] = f"{(fp[7] + fp[8]) / 2:.2f}"
+    v["i2-fprior-lo"], v["i2-fprior-hi"] = f"{fp[0]:.2f}", f"{fp[-1]:.2f}"
+    s0 = d["fd1bstage0"]
+    assert s0["window"] == d["gated"]["window"] and s0["rule_K"]["cells_in_window"] == 16 and s0["rule_K"]["verdict"] == "PASS"
+    # S9: GENIE's carbon-only over CH per nucleon below W = 1.1 GeV
+    v["r5-conly-w0-pct"] = f"{100 * (d['r5genie']['regions']['W0']['Conly_over_CH_per_nucleon'] - 1):.1f}"
+    # S10: the usage-recommendation rule's failing cells: their z at the GiBUU hybrid truth (valid-region readout)
+    zz = d["vregion"]["readings"]["V-ATLAS"]["cells"]
+    v["vatlas-z-R02"], v["vatlas-z-R06"] = f"{zz['R02']['z']['A7_gibuu']:+.2f}", f"{zz['R06']['z']['A7_gibuu']:+.2f}"
+    want = {"q2-selpot-data": "-0.9", "q2-selpot-mc": "-1.8",
+            "m4w-resid68": "2", "m4w-resid999-lo": "-49", "m4w-resid999-hi": "+67", "m4w-wbin-pct": "0.25",
+            "m4w-noreal-pct": "0.086", "m4w-negw2": "4.9", "m4w-axis68": "4",
+            "mp5-rc-min": "0.9965", "mp5-rc-max": "1.0035", "mp5-rc-median": "1.000008", "mp5-z-min": "-0.47", "mp5-z-max": "+0.53",
+            "s5c-highw-pur-lo": "3.5", "s5c-highw-pur-hi": "4.1", "s5n-highw-ref-lo": "0.11", "s5n-highw-ref-hi": "0.23",
+            "s5n-corner-pur": "1.66", "s5n-corner-ref": "0.24", "s5n-total-data": "3", "s5n-total-sim": "2",
+            "s5n-clip-lo": "0.01", "s5n-clip-hi": "0.05",
+            "ledger-datamc-pct": "12", "ledger-datamc-lo": "0.88", "ledger-datamc-hi": "1.2", "status-iter-pct": "0.026",
+            "s5p-k5": "0.314", "s5p-k10plus": "0.384", "s5p-cap-gain": "8",
+            "status-hgbt-chi2": "2.70", "status-lgbm-it5": "2.65", "status-lgbm-it10": "2.66",
+            "re1-pur-max": "5.9", "re1-ref-max": "0.44", "partc-learner-med": "1.03", "partc-learner-max": "17.6",
+            "ct5b-nu": "1.82", "re2per-zmarg-bound": "0.7", "re2per-chi2-pz": "34.4", "re2per-noise-pz": "2.0",
+            "bq-pl-med": "2.09", "bq-pl-p84": "3.34", "bq-pl-max": "6.48", "bq-pl-pz-lo": "1.17", "bq-pl-pz-hi": "3.36",
+            "bq-pl-int": "1.97", "bq-stat-med": "0.676", "re2comb-sigma-inc": "5.8", "re2comb-chi2-s5": "34.8",
+            "re2comb-chi2-s5pl": "2.59", "plref-med": "1.38", "plref-int": "1.09",
+            "pp-mode-max": "4.7", "tension-next9-lo": "3.4", "tension-next9-hi": "3.8", "tension-small10-pct": "9.6",
+            "pub-flux-med": "4.01", "pp-sigpub-lo": "4.1", "pp-sigpub-hi": "4.6",
+            "refg1-chi2-q997": "35.89", "refg1-hartlap-T": "185.2", "refg1-hartlap-q997": "46.09",
+            "did-ibu5-gibuu": "8.3", "did-ibu5-w1": "5.4", "did-ibu5-w3": "4.9", "did-ibu5-q3": "5.3",
+            "did-gbdt5-gibuu": "9.5", "did-gbdt5-w1": "5.4", "did-gbdt5-w3": "5.6", "did-gbdt5-q3": "4.3",
+            "did-ibu200-gibuu": "3.3", "did-ibu200-w1": "3.3", "did-ibu200-w3": "4.4", "did-ibu200-q3": "6.6",
+            "did-n-eligible": "144", "did-n-weak": "121", "did-n-approx": "15", "did-n-approx-id": "2",
+            "did-weak-width-med": "31",
+            "rs1-ratio-sref-153": "0.959", "rs1-ratio-sref-16": "0.890", "rs1-ratio-somni-153": "0.947",
+            "rs1-ratio-somni-16": "0.857", "rs1-ratio-b1023-153": "0.950", "rs1-ratio-b1023-16": "0.945", "rs1-iter5": "1.35",
+            "cov2d-sc-ar23-29": "1.165", "cov2d-sc-ar23-56": "1.316", "cov2d-sc-g18-29": "1.347",
+            "cov2d-pm-ar23-29": "-0.851", "cov2d-pm-ar23-56": "+1.039", "cov2d-pm-g18-29": "-0.964",
+            "cov2d-psd-lo": "0.636", "cov2d-psd-hi": "0.709", "f0b-gibuu-pz8-chisq": v["f0b-gibuu-pz8-chisq"],
+            "i2-fsrc-lo": "0.986", "i2-fsrc-hi": "1.015", "i2-fprior-med": "2.72", "i2-fprior-lo": "0.49", "i2-fprior-hi": "6.51",
+            "r5-conly-w0-pct": "8.3", "vatlas-z-R02": "+4.19", "vatlas-z-R06": "+4.53"}
+    assert v == want, {k: v.get(k) for k in set(v) | set(want) if v.get(k) != want.get(k)}
     return v
 
 
