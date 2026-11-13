@@ -1,0 +1,5 @@
+launcher 60b624c6b31732ea732206ec63af027f09ba45c4329d7aa5c6c2275cc2919b95
+PASS done rc=0 (want 0) staged_left=0 log_left=0
+PASS timeout rc=5 (want 5) staged_left=1 log_left=1
+PASS lrcfail rc=4 (want 4) staged_left=1 log_left=0
+LAUNCH-G2R TEST PASS
