@@ -147,7 +147,9 @@ Configuration (c) is the deterministic variant with purity-based subtraction, an
   \end{tabular}
 \end{table}
 
-\paragraph{Hyperparameter choice.} The settings of the two OmniFold classifiers and the missed-event regressor were fixed \emph{a priori}. No hyperparameter search was performed on data. The refinement capacity and the joint-test estimator's iteration count were chosen in simulation studies (\S\ref{sec:gbdt-model-dependence}). The fixed settings are the scikit-learn \texttt{GradientBoosting} defaults: 100 trees, learning rate $0.1$, and depth-3 capacity. The LightGBM learner of the central value and its ensembles uses matched capacity ($\texttt{num\_leaves}=8=2^{3}$), giving these learners the same deliberately modest capacity, one of OmniFold's regularizers (\S\ref{sec:method-algo}).
+\paragraph{Hyperparameter choice.} The settings of the two OmniFold classifiers and the missed-event regressor were fixed \emph{a priori}. No hyperparameter search was performed on data. The joint-test estimator keeps five iterations under the rule in \S\ref{sec:gbdt-model-dependence}. Its refinement classifier, 400 trees and 31 leaves, was selected before the joint-test design was fixed (\S\ref{sec:joint5d}).
+
+The fixed settings are the scikit-learn \texttt{GradientBoosting} defaults: 100 trees, learning rate $0.1$, and depth-3 capacity. The LightGBM learner of the central value and its ensembles uses matched capacity ($\texttt{num\_leaves}=8=2^{3}$), giving these learners the same deliberately modest capacity, one of OmniFold's regularizers (\S\ref{sec:method-algo}).
 
 Configurations (a) and (f) do not set the histogram construction, so the bin edges come from the library's default row sample and the training seed reaches the result through that sample. The configurations this section calls deterministic set those edges from every training row and enable the library's deterministic training.
 
