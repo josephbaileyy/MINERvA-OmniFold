@@ -1,0 +1,105 @@
+host=nid006887 job=61184880 start=2026-11-12T19:23:48Z
+deploy head=4231b14de5ea693e92cb31b1358a816b5c2f6625 porcelain_lines=0
+nd-unfolding/ll5d.py: OK
+nd-unfolding/fd_1b_c2.py: OK
+nd-unfolding/fd_1b_mc.py: OK
+nd-unfolding/fd_1b_toys.py: OK
+nd-unfolding/fd_1b_inv.py: OK
+nd-unfolding/s1_assemble.py: OK
+nd-unfolding/s5p_universe.py: OK
+nd-unfolding/fd_1b_score.py: OK
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/clip/clip_probe2.py: OK
+2d-unfolding/cov2d/cov2d.py: OK
+docs/orchestration/state/2d-closeout/stageF/methods/sf1/manifest/inputs-sha256.txt: OK
+nd-unfolding/pv-ladder/readouts/h2_definition.json: OK
+setup_salloc_env.sh: OK
+nd-unfolding/s5e_candidate.py: OK
+nd-unfolding/s5e_deform.py: OK
+nd-unfolding/ll5d_b.py: OK
+nd-unfolding/fd_1b_null.py: OK
+nd-unfolding/s5n_pseudo.py: OK
+nd-unfolding/s5p_numerics.py: OK
+nd-unfolding/omnifold_nn_core.py: OK
+2d-unfolding/uq/coverage_fixed_truth/score_coverage.py: OK
+nd-unfolding/ll5d_ctl.py: OK
+lanes 8 x (srun --exact -n1 -c 32 --mem 56G) --threads 32
+lanes=8 items=13 unique=13 pilot=13
+lane 0 rc=0
+lane 1 rc=0
+lane 2 rc=0
+lane 3 rc=0
+lane 4 rc=0
+lane 5 rc=0
+lane 6 rc=0
+lane 7 rc=0
+unfold lanes rc=0
+lane 0 data control rc=0
+lane 0 ar23 stat rc=0
+lane 1 data control rc=0
+lane 2 data control rc=0
+lane 3 data control rc=0
+lane 4 g18 central rc=0
+lane 4 g18 toy rc=0
+lane 5 ar23 central rc=0
+lane 5 g18 toy rc=0
+lane 6 g18 clipmean rc=0
+lane 7 ar23 clipmean rc=0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 11:21.58
+	Maximum resident set size (kbytes): 24731884
+	Exit status: 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 11:48.13
+	Maximum resident set size (kbytes): 24760140
+	Exit status: 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 11:34.65
+	Maximum resident set size (kbytes): 18433300
+	Exit status: 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 11:27.16
+	Maximum resident set size (kbytes): 18375716
+	Exit status: 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 11:33.99
+	Maximum resident set size (kbytes): 18342340
+	Exit status: 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 13:55.72
+	Maximum resident set size (kbytes): 19867308
+	Exit status: 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 15:20.08
+	Maximum resident set size (kbytes): 20027368
+	Exit status: 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 13:54.51
+	Maximum resident set size (kbytes): 19769212
+	Exit status: 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 15:23.97
+	Maximum resident set size (kbytes): 19929036
+	Exit status: 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 29:45.40
+	Maximum resident set size (kbytes): 21365648
+	Exit status: 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 29:39.71
+	Maximum resident set size (kbytes): 21398648
+	Exit status: 0
+walls rc=0
+LL5D-WALLS verdict=PASS
+controls rc=0
+LL5D-CONTROLS verdict=PASS failed=[]
+clipcheck rc=0
+LL5D-CLIPCHECK verdict=PROCEED
+9377977cc9ea330522291363899e6a9a7f233ef71469f46fca184421bbe81e48  /pscratch/sd/j/josephrb/ll5d-pilot-r2/walls.json
+82cc5858263164d7f5dc5977730484c385d960a1bb135208bd5b1f208e9cf2ec  /pscratch/sd/j/josephrb/ll5d-pilot-r2/controls.json
+9632540ecd0d25e2223eedb480b96078459a6e6d75128b4e4132ea1bf644d3aa  /pscratch/sd/j/josephrb/ll5d-pilot-r2/clipcheck.json
+7e4a4e29c9363a9226e4a282431ddcc5a7a67b2b4a2b6fff45e5f58680d13d39  /pscratch/sd/j/josephrb/ll5d-pilot-r2/walls.out
+fae10f409782c519826ec0601f0b6d034a8da7555c7e85ec9c91252e493e5215  /pscratch/sd/j/josephrb/ll5d-pilot-r2/controls.out
+2dbfd4179caaf6ce7af0728358238f47c3075b401f2da8a4e1505fc351b00003  /pscratch/sd/j/josephrb/ll5d-pilot-r2/clipcheck.out
+118202706ce81b5a49851a60f180445b40b116791b77224d49a6aefdb82def9a  /pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_ar23_central_T.npz
+c0cbf6c54cf2b8ac1a715c6064373269936f2bd3f7385f918aa83221a4e46254  /pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_ar23_clipmean_all.npz
+128ad570c12b08c3bd8919defaaec7aa590d84e8730b9c98dde4332070f4aea8  /pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_ar23_clipmean_minus2.npz
+1435357252f19777a8a35d49adb905d0fb8c585b4200e6e311a319df1155549b  /pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_ar23_stat_1.npz
+48948d0e553155c2ef49663d670e32891b75f8f196c2a0c7ad8eec1b7670e94e  /pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_data_control_Flux_0.npz
+64bef18932fca52135901c4e064139b9f32bca13e66dce75fd4814671de4f486  /pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_data_control_GEANT_Pion_0.npz
+1886d861cd9dcb319939537be008703ddffd9ec4cea6e2b6ddcf187f7f091139  /pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_data_control_MaRES_0.npz
+36c9c8427a312f591a9589b67e60c8c68899ae725c5b34e29f988a4f53771a2b  /pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_data_control_setA_b1.npz
+556e01f1ab81ed131b810920c7a7463349cf4e356ee1259d49249b60d12f8035  /pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_central_T.npz
+175175edf3b95003a1cccf81e02dfbaa9024f7fe9af1d0e70e890df755faf751  /pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_clipmean_all.npz
+89510e949bbd7719931437c5434ab8d7aa53cbac4dfd21c28d1c2cecbc9bb5cb  /pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_clipmean_minus2.npz
+0d532166e24c70de3ef192dd0e969f5f1c3a040af2dcc516e9d216e3377f2df6  /pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_toy_all_4751000.npz
+0d3bf7a71e9cbb2f8af0860919c97395cf5d8cc3de704f045390a5e7dd1eef20  /pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_toy_minus2_4751000.npz
+end=2026-11-12T19:54:15Z
