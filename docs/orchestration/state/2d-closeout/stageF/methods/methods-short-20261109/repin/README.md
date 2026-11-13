@@ -19,6 +19,7 @@ The actions are:
 - `drop`: the quote and its check leave #981.
 - `code`: a build change.
 - `fd16row`: a row of `tab:fd16`, read with `\newline` as a space.
+- `keys`: each value key must still be printed (`\fvval{key}` at least once).
 
 The documents are `paper` (`paper_body.tex`), `supplement` (`supplemental_body.tex`) and `abstract`
 (`main_paper.tex`), all under `docs/analysis-note/` at the #977 head.
@@ -51,4 +52,5 @@ The director confirmed this mapping on 2026-11-12 and asked director-helper-3 to
 |---|---|
 | `223c1431a` | REPIN-CHECK PASS (24 rows). RP06 and RP09 were re-sourced for capitalization only, and the director accepted both on 2026-11-12. |
 | `fed85b6d6` | REPIN-CHECK PASS (25 rows), after five rows changed in the body's sentence pass and were proposed to the director: RP02 and RP07 are each split into two sentences, RP05's seed clause is reworded, RP08 moves into the display equation eq:crep (new row RP08L requires its label), and RP10 opens with "In eq.~(\ref{eq:crep}),". The director accepted all five on 2026-11-12. |
-| `1ccb08c29` | REPIN-CHECK PASS (26 rows), after five quotes moved in style round 3 and were proposed to the director: RP02 opens "The held-out-tune tests" and is quoted up to its new cross-reference, RP06 now reads "lack validated coverage", RP08b is now the Supplement's unnumbered equation, RP12 is split after "carbon.", and the new row RP22 holds Table 1's benchmark anchor, which gained "descriptive". |
+| `1ccb08c29` | REPIN-CHECK PASS (26 rows), after five quotes moved in style round 3 and were proposed to the director: RP02 opens "The held-out-tune tests" and is quoted up to its new cross-reference, RP06 now reads "lack validated coverage", RP08b is now the Supplement's unnumbered equation, RP12 is split after "carbon.", and the new row RP22 holds Table 1's benchmark anchor, which gained "descriptive". The director accepted all five on 2026-11-12. |
+| `9c9203f41` | REPIN-CHECK PASS (27 rows). The B0/RS1 rewrite and RSN's paper text moved none of #981's quotes: RP02, RP03 and RP04 each still count 1. The new row RP23 (`keys`) checks that the seven ens1-* keys #981's ENS1 rows depend on are still printed. #981 quotes no B0 or RS1 sentence. |
