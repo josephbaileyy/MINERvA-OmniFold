@@ -1,0 +1,3 @@
+[e96data] mode=dry job=61171790 host=nid006042 pin=b438ab2710b2dcfd30238107187caa3628393b11 lanes=8 start=2026-11-12T14:33:58Z
+[e96data] queue rc=0 end=2026-11-12T14:49:25Z
+[e96data] gate rc=0 (/pscratch/sd/j/josephrb/e96data-a1/log-dry/GATE.json)

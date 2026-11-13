@@ -1,0 +1,37 @@
+node login12 nproc=244 loadavg 4.68 5.88 8.75
+2026-11-12T14:30:31Z
+connect script sha256 0a59335b200397d19c77ef4d151af54e79dd5c62dc0debcf12dd07343b7f2598
+== the fence (a cov2d*/t2a*, e96data* or ll5d_gate_* job, or job 61078463/61078506, stops)
+FENCE: pass (0 jobs, none cov2d/t2a/e96data/ll5d_gate)
+61078463|ll5d_gate_G18|COMPLETED|2026-11-11T15:40:34|2026-11-12T02:34:23
+61078506|ll5d_gate_AR23|COMPLETED|2026-11-11T15:40:34|2026-11-12T02:07:55
+== iris
+Project      Charged(user)    Allocated(user)     Charged    Allocated
+---------  ---------------  -----------------  ----------  -----------
+m3246               2480.4            10000.0     18537.6      20000.0
+balance_node_h=1462.4 half=731.2 cap=5.1
+== stat (stat only)
+stat utc=2026-11-12T14:30:31Z atime=1794492622 mtime=1782610308 size=1548438020 /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz
+stat utc=2026-11-12T14:30:31Z atime=1794492610 mtime=1790319104 size=16017201 /pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz
+stat utc=2026-11-12T14:30:31Z atime=1794385480 mtime=1790450957 size=95564 /pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j-.npz
+stat: 3 files, 0 problems
+== the deploy
+HEAD b438ab2710b2dcfd30238107187caa3628393b11; porcelain --ignored lines before: 0
+sha256: 6 checked, 0 mismatches; E96D-BINDING-1 at origin/main names M_A1: 1
+origin/main 41ae17e95d1a7571f6730880b7cc92868bb09bdb; binding 1 sha256 5c40b2bcdef1ecc1b26d0a784764b21b5843ace807cbd395c8229d219b7b52d8
+== the environment (sourced)
+python 3.11.14 lightgbm 4.6.0 scipy 1.16.3 numpy 1.26.4
+== the queues (sourced)
+{"dry_tasks": 2, "dry_unfolds": 2, "full_tasks": 50, "full_unfolds": 97}
+db37968122076d6ba3204f1347a4931a4cbc2de015fbf8cdf285222de053f9cb  dry.tsv
+3aa0bc5e864144714e7f4509b91b1622f036436ec7cb6c27d7433b938299f5a1  full.tsv
+dry tasks: 2; full tasks: 50
+porcelain --ignored lines before sbatch: 0
+2026-11-12T14:31:19Z
+sbatch rc=0
+Submitted batch job 61171790
+dry job 61171790
+scontrol TimeLimit=00:30:00 (declared 00:30:00)
+61171790 e96data_dry PENDING 0:00 30:00 1 regular_1 m3246 N/A
+e96data dry submit rc=0
+2026-11-12T14:31:24Z

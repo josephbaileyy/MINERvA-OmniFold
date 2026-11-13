@@ -1,0 +1,27 @@
+node login10 loadavg 29.06 40.26 43.56
+2026-11-13T06:05:22Z
+connect script sha256 76e8924db4235247e1d3491606c39426d7d3d6eb235e30acd969f06fd4599dbd
+== the full run's receipts
+{"mode": "full", "tasks": 50, "ended": 50, "rc": 0, "job": "61202343", "pin": "b438ab2710b2dcfd30238107187caa3628393b11", "teardown": ""}
+
+full DONE at the pin, 50 of 50, rc 0: yes
+== the fence (our cov2d*, t2a*, e96data* or ll5d* jobs stop it)
+FENCE: pass
+== the deploy
+HEAD b438ab2710b2dcfd30238107187caa3628393b11; porcelain lines (ignored files excluded): 0
+module sha256 414f7d352560b1cd310666af8e363fe294fda6ebb13239309887cb96c5f0b33a
+== atime reading before (stat only)
+stat utc=2026-11-13T06:05:26Z atime=1794546256 mtime=1782610308 size=1548438020 /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz
+stat utc=2026-11-13T06:05:26Z atime=1794546256 mtime=1790319104 size=16017201 /pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz
+stat utc=2026-11-13T06:05:26Z atime=1794494966 mtime=1790450957 size=95564 /pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j-.npz
+== analyze (2026-11-13T06:05:26Z)
+analyze rc=0 (2026-11-13T06:05:30Z)
+E96-DATA analysis OK rc=0; controls failed: []
+analyze.log lines: 1
+== the record (name, size, sha256; not printed)
+ANALYSIS.json size=8995 sha256=b42208efdbb78e3c7f52174bf8ee97ea0f6414489c076efb8f39fc76ffc469e2
+== atime reading after (stat only)
+stat utc=2026-11-13T06:05:30Z atime=1794546256 mtime=1782610308 size=1548438020 /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz
+stat utc=2026-11-13T06:05:30Z atime=1794546256 mtime=1790319104 size=16017201 /pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz
+stat utc=2026-11-13T06:05:30Z atime=1794549930 mtime=1790450957 size=95564 /pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j-.npz
+deploy porcelain lines after: 0

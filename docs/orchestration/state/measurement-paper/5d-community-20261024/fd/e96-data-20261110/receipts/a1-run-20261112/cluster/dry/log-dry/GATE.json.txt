@@ -1,0 +1,51 @@
+{
+ "schema": "e96-data/1/gate",
+ "pin": "b438ab2710b2dcfd30238107187caa3628393b11",
+ "controls": {
+  "A-D0 (e)'s product is fb5cc679": {
+   "pass": true
+  },
+  "A-D0 U @ (e)'s xsec_flat equals the data product's f to 1e-12": {
+   "pass": true,
+   "detail": {
+    "max_rel": 0.0
+   }
+  },
+  "A-D1 the control product exists": {
+   "pass": true
+  },
+  "A-D1 the control equals (e)'s xsec_flat bitwise, and is the declared call": {
+   "pass": true,
+   "detail": {
+    "problems": []
+   }
+  },
+  "G k = 1's product exists": {
+   "pass": true
+  },
+  "G k = 1 is the declared call": {
+   "pass": true,
+   "detail": {
+    "problems": []
+   }
+  },
+  "G the control and k = 1 ran one code": {
+   "pass": true
+  },
+  "G the projection fits the full run's limit: lane_max x t + 300 s <= 0.9 x the limit": {
+   "pass": true,
+   "detail": {
+    "lane_max": 14,
+    "t_seconds": 923.9540000000001,
+    "projected_s": 13235.356000000002,
+    "limit_s": 15300.0,
+    "times": {
+     "k1": 923.9540000000001,
+     "control": 861.619
+    }
+   }
+  }
+ },
+ "full_queue_sha256": "3aa0bc5e864144714e7f4509b91b1622f036436ec7cb6c27d7433b938299f5a1",
+ "pass": true
+}
