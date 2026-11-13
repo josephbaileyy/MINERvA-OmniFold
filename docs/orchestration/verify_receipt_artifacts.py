@@ -48,6 +48,8 @@ Each citation ends in exactly one state:
   BY-PATH       (also, after OFF-AREA) the same file is cited with a directory anywhere in the
                 receipt, and that path is what gets checked;
   UNRESOLVED    none of the above. This is a separate non-green state and is never counted as green.
+  EXEMPT        a pinned (receipt, receipt sha256, token) triple in `EXEMPT_BARE` that names no file
+                (the director's ruling, 2026-11-13). It is counted and printed, and never classified.
 
 Exit 0 clean, 1 on MISSING, 2 if it could not run, 3 if the UNRESOLVED set differs from the pinned
 inventory (`UNRESOLVED_COUNT`/`UNRESOLVED_SHA256`), or, with `--strict`, if ANY citation is
@@ -163,6 +165,25 @@ DECLARED_DIR_KEY = re.compile(
 #: Nothing was removed: the retired 20260813 keeps its citations.
 UNRESOLVED_COUNT = 66
 UNRESOLVED_SHA256 = "49916d2832740f06163191d8dc960454ab85ae5bbb3aa9d5623b62b7d88e3020"
+
+#: Pinned exemptions: (receipt path, sha256 of the receipt's text, bare token) triples that name NO file.
+#: A triple exempts that one token in that one receipt at exactly those bytes. The same token in any
+#: other receipt, or in this receipt at any other sha256, is classified as usual. Add a triple only on
+#: the director's ruling, in the same commit as the receipt.
+#: 2026-11-13, the director's ruling on #1139: COV2D-G2R's envtest record (job 61220039), written by
+#: `g2r_jobs.envtest` and read at this path by `g2r_jobs.order`. Its `set_aside` list names the
+#: `runConfig` key `out`, which J1 §4 sets aside, as "runConfig.out". That is a set_aside key name, not a
+#: file citation, and the record is the job's own output, so it cannot be reworded.
+EXEMPT_BARE = frozenset({
+    ("docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/g2r/envtest/"
+     "envtest.json", "c4a0720d3a12265403d22e273e219d4594b03ba0a592afe671618ed72cbf0272", "runConfig.out"),
+})
+
+
+def is_exempt(receipt, name, text):
+    """True only for a pinned (receipt, sha256 of text, token) triple in EXEMPT_BARE."""
+    digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+    return (receipt, digest, name) in EXEMPT_BARE
 
 
 def bare_citations(text):
@@ -283,6 +304,9 @@ def scan_full(rev=None, root=None):
                 findings.append({"receipt": f, "artifact": rel,
                                  "why": "named by a tracked receipt, absent from git"})
         for name in sorted(bare_citations(text)):
+            if is_exempt(f, name, text):
+                states["EXEMPT"] = states.get("EXEMPT", 0) + 1
+                continue
             state, where = classify_bare(f, name, text, tracked, tracked_dirs, root)
             states[state] = states.get(state, 0) + 1
             if state == "MISSING":
@@ -345,9 +369,14 @@ def self_test(root=None):
     lost = classify_bare(AREA + "__elsewhere__.json", "lost.err",
                          json.dumps({"x": "lost.err"}), t_tracked, t_dirs)[0]
     bare_ok = bare == {"kept.out": "TRACKED", "dropped.out": "MISSING"} and lost == "UNRESOLVED"
+    # The pinned exemptions are narrow: each triple's token is still classified in another receipt or
+    # at another sha256. Each pin is checked against text that does not hash to it.
+    narrow = all(not is_exempt(r + ".other", n, "{}") and not is_exempt(r, n, "{}")
+                 and not is_exempt(AREA + "__selftest__.json", n, json.dumps({"x": n}))
+                 for r, _, n in EXEMPT_BARE)
     return {"synthetic_path_extracted": caught, "and_is_untracked": fake not in tracked,
-            "bare_states": dict(bare, **{"lost.err": lost}),
-            "control_fires": bool(caught and fake not in tracked and bare_ok)}
+            "bare_states": dict(bare, **{"lost.err": lost}), "exemptions_narrow": narrow,
+            "control_fires": bool(caught and fake not in tracked and bare_ok and narrow)}
 
 
 def main(argv=None):
@@ -386,7 +415,8 @@ def main(argv=None):
         print(f"RECEIPT-ARTIFACTS :: {r['n_receipts']} receipts scanned at {where}, "
               f"{r['n_paths']} deliverable-area artifact path(s), {len(findings)} missing")
         print("  bare-filename citations: " + ", ".join(
-            f"{k} {st.get(k, 0)}" for k in ("TRACKED", "MISSING", "OFF-AREA", "BY-PATH", "UNRESOLVED")))
+            f"{k} {st.get(k, 0)}"
+            for k in ("TRACKED", "MISSING", "OFF-AREA", "BY-PATH", "UNRESOLVED", "EXEMPT")))
         if unresolved:
             tag = ("pinned inventory, UNCHANGED" if pinned else
                    f"DIFFERS from the pinned inventory ({UNRESOLVED_COUNT} / "

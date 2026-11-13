@@ -1,0 +1,10 @@
+9c9
+< # Usage: launch-g2r.sh envtest|prepare <sha256>
+---
+> # Usage: launch-g2r.sh envtest|envtest-r2|prepare <sha256>
+21a22
+>   envtest-r2) SRC=$H/connect-g2r-envtest-r2.sh; ARG="" ;;   # r1 STOPped at the suite gate (TMPDIR under $O)
+23c24
+<   *) echo "usage: launch-g2r.sh envtest|prepare <sha256>"; exit 2 ;;
+---
+>   *) echo "usage: launch-g2r.sh envtest|envtest-r2|prepare <sha256>"; exit 2 ;;

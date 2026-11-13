@@ -1,0 +1,5 @@
+08ef621281636a6c4735314ec7f5925c49455dc2194ebfc5584a093ef3254ddd  /dev/shm/josephrb-g2r-envtest-r3.sh
+ec7f47a63fb8336ff29483d7f2c44b08e8363764cad3a7458b67256da502b0d3  /dev/shm/josephrb-g2r-envtest-r3.log
+rm -f /dev/shm/josephrb-g2r-envtest-r3.sh /dev/shm/josephrb-g2r-envtest-r3.log rc=0
+ls: cannot access '/dev/shm/josephrb-g2r-envtest-r3.sh': No such file or directory
+ls: cannot access '/dev/shm/josephrb-g2r-envtest-r3.log': No such file or directory
