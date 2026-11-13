@@ -18,7 +18,7 @@ ND = Path(__file__).resolve().parents[1]
 TESTS = ND / "tests"
 TEST = TESTS / "test_ll5d_d2.py"
 SRC = ND / "ll5d_d2.py"
-EXPECTED_TESTS = 10
+EXPECTED_TESTS = 11
 
 MUTATIONS = [
     # --- the quantity
@@ -42,10 +42,19 @@ MUTATIONS = [
      '    if ro.get("truth") != a.truth or ro.get("null_sha256") != a.expect_null_sha256:\n',
      '    if ro.get("truth") != a.truth:\n', "D2.test_refusals"),
     ("PN made_from unchecked", '    if nl.get("made_from") != mc.made_from(a, U):\n', '    if False:\n', "D2.test_refusals"),
-    ("CT the control's tolerance ignored", '"tol": CONTROL_TOL, "passes": bool(rel <= CONTROL_TOL)}',
-     '"tol": CONTROL_TOL, "passes": True}', "D2.test_a_readout_from_another_matrix_fails_the_control"),
+    ("CT the diagonal control only (the audit's M1)",
+     "    passes = g is not None and all(v <= CONTROL_TOL for v in rel.values()) and all(exact.values())\n",
+     "    passes = rel[\"realization_check\"] <= CONTROL_TOL\n", "D2.test_off_diagonals_changed_alone_fail_the_control"),
+    ("CT a refused grade passes", "    passes = g is not None and all(", "    passes = all(",
+     "D2.test_off_diagonals_changed_alone_fail_the_control"),
+    ("CT the control's tolerance ignored", "all(v <= CONTROL_TOL for v in rel.values())", "True",
+     "D2.test_a_readout_record_that_differs_fails_the_control"),
+    ("CT the grade recomputed under another matrix", 'g, chk, _rule = ll5d_b.graded(E, rm["C_T"],',
+     'g, chk, _rule = ll5d_b.graded(E, np.diag(np.diag(rm["C_T"])),', "D2.test_the_control_reproduces_the_readouts_full_matrix_statistics"),
+    ("PN the S1 assembly unchecked", '(a.staged / "s1" / "s1_assembly.npz", a.expect_staged_s1_sha256, "staged S1 assembly"),\n                             ', '',
+     "D2.test_refusals"),
     ("CT a failed control still graded", '    if not ctl["passes"]:\n        out["verdict"] = "INVALID"\n        return out\n',
-     '', "D2.test_a_readout_from_another_matrix_fails_the_control"),
+     '', "D2.test_a_readout_record_that_differs_fails_the_control"),
     ("CT a missing check passes", '        raise Refusal(f"the readout\'s {truth}/all evaluation has no realization_check',
      '        return {"passes": True, "max_rel_diff": 0.0}\n        raise Refusal(f"the readout\'s {truth}/all evaluation has no realization_check',
      "D2.test_refusals"),

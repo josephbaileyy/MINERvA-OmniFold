@@ -42,6 +42,14 @@ def reference_mu(G: np.ndarray, M: np.ndarray) -> float:
 class D2(tb.Pipeline):
     """D2 after the null and the readout, on test_ll5d_b's synthetic g18 products."""
 
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        s1 = cls.tmp / "s1" / "s1_assembly.npz"     # the world reads S1 through a stand-in; the pin reads these bytes
+        if not s1.exists():
+            s1.parent.mkdir(parents=True, exist_ok=True)
+            s1.write_bytes(b"a stand-in for the staged S1 assembly")
+
     def readout_file(self) -> Path:
         rf = self.tmp / "readout.json"
         if not rf.exists():
@@ -51,7 +59,8 @@ class D2(tb.Pipeline):
     def d2_args(self, **kw):
         nf, rf = self.null(), self.readout_file()
         base = dict(null=nf, expect_null_sha256=digest(nf), readout=rf, expect_readout_sha256=digest(rf),
-                    out=self.tmp / "d2" / "d2.json")
+                    expect_staged_s1_sha256=digest(self.tmp / "s1" / "s1_assembly.npz"),
+                    expect_flux_constraint_sha256=digest(self.w.constraint), out=self.tmp / "d2" / "d2.json")
         base.update(kw)
         return self.args(**base)
 
@@ -114,12 +123,48 @@ class D2(tb.Pipeline):
 
     # --- the pins and the control
 
-    def test_the_control_reproduces_the_readouts_realization_check(self):
+    def test_the_control_reproduces_the_readouts_full_matrix_statistics(self):
         rec = self.run_d2()
-        self.assertTrue(rec["control"]["passes"])
-        self.assertLessEqual(rec["control"]["max_rel_diff"], d2.CONTROL_TOL)
+        c = rec["control"]
+        self.assertTrue(c["passes"])
+        self.assertEqual(set(c["max_rel_diff"]), {"realization_check", "cholesky_check.kappa2",
+                                                  "grade.chi2_mean_over_ndf", "grade.chi2_mean_over_ndf_se"})
+        self.assertTrue(all(v <= d2.CONTROL_TOL for v in c["max_rel_diff"].values()))
+        self.assertEqual(c["exact"], {"grade.joint_count": True, "grade.counts": True})
 
-    def test_a_readout_from_another_matrix_fails_the_control(self):
+    def off_diagonals(self, factor):
+        real = b.remade
+
+        def remade(*a, **k):
+            rm = real(*a, **k)
+            C = rm["C_T"]
+            D = np.diag(np.diag(C))
+            return dict(rm, C_T=D + factor * (C - D))
+        with mock.patch.object(b, "remade", remade):
+            return self.run_d2()
+
+    def test_off_diagonals_changed_alone_fail_the_control(self):
+        """The audit's M1: halving only C_T's off-diagonals keeps the diagonal (realization_check) exact; the control
+        must still fail. A change at 1e-13 must not."""
+        rec = self.off_diagonals(0.5)
+        c = rec["control"]
+        self.assertEqual(c["max_rel_diff"]["realization_check"], 0.0)
+        self.assertFalse(c["passes"])
+        self.assertEqual(rec["verdict"], "INVALID")
+        self.assertNotIn("C_T_all", rec)
+        self.assertGreater(c["max_rel_diff"]["cholesky_check.kappa2"], d2.CONTROL_TOL)
+        self.assertGreater(c["max_rel_diff"]["grade.chi2_mean_over_ndf"], d2.CONTROL_TOL)
+        near = self.off_diagonals(1 + 1e-13)
+        self.assertTrue(near["control"]["passes"], near["control"])
+        self.assertEqual(near["verdict"], "PASS")
+        # the grade refusing under D2's matrix, where the readout graded, is a failed control, not a pass
+        with mock.patch.object(b, "graded", lambda E, C, null: (None, b.cholesky_tol(C), {"passes": False})):
+            ref = self.run_d2()
+        self.assertFalse(ref["control"]["passes"])
+        self.assertIn("refused", ref["control"]["why"])
+        self.assertEqual(ref["verdict"], "INVALID")
+
+    def test_a_readout_record_that_differs_fails_the_control(self):
         ro = json.loads(self.readout_file().read_text())
         for scale, passes in ((1 + 1e-6, False), (1 + 1e-12, True)):
             r2 = json.loads(json.dumps(ro))
@@ -138,6 +183,10 @@ class D2(tb.Pipeline):
             self.run_d2(expect_null_sha256="0" * 64)
         with self.assertRaisesRegex(d2.Refusal, "readout's digest"):
             self.run_d2(expect_readout_sha256="0" * 64)
+        with self.assertRaisesRegex(d2.Refusal, "staged S1 assembly's digest"):
+            self.run_d2(expect_staged_s1_sha256="0" * 64)
+        with self.assertRaisesRegex(d2.Refusal, "flux constraint's digest"):
+            self.run_d2(expect_flux_constraint_sha256="0" * 64)
         with mock.patch.object(b, "products_digest", lambda u, t, r: "other"):
             with self.assertRaisesRegex(d2.Refusal, "not made from these products"):
                 self.run_d2()
@@ -157,6 +206,12 @@ class D2(tb.Pipeline):
         f = self.tmp / "readout-no-check.json"
         f.write_text(json.dumps(r2, sort_keys=True))
         with self.assertRaisesRegex(d2.Refusal, "no realization_check"):
+            self.run_d2(readout=f, expect_readout_sha256=digest(f))
+        r3 = json.loads(rf.read_text())
+        del r3["evaluations"]["g18/all"]["grade"]
+        f = self.tmp / "readout-no-grade.json"
+        f.write_text(json.dumps(r3, sort_keys=True))
+        with self.assertRaisesRegex(d2.Refusal, "no grade or cholesky_check"):
             self.run_d2(readout=f, expect_readout_sha256=digest(f))
         ps = self.common()
         for p in ps:
@@ -206,7 +261,9 @@ class D2(tb.Pipeline):
             "--cmodel-json", str(self.tmp / "cmodel.json"), "--flux-constraint", str(self.w.constraint),
             "--truth", "g18", "--null", str(self.null()),
             "--expect-null-sha256", kw.get("nsha", digest(self.null())), "--readout", str(self.readout_file()),
-            "--expect-readout-sha256", digest(self.readout_file()), "--out", str(o)]
+            "--expect-readout-sha256", digest(self.readout_file()),
+            "--expect-staged-s1-sha256", digest(self.tmp / "s1" / "s1_assembly.npz"),
+            "--expect-flux-constraint-sha256", digest(self.w.constraint), "--out", str(o)]
         self.assertEqual(self.with_patches(d2.main, argv(out)), 0)
         rec = json.loads(out.read_text())
         self.assertEqual(rec["verdict"], "PASS")
