@@ -855,6 +855,66 @@ Table 7's block is byte-identical. Notes left as they are: §5.4 no longer says 
 inputs equal (both IBU comparisons show a difference), and the new §5.3 title is narrower than the IBU-iteration test the
 section also covers. The title is the director's approved wording.
 
+# J. Joseph's read of the paper, through section 4 (2026-11-12)
+
+**His critiques, verbatim.** They are the file the director saved, `joseph-critique-20261113.txt`, sha256
+`25f6c252dd7b0b3899948ffba3aa0a7f61ea911f046e2b5ae94c0e9a14b4e650` of the file as saved. Where they conflict with
+DECISION-20261111-joseph-ibu-distance-and-zenodo.md item 1 (the IBU-distance wording), they supersede it (the director,
+2026-11-12).
+
+```text
+here are some critiques, I have for the paper, I've read up to section 4: the statement in abstract and section one and right before section 4.2 implies our result is less reliable than binned but published measurement is binned itself
+
+I think the interpretation of the binned shape lying closer to the published same is an indication that the IBU method and OmniFold method are methodologically distinct. I think it is misleading to imply that the binned shape is closer for a reason other than this
+
+p.3
+is it necessary to mention completeness in the paper? by construction it is always 1 so it feels redundant 
+
+
+p.4
+there is a xx, not xx qualification at the top right paragraph of page 4
+```
+
+**Triage (director-helper-3, 2026-11-12; the director's instructions; meaning read and PRD read in `jc-read/`):**
+
+| Item | Status |
+|---|---|
+| 1. The IBU framing | drafted for Joseph, not pushed. The abstract, §1, §4.1, §4.2, §7 and Table 4's row now say that the published result is itself a binned IBU, and that at the published ten iterations a binned unfolding of the same inputs lies close to it. On these inputs the shape difference goes with the change of method, and which feature of the unbinned method produces it is open. There is no reliability ranking. The inputs clause is removed. §4.2 keeps the descriptive-χ² caveat and adds that closeness to the published result measures agreement with another binned unfolding, while accuracy against a known truth is tested in simulation (PRD E4). §4.2 prints the IBU distance over K (PRD E3, keys c2c1-dibu-mid-lo/-hi, -k20, -k1). **The record's limit:** REF-C2C1-DECLARATION.md §1.5 licenses no attribution for the `unresolved` C2-R2; "goes with" is Joseph's wording, put to him with that limit. The PRD read's further hedge ("Whether differences between these inputs and the publication's affect the two methods differently is not tested") is not applied, since it re-adds the inputs clause Joseph removed; it is offered to him |
+| 2. The completeness c | removed from eq. (1) and its definition; U is defined as the signal truth events' final weights, including those without a reconstructed partner (PRD E7). The efficiency sentence stays. The note-label file drops N-sec:method-xsec. journal-editor removes S4.1's "divided by the completeness" (PRD E6; meaning read defect 4) |
+| 3. "X, not Y", page 4 | §3.2: "These are sensitivities of the stated construction. Neither is a calibrated uncertainty, and neither enters a reported covariance." §3.2 run period: "It is an empirical sensitivity allowance whose size is not independently validated." (the wording of §7.1's coverage item). The sweep (`jc-read/x-not-y-sweep.txt`) finds four contrasts left in the body (:49 "rather than the charged-pion mass", :119 "not over their physical weights", :152 "rather than reweighting events", :521 "not repeated experiments") and two asides that are not contrasts ("not used for any reported result"; the availability section's "not yet deposited") |
+<!-- absence-ok: the rows quote the PRD read's proposed hedge and the paper's own scoping sentences ("not identified", "not tested"); none claims that a result does not exist -->
+
+
+
+**Joseph's decision on the drafts (2026-11-12, relayed by the director), verbatim:**
+
+> Yes I like B. and we can include the input caveat. and I like the contrasts.
+
+The director's sha256 of the whole message plus a final newline is `e86b7e253309d769`. The quoted sentence alone, plus a
+final newline, hashes to `fcb0385035d316b8`, so the whole message holds more than this quote. That value was not
+re-derived here.
+
+**What he chose:** the codex-school consult's tightened B (`consult-ibu-ab/`, session 01a1d323):
+- §4.2 takes the consult's paragraph, with the input caveat once, in §4.2 only;
+- the abstract, §1, §7, §4.1's end and Table 4's row take its short form, with no "lies close" and no "goes with";
+- the four contrasts take its rewrites (a)–(d).
+
+This replaces the option-A draft above (68828be8f), which was not pushed. The reads of the B text are in `jcb-read/`.
+
+**B, applied (director-helper-3):**
+- Meaning read DEFECTS (2) and the PRD read's edits are applied (`jcb-read/README.md` lists them).
+- The text reports, descriptively: the published method (binned IBU at ten iterations); χ²/ndf 1.03 and 2.27 with the
+  IBU range over K; the paired difference beyond replica noise; the origin open; the input caveat once, in §4.2; and
+  that agreement with the published result measures consistency with another unfolding, while accuracy is tested in
+  simulation.
+- **The contrasts:** (a) the regressor "Each simulated event contributes equally to the regressor fit, which therefore
+  estimates the mean weight at fixed truth without the events' simulation weights"; (b) "a defined constant of 135 MeV
+  in place of the charged-pion mass" (the mass is kept positively, since it tells the reader the constant is
+  definitional); (c) "shift the reconstructed muon kinematics and beam angle, without reweighting events" (kept,
+  because §5.4's weight-only comparison leaves the lateral block out); (d) "Each point represents a distinct quantity,
+  from the same two perturbations of the data" (keeps the not-repeats warning positively).
+- **For Joseph:** ρ = 0.452 and its interval [0.701, 1.128] are licensed and printed nowhere (`jcb-read/README.md`).
+
 ## Pre-submission checklist (director-helper-3; items added as the director rules)
 
 - [ ] **If T3's MW reading lands, revise §7.1 item 3, §3.1's last sentence and Supplement S4's "do not test" paragraph on

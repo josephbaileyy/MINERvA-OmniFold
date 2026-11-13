@@ -1,0 +1,63 @@
+# PRD referee read: IBU framing edits (working tree vs HEAD f0c451a9d)
+
+Read: main_paper.tex:62, paper_body.tex:26, 117, 124-128, 228-230, 272-274, 285, 647;
+supplemental_body.tex:28-50 (tab:bookkeeping), 265, 690-735 (supp:ibu); values_fived16.tex:106-123.
+Values checked there: K=10 1.03, K=5 0.83, K=2-15 0.83-1.59, K=20 2.16, K=1 3.95, OmniFold 2.27,
+T=382.8 > null max 138.5 (300 replicas); kappa 0.452 on data, replica 90% range 0.701-1.128.
+
+## Verdicts
+1. IBU framing: ACCEPT WITH EDITS. "Goes with" is correlational and defensible: the paired test shows OmniFold and
+   IBU differ on identical inputs, and IBU sits near the published result. "Therefore" holds only at the published
+   iteration count. At K=20 the IBU distance (2.16) is close to OmniFold's (2.27), and the body hides that behind
+   "(other iteration counts: S7)". The HEAD caveat on input differences was deleted without a replacement. Table S1
+   lists five inputs as "not compared", and an outside reader will ask whether they act differently on a method that
+   uses within-bin information. Scope "close" to the published K, put the K range in the body, and say the
+   input-by-method question is untested. That wording neither blames the inputs nor ranks the methods.
+2. Ranking/blame: ACCEPT WITH EDITS. No sentence blames the inputs. Table 1 still says "IBU lies closer ...;
+   mechanism not resolved", which is out of step with the new framing. Nothing says that being close to the published
+   result is not an accuracy criterion. Without that, "differs from both" reads as OmniFold being the outlier, so the
+   paper should say it once.
+3. Abstract sentence: REVISE. On a first read, "published binned result" sounds like a result reported in bins, and
+   both results are reported in 205 bins. "The same inputs" has no antecedent (same as the publication's?). "Its"
+   refers back to "benchmark".
+4. Dropping c: ACCEPT, with one required consistency fix. supplemental_body.tex:265 still divides "by the
+   completeness", so the supplement now contradicts eq. (1). It is optional to make U say that unmatched truth
+   events are included, which puts the no-efficiency logic next to the equation.
+5. Missing items: ACCEPT WITH EDITS. The published K is in the body ("the published count", sec. 4.2) and its origin is
+   in S6 (chosen in a fake-data study), which is enough. Why K=10: it is the published count and the declared primary
+   setting, also stated, which is fine. Missing: the K range (edit E3). Not raised in the body: on paired replicas
+   the IBU/OmniFold distance ratio is 0.70-1.13, against 0.45 on the data (S7 says why "was not tested"). A careful
+   referee will ask whether "close" survives resampling. The descriptive sentence ending sec. 4.2 covers this only
+   partly. I do not require an edit, but expect the question in a response letter.
+
+## Requested edits (old -> new)
+E1 paper_body.tex:26 (sec. 1)
+OLD: and a binned unfolding of the same inputs lies close to it. The shape difference therefore goes with the change from binned to unbinned unfolding, and which feature of the unbinned method produces it has not been identified.
+NEW: and the same binned method applied to this analysis's inputs lies close to it at the published iteration count. The shape difference therefore goes with the change from binned to unbinned unfolding. Which feature of the unbinned method produces it has not been identified.
+
+E2 main_paper.tex:62 (abstract)
+OLD: Its shape differs from the published binned result, while binned unfolding of the same inputs lies near it.
+NEW: The unbinned result's shape differs from the published one. Binned iterative unfolding, the method of the publication, lies near the published shape when applied to this analysis's inputs.
+
+E3 paper_body.tex:285 (sec. 4.2)
+OLD: (other iteration counts: \ssec{S7}{supp:ibu}). The paired test above shows the two unfoldings differ beyond their paired noise. With the inputs held fixed, the binned method lands close to the published binned result, and the unbinned method differs from both. The shape difference therefore goes with the change of unfolding method. Which feature of the unbinned method produces it is not established.
+NEW: (\fvval{c2c1-dibu-mid-lo}--\fvval{c2c1-dibu-mid-hi} for two to fifteen iterations, \fvval{c2c1-dibu-k20} at twenty and \fvval{c2c1-dibu-k1} at one: \ssec{S7}{supp:ibu}). The paired test above shows the two unfoldings differ beyond their paired noise. With the inputs held fixed, the binned unfolding lies close to the published result at the published iteration count, and the unbinned unfolding differs from both. The shape difference therefore goes with the change of unfolding method. Which feature of the unbinned method produces it is not established. Whether differences between these inputs and the publication's (\stab{S1}{tab:bookkeeping}) affect the two methods differently is not tested.
+
+E4 paper_body.tex:285 (sec. 4.2, append after "does not by itself indicate reproduction.")
+OLD: and a value near one does not by itself indicate reproduction.
+NEW: and a value near one does not by itself indicate reproduction. Closeness to the published result measures agreement with another binned unfolding of these data. Accuracy against a known truth is tested in simulation (sections~\ref{sec:fd16} and~\ref{sec:prr}).
+
+E5 paper_body.tex:230 (table 1)
+OLD: IBU lies closer to the published result; mechanism not resolved
+NEW: IBU, the published method, lies near the published result; the feature of the unbinned method responsible is not identified
+
+E6 supplemental_body.tex:265 (required with the eq. change)
+OLD: and divided by the completeness, the flux, the exposure, the number of nucleons and the cell volume.
+NEW: and divided by the flux, the exposure, the number of nucleons and the cell volume.
+
+E7 paper_body.tex:128 (optional)
+OLD: with $U$ the unfolded yield, the sum of the final weights of the simulated truth events in the bin.
+NEW: with $U$ the unfolded yield, the sum of the final weights of the simulated signal truth events in the bin, including those without a reconstructed partner.
+
+No change requested: sec. 4.1 end (line 274) and sec. 7 (line 647) read fairly as edited.
+Build note: E3 uses four existing macros (values_fived16.tex:113-117). Run make_values and --self-test after editing.

@@ -1,0 +1,24 @@
+You are an independent referee/editor for JINST and PRD advising the lead author of an unfolding methods paper (an implementation-specific diagnostic study of unbinned OmniFold on MINERvA open data). Give a recommendation on two wording decisions, with reasoning, the main risk, and your preferred exact wording (you may improve either option). Be concise and direct.
+
+FACTS (treat as established by the records)
+- The published MINERvA measurement (Ruterbories et al. 2021) of d2sigma/(dpT dp||) used binned D'Agostini iterative Bayesian unfolding (IBU) with a binned response matrix, at ten iterations.
+- This paper's two-observable OmniFold result reproduces the published integral within ~1% but has a correlated shape difference: descriptive chi2/ndf = 2.27 against the published result under the published covariance (205 bins; the covariance is ill-conditioned, condition number 1.5e12; no cross-covariance between this result and the published one is available because they share data, so these chi2 values are descriptive only).
+- A binned IBU of this analysis's own inputs on its own grid gives chi2/ndf = 1.03 at ten iterations (0.83-1.59 for 2-15 iterations, 2.16 at 20, 3.95 at 1).
+- A paired test between OmniFold and this binned IBU (same inputs, paired replicas) gives T = 382.8 against a null maximum of 138.5 over the replicas: the two unfoldings differ beyond paired noise.
+- Separately, simulation tests of truth recovery are reported in other sections (accuracy against known truths).
+- A pre-declared study of this comparison (declared before results were read) had a primary reading that came out "unresolved"; that declaration licenses reporting its numbers but no causal or interpretive sentence about why the shape differs, including the sentence "a binned unfolding at the published iteration count is closer". The author has authority to override a declaration's wording licence but would be doing so knowingly.
+- Input differences from the publication (e.g. reconstruction versions) are documented in a supplement bookkeeping table and were not compared directly.
+
+THE AUTHOR'S CRITIQUE (verbatim): "the statement in abstract and section one and right before section 4.2 implies our result is less reliable than binned but published measurement is binned itself. I think the interpretation of the binned shape lying closer to the published same is an indication that the IBU method and OmniFold method are methodologically distinct. I think it is misleading to imply that the binned shape is closer for a reason other than this."
+
+DECISION 1: the wording of the IBU comparison (abstract, introduction, end of 4.1, 4.2, conclusions, summary table).
+Option A (association): "The published result is itself a binned D'Agostini iterative Bayesian unfolding. At the published ten iterations, the same binned method applied to this analysis's inputs lies close to it, and on these inputs the shape difference goes with the change from binned to unbinned unfolding. Which feature of the unbinned method produces it has not been identified." Section 4.2 adds: "Closeness to the published result measures agreement with another binned unfolding of these data. Accuracy against a known truth is tested in simulation." The previous clause "differences between these inputs and the publication's are not excluded as a contributor" is removed.
+Option B (facts only): same, but without "the shape difference goes with the change from binned to unbinned unfolding"; ends "...and the binned and unbinned unfoldings differ beyond paired noise. What produces the difference has not been identified."
+Also: a PRD-style reader suggested adding "Whether differences between these inputs and the publication's affect the two methods differently is not tested." — the author dislikes input caveats here. Should it be included?
+
+DECISION 2: whether to rewrite four remaining contrast constructions ("X, not Y" / "rather than") that the author finds a stylistic tic:
+(a) "[the regressor is fitted with equal event weights] over simulated events, not over their physical weights"
+(b) "subtracts a defined constant of 135 MeV, rather than the charged-pion mass"
+(c) "The lateral uncertainties shift the reconstructed muon kinematics and beam angle rather than reweighting events"
+(d) figure caption: "Points are different quantities, not repeated experiments."
+For each: rewrite or keep, and the rewrite.
