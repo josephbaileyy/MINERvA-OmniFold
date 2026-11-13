@@ -118,13 +118,19 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Finding:* The release appendix still specifies the measurement release; archive package is not mentioned.  
   *Record:* `AUDIT.txt` row N4; `DECISION-20261106-joseph-methods-study-and-archive.md:57-61, :64-67` ("Publication, release and contact acts stay Joseph's").  
   *Target:* `docs/analysis-note/app_release.tex:4`, `:58`.  
-  *Status:* **HELD.** Held by the director (2026-11-08) and Joseph; kept out of steps 4 and 5; no release schema change drafted.
+  *Status:* **RESOLVED for the planned-package text (2026-11-13).** Held by the director (2026-11-08) and Joseph until Joseph's ruling, `DECISION-20261113-joseph-note-n4-n5-role.md` item 1: the planned, provisional Zenodo package paragraph of `4708988a6` (`app_release.tex`) stays, and the hold is lifted for that text only. The deposit itself still needs Joseph's final go (`DECISION-20261112-joseph-consult-d1-d7.md`, D6). No release schema change is drafted.
 
 * **AUD-N5 [R]** — **Event-loop preservation.**  
   *Finding:* Event-loop preservation CFS paths in `app_release.tex:50, :53`.  
   *Record:* `AUDIT.txt` row N5; `DECISION-20261101-joseph-eventloops-copy-to-cfs.md:28-34, :38-48` has no CITABLE FOR block.  
   *Target:* `docs/analysis-note/app_release.tex:50`, `:53`.  
-  *Status:* **HELD.** Held by the director (2026-11-08) and Joseph; kept out of steps 4 and 5; no text drafted without authorization.
+  *Status:* **KEPT FOR NOW (2026-11-13); OPEN, see AUD-N5a.** Held by the director (2026-11-08) and Joseph until Joseph's ruling, `DECISION-20261113-joseph-note-n4-n5-role.md` item 2: the preservation text of `1fbade809` (`app_release.tex`) stays "for now". No internal CFS path remains in the appendix.
+
+* **AUD-N5a [R]** — **A citable record for the preservation sentence.**  
+  *Finding:* `app_release.tex` states "Event-loop outputs are preserved on the analysis's NERSC storage." (`1fbade809`). It is a claim, and its record, `DECISION-20261101-joseph-eventloops-copy-to-cfs.md`, has no CITABLE FOR block (the AUD-N5 finding).  
+  *Record:* `DECISION-20261113-joseph-note-n4-n5-role.md` item 2 ("Its preservation sentence is a claim, so it needs a record citable for it before the note is released"); its NOT CITABLE FOR names "event-loop outputs being preserved".  
+  *Target:* the preservation sentence in `docs/analysis-note/app_release.tex`.  
+  *Status:* **OPEN.** Needs a record citable for the preservation, or a CITABLE FOR block on the 2026-11-01 decision, before the note is released. This row authorizes no tex edit.
 
 * **AUD-N6 [T]** — **Abstract resync.**  
   *Finding:* Resync note abstract to match reframed paper abstract per `DECISION-20261105-joseph-765-abstract-and-2d-disclosure.md:57-59`.  
@@ -221,7 +227,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-ACC-6 [T]** — **Unusable covariance used as a benchmark yardstick.**  
   *Finding:* Configuration-(a) 5D covariance is marked "not to be used" (§9.6), yet is used as a scale in §5.1, §8.4, §9.2, §9.3, Table 5, App. G.2.  
   *Evidence:* `docs/analysis-note/sec_5d.tex:225`, `sec_eavailw.tex:162`, `app_release.tex:72`.  
-  *Resolution:* Governed by S2-COM-2. Do not type 6.145 and do not write "five bands unmeasured." The release checklist stays unedited while app_release.tex is held under AUD-N4. This row authorizes no tex edit.
+  *Resolution:* Governed by S2-COM-2. Do not type 6.145 and do not write "five bands unmeasured." The release checklist stays unedited: AUD-N4's hold is lifted only for the planned-package text of `4708988a6` (`DECISION-20261113-joseph-note-n4-n5-role.md` item 1); this row authorizes no other app_release.tex edit. This row authorizes no tex edit.
 
 * **S1-ACC-7 [T]** — **Executive summary marginalization claim (1–2%) vs body.**  
   *Finding:* Executive summary claims 4D and 5D marginalization passes to 1–2%, but §8.1 gives 0.11% total and 0.3–1.5% median per axis; §7.8 gives no number for 4D→3D.  
@@ -394,12 +400,12 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-CONT-6 [T]** — **App. G placeholders and unreleased RC7 package.**  
   *Finding:* Placeholder strings (`[repository] ... [snapshot identifier pending deposit]`) and unreleased package references.  
   *Evidence:* `docs/analysis-note/app_release.tex:25`.  
-  *Resolution:* Do not edit app_release.tex while AUD-N4 is held. This row authorizes no tex edit.
+  *Resolution:* AUD-N4's hold is lifted only for the planned-package text of `4708988a6` (`DECISION-20261113-joseph-note-n4-n5-role.md` item 1); this row authorizes no other app_release.tex edit. This row authorizes no tex edit.
 
 * **S1-CONT-7 [T]** — **Reference to AI agent session replay for verification.**  
   *Finding:* Verification claim cites replay by "a separate AI agent session (Opus 5.5)".  
   *Evidence:* `docs/analysis-note/app_release.tex:45`.  
-  *Resolution:* Do not edit app_release.tex while AUD-N4 is held. Do not replace the session citation with a claim of an automated verification pipeline. This row authorizes no tex edit.
+  *Resolution:* AUD-N4's hold is lifted only for the planned-package text of `4708988a6` (`DECISION-20261113-joseph-note-n4-n5-role.md` item 1); this row authorizes no other app_release.tex edit. Do not replace the session citation with a claim of an automated verification pipeline. This row authorizes no tex edit.
 
 ### Section 6: Support for Claims
 
@@ -658,7 +664,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S2-COM-12 [T]** — **Unverified items admitted in text.** Same finding as S1-COM-7.  
   *Resolution:* This row authorizes no tex edit. Same disposition as S1-COM-7. Do not add those three statements until a record states each one.
 * **S2-COM-13 [T]** — **Reproduction is not possible.** Same finding as S1-CONT-6.  
-  *Resolution:* This row authorizes no tex edit. Same disposition as S1-CONT-6. Do not edit app_release.tex while AUD-N4 is held.
+  *Resolution:* This row authorizes no tex edit. Same disposition as S1-CONT-6. AUD-N4's hold is lifted only for the planned-package text of `4708988a6` (`DECISION-20261113-joseph-note-n4-n5-role.md` item 1); this row authorizes no other app_release.tex edit.
 * **S2-COM-14 [T]** — **Fake-data tests are not held-out truths.** Same finding as S1-COM-3.  
   *Resolution:* This row authorizes no tex edit. Same disposition as S1-COM-3. Do not type per-cell bias values, and do not add a sentence that the fake-data tests are not held-out truths.
 * **S2-COM-15 [T]** — **Extended fiducial prior envelope.**  
@@ -679,7 +685,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S2-CONT-5 [T]** — **Internal design review factor derivation.** Same finding as S1-CONT-2.  
   *Resolution:* This row authorizes no tex edit. Same disposition as S1-CONT-2. Do not copy that specification into the note, and do not add a derived factor. The joint-test counts stay in the table.
 * **S2-CONT-6 [T]** — **Repository paths and file names in text.** Same finding as S1-CONT-6.  
-  *Resolution:* This row authorizes no tex edit. Same disposition as S1-CONT-6. Do not edit app_release.tex while AUD-N4 is held.
+  *Resolution:* This row authorizes no tex edit. Same disposition as S1-CONT-6. AUD-N4's hold is lifted only for the planned-package text of `4708988a6` (`DECISION-20261113-joseph-note-n4-n5-role.md` item 1); this row authorizes no other app_release.tex edit.
 * **S2-CONT-7 [T]** — **Citations to private communications.** Same finding as S1-CONT-5.  
   *Resolution:* This row authorizes no tex edit. Same disposition as S1-CONT-5. Do not replace a private-communication citation with a rationale the note does not already state.
 * **S2-CONT-8 [T]** — **Internal stage/date jargon.**  
@@ -741,7 +747,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Evidence:* Fig. 23 graphic and caption.  
   *Resolution:* This row authorizes no tex edit. Do not relabel the figure. The caption already says the ratio is data/Tune v1 and that the figure prints data/GENIE. The denominator is the tune-weighted prior.
 * **S2-PRES-7 [T]** — **Statements citing AI agent session replay.** Same finding as S1-CONT-7.  
-  *Resolution:* This row authorizes no tex edit. Same disposition as S1-CONT-7. Do not edit app_release.tex while AUD-N4 is held. Do not replace the session citation with a claim of an automated verification pipeline.
+  *Resolution:* This row authorizes no tex edit. Same disposition as S1-CONT-7. AUD-N4's hold is lifted only for the planned-package text of `4708988a6` (`DECISION-20261113-joseph-note-n4-n5-role.md` item 1); this row authorizes no other app_release.tex edit. Do not replace the session citation with a claim of an automated verification pipeline.
 * **S2-PRES-8 [T]** — **Dates, internal job labels, file names in text.** Same finding as S1-PRES-3.  
   *Resolution:* This row authorizes no tex edit. Same disposition as S1-PRES-3. Do not move provenance sentences out of the body until a later instruction names them.
 * **S2-PRES-9 [T]** — **Terminology used before defined.** Same finding as S1-PRES-4.  
@@ -1268,3 +1274,14 @@ The director's correction, found while revising the methods paper's Supplement (
 GPT-4.20 and GEM-3.7 are left as the dispositions of those reviews. They describe the selection paragraph before `5942669c`. They are not rewritten.
 
 The 2.91 percent figure is not substituted for the deleted scale phrases. No uncertainty, coverage, or validity claim is added. The primer, paper sources, LL5D text, and release appendix were not edited. AUD-N4 and AUD-N5 remain held, and PR #952 remains draft and unmerged. The hold on the note's role sentence remains. No director completion report has been sent.
+
+## Joseph's ruling on AUD-N4, AUD-N5 and the note role (2026-11-13)
+
+Recorded in `DECISION-20261113-joseph-note-n4-n5-role.md` (Joseph's words: sha256 `a1ca71a4fbe2f195`).
+
+1. **AUD-N4:** the planned-package text of `4708988a6` stays; the hold is lifted for that text only. The deposit still needs Joseph's final go (D6).
+2. **AUD-N5:** the preservation text of `1fbade809` stays "for now". Its preservation sentence needs a citable record before release: AUD-N5a, OPEN.
+3. **The note role:** the abstract and executive-summary change of `4836da131` is accepted.
+4. **Development history:** a referee is asked whether the note's account of what was tried matches comparable technical documents. No history is cut before Joseph rules on its result; any cut history stays in the internal ledger.
+
+Updated here: the AUD-N4 and AUD-N5 status rows, the new AUD-N5a row, and the six rows that repeated AUD-N4's hold (S2-COM-2's release checklist row and five "Do not edit app_release.tex while AUD-N4 is held" rows). Earlier dated sections that say "AUD-N4 and AUD-N5 remain held" are history and are not edited.
