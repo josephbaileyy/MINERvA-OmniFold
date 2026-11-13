@@ -1,0 +1,5 @@
+233f8cd2b7dd8ec1c7ee6b2db8a7c3aedf90f07232f5f6ff27833886dd629400  /dev/shm/josephrb-g2r-prepare.sh
+d079b2a627b93abda70c24caada209016339137dfc4bdb2a66ab0235b84138fe  /dev/shm/josephrb-g2r-prepare.log
+rm -f /dev/shm/josephrb-g2r-prepare.sh /dev/shm/josephrb-g2r-prepare.log rc=0
+ls: cannot access '/dev/shm/josephrb-g2r-prepare.sh': No such file or directory
+ls: cannot access '/dev/shm/josephrb-g2r-prepare.log': No such file or directory
