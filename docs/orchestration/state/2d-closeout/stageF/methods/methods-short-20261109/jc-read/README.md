@@ -1,4 +1,4 @@
-# Joseph's critique of 2026-11-13: the reads of the paper edits
+# Joseph's critique of 2026-11-12: the reads of the paper edits
 
 **What changed:** paper_body.tex and main_paper.tex from f0c451a9d, for Joseph's three critiques (RESPONSE.md section J,
 verbatim): the IBU framing, the completeness c, and the "X, not Y" sentences of page 4.
