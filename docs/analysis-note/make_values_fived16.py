@@ -170,6 +170,9 @@ READOUTS = {
     # regrade of the fake-data records; the text is Joseph's approval of 2026-11-12 (DECISION-20261112-joseph-consult-d1-d7.md, addendum)
     "rsn": (f"{RSN}/rsn_readout.json", "6291f48d"),
     "rsnregrade": (f"{RSN}/regrade.json", "cb5f5d17"),
+    # E96D: the 96-fit ensemble average and the float64 copy on the data, beside (e)'s result (E96D-DECLARATION.md,
+    # #1130); in the paper by Joseph's decision of 2026-11-12 (E96D-BINDING-1 ruling 5; RESPONSE.md section J3)
+    "e96d": (f"{FD}/fd/e96-data-20261110/receipts/a1-run-20261112/cluster/analysis/ANALYSIS.json.txt", "b42208ef"),
 }
 # the committed readouts without the run-period block, for the "-nopl" keys
 NOPL_READOUTS = dict(READOUTS, **{
@@ -1604,6 +1607,7 @@ def groupb_values(d):
     v.update(recov_values(d))
     v.update(g_rows_values(d))
     v.update(cbkg2_values(d))
+    v.update(e96d_values(d))
     v.update(rsn_values(d, f'{d["cmodel"]["trace_share_by_vertex"]["gibuu"]:.3f}'))
     # B3a: the synthetic q3 tilt, r = 1 + a z~ (s5c_pseudo.py truth_weight "q3_given_eavail_w"); a and the clip from the
     # code, the event count, the range and in-cell spread of the weight and the two preservation checks from the truth check
@@ -2012,6 +2016,27 @@ def cbkg2_values(d):
     assert s["port"] == "nd-unfolding/bkg_channel_split.py:58-70"
     v = {"cbkg2-oops-1a": f"{100 * s['frac_w_oops']:.0f}"}
     assert v["cbkg2-oops-1a"] == "10" and s["frac_w_cc_out_of_fiducial"] > 0.5   # "mostly out-of-fiducial nu_mu CC"
+    return v
+
+
+def e96d_values(d):
+    """E96D's data result (descriptive; E96D-DECLARATION.md Licence: how the ensemble average and the float64 change move
+    the data result; no adoption, no uncertainty or bias, no ranking). §6.1 prints the two maxima."""
+    r = d["e96d"]
+    assert r["schema"] == "e96-data/1/analysis" and r["label"].startswith("descriptive")
+    assert all(c["pass"] for c in r["controls"].values()), "an E96D control failed"
+    t = r["sixteen"]
+    assert "relative_sigma.C_e alone" in t["label"], "the record's sigma is not C_e's relative sigma"
+    rel, z = [abs(x) for x in t["E96_over_e_minus_1"]], [abs(x) for x in t["E96_minus_e_over_sigma_Ce"]]
+    cells = [c["cell"] for c in r["cells"]]
+    assert len(rel) == len(z) == len(cells) == 16
+    assert cells[rel.index(max(rel))] == "R05" and cells[z.index(max(z))] == "R06"
+    assert abs(r["quotable"]["E96_max_abs_over_sigma_Ce"]["value"] - max(z)) < 1e-15
+    # the float64 copy: every cell's ratio to (e) is exactly 1 in double precision (not a bitwise comparison of the
+    # products; hence the text's "the same result to double precision")
+    assert all(x == 0.0 for x in t["F64_over_e_minus_1"]) and r["quotable"]["F64_max_abs_over_sigma_Ce"]["value"] == 0.0
+    v = {"e96d-maxpct": f"{100 * max(rel):.2f}", "e96d-maxsig": f"{max(z):.2f}"}
+    assert v == {"e96d-maxpct": "0.24", "e96d-maxsig": "0.05"}, v
     return v
 
 

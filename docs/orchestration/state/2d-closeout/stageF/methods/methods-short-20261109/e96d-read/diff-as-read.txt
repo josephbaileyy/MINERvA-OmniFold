@@ -1,0 +1,63 @@
+diff --git a/docs/analysis-note/make_values_fived16.py b/docs/analysis-note/make_values_fived16.py
+index 0e9a8e9fe..028adeb31 100644
+--- a/docs/analysis-note/make_values_fived16.py
++++ b/docs/analysis-note/make_values_fived16.py
+@@ -170,6 +170,9 @@ READOUTS = {
+     # regrade of the fake-data records; the text is Joseph's approval of 2026-11-12 (DECISION-20261112-joseph-consult-d1-d7.md, addendum)
+     "rsn": (f"{RSN}/rsn_readout.json", "6291f48d"),
+     "rsnregrade": (f"{RSN}/regrade.json", "cb5f5d17"),
++    # E96D: the 96-fit ensemble average and the float64 copy on the data, beside (e)'s result (E96D-DECLARATION.md,
++    # #1130); in the paper by Joseph's decision of 2026-11-12 (E96D-BINDING-1 ruling 5; RESPONSE.md section J)
++    "e96d": (f"{FD}/fd/e96-data-20261110/receipts/a1-run-20261112/cluster/analysis/ANALYSIS.json.txt", "b42208ef"),
+ }
+ # the committed readouts without the run-period block, for the "-nopl" keys
+ NOPL_READOUTS = dict(READOUTS, **{
+@@ -1604,6 +1607,7 @@ def groupb_values(d):
+     v.update(recov_values(d))
+     v.update(g_rows_values(d))
+     v.update(cbkg2_values(d))
++    v.update(e96d_values(d))
+     v.update(rsn_values(d, f'{d["cmodel"]["trace_share_by_vertex"]["gibuu"]:.3f}'))
+     # B3a: the synthetic q3 tilt, r = 1 + a z~ (s5c_pseudo.py truth_weight "q3_given_eavail_w"); a and the clip from the
+     # code, the event count, the range and in-cell spread of the weight and the two preservation checks from the truth check
+@@ -2015,6 +2019,26 @@ def cbkg2_values(d):
+     return v
+ 
+ 
++def e96d_values(d):
++    """E96D's data result (descriptive; E96D-DECLARATION.md Licence: how the ensemble average and the float64 change move
++    the data result; no adoption, no uncertainty or bias, no ranking). §6.1 prints the two maxima."""
++    r = d["e96d"]
++    assert r["schema"] == "e96-data/1/analysis" and r["label"].startswith("descriptive")
++    assert all(c["pass"] for c in r["controls"].values()), "an E96D control failed"
++    t = r["sixteen"]
++    rel, z = [abs(x) for x in t["E96_over_e_minus_1"]], [abs(x) for x in t["E96_minus_e_over_sigma_Ce"]]
++    cells = [c["cell"] for c in r["cells"]]
++    assert len(rel) == len(z) == len(cells) == 16
++    assert cells[rel.index(max(rel))] == "R05" and cells[z.index(max(z))] == "R06"
++    assert abs(r["quotable"]["E96_max_abs_over_sigma_Ce"]["value"] - max(z)) < 1e-15
++    # the float64 copy: every cell's ratio to (e) is exactly 1 in double precision (not a bitwise comparison of the
++    # products; hence the text's "the same result to double precision")
++    assert all(x == 0.0 for x in t["F64_over_e_minus_1"]) and r["quotable"]["F64_max_abs_over_sigma_Ce"]["value"] == 0.0
++    v = {"e96d-maxpct": f"{100 * max(rel):.2f}", "e96d-maxsig": f"{max(z):.2f}"}
++    assert v == {"e96d-maxpct": "0.24", "e96d-maxsig": "0.05"}, v
++    return v
++
++
+ def rsn_values(d, share_nominal):
+     """The RSN readings (RSN-DECLARATION.md rev 3, §2 and §9) as the approved text prints them: §3.1, §3.2, §5.2, Table 3's
+     caption, §7.1 item 3 and Supplement S4 and S5. The classes the text states in words are asserted here."""
+diff --git a/docs/analysis-note/paper_body.tex b/docs/analysis-note/paper_body.tex
+index 0c8f7c77e..95def23da 100644
+--- a/docs/analysis-note/paper_body.tex
++++ b/docs/analysis-note/paper_body.tex
+@@ -541,7 +541,8 @@ Perturbing only the input of the refinement stage reproduced the full spread, so
+ A probe tested two-fold cross-fitting and two tree regularizations on simulated pseudo-data. Because no variant met the data-stability requirement, we retained the estimator (ref.~\cite{AnalysisNote2026}). Cross-fitting also gives a larger fake-data bias than the current estimator at three of the 17 truths it was graded on.
+ 
+ % Style batch: split from the probe's paragraph (report_paper.md A2).
+-An ensemble-averaged variant of the estimator, the mean of \fvval{ens1-n} fits, meets the stability requirement on the pseudo-data used to test stability (median \fvval{ens1-median} and at most \fvval{ens1-max}, against \fvval{ens1-bar-median} and \fvval{ens1-bar-max}), where the reported estimator does not. On noise-free fake-data closures at the \fvval{ens1-ntruths} distinct truths it is no worse than the reported estimator at \fvval{ens1-nnoworse} and worse at one, the GiBUU $\Eavail$ shape, where its root-mean-square closure bias is \fvval{ens1-g-rms-r} against \fvval{ens1-g-rmsc-r}, about \fvval{ens1-g-rms-dpct}\,\% larger. Its adoption required closure no worse at every truth, and the reported estimator is kept. The exact values and their accounting are in \ssec{S4}{supp:estimators}.
++% E96D (Joseph's decision of 2026-11-12, "sure add that e96d sentence after the referee style read"; E96D-BINDING-1 ruling 5; RESPONSE.md section J): the data sentence, keys e96d-* from ANALYSIS.json.txt b42208ef (#1130), within E96D-DECLARATION.md's Licence (a description of how the average and the float64 copy move the data result; no adoption, no uncertainty or bias, no ranking). F64/(e) - 1 is 0.0 in every cell, a ratio and not a bitwise comparison: "to double precision". Answers the fresh referee's major 7.
++An ensemble-averaged variant of the estimator, the mean of \fvval{ens1-n} fits, meets the stability requirement on the pseudo-data used to test stability (median \fvval{ens1-median} and at most \fvval{ens1-max}, against \fvval{ens1-bar-median} and \fvval{ens1-bar-max}), where the reported estimator does not. On noise-free fake-data closures at the \fvval{ens1-ntruths} distinct truths it is no worse than the reported estimator at \fvval{ens1-nnoworse} and worse at one, the GiBUU $\Eavail$ shape, where its root-mean-square closure bias is \fvval{ens1-g-rms-r} against \fvval{ens1-g-rmsc-r}, about \fvval{ens1-g-rms-dpct}\,\% larger. Its adoption required closure no worse at every truth, and the reported estimator is kept. The exact values and their accounting are in \ssec{S4}{supp:estimators}. On the data, the ensemble average differs from the reported result by at most \SI{\fvval{e96d-maxpct}}{\percent} per cell (\fvval{e96d-maxsig} of the standard deviation from $C_{\mathrm{e}}$), and the reported estimator on a float64 copy of the inputs gives the same result to double precision.
+ 
+ 
+ \subsection{Calibration of the uncertainties}
