@@ -1,0 +1,30 @@
+% Development-history appendix (DECISION-20261113-joseph-note-n4-n5-role.md, addendum: Joseph's "yes go ahead" to the
+% note-history restructure; the referee's structure, noteref out.txt section 4). Built section by section with the
+% restructure; each row restates what the body says, with a pointer to it, and adds no claim. Each section's cut log is
+% docs/analysis-note/history-cuts/<section>.md. Placed last so that no other appendix letter moves.
+\section{Development history}
+\label{app:devhistory}
+
+This appendix lists configurations and tests that were superseded, stopped or changed during the analysis, where the change matters for reading a released result. Each row states what had already been seen when the change was made. The chronology behind the rows is kept in the analysis repository's records~\cite{NoteRecords2026} and its commit history.
+
+{\setlength{\LTcapwidth}{\textwidth}
+\begin{xltabular}{\textwidth}{@{}>{\footnotesize\RaggedRight\arraybackslash\hsize=0.95\hsize}X>{\footnotesize\RaggedRight\arraybackslash\hsize=0.85\hsize}X>{\footnotesize\RaggedRight\arraybackslash\hsize=1.15\hsize}X>{\footnotesize\RaggedRight\arraybackslash\hsize=0.8\hsize}X>{\footnotesize\RaggedRight\arraybackslash\hsize=1.15\hsize}X>{\footnotesize\RaggedRight\arraybackslash\hsize=1.1\hsize}X@{}}
+\caption{Superseded configurations and changed tests.}
+\label{tab:devhistory}\\
+\toprule
+Configuration or test & Purpose & Outcome or reason superseded & Result affected & Applicability to the released result & Already seen \\
+\midrule
+\endfirsthead
+\toprule
+Configuration or test & Purpose & Outcome or reason superseded & Result affected & Applicability to the released result & Already seen \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+% sec_method.tex sec:method-config (history-cuts/sec_method.md, rows D1-D3).
+Exact-split configuration~(b) (\S\ref{sec:method-config}) & An earlier quoted 2D central value; now a cross-check & Replaced by LightGBM, so that the central value and its covariance share an estimator; it has no matched covariance & 2D central value (\S\ref{sec:results}) & Studies labeled \emph{exact-split} use it and have not been repeated for the quoted estimator & Both comparisons with the publication, when LightGBM was chosen \\
+\addlinespace
+Purity-subtracted 2D central value and covariance, configuration~(a) (\S\ref{sec:method-config}) & The 2D central value and covariance before configuration~(f) & A two-dimensional closure test with backgrounds found the purity bias; rebuilt with configuration~(f) (App.~\ref{sec:negweight-footing}) & 2D central value and covariance (\S\ref{sec:results}) & The purity-subtracted 2D comparisons (\S\ref{sec:results-tension}) use configuration~(a) & The change was decided on the closure test, before the rebuilt result's distance from the published result was computed; the rebuilt result was adopted after that distance was known \\
+\addlinespace
+Five-dimensional central value and five-axis covariance, configuration~(a) (\S\ref{sec:eavailw}) & The five-observable central value & Not rebuilt: produced before the purity bias was found and the refinement was developed & Five-observable central value and covariance (\S\ref{sec:eavailw-adopted}) & That result only; the sixteen-cell result uses configuration~(e) (\S\ref{sec:fived16}) & Produced before the purity bias was found \\
+\end{xltabular}}
