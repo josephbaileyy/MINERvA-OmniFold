@@ -321,5 +321,61 @@ class BareCitationsAndLogEvidence(unittest.TestCase):
             V.EXT, V.PATHLIKE = saved_ext, saved_re
         self.assertEqual({"centring_n50.out"}, V.bare_citations(json.dumps({"e": "centring_n50.out"})))
 
+
+class PinnedExemption(unittest.TestCase):
+    """EXEMPT_BARE (the director's ruling on #1139, 2026-11-13) exempts one token in one receipt at one
+    sha256. FIRES: the same token anywhere else, or in that receipt at any other bytes, is still
+    classified, and is MISSING where the receipt's directory is tracked. SILENT: the pinned bytes."""
+
+    PATH, SHA, TOKEN = next(iter(sorted(V.EXEMPT_BARE)))
+
+    def setUp(self):
+        with open(os.path.join(REPO, self.PATH), encoding="utf-8") as fh:
+            self.text = fh.read()
+        self.tracked = {os.path.dirname(self.PATH) + "/README.md"}
+        self.dirs = {os.path.dirname(self.PATH)}
+
+    def test_exactly_one_pin(self):
+        self.assertEqual(1, len(V.EXEMPT_BARE))
+
+    def test_the_committed_receipt_has_the_pinned_bytes_and_is_exempt(self):
+        self.assertEqual(self.SHA, V.hashlib.sha256(self.text.encode("utf-8")).hexdigest())
+        self.assertIn(self.TOKEN, V.bare_citations(self.text))
+        self.assertTrue(V.is_exempt(self.PATH, self.TOKEN, self.text))
+
+    def test_the_same_token_in_another_receipt_is_still_MISSING(self):
+        other = os.path.dirname(self.PATH) + "/other.json"
+        self.assertFalse(V.is_exempt(other, self.TOKEN, self.text))
+        self.assertEqual("MISSING",
+                         V.classify_bare(other, self.TOKEN, self.text, self.tracked, self.dirs)[0])
+
+    def test_this_receipt_at_another_sha_is_still_MISSING(self):
+        changed = self.text.replace('"verdict": "PASS"', '"verdict": "STOP"')
+        self.assertNotEqual(changed, self.text)
+        self.assertFalse(V.is_exempt(self.PATH, self.TOKEN, changed))
+        self.assertEqual("MISSING",
+                         V.classify_bare(self.PATH, self.TOKEN, changed, self.tracked, self.dirs)[0])
+
+    def test_another_token_in_the_pinned_receipt_is_not_exempt(self):
+        self.assertFalse(V.is_exempt(self.PATH, "runConfig.err", self.text))
+
+    def test_the_real_corpus_counts_one_exemption_and_no_finding(self):
+        r = V.scan_full(root=REPO)
+        self.assertEqual([], r["findings"])
+        self.assertEqual(1, r["bare_states"].get("EXEMPT"))
+
+    def test_the_self_test_reports_the_exemptions_narrow(self):
+        self.assertTrue(V.self_test(REPO)["exemptions_narrow"])
+
+    def test_negative_control_without_the_pin_the_receipt_is_MISSING(self):
+        saved = V.EXEMPT_BARE
+        try:
+            V.EXEMPT_BARE = frozenset()
+            hits = [x for x in V.scan_full(root=REPO)["findings"] if x["receipt"] == self.PATH]
+            self.assertEqual(1, len(hits), hits)
+        finally:
+            V.EXEMPT_BARE = saved
+
+
 if __name__ == "__main__":
     unittest.main()

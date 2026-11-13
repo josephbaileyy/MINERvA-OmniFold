@@ -39,17 +39,19 @@ files (each staged connect's node-side sha256, which equals the committed connec
   - `E_post_MaRES_0.root`: `2d43db0a724724457868d616ee01950e36925e9a56655280b56457b5c89bf987`.
   - These are the job's own sha256 lines, and an O_NOATIME read on login28 at 10:55:07Z gave the same values.
 
-## `envtest.json`: held out of this commit, pending the director's ruling
+## `envtest.json`, committed here at the path J1 §2 names
 
-`envtest.json` is `c4a0720d3a12265403d22e273e219d4594b03ba0a592afe671618ed72cbf0272`, the node's copy, read
-O_NOATIME. J1 §2 names this directory as its committed place: `g2r_jobs.order` reads
-`fd/receipts-cov2d/g2r/envtest/envtest.json` on origin/main before it lets the prepare go (`g2r_jobs.py:68` and
-`:224-226` at M).
-- With the file staged here, `verify_receipt_artifacts.py` failed with 1 MISSING. It reads the `set_aside` entry
-  `runConfig.out`, a key name, as a bare `.out` file citation.
-- Without the file, the same check reads 0 missing.
-- The file is the job's record and is not edited. The shared checker is not a lane's to change. The director rules
-  how the file lands.
+`envtest.json` (`c4a0720d3a12265403d22e273e219d4594b03ba0a592afe671618ed72cbf0272`) is byte-identical to the node's
+copy, read O_NOATIME. `g2r_jobs.order` reads `fd/receipts-cov2d/g2r/envtest/envtest.json` on origin/main before it
+lets the prepare go (`g2r_jobs.py:68` and `:224-226` at M).
+- `verify_receipt_artifacts.py` read its `set_aside` entry `runConfig.out`, a key name, as a bare `.out` file
+  citation (1 MISSING).
+- The director ruled on #1139 (2026-11-13): a pinned exemption for exactly this receipt, at this sha256, and this
+  token. It is `EXEMPT_BARE` in `verify_receipt_artifacts.py`, in this PR.
+- The same token in any other receipt, or this receipt at any other sha256, is still classified. The tests in
+  `test_verify_receipt_artifacts.py` (`PinnedExemption`) check both cases, and two mutants that drop the path or the
+  sha256 from the match are killed.
+- The checker now reads 0 missing and `EXEMPT 1`.
 
 Its fields, as written:
 - `schema` cov2d-g2r-envtest-2, `tol` 1e-08, `verdict` PASS, `problems` [];
