@@ -37,6 +37,7 @@
      1.4  input uncertainty  the 1.4 % normalization uncertainty  [at: normalization \\]
      0.5  design             the run-period study's covariance scale factors  [at: scaled by 0, 0.5, 1 or 2]
     0.05  threshold          the run-period study's test level  [at: $p<0.05$]
+    0.69  quoted result      typed for #981's quote Q23; check_round.py LITERAL_KEYS asserts it equals pp-dbar  [at: by 0.69 per direction]
      1.4  input uncertainty  the 1.4 % normalization uncertainty  [at: the 1.4\,\% normalization]
     0.95  quantile level     the bootstrap thresholds' levels  [at: the 0.95 and 0.997]
    0.997  quantile level     the bootstrap thresholds' levels  [at: the 0.95 and 0.997]

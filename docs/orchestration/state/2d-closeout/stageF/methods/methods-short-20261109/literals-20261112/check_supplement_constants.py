@@ -63,6 +63,7 @@ CONSTANTS = [
     ("2.12", r"GENIE~2.12", "version", "the generator version"),
     ("21.09", r"NuWro~21.09", "version", "the generator version"),
     ("0.01", r"familywise rate of 0.01", "threshold", "the prior-retention study's familywise rate"),
+    ("0.69", r"by 0.69 per direction", "quoted result", "typed for #981's quote Q23; check_round.py LITERAL_KEYS asserts it equals pp-dbar"),
 ]
 NUM = re.compile(r"(?<![\w.-])\d+\.\d+(?![\w.])(?!\\textwidth|\\hsize|\\linewidth)")
 HERE = Path(__file__).resolve().parent
