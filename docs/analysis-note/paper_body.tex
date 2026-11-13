@@ -23,7 +23,7 @@ This paper is a benchmark and diagnostic study of a simultaneous unbinned unfold
 The findings apply to one OmniFold implementation on one data set, for the observables, configurations and deformations tested. The sixteen-cell cross section that the estimator gives on the data illustrates the method and is not a measurement. The supplementary material gives it with its covariance and descriptive comparisons with generator predictions (\ssec{S9}{supp:output}).
 % Style batch (the director, 2026-11-10, on journal-editor's style review, report_paper.md A1, A2): the three findings start their own paragraph; the third carries the coverage statement, said once in the introduction.
 
-We report three findings and the tests supporting them, including tests that failed (table~\ref{tab:outcomes}). First, a benchmark against the published double-differential cross section $d^{2}\sigma/(d\pT\,d\pPar)$ from the same data~\cite{MINERvA:2021owq} shows agreement in normalization and a correlated shape difference (section~\ref{sec:bench}). On fixed inputs, a binned unfolding lies closer to the published shape, and the mechanism of the difference has not been identified. Second, controlled changes of the simulated truth show that the five-observable result retains part of its prior on the sixteen reporting cells, while individual $(\Eavail,W)$ cells can move opposite to a generator-sized change or overshoot it (section~\ref{sec:prior}). Third, the estimator is reproducible but numerically unstable, and the calibration of its uncertainties has not been validated: these are distinct properties (section~\ref{sec:stability}).
+We report three findings and the tests supporting them, including tests that failed (table~\ref{tab:outcomes}). First, a benchmark against the published double-differential cross section $d^{2}\sigma/(d\pT\,d\pPar)$ from the same data~\cite{MINERvA:2021owq} shows agreement in normalization and a correlated shape difference (section~\ref{sec:bench}). On fixed inputs, a binned unfolding lies closer to the published shape, and the mechanism of the difference has not been identified. Second, controlled changes of the simulated truth show that the five-observable result retains part of its prior on the sixteen reported cells, while individual $(\Eavail,W)$ cells can move opposite to a generator-sized change or overshoot it (section~\ref{sec:prior}). Third, the estimator is reproducible but numerically unstable, and the calibration of its uncertainties has not been validated: these are distinct properties (section~\ref{sec:stability}).
 % Search: coverage of the sixteen-cell intervals; validated intervals of the sixteen-cell result; coverage at held-out truths (nd-unfolding/pv-ladder/readouts/cmodel_5d.json labels.coverage: "coverage at held-out truths was not validated"; FD-F0b-REPORT.md NOT CITABLE FOR coverage); the two-dimensional covariance not independently validated (paper sec:limitations item 1, quadrant round); fine-grid convergence (paper sec:conditions) @ 1f7f93da
 
 % New roadmap (ledger L-04).
@@ -50,7 +50,7 @@ which subtracts a defined constant of \SI{135}{MeV}, rather than the charged-pio
 Reconstructed $W$ is an exact function of the reconstructed $(\pT,\pPar,q_{3})$, apart from a clamp at $W^{2}=0$, because $W_{\mathrm{reco}}^{2}=(\bar M+q_{0})^{2}-q_{3,\mathrm{reco}}^{2}$, with $\bar M$ an average nucleon mass, and $q_{3,\mathrm{reco}}$ increases with $q_{0}$ at fixed muon kinematics. The five reconstructed inputs therefore share information and do not provide five independent constraints. Only reconstructed $W$ is fixed by the others. Reconstructed $\Eavail$ comes from its own calorimetric estimator and is not a function of them. The definitions, and the truth-level relation among the observables, are detailed in \ssecc{S2}{supp:observables}.
 
 % r5:81, its first sentence and the NuWro/GiBUU target clause, kept so that the truths of section 3.3 are defined in the paper (the editor's B4); the analysis-definition and CH-correction detail of the data comparison moved to S10.
-As prior reweightings and fake-data truths we use the predictions of the untuned GENIE~2.12.10 without (``GENIE CV'') and with (``GENIE + MEC'') the Valencia 2p2h component~\cite{Nieves:2011pp}, which models meson-exchange currents (MEC), NuWro~21.09~\cite{Golan:2012wx} and GiBUU~2019~\cite{Buss:2011mx}. NuWro and GiBUU are generated on carbon. The analysis simulation is the MINERvA Tune~v1 of GENIE, which is also the prior of every unfolding.
+As prior reweightings and fake-data truths we use the predictions of the untuned GENIE~2.12.10 without the Valencia 2p2h model of meson-exchange currents (MEC)~\cite{Nieves:2011pp} (``GENIE CV'') and with it (``GENIE + MEC''), NuWro~21.09~\cite{Golan:2012wx} and GiBUU~2019~\cite{Buss:2011mx}. NuWro and GiBUU are generated on carbon. The analysis simulation is the MINERvA Tune~v1 of GENIE, which is also the prior of every unfolding.
 
 % Moved before the diagnostic grids, with the support rule defined here (the interim referee round, #1025, group A item 6).
 % r5:105, with the output pointer moved to S10 (the editor's B3: the cell definition stays in the paper).
@@ -64,7 +64,7 @@ Each cell's result is its cell-integrated cross section, the differential cross 
 % The compact cell table (the interim referee round, #1025, group A item 6; the director: purity and diagonal fraction only, from
 % nd-unfolding/pv-ladder/readouts/h2_definition.json reporting_cells, pinned as READOUTS h2; the boxes are table S3's keys).
 \begin{table}[tb]
-\caption{The sixteen reporting cells: purity and diagonal fraction in the simulation. Each cell's box is in \stab{S3}{tab:fived16-cells}, with its cross section and uncertainties.}
+\caption{The sixteen reported cells: purity and diagonal fraction in the simulation. Each cell's box is in \stab{S3}{tab:fived16-cells}, with its cross section and uncertainties.}
 \label{tab:cells}
 \centering\footnotesize\setlength{\tabcolsep}{4pt}
 \begin{tabular}{@{}lrr@{\hspace{14pt}}lrr@{}}
@@ -185,19 +185,19 @@ For every $\chi^2$ of the five-observable result, we invert the full covariance 
 A closure test measures how well the unfolding recovers a specified deformation of the known simulated truth while holding the prior (the initial truth distribution) fixed. Coverage is the frequency with which intervals contain their target over repeated experiments. It tests the estimator and the interval construction together. The fake-data tests grade bias alone, since at most the event counts fluctuate in them, with the systematic parameters fixed. Coverage is graded only by the coverage tests of section~\ref{sec:calib}. The closure, deformation, and coverage studies reweight the true signal of the simulated events used as pseudo-data, which changes their reconstructed and true distributions together and keeps the detector response at fixed truth. The unfolding prior remains Tune~v1 throughout. Every study uses the analysis simulation's detector response.
 
 % r5:84, moved here from section 2 (the fresh referee read on 283f3044, RESPONSE.md row Gs2): the grids are defined where the tests need them.
-The fine grid is the analysis binning: the published $14\times16$ muon-momentum bins, of which the publication reports 205, crossed with 7 $\Eavail$, 7 $q_{3}$, and 6 $W$ bins. A coarse $3^{5}$ grid in $(\pT,\pPar,\Eavail,q_{3},W)$ has its edges at the fine edges nearest the simulated tertiles. The same support rule selects the \jtNcells{} coarse cells used in the joint tests, called the joint cells. The remaining cells contain \SI{0.47}{\percent} of the expected signal and contribute only to the total (\ssec{S8.7}{supp:joint}). Table~\ref{tab:grids} lists the grids.
+The fine grid is the analysis binning: the published $14\times16$ muon-momentum bins, of which the publication reports 205, crossed with 7 $\Eavail$, 7 $q_{3}$, and 6 $W$ bins (edges at 1.1, 1.4, 1.8, 2.2 and \SI{3}{GeV}). A coarse $3^{5}$ grid in $(\pT,\pPar,\Eavail,q_{3},W)$ has its edges at the fine edges nearest the simulated tertiles. The same support rule selects the \jtNcells{} coarse cells used in the joint tests, called the joint cells. The remaining cells contain \SI{0.47}{\percent} of the expected signal and contribute only to the total (\ssec{S8.7}{supp:joint}). Table~\ref{tab:grids} lists the grids.
 
 % Round 2 of the style read (item 1): the grids in one place.
 \begin{table}[tb]
 \centering
-\caption{The grids used in this paper. The sixteen reporting cells are defined in section~\ref{sec:data}, and the others in this section.}
+\caption{The grids used in this paper. The sixteen reported cells are defined in section~\ref{sec:data}, and the others in this section.}
 \label{tab:grids}
 \footnotesize\setlength{\tabcolsep}{3pt}
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.0cm}>{\raggedright\arraybackslash}p{2.5cm}>{\raggedright\arraybackslash}p{3.6cm}@{}}
 \toprule
 Grid & Cells & Use \\
 \midrule
-Reporting cells & 16, R00--R15 & the five-observable results \\
+Reported cells & 16, R00--R15 & the five-observable results \\
 Published $(\pT,\pPar)$ & 205 reported bins & the two-dimensional benchmark \\
 Fine grid & the $14\times16$ $(\pT,\pPar)$ bins $\times$ 7 $\Eavail$ $\times$ 7 $q_3$ $\times$ 6 $W$ bins & the analysis binning; hybrid truths and tune deformations \\
 Joint cells & \jtNcells{} supported coarse $3^{5}$ cells & the note's joint tests, the noise-free IBU comparison, the rounding and prior-response studies \\
@@ -206,7 +206,7 @@ $(\Eavail,W)$ cells & 42, 7 $\times$ 6 & the truth-recovery, rounding and prior-
 \end{tabular}
 \end{table}
 
-The five-observable tests use one set of truths, of which \fvval{f0b-all-truths} are graded (table~\ref{tab:fd16}): the simulation's prior, five hybrid truths, four generator shape changes, a noise-free closure at the NuWro shape, and a synthetic tilt of the $q_3$ distribution at fixed $(\Eavail,W)$. The abstract calls the GiBUU hybrid truth GiBUU-like and the $q_3$ tilt the synthetic momentum-transfer tilt. The tilt's amplitude is a stress value set in advance. The generator differences do not set it (\ssec{S8}{supp:tests}). Each hybrid truth equals a generator prediction in every cell of the fine grid and the Tune~v1 simulation's event composition within each cell. The shape changes include the GiBUU-to-GENIE $\Eavail$ ratio (the GiBUU $\Eavail$ shape). The note gives \fvval{f0b-nungraded} further truths, which are descriptive. The truths are not held out of the analysis, but three of the shape changes, the withheld shapes, were not used while the estimator was chosen.
+The five-observable tests use one set of truths, of which \fvval{f0b-all-truths} are graded (table~\ref{tab:fd16}): the simulation's prior, five hybrid truths, four generator shape changes, a noise-free closure at the NuWro shape, and a synthetic tilt of the $q_3$ distribution at fixed $(\Eavail,W)$. The tilt's amplitude is a stress value set in advance. The generator differences do not set it (\ssec{S8}{supp:tests}). Each hybrid truth equals a generator prediction in every cell of the fine grid and the Tune~v1 simulation's event composition within each cell. The shape changes include the GiBUU-to-GENIE $\Eavail$ ratio (the GiBUU $\Eavail$ shape). The note gives \fvval{f0b-nungraded} further truths, which are descriptive. The truths are not held out of the analysis, but three of the shape changes, the withheld shapes, were not used while the estimator was chosen.
 
 Two GENIE~v3 tunes, \fvval{f1-tune-g18} and \fvval{f1-tune-ar23}, were generated for these tests and were not used in developing the analysis. They share a quasielastic cross-section model, and \fvval{f1-tune-g18} and the GENIE + MEC component of $C_{\mathrm{model}}$ use Valencia-family MEC models. Each enters as a gated, normalized shape deformation of the simulated truth: the ratio of its prediction to GENIE CV in each fine cell, kept where its relative statistical uncertainty is at most \fvval{f1-statmax}, pooled over the coarse cell or set to 1 otherwise, and normalized so that it changes the shape only (\ssec{S8}{supp:tests}).
 
@@ -214,7 +214,7 @@ The bias is graded on Poisson pseudo-experiments, whose mean is compared with th
 
 The grading rules and their timing are stated with the individual tests. Comparisons without a grading rule are descriptive. Criteria, thresholds and readings were fixed before the results they grade were read, unless a test says otherwise. A truth is flagged when the bias's $\chi^2$ over the 16 cells has a reference tail area $p<\fvval{trig-p}$ under $\chi^2_{16}$, or when a cell has $|z|>\fvval{trig-z}$, where $z$ is the cell's bias divided by its uncertainty under the same covariance. Because the bias is deterministic, $p$ is a reference score and carries no calibrated probability.
 
-An estimator meets the stability requirement when rounding-level changes of its inputs move its results by at most 0.3 statistical standard deviations in the median and 1.0 at maximum. A coverage test grades the fraction of pseudo-experiments whose result lies within its interval, per cell and jointly, against a threshold set from the test's own null distribution. The estimator behind each test is given in the Est.\ column of table~\ref{tab:outcomes}, and the two estimators in table~\ref{tab:estimators}.
+An estimator meets the stability requirement when rounding-level changes of its inputs move its results by at most 0.3 statistical standard deviations in the median and 1.0 at maximum. A coverage test grades the fraction of pseudo-experiments whose result lies within its interval, per cell and jointly, against a threshold set from the test's own null distribution. Table~\ref{tab:outcomes} marks the estimator behind each test (2D or 5D), and table~\ref{tab:estimators} describes the two estimators.
 
 \begin{table*}[tb]
 % Style batch (2026-11-10, report_paper.md B1): the prior-retention row's entries as sentences, in place of a semicolon chain.
@@ -308,7 +308,7 @@ Removing the 1G--1M group leaves the covariance-weighted distance of the two-dim
 \label{sec:quad}
 
 % r5:208, its first two sentences; the three-observable marginal comparison stays in the note (sec_fived16.tex sec:fived16-quadrants). T1-3: its own subsection (item 7, "split section 4.2").
-When summed over each of the four $(\pT,\pPar)$ quadrants, the sixteen-cell result agrees with the two-dimensional result: the sums differ by \SIrange{\fvval{x-dpct-min}}{\fvval{x-dpct-max}}{\percent}, and the four differences, using the covariance between the two results evaluated from their shared systematic variations, give $\chi^2\leq\fvval{x-chi2-hi}$ for four degrees of freedom ($p\geq\fvval{x-p-min}$), with no quadrant beyond one standard deviation. The statistical correlation and the correlations of four systematic terms that could not be evaluated directly are bounded within a one-parameter family of valid covariances. Each such cross term is taken as a common fraction, from zero to one, of its fully correlated value. The agreement holds throughout this family. The five-observable result agrees with the two-dimensional normalization in each muon-kinematic quadrant. The benchmark does not test its distribution in the three hadronic observables.
+When summed over each of the four $(\pT,\pPar)$ quadrants, the sixteen-cell result agrees with the two-dimensional result: the sums differ by \SIrange{\fvval{x-dpct-min}}{\fvval{x-dpct-max}}{\percent}, and the four differences, using the covariance between the two results evaluated from their shared systematic variations, give $\chi^2\leq\fvval{x-chi2-hi}$ for four degrees of freedom ($p\geq\fvval{x-p-min}$), with no quadrant beyond one standard deviation. The statistical correlation and the correlations of four systematic terms that could not be evaluated directly are bounded within a one-parameter family of valid covariances. Each such cross term is taken as a common fraction, from zero to one, of its fully correlated value. The agreement holds throughout this family. The benchmark does not test the five-observable result's distribution in the three hadronic observables.
 
 \section{Recovery of controlled truth changes}
 \label{sec:prior}
@@ -324,11 +324,11 @@ A background-inclusive closure at nominal truth tests the five-observable estima
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{methods_short/m3_fig2_deformation}
-% The figure referee read (secondary-results/referee-figure-deformation-20261112; the director's B4-B6, 2026-11-12): markers and error bars named as ensemble means and standard errors; the W-bin key from m3_common.py W_EDGES (0, 1.1, 1.4, 1.8, 2.2, 3.0, 100); the title's 400-tree, 31-leaf refinement moved here (s5e candidate R, contract amendment 3); the shaded cells' points shown, outside the support rule.
+% The figure referee read (secondary-results/referee-figure-deformation-20261112; the director's B4-B6, 2026-11-12): markers and error bars named as ensemble means and standard errors; the W-bin key from m3_common.py W_EDGES (0, 1.1, 1.4, 1.8, 2.2, 3.0, 100); the title's 400-tree, 31-leaf refinement moved here (s5e candidate R, contract amendment 3); the shaded cells' points shown, outside the support rule. Style round 4 (round4; the director's approved item): the refinement capacity and the W-bin key left the caption; section 3.1 states the capacity, and section 3.3's fine grid gives the W edges.
 % #977 rows m5/Fm7 and s11c (the director's routing ruling, 2026-11-12): the injected changes (pscr-20261112/derived/m5_injected.json, s5n_truth_check's full-sample definition; the GiBUU case's is truth_check.json's, the same truth, ratio file and amplitude), the reported estimator's GiBUU case (assess_receipt.json points.eavail_gibuu, 73.86 % at EW29, s5e-gibuu-ewmax) and the unsupported cells EW11, EW36, EW37 (keys fm7-*, l_rows.json m5) are drawn by the producer and asserted in presentation_original_arrays.json; the not-checkable limit is m5_injected.py's.
 % r5:142, its opening rewritten around what it shows (the editor's A4); panel (a), the lower-capacity variant, moved to the Supplement figure fig:supp-lowcap with its "not the reported estimator" (#1025, A1; Codex 12dbe081c).
 % Small multiples and a shorter caption (the director's Gm10 and St7 rulings, 2026-11-12): one panel per truth; the injected change's derivation is in supp:recovery.
-\caption{Fractional residuals, (unfolded $-$ truth)/truth, per $(\Eavail,W)$ cell, with backgrounds, for the reported five-observable estimator (background refinement with a 400-tree, 31-leaf classifier), one panel per changed truth: NuWro $\Eavail$, GENIE + MEC $(\Eavail,W)$ and NuWro $(\pT,\pPar,\Eavail)$ shapes and the GiBUU-to-GENIE $\Eavail$ shape (\nsec{sec:eavailw-adopted}). Markers: means over 20 pseudo-experiments, each evaluated against its own half-sample truth. Error bars, smaller than the markers: standard errors of the mean, at most \SI{\fvval{s5e-shapes-semax}}{\percent}. Dashed: the truth's injected change, the fractional change of the cell's true cross section in the full simulation (\ssecc{S4.4}{supp:recovery}). Shaded: the three cells that do not meet the support rule, $\Eavail=0.1$--\SI{0.2}{GeV} with $W\ge\SI{3}{GeV}$ and $\Eavail\ge\SI{3}{GeV}$ with $W<\SI{1.4}{GeV}$, with truth weights of \fvval{fm7-tw-lo}--\fvval{fm7-tw-hi} events; their points are shown, but the cells are outside the support rule. $W$ bins 1--6 within each $\Eavail$ bin: $W<\SI{1.1}{GeV}$, 1.1--1.4, 1.4--1.8, 1.8--2.2, 2.2--3 and $W\ge\SI{3}{GeV}$. Sixteen-cell results at these truths: table~\ref{tab:fd16}.}
+\caption{Fractional residuals, (unfolded $-$ truth)/truth, per $(\Eavail,W)$ cell, with backgrounds, for the reported five-observable estimator, one panel per changed truth: NuWro $\Eavail$, GENIE + MEC $(\Eavail,W)$ and NuWro $(\pT,\pPar,\Eavail)$ shapes and the GiBUU-to-GENIE $\Eavail$ shape (\nsec{sec:eavailw-adopted}). Markers: means over 20 pseudo-experiments, each evaluated against its own half-sample truth. Error bars, smaller than the markers: standard errors of the mean, at most \SI{\fvval{s5e-shapes-semax}}{\percent}. Dashed: the truth's injected change, the fractional change of the cell's true cross section in the full simulation (\ssecc{S4.4}{supp:recovery}). Shaded: the three cells that do not meet the support rule, $\Eavail=0.1$--\SI{0.2}{GeV} with $W\ge\SI{3}{GeV}$ and $\Eavail\ge\SI{3}{GeV}$ with $W<\SI{1.4}{GeV}$, with truth weights of \fvval{fm7-tw-lo}--\fvval{fm7-tw-hi} events; their points are shown, but the cells are outside the support rule. $W$ bins 1--6, in increasing $W$, within each $\Eavail$ bin (section~\ref{sec:strategy}). Sixteen-cell results at these truths: table~\ref{tab:fd16}.}
 \label{fig:deformation}
 \end{figure*}
 
@@ -408,7 +408,7 @@ The usage-recommendation rule is a per-cell bias-screening rule adapted from ref
 Both rules classify the bias under simulated truths: neither is a coverage statement, neither assesses the detector model, and neither excludes a cell from the output. \fvgroup{vhalf}{Of the 16 cells, \fvval{vhalf-n-valid} pass the bias-half rule, \fvval{vhalf-n-notvalid} fail\fvcase{vhalf-outcome}{some-fail}{ (\fvval{vhalf-cells-notvalid})}\fvcase{vhalf-outcome}{none-fail}{}, \fvval{vhalf-n-notassessed} are not assessed and \fvval{vhalf-n-unresolved} are unresolved.}
 % absence-ok: "not assessed" and "unresolved" are classes of the declared rule (DECISION-20261109-joseph-bias-half-rule.md item 1), and "does not assess the detector model, and it is not a coverage statement" scopes what the rules grade; neither is a claim that a result does not exist
 
-\subsection{What moves the retained prior}
+\subsection{Dependence of prior retention on estimator settings}
 \label{sec:prr}
 
 % Referee recheck (gpt-6.1-sol, 2026-11-11; RESPONSE.md row s5, s4, s11e): the motivation leads, with the exact-binned comparison moved from section 5.1 and a grid warning; figure 5 moved to S9.3.
@@ -432,7 +432,7 @@ The study changes one setting at a time: the iteration count, classifier capacit
 % T1-1: the essentials of the Supplement's tab:prr-rho (prr-rho-*, prr-rms-*, prr-chi2-*; the FD-PRR readout 9238f22b, B0 and IBU K5 at split s991000).
 \begin{table}[tb]
 \centering
-\caption{Retained fraction $\rho$, root-mean-square relative bias over the sixteen cells and noise-free $\chi^2$ (16 degrees of freedom) at the two flagged truths, for the five-observable estimator (5D) and IBU at five iterations, on noise-free pseudo-data at one simulation split (\stab{S14}{tab:prr-rho}). A negative $\rho$ means that, along the prior-to-truth direction, the result overshoots the truth; the total bias is in the RMS and $\chi^2$ columns.}
+\caption{Retained fraction $\rho$, root-mean-square relative bias over the sixteen cells and noise-free $\chi^2$ (16 degrees of freedom) at the two flagged truths, for the five-observable estimator (5D) and IBU at five iterations, on noise-free pseudo-data at one simulation split (\ssec{S8.2}{supp:study-prr}). A negative $\rho$ means that, along the prior-to-truth direction, the result overshoots the truth; the total bias is in the RMS and $\chi^2$ columns.}
 \label{tab:prr16}
 \begin{tabular}{lcccccc}
 \toprule
@@ -446,8 +446,29 @@ $q_3$ tilt & $\fvval{prr-rho-e-q3}$ & $\fvval{prr-rho-ibu-q3}$ & \fvval{prr-rms-
 \end{tabular}
 \end{table}
 
+% Style round 4 (secondary-results/style-methods-20261112/round4; the director's approved items, Joseph's D5, the last style round): Table 7 (tab:stability) placed after Table 6's source, so that it floats ahead of section 6.1's numerical account (from section 6.1 it floated to the page after).
+\begin{table*}[tb]
+\centering
+\caption{The rounding studies of section~\ref{sec:cov5d}: the quantities each uses and its perturbations, replicas or fits. Their results are in the text and in table~\ref{tab:outcomes}.}
+\label{tab:stability}
+\footnotesize\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.2cm}>{\raggedright\arraybackslash}p{6.2cm}>{\raggedright\arraybackslash}p{6.6cm}@{}}
+\toprule
+Study & Quantities & Perturbations, replicas or fits \\
+\midrule
+Rounding spread on the reported cells & the 16 reported cells, on data & 20 rounding-level perturbations of the data \\
+Rounding spread on the joint cells & the joint cells, on data & 20 rounding-level perturbations of the data, against 50 bootstrap replicas \\
+Data-stability requirement & 153 quantities: the 109 joint cells, the 42 $(\Eavail,W)$ cells and two totals, on data & the larger shift under two perturbations, against a bootstrap uncertainty from 100 refitted replicas \\
+Reported statistical block & the 16 reported cells & 50 bootstrap replicas, each with its own perturbation \\
+Mechanism & the 153 quantities and the 16 cells of one simulated pseudo-experiment & modified and unmodified perturbations \\
+Cross-fitting and tree regularizations & simulated pseudo-data & two-fold cross-fitting and two regularizations \\
+Ensemble average & simulated pseudo-data, and noise-free closures at \fvval{ens1-ntruths} truths & the mean of \fvval{ens1-n} fits \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
 % The study's classification rules, thresholds and labels are in S8.2 (style round 2, item 6: plain statements of which setting changed rho here; FD-PRR-DECLARATION.md sec. 5.1 :286-291 for the classes).
-A setting is reported as changing $\rho$ at a flagged truth when some tested level moves $\rho$ from the reported configuration's value by more than a threshold. A separate test asks whether IBU's retained fraction falls or rises between five and 200 iterations. The thresholds, the formal classes and the labels that combine these results are in \ssec{S8.2}{supp:study-prr}. The binned IBU is exact for the binned problem on its truth grid, while OmniFold uses event-level features. A difference between the two therefore combines the algorithm with the discretization. The study selects no estimator, and its results describe these truths only.
+For each setting, we compare $\rho$ at each tested level with its value in the reported configuration, at each flagged truth. We report a change when $\rho$ at some level differs from that value by more than a threshold. A separate test asks whether IBU's retained fraction falls or rises between five and 200 iterations. The thresholds, the formal classes and the labels that combine these results are in \ssec{S8.2}{supp:study-prr}. The binned IBU is exact for the binned problem on its truth grid, while OmniFold uses event-level features. A difference between the two therefore combines the algorithm with the discretization. The study selects no estimator, and its results describe these truths only.
 % Referee recheck (gpt-6.1-sol, 2026-11-11; RESPONSE.md row 6.2, 6.4): the classes and the label definitions moved to S9.3 (now S9.2); the discretization sentence (Supp S8: the IBU's truth grid is the coarse grid).
 
 \fvgroup{prr}{%
@@ -469,7 +490,7 @@ At both flagged truths, IBU at five iterations has a lower retained fraction tha
 % r5:176, with the framing of r5:174 carried by section 4.2's IBU paragraph.
 On the sixteen cells, an IBU of the same data, with the same simulation, background template and weight-only systematic universes as the five-observable estimator, at five iterations, differs from it: $T=\fvval{ibu16-T}$, against the 95th and 99.7th percentiles of its null, \fvval{ibu16-q95} and \fvval{ibu16-q997}. The reported cells depend on the unfolding algorithm: the difference exceeds the null's 99.7th percentile. Each draw of that null rebuilds the flux block with the reported ensemble's 100 constraint weights, and $T$ also lies far above the alternative thresholds the comparison records (\ssecc{S7}{supp:ibu}). The largest differences, as fractions of the five-observable result, are $\fvval{ibu16-dof-R11}\,\%$ in R11, $\fvval{ibu16-dof-R06}\,\%$ in R06 and $\fvval{ibu16-dof-R05}\,\%$ in R05.
 
-The covariance of that comparison contains the statistical, universe and normalization blocks. The model block and the lateral, $C_{\mathrm{resp}}$ and run-period blocks are not in it. These comparisons use this analysis's inputs. Agreement between the methods would leave open whether these inputs equal the publication's, and a difference leaves open which method, if either, is correct.
+The covariance of that comparison contains the statistical, universe and normalization blocks. The model block and the lateral, $C_{\mathrm{resp}}$ and run-period blocks are not in it. These comparisons use this analysis's inputs. They show neither whether those inputs equal the publication's nor which method, if either, is correct.
 
 % r5:274 summarized in one sentence, kept in both W-3 branches (the editor's A5); its thresholds and sensitivity moved to S11. V-PRIOR's results withheld 2026-11-10 (DECISION-20261110-joseph-vprior-withhold.md items 1 and 4, PR #1028): its counts and the "12 under both" count removed, V-ATLAS's 14 of 16 kept; its withholding sentence then moved to S11 (DECISION-20261110-joseph-confirm-round-scope.md, PR #1030), so this section reports only the rules with results. The V-HALF paragraph is new (DECISION-20261109-joseph-bias-half-rule.md items 1-3 and its CITABLE FOR / NOT CITABLE FOR; ledger L-16, L-17; variants.md V-V1, V-V2).
 \section{Reproducibility, stability and uncertainty calibration}
@@ -482,25 +503,6 @@ The covariance of that comparison contains the statistical, universe and normali
 % Fresh referee read on 283f3044 (RESPONSE.md rows St4, G7.1, Gs6; the director's ruling: the table replaces the populations' prose): reproducibility, then the released cells' scale, then the finer-grid requirement.
 Reproducibility and rounding stability are distinct properties. The five-observable estimator is reproducible under a change of training seed, in the sense stated below, but it is not stable under rounding-level changes of its inputs. The studies of this instability use different quantities and ensembles, listed in table~\ref{tab:stability}. On the sixteen reported cells, the spread over 20 rounding-level perturbations of the data is a median \fvval{rnd16-r0a-median} of each cell's statistical uncertainty (\fvval{rnd16-r0a-min}--\fvval{rnd16-r0a-max}).
 
-\begin{table*}[tb]
-\centering
-\caption{The rounding studies of section~\ref{sec:cov5d}: the quantities each uses and its perturbations, replicas or fits. Their results are in the text and in table~\ref{tab:outcomes}.}
-\label{tab:stability}
-\footnotesize\setlength{\tabcolsep}{3pt}
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.2cm}>{\raggedright\arraybackslash}p{6.2cm}>{\raggedright\arraybackslash}p{6.6cm}@{}}
-\toprule
-Study & Quantities & Perturbations, replicas or fits \\
-\midrule
-Rounding spread on the reported cells & the 16 reported cells, on data & 20 rounding-level perturbations of the data \\
-Rounding spread on the joint cells & the joint cells, on data & 20 rounding-level perturbations of the data, against 50 bootstrap replicas \\
-Data-stability requirement & 153 quantities: the 109 joint cells, the 42 $(\Eavail,W)$ cells and two totals, on data & the larger shift under two perturbations, against a bootstrap uncertainty from 100 refitted replicas \\
-Reported statistical block & the 16 reported cells & 50 bootstrap replicas, each with its own perturbation \\
-Mechanism & the 153 quantities and the 16 cells of one simulated pseudo-experiment & modified and unmodified perturbations \\
-Cross-fitting and tree regularizations & simulated pseudo-data & two-fold cross-fitting and two regularizations \\
-Ensemble average & simulated pseudo-data, and noise-free closures at \fvval{ens1-ntruths} truths & the mean of \fvval{ens1-n} fits \\
-\bottomrule
-\end{tabular}
-\end{table*}
 % Fresh referee read (gpt-6.1-sol, 2026-11-11; RESPONSE.md row F6.1, Fm6, Fs5): rs1_r0.json R0a (READOUTS rs1r0 724f0c3a); the repeated sixteen-cell range is left to the B0 sentences.
 
 % r5:230, unchanged but for "Sec." -> "section" and the probe's "declared" (the B0 sentences, DECISION-20261106-joseph-b0-reconciliation-sentence.md, are its third to fifth sentences, verbatim).
@@ -522,9 +524,9 @@ The rounding sensitivity enters the reported statistical block through the block
 The shift of \fvval{s5e-round-max} statistical standard deviations quoted above is the maximum over 153 quantities (the joint cells, the $(\Eavail,W)$ cells and two totals) under two rounding-level perturbations of the data. It is not a typical shift.
 
 % RS1, the controlled rewrite (DECISION-20261112-joseph-consult-d1-d7.md D3 and its addendum (Joseph: "i approve the draft"); b0rs1/DRAFT-v3.md): (a) the mechanism on one pseudo-experiment, (b) where the perturbation enters. OUTCOME-20261108-rs1-rounding-mechanism.md: K1 and K5 are separate tests; K2 by spread ratio, K3 bitwise-equal bases, K4 D_P 4.1e-11 and 1.2e-10 (:42-43, :72-74).
-A study of the mechanism, specified in advance, used one simulated pseudo-experiment. It examined six candidate causes, five of them testable. Spread comparisons used the ratio of the spread under a modified perturbation to that under the unmodified perturbation. On this pseudo-experiment, the perturbation reaches the estimator by breaking ties among equal float32 values, which changes LightGBM's histogram bins. On this pseudo-experiment, a perturbation that keeps the ties leaves residual spread ratios of $6.2\times10^{-7}$ on the 153 quantities and $1.07\times10^{-6}$ on the 16 cells. Storing these kinematics in float32 produces tied values. On this pseudo-experiment, finer binning did not reduce the spread, the unperturbed results from float32 and float64 inputs were bitwise equal, and permuting the input rows moved the result by about $10^{-10}$ of the spread (table~\ref{tab:outcomes} and \ssecc{S4}{supp:estimators}).
+A study of the mechanism, specified in advance, used one simulated pseudo-experiment, and every finding in this and the next paragraph is on that pseudo-experiment. It examined six candidate causes, five of them testable. Spread comparisons used the ratio of the spread under a modified perturbation to that under the unmodified perturbation. The perturbation reached the estimator by breaking ties among equal float32 values, which changed LightGBM's histogram bins. A perturbation that kept the ties left residual spread ratios of $6.2\times10^{-7}$ on the 153 quantities and $1.07\times10^{-6}$ on the 16 cells. Storing these kinematics in float32 produces tied values. Finer binning did not reduce the spread, the unperturbed results from float32 and float64 inputs were bitwise equal, and permuting the input rows moved the result by about $10^{-10}$ of the spread (table~\ref{tab:outcomes} and \ssecc{S4}{supp:estimators}).
 
-On this pseudo-experiment, perturbing only the input of the refinement stage reproduces the full spread, so the perturbation can enter there (\ssecc{S4}{supp:estimators}). The tie test and the refinement test were separate, and no test specified in advance linked their findings. Whether the ties act at the refinement stage was not tested.
+Perturbing only the input of the refinement stage reproduced the full spread, so the perturbation could enter there (\ssecc{S4}{supp:estimators}). The tie test and the refinement test were separate, and no test specified in advance linked their findings. Whether the ties act at the refinement stage was not tested.
 % absence-ok: scoping what RS1's declared tests cover (K1 and K5 are separate tests; the record's NOT CITABLE FOR), not a claim that a result does not exist
 
 % Referee recheck s7 (2026-11-11): the W-4 bias-variance sentence is cut by Joseph's decision, relayed by the director (DECISION-20261111-joseph-bv-sentence-cut.md: "Cut it (Recommended)"; BV96 had STOPPED, #1017, so its "is to address" was stale). The stability gain, the bias increase and "not adopted" with its rule stay.
@@ -660,7 +662,7 @@ The benchmark shows agreement in normalization and a shape difference in two dim
 
 % r5:333-341, item 1 cut to the statements not already made with their results. Items 2-5 complete the list (#1025, A7): items 2 and 4 carry the qualifications of the conclusions' first paragraph, item 3 section 6.1's result, item 5 section 3.3's statement of the tests' detector response.
 \begin{enumerate}
-\item \emph{Estimator bias.} Recovery within the reported uncertainty, as graded on the sixteen reporting cells, is not achieved for every generator-sized truth change tested. The unfolded result retains part of its prior, and some $(\Eavail,W)$ cells move opposite to a truth change (section~\ref{sec:prior}).
+\item \emph{Estimator bias.} Recovery within the reported uncertainty, as graded on the sixteen reported cells, is not achieved for every generator-sized truth change tested. The unfolded result retains part of its prior, and some $(\Eavail,W)$ cells move opposite to a truth change (section~\ref{sec:prior}).
 \item Four of the sixteen cells, \fvval{h2-lowstab-cells}, have a low diagonal fraction (table~\ref{tab:cells}).
 % T1-4 (the confirming round, item 5: the miss-weight approximation in the limitations list): the note's sec_systematics.tex sec:uq-2d-scope,
 % "Approximations and omitted terms" (the universes' weighting of events that fail reconstruction; not corrected; tested in two universes;
