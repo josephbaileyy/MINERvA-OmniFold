@@ -1,0 +1,2 @@
+[e96data] mode=full job=61202343 host=nid006517 pin=b438ab2710b2dcfd30238107187caa3628393b11 lanes=8 start=2026-11-13T02:14:38Z
+[e96data] queue rc=0 end=2026-11-13T05:19:26Z

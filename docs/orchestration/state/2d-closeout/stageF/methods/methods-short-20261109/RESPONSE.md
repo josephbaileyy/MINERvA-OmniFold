@@ -957,6 +957,25 @@ end of 5.2, it is necesary to say 0 are not assessed? Is the sentence in 5.3: "T
 - **Kept as substantive:** §1's "illustrates the method and is not a measurement"; §4.1's hadronic-distribution limit; §7's "does not validate the five-observable distribution" (ruled); the RSN WR scope; §4.2's descriptive-χ² caveat (Joseph's B).
 
 
+## J3. Joseph's decision on E96D's data result (2026-11-12, relayed by the director)
+
+**Verbatim:**
+
+> sure add that e96d sentence after the referee style read
+
+Its sha256 plus a final newline is `13ce49cad311c273`, re-derived here and equal to the director's. This is E96D-BINDING-1
+ruling 5's "enters the paper only by Joseph's decision".
+
+**Applied:** §6.1's ensemble paragraph ends with "On the data, the ensemble average differs from the reported result by
+at most 0.24 % per cell (0.05 of the standard deviation from C_e), and the reported estimator on a float64 copy of the
+inputs gives the same result to double precision."
+- The keys e96d-maxpct and e96d-maxsig come from e96d_values(), pinned to ANALYSIS.json.txt b42208ef (#1130), with
+  asserts on the controls, R05, R06 and F64's zeros.
+- **"Same … to double precision", not "identical":** the producer (ensemble_estimator_data.py:444-448) computes F64/(e) − 1,
+  which is 0.0 in every cell. That is a ratio, not a bitwise comparison.
+- It answers the fresh referee's major 7.
+- The reads are in `e96d-read/`.
+
 ## Pre-submission checklist (director-helper-3; items added as the director rules)
 
 - [ ] **If T3's MW reading lands, revise §7.1 item 3, §3.1's last sentence and Supplement S4's "do not test" paragraph on

@@ -1,0 +1,32 @@
+--- /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/connect-pilot.sh.177f4f4d	2026-11-12 11:14:06
++++ connect-pilot.sh	2026-11-12 11:14:06
+@@ -14,7 +14,7 @@
+ M=4231b14de5ea693e92cb31b1358a816b5c2f6625         # M_A1b.1 (LL5D-BINDING-3.md addendum A1b.1): the merge that carries ll5d_ctl.py
+ L5=2b0224c6fe52c5bb2d3fe64d461ac9edb80ebd191b0ab2f892dec605a0b56a14        # ll5d.py's sha256 at M
+ P=/pscratch/sd/j/josephrb; ND=$P/MINERvA-OmniFold/nd-unfolding
+-W=$P/ll5d-pilot-r1; DD=$W/deploy; U=$P/ll5d-unfolds-r1
++W=$P/ll5d-pilot-r2; DD=$W/deploy; U=$P/ll5d-unfolds-r2   # r2: the rerun after r1's lane-loop STOP (61181899); r1 stays as evidence
+ G18W=$P/ll5d-gate-2-g18-20261110; AR23W=$P/ll5d-gate-2-ar23-20261110
+ G18GATE=a5d66b7e506a98d5a0b555dbe171aa6c1e931eb93df793c3e515d7d44466fc70   # sha256 of gate-g18.json (node-sha256.txt of the merged receipt)
+ AR23GATE=35a20c471cb06f428c49daaaebfc6646babb7f7fb060039d4c63139da51d0a4c  # sha256 of gate-ar23.json
+@@ -135,7 +135,7 @@
+ mkdir -p "$U" "$W/lanes" || stop mkdir
+ lane() {
+   local L=$1 rc=0 t r its cp
+-  while IFS=$'\t' read -r l t r its; do
++  while IFS=$'\t' read -r -u 3 l t r its; do   # the table on fd 3, never stdin (r1's STOP: srun swallowed stdin)
+     [ "$l" = "$L" ] || continue
+     cp=()
+     if [ "$r" = clipmean ]; then
+@@ -143,9 +143,9 @@
+       else cp=(--clip-prep "$AR23W/gate-ar23.clipprep.npz" --expect-clip-prep-sha256 "$AR23CP"); fi
+     fi
+     srun --exact -n1 -c 32 --mem 56G --job-name "lane$L" /usr/bin/time -v python3 -B "$DD/nd-unfolding/ll5d_b.py" unfold "${WORLD[@]}" --truth "$t" --role "$r" --items "$its" \
+-      --out "$U" --threads 32 "${cp[@]}" >> "$W/lanes/lane$L.out" 2>> "$W/lanes/lane$L.time"
++      --out "$U" --threads 32 "${cp[@]}" < /dev/null >> "$W/lanes/lane$L.out" 2>> "$W/lanes/lane$L.time"
+     s=$?; echo "lane $L $t $r rc=$s" >> "$W/lanes/lane$L.out"; rc=$((rc | s))
+-  done < <(grep -v '^#' "$W/pilot-lanes.tsv")
++  done 3< <(grep -v '^#' "$W/pilot-lanes.tsv")
+   return $rc
+ }
+ pids=(); for L in 0 1 2 3 4 5 6 7; do lane $L & pids+=($!); done

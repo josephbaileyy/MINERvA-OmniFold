@@ -1,0 +1,12 @@
+== pilot: 0945ba5fd63e12e0cb9ba61fb773c2c4c23824d01eb4d60596cd7d5c1a14ba10
+PASS pilot rows=11 missing=0 leaks=0
+M1 KILLED pilot (srun without < /dev/null): FAIL pilot rows=11 missing=0 leaks=8
+M2 KILLED pilot (r1's loop): FAIL pilot rows=11 missing=3 leaks=7
+== bulk: 49d0600c618b823e5592ce274897908a23cea6f99dd4b8fd67f7cf95fef98a06
+PASS bulk rows=86 missing=0 leaks=0
+M1 KILLED bulk (srun without < /dev/null): FAIL bulk rows=86 missing=0 leaks=80
+M2 KILLED bulk (r1's loop): FAIL bulk rows=86 missing=6 leaks=79
+LANE-LOOP TEST PASS
+rc=0
+r1 connect 177f4f4d: FAIL pilot rows=11 missing=3 leaks=7
+bulk draft f64f4100: FAIL bulk rows=86 missing=6 leaks=79

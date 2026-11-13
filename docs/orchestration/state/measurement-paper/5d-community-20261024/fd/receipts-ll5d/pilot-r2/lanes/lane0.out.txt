@@ -1,0 +1,4 @@
+{"out": "ll5d_data_control_setA_b1.npz", "seconds_unfold": 663.349}
+lane 0 data control rc=0
+{"out": "ll5d_ar23_stat_1.npz", "seconds_unfold": 687.214}
+lane 0 ar23 stat rc=0

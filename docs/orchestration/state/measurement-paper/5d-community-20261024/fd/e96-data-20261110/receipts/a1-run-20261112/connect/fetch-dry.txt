@@ -1,0 +1,2 @@
+scp rc=0
+2b52bd12caf82efe2e70b51f800638f6750542bd2a30a4d1d2eedc123dd8a17e  /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/5d61e7d7-c2cc-4084-a179-c751bf301f61/scratchpad/e96a1c/fetchdry1/post-dry.tar.gz

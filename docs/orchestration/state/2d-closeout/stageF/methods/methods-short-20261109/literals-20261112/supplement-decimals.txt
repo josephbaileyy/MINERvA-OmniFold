@@ -1,0 +1,119 @@
+decimal literals printed in supplemental_body.tex, not through \fvval: 118
+      0.01 x2 | ent preserves the signed total to $3\times10^{-6}$ and clips \SIrange{0.01}{0.05}{\percent} of events. C
+     0.026 x1 | heck, configuration~(b), the total cross section agrees to within \SI{0.026}{\percent} between five and t
+      0.05 x4 | eserves the signed total to $3\times10^{-6}$ and clips \SIrange{0.01}{0.05}{\percent} of events. Corner 
+      0.07 x1 | -out tunes raises three flags, each attributed to bias: cell 29 ($\pT=0.07$--0.15~GeV/$c$, $\pPar=15$--2
+      0.09 x5 | ables as implemented.}       \centering\small     \toprule     \pcell{0.09\textwidth}{} & \pcell{0.27\te
+       0.1 x4 | ^{\mathrm{lo}}>\tan20^{\circ}$. The extension axes have the edges $[0,0.1,0.2,0.4,0.8,1.5,3.0,100]\,\si
+      0.11 x1 | olumn by about an order of magnitude (from 3.5--\SI{4.1}{\percent} to 0.11--\SI{0.24}{\percent}, the lev
+      0.15 x2 |  (weighted), \SI{0.25}{\percent} change their coarse $W$ bin, and \SI{0.15}{\percent} have no real solut
+       0.2 x2 | athrm{lo}}>\tan20^{\circ}$. The extension axes have the edges $[0,0.1,0.2,0.4,0.8,1.5,3.0,100]\,\si{GeV
+      0.22 x5 | tion} &     \pcell{0.32\textwidth}{Reconstructed definition} & \pcell{0.22\textwidth}{Shared inputs and 
+      0.24 x2 | bout an order of magnitude (from 3.5--\SI{4.1}{\percent} to 0.11--\SI{0.24}{\percent}, the level of the 
+      0.25 x2 | d within $-49$ to $+67$~MeV for 99.9\%. Of the events (weighted), \SI{0.25}{\percent} change their coars
+      0.27 x5 |   \centering\small     \toprule     \pcell{0.09\textwidth}{} & \pcell{0.27\textwidth}{Truth definition} 
+     0.314 x1 | n the noise-free study, this measure on the 27 coarser joint cells is 0.314 at five iterations and at lea
+      0.32 x5 | \textwidth}{} & \pcell{0.27\textwidth}{Truth definition} &     \pcell{0.32\textwidth}{Reconstructed defi
+      0.33 x1 | 47 ( ) and pull means $-0.851$ and $-0.964$, and cell 56 ($\pT=0.25$--0.33~GeV/$c$, $\pPar=6$--7~GeV/$c$
+     0.384 x1 | n the 27 coarser joint cells is 0.314 at five iterations and at least 0.384 at 10, 15 or 20. A classifier
+       0.4 x2 | m{lo}}>\tan20^{\circ}$. The extension axes have the edges $[0,0.1,0.2,0.4,0.8,1.5,3.0,100]\,\si{GeV}$ i
+      0.44 x1 | l uncertainty. The corresponding maximum for the refined estimate was 0.44. In the closure, the two esti
+      0.47 x1 | e Carlo precision, and shifts GENIE's central prediction by between $-0.47$ and $+0.53$ of each cell's n
+      0.49 x1 |  truth gives a block that differs from it by a factor of median 2.72 (0.49--6.51). The full block is not
+       0.5 x2 |  one covariance, estimated from the twelve playlists and scaled by 0, 0.5, 1 or 2, with each playlist's
+      0.53 x1 | ision, and shifts GENIE's central prediction by between $-0.47$ and $+0.53$ of each cell's null standard
+       0.6 x1 | $[0,0.1,0.2,0.4,0.8,1.5,3.0,100]\,\si{GeV}$ in $\Eavail$, $[0,0.2,0.4,0.6,0.8,1.2,2.0,100]\,\si{GeV}$ i
+     0.636 x1 | ) at  , with factor 1.316 and pull mean $+1.039$. The pull widths are 0.636--0.709.  \paragraph{Where the
+     0.676 x1 |   The statistical block, with a median statistical uncertainty of \SI{0.676}{\percent}, is a bootstrap of
+      0.69 x1 | arther from the published result than the three-group combination, by 0.69 per direction, a fraction   o
+       0.7 x1 |  of those playlists is small in each bin: every marginal $z$ is below 0.7. Its $\pPar$ $\chi^{2}$ again
+     0.709 x1 |  with factor 1.316 and pull mean $+1.039$. The pull widths are 0.636--0.709.  \paragraph{Where the two-di
+       0.8 x2 | }}>\tan20^{\circ}$. The extension axes have the edges $[0,0.1,0.2,0.4,0.8,1.5,3.0,100]\,\si{GeV}$ in $\
+      0.81 x1 | observable coverage & \multicolumn{3}{>{\raggedright\arraybackslash}p{0.81\textwidth}@{}}{Statistic and 
+     0.851 x1 | er-coverage factors $s_c$ of 1.165 ( ) and 1.347 ( ) and pull means $-0.851$ and $-0.964$, and cell 56 ($
+      0.88 x1 |  exceed it by about 12\%, and the data/MC ratio rises with $\pT$ from 0.88 to about 1.2 (ref.~ , section
+     0.890 x1 |  spread, with median spread ratios of 0.959 on the 153 quantities and 0.890 on the 16 cells: the perturba
+       0.9 x3 |  in both copies. Its selected yield per proton on target differs by $-0.9\times10^{-5}$ in the data and
+     0.945 x1 | not reduce the spread: the ratios are 0.950 on the 153 quantities and 0.945 on the 16 cells. The unpertur
+     0.947 x1 | y the OmniFold loop reproduces the full spread on the 153 quantities (0.947) and is inconclusive on the 1
+     0.950 x1 | not tested.  Finer binning does not reduce the spread: the ratios are 0.950 on the 153 quantities and 0.9
+      0.95 x1 | nsions, $T$ is not read against $\chi^2_{16}$: its thresholds are the 0.95 and 0.997 quantiles of a para
+     0.959 x1 | nement stage reproduces the full spread, with median spread ratios of 0.959 on the 153 quantities and 0.8
+     0.964 x1 | actors $s_c$ of 1.165 ( ) and 1.347 ( ) and pull means $-0.851$ and $-0.964$, and cell 56 ($\pT=0.25$--0.
+     0.986 x1 | oduce the block of the response alone moved in the simulation, within 0.986--  every cell, whereas the re
+    0.9965 x1 | on changes the analysis simulation's cell contents by factors between 0.9965 and 1.0035 (median 1.000008),
+     0.997 x2 | T$ is not read against $\chi^2_{16}$: its thresholds are the 0.95 and 0.997 quantiles of a parametric boo
+  1.000008 x1 | mulation's cell contents by factors between 0.9965 and 1.0035 (median 1.000008), at the level of its Monte C
+    1.0035 x1 | the analysis simulation's cell contents by factors between 0.9965 and 1.0035 (median 1.000008), at the lev
+      1.03 x1 |  exact-split result differs from the central value by a median of \SI{1.03}{\percent} per bin (maximum \
+     1.039 x1 | eV/$c$, $\pPar=6$--7~GeV/$c$) at  , with factor 1.316 and pull mean $+1.039$. The pull widths are 0.636--
+     1.057 x1 | ef.~  (above) & the same by construction \\ \addlinespace Exposure & $1.057\times10^{21}$ protons on targ
+      1.09 x1 | ive a smaller block (per-bin median \SI{1.38}{\percent}, integral \SI{1.09}{\percent}).  The block's int
+       1.1 x3 | vail$, $[0,0.2,0.4,0.6,0.8,1.2,2.0,100]\,\si{GeV}$ in $q_{3}$ and $[0,1.1,1.4,1.8,2.2,3.0,100]\,\si{GeV
+     1.165 x1 | =15$--20~GeV/$c$) at both tunes, with under-coverage factors $s_c$ of 1.165 ( ) and 1.347 ( ) and pull me
+      1.17 x3 | i^{0}$ and $\gamma$ energy (section~ )} &     \pcell{0.32\textwidth}{$1.17\times$ calorimetric recoil en
+       1.2 x2 | 0.2,0.4,0.8,1.5,3.0,100]\,\si{GeV}$ in $\Eavail$, $[0,0.2,0.4,0.6,0.8,1.2,2.0,100]\,\si{GeV}$ in $q_{3}
+     1.316 x1 | 56 ($\pT=0.25$--0.33~GeV/$c$, $\pPar=6$--7~GeV/$c$) at  , with factor 1.316 and pull mean $+1.039$. The p
+     1.347 x1 | c$) at both tunes, with under-coverage factors $s_c$ of 1.165 ( ) and 1.347 ( ) and pull means $-0.851$ a
+      1.35 x1 | 53 quantities of its ratio to the spread after the first iteration is 1.35 after the fifth.  \paragraph{
+      1.38 x1 | A--1F as the reference would give a smaller block (per-bin median \SI{1.38}{\percent}, integral \SI{1.09
+       1.4 x3 | $, $[0,0.2,0.4,0.6,0.8,1.2,2.0,100]\,\si{GeV}$ in $q_{3}$ and $[0,1.1,1.4,1.8,2.2,3.0,100]\,\si{GeV}$ i
+       1.5 x3 | ial volume with muon phase space     \theta_\mu < 20^{\circ},\qquad   1.5 < \pPar < \SI{60}{GeV/c},\qqu
+      1.66 x1 |  \SIrange{0.01}{0.05}{\percent} of events. Corner bias falls from \SI{1.66}{\percent} to \SI{0.24}{\perc
+       1.8 x2 | per proton on target differs by $-0.9\times10^{-5}$ in the data and $-1.8\times10^{-5}$ in the simulati
+      1.82 x1 | f one Gaussian period effect, their exposure-weighted spread has $\nu=1.82$ effective (Satterthwaite) de
+      1.97 x1 |  is \SIrange{1.17}{3.36}{\percent} on the $\pPar$ projections and \SI{1.97}{\percent} on the integrated 
+       2.0 x2 | 0.4,0.8,1.5,3.0,100]\,\si{GeV}$ in $\Eavail$, $[0,0.2,0.4,0.6,0.8,1.2,2.0,100]\,\si{GeV}$ in $q_{3}$ an
+      2.09 x1 | y determined. Its per-bin median fractional standard deviation is \SI{2.09}{\percent} (84th percentile \
+      2.12 x2 |  fine five-observable cells. In fine cell $c$, the ratio to the GENIE~2.12 CV reference is $t_c=g_c/g^{\
+       2.2 x1 | .2,0.4,0.6,0.8,1.2,2.0,100]\,\si{GeV}$ in $q_{3}$ and $[0,1.1,1.4,1.8,2.2,3.0,100]\,\si{GeV}$ in $W$. E
+       2.5 x1 | gy transfer. $M$ is the struck-nucleon mass, $\bar M=(1.5M_{n}+M_{p})/2.5$.  Exact $Q^{2}$ is $-(k-k')^
+      2.59 x1 |  1G--1M $\pPar$ $\chi^{2}$ is 34.8 against the other blocks alone and 2.59 with the block added. These v
+      2.65 x1 | ons instead of five changes the LightGBM $\chi^{2}/\mathrm{ndf}$ from 2.65 to 2.66 ( ). The purity-subtr
+      2.66 x1 | ead of five changes the LightGBM $\chi^{2}/\mathrm{ndf}$ from 2.65 to 2.66 ( ). The purity-subtracted ex
+      2.70 x1 |  $\chiPaperExact$ for exact-split, $\chiPaperPurity$ for LightGBM and 2.70 for the histogram estimator (
+      2.72 x1 | e same truth gives a block that differs from it by a factor of median 2.72 (0.49--6.51). The full block 
+       3.0 x2 | 0^{\circ}$. The extension axes have the edges $[0,0.1,0.2,0.4,0.8,1.5,3.0,100]\,\si{GeV}$ in $\Eavail$,
+    3.2353 x2 | 980 < z < \SI{8422}{mm}$ within an \SI{850}{mm} apothem and contains $3.2353\times10^{30}$ nucleons, the f
+       3.3 x1 | of the residual of the GiBUU-to-GENIE change (its median falls to \SI{3.3}{\percent} at 200 iterations)
+      3.34 x1 | tional standard deviation is \SI{2.09}{\percent} (84th percentile \SI{3.34}{\percent}, maximum \SI{6.48}
+      3.36 x1 | 6.48}{\percent}). Its fractional standard deviation is \SIrange{1.17}{3.36}{\percent} on the $\pPar$ pro
+       3.4 x1 | variance, the largest standardized component is 4.8 and the next nine 3.4--3.8, and the ten smallest-ei
+       3.5 x2 | h bias in the highest-$W$ column by about an order of magnitude (from 3.5--\SI{4.1}{\percent} to 0.11--
+       3.6 x2 | ion allows none of the 153 reported quantities a mean residual beyond 3.6 standard errors of the mean (
+       3.8 x1 | nce, the largest standardized component is 4.8 and the next nine 3.4--3.8, and the ten smallest-eigenva
+      4.01 x1 | and can be negative.}      The published flux uncertainty (median \SI{4.01}{\percent}) is larger than ou
+       4.1 x2 |  the highest-$W$ column by about an order of magnitude (from 3.5--\SI{4.1}{\percent} to 0.11--\SI{0.24}
+      4.19 x1 |  it; R02 and R06 fail, each from the GiBUU hybrid truth alone, at $z=+4.19$ and $+4.53$.  A further rule
+       4.3 x1 | st \SI{9.5}{\percent}, \SI{5.4}{\percent}, \SI{5.6}{\percent} and \SI{4.3}{\percent} for the boosted tr
+       4.4 x1 | d part of the NuWro $\Eavail$ one, but not that of the other two (\SI{4.4}{\percent} and \SI{6.6}{\perc
+       4.5 x1 | < 20^{\circ},\qquad   1.5 < \pPar < \SI{60}{GeV/c},\qquad   \pT < \SI{4.5}{GeV/c}.   The fiducial volum
+      4.53 x1 |  R06 fail, each from the GiBUU hybrid truth alone, at $z=+4.19$ and $+4.53$.  A further rule of our own,
+      4.57 x1 | hat the open list of ref.~  includes, and has a charged-pion term \SI{4.57}{MeV} per pion above the kine
+       4.6 x1 | -low ratio matches the published one, whose own uncertainty (4.1--\SI{4.6}{\percent}) is wider than the
+       4.8 x1 | is of the published covariance, the largest standardized component is 4.8 and the next nine 3.4--3.8, a
+       4.9 x2 | is excludes events with negative truth $W^{2}$, a weight fraction of $4.9\times10^{-5}$, from its five-
+       5.3 x1 | re \SI{8.3}{\percent}, \SI{5.4}{\percent}, \SI{4.9}{\percent} and \SI{5.3}{\percent} for the GiBUU-to-G
+       5.4 x2 | ions as the boosted trees do. Its medians are \SI{8.3}{\percent}, \SI{5.4}{\percent}, \SI{4.9}{\percent
+       5.6 x1 | q_3$ stress test, against \SI{9.5}{\percent}, \SI{5.4}{\percent}, \SI{5.6}{\percent} and \SI{4.3}{\perc
+       5.8 x1 | o the other blocks, it raises the per-bin $\sigma$ by a median of \SI{5.8}{\percent} (ref.~ , table~ ).
+       5.9 x1 | l of the purity-based estimate reached a maximum over the 205 bins of 5.9, in units of the data result'
+      6.48 x1 | \SI{2.09}{\percent} (84th percentile \SI{3.34}{\percent}, maximum \SI{6.48}{\percent}). Its fractional s
+      6.51 x1 |  gives a block that differs from it by a factor of median 2.72 (0.49--6.51). The full block is not that 
+       6.6 x1 | avail$ one, but not that of the other two (\SI{4.4}{\percent} and \SI{6.6}{\percent} at 200), and the l
+      6.89 x1 | sts) 1G--1M to the earliest periods, 1A--1F, has a $\pPar$ step of $(+6.89\pm0.46)\%$ at \SI{8}{GeV/c}. 
+       8.3 x2 | idual at five iterations as the boosted trees do. Its medians are \SI{8.3}{\percent}, \SI{5.4}{\percent
+      9.03 x2 |  setting that level lies on. This threshold is the larger of 0.05 and 9.03 times the standard deviation 
+       9.5 x1 | uWro $(\pT,\pPar,\Eavail)$ shape and a $q_3$ stress test, against \SI{9.5}{\percent}, \SI{5.4}{\percent
+       9.6 x1 | e next nine 3.4--3.8, and the ten smallest-eigenvalue modes carry \SI{9.6}{\percent} of the $\chi^{2}$.
+      17.6 x1 | central value by a median of \SI{1.03}{\percent} per bin (maximum \SI{17.6}{\percent};  ).  \section{The
+     21.09 x1 | a 2p2h component~ , which models meson-exchange currents (MEC). NuWro~21.09~  and GiBUU~2019~  are genera
+      34.4 x1 | $\chi^{2}$ against the earlier two-dimensional budget is nevertheless 34.4, where noise would give 2.0. 
+      34.8 x1 | erefore does not test the block. The raw 1G--1M $\pPar$ $\chi^{2}$ is 34.8 against the other blocks alon
+     35.89 x1 | alternative threshold on record: the 0.997 quantile of $\chi^2_{16}$, 35.89, and that of the replica-only
+     46.09 x1 | f $\chi^2_{16}$, 35.89, and that of the replica-only Hotelling limit, 46.09. No step of the bootstrap use
+     58.87 x1 | t $\pT$ and $\pPar$, is measured from a fixed beam axis tilted by \SI{58.87}{mrad} from the detector axis
+      99.9 x1 | n \SI{\pm2}{MeV} for 68\% of events and within $-49$ to $+67$~MeV for 99.9\%. Of the events (weighted), 
+     132.4 x1 | eV/$c$, which exclude R06, the GiBUU hybrid truth still gives $\chi^2=132.4$ for 8 degrees of freedom und
+    139.57 x1 | constant \SI{135}{MeV} rather than the charged-pion mass of about \SI{139.57}{MeV}. The analysis code reta
+    938.27 x1 | tEAvailableTrue()}) computes    E_{\rm avail}^{\rm true}=  \sum_{p}(E-938.27)  +\sum_{\pi^\pm}(E-135)  +\s

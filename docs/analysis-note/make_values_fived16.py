@@ -170,6 +170,15 @@ READOUTS = {
     # regrade of the fake-data records; the text is Joseph's approval of 2026-11-12 (DECISION-20261112-joseph-consult-d1-d7.md, addendum)
     "rsn": (f"{RSN}/rsn_readout.json", "6291f48d"),
     "rsnregrade": (f"{RSN}/regrade.json", "cb5f5d17"),
+    # E96D: the 96-fit ensemble average and the float64 copy on the data, beside (e)'s result (E96D-DECLARATION.md,
+    # #1130); in the paper by Joseph's decision of 2026-11-12 (E96D-BINDING-1 ruling 5; RESPONSE.md section J3)
+    "e96d": (f"{FD}/fd/e96-data-20261110/receipts/a1-run-20261112/cluster/analysis/ANALYSIS.json.txt", "b42208ef"),
+    # printed literals keyed after helper-2's D6 clean-environment test (#1132; the director, 2026-11-12): VL155's
+    # joint-cell rounding medians, the lower-capacity variant's rounding maximum, RE-2's tension anatomy, RS1's ratios
+    "s5p2": ("docs/orchestration/state/s5p/stage2/stage2_receipt.json", "0daa7cd8"),
+    "s5er2": ("docs/orchestration/state/s5e/cand/review2/r2_recompute.json", "c0f20299"),
+    "tension": ("docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/receipts/figs/tension_report.txt", "dee699e5"),
+    "rs1read": (f"{FD}/fd/rounding-stability-20261106/receipts/full-a1/read/rs1_read.json", "9938e168"),
 }
 # the committed readouts without the run-period block, for the "-nopl" keys
 NOPL_READOUTS = dict(READOUTS, **{
@@ -221,7 +230,7 @@ def paper_prec(k, x):
 FIGURES = {"fd_g_fig_ratio.pdf": ("fd/gencmp/carbon-figure", "1e6d550e"),
            "fd_g_fig_modes.pdf": ("fd/gencmp-e/rerun1/chain/chdefs/with/figures-a2", "0d6fe57c")}
 # the readouts that are text receipts, not JSON
-TEXT_READOUTS = {"gprobe", "e2sens", "s1code", "s5cpseudo", "f1prep", "cov2ddecl", "ll5ddecl", "nullcode", "stabdecl", "fd1bdecl"}
+TEXT_READOUTS = {"tension", "gprobe", "e2sens", "s1code", "s5cpseudo", "f1prep", "cov2ddecl", "ll5ddecl", "nullcode", "stabdecl", "fd1bdecl"}
 CELLS = [f"R{i:02d}" for i in range(16)]
 BLOCK = {"stat": "statistical", "interaction": "interaction", "flux": "flux", "detector": "detector",
          "lateral": "lateral", "normalization": "normalization", "seed": "training seed", "C_resp": r"$C_{\mathrm{resp}}$",
@@ -1604,6 +1613,8 @@ def groupb_values(d):
     v.update(recov_values(d))
     v.update(g_rows_values(d))
     v.update(cbkg2_values(d))
+    v.update(e96d_values(d))
+    v.update(literal_values(d))
     v.update(rsn_values(d, f'{d["cmodel"]["trace_share_by_vertex"]["gibuu"]:.3f}'))
     # B3a: the synthetic q3 tilt, r = 1 + a z~ (s5c_pseudo.py truth_weight "q3_given_eavail_w"); a and the clip from the
     # code, the event count, the range and in-cell spread of the weight and the two preservation checks from the truth check
@@ -2012,6 +2023,74 @@ def cbkg2_values(d):
     assert s["port"] == "nd-unfolding/bkg_channel_split.py:58-70"
     v = {"cbkg2-oops-1a": f"{100 * s['frac_w_oops']:.0f}"}
     assert v["cbkg2-oops-1a"] == "10" and s["frac_w_cc_out_of_fiducial"] > 0.5   # "mostly out-of-fiducial nu_mu CC"
+    return v
+
+
+def sci(x, sig=2):
+    """A number as the paper prints it in scientific form: mantissa \\times10^{exponent}."""
+    m, e = f"{x:.{sig - 1}e}".split("e")
+    return rf"{m}\times10^{{{int(e)}}}"
+
+
+def literal_values(d):
+    """Numbers the paper printed as typed literals (#1132), now keyed with their sources asserted."""
+    v = {}
+    # section 6.1: the data rounding spread and the bootstrap statistical uncertainty, medians per joint cell (VL155),
+    # and the rounding share of the bootstrap variance (B0's "about 37 %", KI-80)
+    j = d["s5p2"]["study_N"]["N1_data"]["J"]
+    v["vl155-rnd-j-median"] = f"{j['median_sigma_num_base_pct']:.2f}"
+    v["vl155-boot-j-median"] = f"{j['median_sigma_boot_pct']:.2f}"
+    v["vl155-rnd-j-share"] = f"{100 * j['median_absorption']:.0f}"
+    # section 6.1: the lower-capacity variant's largest rounding shift, in the candidate's data sigma (B0 probe diag)
+    b0 = d["s5er2"]["assessment"]["B0_rounding_probe_diag"]
+    assert b0["fails_A3_bounds_on_R_data_sigma"] and b0["metas"][0]["refine_capacity"] is None
+    v["s5e-round-max-lowcap"] = f"{b0['over_R_data_sigma_max']:.1f}"
+    # section 4.1 and Table 4: RE-2's tension anatomy of the 2D benchmark against the published covariance
+    t = d["tension"]
+    cond = float(re.search(r"cond\(V\) = ([0-9.e+-]+)", t).group(1))
+    v["re2-cond"] = sci(cond)
+    rc = {m.group(1): (float(m.group(2)), int(m.group(3)))
+          for m in re.finditer(r"^\s+(1e-\d\d)\s+([0-9.]+)\s+(\d+)\s*$", t, re.M)}
+    nb = int(re.search(r"reported bins: (\d+)", t).group(1))
+    assert nb == 205
+    for tag, rcond in (("4", "1e-04"), ("6", "1e-06")):
+        chi_ndf, kept = rc[rcond]
+        v[f"re2-modes-{tag}"], v[f"re2-chi2-{tag}"] = str(kept), f"{chi_ndf * nb:.0f}"
+    norm = float(re.search(r"chi2_norm\s*=\s*([0-9.]+)", t).group(1))
+    shape = float(re.search(r"chi2_shape\s*=\s*([0-9.]+)", t).group(1))
+    v["re2-chi2-norm"], v["re2-chi2-shape"] = f"{norm:.2f}", f"{shape:.0f}"
+    # section 6.1, RS1: the tie-keeping perturbation's residual spread ratios, and K4's permutation shift (its order)
+    st = d["rs1read"]["statistics"]
+    v["rs1-ratio-v153"], v["rs1-ratio-v16"] = sci(st["ratio"]["V"]["functionals_153"]["M"]), sci(st["ratio"]["V"]["cells_16"]["M"], 3)
+    dp = [st["K4_D_P"]["functionals_153"], st["K4_D_P"]["cells_16"]]
+    assert {round(math.log10(x)) for x in dp} == {-10}, dp
+    v["rs1-k4-order"] = "10^{-10}"
+    want = {"vl155-rnd-j-median": "0.23", "vl155-boot-j-median": "0.37", "vl155-rnd-j-share": "37",
+            "s5e-round-max-lowcap": "2.5", "re2-cond": r"1.5\times10^{12}", "re2-modes-4": "73", "re2-chi2-4": "136",
+            "re2-modes-6": "139", "re2-chi2-6": "285", "re2-chi2-norm": "0.04", "re2-chi2-shape": "465",
+            "rs1-ratio-v153": r"6.2\times10^{-7}", "rs1-ratio-v16": r"1.07\times10^{-6}", "rs1-k4-order": "10^{-10}"}
+    assert v == want, {k: v[k] for k in v if v[k] != want.get(k)}
+    return v
+
+
+def e96d_values(d):
+    """E96D's data result (descriptive; E96D-DECLARATION.md Licence: how the ensemble average and the float64 change move
+    the data result; no adoption, no uncertainty or bias, no ranking). §6.1 prints the two maxima."""
+    r = d["e96d"]
+    assert r["schema"] == "e96-data/1/analysis" and r["label"].startswith("descriptive")
+    assert all(c["pass"] for c in r["controls"].values()), "an E96D control failed"
+    t = r["sixteen"]
+    assert "relative_sigma.C_e alone" in t["label"], "the record's sigma is not C_e's relative sigma"
+    rel, z = [abs(x) for x in t["E96_over_e_minus_1"]], [abs(x) for x in t["E96_minus_e_over_sigma_Ce"]]
+    cells = [c["cell"] for c in r["cells"]]
+    assert len(rel) == len(z) == len(cells) == 16
+    assert cells[rel.index(max(rel))] == "R05" and cells[z.index(max(z))] == "R06"
+    assert abs(r["quotable"]["E96_max_abs_over_sigma_Ce"]["value"] - max(z)) < 1e-15
+    # the float64 copy: every cell's ratio to (e) is exactly 1 in double precision (not a bitwise comparison of the
+    # products; hence the text's "the same result to double precision")
+    assert all(x == 0.0 for x in t["F64_over_e_minus_1"]) and r["quotable"]["F64_max_abs_over_sigma_Ce"]["value"] == 0.0
+    v = {"e96d-maxpct": f"{100 * max(rel):.2f}", "e96d-maxsig": f"{max(z):.2f}"}
+    assert v == {"e96d-maxpct": "0.24", "e96d-maxsig": "0.05"}, v
     return v
 
 
@@ -2631,11 +2710,11 @@ def main(argv):
         bad = check_figures()
         if bad:
             sys.exit("VALUES-FIVED16 :: FAIL (a printed figure differs from its committed source)\n  " + "\n  ".join(bad))
-        print(f"VALUES-FIVED16 :: PASS ({sum(1 for l in text.splitlines() if l.startswith(chr(92) + "@namedef"))} values, "
+        print(f"VALUES-FIVED16 :: PASS ({sum(1 for l in text.splitlines() if l.startswith(chr(92) + '@namedef'))} values, "
               f"readouts pinned, {len(FIGURES)} figures equal their sources, {len(LISTED_CLAIMS)} listed-truth sentences agree)")
         return 0
     OUT.write_text(text)
-    print(f"wrote {OUT.name}: {sum(1 for l in text.splitlines() if l.startswith(chr(92) + "@namedef"))} values")
+    print(f"wrote {OUT.name}: {sum(1 for l in text.splitlines() if l.startswith(chr(92) + '@namedef'))} values")
     return 0
 
 
