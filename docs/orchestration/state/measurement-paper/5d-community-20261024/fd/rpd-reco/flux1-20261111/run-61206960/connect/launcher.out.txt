@@ -1,0 +1,48 @@
+ssh rc=0
+node login06 staged sha256 34694c0d90fa09b4d93c123cdd191043216dc02261b8de5d3076af1eeda0cb6a
+node login06 2026-11-13T01:42:26Z; connect script sha256 34694c0d90fa09b4d93c123cdd191043216dc02261b8de5d3076af1eeda0cb6a
+== 2. the fence (cov2d*, t2a*, rpd* refuse)
+squeue: 61202343|e96data_full|PENDING
+FENCE: clear
+== 3. fresh clone at 763ab4ddcea2d2d3dce56138f8aa7ae7fab4bbe6
+HEAD 763ab4ddcea2d2d3dce56138f8aa7ae7fab4bbe6; porcelain lines 0
+sha256 7302cc1df71758cfae6bdcfba031d37cc78902beaf454b29e12f3e053d44f141 nd-unfolding/fd_rpd_reco.py
+sha256 867822e3cbf7063088717565d2be4e68ae3625cb24ce468255d98ba8fd59bdb5 nd-unfolding/fd_rpd_reco_custody.py
+sha256 6e4ed0f1d7f55b7bfe2f26752eeb28bb9cbe33325a9d91cc7c06d9494a0b0a70 nd-unfolding/fd_rpd_inputs.py
+sha256 32db52355a4811bd4bf5f8b8cc0b5c397c7b403a0996048bcafd8c8c665cc76e nd-unfolding/fd_rpd_reco_flux_connect.sh
+sha256 06360100038f0203b0d994f71c171b12cd955697edf32d1d744c4ce271ceb26d nd-unfolding/tests/fd_rpd_reco_mat_check.py
+sha256 d9704aa45c016b044284d9e3cfc8c6d5c07cda0835a445866d5f792c8ac82840 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/timing-20261106/flux-gen2thin-pdg-14-minervame1M_rearrangedUniverses.root
+sha256 7638f94f56ad0471769445cffe68ff538c9b68158f48415e7c3cafa7ee95a295 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/INPUTS.sha256
+sha256 b67907615fe2e903e60ae6caa1c141fa007676c0a1b3ae9f42490d331bfdda89 nd-unfolding/pv-ladder/readouts/h2_definition.json
+sha256 e60609e756e35fbc9846ae5983c1d848999bc17c7504e3ca876c22c9bcc0e88f docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/flux-pot-provenance-20261104/energy-spectrum-candidates.tsv
+sha256 900d7368d6184d503399bd99c0fd30085212df0327b8be374182495b85a3677d MINERvA101/MINERvA-101-Cross-Section/event/CVUniverse.h
+sha256 b056487e592e7704c2a98c14243b26f44c82821382837a263b75c169859cce0b docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-audit-fix-20261106/MAT-DATA-DEPENDENCIES.json
+== 4. the READY config
+sha256 cde8d02904b0257d82745b03fd61c1aef1a50270f14f36ad7f38c8b3f235f50b (expected cde8d02904b0257d82745b03fd61c1aef1a50270f14f36ad7f38c8b3f235f50b) production-config.ready.json
+== 5. the overlap fence
+sha256 baa7630936db399abf57aa6edf9af1ffc053a3ee80c3730981a806fd8598a202 (expected baa7630936db399abf57aa6edf9af1ffc053a3ee80c3730981a806fd8598a202) tools/fence_overlap.py
+FENCE protected paths 30; exception /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt
+FENCE staged originals 57
+FENCE allowed exception: MAT MPARAMFILES /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt
+FENCE OVERLAP: CLEAR (allowed 1, stops 0)
+overlap fence rc=0
+== 6. the job
+job script sha256 4198103b3a1d94eb7ccaf9b255c273371da73ea5268d08df38a390530081c699
+sbatch rc=0 jobid [61206960] 2026-11-13T01:43:03Z
+JobId=61206960
+JobName=rpd_flux1
+UserId=josephrb(112498)
+Account=m3246
+QOS=shared
+JobState=PENDING
+TimeLimit=03:00:00
+Partition=shared_milan_ss11
+NumNodes=1-1
+NumCPUs=9
+MinMemoryNode=16G
+WorkDir=/pscratch/sd/j/josephrb/rpd-reco-flux-20261111
+StdErr=/pscratch/sd/j/josephrb/rpd-reco-flux-20261111/job.err
+StdOut=/pscratch/sd/j/josephrb/rpd-reco-flux-20261111/job.out
+job 61206960 submitted and checked; the fetch reports it
+== rpd-flux1-connect rc=0 2026-11-13T01:43:03Z
+script rc=0
