@@ -44,3 +44,23 @@ ISSUES.md's AUD-N4 and AUD-N5 rows, and the rows that repeat their holds, are up
   beyond the three commits named.
 
 Nothing is submitted, deposited or tagged.
+
+## Addendum (2026-11-13): Joseph adopts the referee's development-history recommendation
+
+**What was put to him:** the style referee's report, in
+`state/2d-closeout/stageF/methods/secondary-results/note-history-referee-20261113/`. Its rule: history stays in the note
+only if removing it would change a reader's understanding of the reported object, its reproducibility, its evidential
+independence or its limitations, and the rest goes to the ledger. Its structure: a clean main text, technical
+appendices, and a compact "Development history" appendix. The director recommended adopting both, with director-helper-2
+editing one section per commit, each with a cut log pointing to the ledger home of every removed passage, a disclosure
+check, a meaning read, and before/after pages.
+
+**Joseph's words, verbatim:**
+
+> yes go ahead
+
+(`d8770b2228a2edcf`, the sha256 of the text plus a final newline).
+
+**What is decided:** the rule and the structure are adopted. Every disclosure of a choice made after results were seen
+stays, shortened if needed. No passage is removed without a ledger pointer. The executive summary's "It holds the full
+development history" sentence is reworded to match, with the director's approval of the wording.
