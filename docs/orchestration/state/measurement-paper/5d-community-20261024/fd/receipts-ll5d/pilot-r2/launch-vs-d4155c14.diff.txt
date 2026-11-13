@@ -1,0 +1,11 @@
+--- /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/launch-ll5d.sh.d4155c14	2026-11-12 11:14:06
++++ launch-ll5d.sh	2026-11-12 11:14:06
+@@ -18,7 +18,7 @@
+   vicheck) SRC=$H/connect-vicheck.sh; ARG=""; LOGP=/pscratch/sd/j/josephrb/ll5d-vicheck-20261110/logs/connect-vicheck.log ;;
+   calib3) SRC=$H/connect-calib-3.sh; ARG=""; LOGP=/pscratch/sd/j/josephrb/ll5d-calib-3-20261110/logs/connect-calib-3.log ;;
+   gate2-g18|gate2-ar23) T=${N#gate2-}; SRC=$H/connect-gate-2.sh; ARG=$T; LOGP=/pscratch/sd/j/josephrb/ll5d-gate-2-$T-20261110/logs/connect-gate-2-$T.log ;;
+-  pilot) SRC=$H/connect-pilot.sh; ARG=""; LOGP=/pscratch/sd/j/josephrb/ll5d-pilot-r1/logs/connect-pilot.log ;;
++  pilot) SRC=$H/connect-pilot.sh; ARG=""; LOGP=/pscratch/sd/j/josephrb/ll5d-pilot-r2/logs/connect-pilot.log ;;   # r2 (r1: 61181899)
+   *) echo "usage: launch-ll5d.sh ovl|calib|calib2|gate-g18|gate-ar23|vicheck|calib3|gate2-g18|gate2-ar23|pilot <sha256>"; exit 2 ;;
+ esac
+ have=$(shasum -a 256 "$SRC" | cut -c1-64)

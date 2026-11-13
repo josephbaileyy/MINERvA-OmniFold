@@ -1,0 +1,3 @@
+{"out": "ll5d_g18_clipmean_minus2.npz", "seconds_unfold": 891.582}
+{"out": "ll5d_g18_clipmean_all.npz", "seconds_unfold": 874.784}
+lane 6 g18 clipmean rc=0
