@@ -1,12 +1,12 @@
-#977 head 1ccb08c29f2153647a6fe117d53a2acb09e63905; 26 rows
+#977 head 01bb9a7fe; 30 rows
 OK  RP01   resource paper      count=1  The sixteen-cell cross section that the estimator gives on the data il
 OK  RP02   resource paper      count=1  The held-out-tune tests provide partial evidence on bias at truths hel
 OK  RP03   resource paper      count=1  The dependence on the prior's generator shape is reported separately a
 OK  RP04   resource paper      count=1  The model term $C_{\mathrm{model}}$ is constructed from the change in 
 OK  RP05   resource paper      count=1  The two-dimensional covariance is the sum of four blocks, each from Li
 OK  RP06   resource abstract   count=1  The reported five-observable intervals lack validated coverage.
-OK  RP07   resource paper      count=1  The mechanism of the shape difference has not been identified. A binne
-OK  RP07p  code     paper      count=1  The mechanism of the shape difference has not been identified. A binne
+OK  RP07   resource paper      count=1  On this analysis's inputs, OmniFold and binned IBU, the publication's 
+OK  RP07p  code     paper      count=1  On this analysis's inputs, OmniFold and binned IBU, the publication's 
 OK  RP08   resource paper      count=1  C_{\mathrm{rep}}=C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D
 OK  RP08L  resource paper      count=1  \label{eq:crep}
 OK  RP08b  resource supplement count=1  C_{\mathrm{rep}}=C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D
@@ -28,4 +28,14 @@ OK  RP17   fd16row  paper      NuWro shape, noise-free closure
 OK  RP20   resource paper      count=1  these 73 largest-eigenvalue directions
 OK  RP21   resource supplement count=1  In the 132 poorly determined directions, the combination of the other 
 OK  RP22   resource paper      count=1  Integral ratio $\ratioTot$; descriptive $\chi^2/\mathrm{ndf}=\chiPaper
+OK  RP23   keys     paper      printed=3  \fvval{ens1-n}
+OK  RP23   keys     paper      printed=1  \fvval{ens1-median}
+OK  RP23   keys     paper      printed=1  \fvval{ens1-max}
+OK  RP23   keys     paper      printed=1  \fvval{ens1-bar-median}
+OK  RP23   keys     paper      printed=1  \fvval{ens1-bar-max}
+OK  RP23   keys     paper      printed=4  \fvval{ens1-ntruths}
+OK  RP23   keys     paper      printed=1  \fvval{ens1-nnoworse}
+OK  RP24   term     paper      old=0 new=13  reporting cells -> reported cells
+--  RP25   code     B772 R311  #981's own run-period scope sentence "nor the cause of the shape difference" bec
+--  RP26   code     B765-766 R305  #981's own 2D scope sentence "At two held-out GENIE v3 tunes (AR23 and G18_10a_0
 REPIN-CHECK PASS

@@ -1,0 +1,2 @@
+jobid=61206960 host=nid004089 start=2026-11-13T01:56:05Z
+end=2026-11-13T02:00:14Z rc=0 cause=exit

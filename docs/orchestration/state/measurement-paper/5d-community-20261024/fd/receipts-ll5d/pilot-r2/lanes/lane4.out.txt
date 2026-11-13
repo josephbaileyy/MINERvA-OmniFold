@@ -1,0 +1,4 @@
+{"out": "ll5d_g18_central_T.npz", "seconds_unfold": 818.355}
+lane 4 g18 central rc=0
+{"out": "ll5d_g18_toy_minus2_4751000.npz", "seconds_unfold": 903.057}
+lane 4 g18 toy rc=0

@@ -1,0 +1,53 @@
+CHECK: raw fingerprints 409 keys, 288 distinct values
+CHECK: view NONE (the code wrote no public prepare view)
+CHECK 1 not applicable (no view)
+CHECK 2 not applicable (no view)
+CHECK 3 job.id: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 job-host.txt: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 job.rc: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 job.out: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 job.err: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 rpd_flux1_job.sh: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 connect.log: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 strace-probe.txt: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 fence-overlap.txt: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 exception-stat-outer.txt: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 protected-read.json: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 cov2d-fence.json: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 extract-config.json: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 flux-custody.json: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 flux-extract.json: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 flux-extract.strace: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 missing-dependency-check.json: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 missing-dependency.STOP.json: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 missing-dependency.strace: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 negative-policy.checked.json: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 original-config.json: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 prestage.json: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 prestage-reference.json: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 non-input-probe.root: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 real-mnv-check.json: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 real-mnv-worker.json: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 worker.stderr.txt: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 worker.stdout.txt: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 trace-policy.checked.json: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 trace-policy.json: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 c3-check.txt: fingerprint values found 0; empty-string fingerprint found False
+CHECK 4 not applicable (no view)
+CHECK 5 job.id: keys named fingerprints 0
+CHECK 5 protected-read.json: keys named fingerprints 0
+CHECK 5 cov2d-fence.json: keys named fingerprints 0
+CHECK 5 extract-config.json: keys named fingerprints 0
+CHECK 5 flux-custody.json: keys named fingerprints 0
+CHECK 5 flux-extract.json: keys named fingerprints 0
+CHECK 5 missing-dependency-check.json: keys named fingerprints 0
+CHECK 5 missing-dependency.STOP.json: keys named fingerprints 0
+CHECK 5 negative-policy.checked.json: keys named fingerprints 0
+CHECK 5 original-config.json: keys named fingerprints 0
+CHECK 5 prestage.json: keys named fingerprints 0
+CHECK 5 prestage-reference.json: keys named fingerprints 0
+CHECK 5 real-mnv-check.json: keys named fingerprints 0
+CHECK 5 real-mnv-worker.json: keys named fingerprints 0
+CHECK 5 trace-policy.checked.json: keys named fingerprints 0
+CHECK 5 trace-policy.json: keys named fingerprints 0
+REDACTION CHECK: PASS

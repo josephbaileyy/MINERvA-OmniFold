@@ -1,0 +1,60 @@
+{
+  "argv": [
+    "flux-extract",
+    "--config",
+    "/pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run/extract-config.json",
+    "--config-sha256",
+    "7b014d5c3d5c9172e60f10af9cca34d489f615c1552829b8f3190ee60be5d425",
+    "--run",
+    "/pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run"
+  ],
+  "code_sha256": "7302cc1df71758cfae6bdcfba031d37cc78902beaf454b29e12f3e053d44f141",
+  "config_sha256": "7b014d5c3d5c9172e60f10af9cca34d489f615c1552829b8f3190ee60be5d425",
+  "details": {
+    "execution": {
+      "estimate_status": "unavailable_before_input_metadata",
+      "measured_seconds_per_draw": null,
+      "planned_seconds": null,
+      "planning_factor": 10.0,
+      "priced_wall_seconds": null,
+      "scheduler_request": {
+        "SLURM_CPUS_PER_TASK": "9",
+        "SLURM_JOB_CPUS_PER_NODE": "10",
+        "SLURM_JOB_ID": "61206960",
+        "SLURM_JOB_QOS": "shared",
+        "SLURM_MEM_PER_CPU": null,
+        "SLURM_MEM_PER_NODE": "16384",
+        "SLURM_QOS": null
+      },
+      "step_estimate": null,
+      "timing_chunk_shape": null,
+      "timing_source": null,
+      "wall_budget_seconds": 7200
+    }
+  },
+  "estimate_status": "unavailable_before_input_metadata",
+  "guard": "MAT_DATA_STAGE",
+  "input_sha256": {},
+  "measured_seconds_per_draw": null,
+  "message": "MAT_DATA_STAGE: staged MAT dependency missing or changed",
+  "planned_seconds": null,
+  "planning_factor": 10.0,
+  "priced_wall_seconds": null,
+  "readings": null,
+  "scheduler_request": {
+    "SLURM_CPUS_PER_TASK": "9",
+    "SLURM_JOB_CPUS_PER_NODE": "10",
+    "SLURM_JOB_ID": "61206960",
+    "SLURM_JOB_QOS": "shared",
+    "SLURM_MEM_PER_CPU": null,
+    "SLURM_MEM_PER_NODE": "16384",
+    "SLURM_QOS": null
+  },
+  "schema": "fd-rpd-reco-stop/1",
+  "status": "STOP",
+  "step": "flux-extract",
+  "step_estimate": null,
+  "timing_chunk_shape": null,
+  "timing_source": null,
+  "wall_budget_seconds": 7200
+}

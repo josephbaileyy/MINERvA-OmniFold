@@ -1,0 +1,12 @@
+# lane	truth	role	items (LL5D pilot: ll5d_b.PILOT's 13 items over 8 lanes)
+0	data	control	setA_b1
+0	ar23	stat	1
+1	data	control	MaRES_0
+2	data	control	Flux_0
+3	data	control	GEANT_Pion_0
+4	g18	central	T
+4	g18	toy	minus2_4751000
+5	ar23	central	T
+5	g18	toy	all_4751000
+6	g18	clipmean	minus2,all
+7	ar23	clipmean	minus2,all
