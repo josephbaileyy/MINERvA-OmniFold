@@ -28,4 +28,16 @@ pinned in READOUTS):
   the share.
 - The exposure 1.057×10²¹ POT is a data constant (the note's value).
 
-**The Supplement** (`supplement-decimals.txt`, 118 decimal literals) is journal-editor's to key.
+**The Supplement** (`supplement-decimals.txt`, the 118 decimal literals before keying; journal-editor, 2026-11-13):
+- **Keyed:** make_values_fived16.py `supp_literal_values()` holds 107 keys, each asserted against a pinned record. It
+  reuses existing keys where the quantity is the same (rp-pb-unf, pp-dbar, cov1b-win-*, prr-floor, prr-tq).
+- **Prose-only sources** (the director's ruling B): VALIDATION_LEDGER.md and 2D_OMNIFOLD_STUDY_STATUS.md are read
+  through exact text anchors, each required to match once. These working documents are not sha-pinned.
+- **The published flux median** is computed from the release files (cov_ptpl_..._flux.txt a2ba53fd, the data result
+  and bin_mapping.txt) and asserted against stageB/verify-c04-x01/VERIFICATION.md:130's 4.014 %.
+- **Corrections the record check found** (the director's rulings A1-A5 and D, 2026-11-13): S5.3's 4.8 is now 4.7;
+  S7's 46.09 is paired with the Hartlap-corrected T; S2's 0.15 % is now the weighted 0.086 %; S4.2's refined range
+  covers the same six cells as the purity range; S4.6's signed total is given with its sample; S7 says "at or below".
+- **Left as typed:** `supplement-constants.txt` lists the 49 design constants (cuts, bin edges, definitions, levels,
+  thresholds, versions, input uncertainties). `check_supplement_constants.py <worktree>` fails on any typed decimal
+  that it does not list. Table column widths are excluded.

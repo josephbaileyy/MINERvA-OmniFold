@@ -2194,6 +2194,8 @@ def supp_literal_values(d):
     v["m4w-wbin-pct"] = f"{100 * t['bin_change']['J_frac_weighted_Mbar']:.2f}"
     v["m4w-noreal-pct"] = f"{100 * t['q3sq_minus_pt2_negative_wfrac']:.3f}"
     v["m4w-negw2"] = f"{t['w_frac_W_nonfinite_in_ps'] / 1e-5:.1f}"
+    rs = d["m4womni"]["reco_sim"]                    # S2: the reconstructed W^2 clamp at W = 0, simulated events
+    v["m4w-w2clamp-pct"] = f"{100 * rs['n_W2_clamp'] / rs['n_pass_finite']:.1f}"
     v["m4w-axis68"] = r1(d["m4wmad"]["axis_choice_effect"]["pT_beam_minus_pT_nu_MeV"]["r68"])
     a = d["mp5"]["a"]
     rc, z = a["R_c"]["R"], a["GENIE_CV_native"]["z_on_domain"]["a_sd_null_result"]
@@ -2226,6 +2228,9 @@ def supp_literal_values(d):
     v["ledger-datamc-pct"] = f"{100 * (float(r) - 1):.0f}"
     v["ledger-datamc-lo"], v["ledger-datamc-hi"] = _prose_anchor("ledger", r"pT from ([0-9.]+) to ~([0-9.]+)\)")
     (v["status-iter-pct"],) = _prose_anchor("status2d", r"5-iter total σ within ([0-9.]+) % of 10-iter")
+    # S4.4: the recovery check's nominal closure, printed as a bound ("at most 0.1 % in every supported cell")
+    assert d["recov"]["nominal_closure_max_abs_supported"] <= 0.001
+    v["rec-r0-bound"] = "0.1"
     # S4.5: the five-observable estimator's iterations (s5p stage 2, study K, H2 measure)
     k = d["s5p2"]["study_K"]
     v["s5p-k5"] = f"{k['b0']['M']['H2']['5']['M']:.3f}"
@@ -2359,7 +2364,7 @@ def supp_literal_values(d):
     v["vatlas-z-R02"], v["vatlas-z-R06"] = f"{zz['R02']['z']['A7_gibuu']:+.2f}", f"{zz['R06']['z']['A7_gibuu']:+.2f}"
     want = {"q2-selpot-data": "-0.9", "q2-selpot-mc": "-1.8",
             "m4w-resid68": "2", "m4w-resid999-lo": "-49", "m4w-resid999-hi": "+67", "m4w-wbin-pct": "0.25",
-            "m4w-noreal-pct": "0.086", "m4w-negw2": "4.9", "m4w-axis68": "4",
+            "m4w-noreal-pct": "0.086", "m4w-negw2": "4.9", "m4w-axis68": "4", "m4w-w2clamp-pct": "1.5", "rec-r0-bound": "0.1",
             "mp5-rc-min": "0.9965", "mp5-rc-max": "1.0035", "mp5-rc-median": "1.000008", "mp5-z-min": "-0.47", "mp5-z-max": "+0.53",
             "s5c-highw-pur-lo": "3.5", "s5c-highw-pur-hi": "4.1", "s5n-highw-ref-lo": "0.11", "s5n-highw-ref-hi": "0.23",
             "s5n-corner-pur": "1.66", "s5n-corner-ref": "0.24", "s5n-total-data": "3", "s5n-total-sim": "2",
