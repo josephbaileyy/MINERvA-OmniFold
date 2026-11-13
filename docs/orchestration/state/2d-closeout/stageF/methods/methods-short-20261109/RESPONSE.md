@@ -921,6 +921,40 @@ This replaces the option-A draft above (68828be8f), which was not pushed. The re
   from the same two perturbations of the data" (keeps the not-repeats warning positively).
 - **For Joseph:** ρ = 0.452 and its interval [0.701, 1.128] are licensed and printed nowhere (`jcb-read/README.md`).
 
+## J2. Joseph's read of sections 5 to 6.1 (2026-11-12)
+
+**His critique, verbatim.** It is the file the director saved, `joseph-critique-2-20261113.txt` (the UTC date). Its sha256,
+computed here from the file, is `ad652b08aac6ec4757a2655f533407a197abf8a13c810660a9ed70aded66760b`.
+
+```text
+end of 5.2, it is necesary to say 0 are not assessed? Is the sentence in 5.3: "The study selects no estimator, and its results describe these truths only" necessary? are there other disclaimers like this? I also feel like the last paragraph of 5.4 is emphasizing the wrong thing. I feel like it is evident that agreement would not be related to any claim about the publication inputs and that point is unecessary. I also feel like it is evident that a disgreement wouldn't be able to say who the winner is. I am not sure if these things need to be said explicitly. 6.1 also starts four sentences both with "On this pseudo-experiment", how did no style referee catch this? Also the paragraph talking about the ensemble-averaged variant mentioned "a criterion fixed before the test, and it is not adopted". is it typical to have this historical/meta language inside the paper? or even in the supplement? I thought we checked for this. also the last paragraph in 6.1 seems unecessary. also is it typical to have the whole AR23... and G18... written out in full each time and not give it a shorter version?
+```
+<!-- absence-ok: Joseph's critique verbatim; it quotes the paper's 'not assessed' class, and is not a claim that a result does not exist -->
+
+**Triage (director-helper-3, 2026-11-12; the director's items 1–8; meaning read in `jc2-read/`):**
+
+| Item | Status |
+|---|---|
+| 1. §5.2's "0 are not assessed" | cut, with the empty class's definition; make_values asserts the class stays empty |
+| 2. §5.3's "selects no estimator … these truths only" | cut; the sweep's list is below |
+| 3. §5.4's "leave open" sentences | cut; the covariance-contents sentences join the paragraph before (they say which blocks the difference is measured against) |
+| 4. Process language | the one statement stays in §3.3 (now "The grading rules are stated with the individual tests", without "and their timing"). Cut: Fig. 5's caption, the abstract's two, the mechanism study's, "no test linked", the first coverage test's, §6.2's two and its cut, §7.1's region. **Kept:** the LL5D route disclosures ("a check fixed in advance … a decision made after that check was seen"), where the timing is why the result is descriptive; and "The tilt's amplitude is a stress value set in advance", where it means the amplitude was not tuned (Supplement S8: "a stress amplitude chosen in advance and is not derived from a generator") |
+| 5. §6.1's ensemble paragraph | the decision meta-language is cut, and all ten ens1-* keys are still printed. It now ends: "Its adoption required closure no worse at every truth, and the reported estimator is kept." |
+| 6. §6.1's last paragraph | cut; its fact is in §7.1's numerical-behaviour item ("The instability of the data result itself is therefore not mitigated"); the sentence leaves check_round's ONCE list |
+| 7. Tune names | keys f1-tune-g18-short (G18) and f1-tune-ar23-short (AR23), asserted in make_values; both defined at first use (§3.3), the short key after |
+| 8. "On this pseudo-experiment" | none at this head (round 4) |
+<!-- absence-ok: the rows name the cut 'not assessed' class and the kept 'not tested' and 'not tuned' wordings; none claims that a result does not exist -->
+
+**The sweep for scope disclaimers (item 2), with a proposal for each; not applied:**
+- §4.1: "The comparison is descriptive and is not a blind validation." Proposal: "The comparison is descriptive." The abstract already calls the benchmark descriptive.
+- §4.1: "The value is descriptive, and no $p$-value is quoted for it." Proposal: "No $p$-value is quoted for it." The sentence above already says it is descriptive.
+- "not independent of $C_{\mathrm{model}}$", three times (§5.2, and §6.2 twice). Proposal: keep §5.2's and §6.2's first, and cut "The tunes are held out of the analysis but not independent of it".
+- §6.2: "They do not validate the uncertainty of the data result." and "Its result does not validate the uncertainty of the data result." Proposal: keep the first. §7.1's coverage item holds the general statement.
+- §6.2: "A run continued or repaired after a check was seen is descriptive." Proposal: keep until LL5D's fill, which decides whether a route case prints. Then cut it if the direct route prints.
+- §3.3: "The note gives N further truths, which are descriptive." Proposal: keep, since it says why they are not graded.
+- **Kept as substantive:** §1's "illustrates the method and is not a measurement"; §4.1's hadronic-distribution limit; §7's "does not validate the five-observable distribution" (ruled); the RSN WR scope; §4.2's descriptive-χ² caveat (Joseph's B).
+
+
 ## Pre-submission checklist (director-helper-3; items added as the director rules)
 
 - [ ] **If T3's MW reading lands, revise §7.1 item 3, §3.1's last sentence and Supplement S4's "do not test" paragraph on
