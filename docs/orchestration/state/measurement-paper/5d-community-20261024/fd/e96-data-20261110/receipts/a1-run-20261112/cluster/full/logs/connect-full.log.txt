@@ -1,0 +1,66 @@
+node login14 loadavg 15.84 18.32 17.67
+2026-11-12T18:25:55Z
+connect script sha256 3a5395bcad567820ba3a42352cad782ca218259bfc90114b9387bfbd341953bc
+== the reservation window (no --deadline; StartTime read as the cluster's local time, PST)
+now=1794507955 window_end=1794525055 (2026-11-12T23:10:55Z)
+reservation StartTime=2025-11-06T06:03:31 (local) = 2025-11-06T14:03:31Z
+reservation StartTime=2026-11-12T06:00:00 (local) = 2026-11-12T14:00:00Z
+reservation StartTime=2026-11-12T06:20:00 (local) = 2026-11-12T14:20:00Z
+reservation StartTime=2026-11-12T13:00:00 (local) = 2026-11-12T21:00:00Z
+reservation StartTime=2026-11-17T07:00:00 (local) = 2026-11-17T15:00:00Z
+reservation StartTime=2026-11-12T06:30:00 (local) = 2026-11-12T14:30:00Z
+reservation StartTime=2026-11-17T07:00:00 (local) = 2026-11-17T15:00:00Z
+reservation StartTime=2026-11-19T10:00:00 (local) = 2026-11-19T18:00:00Z
+reservation StartTime=2026-12-16T06:00:00 (local) = 2026-12-16T14:00:00Z
+STOP: 1 reservation(s) start inside the full run's window
+e96data full submit rc=11
+2026-11-12T18:25:56Z
+node login38 loadavg 50.45 34.64 29.74
+2026-11-13T00:32:53Z
+connect script sha256 3a5395bcad567820ba3a42352cad782ca218259bfc90114b9387bfbd341953bc
+== the reservation window (no --deadline; StartTime read as the cluster's local time, PST)
+now=1794529973 window_end=1794547073 (2026-11-13T05:17:53Z)
+reservation StartTime=2025-11-06T06:03:31 (local) = 2025-11-06T14:03:31Z
+reservation StartTime=2026-11-12T06:00:00 (local) = 2026-11-12T14:00:00Z
+reservation StartTime=2026-11-12T06:20:00 (local) = 2026-11-12T14:20:00Z
+reservation StartTime=2026-11-17T07:00:00 (local) = 2026-11-17T15:00:00Z
+reservation StartTime=2026-11-12T06:30:00 (local) = 2026-11-12T14:30:00Z
+reservation StartTime=2026-11-17T07:00:00 (local) = 2026-11-17T15:00:00Z
+reservation StartTime=2026-11-19T10:00:00 (local) = 2026-11-19T18:00:00Z
+reservation StartTime=2026-12-16T06:00:00 (local) = 2026-12-16T14:00:00Z
+reservation StartTime=2026-11-12T12:50:19 (local) = 2026-11-12T20:50:19Z
+reservation StartTime=2026-11-14T11:00:00 (local) = 2026-11-14T19:00:00Z
+reservation StartTime=2026-11-13T14:00:00 (local) = 2026-11-13T22:00:00Z
+== the fence (a cov2d*/t2a* or e96data* job stops)
+FENCE: pass
+== the dry run's receipts
+{"mode": "dry", "tasks": 2, "ended": 2, "rc": 0, "job": "61171790", "pin": "b438ab2710b2dcfd30238107187caa3628393b11", "teardown": ""}
+dry DONE and GATE at the pin with the sent queue: yes; full.tsv sha256 3aa0bc5e864144714e7f4509b91b1622f036436ec7cb6c27d7433b938299f5a1
+== the deploy
+HEAD b438ab2710b2dcfd30238107187caa3628393b11; porcelain lines (ignored files excluded): 0
+== iris
+Project      Charged(user)    Allocated(user)     Charged    Allocated
+---------  ---------------  -----------------  ----------  -----------
+m3246               2482.1            10000.0     18566.3      20000.0
+balance_node_h=1433.7 half=716.9 cap=5.1
+== stat (stat only; the before-reading for LL5D's receipts)
+stat utc=2026-11-13T00:33:00Z atime=1794494042 mtime=1782610308 size=1548438020 /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz
+stat utc=2026-11-13T00:33:00Z atime=1794494042 mtime=1790319104 size=16017201 /pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz
+stat utc=2026-11-13T00:33:00Z atime=1794494966 mtime=1790450957 size=95564 /pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j-.npz
+== reservations (read only)
+ReservationName=debug StartTime=2025-11-06T06:03:31 EndTime=2030-11-06T06:03:31 Duration=1826-00:00:00
+ReservationName=iclr_rebuttal2 StartTime=2026-11-12T06:00:00 EndTime=2026-11-14T06:00:00 Duration=2-00:00:00
+ReservationName=iclr_rebuttal_1 StartTime=2026-11-12T06:20:00 EndTime=2026-11-19T06:20:00 Duration=7-00:00:00
+ReservationName=SC26_Live StartTime=2026-11-17T07:00:00 EndTime=2026-11-17T10:00:00 Duration=03:00:00
+ReservationName=iclr_rebuttal_overflow StartTime=2026-11-12T06:30:00 EndTime=2026-11-16T06:30:00 Duration=4-00:00:00
+ReservationName=sc26_clearml_demo StartTime=2026-11-17T07:00:00 EndTime=2026-11-17T10:00:00 Duration=03:00:00
+ReservationName=geant4_perf StartTime=2026-11-19T10:00:00 EndTime=2026-11-20T10:00:00 Duration=1-00:00:00
+ReservationName=maintenance_20261216 StartTime=2026-12-16T06:00:00 EndTime=2026-12-23T06:00:00 Duration=7-00:00:00
+2026-11-13T00:33:00Z
+sbatch rc=0
+Submitted batch job 61202343
+full job 61202343
+scontrol TimeLimit=04:15:00 (declared 04:15:00)
+61202343 e96data_full PENDING 0:00 4:15:00 1 regular_1 m3246 N/A Priority
+e96data full submit rc=0
+2026-11-13T00:33:09Z
