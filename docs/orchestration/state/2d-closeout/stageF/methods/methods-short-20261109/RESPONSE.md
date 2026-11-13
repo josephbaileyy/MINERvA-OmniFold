@@ -890,9 +890,15 @@ there is a xx, not xx qualification at the top right paragraph of page 4
 
 > Yes I like B. and we can include the input caveat. and I like the contrasts.
 
-The director's sha256 of the whole message plus a final newline is `e86b7e253309d769`. The quoted sentence alone, plus a
-final newline, hashes to `fcb0385035d316b8`, so the whole message holds more than this quote. That value was not
-re-derived here.
+The whole message, verbatim (the director, 2026-11-12):
+
+> Yes I like B. and we can include the input caveat. and I like the contrasts. how close are we to publication?
+
+Its sha256 plus a final newline is `e86b7e253309d769`, re-derived here and equal to the director's. The question at its
+end is Joseph's to the director.
+
+**ρ and its interval stay unprinted** (the director, 2026-11-12). The recheck ruling of 2026-11-11 (row 4.5) dropped κ
+and its class from the paper, and S8 keeps the definition. Joseph's B makes no claim that needs the C2-R2 reading.
 
 **What he chose:** the codex-school consult's tightened B (`consult-ibu-ab/`, session 01a1d323):
 - §4.2 takes the consult's paragraph, with the input caveat once, in §4.2 only;
