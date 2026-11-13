@@ -1,4 +1,4 @@
-#977 head 1ccb08c29f2153647a6fe117d53a2acb09e63905; 26 rows
+#977 head 9c9203f41c74c25fdf964b5526e8b308daa3daa7; 27 rows
 OK  RP01   resource paper      count=1  The sixteen-cell cross section that the estimator gives on the data il
 OK  RP02   resource paper      count=1  The held-out-tune tests provide partial evidence on bias at truths hel
 OK  RP03   resource paper      count=1  The dependence on the prior's generator shape is reported separately a
@@ -28,4 +28,11 @@ OK  RP17   fd16row  paper      NuWro shape, noise-free closure
 OK  RP20   resource paper      count=1  these 73 largest-eigenvalue directions
 OK  RP21   resource supplement count=1  In the 132 poorly determined directions, the combination of the other 
 OK  RP22   resource paper      count=1  Integral ratio $\ratioTot$; descriptive $\chi^2/\mathrm{ndf}=\chiPaper
+OK  RP23   keys     paper      printed=3  \fvval{ens1-n}
+OK  RP23   keys     paper      printed=1  \fvval{ens1-median}
+OK  RP23   keys     paper      printed=1  \fvval{ens1-max}
+OK  RP23   keys     paper      printed=1  \fvval{ens1-bar-median}
+OK  RP23   keys     paper      printed=1  \fvval{ens1-bar-max}
+OK  RP23   keys     paper      printed=4  \fvval{ens1-ntruths}
+OK  RP23   keys     paper      printed=1  \fvval{ens1-nnoworse}
 REPIN-CHECK PASS

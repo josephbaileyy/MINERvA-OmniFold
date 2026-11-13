@@ -1,7 +1,8 @@
 """Count every new source in repin_list.tsv at a #977 head (argv[1]). Run from any checkout of the repo. Writes nothing.
 LaTeX comments (an unescaped % to the end of the line) are stripped and whitespace runs collapse, as the re-pinned build
-will read. resource rows must count 1; fd16row rows must each be a row of tab:fd16 with \\newline read as a space; drop
-and code rows are listed only. Exit 1 if any resource or fd16row check fails."""
+will read. resource rows must count 1; fd16row rows must each be a row of tab:fd16 with \\newline read as a space; keys
+rows must each be printed (\\fvval{key} at least once); drop and code rows are listed only. Exit 1 if any resource,
+fd16row or keys check fails."""
 import os, re, subprocess, sys
 
 N = sys.argv[1]
@@ -36,6 +37,13 @@ for rid, ruled, resp, sites, action, doc, quote, note in rows:
             ok = bool(re.search(r"(^|\\\\|\\midrule|\\toprule)\s*" + re.escape(q) + r"\s*&", tab))
             bad += not ok
             print(f"{'OK ' if ok else 'BAD'} {rid:6} fd16row  {doc:10} {q}")
+    elif action == "keys":
+        t = cache.setdefault(doc, text(doc))
+        for k in quote.split("|"):
+            c = t.count("\\fvval{%s}" % k)
+            ok = c >= 1
+            bad += not ok
+            print(f"{'OK ' if ok else 'BAD'} {rid:6} keys     {doc:10} printed={c}  \\fvval{{{k}}}")
     else:
         print(f"--  {rid:6} {action:8} {sites}  {note[:80]}")
 print("REPIN-CHECK", "PASS" if not bad else f"FAIL ({bad})")
