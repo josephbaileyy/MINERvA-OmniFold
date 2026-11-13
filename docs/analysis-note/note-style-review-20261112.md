@@ -1,6 +1,6 @@
 # Note style review queue, 2026-11-12
 
-All commits listed here are **pending Grok review**. Joseph authorized the nineteen prepared edits and further section commits while Grok is paused. These commits do not merge the draft or replace that review. AUD-N4/N5 and the note-role ruling remain with Grok or Joseph.
+All commits listed here were pending Grok review when this queue was written. Later verdicts are not recorded in these tables, except for the two connector commits named in the section-style paragraph. Joseph authorized the nineteen prepared edits and further section commits while Grok is paused. These commits do not merge the draft or replace that review. AUD-N4/N5 and the note-role ruling remain with Grok or Joseph.
 
 ## Measurement
 
@@ -92,7 +92,7 @@ The findings, evidence and disposition of all 38 note–Supplement pairs are rec
 
 ## Section style pass
 
-Each section remains a separate commit. The comparison distinguishes sentence jobs instead of replacing one connector with another. Existing absence-claim support is retained; a copy of the existing coverage search comment follows the claim split in the covariance clarification.
+Each section remains a separate commit. These rows record the script's measurements. They are not review verdicts. In this table, `74d9e933edcc` replaces a comma-so with Thus and stays failed. Its forward correction is `99b63c67b6f3c860dfa9b063cf18ee575ffb0ddc`. `8122492cd674` replaces a comma-so with therefore and stays held. Its forward correction is `eb1acf4fc3c307482350d34ec78f6ad12e27c5b5`. A copy of the existing coverage search comment follows the claim split in the covariance clarification.
 
 | Commit | Section | Before tuple | After tuple |
 |---|---|---|---|
