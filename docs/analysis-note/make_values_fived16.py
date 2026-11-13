@@ -145,7 +145,11 @@ READOUTS = {
     # Q's budget (its derived counts), both RE-2 part C r2; the run-period term's record (its period unfoldings)
     "s5q": ("docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/s5/s5.json.gz", "5c489837"),
     "budgetq": ("docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/outA/budget_Q.json.gz", "971e8a9d"),
-    "plterm": ("docs/orchestration/state/2d-closeout/playlist-term/outputs/playlist_term.json", "5b023478"),
+    # the run-period block as Q adopted it: RE-2's partc-r2 playlist term (npz dbb067aa, the npz budget_Q pins as
+    # A0_pin_playlist_npz). Re-pinned 2026-11-13 from the pre-RE-2 playlist-term/outputs record (5b023478, npz c1723cb5;
+    # median 2.137, max 5.694), which journal-editor's literal trace found; it fed only cov2d-nperiod-word, the same three
+    # periods in both records, so no printed value changed
+    "plterm": ("docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/playlist/playlist_term.json", "a952adda"),
     # #977's L rows (RESPONSE.md 4.2/F4.3, 4.3, F5.3, F5.4, 3.3, m5/Fm7, s11c): one derived readout (l_rows.py) from the
     # read-only pscratch session's receipt (pscr-20261112, f70e805c) and committed sources
     # the figure referee read's check A: how far the unfolded (E_avail, W) cells follow each truth change (recovered
@@ -1867,7 +1871,8 @@ def cov2d_block_values(d):
     seeds = {re.match(r"2dc_P_S4B_s(\d+)_\d+$", k).group(1) for k in po if k.startswith("2dc_P_S4B_")}
     assert len(seeds) + 1 == dc["seed_triplets_S4B_seeds_plus_seed42"], seeds   # the S4B seeds and seed 42
     periods = {m.group(1) for k in pl["runs"] for m in [re.search(r"/pu_(P[A-Z])_s42/", k)] if m}
-    assert pl["checks_passed"] and pl["npz"]["sha256"].startswith("c1723cb5")      # C_PL as Q adopted it
+    assert pl["checks_passed"] and pl["npz"]["sha256"] == bq["checks"]["A0_pin_playlist_npz"]["value"], "C_PL is not Q's"
+    assert pl["npz"]["sha256"].startswith("dbb067aa")      # C_PL as Q adopted it (RE-2's partc-r2)
     words = {3: "three", 5: "five"}
     return {"cov2d-nuniv": str(nwu + nlu), "cov2d-nunivbands": str(nwb + len(lat)),
             "cov2d-nstat": str(nstat),
