@@ -1,0 +1,78 @@
+{
+ "source": "the director's field baseline, 2026-11-09: 11 human-written papers before November 2022 (3 MINERvA, 5 unfolding incl. OmniFold and one JINST, 3 instrumentation), 78,599 words after stripping; corpus.tsv and results.json in the director's scratch (style-baseline/). Rates per 1,000 words by style_metrics.py (sha256 8bf224280556ea41); no corpus text is kept here.",
+ "script_sha256": "8bf224280556ea411c7ae74cce67956643344573a6085180b92ab642237608b4",
+ "patterns": {
+  "1_comma_not": {
+   "field_median": 0.0,
+   "field_max": 0.303,
+   "field_max_id": "2009.00552",
+   "field_pooled": 0.04
+  },
+  "2_not_X_but_Y": {
+   "field_median": 0.0,
+   "field_max": 0.386,
+   "field_max_id": "2006.06685",
+   "field_pooled": 0.09
+  },
+  "3_rather_than": {
+   "field_median": 0.0,
+   "field_max": 0.446,
+   "field_max_id": "2106.16210",
+   "field_pooled": 0.08
+  },
+  "4_corrective": {
+   "field_median": 0.0,
+   "field_max": 0.117,
+   "field_max_id": "1907.11736",
+   "field_pooled": 0.01
+  },
+  "5_semicolon_chain": {
+   "field_median": 0.0,
+   "field_max": 0.668,
+   "field_max_id": "2106.16210",
+   "field_pooled": 0.17
+  },
+  "6_copula_avoid": {
+   "field_median": 0.0,
+   "field_max": 0.335,
+   "field_max_id": "1912.09890",
+   "field_pooled": 0.13
+  },
+  "7_ai_vocab": {
+   "field_median": 0.0,
+   "field_max": 1.083,
+   "field_max_id": "1911.09107",
+   "field_pooled": 0.32
+  },
+  "8_triad": {
+   "field_median": 1.584,
+   "field_max": 2.344,
+   "field_max_id": "1912.09890",
+   "field_pooled": 1.42
+  },
+  "9a_fragment_le6_noverb": {
+   "field_median": 0.396,
+   "field_max": 1.083,
+   "field_max_id": "1911.09107",
+   "field_pooled": 0.37
+  },
+  "9b_sentence_le5": {
+   "field_median": 0.357,
+   "field_max": 1.005,
+   "field_max_id": "1912.09890",
+   "field_pooled": 0.36
+  },
+  "10_didactic": {
+   "field_median": 0.284,
+   "field_max": 0.91,
+   "field_max_id": "2009.00552",
+   "field_pooled": 0.23
+  },
+  "11_hedge_stack": {
+   "field_median": 0.0,
+   "field_max": 0.179,
+   "field_max_id": "2109.13243",
+   "field_pooled": 0.01
+  }
+ }
+}

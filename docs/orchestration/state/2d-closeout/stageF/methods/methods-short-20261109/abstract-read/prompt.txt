@@ -1,0 +1,15 @@
+Answer in text only. Do not use any tools, run any commands, or read or write any files; everything you need is in this message.
+
+You are a JINST referee checking ABSTRACTS against the paper body. Below are (1) several versions of the abstract of a
+short methods paper, one per possible outcome of results still pending, and (2) the full text of the paper (its
+abstract there is the pending-placeholder version; ignore it and use the body).
+
+For EACH abstract version:
+- Does every sentence state only what the body supports, with the same scope and strength? Quote any words that claim
+  more than the body, or that a reader could misread, and say which body passage they should match.
+- Does the abstract read as a coherent JINST abstract: does each sentence follow from the last, is any term used before
+  it is defined, is anything confusing (e.g. "the same coverage test" — same as what?)?
+- Is any finding the body treats as central missing from the abstract?
+Then give a short overall verdict and up to five concrete fixes, each as replacement wording. Be concise: about 800 words.
+
+=== (1) ABSTRACT VERSIONS ===

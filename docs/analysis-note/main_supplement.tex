@@ -1,0 +1,70 @@
+% ====================================================================
+% Supplemental Material of the methods paper (main_paper.tex). Round-5 draft, 2026-11-08: Joseph asked for referee
+% rounds on the paper, the Supplement and the note (the round-4 referees' self-containment item, referee-methods-
+% round4-20261106/README.md item 5). Build: latexmk -pdf main_supplement.tex.
+% The Supplement takes the definitions the paper needs from the analysis note's own text
+% (supplemental_body.tex names each block's source); pointers it keeps into the note resolve, with the prefix N-,
+% through note_release_labels.tex, the labels of the note revision named for release, as the paper's do. No wording is approved: draft for the referee reads
+% and Joseph.
+% ====================================================================
+\documentclass[11pt]{article}
+\usepackage{xr-hyper}
+\usepackage{tikz}
+\usepackage{xltabular} % Tables S9 and S10, the headline tests (2026-11-12): tabularx X columns across a page break
+\usetikzlibrary{arrows.meta,matrix,positioning}
+\input{preamble}
+\NOTEtrue
+\input{values}
+\input{values_inference}
+\input{values_fived16}
+\addbibresource{publication.bib}
+\addbibresource{technote.bib}% for DAgostini:1994fjx, cited in S7 as the paper cites it (the paper reads both files)
+\input{note_release_labels}
+% The paper's labels that the Supplement cites (make_paper_labels.py; check_round.py's fill test reruns it with --check):
+% \psec{<paper label>} prints the paper's section number (the director's ruling (a), 2026-11-12).
+\input{paper_labels}
+\providecommand{\psec}[1]{section~\ref*{P-#1}}
+\newcommand{\pubhold}[1]{\textcolor{red}{[HOLD: #1]}}
+% Short paper (methods-short-20261109): the pointers of the text moved here from the paper print as in the Supplement's own text.
+\providecommand{\nsec}[1]{ref.~\cite{AnalysisNote2026}, section~\ref*{N-#1}}
+\providecommand{\napp}[1]{ref.~\cite{AnalysisNote2026}, appendix~\ref*{N-#1}}
+
+\renewcommand{\thesection}{S\arabic{section}}
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\thefigure}{S\arabic{figure}}
+\renewcommand{\theequation}{S\arabic{equation}}
+
+\title{Supplemental Material for ``Five-observable unbinned unfolding of MINERvA open data with OmniFold: a benchmark and
+diagnostic study''}
+\author{Joseph Bailey and Benjamin Nachman}
+\date{}
+
+\begin{document}
+\maketitle
+
+% Restyled 2026-11-12 (journal-editor's Supplement style pass; style1's opening-paragraph item, a short contents guide
+% grouped by definitions, implementation, uncertainties and tests, and data products; "two per-cell validity rules" was
+% stale after the director's D3 and D4: S10 defines one rule).
+This Supplement gives the definitions and checks behind the paper's results. Sections~\ref{supp:selection}--\ref{supp:cells}
+define the event selection, the observables, and the reported cells with their machine-readable files
+(section~\ref{supp:cells}).
+Section~\ref{supp:estimators} describes the estimators: the algorithm, the reported configurations and their history.
+Sections~\ref{supp:cov16}--\ref{supp:tests} give the reported covariances, the comparisons with binned unfolding, and
+the designs and results of the coverage and fake-data tests, with the joint tests of the generator predictions in
+section~\ref{supp:joint}. Section~\ref{supp:output} gives the illustrative output on
+data with its descriptive comparisons with generator predictions, and section~\ref{supp:validity} the usage-recommendation
+rule, a per-cell bias-screening rule adapted from ref.~\cite{ATLAS:2024jets}.
+% Gloss at first use (the director's ruling, 2026-11-12): the name is kept, glossed as the paper glosses it (paper_body.tex,
+% "a per-cell bias-screening rule adapted from ref. [ATLAS]", the director's wording; helper-3's 71d4bb19).
+% Rewritten 2026-11-11 (the director, on Joseph's adoption of the independent consult's "full record" recommendation), with
+% supplemental_body.tex's one sentence on the shared text: no blanket claim that the text is taken from the note.
+Several sections reproduce or adapt material from the companion analysis note~\cite{AnalysisNote2026}. Other studies
+are documented in this Supplement and the accompanying paper. References to the note identify the sections containing
+further detail.
+
+\input{supplemental_body}
+
+% Referee recheck (2026-11-11; RESPONSE.md m10): floats print before the references, so the blinded copy, cut at the references, keeps every figure.
+\clearpage
+\printbibliography
+\end{document}

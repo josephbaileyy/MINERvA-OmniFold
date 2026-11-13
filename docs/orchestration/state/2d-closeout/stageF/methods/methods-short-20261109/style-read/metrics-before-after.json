@@ -1,0 +1,226 @@
+{
+ "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/2929ca26-b0ae-42b9-82fa-8300158500d3/scratchpad/style/paper-2f32b7c7.txt": {
+  "words": 10119,
+  "sentences": 442,
+  "patterns": {
+   "1_comma_not": {
+    "count": 9,
+    "per_1000": 0.889
+   },
+   "2_not_X_but_Y": {
+    "count": 0,
+    "per_1000": 0.0
+   },
+   "3_rather_than": {
+    "count": 2,
+    "per_1000": 0.198
+   },
+   "4_corrective": {
+    "count": 7,
+    "per_1000": 0.692
+   },
+   "5_semicolon_chain": {
+    "count": 9,
+    "per_1000": 0.889
+   },
+   "6_copula_avoid": {
+    "count": 0,
+    "per_1000": 0.0
+   },
+   "7_ai_vocab": {
+    "count": 1,
+    "per_1000": 0.099,
+    "breakdown": {
+     "robustness": 1
+    }
+   },
+   "8_triad": {
+    "count": 48,
+    "per_1000": 4.744
+   },
+   "9a_fragment_le6_noverb": {
+    "count": 7,
+    "per_1000": 0.692
+   },
+   "9b_sentence_le5": {
+    "count": 8,
+    "per_1000": 0.791
+   },
+   "10_didactic": {
+    "count": 0,
+    "per_1000": 0.0
+   },
+   "11_hedge_stack": {
+    "count": 0,
+    "per_1000": 0.0
+   }
+  }
+ },
+ "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/2929ca26-b0ae-42b9-82fa-8300158500d3/scratchpad/style/supplement-2f32b7c7.txt": {
+  "words": 14627,
+  "sentences": 709,
+  "patterns": {
+   "1_comma_not": {
+    "count": 8,
+    "per_1000": 0.547
+   },
+   "2_not_X_but_Y": {
+    "count": 0,
+    "per_1000": 0.0
+   },
+   "3_rather_than": {
+    "count": 6,
+    "per_1000": 0.41
+   },
+   "4_corrective": {
+    "count": 4,
+    "per_1000": 0.273
+   },
+   "5_semicolon_chain": {
+    "count": 27,
+    "per_1000": 1.846
+   },
+   "6_copula_avoid": {
+    "count": 0,
+    "per_1000": 0.0
+   },
+   "7_ai_vocab": {
+    "count": 0,
+    "per_1000": 0.0,
+    "breakdown": {}
+   },
+   "8_triad": {
+    "count": 53,
+    "per_1000": 3.623
+   },
+   "9a_fragment_le6_noverb": {
+    "count": 45,
+    "per_1000": 3.077
+   },
+   "9b_sentence_le5": {
+    "count": 43,
+    "per_1000": 2.94
+   },
+   "10_didactic": {
+    "count": 0,
+    "per_1000": 0.0
+   },
+   "11_hedge_stack": {
+    "count": 0,
+    "per_1000": 0.0
+   }
+  }
+ },
+ "paper-after.txt": {
+  "words": 10106,
+  "sentences": 450,
+  "patterns": {
+   "1_comma_not": {
+    "count": 1,
+    "per_1000": 0.099
+   },
+   "2_not_X_but_Y": {
+    "count": 0,
+    "per_1000": 0.0
+   },
+   "3_rather_than": {
+    "count": 2,
+    "per_1000": 0.198
+   },
+   "4_corrective": {
+    "count": 0,
+    "per_1000": 0.0
+   },
+   "5_semicolon_chain": {
+    "count": 6,
+    "per_1000": 0.594
+   },
+   "6_copula_avoid": {
+    "count": 0,
+    "per_1000": 0.0
+   },
+   "7_ai_vocab": {
+    "count": 1,
+    "per_1000": 0.099,
+    "breakdown": {
+     "robustness": 1
+    }
+   },
+   "8_triad": {
+    "count": 48,
+    "per_1000": 4.75
+   },
+   "9a_fragment_le6_noverb": {
+    "count": 6,
+    "per_1000": 0.594
+   },
+   "9b_sentence_le5": {
+    "count": 11,
+    "per_1000": 1.088
+   },
+   "10_didactic": {
+    "count": 0,
+    "per_1000": 0.0
+   },
+   "11_hedge_stack": {
+    "count": 0,
+    "per_1000": 0.0
+   }
+  }
+ },
+ "supplement-after.txt": {
+  "words": 14637,
+  "sentences": 711,
+  "patterns": {
+   "1_comma_not": {
+    "count": 2,
+    "per_1000": 0.137
+   },
+   "2_not_X_but_Y": {
+    "count": 0,
+    "per_1000": 0.0
+   },
+   "3_rather_than": {
+    "count": 6,
+    "per_1000": 0.41
+   },
+   "4_corrective": {
+    "count": 0,
+    "per_1000": 0.0
+   },
+   "5_semicolon_chain": {
+    "count": 0,
+    "per_1000": 0.0
+   },
+   "6_copula_avoid": {
+    "count": 0,
+    "per_1000": 0.0
+   },
+   "7_ai_vocab": {
+    "count": 0,
+    "per_1000": 0.0,
+    "breakdown": {}
+   },
+   "8_triad": {
+    "count": 52,
+    "per_1000": 3.553
+   },
+   "9a_fragment_le6_noverb": {
+    "count": 46,
+    "per_1000": 3.143
+   },
+   "9b_sentence_le5": {
+    "count": 44,
+    "per_1000": 3.006
+   },
+   "10_didactic": {
+    "count": 0,
+    "per_1000": 0.0
+   },
+   "11_hedge_stack": {
+    "count": 0,
+    "per_1000": 0.0
+   }
+  }
+ }
+}

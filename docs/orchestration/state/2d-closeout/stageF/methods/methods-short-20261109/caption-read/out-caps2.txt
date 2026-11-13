@@ -1,0 +1,5 @@
+fig:tension2d | WEAKER | "$\mathbf{C}$ the published covariance" | final caption: "$\mathbf C$ its covariance", where "its" can be read as the two-dimensional result's; the text never says $\mathbf C$ is the published covariance except by the phrase "published-covariance $\chi^2$" | the caption no longer says which covariance $\mathbf C$ is
+fig:bias-cells | WEAKER | "Numbers give the largest $|z|$ in each outlined row" | final caption: "Numbers: row maxima to two decimals" | the "outlined row" restriction is dropped, so it reads as a number on every row
+fig:rounding-shifts | WEAKER | "the study's own data-bootstrap statistical standard deviation" | final caption: "the study's statistical standard deviation (100 refitted replicas…)"; the text's "data-bootstrap" uncertainty of 0.37% is a different quantity | the denominator is no longer identified as the data-bootstrap spread
+fig:rounding-shifts | LOST | "The observed median and largest shift are marked, at the text's precision." | absent; the caption says only "Markers show the observed median and largest shift" | the precision statement is gone
+FLAGGED 4

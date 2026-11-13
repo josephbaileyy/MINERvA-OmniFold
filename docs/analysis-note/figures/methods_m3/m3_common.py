@@ -30,6 +30,10 @@ INPUTS = {
                    "84266e309d1aae0d2db1db315750b8164413a7d0125fcaa4a6c9b25834261a2c"),
     "tier_s": ("docs/orchestration/state/s5c/tier_s/interim_400.json",
                "aa574c17756ac9cea55306a731728104f7e084621372c8941c91bd9d0aab031f"),
+    # m5/Fm7 (#977 RESPONSE.md): the withheld truths' injected change, s5n_truth_check's full-sample definition, from
+    # the read-only pscratch session's truths (pscr-20261112/code/m5_injected.py; controls W1, W2 pass to 8e-15)
+    "m5_injected": ("docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/pscr-20261112/derived/m5_injected.json",
+                    "05afb8b71b8cce2f32071b39eada5fb91f837ac8c8165b041a61b39f883fb8ff"),
 }
 
 # (E_avail, W) projection binning (nd-unfolding/project_cov_nd.py AXIS_EDGES); EW index = 6 * i_Eavail + i_W.

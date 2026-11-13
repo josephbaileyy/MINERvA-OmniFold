@@ -132,9 +132,16 @@ def regularization_max():  # VL151: GiBUU/GENIE E_avail shape, largest high-W de
     return max(abs(v["mean_rel_pct"]) for v in dev()["grid"]["C4_eavail_shape"]["high_W"].values())
 
 
-def shapes_range():  # VL154 A4: worst (E_avail, W) cell for each withheld shape, joint-test estimator
+def e_gibuu_max():  # s5e: the reported estimator (e) at the GiBUU/GENIE E_avail shape, its largest (E_avail, W) residual
+    return receipt("s5e/cand/assess_receipt.json")["points"]["eavail_gibuu"]["ew_max_abs_pct"]
+
+
+def shapes_range():  # VL154 A4: worst SUPPORTED (E_avail, W) cell for each withheld shape, joint-test estimator
+    # (the figure referee read's meaning read, 2026-11-12: ew_max_abs_pct's W2 maximum is EW37, an unsupported cell; the
+    # paper now prints the supported-cell range, recomputed here from the assess receipt and the support rule)
     pts = receipt("s5e/cand/assess_receipt.json")["points"]
-    v = [pts[w]["ew_max_abs_pct"] for w in ("W1", "W2", "W3")]
+    rep = receipt("s5p/stage1/stage1_inspect.json")["mc"]["EW"]["reported"]
+    v = [max(abs(100 * x) for x, ok in zip(pts[w]["per_functional"]["mean_rel"][:42], rep) if ok) for w in ("W1", "W2", "W3")]
     return min(v), max(v)
 
 
@@ -153,7 +160,8 @@ CHECKS = [
      lambda: interim("C1"), "round"),
     ("two-sigma nominal of the earlier band's test (note sec:coverage)", "sec_validation.tex",
      r"lies entirely below its window \(Gaussian ([0-9.]+)\)", lambda: math.erf(2.0 / math.sqrt(2.0)), "round"),
-    ("statistical block median (Q_R, S1)", "paper_body.tex",
+    # the short methods paper (methods-short-20261109) moved this sentence to the Supplement, S6
+    ("statistical block median (Q_R, S1)", "supplemental_body.tex",
      r"with a median statistical uncertainty of \\SI\{([0-9.]+)\}\{\\percent\}", stat_median, "round"),
     ("rescoring against the rebuilt (VL170) band, 2 and 1 sigma (note sec:coverage)", "sec_validation.tex",
      r"removes the tail undercoverage: \$C_2=([0-9.]+)\$ \$\[[0-9.,]+\]\$ and \$C_1=([0-9.]+)\$",
@@ -171,24 +179,51 @@ CHECKS = [
      r"Some joint cells remain up to \\SI\{([0-9.]+)\}\{\\percent\} high", negweight_joint_max, "round"),
     ("treatments on data (VL152)", "sec_5d.tex", r"and at most \\SI\{([0-9.]+)\}\{\\percent\} over the reported functionals",
      data_method_diff, "round"),
-    ("regularization bias at high W (VL151)", "paper_body.tex", r"by up to \\SI\{([0-9.]+)\}\{\\percent\} at high \$W\$",
-     regularization_max, "round"),
-    ("an earlier estimator's 68% coverage under the rate reduction (s5c tier S)", "paper_body.tex",
-     r"with coverage as low as ([0-9.]+) for 68\\% intervals", tilt_coverage68_min, "round"),
-    ("other fixed shapes, most affected cell (VL154)", "paper_body.tex", r"it is \\SIrange\{([0-9.]+)\}\{([0-9.]+)\}\{\\percent\} in the most affected",
+    # the interim round (#1025) A1: section 5.1 leads with the reported estimator (e) at this truth; the lower-capacity
+    # variant of VL151 (the Supplement's figure) is one clause after it
+    # the figure referee read's check A (2026-11-12): the opening was rewritten around the median fraction followed; the
+    # same value is now printed as the cell's residual "reaches" (anchor moved, value and key unchanged)
+    ("the reported estimator at the GiBUU/GENIE shape, high W (s5e)", "paper_body.tex",
+     r"the residual against the changed truth reaches \\SI\{([0-9.]+)\}\{\\percent\}", e_gibuu_max, "round"),
+    ("regularization bias at high W, the lower-capacity variant (VL151)", "paper_body.tex",
+     r"gives the same \\SI\{([0-9.]+)\}\{\\percent\} in that cell", regularization_max, "round"),
+    # The referee recheck of 2026-11-11 (RESPONSE.md s8; the director's ruling): the paper's sentence is cut because the note
+    # carries it at its release revision (acf934d71, and 4219869a2): sec_5d.tex sec:coverage-5d, "coverage as low as 0.060".
+    ("an earlier estimator's 68% coverage under the rate reduction (s5c tier S)", "sec_5d.tex",
+     r"with coverage as low as ([0-9.]+), and 42 of the 153 fail at 95", tilt_coverage68_min, "round"),
+    ("other fixed shapes, most affected cell (VL154)", "paper_body.tex", r"five-observable estimator is \\SIrange\{([0-9.]+)\}\{([0-9.]+)\}\{\\percent\} in the most affected supported",
      shapes_range, "round"),
 ]
-VERBAL = [("about half of those cells (VL154: 20 of 42)", "paper_body.tex", r"within the quoted total uncertainty in about half of those cells",
-           half_of_cells, 0.40, 0.60)]
+# The short methods paper (methods-short-20261109, W-15, the director's decision of 2026-11-09 on IR-sol, #988) dropped
+# the comparison of the residual with an earlier covariance that fails its acceptance criteria, so the "about half of
+# those cells" phrase no longer prints and its verbal check is retired. VL154's 20 of 42 stays in the figure producer's
+# numbers file (figures/methods_m3/fig_m3_deformation.py) as a record. The retired row was:
+# VERBAL = [("about half of those cells (VL154: 20 of 42)", "paper_body.tex", r"within the quoted total uncertainty in about half of those cells",
+#            half_of_cells, 0.40, 0.60)]
+VERBAL = []
 
 
 def half_ulp(printed: str) -> float:
     return 0.5 * 10.0 ** -(len(printed.split(".")[1]) if "." in printed else 0)
 
 
+_FV: dict[str, str] | None = None
+
+
+def fv_values() -> dict[str, str]:
+    """The build-checked values of values_fived16.tex (make_values_fived16.py), key -> printed text."""
+    global _FV
+    if _FV is None:
+        f = HERE / "values_fived16.tex"
+        _FV = dict(re.findall(r"\\@namedef\{fv@([^}]+)\}\{([^{}]*)\}", f.read_text())) if f.exists() else {}
+    return _FV
+
+
 def text(name: str, sources: dict[str, str]) -> str:
-    """The source with LaTeX comments (an unescaped % to the end of the line) removed and whitespace collapsed."""
-    return re.sub(r"\s+", " ", re.sub(r"(?<!\\)%[^\n]*", "", sources[name]))
+    """The source with LaTeX comments (an unescaped % to the end of the line) removed, each \\fvval{key} replaced by its
+    printed value from values_fived16.tex (an unknown key is left as written), and whitespace collapsed."""
+    t = re.sub(r"\s+", " ", re.sub(r"(?<!\\)%[^\n]*", "", sources[name]))
+    return re.sub(r"\\fvval\{([^}]+)\}", lambda m: fv_values().get(m.group(1), m.group(0)), t)
 
 
 def evaluate(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
@@ -214,7 +249,7 @@ def evaluate(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
 
 
 def load() -> dict[str, str]:
-    return {n: (HERE / n).read_text() for n in ("paper_body.tex", "values.tex", "sec_validation.tex", "sec_5d.tex")}
+    return {n: (HERE / n).read_text() for n in ("paper_body.tex", "values.tex", "sec_validation.tex", "sec_5d.tex", "supplemental_body.tex")}
 
 
 def gzip_self_test() -> bool:
@@ -275,12 +310,13 @@ def self_test() -> int:
                     continue
                 caught += 1
                 print(f"  caught      {label}: {p} -> {bad}")
-    trial = dict(base)
-    trial["paper_body.tex"] = text("paper_body.tex", base).replace("about half of those cells", "about a third of those cells")
-    if dict((r[0], r[1]) for r in evaluate(trial))[VERBAL[0][0]]:
-        print("  NOT CAUGHT  verbal phrase removal"); ok = False
-    else:
-        caught += 1; print("  caught      verbal phrase changed")
+    for label, src, pat, fn, lo, hi in VERBAL:   # none since W-15; the loop is kept for a future verbal row
+        trial = dict(base)
+        trial[src] = text(src, base).replace(pat.replace("\\", ""), "")
+        if dict((r[0], r[1]) for r in evaluate(trial))[label]:
+            print(f"  NOT CAUGHT  verbal phrase removal: {label}"); ok = False
+        else:
+            caught += 1; print(f"  caught      verbal phrase changed: {label}")
     print(f"SELF-TEST :: {'PASS' if ok else 'FAIL'} ({caught} perturbations rejected)")
     return 0 if ok else 1
 

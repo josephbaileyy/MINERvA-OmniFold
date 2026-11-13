@@ -1,0 +1,44 @@
+# PRD referee read: IBU framing diff (methods-short, uncommitted on 6fb65ec2f)
+
+Values checked in values_fived16.tex / values.tex: c2c1-dibu 1.03, c2c1-der 2.27 = \chiPaper 2.27, ratioTot 1.010, c2c1-max 138.5, nrep 300. Table 4 rows 1-2 agree with §4.1-4.2.
+
+## 1. IBU framing. Verdict: fair, with no ranking or attribution stated; two requested changes.
+(a) "identical inputs" (abstract, §1, §4.1, §7) is ambiguous. A reader can take it as "identical to the publication's inputs", which §4.2's untested-input-differences caveat and §5.4 ("They show neither whether those inputs equal the publication's...") contradict. §5.4 already says "this analysis's inputs". Use that.
+(b) §4.1 joins "published result is itself a binned unfolding" to "OmniFold and binned IBU differ" with "and", right before "origin ... not identified". Read together, that reads as an implied attribution, and §4.1 does not carry §4.2's input caveat. The published-is-IBU fact also appears in §1, §4.2, §7 and Table 4, so §4.1 can drop it.
+
+- §1 old: "A comparison using identical inputs establishes a difference between OmniFold and binned IBU beyond paired replica noise, and its origin remains unidentified."
+  new: "On this analysis's inputs, a comparison detects a difference between OmniFold and binned IBU beyond paired replica noise, and its origin remains unidentified."
+  ("detects" matches Table 4's "Difference detected" and §4.2's definition of "differs".)
+- §4.1 old: "The published result is itself a binned unfolding, and on identical inputs OmniFold and binned IBU differ beyond paired replica noise (section~\ref{sec:paired2d})."
+  new: "On this analysis's inputs, OmniFold and binned IBU differ beyond paired replica noise (section~\ref{sec:paired2d})."
+- §7 old: "On identical inputs, OmniFold and binned IBU, the publication's method, differ beyond paired replica noise,"
+  new: "On this analysis's inputs, OmniFold and binned IBU, the publication's method, differ beyond paired replica noise,"
+
+## 2. Abstract pair. Verdict: not clear in one pass. Requested change, same word count (15 -> 15).
+"it" grammatically refers to "A descriptive two-dimensional benchmark", and a benchmark does not differ from IBU. "identical" has the ambiguity in 1(a).
+- old: "On identical inputs, it differs from binned iterative unfolding, the publication's method, beyond paired noise."
+  new: "On our inputs, OmniFold differs from binned iterative unfolding, the publication's method, beyond paired noise."
+- Optional, net zero words: cutting "muon-kinematic cross-section" leaves "the published integral" without saying what was published.
+  old: "reproduces the published integral within about 1\% but shows a shape difference."
+  new: "reproduces the published muon-kinematic integral within about 1\% but differs in shape."
+  (Cost: "differs" then appears in two consecutive sentences. Take it only if the repetition is acceptable.)
+
+## 3. Four contrast sentences. Verdict: the regressor and caption sentences read well and keep their information. The 135 MeV and lateral sentences each lose one fact.
+- 135 MeV: "below the charged-pion mass" gives only an ordering. It loses the point that the constant replaces the mass the kinetic-energy convention would use.
+  old: "which subtracts a defined constant of \SI{135}{MeV}, below the charged-pion mass, in the charged-pion term."
+  new: "which subtracts a defined constant of \SI{135}{MeV} in place of the charged-pion mass in the charged-pion term."
+- Lateral: the dropped "not by reweighting" carries weight, because §5.4 excludes the lateral block from the weight-only IBU comparison.
+  old: "The lateral uncertainties are implemented through shifts in the reconstructed muon kinematics and beam angle (\ssec{S9}{supp:output})."
+  new: "The lateral uncertainties shift the reconstructed muon kinematics and beam angle, without reweighting events (\ssec{S9}{supp:output})."
+- Regressor ("...which therefore estimates the unweighted mean weight at fixed truth"): keep. Caption ("Each point represents a distinct quantity, from the same two perturbations of the data."): keep.
+
+## 4. Redundancy and consistency in §4. Verdict: one redundant sentence in §4.2, with a referent risk. Requested change.
+§4.2 states the paired difference twice: the T sentence already reports it, and "differs" is defined. "The two implementations also differ beyond paired replica noise" then repeats it, with "also" suggesting a new fact. The next sentence, "The origin of the difference", comes right after the two χ² values, so it can be read as the origin of the 1.03-versus-2.27 gap. That reading is an implied ranking.
+- old: "A binned IBU of this analysis's inputs at ten iterations differs from the two-dimensional result: $T=..."
+  new: "A binned IBU of this analysis's inputs at ten iterations differs from the two-dimensional result beyond paired replica noise: $T=..."
+- old: "The two implementations also differ beyond paired replica noise. The origin of the difference has not been identified."
+  new: "The origin of the paired-test difference has not been identified."
+- Minor, optional: §4.2 spells out and redefines IBU after §1 has defined it.
+  old: "used binned D'Agostini iterative Bayesian unfolding (IBU)~\cite{DAgostini:1994fjx} with ten iterations"
+  new: "used binned IBU~\cite{DAgostini:1994fjx} with ten iterations"
+Nothing else in §4.1-4.3 conflicts. The input caveat in §4.2 agrees with §5.4. The quadrant-sum and run-period text is untouched and consistent.

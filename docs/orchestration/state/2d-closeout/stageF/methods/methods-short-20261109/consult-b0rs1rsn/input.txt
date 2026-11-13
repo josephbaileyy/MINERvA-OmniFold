@@ -1,0 +1,373 @@
+You are a referee and editor for JINST/PRD, reviewing proposed rewrites of specific passages in a methods paper (an implementation-specific diagnostic study of OmniFold unbinned unfolding on MINERvA open data) and its supplement. Three drafts follow, each with the current text, the proposed text, and a claim table tracing each clause to its source record. Treat the claim tables and the quoted record facts as given; you cannot see the records themselves.
+
+For each proposed passage (paper B0, paper RS1, supplement S4.4 RS1, and each RSN passage: paper §3.2, §5.2 + Table 3 caption, §3.1, §7.1 item 3, and the supplement paragraphs), give:
+1. Verdict: accept / accept with edits / revise.
+2. Accuracy and scope: does any sentence say more or less than its claim-table source supports? Flag any widened or narrowed claim, any causal link added or lost, any ambiguous referent, any number paired with the wrong population.
+3. Clarity: would a physicist outside the collaboration follow it in one pass? Name the sentence and the problem.
+4. Concrete suggested wording for every change you recommend (quote old -> new). Keep every number and every stated limitation; do not add claims.
+5. Consistency between the paper and supplement versions, and between these passages and each other (terms, symbols, the same claim worded the same way).
+Finish with the three most important changes overall. Be concise and specific.
+
+===== DRAFT 1: paper B0 and RS1 (director-helper-3) =====
+# B0 and RS1: a controlled rewrite (director-helper-3, 2026-11-12). NOT COMMITTED. For Joseph's review (D3).
+
+**Authority:** DECISION-20261112-joseph-consult-d1-d7.md D3 unlocks both passages for a controlled rewrite. The
+director's brief:
+- B0 separates seed reproducibility, the bootstrap perturbation and the meaning of the maximum shift;
+- RS1 separates the mechanism shown on one pseudo-experiment from the refinement-stage location, which was not tested.
+
+**The approved sources:**
+- B0: DECISION-20261106-joseph-b0-reconciliation-sentence.md, whose text was approved "as written" (sha256 a1e74c5a…),
+  and its ledger B0-1 to B0-5 (b0-reconciliation-20261105/DRAFT.md);
+- RS1: OUTCOME-20261108-rs1-rounding-mechanism.md, the readings K1 and K5 and its NOT-claimed paragraph.
+
+**In the same commit, after Joseph approves:** check_restyle.py's two protected spans and check_round.py's three
+LITERAL_KEYS rows for B0 are removed, citing D3. The rewrite prints those numbers through their keys
+(s5e-round-max, rnd16-median, rnd16-min, rnd16-max), so the literal guard is no longer needed. The seven ens1-* keys
+that #981 reads (ENS1_KEYS) are in §6.1's ensemble paragraph, outside both passages, and are untouched.
+
+## B0, current text (paper §6.1, with the sentence before it)
+
+> The five-observable covariance has its own training-seed block, separate from the two-dimensional covariance's block
+> of \fvval{cov2d-nseed-word} seed settings. The training-seed block of section~\ref{sec:cov16} is zero because, in
+> the unfolds we ran, the result is bitwise independent of the training seed and of input row order; this is distinct
+> from the sensitivity to rounding-level input changes quoted above. That sensitivity enters the reported statistical
+> block by construction: each of its 50 bootstrap replicas refits the whole unfolding with its own rounding-level
+> perturbation of the inputs. On the finer joint cells, the rounding spread is about \SI{37}{\percent} of the
+> statistical variance and below a tenth of any total uncertainty (ref.~\cite{AnalysisNote2026}); on the 16 reported
+> cells, over 20 rounding-level perturbations of the data, it is a median \SI{0.133}{\percent} of the cross section
+> (\SIrange{0.055}{0.252}{\percent}); the quoted 2.6 statistical standard deviations is the largest shift, over 153
+> quantities (the joint cells, the $(\Eavail,W)$ cells and two totals) under two such perturbations of the data, not
+> the typical one.
+
+## B0, proposed: three paragraphs, one job each
+
+> **(a) Seed reproducibility.** The five-observable covariance's training-seed block (section~\ref{sec:cov16}) is
+> zero because, in the unfolds we ran, the result is bitwise independent of the training seed and of input row order.
+> This
+> reproducibility is distinct from the sensitivity to rounding-level input changes quoted above. The two-dimensional
+> covariance has its own training-seed block, from \fvval{cov2d-nseed-word} seed settings.
+>
+> **(b) The perturbation in the bootstrap.** The rounding sensitivity enters the reported statistical block through
+> the block's construction. Each of its 50 bootstrap replicas refits the whole unfolding with its own rounding-level
+> perturbation of the inputs. On the finer joint cells, the rounding spread is about \SI{37}{\percent} of the
+> statistical variance and, as a standard deviation, below a tenth of any total uncertainty
+> (ref.~\cite{AnalysisNote2026}). On the 16 reported cells, over 20 rounding-level perturbations of the data, the
+> spread is a median \SI{\fvval{rnd16-median}}{\percent} of the cross section
+> (\SIrange{\fvval{rnd16-min}}{\fvval{rnd16-max}}{\percent}).
+>
+> **(c) The maximum shift.** The \fvval{s5e-round-max} statistical standard deviations quoted above is the largest
+> shift, not the typical one. It is the largest shift over 153 quantities (the joint cells, the $(\Eavail,W)$ cells
+> and two totals) under two rounding-level perturbations of the data.
+
+## RS1, current text
+
+> A study of the mechanism specified in advance, on one simulated pseudo-experiment, examined six candidate causes,
+> five of them testable, by the ratio of the spread under a modified perturbation to that under the unmodified one. On
+> this pseudo-experiment, the perturbation reaches the estimator by breaking ties among equal float32 values, which
+> changes LightGBM's histogram bins; a perturbation that keeps the ties removes the spread, leaving a ratio of
+> $6.2\times10^{-7}$ and $1.07\times10^{-6}$ on the 153 quantities and the 16 cells. Equal float32 values are what
+> float32 storage of these kinematics produces. Perturbing only the input of the refinement stage reproduces the full
+> spread, so the perturbation can enter there, though whether the ties act there was not tested; finer binning,
+> float64 inputs and a permutation of the input rows do not reduce the spread (table~\ref{tab:outcomes};
+> \ssecc{S4}{supp:estimators}).
+
+## RS1, proposed: two paragraphs
+
+> **(a) The mechanism, on one pseudo-experiment.** A study of the mechanism, specified in advance, used one simulated
+> pseudo-experiment. It examined six candidate causes, five of them testable, by the ratio of the spread under a
+> modified perturbation to that under the unmodified one. On this pseudo-experiment, the perturbation reaches the
+> estimator by breaking ties among equal float32 values, which changes LightGBM's histogram bins. On this
+> pseudo-experiment, a perturbation that keeps the ties removes the spread: the ratio is $6.2\times10^{-7}$ on the 153 quantities and $1.07\times10^{-6}$ on
+> the 16 cells. Equal float32 values are what float32 storage of these kinematics produces. Finer binning, float64
+> inputs and a permutation of the input rows do not reduce the spread (table~\ref{tab:outcomes} and
+> \ssecc{S4}{supp:estimators}).
+>
+> **(b) Where the perturbation enters.** Perturbing only the input of the refinement stage reproduces the full spread,
+> so the perturbation can enter there (\ssecc{S4}{supp:estimators}). The tie test and the refinement test were
+> separate, and no declared test joined them. Whether the ties act at the refinement stage was therefore not tested.
+
+## Claim table: each approved clause, where it goes, and its source
+
+| # | approved clause (current text) | proposed | kept as | source |
+|---|---|---|---|---|
+| B0-1 | the training-seed block … is zero because, in the unfolds we ran, the result is bitwise independent of the training seed and of input row order | (a) sentences 1–2 | the same claim. "In the unfolds we ran" scopes it, and "because" becomes two sentences; the causal link is implied by adjacency | B0 ledger B0-1: KI-80; s5e A3 seed_and_permutation_max_over_sigma; sec_fived16.tex :96 |
+| B0-1b | this is distinct from the sensitivity to rounding-level input changes quoted above | (a) sentence 3 | verbatim in meaning ("This reproducibility is distinct from …") | the decision's ruling 1 |
+| — | the two-dimensional block's N seed settings (the non-protected lead sentence) | (a) sentence 4 | moved after the B0 claim, which now names the five-observable block itself, so "the training-seed block" has its referent | §3.2 |
+| B0-2 | that sensitivity enters the reported statistical block by construction: each of its 50 bootstrap replicas refits the whole unfolding with its own rounding-level perturbation | (b) sentences 1–2 | the same. "By construction" becomes "through the block's construction" | B0-2: S1-DECLARATION.md :66 |
+| B0-3 | on the finer joint cells, the rounding spread is about 37 % of the statistical variance | (b) sentence 3 | the same: variance, joint cells | B0-3: VL155; KI-80 "≈ 37% of its variance" |
+| B0-3b | … and below a tenth of any total uncertainty | (b) sentence 4 | now states what is compared: the spread as a standard deviation (not the variance share) against the total uncertainty, on the joint cells | B0-3: KI-80 "Relative to any total uncertainty (≥ 6%) it is below 0.1", where "it" is the rounding spread, median 0.23 % per J cell, an SD; sec_5d.tex :91 |
+| R0 | on the 16 reported cells, over 20 perturbations of the data, a median 0.133 % of the cross section (0.055–0.252 %) | (b) sentence 5 | the same; the typed numbers become their keys | rs1_r0.json sigma_J_over_f (rnd16-*), the T1-1 LITERAL_KEYS rows |
+| B0-4 | the quoted 2.6 statistical standard deviations is the largest shift, over 153 quantities (…) under two such perturbations of the data, not the typical one | (c) | the same: largest, not typical; two perturbations; 153 quantities and their composition. The 20-perturbation summary against the two-perturbation maximum stays separate, in (b) against (c) | B0-4: s5e A3 data_rounding_probe_over_data_sigma, max 2.5838 at J145, 153 functionals; LITERAL_KEYS s5e-round-max |
+| RS1-1 | a study specified in advance, on one simulated pseudo-experiment, examined six candidates, five testable, by the spread ratio | RS1 (a) sentences 1–2 | the same | the RS1 outcome: the readings table; K6 not testable |
+| RS1-2 | on this pseudo-experiment, the perturbation reaches the estimator by breaking ties …, which changes LightGBM's histogram bins; a perturbation that keeps the ties removes the spread | RS1 (a) sentences 3–4 | verbatim, the licensed K1 sentence split at its semicolon. "On this pseudo-experiment" is kept | K1's licence, quoted verbatim in the outcome |
+| RS1-3 | ratios 6.2e-7 and 1.07e-6 on the 153 quantities and the 16 cells | RS1 (a) sentence 4 | the same numbers, each now paired with its set | statistics.ratio.V |
+| RS1-4 | equal float32 values are what float32 storage of these kinematics produces | RS1 (a) sentence 5 | verbatim | K1's "may not say … a defect" |
+| RS1-5 | finer binning, float64 inputs and a permutation of the input rows do not reduce the spread | RS1 (a) sentence 6 | verbatim | K2, K3, K4 not supported |
+| RS1-6 | perturbing only the input of the refinement stage reproduces the full spread, so the perturbation can enter there | RS1 (b) sentence 1 | verbatim: K5 as "a sufficient entry", and neither stage is "the" mechanism | K5's licence |
+| RS1-7 | though whether the ties act there was not tested | RS1 (b) sentences 2–3 | kept, with its reason from the record: the two tests were separate | the outcome's "Not a declared reading": K1 and K5 are separate tests |
+
+**Nothing added and nothing dropped.**
+- No new number is introduced.
+- No caveat is introduced except RS1 (b)'s reason, which the record states.
+- The variance-against-SD distinction is made explicit at (b) sentence 4, as the director asked.
+- (c) cites no new population.
+
+**The remaining connective** is RS1 (b)'s "therefore", which carries the record's reason. It could become
+"…were separate tests, so whether…": that is a ", so", which the pass avoids. Tell me if you prefer it.
+
+## The meaning read (an independent general-purpose subagent, read-only; 2026-11-12)
+
+The first pass found 11 OK, 3 DEFECT and 5 NOTE against the approved sources. All three defects are fixed above:
+- **B0 (a):** "is zero because …" stays one sentence. The approved text explains why the block is zero, and the split
+  had lost the causal link.
+- **RS1 (a) sentence 2:** "each by the ratio" overstated the method. K3 was read by bitwise equality and K4 by another
+  measure, so the approved wording is restored.
+- **RS1 (a) sentence 4:** "On this pseudo-experiment" is repeated on the tie-keeping sentence. The split had left it
+  reading as general, against D3's one-pseudo-experiment requirement.
+
+Notes taken:
+- the reference covers the 37 % again;
+- (c) reads "the largest shift over 153 quantities … under two … perturbations";
+- RS1 (b) carries its S4 pointer;
+- RS1 (b) gives the record's full reason ("no declared test joined them").
+
+**For Joseph, an older gap the read found.** The text approved "as written" on 2026-11-06 included "(this share was not
+measured on the 16 reported cells)" after the 37 % clause. That clause is in neither the current text nor this draft.
+Commit 33cdc4e59 (round 4, at the director's instruction) replaced it with the sixteen-cell figure, the "median 0.133 %"
+clause, calling it false against #645. Since then the sixteen-cell share has also been measured (lrows-g
+rounding_decomp.json, printed in §3.2 as a median 26 %). This rewrite keeps the sixteen-cell figure and does not
+restore the clause.
+
+===== DRAFT 2: supplement S4.4 RS1 (journal-editor) =====
+# S4.4 "The rounding mechanism": controlled rewrite (D3), draft for Joseph's review
+
+journal-editor, 2026-11-12. This is not committed. The Supplement worktree is unchanged.
+
+Sources:
+- the approved text at #977 e54994fa7, supplemental_body.tex:401, which is round 5's paper_body.tex:232 at bc8673186;
+- the record, docs/orchestration/OUTCOME-20261108-rs1-rounding-mechanism.md on draft/methods-short-20261109
+  (rs1_read.json sha256 9938e168…);
+- the licence, DECISION-20261112-joseph-consult-d1-d7.md, item D3.
+
+## Current text (approved, protected until D3)
+
+> \paragraph{The rounding mechanism.} In the study of the rounding mechanism, jittering only the input of the refinement
+> stage carries the full spread (ratios 0.959 and 0.890), so the refinement is a sufficient entry; jittering only the
+> OmniFold loop carries it on the 153 quantities (0.947) and is inconclusive on the 16 cells, and whether the ties act
+> at the refinement was not tested. Finer binning does not reduce the spread (0.950 and 0.945), the float32 and float64
+> inputs give bitwise-equal results, and permuting the input rows moves the result by about $10^{-10}$ of the spread.
+> The spread grows over the five iterations, to 1.35 times its size after the first.
+
+## Proposed text (revision 3: revision 2 aligned with helper-3's paper draft, b0rs1/DRAFT.md)
+
+> \paragraph{The rounding mechanism.} The study of the rounding mechanism used one simulated pseudo-experiment, and its
+> results describe that pseudo-experiment only. Its declared readings supported two candidate causes. First, on this
+> pseudo-experiment, the perturbation reaches the estimator by breaking ties among equal float32 values, which changes
+> LightGBM's histogram bins: a perturbation that keeps the ties leaves a spread ratio of about $10^{-6}$. Second,
+> perturbing only the input of the refinement stage reproduces the full spread, with median spread ratios of 0.959 on
+> the 153 quantities and 0.890 on the 16 cells, so the perturbation can enter there. Perturbing only the OmniFold loop
+> reproduces it on the 153 quantities (0.947) and is inconclusive on the 16 cells, so neither stage alone is
+> established as the mechanism. The tie test and the refinement test were separate tests. Whether the ties act at the
+> refinement stage was therefore not tested. Finer binning does not reduce the spread (0.950 and 0.945), the float32 and
+> float64 inputs give bitwise-equal results, and permuting the input rows moves the result by about $10^{-10}$ of the
+> spread. The spread grows over the five iterations, to 1.35 times its size after the first.
+
+Revision 3 takes helper-3's paper wording exactly where the two texts say the same thing:
+- "one simulated pseudo-experiment"
+- "On this pseudo-experiment, the perturbation reaches the estimator by breaking ties among equal float32 values, which
+  changes LightGBM's histogram bins"
+- "Perturbing only the input of the refinement stage reproduces the full spread, … so the perturbation can enter there"
+- "The tie test and the refinement test were separate tests. Whether the ties act at the refinement stage was therefore
+  not tested."
+
+Only the Supplement keeps "neither stage alone is established as the mechanism". It is the record's K5 licence, and
+helper-3 agrees; the paper never claims a single stage. The Supplement also keeps its extra numbers: 10^-6, the ratios,
+B1023, K3, K4 and the per-iteration growth.
+
+Revision 2 makes two changes, following the director's checks:
+- **"supported":** the record's term is the declared reading "SUPPORTED" (its title: "K1 and K5 are SUPPORTED";
+  CITABLE FOR: "K1 and K5 are SUPPORTED … in the declaration's licensed wording"). The sentence now names it as the
+  study's declared reading ("Its declared readings supported two candidate causes"), not as a finding stated in
+  general terms.
+- **"sufficient entry point" dropped:** the sentence leads with the observation the record licenses (K5: "Jittering
+  only the refinement's input carries the full spread"), as "perturbing only the input of the refinement stage
+  reproduces the full spread".
+
+What changes:
+1. The one-pseudo-experiment limit is now stated. The approved text did not state it here.
+2. The tie mechanism (K1) is stated separately from the refinement-stage entry (K5).
+3. "whether the ties act at the refinement was not tested" becomes its own sentence, with the same meaning.
+4. The semicolon chain is split.
+5. Every number is unchanged: 0.959, 0.890, 0.947, 0.950, 0.945, 10^-10, 1.35. 10^-6 is added from the record.
+
+## Claim-by-claim table against the record
+
+| # | Claim in the proposed text | Record (OUTCOME-20261108-rs1-rounding-mechanism.md) | Status |
+|---|---|---|---|
+| 1 | The study used one pseudo-experiment; its results describe that pseudo-experiment only | CITABLE FOR: "RS1's step-1 outcome on this pseudo-experiment"; NOT CITABLE FOR: "Any statement about the real data"; K1 licence: "on this pseudo-experiment" | kept (D3: "the limitation to one pseudo-experiment") |
+| 2 | Its declared readings supported two candidate causes, in separate tests | `supported` = [K1, K5]; "K1 and K5 are separate tests" | as recorded |
+| 3 | The perturbation reaches the estimator by breaking ties among equal float32 values, which changes LightGBM's histogram bins | K1 licence, verbatim in substance: "the perturbation reaches the estimator by breaking ties among equal float32 values, which changes LightGBM's histogram bins" | licensed wording |
+| 4 | A perturbation that keeps the ties leaves a spread ratio of about 10^-6 | K1: "a perturbation that keeps the ties removes the spread. Measured, the tie-preserving jitter leaves a spread ratio of about 10⁻⁶ on both sets"; table V: 6.2×10⁻⁷ and 1.07×10⁻⁶ | as recorded |
+| 5 | (dropped in revision 2: the label "sufficient entry point"; the observation in row 6 states it) | K5 licence: "The refinement is a **sufficient entry**" | label not used |
+| 6 | Perturbing only the input of the refinement stage reproduces the full spread: median spread ratios 0.959 (153 quantities) and 0.890 (16 cells) | K5: "Jittering only the refinement's input carries the full spread"; table S-ref: 0.959, 0.890 (M is an arm's median spread ratio to A0) | as recorded |
+| 7 | Perturbing only the OmniFold loop reproduces it on the 153 quantities (0.947) and is inconclusive on the 16 cells | "S-omni … reads C on the 153 functionals (0.947 …). On the 16 cells it reads INCONCLUSIVE" | as recorded |
+| 8 | So neither stage alone is established as the mechanism | "'either stage alone is a sufficient entry' … is **not** established. Only the refinement's sufficiency is. Neither stage is 'the' mechanism." | narrower than the record: "not established as" in place of the record's "is not" |
+| 9 | Whether the ties act at the refinement stage was not tested | "Not a declared reading, and not claimed here: that K1's ties act *at the refinement*"; NOT CITABLE FOR "K1 and K5 joined into one mechanism" | kept (D3: "the ties' action within refinement was not tested") |
+| 10 | Finer binning does not reduce the spread (0.950 and 0.945) | K2: "Finer binning (B1023) does not reduce the spread"; table B1023: 0.950, 0.945 | unchanged |
+| 11 | The float32 and float64 inputs give bitwise-equal results | K3: "bitwise equal" | unchanged |
+| 12 | Permuting the input rows moves the result by about 10^-10 of the spread | K4: "Permuting the rows moves the result by about 10⁻¹⁰ of the jitter spread" | unchanged |
+| 13 | The spread grows over the five iterations, to 1.35 times its size after the first | readouts.per_iteration_spread_over_iteration_1: 1.00, 1.10, 1.22, 1.25, 1.35 | unchanged |
+
+Not claimed, as the record requires:
+- ties as a defect of the inputs;
+- any remedy;
+- anything about the data's spread;
+- "either stage suffices".
+
+D3's other two must-keeps, the variance against standard-deviation distinctions and the 20-perturbation summary against
+the two-perturbation maximum, belong to B0 and the paper's RS1 text (helper-3's part). This S4.4 paragraph contains
+neither.
+
+## For consistency with the paper
+
+helper-3 is redrafting the paper's RS1 paragraph. The two should use the same terms: "perturbing only the input of
+the refinement stage reproduces the full spread", "breaking ties among equal float32 values" and "was not tested".
+I'll align with helper-3's draft once it exists.
+
+## When approved
+
+The edit goes in with a step_check, which reports the RS1 protected-span change as expected under D3. It also needs
+check_restyle's protected-span list updated, because the old paragraph is in it. That is helper-3's tool: propose the
+new text as the protected span, or drop the protection, as Joseph rules.
+
+===== DRAFT 3: RSN readings, paper and supplement text (director-helper-3) =====
+# RSN readings: draft paper and Supplement text, v2 (director-helper-3, 2026-11-12). NOT COMMITTED.
+
+**Sources:**
+- the readout `rsn_readout.json` (6291f48d) and `regrade.json` (cb5f5d17), on `origin/receipts/rsn-post-20261112`;
+- RSN-DECLARATION rev 3 §2, §3 and §9 on main.
+
+**Status:** v2 applies the meaning and PRD read (READ-v1.md; verdict MINOR, every number and class checked against the
+two files). The wording waits for Joseph under RSN-BINDING-1 ruling 5. Nothing is applied to paper_body.tex or
+supplemental_body.tex.
+
+**Keys:**
+- new keys `rsn-*` come from a new make_values `rsn_values()`, pinned to the two files once the receipt PR merges;
+- the existing `cmodel-trace-gibuu` gives 0.890, and `trig-z` gives the 2σ.
+
+## Keys
+
+| key | value | source |
+|---|---|---|
+| rsn-g6-trace | 1.41 | arms/G6/P4/trace_ratio |
+| rsn-g6-share | 0.923 | arms/G6/P4/gibuu_trace_share (nominal 0.890 = existing cmodel-trace-gibuu, asserted equal) |
+| rsn-g6-qmed, -qlo, -qhi | 1.12, 0.54, 1.77 | arms/G6/P4/q |
+| rsn-g6-sig-med, -lo, -hi | 1.002, 0.864, 1.338 | arms/G6/P5 |
+| rsn-sm-radius | two | arms/SM/radius = 2 |
+| rsn-sm-trace | 0.112 | arms/SM/P4/trace_ratio |
+| rsn-sm-share | 0.664 | arms/SM/P4/gibuu_trace_share |
+| rsn-sm-qmed, -qlo, -qhi | 0.50, 0.098, 2.23 | arms/SM/P4/q |
+| rsn-sm-sig-med, -lo, -hi | 0.934, 0.595, 1.028 | arms/SM/P5 |
+| rsn-sm-nuwro-p | 0.0049 | regrade arms/SM/records[A7_nuwro]/grade/p |
+| rsn-wr-floor-max | 2.9 | arms/WR/P6 max \|δ\|/φ |
+| rsn-wr-sig-max | 0.09 | arms/WR/P6 max \|δ\|/σ |
+
+## Paper §3.2, after "…and the steps of the ratio's statistical gate (\ssec{S5}{supp:cov16})."
+
+> The size of $C_{\mathrm{model}}$ depends on how the generator ratios are built. Building GiBUU's ratio only on the
+> phase space every generator covers, $\pPar<\SI{6}{GeV/c}$, removes that sample's energy truncation and the cut in
+> $\pPar$ from its shift. The resulting matrix has [1.41] times the trace of $C_{\mathrm{model}}$, and GiBUU's share
+> of the trace rises from \fvval{cmodel-trace-gibuu} to [0.923]. Replacing each generator's ratio by its
+> prior-weighted average over the fine cells within [two] bins on every axis gives a matrix with [0.112] of the trace
+> of $C_{\mathrm{model}}$. These are sensitivities of the stated construction, not calibrated uncertainties, and
+> neither enters a reported covariance (\ssec{S5}{supp:cov16}).
+
+## Paper §5.2, a new paragraph after the held-out-tune paragraph (the LISTED_CLAIMS paragraph is unchanged)
+
+> The flagged truths above are those of the reported $C_{\mathrm{model}}$. If $C_{\mathrm{model}}$ is built with
+> GiBUU's ratio on the common phase space of section~\ref{sec:cov16}, the flagged truths are the same. This
+> construction cannot change the grades of the two GiBUU truths, which omit GiBUU's component. If it is built from
+> smoothed ratios, the NuWro hybrid truth is also flagged, by its $p$ alone ($p=[0.0049]$, no cell beyond
+> $\fvval{trig-z}\sigma$). Under both constructions, the held-out tunes still meet both criteria
+> (\ssec{S5}{supp:cov16}).
+
+**Table 3's caption, one added sentence:**
+
+> If $C_{\mathrm{model}}$ is built from smoothed generator ratios, the NuWro hybrid truth is also flagged, by its $p$
+> (\ssec{S5}{supp:cov16}).
+
+## Paper §3.1, after "…carry \SIrange{\fvval{ess-nrp-min}}{\fvval{ess-nrp-max}}{\percent} of a cell's final weight (\ssecc{S4}{supp:estimators})."
+
+> Refitting the regressor with each event's weight at that iteration, its simulation weight times the current
+> reweighting, moves the sixteen data cells by at most [0.09] of their reported uncertainty. In noise-free, signal-only
+> closures on the full simulation at the GiBUU hybrid truth and the $q_3$ tilt, each closure's flag is unchanged and its
+> $\chi^2$ is within a quarter of the equal-weight value (\ssec{S4}{supp:estimators}). These closures do not test
+> whether the equal-weight regression causes the fake-data flags of section~\ref{sec:fd16}, which come from half-sample
+> pseudo-data with background and noise.
+
+## Paper §7.1, item 3 (replaces "Its effect on the result was not tested.", with its absence-ok comment updated)
+
+> \item The step-1 weight of truth events without a reconstructed partner comes from a regression fitted with equal
+> event weights (section~\ref{sec:unfolding}). A regression weighted with each event's weight at that iteration was
+> tested on the data and in noise-free, signal-only closures, but its effect on the fake-data flags was not tested.
+
+**For the director:** that last clause becomes false if T3's MW reading lands before submission. Proposed: a pending
+variant keyed to T3 MW, or a recorded dependency. Which do you want?
+
+## Supplement S5 (a new paragraph; journal-editor applies it)
+
+> \paragraph{Sensitivity of $C_{\mathrm{model}}$ to its construction.} The fake-data records were regraded under two
+> alternative constructions of the generator ratios, against readings fixed before the run.
+>
+> - **In the first,** GiBUU's ratio is built only on the phase space every generator covers, $\pPar<\SI{6}{GeV/c}$.
+>   This removes from GiBUU's shift its energy truncation and the momentum cut at \SI{10}{GeV/c}. It leaves the
+>   carbon-target difference and the gate's steps in place. The resulting matrix has [1.41] times the trace of
+>   $C_{\mathrm{model}}$, and GiBUU's share of it is [0.923] against \fvval{cmodel-trace-gibuu}. The σ of the model term
+>   in each of the sixteen cells changes by a median factor [1.12] ([0.54]–[1.77]). The total σ built with it is a
+>   median [1.002] ([0.864]–[1.338]) times the reported σ.
+> - **In the second,** every generator's ratio in each region cell is replaced by its prior-weighted average over the
+>   region cells within [two] fine bins on every axis. The trace falls to [0.112] of the reported one, and GiBUU's share
+>   to [0.664]. The model σ ratio has a median [0.50] ([0.098]–[2.23]), and the total σ built with it is a median
+>   [0.934] ([0.595]–[1.028]) times the reported σ.
+>
+> Regraded under the first, the fake-data flags are unchanged. The two GiBUU truths are graded without GiBUU's shift,
+> so this construction cannot change their grades, but every other record could have moved. Under the second, the
+> NuWro hybrid truth is also flagged, by $p=[0.0049]$, with no cell beyond $\fvval{trig-z}\sigma$. Under both, the
+> held-out tunes meet both criteria. These are sensitivities of the stated construction, not calibrated uncertainties,
+> and neither enters a reported covariance.
+
+## Supplement S4 (a new paragraph; journal-editor applies it)
+
+> \paragraph{The misses regressor, weighted.} Refitted with each event's weight at that iteration, its simulation weight
+> times the current reweighting, the regressor moves the sixteen data cells by at most [0.09] of the reported σ. The
+> largest move is [2.9] times the rounding floor, the per-cell spread of the data result under rounding-level
+> perturbations of its inputs. The change is therefore above twice that floor and below half the reported σ.
+>
+> In the noise-free, signal-only closures on the full simulation, the weighted regressor does not break the prior's
+> closure, and at the NuWro shape its RMS bias is comparable to the equal-weight one. At the GiBUU hybrid truth and the $q_3$ tilt, the weighted and equal-weight regressors give the same
+> noise-free flags. Their $\chi^2$ values agree within a quarter of the equal-weight value. With the same flags, this
+> makes the weighting immaterial at both truths by the reading fixed in advance.
+>
+> The test does not test whether the equal-weight regression causes the fake-data flags, which were made in
+> half-sample pseudo-data with background and noise.
+>
+> A transfer test in simulation holds out a random fifth of the matched events at each iteration. It compares the
+> prediction of a regressor fitted on the other four fifths with their known step-1 weights. In the unfolding of the
+> data and at the GiBUU hybrid truth, the transfer is within half the reported σ in every cell. At the $q_3$ tilt it is
+> within twice the rounding floor. These bounds include the probe's own estimation noise, and no separate noise
+> reference was made.
+>
+> Neither test shows that missed events resemble matched ones in what the five observables omit.
+
+## RESPONSE.md rows
+
+- 3.1 and 3.2 close with G6 and SM.
+- 1.2 and F1.1 close with WR, as scoped.
+- F1.2(ii) closes with TR.
+- F1.2(i) is RDX, still pending, and the paper does not wait for it.
+
+## Referee risk, from the read
+
+Smoothing at radius 2 shrinks GiBUU's departure in the sixteen cells (prep.json, for example R02 from −0.393 to
+−0.068). So no sentence may credit SM's drop in trace to removing the gate's steps alone. None does.

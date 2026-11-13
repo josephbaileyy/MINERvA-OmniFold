@@ -1,0 +1,104 @@
+**Paper B0 — accept with edits.** The populations and numbers are preserved, including the distinction between 20 perturbations for the sixteen-cell summary and two for the maximum over 153 quantities. The causal explanation for the zero seed block also survives; the claim table’s statement that “because” became two sentences is stale.
+
+The remaining problems are dimensional language and the maximum’s grammatical subject.
+
+- “the rounding spread is about \SI{37}{\percent} of the statistical variance and, as a standard deviation, below a tenth of any total uncertainty” → “the rounding variance is about \SI{37}{\percent} of the statistical variance, and the rounding standard deviation is below a tenth of any total uncertainty”.
+- “On the 16 reported cells, over 20 rounding-level perturbations of the data, the spread is a median …” → “Across the 16 reported cells, the rounding standard deviation estimated from 20 rounding-level perturbations of the data is a median …”. Retain the cross-section normalization and all three numerical keys. This makes clear that the median is across cells.
+- Replace paragraph (c) with: “The shift of \fvval{s5e-round-max} statistical standard deviations quoted above is the maximum over 153 quantities (the joint cells, the $(\Eavail,W)$ cells and two totals) under two rounding-level perturbations of the data; it is not a typical shift.”
+
+**Paper RS1 — accept with edits.** The mechanism and refinement-stage statements retain their licensed scope. However, “examined six candidate causes … by the ratio” still suggests a common diagnostic for all candidates, despite the supplied account identifying different diagnostics for K3 and K4.
+
+- “It examined six candidate causes, five of them testable, by the ratio of the spread under a modified perturbation to that under the unmodified one.” → “It examined six candidate causes, five of them testable. Spread comparisons used the ratio of the spread under a modified perturbation to that under the unmodified perturbation.”
+- “a perturbation that keeps the ties removes the spread: the ratio is …” → “a perturbation that keeps the ties leaves residual spread ratios of $6.2\times10^{-7}$ on the 153 quantities and $1.07\times10^{-6}$ on the 16 cells.” Keep the preceding “On this pseudo-experiment”. “Removes” is licensed, but the residual wording reads more naturally beside nonzero ratios.
+- “Equal float32 values are what float32 storage of these kinematics produces.” → “Storing these kinematics in float32 produces tied values.”
+- “Finer binning, float64 inputs and a permutation of the input rows do not reduce the spread” → “On this pseudo-experiment, finer binning, float64 inputs and a permutation of the input rows did not reduce the spread”.
+- “The tie test and the refinement test were separate, and no declared test joined them. Whether the ties act at the refinement stage was therefore not tested.” → “The tie test and the refinement test were separate, and no test specified in advance linked their findings. Whether the ties act at the refinement stage was not tested.”
+
+The last replacement preserves both limitations without the internal term “declared” or an unnecessary inferential “therefore”.
+
+**Supplement S4.4 RS1 — accept with edits.** Its numerical results agree with the paper. Two sentences blur the distinction the rewrite otherwise establishes: “two candidate causes” presents the mechanism and a sufficient entry stage as equivalent findings, and “so neither stage…” makes the limitation appear to follow from the loop-only result.
+
+- “Its declared readings supported two candidate causes.” → “Under the criteria specified in advance, the study supported two findings from separate tests.”
+- “a perturbation that keeps the ties leaves a spread ratio of about $10^{-6}$” → “a perturbation that keeps the ties leaves a residual spread ratio of about $10^{-6}$ on both the 153 quantities and the 16 cells”.
+- “Perturbing only the OmniFold loop reproduces it on the 153 quantities (0.947) and is inconclusive on the 16 cells, so neither stage alone is established as the mechanism.” → “Perturbing only the OmniFold loop reproduces the full spread on the 153 quantities (0.947) and is inconclusive on the 16 cells. Neither stage alone is established as the mechanism.”
+- Replace the two tie/refinement-test sentences with the paper wording recommended above, including the absence of a test specified in advance linking their findings.
+- “Finer binning does not reduce the spread (0.950 and 0.945)” → “Finer binning does not reduce the spread: the ratios are 0.950 on the 153 quantities and 0.945 on the 16 cells”.
+
+The approximation $10^{-6}$ is consistent with the paper’s two precise values. The population and summary statistic underlying the 1.35 iteration-growth factor are not identified in the supplied record excerpt; do not silently assign it to either population. Splitting the paragraph before “Finer binning” would also improve readability.
+
+**RSN paper §3.2 — accept with edits.** The trace ratios and GiBUU trace shares are correctly paired. The first sentence’s “cut in $\pPar$” is ambiguous because the construction introduces a common restriction at 6 GeV/c while removing the original cut’s contribution at 10 GeV/c.
+
+- “Building GiBUU’s ratio only on the phase space every generator covers, $\pPar<\SI{6}{GeV/c}$, removes that sample’s energy truncation and the cut in $\pPar$ from its shift.” → “GiBUU’s ratio is built only on the phase space covered by every generator, $\pPar<\SI{6}{GeV/c}$. This removes from GiBUU’s shift its energy truncation and its original momentum cut at \SI{10}{GeV/c}.”
+
+The smoothing descriptions need a common definition. The paper averages over “fine cells”; the supplement averages over “region cells” within a distance measured in fine bins. Those are not demonstrably interchangeable from the supplied excerpts.
+
+Using the supplement’s stated definition:
+
+- “Replacing each generator’s ratio by its prior-weighted average over the fine cells within [two] bins on every axis” → “Replacing each generator’s ratio in each region cell by its prior-weighted average over region cells within [two] fine-bin steps along every axis”.
+
+Confirm that “region cells” is the declaration’s averaging unit. The radius must describe distance from the cell being smoothed, rather than a neighborhood with total width two bins.
+
+Keep both final limitations unchanged. Neither trace result establishes a calibrated uncertainty, and the smoothing result must not be attributed solely to removing gate steps.
+
+**RSN paper §5.2 and Table 3 caption — accept with edits.** The alternative flags and $p=0.0049$ are correctly paired. The GiBUU invariance has the required causal explanation, but its grammatical subject is wrong: truths do not omit covariance components; their grading covariances do.
+
+- “The flagged truths above are those of the reported $C_{\mathrm{model}}$.” → “The flags above use the reported construction of $C_{\mathrm{model}}$.”
+- “This construction cannot change the grades of the two GiBUU truths, which omit GiBUU’s component.” → “This construction cannot change the grades of the two GiBUU truths because their grading covariances omit GiBUU’s component.”
+- Caption: “also flagged, by its $p$” → “also flagged by the $p$-value criterion alone”.
+
+“Held-out tunes still meet both criteria” is materially ambiguous: a reader cannot tell whether these are flagging triggers or requirements for agreement. The supplied excerpts do not settle that meaning. Use the appropriate explicit wording in both paper and supplement:
+
+- If they are flagging triggers: “Under both constructions, the held-out tunes still meet both flagging criteria.”
+- If they are agreement requirements: “Under both constructions, the held-out tunes still satisfy both agreement criteria.”
+
+Keep “no cell beyond $\fvval{trig-z}\sigma$” in the main paragraph; it explains why the NuWro flag is from $p$ alone.
+
+**RSN paper §3.1 — accept with edits.** The distinction between full-simulation, noise-free closures and noisy half-sample fake data is essential and correctly retained. The opening apposition is difficult to parse, and “within a quarter” could mean either a difference or a fraction of the value.
+
+- Opening sentence → “Refitting the regressor using each event’s simulation weight multiplied by its current reweighting at that iteration moves the sixteen data cells by at most [0.09] of their reported uncertainty.”
+- “each closure’s flag is unchanged and its $\chi^2$ is within a quarter of the equal-weight value” → “the noise-free closure flags are unchanged, and each $\chi^2$ differs from its equal-weight value by no more than a quarter of that value”.
+
+Do not describe these unchanged closure flags as evidence that weighting cannot affect the §5.2 fake-data flags. The final sentence correctly excludes that inference.
+
+**RSN paper §7.1, item 3 — accept with edits.** Its limitation agrees with §3.1, but “fake-data flags” should explicitly identify the untested population.
+
+- Second sentence → “The effect of using a regression weighted with each event’s weight at that iteration was tested in the data unfolding and in noise-free, signal-only closures on the full simulation. Its effect on the flags from half-sample pseudo-data with background and noise was not tested.”
+
+Retain the first sentence about equal event weights. If the pending test arrives, update this limitation together with §3.1 and supplement S4; a pending result should not appear as an alternative factual statement in the submitted text.
+
+**RSN supplement S5 — accept with edits.** The numbers are correctly assigned: 1.41 and 0.112 are trace ratios; 0.923 and 0.664 are GiBUU trace shares; the remaining sequences describe model or total standard-deviation ratios. The denominators should be explicit.
+
+- “GiBUU’s share of it is [0.923] against \fvval{cmodel-trace-gibuu}” → “GiBUU’s share of the trace rises from \fvval{cmodel-trace-gibuu} to [0.923]”.
+- “The σ of the model term in each of the sixteen cells changes by a median factor [1.12] ([0.54]–[1.77]).” → “Across the sixteen cells, the ratio of the alternative to the reported model standard deviation has median [1.12] ([0.54]–[1.77]).”
+- “The total σ built with it is a median [1.002] ([0.864]–[1.338]) times the reported σ.” → “The corresponding ratio of total standard deviations has median [1.002] ([0.864]–[1.338]).”
+- For smoothing, use the same denominator wording: “The alternative-to-reported model standard-deviation ratio has median [0.50] ([0.098]–[2.23]); the corresponding total standard-deviation ratio has median [0.934] ([0.595]–[1.028]).”
+- “Regraded under the first” → “Regraded using the common-phase-space construction”.
+- “Under the second” → “Under the smoothed-ratio construction”.
+
+Apply the common smoothing-neighborhood definition and the explicit held-out-tune criterion wording recommended above. Preserve the carbon-target and gate-step limitations, the unchanged GiBUU grades, and the statement that other records could have changed. Neither an increased trace nor a decreased trace implies that every cell’s uncertainty changes in that direction.
+
+**RSN supplement S4 — revise.** The first paragraph turns two separate maxima into a statement about “the largest move”, then appears to apply the lower bound to every cell. The maxima need not occur in the same cell. This is the clearest population error among the drafts.
+
+- “The largest move is [2.9] times the rounding floor…” → “The maximum across the sixteen cells of the absolute shift divided by that cell’s rounding floor is [2.9]. The rounding floor is the per-cell spread of the data result under rounding-level perturbations of its inputs.”
+- “The change is therefore above twice that floor and below half the reported σ.” → “Thus at least one cell moves by more than twice its rounding floor, while every cell moves by less than half its reported σ.”
+
+Keep the preceding bound of [0.09] unchanged.
+
+Further edits:
+
+- “Their $\chi^2$ values agree within a quarter of the equal-weight value.” → “For each of these two truths, the $\chi^2$ changes by no more than a quarter of its equal-weight value.”
+- “With the same flags, this makes the weighting immaterial at both truths by the reading fixed in advance.” → “These unchanged flags and $\chi^2$ differences meet the criterion specified in advance for classifying the weighting as immaterial in these two noise-free closures.”
+- “The test does not test whether…” → “These noise-free, signal-only closures do not test whether…”.
+- “It compares the prediction of a regressor fitted on the other four fifths with their known step-1 weights.” → “It compares the regressor’s predictions for the held-out fifth with those events’ known step-1 weights; the regressor is fitted on the other four fifths.”
+- “the transfer is within half the reported σ” → “the transfer discrepancy is within half the reported σ”.
+- “Neither test shows that…” → “Neither the weighted-regressor tests nor the matched-event transfer test shows that…”.
+
+“NuWro shape” also needs an unambiguous identifier. Use “NuWro hybrid truth” only if the record establishes that they are the same case. Preserve the estimation-noise limitation and absence of a separate noise reference.
+
+The RSN key table traces the two data-shift maxima but does not provide clause-level support for the other closure and transfer assertions. Those statements are not contradicted here, but their source support cannot be independently certified from the supplied excerpts.
+
+The three most important changes overall are:
+
+1. Correct supplement S4’s separate maxima and the resulting **at-least-one-cell versus every-cell** claim.
+2. Keep the RS1 tie mechanism separate from refinement-stage sufficiency, including the explicit absence of a test linking them.
+3. Standardize the smoothing neighborhood and identify whether the held-out tunes satisfy **flagging or agreement** criteria.

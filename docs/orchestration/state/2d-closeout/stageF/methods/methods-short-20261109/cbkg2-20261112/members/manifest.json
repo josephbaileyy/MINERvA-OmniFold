@@ -1,0 +1,24 @@
+{
+ "inputs": [
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s0/evloop/base_cv.root",
+   "bytes": 398375089,
+   "sha256": "c76256a495d2deb7c213c2f8203b284bea640d90e697c495f5e11cedc830846b",
+   "pin_ok": true,
+   "stat_unchanged": true,
+   "whole": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/tmp-playlist-coverage-20261014/work_proxy.npz",
+   "bytes": 187598,
+   "sha256": "42ce788bb28919c098041f14b5a4fb8b22aca06aa7f962ca38dd398149f23621",
+   "pin_ok": true,
+   "stat_unchanged": true,
+   "whole": true
+  }
+ ],
+ "host": "login27",
+ "ok": true,
+ "exit": 0,
+ "why": "ok"
+}

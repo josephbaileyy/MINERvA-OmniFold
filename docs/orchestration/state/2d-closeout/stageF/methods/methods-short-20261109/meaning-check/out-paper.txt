@@ -1,0 +1,19 @@
+M009 | LESS | "for the observables, configurations, and deformations tested, rather than of multidimensional OmniFold in general -> in the cases tested" | drops the explicit statement that the findings do not extend to multidimensional OmniFold in general
+M069 | NEWCLAIM | "a control of the test fails -> a control of the test fails at every tune and variant" | base Invalid means a control fails; "at every tune and variant" is a narrower new condition
+M075 | LESS | "descriptive: continued past its clipping-offset check; some passes weakened; Stopped by a decision made after its clipping-offset check exceeded its bound -> a check was exceeded; no weakened-passes note" | the table drops the "some passes weakened" note and the clipping-offset identity of the check
+M084 | LESS | "indicates a correlated shape difference, not a normalization difference -> The difference is in shape" | drops "correlated"
+M090 | LESS | "should be read as a descriptive comparison, not a blind validation -> is descriptive" | drops the explicit "not a blind validation"
+M091 | MORE | "put the two-dimensional result beside other unfoldings -> test the two-dimensional result against other unfoldings" | "beside" becomes "test against", which claims a stronger role for the comparison
+M111 | DIFF | "GiBUU-like change -> GiBUU-to-GENIE change" | changes which truth change the regularization statement applies to; GiBUU-like is the hybrid truth, GiBUU-to-GENIE is the shape ratio
+M131 | LESS | "only event counts fluctuate -> event counts fluctuate" | drops "only", so it no longer says nothing else fluctuates
+M192 | NEWCLAIM | "the joint reading carries over only if both matrices have 16 degrees of freedom" | new condition; base said a pass carries over to the full covariance at that tune, with no such caveat
+M194 | LOST | "Its check of the clipping offset exceeded the bound fixed in advance (\fvval{ll5d-offset}) -> A check fixed in advance was exceeded" | the clipping-offset identity and the offset value are not restated anywhere in the current text
+M195 | LOST | "passes ... count as weakened (variance ratio after clipping below bound); flagged cells possibly the clipping artefact, no further test run; each under-coverage found with response and run-period terms left out and not shown to persist with them" | these three statements are absent from the current sentences
+M196 | LOST | "this test does not establish why the five-observable result differs" | not restated; the clipping-offset value in the offset-stopped case is also gone
+M212 | LOST | "The benchmark establishes normalization agreement and a qualified shape comparison in two dimensions, not the validity of the five-observable distribution" | this limit appears nowhere in the current text
+M213 | LOST | "The validity rules grade the estimator's bias under simulated truths; they do not identify where the detector model is inadequate" | this limit appears nowhere in the current text
+M223 | LOST | "a result about the procedure's covariance at those tunes, not the reported intervals at the data; whatever its outcome" | the scope limit on the 2D under-coverage result is dropped from the Limitations; the second-test version survives only conditionally in M198
+M228 | LOST | "not the stronger simultaneous coverage of all of them" | the contrast with simultaneous coverage is dropped
+M236 | NEWCLAIM | "the spread under 20 such perturbations is a median of 0.133%" | "20 perturbations" and "spread" are new; base gave only the shift median
+
+FLAGGED 17 of 239 rows

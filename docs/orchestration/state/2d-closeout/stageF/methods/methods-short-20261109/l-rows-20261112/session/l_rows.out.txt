@@ -1,0 +1,233 @@
+{
+ "schema": "methods-short-l-rows/1",
+ "label": "descriptive only",
+ "bkg_42": {
+  "fraction_full_sample": 0.02905768004364198,
+  "sum_background": 118895.5128383302,
+  "sum_data_in_grid": 4091707.0,
+  "n_cells_with_data": 205,
+  "per_playlist": {
+   "1A": 0.02735,
+   "1B": 0.02735,
+   "1C": 0.02723,
+   "1D": 0.02738,
+   "1E": 0.02785,
+   "1F": 0.02862,
+   "1G": 0.02874,
+   "1L": 0.03158,
+   "1M": 0.03154,
+   "1N": 0.03026,
+   "1O": 0.03195,
+   "1P": 0.03233
+  },
+  "per_playlist_template_sum": {
+   "1A": 9781.53,
+   "1B": 2043.09,
+   "1C": 4683.69,
+   "1D": 15800.52,
+   "1E": 11292.11,
+   "1F": 18266.04,
+   "1G": 15375.0,
+   "1L": 1563.81,
+   "1M": 18506.45,
+   "1N": 12494.7,
+   "1O": 3515.79,
+   "1P": 5572.78
+  },
+  "run_log_1A_hBkgReco2D": 9782,
+  "matches_run_log_1A": true,
+  "per_cell_min": 0.013687868031564581,
+  "per_cell_median": 0.02531116702817827,
+  "per_cell_max": 0.46574462957966684,
+  "per_cell_max_at_pt_pz_bin": [
+   0,
+   0
+  ],
+  "compare_E_U": {
+   "E_U_background": 119132.37,
+   "E_U_data": 4091707,
+   "data_equal": true,
+   "background_rel_diff": -0.001988184753394795,
+   "E_U_fraction": 0.02911556717037657
+  },
+  "not_separated": "genuine background and out-of-phase-space signal: no committed record separates them"
+ },
+ "bkg_43": {
+  "rule": "largest contributors in decreasing order until their sum first reaches chi2/2",
+  "chi2": 465.41527219152636,
+  "n_cells_T": 15,
+  "chi2_share_T": 0.5131312786139723,
+  "fraction_T": 0.030809177510218354,
+  "fraction_all": 0.02905768004364198,
+  "per_cell_median_T": 0.02930003136536892,
+  "per_cell_median_all": 0.02531116702817827,
+  "per_cell_min_T": 0.013687868031564581,
+  "per_cell_max_T": 0.12329293312579623,
+  "spearman_fraction_vs_contribution_205": -0.09062138708194621
+ },
+ "f53": {
+  "weighted_outside_reco_window": 2.0489701313186615e-05,
+  "weighted_gen_outside_grid": 0.00011015129242120114,
+  "n_reco_outside_window": 428,
+  "n_gen_outside_grid": 1755,
+  "n_pass_reco": 20404292,
+  "gen_outside_grid_includes": "rows with the -9999 truth sentinel in q3 and W (r4_migration.json gen_min_per_col)",
+  "measured_side": "s5c_pseudo.purity_weights :104-112 gives pseudo-data outside the window measured weight 0"
+ },
+ "f54": {
+  "boxes": [
+   2,
+   6,
+   10,
+   14
+  ],
+  "truth_weight": [
+   0.0,
+   0.1678326440960972,
+   0.0,
+   0.0
+  ],
+  "expected_reco_signal": [
+   0.06802856673667544,
+   0.16189670151538088,
+   0.0,
+   0.0
+  ],
+  "share_truth_weight": 2.9042135165738275e-08,
+  "share_expected_reco_signal": 6.506512863531916e-08,
+  "truth_weight_total": 5778936.126366271,
+  "expected_reco_signal_total": 3533771.0548572787
+ },
+ "r33": {
+  "n_records": 16,
+  "records_count_moved": {
+   "q3": [
+    0,
+    1
+   ]
+  },
+  "chi2_rise_max": 9.692021102733037,
+  "chi2_rise_max_record": "q3",
+  "chi2_from_to_max_record": [
+   53.42435713092543,
+   63.116378233658466
+  ],
+  "unchanged_own_gibuu": [
+   "stage0c_gibuu",
+   "A7_gibuu"
+  ],
+  "q3_max_abs_z": [
+   1.6203487400295948,
+   2.0187142804355993
+  ],
+  "q3_cells_abs_z_gt_2_added": [
+   "R15"
+  ]
+ },
+ "m5": {
+  "max_abs_injected_pct": {
+   "W1": [
+    21.391,
+    "EW6"
+   ],
+   "W2": [
+    14.844,
+    "EW37"
+   ],
+   "W3": [
+    27.508,
+    "EW7"
+   ]
+  },
+  "max_abs_injected_pct_supported": {
+   "W1": [
+    21.391009226294265,
+    "EW6"
+   ],
+   "W2": [
+    11.820227452382849,
+    "EW1"
+   ],
+   "W3": [
+    27.507604524369622,
+    "EW7"
+   ]
+  },
+  "unsupported_EW": [
+   "EW11",
+   "EW36",
+   "EW37"
+  ],
+  "unsupported_truth_weight": [
+   777.1117026189024,
+   245.75595580211333,
+   628.7265468126208
+  ],
+  "controls_pass": [
+   true,
+   true
+  ],
+  "support_cells_empty_in_every_seed": {
+   "nominal": 0,
+   "W1": 0,
+   "W2": 0,
+   "W3": 0
+  },
+  "not_checkable": "a fine cell populated in the full MC but empty in every one of the 100 halves"
+ },
+ "s11c": {
+  "n_experiments": 20,
+  "estimator": "R",
+  "max_abs_residual_pct": [
+   73.86475370592413,
+   "EW29"
+  ],
+  "median_abs_residual_pct": 10.811974302822492,
+  "max_abs_residual_pct_supported": 73.86475370592413,
+  "residual_pct": [
+   1.2871705555028243,
+   -2.7137825191278524,
+   -26.540214013532935,
+   -28.167362984361443,
+   -19.017163892272443,
+   0.5263815804664297,
+   -3.0787774793016762,
+   -6.7933094343879095,
+   -28.748898848780343,
+   -32.837242481316395,
+   -24.737819764181236,
+   -6.3929578104522236,
+   2.6750382964368202,
+   -1.4991717555237483,
+   -17.39383992088458,
+   -20.23108947902992,
+   -10.70198827308082,
+   11.876440476249892,
+   7.0414156796712115,
+   4.619776467289889,
+   -2.6047157341982485,
+   -0.8554059372602065,
+   16.962067467712025,
+   44.214451392619765,
+   16.976669734323423,
+   12.655697052424836,
+   10.489817198701386,
+   13.540198670074089,
+   41.93464090353487,
+   73.86475370592413,
+   -3.3672357871788057,
+   -5.899855661291477,
+   -6.89514484139703,
+   -3.247137966404147,
+   10.217218913143366,
+   34.22070377446405,
+   -10.831330351278606,
+   -12.212898527639542,
+   -13.547676172016926,
+   -15.274626062637854,
+   -10.79261825436638,
+   -1.798659828958185
+  ]
+ }
+}
+L-ROWS OK

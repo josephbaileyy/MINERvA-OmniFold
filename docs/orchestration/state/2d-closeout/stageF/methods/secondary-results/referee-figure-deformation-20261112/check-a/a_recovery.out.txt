@@ -1,0 +1,4 @@
+GiBUU {'n_cells': 39, 'n_opposite': 12, 'n_partial': 17, 'n_overshoot': 10, 'f_median': 0.6286045051063016, 'n_within_3sigma_of_a_class_boundary': 1, 'within_3sigma_cells': ['EW34']}
+W1 {'n_cells': 33, 'n_opposite': 10, 'n_partial': 22, 'n_overshoot': 1, 'f_median': 0.5626870058963279, 'n_within_3sigma_of_a_class_boundary': 2, 'within_3sigma_cells': ['EW10', 'EW22']}
+W2 {'n_cells': 26, 'n_opposite': 0, 'n_partial': 17, 'n_overshoot': 9, 'f_median': 0.8834629428704811, 'n_within_3sigma_of_a_class_boundary': 2, 'within_3sigma_cells': ['EW7', 'EW26']}
+W3 {'n_cells': 35, 'n_opposite': 8, 'n_partial': 23, 'n_overshoot': 4, 'f_median': 0.6124292850041295, 'n_within_3sigma_of_a_class_boundary': 2, 'within_3sigma_cells': ['EW38', 'EW39']}

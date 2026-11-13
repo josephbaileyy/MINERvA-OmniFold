@@ -1,0 +1,80 @@
+The paper has a clear overall progression: introduce the filtering analogy, derive the method, illustrate it twice, and give recommendations. A physicist outside the collaboration could follow that route, but several passages would require rereading. The main presentation problems are an abstract that withholds the findings, a densely organized methods section, lengthy background passages, repeated explanations, and inconsistent terminology. Paragraphs often combine setup, interpretation, and qualification. The prose needs substantial editing for grammar and economy. This assessment concerns the supplied text and captions; visual layout and apparent PDF-extraction artifacts are excluded. Supplement criteria are not applicable.
+
+**STYLE SCORE: 6/10**
+
+**Most important changes, ranked**
+
+1. **Abstract and final paragraph of §1: state the contribution and findings directly.**  
+   The abstract ends with “Through a couple examples, the pros and cons … as well as the nature of the unfolded results are discussed.” This announces discussion without telling readers its outcome. The preceding sentence also stacks the method, objective, assumptions, and parameter claim together.
+
+   A clearer abstract core would be:
+   > “We introduce Wiener-SVD unfolding, which combines singular value decomposition with a Wiener filter constructed from expected signal and noise. The method avoids scanning a regularization parameter. In two neutrino examples, it yields smaller mean squared errors than the corresponding Tikhonov solutions. We describe how to report the unfolded covariance and additional smearing matrix for subsequent comparisons.”
+
+   Expand HEP and SVD at first use. End §1 with the contribution and a brief roadmap; correct “The findings are summarized in Sec. 6” to distinguish §6’s discussion from §7’s summary.
+
+2. **§3.3: turn the extended bullet list into a navigable methods section.**  
+   “A few comments should be made” introduces material that includes the generalized algorithm, uncertainty propagation, two bias definitions, signal-model averaging, and a further derivation. These are substantial components, not incidental comments. The principal recipe becomes difficult to locate.
+
+   Use named subsections: filter construction; choice of \(C\); signal expectation; covariance and bias; regularization interpretation. Put the signal-expectation prescription beside the filter construction. End with a short numbered procedure linking the required inputs to the output equations. The alternative regularization derivation could become an appendix.
+
+3. **§§1, 2, 4, and 5: improve pacing and paragraph boundaries.**  
+   The second paragraph of §1 runs from “the main challenge” through detailed accounts of two methods to the bias–variance trade-off. Split it into the challenge, Tikhonov regularization, and iterative unfolding.
+
+   Background also delays the examples. In §4, “Experiments that engage in neutrino cross-section measurements generally consist of two parts” begins a broad detector overview before the toy setup appears. §5 similarly gives a long inventory of detector effects. Condense these passages to the details needed to understand each example, then state the inputs and assumptions together.
+
+   §2’s worked analogy is useful, but its derivation and repeated panel-by-panel narration occupy considerable space before the algorithm. Retain the essential analogy in the main text and consolidate supporting detail in an appendix.
+
+4. **§§3.3, 5, 6, and 7: consolidate qualifications and give the closing sections distinct jobs.**  
+   Signal-expectation dependence is introduced in §3.3, revisited at length after Fig. 12, and explained again in §6. Likewise, §6 recommends reporting \(A_C\), then repeats that recommendation within multiple advantages/disadvantages bullets.
+
+   Explain the dependence and its interpretation fully in §3.3. Let §5 describe what the example illustrates, and let §6 state the practical recommendation once. §7 should summarize the contribution and principal findings without reproducing the comparison discussion.
+
+   Qualifications sometimes accumulate through “In practice,” “In addition,” and “This is the common issue…”. Give each qualification one clear home and use short cross-references elsewhere.
+
+5. **§3, Table 1, and figure captions: enforce a single terminology and notation scheme.**  
+   §3.1 defines “singular values,” but Fig. 5 calls them “eigenvalue[s] of SVD.” §3.3 describes `Cov` as “the covariance matrix of M,” whereas §3.1 defines it for \(m\). Fig. 11 uses \(A_c\), while the method uses \(A_C\). These inconsistencies force readers to check whether a distinction is intended.
+
+   Standardize these labels throughout. Use “whitening” consistently after defining its equivalence to “pre-scaling.” Define “Asimov spectrum” when first introduced in §4, rather than waiting for Fig. 6. Present “effective frequency domain” once as an analogy and thereafter use it without repeatedly re-establishing the comparison. Table 1 is useful as a lookup aid, but should supplement local definitions.
+
+6. **Throughout, especially §§3.1 and 5: shorten explanatory sentences and remove verbal scaffolding.**  
+   For example, §3.1 says:
+   > “Therefore, in analogy to the results after the Fast Fourier Transformation (FFT), we refer to MU after the SVD transformation as the measurement in the effective frequency domain in analogy to the frequency domain in the signal processing…”
+
+   Rewrite:
+   > “We call the SVD-transformed measurement \(M_U\) the measurement in the effective frequency domain, by analogy with a Fourier-transformed signal.”
+
+   Repeated “As can be seen,” “It is easy to see,” “straightforward to understand,” and “Figure … shows” weaken topic sentences. Lead with the observation, then cite the figure. Replace nested comparisons such as “at fixed variance (bias), the bias (variance)” with “At fixed variance, Wiener-SVD gives a smaller bias; the converse comparison gives the same ordering.”
+
+   Semicolons and audit-log phrasing are not dominant problems here; repetition, parenthetical compression, and awkward syntax are.
+
+7. **Figs. 5–7 and 10–12: make captions precise, self-contained, and economical.**  
+   Fig. 5 uses “w/,” comparative uncertainty wording, and “See text for more discussion.” State the configuration directly and identify exactly which uncertainty quantity is scaled.
+
+   Fig. 6 says, “In the case of unfolded spectrum, the residual is the same as bias.” Specify the residual convention and which plotted curve the bias statement concerns.
+
+   Fig. 12’s caption repeats the result interpretation and ends by discussing an alteration “which is not shown in this figure.” Keep the caption focused on plotted quantities, model choices, symbols, and curves; retain the broader explanation in §5.
+
+   The figure numbering follows the discussion sensibly. However, avoid making readers reconstruct panel identities from phrases such as “the third panel to top”; use “third row.” Tables are appropriate for symbol definitions and could also compactly collect the example configurations.
+
+**Smaller fixes — paper**
+
+- **Title:** “Data Unfolding with **the** Wiener-SVD Method.”
+- **Abstract:** “in the digital signal processing” → “in digital signal processing”; “free from regularization parameter” → “requires no regularization-parameter scan.”
+- **§1:** “helpful in many occasions” → “useful in several situations”; replace “for the presentation purpose” with a direct statement about presenting results.
+- **§2:** “noises” → “noise”; “with \(E[\cdot]\) denotes” → “where \(E[\cdot]\) denotes.”
+- **§3.1, footnote 1:** “calcualte the expectated spectra” → “calculate the expected spectra.”
+- **§3.1:** the reference to the deconvolution discussion in “Sec. 1” should point to **§2**.
+- **§4:** “could leave undetectable” → “may escape detection”; “mocked up” → “constructed.”
+- **§5:** “a ∼50k events toy reactor neutrino experiment” → “a toy reactor-neutrino sample containing approximately 50,000 events.”
+- **§5:** “only results with the using of a \(C_2\) matrix” → “only results using \(C_2\).”
+- **Fig. 12:** “Both methods using” → “Both methods use”; “from the a large number” → “from a large number.”
+- **§6 title:** “Discussions and Recommendations” → “Discussion and Recommendations.”
+- **Throughout:** standardize “mean squared error,” “bias squared,” “signal-to-noise ratio,” and “versus.”
+
+**Smaller fixes — supplement**
+
+- Not applicable: no separate supplement was supplied.
+
+**To reach 9/10**
+
+The manuscript needs a structural edit followed by a thorough sentence edit: a results-bearing abstract, a clearly signposted algorithm, shorter background passages, distinct roles for discussion and summary, consolidated qualifications, and consistent notation and captions. These improvements require reorganizing and rewriting the existing material, without adding scientific studies.
