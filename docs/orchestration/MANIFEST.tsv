@@ -6059,6 +6059,10 @@ docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/independen
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/independent-read-w-items-20261109/answer.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/independent-read-w-items-20261109/prompt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/independent-read-w-items-20261109/run-header.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/note-history-referee-20261113/README.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/note-history-referee-20261113/SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/note-history-referee-20261113/gpt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/note-history-referee-20261113/prompt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/note-round2-blind-reads-20261110/README.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/note-round2-blind-reads-20261110/SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/note-round2-blind-reads-20261110/blind-build-check.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
