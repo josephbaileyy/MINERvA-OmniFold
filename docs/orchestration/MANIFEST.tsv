@@ -3909,6 +3909,7 @@ docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/zenod
 docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/zenodo-cleanenv/runs/checks-vs-head.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/zenodo-cleanenv/runs/checks.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/zenodo-cleanenv/runs/clone.log.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/zenodo-cleanenv/runs/freshness-a8713799.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/zenodo-cleanenv/runs/mv977check.err.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/zenodo-cleanenv/runs/mv977check.out.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/zenodo-cleanenv/runs/mv977self-test.err.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
@@ -3937,6 +3938,7 @@ docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/zenod
 docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/zenodo-cleanenv/runs/tar-sums.out.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/zenodo-cleanenv/runs/venv.log.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/zenodo-cleanenv/tools/compare_head.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/zenodo-cleanenv/tools/freshness_check.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/zenodo-cleanenv/tools/log_checks.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/zenodo-cleanenv/tools/resolve_fv.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-b3/REVIEW.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
