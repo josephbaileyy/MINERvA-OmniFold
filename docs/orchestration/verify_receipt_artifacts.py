@@ -174,9 +174,18 @@ UNRESOLVED_SHA256 = "49916d2832740f06163191d8dc960454ab85ae5bbb3aa9d5623b62b7d88
 #: `g2r_jobs.envtest` and read at this path by `g2r_jobs.order`. Its `set_aside` list names the
 #: `runConfig` key `out`, which J1 §4 sets aside, as "runConfig.out". That is a set_aside key name, not a
 #: file citation, and the record is the job's own output, so it cannot be reworded.
+#: 2026-11-13, the director's ruling on the G2R prepare receipt: COV2D-G2R's prepare record (job 61223390),
+#: read at this path by `g2r_jobs.order`. Its 12 tokens are P5 per-playlist input file names written by
+#: g2r_prepare.py run() into blocks/map.blocks; not file citations; director ruling 2026-11-13.
+G2R_PREPARE_PLAYLISTS = ("1A", "1B", "1C", "1D", "1E", "1F", "1G", "1L", "1M", "1N", "1O", "1P")
 EXEMPT_BARE = frozenset({
     ("docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/g2r/envtest/"
      "envtest.json", "c4a0720d3a12265403d22e273e219d4594b03ba0a592afe671618ed72cbf0272", "runConfig.out"),
+} | {
+    ("docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/g2r/prepare/"
+     "g2r_prepare.json", "d72facde6b73e854620bce58780928307fcb1fa9b3e921e94f03cbe6ec9ac1dc",
+     f"runEventLoopOmniFold_{pl}_universes_full.root")
+    for pl in G2R_PREPARE_PLAYLISTS
 })
 
 

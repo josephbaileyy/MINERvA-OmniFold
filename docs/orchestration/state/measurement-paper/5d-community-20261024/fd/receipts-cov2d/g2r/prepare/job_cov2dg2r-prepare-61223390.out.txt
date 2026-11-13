@@ -1,0 +1,7 @@
+UNI-STAT PASS
+python 3.10.19 numpy 2.2.6 uproot 5.6.9
+[g2r] start 2026-11-13T11:39:32Z job=61223390 prepare node=nid005845
+G2R-PREPARE PASS
+956531e3b761aaf08d40c6ab8d917ba5f19dab5947b72607e6a34d0d3f7f83ae  g2r_map.npz
+d72facde6b73e854620bce58780928307fcb1fa9b3e921e94f03cbe6ec9ac1dc  g2r_prepare.json
+[g2r] end 2026-11-13T12:39:35Z rc=0
