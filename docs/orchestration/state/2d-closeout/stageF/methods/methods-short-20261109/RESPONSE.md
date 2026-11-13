@@ -827,6 +827,34 @@ check_round's ONCE list is updated in the same commit, with a comment naming the
 - the repeated "The data result remains an illustration" cut;
 - "Both tunes pass the bias criteria".
 
+## Style round 4 (6/10 on 52856226), the last style round: the paper items (director-helper-3, 2026-11-12)
+
+Record: `secondary-results/style-methods-20261112/round4/`. Per Joseph's D5 this is the last style round. The director
+approved one bounded pass on the report's concrete items, and Joseph's own read is the stopping test. The report's
+general points (consolidating qualifications, the hierarchy of findings) are not restructured again.
+
+| Item | Status |
+|---|---|
+| §3.3's "Est.\ column of table 4" | fixed. Table 4 has no such column; it marks each test's estimator (2D)/(5D) in the test name, and the sentence now says so |
+| The abstract-naming metatext | deleted. The abstract now says "GiBUU hybrid truth", as the body does; make_values' LISTED_CLAIMS anchor and its self-test plant follow. "Synthetic momentum-transfer tilt" stays in the abstract, the body's "$q_3$ tilt" with the symbol spelled out ($q_3$ is defined as the three-momentum transfer, §2) |
+| §4.4's repeated quadrant sentence | deleted; the next sentence names "the five-observable result" in place of its "its" |
+| §5.3 | titled "Dependence of prior retention on estimator settings"; the threshold sentence is two sentences, keeping "at each flagged truth", "some level" and the two-sided "differs … by more than" (meaning read NOTE) |
+| §5.4's "leave open" sentence | "They show neither whether those inputs equal the publication's nor which method, if either, is correct." The report's "establishes algorithm dependence" was not used: the paragraph before already states it |
+| §6.1, the mechanism scope | stated once ("every finding in this and the next paragraph is on that pseudo-experiment"), the findings in the past tense, inside the approved RS1 v3 meaning. The meaning read asked for the bounded scope: "below" had no end point |
+| §6.1, Table 7 first | its source moved after Table 6's, so it prints at the top of section 6.1's page, ahead of the numbers (from section 6.1 it floated to the page after) |
+| §2 and §3.1 line items | §2: GENIE "without the Valencia 2p2h model of meson-exchange currents (MEC) (``GENIE CV'') and with it"; §3.1: **not condensed.** The report's "The two-dimensional central value and covariance use the same estimator" drops why that estimator's result is the central value, which no other sentence gives (meaning read DEFECT; the five-observable estimator also reproduces it, §4.4). The sentence stays as it was ("We quote its result as the central value because its covariance uses the same estimator: …"; its line is cited by digest in the registry, ALIASES row 39 and ATTRIBUTION row 17) |
+| Fig. 3's caption | the refinement capacity is dropped (§3.1 states it); the W-bin edges move to §3.3's fine-grid definition; the plotted quantities, the bars and the unsupported-cell warning stay |
+| Table S14 against Table 6 | Table 6 keeps the numbers (the same 12 keys); journal-editor removes S14 and keeps prr-ibu-bar in S8.2's prose. Table 6's caption points to \ssec{S8.2}{supp:study-prr} in place of \stab{S14} |
+| Terminology | "reported cells" for the sixteen cells (the paper's five "reporting cells" and Table 3's row); "two-observable" for the estimator only, "two-dimensional" for grid, result, covariance and benchmark (the abstract's "two-observable benchmark" changed); "variant" for the second test's analyses. journal-editor matches the Supplement |
+| [PENDING] | waits for LL5D's fill (ruled) |
+
+**Meaning read** (`round4-read/READ.txt`, an independent general-purpose subagent, read-only, on the diff `diff-as-read.txt`):
+DEFECTS (1), fixed: §3.1's reason, above. Its two NOTEs with repairs were applied (RS1's bounded scope; §5.3's
+two-sided test). The W edges were checked against the code (m3_common.py:41, pvl_lib.py:24, project_cov_nd.py:53), and
+Table 7's block is byte-identical. Notes left as they are: §5.4 no longer says that even agreement would not show the
+inputs equal (both IBU comparisons show a difference), and the new §5.3 title is narrower than the IBU-iteration test the
+section also covers. The title is the director's approved wording.
+
 ## Pre-submission checklist (director-helper-3; items added as the director rules)
 
 - [ ] **If T3's MW reading lands, revise §7.1 item 3, §3.1's last sentence and Supplement S4's "do not test" paragraph on
