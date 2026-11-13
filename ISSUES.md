@@ -1285,3 +1285,11 @@ Recorded in `DECISION-20261113-joseph-note-n4-n5-role.md` (Joseph's words: sha25
 4. **Development history:** a referee is asked whether the note's account of what was tried matches comparable technical documents. No history is cut before Joseph rules on its result; any cut history stays in the internal ledger.
 
 Updated here: the AUD-N4 and AUD-N5 status rows, the new AUD-N5a row, and the six rows that repeated AUD-N4's hold (S2-COM-2's release checklist row and five "Do not edit app_release.tex while AUD-N4 is held" rows). Earlier dated sections that say "AUD-N4 and AUD-N5 remain held" are history and are not edited.
+
+## Figure style follow-ups (2026-11-13)
+
+* **FIG-1 [R]** — **A figure producer is absent.**  
+  *Finding:* `docs/analysis-note/make_figures.sh:55` regenerates `nn_vs_gbdt_full` with `nd-unfolding/plot_nn_vs_gbdt_full.py`, which is not in the repository (`git ls-files` at the branch head has no such file). The note's `figures/nn_vs_gbdt_full.pdf` (sec_3d.tex) cannot be regenerated, so it was left out of the figure-style pass and is unchanged.  
+  *Record:* `docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/README.md` ("The rest of group L"); the director's ruling of 2026-11-13: leave the figure unchanged and do not recreate the producer.  
+  *Status:* **OPEN.** Find the producer, or record that the figure is no longer regenerable. This row authorizes no edit.
+

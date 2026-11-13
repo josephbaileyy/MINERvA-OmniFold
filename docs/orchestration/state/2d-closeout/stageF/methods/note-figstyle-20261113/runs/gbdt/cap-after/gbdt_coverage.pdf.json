@@ -1,0 +1,248 @@
+{
+ "artists_py_sha256": "feb486fefd363c0d80174fc034c82f53874558de718736af2c34c6b5344de041",
+ "size_in": [
+  6.5,
+  5.4
+ ],
+ "items": [
+  {
+   "kind": "image",
+   "axes": 0,
+   "label": "_child0",
+   "hash": "2e7ab9072fa84c55a4443e228aeb2aa80f0facdb887293850deff29f71c10de7",
+   "dhash": "589d34981183b1a3c7bd70ab6390fce67c657164737a5d7c0be0cbe7df6366fa",
+   "xhash": "589d34981183b1a3c7bd70ab6390fce67c657164737a5d7c0be0cbe7df6366fa"
+  },
+  {
+   "kind": "line",
+   "axes": 1,
+   "label": "_nolegend_",
+   "hash": "a650d9158260d0382db59404c613176d0e32791d9226f3d84cf7d8b3b22b2e48",
+   "dhash": "445feed6bec696446fb456dce9f428bbc49398a22442c9bab768e92f50e8b418",
+   "xhash": "4db48e41d9588d95b0ff69ab46d4bd8cef036bffe7c1ae4a3ec8999e71e05a6d"
+  },
+  {
+   "kind": "LineCollection",
+   "axes": 1,
+   "label": "_nolegend_",
+   "hash": "50b93af33ea8d33314b169c19ab329e939798587e3789295f394d141a0af5ded",
+   "dhash": "f5801bc9be8fe997020231af28b55512a2c5921179066148347bc38f20470973",
+   "xhash": "f5801bc9be8fe997020231af28b55512a2c5921179066148347bc38f20470973"
+  },
+  {
+   "kind": "line",
+   "axes": 1,
+   "label": "_nolegend_",
+   "hash": "dbbc314d30a033a0f722a0d0c5c299558d8df6439acd911beef5a93a1e1ad571",
+   "dhash": "056b69687c38611f74c12e8a2ed5b20aecf124361ccdd514698ab4a3a0784d6f",
+   "xhash": "f5315bec731140ad0bc648901f0beaffeccb27d149c78eb707bea40d20a51f30"
+  },
+  {
+   "kind": "LineCollection",
+   "axes": 1,
+   "label": "_nolegend_",
+   "hash": "2014b76bc307b2794d49c1d40a53abf119829376d113b96f2a8a55a53c70d6d3",
+   "dhash": "614d93981921e5699bee2ee36bf6d16d35fd0afb81097c04a63d4715d1c12369",
+   "xhash": "614d93981921e5699bee2ee36bf6d16d35fd0afb81097c04a63d4715d1c12369"
+  },
+  {
+   "kind": "line",
+   "axes": 1,
+   "label": "_child4",
+   "hash": "2b72954564338c6ed6d8e77f967bc09c402ccf918107fbe1e5b7a85698ffcc76",
+   "dhash": "fccb538e3f179c02a249503d37cb71c3ee8a0553cc87af1274cae8a12a71e3a1",
+   "xhash": "2ed38644787d604213761e15bb31155bd217a4950c96f33b3ec3b46e3235eccb"
+  },
+  {
+   "kind": "LineCollection",
+   "axes": 2,
+   "label": "_child0",
+   "hash": "c78f26eeb0efecdcc1a13ce55d6ce9d339e615e455c8f4efbfa1316d7269473f",
+   "dhash": "2062b477c651b3fc38ee2bc7849247c25be032f05a382689d12fc1abf3db4447",
+   "xhash": "2062b477c651b3fc38ee2bc7849247c25be032f05a382689d12fc1abf3db4447"
+  },
+  {
+   "kind": "QuadMesh",
+   "axes": 2,
+   "label": "_child1",
+   "hash": "cbd4255dc59ed16c0b4f4a183d894c848ebe3f0804421949c3e481d987b051d5",
+   "dhash": "012540386aa876faf4a7b59e5ac7d743d23b72c212629baa8fd526f6f28811c8",
+   "xhash": "012540386aa876faf4a7b59e5ac7d743d23b72c212629baa8fd526f6f28811c8"
+  }
+ ],
+ "texts": [
+  [
+   9.3,
+   "EW cell index (all 42 historical functionals)"
+  ],
+  [
+   8.3,
+   "\u22125"
+  ],
+  [
+   8.3,
+   "0"
+  ],
+  [
+   8.3,
+   "5"
+  ],
+  [
+   8.3,
+   "10"
+  ],
+  [
+   8.3,
+   "15"
+  ],
+  [
+   8.3,
+   "20"
+  ],
+  [
+   8.3,
+   "25"
+  ],
+  [
+   8.3,
+   "30"
+  ],
+  [
+   8.3,
+   "35"
+  ],
+  [
+   8.3,
+   "40"
+  ],
+  [
+   8.3,
+   "45"
+  ],
+  [
+   8.3,
+   "Nominal (n=40)"
+  ],
+  [
+   8.3,
+   "D1 historical (n=20)"
+  ],
+  [
+   8.3,
+   "q3 stress (n=20)"
+  ],
+  [
+   8.3,
+   "W1 historical (n=20)"
+  ],
+  [
+   8.3,
+   "W2 historical (n=20)"
+  ],
+  [
+   8.3,
+   "W3 historical (n=20)"
+  ],
+  [
+   8.3,
+   "Nom."
+  ],
+  [
+   8.3,
+   "D1"
+  ],
+  [
+   8.3,
+   "q3"
+  ],
+  [
+   8.3,
+   "W1"
+  ],
+  [
+   8.3,
+   "W2"
+  ],
+  [
+   8.3,
+   "W3"
+  ],
+  [
+   9.3,
+   "Coverage with 95% pointwise exact bounds"
+  ],
+  [
+   8.3,
+   "\u22120.2"
+  ],
+  [
+   8.3,
+   "0.0"
+  ],
+  [
+   8.3,
+   "0.2"
+  ],
+  [
+   8.3,
+   "0.4"
+  ],
+  [
+   8.3,
+   "0.6"
+  ],
+  [
+   8.3,
+   "0.8"
+  ],
+  [
+   8.3,
+   "1.0"
+  ],
+  [
+   8.3,
+   "1.2"
+  ],
+  [
+   8.5,
+   "EW7"
+  ],
+  [
+   8.5,
+   "EW41"
+  ],
+  [
+   9.3,
+   "Fraction in fixed \u00b1\u03c3 interval"
+  ],
+  [
+   8.3,
+   "0.0"
+  ],
+  [
+   8.3,
+   "0.2"
+  ],
+  [
+   8.3,
+   "0.4"
+  ],
+  [
+   8.3,
+   "0.6"
+  ],
+  [
+   8.3,
+   "0.8"
+  ],
+  [
+   8.3,
+   "1.0"
+  ],
+  [
+   9.3,
+   "Historical R statistical intervals: \u03c3 from 100 replicas of nominal seed 700000 Reused assessment samples; no per-experiment or total-coverage claim"
+  ]
+ ],
+ "text_overlaps": []
+}

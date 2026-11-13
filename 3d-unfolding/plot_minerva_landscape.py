@@ -26,6 +26,17 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 
+# --print-style (the note's figure style, director 2026-11-13): the methods paper's rcParams from the repo-root
+# note_print_style.py, and the canvas at the note's printed width (0.97\textwidth, sec_3d.tex). Without the flag the
+# output is unchanged.
+PRINT = "--print-style" in _sys.argv[1:]
+if PRINT:
+    for _a in _pathlib.Path(__file__).resolve().parents:
+        if (_a / "note_print_style.py").exists():
+            _sys.path.insert(0, str(_a)); break
+    import note_print_style
+    note_print_style.apply()
+
 # (year, dims, channel, arxiv)   channel keys -> color/label below
 M = [
     (2013, 2, "qe",    "1305.2243"),
@@ -69,7 +80,7 @@ chan = {
     "ratio": ("#7f7f7f", "Nuclear-target ratio"),
 }
 
-fig, ax = plt.subplots(figsize=(9.4, 5.2))
+fig, ax = plt.subplots(figsize=note_print_style.figsize(0.97, 0.7) if PRINT else (9.4, 5.2))
 ax.axhspan(0.5, 2.5, color="#1f77b4", alpha=0.06, zorder=0)
 ax.text(2012.6, 2.47, "binned D'Agostini IBU: 29 of 30 measurements at "
         "$\\leq 2$ simultaneously unfolded variables", fontsize=8.5, va="top",
@@ -123,8 +134,12 @@ handles += [
     Line2D([], [], marker="*", ls="", mfc="#C44E52", mec="k", ms=15,
            label="this work, OmniFold (5D)"),
 ]
-ax.legend(handles=handles, loc="upper left", fontsize=8.0, framealpha=0.95,
-          ncol=2)
+if PRINT:  # below the axes, so that it covers no marker or annotation at the printed size
+    ax.legend(handles=handles, loc="upper center", bbox_to_anchor=(0.5, -0.16), fontsize=8.0, framealpha=0.95,
+              ncol=3)
+else:
+    ax.legend(handles=handles, loc="upper left", fontsize=8.0, framealpha=0.95,
+              ncol=2)
 fig.tight_layout()
 fig.savefig("minerva_unfolding_landscape.png", dpi=150)
 print("wrote minerva_unfolding_landscape.png with", len(M), "prior measurements")

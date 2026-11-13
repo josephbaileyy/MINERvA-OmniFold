@@ -1,0 +1,726 @@
+{
+ "artists_py_sha256": "feb486fefd363c0d80174fc034c82f53874558de718736af2c34c6b5344de041",
+ "size_in": [
+  6.5,
+  5.6
+ ],
+ "items": [
+  {
+   "kind": "line",
+   "axes": 0,
+   "label": "D1 historical",
+   "hash": "1567ed57b9bcec1e50a90513b3b075edc15b9a90c74dfe2567f82f703e828ac2",
+   "dhash": "b05f6e55350a8c7a8c37d4d023c5cf0209ec355cf4d4e79afe020a283540feb2",
+   "xhash": "743f86bcea6938e87e64954f8600db496f8a14dd97c1b47dabbafeda5c56ba62"
+  },
+  {
+   "kind": "line",
+   "axes": 0,
+   "label": "_child1",
+   "hash": "23df4992bbe33faa94ce5cecbc4e97982f3cf5c3261eb30024310b25cd958ee2",
+   "dhash": "88c24783c44169f5eef495e4f7346e37ff18da5b43dda64547668b24d253c6f3",
+   "xhash": "379168c7ba2d6bd5ea34f87f7f4fae2fa263f26e0ac55cedf8527ef9022760b3"
+  },
+  {
+   "kind": "line",
+   "axes": 0,
+   "label": "q3 stress",
+   "hash": "902dad048abdefb55da71b212844aedeb0d9da4c9525c35c57a595dbaadae19b",
+   "dhash": "8208ae59f379bc9c076a00dd0a03c810d4f69b0fd1822ee259eed8c9573b0e83",
+   "xhash": "dee84652934521ff23cdf7b31047f0852f93c7415346baa35919612e50559024"
+  },
+  {
+   "kind": "line",
+   "axes": 0,
+   "label": "_child3",
+   "hash": "b8cfc740ea5217ae1e641c4d46fb9459717883a07a6fed4d3378c1ed1d8911b6",
+   "dhash": "167c46a9db2846ef8ac647175c7142c3b431b8faacffca60119db8929f3c3578",
+   "xhash": "0c2581960bfd4a047a1fca8681099ad4b2fb196d2df6985bda375b8753acd578"
+  },
+  {
+   "kind": "line",
+   "axes": 0,
+   "label": "W1 historical",
+   "hash": "8df4e3bdc329386218725ec3c30513a880e89a9ca3617a11ab66ec2e9f2c3704",
+   "dhash": "84b50b4161ee7e986929befe15cfb9fddee9a72a1fb49c33b945817e3f6e1ee3",
+   "xhash": "2f7fc90f0c79b9b6c82d1a8cddf1d71bcd7239d219698ac0762c8d88b5b93f2f"
+  },
+  {
+   "kind": "line",
+   "axes": 0,
+   "label": "W3 historical",
+   "hash": "0a9e11efd06967098d86e1dafe6eb3d42549fb1d64ddcfc7003d6a79e05c82c5",
+   "dhash": "e8792f2d1e65387ecfa838074b6fa19f608b0f391cf0e195610934593c807967",
+   "xhash": "781fcf9faaafb7a6d526bc97d2f355fc17da4523bc18a6ccb1f3c084e5d51ef4"
+  },
+  {
+   "kind": "line",
+   "axes": 0,
+   "label": "_child6",
+   "hash": "bb2d8b295c2565cd4c86bee75f55be4824ed745cc6bc4aa519dc79752bc6579d",
+   "dhash": "2523072f4b4d8e2e63be7c574383f861092ae6cf698160b00cf7000d45a453f7",
+   "xhash": "afe6013d338cf5bf33eea981128e097a79a61f5b94371d4cbf1e24bc2528cc9b"
+  },
+  {
+   "kind": "line",
+   "axes": 1,
+   "label": "D1 historical",
+   "hash": "d58ecb140135e09f65937ed3cc45bbc04e5d274ad0554874d53de27fd40fb015",
+   "dhash": "17a9dff1528d996b3e43b55c904151bcd9dfebb8c40ef971ccfd292024009988",
+   "xhash": "ad5d4e11dcfda9a29220128caaa51fc31efff95b5c59fe1e4b85d6af44fd33b2"
+  },
+  {
+   "kind": "line",
+   "axes": 1,
+   "label": "_child1",
+   "hash": "a55613e337d0d8660dda57a1c926d4a15154c12ea150d582685aa887ca7c04d5",
+   "dhash": "e30d5add24d3b9115eca71cc004ee0e89a1ee80c579140f87bf657741f386a7a",
+   "xhash": "9a2032fe3343b057f6e26fa97fdfe749db4669c2683b088af9f78e7a0f7dc07c"
+  },
+  {
+   "kind": "line",
+   "axes": 1,
+   "label": "q3 stress",
+   "hash": "1665b5991e1d2ff499b35b55542193fd6bac8f7fd826e5a7402883a639e64807",
+   "dhash": "90a80494d08ee5d10c9fcb584b91a0c2e4e0c43fc7bed4da5faab205d856b342",
+   "xhash": "0daea7d9f10e3800a82e438aad8df3a1667407fc4eaf6815e812d53ddc653a69"
+  },
+  {
+   "kind": "line",
+   "axes": 1,
+   "label": "_child3",
+   "hash": "0fc7885492301e827f746e1723d2b32441b4a33c99616d854d14ba2aabf54c12",
+   "dhash": "40c1edcf68c4b250371913159e33f5bb9fd4341be42e241ea8466e74996e4e22",
+   "xhash": "a25634bedd1102954a658da99a5abba11a57540e0f70a5ad7ce70c3c0b65cc29"
+  },
+  {
+   "kind": "line",
+   "axes": 1,
+   "label": "W1 historical",
+   "hash": "68dde5418d77ca86a173335119990fffced8c5243efc3137e85b1d1fc8384dc0",
+   "dhash": "175a80c3cf5470bc7829c19f19a02c960eaada3975da32b3f5e339f1a9636793",
+   "xhash": "22a7ba7ded33d7155a4bc2271008b883b7cb5fa03a0d0bb538042e8887c3517b"
+  },
+  {
+   "kind": "line",
+   "axes": 1,
+   "label": "W3 historical",
+   "hash": "fd2365861f184a672b37d8560f96b4334e4192fab4b87f8354c6ff66888f331f",
+   "dhash": "c2dff8a9cf34e36aae04fe2bf66809a36bb4b1af378e7703eae55275c9938f08",
+   "xhash": "94e470f82e4f14abbb238fc84274a41caab46339cf84b5339e7c3069626ad595"
+  },
+  {
+   "kind": "line",
+   "axes": 1,
+   "label": "_child6",
+   "hash": "3b48e9ac4cddeff2ad99851e65b5e9ba84afa8bff77d94ee66bf99c32d8bdb9a",
+   "dhash": "2ef490ee2d37a59c30085db391236592e1d848dab7164d902b56be24e4fa6187",
+   "xhash": "2940fec54b2bc3987f1dab8af853d1bb8362d3003a230f362e85d0cfb23cf2c6"
+  },
+  {
+   "kind": "line",
+   "axes": 2,
+   "label": "D1 historical",
+   "hash": "7a91b64eeef1ab7cb8c2d4fac6c44e51661166b25d3402eb08e8c2e3bf99bea1",
+   "dhash": "53fe3fbc69334f6c893e9f634a7ceef3daf4df3b9737b7a7be989036aaa2128e",
+   "xhash": "16d632d418a7450f71976de55abab43df861fb7dcff186763d8d5d5dff64ddc1"
+  },
+  {
+   "kind": "line",
+   "axes": 2,
+   "label": "_child1",
+   "hash": "097af49a2e14dc1c614b19179b9acfb6e7d790bcd48b4be612088b86af191d36",
+   "dhash": "c21dda11309e62b142d18041bfa632d73ec7857e8474c81e533ed87c232673c3",
+   "xhash": "318167c256061c73d51cf7cfe17f42bd19503e1dbc4e069e579033f118070821"
+  },
+  {
+   "kind": "line",
+   "axes": 2,
+   "label": "q3 stress",
+   "hash": "b5f429be4831f8299c01310f1cafa103d3cdd57149958480a93de1108cc3488e",
+   "dhash": "043249afb338978b7ac237dd251f321f8c8dffa655ad6311041ed21c41707f50",
+   "xhash": "a8d3f0fbd1042b5893708801703c0ad7b939480e628d213f9d413c3e556eb5a4"
+  },
+  {
+   "kind": "line",
+   "axes": 2,
+   "label": "_child3",
+   "hash": "7d846a2ec8a1bd09510474397c83eaceee2b3d8120aa9e579b0f8ee6e6481794",
+   "dhash": "aa37fd8807cee74cc69b97294636a215393bb62c4aab1addf819b17eaa9dd2f9",
+   "xhash": "125e1afe668c206489884abc46c7f3bda22aa377240e20bb62814be0eae2ef32"
+  },
+  {
+   "kind": "line",
+   "axes": 2,
+   "label": "W1 historical",
+   "hash": "d10a8b4c4de36d8c91b3d4cc9da23ee40c30e5695a7faaa610eacbee1dfb5a00",
+   "dhash": "6055e9bbe584e93559b849c6cc9ff33fd739e6f9b0cc7c27065b4213e4a0eb3a",
+   "xhash": "34020af991dcfabe53ede766280e41a37ed794fc28fef636d80f1f3ec5cc108d"
+  },
+  {
+   "kind": "line",
+   "axes": 2,
+   "label": "W3 historical",
+   "hash": "d3779af88dff91ea71909643e09ac98575a4b92683494030022c627f192783c0",
+   "dhash": "6b27e984dbc89986b76c6759ec48ea0ca34cd895b73ed3761bfa93a61325c7ce",
+   "xhash": "0e738eacb4b3c1f15fd156fd9b50f4a2d387d58b1b682d48e5dfa6187e57be37"
+  },
+  {
+   "kind": "line",
+   "axes": 2,
+   "label": "_child6",
+   "hash": "d766cf39d415297bda8d5fc866727cc6d6c675388d524db4c3bf20f9b2e514b7",
+   "dhash": "889111f61724b545352e6c7d204e044dc61308948b312ac24f93bc93d33dcf39",
+   "xhash": "b39938c35a3ca9d0f641138331847558134bd81b5ce4039f52ba51b0a66b81ee"
+  },
+  {
+   "kind": "line",
+   "axes": 3,
+   "label": "_child0",
+   "hash": "2acac1f25e288c8dadc4090852c13dc78447e22e4ed5aafca851ab3132f1779d",
+   "dhash": "63b90cbf2fcd47b54be0a692b3c2a704b939aa7ff5805ec998e5548f6bb0e6b5",
+   "xhash": "f468f680480e565580f6163a6fea9501565dd3c629b72ce25b14ad22a84ecc15"
+  },
+  {
+   "kind": "line",
+   "axes": 3,
+   "label": "_child1",
+   "hash": "dfdd276029c7461cf3a9b980243354a7b95fce8a2ad0d60d766c80fb823cb22e",
+   "dhash": "f602c50e5faf2db741ffc1072090b2260416f402cf03643a58b56b0a8b08c036",
+   "xhash": "c20bae38a138103d327413054627ad6bfd49c61beb8af27ab6feb99285eb80e5"
+  },
+  {
+   "kind": "line",
+   "axes": 3,
+   "label": "_child2",
+   "hash": "ea91bf27b16e945a4c3bb52d1edba8bb8f62b23f30521523facef24599c58ff6",
+   "dhash": "cdee8fa0ebc56e888727f395ee5ef789fbb42ac4a8d27d3d81b7f3c6060f6915",
+   "xhash": "729be114b430beaf1d5c82436c446ef397093d1dda910f4e2f725a0de960e19c"
+  },
+  {
+   "kind": "line",
+   "axes": 3,
+   "label": "_child3",
+   "hash": "a09d45525fd10fc64c76dd60192729ae5d4e4565e7ee40fdf9e66667c7dab8e4",
+   "dhash": "dfa6b6370c69afe958df50ab30ea190febe73510fea74be853d77d291931e43e",
+   "xhash": "0f3357753999f843f566789a1733b3d3e51fbb8090b2fa1331d4edaf5e566604"
+  },
+  {
+   "kind": "line",
+   "axes": 3,
+   "label": "_child4",
+   "hash": "6474e88adc3c1b712e9b6eb9191641117f6f1ff2717fc3b1c29280a0ed751d46",
+   "dhash": "ea56c70865127f986547664a4ed387b5f8ce05703d6b2e37f08e6124274857e8",
+   "xhash": "c5257220ab67361c32d2ca4e657788b64a30900548c75004a9d46c9292edbabd"
+  },
+  {
+   "kind": "line",
+   "axes": 3,
+   "label": "_child5",
+   "hash": "d67fe9fa23163bcf4f5d3c194cdfcc4adad558c3362829ecd4f3aa714108aed4",
+   "dhash": "65d1d63d1ff29371fcd3340a88f801a3f1aeb649a0c4a611b71e542ba1e975a8",
+   "xhash": "742f926bd4633135a7f36aaffba2a3020d4b0edcf3074cc4d9dd0b15fc701dc9"
+  },
+  {
+   "kind": "line",
+   "axes": 3,
+   "label": "_child6",
+   "hash": "2499aa69f4245aceb563154adbe2266e3363e5dd8bb5808e347153dc8a30c2dd",
+   "dhash": "c6156656baf638184e8bb8eb37c59122a9b9d928342a675277b33c29ccea4c46",
+   "xhash": "4edf7493f1940b9291049b0540b4a39b780d845ba1916614249b55015cac9703"
+  },
+  {
+   "kind": "line",
+   "axes": 3,
+   "label": "_child7",
+   "hash": "280cf0a3e1b697944f360927904b6d2da4750de06493e6d911dd4d8ffe86df55",
+   "dhash": "24d738ed063d1df21fb5ef2ffec099642266ce6e6b2a3a5820497799b0bf933c",
+   "xhash": "b606c01d2da3e255fe3d5907d362ce28ccb6ace5c74fe86c34b13a72bfe3d2fd"
+  },
+  {
+   "kind": "line",
+   "axes": 4,
+   "label": "_child0",
+   "hash": "fee2997c8c3c289f1e78dc510c30786a56d31b3e79729fb71a7ee097718ceab2",
+   "dhash": "83a4d5c54016164db8c097b5bedd13c334d567c8ff42e5fbc76abf3e2dfdb418",
+   "xhash": "20683c7f86dfd89a99282b9ee6d093661e150714c8392ec929278c1211c1ad15"
+  },
+  {
+   "kind": "line",
+   "axes": 4,
+   "label": "_child1",
+   "hash": "7991b9707df7398c8f501d3ce509179208ed23d32308f209a08c47d53be3fb6d",
+   "dhash": "e8132a1d6b6ef59e47a537ce29fc9de1bf87ed2c5dffe554517e4e90a0f8a9b9",
+   "xhash": "55dc41a52844e2d5bcbd8d1e917ab1c082bdd4969e78dfbd77ec9d64448b77ee"
+  },
+  {
+   "kind": "line",
+   "axes": 4,
+   "label": "_child2",
+   "hash": "26d273809aab5e74dc2939d38e77f4ec20a99acaede9d493191857a785103fe2",
+   "dhash": "bcb892adec8feba8b3423f6aed380f1fb5c9fee99ee2dfc79d1c7da7e693d5ba",
+   "xhash": "91946fe34461a2c07677b984473dda18a01717305d69bad60808f74eef5562ab"
+  },
+  {
+   "kind": "line",
+   "axes": 4,
+   "label": "_child3",
+   "hash": "aecae8356ba2ddbc5159f32bc3957f5c6ba83fae0b8a7e31f093a50a701c648f",
+   "dhash": "a6756c67ac5f2768af0298bfb0d8f57869f1fdea0c9d559a4d15df4f87341bfa",
+   "xhash": "f74e267d38522f418cfd9de34b4c812c4649c9a03c1f24647cb06dcbc7372f82"
+  },
+  {
+   "kind": "line",
+   "axes": 4,
+   "label": "_child4",
+   "hash": "036371b20ba82938daac3d9c935234dca6489bedc2b4f1dedc45f11f39d2aa5e",
+   "dhash": "ce1420e11c48b171fd782c6b750aeaf32a57367a9cf700be8ff209b08a17f128",
+   "xhash": "22841d383abc45efd2e851379bf259498a3bf576d79bdd8fbbc4e6433161275b"
+  },
+  {
+   "kind": "line",
+   "axes": 4,
+   "label": "_child5",
+   "hash": "85800339967a06cb2102bf5b2aaa3f09a50c060af787e149d31f68377a6ff3d2",
+   "dhash": "69aae9b3e7c0c4fa75e49804fb7ee7a778dcf9cc6da3c43f424e3c563564a2d8",
+   "xhash": "ea31479ea2a2a50a6f5504fb83387a30b192441574c1435f1ab5ea8a1d9473a9"
+  },
+  {
+   "kind": "line",
+   "axes": 4,
+   "label": "_child6",
+   "hash": "a032715640b93d50fd154761bf44d334fb4dacbec8faaa52f9487bf24f455b30",
+   "dhash": "78a8a7e125fb9980fd2d5633e0a420690a7ec0e329c198237d9ebbc61d7ad519",
+   "xhash": "9113f7c672970163196803d76ed2205df5b9ecd45720eb83490e6eab02d1dc75"
+  },
+  {
+   "kind": "line",
+   "axes": 4,
+   "label": "_child7",
+   "hash": "280cf0a3e1b697944f360927904b6d2da4750de06493e6d911dd4d8ffe86df55",
+   "dhash": "24d738ed063d1df21fb5ef2ffec099642266ce6e6b2a3a5820497799b0bf933c",
+   "xhash": "b606c01d2da3e255fe3d5907d362ce28ccb6ace5c74fe86c34b13a72bfe3d2fd"
+  },
+  {
+   "kind": "line",
+   "axes": 5,
+   "label": "_child0",
+   "hash": "7d7cd47fd4b000aaff6ebe9c10aa8cf20fc98109614d9f5dc45b157d9f95ce1a",
+   "dhash": "24a241c849c9896ce0dea3628c58b88aa56d52aadb9578f3b55a2197ffc0eeb0",
+   "xhash": "999b9219f76ef9a1aa0afdc0a45d971e0d9d22b0376c6945096dda2b4715052d"
+  },
+  {
+   "kind": "line",
+   "axes": 5,
+   "label": "_child1",
+   "hash": "49b2755c372ee4b8dc3409f48c4a69c9bff5a42eb32233e646532a57ed6016c0",
+   "dhash": "e3febead7f5f3c5ad9657a509b7e1c04e695dc66b0551206c30cbc4fae4dd144",
+   "xhash": "701eedde0f1f9d627f5b41a0da2f1d1b7fb5c25a424982f077149ed322fb3910"
+  },
+  {
+   "kind": "line",
+   "axes": 5,
+   "label": "_child2",
+   "hash": "163e15f02740bcfe3fe5023cac50eecdda5c58299b3e4efe811a7741ba3153e2",
+   "dhash": "78ed6a2abc1b8dcab9277a726bf2aec41c01ad0617333d8e1a1dbf3f01dcbad6",
+   "xhash": "9b445970bd39036b77c793be618d4efb29a3558ea5ab1b74e49a61a551543dea"
+  },
+  {
+   "kind": "line",
+   "axes": 5,
+   "label": "_child3",
+   "hash": "289671d48714aaa1d6b0c246c50e9f57bfafb3f558cef76b566e3f9713da4642",
+   "dhash": "aa9c0c155199fbbad627a082ae2e50f4701d664258c581195531c2536519c491",
+   "xhash": "9b445970bd39036b77c793be618d4efb29a3558ea5ab1b74e49a61a551543dea"
+  },
+  {
+   "kind": "line",
+   "axes": 5,
+   "label": "_child4",
+   "hash": "8aff3e9dd630940bd1234742776d83350bf28d1b898de5cce16c9a83f9f5a91d",
+   "dhash": "4fd59eb28c9cc7172172bf67b10b2eb61d5a3805f4185dbe25f9e49b042ab086",
+   "xhash": "b5e5d00eabc0c91aad628b8c93b65a100db376bc7b656d6e27ffb8814ffdb05c"
+  },
+  {
+   "kind": "line",
+   "axes": 5,
+   "label": "_child5",
+   "hash": "eb896f595f204e50275261d2bec4162ddbc6ae06e2682e616f7bb1fc0763f780",
+   "dhash": "1c9eb91dff673eacd1d63b441f51c22ab8f4b1c24ca8bbc01df1c90c231bc790",
+   "xhash": "3758a028a8b2484f103eedda29cffcf87b5fcbf0ee974720107e3c3703d53092"
+  },
+  {
+   "kind": "line",
+   "axes": 5,
+   "label": "_child6",
+   "hash": "337241a335bf2d1bdf89a722ec58f1c2835e0f4f6977e3e2850d72238f6ee9c6",
+   "dhash": "7593ac71f36188ac7d023d00acd17d150e5833c98d5ecd8e163549c3994db3a5",
+   "xhash": "5d0750ec0d9f64ed151def3e5a313b0b93e341df88a84903b356ba416d6c34a0"
+  },
+  {
+   "kind": "line",
+   "axes": 5,
+   "label": "_child7",
+   "hash": "280cf0a3e1b697944f360927904b6d2da4750de06493e6d911dd4d8ffe86df55",
+   "dhash": "24d738ed063d1df21fb5ef2ffec099642266ce6e6b2a3a5820497799b0bf933c",
+   "xhash": "b606c01d2da3e255fe3d5907d362ce28ccb6ace5c74fe86c34b13a72bfe3d2fd"
+  }
+ ],
+ "texts": [
+  [
+   8.3,
+   "1"
+  ],
+  [
+   8.3,
+   "5"
+  ],
+  [
+   8.3,
+   "10"
+  ],
+  [
+   8.3,
+   "30"
+  ],
+  [
+   8.3,
+   "200"
+  ],
+  [
+   9.3,
+   "Median absolute residual (%)"
+  ],
+  [
+   8.3,
+   "2"
+  ],
+  [
+   8.3,
+   "4"
+  ],
+  [
+   8.3,
+   "6"
+  ],
+  [
+   8.3,
+   "8"
+  ],
+  [
+   8.3,
+   "10"
+  ],
+  [
+   8.3,
+   "12"
+  ],
+  [
+   8.3,
+   "14"
+  ],
+  [
+   8.5,
+   "J: 109 supported joint cells"
+  ],
+  [
+   8.3,
+   "D1 historical"
+  ],
+  [
+   8.3,
+   "q3 stress"
+  ],
+  [
+   8.3,
+   "W1 historical"
+  ],
+  [
+   8.3,
+   "W3 historical"
+  ],
+  [
+   8.3,
+   "1"
+  ],
+  [
+   8.3,
+   "5"
+  ],
+  [
+   8.3,
+   "10"
+  ],
+  [
+   8.3,
+   "30"
+  ],
+  [
+   8.3,
+   "200"
+  ],
+  [
+   8.3,
+   "0"
+  ],
+  [
+   8.3,
+   "1"
+  ],
+  [
+   8.3,
+   "2"
+  ],
+  [
+   8.3,
+   "3"
+  ],
+  [
+   8.3,
+   "4"
+  ],
+  [
+   8.3,
+   "5"
+  ],
+  [
+   8.3,
+   "6"
+  ],
+  [
+   8.3,
+   "7"
+  ],
+  [
+   8.3,
+   "8"
+  ],
+  [
+   8.3,
+   "9"
+  ],
+  [
+   8.5,
+   "H2: 27 supported joint cells"
+  ],
+  [
+   8.3,
+   "1"
+  ],
+  [
+   8.3,
+   "5"
+  ],
+  [
+   8.3,
+   "10"
+  ],
+  [
+   8.3,
+   "30"
+  ],
+  [
+   8.3,
+   "200"
+  ],
+  [
+   8.3,
+   "0"
+  ],
+  [
+   8.3,
+   "2"
+  ],
+  [
+   8.3,
+   "4"
+  ],
+  [
+   8.3,
+   "6"
+  ],
+  [
+   8.3,
+   "8"
+  ],
+  [
+   8.3,
+   "10"
+  ],
+  [
+   8.3,
+   "12"
+  ],
+  [
+   8.3,
+   "14"
+  ],
+  [
+   8.3,
+   "16"
+  ],
+  [
+   8.5,
+   "EW: 39 supported projected cells"
+  ],
+  [
+   8.3,
+   "1"
+  ],
+  [
+   8.3,
+   "5"
+  ],
+  [
+   8.3,
+   "10"
+  ],
+  [
+   8.3,
+   "30"
+  ],
+  [
+   8.3,
+   "200"
+  ],
+  [
+   9.3,
+   "Historical recovery proxy"
+  ],
+  [
+   8.3,
+   "0.2"
+  ],
+  [
+   8.3,
+   "0.3"
+  ],
+  [
+   8.3,
+   "0.4"
+  ],
+  [
+   8.3,
+   "0.5"
+  ],
+  [
+   8.3,
+   "0.6"
+  ],
+  [
+   8.3,
+   "0.7"
+  ],
+  [
+   8.3,
+   "0.8"
+  ],
+  [
+   8.3,
+   "1"
+  ],
+  [
+   8.3,
+   "5"
+  ],
+  [
+   8.3,
+   "10"
+  ],
+  [
+   8.3,
+   "30"
+  ],
+  [
+   8.3,
+   "200"
+  ],
+  [
+   8.3,
+   "0.1"
+  ],
+  [
+   8.3,
+   "0.2"
+  ],
+  [
+   8.3,
+   "0.3"
+  ],
+  [
+   8.3,
+   "0.4"
+  ],
+  [
+   8.3,
+   "0.5"
+  ],
+  [
+   8.3,
+   "0.6"
+  ],
+  [
+   8.3,
+   "1"
+  ],
+  [
+   8.3,
+   "5"
+  ],
+  [
+   8.3,
+   "10"
+  ],
+  [
+   8.3,
+   "30"
+  ],
+  [
+   8.3,
+   "200"
+  ],
+  [
+   8.3,
+   "0.2"
+  ],
+  [
+   8.3,
+   "0.3"
+  ],
+  [
+   8.3,
+   "0.4"
+  ],
+  [
+   8.3,
+   "0.5"
+  ],
+  [
+   8.3,
+   "0.6"
+  ],
+  [
+   8.3,
+   "0.7"
+  ],
+  [
+   8.3,
+   "0.8"
+  ],
+  [
+   9.3,
+   "Iteration (available ranges only)"
+  ],
+  [
+   9.3,
+   "Noise-free development traces: solid 100 trees / 8 leaves; dashed 400 / 31 No repeat-variance axis; historical truth ratios, fixed detector response"
+  ]
+ ],
+ "text_overlaps": [
+  [
+   "q3 stress",
+   "W1 historical",
+   30.8
+  ]
+ ]
+}
