@@ -29,14 +29,14 @@ For every row, the recorded reason for divergence is **“rewritten for the pape
 | `app_negweight.tex` | `app:negweight`; 4 | Same density-ratio formulae and distinction between bin integrals and continuous shape. rho/phi is local notation only. |
 | `app_negweight.tex` | `app:negweight`; 5 | Same floor, positivity restriction, refinement and classifier-dependence limit. |
 | `app_negweight.tex` | `app:negweight`; 36 | Scoped the absence of a coverage test to the historical refinement study; see B. |
-| `sec_method.tex` | `sec:method-config`; 7 | Scoped the a-priori settings to the OmniFold classifiers and missed-event regressor; simulation-selected refinement/iterations are distinguished; see C. |
+| `sec_method.tex` | `sec:method-config`; 7 | The a-priori settings are the two OmniFold classifiers and the missed-event regressor. Five iterations stay under the rule in sec:gbdt-model-dependence. The 400-tree, 31-leaf refinement was selected before the joint-test design was fixed (sec:joint5d). See C. |
 | `sec_method.tex` | `sec:method-config`; 8 | Same iteration counts and exact-split movement. Note retains its stronger explicit limits: one diagnostic is not convergence of every functional, and reproduction is not an iteration test. |
 | `sec_fived16.tex` | `sec:fived16-cov`; 0 | Same reported block sum, components, refit/jitter bootstrap and zero measured seed block. |
 | `sec_fived16.tex` | `sec:fived16-cov`; 1 | Disambiguated fractional and cross-section covariance symbols, including fractional-trace shares; see D. Carbon ratios remain the reported construction. |
 | `sec_fived16.tex` | `sec:fived16-cov`; 3 | Same response construction and exclusions. Supplement prints the category scale constants that the note describes generically; checked against build_cresp.py, with no conflicting value. |
 | `sec_fived16.tex` | `sec:fived16-cov`; 5 | Same correlation matrix and route to reconstructing the reported covariance. |
 | `sec_fived16.tex` | `sec:fived16-cov`; 7 | Same inversion dimensions, shape construction, mixed-block normalizations and absence of an ensemble correction. Supplement adds a matrix identity and construction table; no new note diagnostic. |
-| `sec_fived16.tex` | `sec:fived16-pl`; 0 | Made the Gaussian common-variance assumption and uncalibrated interpretation of the existing period-size interval explicit; see E. |
+| `sec_fived16.tex` | `sec:fived16-pl`; 0 | The period offsets are exchangeable draws with a common variance. The existing interval is the chi-squared interval at the Satterthwaite degrees of freedom of the exposure-weighted spread. It depends only on the exposure shares and is not a coverage or calibration of the block. See E. |
 | `sec_fived16.tex` | `sec:fived16-pl`; 1 | Same playlist statistic, partition counts, exchangeability limit and descriptive comparisons. |
 | `sec_fived16.tex` | `sec:fived16-pl`; 3 | Same post-observation block choice, preceding audit and unchanged comparisons. |
 | `sec_systematics.tex` | `sec:uq-combine`; 0 | Same block sum, independence/linearity assumptions, unified-throw construction and unreported two-dimensional comparison/mean-shift norm. |
@@ -55,11 +55,11 @@ A. **Background composition.** `sec_experiment.tex`, `sec:selection`: the templa
 
 B. **Purity and historical refinement scope.** `app_negweight.tex`: the binning-only statement applies to configurations (a)–(c); the unbinned treatments already described in the appendix are separate constructions. The no-coverage-test statement refers to that historical refinement study. Evidence: the note's `tab:estimators-matrix` and `OUTCOME-20260925-s5n-stage1-development-fail.md`, especially its NOT CITABLE FOR and “no validation seed” statements. This does not retract or import any later coverage result.
 
-C. **Settings chosen a priori.** `sec_method.tex`, `sec:method-config`: the two OmniFold classifiers and missed-event regressor retain the stated nominal settings. The refinement capacity and five-observable iteration count were chosen through the simulation studies already described in `sec:gbdt-model-dependence`. The qualification prevents the broad phrase “learner settings” from incorrectly covering the separately selected refinement. No configuration, setting, result assignment or selection chronology changes.
+C. **Settings chosen a priori.** `sec_method.tex`, `sec:method-config`: the two OmniFold classifiers and the missed-event regressor were fixed a priori. No hyperparameter search was performed on data. The joint-test estimator keeps five iterations under the rule in `sec:gbdt-model-dependence`. Its refinement classifier, 400 trees and 31 leaves, was selected before the joint-test design was fixed (`sec:joint5d`). The nominal 100-tree, learning-rate 0.1, depth-3 settings stay. No configuration, result assignment or printed number changes.
 
 D. **Covariance units.** `sec_fived16.tex`, `sec:fived16-cov`: the outer products of relative generator shifts define the fractional matrix. Multiplication by the diagonal of the cell-integrated cross sections gives the absolute matrix used in the reported block sum. Distinct fractional/absolute symbols make the sum and the fractional-trace shares consistent. Evidence: `nd-unfolding/pv-ladder/build_cmodel5d.py`'s construction and `nd-unfolding/s1_assemble.py`, `model_abs` and the `C_model_frac`/`C_model_abs` output keys. The matrices and all printed values remain unchanged. The reported generator ratios remain carbon ratios; the note's CH sensitivity and the paper's withholding remain as recorded in the existing B5/V-PRIOR alignment ledger.
 
-E. **Period-size interval.** `sec_fived16.tex`, `sec:fived16-pl`: the existing interval is an uncalibrated illustration under independent Gaussian period effects with a common variance. Evidence: `FD-CT-5B-AUDIT-DECLARATION.md` section 4.4 and `nd-unfolding/fd_ct_5b_audit.py`, `nu_eff` and `sigma_interval`. This states the assumption behind the chi-squared reference; it does not turn the interval into measured coverage or change its endpoints.
+E. **Period-size interval.** `sec_fived16.tex`, `sec:fived16-pl`: the period offsets are treated as exchangeable draws with a common variance. The 68 percent interval on the ratio of the block's true sigma to its estimated sigma is the chi-squared interval at the Satterthwaite degrees of freedom of the exposure-weighted spread. It depends only on the exposure shares. It is not a coverage or calibration of the block. The endpoints are unchanged. Evidence: `2d-closeout/playlist-term/DESIGN.md` section 2 and `FD-CT-5B-AUDIT-DECLARATION.md` sections 4.4 and 5.1.
 
 The remaining differences are wording, notation, relocation, explicit definitions, or deliberately different amounts of context. Added Supplement explanations of finite classifier capacity, particle-species definitions, scale constants, matrix identities, CSV packaging and diagnostics are not copied into the note. Existing note qualifications, including its iteration-test limits and contextual Gaussian references, are retained. No shared reported number was reconciled by changing its value.
 
@@ -69,9 +69,7 @@ S8.6's stopped-test diagnostics remain in the Supplement. None is moved into the
 
 ## Clarification commits
 
-All remain pending Grok review.
-
-- `e381b6cd7d841879ce1a8745782ac52d6aeadc68`: playlist 1a template composition.
-- `3925864482954bbe32f9ea217d29fea5a1e37cf6`: learner selection scope.
-- `5a5582f3750379c04baf5c59f0ca1b751691fc5d`: covariance units and interval assumptions.
-- `3d2f0d0dc08c8d6fdc5dbdecf50b22913ffc09ad`: purity and refinement study scope.
+- `e381b6cd7d841879ce1a8745782ac52d6aeadc68`: playlist 1A template composition. Passed.
+- `3925864482954bbe32f9ea217d29fea5a1e37cf6`: learner-selection scope. Held. Forward correction `0b920ac79fbc0d16d4158e8e0cc056224422395c`.
+- `5a5582f3750379c04baf5c59f0ca1b751691fc5d`: covariance units and interval assumptions. Held. The covariance-unit sentences stay. The period-interval sentences are corrected by `a4625238c5b099e429d5ba333b54128961cf71ba`.
+- `3d2f0d0dc08c8d6fdc5dbdecf50b22913ffc09ad`: purity and refinement study scope. Passed.
