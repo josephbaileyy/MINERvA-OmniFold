@@ -1,4 +1,4 @@
-#977 head a87137996; 36 rows
+#977 head a5e3005fd; 40 rows
 OK  RP01   resource paper      count=1  The sixteen-cell cross section that the estimator gives on the data il
 OK  RP02   resource paper      count=1  The held-out-tune tests provide partial evidence on bias at truths hel
 OK  RP03   resource paper      count=1  The dependence on the prior's generator shape is reported separately a
@@ -25,7 +25,7 @@ OK  RP17   fd16row  paper      NuWro, $(\pT,\pPar,\Eavail)$ shape
 OK  RP17   fd16row  paper      NuWro shape, noise-free closure
 --  RP18   code     B194-203  at_ref strips LaTeX comments before every count, plus a plant; receipt: COMMENT-
 --  RP19   code     R106 R145 R150 R180 R247 R255 R266 B619 B643  option (A): remove Supplement S-numbers; cite labels only
-OK  RP20   resource paper      count=1  these 73 largest-eigenvalue directions
+OK  RP20   resource paper      count=1  these \fvval{re2-modes-4} largest-eigenvalue directions
 OK  RP21   resource supplement count=1  In the 132 poorly determined directions, the combination of the other 
 OK  RP22   resource paper      count=1  Integral ratio $\ratioTot$; descriptive $\chi^2/\mathrm{ndf}=\chiPaper
 OK  RP23   keys     paper      printed=3  \fvval{ens1-n}
@@ -35,13 +35,18 @@ OK  RP23   keys     paper      printed=1  \fvval{ens1-bar-median}
 OK  RP23   keys     paper      printed=1  \fvval{ens1-bar-max}
 OK  RP23   keys     paper      printed=4  \fvval{ens1-ntruths}
 OK  RP23   keys     paper      printed=1  \fvval{ens1-nnoworse}
-OK  RP24   term     paper      old=0 new=13  reporting cells -> reported cells
+OK  RP24   term     paper      old=0 new=14  reporting cells -> reported cells
 --  RP25   code     B772 R311  #981's own run-period scope sentence "nor the cause of the shape difference" bec
 --  RP26   code     B765-766 R305  #981's own 2D scope sentence "At two held-out GENIE v3 tunes (AR23 and G18_10a_0
 --  RP27   code     B397  build_tunes: c.key for f1-tune-g18 and f1-tune-ar23 compares r"\mbox{" + name + 
 --  RP28   code     B1089-1090  assemble: the freshness check requires the values_fived16.tex text to equal mv.r
---  RP29   code     B24 B1250 R349  S3: the README states Python >= 3.12 where it says Python 3; 3.10.20 and 3.11.15
+--  RP29   code     B24 B1250 R349  S3: the README states Python >= 3.10 where it says Python 3 (a5e3005f requoted t
 --  RP30   code     B4 B1250 R345-349  S2: the README names git only as the requirement of the optional git-based check
 --  RP31   code     B41-45 B195-203 B1077-1101 B1250 R345-349  S1 (design approved 2026-11-13; build at the freeze): snapshot/ inside the packa
 --  RP32   code     B1360 B1251 R349  S4 (approved 2026-11-13): sums() covers connect/ (cov2d_arrays_login.sh, decode_
+--  RP33   code     B495-501  build_benchmark2d: a5e3005f keyed the 2D benchmark's literals (re2-cond, re2-chi
+OK  RP33n  resource paper      count=1  its normalization part is $\chi^{2}=\fvval{re2-chi2-norm}$, against \f
+OK  RP33e  resource paper      count=1  \fvval{re2-modes-4} of its 205 eigenvalues exceed $10^{-4}$ of the lar
+OK  RP33k  resource paper      count=1  Keeping the \fvval{re2-modes-4} directions with $\lambda/\lambda_{\max
+OK  GEN16  labels=1 block_sha=65b02f09daacba48
 REPIN-CHECK PASS

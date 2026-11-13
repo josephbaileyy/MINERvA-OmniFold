@@ -25,3 +25,9 @@
 #
 # Result: as the files stand, the requirement is Python >= 3.12. It would be >= 3.10 if #977's producer requoted
 # those two f-strings. That is #977's file and the director's choice.
+#
+# 5. At #977 a5e3005fd (helper-3 requoted the two f-strings and moved two backslash expressions out of f-strings in
+#    literal_values(), as the director asked): make_values_fived16.py --check passes on 3.10.20, 3.11.15 and 3.12.2
+#    (VALUES-FIVED16 :: PASS (4274 values, ...)). The merge simulation with RP27, RP28 and RP33 applied passes on all
+#    three, and its output is byte-identical across them (MERGE-SIM-a5e3005fd-fixes.txt). The requirement becomes
+#    Python >= 3.10 (RP29).
