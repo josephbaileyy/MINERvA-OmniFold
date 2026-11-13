@@ -1,6 +1,11 @@
 \documentclass[11pt]{article}
 \usepackage{authblk}
 \input{preamble}
+% Table 1 (tab:result-status, sec_execsummary.tex) is an xltabular with ragged-right X columns, so that it breaks
+% across pages instead of running past the bottom margin (director, 2026-11-13; layout only). Loaded here, not in
+% preamble.tex, so the other targets that share the preamble are unchanged.
+\usepackage{xltabular}
+\usepackage{ragged2e}
 \NOTEtrue
 \input{values}
 \input{values_inference}

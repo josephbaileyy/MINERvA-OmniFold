@@ -7,15 +7,26 @@ This note is the companion technical document to the methods paper, which cites 
 
 We apply \emph{unbinned machine-learning unfolding} (OmniFold~\cite{Andreassen:2019cjw, Andreassen:2021zzk}) to MINERvA's medium-energy neutrino data. The work is a methods and benchmark study of that unfolding. Applied to the data, the five-observable estimator gives a cross section on the sixteen cells of \S\ref{sec:fived16} in $\pT$, $\pPar$, $\Eavail$, $q_{3}$ and $W$, as illustrative output, not for fitting or for constraining models. Its covariance gives a median per-cell uncertainty of \fvval{sigmed-reported}\%. As a descriptive comparison, three external generator predictions, compared on all sixteen cells, give $\chi^{2}$ between \fvval{g-ext-chi2int-min16} and \fvval{g-ext-chi2int-max16} for 16 degrees of freedom. GiBUU, compared only on the 8 cells its sample covers, gives $\chi^{2}=\fvval{g-gibuu-total-chi2int}$ on those cells (\S\ref{sec:fived16-gen}). Table~\ref{tab:result-status} summarizes the construction, checks and limits of each result component.
 
-\begin{table}[htbp]
-\centering\footnotesize
+% Layout (director, 2026-11-13): an xltabular at \textwidth, so the table breaks between rows and stays inside the
+% margins; the column header repeats on each page. Ragged-right X columns keep the old p-column proportions
+% (0.18/0.22/0.28/0.26, which summed to 0.94\textwidth): \hsize factors 0.766/0.936/1.191/1.107 sum to 4. The
+% caption, label and every cell are unchanged. The caption spans \textwidth at body size, as the float's did; the
+% cells are \footnotesize through the column specification.
+\begingroup\setlength{\LTcapwidth}{\textwidth}
+\begin{xltabular}{\textwidth}{@{}>{\footnotesize\RaggedRight\arraybackslash\hsize=0.766\hsize}X>{\footnotesize\RaggedRight\arraybackslash\hsize=0.936\hsize}X>{\footnotesize\RaggedRight\arraybackslash\hsize=1.191\hsize}X>{\footnotesize\RaggedRight\arraybackslash\hsize=1.107\hsize}X@{}}
 \caption{Result components, checks and limits. Each component is listed with its construction, validation and interval checks, and supported interpretation. Adoption records a choice of construction; interval coverage and publication readiness require their own assessments. PET point-cloud tokens are separately limited to diagnostic method development (App.~\ref{sec:pet}). Details: \S\ref{sec:method-config}, \S\ref{sec:coverage}, \S\ref{sec:val-fiveaxis}, \S\ref{sec:eavailw-adopted}, \S\ref{sec:fived16} and \S\ref{sec:joint5d}.}
-\label{tab:result-status}
+\label{tab:result-status}\\
 % Search: held-out simulation; held-out-MC re-test; S1 has not been coverage-tested; coverage statement about Q_R (the search of its home, sec_systematics.tex sec:uq-boot) @ ddf16f10
-\begin{tabular}{@{}p{0.18\textwidth}p{0.22\textwidth}p{0.28\textwidth}p{0.26\textwidth}@{}}
 \toprule
 Result component & Estimator / construction & Status \& validation checks & Interpretation \& limits \\
 \midrule
+\endfirsthead
+\toprule
+Result component & Estimator / construction & Status \& validation checks & Interpretation \& limits \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
 2D central value ($d^{2}\sigma/(d\pT\,d\pPar)$) & LightGBM, 5 iterations, seed 42, refined negative-weight subtraction (configuration~(f); exact-split cross-check) & The iteration comparison was measured for the exact-split cross-check. Completeness is a monitored self-check and makes no recovery claim. Closure passes depend on the deformation and the amplitude (\S\ref{sec:validation}). Both comparisons with publication known before learner choice (\S\ref{sec:method-config}). & Reproduction of the published integral within about one percent, with a correlated shape difference. The comparison supplies no independent validation (\S\ref{sec:method-config}). Publication as a measurement remains unresolved (\S\ref{sec:results}). \\
 \addlinespace
 2D uncertainty ($Q_R$; \S\ref{sec:results-uq}) & Standalone construction: LightGBM systematic and statistical ensembles at central-value seed, 5-setting seed ensemble, and run-period block; median per bin \SI{\uqMedian}{\percent}, integral \SI{\uqIntegral}{\percent} on \lrval{q-ncells} cells & Run-period block absorbs playlist variation. Statistical block has had no coverage test; earlier band undercovered in tails ($C_2=\covTwoDCTwo$; \S\ref{sec:coverage}). & Quoted uncertainty on the 2D benchmark cross section; model-dependence component reported beside it (\S\ref{sec:uq-2d-scope}). Its interval coverage remains unvalidated. \\
@@ -31,9 +42,8 @@ Result component & Estimator / construction & Status \& validation checks & Inte
 Joint 5D generator tests & Calibrated tests of hybrid null hypotheses across 5 predictions in total rate and shape with deterministic LightGBM (\S\ref{sec:joint5d}). Adds no cross-section uncertainty & Protocol fixed before observed statistics; all 10 simple hypotheses rejected under six stated conditions (\S\ref{sec:joint5d-conditions}); arithmetic independently recomputed. & Calibration within the implemented model under the assumptions of \S\ref{sec:joint5d}. The rejection rate for the experiment was not measured, and these are not physical exclusions of generators. NuWro total rejection is not robust to CH target correction (\S\ref{sec:joint5d-ch}). \\
 \addlinespace
 Extended-fiducial study & Unbinned unfolding with truth-muon cuts removed, retaining fiducial volume and MINOS selection (\S\ref{sec:fps}) & Separates phase space into tier~1 (supported, $\approx$\SI{\lrval{fps-tier1-pct}}{\percent}) and tier~2 (extrapolated from prior, $\approx$\SI{\lrval{fps-tier2-pct}}{\percent}). & Preliminary exploratory study of acceptance recovery, with no finalized cross section. \\
-\bottomrule
-\end{tabular}
-\end{table}
+\end{xltabular}
+\endgroup
 
 \begin{table}[htbp]
 \centering\small
