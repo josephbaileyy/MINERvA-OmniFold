@@ -2056,8 +2056,9 @@ def literal_values(d):
     for tag, rcond in (("4", "1e-04"), ("6", "1e-06")):
         chi_ndf, kept = rc[rcond]
         v[f"re2-modes-{tag}"], v[f"re2-chi2-{tag}"] = str(kept), f"{chi_ndf * nb:.0f}"
-    v["re2-chi2-norm"] = f"{float(re.search(r'chi2_norm\s*=\s*([0-9.]+)', t).group(1)):.2f}"
-    v["re2-chi2-shape"] = f"{float(re.search(r'chi2_shape\s*=\s*([0-9.]+)', t).group(1)):.0f}"
+    norm = float(re.search(r"chi2_norm\s*=\s*([0-9.]+)", t).group(1))
+    shape = float(re.search(r"chi2_shape\s*=\s*([0-9.]+)", t).group(1))
+    v["re2-chi2-norm"], v["re2-chi2-shape"] = f"{norm:.2f}", f"{shape:.0f}"
     # section 6.1, RS1: the tie-keeping perturbation's residual spread ratios, and K4's permutation shift (its order)
     st = d["rs1read"]["statistics"]
     v["rs1-ratio-v153"], v["rs1-ratio-v16"] = sci(st["ratio"]["V"]["functionals_153"]["M"]), sci(st["ratio"]["V"]["cells_16"]["M"], 3)
@@ -2709,11 +2710,11 @@ def main(argv):
         bad = check_figures()
         if bad:
             sys.exit("VALUES-FIVED16 :: FAIL (a printed figure differs from its committed source)\n  " + "\n  ".join(bad))
-        print(f"VALUES-FIVED16 :: PASS ({sum(1 for l in text.splitlines() if l.startswith(chr(92) + "@namedef"))} values, "
+        print(f"VALUES-FIVED16 :: PASS ({sum(1 for l in text.splitlines() if l.startswith(chr(92) + '@namedef'))} values, "
               f"readouts pinned, {len(FIGURES)} figures equal their sources, {len(LISTED_CLAIMS)} listed-truth sentences agree)")
         return 0
     OUT.write_text(text)
-    print(f"wrote {OUT.name}: {sum(1 for l in text.splitlines() if l.startswith(chr(92) + "@namedef"))} values")
+    print(f"wrote {OUT.name}: {sum(1 for l in text.splitlines() if l.startswith(chr(92) + '@namedef'))} values")
     return 0
 
 
