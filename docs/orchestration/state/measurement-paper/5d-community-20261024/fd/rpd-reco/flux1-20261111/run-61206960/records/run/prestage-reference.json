@@ -1,0 +1,11 @@
+{
+  "connect_id": "54624217-c176-4fad-a66a-845bd93f328e",
+  "prepare_name": "prestage",
+  "private_prepare": {
+    "path": "/pscratch/sd/j/josephrb/rpd-reco-flux-20261111/.rpd-private/7170edc8f89501fb36113e3b0a587f14e17ccbb74c3f6800a355fc8d62149777/prestage.json",
+    "sha256": "23c1139ab237bcebe49a7c50eaba59632272141e5881e1cc25c14b9639b2aacc"
+  },
+  "run": "/pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run",
+  "schema": "fd-rpd-reco-private-prepare-reference/1",
+  "status": "PASS"
+}
