@@ -20,8 +20,12 @@ pinned in READOUTS):
 - **Design constants and definitions:** the 0.3/1.0 requirement, 16, 20, 50, 153, 109, 42, 205, 300, 400/31, 100/8,
   135 MeV, the bin edges, 10 iterations, 1000 events, the generator versions, 6 GeV, the phase-space cuts, 14×16, the
   95 % CI, the LL5D sizes 0.025 and 0.08, and the Eavail factor 1.17.
-- **One result with no record found:** §3.3's "The remaining cells contain 0.47 % of the expected signal". No
-  committed record holds it. The director should name its source, or the sentence should drop the number.
+- **§3.3's "0.47 % of the expected signal" is keyed after all (the director's pointer, 2026-11-13):** the source is
+  jt-unsup-share, computed from s5c/b1/partition_scan_2.json (7b49b52d) level H3. It is the 243 coarse cells'
+  expected reconstructed signal outside the support rule (s5p_stage1_inspect.py:49, :273: both the reco signal and the
+  truth weight ≥ 1000), over the total. The asserts reproduce M4-DEFINITIONS.md:218's 109 supported cells and 25
+  unsupported cells with signal. The pinned stage1_inspect.json holds only the 109 reported J cells, so it cannot give
+  the share.
 - The exposure 1.057×10²¹ POT is a data constant (the note's value).
 
 **The Supplement** (`supplement-decimals.txt`, 118 decimal literals) is journal-editor's to key.

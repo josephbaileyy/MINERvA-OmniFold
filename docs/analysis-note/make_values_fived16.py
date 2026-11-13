@@ -179,6 +179,10 @@ READOUTS = {
     "s5er2": ("docs/orchestration/state/s5e/cand/review2/r2_recompute.json", "c0f20299"),
     "tension": ("docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/receipts/figs/tension_report.txt", "dee699e5"),
     "rs1read": (f"{FD}/fd/rounding-stability-20261106/receipts/full-a1/read/rs1_read.json", "9938e168"),
+    # the coarse 3^5 grid's cells, for the unsupported cells' share of the expected signal (M4-DEFINITIONS.md:218: "The
+    # 25 unsupported cells with signal (0.47% of signal) stay in the total. A re-count from partition_scan_2.json
+    # reproduces 109 and 25"); the support rule is s5p_stage1_inspect.py:49 and :273
+    "s5cscan": ("docs/orchestration/state/s5c/b1/partition_scan_2.json", "7b49b52d"),
 }
 # the committed readouts without the run-period block, for the "-nopl" keys
 NOPL_READOUTS = dict(READOUTS, **{
@@ -2065,10 +2069,19 @@ def literal_values(d):
     dp = [st["K4_D_P"]["functionals_153"], st["K4_D_P"]["cells_16"]]
     assert {round(math.log10(x)) for x in dp} == {-10}, dp
     v["rs1-k4-order"] = "10^{-10}"
+    # section 3.3: the coarse cells outside the support rule (both the expected reconstructed signal and the truth weight
+    # at the data exposure at least 1000) carry this share of the expected reconstructed signal
+    h3 = d["s5cscan"]["levels"]["H3"]
+    rs, tw = h3["per_cell"]["expected_reco_signal"], h3["per_cell"]["truth"]
+    assert h3["n_cells"] == 243 == len(rs) == len(tw)
+    sup = [a >= 1000.0 and b >= 1000.0 for a, b in zip(rs, tw)]
+    assert sum(sup) == 109 and sum(1 for k, a in zip(sup, rs) if not k and a > 0) == 25, "M4-DEFINITIONS.md:218's 109 and 25"
+    v["jt-unsup-share"] = f"{100 * sum(a for k, a in zip(sup, rs) if not k) / sum(rs):.2f}"
     want = {"vl155-rnd-j-median": "0.23", "vl155-boot-j-median": "0.37", "vl155-rnd-j-share": "37",
             "s5e-round-max-lowcap": "2.5", "re2-cond": r"1.5\times10^{12}", "re2-modes-4": "73", "re2-chi2-4": "136",
             "re2-modes-6": "139", "re2-chi2-6": "285", "re2-chi2-norm": "0.04", "re2-chi2-shape": "465",
-            "rs1-ratio-v153": r"6.2\times10^{-7}", "rs1-ratio-v16": r"1.07\times10^{-6}", "rs1-k4-order": "10^{-10}"}
+            "rs1-ratio-v153": r"6.2\times10^{-7}", "rs1-ratio-v16": r"1.07\times10^{-6}", "rs1-k4-order": "10^{-10}",
+            "jt-unsup-share": "0.47"}
     assert v == want, {k: v[k] for k in v if v[k] != want.get(k)}
     return v
 
