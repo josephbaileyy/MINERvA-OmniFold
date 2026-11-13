@@ -1,12 +1,12 @@
-#977 head 990aad756; 28 rows
+#977 head 990aad756; 29 rows
 OK  RP01   resource paper      count=1  The sixteen-cell cross section that the estimator gives on the data il
 OK  RP02   resource paper      count=1  The held-out-tune tests provide partial evidence on bias at truths hel
 OK  RP03   resource paper      count=1  The dependence on the prior's generator shape is reported separately a
 OK  RP04   resource paper      count=1  The model term $C_{\mathrm{model}}$ is constructed from the change in 
 OK  RP05   resource paper      count=1  The two-dimensional covariance is the sum of four blocks, each from Li
 OK  RP06   resource abstract   count=1  The reported five-observable intervals lack validated coverage.
-OK  RP07   resource paper      count=1  The origin of the shape difference has not been identified.
-OK  RP07p  code     paper      count=1  The origin of the shape difference has not been identified.
+OK  RP07   resource paper      count=1  On this analysis's inputs, OmniFold and binned IBU, the publication's 
+OK  RP07p  code     paper      count=1  On this analysis's inputs, OmniFold and binned IBU, the publication's 
 OK  RP08   resource paper      count=1  C_{\mathrm{rep}}=C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D
 OK  RP08L  resource paper      count=1  \label{eq:crep}
 OK  RP08b  resource supplement count=1  C_{\mathrm{rep}}=C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D
@@ -36,4 +36,5 @@ OK  RP23   keys     paper      printed=1  \fvval{ens1-bar-max}
 OK  RP23   keys     paper      printed=4  \fvval{ens1-ntruths}
 OK  RP23   keys     paper      printed=1  \fvval{ens1-nnoworse}
 OK  RP24   term     paper      old=0 new=13  reporting cells -> reported cells
+--  RP25   code     B772 R311  #981's own run-period scope sentence "nor the cause of the shape difference" bec
 REPIN-CHECK PASS
