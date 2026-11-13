@@ -1,0 +1,10 @@
+  ok   a source whose sha256 differs is refused: source docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/r
+  ok   an fvval key in the 16-cell table is refused: tab-fived16-cells.csv: f-R00 is '99.9' in values_fived16.tex, the record gives '32.6'
+  ok   an fvval key in the fake-data table is refused: tab-fd16.csv: f0b-A7_gibuu-cells is 'R99' in values_fived16.tex, the record gives 'R02, R06'
+  ok   an fvval key in the correlation table is refused: tab-fived16-corr.csv: corr-R05-R04 is '0.00' in values_fived16.tex, the record gives '0.57'
+  ok   a values.tex macro is refused: sec-repro2d_benchmark.csv: \ratioTot is '9.999' in values.tex, the record gives '1.010'
+  ok   a printed phrase the paper does not hold is refused: supp-validity.csv: the paper at 5c8f0d7a does not print 'each leave 14 of the 16 cells valid and 12 under both
+  ok   a label missing from the paper is refused: the supplement at 5c8f0d7a has no \label{tab:gen16}
+  ok   a licence quote missing from its record is refused: scope quote not found in docs/orchestration/state/measurement-paper/5d-community-20261024/FD-F0b-REPORT.md: 'a
+  ok   a quoted sentence that occurs twice in the paper is refused: scope quote occurs 2 times in docs/analysis-note/paper_body.tex: 'The source of the shape difference has not b
+RESULT-PACKAGE SELF-TEST :: PASS

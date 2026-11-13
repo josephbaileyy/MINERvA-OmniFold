@@ -1,0 +1,41 @@
+#977 head a871379960f2681b37dd98cfd7ab63562d1dae9f; 30 rows
+OK  RP01   resource paper      count=1  The sixteen-cell cross section that the estimator gives on the data il
+OK  RP02   resource paper      count=1  The held-out-tune tests provide partial evidence on bias at truths hel
+OK  RP03   resource paper      count=1  The dependence on the prior's generator shape is reported separately a
+OK  RP04   resource paper      count=1  The model term $C_{\mathrm{model}}$ is constructed from the change in 
+OK  RP05   resource paper      count=1  The two-dimensional covariance is the sum of four blocks, each from Li
+OK  RP06   resource abstract   count=1  The reported five-observable intervals lack validated coverage.
+OK  RP07   resource paper      count=1  On this analysis's inputs, OmniFold and binned IBU, the publication's 
+OK  RP07p  code     paper      count=1  On this analysis's inputs, OmniFold and binned IBU, the publication's 
+OK  RP08   resource paper      count=1  C_{\mathrm{rep}}=C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D
+OK  RP08L  resource paper      count=1  \label{eq:crep}
+OK  RP08b  resource supplement count=1  C_{\mathrm{rep}}=C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D
+OK  RP09   resource supplement count=1  The smallest change resolved is $3\sigma=\fvval{pp-res}$ per direction
+OK  RP10   resource paper      count=1  $C_{\mathrm{e}}$ is the sum of the statistical, flux, interaction, det
+OK  RP10b  resource supplement count=1  $C_{\mathrm{e}}$ is the sum of the first six groups and the training-s
+OK  RP11   resource paper      count=1  The lateral uncertainties shift the reconstructed muon kinematics and 
+OK  RP12   resource supplement count=1  are generated on carbon. The sixteen-cell comparison of section~\ref{s
+OK  RP13   resource supplement count=1  Fourteen cells pass it; R02 and R06 fail
+--  RP14   drop     B836 P172  "The second rule is ours": drops with V-PRIOR (DECISION-20261110-joseph-vprior-w
+--  RP15   drop     B441 B442 B443  V-PRIOR printed lines: DROP with V-PRIOR (RESPONSE.md says "re-sources"; the rul
+--  RP16   drop     B439  "each leave 14 of the 16 cells valid and 12 under both": the count-equality need
+OK  RP17   fd16row  paper      GENIE + MEC, hybrid
+OK  RP17   fd16row  paper      GENIE + MEC, $(\Eavail,W)$ shape
+OK  RP17   fd16row  paper      NuWro, $(\pT,\pPar,\Eavail)$ shape
+OK  RP17   fd16row  paper      NuWro shape, noise-free closure
+--  RP18   code     B194-203  at_ref strips LaTeX comments before every count, plus a plant; receipt: COMMENT-
+--  RP19   code     R106 R145 R150 R180 R247 R255 R266 B619 B643  option (A): remove Supplement S-numbers; cite labels only
+OK  RP20   resource paper      count=1  these 73 largest-eigenvalue directions
+OK  RP21   resource supplement count=1  In the 132 poorly determined directions, the combination of the other 
+OK  RP22   resource paper      count=1  Integral ratio $\ratioTot$; descriptive $\chi^2/\mathrm{ndf}=\chiPaper
+OK  RP23   keys     paper      printed=3  \fvval{ens1-n}
+OK  RP23   keys     paper      printed=1  \fvval{ens1-median}
+OK  RP23   keys     paper      printed=1  \fvval{ens1-max}
+OK  RP23   keys     paper      printed=1  \fvval{ens1-bar-median}
+OK  RP23   keys     paper      printed=1  \fvval{ens1-bar-max}
+OK  RP23   keys     paper      printed=4  \fvval{ens1-ntruths}
+OK  RP23   keys     paper      printed=1  \fvval{ens1-nnoworse}
+OK  RP24   term     paper      old=0 new=13  reporting cells -> reported cells
+--  RP25   code     B772 R311  #981's own run-period scope sentence "nor the cause of the shape difference" bec
+--  RP26   code     B765-766 R305  #981's own 2D scope sentence "At two held-out GENIE v3 tunes (AR23 and G18_10a_0
+REPIN-CHECK PASS

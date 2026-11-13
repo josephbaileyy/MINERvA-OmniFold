@@ -1,0 +1,19 @@
+# rc and wall time of each command, as the session read them unpiped (summary.txt holds the first two as written by the run itself). Times from /usr/bin/time -p (real, s); "-" = not timed.
+step	layout	python	command	rc	real_s	output
+clone	-	-	git clone --branch pkg/methods-result-20261109 https://github.com/josephbaileyy/MINERvA-OmniFold repo	0	74.92	clone.log.txt
+A1	full clone at 91f9cb615	3.12.2 venv	python3 docs/.../result-package-20261109/build_package.py --check	0	0.74	runcheck.out.txt
+A2	full clone at 91f9cb615	3.12.2 venv	python3 docs/.../result-package-20261109/build_package.py --self-test	0	2.79	runself-test.out.txt
+A3	full clone at 91f9cb615	-	(in result-package-20261109/) shasum -a 256 -c SHA256SUMS	0	-	sha256sums.out.txt
+A4	full clone at 91f9cb615	-	(in receipts/c2a-20261109/) shasum -a 256 -c SHA256SUMS.txt	0	-	c2a-sums.out.txt
+B1	single-branch clone of pkg/methods-result-20261109	3.12.2 venv	build_package.py --check	1	-	sb-check.out.txt
+B2	git archive of 91f9cb615 (no .git)	3.12.2 venv	build_package.py --check	1	-	tar-check.err.txt
+B3	git archive of 91f9cb615 (no .git)	-	shasum -a 256 -c SHA256SUMS	0	-	tar-sums.out.txt
+C1	full clone at 91f9cb615	3.9.6 venv	build_package.py --check	1	0.25	py39check.err.txt
+C2	full clone at 91f9cb615	3.9.6 venv	build_package.py --self-test	1	0.11	py39self-test.err.txt
+C3	full clone at 91f9cb615	3.13.7 venv	build_package.py --check	0	-	py3.13-check.out.txt
+C4	full clone at 91f9cb615	3.14.6 venv	build_package.py --check	0	-	py3.14-check.out.txt
+D1	worktree at #977 a8713799	3.12.2 venv	python3 docs/analysis-note/make_values_fived16.py --check	0	0.49	mv977check.out.txt
+D2	worktree at #977 a8713799	3.12.2 venv	python3 docs/analysis-note/make_values_fived16.py --self-test	0	3.56	mv977self-test.out.txt
+D3	full clone (git show of main's repin/)	3.12.2 venv	python3 repin_check.py a871379960f2681b37dd98cfd7ab63562d1dae9f	0	-	repin-a8713799.txt
+E1	full clone at 91f9cb615	3.12.2 venv	python3 tools/log_checks.py build_package.py checks.tsv	0	-	checks.tsv
+E2	worktree at #977 a8713799	3.12.2 venv	python3 -I tools/compare_head.py <w977>/docs/analysis-note checks.tsv	0	-	checks-vs-head.txt
