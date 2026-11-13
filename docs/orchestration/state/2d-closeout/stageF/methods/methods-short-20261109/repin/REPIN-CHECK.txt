@@ -1,4 +1,4 @@
-#977 head a87137996; 34 rows
+#977 head a87137996; 36 rows
 OK  RP01   resource paper      count=1  The sixteen-cell cross section that the estimator gives on the data il
 OK  RP02   resource paper      count=1  The held-out-tune tests provide partial evidence on bias at truths hel
 OK  RP03   resource paper      count=1  The dependence on the prior's generator shape is reported separately a
@@ -42,4 +42,6 @@ OK  RP24   term     paper      old=0 new=13  reporting cells -> reported cells
 --  RP28   code     B1089-1090  assemble: the freshness check requires the values_fived16.tex text to equal mv.r
 --  RP29   code     B24 B1250 R349  S3: the README states Python >= 3.12 where it says Python 3; 3.10.20 and 3.11.15
 --  RP30   code     B4 B1250 R345-349  S2: the README names git only as the requirement of the optional git-based check
+--  RP31   code     B41-45 B195-203 B1077-1101 B1250 R345-349  S1 (design approved 2026-11-13; build at the freeze): snapshot/ inside the packa
+--  RP32   code     B1360 B1251 R349  S4 (approved 2026-11-13): sums() covers connect/ (cov2d_arrays_login.sh, decode_
 REPIN-CHECK PASS
