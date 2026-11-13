@@ -3899,11 +3899,15 @@ docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/lrows
 docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/lrows-g/rounding_decomp.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/lrows-g/rounding_decomp.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/repin/COMMENT-STRIP-30e2e79e.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/repin/DRYRUN-a5e3005fd.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/repin/DRYRUN-a87137996.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/repin/MERGE-SIM-a5e3005fd-fixes.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/repin/MERGE-SIM-a5e3005fd.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/repin/MERGE-SIM-a87137996-RP27-RP28.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/repin/MERGE-SIM-a87137996.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/repin/PYTHON-VERSIONS-20261113.txt	tracked	MACHINE	state-artifact	2d-closeout	20261113	generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/repin/README.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
+docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/repin/READS-a5e3005fd.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/repin/READS-a87137996.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/repin/REPIN-CHECK.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/repin/comment_strip_measure.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
