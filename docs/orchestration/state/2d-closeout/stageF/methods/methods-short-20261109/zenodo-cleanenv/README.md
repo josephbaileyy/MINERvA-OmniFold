@@ -26,11 +26,12 @@ its contents (D6).
   standard library only"), `env -i` and an empty HOME.
 - The checkout was clean afterwards: `git status --porcelain` printed 0 lines.
 
-**The structural gaps for a deposit (S1–S6 below):**
+**The structural gaps for a deposit (S1–S7 below):**
 - The rebuild needs the `git` executable and a full repository history that contains PAPER_REF. It fails in a
   single-branch clone of the package and in a tree without `.git`, the form a GitHub-release archive takes.
 - It needs Python ≥ 3.12, which the README doesn't say. Python 3.9.6 fails.
-- One re-pin item is not on the list: the tune-name keys.
+- Two re-pin items were not on the list: the tune-name keys (S5), and the build's freshness check (S7, added
+  2026-11-13 after the merge of #1132; found by limitation-resolver's merge simulation).
 
 **The claim map (below):**
 - The package regenerates the fake-data tests, the tunes, the 16-cell result and its covariances, the validity
@@ -137,6 +138,24 @@ its contents (D6).
 - Every label #981 binds is present once at a8713799, `tab:gen16` among them. So limitation-resolver's stop item for
   Table S14 does not fire at this head.
 
+**S7. Added after #1132's merge: the freshness check, found by limitation-resolver's merge simulation.**
+- #981's build refuses unless `parse_fvval(values_fived16.tex) == mv.all_values()`
+  (`build_package.py:1088-1090`@91f9cb615).
+- limitation-resolver simulated the merge: a worktree at #977 a8713799 with #981's package from 91f9cb615. In that
+  simulation the check fails. The lane re-measured it at a8713799 with `tools/freshness_check.py`, in the clean
+  3.12.2 venv, reading only (`runs/freshness-a8713799.txt`):
+  - the file holds 4162 fv@ keys, against 4072 from `all_values()`;
+  - the 90 keys in the file only are the pending-group lines that `pending_lines()` writes: ll5d 55, prr 29 and
+    vhalf 6;
+  - no key of `all_values()` is missing from the file;
+  - `render(all_values())` equals the file byte for byte, so the file is fresh by the paper's own rule.
+- So #981's check predates the pending scheme. limitation-resolver proposed the fix to the director as RP28: compare
+  against `render()`. S5 is RP27.
+- **Why this report's compare missed it:** `tools/compare_head.py` checks only the build's per-value `key`, `macro`
+  and `printed` checks (`runs/checks.tsv`). The freshness check runs before them, in `assemble()`, and compares whole
+  files. Before the merge, the build reads #981's own `values_fived16.tex`, so neither the dry runs nor this
+  clean-environment run could reach it.
+
 ## The claim map (#977 a8713799)
 
 **The routes:**
@@ -204,7 +223,7 @@ readouts through the function that assigns them; the readouts below are the ones
 
 **CITABLE FOR:**
 - the clean-environment run of #981 at 91f9cb615: each command, its rc and its runtime;
-- S1–S6 as findings for the re-pin;
+- S1–S7 as findings for the re-pin (S7 is limitation-resolver's find, re-measured here);
 - the claim map's routes at #977 a8713799.
 
 **NOT CITABLE FOR:**

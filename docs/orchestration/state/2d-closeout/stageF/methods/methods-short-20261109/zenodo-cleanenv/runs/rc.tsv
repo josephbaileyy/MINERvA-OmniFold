@@ -17,3 +17,4 @@ D2	worktree at #977 a8713799	3.12.2 venv	python3 docs/analysis-note/make_values_
 D3	full clone (git show of main's repin/)	3.12.2 venv	python3 repin_check.py a871379960f2681b37dd98cfd7ab63562d1dae9f	0	-	repin-a8713799.txt
 E1	full clone at 91f9cb615	3.12.2 venv	python3 tools/log_checks.py build_package.py checks.tsv	0	-	checks.tsv
 E2	worktree at #977 a8713799	3.12.2 venv	python3 -I tools/compare_head.py <w977>/docs/analysis-note checks.tsv	0	-	checks-vs-head.txt
+F1	worktree at #977 a8713799	3.12.2 venv	python3 -I tools/freshness_check.py <w977b>	0	-	freshness-a8713799.txt
