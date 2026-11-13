@@ -9,7 +9,7 @@ committed, because the lane's scratch copy is lost to macOS cleanup after a few 
 
 | file | what it is |
 |---|---|
-| `repin_list.tsv` | One row per change the re-pin makes (RP01–RP21). Each row has the ruling date, the RESPONSE.md quote id if any (`supp-quotes.tsv`'s Q number), the sites in #981 at `91f9cb615`, the action, the source document and the exact new quote. |
+| `repin_list.tsv` | One row per change the re-pin makes (RP01–RP24). Each row has the ruling date, the RESPONSE.md quote id if any (`supp-quotes.tsv`'s Q number), the sites in #981 at `91f9cb615`, the action, the source document and the exact new quote. |
 | `repin_check.py` | Counts every new quote at a #977 head the way the re-pinned build will read it. |
 | `REPIN-CHECK.txt` | The checker's output at the latest #977 head checked. |
 | `comment_strip_measure.py`, `COMMENT-STRIP-30e2e79e.txt` | The measurement behind RP18 (strip LaTeX comments before every count). It runs #981's build in memory twice at #977 `30e2e79e`, once as read and once with comments stripped. Only the old §4.1 quote changes (34 failures against 36), and that quote was already ruled for re-source. The director asked for this in the re-pin's receipt. |
@@ -20,6 +20,8 @@ The actions are:
 - `code`: a build change.
 - `fd16row`: a row of `tab:fd16`, read with `\newline` as a space.
 - `keys`: each value key must still be printed (`\fvval{key}` at least once).
+- `term`: a term in one of #981's descriptions follows the paper's term. The row holds `old|new`; the new term must be
+  printed at least once in the document and the old one not at all.
 
 The documents are `paper` (`paper_body.tex`), `supplement` (`supplemental_body.tex`) and `abstract`
 (`main_paper.tex`), all under `docs/analysis-note/` at the #977 head.
@@ -54,3 +56,4 @@ The director confirmed this mapping on 2026-11-12 and asked director-helper-3 to
 | `fed85b6d6` | REPIN-CHECK PASS (25 rows), after five rows changed in the body's sentence pass and were proposed to the director: RP02 and RP07 are each split into two sentences, RP05's seed clause is reworded, RP08 moves into the display equation eq:crep (new row RP08L requires its label), and RP10 opens with "In eq.~(\ref{eq:crep}),". The director accepted all five on 2026-11-12. |
 | `1ccb08c29` | REPIN-CHECK PASS (26 rows), after five quotes moved in style round 3 and were proposed to the director: RP02 opens "The held-out-tune tests" and is quoted up to its new cross-reference, RP06 now reads "lack validated coverage", RP08b is now the Supplement's unnumbered equation, RP12 is split after "carbon.", and the new row RP22 holds Table 1's benchmark anchor, which gained "descriptive". The director accepted all five on 2026-11-12. |
 | `9c9203f41` | REPIN-CHECK PASS (27 rows). The B0/RS1 rewrite and RSN's paper text moved none of #981's quotes: RP02, RP03 and RP04 each still count 1. The new row RP23 (`keys`) checks that the seven ens1-* keys #981's ENS1 rows depend on are still printed. #981 quotes no B0 or RS1 sentence. |
+| `f0c451a9d` | REPIN-CHECK PASS (28 rows). Style round 4's paper pass moved none of #981's quotes, and the dry run flags only ruled failures. One term changed under a #981 description: the paper now says "reported cells" where #981's glossary entry for a cell says "reporting cells". The new row RP24 (`term`) proposes that the glossary follow the paper; it is with the director. Search: `git show f0c451a9d:docs/analysis-note/paper_body.tex`, counted case-insensitively after comment stripping: "reporting cells" 0, "reported cells" 13. Coming next: journal-editor is removing Supplement Table S14, which is `tab:gen16` at this head. #981 binds `tab-gen16.csv` to that label and its self-test plants a missing `\label{tab:gen16}`, so that removal needs the director's ruling once it lands. |

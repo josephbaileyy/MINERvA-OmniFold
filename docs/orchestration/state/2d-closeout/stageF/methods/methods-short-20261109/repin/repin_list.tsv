@@ -1,6 +1,7 @@
 # #981 re-pin list (limitation-resolver lane). Sites are at #981 91f9cb615 (build_package.py = B, PROVENANCE.txt = P, README.txt = R).
 # action: keys = each |-separated value key must be printed as \fvval{key} in doc; resource = re-source to new_quote (must count 1 in doc, LaTeX comments stripped, whitespace collapsed);
-#         drop = the quote and its check leave #981; code = a build change with no quote; fd16row = tab:fd16 row read with \newline as a space.
+#         drop = the quote and its check leave #981; code = a build change with no quote; fd16row = tab:fd16 row read with \newline as a space;
+#         term = a description's term follows the paper's: new_quote is old|new, new printed at least once in doc and old not at all.
 # doc: paper = paper_body.tex, supplement = supplemental_body.tex, abstract = main_paper.tex. RESPONSE id = supp-quotes.tsv's Q number.
 id	ruled	response_id	sites	action	doc	new_quote	note
 RP01	2026-11-09	-	B803 B900 P136 P234 R8	resource	paper	The sixteen-cell cross section that the estimator gives on the data illustrates the method and is not a measurement	README's first scope paragraph re-sourced to it (ruling (2))
@@ -30,3 +31,4 @@ RP20	2026-11-10	-	B522 B526	resource	paper	these 73 largest-eigenvalue direction
 RP21	2026-11-09	Q23	B518	resource	supplement	In the 132 poorly determined directions, the combination of the other two run-period groups is farther from the published result than the three-group combination, by	unchanged; watch
 RP22	2026-11-12 (1ccb08c2: accepted 11-12)	-	B495	resource	paper	Integral ratio $\ratioTot$; descriptive $\chi^2/\mathrm{ndf}=\chiPaper$ (ndf $=205$) against a covariance of condition number $1.5\times10^{12}$	Table 1's benchmark anchor (the build's printed check); 1ccb08c2 added "descriptive"; mechanical
 RP23	2026-11-12	-	B689 B692-711	keys	paper	ens1-n|ens1-median|ens1-max|ens1-bar-median|ens1-bar-max|ens1-ntruths|ens1-nnoworse	ENS1_KEYS: the sec-cov5d_ens1.csv rows check these keys against the ENS1 OUTCOME records; #981 quotes no B0/RS1 sentence, so the B0/RS1 rewrite reaches #981 only through these keys
+RP24	proposed 11-12 (f0c451a9)	-	B930 R29	term	paper	reporting cells|reported cells	glossary "cell (R00-R15)": "one of the 16 reporting cells" becomes "one of the 16 reported cells"; style round 4 made the paper say "reported cells" throughout (0 "reporting cell" left; the Supplement still has 3); description only, the dp source quote and keys stay
