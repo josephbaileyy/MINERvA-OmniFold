@@ -440,6 +440,8 @@ def vhalf_verdicts(r):
     assert all(counts.get(k, 0) == n[v] for k, v in VHALF_CLASSES.items()) and counts.get("no d", 0) == 0, \
         f"the V-HALF readout's counts {counts} disagree with its cells"
     notvalid = sorted(c for c, k in cls.items() if k == "not valid")
+    # the paper no longer prints the not-assessed class or its count (Joseph's read of 2026-11-12, item 1): it is empty
+    assert n["notassessed"] == 0, "a V-HALF cell is not assessed: §5.2 must print the class and its definition again"
     return {"vhalf-outcome": "some-fail" if notvalid else "none-fail",
             **{f"vhalf-n-{v}": str(n[v]) for v in ("valid", "notvalid", "notassessed", "unresolved")},
             "vhalf-cells-notvalid": ", ".join(notvalid) if notvalid else "none"}
@@ -1417,6 +1419,9 @@ def values(d, arm="with"):
     for tune in ("g18", "ar23"):
         # in \mbox, so that a tune name never breaks at a hyphenation point (journal-editor, 2026-11-10)
         v[f"f1-tune-{tune}"] = r"\mbox{" + d[f"f1meta-{tune}"]["generator"].removeprefix("genie_v3_").replace("_", r"\_") + "}"
+        # the short name defined at first use and printed after it (Joseph's read of 2026-11-12, item 7): G18, AR23
+        v[f"f1-tune-{tune}-short"] = d[f"f1meta-{tune}"]["generator"].removeprefix("genie_v3_").split("_")[0]
+        assert v[f"f1-tune-{tune}-short"] == tune.upper(), v[f"f1-tune-{tune}-short"]
         for rec, k in ((f"F1_genie_v3_{tune}", f"f1-{tune}"), (f"F1_closure_genie_v3_{tune}", f"f1-closure-{tune}")):
             t = held.pop(rec)
             assert t["graded"] and t["own_vertex"] is None and t["grade_matrix"] == A["rep"]

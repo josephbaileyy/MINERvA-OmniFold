@@ -104,9 +104,11 @@ ONCE = [
     # paper body's sentence pass); each is still printed exactly once
     "Because their cross-covariance is unavailable, the significance of their difference cannot be calibrated.",
     "The five-observable estimator is the baseline this study characterizes",
-    "We report the ensemble average as a tested mitigation of the instability.",
+    # "We report the ensemble average as a tested mitigation of the instability." left ONCE with its paragraph, cut by
+    # Joseph's read of 2026-11-12 (item 6; RESPONSE.md section J): the data output's use of the failing estimator is in §7.1
     "That test is a next step.",
-    "The grading rules and their timing are stated with the individual tests. Comparisons without a grading rule are descriptive.",
+    # "and their timing" left with the per-test timing statements (Joseph's read of 2026-11-12, item 4; the meaning read)
+    "The grading rules are stated with the individual tests. Comparisons without a grading rule are descriptive.",
 ]
 # validat...: the affirmative claim decision item 6 (:74) forbids; its denial, "does not validate ...", is allowed
 GONE = [r"stabili[sz]ed variant", r"(?<!not )validat\w* the (full|five-observable) distribution", r"detector[- ]inadequa",
