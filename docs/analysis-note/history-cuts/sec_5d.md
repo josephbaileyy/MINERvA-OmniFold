@@ -73,6 +73,9 @@ Each row restates the body. "Already seen" is "--" in all three, because §9 doe
 | the target-correction sensitivity | no (§11) | — |
 | also found: the null bound not fixed before production (item 6) | yes, :294 onward, :350 | ✓ unchanged |
 
+**A record date, noted only:** FD-STAB-BINDING-2.md's header reads "(director, 2026-11-05)", while its first commit is
+578136817 on 2026-11-04. The record states its own date, and nothing here depends on the difference.
+
 ## Unreleased support
 
 `UNRELEASED-SUPPORT.md` already lists §9's sites: NoteRecords2026 [34] at :90, :294 and :360. None changes here.
