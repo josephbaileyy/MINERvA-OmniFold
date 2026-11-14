@@ -1,0 +1,27 @@
+=== Co-Authored-By trailers over origin/main's history (git log origin/main --format=%b), counted
+2474 Co-Authored-By: Claude Opus 5.5 
+1850 Co-Authored-By: Claude Opus 5 (1M context) 
+ 713 Co-Authored-By: Claude Opus 5.5 (1M context) 
+ 375 Co-Authored-By: Claude Opus 5 
+ 121 Co-Authored-By: Claude Opus 4.8 
+  53 Co-Authored-By: Claude 
+  46 Co-Authored-By: Claude Fable 5 
+  23 Co-Authored-By: Claude Fable 5.1 
+  20 Co-Authored-By: Claude Opus 4.7 
+   7 Co-Authored-By: Claude Opus 5 (school) 
+   4 Co-Authored-By: Codex (personal) 
+   1 Co-Authored-By: Codex (school) 
+   1 Co-Authored-By: Claude Opus 4.8 (1M context) 
+
+=== Record mentions at origin/main (git grep -l -i, count of files) per model string
+gpt-5.5:        8 files
+gpt-5.6-sol:       10 files
+gpt-5.6-luna:        6 files
+gpt-6-astra:       39 files
+gpt-6-sol:        2 files
+gpt-6.1-sol:       84 files
+gemini-3.1-pro:        2 files
+gemini-3.8-flash:       53 files
+antigravity:       11 files
+grok:       16 files
+sonnet:      123 files
