@@ -1,0 +1,41 @@
+You are a meaning referee for a JINST methods paper's Supplement (OmniFold unfolding of MINERvA open data). Judge meaning
+and fidelity to the records only, not style, layout or physics. Do not propose new numbers. Work read-only, from the
+files in this directory.
+
+Context. The Supplement's headline-test index (Table S11, label tab:tests) was accepted at the revision in
+old_supplemental_body.tex. new_supplemental_body.tex changes it as follows (supplement.diff is the source diff):
+(a) Layout: the caption is shortened, and a redundant "as the unfolding simulation" is dropped from the definition of
+    "half split" in the S8 introduction.
+(b) Row 4's Reading: the sentence "Every higher iteration count and capacity lowers rho, by at most ..." (inside the prr
+    group) and the phrase "an overshoot along the prior-to-truth direction" move from the index to a new paragraph in
+    section S8.2 ("The study's results"), the first inside its own \fvgroup{prr}{...}.
+(c) Rulings by the PI on test 9 (the first five-observable coverage test):
+    1. Row 9's Reading is kept unchanged, and the source comments no longer call it "the paper's section 6.2 sentence";
+       the paper's shorter version is paper_body.tex:626.
+    2. The former "as 10" (test 9's simulation, variations, statistic and threshold were given as test 10's) is
+       replaced by test 9's own design, in the terms of its records. Test 10's two GEANT4 band variants must not carry
+       over unless the record names them.
+    3. Whether a plug-in truth was part of test 9 is settled from the records, and section S8.6 and the index agree.
+    The new text: index row 9's "Statistic and criterion" cell, and sentences 2-6 of section S8.6 ("Preliminary checks
+    and redesign"). A new number macro \fvval{fd1b-alpha} prints 0.025, read from the declaration's rule table.
+record-excerpts.txt holds the records, with line numbers: FD-1B-STAGED-DECLARATION.md (the staged redesign's
+declaration), FD-1B-STAGED-BINDING-3.md, DECISION-20261101-joseph-1b-staged-method-coverage.md and
+OUTCOME-20261106-1b-stage1-receipt-stop.md. The S8.6 source comment cites file:line for each clause.
+Also here: inventory.tsv (one row per clause of the old two tables, with where each now prints), old_supplement.txt and
+new_supplement.txt (rendered text), paper_body.tex, and the pages r2-24/25/26.png.
+
+Check, and report each problem with file:line:
+1. For (c): does every clause of the new S8.6 sentences and of index row 9's criterion cell follow from the cited record
+   lines, no more and no less? Check the truths, the pseudo-experiment count, the groups drawn, the resampling, the
+   unfolding, the covariance, the statistics and the levels. Is anything stated that the record does not support (for
+   example the band variants), or anything in the old row-9 cells silently lost? Is the plug-in sentence ("declared as
+   an option and was not included") faithful to the declaration and binding 3?
+2. Does anything in the new S8.6 text conflict with the rest of S8.6, with the row 9 Reading, or with the paper's
+   section 6.2 (paper_body.tex around line 626)?
+3. For (b): does the moved sentence keep its meaning and its pending behaviour (it is inside a prr group in both
+   places)? Does the index still carry what a reader needs for test 4? Is anything lost?
+4. For (a): no meaning change?
+5. Are rows 9's and 10's Readings still character-identical to the old source?
+6. Does inventory.tsv still map every clause correctly for tests 4 and 9?
+End with a ranked list of problems, each with a concrete fix, then one final line exactly "VERDICT: PASS" or
+"VERDICT: FAIL".

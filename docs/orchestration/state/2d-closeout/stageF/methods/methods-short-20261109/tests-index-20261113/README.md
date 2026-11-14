@@ -39,8 +39,8 @@ pdflatex harness found that the best column widths shorten the tables by only 7.
 
 ## The inventory
 
-`inventory.tsv` has one row per clause of every old S11 and S12 cell (140 rows: 59 in the index, 65 moved to a home
-section, 16 already printed there), plus the two repointed sentences.
+`inventory.tsv` has one row per clause of every old S11 and S12 cell (145 rows: 60 in the index, 68 moved to a home
+section, 17 already printed there), plus the two repointed sentences.
 - Columns: id, test, old table, old column, clause, how, now_prints_at (file:line), locator.
 - `make_inventory.py <worktree> <out.tsv>` regenerates it. Every locator must occur exactly once in the comment-free
   lines, so each line number is found by the script, not typed.
@@ -55,7 +55,8 @@ Each was checked against the source cells before use:
 - **Row 4:** it would move the class breakdown to S8.2 ("Reduced-setting classes: see section S8.2"). S8.2 prints the
   classes' definitions, but not this study's class results, so the index keeps the `\fvgroup{prr}` reading unchanged.
 - **Row 9:** it reconstructs "as 10" by hand as "Cutoffs: 0.025/16 per cell; 0.025 jointly". Against rows 8 and 10,
-  that is row 10's threshold, but the old row 9 states only "as 10". So the index keeps "as 10" and types no number.
+  that is row 10's threshold, but the old row 9 states only "as 10". So a1bd56bfe kept "as 10" and typed no
+  number. The second round replaced it from test 9's own record (below).
   - The referee's relocated test-9 design also adds row 10's two band variants ("without and with the GEANT4 neutron
     and proton bands") to test 9.
   - S8.5 says these variants exist because of the first test's own checks, and the 1B design record
@@ -72,17 +73,44 @@ The codex-school meaning reads of old against new used gpt-6.1-sol at high effor
   They were fixed, and the inventory was repointed.
 - `meaning-read-2.txt`: the second round, on the committed text.
 
-## Inherited, not changed (for Joseph via the director)
+## Second round, after a1bd56bfe (the director's layout note, and Joseph's ruling on items 1-3)
 
-- **Row 9's reading is no longer the paper's section 6.2 sentence word for word.**
-  - The old S12 cell, and the S8 comment calling it "the paper's section 6.2 sentence", date from an earlier paper
-    revision.
-  - paper_body.tex:626 now has no "staged redesign" clause, and it adds "Its checks led to the second test's
-    like-for-like construction".
-  - The reading is kept unchanged, as ruled.
-- **Test 9's "as 10" (the old S11's Simulation and What is varied) literally includes test 10's two band variants.**
-  - S8.5 says those variants follow from the first test's checks.
-  - The new S8.6 sentence ("Its estimator, simulation, variations, statistic and thresholds were specified as the
-    second test's") is no stronger than "as 10", but it inherits that looseness.
-- **S8.6 opens "at the two tunes", while old S11 gave test 9 a plug-in truth as well.** The new sentence names all
-  three truths, and the opening is unchanged.
+The director accepted a1bd56bfe. Joseph ruled on the three items (2026-11-13: "yes make 1–3 as you recommended").
+
+- **The p24 break.** p24 ended after row 1, with 64 pt free. Row 2 needed about 77 pt: it is 72 pt high, plus the
+  5 pt `\addlinespace` after row 1. Nothing else forced the break: there is no `\nopagebreak` or `\flushbottom`, and the
+  11 rows are well under xltabular's chunk size. Three changes fixed it:
+  - the caption is one line (the column headers already name the content);
+  - a redundant "as the unfolding simulation" is dropped from the S8 definition of "half split";
+  - row 4 is shorter (below).
+
+  Row 2 now fits on p24, with no gap. p25 now ends 71 pt short, against 37 pt before, because row 9 (10 lines)
+  cannot split. The total page-bottom gap on pp. 24–25 falls from 101 pt to 71 pt.
+- **Row 4.** Two parts of its Reading move to a new S8.2 paragraph, "The study's results":
+  - "Every higher iteration count and capacity lowers ρ, by at most …", in its own `\fvgroup{prr}`;
+  - IBU's overshoot along the prior-to-truth direction.
+
+  The index keeps the classes and "IBU at five iterations: ρ<0 at both truths", as the paper's tab:outcomes does. The
+  Reading is now 9 lines, against 13.
+- **Item 1: row 9's provenance.** The reading is unchanged. Three source comments no longer call it "the paper's
+  section 6.2 sentence". It is the Supplement's account of the first test. The paper's shorter version is
+  paper_body.tex:626: it has no staged-redesign clause, and it adds that the first test's checks led to the second
+  test's like-for-like construction.
+- **Item 2: test 9's design in its records' terms.** "As 10" is replaced. Index row 9 now prints its own statistics
+  and levels, and S8.6's sentences 2–6 give its design. Test 10's band variants are not carried over: test 9 draws
+  every group, and the record names no variants. The sources, with lines at this head, and the declaration at the
+  sha make_values pins (50d9e883):
+  - the two tunes, every group drawn, the nominal-simulation unfold and the covariance remade at each tune:
+    FD-1B-STAGED-DECLARATION.md:66-69, carrying DECISION-20261101-joseph-1b-staged-method-coverage.md:39-44;
+  - 300 per truth: :236 (key fd1b-ntoys);
+  - the groups, with the MC and template Poisson streams: :186-193;
+  - the statistics: :345 (per cell) and :353 (joint, χ² ≤ F⁻¹(P₀));
+  - the levels, 0.025/16 per cell and 0.025 jointly: :399-400. They are keyed as fd1b-alpha, read from that table by
+    make_values_fived16.py's supp_literal_values() and asserted equal at both places.
+- **Item 3: the plug-in truth.** The declaration made it optional (:178, sec. 6). FD-1B-STAGED-BINDING-3.md:52-53
+  bound the no-plug-in path, G18 and AR23 only, with the plug-in deferred. The question became moot when stage 1
+  ended (OUTCOME-20261106-1b-stage1-receipt-stop.md:120-121; draws 600-899 were declared, :45-49). So test 9 ran at
+  the two tunes, which agrees with S8.6's opening. The old S11's "and a plug-in truth" is corrected to "A plug-in truth
+  was declared as an option and was not included".
+- `meaning-read-3.txt`: the codex-school meaning read of this round, with the record excerpts
+  (`meaning-read-3-records.txt`).

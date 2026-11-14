@@ -2362,7 +2362,14 @@ def supp_literal_values(d):
     # S10: the usage-recommendation rule's failing cells: their z at the GiBUU hybrid truth (valid-region readout)
     zz = d["vregion"]["readings"]["V-ATLAS"]["cells"]
     v["vatlas-z-R02"], v["vatlas-z-R06"] = f"{zz['R02']['z']['A7_gibuu']:+.2f}", f"{zz['R06']['z']['A7_gibuu']:+.2f}"
-    want = {"q2-selpot-data": "-0.9", "q2-selpot-mc": "-1.8",
+    # S8.6 and table S11 test 9: the first five-observable test's levels, from its staged declaration's rule table
+    # (FD-1B-STAGED-DECLARATION.md, sec. 5.2: per cell < alpha/16, joint < alpha); the S8 index restructure, Joseph via the director
+    tx = d["fd1bdecl"]
+    pc = re.findall(r"P\(Bin\(300, p_c\(T\)\) ≤ k\) < ([0-9.]+)/16\.", tx)
+    pj = re.findall(r"P\(Bin\(300, q\(T\)\) ≤ k\) < ([0-9.]+) \|", tx)
+    assert len(pc) == 1 and pc == pj, (pc, pj)
+    v["fd1b-alpha"] = pc[0]
+    want = {"fd1b-alpha": "0.025", "q2-selpot-data": "-0.9", "q2-selpot-mc": "-1.8",
             "m4w-resid68": "2", "m4w-resid999-lo": "-49", "m4w-resid999-hi": "+67", "m4w-wbin-pct": "0.25",
             "m4w-noreal-pct": "0.086", "m4w-negw2": "4.9", "m4w-axis68": "4", "m4w-w2clamp-pct": "1.5", "rec-r0-bound": "0.1",
             "mp5-rc-min": "0.9965", "mp5-rc-max": "1.0035", "mp5-rc-median": "1.000008", "mp5-z-min": "-0.47", "mp5-z-max": "+0.53",

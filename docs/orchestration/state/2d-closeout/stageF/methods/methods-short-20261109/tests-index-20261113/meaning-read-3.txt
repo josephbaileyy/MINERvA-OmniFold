@@ -1,0 +1,21 @@
+No meaning or record-fidelity problems found.
+
+1. **Test 9’s design and criterion are supported.** At `new_supplemental_body.tex:1028`, sentences 2–5 follow the staged declaration: the two tunes and nominal-simulation unfolding (`FD-1B-STAGED-DECLARATION.md:66–69`), pseudo-experiment count (`:236`), six uncertainty groups and simulation/template resampling (`:187–192`), and covariance remade at each tune (`:69`). The counts in index row 9 (`new_supplemental_body.tex:817`) are equivalent to the declared fractions for the fixed ensemble size (`:345`, `:353`). The one-sided binomial criteria and printed levels follow `:399–400`. No two-variant GEANT4 design carries over.
+
+   The plug-in sentence is faithful: the declaration makes it optional (`:178`, `:470`); binding 3 includes G18 and AR23 only and reserves any addition for a separate decision and binding (`FD-1B-STAGED-BINDING-3.md:52–55`). The outcome makes that reserved question moot unless the stop is overridden (`OUTCOME-20261106-1b-stage1-receipt-stop.md:120–121`). “Was not included” accurately describes the bound path; it does not claim permanent rejection.
+
+   The former row-9 content is accounted for. The inherited design is replaced explicitly, and the plug-in assertion is corrected explicitly. Neither is silently dropped.
+
+2. **No conflict with the surrounding account.** `new_supplemental_body.tex:1028` identifies the added design as the *staged redesign*. The subsequent fixed-truth comparison describes the earlier preliminary check, also distinguished at `:1042`. This agrees with row 9’s Reading (`:817`) and `paper_body.tex:626`. The paper’s shorter account omits the staged-redesign stop without contradicting it.
+
+3. **Test 4’s move preserves meaning and pending behavior.** The higher-settings sentence at `new_supplemental_body.tex:945` retains its wording, bound macro, and `prr` group control from `old_supplemental_body.tex:810`. The overshoot interpretation remains attached to IBU at five iterations and both truths, outside that group as before. Row 4 (`new_supplemental_body.tex:811`) retains the statistic, threshold, classes, negative retained fractions, and route to S8.2. No substantive content is lost.
+
+4. **The caption and half-split edits preserve meaning.** At `new_supplemental_body.tex:783` and `:795`, the shorter wording retains the same simulation-half roles and index purpose.
+
+5. **Both Readings are character-identical.** Direct comparison confirms row 9’s Reading is unchanged between old `:816` and new `:817`; row 10’s entire Reading, including all macro cases, is unchanged between old `:817` and new `:818`.
+
+6. **The inventory remains correct.** All test-4 entries C053–C072 (`inventory.tsv:54–73`) and test-9 entries C126–C135 (`inventory.tsv:127–136`) have matching locators at their stated new-source lines. The mappings preserve the moved `prr` qualification and explicitly record the test-9 design and plug-in corrections.
+
+Ranked problems: none. No fixes required.
+
+VERDICT: PASS
