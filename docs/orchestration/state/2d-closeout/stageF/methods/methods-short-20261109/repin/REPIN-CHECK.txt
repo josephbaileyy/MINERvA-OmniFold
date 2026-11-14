@@ -1,4 +1,4 @@
-#977 head 89b5969b8; 47 rows
+#977 head 89b5969b8; 48 rows
 OK  RP01   resource paper      count=1  The sixteen-cell cross section that the estimator gives on the data il
 OK  RP02   resource paper      count=1  The held-out-tune tests provide partial evidence on bias at truths hel
 OK  RP03   resource paper      count=1  The dependence on the prior's generator shape is reported separately a
@@ -55,5 +55,6 @@ OK  RP33k  resource paper      count=1  Keeping the \fvval{re2-modes-4} directio
 --  RP38   code     B465-470  sec-repro2d_benchmark.csv rows median_relative_uncertainty (6.41 -> 6.46) and in
 --  RP39   code     B1297-1303 P102-109 B533-536 R212 R218 R242  PROVENANCE's "THE 2D ARRAYS" names cov2d_Q_205.npz (7153b194…) as the arrays' so
 --  RP40   code     B765-767 R304-307 B849-871 P186-204  2D SCOPE line and the OUTCOME-20261108 record quotes: under C_T' the coverage co
+--  RP41   code     B103-106 B561-571 B586-612  follow-up to RP36 (director 11-14): after the LL5D HOLD is lifted, if cheap, cov
 OK  GEN16  labels=1 block_sha=65b02f09daacba48
 REPIN-CHECK PASS

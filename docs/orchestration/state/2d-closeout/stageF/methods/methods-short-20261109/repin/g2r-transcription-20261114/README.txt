@@ -36,9 +36,26 @@ WHAT IT MEANS FOR #981 (SUMS.out, sums_check.py)
   identities exactly. Any derivation leaves at least one of them inexact, so RP35's "the exact-sum needs stay" needs
   the director's ruling. The lane proposes shipping Q = C_new byte for byte and checking both identities at 1e-15
   relative.
-- \fluxBand (RP38) is budget_Q's bands.Flux.median_pct (re2c_build_q.py:618). It needs the 100 Flux universe weights
-  with g2r_bands.csv's Flux rows. data_g2r.json records only their sum and n_eff, and the npz does not carry them. Its
-  producer is being agreed with cov2d, as the director asked.
+- RP35 as ruled by the director on 2026-11-14: Q ships as C_new byte for byte, and the two identities are checked at
+  1e-15 relative, with the worst value printed and a 1e-12 plant.
 
-FILES: README.txt, SOURCE.txt, transcribe_g2r.py, transcribe.out, TESTS.out, sums_check.py, SUMS.out, transcription/.
+\FLUXBAND UNDER C_NEW (fluxband_g2r.py, FLUXBAND.out, FLUXBAND-PLANTS.out; added 2026-11-14 after PR #1147)
+- The one producer of \fluxBand under C_new, agreed with cov2d and accepted by the director (route B, RP38):
+  3.723437872589673 %, printed 3.72. RE-2's value under the current covariance is 3.7124503352159897, printed 3.71.
+- The computation is RE-2's budget formula (re2c_build_q.py, metrics()): 100 * np.median(sqrt(max(diag C, 0)) / x),
+  with C = build_repair.wcov(Flux rows of g2r_bands.csv, w_flux). x is c2a's cov2d_x.csv. wcov is executed from its
+  committed source (the function re2c_rollup.band_cov calls).
+- w_flux is the 100 per-universe Flux weights committed in COV2D's readout blocks_G18.npz and blocks_AR23.npz
+  (member w_flux, written from re2c_rollup.flux_weights(), the function G2R's data phase calls). The two arrays are
+  bitwise equal. Their sum (211.01200325082078) and n_eff (19.060534772246488) equal G2R's log line
+  ("weights_equal_vl175_build_json", readout/data/connect.log.txt:14) exactly.
+- The validation: the 38 band covariances, Flux weighted by w_flux and the others unweighted, summed in sorted band
+  order, reproduce g2r_C_univ_new.csv to 1.3e-20 of its largest entry (tolerance 1e-15). G2R's universe block is
+  therefore these 38 bands, without the normalization.
+- FLUXBAND-PLANTS.out: three one-line plants in scratch copies, each rc 1. Unweighted Flux gives a residual of 0.62.
+  One weight scaled by 1 + 1e-12 gives 1.5e-14, over the tolerance. Unequal G18 and AR23 weights are refused at
+  check 2.
+
+FILES: README.txt, SOURCE.txt, transcribe_g2r.py, transcribe.out, TESTS.out, sums_check.py, SUMS.out,
+fluxband_g2r.py, FLUXBAND.out, FLUXBAND-PLANTS.out, transcription/.
 Digests: SHA256SUMS.txt.
