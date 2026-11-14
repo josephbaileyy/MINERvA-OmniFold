@@ -1,0 +1,20 @@
+# app_statmethods meaning read, pass 1: reader codex-school gpt-6.1-sol, high, read-only; prompt app_statmethods-prompt.txt
+**Question 1 — Remaining text**
+
+- **A1 — PASS:** The retained check on the quoted, Flux-weighted universe block is unchanged, including its \(1.3\times10^{-16}\) agreement and constraint-weight qualification.
+- **A2 — PASS:** The reference now correctly points to that quoted, weighted-block check; the MAT-conformance claim, Flux weighting and rank-1 normalization retain their scope and numbers.
+- **A3 — PASS:** “Specified as tolerable” preserves the acceptance-bound meaning under your stated interpretation, including the disclosure that the largest deformation fails and remains an open sensitivity.
+
+App. I has **no new rows for App. A**, so there are no additional rows to assess.
+
+**Question 2 — Removed or shortened items**
+
+- **A1 — LEDGER:** The obsolete check’s setup, numerical agreement, missing-weight defect and pre-fix scope may leave together because the check concerned no quoted product and its remaining evidential citation is also removed; its pointer is `ae4285e94:app_statmethods.tex:231`.
+- **A2 — LEDGER:** The qualification about the earlier check covering unweighted bands becomes unnecessary when that check ceases to be cited as evidence; its pointer is `ae4285e94:app_statmethods.tex:505`.
+- **A3 — NEEDED, retained:** The acceptance-bound violation and open-sensitivity limitation remain printed in full, and the word replacement loses no timing disclosure under your instruction.
+
+**No NEEDED item was lost.** The removed numbers belong exclusively to the obsolete check.
+
+No disclosure of a choice made after results were seen disappeared from the printed text.
+
+OVERALL: PASS — FAILs: none.
