@@ -11,6 +11,11 @@ Two products from the CV 5D omnifile (no universe branches needed):
 Streams with RDataFrame (no event arrays in memory), so it runs on a login node.
 
   python make_control_plots.py [--omnifile runEventLoopOmniFold_5D_MEFHC.root]
+      [--dump-arrays FILE.npz] [--from-arrays FILE.npz] [--print-style]
+
+--dump-arrays writes every value the figures draw (histogram contents and errors, edges, migration matrices, the POT
+scale) after filling; --from-arrays draws from such a file without ROOT; --print-style draws in the note's print style
+(note_print_style.py; director 2026-11-13). With none of them the output is unchanged.
 """
 
 import sys as _sys, pathlib as _pathlib
@@ -55,15 +60,11 @@ def th1_np(h):
     return vals, errs
 
 
-def main():
+def fill(args):
+    """Every value the two figures draw, from the omnifile (one RDataFrame pass)."""
     import ROOT
     ROOT.gErrorIgnoreLevel = ROOT.kError
     ROOT.EnableImplicitMT(16)
-
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--omnifile", default="runEventLoopOmniFold_5D_MEFHC.root")
-    ap.add_argument("--outdir", default="products/5d")
-    args = ap.parse_args()
 
     f = ROOT.TFile.Open(args.omnifile)
     pot_scale = f.Get("dataPOTUsed").GetVal() / f.Get("mcPOTUsed").GetVal()
@@ -85,6 +86,23 @@ def main():
         m2 = ROOT.RDF.TH2DModel(f"m_{ax}", "", len(e) - 1, e, len(e) - 1, e)
         h_mig[ax] = d_sig.Histo2D(m2, f"MC{SUFFIX[ax]}", f"sim{SUFFIX[ax]}", "w_reco")
 
+    arr = {"pot_scale": np.float64(pot_scale)}
+    for ax in AXES:
+        e = edges_for(ax)
+        n = len(e) - 1
+        arr[f"edges_{ax}"] = e
+        arr[f"dat_{ax}"], arr[f"derr_{ax}"] = th1_np(h_data[ax].GetValue())
+        arr[f"sig_{ax}"], arr[f"serr_{ax}"] = th1_np(h_sig[ax].GetValue())
+        arr[f"bkg_{ax}"], arr[f"berr_{ax}"] = th1_np(h_bkg[ax].GetValue())
+        H = h_mig[ax].GetValue()
+        arr[f"mig_{ax}"] = np.array([[H.GetBinContent(ix + 1, iy + 1) for iy in range(n)]
+                                     for ix in range(n)])  # [truth, reco]
+    return arr
+
+
+def draw(arr, outdir, print_style=False):
+    """The two figures from fill()'s arrays. print_style: the note's print style (sizes for the printed width)."""
+    pot_scale = arr["pot_scale"]
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -97,11 +115,23 @@ def main():
     C_SIG = technote_style.GEN_COLORS["Tune"]   # signal = the fixed Tune blue
     C_BKG = "#DD8452"                           # background = solid warm orange
     C_EDGE = "#2F4B7C"                          # stack outline (darker signal blue)
-    FS_LAB, FS_TICK, FS_LEG = 16, 14, 16
+    if print_style:
+        for _a in _pathlib.Path(__file__).resolve().parents:
+            if (_a / "note_print_style.py").exists():
+                _sys.path.insert(0, str(_a)); break
+        import note_print_style
+        note_print_style.apply()
+        FS_LAB, FS_TICK, FS_LEG, FS_TAG, FS_NOTE = 9.3, 8.3, 8.5, 8.3, 7.5
+        FIG1, MS, ELW, LWO, LWG = note_print_style.figsize(0.99, 0.86), 2.6, 0.7, 0.7, 0.5
+        GS1 = dict(hspace=0.34, wspace=0.30, left=0.09, right=0.985, top=0.97, bottom=0.09)
+    else:
+        FS_LAB, FS_TICK, FS_LEG = 16, 14, 16
+        FS_TAG, FS_NOTE = FS_LAB - 2, FS_LAB - 4
+        FIG1, MS, ELW, LWO, LWG = (13.5, 9.0), 4.8, 1.1, 1.0, 0.8
+        GS1 = dict(hspace=0.30, wspace=0.24, left=0.065, right=0.985, top=0.97, bottom=0.075)
 
-    fig = plt.figure(figsize=(13.5, 9.0))
-    outer = fig.add_gridspec(2, 3, hspace=0.30, wspace=0.24,
-                             left=0.065, right=0.985, top=0.97, bottom=0.075)
+    fig = plt.figure(figsize=FIG1)
+    outer = fig.add_gridspec(2, 3, **GS1)
     summary = {}
     handles = None
     for i, ax in enumerate(AXES):
@@ -109,12 +139,12 @@ def main():
                                               hspace=0.05)
         A = fig.add_subplot(gs[0])
         R = fig.add_subplot(gs[1], sharex=A)
-        e = edges_for(ax)
+        e = arr[f"edges_{ax}"]
         # drop the wide catch bin from the visible axis (keep it in the numbers)
         nshow = len(e) - 2 if e[-1] >= 99 else len(e) - 1
-        dat, derr = th1_np(h_data[ax].GetValue())
-        sig, serr = th1_np(h_sig[ax].GetValue())
-        bkg, berr = th1_np(h_bkg[ax].GetValue())
+        dat, derr = arr[f"dat_{ax}"], arr[f"derr_{ax}"]
+        sig, serr = arr[f"sig_{ax}"], arr[f"serr_{ax}"]
+        bkg, berr = arr[f"bkg_{ax}"], arr[f"berr_{ax}"]
         mc = (sig + bkg) * pot_scale
         summary[ax] = (dat.sum(), mc.sum())
         ctr = 0.5 * (e[:-1] + e[1:])
@@ -128,10 +158,10 @@ def main():
                              color=C_BKG, lw=0, label="MC background")
         h_s = A.fill_between(xs, np.maximum(y_bkg, floor), y_tot,
                              color=C_SIG, lw=0, label="MC signal (MnvTune v1)")
-        A.plot(xs, y_bkg, color="white", lw=0.8)      # gap between stack segments
-        A.plot(xs, y_tot, color=C_EDGE, lw=1.0)       # stack outline
+        A.plot(xs, y_bkg, color="white", lw=LWG)      # gap between stack segments
+        A.plot(xs, y_tot, color=C_EDGE, lw=LWO)       # stack outline
         h_d = A.errorbar(ctr[:nshow], dat[:nshow], yerr=derr[:nshow],
-                         fmt="o", color="k", ms=4.8, elinewidth=1.1,
+                         fmt="o", color="k", ms=MS, elinewidth=ELW,
                          zorder=5, label="Data")
         if handles is None:
             handles = [h_d, h_s, h_b]
@@ -153,7 +183,7 @@ def main():
                        color="0.85", lw=0, label="MC stat.")
         R.axhline(1.0, color="0.45", lw=0.9)
         R.errorbar(ctr[:nshow], r[:nshow], yerr=re[:nshow],
-                   fmt="o", color="k", ms=4.8, elinewidth=1.1, zorder=5)
+                   fmt="o", color="k", ms=MS, elinewidth=ELW, zorder=5)
         R.set_ylim(0.77, 1.30)
         R.set_yticks([0.8, 1.0, 1.2])
         R.set_xlabel(LABELS[ax], fontsize=FS_LAB)
@@ -161,6 +191,8 @@ def main():
         if i % 3 == 0:
             R.set_ylabel("Data / MC", fontsize=FS_LAB)
 
+    if print_style:  # the spectrum and ratio y labels of each column on one line, so that they do not overlap
+        fig.align_ylabels(fig.axes)
     # sixth cell: legend + dataset tag (titles are suppressed by house style)
     ax_leg = fig.add_subplot(outer[1, 2])
     ax_leg.axis("off")
@@ -169,11 +201,11 @@ def main():
                   borderaxespad=0, handlelength=1.6)
     ax_leg.text(0.5, 0.13, r"MINERvA ME FHC, $1.06\times10^{21}$ POT",
                 transform=ax_leg.transAxes, ha="center", va="center",
-                fontsize=FS_LAB - 2, color="0.25")
+                fontsize=FS_TAG, color="0.25")
     ax_leg.text(0.5, 0.02, "wide catch bins not drawn",
                 transform=ax_leg.transAxes, ha="center", va="center",
-                fontsize=FS_LAB - 4, color="0.45")
-    out1 = os.path.join(args.outdir, "control_plots.png")
+                fontsize=FS_NOTE, color="0.45")
+    out1 = os.path.join(outdir, "control_plots.png")
     fig.savefig(out1, dpi=140, bbox_inches="tight")
     plt.close(fig)
     for ax in AXES:
@@ -182,13 +214,16 @@ def main():
     print(f"[ctrl] wrote {out1}")
 
     # ---------------- migration + resolution ----------------
-    fig, axs = plt.subplots(2, 5, figsize=(32, 14))
+    if print_style:
+        FIG2, F_T, F_X, F_K, F_D, F_C = note_print_style.figsize(0.99, 0.56), 9.3, 7.5, 7.0, 6.5, 7.0
+        fig, axs = plt.subplots(2, 5, figsize=FIG2, layout="constrained")
+    else:
+        FIG2, F_T, F_X, F_K, F_D, F_C = (32, 14), 17, 16, 14, 13, 12
+        fig, axs = plt.subplots(2, 5, figsize=FIG2)
     for i, ax in enumerate(AXES):
-        e = edges_for(ax)
+        e = arr[f"edges_{ax}"]
         n = len(e) - 1
-        H = h_mig[ax].GetValue()
-        M = np.array([[H.GetBinContent(ix + 1, iy + 1) for iy in range(n)]
-                      for ix in range(n)])  # [truth, reco]
+        M = arr[f"mig_{ax}"]  # [truth, reco]
         colsum = M.sum(axis=1, keepdims=True)
         Mn = np.where(colsum > 0, M / colsum, 0.0)
         nshow = n - 1 if e[-1] >= 99 else n
@@ -197,30 +232,53 @@ def main():
                       vmin=0, vmax=1, aspect="auto",
                       extent=(0, nshow, 0, nshow))
         A.plot([0, nshow], [0, nshow], "w--", lw=0.7)
-        A.set_title(LABELS[ax], fontsize=17)
-        A.set_xlabel("truth bin", fontsize=16)
-        A.tick_params(axis="both", which="major", labelsize=14)
+        A.set_title(LABELS[ax], fontsize=F_T)
+        A.set_xlabel("truth bin", fontsize=F_X)
+        A.tick_params(axis="both", which="major", labelsize=F_K)
         if i == 0:
-            A.set_ylabel("reco bin", fontsize=16)
+            A.set_ylabel("reco bin", fontsize=F_X)
         diag = np.diag(Mn)[:nshow]
         A.text(0.04, 0.92, f"diag median {np.median(diag):.2f}",
-               color="w", fontsize=13, transform=A.transAxes)
-        cb = fig.colorbar(im, ax=A, fraction=0.046)
-        cb.ax.tick_params(labelsize=12)
+               color="w", fontsize=F_D, transform=A.transAxes)
+        if not print_style:  # print style: one colour bar for the row, below
+            cb = fig.colorbar(im, ax=A, fraction=0.046)
+            cb.ax.tick_params(labelsize=F_C)
         axs[1, i].bar(np.arange(nshow) + 0.5, diag, width=0.9, color="tab:blue")
         axs[1, i].set_ylim(0, 1)
-        axs[1, i].set_xlabel(f"{LABELS[ax]} truth bin", fontsize=16)
-        axs[1, i].tick_params(axis="both", which="major", labelsize=14)
+        axs[1, i].set_xlabel(f"{LABELS[ax]} truth bin", fontsize=F_X)
+        axs[1, i].tick_params(axis="both", which="major", labelsize=F_K)
         if i == 0:
-            axs[1, i].set_ylabel("P(reco bin = truth bin)", fontsize=16)
+            axs[1, i].set_ylabel("P(reco bin = truth bin)", fontsize=F_X)
+        if print_style and i == len(AXES) - 1:
+            cb = fig.colorbar(im, ax=axs[0, :], fraction=0.046, pad=0.02)
+            cb.ax.tick_params(labelsize=F_C)
         print(f"[mig] {ax:7s} diagonal P median={np.median(diag):.3f} "
               f"min={diag.min():.3f} max={diag.max():.3f}")
     fig.suptitle("Truth$\\to$reco migration (column-normalised; analysis binning) "
                  "and diagonal purity per truth bin", y=0.99, fontsize=18)
-    out2 = os.path.join(args.outdir, "migration_resolution.png")
+    out2 = os.path.join(outdir, "migration_resolution.png")
     fig.savefig(out2, dpi=140, bbox_inches="tight")
     plt.close(fig)
     print(f"[mig] wrote {out2}")
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--omnifile", default="runEventLoopOmniFold_5D_MEFHC.root")
+    ap.add_argument("--outdir", default="products/5d")
+    ap.add_argument("--dump-arrays", default=None, help="write every drawn value to this .npz after filling")
+    ap.add_argument("--from-arrays", default=None, help="draw from this .npz (no ROOT)")
+    ap.add_argument("--print-style", action="store_true", help="draw in the note's print style")
+    args = ap.parse_args()
+    if args.from_arrays:
+        with np.load(args.from_arrays, allow_pickle=False) as z:
+            arr = {k: z[k] for k in z.files}
+    else:
+        arr = fill(args)
+    if args.dump_arrays:
+        np.savez(args.dump_arrays, **arr)
+        print(f"[ctrl] wrote {args.dump_arrays}")
+    draw(arr, args.outdir, args.print_style)
 
 
 if __name__ == "__main__":
