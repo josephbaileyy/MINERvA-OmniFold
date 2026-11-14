@@ -118,6 +118,74 @@ The landscape's `run` line gains `--print-style`.
   ISSUES.md. The producer is not recreated (the director's ruling).
   <!-- absence-ok: the search is stated in the same sentence (git ls-files at the branch head) -->
 
+## Group C, family 1 (2026-11-14): make_control_plots.py (Figs. 1 and 3) and plot_control_corner.py
+
+**Method, the director's go of 2026-11-14:** one cluster read per family, then all styling locally.
+- **The code, committed and gated first** (0f52ab2ab, 7d7b85522): each producer splits into fill (ROOT) and draw, with
+  `--dump-arrays`, `--from-arrays` and `--print-style`, all opt-in.
+- **Local identity test** (`tools/identity_family1.py` with `tools/fakeroot/ROOT.py`): synthetic inputs, a fake ROOT and
+  stand-in edges. With no flag the producers draw PNGs byte-identical to those at 2cac548bd, and `--from-arrays` on
+  their own dump draws byte-identical PNGs.
+
+**The connects**, on a login node at 0 node-h, each by the director's go on its sha:
+- **The presence check** (`tools/figc_presence.sh` fa6ae0f4, launcher a866065c; `runs/family1/connect-presence.session.txt`):
+  - the fence passed;
+  - no overlap, by path, realpath, the G2R prefix or device:inode, against the 1146 LL5D atime-pre paths (column sha256
+    71bd8498, equal to the bulk 908d3922's by cov2d's check) and the 18 G2R inputs;
+  - all 53 group C inputs present;
+  - stat and realpath only.
+- **family1** (`tools/figc_family1.sh` 2cc6be4f, launcher 071f3e2a; `runs/family1/connect-family1.session.txt`), 03:46:45–03:49:28Z:
+  - the RUNNING marker for cov2d's fence;
+  - a fresh clone at 0f52ab2ab;
+  - env python 3.11.14, matplotlib 3.10.8 (the committed PDFs' version), numpy 1.26.4.
+
+| arm | wall | CPU |
+|---|---|---|
+| ctrl-off | 26.8 s | 78.9 s |
+| corner-off | 55.2 s | 90.7 s |
+| ctrl-from | 5.5 s | 12.1 s |
+| corner-from | 5.5 s | 12.1 s |
+
+The fetched tar's sha256 is 01171756, equal to the cluster's.
+
+**The dumps** (`runs/family1/dumps/`, force-added as deliberate receipt members):
+
+| dump | size | sha256 |
+|---|---|---|
+| control_plots_arrays.npz | 17666 B | c1793d0f… |
+| control_corner_arrays.npz | 19180 B | 5b44a80b… |
+
+For all three figures, the from-arrays capture hashes equal off's (`runs/family1/cap-off/`, `cap-from/`), so each dump
+holds every drawn value.
+
+**Per figure:**
+- **migration_resolution (Fig. 3): PASS.**
+  - off is pixel-equal to the committed PDF (pdftoppm -r 100).
+  - Print style from the dump: the plot axes' drawn data are bit-equal to off (57/57 items, `runs/family1/cap-after/`).
+  - The five per-panel colour bars become one shared bar; that is the only change in the colour-bar axes.
+  - The "diag median" annotations move above each map.
+  - Printed text: 2.4–3.2 pt becomes 6.5–7.5 pt.
+  - Installed, sha256 7ea7fd45.
+- **control_corner: identity baseline accepted by the director's ruling (a).**
+  - off differs from the committed PDF only in where the dataset tag sits, inside the top-left panel against above the
+    figure.
+  - Their printed text is identical, 56 lines with 0 sorted differences, including every r_MC and r_data value.
+  - The tag moved with technote_style.py 1e7c28688 (2026-07-15, "fix plot header clipping"), after the committed
+    corner (6749ddf8e, 2026-07-05). The producer and its input are unchanged since then; the input's mtime is
+    2026-06-07.
+  - Print style: drawn data bit-equal to off (67/67); the legend moves into the empty upper triangle.
+  - Printed text: 3.0–4.1 pt becomes 6.5–8.3 pt.
+  - Installed, sha256 09f29102.
+- **control_plots (Fig. 1): pending, by the director's ruling (c).**
+  - The committed PDF (1b2925259, 2026-07-09, sha256 1191cc0c…) was drawn by code that was never committed: finer q3
+    and W binning, with compressed catch bins.
+  - Its binning and display were recovered from the PDF's vector paths (`tools/edges_from_pdf.py`, tolerance 0.001 data
+    units) into `make_control_plots.py --extended-display` (7d7b85522).
+  - One extension connect (`tools/figc_family1b.sh` 4e713548, launcher 02cc7f35, approved) waits for LL5D job 61255888
+    to end.
+  - The identity test against the committed PDF then has four parts: sorted text, plotted values from the PDF's
+    paths, the catch bins, and a visual diff. If it fails twice, the fallback is to leave the figure, with FIG-2.
+
 ## CITABLE FOR / NOT CITABLE FOR
 
 **CITABLE FOR:**

@@ -1,0 +1,860 @@
+{
+ "artists_py_sha256": "feb486fefd363c0d80174fc034c82f53874558de718736af2c34c6b5344de041",
+ "size_in": [
+  13.5,
+  9.0
+ ],
+ "items": [
+  {
+   "kind": "FillBetweenPolyCollection",
+   "axes": 0,
+   "label": "MC background",
+   "hash": "0ffbd528d2dff65d33fbb2724247b00dbb87b44488ec30b89916aabacf83227c",
+   "dhash": "3d213ce4ff544584fcfbad0edda904729d239a383d7ba4844cb1dc16255da77a",
+   "xhash": "3d213ce4ff544584fcfbad0edda904729d239a383d7ba4844cb1dc16255da77a"
+  },
+  {
+   "kind": "FillBetweenPolyCollection",
+   "axes": 0,
+   "label": "MC signal (MnvTune v1)",
+   "hash": "fabb130b5e9b36be8419d73e04b7a1e345ec55e010b0d4f2e20d804d86bfaa5c",
+   "dhash": "c0c4ed26818ea433538de36ba3c9f33a79df27f0015a9098837cb5f684aecfe7",
+   "xhash": "c0c4ed26818ea433538de36ba3c9f33a79df27f0015a9098837cb5f684aecfe7"
+  },
+  {
+   "kind": "line",
+   "axes": 0,
+   "label": "_child2",
+   "hash": "06cb4683eb5bfefcd7e2d1789db0e131629d1f277ab7c0e0f3b023f3425c479c",
+   "dhash": "95dbf6bb5155cf577a8a80e65038af47af83f536af8e821b07d2cfbe152e68a0",
+   "xhash": "4db598d3ad18928b549c88437c4b2fca71fe3cdf0f059a346c71ef4fc8fabc9d"
+  },
+  {
+   "kind": "line",
+   "axes": 0,
+   "label": "_child3",
+   "hash": "6b1cc5f0643de9d95c4425aeddaf0c7e576414e7145acedbe4e14a88f9b7a49f",
+   "dhash": "6291f33741f7d23e31c33166969b0cac921a23989aad32944e85cb457286e874",
+   "xhash": "30cedcdf8b2116513ccafa8debb719dd04be8c983ab6bd865f5b9e49fbaa23aa"
+  },
+  {
+   "kind": "line",
+   "axes": 0,
+   "label": "_nolegend_",
+   "hash": "db463065e13fe3f0a6c94f776170304fc3d26326ebe89843bf47780767f9e717",
+   "dhash": "570474795f5e87fa38ff782b9baf5dac84793ad1bf040b4b564ac8beadb73be6",
+   "xhash": "a7e35d51d8d6e55c2566f25471f9e38b2fe525d0c4e52477570a1f163c1b41a1"
+  },
+  {
+   "kind": "LineCollection",
+   "axes": 0,
+   "label": "_nolegend_",
+   "hash": "55ad7bf359b0d03b9150854006da5cb73d68d5e287a2dad27d8d1fe60b6e468d",
+   "dhash": "b3def7e904c7cc69d589b52e709a8934de53c3cca25b77c7ddd3c55388f5aa22",
+   "xhash": "b3def7e904c7cc69d589b52e709a8934de53c3cca25b77c7ddd3c55388f5aa22"
+  },
+  {
+   "kind": "FillBetweenPolyCollection",
+   "axes": 1,
+   "label": "MC stat.",
+   "hash": "3376542441e7195aa1bc82409ea5ed33d6ddee6ac699e7e8e0a7b22552aa6857",
+   "dhash": "8a415116646352a71c4e42072a537bb928b95634ecc4628e0f2b0a6eeac05a79",
+   "xhash": "8a415116646352a71c4e42072a537bb928b95634ecc4628e0f2b0a6eeac05a79"
+  },
+  {
+   "kind": "line",
+   "axes": 1,
+   "label": "_child1",
+   "hash": "85e15c366a09c81e293a33a6b85e9e5d97e7fdfd776151334917261361ace0f8",
+   "dhash": "e3873c730f33a6c17704cc843606016ba48a708a8a7c460fa25e28bd90b07dc6",
+   "xhash": "81b1f80e69422b30d5c57554ad089580df28a592c900810d3828cf0f2c76f838"
+  },
+  {
+   "kind": "line",
+   "axes": 1,
+   "label": "_nolegend_",
+   "hash": "f4d9f117af85a201a38d9626798c75b56441fe1b3123d7620f709dc2d87095e5",
+   "dhash": "5ec4cb6851cbc3eaa90cf0f9a413a7799ae282be0455961c449fe0a15530a3c3",
+   "xhash": "ceffca26e46e248786a2864b86f715506ad9a53a88c2fb6439617d228af75bf1"
+  },
+  {
+   "kind": "LineCollection",
+   "axes": 1,
+   "label": "_nolegend_",
+   "hash": "3ea68898041182b98b18b9aebed8a7d720f6179cad252d9e156c5d17a980c771",
+   "dhash": "d665bb6d6561e9d66d569b2ecda12e3f0bb22636c3b00b8596be53bde1876d46",
+   "xhash": "d665bb6d6561e9d66d569b2ecda12e3f0bb22636c3b00b8596be53bde1876d46"
+  },
+  {
+   "kind": "FillBetweenPolyCollection",
+   "axes": 2,
+   "label": "MC background",
+   "hash": "dad737ea8b4edb7ed65d61923bba8b3842ae64967c19205d131a1f9ceafbe5ab",
+   "dhash": "3729b4f2b34413d4c685a2fe4d31e755c56830bce0086333e9fb43b815809b9a",
+   "xhash": "3729b4f2b34413d4c685a2fe4d31e755c56830bce0086333e9fb43b815809b9a"
+  },
+  {
+   "kind": "FillBetweenPolyCollection",
+   "axes": 2,
+   "label": "MC signal (MnvTune v1)",
+   "hash": "7d54525c6006bfbee1fb74fc3dbf58881ecf6efc5fb3cb077feb1be6087b0b11",
+   "dhash": "c828ea323fef629044c1fb1e9fdfa2629f5067a44203f6b987fa73b95575095e",
+   "xhash": "c828ea323fef629044c1fb1e9fdfa2629f5067a44203f6b987fa73b95575095e"
+  },
+  {
+   "kind": "line",
+   "axes": 2,
+   "label": "_child2",
+   "hash": "5d2f25495c8f1ff48030844f00c5fa89d2b82792b9f122dc12aae945ea421f73",
+   "dhash": "92634b1391b79a657d827f6ce49194048d1017a6b48a3e5bf966b530fc61850b",
+   "xhash": "1d5f2791892c654a41c1bcc3365dc204bfef82270eeb0df5e1eae33edff1a0e4"
+  },
+  {
+   "kind": "line",
+   "axes": 2,
+   "label": "_child3",
+   "hash": "5020a6b951c7859e31d66680b10b3e77bd1579a49737d79d358c49d9db558565",
+   "dhash": "cd327dc1031a3a281ce7461a7d3694caa2658246ada21a48f2691065b126fec1",
+   "xhash": "76eaa2d205245dc3186bab93b8cd959bea34825f2e852ec7d70b158144134a95"
+  },
+  {
+   "kind": "line",
+   "axes": 2,
+   "label": "_nolegend_",
+   "hash": "b4b8c2fb971f26726e85d62ad7b512f789f0a2eced73f1f5e44c50279fbf7fc4",
+   "dhash": "35a49450c36e92a3e1d59b8e3a566e9726350850601e205cfa52c3914bdaa209",
+   "xhash": "77ebd9ecc36b450e728d4637cd69e9de4c0ca9172994648cd6c7beca955da849"
+  },
+  {
+   "kind": "LineCollection",
+   "axes": 2,
+   "label": "_nolegend_",
+   "hash": "862f90b08a2b92f425038f393489b98dd765c68b7d67e63283f9af88ba91cb4b",
+   "dhash": "1267b3ea568fda5e9921765074e53fd827209c4444229ee4355ee3c0872f969d",
+   "xhash": "1267b3ea568fda5e9921765074e53fd827209c4444229ee4355ee3c0872f969d"
+  },
+  {
+   "kind": "FillBetweenPolyCollection",
+   "axes": 3,
+   "label": "MC stat.",
+   "hash": "84d691aee59934fd8fb9092aec609423ed687be4a53c5afc2a30b4777698b44b",
+   "dhash": "3a68563c82ec87586c4f7035b15ac247a7dfa9a1eeaaf6c1dc53b35fdb88ad71",
+   "xhash": "3a68563c82ec87586c4f7035b15ac247a7dfa9a1eeaaf6c1dc53b35fdb88ad71"
+  },
+  {
+   "kind": "line",
+   "axes": 3,
+   "label": "_child1",
+   "hash": "85e15c366a09c81e293a33a6b85e9e5d97e7fdfd776151334917261361ace0f8",
+   "dhash": "e3873c730f33a6c17704cc843606016ba48a708a8a7c460fa25e28bd90b07dc6",
+   "xhash": "81b1f80e69422b30d5c57554ad089580df28a592c900810d3828cf0f2c76f838"
+  },
+  {
+   "kind": "line",
+   "axes": 3,
+   "label": "_nolegend_",
+   "hash": "e3d94dbdcfb3a47a2b21e5b50d6914cdec36d44ab9695aafd5702008c0bdaf39",
+   "dhash": "6545a7cbf97f020e0f66e5ffc01ad3e8cb265128dce2c945d24483b312f3e312",
+   "xhash": "11ef619453e53be1175ea5f0303f678bd76ea02efa12f145e78399c341a41683"
+  },
+  {
+   "kind": "LineCollection",
+   "axes": 3,
+   "label": "_nolegend_",
+   "hash": "f87affa3aca33eafd2d23ed1228220d1d6f3828a9b3a8f2ae38509c97aea07e2",
+   "dhash": "a90ce69e70524b701bbd420671512a15a40ff5454b49884ec129794a6f765af9",
+   "xhash": "a90ce69e70524b701bbd420671512a15a40ff5454b49884ec129794a6f765af9"
+  },
+  {
+   "kind": "FillBetweenPolyCollection",
+   "axes": 4,
+   "label": "MC background",
+   "hash": "ce199ee4fc83e00098c42e6ac132ea304d32e987c4301ccb3d5d0029a78a0a2e",
+   "dhash": "d4709b87909d27b6b08505627b95755c904d5128597540c160e5365a5455645c",
+   "xhash": "d4709b87909d27b6b08505627b95755c904d5128597540c160e5365a5455645c"
+  },
+  {
+   "kind": "FillBetweenPolyCollection",
+   "axes": 4,
+   "label": "MC signal (MnvTune v1)",
+   "hash": "689297f43d8dfe7e6d8fb05d5c034cf4955bc454ed19f504744d156d26f1e420",
+   "dhash": "2bc3eae30cf55573a9af6325eafa200832d660066b9c1dd6812177b618bc91ef",
+   "xhash": "2bc3eae30cf55573a9af6325eafa200832d660066b9c1dd6812177b618bc91ef"
+  },
+  {
+   "kind": "line",
+   "axes": 4,
+   "label": "_child2",
+   "hash": "ce529a407c380763451c46898e58bb6210e1b84dd4feb8e7215c4309993145e4",
+   "dhash": "e4519a5a9568b13d0f840795e8c429755d1238028b7266fd632ccb35815bd361",
+   "xhash": "18a27c37763df24e28048e01f9e7f28449024c1835ee6a7851ebdd472b9bb3a7"
+  },
+  {
+   "kind": "line",
+   "axes": 4,
+   "label": "_child3",
+   "hash": "919b21b284706f53d80f7fde484c803f13b99db2a2a518cebfae5b8c9bcefec7",
+   "dhash": "1a1976572b9413a80135aca7575571716e0871057947110fab31efdeb488e07f",
+   "xhash": "3374b8c63f453f046f1fc95f81bf78c4a570dc682299f06114a2df074a2d4c12"
+  },
+  {
+   "kind": "line",
+   "axes": 4,
+   "label": "_nolegend_",
+   "hash": "b807bde3d4a6c14ecb7cb9be037eef7cd2c7a413659783d8f919b868e5da514b",
+   "dhash": "4f8d1e15af79d877a02547667544aa2862cac703f671590ffee721ab2645a876",
+   "xhash": "6a1649eda2db42510babdadc7c4d325db8d71aa991aa856085bd6d581708b570"
+  },
+  {
+   "kind": "LineCollection",
+   "axes": 4,
+   "label": "_nolegend_",
+   "hash": "da55292f0179301ca1c15dcea02491c03a59ebaecb43ea062a528818dfa954b2",
+   "dhash": "bd6a5883b116d7b8830cada5b601c7857c1ce12d708441181a3d6bfc351ac358",
+   "xhash": "bd6a5883b116d7b8830cada5b601c7857c1ce12d708441181a3d6bfc351ac358"
+  },
+  {
+   "kind": "FillBetweenPolyCollection",
+   "axes": 5,
+   "label": "MC stat.",
+   "hash": "f72c352ae1179021d716fd02c9e6f5e316418dccb5df5188c5b6b2d91529b38d",
+   "dhash": "4feba2883dcddae4a627ec3b4813324a66cb57dc2ecf7b77686a8e8ac6034e25",
+   "xhash": "4feba2883dcddae4a627ec3b4813324a66cb57dc2ecf7b77686a8e8ac6034e25"
+  },
+  {
+   "kind": "line",
+   "axes": 5,
+   "label": "_child1",
+   "hash": "85e15c366a09c81e293a33a6b85e9e5d97e7fdfd776151334917261361ace0f8",
+   "dhash": "e3873c730f33a6c17704cc843606016ba48a708a8a7c460fa25e28bd90b07dc6",
+   "xhash": "81b1f80e69422b30d5c57554ad089580df28a592c900810d3828cf0f2c76f838"
+  },
+  {
+   "kind": "line",
+   "axes": 5,
+   "label": "_nolegend_",
+   "hash": "ccc9ff477b58506a7b584ed6b27c7832de9fc128b0207f59df04349379f8cbe2",
+   "dhash": "aeb4b9398c473af8fb0c8ad289c1a82ce0860f7c791484fcb011c0605ce5185e",
+   "xhash": "ee8fee7744e313a40fd90db62efcc0cbb2ae73a4bf518b42096384c658653f38"
+  },
+  {
+   "kind": "LineCollection",
+   "axes": 5,
+   "label": "_nolegend_",
+   "hash": "87d3583de309b9a462db7185d8f2fdfaf956c8c424958ba4c643f070384e34d7",
+   "dhash": "b6d814f41051e9144a35fad4cdc91b0d5ebe862a5f9def4cf2e7c8f5ab50d9a6",
+   "xhash": "b6d814f41051e9144a35fad4cdc91b0d5ebe862a5f9def4cf2e7c8f5ab50d9a6"
+  },
+  {
+   "kind": "FillBetweenPolyCollection",
+   "axes": 6,
+   "label": "MC background",
+   "hash": "9e8b1002443bb47d7f9041b04c986d00fe812b05146be51020edc573642c016a",
+   "dhash": "ce63b727354773684ffbe75d69e825f4d9d01d7f62c5c86b4559b668715a9b08",
+   "xhash": "ce63b727354773684ffbe75d69e825f4d9d01d7f62c5c86b4559b668715a9b08"
+  },
+  {
+   "kind": "FillBetweenPolyCollection",
+   "axes": 6,
+   "label": "MC signal (MnvTune v1)",
+   "hash": "aadc2645beb84a5cd3a4fd9c85dc1f68a25d7a67c4851e938de1d5e58f118127",
+   "dhash": "cb74c848bd2f1964591dc448e186cf127fe87a1722b290c1c0c27f32ec7ee93e",
+   "xhash": "cb74c848bd2f1964591dc448e186cf127fe87a1722b290c1c0c27f32ec7ee93e"
+  },
+  {
+   "kind": "line",
+   "axes": 6,
+   "label": "_child2",
+   "hash": "4e97a01f8f00ae780eea06527f7108beb7a291a5a32add66445ea456ac72fedf",
+   "dhash": "256d59a9bda829f40ebb0213ee8915253cce420044c10f57ea8201efe05d4666",
+   "xhash": "79a6f9843af2bfaba521a28bc3ec33baacf3bddb2046548b61bf907141f87384"
+  },
+  {
+   "kind": "line",
+   "axes": 6,
+   "label": "_child3",
+   "hash": "622f5ad927cdea1648e7fc6384c219ce92bec9bb34a28a1ad91db7504026d00b",
+   "dhash": "e56be984dd711ae764e3164930a11c7bc155cddc17360b6284fccc007fd4203c",
+   "xhash": "4ff707cd6f2a98d759f32c2a5ecec47e32cc99670f3c7e69546b435c9a73a22d"
+  },
+  {
+   "kind": "line",
+   "axes": 6,
+   "label": "_nolegend_",
+   "hash": "8c66a0b0bc5762292579e3e05d5d6c9627df5e970607525af1b6e2d5311b8a68",
+   "dhash": "15ca5d104705b468e03a208e8073feafc89fdb0dfd1582ef8b2ef000427ac2b6",
+   "xhash": "88cbcad9c8f84f1e61356c3d8bacee34268c36a549a792e08e370b48865188e0"
+  },
+  {
+   "kind": "LineCollection",
+   "axes": 6,
+   "label": "_nolegend_",
+   "hash": "b861d2b630d0c073f6e8fc83817755e8f49f115ffbc959ebf568e7df35e12541",
+   "dhash": "b553520b4672e75d07310a478f58664746e108b4b2cf8295636aa126e7edf6e2",
+   "xhash": "b553520b4672e75d07310a478f58664746e108b4b2cf8295636aa126e7edf6e2"
+  },
+  {
+   "kind": "FillBetweenPolyCollection",
+   "axes": 7,
+   "label": "MC stat.",
+   "hash": "fb03d68ab6ab0265dc8b54f109a828a38ec84afeed368b2028ee4bb19bdb25c5",
+   "dhash": "ad54de8fea6a8f22a295bd5559638d6e05e8fa21763c45094a09330162e2e2f6",
+   "xhash": "ad54de8fea6a8f22a295bd5559638d6e05e8fa21763c45094a09330162e2e2f6"
+  },
+  {
+   "kind": "line",
+   "axes": 7,
+   "label": "_child1",
+   "hash": "85e15c366a09c81e293a33a6b85e9e5d97e7fdfd776151334917261361ace0f8",
+   "dhash": "e3873c730f33a6c17704cc843606016ba48a708a8a7c460fa25e28bd90b07dc6",
+   "xhash": "81b1f80e69422b30d5c57554ad089580df28a592c900810d3828cf0f2c76f838"
+  },
+  {
+   "kind": "line",
+   "axes": 7,
+   "label": "_nolegend_",
+   "hash": "78bd0f84675bfb0851b3fa82d378308bdc8e92f0d29eaeb5c0ee80b4c0a98579",
+   "dhash": "4f642dedea2c6b9f985ca6765f7db8ebf731ed3dc7e15a896057ebfba6f9a197",
+   "xhash": "4c5ef28ece62df6a9c20fcc1c4589701b58824dee548602027274064c4d4efe0"
+  },
+  {
+   "kind": "LineCollection",
+   "axes": 7,
+   "label": "_nolegend_",
+   "hash": "ba3741c97824d7e9135c472c6194d58c3c1bbaa98c21be31ad958a39c87b7b8f",
+   "dhash": "3b222aeb200e5693d1550969a1317b65ee4324ce5487eea98b19c88d60d463e4",
+   "xhash": "3b222aeb200e5693d1550969a1317b65ee4324ce5487eea98b19c88d60d463e4"
+  },
+  {
+   "kind": "FillBetweenPolyCollection",
+   "axes": 8,
+   "label": "MC background",
+   "hash": "2c0367ab107a48202d9e1fbd7d2b2b438950817a2f3a3a999bbd1450640cf3e2",
+   "dhash": "e74c4a9af4d0ba1400c27b16ae6313cd5ae16138e3726acce5b0bfe6afe712fa",
+   "xhash": "e74c4a9af4d0ba1400c27b16ae6313cd5ae16138e3726acce5b0bfe6afe712fa"
+  },
+  {
+   "kind": "FillBetweenPolyCollection",
+   "axes": 8,
+   "label": "MC signal (MnvTune v1)",
+   "hash": "fba8544a141b9036a02f7f1064d1986a864aa1d5f23d6dc6a0258a444748b8c3",
+   "dhash": "98c6a459166791cad6446a8c4b107cb03248ebc0445b6f1c85313d4e7035beb7",
+   "xhash": "98c6a459166791cad6446a8c4b107cb03248ebc0445b6f1c85313d4e7035beb7"
+  },
+  {
+   "kind": "line",
+   "axes": 8,
+   "label": "_child2",
+   "hash": "ad3ca0895cdadb03375f469b44d3844d8f2150fdcc976e2a644663ba5c42fbc9",
+   "dhash": "3a4245e4f283540861d87a7808e84f521a969a4ec85ad793767ab7c1e3a42379",
+   "xhash": "74d890b3591cac34f4a4db9d7395095fcd8268c8ee81f7f74acdae2553fa5890"
+  },
+  {
+   "kind": "line",
+   "axes": 8,
+   "label": "_child3",
+   "hash": "9c6cd1d85b4da335402131cadd792555097cb182692f513fa8f7735563798746",
+   "dhash": "bdc9ed654429b95ba6f2a5ae2e9f1e2ca301359f03379a4f2564326826a3bc5f",
+   "xhash": "2e8e46c71523fd207f4200bb64e3a46056d6580e7cd840376152d6d5a2d1bbf8"
+  },
+  {
+   "kind": "line",
+   "axes": 8,
+   "label": "_nolegend_",
+   "hash": "9d39eb6dd11dda94eedc9d131a208b26d3484343e19ec2a039e1b3132c698f14",
+   "dhash": "7218285148a8b8ac0d6ac8f5c2aaaa39b394ccfe722dcf700f5a47bfbff9b011",
+   "xhash": "a8fd7e519ea376300a3d7af0ffb11705b00375e36503a6772d9d8d944f99f904"
+  },
+  {
+   "kind": "LineCollection",
+   "axes": 8,
+   "label": "_nolegend_",
+   "hash": "7f05406e1e9716e5bf18124a7abe8660138a58e2966dca7a3e084b23d32afef9",
+   "dhash": "f7e033b7fec43cf7e873099a453b7b24de9a898bfac782e276cf89e2a674fbd1",
+   "xhash": "f7e033b7fec43cf7e873099a453b7b24de9a898bfac782e276cf89e2a674fbd1"
+  },
+  {
+   "kind": "FillBetweenPolyCollection",
+   "axes": 9,
+   "label": "MC stat.",
+   "hash": "511cd22ac5ff2d9026768a438018705c5317f17104403f0d2fd2ddbccd66e215",
+   "dhash": "6d5072426f94217096e752fdfba54b5b3d56da55564ab2ed84dc5fa91ca662cd",
+   "xhash": "6d5072426f94217096e752fdfba54b5b3d56da55564ab2ed84dc5fa91ca662cd"
+  },
+  {
+   "kind": "line",
+   "axes": 9,
+   "label": "_child1",
+   "hash": "85e15c366a09c81e293a33a6b85e9e5d97e7fdfd776151334917261361ace0f8",
+   "dhash": "e3873c730f33a6c17704cc843606016ba48a708a8a7c460fa25e28bd90b07dc6",
+   "xhash": "81b1f80e69422b30d5c57554ad089580df28a592c900810d3828cf0f2c76f838"
+  },
+  {
+   "kind": "line",
+   "axes": 9,
+   "label": "_nolegend_",
+   "hash": "fabc8c5ebb61d93b5883f2761603179adf187a92a758388e71f8b50eb72e206a",
+   "dhash": "4de8eb3ef93e4daaaa55301344e11ccb14b6b2335738121a73f1815f63d3b566",
+   "xhash": "5b71249b2d0cf5f5c3299b965a045ac4a099b5db9826bb1780a9cc9d06b19a8e"
+  },
+  {
+   "kind": "LineCollection",
+   "axes": 9,
+   "label": "_nolegend_",
+   "hash": "63f190ae3ce719a758469a8dfc0678d3dec4332c3fdcd6b030d15f748467b367",
+   "dhash": "0b902883cd3db4e7fa10a6b4877ca8cb3ec381f446a8acac7667579001bad810",
+   "xhash": "0b902883cd3db4e7fa10a6b4877ca8cb3ec381f446a8acac7667579001bad810"
+  }
+ ],
+ "texts": [
+  [
+   16.0,
+   "Events (POT-scaled)"
+  ],
+  [
+   14.0,
+   "$\\mathdefault{10^{1}}$"
+  ],
+  [
+   14.0,
+   "$\\mathdefault{10^{2}}$"
+  ],
+  [
+   14.0,
+   "$\\mathdefault{10^{3}}$"
+  ],
+  [
+   14.0,
+   "$\\mathdefault{10^{4}}$"
+  ],
+  [
+   14.0,
+   "$\\mathdefault{10^{5}}$"
+  ],
+  [
+   14.0,
+   "$\\mathdefault{10^{6}}$"
+  ],
+  [
+   14.0,
+   "$\\mathdefault{10^{7}}$"
+  ],
+  [
+   14.0,
+   "$\\mathdefault{10^{8}}$"
+  ],
+  [
+   16.0,
+   "$p_T$ (GeV/c)"
+  ],
+  [
+   14.0,
+   "0"
+  ],
+  [
+   14.0,
+   "1"
+  ],
+  [
+   14.0,
+   "2"
+  ],
+  [
+   14.0,
+   "3"
+  ],
+  [
+   14.0,
+   "4"
+  ],
+  [
+   14.0,
+   "5"
+  ],
+  [
+   16.0,
+   "Data / MC"
+  ],
+  [
+   14.0,
+   "0.8"
+  ],
+  [
+   14.0,
+   "1.0"
+  ],
+  [
+   14.0,
+   "1.2"
+  ],
+  [
+   14.0,
+   "$\\mathdefault{10^{1}}$"
+  ],
+  [
+   14.0,
+   "$\\mathdefault{10^{2}}$"
+  ],
+  [
+   14.0,
+   "$\\mathdefault{10^{3}}$"
+  ],
+  [
+   14.0,
+   "$\\mathdefault{10^{4}}$"
+  ],
+  [
+   14.0,
+   "$\\mathdefault{10^{5}}$"
+  ],
+  [
+   14.0,
+   "$\\mathdefault{10^{6}}$"
+  ],
+  [
+   14.0,
+   "$\\mathdefault{10^{7}}$"
+  ],
+  [
+   14.0,
+   "$\\mathdefault{10^{8}}$"
+  ],
+  [
+   16.0,
+   "$p_\\parallel$ (GeV/c)"
+  ],
+  [
+   14.0,
+   "0"
+  ],
+  [
+   14.0,
+   "10"
+  ],
+  [
+   14.0,
+   "20"
+  ],
+  [
+   14.0,
+   "30"
+  ],
+  [
+   14.0,
+   "40"
+  ],
+  [
+   14.0,
+   "50"
+  ],
+  [
+   14.0,
+   "60"
+  ],
+  [
+   14.0,
+   "0.8"
+  ],
+  [
+   14.0,
+   "1.0"
+  ],
+  [
+   14.0,
+   "1.2"
+  ],
+  [
+   14.0,
+   "$\\mathdefault{10^{2}}$"
+  ],
+  [
+   14.0,
+   "$\\mathdefault{10^{3}}$"
+  ],
+  [
+   14.0,
+   "$\\mathdefault{10^{4}}$"
+  ],
+  [
+   14.0,
+   "$\\mathdefault{10^{5}}$"
+  ],
+  [
+   14.0,
+   "$\\mathdefault{10^{6}}$"
+  ],
+  [
+   14.0,
+   "$\\mathdefault{10^{7}}$"
+  ],
+  [
+   14.0,
+   "$\\mathdefault{10^{8}}$"
+  ],
+  [
+   16.0,
+   "$E_{\\mathrm{avail}}$ (GeV)"
+  ],
+  [
+   14.0,
+   "0.0"
+  ],
+  [
+   14.0,
+   "0.5"
+  ],
+  [
+   14.0,
+   "1.0"
+  ],
+  [
+   14.0,
+   "1.5"
+  ],
+  [
+   14.0,
+   "2.0"
+  ],
+  [
+   14.0,
+   "2.5"
+  ],
+  [
+   14.0,
+   "3.0"
+  ],
+  [
+   14.0,
+   "0.8"
+  ],
+  [
+   14.0,
+   "1.0"
+  ],
+  [
+   14.0,
+   "1.2"
+  ],
+  [
+   16.0,
+   "Events (POT-scaled)"
+  ],
+  [
+   14.0,
+   "$\\mathdefault{10^{0}}$"
+  ],
+  [
+   14.0,
+   "$\\mathdefault{10^{1}}$"
+  ],
+  [
+   14.0,
+   "$\\mathdefault{10^{2}}$"
+  ],
+  [
+   14.0,
+   "$\\mathdefault{10^{3}}$"
+  ],
+  [
+   14.0,
+   "$\\mathdefault{10^{4}}$"
+  ],
+  [
+   14.0,
+   "$\\mathdefault{10^{5}}$"
+  ],
+  [
+   14.0,
+   "$\\mathdefault{10^{6}}$"
+  ],
+  [
+   14.0,
+   "$\\mathdefault{10^{7}}$"
+  ],
+  [
+   14.0,
+   "$\\mathdefault{10^{8}}$"
+  ],
+  [
+   16.0,
+   "$q_3$ (GeV)"
+  ],
+  [
+   14.0,
+   "0.0"
+  ],
+  [
+   14.0,
+   "0.5"
+  ],
+  [
+   14.0,
+   "1.0"
+  ],
+  [
+   14.0,
+   "1.5"
+  ],
+  [
+   14.0,
+   "2.0"
+  ],
+  [
+   16.0,
+   "Data / MC"
+  ],
+  [
+   14.0,
+   "0.8"
+  ],
+  [
+   14.0,
+   "1.0"
+  ],
+  [
+   14.0,
+   "1.2"
+  ],
+  [
+   14.0,
+   "$\\mathdefault{10^{2}}$"
+  ],
+  [
+   14.0,
+   "$\\mathdefault{10^{3}}$"
+  ],
+  [
+   14.0,
+   "$\\mathdefault{10^{4}}$"
+  ],
+  [
+   14.0,
+   "$\\mathdefault{10^{5}}$"
+  ],
+  [
+   14.0,
+   "$\\mathdefault{10^{6}}$"
+  ],
+  [
+   14.0,
+   "$\\mathdefault{10^{7}}$"
+  ],
+  [
+   14.0,
+   "$\\mathdefault{10^{8}}$"
+  ],
+  [
+   16.0,
+   "$W$ (GeV)"
+  ],
+  [
+   14.0,
+   "0.0"
+  ],
+  [
+   14.0,
+   "0.5"
+  ],
+  [
+   14.0,
+   "1.0"
+  ],
+  [
+   14.0,
+   "1.5"
+  ],
+  [
+   14.0,
+   "2.0"
+  ],
+  [
+   14.0,
+   "2.5"
+  ],
+  [
+   14.0,
+   "3.0"
+  ],
+  [
+   14.0,
+   "0.8"
+  ],
+  [
+   14.0,
+   "1.0"
+  ],
+  [
+   14.0,
+   "1.2"
+  ],
+  [
+   14.0,
+   "MINERvA ME FHC, $1.06\\times10^{21}$ POT"
+  ],
+  [
+   12.0,
+   "wide catch bins not drawn"
+  ],
+  [
+   10.0,
+   "0.0"
+  ],
+  [
+   10.0,
+   "0.2"
+  ],
+  [
+   10.0,
+   "0.4"
+  ],
+  [
+   10.0,
+   "0.6"
+  ],
+  [
+   10.0,
+   "0.8"
+  ],
+  [
+   10.0,
+   "1.0"
+  ],
+  [
+   10.0,
+   "0.0"
+  ],
+  [
+   10.0,
+   "0.2"
+  ],
+  [
+   10.0,
+   "0.4"
+  ],
+  [
+   10.0,
+   "0.6"
+  ],
+  [
+   10.0,
+   "0.8"
+  ],
+  [
+   10.0,
+   "1.0"
+  ],
+  [
+   16.0,
+   "Data"
+  ],
+  [
+   16.0,
+   "MC signal (MnvTune v1)"
+  ],
+  [
+   16.0,
+   "MC background"
+  ]
+ ],
+ "text_overlaps": []
+}

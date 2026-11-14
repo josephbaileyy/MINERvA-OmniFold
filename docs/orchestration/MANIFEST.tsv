@@ -3923,12 +3923,26 @@ docs/orchestration/state/2d-closeout/stageF/methods/note-consolidate/recount-bef
 docs/orchestration/state/2d-closeout/stageF/methods/note-consolidate/recount-before.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-consolidate/recount.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/README.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
+docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/figs/control_corner.pdf	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/figs/gbdt_bias_spread.pdf	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/figs/gbdt_coverage.pdf	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/figs/gbdt_prior_response.pdf	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/figs/gbdt_recovery.pdf	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/figs/migration_resolution.pdf	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/figs/minerva_unfolding_landscape.pdf	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/runs/CHECKS.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/runs/family1/cap-after/control_corner.pdf.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/runs/family1/cap-after/migration_resolution.pdf.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/runs/family1/cap-from/control_corner.pdf.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/runs/family1/cap-from/control_plots.pdf.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/runs/family1/cap-from/migration_resolution.pdf.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/runs/family1/cap-off/control_corner.pdf.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/runs/family1/cap-off/control_plots.pdf.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/runs/family1/cap-off/migration_resolution.pdf.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/runs/family1/connect-family1.session.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/runs/family1/connect-presence.session.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/runs/family1/dumps/control_corner_arrays.npz	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/runs/family1/dumps/control_plots_arrays.npz	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/runs/gbdt/cap-after/gbdt_bias_spread.pdf.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/runs/gbdt/cap-after/gbdt_coverage.pdf.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/runs/gbdt/cap-after/gbdt_prior_response.pdf.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
@@ -3952,6 +3966,10 @@ docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/tools
 docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/tools/compare_any.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/tools/edges_from_pdf.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/tools/fakeroot/ROOT.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/tools/figc_family1.sh	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/tools/figc_family1b.sh	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/tools/figc_launch.sh	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/tools/figc_presence.sh	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/tools/identity_family1.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-fixes/FIX-20261025-negweight-scope.md	tracked	LIVE	state-artifact	2d-closeout	20261025	open		route-only	no
 docs/orchestration/state/2d-closeout/stageF/methods/note-g0/GLOSSARY.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no

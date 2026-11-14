@@ -140,7 +140,7 @@ def draw(arr, outdir, print_style=False):
                 _sys.path.insert(0, str(_a)); break
         import note_print_style
         note_print_style.apply()
-        FIGC, MSC, F_LEG, F_R, F_LAB, F_TK = note_print_style.figsize(0.92, 0.94), 1.6, 6.5, 6.5, 8.3, 7.0
+        FIGC, MSC, F_LEG, F_R, F_LAB, F_TK = note_print_style.figsize(0.92, 0.94), 1.6, 8.3, 6.5, 8.3, 7.0
     else:
         FIGC, MSC, F_LEG, F_R, F_LAB, F_TK = (3.2 * n, 3.0 * n), 2.5, 8, 9, 11, None
     fig, axs = plt.subplots(n, n, figsize=FIGC)
@@ -163,7 +163,10 @@ def draw(arr, outdir, print_style=False):
                 A.errorbar(ctr, hd, yerr=np.sqrt(hd), fmt="ko", ms=MSC,
                            label="Data")
                 A.set_yscale("log")
-                if i == 0:
+                if i == 0 and print_style:  # in the empty upper triangle, so that it covers no data
+                    fig.legend(*A.get_legend_handles_labels(), fontsize=F_LEG, loc="upper right",
+                               bbox_to_anchor=(0.97, 0.95), frameon=False)
+                elif i == 0:
                     A.legend(fontsize=F_LEG, loc="upper right")
             else:
                 ey = arr[f"edges_{ax_y}"]

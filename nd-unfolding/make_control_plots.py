@@ -268,8 +268,12 @@ def draw(arr, outdir, print_style=False, extended=False):
         if i == 0:
             A.set_ylabel("reco bin", fontsize=F_X)
         diag = np.diag(Mn)[:nshow]
-        A.text(0.04, 0.92, f"diag median {np.median(diag):.2f}",
-               color="w", fontsize=F_D, transform=A.transAxes)
+        if print_style:  # above the map, inside the panel width (white on the map overflowed into the next panel)
+            A.text(0.5, 1.03, f"diag median {np.median(diag):.2f}", ha="center", va="bottom",
+                   color="k", fontsize=F_D, transform=A.transAxes)
+        else:
+            A.text(0.04, 0.92, f"diag median {np.median(diag):.2f}",
+                   color="w", fontsize=F_D, transform=A.transAxes)
         if not print_style:  # print style: one colour bar for the row, below
             cb = fig.colorbar(im, ax=A, fraction=0.046)
             cb.ax.tick_params(labelsize=F_C)

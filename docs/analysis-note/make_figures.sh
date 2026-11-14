@@ -315,6 +315,10 @@ install_printstyle_fig gbdt_bias_spread.pdf             f1786f4862eea1a3439b79ef
 install_printstyle_fig gbdt_coverage.pdf                422ef3f7c8e53b47d371cbeee68742a869ec372394c81a8324a121c18a10fd54
 install_printstyle_fig gbdt_prior_response.pdf          445374318044846a72b8a71da3a474d3d63820e8f5491ac6d5eb06a42745a2d3
 install_printstyle_fig minerva_unfolding_landscape.pdf  bf1f14eae609fdf06f01a248674a175a1df72bd0ed1b4c8f269b860e66b78372
+# Group C, family 1 (2026-11-14): drawn locally with --from-arrays --print-style from the dumps of one cluster pass
+# (note-figstyle-20261113/runs/family1/dumps/; recipe: make_control_plots.py / plot_control_corner.py --from-arrays <dump> --print-style).
+install_printstyle_fig migration_resolution.pdf         7ea7fd45dd7276b193f2ca4554a8247c6ee528a2e59acace4666e9486af8cc9b
+install_printstyle_fig control_corner.pdf               09f291027d63f4f018e651d66be1e6e53aa95ee3ba8c028905621fd2ff0aa477
 
 echo
 echo "== paper-only vector crops =="
