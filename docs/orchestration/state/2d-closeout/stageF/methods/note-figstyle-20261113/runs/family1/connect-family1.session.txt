@@ -1,0 +1,36 @@
+ssh rc=0
+node login29 staged sha256 2cc6be4f82970f3345fe130978803f80aa5a57daf8b088480674c56f460e56bc
+detached pid 2218985, output /dev/shm/figc-family1.2218619.sh.out
+figc family1 host=login29 utc=2026-11-14T03:46:45Z sha256=2cc6be4f82970f3345fe130978803f80aa5a57daf8b088480674c56f460e56bc
+== fence (our jobs; STOP on ll5d_|rsn_|e96data|rdx_|t2a)
+FENCE: pass
+== overlap (1164 guard paths)
+OVERLAP: none; IN /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_MEFHC.root size 4825716683 dev:inode 3592384858:882725212074833886
+== deploy (fresh clone at M)
+HEAD 0f52ab2ab1ee860ef30737e293576e13181350cc; porcelain --ignored lines: 0
+env: python 3.11.14 matplotlib 3.10.8 numpy 1.26.4
+== off arms (one RDataFrame pass each)
+ctrl-off rc=0 wall=0:26.83 cpu_s=78.93
+corner-off rc=0 wall=0:55.17 cpu_s=90.72
+== from-arrays arms (no ROOT)
+ctrl-from rc=0 wall=0:05.47 cpu_s=12.12
+corner-from rc=0 wall=0:05.46 cpu_s=12.08
+deploy porcelain --ignored after: 0
+== products
+a2bdde90d7bfb1f884b299074fe0832bc53fee2e902a224c16324682ee2e461a  from/control_corner.pdf
+674b5c3db739fb2363c1ef23398d132a2e346282400a14bc5d40f4e791531f3c  from/control_corner.png
+5d1827348e1c15b59a00f7a5b9460a21af9e7766d1365edcfd418d65cebcc251  from/control_plots.pdf
+b77d3fb37171b2056f7d5e52dc8b0e937d9fef9afc1512bb2f4a322f2e79388d  from/control_plots.png
+91190c3ef3a6a52585e9edaad423120ac29e66909e26801d3f19381e1a596852  from/migration_resolution.pdf
+a6109427d32cb5d85140d672f19dd7acd286186e264a5a63d8db91526e31be0f  from/migration_resolution.png
+c1793d0fc17b623f7c4b826d116d731239868fbac38e99e8a90940236dbd16ed  off/control_corner_arrays.npz
+9be709de07f84e84764b8a945642e9a83f705a2095c481ccc94e818de2078c6a  off/control_corner.pdf
+674b5c3db739fb2363c1ef23398d132a2e346282400a14bc5d40f4e791531f3c  off/control_corner.png
+5b44a80b00add7ae71543df2ecdb8d8bf8b3b39201627cf4630a89a31f7db10a  off/control_plots_arrays.npz
+6d495c683f04e9e2ee8ad0368a78c1d96b8a3cd9613f690c5cdaea2bcb6cdce6  off/control_plots.pdf
+b77d3fb37171b2056f7d5e52dc8b0e937d9fef9afc1512bb2f4a322f2e79388d  off/control_plots.png
+20b2338953936cc803214b264e609d292a94060520927147163234f96dd54df2  off/migration_resolution.pdf
+a6109427d32cb5d85140d672f19dd7acd286186e264a5a63d8db91526e31be0f  off/migration_resolution.png
+01171756d965e650e69ae2498afbc17a83f6615aa217b2631c4373fe75848d23  /pscratch/sd/j/josephrb/note-figstyle-20261114/f1/post-f1.tar.gz
+figc family1 rc=0 utc=2026-11-14T03:49:28Z
+script rc=0

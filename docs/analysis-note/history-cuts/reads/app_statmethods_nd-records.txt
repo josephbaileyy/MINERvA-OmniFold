@@ -1,0 +1,27 @@
+Excerpts of the records the cut log cites for row B2. Brackets give each record's first commit.
+
+=== docs/STATVAL_REPAIR.md:31 [6964af371, 2026-07-16]
+### Predeclared contract (fixed BEFORE looking at results)
+
+=== docs/orchestration/RANK-AND-INVERSION-20260810.md:105-120 [b04470d22, 2026-08-09]
+## 5. Coordination
+
+This touches both lanes and should not be duplicated. `docs/STATVAL_REPAIR.md` already carries the
+matching requirement from the PET/statistics side — it calls the rank-deficient covariance plus
+"truncated-spectral / pseudoinverse treatment" an *already-disclosed concern* (§ line 160) and
+requires a **PREDECLARED rank/pseudoinverse cut** for the difference statistics (lines 170, 192,
+207, 214). That is the same rule as §4.2 above, arrived at independently.
+
+**What is new here** and is not in `STATVAL_REPAIR.md`: the measured rank of the *actual* standard-P4
+covariance (263 of 10 694), the enumeration in §3 showing no currently quoted number is affected,
+and the observation in §4 that the note's `ndf` definition is a general one that will silently
+follow the covariance into a regime where it is wrong.
+
+**Owner boundary:** the predeclared rank cut for the ND difference statistics is a statistics
+decision and belongs with `STATVAL_REPAIR.md`, not with this lane. This document supplies the
+measurement and the hazard; it does not choose the cut.
+
+=== docs/analysis-note/app_provenance.tex:56-58 (the note's record map)
+\texttt{rank-inversion} & \S\ref{sec:nd-declarations} &
+  \repopath{docs/orchestration/RANK-AND-INVERSION-20260810.md}; the predeclared rank cut itself is
+  a statistics decision recorded in \texttt{docs/}\allowbreak\texttt{STATVAL\_REPAIR.md} \\

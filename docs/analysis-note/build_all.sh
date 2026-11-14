@@ -152,6 +152,10 @@ python3 check_note_records.py entry-numbers --check
 echo "=== five-observable values (generated file fresh; readouts pinned) ==="
 python3 make_values_fived16.py --self-test
 python3 make_values_fived16.py --check
+# The results that landed from 2026-11-01 on (note round 1, 2026-11-08): every number the note prints from them is a key
+# of values_landed.tex, generated from their committed readouts (pinned by sha256) or checked against their OUTCOME
+# record's line. A stale file stops the build here; in the standalone note repository the generator reports SKIP.
+python3 make_values_landed.py --check
 # The paper's machine-readable Supplemental Material (DECISION-20261029-joseph-oi160-reproduction-and-q8.md item 2):
 # each file pinned by sha256, reproduced from the pinned data product, and equal to the printed table to its precision.
 python3 make_supplemental.py --self-test

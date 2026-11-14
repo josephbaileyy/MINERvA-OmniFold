@@ -181,7 +181,9 @@ LISTED_CLAIMS = [
     ("sec_fived16.tex", "The fake-data bias therefore exceeds the stated thresholds", {"kind": "both"}),
     ("sec_fived16.tex", "so the GiBUU comparison carries that limitation", {"kind": "both", "family": "gibuu"}),
     ("main_paper.tex", "at a GiBUU-like truth and at a synthetic momentum-transfer tilt find", {"kind": "count", "gibuu": 1, "also": ["q3"]}),
-    ("main_note.tex", "At a GiBUU-like truth and a synthetic momentum-transfer tilt", {"kind": "count", "gibuu": 1, "also": ["q3"]}),
+    # main_note.tex: the abstract sentence re-declared when the note was reframed and its fake-data sentence resynced to the
+    # paper's (note round 1, N1 + N6; DECISION-20261108-joseph-note-framing-and-estimator-dependence.md, #947)
+    ("main_note.tex", "Fake-data studies at a GiBUU-like truth and at a synthetic momentum-transfer tilt find", {"kind": "count", "gibuu": 1, "also": ["q3"]}),
 ]
 
 

@@ -1,0 +1,27 @@
+# sec_fived16 row G1 meaning read, pass 2 (the opening paragraph restates :279): reader codex-school gpt-6.1-sol, high, read-only; prompt sec_fived16-g1-prompt.txt
+Scope: G1 only; the previously passed T, M and D rows are not reassessed.
+
+**Question 1 — remaining text**
+
+- **G1 — PASS:** The section pointer preserves the investigation’s scope and limitation, the new appendix opening identifies the correct coverage test and repeats its gate result verbatim, and all three moved paragraphs remain verbatim with their antecedents, qualifiers and numerical values intact.
+
+G1 adds no App. I row.
+
+**Question 2 — removed or shortened items**
+
+Each item below leaves §10 but remains verbatim in the printed N-D statistical-methods appendix:
+
+- **Unlike-object diagnosis — NEEDED:** It explains a limitation of the stopped test and survives intact.
+- **Response-only versus full-universe spread, including median and range — NEEDED:** It specifies the objects compared and quantifies their difference, and survives intact.
+- **Response-only sensitivity in the data’s frame — NEEDED:** Its numerical comparison, grid dependence and “not a bound” qualification affect interpretation and survive intact.
+- **Nominal-truth versus data dependence — NEEDED:** It distinguishes the investigation’s setting from where the reported covariance is constructed and survives intact.
+- **Full-universe pseudo-data swap — NEEDED:** Its construction, all-16-cell result and first-order closure explanation define what this check establishes and survive intact.
+- **“Neither validates nor undermines” and unresolved interval spread — NEEDED:** These limit the investigation’s implications for the reported result and survive intact.
+- **R00/R05 attribution and unexplained contributions — NEEDED:** The 0.57/0.36 shares and limits concerning flux and detector uncertainties constrain the explanation and survive intact.
+- **Flux/detector pre-check — NEEDED:** Its resolved-cell qualification, neutron/proton exceptions and absence of an established cause disclose limitations and survive intact.
+
+No NEEDED item was lost from the printed note; the N-D appendix retains the full material, so retention in App. I is unnecessary. The relocated `%` source comments were never printed disclosures.
+
+No disclosure of a choice made after results were seen disappeared; the investigation and pre-check remain explicitly described as “later.”
+
+OVERALL: PASS — FAILs: none.

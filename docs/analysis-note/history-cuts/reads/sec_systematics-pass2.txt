@@ -1,0 +1,38 @@
+# sec_systematics meaning read, pass 2: codex-school gpt-6.1-sol, high, read-only; prompt: PROMPT-two-question.txt
+Question 1 — remaining text
+
+The timing assessments below use the provenance stated in the cut log.
+
+| Row | Verdict | Reason |
+|---|---|---|
+| S1 | PASS | The replacement specifies the test’s thresholds and their timing without changing the tested covariance, tune scope or undercoverage finding. |
+| S2 | PASS | The same clarification preserves the tune-specific scope, counts and restriction against applying the finding to the reported data intervals. |
+| S3 | PASS | The gate’s timing is tied to the reweighted unfolds, consistent with the logged provenance, while the coarser cell retains its separate “before the measurement” timing. |
+| D4 | PASS | The row summarizes the corrected defects and continuing comparisons without asserting an exhaustive defect count, and the full qualifications remain in the section it cites. |
+| D5 | PASS | The row preserves the earlier block’s interaction-dominated spread and continuing use as a yardstick without adding chronology relative to the fixed-seed statistical block. |
+
+S4 and S4a–S4f are restored unchanged, so their proposed replacements are not changes in the submitted text. S5 has no remaining replacement sentence and is assessed below. No retained numerical value or value macro changes.
+
+Question 2 — removed or shortened items
+
+For completeness, this includes the reverted S4 proposals, clearly distinguished from actual removals.
+
+| Item | Classification | Reason and retention |
+|---|---|---|
+| S1 | NEEDED | The declaration concerns evidential independence, and its substantive timing is retained through the explicit threshold statement. |
+| S2 | NEEDED | The repeated declaration likewise concerns evidential independence and remains explicit in the revised wording. |
+| S3 | NEEDED | The gate’s advance specification matters to interpreting the procedure’s independence from its outputs and is retained with a named execution stage. |
+| S4, whole comparison | NEEDED | The earlier budget remains a comparator, making its defects and their interpretive limits relevant; the entire passage is retained. |
+| S4a, “the May sweep” | LEDGER | The internal name adds no necessary distinction beyond “the systematic sweep of the earlier budget,” and it is retained anyway. |
+| S4b, first-order cancellation | NEEDED | This limits how the truth-input mismatch bears on the covariance and is retained verbatim. |
+| S4c, unavailable input and revision | NEEDED | This states a reproducibility and attribution limitation and is retained verbatim. |
+| S4d, band size and double-count defect | NEEDED | The magnitude, its band referent and the construction defect affect interpretation of the comparison and all remain unchanged. |
+| S4e, neglect everywhere unsupported | LEDGER | This conclusion follows from the retained 60-of-205 diagnostic rather than adding a separate limitation, and it is retained anyway. |
+| S4f, re-selected lateral universes | NEEDED | This identifies the reported covariance’s construction and remains both here and in the other cited section passages. |
+| S5, earlier unused 5D construction | LEDGER | Neither variant supplies a quoted result or magnitude, so its development history may leave the note using the logged commit-and-line pointer. |
+
+No NEEDED item was lost from the printed text.
+
+No disclosure of a choice made after results were seen disappeared: the observed-difference basis of the run-period block and the cells “Identified after the measurement” remain unchanged.
+
+OVERALL: PASS — FAILs: none.

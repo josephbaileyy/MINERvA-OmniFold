@@ -1,0 +1,18 @@
+# sec_method meaning read, pass 2: codex-school gpt-6.1-sol, reasoning high, sandbox read-only; files: old/new sec_method.tex, cutlog.md, app_devhistory.tex at that pass
+## prompt
+You are checking an editorial change to one section of a HEP technical note, for MEANING only (not style, not the physics). Files here:
+- old_sec_method.tex: the section before the edit (LaTeX; lines starting with % are source comments, not printed).
+- new_sec_method.tex: the section after the edit.
+- cutlog.md: the edit log. Its "change made" table has row C6; its "proposed and reverted" table lists C1-C5, which must now be absent (the new text must equal the old there).
+- app_devhistory.tex: a new appendix whose rows D1-D3 restate what the section says.
+
+The rule: history may leave the note only if removing it does not change a reader's understanding of the reported object, its reproducibility, its evidential independence or its limitations. Disclosures of choices made after results were seen must stay.
+
+Check: (1) C6: does the new text preserve every fact a reader needs on those four grounds, and add or alter no claim or number? (2) Are C1-C5 really reverted, i.e. is the printed text identical to the old outside C6 (ignore % comments)? (3) Are rows D1-D3 each supported by the section's own printed text, adding no claim? (4) Did any disclosure of a choice made after results were seen disappear? Give PASS/FAIL per item with one sentence each, then one line "OVERALL: PASS" or "OVERALL: FAIL" listing each FAIL. Quote text when you object.
+## answer
+1. **PASS — C6:** The replacement preserves the earlier central value’s identity and the exact-split studies’ applicability limitation, removes only an unnecessary calendar date, and adds no claim or numerical value.
+2. **PASS — C1–C5:** After excluding source comments, the section is identical to the old text everywhere outside C6.
+3. **PASS — D1–D3:** The printed section supports D1’s estimator replacement and prior comparisons, D2’s rebuild, configuration applicability and decision/adoption timing, and D3’s retained configuration-(a) result and pre-bias provenance, with no added claim.
+4. **PASS — After-results disclosures:** No disclosure disappeared; both the LightGBM choice after the publication comparisons were known and the rebuilt result’s adoption after its published-result distance was known remain explicit.
+
+OVERALL: PASS

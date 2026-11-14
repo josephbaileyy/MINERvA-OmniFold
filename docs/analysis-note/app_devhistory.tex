@@ -1,0 +1,54 @@
+% Development-history appendix (DECISION-20261113-joseph-note-n4-n5-role.md, addendum: Joseph's "yes go ahead" to the
+% note-history restructure; the referee's structure, noteref out.txt section 4). Built section by section with the
+% restructure; each row restates what the body says, with a pointer to it, and adds no claim. Each section's cut log is
+% docs/analysis-note/history-cuts/<section>.md. Placed last so that no other appendix letter moves.
+\section{Development history}
+\label{app:devhistory}
+
+This appendix lists configurations and tests that were superseded, stopped or changed during the analysis, where the change matters for reading a released result. Each row states what had already been seen when the change was made. The chronology behind the rows is kept in the analysis repository's records~\cite{NoteRecords2026} and its commit history.
+
+{\setlength{\LTcapwidth}{\textwidth}
+\begin{xltabular}{\textwidth}{@{}>{\footnotesize\RaggedRight\arraybackslash\hsize=0.95\hsize}X>{\footnotesize\RaggedRight\arraybackslash\hsize=0.85\hsize}X>{\footnotesize\RaggedRight\arraybackslash\hsize=1.15\hsize}X>{\footnotesize\RaggedRight\arraybackslash\hsize=0.8\hsize}X>{\footnotesize\RaggedRight\arraybackslash\hsize=1.15\hsize}X>{\footnotesize\RaggedRight\arraybackslash\hsize=1.1\hsize}X@{}}
+\caption{Superseded configurations and changed tests.}
+\label{tab:devhistory}\\
+\toprule
+Configuration or test & Purpose & Outcome or reason superseded & Result affected & Applicability to the released result & Already seen \\
+\midrule
+\endfirsthead
+\toprule
+Configuration or test & Purpose & Outcome or reason superseded & Result affected & Applicability to the released result & Already seen \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+% sec_method.tex sec:method-config (history-cuts/sec_method.md, rows D1-D3).
+Exact-split configuration~(b) (\S\ref{sec:method-config}) & An earlier quoted 2D central value; now a cross-check & Replaced by LightGBM, so that the central value and its covariance share an estimator; it has no matched covariance & 2D central value (\S\ref{sec:results}) & Studies labeled \emph{exact-split} use it and have not been repeated for the quoted estimator & Both comparisons with the publication, when LightGBM was chosen \\
+\addlinespace
+Purity-subtracted 2D central value and covariance, configuration~(a) (\S\ref{sec:method-config}) & The 2D central value and covariance before configuration~(f) & A two-dimensional closure test with backgrounds found the purity bias; rebuilt with configuration~(f) (App.~\ref{sec:negweight-footing}) & 2D central value and covariance (\S\ref{sec:results}) & The purity-subtracted 2D comparisons (\S\ref{sec:results-tension}) use configuration~(a) & The change was decided on the closure test, before the rebuilt result's distance from the published result was computed; the rebuilt result was adopted after that distance was known \\
+\addlinespace
+Five-dimensional central value and five-axis covariance, configuration~(a) (\S\ref{sec:eavailw}) & The five-observable central value & Not rebuilt: produced before the purity bias was found and the refinement was developed & Five-observable central value and covariance (\S\ref{sec:eavailw-adopted}) & That result only; the sixteen-cell result uses configuration~(e) (\S\ref{sec:fived16}) & Produced before the purity bias was found \\
+\addlinespace
+% sec_systematics.tex (history-cuts/sec_systematics.md, rows D4-D5).
+Earlier 2D budget~\cite{TwoDFollowup2026} (\S\ref{sec:uq-2d-scope}) & The 2D covariance before the quoted budget & Construction defects, each corrected in the quoted budget, among them a simulated truth input that differs from its seed-42 reference, the nonresonant-pion shift counted twice, and background-template statistics not propagated & 2D covariance (\S\ref{sec:systematics}) & Its printed values are unchanged; it remains a comparison for the flux weights (\S\ref{sec:uq-2d-construction}) and the run-period step (\S\ref{sec:uq-combine}) & -- \\
+\addlinespace
+Earlier ten-seed training-seed block (\S\ref{sec:uq-ml}) & An earlier training-seed block & Its spread was dominated by the bootstrap\,$\times$\,seed interaction, which the fixed-seed statistical block now contains & Training-seed block (\S\ref{sec:uq-ml}) & Its $\sigma$ remains the yardstick of the completeness and retraining tests (\S\ref{sec:uq-2d-scope}) & -- \\
+\addlinespace
+% sec_validation.tex (history-cuts/sec_validation.md, rows D6-D7).
+% D6's "has not been tested" restates sec_validation.tex:154; its search, as there:
+% Search: S1 has not been coverage-tested; coverage statement about Q_R; held-out-MC re-test @ ddf16f10
+Completeness-divided 2D statistical band (\S\ref{sec:coverage}) & The first-built statistical band, quoted when the fixed-truth coverage test ran & The test found undercoverage in its tails and stopped at the interim analysis; under the attribution rule the undercoverage is attributed, partly, to the band's completeness term, and the band was rebuilt without it & 2D statistical block (\S\ref{sec:uq-boot}) & The quoted statistical block is a separate ensemble and has not been tested & The attribution rule was fixed before the full run, but its clause for the undercoverage outcome was written after the pilot pulls had been seen \\
+\addlinespace
+Undivided 2D statistical band (\S\ref{sec:coverage}) & The band rebuilt without the completeness division & Since superseded & 2D statistical block (\S\ref{sec:uq-boot}) & Rescored only post hoc, on the same toys & The fixed-truth test's toys and result \\
+\addlinespace
+% sec_5d.tex (history-cuts/sec_5d.md, rows D8-D10).
+Stabilization probe: two-fold cross-fitting and two tree regularizations (\S\ref{sec:val-departure}) & Find an estimator variant that meets the data-stability requirement & No variant met the requirement; the estimator is unchanged & Five-observable estimator & The reported estimator is kept & -- \\
+\addlinespace
+End-to-end independent-truth coverage test of a deterministic five-dimensional variant (\S\ref{sec:coverage-5d}) & Test the statistical intervals of a bias-corrected variant & It failed its futility criterion, set before the test was run; its change of the $q_3$ dependence did not implement the intended reweighting and is not an interpretable test of that deformation & Five-dimensional intervals & No frequentist coverage is claimed for any five-dimensional interval; the futility verdict does not depend on the $q_3$ experiments & -- \\
+\addlinespace
+Coverage test of the sixteen-cell result (\S\ref{sec:fived16-fd}) & Test the sixteen-cell covariance at two tunes & Ended without a coverage result: its first stage stopped under a fail-closed rule fixed before that stage ran & Sixteen-cell covariance & No coverage result & -- \\
+\addlinespace
+% sec_fived16.tex (history-cuts/sec_fived16.md, rows D11-D12).
+Earlier route to a calibrated model term with validated coverage (\S\ref{sec:fived16-cov}) & A model term whose scale is calibrated on the estimator's bias at other generator families & It did not pass its first two tests and was not pursued further: Stage~0 failed its first part on both sets of cells and stopped, and in the reconstruction-information test no configuration met its residual requirement, a study that remains incomplete; $C_{\mathrm{model}}$ was then adopted unscaled & $C_{\mathrm{model}}$ (\S\ref{sec:fived16-cov}) & The coverage of $C_{\mathrm{model}}$ is not validated & -- \\
+\addlinespace
+Coverage test at the two tunes for the covariance without the run-period block (\S\ref{sec:fived16-fd}) & Test the intervals with pseudo-experiments that also draw the flux, interaction and detector uncertainties & Stopped before any coverage pseudo-experiment ran: at one of its gates, the ratio of each cell's reproduced uncertainty to that of the drawn covariance lay outside the gate's window in \fvval{cov1b-ncells-out} of the 16 cells & Sixteen-cell covariance & No coverage result & -- \\
+\end{xltabular}}

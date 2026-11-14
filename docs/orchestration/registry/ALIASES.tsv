@@ -4,7 +4,7 @@ a-central-lgbm	paper-table	(a) central value: LightGBM, seed 42 in 2D	\(a\) cent
 a-central-lgbm	note-table	(a) central-value estimator	\(a\) central[- ]value	yes	default	docs/analysis-note/sec_method.tex	128	(a) central-value estimator	e861e584658a53e7
 a-central-lgbm	note-label-old	configuration 1 (note, before register batch b5)	configuration 1: .the 2D central value	yes	default	docs/orchestration/state/2d-closeout/stageF/methods/note-g0/REVIEW.md	116	configuration 1: "the 2D central value and its	6caa1947e73d10ad
 a-central-lgbm	code-flag	--estimator lgbm	--estimator[ =]lgbm|\"--estimator\", default=\"lgbm\"	no	opt-in	nd-unfolding/unfold_nd_omnifold_unbinned.py	635	ap.add_argument("--estimator", default="lgbm")	61987df2adbf1c68
-a-central-lgbm	code-name	lgbm	\\texttt\{lgbm\}	no	opt-in	docs/analysis-note/app_guide.tex	8	\texttt{lgbm}	29237d5e00d0996a
+a-central-lgbm	code-name	lgbm	\\texttt\{lgbm\}	no	opt-in	docs/analysis-note/app_guide.tex	10	\texttt{lgbm}	936093eaedf22a04
 b-exact-split	paper-label	configuration (b)	[Cc]onfiguration[~ ]\(b\)	yes	default	docs/analysis-note/sec_method.tex	131	(b) exact-split cross-check	c5d867d734e66a79
 b-exact-split	note-table	(b) exact-split cross-check	\(b\) exact-split	yes	default	docs/analysis-note/sec_method.tex	131	(b) exact-split cross-check	c5d867d734e66a79
 b-exact-split	code-flag	--estimator exact	--estimator[ =]exact|default=\"exact\"	no	opt-in	2d-unfolding/unfold_2d_omnifold_unbinned.py	1478	default="exact"	c6b19014cafa7233
@@ -32,7 +32,7 @@ d-N-B0	crosswalk	(d) = family N	family N, refinement with the F2 parameters	yes	
 d-N-B0	code-candidate	--candidate B0	--candidate B0|\"B0\": \{\}	yes	default	nd-unfolding/s5e_candidate.py	33	"B0": {}	5fb6446f6670ab43
 d-N-B0	background-mode	--bkg-mode negweight-refined (shared with e-R-joint-test)	negweight-refined	no	opt-in	nd-unfolding/unfold_nd_omnifold_unbinned.py	620	choices=["purity", "negweight", "negweight-refined"]	092c1cb60a731257
 d-N-B0	capacity	refinement 100 trees, 8 leaves	refinement (classifier )?100 trees, 8 leaves	yes	default	docs/analysis-note/sec_method.tex	138	negative weights; refinement classifier 100 trees, 8 leaves	00949fdb4f8d3b9d
-e-R-joint-test	paper-label	configuration (e)	[Cc]onfiguration[~ ]\(e\)	yes	default	docs/analysis-note/sec_method.tex	103	configuration~(e))	5f89ee8387361a14
+e-R-joint-test	paper-label	configuration (e)	[Cc]onfiguration[~ ]\(e\)	yes	default	docs/analysis-note/sec_method.tex	103	configuration~(e))	cf255c70434d2f6a
 e-R-joint-test	paper-table	(e) joint-test estimator	\(e\) joint-test estimator	yes	default	docs/analysis-note/sec_method.tex	140	(e) joint-test estimator	f31ef4e68d2339fe
 e-R-joint-test	note-table	(e) joint-test estimator	\(e\) joint-test estimator	yes	default	docs/analysis-note/sec_method.tex	140	(e) joint-test estimator	f31ef4e68d2339fe
 e-R-joint-test	description	joint-test estimator	joint-test estimator	yes	default	docs/analysis-note/paper_body.tex	56	joint-test estimator, a deterministic LightGBM	f6851f4a756a83eb

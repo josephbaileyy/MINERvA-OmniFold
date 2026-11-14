@@ -137,7 +137,9 @@ run products/5d/control_corner.png       nd-unfolding  python plot_control_corne
 # The configuration-(a) run that stood here is kept, commented out; rerunning it would overwrite the (e) figure.
 # run figures/ascencio_fullcov_compare_central.png docs/analysis-note  python redraw_central_only.py --xsec4d "$REPO/nd-unfolding/products/4d/xsec_4d_MEFHC_5iter_lgbm.root" --supplemental "$REPO/3d-unfolding/genie/ascencio_2110.13372_supplemental.txt" --outdir figures --only ascencio
 # run products/4d/ascencio_fullcov_compare.png nd-unfolding  python compare_ascencio_fullcov.py
-run minerva_unfolding_landscape.png      3d-unfolding  python plot_minerva_landscape.py
+# 2026-11-13: --print-style draws the note's print style (note_print_style.py); the installed PDF is the committed
+# note-figstyle-20261113 copy (below, after the sync loop).
+run minerva_unfolding_landscape.png      3d-unfolding  python plot_minerva_landscape.py --print-style
 
 echo
 echo "==================== SUMMARY ===================="
@@ -288,6 +290,38 @@ install_re1_fig generators_vs_unfolded_band_central.pdf 48210da26e8e84bd8cae0d83
 install_re1_fig mode_decomp_eavail_central.pdf          009a26be4dc3b1a8ec7bfc51ee1e038c74b6a62e6490e027ece08b63f4febc12
 install_re1_fig compare_mec_eavail_central.pdf          09e2b824cfa10671f3bbab33764778424493011081e40ea507073e3307fd63f4
 install_re1_fig ascencio_fullcov_compare_central.pdf    9bd4316e8bd94ecd6b0681ef955579fbf0e867847a6f43274fda64349584d2a5
+
+echo
+echo "== note print style (2026-11-13; digest-checked copy) =="
+# The methods paper's figure style for the note's figures (director, 2026-11-13; note_print_style.py): serif CM text at
+# the paper's sizes, each canvas at its printed width. Producers run with --print-style; the plotted data are the
+# committed outputs', bit for bit (note-figstyle-20261113/README.md: three arms, capture_any.py / compare_any.py).
+# Recipes: nd-unfolding/gbdt_model_dependence/analyze.py --print-style --out <dir> (its package results/ stay in the
+# default style), and plot_minerva_landscape.py --print-style (run above). Also after the sync loop.
+NPS="$REPO/docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/figs"
+install_printstyle_fig() {  # install_printstyle_fig <basename under $NPS and in $FIGDIR> <sha256>
+  local src="$NPS/$1" dst="$FIGDIR/$1" want="$2"
+  if [[ "$(sha256_of "$src")" != "$want" ]]; then
+    echo "REFUSE install: $src does not have sha256 $want" >&2; exit 1
+  fi
+  cp "$src" "$dst"
+  if [[ "$(sha256_of "$dst")" != "$want" ]]; then
+    echo "REFUSE install: $dst differs from $src after the copy" >&2; exit 1
+  fi
+  echo "  installed $1 ($want)"
+}
+install_printstyle_fig gbdt_recovery.pdf                62bf4a8337115ffa4ca4227bf15d2883c6a74771583f672122ca5b14dcf69e11
+install_printstyle_fig gbdt_bias_spread.pdf             f1786f4862eea1a3439b79ef7af2132969e95f7fb087bddcf9661802cf6310c2
+install_printstyle_fig gbdt_coverage.pdf                422ef3f7c8e53b47d371cbeee68742a869ec372394c81a8324a121c18a10fd54
+install_printstyle_fig gbdt_prior_response.pdf          445374318044846a72b8a71da3a474d3d63820e8f5491ac6d5eb06a42745a2d3
+install_printstyle_fig minerva_unfolding_landscape.pdf  bf1f14eae609fdf06f01a248674a175a1df72bd0ed1b4c8f269b860e66b78372
+# Group C, family 1 (2026-11-14): drawn locally with --from-arrays --print-style from the dumps of one cluster pass
+# (note-figstyle-20261113/runs/family1/dumps/; recipe: make_control_plots.py / plot_control_corner.py --from-arrays <dump> --print-style).
+install_printstyle_fig migration_resolution.pdf         7ea7fd45dd7276b193f2ca4554a8247c6ee528a2e59acace4666e9486af8cc9b
+install_printstyle_fig control_corner.pdf               09f291027d63f4f018e651d66be1e6e53aa95ee3ba8c028905621fd2ff0aa477
+# Family 1b (2026-11-14): Fig. 1 from the extended-display dump of one cluster pass (runs/family1b/dumps/), with
+# --from-arrays <dump> --extended-display --print-style.
+install_printstyle_fig control_plots.pdf                dcea96fa289c03a4c204804c2852242d4236ff96330d28877bbd0ac1e3a94602
 
 echo
 echo "== paper-only vector crops =="

@@ -1,10 +1,16 @@
 \documentclass[11pt]{article}
 \usepackage{authblk}
 \input{preamble}
+% Table 1 (tab:result-status, sec_execsummary.tex) is an xltabular with ragged-right X columns, so that it breaks
+% across pages instead of running past the bottom margin (director, 2026-11-13; layout only). Loaded here, not in
+% preamble.tex, so the other targets that share the preamble are unchanged.
+\usepackage{xltabular}
+\usepackage{ragged2e}
 \NOTEtrue
 \input{values}
 \input{values_inference}
 \input{values_fived16}
+\input{values_landed}
 \addbibresource{publication.bib}
 
 \usepackage{hyperref}
@@ -31,7 +37,7 @@ Unbinned OmniFold analysis of MINERvA charged-current inclusive data}
 
 % Deposit pass (DECISION-20261020-joseph-refined-estimator-shorten-delta.md item 2): a fixed version and date instead of \today, set once here; the deposit snapshot identifier and the funding statement are holds that print visibly until they are supplied; depositing the note is Joseph's act.
 \newcommand{\noteversion}{Version 1.0 (review)}
-\newcommand{\notedate}{20 October 2026}
+\newcommand{\notedate}{11 November 2026}
 \newcommand{\depositsnapshot}{\textbf{[snapshot identifier pending deposit]}}
 \newcommand{\fundingpending}{\textbf{[funding statement pending]}}
 \date{\noteversion, \notedate\\[4pt]\small Code and file references: \repolink}
@@ -70,7 +76,13 @@ Unbinned OmniFold analysis of MINERvA charged-current inclusive data}
 % 10% criterion wording; hybrid nulls; familywise statement; DECISION-20261020-joseph-nuwro-ch-claim.md, provisional).
 % plain-language pass, review fix m6 (DECISION-20261018-joseph-plain-language-pass)
 % Search: coverage of the sixteen-cell intervals; validated intervals of the sixteen-cell result; coverage at held-out truths (nd-unfolding/pv-ladder/readouts/cmodel_5d.json labels.coverage: "coverage at held-out truths was not validated"; FD-F0b-REPORT.md NOT CITABLE FOR coverage); the two-dimensional covariance not independently validated (paper sec:uq2d); fine-grid convergence (paper sec:conditions) @ 1f7f93da
-We present a simultaneous measurement of the inclusive muon-neutrino charged-current cross section in muon transverse and longitudinal momenta, available hadronic energy, three-momentum transfer and hadronic invariant mass. The measurement uses OmniFold to unfold MINERvA medium-energy open data without binning and reports cross sections and their covariance in sixteen cells. The median relative uncertainty per cell is \fvval{sigmed-reported}\%, including a run-period contribution estimated after differences between periods were observed. Three external generator predictions give $\chi^{2}$ values of \fvval{g-ext-chi2int-min16}--\fvval{g-ext-chi2int-max16} for \fvval{g-gcv-total-ndf} degrees of freedom; GiBUU gives \fvval{g-gibuu-total-chi2int} on its \fvval{g-gibuu-ncells-word} supported cells. Bias tests at two held-out GENIE~v3 truths find residuals below the reported uncertainty in every cell. At a GiBUU-like truth and a synthetic momentum-transfer tilt, residual bias exceeds predeclared uncertainty-based thresholds. The coverage of the reported uncertainty intervals has not been validated.
+This note is the companion technical document to the methods paper. It records a methods and benchmark study of unbinned unfolding with OmniFold on neutrino data. MINERvA medium-energy open data are unfolded without binning, simultaneously in five observables: muon transverse and longitudinal momenta, available hadronic energy, three-momentum transfer and hadronic invariant mass. The unfolding reproduces the published muon-kinematic cross-section integral within about one percent, with a correlated shape difference whose source has not been identified. A binned iterative Bayesian unfolding of the same inputs differs from the method on the sixteen five-observable cells.
+
+Fake-data studies at a GiBUU-like truth and at a synthetic momentum-transfer tilt find residual bias exceeding uncertainty-based criteria ($p<\fvval{trig-p}$, or any cell with $|z|>\fvval{trig-z}$) that were fixed before the tests were graded. For configuration (e), rounding-level changes of the inputs move the joint cells, the $(\Eavail,W)$ cells, the sum of those cells and the integrated total by up to \lrval{stab-max} statistical standard deviations, beyond a stability requirement fixed in advance.
+
+The coverage of the reported uncertainty intervals has not been validated: a five-dimensional test of 1,200 pseudo-experiments failed its futility criterion (\S\ref{sec:coverage-5d}). Of that test's three generated truths, the change of the $q_3$ dependence at fixed $(\Eavail,W)$ did not implement the intended reweighting and is not an interpretable test, and the futility verdict does not depend on it. The declared coverage test of the sixteen-cell result did not run to a result (\S\ref{sec:fived16-fd}). The sixteen-cell output on data, with a median relative uncertainty per cell of \fvval{sigmed-reported}\%, including a run-period contribution estimated after differences between periods were observed, and descriptive comparisons with generator predictions, is given only as an illustration.
+% Search: coverage of the sixteen-cell intervals; validated intervals of the sixteen-cell result; coverage at held-out truths (nd-unfolding/pv-ladder/readouts/cmodel_5d.json labels.coverage: "coverage at held-out truths was not validated"; FD-F0b-REPORT.md NOT CITABLE FOR coverage); the two-dimensional covariance not independently validated (paper sec:uq2d); fine-grid convergence (paper sec:conditions) @ 1f7f93da
+% - Note round 1, the reframe (2026-11-08, draft for a PRD-referee read and Joseph): DECISION-20261108-joseph-note-framing-and-estimator-dependence.md (#947, merged at af73565) items 1 (unfrozen; the technical record of the methods-and-benchmark study, the 16 cells as the paper presents them) and 3; N6, the fake-data sentence as DECISION-20261105-joseph-765-abstract-and-2d-disclosure.md:57-59; REF-G1 as OUTCOME-20261106-ref-g1-r1-differ.md:40-41; the 1B STOP as OUTCOME-20261106-1b-stage1-receipt-stop.md:101-102; COV2D as OUTCOME-20261108-cov2d-both-tunes-under-cover.md:99-101; the rounding shift as DECISION-20261106-joseph-methods-study-and-archive.md:20 (\lrval{stab-max}, checked by make_values_landed.py). The measurement-framed abstract is in archive-note-measurement-framed-20261108/ and in git history at b551b05f.
 \end{abstract}
 
 \input{sec_execsummary}
@@ -112,21 +124,22 @@ targeting correlations among the reconstructed hadronic observables.
 % Aligned with the article's statement (main_paper.tex acknowledgments), 2026-10-11.
 % 2026-10-21: the article now gives a condensed statement and points here; this is the full statement, with the
 % tool versions. Do not shorten it to match the article.
-The analysis code, statistical procedures, computing campaigns, independent
-recomputations and reviews, figures, and manuscript drafts were produced with
-substantial assistance from AI language-model tools, used through the Claude
-Code and OpenAI Codex command-line agents: Anthropic Claude (Opus 4.7, 4.8, 5,
-and 5.5; Fable 5 and 5.1) and OpenAI GPT models (GPT-5.5, GPT-5.6 Sol and Luna,
-GPT-6 Astra, and GPT-6.1), including those used for independent review. The
-authors directed this work through written specifications fixed before each
-study. Results were accepted only after verification against committed
-evidence: predeclared criteria, independent recomputation by separately written
-code (for example, the joint-test evaluation and the lost-seed recovery), and
-independent read-only reviews. AI tools were also used for methodological
-discussion. The figures were drawn by plotting code
-from the analysis outputs; no image was generated or edited by a generative-AI
-image tool. AI tools are not authors. The authors take responsibility for the
-content.
+% 2026-11-14: replaced by Joseph's revised statement, byte for byte: DECISION-20261114-joseph-ai-use-statement.md,
+% "The note's full statement" (PR #1152, at 19ee2a831).
+The analysis code, statistical procedures, computing campaigns, independent recomputations and reviews, figures, and
+manuscript drafts were produced with substantial assistance from AI language-model tools: Anthropic Claude (Opus 4.7,
+4.8, 5 and 5.5; Fable 5 and 5.1; Sonnet 5 or 5.5) through the Claude Code agent; OpenAI GPT models (GPT-5.5, GPT-5.6
+Sol and Luna, GPT-6 Astra, GPT-6 Sol and GPT-6.1 Sol) through the OpenAI Codex agent; Google Gemini (3.1 Pro and 3.8
+Flash) through the Antigravity agent; and xAI Grok 4.7. The first author set the scientific questions and approved
+every claim and its wording. Each study was specified in writing before its results were read, unless it is labelled
+descriptive. Routine operational decisions (reviewing code and job packages, approving computing jobs within budgets
+the authors set, and merging records) were delegated to a coordinating AI agent under written rules, and each
+decision is recorded in the analysis repository. Results were accepted only after verification against committed
+evidence: criteria specified in advance, independent recomputation by separately written code (for example, the
+joint-test evaluation and the lost-seed recovery), and independent read-only reviews, including reviews by models
+from developers other than the one whose model wrote the work under review. AI tools were also used for
+methodological discussion. The figures were drawn by plotting code from the analysis outputs; no image was generated
+or edited by a generative-AI image tool. AI tools are not authors. The authors take responsibility for the content.
 
 \appendix
 \input{app_guide}
@@ -142,6 +155,8 @@ content.
 % as NoteRecords2026. check_note_records.py proves the move lost nothing.
 \input{app_release}
 \input{app_codebase}
+% The development-history appendix (history restructure, 2026-11-13), last so that no other appendix letter moves.
+\input{app_devhistory}
 
 \printbibliography
 

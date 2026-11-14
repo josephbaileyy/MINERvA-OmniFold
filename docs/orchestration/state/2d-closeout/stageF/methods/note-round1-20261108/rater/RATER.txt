@@ -1,0 +1,14 @@
+The blinded rater copy of the analysis note for round 1's referee reads (not yet run), after the reframe.
+Built by ../make_note_rater_copy.sh from a git archive of draft/note-round1-20261108 at
+0d6bfb0987491de805bb3ce9937973f7215ce20b: round 1's currency edits, N3 and N7, the reframe (N1 + N6) and REF-G1 as a
+stated limitation (N2), under DECISION-20261108-joseph-note-framing-and-estimator-dependence.md (#947), and the CI fix
+that moves one sec_systematics sentence. Later commits on
+the branch add only this rater/ directory. main_note.pdf: 139 pages, sha256
+3ae7a087141aeb4e770662163b0ec49001d65e54cc69b0a28a42d1f3aaa81b95.
+Kept: abstract, executive summary, contents, body and appendices A-H. Dropped: title block, e-mail footnotes,
+acknowledgments, reference list. Masked: the repository URL (1 occurrence) as [repository].
+Complete (check.txt): 37 of 37 figure captions, 35 of 35 table captions, appendix headings A-H, the last body section
+(13 Summary and outlook) and the last line before the references. The identifying-text grep is clean.
+Words: full text 72,404; blinded copy 69,536.
+Files: note.blind.txt (the copy), check.txt (completeness), blind.log (every cut, for audit).
+The superseded copy of a73f9fed (68,951 words) is in git history.
