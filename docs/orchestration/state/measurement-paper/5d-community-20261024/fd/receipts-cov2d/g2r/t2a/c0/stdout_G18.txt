@@ -1,0 +1,2 @@
+T2A G18 OK rc=0 -> t2a_G18.json; controls failed: []
+T2A-G2R mode=cov2d truth=G18 rc=0
