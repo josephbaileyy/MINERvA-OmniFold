@@ -1,0 +1,52 @@
+host=login02 start=2026-11-14T03:53:34Z pid=543922 user=josephrb M=401733bce290ce122cfbf38f1526e120f174b3ec PH=data
+squeue: []
+readout place=/dev/shm/josephrb-g2r-readout-data.6NcKaX clone head=401733bce290ce122cfbf38f1526e120f174b3ec porcelain_ignored=0 bound sums 19 OK TMPDIR=/dev/shm/josephrb-g2r-readout-data.6NcKaX/tmp
+map_sha256=956531e3b761aaf08d40c6ab8d917ba5f19dab5947b72607e6a34d0d3f7f83ae
+177 products for data
+products.tsv 177 rows sha256 a0f86fe191d6e02e4d4a9f9616dff6edaa2fadfb4384e9d56c333a92f771b8cf
+{"mat_setup_scripts": 6, "mismatches": 0}
+python=/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python TMPDIR=/dev/shm/josephrb-g2r-readout-data.6NcKaX/tmp
+3.11.14 numpy 1.26.4 ROOT 6.28/12
+MAT preflight file: /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_1A.root sha256 d54d2a2c6e0454b035c69d82aff3d3ac2c8cb5e589fea09f2b439804854b1107
+MAT preflight: MnvH1D PlotUtils::MnvH1D 14 bins
+[PASS] weights_identical_across_playlists
+[PASS] weights_equal_constraint_file
+[PASS] weights_equal_vl175_build_json  {'sum': 211.01200325082078, 'n_eff': 19.060534772246488}
+G2R-DATA verdict=PASS controls_failed=[] stop=[]
+	Command being timed: "python -B g2r_readout.py data --products /dev/shm/josephrb-g2r-readout-data.6NcKaX/products.tsv --map-sha 956531e3b761aaf08d40c6ab8d917ba5f19dab5947b72607e6a34d0d3f7f83ae --out /dev/shm/josephrb-g2r-readout-data.6NcKaX/out"
+	User time (seconds): 4.33
+	System time (seconds): 6.13
+	Percent of CPU this job got: 86%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:12.09
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 442828
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 136690
+	Voluntary context switches: 4705
+	Involuntary context switches: 42073
+	Swaps: 0
+	File system inputs: 12546414
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+READOUT-data PASS rc=0 verdict=PASS
+outputs: 2
+cd975b64402325da489ae608277faf5f6d7a7cbebe4974465f90b07c336e083f  data_g2r.json
+3b8cc7ceaef97c3dc6bbcd2c5cfdf853442c347e37e23f64eca54898d0e9eb4b  data_g2r.npz
+clone porcelain_ignored after=0 head=401733bce290ce122cfbf38f1526e120f174b3ec
+blobs unchanged
+data_g2r.json: OK
+data_g2r.npz: OK
+copied to /pscratch/sd/j/josephrb/cov2d-g2r-20261112/readout/data: data_g2r.json data_g2r.npz out.sha256 products.tsv readout.log 
+removed the readout place /dev/shm/josephrb-g2r-readout-data.6NcKaX rc=0 left=no
+readout subshell rc=0
+READOUT-data PASS
+end=2026-11-14T03:54:39Z
+DONE
