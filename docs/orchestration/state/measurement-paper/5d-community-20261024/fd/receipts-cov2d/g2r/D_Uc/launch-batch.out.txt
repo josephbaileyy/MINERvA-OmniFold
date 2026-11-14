@@ -1,0 +1,60 @@
+batch start 2026-11-13T14:15:59Z
+== D_Uc 2026-11-13T14:15:59Z connect=031819cc2fe5ca456cadf62168a5c64204aa5feac5506fba7cfb698e655fd7de launcher=ebf576f5374ea778be3d43173a733a9b612f529fefa64f694f67a66d31c82170
+   launcher rc=0; balance_node_h=1328.8 half=664.4 cap=110.0 recompute spent=1.241 held=17.800 this=8.9 total=27.941 cap=110.0 
+   submit D_Uc rc=0
+   2026-11-13T14:16:34Z M=401733bce290ce122cfbf38f1526e120f174b3ec job=D_Uc id=61226525 limit=08:54:00
+   ok half=664.4 >= 258.0
+== D_Ud 2026-11-13T14:17:01Z connect=900df2baf42a896c168e710595636bcc72195b7323f91ad9db60c4fc1a8b870e launcher=ebf576f5374ea778be3d43173a733a9b612f529fefa64f694f67a66d31c82170
+   launcher rc=0; balance_node_h=1328.8 half=664.4 cap=110.0 recompute spent=1.241 held=26.700 this=9.3 total=37.241 cap=110.0 
+   submit D_Ud rc=0
+   2026-11-13T14:17:35Z M=401733bce290ce122cfbf38f1526e120f174b3ec job=D_Ud id=61226543 limit=09:18:00
+   ok half=664.4 >= 258.0
+== G18_Ua 2026-11-13T14:18:03Z connect=a5948d2e3205b54429dd8b29e22ca61e6453e636b8c5a6c686071df8c4f63555 launcher=ebf576f5374ea778be3d43173a733a9b612f529fefa64f694f67a66d31c82170
+   launcher rc=0; balance_node_h=1328.8 half=664.4 cap=110.0 recompute spent=1.241 held=36.000 this=8.9 total=46.141 cap=110.0 
+   realization /pscratch/sd/j/josephrb/cov2d-run-20261104/pseudo/G18/b/data_5721000.root sha256=82c33320ceb9ce96967850148f97cbf873654609f0f8e1ac31b1491d5dd72eee (O_NOATIME) step-B record G18 sha256=82c33320ceb9ce96967850148f97cbf873654609f0f8e1ac31b1491d5dd72eee
+   submit G18_Ua rc=0
+   2026-11-13T14:18:37Z M=401733bce290ce122cfbf38f1526e120f174b3ec job=G18_Ua id=61226562 limit=08:54:00
+   ok half=664.4 >= 258.0
+== G18_Ub 2026-11-13T14:19:05Z connect=5307f0bf75e810f84cc98d0289c9bb32740c8691d046ae9e15e1ae61ff7b39d7 launcher=ebf576f5374ea778be3d43173a733a9b612f529fefa64f694f67a66d31c82170
+   launcher rc=0; balance_node_h=1328.8 half=664.4 cap=110.0 recompute spent=1.241 held=44.900 this=8.9 total=55.041 cap=110.0 
+   realization /pscratch/sd/j/josephrb/cov2d-run-20261104/pseudo/G18/b/data_5721000.root sha256=82c33320ceb9ce96967850148f97cbf873654609f0f8e1ac31b1491d5dd72eee (O_NOATIME) step-B record G18 sha256=82c33320ceb9ce96967850148f97cbf873654609f0f8e1ac31b1491d5dd72eee
+   submit G18_Ub rc=0
+   2026-11-13T14:19:38Z M=401733bce290ce122cfbf38f1526e120f174b3ec job=G18_Ub id=61226579 limit=08:54:00
+   ok half=664.4 >= 258.0
+== G18_Uc 2026-11-13T14:20:22Z connect=defd72911ba782fc461ca06bffa8c10447352c8dd4043c7f2f4523cffe0df13b launcher=ebf576f5374ea778be3d43173a733a9b612f529fefa64f694f67a66d31c82170
+   launcher rc=0; balance_node_h=1328.8 half=664.4 cap=110.0 recompute spent=1.241 held=53.800 this=8.9 total=63.941 cap=110.0 
+   realization /pscratch/sd/j/josephrb/cov2d-run-20261104/pseudo/G18/b/data_5721000.root sha256=82c33320ceb9ce96967850148f97cbf873654609f0f8e1ac31b1491d5dd72eee (O_NOATIME) step-B record G18 sha256=82c33320ceb9ce96967850148f97cbf873654609f0f8e1ac31b1491d5dd72eee
+   submit G18_Uc rc=0
+   2026-11-13T14:21:08Z M=401733bce290ce122cfbf38f1526e120f174b3ec job=G18_Uc id=61226663 limit=08:54:00
+   ok half=664.4 >= 258.0
+== G18_Ud 2026-11-13T14:21:35Z connect=e59b87dc6a0025114057ddfebe0eb9226e240a7078be164184b178c936ee443d launcher=ebf576f5374ea778be3d43173a733a9b612f529fefa64f694f67a66d31c82170
+   launcher rc=0; balance_node_h=1328.8 half=664.4 cap=110.0 recompute spent=1.241 held=62.700 this=8.9 total=72.841 cap=110.0 
+   realization /pscratch/sd/j/josephrb/cov2d-run-20261104/pseudo/G18/b/data_5721000.root sha256=82c33320ceb9ce96967850148f97cbf873654609f0f8e1ac31b1491d5dd72eee (O_NOATIME) step-B record G18 sha256=82c33320ceb9ce96967850148f97cbf873654609f0f8e1ac31b1491d5dd72eee
+   submit G18_Ud rc=0
+   2026-11-13T14:22:08Z M=401733bce290ce122cfbf38f1526e120f174b3ec job=G18_Ud id=61226699 limit=08:54:00
+   ok half=664.4 >= 258.0
+== AR23_Ua 2026-11-13T14:22:36Z connect=5d67b5025c264913226c6b943ab0630aa3ab3a31ce5ce621a752048326cffcfe launcher=ebf576f5374ea778be3d43173a733a9b612f529fefa64f694f67a66d31c82170
+   launcher rc=0; balance_node_h=1328.8 half=664.4 cap=110.0 recompute spent=1.241 held=71.600 this=8.9 total=81.741 cap=110.0 
+   realization /pscratch/sd/j/josephrb/cov2d-run-20261104/pseudo/AR23-a2/b/data_5731000.root sha256=7f2b1e7165ce2e0f3433fdcc3ccfb9e27d05d29bbe7e3cbca879efc6d6fad645 (O_NOATIME) step-B record AR23 sha256=7f2b1e7165ce2e0f3433fdcc3ccfb9e27d05d29bbe7e3cbca879efc6d6fad645
+   submit AR23_Ua rc=0
+   2026-11-13T14:23:13Z M=401733bce290ce122cfbf38f1526e120f174b3ec job=AR23_Ua id=61226719 limit=08:54:00
+   ok half=664.4 >= 258.0
+== AR23_Ub 2026-11-13T14:23:40Z connect=426c6e06dbd97e02c67914c647981b725eef79d030abea65f11e193c5c7929c4 launcher=ebf576f5374ea778be3d43173a733a9b612f529fefa64f694f67a66d31c82170
+   launcher rc=0; balance_node_h=1328.8 half=664.4 cap=110.0 recompute spent=1.241 held=80.500 this=8.9 total=90.641 cap=110.0 
+   realization /pscratch/sd/j/josephrb/cov2d-run-20261104/pseudo/AR23-a2/b/data_5731000.root sha256=7f2b1e7165ce2e0f3433fdcc3ccfb9e27d05d29bbe7e3cbca879efc6d6fad645 (O_NOATIME) step-B record AR23 sha256=7f2b1e7165ce2e0f3433fdcc3ccfb9e27d05d29bbe7e3cbca879efc6d6fad645
+   submit AR23_Ub rc=0
+   2026-11-13T14:24:17Z M=401733bce290ce122cfbf38f1526e120f174b3ec job=AR23_Ub id=61226757 limit=08:54:00
+   ok half=664.4 >= 258.0
+== AR23_Uc 2026-11-13T14:24:41Z connect=ff10dec107a3492eaf54d9d059164a591afb0821d766a5e619ead0d28b8b268a launcher=ebf576f5374ea778be3d43173a733a9b612f529fefa64f694f67a66d31c82170
+   launcher rc=0; balance_node_h=1328.8 half=664.4 cap=110.0 recompute spent=1.241 held=89.400 this=8.9 total=99.541 cap=110.0 
+   realization /pscratch/sd/j/josephrb/cov2d-run-20261104/pseudo/AR23-a2/b/data_5731000.root sha256=7f2b1e7165ce2e0f3433fdcc3ccfb9e27d05d29bbe7e3cbca879efc6d6fad645 (O_NOATIME) step-B record AR23 sha256=7f2b1e7165ce2e0f3433fdcc3ccfb9e27d05d29bbe7e3cbca879efc6d6fad645
+   submit AR23_Uc rc=0
+   2026-11-13T14:25:16Z M=401733bce290ce122cfbf38f1526e120f174b3ec job=AR23_Uc id=61226781 limit=08:54:00
+   ok half=664.4 >= 258.0
+== AR23_Ud 2026-11-13T14:25:45Z connect=1f277af0c741c561be0f3a20296c85a68354b82cabb9e0964b9c37ec56d2ac9d launcher=ebf576f5374ea778be3d43173a733a9b612f529fefa64f694f67a66d31c82170
+   launcher rc=0; balance_node_h=1328.8 half=664.4 cap=110.0 recompute spent=1.241 held=98.300 this=8.9 total=108.441 cap=110.0 
+   realization /pscratch/sd/j/josephrb/cov2d-run-20261104/pseudo/AR23-a2/b/data_5731000.root sha256=7f2b1e7165ce2e0f3433fdcc3ccfb9e27d05d29bbe7e3cbca879efc6d6fad645 (O_NOATIME) step-B record AR23 sha256=7f2b1e7165ce2e0f3433fdcc3ccfb9e27d05d29bbe7e3cbca879efc6d6fad645
+   submit AR23_Ud rc=0
+   2026-11-13T14:26:21Z M=401733bce290ce122cfbf38f1526e120f174b3ec job=AR23_Ud id=61226797 limit=08:54:00
+   ok half=664.4 >= 258.0
+BATCH DONE 2026-11-13T14:26:43Z

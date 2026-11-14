@@ -1,0 +1,13 @@
+connect fence: 6 lines; launcher fence: 4 lines, refusal: 2 lines
+PASS d_ua-running connect=pass launcher=clear
+PASS nothing connect=pass launcher=clear
+PASS g2r-pending connect=pass launcher=clear
+PASS cov2d-queued connect=stop launcher=refused
+PASS cov2d-unended-only connect=stop launcher=refused
+PASS cov2d-ended connect=pass launcher=clear
+PASS rdx connect=stop launcher=clear
+PASS rsn connect=stop launcher=clear
+PASS e96data connect=stop launcher=clear
+PASS t2a connect=stop launcher=clear
+PASS g2r-and-cov2d connect=stop launcher=refused
+FENCE-G2R TEST PASS

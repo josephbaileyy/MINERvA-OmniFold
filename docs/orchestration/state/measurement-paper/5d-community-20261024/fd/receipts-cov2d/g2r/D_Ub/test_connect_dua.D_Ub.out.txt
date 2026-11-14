@@ -1,0 +1,12 @@
+block: 22 lines, from 'PR=docs/orch' to 'echo "ll5d constrain'
+PASS pass rc=0
+PASS pass-lines (record, map, 4 inputs, constraint)
+PASS record-stop rc=2
+PASS record-absent rc=2
+PASS record-garbled rc=2
+PASS record-no-mapsha rc=2
+PASS map-mismatch rc=2
+PASS map-missing rc=2
+PASS input-missing rc=2
+PASS constraint-missing-no-stop rc=0
+CONNECT-DUA BLOCK TEST PASS
