@@ -1,0 +1,37 @@
+# sec_systematics meaning read, pass 1: codex-school gpt-6.1-sol, high, read-only; prompt: PROMPT-two-question.txt
+**Question 1 — remaining changed text**
+
+Pure deletions are assessed under Question 2.
+
+| Row | Verdict | Reason |
+|---|---|---|
+| S1 | PASS | The test, scope and finding remain unchanged, and the cut log’s quoted source supports the threshold timing. |
+| S2 | PASS | This makes the same supported clarification as S1 while retaining the counts and applicability limits. |
+| S3 | FAIL | “Gate fixed before the measurement” strengthens “predeclared”: the original’s measurement timing qualifies the coarser cell, and cannot simply be transferred to the gate. |
+| S4 | FAIL | “Show three defects” adds an explicit count to “show the following defects,” changing the original’s nonexhaustive framing, while the shortened paragraph also has the losses identified below. |
+| S4d | FAIL | In “the configured nonresonant-pion tune (0.088%),” the number no longer clearly denotes the **band’s uncertainty**, as “The band is small, 0.088%” did. |
+| S4f — surviving clause | PASS | The retained statement that the statistical block draws background simulation as its own bootstrap stream preserves its meaning. |
+| D4 | FAIL | “Three construction defects” repeats S4’s newly explicit count; the unchanged-values and continuing-comparison statements otherwise match the original. |
+| D5 | FAIL | “The training-seed block before the fixed-seed statistical block” introduces a chronology between different blocks, whereas the original identifies an earlier training-seed block without dating it relative to the statistical block’s introduction. |
+
+**Question 2 — removed or shortened items**
+
+| Item | Classification | Reason and disposition |
+|---|---|---|
+| S1 | NEEDED | The test’s declaration status concerns evidential independence and remains through the supported threshold-timing statement. |
+| S2 | NEEDED | The same declaration information remains, alongside the test’s limited applicability. |
+| S3 | NEEDED | Advance specification of the gate matters for reproducibility and independence, but its replacement introduces the timing problem flagged in Question 1. |
+| S4 overall | NEEDED | The earlier budget remains a comparator, so its defects and corrections matter; most remain, but S4b and S4c are lost. |
+| S4a | LEDGER | “The May sweep” adds an internal name to an already identified earlier budget, and its ledger pointer suffices. |
+| S4b | NEEDED — **lost** | “A common displacement cancels to first order in the MAT mean-centered covariance” limits the interpretation of this mismatch, and neither the generic “does not invalidate the entire covariance” nor Appendix I preserves that specific qualification. |
+| S4c | NEEDED — **lost** | “Because the May input and code revision are not available” discloses a reproducibility limitation that “cannot be attributed more specifically” does not preserve. |
+| S4d | NEEDED | The band’s size and the double-counting defect matter and remain numerically and substantively, although the number’s referent fails Question 1. |
+| S4e | LEDGER | “So neglecting them everywhere is unsupported” restates the retained characterization as a construction defect, supported by the retained diagnostic and its qualification. |
+| S4f | NEEDED — retained elsewhere | Re-selected lateral universes define the quoted construction, and that information remains explicitly in §4.1. |
+| S5 | LEDGER | The superseded 5D variants supply neither a used covariance nor a quoted magnitude, so their history may leave with the recorded pointer. |
+
+**Needed information was lost:** S4b’s cancellation qualification and S4c’s unavailable-input/code disclosure; Appendix I restores neither, and source comments do not count as printed retention.
+
+**Post-results disclosures:** None disappeared in this edit: the run-period block’s construction from observed differences and the identification of the 52 cells after the measurement remain printed.
+
+OVERALL: FAIL — Question 1: S3, S4, S4d, D4, D5; Question 2: lost NEEDED items S4b, S4c.
