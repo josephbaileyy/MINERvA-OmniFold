@@ -176,15 +176,40 @@ holds every drawn value.
   - Print style: drawn data bit-equal to off (67/67); the legend moves into the empty upper triangle.
   - Printed text: 3.0–4.1 pt becomes 6.5–8.3 pt.
   - Installed, sha256 09f29102.
-- **control_plots (Fig. 1): pending, by the director's ruling (c).**
+- **control_plots (Fig. 1): PASS on the second identity try, by the director's ruling (c).**
   - The committed PDF (1b2925259, 2026-07-09, sha256 1191cc0c…) was drawn by code that was never committed: finer q3
     and W binning, with compressed catch bins.
   - Its binning and display were recovered from the PDF's vector paths (`tools/edges_from_pdf.py`, tolerance 0.001 data
     units) into `make_control_plots.py --extended-display` (7d7b85522).
-  - One extension connect (`tools/figc_family1b.sh` 4e713548, launcher 02cc7f35, approved) waits for LL5D job 61255888
-    to end.
-  - The identity test against the committed PDF then has four parts: sorted text, plotted values from the PDF's
-    paths, the catch bins, and a visual diff. If it fails twice, the fallback is to leave the figure, with FIG-2.
+  - **The extension connect** (`tools/figc_family1b.sh` 4e713548, launcher 02cc7f35;
+    `runs/family1b/connect-family1b.session.txt`), 10:36:24–10:38:01Z on login34:
+    - it ran after sacct showed LL5D 61255888 COMPLETED (2026-11-13 21:57:32–23:12:46 PST; `runs/family1b/sacct-61255888.txt`);
+    - the fence passed, with no overlap against 1164 guard paths;
+    - a fresh clone at 7d7b85522, with porcelain 0 before and after;
+    - matplotlib 3.10.8;
+    - ctrl-ext took 26.1 s wall and 86.2 s CPU; ctrl-ext-from took 5.4 s and 12.9 s. Their PNGs are byte-equal.
+    - The tar's sha256 is 16e04848, and the fetched copy matches. The dump, `runs/family1b/dumps/control_plots_ext_arrays.npz`
+      (22644 B, sha256 815e6c0a…), is force-added as a receipt member.
+  - **The identity test** (`tools/identity_fig1.py`, `runs/family1b/identity/`) has four parts: the sorted words; every
+    drawn path's vertices, by colour, to 0.02 pt; the catch bins and their "100" labels; and the pixels at 100 dpi.
+    - **Controls:** the committed PDF against itself passes all four. Against family 1's off arm, which uses the
+      analysis binning, it fails all four.
+    - **Try 1** (the connect's PDF): FAIL. The binning (every path group's x extents), the ratio panels (0.00 pt) and the
+      catch-bin labels matched. The spectrum panels' upper y limit differed: the committed headroom is 2.6 × the largest
+      drawn value, not 2.2. One "10^6" tick label was missing as a result. The three "//" marks also differed in form.
+    - **Try 2** (the director's go): the headroom and the mark's form were recovered from the committed PDF's tick
+      positions and text spans. `EXT_YTOP = 2.6`, and the mark is `$/\!/$` at the tick size less 1 pt, both under
+      `--extended-display` only. The redraw from the dump through the producer's CLI passes all four parts: 109 of 109
+      words, 571 of 571 paths with Δ 0.0000 pt, and 0 differing pixels (also 0 at 300 dpi).
+    - The local environment reproduces the connect's arm exactly (`try2-env-local-vs-cluster.txt`).
+    - The PDF bytes still differ, because the mark is written earlier in the page's content stream. Its glyphs and
+      coordinates are the same.
+    - With no flag, the producers still draw byte-identical PNGs (`try2-noflag-family1.txt`, IDENTITY-FAMILY1 PASS).
+  - **Print style** from the dump: Fig. 1's drawn data are hash-equal to the extended off arm (50 of 50,
+    `runs/family1b/cap-off/`, `cap-after/`). Printed text goes from 4.8–7.6 pt to 7.3–9.3 pt (0.99 of the text width).
+    - The capture lists three text overlaps. All three involve the legend cell's tick labels, and that axis is turned off
+      (`ax_leg.axis("off")`), so none is drawn.
+    - Installed, sha256 59aab046.
 
 ## CITABLE FOR / NOT CITABLE FOR
 

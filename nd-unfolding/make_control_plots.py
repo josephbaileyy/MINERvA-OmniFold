@@ -46,11 +46,14 @@ SUFFIX = {"pt": "", "pz": "_pz", "eavail": "_eavail", "q3": "_q3", "W": "_W"}
 # 2026-07-09, "extended-range control plots"; the code that drew it was not committed). Its binning and display were
 # recovered from that PDF's own vector paths: each panel's stack-outline vertices, calibrated by its x tick labels
 # (note-figstyle-20261113 README). q3 and W are filled on finer edges than the analysis grid; E_avail, q3 and W draw the
-# wide catch bin compressed, ending at the display position below, with a "//" mark and a "100" tick.
+# wide catch bin compressed, ending at the display position below, with a "//" mark and a "100" tick. Its spectrum
+# panels' upper y limit (EXT_YTOP times the largest drawn value) and the mark's form were recovered from the same PDF's
+# tick positions and text spans (identity try 2, 2026-11-14).
 EXT_EDGES = {"q3": [0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.6, 2.0, 2.6, 3.2, 4.0, 5.0, 6.5, 8.0, 10.0, 100.0],
              "W": [0, 0.8, 1.1, 1.4, 1.7, 2.0, 2.4, 2.8, 3.5, 5.0, 100.0]}
 CATCH_DISPLAY = {"eavail": 3.66, "q3": 11.4, "W": 5.88}
 EXT_TICKS = {"eavail": [0, 1, 2, 3], "q3": [0, 2, 4, 6, 8, 10], "W": [0, 1, 2, 3, 4, 5]}
+EXT_YTOP = 2.6
 
 
 def edges_for(ax):
@@ -194,7 +197,7 @@ def draw(arr, outdir, print_style=False, extended=False):
         A.set_yscale("log")
         A.set_xlim(e[0], e[nshow])
         top = np.max([y_tot.max(), dat[:nshow].max()])
-        A.set_ylim(floor, top * 2.2)
+        A.set_ylim(floor, top * (EXT_YTOP if extended else 2.2))
         A.tick_params(axis="both", which="major", labelsize=FS_TICK)
         plt.setp(A.get_xticklabels(), visible=False)
         if i % 3 == 0:
@@ -215,7 +218,7 @@ def draw(arr, outdir, print_style=False, extended=False):
         if extended and ax in CATCH_DISPLAY:  # the catch bin's "100" tick and break mark
             tk = EXT_TICKS[ax] + [CATCH_DISPLAY[ax]]
             R.set_xticks(tk, [f"{t:g}" for t in EXT_TICKS[ax]] + ["100"])
-            R.text(0.5 * (e[-2] + e[-1]), 0.77, "//", ha="center", va="center", fontsize=FS_TICK)
+            R.text(0.5 * (e[-2] + e[-1]), 0.77, r"$/\!/$", ha="center", va="center", fontsize=FS_TICK - 1)
         R.set_xlabel(LABELS[ax], fontsize=FS_LAB)
         R.tick_params(axis="both", which="major", labelsize=FS_TICK)
         if i % 3 == 0:

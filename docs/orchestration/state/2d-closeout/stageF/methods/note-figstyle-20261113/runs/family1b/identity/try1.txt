@@ -1,0 +1,17 @@
+1. text: 109 vs 108 words; differing multiset entries 1 -> FAIL
+    {'106': 1}
+2. values: 9 colour groups, 571 vs 568 paths; max vertex delta 3.9146 pt (tol 0.02); mismatches 84 -> FAIL
+    ((), (0.298, 0.447, 0.69)): max delta 3.5927 pt
+    ((), (0.298, 0.447, 0.69)): max delta 3.8587 pt
+    ((), (0.298, 0.447, 0.69)): max delta 3.2648 pt
+    ((), (0.298, 0.447, 0.69)): max delta 2.8494 pt
+    ((), (0.298, 0.447, 0.69)): max delta 3.5283 pt
+    ((), (0.867, 0.518, 0.322)): max delta 2.0677 pt
+    ((), (0.867, 0.518, 0.322)): max delta 1.5675 pt
+    ((), (0.867, 0.518, 0.322)): max delta 1.6213 pt
+    ((), (0.867, 0.518, 0.322)): max delta 2.0763 pt
+    ((), (0.867, 0.518, 0.322)): max delta 1.4675 pt
+3. catch: 4 vs 4 '100' labels, positions equal True; vertices near the catch bins: max delta 3.9146 pt, mismatches 55 -> FAIL
+   differing region x 39-1322 y 11-821
+4. visual: 1353x884 px at 100 dpi; differing pixels 24547 -> FAIL
+NOT ALL PASS

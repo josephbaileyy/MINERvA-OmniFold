@@ -319,6 +319,9 @@ install_printstyle_fig minerva_unfolding_landscape.pdf  bf1f14eae609fdf06f01a248
 # (note-figstyle-20261113/runs/family1/dumps/; recipe: make_control_plots.py / plot_control_corner.py --from-arrays <dump> --print-style).
 install_printstyle_fig migration_resolution.pdf         7ea7fd45dd7276b193f2ca4554a8247c6ee528a2e59acace4666e9486af8cc9b
 install_printstyle_fig control_corner.pdf               09f291027d63f4f018e651d66be1e6e53aa95ee3ba8c028905621fd2ff0aa477
+# Family 1b (2026-11-14): Fig. 1 from the extended-display dump of one cluster pass (runs/family1b/dumps/), with
+# --from-arrays <dump> --extended-display --print-style.
+install_printstyle_fig control_plots.pdf                59aab046902bdbc7fe2c033768a8df8da9e67cdfef5294f1f0f926da89fe3b39
 
 echo
 echo "== paper-only vector crops =="
