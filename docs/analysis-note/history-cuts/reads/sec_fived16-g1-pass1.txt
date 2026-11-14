@@ -1,0 +1,17 @@
+# sec_fived16 row G1 meaning read, pass 1 (first opening sentence): reader a fresh Claude subagent (claude-opus-5-5, general-purpose, blind to the author's reasoning, given only the read directory; codex-school had refused with a usage-limit error), read-only; prompt sec_fived16-g1-prompt.txt
+**Question 1 — remaining text (row G1)**
+
+| row | verdict | reason |
+|---|---|---|
+| G1-a — new opening sentence of `sec:cov1b-gate`: "The coverage test at the two tunes of \S\ref{sec:fived16-fd} stopped at one of its gates. This subsection gives the investigation of that gate." | FAIL | It is meant to give "the gate" its referent but does not: §10.5 holds two coverage tests at the two tunes (the gate-stopped one at :279 and the staged one, which "stopped under a fail-closed rule"), so "The coverage test at the two tunes" is not unique, and it never states what the gate measured (the ratio of each cell's reproduced uncertainty to the drawn covariance's, outside the window in \fvval{cov1b-ncells-out} of 16 cells). |
+| G1-b — the three moved paragraphs | FAIL | Byte-for-byte verbatim, but one referent shifts in the new location: in §10 the gate's ratio was defined in the preceding paragraph; in the appendix "the squared ratio's departure from one … does not explain the gate's departure there" has no gate ratio defined in the subsection, and the only antecedent ratio is the one that "lies within the gate's window … in all 16 cells" (kappa), so the R00/R05 caveat now literally refers to the wrong ratio. |
+| G1-c — the §10 pointer | PASS | "That gate" has a clear referent at :279; "later" and the "neither validates nor undermines" limitation are retained; the sentence states no finding, so dropping "for the interaction uncertainties" widens no claim. |
+| D12 (App. I), unchanged by G1 | PASS | Still points to §10.5, which still states the gate's result with its count; G1 adds no App. I row. |
+
+No numbers changed; the moved text keeps its \lrval/\fvval keys, and §10 keeps cov1b-ncells-out, rho-min/max, kmax and nbands.
+
+**Question 2 — removed/shortened items from §10's printed text:** the unlike-objects finding, the response-only sensitivity, the nominal-truth versus data dependence, "This concerns the test; it neither validates nor undermines …", "Neither finding shows which spread …", the R00/R05 shares and the flux/detector pre-check are NEEDED; the kappa confirmation and the source comments are LEDGER. No NEEDED item was lost: all remain printed verbatim in the N-D appendix. The only defect is the referent fault in G1-a/G1-b.
+
+**Disclosure:** none lost.
+
+OVERALL: FAIL — G1-a (opening sentence neither identifies a unique test nor states the gate's ratio/window/cell count); G1-b (in the new location "the squared ratio's departure from one" has kappa, not the gate's ratio, as its only antecedent).

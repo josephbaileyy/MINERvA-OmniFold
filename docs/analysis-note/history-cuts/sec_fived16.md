@@ -35,6 +35,21 @@ Both coverage attempts and the earlier route go to App. I.
 | M2 | :287 | "if any declared draw", "of the … declared draws", "the declared composition of the natures" | "specified draw", "specified draws", "the specified composition" | as M1 |
 | M3 | :380 | "($\alpha$ of the declared grid;" | "($\alpha$ of the specified grid;" | as M1 |
 
+## The gate investigation moved to the N-D appendix (the director's go of 2026-11-14, after 1fcb3713d)
+
+| id | base line (1fcb3713d) | old text | new text | ledger home |
+|---|---|---|---|---|
+| G1 | :281–285, with the source comments :292–296 | three paragraphs: "For the interaction uncertainties, a later investigation at the nominal truth found that the gate compared unlike objects. …", "This concerns the test; it neither validates nor undermines the reported interaction block, …" and "A later pre-check of those two groups at the nominal truth found that, …" | moved verbatim to `app_statmethods_nd.tex` as `\subsection{Investigation of the gate of the sixteen-cell coverage test}` (`sec:cov1b-gate`), after an opening paragraph that restates :279, so that the moved text keeps the antecedents it had in §10: "The coverage test at the two tunes for the covariance without the run-period block (\S\ref{sec:fived16-fd}) was stopped before any coverage pseudo-experiment ran." followed by :279's gate sentence verbatim ("At one of its gates, the ratio of each cell's uncertainty reproduced through the pseudo-experiments to that of the drawn covariance lay outside … in \fvval{cov1b-ncells-out} of the 16 cells, ranging from … to ….") and "This subsection gives the investigation of that gate." (A first opening sentence, without the test's identity or the gate's ratio, was failed by the first read: §10.5 holds two coverage tests at the two tunes, and the moved text's "the gate's departure" then had only kappa as an antecedent.) In §10, :279 keeps the gate's result (outside the window in \fvval{cov1b-ncells-out} of the 16 cells) and is followed by the pointer "A later investigation of that gate at the nominal truth, which concerns the test and neither validates nor undermines the reported interaction block, and a pre-check of the flux and detector uncertainties are in App.~\ref{sec:cov1b-gate}." | no text leaves the note; 1fcb3713d:sec_fived16.tex:281-296 |
+
+The move is checked byte for byte: the base's lines 281–285 and 292–296 appear contiguous and unchanged in the
+appendix, and none remains in §10. The appendix's opening paragraph, which lists its contents, is unchanged, as §5's
+V2 left App. A's. `numdiff.py` over §10 plus the N-D appendix, base against new: no number, key or macro removed or
+added.
+
+**G1's meaning read:** pass 1 (a fresh Claude subagent, claude-opus-5-5, blind, while codex-school refused for its
+usage limit) FAIL on the opening sentence and the antecedent it left (above), reads/sec_fived16-g1-pass1.txt; pass 2
+(codex-school gpt-6.1-sol) PASS, reads/sec_fived16-g1-pass2.txt. Prompt: reads/sec_fived16-g1-prompt.txt.
+
 **F3's pointer in §9:** the director asked to retarget sec_5d.tex:237's "(\S\ref{sec:fived16-fd})" at the subsection
 that states the stop. That is already §10.5: `sec:fived16-fd` opens at :201, and the next subsection opens at :302, so
 :287 lies inside it. No change.
