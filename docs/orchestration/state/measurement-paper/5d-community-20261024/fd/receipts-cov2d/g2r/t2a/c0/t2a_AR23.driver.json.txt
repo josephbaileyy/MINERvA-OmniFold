@@ -1,0 +1,31 @@
+{
+ "schema": "t2a-g2r-driver/1",
+ "mode": "cov2d",
+ "truth": "AR23",
+ "t2a_split_sha256": "462ff4e204530a231af35b850b91d9ffe19eb9f6596ee6aace4aeb29449a2f79",
+ "pins_committed": {
+  "blocks": "abaebaeae6c9cb075dcb974a420dbf148809d01b2cabc8deda31f318bf6715ee",
+  "score": "fe5263e904f65892ce26b75fb279441230713c38675c2a3615c59d561c4f5ce1",
+  "null": "80274e52c23365e5c6f84fad977576e54507bf186e1d04a8da8d596a75b0ac76",
+  "capture": "e30f6b9301a3a7db94953e1a8e2a5b767483e80b4f8cca637caf5c3381e0600c"
+ },
+ "pins_used": {
+  "blocks": "abaebaeae6c9cb075dcb974a420dbf148809d01b2cabc8deda31f318bf6715ee",
+  "score": "fe5263e904f65892ce26b75fb279441230713c38675c2a3615c59d561c4f5ce1",
+  "null": "80274e52c23365e5c6f84fad977576e54507bf186e1d04a8da8d596a75b0ac76",
+  "capture": "e30f6b9301a3a7db94953e1a8e2a5b767483e80b4f8cca637caf5c3381e0600c"
+ },
+ "module_pins": {
+  "nd-unfolding/fd_1b_null.py": "ec1402db5cbb5ca3002d7e45a714319d90a8b93654005d688b304a69caab4d38",
+  "2d-unfolding/cov2d/cov2d_null.py": "a92c0506d1ff86f497ee9d2c5bbb884aaed93320d2b7d5551f84885ad8a561b2",
+  "2d-unfolding/cov2d/cov2d.py": "76cbceba395bc6bbf8fc5cce9cf44fc0f21354dff8591cbdee578e0fddcaf8ed"
+ },
+ "ranks": [
+  73,
+  139
+ ],
+ "n_mc": null,
+ "a1_chi2_tol": "A5",
+ "label": "descriptive only (COV2D-G2R-DECLARATION.md:135-137); t2a_split.main() unchanged, PINS[T] as listed",
+ "t2a_split_rc": 0
+}

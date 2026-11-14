@@ -1,0 +1,2 @@
+T2A AR23 OK rc=0 -> t2a_g2r_AR23.json; controls failed: []
+T2A-G2R mode=g2r truth=AR23 rc=0
