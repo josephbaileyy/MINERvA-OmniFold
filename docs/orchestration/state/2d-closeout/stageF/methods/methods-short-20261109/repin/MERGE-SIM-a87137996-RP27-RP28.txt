@@ -1,0 +1,11 @@
+# merge_sim.sh's tree (#977 a87137996 with #981's package from 91f9cb615), with RP27 and RP28 applied to
+# build_package.py in that scratch tree only (never committed), then dryrun.py a87137996 run there. The change:
+#   -        c.key(fn, f"f1-tune-{tune}", gen.removeprefix("genie_v3_").replace("_", r"\_"))
+#   +        c.key(fn, f"f1-tune-{tune}", r"\mbox{" + gen.removeprefix("genie_v3_").replace("_", r"\_") + "}")
+#   -    fv = parse_fvval((NOTE / "values_fived16.tex").read_text())
+#   -    need(fv == fresh, "values_fived16.tex is not a fresh generation of make_values_fived16.py; regenerate it first")
+#   +    vf = (NOTE / "values_fived16.tex").read_text()
+#   +    fv = parse_fvval(vf)
+#   +    need(vf == mv.render(fresh), "values_fived16.tex is not a fresh generation of make_values_fived16.py; regenerate it first")
+#977 head a87137996; ruled failures: 46
+DRYRUN PASS (only ruled failures)

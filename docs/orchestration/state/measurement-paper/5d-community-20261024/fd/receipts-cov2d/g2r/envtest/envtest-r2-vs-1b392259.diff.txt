@@ -1,0 +1,114 @@
+2,15c2,26
+< # COV2D-G2R connect ENVTEST (addendum J1 §4; COV2D-G2R-BINDING-1.md addendum J1): the first G2R connect. On a login
+< # node it runs:
+< #   - the fence: no rsn_, e96data, rdx_, ll5d_, t2a or cov2d* job queued or running, and no cov2d* job unended;
+< #   - iris (the cap at most half the balance);
+< #   - the independent recompute of the 110 node-h cap (the director's ruling 3 of 2026-11-06): spent from sacct over
+< #     cov2dg2r-* plus held from squeue plus this job's 1.067, at most 110;
+< #   - a fresh clone at M_J1 with the bound blobs, and the pre-patch deploy at PRE_M (re2_driver 938c53c5..., the same
+< #     helper e9623412...);
+< #   - the four G2R suites on this login node under the jobs' root_6_28 environment, whose numpy must be 1.26 (C1's
+< #     numpy 1.26 half), each rc 0, with the deploy clean after;
+< #   - then the bound g2r_submit.sh, once: envtest.
+< # Nothing else is submitted, and any refusal stops the connect. This log is fetched for the receipt, then it and this
+< # script are removed from /dev/shm (logged).
+< # Run: setsid nohup bash /dev/shm/josephrb-g2r-envtest.sh >/dev/null 2>&1 </dev/null &
+---
+> # COV2D-G2R connect ENVTEST-R2 (addendum J1 §4; COV2D-G2R-BINDING-1.md addendum J1): the envtest connect again, after
+> # r1 (connect-g2r-envtest.sh 1b392259, 2026-11-13T06:02Z) STOPped at the suite gate: test_g2r_glue's 13 errors were
+> # the open audit (cov2d_blocks.OpenAudit, GUARDED = /global/cfs, /pscratch) refusing the tests' plain opens,
+> # because r1 ran them under /pscratch: their TMPDIR under $O and their code and data in $C. Reproduced locally (guard
+> # stand-in holding $O and $C: "Ran 11 tests ... FAILED (errors=13)"). The director's ruling 3 (2026-11-13): the
+> # narrowest fix, the open audit unchanged. Changes from r1, nothing else:
+> #   - the suites run from a shared clone of $C at M (clean, the bound sums re-checked) with their TMPDIR beside it,
+> #     both in a fresh mktemp under /dev/shm, refused if it resolves under a guarded tree, $O or $C, removed on exit
+> #     with the removal logged (the block between the >>> and <<< markers, run verbatim by test_envtest_r2_tmpdir.sh).
+> #     coverage-5b-audit's B1 (2026-11-13): r1's log also holds 4 refusals of the tests' plain reads of committed files
+> #     in $C (blocks_AR23.npz x3, E_AR23.npz), and shutil.rmtree's dir_fd opens resolve against a cwd inside $C; a
+> #     TMPDIR move alone leaves "Ran 14 tests ... FAILED (errors=11)" in the cluster's layout;
+> #   - r1 made $O, $C and $PRE: this connect reuses them, each clean (porcelain --ignored 0) at its commit, the bound
+> #     sums re-checked; its own records go to $O/logs/envtest-r2/, refused if that exists; no envtest dir and no
+> #     submissions.log may exist yet (r1 submitted nothing);
+> #   - the fence drops ll5d_ (the audited overlap fence, f40d1000; the director's ruling 4 of 2026-11-13: the envtest
+> #     and the prepare may run during the LL5D bulk).
+> # On a login node it runs: the fence (no rsn_, e96data, rdx_, t2a or cov2d* job queued or running, no cov2d* job
+> # unended); iris (the cap at most half the balance; the balance printed); the independent recompute of the 110 node-h
+> # cap (spent over cov2dg2r-* plus held plus this job's 1.067); the deploy checks; the four G2R suites under the jobs'
+> # root_6_28 environment (numpy 1.26) from the /dev/shm clone, each rc 0, the clone and the deploy clean after; then
+> # the bound g2r_submit.sh, once: envtest.
+> # Any refusal stops the connect. This log is fetched for the receipt, then it and this script are removed from
+> # /dev/shm (logged).
+> # Run: setsid nohup bash /dev/shm/josephrb-g2r-envtest-r2.sh >/dev/null 2>&1 </dev/null &
+21c32,33
+< LOG=/dev/shm/josephrb-g2r-envtest.log
+---
+> LOG=/dev/shm/josephrb-g2r-envtest-r2.log
+> SHM_BASE=/dev/shm                                  # the suites' TMPDIR parent (outside GUARDED)
+29,30c41,42
+< [ "$(squeue --me -h -o %j | grep -cE '^(rsn_|e96data|rdx_|ll5d_|t2a|cov2d)')" = "0" ] \
+<     || stop "an rsn_, e96data, rdx_, ll5d_, t2a or cov2d job is queued or running"
+---
+> [ "$(squeue --me -h -o %j | grep -cE '^(rsn_|e96data|rdx_|t2a|cov2d)')" = "0" ] \
+>     || stop "an rsn_, e96data, rdx_, t2a or cov2d job is queued or running"
+43,46c55,60
+< # --- the deploys
+< [ -e "$O" ] && stop "$O exists (this connect makes it)"
+< [ -e "$C" ] && stop "$C exists (this connect makes it)"
+< git clone --quiet https://github.com/josephbaileyy/MINERvA-OmniFold "$C" && git -C "$C" checkout --quiet --detach "$M" || stop clone
+---
+> # --- the deploys r1 made, reused
+> R2=$O/logs/envtest-r2
+> [ -d "$O" ] && [ -d "$C" ] && [ -d "$PRE" ] || stop "$O, $C or $PRE is missing (r1 made them)"
+> [ -e "$R2" ] && stop "$R2 exists (this connect runs once)"
+> [ -e "$O/envtest" ] && stop "$O/envtest exists"
+> [ -e "$O/submissions.log" ] && stop "$O/submissions.log exists (r1 submitted nothing)"
+49,50c63,64
+< mkdir -p "$O/logs" || stop "mkdir $O"
+< cat > "$O/logs/bound.sha256" <<'SUMS'
+---
+> mkdir "$R2" || stop "mkdir $R2"
+> cat > "$R2/bound.sha256" <<'SUMS'
+71,72c85
+< (cd "$C" && sha256sum -c "$O/logs/bound.sha256") || stop "bound blobs differ at M"
+< git clone --quiet https://github.com/josephbaileyy/MINERvA-OmniFold "$PRE" && git -C "$PRE" checkout --quiet --detach "$PRE_M" || stop "clone pre"
+---
+> (cd "$C" && sha256sum -c "$R2/bound.sha256") || stop "bound blobs differ at M"
+76,77c89,90
+<     "e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a  unbinned_unfolding/python/omnifold.py" > "$O/logs/pre.sha256"
+< (cd "$PRE" && sha256sum -c "$O/logs/pre.sha256") || stop "the pre-patch deploy's driver or helper differs"
+---
+>     "e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a  unbinned_unfolding/python/omnifold.py" > "$R2/pre.sha256"
+> (cd "$PRE" && sha256sum -c "$R2/pre.sha256") || stop "the pre-patch deploy's driver or helper differs"
+82c95,111
+<     export TMPDIR=$(mktemp -d "$O/tmp-suites.XXXXXX")
+---
+>     # >>> the suites' place (run verbatim by test_envtest_r2_tmpdir.sh): the open audit refuses plain opens under
+>     # /global/cfs and /pscratch, so the suites run from a shared clone of $C at M, with their TMPDIR, both in one
+>     # fresh directory under /dev/shm, removed on exit (logged)
+>     SR=$(mktemp -d "$SHM_BASE/josephrb-g2r-suites.XXXXXX") || exit 3
+>     case "$(realpath "$SR")/" in
+>         /global/cfs/*|/pscratch/*|"$(realpath "$O")"/*|"$(realpath "$C")"/*)
+>             echo "the suites' place $SR is under a guarded tree, \$O or \$C"; rm -rf "$SR"; exit 6 ;;
+>     esac
+>     trap 'rm -rf "$SR"; echo "removed the suites place $SR rc=$? left=$([ -e "$SR" ] && echo yes || echo no)"' EXIT
+>     export TMPDIR=$SR/tmp; mkdir "$TMPDIR" || exit 3
+>     SC=$SR/repo
+>     git clone --quiet --shared --no-checkout "$C" "$SC" && git -C "$SC" checkout --quiet --detach "$M" || exit 7
+>     n=$(git -C "$SC" status --porcelain --ignored | wc -l); h=$(git -C "$SC" rev-parse HEAD)
+>     [ "$n" = "0" ] && [ "$h" = "$M" ] || { echo "the suites' clone is not clean at M ($n, $h)"; exit 7; }
+>     (cd "$SC" && sha256sum -c "$R2/bound.sha256" > "$SR/bound-check.txt" 2>&1) || { cat "$SR/bound-check.txt"; exit 7; }
+>     echo "suites place=$SR clone head=$h porcelain_ignored=$n bound sums $(grep -c ': OK$' "$SR/bound-check.txt") OK TMPDIR=$TMPDIR"
+>     # <<< the suites' place
+90,92c119,121
+<         (cd "$C/$1" && python -B -m unittest "$2" > "$O/logs/suite-$2.log" 2>&1); r=$?
+<         echo "suite $2 rc=$r $(grep -E '^(Ran|OK|FAILED)' "$O/logs/suite-$2.log" | tr '\n' ' ')"
+<         grep -q 'skipped' "$O/logs/suite-$2.log" && { echo "suite $2 skipped tests"; r=5; }
+---
+>         (cd "$SC/$1" && python -B -m unittest "$2" > "$R2/suite-$2.log" 2>&1); r=$?
+>         echo "suite $2 rc=$r $(grep -E '^(Ran|OK|FAILED)' "$R2/suite-$2.log" | tr '\n' ' ')"
+>         grep -q 'skipped' "$R2/suite-$2.log" && { echo "suite $2 skipped tests"; r=5; }
+95c124,125
+<     rm -rf "$TMPDIR"
+---
+>     n=$(git -C "$SC" status --porcelain --ignored | wc -l); echo "suites clone porcelain_ignored after the suites=$n"
+>     [ "$n" = "0" ] || { git -C "$SC" status --porcelain --ignored | head; rc=1; }

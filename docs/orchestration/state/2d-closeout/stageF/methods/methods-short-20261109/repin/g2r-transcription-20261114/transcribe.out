@@ -1,0 +1,11 @@
+C_new equals c2a's Q - C_univ_old + C_univ_new byte for byte (the npz is in c2a's cell order): True
+median per-cell relative sigma: c2a's Q 6.413665927768751, C_new 6.463024978099694; data_g2r.json 6.413665927768751, 6.463024978099694
+g2r_C_new.csv: ids in order and matrix bitwise equal to the npz: True
+g2r_C_univ_old.csv: ids in order and matrix bitwise equal to the npz: True
+g2r_C_univ_new.csv: ids in order and matrix bitwise equal to the npz: True
+g2r_bands.csv: 38 bands, 175 universe rows, labels in order and every row bitwise equal to the npz: True
+sha256 92321e253680add8d2580650060ff55a4617b702c6d1675778a4ed487df1048a  g2r_C_new.csv
+sha256 28216af51712932a305f576c58976c7fcc6631cfd046603c1d135c5d7d6a6103  g2r_C_univ_new.csv
+sha256 0409ad632e9e1b1acde44cc93deaf30682e23f5bee9e7ccd786d8ccabfa943f1  g2r_C_univ_old.csv
+sha256 8caa9ed6eee9f360a60edcdd800230f27cce2f37286b0f302ed4cf0fb7572613  g2r_bands.csv
+TRANSCRIBE :: PASS (npz 3b8cc7ceaef97c3dc6bbcd2c5cfdf853442c347e37e23f64eca54898d0e9eb4b; 4 files; every array bitwise equal after the round trip)

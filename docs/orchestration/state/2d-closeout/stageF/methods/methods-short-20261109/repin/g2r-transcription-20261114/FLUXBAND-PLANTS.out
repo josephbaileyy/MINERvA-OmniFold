@@ -1,0 +1,17 @@
+# Plant tests of fluxband_g2r.py (sha256 14266be3c17cfc24f3a014611e7354cf6e1a959d029bb4815c01cdaf9431db34), run from the top of the checkout
+# on 2026-11-14T10:54:22Z. Each plant is a one-line change in a scratch copy of the script and must exit 1 with its refusal.
+## 1. the Flux band unweighted in the band sum (w_flux replaced by ones)
+   lines changed: 1
+3. 38 band covariances (175 universes; Flux has 100) summed: largest |residual| / max|C_univ_new| = 6.241e-01 (tolerance 1e-15)
+FLUXBAND: the band sum does not reproduce C_univ_new
+rc=1
+## 2. one Flux weight perturbed by 1e-12 relative (w[0] scaled after loading)
+   lines changed: 1
+3. 38 band covariances (175 universes; Flux has 100) summed: largest |residual| / max|C_univ_new| = 1.455e-14 (tolerance 1e-15)
+FLUXBAND: the band sum does not reproduce C_univ_new
+rc=1
+## 3. a weights file whose w_flux differs between G18 and AR23 (the AR23 array negated in memory)
+   lines changed: 1
+2. w_flux: shape (100,), bitwise equal in G18 and AR23: False; sum 211.01200325082078, n_eff 19.060534772246488; logged by G2R 211.01200325082078, 19.060534772246488
+FLUXBAND: the Flux weights do not match
+rc=1

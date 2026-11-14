@@ -1,0 +1,69 @@
+fence host=login02 utc=2026-11-13T14:03:11Z
+squeue:
+61214607 ll5d_bulk_05 RUNNING
+61214614 ll5d_bulk_09 RUNNING
+61214615 ll5d_bulk_10 RUNNING
+61214610 ll5d_bulk_07 RUNNING
+61214612 ll5d_bulk_08 RUNNING
+61225732 cov2dg2r-D_Ua RUNNING
+sacct unended cov2d:
+fence end
+FENCE_CLEAR (other lanes' jobs are recorded above; the director sequences them)
+staged rc=0 node=4142a188d7fbed9ba3fe3e76d0db5002dd2f1a5eddc7031cc4dd480f8c75cda9 local=4142a188d7fbed9ba3fe3e76d0db5002dd2f1a5eddc7031cc4dd480f8c75cda9 go=4142a188d7fbed9ba3fe3e76d0db5002dd2f1a5eddc7031cc4dd480f8c75cda9
+DIGEST_MATCH
+launched rc=0 at 2026-11-13T14:03:30Z
+last line: DONE (polls=2 of 360, done_seen=1)
+fetched connect log rc=0
+host=login02 start=2026-11-13T14:03:28Z pid=1366725 user=josephrb M=401733bce290ce122cfbf38f1526e120f174b3ec
+squeue: [61214607 ll5d_bulk_05 RUNNING 8:00:00 1;61214614 ll5d_bulk_09 RUNNING 8:00:00 1;61214615 ll5d_bulk_10 RUNNING 8:00:00 1;61214610 ll5d_bulk_07 RUNNING 8:00:00 1;61214612 ll5d_bulk_08 RUNNING 8:00:00 1;61225732 cov2dg2r-D_Ua RUNNING 8:54:00 1;]
+cov2dg2r queued or running: [61225732 cov2dg2r-D_Ua RUNNING 8:54:00;]
+== iris
+m3246               2531.9            10000.0     18671.2      20000.0
+balance_node_h=1328.8 half=664.4 cap=110.0
+recompute spent=1.241 held=8.900 this=8.9 total=19.041 cap=110.0
+deploy porcelain=0 ignored=0 head=401733bce290ce122cfbf38f1526e120f174b3ec
+2d-unfolding/cov2d/g2r/jobs/g2r_jobs.py: OK
+2d-unfolding/cov2d/g2r/jobs/g2r_env.sh: OK
+2d-unfolding/cov2d/g2r/jobs/g2r_job.sbatch: OK
+2d-unfolding/cov2d/g2r/jobs/g2r_envtest.sbatch: OK
+2d-unfolding/cov2d/g2r/jobs/g2r_prepare.sbatch: OK
+2d-unfolding/cov2d/g2r/jobs/g2r_submit.sh: OK
+2d-unfolding/re2/re2_driver.py: OK
+2d-unfolding/cov2d/g2r/g2r.py: OK
+2d-unfolding/cov2d/g2r/g2r_prepare.py: OK
+2d-unfolding/cov2d/g2r/g2r_readout.py: OK
+2d-unfolding/cov2d/jobs/cov2d_jobs.py: OK
+2d-unfolding/cov2d/jobs/cov2d_env.sh: OK
+2d-unfolding/cov2d/cov2d.py: OK
+2d-unfolding/cov2d/cov2d_receipt.py: OK
+nd-unfolding/mnv_guarded_run.py: OK
+nd-unfolding/fd_rpd_inputs.py: OK
+docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partb_runs.tsv: OK
+setup_salloc_env.sh: OK
+unbinned_unfolding/python/omnifold.py: OK
+origin/main=c29c2dfa21d58f3f7af762e051505cc549dc65b3
+envtest record on origin/main: verdict=PASS sha256=c4a0720d3a12265403d22e273e219d4594b03ba0a592afe671618ed72cbf0272
+prepare record on origin/main: verdict=PASS map_npz_sha256=956531e3b761aaf08d40c6ab8d917ba5f19dab5947b72607e6a34d0d3f7f83ae sha256=d72facde6b73e854620bce58780928307fcb1fa9b3e921e94f03cbe6ec9ac1dc
+map /pscratch/sd/j/josephrb/cov2d-g2r-20261112/prepare/g2r_map.npz sha256=956531e3b761aaf08d40c6ab8d917ba5f19dab5947b72607e6a34d0d3f7f83ae (O_NOATIME)
+input /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root size=171117087867 atime=2026-11-13T10:39:23Z
+input /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root size=5143 atime=2026-11-13T10:36:28Z
+input /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/flux_integral_universes_MEFHC.root size=6396 atime=2026-11-06T16:31:27Z
+input /pscratch/sd/j/josephrb/cov2d-g2r-20261112/prepare/g2r_map.npz size=143986060 atime=2026-11-13T13:53:34Z
+ll5d constraint /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt atime_epoch=1793891894 (stat only; not a D_Ub input)
+{"spent": 1.241111111111111, "held": 8.9, "lagging_ids": [], "want": "D_Ub", "want_node_h": 8.9, "total": 19.041111111111114, "cap": 110.0, "pass": true, "not_yet_submitted": ["D_Uc", "D_Ud", "G18_Ua", "G18_Ub", "G18_Uc", "G18_Ud", "AR23_Ua", "AR23_Ub", "AR23_Uc", "AR23_Ud"], "projection": 108.44111111111113, "stop": false}
+2026-11-13T14:03:42Z M=401733bce290ce122cfbf38f1526e120f174b3ec job=D_Ub id=61226353 limit=08:54:00
+sacct lists 61226353
+submit D_Ub rc=0
+2026-11-13T09:41:52Z M=401733bce290ce122cfbf38f1526e120f174b3ec job=envtest id=61220039 limit=01:04:00
+2026-11-13T11:21:02Z M=401733bce290ce122cfbf38f1526e120f174b3ec job=prepare id=61223390 limit=02:00:00
+2026-11-13T13:22:52Z M=401733bce290ce122cfbf38f1526e120f174b3ec job=D_Ua id=61225732 limit=08:54:00
+2026-11-13T14:03:42Z M=401733bce290ce122cfbf38f1526e120f174b3ec job=D_Ub id=61226353 limit=08:54:00
+JobId=61226353 JobName=cov2dg2r-D_Ub Account=m3246 QOS=regular_1 JobState=PENDING TimeLimit=08:54:00 Partition=regular_milan_ss11 NumNodes=1-1 OverSubscribe=NO 
+end=2026-11-13T14:03:52Z
+DONE
+removal rc=2
+4142a188d7fbed9ba3fe3e76d0db5002dd2f1a5eddc7031cc4dd480f8c75cda9  /dev/shm/josephrb-g2r-D_Ub.sh
+aa1b49a022a5e2e79763cf9a498b5ab6c77713017387a8e27e9bdcceaf88fd56  /dev/shm/josephrb-g2r-D_Ub.log
+rm -f /dev/shm/josephrb-g2r-D_Ub.sh /dev/shm/josephrb-g2r-D_Ub.log rc=0
+ls: cannot access '/dev/shm/josephrb-g2r-D_Ub.sh': No such file or directory
+ls: cannot access '/dev/shm/josephrb-g2r-D_Ub.log': No such file or directory

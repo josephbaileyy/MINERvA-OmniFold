@@ -1,0 +1,33 @@
+# S3: Python versions for #981's build and the values producer it imports (limitation-resolver lane, 2026-11-13).
+# Interpreters: CPython 3.10.20 and 3.11.15 (uv-managed builds), 3.12.2 (miniconda3). Each run used
+# env -i PATH=/usr/bin:/bin HOME=<empty dir>, python -B, and the rc was read unpiped.
+#
+# 1. #981 at 91f9cb615, its own worktree (its own make_values_fived16.py), the README's commands:
+#    version   build_package.py --check   build_package.py --self-test
+#    3.10.20   rc 1                        rc 1
+#    3.11.15   rc 1                        rc 1
+#    3.12.2    rc 0 (RESULT-PACKAGE :: PASS (29 files equal a rebuild; 985 values checked) :: INCOMPLETE, pending: ENS1, FD-PRR, LL5D, V-HALF)
+#                                          rc 0 (RESULT-PACKAGE SELF-TEST :: PASS)
+#    On 3.10 and 3.11 both stop at the import of docs/analysis-note/make_values_fived16.py, line 1435 at 91f9cb615:
+#    "SyntaxError: f-string: unmatched '('". The f-string nests double quotes, which PEP 701 allows from 3.12.
+#
+# 2. #977's make_values_fived16.py --check at a87137996, in a copy holding only the 101 files it opens and no .git
+#    (its own fallback sets the root two levels above docs/analysis-note):
+#    3.10.20 rc 1, 3.11.15 rc 1 (the same SyntaxError, line 2634); 3.12.2 rc 0 (VALUES-FIVED16 :: PASS (4258 values,
+#    readouts pinned, 2 figures equal their sources, 10 listed-truth sentences agree)).
+#
+# 3. Syntax alone (compile() of the source): build_package.py and connect/decode_c2a.py at 91f9cb615 compile on 3.10
+#    and 3.11; make_values_fived16.py fails on both, at 91f9cb615 (line 1435) and at a87137996 (line 2634).
+#
+# 4. Measured only, no change proposed to #977: the producer at a87137996 has two occurrences of that f-string. With
+#    both requoted ('@namedef' for "@namedef") in a scratch copy, --check passes on 3.10.20 and 3.11.15 with the same
+#    PASS line, and dryrun.py in the merge simulation prints output byte-identical to 3.12.2's.
+#
+# Result: as the files stand, the requirement is Python >= 3.12. It would be >= 3.10 if #977's producer requoted
+# those two f-strings. That is #977's file and the director's choice.
+#
+# 5. At #977 a5e3005fd (helper-3 requoted the two f-strings and moved two backslash expressions out of f-strings in
+#    literal_values(), as the director asked): make_values_fived16.py --check passes on 3.10.20, 3.11.15 and 3.12.2
+#    (VALUES-FIVED16 :: PASS (4274 values, ...)). The merge simulation with RP27, RP28 and RP33 applied passes on all
+#    three, and its output is byte-identical across them (MERGE-SIM-a5e3005fd-fixes.txt). The requirement becomes
+#    Python >= 3.10 (RP29).

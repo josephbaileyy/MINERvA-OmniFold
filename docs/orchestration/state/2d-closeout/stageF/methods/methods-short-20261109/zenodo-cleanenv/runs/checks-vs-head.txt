@@ -1,0 +1,10 @@
+equal at head: 886 | key gone: 0 | key value differs: 2 | other: 7
+KEY-DIFF | sec-fd16_tunes.csv | f1-tune-g18 | G18\_10a\_02\_11b | \mbox{G18\_10a\_02\_11b}
+KEY-DIFF | sec-fd16_tunes.csv | f1-tune-ar23 | AR23\_20i\_00\_000 | \mbox{AR23\_20i\_00\_000}
+PHRASE-COUNT-0 | supp-validity.csv | each leave 14 of the 16 cells valid and 12 under both |  | 
+PHRASE-COUNT-0 | supp-validity.csv | Fourteen cells are valid under it; R02 and R06 fail |  | 
+PHRASE-COUNT-0 | supp-validity.csv | Fourteen cells are valid under it; R08 ( |  | 
+PHRASE-COUNT-0 | supp-validity.csv | ) and R15 ( |  | 
+PHRASE-COUNT-0 | supp-validity.csv | Twelve cells are valid under both rules. |  | 
+PHRASE-COUNT-0 | sec-repro2d_benchmark.csv | Integral ratio $\ratioTot$; $\chi^2/\mathrm{ndf}=\chiPaper$ (ndf $=205$) against a covariance of condition num |  | 
+PHRASE-COUNT-0 | sec-repro2d_benchmark.csv | the smallest change resolved is $3\sigma=0.29$ per direction |  | 

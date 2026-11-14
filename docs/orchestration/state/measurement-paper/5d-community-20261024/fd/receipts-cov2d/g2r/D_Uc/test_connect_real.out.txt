@@ -1,0 +1,65 @@
+== connect-g2r-G18_Ua.sh: block 17 lines, TRUTH=G18 RD=$P/cov2d-run-20261104/pseudo/G18/b RF=data_5721000.root
+PASS pass rc=0
+PASS pass-lines
+PASS record-differs rc=2
+PASS realization-missing rc=2
+PASS record-lacks-file rc=2
+PASS listed-twice rc=2
+PASS record-missing rc=2
+== connect-g2r-G18_Ub.sh: block 17 lines, TRUTH=G18 RD=$P/cov2d-run-20261104/pseudo/G18/b RF=data_5721000.root
+PASS pass rc=0
+PASS pass-lines
+PASS record-differs rc=2
+PASS realization-missing rc=2
+PASS record-lacks-file rc=2
+PASS listed-twice rc=2
+PASS record-missing rc=2
+== connect-g2r-G18_Uc.sh: block 17 lines, TRUTH=G18 RD=$P/cov2d-run-20261104/pseudo/G18/b RF=data_5721000.root
+PASS pass rc=0
+PASS pass-lines
+PASS record-differs rc=2
+PASS realization-missing rc=2
+PASS record-lacks-file rc=2
+PASS listed-twice rc=2
+PASS record-missing rc=2
+== connect-g2r-G18_Ud.sh: block 17 lines, TRUTH=G18 RD=$P/cov2d-run-20261104/pseudo/G18/b RF=data_5721000.root
+PASS pass rc=0
+PASS pass-lines
+PASS record-differs rc=2
+PASS realization-missing rc=2
+PASS record-lacks-file rc=2
+PASS listed-twice rc=2
+PASS record-missing rc=2
+== connect-g2r-AR23_Ua.sh: block 17 lines, TRUTH=AR23 RD=$P/cov2d-run-20261104/pseudo/AR23-a2/b RF=data_5731000.root
+PASS pass rc=0
+PASS pass-lines
+PASS record-differs rc=2
+PASS realization-missing rc=2
+PASS record-lacks-file rc=2
+PASS listed-twice rc=2
+PASS record-missing rc=2
+== connect-g2r-AR23_Ub.sh: block 17 lines, TRUTH=AR23 RD=$P/cov2d-run-20261104/pseudo/AR23-a2/b RF=data_5731000.root
+PASS pass rc=0
+PASS pass-lines
+PASS record-differs rc=2
+PASS realization-missing rc=2
+PASS record-lacks-file rc=2
+PASS listed-twice rc=2
+PASS record-missing rc=2
+== connect-g2r-AR23_Uc.sh: block 17 lines, TRUTH=AR23 RD=$P/cov2d-run-20261104/pseudo/AR23-a2/b RF=data_5731000.root
+PASS pass rc=0
+PASS pass-lines
+PASS record-differs rc=2
+PASS realization-missing rc=2
+PASS record-lacks-file rc=2
+PASS listed-twice rc=2
+PASS record-missing rc=2
+== connect-g2r-AR23_Ud.sh: block 17 lines, TRUTH=AR23 RD=$P/cov2d-run-20261104/pseudo/AR23-a2/b RF=data_5731000.root
+PASS pass rc=0
+PASS pass-lines
+PASS record-differs rc=2
+PASS realization-missing rc=2
+PASS record-lacks-file rc=2
+PASS listed-twice rc=2
+PASS record-missing rc=2
+CONNECT-REAL BLOCK TEST PASS

@@ -1,0 +1,59 @@
+{"mat_setup_scripts": 6, "mismatches": 0}
+python=/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python TMPDIR=/dev/shm/josephrb-g2r-readout-data.6NcKaX/tmp
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+3.11.14 numpy 1.26.4 ROOT 6.28/12
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+MAT preflight file: /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_1A.root sha256 d54d2a2c6e0454b035c69d82aff3d3ac2c8cb5e589fea09f2b439804854b1107
+MAT preflight: MnvH1D PlotUtils::MnvH1D 14 bins
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+[PASS] weights_identical_across_playlists
+[PASS] weights_equal_constraint_file
+[PASS] weights_equal_vl175_build_json  {'sum': 211.01200325082078, 'n_eff': 19.060534772246488}
+G2R-DATA verdict=PASS controls_failed=[] stop=[]
+	Command being timed: "python -B g2r_readout.py data --products /dev/shm/josephrb-g2r-readout-data.6NcKaX/products.tsv --map-sha 956531e3b761aaf08d40c6ab8d917ba5f19dab5947b72607e6a34d0d3f7f83ae --out /dev/shm/josephrb-g2r-readout-data.6NcKaX/out"
+	User time (seconds): 4.33
+	System time (seconds): 6.13
+	Percent of CPU this job got: 86%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:12.09
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 442828
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 136690
+	Voluntary context switches: 4705
+	Involuntary context switches: 42073
+	Swaps: 0
+	File system inputs: 12546414
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
