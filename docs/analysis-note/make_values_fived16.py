@@ -121,18 +121,27 @@ READOUTS = {
     # test's score records, and the declarations that alone state FD-STAB's pairs and the first 5D test's toys (text)
     "s5econtract": ("docs/orchestration/state/s5e/contract-amendment-3-candidate-R-and-assessment.json", "f6d3791c"),
     "refg1bars": (f"{FD}/fd/receipts-ref-g1/a1-connect1/bars.json", "ba4b6985"),
-    "cov2dar23": (f"{FD}/fd/receipts-cov2d/readout/AR23/score_AR23.json", "fe5263e9"),
-    "cov2dg18": (f"{FD}/fd/receipts-cov2d/readout/G18/score_G18.json", "84976694"),
+    # D1 (DECISION-20261114-joseph-d1-g2r-adopted.md): the reported 2D covariance is COV2D-G2R's C_T', so the coverage
+    # test's score and null are G2R's regrade (COV2D-G2R-DECLARATION.md §4-5; #1143-#1150). The first grade, with the
+    # universes' misses approximation, stays pinned as cov2dold* for S6.1's comparison sentence.
+    "cov2dar23": (f"{FD}/fd/receipts-cov2d/g2r/readout/AR23/score_g2r_AR23.json", "fb6d1f7f"),
+    "cov2dg18": (f"{FD}/fd/receipts-cov2d/g2r/readout/G18/score_g2r_G18.json", "27374aab"),
+    "cov2doldar23": (f"{FD}/fd/receipts-cov2d/readout/AR23/score_AR23.json", "fe5263e9"),
+    "cov2doldg18": (f"{FD}/fd/receipts-cov2d/readout/G18/score_G18.json", "84976694"),
     # T1-2: the two-dimensional test's draw-matched nulls (each score's null_digest is asserted to be its file's sha256)
-    "cov2dnullar23": (f"{FD}/fd/receipts-cov2d/readout/AR23/null_AR23.json", "80274e52"),
-    "cov2dnullg18": (f"{FD}/fd/receipts-cov2d/readout/G18/null_G18.json", "6bd5259d"),
+    "cov2dnullar23": (f"{FD}/fd/receipts-cov2d/g2r/readout/AR23/null_g2r_AR23.json", "ae82601d"),
+    "cov2dnullg18": (f"{FD}/fd/receipts-cov2d/g2r/readout/G18/null_g2r_G18.json", "d6b84ec0"),
+    # D1: C_T' at the data (G2R part (a)): readings.sigma gives the median per-bin and integrated relative sigma before
+    # ([0], the reported Q) and after ([1], C_new)
+    "g2rdata": (f"{FD}/fd/receipts-cov2d/g2r/readout/data/data_g2r.json", "cd975b64"),
     # T1-2: Tier 2 (a), the descriptive split of the two-dimensional test's chi2 (#1041; T2A declaration, T2-BINDING-1)
     # T1-3: Tier 2 (b), the fake-data biases against smaller matrices (#1039; T2B declaration, T2-BINDING-1: descriptive)
     "t2b": (f"{FD}/fd/tier2-20261110/t2b/t2b.json", "0e281a61"),
     # T1-3: the per-period two-dimensional benchmark's read (OUTCOME-20261107-per-period-2d-benchmark.md, #879)
     "ppbench": ("docs/orchestration/state/2d-closeout/per-period-benchmark-20261106/receipts/read/readout.json", "4872df32"),
-    "t2aar23": (f"{FD}/fd/tier2-20261110/t2a/t2a_AR23.json", "33b7fd40"),
-    "t2ag18": (f"{FD}/fd/tier2-20261110/t2a/t2a_G18.json", "6757055e"),
+    # D1: T2A's split at C_T' (#1150), on the same 300 error vectors per tune
+    "t2aar23": (f"{FD}/fd/receipts-cov2d/g2r/t2a/run/t2a_g2r_AR23.json", "74fab014"),
+    "t2ag18": (f"{FD}/fd/receipts-cov2d/g2r/t2a/run/t2a_g2r_G18.json", "b1310d44"),
     "stabdecl": (f"{FD}/FD-STAB-DECLARATION.md", "6c91c0cc"),
     "fd1bdecl": (f"{FD}/FD-1B-STAGED-DECLARATION.md", "50d9e883"),
     # group C (#1027): the Kish effective sample size of configuration (e)'s final weights on the sixteen cells
@@ -1640,6 +1649,7 @@ def groupb_values(d):
         assert i5["rho"] < e["rho"], "the text says IBU at five iterations retains less"
     v.update(tier1_values(d))
     v.update(t2a_values(d))
+    v.update(d1_values(d))
     v.update(period_values(d))
     v.update(t2b_values(d))
     v.update(lrows_values(d))
@@ -2010,11 +2020,18 @@ def t2a_values(d):
         assert abs(sum(b) - sp["ebar_Cplus_ebar"]) < 1e-9 * sp["ebar_Cplus_ebar"] and abs(sum(f) - sp["trace_Cplus_S"]) < 1e-9 * sp["trace_Cplus_S"]
         v[f"t2a-bias-share-{t}"] = f"{100 * sp['share_of_ebar_Cplus_ebar']:.0f}"
         v[f"t2a-bias-ndf-{t}"], v[f"t2a-spread-ndf-{t}"] = f"{sp['ebar_Cplus_ebar_over_ndf']:.1f}", f"{sp['trace_Cplus_S_over_ndf']:.2f}"
+        # D1: at C_T' the top-32 share is 1.2 % at AR23, so "under 1 %" no longer holds; it is printed per tune
         top = sum(b[:ntop]) / sum(b)
-        assert top < 0.01, "the text says under 1 %"
+        v[f"t2a-top-{t}"] = f"{100 * top:.1f}"
         r1, r2 = sorted(int(k) for k in tr)
         assert (r1, r2) == (73, 139)
-        v[f"t2a-beyond1-{t}"] = f"{100 * sum(b[r1:]) / sum(b):.0f}"
+        beyond = sum(b[r1:]) / sum(b)
+        assert abs(beyond - (1 - br["cumulative_at"][str(r1)]["b"] / sp["ebar_Cplus_ebar"])) < 1e-9, "the record's own sum"
+        # section 6.2's "dominated by mean bias concentrated in the poorly determined directions ..., with the spread
+        # also exceeding C_T's prediction" (the director's ruling 3, 2026-11-14): each word's plain reading
+        assert sp["share_of_ebar_Cplus_ebar"] > 0.5 and beyond > 0.5 and sp["trace_Cplus_S_over_ndf"] > 1, t
+        assert top < beyond
+        v[f"t2a-beyond1-{t}"] = f"{100 * beyond:.0f}"
         v[f"t2a-flow-{t}"] = f"{sum(f[:r1]) / r1:.1f}"
         v[f"t2a-fmid-{t}"] = f"{sum(f[r1:r2]) / (r2 - r1):.1f}"
         v[f"t2a-fhigh-{t}"] = f"{sum(f[r2:]) / (n - r2):.1f}"
@@ -2027,6 +2044,39 @@ def t2a_values(d):
     v["t2a-r1"], v["t2a-r2"] = "73", "139"
     m, e = f"{max(dmax):.1e}".split("e")
     v["t2a-dmax"] = f"{m}\\times10^{{{int(e)}}}"
+    return v
+
+
+def d1_values(d):
+    """D1 (DECISION-20261114-joseph-d1-g2r-adopted.md; the director's rulings of 2026-11-14): COV2D-G2R's C_T' is the
+    reported 2D covariance. Section 3.2's median per-bin and integrated relative sigma come from G2R part (a)'s data
+    record, readings.sigma [1] (C_new); S6.1's comparison sentence prints [0], the reported Q before the correction, and
+    states that the coverage test's joint counts and flagged cells are the same under both (asserted below from the
+    first grade, cov2dold*, against the regrade). Q's block sizes keep their RE-2 pins (ruling 5), with G2R's rebuilt
+    weight bands asserted to be Q's."""
+    g = d["g2rdata"]
+    assert g["schema"] == "cov2d-g2r/1" and g["step"] == "data" and g["verdict"] == "PASS"
+    assert g["controls_failed"] == [] and not g["stop"] and not g["atime_moved"] and g["G6"]["pass"] and g["G10"]["pass"]
+    s, bq = g["readings"]["sigma"], d["budgetq"]["Q"]
+    for k in ("median_pct", "integral_sigma_pct"):
+        assert s[k][0] == bq[k] == g["G10"]["values"][k][1], f"readings.sigma.{k}[0] is not the reported Q's"
+    v = {"q2d-sigma-med": f"{s['median_pct'][1]:.2f}", "q2d-sigma-int": f"{s['integral_sigma_pct'][1]:.2f}",
+         "q2d-sigma-med-old": f"{s['median_pct'][0]:.2f}", "q2d-sigma-int-old": f"{s['integral_sigma_pct'][0]:.2f}"}
+    po = d["s5q"]["inputs"]["production_outputs"]
+    wbands = {re.match(r"U_(.+)_\d+$", k).group(1) for k in po if k.startswith("U_")}
+    assert set(g["G6"]["per_band"]) == wbands and len(wbands) == 38, "G2R rebuilt Q's 38 weight bands"
+    cp = d["cpint"]["tunes"]
+    for t, T in (("ar23", "AR23"), ("g18", "G18")):
+        n, o = d["cov2d" + t], d["cov2dold" + t]
+        assert n["schema"] == "cov2d-g2r/1" and n["step"] == "tune" and n["controls_failed"] == [] and not n["stop"]
+        assert n["G6"]["pass"] and n["G7"]["pass"] and n["section_9_8"]["pass"] and not n["atime_moved"]
+        gn, go = n["grade"], o["grade"]
+        assert (gn["joint_count"], gn["flagged_cells"], gn["verdict"]) == (go["joint_count"], go["flagged_cells"],
+                                                                          go["verdict"]), "S6.1: the same joint counts and flagged cells"
+        # the CP intervals (lrows-g G1) were made from the first grade's counts: they hold for C_T' only if the
+        # joint count and each flagged cell's count are the regrade's
+        assert cp[T]["joint"]["count"] == gn["joint_count"]
+        assert [(f["i"], f["count"]) for f in cp[T]["cells"]["flagged"]] == [(i, gn["counts"][i]) for i in gn["flagged_cells"]]
     return v
 
 
@@ -2394,9 +2444,11 @@ def supp_literal_values(d):
             "did-weak-width-med": "31",
             "rs1-ratio-sref-153": "0.959", "rs1-ratio-sref-16": "0.890", "rs1-ratio-somni-153": "0.947",
             "rs1-ratio-somni-16": "0.857", "rs1-ratio-b1023-153": "0.950", "rs1-ratio-b1023-16": "0.945", "rs1-iter5": "1.35",
-            "cov2d-sc-ar23-29": "1.165", "cov2d-sc-ar23-56": "1.316", "cov2d-sc-g18-29": "1.347",
-            "cov2d-pm-ar23-29": "-0.851", "cov2d-pm-ar23-56": "+1.039", "cov2d-pm-g18-29": "-0.964",
-            "cov2d-psd-lo": "0.636", "cov2d-psd-hi": "0.709", "f0b-gibuu-pz8-chisq": v["f0b-gibuu-pz8-chisq"],
+            # D1: the regrade at C_T' (score_g2r_<T>.json); the first grade's were 1.165, 1.316, 1.347, -0.851,
+            # +1.039, -0.964, 0.636 and 0.709
+            "cov2d-sc-ar23-29": "1.160", "cov2d-sc-ar23-56": "1.311", "cov2d-sc-g18-29": "1.340",
+            "cov2d-pm-ar23-29": "-0.848", "cov2d-pm-ar23-56": "+1.037", "cov2d-pm-g18-29": "-0.959",
+            "cov2d-psd-lo": "0.634", "cov2d-psd-hi": "0.707", "f0b-gibuu-pz8-chisq": v["f0b-gibuu-pz8-chisq"],
             "i2-fsrc-lo": "0.986", "i2-fsrc-hi": "1.015", "i2-fprior-med": "2.72", "i2-fprior-lo": "0.49", "i2-fprior-hi": "6.51",
             "r5-conly-w0-pct": "8.3", "vatlas-z-R02": "+4.19", "vatlas-z-R06": "+4.53"}
     assert v == want, {k: v.get(k) for k in set(v) | set(want) if v.get(k) != want.get(k)}
