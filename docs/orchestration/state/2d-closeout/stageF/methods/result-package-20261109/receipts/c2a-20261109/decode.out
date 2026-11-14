@@ -1,0 +1,10 @@
+sha256 7153b194b95c27f80db5997bdde35fe2475f2b1c40c9ff456edd409850cf47d2 (2022426 bytes): equals the cluster's and the bound digest
+  Q: float64 [205, 205], sqrt(trace) equals the export's
+  s5_total: float64 [205, 205], sqrt(trace) equals the export's
+  universe: float64 [205, 205], sqrt(trace) equals the export's
+  stat: float64 [205, 205], sqrt(trace) equals the export's
+  c08: float64 [205, 205], sqrt(trace) equals the export's
+  C_PL: float64 [205, 205], sqrt(trace) equals the export's
+  cells: int64 [205]
+  x: float64 [205]
+wrote <scratch copy, deleted after the check>

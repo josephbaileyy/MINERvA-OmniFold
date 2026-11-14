@@ -1,0 +1,15 @@
+cov2d_x.csv: ids and x bitwise equal to the npz: True
+cov2d_Q.csv: ids in order and matrix bitwise equal to the npz: True
+cov2d_s5_total.csv: ids in order and matrix bitwise equal to the npz: True
+cov2d_universe.csv: ids in order and matrix bitwise equal to the npz: True
+cov2d_stat.csv: ids in order and matrix bitwise equal to the npz: True
+cov2d_c08.csv: ids in order and matrix bitwise equal to the npz: True
+cov2d_C_PL.csv: ids in order and matrix bitwise equal to the npz: True
+sha256 6f59d683feba557c9b8fe1c035c8d208e0244ccb3e5a54b374f6124f96177483  cov2d_C_PL.csv
+sha256 4f07aa887c5896161f82297431a12cbdd30bdc3e11d86befb3c76648078b2d74  cov2d_Q.csv
+sha256 e63cf0077477d20bc0df19fa3374bd7b983f4bac1a8fe9d678be289f95732a64  cov2d_c08.csv
+sha256 9279482548e0cd58921209cd3b9d51a98eec3e538cf2e7f215ff1f1afdb5a153  cov2d_s5_total.csv
+sha256 e5f376e8f222c4ef17305ef6ba2c9b2e887d30d4e23a22109d4fc90d812e7944  cov2d_stat.csv
+sha256 69a0737b476866770cd27b6ca9f5e391b3e86e10ce2681f2318d2bf216cb0cb4  cov2d_universe.csv
+sha256 f0612bcc3bc432e90b6a1546a106043a7c525d4cae69e29ebdcec6a4505df723  cov2d_x.csv
+TRANSCRIBE :: PASS (npz 7153b194b95c27f80db5997bdde35fe2475f2b1c40c9ff456edd409850cf47d2; 7 files; every array bitwise equal after the round trip)

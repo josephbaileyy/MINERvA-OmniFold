@@ -1,0 +1,1 @@
+Not yet available: the data file for the ensemble-averaged variant of the estimator (96 fits), whose result is final and reported in the paper; to be added in a later version.
