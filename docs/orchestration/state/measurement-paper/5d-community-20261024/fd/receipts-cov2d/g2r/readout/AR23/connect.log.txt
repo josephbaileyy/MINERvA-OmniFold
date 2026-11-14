@@ -1,0 +1,51 @@
+host=login02 start=2026-11-14T04:09:13Z pid=656031 user=josephrb M=401733bce290ce122cfbf38f1526e120f174b3ec PH=AR23
+squeue: [61255888 ll5d_rerun129_01 PENDING 2:30:00 1;]
+readout place=/dev/shm/josephrb-g2r-readout-AR23.OVOnIG clone head=401733bce290ce122cfbf38f1526e120f174b3ec porcelain_ignored=0 bound sums 19 OK TMPDIR=/dev/shm/josephrb-g2r-readout-AR23.OVOnIG/tmp
+map_sha256=956531e3b761aaf08d40c6ab8d917ba5f19dab5947b72607e6a34d0d3f7f83ae
+175 products for AR23
+products.tsv 175 rows sha256 9534ddf451ab35725b282f7886ccfb72af9eff3639da65228d0f378ef8af4c64
+{"mat_setup_scripts": 6, "mismatches": 0}
+python=/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python TMPDIR=/dev/shm/josephrb-g2r-readout-AR23.OVOnIG/tmp
+3.11.14 numpy 1.26.4 ROOT 6.28/12
+MAT preflight file: /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_1A.root sha256 d54d2a2c6e0454b035c69d82aff3d3ac2c8cb5e589fea09f2b439804854b1107
+MAT preflight: MnvH1D PlotUtils::MnvH1D 14 bins
+G2R-TUNE verdict=UNDER-COVERS controls_failed=[] stop=[]
+	Command being timed: "python -B g2r_readout.py tune --truth AR23 --products /dev/shm/josephrb-g2r-readout-AR23.OVOnIG/products.tsv --map-sha 956531e3b761aaf08d40c6ab8d917ba5f19dab5947b72607e6a34d0d3f7f83ae --out /dev/shm/josephrb-g2r-readout-AR23.OVOnIG/out"
+	User time (seconds): 134.71
+	System time (seconds): 199.41
+	Percent of CPU this job got: 97%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 5:41.49
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 1067404
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 80193178
+	Voluntary context switches: 2727
+	Involuntary context switches: 861917
+	Swaps: 0
+	File system inputs: 5734542
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+READOUT-AR23 PASS rc=0 verdict=UNDER-COVERS
+outputs: 3
+c060cb40232e0112ec440951f94841e87fc98b542a165eed2c8242898508a70a  blocks_g2r_AR23.npz
+ae82601d7f8b2f5474bfe2a6060245c854eae2cbf90d706e8f1276971ff45872  null_g2r_AR23.json
+fb6d1f7fddfa18124bf097087a2f895582ef0991f9888c5ab1ce16cefbbe3079  score_g2r_AR23.json
+clone porcelain_ignored after=0 head=401733bce290ce122cfbf38f1526e120f174b3ec
+blobs unchanged
+blocks_g2r_AR23.npz: OK
+null_g2r_AR23.json: OK
+score_g2r_AR23.json: OK
+copied to /pscratch/sd/j/josephrb/cov2d-g2r-20261112/readout/AR23: blocks_g2r_AR23.npz null_g2r_AR23.json out.sha256 products.tsv readout.log score_g2r_AR23.json 
+removed the readout place /dev/shm/josephrb-g2r-readout-AR23.OVOnIG rc=0 left=no
+readout subshell rc=0
+READOUT-AR23 PASS
+end=2026-11-14T04:15:36Z
+DONE

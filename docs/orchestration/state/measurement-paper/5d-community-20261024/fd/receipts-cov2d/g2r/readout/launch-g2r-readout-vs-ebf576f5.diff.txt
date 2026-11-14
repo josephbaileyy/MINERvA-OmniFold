@@ -1,0 +1,9 @@
+9c9
+< # Usage: launch-g2r.sh envtest|envtest-r2|envtest-r3|diag-tune|prepare|D_Ua|D_Ub|<a remaining unfold job> <sha256>
+---
+> # Usage: launch-g2r.sh envtest|envtest-r2|envtest-r3|diag-tune|prepare|D_Ua|D_Ub|<a remaining unfold job>|readout-<data|G18|AR23> <sha256>
+29c29,30
+<   *) echo "usage: launch-g2r.sh envtest|envtest-r2|envtest-r3|diag-tune|prepare|D_Ua|D_Ub|D_Uc|D_Ud|G18_Ua|G18_Ub|G18_Uc|G18_Ud|AR23_Ua|AR23_Ub|AR23_Uc|AR23_Ud <sha256>"; exit 2 ;;
+---
+>   readout-data|readout-G18|readout-AR23) SRC=$H/connect-g2r-$N.sh; ARG="" ;;   # the readout, one phase per connect (login node; its log is $SHM/josephrb-g2r-$N.log)
+>   *) echo "usage: launch-g2r.sh envtest|envtest-r2|envtest-r3|diag-tune|prepare|D_Ua|D_Ub|D_Uc|D_Ud|G18_Ua|G18_Ub|G18_Uc|G18_Ud|AR23_Ua|AR23_Ub|AR23_Uc|AR23_Ud|readout-data|readout-G18|readout-AR23 <sha256>"; exit 2 ;;

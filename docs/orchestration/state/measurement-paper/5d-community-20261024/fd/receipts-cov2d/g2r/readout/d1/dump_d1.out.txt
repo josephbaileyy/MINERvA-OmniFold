@@ -1,0 +1,56 @@
+===== G18
+--- G2R (C_T'): verdict UNDER-COVERS; ndf 205; cells 205
+    per-cell: counts min 148 max 300; k_cell min 144 max 178; cells with count < k_cell: [29]
+    flagged_cells [29]; sum(cell_flag) 1
+      cell 29: count 148 k_cell 174 pull_mean -0.9595 pull_sd 0.6626 s_c 1.3404
+    joint: joint_count 0 of 300; k_joint 192; joint_flag True
+    size: {"cell": "list(205)", "cells_union_bound": 0.017355539897561653, "joint": 0.020845266648815343, "per_truth_union_bound": 0.038200806546376996}
+    chi2_mean_over_ndf 25.03382370299057 se 0.40724267380349816
+    attribution {"R29": {"centred_count": 261, "driven_by": "bias", "k_flag": 174, "pull_mean": -0.9594880511631833, "pull_mean_se": 0.03825246432344727, "pull_sd": 0.6625521172292651, "pull_sd_se": 0.027093770898121636}}
+    outlier_cell {"cell": 216, "count": 261, "flagged": false, "k_cell": 173, "pull_mean": 0.34773811953799066, "s_c": 0.7038734966130517}
+    weakened_pass [79, 95, 107, 111, 123, 127, 143, 159, 175, 191] share 0.04878048780487805
+    controls_failed []; stop []
+--- COV2D committed (C_T): verdict UNDER-COVERS; ndf 205; cells 205
+    per-cell: counts min 148 max 300; k_cell min 144 max 178; cells with count < k_cell: [29]
+    flagged_cells [29]; sum(cell_flag) 1
+      cell 29: count 148 k_cell 175 pull_mean -0.9638 pull_sd 0.6655 s_c 1.3466
+    joint: joint_count 0 of 300; k_joint 192; joint_flag True
+    size: {"cell": "list(205)", "cells_union_bound": 0.01705244631548881, "joint": 0.019246895047754033, "per_truth_union_bound": 0.036299341363242844}
+    chi2_mean_over_ndf 24.173527532925576 se 0.367030332805084
+    attribution {"R29": {"centred_count": 261, "driven_by": "bias", "k_flag": 175, "pull_mean": -0.9637655433122867, "pull_mean_se": 0.03842299757357899, "pull_sd": 0.665505839765345, "pull_sd_se": 0.027214557594908352}}
+    outlier_cell {"cell": 216, "count": 261, "flagged": false, "k_cell": 173, "pull_mean": 0.3462027066430167, "s_c": 0.7007702715305686}
+    weakened_pass [79, 95, 107, 111, 123, 127, 143, 159, 175, 191] share 0.04878048780487805
+    controls_failed []; stop []
+--- G2R descriptive readouts: keys ['bias', 'leave_out_mec', 'predicted_offset', 'spread_alone']
+    leave_out_mec: flagged_under_minus [29, 30]; changes_no_verdict True; reading 'printed; no reading (the tune under-covers under C_T)'
+    tune_eps {"corr": {"max_abs_delta_rho": 0.0349358285402559, "median_abs_delta_rho": 0.0018611919883511942}, "eps": {"139": {"coupling_to_discarded": 1.0848787219813974e-42, "directions": 139, "eps": 3.897213192186232}, "73": {"coupling_to_discarded": 6.875424140065838e-42, "directions": 73, "eps": 1.83801494459252}, "retained": {"coupling_to_discarded": 1.2476114075142633e-54, "directions": 205, "eps": 6.680505416161317}}, "rank": {"after": 205, "before": 205}}
+--- COV2D committed readouts keys ['bias', 'clipping_residual', 'leave_out_mec', 'predicted_offset', 'realization_check', 'spread_alone']
+===== AR23
+--- G2R (C_T'): verdict UNDER-COVERS; ndf 204; cells 205
+    per-cell: counts min 148 max 300; k_cell min 145 max 176; cells with count < k_cell: [29, 56]
+    flagged_cells [29, 56]; sum(cell_flag) 2
+      cell 29: count 164 k_cell 174 pull_mean -0.8484 pull_sd 0.6344 s_c 1.1595
+      cell 56: count 148 k_cell 174 pull_mean 1.0366 pull_sd 0.7073 s_c 1.3112
+    joint: joint_count 0 of 300; k_joint 190; joint_flag True
+    size: {"cell": "list(205)", "cells_union_bound": 0.017118948689699924, "joint": 0.017277562142103894, "per_truth_union_bound": 0.03439651083180382}
+    chi2_mean_over_ndf 16.408481054434255 se 0.16419101924905363
+    attribution {"R29": {"centred_count": 271, "driven_by": "bias", "k_flag": 174, "pull_mean": -0.8483787107891612, "pull_mean_se": 0.036626267472048155, "pull_sd": 0.6343855615319471, "pull_sd_se": 0.02594195478100817}, "R56": {"centred_count": 262, "driven_by": "bias", "k_flag": 174, "pull_mean": 1.0366070325162335, "pull_mean_se": 0.040835789377171264, "pull_sd": 0.7072966196844207, "pull_sd_se": 0.028923509671789957}}
+    outlier_cell {"cell": 216, "count": 247, "flagged": false, "k_cell": 173, "pull_mean": 0.33927066166813336, "s_c": 0.6792367367784212}
+    weakened_pass [9, 10, 11, 12, 25, 26, 27, 28, 32, 33, 41, 42, 43, 44, 45, 48, 49, 51, 57, 58, 59, 60, 61, 64, 65, 74, 75, 76, 77, 80, 81, 91, 92, 93, 96, 97, 98, 99, 108, 109, 112, 113, 114, 115, 116, 124, 125, 140, 141, 156, 157, 172, 173] share 0.2634146341463415
+    controls_failed []; stop []
+--- COV2D committed (C_T): verdict UNDER-COVERS; ndf 204; cells 205
+    per-cell: counts min 148 max 300; k_cell min 145 max 176; cells with count < k_cell: [29, 56]
+    flagged_cells [29, 56]; sum(cell_flag) 2
+      cell 29: count 164 k_cell 174 pull_mean -0.8508 pull_sd 0.6362 s_c 1.1645
+      cell 56: count 148 k_cell 174 pull_mean 1.0394 pull_sd 0.7092 s_c 1.3164
+    joint: joint_count 0 of 300; k_joint 190; joint_flag True
+    size: {"cell": "list(205)", "cells_union_bound": 0.01722272577316762, "joint": 0.017545001798961114, "per_truth_union_bound": 0.03476772757212873}
+    chi2_mean_over_ndf 16.5510421219117 se 0.17028384791449858
+    attribution {"R29": {"centred_count": 271, "driven_by": "bias", "k_flag": 174, "pull_mean": -0.85081360486144, "pull_mean_se": 0.03673138689621951, "pull_sd": 0.636206283367219, "pull_sd_se": 0.02601640963367751}, "R56": {"centred_count": 262, "driven_by": "bias", "k_flag": 174, "pull_mean": 1.039360253883176, "pull_mean_se": 0.04094424896149056, "pull_sd": 0.7091751947905091, "pull_sd_se": 0.029000330320635096}}
+    outlier_cell {"cell": 216, "count": 247, "flagged": false, "k_cell": 173, "pull_mean": 0.3401462581380487, "s_c": 0.6810882078299496}
+    weakened_pass [9, 10, 11, 12, 25, 26, 27, 28, 32, 33, 41, 42, 43, 44, 45, 48, 49, 51, 57, 58, 59, 60, 61, 64, 65, 74, 75, 76, 77, 80, 81, 91, 92, 93, 96, 97, 98, 99, 108, 109, 112, 113, 114, 115, 116, 124, 125, 140, 141, 156, 157, 172, 173] share 0.2634146341463415
+    controls_failed []; stop []
+--- G2R descriptive readouts: keys ['bias', 'leave_out_mec', 'predicted_offset', 'spread_alone']
+    leave_out_mec: flagged_under_minus [29, 30, 56]; changes_no_verdict True; reading 'printed; no reading (the tune under-covers under C_T)'
+    tune_eps {"corr": {"max_abs_delta_rho": 0.041359906411556485, "median_abs_delta_rho": 0.0018564514672311655}, "eps": {"139": {"coupling_to_discarded": 1.2269117755517343e-42, "directions": 139, "eps": 4.331441541944902}, "73": {"coupling_to_discarded": 8.524079555893028e-42, "directions": 73, "eps": 1.9743610196395536}, "retained": {"coupling_to_discarded": 1.1598151364355987e-45, "directions": 204, "eps": 7.475870309046506}}, "rank": {"after": 204, "before": 204}}
+--- COV2D committed readouts keys ['bias', 'clipping_residual', 'leave_out_mec', 'predicted_offset', 'realization_check', 'spread_alone']
