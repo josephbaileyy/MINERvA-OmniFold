@@ -134,6 +134,9 @@ READOUTS = {
     # D1: C_T' at the data (G2R part (a)): readings.sigma gives the median per-bin and integrated relative sigma before
     # ([0], the reported Q) and after ([1], C_new)
     "g2rdata": (f"{FD}/fd/receipts-cov2d/g2r/readout/data/data_g2r.json", "cd975b64"),
+    # D1: the Flux band's median relative sigma under C_new, transcribed from G2R's data products by #1148
+    # (repin/g2r-transcription-20261114/fluxband_g2r.py; limitation-resolver): keyed from its output, not recomputed
+    "fluxbandg2r": ("docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/repin/g2r-transcription-20261114/FLUXBAND.out", "15af01f5"),
     # T1-2: Tier 2 (a), the descriptive split of the two-dimensional test's chi2 (#1041; T2A declaration, T2-BINDING-1)
     # T1-3: Tier 2 (b), the fake-data biases against smaller matrices (#1039; T2B declaration, T2-BINDING-1: descriptive)
     "t2b": (f"{FD}/fd/tier2-20261110/t2b/t2b.json", "0e281a61"),
@@ -271,7 +274,7 @@ def paper_prec(k, x):
 FIGURES = {"fd_g_fig_ratio.pdf": ("fd/gencmp/carbon-figure", "1e6d550e"),
            "fd_g_fig_modes.pdf": ("fd/gencmp-e/rerun1/chain/chdefs/with/figures-a2", "0d6fe57c")}
 # the readouts that are text receipts, not JSON
-TEXT_READOUTS = {"tension", "gprobe", "e2sens", "s1code", "s5cpseudo", "f1prep", "cov2ddecl", "ll5ddecl", "nullcode", "stabdecl", "fd1bdecl"}
+TEXT_READOUTS = {"fluxbandg2r", "tension", "gprobe", "e2sens", "s1code", "s5cpseudo", "f1prep", "cov2ddecl", "ll5ddecl", "nullcode", "stabdecl", "fd1bdecl"}
 TEXT_READOUTS |= {"pubflux", "pubresult", "pubbins"}     # the Supplement's release files (supp_literal_values)
 CELLS = [f"R{i:02d}" for i in range(16)]
 BLOCK = {"stat": "statistical", "interaction": "interaction", "flux": "flux", "detector": "detector",
@@ -2062,6 +2065,10 @@ def d1_values(d):
         assert s[k][0] == bq[k] == g["G10"]["values"][k][1], f"readings.sigma.{k}[0] is not the reported Q's"
     v = {"q2d-sigma-med": f"{s['median_pct'][1]:.2f}", "q2d-sigma-int": f"{s['integral_sigma_pct'][1]:.2f}",
          "q2d-sigma-med-old": f"{s['median_pct'][0]:.2f}", "q2d-sigma-int-old": f"{s['integral_sigma_pct'][0]:.2f}"}
+    (fb,) = re.findall(r"^FLUXBAND :: PASS  Flux band median relative sigma under C_new = ([0-9.]+) %  \(printed ([0-9.]+); "
+                       r"RE-2's value under the current covariance is ([0-9.]+), printed ([0-9.]+)\)$", d["fluxbandg2r"], re.M)
+    assert f"{float(fb[0]):.2f}" == fb[1] and f"{float(fb[2]):.2f}" == fb[3] == "3.71", fb   # 3.71: values.tex's \fluxBand
+    v["q2d-fluxband"] = fb[1]
     po = d["s5q"]["inputs"]["production_outputs"]
     wbands = {re.match(r"U_(.+)_\d+$", k).group(1) for k in po if k.startswith("U_")}
     assert set(g["G6"]["per_band"]) == wbands and len(wbands) == 38, "G2R rebuilt Q's 38 weight bands"
