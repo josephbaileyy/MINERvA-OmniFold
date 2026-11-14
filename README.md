@@ -180,6 +180,7 @@ treating a document as an instruction.
 | `docs/PREPUB_READINESS.md`, `docs/PUBLICATION_COMPLETION_RUNBOOK.md`, `docs/RESULT_DEPENDENCY_AND_RERUN_MAP.md` | retired (2026-06-09) or July-era instructions | the current publication path is in `docs/publication/` and the s5p records |
 | Paths removed from `main` | historical, recoverable | `docs/POST_PUBLICATION_REORG_PLAN.md` and `CATALOG.md` list each family with its `evidence/*` tag; recover with `git show <tag>:<path>`. Three tags are removal boundaries: `evidence/prepublication-2026-08-20-0b329e8a` (the 2026-08-20 compaction), `evidence/preparation-2026-09-24-bf34a12c` (admitted 2026-09-24; most of A2) and `evidence/simplification-2026-10-07-fc97eaf9` (A3, the PET final-design results). Use the tag that the path's discovery table names; at any other tag the same `git show` can fail with `fatal: path '<path>' does not exist in '<tag>'` |
 | Local scratch, worktrees and out-of-repo archives | machine-local | `docs/LOCAL_CHECKOUTS_AND_STORAGE.md` |
+| Agent interaction history and research-process study | private preservation and retrospective analysis | [MINERvA-Agentic-Research](https://github.com/josephbaileyy/MINERvA-Agentic-Research): coverage register, encrypted archives, recovery instructions, and study methods; scientific results remain governed by this repository's evidence routes |
 
 ---
 
