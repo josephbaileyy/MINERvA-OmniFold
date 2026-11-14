@@ -1,0 +1,9 @@
+3c3
+< # Usage: launch-ll5d.sh ovl | calib | calib2 | gate-g18 | gate-ar23 | vicheck | calib3 | gate2-g18 | gate2-ar23 | pilot | bulk | rerun129 <sha256>
+---
+> # Usage: launch-ll5d.sh ovl | calib | calib2 | gate-g18 | gate-ar23 | vicheck | calib3 | gate2-g18 | gate2-ar23 | pilot | bulk | rerun129 | null <sha256>
+24c24,25
+<   *) echo "usage: launch-ll5d.sh ovl|calib|calib2|gate-g18|gate-ar23|vicheck|calib3|gate2-g18|gate2-ar23|pilot|bulk|rerun129 <sha256>"; exit 2 ;;
+---
+>   null) SRC=$H/null/connect-null.sh; ARG=""; LOGP=/pscratch/sd/j/josephrb/ll5d-null-r1/logs/connect-null.log ;;   # section 11 step 7: the null at G18 and AR23
+>   *) echo "usage: launch-ll5d.sh ovl|calib|calib2|gate-g18|gate-ar23|vicheck|calib3|gate2-g18|gate2-ar23|pilot|bulk|rerun129|null <sha256>"; exit 2 ;;

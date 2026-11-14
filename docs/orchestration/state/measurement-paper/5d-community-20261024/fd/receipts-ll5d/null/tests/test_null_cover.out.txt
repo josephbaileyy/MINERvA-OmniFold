@@ -1,0 +1,6 @@
+PASS pass rc=0: declared inputs: protected 2 (in atime-pre: 2), deploy 2 (in atime-pre: 0), products 454 (in atime-pre: 0), missing []
+PASS pass-counts (454 products, 0 in atime-pre)
+PASS constraint-not-in-pre rc=1: declared inputs: protected 2 (in atime-pre: 1), deploy 2 (in atime-pre: 0), products 454 (in atime-pre: 0), missing []
+PASS product-in-pre rc=1: declared inputs: protected 2 (in atime-pre: 2), deploy 2 (in atime-pre: 0), products 454 (in atime-pre: 1), missing []
+PASS cmodel-absent rc=1: declared inputs: protected 2 (in atime-pre: 2), deploy 2 (in atime-pre: 0), products 454 (in atime-pre: 0), missing ['/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T//tnc.9oXxxT/c4/dd/nd-unfolding/pv-ladder/readouts/cmodel_5d.json']
+NULL-COVER TEST PASS
