@@ -321,7 +321,7 @@ install_printstyle_fig migration_resolution.pdf         7ea7fd45dd7276b193f2ca45
 install_printstyle_fig control_corner.pdf               09f291027d63f4f018e651d66be1e6e53aa95ee3ba8c028905621fd2ff0aa477
 # Family 1b (2026-11-14): Fig. 1 from the extended-display dump of one cluster pass (runs/family1b/dumps/), with
 # --from-arrays <dump> --extended-display --print-style.
-install_printstyle_fig control_plots.pdf                59aab046902bdbc7fe2c033768a8df8da9e67cdfef5294f1f0f926da89fe3b39
+install_printstyle_fig control_plots.pdf                dcea96fa289c03a4c204804c2852242d4236ff96330d28877bbd0ac1e3a94602
 
 echo
 echo "== paper-only vector crops =="

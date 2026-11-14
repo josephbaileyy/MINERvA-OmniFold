@@ -217,7 +217,10 @@ def draw(arr, outdir, print_style=False, extended=False):
         R.set_yticks([0.8, 1.0, 1.2])
         if extended and ax in CATCH_DISPLAY:  # the catch bin's "100" tick and break mark
             tk = EXT_TICKS[ax] + [CATCH_DISPLAY[ax]]
-            R.set_xticks(tk, [f"{t:g}" for t in EXT_TICKS[ax]] + ["100"])
+            lab = [f"{t:g}" for t in EXT_TICKS[ax]]
+            if print_style and ax in ("q3", "W"):  # at the printed size the last resolved label runs into "100"
+                lab[-1] = ""
+            R.set_xticks(tk, lab + ["100"])
             R.text(0.5 * (e[-2] + e[-1]), 0.77, r"$/\!/$", ha="center", va="center", fontsize=FS_TICK - 1)
         R.set_xlabel(LABELS[ax], fontsize=FS_LAB)
         R.tick_params(axis="both", which="major", labelsize=FS_TICK)

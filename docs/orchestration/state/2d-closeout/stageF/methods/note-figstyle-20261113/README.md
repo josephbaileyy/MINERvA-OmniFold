@@ -209,7 +209,10 @@ holds every drawn value.
     `runs/family1b/cap-off/`, `cap-after/`). Printed text goes from 4.8–7.6 pt to 7.3–9.3 pt (0.99 of the text width).
     - The capture lists three text overlaps. All three involve the legend cell's tick labels, and that axis is turned off
       (`ax_leg.axis("off")`), so none is drawn.
-    - Installed, sha256 59aab046.
+    - Installed, sha256 59aab046 (d4c7494f8). Then, at the director's request after his review of p. 12, the last resolved
+      tick label before the catch bin is left blank on the q3 and W panels ("10" and "5"), under `--print-style` only.
+      At the printed size those labels ran into the catch bin's "100" ("10100"). The ticks stay. The drawn data are
+      still hash-equal to the off arm (50 of 50, `runs/family1b/cap-after-ticks/`). Installed, sha256 dcea96fa.
 
 ## CITABLE FOR / NOT CITABLE FOR
 

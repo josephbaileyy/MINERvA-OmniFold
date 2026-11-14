@@ -3944,6 +3944,10 @@ docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/runs/
 docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/runs/family1/connect-presence.session.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/runs/family1/dumps/control_corner_arrays.npz	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/runs/family1/dumps/control_plots_arrays.npz	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/runs/family1b/cap-after-ticks/control_plots.pdf.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/runs/family1b/cap-after-ticks/control_plots.png.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/runs/family1b/cap-after-ticks/migration_resolution.pdf.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/runs/family1b/cap-after-ticks/migration_resolution.png.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/runs/family1b/cap-after/control_plots.pdf.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/runs/family1b/cap-after/control_plots.png.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/runs/family1b/cap-after/migration_resolution.pdf.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
