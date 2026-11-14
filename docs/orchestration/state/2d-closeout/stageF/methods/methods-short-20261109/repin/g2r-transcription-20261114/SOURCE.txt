@@ -1,0 +1,8 @@
+# The source copy, checked on the Mac on 2026-11-14T10:44:31Z before the transcription.
+local copy (cov2d's O_NOATIME fetch; ls -l, then shasum -a 256):
+  -rw-r--r--@ 1306260 /Users/josephbailey/cov2d-work/g2r/readout-fetch/node/readout/data/data_g2r.npz
+  3b8cc7ceaef97c3dc6bbcd2c5cfdf853442c347e37e23f64eca54898d0e9eb4b  /Users/josephbailey/cov2d-work/g2r/readout-fetch/node/readout/data/data_g2r.npz
+main's docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/g2r/readout/data/out.sha256.txt at 02971dcd4:
+  cd975b64402325da489ae608277faf5f6d7a7cbebe4974465f90b07c336e083f  data_g2r.json
+  3b8cc7ceaef97c3dc6bbcd2c5cfdf853442c347e37e23f64eca54898d0e9eb4b  data_g2r.npz
+EQUAL
