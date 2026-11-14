@@ -1,0 +1,29 @@
+host=login22 utc=2026-11-14T11:29:02Z
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+code/nd-unfolding/ll5d_b.py: OK
+code/nd-unfolding/fd_1b_inv.py: OK
+code/nd-unfolding/s5n_pseudo.py: OK
+test_null_order.py: OK
+python=/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3 Python 3.11.14
+Traceback (most recent call last):
+  File "/pscratch/sd/j/josephrb/ll5d-null-synth-r1/test_null_order.py", line 94, in <module>
+    sys.exit(main(Path(sys.argv[1]), Path(sys.argv[2])))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pscratch/sd/j/josephrb/ll5d-null-synth-r1/test_null_order.py", line 25, in main
+    import fd_1b_inv as inv
+  File "/pscratch/sd/j/josephrb/ll5d-null-synth-r1/code/nd-unfolding/fd_1b_inv.py", line 50, in <module>
+    import fd_1b_diag as fdg  # noqa: E402
+    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pscratch/sd/j/josephrb/ll5d-null-synth-r1/code/nd-unfolding/fd_1b_diag.py", line 39, in <module>
+    import fd_1b_score as fs  # noqa: E402
+    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pscratch/sd/j/josephrb/ll5d-null-synth-r1/code/nd-unfolding/fd_1b_score.py", line 56, in <module>
+    _spec.loader.exec_module(vl)
+  File "<frozen importlib._bootstrap_external>", line 936, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 1073, in get_code
+  File "<frozen importlib._bootstrap_external>", line 1130, in get_data
+FileNotFoundError: [Errno 2] No such file or directory: '/pscratch/sd/j/josephrb/ll5d-null-synth-r1/code/2d-unfolding/uq/coverage_fixed_truth/score_coverage.py'
+test rc=1
+left in place for removal by the user: /pscratch/sd/j/josephrb/ll5d-null-synth-r1/code and /pscratch/sd/j/josephrb/ll5d-null-synth-r1/test_null_order.py
+end=2026-11-14T11:30:22Z
+ssh_rc=1

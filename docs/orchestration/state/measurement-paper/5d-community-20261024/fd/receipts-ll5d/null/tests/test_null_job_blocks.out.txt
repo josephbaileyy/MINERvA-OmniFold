@@ -1,0 +1,11 @@
+PASS expect-g18 reproduces the fixed set (ec363fd10db805005306e12955bc8651a02a340d5e53b8e81097bc53cb0e1e01 227)
+PASS expect-ar23 reproduces the fixed set (923681b295f1226360ca9ba9ee73c783ad7d9e2d559abd0106bc20d6320f3a93 227)
+PASS expect-absent-product exits 1
+PASS check-clean
+PASS check-rc0-nothing-moved
+PASS check-extra-path
+PASS check-missing-path
+PASS check-verdict-invalid
+PASS check-only-invalid-record
+PASS check-no-record
+NULL-JOB BLOCK TEST PASS

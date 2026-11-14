@@ -1,0 +1,4 @@
+REFUSED: /Users/josephbailey/cov2d-work/ll5d/null/connect-null.sh is 87aa0b654609ccd74fa75c42279116c405690cc645a97157f3995a34351b88d2, not the go's 0000
+rc=2
+usage: launch-ll5d.sh ovl|calib|calib2|gate-g18|gate-ar23|vicheck|calib3|gate2-g18|gate2-ar23|pilot|bulk|rerun129|null <sha256>
+rc=2
