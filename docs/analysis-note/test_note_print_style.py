@@ -53,3 +53,24 @@ def test_apply_and_figsize():
     assert nps.figsize(1.0, 0.5) == (6.5, 3.25)
     w, h = nps.figsize(0.49, 1.0)
     assert abs(w - 3.185) < 1e-12 and abs(h - 3.185) < 1e-12
+
+
+def test_group_r_print_font_is_the_papers_fonts():
+    """restyle_2026_10.PRINT_FONT (group R's font-only pass) is exactly the font keys of PRINT_RC."""
+    sys.path.insert(0, str(ROOT / "2d-unfolding"))
+    rs = importlib.import_module("restyle_2026_10")
+    assert rs.PRINT_FONT == {k: nps.PRINT_RC[k] for k in ("font.family", "font.serif", "mathtext.fontset")}
+
+
+def test_group_r_print_font_is_opt_in():
+    """Without --print-font, on() changes no rcParams; with it, only PRINT_FONT's keys change, and only under --style."""
+    code = ("import sys, argparse, matplotlib as mpl; sys.path.insert(0, sys.argv[1]); import restyle_2026_10 as rs;"
+            "ap = argparse.ArgumentParser(); rs.add_option(ap); before = dict(mpl.rcParams);"
+            "assert rs.on(ap.parse_args(['--style', rs.STYLE])) and dict(mpl.rcParams) == before;"
+            "assert not rs.on(ap.parse_args(['--print-font'])) and dict(mpl.rcParams) == before;"
+            "assert rs.on(ap.parse_args(['--style', rs.STYLE, '--print-font']));"
+            "changed = {k for k in before if mpl.rcParams[k] != before[k]};"
+            "assert changed <= set(rs.PRINT_FONT), changed;"
+            "want = mpl.RcParams(rs.PRINT_FONT); assert all(mpl.rcParams[k] == want[k] for k in want); print('ok')")
+    out = subprocess.run([sys.executable, "-c", code, str(ROOT / "2d-unfolding")], capture_output=True, text=True)
+    assert out.returncode == 0 and out.stdout.strip() == "ok", out.stderr
