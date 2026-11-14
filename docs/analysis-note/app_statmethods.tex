@@ -642,3 +642,20 @@ Same-ensemble $|r|\leq1$: $68.71\%$ & \S\ref{sec:val-other} &
   \item \textbf{Band independence in $\mathbf{C}^{\syst}$.} Different physics sources are taken as uncorrelated; the one known exception, the Bashyal flux\,$\leftrightarrow$\,muon-E joint block, is treated in \S\ref{sec:rank}.
   \item Closure passes apply to tested perturbations; unphysical deformations far outside training have no guarantee of passing.
 \end{enumerate}
+
+\subsection{Same-ensemble pull diagnostic}
+\label{sec:pull-diagnostic}
+% History restructure (2026-11-13): moved verbatim from sec_validation.tex (sec:val-other) at 2cac548bd:228-239;
+% history-cuts/sec_validation.md row V2. The 2D coverage statements are in sec:coverage and sec:coverage-tunes.
+\paragraph{Same-ensemble pull diagnostic (not a coverage test).} An earlier ensemble of $N_{\text{toy}}=200$ 2D closure unfolds (Ref.~\cite{NoteRecords2026}, \recentry{coverage-toys}) uses weighted MC reco pseudo-data and stores the truth marginals in truth histograms. Each toy has its own bootstrap seed $k$ and per-event Poisson(1) draws, as in production, with seeds chosen not to collide with the production replicas. Toy seeds are independent. Bins within a toy are correlated. The MC bootstrap multiplies the truth weight. It fluctuates both the unfolded result and the stored truth. The stored truth varies in all 205 reported bins, and its all-toy mean $\bar X^{\text{truth}}$ is therefore not an independent fixed truth for a split-sample coverage claim. It only centers a same-ensemble diagnostic.
+% (\texttt{sbatch\_coverage\_toys\_MEFHC\_200.sh}; rollup
+% \texttt{uq/coverage\_toys.py}, summary \texttt{uq/coverage/coverage\_summary.txt})
+% CLI: \texttt{-{}-closure} with \texttt{-{}-bootstrap-seed $k$}; truth histogram \texttt{hTruthXSec2D}
+% truth weight: \texttt{w\_truth}; stored truth: \texttt{hTruthXSec2D}
+
+In reported bin $i$ with $\bar X^{\text{truth}}_{i}>0$, define $\sigma_{i}$ as the across-toy sample standard deviation (denominator $N_{\text{toy}}-1$) and standardized residual $r^{(t)}_{i}=(U^{(t)}_{i}-\bar X^{\text{truth}}_{i})/\sigma_{i}$. Compare the per-bin fraction $c_{i}$ of toys with $|r^{(t)}_{i}|\le1$ to the unit-normal $\Phi(1)-\Phi(-1)=\mathrm{erf}(1/\sqrt 2)\approx0.6827$ and the mean absolute pull $\langle|r|\rangle$ to $\sqrt{2/\pi}$. The fraction with $|r|\le1$ is \SI{\pullFrac}{\percent} (Gaussian reference $68.27\%$; $\Delta = +0.44\%$; median $68.50\%$), and $\langle|r|\rangle=\pullMeanAbs$ against $\sqrt{2/\pi}=\pullGauss$ (within $0.5\%$). The signed residual mean is $+0.006 \pm 0.082\,\sigma$, consistent with zero. The within-bin fraction is above \SI{65}{\percent} in \SI{97.6}{\percent} of bins (only $5$ of $205$ fall below). These show that the standardized toy residuals are approximately normal.
+
+Because $\sigma_i$ is estimated from the same toys that are evaluated, these figures diagnose standardized pulls and Gaussianity only and are not a coverage test of the bootstrap band. No coverage number is quoted from this ensemble, and the 2D coverage statements are the fixed-truth test of \S\ref{sec:coverage} and the held-out-tune test of \S\ref{sec:coverage-tunes}.
+% Note register round n1, batch n1-B (2026-10-25; R-N1): the separate sentence denying a coverage measurement was
+% dropped; the closing sentence ("not a coverage test of the bootstrap band") states it.
+% Search: coverage-toys; coverage_summary; same-ensemble pull @ ddf16f10

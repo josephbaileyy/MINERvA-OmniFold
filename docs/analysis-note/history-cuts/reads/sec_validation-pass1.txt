@@ -1,0 +1,26 @@
+# sec_validation meaning read, pass 1: codex-school gpt-6.1-sol, high, read-only; prompt: PROMPT-two-question.txt plus a note that old/new hold §5 then App. A
+**QUESTION 1 — Remaining text**
+
+| Row | Verdict | Reason |
+|---|---|---|
+| V1a | PASS | Removing “declared” preserves the claim because the same paragraph still identifies the test as declared before it ran. |
+| V1b | PASS | Removing “declared” loses no timing qualifier because the paragraph retains that thresholds were fixed from the null before any pseudo-experiment was read. |
+| V2 | PASS | The diagnostic moves verbatim to App. A, and the replacement pointer correctly preserves its identity, 200-toy count, dimensionality and non-coverage status. |
+| D6 | PASS | Every claim matches the original, including the tested band’s identity, interim failure and stop, partial attribution under the rule, rebuild, untested quoted ensemble and attribution clause written after pilot pulls were seen. |
+| D7 | PASS | The original supports the rebuilt band’s superseded status, post hoc rescoring on the same toys and prior knowledge of the fixed-truth test’s toys and result. |
+
+No numerical value or value macro changes; V2’s pointer repeats existing values.
+
+**QUESTION 2 — Removed or shortened items**
+
+| Item | Classification | Reason |
+|---|---|---|
+| V1a: redundant “declared” | LEDGER | The deleted occurrence adds no understanding beyond the retained statement that the test was declared before it ran; its source pointer remains in the cut log. |
+| V1b: redundant “declared” | LEDGER | The deleted occurrence adds no understanding beyond the retained threshold-setting chronology; its source pointer remains in the cut log. |
+| V2: three diagnostic paragraphs | NEEDED | Their construction, definitions and limitations determine reproducibility and evidential independence, and all remain verbatim in printed App. A with a section pointer. |
+
+No NEEDED item was lost from the printed note; the moved source comments were not printed text.
+
+**Disclosure after seeing results:** None disappeared: the secondary analysis added after the pilot, the attribution clause written after seeing pilot pulls, and the post hoc rescoring and diagnostic remain in §5; D6–D7 also preserve relevant chronology.
+
+OVERALL: PASS — FAILs: none.
