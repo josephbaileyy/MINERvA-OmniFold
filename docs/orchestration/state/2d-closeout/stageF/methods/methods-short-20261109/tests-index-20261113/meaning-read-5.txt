@@ -1,0 +1,7 @@
+No problems; no fix needed.
+
+1. **Same facts:** “Specified” preserves the stated design count.
+2. **Supported:** Line 236 specifies 300 per truth; line 66 identifies the two tune truths. “Its staged redesign specified” describes the planned count without asserting that any pseudo-experiments ran.
+3. **No conflict:** The wording is consistent with the paragraph’s explicit stop before any coverage pseudo-experiment ran and its unused optional plug-in truth.
+
+VERDICT: PASS

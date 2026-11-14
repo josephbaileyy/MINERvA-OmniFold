@@ -161,7 +161,7 @@ add("8", "S12", "Threshold", r"one-sided binomial against the draw-matched null:
 add("8", "S12", "Result", r"under-covers at both tunes: no pseudo-experiment of \fvval{cov2d-ntoys} in the joint region at either tune", IX, r"under-covers at both tunes: no pseudo-experiment of \fvval{cov2d-ntoys} lies in the joint region at either tune")
 add("8", "S12", "Result", "Flagged cells at each tune (counts and cell lists)", IX, r"Flagged cells: \fvval{cov2d-nflags-ar23} at \fvval{f1-tune-ar23-short}")
 # ---- test 9 (Joseph's ruling on items 2-3, 2026-11-13: test 9's own design in its records' terms)
-L9 = r"Its staged redesign declared \fvval{fd1b-ntoys} pseudo-experiments at each tune."
+L9 = r"Its staged redesign specified \fvval{fd1b-ntoys} pseudo-experiments at each tune."
 add("9", "S11", "Estimator", "the estimator", "moved", r"It is unfolded with the estimator and the nominal simulation")
 add("9", "S11", "Truth(s)", r"\fvval{f1-tune-g18-short}, \fvval{f1-tune-ar23-short} (the two tunes)", "already", r"A first coverage test of the five-observable covariance at the two tunes gave no coverage result.")
 add("9", "S11", "Truth(s)", "and a plug-in truth: corrected to the record, declared as an option and not included", "moved", r"The design allowed an optional plug-in truth, which was not used.")

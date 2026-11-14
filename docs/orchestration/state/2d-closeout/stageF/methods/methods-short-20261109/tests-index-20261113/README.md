@@ -114,5 +114,7 @@ The director accepted a1bd56bfe. Joseph ruled on the three items (2026-11-13: "y
   was declared as an option and was not included". The director, in line with Joseph's ruling against process language,
   reworded it to "The design allowed an optional plug-in truth, which was not used." `meaning-read-4.txt` checks that
   one sentence against `meaning-read-4-records.txt`: PASS.
+  S8.6's sentence 2, "Its staged redesign declared …", was reworded on the same grounds to "… specified …"
+  (record :236). `meaning-read-5.txt` checks it against `meaning-read-5-records.txt`: PASS.
 - `meaning-read-3.txt`: the codex-school meaning read of this round, with the record excerpts
   (`meaning-read-3-records.txt`).
