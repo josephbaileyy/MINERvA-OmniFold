@@ -66,5 +66,21 @@ ok = raw.count(r"\label{tab:gen16}") == 1 and sha == GEN16_SHA
 bad += not ok
 print(f"{'OK ' if ok else 'BAD'} GEN16  labels={raw.count(chr(92) + 'label{tab:gen16}')} block_sha={sha[:16]}"
       + ("" if ok else "  tab:gen16 CHANGED: STOP to the director and re-measure"))
+# #981 checks these values.tex macros against its records (c.macro and BENCH's ("macro", m) at 91f9cb615). A macro
+# check only binds if the paper still prints the macro: if the paper switches to a key, values.tex can keep the old
+# value and #981's check passes on a number nothing prints. Each macro must be printed (\m not followed by a letter,
+# after comment stripping, in the paper, Supplement and abstract together), or its re-sourced key (RESOURCED, with
+# its row) must be printed as \fvval{key}.
+MACROS = ["chiPaper", "fluxBand", "pullRMS", "ratioTot", "sigTwoD", "uqIntegral", "uqMedian"]
+RESOURCED = {"uqMedian": ("q2d-sigma-med", "RP42"), "uqIntegral": ("q2d-sigma-int", "RP42")}
+alltext = " ".join(cache.setdefault(d, text(d)) for d in DOCS)
+for m in MACROS:
+    n = len(re.findall(r"\\" + m + r"(?![A-Za-z])", alltext))
+    alt, row = RESOURCED.get(m, (None, None))
+    k = alltext.count(r"\fvval{" + alt + "}") if alt else 0
+    ok = n >= 1 or k >= 1
+    bad += not ok
+    print(f"{'OK ' if ok else 'BAD'} MACRO  \\{m} printed {n}" + (f"; \\fvval{{{alt}}} printed {k} ({row})" if alt else "")
+          + ("" if ok else "  #981 checks this macro but nothing prints it: re-source the check to the printed key"))
 print("REPIN-CHECK", "PASS" if not bad else f"FAIL ({bad})")
 sys.exit(1 if bad else 0)
