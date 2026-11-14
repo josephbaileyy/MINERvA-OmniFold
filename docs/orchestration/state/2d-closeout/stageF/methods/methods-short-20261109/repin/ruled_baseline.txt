@@ -32,3 +32,12 @@ the paper's tab:fd16 has no row 'GENIE + MEC, $(\\Eavail,W)$ shape'
 the paper's tab:fd16 has no row 'GENIE + MEC, hybrid'
 the paper's tab:fd16 has no row 'NuWro shape, noise-free closure'
 the paper's tab:fd16 has no row 'NuWro, $(\\pT,\\pPar,\\Eavail)$ shape'
+sec-fd16_tunes.csv: f1-tune-ar23 is '\\mbox{AR23\\_20i\\_00\\_000}' in values_fived16.tex, the record gives 'AR23\\_20i\\_00\\_000'
+sec-fd16_tunes.csv: f1-tune-g18 is '\\mbox{G18\\_10a\\_02\\_11b}' in values_fived16.tex, the record gives 'G18\\_10a\\_02\\_11b'
+sec-repro2d_benchmark.csv: the paper at HEAD does not print '73 of its 205 eigenvalues exceed $10^{-4}$ of the largest'
+sec-repro2d_benchmark.csv: the paper at HEAD does not print 'its normalization part is $\\chi^{2}=0.04$, against 465 for the shape'
+sec-repro2d_benchmark.csv: the paper at HEAD does not print 'Keeping the 73 directions with $\\lambda/\\lambda_{\\max}>10^{-4}$ gives $\\chi^{2}=136$, and the 139 with $\\lambda/\\lambda_{\\max}>10^{-6}$ give $\\chi^{2}=
+sec-repro2d_benchmark.csv: the paper prints '73 of its 205 eigenvalues exceed $10^{-4}$ of the largest' 0 times, not once
+sec-repro2d_benchmark.csv: the paper prints 'its normalization part is $\\chi^{2}=0.04$, against 465 for the shape' 0 times, not once
+sec-repro2d_benchmark.csv: the paper prints 'Keeping the 73 directions with $\\lambda/\\lambda_{\\max}>10^{-4}$ gives $\\chi^{2}=136$, and the 139 with $\\lambda/\\lambda_{\\max}>10^{-6}$ give $\\chi^{2}=285$.' 0 times, 
+values_fived16.tex is not a fresh generation of make_values_fived16.py; regenerate it first

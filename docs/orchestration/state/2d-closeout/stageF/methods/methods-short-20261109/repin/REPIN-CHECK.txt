@@ -1,4 +1,4 @@
-#977 head a5e3005fd; 40 rows
+#977 head 89b5969b8; 47 rows
 OK  RP01   resource paper      count=1  The sixteen-cell cross section that the estimator gives on the data il
 OK  RP02   resource paper      count=1  The held-out-tune tests provide partial evidence on bias at truths hel
 OK  RP03   resource paper      count=1  The dependence on the prior's generator shape is reported separately a
@@ -48,5 +48,12 @@ OK  RP24   term     paper      old=0 new=14  reporting cells -> reported cells
 OK  RP33n  resource paper      count=1  its normalization part is $\chi^{2}=\fvval{re2-chi2-norm}$, against \f
 OK  RP33e  resource paper      count=1  \fvval{re2-modes-4} of its 205 eigenvalues exceed $10^{-4}$ of the lar
 OK  RP33k  resource paper      count=1  Keeping the \fvval{re2-modes-4} directions with $\lambda/\lambda_{\max
+--  RP34   code     B48 B109-122 B532-560 B1049-1052 P63-89  D1 (DECISION-20261114, PR #1145): sec-uq2d_universe.csv becomes C_univ,new, G2R 
+--  RP35   code     B111-122 B574-579 P67-69 P87-89  sec-uq2d_Q.csv and sec-uq2d_s5_total.csv become C_new's Q and s5_total. The exac
+--  RP36   code     B103-106 B561-571 B586-612  the per-block cross-checks read the old Q: export2d (cov2d_Q_205.json.gz, sqrt(t
+--  RP37   code     B545-549 B586-598 R205-210  fig-validation_result2d.csv: the x column is unchanged (the rebuild changes no c
+--  RP38   code     B465-470  sec-repro2d_benchmark.csv rows median_relative_uncertainty (6.41 -> 6.46) and in
+--  RP39   code     B1297-1303 P102-109 B533-536 R212 R218 R242  PROVENANCE's "THE 2D ARRAYS" names cov2d_Q_205.npz (7153b194…) as the arrays' so
+--  RP40   code     B765-767 R304-307 B849-871 P186-204  2D SCOPE line and the OUTCOME-20261108 record quotes: under C_T' the coverage co
 OK  GEN16  labels=1 block_sha=65b02f09daacba48
 REPIN-CHECK PASS
