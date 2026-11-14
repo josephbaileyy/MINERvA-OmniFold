@@ -119,7 +119,7 @@ Agreement between the two subtractions does not make the choice between them arb
 
 \paragraph{The standard \(N\)-dimensional chain uses purity.} The entire standard five-dimensional chain, that of the configuration-(a) central value and its five-axis covariance, uses binned purity (\S\ref{sec:method-algo}): the central unfold, $169$ vertical-band unfolds, $18$ detector unfolds and $10$ endpoint unfolds of the re-selected lateral bands.
 
-The existing endpoint unfolds, produced in July 2026, used purity, as established by elimination from their job scripts and logs (Ref.~\cite{NoteRecords2026}, \recentry{bkg-mode-elimination}). Current production fixes the background treatment in a configuration object that rejects every other mode. The standard job script passes the driver's background-mode option (\texttt{-{}-bkg-mode}) explicitly from that configuration, and the value is written into the record of every endpoint unfold as it is produced, so the background treatment of each new component can be read from the component itself; this changes how the treatment is recorded, not the treatment itself.
+The existing endpoint unfolds used purity, as established by elimination from their job scripts and logs (Ref.~\cite{NoteRecords2026}, \recentry{bkg-mode-elimination}). Current production writes the background treatment into the record of every endpoint unfold as it is produced, so the background treatment of each new component can be read from the component itself; this changes how the treatment is recorded, not the treatment itself.
 % Note register round n2 (R-N2b): the elimination is held verbatim by the bkg-mode-elimination records entry
 % (app_provenance.tex).
 
