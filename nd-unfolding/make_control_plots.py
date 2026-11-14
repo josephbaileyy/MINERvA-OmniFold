@@ -42,6 +42,16 @@ LABELS = {"pt": r"$p_T$ (GeV/c)", "pz": r"$p_\parallel$ (GeV/c)",
 # branch suffix per axis ("" = the bare pT branch: measured/sim/sim_background/MC)
 SUFFIX = {"pt": "", "pz": "_pz", "eavail": "_eavail", "q3": "_q3", "W": "_W"}
 
+# --extended-display: the note's committed Fig. 1 (docs/analysis-note/figures/control_plots.pdf, installed by 1b2925259 on
+# 2026-07-09, "extended-range control plots"; the code that drew it was not committed). Its binning and display were
+# recovered from that PDF's own vector paths: each panel's stack-outline vertices, calibrated by its x tick labels
+# (note-figstyle-20261113 README). q3 and W are filled on finer edges than the analysis grid; E_avail, q3 and W draw the
+# wide catch bin compressed, ending at the display position below, with a "//" mark and a "100" tick.
+EXT_EDGES = {"q3": [0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.6, 2.0, 2.6, 3.2, 4.0, 5.0, 6.5, 8.0, 10.0, 100.0],
+             "W": [0, 0.8, 1.1, 1.4, 1.7, 2.0, 2.4, 2.8, 3.5, 5.0, 100.0]}
+CATCH_DISPLAY = {"eavail": 3.66, "q3": 11.4, "W": 5.88}
+EXT_TICKS = {"eavail": [0, 1, 2, 3], "q3": [0, 2, 4, 6, 8, 10], "W": [0, 1, 2, 3, 4, 5]}
+
 
 def edges_for(ax):
     import unfold_2d_omnifold_unbinned as u2d
@@ -85,6 +95,14 @@ def fill(args):
         h_bkg[ax] = d_bkg.Histo1D(model, f"sim_background{SUFFIX[ax]}", "w_bkg")
         m2 = ROOT.RDF.TH2DModel(f"m_{ax}", "", len(e) - 1, e, len(e) - 1, e)
         h_mig[ax] = d_sig.Histo2D(m2, f"MC{SUFFIX[ax]}", f"sim{SUFFIX[ax]}", "w_reco")
+    h_ext = {}
+    if getattr(args, "extended_display", False):  # the finer q3 and W fills, in the same event loop
+        for ax, ee in EXT_EDGES.items():
+            e = np.asarray(ee, float)
+            model = ROOT.RDF.TH1DModel(f"x_{ax}", "", len(e) - 1, e)
+            h_ext[ax] = (e, d_data.Histo1D(model, f"measured{SUFFIX[ax]}"),
+                         d_sig.Histo1D(model, f"sim{SUFFIX[ax]}", "w_reco"),
+                         d_bkg.Histo1D(model, f"sim_background{SUFFIX[ax]}", "w_bkg"))
 
     arr = {"pot_scale": np.float64(pot_scale)}
     for ax in AXES:
@@ -97,10 +115,15 @@ def fill(args):
         H = h_mig[ax].GetValue()
         arr[f"mig_{ax}"] = np.array([[H.GetBinContent(ix + 1, iy + 1) for iy in range(n)]
                                      for ix in range(n)])  # [truth, reco]
+    for ax, (e, hd, hs, hb) in h_ext.items():
+        arr[f"extedges_{ax}"] = e
+        arr[f"extdat_{ax}"], arr[f"extderr_{ax}"] = th1_np(hd.GetValue())
+        arr[f"extsig_{ax}"], arr[f"extserr_{ax}"] = th1_np(hs.GetValue())
+        arr[f"extbkg_{ax}"], arr[f"extberr_{ax}"] = th1_np(hb.GetValue())
     return arr
 
 
-def draw(arr, outdir, print_style=False):
+def draw(arr, outdir, print_style=False, extended=False):
     """The two figures from fill()'s arrays. print_style: the note's print style (sizes for the printed width)."""
     pot_scale = arr["pot_scale"]
     import matplotlib
@@ -139,12 +162,15 @@ def draw(arr, outdir, print_style=False):
                                               hspace=0.05)
         A = fig.add_subplot(gs[0])
         R = fig.add_subplot(gs[1], sharex=A)
-        e = arr[f"edges_{ax}"]
+        k = "ext" if extended and f"extedges_{ax}" in arr else ""
+        e = arr[f"{k}edges_{ax}"] if k else arr[f"edges_{ax}"]
         # drop the wide catch bin from the visible axis (keep it in the numbers)
         nshow = len(e) - 2 if e[-1] >= 99 else len(e) - 1
-        dat, derr = arr[f"dat_{ax}"], arr[f"derr_{ax}"]
-        sig, serr = arr[f"sig_{ax}"], arr[f"serr_{ax}"]
-        bkg, berr = arr[f"bkg_{ax}"], arr[f"berr_{ax}"]
+        dat, derr = arr[f"{k}dat_{ax}"], arr[f"{k}derr_{ax}"]
+        sig, serr = arr[f"{k}sig_{ax}"], arr[f"{k}serr_{ax}"]
+        bkg, berr = arr[f"{k}bkg_{ax}"], arr[f"{k}berr_{ax}"]
+        if extended and ax in CATCH_DISPLAY:  # draw the catch bin, compressed to its display width
+            e = np.array(e, float); e[-1] = CATCH_DISPLAY[ax]; nshow = len(e) - 1
         mc = (sig + bkg) * pot_scale
         summary[ax] = (dat.sum(), mc.sum())
         ctr = 0.5 * (e[:-1] + e[1:])
@@ -186,6 +212,10 @@ def draw(arr, outdir, print_style=False):
                    fmt="o", color="k", ms=MS, elinewidth=ELW, zorder=5)
         R.set_ylim(0.77, 1.30)
         R.set_yticks([0.8, 1.0, 1.2])
+        if extended and ax in CATCH_DISPLAY:  # the catch bin's "100" tick and break mark
+            tk = EXT_TICKS[ax] + [CATCH_DISPLAY[ax]]
+            R.set_xticks(tk, [f"{t:g}" for t in EXT_TICKS[ax]] + ["100"])
+            R.text(0.5 * (e[-2] + e[-1]), 0.77, "//", ha="center", va="center", fontsize=FS_TICK)
         R.set_xlabel(LABELS[ax], fontsize=FS_LAB)
         R.tick_params(axis="both", which="major", labelsize=FS_TICK)
         if i % 3 == 0:
@@ -202,7 +232,7 @@ def draw(arr, outdir, print_style=False):
     ax_leg.text(0.5, 0.13, r"MINERvA ME FHC, $1.06\times10^{21}$ POT",
                 transform=ax_leg.transAxes, ha="center", va="center",
                 fontsize=FS_TAG, color="0.25")
-    ax_leg.text(0.5, 0.02, "wide catch bins not drawn",
+    ax_leg.text(0.5, 0.02, "wide catch bin compressed to 100 at right" if extended else "wide catch bins not drawn",
                 transform=ax_leg.transAxes, ha="center", va="center",
                 fontsize=FS_NOTE, color="0.45")
     out1 = os.path.join(outdir, "control_plots.png")
@@ -269,6 +299,8 @@ def main():
     ap.add_argument("--dump-arrays", default=None, help="write every drawn value to this .npz after filling")
     ap.add_argument("--from-arrays", default=None, help="draw from this .npz (no ROOT)")
     ap.add_argument("--print-style", action="store_true", help="draw in the note's print style")
+    ap.add_argument("--extended-display", action="store_true",
+                    help="fill and draw the committed Fig. 1's display (finer q3, W; compressed catch bins)")
     args = ap.parse_args()
     if args.from_arrays:
         with np.load(args.from_arrays, allow_pickle=False) as z:
@@ -278,7 +310,7 @@ def main():
     if args.dump_arrays:
         np.savez(args.dump_arrays, **arr)
         print(f"[ctrl] wrote {args.dump_arrays}")
-    draw(arr, args.outdir, args.print_style)
+    draw(arr, args.outdir, args.print_style, args.extended_display)
 
 
 if __name__ == "__main__":

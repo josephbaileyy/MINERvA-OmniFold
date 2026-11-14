@@ -3950,6 +3950,7 @@ docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/tools
 docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/tools/arms_land.sh	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/tools/capture_any.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/tools/compare_any.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/tools/edges_from_pdf.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/tools/fakeroot/ROOT.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/tools/identity_family1.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-fixes/FIX-20261025-negweight-scope.md	tracked	LIVE	state-artifact	2d-closeout	20261025	open		route-only	no
