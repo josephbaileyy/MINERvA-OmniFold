@@ -1,0 +1,161 @@
+Each excerpt names its file, lines and the commit it was read at; the date of the record's first commit is given in brackets.
+
+######## F1 (the stabilization probe)
+=== docs/orchestration/state/measurement-paper/5d-community-20261024/FD-STAB-DECLARATION.md:1-14 [first commit f544c6bbb, 2026-11-03]
+# FD-STAB DECLARATION: a stabilisation probe of the estimator on simulated GiBUU-like pseudo-data (2026-11-03)
+
+**Authority.** Joseph, 2026-11-02, asked whether to declare a stabilisation probe on simulated pseudo-data and
+whether 1B's stage 1 should wait for it:
+> Probe, 1B waits (Recommended)
+
+The sha256 of the text plus a final newline begins `a830b9c7dd691581`
+(`DECISION-20261102-joseph-bias-and-stabilisation-routes.md`, merged 86a7b4b4, "What is decided" item 1).
+
+**Written by** the limitations-catalog session, at the director's offer. The design comes from the scope report
+(`state/2d-closeout/stageF/methods/secondary-results/scope-bias-stabilisation-20261102/REPORT.md` §1, B2–B4, and §5).
+**Process:**
+1. code first, with mutation tests (§8);
+2. an independent audit, which is not this session and is arranged by the director;
+
+=== docs/orchestration/state/measurement-paper/5d-community-20261024/FD-STAB-DECLARATION.md:15-20
+3. the director's two-step binding;
+4. a dry run on real inputs at binding: one short single-node regular job, by a cluster lane (§11).
+
+**Revised after the independent audit** (`coverage-5b-audit`, 2026-11-03, PR #720), item by item in §12.
+
+Nothing runs before the binding.
+
+=== docs/orchestration/state/measurement-paper/5d-community-20261024/FD-STAB-BINDING-1.md:1-12 [bb7e2ffbb, 2026-11-04]
+# BINDING 1 (step one): the B4 stabilisation probe (director, 2026-11-04)
+
+**Binds** [`FD-STAB-DECLARATION.md`](FD-STAB-DECLARATION.md), sha256
+`06d8334ae437bf24dcf33229da48991add4596b71f4c28d5ada075669d7856e4`, as merged in PR #720 at
+**M = `dd47f98eb4437bd354de78b90db0f05fe1f564b8`** (PR head `e42cca4c`).
+
+**Under** `DECISION-20261102-joseph-bias-and-stabilisation-routes.md` items 1–3 (#714).
+
+**The code, by blob at M:**
+
+| file | blob |
+|---|---|
+
+=== docs/orchestration/state/measurement-paper/5d-community-20261024/FD-STAB-BINDING-2.md:1-12 [578136817, 2026-11-04]
+# BINDING 2: the B4 stabilisation probe's full run (director, 2026-11-05)
+
+**Binds** the full run of [`FD-STAB-DECLARATION.md`](FD-STAB-DECLARATION.md) (sha256
+`6c91c0ccbb8061c0dfe755f2283ecbf0f12ba001737876df09f8882eca4ca2b4`) under
+[`FD-STAB-ADDENDUM-A1.md`](FD-STAB-ADDENDUM-A1.md) (sha256
+`277f6c799aca808315ce519f427007b7dec5da0c514dc5d0c229841ec01e23b2`). Both are taken as they stand at
+**M_A1 = `cc54d86f7ac66c1346fa69e5894b2d2f000fb09c`**.
+
+**Under** [`FD-STAB-BINDING-1.md`](FD-STAB-BINDING-1.md) ruling 4 and [`FD-STAB-BINDING-1-A1.md`](FD-STAB-BINDING-1-A1.md)
+ruling 5, with its Director's correction (#766).
+
+**The code is unchanged since M_A1.** These are its blobs at M_A1, and they are the same at main:
+
+=== docs/orchestration/state/measurement-paper/5d-community-20261024/FD-STAB-BINDING-2.md:26-27, 34, 39 and 56
+## The dry run's record
+
+| `dry/DONE` (mode dry, 9 tasks, 9 ended, rc 0, job 60827080) | `ed98090ecfb32c6977256c57b5266183bcd77acf5dbdd5170d02422c4a61e504` |
+- **Job 60827080: COMPLETED 0:0.** TimeLimit was 00:45:00, as parsed and printed at submission. Elapsed was 992 s on
+1. **Step two is bound.** The full run is `sbatch_fd_stab.sh full <deploy> <M_A1> <OUT> 7.2500`, in the dry run's
+
+######## F2 (the mechanism study)
+=== docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rounding-stability-20261106/RS1-DECLARATION.md:1-14 [a2b67496d, 2026-11-06]
+# RS1 DECLARATION: the mechanism of the rounding instability, on simulated pseudo-data (2026-11-06)
+
+**For** audit by `coverage-5b-audit` and binding by the director. **Nothing has run, and nothing runs before the
+binding.**
+
+**Written by** the rounding-instability lane, a Claude session named `director-helper-3`, under the director's
+handoff `HANDOFF-20261106-lane-rounding-instability.md`, which lives outside the repository. All repository
+citations are at `origin/main` `d95ed680` unless stated.
+
+**Authority.**
+- `DECISION-20261106-joseph-diagnoses-jinst-corrections.md:40-41`, item 1.3: "The rounding-instability fix. First the
+  spread is measured on the sixteen reported cells. Then an ensemble-averaged estimator is declared as a variant. It
+  is declared, audited and bound before it runs."
+- `DECISION-20261106-joseph-plateau-next-work.md:45-46`, "What is decided" item 1: "The mechanism is found first,
+
+=== docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rounding-stability-20261106/RS1-BINDING-1.md:1-12 [d53cb7984, 2026-11-06]
+# BINDING 1: RS1, the rounding-instability mechanism study, its design (director, 2026-11-07)
+
+**Binds the design of** [`RS1-DECLARATION.md`](RS1-DECLARATION.md), as merged in PR #867 (merge `de73f6c8`) at the
+declaration head **D = `0d51e05456810dc568fb939eca1fb319acd7a3d4`** (the file's sha256 begins `dbfb0c941b2ad699`).
+**No code is bound here.** The code is bound in binding 2, at its own M.
+
+**Under:**
+- `DECISION-20261106-joseph-diagnoses-jinst-corrections.md` item 1.3;
+- `DECISION-20261106-joseph-plateau-next-work.md` item 1, at main `6d0aca7f`.
+
+## What the director checked
+
+
+=== docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rounding-stability-20261106/RS1-BINDING-2.md:1-12 [a23d31473, 2026-11-07]
+# BINDING 2: RS1, the rounding-instability mechanism study, its code (director, 2026-11-07)
+
+**Binds the code** of RS1, as merged in PR #882 at **M = `e306087e68fd497541d32b440848a40f7f29611e`**. The code head
+is `a884aeb8`, and the code files are identical at the two commits.
+
+| file | sha256 (prefix) |
+|---|---|
+| `nd-unfolding/rounding_mechanism_probe.py` | `b2e6785837470d8e` |
+| `nd-unfolding/rounding_mechanism_analyze.py` | `5542278154f701d2` |
+| `nd-unfolding/sbatch_rs1.sh` | `b4fc2f69131d292e` |
+
+The tests are in `nd-unfolding/tests/test_rounding_mechanism.py` and the harness in
+
+######## F3 (the sixteen-cell coverage test, 1B, and its stage-1 stop rule)
+=== docs/orchestration/state/measurement-paper/5d-community-20261024/FD-1B-DECLARATION.md:1-12 [fcdc1afed, 2026-10-30]
+# DECLARATION 1B with 4A, stage 1: the coverage protocol, fixed before any toy, and the stages that follow (2026-10-30)
+
+**By** the measurement session `coverage-5b` (ListAgents), for the director to bind.
+
+**Under** [`DECISION-20261030-joseph-fund-1b-with-4a.md`](../../../DECISION-20261030-joseph-fund-1b-with-4a.md)
+(Joseph: "Fund it (Recommended)"): 1B runs with 4A as
+[`LIMITATION-PLAN-ADDENDUM-20261028.md`](LIMITATION-PLAN-ADDENDUM-20261028.md) §1 and §4.2 scope them, "declared and
+bound in stages; the nominal control must pass before the production toys run", about 44.5–145 CPU node-h, every job
+under 12 h, CPU only. Item 3 of
+[`DECISION-20261030-joseph-4b-not-now-5b-audit-then-add.md`](../../../DECISION-20261030-joseph-4b-not-now-5b-audit-then-add.md)
+fixes which matrix 1B tests (§2 below).
+
+
+=== docs/orchestration/state/measurement-paper/5d-community-20261024/FD-1B-STAGED-AMENDMENT-2.md:202-206 at its first commit 2b8859efc [2026-11-03]
+
+**INVALID versus STOP** (the audit's P1, the director's ruling):
+- **STOP** is only N1 (`exact.*.rows_above` > 0) or §2b (`denominator.draws_with_nonpositive_cells` non-empty), on a
+  receipt that completed and wrote `receipt.json`.
+- **INVALID** is anything that stops the receipt from deciding. It writes no `receipt.json`, costs only its job, and
+
+=== the same file :220-224 at b3f27fab3 (the commit that recorded the stage's receipt, 2026-11-06)
+
+**INVALID versus STOP** (the audit's P1, the director's ruling):
+- **STOP** is only N1 (`exact.*.rows_above` > 0) or §2b (`denominator.draws_with_nonpositive_cells` non-empty), on a
+  receipt that completed and wrote `receipt.json`.
+- **INVALID** is anything that stops the receipt from deciding. It writes no `receipt.json`, costs only its job, and
+
+=== docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/b3/receipt-run-60893641/receipt.txt:1-16 at b3f27fab3 (the stage's receipt: connect 2026-11-06T08:15Z)
+1B binding 3, stage 3 (v2): the receipt job 60893641. Verdict STOP on §2b (amendment 2 §4: STOP is N1 or §2b, on a
+completed receipt that wrote receipt.json). Under A2.1 §11, a STOP at the receipt ends the sequence and goes to Joseph.
+connect-receipt.sh c457d5dd0e7083167255748db4294449deaf3dfadd7265630d4d346fbf4d15aa, M4 5771ce2043f6d8a8338220b099edde31deedff54,
+login03, 2026-11-06T08:15:11Z..08:16:02Z: every check passed (connect-receipt.log), the move of the INVALID a2 to
+stage1/a2-invalid-60889950 among them; fit: steps=1, cpus 256 of 256, mem 458752M of 487802M.
+Job: COMPLETED 01:18:42 (ElapsedRaw 4722 s, 1.312 node-h), step line0 COMPLETED, MaxRSS 382909276K (365.2 GiB of the
+448G step).
+connect-receipt-readout.sh 322216efc8547359663612b0e8956f4b026e17f096bfd2c0f3b158bece86773a (sha compared before run),
+login03: receipt.json sha256 9995f55adb7846e230c2e982221d20e7c5c1136daf5cb4576e355544bb54fa3d bytes 253512 (from its
+O_NOATIME read; the committed receipt.json has the same sha256).
+- N1: exact wt/wr/bkgw rows_above 0 (pairs past the screen 383517, 431528, 15604); validation agrees for all three;
+  denominator n1 pairs_above 0 over 65856 cells, max 2.146.
+- §2b: denominator.draws_with_nonpositive_cells holds 892 of the 900 draws 0..899 (not flagged: 84, 98, 260, 460,
+  550, 690, 787, 835); max_cells 62.
+- stop_reasons ['2b: 892 draws with a non-positive denominator cell'].
+- atime: 708 opened, 0 moved. Sources atime/mtime/size UNCHANGED (20135); the stat-before and stat-after are
+
+######## the note's other section that row D10 draws on
+=== docs/analysis-note/sec_fived16.tex:279 and :287 at 619a1d9b6
+The test is a bias test, not a coverage test: its Poisson pseudo-experiments do not draw the systematic parameters, so they cannot test the interval widths, and the detector response is not probed. A coverage test at these two tunes, declared in advance for the covariance without the run-period block, with pseudo-experiments that also draw the flux, interaction and detector uncertainties (the lateral and normalization ones as surrogates, and $C_{\mathrm{model}}$ and $C_{\mathrm{resp}}$ not at all), was stopped before any coverage pseudo-experiment ran. At one of its gates, the ratio of each cell's uncertainty reproduced through the pseudo-experiments to that of the drawn covariance lay outside \fvval{cov1b-win-lo}--\fvval{cov1b-win-hi} in \fvval{cov1b-ncells-out} of the 16 cells, ranging from \fvval{cov1b-rho-min} to \fvval{cov1b-rho-max}. Replacing the pseudo-experiments' values by the covariance's for any \fvval{cov1b-kmax-word} or fewer of the \fvval{cov1b-nbands} drawn bands does not bring every cell inside that window.
+The coverage of the result's intervals has not been validated. A staged coverage test at the two tunes, with the covariance rebuilt by the same procedure at each tune, ended without a coverage result: its first stage stopped under a fail-closed rule declared in advance. That rule stops the stage if any declared draw makes a cell of the drawn natures' composite denominator non-positive. In a cell, that denominator is the first drawn universe's denominator plus each later universe's departure from the central-value denominator, and a cell that is positive at the central value and non-positive in the sum is the failure. \lrval{stop-flagged} of the \lrval{stop-draws} declared draws failed, with at most \lrval{stop-maxcells} such cells in a draw. The record does not establish why those cells are non-positive. The stop concerns the declared composition of the natures, not the estimator's coverage, and says nothing about whether the intervals cover, in either direction.
+
+######## the note's use of "declared"
+Search: mph{declared}; "declared" ... means; ``declared; pre-registered/preregistered; in sec_intro, sec_execsummary, sec_method, app_guide, main_note @ 619a1d9b6: the note does not define "declared". In the project's records it means specified before the run (e.g. FD-STAB-DECLARATION above: "nothing run"; RS1: "Nothing has run").
