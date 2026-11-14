@@ -164,7 +164,7 @@ add("8", "S12", "Result", "Flagged cells at each tune (counts and cell lists)", 
 L9 = r"Its staged redesign declared \fvval{fd1b-ntoys} pseudo-experiments at each tune."
 add("9", "S11", "Estimator", "the estimator", "moved", r"It is unfolded with the estimator and the nominal simulation")
 add("9", "S11", "Truth(s)", r"\fvval{f1-tune-g18-short}, \fvval{f1-tune-ar23-short} (the two tunes)", "already", r"A first coverage test of the five-observable covariance at the two tunes gave no coverage result.")
-add("9", "S11", "Truth(s)", "and a plug-in truth: corrected to the record, declared as an option and not included", "moved", r"A plug-in truth was declared as an option and was not included.")
+add("9", "S11", "Truth(s)", "and a plug-in truth: corrected to the record, declared as an option and not included", "moved", r"The design allowed an optional plug-in truth, which was not used.")
 add("9", "S11", "Simulation", "as 10: replaced by its record's terms (nominal simulation; simulation and template resampled)", "moved", r"with the simulation and background template resampled. It is unfolded with the estimator and the nominal simulation")
 add("9", "S11", "What is varied", "as 10: replaced by its record's terms (every group drawn; no band variants)", "moved", r"Each pseudo-experiment draws every uncertainty group (statistical, flux, interaction, detector, lateral and normalization)")
 add("9", "S11", "Repetitions", r"\fvval{fd1b-ntoys} per truth", "moved", L9)

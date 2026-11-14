@@ -110,7 +110,9 @@ The director accepted a1bd56bfe. Joseph ruled on the three items (2026-11-13: "y
 - **Item 3: the plug-in truth.** The declaration made it optional (:178, sec. 6). FD-1B-STAGED-BINDING-3.md:52-53
   bound the no-plug-in path, G18 and AR23 only, with the plug-in deferred. The question became moot when stage 1
   ended (OUTCOME-20261106-1b-stage1-receipt-stop.md:120-121; draws 600-899 were declared, :45-49). So test 9 ran at
-  the two tunes, which agrees with S8.6's opening. The old S11's "and a plug-in truth" is corrected to "A plug-in truth
-  was declared as an option and was not included".
+  the two tunes, which agrees with S8.6's opening. The old S11's "and a plug-in truth" is corrected. 4db16d946 printed "A plug-in truth
+  was declared as an option and was not included". The director, in line with Joseph's ruling against process language,
+  reworded it to "The design allowed an optional plug-in truth, which was not used." `meaning-read-4.txt` checks that
+  one sentence against `meaning-read-4-records.txt`: PASS.
 - `meaning-read-3.txt`: the codex-school meaning read of this round, with the record excerpts
   (`meaning-read-3-records.txt`).

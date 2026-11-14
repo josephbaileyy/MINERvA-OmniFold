@@ -1,0 +1,7 @@
+1. **Same facts:** Yes. Both sentences say the design included a plug-in truth as an option and that option was not used.
+2. **Record support:** Yes. The declaration explicitly marks it optional; Binding 3 specifies G18 and AR23 only. The receipt’s plug-in label identifies a seed range, not use of that truth.
+3. **Paragraph consistency:** No conflict. An unused design option is consistent with the test stopping before any coverage pseudo-experiment ran.
+
+No problems found; no fix needed.
+
+VERDICT: PASS

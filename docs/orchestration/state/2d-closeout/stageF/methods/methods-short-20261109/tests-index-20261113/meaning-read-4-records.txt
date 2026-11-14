@@ -1,0 +1,34 @@
+## FD-1B-STAGED-DECLARATION.md lines 172-178
+172: ### 4.1 The truths
+173: 
+174: | truth | definition | pin |
+175: |---|---|---|
+176: | **G18** | G18_10a_02_11b, F1's gated, k-normalised bridged ratio, applied as `s5n_pseudo.truth_weight("ratio_nd", …, 1.0, ratio)`, as the original 1B toys apply it (`fd_1b_toys.truth_ratio`, `truth_model`) | the committed `f1-prep-SHA256SUMS` digest, checked by `fd_1b_toys.truth_ratio` |
+177: | **AR23** | AR23_20i_00_000, the same | the same |
+178: | **plug-in** (optional, §6) | the unfolding's own final truth weights at the data | the capture product's digest |
+## FD-1B-STAGED-DECLARATION.md lines 470-473
+470: ## 6. The plug-in truth (optional, priced separately)
+471: 
+472: **What it is:** the nominal MC's truth reweighted by the unfolding's own final per-event push weights at the data. It
+473: is the unfolding's estimate of nature, made by the production run on the data, the consult's first choice.
+## FD-1B-STAGED-BINDING-3.md lines 50-55
+50: ## Rulings
+51: 
+52: 1. **Binding 3 is the no-plug-in path:** G18 and AR23 only, with a bulk of 6 jobs. Whether the plug-in truth belongs in 1B
+53:    is deferred to Joseph's publication-scope decision. Adding it later would need its own binding: S1-0 with the
+54:    capture, all three c2checks with the push, and a new pin, at about 120 node-h or more. Binding 3's bulk products would
+55:    not resume under that.
+## OUTCOME-20261106-1b-stage1-receipt-stop.md lines 43-49, 91-92, 120-121
+43: | truth | draws | flagged |
+44: |---|---|---:|
+45: | G18 | 0–299 | 297 of 300 |
+46: | AR23 | 300–599 | 298 of 300 |
+47: | the plug-in | 600–899 | 297 of 300 |
+48: 
+49: - Binding 3 runs G18 and AR23 only. The receipt checks all 900 declared draws, and the truth labels only the seed range.
+91: **So stage 1 has ended, unrepaired.** S1-0b, `clipcheck` and the bulk (binding 3's stages 4–7) do not run. No
+92: redesign is opened. coverage-5b holds and launches nothing. The campaign branch stays as it is.
+120: **Moot unless Joseph overrides (iii):** binding 3 ruling 1's reserved item, whether the plug-in truth belongs in 1B
+121: (`FD-1B-STAGED-BINDING-3.md:52` @ `3d976a76`).
+## The Supplement paragraph (supplemental_body.tex:1028), new
+A first coverage test of the five-observable covariance at the two tunes gave no coverage result. Its staged redesign declared \fvval{fd1b-ntoys} pseudo-experiments at each tune. Each pseudo-experiment draws every uncertainty group (statistical, flux, interaction, detector, lateral and normalization), with the simulation and background template resampled. It is unfolded with the estimator and the nominal simulation, and graded against a covariance remade at the tune by the reported procedure. The per-cell and joint in-interval counts are read against a draw-matched null, at $\fvval{fd1b-alpha}/16$ per cell and \fvval{fd1b-alpha} jointly. The design allowed an optional plug-in truth, which was not used. One of its preliminary checks stopped it before any coverage pseudo-experiment ran. That check compared pseudo-experiments that move only the detector response at fixed truth with blocks built from the prior and the response together. A staged redesign then stopped at its first stage, under its stopping rules. The check required, in every cell, the ratio of the pseudo-experiments' standard deviation to that of the reported block to lie in the window \fvval{cov1b-win-lo}--\fvval{cov1b-win-hi}. The diagnostic study of that check gave the following results. No set of \fvval{cov1b-kmax-word} or fewer of the \fvval{cov1b-nbands} drawn bands brings every cell inside the window. In R08, the cell with the largest ratio, the interaction bands MaRES, MaCCQE and MvRES carry most of the excess. Estimator noise is rejected as the explanation for every failing cell.

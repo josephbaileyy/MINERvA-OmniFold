@@ -126,7 +126,7 @@ C124	8	S12	Result	under-covers at both tunes: no pseudo-experiment of \fvval{cov
 C125	8	S12	Result	Flagged cells at each tune (counts and cell lists)	index	supplemental_body.tex:815	Flagged cells: \fvval{cov2d-nflags-ar23} at \fvval{f1-tune-ar23-short}
 C126	9	S11	Estimator	the estimator	moved	supplemental_body.tex:1028	It is unfolded with the estimator and the nominal simulation
 C127	9	S11	Truth(s)	\fvval{f1-tune-g18-short}, \fvval{f1-tune-ar23-short} (the two tunes)	already	supplemental_body.tex:1028	A first coverage test of the five-observable covariance at the two tunes gave no coverage result.
-C128	9	S11	Truth(s)	and a plug-in truth: corrected to the record, declared as an option and not included	moved	supplemental_body.tex:1028	A plug-in truth was declared as an option and was not included.
+C128	9	S11	Truth(s)	and a plug-in truth: corrected to the record, declared as an option and not included	moved	supplemental_body.tex:1028	The design allowed an optional plug-in truth, which was not used.
 C129	9	S11	Simulation	as 10: replaced by its record's terms (nominal simulation; simulation and template resampled)	moved	supplemental_body.tex:1028	with the simulation and background template resampled. It is unfolded with the estimator and the nominal simulation
 C130	9	S11	What is varied	as 10: replaced by its record's terms (every group drawn; no band variants)	moved	supplemental_body.tex:1028	Each pseudo-experiment draws every uncertainty group (statistical, flux, interaction, detector, lateral and normalization)
 C131	9	S11	Repetitions	\fvval{fd1b-ntoys} per truth	moved	supplemental_body.tex:1028	Its staged redesign declared \fvval{fd1b-ntoys} pseudo-experiments at each tune.
