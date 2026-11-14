@@ -1,0 +1,4 @@
+1. inputs: every sha256 equals its pin
+2. w_flux: shape (100,), bitwise equal in G18 and AR23: True; sum 211.01200325082078, n_eff 19.060534772246488; logged by G2R 211.01200325082078, 19.060534772246488
+3. 38 band covariances (175 universes; Flux has 100) summed: largest |residual| / max|C_univ_new| = 1.336e-20 (tolerance 1e-15)
+FLUXBAND :: PASS  Flux band median relative sigma under C_new = 3.723437872589673 %  (printed 3.72; RE-2's value under the current covariance is 3.7124503352159897, printed 3.71)

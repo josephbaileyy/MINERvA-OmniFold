@@ -9,7 +9,7 @@ committed, because the lane's scratch copy is lost to macOS cleanup after a few 
 
 | file | what it is |
 |---|---|
-| `repin_list.tsv` | One row per change the re-pin makes (RP01–RP40, with RP33n, RP33e and RP33k). Each row has the ruling date, the RESPONSE.md quote id if any (`supp-quotes.tsv`'s Q number), the sites in #981 at `91f9cb615`, the action, the source document and the exact new quote. |
+| `repin_list.tsv` | One row per change the re-pin makes (RP01–RP41, with RP33n, RP33e and RP33k). Each row has the ruling date, the RESPONSE.md quote id if any (`supp-quotes.tsv`'s Q number), the sites in #981 at `91f9cb615`, the action, the source document and the exact new quote. |
 | `repin_check.py` | Counts every new quote at a #977 head the way the re-pinned build will read it. It also checks the `tab:gen16` table block against its pinned sha256, and fails with "STOP to the director" if the block changed (the director's standing order). |
 | `REPIN-CHECK.txt` | The checker's output at the latest #977 head checked. |
 | `comment_strip_measure.py`, `COMMENT-STRIP-30e2e79e.txt` | The measurement behind RP18 (strip LaTeX comments before every count). It runs #981's build in memory twice at #977 `30e2e79e`, once as read and once with comments stripped. Only the old §4.1 quote changes (34 failures against 36), and that quote was already ruled for re-source. The director asked for this in the re-pin's receipt. |
@@ -19,6 +19,7 @@ committed, because the lane's scratch copy is lost to macOS cleanup after a few 
 | `READS-a87137996.tsv` | Every file the build and the values producer open in the merge simulation, with sizes, and the four files the build reads through git at `PAPER_REF`. The input to the S1 design. |
 | `DRYRUN-a5e3005fd.txt`, `MERGE-SIM-a5e3005fd.txt`, `MERGE-SIM-a5e3005fd-fixes.txt`, `READS-a5e3005fd.tsv` | The same runs and inventory at #977 `a5e3005fd`. The fixes run applies RP27, RP28 and the proposed RP33. |
 | `DRYRUN-89b5969b8.txt`, `MERGE-SIM-89b5969b8.txt`, `MERGE-SIM-89b5969b8-fixes.txt`, `READS-89b5969b8.tsv` | The same runs and inventory at #977 `89b5969b8`. The fixes run applies the ruled RP27, RP28 and RP33. |
+| `g2r-transcription-20261114/` | The lossless transcription of COV2D-G2R's `data_g2r.npz` (RP34), the measurement behind RP35's ruling (`SUMS.out`), and the one producer of `\fluxBand` under C_new (RP38). Its own `README.txt` and `SHA256SUMS.txt`. |
 | `PYTHON-VERSIONS-20261113.txt` | The S3 measurement: the build and the producer on Python 3.10, 3.11 and 3.12. |
 
 The actions are:
@@ -83,7 +84,9 @@ Joseph ruled on 2026-11-14 that COV2D-G2R's rebuilt covariance becomes the repor
 (`DECISION-20261114-joseph-d1-g2r-adopted.md`, PR #1145). At the data that matrix is
 C_new = C_rep − C_univ,old + C_univ,new (`COV2D-G2R-DECLARATION.md` §3); the readout is
 `fd/receipts-cov2d/g2r/readout/data/` (PR #1144). Rows RP34–RP40 are proposed to the director. They are `code`
-rows, which the checker lists without counting, because the new numbers are not printed in the paper yet.
+rows, which the checker lists without counting, because the new numbers are not printed in the paper yet. The
+director accepted all seven on 2026-11-14, ruled RP35 and RP38 as recorded in their rows, and added the follow-up
+RP41.
 
 What moves in #981 (sites at `91f9cb615`):
 - `sec-uq2d_universe.csv`, `sec-uq2d_s5_total.csv` and `sec-uq2d_Q.csv` (RP34, RP35). `sec-uq2d_stat.csv`,
@@ -98,9 +101,14 @@ What moves in #981 (sites at `91f9cb615`):
 - The 2D scope line and the OUTCOME-20261108 record quotes keep their words, because the coverage counts are the same
   under C_T' (RP40).
 
-`data_g2r.npz` (sha256 `3b8cc7ceaef97c3dc6bbcd2c5cfdf853442c347e37e23f64eca54898d0e9eb4b`) is not committed. The
-package needs the 205 × 205 matrices, so a lossless transcription like `receipts/c2a-20261109/` must be committed
-first. That needs a connect on the director's go.
+`data_g2r.npz` (sha256 `3b8cc7ceaef97c3dc6bbcd2c5cfdf853442c347e37e23f64eca54898d0e9eb4b`) stays out of git. Its
+lossless transcription is `g2r-transcription-20261114/` (PR #1147). It was made from cov2d's local O_NOATIME copy,
+whose sha256 equals main's `out.sha256`, with no connect. Two findings there shaped the rulings:
+- The package's universe block is not G2R's C_univ_old. RP35's exact sums therefore hold only to rounding (at most
+  1.3e-16 relative). The director ruled that Q ships as C_new byte for byte, with the identities checked at 1e-15.
+- `\fluxBand` needs the 100 Flux weights, which the npz lacks. They are committed in COV2D's readout blocks. With
+  them, the 38 band covariances reproduce C_univ_new to 1.3e-20. The receipt's `fluxband_g2r.py` gives 3.723437872589673
+  (printed 3.72), and cov2d pins it from there.
 
 What does not move. These read the published covariance (arXiv:2106.16210's TotalCov), which D1 does not change:
 - \chiPaper, the shape and normalization parts, the 73 and 139 directions with their χ² values, and the condition
@@ -128,3 +136,4 @@ What does not move. These read the published covariance (arXiv:2106.16210's Tota
 | `a5e3005fd`, the director's ruling | The director accepted RP33 as proposed on 2026-11-13, with RP20 and RP22 quoting the keyed sentences. REPIN-CHECK PASS (40 rows). |
 | `89b5969b8` | REPIN-CHECK PASS (47 rows). The Supplement's keying of its decimal results (00ee8569c, 8a5db5d3c, ab9a50335) and the S8 index restructure (a1bd56bfe, 4db16d946) moved none of #981's six Supplement quotes (RP08b, RP09, RP10b, RP12, RP13, RP21 each count 1), and `tab:gen16`'s block sha256 is unchanged. The plain dry run and the merge simulation flag only ruled failures. The RP27, RP28 and RP33 failures are now in `ruled_baseline.txt` (34 → 43 lines), since the director accepted them. With those three applied, the merge simulation flags only ruled failures (44). The snapshot inventory grows from 141 to 161 files (153 outside the package, 17,118,886 bytes): 21 new pins, among them the published 2D result and covariance under `2d-unfolding/minerva_paper_anc/`, and `playlist-term/outputs/playlist_term.json` replaced by RE-2's `partc-r2/playlist/playlist_term.json` (3f7f315f6). |
 | `89b5969b8`, D1 | Rows RP34–RP40 added for the rebuilt 2D covariance (section "D1" above), proposed to the director. REPIN-CHECK PASS (47 rows). |
+| `89b5969b8`, the director's D1 rulings | The director accepted RP34–RP40 on 2026-11-14. RP35 is ruled: Q = C_new byte for byte, the block identities at 1e-15 with the worst printed, and a 1e-12 plant. RP38 is ruled: `\fluxBand` comes from `g2r-transcription-20261114/fluxband_g2r.py`, 3.723437872589673. RP41 is the follow-up for a route-(A) budget after the LL5D lift. REPIN-CHECK PASS (48 rows). |
