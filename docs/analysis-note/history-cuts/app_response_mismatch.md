@@ -70,3 +70,8 @@ No site in App. D changes its citation. `UNRELEASED-SUPPORT.md` is unchanged.
   limitations the rule keeps, against the referee's "Move the unexecuted protocol … to ledger". What it would let leave
   is a few sentences of framing and plan. As in §3 and §4, the text stays as at base. The referee's compression of
   App. D would need the director's ruling on whether an unrun test's protocol limits are limitations under the rule.
+
+**The director's ruling (2026-11-14): leave App. D as it is.** "Strictly, an unrun test's protocol limits no reported
+result. But App. D documents a test that is implemented in the released code, and its restrictions ('changes only
+the reconstructed pseudo-data record', 'must not be quoted', 'not a detector model') are exactly what a reader of the
+package needs before running it. Compressing it would gain little against what's at risk."

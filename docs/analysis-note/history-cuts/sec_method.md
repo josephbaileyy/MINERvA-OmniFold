@@ -52,6 +52,17 @@ printed text.
 - Added: none.
 - Value keys and macros: unchanged.
 
+## Under ruling (A), 2026-11-14 (row C7)
+
+| id | base line (4a997b89d) | old text | new text | ledger home |
+|---|---|---|---|---|
+| C7 | :192 | "every event in the declared truth sample enters" | "every event in the specified truth sample enters" (a method use: no timing) | 4a997b89d:sec_method.tex:192 |
+
+**Still not changed: :150's "fixed \emph{a priori}".** A record that the classifiers' settings were fixed before
+any training would let it name its object. The search found none: `git grep -i 'fixed a priori|no hyperparameter
+search|hyperparameters.*before'` over docs/orchestration and docs/*.md finds only other studies' seeds and the
+paper's own sentence. By the director's ruling it stays, and it is listed as open in UNRELEASED-SUPPORT.md.
+
 ## The Development-history appendix (App.~\ref{app:devhistory}, `app_devhistory.tex`)
 
 **New, placed last** so that no other appendix letter moves. It has the referee's six columns:

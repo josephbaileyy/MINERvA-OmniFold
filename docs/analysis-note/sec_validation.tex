@@ -15,9 +15,9 @@ Miss completeness & Full truth-event inventory; production truth--reco event mat
 \addlinespace
 Iteration stability & Same data, exact-split cross-check; five versus ten iterations & Shared sample; movement of total and shape & Small observed movement; not a known-truth accuracy test \\
 \addlinespace
-Held-out-tune coverage & Two held-out GENIE~v3 tunes; the procedure's 2D covariance remade at each tune & Pseudo-experiments that draw the covariance's shifts; joint and per-cell containment & Declared test; under-covers at both tunes (\S\ref{sec:coverage-tunes}) \\
+Held-out-tune coverage & Two held-out GENIE~v3 tunes; the procedure's 2D covariance remade at each tune & Pseudo-experiments that draw the covariance's shifts; joint and per-cell containment & Test specified before it ran; under-covers at both tunes (\S\ref{sec:coverage-tunes}) \\
 \addlinespace
-Fixed-truth coverage & Fixed unfluctuated MC truth; LightGBM statistical estimator & Poisson pseudo-data; MC resampling shares the band's mechanism; pooled toy--bin containment & Predeclared coverage windows; earlier (completeness-divided) band undercovers in its tails (\S\ref{sec:coverage}) \\
+Fixed-truth coverage & Fixed unfluctuated MC truth; LightGBM statistical estimator & Poisson pseudo-data; MC resampling shares the band's mechanism; pooled toy--bin containment & Coverage windows specified before any toy was generated; earlier (completeness-divided) band undercovers in its tails (\S\ref{sec:coverage}) \\
 \bottomrule
 \end{tabular}
 \caption{Validation questions, targets and limits. Coverage pooled over bins is not a simultaneous probability that every bin is covered.}
@@ -36,7 +36,7 @@ Fixed-truth coverage & Fixed unfluctuated MC truth; LightGBM statistical estimat
 
 A data-versus-prior $\chi^2$ with a diagonal covariance of statistical variances only is larger at truth level than at reco level. This is expected at high resolution: detector smearing lowers the reco-level value, and the diagonal covariance omits the unfolding covariance. The comparisons that use a full covariance are the $\chi^2$ against the published result (\S\ref{sec:results-tension}) and the generator comparisons.
 
-These closure tests recover injected features and are not a formal statistical validation of the estimator. No non-closure uncertainty is assigned from them. Assigning one would require a predeclared suite of injection shapes and amplitudes. Calibration to a single Gaussian bump would leave that requirement unmet.
+These closure tests recover injected features and are not a formal statistical validation of the estimator. No non-closure uncertainty is assigned from them. Assigning one would require a suite of injection shapes and amplitudes specified before the tests are run. Calibration to a single Gaussian bump would leave that requirement unmet.
 
 None of these tests changes the simulated detector. The hidden-variable closure does change the effective response: it reweights reconstructed events by a function of $\Delta\pT$ and leaves the truth weights unchanged (\S\ref{sec:closure-hv}). Appendix~\ref{app:response-mismatch} defines a separate test, a closure that rescales only the reconstructed $\Eavail$ of the pseudo-data, together with a more complete leading-nucleon follow-up. No result from it is reported here. The five-dimensional estimator, including its background subtraction, is evaluated under the technical closure checks of \S\ref{sec:val-fiveaxis}. Its coverage is unvalidated.
 % Note register round n2, batch n2-B (2026-10-26; R-N2a): the response-mismatch sentence is split; the statement that
@@ -88,15 +88,15 @@ Hidden variable & Bias in $\Delta\pT$, a resolution variable outside the feature
   Leakage linear in amplitude; $A=0.30$ exceeds its \SI{3}{\percent} threshold \\
 \addlinespace
 Injected $\Eavail$ bump & $+\SI{30}{\percent}$ Gaussian in truth $\Eavail$ at \SI{0.3}{GeV}, width \SI{0.15}{GeV}; configuration (a) (\S\ref{sec:method-config}) & 3D &
-  Marginal residual \SI{1.84}{\percent} of \SI{18.1}{\percent} injected (ratio 0.102); no predeclared threshold.
+  Marginal residual \SI{1.84}{\percent} of \SI{18.1}{\percent} injected (ratio 0.102); no threshold specified before it ran.
   Per-3D-bin spread \SI{3.2}{\percent} (\S\ref{sec:3d-closure}) \\
 \addlinespace
 Injected $q_3$ bump & Same Gaussian form in truth $q_3$ (mean weight 1.014); configuration (a) & 4D &
-  Marginal $q_3$ ratios within \SI{1.1}{\percent}; no predeclared threshold \\
+  Marginal $q_3$ ratios within \SI{1.1}{\percent}; no threshold specified before it ran \\
 \addlinespace
 Injected $W$ bump & $+\SI{30}{\percent}$ Gaussian in truth $W$ at \SI{1.23}{GeV} (the $\Delta$ peak), width \SI{0.15}{GeV}; mean weight 1.053 & 5D &
   Marginal residual \SI{4.2}{\percent} of \SI{23.1}{\percent} injected in the
-  \SIrange{1.1}{1.4}{GeV} bin (ratio 0.180; threshold 0.20, set in advance); pass, by a
+  \SIrange{1.1}{1.4}{GeV} bin (ratio 0.180; threshold 0.20, set before the test was run); pass, by a
   narrow margin. Neighbouring $W$ bins are \SI{3.1}{\percent} and
   \SI{2.7}{\percent} high, and joint $(\Eavail,W)$ cells in the peak column
   \SIrange{2.2}{9.4}{\percent} low. Per-5D-bin spread \SI{3.7}{\percent}. Signal only \\
@@ -185,7 +185,7 @@ The excess width lies in the data-statistics component. The per-bin pull RMS fal
 
 \subsection{Held-out-tune coverage of the 2D covariance}
 \label{sec:coverage-tunes}
-A second coverage test, declared before it ran, asks whether the analysis procedure's 2D covariance covers truths held out of its construction. A pseudo-experiment is inside a cell when the difference between its unfolded result and the held-out truth lies within that cell's standard deviation under the remade covariance, and inside the joint region when its $\chi^{2}$ on that covariance, with the degrees of freedom printed below, is at most the $\chi^{2}$ quantile at the one-standard-deviation Gaussian content. The thresholds were fixed from the null before any pseudo-experiment was read. This containment is why the test is called a coverage test. The scope paragraph says why the result is not a coverage rate of the reported intervals. At each of two held-out GENIE~v3 tunes, \fvval{f1-tune-ar23} and \fvval{f1-tune-g18}, with \lrval{cov2d-ntoys} pseudo-experiments each and the analysis procedure's 2D covariance remade at each tune's truth (model term included, run-period term excluded), the test reads \emph{under-covers}. The joint in-region count is \lrval{cov2d-ar23-joint} of \lrval{cov2d-ntoys} at both tunes, against thresholds of \lrval{cov2d-ar23-kjoint} (\fvval{f1-tune-ar23}) and \lrval{cov2d-g18-kjoint} (\fvval{f1-tune-g18}). Per cell, \lrval{cov2d-ar23-nflagged} cells are flagged at \fvval{f1-tune-ar23} and \lrval{cov2d-g18-nflagged} at \fvval{f1-tune-g18}, each attributed to bias (Table~\ref{tab:coverage-tunes}). The mean $\chi^{2}/\mathrm{ndf}$ of the pseudo-experiments is $\lrval{cov2d-ar23-chi2ndf}\pm\lrval{cov2d-ar23-chi2ndf-se}$ ($\mathrm{ndf}=\lrval{cov2d-ar23-ndf}$) at \fvval{f1-tune-ar23} and $\lrval{cov2d-g18-chi2ndf}\pm\lrval{cov2d-g18-chi2ndf-se}$ ($\mathrm{ndf}=\lrval{cov2d-g18-ndf}$) at \fvval{f1-tune-g18}. The test's false-flag rate under its null's law is at most \lrval{cov2d-ar23-size} and \lrval{cov2d-g18-size} per tune.
+A second coverage test, specified before it ran, asks whether the analysis procedure's 2D covariance covers truths held out of its construction. A pseudo-experiment is inside a cell when the difference between its unfolded result and the held-out truth lies within that cell's standard deviation under the remade covariance, and inside the joint region when its $\chi^{2}$ on that covariance, with the degrees of freedom printed below, is at most the $\chi^{2}$ quantile at the one-standard-deviation Gaussian content. The thresholds were fixed from the null before any pseudo-experiment was read. This containment is why the test is called a coverage test. The scope paragraph says why the result is not a coverage rate of the reported intervals. At each of two held-out GENIE~v3 tunes, \fvval{f1-tune-ar23} and \fvval{f1-tune-g18}, with \lrval{cov2d-ntoys} pseudo-experiments each and the analysis procedure's 2D covariance remade at each tune's truth (model term included, run-period term excluded), the test reads \emph{under-covers}. The joint in-region count is \lrval{cov2d-ar23-joint} of \lrval{cov2d-ntoys} at both tunes, against thresholds of \lrval{cov2d-ar23-kjoint} (\fvval{f1-tune-ar23}) and \lrval{cov2d-g18-kjoint} (\fvval{f1-tune-g18}). Per cell, \lrval{cov2d-ar23-nflagged} cells are flagged at \fvval{f1-tune-ar23} and \lrval{cov2d-g18-nflagged} at \fvval{f1-tune-g18}, each attributed to bias (Table~\ref{tab:coverage-tunes}). The mean $\chi^{2}/\mathrm{ndf}$ of the pseudo-experiments is $\lrval{cov2d-ar23-chi2ndf}\pm\lrval{cov2d-ar23-chi2ndf-se}$ ($\mathrm{ndf}=\lrval{cov2d-ar23-ndf}$) at \fvval{f1-tune-ar23} and $\lrval{cov2d-g18-chi2ndf}\pm\lrval{cov2d-g18-chi2ndf-se}$ ($\mathrm{ndf}=\lrval{cov2d-g18-ndf}$) at \fvval{f1-tune-g18}. The test's false-flag rate under its null's law is at most \lrval{cov2d-ar23-size} and \lrval{cov2d-g18-size} per tune.
 
 \begin{table}[htbp]
 \centering

@@ -1,0 +1,45 @@
+# ES (E1, E2), §5 (V3-V9) and §3 (C7) meaning read, pass 1: reader codex-school gpt-6.1-sol, high, read-only; prompt es-v3-prompt.txt, records es-v3-records.txt
+**Question 1 — remaining text**
+
+| Row | Verdict | Meaning assessment |
+|---|---|---|
+| E1 | PASS | The revised description correctly identifies the retained diagnostics and relevant history in App. I, without promising the full development history. |
+| E2 | PASS | The replacement preserves the absence of a threshold specified before the injected-\(E_{\mathrm{avail}}\) closure ran, supported by the cited records. |
+| V3 | PASS | The explicit timing is supported by the body’s existing statement that this coverage test was declared before it ran. |
+| V4 | PASS | The stronger-looking specificity is supported by the body’s statement that the design and criteria preceded generation of any toy. |
+| V5 | PASS | The requirement remains a suite of injection shapes and amplitudes specified before testing. |
+| V6 | PASS | The replacement preserves the 3D closure’s lack of a threshold specified before its run. |
+| V7 | PASS | The replacement preserves the corresponding limitation for the 4D closure. |
+| V8 | PASS | The preregistration committed before submission supports the explicit timing, and the threshold remains 0.20. |
+| V9 | PASS | Replacing “declared” with “specified” preserves the already explicit timing and the test’s scope. |
+| C7 | PASS | “Specified truth sample” preserves the sample referent and event-inclusion claim without introducing timing. |
+| App. I D6 | PASS | The row accurately preserves the tested band’s identity, partial attribution, rebuild, untested quoted ensemble, and disclosure that the attribution clause followed pilot pulls. |
+| App. I D7 | PASS | The row accurately identifies the superseded undivided band and its post hoc rescoring on the same toys after the original result. |
+
+No numerical value or value macro changes in these edits.
+
+**Question 2 — removed or shortened items**
+
+For terminology replacements, the classification below concerns the information conveyed by the old wording.
+
+| Item | Classification | Retention assessment |
+|---|---|---|
+| E1: unrestricted “full development history” | LEDGER | History beyond what affects the reported objects, reproducibility, independence or limitations may leave the note, with the old wording’s home recorded in the cut log. |
+| E1: history bearing on released results | NEEDED | This qualifying history remains in the printed sections and App. I, which the revised sentence identifies. |
+| E2: absent advance threshold and configuration restriction | NEEDED | Both limitations remain explicit in the executive-summary table. |
+| V3: advance specification of the tune test | NEEDED | Its timing and undercoverage conclusion remain printed. |
+| V4: advance specification of coverage windows | NEEDED | The replacement retains the timing and names toy generation as the boundary. |
+| V5: advance specification of an injection suite | NEEDED | The requirement remains explicit. |
+| V6: absent advance threshold for the 3D closure | NEEDED | This limitation remains printed. |
+| V7: absent advance threshold for the 4D closure | NEEDED | This limitation remains printed. |
+| V8: advance setting of the 0.20 threshold | NEEDED | Both the threshold and its timing remain printed. |
+| V9: tune-test specification before running | NEEDED | The replacement retains this evidential timing. |
+| C7: truth-sample scope and complete inclusion | NEEDED | The replacement preserves which events enter and the completeness claim. |
+| D6 history: band identity, attribution and rebuild | NEEDED | The section and appendix retain the distinction from the untested quoted block and the attribution clause’s timing after pilot pulls. |
+| D7 history: superseded band and post hoc rescoring | NEEDED | The section and appendix retain the same-toy reuse and post hoc status, and the section also retains the circularity limitation. |
+
+**No NEEDED item was lost.**
+
+**No disclosure of a choice made after results were seen disappeared.** The printed text retains the secondary analysis added after the pilot, the attribution clause written after pilot pulls, post hoc rescoring, learner selection after both publication comparisons, and adoption of the rebuilt result after its distance from the publication was known.
+
+OVERALL: PASS — FAILs: none.

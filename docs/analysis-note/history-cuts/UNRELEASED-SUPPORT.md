@@ -61,3 +61,12 @@ The director's list (2026-11-13), for Joseph's decision at the end of the restru
   - Search: `git log -S'fixed \emph{a priori}' -- docs/analysis-note/*.tex` finds only 242e996c6 (2026-07-04, "note: advisor-comment round 1"). That commit wrote "The learner settings were fixed \emph{a priori} rather than tuned on data: 100 trees, learning rate $0.1$, and depth-3 capacity are the sklearn GradientBoosting defaults".
   - `grep -i 'a priori' docs/orchestration/CATALOG.md` finds only the F1 bias test's "seeds fixed a priori" row, which is a different object.
   - No record names what the settings were fixed before. The surviving sentence "No hyperparameter search was performed on data" states what it rules out. The wording is left as it is, for Joseph.
+
+## Candidates and open items (2026-11-14)
+
+- **A pointer to the records, a candidate.** The ES's sentence on App. I (history-cuts/sec_execsummary.md, E1) could
+  end "the full chronology is in the analysis repository's records~\cite{NoteRecords2026}" if Joseph puts those records
+  in the deposit. Until then the clause stays out (the director's ruling of 2026-11-14).
+- **An unnamed timing object with no record: sec_method.tex:150** "were fixed \emph{a priori}". No record found that
+  fixes the classifiers' settings before any training (history-cuts/sec_method.md, after C7).
+

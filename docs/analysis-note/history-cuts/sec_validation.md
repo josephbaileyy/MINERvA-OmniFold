@@ -59,6 +59,24 @@ the pilot pulls) is marked "Disclosure—stay".
 | the target-correction sensitivity | no | — |
 | also found: the attribution clause written after the pilot pulls (:152) | yes | ✓ unchanged, and in D6 |
 
+## Under ruling (A), 2026-11-14: "predeclared" and the remaining "declared" (rows V3–V9)
+
+My §5 pass searched for the word "declared" and missed "predeclared". The director approved these rows on 2026-11-14.
+Base: `sec_validation.tex` at `4a997b89d`, whose lines equal 2cac548bd's except where V1 and V2 changed them.
+
+| id | base line | old text | new text | records for the object |
+|---|---|---|---|---|
+| V3 | :18 (tab:validation-design, the tune test) | "Declared test; under-covers at both tunes" | "Test specified before it ran; under-covers at both tunes" | §5 :188, "A second coverage test, declared before it ran" (V9 spells it "specified"); the record is COV2D-DECLARATION.md, as §4's S1 |
+| V4 | :20 (the same table, the fixed-truth test) | "Predeclared coverage windows" | "Coverage windows specified before any toy was generated" | §5 :137's own "The design, criteria and positive control of the test were specified before any toy was generated" |
+| V5 | :39 | "Assigning one would require a predeclared suite of injection shapes and amplitudes." | "… a suite of injection shapes and amplitudes specified before the tests are run." | a requirement; no record needed |
+| V6 | :91 (tab:closure-map, the 3D bump) | "no predeclared threshold." | "no threshold specified before it ran." | the 3D closure has no recorded threshold (§5 :125's comment; sec_3d.tex:105's Search) |
+| V7 | :95 (tab:closure-map, the 4D closure) | "no predeclared threshold" | "no threshold specified before it ran" | as V6 |
+| V8 | :99 (tab:closure-map, the injected-$W$ bump) | "threshold 0.20, set in advance" | "threshold 0.20, set before the test was run" | PREREG-20261012-5d-injected-w-closure.md:68 "PASS iff ratio < 0.20" (first commit b11ff40d0, 2026-10-12 15:28 -0700); the job 59719296 ran at b11ff40d (§5 :133's comment), and its result was recorded at e885a20f9 (2026-10-13) |
+| V9 | :188 | "A second coverage test, declared before it ran," | "A second coverage test, specified before it ran," (as §9's F1–F3; V1 kept it before the ruling) | as V3 |
+
+**Meaning read for V3–V9, with E1, E2 and C7** (codex-school gpt-6.1-sol, high; reads/es-v3-prompt.txt, es-v3-records.txt):
+pass 1 OVERALL PASS, with no FAILs; no NEEDED item lost; no disclosure lost. reads/es-v3-pass1.txt.
+
 ## Unreleased support
 
 `UNRELEASED-SUPPORT.md` lists §5's sites: TwoDFollowup2026 [39] at :46, and NoteRecords2026 [34] at :137 (coverage-fixed-truth) and :228 (coverage-toys). The
