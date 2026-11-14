@@ -1,0 +1,1 @@
+{"spent": 1.241111111111111, "held": 71.6, "lagging_ids": [], "want": "AR23_Ua", "want_node_h": 8.9, "total": 81.74111111111111, "cap": 110.0, "pass": true, "not_yet_submitted": ["AR23_Ub", "AR23_Uc", "AR23_Ud"], "projection": 108.44111111111111, "stop": false}

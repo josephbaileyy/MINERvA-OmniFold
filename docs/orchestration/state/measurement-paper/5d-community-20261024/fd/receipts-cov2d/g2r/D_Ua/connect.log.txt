@@ -1,0 +1,45 @@
+host=login02 start=2026-11-13T13:22:38Z pid=1198163 user=josephrb M=401733bce290ce122cfbf38f1526e120f174b3ec
+squeue: [61214607 ll5d_bulk_05 RUNNING 8:00:00 1;61214609 ll5d_bulk_06 RUNNING 8:00:00 1;61214614 ll5d_bulk_09 RUNNING 8:00:00 1;61214615 ll5d_bulk_10 RUNNING 8:00:00 1;61214610 ll5d_bulk_07 RUNNING 8:00:00 1;61214612 ll5d_bulk_08 RUNNING 8:00:00 1;]
+== iris
+m3246               2524.8            10000.0     18664.1      20000.0
+balance_node_h=1335.9 half=668.0 cap=110.0
+recompute spent=1.241 held=0.000 this=8.9 total=10.141 cap=110.0
+deploy porcelain=0 ignored=0 head=401733bce290ce122cfbf38f1526e120f174b3ec
+2d-unfolding/cov2d/g2r/jobs/g2r_jobs.py: OK
+2d-unfolding/cov2d/g2r/jobs/g2r_env.sh: OK
+2d-unfolding/cov2d/g2r/jobs/g2r_job.sbatch: OK
+2d-unfolding/cov2d/g2r/jobs/g2r_envtest.sbatch: OK
+2d-unfolding/cov2d/g2r/jobs/g2r_prepare.sbatch: OK
+2d-unfolding/cov2d/g2r/jobs/g2r_submit.sh: OK
+2d-unfolding/re2/re2_driver.py: OK
+2d-unfolding/cov2d/g2r/g2r.py: OK
+2d-unfolding/cov2d/g2r/g2r_prepare.py: OK
+2d-unfolding/cov2d/g2r/g2r_readout.py: OK
+2d-unfolding/cov2d/jobs/cov2d_jobs.py: OK
+2d-unfolding/cov2d/jobs/cov2d_env.sh: OK
+2d-unfolding/cov2d/cov2d.py: OK
+2d-unfolding/cov2d/cov2d_receipt.py: OK
+nd-unfolding/mnv_guarded_run.py: OK
+nd-unfolding/fd_rpd_inputs.py: OK
+docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partb_runs.tsv: OK
+setup_salloc_env.sh: OK
+unbinned_unfolding/python/omnifold.py: OK
+origin/main=c29c2dfa21d58f3f7af762e051505cc549dc65b3
+envtest record on origin/main: verdict=PASS sha256=c4a0720d3a12265403d22e273e219d4594b03ba0a592afe671618ed72cbf0272
+prepare record on origin/main: verdict=PASS map_npz_sha256=956531e3b761aaf08d40c6ab8d917ba5f19dab5947b72607e6a34d0d3f7f83ae sha256=d72facde6b73e854620bce58780928307fcb1fa9b3e921e94f03cbe6ec9ac1dc
+map /pscratch/sd/j/josephrb/cov2d-g2r-20261112/prepare/g2r_map.npz sha256=956531e3b761aaf08d40c6ab8d917ba5f19dab5947b72607e6a34d0d3f7f83ae (O_NOATIME)
+input /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root size=171117087867 atime=2026-11-13T10:39:23Z
+input /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root size=5143 atime=2026-11-13T10:36:28Z
+input /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/flux_integral_universes_MEFHC.root size=6396 atime=2026-11-06T16:31:27Z
+input /pscratch/sd/j/josephrb/cov2d-g2r-20261112/prepare/g2r_map.npz size=143986060 atime=2026-11-13T12:39:35Z
+ll5d constraint /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt atime_epoch=1793891894 (stat only; not a D_Ua input)
+{"spent": 1.241111111111111, "held": 0.0, "lagging_ids": [], "want": "D_Ua", "want_node_h": 8.9, "total": 10.141111111111112, "cap": 110.0, "pass": true, "not_yet_submitted": ["D_Ub", "D_Uc", "D_Ud", "G18_Ua", "G18_Ub", "G18_Uc", "G18_Ud", "AR23_Ua", "AR23_Ub", "AR23_Uc", "AR23_Ud"], "projection": 108.44111111111111, "stop": false}
+2026-11-13T13:22:52Z M=401733bce290ce122cfbf38f1526e120f174b3ec job=D_Ua id=61225732 limit=08:54:00
+sacct lists 61225732
+submit D_Ua rc=0
+2026-11-13T09:41:52Z M=401733bce290ce122cfbf38f1526e120f174b3ec job=envtest id=61220039 limit=01:04:00
+2026-11-13T11:21:02Z M=401733bce290ce122cfbf38f1526e120f174b3ec job=prepare id=61223390 limit=02:00:00
+2026-11-13T13:22:52Z M=401733bce290ce122cfbf38f1526e120f174b3ec job=D_Ua id=61225732 limit=08:54:00
+JobId=61225732 JobName=cov2dg2r-D_Ua Account=m3246 QOS=regular_1 JobState=PENDING TimeLimit=08:54:00 Partition=regular_milan_ss11 NumNodes=1-1 OverSubscribe=NO 
+end=2026-11-13T13:23:04Z
+DONE
