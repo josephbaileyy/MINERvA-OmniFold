@@ -286,7 +286,7 @@
     "sec_systematics.tex:99",
     "sec_systematics.tex:265",
     "sec_eavailw.tex:118",
-    "sec_5d.tex:312",
+    "sec_5d.tex:314",
     "app_statmethods.tex:95",
     "app_statmethods.tex:113"
    ],
@@ -332,7 +332,7 @@
     "sec_execsummary.tex:21",
     "sec_method.tex:100",
     "sec_5d.tex:51",
-    "sec_5d.tex:90",
+    "sec_5d.tex:91",
     "app_negweight.tex:136",
     "app_negweight.tex:163",
     "app_negweight.tex:168"
@@ -376,7 +376,7 @@
     "sec_3d.tex:206",
     "sec_3d.tex:209",
     "sec_3d.tex:216",
-    "sec_fived16.tex:43"
+    "sec_fived16.tex:91"
    ],
    "unlocated_or_partial": [
     {
@@ -423,9 +423,9 @@
     "sec_validation.tex:39",
     "sec_validation.tex:57",
     "sec_eavailw.tex:118",
-    "sec_fived16.tex:134",
-    "sec_fived16.tex:196",
-    "sec_fived16.tex:198",
+    "sec_fived16.tex:187",
+    "sec_fived16.tex:249",
+    "sec_fived16.tex:251",
     "app_response_mismatch.tex:4",
     "app_response_mismatch.tex:13",
     "app_response_mismatch.tex:20",
@@ -499,7 +499,7 @@
     "sec_systematics.tex:12",
     "sec_systematics.tex:50",
     "sec_systematics.tex:231",
-    "sec_5d.tex:294",
+    "sec_5d.tex:296",
     "app_statmethods.tex:223",
     "app_statmethods.tex:231"
    ],
@@ -670,7 +670,7 @@
    ],
    "locations": [
     "sec_systematics.tex:165",
-    "sec_fived16.tex:125"
+    "sec_fived16.tex:173"
    ],
    "unlocated_or_partial": [
     {
@@ -699,14 +699,14 @@
     "sec_systematics.tex:156",
     "sec_systematics.tex:168",
     "sec_systematics.tex:186",
-    "sec_fived16.tex:125",
-    "sec_fived16.tex:127",
+    "sec_fived16.tex:173",
+    "sec_fived16.tex:180",
     "app_statmethods.tex:632"
    ],
    "unlocated_or_partial": [
     {
      "quote": "and in cells R00, R08 it is dominated by that noise.",
-     "best": "sec_fived16.tex:125",
+     "best": "sec_fived16.tex:173",
      "token_share": 0.55
     }
    ],
@@ -727,13 +727,13 @@
     "sec_systematics.tex:214",
     "sec_validation.tex:44",
     "sec_validation.tex:144",
-    "sec_5d.tex:90",
-    "sec_5d.tex:174",
-    "sec_5d.tex:179",
-    "sec_5d.tex:187",
-    "sec_5d.tex:207",
-    "sec_5d.tex:214",
-    "sec_fived16.tex:198"
+    "sec_5d.tex:91",
+    "sec_5d.tex:175",
+    "sec_5d.tex:180",
+    "sec_5d.tex:188",
+    "sec_5d.tex:208",
+    "sec_5d.tex:215",
+    "sec_fived16.tex:251"
    ],
    "unlocated_or_partial": [
     {
@@ -748,12 +748,12 @@
     },
     {
      "quote": "surrogates, and Cmodel and Cresp not at all), was stopped before any coverage pseudo-experiment ran.",
-     "best": "sec_fived16.tex:198",
+     "best": "sec_fived16.tex:251",
      "token_share": 0.69
     },
     {
      "quote": "to that of the drawn covariance lay outside 0.9–1.1 in 11 of the 16 cells, ranging from 0.70 to 2.30.",
-     "best": "sec_fived16.tex:198",
+     "best": "sec_fived16.tex:251",
      "token_share": 0.53
     }
    ],
@@ -921,7 +921,7 @@
     "sec_validation.tex:127",
     "sec_validation.tex:129",
     "sec_3d.tex:104",
-    "sec_5d.tex:135"
+    "sec_5d.tex:136"
    ],
    "unlocated_or_partial": [
     {
@@ -960,11 +960,11 @@
     "sec_5d.tex:61",
     "sec_5d.tex:75",
     "sec_5d.tex:77",
-    "sec_5d.tex:95",
-    "sec_5d.tex:168",
-    "sec_5d.tex:194",
-    "sec_5d.tex:196",
-    "sec_5d.tex:202",
+    "sec_5d.tex:96",
+    "sec_5d.tex:169",
+    "sec_5d.tex:195",
+    "sec_5d.tex:197",
+    "sec_5d.tex:203",
     "sec_joint.tex:50",
     "app_statmethods.tex:552",
     "app_statmethods_nd.tex:47"
@@ -1017,12 +1017,12 @@
     },
     {
      "quote": "2 % to 6 % and at most 16 % to 31 %, within the configuration-(a) total uncertainty in 20 of the 42",
-     "best": "sec_5d.tex:95",
+     "best": "sec_5d.tex:96",
      "token_share": 0.64
     },
     {
      "quote": "Historical W3 at five iterations: correlation is not a per-cell bias bound",
-     "best": "sec_5d.tex:202",
+     "best": "sec_5d.tex:203",
      "token_share": 0.38
     },
     {
@@ -1302,7 +1302,7 @@
    "locations": [
     "sec_3d.tex:125",
     "sec_3d.tex:170",
-    "sec_5d.tex:131"
+    "sec_5d.tex:132"
    ],
    "unlocated_or_partial": [
     {
@@ -1426,10 +1426,10 @@
    ],
    "locations": [
     "sec_eavailw.tex:9",
-    "sec_5d.tex:105",
-    "sec_5d.tex:161",
-    "sec_5d.tex:168",
-    "sec_5d.tex:174"
+    "sec_5d.tex:106",
+    "sec_5d.tex:162",
+    "sec_5d.tex:169",
+    "sec_5d.tex:175"
    ],
    "unlocated_or_partial": [],
    "key": "biasvar"
@@ -1479,10 +1479,9 @@
    "locations": [
     "sec_execsummary.tex:15",
     "sec_eavailw.tex:108",
-    "sec_fived16.tex:311",
-    "sec_fived16.tex:339",
-    "sec_fived16.tex:341",
-    "sec_fived16.tex:348",
+    "sec_fived16.tex:393",
+    "sec_fived16.tex:395",
+    "sec_fived16.tex:402",
     "sec_joint.tex:305",
     "sec_joint.tex:319",
     "sec_joint.tex:327"
@@ -1494,8 +1493,13 @@
      "token_share": 0.75
     },
     {
+     "quote": "in which the events lost to generator aborts were not shown to be negligible (§11.9).",
+     "best": "sec_joint.tex:295",
+     "token_share": 0.29
+    },
+    {
      "quote": "the sampling-closure check failed on its hydrogen sample, a bias check of that check’s premise, added post hoc, passed at ≤ 0.1 σc , and deep-inelastic events, 46 % of its hydrogen sample, do not conserve energy.",
-     "best": "sec_fived16.tex:339",
+     "best": "sec_fived16.tex:393",
      "token_share": 0.63
     }
    ],
@@ -1509,7 +1513,7 @@
    "locations": [
     "sec_execsummary.tex:13",
     "sec_eavailw.tex:137",
-    "sec_fived16.tex:311",
+    "sec_fived16.tex:365",
     "sec_joint.tex:29"
    ],
    "unlocated_or_partial": [
@@ -1535,22 +1539,22 @@
     },
     {
      "quote": "The GiBUU reweighting is applied only below p∥ = 10 GeV/c; above it the prior is unchanged.",
-     "best": "sec_fived16.tex:50",
+     "best": "sec_fived16.tex:98",
      "token_share": 0.5
     },
     {
      "quote": "the GiBUU sample lacks the contribution from Eν > 20 GeV, which is at least 4.9–5.3% of the cross section there",
-     "best": "sec_fived16.tex:50",
+     "best": "sec_fived16.tex:98",
      "token_share": 0.44
     },
     {
      "quote": "GiBUU’s sample has no events above Eν = 20 GeV, so it is compared on the 8 cells below p∥ = 4.5 GeV/c only, and no value is formed on the other 8.",
-     "best": "sec_fived16.tex:204",
+     "best": "sec_fived16.tex:258",
      "token_share": 0.38
     },
     {
      "quote": "In the GENIE CV and NuWro samples, at least 11.71% and 12.59%, respectively, of the cross section above p∥ = 4.5 GeV/c comes from Eν > 20 GeV.",
-     "best": "sec_fived16.tex:204",
+     "best": "sec_fived16.tex:258",
      "token_share": 0.39
     },
     {
@@ -1575,13 +1579,13 @@
    "locations": [
     "sec_execsummary.tex:21",
     "sec_eavailw.tex:146",
-    "sec_5d.tex:250",
-    "sec_5d.tex:281",
-    "sec_5d.tex:298",
-    "sec_5d.tex:306",
-    "sec_5d.tex:309",
+    "sec_5d.tex:252",
+    "sec_5d.tex:283",
+    "sec_5d.tex:300",
+    "sec_5d.tex:308",
     "sec_5d.tex:311",
-    "sec_5d.tex:316",
+    "sec_5d.tex:313",
+    "sec_5d.tex:318",
     "sec_joint.tex:5",
     "app_negweight.tex:185",
     "app_release.tex:101"
@@ -1589,12 +1593,12 @@
    "unlocated_or_partial": [
     {
      "quote": "Their sign carries no information: nnegative = 0 describes this computation and does not show that the source’s negative directions were cured.",
-     "best": "sec_5d.tex:298",
+     "best": "sec_5d.tex:300",
      "token_share": 0.71
     },
     {
      "quote": "1. Estimator-seed sensitivity exceeds its limit. Companion covariances at seed offsets {0, 1200} give the correlation-sensitive measure sproj = 6.145 %, against the movement limit of 5 %,",
-     "best": "sec_5d.tex:306",
+     "best": "sec_5d.tex:308",
      "token_share": 0.73
     },
     {
@@ -1628,10 +1632,10 @@
    ],
    "locations": [
     "sec_5d.tex:39",
-    "sec_5d.tex:179",
-    "sec_5d.tex:187",
-    "sec_5d.tex:214",
-    "sec_5d.tex:227",
+    "sec_5d.tex:180",
+    "sec_5d.tex:188",
+    "sec_5d.tex:215",
+    "sec_5d.tex:228",
     "app_statmethods_nd.tex:33",
     "app_statmethods_nd.tex:35",
     "app_statmethods_nd.tex:43",
@@ -1665,12 +1669,12 @@
    "locations": [
     "sec_systematics.tex:243",
     "sec_5d.tex:77",
-    "sec_fived16.tex:50",
-    "sec_fived16.tex:53",
-    "sec_fived16.tex:171",
-    "sec_fived16.tex:196",
-    "sec_fived16.tex:204",
-    "sec_fived16.tex:343"
+    "sec_fived16.tex:98",
+    "sec_fived16.tex:101",
+    "sec_fived16.tex:224",
+    "sec_fived16.tex:249",
+    "sec_fived16.tex:258",
+    "sec_fived16.tex:397"
    ],
    "unlocated_or_partial": [
     {
@@ -1680,32 +1684,32 @@
     },
     {
      "quote": "In every cell, 77–100% of the prior weight lies next to a discontinuity larger than 0.1 in the reweighting ratio, created by the ratio’s statistical gate or by a cut; the shifts are used unmodified.",
-     "best": "sec_fived16.tex:50",
+     "best": "sec_fived16.tex:98",
      "token_share": 0.59
     },
     {
      "quote": "did not pass its first two tests and was not pursued further, after which Cmodel was adopted unscaled",
-     "best": "sec_fived16.tex:53",
+     "best": "sec_fived16.tex:101",
      "token_share": 0.78
     },
     {
      "quote": "did not pass its first two tests and was not pursued further, after which Cmodel was adopted unscaled",
-     "best": "sec_fived16.tex:53",
+     "best": "sec_fived16.tex:101",
      "token_share": 0.78
     },
     {
      "quote": "in the sixteen-cell comparison GiBUU’s total χ2 , on its eight cells, rises, because the CH prediction is paired with Cmodel ’s NuWro and GiBUU shape ratios from carbon",
-     "best": "sec_fived16.tex:339",
+     "best": "sec_fived16.tex:393",
      "token_share": 0.69
     },
     {
      "quote": "For the scale of Cmodel itself, whose size is not calibrated, the table also gives the χ2 with Cmodel removed and doubled.",
-     "best": "sec_fived16.tex:343",
+     "best": "sec_fived16.tex:397",
      "token_share": 0.57
     },
     {
      "quote": "Removing Cmodel raises GiBUU’s total most, to 166.83 from 47.78.",
-     "best": "sec_fived16.tex:343",
+     "best": "sec_fived16.tex:397",
      "token_share": 0.67
     }
    ],
@@ -1718,14 +1722,14 @@
     "binned vs unbinned estimands differ within bin"
    ],
    "locations": [
-    "sec_5d.tex:83",
-    "sec_5d.tex:161",
+    "sec_5d.tex:84",
+    "sec_5d.tex:162",
     "app_negweight.tex:36"
    ],
    "unlocated_or_partial": [
     {
      "quote": "It does not address what unbinned or biased estimators could recover, the coverage failure of §9.5 or the validity of any interval, and it establishes no impossibility.",
-     "best": "sec_5d.tex:83",
+     "best": "sec_5d.tex:84",
      "token_share": 0.58
     },
     {
@@ -1744,15 +1748,15 @@
     "training-seed block zero by determinism"
    ],
    "locations": [
-    "sec_5d.tex:90",
-    "sec_fived16.tex:48",
-    "sec_fived16.tex:61",
+    "sec_5d.tex:91",
+    "sec_fived16.tex:96",
+    "sec_fived16.tex:109",
     "sec_joint.tex:144"
    ],
    "unlocated_or_partial": [
     {
      "quote": "The paired perturbation study of §9.4 tests whether the bootstrap contains this variability, for this candidate only.",
-     "best": "sec_5d.tex:90",
+     "best": "sec_5d.tex:91",
      "token_share": 0.69
     }
    ],
@@ -1766,7 +1770,7 @@
    ],
    "locations": [
     "sec_method.tex:15",
-    "sec_5d.tex:107"
+    "sec_5d.tex:108"
    ],
    "unlocated_or_partial": [
     {
@@ -1790,14 +1794,14 @@
     "precision targets not met"
    ],
    "locations": [
-    "sec_5d.tex:135",
-    "sec_5d.tex:146",
-    "sec_5d.tex:168"
+    "sec_5d.tex:136",
+    "sec_5d.tex:147",
+    "sec_5d.tex:169"
    ],
    "unlocated_or_partial": [
     {
      "quote": "(a residual proxy of Fig. 26 of at most 0.25, against 0.31–0.63 measured), fail in every definition.",
-     "best": "sec_5d.tex:146",
+     "best": "sec_5d.tex:147",
      "token_share": 0.64
     }
    ],
@@ -1838,7 +1842,7 @@
     "unsupported cells excluded from summaries"
    ],
    "locations": [
-    "sec_fived16.tex:43",
+    "sec_fived16.tex:91",
     "app_statmethods_nd.tex:25"
    ],
    "unlocated_or_partial": [
@@ -1859,7 +1863,7 @@
    ],
    "locations": [
     "sec_systematics.tex:221",
-    "sec_fived16.tex:57",
+    "sec_fived16.tex:105",
     "sec_joint.tex:295"
    ],
    "unlocated_or_partial": [
@@ -1870,7 +1874,7 @@
     },
     {
      "quote": "A cross-talk term, reported beside Cresp and not summed into it, has a median per-cell relative σ of 0.36%.",
-     "best": "sec_fived16.tex:57",
+     "best": "sec_fived16.tex:105",
      "token_share": 0.63
     },
     {
@@ -1890,7 +1894,7 @@
    ],
    "locations": [
     "sec_method.tex:15",
-    "sec_fived16.tex:120",
+    "sec_fived16.tex:168",
     "app_statmethods_nd.tex:16",
     "app_statmethods_nd.tex:19"
    ],
@@ -1907,8 +1911,8 @@
    ],
    "locations": [
     "sec_systematics.tex:186",
-    "sec_fived16.tex:127",
-    "sec_fived16.tex:163"
+    "sec_fived16.tex:180",
+    "sec_fived16.tex:216"
    ],
    "unlocated_or_partial": [
     {
@@ -1923,17 +1927,17 @@
     },
     {
      "quote": "With the block, each prediction’s total χ2 is lower by 3.6–29.3 % of its value without it, and each shape-only χ2 by 7.4–40.4 %",
-     "best": "sec_fived16.tex:129",
+     "best": "sec_fived16.tex:182",
      "token_share": 0.5
     },
     {
      "quote": "We infer from these falls that the predictions’ residuals have components along the directions the rank-2 block adds; the comparison does not test this interpretation.",
-     "best": "sec_fived16.tex:129",
+     "best": "sec_fived16.tex:182",
      "token_share": 0.64
     },
     {
      "quote": "one fake-data truth fewer is listed (§10.4), with the bias unchanged.",
-     "best": "sec_fived16.tex:129",
+     "best": "sec_fived16.tex:182",
      "token_share": 0.64
     }
    ],
@@ -1945,7 +1949,7 @@
     "fake-data truths not held out"
    ],
    "locations": [
-    "sec_fived16.tex:134"
+    "sec_fived16.tex:187"
    ],
    "unlocated_or_partial": [],
    "key": "fdheld"
@@ -1959,11 +1963,11 @@
    ],
    "locations": [
     "main_note.tex:73",
-    "sec_fived16.tex:163",
-    "sec_fived16.tex:165",
-    "sec_fived16.tex:196",
-    "sec_fived16.tex:198",
-    "sec_fived16.tex:260"
+    "sec_fived16.tex:216",
+    "sec_fived16.tex:218",
+    "sec_fived16.tex:249",
+    "sec_fived16.tex:251",
+    "sec_fived16.tex:314"
    ],
    "unlocated_or_partial": [],
    "key": "fdbias"
@@ -1974,8 +1978,8 @@
     "fake-data offset control check failed"
    ],
    "locations": [
-    "sec_fived16.tex:167",
-    "sec_fived16.tex:171"
+    "sec_fived16.tex:220",
+    "sec_fived16.tex:224"
    ],
    "unlocated_or_partial": [],
    "key": "fdctrl"
@@ -1986,7 +1990,7 @@
     "tune v1 is prior not independent"
    ],
    "locations": [
-    "sec_fived16.tex:204"
+    "sec_fived16.tex:258"
    ],
    "unlocated_or_partial": [],
    "key": "tunev1"
@@ -1997,12 +2001,12 @@
     "chi2 sensitivity to correlations"
    ],
    "locations": [
-    "sec_fived16.tex:262"
+    "sec_fived16.tex:316"
    ],
    "unlocated_or_partial": [
     {
      "quote": "Shrinking only the flux correlations by 10 % lowers the χ2 of the 16-cell predictions by 23–38 %.",
-     "best": "sec_fived16.tex:262",
+     "best": "sec_fived16.tex:316",
      "token_share": 0.54
     }
    ],
@@ -2047,7 +2051,7 @@
     },
     {
      "quote": "It motivates the calibrated joint tests of §11, a separate inference that reports no measured cross section.",
-     "best": "sec_5d.tex:146",
+     "best": "sec_5d.tex:147",
      "token_share": 0.56
     },
     {
