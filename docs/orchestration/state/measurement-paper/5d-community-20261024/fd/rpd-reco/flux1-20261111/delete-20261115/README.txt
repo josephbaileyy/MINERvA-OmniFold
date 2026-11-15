@@ -89,6 +89,26 @@ STEP B, THE DELETION (built 2026-11-15; runs only on the director's go by sha)
   Deleting the STOP gate fails 4 of them. test_launch.sh case 6 stages the delete mode the same way (TEST-LAUNCH.out).
   The script parses as Python 3.6.
 
+STEP B, THE RUN (2026-11-15, on the director's go "go eb531545 bf630216 (flux1 step B, delete mode), run once on a
+login node after the certificate, survey and fence"; stepB/)
+- Shas from main's bytes at bc56c253d: flux1_delete.py eb531545..., flux1_cleanup_launch.sh bf630216...,
+  rpd_flux1_launch.sh 8354aece..., cov2d_fence.sh 16a2a5cd.... Certificate valid to 2026-11-15T10:37:34Z (TZ=UTC
+  ssh-keygen -L, read only).
+- Survey (stepB/survey/, 03:13Z): login05, 06, 08, 09 and 10 answered, and the root exists on each. login07 printed
+  nothing. login06 had the lowest 1-minute load (38.06).
+- Fence (stepB/fence/, login06, 03:13:40Z): FENCE CLEAR. squeue held only RDX's rdx_s1_1A (RUNNING); step B lstat's
+  originals that RDX reads, which reads no contents.
+- Delete (stepB/delete/, login06, 03:14:05Z to 03:14:21Z): ssh rc 0, the staged copy's sha256 equal to the approved
+  one, script rc 0, the /dev/shm copy removed. Python 3.6.15.
+  - listing: 24,422 entries, sha256 6e9a2735..., equal to step A's; clone/ 9a85268d..., equal; problems 0;
+  - checks passed at 03:14:13Z: 69 of 69 staged copies equal to their recorded digests, with 64 pscratch originals
+    present at their recorded size and mtime and 5 committed in git; 37 of 37 records equal to their committed
+    counterparts;
+  - removed 26 files by literal path, then the 8 trees, with no removal error;
+  - after: 18 entries, exactly the kept set: run/, the 12 factor products, run/flux-extract.json, run/prestage.json,
+    and .rpd-private/ with its hash directory and record. "DELETE :: DONE end 2026-11-15T03:14:21Z".
+- About 2.83 GB freed. 0 node-h, no Slurm job.
+
 FOLLOW-UP (the director, 2026-11-15)
 - F-KEEP-HPSS: the kept files (the 12 factor products, flux-extract.json, prestage.json, about 592 MB) are exposed to
   pscratch's purge, and P0 pins them by sha256. They should get an HPSS copy before the purge window, in a separate
