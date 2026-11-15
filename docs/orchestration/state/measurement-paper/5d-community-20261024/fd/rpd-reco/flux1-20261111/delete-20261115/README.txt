@@ -52,18 +52,47 @@ once"; stepA/)
   - the job's files at the top (job.out, job.rc, connect.log and the rest), tools/fence_overlap.py, and
     .rpd-private/<hash>/prestage.json (the private prepare record, 258,133 bytes).
 
-STEP B, THE DELETION (after step A's output is committed)
-- What still needs the root: NEEDS.txt, the director's condition before step B. RPD-RECO's pending P0 reads the 12
-  factor products and run/flux-extract.json from this root, so they stay; the clone, the 69 staged copies (54 inputs,
-  among them the 9 instrument files, and 15 MAT dependencies; the earlier "63" counted the instrument files twice) and
-  the records are committed or duplicates of originals that stay in place. run/prestage.json is the director's call.
-- flux1_delete.py will carry, as constants: the root's literal path; step A's listing digest and entry count; the
-  paths it keeps; and the digests the records hold (the staged copies' recorded sha256s, the records' committed
-  counterparts). It recomputes the listing with step A's code and requires the same digest. It reads each declared
-  file with O_NOATIME and requires its digest, and lstat's each pscratch original against its recorded stat_before.
-  Only then does it remove the declared paths by literal path, and it verifies them absent and the kept files present.
-  Exit 0 done; 4 STOP with nothing removed; 8 something still present or a kept file missing; 9 a removal failed.
-- Its sha256 goes to the director before it runs, under the same launcher pattern.
+STEP B, THE DELETION (built 2026-11-15; runs only on the director's go by sha)
+- The director's scope (2026-11-15): delete the clone, the 69 staged copies (each verified against its original's
+  recorded stat first) and the records (each digest checked). Keep in place the 12 factor products,
+  run/flux-extract.json, run/prestage.json and the .rpd-private record (until RPD-RECO closes). NEEDS.txt has the
+  reasons.
+- gen_delete.py builds flux1_delete.py (GEN-DELETE.out) from step A's committed inventory, the held-out prestage.json
+  (sha256 99528ac8..., checked; a copy stays on pscratch, kept) and the committed files the digests come from. It
+  copies step A's listing() and canon() verbatim, by AST. It classifies all 22,190 files and asserts none is left
+  over:
+  - 22,069 clone files, deleted on clone/'s listing digest 9a85268d... (a checkout of 763ab4dd);
+  - 69 staged copies, each by its recorded sha256 read with O_NOATIME. 64 have a pscratch original that must lstat
+    (no read) to its recorded stat_before size and mtime_ns. The 5 whose originals were files of the job's
+    /dev/shm repository copy were checked at generation against git blobs at 763ab4dd (equal);
+  - 37 records, each by the sha256 of its committed counterpart (run-61206960/records/, ../production-config.ready.json,
+    ../tools/fence_overlap.py; the two prepare-check copies by their originals' recorded digests);
+  - 15 files kept.
+- flux1_delete.py (sha256 eb5315459e2dd077c40d19e47eaa5f1fb2baa40f509a1289b932f24ef25c5e56) removes nothing unless
+  every check passes:
+  1. a login node;
+  2. the whole listing equals step A's (6e9a2735..., 24,422 entries), and so does clone/'s;
+  3. every staged copy and original as above;
+  4. every record's digest.
+  It then removes 26 files by literal path and 8 trees (clone, run/original-inputs, run/mat-data,
+  run/prepare-check, run/staged, run/real-mnv-check, run/tmp, tools) with shutil.rmtree, which does not follow
+  symlinks. It requires the remaining listing to be exactly the 18 kept entries. Exit 0 done; 4 STOP with nothing
+  removed; 8 the remaining tree differs; 9 a removal failed.
+- flux1_cleanup_launch.sh gains a delete mode with that sha (launcher sha256 bf6302161d94a00cebccead08ac4cad9561f33ab6bcafe90f392b98edca7eeab; the inventory mode is unchanged).
+- Tests: test_delete.py, 11 tests, OK on Python 3.12 and 3.10, with its constants replaced by a fixture's:
+  - the happy path keeps exactly the kept set and leaves the originals untouched;
+  - each STOP shows, through an audit hook on os.remove, os.rmdir and shutil.rmtree, that nothing was removed: a
+    changed staged byte, a missing original, an original's moved mtime, an extra entry, a changed record, an off-login
+    host, a symlinked root;
+  - a failed removal returns 9, and a wrong kept set returns 8;
+  - the committed script's constants are consistent with step A and the scope.
+  Deleting the STOP gate fails 4 of them. test_launch.sh case 6 stages the delete mode the same way (TEST-LAUNCH.out).
+  The script parses as Python 3.6.
+
+FOLLOW-UP (the director, 2026-11-15)
+- F-KEEP-HPSS: the kept files (the 12 factor products, flux-extract.json, prestage.json, about 592 MB) are exposed to
+  pscratch's purge, and P0 pins them by sha256. They should get an HPSS copy before the purge window, in a separate
+  package when convenient. The .rpd-private record is deleted when RPD-RECO closes.
 
 Nothing is submitted, deposited or tagged, and no file leaves the repository.
 <!-- absence-ok: the document's own status line -->
