@@ -29,6 +29,9 @@ Case 7 (the style batch, 2026-11-10): the ACKNOWLEDGMENTS heading and its text's
 AVAILABILITY heading and its text, and then by the rest of [n]. Move the fragment to just before the rest of [n]. It is
 entered only where the tool otherwise fails (a reference line before a heading that precedes its text), and only if the
 block before the heading is the acknowledgments' tail and the line after the data-availability text continues an entry.
+Case 8 (the AI-use statement, 2026-11-14): as case 7, but the emitted references are whole entries [1] to [n], the line
+after the data-availability text starts [n+1], and the tail's last sentence wraps. Move the entries to just before
+[n+1]. It is entered only after every earlier case has declined.
 Fail if the section's first sentence is not found once, if case 2's tail is not the acknowledgments' end, if case 4's
 fragment or its continuation is not where that layout puts them, or if a reference line precedes the heading in a layout
 no case describes. Every move keeps the word multiset."""
@@ -237,6 +240,37 @@ if h[0] < b[0] and len(a) == 1 and a[0] < r[0]:  # case 7 (the style batch, 2026
         open(p, "w", encoding="utf-8").write("\n".join(L))
         print("moved reference [1]'s first %d lines from between the acknowledgments and their tail to before the rest "
               "of their last entry, after the data-availability text" % len([l for l in frag if l.strip()]))
+        sys.exit(0)
+# case 8 (the AI-use statement, 2026-11-14): as case 7, but the fragment ends on a whole entry [n], the line after the
+# data-availability text starts [n+1], and the tail's last sentence wraps across lines. Reached only where every earlier
+# case has declined, so no older layout reaches it.
+if h[0] < b[0] and len(a) == 1 and a[0] < r[0]:
+    t1 = h[0]
+    while t1 > 0 and not L[t1 - 1].strip():
+        t1 -= 1
+    t0 = t1
+    while t0 > 0 and L[t0 - 1].strip():
+        t0 -= 1
+    tail = " ".join(l.strip() for l in L[t0:t1] if l.strip())
+    e = [i for i in range(b[0], len(L)) if L[i].rstrip().endswith("does not reproduce.")]
+    c = [i for i in range(e[0] + 1, len(L)) if L[i].strip()][:1] if len(e) == 1 else []
+    frag = [l for l in L[r[0]:t0] if l.strip()]
+    nums = [int(m.group(1)) for m in (re.match(r"^\[(\d+)\] ", l) for l in frag) if m]
+    if (tail.endswith("responsibility for the content.") and r[0] < t0 and c and nums
+            and nums == list(range(1, nums[-1] + 1)) and frag[-1].rstrip().endswith((".", "]"))
+            and L[c[0]].startswith("[%d] " % (nums[-1] + 1))):
+        block = L[r[0]:t0]
+        L[c[0]:c[0]] = block
+        del L[r[0]:t0]
+        r2 = [i for i, l in enumerate(L) if l.startswith("[1] ")]
+        h2 = [i for i, l in enumerate(L) if l.strip() == "DATA AVAILABILITY"]
+        b2 = [i for i, l in enumerate(L) if l.startswith(first)]
+        n2 = [i for i, l in enumerate(L) if l.startswith("[%d] " % (nums[-1] + 1))]
+        assert len(r2) == len(h2) == len(b2) == len(n2) == 1 and a[0] < h2[0] < b2[0] < r2[0] < n2[0], (a, h2, b2, r2, n2)
+        assert sorted(" ".join(L).split()) == words0, "word multiset changed"
+        open(p, "w", encoding="utf-8").write("\n".join(L))
+        print("moved references [1] to [%d] (whole entries) from between the acknowledgments and their tail to before "
+              "[%d], after the data-availability text" % (nums[-1], nums[-1] + 1))
         sys.exit(0)
 if h[0] < b[0]:  # case 1 is a heading emitted after its text; this is some other layout
     sys.exit("FAIL: a reference line precedes the DATA AVAILABILITY heading, which already precedes its text: no case describes this layout")
