@@ -14804,6 +14804,13 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/env
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/environment-private-native-20261108/VERIFICATION.json	tracked	MACHINE	state-artifact	measurement-paper		open		exact-path-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/README.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/SHA256SUMS	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/delete-20261115/README.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/delete-20261115/SHA256SUMS	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/delete-20261115/TEST-LAUNCH.out	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/delete-20261115/flux1_cleanup_launch.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/delete-20261115/flux1_inventory.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/delete-20261115/test_inventory.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/delete-20261115/test_launch.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/production-config.ready.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/rpd_flux1_connect.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/rpd_flux1_fetch.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
