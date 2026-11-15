@@ -1,0 +1,374 @@
+[
+ {
+  "i": 0,
+  "kind": "image",
+  "axes": 0,
+  "label": "_child0",
+  "hash": "30d5519f36c955b550635e3e041ee7fc28f4be08ec1af8e27e56aebb4536b1b2",
+  "dhash": "acbd51bc04345aab8280262a4da59888797f719273d84d374c16cfddb920f18b",
+  "xhash": "acbd51bc04345aab8280262a4da59888797f719273d84d374c16cfddb920f18b",
+  "colours": {
+   "cmap": "RdBu_r"
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 1,
+  "kind": "image",
+  "axes": 1,
+  "label": "_child0",
+  "hash": "bc2295844290ba914064e1d12f56dcadc66623fb99e072f35dfd01dbbb29c8fb",
+  "dhash": "7143ed337f0ad0c8d474af0b2ea525edde9d9228da1ef6805eec1b50a008ed8b",
+  "xhash": "7143ed337f0ad0c8d474af0b2ea525edde9d9228da1ef6805eec1b50a008ed8b",
+  "colours": {
+   "cmap": "RdBu_r"
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 2,
+  "kind": "image",
+  "axes": 2,
+  "label": "_child0",
+  "hash": "f143b67a3e9fab8a28a4ecaad56c77a24e190967ba848d6ebbb5834ebd1d9dcf",
+  "dhash": "54b0279c387ca52ba73af524d301d25bce7b0bce7f2c4de784d1183baa1bf861",
+  "xhash": "54b0279c387ca52ba73af524d301d25bce7b0bce7f2c4de784d1183baa1bf861",
+  "colours": {
+   "cmap": "RdBu_r"
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 3,
+  "kind": "image",
+  "axes": 3,
+  "label": "_child0",
+  "hash": "4d3dcb81900b52785a87d94faa4377ee7efa7d6d67c88741e431845e2e3536ce",
+  "dhash": "30f5350710cca8599fa998c3ffc0c65684e1b529d7aabd7112d92c1e4b330471",
+  "xhash": "30f5350710cca8599fa998c3ffc0c65684e1b529d7aabd7112d92c1e4b330471",
+  "colours": {
+   "cmap": "RdBu_r"
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 4,
+  "kind": "image",
+  "axes": 4,
+  "label": "_child0",
+  "hash": "bd488b8bf3ead8f6a47e2fb26c65c9732ee40f3d9d0898b95854b210e482aac2",
+  "dhash": "7c5ffb229c5a0fcc9191b47c3c43c68e4c97bfb04323cd6dd6672e23306cfe0e",
+  "xhash": "7c5ffb229c5a0fcc9191b47c3c43c68e4c97bfb04323cd6dd6672e23306cfe0e",
+  "colours": {
+   "cmap": "RdBu_r"
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 5,
+  "kind": "image",
+  "axes": 5,
+  "label": "_child0",
+  "hash": "29ae7ab7507bc7825b173aa6aa6a51afa3302b4960efb951accdde45d17809b4",
+  "dhash": "396ff0a7927412043788c9d26e3312f04b533ea7461e36564f9e3c2d8f36ae41",
+  "xhash": "396ff0a7927412043788c9d26e3312f04b533ea7461e36564f9e3c2d8f36ae41",
+  "colours": {
+   "cmap": "RdBu_r"
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 6,
+  "kind": "LineCollection",
+  "axes": 6,
+  "label": "_child0",
+  "hash": "c78f26eeb0efecdcc1a13ce55d6ce9d339e615e455c8f4efbfa1316d7269473f",
+  "dhash": "2062b477c651b3fc38ee2bc7849247c25be032f05a382689d12fc1abf3db4447",
+  "xhash": "2062b477c651b3fc38ee2bc7849247c25be032f05a382689d12fc1abf3db4447",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#000000FF"
+   ],
+   "cmap": "viridis"
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 7,
+  "kind": "QuadMesh",
+  "axes": 6,
+  "label": "_child1",
+  "hash": "367321c62ed836a454549056b7f9e1a1e97181c617b5b9b58ace99e6dcee0ab9",
+  "dhash": "4d061b9ff34b8f0e0dae430e0e841b0c7417efbf14b7d1bdf83a66cf7e040c7b",
+  "xhash": "4d061b9ff34b8f0e0dae430e0e841b0c7417efbf14b7d1bdf83a66cf7e040c7b",
+  "colours": {
+   "face": [
+    "#C44E52FF"
+   ],
+   "edge": [],
+   "cmap": "RdBu_r"
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 8,
+  "kind": "LineCollection",
+  "axes": 7,
+  "label": "_child0",
+  "hash": "c78f26eeb0efecdcc1a13ce55d6ce9d339e615e455c8f4efbfa1316d7269473f",
+  "dhash": "2062b477c651b3fc38ee2bc7849247c25be032f05a382689d12fc1abf3db4447",
+  "xhash": "2062b477c651b3fc38ee2bc7849247c25be032f05a382689d12fc1abf3db4447",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#000000FF"
+   ],
+   "cmap": "viridis"
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 9,
+  "kind": "QuadMesh",
+  "axes": 7,
+  "label": "_child1",
+  "hash": "0a7d42b2c63dfbaabefda963f5b57daa41b0c7370aceb7c15331caf96bdd13b6",
+  "dhash": "523b09998616ea48cf12fedb9fb9677f9c7337acb73b8f8a5d218461004b6451",
+  "xhash": "523b09998616ea48cf12fedb9fb9677f9c7337acb73b8f8a5d218461004b6451",
+  "colours": {
+   "face": [
+    "#C44E52FF"
+   ],
+   "edge": [],
+   "cmap": "RdBu_r"
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 10,
+  "kind": "LineCollection",
+  "axes": 8,
+  "label": "_child0",
+  "hash": "c78f26eeb0efecdcc1a13ce55d6ce9d339e615e455c8f4efbfa1316d7269473f",
+  "dhash": "2062b477c651b3fc38ee2bc7849247c25be032f05a382689d12fc1abf3db4447",
+  "xhash": "2062b477c651b3fc38ee2bc7849247c25be032f05a382689d12fc1abf3db4447",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#000000FF"
+   ],
+   "cmap": "viridis"
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 11,
+  "kind": "QuadMesh",
+  "axes": 8,
+  "label": "_child1",
+  "hash": "b058ec977da36421e5b2087052eeb386a1e44007f21444ebe3bb9906351e7695",
+  "dhash": "867f8f5cb405e5d41bbcd9b612f83228155ba91a6e8506fd79a7a0f9860e119e",
+  "xhash": "867f8f5cb405e5d41bbcd9b612f83228155ba91a6e8506fd79a7a0f9860e119e",
+  "colours": {
+   "face": [
+    "#C44E52FF"
+   ],
+   "edge": [],
+   "cmap": "RdBu_r"
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 12,
+  "kind": "LineCollection",
+  "axes": 9,
+  "label": "_child0",
+  "hash": "c78f26eeb0efecdcc1a13ce55d6ce9d339e615e455c8f4efbfa1316d7269473f",
+  "dhash": "2062b477c651b3fc38ee2bc7849247c25be032f05a382689d12fc1abf3db4447",
+  "xhash": "2062b477c651b3fc38ee2bc7849247c25be032f05a382689d12fc1abf3db4447",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#000000FF"
+   ],
+   "cmap": "viridis"
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 13,
+  "kind": "QuadMesh",
+  "axes": 9,
+  "label": "_child1",
+  "hash": "98893024ae207edcc7393cb219c4bd20582fb5666328fe4fde28b3b170818e66",
+  "dhash": "f94d350ddacbf0762858c47e58487ea3b15de540e4279f5d7a155fe29540a0e3",
+  "xhash": "f94d350ddacbf0762858c47e58487ea3b15de540e4279f5d7a155fe29540a0e3",
+  "colours": {
+   "face": [
+    "#C44E52FF"
+   ],
+   "edge": [],
+   "cmap": "RdBu_r"
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 14,
+  "kind": "LineCollection",
+  "axes": 10,
+  "label": "_child0",
+  "hash": "c78f26eeb0efecdcc1a13ce55d6ce9d339e615e455c8f4efbfa1316d7269473f",
+  "dhash": "2062b477c651b3fc38ee2bc7849247c25be032f05a382689d12fc1abf3db4447",
+  "xhash": "2062b477c651b3fc38ee2bc7849247c25be032f05a382689d12fc1abf3db4447",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#000000FF"
+   ],
+   "cmap": "viridis"
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 15,
+  "kind": "QuadMesh",
+  "axes": 10,
+  "label": "_child1",
+  "hash": "067a548a0d15d54111df89486f530677edbabc7f115c13fadc819842e151c674",
+  "dhash": "4476356cd086934ed2dbe958ede8a761b087dac086d96e575fac79195e45c846",
+  "xhash": "4476356cd086934ed2dbe958ede8a761b087dac086d96e575fac79195e45c846",
+  "colours": {
+   "face": [
+    "#C44E52FF"
+   ],
+   "edge": [],
+   "cmap": "RdBu_r"
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 16,
+  "kind": "LineCollection",
+  "axes": 11,
+  "label": "_child0",
+  "hash": "c78f26eeb0efecdcc1a13ce55d6ce9d339e615e455c8f4efbfa1316d7269473f",
+  "dhash": "2062b477c651b3fc38ee2bc7849247c25be032f05a382689d12fc1abf3db4447",
+  "xhash": "2062b477c651b3fc38ee2bc7849247c25be032f05a382689d12fc1abf3db4447",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#000000FF"
+   ],
+   "cmap": "viridis"
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 17,
+  "kind": "QuadMesh",
+  "axes": 11,
+  "label": "_child1",
+  "hash": "94dca2b2ea56182e1ee1777479cb7057c818453c2cc86b03da675899747375b1",
+  "dhash": "032b3906a4463705e8064ab78e05a098c7ff0c0387e64235a4ef17005d629d38",
+  "xhash": "032b3906a4463705e8064ab78e05a098c7ff0c0387e64235a4ef17005d629d38",
+  "colours": {
+   "face": [
+    "#C44E52FF"
+   ],
+   "edge": [],
+   "cmap": "RdBu_r"
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ }
+]

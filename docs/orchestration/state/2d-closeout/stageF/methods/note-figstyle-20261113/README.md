@@ -214,11 +214,60 @@ holds every drawn value.
       At the printed size those labels ran into the catch bin's "100" ("10100"). The ticks stay. The drawn data are
       still hash-equal to the off arm (50 of 50, `runs/family1b/cap-after-ticks/`). Installed, sha256 dcea96fa.
 
+## Family 2, group R (2026-11-14): the eleven 2D figures of 10-31, font-only pass
+
+**Method, by the director's rulings of 2026-11-14:** font family and mathtext only. The restyle's Joseph-approved sizes
+are unchanged. One opt-in, no dump.
+- **The code** (6b9b5be5c): `2d-unfolding/restyle_2026_10.py` gains `--print-font`. `on(args)`, which all six producers
+  call before drawing, sets `PRINT_FONT` only with both `--style restyle-2026-10` and `--print-font`. The keys are
+  font.family serif, font.serif DejaVu Serif and mathtext.fontset cm.
+- **Tests:** `docs/analysis-note/test_note_print_style.py` pins `PRINT_FONT` to `note_print_style.PRINT_RC`'s font keys,
+  and proves the option is opt-in; a mutant is killed. The 10-31 restyle selftest passes on this tree (SELF-TEST :: PASS,
+  numpy 1.26.4).
+
+**The connect** (`tools/figc_family2.sh` 5932e43e, launcher 98e77743; `runs/family2/connect-family2.session.txt`):
+login21, 11:53:24–11:56:32Z, 0 node-h.
+- It ran after sacct showed cov2d's ll5d_null_01 (61271235) COMPLETED (`runs/family2/sacct-61271235.txt`).
+- The fence passed. The overlap check found nothing for the two inputs: X (E_R `xsec.root`, sha256 a5c13fc3) and ANC
+  (the published covariance, 6c6dce72). These are the only files run-a2 opened, and each matched its size and sha256.
+- A fresh clone at 6b9b5be5c, with porcelain 0 before and after.
+- matplotlib 3.10.8 and numpy 1.26.4.
+- Six steps per arm through the 10-31 `capture.py`, unchanged, each at 4–12 s wall.
+- The tar's sha256 is 77d38c75, and the fetched copy matches.
+
+**Checks:**
+- **Identity:** the before arm (`--style restyle-2026-10`, new code) is pixel-equal to the installed figures, 11 of 11
+  at 100 dpi (`runs/family2/identity/identity-and-fonts.txt`).
+- **Data:** the 10-31 `compare.py`, before against after, gives COMPARE :: PASS
+  (`runs/family2/compare-before-after.txt`):
+  - every figure's data-artist hashes are equal (data, colours, markers, line styles, colour limits);
+  - both text reports are byte-equal, and so are the input rows.
+- **Collisions:** `overlap.py` finds 0 in every figure of both arms (`runs/family2/overlap-*.txt`).
+- **Fonts:** before uses DejaVu Sans. After uses DejaVu Serif with Computer Modern maths (Cmr10, Cmmi10, Cmsy10) and
+  STIXGeneral-Regular for the glyphs Computer Modern lacks. The paper's own figures use the same set, STIX included.
+
+**Installed:** the after PDFs are in `figs/` and installed by `make_figures.sh` (`install_printstyle_fig`). The eleven
+`install_restyle_fig` lines from 11-01 are now comments.
+
+| figure | sha256 |
+|---|---|
+| MEFHC_5iter_fig13.pdf | `d9bb9a95…` |
+| MEFHC_5iter_xsec_proj_pt.pdf | `a770d747…` |
+| MEFHC_5iter_xsec_proj_pz.pdf | `52a0724e…` |
+| MEFHC_5iter_pull_full.pdf | `a9510fb9…` |
+| MEFHC_5iter_xsec_paper_pt_slices.pdf | `c97195af…` |
+| MEFHC_5iter_xsec_paper_pz_slices.pdf | `9c18ea23…` |
+| tension_spectrum.pdf | `d358068b…` |
+| tension_chi2_map.pdf | `dfc675ac…` |
+| tension_mode_maps.pdf | `04964741…` |
+| model_comp_projections.pdf | `ae7f5a54…` |
+| model_comp_ratio_maps.pdf | `49f0d76c…` |
+
 ## CITABLE FOR / NOT CITABLE FOR
 
 **CITABLE FOR:**
-- that the five redrawn figures plot the committed figures' data, colours and line styles bit for bit (drawn-data
-  hashes);
+- that each redrawn figure listed above plots the committed figure's data, colours and line styles bit for bit
+  (drawn-data hashes: capture_any/compare_any for groups L and C, the 10-31 compare.py for group R);
 - that their data files are byte-equal;
 - each figure's printed text size;
 - the install pins.

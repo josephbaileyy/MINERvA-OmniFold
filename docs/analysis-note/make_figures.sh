@@ -256,17 +256,17 @@ install_restyle_fig() {  # install_restyle_fig <basename under $RSG and in $FIGD
   fi
   echo "  installed $1 ($want)"
 }
-install_restyle_fig MEFHC_5iter_fig13.pdf                 a5530bfc0c3220a0a522dfcaa52f143752dd67465c525237acb0ad8cf722237f
-install_restyle_fig MEFHC_5iter_xsec_proj_pt.pdf          bfff6d0b8034436f6bd46d92a9d67e029812fb545f38a36eeb30ca5cbad157c2
-install_restyle_fig MEFHC_5iter_xsec_proj_pz.pdf          ff27c7d477af3c4099631c39e462972842b9fe805264c507876b8b40570f9e58
-install_restyle_fig MEFHC_5iter_pull_full.pdf             fd84d992f3b212be3be6da06badbe3dfb5123f160f34f10e81d7f65cc80afd3d
-install_restyle_fig MEFHC_5iter_xsec_paper_pt_slices.pdf  ed6fb4162bdf84f6c57fedde39912fff13d0f387e5e5bc6d7a028af3ecdb2cdd
-install_restyle_fig MEFHC_5iter_xsec_paper_pz_slices.pdf  18252c59b3a0572d490c63770df1ec2e38b8989bf3be8165985cbac799d6daf4
-install_restyle_fig tension_spectrum.pdf                  5de8157fb9831a9b6b895f231ac771488e1eef1334c0bef7e19885e676b83c5d
-install_restyle_fig tension_chi2_map.pdf                  7161ded1a2a6666de6c04d55652c00bf2435a72a38e8ef0e422a6105c002ef08
-install_restyle_fig tension_mode_maps.pdf                 7ea2d004150d1633b7e92b655d9664f7d183444a46fd48830b43f7592cfc2c71
-install_restyle_fig model_comp_projections.pdf            44f2a7b7800b5c59821e0bda87e12c137237f1bed89fe9fae87a2a4aa15294c0
-install_restyle_fig model_comp_ratio_maps.pdf             838e5fc4669cf4d58b20f81dbda29f5131c1a57a9d34202948b9830ab51648bd
+# install_restyle_fig MEFHC_5iter_fig13.pdf                 a5530bfc0c3220a0a522dfcaa52f143752dd67465c525237acb0ad8cf722237f   (font-only pass, 2026-11-14: installed below)
+# install_restyle_fig MEFHC_5iter_xsec_proj_pt.pdf          bfff6d0b8034436f6bd46d92a9d67e029812fb545f38a36eeb30ca5cbad157c2   (font-only pass, 2026-11-14: installed below)
+# install_restyle_fig MEFHC_5iter_xsec_proj_pz.pdf          ff27c7d477af3c4099631c39e462972842b9fe805264c507876b8b40570f9e58   (font-only pass, 2026-11-14: installed below)
+# install_restyle_fig MEFHC_5iter_pull_full.pdf             fd84d992f3b212be3be6da06badbe3dfb5123f160f34f10e81d7f65cc80afd3d   (font-only pass, 2026-11-14: installed below)
+# install_restyle_fig MEFHC_5iter_xsec_paper_pt_slices.pdf  ed6fb4162bdf84f6c57fedde39912fff13d0f387e5e5bc6d7a028af3ecdb2cdd   (font-only pass, 2026-11-14: installed below)
+# install_restyle_fig MEFHC_5iter_xsec_paper_pz_slices.pdf  18252c59b3a0572d490c63770df1ec2e38b8989bf3be8165985cbac799d6daf4   (font-only pass, 2026-11-14: installed below)
+# install_restyle_fig tension_spectrum.pdf                  5de8157fb9831a9b6b895f231ac771488e1eef1334c0bef7e19885e676b83c5d   (font-only pass, 2026-11-14: installed below)
+# install_restyle_fig tension_chi2_map.pdf                  7161ded1a2a6666de6c04d55652c00bf2435a72a38e8ef0e422a6105c002ef08   (font-only pass, 2026-11-14: installed below)
+# install_restyle_fig tension_mode_maps.pdf                 7ea2d004150d1633b7e92b655d9664f7d183444a46fd48830b43f7592cfc2c71   (font-only pass, 2026-11-14: installed below)
+# install_restyle_fig model_comp_projections.pdf            44f2a7b7800b5c59821e0bda87e12c137237f1bed89fe9fae87a2a4aa15294c0   (font-only pass, 2026-11-14: installed below)
+# install_restyle_fig model_comp_ratio_maps.pdf             838e5fc4669cf4d58b20f81dbda29f5131c1a57a9d34202948b9830ab51648bd   (font-only pass, 2026-11-14: installed below)
 
 echo
 echo "== 3D/4D configuration-(e) figures from RE-1 run 2 F2 (digest-checked copy) =="
@@ -322,6 +322,20 @@ install_printstyle_fig control_corner.pdf               09f291027d63f4f018e651d6
 # Family 1b (2026-11-14): Fig. 1 from the extended-display dump of one cluster pass (runs/family1b/dumps/), with
 # --from-arrays <dump> --extended-display --print-style.
 install_printstyle_fig control_plots.pdf                dcea96fa289c03a4c204804c2852242d4236ff96330d28877bbd0ac1e3a94602
+# Family 2, group R (2026-11-14): the eleven 2D figures of 10-31 in the paper fonts (restyle_2026_10 --print-font,
+# font family and mathtext only), from one login-node pass (note-figstyle-20261113/runs/family2/). Data, colours and
+# styles bit-equal to the restyle (compare.py COMPARE :: PASS); the restyle install lines above are now comments.
+install_printstyle_fig MEFHC_5iter_fig13.pdf                 d9bb9a951ef13b6d6a6146f7de2a7b83ef07c425a9c2572d1069a3ec1056551e
+install_printstyle_fig MEFHC_5iter_xsec_proj_pt.pdf          a770d7477cad9aabe25faf1f0694654a67606a7977028898ca7bed8c1332bacc
+install_printstyle_fig MEFHC_5iter_xsec_proj_pz.pdf          52a0724ee3e9d25d007c116d92969e6641ca2e2a73a32a21db7818b1414654dd
+install_printstyle_fig MEFHC_5iter_pull_full.pdf             a9510fb997ba90577a95b6bead042781bbc882abee0c34baa736516619793add
+install_printstyle_fig MEFHC_5iter_xsec_paper_pt_slices.pdf  c97195af5d71d1401782446bf9ac1260d4f07bf081b344052dafc4c47661713f
+install_printstyle_fig MEFHC_5iter_xsec_paper_pz_slices.pdf  9c18ea23b4525375b76eca054d4db6db4e64c902326607e313b3c41e60ed73a9
+install_printstyle_fig tension_spectrum.pdf                  d358068b707b8b677cbe2c1f0304427621df76d2da03c9f051822cb38371fdd7
+install_printstyle_fig tension_chi2_map.pdf                  dfc675ac425b90c94890e386b2630482e48d55867839100bc242bcbc64381ed5
+install_printstyle_fig tension_mode_maps.pdf                 049647417c6aaaf889a885a573f311b61d2e6819cdf4bbe174894a5e1e376996
+install_printstyle_fig model_comp_projections.pdf            ae7f5a54efd234e80388c9f6990721d022dc5df0278637d190b78b2f4938ec19
+install_printstyle_fig model_comp_ratio_maps.pdf             49f0d76c0eb17dc9e22522a472baa28fd5e436d9b2863bb9be3a6e59135b7307
 
 echo
 echo "== paper-only vector crops =="

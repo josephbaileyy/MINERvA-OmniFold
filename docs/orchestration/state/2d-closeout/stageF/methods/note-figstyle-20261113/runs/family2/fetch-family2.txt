@@ -1,0 +1,2 @@
+scp rc=0
+77d38c757163832b17ef615f6c7106afd31a5b46a38931c5e4a4c0555f1ae21e  f2fetch/post-f2.tar.gz
