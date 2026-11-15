@@ -4152,6 +4152,7 @@ docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/tools
 docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/tools/capture_pickle.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/tools/compare_any.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/tools/edges_from_pdf.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/tools/fakereplay6/replay_inference.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/tools/fakeroot/ROOT.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/tools/fakeroot3/ROOT.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/tools/fakeroot4/ROOT.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
@@ -4165,6 +4166,7 @@ docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/tools
 docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/tools/identity_family3.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/tools/identity_family4.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/tools/identity_family5.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/tools/identity_family6.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/tools/identity_fig1.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/tools/root_th1_readback.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-fixes/FIX-20261025-negweight-scope.md	tracked	LIVE	state-artifact	2d-closeout	20261025	open		route-only	no
