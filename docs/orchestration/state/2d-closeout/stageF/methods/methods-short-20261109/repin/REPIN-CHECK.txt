@@ -59,7 +59,7 @@ OK  RP33k  resource paper      count=1  Keeping the \fvval{re2-modes-4} directio
 --  RP42   code     B465-468 B586-598  helper-3's D1 prep (prep/d1-cnew-20261114 at 1f3279bf7, not yet in the draft) ma
 OK  GEN16  labels=1 block_sha=65b02f09daacba48
 OK  MACRO  \chiPaper printed 3
-OK  MACRO  \fluxBand printed 1
+OK  MACRO  \fluxBand printed 1; \fvval{q2d-fluxband} printed 0 (RP42)
 OK  MACRO  \pullRMS printed 1
 OK  MACRO  \ratioTot printed 3
 OK  MACRO  \sigTwoD printed 1

@@ -72,7 +72,8 @@ print(f"{'OK ' if ok else 'BAD'} GEN16  labels={raw.count(chr(92) + 'label{tab:g
 # after comment stripping, in the paper, Supplement and abstract together), or its re-sourced key (RESOURCED, with
 # its row) must be printed as \fvval{key}.
 MACROS = ["chiPaper", "fluxBand", "pullRMS", "ratioTot", "sigTwoD", "uqIntegral", "uqMedian"]
-RESOURCED = {"uqMedian": ("q2d-sigma-med", "RP42"), "uqIntegral": ("q2d-sigma-int", "RP42")}
+RESOURCED = {"uqMedian": ("q2d-sigma-med", "RP42"), "uqIntegral": ("q2d-sigma-int", "RP42"),
+             "fluxBand": ("q2d-fluxband", "RP42")}
 alltext = " ".join(cache.setdefault(d, text(d)) for d in DOCS)
 for m in MACROS:
     n = len(re.findall(r"\\" + m + r"(?![A-Za-z])", alltext))
