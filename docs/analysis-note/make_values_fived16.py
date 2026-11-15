@@ -499,7 +499,7 @@ VERDICTS = {
     'll5d-offset': '$|o_c|=0.048$ under $C_T$, in R05 at \\fvval{f1-tune-ar23-short} in the variant with the two bands, against $\\delta^*=0.667$',
     'll5d-repair': 'the correction of an implementation defect in that check, which compared event weights stored at two precisions. The repair changed no rule, threshold, bound or cell',
     'll5d-route': 'repaired',
-    'll5d-route-record': "at both tunes, an entry check that matches each simulated truth event across two of the test's inputs found every event unmatched, against a bound of 5\\,\\% on the largest unmatched share in any cell, and the run stopped. The entry checks had used the coverage pseudo-experiments' draws (as above), but at that point none had been unfolded or graded. Every other entry check had passed, and their readings were visible when the repair was chosen. A diagnosis classed the failure as an implementation defect: the check compared event weights stored at two floating-point precisions, so no event could match. The repair compares them at one precision and adds a check of the matching on the real inputs, which passed. It changed no rule, threshold, bound or cell. The entry checks were then rerun at both tunes and passed. A later pilot attempt stopped on a missing product, at a price check that stops a job without grading it, and reran with a job-script change only. The diagnosed defect is distinct from the unexplained disagreement of the two GEANT4 bands described above, which led to the primary variant",
+    'll5d-route-record': "at both tunes, an entry check that matches each simulated truth event across two of the test's inputs found every event unmatched, against a bound of 5\\,\\% on the largest unmatched share in any cell, and the run stopped. The entry checks had used the coverage pseudo-experiments' draws (as above), but at that point none had been unfolded or graded. Every other entry check had passed, and their readings were visible when the repair was chosen. A diagnosis classed the failure as an implementation defect: the check compared event weights stored at two floating-point precisions, so no event could match. The repair compares them at one precision and adds a check of the matching on the real inputs, which passed. It changed no rule, threshold, bound or cell. The entry checks were then rerun at both tunes and passed. A later trial run of the procedure's controls and one pseudo-experiment stopped at a check on computing time and memory, which found an output file missing before any pseudo-experiment was graded, and was rerun with a change to its batch script only. The diagnosed defect is in this test's entry check. The disagreement of the two GEANT4 bands in the first test (above), which led to the primary variant, remains unexplained",
     'll5d-status': 'descriptive',
     'll5d-stop-what': 'an event-matching entry check, which found every event unmatched at both tunes',
 }
@@ -598,9 +598,15 @@ LL5D_ROUTE_TEXT = {
     "ll5d-stop-what": "an event-matching entry check, which found every event unmatched at both tunes",
     "ll5d-repair": ("the correction of an implementation defect in that check, which compared event weights stored at "
                     "two precisions. The repair changed no rule, threshold, bound or cell"),
-    # The pilot (the director's ruling (a), 2026-11-15): pilot r1 walls REPRICE on a missing npz (pilot-r1/README.md
-    # :1, :10-17; LL5D-DECLARATION.md:614-618), r2 with a connect-only change (pilot-r2/README.md:3-8); a disclosure,
-    # not a repair. The band disagreement (ruling (d)): S9's frame, the first test's checks (S8.6).
+    # The pilot (the director's ruling (a), 2026-11-15): pilot r1's walls check, on wall time and peak RSS, read
+    # REPRICE on a missing toy output, `missing ll5d_g18_toy_minus2_4751000.npz`, with 10 of 13 items run
+    # (pilot-r1/README.md:1, :10-17; LL5D-DECLARATION.md:558, :614-618); r2 changed the connect script only
+    # (pilot-r2/README.md:3-8); a disclosure, not a repair, and no cause is stated beyond the record's. "Before any
+    # pseudo-experiment was graded": the pilot's 13 items unfold and check only (LL5D-DECLARATION.md:558); grading is
+    # over each (truth, reading)'s 300 toys (sec. 6), and the only grade is the readout after the bulk (job 61272425,
+    # #1157). The band
+    # disagreement (ruling (d); journal-editor, 2026-11-15): stated as unexplained, with no claim that the defect is
+    # unrelated to it, which no record shows.
     # The exceeded quantity and its bound (the PRD read, 2026-11-15): vi's largest_cell_unmatched_share 1.0 against
     # MISMATCH_BOUND = 0.05 (gate-g18/README.md:28-33, clip_probe2.py:60; vicheck/README.md:18-19).
     # The order (journal-editor's round 2): the STOPs (gate-g18 and gate-ar23 README.md:1, jobs 61040163 and 61040235,
@@ -619,11 +625,11 @@ LL5D_ROUTE_TEXT = {
                           "event weights stored at two floating-point precisions, so no event could match. The repair "
                           "compares them at one precision and adds a check of the matching on the real inputs, which "
                           "passed. It changed no rule, threshold, bound or cell. The entry checks were then rerun at "
-                          "both tunes and passed. A later pilot attempt stopped on a missing product, at a price check "
-                          "that stops a job without grading it, and reran with a job-script change only. The diagnosed "
-                          "defect is distinct "
-                          "from the unexplained disagreement of the two GEANT4 bands described above, which led to the "
-                          "primary variant"),
+                          "both tunes and passed. A later trial run of the procedure's controls and one pseudo-experiment "
+                          "stopped at a check on computing time and memory, which found an output file missing before any "
+                          "pseudo-experiment was graded, and was rerun with a change to its batch script only. The "
+                          "diagnosed defect is in this test's entry check. The disagreement of the two GEANT4 bands in "
+                          "the first test (above), which led to the primary variant, remains unexplained"),
 }
 _LL5D_CLASS = {(True, True): "under-joint", (True, False): "under-joint-only", (False, True): "under-cells"}
 
