@@ -34,6 +34,8 @@ BASECV=$MP1/s0/evloop/base_cv.root; BASECV_SHA=c76256a495d2deb7c213c2f8203b284be
 ZERO=$MP1/s1/evloop/zero; LATD=$MP1/s1/lateral
 PLS="1A 1B 1C 1D 1E 1F 1G 1L 1M 1N 1O 1P"
 PY=/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3
+CHKPY=/global/homes/j/josephrb/.conda/envs/omnifold_py310/bin/python   # align, rows, truthx_npz: uproot + numpy, no ROOT
+# (root_6_28 has PyROOT but no uproot: the c1 STOP of 2026-11-15); the walk probe stays under setup_salloc_env
 SYSPY=/usr/bin/python3
 REPO=https://github.com/josephbaileyy/MINERvA-OmniFold.git
 POLICY_REL=docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/prologue5-20261108/policy-config.json
@@ -79,6 +81,16 @@ submit() {  # submit NAME LIMIT SCRIPT ARGS...
   squeue -j "$jid" -o '%i|%j|%T|%l|%q' 2>&1
 }
 md5_of() { awk '$2 ~ /bld_'"$1"'\/runEventLoopOmniFold$/ && length($1) == 32 {print $1}' "$RDXBUILD/MANIFEST.md5"; }
+chkenv() {  # fail closed unless the checker python imports uproot, numpy and the deploy's mp1/w2 modules the checkers use
+  $CHKPY -I -B - "$DEP" <<'EOF' || stop "the checker python $CHKPY cannot import uproot, numpy, omnifile_io and compare_omnifiles"
+import os, sys
+for p in ("measurement-paper/phase1/mp1", "publication/w2"):
+    sys.path.insert(0, os.path.join(sys.argv[1], p))
+import numpy, uproot, omnifile_io, compare_omnifiles
+assert hasattr(omnifile_io, "read_latest") and hasattr(compare_omnifiles, "same")
+print("checker python %s %s: numpy %s, uproot %s" % (sys.executable, sys.version.split()[0], numpy.__version__, uproot.__version__))
+EOF
+}
 
 case "$STEP" in
 gs2|gmerge|gs3a|gs3b)
@@ -133,9 +145,9 @@ c1)
   F=$OUT/evloop/runEventLoopOmniFold_RDX_1A.root; [ -s "$F" ] || stop "no pilot output $F"
   mkdir -p "$OUT/checks"; policy "$BASECV" "$F"
   [ -e "$OUT/stage/base_cv.root" ] || $SYSPY -I -B "$R/rdx_paths.py" stage --dest "$OUT/stage" "$BASECV" "$BASECV_SHA" || stop "staging base_cv failed"
-  $PY -I -B -c "import uproot" || stop "the checker python has no uproot"
-  $PY -I -B "$R/rdx_align.py" "$OUT/stage/base_cv.root" "$F" --out "$OUT/checks/align_1A.json"; ra=$?
-  $PY -I -B "$R/rdx_truthx_rows.py" "$F" --out "$OUT/checks/truthx_rows_1A.json"; rt=$?
+  chkenv
+  $CHKPY -I -B "$R/rdx_align.py" "$OUT/stage/base_cv.root" "$F" --out "$OUT/checks/align_1A.json"; ra=$?
+  $CHKPY -I -B "$R/rdx_truthx_rows.py" "$F" --out "$OUT/checks/truthx_rows_1A.json"; rt=$?
   ( source "$CANON/setup_salloc_env.sh" > /dev/null 2>&1; python -I -B "$R/rdx_probe_walk.py" "$F" --out "$OUT/checks/walk_probe.json" ); rp=$?
   echo "C-ALIGN-1A rc=$ra C-TRUTHX rc=$rt walk probe rc=$rp"
   [ $ra -eq 0 ] && [ $rt -eq 0 ] || stop "C-ALIGN-1A or C-TRUTHX did not pass"
@@ -171,7 +183,7 @@ EOF
   done
   ;;
 c2)
-  mkdir -p "$OUT/checks" "$OUT/stage/zero"
+  chkenv; mkdir -p "$OUT/checks" "$OUT/stage/zero"
   [ ! -e "$OUT/loops.sha256" ] || stop "$OUT/loops.sha256 exists"
   ok=1; : > "$OUT/checks/loops.sha256.partial"
   for pl in $PLS; do
@@ -179,8 +191,8 @@ c2)
     Z=$ZERO/runEventLoopOmniFold_5D_${pl}_zero.root
     ZSHA=$($SYSPY -I -B -c "import sys; sys.path.insert(0, sys.argv[1]); import fd_ct_period_inputs as C; print(C.ZERO_LOOPS[sys.argv[2]])" "$DEP/nd-unfolding" "$pl") || stop "no zero-loop pin for $pl"
     [ -e "$OUT/stage/zero/$(basename "$Z")" ] || $SYSPY -I -B "$R/rdx_paths.py" stage --dest "$OUT/stage/zero" "$Z" "$ZSHA" || stop "staging $Z"
-    $PY -I -B "$R/rdx_align.py" "$OUT/stage/zero/$(basename "$Z")" "$F" --out "$OUT/checks/align_$pl.json" || ok=0
-    $PY -I -B "$R/rdx_truthx_rows.py" "$F" --out "$OUT/checks/truthx_rows_$pl.json" || ok=0
+    $CHKPY -I -B "$R/rdx_align.py" "$OUT/stage/zero/$(basename "$Z")" "$F" --out "$OUT/checks/align_$pl.json" || ok=0
+    $CHKPY -I -B "$R/rdx_truthx_rows.py" "$F" --out "$OUT/checks/truthx_rows_$pl.json" || ok=0
     echo "$(sha256sum "$F" | cut -d' ' -f1)  $(basename "$F")" >> "$OUT/checks/loops.sha256.partial"
   done
   [ $ok -eq 1 ] || stop "a per-playlist check did not pass (loops.sha256 not written)"
@@ -201,7 +213,8 @@ m)
   ;;
 cm)
   grep -q '"verdict": "PASS"' "$OUT/checks/k1.json" 2>/dev/null || stop "k1.json records no PASS"
-  $PY -I -B "$R/rdx_truthx_npz.py" "$OUT/dumps/lat_RDX_ALL.npz" "$OUT/dumps/truthx_RDX_ALL.npz" --out "$OUT/checks/truthx_npz.json" \
+  chkenv
+  $CHKPY -I -B "$R/rdx_truthx_npz.py" "$OUT/dumps/lat_RDX_ALL.npz" "$OUT/dumps/truthx_RDX_ALL.npz" --out "$OUT/checks/truthx_npz.json" \
     || stop "C-TRUTHX-NPZ did not pass"
   sha256sum "$OUT"/dumps/lat_RDX_ALL.npz "$OUT"/dumps/lat_RDX_ALL_bkg.npz "$OUT"/dumps/truthx_RDX_ALL.npz | sed "s|$OUT/dumps/|./|"
   echo "MERGE CHECKS PASS"
