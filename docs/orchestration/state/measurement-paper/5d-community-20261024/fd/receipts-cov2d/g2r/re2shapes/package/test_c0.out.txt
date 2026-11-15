@@ -1,7 +1,20 @@
-PASS same rc=0: C0 PASS: lines 6/6 counts {"bitwise": 2, "path-pairs": 2, "skipped: PDF: creation date; compared through its PNG twin": 1, "skipped: run logs or caches": 1} other [] comparator FAIL differ ['SHA256SUMS'] extra []
-PASS same: combination.json classed path-pairs
-PASS npz rc=1: C0 STOP: lines 6/6 counts {"OTHER": 1, "bitwise": 1, "path-pairs": 1, "skipped: PDF: creation date; compared through its PNG twin": 1, "skipped: ROOT: TFile creation time; compared through its npz twin": 1, "skipped: run logs or c
+PASS same rc=0: C0 PASS: lines 12/12 mkdtemp tmp6hw50588/tmpq3zk81xa counts {"bitwise": 5, "path-pairs": 2, "scratch (id.json: equal after the path pairs and the mkdtemp name)": 1, "scratch (inj.json: equal after the path pairs and the mkdtemp name, inj.ro
+PASS same: path-pairs, values_table bitwise, the five scratch files each by its rule under two mkdtemp names
+PASS npz rc=1: C0 STOP: lines 12/12 mkdtemp tmp6hw50588/tmpq3zk81xa counts {"OTHER": 1, "bitwise": 4, "path-pairs": 1, "scratch (id.json: equal after the path pairs and the mkdtemp name)": 1, "scratch (inj.json: equal after the path pairs and the mkdtemp 
 PASS npz: the differing npz is OTHER
-PASS extra rc=1: C0 STOP: lines 6/7 counts {"OTHER": 1, "bitwise": 2, "path-pairs": 2, "skipped: PDF: creation date; compared through its PNG twin": 1, "skipped: run logs or caches": 1} other ['s5/g2r_driver.json'] comparator FAIL differ ['SHA256S
-PASS wrongdeploy rc=1: C0 STOP: lines 6/6 counts {"OTHER": 1, "bitwise": 2, "path-pairs": 1, "skipped: PDF: creation date; compared through its PNG twin": 1, "skipped: run logs or caches": 1} other ['combination/combination.json'] comparator FAIL differ
+PASS extra rc=1: C0 STOP: lines 12/13 mkdtemp tmp6hw50588/tmpq3zk81xa counts {"OTHER": 1, "bitwise": 5, "path-pairs": 2, "scratch (id.json: equal after the path pairs and the mkdtemp name)": 1, "scratch (inj.json: equal after the path pairs and the mkdtemp 
+PASS wrongdeploy rc=1: C0 STOP: lines 12/12 mkdtemp tmp6hw50588/tmpq3zk81xa counts {"OTHER": 1, "bitwise": 5, "path-pairs": 1, "scratch (id.json: equal after the path pairs and the mkdtemp name)": 1, "scratch (inj.json: equal after the path pairs and the mkdtemp 
+PASS values-one-value rc=1: C0 STOP: lines 12/12 mkdtemp tmp6hw50588/tmpq3zk81xa counts {"OTHER": 1, "bitwise": 4, "path-pairs": 2, "scratch (id.json: equal after the path pairs and the mkdtemp name)": 1, "scratch (inj.json: equal after the path pairs and the mkdtemp 
+PASS values-one-value: one printed value changed is OTHER
+PASS scratch-extra rc=1: C0 STOP: lines 12/13 mkdtemp tmp6hw50588/tmpq3zk81xa counts {"OTHER": 1, "bitwise": 5, "path-pairs": 2, "scratch (id.json: equal after the path pairs and the mkdtemp name)": 1, "scratch (inj.json: equal after the path pairs and the mkdtemp 
+PASS scratch-extra: a file outside the five is OTHER
+PASS scratch-missing rc=1: C0 STOP: lines 12/11 mkdtemp tmp6hw50588/tmpq3zk81xa counts {"OTHER": 1, "bitwise": 4, "path-pairs": 2, "scratch (id.json: equal after the path pairs and the mkdtemp name)": 1, "scratch (inj.json: equal after the path pairs and the mkdtemp 
+PASS scratch-missing: a missing scratch file is OTHER
+PASS scratch-txt rc=1: C0 STOP: lines 12/12 mkdtemp tmp6hw50588/tmpq3zk81xa counts {"OTHER": 1, "bitwise": 4, "path-pairs": 2, "scratch (id.json: equal after the path pairs and the mkdtemp name)": 1, "scratch (inj.json: equal after the path pairs and the mkdtemp 
+PASS scratch-txt: a changed inj.txt is OTHER
+PASS scratch-rootsha rc=1: C0 STOP: lines 12/12 mkdtemp tmp6hw50588/tmpq3zk81xa counts {"OTHER": 2, "bitwise": 5, "path-pairs": 2, "scratch (id.json: equal after the path pairs and the mkdtemp name)": 1, "skipped: PDF: creation date; compared through its PNG twin": 1
+PASS scratch-rootsha: inj.json recording another inj.root digest is OTHER
+PASS scratch-idjson rc=1: C0 STOP: lines 12/12 mkdtemp tmp6hw50588/tmpq3zk81xa counts {"OTHER": 1, "bitwise": 5, "path-pairs": 2, "scratch (inj.json: equal after the path pairs and the mkdtemp name, inj.root digest)": 1, "scratch (inj.root: TFile time; digest = its 
+PASS scratch-idjson: a changed id.json is OTHER
+PASS two-mkdtemps rc=1: $TMP//tc0.pVrHDl/two-mkdtemps/cov2d-re2shapes-20261114/c0/SHA256SUMS: periods_ns/tmp/<mkdtemp>/id.json listed twice
 C0 TEST PASS
