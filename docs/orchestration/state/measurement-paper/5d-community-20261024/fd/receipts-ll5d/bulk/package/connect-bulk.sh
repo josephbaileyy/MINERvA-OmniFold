@@ -1,0 +1,257 @@
+#!/bin/bash
+# LL5D section 11 step 6: the bulk, ll5d_bulk_01 ... ll5d_bulk_10, DRAFT for the director's review (binding 3 ruling 4;
+# A1b section 5). Ten exclusive regular CPU nodes, --time 08:00:00 each (section 9: 80.0 node-h reserved, about 37.6
+# expected), 8 lanes a node, each an srun step of 32 CPUs and 56G at --threads 32 (as 1B staged): the 1,649 items of section 9 not in the pilot, at most 21 a lane
+# (21 x 1,062 s = 22,302 s, under section 9's 22-item line of 23,364 s and the 0.9 line 25,920 s). The partition is
+# bulk-lanes.tsv, pinned by its sha256 here and asserted in every job against ll5d_b.items and ll5d_b.PILOT.
+# Submitted only after ALL of section 11 step 6 (each placeholder refuses until filled from git or the named record):
+#   the gate PASS at all four evaluations (both gate records, as in the pilot connect);
+#   the pilot's walls PASS and every procedure control passing (controls.json PASS, amendment A1b.1);
+#   clipcheck PROCEED;
+#   the projection gate, with this connect's 80.0;
+#   the audit's written acknowledgement.
+# Products go into the pilot's directory $U (ll5d_b's unfold keeps an existing product). Nothing to CFS. Not under set -u.
+M=4231b14de5ea693e92cb31b1358a816b5c2f6625         # M_A1b.1 (LL5D-BINDING-3.md addendum A1b.1): the merge that carries ll5d_ctl.py
+L5=2b0224c6fe52c5bb2d3fe64d461ac9edb80ebd191b0ab2f892dec605a0b56a14        # ll5d.py's sha256 at M
+P=/pscratch/sd/j/josephrb; ND=$P/MINERvA-OmniFold/nd-unfolding
+W=$P/ll5d-bulk-r1; DD=$W/deploy; U=$P/ll5d-unfolds-r2; PW=$P/ll5d-pilot-r2   # the pilot's r2 namespace
+G18W=$P/ll5d-gate-2-g18-20261110; AR23W=$P/ll5d-gate-2-ar23-20261110
+G18GATE=a5d66b7e506a98d5a0b555dbe171aa6c1e931eb93df793c3e515d7d44466fc70   # sha256 of gate-g18.json (receipts-ll5d/gate-2-g18/node-sha256.txt)
+AR23GATE=35a20c471cb06f428c49daaaebfc6646babb7f7fb060039d4c63139da51d0a4c  # sha256 of gate-ar23.json (receipts-ll5d/gate-2-ar23/node-sha256.txt)
+WALLSSHA=9377977cc9ea330522291363899e6a9a7f233ef71469f46fca184421bbe81e48  # sha256 of the pilot's walls.json (#1123, ll5d_pilot_61184880.out.txt)
+CLIPSHA=9632540ecd0d25e2223eedb480b96078459a6e6d75128b4e4132ea1bf644d3aa   # sha256 of the pilot's clipcheck.json (#1123)
+CTLSHA=82cc5858263164d7f5dc5977730484c385d960a1bb135208bd5b1f208e9cf2ec    # sha256 of the pilot's controls.json (#1123; amendment A1b.1, ll5d_ctl.py)
+AUDITACK=https://github.com/josephbaileyy/MINERvA-OmniFold/pull/1123#issuecomment-6840388077   # coverage-5b-audit's GO (2026-11-13T00:48:18Z)
+LANESHA=315f004bb6869345400dd87f3bee2d31f380713492e33ce3c5a7582a6c41ede7
+CAP=148.0; THIS=80.0; TL=08:00:00; NODES="01 02 03 04 05 06 07 08 09 10"
+stop() { echo "STOP $*"; echo "end=$(date -u +%FT%TZ)"; exit 2; }
+for v in "$G18GATE" "$AR23GATE" "$WALLSSHA" "$CLIPSHA" "$CTLSHA" "$L5" "$LANESHA"; do [[ $v =~ ^[0-9a-f]{64}$ ]] || { echo "STOP a placeholder is not filled"; exit 2; }; done
+[[ $M =~ ^[0-9a-f]{40}$ ]] || { echo "STOP M is not filled"; exit 2; }
+[[ $AUDITACK =~ ^https://github\.com/josephbaileyy/MINERvA-OmniFold/pull/[0-9]+#issuecomment-[0-9]+$ ]] || { echo "STOP the audit's acknowledgement is not filled"; exit 2; }
+[ -e "$W" ] && { echo "STOP $W exists"; exit 2; }
+mkdir -p "$W/logs" || exit 2
+exec >> "$W/logs/connect-bulk.log" 2>&1
+echo "host=$(hostname) start=$(date -u +%FT%TZ) pid=$$ audit_ack=$AUDITACK"
+echo "squeue: [$(squeue --me -h -o '%i %j %T %l %D' | tr '\n' ';')]"
+[ "$(squeue --me -h -o %j | grep -c '^ll5d_')" = "0" ] || stop "an ll5d_ job is queued or running"
+[ "$(squeue --me -h -o %j | grep -cE '^(rsn_|e96data|rdx_)')" = "0" ] || stop "an rsn_, e96data or rdx_ job is queued or running"
+# ^cov2d but not ^cov2dg2r-: COV2D-G2R reads no LL5D input outside O_NOATIME (overlap-fence.diff.txt); COV2D proper still refuses
+cv=$(sacct -X -n -P -S 2026-11-04 -u josephrb -o JobID,JobName,State | awk -F'|' '$2 ~ /^cov2d/ && $2 !~ /^cov2dg2r-/ && $3 !~ /^(COMPLETED|FAILED|CANCELLED|TIMEOUT|OUT_OF_MEMORY|NODE_FAIL|PREEMPTED|BOOT_FAIL|DEADLINE)/')
+[ -z "$cv" ] || stop "a cov2d job is unended: $cv"
+echo "== iris"; row=$(iris 2>&1 | grep -E '^m3246 ' | head -1); echo "$row"
+bal=$(echo "$row" | awk 'NF>=5 {printf "%.1f", $5-$4}'); [ -n "$bal" ] || stop "could not read the m3246 balance"
+echo "balance_node_h=$bal half=$(awk -v b=$bal 'BEGIN{printf "%.1f", b/2}') cap=$CAP"
+awk -v b=$bal -v c=$CAP 'BEGIN{exit !(c <= b/2)}' || stop "the cap $CAP is above half the balance $bal: to Joseph"
+charged=$(sacct -X -n -P -S 2026-11-08 -u josephrb -o JobName,State,ElapsedRaw,NNodes | awk -F'|' '$1 ~ /^ll5d_/ && $2 !~ /^(PENDING|RUNNING|REQUEUED|SUSPENDED)/ {s += $3 * $4} END {printf "%.3f", s / 3600}')
+held=$(squeue --me -h -o '%j|%l|%D' | awk -F'|' '$1 ~ /^ll5d_/ {split($2, t, /[-:]/); n = length(t); s = (n == 4 ? t[1]*86400 + t[2]*3600 + t[3]*60 + t[4] : n == 3 ? t[1]*3600 + t[2]*60 + t[3] : t[1]*60 + t[2]); h += s * $3} END {printf "%.3f", h / 3600}')
+proj=$(awk -v a=$charged -v b=$held -v c=$THIS 'BEGIN{printf "%.3f", a + b + c}')
+echo "projection charged=$charged held=$held this=$THIS total=$proj cap=$CAP"
+awk -v p=$proj -v c=$CAP 'BEGIN{exit !(p <= c)}' || stop "the projection $proj passes the cap $CAP"
+# Section 11 step 6's preconditions, each by the receipted digest; only the named verdict fields are read.
+for T in g18 ar23; do
+  if [ $T = g18 ]; then GW=$G18W; GS=$G18GATE; else GW=$AR23W; GS=$AR23GATE; fi
+  [ "$(sha256sum "$GW/gate-$T.json" | cut -d' ' -f1)" = "$GS" ] || stop "gate-$T.json's digest is not the receipt's"
+  python3 -c 'import json,sys; g=json.load(open(sys.argv[1])); ok=g.get("truth")==sys.argv[2] and g.get("verdict")=="PASS"; print("gate", sys.argv[2], "truth=%s verdict=%s" % (g.get("truth"), g.get("verdict"))); sys.exit(0 if ok else 1)' "$GW/gate-$T.json" "$T" || stop "gate $T is not PASS"
+done
+for f in "walls.json|$WALLSSHA|PASS" "controls.json|$CTLSHA|PASS" "clipcheck.json|$CLIPSHA|PROCEED"; do
+  IFS='|' read -r name want verdict <<< "$f"
+  [ "$(sha256sum "$PW/$name" | cut -d' ' -f1)" = "$want" ] || stop "the pilot's $name digest is not the receipt's"
+  python3 -c 'import json,sys; v=json.load(open(sys.argv[1])).get("verdict"); print(sys.argv[1], "verdict=%s" % v); sys.exit(0 if v==sys.argv[2] else 1)' "$PW/$name" "$verdict" || stop "the pilot's $name is not $verdict"
+done
+k=$(ls "$U" | grep -c '\.npz$'); echo "products before the bulk: $k"
+[ "$k" = "13" ] || stop "the products directory does not hold exactly the pilot's 13 products"
+git clone --quiet https://github.com/josephbaileyy/MINERvA-OmniFold "$DD" && git -C "$DD" checkout --quiet --detach "$M" || stop clone
+n=$(git -C "$DD" status --porcelain | wc -l); h=$(git -C "$DD" rev-parse HEAD); echo "deploy porcelain_lines=$n head=$h"
+[ "$n" = "0" ] && [ "$h" = "$M" ] || stop "deploy not clean at M"
+cat > "$W/bound.sha256" <<SUMS
+$L5  nd-unfolding/ll5d.py
+522d7edd71643df61d0c5ef5a7488834e664eb36d20c3e0c0b46e10a5808f02f  nd-unfolding/fd_1b_c2.py
+936e1957d330e24d3eaab5f6c53d30b5be42a96f76daac07d527be97c0af30e2  nd-unfolding/fd_1b_mc.py
+869a65c3bcce1a3b56ecd197ecdf3b6cf2741e0611f91b582c3064f67967bc08  nd-unfolding/fd_1b_toys.py
+71b3903aa1329807af7e48b29b4ffd3336ad637d4b8c7e43ae0a6cbe28bcdf1f  nd-unfolding/fd_1b_inv.py
+b157250af21a2ef74e4164db6009a40ac596e225f33ac655475798ef49f613f7  nd-unfolding/s1_assemble.py
+805a00063a6136e25c6f8f57d228ec996c85a9bc997981632643baeee6c13d80  nd-unfolding/s5p_universe.py
+c6c9a45fa93c6590c4fdf0d9b7d29f01cccf97b281e469fa29a3d2f34b4618fd  nd-unfolding/fd_1b_score.py
+b95c562916091b910a5ca8d874d83296035690cb8784db3d318b2f07fed28182  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/clip/clip_probe2.py
+76cbceba395bc6bbf8fc5cce9cf44fc0f21354dff8591cbdee578e0fddcaf8ed  2d-unfolding/cov2d/cov2d.py
+3a50f502b5a425bc4d116245c36f79bbc279cbd876b87aa72bd0298b001b5031  docs/orchestration/state/2d-closeout/stageF/methods/sf1/manifest/inputs-sha256.txt
+b67907615fe2e903e60ae6caa1c141fa007676c0a1b3ae9f42490d331bfdda89  nd-unfolding/pv-ladder/readouts/h2_definition.json
+ea3c6998d33f45c831b80da5e5228032a19fc392018ede54a7f52f2f283d1d48  setup_salloc_env.sh
+bda8c48ce2365e173bbba083b18233d6f6b7c2dfbab5179156073860c8281ec7  nd-unfolding/s5e_candidate.py
+6726ff99c7787d1ee6dff7fa5d08df88f9df76285d98c4c462f964ac6164779f  nd-unfolding/s5e_deform.py
+24312ca86f9e70ed86699772d634c19d9bcacb2bb87bff5aaa8c9f7c2661f3cb  nd-unfolding/ll5d_b.py
+ec1402db5cbb5ca3002d7e45a714319d90a8b93654005d688b304a69caab4d38  nd-unfolding/fd_1b_null.py
+8981f97b96b418cfe46f1e940cb120f174053d7d3429f3b0b01a229c6c02ee6c  nd-unfolding/s5n_pseudo.py
+7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185  nd-unfolding/s5p_numerics.py
+24f87f119073c4f125c2f753310507d4375b6f8a1b7751e59d3615dd50e90582  nd-unfolding/omnifold_nn_core.py
+fc95f53459a5caafea4aa05a24a406535968e25b0bcca52567a38caf4caf3de5  2d-unfolding/uq/coverage_fixed_truth/score_coverage.py
+a9f09557ec1b6022b1205f14e8d2241257336d9028b166061a3b33118243a936  nd-unfolding/ll5d_ctl.py
+SUMS
+(cd "$DD" && sha256sum -c "$W/bound.sha256") || stop "bound blobs differ"
+cat > "$W/bulk-lanes.tsv" <<'LANES'
+# node	lane	truth	role	items (LL5D bulk: the 1,649 items of section 9 not in ll5d_b.PILOT, contiguous over 80 lanes; generated from ll5d_b at M_A1a.2 639ef907)
+01	0	g18	seed	T
+01	0	g18	block	2p2h_0,2p2h_1,2p2h_2,AGKYxF1pi_0,AGKYxF1pi_1,AhtBY_0,AhtBY_1,BhtBY_0,BhtBY_1,CCQEPauliSupViaKF_0,CCQEPauliSupViaKF_1,CV1uBY_0,CV1uBY_1,CV2uBY_0,CV2uBY_1,EtaNCEL_0,EtaNCEL_1,Flux_0,Flux_1,Flux_2
+01	1	g18	block	Flux_3,Flux_4,Flux_5,Flux_6,Flux_7,Flux_8,Flux_9,Flux_10,Flux_11,Flux_12,Flux_13,Flux_14,Flux_15,Flux_16,Flux_17,Flux_18,Flux_19,Flux_20,Flux_21,Flux_22,Flux_23
+01	2	g18	block	Flux_24,Flux_25,Flux_26,Flux_27,Flux_28,Flux_29,Flux_30,Flux_31,Flux_32,Flux_33,Flux_34,Flux_35,Flux_36,Flux_37,Flux_38,Flux_39,Flux_40,Flux_41,Flux_42,Flux_43,Flux_44
+01	3	g18	block	Flux_45,Flux_46,Flux_47,Flux_48,Flux_49,Flux_50,Flux_51,Flux_52,Flux_53,Flux_54,Flux_55,Flux_56,Flux_57,Flux_58,Flux_59,Flux_60,Flux_61,Flux_62,Flux_63,Flux_64,Flux_65
+01	4	g18	block	Flux_66,Flux_67,Flux_68,Flux_69,Flux_70,Flux_71,Flux_72,Flux_73,Flux_74,Flux_75,Flux_76,Flux_77,Flux_78,Flux_79,Flux_80,Flux_81,Flux_82,Flux_83,Flux_84,Flux_85,Flux_86
+01	5	g18	block	Flux_87,Flux_88,Flux_89,Flux_90,Flux_91,Flux_92,Flux_93,Flux_94,Flux_95,Flux_96,Flux_97,Flux_98,Flux_99,FrAbs_N_0,FrAbs_N_1,FrAbs_pi_0,FrAbs_pi_1,FrCEx_N_0,FrCEx_N_1,FrCEx_pi_0,FrCEx_pi_1
+01	6	g18	block	FrElas_N_0,FrElas_N_1,FrElas_pi_0,FrElas_pi_1,FrInel_N_0,FrInel_N_1,FrPiProd_N_0,FrPiProd_N_1,FrPiProd_pi_0,FrPiProd_pi_1,GEANT_Neutron_0,GEANT_Neutron_1,GEANT_Pion_0,GEANT_Pion_1,GEANT_Proton_0,GEANT_Proton_1,HighQ2_0,HighQ2_1,LowQ2_0,LowQ2_1,MFP_N_0
+01	7	g18	block	MFP_N_1,MFP_pi_0,MFP_pi_1,MaCCQE_0,MaCCQE_1,MaNCEL_0,MaNCEL_1,MaRES_0,MaRES_1,MinosEfficiency_0,MinosEfficiency_1,MvRES_0,MvRES_1,NormDISCC_0,NormDISCC_1,NormNCRES_0,NormNCRES_1,RDecBR1gamma_0,RDecBR1gamma_1,Rvn1pi_0,Rvn1pi_1
+02	0	g18	block	Rvn2pi_0,Rvn2pi_1,Rvp2pi_0,Rvp2pi_1,Theta_Delta2Npi_0,Theta_Delta2Npi_1,VecFFCCQEshape_0,VecFFCCQEshape_1
+02	0	g18	stat	1,2,3,4,5,6,7,8,9,10,11,12,13
+02	1	g18	stat	14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34
+02	2	g18	stat	35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50
+02	2	g18	toy	minus2_4751001,minus2_4751002,minus2_4751003,minus2_4751004,minus2_4751005
+02	3	g18	toy	minus2_4751006,minus2_4751007,minus2_4751008,minus2_4751009,minus2_4751010,minus2_4751011,minus2_4751012,minus2_4751013,minus2_4751014,minus2_4751015,minus2_4751016,minus2_4751017,minus2_4751018,minus2_4751019,minus2_4751020,minus2_4751021,minus2_4751022,minus2_4751023,minus2_4751024,minus2_4751025,minus2_4751026
+02	4	g18	toy	minus2_4751027,minus2_4751028,minus2_4751029,minus2_4751030,minus2_4751031,minus2_4751032,minus2_4751033,minus2_4751034,minus2_4751035,minus2_4751036,minus2_4751037,minus2_4751038,minus2_4751039,minus2_4751040,minus2_4751041,minus2_4751042,minus2_4751043,minus2_4751044,minus2_4751045,minus2_4751046,minus2_4751047
+02	5	g18	toy	minus2_4751048,minus2_4751049,minus2_4751050,minus2_4751051,minus2_4751052,minus2_4751053,minus2_4751054,minus2_4751055,minus2_4751056,minus2_4751057,minus2_4751058,minus2_4751059,minus2_4751060,minus2_4751061,minus2_4751062,minus2_4751063,minus2_4751064,minus2_4751065,minus2_4751066,minus2_4751067,minus2_4751068
+02	6	g18	toy	minus2_4751069,minus2_4751070,minus2_4751071,minus2_4751072,minus2_4751073,minus2_4751074,minus2_4751075,minus2_4751076,minus2_4751077,minus2_4751078,minus2_4751079,minus2_4751080,minus2_4751081,minus2_4751082,minus2_4751083,minus2_4751084,minus2_4751085,minus2_4751086,minus2_4751087,minus2_4751088,minus2_4751089
+02	7	g18	toy	minus2_4751090,minus2_4751091,minus2_4751092,minus2_4751093,minus2_4751094,minus2_4751095,minus2_4751096,minus2_4751097,minus2_4751098,minus2_4751099,minus2_4751100,minus2_4751101,minus2_4751102,minus2_4751103,minus2_4751104,minus2_4751105,minus2_4751106,minus2_4751107,minus2_4751108,minus2_4751109,minus2_4751110
+03	0	g18	toy	minus2_4751111,minus2_4751112,minus2_4751113,minus2_4751114,minus2_4751115,minus2_4751116,minus2_4751117,minus2_4751118,minus2_4751119,minus2_4751120,minus2_4751121,minus2_4751122,minus2_4751123,minus2_4751124,minus2_4751125,minus2_4751126,minus2_4751127,minus2_4751128,minus2_4751129,minus2_4751130,minus2_4751131
+03	1	g18	toy	minus2_4751132,minus2_4751133,minus2_4751134,minus2_4751135,minus2_4751136,minus2_4751137,minus2_4751138,minus2_4751139,minus2_4751140,minus2_4751141,minus2_4751142,minus2_4751143,minus2_4751144,minus2_4751145,minus2_4751146,minus2_4751147,minus2_4751148,minus2_4751149,minus2_4751150,minus2_4751151,minus2_4751152
+03	2	g18	toy	minus2_4751153,minus2_4751154,minus2_4751155,minus2_4751156,minus2_4751157,minus2_4751158,minus2_4751159,minus2_4751160,minus2_4751161,minus2_4751162,minus2_4751163,minus2_4751164,minus2_4751165,minus2_4751166,minus2_4751167,minus2_4751168,minus2_4751169,minus2_4751170,minus2_4751171,minus2_4751172,minus2_4751173
+03	3	g18	toy	minus2_4751174,minus2_4751175,minus2_4751176,minus2_4751177,minus2_4751178,minus2_4751179,minus2_4751180,minus2_4751181,minus2_4751182,minus2_4751183,minus2_4751184,minus2_4751185,minus2_4751186,minus2_4751187,minus2_4751188,minus2_4751189,minus2_4751190,minus2_4751191,minus2_4751192,minus2_4751193,minus2_4751194
+03	4	g18	toy	minus2_4751195,minus2_4751196,minus2_4751197,minus2_4751198,minus2_4751199,minus2_4751200,minus2_4751201,minus2_4751202,minus2_4751203,minus2_4751204,minus2_4751205,minus2_4751206,minus2_4751207,minus2_4751208,minus2_4751209,minus2_4751210,minus2_4751211,minus2_4751212,minus2_4751213,minus2_4751214,minus2_4751215
+03	5	g18	toy	minus2_4751216,minus2_4751217,minus2_4751218,minus2_4751219,minus2_4751220,minus2_4751221,minus2_4751222,minus2_4751223,minus2_4751224,minus2_4751225,minus2_4751226,minus2_4751227,minus2_4751228,minus2_4751229,minus2_4751230,minus2_4751231,minus2_4751232,minus2_4751233,minus2_4751234,minus2_4751235,minus2_4751236
+03	6	g18	toy	minus2_4751237,minus2_4751238,minus2_4751239,minus2_4751240,minus2_4751241,minus2_4751242,minus2_4751243,minus2_4751244,minus2_4751245,minus2_4751246,minus2_4751247,minus2_4751248,minus2_4751249,minus2_4751250,minus2_4751251,minus2_4751252,minus2_4751253,minus2_4751254,minus2_4751255,minus2_4751256,minus2_4751257
+03	7	g18	toy	minus2_4751258,minus2_4751259,minus2_4751260,minus2_4751261,minus2_4751262,minus2_4751263,minus2_4751264,minus2_4751265,minus2_4751266,minus2_4751267,minus2_4751268,minus2_4751269,minus2_4751270,minus2_4751271,minus2_4751272,minus2_4751273,minus2_4751274,minus2_4751275,minus2_4751276,minus2_4751277,minus2_4751278
+04	0	g18	toy	minus2_4751279,minus2_4751280,minus2_4751281,minus2_4751282,minus2_4751283,minus2_4751284,minus2_4751285,minus2_4751286,minus2_4751287,minus2_4751288,minus2_4751289,minus2_4751290,minus2_4751291,minus2_4751292,minus2_4751293,minus2_4751294,minus2_4751295,minus2_4751296,minus2_4751297,minus2_4751298,minus2_4751299
+04	1	g18	toy	all_4751001,all_4751002,all_4751003,all_4751004,all_4751005,all_4751006,all_4751007,all_4751008,all_4751009,all_4751010,all_4751011,all_4751012,all_4751013,all_4751014,all_4751015,all_4751016,all_4751017,all_4751018,all_4751019,all_4751020,all_4751021
+04	2	g18	toy	all_4751022,all_4751023,all_4751024,all_4751025,all_4751026,all_4751027,all_4751028,all_4751029,all_4751030,all_4751031,all_4751032,all_4751033,all_4751034,all_4751035,all_4751036,all_4751037,all_4751038,all_4751039,all_4751040,all_4751041,all_4751042
+04	3	g18	toy	all_4751043,all_4751044,all_4751045,all_4751046,all_4751047,all_4751048,all_4751049,all_4751050,all_4751051,all_4751052,all_4751053,all_4751054,all_4751055,all_4751056,all_4751057,all_4751058,all_4751059,all_4751060,all_4751061,all_4751062,all_4751063
+04	4	g18	toy	all_4751064,all_4751065,all_4751066,all_4751067,all_4751068,all_4751069,all_4751070,all_4751071,all_4751072,all_4751073,all_4751074,all_4751075,all_4751076,all_4751077,all_4751078,all_4751079,all_4751080,all_4751081,all_4751082,all_4751083,all_4751084
+04	5	g18	toy	all_4751085,all_4751086,all_4751087,all_4751088,all_4751089,all_4751090,all_4751091,all_4751092,all_4751093,all_4751094,all_4751095,all_4751096,all_4751097,all_4751098,all_4751099,all_4751100,all_4751101,all_4751102,all_4751103,all_4751104,all_4751105
+04	6	g18	toy	all_4751106,all_4751107,all_4751108,all_4751109,all_4751110,all_4751111,all_4751112,all_4751113,all_4751114,all_4751115,all_4751116,all_4751117,all_4751118,all_4751119,all_4751120,all_4751121,all_4751122,all_4751123,all_4751124,all_4751125,all_4751126
+04	7	g18	toy	all_4751127,all_4751128,all_4751129,all_4751130,all_4751131,all_4751132,all_4751133,all_4751134,all_4751135,all_4751136,all_4751137,all_4751138,all_4751139,all_4751140,all_4751141,all_4751142,all_4751143,all_4751144,all_4751145,all_4751146,all_4751147
+05	0	g18	toy	all_4751148,all_4751149,all_4751150,all_4751151,all_4751152,all_4751153,all_4751154,all_4751155,all_4751156,all_4751157,all_4751158,all_4751159,all_4751160,all_4751161,all_4751162,all_4751163,all_4751164,all_4751165,all_4751166,all_4751167,all_4751168
+05	1	g18	toy	all_4751169,all_4751170,all_4751171,all_4751172,all_4751173,all_4751174,all_4751175,all_4751176,all_4751177,all_4751178,all_4751179,all_4751180,all_4751181,all_4751182,all_4751183,all_4751184,all_4751185,all_4751186,all_4751187,all_4751188,all_4751189
+05	2	g18	toy	all_4751190,all_4751191,all_4751192,all_4751193,all_4751194,all_4751195,all_4751196,all_4751197,all_4751198,all_4751199,all_4751200,all_4751201,all_4751202,all_4751203,all_4751204,all_4751205,all_4751206,all_4751207,all_4751208,all_4751209,all_4751210
+05	3	g18	toy	all_4751211,all_4751212,all_4751213,all_4751214,all_4751215,all_4751216,all_4751217,all_4751218,all_4751219,all_4751220,all_4751221,all_4751222,all_4751223,all_4751224,all_4751225,all_4751226,all_4751227,all_4751228,all_4751229,all_4751230,all_4751231
+05	4	g18	toy	all_4751232,all_4751233,all_4751234,all_4751235,all_4751236,all_4751237,all_4751238,all_4751239,all_4751240,all_4751241,all_4751242,all_4751243,all_4751244,all_4751245,all_4751246,all_4751247,all_4751248,all_4751249,all_4751250,all_4751251,all_4751252
+05	5	g18	toy	all_4751253,all_4751254,all_4751255,all_4751256,all_4751257,all_4751258,all_4751259,all_4751260,all_4751261,all_4751262,all_4751263,all_4751264,all_4751265,all_4751266,all_4751267,all_4751268,all_4751269,all_4751270,all_4751271,all_4751272,all_4751273
+05	6	g18	toy	all_4751274,all_4751275,all_4751276,all_4751277,all_4751278,all_4751279,all_4751280,all_4751281,all_4751282,all_4751283,all_4751284,all_4751285,all_4751286,all_4751287,all_4751288,all_4751289,all_4751290,all_4751291,all_4751292,all_4751293,all_4751294
+05	7	g18	toy	all_4751295,all_4751296,all_4751297,all_4751298,all_4751299
+05	7	ar23	seed	T
+05	7	ar23	block	2p2h_0,2p2h_1,2p2h_2,AGKYxF1pi_0,AGKYxF1pi_1,AhtBY_0,AhtBY_1,BhtBY_0,BhtBY_1,CCQEPauliSupViaKF_0,CCQEPauliSupViaKF_1,CV1uBY_0,CV1uBY_1,CV2uBY_0,CV2uBY_1
+06	0	ar23	block	EtaNCEL_0,EtaNCEL_1,Flux_0,Flux_1,Flux_2,Flux_3,Flux_4,Flux_5,Flux_6,Flux_7,Flux_8,Flux_9,Flux_10,Flux_11,Flux_12,Flux_13,Flux_14,Flux_15,Flux_16,Flux_17,Flux_18
+06	1	ar23	block	Flux_19,Flux_20,Flux_21,Flux_22,Flux_23,Flux_24,Flux_25,Flux_26,Flux_27,Flux_28,Flux_29,Flux_30,Flux_31,Flux_32,Flux_33,Flux_34,Flux_35,Flux_36,Flux_37,Flux_38,Flux_39
+06	2	ar23	block	Flux_40,Flux_41,Flux_42,Flux_43,Flux_44,Flux_45,Flux_46,Flux_47,Flux_48,Flux_49,Flux_50,Flux_51,Flux_52,Flux_53,Flux_54,Flux_55,Flux_56,Flux_57,Flux_58,Flux_59,Flux_60
+06	3	ar23	block	Flux_61,Flux_62,Flux_63,Flux_64,Flux_65,Flux_66,Flux_67,Flux_68,Flux_69,Flux_70,Flux_71,Flux_72,Flux_73,Flux_74,Flux_75,Flux_76,Flux_77,Flux_78,Flux_79,Flux_80,Flux_81
+06	4	ar23	block	Flux_82,Flux_83,Flux_84,Flux_85,Flux_86,Flux_87,Flux_88,Flux_89,Flux_90,Flux_91,Flux_92,Flux_93,Flux_94,Flux_95,Flux_96,Flux_97,Flux_98,Flux_99,FrAbs_N_0,FrAbs_N_1,FrAbs_pi_0
+06	5	ar23	block	FrAbs_pi_1,FrCEx_N_0,FrCEx_N_1,FrCEx_pi_0,FrCEx_pi_1,FrElas_N_0,FrElas_N_1,FrElas_pi_0,FrElas_pi_1,FrInel_N_0,FrInel_N_1,FrPiProd_N_0,FrPiProd_N_1,FrPiProd_pi_0,FrPiProd_pi_1,GEANT_Neutron_0,GEANT_Neutron_1,GEANT_Pion_0,GEANT_Pion_1,GEANT_Proton_0,GEANT_Proton_1
+06	6	ar23	block	HighQ2_0,HighQ2_1,LowQ2_0,LowQ2_1,MFP_N_0,MFP_N_1,MFP_pi_0,MFP_pi_1,MaCCQE_0,MaCCQE_1,MaNCEL_0,MaNCEL_1,MaRES_0,MaRES_1,MinosEfficiency_0,MinosEfficiency_1,MvRES_0,MvRES_1,NormDISCC_0,NormDISCC_1,NormNCRES_0
+06	7	ar23	block	NormNCRES_1,RDecBR1gamma_0,RDecBR1gamma_1,Rvn1pi_0,Rvn1pi_1,Rvn2pi_0,Rvn2pi_1,Rvp2pi_0,Rvp2pi_1,Theta_Delta2Npi_0,Theta_Delta2Npi_1,VecFFCCQEshape_0,VecFFCCQEshape_1
+06	7	ar23	stat	2,3,4,5,6,7,8,9
+07	0	ar23	stat	10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30
+07	1	ar23	stat	31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50
+07	2	ar23	toy	minus2_4761000,minus2_4761001,minus2_4761002,minus2_4761003,minus2_4761004,minus2_4761005,minus2_4761006,minus2_4761007,minus2_4761008,minus2_4761009,minus2_4761010,minus2_4761011,minus2_4761012,minus2_4761013,minus2_4761014,minus2_4761015,minus2_4761016,minus2_4761017,minus2_4761018,minus2_4761019
+07	3	ar23	toy	minus2_4761020,minus2_4761021,minus2_4761022,minus2_4761023,minus2_4761024,minus2_4761025,minus2_4761026,minus2_4761027,minus2_4761028,minus2_4761029,minus2_4761030,minus2_4761031,minus2_4761032,minus2_4761033,minus2_4761034,minus2_4761035,minus2_4761036,minus2_4761037,minus2_4761038,minus2_4761039
+07	4	ar23	toy	minus2_4761040,minus2_4761041,minus2_4761042,minus2_4761043,minus2_4761044,minus2_4761045,minus2_4761046,minus2_4761047,minus2_4761048,minus2_4761049,minus2_4761050,minus2_4761051,minus2_4761052,minus2_4761053,minus2_4761054,minus2_4761055,minus2_4761056,minus2_4761057,minus2_4761058,minus2_4761059
+07	5	ar23	toy	minus2_4761060,minus2_4761061,minus2_4761062,minus2_4761063,minus2_4761064,minus2_4761065,minus2_4761066,minus2_4761067,minus2_4761068,minus2_4761069,minus2_4761070,minus2_4761071,minus2_4761072,minus2_4761073,minus2_4761074,minus2_4761075,minus2_4761076,minus2_4761077,minus2_4761078,minus2_4761079
+07	6	ar23	toy	minus2_4761080,minus2_4761081,minus2_4761082,minus2_4761083,minus2_4761084,minus2_4761085,minus2_4761086,minus2_4761087,minus2_4761088,minus2_4761089,minus2_4761090,minus2_4761091,minus2_4761092,minus2_4761093,minus2_4761094,minus2_4761095,minus2_4761096,minus2_4761097,minus2_4761098,minus2_4761099
+07	7	ar23	toy	minus2_4761100,minus2_4761101,minus2_4761102,minus2_4761103,minus2_4761104,minus2_4761105,minus2_4761106,minus2_4761107,minus2_4761108,minus2_4761109,minus2_4761110,minus2_4761111,minus2_4761112,minus2_4761113,minus2_4761114,minus2_4761115,minus2_4761116,minus2_4761117,minus2_4761118,minus2_4761119
+08	0	ar23	toy	minus2_4761120,minus2_4761121,minus2_4761122,minus2_4761123,minus2_4761124,minus2_4761125,minus2_4761126,minus2_4761127,minus2_4761128,minus2_4761129,minus2_4761130,minus2_4761131,minus2_4761132,minus2_4761133,minus2_4761134,minus2_4761135,minus2_4761136,minus2_4761137,minus2_4761138,minus2_4761139
+08	1	ar23	toy	minus2_4761140,minus2_4761141,minus2_4761142,minus2_4761143,minus2_4761144,minus2_4761145,minus2_4761146,minus2_4761147,minus2_4761148,minus2_4761149,minus2_4761150,minus2_4761151,minus2_4761152,minus2_4761153,minus2_4761154,minus2_4761155,minus2_4761156,minus2_4761157,minus2_4761158,minus2_4761159
+08	2	ar23	toy	minus2_4761160,minus2_4761161,minus2_4761162,minus2_4761163,minus2_4761164,minus2_4761165,minus2_4761166,minus2_4761167,minus2_4761168,minus2_4761169,minus2_4761170,minus2_4761171,minus2_4761172,minus2_4761173,minus2_4761174,minus2_4761175,minus2_4761176,minus2_4761177,minus2_4761178,minus2_4761179
+08	3	ar23	toy	minus2_4761180,minus2_4761181,minus2_4761182,minus2_4761183,minus2_4761184,minus2_4761185,minus2_4761186,minus2_4761187,minus2_4761188,minus2_4761189,minus2_4761190,minus2_4761191,minus2_4761192,minus2_4761193,minus2_4761194,minus2_4761195,minus2_4761196,minus2_4761197,minus2_4761198,minus2_4761199
+08	4	ar23	toy	minus2_4761200,minus2_4761201,minus2_4761202,minus2_4761203,minus2_4761204,minus2_4761205,minus2_4761206,minus2_4761207,minus2_4761208,minus2_4761209,minus2_4761210,minus2_4761211,minus2_4761212,minus2_4761213,minus2_4761214,minus2_4761215,minus2_4761216,minus2_4761217,minus2_4761218,minus2_4761219
+08	5	ar23	toy	minus2_4761220,minus2_4761221,minus2_4761222,minus2_4761223,minus2_4761224,minus2_4761225,minus2_4761226,minus2_4761227,minus2_4761228,minus2_4761229,minus2_4761230,minus2_4761231,minus2_4761232,minus2_4761233,minus2_4761234,minus2_4761235,minus2_4761236,minus2_4761237,minus2_4761238,minus2_4761239
+08	6	ar23	toy	minus2_4761240,minus2_4761241,minus2_4761242,minus2_4761243,minus2_4761244,minus2_4761245,minus2_4761246,minus2_4761247,minus2_4761248,minus2_4761249,minus2_4761250,minus2_4761251,minus2_4761252,minus2_4761253,minus2_4761254,minus2_4761255,minus2_4761256,minus2_4761257,minus2_4761258,minus2_4761259
+08	7	ar23	toy	minus2_4761260,minus2_4761261,minus2_4761262,minus2_4761263,minus2_4761264,minus2_4761265,minus2_4761266,minus2_4761267,minus2_4761268,minus2_4761269,minus2_4761270,minus2_4761271,minus2_4761272,minus2_4761273,minus2_4761274,minus2_4761275,minus2_4761276,minus2_4761277,minus2_4761278,minus2_4761279
+09	0	ar23	toy	minus2_4761280,minus2_4761281,minus2_4761282,minus2_4761283,minus2_4761284,minus2_4761285,minus2_4761286,minus2_4761287,minus2_4761288,minus2_4761289,minus2_4761290,minus2_4761291,minus2_4761292,minus2_4761293,minus2_4761294,minus2_4761295,minus2_4761296,minus2_4761297,minus2_4761298,minus2_4761299
+09	1	ar23	toy	all_4761000,all_4761001,all_4761002,all_4761003,all_4761004,all_4761005,all_4761006,all_4761007,all_4761008,all_4761009,all_4761010,all_4761011,all_4761012,all_4761013,all_4761014,all_4761015,all_4761016,all_4761017,all_4761018,all_4761019
+09	2	ar23	toy	all_4761020,all_4761021,all_4761022,all_4761023,all_4761024,all_4761025,all_4761026,all_4761027,all_4761028,all_4761029,all_4761030,all_4761031,all_4761032,all_4761033,all_4761034,all_4761035,all_4761036,all_4761037,all_4761038,all_4761039
+09	3	ar23	toy	all_4761040,all_4761041,all_4761042,all_4761043,all_4761044,all_4761045,all_4761046,all_4761047,all_4761048,all_4761049,all_4761050,all_4761051,all_4761052,all_4761053,all_4761054,all_4761055,all_4761056,all_4761057,all_4761058,all_4761059
+09	4	ar23	toy	all_4761060,all_4761061,all_4761062,all_4761063,all_4761064,all_4761065,all_4761066,all_4761067,all_4761068,all_4761069,all_4761070,all_4761071,all_4761072,all_4761073,all_4761074,all_4761075,all_4761076,all_4761077,all_4761078,all_4761079
+09	5	ar23	toy	all_4761080,all_4761081,all_4761082,all_4761083,all_4761084,all_4761085,all_4761086,all_4761087,all_4761088,all_4761089,all_4761090,all_4761091,all_4761092,all_4761093,all_4761094,all_4761095,all_4761096,all_4761097,all_4761098,all_4761099
+09	6	ar23	toy	all_4761100,all_4761101,all_4761102,all_4761103,all_4761104,all_4761105,all_4761106,all_4761107,all_4761108,all_4761109,all_4761110,all_4761111,all_4761112,all_4761113,all_4761114,all_4761115,all_4761116,all_4761117,all_4761118,all_4761119
+09	7	ar23	toy	all_4761120,all_4761121,all_4761122,all_4761123,all_4761124,all_4761125,all_4761126,all_4761127,all_4761128,all_4761129,all_4761130,all_4761131,all_4761132,all_4761133,all_4761134,all_4761135,all_4761136,all_4761137,all_4761138,all_4761139
+10	0	ar23	toy	all_4761140,all_4761141,all_4761142,all_4761143,all_4761144,all_4761145,all_4761146,all_4761147,all_4761148,all_4761149,all_4761150,all_4761151,all_4761152,all_4761153,all_4761154,all_4761155,all_4761156,all_4761157,all_4761158,all_4761159
+10	1	ar23	toy	all_4761160,all_4761161,all_4761162,all_4761163,all_4761164,all_4761165,all_4761166,all_4761167,all_4761168,all_4761169,all_4761170,all_4761171,all_4761172,all_4761173,all_4761174,all_4761175,all_4761176,all_4761177,all_4761178,all_4761179
+10	2	ar23	toy	all_4761180,all_4761181,all_4761182,all_4761183,all_4761184,all_4761185,all_4761186,all_4761187,all_4761188,all_4761189,all_4761190,all_4761191,all_4761192,all_4761193,all_4761194,all_4761195,all_4761196,all_4761197,all_4761198,all_4761199
+10	3	ar23	toy	all_4761200,all_4761201,all_4761202,all_4761203,all_4761204,all_4761205,all_4761206,all_4761207,all_4761208,all_4761209,all_4761210,all_4761211,all_4761212,all_4761213,all_4761214,all_4761215,all_4761216,all_4761217,all_4761218,all_4761219
+10	4	ar23	toy	all_4761220,all_4761221,all_4761222,all_4761223,all_4761224,all_4761225,all_4761226,all_4761227,all_4761228,all_4761229,all_4761230,all_4761231,all_4761232,all_4761233,all_4761234,all_4761235,all_4761236,all_4761237,all_4761238,all_4761239
+10	5	ar23	toy	all_4761240,all_4761241,all_4761242,all_4761243,all_4761244,all_4761245,all_4761246,all_4761247,all_4761248,all_4761249,all_4761250,all_4761251,all_4761252,all_4761253,all_4761254,all_4761255,all_4761256,all_4761257,all_4761258,all_4761259
+10	6	ar23	toy	all_4761260,all_4761261,all_4761262,all_4761263,all_4761264,all_4761265,all_4761266,all_4761267,all_4761268,all_4761269,all_4761270,all_4761271,all_4761272,all_4761273,all_4761274,all_4761275,all_4761276,all_4761277,all_4761278,all_4761279
+10	7	ar23	toy	all_4761280,all_4761281,all_4761282,all_4761283,all_4761284,all_4761285,all_4761286,all_4761287,all_4761288,all_4761289,all_4761290,all_4761291,all_4761292,all_4761293,all_4761294,all_4761295,all_4761296,all_4761297,all_4761298,all_4761299
+LANES
+[ "$(sha256sum "$W/bulk-lanes.tsv" | cut -d' ' -f1)" = "$LANESHA" ] || stop "bulk-lanes.tsv is not the pinned partition"
+cat > "$W/sbatch-ll5d-bulk.sh" <<'JOB'
+#!/bin/bash
+# ll5d_bulk_<NN>'s job: 8 lanes, each an srun step (32 CPUs, 56G, --threads 32); the deploy at M with porcelain 0 and the bound blobs; the
+# partition asserted against ll5d_b; this node's 8 lanes (ll5d_b.py unfold, one truth and role per call). Not under
+# set -u. Writes only under $W and $U.
+DD=$1; M=$2; W=$3; U=$4; NODE=$5
+P=/pscratch/sd/j/josephrb; ND=$P/MINERvA-OmniFold/nd-unfolding
+stop() { echo "STOP $*"; echo "end=$(date -u +%FT%TZ)"; exit 2; }
+echo "host=$(hostname) job=$SLURM_JOB_ID node=$NODE start=$(date -u +%FT%TZ)"
+h=$(git -C "$DD" rev-parse HEAD); n=$(git -C "$DD" status --porcelain | wc -l); echo "deploy head=$h porcelain_lines=$n"
+[ "$h" = "$M" ] && [ "$n" = "0" ] || stop "deploy not clean at M"
+(cd "$DD" && sha256sum -c "$W/bound.sha256") || stop "bound blobs differ"
+source "$DD/setup_salloc_env.sh" > "$W/logs/env-job-$NODE.log" 2>&1
+case "$(python3 -V 2>&1)" in *3.11*) ;; *) stop "environment did not activate ($(python3 -V 2>&1))" ;; esac
+export PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+# The unfolds run as 1B staged ran them, and as S1 made the controls' references (meta threads 32): each lane one srun
+# step with 32 CPUs and 56G (section 9's 8 lanes; the RSS limit is 75 % of 56 GiB), --threads 32. The one-thread rule
+# is the gate's and the calibration's (section 9, 936-C2), not the unfolds'.
+echo "lanes 8 x (srun --exact -n1 -c 32 --mem 56G) --threads 32"
+python3 -B - "$DD/nd-unfolding" "$W/bulk-lanes.tsv" <<'PY' || stop "the partition is not section 9's bulk"
+import sys
+from collections import Counter
+sys.path.insert(0, sys.argv[1])
+import ll5d_b
+rows = [l.rstrip("\n").split("\t") for l in open(sys.argv[2]) if l.strip() and not l.startswith("#")]
+got = [(t, r, i) for _, _, t, r, its in rows for i in its.split(",")]
+per_lane = Counter((nd, ln) for nd, ln, t, r, its in rows for i in its.split(","))
+want = {(t, r, i) for t in ll5d_b.TRUTHS for r, i in ll5d_b.items(t)} - set(ll5d_b.PILOT)
+print(f"items={len(got)} unique={len(set(got))} want={len(want)} lanes={len(per_lane)} max_per_lane={max(per_lane.values())}")
+sys.exit(0 if len(got) == len(set(got)) and set(got) == want and max(per_lane.values()) <= 22 and len(per_lane) == 80 else 1)
+PY
+WORLD=(--npz "$ND/of_inputs_5d.npz" --bkg "$P/s5c-20260924/runs/p2/bkg_dump.npz" --bank "$ND/bank_sweep_5d_bkgaware"
+  --detector-dir "$P/s5p-20260926/bank_detector" --pins "$P/fd-1b-20261030/pins.json"
+  --expect-pins-sha256 5adcd576eb46f443fe4133b05044cd315c0eeb0f281e21acee5f2318b4bab248
+  --flux-constraint "$P/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt"
+  --flux-table "$P/fd-1b-staged-20261102/stage1/in/flux_universes.npz"
+  --expect-flux-table-sha256 cdc3da788c385da72826b2a74b1987320bbe399af212722826914df4d2fe15a5
+  --prep "$P/fd-f1-20261027/f1b3/prep"
+  --manifest "$DD/docs/orchestration/state/2d-closeout/stageF/methods/sf1/manifest/inputs-sha256.txt"
+  --expect-manifest-sha256 3a50f502b5a425bc4d116245c36f79bbc279cbd876b87aa72bd0298b001b5031)
+mkdir -p "$W/lanes" || stop mkdir
+lane() {
+  local L=$1 rc=0 nd l t r its
+  while IFS=$'\t' read -r -u 3 nd l t r its; do   # the table on fd 3, never stdin (the pilot r1 STOP)
+    [ "$nd" = "$NODE" ] && [ "$l" = "$L" ] || continue
+    srun --exact -n1 -c 32 --mem 56G --job-name "lane$L" /usr/bin/time -v python3 -B "$DD/nd-unfolding/ll5d_b.py" unfold "${WORLD[@]}" --truth "$t" --role "$r" --items "$its" \
+      --out "$U" --threads 32 < /dev/null >> "$W/lanes/node$NODE-lane$L.out" 2>> "$W/lanes/node$NODE-lane$L.time"
+    s=$?; echo "node $NODE lane $L $t $r rc=$s" >> "$W/lanes/node$NODE-lane$L.out"; rc=$((rc | s))
+  done 3< <(grep -v '^#' "$W/bulk-lanes.tsv")
+  return $rc
+}
+pids=(); for L in 0 1 2 3 4 5 6 7; do lane $L & pids+=($!); done
+urc=0; for k in 0 1 2 3 4 5 6 7; do wait ${pids[$k]}; s=$?; echo "lane $k rc=$s"; urc=$((urc | s)); done
+echo "unfold lanes rc=$urc"
+grep -h "rc=" "$W"/lanes/node$NODE-lane*.out
+grep -h -E "Elapsed|Maximum resident|Exit status" "$W"/lanes/node$NODE-lane*.time
+echo "end=$(date -u +%FT%TZ)"
+exit $urc
+JOB
+echo "job script sha256 $(sha256sum "$W/sbatch-ll5d-bulk.sh" | cut -d' ' -f1)"
+find "$ND/of_inputs_5d.npz" "$P/s5c-20260924/runs/p2/bkg_dump.npz" "$ND/bank_sweep_5d_bkgaware" "$P/s5p-20260926/bank_detector" \
+  "$P/fd-1b-20261030/pins.json" "$P/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt" \
+  "$P/fd-1b-staged-20261102/stage1/in/flux_universes.npz" "$P/fd-f1-20261027/f1b3/prep" "$P/fd-1b-inv-20261101/i0/in" \
+  -type f -printf "%A@\t%p\n" | sort -k2 > "$W/atime-pre.tsv" || stop "atime snapshot"
+echo "atime-pre $(wc -l < "$W/atime-pre.tsv") files at $(date -u +%FT%TZ)"
+ids=()
+for NN in $NODES; do
+  jid=$(sbatch --parsable -A m3246 -q regular -C cpu -N 1 --exclusive --no-requeue -t "$TL" -J "ll5d_bulk_$NN" \
+    -o "$W/logs/%x_%j.out" "$W/sbatch-ll5d-bulk.sh" "$DD" "$M" "$W" "$U" "$NN")
+  jid=${jid%%;*}
+  [ -n "$jid" ] || { [ ${#ids[@]} -gt 0 ] && scancel "${ids[@]}"; stop "sbatch for ll5d_bulk_$NN returned no id: cancelled ${ids[*]}"; }
+  ids+=("$jid"); echo "Submitted batch job $jid (ll5d_bulk_$NN)"
+  tl=$(scontrol show job "$jid" | grep -oE "TimeLimit=[^ ]*"); echo "$tl"
+  [ "$tl" = "TimeLimit=08:00:00" ] || { scancel "${ids[@]}"; stop "ll5d_bulk_$NN's time limit parsed as ${tl#TimeLimit=}, not 08:00:00: cancelled ${ids[*]}"; }
+done
+squeue --me -h -o '%i %j %T %l %D' | grep ll5d_bulk_
+echo "end=$(date -u +%FT%TZ)"
