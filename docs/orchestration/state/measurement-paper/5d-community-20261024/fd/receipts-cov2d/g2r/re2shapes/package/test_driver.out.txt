@@ -1,0 +1,7 @@
+other labels unchanged: 469
+PASS g2r: 175 U_ redirected to G2R's path with G2R's digest, others unchanged, sidecar, rc 0
+PASS identity: every path and digest is part B's, nothing redirected, rc 0
+PASS an unknown mode refuses (rc 1)
+PASS an altered products.tsv refuses (rc 1)
+PASS a part-B sums set missing a U_ label refuses (rc 1)
+DRIVER TEST PASS

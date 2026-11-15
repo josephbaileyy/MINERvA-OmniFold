@@ -1,0 +1,4 @@
+94c94
+<     step rollup "$O" "$L/rollup.log" "$P/re2c_rollup.py" --arm refined --out "$O/s5" --results "$O/results"
+---
+>     step rollup "$O" "$L/rollup.log" "$(cd "$(dirname "$0")" && pwd)/re2c_rollup_g2r.py" --driver-mode "${RE2C_G2R_MODE:?}" --deploy "$D" --products-tsv "$(cd "$(dirname "$0")" && pwd)/products.tsv.txt" --sidecar "$O.g2r_driver.json" --arm refined --out "$O/s5" --results "$O/results"

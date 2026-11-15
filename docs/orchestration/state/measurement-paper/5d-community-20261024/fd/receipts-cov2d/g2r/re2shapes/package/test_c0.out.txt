@@ -1,0 +1,7 @@
+PASS same rc=0: C0 PASS: lines 6/6 counts {"bitwise": 2, "path-pairs": 2, "skipped: PDF: creation date; compared through its PNG twin": 1, "skipped: run logs or caches": 1} other [] comparator FAIL differ ['SHA256SUMS'] extra []
+PASS same: combination.json classed path-pairs
+PASS npz rc=1: C0 STOP: lines 6/6 counts {"OTHER": 1, "bitwise": 1, "path-pairs": 1, "skipped: PDF: creation date; compared through its PNG twin": 1, "skipped: ROOT: TFile creation time; compared through its npz twin": 1, "skipped: run logs or c
+PASS npz: the differing npz is OTHER
+PASS extra rc=1: C0 STOP: lines 6/7 counts {"OTHER": 1, "bitwise": 2, "path-pairs": 2, "skipped: PDF: creation date; compared through its PNG twin": 1, "skipped: run logs or caches": 1} other ['s5/g2r_driver.json'] comparator FAIL differ ['SHA256S
+PASS wrongdeploy rc=1: C0 STOP: lines 6/6 counts {"OTHER": 1, "bitwise": 2, "path-pairs": 1, "skipped: PDF: creation date; compared through its PNG twin": 1, "skipped: run logs or caches": 1} other ['combination/combination.json'] comparator FAIL differ
+C0 TEST PASS
