@@ -7,6 +7,10 @@ gErrorIgnoreLevel = 0
 class _G:
     def SetBatch(s, b): pass
 gROOT = _G()
+class _St:
+    def SetOptTitle(s, v): pass
+gStyle = _St()   # overlay_eavailW_band.py sets it at import
+kBlack = 1
 class _H2:
     def __init__(s, m): s.m = m
     def __bool__(s): return True
