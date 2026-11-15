@@ -1,0 +1,23 @@
+=== docs/orchestration/state/2d-closeout/stageF/methods/m4-w/probe_omni.json:6-12
+  "n_W_nonfinite_in_ps": 1474,
+  "w_frac_W_nonfinite_in_ps": 4.915615751553879e-05,
+  "n_kept": 32846302,
+  "q3sq_minus_pt2_negative": 49754,
+  "q3sq_minus_pt2_negative_wfrac": 0.0008646336152056916,
+  "resid_Mbar_MeV": {
+   "n": 32846302,
+
+=== docs/orchestration/state/2d-closeout/per-period-benchmark-20261106/receipts/read/readout.json:57-63
+    {
+     "rank": 23,
+     "lam_rel": 3.5490094547068237e-09,
+     "lam_rel_declared": "3.549e-09",
+     "abs_z": 4.746664876937429,
+     "abs_z_declared": 4.75,
+     "ok": true
+
+=== the Supplement, origin/draft/methods-short-20261109 docs/analysis-note/supplemental_body.tex:97-98 and :675-676
+% Fixed 2026-11-13 (the director's D6 ruling A3, journal-editor): the no-real-solution fraction is the weighted one, 0.086 % (m4-w probe_omni.json truth.q3sq_minus_pt2_negative_wfrac); the 0.15 % printed before was unweighted.
+At truth level, $q_{3}$ is computed from the true neutrino and muon four-vectors, but $\theta_{\mu}$, and with it $\pT$ and $\pPar$, is measured from a fixed beam axis tilted by \SI{58.87}{mrad} from the detector axis rather than from the true neutrino direction.  Truth $W$ is therefore fixed by $(\pT,\pPar,q_{3})$ only up to that event-by-event angle, of about \SI{1}{mrad}, and the choice of $M$: the residual is within \SI{\pm\fvval{m4w-resid68}}{MeV} for 68\% of events and within $\fvval{m4w-resid999-lo}$ to $\fvval{m4w-resid999-hi}$~MeV for 99.9\%. Of the events (weighted), \SI{\fvval{m4w-wbin-pct}}{\percent} change their coarse $W$ bin, and \SI{\fvval{m4w-noreal-pct}}{\percent} have no real solution.
+% Fixed 2026-11-13 (the director's D6 ruling A1, journal-editor): the largest standardized component is 4.7467 (per-period benchmark readout controls[5].modes[0].abs_z); the 4.8 printed before rounded the report's 4.75 a second time.
+In the eigenbasis of the published covariance, the largest standardized component is \fvval{pp-mode-max} and the next nine \fvval{tension-next9-lo}--\fvval{tension-next9-hi}, and the ten smallest-eigenvalue modes carry \SI{\fvval{tension-small10-pct}}{\percent} of the $\chi^{2}$. Of the six leading modes, three are poorly determined directions ($\lambda/\lambda_{\max}\lesssim4\times10^{-9}$) in the highest-$\pPar$ bins, and three are moderate-$\lambda$ modes ($4\times10^{-6}$ to $6\times10^{-5}$) below them (figure~\ref{fig:tension2d}; \nsec{sec:results-tension}).

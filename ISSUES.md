@@ -1293,3 +1293,23 @@ Updated here: the AUD-N4 and AUD-N5 status rows, the new AUD-N5a row, and the si
   *Record:* `docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/README.md` ("The rest of group L"); the director's ruling of 2026-11-13: leave the figure unchanged and do not recreate the producer.  
   *Status:* **OPEN.** Find the producer, or record that the figure is no longer regenerable. This row authorizes no edit.
 
+
+* **FIG-3 [T]** — **A producer's docstring miscounts the reported cells.**  
+  *Finding:* `nd-unfolding/fps_pilot_compare.py`'s docstring says the anchor is "Reported on the 205 paper-reported cells"; its `reported_mask` counts 185 on the paper grid, at both the base `c704c9cd5` and the family-5 split (checked with the family-5 fake ROOT).  
+  *Status:* **OPEN, follow-up list** (the director's ruling of 2026-11-15: no code change in the figure-style pass).
+
+## Cross-document numbers (2026-11-15)
+
+From the codex-school audit `~/codex-reports/crossdoc-numbers-3027c959…-6c38249b….md` §1 (paper and Supplement at `3027c9596`, note at `6c38249bc`), the director's rulings of 2026-11-15: literals with source comments, no port of the paper branch's value keys.
+
+* **XDOC-1 [R]** — **The truth-level no-real-solution fraction was printed unweighted after a weighted clause.**  
+  *Finding:* `sec_eavailw.tex:65` printed "0.25% of events (weighted) change their coarse W bin, and 0.15% have no real solution". 0.15% is the unweighted fraction (49754 of 32846302 events); the weighted fraction is 0.086%, which the Supplement prints (`supplemental_body.tex:98`, key `m4w-noreal-pct`).  
+  *Record:* `docs/orchestration/state/2d-closeout/stageF/methods/m4-w/probe_omni.json:8-10` (`n_kept`, `q3sq_minus_pt2_negative`, `q3sq_minus_pt2_negative_wfrac` 0.0008646336152056916).  
+  *Status:* **RESOLVED:** "0.086% (weighted) have no real solution", with a same-line source comment.
+* **XDOC-2 [R]** — **The largest standardized eigenmode component was double-rounded.**  
+  *Finding:* `sec_results.tex:130` printed 4.8; the value is 4.7467, printed by the Supplement as 4.7 (`supplemental_body.tex:675-676`, key `pp-mode-max`). 4.8 rounded the already rounded 4.75.  
+  *Record:* `docs/orchestration/state/2d-closeout/per-period-benchmark-20261106/receipts/read/readout.json:61-62` (`abs_z` 4.746664876937429, `abs_z_declared` 4.75).  
+  *Status:* **RESOLVED:** 4.7, with a same-line source comment.
+* **XDOC-3 [T]** — **The note prints these two values as literals; the paper branch derives them from keys.**  
+  *Finding:* `m4w-noreal-pct` and `pp-mode-max` exist only in the paper branch's `make_values_fived16.py` (`:2195`, `:2276`, `:2374`, `:2387` at `3027c9596`).  
+  *Status:* **OPEN, by ruling:** the keys are not ported across branches now; the two literals cite their records.
