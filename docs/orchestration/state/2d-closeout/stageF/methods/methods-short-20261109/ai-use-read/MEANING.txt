@@ -1,0 +1,51 @@
+Meaning read: the AI-use edit to the acknowledgments of docs/analysis-note/main_paper.tex (an independent
+general-purpose subagent, read-only, 2026-11-14; worktree at a8d1746f2 plus the uncommitted edit in diff-as-read.txt)
+
+The working-tree git diff is byte-identical to diff-as-read.txt. The scratchpad DECISION.md is byte-identical to
+origin/main:docs/orchestration/DECISION-20261114-joseph-ai-use-statement.md.
+
+1. OK. The new AI text in main_paper.tex:71, after "\pubhold{...} ", equals DECISION.md:54-61 joined with single spaces.
+   Both are 842 characters, and a programmatic comparison returned EQUAL. The old text used two spaces between
+   sentences and the new text uses one, as the decision specifies.
+
+2. OK. Line 71 is unchanged through "\pubhold{funding and grant acknowledgments}", compared programmatically against
+   git show HEAD. The environment still spans lines 70-92. The only other change is the 4 comment lines added at 88-91.
+
+3. OK. All four families in the census (DECISION.md:20-24) are named. Gemini is tied to Antigravity, and Claude Code
+   and Codex appear as before. The census names no agent for Grok, and the paper's three-agent parenthetical neither
+   assigns one nor contradicts the census. No versions are stated in the paper, which is the intended condensation.
+   The paper also drops the old "before each study" claim that the census contradicts (DECISION.md:26-27). Nothing in
+   the paper contradicts the census.
+
+4. DEFECT (coupling). The note's current statement at main_note.tex:115-131 is still the old text. It reads "used
+   through the Claude Code and OpenAI Codex command-line agents: Anthropic Claude (Opus 4.7, 4.8, 5, and 5.5; Fable 5
+   and 5.1) and OpenAI GPT models (GPT-5.5, GPT-5.6 Sol and Luna, GPT-6 Astra, and GPT-6.1)... written
+   specifications fixed before each study". A grep of main_note.tex finds no Gemini, Grok, Sonnet, Antigravity,
+   GPT-6 Sol, delegation sentence or "unless labelled descriptive" clause. The paper's pointer ("gives the full
+   statement, including the tool versions") and its delegation sentence therefore point to text that doesn't exist
+   yet. Both statements must land together, in one commit or one gated batch.
+
+5. NOTE.
+   - "byte for byte" is true (item 1).
+   - The quoted fragment does come from Joseph's words. 40b161d5401dc895 matches the sha256 of the full quote plus a
+     newline, which I recomputed, so it is the hash of the full sentence, not of the quoted fragment.
+   - #1152 is the merged PR that added the decision.
+   - The cited decision path exists on origin/main but not at this branch's HEAD.
+   - "the first author" for now comes from Joseph's second quote (c23237e29e3186ce), which the comment doesn't cite.
+     It is reachable through the record.
+   - "The comments above record the text it replaces" is loose. Lines 74-87 record where the old text came from and
+     which elements were kept, but not the text itself (git does). Line 84 still says "the authors directed and
+     verified the work", which is now superseded, so the new line's framing as history matters.
+   - No false statement about the change itself.
+
+6. OK, with one NOTE. "The first author... approved the claims, and verified the results" and "each is recorded" are
+   the decision's own approved wording (DECISION.md:57-58). "The first author" is explicitly temporary until Ben has
+   read the work (DECISION.md:63). The decision's limits (DECISION.md:68-69) say it is not citable for a complete
+   census, and that the Sonnet and Grok versions come from Joseph, not the records. The paper states no versions, so it
+   doesn't break those limits. The note, which will carry the versions, is where that limit bites. "each is recorded"
+   is shorter than the note's "recorded in the analysis repository", but it is the approved wording and doesn't
+   overstate it.
+
+Verdict: DEFECT. One coupling defect (item 4): the paper's pointer and delegation sentence are accurate only once
+main_note.tex:115-131 is replaced with the decision's full statement (DECISION.md:37-50). The paper edit on its own is
+otherwise clean.
