@@ -1,0 +1,7 @@
+host=login34 utc=2026-11-14T10:42:35Z
+find_rc=0 end_utc=2026-11-14T10:42:35Z
+pre 1146 lines (1146 paths), post 1146 lines (1146 paths)
+only in pre: []
+only in post: []
+moved 0
+ATIME-POST SAME-SET-NONE-MOVED

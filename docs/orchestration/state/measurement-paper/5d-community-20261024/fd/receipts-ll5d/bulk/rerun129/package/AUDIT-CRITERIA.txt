@@ -1,0 +1,24 @@
+coverage-5b-audit's package criteria (a)-(f) for the rc-129 rerun, received 2026-11-14 (verbatim summary):
+(a) one job, alone on its deploy: one sbatch -N1 --exclusive, one srun step, one ll5d_b unfold call; no other job reads
+    the deploy (a fresh clone at 4231b14d, or a shown reason); its single start check runs before the call (show the
+    ordering); the job name is ll5d_* (if new, the director tells the fenced lanes before the go).
+(b) fresh out, $U untouched: --out is a new dir outside $U, refused if it exists; nothing writes/moves/deletes under $U
+    (comparator included); the "writes only under" comment is accurate.
+(c) same call as the bulk lane: M 4231b14d, the 22-line bound list 7540b2de verified at job start; the same WORLD args as
+    connect-bulk.sh:212-220 with both expect-sha256; --truth ar23 --role toy --threads 32 under srun --exact -n1 -c 32
+    --mem 56G and the same env setup; items taken from bulk-lanes.tsv node 09 lane 4, not retyped; assert count 20 and
+    exactly those names in $U; list intended differences; diff the job script vs sbatch-ll5d-bulk.sh.
+(d) comparison under the director's rule: allow-list with file:line at 4231b14d (incl. refinement, estimator_params);
+    both sides read O_NOATIME after the job; pair by name; a missing/extra file, a member-set diff or count != 20 is a
+    mismatch; numeric members equal in name/dtype/shape/bytes; meta parsed JSON, equal except the allow-list, whose
+    values are printed; mutants (an xsec_flat data byte; a non-allow-listed key), each against a byte-identical passing
+    control; a zip-metadata-only change is reported and passes; every verdict line names the file and member. The
+    rerun's exit is part of the result: rc 0, or 8 with explained sidecar moves; rc 129 again goes to the director even
+    when the comparison is equal; say what the connect prints then.
+(e) fence and price: cov2d_fence.sh, the ^ll5d fence, squeue/sacct before submit; projection (decl :605-610) = charged
+    + the full --time of unended ll5d_* + this <= 148.0; --time in full H:MM:SS, covering 20 x 1062 s + setup, under
+    the 0.9 line, checked against scontrol TimeLimit, cancel on a mismatch.
+(f) atime and order: the sidecar is written (ll5d_b.py:324-326); a stat-only atime-pre of the 1146 paths at submit and
+    an atime-post after; any move reported (decl :672); no HPSS/null/readout on $U during the rerun or the comparison;
+    order: rerun, comparison, null, readout, HPSS.
+Package: the sha256 of each file (connect, job script, comparator and its test output) and each diff vs its parent.

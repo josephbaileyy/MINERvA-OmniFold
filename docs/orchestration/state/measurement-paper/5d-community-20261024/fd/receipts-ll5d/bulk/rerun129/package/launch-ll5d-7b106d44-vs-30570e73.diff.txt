@@ -1,0 +1,9 @@
+3c3
+< # Usage: launch-ll5d.sh ovl | calib | calib2 | gate-g18 | gate-ar23 | vicheck | calib3 | gate2-g18 | gate2-ar23 | pilot | bulk <sha256>
+---
+> # Usage: launch-ll5d.sh ovl | calib | calib2 | gate-g18 | gate-ar23 | vicheck | calib3 | gate2-g18 | gate2-ar23 | pilot | bulk | rerun129 <sha256>
+23c23,24
+<   *) echo "usage: launch-ll5d.sh ovl|calib|calib2|gate-g18|gate-ar23|vicheck|calib3|gate2-g18|gate2-ar23|pilot|bulk <sha256>"; exit 2 ;;
+---
+>   rerun129) SRC=$H/rerun129/connect-rerun129.sh; ARG=""; LOGP=/pscratch/sd/j/josephrb/ll5d-rerun129-r1/logs/connect-rerun129.log ;;   # the bulk's rc-129 call, rerun once
+>   *) echo "usage: launch-ll5d.sh ovl|calib|calib2|gate-g18|gate-ar23|vicheck|calib3|gate2-g18|gate2-ar23|pilot|bulk|rerun129 <sha256>"; exit 2 ;;
