@@ -40,3 +40,13 @@ scratch or skipped; values_table.* are bitwise.
 - M2: values_table.* bitwise (partc-r2's hold no path, host or time).
 - M3: the fence fails closed and refuses every job (see the connect and fence-families.txt).
 - Low: the fence runs again before the g2r arm.
+
+**Rev 3, after the first run's C0 STOP (2026-11-15T22:53Z; the director's ruling (a2)):** that run, in
+`/pscratch/sd/j/josephrb/cov2d-re2shapes-20261114`, stopped on two metadata causes, and the g2r arm never ran.
+(1) `receipts/receipt_model_chi2.json`'s repo_commit is the shared `$A` checkout's HEAD (receipt_model_chi2_2d.py:56,
+:307-308; re2c_run.sh MNV_REPO=$A), which moved from 32e403b8 to ed3590ea. (2) partc-r2's directory holds 8 files that
+the later Fig. 1 steps added, absent from its SHA256SUMS, and the comparator saw them as only_stopped. c0_sums gains
+exactly two named rules: R1 compares that receipt with only repo_commit set aside, beside the comparator's FIELD_SKIP
+pair; R2 accepts only_stopped only when it equals those 8 files by name, none listed in partc-r2's SHA256SUMS.
+test_c0 has both rules, with STOP mutants: a second differing receipt field, a ninth only_stopped file, and one of
+the 8 missing. The next connect reruns everything in a new namespace, `cov2d-re2shapes-20261115`.

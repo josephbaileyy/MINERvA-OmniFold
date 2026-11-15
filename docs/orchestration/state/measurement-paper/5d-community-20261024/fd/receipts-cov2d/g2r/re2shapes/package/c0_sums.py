@@ -26,6 +26,16 @@ rule, from a read-only O_NOATIME probe of partc (tmp8lbdy9iq) against partc-r2 (
   inj.root         not deterministic (TFile creation time): accepted, but its listed digest must be the sha256 that
                    the same run's inj.json records for it, in each run.
 Any other line under periods_ns/tmp/ is OTHER. The two random names are recorded.
+Two named rules (the director's ruling (a2), 2026-11-15, after the first run's C0 STOP):
+  R1  receipts/receipt_model_chi2.json is compared field by field (parsed JSON, c0's bytes after the path pairs) with
+      only repo_commit set aside, beside the comparator's FIELD_SKIP pair (generated_utc, host). repo_commit is
+      `git -C REPO rev-parse HEAD` with REPO = $MNV_REPO (receipt_model_chi2_2d.py:56, :307-308 at B), and re2c_run.sh
+      sets MNV_REPO=$A, the shared /pscratch/sd/j/josephrb/MINERvA-OmniFold checkout, whose HEAD moved after partc-r2
+      (32e403b8 -> ed3590ea). Every other field, the chi2 values included, must be equal. When R1 holds, the
+      comparator's differ entry for this file is accepted.
+  R2  the comparator's only_stopped set is accepted only when it equals, by name, FIG1_LATER (the 8 files the later
+      Fig. 1 steps added to partc-r2's directory), each absent from partc-r2's committed SHA256SUMS. Any other
+      only_stopped file, or any one of the 8 listed in that SHA256SUMS, is a STOP.
 Exit 0 only if no line is OTHER, the two lists name the same files after that replacement, and the comparator's own
 differences are at most SHA256SUMS. Otherwise 1.
     python3 -I c0_sums.py --comparator re2c_determinism.py --determinism c0-determinism.json \
@@ -41,6 +51,10 @@ from pathlib import Path
 
 SCRATCH = re.compile(r"^(periods_ns/tmp/)(tmp[a-z0-9_]{8})(/(?:id\.json|id\.txt|inj\.json|inj\.root|inj\.txt))$")
 VALUES = ("values_table.tsv", "values_table.json")
+RECEIPT = "receipts/receipt_model_chi2.json"
+RECEIPT_SET_ASIDE = ("generated_utc", "host", "repo_commit")   # the comparator's FIELD_SKIP pair + repo_commit (R1)
+FIG1_LATER = frozenset(f"{d}/{f}" for d in ("fig1", "fig1-a2-cabbbbc3")
+                       for f in ("RUN-fig1.txt", "fig1_run.log", "pins.json", "uqmedian.tex"))   # R2
 
 
 def sums(path):
@@ -63,6 +77,21 @@ def sums(path):
 
 def real(root, rel, name):
     return Path(root, rel.replace("<mkdtemp>", name))
+
+
+def receipt(a, pp):
+    """R1: receipt_model_chi2.json equal field by field with only RECEIPT_SET_ASIDE set aside."""
+    b = Path(a.c0, RECEIPT).read_bytes()
+    for new, old in pp:
+        b = b.replace(new, old)
+    ja, jb = json.loads(Path(a.partc_r2, RECEIPT).read_bytes()), json.loads(b)
+    for k in RECEIPT_SET_ASIDE:
+        ja.pop(k, None)
+        jb.pop(k, None)
+    if ja == jb:
+        return "R1 (receipt equal without repo_commit and the comparator's FIELD_SKIP pair)"
+    diff = sorted(k for k in set(ja) | set(jb) if ja.get(k) != jb.get(k))
+    return f"OTHER (receipt fields differ beyond repo_commit: {diff})"
 
 
 def recorded(doc, suffix):
@@ -122,6 +151,8 @@ def main():
             cls = "bitwise"
         elif rel.split("/")[-1] in VALUES:
             cls = "OTHER (values table differs)"
+        elif rel == RECEIPT:
+            cls = receipt(a, pp)
         elif rel.startswith("periods_ns/tmp/<mkdtemp>/"):
             cls = scratch(rel, a, pp, s, r, s_tmp, r_tmp)
         elif r[rel] in pairs and pairs[r[rel]]["stopped"] == s[rel]:
@@ -135,9 +166,12 @@ def main():
         counts[key] = counts.get(key, 0) + 1
     other = sorted(k for k, v in rows.items() if v.startswith("OTHER"))
     det_differ = [d["file"] for d in rec["differ"]]
-    det_extra = rec["only_stopped"] + rec["only_rerun"] + rec["root_untabled"] + [f for f in det_differ if f != "SHA256SUMS"]
+    r1 = rows.get(RECEIPT, "").startswith("R1")
+    r2 = set(rec["only_stopped"]) == FIG1_LATER and not (FIG1_LATER & set(s))
+    det_extra = ([] if r2 else rec["only_stopped"]) + rec["only_rerun"] + rec["root_untabled"] + \
+        [f for f in det_differ if f != "SHA256SUMS" and not (f == RECEIPT and r1)]
     ok = not other and not det_extra and set(s) == set(r)
-    res = {"schema": "re2shapes-c0/3", "verdict": "PASS" if ok else "STOP", "n_lines": {"partc-r2": len(s), "c0": len(r)},
+    res = {"schema": "re2shapes-c0/4", "R1_receipt": r1, "R2_only_stopped_fig1_later": r2, "verdict": "PASS" if ok else "STOP", "n_lines": {"partc-r2": len(s), "c0": len(r)},
            "mkdtemp": {"partc-r2": s_tmp, "c0": r_tmp}, "path_pairs": a.path_pair,
            "counts": counts, "other": other, "comparator": {"verdict": rec["verdict"], "differ": det_differ,
                                                            "only_stopped": rec["only_stopped"], "only_rerun": rec["only_rerun"],

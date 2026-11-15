@@ -1,20 +1,26 @@
-PASS same rc=0: C0 PASS: lines 12/12 mkdtemp tmp6hw50588/tmpq3zk81xa counts {"bitwise": 5, "path-pairs": 2, "scratch (id.json: equal after the path pairs and the mkdtemp name)": 1, "scratch (inj.json: equal after the path pairs and the mkdtemp name, inj.ro
+PASS same rc=0: C0 PASS: lines 13/13 mkdtemp tmp6hw50588/tmpq3zk81xa counts {"R1": 1, "bitwise": 5, "path-pairs": 2, "scratch (id.json: equal after the path pairs and the mkdtemp name)": 1, "scratch (inj.json: equal after the path pairs and the mkdtemp nam
+PASS same: R1 (receipt differs only in time, host, path, repo_commit) and R2 (the 8 later fig1 files) accepted
 PASS same: path-pairs, values_table bitwise, the five scratch files each by its rule under two mkdtemp names
-PASS npz rc=1: C0 STOP: lines 12/12 mkdtemp tmp6hw50588/tmpq3zk81xa counts {"OTHER": 1, "bitwise": 4, "path-pairs": 1, "scratch (id.json: equal after the path pairs and the mkdtemp name)": 1, "scratch (inj.json: equal after the path pairs and the mkdtemp 
+PASS npz rc=1: C0 STOP: lines 13/13 mkdtemp tmp6hw50588/tmpq3zk81xa counts {"OTHER": 1, "R1": 1, "bitwise": 4, "path-pairs": 1, "scratch (id.json: equal after the path pairs and the mkdtemp name)": 1, "scratch (inj.json: equal after the path pairs and the
 PASS npz: the differing npz is OTHER
-PASS extra rc=1: C0 STOP: lines 12/13 mkdtemp tmp6hw50588/tmpq3zk81xa counts {"OTHER": 1, "bitwise": 5, "path-pairs": 2, "scratch (id.json: equal after the path pairs and the mkdtemp name)": 1, "scratch (inj.json: equal after the path pairs and the mkdtemp 
-PASS wrongdeploy rc=1: C0 STOP: lines 12/12 mkdtemp tmp6hw50588/tmpq3zk81xa counts {"OTHER": 1, "bitwise": 5, "path-pairs": 1, "scratch (id.json: equal after the path pairs and the mkdtemp name)": 1, "scratch (inj.json: equal after the path pairs and the mkdtemp 
-PASS values-one-value rc=1: C0 STOP: lines 12/12 mkdtemp tmp6hw50588/tmpq3zk81xa counts {"OTHER": 1, "bitwise": 4, "path-pairs": 2, "scratch (id.json: equal after the path pairs and the mkdtemp name)": 1, "scratch (inj.json: equal after the path pairs and the mkdtemp 
+PASS extra rc=1: C0 STOP: lines 13/14 mkdtemp tmp6hw50588/tmpq3zk81xa counts {"OTHER": 1, "R1": 1, "bitwise": 5, "path-pairs": 2, "scratch (id.json: equal after the path pairs and the mkdtemp name)": 1, "scratch (inj.json: equal after the path pairs and the
+PASS wrongdeploy rc=1: C0 STOP: lines 13/13 mkdtemp tmp6hw50588/tmpq3zk81xa counts {"OTHER": 2, "bitwise": 5, "path-pairs": 1, "scratch (id.json: equal after the path pairs and the mkdtemp name)": 1, "scratch (inj.json: equal after the path pairs and the mkdtemp 
+PASS values-one-value rc=1: C0 STOP: lines 13/13 mkdtemp tmp6hw50588/tmpq3zk81xa counts {"OTHER": 1, "R1": 1, "bitwise": 4, "path-pairs": 2, "scratch (id.json: equal after the path pairs and the mkdtemp name)": 1, "scratch (inj.json: equal after the path pairs and the
 PASS values-one-value: one printed value changed is OTHER
-PASS scratch-extra rc=1: C0 STOP: lines 12/13 mkdtemp tmp6hw50588/tmpq3zk81xa counts {"OTHER": 1, "bitwise": 5, "path-pairs": 2, "scratch (id.json: equal after the path pairs and the mkdtemp name)": 1, "scratch (inj.json: equal after the path pairs and the mkdtemp 
+PASS scratch-extra rc=1: C0 STOP: lines 13/14 mkdtemp tmp6hw50588/tmpq3zk81xa counts {"OTHER": 1, "R1": 1, "bitwise": 5, "path-pairs": 2, "scratch (id.json: equal after the path pairs and the mkdtemp name)": 1, "scratch (inj.json: equal after the path pairs and the
 PASS scratch-extra: a file outside the five is OTHER
-PASS scratch-missing rc=1: C0 STOP: lines 12/11 mkdtemp tmp6hw50588/tmpq3zk81xa counts {"OTHER": 1, "bitwise": 4, "path-pairs": 2, "scratch (id.json: equal after the path pairs and the mkdtemp name)": 1, "scratch (inj.json: equal after the path pairs and the mkdtemp 
+PASS scratch-missing rc=1: C0 STOP: lines 13/12 mkdtemp tmp6hw50588/tmpq3zk81xa counts {"OTHER": 1, "R1": 1, "bitwise": 4, "path-pairs": 2, "scratch (id.json: equal after the path pairs and the mkdtemp name)": 1, "scratch (inj.json: equal after the path pairs and the
 PASS scratch-missing: a missing scratch file is OTHER
-PASS scratch-txt rc=1: C0 STOP: lines 12/12 mkdtemp tmp6hw50588/tmpq3zk81xa counts {"OTHER": 1, "bitwise": 4, "path-pairs": 2, "scratch (id.json: equal after the path pairs and the mkdtemp name)": 1, "scratch (inj.json: equal after the path pairs and the mkdtemp 
+PASS scratch-txt rc=1: C0 STOP: lines 13/13 mkdtemp tmp6hw50588/tmpq3zk81xa counts {"OTHER": 1, "R1": 1, "bitwise": 4, "path-pairs": 2, "scratch (id.json: equal after the path pairs and the mkdtemp name)": 1, "scratch (inj.json: equal after the path pairs and the
 PASS scratch-txt: a changed inj.txt is OTHER
-PASS scratch-rootsha rc=1: C0 STOP: lines 12/12 mkdtemp tmp6hw50588/tmpq3zk81xa counts {"OTHER": 2, "bitwise": 5, "path-pairs": 2, "scratch (id.json: equal after the path pairs and the mkdtemp name)": 1, "skipped: PDF: creation date; compared through its PNG twin": 1
+PASS scratch-rootsha rc=1: C0 STOP: lines 13/13 mkdtemp tmp6hw50588/tmpq3zk81xa counts {"OTHER": 2, "R1": 1, "bitwise": 5, "path-pairs": 2, "scratch (id.json: equal after the path pairs and the mkdtemp name)": 1, "skipped: PDF: creation date; compared through its PNG
 PASS scratch-rootsha: inj.json recording another inj.root digest is OTHER
-PASS scratch-idjson rc=1: C0 STOP: lines 12/12 mkdtemp tmp6hw50588/tmpq3zk81xa counts {"OTHER": 1, "bitwise": 5, "path-pairs": 2, "scratch (inj.json: equal after the path pairs and the mkdtemp name, inj.root digest)": 1, "scratch (inj.root: TFile time; digest = its 
+PASS scratch-idjson rc=1: C0 STOP: lines 13/13 mkdtemp tmp6hw50588/tmpq3zk81xa counts {"OTHER": 1, "R1": 1, "bitwise": 5, "path-pairs": 2, "scratch (inj.json: equal after the path pairs and the mkdtemp name, inj.root digest)": 1, "scratch (inj.root: TFile time; dige
 PASS scratch-idjson: a changed id.json is OTHER
-PASS two-mkdtemps rc=1: $TMP//tc0.pVrHDl/two-mkdtemps/cov2d-re2shapes-20261114/c0/SHA256SUMS: periods_ns/tmp/<mkdtemp>/id.json listed twice
+PASS receipt-chi2 rc=1: C0 STOP: lines 13/13 mkdtemp tmp6hw50588/tmpq3zk81xa counts {"OTHER": 1, "bitwise": 5, "path-pairs": 2, "scratch (id.json: equal after the path pairs and the mkdtemp name)": 1, "scratch (inj.json: equal after the path pairs and the mkdtemp 
+PASS receipt-chi2: a second differing receipt field (chi2) is OTHER
+PASS ninth-only-stopped rc=1: C0 STOP: lines 13/13 mkdtemp tmp6hw50588/tmpq3zk81xa counts {"R1": 1, "bitwise": 5, "path-pairs": 2, "scratch (id.json: equal after the path pairs and the mkdtemp name)": 1, "scratch (inj.json: equal after the path pairs and the mkdtemp nam
+PASS ninth-only-stopped: a ninth only_stopped file fails R2
+PASS seven-only-stopped rc=1: C0 STOP: lines 13/13 mkdtemp tmp6hw50588/tmpq3zk81xa counts {"R1": 1, "bitwise": 5, "path-pairs": 2, "scratch (id.json: equal after the path pairs and the mkdtemp name)": 1, "scratch (inj.json: equal after the path pairs and the mkdtemp nam
+PASS two-mkdtemps rc=1: $TMP//tc0.7vC2PC/two-mkdtemps/cov2d-re2shapes-20261115/c0/SHA256SUMS: periods_ns/tmp/<mkdtemp>/id.json listed twice
 C0 TEST PASS
