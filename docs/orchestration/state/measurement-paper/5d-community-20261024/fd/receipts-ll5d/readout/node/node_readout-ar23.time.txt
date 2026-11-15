@@ -1,0 +1,23 @@
+	Command being timed: "python3 -B /pscratch/sd/j/josephrb/ll5d-readout-r1/deploy/nd-unfolding/ll5d_b.py readout --staged /pscratch/sd/j/josephrb/fd-1b-inv-20261101/i0/in --definition /pscratch/sd/j/josephrb/ll5d-readout-r1/deploy/nd-unfolding/pv-ladder/readouts/h2_definition.json --unfolds /pscratch/sd/j/josephrb/ll5d-unfolds-r2 --cmodel-json /pscratch/sd/j/josephrb/ll5d-readout-r1/deploy/nd-unfolding/pv-ladder/readouts/cmodel_5d.json --flux-constraint /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt --truth ar23 --null /pscratch/sd/j/josephrb/ll5d-null-r1/null-ar23.json --expect-null-sha256 a0544ab9f6f0ec55c9866bee689d2563b13c9d07f4b3fdc37ce4762718a23933 --clipcheck /pscratch/sd/j/josephrb/ll5d-pilot-r2/clipcheck.json --expect-clipcheck-sha256 9632540ecd0d25e2223eedb480b96078459a6e6d75128b4e4132ea1bf644d3aa --gate /pscratch/sd/j/josephrb/ll5d-gate-2-ar23-20261110/gate-ar23.json --expect-gate-sha256 35a20c471cb06f428c49daaaebfc6646babb7f7fb060039d4c63139da51d0a4c --out /pscratch/sd/j/josephrb/ll5d-readout-r1/readout-ar23.json"
+	User time (seconds): 33.20
+	System time (seconds): 3.55
+	Percent of CPU this job got: 382%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:09.62
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 76484
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 20537
+	Voluntary context switches: 9781
+	Involuntary context switches: 9115
+	Swaps: 0
+	File system inputs: 12388392
+	File system outputs: 720
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

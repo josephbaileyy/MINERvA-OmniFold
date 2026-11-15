@@ -1,0 +1,42 @@
+host=nid006482 job=61272425 node=01 start=2026-11-14T12:31:12Z
+deploy head=4231b14de5ea693e92cb31b1358a816b5c2f6625 porcelain_lines=0
+nd-unfolding/ll5d.py: OK
+nd-unfolding/fd_1b_c2.py: OK
+nd-unfolding/fd_1b_mc.py: OK
+nd-unfolding/fd_1b_toys.py: OK
+nd-unfolding/fd_1b_inv.py: OK
+nd-unfolding/s1_assemble.py: OK
+nd-unfolding/s5p_universe.py: OK
+nd-unfolding/fd_1b_score.py: OK
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/clip/clip_probe2.py: OK
+2d-unfolding/cov2d/cov2d.py: OK
+docs/orchestration/state/2d-closeout/stageF/methods/sf1/manifest/inputs-sha256.txt: OK
+nd-unfolding/pv-ladder/readouts/h2_definition.json: OK
+setup_salloc_env.sh: OK
+nd-unfolding/s5e_candidate.py: OK
+nd-unfolding/s5e_deform.py: OK
+nd-unfolding/ll5d_b.py: OK
+nd-unfolding/fd_1b_null.py: OK
+nd-unfolding/s5n_pseudo.py: OK
+nd-unfolding/s5p_numerics.py: OK
+nd-unfolding/omnifold_nn_core.py: OK
+2d-unfolding/uq/coverage_fixed_truth/score_coverage.py: OK
+nd-unfolding/ll5d_ctl.py: OK
+readout g18 rc=0: LL5D-READOUT verdict={'g18/minus2': 'UNDER-COVERS', 'g18/all': 'UNDER-COVERS'}
+readout g18: record readout-g18.json verdicts {'g18/all': 'UNDER-COVERS', 'g18/minus2': 'UNDER-COVERS'} moved 0 []
+READOUT-EXIT g18 CLEAN: rc 0, record written, atime.moved []
+readout ar23 rc=0: LL5D-READOUT verdict={'ar23/minus2': 'UNDER-COVERS', 'ar23/all': 'UNDER-COVERS'}
+readout ar23: record readout-ar23.json verdicts {'ar23/all': 'UNDER-COVERS', 'ar23/minus2': 'UNDER-COVERS'} moved 0 []
+READOUT-EXIT ar23 CLEAN: rc 0, record written, atime.moved []
+5b3fbbf5ed6fcf0b2da9cf9a3024910c27c55bbb4f84373ff453fcba88feba10  /pscratch/sd/j/josephrb/ll5d-readout-r1/readout-ar23.json
+7bd6d3901fa9d5b017f7c5c2335ef70a4a41be58510d31cbcae3734556d0b12d  /pscratch/sd/j/josephrb/ll5d-readout-r1/readout-g18.json
+69a93f7f63385b32671ebd92bda9617cba6363caa5b5137ccd127fe6e5484d30  /pscratch/sd/j/josephrb/ll5d-readout-r1/readout-ar23.out
+fabf55da7d87a02460ff4bc94619f528e081688e3789d80e8228f4199343eaae  /pscratch/sd/j/josephrb/ll5d-readout-r1/readout-g18.out
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:09.62
+	Maximum resident set size (kbytes): 76484
+	Exit status: 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:11.57
+	Maximum resident set size (kbytes): 82072
+	Exit status: 0
+readout checks rc=0
+end=2026-11-14T12:31:41Z

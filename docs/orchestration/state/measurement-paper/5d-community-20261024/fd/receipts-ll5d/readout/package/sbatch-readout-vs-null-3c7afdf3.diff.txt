@@ -1,0 +1,95 @@
+2,4c2,4
+< # ll5d_null_01's job: the deploy at M with porcelain 0 and the bound blobs, checked ONCE here, before both calls; the
+< # expected moved set recomputed from the bound module and pinned; then ll5d_b.py null for g18, then for ar23, one after
+< # the other; after each, its record checked against the fixed set. Not under set -u. Writes only under $W.
+---
+> # ll5d_readout_01's job: the deploy at M with porcelain 0 and the bound blobs, checked ONCE here, before both calls; then
+> # ll5d_b.py readout for g18, then for ar23, one after the other; after each, its record checked (rc 0, no atime move).
+> # Not under set -u. Writes only under $W.
+6c6
+< P=/pscratch/sd/j/josephrb; STAGED=$P/fd-1b-inv-20261101/i0/in
+---
+> P=/pscratch/sd/j/josephrb; STAGED=$P/fd-1b-inv-20261101/i0/in; NW=$P/ll5d-null-r1; PW=$P/ll5d-pilot-r2
+8,9c8,11
+< EXP_g18_SHA256=ec363fd10db805005306e12955bc8651a02a340d5e53b8e81097bc53cb0e1e01; EXP_g18_N=227
+< EXP_ar23_SHA256=923681b295f1226360ca9ba9ee73c783ad7d9e2d559abd0106bc20d6320f3a93; EXP_ar23_N=227
+---
+> NULL_g18=73dbaf9517374646c719ff589015cb12c1a6a2eafd5579e1074ef700bde703c2; NULL_ar23=a0544ab9f6f0ec55c9866bee689d2563b13c9d07f4b3fdc37ce4762718a23933
+> GATE_g18=a5d66b7e506a98d5a0b555dbe171aa6c1e931eb93df793c3e515d7d44466fc70; GW_g18=$P/ll5d-gate-2-g18-20261110
+> GATE_ar23=35a20c471cb06f428c49daaaebfc6646babb7f7fb060039d4c63139da51d0a4c; GW_ar23=$P/ll5d-gate-2-ar23-20261110
+> CLIPSHA=9632540ecd0d25e2223eedb480b96078459a6e6d75128b4e4132ea1bf644d3aa
+18,44d19
+< # the expected moved set (the director's ruling (a)): remade's opened products (bands_of, sa.EXPECT, STAT_REPLICAS,
+< # product_name over READINGS) intersected with products_digest's set (TAG, BLOCK_ROLES) applied to $U's names
+< for T in g18 ar23; do
+<   python3 -B - "$DD/nd-unfolding" "$W/u-names.txt" "$U" "$T" "$W/expected_moved_$T.txt" <<'EXPECT' || stop "expected set $T"
+< import hashlib, sys
+< sys.path.insert(0, sys.argv[1])
+< import ll5d, ll5d_b as b
+< names = [l.strip() for l in open(sys.argv[2]) if l.strip()]
+< U, T = sys.argv[3].rstrip("/"), sys.argv[4]
+< opened = set()
+< for rd in ll5d.READINGS:
+<     opened |= {b.product_name(T, "central", "T"), b.product_name(T, "seed", "T")}
+<     opened |= {b.product_name(T, "block", f"{band}_{i}") for band in b.bands_of(rd) for i in range(b.sa.EXPECT[band])}
+<     opened |= {b.product_name(T, "stat", str(x)) for x in b.STAT_REPLICAS}
+< dig = {n for n in names if n.startswith(f"{b.TAG}_{T}_") and n.endswith(".npz") and ".partial-" not in n
+<         and n.split("_")[2] in b.BLOCK_ROLES}
+< body = "".join(f"{U}/{n}\n" for n in sorted(opened & dig))
+< open(sys.argv[5], "w").write(body)
+< print(f"expected {T}: opened {len(opened)} digested {len(dig)} absent {len(opened - set(names))} moved {len(opened & dig)} "
+<       f"sha256 {hashlib.sha256(body.encode()).hexdigest()}")
+< sys.exit(1 if opened - set(names) else 0)
+< EXPECT
+<   eval "want=\$EXP_${T}_SHA256; wn=\$EXP_${T}_N"
+<   [ "$(sha256sum "$W/expected_moved_$T.txt" | cut -d' ' -f1)" = "$want" ] && [ "$(awk 'END {print NR}' "$W/expected_moved_$T.txt")" = "$wn" ] \
+<     || stop "the expected moved set at $T is not the fixed one ($want, $wn paths)"
+<   echo "expected moved $T: $wn paths, sha256 $want (fixed)"
+< done
+47c22,23
+<   /usr/bin/time -v python3 -B "$DD/nd-unfolding/ll5d_b.py" null --staged "$STAGED" \
+---
+>   eval "ns=\$NULL_$T; gs=\$GATE_$T; gw=\$GW_$T"
+>   /usr/bin/time -v python3 -B "$DD/nd-unfolding/ll5d_b.py" readout --staged "$STAGED" \
+49,52c25,29
+<     --cmodel-json "$DD/nd-unfolding/pv-ladder/readouts/cmodel_5d.json" --flux-constraint "$CONSTRAINT" \
+<     --truth "$T" --out "$W/null-$T.json" < /dev/null > "$W/null-$T.out" 2> "$W/null-$T.time"; s=$?
+<   echo "null $T rc=$s: $(tail -1 "$W/null-$T.out")"
+<   python3 -B - "$W/null-$T.json" "$W/null-$T.invalid.json" "$W/expected_moved_$T.txt" "$s" "$T" <<'CHECK'
+---
+>     --cmodel-json "$DD/nd-unfolding/pv-ladder/readouts/cmodel_5d.json" --flux-constraint "$CONSTRAINT" --truth "$T" \
+>     --null "$NW/null-$T.json" --expect-null-sha256 "$ns" --clipcheck "$PW/clipcheck.json" --expect-clipcheck-sha256 "$CLIPSHA" \
+>     --gate "$gw/gate-$T.json" --expect-gate-sha256 "$gs" --out "$W/readout-$T.json" < /dev/null > "$W/readout-$T.out" 2> "$W/readout-$T.time"; s=$?
+>   echo "readout $T rc=$s: $(tail -1 "$W/readout-$T.out")"
+>   python3 -B - "$W/readout-$T.json" "$W/readout-$T.invalid.json" "$s" "$T" <<'CHECK'
+54,55c31
+< rec_p, inv_p, exp_p, rc, T = sys.argv[1], sys.argv[2], sys.argv[3], int(sys.argv[4]), sys.argv[5]
+< exp = sorted(l for l in open(exp_p).read().splitlines() if l)
+---
+> rec_p, inv_p, rc, T = sys.argv[1], sys.argv[2], int(sys.argv[3]), sys.argv[4]
+58c34
+<     print(f"NULL-EXIT {T} NOT-CLEAN rc={rc}: no record; to the director unrepaired"); sys.exit(1)
+---
+>     print(f"READOUT-EXIT {T} NOT-CLEAN rc={rc}: no record; to the director unrepaired"); sys.exit(1)
+60,66c36,40
+< moved = sorted(rec.get("atime", {}).get("moved", []))
+< extra, missing = sorted(set(moved) - set(exp)), sorted(set(exp) - set(moved))
+< print(f"null {T}: record {os.path.basename(p)} verdict {rec.get('verdict')} moved {len(moved)} expected {len(exp)} "
+<       f"extra {len(extra)} {extra[:5]} missing {len(missing)} {missing[:5]}")
+< ok = rc == 8 and p == rec_p and rec.get("verdict") == "PASS" and not extra and not missing
+< print(f"NULL-EXIT {T} " + ("CLEAN: rc 8, verdict PASS, moved == the fixed set (the declared deviation)" if ok else
+<       f"NOT-CLEAN rc={rc}: to the director unrepaired; nothing is read from this null"))
+---
+> moved = rec.get("atime", {}).get("moved", [])
+> print(f"readout {T}: record {os.path.basename(p)} verdicts {rec.get('verdicts')} moved {len(moved)} {moved[:5]}")
+> ok = rc == 0 and p == rec_p and moved == [] and "evaluations" in rec
+> print(f"READOUT-EXIT {T} " + ("CLEAN: rc 0, record written, atime.moved []" if ok else
+>       f"NOT-CLEAN rc={rc}: to the director unrepaired"))
+71,73c45,47
+< sha256sum "$W"/null-*.json "$W"/null-*.out "$W"/expected_moved_*.txt 2>/dev/null
+< grep -h -E "Elapsed|Maximum resident|Exit status" "$W"/null-*.time
+< echo "null checks rc=$urc"
+---
+> sha256sum "$W"/readout-*.json "$W"/readout-*.out 2>/dev/null
+> grep -h -E "Elapsed|Maximum resident|Exit status" "$W"/readout-*.time
+> echo "readout checks rc=$urc"
