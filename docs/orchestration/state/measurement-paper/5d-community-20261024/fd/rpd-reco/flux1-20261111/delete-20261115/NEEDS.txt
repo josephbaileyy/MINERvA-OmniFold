@@ -1,0 +1,69 @@
+What still needs the flux connect 1 root? The director's condition before step B (2026-11-15): for each part of
+/pscratch/sd/j/josephrb/rpd-reco-flux-20261111, show that it is committed, archived (HPSS or CFS) or regenerable by a
+recorded command, and that no pending step reads it (the paper, #981's re-pin, the Zenodo package D6, any RP row). A
+part that is a source for anything printed or released stays. Read against step A's inventory (stepA/inventory/) at
+main 9855389f2 and #977 head 3027c9596.
+
+RESULT: the 12 factor products and run/flux-extract.json STAY. RPD-RECO's pending step P0 reads them from this root,
+and they are neither committed nor archived. Everything else meets the condition.
+
+1. THE 12 FACTOR PRODUCTS, run/flux-factors-{1A..1P}.npz (591,245,748 bytes): STAY
+- Pending reader: P0. FD-RPD-RECO-BINDING-2.md ruling 7: "The result is read once from its committed receipt. It feeds
+  P0". Ruling 1: P0 is not yet bound and needs its own READY config. The CATALOG's AT-RISK retention record of
+  2026-11-11 lists RPD-RECO among the pending declarations.
+- How P0 reads them (nd-unfolding/fd_rpd_reco.py at main): extracted_flux() (:1971-1990) opens the extract JSON at the
+  READY config's flux_extract path, and pinned_flux_factors() (:2060-2075) opens each product at the path the
+  extract records, products[playlist]["path"]. That path is this root's run/flux-factors-<playlist>.npz, written at
+  :1922 as inputs.run / "flux-factors-{playlist}.npz", and each is pinned by its sha256 in flux-extract.json.
+- Committed: no. F1 (BINDING-2) keeps them on pscratch; only their sha256s were fetched. Archived: no.
+- Regenerable: in principle, by rerunning flux connect 1 from its recorded pins (connect 34694c0d, config cde8d029,
+  clone 763ab4dd, inputs by digest). No rerun has shown the products to be bitwise reproducible, and P0 pins them
+  by sha256. A rerun would also need re-pricing at the allotted CPUs (the director, 2026-11-13).
+- Printed or released: no. Search: the paper, Supplement, main_paper.tex, values.tex and values_fived16.tex at
+  3027c9596, #981's READS-89b5969b8.tsv and repin_list.tsv on main, each grep -ciE 'rpd-reco|flux-factor|flux
+  connect|rpd_flux1' (or 'rpd-reco|flux1|flux-factors'): 0 in every file.
+  <!-- absence-ok: each count is stated with its command -->
+
+2. run/flux-extract.json (456,334 bytes): STAYS with the products
+- P0 opens it by path (above). A byte-identical copy is committed (../run-61206960/records/run/flux-extract.json,
+  equal size; step B checks its digest). But P0's READY config, when written, will name a cluster path, and the
+  products' paths inside it point into this root.
+
+3. THE CLONE, clone/ (24,283 entries, 1,166,884,424 bytes): DELETE
+- Committed: it is a checkout of 763ab4ddcea2d2d3dce56138f8aa7ae7fab4bbe6, an ancestor of main (BINDING-2). Its
+  regeneration is git clone plus checkout, as the connect did. Pending readers: none. P0 needs the code at
+  fd_rpd_reco.py 7302cc1d (the extract's code_sha256 check, :1986), from its own deployment.
+
+4. THE STAGED COPIES, run/original-inputs/ (54 files, 1,617,556,047 bytes) and run/mat-data/ (15 files, 37,943,898
+   bytes): DELETE
+- They are copies made by custody prepare, each with its original's sha256 recorded (prestage.json "files", 54
+  entries, whose 9 instrument_files are among the same 54 staged paths, and "mat_dependencies", 15 entries). The 54
+  staged originals and their digests are committed as ../run-61206960/staged-originals.txt.
+- The originals stay in place: 49 under /pscratch/sd/j/josephrb (the dumps, minerva_large_files and
+  MINERvA-OmniFold), and 5 that were files of the job's /dev/shm repository copy, which are committed in git at
+  763ab4dd. Step B will lstat each pscratch original (no read) and require its size and mtime to equal the recorded
+  stat_before, so the copies are deleted only while their originals are present.
+- Pending readers: none. P0 reads only the extract and the products from this root (item 1); any inputs it needs
+  are prestaged by its own run.
+
+5. THE RECORDS: DELETE
+- 31 files (the run's JSON records, traces and the job's files) have committed copies of equal size under
+  ../run-61206960/records/. Step B checks each digest.
+- production-config.ready.json and run/prepare-check/staged/config.json (15,004 bytes each) are the committed
+  ../production-config.ready.json (cde8d029). tools/fence_overlap.py is the committed ../tools/fence_overlap.py
+  (baa76309). run/staged/config.json and run/staged/prestage-reference.json equal the committed
+  records/run/extract-config.json and records/run/prestage-reference.json in size. run/prepare-check/staged/'s
+  INPUTS.sha256 and energy-spectrum-candidates.tsv are repository files staged by name. Step B checks every one of
+  these digests against its committed counterpart.
+- run/prestage.json (249,294 bytes, sha256 99528ac8...): held out of git by the receipt hook's rule, listed by sha256
+  in the run README. Its "files" section is committed as staged-originals.txt. The rest (environment snapshots, the
+  dump listing) is a record and not a source for anything printed. After deletion the only copy left is the lane's
+  scratch copy, which macOS removes within days. THE DIRECTOR DECIDES whether it is kept with item 1.
+- .rpd-private/<hash>/prestage.json (258,133 bytes): the private prepare record, never sent by design (its
+  fingerprints), with deletion planned from the start (run README, "Left on pscratch").
+
+STEP B AS PROPOSED
+- Delete items 3, 4 and 5, about 2.83 GB, and keep run/flux-factors-*.npz and run/flux-extract.json (plus
+  run/prestage.json if the director keeps it) in place, so the root and run/ remain.
+- Alternatives for the director: archive items 1 and 2 to CFS or HPSS first (a separate go), then delete the whole
+  root; or keep the whole root until P0 runs or RPD-RECO is closed.

@@ -29,13 +29,40 @@ STEP A, THE INVENTORY (this commit; read-only)
   staged run and copy removal; an altered local script (rc 8); a non-login node name (rc 9); a session dir that is not
   empty (rc 9); and a copy that differs on the node (rc 8, nothing left).
 
+STEP A, THE RUN (2026-11-15, on the director's go "go 074c56a9 52957587 for step A, the read-only inventory, run
+once"; stepA/)
+- Shas from main's bytes at 9855389f2: flux1_inventory.py 074c56a9..., flux1_cleanup_launch.sh 52957587...,
+  rpd_flux1_launch.sh 8354aece..., cov2d_fence.sh 16a2a5cd.... Certificate valid 2026-11-14T10:36:00Z to
+  2026-11-15T10:37:34Z (TZ=UTC ssh-keygen -L, read only).
+- Survey (stepA/survey/, 02:48Z): login05, 06, 08, 09 and 10 answered, and the root exists on each. login07 printed
+  nothing. login06 had the lowest 1-minute load (41.30).
+- Fence (stepA/fence/, login06, 02:49:01Z): FENCE CLEAR. squeue held only RDX's rdx_s1_1A (RUNNING), whose inputs are
+  outside the root (tier3-design's notice).
+- Inventory (stepA/inventory/, login06, 02:49:16Z to 02:49:23Z): ssh rc 0, the staged copy's sha256 equal to the
+  approved one, script rc 0, the /dev/shm copy removed. Python 3.6.15.
+  - root: dev 3592384858, ino 882727459953338490, uid 112498, mode 40700;
+  - 24,422 entries, 22,190 files, 3,424,040,979 bytes; listing sha256
+    6e9a273506598728091867436ef2fa562f3418f9726175d2d43bfb0ddce6ee89; problems 0 (every entry on the root's device and
+    owned by this uid, no other kinds, no symlink outside the root);
+  - clone/: 24,283 entries (2,093 directories, 22,069 files, 121 symlinks), 1,166,884,424 bytes, listing sha256
+    9a85268d4f113460ef94c682f15ca7578534ffc7ce46da1348eefd6d848fd71f;
+  - run/: 120 entries, 2,256,851,244 bytes: the 12 factor products (591,245,748 bytes), run/original-inputs (54
+    staged files, 1,617,556,047 bytes), run/mat-data (the staged MAT tree, 37,943,898 bytes), run/real-mnv-check,
+    run/prepare-check, run/staged, run/tmp and the run's records;
+  - the job's files at the top (job.out, job.rc, connect.log and the rest), tools/fence_overlap.py, and
+    .rpd-private/<hash>/prestage.json (the private prepare record, 258,133 bytes).
+
 STEP B, THE DELETION (after step A's output is committed)
-- flux1_delete.py will carry, as constants: the root's literal path; step A's listing digest and entry count; and the
-  digests the records hold, namely the 12 factor products (../run-61206960/records/run/flux-extract.json) and the 63
-  staged copies (54 files and 9 instrument files in prestage.json, whose sha256 99528ac8... is listed in the run
-  README). It recomputes the listing with step A's code and requires the same digest. It reads each declared file
-  with O_NOATIME and requires its digest. Only then does it remove the root by its literal path, and it verifies the
-  root is absent. Exit 0 removed and absent; 4 STOP with nothing removed; 8 still present; 9 a removal failed.
+- What still needs the root: NEEDS.txt, the director's condition before step B. RPD-RECO's pending P0 reads the 12
+  factor products and run/flux-extract.json from this root, so they stay; the clone, the 69 staged copies (54 inputs,
+  among them the 9 instrument files, and 15 MAT dependencies; the earlier "63" counted the instrument files twice) and
+  the records are committed or duplicates of originals that stay in place. run/prestage.json is the director's call.
+- flux1_delete.py will carry, as constants: the root's literal path; step A's listing digest and entry count; the
+  paths it keeps; and the digests the records hold (the staged copies' recorded sha256s, the records' committed
+  counterparts). It recomputes the listing with step A's code and requires the same digest. It reads each declared
+  file with O_NOATIME and requires its digest, and lstat's each pscratch original against its recorded stat_before.
+  Only then does it remove the declared paths by literal path, and it verifies them absent and the kept files present.
+  Exit 0 done; 4 STOP with nothing removed; 8 something still present or a kept file missing; 9 a removal failed.
 - Its sha256 goes to the director before it runs, under the same launcher pattern.
 
 Nothing is submitted, deposited or tagged, and no file leaves the repository.
