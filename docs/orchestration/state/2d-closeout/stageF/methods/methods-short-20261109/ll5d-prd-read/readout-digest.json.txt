@@ -1,0 +1,130 @@
+{
+ "g18/all": {
+  "verdict": "UNDER-COVERS",
+  "joint_count": 14,
+  "k_joint": 195,
+  "joint_flag": true,
+  "chi2_mean_over_ndf": 3.0358,
+  "chi2_mean_over_ndf_se": 0.0843,
+  "ndf": 16,
+  "flagged_cells": [],
+  "counts_of_flagged": {},
+  "over_covers": [
+   "R02",
+   "R03",
+   "R06",
+   "R09"
+  ],
+  "weakened_cells": [],
+  "clipping_artefact_reading": {},
+  "o_c_under_C_T_max_abs": 0.0455,
+  "attribution": {}
+ },
+ "g18/minus2": {
+  "verdict": "UNDER-COVERS",
+  "joint_count": 12,
+  "k_joint": 195,
+  "joint_flag": true,
+  "chi2_mean_over_ndf": 3.0706,
+  "chi2_mean_over_ndf_se": 0.0837,
+  "ndf": 16,
+  "flagged_cells": [],
+  "counts_of_flagged": {},
+  "over_covers": [
+   "R02",
+   "R03",
+   "R05",
+   "R06",
+   "R09"
+  ],
+  "weakened_cells": [],
+  "clipping_artefact_reading": {},
+  "o_c_under_C_T_max_abs": 0.0396,
+  "attribution": {}
+ },
+ "ar23/all": {
+  "verdict": "UNDER-COVERS",
+  "joint_count": 4,
+  "k_joint": 195,
+  "joint_flag": true,
+  "chi2_mean_over_ndf": 3.6857,
+  "chi2_mean_over_ndf_se": 0.0984,
+  "ndf": 16,
+  "flagged_cells": [
+   "R07"
+  ],
+  "counts_of_flagged": {
+   "R07": [
+    167,
+    178
+   ]
+  },
+  "over_covers": [
+   "R02",
+   "R03",
+   "R05",
+   "R06",
+   "R09",
+   "R11",
+   "R15"
+  ],
+  "weakened_cells": [],
+  "clipping_artefact_reading": {
+   "R07": false
+  },
+  "o_c_under_C_T_max_abs": 0.0476,
+  "attribution": {
+   "R07": {
+    "centred_count": 224,
+    "driven_by": "bias",
+    "k_flag": 178,
+    "pull_mean": -0.7464349305969828,
+    "pull_mean_se": 0.05410357389574885,
+    "pull_sd": 0.9371013885849424,
+    "pull_sd_se": 0.03832092550969305
+   }
+  }
+ },
+ "ar23/minus2": {
+  "verdict": "UNDER-COVERS",
+  "joint_count": 1,
+  "k_joint": 195,
+  "joint_flag": true,
+  "chi2_mean_over_ndf": 3.6957,
+  "chi2_mean_over_ndf_se": 0.0959,
+  "ndf": 16,
+  "flagged_cells": [
+   "R07"
+  ],
+  "counts_of_flagged": {
+   "R07": [
+    163,
+    178
+   ]
+  },
+  "over_covers": [
+   "R02",
+   "R03",
+   "R06",
+   "R09",
+   "R11",
+   "R15"
+  ],
+  "weakened_cells": [],
+  "clipping_artefact_reading": {
+   "R07": false
+  },
+  "o_c_under_C_T_max_abs": 0.0333,
+  "attribution": {
+   "R07": {
+    "centred_count": 226,
+    "driven_by": "bias",
+    "k_flag": 178,
+    "pull_mean": -0.7630585586291156,
+    "pull_mean_se": 0.05394004866976325,
+    "pull_sd": 0.9342690485876799,
+    "pull_sd_se": 0.03820510251404354
+   }
+  }
+ }
+}

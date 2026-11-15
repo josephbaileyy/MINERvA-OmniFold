@@ -1,0 +1,12 @@
+OpenAI Codex v0.166.0
+--------
+workdir: /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/ac4a31cb-2f0f-47a3-9c67-815e0d18ed77/scratchpad/ll5d-read/gptdir
+model: gpt-6.1-sol
+provider: openai
+approval: on-request
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 01a1dd32-0d46-7a51-bed0-1302cba6ac8d
+--------
+user
