@@ -15,6 +15,9 @@ Checks:
   2. PRIOR SWAP: FPS(tune) vs FPS(genie) per-cell ratio = direct prior-
      dependence metric, summarised separately inside the published phase
      space and in the new (extrapolated) cells.
+
+Opt-in (note figure style, group C family 5): --dump-arrays FILE.npz writes every drawn value after the read;
+--from-arrays FILE.npz draws from such a dump with no ROOT. With neither, the figure is drawn as before.
 """
 
 import sys as _sys, pathlib as _pathlib
@@ -34,8 +37,6 @@ _REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 for _p in (f"{_REPO}/2d-unfolding", f"{_REPO}/nd-unfolding"):
     if _p not in sys.path:
         sys.path.insert(0, _p)
-import unfold_2d_omnifold_unbinned as u2d
-from fps_acceptance import PT_EXT, PZ_EXT, TAN20
 
 
 def th2_np(fn, name="hXSecND"):
@@ -53,6 +54,7 @@ def th2_np(fn, name="hXSecND"):
 
 def reported_mask(pt_e, pz_e):
     """True for paper-reported cells: NOT (pT_hi/pz_lo > tan20)."""
+    from fps_acceptance import TAN20
     m = np.ones((len(pt_e) - 1, len(pz_e) - 1), bool)
     for i in range(len(pt_e) - 1):
         for j in range(len(pz_e) - 1):
@@ -61,17 +63,10 @@ def reported_mask(pt_e, pz_e):
     return m
 
 
-def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--fps-tune", default="products/5d/xsec_2d_FPS_1A_tune.root")
-    ap.add_argument("--fps-genie", default="products/5d/xsec_2d_FPS_1A_genie.root")
-    ap.add_argument("--ctrl", default="products/5d/xsec_2d_CTRL_1A.root")
-    ap.add_argument("--omnifile", default="runEventLoopOmniFold_5D_FPS_1A.root",
-                    help="unused since the 2026-06-10 driver normalization fix; "
-                         "kept for caller compatibility")
-    ap.add_argument("--out-png", default="products/5d/fps_pilot_compare_1A.png")
-    args = ap.parse_args()
-
+def fill(args):
+    """Read the three unfolds and form the anchor and prior-swap comparisons: everything the figure draws."""
+    import unfold_2d_omnifold_unbinned as u2d
+    from fps_acceptance import PT_EXT, PZ_EXT
     pt_ext, pz_ext = np.asarray(PT_EXT), np.asarray(PZ_EXT)
     pt_pap, pz_pap = np.asarray(u2d.PT_EDGES, float), np.asarray(u2d.PZ_EDGES, float)
     # paper sub-block inside the extended grid
@@ -129,14 +124,18 @@ def main():
               f"median={np.median(d)*100:.2f}%  p90={np.percentile(d,90)*100:.2f}%  "
               f"max={d.max()*100:.1f}%   (shape-only: median={np.median(ds)*100:.2f}% "
               f"p90={np.percentile(ds,90)*100:.2f}%)")
+    sub_full = np.full(A_t.shape, np.nan)
+    sub_full[i0:i0 + npt, j0:j0 + npz] = np.where(ok, sub / np.where(C > 0, C, np.nan), np.nan)
+    return {"sub_full": sub_full, "R": R, "A_t": A_t, "pt_ext": pt_ext, "pz_ext": pz_ext}
 
+
+def draw(arr, out_png):
+    sub_full, R, A_t, pt_ext, pz_ext = (arr[k] for k in ("sub_full", "R", "A_t", "pt_ext", "pz_ext"))
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
     fig, axs = plt.subplots(1, 3, figsize=(19, 5))
     X, Y = np.arange(len(pt_ext)), np.arange(len(pz_ext))
-    sub_full = np.full(A_t.shape, np.nan)
-    sub_full[i0:i0 + npt, j0:j0 + npz] = np.where(ok, sub / np.where(C > 0, C, np.nan), np.nan)
     # panels (a),(b) are RATIOS -> diverging RdBu_r centred at 1.0; panel (c) is an
     # absolute MAGNITUDE -> sequential viridis (the two-colour-scheme question)
     im0 = axs[0].pcolormesh(X, Y, sub_full.T, cmap="RdBu_r", vmin=0.8, vmax=1.2)
@@ -155,9 +154,31 @@ def main():
         technote_style.panel_label(A, lab)
     fig.subplots_adjust(wspace=0.55)  # keep each colorbar clear of the next panel's y-label
     technote_style.minerva_tag(axs[0])
-    os.makedirs(os.path.dirname(args.out_png), exist_ok=True)
-    fig.savefig(args.out_png, dpi=140, bbox_inches="tight")
-    print(f"[cmp] wrote {args.out_png}")
+    os.makedirs(os.path.dirname(out_png), exist_ok=True)
+    fig.savefig(out_png, dpi=140, bbox_inches="tight")
+    print(f"[cmp] wrote {out_png}")
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--fps-tune", default="products/5d/xsec_2d_FPS_1A_tune.root")
+    ap.add_argument("--fps-genie", default="products/5d/xsec_2d_FPS_1A_genie.root")
+    ap.add_argument("--ctrl", default="products/5d/xsec_2d_CTRL_1A.root")
+    ap.add_argument("--omnifile", default="runEventLoopOmniFold_5D_FPS_1A.root",
+                    help="unused since the 2026-06-10 driver normalization fix; "
+                         "kept for caller compatibility")
+    ap.add_argument("--out-png", default="products/5d/fps_pilot_compare_1A.png")
+    ap.add_argument("--dump-arrays", default=None, help="write every drawn value to this .npz after the read")
+    ap.add_argument("--from-arrays", default=None, help="draw from this .npz (no ROOT)")
+    args = ap.parse_args()
+    if args.from_arrays:
+        with np.load(args.from_arrays) as z:
+            arr = {k: z[k] for k in z.files}
+    else:
+        arr = fill(args)
+        if args.dump_arrays:
+            np.savez(args.dump_arrays, **arr)
+    draw(arr, args.out_png)
 
 
 if __name__ == "__main__":
