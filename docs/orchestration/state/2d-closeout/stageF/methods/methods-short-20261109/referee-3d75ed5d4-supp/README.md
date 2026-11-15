@@ -32,3 +32,10 @@ The director passed on these Supplement items from `referee-paper-3d75ed5d4….m
 
 Each read's inputs are its `-prompt.txt` file, `meaning-read-records.txt`, `diff-as-read.txt` and
 `new-values-as-read.txt`.
+
+## Terms aligned with the paper (2026-11-16)
+
+Table S13's caption uses the paper's §3.1 names for the three learners: "the reconstruction-level (step-1) classifier,
+the truth-level (step-2) classifier and the regressor". Its mask is now "a column mask on the inputs of all three",
+which matches director-helper-3's §5.3 alternative. `meaning-read-4.txt` checks this change against
+`meaning-read-4-records.txt`: PASS.
