@@ -9,7 +9,8 @@ technote style.
   python plot_eavail_spectrum.py --infile xsec_3d_MEFHC_5iter_lgbm.root --out eavail_spectrum.png
 
 Opt-in (note figure style, group C family 4): --dump-arrays FILE.npz writes every drawn value after the read;
---from-arrays FILE.npz draws from such a dump with no ROOT. With neither, the figure is drawn as before.
+--from-arrays FILE.npz draws from such a dump with no ROOT; --print-style draws in the note's print style
+(note_print_style, at the printed width). With none of them, the figure is drawn as before.
 """
 import sys as _sys, pathlib as _pathlib
 for _a in _pathlib.Path(__file__).resolve().parents:
@@ -20,6 +21,18 @@ import technote_style  # noqa: E402  (no titles + consistent colours)
 import argparse  # noqa: E402
 import numpy as np  # noqa: E402
 import matplotlib.pyplot as plt  # noqa: E402
+
+
+def _print_style(depth):
+    """note_print_style from the repository root, applied (the paper's rcParams); returned for its figsize()."""
+    import sys as _s
+    from pathlib import Path as _P
+    _r = _P(__file__).resolve().parents[depth]
+    if str(_r) not in _s.path:
+        _s.path.insert(0, str(_r))
+    import note_print_style as _nps
+    _nps.apply()
+    return _nps
 
 
 def fill(infile):
@@ -37,14 +50,15 @@ def fill(infile):
     return {"edges": edges, "vals": vals, "errs": errs}
 
 
-def draw(arr, out):
+def draw(arr, out, print_style=False):
     edges, vals, errs = arr["edges"], arr["vals"], arr["errs"]
+    nps = _print_style(1) if print_style else None
     # drop the wide catch bin (last) from the axis, annotate its value
     catch_lo, catch_val = edges[-2], vals[-1]
     e, v, dv = edges[:-1], vals[:-1], errs[:-1]
     centers = 0.5 * (e[:-1] + e[1:])
 
-    fig, ax = plt.subplots(figsize=(6.6, 4.6))
+    fig, ax = plt.subplots(figsize=nps.figsize(0.66, 0.68) if print_style else (6.6, 4.6))
     ax.stairs(v, e, color="k", lw=1.6, label="unfolded data")
     ax.errorbar(centers, v, yerr=dv, fmt="none", ecolor="k", elinewidth=1, capsize=2)
     ax.set_xlabel(r"$E_{\mathrm{avail}}$ (GeV)")
@@ -68,6 +82,7 @@ def main():
     ap.add_argument("--out", default="eavail_spectrum.png")
     ap.add_argument("--dump-arrays", default=None, help="write every drawn value to this .npz after the read")
     ap.add_argument("--from-arrays", default=None, help="draw from this .npz (no ROOT)")
+    ap.add_argument("--print-style", action="store_true", help="draw in the note's print style")
     args = ap.parse_args()
     if args.from_arrays:
         with np.load(args.from_arrays) as z:
@@ -76,7 +91,7 @@ def main():
         arr = fill(args.infile)
         if args.dump_arrays:
             np.savez(args.dump_arrays, **arr)
-    draw(arr, args.out)
+    draw(arr, args.out, args.print_style)
 
 
 if __name__ == "__main__":

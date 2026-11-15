@@ -14,7 +14,7 @@ the tracker fiducial, NO muon kinematic cuts) and reports, on the extended
   python fps_acceptance.py --omnifile runEventLoopOmniFold_5D_FPS_1A.root
 
 Opt-in (note figure style, group C family 5): --dump-arrays FILE.npz writes every drawn value after the read;
---from-arrays FILE.npz draws from such a dump (no RDataFrame; the module still imports unfold_2d_omnifold_unbinned for
+--print-style draws in the note's print style (note_print_style, at the printed width); --from-arrays FILE.npz draws from such a dump (no RDataFrame; the module still imports unfold_2d_omnifold_unbinned for
 the grid, which imports ROOT). With neither, the figure is drawn as before.
 """
 
@@ -44,6 +44,18 @@ import unfold_2d_omnifold_unbinned as u2d
 PT_EXT = list(u2d.PT_EDGES) + [30.0]
 PZ_EXT = [0.0, 0.75] + list(u2d.PZ_EDGES) + [120.0]
 TAN20 = math.tan(math.radians(20.0))
+
+
+def _print_style(depth):
+    """note_print_style from the repository root, applied (the paper's rcParams); returned for its figsize()."""
+    import sys as _s
+    from pathlib import Path as _P
+    _r = _P(__file__).resolve().parents[depth]
+    if str(_r) not in _s.path:
+        _s.path.insert(0, str(_r))
+    import note_print_style as _nps
+    _nps.apply()
+    return _nps
 
 
 def fill(args):
@@ -96,13 +108,14 @@ def fill(args):
     return {"HT": HT, "eff": eff, "dead": dead, "pt_e": pt_e, "pz_e": pz_e, "eff_floor": np.float64(args.eff_floor)}
 
 
-def draw(arr, out_png):
+def draw(arr, out_png, print_style=False):
     HT, eff, dead, pt_e, pz_e = (arr[k] for k in ("HT", "eff", "dead", "pt_e", "pz_e"))
+    nps = _print_style(1) if print_style else None
     eff_floor = float(arr["eff_floor"])
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
-    fig, axs = plt.subplots(1, 3, figsize=(19, 5))
+    fig, axs = plt.subplots(1, 3, figsize=nps.figsize(0.99, 0.37) if print_style else (19, 5))
     X, Y = np.arange(len(pt_e)), np.arange(len(pz_e))
     im0 = axs[0].pcolormesh(X, Y, np.log10(np.maximum(HT, 1e-1)).T, cmap="viridis")
     im1 = axs[1].pcolormesh(X, Y, eff.T, cmap="viridis", vmin=0, vmax=0.7)
@@ -121,6 +134,12 @@ def draw(arr, out_png):
         fig.colorbar(im, ax=A, fraction=0.046, pad=0.04)
         technote_style.panel_label(A, lab)
     fig.subplots_adjust(wspace=0.55)  # keep each colorbar clear of the next panel's y-label
+    if print_style:  # at the printed width: panel tags at the body size, and room for each colorbar's ticks
+        for A in axs:
+            for t in A.texts:
+                if t.get_bbox_patch() is not None:
+                    t.set_fontsize(8.5)
+        fig.subplots_adjust(left=0.07, right=0.97, bottom=0.17, top=0.95, wspace=0.85)
     os.makedirs(os.path.dirname(out_png), exist_ok=True)
     fig.savefig(out_png, dpi=140, bbox_inches="tight")
     print(f"[acc] wrote {out_png}")
@@ -134,6 +153,7 @@ def main():
                     help="cells below this efficiency count as 'dead'")
     ap.add_argument("--dump-arrays", default=None, help="write every drawn value to this .npz after the read")
     ap.add_argument("--from-arrays", default=None, help="draw from this .npz (no RDataFrame)")
+    ap.add_argument("--print-style", action="store_true", help="draw in the note's print style")
     args = ap.parse_args()
     if args.from_arrays:
         with np.load(args.from_arrays) as z:
@@ -142,7 +162,7 @@ def main():
         arr = fill(args)
         if args.dump_arrays:
             np.savez(args.dump_arrays, **arr)
-    draw(arr, args.out_png)
+    draw(arr, args.out_png, args.print_style)
 
 
 if __name__ == "__main__":

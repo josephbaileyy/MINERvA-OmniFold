@@ -11,7 +11,8 @@ omnifile (matching the saved hUnfoldND's POT scaling), divide, and marginalize t
 
 Opt-in (note figure style, group C family 5): --omni, --cv and --out name the inputs and the output (their defaults are
 the paths this script always used); --dump-arrays FILE.npz writes every drawn value after the read; --from-arrays
-FILE.npz draws from such a dump (no RDataFrame; the module still imports the drivers for the grid, which import ROOT).
+FILE.npz draws from such a dump (no RDataFrame; --print-style draws in the note's print style, note_print_style, at
+the printed width; the module still imports the drivers for the grid, which import ROOT).
 With no option, the figure is drawn as before.
 """
 
@@ -44,6 +45,18 @@ q3_e = np.asarray(und.EXTRA_AXES["q3"]["edges"], float)
 edges = [pt_e, pz_e, ea_e, q3_e]
 shape = tuple(len(e) - 1 for e in edges)
 THMAX = u2d.MAX_MUON_THETA_RAD
+
+def _print_style(depth):
+    """note_print_style from the repository root, applied (the paper's rcParams); returned for its figsize()."""
+    import sys as _s
+    from pathlib import Path as _P
+    _r = _P(__file__).resolve().parents[depth]
+    if str(_r) not in _s.path:
+        _s.path.insert(0, str(_r))
+    import note_print_style as _nps
+    _nps.apply()
+    return _nps
+
 
 def fill(omni, cv):
     """The prior and unfolded 4D counts, their ratio and its marginals: everything the figure draws."""
@@ -101,14 +114,18 @@ def fill(omni, cv):
     return {"ratio_eq": ratio_eq, "r_q3": r_q3, "r_ea": r_ea, "q3_e": q3_e, "ea_e": ea_e}
 
 
-def draw(arr, out):
+def draw(arr, out, print_style=False):
     ratio_eq, r_q3, r_ea, q3_e, ea_e = (arr[k] for k in ("ratio_eq", "r_q3", "r_ea", "q3_e", "ea_e"))
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
     from matplotlib.colors import TwoSlopeNorm
 
-    fig, ax = plt.subplots(1, 3, figsize=(16, 4.6))
+    nps = _print_style(1) if print_style else None
+    if print_style:  # the heat map's cell values need the width at the printed size
+        fig, ax = plt.subplots(1, 3, figsize=nps.figsize(0.99, 0.42), gridspec_kw={"width_ratios": [2.1, 1, 1]})
+    else:
+        fig, ax = plt.subplots(1, 3, figsize=(16, 4.6))
     # panel 1: 2D ratio heatmap (cap q3/eavail axes at the last finite edge for labels)
     disp = ratio_eq.copy()
     im = ax[0].imshow(disp, origin="lower", aspect="auto", cmap="RdBu_r",
@@ -120,7 +137,7 @@ def draw(arr, out):
     ax[0].set_title("data / GENIE ratio  (E_avail, q3)")
     for (r, c), v in np.ndenumerate(disp):
         if np.isfinite(v):
-            ax[0].text(c, r, f"{v:.2f}", ha="center", va="center", fontsize=6)
+            ax[0].text(c, r, f"{v:.2f}", ha="center", va="center", fontsize=5.5 if print_style else 6)
     fig.colorbar(im, ax=ax[0], fraction=0.046)
     # panel 2: q3 marginal
     xc = 0.5 * (q3_e[:-1] + q3_e[1:]); xc[-1] = q3_e[-2] + 0.3
@@ -137,7 +154,10 @@ def draw(arr, out):
     ax[2].set_xlabel("E_avail [GeV] (low edge)"); ax[2].set_ylabel("data/GENIE")
     ax[2].set_title("E_avail marginal (cf. 3D excess)")
     technote_style.minerva_tag(ax[0])
-    fig.tight_layout()
+    if print_style:  # the marginals' low-edge tick labels, rotated as the heat map's are, so they do not run together
+        for A in ax[1:]:
+            plt.setp(A.get_xticklabels(), rotation=45, ha="right")
+    fig.tight_layout(rect=(0, 0, 0.93, 1) if print_style else None)
     fig.savefig(out, dpi=130)
     print(f"\n[wrote] {out}")
 
@@ -149,6 +169,7 @@ def main():
     ap.add_argument("--out", default=f"{_REPO}/nd-unfolding/q3_excess_projection.png")
     ap.add_argument("--dump-arrays", default=None, help="write every drawn value to this .npz after the read")
     ap.add_argument("--from-arrays", default=None, help="draw from this .npz (no RDataFrame)")
+    ap.add_argument("--print-style", action="store_true", help="draw in the note's print style")
     args = ap.parse_args()
     if args.from_arrays:
         with np.load(args.from_arrays) as z:
@@ -157,7 +178,7 @@ def main():
         arr = fill(args.omni, args.cv)
         if args.dump_arrays:
             np.savez(args.dump_arrays, **arr)
-    draw(arr, args.out)
+    draw(arr, args.out, args.print_style)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,2 @@
+scp rc=0
+b7d5603a37e3de42a22e6f26ba333b258b3722537f37f8956966efb320188d15  f3fetch/post-f3.tar.gz

@@ -7,7 +7,7 @@ The bare-GENIE input must come from the 2026-06-10-fixed driver (KNOWN_ISSUES
 would need an extra 1/pot_scale.
 
 Opt-in (note figure style, group C family 5): --dump-arrays FILE.npz writes every drawn value after the read;
---from-arrays FILE.npz draws from such a dump with no ROOT. With neither, the figure is drawn as before.
+--print-style draws in the note's print style (note_print_style, at the printed width); --from-arrays FILE.npz draws from such a dump with no ROOT. With neither, the figure is drawn as before.
 """
 
 import sys as _sys, pathlib as _pathlib
@@ -27,6 +27,18 @@ _REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 for _p in (f"{_REPO}/2d-unfolding", f"{_REPO}/nd-unfolding"):
     if _p not in sys.path:
         sys.path.insert(0, _p)
+
+
+def _print_style(depth):
+    """note_print_style from the repository root, applied (the paper's rcParams); returned for its figsize()."""
+    import sys as _s
+    from pathlib import Path as _P
+    _r = _P(__file__).resolve().parents[depth]
+    if str(_r) not in _s.path:
+        _s.path.insert(0, str(_r))
+    import note_print_style as _nps
+    _nps.apply()
+    return _nps
 
 
 def fill(args):
@@ -65,12 +77,13 @@ def fill(args):
     return {"env": env, "pt_ext": pt_ext, "pz_ext": pz_ext}
 
 
-def draw(arr, out_png):
+def draw(arr, out_png, print_style=False):
     env, pt_ext, pz_ext = arr["env"], arr["pt_ext"], arr["pz_ext"]
+    nps = _print_style(1) if print_style else None
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
-    fig, ax = plt.subplots(figsize=(7.5, 6))
+    fig, ax = plt.subplots(figsize=nps.figsize(0.62, 0.8) if print_style else (7.5, 6))
     X, Y = np.arange(len(pt_ext)), np.arange(len(pz_ext))
     im = ax.pcolormesh(X, Y, (100 * env).T, cmap="viridis", vmin=0, vmax=30)
     ax.axvline(np.searchsorted(pt_ext, 4.5), color="cyan", lw=1.2)
@@ -95,6 +108,7 @@ def main():
     ap.add_argument("--out-png", default="products/5d/fps_prior_envelope_MEFHC.png")
     ap.add_argument("--dump-arrays", default=None, help="write every drawn value to this .npz after the read")
     ap.add_argument("--from-arrays", default=None, help="draw from this .npz (no ROOT)")
+    ap.add_argument("--print-style", action="store_true", help="draw in the note's print style")
     args = ap.parse_args()
     if args.from_arrays:
         with np.load(args.from_arrays) as z:
@@ -103,7 +117,7 @@ def main():
         arr = fill(args)
         if args.dump_arrays:
             np.savez(args.dump_arrays, **arr)
-    draw(arr, args.out_png)
+    draw(arr, args.out_png, args.print_style)
 
 
 if __name__ == "__main__":

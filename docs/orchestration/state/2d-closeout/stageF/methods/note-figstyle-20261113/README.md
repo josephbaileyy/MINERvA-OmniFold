@@ -263,6 +263,83 @@ login21, 11:53:24–11:56:32Z, 0 node-h.
 | model_comp_projections.pdf | `ae7f5a54…` |
 | model_comp_ratio_maps.pdf | `49f0d76c…` |
 
+## Families 3-6, group C (2026-11-15): RE-2 (statistical block only), RE-1, the rest, and paper_joint_nulls
+
+**Methods, by the director's rulings of 2026-11-15:**
+- **Array dumps** (family 1's method), with opt-in `--dump-arrays`, `--from-arrays` and `--print-style`, for every producer
+  that is not pinned:
+  - plot_bootstrap_figs.py (uq_spread_2d, uq_corr_2d);
+  - plot_eavail_spectrum.py;
+  - q3_excess_projection.py, fps_acceptance.py, fps_pilot_compare.py and fps_prior_envelope.py;
+  - plot_joint_null_distributions_physlabels.py.
+- **Figure pickles** (`tools/capture_pickle.py`, recipe `tools/restyle_family4.py`) for the four RE-1 central redraws. Their
+  producers (nd-unfolding/re1/redraw_central_only_p3.py and _p4.py, and the four they import) are hash-recorded and ran
+  unchanged. The recipe unpickles only its four pinned files, and only at their sha256. It names the producers and the
+  nine input shas.
+- **eavailW_band:** an opt-in matplotlib rendering of the PyROOT figure (`overlay_eavailW_band.py --print-style`). It is
+  **a new rendering, not a restyle.** Its check is numerical. RE1-REPORT.md:64 stays attached: the committed
+  eavailW_band.pdf does not reproduce from its stated inputs.
+- **Held for the regenerated covariance (C_new):** MEFHC_fig6_7_uncertainty_pt and _pz.
+- **Skipped** (the director's ruling): paper_fig2_joint. It is already in the article's style, so an identity-only
+  redraw adds nothing.
+
+**Local tests of the default paths:**
+- `tools/identity_family3.py` to `identity_family6.py`, with fake ROOT, RDataFrame and replay modules
+  (`tools/fakeroot3`, `fakeroot4`, `fakeroot5`, `fakereplay6`).
+- For each, the base commit's producer, the new code with no flag, and `--from-arrays` on its own dump draw
+  byte-identical output: PASS each, and a mutant is killed in each.
+
+**The connects** (each by the director's go on its sha). Each passed the fence and the overlap check over 1164 guard
+paths. Every input's size matched, and so did its sha256 where the inventory records one; the rest are recorded in the
+session. Each used a fresh clone with porcelain 0 before and after, and the RUNNING marker was removed at exit.
+
+| family | script, launcher | host, UTC | tar |
+|---|---|---|---|
+| 3 | figc_family3.sh 2be24d93, 16b338ac | login31, 2026-11-15 22:16:47-22:18:01 | b7d5603a |
+| 4 | figc_family4.sh 1397c362, 16b338ac | login25, 22:18:11-22:20:21 | b03af4c2 |
+| 5 | figc_family5.sh e31687eb, a1571436 | login14, 22:21:29-22:26:16 | e6340c4c |
+| 6 | figc_family6.sh 64bbf076, a1571436 | login11, 22:26:27-22:28:15 | 68c13d2d |
+
+Families 3 and 4 ran after sacct showed rdx_s1_1A (61315648) COMPLETED (`runs/family3/sacct-61315648.txt`).
+
+**Checks after the fetch:** `runs/CHECKS-families3to6.txt` has each measurement. In summary:
+- **Identity:** every off arm reproduces its installed figure, pixel for pixel. Three were committed before
+  technote_style 1e7c28688, and paper_joint_nulls was made by matplotlib 3.11.1; those four are reproduced by a redraw
+  from the dump in the matching environment.
+- **eavailW_band:** EAVAILW-NUMCHECK :: PASS.
+- **Print style:** it changes no drawn data in any figure. Three figures differ from the cluster capture in one artist
+  each: a draw-time log10 or geomspace evaluated on arm64 against x86_64. The local default draw differs from the cluster
+  in exactly that artist too.
+
+**Layout under `--print-style` only** (no string changes; the one line break is the listed kind of display change):
+- **Every figure:** the canvas is at its printed width (sec_*.tex's `\includegraphics`), with the paper's fonts.
+- **uq_corr_2d:** the x label breaks after "index".
+- **q3_excess_projection:** the heat map is 2.1 times a marginal's width, its cell values are at 5.5 pt, and the marginal
+  tick labels are rotated 45°.
+- **fps_acceptance and fps_pilot_compare:** the panel tags are at the body size, and the panels are spaced further apart.
+- **The four RE-1 redraws** (from their pickles):
+  - markers are capped at 3 or 4 pt in generators_vs_unfolded_band_central and ascencio_fullcov_compare_central;
+  - the legend goes under the panels in those two and in mode_decomp_eavail_central;
+  - axis labels are 9.3 pt, tick labels 8.3 pt, and other text 8.5 pt.
+
+**Installed** by `make_figures.sh` (`install_printstyle_fig`):
+
+| figure | sha256 |
+|---|---|
+| uq_spread_2d.pdf | `41347061…` |
+| uq_corr_2d.pdf | `f202c729…` |
+| eavail_spectrum.pdf | `906a6473…` |
+| generators_vs_unfolded_band_central.pdf | `9ee744b3…` |
+| mode_decomp_eavail_central.pdf | `35498b2d…` |
+| compare_mec_eavail_central.pdf | `a43a2499…` |
+| ascencio_fullcov_compare_central.pdf | `ae1e5e59…` |
+| q3_excess_projection.pdf | `1b86a31b…` |
+| fps_acceptance_MEFHC.pdf | `ab63256c…` |
+| fps_pilot_compare_MEFHC.pdf | `a910ccca…` |
+| fps_prior_envelope_MEFHC.pdf | `55b3aeeb…` |
+| eavailW_band.pdf | `c9e7fcdb…` |
+| paper_joint_nulls.pdf | `66888ffc…` |
+
 ## CITABLE FOR / NOT CITABLE FOR
 
 **CITABLE FOR:**

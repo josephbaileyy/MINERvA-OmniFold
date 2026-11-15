@@ -336,6 +336,23 @@ install_printstyle_fig tension_chi2_map.pdf                  dfc675ac425b90c9489
 install_printstyle_fig tension_mode_maps.pdf                 049647417c6aaaf889a885a573f311b61d2e6819cdf4bbe174894a5e1e376996
 install_printstyle_fig model_comp_projections.pdf            ae7f5a54efd234e80388c9f6990721d022dc5df0278637d190b78b2f4938ec19
 install_printstyle_fig model_comp_ratio_maps.pdf             49f0d76c0eb17dc9e22522a472baa28fd5e436d9b2863bb9be3a6e59135b7307
+# Families 3-6, group C (2026-11-15): drawn locally with --print-style from the dumps of one cluster pass per family
+# (note-figstyle-20261113/runs/family3..family6/); the four RE-1 central redraws by tools/restyle_family4.py from their
+# pinned figure pickles; eavailW_band is a new matplotlib rendering of the ROOT figure (numerical check, runs/family5/).
+# Each one's drawn data equal its cluster off arm's (the README gives the checks and their one environmental exception).
+install_printstyle_fig uq_spread_2d.pdf                      41347061d6064aaae142895cbfeaf5d5c2449cdd9c72f8a4b6f153cd9fbf5031
+install_printstyle_fig uq_corr_2d.pdf                        f202c729700676096b4274be73ab5d30ffa31d94823c070c3d3491b4784d0b02
+install_printstyle_fig eavail_spectrum.pdf                   906a6473311775703dc4ff92ee52bdd61deb7b1173b7998c41331fbe1723723e
+install_printstyle_fig generators_vs_unfolded_band_central.pdf9ee744b3a36761ae2e854e7ddce23aa35633f636a532fd751c798bebea459884
+install_printstyle_fig mode_decomp_eavail_central.pdf        35498b2d0e92d61ac056bbef1e0d432716546bf627a7fee662f7770631961568
+install_printstyle_fig compare_mec_eavail_central.pdf        a43a2499d84c1c95c096fa0edd4d941ed088c664489cb28304503a50de896005
+install_printstyle_fig ascencio_fullcov_compare_central.pdf  ae1e5e59d641c3457a0db11c826c1a064fd1f1ae96e282657750a6b49aa50a4a
+install_printstyle_fig q3_excess_projection.pdf              1b86a31b2fc2ae2000e451c22253be5d207146a66cf8663f09e0e80ae02fd85b
+install_printstyle_fig fps_acceptance_MEFHC.pdf              ab63256c62c14945aa111333fca73edefcca57b2d3a9a98283d7cfe26b1219c8
+install_printstyle_fig fps_pilot_compare_MEFHC.pdf           a910ccca6084b5f652df0840e65a0d95117a154b22f22a87d519d85f26e5181f
+install_printstyle_fig fps_prior_envelope_MEFHC.pdf          55b3aeeb06e3fffcdcbfd7b0d30450378cee91fdc1e885095f677a6e873e68de
+install_printstyle_fig eavailW_band.pdf                      c9e7fcdbefa35e609272ec56616a449c85896cadc6e18b7b2f6366384722144a
+install_printstyle_fig paper_joint_nulls.pdf                 66888ffc0f3e8e9d41b78e4962063cbc67f2649af6cdef82532c26313d5865bb
 
 echo
 echo "== paper-only vector crops =="

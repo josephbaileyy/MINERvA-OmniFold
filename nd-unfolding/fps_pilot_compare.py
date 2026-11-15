@@ -17,7 +17,7 @@ Checks:
      space and in the new (extrapolated) cells.
 
 Opt-in (note figure style, group C family 5): --dump-arrays FILE.npz writes every drawn value after the read;
---from-arrays FILE.npz draws from such a dump with no ROOT. With neither, the figure is drawn as before.
+--print-style draws in the note's print style (note_print_style, at the printed width); --from-arrays FILE.npz draws from such a dump with no ROOT. With neither, the figure is drawn as before.
 """
 
 import sys as _sys, pathlib as _pathlib
@@ -61,6 +61,18 @@ def reported_mask(pt_e, pz_e):
             if pz_e[j] <= 0 or pt_e[i + 1] / max(pz_e[j], 1e-9) > TAN20:
                 m[i, j] = False
     return m
+
+
+def _print_style(depth):
+    """note_print_style from the repository root, applied (the paper's rcParams); returned for its figsize()."""
+    import sys as _s
+    from pathlib import Path as _P
+    _r = _P(__file__).resolve().parents[depth]
+    if str(_r) not in _s.path:
+        _s.path.insert(0, str(_r))
+    import note_print_style as _nps
+    _nps.apply()
+    return _nps
 
 
 def fill(args):
@@ -129,12 +141,13 @@ def fill(args):
     return {"sub_full": sub_full, "R": R, "A_t": A_t, "pt_ext": pt_ext, "pz_ext": pz_ext}
 
 
-def draw(arr, out_png):
+def draw(arr, out_png, print_style=False):
     sub_full, R, A_t, pt_ext, pz_ext = (arr[k] for k in ("sub_full", "R", "A_t", "pt_ext", "pz_ext"))
+    nps = _print_style(1) if print_style else None
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
-    fig, axs = plt.subplots(1, 3, figsize=(19, 5))
+    fig, axs = plt.subplots(1, 3, figsize=nps.figsize(0.99, 0.37) if print_style else (19, 5))
     X, Y = np.arange(len(pt_ext)), np.arange(len(pz_ext))
     # panels (a),(b) are RATIOS -> diverging RdBu_r centred at 1.0; panel (c) is an
     # absolute MAGNITUDE -> sequential viridis (the two-colour-scheme question)
@@ -153,6 +166,12 @@ def draw(arr, out_png):
         fig.colorbar(im, ax=A, fraction=0.046, pad=0.04)
         technote_style.panel_label(A, lab)
     fig.subplots_adjust(wspace=0.55)  # keep each colorbar clear of the next panel's y-label
+    if print_style:  # at the printed width: panel tags at the body size, and room for each colorbar's ticks
+        for A in axs:
+            for t in A.texts:
+                if t.get_bbox_patch() is not None:
+                    t.set_fontsize(8.5)
+        fig.subplots_adjust(left=0.07, right=0.97, bottom=0.17, top=0.95, wspace=0.85)
     technote_style.minerva_tag(axs[0])
     os.makedirs(os.path.dirname(out_png), exist_ok=True)
     fig.savefig(out_png, dpi=140, bbox_inches="tight")
@@ -170,6 +189,7 @@ def main():
     ap.add_argument("--out-png", default="products/5d/fps_pilot_compare_1A.png")
     ap.add_argument("--dump-arrays", default=None, help="write every drawn value to this .npz after the read")
     ap.add_argument("--from-arrays", default=None, help="draw from this .npz (no ROOT)")
+    ap.add_argument("--print-style", action="store_true", help="draw in the note's print style")
     args = ap.parse_args()
     if args.from_arrays:
         with np.load(args.from_arrays) as z:
@@ -178,7 +198,7 @@ def main():
         arr = fill(args)
         if args.dump_arrays:
             np.savez(args.dump_arrays, **arr)
-    draw(arr, args.out_png)
+    draw(arr, args.out_png, args.print_style)
 
 
 if __name__ == "__main__":
