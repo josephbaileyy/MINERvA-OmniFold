@@ -1,0 +1,48 @@
+# HEAD 44d2170c4d7724b05705ce4d96715e58cbe18c84
+# clean clone, serial, nice 19, threads 1; test_rdx.py (the checkers' suite) under a uv venv matching omnifold_py310's measured versions: Python 3.10.20, numpy 2.2.6, uproot 5.6.9
+# command: python -B -m unittest -v nd-unfolding/rdx/test_rdx.py
+test_equal_with_exactly_c1s_extras_passes (nd-unfolding.rdx.test_rdx.Align) ... ok
+test_the_align_refusals (nd-unfolding.rdx.test_rdx.Align) ... ok
+test_the_argument_refusals (nd-unfolding.rdx.test_rdx.Arguments) ... ok
+test_a_replica_that_differs_from_the_npz_refuses (nd-unfolding.rdx.test_rdx.KeptRows) ... ok
+test_rows_at_the_angle_cut_are_decided_by_the_reference_function (nd-unfolding.rdx.test_rdx.KeptRows) ... ok
+test_the_dump_uses_the_vectorized_walk (nd-unfolding.rdx.test_rdx.KeptRows) ... ok
+test_the_playlist_index_and_its_refusals (nd-unfolding.rdx.test_rdx.KeptRows) ... ok
+test_the_replica_equals_the_collector_row_for_row (nd-unfolding.rdx.test_rdx.KeptRows) ... ok
+test_the_vectorized_walk_equals_the_loop_bitwise (nd-unfolding.rdx.test_rdx.KeptRows) ... ok
+test_packing_and_lookup (nd-unfolding.rdx.test_rdx.Keys) ... ok
+test_an_ungated_fill_is_caught (nd-unfolding.rdx.test_rdx.Patch) ... ok
+test_every_added_line_is_gated_or_a_declared_declaration (nd-unfolding.rdx.test_rdx.Patch) ... ok
+test_the_patch_fills_denom_reco_and_miss_rows_and_refuses_both_gates (nd-unfolding.rdx.test_rdx.Patch) ... ok
+test_the_patch_removes_only_the_explicit_names_line (nd-unfolding.rdx.test_rdx.Patch) ... ok
+test_the_tracked_source_is_s0s_pin_and_the_patch_applies_to_it (nd-unfolding.rdx.test_rdx.Patch) ... ok
+test_the_permutation_is_joint_seeded_and_deterministic (nd-unfolding.rdx.test_rdx.Permutation) ... ok
+test_a_sidecar_for_another_npz_or_with_duplicate_ids_refuses (nd-unfolding.rdx.test_rdx.Pipeline) ... ok
+test_a_weight_or_coordinate_mismatch_fails_the_join (nd-unfolding.rdx.test_rdx.Pipeline) ... ok
+test_mutant_d6a_truthx_offset_by_one_row_fails_the_join (nd-unfolding.rdx.test_rdx.Pipeline) ... ok
+test_mutant_d6b_mask_on_truthx_alone_fails_the_join (nd-unfolding.rdx.test_rdx.Pipeline) ... ok
+test_the_build_refuses_an_npz_the_replica_does_not_reproduce (nd-unfolding.rdx.test_rdx.Pipeline) ... ok
+test_the_build_refuses_to_overwrite_and_refuses_a_non_finite_truthx (nd-unfolding.rdx.test_rdx.Pipeline) ... ok
+test_the_sidecar_joins_back_to_every_playlist_row (nd-unfolding.rdx.test_rdx.Pipeline) ... ok
+test_the_vectorized_build_joins_too (nd-unfolding.rdx.test_rdx.Pipeline) ... ok
+test_a_changed_pin_or_library_or_a_missing_library_fails (nd-unfolding.rdx.test_rdx.Provenance) ... ok
+test_a_matching_build_passes_and_lists_the_synced_difference (nd-unfolding.rdx.test_rdx.Provenance) ... ok
+test_the_declared_pins_are_build_mp1_s0s (nd-unfolding.rdx.test_rdx.Provenance) ... ok
+test_a_good_sidecar_loads (nd-unfolding.rdx.test_rdx.Sidecar) ... ok
+test_the_sidecar_refusals (nd-unfolding.rdx.test_rdx.Sidecar) ... ok
+test_a_zeroed_miss_row_a_partnerless_row_and_a_bad_enu_fail (nd-unfolding.rdx.test_rdx.TruthxRows) ... ok
+test_duplicate_identities_refuse (nd-unfolding.rdx.test_rdx.TruthxRows) ... ok
+test_the_rows_check_passes_and_counts (nd-unfolding.rdx.test_rdx.TruthxRows) ... ok
+test_a_loop_that_predicts_on_other_rows_refuses (nd-unfolding.rdx.test_rdx.WideRegressor) ... ok
+test_a_sidecar_with_the_wrong_row_count_refuses (nd-unfolding.rdx.test_rdx.WideRegressor) ... ok
+test_the_transfer_probe_uses_rdx_mask_and_the_widened_rows (nd-unfolding.rdx.test_rdx.WideRegressor) ... ok
+test_the_weight_composes_with_the_wide_regressor (nd-unfolding.rdx.test_rdx.WideRegressor) ... ok
+test_the_wide_regressor_sees_truthx_aligned_to_the_loops_fit_and_predict_rows (nd-unfolding.rdx.test_rdx.WideRegressor) ... ok
+test_without_truthx_the_wrapper_reproduces_the_plain_loop_and_widening_changes_it (nd-unfolding.rdx.test_rdx.WideRegressor) ... ok
+
+----------------------------------------------------------------------
+Ran 38 tests in 2.071s
+
+OK
+[INFO] signal: kept=3347 dropped_phase=613 bad_weight=20 excluded_nonfinite_truth_support=20
+# exit 0
