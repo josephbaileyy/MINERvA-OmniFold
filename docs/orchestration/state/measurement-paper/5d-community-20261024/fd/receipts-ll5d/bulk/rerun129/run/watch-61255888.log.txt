@@ -1,0 +1,16 @@
+2026-11-14T03:58:43Z poll=1 61255888|ll5d_rerun129_01|PENDING|Unknown|Unknown|00:00:00|0:0
+2026-11-14T04:19:58Z poll=11 61255888|ll5d_rerun129_01|PENDING|Unknown|Unknown|00:00:00|0:0
+2026-11-14T04:40:57Z poll=21 61255888|ll5d_rerun129_01|PENDING|Unknown|Unknown|00:00:00|0:0
+2026-11-14T05:01:46Z poll=31 61255888|ll5d_rerun129_01|PENDING|Unknown|Unknown|00:00:00|0:0
+2026-11-14T05:22:41Z poll=41 61255888|ll5d_rerun129_01|PENDING|Unknown|Unknown|00:00:00|0:0
+2026-11-14T05:43:27Z poll=51 61255888|ll5d_rerun129_01|PENDING|Unknown|Unknown|00:00:00|0:0
+2026-11-14T06:04:55Z poll=61 61255888|ll5d_rerun129_01|RUNNING|2026-11-14T05:57:32|Unknown|00:07:23|0:0
+2026-11-14T06:25:58Z poll=71 61255888|ll5d_rerun129_01|RUNNING|2026-11-14T05:57:32|Unknown|00:28:26|0:0
+2026-11-14T06:47:03Z poll=81 61255888|ll5d_rerun129_01|RUNNING|2026-11-14T05:57:32|Unknown|00:49:31|0:0
+2026-11-14T07:07:47Z ERROR poll=91 ssh_rc=255 reply=[] stderr=[] consecutive=1
+2026-11-14T07:09:48Z ERROR poll=92 ssh_rc=255 reply=[] stderr=[] consecutive=2
+2026-11-14T07:11:48Z ERROR poll=93 ssh_rc=255 reply=[] stderr=[] consecutive=3
+2026-11-14T07:13:48Z ERROR poll=94 ssh_rc=255 reply=[] stderr=[] consecutive=4
+2026-11-14T07:15:48Z ERROR poll=95 ssh_rc=255 reply=[] stderr=[] consecutive=5
+2026-11-14T07:17:48Z ERROR poll=96 ssh_rc=255 reply=[] stderr=[] consecutive=6
+2026-11-14T07:17:48Z WATCH-ERROR: 6 consecutive failed polls

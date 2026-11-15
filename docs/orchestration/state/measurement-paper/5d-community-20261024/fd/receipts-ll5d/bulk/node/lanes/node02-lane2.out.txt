@@ -1,0 +1,23 @@
+{"out": "ll5d_g18_stat_35.npz", "seconds_unfold": 645.546}
+{"out": "ll5d_g18_stat_36.npz", "seconds_unfold": 635.849}
+{"out": "ll5d_g18_stat_37.npz", "seconds_unfold": 640.196}
+{"out": "ll5d_g18_stat_38.npz", "seconds_unfold": 644.203}
+{"out": "ll5d_g18_stat_39.npz", "seconds_unfold": 634.379}
+{"out": "ll5d_g18_stat_40.npz", "seconds_unfold": 633.736}
+{"out": "ll5d_g18_stat_41.npz", "seconds_unfold": 638.729}
+{"out": "ll5d_g18_stat_42.npz", "seconds_unfold": 638.644}
+{"out": "ll5d_g18_stat_43.npz", "seconds_unfold": 642.553}
+{"out": "ll5d_g18_stat_44.npz", "seconds_unfold": 635.354}
+{"out": "ll5d_g18_stat_45.npz", "seconds_unfold": 636.201}
+{"out": "ll5d_g18_stat_46.npz", "seconds_unfold": 639.909}
+{"out": "ll5d_g18_stat_47.npz", "seconds_unfold": 639.729}
+{"out": "ll5d_g18_stat_48.npz", "seconds_unfold": 638.472}
+{"out": "ll5d_g18_stat_49.npz", "seconds_unfold": 636.114}
+{"out": "ll5d_g18_stat_50.npz", "seconds_unfold": 639.224}
+node 02 lane 2 g18 stat rc=8
+{"out": "ll5d_g18_toy_minus2_4751001.npz", "seconds_unfold": 937.653}
+{"out": "ll5d_g18_toy_minus2_4751002.npz", "seconds_unfold": 899.67}
+{"out": "ll5d_g18_toy_minus2_4751003.npz", "seconds_unfold": 899.545}
+{"out": "ll5d_g18_toy_minus2_4751004.npz", "seconds_unfold": 904.726}
+{"out": "ll5d_g18_toy_minus2_4751005.npz", "seconds_unfold": 892.815}
+node 02 lane 2 g18 toy rc=0
