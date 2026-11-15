@@ -1639,6 +1639,8 @@ def groupb_values(d):
         v[f"prr-chi2-e-{t}"], v[f"prr-chi2-ibu-{t}"] = f"{e['grade']['chi2']:.1f}", f"{i5['grade']['chi2']:.1f}"
         assert i5["rho"] < e["rho"], "the text says IBU at five iterations retains less"
     v.update(tier1_values(d))
+    v.update(prr_levels_values(d))
+    v.update(vhalf_band_values(d))
     v.update(t2a_values(d))
     v.update(period_values(d))
     v.update(t2b_values(d))
@@ -1988,6 +1990,55 @@ def tier1_values(d):
     v["ens1-g-dmax"], v["ens1-g-maxfloor"] = f"{bw['max'] - bw['max_control']:.6f}", f"{bw['delta_max']:.6f}"
     assert (v["ens1-g-drms"], v["ens1-g-ratio"], v["ens1-g-dmax"], v["ens1-g-maxfloor"]) == ("0.000512", "1.23", "0.000929", "0.001783")
     return v
+
+
+def prr_levels_values(d):
+    """S8.2's settings table, tab:prr-levels (the codex referee read at 3d75ed5d4, Major 1). Each FD-PRR level
+    (FD-PRR-DECLARATION.md:165-172): its rho at the two flagged truths and its change from B0 (table.*.rho, split 991000),
+    each setting's PR-1 class, the threshold, and PR-3's newly flagged graded truths, recomputed from the table's grades
+    and asserted equal to the readout's own list. Nothing is typed."""
+    r, v = d["prr"], {}
+    rd, t = r["readings"], r["table"]
+    fl = rd["floor"]
+    # every setting's threshold is the floor (sec. 5.1 :282): T_Q s_F stays below it, so one number serves all four
+    tqs = {f: fl["T_Q"] * fl["s_F"][f] for f in PRR_FACTOR}
+    assert all(fl["bars"][f] == fl["bar_floor"] == max(fl["bar_floor"], tqs[f]) for f in PRR_FACTOR)
+    # printed as an upper bound ("below"): the maximum rounded up at the third decimal, asserted above the maximum
+    v["prr-lev-tqs-max"] = f"{math.ceil(1000 * max(tqs.values())) / 1000:.3f}"
+    assert max(tqs.values()) < float(v["prr-lev-tqs-max"]) < fl["bar_floor"]
+    levels = [L for f in PRR_FACTOR for part in PRR_LEVELS[f] for L in part]
+    assert sorted(levels) == sorted(set(rd["PR-3"]) - {"B0", "IBU_K5"}), "the table's rows are PR-3's levels"
+    graded = sorted({k.split("/")[1] for k in t if k.startswith("B0/") and k.endswith("/s991000")})
+    flagged0 = {T for T in graded if t[f"B0/{T}/s991000"]["grade"]["flagged"]}
+    assert len(graded) == 12 and flagged0 == set(PRR_TRUTHS.values()), "B0 flags exactly the two flagged truths"
+    v["prr-lev-nother"] = str(len(graded) - len(flagged0))
+    names = {"no effect": "no detected change", "increases": "increases", "reduces": "reduces", "both": "both"}
+    for f in PRR_FACTOR:
+        for tt, T in PRR_TRUTHS.items():
+            v[f"prr-lev-cls-{f}-{tt}"] = names[rd["PR-1"][T][f]]
+    for L in levels:
+        p3 = rd["PR-3"][L]
+        # the caption: no level clears either flagged truth (PR-3's "does not clear at these truths", read per truth)
+        assert p3["reading"] == "does not clear at these truths"
+        assert all(t[f"{L}/{T}/s991000"]["grade"]["flagged"] for T in PRR_TRUTHS.values()), L
+        new = {T for T in graded if t[f"{L}/{T}/s991000"]["grade"]["flagged"]} - flagged0
+        assert new == set(p3["new_flags"]), (L, new, p3["new_flags"])
+        v[f"prr-lev-{L}-nnew"] = str(len(new))
+        for tt, T in PRR_TRUTHS.items():
+            x, b0 = t[f"{L}/{T}/s991000"]["rho"], t[f"B0/{T}/s991000"]["rho"]
+            v[f"prr-lev-{L}-rho-{tt}"] = f"{x:.3f}"
+            v[f"prr-lev-{L}-d-{tt}"] = f"{x - b0:+.3f}"
+            assert v[f"prr-lev-{L}-d-{tt}"] not in ("+0.000", "-0.000"), (L, tt)
+    return v
+
+
+def vhalf_band_values(d):
+    """S10's bias-half noise band (the codex referee read at 3d75ed5d4, minor 8): its multiplier K, from the V-HALF
+    readout's own rule record (readings.rule; v-half/DECLARATION.md sec. 4 :134-142), with the bound's 0.5 asserted."""
+    rule = d["vhalf"]["readings"]["rule"]
+    assert rule["half"] == 0.5 and rule["floor"] == 0.01 and rule["b"] == "r (1 + d)"
+    assert rule["sigma_m"] == "sqrt(((1 + d) nu)^2 + (0.5 sgn(d) - |r|)^2 sigma_d^2)", "S10's sentence states these two terms"
+    return {"vhalf-k": f"{rule['K']:g}"}
 
 
 def t2a_values(d):
