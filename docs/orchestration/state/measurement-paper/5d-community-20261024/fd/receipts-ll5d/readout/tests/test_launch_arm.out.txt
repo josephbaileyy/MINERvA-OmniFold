@@ -1,0 +1,4 @@
+REFUSED: /Users/josephbailey/cov2d-work/ll5d/readout/connect-readout.sh is 23d61754fcad6b27345e0238d506805a65b1135181c7a3258a0de33ebeedf4ad, not the go's 0000
+rc=2
+usage: launch-ll5d.sh ovl|calib|calib2|gate-g18|gate-ar23|vicheck|calib3|gate2-g18|gate2-ar23|pilot|bulk|rerun129|null|readout <sha256>
+rc=2
