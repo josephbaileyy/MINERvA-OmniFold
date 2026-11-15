@@ -1,0 +1,45 @@
+host=login02 start=2026-11-14T11:34:42Z pid=1372403 audit_ack=https://github.com/josephbaileyy/MINERvA-OmniFold/pull/1123#issuecomment-6840388077
+squeue: []
+group C marker absent: /pscratch/sd/j/josephrb/note-figstyle-20261114/RUNNING
+== iris
+m3246               2600.3            10000.0     18761.2      20000.0
+balance_node_h=1238.8 half=619.4 cap=148.0
+projection charged=98.234 held=0.000 this=1.0 total=99.234 cap=148.0
+gate g18 truth=g18 verdict=PASS
+gate ar23 truth=ar23 verdict=PASS
+/pscratch/sd/j/josephrb/ll5d-pilot-r2/walls.json verdict=PASS
+/pscratch/sd/j/josephrb/ll5d-pilot-r2/controls.json verdict=PASS
+/pscratch/sd/j/josephrb/ll5d-pilot-r2/clipcheck.json verdict=PROCEED
+products in $U: 1662
+deploy porcelain_lines=0 head=4231b14de5ea693e92cb31b1358a816b5c2f6625
+nd-unfolding/ll5d.py: OK
+nd-unfolding/fd_1b_c2.py: OK
+nd-unfolding/fd_1b_mc.py: OK
+nd-unfolding/fd_1b_toys.py: OK
+nd-unfolding/fd_1b_inv.py: OK
+nd-unfolding/s1_assemble.py: OK
+nd-unfolding/s5p_universe.py: OK
+nd-unfolding/fd_1b_score.py: OK
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/clip/clip_probe2.py: OK
+2d-unfolding/cov2d/cov2d.py: OK
+docs/orchestration/state/2d-closeout/stageF/methods/sf1/manifest/inputs-sha256.txt: OK
+nd-unfolding/pv-ladder/readouts/h2_definition.json: OK
+setup_salloc_env.sh: OK
+nd-unfolding/s5e_candidate.py: OK
+nd-unfolding/s5e_deform.py: OK
+nd-unfolding/ll5d_b.py: OK
+nd-unfolding/fd_1b_null.py: OK
+nd-unfolding/s5n_pseudo.py: OK
+nd-unfolding/s5p_numerics.py: OK
+nd-unfolding/omnifold_nn_core.py: OK
+2d-unfolding/uq/coverage_fixed_truth/score_coverage.py: OK
+nd-unfolding/ll5d_ctl.py: OK
+cmodel_5d.json 3cfdc6a5b8c6cea5f99b4678e27f6ca5f7973ee57a79b9d139798f0751cfcd60 OK
+u-names 1759 lines sha256 1561658e630a4b2b9e0f4ed0328e81ae3a71c2022eb75806a49f13e6d9771841
+job script sha256 3c7afdf3c6ce9624d067c1a619976ba2992b5b4b915d9d13b343aaeaaa60d67b
+atime-pre 1146 files at 2026-11-14T11:36:09Z
+declared inputs: protected 2 (in atime-pre: 2), deploy 2 (in atime-pre: 0), products 454 (in atime-pre: 0), missing []
+Submitted batch job 61271235 (ll5d_null_01)
+TimeLimit=01:00:00
+61271235 ll5d_null_01 PENDING 1:00:00 1
+end=2026-11-14T11:36:09Z

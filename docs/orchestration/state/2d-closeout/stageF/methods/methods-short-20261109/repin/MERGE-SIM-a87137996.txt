@@ -1,0 +1,6 @@
+merge simulation: tree a87137996 with docs/orchestration/state/2d-closeout/stageF/methods/result-package-20261109 from 91f9cb615
+#977 head a87137996; ruled failures: 46
+NEW FAILURE - values_fived16.tex is not a fresh generation of make_values_fived16.py; regenerate it first
+NEW FAILURE - sec-fd16_tunes.csv: f1-tune-g18 is '\\mbox{G18\\_10a\\_02\\_11b}' in values_fived16.tex, the record gives 'G18\\_10a\\_02\\_11b'
+NEW FAILURE - sec-fd16_tunes.csv: f1-tune-ar23 is '\\mbox{AR23\\_20i\\_00\\_000}' in values_fived16.tex, the record gives 'AR23\\_20i\\_00\\_000'
+DRYRUN NEW FAILURES (3)

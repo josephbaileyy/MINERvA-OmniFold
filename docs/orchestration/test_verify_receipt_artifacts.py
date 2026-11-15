@@ -321,5 +321,144 @@ class BareCitationsAndLogEvidence(unittest.TestCase):
             V.EXT, V.PATHLIKE = saved_ext, saved_re
         self.assertEqual({"centring_n50.out"}, V.bare_citations(json.dumps({"e": "centring_n50.out"})))
 
+
+G2R = "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/g2r/"
+ENVTEST_PIN = (G2R + "envtest/envtest.json",
+               "c4a0720d3a12265403d22e273e219d4594b03ba0a592afe671618ed72cbf0272", "runConfig.out")
+PREPARE_PATH = G2R + "prepare/g2r_prepare.json"
+PREPARE_SHA = "d72facde6b73e854620bce58780928307fcb1fa9b3e921e94f03cbe6ec9ac1dc"
+PREPARE_TOKENS = tuple(f"runEventLoopOmniFold_{pl}_universes_full.root"
+                       for pl in ("1A", "1B", "1C", "1D", "1E", "1F", "1G", "1L", "1M", "1N", "1O", "1P"))
+PREPARE_PINS = frozenset((PREPARE_PATH, PREPARE_SHA, t) for t in PREPARE_TOKENS)
+
+
+def _read(path):
+    with open(os.path.join(REPO, path), encoding="utf-8") as fh:
+        return fh.read()
+
+
+def _findings_without(pins):
+    """scan_full's findings with only `pins` removed from EXEMPT_BARE (every other pin kept)."""
+    saved = V.EXEMPT_BARE
+    try:
+        V.EXEMPT_BARE = frozenset(saved - set(pins))
+        return V.scan_full(root=REPO)["findings"]
+    finally:
+        V.EXEMPT_BARE = saved
+
+
+class PinnedExemptionInventory(unittest.TestCase):
+    """EXEMPT_BARE holds exactly the director's two rulings of 2026-11-13: #1139's one envtest pin and the
+    prepare receipt's 12. Any other triple, or a missing one, fails here."""
+
+    def test_exactly_thirteen_pins(self):
+        self.assertEqual(13, len(V.EXEMPT_BARE))
+
+    def test_the_pins_are_exactly_the_two_rulings(self):
+        self.assertEqual({ENVTEST_PIN} | PREPARE_PINS, set(V.EXEMPT_BARE))
+
+    def test_the_real_corpus_counts_thirteen_exemptions_and_no_finding(self):
+        r = V.scan_full(root=REPO)
+        self.assertEqual([], r["findings"])
+        self.assertEqual(13, r["bare_states"].get("EXEMPT"))
+        self.assertEqual(0, r["bare_states"].get("MISSING", 0))
+
+    def test_the_self_test_reports_the_exemptions_narrow(self):
+        self.assertTrue(V.self_test(REPO)["exemptions_narrow"])
+
+
+class PinnedExemption(unittest.TestCase):
+    """EXEMPT_BARE (the director's ruling on #1139, 2026-11-13) exempts one token in one receipt at one
+    sha256. FIRES: the same token anywhere else, or in that receipt at any other bytes, is still
+    classified, and is MISSING where the receipt's directory is tracked. SILENT: the pinned bytes.
+    Bound to its own triple explicitly, not by the sort order of EXEMPT_BARE."""
+
+    PATH, SHA, TOKEN = ENVTEST_PIN
+
+    def setUp(self):
+        self.text = _read(self.PATH)
+        self.tracked = {os.path.dirname(self.PATH) + "/README.md"}
+        self.dirs = {os.path.dirname(self.PATH)}
+
+    def test_its_pin_is_in_the_inventory(self):
+        self.assertIn(ENVTEST_PIN, V.EXEMPT_BARE)
+        self.assertEqual(1, sum(1 for p, _, _ in V.EXEMPT_BARE if p == self.PATH))
+
+    def test_the_committed_receipt_has_the_pinned_bytes_and_is_exempt(self):
+        self.assertEqual(self.SHA, V.hashlib.sha256(self.text.encode("utf-8")).hexdigest())
+        self.assertIn(self.TOKEN, V.bare_citations(self.text))
+        self.assertTrue(V.is_exempt(self.PATH, self.TOKEN, self.text))
+
+    def test_the_same_token_in_another_receipt_is_still_MISSING(self):
+        other = os.path.dirname(self.PATH) + "/other.json"
+        self.assertFalse(V.is_exempt(other, self.TOKEN, self.text))
+        self.assertEqual("MISSING",
+                         V.classify_bare(other, self.TOKEN, self.text, self.tracked, self.dirs)[0])
+
+    def test_this_receipt_at_another_sha_is_still_MISSING(self):
+        changed = self.text.replace('"verdict": "PASS"', '"verdict": "STOP"')
+        self.assertNotEqual(changed, self.text)
+        self.assertFalse(V.is_exempt(self.PATH, self.TOKEN, changed))
+        self.assertEqual("MISSING",
+                         V.classify_bare(self.PATH, self.TOKEN, changed, self.tracked, self.dirs)[0])
+
+    def test_another_token_in_the_pinned_receipt_is_not_exempt(self):
+        self.assertFalse(V.is_exempt(self.PATH, "runConfig.err", self.text))
+        for t in PREPARE_TOKENS:
+            self.assertFalse(V.is_exempt(self.PATH, t, self.text))
+
+    def test_negative_control_without_the_pin_the_receipt_is_MISSING(self):
+        hits = _findings_without({ENVTEST_PIN})
+        self.assertEqual(1, len([x for x in hits if x["receipt"] == self.PATH]), hits)
+        self.assertEqual(1, len(hits), hits)
+
+
+class PinnedPrepareExemption(unittest.TestCase):
+    """The director's ruling on the G2R prepare receipt (2026-11-13): 12 P5 per-playlist input file names,
+    written by g2r_prepare.py run() into blocks/map.blocks, are exempt in that one record at its one
+    sha256. FIRES: the same names in another receipt, or this path at other bytes, are MISSING."""
+
+    def setUp(self):
+        self.text = _read(PREPARE_PATH)
+        self.tracked = {os.path.dirname(PREPARE_PATH) + "/README.md"}
+        self.dirs = {os.path.dirname(PREPARE_PATH)}
+
+    def test_its_twelve_pins_are_in_the_inventory(self):
+        self.assertEqual(12, len(PREPARE_PINS))
+        self.assertLessEqual(PREPARE_PINS, set(V.EXEMPT_BARE))
+        self.assertEqual(PREPARE_PINS, {p for p in V.EXEMPT_BARE if p[0] == PREPARE_PATH})
+
+    def test_the_committed_record_has_the_pinned_bytes_and_all_twelve_are_exempt(self):
+        self.assertEqual(PREPARE_SHA, V.hashlib.sha256(self.text.encode("utf-8")).hexdigest())
+        self.assertEqual(set(PREPARE_TOKENS), set(V.bare_citations(self.text)))
+        for t in PREPARE_TOKENS:
+            self.assertTrue(V.is_exempt(PREPARE_PATH, t, self.text), t)
+
+    def test_the_same_names_in_another_receipt_are_still_MISSING(self):
+        other = os.path.dirname(PREPARE_PATH) + "/other.json"
+        for t in PREPARE_TOKENS:
+            self.assertFalse(V.is_exempt(other, t, self.text), t)
+            self.assertEqual("MISSING",
+                             V.classify_bare(other, t, self.text, self.tracked, self.dirs)[0], t)
+
+    def test_this_path_at_other_bytes_is_still_MISSING(self):
+        changed = self.text.replace('"verdict": "PASS"', '"verdict": "STOP"')
+        self.assertNotEqual(changed, self.text)
+        for t in PREPARE_TOKENS:
+            self.assertFalse(V.is_exempt(PREPARE_PATH, t, changed), t)
+            self.assertEqual("MISSING",
+                             V.classify_bare(PREPARE_PATH, t, changed, self.tracked, self.dirs)[0], t)
+
+    def test_other_tokens_in_this_record_are_not_exempt(self):
+        for t in ("runEventLoopOmniFold_1H_universes_full.root",
+                  "runEventLoopOmniFold_MEFHC_universes_full.root", "runConfig.out"):
+            self.assertFalse(V.is_exempt(PREPARE_PATH, t, self.text), t)
+
+    def test_negative_control_without_the_twelve_pins_the_record_is_MISSING(self):
+        hits = _findings_without(PREPARE_PINS)
+        self.assertEqual(12, len([x for x in hits if x["receipt"] == PREPARE_PATH]), hits)
+        self.assertEqual(12, len(hits), hits)
+
+
 if __name__ == "__main__":
     unittest.main()

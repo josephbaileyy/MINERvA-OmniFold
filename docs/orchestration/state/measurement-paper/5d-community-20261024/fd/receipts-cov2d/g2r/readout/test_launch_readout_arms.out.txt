@@ -1,0 +1,8 @@
+REFUSED: /Users/josephbailey/cov2d-work/g2r/connect-g2r-readout-data.sh is 56c34ad69b2c3423128b982a3e12b328bbe3e53ccbbba9d8e6126a3c76103b3c, not the go's 0000
+  rc=2
+REFUSED: /Users/josephbailey/cov2d-work/g2r/connect-g2r-readout-G18.sh is 029ff7fb3455c2e27289d1ecf68cb9483aa0dd212bf7384f2ca02e631e7d49a3, not the go's 0000
+  rc=2
+REFUSED: /Users/josephbailey/cov2d-work/g2r/connect-g2r-readout-AR23.sh is 6bec8fad7c4d527e86d1a43ba0d0f06a5e121c74638aa6a58d313f3c0d9f0ca2, not the go's 0000
+  rc=2
+usage: launch-g2r.sh envtest|envtest-r2|envtest-r3|diag-tune|prepare|D_Ua|D_Ub|D_Uc|D_Ud|G18_Ua|G18_Ub|G18_Uc|G18_Ud|AR23_Ua|AR23_Ub|AR23_Uc|AR23_Ud|readout-data|readout-G18|readout-AR23 <sha256>
+  rc=2

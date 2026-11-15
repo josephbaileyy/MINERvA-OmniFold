@@ -1,0 +1,10 @@
+fence host=login02 utc=2026-11-13T14:16:06Z
+squeue:
+61214614 ll5d_bulk_09 RUNNING
+61214615 ll5d_bulk_10 RUNNING
+61214610 ll5d_bulk_07 RUNNING
+61214612 ll5d_bulk_08 RUNNING
+61225732 cov2dg2r-D_Ua RUNNING
+61226353 cov2dg2r-D_Ub RUNNING
+sacct unended cov2d:
+fence end

@@ -1,0 +1,21 @@
+--- launch-g2r.4a88370d.sh	2026-11-12 16:52:19
++++ launch-g2r.sh	2026-11-12 16:52:19
+@@ -6,7 +6,7 @@
+ # 15 s, up to 90 min), then fetched. The staged copy and the log are removed (logged) ONLY if the fetched log ends with
+ # DONE; otherwise both stay, and the launcher prints TIMEOUT with the log's last lines and exits 5 (the audit's B1). The
+ # job itself is watched apart. Every ssh's rc is read directly (no pipe).
+-# Usage: launch-g2r.sh envtest <sha256>
++# Usage: launch-g2r.sh envtest|prepare <sha256>
+ # Exit: 0 launched, fetched and removed; 2 refused before staging; 3 digest mismatch; 4 the launch ssh failed (STOP);
+ # 5 TIMEOUT or the fetched log does not end with DONE (both files left in place).
+ # Test mode (test_launch_g2r.sh only): G2R_LAUNCH_TEST=1 lets G2R_SHM, G2R_TEST_SRC, G2R_WAIT_N and G2R_POLL_S stand
+@@ -19,7 +19,8 @@
+ [ -e "$OUT" ] && { echo "REFUSED $OUT exists"; exit 2; }
+ case "$N" in
+   envtest) SRC=$H/connect-g2r-envtest.sh; ARG="" ;;
+-  *) echo "usage: launch-g2r.sh envtest <sha256>"; exit 2 ;;
++  prepare) SRC=$H/connect-g2r-prepare.sh; ARG="" ;;
++  *) echo "usage: launch-g2r.sh envtest|prepare <sha256>"; exit 2 ;;
+ esac
+ if [ "${G2R_LAUNCH_TEST:-}" = 1 ]; then
+   SHM=${G2R_SHM:-$SHM}; SRC=${G2R_TEST_SRC:-$SRC}; WAIT_N=${G2R_WAIT_N:-$WAIT_N}; POLL_S=${G2R_POLL_S:-$POLL_S}

@@ -1,0 +1,22 @@
+== each alone, D_Ua and D_Ub held:
+  D_Uc     spent 1.241 held 17.800 want 8.9 total 27.941 projection 108.441 pass True stop False
+  D_Ud     spent 1.241 held 17.800 want 9.3 total 28.341 projection 108.441 pass True stop False
+  G18_Ua   spent 1.241 held 17.800 want 8.9 total 27.941 projection 108.441 pass True stop False
+  G18_Ub   spent 1.241 held 17.800 want 8.9 total 27.941 projection 108.441 pass True stop False
+  G18_Uc   spent 1.241 held 17.800 want 8.9 total 27.941 projection 108.441 pass True stop False
+  G18_Ud   spent 1.241 held 17.800 want 8.9 total 27.941 projection 108.441 pass True stop False
+  AR23_Ua  spent 1.241 held 17.800 want 8.9 total 27.941 projection 108.441 pass True stop False
+  AR23_Ub  spent 1.241 held 17.800 want 8.9 total 27.941 projection 108.441 pass True stop False
+  AR23_Uc  spent 1.241 held 17.800 want 8.9 total 27.941 projection 108.441 pass True stop False
+  AR23_Ud  spent 1.241 held 17.800 want 8.9 total 27.941 projection 108.441 pass True stop False
+== cumulative, in this order, each earlier one held as a submitted id sacct does not list yet:
+  D_Uc     held 17.800 total 27.941 projection 108.441 pass True stop False lagging 0
+  D_Ud     held 26.700 total 37.241 projection 108.441 pass True stop False lagging 1
+  G18_Ua   held 36.000 total 46.141 projection 108.441 pass True stop False lagging 2
+  G18_Ub   held 44.900 total 55.041 projection 108.441 pass True stop False lagging 3
+  G18_Uc   held 53.800 total 63.941 projection 108.441 pass True stop False lagging 4
+  G18_Ud   held 62.700 total 72.841 projection 108.441 pass True stop False lagging 5
+  AR23_Ua  held 71.600 total 81.741 projection 108.441 pass True stop False lagging 6
+  AR23_Ub  held 80.500 total 90.641 projection 108.441 pass True stop False lagging 7
+  AR23_Uc  held 89.400 total 99.541 projection 108.441 pass True stop False lagging 8
+  AR23_Ud  held 98.300 total 108.441 projection 108.441 pass True stop False lagging 9

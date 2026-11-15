@@ -1,0 +1,189 @@
+2,13c2,12
+< # LL5D section 11 step 7: the null at G18 and AR23 (ll5d_b.py null, one call per truth, both readings and both
+< # matrices inside), DRAFT for the director's review. The director's ruling (a), 2026-11-14: run as bound; the
+< # products_digest moves are the declared deviation of LL5D-DECLARATION.md:672-673. At 4231b14d null_step opens the
+< # products through the atime watch (ll5d_b.py:499 remade, _x :366-368), and only then hashes them with a plain open
+< # (:502 products_digest, :477; s5c_unfold.py:87-89). So each call's record should list exactly those products in
+< # atime.moved and exit 8 with verdict PASS. That expected set is fixed here before the run: the job recomputes it from
+< # the bound module and must reproduce EXP_<T>_SHA256 (227 paths per truth: central T, seed T, 175 blocks, stat 1-50),
+< # or it stops before any call. CLEAN per truth = rc exactly 8, verdict PASS, atime.moved set-equal to the fixed set.
+< # Anything else (rc 0, 13, any extra or missing path) is NOT-CLEAN and goes to the director unrepaired.
+< # ONE job (-N 1 --exclusive, --time 01:00:00, 1.0 node-h) on a FRESH deploy clone at M that no other job reads; its
+< # single start check (sha256sum -c) runs before both calls, which run one after the other, so no plain read of a
+< # watched file runs while a call is in flight (B1). Writes only under $W; $U is read. Nothing to CFS. Not under set -u.
+---
+> # LL5D section 11 step 7: the readout at G18 and AR23 (ll5d_b.py readout, one call per truth, both readings inside),
+> # DRAFT for the director's review. Inputs, each pinned: the null records of job 61271235 (null-<T>.json, sha256 below;
+> # receipts-ll5d/null), the pilot's clipcheck.json (CLIPSHA), each truth's gate-2 record (G18GATE, AR23GATE), and the
+> # bulk's products in $U, unchanged since the null (1662, no partials, 300 toys per reading per truth). At 4231b14d the
+> # readout's only plain reads are products_digest (ll5d_b.py:660, BEFORE its first watched product open at :670) and the
+> # deploy's definition and cmodel json, which are not watched; every watched read goes through O_NOATIME. So the expected
+> # atime-moved set is EMPTY. CLEAN per truth = rc 0, the record readout-<T>.json (not .invalid.json), and atime.moved == [].
+> # Anything else is NOT-CLEAN and goes to the director unrepaired. The :660 check refuses unless the products' digest
+> # equals the null's products_sha256 (g18 c16e9ce0…, ar23 b716657b…). ONE job (-N 1 --exclusive, --time 01:00:00,
+> # 1.0 node-h) on a FRESH deploy clone at M; its single start check runs before both calls, which run one after the
+> # other (B1). Writes only under $W; $U, the null records, clipcheck and the gate records are read. Not under set -u.
+17c16,19
+< W=$P/ll5d-null-r1; DD=$W/deploy; U=$P/ll5d-unfolds-r2; PW=$P/ll5d-pilot-r2   # $U: the bulk's 1662 products, read
+---
+> W=$P/ll5d-readout-r1; DD=$W/deploy; U=$P/ll5d-unfolds-r2; PW=$P/ll5d-pilot-r2   # $U: the bulk's 1662 products, read
+> NW=$P/ll5d-null-r1   # the null's namespace: null-g18.json, null-ar23.json (job 61271235)
+> NULLG18=73dbaf9517374646c719ff589015cb12c1a6a2eafd5579e1074ef700bde703c2   # null-g18.json (receipts-ll5d/null)
+> NULLAR23=a0544ab9f6f0ec55c9866bee689d2563b13c9d07f4b3fdc37ce4762718a23933  # null-ar23.json
+31c33
+< for v in "$G18GATE" "$AR23GATE" "$WALLSSHA" "$CLIPSHA" "$CTLSHA" "$L5" "$CMODELSHA"; do [[ $v =~ ^[0-9a-f]{64}$ ]] || { echo "STOP a placeholder is not filled"; exit 2; }; done
+---
+> for v in "$G18GATE" "$AR23GATE" "$WALLSSHA" "$CLIPSHA" "$CTLSHA" "$L5" "$CMODELSHA" "$NULLG18" "$NULLAR23"; do [[ $v =~ ^[0-9a-f]{64}$ ]] || { echo "STOP a placeholder is not filled"; exit 2; }; done
+36c38
+< exec >> "$W/logs/connect-null.log" 2>&1
+---
+> exec >> "$W/logs/connect-readout.log" 2>&1
+68a71,77
+> [ "$(ls "$U" | grep -c '\.partial-')" = "0" ] || stop "partial products are present in \$U"
+> for T in g18 ar23; do for RD in all minus2; do
+>   nt=$(ls "$U" | grep -c "^ll5d_${T}_toy_${RD}_[0-9]*\.npz$"); echo "toys $T/$RD: $nt"
+>   [ "$nt" = "300" ] || stop "$T/$RD holds $nt toy products, not 300"; done; done
+> [ "$(sha256sum "$NW/null-g18.json" | cut -d' ' -f1)" = "$NULLG18" ] || stop "null-g18.json is not the receipted record"
+> [ "$(sha256sum "$NW/null-ar23.json" | cut -d' ' -f1)" = "$NULLAR23" ] || stop "null-ar23.json is not the receipted record"
+> echo "null records OK: g18 $NULLG18 ar23 $NULLAR23"
+102c111
+< cat > "$W/sbatch-ll5d-null.sh" <<'JOB'
+---
+> cat > "$W/sbatch-ll5d-readout.sh" <<'JOB'
+104,106c113,115
+< # ll5d_null_01's job: the deploy at M with porcelain 0 and the bound blobs, checked ONCE here, before both calls; the
+< # expected moved set recomputed from the bound module and pinned; then ll5d_b.py null for g18, then for ar23, one after
+< # the other; after each, its record checked against the fixed set. Not under set -u. Writes only under $W.
+---
+> # ll5d_readout_01's job: the deploy at M with porcelain 0 and the bound blobs, checked ONCE here, before both calls; then
+> # ll5d_b.py readout for g18, then for ar23, one after the other; after each, its record checked (rc 0, no atime move).
+> # Not under set -u. Writes only under $W.
+108c117
+< P=/pscratch/sd/j/josephrb; STAGED=$P/fd-1b-inv-20261101/i0/in
+---
+> P=/pscratch/sd/j/josephrb; STAGED=$P/fd-1b-inv-20261101/i0/in; NW=$P/ll5d-null-r1; PW=$P/ll5d-pilot-r2
+110,111c119,122
+< EXP_g18_SHA256=ec363fd10db805005306e12955bc8651a02a340d5e53b8e81097bc53cb0e1e01; EXP_g18_N=227
+< EXP_ar23_SHA256=923681b295f1226360ca9ba9ee73c783ad7d9e2d559abd0106bc20d6320f3a93; EXP_ar23_N=227
+---
+> NULL_g18=73dbaf9517374646c719ff589015cb12c1a6a2eafd5579e1074ef700bde703c2; NULL_ar23=a0544ab9f6f0ec55c9866bee689d2563b13c9d07f4b3fdc37ce4762718a23933
+> GATE_g18=a5d66b7e506a98d5a0b555dbe171aa6c1e931eb93df793c3e515d7d44466fc70; GW_g18=$P/ll5d-gate-2-g18-20261110
+> GATE_ar23=35a20c471cb06f428c49daaaebfc6646babb7f7fb060039d4c63139da51d0a4c; GW_ar23=$P/ll5d-gate-2-ar23-20261110
+> CLIPSHA=9632540ecd0d25e2223eedb480b96078459a6e6d75128b4e4132ea1bf644d3aa
+120,146d130
+< # the expected moved set (the director's ruling (a)): remade's opened products (bands_of, sa.EXPECT, STAT_REPLICAS,
+< # product_name over READINGS) intersected with products_digest's set (TAG, BLOCK_ROLES) applied to $U's names
+< for T in g18 ar23; do
+<   python3 -B - "$DD/nd-unfolding" "$W/u-names.txt" "$U" "$T" "$W/expected_moved_$T.txt" <<'EXPECT' || stop "expected set $T"
+< import hashlib, sys
+< sys.path.insert(0, sys.argv[1])
+< import ll5d, ll5d_b as b
+< names = [l.strip() for l in open(sys.argv[2]) if l.strip()]
+< U, T = sys.argv[3].rstrip("/"), sys.argv[4]
+< opened = set()
+< for rd in ll5d.READINGS:
+<     opened |= {b.product_name(T, "central", "T"), b.product_name(T, "seed", "T")}
+<     opened |= {b.product_name(T, "block", f"{band}_{i}") for band in b.bands_of(rd) for i in range(b.sa.EXPECT[band])}
+<     opened |= {b.product_name(T, "stat", str(x)) for x in b.STAT_REPLICAS}
+< dig = {n for n in names if n.startswith(f"{b.TAG}_{T}_") and n.endswith(".npz") and ".partial-" not in n
+<         and n.split("_")[2] in b.BLOCK_ROLES}
+< body = "".join(f"{U}/{n}\n" for n in sorted(opened & dig))
+< open(sys.argv[5], "w").write(body)
+< print(f"expected {T}: opened {len(opened)} digested {len(dig)} absent {len(opened - set(names))} moved {len(opened & dig)} "
+<       f"sha256 {hashlib.sha256(body.encode()).hexdigest()}")
+< sys.exit(1 if opened - set(names) else 0)
+< EXPECT
+<   eval "want=\$EXP_${T}_SHA256; wn=\$EXP_${T}_N"
+<   [ "$(sha256sum "$W/expected_moved_$T.txt" | cut -d' ' -f1)" = "$want" ] && [ "$(awk 'END {print NR}' "$W/expected_moved_$T.txt")" = "$wn" ] \
+<     || stop "the expected moved set at $T is not the fixed one ($want, $wn paths)"
+<   echo "expected moved $T: $wn paths, sha256 $want (fixed)"
+< done
+149c133,134
+<   /usr/bin/time -v python3 -B "$DD/nd-unfolding/ll5d_b.py" null --staged "$STAGED" \
+---
+>   eval "ns=\$NULL_$T; gs=\$GATE_$T; gw=\$GW_$T"
+>   /usr/bin/time -v python3 -B "$DD/nd-unfolding/ll5d_b.py" readout --staged "$STAGED" \
+151,154c136,140
+<     --cmodel-json "$DD/nd-unfolding/pv-ladder/readouts/cmodel_5d.json" --flux-constraint "$CONSTRAINT" \
+<     --truth "$T" --out "$W/null-$T.json" < /dev/null > "$W/null-$T.out" 2> "$W/null-$T.time"; s=$?
+<   echo "null $T rc=$s: $(tail -1 "$W/null-$T.out")"
+<   python3 -B - "$W/null-$T.json" "$W/null-$T.invalid.json" "$W/expected_moved_$T.txt" "$s" "$T" <<'CHECK'
+---
+>     --cmodel-json "$DD/nd-unfolding/pv-ladder/readouts/cmodel_5d.json" --flux-constraint "$CONSTRAINT" --truth "$T" \
+>     --null "$NW/null-$T.json" --expect-null-sha256 "$ns" --clipcheck "$PW/clipcheck.json" --expect-clipcheck-sha256 "$CLIPSHA" \
+>     --gate "$gw/gate-$T.json" --expect-gate-sha256 "$gs" --out "$W/readout-$T.json" < /dev/null > "$W/readout-$T.out" 2> "$W/readout-$T.time"; s=$?
+>   echo "readout $T rc=$s: $(tail -1 "$W/readout-$T.out")"
+>   python3 -B - "$W/readout-$T.json" "$W/readout-$T.invalid.json" "$s" "$T" <<'CHECK'
+156,157c142
+< rec_p, inv_p, exp_p, rc, T = sys.argv[1], sys.argv[2], sys.argv[3], int(sys.argv[4]), sys.argv[5]
+< exp = sorted(l for l in open(exp_p).read().splitlines() if l)
+---
+> rec_p, inv_p, rc, T = sys.argv[1], sys.argv[2], int(sys.argv[3]), sys.argv[4]
+160c145
+<     print(f"NULL-EXIT {T} NOT-CLEAN rc={rc}: no record; to the director unrepaired"); sys.exit(1)
+---
+>     print(f"READOUT-EXIT {T} NOT-CLEAN rc={rc}: no record; to the director unrepaired"); sys.exit(1)
+162,168c147,151
+< moved = sorted(rec.get("atime", {}).get("moved", []))
+< extra, missing = sorted(set(moved) - set(exp)), sorted(set(exp) - set(moved))
+< print(f"null {T}: record {os.path.basename(p)} verdict {rec.get('verdict')} moved {len(moved)} expected {len(exp)} "
+<       f"extra {len(extra)} {extra[:5]} missing {len(missing)} {missing[:5]}")
+< ok = rc == 8 and p == rec_p and rec.get("verdict") == "PASS" and not extra and not missing
+< print(f"NULL-EXIT {T} " + ("CLEAN: rc 8, verdict PASS, moved == the fixed set (the declared deviation)" if ok else
+<       f"NOT-CLEAN rc={rc}: to the director unrepaired; nothing is read from this null"))
+---
+> moved = rec.get("atime", {}).get("moved", [])
+> print(f"readout {T}: record {os.path.basename(p)} verdicts {rec.get('verdicts')} moved {len(moved)} {moved[:5]}")
+> ok = rc == 0 and p == rec_p and moved == [] and "evaluations" in rec
+> print(f"READOUT-EXIT {T} " + ("CLEAN: rc 0, record written, atime.moved []" if ok else
+>       f"NOT-CLEAN rc={rc}: to the director unrepaired"))
+173,175c156,158
+< sha256sum "$W"/null-*.json "$W"/null-*.out "$W"/expected_moved_*.txt 2>/dev/null
+< grep -h -E "Elapsed|Maximum resident|Exit status" "$W"/null-*.time
+< echo "null checks rc=$urc"
+---
+> sha256sum "$W"/readout-*.json "$W"/readout-*.out 2>/dev/null
+> grep -h -E "Elapsed|Maximum resident|Exit status" "$W"/readout-*.time
+> echo "readout checks rc=$urc"
+179c162
+< echo "job script sha256 $(sha256sum "$W/sbatch-ll5d-null.sh" | cut -d' ' -f1)"
+---
+> echo "job script sha256 $(sha256sum "$W/sbatch-ll5d-readout.sh" | cut -d' ' -f1)"
+185,188c168,172
+< python3 - "$W/atime-pre.tsv" "$STAGED" "$CONSTRAINT" "$DD" "$U" "$W/u-names.txt" <<'COVER' || stop "a declared protected input is not in atime-pre"
+< # The null's declared inputs (ll5d_b.setup, remade, made_from at 4231b14d): the staged S1 assembly and the flux
+< # constraint (protected: each must be in atime-pre), the deploy's definition and cmodel json, and the $U products
+< # of the two truths' central/seed/block/stat roles (LL5D's own outputs). Classified by path against atime-pre.
+---
+> python3 - "$W/atime-pre.tsv" "$STAGED" "$CONSTRAINT" "$DD" "$U" "$W/u-names.txt" "$NW" "$PW" "$G18W" "$AR23W" <<'COVER' || stop "a declared protected input is not in atime-pre"
+> # The readout's declared inputs (ll5d_b.readout, setup, remade, toy_errors, gate_ratios at 4231b14d): the staged S1
+> # assembly and the flux constraint (protected: each must be in atime-pre); the deploy's definition and cmodel json;
+> # the $U products of the two truths' central/seed/block/stat AND toy roles; the null records, clipcheck and the gate
+> # records. Only the first two may be in atime-pre. Classified by path against atime-pre.
+193a178,179
+> nw, pw, g18w, ar23w = sys.argv[7:11]
+> deploy += [f"{nw}/null-g18.json", f"{nw}/null-ar23.json", f"{pw}/clipcheck.json", f"{g18w}/gate-g18.json", f"{ar23w}/gate-ar23.json"]
+195c181
+<          and n.split("_")[2:3] and n.split("_")[2] in ("central", "seed", "block", "stat") and n.endswith(".npz")]
+---
+>          and n.split("_")[2:3] and n.split("_")[2] in ("central", "seed", "block", "stat", "toy") and n.endswith(".npz")]
+203,204c189,190
+<   jid=$(sbatch --parsable -A m3246 -q regular -C cpu -N 1 --exclusive --no-requeue -t "$TL" -J "ll5d_null_$NN" \
+<     -o "$W/logs/%x_%j.out" "$W/sbatch-ll5d-null.sh" "$DD" "$M" "$W" "$U" "$NN")
+---
+>   jid=$(sbatch --parsable -A m3246 -q regular -C cpu -N 1 --exclusive --no-requeue -t "$TL" -J "ll5d_readout_$NN" \
+>     -o "$W/logs/%x_%j.out" "$W/sbatch-ll5d-readout.sh" "$DD" "$M" "$W" "$U" "$NN")
+206,207c192,193
+<   [ -n "$jid" ] || { [ ${#ids[@]} -gt 0 ] && scancel "${ids[@]}"; stop "sbatch for ll5d_null_$NN returned no id: cancelled ${ids[*]}"; }
+<   ids+=("$jid"); echo "Submitted batch job $jid (ll5d_null_$NN)"
+---
+>   [ -n "$jid" ] || { [ ${#ids[@]} -gt 0 ] && scancel "${ids[@]}"; stop "sbatch for ll5d_readout_$NN returned no id: cancelled ${ids[*]}"; }
+>   ids+=("$jid"); echo "Submitted batch job $jid (ll5d_readout_$NN)"
+209c195
+<   [ "$tl" = "TimeLimit=01:00:00" ] || { scancel "${ids[@]}"; stop "ll5d_null_$NN's time limit parsed as ${tl#TimeLimit=}, not 01:00:00: cancelled ${ids[*]}"; }
+---
+>   [ "$tl" = "TimeLimit=01:00:00" ] || { scancel "${ids[@]}"; stop "ll5d_readout_$NN's time limit parsed as ${tl#TimeLimit=}, not 01:00:00: cancelled ${ids[*]}"; }
+211c197
+< squeue --me -h -o '%i %j %T %l %D' | grep ll5d_null_
+---
+> squeue --me -h -o '%i %j %T %l %D' | grep ll5d_readout_

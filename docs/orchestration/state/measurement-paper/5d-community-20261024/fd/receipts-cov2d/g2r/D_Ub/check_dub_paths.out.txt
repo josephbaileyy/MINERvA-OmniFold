@@ -1,0 +1,24 @@
+deploy HEAD 401733bce290ce122cfbf38f1526e120f174b3ec
+(a) runs 529, labels 529, distinct 529, duplicated []
+    D_Ua labels 44, D_Ub labels 44, shared []
+    D_Ub labels: A_2p2h_1 A_AhtBY_0 A_CCQEPauliSupViaKF_0 A_CV2uBY_0 A_Flux_0 A_Flux_12 A_Flux_16 A_Flux_2 A_Flux_23 A_Flux_27 A_Flux_30 A_Flux_34 A_Flux_38 A_Flux_41 A_Flux_45 A_Flux_49 A_Flux_52 A_Flux_56 A_Flux_6 A_Flux_63 A_Flux_67 A_Flux_70 A_Flux_74 A_Flux_78 A_Flux_81 A_Flux_85 A_Flux_89 A_Flux_92 A_Flux_96 A_FrAbs_N_0 A_FrCEx_N_0 A_FrElas_N_0 A_FrInel_N_0 A_FrPiProd_pi_0 A_GEANT_Pion_0 A_HighQ2_0 A_MFP_N_0 A_MaCCQE_0 A_MaRES_0 A_MvRES_0 A_NormNCRES_0 A_Rvn1pi_0 A_Rvp2pi_0 A_VecFFCCQEshape_0
+(b) $O paths named in g2r_job.sbatch and g2r_preflight at M:
+    per job lane: $O/SHA256SUMS.$JOB.${want#$JOB.}
+    shared dir (mkdir -p): $O/inventory
+    per label: $O/inventory/$label.jsonl
+    shared dir (mkdir -p): $O/logs
+    per label: $O/logs/$label.log
+    per job: $O/logs/check-$JOB-$SLURM_JOB_ID.json
+    per job id: $O/logs/mat-${SLURM_JOB_ID:-local}.json
+    shared dir (mkdir -p): $O/out
+    per label: $O/out/$label
+    per label: $O/out/$label/xsec.root
+    read: $O/tables/jobs_g2r.tsv
+    read: $O/tables/runs_g2r.tsv
+    per job id: $O/tmp/${SLURM_JOB_ID:-dry}
+    per job id: $O/tmp/${SLURM_JOB_ID:-local}
+    per job lane: $O/walls.$JOB.${want#$JOB.}.tsv
+    per job name and id: /pscratch/sd/j/josephrb/cov2d-g2r-20261112/logs/%x-%j.out
+    D_Ua writes 184 paths, D_Ub writes 184 paths, shared []
+    D_Ub per-job paths: SHA256SUMS.D_Ub.1 SHA256SUMS.D_Ub.2 logs/check-D_Ub-<D_Ub id>.json logs/cov2dg2r-D_Ub-<D_Ub id>.out logs/mat-<D_Ub id>.json tmp/<D_Ub id>/ walls.D_Ub.1.tsv walls.D_Ub.2.tsv
+DUB-PATHS PASS 

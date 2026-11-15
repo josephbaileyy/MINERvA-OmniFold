@@ -1,0 +1,80 @@
+fence host=login02 utc=2026-11-13T14:20:38Z
+squeue:
+61226579 cov2dg2r-G18_Ub PENDING
+61226562 cov2dg2r-G18_Ua PENDING
+61226543 cov2dg2r-D_Ud PENDING
+61226525 cov2dg2r-D_Uc PENDING
+61214614 ll5d_bulk_09 RUNNING
+61214615 ll5d_bulk_10 RUNNING
+61214610 ll5d_bulk_07 RUNNING
+61214612 ll5d_bulk_08 RUNNING
+61225732 cov2dg2r-D_Ua RUNNING
+61226353 cov2dg2r-D_Ub RUNNING
+sacct unended cov2d:
+fence end
+FENCE_CLEAR (other lanes' jobs are recorded above; the director sequences them)
+staged rc=0 node=defd72911ba782fc461ca06bffa8c10447352c8dd4043c7f2f4523cffe0df13b local=defd72911ba782fc461ca06bffa8c10447352c8dd4043c7f2f4523cffe0df13b go=defd72911ba782fc461ca06bffa8c10447352c8dd4043c7f2f4523cffe0df13b
+DIGEST_MATCH
+launched rc=0 at 2026-11-13T14:20:58Z
+last line: DONE (polls=2 of 360, done_seen=1)
+fetched connect log rc=0
+host=login02 start=2026-11-13T14:20:56Z pid=1461181 user=josephrb M=401733bce290ce122cfbf38f1526e120f174b3ec
+squeue: [61226525 cov2dg2r-D_Uc PENDING 8:54:00 1;61226543 cov2dg2r-D_Ud PENDING 9:18:00 1;61226562 cov2dg2r-G18_Ua PENDING 8:54:00 1;61226579 cov2dg2r-G18_Ub PENDING 8:54:00 1;61214614 ll5d_bulk_09 RUNNING 8:00:00 1;61214615 ll5d_bulk_10 RUNNING 8:00:00 1;61214610 ll5d_bulk_07 RUNNING 8:00:00 1;61214612 ll5d_bulk_08 RUNNING 8:00:00 1;61225732 cov2dg2r-D_Ua RUNNING 8:54:00 1;61226353 cov2dg2r-D_Ub RUNNING 8:54:00 1;]
+cov2dg2r queued or running: [61226525 cov2dg2r-D_Uc PENDING 8:54:00;61226543 cov2dg2r-D_Ud PENDING 9:18:00;61226562 cov2dg2r-G18_Ua PENDING 8:54:00;61226579 cov2dg2r-G18_Ub PENDING 8:54:00;61225732 cov2dg2r-D_Ua RUNNING 8:54:00;61226353 cov2dg2r-D_Ub RUNNING 8:54:00;]
+== iris
+m3246               2531.9            10000.0     18671.2      20000.0
+balance_node_h=1328.8 half=664.4 cap=110.0
+recompute spent=1.241 held=53.800 this=8.9 total=63.941 cap=110.0
+deploy porcelain=0 ignored=0 head=401733bce290ce122cfbf38f1526e120f174b3ec
+2d-unfolding/cov2d/g2r/jobs/g2r_jobs.py: OK
+2d-unfolding/cov2d/g2r/jobs/g2r_env.sh: OK
+2d-unfolding/cov2d/g2r/jobs/g2r_job.sbatch: OK
+2d-unfolding/cov2d/g2r/jobs/g2r_envtest.sbatch: OK
+2d-unfolding/cov2d/g2r/jobs/g2r_prepare.sbatch: OK
+2d-unfolding/cov2d/g2r/jobs/g2r_submit.sh: OK
+2d-unfolding/re2/re2_driver.py: OK
+2d-unfolding/cov2d/g2r/g2r.py: OK
+2d-unfolding/cov2d/g2r/g2r_prepare.py: OK
+2d-unfolding/cov2d/g2r/g2r_readout.py: OK
+2d-unfolding/cov2d/jobs/cov2d_jobs.py: OK
+2d-unfolding/cov2d/jobs/cov2d_env.sh: OK
+2d-unfolding/cov2d/cov2d.py: OK
+2d-unfolding/cov2d/cov2d_receipt.py: OK
+nd-unfolding/mnv_guarded_run.py: OK
+nd-unfolding/fd_rpd_inputs.py: OK
+docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partb_runs.tsv: OK
+setup_salloc_env.sh: OK
+unbinned_unfolding/python/omnifold.py: OK
+origin/main=c29c2dfa21d58f3f7af762e051505cc549dc65b3
+envtest record on origin/main: verdict=PASS sha256=c4a0720d3a12265403d22e273e219d4594b03ba0a592afe671618ed72cbf0272
+prepare record on origin/main: verdict=PASS map_npz_sha256=956531e3b761aaf08d40c6ab8d917ba5f19dab5947b72607e6a34d0d3f7f83ae sha256=d72facde6b73e854620bce58780928307fcb1fa9b3e921e94f03cbe6ec9ac1dc
+map /pscratch/sd/j/josephrb/cov2d-g2r-20261112/prepare/g2r_map.npz sha256=956531e3b761aaf08d40c6ab8d917ba5f19dab5947b72607e6a34d0d3f7f83ae (O_NOATIME)
+input /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root size=171117087867 atime=2026-11-13T10:39:23Z
+input /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root size=5143 atime=2026-11-13T10:36:28Z
+input /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/flux_integral_universes_MEFHC.root size=6396 atime=2026-11-06T16:31:27Z
+input /pscratch/sd/j/josephrb/cov2d-g2r-20261112/prepare/g2r_map.npz size=143986060 atime=2026-11-13T14:19:50Z
+ll5d constraint /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt atime_epoch=1793891894 (stat only; not a G18_Uc input)
+realization /pscratch/sd/j/josephrb/cov2d-run-20261104/pseudo/G18/b/data_5721000.root sha256=82c33320ceb9ce96967850148f97cbf873654609f0f8e1ac31b1491d5dd72eee (O_NOATIME) step-B record G18 sha256=82c33320ceb9ce96967850148f97cbf873654609f0f8e1ac31b1491d5dd72eee
+input /pscratch/sd/j/josephrb/cov2d-run-20261104/pseudo/G18/b/data_5721000.root size=51455930 atime=2026-11-06T17:01:38Z
+{"spent": 1.241111111111111, "held": 53.8, "lagging_ids": [], "want": "G18_Uc", "want_node_h": 8.9, "total": 63.941111111111105, "cap": 110.0, "pass": true, "not_yet_submitted": ["G18_Ud", "AR23_Ua", "AR23_Ub", "AR23_Uc", "AR23_Ud"], "projection": 108.4411111111111, "stop": false}
+2026-11-13T14:21:08Z M=401733bce290ce122cfbf38f1526e120f174b3ec job=G18_Uc id=61226663 limit=08:54:00
+sacct lists 61226663
+submit G18_Uc rc=0
+2026-11-13T09:41:52Z M=401733bce290ce122cfbf38f1526e120f174b3ec job=envtest id=61220039 limit=01:04:00
+2026-11-13T11:21:02Z M=401733bce290ce122cfbf38f1526e120f174b3ec job=prepare id=61223390 limit=02:00:00
+2026-11-13T13:22:52Z M=401733bce290ce122cfbf38f1526e120f174b3ec job=D_Ua id=61225732 limit=08:54:00
+2026-11-13T14:03:42Z M=401733bce290ce122cfbf38f1526e120f174b3ec job=D_Ub id=61226353 limit=08:54:00
+2026-11-13T14:16:34Z M=401733bce290ce122cfbf38f1526e120f174b3ec job=D_Uc id=61226525 limit=08:54:00
+2026-11-13T14:17:35Z M=401733bce290ce122cfbf38f1526e120f174b3ec job=D_Ud id=61226543 limit=09:18:00
+2026-11-13T14:18:37Z M=401733bce290ce122cfbf38f1526e120f174b3ec job=G18_Ua id=61226562 limit=08:54:00
+2026-11-13T14:19:38Z M=401733bce290ce122cfbf38f1526e120f174b3ec job=G18_Ub id=61226579 limit=08:54:00
+2026-11-13T14:21:08Z M=401733bce290ce122cfbf38f1526e120f174b3ec job=G18_Uc id=61226663 limit=08:54:00
+JobId=61226663 JobName=cov2dg2r-G18_Uc Account=m3246 QOS=regular_1 JobState=PENDING TimeLimit=08:54:00 Partition=regular_milan_ss11 NumNodes=1-1 OverSubscribe=NO 
+end=2026-11-13T14:21:20Z
+DONE
+removal rc=2
+defd72911ba782fc461ca06bffa8c10447352c8dd4043c7f2f4523cffe0df13b  /dev/shm/josephrb-g2r-G18_Uc.sh
+b7e600449923af40a560b08ce1e04534a07968739888f45ef9f3ba333556e3d6  /dev/shm/josephrb-g2r-G18_Uc.log
+rm -f /dev/shm/josephrb-g2r-G18_Uc.sh /dev/shm/josephrb-g2r-G18_Uc.log rc=0
+ls: cannot access '/dev/shm/josephrb-g2r-G18_Uc.sh': No such file or directory
+ls: cannot access '/dev/shm/josephrb-g2r-G18_Uc.log': No such file or directory

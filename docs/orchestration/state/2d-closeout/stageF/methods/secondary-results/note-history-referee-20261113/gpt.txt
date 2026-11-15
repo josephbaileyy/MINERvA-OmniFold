@@ -1,0 +1,134 @@
+**Your concern is justified: the note mixes a technical account with an audit trail.** Its unusually explicit limitations are valuable. The editing task is to preserve those disclosures while removing obsolete-product forensics, repeated chronology, and internal administrative language.
+
+**1. Conventions**
+
+What I can substantiate:
+
+- **Public notes and internal supporting notes are different document classes.** ATLAS distinguishes public PUB notes from restricted internal material; CMS likewise distinguishes public notes from internal analysis documentation. “Technical note” does not imply that a development diary is expected. [ATLAS public notes](https://twiki.cern.ch/twiki/bin/view/AtlasPublic/PUBnotes), [CMS documentation categories](https://cms.org.tr/sites/cms.org.tr/files/constitution_061215.pdf).
+- **Method/software reports organize around the implemented method, comparisons, validation, and limitations.** TUnfold follows that structure. RooUnfold also reports an error-propagation deficiency and its correction: adverse findings belong when they establish a technical point. [TUnfold](https://arxiv.org/html/1205.6201), [RooUnfold, §5.1](https://arxiv.org/html/1105.1160).
+- **OmniFold guidance emphasizes configuration choices, uncertainty construction, stress tests, and validation scope.** Those are appropriate technical content even when discovered during development. [A Practical Guide to Unbinned Unfolding](https://arxiv.org/html/2507.09582v1).
+- **Long documents need not be chronological.** MINERvA’s substantial NIM detector paper is organized around the detector, calibration, and performance. I have not verified a representative corpus establishing a separate convention for publicly released MINERvA technical notes. [MINERvA detector paper](https://arxiv.org/pdf/1305.5199).
+
+My general editorial judgment—not an asserted collaboration rule—is that released supporting notes tolerate more diagnostic detail than journal papers, but usually present a **scientific rationale**, rather than the sequence of investigations and approvals. Design evolution belongs when it explains an enduring feature, failure mode, or limitation.
+
+**2. An operational rule**
+
+**Retain history if removing it would change a reader’s understanding of the reported object, its reproducibility, its evidential independence, or its limitations. Otherwise, use the ledger.**
+
+| Material | Public note treatment |
+|---|---|
+| Alternatives tried and rejected | Keep a concise comparison if it explains the selected method or demonstrates sensitivity. Put exhaustive searches in the ledger. |
+| Failed or stopped tests | Keep failures relevant to reported claims, including why a stopped test supplies no conclusion. Relocate detailed troubleshooting. |
+| Superseded numbers/configurations | Keep only those used in a meaningful comparison or needed to identify which estimator a test assessed. Label them locally. |
+| Choices relative to results | Keep consequential exposure and adaptation: what had been seen, what changed afterward, and which assessment was therefore exploratory. |
+| Dates, rounds, record names | Keep release versions, data-taking periods, and identifiers needed for reproduction. Usually replace development dates and internal round names with functional descriptions. |
+
+“Fixed before” needs an object: **before generating toys, inspecting pilot pulls, grading tests, or seeing observed statistics are different disclosures.** “Declared” alone establishes none of these.
+
+An internal ledger may support the authors’ account, but essential protocols, limitations, and artifact identities must be available in the public note or deposit.
+
+**3. Section diagnosis**
+
+These are editorial estimates of **prose**, not measured word fractions. “History” includes necessary chronology; it is **not** the fraction proposed for deletion. The remainder is method, results, interpretation, or context. Empirical studies remain technical results even when performed during development.
+
+| Section | Estimated history | Recommended treatment |
+|---|---:|---|
+| Abstract/executive summary, pp. 1–4 | 10–20% | **Compress.** Preserve result status and consequential adaptation; reduce configuration genealogy. |
+| §1 | 0–5% | **Keep.** Retain the disclosure that the published comparison supplied no blind validation. |
+| §2 | 0–5% | **Keep.** Move unrelated PET population descriptions to its separate documentation. |
+| §3 | 20–30% | **Compress**, chiefly §3.2. Keep Table 4’s result-to-configuration mapping; move regeneration narratives to ledger. |
+| §4 | 10–20% | **Compress.** Keep current construction and omissions. Move §4.6’s earlier-budget forensic account to ledger. |
+| §5 | 20–30% | **Compress / appendix.** Keep failed coverage outcomes and exact applicability; move secondary analyses and the same-ensemble diagnostic to an appendix. |
+| §6 | 0–5% | **Keep.** Preserve descriptive-comparison qualifications and labels identifying older cross-checks. |
+| §7 | 5–10% | **Compress**, especially §7.6’s repair narrative. Retain which studies still use unrepaired inputs and which closures concern configuration (a). |
+| §8 | 0–5% | **Keep.** Definitions, target differences, and dependencies are technical content. |
+| §9 | 10–20% | **Compress / appendix.** Keep bias, instability, failed coverage, invalid deformation, and covariance restrictions. Move extended diagnostic traces and investigation details. |
+| §10 | 10–20% | **Compress / appendix**, especially §§10.4–10.5. Keep the data-informed run-period term, failed controls, algorithm dependence, and both unsuccessful coverage attempts. |
+| §11 | 15–25% | **Compress**, chiefly §§11.3 and 11.6. Keep design exposure, budget adaptation, recovery outcomes, calibration assumptions, and correction sensitivities. |
+| §12 | 5–10% | **Keep**, with shorter configuration explanations. Retain purity treatment, unrepaired prior, unsupported regions, and absent qualified uncertainties. |
+| §13 | 5–10% | **Compress.** Summarize conclusions and unresolved limits; avoid repeating adoption history. |
+| App. A | 10–20% | **Compress / ledger.** Keep statistical definitions; remove obsolete scans and checks unless they support an explicit comparison. |
+| App. B | 15–25% | **Compress / ledger**, chiefly B.1’s retired-covariance examples. Preserve applicable inverse and finite-ensemble qualifications. |
+| App. C | 15–25% | **Compress.** Keep derivations, comparisons, bias findings, and actual background treatments; remove production archaeology. |
+| App. D | 5–10% | **Compress.** Keep completed response-shift results. Move the unexecuted protocol and contingent follow-up plan to ledger; retain “not tested” where relevant. |
+| App. E | 0–5% | **Keep.** Literature context is not project development history. |
+| App. F | ≈0% | **Compress** into the outlook: it is already only a short future-work statement. |
+| App. G | 20–30% | **Compress substantially.** State the actual package/version, verified capabilities, exclusions, and provenance gaps. Move earlier-candidate testing to ledger. |
+| App. H | 0–5% | **Keep.** Useful implementation reference. |
+| References | — | Essential support must not depend solely on unreleased records such as Ref. [34]. |
+
+No substantive results section should move wholesale to the ledger.
+
+The following are ten particularly clear editing targets. Quotations normalize whitespace. Where marked **disclosure—stay**, the excess is the surrounding audit narrative, not the underlying fact.
+
+1. **§3.2, p. 15:**  
+   > “Two regenerations, with one driver and one input and differing only in the seed, reproduce the two central values to ≲ 2 × 10−11…”
+
+   **Rewrite:** “Matched reruns attribute this difference to the training seed.” Put regeneration identities and numerical tolerances in the reproduction record.
+
+2. **§3.2, p. 16:**  
+   > “The exact-split central value was the quoted 2D central value until 2026-10-11; studies labeled exact-split use it and have not been recomputed.”
+
+   **Rewrite:** “Tests labeled exact-split concern that cross-check and have not been repeated for the quoted estimator.” **Applicability disclosure—stay; calendar chronology can go.** Separately retain the paragraph’s consequential disclosure that the refined result was adopted after its published-result distance was known.
+
+3. **§4.6, p. 27:**  
+   > “First, the systematic sweep of the earlier budget (the May sweep) has a simulated truth input that differs from that of its seed-42 reference…”
+
+   **Cut (ledger)** the obsolete-budget investigation. Keep the corrected current construction in §§4.1–4.2. Any historical result retained elsewhere must still identify its affected budget.
+
+4. **§4.7, p. 28:**  
+   > “A 5D covariance construction that preceded it used both mean-centered and CV-centered unified throws… neither variant is used, and no magnitude from either is quoted.”
+
+   **Cut (ledger).** The current covariance’s centering and limitations already provide the necessary information.
+
+5. **§5.2, p. 33:**  
+   > “The attribution rule was fixed before the full run, but its clause for the undercoverage outcome was written after the pilot pulls had been seen.”
+
+   **Rewrite:** “Attribution of the undercoverage to completeness was partly developed after inspecting pilot pulls; it is partial and does not validate the quoted statistical block.” **Disclosure—stay.**
+
+6. **§9.6, p. 69:**  
+   > “The specification requires the null bound to be fixed before production, which was not done for this covariance… This note nevertheless uses this covariance and its projection.”
+
+   **Rewrite:** “This covariance is shown diagnostically despite metadata marking it unsuitable for use: its required preproduction null bound was not fixed.” **Disclosure—stay**, together with the restrictions on interpretation and the four limiting measurements. Replace administrative exposition with the precise permitted use.
+
+7. **§11.6, p. 96:**  
+   > “With complete batches the predeclared rule would have stopped… one batch earlier (B = 1200), with the same decisions.”
+
+   **Cut (ledger)** the counterfactual stopping chronology. **Keep** the interruption/recovery counts, recovered outcomes, original decision ensemble, and differing scopes of independent verification.
+
+8. **§A.2.6, p. 110:**  
+   > “An earlier check compared MnvH1D::GetTotalErrorMatrix with our band sum… That check could not detect that the Flux band omitted those constraint weights…”
+
+   **Cut (ledger)** the obsolete agreement calculation and its autopsy. Keep the check on the quoted weighted covariance and its scope. If the old check remains cited as evidence, its limitation must remain too.
+
+9. **§C.6, p. 127:**  
+   > “Second, switching would have required rerunning every unfold above and would have invalidated the flux-corrected covariance then just chosen for use; this consequence… decided the choice.”
+
+   **Rewrite:** “Purity subtraction was retained to preserve the existing covariance and consistent treatment across its components; its observed subtraction bias remains in configuration (a).” **Decision-basis disclosure—stay.** Job-script reconstruction belongs in the ledger.
+
+10. **§G.1, p. 134:**  
+    > “An earlier version of the package, RC1, was replayed… by a separate AI agent session (Opus 5.5)… its verifier passed.”
+
+    **Cut (ledger).** Describe verification of the package actually distributed. Preserve every stated reproduction exclusion and provenance gap; an earlier candidate’s successful replay does not describe the current package’s verification.
+
+Additional disclosures that must survive compression include the post-observation run-period uncertainty, reused development samples/seeds, invalid q₃ deformation, stopped coverage tests, data-informed joint-test design and budget extension, missing response uncertainty, unresolved generator-sample problems, and target-correction sensitivity. Their full enumeration need not recur in every summary.
+
+**4. Structure**
+
+**Yes—a clean main text plus a compact “Development history” appendix is better**, provided the appendix is selective rather than a public copy of the ledger.
+
+Use three layers:
+
+- **Main text:** reported configurations and results, current validation, and limitations beside the claims they qualify. Retain a short disclosure paragraph identifying consequential choices made after results were inspected.
+- **Technical appendices:** derivations and substantial diagnostic results, including relevant unsuccessful tests.
+- **Development-history appendix:** perhaps two or three pages, with columns: configuration/test; purpose; outcome/reason superseded; result affected; applicability to the released result; information already inspected.
+
+Include rows for estimator replacement, background-treatment changes, retired statistical bands, and consequential test adaptations. Exclude job chronology, internal review rounds, abandoned scripts, and repetitive regeneration checks.
+
+Keep public-version changes in a separate brief changelog. In App. G, distinguish the deposited package from planned capabilities; preserve unresolved metadata as explicit status statements.
+
+**5. Score**
+
+**Current reporting style: 6/10.** Strong specificity and unusually candid limitations; weakened by repetition, obsolete-object discussion, and reliance on internal-record language.
+
+**After these edits: about 8.5/10.** That improvement requires no more favorable results—only clearer identification of the reported objects, their evidence, and their limits.

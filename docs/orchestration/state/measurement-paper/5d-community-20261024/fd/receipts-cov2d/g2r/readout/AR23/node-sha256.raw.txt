@@ -1,0 +1,7 @@
+# node sha256 of $O/readout/AR23/, read O_NOATIME (the AR23 subset of ../d1/node-sha256.raw.txt)
+c060cb40232e0112ec440951f94841e87fc98b542a165eed2c8242898508a70a  readout/AR23/blocks_g2r_AR23.npz
+ae82601d7f8b2f5474bfe2a6060245c854eae2cbf90d706e8f1276971ff45872  readout/AR23/null_g2r_AR23.json
+1d49a41745a4e6c962568084a0b8ab162a6b62773c3bebb6f8223a23cfd7a09b  readout/AR23/out.sha256
+9534ddf451ab35725b282f7886ccfb72af9eff3639da65228d0f378ef8af4c64  readout/AR23/products.tsv
+eae6c9bcd17bcef56d87222e8d1fa9d6c354951142c0e14cb07ff2fea4bec2cc  readout/AR23/readout.log
+fb6d1f7fddfa18124bf097087a2f895582ef0991f9888c5ab1ce16cefbbe3079  readout/AR23/score_g2r_AR23.json

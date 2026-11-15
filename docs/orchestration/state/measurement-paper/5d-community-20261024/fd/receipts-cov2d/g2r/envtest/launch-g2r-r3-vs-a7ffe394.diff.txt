@@ -1,0 +1,10 @@
+9c9
+< # Usage: launch-g2r.sh envtest|envtest-r2|diag-tune|prepare <sha256>
+---
+> # Usage: launch-g2r.sh envtest|envtest-r2|envtest-r3|diag-tune|prepare <sha256>
+22a23
+>   envtest-r3) SRC=$H/connect-g2r-envtest-r3.sh; ARG="" ;;   # r2 STOPped: tmpfs atime under the glue test's O_NOATIME=0 patch
+25c26
+<   *) echo "usage: launch-g2r.sh envtest|envtest-r2|diag-tune|prepare <sha256>"; exit 2 ;;
+---
+>   *) echo "usage: launch-g2r.sh envtest|envtest-r2|envtest-r3|diag-tune|prepare <sha256>"; exit 2 ;;

@@ -1,0 +1,31 @@
+{
+ "schema": "t2a-g2r-driver/1",
+ "mode": "g2r",
+ "truth": "G18",
+ "t2a_split_sha256": "462ff4e204530a231af35b850b91d9ffe19eb9f6596ee6aace4aeb29449a2f79",
+ "pins_committed": {
+  "blocks": "7eb657b82ae953bdf0584eda27264c52a64bcb48baea52dfc194f5efe440ea3d",
+  "score": "849766942b3ecd9e6e72fd5db9d1a59815796b3f917875f8d0122b0c639088ec",
+  "null": "6bd5259d61b062af7b3a8b09af78fc544e3eba48e35a062a28fdcd923b90f6e0",
+  "capture": "3e954247c48115c953c6aa62bb33f47cbaca2193bf75ca3169e022fc40bc1da4"
+ },
+ "pins_used": {
+  "blocks": "55ad7cc4faa4680b49391a9d68f52fcaa707150bd1300915063d66a16be9bfbe",
+  "score": "27374aab74793444ee20561ced1066247b225a40067092d7d181e186128b9ec2",
+  "null": "d6b84ec086477d615a3240f3bdf4ea677ad0f24f801cfe912b885ac1e225f003",
+  "capture": "3e954247c48115c953c6aa62bb33f47cbaca2193bf75ca3169e022fc40bc1da4"
+ },
+ "module_pins": {
+  "nd-unfolding/fd_1b_null.py": "ec1402db5cbb5ca3002d7e45a714319d90a8b93654005d688b304a69caab4d38",
+  "2d-unfolding/cov2d/cov2d_null.py": "a92c0506d1ff86f497ee9d2c5bbb884aaed93320d2b7d5551f84885ad8a561b2",
+  "2d-unfolding/cov2d/cov2d.py": "76cbceba395bc6bbf8fc5cce9cf44fc0f21354dff8591cbdee578e0fddcaf8ed"
+ },
+ "ranks": [
+  73,
+  139
+ ],
+ "n_mc": null,
+ "a1_chi2_tol": "A5",
+ "label": "descriptive only (COV2D-G2R-DECLARATION.md:135-137); t2a_split.main() unchanged, PINS[T] as listed",
+ "t2a_split_rc": 0
+}

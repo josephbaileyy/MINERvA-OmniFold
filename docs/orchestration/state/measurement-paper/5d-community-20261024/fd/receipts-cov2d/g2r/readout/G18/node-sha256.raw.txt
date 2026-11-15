@@ -1,0 +1,7 @@
+# node sha256 of $O/readout/G18/, read O_NOATIME (the G18 subset of ../d1/node-sha256.raw.txt)
+55ad7cc4faa4680b49391a9d68f52fcaa707150bd1300915063d66a16be9bfbe  readout/G18/blocks_g2r_G18.npz
+d6b84ec086477d615a3240f3bdf4ea677ad0f24f801cfe912b885ac1e225f003  readout/G18/null_g2r_G18.json
+47536d93df66bd1b971a1b76d13e33fc7c7dbfca1c9a2eb6874efe7d32b52ae2  readout/G18/out.sha256
+f367f10a81c128650a7e5f6910f139f00aa3b062b01b5730f8f8716f8d5d4a6f  readout/G18/products.tsv
+40c7b617e0f2feb8ce422ebefb449450a7774b8003813922aa61ab441db155f7  readout/G18/readout.log
+27374aab74793444ee20561ced1066247b225a40067092d7d181e186128b9ec2  readout/G18/score_g2r_G18.json

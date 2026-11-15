@@ -1,0 +1,9 @@
+3c3
+< # Usage: launch-ll5d.sh ovl | calib | calib2 | gate-g18 | gate-ar23 | vicheck | calib3 | gate2-g18 | gate2-ar23 | pilot | bulk | rerun129 | null <sha256>
+---
+> # Usage: launch-ll5d.sh ovl | calib | calib2 | gate-g18 | gate-ar23 | vicheck | calib3 | gate2-g18 | gate2-ar23 | pilot | bulk | rerun129 | null | readout <sha256>
+25c25,26
+<   *) echo "usage: launch-ll5d.sh ovl|calib|calib2|gate-g18|gate-ar23|vicheck|calib3|gate2-g18|gate2-ar23|pilot|bulk|rerun129|null <sha256>"; exit 2 ;;
+---
+>   readout) SRC=$H/readout/connect-readout.sh; ARG=""; LOGP=/pscratch/sd/j/josephrb/ll5d-readout-r1/logs/connect-readout.log ;;   # section 11 step 7: the readout at G18 and AR23
+>   *) echo "usage: launch-ll5d.sh ovl|calib|calib2|gate-g18|gate-ar23|vicheck|calib3|gate2-g18|gate2-ar23|pilot|bulk|rerun129|null|readout <sha256>"; exit 2 ;;

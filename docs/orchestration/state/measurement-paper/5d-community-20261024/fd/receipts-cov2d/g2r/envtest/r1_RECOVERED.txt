@@ -1,0 +1,19 @@
+# run-envtest: recovered 2026-11-13 (06:28:24Z, file mtimes)
+
+The launcher's local record of r1 (launch-g2r.sh 4a88370d, connect 1b392259, 06:01:34Z-06:06:37Z) was deleted twice
+(between 06:26:17Z and 06:27:08Z, and at about 06:28Z, from the scratchpad files' mtimes) by `test_launch_g2r.sh`, which `rm -rf`ed `$H/run-envtest` (the test's own directory)
+between cases. I ran it against a launcher copy elsewhere, and the second time after an unchecked failed edit of the
+test. The test now runs the launcher from a copy in its temporary directory. Rebuilt (scratchpad recover/rebuild.py)
+from the launcher's stdout as captured in the cov2d session transcript (a521c516...jsonl):
+
+| file | how | verified |
+|---|---|---|
+| connect.log | the lines the launcher printed with `cat` | sha256 217bed77c01222470c724754fbb9b105c9a20c50b1f51c9254454f155546dd31 = the node-side sha256sum in removal.log, byte-exact |
+| removal.log | printed with `cat` | not independently (no recorded digest) |
+| fence.txt | printed with `cat` | not independently |
+| staged_sha.txt | rebuilt as `<node sha>  /dev/shm/josephrb-g2r-envtest.sh` from "staged rc=0 node=..." | sha256sum's format, not byte-verified |
+| launch.txt | from "launched rc=0 at <date>" | not byte-verified |
+| tail.txt | from "last line: DONE" | not byte-verified |
+| fence.sh | the FENCE heredoc of launch-g2r.sh 4a88370d | regenerated from that launcher |
+
+The node-side records ($O/logs/bound.sha256, pre.sha256, suite-*.log) were not touched.

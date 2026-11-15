@@ -1,0 +1,1614 @@
+{
+ "atime": {
+  "files": {
+   "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt": {
+    "atime_ns_first": 1793891894000000000,
+    "atime_ns_now": 1793891894000000000
+   },
+   "/pscratch/sd/j/josephrb/fd-1b-inv-20261101/i0/in/s1/s1_assembly.npz": {
+    "atime_ns_first": 1793622666000000000,
+    "atime_ns_now": 1793622666000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_2p2h_0.npz": {
+    "atime_ns_first": 1794555434000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_2p2h_1.npz": {
+    "atime_ns_first": 1794556251000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_2p2h_2.npz": {
+    "atime_ns_first": 1794557061000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_AGKYxF1pi_0.npz": {
+    "atime_ns_first": 1794557873000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_AGKYxF1pi_1.npz": {
+    "atime_ns_first": 1794558684000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_AhtBY_0.npz": {
+    "atime_ns_first": 1794559502000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_AhtBY_1.npz": {
+    "atime_ns_first": 1794560317000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_BhtBY_0.npz": {
+    "atime_ns_first": 1794561128000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_BhtBY_1.npz": {
+    "atime_ns_first": 1794561946000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_CCQEPauliSupViaKF_0.npz": {
+    "atime_ns_first": 1794562757000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_CCQEPauliSupViaKF_1.npz": {
+    "atime_ns_first": 1794563572000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_CV1uBY_0.npz": {
+    "atime_ns_first": 1794564380000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_CV1uBY_1.npz": {
+    "atime_ns_first": 1794565199000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_CV2uBY_0.npz": {
+    "atime_ns_first": 1794566014000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_CV2uBY_1.npz": {
+    "atime_ns_first": 1794566824000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_EtaNCEL_0.npz": {
+    "atime_ns_first": 1794567637000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_EtaNCEL_1.npz": {
+    "atime_ns_first": 1794568452000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_0.npz": {
+    "atime_ns_first": 1794569251000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_1.npz": {
+    "atime_ns_first": 1794570046000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_10.npz": {
+    "atime_ns_first": 1794560167000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_11.npz": {
+    "atime_ns_first": 1794560955000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_12.npz": {
+    "atime_ns_first": 1794561742000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_13.npz": {
+    "atime_ns_first": 1794562553000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_14.npz": {
+    "atime_ns_first": 1794563355000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_15.npz": {
+    "atime_ns_first": 1794564157000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_16.npz": {
+    "atime_ns_first": 1794564944000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_17.npz": {
+    "atime_ns_first": 1794565741000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_18.npz": {
+    "atime_ns_first": 1794566539000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_19.npz": {
+    "atime_ns_first": 1794567334000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_2.npz": {
+    "atime_ns_first": 1794570846000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_20.npz": {
+    "atime_ns_first": 1794568136000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_21.npz": {
+    "atime_ns_first": 1794568916000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_22.npz": {
+    "atime_ns_first": 1794569720000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_23.npz": {
+    "atime_ns_first": 1794570501000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_24.npz": {
+    "atime_ns_first": 1794554585000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_25.npz": {
+    "atime_ns_first": 1794555383000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_26.npz": {
+    "atime_ns_first": 1794556186000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_27.npz": {
+    "atime_ns_first": 1794556968000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_28.npz": {
+    "atime_ns_first": 1794557767000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_29.npz": {
+    "atime_ns_first": 1794558564000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_3.npz": {
+    "atime_ns_first": 1794554570000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_30.npz": {
+    "atime_ns_first": 1794559367000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_31.npz": {
+    "atime_ns_first": 1794560170000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_32.npz": {
+    "atime_ns_first": 1794560988000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_33.npz": {
+    "atime_ns_first": 1794561791000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_34.npz": {
+    "atime_ns_first": 1794562597000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_35.npz": {
+    "atime_ns_first": 1794563378000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_36.npz": {
+    "atime_ns_first": 1794564184000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_37.npz": {
+    "atime_ns_first": 1794564998000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_38.npz": {
+    "atime_ns_first": 1794565778000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_39.npz": {
+    "atime_ns_first": 1794566575000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_4.npz": {
+    "atime_ns_first": 1794555363000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_40.npz": {
+    "atime_ns_first": 1794567378000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_41.npz": {
+    "atime_ns_first": 1794568163000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_42.npz": {
+    "atime_ns_first": 1794568978000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_43.npz": {
+    "atime_ns_first": 1794569788000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_44.npz": {
+    "atime_ns_first": 1794570573000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_45.npz": {
+    "atime_ns_first": 1794554564000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_46.npz": {
+    "atime_ns_first": 1794555347000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_47.npz": {
+    "atime_ns_first": 1794556137000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_48.npz": {
+    "atime_ns_first": 1794556929000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_49.npz": {
+    "atime_ns_first": 1794557711000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_5.npz": {
+    "atime_ns_first": 1794556154000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_50.npz": {
+    "atime_ns_first": 1794558516000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_51.npz": {
+    "atime_ns_first": 1794559313000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_52.npz": {
+    "atime_ns_first": 1794560109000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_53.npz": {
+    "atime_ns_first": 1794560907000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_54.npz": {
+    "atime_ns_first": 1794561693000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_55.npz": {
+    "atime_ns_first": 1794562483000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_56.npz": {
+    "atime_ns_first": 1794563284000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_57.npz": {
+    "atime_ns_first": 1794564062000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_58.npz": {
+    "atime_ns_first": 1794564870000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_59.npz": {
+    "atime_ns_first": 1794565659000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_6.npz": {
+    "atime_ns_first": 1794556969000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_60.npz": {
+    "atime_ns_first": 1794566436000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_61.npz": {
+    "atime_ns_first": 1794567243000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_62.npz": {
+    "atime_ns_first": 1794568022000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_63.npz": {
+    "atime_ns_first": 1794568818000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_64.npz": {
+    "atime_ns_first": 1794569609000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_65.npz": {
+    "atime_ns_first": 1794570376000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_66.npz": {
+    "atime_ns_first": 1794554578000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_67.npz": {
+    "atime_ns_first": 1794555377000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_68.npz": {
+    "atime_ns_first": 1794556173000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_69.npz": {
+    "atime_ns_first": 1794556973000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_7.npz": {
+    "atime_ns_first": 1794557770000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_70.npz": {
+    "atime_ns_first": 1794557791000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_71.npz": {
+    "atime_ns_first": 1794558577000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_72.npz": {
+    "atime_ns_first": 1794559384000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_73.npz": {
+    "atime_ns_first": 1794560179000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_74.npz": {
+    "atime_ns_first": 1794560972000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_75.npz": {
+    "atime_ns_first": 1794561753000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_76.npz": {
+    "atime_ns_first": 1794562561000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_77.npz": {
+    "atime_ns_first": 1794563352000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_78.npz": {
+    "atime_ns_first": 1794564138000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_79.npz": {
+    "atime_ns_first": 1794564926000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_8.npz": {
+    "atime_ns_first": 1794558560000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_80.npz": {
+    "atime_ns_first": 1794565720000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_81.npz": {
+    "atime_ns_first": 1794566520000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_82.npz": {
+    "atime_ns_first": 1794567304000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_83.npz": {
+    "atime_ns_first": 1794568096000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_84.npz": {
+    "atime_ns_first": 1794568893000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_85.npz": {
+    "atime_ns_first": 1794569692000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_86.npz": {
+    "atime_ns_first": 1794570489000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_87.npz": {
+    "atime_ns_first": 1794554571000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_88.npz": {
+    "atime_ns_first": 1794555363000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_89.npz": {
+    "atime_ns_first": 1794556164000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_9.npz": {
+    "atime_ns_first": 1794559366000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_90.npz": {
+    "atime_ns_first": 1794556971000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_91.npz": {
+    "atime_ns_first": 1794557759000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_92.npz": {
+    "atime_ns_first": 1794558537000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_93.npz": {
+    "atime_ns_first": 1794559302000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_94.npz": {
+    "atime_ns_first": 1794560112000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_95.npz": {
+    "atime_ns_first": 1794560902000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_96.npz": {
+    "atime_ns_first": 1794561688000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_97.npz": {
+    "atime_ns_first": 1794562493000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_98.npz": {
+    "atime_ns_first": 1794563292000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_99.npz": {
+    "atime_ns_first": 1794564097000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_FrAbs_N_0.npz": {
+    "atime_ns_first": 1794564909000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_FrAbs_N_1.npz": {
+    "atime_ns_first": 1794565717000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_FrAbs_pi_0.npz": {
+    "atime_ns_first": 1794566522000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_FrAbs_pi_1.npz": {
+    "atime_ns_first": 1794567327000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_FrCEx_N_0.npz": {
+    "atime_ns_first": 1794568129000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_FrCEx_N_1.npz": {
+    "atime_ns_first": 1794568932000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_FrCEx_pi_0.npz": {
+    "atime_ns_first": 1794569735000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_FrCEx_pi_1.npz": {
+    "atime_ns_first": 1794570539000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_FrElas_N_0.npz": {
+    "atime_ns_first": 1794554588000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_FrElas_N_1.npz": {
+    "atime_ns_first": 1794555398000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_FrElas_pi_0.npz": {
+    "atime_ns_first": 1794556212000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_FrElas_pi_1.npz": {
+    "atime_ns_first": 1794557024000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_FrInel_N_0.npz": {
+    "atime_ns_first": 1794557837000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_FrInel_N_1.npz": {
+    "atime_ns_first": 1794558653000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_FrPiProd_N_0.npz": {
+    "atime_ns_first": 1794559468000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_FrPiProd_N_1.npz": {
+    "atime_ns_first": 1794560284000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_FrPiProd_pi_0.npz": {
+    "atime_ns_first": 1794561095000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_FrPiProd_pi_1.npz": {
+    "atime_ns_first": 1794561912000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_GEANT_Neutron_0.npz": {
+    "atime_ns_first": 1794562717000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_GEANT_Neutron_1.npz": {
+    "atime_ns_first": 1794563525000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_GEANT_Pion_0.npz": {
+    "atime_ns_first": 1794564342000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_GEANT_Pion_1.npz": {
+    "atime_ns_first": 1794565140000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_GEANT_Proton_0.npz": {
+    "atime_ns_first": 1794565950000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_GEANT_Proton_1.npz": {
+    "atime_ns_first": 1794566760000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_HighQ2_0.npz": {
+    "atime_ns_first": 1794567572000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_HighQ2_1.npz": {
+    "atime_ns_first": 1794568386000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_LowQ2_0.npz": {
+    "atime_ns_first": 1794569197000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_LowQ2_1.npz": {
+    "atime_ns_first": 1794570007000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_MFP_N_0.npz": {
+    "atime_ns_first": 1794570817000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_MFP_N_1.npz": {
+    "atime_ns_first": 1794554587000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_MFP_pi_0.npz": {
+    "atime_ns_first": 1794555400000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_MFP_pi_1.npz": {
+    "atime_ns_first": 1794556218000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_MaCCQE_0.npz": {
+    "atime_ns_first": 1794557032000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_MaCCQE_1.npz": {
+    "atime_ns_first": 1794557849000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_MaNCEL_0.npz": {
+    "atime_ns_first": 1794558665000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_MaNCEL_1.npz": {
+    "atime_ns_first": 1794559477000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_MaRES_0.npz": {
+    "atime_ns_first": 1794560303000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_MaRES_1.npz": {
+    "atime_ns_first": 1794561121000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_MinosEfficiency_0.npz": {
+    "atime_ns_first": 1794561930000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_MinosEfficiency_1.npz": {
+    "atime_ns_first": 1794562737000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_MvRES_0.npz": {
+    "atime_ns_first": 1794563554000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_MvRES_1.npz": {
+    "atime_ns_first": 1794564369000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_NormDISCC_0.npz": {
+    "atime_ns_first": 1794565181000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_NormDISCC_1.npz": {
+    "atime_ns_first": 1794565991000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_NormNCRES_0.npz": {
+    "atime_ns_first": 1794566803000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_NormNCRES_1.npz": {
+    "atime_ns_first": 1794567615000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_RDecBR1gamma_0.npz": {
+    "atime_ns_first": 1794568428000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_RDecBR1gamma_1.npz": {
+    "atime_ns_first": 1794569238000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Rvn1pi_0.npz": {
+    "atime_ns_first": 1794570054000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Rvn1pi_1.npz": {
+    "atime_ns_first": 1794570854000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Rvn2pi_0.npz": {
+    "atime_ns_first": 1794554621000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Rvn2pi_1.npz": {
+    "atime_ns_first": 1794555420000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Rvp2pi_0.npz": {
+    "atime_ns_first": 1794556232000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Rvp2pi_1.npz": {
+    "atime_ns_first": 1794557037000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Theta_Delta2Npi_0.npz": {
+    "atime_ns_first": 1794557847000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Theta_Delta2Npi_1.npz": {
+    "atime_ns_first": 1794558659000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_VecFFCCQEshape_0.npz": {
+    "atime_ns_first": 1794559470000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_VecFFCCQEshape_1.npz": {
+    "atime_ns_first": 1794560283000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_central_T.npz": {
+    "atime_ns_first": 1794513236000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_seed_T.npz": {
+    "atime_ns_first": 1794554589000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_1.npz": {
+    "atime_ns_first": 1794560970000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_10.npz": {
+    "atime_ns_first": 1794566712000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_11.npz": {
+    "atime_ns_first": 1794567350000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_12.npz": {
+    "atime_ns_first": 1794567986000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_13.npz": {
+    "atime_ns_first": 1794568623000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_14.npz": {
+    "atime_ns_first": 1794554443000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_15.npz": {
+    "atime_ns_first": 1794555074000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_16.npz": {
+    "atime_ns_first": 1794555715000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_17.npz": {
+    "atime_ns_first": 1794556350000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_18.npz": {
+    "atime_ns_first": 1794556986000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_19.npz": {
+    "atime_ns_first": 1794557617000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_2.npz": {
+    "atime_ns_first": 1794561612000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_20.npz": {
+    "atime_ns_first": 1794558250000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_21.npz": {
+    "atime_ns_first": 1794558876000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_22.npz": {
+    "atime_ns_first": 1794559499000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_23.npz": {
+    "atime_ns_first": 1794560130000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_24.npz": {
+    "atime_ns_first": 1794560753000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_25.npz": {
+    "atime_ns_first": 1794561379000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_26.npz": {
+    "atime_ns_first": 1794562008000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_27.npz": {
+    "atime_ns_first": 1794562635000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_28.npz": {
+    "atime_ns_first": 1794563259000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_29.npz": {
+    "atime_ns_first": 1794563883000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_3.npz": {
+    "atime_ns_first": 1794562246000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_30.npz": {
+    "atime_ns_first": 1794564514000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_31.npz": {
+    "atime_ns_first": 1794565136000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_32.npz": {
+    "atime_ns_first": 1794565763000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_33.npz": {
+    "atime_ns_first": 1794566395000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_34.npz": {
+    "atime_ns_first": 1794567018000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_35.npz": {
+    "atime_ns_first": 1794554439000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_36.npz": {
+    "atime_ns_first": 1794555075000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_37.npz": {
+    "atime_ns_first": 1794555715000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_38.npz": {
+    "atime_ns_first": 1794556359000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_39.npz": {
+    "atime_ns_first": 1794556994000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_4.npz": {
+    "atime_ns_first": 1794562882000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_40.npz": {
+    "atime_ns_first": 1794557628000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_41.npz": {
+    "atime_ns_first": 1794558266000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_42.npz": {
+    "atime_ns_first": 1794558905000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_43.npz": {
+    "atime_ns_first": 1794559548000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_44.npz": {
+    "atime_ns_first": 1794560183000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_45.npz": {
+    "atime_ns_first": 1794560819000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_46.npz": {
+    "atime_ns_first": 1794561459000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_47.npz": {
+    "atime_ns_first": 1794562099000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_48.npz": {
+    "atime_ns_first": 1794562738000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_49.npz": {
+    "atime_ns_first": 1794563374000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_5.npz": {
+    "atime_ns_first": 1794563519000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_50.npz": {
+    "atime_ns_first": 1794564013000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_6.npz": {
+    "atime_ns_first": 1794564154000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_7.npz": {
+    "atime_ns_first": 1794564790000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_8.npz": {
+    "atime_ns_first": 1794565435000000000,
+    "atime_ns_now": 1794657014000000000
+   },
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_9.npz": {
+    "atime_ns_first": 1794566072000000000,
+    "atime_ns_now": 1794657014000000000
+   }
+  },
+  "moved": [
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_2p2h_0.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_2p2h_1.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_2p2h_2.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_AGKYxF1pi_0.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_AGKYxF1pi_1.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_AhtBY_0.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_AhtBY_1.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_BhtBY_0.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_BhtBY_1.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_CCQEPauliSupViaKF_0.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_CCQEPauliSupViaKF_1.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_CV1uBY_0.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_CV1uBY_1.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_CV2uBY_0.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_CV2uBY_1.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_EtaNCEL_0.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_EtaNCEL_1.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_0.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_1.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_10.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_11.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_12.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_13.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_14.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_15.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_16.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_17.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_18.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_19.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_2.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_20.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_21.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_22.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_23.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_24.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_25.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_26.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_27.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_28.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_29.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_3.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_30.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_31.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_32.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_33.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_34.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_35.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_36.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_37.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_38.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_39.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_4.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_40.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_41.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_42.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_43.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_44.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_45.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_46.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_47.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_48.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_49.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_5.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_50.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_51.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_52.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_53.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_54.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_55.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_56.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_57.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_58.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_59.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_6.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_60.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_61.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_62.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_63.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_64.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_65.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_66.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_67.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_68.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_69.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_7.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_70.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_71.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_72.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_73.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_74.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_75.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_76.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_77.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_78.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_79.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_8.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_80.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_81.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_82.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_83.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_84.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_85.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_86.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_87.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_88.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_89.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_9.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_90.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_91.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_92.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_93.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_94.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_95.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_96.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_97.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_98.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Flux_99.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_FrAbs_N_0.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_FrAbs_N_1.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_FrAbs_pi_0.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_FrAbs_pi_1.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_FrCEx_N_0.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_FrCEx_N_1.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_FrCEx_pi_0.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_FrCEx_pi_1.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_FrElas_N_0.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_FrElas_N_1.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_FrElas_pi_0.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_FrElas_pi_1.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_FrInel_N_0.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_FrInel_N_1.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_FrPiProd_N_0.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_FrPiProd_N_1.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_FrPiProd_pi_0.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_FrPiProd_pi_1.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_GEANT_Neutron_0.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_GEANT_Neutron_1.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_GEANT_Pion_0.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_GEANT_Pion_1.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_GEANT_Proton_0.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_GEANT_Proton_1.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_HighQ2_0.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_HighQ2_1.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_LowQ2_0.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_LowQ2_1.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_MFP_N_0.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_MFP_N_1.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_MFP_pi_0.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_MFP_pi_1.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_MaCCQE_0.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_MaCCQE_1.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_MaNCEL_0.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_MaNCEL_1.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_MaRES_0.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_MaRES_1.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_MinosEfficiency_0.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_MinosEfficiency_1.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_MvRES_0.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_MvRES_1.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_NormDISCC_0.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_NormDISCC_1.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_NormNCRES_0.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_NormNCRES_1.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_RDecBR1gamma_0.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_RDecBR1gamma_1.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Rvn1pi_0.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Rvn1pi_1.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Rvn2pi_0.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Rvn2pi_1.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Rvp2pi_0.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Rvp2pi_1.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Theta_Delta2Npi_0.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_Theta_Delta2Npi_1.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_VecFFCCQEshape_0.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_block_VecFFCCQEshape_1.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_central_T.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_seed_T.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_1.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_10.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_11.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_12.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_13.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_14.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_15.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_16.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_17.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_18.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_19.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_2.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_20.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_21.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_22.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_23.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_24.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_25.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_26.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_27.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_28.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_29.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_3.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_30.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_31.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_32.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_33.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_34.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_35.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_36.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_37.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_38.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_39.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_4.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_40.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_41.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_42.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_43.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_44.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_45.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_46.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_47.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_48.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_49.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_5.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_50.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_6.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_7.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_8.npz",
+   "/pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_stat_9.npz"
+  ]
+ },
+ "g18/all": {
+  "C_T": {
+   "chi2_cut": 18.113191338735746,
+   "match_rel": 4.093640261633501e-16,
+   "n_mc": 2000000,
+   "ndf": 16,
+   "p_cell": [
+    0.6624325,
+    0.66527,
+    0.6817215,
+    0.6803905,
+    0.6875405,
+    0.6807685,
+    0.683223,
+    0.678365,
+    0.6779735,
+    0.6817355,
+    0.6811875,
+    0.6826915,
+    0.668561,
+    0.680599,
+    0.682287,
+    0.681099
+   ],
+   "q_joint": 0.7060525,
+   "se_cell": [
+    0.000334376795654057,
+    0.00033368085583383413,
+    0.00032937615004562034,
+    0.00032974176828978616,
+    0.000327741179026797,
+    0.00032963824824172784,
+    0.0003289599764948618,
+    0.00033029223936916835,
+    0.0003303978157447095,
+    0.00032937228787479223,
+    0.00032952320847229414,
+    0.0003291077451441625,
+    0.0003328567178824847,
+    0.00032968469876459237,
+    0.0003292198730567461,
+    0.00032954753238265946
+   ],
+   "se_joint": 0.00032213534984828194,
+   "seed": 4770320,
+   "size": {
+    "cell": [
+     0.0012083652993792626,
+     0.0012589836104650988,
+     0.0011585911171159756,
+     0.001368827633837941,
+     0.0012289132762315907,
+     0.0013058651827169427,
+     0.0009568782767346546,
+     0.0011893459165701484,
+     0.0012491393976042852,
+     0.0011565445873470653,
+     0.0012391449249192995,
+     0.0010243083962908589,
+     0.0012396575174540114,
+     0.0013337669522050632,
+     0.0010784868639868823,
+     0.001252974626602206
+    ],
+    "cells_union_bound": 0.019249793579461286,
+    "joint": 0.020559465675089705,
+    "per_truth_union_bound": 0.03980925925455099
+   },
+   "thresholds": {
+    "alpha_cell": 0.0015625,
+    "alpha_joint": 0.025,
+    "k_cell": [
+     173,
+     174,
+     179,
+     179,
+     181,
+     179,
+     179,
+     178,
+     178,
+     179,
+     179,
+     179,
+     175,
+     179,
+     179,
+     179
+    ],
+    "k_joint": 195,
+    "n": 300,
+    "p_used": [
+     0.6614293696130378,
+     0.6642689574324985,
+     0.6807333715498631,
+     0.6794012746951307,
+     0.6865572764629196,
+     0.6797795852552748,
+     0.6822361200705155,
+     0.6773741232818925,
+     0.6769823065527659,
+     0.6807473831363757,
+     0.680198930374583,
+     0.6817041767645675,
+     0.6675624298463525,
+     0.6796099459037062,
+     0.6812993403808297,
+     0.6801103574028521
+    ],
+    "q_used": 0.7050860939504551
+   }
+  },
+  "C_T_minus_mec": {
+   "chi2_cut": 18.113191338735746,
+   "match_rel": 3.2759789198448194e-16,
+   "n_mc": 2000000,
+   "ndf": 16,
+   "p_cell": [
+    0.6623695,
+    0.665104,
+    0.681756,
+    0.680422,
+    0.6876075,
+    0.6805235,
+    0.6837475,
+    0.678131,
+    0.6781105,
+    0.681804,
+    0.681197,
+    0.682731,
+    0.668171,
+    0.6804505,
+    0.6822275,
+    0.680926
+   ],
+   "q_joint": 0.706844,
+   "se_cell": [
+    0.0003343920943067808,
+    0.00033372194202958844,
+    0.0003293666319346876,
+    0.00032973315113588443,
+    0.0003277220056265294,
+    0.00032970537298302404,
+    0.0003288136677844688,
+    0.0003303553744371355,
+    0.000330360900977817,
+    0.0003293533858820948,
+    0.0003295205966180263,
+    0.00032909678032381297,
+    0.00033295533841568,
+    0.00032972535317272013,
+    0.00032923634234676314,
+    0.00032959504131888876
+   ],
+   "se_joint": 0.00032188162394271595,
+   "seed": 4770320,
+   "size": {
+    "cell": [
+     0.0012178085140182838,
+     0.0012850296030414922,
+     0.0011535537948287754,
+     0.0013634778157332833,
+     0.0012185487671979823,
+     0.001346367865799234,
+     0.0013336044205483275,
+     0.0012247647129456176,
+     0.0012279127116570534,
+     0.0011465783713592707,
+     0.0012376686259126732,
+     0.0010191525235579376,
+     0.001300938459129678,
+     0.0013586538017380085,
+     0.0010866720116624012,
+     0.0012804132438305354
+    ],
+    "cells_union_bound": 0.019801145242960554,
+    "joint": 0.019087944715309918,
+    "per_truth_union_bound": 0.03888908995827047
+   },
+   "thresholds": {
+    "alpha_cell": 0.0015625,
+    "alpha_joint": 0.025,
+    "k_cell": [
+     173,
+     174,
+     179,
+     179,
+     181,
+     179,
+     180,
+     178,
+     178,
+     179,
+     179,
+     179,
+     175,
+     179,
+     179,
+     179
+    ],
+    "k_joint": 195,
+    "n": 300,
+    "p_used": [
+     0.6613663237170797,
+     0.6641028341739112,
+     0.680767900104196,
+     0.6794328005465923,
+     0.6866243339831205,
+     0.6795343838810509,
+     0.6827610589966465,
+     0.6771399338766886,
+     0.6771194172970665,
+     0.6808159398423537,
+     0.680208438210146,
+     0.6817437096590285,
+     0.667172133984753,
+     0.6794613239404818,
+     0.6812397909729597,
+     0.6799372148760434
+    ],
+    "q_used": 0.7058783551281719
+   }
+  }
+ },
+ "g18/minus2": {
+  "C_T": {
+   "chi2_cut": 18.113191338735746,
+   "match_rel": 4.0945848544276704e-16,
+   "n_mc": 2000000,
+   "ndf": 16,
+   "p_cell": [
+    0.6620185,
+    0.665145,
+    0.68177,
+    0.68053,
+    0.687765,
+    0.6803845,
+    0.683681,
+    0.678505,
+    0.6781535,
+    0.682351,
+    0.681469,
+    0.6826735,
+    0.668609,
+    0.6807945,
+    0.682733,
+    0.6816565
+   ],
+   "q_joint": 0.7066015,
+   "se_cell": [
+    0.0003344772082352922,
+    0.0003337117985440431,
+    0.00032936276891901427,
+    0.0003297035934745025,
+    0.00032767690243210615,
+    0.000329743409456315,
+    0.0003288322446468716,
+    0.0003302544208447481,
+    0.00033034930788314814,
+    0.00032920215126803164,
+    0.00032944574821888354,
+    0.0003291127408637882,
+    0.00033284456216002686,
+    0.0003296311186536778,
+    0.00032909622507026724,
+    0.00032939407706252856
+   ],
+   "se_joint": 0.00032195948518233623,
+   "seed": 4770310,
+   "size": {
+    "cell": [
+     0.0012716565172198936,
+     0.0012785515594758458,
+     0.0011515153331218095,
+     0.0013452787987738913,
+     0.0011944954356730307,
+     0.001369848795886257,
+     0.0013447307184806076,
+     0.0011686016009213268,
+     0.0012213180091945064,
+     0.0010697451563935541,
+     0.0011960696729108645,
+     0.001026665754620877,
+     0.001232298887983872,
+     0.0013016322974412407,
+     0.001018892094686224,
+     0.0011681359287916005
+    ],
+    "cells_union_bound": 0.019359436561575405,
+    "joint": 0.019529134934034784,
+    "per_truth_union_bound": 0.03888857149561019
+   },
+   "thresholds": {
+    "alpha_cell": 0.0015625,
+    "alpha_joint": 0.025,
+    "k_cell": [
+     173,
+     174,
+     179,
+     179,
+     181,
+     179,
+     180,
+     178,
+     178,
+     179,
+     179,
+     179,
+     175,
+     179,
+     179,
+     179
+    ],
+    "k_joint": 195,
+    "n": 300,
+    "p_used": [
+     0.6610150683752941,
+     0.6641438646043678,
+     0.680781911693243,
+     0.6795408892195764,
+     0.6867819692927036,
+     0.679395269771631,
+     0.6826945032660594,
+     0.6775142367374658,
+     0.6771624520763505,
+     0.6813633935461959,
+     0.6804806627553434,
+     0.6816861617774087,
+     0.66761046631352,
+     0.6798056066440389,
+     0.6817457113247892,
+     0.6806683177688124
+    ],
+    "q_used": 0.705635621544453
+   }
+  },
+  "C_T_minus_mec": {
+   "chi2_cut": 18.113191338735746,
+   "match_rel": 3.276735086496415e-16,
+   "n_mc": 2000000,
+   "ndf": 16,
+   "p_cell": [
+    0.661975,
+    0.665114,
+    0.681794,
+    0.680481,
+    0.6879335,
+    0.68034,
+    0.6838305,
+    0.6785295,
+    0.678213,
+    0.682171,
+    0.681587,
+    0.682692,
+    0.668336,
+    0.6806585,
+    0.6826125,
+    0.6817245
+   ],
+   "q_joint": 0.707609,
+   "se_cell": [
+    0.0003344877422081413,
+    0.0003337194682693834,
+    0.00032935614580875824,
+    0.00032971700641535006,
+    0.00032762860038292594,
+    0.00032975557948274357,
+    0.0003287904707178646,
+    0.00033024779910678436,
+    0.0003303332609888081,
+    0.0003292519755134356,
+    0.0003294132370071063,
+    0.0003291076063660638,
+    0.0003329136457882134,
+    0.00032966839883263757,
+    0.00032912966657819683,
+    0.00032937532246644555
+   ],
+   "se_joint": 0.0003216352772310587,
+   "seed": 4770310,
+   "size": {
+    "cell": [
+     0.0012784781341926117,
+     0.0012834468567121545,
+     0.001148028423238261,
+     0.0013535083601567042,
+     0.0011692390059804402,
+     0.0013774439367597257,
+     0.0013198342859456016,
+     0.0011650052523471009,
+     0.0012122456931721373,
+     0.0010944965922685718,
+     0.0011784203248213958,
+     0.0010242429843359607,
+     0.001274684710004624,
+     0.0013239116936845446,
+     0.001034691262694019,
+     0.001158152298889137
+    ],
+    "cells_union_bound": 0.019395829815202992,
+    "joint": 0.017750374579548537,
+    "per_truth_union_bound": 0.037146204394751525
+   },
+   "thresholds": {
+    "alpha_cell": 0.0015625,
+    "alpha_joint": 0.025,
+    "k_cell": [
+     173,
+     174,
+     179,
+     179,
+     181,
+     179,
+     180,
+     178,
+     178,
+     179,
+     179,
+     179,
+     175,
+     179,
+     179,
+     179
+    ],
+    "k_joint": 195,
+    "n": 300,
+    "p_used": [
+     0.6609715367733755,
+     0.6641128415951918,
+     0.6808059315625737,
+     0.679491848980754,
+     0.6869506141988512,
+     0.6793507332615517,
+     0.6828441285878464,
+     0.6775387566026797,
+     0.6772220002170335,
+     0.6811832440734596,
+     0.6805987602889787,
+     0.6817046771809018,
+     0.6673372590626354,
+     0.6796694948035021,
+     0.6816251110002653,
+     0.6807363740326006
+    ],
+    "q_used": 0.7066440941683069
+   }
+  }
+ },
+ "made_from": {
+  "U_sha256": "54dd57af80ab148b180d94ae38b35e5444b3fa87f2c39737be4b2fd613115ddf",
+  "cmodel_json_sha256": "3cfdc6a5b8c6cea5f99b4678e27f6ca5f7973ee57a79b9d139798f0751cfcd60",
+  "definition_sha256": "b67907615fe2e903e60ae6caa1c141fa007676c0a1b3ae9f42490d331bfdda89"
+ },
+ "products_sha256": "c16e9ce045ed255dda49c8031ca6769cf4285d25fd8f5b3fe86d5a2f8d8508a9",
+ "removal_control": {
+  "limit": 4.574585020154214e-92,
+  "max_abs_dev": 7.490682167507517e-96,
+  "passes": true
+ },
+ "schema": "ll5d-b/1",
+ "step": "null",
+ "truth": "g18",
+ "verdict": "PASS"
+}

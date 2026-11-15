@@ -1,0 +1,29 @@
+host login27 table runs 529 lanes 26
+lane AR23_Ua.1  runs 22 walls 22 sums 22 ok
+lane AR23_Ua.2  runs 22 walls 22 sums 22 ok
+lane AR23_Ub.1  runs 22 walls 22 sums 22 ok
+lane AR23_Ub.2  runs 22 walls 22 sums 22 ok
+lane AR23_Uc.1  runs 22 walls 22 sums 22 ok
+lane AR23_Uc.2  runs 22 walls 22 sums 22 ok
+lane AR23_Ud.1  runs 22 walls 22 sums 22 ok
+lane AR23_Ud.2  runs 21 walls 21 sums 21 ok
+lane D_Ua.1     runs 22 walls 22 sums 22 ok
+lane D_Ua.2     runs 22 walls 22 sums 22 ok
+lane D_Ub.1     runs 22 walls 22 sums 22 ok
+lane D_Ub.2     runs 22 walls 22 sums 22 ok
+lane D_Uc.1     runs 22 walls 22 sums 22 ok
+lane D_Uc.2     runs 22 walls 22 sums 22 ok
+lane D_Ud.1     runs 22 walls 22 sums 22 ok
+lane D_Ud.2     runs 23 walls 23 sums 23 ok
+lane G18_Ua.1   runs 22 walls 22 sums 22 ok
+lane G18_Ua.2   runs 22 walls 22 sums 22 ok
+lane G18_Ub.1   runs 22 walls 22 sums 22 ok
+lane G18_Ub.2   runs 22 walls 22 sums 22 ok
+lane G18_Uc.1   runs 22 walls 22 sums 22 ok
+lane G18_Uc.2   runs 22 walls 22 sums 22 ok
+lane G18_Ud.1   runs 22 walls 22 sums 22 ok
+lane G18_Ud.2   runs 21 walls 21 sums 21 ok
+no walls file for lane envtest.1 runs ['E_pre_MaRES_0']
+no walls file for lane envtest.2 runs ['E_post_MaRES_0']
+walls lines 527 mismatched lanes 0 nonzero rc []
+LANE-CHECK PASS

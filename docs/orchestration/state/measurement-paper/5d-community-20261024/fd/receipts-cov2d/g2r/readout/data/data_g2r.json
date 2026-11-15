@@ -1,0 +1,212 @@
+{
+ "G10": {
+  "pass": true,
+  "values": {
+   "integral_sigma_pct": [
+    4.759173209888885,
+    4.759173209888885
+   ],
+   "median_pct": [
+    6.413665927768751,
+    6.413665927768751
+   ]
+  }
+ },
+ "G6": {
+  "pass": true,
+  "per_band": {
+   "2p2h": 0.0,
+   "AGKYxF1pi": 0.0,
+   "AhtBY": 0.0,
+   "BhtBY": 0.0,
+   "CCQEPauliSupViaKF": 0.0,
+   "CV1uBY": 0.0,
+   "CV2uBY": 0.0,
+   "EtaNCEL": 0.0,
+   "Flux": 4.5852173151654e-16,
+   "FrAbs_N": 0.0,
+   "FrAbs_pi": 0.0,
+   "FrCEx_N": 0.0,
+   "FrCEx_pi": 0.0,
+   "FrElas_N": 0.0,
+   "FrElas_pi": 0.0,
+   "FrInel_N": 0.0,
+   "FrPiProd_N": 0.0,
+   "FrPiProd_pi": 0.0,
+   "GEANT_Neutron": 0.0,
+   "GEANT_Pion": 0.0,
+   "GEANT_Proton": 0.0,
+   "HighQ2": 0.0,
+   "LowQ2": 0.0,
+   "MFP_N": 0.0,
+   "MFP_pi": 0.0,
+   "MaCCQE": 0.0,
+   "MaNCEL": 0.0,
+   "MaRES": 0.0,
+   "MinosEfficiency": 0.0,
+   "MvRES": 0.0,
+   "NormDISCC": 0.0,
+   "NormNCRES": 0.0,
+   "RDecBR1gamma": 0.0,
+   "Rvn1pi": 0.0,
+   "Rvn2pi": 0.0,
+   "Rvp2pi": 0.0,
+   "Theta_Delta2Npi": 0.0,
+   "VecFFCCQEshape": 0.0
+  },
+  "tol": 1e-12,
+  "worst_rel": 4.5852173151654e-16
+ },
+ "M": "401733bce290ce122cfbf38f1526e120f174b3ec",
+ "atime_checked": 359,
+ "atime_moved": [],
+ "controls_failed": [],
+ "floor": {
+  "bitwise_equal": {
+   "Flux:23": false,
+   "MaRES:0": false
+  },
+  "readings": {
+   "corr": {
+    "max_abs_delta_rho": 8.644238103094892e-12,
+    "median_abs_delta_rho": 1.9998586120451023e-13
+   },
+   "eps": {
+    "139": {
+     "coupling_to_discarded": 5.63309626644267e-53,
+     "directions": 139,
+     "eps": 1.4762277747129414e-10
+    },
+    "73": {
+     "coupling_to_discarded": 5.7113168921345236e-52,
+     "directions": 73,
+     "eps": 7.87524374047798e-11
+    },
+    "retained": {
+     "coupling_to_discarded": 8.520525727784226e-65,
+     "directions": 205,
+     "eps": 2.5868071632186637e-10
+    }
+   },
+   "rank": {
+    "after": 205,
+    "before": 205
+   }
+  }
+ },
+ "host": "login02",
+ "inputs": {
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopData_1A.root": "d7c57e84c5f07a74818f53ae0571366d3f135af3d4059daa6c7f36857bd84fe3",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopData_1B.root": "b648ee4d4f3eb053a6eeb6564f00d9d54ea1786717b5cc1f9adf30d29c5a45bf",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopData_1C.root": "1efe76c7196b77e1ba16b83731d3bc585dce1f96292e40b683ece57e49428344",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopData_1D.root": "d706af08ea3a9c43ef66ffb2d369fd7398bb229c88c9072de5674dd66b46d13a",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopData_1E.root": "7c7a95f54431a581df4b1b427cba6128974b309e861f23fd6f243aab0f910a4b",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopData_1F.root": "9991635c593ee16617c793ab59cd6b331b2273bf030b41d05a79e5d14f366923",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopData_1G.root": "b3ec03e304a3dbe19c2aa7505427bc06fd81e7388afe1f754dbb48b782c2451d",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopData_1L.root": "c42829d9df2aed7417cb73d1b4060ccce7c55d7ef8acd74624ceb461095a9ae8",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopData_1M.root": "ed56c3adfe15d6588016194629802599795dbbca11bc67df3025d7eb1668bb55",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopData_1N.root": "4f369303730eae4a56c4a52e201332b145b284321dd299b11bc336e3eb721bc5",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopData_1O.root": "e0b93d385d2e63a9b40255674dd8b0f240245772008de09e0d0b1195e6d5433b",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopData_1P.root": "42c1f6ef7c94e45964eae5ecb096b0d277bd95c1aa9aaa3dea8b16f7677afe8f",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_1A.root": "d54d2a2c6e0454b035c69d82aff3d3ac2c8cb5e589fea09f2b439804854b1107",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_1B.root": "b3fe98499fd504c023bc188c6995e0bdfe98a1d8694f6af3413bf08a321f3f1e",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_1C.root": "199789aaefa34ac7dda5d506f9be638b6caa0b0628f6709890da66b6c2862b1e",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_1D.root": "69006ab6a730dff0ab88f16e9e02fd5c4af5d74df236e0a75757daf2fa542c77",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_1E.root": "dc4517b83f33a347f633176f7105a4154b36496138baa2e225ae358e8489f6d1",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_1F.root": "803e5fb593b6e6c4264f782faef6354ec17f59c0763f5696a203ae672db3915d",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_1G.root": "379a052a0249dd41755498e7e01a34a2cdad238346c386f5e4cbc471a053c4a8",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_1L.root": "c65876c847709c44ec56662ac865c003bb4a656ce4091d47eeb4516112d5b670",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_1M.root": "36879d6bbb0201c8c9d539589c23073b1b3bcb9c7b3c3219e14199756b6533d0",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_1N.root": "09f9e0f7f9311d63c3503e11ae43934df530ad0c6c0641605c6dfb377bb9207c",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_1O.root": "0d195e4d94057b2679456fdf9e82f912247c9638f5aae3e757bbfcbdc77a4c4f",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_1P.root": "3d98169a18adad7132d53aaa2d1abb992294cd0fed05dfef9c533ed224f877f3",
+  "constraint": "e38ad7d28354d071577113a18c8c569f88b6239f7fb193d20285273f172fc0c2",
+  "flux_mefhc": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316",
+  "vl175_build_json": "dcc1331e8e510cc21a2abd95675cfc69acf92bae7ae3dfa43a3a94b9fdbe34dd",
+  "vl175_minos_npz": "8912376ef2a6cfce8bed515cc945d9d5778cf5c838154a685435c3c7ce25416d"
+ },
+ "map_sha256": "956531e3b761aaf08d40c6ab8d917ba5f19dab5947b72607e6a34d0d3f7f83ae",
+ "mat_environment": {
+  "mapped_mat_files": [
+   "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/libMAT.so"
+  ],
+  "mat_sha256": {
+   "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/MATDict.rootmap": "bd66930866410c2302a29b3c1bb70a45ea5de489e025852e28455bc5090d38aa",
+   "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/MAT_rdict.pcm": "9eedbfd94a452f3bb9b267ca890b52d7a5567c0da86059e2b1fb90aac480550a",
+   "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/libMAT.so": "5901f18ab069824b04c90e89ade74405a3336c827215a41dfaabdf9d2d66dc48"
+  },
+  "plotutils_mnvh1d_dictionary": true,
+  "setup_sha256": {
+   "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup.sh": "e22a5b93d327111bf6ffc80f15ef36b908fab642072a6ef296e8bb9cd3719ba6",
+   "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup_MAT-MINERvA.sh": "c259101619ac365dcc57043d8ac4926908e51a8a87dad08f601394c9b418c3ac",
+   "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup_MAT.sh": "733e9cd839a0f75186d109eaab3dfe746a921d6d7b0347fbd6662b6f1ced3c0e",
+   "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup_UnfoldUtils.sh": "bd305c17ddcd507f88ab49cbfcf5fe5a14075e0c1a173e631addcb3423212cd9",
+   "/pscratch/sd/j/josephrb/MINERvA-OmniFold/setup_salloc_env.sh": "ea3c6998d33f45c831b80da5e5228032a19fc392018ede54a7f52f2f283d1d48",
+   "/pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/build/setup.sh": "40ff3a3d0c0308a82d90fd6cb4858696931fa00563277e5865141f8ebdc84598"
+  },
+  "symlink": {
+   "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/libMATDict.so": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/libMAT.so"
+  }
+ },
+ "modules": {
+  "cov2d": "/dev/shm/josephrb-g2r-readout-data.6NcKaX/deploy/2d-unfolding/cov2d/cov2d.py",
+  "cov2d_blocks": "/dev/shm/josephrb-g2r-readout-data.6NcKaX/deploy/2d-unfolding/cov2d/cov2d_blocks.py",
+  "cov2d_null": "/dev/shm/josephrb-g2r-readout-data.6NcKaX/deploy/2d-unfolding/cov2d/cov2d_null.py",
+  "cov2d_readouts": "/dev/shm/josephrb-g2r-readout-data.6NcKaX/deploy/2d-unfolding/cov2d/cov2d_readouts.py",
+  "cov2d_score": "/dev/shm/josephrb-g2r-readout-data.6NcKaX/deploy/2d-unfolding/cov2d/cov2d_score.py",
+  "re2c_rollup": "/dev/shm/josephrb-g2r-readout-data.6NcKaX/deploy/2d-unfolding/re2/partc/re2c_rollup.py"
+ },
+ "npz_sha256": "3b8cc7ceaef97c3dc6bbcd2c5cfdf853442c347e37e23f64eca54898d0e9eb4b",
+ "open_audit": {
+  "guarded_opens_distinct": 392,
+  "guarded_opens_total": 392,
+  "guarded_opens_with_noatime_bit": 392,
+  "opens": 1406,
+  "refused": []
+ },
+ "pins_checked": true,
+ "readings": {
+  "corr": {
+   "max_abs_delta_rho": 0.12994896841804865,
+   "median_abs_delta_rho": 0.007894906066412077
+  },
+  "eps": {
+   "139": {
+    "coupling_to_discarded": 5.630707067262413e-42,
+    "directions": 139,
+    "eps": 15.375651511560683
+   },
+   "73": {
+    "coupling_to_discarded": 3.1023872520203856e-41,
+    "directions": 73,
+    "eps": 5.998864754303031
+   },
+   "retained": {
+    "coupling_to_discarded": 3.000005163384927e-54,
+    "directions": 205,
+    "eps": 25.833115477875133
+   }
+  },
+  "rank": {
+   "after": 205,
+   "before": 205
+  },
+  "sigma": {
+   "integral_sigma_pct": [
+    4.759173209888885,
+    4.759118249475364
+   ],
+   "median_pct": [
+    6.413665927768751,
+    6.463024978099694
+   ]
+  }
+ },
+ "root": "6.28/12",
+ "schema": "cov2d-g2r/1",
+ "step": "data",
+ "stop": [],
+ "truth": "data",
+ "utc": "2026-11-14T03:54:28Z",
+ "verdict": "PASS"
+}

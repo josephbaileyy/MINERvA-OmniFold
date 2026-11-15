@@ -1,0 +1,4 @@
+file fv@ keys 4162; all_values 4072; in the file only 90; in all_values only 0
+in the file only, by prefix: {'ll5d': 55, 'prr': 29, 'vhalf': 6}
+render(all_values()) equals the file: True
+key sets equal (necessary for #981's dict equality): False
