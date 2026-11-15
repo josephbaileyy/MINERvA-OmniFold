@@ -1,5 +1,5 @@
-# HEAD 44d2170c4d7724b05705ce4d96715e58cbe18c84
-# clean clone, serial, nice 19, OMP/MKL/OPENBLAS/NUMEXPR threads 1, Python 3.12.2, numpy 1.26.4, 2026-11-15T22:27:34Z
+# HEAD d2bd54799720829ca167f7c83f4e46ee9513800c
+# clean clone, serial, nice 19, OMP/MKL/OPENBLAS/NUMEXPR threads 1, Python 3.12.2, numpy 1.26.4, 2026-11-15T22:48:20Z
 # 9d71cf6d1935a00442dd58631957a83d95ef8a4cefddc3522811006a8e29ef3b  rdx_align.py
 # 457e89efa20b484cc0d54c1125636ee7e7d3f023cf3aa5462eb9771e3450e451  rdx_cap.py
 # 177259b8f8bc602319a16de7768ce1ca75c23a545fda144471c08629d50b9fde  rdx_common.py
@@ -7,7 +7,7 @@
 # eae946894be8ce02354e8bd6aaf038d78bd8f574772a359b90eaeb0d1dfd985d  rdx_connect.sh
 # 122702c647efc4518af51a7a4e99bba9d7d37332cbfbcc54f59734b2d28dde9b  rdx_dump.py
 # 23dce7a447a830f5af1d3c6f708d2ec6de7f5d49cd4e9a4b7a7186aaaa3103e8  rdx_merge.py
-# 4bfea59830bd707cfe68f2c7583ccbc2c386f07218ee5d88ca7e69e2109bf9e9  rdx_mutation_stages.py
+# bc06bf00dc8326f28ce36c921873b6d77ddcd687c7cd1dd8a0523c3f17de51b6  rdx_mutation_stages.py
 # 270c251fbb07a5f124cd2bd1af6a96c4e6a52e9373f1ddb48b2be74add1a71b0  rdx_mutation.py
 # 948c47e05f22396afafa20fbb2c89881dded027bd49e38c04fe76fdaf89e4dbe  rdx_paths.py
 # dedaa80e5fb108e4b96e61c901d101b4bd51d44d396b9f3d038d00e781c5b67e  rdx_probe_walk.py
@@ -22,7 +22,7 @@
 # 742503fa085faa5f1fc5827bd43b247b9ca0cf76d1334d43637f05d3a675e483  sbatch_rdx_merge.sh
 # e0d3b70088500bdced0a3f7dcf08eb179278aa85a501a165bef373fd20a7f51e  setup_salloc_env.exports
 # f02ca57acdfab743dc4774393d6d2742e07c1dd9badfdb0f639a152737511a54  smoke_rdx_stages.sh
-# d19068d15ae7d09c1343a4433e5d85e641809c70a5e0b1814358ebdc5878de5f  test_rdx_stages.py
+# b40f5beeb0cea98cfceb3451f9f9342986a1f779bd35ba946701f02ec69f4681  test_rdx_stages.py
 # 8360dbf536fefebd8a855fa6d36f2f6d39b72e5b485cd083518a33608b3c214d  test_rdx.py
 # status: 0 changed files
 test_equal_with_exactly_c1s_extras_passes (nd-unfolding.rdx.test_rdx.Align.test_equal_with_exactly_c1s_extras_passes) ... ok
@@ -66,6 +66,8 @@ test_without_truthx_the_wrapper_reproduces_the_plain_loop_and_widening_changes_i
 test_over_the_cap_and_unusable_inputs_refuse (nd-unfolding.rdx.test_rdx_stages.Cap.test_over_the_cap_and_unusable_inputs_refuse) ... ok
 test_spent_held_unlisted_and_the_wanted_ceiling (nd-unfolding.rdx.test_rdx_stages.Cap.test_spent_held_unlisted_and_the_wanted_ceiling) ... ok
 test_the_job_kinds (nd-unfolding.rdx.test_rdx_stages.Cap.test_the_job_kinds) ... ok
+test_chkenv_fails_closed_without_uproot_or_the_modules (nd-unfolding.rdx.test_rdx_stages.CheckerEnv.test_chkenv_fails_closed_without_uproot_or_the_modules) ... ok
+test_every_checker_runs_under_chkpy_behind_chkenv (nd-unfolding.rdx.test_rdx_stages.CheckerEnv.test_every_checker_runs_under_chkpy_behind_chkenv) ... ok
 test_k1_passes_only_when_every_key_matches (nd-unfolding.rdx.test_rdx_stages.MergeAndK1.test_k1_passes_only_when_every_key_matches) ... [rdx_merge] REFUSE (2): MP-1's lat_zero files are not at their pinned digests
 ok
 test_the_sums_must_list_exactly_the_twelve_loops (nd-unfolding.rdx.test_rdx_stages.MergeAndK1.test_the_sums_must_list_exactly_the_twelve_loops) ... [rdx_merge] REFUSE (2): --sums must list exactly the twelve RDX loops, not ['runEventLoopOmniFold_RDX_1A.root', 'runEventLoopOmniFold_RDX_1B.root', 'runEventLoopOmniFold_RDX_1C.root', 'runEventLoopOmniFold_RDX_1D.root', 'runEventLoopOmniFold_RDX_1E.root', 'runEventLoopOmniFold_RDX_1F.root', 'runEventLoopOmniFold_RDX_1G.root', 'runEventLoopOmniFold_RDX_1L.root', 'runEventLoopOmniFold_RDX_1M.root', 'runEventLoopOmniFold_RDX_1N.root', 'runEventLoopOmniFold_RDX_1O.root']
@@ -86,7 +88,7 @@ test_the_launcher_pins_the_connect_script (nd-unfolding.rdx.test_rdx_stages.Tabl
 test_the_task_table_is_the_declarations (nd-unfolding.rdx.test_rdx_stages.Tables.test_the_task_table_is_the_declarations) ... ok
 
 ----------------------------------------------------------------------
-Ran 54 tests in 2.182s
+Ran 56 tests in 2.867s
 
 OK
 [INFO] signal: kept=3347 dropped_phase=613 bad_weight=20 excluded_nonfinite_truth_support=20

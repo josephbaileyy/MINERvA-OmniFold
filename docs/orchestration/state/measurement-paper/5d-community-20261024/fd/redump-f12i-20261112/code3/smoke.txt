@@ -1,5 +1,5 @@
 # RDX launcher-tranche smoke after the c1 fix (smoke_rdx_stages.sh; macOS bash 3.2; stubs; never connects or submits)
-# HEAD 44d2170c4d7724b05705ce4d96715e58cbe18c84, clean clone, 2026-11-15T22:28:27Z
+# HEAD d2bd54799720829ca167f7c83f4e46ee9513800c, clean clone, 2026-11-15T22:50:54Z
 # smoke_rdx_stages.sh sha256 f02ca57acdfab743dc4774393d6d2742e07c1dd9badfdb0f639a152737511a54
 # sbatch_rdx_evloop.sh sha256 7ce210dcab5909fa590e75f3fc0371d958316e451de10dfd186398dde55ddc4e
 # sbatch_rdx_merge.sh sha256 742503fa085faa5f1fc5827bd43b247b9ca0cf76d1334d43637f05d3a675e483
@@ -23,7 +23,7 @@
 ## evloop manifest not committed
 [rdx-evloop] REFUSE: <w>/canon/2d-unfolding/playlist_manifests/1A_MC.txt is not the deploy's committed 2d-unfolding/playlist_manifests/1A_MC.txt
 ## evloop AnaTuple mtime differs
-  <w>/ana/Data/Playlist1A/f2.root: 7 B 2020-01-01T08:00:00Z, manifest 7 B 2026-11-15T22:28:09Z
+  <w>/ana/Data/Playlist1A/f2.root: 7 B 2020-01-01T08:00:00Z, manifest 7 B 2026-11-15T22:50:43Z
 [rdx-evloop] REFUSE: an AnaTuple's size or mtime is not its manifest row's
 ## evloop output exists
 [rdx-evloop] 4 AnaTuples checked by size and mtime; 0 differ
@@ -35,7 +35,7 @@ STEP dump python <w>/deploy/nd-unfolding/rdx/rdx_dump.py --playlists 1A=<w>/B/ou
 STEP k1 python <w>/deploy/nd-unfolding/rdx/rdx_merge.py k1 --lat-npz <w>/B/out/dumps/lat_RDX_ALL.npz --lat-bkg <w>/B/out/dumps/lat_RDX_ALL_bkg.npz --mp1-lat-npz <w>/B/out/stage/lat_zero.npz --mp1-lat-bkg <w>/B/out/stage/lat_zero_bkg.npz --out <w>/B/out/checks/k1.json
 [rdx-merge] smoke: checks passed, 4 steps
 ## merge gate limit mismatch
-[rdx-merge] refusing: <w>/B/out/gates/merge.ok is missing or does not name pin f65cef93aac519fbda570f4bea2589fad5524d16 and limit 0:50:00
+[rdx-merge] refusing: <w>/B/out/gates/merge.ok is missing or does not name pin 4f875c6fc86fd1abf67067da0c007fc499fe4738 and limit 0:50:00
 ## merge no loops.sha256
 [rdx-merge] refusing: no <w>/B/out/loops.sha256 (the stage-2 checks did not pass)
 ## merge output exists
@@ -64,90 +64,90 @@ STEP X1q    q3 closure wide
 ## arms k1 FAIL
 [rdx-arms] refusing: <w>/B/out/checks/k1.json records no PASS
 ## arms gate missing
-[rdx-arms] refusing: <w>/B/out/gates/S3b.ok is missing or does not name pin f65cef93aac519fbda570f4bea2589fad5524d16
+[rdx-arms] refusing: <w>/B/out/gates/S3b.ok is missing or does not name pin 4f875c6fc86fd1abf67067da0c007fc499fe4738
 ## arms wrong pin
-[rdx-arms] refusing: deploy HEAD=f65cef93aac519fbda570f4bea2589fad5524d16 (pinned 0000000000000000000000000000000000000000),        0 porcelain lines
+[rdx-arms] refusing: deploy HEAD=4f875c6fc86fd1abf67067da0c007fc499fe4738 (pinned 0000000000000000000000000000000000000000),        0 porcelain lines
 ## connect gs2 writes the gate
 pin=<pin>
-== rdx connect gs2 rc=0 2026-11-15T22:28:14Z
+== rdx connect gs2 rc=0 2026-11-15T22:50:47Z
   sbatch called: no
 ## connect gs2 refuses to overwrite
 STOP: <w>/B/out/gates/s2.ok exists
-== rdx connect gs2 rc=8 2026-11-15T22:28:14Z
+== rdx connect gs2 rc=8 2026-11-15T22:50:47Z
   sbatch called: no
 ## connect gmerge without a limit
 STOP: gmerge needs a limit
-== rdx connect gmerge rc=8 2026-11-15T22:28:14Z
+== rdx connect gmerge rc=8 2026-11-15T22:50:47Z
   sbatch called: no
 ## connect s1 without the LL5D time
 STOP: s1 needs cov2d's LL5D atime-post UTC time
-== rdx connect s1 rc=8 2026-11-15T22:28:14Z
+== rdx connect s1 rc=8 2026-11-15T22:50:47Z
   sbatch called: no
 ## connect s1 with a future LL5D time
 STOP: cov2d's LL5D atime-post time 2099-01-01T00:00:00Z is not yet past
-== rdx connect s1 rc=8 2026-11-15T22:28:14Z
+== rdx connect s1 rc=8 2026-11-15T22:50:47Z
   sbatch called: no
 ## connect s1 fenced
 STOP: fenced or rdx_ jobs are queued or running: e96data_full|PENDING
-== rdx connect s1 rc=8 2026-11-15T22:28:14Z
+== rdx connect s1 rc=8 2026-11-15T22:50:47Z
   sbatch called: no
 ## connect s1 over the cap
 [rdx-evloop] smoke: checks passed for 1A (rdx_s1_1A, 2:15:00)
 STOP: the cap gate refuses rdx_s1_1A (2:15:00)
-== rdx connect s1 rc=8 2026-11-15T22:28:15Z
+== rdx connect s1 rc=8 2026-11-15T22:50:48Z
   sbatch called: no
 ## connect s1 submits
 [rdx-evloop] smoke: checks passed for 1A (rdx_s1_1A, 2:15:00)
-SUBMIT id=70000001 name=rdx_s1_1A limit=2:15:00 utc=2026-11-15T22:28:16Z
-== rdx connect s1 rc=0 2026-11-15T22:28:16Z
+SUBMIT id=70000001 name=rdx_s1_1A limit=2:15:00 utc=2026-11-15T22:50:49Z
+== rdx connect s1 rc=0 2026-11-15T22:50:49Z
   sbatch called: --parsable --job-name=rdx_s1_1A --time=2:15:00 --output=<w>/B/out/logs/%x_%j.out <w>/B/deploy/nd-unfolding/rdx/sbatch_rdx_evloop.sh <w>/B <w>/B/deploy 1A <w>/B/build/bld_rdx/runEventLoopOmniFold e894f2344aaa92289fb57bc8f597ffa9
 ## connect c1 with a failing walk probe
 checker python <py> 3.12.2: numpy 1.26.4, uproot 5.6.2
 C-ALIGN-1A rc=0 C-TRUTHX rc=0 walk probe rc=1
 STOP: the walk probe did not pass (rc 1): the walks differ, or no timing for the merge limit
-== rdx connect c1 rc=8 2026-11-15T22:28:17Z
+== rdx connect c1 rc=8 2026-11-15T22:50:50Z
   sbatch called: no
 ## connect c1 with a probe that cannot run
 checker python <py> 3.12.2: numpy 1.26.4, uproot 5.6.2
 C-ALIGN-1A rc=0 C-TRUTHX rc=0 walk probe rc=1
 STOP: the walk probe did not pass (rc 1): the walks differ, or no timing for the merge limit
-== rdx connect c1 rc=8 2026-11-15T22:28:18Z
+== rdx connect c1 rc=8 2026-11-15T22:50:50Z
   sbatch called: no
 ## connect c1 with a failing alignment
 checker python <py> 3.12.2: numpy 1.26.4, uproot 5.6.2
 C-ALIGN-1A rc=1 C-TRUTHX rc=0 walk probe rc=0
 STOP: C-ALIGN-1A or C-TRUTHX did not pass
-== rdx connect c1 rc=8 2026-11-15T22:28:20Z
+== rdx connect c1 rc=8 2026-11-15T22:50:50Z
   sbatch called: no
 ## connect c1 with a checker python that has no uproot
 STOP: the checker python <w>/chkstub cannot import uproot, numpy, omnifile_io and compare_omnifiles
-== rdx connect c1 rc=8 2026-11-15T22:28:21Z
+== rdx connect c1 rc=8 2026-11-15T22:50:51Z
   sbatch called: no
 ## connect c1 passes
 checker python <py> 3.12.2: numpy 1.26.4, uproot 5.6.2
 C-ALIGN-1A rc=0 C-TRUTHX rc=0 walk probe rc=0
 STAGE 1 CHECKS PASS
-== rdx connect c1 rc=0 2026-11-15T22:28:22Z
+== rdx connect c1 rc=0 2026-11-15T22:50:51Z
   sbatch called: no
 ## connect c2 with a checker python that has no uproot
 STOP: the checker python <w>/chkstub cannot import uproot, numpy, omnifile_io and compare_omnifiles
-== rdx connect c2 rc=8 2026-11-15T22:28:22Z
+== rdx connect c2 rc=8 2026-11-15T22:50:51Z
   sbatch called: no
 ## connect cm with a checker python that has no uproot
 STOP: the checker python <w>/chkstub cannot import uproot, numpy, omnifile_io and compare_omnifiles
-== rdx connect cm rc=8 2026-11-15T22:28:23Z
+== rdx connect cm rc=8 2026-11-15T22:50:51Z
   sbatch called: no
 ## connect cm passes
 checker python <py> 3.12.2: numpy 1.26.4, uproot 5.6.2
 MERGE CHECKS PASS
-== rdx connect cm rc=0 2026-11-15T22:28:24Z
+== rdx connect cm rc=0 2026-11-15T22:50:52Z
   sbatch called: no
 ## connect s0 end to end (the env stub exports BUILD=x86_64-conda-linux-gnu)
 == binaries
-c8a58a8c89350d28a63891b8f00c72b0  <w>/B0/build/bld_base/runEventLoopOmniFold
-952cf646528332f2f8c0737e9612bcfd  <w>/B0/build/bld_rdx/runEventLoopOmniFold
+f55ad7fada95e88a8392ff7f6d059556  <w>/B0/build/bld_base/runEventLoopOmniFold
+6fb421a8a3324ae615c8fe3fbc5ba35a  <w>/B0/build/bld_rdx/runEventLoopOmniFold
 == RUNTIME.sha256 29923bc17a3de453bb9d649fbf4e75e636b33bdcdb288346d1a90f188f88390b (       1 files)
-== rdx connect s0 rc=0 2026-11-15T22:28:27Z
+== rdx connect s0 rc=0 2026-11-15T22:50:53Z
   stray conda-named dir: no
 ## connect dtn host
 REFUSED (nothing written): host dtn01 is not a login node

@@ -1,6 +1,6 @@
-# HEAD 44d2170c4d7724b05705ce4d96715e58cbe18c84
-# clean clone, serial, nice 19, threads 1; test_rdx.py (the checkers' suite) under a uv venv matching omnifold_py310's measured versions: Python 3.10.20, numpy 2.2.6, uproot 5.6.9
-# command: python -B -m unittest -v nd-unfolding/rdx/test_rdx.py
+# HEAD d2bd54799720829ca167f7c83f4e46ee9513800c
+# clean clone, serial, nice 19, threads 1; both RDX suites under a uv venv matching omnifold_py310's measured versions: Python 3.10.20, numpy 2.2.6, uproot 5.6.9
+# command: python -B -m unittest -v nd-unfolding/rdx/test_rdx.py nd-unfolding/rdx/test_rdx_stages.py
 test_equal_with_exactly_c1s_extras_passes (nd-unfolding.rdx.test_rdx.Align) ... ok
 test_the_align_refusals (nd-unfolding.rdx.test_rdx.Align) ... ok
 test_the_argument_refusals (nd-unfolding.rdx.test_rdx.Arguments) ... ok
@@ -39,9 +39,32 @@ test_the_transfer_probe_uses_rdx_mask_and_the_widened_rows (nd-unfolding.rdx.tes
 test_the_weight_composes_with_the_wide_regressor (nd-unfolding.rdx.test_rdx.WideRegressor) ... ok
 test_the_wide_regressor_sees_truthx_aligned_to_the_loops_fit_and_predict_rows (nd-unfolding.rdx.test_rdx.WideRegressor) ... ok
 test_without_truthx_the_wrapper_reproduces_the_plain_loop_and_widening_changes_it (nd-unfolding.rdx.test_rdx.WideRegressor) ... ok
+test_over_the_cap_and_unusable_inputs_refuse (nd-unfolding.rdx.test_rdx_stages.Cap) ... ok
+test_spent_held_unlisted_and_the_wanted_ceiling (nd-unfolding.rdx.test_rdx_stages.Cap) ... ok
+test_the_job_kinds (nd-unfolding.rdx.test_rdx_stages.Cap) ... ok
+test_chkenv_fails_closed_without_uproot_or_the_modules (nd-unfolding.rdx.test_rdx_stages.CheckerEnv) ... ok
+test_every_checker_runs_under_chkpy_behind_chkenv (nd-unfolding.rdx.test_rdx_stages.CheckerEnv) ... ok
+test_k1_passes_only_when_every_key_matches (nd-unfolding.rdx.test_rdx_stages.MergeAndK1) ... [rdx_merge] REFUSE (2): MP-1's lat_zero files are not at their pinned digests
+ok
+test_the_sums_must_list_exactly_the_twelve_loops (nd-unfolding.rdx.test_rdx_stages.MergeAndK1) ... [rdx_merge] REFUSE (2): --sums must list exactly the twelve RDX loops, not ['runEventLoopOmniFold_RDX_1A.root', 'runEventLoopOmniFold_RDX_1B.root', 'runEventLoopOmniFold_RDX_1C.root', 'runEventLoopOmniFold_RDX_1D.root', 'runEventLoopOmniFold_RDX_1E.root', 'runEventLoopOmniFold_RDX_1F.root', 'runEventLoopOmniFold_RDX_1G.root', 'runEventLoopOmniFold_RDX_1L.root', 'runEventLoopOmniFold_RDX_1M.root', 'runEventLoopOmniFold_RDX_1N.root', 'runEventLoopOmniFold_RDX_1O.root']
+[rdx_merge] REFUSE (2): --sums must list exactly the twelve RDX loops, not ['extra.root', 'runEventLoopOmniFold_RDX_1A.root', 'runEventLoopOmniFold_RDX_1B.root', 'runEventLoopOmniFold_RDX_1C.root', 'runEventLoopOmniFold_RDX_1D.root', 'runEventLoopOmniFold_RDX_1E.root', 'runEventLoopOmniFold_RDX_1F.root', 'runEventLoopOmniFold_RDX_1G.root', 'runEventLoopOmniFold_RDX_1L.root', 'runEventLoopOmniFold_RDX_1M.root', 'runEventLoopOmniFold_RDX_1N.root', 'runEventLoopOmniFold_RDX_1O.root', 'runEventLoopOmniFold_RDX_1P.root']
+ok
+test_atime_stage_and_manifest (nd-unfolding.rdx.test_rdx_stages.Paths) ... ok
+test_the_never_read_list_names_the_ll5d_inputs_and_cov2ds_cv (nd-unfolding.rdx.test_rdx_stages.Paths) ... ok
+test_the_policy_check (nd-unfolding.rdx.test_rdx_stages.Paths) ... ok
+test_c1_stops_on_the_walk_probe_and_s2_requires_its_pass (nd-unfolding.rdx.test_rdx_stages.Tables) ... ok
+test_every_launcher_fences_the_six_prefixes (nd-unfolding.rdx.test_rdx_stages.Tables) ... ok
+test_every_repo_path_the_launchers_name_exists_at_head (nd-unfolding.rdx.test_rdx_stages.Tables)
+B1's root cause: a hard-coded repo path that does not exist (the smoke stubbed it into its own tiny repo). ... ok
+test_no_launcher_variable_is_one_the_env_setup_exports (nd-unfolding.rdx.test_rdx_stages.Tables)
+The s0 STOP of 2026-11-12: conda's activation (setup_salloc_env.sh) set BUILD, clobbering the connect's. ... ok
+test_the_event_loop_job_allows_the_connects_b (nd-unfolding.rdx.test_rdx_stages.Tables) ... ok
+test_the_event_loop_limits_are_the_declared_rule_everywhere (nd-unfolding.rdx.test_rdx_stages.Tables) ... ok
+test_the_launcher_pins_the_connect_script (nd-unfolding.rdx.test_rdx_stages.Tables) ... ok
+test_the_task_table_is_the_declarations (nd-unfolding.rdx.test_rdx_stages.Tables) ... ok
 
 ----------------------------------------------------------------------
-Ran 38 tests in 2.071s
+Ran 56 tests in 5.944s
 
 OK
 [INFO] signal: kept=3347 dropped_phase=613 bad_weight=20 excluded_nonfinite_truth_support=20
