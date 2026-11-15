@@ -15,6 +15,9 @@ the spread, RdBu_r diverging for the correlation).
   python plot_bootstrap_figs.py \
       --cov bootstrap_MEFHC_300/uq_covariance_boot300.root \
       --outdir bootstrap_MEFHC_300
+
+Opt-in (note figure style, group C family 3): --dump-arrays FILE.npz writes every drawn value after the read;
+--from-arrays FILE.npz draws from such a dump with no ROOT. With neither, the figures are drawn as before.
 """
 import sys as _sys, pathlib as _pathlib
 for _a in _pathlib.Path(__file__).resolve().parents:
@@ -26,9 +29,6 @@ import argparse  # noqa: E402
 import os  # noqa: E402
 import numpy as np  # noqa: E402
 import matplotlib.pyplot as plt  # noqa: E402
-import ROOT  # noqa: E402
-
-ROOT.gROOT.SetBatch(True)
 
 # physical paper edges, so the spread map matches the seedscan map (Fig.~13):
 # real GeV/c axes with unpopulated bins masked white, not bin-index with empties
@@ -45,17 +45,19 @@ def th2_to_np(h):
                      for i in range(nx)])
 
 
-def main():
-    ap = argparse.ArgumentParser(description=__doc__,
-                                 formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--cov", default="bootstrap_MEFHC_300/uq_covariance_boot300.root")
-    ap.add_argument("--outdir", default="bootstrap_MEFHC_300")
-    args = ap.parse_args()
-
-    f = ROOT.TFile.Open(args.cov)
+def fill(path):
+    """Read hRel2D (percent) and hCov2D_reported: everything the two figures draw."""
+    import ROOT
+    ROOT.gROOT.SetBatch(True)
+    f = ROOT.TFile.Open(path)
     rel = th2_to_np(f.Get("hRel2D")) * 100.0           # percent
     cov = th2_to_np(f.Get("hCov2D_reported"))          # 205 x 205
     f.Close()
+    return {"rel": rel, "cov": cov}
+
+
+def draw(arr, outdir):
+    rel, cov = arr["rel"], arr["cov"]
 
     d = np.sqrt(np.clip(np.diag(cov), 0, None))
     with np.errstate(invalid="ignore", divide="ignore"):
@@ -73,7 +75,7 @@ def main():
     ax.set_xlabel(r"$p_T$ (GeV/c)"); ax.set_ylabel(r"$p_{||}$ (GeV/c)")
     cb = fig.colorbar(pc, ax=ax); cb.set_label("per-bin rel spread std/mean (%)")
     fig.tight_layout()
-    out_spread = os.path.join(args.outdir, "uq_spread_2d.png")
+    out_spread = os.path.join(outdir, "uq_spread_2d.png")
     fig.savefig(out_spread, dpi=130); plt.close(fig)
 
     # --- 205 x 205 correlation matrix ------------------------------------
@@ -83,10 +85,28 @@ def main():
     ax.set_ylabel("reported-bin index")
     cb = fig.colorbar(im, ax=ax); cb.set_label("correlation")
     fig.tight_layout()
-    out_corr = os.path.join(args.outdir, "uq_corr_2d.png")
+    out_corr = os.path.join(outdir, "uq_corr_2d.png")
     fig.savefig(out_corr, dpi=130); plt.close(fig)
 
     print(f"[boot] wrote {out_spread} and {out_corr}")
+
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__,
+                                 formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--cov", default="bootstrap_MEFHC_300/uq_covariance_boot300.root")
+    ap.add_argument("--outdir", default="bootstrap_MEFHC_300")
+    ap.add_argument("--dump-arrays", default=None, help="write every drawn value to this .npz after the read")
+    ap.add_argument("--from-arrays", default=None, help="draw from this .npz (no ROOT)")
+    args = ap.parse_args()
+    if args.from_arrays:
+        with np.load(args.from_arrays) as z:
+            arr = {k: z[k] for k in z.files}
+    else:
+        arr = fill(args.cov)
+        if args.dump_arrays:
+            np.savez(args.dump_arrays, **arr)
+    draw(arr, args.outdir)
 
 
 if __name__ == "__main__":
