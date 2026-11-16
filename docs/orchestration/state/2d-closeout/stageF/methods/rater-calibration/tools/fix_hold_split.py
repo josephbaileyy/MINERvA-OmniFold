@@ -7,8 +7,10 @@ Fig. 1 B' reflowed section 7). Removing the span by its brackets would then dele
 
 For each hold span holding a form feed, take the text after the page break (minus a page-number line). The longest
 token prefix of it that occurs verbatim in the hold-free RATER build's text is the interleaved block. It is moved to
-just after the span's closing bracket, so the word multiset is unchanged. Fail when the block is shorter than five
-tokens or does not end a sentence: then no rule here describes the layout. A span without a form feed is untouched."""
+just after the span's closing bracket, so the word multiset is unchanged. A run shorter than five tokens, or one that does
+not end a sentence, is a chance match of the hold's own continuation (2026-11-16: "and"), and the span is left as it is.
+Any paper text the span then still holds is caught downstream by multiset_check, which fails on a missing word. A span
+without a form feed is untouched."""
 import re
 import sys
 
@@ -38,8 +40,7 @@ def fix(normal, rater):
             else:
                 break
         if k < 5 or not toks[k - 1].endswith("."):
-            sys.exit(f"FAIL: a hold span crosses a page break, but its interleaved block ({k} tokens: "
-                     f"{' '.join(toks[:k])[:80]!r}) is not a whole sentence run found in the rater build")
+            continue                                   # no interleaved block: the hold continues after the break
         new = a.rstrip() + " " + " ".join(toks[k:]) + "\f" + (pn + "\n" if pn else "\n") + " ".join(toks[:k]) + "\n"
         out += [normal[pos:m.start()], new]
         pos = m.end()
@@ -56,6 +57,9 @@ def self_test():
     assert HOLD.findall(t) == ["[HOLD: alpha beta gamma delta epsilon.]"], HOLD.findall(t)
     assert sorted(t.split()) == sorted(n.split()), "the word multiset changed"
     assert fix("A [HOLD: x y] B", "A B")[1] == [], "a span without a page break is untouched"
+    whole = "Body one. [HOLD: alpha beta\f\n18\nand gamma delta.] Tail and more."
+    t2, mv2 = fix(whole, "Body one.\f\n18\nTail and more.")
+    assert mv2 == [] and t2 == whole, "a hold that simply continues after the break is left as it is"
     print("FIX-HOLD-SPLIT SELF-TEST :: PASS")
 
 
