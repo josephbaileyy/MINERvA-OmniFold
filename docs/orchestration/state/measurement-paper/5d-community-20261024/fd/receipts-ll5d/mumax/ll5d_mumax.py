@@ -135,8 +135,10 @@ def declared_inputs(a, truth: str) -> list[str]:
 
 
 def cmd_inputs(a) -> int:
+    seen = []
     for t in a.truth:
-        print("\n".join(declared_inputs(a, t)))
+        seen += [p for p in declared_inputs(a, t) if p not in seen]     # the staged S1 and the constraint once
+    print("\n".join(seen))
     return 0
 
 
