@@ -1,0 +1,49 @@
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+wrote ['fig1_validation.pdf', 'fig2_joint_localization.pdf', 'fig3_generator_context.pdf']
+wrote ['fig1_validation.pdf', 'fig2_joint_localization.pdf', 'fig3_generator_context.pdf']
+PASS F0 both producers ran: rc 0 / 0; figures ['fig1_validation.pdf', 'fig2_joint_localization.pdf', 'fig3_generator_context.pdf']
+PASS F1 PDF digests as given: old/fig1_validation.pdf 1ead58a2, new/fig1_validation.pdf ef466621, old/fig2_joint_localization.pdf 57f3cc60, new/fig2_joint_localization.pdf 57f3cc60, old/fig3_generator_context.pdf e9d1bb01, new/fig3_generator_context.pdf e9d1bb01
+PASS F2 fig2_joint_localization.pdf unchanged: 6 items, PDF 57f3cc601281950c
+PASS F2 fig3_generator_context.pdf unchanged: 20 items, PDF e9d1bb01fc79e061
+PASS F3a seven axes: 7 / 7
+PASS F3b the six other axes draw the same items: 23 items; differing axes []
+PASS F4 texts equal except the colour bar label: other axes differing []; removed {(7.5, '(OmniFold $-$ published)$/\\sigma_{\\mathrm{published}}$'): 1}; added {(8.0, '$r_i$'): 1}; colour bar old {'label': '(OmniFold $-$ published)$/\\sigma_{\\mathrm{published}}$', 'title': ''}, new {'label': '', 'title': '$r_i$'}
+PASS F5 the panel's histogram is of the 205 r_i: old panel items 0; hist calls 1; values == r_i: True (205); width 0.25..0.25; min |centre| 0; bins -3.125..3.125 cover r_i -2.572..1.910; counts 205; lines 1 (x [0.0, 0.0]); other kinds []
+PASS F6 printed count, mean and SD: old ('0.060', '0.535', '205'); new ('205', '0.060', '0.535'); from the arrays ('205', '0.060', '0.535')
+PASS F7 changed pixels inside the panel and the colour bar's label boxes: 147167 changed pixels (x 943..2093, y 1019..1839); 0 outside; image 2100x1860
+FIG1 IDENTITY PASS

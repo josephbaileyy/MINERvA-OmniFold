@@ -1,6 +1,6 @@
 --- docs/orchestration/state/2d-closeout/stageF/rebuild/scripts/make_fig1_q.py
 +++ 2d-unfolding/re2/partc/re2c_fig1.py
-@@ -1,6 +1,21 @@
+@@ -1,6 +1,25 @@
  #!/usr/bin/env python3
 -"""Regenerate the article's Fig. 1 with the adopted covariance Q = S5 total + C_PL (decision 2026-10-17).
 +"""RE-2 part C copy of stageF/rebuild/scripts/make_fig1_q.py (7710d601...), RE2-DECLARATION-C.md §3.8.
@@ -15,6 +15,10 @@
 +    - check 1 requires cov2d_Q_205.npz's x to equal that E_R, and production_cov.npz and playlist_term.npz to carry
 +      arm = refined (cov2d_Q_205.npz is build_q's own output and has no arm key);
 +    - the inset's \\uqMedian is Q_R's (budget_Q.json), as before.
++Fig. 1 version B' (make_figs.py since 2026-11-16, DECISION-20261116-joseph-paper-batch.md item 15) no longer prints
++\\uqMedian: the bottom-right panel is the histogram of the 205 r_i, and the medians are in the caption. The --values
++check is kept. It still requires exactly one \\uqMedian, equal to budget_Q.json's Q median at 2 decimals, so the
++uqmedian.tex a run records stays validated against its budget.
 +
 +The original docstring follows.
 +
@@ -23,16 +27,16 @@
  Derived from receipts/2d-c04-adopt-20261012/make_fig1_vl175.py (rebuild SPEC §6). The central-value swap and its
  E_C control are unchanged. The covariance is `Q` from cov2d_Q_205.npz (step A), and its checks no longer use the
  VL175 --sigma file. They are, each a refusal:
-@@ -31,7 +46,7 @@
+@@ -31,7 +50,7 @@
  PINS = {
      "npz": "72394a2b4eff9f14b01903ff97525bcb690c2adee58ccaf573a8d95139b415b8",
      "reduce": "2ecfc243ab4a6c508a69df0e231676019106f3ad86f34e3ac3423f7bd2bca9ce",
 -    "make_figs": "9c4dbf24d5e19161034fbdf6f84834f578fbde3a1b879961ef7c25a739301c7c",
-+    "make_figs": "4e18c26681fc86dcfef2861c7c0126aa2df4839376d967b18f08a7d77664ee67",
++    "make_figs": "9a575b36fb332dfe3e85c9eda65e4df3524b497b41de4e96fe6f8f0c9e25c0c1",
      "s5_npz": "6689d2fc2a795a72e66ee953a32d94c7906dd81a866771979f379c5f163a9ddc",
      "playlist_npz": "c1723cb5e185ae7a6176fbbe523432ab87877c8cddcfe721eaed71f0a43b9476",
      "combination": "050e256023277ec9da492ffa7b9d129275c3afa2bfc6c47091999d88de5bf18d",
-@@ -41,7 +56,18 @@
+@@ -41,7 +60,18 @@
  for k in ("npz", "reduce", "make_figs", "values", "tmp", "outdir", "cov", "s5_npz", "playlist_npz", "combination",
            "budget", "step_a_sums"):
      ap.add_argument("--" + k.replace("_", "-"), required=True, type=Path)
@@ -51,7 +55,7 @@
  
  
  def sha(p):
-@@ -80,18 +106,23 @@
+@@ -80,18 +110,23 @@
  ctl = np.zeros(224); ctl[gids] = rr["central"]["E_C"]
  if not np.array_equal(ctl[mask], z["ours_v"][mask]):
      sys.exit("[FAIL] E_C in remote_reduce must equal the released ours_v")

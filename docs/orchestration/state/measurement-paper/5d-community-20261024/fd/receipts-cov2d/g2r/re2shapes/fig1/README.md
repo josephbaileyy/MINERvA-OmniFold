@@ -59,7 +59,9 @@ arm replaces it: `bash re2c_fig1_local.sh control <workdir> <python>` is section
 - It never writes to the cluster: no ssh, no upload. Section 2's run reached its rc 4 only because `partc-r2/fig1` is
   not empty. The control arm no longer depends on that.
 
-The refined arm is unchanged. The script's sha256 goes from 02c3090f to 71ac4861.
+The refined arm is unchanged. The script's sha256 goes from 02c3090f to 4988c720.
+(Corrected 2026-11-16: this line first said 71ac4861, the digest of an intermediate edit. The committed script at
+a3fd95c6 is 4988c720, from `git show a3fd95c6:2d-unfolding/re2/partc/re2c_fig1_local.sh | shasum -a 256`.)
 
 RE2-DECLARATION-C and its binding amendments 1-3 pin `02c3090f`, as do part C's preflight lists. Those are the records
 of the bound procedure that ran, at the commits they name, and they are not re-pinned here. The same goes for
@@ -80,3 +82,9 @@ test first checks all 11 against `control/RUN-fig1.txt`. Nothing reaches the clu
 - a mutant with the K1 pin changed exits rc 3 at the K1 check.
 
 The output is in `test_fig1_local_control.out.txt`.
+
+## Version B′ (2026-11-16): the K1 moves
+
+Fig. 1 version B′ (`DECISION-20261116-joseph-paper-batch.md` item 15) changes `make_figs.py`, so amendment 3's
+inputs no longer redraw `71a2ea48`. The control arm's K1 becomes `fee46c1a…`, the B′ redraw of the same inputs, and
+`test_fig1_local_control.sh` moves with it. The package, its identity check and its record are in `bprime/`.

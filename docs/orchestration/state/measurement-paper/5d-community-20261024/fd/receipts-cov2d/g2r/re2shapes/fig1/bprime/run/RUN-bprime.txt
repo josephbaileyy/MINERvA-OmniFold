@@ -1,0 +1,4 @@
+# run_bprime.sh 80edaa973b5b59c24198d2a16aadc874bd756842fcb0c44d391faeaee12e3c35, fig1_identity.py d50604b03407a6e9268856d988517ed5dc2d81e7d6e8c7262d2056688faa1f12
+old make_figs.py: 4e18c26681fc86dcfef2861c7c0126aa2df4839376d967b18f08a7d77664ee67 (7fc9ce93:publication/release/figs/make_figs.py)
+a: ef466621b97f7d2a55bb18c335aa5de32be529eb10f2215844ee8fa075886de0  fig1_validation.pdf; identity FIG1 IDENTITY PASS
+c: fee46c1a8b60a09701444373e9dbfbf106bffdd42759928b0979c8eeb57135d1  fig1_validation.pdf; identity FIG1 IDENTITY PASS

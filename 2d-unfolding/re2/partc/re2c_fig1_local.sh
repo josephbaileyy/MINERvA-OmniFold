@@ -1,11 +1,12 @@
 #!/bin/bash
 # RE-2 part C, C10: Fig. 1 on the laptop, in the recorded environment (RE2-DECLARATION-C.md §3.8):
-#     bash re2c_fig1_local.sh control <workdir> <python>               the K1: must reproduce 71a2ea48... byte for byte
+#     bash re2c_fig1_local.sh control <workdir> <python>               the K1: must reproduce fee46c1a... byte for byte
 #     bash re2c_fig1_local.sh refined <workdir> <python> <partc dir>   Fig. 1 from E_R and Q_R; outputs copied to
 #                                                                       <partc dir>/fig1/ on the cluster
 # The control is the refined arm on amendment 3's part C directory ($B/partc-r2, RE2-PARTC-A3-REPORT.md), with its
-# chain.json pinned to the one amendment 3's redraw read, and it must reproduce that redraw's fig1_validation.pdf
-# (run/partc_a3/RUN-fig1.txt; the copy docs/analysis-note/make_figures.sh installs). It never writes to the cluster.
+# chain.json pinned to the one amendment 3's redraw read. Its K1 is that redraw (71a2ea48, run/partc_a3/RUN-fig1.txt)
+# drawn again with Fig. 1 version B' (make_figs.py since 2026-11-16): fee46c1a, identity-checked against 71a2ea48 in
+# fd/receipts-cov2d/g2r/re2shapes/fig1/bprime/ (under 5d-community-20261024). It never writes to the cluster.
 # It replaces the purity arm, whose K1 (82665808, drawn with make_figs 9c4dbf24) no longer holds since 0b13b747 moved
 # make_figs to 4e18c266 (fd/receipts-cov2d/g2r/re2shapes/fig1/README.md, under 5d-community-20261024).
 # <python> is the uv venv's interpreter: python 3.12.2, matplotlib 3.11.2, numpy 2.5.4 (RUN-fig1.txt), checked here.
@@ -66,8 +67,8 @@ matplotlib.__version__, 'numpy', numpy.__version__)") ($PY)"
 } > RUN-fig1.txt
 cat RUN-fig1.txt
 if [ "$ARM" = control ]; then
-    want out/fig1_validation.pdf 71a2ea488ab758a466d40b7d5a7a061ebd95b1cdb90a79427c3da968238b6427
-    echo "K1: fig1_validation.pdf reproduces 71a2ea48 (amendment 3's refined Fig. 1) byte for byte; no cluster write"
+    want out/fig1_validation.pdf fee46c1a8b60a09701444373e9dbfbf106bffdd42759928b0979c8eeb57135d1
+    echo "K1: fig1_validation.pdf reproduces fee46c1a (amendment 3's Fig. 1, version B') byte for byte; no cluster write"
 else
     ssh -o BatchMode=yes "$S" "mkdir -p $C/fig1 && [ -z \"\$(ls -A $C/fig1)\" ]" || { echo "$C/fig1 is not empty"; exit 4; }
     scp -q out/* RUN-fig1.txt fig1_run.log in/uqmedian.tex in/pins.json "$S:$C/fig1/"

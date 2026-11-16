@@ -6,6 +6,7 @@
 #   ssh  logs "SSH <args>" and exits 0.
 # <inputs> is the local copy of the files the 2026-11-16 control fetched from partc-r2. Each must equal the digest in
 # ../control/RUN-fig1.txt; the test checks this first. Nothing reaches the cluster.
+# Since Fig. 1 version B' (2026-11-16) the K1 is fee46c1a (../bprime/): fig2 and fig3 still equal the control's.
 #   bash test_fig1_local_control.sh <repo worktree> <inputs> <python>
 set -u
 REPO=$(cd "$1" && pwd); IN=$(cd "$2" && pwd); PY=$3
@@ -40,13 +41,13 @@ run() {  # run <name> <want rc> <script> <args after the workdir and python...> 
 }
 run control 0 "$SCRIPT" control
 R=$T0/control
-[ "$(shasum -a 256 "$R/w/out/fig1_validation.pdf" | cut -d' ' -f1)" = 71a2ea488ab758a466d40b7d5a7a061ebd95b1cdb90a79427c3da968238b6427 ] \
-  && grep -q '^K1: fig1_validation.pdf reproduces 71a2ea48' "$R/stdout" && ok "control: fig1_validation.pdf is 71a2ea48, K1 line printed" || bad "control: output"
+[ "$(shasum -a 256 "$R/w/out/fig1_validation.pdf" | cut -d' ' -f1)" = fee46c1a8b60a09701444373e9dbfbf106bffdd42759928b0979c8eeb57135d1 ] \
+  && grep -q '^K1: fig1_validation.pdf reproduces fee46c1a' "$R/stdout" && ok "control: fig1_validation.pdf is fee46c1a, K1 line printed" || bad "control: output"
 ! grep -q '^SSH\|^UPLOAD' "$R/log" && ok "control: no ssh and no upload (no cluster write)" || { bad "control: cluster write"; cat "$R/log"; }
 nf=$(grep -c '^FETCH' "$R/log"); nout=$(grep '^FETCH' "$R/log" | grep -v "^FETCH $A3/" | grep -vc '^FETCH /pscratch/sd/j/josephrb/pub-release-20261006/figs/fig_arrays.npz$')
 [ "$nf" = 9 ] && [ "$nout" = 0 ] && ok "control: 9 fetches, each from partc-r2 except fig_arrays.npz" || { bad "control: fetches ($nf, $nout outside)"; cat "$R/log"; }
-diff <(sed -n '/^outputs:/,$p' "$R/w/RUN-fig1.txt") <(sed -n '/^outputs:/,$p' "$H/../control/RUN-fig1.txt") > /dev/null \
-  && ok "control: all three outputs equal the 2026-11-16 control's" || bad "control: outputs differ from ../control/RUN-fig1.txt"
+diff <(sed -n '/^outputs:/,$p' "$R/w/RUN-fig1.txt" | grep -v fig1_validation) <(sed -n '/^outputs:/,$p' "$H/../control/RUN-fig1.txt" | grep -v fig1_validation) > /dev/null \
+  && ok "control: fig2 and fig3 equal the 2026-11-16 control's" || bad "control: fig2 or fig3 differ from ../control/RUN-fig1.txt"
 run control-with-dir 2 "$SCRIPT" control /some/dir
 grep -q '^control: takes no part C directory' "$T0/control-with-dir/stdout" && [ ! -e "$T0/control-with-dir/w" ] && ok "control-with-dir: refused before the workdir" || bad "control-with-dir: message"
 run purity-gone 2 "$SCRIPT" purity
@@ -58,18 +59,18 @@ run refined-no-dir 2 "$SCRIPT" refined
 run refined 0 "$SCRIPT" refined /x/partc
 R=$T0/refined
 grep -q '^SSH -o BatchMode=yes saul.nersc.gov mkdir -p /x/partc/fig1' "$R/log" && grep -q '^UPLOAD saul.nersc.gov:/x/partc/fig1/$' "$R/log" \
-  && [ "$(shasum -a 256 "$R/w/out/fig1_validation.pdf" | cut -d' ' -f1)" = 71a2ea488ab758a466d40b7d5a7a061ebd95b1cdb90a79427c3da968238b6427 ] \
+  && [ "$(shasum -a 256 "$R/w/out/fig1_validation.pdf" | cut -d' ' -f1)" = fee46c1a8b60a09701444373e9dbfbf106bffdd42759928b0979c8eeb57135d1 ] \
   && ok "refined: unchanged behaviour (fetches from <partc dir>, dir check by ssh, upload to <partc dir>/fig1/)" || { bad "refined: detail"; cat "$R/log"; }
 # mutant: the K1 pin changed, in a mirror tree laid out as the repository (REPO = HERE/../../..)
 M=$T0/mirror; mkdir -p "$M/2d-unfolding/re2/partc" "$M/publication/release/figs"
 cp "$REPO/2d-unfolding/re2/partc/re2c_fig1.py" "$M/2d-unfolding/re2/partc/"; cp "$REPO/publication/release/figs/make_figs.py" "$M/publication/release/figs/"
 "$PY" -I - "$SCRIPT" "$M/2d-unfolding/re2/partc/re2c_fig1_local.sh" <<'PYM'
 import sys
-s = open(sys.argv[1]).read(); a = "want out/fig1_validation.pdf 71a2ea48"
-assert s.count(a) == 1; open(sys.argv[2], "w").write(s.replace(a, "want out/fig1_validation.pdf 71a2ea49"))
+s = open(sys.argv[1]).read(); a = "want out/fig1_validation.pdf fee46c1a"
+assert s.count(a) == 1; open(sys.argv[2], "w").write(s.replace(a, "want out/fig1_validation.pdf fee46c1b"))
 PYM
 run mutant-k1-pin 3 "$M/2d-unfolding/re2/partc/re2c_fig1_local.sh" control
-grep -q '^out/fig1_validation.pdf: sha256 71a2ea48.* != 71a2ea49' "$T0/mutant-k1-pin/stdout" && ok "mutant-k1-pin: the K1 check fires" || bad "mutant-k1-pin: detail"
+grep -q '^out/fig1_validation.pdf: sha256 fee46c1a.* != fee46c1b' "$T0/mutant-k1-pin/stdout" && ok "mutant-k1-pin: the K1 check fires" || bad "mutant-k1-pin: detail"
 find "$T0" -type f -exec rm -f {} + 2>/dev/null; find "$T0" -type l -exec rm -f {} + 2>/dev/null; find "$T0" -depth -type d -exec rmdir {} \; 2>/dev/null
 [ -e "$T0" ] && echo "left: $T0"
 [ "$fail" = 0 ] && echo "FIG1 CONTROL-ARM TEST PASS" || echo "FIG1 CONTROL-ARM TEST FAILED"
