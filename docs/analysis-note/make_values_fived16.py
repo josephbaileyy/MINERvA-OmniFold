@@ -2128,7 +2128,7 @@ def t2a_values(d):
 
 # values.tex macros whose values move with the 2D covariance (D1); the paper and Supplement print keys instead
 COV_MACROS = ("uqMedian", "uqIntegral", "fluxBand", "qrCmodelMedian", "chiCombined", "chiCombinedLog", "chiCombinedSubStat",
-              "uqSFiveMedian")
+              "uqSFiveMedian", "rhoFluxMuon", "nwSystRatio", r"covTwoD[A-Za-z]*")   # covTwoD*: the earlier 2D coverage study
 
 
 def d1_values(d):
