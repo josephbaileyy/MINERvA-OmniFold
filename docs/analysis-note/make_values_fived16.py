@@ -91,8 +91,14 @@ READOUTS = {
     # the quadrant sums against the adopted 2D result (DECISION-20261102-joseph-quadrant-sentence-sec4-and-validations.md
     # item 1): step C-R's bound rule (FD-GENCMP-AMENDMENT-E-REPORT.md sec. 3.2) and GENCMP X's cross-covariance test
     # (FD-GENCMP-X-REPORT.md sec. 1). Each is computed once, from the reported matrix, so both arms read the same files
-    "cr": (f"{FD}/fd/gencmp-e/c-r/overlap_refined.json", "f1f2fb78"),
-    "xk": (f"{FD}/fd/xcov/run/k/k.json", "f3dc2a34"),
+    # cr under C_new (the director's XCOV ruling and approval of 2026-11-16): #1169's g2r arm, the same command on route A's
+    # Q_R (fd/receipts-cov2d/g2r/cr/README.md; run/node/out.sha256.txt lists it). Before, GENCMP step C-R on partc-r2's
+    # Q_R: fd/gencmp-e/c-r/overlap_refined.json (f1f2fb78)
+    "cr": (f"{FD}/fd/receipts-cov2d/g2r/cr/run/node/g2r/overlap_refined.json", "0734cf4a"),
+    # xk under C_new (the director's XCOV ruling, 2026-11-16): #1170's `k --products g2r`, GENCMP X step K on COV2D-G2R's
+    # products (fd/receipts-cov2d/g2r/xk/README.md; run/node/out.sha256.txt lists it; its control reproduced f3dc2a34 byte
+    # for byte). Before, step K as it ran: fd/xcov/run/k/k.json (f3dc2a34)
+    "xk": (f"{FD}/fd/receipts-cov2d/g2r/xk/run/node/run/k/k.json", "204e4c89"),
     # the run-period diagnosis's readout (FD-RPD-DECLARATION.md sec. 5; DECISION-20261104-joseph-rpd-sentence.md item 2),
     # computed once from the per-playlist unfolds, so both arms read the same file
     "rpd": (f"{FD}/fd/receipts-rpd/run/readout/fd_rpd.json", "c0b06cfd"),
@@ -134,6 +140,12 @@ READOUTS = {
     # D1: C_T' at the data (G2R part (a)): readings.sigma gives the median per-bin and integrated relative sigma before
     # ([0], the reported Q) and after ([1], C_new)
     "g2rdata": (f"{FD}/fd/receipts-cov2d/g2r/readout/data/data_g2r.json", "cd975b64"),
+    # D1: RE-2's derived records on C_new, from COV2D-G2R's RE-2-shapes route A run 2 (#1167; its SHA256SUMS ae994593):
+    # Q's budget (C_PL and the statistical block print from it; Q's sigmas are asserted equal to data_g2r's), C_model's
+    # record (\qrCmodelMedian becomes q2d-qr-cmodel-med) and the values table (a cross-check of the printed G2R values)
+    "g2rbudget": (f"{FD}/fd/receipts-cov2d/g2r/re2shapes/run2/g2r/outA/budget_Q.json.gz", "a5ccddf2"),
+    "g2rcmodel": (f"{FD}/fd/receipts-cov2d/g2r/re2shapes/run2/g2r/cmodel/cmodel_R.json", "0525217d"),
+    "g2rvt": (f"{FD}/fd/receipts-cov2d/g2r/re2shapes/run2/g2r/values_table.tsv", "798b837c"),
     # D1: the Flux band's median relative sigma under C_new, transcribed from G2R's data products by #1148
     # (repin/g2r-transcription-20261114/fluxband_g2r.py; limitation-resolver): keyed from its output, not recomputed
     "fluxbandg2r": ("docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/repin/g2r-transcription-20261114/FLUXBAND.out", "15af01f5"),
@@ -211,7 +223,8 @@ READOUTS = {
     "partc": ("docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/partc_numbers.json", "46519daa"),
     # S5 (the run-period block, RE-2's: budget_Q's provenance names its npz dbb067aa)
     "ct5b": (f"{FD}/fd/readout/fd_ct_5b_audit.json", "6d34d7f8"),
-    "re2comb": ("docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/combination/combination.json", "c663eadb"),
+    # D1: the run-period combination on C_new (#1167 run 2); before, RE-2's partc-r2 combination.json (c663eadb)
+    "re2comb": (f"{FD}/fd/receipts-cov2d/g2r/re2shapes/run2/g2r/combination/combination.json", "fb9fe357"),
     # S5: the published flux median, computed from the release (stageB/verify-c04-x01/VERIFICATION.md:130: 4.014 %)
     "pubflux": ("2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV_flux.txt", "a2ba53fd"),
     "pubresult": ("2d-unfolding/minerva_paper_anc/data_result_ptpl_2D_minerva_inclusive_6GeV.txt", "02153e7a"),
@@ -274,7 +287,7 @@ def paper_prec(k, x):
 FIGURES = {"fd_g_fig_ratio.pdf": ("fd/gencmp/carbon-figure", "1e6d550e"),
            "fd_g_fig_modes.pdf": ("fd/gencmp-e/rerun1/chain/chdefs/with/figures-a2", "0d6fe57c")}
 # the readouts that are text receipts, not JSON
-TEXT_READOUTS = {"fluxbandg2r", "tension", "gprobe", "e2sens", "s1code", "s5cpseudo", "f1prep", "cov2ddecl", "ll5ddecl", "nullcode", "stabdecl", "fd1bdecl"}
+TEXT_READOUTS = {"g2rvt", "fluxbandg2r", "tension", "gprobe", "e2sens", "s1code", "s5cpseudo", "f1prep", "cov2ddecl", "ll5ddecl", "nullcode", "stabdecl", "fd1bdecl"}
 TEXT_READOUTS |= {"pubflux", "pubresult", "pubbins"}     # the Supplement's release files (supp_literal_values)
 CELLS = [f"R{i:02d}" for i in range(16)]
 BLOCK = {"stat": "statistical", "interaction": "interaction", "flux": "flux", "detector": "detector",
@@ -996,6 +1009,13 @@ def quadrant_values(d):
         v[f"cr-{n}-nopl-reading"], v[f"cr-{n}-nopl-rhostar"] = word[o["outcome"]], f"{o['rho_star']:.4f}"
         # "agree" is |d| within the any-correlation band (rho* above 1); "agree below a correlation", rho* at most 1
         assert (t["outcome"] == "agree") == (t["rho_star"] > 1) and (o["outcome"] == "agree") == (o["rho_star"] > 1)
+    # sec_fived16.tex :47 names the readings by hand: "All four agree, QA at every rho and the others below correlations of
+    # cr-QC-rhostar (QC) to cr-QB-rhostar (QB)". Guard each named choice, so a readout that changes one stops the run
+    oc = {n: q[n]["2D"]["outcome"] for n in Q}
+    assert oc["QA"] == "agree" and all(oc[n] == "agree below a correlation" for n in ("QB", "QC", "QD")), \
+        "sec_fived16 :47's readings changed: QA at every rho, the others below a correlation"
+    rs = {n: q[n]["2D"]["rho_star"] for n in ("QB", "QC", "QD")}
+    assert min(rs, key=rs.get) == "QC" and max(rs, key=rs.get) == "QB", "sec_fived16 :47's rho* range (QC to QB) changed"
     # the paper: "the sums differ by -1.5 to +0.7 per cent"
     pct = [q[n]["2D"]["d_pct"] for n in Q]
     assert min(pct) < 0 < max(pct), "the paper prints a signed range of the quadrant differences"
@@ -1053,6 +1073,8 @@ def quadrant_values(d):
         "a printed bound is not a bound: chi2 <= x-chi2-hi and p >= x-p-min must hold"
     zmax = max(abs(z) for r in ("r0", "r1") for z in p[r]["z"])
     assert zmax < 1, "the paper says no quadrant lies beyond one standard deviation"
+    # sec_fived16.tex names where it lies: "the largest |z| is x-zmax, in QC at r = 1"
+    assert abs(p["r1"]["z"][Q.index("QC")]) == zmax, "the largest |z| is no longer QC's at r = 1, as sec_fived16 says"
     v["x-zmax"] = f"{zmax:.3f}"
     return v
 
@@ -2104,6 +2126,11 @@ def t2a_values(d):
     return v
 
 
+# values.tex macros whose values move with the 2D covariance (D1); the paper and Supplement print keys instead
+COV_MACROS = ("uqMedian", "uqIntegral", "fluxBand", "qrCmodelMedian", "chiCombined", "chiCombinedLog", "chiCombinedSubStat",
+              "uqSFiveMedian")
+
+
 def d1_values(d):
     """D1 (DECISION-20261114-joseph-d1-g2r-adopted.md; the director's rulings of 2026-11-14): COV2D-G2R's C_T' is the
     reported 2D covariance. Section 3.2's median per-bin and integrated relative sigma come from G2R part (a)'s data
@@ -2138,6 +2165,27 @@ def d1_values(d):
         # joint count and each flagged cell's count are the regrade's
         assert cp[T]["joint"]["count"] == gn["joint_count"]
         assert [(f["i"], f["count"]) for f in cp[T]["cells"]["flagged"]] == [(i, gn["counts"][i]) for i in gn["flagged_cells"]]
+    # C_new's budget (#1167) carries the same Q sigmas as data_g2r's [1]
+    gb = d["g2rbudget"]["Q"]
+    for k in ("median_pct", "integral_sigma_pct"):
+        assert abs(gb[k] - s[k][1]) <= 1e-12 * s[k][1], (k, gb[k], s[k][1])
+    # \qrCmodelMedian (Supplement S6): the median relative sigma of C_new + C_model, from C_model's record on C_new
+    cm = d["g2rcmodel"]["cell_rel_sigma"]
+    assert abs(100 * cm["Q_R"]["median"] - s["median_pct"][1]) <= 1e-9, "cmodel_R's Q_R is C_new"
+    v["q2d-qr-cmodel-med"] = f"{100 * cm['Q_R_plus_C_model']['median']:.2f}"
+    # the values table on C_new (#1167) prints the same values as the keys, from the same numbers
+    rows = {ln.split("\t")[0]: ln.split("\t") for ln in d["g2rvt"].splitlines()[1:] if ln.strip()}
+    for row, key, x in (("m-uqMedian", "q2d-sigma-med", s["median_pct"][1]), ("m-uqIntegral", "q2d-sigma-int", s["integral_sigma_pct"][1]),
+                        ("m-fluxBand", "q2d-fluxband", float(v["q2d-fluxband"]))):
+        r = rows[row]
+        assert r[3] == v[key] and abs(float(r[10]) - x) <= (1e-12 * x if row != "m-fluxBand" else 0.005), (row, r[3], r[10], v[key])
+    # the paper prints no covariance-dependent values.tex macro, so a later merge of the note's values.tex cannot set an old
+    # value beside a new key (the director, 2026-11-16)
+    for f in ("paper_body.tex", "main_paper.tex", "supplemental_body.tex"):
+        t = re.sub(r"(?m)(?<!\\)%.*$", "", (ROOT / "docs/analysis-note" / f).read_text())
+        bad = [m for m in COV_MACROS if re.search(r"\\" + m + r"(?![A-Za-z])", t)]
+        assert not bad, f"{f} prints covariance-dependent macros {bad}: key them (q2d-*)"
+
     return v
 
 
@@ -2366,12 +2414,14 @@ def supp_literal_values(d):
     assert max(b["pz_marg_z_max"], b["pt_marg_z_max"]) < 0.7           # printed as a bound ("every marginal z is below 0.7")
     v["re2per-zmarg-bound"] = "0.7"
     v["re2per-chi2-pz"], v["re2per-noise-pz"] = f"{b['chi2_pz_marginal']:.1f}", f"{b['noise']['expected_chi2']['pz']:.1f}"
-    c = d["budgetq"]["C_PL"]
+    # D1: from C_new's budget (#1167 run 2); RE-2's budgetq stays pinned for Q's block sizes and data_g2r's [0] check
+    c = d["g2rbudget"]["C_PL"]
     v["bq-pl-med"], v["bq-pl-p84"], v["bq-pl-max"] = (f"{c[k]:.2f}" for k in ("median_pct", "p84_pct", "max_pct"))
     v["bq-pl-pz-lo"], v["bq-pl-pz-hi"] = f"{min(c['pz_sigma_pct']):.2f}", f"{max(c['pz_sigma_pct']):.2f}"
     v["bq-pl-int"] = f"{c['integral_sigma_pct']:.2f}"
-    v["bq-stat-med"] = f"{d['budgetq']['stat']['median_pct']:.3f}"
-    assert d["budgetq"]["provenance"]["inputs"]["playlist_npz"]["sha256"].startswith("dbb067aa")
+    v["bq-stat-med"] = f"{d['g2rbudget']['stat']['median_pct']:.3f}"
+    for k in ("budgetq", "g2rbudget"):
+        assert d[k]["provenance"]["inputs"]["playlist_npz"]["sha256"].startswith("dbb067aa")
     cb = d["re2comb"]["report"]
     v["re2comb-sigma-inc"] = f"{cb['effect_of_C_PL_on_S5']['cell_sigma_increase_pct']['median']:.1f}"
     raw = cb["reference_scenario_algebraic"]["bias_PB_raw_frozen"]
@@ -2493,8 +2543,9 @@ def supp_literal_values(d):
             "re1-pur-max": "5.9", "re1-ref-max": "0.44", "partc-learner-med": "1.03", "partc-learner-max": "17.6",
             "ct5b-nu": "1.82", "re2per-zmarg-bound": "0.7", "re2per-chi2-pz": "34.4", "re2per-noise-pz": "2.0",
             "bq-pl-med": "2.09", "bq-pl-p84": "3.34", "bq-pl-max": "6.48", "bq-pl-pz-lo": "1.17", "bq-pl-pz-hi": "3.36",
-            "bq-pl-int": "1.97", "bq-stat-med": "0.676", "re2comb-sigma-inc": "5.8", "re2comb-chi2-s5": "34.8",
-            "re2comb-chi2-s5pl": "2.59", "plref-med": "1.38", "plref-int": "1.09",
+            # D1: re2comb's chi2s on C_new (#1167 run 2's combination.json); before, 34.8 and 2.59 (RE-2 partc-r2)
+            "bq-pl-int": "1.97", "bq-stat-med": "0.676", "re2comb-sigma-inc": "5.8", "re2comb-chi2-s5": "33.8",
+            "re2comb-chi2-s5pl": "2.60", "plref-med": "1.38", "plref-int": "1.09",
             "pp-mode-max": "4.7", "tension-next9-lo": "3.4", "tension-next9-hi": "3.8", "tension-small10-pct": "9.6",
             "pub-flux-med": "4.01", "pp-sigpub-lo": "4.1", "pp-sigpub-hi": "4.6",
             "refg1-chi2-q997": "35.89", "refg1-hartlap-T": "185.2", "refg1-hartlap-q997": "46.09",
