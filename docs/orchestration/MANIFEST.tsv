@@ -6103,6 +6103,15 @@ docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/preread-ou
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/preread-outcomes-20261109/run-header.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/preread-outcomes-20261109/sonnet-preread.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/r18-paper-inventory.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-abstract-s4title-20261116/README.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-abstract-s4title-20261116/SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-abstract-s4title-20261116/abstract/answer.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-abstract-s4title-20261116/abstract/prompt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-abstract-s4title-20261116/abstract/proposed-coverage-sentences.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-abstract-s4title-20261116/abstract/run-header.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-abstract-s4title-20261116/s4title/answer.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-abstract-s4title-20261116/s4title/prompt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-abstract-s4title-20261116/s4title/run-header.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-and-qualifications-20261101/INPUTS.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-and-qualifications-20261101/REPORT.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-and-qualifications-20261101/SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
