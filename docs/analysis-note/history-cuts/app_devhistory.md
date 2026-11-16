@@ -56,3 +56,7 @@ two. The rendered pages were also checked by eye (pdftoppm -r 60, pp. 138–141)
   lost. reads/app_devhistory-pass2.txt.
 
 **Meaning read of the rulings (codex-school gpt-6.1-sol, high, read-only; rows E3, E4, T9, I10, I11 together, records attached):** pass 1 FAIL on E3 only (its first wording listed the seed-shift scale, which sec_5d.tex:344 assigns to the companion covariances); pass 2, E3 revised, OVERALL PASS with no FAILs and no NEEDED item lost. reads/rulings-pass1.txt, reads/rulings-pass2.txt.
+
+## V-1 / App-I-1 (2026-11-16)
+
+Row added: the first grade of the held-out-tune 2D coverage test, superseded by its regrade against the adopted covariance (COV2D-G2R-DECLARATION.md sec. 4-5; DECISION-20261114-joseph-d1-g2r-adopted.md item 3). NEEDED: it says which grade the printed numbers are, and that the verdict did not move.

@@ -27,10 +27,19 @@ FD = "docs/orchestration/state/measurement-paper/5d-community-20261024/fd"
 ST = "docs/orchestration/state/2d-closeout"
 OR = "docs/orchestration"
 READOUTS = {  # name: (path, sha256 as the OUTCOME record states it)
-    "ar23": (f"{FD}/receipts-cov2d/readout/AR23/score_AR23.json",
-             "fe5263e904f65892ce26b75fb279441230713c38675c2a3615c59d561c4f5ce1"),
-    "g18": (f"{FD}/receipts-cov2d/readout/G18/score_G18.json",
-            "849766942b3ecd9e6e72fd5db9d1a59815796b3f917875f8d0122b0c639088ec"),
+    # The 2D held-out-tune coverage test: the regrade against the adopted covariance C_T' (DECISION-20261114-joseph-
+    # d1-g2r-adopted.md item 3; COV2D-G2R-DECLARATION.md sec. 4-5: "every number is replaced by the regrade's"), as
+    # the paper keys it (cov2dar23, cov2dg18), with the full digests of the receipts' files.sha256 (line 15 of each)
+    "ar23": (f"{FD}/receipts-cov2d/g2r/readout/AR23/score_g2r_AR23.json",
+             "fb6d1f7fddfa18124bf097087a2f895582ef0991f9888c5ab1ce16cefbbe3079"),
+    "g18": (f"{FD}/receipts-cov2d/g2r/readout/G18/score_g2r_G18.json",
+            "27374aab74793444ee20561ced1066247b225a40067092d7d181e186128b9ec2"),
+    # The first grade (superseded; App. I): the toy count, which the regrade's record does not repeat, and the check
+    # that the regrade kept the first grade's verdict, joint counts, thresholds and flagged cells
+    "ar23old": (f"{FD}/receipts-cov2d/readout/AR23/score_AR23.json",
+                "fe5263e904f65892ce26b75fb279441230713c38675c2a3615c59d561c4f5ce1"),
+    "g18old": (f"{FD}/receipts-cov2d/readout/G18/score_G18.json",
+               "849766942b3ecd9e6e72fd5db9d1a59815796b3f917875f8d0122b0c639088ec"),
     "vr": (f"{ST}/valid-region-20261107/receipts/read/readout.json",
            "91bb604e3a62e2654e611750830e225061e5c0b0255b12455a23ac9be4eec84c"),
     "pp": (f"{ST}/per-period-benchmark-20261106/receipts/read/readout.json",
@@ -99,8 +108,14 @@ def build(R):
         if not cond:
             A.append(what)
     # --- COV2D (OUTCOME-20261108-cov2d-both-tunes-under-cover.md, sections 1-4 and CITABLE FOR)
-    V["cov2d-ntoys"] = str(at(R["ar23"], "section_9_9/products"))
-    expect(at(R["g18"], "section_9_9/products") == at(R["ar23"], "section_9_9/products"), "COV2D toy counts differ")
+    V["cov2d-ntoys"] = str(at(R["ar23old"], "section_9_9/products"))
+    expect(at(R["g18old"], "section_9_9/products") == at(R["ar23old"], "section_9_9/products"), "COV2D toy counts differ")
+    for t in ("ar23", "g18"):   # the regrade (R[t]) keeps the first grade's (R[t + "old"]) verdict, counts and flags
+        g, o = R[t]["grade"], R[t + "old"]["grade"]
+        expect(all(g[k] == o[k] for k in ("verdict", "joint_count", "k_joint", "ndf", "flagged_cells")),
+               f"{t}: the regrade changed the verdict, joint count, threshold, ndf or flagged cells")
+        expect(len(g["counts"]) == len(o["counts"]) and max(g["counts"]) <= int(V["cov2d-ntoys"]), f"{t} counts")
+        expect(all(g["counts"][c] == o["counts"][c] for c in g["flagged_cells"]), f"{t}: a flagged cell's count moved")
     for t in ("ar23", "g18"):
         g = R[t]["grade"]
         expect(R[t]["verdict"] == "UNDER-COVERS" and g["verdict"] == "UNDER-COVERS", f"{t} verdict")
