@@ -1,0 +1,11 @@
+PASS copy: rc 0 and exactly the K set (XK-COPY OK: 6 files to 2 destination(s), each equal to fd/xcov/run/hpss/files.sha256)
+PASS copy: an existing destination refuses (XK-COPY REFUSED: $TMP/tmpral9zb17/d1/v0-a1/v0.json exists)
+PASS copy: a digest mismatch refuses (XK-COPY REFUSED: boot/xcov/xcov_b1_j101.npz: sha256 ec31682fde561917952ff78a7a8adeffd0febc372dd26871916c46c630381b45 != committed d9298a10d1b0735837dc4bd85dac641b0f3cef27a47e5d53a54f2f3f5b2fcffa)
+PASS copy: a K file absent from the list refuses (XK-COPY REFUSED: not in the committed list: ['v1-a2/v1.json'])
+PASS compare: itself, identical bytes (XK-CONTROL PASS: 0 difference(s); bytes identical)
+PASS compare: re-serialized, bytes differ, PASS (XK-CONTROL PASS: 0 difference(s); bytes differ)
+PASS compare: a reading changed STOPs (XK-CONTROL STOP: 1 difference(s); bytes differ)
+PASS compare: route changed STOPs (XK-CONTROL STOP: 1 difference(s); bytes differ)
+PASS compare: a dropped input STOPs (XK-CONTROL STOP: 1 difference(s); bytes differ)
+PASS compare: an extra key STOPs (XK-CONTROL STOP: 1 difference(s); bytes differ)
+XK TOOLS TEST PASS
