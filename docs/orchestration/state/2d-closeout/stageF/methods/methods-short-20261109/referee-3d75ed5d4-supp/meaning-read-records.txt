@@ -1,0 +1,281 @@
+== FD-PRR-DECLARATION.md :136-142, :165-176, :280-292, :305-313
+   136	### 3.1 The baseline B0 and the pairing
+   137	
+   138	- **B0 is configuration (e)** (`registry/ESTIMATORS.tsv`, `e-R-joint-test`). That is s5e candidate R: the
+   139	  Stay-Positive refinement at 400 trees and 31 leaves, and the three OmniFold estimators at 100 trees, 8 leaves,
+   140	  5 iterations (`FD-STAB-DECLARATION.md:41-44`).
+   141	- **The pseudo-data is FD-STAB's closure construction, unchanged** (`FD-STAB-DECLARATION.md:105-123`):
+   142	  `s5p_nullexp.py --expectation --no-nuisance --mc-fraction half`:
+   165	### 3.3 Route 1: the factors and levels (OFAT around B0)
+   166	
+   167	| factor | levels (B0's in bold) | how | bound code? |
+   168	|---|---|---|---|
+   169	| **F1 iterations** K | 2, **5**, 10, 20, 50 | `s5p_nullexp.py --iters K` | yes, a runner flag (`s5p_nullexp.py:278`) |
+   170	| **F2 capacity** (trees, leaves) of the three OmniFold estimators | (25, 4), **(100, 8)**, (400, 31), (1000, 63) | `s5p_nullexp.py --capacity N,L` (`s5p_numerics.omnifold_capacity`, `s5p_numerics.py:91-102`). The refinement stays at 400/31 | yes, a runner flag (`s5p_nullexp.py:277`) |
+   171	| **F3 training statistics** (the unfolding MC) | **half**, quarter | `s5p_nullexp.py --mc-fraction quarter` | yes, a runner flag (`s5p_nullexp.py:275`) |
+   172	| **F4 observables the classifiers see** | **O5**: all five; **O4r**: W dropped from the step-1 (reco) classifier only; **O4**: W dropped from all three OmniFold estimators; **O3**: (p_T, p_∥, E_avail); **O2**: (p_T, p_∥) | a column mask on the classifier inputs only. The truth histogram, the extraction and the refinement keep all five, so every level reports the same 16 cells | **no:** new, a pass-through wrapper (§8) |
+   173	
+   174	**Why these levels:**
+   175	- **F1** spans the iteration readings already on main: the paper's K ≤ 20, the note's 30, and D-ID's direction of
+   176	  K = 200, here 50 for the unbinned estimator's cost. IBU covers K = 200 in route 2.
+   280	
+   281	At T ∈ {A7 GiBUU, q3} and factor F with non-baseline levels L, at split 991000:
+   282	- **The bar** is δ_F = max(0.05, 9.03 s_F).
+   283	  - 9.03 is the two-sided Student-t quantile on 4 degrees of freedom at 0.01/12, Bonferroni over the 12 primary
+   284	    readings of §5.1 and §5.2 at familywise 0.01. The code uses 9.02936702750999 (`prr_read.T_Q`), and
+   285	    `test_t_quantile` recomputes it with `scipy.stats.t.ppf`.
+   286	  - The absolute floor of 0.05 keeps a tiny s from making a trivial change "real".
+   287	- **The classes:**
+   288	  - **reduces** if some L has ρ_L ≤ ρ_B0 − δ_F and none has ρ_L ≥ ρ_B0 + δ_F;
+   289	  - **increases** if the reverse;
+   290	  - **both** if each happens at some level;
+   291	  - **no effect** if every |ρ_L − ρ_B0| < δ_F;
+   292	  - **undefined** if ρ is undefined at T. That truth's χ² of §5.3 is printed instead.
+   305	### 5.3 PR-3: does a level clear the flagged truths at these truths? (descriptive, one reading per level)
+   306	
+   307	At each level L, and for IBU at K = 5:
+   308	- **"clears at these truths"** if neither A7 GiBUU nor q3 is flagged under §4.2's rule; otherwise **"does not clear
+   309	  at these truths"**. Those are the only wordings (the director's ruling 2);
+   310	- **without new flags** if, in addition, no graded truth unflagged at B0 is flagged at L.
+   311	- A level that clears is a finding about the mechanism. It is not a new estimator, and it is not evidence that the
+   312	  level would pass a held-out test (§6).
+   313	
+== nd-unfolding/prior_retention/prr_probe.py :18-24, :112-137
+    18	* F1, the iteration count K: ``--iters``;
+    19	* F2, the capacity (n_estimators, num_leaves) of the three OmniFold estimators: ``--capacity``, through the bound
+    20	  ``s5p_numerics.omnifold_capacity``. The refinement keeps 400/31;
+    21	* F3, the unfolding-MC size: ``--mc-fraction quarter``;
+    22	* F4, the observables the OmniFold estimators see: a column mask around ``omnifold_nn_core.omnifold_loop`` for one
+    23	  invocation (``column_mask``). It slices the loop's three coordinate arguments only. The truth histogram, the
+    24	  extraction and the refinement keep all five coordinates, so every level reports the same 16 cells.
+   112	
+   113	# ------------------------------------------------------------------------------------------- the levels (§3.3)
+   114	AXES = ("pt", "pz", "eavail", "q3", "W")  # the classifier columns, checked on the input (C-COLS), never assumed
+   115	NO_W = ("pt", "pz", "eavail", "q3")
+   116	MASKS = {  # level -> (columns of MCgen: step-2 classifier and regressor; columns of MCreco and measured: step 1)
+   117	    "O5": (AXES, AXES),
+   118	    "O4r": (AXES, NO_W),
+   119	    "O4": (NO_W, NO_W),
+   120	    "O3": (("pt", "pz", "eavail"),) * 2,
+   121	    "O2": (("pt", "pz"),) * 2,
+   122	}
+   123	# id: factor, iters, capacity, mc_fraction, mask, units (u = one B0 unfold; the multipliers are §10.1's assumptions)
+   124	LEVELS = {
+   125	    "B0": dict(factor=None, iters=5, capacity=None, mc_fraction="half", mask=None, units=1.0),
+   126	    "K2": dict(factor="F1", iters=2, capacity=None, mc_fraction="half", mask=None, units=0.4),
+   127	    "K10": dict(factor="F1", iters=10, capacity=None, mc_fraction="half", mask=None, units=2.0),
+   128	    "K20": dict(factor="F1", iters=20, capacity=None, mc_fraction="half", mask=None, units=4.0),
+   129	    "K50": dict(factor="F1", iters=50, capacity=None, mc_fraction="half", mask=None, units=10.0),
+   130	    "C25": dict(factor="F2", iters=5, capacity=(25, 4), mc_fraction="half", mask=None, units=0.5),
+   131	    "C400": dict(factor="F2", iters=5, capacity=(400, 31), mc_fraction="half", mask=None, units=4.0),
+   132	    "C1000": dict(factor="F2", iters=5, capacity=(1000, 63), mc_fraction="half", mask=None, units=15.0),
+   133	    "MCq": dict(factor="F3", iters=5, capacity=None, mc_fraction="quarter", mask=None, units=1.0),
+   134	    "O4r": dict(factor="F4", iters=5, capacity=None, mc_fraction="half", mask="O4r", units=1.0),
+   135	    "O4": dict(factor="F4", iters=5, capacity=None, mc_fraction="half", mask="O4", units=1.0),
+   136	    "O3": dict(factor="F4", iters=5, capacity=None, mc_fraction="half", mask="O3", units=1.0),
+   137	    "O2": dict(factor="F4", iters=5, capacity=None, mc_fraction="half", mask="O2", units=1.0),
+== the PRR readout (docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/read/cluster/readout.json): floor, PR-1, PR-3, and per level rho and grade.flagged at split 991000
+floor {"s_F": {"F1": 0.0023377215802034717, "F2": 0.0009797751536834596, "F3": 0.0017675397487514604, "F4": 0.0015668249241088173}, "T_Q": 9.02936702750999, "bar_floor": 0.05, "bars": {"F1": 0.05, "F2": 0.05, "F3": 0.05, "F4": 0.05, "IBU": 0.05}, "transfer": "s is measured at A7_gibuu and applied at ['q3'] (a transfer), and each factor's measured level's s is applied to all its levels"}
+PR-1 {"A7_gibuu": {"F1": "no effect", "F2": "increases", "F3": "no effect", "F4": "increases"}, "q3": {"F1": "increases", "F2": "increases", "F3": "no effect", "F4": "increases"}}
+PR-3 {"B0": {"reading": "does not clear at these truths", "without_new_flags": false, "new_flags": []}, "K2": {"reading": "does not clear at these truths", "without_new_flags": false, "new_flags": ["A7_nuwro", "W3", "stage0c_gibuu"]}, "K10": {"reading": "does not clear at these truths", "without_new_flags": false, "new_flags": []}, "K20": {"reading": "does not clear at these truths", "without_new_flags": false, "new_flags": []}, "K50": {"reading": "does not clear at these truths", "without_new_flags": false, "new_flags": []}, "C25": {"reading": "does not clear at these truths", "without_new_flags": false, "new_flags": ["A7_nuwro", "W3", "stage0c_gibuu"]}, "C400": {"reading": "does not clear at these truths", "without_new_flags": false, "new_flags": []}, "C1000": {"reading": "does not clear at these truths", "without_new_flags": false, "new_flags": []}, "MCq": {"reading": "does not clear at these truths", "without_new_flags": false, "new_flags": []}, "O4r": {"reading": "does not clear at these truths", "without_new_flags": false, "new_flags": []}, "O4": {"reading": "does not clear at these truths", "without_new_flags": false, "new_flags": ["A7_nuwro"]}, "O3": {"reading": "does not clear at these truths", "without_new_flags": false, "new_flags": []}, "O2": {"reading": "does not clear at these truths", "without_new_flags": false, "new_flags": ["A7_genie_cv", "A7_nuwro", "W1", "W3", "closure_nuwro", "stage0c_gibuu"]}, "IBU_K5": {"reading": "does not clear at these truths", "without_new_flags": false, "new_flags": ["A7_nuwro", "W3", "closure_nuwro", "stage0c_gibuu"]}}
+B0/A7_genie_cv/s991000 rho= 0.00947430608826859 flagged= False
+B0/A7_genie_mec/s991000 rho= 0.007053561404887685 flagged= False
+B0/A7_gibuu/s991000 rho= 0.125000768884699 flagged= True
+B0/A7_mnvtune/s991000 rho= None flagged= False
+B0/A7_nuwro/s991000 rho= 0.31995622497039145 flagged= False
+B0/W1/s991000 rho= 0.14690677349916273 flagged= False
+B0/W2/s991000 rho= 0.09380337722462097 flagged= False
+B0/W3/s991000 rho= 0.21627657837473527 flagged= False
+B0/closure_nuwro/s991000 rho= -0.02160043138668077 flagged= False
+B0/nominal/s991000 rho= None flagged= False
+B0/q3/s991000 rho= 0.17852905299277708 flagged= True
+B0/stage0c_gibuu/s991000 rho= 0.23899352919123382 flagged= False
+C1000/A7_genie_cv/s991000 rho= -0.03503934900208049 flagged= False
+C1000/A7_genie_mec/s991000 rho= -0.01326033613588801 flagged= False
+C1000/A7_gibuu/s991000 rho= 0.10205562223494619 flagged= True
+C1000/A7_mnvtune/s991000 rho= None flagged= False
+C1000/A7_nuwro/s991000 rho= 0.22003115178104518 flagged= False
+C1000/W1/s991000 rho= 0.12988599484254162 flagged= False
+C1000/W2/s991000 rho= 0.09436394629122256 flagged= False
+C1000/W3/s991000 rho= 0.10954441621208053 flagged= False
+C1000/closure_nuwro/s991000 rho= -0.07438070403005496 flagged= False
+C1000/nominal/s991000 rho= None flagged= False
+C1000/q3/s991000 rho= 0.1633785826473624 flagged= True
+C1000/stage0c_gibuu/s991000 rho= 0.23525177445330014 flagged= False
+C25/A7_genie_cv/s991000 rho= 0.3818441631834822 flagged= False
+C25/A7_genie_mec/s991000 rho= 0.2857696095242415 flagged= False
+C25/A7_gibuu/s991000 rho= 0.35543905996625536 flagged= True
+C25/A7_mnvtune/s991000 rho= None flagged= False
+C25/A7_nuwro/s991000 rho= 0.7054002097003954 flagged= True
+C25/W1/s991000 rho= 0.4483431309162001 flagged= False
+C25/W2/s991000 rho= 0.22420866986638538 flagged= False
+C25/W3/s991000 rho= 0.7233424577455716 flagged= True
+C25/closure_nuwro/s991000 rho= 0.42197613402366685 flagged= False
+C25/nominal/s991000 rho= None flagged= False
+C25/q3/s991000 rho= 0.4991837335221669 flagged= True
+C25/stage0c_gibuu/s991000 rho= 0.44456892705179635 flagged= True
+C400/A7_genie_cv/s991000 rho= -0.05149395642865746 flagged= False
+C400/A7_genie_mec/s991000 rho= -0.029520827138447735 flagged= False
+C400/A7_gibuu/s991000 rho= 0.10310556288240219 flagged= True
+C400/A7_mnvtune/s991000 rho= None flagged= False
+C400/A7_nuwro/s991000 rho= 0.20270459185274176 flagged= False
+C400/W1/s991000 rho= 0.1332687872291943 flagged= False
+C400/W2/s991000 rho= 0.09142271878938144 flagged= False
+C400/W3/s991000 rho= 0.1022288558842944 flagged= False
+C400/closure_nuwro/s991000 rho= -0.07600232464029981 flagged= False
+C400/nominal/s991000 rho= None flagged= False
+C400/q3/s991000 rho= 0.1581245133026602 flagged= True
+C400/stage0c_gibuu/s991000 rho= 0.23154458927556681 flagged= False
+K10/A7_genie_cv/s991000 rho= -0.010602286404543155 flagged= False
+K10/A7_genie_mec/s991000 rho= 0.006622101502143279 flagged= False
+K10/A7_gibuu/s991000 rho= 0.11290979384171498 flagged= True
+K10/A7_mnvtune/s991000 rho= None flagged= False
+K10/A7_nuwro/s991000 rho= 0.2977796951660041 flagged= False
+K10/W1/s991000 rho= 0.13374830204342075 flagged= False
+K10/W2/s991000 rho= 0.0883779198528004 flagged= False
+K10/W3/s991000 rho= 0.21320070538925268 flagged= False
+K10/closure_nuwro/s991000 rho= -0.042327667807398245 flagged= False
+K10/nominal/s991000 rho= None flagged= False
+K10/q3/s991000 rho= 0.17242324005535808 flagged= True
+K10/stage0c_gibuu/s991000 rho= 0.20851702563375465 flagged= False
+K2/A7_genie_cv/s991000 rho= 0.10958369444730295 flagged= False
+K2/A7_genie_mec/s991000 rho= 0.06980034324784797 flagged= False
+K2/A7_gibuu/s991000 rho= 0.16835752787138528 flagged= True
+K2/A7_mnvtune/s991000 rho= None flagged= False
+K2/A7_nuwro/s991000 rho= 0.4427831835491816 flagged= True
+K2/W1/s991000 rho= 0.23722951135076212 flagged= False
+K2/W2/s991000 rho= 0.15427448569295676 flagged= False
+K2/W3/s991000 rho= 0.29855164083616165 flagged= True
+K2/closure_nuwro/s991000 rho= 0.13208482667464364 flagged= False
+K2/nominal/s991000 rho= None flagged= False
+K2/q3/s991000 rho= 0.235069168218984 flagged= True
+K2/stage0c_gibuu/s991000 rho= 0.30547237683362727 flagged= True
+K20/A7_genie_cv/s991000 rho= -0.009268637957509797 flagged= False
+K20/A7_genie_mec/s991000 rho= 0.005155608845561031 flagged= False
+K20/A7_gibuu/s991000 rho= 0.10359183049366101 flagged= True
+K20/A7_mnvtune/s991000 rho= None flagged= False
+K20/A7_nuwro/s991000 rho= 0.2905583228115718 flagged= False
+K20/W1/s991000 rho= 0.12737969723632317 flagged= False
+K20/W2/s991000 rho= 0.09308249209925289 flagged= False
+K20/W3/s991000 rho= 0.20702292901338645 flagged= False
+K20/closure_nuwro/s991000 rho= -0.043603084725673535 flagged= False
+K20/nominal/s991000 rho= None flagged= False
+K20/q3/s991000 rho= 0.1716903313862641 flagged= True
+K20/stage0c_gibuu/s991000 rho= 0.18389329788913544 flagged= False
+K50/A7_genie_cv/s991000 rho= -0.015378281933893033 flagged= False
+K50/A7_genie_mec/s991000 rho= -0.003416078440841986 flagged= False
+K50/A7_gibuu/s991000 rho= 0.09429608525825453 flagged= True
+K50/A7_mnvtune/s991000 rho= None flagged= False
+K50/A7_nuwro/s991000 rho= 0.29993375059554445 flagged= False
+K50/W1/s991000 rho= 0.11474634815674183 flagged= False
+K50/W2/s991000 rho= 0.10319932928651157 flagged= False
+K50/W3/s991000 rho= 0.2049404831415064 flagged= False
+K50/closure_nuwro/s991000 rho= -0.048925667177482535 flagged= False
+K50/nominal/s991000 rho= None flagged= False
+K50/q3/s991000 rho= 0.16281010141894403 flagged= True
+K50/stage0c_gibuu/s991000 rho= 0.14673261112131772 flagged= False
+MCq/A7_genie_cv/s991000 rho= 0.006088453078199072 flagged= False
+MCq/A7_genie_mec/s991000 rho= 0.009173115801498101 flagged= False
+MCq/A7_gibuu/s991000 rho= 0.12580692544158423 flagged= True
+MCq/A7_mnvtune/s991000 rho= None flagged= False
+MCq/A7_nuwro/s991000 rho= 0.3172769030849727 flagged= False
+MCq/W1/s991000 rho= 0.14469224771087721 flagged= False
+MCq/W2/s991000 rho= 0.09378293836782929 flagged= False
+MCq/W3/s991000 rho= 0.2237658932651665 flagged= False
+MCq/closure_nuwro/s991000 rho= -0.015504518009879505 flagged= False
+MCq/nominal/s991000 rho= None flagged= False
+MCq/q3/s991000 rho= 0.1794552844174193 flagged= True
+MCq/stage0c_gibuu/s991000 rho= 0.24392821052438374 flagged= False
+O2/A7_genie_cv/s991000 rho= 0.6872866340299185 flagged= True
+O2/A7_genie_mec/s991000 rho= 0.3751362997730097 flagged= False
+O2/A7_gibuu/s991000 rho= 0.46294522772617724 flagged= True
+O2/A7_mnvtune/s991000 rho= None flagged= False
+O2/A7_nuwro/s991000 rho= 0.9759349766381276 flagged= True
+O2/W1/s991000 rho= 0.9319879032528697 flagged= True
+O2/W2/s991000 rho= 0.8965414888195998 flagged= False
+O2/W3/s991000 rho= 0.7871156064768743 flagged= True
+O2/closure_nuwro/s991000 rho= 0.8517473789313703 flagged= True
+O2/nominal/s991000 rho= None flagged= False
+O2/q3/s991000 rho= 0.3924816975859361 flagged= True
+O2/stage0c_gibuu/s991000 rho= 0.9244383029636302 flagged= True
+O3/A7_genie_cv/s991000 rho= 0.04671013045001171 flagged= False
+O3/A7_genie_mec/s991000 rho= 0.0631086765826235 flagged= False
+O3/A7_gibuu/s991000 rho= 0.15058342938887498 flagged= True
+O3/A7_mnvtune/s991000 rho= None flagged= False
+O3/A7_nuwro/s991000 rho= 0.33636754376319383 flagged= False
+O3/W1/s991000 rho= 0.18737861794175428 flagged= False
+O3/W2/s991000 rho= 0.05726216599078751 flagged= False
+O3/W3/s991000 rho= 0.24872377805879642 flagged= False
+O3/closure_nuwro/s991000 rho= 0.05399454409487047 flagged= False
+O3/nominal/s991000 rho= None flagged= False
+O3/q3/s991000 rho= 0.19837335466047484 flagged= True
+O3/stage0c_gibuu/s991000 rho= 0.22469613039403655 flagged= False
+O4/A7_genie_cv/s991000 rho= 0.05819703123796012 flagged= False
+O4/A7_genie_mec/s991000 rho= 0.05453906131012282 flagged= False
+O4/A7_gibuu/s991000 rho= 0.11674931238546422 flagged= True
+O4/A7_mnvtune/s991000 rho= None flagged= False
+O4/A7_nuwro/s991000 rho= 0.3610934388361702 flagged= True
+O4/W1/s991000 rho= 0.13956459061366877 flagged= False
+O4/W2/s991000 rho= 0.09038632348790425 flagged= False
+O4/W3/s991000 rho= 0.21855969514134455 flagged= False
+O4/closure_nuwro/s991000 rho= 0.008679461809581342 flagged= False
+O4/nominal/s991000 rho= None flagged= False
+O4/q3/s991000 rho= 0.20562609548750183 flagged= True
+O4/stage0c_gibuu/s991000 rho= 0.2351486044555847 flagged= False
+O4r/A7_genie_cv/s991000 rho= 0.03744630175808579 flagged= False
+O4r/A7_genie_mec/s991000 rho= 0.03212721891694338 flagged= False
+O4r/A7_gibuu/s991000 rho= 0.12687951712940973 flagged= True
+O4r/A7_mnvtune/s991000 rho= None flagged= False
+O4r/A7_nuwro/s991000 rho= 0.32101935092985545 flagged= False
+O4r/W1/s991000 rho= 0.14559165050459844 flagged= False
+O4r/W2/s991000 rho= 0.10410738206092779 flagged= False
+O4r/W3/s991000 rho= 0.21649919620114158 flagged= False
+O4r/closure_nuwro/s991000 rho= -0.013501089726530559 flagged= False
+O4r/nominal/s991000 rho= None flagged= False
+O4r/q3/s991000 rho= 0.18593865605825147 flagged= True
+O4r/stage0c_gibuu/s991000 rho= 0.23756118644785562 flagged= False
+O5/nominal/s991000 rho= None flagged= False
+== docs/orchestration/state/2d-closeout/valid-region-20261107/v-half/DECLARATION.md :125-147
+   125	## 4. The quantities and the noise, per pair (c, t)
+   126	
+   127	**The point values:**
+   128	- r = H1 `bias[c]` and ν = H1 `noise_sigma[c]`, the standard error of r. ν is 0 for the noise-free closure rows.
+   129	- d = H2's B0 `d[c]` at split 991000.
+   130	- b = r (1 + d), which is §4.1's (X̂ − X)/P, because X/P = 1 + d.
+   131	- **Applies** ⇔ |d| ≥ 0.01, by the point value.
+   132	- **The margin** is m = 0.5 |d| − |b|. The pair passes by the point value iff m ≥ 0.
+   133	
+   134	**The noise band:**
+   135	- σ_d(c) is the sample s.d. (ddof 1) of H2's B0 `d[c]` at A7_gibuu over the five splits 991000 and 994001–994004.
+   136	  They are the only measured points of d's noise. σ_d(c) is applied to every truth in cell c, and the readout prints it.
+   137	  - The nominal truth's five splits enter only as each split's P. Its own d is 0 by construction, and control C-PRR
+   138	    checks that.
+   139	- σ_m² = ((1 + d) ν)² + (0.5 sgn(d) − |r|)² σ_d². These are the two terms linearized:
+   140	  - ∂m/∂r = −(1 + d) sgn(r);
+   141	  - ∂m/∂d = 0.5 sgn(d) − |r|.
+   142	- **K = 2.** lo = m − K σ_m and hi = m + K σ_m.
+   143	
+   144	**The pair's class:**
+   145	- **pass** if lo ≥ 0;
+   146	- **fail** if hi < 0;
+   147	- **"unresolved (noise)"** otherwise, because the point class flips within the band;
+== V-HALF readout readings.rule
+{'K': 2.0, 'b': 'r (1 + d)', 'floor': 0.01, 'forms': ['|b| <= 0.5 |d|', '|r| <= 0.5 |d| / (1 + d)'], 'half': 0.5, 'sigma_m': 'sqrt(((1 + d) nu)^2 + (0.5 sgn(d) - |r|)^2 sigma_d^2)'}
+== paper_body.tex :546 (the ensemble)
+An ensemble-averaged variant of the estimator, the mean of \fvval{ens1-n} fits, meets the stability requirement on the pseudo-data used to test stability (median \fvval{ens1-median} and at most \fvval{ens1-max}, against \fvval{ens1-bar-median} and \fvval{ens1-bar-max}), where the reported estimator does not. On noise-free fake-data closures at the \fvval{ens1-ntruths} distinct truths it is no worse than the reported estimator at \fvval{ens1-nnoworse} and worse at one, the GiBUU $\Eavail$ shape, where its root-mean-square closure bias is \fvval{ens1-g-rms-r} against \fvval{ens1-g-rmsc-r}, about \fvval{ens1-g-rms-dpct}\,\% larger. Its adoption required closure no worse at every truth, and the reported estimator is kept. The pseudo-data values and their accounting are in \ssec{S4}{supp:estimators}. On the sixteen reported cells of the data, the ensemble average differs from the reported result by at most \SI{\fvval{e96d-maxpct}}{\percent}, and by at most \fvval{e96d-maxsig} of a cell's standard deviation from $C_{\mathrm{e}}$. Its fits perturb a float64 copy of the inputs at the rounding level, and on the unperturbed copy the reported estimator gives the reported result to double precision.
+== supplemental_body.tex: S4.4's stability paragraph
+409:\paragraph{The stability test.} The stability test of the paper's \psec{sec:cov5d} perturbs the inputs at the rounding level. The reported estimator is tested on the data, under two perturbations. Its variants, cross-fitting and two tree regularizations, are tested in simulation at a GiBUU-to-GENIE $\Eavail$ shape, on \fvval{stab-npairs} disjoint perturbation pairs. The ensemble average of \fvval{ens1-n} fits is tested there on \fvval{ens1-pairs} pairs. The simulated input is drawn from one half of the simulation and unfolded with the other half. The test's statistic, criterion and reading are test 7 of table~\ref{tab:tests}.
+== the referee's minor 2 (codex report)
+2. **Correct the model-covariance trace convention.** P4, §3.2; S15–16, §S5.1. The 0.890 GiBUU share is a share of the fractional covariance's trace, not of the cross-section-unit covariance defined in the sum. This is a real difference, not interchangeable notation. From the committed `cmodel_5d.json` arrays S and x, the fractional shares are 0.01412, 0.09547, 0.89040 for GENIE+MEC, NuWro, GiBUU, whereas the shares after multiplication by diag(x) on both sides are 0.01745, 0.30765, 0.67490. The alternative-construction trace ratios 1.41 and 0.112 likewise refer to fractional matrices. Using the stored diagonal ratios and x gives approximately 1.282 and 0.256 in cross-section units. State `tr(C_model^frac)` consistently; no new uncertainty claim follows from this correction.
+== make_values rsn_values :2431-2437
+            "re1-pur-max": "5.9", "re1-ref-max": "0.44", "partc-learner-med": "1.03", "partc-learner-max": "17.6",
+            "ct5b-nu": "1.82", "re2per-zmarg-bound": "0.7", "re2per-chi2-pz": "34.4", "re2per-noise-pz": "2.0",
+            "bq-pl-med": "2.09", "bq-pl-p84": "3.34", "bq-pl-max": "6.48", "bq-pl-pz-lo": "1.17", "bq-pl-pz-hi": "3.36",
+            "bq-pl-int": "1.97", "bq-stat-med": "0.676", "re2comb-sigma-inc": "5.8", "re2comb-chi2-s5": "34.8",
+            "re2comb-chi2-s5pl": "2.59", "plref-med": "1.38", "plref-int": "1.09",
+            "pp-mode-max": "4.7", "tension-next9-lo": "3.4", "tension-next9-hi": "3.8", "tension-small10-pct": "9.6",
+            "pub-flux-med": "4.01", "pp-sigpub-lo": "4.1", "pp-sigpub-hi": "4.6",
+== supplemental_body.tex S4.4 stability paragraph (unchanged)
+\paragraph{The stability test.} The stability test of the paper's \psec{sec:cov5d} perturbs the inputs at the rounding level. The reported estimator is tested on the data, under two perturbations. Its variants, cross-fitting and two tree regularizations, are tested in simulation at a GiBUU-to-GENIE $\Eavail$ shape, on \fvval{stab-npairs} disjoint perturbation pairs. The ensemble average of \fvval{ens1-n} fits is tested there on \fvval{ens1-pairs} pairs. The simulated input is drawn from one half of the simulation and unfolded with the other half. The test's statistic, criterion and reading are test 7 of table~\ref{tab:tests}.
+== supplemental_body.tex S8.2 thresholds paragraph (unchanged)
+At each of the two flagged truths, each setting is classified according to whether any tested level reduces or increases $\rho$ by at least a threshold, whichever side of the reported setting that level lies on. This threshold is the larger of \fvval{prr-floor} and \fvval{prr-tq} times the standard deviation of the paired change of $\rho$ over five splits of the simulation. The factor \fvval{prr-tq} is the two-sided Student-$t$ quantile on four degrees of freedom at a familywise rate of 0.01 over the study's twelve primary comparisons.

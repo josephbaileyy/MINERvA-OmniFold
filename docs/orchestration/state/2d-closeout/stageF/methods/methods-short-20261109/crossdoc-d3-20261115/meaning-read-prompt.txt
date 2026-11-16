@@ -1,0 +1,12 @@
+You are a meaning referee for a JINST methods paper and its Supplement (OmniFold unfolding of MINERvA open data). Judge meaning and fidelity to the records only, not style. Do not propose new numbers. Work read-only, from the files in this directory.
+
+change.diff changes two things (comment lines starting with % are provenance, not printed):
+(A) The prior-retention study's threshold boundary. Four printed sentences in the paper and three in the Supplement change "by more than the threshold" to "by at least the threshold", and one changes "no change above the threshold is detected" to "no change as large as the threshold is detected".
+(B) One Supplement sentence names the direction of a ratio: "per cell, the ratio of the response block's spread to the full-universe block's has median ...", replacing "gives a block that differs from it by a factor of median ...".
+records.txt holds the governing record lines: the study's declaration and its code for (A); the coverage-diagnosis declaration and report, and the analysis note's wording as quoted by an audit, for (B).
+
+Check, citing file:line:
+1. (A) Does each new sentence state exactly the record's rule (<= / >= for a change, strict < for no effect), for the per-setting classes and for IBU's five-iteration class? Is any sentence now false or weaker than the record, or is a result sentence turned into a different claim?
+2. (B) Is the named direction (response-only over full-universe, as a ratio of spreads, i.e. square roots of the blocks) the one in the records? Does the sentence still fit the sentences around it in the diff context?
+3. Anything else in the diff that changes meaning?
+End with a ranked list of problems, each with a concrete fix (or "No problems"), then one final line exactly "VERDICT: PASS" or "VERDICT: FAIL".

@@ -1,0 +1,16 @@
+== paper_body.tex :119
+Each OmniFold iteration has two classification steps. A reconstruction-level classifier distinguishes data from simulated events and defines a likelihood-ratio weight. The pairing of reconstructed and true events transfers that weight to truth, including unmatched events, and a truth-level classifier propagates a smooth reweighting to the next iteration. Because events that fail reconstruction enter as truth events without a reconstructed partner, no separate efficiency correction is applied. Their step-1 weight comes from a regressor of that weight on the truth coordinates, fitted to the events that have a partner. Each simulated event contributes equally to the regressor fit, which therefore estimates the mean weight at fixed truth without the events' simulation weights. Events without a reconstructed partner carry \SIrange{\fvval{ess-nrp-min}}{\fvval{ess-nrp-max}}{\percent} of a cell's final weight (\ssecc{S4}{supp:estimators}).
+== supplemental_body.tex :347
+\paragraph{Hyperparameter choice.} The settings of the two OmniFold classifiers (steps 1 and 2) and the regressor for events without a reconstructed partner were fixed \emph{a priori}. No hyperparameter search was performed on data, which avoids tuning on the result. The refinement classifier's capacity and the five-observable estimator's iteration count were instead chosen in simulation closure studies (section~\ref{supp:superseded}). The \emph{a priori} settings are the scikit-learn \texttt{GradientBoosting} defaults: 100 trees, learning rate $0.1$, and depth-3 capacity. The LightGBM learner of the central value and its ensembles uses matched capacity ($\texttt{num\_leaves}=8=2^{3}$), giving each of these learners the same deliberately modest capacity, one of OmniFold's regularizers (section~\ref{sec:method-algo}). The two-observable estimator, configuration~(f), and the superseded configuration~(a) do not set the histogram construction. Their bin edges therefore come from the library's default row sample, and the training seed reaches the result through that sample. The configurations this section calls deterministic set those edges from every training row and enable the library's deterministic training.
+== prr_probe.py :112-122
+
+# ------------------------------------------------------------------------------------------- the levels (§3.3)
+AXES = ("pt", "pz", "eavail", "q3", "W")  # the classifier columns, checked on the input (C-COLS), never assumed
+NO_W = ("pt", "pz", "eavail", "q3")
+MASKS = {  # level -> (columns of MCgen: step-2 classifier and regressor; columns of MCreco and measured: step 1)
+    "O5": (AXES, AXES),
+    "O4r": (AXES, NO_W),
+    "O4": (NO_W, NO_W),
+    "O3": (("pt", "pz", "eavail"),) * 2,
+    "O2": (("pt", "pz"),) * 2,
+}

@@ -1,0 +1,23 @@
+(A) All seven revised sentences match the governing boundary. For a defined retained fraction, a change includes equality: a decrease has \(\Delta\le-\delta\), an increase has \(\Delta\ge\delta\), and “no effect” requires every \(|\Delta|<\delta\). The declaration and code agree (`records.txt:10–14`, `records.txt:28–39`).
+
+- **Paper’s general rule:** “differs … by at least a threshold” correctly includes both boundaries (`change.diff:11`).
+- **Paper’s increases result:** “raised … by at least the threshold” together with “no tested level … lowered it that far” exactly expresses the *increases* class (`change.diff:18`).
+- **Paper’s no-change result:** “no change as large as the threshold” correctly requires strict inequality below the threshold (`change.diff:18`).
+- **Paper’s IBU result:** “lower … by at least its threshold” means \(\rho_{\mathrm{IBU}}(5)-\rho_{\mathrm{B0}}\le-\delta_{\mathrm{IBU}}\), matching `ibu_class` (`change.diff:24`; `records.txt:36–39`).
+- **Supplement’s index reading:** “raises … by at least the threshold” is consistent with the named *increases* class and the row’s existing criterion (`change.diff:37`).
+- **Supplement’s thresholds paragraph:** “reduces or increases … by at least a threshold” correctly includes equality in either direction (`change.diff:49`).
+- **Supplement’s classes paragraph:** the revised *increases* definition, its reverse for *reduces*, *both*, and “no level moves it that far” reproduce the record’s classes, including strict \(<\) for no detected change (`change.diff:54`).
+
+The Supplement explicitly applies the same rule with IBU’s own threshold (`change.diff:51`). The separate five-to-200-iteration test remains inclusive at its fixed margin, matching the declaration and code (`change.diff:24`, `change.diff:54`; `records.txt:21–22`, `records.txt:42–45`).
+
+No revised sentence is false or weaker than the governing rule. Although “at least” is logically less restrictive than the previous “more than,” it restores the recorded classification criterion. The result sentences remain result statements; they do not become definitions or assert that an observed difference equals the threshold.
+
+(B) The direction and quantity are correct. The records identify \(A\) as the full-universe block and \(B\) as the response-only block, then define \(F_{\mathrm{prior}}=\sqrt{B/A}\) (`records.txt:49–56`). Thus the new sentence names the per-cell response-only spread divided by the full-universe spread, rather than a ratio of block magnitudes (`change.diff:64`). Both the report and the audit’s quotation confirm this interpretation (`records.txt:62–68`).
+
+The sentence fits its context: the pseudo-experiments reproduce the response-only block; the full-universe block differs; the following sentences discuss the failed additive construction and the successful full-weight control (`change.diff:59`, `change.diff:64–67`). Neither comparison is reversed or reinterpreted.
+
+(C) No other printed meaning changes appear. The added `%` lines supply provenance only (`change.diff:10`, `change.diff:45`, `change.diff:63`).
+
+No problems
+
+VERDICT: PASS

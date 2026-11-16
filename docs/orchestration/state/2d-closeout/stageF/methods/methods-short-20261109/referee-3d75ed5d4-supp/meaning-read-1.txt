@@ -1,0 +1,27 @@
+The table’s data and the changes for minors 2 and 7 are faithful. Minor 8 omits a factor required by the declared noise formula. The caption also presents a rounded maximum as an exact upper bound.
+
+1. **Table and producer:** All displayed \(\rho\) values match the readout to three decimals; every \(\Delta\rho\) is the unrounded level value minus configuration (e), then rounded. The classes and new-flag counts also match (`new-values.txt:1–70`; `records.txt:78–236`). The rendered table agrees with the keys.
+
+   The levels, order, and “Applies to” entries match the declaration and code, including O4r versus O4/O3/O2, the three estimators’ capacity, fixed refinement capacity, iterations, and training statistics (`change.diff:123–143`; `records.txt:4–16,53–76`). The runner/mask route and unchanged sixteen cells are supported (`records.txt:44–50`). Every level actually flags both original flagged truths; this is supported by the individual grades, beyond the weaker PR-3 “does not clear” wording. The new-flags definition is correct (`records.txt:37–41,80–236`). Nothing claims improvement, adoption, or clearance. The pointer additions preserve meaning (`change.diff:92,107,155`). The threshold remains floor-dominated, subject to the rounding problem below.
+
+2. **Fractional covariance:** Correct for both alternatives. The revised trace ratios and GiBUU shares refer to fractional matrices, as required by the referee’s record (`change.diff:82–83`; `records.txt:269`). No additional uncertainty claim is introduced.
+
+3. **Stability Reading:** The variant names match S4.4. The ensemble passes stability and fails the separate adoption requirement of closure no worse at every truth, being worse at one. The old Reading’s substantive content—including keeping the reported estimator—is retained (`change.diff:95–98`; `records.txt:265–267`).
+
+4. **Bias-half rule:** The margin, applicability, GiBUU measurement and transfer of departure noise, \(K\), pass/fail inequalities, unresolved remainder, and reduction when noise vanishes agree with the declaration. The second first-order noise term does **not** agree (`change.diff:173`; `records.txt:242–263`). The producer asserts the correct formula and reads the correct \(K\); it does not reclassify records (`change.diff:56–62`).
+
+No other meaning changes found.
+
+Ranked problems:
+
+1. **S10 omits the departure-noise coefficient.** `change.diff:173` says to combine the scaled bias standard error with the departure’s standard deviation itself. The declaration requires the latter to be multiplied by \(\left|0.5\operatorname{sgn}(d_c)-|r_c|\right|\) (`records.txt:253–255`). As printed, this describes a different band and could imply different classes, although the recorded classes remain unchanged. **Fix:** state the declared equation explicitly:
+   \[
+   b_c=r_c(1+d_c),\qquad
+   \sigma_m^2=((1+d_c)\nu_c)^2+
+   (0.5\operatorname{sgn}(d_c)-|r_c|)^2\sigma_d(c)^2,
+   \]
+   defining \(r_c\) and \(\nu_c\) as the truth-relative bias and its standard error.
+
+2. **The caption’s “at most” bound uses a rounded-down maximum.** The producer rounds the maximum to three decimals (`change.diff:29`; `new-values.txt:70`), but the governing product exceeds that printed value (`records.txt:78`). The floor-dominated threshold conclusion remains correct. **Fix:** replace “is at most [key]” with “has a maximum that rounds to [key]”, retaining the existing key and value.
+
+VERDICT: FAIL
