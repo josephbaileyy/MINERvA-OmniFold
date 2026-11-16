@@ -27,10 +27,25 @@ FD = "docs/orchestration/state/measurement-paper/5d-community-20261024/fd"
 ST = "docs/orchestration/state/2d-closeout"
 OR = "docs/orchestration"
 READOUTS = {  # name: (path, sha256 as the OUTCOME record states it)
-    "ar23": (f"{FD}/receipts-cov2d/readout/AR23/score_AR23.json",
-             "fe5263e904f65892ce26b75fb279441230713c38675c2a3615c59d561c4f5ce1"),
-    "g18": (f"{FD}/receipts-cov2d/readout/G18/score_G18.json",
-            "849766942b3ecd9e6e72fd5db9d1a59815796b3f917875f8d0122b0c639088ec"),
+    # The 2D held-out-tune coverage test: the regrade against the adopted covariance C_T' (DECISION-20261114-joseph-
+    # d1-g2r-adopted.md item 3; COV2D-G2R-DECLARATION.md sec. 4-5: "every number is replaced by the regrade's"), as
+    # the paper keys it (cov2dar23, cov2dg18), with the full digests of the receipts' files.sha256 (line 15 of each)
+    "ar23": (f"{FD}/receipts-cov2d/g2r/readout/AR23/score_g2r_AR23.json",
+             "fb6d1f7fddfa18124bf097087a2f895582ef0991f9888c5ab1ce16cefbbe3079"),
+    "g18": (f"{FD}/receipts-cov2d/g2r/readout/G18/score_g2r_G18.json",
+            "27374aab74793444ee20561ced1066247b225a40067092d7d181e186128b9ec2"),
+    # The first grade (superseded; App. I): the toy count, which the regrade's record does not repeat, and the check
+    # that the regrade kept the first grade's verdict, joint counts, thresholds and flagged cells
+    # Tier 2 (a) at C_T' (#1150): the joint test truncated to the best-determined eigen-directions, as the paper keys it
+    # (t2aar23, t2ag18; ported 2026-11-16 for sec. 5.3's truncation sentence, check_t2a_port.py)
+    "t2aar23": (f"{FD}/receipts-cov2d/g2r/t2a/run/t2a_g2r_AR23.json",
+                "74fab014ea403fb0e5f56e2ee9768a68c12e441cd59ff6167adede9f5496170e"),
+    "t2ag18": (f"{FD}/receipts-cov2d/g2r/t2a/run/t2a_g2r_G18.json",
+               "b1310d44b1929e2f649048e6a2e16c065e2d60ebc6be731f34385611e4c6b9ff"),
+    "ar23old": (f"{FD}/receipts-cov2d/readout/AR23/score_AR23.json",
+                "fe5263e904f65892ce26b75fb279441230713c38675c2a3615c59d561c4f5ce1"),
+    "g18old": (f"{FD}/receipts-cov2d/readout/G18/score_G18.json",
+               "849766942b3ecd9e6e72fd5db9d1a59815796b3f917875f8d0122b0c639088ec"),
     "vr": (f"{ST}/valid-region-20261107/receipts/read/readout.json",
            "91bb604e3a62e2654e611750830e225061e5c0b0255b12455a23ac9be4eec84c"),
     "pp": (f"{ST}/per-period-benchmark-20261106/receipts/read/readout.json",
@@ -99,8 +114,21 @@ def build(R):
         if not cond:
             A.append(what)
     # --- COV2D (OUTCOME-20261108-cov2d-both-tunes-under-cover.md, sections 1-4 and CITABLE FOR)
-    V["cov2d-ntoys"] = str(at(R["ar23"], "section_9_9/products"))
-    expect(at(R["g18"], "section_9_9/products") == at(R["ar23"], "section_9_9/products"), "COV2D toy counts differ")
+    V["cov2d-ntoys"] = str(at(R["ar23old"], "section_9_9/products"))
+    expect(at(R["g18old"], "section_9_9/products") == at(R["ar23old"], "section_9_9/products"), "COV2D toy counts differ")
+    for t in ("ar23", "g18"):   # the regrade (R[t]) keeps the first grade's (R[t + "old"]) verdict, counts and flags
+        g, o = R[t]["grade"], R[t + "old"]["grade"]
+        expect(all(g[k] == o[k] for k in ("verdict", "joint_count", "k_joint", "ndf", "flagged_cells")),
+               f"{t}: the regrade changed the verdict, joint count, threshold, ndf or flagged cells")
+        expect(len(g["counts"]) == len(o["counts"]) and max(g["counts"]) <= int(V["cov2d-ntoys"]), f"{t} counts")
+        expect(all(g["counts"][c] == o["counts"][c] for c in g["flagged_cells"]), f"{t}: a flagged cell's count moved")
+    # App. I's first-grade row: the one per-cell threshold of a flagged cell that the regrade moved (G18 cell 29)
+    V["cov2d-g18-29-kc-first"] = str(R["g18old"]["grade"]["attribution"]["R29"]["k_flag"])
+    moved = [(t, c) for t in ("ar23", "g18") for c in R[t]["grade"]["flagged_cells"]
+             if R[t]["grade"]["attribution"][f"R{c}"]["k_flag"] != R[t + "old"]["grade"]["attribution"][f"R{c}"]["k_flag"]]
+    expect(moved == [("g18", 29)], f"App. I names G18 cell 29 as the only flagged cell whose threshold moved: {moved}")
+    # ES-1: the abstract and the ES print one joint count "at each" tune, so both tunes' counts must be equal
+    expect(R["ar23"]["grade"]["joint_count"] == R["g18"]["grade"]["joint_count"], "the two tunes' joint counts differ")
     for t in ("ar23", "g18"):
         g = R[t]["grade"]
         expect(R[t]["verdict"] == "UNDER-COVERS" and g["verdict"] == "UNDER-COVERS", f"{t} verdict")
@@ -218,6 +246,21 @@ def build(R):
     # --- extended-fiducial tier shares (note-b8/ledger.md row E7)
     V["fps-tier1-pct"] = record("fpsledger", 81, "6")
     V["fps-tier2-pct"] = record("fpsledger", 81, "28")
+    # --- Tier 2 (a) at C_T', the truncated joint test (the paper's t2a_values, ported: only t2a-r1 and t2a-r2 print)
+    for t in ("ar23", "g18"):
+        x = R["t2a" + t]
+        expect(x["schema"] == "t2a/1" and all(c["pass"] for c in x["controls"].values()), f"t2a {t} controls")
+        expect(x["inputs_sha256"]["score"] == READOUTS[t][1], f"t2a {t} was not computed from the pinned regrade")
+        tr = x["truncated"]
+        r1, r2 = sorted(int(k) for k in tr)
+        expect((r1, r2) == (73, 139), f"t2a {t} ranks")
+        for r in (r1, r2):
+            z = tr[str(r)]
+            expect(z["in_region_count"] == 0 and z["of"] == int(V["cov2d-ntoys"]) and z["at_or_below_k_joint"],
+                   f"t2a {t}: the truncated joint test at rank {r} is not none of {V['cov2d-ntoys']} in the region")
+        expect(x["precision"]["n_unresolved"] == 0 and all(c["agree"] for c in x["precision"]["truncated_counts"].values()),
+               f"t2a {t} precision")
+    V["t2a-r1"], V["t2a-r2"] = "73", "139"
     if A:
         sys.exit("FAIL: a record no longer says what the prose states: " + "; ".join(A))
     return V
