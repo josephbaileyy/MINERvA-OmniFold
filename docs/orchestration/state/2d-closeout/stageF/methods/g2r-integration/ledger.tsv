@@ -18,15 +18,15 @@ V	g2r-comb-q-vs-ec	app_statmethods.tex	6.462	6.468	\SI{6.468}{\percent}. The uni
 V	g2r-comb-univ-plus-stat	app_statmethods.tex	5.982	5.976	l blocks together give $5.976\%$, again evaluated on	l blocks together give $5.982\%$, again evaluated on	values_table.tsv	comb-univ-plus-stat
 V	g2r-worked-q-median	app_statmethods.tex	6.414	6.463	igma$ & $\uqPaper\%$ & $6.463\%$ \\	igma$ & $\uqPaper\%$ & $6.414\%$ \\	values_table.tsv	worked-q-median
 V	g2r-floor-oo-univstat	app_statmethods.tex	22.29	22.38	$\chi^{2}/\mathrm{ndf}=22.38$ (\S\ref{sec:rank}).	$\chi^{2}/\mathrm{ndf}=22.29$ (\S\ref{sec:rank}).	values_table.tsv	floor-oo-univstat
-V	g2r-pull-comb-rms	app_statmethods.tex	0.388	0.389	offset, and RMS $\boxed{0.389}$. For the exact-split	offset, and RMS $\boxed{0.388}$. For the exact-split	values_table.tsv	pull-comb-rms
+V	g2r-pull-comb-rms	app_statmethods.tex	0.388	0.389	offset, and standard deviation $\boxed{0.389}$. For the exact-split	offset, and RMS $\boxed{0.388}$. For the exact-split	values_table.tsv	pull-comb-rms
 V	g2r-cond-univ-1e12	app_statmethods.tex	9.78	7.45	}(\mathbf{C}^{\syst}) = 7.45\times10^{11},	}(\mathbf{C}^{\syst}) = 9.78\times10^{11},	values_table.tsv	cond-univ-1e12
 V	g2r-rank-univ-1e10	app_statmethods.tex	124	123	($123$ and $7.54\times10^{9}$	($124$ and $9.45\times10^{9}$	values_table.tsv	rank-univ-1e10
 V	g2r-cond-univ-1e10	app_statmethods.tex	9.45	7.54	($123$ and $7.54\times10^{9}$ above $10^	($124$ and $9.45\times10^{9}$ above $10^	values_table.tsv	cond-univ-1e10
 V	g2r-cond-univstat-1e12	app_statmethods.tex	7.91	7.95	{\max}$; $\mathrm{cond}=7.95\times10^{11}$ by the de	{\max}$; $\mathrm{cond}=7.91\times10^{11}$ by the de	values_table.tsv	cond-univstat-1e12
 V	g2r-oo-q	app_statmethods.tex	21.77	21.96	($21.96$ for all four blocks) f	($21.77$ for all four blocks) f	values_table.tsv	oo-q
 V	g2r-rank-q-1e10	app_statmethods.tex	197	198	ed covariance has rank $198$ above	ed covariance has rank $197$ above	values_table.tsv	rank-q-1e10
-V	g2r-audit-pull-rms	app_statmethods.tex	0.388	0.389	nd pull mean/RMS $0.034/0.389$.	nd pull mean/RMS $0.034/0.388$.	values_table.tsv	audit-pull-rms
-V	g2r-audit-pull-rms-b	app_statmethods.tex	0.388	0.389	Pull RMS $= 0.389$ & \S\ref{sec:pull} &	Pull RMS $= 0.388$ & \S\ref{sec:pull} &	values_table.tsv	audit-pull-rms-b
+V	g2r-audit-pull-rms	app_statmethods.tex	0.388	0.389	nd pull mean/standard deviation $0.034/0.389$.	nd pull mean/RMS $0.034/0.388$.	values_table.tsv	audit-pull-rms
+V	g2r-audit-pull-rms-b	app_statmethods.tex	0.388	0.389	Pull standard deviation $= 0.389$ & \S\ref{sec:pull} &	Pull RMS $= 0.388$ & \S\ref{sec:pull} &	values_table.tsv	audit-pull-rms-b
 V	g2r-audit-q-median	app_statmethods.tex	6.414	6.463	ombined median rel.\ $= 6.463\%$ & \S\ref{sec:combine	ombined median rel.\ $= 6.414\%$ & \S\ref{sec:combine	values_table.tsv	audit-q-median
 V	g2r-tabcomb-univ-trace	app_statmethods.tex	2.689	2.686	Systematic (universe sweep $+$ norm) & $2.686	Systematic (universe sweep $+$ norm) & $2.689	values_table.tsv	tabcomb-univ-trace
 V	g2r-oo-univstat	app_statmethods.tex	22.29	22.38	\mathbf{C}^{\boot}$ gives $\chi^{2}/\mathrm{ndf}=22.38	\mathbf{C}^{\boot}$ gives $\chi^{2}/\mathrm{ndf}=22.29	values_table.tsv	oo-univstat
