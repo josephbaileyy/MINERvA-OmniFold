@@ -22,9 +22,10 @@ then ties the manifest to the rulings before it becomes the list:
    it, equals the null record's products_sha256: g18 c16e9ce0…, ar23 b716657b….
 2. **extras (8):** the clipmean and data_control products. All 13 of the pilot's extras evidenced in
    bulk/evidence/extras-vs-pilot-r2.out.txt (these 8, plus 3 null-role and 2 toy products) equal the manifest.
-3. **toys (1200)** and **4. sidecars (97):** the manifest is their pin of record. The readout's atime-post read
-   SAME-SET-NONE-MOVED over $U's declared inputs, nothing has written $U since the bulk, and the manifest pass moved
-   no atime.
+3. **toys (1200)** and **4. sidecars (97):** the manifest is their pin of record. Each readout record watched 832 paths,
+   its truth's 227 products and 600 toys among them, and none moved (receipts-ll5d/readout/README.md). The readout's
+   1146-path atime-post covered the protected inputs, not $U's products (`products 1654 (in atime-pre: 0)`). Nothing
+   has written $U since the bulk, and the manifest pass moved no atime.
 The four groups partition all 1759 files. At run time the kit stages each file by O_NOATIME copy, and the bytes must
 equal its pin, so for the toys and the sidecars two independent O_NOATIME reads must agree.
 
