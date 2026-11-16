@@ -1,0 +1,23 @@
+# rulings meaning read, pass 2: codex-school gpt-6.1-sol, high, read-only; prompt rulings-pass2-prompt.txt, records rulings-records.txt
+For Question 1:
+
+- **E3 — PASS:** R4 supports this file’s diagnostic role through item 3 and assigns the measured seed sensitivity and central-value shifts to the two companions, R3 supports per-source attribution, and no supplied body passage uses this covariance outside the revised list.
+- **E4 — PASS:** The expanded scope matches R5 and the current App. I, while “where the note states it” correctly weakens the old unconditional promise to match the appendix’s disclosure limits.
+- **T9 — PASS:** R1 supports both setting the conditions after reading the reported numbers and expecting N and R not to fire, and R1b confirms that “second and third” correctly refers to N’s replica-spread condition and R’s variance-in-plane condition in the new sentence.
+- **I10 — PASS:** The added timing and expectation accurately summarize R1 and T9, while retaining the distinction between previously reported numbers and subsequently computed deciding measurements, together with the unchanged outcome.
+- **I11 — PASS:** The revised description matches R5 and the current appendix, including consequential choices made after results were seen.
+
+For Question 2, **no NEEDED information was lost**; the replacements retain the relevant content, with supported corrections to scope and disclosure.
+
+| Row | Removed or replaced phrase | Classification |
+|---|---|---|
+| E3 | “Technical diagnostic of estimator-seed sensitivity only.” | **NEEDED:** states scope and limitations; the diagnostic role remains, and the exclusivity is corrected to accommodate R3’s attribution use. |
+| E4 | “Superseded configurations and changed tests that bear on the released results” | **NEEDED:** identifies relevant history and its location; retained and expanded. |
+| E4 | “with what had been seen when each change was made” | **NEEDED:** bears on evidential independence; retained with R5’s warranted disclosure qualifier, correcting an overpromise rather than deleting a timing fact. |
+| T9 | Nothing removed or replaced. | No removal to classify; the added disclosure is **NEEDED** for evidential independence. |
+| I10 | “were fixed before the measurements that decide them were computed, and none occurred” | **NEEDED:** timing and outcome bear on evidential independence and limitations; both remain. |
+| I11 | “with the configurations and tests superseded or changed during the analysis” | **NEEDED:** identifies relevant history and its pointer; its substantive scope remains and is expanded. |
+
+No replaced substantive phrase is merely LEDGER material.
+
+OVERALL: PASS — FAILs: none.

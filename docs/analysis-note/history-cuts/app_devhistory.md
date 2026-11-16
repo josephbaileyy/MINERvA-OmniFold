@@ -20,14 +20,15 @@ the body at the cited place and adds no claim; each removed or shortened cell st
 | I7 | :51, D11's outcome | "It did not pass its first two tests and was not pursued further: Stage~0 failed its first part on both sets of cells and stopped, and in the reconstruction-information test no configuration met its residual requirement, a study that remains incomplete; …" | "Not pursued after its first two tests: Stage~0 failed its first part on both sets of cells and stopped; the reconstruction-information test, which remains incomplete, had no configuration meeting its residual requirement. …" (the distinction between the failed Stage 0 and the incomplete study is kept) | sec_fived16.tex:110–115 |
 | I8 | :53, D12's label | "Coverage test at the two tunes for the covariance without the run-period block" | "…, stopped at a gate" | sec_fived16.tex:279 |
 | I9 | :51, D11's "Already seen" | "--" | "The results of the route's first two tests, when $C_{\mathrm{model}}$ was adopted unscaled" (pass 1 of the read: the dash made I1's "a dash means the note does not state it" false for this row) | sec_fived16.tex:110 ("did not pass its first two tests and was not pursued further, after which $C_{\mathrm{model}}$ was adopted unscaled") |
+| I10 | :54, D13's "Already seen" | "…were fixed before the measurements that decide them were computed, and none occurred" | "…were fixed before the measurements that decide them were computed, after the block's reported numbers had been read; two were not expected to fire, and none occurred" | ruling 2; sec_fived16.tex:196 (T9) |
+| I11 | app_guide.tex:6 | "with the configurations and tests superseded or changed during the analysis (App.~…)" | "with the superseded configurations, changed tests and consequential choices made after results were seen (App.~…)" | ruling 3 |
 | D13 | new | — | the run-period blocks C_PL and C_PL,5D: assigned after the period differences had been seen; built from them, so they contain them by construction; the containment gives no information on size or coverage; the sixteen-cell results with and without C_PL,5D; already seen: the period differences, and for C_PL,5D the conditions fixed before the measurements that decide them were computed, none occurring | sec_systematics.tex:166, :187; sec_fived16.tex:187, :196 (T8 of history-cuts/sec_fived16.md, whose records check is there) |
 | D14 | new | — | the joint-test design: fixed before any production pseudo-experiment or observed statistic, with two data-informed elements; the budget extension decided during production so that the sequential rule could set the stop; no statistic, variant, threshold or stopping rule changed; the familywise bound holds whatever rule set the stop; already seen: descriptive per-cell residuals (the design's reviewers), observed claim p values in the monitoring output (the extension) | sec_joint.tex:126 |
 | D15 | new | — | the matched coarse-projection comparison: no test meets its criterion, no evidence of additional discrimination; report-only, outside the Holm family, no decision changed; already seen: the five-dimensional outcomes, when it and its criterion were specified, before it ran | sec_joint.tex:134, :254 |
 
 **Not done:**
-- **The ES (sec_execsummary.tex:6) and the guide (app_guide.tex:6)** still describe App. I as superseded
-  configurations and changed tests. Both are still true, but they no longer cover the whole appendix. They are left
-  for the director, because the ES wording is a separate edit.
+- **The ES (sec_execsummary.tex:6) and the guide (app_guide.tex:6)** were left at first; the director's ruling 3 of
+  2026-11-15 updated both (E4 in history-cuts/sec_execsummary.md; I11 above).
 
 ## Numbers and keys
 
@@ -51,3 +52,5 @@ two. The rendered pages were also checked by eye (pdftoppm -r 60, pp. 138–141)
 - **Pass 2, D11's cell filled (I9), each of the five remaining dashes checked against the body:** OVERALL PASS, with
   no FAILs. None of the five rows' body passages states what had been seen when the change was made; no NEEDED item
   lost. reads/app_devhistory-pass2.txt.
+
+**Meaning read of the rulings (codex-school gpt-6.1-sol, high, read-only; rows E3, E4, T9, I10, I11 together, records attached):** pass 1 FAIL on E3 only (its first wording listed the seed-shift scale, which sec_5d.tex:344 assigns to the companion covariances); pass 2, E3 revised, OVERALL PASS with no FAILs and no NEEDED item lost. reads/rulings-pass1.txt, reads/rulings-pass2.txt.

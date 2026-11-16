@@ -125,3 +125,11 @@ numbering).
 **Style pass B, meaning read (codex-school gpt-6.1-sol, high, read-only; rows S6, C8, F4 and T8 read together, records attached):**
 - **Pass 1:** OVERALL FAIL on F4 only ("for the purposes, and within the limits, stated in Table~\ref{tab:result-status}" imported Table 1's estimator-seed-only scope, which omits sec_eavailw.tex:118 and sec_systematics.tex:160). S6, C8 and T8 passed; every removed item was LEDGER or NEEDED and retained; no disclosure lost. reads/styleB-pass1.txt.
 - **Pass 2, F4 revised to "with the restrictions stated in this section":** OVERALL PASS, with no FAILs; no NEEDED item lost; no disclosure lost. reads/styleB-pass2.txt.
+
+## The director's ruling on the pass-B flag, 2026-11-15 (row T9)
+
+| id | base line | old text | new text | source |
+|---|---|---|---|---|
+| T9 | :196 (base `8b4758e46`) | — | added after the three conditions: "The conditions were set after the block's reported numbers had been read, and the second and third were not expected to fire." Source comment appended to :199, so no line moves. A new disclosure, in Joseph's batch. | ruling 2 (NEEDED: evidential independence); FD-CT-5B-AUDIT-DECLARATION.md:52–75 (what was read before the stop condition) and :72 ("So clauses N and R (§7) are not expected to fire") |
+
+**Meaning read of the rulings (codex-school gpt-6.1-sol, high, read-only; rows E3, E4, T9, I10, I11 together, records attached):** pass 1 FAIL on E3 only (its first wording listed the seed-shift scale, which sec_5d.tex:344 assigns to the companion covariances); pass 2, E3 revised, OVERALL PASS with no FAILs and no NEEDED item lost. reads/rulings-pass1.txt, reads/rulings-pass2.txt.

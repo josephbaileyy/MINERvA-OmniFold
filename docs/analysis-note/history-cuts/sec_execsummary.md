@@ -25,6 +25,17 @@ Joseph's disclosure wording.
 
 **Numbers and keys:** `numdiff.py` on the base and new ES: none removed or added; value keys and macros unchanged.
 
+## The director's rulings on the pass-B flags, 2026-11-15 (rows E3, E4)
+
+Base: this file at `8b4758e46`. Both go in Joseph's batch as ES wording approved by the director.
+
+| id | base line | old text | new text | source |
+|---|---|---|---|---|
+| E3 | ES :38, Table 1's $C_Z$ row | "Technical diagnostic of estimator-seed sensitivity only." | "Used only for the estimator-seed sensitivity diagnostic (§eavailw-adopted), whose seed-sensitivity measurements use two companion covariances, and for the attribution of its per-source decomposition (§uq-combine)." The restrictions that follow are unchanged. Pass 1 of the read failed a first wording that also listed "the scale of the seed shifts of central values (§eavailw-map)": sec_5d.tex:344 says items 1, 2 and 4 (item 4 is the seed-shift comparison that sec_eavailw.tex:118 points to) use the two companion covariances, and only item 3 describes this file. | ruling 1: the body's uses, sec_5d.tex:294, :344–360, sec_systematics.tex:160 |
+| E4 | ES :6 | "Superseded configurations and changed tests that bear on the released results are listed in App.~…, with what had been seen when each change was made." | "Superseded configurations, changed tests and consequential choices made after results were seen that bear on the released results are listed in App.~…, with what had been seen when each was made, where the note states it." (the qualifier matches App. I's opening, I1 of history-cuts/app_devhistory.md) | ruling 3; app_devhistory.tex:8 |
+
 ## Meaning read
 
 See sec_validation.md, rows V3–V9: one read covers E1, E2, V3–V9 and §3's C7 (reads/es-v3-pass*.txt).
+
+**Meaning read of the rulings (codex-school gpt-6.1-sol, high, read-only; rows E3, E4, T9, I10, I11 together, records attached):** pass 1 FAIL on E3 only (its first wording listed the seed-shift scale, which sec_5d.tex:344 assigns to the companion covariances); pass 2, E3 revised, OVERALL PASS with no FAILs and no NEEDED item lost. reads/rulings-pass1.txt, reads/rulings-pass2.txt.
