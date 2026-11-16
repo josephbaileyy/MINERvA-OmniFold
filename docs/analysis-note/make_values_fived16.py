@@ -379,7 +379,9 @@ PENDING["ll5d-repair"] = ("ll5d", None)             # the repair, as the record 
 PENDING["ll5d-offset"] = ("ll5d", None)             # clipcheck's largest |o_c|, its cell and the bound (offset routes)
 PENDING["ll5d-clip-record"] = ("ll5d", None)        # the Supplement S9 clipping record (the director's option (a))
 PENDING["ll5d-abs-form"] = ("ll5d", LL5D_ABS_FORMS)  # the abstract's approved case or the PRD read's form (Joseph's choice)
-PENDING["ll5d-route-record"] = ("ll5d", None)       # S9, adaptive routes: the exceeded quantity and its bound, what was visible, the reason, every repair (DECISION-20261109-joseph-coverage-case-wording.md item 2)
+PENDING["ll5d-route-record"] = ("ll5d", None)
+for _k in ("njoint-min", "njoint-max", "kjoint-all", "chi2ndf-min", "chi2ndf-max"):   # §6.3's magnitude clause (the director, (d))
+    PENDING[f"ll5d-{_k}"] = ("ll5d", None)       # S9, adaptive routes: the exceeded quantity and its bound, what was visible, the reason, every repair (DECISION-20261109-joseph-coverage-case-wording.md item 2)
 for _t in ("g18", "ar23"):
     for _r in ("minus2", "all"):
         PENDING[f"ll5d-{_t}-{_r}"] = ("ll5d", LL5D_T)
@@ -488,6 +490,8 @@ VERDICTS = {
     'll5d-ar23-minus2-why': 'none',
     'll5d-campaign': 'graded',
     'll5d-cellflags': 'some',
+    'll5d-chi2ndf-max': '3.7',
+    'll5d-chi2ndf-min': '3.0',
     'll5d-clip-record': "no cell reads ``passes, weakened by clipping'', no flagged cell is read as a possible clipping artefact, and the largest clipping offset is $|o_c|=0.048$ under $C_T$, in R05 at \\fvval{f1-tune-ar23-short} in the variant with the two bands, against $\\delta^*=0.667$",
     'll5d-g18-all': 'under-joint-only',
     'll5d-g18-all-cells': 'none',
@@ -521,6 +525,9 @@ VERDICTS = {
     'll5d-g18-minus2-weak': 'none',
     'll5d-g18-minus2-weak-cells': 'none',
     'll5d-g18-minus2-why': 'none',
+    'll5d-kjoint-all': '195',
+    'll5d-njoint-max': '14',
+    'll5d-njoint-min': '1',
     'll5d-offset': '$|o_c|=0.048$ under $C_T$, in R05 at \\fvval{f1-tune-ar23-short} in the variant with the two bands, against $\\delta^*=0.667$',
     'll5d-repair': 'the correction of an implementation defect in that check, which compared event weights stored at two precisions. The repair changed no rule, threshold, bound or cell',
     'll5d-route': 'repaired',
@@ -721,6 +728,15 @@ def ll5d_verdicts(d):
             i = max(range(16), key=lambda c: abs(o[c]))
             oc.append((abs(o[i]), t, r, i))
     m, t, r, i = max(oc)
+    # §6.3's magnitude clause over the four readings: the joint counts' range against their common threshold, and the
+    # mean chi2/ndf's range at one decimal (the director's ruling (d), 2026-11-15)
+    J = {(t_, r_): d["ll5d" + t_]["evaluations"][f"{t_}/{r_}"]["grade"] for t_ in ("g18", "ar23") for r_ in ("minus2", "all")}
+    ks = {g_["k_joint"] for g_ in J.values()}
+    assert len(ks) == 1, "the clause states one threshold"
+    nj, cn = [g_["joint_count"] for g_ in J.values()], [g_["chi2_mean_over_ndf"] for g_ in J.values()]
+    assert max(nj) <= min(ks), "every reading is at or below the threshold"
+    text["njoint-min"], text["njoint-max"], text["kjoint-all"] = str(min(nj)), str(max(nj)), str(ks.pop())
+    text["chi2ndf-min"], text["chi2ndf-max"] = f"{min(cn):.1f}", f"{max(cn):.1f}"
     tune = {"g18": "\\fvval{f1-tune-g18-short}", "ar23": "\\fvval{f1-tune-ar23-short}"}
     var = {"all": "in the variant with the two bands", "minus2": "in the primary variant, without them"}
     text["offset"] = f"$|o_c|={m:.3f}$ under $C_T$, in R{i:02d} at {tune[t]} {var[r]}, against $\\delta^*={dstar:g}$"
@@ -734,6 +750,7 @@ def ll5d_verdicts(d):
     v = ll5d_case("graded", per, text["ll5d-route"], flags, cells,
                   {"stop-what": text["ll5d-stop-what"], "repair": text["ll5d-repair"], "offset": text["offset"],
                    "clip-record": text["clip-record"], "route-record": text["ll5d-route-record"], "abs-form": LL5D_ABS_FORM,
+                   **{k: text[k] for k in ("njoint-min", "njoint-max", "kjoint-all", "chi2ndf-min", "chi2ndf-max")},
                    **{k: x for k, x in text.items() if isinstance(k, tuple)}})
     for k, x in v.items():
         cls = PENDING[k][1]
@@ -811,7 +828,8 @@ def ll5d_case(campaign, per=None, route="direct", flags=None, cells=None, text=N
          "ll5d-stop-what": text.get("stop-what", "[the gate or check]"), "ll5d-repair": text.get("repair", "[the repair]"),
          "ll5d-offset": text.get("offset", "[the largest offset, its cell, and the bound]"),
          "ll5d-clip-record": text.get("clip-record", "[the clipping record]"),
-         "ll5d-route-record": text.get("route-record", "[the exceeded quantity and its bound, what was visible when the decision was made, its reason, and every repair]")}
+         "ll5d-route-record": text.get("route-record", "[the exceeded quantity and its bound, what was visible when the decision was made, its reason, and every repair]"),
+         **{f"ll5d-{k}": text.get(k, f"[{k}]") for k in ("njoint-min", "njoint-max", "kjoint-all", "chi2ndf-min", "chi2ndf-max")}}
     for t in ("g18", "ar23"):
         for r in ("minus2", "all"):
             c = per.get((t, r), "covers") if graded else "na"
