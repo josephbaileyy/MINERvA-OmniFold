@@ -1,0 +1,12 @@
+§6.3, the graded arm of the second five-observable coverage test, after the alljoint clause (rendered, with the values of values_fived16.tex):
+
+[As read:] Removing the two bands' block from the covariance graded with them raises any chi-square by at most a factor
+of 1.071 at G18 and 1.095 at AR23, a bound set by the block's largest eigenvalue relative to that covariance. The bound
+applies to the block's place in the covariance only, not to the bands' pseudo-data draws, and what separates the bands'
+pseudo-experiment and simulation-side blocks remains unclassified.
+
+[As committed, the reader's optional replacement for the first sentence adopted:] Removing the two bands' block from
+the covariance graded with them raises the chi-square of any fixed set of residuals by at most a factor of 1.071 at G18
+and 1.095 at AR23, a bound set by the largest fraction of that covariance, in any direction, that the block carries. The
+bound applies to the block's place in the covariance only, not to the bands' pseudo-data draws, and what separates the
+bands' pseudo-experiment and simulation-side blocks remains unclassified.

@@ -53,6 +53,13 @@ READOUTS = {
     "prr": (f"{FD}/fd/receipts-prr/read/cluster/readout.json", "9238f22b"),
     # V-HALF read (#1009); filled into the short paper as a diagnostic (the director, 2026-11-10: Joseph confirmed it)
     "vhalf": ("docs/orchestration/state/2d-closeout/valid-region-20261107/v-half/receipts/read/readout.json", "e7423390"),
+    # LL5D's readout (#1157; job 61272425; nd-unfolding/ll5d_b.py readout_reading at M_A1b.1 4231b14d): the second
+    # five-observable coverage test's grade at each truth and reading, mapped by ll5d_verdicts()
+    "ll5dg18": (f"{FD}/fd/receipts-ll5d/readout/node/readout-g18.json", "7bd6d390"),
+    "ll5dar23": (f"{FD}/fd/receipts-ll5d/readout/node/readout-ar23.json", "5b3fbbf5"),
+    # D2 (DECISION-20261112-joseph-consult-d1-d7.md item 2): the two GEANT4 bands' mu_max in LL5D's own graded matrix
+    # (#1172; fd/receipts-ll5d/mumax/README.md): chi2(M - G)/chi2(M) lies in [1, 1/(1 - mu_max)], M = C_T (all)
+    "ll5dmumax": (f"{FD}/fd/receipts-ll5d/mumax/run/node/mumax.json", "422db056"),
     # the pion-constant departure of Eq. (1), as full-covariance norms of its first-order shift under each arm's matrix
     # (ASSESSMENT-20261031-eavail-charged-pion-mass-switch-pricing.md section 7.3; JSON despite the suffix)
     "eav": ("docs/orchestration/state/eavail-switch-pricing-20261031/step0/step0_metric.txt", "3e8bd546"),
@@ -359,6 +366,11 @@ LL5D_C = ("graded", "gate-failed", "offset-stopped", "stop")
 # repair chosen after an earlier run stopped (:71; the stop-rule decision item 4). Both of the latter make the readings
 # descriptive (the pre-read ruling 8, pending Joseph). na: not graded.
 LL5D_ROUTE = ("direct", "offset-proceeded", "repaired", "na")
+# The abstract's LL5D clause: "approved", the pre-read-approved case (the default), or "referee", the PRD read's form
+# (2026-11-15; the director recommending it), written for this outcome's pattern only (G18 jointly, AR23 jointly and in
+# one cell, in both variants; ll5d_derived asserts it). Joseph's answer is LL5D_ABS_FORM.
+LL5D_ABS_FORMS = ("approved", "referee")
+LL5D_ABS_FORM = "approved"
 # one variant's two tunes, unordered (the pre-read ruling 4: one abstract clause per variant, keeping the cell-versus-
 # joint distinction): c covers, uc cells only, uj joint only, ujc joint and cells, i invalid
 _TL = {"covers": "c", "under-cells": "uc", "under-joint-only": "uj", "under-joint": "ujc", "invalid": "i"}
@@ -366,6 +378,7 @@ _TO = ("c", "uc", "uj", "ujc", "i")
 LL5D_PAIR = tuple(f"{a}-{b}" for i, a in enumerate(_TO) for b in _TO[i:]) + ("na",)
 LL5D_SOME = ("some", "none", "na")
 LL5D_CLOSE = ("scope", "none", "na")    # "none" when no reading was graded; the scope itself is stated once (the style pass)
+LL5D_ALLJOINT = ("all", "notall", "na")   # every (tune, reading) flags jointly (§7 and §7.1 carry it; the codex referee's Minor 3)
 LL5D_STATUS = ("graded", "descriptive", "invalid", "stopped")   # Table 1's status (its caption); no outcome summary: DECISION-20261109-joseph-coverage-case-wording.md item 3
 VHALF_O = ("none-fail", "some-fail")                  # DECISION-20261109-joseph-bias-half-rule.md item 1 (counts below)
 PENDING_GROUPS = {
@@ -393,13 +406,19 @@ PENDING["ll5d-stop-what"] = ("ll5d", None)          # the gate or check a STOP f
 PENDING["ll5d-repair"] = ("ll5d", None)             # the repair, as the record names it (repaired)
 PENDING["ll5d-offset"] = ("ll5d", None)             # clipcheck's largest |o_c|, its cell and the bound (offset routes)
 PENDING["ll5d-clip-record"] = ("ll5d", None)        # the Supplement S9 clipping record (the director's option (a))
+PENDING["ll5d-abs-form"] = ("ll5d", LL5D_ABS_FORMS)  # the abstract's approved case or the PRD read's form (Joseph's choice)
 PENDING["ll5d-route-record"] = ("ll5d", None)       # S9, adaptive routes: the exceeded quantity and its bound, what was visible, the reason, every repair (DECISION-20261109-joseph-coverage-case-wording.md item 2)
+for _k in ("njoint-min", "njoint-max", "kjoint-all", "chi2ndf-min", "chi2ndf-max"):   # §6.3's magnitude clause (the director, (d))
+    PENDING[f"ll5d-{_k}"] = ("ll5d", None)
 for _t in ("g18", "ar23"):
     for _r in ("minus2", "all"):
         PENDING[f"ll5d-{_t}-{_r}"] = ("ll5d", LL5D_T)
         PENDING[f"ll5d-{_t}-{_r}-cells"] = ("ll5d", None)   # the flagged cells with their coverage fractions (counts/300)
         PENDING[f"ll5d-{_t}-{_r}-stats"] = ("ll5d", None)   # joint_count, k_joint, chi2_mean_over_ndf and its se, ndf
         PENDING[f"ll5d-{_t}-{_r}-why"] = ("ll5d", None)     # the failed control, for an invalid reading
+        PENDING[f"ll5d-{_t}-{_r}-names"] = ("ll5d", None)   # the flagged cells by name only ("cell R07"), for the abstract's referee form
+        for _k in ("njoint", "kjoint", "chi2ndf", "chi2se", "cells-tab"):   # the S8.5 results table (journal-editor, Minor 4)
+            PENDING[f"ll5d-{_t}-{_r}-{_k}"] = ("ll5d", None)
         for _x in ("weak", "over", "clip"):
             PENDING[f"ll5d-{_t}-{_r}-{_x}"] = ("ll5d", LL5D_FLAG)
             PENDING[f"ll5d-{_t}-{_r}-{_x}-cells"] = ("ll5d", None)
@@ -409,19 +428,31 @@ PENDING["ll5d-abs-close"] = ("ll5d", LL5D_CLOSE)    # derived
 for _x in ("anypass", "cellflags", "anyweak", "anyover"):
     PENDING[f"ll5d-{_x}"] = ("ll5d", LL5D_SOME)     # derived
 PENDING["ll5d-status"] = ("ll5d", LL5D_STATUS)      # derived
+PENDING["ll5d-alljoint"] = ("ll5d", LL5D_ALLJOINT)  # derived
 PENDING["vhalf-outcome"] = ("vhalf", VHALF_O)
 for _c in ("valid", "notvalid", "notassessed", "unresolved"):
     PENDING[f"vhalf-n-{_c}"] = ("vhalf", None)
 PENDING["vhalf-cells-notvalid"] = ("vhalf", None)
 # The words \fvval prints for a class key (Table 1). A class key with no entry here cannot be printed by \fvval: its
 # value is an \errmessage, so no raw class name reaches a build (round 6 pre-read, NOTES item 24; the director's item 8).
+# The finer-words option for Table 2 and the Supplement's row 10, put to Joseph in the director's batch (2026-11-15;
+# journal-editor's item 3, the director recommending it). False keeps DECISION-20261109 item 3's scheme, the default
+# until Joseph answers; his answer is this one line.
+LL5D_FINER_WORDS = False
+LL5D_T_WORDS = {
+    False: {"covers": "no under-coverage detected", "under-cells": "under-coverage flagged",
+            "under-joint": "under-coverage flagged", "under-joint-only": "under-coverage flagged", "invalid": "invalid",
+            "na": ""},
+    True: {"covers": "no under-coverage detected", "under-cells": "under-coverage flagged per cell",
+           "under-joint": "under-coverage flagged jointly and per cell",
+           "under-joint-only": "under-coverage flagged jointly", "invalid": "invalid", "na": ""},
+}
 WORDS = {
     **{k: {"reduces": "reduces", "increases": "increases", "both": "reduces and increases", "no-effect": "no detected change",
            "undefined": "undefined"} for k, (_, c) in PENDING.items() if c is PR1},
-    # Table 1's entry per tune and variant (DECISION-20261109-joseph-coverage-case-wording.md item 3)
-    **{k: {"covers": "no under-coverage detected", "under-cells": "under-coverage flagged",
-           "under-joint": "under-coverage flagged", "under-joint-only": "under-coverage flagged", "invalid": "invalid",
-           "na": ""} for k, (_, c) in PENDING.items() if c is LL5D_T},
+    # Table 1's entry per tune and variant (DECISION-20261109-joseph-coverage-case-wording.md item 3), or, if Joseph
+    # chooses it, the finer words that separate a joint-only flag from a joint and per-cell one (LL5D_FINER_WORDS)
+    **{k: LL5D_T_WORDS[LL5D_FINER_WORDS] for k, (_, c) in PENDING.items() if c is LL5D_T},
 }
 # filled when a record lands: key -> class (or printed value); a group is filled only when every key has one
 # The prior-retention group, from the FD-PRR readout (READOUTS["prr"]) by prr_verdicts() below; main() refuses any
@@ -442,10 +473,99 @@ VERDICTS = {
     # difference from a fresh mapping of the pinned readout
     "vhalf-outcome": "some-fail", "vhalf-n-valid": "5", "vhalf-n-notvalid": "9", "vhalf-n-notassessed": "0",
     "vhalf-n-unresolved": "2", "vhalf-cells-notvalid": "R03, R05, R07, R08, R10, R11, R12, R13, R15",
+    # the second five-observable coverage test, from LL5D's readout (READOUTS ll5dg18, ll5dar23) by ll5d_verdicts(),
+    # with LL5D_ROUTE_TEXT's route (the director's ruling of 2026-11-15, pending Joseph); main() refuses any difference
+    # from a fresh mapping of the pinned records
+    'll5d-abs-all': 'uj-ujc',
+    'll5d-abs-close': 'scope',
+    'll5d-abs-form': 'approved',
+    'll5d-abs-minus2': 'uj-ujc',
+    'll5d-alljoint': 'all',
+    'll5d-anyover': 'some',
+    'll5d-anypass': 'none',
+    'll5d-anyweak': 'none',
+    'll5d-ar23-all': 'under-joint',
+    'll5d-ar23-all-cells': 'cell R07 (167 of 300 within its interval, flagged at 178 or fewer)',
+    'll5d-ar23-all-cells-tab': 'R07 (167, $\\leq$178)',
+    'll5d-ar23-all-chi2ndf': '3.69',
+    'll5d-ar23-all-chi2se': '0.10',
+    'll5d-ar23-all-clip': 'none',
+    'll5d-ar23-all-clip-cells': 'none',
+    'll5d-ar23-all-kjoint': '195',
+    'll5d-ar23-all-names': 'cell R07',
+    'll5d-ar23-all-njoint': '4',
+    'll5d-ar23-all-over': 'some',
+    'll5d-ar23-all-over-cells': 'R02, R03, R05, R06, R09, R11 and R15',
+    'll5d-ar23-all-stats': '4 of 300 in the joint region, flagged at 195 or fewer, mean $\\chi^2/\\mathrm{ndf}=3.69\\pm0.10$',
+    'll5d-ar23-all-weak': 'none',
+    'll5d-ar23-all-weak-cells': 'none',
+    'll5d-ar23-all-why': 'none',
+    'll5d-ar23-minus2': 'under-joint',
+    'll5d-ar23-minus2-cells': 'cell R07 (163 of 300 within its interval, flagged at 178 or fewer)',
+    'll5d-ar23-minus2-cells-tab': 'R07 (163, $\\leq$178)',
+    'll5d-ar23-minus2-chi2ndf': '3.70',
+    'll5d-ar23-minus2-chi2se': '0.10',
+    'll5d-ar23-minus2-clip': 'none',
+    'll5d-ar23-minus2-clip-cells': 'none',
+    'll5d-ar23-minus2-kjoint': '195',
+    'll5d-ar23-minus2-names': 'cell R07',
+    'll5d-ar23-minus2-njoint': '1',
+    'll5d-ar23-minus2-over': 'some',
+    'll5d-ar23-minus2-over-cells': 'R02, R03, R06, R09, R11 and R15',
+    'll5d-ar23-minus2-stats': '1 of 300 in the joint region, flagged at 195 or fewer, mean $\\chi^2/\\mathrm{ndf}=3.70\\pm0.10$',
+    'll5d-ar23-minus2-weak': 'none',
+    'll5d-ar23-minus2-weak-cells': 'none',
+    'll5d-ar23-minus2-why': 'none',
+    'll5d-campaign': 'graded',
+    'll5d-cellflags': 'some',
+    'll5d-chi2ndf-max': '3.7',
+    'll5d-chi2ndf-min': '3.0',
+    'll5d-clip-record': "no cell reads ``passes, weakened by clipping'', no flagged cell is read as a possible clipping artefact, and the largest clipping offset is $|o_c|=0.048$ under $C_T$, in R05 at \\fvval{f1-tune-ar23-short} in the variant with the two bands, against $\\delta^*=0.667$",
+    'll5d-g18-all': 'under-joint-only',
+    'll5d-g18-all-cells': 'none',
+    'll5d-g18-all-cells-tab': 'none',
+    'll5d-g18-all-chi2ndf': '3.04',
+    'll5d-g18-all-chi2se': '0.08',
+    'll5d-g18-all-clip': 'none',
+    'll5d-g18-all-clip-cells': 'none',
+    'll5d-g18-all-kjoint': '195',
+    'll5d-g18-all-names': 'none',
+    'll5d-g18-all-njoint': '14',
+    'll5d-g18-all-over': 'some',
+    'll5d-g18-all-over-cells': 'R02, R03, R06 and R09',
+    'll5d-g18-all-stats': '14 of 300 in the joint region, flagged at 195 or fewer, mean $\\chi^2/\\mathrm{ndf}=3.04\\pm0.08$',
+    'll5d-g18-all-weak': 'none',
+    'll5d-g18-all-weak-cells': 'none',
+    'll5d-g18-all-why': 'none',
+    'll5d-g18-minus2': 'under-joint-only',
+    'll5d-g18-minus2-cells': 'none',
+    'll5d-g18-minus2-cells-tab': 'none',
+    'll5d-g18-minus2-chi2ndf': '3.07',
+    'll5d-g18-minus2-chi2se': '0.08',
+    'll5d-g18-minus2-clip': 'none',
+    'll5d-g18-minus2-clip-cells': 'none',
+    'll5d-g18-minus2-kjoint': '195',
+    'll5d-g18-minus2-names': 'none',
+    'll5d-g18-minus2-njoint': '12',
+    'll5d-g18-minus2-over': 'some',
+    'll5d-g18-minus2-over-cells': 'R02, R03, R05, R06 and R09',
+    'll5d-g18-minus2-stats': '12 of 300 in the joint region, flagged at 195 or fewer, mean $\\chi^2/\\mathrm{ndf}=3.07\\pm0.08$',
+    'll5d-g18-minus2-weak': 'none',
+    'll5d-g18-minus2-weak-cells': 'none',
+    'll5d-g18-minus2-why': 'none',
+    'll5d-kjoint-all': '195',
+    'll5d-njoint-max': '14',
+    'll5d-njoint-min': '1',
+    'll5d-offset': '$|o_c|=0.048$ under $C_T$, in R05 at \\fvval{f1-tune-ar23-short} in the variant with the two bands, against $\\delta^*=0.667$',
+    'll5d-repair': 'the correction of an implementation defect in that check, which compared event weights stored at two precisions. The repair changed no rule, threshold, bound or cell',
+    'll5d-route': 'repaired',
+    'll5d-route-record': "at both tunes, an entry check that matches each simulated truth event across two of the test's inputs found every event unmatched, against a bound of 5\\,\\% on the largest unmatched share in any cell, and the run stopped. The entry checks had used the coverage pseudo-experiments' draws (as above), but at that point none had been unfolded or graded. Every other entry check had passed, and their readings were visible when the repair was chosen. A diagnosis classed the failure as an implementation defect: the check compared event weights stored at two floating-point precisions, so no event could match. The repair compares them at one precision and adds a check of the matching on the real inputs, which passed. It changed no rule, threshold, bound or cell. The entry checks were then rerun at both tunes and passed. A later trial run of the procedure's controls and one pseudo-experiment stopped at a check on computing time and memory, which found an output file missing before any pseudo-experiment was graded, and was rerun with a change to its batch script only. The diagnosed defect is in this test's entry check. The disagreement of the two GEANT4 bands in the first test (above), which led to the primary variant, remains unexplained",
+    'll5d-status': 'descriptive',
+    'll5d-stop-what': 'an event-matching entry check, which found every event unmatched at both tunes',
 }
 DERIVED = {"prr": ("prr-abs",),
            "ll5d": ("ll5d-abs-minus2", "ll5d-abs-all", "ll5d-abs-close", "ll5d-anypass", "ll5d-cellflags",
-                    "ll5d-anyweak", "ll5d-anyover", "ll5d-status")}
+                    "ll5d-anyweak", "ll5d-anyover", "ll5d-status", "ll5d-alljoint")}
 
 
 def prr_derived(v):
@@ -522,6 +642,159 @@ def check_vhalf_verdicts(d):
             if have.get(k) != want.get(k)]
 
 
+# LL5D's route, ruled by the director on 2026-11-15 from the declaration's text, pending Joseph with the wording:
+# `repaired`. Both first gates STOPped (fd/receipts-ll5d/gate-g18/README.md:1, gate-ar23 the same); Joseph decided the
+# relaunch "after the STOP" (DECISION-20261110-joseph-ll5d-rerun-16-cells.md item 1); amendment A1a.2, written "Under:
+# The STOP of both LL5D gates" (LL5D-AMENDMENT-A1A2.md:9), changed bound code after that STOP was seen, with the
+# gate's other readings visible (:11). LL5D-DECLARATION.md:71 and DECISION-20261109-joseph-coverage-case-wording.md
+# item 2(b) then make the route `repaired` and the status Descriptive. A1a.1's "not a post-hoc repair" (A1A1:7-10)
+# rested on nothing having been read and does not carry. Pilot r1 was a REPRICE (pilot-r1/README.md:10-17;
+# LL5D-DECLARATION.md:614-618), not a STOP, so A1a.2 is the only repair. The disclosure states that it fixed an
+# implementation defect (fd/receipts-ll5d/gate-vi-diagnosis/README.md:13-15, #1015) and changed no rule, threshold,
+# bound or cell (A1A2:18-26); the gate reruns passed (gate-2-g18/README.md:1, gate-2-ar23/README.md:1) and the real-
+# data preflight passed (vicheck/README.md:1). These three keys are written prose, not mapped from the readout.
+LL5D_ROUTE_TEXT = {
+    "ll5d-route": "repaired",
+    "ll5d-stop-what": "an event-matching entry check, which found every event unmatched at both tunes",
+    "ll5d-repair": ("the correction of an implementation defect in that check, which compared event weights stored at "
+                    "two precisions. The repair changed no rule, threshold, bound or cell"),
+    # The pilot (the director's ruling (a), 2026-11-15): pilot r1's walls check, on wall time and peak RSS, read
+    # REPRICE on a missing toy output, `missing ll5d_g18_toy_minus2_4751000.npz`, with 10 of 13 items run
+    # (pilot-r1/README.md:1, :10-17; LL5D-DECLARATION.md:558, :614-618); r2 changed the connect script only
+    # (pilot-r2/README.md:3-8); a disclosure, not a repair, and no cause is stated beyond the record's. "Before any
+    # pseudo-experiment was graded": the pilot's 13 items unfold and check only (LL5D-DECLARATION.md:558); grading is
+    # over each (truth, reading)'s 300 toys (sec. 6), and the only grade is the readout after the bulk (job 61272425,
+    # #1157). The band
+    # disagreement (ruling (d); journal-editor, 2026-11-15): stated as unexplained, with no claim that the defect is
+    # unrelated to it, which no record shows.
+    # The exceeded quantity and its bound (the PRD read, 2026-11-15): vi's largest_cell_unmatched_share 1.0 against
+    # MISMATCH_BOUND = 0.05 (gate-g18/README.md:28-33, clip_probe2.py:60; vicheck/README.md:18-19).
+    # The order (journal-editor's round 2): the STOPs (gate-g18 and gate-ar23 README.md:1, jobs 61040163 and 61040235,
+    # 2026-11-10; "Nothing was relaunched or changed", :10-11), the reruns' PASS (gate-2-g18 and gate-2-ar23
+    # README.md:1, jobs 61078463 and 61078506, 2026-11-12), then the first pilot (pilot-r1, job 61181899). The gate
+    # evaluates clipped-variance ratios on its draws (LL5D-DECLARATION.md:359-372), the first 300 of which are the
+    # toys' draws (sec. 3.6); a toy is drawn and then unfolded (:152), first in the pilot; the calibration's null uses
+    # other seeds (sec. 3.6, from 4,770,500). So the draws existed, and none was unfolded or graded.
+    "ll5d-route-record": ("at both tunes, an entry check that matches each simulated truth event across two of the "
+                          "test's inputs found every event unmatched, against a bound of 5\\,\\% on the largest unmatched share in "
+                          "any cell, and the run stopped. The entry checks "
+                          "had used the coverage pseudo-experiments' draws (as above), but at that point none had been "
+                          "unfolded or "
+                          "graded. Every other entry check had passed, and their readings were visible when the "
+                          "repair was chosen. A diagnosis classed the failure as an implementation defect: the check compared "
+                          "event weights stored at two floating-point precisions, so no event could match. The repair "
+                          "compares them at one precision and adds a check of the matching on the real inputs, which "
+                          "passed. It changed no rule, threshold, bound or cell. The entry checks were then rerun at "
+                          "both tunes and passed. A later trial run of the procedure's controls and one pseudo-experiment "
+                          "stopped at a check on computing time and memory, which found an output file missing before any "
+                          "pseudo-experiment was graded, and was rerun with a change to its batch script only. The "
+                          "diagnosed defect is in this test's entry check. The disagreement of the two GEANT4 bands in "
+                          "the first test (above), which led to the primary variant, remains unexplained"),
+}
+_LL5D_CLASS = {(True, True): "under-joint", (True, False): "under-joint-only", (False, True): "under-cells"}
+
+
+def _cells(cs):
+    return cs[0] if len(cs) == 1 else ", ".join(cs[:-1]) + " and " + cs[-1]
+
+
+def ll5d_verdicts(d):
+    """Every readout-mapped key of the LL5D group from the two pinned readout records (ll5d_b.py readout_reading):
+    each (truth, reading)'s class from its grade's joint_flag and cell_flag (LL5D-DECLARATION.md sec. 6 :469-481),
+    the weak, over and clip flags from weakened.weakened_cells, grade.over_covers and clipping_artefact_reading, the
+    printed cells and statistics, and the clipping record. The route keys are LL5D_ROUTE_TEXT's."""
+    per, flags, cells, text, oc = {}, {}, {}, dict(LL5D_ROUTE_TEXT), []
+    (dstar,) = re.findall(r"\|o_c\| ≥ δ\* = ([0-9.]+), the verdict is `TO_JOSEPH`", d["ll5ddecl"])
+    dstar = float(dstar)
+    # route-record's "as above" resolves only inside S9's paragraph (journal-editor, 2026-11-15): the paper must not print it
+    assert "ll5d-route-record" not in (ROOT / "docs/analysis-note/paper_body.tex").read_text() + (
+        ROOT / "docs/analysis-note/main_paper.tex").read_text(), "route-record printed outside S9: replace its 'as above'"
+    for t in ("g18", "ar23"):
+        x = d["ll5d" + t]
+        assert x["schema"] == "ll5d-b/1" and x["step"] == "readout" and x["truth"] == t, (t, x["schema"], x["step"])
+        assert set(x["evaluations"]) == {f"{t}/all", f"{t}/minus2"} and x["clipcheck_sha256"].startswith("9632540e")
+        for r in ("minus2", "all"):
+            e = x["evaluations"][f"{t}/{r}"]
+            assert x["verdicts"][f"{t}/{r}"] == e["verdict"] and all(q["passes"] for q in e["reading_rule"].values())
+            g = e["grade"]
+            assert g["ndf"] == 16 and len(g["cell_flag"]) == len(g["counts"]) == len(g["k_cell"]) == 16
+            fl = [f"R{c:02d}" for c, f in enumerate(g["cell_flag"]) if f]
+            assert all(g["counts"][c] <= g["k_cell"][c] for c, f in enumerate(g["cell_flag"]) if f)
+            assert g["joint_flag"] == (g["joint_count"] <= g["k_joint"])
+            if e["verdict"] == "COVERS":
+                assert not g["joint_flag"] and not fl
+                per[(t, r)] = "covers"
+            else:
+                assert e["verdict"] == "UNDER-COVERS", e["verdict"]
+                per[(t, r)] = _LL5D_CLASS[(bool(g["joint_flag"]), bool(fl))]
+            wk, ov = e["weakened"]["weakened_cells"], [f"R{c:02d}" for c, f in enumerate(g["over_covers"]) if f]
+            ca = e["clipping_artefact_reading"]
+            assert set(ca) == set(fl), "the clipping-artefact reading is for the flagged cells only"
+            art = sorted(c for c, b in ca.items() if b)
+            flags[(t, r, "weak")] = "some" if wk else "none"
+            flags[(t, r, "over")] = "some" if ov else "none"
+            flags[(t, r, "clip")] = "some" if art else "none"
+            cells[(t, r)] = ("cell " if len(fl) == 1 else "cells ") + _cells(
+                [f"{c} ({g['counts'][int(c[1:])]} of 300 within its interval, flagged at {g['k_cell'][int(c[1:])]} "
+                 "or fewer)" for c in fl]) if fl else "none"
+            cells[(t, r, "over")] = _cells(ov) if ov else "none"
+            cells[(t, r, "names")] = ("cell " if len(fl) == 1 else "cells ") + _cells(fl) if fl else "none"
+            cells[(t, r, "weak")] = _cells(wk) if wk else "none"
+            cells[(t, r, "clip")] = _cells(art) if art else "none"
+            text[(t, r, "stats")] = (f"{g['joint_count']} of 300 in the joint region, flagged at {g['k_joint']} or "
+                                     f"fewer, mean $\\chi^2/\\mathrm{{ndf}}={g['chi2_mean_over_ndf']:.2f}\\pm"
+                                     f"{g['chi2_mean_over_ndf_se']:.2f}$")
+            text[(t, r, "why")] = "none"
+            text[(t, r, "njoint")], text[(t, r, "kjoint")] = str(g["joint_count"]), str(g["k_joint"])
+            text[(t, r, "chi2ndf")], text[(t, r, "chi2se")] = (f"{g['chi2_mean_over_ndf']:.2f}", f"{g['chi2_mean_over_ndf_se']:.2f}")
+            assert text[(t, r, "stats")].endswith(f"{text[(t, r, 'chi2ndf')]}\\pm{text[(t, r, 'chi2se')]}$"), "the table and -stats"
+            assert max(g["counts"]) <= 300 and g["joint_count"] <= 300
+            text[(t, r, "cells-tab")] = ", ".join(f"{c} ({g['counts'][int(c[1:])]}, $\\leq${g['k_cell'][int(c[1:])]})"
+                                                  for c in fl) or "none"
+            o = e["readouts"]["clipping"]["o_c_under_C_T"]
+            assert len(o) == 16 and all(abs(z) < dstar for z in o), "an offset at or above delta* (sec. 5.3)"
+            i = max(range(16), key=lambda c: abs(o[c]))
+            oc.append((abs(o[i]), t, r, i))
+    m, t, r, i = max(oc)
+    # §6.3's magnitude clause over the four readings: the joint counts' range against their common threshold, and the
+    # mean chi2/ndf's range at one decimal (the director's ruling (d), 2026-11-15)
+    J = {(t_, r_): d["ll5d" + t_]["evaluations"][f"{t_}/{r_}"]["grade"] for t_ in ("g18", "ar23") for r_ in ("minus2", "all")}
+    ks = {g_["k_joint"] for g_ in J.values()}
+    assert len(ks) == 1, "the clause states one threshold"
+    nj, cn = [g_["joint_count"] for g_ in J.values()], [g_["chi2_mean_over_ndf"] for g_ in J.values()]
+    assert max(nj) <= min(ks), "every reading is at or below the threshold"
+    text["njoint-min"], text["njoint-max"], text["kjoint-all"] = str(min(nj)), str(max(nj)), str(ks.pop())
+    text["chi2ndf-min"], text["chi2ndf-max"] = f"{min(cn):.1f}", f"{max(cn):.1f}"
+    tune = {"g18": "\\fvval{f1-tune-g18-short}", "ar23": "\\fvval{f1-tune-ar23-short}"}
+    var = {"all": "in the variant with the two bands", "minus2": "in the primary variant, without them"}
+    text["offset"] = f"$|o_c|={m:.3f}$ under $C_T$, in R{i:02d} at {tune[t]} {var[r]}, against $\\delta^*={dstar:g}$"
+    weak = any(f == "some" for (_, _, x), f in flags.items() if x == "weak")
+    # S8's term for a weakened pass (supplemental_body.tex, the shared design: "passes, weakened by clipping"); the
+    # artefact reading, LL5D-DECLARATION.md:479-480
+    text["clip-record"] = ("no cell reads ``passes, weakened by clipping''" if not weak else "[weakened passes]") + (
+        ", no flagged cell is read as a possible clipping artefact, and the largest clipping offset is "
+        f"{text['offset']}")
+    assert not any(f == "some" for (_, _, x), f in flags.items() if x == "clip"), "a clipping artefact: reword"
+    v = ll5d_case("graded", per, text["ll5d-route"], flags, cells,
+                  {"stop-what": text["ll5d-stop-what"], "repair": text["ll5d-repair"], "offset": text["offset"],
+                   "clip-record": text["clip-record"], "route-record": text["ll5d-route-record"], "abs-form": LL5D_ABS_FORM,
+                   **{k: text[k] for k in ("njoint-min", "njoint-max", "kjoint-all", "chi2ndf-min", "chi2ndf-max")},
+                   **{k: x for k, x in text.items() if isinstance(k, tuple)}})
+    for k, x in v.items():
+        cls = PENDING[k][1]
+        assert cls is None or x in cls, f"{k}: {x!r} is not a declared class {cls}"
+        assert cls is not None or "[" not in x, f"{k}: a placeholder survived: {x!r}"
+    return v
+
+
+def check_ll5d_verdicts(d):
+    """VERDICTS' LL5D keys equal a fresh mapping of the pinned readout records."""
+    want = ll5d_verdicts(d)
+    have = {k: x for k, x in VERDICTS.items() if PENDING.get(k, ("",))[0] == "ll5d"}
+    return [f"{k}: VERDICTS {have.get(k)!r}, the readout {want.get(k)!r}" for k in sorted(set(want) | set(have))
+            if have.get(k) != want.get(k)]
+
+
 def check_prr_verdicts(d):
     """VERDICTS' prior-retention keys equal a fresh mapping of the pinned readout."""
     want = prr_verdicts(d["prr"])
@@ -538,8 +811,14 @@ def ll5d_derived(v):
         assert all(v[f"ll5d-{t}-{r}"] == "na" for t, r in tr), "a per-tune class on an ungraded campaign"
         assert v["ll5d-route"] == "na", "a route on an ungraded campaign"
         assert all(v[f"ll5d-{t}-{r}-{x}"] == "na" for t, r in tr for x in ("weak", "over", "clip")), "a flag, ungraded"
+        assert v["ll5d-abs-form"] == "approved", "the abstract's referee form on an ungraded campaign"
         return {**{k: "na" for k in DERIVED["ll5d"]}, "ll5d-status": "stopped"}
     assert v["ll5d-route"] != "na" and all(v[f"ll5d-{t}-{r}"] != "na" for t, r in tr), "a graded campaign with na"
+    if v["ll5d-abs-form"] == "referee":              # its words fit one pattern only (main_paper.tex, the abstract)
+        assert all(v[f"ll5d-g18-{r}"] == "under-joint-only" and v[f"ll5d-ar23-{r}"] == "under-joint"
+                   for r in ("minus2", "all")), "the abstract's referee form needs G18 joint-only, AR23 joint and cells"
+        assert v["ll5d-ar23-minus2-names"] == v["ll5d-ar23-all-names"] and v["ll5d-ar23-all-names"].startswith("cell "), \
+            "the abstract's referee form names one AR23 cell, the same in both variants"
     for t, r in tr:                                  # the flags read only where the (tune, reading) was graded
         c = v[f"ll5d-{t}-{r}"]
         for x in ("weak", "over", "clip"):
@@ -557,6 +836,7 @@ def ll5d_derived(v):
     out["ll5d-cellflags"] = some(any(c in ("under-cells", "under-joint") for c in cls))
     out["ll5d-anyweak"] = some(any(v[f"ll5d-{t}-{r}-weak"] == "some" for t, r in tr))
     out["ll5d-anyover"] = some(any(v[f"ll5d-{t}-{r}-over"] == "some" for t, r in tr))
+    out["ll5d-alljoint"] = "all" if all(c in ("under-joint", "under-joint-only") for c in cls) else "notall"
     # an adaptive route is Descriptive whatever its readings; otherwise no outcome is summarized (the decision, items 2-3)
     out["ll5d-status"] = ("descriptive" if v["ll5d-route"] in ("offset-proceeded", "repaired") else
                           "invalid" if all(c == "invalid" for c in cls) else "graded")
@@ -572,11 +852,12 @@ def ll5d_case(campaign, per=None, route="direct", flags=None, cells=None, text=N
     """
     per, flags, cells, text = per or {}, flags or {}, cells or {}, text or {}
     graded = campaign == "graded"
-    v = {"ll5d-campaign": campaign, "ll5d-route": route if graded else "na",
+    v = {"ll5d-campaign": campaign, "ll5d-route": route if graded else "na", "ll5d-abs-form": text.get("abs-form", "approved"),
          "ll5d-stop-what": text.get("stop-what", "[the gate or check]"), "ll5d-repair": text.get("repair", "[the repair]"),
          "ll5d-offset": text.get("offset", "[the largest offset, its cell, and the bound]"),
          "ll5d-clip-record": text.get("clip-record", "[the clipping record]"),
-         "ll5d-route-record": text.get("route-record", "[the exceeded quantity and its bound, what was visible when the decision was made, its reason, and every repair]")}
+         "ll5d-route-record": text.get("route-record", "[the exceeded quantity and its bound, what was visible when the decision was made, its reason, and every repair]"),
+         **{f"ll5d-{k}": text.get(k, f"[{k}]") for k in ("njoint-min", "njoint-max", "kjoint-all", "chi2ndf-min", "chi2ndf-max")}}
     for t in ("g18", "ar23"):
         for r in ("minus2", "all"):
             c = per.get((t, r), "covers") if graded else "na"
@@ -584,6 +865,9 @@ def ll5d_case(campaign, per=None, route="direct", flags=None, cells=None, text=N
             v[f"ll5d-{t}-{r}-cells"] = cells.get((t, r), "[cells R.., with their coverage fractions]")
             v[f"ll5d-{t}-{r}-stats"] = text.get((t, r, "stats"), "[joint region: n of 300, flagged at k or fewer, mean chi2/ndf]")
             v[f"ll5d-{t}-{r}-why"] = text.get((t, r, "why"), "[the failed control]")
+            v[f"ll5d-{t}-{r}-names"] = cells.get((t, r, "names"), "[cells R..]")
+            for k in ("njoint", "kjoint", "chi2ndf", "chi2se", "cells-tab"):
+                v[f"ll5d-{t}-{r}-{k}"] = text.get((t, r, k), f"[{k}]")
             for x in ("weak", "over", "clip"):
                 v[f"ll5d-{t}-{r}-{x}"] = "na" if c in ("na", "invalid") else flags.get((t, r, x), "none")
                 v[f"ll5d-{t}-{r}-{x}-cells"] = cells.get((t, r, x), "[cells R..]")
@@ -623,6 +907,9 @@ def ll5d_fill_cases():
     out.append(ll5d_case("graded", {(t, r): "covers" for t in ("g18", "ar23") for r in ("minus2", "all")}))
     out.append(ll5d_case("graded", {(t, r): "invalid" for t in ("g18", "ar23") for r in ("minus2", "all")}))
     out.append(ll5d_case("graded", {(t, r): "under-cells" for t in ("g18", "ar23") for r in ("minus2", "all")}))
+    out.append(ll5d_case("graded", {("g18", r): "under-joint-only" for r in ("minus2", "all")}
+                         | {("ar23", r): "under-joint" for r in ("minus2", "all")}, "repaired", None,
+                         {("ar23", r, "names"): "cell R07" for r in ("minus2", "all")}, {"abs-form": "referee"}))
     out += [ll5d_case("gate-failed"), ll5d_case("offset-stopped"), ll5d_case("stop")]
     return out
 
@@ -1680,6 +1967,7 @@ def groupb_values(d):
     v.update(vhalf_band_values(d))
     v.update(t2a_values(d))
     v.update(d1_values(d))
+    v.update(mumax_values(d))
     v.update(period_values(d))
     v.update(t2b_values(d))
     v.update(lrows_values(d))
@@ -1756,6 +2044,12 @@ def groupb_values(d):
     v["ll5d-nint"] = one(r"\| \*\*interaction\*\* \| each of the (\d+) bands", l5, "LL5D interaction")
     v["ll5d-ndet"] = one(r"\| \*\*detector\*\* \| each of the (\d+) bands", l5, "LL5D detector")
     v["ll5d-statrep"] = one(r"replicas b = 1–(\d+) by `s5n_pseudo\.bootstrap_replica`", l5, "LL5D statistical block")
+    # S9's clipping definition (LL5D-DECLARATION.md:439-441): the bound delta* and the per-cell resolution it rests on
+    v["ll5d-dstar"] = one(r"\|o_c\| ≥ δ\* = ([0-9.]+), the verdict is `TO_JOSEPH`", l5, "LL5D delta*")
+    v["ll5d-cellres"] = one(r"by §6's per-cell resolution, ([0-9.]+)", l5, "LL5D per-cell resolution")
+    # the S8.5 results table's denominator: the toys per (truth, reading), from sec. 3.6's shared toy seeds (G18's range)
+    lo, hi = (int(x.replace(",", "")) for x in one(r"\| toys \(both readings, shared\) \| ([0-9,]+)–([0-9,]+) \|", l5, "LL5D toys"))
+    v["ll5d-ntoys"] = str(hi - lo + 1)
     const = {}
     for k in ("P0", "N_TOYS", "ALPHA_CELLS", "ALPHA_JOINT", "N_MC", "SE_MARGIN", "MATCH_TOL"):
         m = re.findall(r"^%s = ([^#\n]+)" % k, nc, re.M)
@@ -2077,6 +2371,23 @@ def vhalf_band_values(d):
     assert rule["half"] == 0.5 and rule["floor"] == 0.01 and rule["b"] == "r (1 + d)"
     assert rule["sigma_m"] == "sqrt(((1 + d) nu)^2 + (0.5 sgn(d) - |r|)^2 sigma_d^2)", "S10's sentence states these two terms"
     return {"vhalf-k": f"{rule['K']:g}"}
+
+
+def mumax_values(d):
+    """D2: the bound on how much the two GEANT4 bands' block in LL5D's graded covariance can change a chi2, per tune, from
+    the primary matrix C_T (all): 1/(1 - mu_max), with mu_max the largest generalized eigenvalue of (G, M)."""
+    r, v = d["ll5dmumax"], {}
+    assert r["schema"] == "ll5d-mumax/1" and r["verdict"] == "PASS" and not r["stop"]
+    for t in ("g18", "ar23"):
+        x = r["truths"][t]
+        assert x["products_match"] and x["made_from_match"] and x["removal_control_on_G"]["passes"]
+        assert x["removal_control_ll5d_b"]["passes"]
+        p = x["primary C_T (all)"]
+        assert abs(p["chi2_ratio_bound"] - 1 / (1 - p["mu_max"])) < 1e-12
+        v[f"ll5d-mumax-{t}"] = f"{p['mu_max']:.3f}"
+        v[f"ll5d-mumax-bound-{t}"] = f"{math.ceil(1000 * p['chi2_ratio_bound']) / 1000:.3f}"   # an upper bound, rounded up
+        assert p["chi2_ratio_bound"] <= float(v[f"ll5d-mumax-bound-{t}"])
+    return v
 
 
 def t2a_values(d):
@@ -3211,9 +3522,9 @@ def main(argv):
     if argv[:1] == ["--self-test"]:
         return self_test()
     d = load()
-    bad = check_prr_verdicts(d) + check_vhalf_verdicts(d)
+    bad = check_prr_verdicts(d) + check_vhalf_verdicts(d) + check_ll5d_verdicts(d)
     if bad:
-        sys.exit("VALUES-FIVED16 :: FAIL (VERDICTS differ from a pinned readout (FD-PRR or V-HALF))\n  "
+        sys.exit("VALUES-FIVED16 :: FAIL (VERDICTS differ from a pinned readout (FD-PRR, V-HALF or LL5D))\n  "
                  + "\n  ".join(bad))
     text = render(all_values(d))
     bad = check_listed_claims(d["f0b"], read_claim_texts())
