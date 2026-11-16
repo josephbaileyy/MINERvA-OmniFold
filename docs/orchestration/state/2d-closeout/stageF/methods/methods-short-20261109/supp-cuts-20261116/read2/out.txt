@@ -1,0 +1,98 @@
+All four cuts can stand. The complete evidence resolves round 1’s verification gaps. I treated `%` comments as provenance only.
+
+**Cut 1 — KEEP-CUT**
+
+(a) Every deleted fact is **LEDGER**:
+
+| Deleted fact | Surviving holding |
+|---|---|
+| Two classification steps per iteration | Paper §3.1, reproduced in records B; Supplement S4.1’s step list |
+| Truth-level push weights start at one and update each iteration | S4.1, iteration step |
+| Reconstruction classifier compares data with simulation carrying current push weights; its output gives \(p/(1-p)\) | S4.1, step 1 and “Training details” |
+| Reconstruction/truth pairing transfers the weight; pull weight is the likelihood ratio times the push weight | Paper §3.1; S4.1 explicitly gives \(\pi_i=\omega_i u_i\) |
+| Misses receive weights from a truth-coordinate regressor trained on matched events | Paper §3.1; S4.1, step 2(b) |
+| Acceptance needs no separate efficiency correction | Paper §3.1 |
+| Truth classifier compares original truth simulation with its pulled-back weighted version, producing the next push weights | S4.1, step 2(d) |
+| Final push weights define the corrected truth sample and its histogrammed spectrum | S4.1, cross-section step |
+| Histogram bins may be chosen after unfolding | S3 explicitly permits changing the binning without repeating unfolding |
+
+The opening description and the sentence about iteration count and learner capacity remain printed.
+
+(b) The pointer accurately describes the paper’s iteration paragraph and the surviving estimator steps. Together they hold the deleted operational details.
+
+(c) No orphan results. Push and pull weights remain defined; `sec:method-algo` survives; subsequent algorithm references remain intelligible.
+
+(d) Page 6 matches the replacement. The full rendered text also contains the surviving step list, including both previously unverified weight definitions.
+
+**Cut 2 — KEEP-CUT**
+
+(a) Every deleted fact is **LEDGER**, held in ref. [2], §10.4 (`sec:fived16-pl`), reproduced untruncated in records E:
+
+| Deleted fact | Confirmed holding in that section |
+|---|---|
+| Twelve separate unfoldings, each with its own simulation and bootstrap replicas | Explicitly stated |
+| Offset definition: sixteen-cell double ratio relative to the exposure-weighted twelve-playlist mean | Explicitly defined |
+| \(F\): group-mean share of exposure-weighted squared offsets, using the inverse relative \(C_{\mathrm{total}}+C_{\mathrm{resp}}\) metric | Explicitly defined |
+| Observed \(F\), exhaustive partition count and minimum attainable permutation \(p\) | Same `rpd-*` values and six–three–three restriction |
+| Approximate permutation, unequal exposure/noise, nonexchangeable labels and dependence on a simulated null | All qualifications retained |
+| Null dataset count, independent common-covariance draws, four scales and playlist-specific bootstrap/simulation noise | Full construction retained |
+| False-positive range and acceptance bound | Same values retained |
+| Alternative five–two–two–three grouping, its playlist membership, partition count and \(p\) | All retained |
+| Alternative comparison is descriptive | Explicitly retained |
+
+The paper neither prints nor points to this test (records C). The Supplement retains the period discrepancy, unknown cause and inability to identify a correct period.
+
+(b) The revised pointer is supported: “every other division” is now explicitly restricted to groups of **six, three and three**. Its target holds the test, results and qualifications. It adds no calibration or causal claim.
+
+(c) No orphan statistic, result or test reference remains. The subsection title is now “The run-period block,” and its labels survive.
+
+(d) Page 19 matches the revised pointer and surrounding source; the full rendered text confirms the revised subsection title.
+
+**Cut 3 — KEEP-CUT**
+
+(a) Every deleted fact is **LEDGER**, held in ref. [2], §9.3 (`sec:val-departure`), reproduced in records E:
+
+| Deleted fact | Confirmed holding |
+|---|---|
+| Eligibility requires residuals above 2% and classification stable under truth resolution and response weighting | The note explains the exclusions and retains 144 of 376 cases |
+| 121 eligible residuals concern quantities weakly constrained at analysis exposure | Explicit count and interpretation |
+| Cramér–Rao widths exceed 10%, with median 31% | Explicitly stated, including the resolutions involved |
+| Tree approximation dominates 15 residuals, of which two concern identified quantities | Explicit counts |
+| “Identified” uses a relative Cramér–Rao width at or below the specified bound | Explicit definition, with the 2.5% bound |
+| Scope: binned, signal-only, noise-free simulation at the simulation’s response | Explicit scope and limitations; the note also states the W2 background-comparator exception |
+
+(b) The pointer accurately names the two classification axes without adding a numerical or causal conclusion. The target contains the eligibility restrictions, definitions, counts and scope.
+
+(c) No orphan classification term, threshold or count remains. The preceding comparison retains its nonconvergence warning, limited interpretation and statement that it bounds neither the event-level problem nor the following study.
+
+(d) Page 23 matches the source.
+
+**Cut 4 — KEEP-CUT**
+
+(a) Every deleted description is **LEDGER**:
+
+| Deleted fact | Surviving holding |
+|---|---|
+| Superseded central-value estimator: LightGBM, purity subtraction, seed 42 in two-dimensional runs | Table S4 row (a), with common capacity/settings in S4.1 and S4.3 |
+| Its former five-observable central value and covariance | Row (a) and retained S4.5 sentence |
+| Exact-split implementation, purity subtraction and earlier two-dimensional central value | Row (b) |
+| Exact-split studies use that configuration and were not recomputed | Row (b) and retained S4.5 sentence |
+| Deterministic purity variant’s learner and background treatment | Row (c) |
+| Lower-capacity variant inherits the deterministic learner and uses negative weights with 100-tree, 8-leaf refinement | Row (d), including “as (c)” |
+| Its association with the generator-sized-change figure | Row (d) and figure S1’s caption |
+
+The necessary history remains: none supplies a reported result, the purity bias preceded replacement, and exact-split studies were not recomputed.
+
+(b) The new table pointer identifies the four superseded rows accurately. The history pointer remains unchanged.
+
+(c) No orphan configuration or figure reference results. The table continues to identify configurations used elsewhere.
+
+(d) Pages 7 and 14 match the table and replacement paragraph.
+
+**Other edit:** S5’s lateral-band item is correct. BeamAngleX and BeamAngleY supply two beam-angle bands; MuonResolution supplies one; Muon_Energy_MINERvA and Muon_Energy_MINOS supply two energy-scale bands. Given the supplied producer equality assertion, these are the record’s five lateral blocks. The source uses `s1-n-lateral`, and the rendered text prints **5** with the correct descriptions and note pointer.
+
+The document-wide source and rendered-text checks found no references stranded by these cuts. All six supplied PNGs agree with their corresponding source passages.
+
+1. No problems.
+
+VERDICT: PASS

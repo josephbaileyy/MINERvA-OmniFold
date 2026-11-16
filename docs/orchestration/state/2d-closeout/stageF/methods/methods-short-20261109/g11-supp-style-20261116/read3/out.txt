@@ -1,0 +1,5 @@
+1. **S6 drops the joint covariance’s centering convention.** Deleted `change.diff:168` says it is centered on the throw mean, whose displacement from the central value is stored separately as a per-bin vector and norm. The replacement at `change.diff:172`, rendered across pages 19–20, retains only the stored norm. Centering defines the covariance being compared and separates ensemble spread from mean displacement, so it is NEEDED under `records.txt:14`. Restore: “The joint covariance is centered on the throw mean; its displacement from the central value is stored separately as a per-bin vector and its norm.”
+
+2. **S6 drops the fixed-seed qualification.** Deleted `change.diff:168` states that the estimator seed is fixed for every throw; `change.diff:172` and pages 19–20 omit it. This qualifies the linearity test’s interpretation: seed variation is not another perturbation in the ensemble, especially relevant when no jitter floor is subtracted. Restore: “The estimator seed is fixed for every throw.”
+
+VERDICT: FAIL

@@ -54,8 +54,6 @@ CONSTANTS = [
     ("3.5", r"for protons", "input uncertainty", "the proton response's one-standard-deviation scale factor"),
     ("1.4", r"normalization \\", "input uncertainty", "the 1.4 % normalization uncertainty"),
     ("1.4", r"the 1.4\,\% normalization", "input uncertainty", "the 1.4 % normalization uncertainty"),
-    ("0.5", r"scaled by 0, 0.5, 1 or 2", "design", "the run-period study's covariance scale factors"),
-    ("0.05", r"$p<0.05$", "threshold", "the run-period study's test level"),
     ("0.95", r"the 0.95 and 0.997", "quantile level", "the bootstrap thresholds' levels"),
     ("0.997", r"the 0.95 and 0.997", "quantile level", "the bootstrap thresholds' levels"),
     ("0.997", r"the 0.997 quantile of $\chi^2_{16}$", "quantile level", "the alternative threshold's level"),
