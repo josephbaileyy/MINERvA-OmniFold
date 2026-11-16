@@ -36,7 +36,8 @@ if [ -f "$L/paper.holddiff.txt" ]; then
   last=$(tail -1 "$L/paper.holddiff.txt")
   strict=$(grep -m1 -E '^VERDICT: ' "$L/paper.holddiff.txt")
   echo "holddiff: word-level [$strict]; final [$last]" | tee -a "$L/summary.txt"
-  case "$last" in "VERDICT: PASS"|"multiset VERDICT: PASS") ;; *) fail=1 ;; esac
+  # holddiff.py:40 prints a strict pass as "VERDICT: PASS (only hold text differs)" (the director, 2026-11-16).
+  case "$last" in "VERDICT: PASS"|"VERDICT: PASS (only hold text differs)"|"multiset VERDICT: PASS") ;; *) fail=1 ;; esac
 else echo "holddiff: missing" | tee -a "$L/summary.txt"; fail=1; fi
 grep -E 'DESYNC|SYNC' "$L/fill-test.log" | tail -5 >> "$L/summary.txt"
 links=$(find "$RC/build" -type l 2>/dev/null | wc -l | tr -d ' ')
