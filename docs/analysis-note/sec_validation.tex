@@ -38,7 +38,9 @@ A data-versus-prior $\chi^2$ with a diagonal covariance of statistical variances
 
 These closure tests recover injected features and are not a formal statistical validation of the estimator. No non-closure uncertainty is assigned from them. Assigning one would require a suite of injection shapes and amplitudes specified before the tests are run. Calibration to a single Gaussian bump would leave that requirement unmet.
 
-None of these tests changes the simulated detector. The hidden-variable closure does change the effective response: it reweights reconstructed events by a function of $\Delta\pT$ and leaves the truth weights unchanged (\S\ref{sec:closure-hv}). Appendix~\ref{app:response-mismatch} defines a separate test, a closure that rescales only the reconstructed $\Eavail$ of the pseudo-data, together with a more complete leading-nucleon follow-up. No result from it is reported here. The five-dimensional estimator, including its background subtraction, is evaluated under the technical closure checks of \S\ref{sec:val-fiveaxis}. Its coverage is unvalidated.
+None of these tests changes the simulated detector. The hidden-variable closure does change the effective response: it reweights reconstructed events by a function of $\Delta\pT$ and leaves the truth weights unchanged (\S\ref{sec:closure-hv}). Appendix~\ref{app:response-mismatch} defines a separate test, a closure that rescales only the reconstructed $\Eavail$ of the pseudo-data, together with a more complete leading-nucleon follow-up. No result of that reconstruction-only test is reported here; the same appendix reports noise-free closures with a shifted recoil response on the sixteen cells, which have been run. The five-dimensional estimator, including its background subtraction, is evaluated under the technical closure checks of \S\ref{sec:val-fiveaxis}. Its coverage is unvalidated.
+% App-D-1 / V-2 (2026-11-16): scoped to the reconstruction-only test; the shifted-response closures are app_response_mismatch.tex
+% "Closures from the shifted response samples" (\fvval{ct3b-*}, fd/readout/fd_ct_mismatch.json 14399419), cited by the paper.
 % Note register round n2, batch n2-B (2026-10-26; R-N2a): the response-mismatch sentence is split; the statement that
 % no result is reported is unchanged (App. response-mismatch: "protocol implemented; not yet run").
 % Search: response-mismatch; response mismatch; mismatch closure; RESPONSE_MISMATCH_CLOSURE; not yet run @ 1a015eef
@@ -118,7 +120,7 @@ Hidden $q_3$ & $q_3$ at fixed $(\Eavail,W)$ truth, amplitude 0.3 & 5D &
   $(\Eavail,W)$ cells shift by up to \SI{37}{\percent} \\
 \addlinespace
 Response mismatch & Reconstructed $\Eavail$ of pseudo-data scaled & 5D &
-  Protocol implemented, not run (App.~\ref{app:response-mismatch}) \\
+  Protocol implemented, not run; shifted-response closures on the sixteen cells run (App.~\ref{app:response-mismatch}) \\
 \bottomrule
 \end{longtable}
 
