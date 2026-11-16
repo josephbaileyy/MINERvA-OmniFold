@@ -350,6 +350,7 @@ _TO = ("c", "uc", "uj", "ujc", "i")
 LL5D_PAIR = tuple(f"{a}-{b}" for i, a in enumerate(_TO) for b in _TO[i:]) + ("na",)
 LL5D_SOME = ("some", "none", "na")
 LL5D_CLOSE = ("scope", "none", "na")    # "none" when no reading was graded; the scope itself is stated once (the style pass)
+LL5D_ALLJOINT = ("all", "notall", "na")   # every (tune, reading) flags jointly (§7 and §7.1 carry it; the codex referee's Minor 3)
 LL5D_STATUS = ("graded", "descriptive", "invalid", "stopped")   # Table 1's status (its caption); no outcome summary: DECISION-20261109-joseph-coverage-case-wording.md item 3
 VHALF_O = ("none-fail", "some-fail")                  # DECISION-20261109-joseph-bias-half-rule.md item 1 (counts below)
 PENDING_GROUPS = {
@@ -397,6 +398,7 @@ PENDING["ll5d-abs-close"] = ("ll5d", LL5D_CLOSE)    # derived
 for _x in ("anypass", "cellflags", "anyweak", "anyover"):
     PENDING[f"ll5d-{_x}"] = ("ll5d", LL5D_SOME)     # derived
 PENDING["ll5d-status"] = ("ll5d", LL5D_STATUS)      # derived
+PENDING["ll5d-alljoint"] = ("ll5d", LL5D_ALLJOINT)  # derived
 PENDING["vhalf-outcome"] = ("vhalf", VHALF_O)
 for _c in ("valid", "notvalid", "notassessed", "unresolved"):
     PENDING[f"vhalf-n-{_c}"] = ("vhalf", None)
@@ -448,6 +450,7 @@ VERDICTS = {
     'll5d-abs-close': 'scope',
     'll5d-abs-form': 'approved',
     'll5d-abs-minus2': 'uj-ujc',
+    'll5d-alljoint': 'all',
     'll5d-anyover': 'some',
     'll5d-anypass': 'none',
     'll5d-anyweak': 'none',
@@ -527,7 +530,7 @@ VERDICTS = {
 }
 DERIVED = {"prr": ("prr-abs",),
            "ll5d": ("ll5d-abs-minus2", "ll5d-abs-all", "ll5d-abs-close", "ll5d-anypass", "ll5d-cellflags",
-                    "ll5d-anyweak", "ll5d-anyover", "ll5d-status")}
+                    "ll5d-anyweak", "ll5d-anyover", "ll5d-status", "ll5d-alljoint")}
 
 
 def prr_derived(v):
@@ -788,6 +791,7 @@ def ll5d_derived(v):
     out["ll5d-cellflags"] = some(any(c in ("under-cells", "under-joint") for c in cls))
     out["ll5d-anyweak"] = some(any(v[f"ll5d-{t}-{r}-weak"] == "some" for t, r in tr))
     out["ll5d-anyover"] = some(any(v[f"ll5d-{t}-{r}-over"] == "some" for t, r in tr))
+    out["ll5d-alljoint"] = "all" if all(c in ("under-joint", "under-joint-only") for c in cls) else "notall"
     # an adaptive route is Descriptive whatever its readings; otherwise no outcome is summarized (the decision, items 2-3)
     out["ll5d-status"] = ("descriptive" if v["ll5d-route"] in ("offset-proceeded", "repaired") else
                           "invalid" if all(c == "invalid" for c in cls) else "graded")
