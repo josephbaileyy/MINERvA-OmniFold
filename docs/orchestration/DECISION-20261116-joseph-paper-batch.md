@@ -224,6 +224,25 @@ sha256 of the text plus a final newline begins `7f8edd6d7a76d5bf`.
     is merged. The director reviews and merges.
 35. **The paper and Supplement go to Ben first.** The note follows when its corrections and cutdown land.
 
+## Joseph's seventh answer, verbatim
+
+The meaning read of items 26 and 28 found that item 28's §7 sentence was not true in the paper's own terms: the 2D
+estimator's inputs are the muon variables only, and "bias" means unfolded minus true. It also found that item 26's
+"both estimators" could be read as OmniFold and binned unfolding, whose coverage was never tested. The director put two
+replacements to Joseph.
+<!-- absence-ok: reports the meaning read's scoping finding (no coverage test of binned unfolding is in the paper), recorded in helper-3's read; not a new claim -->
+
+> okay yes to boht
+
+sha256 of the text plus a final newline begins `e28f96ed986afb80`.
+
+**These supersede the two sentences in items 26 and 28:**
+
+36. **§7:** "Whether a difference between the data's and the simulation's hadronic distributions at fixed muon kinematics
+    contributes to the two-dimensional shape difference is open."
+37. **The abstract:** "They find joint under-coverage for the two- and five-observable estimators at both held-out
+    truths in all completed coverage variants."
+
 ## CITABLE FOR / NOT CITABLE FOR
 
 - **Citable for:** the wording choices above as Joseph's; A1–A4 as open.
