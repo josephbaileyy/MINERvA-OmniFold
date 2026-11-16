@@ -1,0 +1,51 @@
+# G2R anchors (g2r_ledger.py). T <id> <file> <values_table row> <anchor>; J <id> <file> <json> <key> <scale> <format> <anchor>.
+# The T rows from g2r-tabvs-univ-median to g2r-m-fluxBand take their anchors from re2-integration/ledger.tsv's new contexts, which still print; the last ten are by hand.
+T	g2r-tabvs-univ-median	app_statmethods.tex	tabvs-univ-median	median $5.935\%$; Table~\ref{tab:band
+T	g2r-tabvs-q-median	app_statmethods.tex	tabvs-q-median	median $6.414\%$; Table~\ref{tab:comb
+T	g2r-band-flux	app_statmethods.tex	band-flux	constraint-weighted) & $3.712\%$ \\
+T	g2r-band-mares	app_statmethods.tex	band-mares	MaRES & $0.627\%$ \\
+T	g2r-band-mvres	app_statmethods.tex	band-mvres	MvRES & $0.362\%$ \\
+T	g2r-band-maccqe	app_statmethods.tex	band-maccqe	MaCCQE & $0.336\%$ \\
+T	g2r-band-univ-median	app_statmethods.tex	band-univ-median	\shortstack[l]{$\boxed{5.935\%}$ (median)\\$\sqrt{\T
+T	g2r-band-univ-trace	app_statmethods.tex	band-univ-trace	\\$\sqrt{\Tr\mathbf{C}}=2.689\times10^{-39}$} \\
+T	g2r-grp-models	app_statmethods.tex	grp-models	tion $3.437\%$, Models $1.401\%$, Flux
+T	g2r-grp-flux	app_statmethods.tex	grp-flux	$3.712\%$, Hadronic response $
+T	g2r-grp-hadronic	app_statmethods.tex	grp-hadronic	\%$, Hadronic response $0.743\%$, Statistical $0.676\
+T	g2r-tabcomb-univ-median	app_statmethods.tex	tabcomb-univ-median	2.689\times10^{-39}$ & $5.935\%$ \\
+T	g2r-tabcomb-q-trace	app_statmethods.tex	tabcomb-q-trace	ombined (block sum)} & $2.821\times10^{-39}$ & $\boxe
+T	g2r-tabcomb-q-median	app_statmethods.tex	tabcomb-q-median	imes10^{-39}$ & $\boxed{6.414\%}$ \\
+T	g2r-comb-q-median-prose	app_statmethods.tex	comb-q-median-prose	es. The per-bin median $6.414\%$ is not the quadratur
+T	g2r-comb-q-vs-ec	app_statmethods.tex	comb-q-vs-ec	\SI{6.462}{\percent}. The univers
+T	g2r-comb-univ-plus-stat	app_statmethods.tex	comb-univ-plus-stat	l blocks together give $5.982\%$, again evaluated on
+T	g2r-worked-q-median	app_statmethods.tex	worked-q-median	igma$ & $\uqPaper\%$ & $6.414\%$ \\
+T	g2r-floor-oo-univstat	app_statmethods.tex	floor-oo-univstat	$\chi^{2}/\mathrm{ndf}=22.29$ (\S\ref{sec:rank}).
+T	g2r-pull-comb-rms	app_statmethods.tex	pull-comb-rms	offset, and RMS $\boxed{0.388}$. For the exact-split
+T	g2r-cond-univ-1e12	app_statmethods.tex	cond-univ-1e12	}(\mathbf{C}^{\syst}) = 9.78\times10^{11},
+T	g2r-rank-univ-1e10	app_statmethods.tex	rank-univ-1e10	($124$ and $9.45\times10^{9}$
+T	g2r-cond-univ-1e10	app_statmethods.tex	cond-univ-1e10	($124$ and $9.45\times10^{9}$ above $10^
+T	g2r-cond-univstat-1e12	app_statmethods.tex	cond-univstat-1e12	{\max}$; $\mathrm{cond}=7.91\times10^{11}$ by the de
+T	g2r-oo-q	app_statmethods.tex	oo-q	($21.77$ for all four blocks) f
+T	g2r-rank-q-1e10	app_statmethods.tex	rank-q-1e10	ed covariance has rank $197$ above
+T	g2r-audit-pull-rms	app_statmethods.tex	audit-pull-rms	nd pull mean/RMS $0.034/0.388$.
+T	g2r-audit-pull-rms-b	app_statmethods.tex	audit-pull-rms-b	Pull RMS $= 0.388$ & \S\ref{sec:pull} &
+T	g2r-audit-q-median	app_statmethods.tex	audit-q-median	ombined median rel.\ $= 6.414\%$ & \S\ref{sec:combine
+T	g2r-res-q-vs-ec	sec_results.tex	res-q-vs-ec	a per-bin median of \SI{6.462}{\percent}.
+T	g2r-tabuq-univ-median	sec_results.tex	tabuq-univ-median	& \num{2.69e-39} & \SI{5.935}{\percent} \\
+T	g2r-tabuq-q-median	sec_results.tex	tabuq-q-median	& \num{2.82e-39} & \SI{6.414}{\percent} \\
+T	g2r-tabuq-caption-q-median	sec_results.tex	tabuq-caption-q-median	uncertainty (\SI{6.414}{\percent}) is below th
+T	g2r-cpl-raw-vs-s5	sec_systematics.tex	cpl-raw-vs-s5	34.8 against the other block
+T	g2r-m-chiCombined	values.tex	m-chiCombined	\newcommand{\chiCombined}{0.929}
+T	g2r-m-chiCombinedLog	values.tex	m-chiCombinedLog	\newcommand{\chiCombinedLog}{0.945}
+T	g2r-m-chiCombinedSubStat	values.tex	m-chiCombinedSubStat	\newcommand{\chiCombinedSubStat}{6.72}
+T	g2r-m-uqMedian	values.tex	m-uqMedian	\newcommand{\uqMedian}{6.41}
+T	g2r-m-fluxBand	values.tex	m-fluxBand	\newcommand{\fluxBand}{3.71}
+T	g2r-tabcomb-univ-trace	app_statmethods.tex	tabcomb-univ-trace	Systematic (universe sweep $+$ norm) & $2.689
+T	g2r-oo-univstat	app_statmethods.tex	oo-univstat	\mathbf{C}^{\boot}$ gives $\chi^{2}/\mathrm{ndf}=22.29
+T	g2r-cpl-effect-max	sec_systematics.tex	cpl-effect-max	Per bin, maximum & \SI{39.1}
+T	g2r-cpl-share-cell	sec_systematics.tex	cpl-share-cell	\SI{5.8}{\percent} & \SI{10.6}
+T	g2r-cpl-raw-vs-q	sec_systematics.tex	cpl-raw-vs-q	alone and 2.59 with the block added
+T	g2r-centring-min-rel	sec_systematics.tex	centring-min-rel	is \SIrange{0.10}
+T	g2r-centring-max-rel	sec_systematics.tex	centring-max-rel	{0.55}{\percent} of the central value
+T	g2r-qr-cmodel-median	values.tex	new-QR-plus-Cmodel-median	\newcommand{\qrCmodelMedian}{7.90}
+T	g2r-qr-cmodel-p84	sec_systematics.tex	new-QR-plus-Cmodel-p84	(84th percentile \SI{12.32}
+J	g2r-qr-cmodel-max	sec_systematics.tex	cmodel/cmodel_R.json	cell_rel_sigma.Q_R_plus_C_model.max	100	.2f	maximum \SI{24.49

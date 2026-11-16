@@ -1,0 +1,24 @@
+# G2R wording meaning read, pass 1: codex-school gpt-6.1-sol, high, read-only; prompt pass1-prompt.txt, texts pass1-texts.txt, records pass1-records.txt
+**N1: FAIL.**
+
+The objection is: “its checks confirm **only** that the covariance’s reported cells are the paper’s.” R2 also records a numerical check that the fig6/7 projections equal `budget_Q`, with discrepancy \(3.4798\times10^{-16}\), below \(10^{-12}\). That check bears on numerical consistency and is omitted by “only.” It remains distinct from an independent χ² recomputation.
+
+The other changes are supported:
+
+- The five-definition recomputation is correctly attributed to the earlier rebuild Q, before adoption of the refined estimator. The source comment identifies the reproduced value as 0.987; all four alternative values and their definitions are retained correctly.
+- “Have no independent recomputation” is supported by R1 for the quoted run-2 results.
+- No necessary content from the old paragraph was otherwise removed. Its formula, interpretation and limits remain.
+
+**H1: FAIL, solely for an unsupported completeness claim.**
+
+“The complete list of the note’s re-keyed values, each with its source, is `g2r-integration/ledger.tsv`” is not established by R4 or R5. Neither supplies that ledger or establishes its completeness and source annotations. This is unverified from the supplied evidence, rather than demonstrated false.
+
+The remaining checks pass:
+
+- R4 supports the adoption date, covariance replacement, construction correction and update of dependent results.
+- Every displayed 2026-10-24 entry matches the existing table’s Q_R entry at the corresponding position.
+- Every new entry matches R5, including **6.463% (6.46%)** and **3.723% (3.72%)**.
+- “Its rows that change at their printed precision are these; the other rows are unchanged” is true. The omitted width-weighted-total row remains 4.76%, and the omitted statistical row remains 0.676% and \(1.886\times10^{-40}\). Included rows with some unchanged entries each contain another entry that changes.
+- The row labels introduce no additional printing locations beyond those already identified by the existing labels.
+
+OVERALL: FAIL — N1: excludes a numerical consistency check; H1: ledger completeness and source annotations are unsupported.

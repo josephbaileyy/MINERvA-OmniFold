@@ -1,0 +1,60 @@
+=== R1. cov2d's message of 2026-11-15 (verbatim, item 2): "Recompute: no. Run 2 carries no independent χ² recompute like rebuild/outputs/recompute/. The only cross-check is re2c_run.sh's own check_rebuild (g2r/logs/check_rebuild.log: 5/5 PASS). Those 5 are identity checks: the cell-identity pass lines of chi2_Q_std, chi2_Q_lognormal and chi2_Q_substat; fig67's four pass lines; fig67 projections equal to budget_Q at 3.48e-16 (<= 1e-12). They're not an independent recompute."
+
+=== R2. g2r/logs/check_rebuild.log
+[PASS] C_chi2_Q_std_cell_identity_pass_line
+[PASS] C_chi2_Q_lognormal_cell_identity_pass_line
+[PASS] C_chi2_Q_substat_cell_identity_pass_line
+[PASS] D_fig67_Q_cell_identity_four_pass_lines  4
+[PASS] D_fig67_projections_eq_budget_Q_le_1e-12  3.4798127599706265e-16
+re2c_check_rebuild: 5/5 passed
+
+=== R3. g2r/chi2/chi2_Q_std.txt lines 25-27
+  [omnifold-cov] cell identity OK: /pscratch/sd/j/josephrb/cov2d-re2shapes-20261115/g2r/outA/uq_adopted_covariance.root (hReportedCells) equals the paper StatOnly set
+  [omnifold-cov] /pscratch/sd/j/josephrb/cov2d-re2shapes-20261115/g2r/outA/uq_adopted_covariance.root:hCov_Q  shape=(205, 205)  sqrt(trace)=2.818e-39
+  COMBINED (paper + hCov_Q)       chi2 =       193.30   ndf = 205   chi2/ndf =   0.943
+
+=== R4. DECISION-20261114-joseph-d1-g2r-adopted.md, 'What is decided'
+## What is decided
+
+1. In D1, "the held-out constructions validate" means that the held-out tunes' runs are valid under their declared
+   controls. It does not mean that they cover.
+2. The condition is met, so the rebuilt covariance (COV2D-G2R's C_T') becomes the reported 2D covariance. The current
+   covariance stays as a documented comparison.
+3. As D1 says, the paper reports the coverage counts under the unchanged rule. They are unchanged: under-covers at both
+   tunes, with the same flagged cells and joint counts. Every result that depends on the 2D covariance is updated from
+   the G2R readout records. The construction's correction (per-universe weights on the missed-event rows) is described.
+4. T2A's descriptive decomposition and its truncated joint counts, which the G2R code did not produce, are computed for
+   C_T' as a descriptive step before the dependent text is updated.
+
+## CITABLE FOR / NOT CITABLE FOR
+
+=== R5. the run-2 values_table hist-* rows (id, refined_rendered) and RE-2 part C's
+hist-q-median 6.414 -> 6.463
+hist-q-median-2 6.41 -> 6.46
+hist-flux 3.712 -> 3.723
+hist-flux-2 3.71 -> 3.72
+hist-chicomb 0.929 -> 0.943
+hist-chicomblog 0.945 -> 0.959
+hist-chisubstat 6.72 -> 6.95
+hist-q-integral 4.76 -> 4.76
+hist-pull-mean 0.034 -> 0.034
+hist-pull-rms 0.388 -> 0.389
+hist-univ-median 5.935 -> 5.926
+hist-univ-trace 2.689 -> 2.686
+hist-q-trace 2.821 -> 2.818
+hist-univstat 5.982 -> 5.976
+hist-q-vs-ec 6.462 -> 6.468
+hist-band-minos-e 2.358 -> 2.358
+hist-band-minerva-e 1.435 -> 1.435
+hist-band-minoseff 1.505 -> 1.505
+hist-band-mares 0.627 -> 0.507
+hist-band-mvres 0.362 -> 0.404
+hist-band-maccqe 0.336 -> 0.328
+hist-grp-muonreco 3.437 -> 3.437
+hist-grp-models 1.401 -> 1.428
+hist-grp-hadronic 0.743 -> 0.752
+hist-stat-median 0.676 -> 0.676
+hist-stat-trace 1.886 -> 1.886
+hist-q-median-b 6.414 -> 6.463
+hist-pull-mean-b 0.034 -> 0.034
+hist-pull-rms-b 0.388 -> 0.389

@@ -1313,3 +1313,9 @@ From the codex-school audit `~/codex-reports/crossdoc-numbers-3027c959…-6c3824
 * **XDOC-3 [T]** — **The note prints these two values as literals; the paper branch derives them from keys.**  
   *Finding:* `m4w-noreal-pct` and `pp-mode-max` exist only in the paper branch's `make_values_fived16.py` (`:2195`, `:2276`, `:2374`, `:2387` at `3027c9596`).  
   *Status:* **OPEN, by ruling:** the keys are not ported across branches now; the two literals cite their records.
+* **REC-1 [R]** — **The records-move probe fails 15 checks; most are N: probes whose pinned sentences were later edited.**  
+  *Finding:* `cd docs/analysis-note && python3 check_note_records.py probe records-inventory-base.json .` (it runs in no build or test) reports 15 failures with the G2R re-key applied:
+  - **P7, 13:** ledger rows L10, L-bhi5, L-bhi8, L-thin-C06, -C13, -C21 (x2), -C39, -C48 (x2), -C53, -C65 and -C71. Each pins a note sentence that a later edit changed: the history restructure of 2026-11-13/14 (C06, C21, C53, C65, C71), the 2026-10-26 reflow (C13, C48's first probe), style pass B (C39, C48's second, 4c6756fde), the rulings and E (L10, bhi8; bb8e03b20, 6e4ea3a8f), and the release appendix (bhi5, e2c37c0d2).
+  - **P6, 1, and P8, 1:** sec_validation.tex's coverage-toys citation left with the same-ensemble diagnostic's move to App. A.8 (history-cuts/sec_validation.md V2), and no drop row lists it.
+  *Fix:* re-pin each N: probe to its edited sentence, and list the coverage-toys move as a drop or citation move, each checked against the probe.  
+  *Status:* **OPEN, by ruling** (the director, 2026-11-15): a records-document item on the follow-up list, to fix before the note's release. The G2R commit re-pinned its own L8 (0.388 → 0.389) and added L-g2r-1, which holds.

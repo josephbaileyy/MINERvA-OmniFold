@@ -55,7 +55,11 @@ def receipt(rel: str) -> dict:
 # budget, committed gzipped (RE2-PARTC-REPORT.md sec. 3; gunzip -c gives bbe13622..., as partc-r2/SHA256SUMS lists).
 # Repointed at integration as RE2-DECLARATION-C sec. 6.4 says; before, the Stage F rebuild's Q budget
 # (2d-closeout/stageF/rebuild/outputs/outA/budget_Q.json.gz).
-BUDGET_Q = "2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/outA/budget_Q.json.gz"
+# G2R (DECISION-20261114-joseph-d1-g2r-adopted.md; the director's ruling of 2026-11-15, re-key every printed Q_R value):
+# repointed to RE-2-shapes run 2 (C_new), merged at main d58d0d18 by #1167; its SHA256SUMS lists ./outA/budget_Q.json
+# (gunzip of the committed .gz gives 7ed733c6...); g2r-integration/README.md. Before, RE-2 part C's budget:
+# 2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/outA/budget_Q.json.gz.
+BUDGET_Q = "measurement-paper/5d-community-20261024/fd/receipts-cov2d/g2r/re2shapes/run2/g2r/outA/budget_Q.json.gz"
 
 
 def ev(name: str) -> bool:

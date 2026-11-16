@@ -60,7 +60,7 @@ Poisson bootstrap (stat) & Data- and MC-statistical variance, propagated coheren
 Universes (syst) & Flux, detector and interaction-model uncertainty, by re-unfolding under reweighted MC &
   The event loop writes truth and reco weights per (band $B$, universe $u$); each $(B,u)$ is re-unfolded with a fixed seed against a matched CV job (same event-loop output file, backend, seed, iteration count and flux; a common seed correlates the training noise and does not cancel it, \S\ref{sec:uq-2d-scope}); MAT per-band covariance, Eq.~\eqref{eq:matcov}, plus a rank-1 normalization &
   Quoted sweep: $187$ universes, $44$ bands; band sum $43$ bands $+$ norm &
-  median $5.935\%$; Table~\ref{tab:band-medians} \\
+  median $5.926\%$; Table~\ref{tab:band-medians} \\ % G2R: RE-2-shapes run 2 (C_new), g2r-integration/ledger.tsv g2r-tabvs-univ-median; a source comment citing RE-2 part C for this value gives the earlier value
 Run period & Inconsistency between the run periods' results &
   Separate seed-42 unfolds of three run periods; spread of each period's unfolded-to-simulated ratio about the exposure-weighted mean, applied to the central value (\S\ref{sec:uq-combine}) &
   $3$ periods &
@@ -72,7 +72,7 @@ MAT reference & How MINERvA builds its published covariance &
 Block sum & Total uncertainty covariance &
   Element-wise sum of the four blocks, Eq.~\eqref{eq:blocksum} &
   --- &
-  median $6.414\%$; Table~\ref{tab:combine} \\
+  median $6.463\%$; Table~\ref{tab:combine} \\ % G2R: RE-2-shapes run 2 (C_new), g2r-integration/ledger.tsv g2r-tabvs-q-median; a source comment citing RE-2 part C for this value gives the earlier value
 % Q (2026-10-17): rebuild/outputs/outA/budget_Q.json.gz c08/stat/universe/C_PL/Q .median_pct; MAT check
 % s5_copied.mat_agreement (s5.json mat_universe_block_le_1e-12, 3.43e-16, rel = max|A-B|/max|B|). Constructions:
 % stageC/production/DESIGN.md §3.4, §3.5, §S5; playlist-term/DESIGN.md §2; stageC/pilot/DESIGN.md §8 (stream seeds).
@@ -178,19 +178,19 @@ Band & Per-bin median rel.\ $\sigma$ \\
 MINOS muon energy scale (Muon\_Energy\_MINOS) & $2.358\%$ \\
 MINERvA muon energy scale (Muon\_Energy\_MINERvA) & $1.435\%$ \\
 MINOS muon-match efficiency (MinosEfficiency) & $1.505\%$ \\
-Flux (PPFX, $N_{u}=100$, constraint-weighted) & $3.712\%$ \\
-MaRES & $0.627\%$ \\
-MvRES & $0.362\%$ \\
-MaCCQE & $0.336\%$ \\
+Flux (PPFX, $N_{u}=100$, constraint-weighted) & $3.723\%$ \\ % G2R: RE-2-shapes run 2 (C_new), g2r-integration/ledger.tsv g2r-band-flux; a source comment citing RE-2 part C for this value gives the earlier value
+MaRES & $0.507\%$ \\ % G2R: RE-2-shapes run 2 (C_new), g2r-integration/ledger.tsv g2r-band-mares; a source comment citing RE-2 part C for this value gives the earlier value
+MvRES & $0.404\%$ \\ % G2R: RE-2-shapes run 2 (C_new), g2r-integration/ledger.tsv g2r-band-mvres; a source comment citing RE-2 part C for this value gives the earlier value
+MaCCQE & $0.328\%$ \\ % G2R: RE-2-shapes run 2 (C_new), g2r-integration/ledger.tsv g2r-band-maccqe; a source comment citing RE-2 part C for this value gives the earlier value
 \midrule
-\shortstack[l]{Systematic total\\(43 bands $+$ norm)} & \shortstack[l]{$\boxed{5.935\%}$ (median)\\$\sqrt{\Tr\mathbf{C}}=2.689\times10^{-39}$} \\
+\shortstack[l]{Systematic total\\(43 bands $+$ norm)} & \shortstack[l]{$\boxed{5.926\%}$ (median)\\$\sqrt{\Tr\mathbf{C}}=2.686\times10^{-39}$} \\ % G2R: RE-2-shapes run 2 (C_new), g2r-integration/ledger.tsv g2r-band-univ-median, g2r-band-univ-trace; a source comment citing RE-2 part C for this value gives the earlier value
 \bottomrule
 \end{tabular}
 \caption{Top contributing bands of the quoted universe block (the quoted universe sweep, with the lateral bands from re-unfolds of re-selected universes and Rvp1pi dropped): per-bin median relative $\sigma_{i}/X^{\CV}_{i}$ over the $205$ reported bins. Flux carries MAT's $\nu$--$e$ and inverse-muon-decay constraint weights, and Muon\_Energy\_MINOS is divided by its own flux.}
 \label{tab:band-medians}
 \end{table}
 % Table tab:band-medians (Q, 2026-10-18): rebuild/outputs/outA/budget_Q.json.gz bands.<band>.median_pct and universe.{median_pct, sqrt_trace}. J3/J4 provisional (DECISION-20261018, packet W3: D10).
-Grouped by category as in Fig.~\ref{fig:uqbands}, which follows Figs.~6--7 of Ref.~\cite{MINERvA:2021owq}, the medians are: Muon reconstruction $3.437\%$, Models $1.401\%$, Flux $3.712\%$, Hadronic response $0.743\%$, Statistical $0.676\%$, Normalization $1.400\%$, Training seed $0.048\%$, Run period $2.087\%$. (MINOS$+$MINERvA) and the MINOS-efficiency band dominate; these are the bands that the Ruterbories paper identifies as flux-correlated (\S\ref{sec:rank}).
+Grouped by category as in Fig.~\ref{fig:uqbands}, which follows Figs.~6--7 of Ref.~\cite{MINERvA:2021owq}, the medians are: Muon reconstruction $3.437\%$, Models $1.428\%$, Flux $3.723\%$, Hadronic response $0.752\%$, Statistical $0.676\%$, Normalization $1.400\%$, Training seed $0.048\%$, Run period $2.087\%$. (MINOS$+$MINERvA) and the MINOS-efficiency band dominate; these are the bands that the Ruterbories paper identifies as flux-correlated (\S\ref{sec:rank}). % G2R: RE-2-shapes run 2 (C_new), g2r-integration/ledger.tsv g2r-grp-models, g2r-grp-flux, g2r-grp-hadronic; a source comment citing RE-2 part C for this value gives the earlier value
 % 2026-10-18: rebuild/outputs/outA/budget_Q.json.gz groups.median_pct (grouping plot_uncertainty_fig6_7_style
 % .category_for_band; 'Training seed' = C08, 'Run period' = C_PL, labels kept, J3/J4 provisional (DECISION-20261018, packet W10)). The VL175
 % sentence on the muon-reconstruction median moved to App. history-vl175.
@@ -269,10 +269,10 @@ Component & $\sqrt{\Tr\mathbf{C}}$ & Per-bin median rel.\ $\sigma$ \\
 \midrule
 ML noise (LightGBM training-seed settings, $n=5$) & $1.351\times10^{-41}$ & $0.048\%$ \\
 Statistical (Poisson bootstrap, $N=300$) & $1.886\times10^{-40}$ & $0.676\%$ \\
-Systematic (universe sweep $+$ norm) & $2.689\times10^{-39}$ & $5.935\%$ \\
+Systematic (universe sweep $+$ norm) & $2.686\times10^{-39}$ & $5.926\%$ \\ % G2R: RE-2-shapes run 2 (C_new), g2r-integration/ledger.tsv g2r-tabcomb-univ-median, g2r-tabcomb-univ-trace; a source comment citing RE-2 part C for this value gives the earlier value
 Run period (three periods) & $8.314\times10^{-40}$ & $2.087\%$ \\
 \midrule
-\textbf{Combined (block sum)} & $2.821\times10^{-39}$ & $\boxed{6.414\%}$ \\
+\textbf{Combined (block sum)} & $2.818\times10^{-39}$ & $\boxed{6.463\%}$ \\ % G2R: RE-2-shapes run 2 (C_new), g2r-integration/ledger.tsv g2r-tabcomb-q-trace, g2r-tabcomb-q-median; a source comment citing RE-2 part C for this value gives the earlier value
 % rebuild/outputs/outA/budget_Q.json.gz {c08,stat,universe,C_PL,Q}.{sqrt_trace,median_pct}; paper
 % paper_ratios.paper_sqrt_trace_TotalCovariance_205. Row labels kept, J3/J4 provisional (DECISION-20261018, packet W3: D0, D5; W10).
 Paper \texttt{TotalCov} (reference) & $2.676\times10^{-39}$ & $\uqPaper\%$ \\
@@ -281,7 +281,7 @@ Paper \texttt{TotalCov} (reference) & $2.676\times10^{-39}$ & $\uqPaper\%$ \\
 \caption{Component traces and per-bin median relative spreads of the 2D uncertainty envelope (205 reported bins): the full-precision form of Table~\ref{tab:uq}.}
 \label{tab:combine}
 \end{table}
-The combined $\sqrt{\Tr\mathbf{C}}$ is the quadrature sum of the component square-root traces. The per-bin median $6.414\%$ is not the quadrature sum of the component medians. Both combined entries are evaluated on the summed covariance. The relative entries divide by the quoted central value, the LightGBM seed-42 central value of the universe sweep. Dividing the combined covariance by the exact-split cross-check instead gives a combined median of \SI{6.462}{\percent}. The universe, statistical and training-seed blocks are LightGBM ensembles, the first two at the central value's training seed and the third over five settings that include it (\S\ref{sec:method-config}). The universe and statistical blocks together give $5.982\%$, again evaluated on their sum rather than combined from the printed medians.
+The combined $\sqrt{\Tr\mathbf{C}}$ is the quadrature sum of the component square-root traces. The per-bin median $6.463\%$ is not the quadrature sum of the component medians. Both combined entries are evaluated on the summed covariance. The relative entries divide by the quoted central value, the LightGBM seed-42 central value of the universe sweep. Dividing the combined covariance by the exact-split cross-check instead gives a combined median of \SI{6.468}{\percent}. The universe, statistical and training-seed blocks are LightGBM ensembles, the first two at the central value's training seed and the third over five settings that include it (\S\ref{sec:method-config}). The universe and statistical blocks together give $5.976\%$, again evaluated on their sum rather than combined from the printed medians. % G2R: RE-2-shapes run 2 (C_new), g2r-integration/ledger.tsv g2r-comb-q-median-prose, g2r-comb-q-vs-ec, g2r-comb-univ-plus-stat; a source comment citing RE-2 part C for this value gives the earlier value
 % rebuild/outputs/outA/budget_Q.json.gz Q.median_pct (6.4479), Q_vs_EC.median_pct (6.4104),
 % universe_plus_stat.median_pct (6.0398). J3/J4 provisional (DECISION-20261018, packet W3: D10 KI-88).
 % Recomputed from the covariance files, with the sha256 of each input, by
@@ -337,14 +337,14 @@ The comparison applies the pseudo-inverse of \S\ref{sec:invert} to the $205\time
 Metric (205 bins) & Paper & OmniFold (combined) \\
 \midrule
 Width-weighted total $\sigma$, $\sqrt{\mathbf{w}\T\mathbf{C}\,\mathbf{w}}/(\mathbf{w}\T\mathbf{x})$ & $4.61\%$ & $4.76\%$ \\
-Per-bin median relative $\sigma$ & $\uqPaper\%$ & $6.414\%$ \\
+Per-bin median relative $\sigma$ & $\uqPaper\%$ & $6.463\%$ \\ % G2R: RE-2-shapes run 2 (C_new), g2r-integration/ledger.tsv g2r-worked-q-median; a source comment citing RE-2 part C for this value gives the earlier value
 $\chi^{2}/\mathrm{ndf}$ & $\chiPaper$ (paper-only) & $\boxed{\chiCombined}$ (paper$+$ours) \\
 Log-normal $\chi^{2}/\mathrm{ndf}$ & --- & $\chiCombinedLog$ \\
 \bottomrule
 \end{tabular}
 \end{center}
 % OmniFold column (Q): rebuild/outputs/outA/budget_Q.json.gz Q.integral_sigma_pct (4.755) and Q.median_pct (6.448); rebuild/outputs/chi2/chi2_Q_std.txt (0.964) and chi2_Q_lognormal.txt (0.987).
-The log-normal $\chi^{2}$ uses $\delta_{i}=\ln x^{\ours}_{i}-\ln x^{\paper}_{i}$ and $\mathbf{C}^{\ln}_{ij}=\big(\texttt{TotalCov}+\mathbf{C}^{\tot}\big)_{ij}/(x^{\paper}_{i}x^{\paper}_{j})$; both covariances are scaled by the paper's values. This is the definition used for the quoted value: of five definitions recomputed, only this one reproduces $\chiCombinedLog$. The others give $1.197$ (our covariance scaled by our own values), $0.958$ (both scaled by ours), $0.963$ (scaled by the geometric mean) and $1.015$ ($\ln(1+\mathbf{C}/(x_{i}x_{j}))$ in place of the ratio). Adding the OmniFold error budget lowers the summed-covariance distance from $\chiPaper$ to $\chiCombined$ per bin. It is a descriptive distance, not a validation result, and three limits apply to every use of it.
+The log-normal $\chi^{2}$ uses $\delta_{i}=\ln x^{\ours}_{i}-\ln x^{\paper}_{i}$ and $\mathbf{C}^{\ln}_{ij}=\big(\texttt{TotalCov}+\mathbf{C}^{\tot}\big)_{ij}/(x^{\paper}_{i}x^{\paper}_{j})$; both covariances are scaled by the paper's values. This is the definition used for the quoted value. On an earlier covariance, before the refined estimator was adopted, an independent recomputation of five definitions found that only this one reproduced the value then quoted; the others gave $1.197$ (our covariance scaled by our own values), $0.958$ (both scaled by ours), $0.963$ (scaled by the geometric mean) and $1.015$ ($\ln(1+\mathbf{C}/(x_{i}x_{j}))$ in place of the ratio). The quoted $\chiCombined$ and $\chiCombinedLog$ have no independent recomputation: they are the production run's own outputs. Its checks confirm that the covariance's reported cells are the paper's and that the plotted projections equal the budget's, and neither recomputes these values. Adding the OmniFold error budget lowers the summed-covariance distance from $\chiPaper$ to $\chiCombined$ per bin. It is a descriptive distance, not a validation result, and three limits apply to every use of it. % G2R no-recompute sentence (the director, 2026-11-15): RE-2-shapes run 2 has no independent chi2 recompute (cov2d, 2026-11-15); its check_rebuild (g2r/logs/check_rebuild.log, 5/5) checks the chi2 files' cell identity (chi2_Q_std.txt: 'cell identity OK: ... hReportedCells equals the paper StatOnly set') and fig6/7 against budget_Q. The five-definition recompute is the Stage F rebuild's, on its Q (comment below).
 % Review m8: the attribution to the paper's Table I is not carried here.
 % J3/J4 provisional (DECISION-20261018, packet W4): rebuild REPORT §5 (independent recompute, rebuild/outputs/recompute/:
 % 0.987 reproduces only with delta = ln E_U - ln paper and C_ln = (Total + Q)/(p_i p_j); our-value scaling of Q 1.197;
@@ -373,7 +373,7 @@ and the published IBU-era and OmniFold results share MINERvA data and flux, dete
 % purity-era rebuild/outputs/outA/budget_Q.json.gz paper_ratios.sqrt_trace_stat_over_sqrt_trace_StatOnly was 0.4277. The
 % derived inverse and square are not printed. (n2: comment corrected to the printed value's source.)
 
-Trace share alone cannot justify this protection: trace weights eigenvalues by $\lambda$, precision by $1/\lambda$, so even a negligible-trace block can dominate an inverse. Without the external floor, our finite-$N$ blocks fill $\mathbf{C}^{\syst}$'s null space (rank $138\to205$, eigenvalues above $10^{-12}\lambda_{\max}$) and, inverted directly, yield $\chi^{2}/\mathrm{ndf}=22.29$ (\S\ref{sec:rank}). Protection depends on the source of the smallest retained eigenvalues.
+Trace share alone cannot justify this protection: trace weights eigenvalues by $\lambda$, precision by $1/\lambda$, so even a negligible-trace block can dominate an inverse. Without the external floor, our finite-$N$ blocks fill $\mathbf{C}^{\syst}$'s null space (rank $138\to205$, eigenvalues above $10^{-12}\lambda_{\max}$) and, inverted directly, yield $\chi^{2}/\mathrm{ndf}=22.38$ (\S\ref{sec:rank}). Protection depends on the source of the smallest retained eigenvalues. % G2R: RE-2-shapes run 2 (C_new), g2r-integration/ledger.tsv g2r-floor-oo-univstat; a source comment citing RE-2 part C for this value gives the earlier value
 % rebuild/outputs/outA/budget_Q.json.gz ranks.universe.rank_1e-12 (137), ranks.universe_plus_stat.rank_1e-12 (205);
 % rebuild/outputs/chi2/ours_only_universe_plus_stat.txt (23.566). The earlier bootstrap's pinv 252 is in App. history-vl175.
 
@@ -408,7 +408,7 @@ For each of the $205$ reported bins,
 \mathrm{Var}[\mathrm{pull}_{i}] = 1
 \;\text{under the null},
 \end{equation}
-summarized by mean, RMS, a $14\times16$ heatmap and histogram. The combined covariance (paper TotalCov $+$ the quoted 2D covariance of \S\ref{sec:systematics}) gives mean $\boxed{0.034}$, centered on zero with no global offset, and RMS $\boxed{0.388}$. For the exact-split cross-check, on the earlier covariance built before the flux-band repair, they are $0.051$ and $0.405$. RMS $< 1$ is descriptive and does not establish conservatism: the summed covariance is wrong by an unknown amount (Eq.~\eqref{eq:diffcov}).
+summarized by mean, RMS, a $14\times16$ heatmap and histogram. The combined covariance (paper TotalCov $+$ the quoted 2D covariance of \S\ref{sec:systematics}) gives mean $\boxed{0.034}$, centered on zero with no global offset, and RMS $\boxed{0.389}$. For the exact-split cross-check, on the earlier covariance built before the flux-band repair, they are $0.051$ and $0.405$. RMS $< 1$ is descriptive and does not establish conservatism: the summed covariance is wrong by an unknown amount (Eq.~\eqref{eq:diffcov}). % G2R: RE-2-shapes run 2 (C_new), g2r-integration/ledger.tsv g2r-pull-comb-rms; a source comment citing RE-2 part C for this value gives the earlier value
 % (\texttt{compare\_to\_paper\_fullcov.py})
 % rebuild/outputs/chi2/chi2_Q_std.txt "pull mean / rms : 0.042 / 0.398" (the "rms" is the SD about the mean;
 % rebuild REPORT §4). J3/J4 provisional (DECISION-20261018, packet W5: the note kept the history clause; on 2026-10-21
@@ -441,9 +441,9 @@ The unit-area constraint removes one degree of freedom. $\mathbf{w}\T\mathbf{J} 
 \begin{equation}
 \mathrm{rank}(\mathbf{C}^{\syst}_{\text{sample}}) = 138 / 205,
 \qquad
-\mathrm{cond}(\mathbf{C}^{\syst}) = 9.78\times10^{11},
+\mathrm{cond}(\mathbf{C}^{\syst}) = 7.45\times10^{11}, % G2R: RE-2-shapes run 2 (C_new), g2r-integration/ledger.tsv g2r-cond-univ-1e12; a source comment citing RE-2 part C for this value gives the earlier value
 \end{equation}
-counting eigenvalues of $(\mathbf{C}+\mathbf{C}\T)/2$ above $10^{-12}\lambda_{\max}$, with $\mathrm{cond}$ the ratio of $\lambda_{\max}$ to the smallest retained eigenvalue ($124$ and $9.45\times10^{9}$ above $10^{-10}\lambda_{\max}$). Every rank and condition number of our blocks quoted below uses this definition. Band count, not universe count, limits the rank: Eq.~\eqref{eq:matcov} gives each $\pm1\sigma$ pair rank $1$ and the $100$-universe PPFX band rank $\le 99$. PPFX is effectively rank-$1$ (\S\ref{sec:uq-universes}). The $43$ bands cannot span $205$ bins. The deficit does not come from missing bands. The paper's systematic-only covariance ($\texttt{TotalCov}-\texttt{StatOnlyCov}$) has rank $120$, below our $138$. We use the same \texttt{GetStandardSystematics} and propagate at least as many independent systematic directions. The statistical block ($\texttt{StatOnlyCov}$, rank $205$, near-diagonal) alone makes the paper's $V$ full-rank ($\mathrm{rank}=205$, with 204 eigenvalues above $10^{-12}\lambda_{\max}$; $\mathrm{cond}=1.5\times10^{12}$). Our $300$-replica bootstrap similarly gives $\mathrm{rank}(\mathbf{C}^{\syst}+\mathbf{C}^{\boot})=205$ (eigenvalues above $10^{-12}\lambda_{\max}$; $\mathrm{cond}=7.91\times10^{11}$ by the definition above).
+counting eigenvalues of $(\mathbf{C}+\mathbf{C}\T)/2$ above $10^{-12}\lambda_{\max}$, with $\mathrm{cond}$ the ratio of $\lambda_{\max}$ to the smallest retained eigenvalue ($123$ and $7.54\times10^{9}$ above $10^{-10}\lambda_{\max}$). Every rank and condition number of our blocks quoted below uses this definition. Band count, not universe count, limits the rank: Eq.~\eqref{eq:matcov} gives each $\pm1\sigma$ pair rank $1$ and the $100$-universe PPFX band rank $\le 99$. PPFX is effectively rank-$1$ (\S\ref{sec:uq-universes}). The $43$ bands cannot span $205$ bins. The deficit does not come from missing bands. The paper's systematic-only covariance ($\texttt{TotalCov}-\texttt{StatOnlyCov}$) has rank $120$, below our $138$. We use the same \texttt{GetStandardSystematics} and propagate at least as many independent systematic directions. The statistical block ($\texttt{StatOnlyCov}$, rank $205$, near-diagonal) alone makes the paper's $V$ full-rank ($\mathrm{rank}=205$, with 204 eigenvalues above $10^{-12}\lambda_{\max}$; $\mathrm{cond}=1.5\times10^{12}$). Our $300$-replica bootstrap similarly gives $\mathrm{rank}(\mathbf{C}^{\syst}+\mathbf{C}^{\boot})=205$ (eigenvalues above $10^{-12}\lambda_{\max}$; $\mathrm{cond}=7.95\times10^{11}$ by the definition above). % G2R: RE-2-shapes run 2 (C_new), g2r-integration/ledger.tsv g2r-rank-univ-1e10, g2r-cond-univ-1e10, g2r-cond-univstat-1e12; a source comment citing RE-2 part C for this value gives the earlier value
 % Source of rank and cond: budget_Q ranks (review NOTE 1). The ours-only script prints its own cond for the
 % universe block (5.624e12, chi2/ours_only_universe.txt), a different convention; it is not quoted.
 % rebuild/outputs/outA/budget_Q.json.gz ranks.universe (rank_1e-12 137, cond_1e-12 4.932e11; rank_1e-10 123,
@@ -455,7 +455,7 @@ counting eigenvalues of $(\mathbf{C}+\mathbf{C}\T)/2$ above $10^{-12}\lambda_{\m
 % VL175-era (VL172 controls/split_*.log, state/ki84-adopt-20261006/): 204 and 1.0e12. The VL162 band gives 199 and
 % 6.1e14 by the same convention; the earlier printed 201 / 3.8e14 does not reproduce from the current files.
 
-\paragraph{The real obstruction is statistical, not rank.} Even at full rank ($205$) a defensible single $\chi^{2}_{\ours}$ is out of reach, for a \emph{statistical-precision} reason. The bootstrap block is smaller in \emph{global scale}: its square-root trace is $0.407$ of the paper's ($\sqrt{\Tr\mathbf{C}^{\boot}}=1.886\times10^{-40}$ vs $\sqrt{\Tr\,\texttt{StatOnlyCov}}=4.639\times10^{-40}$). The paper's full-rank, near-diagonal \texttt{StatOnlyCov} supplies a variance floor in every reported eigendirection; because the covariance structures differ, this should \emph{not} be read as a uniform per-mode effect. The direct inverse of $\mathbf{C}^{\syst}+\mathbf{C}^{\boot}$ gives $\chi^{2}/\mathrm{ndf}=22.29$ ($21.77$ for all four blocks) for the LightGBM central value, against the paper covariance's $\chiPaper$ with its larger stat floor, so a usable $\chi^{2}_{\ours}$ depends on the \emph{statistical} block, not on more systematic bands. The gap is \emph{not} a missing MC-statistical term: our bootstrap already draws independent Poisson($1$) multipliers on data, signal MC and background MC per replica (\S\ref{sec:bootstrap}; Practical Guide 2507.09582 \S5.1). The remaining candidates are a real difference in statistical efficiency between the unbinned reweighting and the published binned D'Agostini unfold, a difference in what the paper's \texttt{StatOnlyCov} encompasses, or a regularization effect in our own estimator that suppresses dispersion without improving information. A split bootstrap of the earlier rebuilt bootstrap (Ref.~\cite{NoteRecords2026}, superseded values: retired material) separated the first two from an MC-statistics omission but not from the third, and it has not been repeated for the quoted statistical block.
+\paragraph{The real obstruction is statistical, not rank.} Even at full rank ($205$) a defensible single $\chi^{2}_{\ours}$ is out of reach, for a \emph{statistical-precision} reason. The bootstrap block is smaller in \emph{global scale}: its square-root trace is $0.407$ of the paper's ($\sqrt{\Tr\mathbf{C}^{\boot}}=1.886\times10^{-40}$ vs $\sqrt{\Tr\,\texttt{StatOnlyCov}}=4.639\times10^{-40}$). The paper's full-rank, near-diagonal \texttt{StatOnlyCov} supplies a variance floor in every reported eigendirection; because the covariance structures differ, this should \emph{not} be read as a uniform per-mode effect. The direct inverse of $\mathbf{C}^{\syst}+\mathbf{C}^{\boot}$ gives $\chi^{2}/\mathrm{ndf}=22.38$ ($21.96$ for all four blocks) for the LightGBM central value, against the paper covariance's $\chiPaper$ with its larger stat floor, so a usable $\chi^{2}_{\ours}$ depends on the \emph{statistical} block, not on more systematic bands. The gap is \emph{not} a missing MC-statistical term: our bootstrap already draws independent Poisson($1$) multipliers on data, signal MC and background MC per replica (\S\ref{sec:bootstrap}; Practical Guide 2507.09582 \S5.1). The remaining candidates are a real difference in statistical efficiency between the unbinned reweighting and the published binned D'Agostini unfold, a difference in what the paper's \texttt{StatOnlyCov} encompasses, or a regularization effect in our own estimator that suppresses dispersion without improving information. A split bootstrap of the earlier rebuilt bootstrap (Ref.~\cite{NoteRecords2026}, superseded values: retired material) separated the first two from an MC-statistics omission but not from the third, and it has not been repeated for the quoted statistical block. % G2R: RE-2-shapes run 2 (C_new), g2r-integration/ledger.tsv g2r-oo-q, g2r-oo-univstat; a source comment citing RE-2 part C for this value gives the earlier value
 % Printed values are the refined estimator's (RE-2 part C, stageF/methods/re2/run/partc_r2/partc-r2/values_table.tsv rows stat-trace-a 1.886e-40,
 % stat-vs-statonly-a 0.4067); the purity-era rebuild/outputs/outA/budget_Q.json.gz had stat.sqrt_trace 1.984e-40 and
 % paper_ratios 0.4277 (StatOnly 4.639e-40, unchanged). (n2: comment corrected to the printed values' source.)
@@ -502,7 +502,7 @@ Each method spans roughly two decades of $\chi^{2}/205$ across a two-decade scan
 % Rederived block: \texttt{uq/flux\_muonE\_cross.root}.
 % (2026-08-02, verbal)
 
-\paragraph{What is reported.} The combined $\chi^{2}/\mathrm{ndf}=\chiCombined$ is the descriptive distance of \S\ref{sec:chisq}, not a quoted result or validation statistic, with the limits stated there (Eq.~\eqref{eq:diffcov}). The per-band sum is MAT-conformant, with the Flux band weighted as MAT weights it (\S\ref{sec:minerva}) and the $1.4\%$ normalization as a rank-1 band. The truncated-spectral $\chi^{2}_{\ours}$ uses $\mathbf{C}^{\mathrm{ours}}$, which for the quoted covariance has rank $197$ above $10^{-10}\lambda_{\max}$; the regularization scan shown above is of an earlier $\mathbf{C}^{\ours}$. The 2D agreement claims are the total-cross-section ratio, per-bin ratio distribution and published-$\sigma$ standardized differences; no covariance-based goodness-of-fit is claimed.
+\paragraph{What is reported.} The combined $\chi^{2}/\mathrm{ndf}=\chiCombined$ is the descriptive distance of \S\ref{sec:chisq}, not a quoted result or validation statistic, with the limits stated there (Eq.~\eqref{eq:diffcov}). The per-band sum is MAT-conformant, with the Flux band weighted as MAT weights it (\S\ref{sec:minerva}) and the $1.4\%$ normalization as a rank-1 band. The truncated-spectral $\chi^{2}_{\ours}$ uses $\mathbf{C}^{\mathrm{ours}}$, which for the quoted covariance has rank $198$ above $10^{-10}\lambda_{\max}$; the regularization scan shown above is of an earlier $\mathbf{C}^{\ours}$. The 2D agreement claims are the total-cross-section ratio, per-bin ratio distribution and published-$\sigma$ standardized differences; no covariance-based goodness-of-fit is claimed. % G2R: RE-2-shapes run 2 (C_new), g2r-integration/ledger.tsv g2r-rank-q-1e10; a source comment citing RE-2 part C for this value gives the earlier value
 % rebuild/outputs/outA/budget_Q.json.gz ranks.Q.rank_1e-10 (197; 205 at 1e-12).
 
 \subsection{Anatomy of the paper-covariance tension}
@@ -596,7 +596,7 @@ scaling the CV truth marginal by the alternative-to-CV in-acceptance count ratio
 \subsection{Summary of the 2D comparison numbers}
 \label{sec:assemble}
 
-Across $205$ reported bins, combined OmniFold $+$ paper uncertainties give $\chi^{2}/\mathrm{ndf} = \chiCombined$ and pull mean/RMS $0.034/0.388$. This distance is descriptive, without calibrated goodness-of-fit (\S\ref{sec:chisq}). Same-ensemble toy pulls are approximately Gaussian; the $0.048\%$ training-seed block is more than an order of magnitude below the systematic block.
+Across $205$ reported bins, combined OmniFold $+$ paper uncertainties give $\chi^{2}/\mathrm{ndf} = \chiCombined$ and pull mean/RMS $0.034/0.389$. This distance is descriptive, without calibrated goodness-of-fit (\S\ref{sec:chisq}). Same-ensemble toy pulls are approximately Gaussian; the $0.048\%$ training-seed block is more than an order of magnitude below the systematic block. % G2R: RE-2-shapes run 2 (C_new), g2r-integration/ledger.tsv g2r-audit-pull-rms; a source comment citing RE-2 part C for this value gives the earlier value
 % rebuild/outputs/chi2/chi2_Q_std.txt (pull mean / rms); budget_Q c08.median_pct, universe.median_pct (5.969).
 
 \subsubsection*{Sources of the 2D comparison numbers}
@@ -615,9 +615,9 @@ $\mathbf{C}^{\stat}$ & \S\ref{sec:bootstrap} &
 $\mathbf{C}^{\ML}$ & \S\ref{sec:seedscan} & LightGBM training-seed settings, $5\times20$ replicas \\
 $\mathbf{C}^{\mathrm{PL}}$ & \S\ref{sec:uq-combine} & Run-period block, three run periods \\
 $\mathbf{C}^{\paper}$ & \S\ref{sec:minerva} & Paper's published \texttt{TotalCovariance} \\
-Pull RMS $= 0.388$ & \S\ref{sec:pull} &
+Pull RMS $= 0.389$ & \S\ref{sec:pull} & % G2R: RE-2-shapes run 2 (C_new), g2r-integration/ledger.tsv g2r-audit-pull-rms-b; a source comment citing RE-2 part C for this value gives the earlier value
   Per-bin standardized residual on combined $\mathbf{C}$ \\
-Combined median rel.\ $= 6.414\%$ & \S\ref{sec:combine} &
+Combined median rel.\ $= 6.463\%$ & \S\ref{sec:combine} & % G2R: RE-2-shapes run 2 (C_new), g2r-integration/ledger.tsv g2r-audit-q-median; a source comment citing RE-2 part C for this value gives the earlier value
   $\sqrt{\diag\mathbf{C}^{\tot}}/\mathbf{X}^{\CV}$, $\mathbf{X}^{\CV}$ the LightGBM seed-42 central value \\
 Fixed-truth $C_2=\covTwoDCTwo$ (nominal $0.954$) & \S\ref{sec:coverage} &
   Earlier statistical band vs.\ fixed truth, $N_{\text{toy}}=\covTwoDNtoy$: fails \\
