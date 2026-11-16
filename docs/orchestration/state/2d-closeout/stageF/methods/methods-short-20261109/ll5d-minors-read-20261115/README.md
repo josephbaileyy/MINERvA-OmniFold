@@ -36,3 +36,25 @@ make_values --check.
 - §6.3 no longer shows the failure's size (1-14 of 300 against ≤195; χ²/ndf 3.0-3.7). A keyed magnitude clause could
   restore it.
 - Row 10 and Table 2 don't say "joint" or name R07. That is the finer-words question already before Joseph.
+
+## Round 2: the director's rulings (a), (c) and (d), d2581e7ef (2026-11-15)
+
+**What changed:**
+- (a): the referee form says "where separate bias tests flag no bias".
+- (c): the checklist qualifies the 2D test's graded matrix ("for a matrix without the run-period term";
+  COV2D-DECLARATION.md:214, :221).
+- (d): §6.3's keyed magnitude clause ("1 to 14 of 300 … against a threshold of 195 … 3.0 to 3.7").
+
+**The read:** a second independent read-only subagent.
+
+**Verdict: MINOR, no defects:**
+- (a) holds (paper :402, :238).
+- (c) holds: the 2D analysis has no recoil-response term, so "without the run-period term" is the right contrast.
+- (d) holds against the readouts (joint 14, 12, 4, 1; k_joint 195 at all four; flagged when the count is at or below it,
+  fd_1b_mc.py:682; χ²/ndf 3.036 to 3.696), and make_values' asserts guard the sentence.
+
+**Notes:**
+- The ll5d-route-record comment had moved onto the new loop's line. It is restored.
+- "of 300" comes from ll5d-ntoys (D §3.6's seeds). The readouts carry no toy-count field to check it against; each
+  reading's counts are asserted ≤ 300.
+- Other mentions of the 2D under-coverage (paper :247, :556) keep their unqualified wording; §6.2 states the scope.

@@ -379,9 +379,9 @@ PENDING["ll5d-repair"] = ("ll5d", None)             # the repair, as the record 
 PENDING["ll5d-offset"] = ("ll5d", None)             # clipcheck's largest |o_c|, its cell and the bound (offset routes)
 PENDING["ll5d-clip-record"] = ("ll5d", None)        # the Supplement S9 clipping record (the director's option (a))
 PENDING["ll5d-abs-form"] = ("ll5d", LL5D_ABS_FORMS)  # the abstract's approved case or the PRD read's form (Joseph's choice)
-PENDING["ll5d-route-record"] = ("ll5d", None)
+PENDING["ll5d-route-record"] = ("ll5d", None)       # S9, adaptive routes: the exceeded quantity and its bound, what was visible, the reason, every repair (DECISION-20261109-joseph-coverage-case-wording.md item 2)
 for _k in ("njoint-min", "njoint-max", "kjoint-all", "chi2ndf-min", "chi2ndf-max"):   # §6.3's magnitude clause (the director, (d))
-    PENDING[f"ll5d-{_k}"] = ("ll5d", None)       # S9, adaptive routes: the exceeded quantity and its bound, what was visible, the reason, every repair (DECISION-20261109-joseph-coverage-case-wording.md item 2)
+    PENDING[f"ll5d-{_k}"] = ("ll5d", None)
 for _t in ("g18", "ar23"):
     for _r in ("minus2", "all"):
         PENDING[f"ll5d-{_t}-{_r}"] = ("ll5d", LL5D_T)
