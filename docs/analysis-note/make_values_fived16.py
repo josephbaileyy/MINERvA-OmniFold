@@ -386,6 +386,8 @@ for _t in ("g18", "ar23"):
         PENDING[f"ll5d-{_t}-{_r}-stats"] = ("ll5d", None)   # joint_count, k_joint, chi2_mean_over_ndf and its se, ndf
         PENDING[f"ll5d-{_t}-{_r}-why"] = ("ll5d", None)     # the failed control, for an invalid reading
         PENDING[f"ll5d-{_t}-{_r}-names"] = ("ll5d", None)   # the flagged cells by name only ("cell R07"), for the abstract's referee form
+        for _k in ("njoint", "kjoint", "chi2ndf", "chi2se", "cells-tab"):   # the S8.5 results table (journal-editor, Minor 4)
+            PENDING[f"ll5d-{_t}-{_r}-{_k}"] = ("ll5d", None)
         for _x in ("weak", "over", "clip"):
             PENDING[f"ll5d-{_t}-{_r}-{_x}"] = ("ll5d", LL5D_FLAG)
             PENDING[f"ll5d-{_t}-{_r}-{_x}-cells"] = ("ll5d", None)
@@ -451,9 +453,14 @@ VERDICTS = {
     'll5d-anyweak': 'none',
     'll5d-ar23-all': 'under-joint',
     'll5d-ar23-all-cells': 'cell R07 (167 of 300 within its interval, flagged at 178 or fewer)',
+    'll5d-ar23-all-cells-tab': 'R07 (167, $\\leq$178)',
+    'll5d-ar23-all-chi2ndf': '3.69',
+    'll5d-ar23-all-chi2se': '0.10',
     'll5d-ar23-all-clip': 'none',
     'll5d-ar23-all-clip-cells': 'none',
+    'll5d-ar23-all-kjoint': '195',
     'll5d-ar23-all-names': 'cell R07',
+    'll5d-ar23-all-njoint': '4',
     'll5d-ar23-all-over': 'some',
     'll5d-ar23-all-over-cells': 'R02, R03, R05, R06, R09, R11 and R15',
     'll5d-ar23-all-stats': '4 of 300 in the joint region, flagged at 195 or fewer, mean $\\chi^2/\\mathrm{ndf}=3.69\\pm0.10$',
@@ -462,9 +469,14 @@ VERDICTS = {
     'll5d-ar23-all-why': 'none',
     'll5d-ar23-minus2': 'under-joint',
     'll5d-ar23-minus2-cells': 'cell R07 (163 of 300 within its interval, flagged at 178 or fewer)',
+    'll5d-ar23-minus2-cells-tab': 'R07 (163, $\\leq$178)',
+    'll5d-ar23-minus2-chi2ndf': '3.70',
+    'll5d-ar23-minus2-chi2se': '0.10',
     'll5d-ar23-minus2-clip': 'none',
     'll5d-ar23-minus2-clip-cells': 'none',
+    'll5d-ar23-minus2-kjoint': '195',
     'll5d-ar23-minus2-names': 'cell R07',
+    'll5d-ar23-minus2-njoint': '1',
     'll5d-ar23-minus2-over': 'some',
     'll5d-ar23-minus2-over-cells': 'R02, R03, R06, R09, R11 and R15',
     'll5d-ar23-minus2-stats': '1 of 300 in the joint region, flagged at 195 or fewer, mean $\\chi^2/\\mathrm{ndf}=3.70\\pm0.10$',
@@ -476,9 +488,14 @@ VERDICTS = {
     'll5d-clip-record': "no cell reads ``passes, weakened by clipping'', no flagged cell is read as a possible clipping artefact, and the largest clipping offset is $|o_c|=0.048$ under $C_T$, in R05 at \\fvval{f1-tune-ar23-short} in the variant with the two bands, against $\\delta^*=0.667$",
     'll5d-g18-all': 'under-joint-only',
     'll5d-g18-all-cells': 'none',
+    'll5d-g18-all-cells-tab': 'none',
+    'll5d-g18-all-chi2ndf': '3.04',
+    'll5d-g18-all-chi2se': '0.08',
     'll5d-g18-all-clip': 'none',
     'll5d-g18-all-clip-cells': 'none',
+    'll5d-g18-all-kjoint': '195',
     'll5d-g18-all-names': 'none',
+    'll5d-g18-all-njoint': '14',
     'll5d-g18-all-over': 'some',
     'll5d-g18-all-over-cells': 'R02, R03, R06 and R09',
     'll5d-g18-all-stats': '14 of 300 in the joint region, flagged at 195 or fewer, mean $\\chi^2/\\mathrm{ndf}=3.04\\pm0.08$',
@@ -487,9 +504,14 @@ VERDICTS = {
     'll5d-g18-all-why': 'none',
     'll5d-g18-minus2': 'under-joint-only',
     'll5d-g18-minus2-cells': 'none',
+    'll5d-g18-minus2-cells-tab': 'none',
+    'll5d-g18-minus2-chi2ndf': '3.07',
+    'll5d-g18-minus2-chi2se': '0.08',
     'll5d-g18-minus2-clip': 'none',
     'll5d-g18-minus2-clip-cells': 'none',
+    'll5d-g18-minus2-kjoint': '195',
     'll5d-g18-minus2-names': 'none',
+    'll5d-g18-minus2-njoint': '12',
     'll5d-g18-minus2-over': 'some',
     'll5d-g18-minus2-over-cells': 'R02, R03, R05, R06 and R09',
     'll5d-g18-minus2-stats': '12 of 300 in the joint region, flagged at 195 or fewer, mean $\\chi^2/\\mathrm{ndf}=3.07\\pm0.08$',
@@ -685,6 +707,12 @@ def ll5d_verdicts(d):
                                      f"fewer, mean $\\chi^2/\\mathrm{{ndf}}={g['chi2_mean_over_ndf']:.2f}\\pm"
                                      f"{g['chi2_mean_over_ndf_se']:.2f}$")
             text[(t, r, "why")] = "none"
+            text[(t, r, "njoint")], text[(t, r, "kjoint")] = str(g["joint_count"]), str(g["k_joint"])
+            text[(t, r, "chi2ndf")], text[(t, r, "chi2se")] = (f"{g['chi2_mean_over_ndf']:.2f}", f"{g['chi2_mean_over_ndf_se']:.2f}")
+            assert text[(t, r, "stats")].endswith(f"{text[(t, r, 'chi2ndf')]}\\pm{text[(t, r, 'chi2se')]}$"), "the table and -stats"
+            assert max(g["counts"]) <= 300 and g["joint_count"] <= 300
+            text[(t, r, "cells-tab")] = ", ".join(f"{c} ({g['counts'][int(c[1:])]}, $\\leq${g['k_cell'][int(c[1:])]})"
+                                                  for c in fl) or "none"
             o = e["readouts"]["clipping"]["o_c_under_C_T"]
             assert len(o) == 16 and all(abs(z) < dstar for z in o), "an offset at or above delta* (sec. 5.3)"
             i = max(range(16), key=lambda c: abs(o[c]))
@@ -788,6 +816,8 @@ def ll5d_case(campaign, per=None, route="direct", flags=None, cells=None, text=N
             v[f"ll5d-{t}-{r}-stats"] = text.get((t, r, "stats"), "[joint region: n of 300, flagged at k or fewer, mean chi2/ndf]")
             v[f"ll5d-{t}-{r}-why"] = text.get((t, r, "why"), "[the failed control]")
             v[f"ll5d-{t}-{r}-names"] = cells.get((t, r, "names"), "[cells R..]")
+            for k in ("njoint", "kjoint", "chi2ndf", "chi2se", "cells-tab"):
+                v[f"ll5d-{t}-{r}-{k}"] = text.get((t, r, k), f"[{k}]")
             for x in ("weak", "over", "clip"):
                 v[f"ll5d-{t}-{r}-{x}"] = "na" if c in ("na", "invalid") else flags.get((t, r, x), "none")
                 v[f"ll5d-{t}-{r}-{x}-cells"] = cells.get((t, r, x), "[cells R..]")
@@ -1951,6 +1981,9 @@ def groupb_values(d):
     # S9's clipping definition (LL5D-DECLARATION.md:439-441): the bound delta* and the per-cell resolution it rests on
     v["ll5d-dstar"] = one(r"\|o_c\| ≥ δ\* = ([0-9.]+), the verdict is `TO_JOSEPH`", l5, "LL5D delta*")
     v["ll5d-cellres"] = one(r"by §6's per-cell resolution, ([0-9.]+)", l5, "LL5D per-cell resolution")
+    # the S8.5 results table's denominator: the toys per (truth, reading), from sec. 3.6's shared toy seeds (G18's range)
+    lo, hi = (int(x.replace(",", "")) for x in one(r"\| toys \(both readings, shared\) \| ([0-9,]+)–([0-9,]+) \|", l5, "LL5D toys"))
+    v["ll5d-ntoys"] = str(hi - lo + 1)
     const = {}
     for k in ("P0", "N_TOYS", "ALPHA_CELLS", "ALPHA_JOINT", "N_MC", "SE_MARGIN", "MATCH_TOL"):
         m = re.findall(r"^%s = ([^#\n]+)" % k, nc, re.M)
