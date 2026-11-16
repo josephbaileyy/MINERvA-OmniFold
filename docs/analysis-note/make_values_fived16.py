@@ -945,6 +945,10 @@ def values(d, arm="with"):
     assert len(ext) == 3 and v["g-gibuu-total-ndf"] == "8" and "tune" not in ext
     v["g-ext-chi2int-min16"] = str(min(int(v[f"g-{k}-total-chi2int"]) for k in ext))
     v["g-ext-chi2int-max16"] = str(max(int(v[f"g-{k}-total-chi2int"]) for k in ext))
+    # F16-1 (2026-11-16): the ES prints this range "with NuWro and GiBUU on carbon" (the paper's primary comparison); it
+    # is the same range with NuWro's carbon chi2 in place of the CH one, since NuWro sets neither end
+    assert int(v["g-ext-chi2int-min16"]) < int(v["g-nuwro-carbon-total-chi2int"]) < int(v["g-ext-chi2int-max16"])
+    assert int(v["g-ext-chi2int-min16"]) < int(v["g-nuwro-total-chi2int"]) < int(v["g-ext-chi2int-max16"])
     # 3D, the flux-correlation bootstrap (FD-FLUX-BOOT-REPORT.md; DECISION-20261027 limitation plan item 3). Under
     # FD-FLUX-BOOT-BINDING ruling 2 only the correlation variant's 16-84% percentile band of the total chi2 may be
     # described, beside Stage G's chi2 and the offset (median - chi2), as estimation scatter given these universes under
