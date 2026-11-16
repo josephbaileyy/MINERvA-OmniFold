@@ -1,0 +1,26 @@
+# item D meaning read, pass2: codex-school gpt-6.1-sol, high, read-only; prompt pass-D-pass2-prompt.txt, records pass-D-pass2-records.txt
+For Question 1:
+
+- **Q1 — PASS:** B2 contains the response-information diagnostic identified in B1, including the 144 eligible residuals and 121 weakly constrained quantities, so the new pointer reaches the evidence the sentence relies on.
+- **Q2 — PASS:** B4 supports both sweeps, their distinct identities and their new pointers.
+- **Q3 — PASS:** Cutting the orphaned earlier-MAT-check clause removes no information needed to understand or reproduce a surviving reported object.
+- **Q4 — PASS:** All three replacements reach the same-ensemble pull diagnostic in B5 without changing its meaning or limitations.
+- **Q5 — PASS:** “The end-to-end test” correctly names the object that failed its futility criterion.
+- **Q6a — PASS:** “Specified before it ran” preserves the project meaning of “declared” for the same sixteen-cell coverage test.
+- **Q6b — PASS:** Under R5’s method-use classification, the domain and its cross-check-specific selection are unchanged; the old word’s before-run implication disappears, but no reader-needed timing loss is established here.
+- **Q6c — PASS:** Under R5’s method-use classification, the sample-population claim is unchanged apart from removing the old word’s before-run implication, which the supplied context does not establish as reader-needed.
+- **Q6d — PASS:** The benchmark’s identity and explicit before-run timing remain unchanged.
+- **Q7 — PASS:** B3 supports setting this data-stability test’s criterion before running it for the same configuration-(e) candidate.
+- **Q8 — PASS:** B6 lists eight distinct controls, and replacing their identifiers with “eight” preserves the result, failed offset check and consequence for the six power alternatives.
+- **Q9 — PASS:** R1 supports the simulated-world description, R3 supersedes the earlier composition with the stated per-cell sum and positive-central-value failure condition, R4 establishes per-cell composition, and R2 supports the unchanged counts—892 of 900, at most 62 cells—and first-stage stop, while the unknown cause and absence of any coverage conclusion in either direction remain explicit.
+
+For Question 2, **NEEDED** refers to substantive information, which can survive through rewording:
+
+- **Q3’s clause — LEDGER:** The earlier check’s account has left the note, and its command option no longer supports a surviving reported object.
+- **Q8’s control numbers — LEDGER:** These internal identifiers add no needed information beyond the retained count, failed-check identity and consequence.
+- **Q9’s “fail-closed” — LEDGER:** The label can leave because the operational stopping condition remains explicit.
+- **Q9’s “specified draw” — NEEDED, retained:** The draw population matters and remains tied to this test through the pseudo-experiment construction and counts; “specified” itself adds no timing under the stated convention.
+- **Q9’s “natures’ composite denominator” — NEEDED, retained:** The simulated world’s denominator and its construction are explicitly described and supported by the amendment in force.
+- **Q9’s “specified composition of the natures” — NEEDED, retained:** “How the drawn universes were combined” preserves the stop’s scope, alongside the unchanged coverage and causation limitations.
+
+OVERALL: PASS — FAILs: none.

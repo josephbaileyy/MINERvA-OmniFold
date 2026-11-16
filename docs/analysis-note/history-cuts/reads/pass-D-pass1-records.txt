@@ -1,0 +1,87 @@
+=== B1. f63cec226:docs/analysis-note/sec_5d.tex:353-362 (the diagnostic Q1's old pointer meant)
+\paragraph{A scoped response-information diagnostic.}
+A subsequent signal-only study compared binned exact-response inversions and
+local information widths with the stored GBDT residuals. Of 376
+joint-cell/departure combinations with residuals above 2\%, 232 changed
+classification with truth resolution or response weighting and were excluded.
+Among the remaining 144, 121 (84\%) were classified as weakly constrained
+under the study's binned, fixed-response assumptions. Thus the result supports
+weak response information for that subset, not a universal explanation of
+the unfolding residual. The coarser muon projection retained only three cases
+and was effectively uninformative. The diagnostic does not bound biased or
+
+=== B2. sec_5d.tex:84-90 now (sec:val-departure is the label at :71)
+\paragraph{Comparison with exact binned unfolding.} A diagnostic in simulation compares the boosted-tree residual with that of an exact binned iterative unfolding. The binned unfolding unfolds the same simulated events, with their exact efficiency and the response binned in the 10,499 occupied five-dimensional reconstructed cells, starting from the nominal prior. The comparison uses noise-free signal-only pseudo-data, the 109 supported fine joint cells (J cells) and the fixed historical truth deformations D1, W1, W3 and the $q_3$ stress, pooled with W2 (all defined in \S\ref{sec:gbdt-model-dependence}). The boosted-tree comparator for W2 includes background. The outcome is unchanged without it. A residual is eligible when its diagnosis is stable under the truth resolution: of the 376 J-cell and deformation combinations with residuals above \SI{2}{\percent}, 232 changed classification with the truth resolution or the response weighting and were excluded, leaving 144 (\SI{38}{\percent} of the 376). At five iterations the J-cell medians of the absolute residual agree: \SI{9.5}{\percent}, \SI{5.4}{\percent}, \SI{5.6}{\percent} and \SI{4.3}{\percent} for the boosted trees, against \SI{8.3}{\percent}, \SI{5.4}{\percent}, \SI{4.9}{\percent} and \SI{5.3}{\percent} for the exact binned unfolding, for D1, W1, W3 and the $q_3$ stress.
+
+Of the 144 eligible residuals, pooled over the deformations, 15 are dominated by the tree approximation. Only 2 of these 15 lie in identified quantities, a share of 0.014 of the 144. An identified quantity has a relative Cram\'er--Rao width at or below \SI{2.5}{\percent} at the analysis exposure. A width between that bound and the \SI{10}{\percent} bound is neither. Of the 144, 121 lie in quantities that the binned response constrains weakly at the analysis exposure. Their Cram\'er--Rao widths exceed \SI{10}{\percent} at both truth resolutions tested (median \SI{31}{\percent} at the coarser resolution, that of the J cells themselves). Here the regularization trades a large variance for the bias.
+
+Longer noise-free exact iteration removes much of the residual for D1 (J median \SI{3.3}{\percent} after 200 iterations and \SI{0.8}{\percent} after $10^{5}$) and part of it for W1 (\SI{3.3}{\percent} and \SI{2.8}{\percent}). It does not do so for W3 and the $q_3$ stress (\SI{4.4}{\percent} and \SI{6.6}{\percent} after 200 iterations, \SI{8.9}{\percent} and \SI{6.7}{\percent} after $10^{5}$), whose within-cell binning bias grows with the iteration number. The long runs do not converge (only 9--34 of the 109 J quantities converge for each traced deformation). These values are last iterates. The coarser muon projection retained only three cases and is uninformative.
+
+Within this comparison, the residual is consistent with the regularization of the inverse problem at this binning and prior, and the tree approximation is not supported as its main cause. This conclusion holds for a binned, signal-only and noise-free comparison at the simulation's detector response, on the development truths, and for these 144 residuals only. It does not address what unbinned or biased estimators could recover, the coverage failure of \S\ref{sec:coverage-5d} or the validity of any interval, and it establishes no impossibility. The precision thresholds that the diagnostic proposes are not acceptance criteria for any result in this note. The numerical verification of these counts is in the binned response diagnostic record (Ref.~\cite{NoteRecords2026}, \recentry{response-diagnostic}).
+
+=== B3. sec_5d.tex:94-99
+
+\paragraph{Higher-capacity background refinement and data stability.}
+
+The refinement classifier underfits, which causes the residual background bias (App.~\ref{app:negweight}). A candidate with raised refinement capacity, configuration (e) of the sixteen-cell result (\S\ref{sec:fived16}), passes the nominal background-inclusive closure on 40 fresh pseudo-experiments (largest deviation 2.7 standard errors) and a pooled test of its statistical intervals (pull width 1.02). The pooled test does not establish coverage and width for every functional.
+
+The candidate fails the data-stability test, whose criterion was set before it was run: input perturbations within floating-point rounding move functionals by a median of 0.8 and at most 2.6 statistical standard deviations. The baseline estimator's shifts, a median of 0.8 and at most 2.5, place this instability in the estimator family. The instability also explains the difference of at most \SI{1.2}{\percent} on data between the driver and the development pipeline. The data bootstrap, which refits the full chain per replica, already includes this rounding-level variability: each replica carries the same spread (median \SI{0.23}{\percent} per joint cell), about \SI{37}{\percent} of the bootstrap variance and below a tenth of any total uncertainty. Central values are therefore reproducible only to within this spread. The paired perturbation study of \S\ref{sec:gbdt-model-dependence} tests whether the bootstrap contains this variability, for this candidate only.
+
+=== B4. sec_systematics.tex:10-12 and :282
+\subsection{Systematic universes}
+\label{sec:uq-universes}
+Detector and model systematics use the July universe sweep: the 44 error bands and 187 universes of the MINERvA Analysis Toolkit (MAT), identical to the standard systematics set of the published analysis. Each universe is re-unfolded with LightGBM at seed~42 and compared with the quoted 2D central value, unfolded with the same estimator and seed. The five lateral bands, which shift reconstructed kinematics rather than event weights, are taken from re-unfolds of re-selected universes (\S\ref{sec:uq-higherdim}) at the same seed. The band sum omits the nonresonant-pion band Rvp1pi, which encodes the same shift as Rvn1pi (\S\ref{sec:uq-2d-scope}); it holds 43 bands plus the flat normalization. Per-band covariances follow MAT's universe-mean centering and biased $1/N$ normalization. For a $\pm1\sigma$ pair the covariance is the outer product of the half-difference of the two shifts, excluding any common endpoint displacement from the central value (CV). The 100 PPFX hadron-production flux universes use the same mean-centered $1/N$ formula.
+\paragraph{Comparison with the earlier 2D budget.} The saved products and code of the earlier 2D budget~\cite{TwoDFollowup2026} show the following defects in its construction; the quoted budget corrects each. First, its systematic sweep has a simulated truth input that differs from that of its seed-42 reference, while its saved reconstructed inputs agree. A common displacement cancels to first order in the MAT mean-centered covariance: the mismatch does not invalidate the entire covariance and supplies no correction to subtract, and because the earlier input and code revision are not available, it cannot be attributed more specifically. The sweep used by the quoted universe block does not have this mismatch.
+
+=== B5. app_statmethods.tex:646-650
+\subsection{Same-ensemble pull diagnostic}
+\label{sec:pull-diagnostic}
+\paragraph{Same-ensemble pull diagnostic (not a coverage test).} An earlier ensemble of $N_{\text{toy}}=200$ 2D closure unfolds (Ref.~\cite{NoteRecords2026}, \recentry{coverage-toys}) uses weighted MC reco pseudo-data and stores the truth marginals in truth histograms. Each toy has its own bootstrap seed $k$ and per-event Poisson(1) draws, as in production, with seeds chosen not to collide with the production replicas. Toy seeds are independent. Bins within a toy are correlated. The MC bootstrap multiplies the truth weight. It fluctuates both the unfolded result and the stored truth. The stored truth varies in all 205 reported bins, and its all-toy mean $\bar X^{\text{truth}}$ is therefore not an independent fixed truth for a split-sample coverage claim. It only centers a same-ensemble diagnostic.
+
+=== B6. values_fived16.tex:1574
+\@namedef{fv@f0b-controls-passed}{0, 1, 2, 3, 4, 5, 6, 8}
+
+=== R1. FD-1B-STAGED-DECLARATION.md:182-205 (the pseudo-data; a 'nature' is one toy's simulated world)
+One toy is one nature, drawn from `numpy.random.default_rng([seed, DRAW_SALT])` in `fd_1b_toys.draw`'s order, then
+unfolded once.
+
+| group | the nature drawn | as in |
+|---|---|---|
+| stat | Poisson pseudo-data at data size on every reco-passing MC row and every background row, plus set A's MC and template Poisson(1) streams at the toy's seed | `fd_1b_toys.build_full`, `mc_template_streams` |
+| flux | one of the 100 PPFX universes, with probability w_u / Σw. Nature's flux, truth weights, reco weights, denominator and background are u's | S1's flux block (weights from `s1_assemble.flux_weights`); u's arrays as `s5p_universe.universe_inputs` gives them |
+| interaction | each of the 33 bands at one of its universes, uniformly: a pair band at either endpoint with probability ½, 2p2h at one of 3. **Nature = universe:** truth weights, reco weights, denominator and background all become the universe's, **not** truth-preserving | mode D (#655 §2), which κ gates. This replaces the original toys' truth-preserving g_f, the cause of gate D's mismatch |
+| detector | the 4 weight-only bands, each at endpoint 0 or 1 with probability ½, from the detector dump (reco and background weights) | the original toys; S1 choice 7 |
+| lateral | the declared surrogate: x̂ += Σ_b s_b Δ_b(T) / 2 with s_b = ±1, and Δ_b(T) S1's lateral endpoint difference transferred to the truth (§4.4) | `fd_1b_score.surrogate`; `FD-1B-DECLARATION.md` §3 |
+| normalization | x̂ × (1 + 0.014 z), z ~ N(0, 1) | S1's 1.4 % |
+| seed | not drawn. The estimator seed is 42, and S1 measured the block as exactly zero | S1-REPORT §7 |
+
+**Composition: one rule (revision 2, the audit's R3).**
+
+**Loading.** Each drawn universe's arrays are first loaded exactly as S1's block and κ load them:
+`s5p_universe.weights(bank, tag, nonfinite="zero")` (the detector dump for the detector bands), then
+`s5p_universe.universe_inputs`. So non-finite weights are zeroed, and negative weights are kept.
+
+**The rule.** Take a draw D = (u₁, …, u_k) in `fd_1b_toys.draw`'s order: the flux universe, the interaction bands
+sorted, then the detector bands. Each per-row array a ∈ {w_truth, w_reco, bkg_w, tdw} composes as follows.
+- **On rows where a_CV ≠ 0:** a_D = a_{u₁} ⊙ Π_{j≥2} (a_{u_j} / a_CV). Negative ratios are kept, and nothing is
+  clipped.
+- **On rows where a_CV = 0,** where no ratio exists: a_D = a_{u₁} + Σ_{j≥2} a_{u_j}.
+
+=== R2. OUTCOME-20261106-1b-stage1-receipt-stop.md:26-31 and :70-80
+**§2b is the STOP:**
+- `denominator.draws_with_nonpositive_cells` holds **892 of the 900** declared draws;
+- the 8 unflagged draws are 84, 98, 260, 460, 550, 690, 787 and 835;
+- `max_cells` is 62;
+- `stop_reasons` is `['2b: 892 draws with a non-positive denominator cell']`.
+
+## The rule that decides it
+
+1. **The STOP.** Amendment 2 says at `FD-1B-STAGED-AMENDMENT-2.md:222` @ `b3f27fab`: "**STOP** is only N1 … or §2b
+   (`denominator.draws_with_nonpositive_cells` non-empty), on a receipt that completed and wrote `receipt.json`". Here
+   §2b is non-empty and the receipt completed, so this is a STOP. It is not an INVALID.
+2. **Its consequence.** Amendment 2 §8 at `:378-382` @ `b3f27fab`, carrying decision item 2 (iii):
+
+   > A STOP of the new receipt, or of `n1` at any truth, ends stage 1 unless Joseph rules otherwise (decision item 2
+   > (iii)). It goes to the director and to Joseph unrepaired, with no further redesign.
+
+   Joseph adopted that rule in `DECISION-20261102-joseph-1b-redesign.md:78`, through his answer "Run, with additions
