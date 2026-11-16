@@ -78,3 +78,12 @@ Kept as written, by the same ruling: T9/I10 (the run-period audit disclosure), a
 as comment lines that keep the old row. The figures are fig6/7 and the 13 re-installed by the note figure style. Each
 figures/ copy equals its live install_printstyle_fig pin. `check_ledger.py --figures`: 28 failures → PASS. push_gate
 now runs it.
+
+## Referee accuracy items, 2026-11-16 (the director, restating an independent referee read)
+
+| id | site | old | new | support |
+|---|---|---|---|---|
+| A1 | sec_experiment.tex:8 | "contain $1.057\times10^{21}$ protons on target, the same exposure as Ref.~[3]." | "contain $1.057\times10^{21}$ protons on target, summed over the analysed files; Ref.~[3] quotes $10.61\times10^{20}$, \SI{0.34}{\percent} more." | stageA/REPORT.md:129–133 (dataPOT 1.057394e21; the paper's 10.61e20 is 0.34 % above). 10.61e20 / 1.057394e21 = 1.00341. RECORD-20261008-release-audit-corrections.md row D02 gives "0.35 %", which the arithmetic does not support; that record is the paper lane's and is left for it. |
+| N4 | app_statmethods.tex:513 | "(σ ratio = 1.011, median bin ratio 1.006), and the per-bin pull RMS … is only 0.598 for the exact-split cross-check (§pull gives \pullRMS for the quoted value)" | "For the exact-split cross-check, σ ratio = 1.011, the median bin ratio is 1.006 and the per-bin pull RMS … is only 0.598; for the quoted value they are \ratioTot, \medianBinRatio and \pullRMS (§pull)." | The three numbers were not stale. All are the exact-split's (values.tex comments: 1.0113, 1.0064, 0.598), but the old sentence attributed only the pull RMS to it. |
+
+Not changed: N3 (the ES's "principal result"), which goes to Joseph. **Meaning read:** OVERALL PASS. reads/a1n4-pass1.txt.
