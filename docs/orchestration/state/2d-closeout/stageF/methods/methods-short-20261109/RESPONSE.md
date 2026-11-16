@@ -47,7 +47,7 @@ under the director's authority.
 | 4.2 | Full-sample genuine-background and out-of-phase-space fractions | L | the per-playlist background and out-of-phase-space templates of the 2D production; login node, minutes. Inputs to confirm: whether they are committed or only on pscratch. | Add both fractions to S1 and the table of 4.1. | no |
 | 4.3 | Their distribution where the 2D shape difference is largest | L | as 4.2, on the 205 cells with fig:tension2d's largest contributors | One figure or sentence in S6. | no |
 | 4.4 | The 1A check does not establish equivalence to the published inputs | T | Supp S1 :28 already says so ("it does not compare unfolded results or these inputs with those of the published analysis") | Bring the clause into the paper's §2 sentence. | M: the Supplement already states it; the paper's "was checked" sentence is too short |
-| 4.5 | κ: explain the data value below its replica range, or drop the classification | T (drop) | OUTCOME-20261106-ref-c2c1-read.md:32-37 (no mechanism offered); the readout keeps only the range's end points (read-2/readout.json) | Drop κ and its "unresolved" class from the paper (§4.1 and Table 2). S8 keeps the definition and one sentence that the data value lies below the replica range and the class reading is not used. Reason: an explanation needs the per-replica distances, which the record does not keep (an A); the paired T comparison stands without κ. | no |
+| 4.5 | κ: explain the data value below its replica range, or drop the classification | T (drop) | OUTCOME-20261106-ref-c2c1-read.md:32-37 (no mechanism offered); the readout keeps only the range's end points (read-2/readout.json) | Drop κ and its "unresolved" class from the paper (§4.1 and Table 2). S8 keeps the definition and one sentence that the data value lies below the replica range and the class reading is not used. Reason: an explanation needs the per-replica distances, which the record does not keep (an A); the paired T comparison stands without κ. **Amended 2026-11-16:** the Supplement's κ paragraph (definition, replica interval and class sentence) is also cut (cbd405125; the independent referee read of d30df1ce9, item D7, via the director): the classification is unused and the data value below the replica range stays unexplained, so the definition no longer serves a printed result. | no |
 | 5.1 | Call χ² tail areas reference scores, not calibrated probabilities | T | §3.3's flag definition; Table 3's caption | Say "reference p, a score against χ²₁₆" at the definition, once; captions follow. | no |
 | 5.2 | "Agree" → "No difference detected" | T | Table 2 status words :175 | Rename the status in Table 2, its glossary, S9's tables and §4.1, §4.3. | no |
 | 5.3 | The sixteen-cell IBU null's flux surrogate (100 Gaussian vectors against n_eff ≈ 19) | T | REF-G1-DECLARATION.md:142-143 (each draw forms Ĉ*_flux "by S1's Flux estimator: the same 100 constraint weights", so the weighted estimator and its effective size are reproduced); :271 (χ²₁₆'s 0.997 quantile 35.89), :160 (Hartlap 46.09); T = 194.4 against 39.04 (ibu16-*) | State the weighted construction in S8, and that T exceeds every alternative threshold on record (χ²₁₆ 35.89, Hartlap 46.09) by a factor of more than 4, so the "differ" reading does not depend on the surrogate. | M: the null applies the constraint weights, so its effective size is the reported ensemble's |
@@ -175,7 +175,7 @@ Needing your ruling inside the T batch:
 | 3.3, 3.5 | L / after A | 3.5's text waits for 3.1–3.3 |
 | 4.1, 4.4 | done | S1 tab:bookkeeping; §2's 1A clause |
 | 4.2, 4.3 | L | — |
-| 4.5 | done | κ and its class reading removed from §4.1 (now §4.2); S8 keeps its definition, adding "The paper does not use this classification." |
+| 4.5 | done | κ and its class reading removed from §4.1 (now §4.2); S8 keeps its definition, adding "The paper does not use this classification." Amended 2026-11-16: the definition is cut too (cbd405125, item D7; see row 4.5 above). |
 | 5.1, 5.2 | done | §3.3 (reference tail area, a score); Table 2 and S9's test 5 say "No difference detected" |
 | 5.3 | done | §5.4 and S8: each draw's flux block uses the same 100 constraint weights (effective number s1-flux-neff); T = 194.4 against χ²₁₆'s 35.89 and the Hotelling limit's 46.09 |
 | 5.4 | done as is | §6.2 and §7 describe where the χ² sits, not its cause |
@@ -898,7 +898,7 @@ Its sha256 plus a final newline is `e86b7e253309d769`, re-derived here and equal
 end is Joseph's to the director.
 
 **ρ and its interval stay unprinted** (the director, 2026-11-12). The recheck ruling of 2026-11-11 (row 4.5) dropped κ
-and its class from the paper, and S8 keeps the definition. Joseph's B makes no claim that needs the C2-R2 reading.
+and its class from the paper, and S8 kept the definition until 2026-11-16, when it was cut too (cbd405125, item D7; row 4.5). Joseph's B makes no claim that needs the C2-R2 reading.
 
 **What he chose:** the codex-school consult's tightened B (`consult-ibu-ab/`, session 01a1d323):
 - §4.2 takes the consult's paragraph, with the input caveat once, in §4.2 only;
