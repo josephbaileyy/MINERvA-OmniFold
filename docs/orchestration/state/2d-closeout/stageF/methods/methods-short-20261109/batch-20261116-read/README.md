@@ -101,3 +101,53 @@ approved it and a referee is reading the whole abstract. Two measurements are ke
 - **Adopted (optional):** the band sentence had "the four-block covariance of section~\ref{sec:cov16}, without
   C_model", which can be read as the sixteen-cell C_rep minus one term. It now reads "the two-dimensional covariance of
   section~\ref{sec:cov16}, the sum of four blocks without C_model".
+
+## The short abstract and the introduction (the director, relaying Joseph 2026-11-16; items 22-25 to follow)
+
+**The abstract** is the codex referee's 198-word form (absref/out.txt §3), approved by Joseph. A script checked the
+rendered text word for word. The read added two changes, which Joseph approved:
+- "binned unfolding at five iterations overshoots";
+- "remove neither bias flag".
+
+The abstract is now 199 words.
+- **Keying:** vhalf-outcome, prr-pr3-any, prr-abs, ll5d-campaign, ll5d-alljoint and ll5d-route.
+- **Retired:** LL5D_ABS_FORM.
+- **Re-declared:** the listed-truth sentences. The abstract's is a count, "at two truths" (n = 2); the introduction's is
+  a count plus n.
+
+**The read (independent, read-only) of the abstract and the introduction:**
+- **The abstract, sentence by sentence:** PASS, except one defect: IBU overshoots only at five iterations. The
+  readout's IBU ρ is +0.23 and +0.36 at one iteration and +0.07 and +0.10 at two, and turns negative from three.
+  Fixed as Joseph approved.
+- **(a)** "Coverage tests omit some reported uncertainty terms" is true for the 2D test: COV2D-DECLARATION.md:214,
+  "C_PL_R ... not in the graded matrix", and :221. The body's 2D-test sentence now says the run-period block "was
+  neither drawn nor included in the graded covariance".
+- **(b)** The bias-half sentence states a measured inequality and needs no "descriptive". Two body gaps go to
+  journal-editor's F5 pass, on the director's ruling:
+  - Table 1's caption defines "Descriptive" for the second 5D test only;
+  - Supplement :1247 calls the bias-half rule "graded".
+- **"Remove neither":** checked against readout.json. Every FD-PRR OmniFold level, B0 included, has grade.flagged true
+  at both A7_gibuu and q3, and prr_levels_values asserts it. IBU at five iterations, the comparison method, unflags q3.
+- **The introduction's additions** were fixed as the read proposed:
+  - "at five iterations";
+  - the screen sentence placed before IBU, so that "also" refers correctly;
+  - "the five-observable test that gave a result", because the introduction never names a first test.
+
+**The style gate:**
+- **The abstract** is re-based: wps 11 against the base's 16.4 and the references' 17.3-22.8. Lower is the gate's
+  direction.
+- **The body:** check_style counted case-arm keys as words and hid sentence ends behind them. 220ddf41f fixes that,
+  with a self-test and a mutant; the director approved it. The body is now 20.0 against 20.1.
+
+**The read of items 22-25's three texts** (independent, read-only):
+- **"At the two flagged truths, binned unfolding at five iterations overshoots ...": PASS.** IBU K5 ρ is −0.116 at
+  A7_gibuu and −0.130 at q3 (s991000). A7_gibuu is negative on all five splits. sec:prr defines ρ < 0 as passing the
+  truth along the prior-to-truth direction.
+- **"Tested settings change prior retention but remove neither bias flag": the facts PASS; minor scope note, not
+  applied.** Every OmniFold level stays flagged at both truths, and ρ moves past the threshold for K2 at q3 and for C25
+  and O2 at both truths. But S8.2 says "For IBU the study varies the iterations", and IBU at K5 unflags q3, so a reader
+  could count IBU as a tested setting. The read proposes "Tested settings of the five-observable estimator change
+  prior retention but remove neither bias flag" (203 words), for Joseph via the director.
+- **app_release.tex:9: minor note, not applied.** "Extended" reads as additions only, but B′ replaces RC7's text panel.
+  The read proposes "... extended to draw this analysis's band and, in place of RC7's text panel, the distribution of
+  standardized bin differences", for the director. RL-25's row already says "in place of the text panel".

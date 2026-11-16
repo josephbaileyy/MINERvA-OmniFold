@@ -470,18 +470,18 @@ def abstract_text(main_tex, values_tex, ver):
 
 def abstract_cases(mv):
     """Every consistent filling of the abstract's pending keys: each PR-2a pair; each ll5d campaign, and on a graded
-    campaign each route and each pair of per-variant pairs (ll5d-abs-close derived as ll5d_derived derives it)."""
+    campaign each route and each pair of per-variant pairs (ll5d-abs-close derived as ll5d_derived derives it).
+    Once every pending key is filled (2026-11-16), the one filled case, with the retired abstract-form key at its last
+    value ("approved") so that a base abstract from before the retirement still renders (check_style)."""
+    if all(k in mv.VERDICTS for k in mv.PENDING):
+        return [{**mv.VERDICTS, "ll5d-abs-form": "approved"}]
     pairs = [p for p in mv.LL5D_PAIR if p != "na"]
-    ll5d = [{"ll5d-campaign": c, "ll5d-route": "na", "ll5d-abs-minus2": "na", "ll5d-abs-all": "na", "ll5d-abs-close": "na",
-             "ll5d-abs-form": "approved"} for c in mv.LL5D_C if c != "graded"]
+    ll5d = [{"ll5d-campaign": c, "ll5d-route": "na", "ll5d-abs-minus2": "na", "ll5d-abs-all": "na", "ll5d-abs-close": "na"} for c in mv.LL5D_C if c != "graded"]
     for route in (r for r in mv.LL5D_ROUTE if r != "na"):
         for a in pairs:
             for b in pairs:
                 ll5d.append({"ll5d-campaign": "graded", "ll5d-route": route, "ll5d-abs-minus2": a, "ll5d-abs-all": b,
-                             "ll5d-abs-close": "none" if a == b == "i-i" else "scope", "ll5d-abs-form": "approved"})
-        # the PRD read's form, written for one pattern only (make_values ll5d_derived asserts it)
-        ll5d.append({"ll5d-campaign": "graded", "ll5d-route": route, "ll5d-abs-minus2": "uj-ujc", "ll5d-abs-all": "uj-ujc",
-                     "ll5d-abs-close": "scope", "ll5d-abs-form": "referee"})
+                             "ll5d-abs-close": "none" if a == b == "i-i" else "scope"})
     return [{"prr-abs": p, **v} for p in mv.PRR_ABS for v in ll5d]
 
 
@@ -515,17 +515,6 @@ def check_abstract(wt):
     mv = load_mv(wt)
     main, vals, ver = (wt / NOTE / "main_paper.tex").read_text(), (wt / NOTE / "values_fived16.tex").read_text(), dict(mv.VERDICTS)
     fails, lines = abstract_gate(main, vals, abstract_cases(mv), ver)
-    # a filled ll5d group: the abstract form Joseph has not chosen is gated too, so his answer is a one-line switch
-    if ver.get("ll5d-abs-form") in mv.LL5D_ABS_FORMS:
-        alt = {**ver, "ll5d-abs-form": next(f for f in mv.LL5D_ABS_FORMS if f != ver["ll5d-abs-form"])}
-        try:
-            mv.ll5d_derived(alt)
-        except AssertionError:
-            alt = None                             # the other form does not fit this outcome's pattern
-        if alt is not None:
-            f2, l2 = abstract_gate(main, vals, [], alt)
-            fails += [f"the abstract's {alt['ll5d-abs-form']} form: {x}" for x in f2]
-            lines += [f"the {alt['ll5d-abs-form']} form: {x}" for x in l2]
     for line in lines:
         print(line)
     return fails

@@ -322,7 +322,8 @@ TRUTH_LABEL = {"nominal": ("the simulation prior", "simulation prior"),
 #   "without": it names (types) every truth listed only without the block, and every truth it names or keys is listed
 #              without the block;
 #   "both": the truths it types (of the family, if given) equal the truths listed with or without the block;
-#   "count": exactly `gibuu` GiBUU truths are listed with the block, and every truth in `also`.
+#   "count": exactly `gibuu` GiBUU truths are listed with the block, and every truth in `also` (and, given `n`, n in all);
+#   "n": exactly `n` truths are listed with the block (a sentence that counts them in words).
 #   "ctotal": the truths it types equal F0's listed set, under C_total alone (Table I's right-hand columns).
 # The anchor is the sentence's distinguishing clause; a missing anchor fails, so a moved sentence must be re-declared.
 LISTED_CLAIMS = [
@@ -336,7 +337,10 @@ LISTED_CLAIMS = [
     ("sec_fived16.tex", "so the GiBUU comparison carries that limitation", {"kind": "both", "family": "gibuu"}),
     # the abstract read of 2026-11-12 dropped the second "at" (to fit "move opposite the change" at 250 words)
     # style round 4 (the director's approved item, 2026-11-12): the abstract names the truth as the body does, "GiBUU hybrid truth"
-    ("main_paper.tex", "at a GiBUU hybrid truth and a synthetic momentum-transfer tilt find", {"kind": "count", "gibuu": 1, "also": ["q3"]}),
+    # Joseph's short abstract (the director, relaying Joseph 2026-11-16) counts them; the introduction names them
+    ("main_paper.tex", "flag bias beyond uncertainty-based criteria at two truths", {"kind": "n", "n": 2}),
+    ("paper_body.tex", "Fake-data tests flag bias beyond uncertainty-based criteria at two truths, a GiBUU hybrid and a synthetic",
+     {"kind": "count", "gibuu": 1, "also": ["q3"], "n": 2}),
     ("main_note.tex", "At a GiBUU-like truth and a synthetic momentum-transfer tilt", {"kind": "count", "gibuu": 1, "also": ["q3"]}),
 ]
 
@@ -366,11 +370,8 @@ LL5D_C = ("graded", "gate-failed", "offset-stopped", "stop")
 # repair chosen after an earlier run stopped (:71; the stop-rule decision item 4). Both of the latter make the readings
 # descriptive (the pre-read ruling 8, pending Joseph). na: not graded.
 LL5D_ROUTE = ("direct", "offset-proceeded", "repaired", "na")
-# The abstract's LL5D clause: "approved", the pre-read-approved case (the default), or "referee", the PRD read's form
-# (2026-11-15; the director recommending it), written for this outcome's pattern only (G18 jointly, AR23 jointly and in
-# one cell, in both variants; ll5d_derived asserts it). Joseph's answer is LL5D_ABS_FORM.
-LL5D_ABS_FORMS = ("approved", "referee")
-LL5D_ABS_FORM = "approved"
+# The abstract-form switch (its approved and referee clauses) was retired 2026-11-16: the abstract is Joseph's
+# approved short form, keyed on ll5d-campaign, ll5d-alljoint and ll5d-route (main_paper.tex).
 # one variant's two tunes, unordered (the pre-read ruling 4: one abstract clause per variant, keeping the cell-versus-
 # joint distinction): c covers, uc cells only, uj joint only, ujc joint and cells, i invalid
 _TL = {"covers": "c", "under-cells": "uc", "under-joint-only": "uj", "under-joint": "ujc", "invalid": "i"}
@@ -407,7 +408,6 @@ PENDING["ll5d-stop-what"] = ("ll5d", None)          # the gate or check a STOP f
 PENDING["ll5d-repair"] = ("ll5d", None)             # the repair, as the record names it (repaired)
 PENDING["ll5d-offset"] = ("ll5d", None)             # clipcheck's largest |o_c|, its cell and the bound (offset routes)
 PENDING["ll5d-clip-record"] = ("ll5d", None)        # the Supplement S9 clipping record (the director's option (a))
-PENDING["ll5d-abs-form"] = ("ll5d", LL5D_ABS_FORMS)  # the abstract's approved case or the PRD read's form (Joseph's choice)
 PENDING["ll5d-route-record"] = ("ll5d", None)       # S9, adaptive routes: the exceeded quantity and its bound, what was visible, the reason, every repair (DECISION-20261109-joseph-coverage-case-wording.md item 2)
 for _k in ("njoint-min", "njoint-max", "kjoint-all", "chi2ndf-min", "chi2ndf-max"):   # §6.3's magnitude clause (the director, (d))
     PENDING[f"ll5d-{_k}"] = ("ll5d", None)
@@ -480,7 +480,6 @@ VERDICTS = {
     # from a fresh mapping of the pinned records
     'll5d-abs-all': 'uj-ujc',
     'll5d-abs-close': 'scope',
-    'll5d-abs-form': 'approved',
     'll5d-abs-minus2': 'uj-ujc',
     'll5d-alljoint': 'all',
     'll5d-anyover': 'some',
@@ -780,7 +779,7 @@ def ll5d_verdicts(d):
     assert not any(f == "some" for (_, _, x), f in flags.items() if x == "clip"), "a clipping artefact: reword"
     v = ll5d_case("graded", per, text["ll5d-route"], flags, cells,
                   {"stop-what": text["ll5d-stop-what"], "repair": text["ll5d-repair"], "offset": text["offset"],
-                   "clip-record": text["clip-record"], "route-record": text["ll5d-route-record"], "abs-form": LL5D_ABS_FORM,
+                   "clip-record": text["clip-record"], "route-record": text["ll5d-route-record"],
                    **{k: text[k] for k in ("njoint-min", "njoint-max", "kjoint-all", "chi2ndf-min", "chi2ndf-max")},
                    **{k: x for k, x in text.items() if isinstance(k, tuple)}})
     for k, x in v.items():
@@ -814,14 +813,8 @@ def ll5d_derived(v):
         assert all(v[f"ll5d-{t}-{r}"] == "na" for t, r in tr), "a per-tune class on an ungraded campaign"
         assert v["ll5d-route"] == "na", "a route on an ungraded campaign"
         assert all(v[f"ll5d-{t}-{r}-{x}"] == "na" for t, r in tr for x in ("weak", "over", "clip")), "a flag, ungraded"
-        assert v["ll5d-abs-form"] == "approved", "the abstract's referee form on an ungraded campaign"
         return {**{k: "na" for k in DERIVED["ll5d"]}, "ll5d-status": "stopped"}
     assert v["ll5d-route"] != "na" and all(v[f"ll5d-{t}-{r}"] != "na" for t, r in tr), "a graded campaign with na"
-    if v["ll5d-abs-form"] == "referee":              # its words fit one pattern only (main_paper.tex, the abstract)
-        assert all(v[f"ll5d-g18-{r}"] == "under-joint-only" and v[f"ll5d-ar23-{r}"] == "under-joint"
-                   for r in ("minus2", "all")), "the abstract's referee form needs G18 joint-only, AR23 joint and cells"
-        assert v["ll5d-ar23-minus2-names"] == v["ll5d-ar23-all-names"] and v["ll5d-ar23-all-names"].startswith("cell "), \
-            "the abstract's referee form names one AR23 cell, the same in both variants"
     for t, r in tr:                                  # the flags read only where the (tune, reading) was graded
         c = v[f"ll5d-{t}-{r}"]
         for x in ("weak", "over", "clip"):
@@ -858,7 +851,7 @@ def ll5d_case(campaign, per=None, route="direct", flags=None, cells=None, text=N
     """
     per, flags, cells, text = per or {}, flags or {}, cells or {}, text or {}
     graded = campaign == "graded"
-    v = {"ll5d-campaign": campaign, "ll5d-route": route if graded else "na", "ll5d-abs-form": text.get("abs-form", "approved"),
+    v = {"ll5d-campaign": campaign, "ll5d-route": route if graded else "na",
          "ll5d-stop-what": text.get("stop-what", "[the gate or check]"), "ll5d-repair": text.get("repair", "[the repair]"),
          "ll5d-offset": text.get("offset", "[the largest offset, its cell, and the bound]"),
          "ll5d-clip-record": text.get("clip-record", "[the clipping record]"),
@@ -915,7 +908,7 @@ def ll5d_fill_cases():
     out.append(ll5d_case("graded", {(t, r): "under-cells" for t in ("g18", "ar23") for r in ("minus2", "all")}))
     out.append(ll5d_case("graded", {("g18", r): "under-joint-only" for r in ("minus2", "all")}
                          | {("ar23", r): "under-joint" for r in ("minus2", "all")}, "repaired", None,
-                         {("ar23", r, "names"): "cell R07" for r in ("minus2", "all")}, {"abs-form": "referee"}))
+                         {("ar23", r, "names"): "cell R07" for r in ("minus2", "all")}))
     out += [ll5d_case("gate-failed"), ll5d_case("offset-stopped"), ll5d_case("stop")]
     return out
 
@@ -3300,8 +3293,11 @@ def check_listed_claims(f0b, texts, f0b_nopl=None, f0=None):
         elif kind == "both":
             fam = (lambda t: rule["family"] in t.lower()) if "family" in rule else (lambda t: True)
             ok = typed == {t for t in listed | without if fam(t)}
+        elif kind == "n":
+            ok = len(listed) == rule["n"]
         else:
-            ok = sum("gibuu" in t for t in listed) == rule["gibuu"] and all(t in listed for t in rule["also"])
+            ok = (sum("gibuu" in t for t in listed) == rule["gibuu"] and all(t in listed for t in rule["also"])
+                  and len(listed) == rule.get("n", len(listed)))
         if not ok:
             bad.append(f"{name}: {anchor!r} ({kind}) disagrees with the pinned F0b readouts: {got}")
     return bad
@@ -3516,8 +3512,8 @@ def self_test():
             ("omits a truth F0 lists", "paper_body.tex", r"Under $C_{\mathrm{total}}$ alone, the right-hand columns",
              lambda t: t.replace(r"the synthetic $q_3$ tilt and the NuWro $(\pT,\pPar,\Eavail)$ shape, the last by $p$ alone",
                                  r"and the synthetic $q_3$ tilt, the last by $p$ alone", 1)),
-            ("loses its anchor", "main_paper.tex", "at a GiBUU hybrid truth and a synthetic momentum-transfer tilt find",
-             lambda t: t.replace("at a GiBUU hybrid truth and a synthetic", "at GiBUU hybrid truths and a synthetic", 1))):
+            ("loses its anchor", "main_paper.tex", "flag bias beyond uncertainty-based criteria at two truths",
+             lambda t: t.replace("criteria at two truths", "criteria at both truths", 1))):
         planted = dict(texts, **{name: edit(texts[name])})
         if planted[name] == texts[name]:
             print(f"  FAIL the plant that {what} did not apply"); ok = False
