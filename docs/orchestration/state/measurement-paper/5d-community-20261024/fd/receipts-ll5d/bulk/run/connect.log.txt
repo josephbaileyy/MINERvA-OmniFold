@@ -1,0 +1,68 @@
+host=login02 start=2026-11-13T06:09:19Z pid=1679123 audit_ack=https://github.com/josephbaileyy/MINERvA-OmniFold/pull/1123#issuecomment-6840388077
+squeue: []
+== iris
+m3246               2485.2            10000.0     18616.0      20000.0
+balance_node_h=1384.0 half=692.0 cap=148.0
+projection charged=46.623 held=0.000 this=80.0 total=126.623 cap=148.0
+gate g18 truth=g18 verdict=PASS
+gate ar23 truth=ar23 verdict=PASS
+/pscratch/sd/j/josephrb/ll5d-pilot-r2/walls.json verdict=PASS
+/pscratch/sd/j/josephrb/ll5d-pilot-r2/controls.json verdict=PASS
+/pscratch/sd/j/josephrb/ll5d-pilot-r2/clipcheck.json verdict=PROCEED
+products before the bulk: 13
+deploy porcelain_lines=0 head=4231b14de5ea693e92cb31b1358a816b5c2f6625
+nd-unfolding/ll5d.py: OK
+nd-unfolding/fd_1b_c2.py: OK
+nd-unfolding/fd_1b_mc.py: OK
+nd-unfolding/fd_1b_toys.py: OK
+nd-unfolding/fd_1b_inv.py: OK
+nd-unfolding/s1_assemble.py: OK
+nd-unfolding/s5p_universe.py: OK
+nd-unfolding/fd_1b_score.py: OK
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/clip/clip_probe2.py: OK
+2d-unfolding/cov2d/cov2d.py: OK
+docs/orchestration/state/2d-closeout/stageF/methods/sf1/manifest/inputs-sha256.txt: OK
+nd-unfolding/pv-ladder/readouts/h2_definition.json: OK
+setup_salloc_env.sh: OK
+nd-unfolding/s5e_candidate.py: OK
+nd-unfolding/s5e_deform.py: OK
+nd-unfolding/ll5d_b.py: OK
+nd-unfolding/fd_1b_null.py: OK
+nd-unfolding/s5n_pseudo.py: OK
+nd-unfolding/s5p_numerics.py: OK
+nd-unfolding/omnifold_nn_core.py: OK
+2d-unfolding/uq/coverage_fixed_truth/score_coverage.py: OK
+nd-unfolding/ll5d_ctl.py: OK
+job script sha256 1d1f7f6f7471b234651cb947db807128d3b2fa2655aab6d16e0c6460e9bf4b7b
+atime-pre 1146 files at 2026-11-13T06:10:24Z
+Submitted batch job 61214597 (ll5d_bulk_01)
+TimeLimit=08:00:00
+Submitted batch job 61214601 (ll5d_bulk_02)
+TimeLimit=08:00:00
+Submitted batch job 61214604 (ll5d_bulk_03)
+TimeLimit=08:00:00
+Submitted batch job 61214605 (ll5d_bulk_04)
+TimeLimit=08:00:00
+Submitted batch job 61214607 (ll5d_bulk_05)
+TimeLimit=08:00:00
+Submitted batch job 61214609 (ll5d_bulk_06)
+TimeLimit=08:00:00
+Submitted batch job 61214610 (ll5d_bulk_07)
+TimeLimit=08:00:00
+Submitted batch job 61214612 (ll5d_bulk_08)
+TimeLimit=08:00:00
+Submitted batch job 61214614 (ll5d_bulk_09)
+TimeLimit=08:00:00
+Submitted batch job 61214615 (ll5d_bulk_10)
+TimeLimit=08:00:00
+61214615 ll5d_bulk_10 PENDING 8:00:00 1
+61214614 ll5d_bulk_09 PENDING 8:00:00 1
+61214612 ll5d_bulk_08 PENDING 8:00:00 1
+61214610 ll5d_bulk_07 PENDING 8:00:00 1
+61214609 ll5d_bulk_06 PENDING 8:00:00 1
+61214607 ll5d_bulk_05 PENDING 8:00:00 1
+61214605 ll5d_bulk_04 PENDING 8:00:00 1
+61214604 ll5d_bulk_03 PENDING 8:00:00 1
+61214601 ll5d_bulk_02 PENDING 8:00:00 1
+61214597 ll5d_bulk_01 PENDING 8:00:00 1
+end=2026-11-13T06:10:36Z

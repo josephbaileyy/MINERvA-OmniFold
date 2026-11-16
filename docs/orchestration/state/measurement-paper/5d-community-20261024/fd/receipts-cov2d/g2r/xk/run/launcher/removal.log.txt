@@ -1,0 +1,5 @@
+4bf6874ee3ebc68e9df602a6e694d08766c464c4f2c5e2e933ceae4fb54bce20  /dev/shm/josephrb-g2r-xk.sh
+d017afe4748a13049d5323609fa4debd8ad3f2b7104eb8c0fe91294c7aeee254  /dev/shm/josephrb-g2r-xk.log
+rm -f /dev/shm/josephrb-g2r-xk.sh /dev/shm/josephrb-g2r-xk.log rc=0
+ls: cannot access '/dev/shm/josephrb-g2r-xk.sh': No such file or directory
+ls: cannot access '/dev/shm/josephrb-g2r-xk.log': No such file or directory

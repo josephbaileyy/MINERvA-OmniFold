@@ -1,0 +1,4 @@
+MUTANT [ro.partb_sums, ro.Path = partb_sums, path|ro.partb_sums = partb_sums] -> FAIL g2r;
+MUTANT [ro.partb_sums, ro.Path = partb_sums, path|ro.Path = path] -> FAIL g2r;FAIL badsums;
+MUTANT [if mode == "g2r" and len(a) == 3|if len(a) == 3] -> FAIL identity;
+MUTANT [    if sha(tsv) != PRODUCTS_SHA:|    if False:] -> FAIL badtsv;

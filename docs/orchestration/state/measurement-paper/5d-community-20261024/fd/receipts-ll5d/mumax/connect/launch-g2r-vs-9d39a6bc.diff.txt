@@ -1,0 +1,9 @@
+9c9
+< # Usage: launch-g2r.sh envtest|envtest-r2|envtest-r3|diag-tune|prepare|D_Ua|D_Ub|<a remaining unfold job>|readout-<data|G18|AR23>|re2shapes|cr|xk <sha256>
+---
+> # Usage: launch-g2r.sh envtest|envtest-r2|envtest-r3|diag-tune|prepare|D_Ua|D_Ub|<a remaining unfold job>|readout-<data|G18|AR23>|re2shapes|cr|xk|d2 <sha256>
+33c33,34
+<   *) echo "usage: launch-g2r.sh envtest|envtest-r2|envtest-r3|diag-tune|prepare|D_Ua|D_Ub|D_Uc|D_Ud|G18_Ua|G18_Ub|G18_Uc|G18_Ud|AR23_Ua|AR23_Ub|AR23_Uc|AR23_Ud|readout-data|readout-G18|readout-AR23|re2shapes|cr|xk <sha256>"; exit 2 ;;
+---
+>   d2) SRC=$H/d2/connect-g2r-d2.sh; ARG="" ;;   # D2: mu_max in LL5D's own space, G18 and AR23 (login node; log $SHM/josephrb-g2r-d2.log)
+>   *) echo "usage: launch-g2r.sh envtest|envtest-r2|envtest-r3|diag-tune|prepare|D_Ua|D_Ub|D_Uc|D_Ud|G18_Ua|G18_Ub|G18_Uc|G18_Ud|AR23_Ua|AR23_Ub|AR23_Uc|AR23_Ud|readout-data|readout-G18|readout-AR23|re2shapes|cr|xk|d2 <sha256>"; exit 2 ;;

@@ -1,0 +1,63 @@
+PASS control-byte-identical rc=0 (want 0)
+    COMPARE-RERUN EQUAL (20 names)
+PASS allow-listed-keys-only rc=0 (want 0)
+    ALLOW ll5d_ar23_toy_all_4761066.npz meta.npy slurm_job: orig '61214614' rerun '99999999'
+    ALLOW ll5d_ar23_toy_all_4761066.npz meta.npy seconds_unfold: orig 918.171 rerun 1.5
+    ALLOW ll5d_ar23_toy_all_4761066.npz meta.npy peak_rss_kib: orig 19979216 rerun 1
+    ALLOW ll5d_ar23_toy_all_4761066.npz meta.npy refinement/seconds: orig 31.341 rerun 2.25
+    COMPARE-RERUN EQUAL (20 names)
+PASS zip-metadata-only rc=0 (want 0)
+    ALLOW ll5d_ar23_toy_all_4761066.npz meta.npy slurm_job: orig '61214614' rerun '61214614'
+    ALLOW ll5d_ar23_toy_all_4761066.npz meta.npy seconds_unfold: orig 918.171 rerun 918.171
+    ALLOW ll5d_ar23_toy_all_4761066.npz meta.npy peak_rss_kib: orig 19979216 rerun 19979216
+    ALLOW ll5d_ar23_toy_all_4761066.npz meta.npy refinement/seconds: orig 31.341 rerun 31.341
+    REPORT ll5d_ar23_toy_all_4761066.npz: zip metadata differs (not a mismatch): orig {'xsec_flat.npy': ((1980, 1, 1, 0, 0, 0), 8, 25165824, 3, 0), 'xtrue_flat.npy': ((1980, 1, 1, 0, 0, 0), 8, 25165824, 3, 0), 'clip_reco_fin
+    COMPARE-RERUN EQUAL (20 names)
+PASS rezip-identity-control rc=0 (want 0)
+    ALLOW ll5d_ar23_toy_all_4761066.npz meta.npy slurm_job: orig '61214614' rerun '61214614'
+    ALLOW ll5d_ar23_toy_all_4761066.npz meta.npy seconds_unfold: orig 918.171 rerun 918.171
+    ALLOW ll5d_ar23_toy_all_4761066.npz meta.npy peak_rss_kib: orig 19979216 rerun 19979216
+    ALLOW ll5d_ar23_toy_all_4761066.npz meta.npy refinement/seconds: orig 31.341 rerun 31.341
+    COMPARE-RERUN EQUAL (20 names)
+PASS mutant-xsec-byte rc=1 (want 1)
+    ALLOW ll5d_ar23_toy_all_4761066.npz meta.npy slurm_job: orig '61214614' rerun '61214614'
+    ALLOW ll5d_ar23_toy_all_4761066.npz meta.npy seconds_unfold: orig 918.171 rerun 918.171
+    ALLOW ll5d_ar23_toy_all_4761066.npz meta.npy peak_rss_kib: orig 19979216 rerun 19979216
+    ALLOW ll5d_ar23_toy_all_4761066.npz meta.npy refinement/seconds: orig 31.341 rerun 31.341
+    MISMATCH ll5d_ar23_toy_all_4761066.npz xsec_flat.npy: dtype float64/float64 shape (65856,)/(65856,); 1 data bytes differ
+    COMPARE-RERUN MISMATCH (20 names)
+PASS mutant-meta-item rc=1 (want 1)
+    MISMATCH ll5d_ar23_toy_all_4761066.npz meta.npy key item: orig 'all_4761060' rerun 'all_4761066'
+    ALLOW ll5d_ar23_toy_all_4761066.npz meta.npy slurm_job: orig '61214614' rerun '61214614'
+    ALLOW ll5d_ar23_toy_all_4761066.npz meta.npy seconds_unfold: orig 918.171 rerun 918.171
+    ALLOW ll5d_ar23_toy_all_4761066.npz meta.npy peak_rss_kib: orig 19979216 rerun 19979216
+    ALLOW ll5d_ar23_toy_all_4761066.npz meta.npy refinement/seconds: orig 31.341 rerun 31.341
+    COMPARE-RERUN MISMATCH (20 names)
+PASS mutant-meta-code_sha256 rc=1 (want 1)
+    MISMATCH ll5d_ar23_toy_all_4761066.npz meta.npy key code_sha256/ll5d_b.py: orig '24312ca86f9e70ed86699772d634c19d9bcacb2bb87bff5aaa8c9f7c2661f3cb' rerun '0000000000000000000000000000000000000000000000000000000000000000'
+    ALLOW ll5d_ar23_toy_all_4761066.npz meta.npy slurm_job: orig '61214614' rerun '61214614'
+    ALLOW ll5d_ar23_toy_all_4761066.npz meta.npy seconds_unfold: orig 918.171 rerun 918.171
+    ALLOW ll5d_ar23_toy_all_4761066.npz meta.npy peak_rss_kib: orig 19979216 rerun 19979216
+    ALLOW ll5d_ar23_toy_all_4761066.npz meta.npy refinement/seconds: orig 31.341 rerun 31.341
+    COMPARE-RERUN MISMATCH (20 names)
+PASS mutant-meta-estimator_params-not-allowed rc=1 (want 1)
+    MISMATCH ll5d_ar23_toy_all_4761066.npz meta.npy key estimator_params: orig [{'boosting_type': 'gbdt', 'class_weight': None, 'colsample_bytree': 1.0, 'importance_type': 'split', 'learning_rate': 0.1, 'max_depth': -1, 'min
+    ALLOW ll5d_ar23_toy_all_4761066.npz meta.npy slurm_job: orig '61214614' rerun '61214614'
+    ALLOW ll5d_ar23_toy_all_4761066.npz meta.npy seconds_unfold: orig 918.171 rerun 918.171
+    ALLOW ll5d_ar23_toy_all_4761066.npz meta.npy peak_rss_kib: orig 19979216 rerun 19979216
+    ALLOW ll5d_ar23_toy_all_4761066.npz meta.npy refinement/seconds: orig 31.341 rerun 31.341
+    COMPARE-RERUN MISMATCH (20 names)
+PASS mutant-member-dropped rc=1 (want 1)
+    MISMATCH ll5d_ar23_toy_all_4761066.npz member set: only orig ['clip_tdw_fine.npy'] only rerun []
+    COMPARE-RERUN MISMATCH (20 names)
+PASS missing-on-rerun-side rc=1 (want 1)
+    MISMATCH ll5d_ar23_toy_all_4761063.npz: missing on the rerun side
+    COMPARE-RERUN MISMATCH (20 names)
+PASS extra-on-rerun-side rc=1 (want 1)
+    MISMATCH rerun dir holds products outside the 20: ['ll5d_ar23_toy_all_4761999.npz']
+    COMPARE-RERUN MISMATCH (20 names)
+PASS names-count-19 rc=1 (want 1)
+    MISMATCH names file: 19 names, 19 distinct, want 20
+    MISMATCH rerun dir holds products outside the 20: ['ll5d_ar23_toy_all_4761079.npz']
+    COMPARE-RERUN MISMATCH (19 names)
+COMPARE-RERUN TEST PASS

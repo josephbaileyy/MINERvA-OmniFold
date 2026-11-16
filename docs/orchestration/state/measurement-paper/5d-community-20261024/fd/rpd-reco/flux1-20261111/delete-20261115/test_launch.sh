@@ -12,7 +12,7 @@ exec bash -c "$1"
 S
 chmod +x "$T/shim/ssh"
 command -v sha256sum >/dev/null || { printf '#!/bin/bash\nexec shasum -a 256 "$@"\n' > "$T/shim/sha256sum"; chmod +x "$T/shim/sha256sum"; }
-cp "$D/flux1_inventory.py" "$T/run/"
+cp "$D/flux1_inventory.py" "$D/flux1_delete.py" "$T/run/"
 sed "s#/dev/shm/#$T/shm/#" "$D/flux1_cleanup_launch.sh" > "$T/run/flux1_cleanup_launch.sh"
 echo "## 1. plumbing: staged, sha checked on the node, script run, copy removed"
 mkdir "$T/s1"; PATH="$T/shim:$PATH" bash "$T/run/flux1_cleanup_launch.sh" inventory "$T/s1" login05; echo "launcher rc=$?"
@@ -28,4 +28,8 @@ mkdir "$T/s4"; touch "$T/s4/x"; PATH="$T/shim:$PATH" bash "$T/run/flux1_cleanup_
 echo "## 5. a staged copy that differs on the node: the shim's cat appends a byte, so the node-side sha check must refuse"
 printf '#!/bin/bash\n/bin/cat "$@"; printf x\n' > "$T/shim/cat"; chmod +x "$T/shim/cat"
 mkdir "$T/s5"; PATH="$T/shim:$PATH" bash "$T/run/flux1_cleanup_launch.sh" inventory "$T/s5" login05; echo "launcher rc=$?"
+echo "   left in the /dev/shm stand-in: $(ls -A "$T/shm" | wc -l | tr -d ' ')"
+echo "## 6. delete mode: staged and sha-checked like inventory (the script refuses here: no O_NOATIME on macOS)"
+rm -f "$T/shim/cat"
+mkdir "$T/s6"; PATH="$T/shim:$PATH" bash "$T/run/flux1_cleanup_launch.sh" delete "$T/s6" login05; echo "launcher rc=$?"
 echo "   left in the /dev/shm stand-in: $(ls -A "$T/shm" | wc -l | tr -d ' ')"

@@ -83,5 +83,49 @@ for m in MACROS:
     bad += not ok
     print(f"{'OK ' if ok else 'BAD'} MACRO  \\{m} printed {n}" + (f"; \\fvval{{{alt}}} printed {k} ({row})" if alt else "")
           + ("" if ok else "  #981 checks this macro but nothing prints it: re-source the check to the printed key"))
+# #981 (91f9cb615) hard-codes its pending results (build_package.py PENDING: FD-PRR, LL5D, V-HALF) and writes a
+# pending/<name>.txt "Not yet available" file for each, whatever the paper's producer says. Each maps to a producer
+# group whose state values_fived16.tex records (\@namedef{fvg@<group>}{PENDING|FILLED}). A FILLED group that #981
+# still marks pending would ship a stale "not yet available" note, and no build check sees it. Each FILLED group must
+# have the re-pin row that fills it (FILLS).
+PENDING_MAP = {"FD-PRR": "prr", "LL5D": "ll5d", "V-HALF": "vhalf"}
+FILLS = {"FD-PRR": "RP43", "LL5D": "RP43", "V-HALF": "RP43"}
+vf = subprocess.run(["git", "show", f"{N}:docs/analysis-note/values_fived16.tex"], capture_output=True, text=True,
+                    check=True).stdout
+for name, grp in PENDING_MAP.items():
+    m = re.findall(r"\\@namedef\{fvg@" + grp + r"\}\{([A-Z]+)\}", vf)
+    state = m[0] if len(m) == 1 else "UNKNOWN (%d definitions)" % len(m)
+    ok = state == "PENDING" or (state == "FILLED" and name in FILLS)
+    bad += not ok
+    print(f"{'OK ' if ok else 'BAD'} PENDING #981 {name} -> group {grp}: {state}"
+          + (f" ({FILLS[name]} fills it at the re-pin)" if state == "FILLED" and name in FILLS else "")
+          + ("" if ok else "  #981 would ship a stale pending note: add the row that fills it"))
+# RP44: the code-location map #981's README gains (codemap.tsv). Each entry's file must have its pinned sha256 at its
+# commit, and its anchor must lie inside its cited lines. The Supplement's tab:codemap block is pinned by sha256 while
+# it exists: a change means RP44's map must be re-checked against it; once journal-editor cuts it, RP44 is the source.
+CODEMAP_TABLE_SHA = "11de5b171ea0f3e11cee7eecc10f15108cc4b944227889ed9d2c9113fa96c9d2"   # at f03dbd758
+cm = [l.split("\t") for l in open(os.path.join(HERE, "codemap.tsv")).read().splitlines()
+      if l and not l.startswith("#") and not l.startswith("step\t")]
+nbad = 0
+for step, path, commit, lines, want, anchor in cm:
+    b = subprocess.run(["git", "show", f"{commit}:{path}"], capture_output=True, check=True).stdout
+    a, z = map(int, lines.split("-"))
+    seg = b"\n".join(b.split(b"\n")[a - 1:z]).decode()
+    ok = hashlib.sha256(b).hexdigest() == want and anchor in seg
+    nbad += not ok
+    if not ok:
+        print(f"BAD CODEMAP {path}:{lines} @{commit} ({step}): sha or anchor differs")
+bad += nbad
+print(f"{'OK ' if not nbad else 'BAD'} CODEMAP {len(cm)} entries: every file at its pinned sha256 and every anchor in its lines")
+i = raw.find(r"\label{tab:codemap}")
+if i < 0:
+    print("OK  CODEMAP tab:codemap is cut from the Supplement; RP44's map is the source")
+else:
+    blk = raw[raw.rfind(r"\begin{table", 0, i):raw.find(r"\end{table", i)]
+    tsha = hashlib.sha256(blk.encode()).hexdigest()
+    ok = raw.count(r"\label{tab:codemap}") == 1 and tsha == CODEMAP_TABLE_SHA
+    bad += not ok
+    print(f"{'OK ' if ok else 'BAD'} CODEMAP tab:codemap block_sha={tsha[:16]}"
+          + ("" if ok else "  tab:codemap CHANGED: re-check RP44's map against it"))
 print("REPIN-CHECK", "PASS" if not bad else f"FAIL ({bad})")
 sys.exit(1 if bad else 0)

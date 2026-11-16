@@ -1,0 +1,147 @@
+node login06 staged sha256 eb5315459e2dd077c40d19e47eaa5f1fb2baa40f509a1289b932f24ef25c5e56
+delete host login06 python 3.6.15 start 2026-11-15T03:14:05Z root /pscratch/sd/j/josephrb/rpd-reco-flux-20261111
+listing entries 24422 sha256 6e9a273506598728091867436ef2fa562f3418f9726175d2d43bfb0ddce6ee89 (step A 24422 6e9a273506598728091867436ef2fa562f3418f9726175d2d43bfb0ddce6ee89); clone sha256 9a85268d4f113460ef94c682f15ca7578534ffc7ce46da1348eefd6d848fd71f (step A 9a85268d4f113460ef94c682f15ca7578534ffc7ce46da1348eefd6d848fd71f); problems 0
+staged run/mat-data/MPARAMFILES/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt sha256 e38ad7d28354d071577113a18c8c569f88b6239f7fb193d20285273f172fc0c2 OK; original /pscratch/sd/j/josephrb/minerva/minerva_large_files/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt present, size and mtime as recorded
+staged run/mat-data/PLOTUTILSROOT/data/flux/flux-g4numiv6-pdg-14-minervame1D_rearrangedUniverses.root sha256 2ceba3558e89f7b152435ac3f46e32e7d73c8186e02870b5df1f82ccb8d88211 OK; original /pscratch/sd/j/josephrb/minerva/minerva_large_files/MATFluxAndReweightFiles/flux/flux-g4numiv6-pdg-14-minervame1D_rearrangedUniverses.root present, size and mtime as recorded
+staged run/mat-data/PLOTUTILSROOT/data/flux/flux-g4numiv6-pdg-14-minervame1M_rearrangedUniverses.root sha256 e672e633f637f14fee7c169cf9c1bfaad83ac3f033d1c6f171e451a704b941f3 OK; original /pscratch/sd/j/josephrb/minerva/minerva_large_files/MATFluxAndReweightFiles/flux/flux-g4numiv6-pdg-14-minervame1M_rearrangedUniverses.root present, size and mtime as recorded
+staged run/mat-data/PLOTUTILSROOT/data/flux/flux-g4numiv6-pdg-14-minervame1N_rearrangedUniverses.root sha256 9b66bf82b13c3d45332100cc6b37e52d7f97873c289109a2f99dcb8ce5195077 OK; original /pscratch/sd/j/josephrb/minerva/minerva_large_files/MATFluxAndReweightFiles/flux/flux-g4numiv6-pdg-14-minervame1N_rearrangedUniverses.root present, size and mtime as recorded
+staged run/mat-data/PLOTUTILSROOT/data/flux/flux-g4numiv6-pdg14-minervame1D_rearrangedUniverses.root sha256 9c1b561c5245355898c03cdd1b221c7e3c6679fcd33bc6adc38b9c903ec29825 OK; original /pscratch/sd/j/josephrb/minerva/minerva_large_files/MATFluxAndReweightFiles/flux/flux-g4numiv6-pdg14-minervame1D_rearrangedUniverses.root present, size and mtime as recorded
+staged run/mat-data/PLOTUTILSROOT/data/flux/flux-g4numiv6-pdg14-minervame1M_rearrangedUniverses.root sha256 f03207e7063b91eb51291d3f223bafa99d75428aa28c2bb5097b065319b0a6f5 OK; original /pscratch/sd/j/josephrb/minerva/minerva_large_files/MATFluxAndReweightFiles/flux/flux-g4numiv6-pdg14-minervame1M_rearrangedUniverses.root present, size and mtime as recorded
+staged run/mat-data/PLOTUTILSROOT/data/flux/flux-g4numiv6-pdg14-minervame1N_rearrangedUniverses.root sha256 5a051aa71eeffae2e9dbd1efe51e8d51f7e04fe12e9fcda82893cd586119f315 OK; original /pscratch/sd/j/josephrb/minerva/minerva_large_files/MATFluxAndReweightFiles/flux/flux-g4numiv6-pdg14-minervame1N_rearrangedUniverses.root present, size and mtime as recorded
+staged run/mat-data/PLOTUTILSROOT/data/flux/flux-gen2thin-pdg-14-minervame1D_rearrangedUniverses.root sha256 4cc2c17103c9c62de310434ce34bf2f4b7665eb7799f4a84c8da6a851678ab7d OK; original /pscratch/sd/j/josephrb/minerva/minerva_large_files/MATFluxAndReweightFiles/flux/flux-gen2thin-pdg-14-minervame1D_rearrangedUniverses.root present, size and mtime as recorded
+staged run/mat-data/PLOTUTILSROOT/data/flux/flux-gen2thin-pdg-14-minervame1M_rearrangedUniverses.root sha256 d9704aa45c016b044284d9e3cfc8c6d5c07cda0835a445866d5f792c8ac82840 OK; original /pscratch/sd/j/josephrb/minerva/minerva_large_files/MATFluxAndReweightFiles/flux/flux-gen2thin-pdg-14-minervame1M_rearrangedUniverses.root present, size and mtime as recorded
+staged run/mat-data/PLOTUTILSROOT/data/flux/flux-gen2thin-pdg-14-minervame1N_rearrangedUniverses.root sha256 4789910343e493118ccc13651dbcd6a977189e4e27c081c043c9c90f1da18091 OK; original /pscratch/sd/j/josephrb/minerva/minerva_large_files/MATFluxAndReweightFiles/flux/flux-gen2thin-pdg-14-minervame1N_rearrangedUniverses.root present, size and mtime as recorded
+staged run/mat-data/PLOTUTILSROOT/data/flux/flux-gen2thin-pdg14-minervame1D_rearrangedUniverses.root sha256 951a400ea3aa9c62ab289119ac91b835fcb473ff8898d65065eb229fc2668ae5 OK; original /pscratch/sd/j/josephrb/minerva/minerva_large_files/MATFluxAndReweightFiles/flux/flux-gen2thin-pdg14-minervame1D_rearrangedUniverses.root present, size and mtime as recorded
+staged run/mat-data/PLOTUTILSROOT/data/flux/flux-gen2thin-pdg14-minervame1M_rearrangedUniverses.root sha256 3c76ed6fbb2d0623c645b0192b720253843f37d015cfc4c1cfc10f283433db0f OK; original /pscratch/sd/j/josephrb/minerva/minerva_large_files/MATFluxAndReweightFiles/flux/flux-gen2thin-pdg14-minervame1M_rearrangedUniverses.root present, size and mtime as recorded
+staged run/mat-data/PLOTUTILSROOT/data/flux/flux-gen2thin-pdg14-minervame1N_rearrangedUniverses.root sha256 bfe5e3c5fb66252c64f1fde06f66dd0d656e2f69f5e5bd7cc159a537f31e5cfa OK; original /pscratch/sd/j/josephrb/minerva/minerva_large_files/MATFluxAndReweightFiles/flux/flux-gen2thin-pdg14-minervame1N_rearrangedUniverses.root present, size and mtime as recorded
+staged run/mat-data/PLOTUTILSROOT/data/flux/sys/Muon_Energy_MnvH1D.root sha256 996a2752dbd08c32252f9b8c52706f8aa841ffe40539ab5b27d15b870a6f704f OK; original /pscratch/sd/j/josephrb/minerva/minerva_large_files/MATFluxAndReweightFiles/flux/sys/Muon_Energy_MnvH1D.root present, size and mtime as recorded
+staged run/mat-data/PLOTUTILSROOT/data/lowNuReweight/lowNuReweight.root sha256 fbec8d2ae91bdd4989e6aeedb50c5a0c74de4884be4fc99ae5ee950606a9b553 OK; original /pscratch/sd/j/josephrb/minerva/minerva_large_files/MATFluxAndReweightFiles/lowNuReweight/lowNuReweight.root present, size and mtime as recorded
+staged run/original-inputs/03053d12eefd54a9-lat_1G_bkg.npz sha256 82e2cf0f08c505f5b0090aa15381cd4b9a32ff6e1708a1df7621ee89ff7eca8a OK; original /pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1G_bkg.npz present, size and mtime as recorded
+staged run/original-inputs/08500b2e58a20f66-flux-gen2thin-pdg-14-minervame1N_rearrangedUniverses.root sha256 4789910343e493118ccc13651dbcd6a977189e4e27c081c043c9c90f1da18091 OK; original /pscratch/sd/j/josephrb/minerva/minerva_large_files/MATFluxAndReweightFiles/flux/flux-gen2thin-pdg-14-minervame1N_rearrangedUniverses.root present, size and mtime as recorded
+staged run/original-inputs/0a5c6adb429e437c-setup_UnfoldUtils.sh sha256 bd305c17ddcd507f88ab49cbfcf5fe5a14075e0c1a173e631addcb3423212cd9 OK; original /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup_UnfoldUtils.sh present, size and mtime as recorded
+staged run/original-inputs/14b0bc45cf3605e2-INPUTS.sha256 sha256 7638f94f56ad0471769445cffe68ff538c9b68158f48415e7c3cafa7ee95a295 OK; original committed in git (gen_delete.py's check)
+staged run/original-inputs/19360bf36c1b67dd-setup_MAT.sh sha256 733e9cd839a0f75186d109eaab3dfe746a921d6d7b0347fbd6662b6f1ced3c0e OK; original /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup_MAT.sh present, size and mtime as recorded
+staged run/original-inputs/1b2d014681c4892e-MAT-DATA-DEPENDENCIES.json sha256 b056487e592e7704c2a98c14243b26f44c82821382837a263b75c169859cce0b OK; original committed in git (gen_delete.py's check)
+staged run/original-inputs/1b55ce2d601762d2-lat_1E_bkg.npz sha256 3828fed6042c88af5f48a9f7ee4c1e2c1755c09b186e87574dbfab3b3714931a OK; original /pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1E_bkg.npz present, size and mtime as recorded
+staged run/original-inputs/1c2439cc11e2101b-flux-g4numiv6-pdg14-minervame1N_rearrangedUniverses.root sha256 5a051aa71eeffae2e9dbd1efe51e8d51f7e04fe12e9fcda82893cd586119f315 OK; original /pscratch/sd/j/josephrb/minerva/minerva_large_files/MATFluxAndReweightFiles/flux/flux-g4numiv6-pdg14-minervame1N_rearrangedUniverses.root present, size and mtime as recorded
+staged run/original-inputs/1dead4f249ff3a35-libMAT.so sha256 5901f18ab069824b04c90e89ade74405a3336c827215a41dfaabdf9d2d66dc48 OK; original /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/libMAT.so present, size and mtime as recorded
+staged run/original-inputs/1f6898cee4f592a7-lat_1C_bkg.npz sha256 92b1e44674bfbfb23710dd2c2ea669551f279e191f3728e95f35dd71dfc94418 OK; original /pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1C_bkg.npz present, size and mtime as recorded
+staged run/original-inputs/23ba7b3e4f03097e-lat_1B.npz sha256 1ec638e3ab8b37c11f2bdb49a41f17a4edd60fa213ddd27a4aef72c2bc14123e OK; original /pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1B.npz present, size and mtime as recorded
+staged run/original-inputs/2c20ac85fd963fcf-setup_MAT-MINERvA.sh sha256 c259101619ac365dcc57043d8ac4926908e51a8a87dad08f601394c9b418c3ac OK; original /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup_MAT-MINERvA.sh present, size and mtime as recorded
+staged run/original-inputs/325a46f9785553e4-flux-gen2thin-pdg-14-minervame1D_rearrangedUniverses.root sha256 4cc2c17103c9c62de310434ce34bf2f4b7665eb7799f4a84c8da6a851678ab7d OK; original /pscratch/sd/j/josephrb/minerva/minerva_large_files/MATFluxAndReweightFiles/flux/flux-gen2thin-pdg-14-minervame1D_rearrangedUniverses.root present, size and mtime as recorded
+staged run/original-inputs/3bd5bbeda15cec00-MAT_rdict.pcm sha256 9eedbfd94a452f3bb9b267ca890b52d7a5567c0da86059e2b1fb90aac480550a OK; original /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/MAT_rdict.pcm present, size and mtime as recorded
+staged run/original-inputs/5709f1805650942f-lat_1N_bkg.npz sha256 7bd73380d6b2289dca7586a47c4f48ce4723e008d6d49d2994edb8acdabd84a8 OK; original /pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1N_bkg.npz present, size and mtime as recorded
+staged run/original-inputs/589e8e7c32a32b9e-lat_1G.npz sha256 eed27d58cdf2078c2d96712542967033ed139448d8cf18ef74c342926eb9fdbd OK; original /pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1G.npz present, size and mtime as recorded
+staged run/original-inputs/5d205f38d4577979-setup_salloc_env.sh sha256 ea3c6998d33f45c831b80da5e5228032a19fc392018ede54a7f52f2f283d1d48 OK; original /pscratch/sd/j/josephrb/MINERvA-OmniFold/setup_salloc_env.sh present, size and mtime as recorded
+staged run/original-inputs/60dce5f309f75068-lat_1L.npz sha256 65ab4446b66524a2993fb5542d5a14aeda5584bbfc5cbcfb7ce22d112c584412 OK; original /pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1L.npz present, size and mtime as recorded
+staged run/original-inputs/60dd95f990447c08-lat_1O.npz sha256 2022cc9deddff0412c94e7347f1dfbdaca894b66b4bddf0ba0935c1ce9423690 OK; original /pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1O.npz present, size and mtime as recorded
+staged run/original-inputs/6408e97fafde39fd-lat_1N.npz sha256 3d40b0296878c4540de0c19d1615ab6fa970dca81e16bf97229724046c49c3ee OK; original /pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1N.npz present, size and mtime as recorded
+staged run/original-inputs/693f7f4d9f82b8af-flux-g4numiv6-pdg-14-minervame1M_rearrangedUniverses.root sha256 e672e633f637f14fee7c169cf9c1bfaad83ac3f033d1c6f171e451a704b941f3 OK; original /pscratch/sd/j/josephrb/minerva/minerva_large_files/MATFluxAndReweightFiles/flux/flux-g4numiv6-pdg-14-minervame1M_rearrangedUniverses.root present, size and mtime as recorded
+staged run/original-inputs/71033ac432cf9dd6-lat_1B_bkg.npz sha256 a645662bda5bd9a96222ad5b304adeddfec88cdc40bd32b73d094196b82f849d OK; original /pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1B_bkg.npz present, size and mtime as recorded
+staged run/original-inputs/7128515c686cb2a7-Muon_Energy_MnvH1D.root sha256 996a2752dbd08c32252f9b8c52706f8aa841ffe40539ab5b27d15b870a6f704f OK; original /pscratch/sd/j/josephrb/minerva/minerva_large_files/MATFluxAndReweightFiles/flux/sys/Muon_Energy_MnvH1D.root present, size and mtime as recorded
+staged run/original-inputs/7498526864f517fc-MATDict.rootmap sha256 bd66930866410c2302a29b3c1bb70a45ea5de489e025852e28455bc5090d38aa OK; original /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/MATDict.rootmap present, size and mtime as recorded
+staged run/original-inputs/74fa63fbf271176e-lat_1C.npz sha256 26b91bd5fd7531c0cc2d2ef5045e2c21d0d059c4e34a0d67f3938d400f2b70ba OK; original /pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1C.npz present, size and mtime as recorded
+staged run/original-inputs/76420fe9021e8fbb-lat_1F_bkg.npz sha256 a076752ba529de69f627f8cba88cd27179bc1487594cb4e950fd9ab8f46b84cb OK; original /pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1F_bkg.npz present, size and mtime as recorded
+staged run/original-inputs/7954b8ff9b67e1bf-h2_definition.json sha256 b67907615fe2e903e60ae6caa1c141fa007676c0a1b3ae9f42490d331bfdda89 OK; original committed in git (gen_delete.py's check)
+staged run/original-inputs/7ac5fc566723b2e4-lat_1P_bkg.npz sha256 709d7c195923a4fe5646bbf35b0c0326c1d5e5ca34a3ec559f1b4c35a1261359 OK; original /pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1P_bkg.npz present, size and mtime as recorded
+staged run/original-inputs/83f24b7f787a7c47-lat_1E.npz sha256 edd17efb72766f7550ce08267db0bf1de36ebd743d2458de071f119300a76350 OK; original /pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1E.npz present, size and mtime as recorded
+staged run/original-inputs/882ab7fbaedcdf83-flux-g4numiv6-pdg-14-minervame1D_rearrangedUniverses.root sha256 2ceba3558e89f7b152435ac3f46e32e7d73c8186e02870b5df1f82ccb8d88211 OK; original /pscratch/sd/j/josephrb/minerva/minerva_large_files/MATFluxAndReweightFiles/flux/flux-g4numiv6-pdg-14-minervame1D_rearrangedUniverses.root present, size and mtime as recorded
+staged run/original-inputs/8ad9727f32b0e55c-lat_1M_bkg.npz sha256 a6bf0de714c5ad170884894ddf3eff9c85db7b75352ecc3452442d8bc85cd0bd OK; original /pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1M_bkg.npz present, size and mtime as recorded
+staged run/original-inputs/8be5eb94426af3a4-lat_1F.npz sha256 96b4a02cb173c3c549e06f5662d8e2afea997db6b74157689f8a37691c39cf17 OK; original /pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1F.npz present, size and mtime as recorded
+staged run/original-inputs/8c563645b31a023e-FluxReweighter.cxx sha256 4576346db5e7a9e3673253bfc89f38bd2ca1dc260f24ebe66df055069990bbbc OK; original /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/MAT/PlotUtils/FluxReweighter.cxx present, size and mtime as recorded
+staged run/original-inputs/903203ab39c23eba-flux-gen2thin-pdg14-minervame1M_rearrangedUniverses.root sha256 3c76ed6fbb2d0623c645b0192b720253843f37d015cfc4c1cfc10f283433db0f OK; original /pscratch/sd/j/josephrb/minerva/minerva_large_files/MATFluxAndReweightFiles/flux/flux-gen2thin-pdg14-minervame1M_rearrangedUniverses.root present, size and mtime as recorded
+staged run/original-inputs/90ba74ab9f17d469-lat_1A.npz sha256 ed08f44d02a1b5c8219c91864924d7d6251925ba1e13884d8dae478c7b0403d7 OK; original /pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1A.npz present, size and mtime as recorded
+staged run/original-inputs/9129a33666de8e29-sorted_NuEConstraint_FHC_RHC_IMD.txt sha256 e38ad7d28354d071577113a18c8c569f88b6239f7fb193d20285273f172fc0c2 OK; original /pscratch/sd/j/josephrb/minerva/minerva_large_files/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt present, size and mtime as recorded
+staged run/original-inputs/93dd6519c6dcfefe-lowNuReweight.root sha256 fbec8d2ae91bdd4989e6aeedb50c5a0c74de4884be4fc99ae5ee950606a9b553 OK; original /pscratch/sd/j/josephrb/minerva/minerva_large_files/MATFluxAndReweightFiles/lowNuReweight/lowNuReweight.root present, size and mtime as recorded
+staged run/original-inputs/a22a361fe047d9a5-lat_1D.npz sha256 7bc329ef93fce3e9eedf92ed9e4ac084e92e6ee73ffebb2d2055282b7b85c3c6 OK; original /pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1D.npz present, size and mtime as recorded
+staged run/original-inputs/a3536bff2d297cb8-lat_1P.npz sha256 82b9a5195293a88b8bcf7310652fa24477fb3cf9b2a6aee0b0d578a75ba6c96f OK; original /pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1P.npz present, size and mtime as recorded
+staged run/original-inputs/a8bbdb8c6847827e-setup.sh sha256 e22a5b93d327111bf6ffc80f15ef36b908fab642072a6ef296e8bb9cd3719ba6 OK; original /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup.sh present, size and mtime as recorded
+staged run/original-inputs/b52e8aaa3c94ac0f-flux-g4numiv6-pdg14-minervame1D_rearrangedUniverses.root sha256 9c1b561c5245355898c03cdd1b221c7e3c6679fcd33bc6adc38b9c903ec29825 OK; original /pscratch/sd/j/josephrb/minerva/minerva_large_files/MATFluxAndReweightFiles/flux/flux-g4numiv6-pdg14-minervame1D_rearrangedUniverses.root present, size and mtime as recorded
+staged run/original-inputs/bab9d8b21c5310c0-energy-spectrum-candidates.tsv sha256 e60609e756e35fbc9846ae5983c1d848999bc17c7504e3ca876c22c9bcc0e88f OK; original committed in git (gen_delete.py's check)
+staged run/original-inputs/c058e5c64a0e9d4a-lat_1A_bkg.npz sha256 2739ddf5871680325cf0899556b3dd59acd90624cf91fb208cf2cc6e2884f3a2 OK; original /pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1A_bkg.npz present, size and mtime as recorded
+staged run/original-inputs/c2364bb69fb3a8ef-lat_1M.npz sha256 0bb7d5ff27ab19cc6fdfdc20a4fe7b798d343d41cfa5b51960334e327f9d1f41 OK; original /pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1M.npz present, size and mtime as recorded
+staged run/original-inputs/d05d233ebaa252cd-lat_1L_bkg.npz sha256 6839edd4c6fe0563e6167a0e4bda83638d88d2afdbf4a620e0c7de55028fe69f OK; original /pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1L_bkg.npz present, size and mtime as recorded
+staged run/original-inputs/d7ce15f86e01762d-setup.sh sha256 40ff3a3d0c0308a82d90fd6cb4858696931fa00563277e5865141f8ebdc84598 OK; original /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/build/setup.sh present, size and mtime as recorded
+staged run/original-inputs/d877092f5479c1c4-CVUniverse.h sha256 900d7368d6184d503399bd99c0fd30085212df0327b8be374182495b85a3677d OK; original committed in git (gen_delete.py's check)
+staged run/original-inputs/d9b014a27bac0e30-lat_1O_bkg.npz sha256 74a3977290b893984669a21019ff7eba6bfd45aed57c4b60481ce1457938d433 OK; original /pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1O_bkg.npz present, size and mtime as recorded
+staged run/original-inputs/dc14631f127c53d2-lat_1D_bkg.npz sha256 79ba1de90d6545b5917b8e12edb219c1df2d1752ad591c0b55b9f9b39f36648d OK; original /pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1D_bkg.npz present, size and mtime as recorded
+staged run/original-inputs/dcee86a3be368d65-flux-g4numiv6-pdg-14-minervame1N_rearrangedUniverses.root sha256 9b66bf82b13c3d45332100cc6b37e52d7f97873c289109a2f99dcb8ce5195077 OK; original /pscratch/sd/j/josephrb/minerva/minerva_large_files/MATFluxAndReweightFiles/flux/flux-g4numiv6-pdg-14-minervame1N_rearrangedUniverses.root present, size and mtime as recorded
+staged run/original-inputs/efe4bfe8f63f0609-flux-gen2thin-pdg14-minervame1D_rearrangedUniverses.root sha256 951a400ea3aa9c62ab289119ac91b835fcb473ff8898d65065eb229fc2668ae5 OK; original /pscratch/sd/j/josephrb/minerva/minerva_large_files/MATFluxAndReweightFiles/flux/flux-gen2thin-pdg14-minervame1D_rearrangedUniverses.root present, size and mtime as recorded
+staged run/original-inputs/f044d6329f826af0-flux-gen2thin-pdg-14-minervame1M_rearrangedUniverses.root sha256 d9704aa45c016b044284d9e3cfc8c6d5c07cda0835a445866d5f792c8ac82840 OK; original /pscratch/sd/j/josephrb/minerva/minerva_large_files/MATFluxAndReweightFiles/flux/flux-gen2thin-pdg-14-minervame1M_rearrangedUniverses.root present, size and mtime as recorded
+staged run/original-inputs/f1444640e8cbebc0-flux-gen2thin-pdg14-minervame1N_rearrangedUniverses.root sha256 bfe5e3c5fb66252c64f1fde06f66dd0d656e2f69f5e5bd7cc159a537f31e5cfa OK; original /pscratch/sd/j/josephrb/minerva/minerva_large_files/MATFluxAndReweightFiles/flux/flux-gen2thin-pdg14-minervame1N_rearrangedUniverses.root present, size and mtime as recorded
+staged run/original-inputs/fce6a37d72dc687e-flux-g4numiv6-pdg14-minervame1M_rearrangedUniverses.root sha256 f03207e7063b91eb51291d3f223bafa99d75428aa28c2bb5097b065319b0a6f5 OK; original /pscratch/sd/j/josephrb/minerva/minerva_large_files/MATFluxAndReweightFiles/flux/flux-g4numiv6-pdg14-minervame1M_rearrangedUniverses.root present, size and mtime as recorded
+record c3-check.txt sha256 986518b7d27a2c8f13544b3190013dc9abdf80b7093736c86a0b8fcf3076d97e OK
+record connect.log sha256 e995144fd250695df02c5c01d0bfaeae0d631cbd2421ff9d294d5d0574d1ff15 OK
+record exception-stat-outer.txt sha256 9f76ef8f7d3dccf42fa716fc9747fbd7ff43b8189319791d77115be49807697e OK
+record fence-overlap.txt sha256 dad9d7c8f412ee289f22a5c3168df9d3c4ca13792347c2cff8e81c28c6b21b0b OK
+record job-host.txt sha256 966bc80df6778379318ba632e31f59fd0cac7a5ef8b033c9e305cd67d49d50b6 OK
+record job.err sha256 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 OK
+record job.id sha256 76adce4d7379b7fe95157f694012f87d69d9ce6b6420ce1aa3951b1c25e23353 OK
+record job.out sha256 8ba573e8d5daeddae99c68823d44e306327b796407b75747ff58ba1dcd0ae588 OK
+record job.rc sha256 aef415b814cb031b27150e5c7c43ab013f2dea31bc42418edff58602eca48f91 OK
+record production-config.ready.json sha256 cde8d02904b0257d82745b03fd61c1aef1a50270f14f36ad7f38c8b3f235f50b OK
+record protected-read.json sha256 a1f2bfa68a70c0f90661d8e7de2fcdb037045c4c70a83d272be406fefd9d4a81 OK
+record redaction-check.txt sha256 8d0d776e806b35d9bc8e10c7ec9704ad643e56c42e2332a7f04a02d85da6bbd6 OK
+record rpd_flux1_job.sh sha256 4198103b3a1d94eb7ccaf9b255c273371da73ea5268d08df38a390530081c699 OK
+record run/cov2d-fence.json sha256 9e0930b604cf4a9c28a57347b5cf8180e681e19a3891ce243456304dc43ee6d8 OK
+record run/extract-config.json sha256 7b014d5c3d5c9172e60f10af9cca34d489f615c1552829b8f3190ee60be5d425 OK
+record run/flux-custody.json sha256 84db31cab75feb2ddfcf20ea52b9bb9f8112308f3fe9b212000df979881e8a0b OK
+record run/flux-extract.strace sha256 faedee5679812431412dcfa553512516408dcc5296d80b8bcccd021614ba3bd7 OK
+record run/missing-dependency-check.json sha256 faff0fdcabc620b617d2096ef1a6353771fc5675e4f1427ff261a386b682d99e OK
+record run/missing-dependency.STOP.json sha256 80c3cf8886c34b8ebfd8d843d6add78143eaef0f24f0d7767ab0e027af78fd63 OK
+record run/missing-dependency.strace sha256 3ddbcca0035cf31a2c46b94c86fce840182c8836caaccf252fdef06489c42feb OK
+record run/negative-policy.checked.json sha256 7572805ae714af403b6296f91187a2acf792ac40590f755fbb2af82794cda70f OK
+record run/original-config.json sha256 cde8d02904b0257d82745b03fd61c1aef1a50270f14f36ad7f38c8b3f235f50b OK
+record run/prepare-check/staged/14b0bc45cf3605e2-INPUTS.sha256 sha256 7638f94f56ad0471769445cffe68ff538c9b68158f48415e7c3cafa7ee95a295 OK
+record run/prepare-check/staged/bab9d8b21c5310c0-energy-spectrum-candidates.tsv sha256 e60609e756e35fbc9846ae5983c1d848999bc17c7504e3ca876c22c9bcc0e88f OK
+record run/prepare-check/staged/config.json sha256 cde8d02904b0257d82745b03fd61c1aef1a50270f14f36ad7f38c8b3f235f50b OK
+record run/prestage-reference.json sha256 a0e232ead4b9f072a397352a56cf49f7cfdb08a1079d670eeda5b34cfecdcc2e OK
+record run/real-mnv-check/non-input-probe.root sha256 d9704aa45c016b044284d9e3cfc8c6d5c07cda0835a445866d5f792c8ac82840 OK
+record run/real-mnv-check/real-mnv-check.json sha256 a4b6646466028827a51549d84ca34ce0917983609b357e049c24a6481a6ab8da OK
+record run/real-mnv-check/real-mnv-worker.json sha256 bc33c25ce3a42596210ddeeff1c601a9a91e8751e7f642cc8e1d8f190eb3c71b OK
+record run/real-mnv-check/worker.stderr.txt sha256 c0b89ac88c4dea667785089e08266eecf07a0040aa7f8e80ebfb85caba2c12c7 OK
+record run/real-mnv-check/worker.stdout.txt sha256 89625f3fc3737c0015c1ee00dfa7628f8f7f540aad4e081a30c9e228583df0d2 OK
+record run/staged/config.json sha256 7b014d5c3d5c9172e60f10af9cca34d489f615c1552829b8f3190ee60be5d425 OK
+record run/staged/prestage-reference.json sha256 a0e232ead4b9f072a397352a56cf49f7cfdb08a1079d670eeda5b34cfecdcc2e OK
+record run/trace-policy.checked.json sha256 7572805ae714af403b6296f91187a2acf792ac40590f755fbb2af82794cda70f OK
+record run/trace-policy.json sha256 7572805ae714af403b6296f91187a2acf792ac40590f755fbb2af82794cda70f OK
+record strace-probe.txt sha256 c05c3e4a33e7d4c380318527d4959d45c2dd8fc1c2700f177b7f1ae106d268ba OK
+record tools/fence_overlap.py sha256 baa7630936db399abf57aa6edf9af1ffc053a3ee80c3730981a806fd8598a202 OK
+checks passed: 69 staged copies, 37 records, at 2026-11-15T03:14:13Z
+removed file c3-check.txt
+removed file connect.log
+removed file exception-stat-outer.txt
+removed file fence-overlap.txt
+removed file job-host.txt
+removed file job.err
+removed file job.id
+removed file job.out
+removed file job.rc
+removed file production-config.ready.json
+removed file protected-read.json
+removed file redaction-check.txt
+removed file rpd_flux1_job.sh
+removed file run/cov2d-fence.json
+removed file run/extract-config.json
+removed file run/flux-custody.json
+removed file run/flux-extract.strace
+removed file run/missing-dependency-check.json
+removed file run/missing-dependency.STOP.json
+removed file run/missing-dependency.strace
+removed file run/negative-policy.checked.json
+removed file run/original-config.json
+removed file run/prestage-reference.json
+removed file run/trace-policy.checked.json
+removed file run/trace-policy.json
+removed file strace-probe.txt
+removed tree clone
+removed tree run/original-inputs
+removed tree run/mat-data
+removed tree run/prepare-check
+removed tree run/staged
+removed tree run/real-mnv-check
+removed tree run/tmp
+removed tree tools
+after: 18 entries, exactly the kept set; .rpd-private, .rpd-private/7170edc8f89501fb36113e3b0a587f14e17ccbb74c3f6800a355fc8d62149777, .rpd-private/7170edc8f89501fb36113e3b0a587f14e17ccbb74c3f6800a355fc8d62149777/prestage.json, run, run/flux-extract.json, run/flux-factors-1A.npz, run/flux-factors-1B.npz, run/flux-factors-1C.npz, run/flux-factors-1D.npz, run/flux-factors-1E.npz, run/flux-factors-1F.npz, run/flux-factors-1G.npz, run/flux-factors-1L.npz, run/flux-factors-1M.npz, run/flux-factors-1N.npz, run/flux-factors-1O.npz, run/flux-factors-1P.npz, run/prestage.json
+DELETE :: DONE end 2026-11-15T03:14:21Z
+script rc=0; /dev/shm copy removed: yes

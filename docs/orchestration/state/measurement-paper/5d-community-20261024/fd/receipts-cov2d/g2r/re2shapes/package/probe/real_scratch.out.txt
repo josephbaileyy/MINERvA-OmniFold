@@ -1,0 +1,7 @@
+squeue:[]
+names tmp6hw50588 tmp8lbdy9iq same file set: True
+periods_ns/tmp/<mkdtemp>/id.json scratch (id.json: equal after the path pairs and the mkdtemp name)
+periods_ns/tmp/<mkdtemp>/id.txt bitwise
+periods_ns/tmp/<mkdtemp>/inj.json scratch (inj.json: equal after the path pairs and the mkdtemp name, inj.root digest)
+periods_ns/tmp/<mkdtemp>/inj.root scratch (inj.root: TFile time; digest = its run's inj.json record)
+periods_ns/tmp/<mkdtemp>/inj.txt bitwise

@@ -1,0 +1,24 @@
+# The PENDING guard's plant, 2026-11-15: repin_check.py with FILLS = {} (a scratch copy), at the draft head and the LL5D prep.
+## 3027c9596
+BAD PENDING #981 FD-PRR -> group prr: FILLED  #981 would ship a stale pending note: add the row that fills it
+OK  PENDING #981 LL5D -> group ll5d: PENDING
+BAD PENDING #981 V-HALF -> group vhalf: FILLED  #981 would ship a stale pending note: add the row that fills it
+REPIN-CHECK FAIL (2)
+## 3d75ed5d4
+BAD PENDING #981 FD-PRR -> group prr: FILLED  #981 would ship a stale pending note: add the row that fills it
+BAD PENDING #981 LL5D -> group ll5d: FILLED  #981 would ship a stale pending note: add the row that fills it
+BAD PENDING #981 V-HALF -> group vhalf: FILLED  #981 would ship a stale pending note: add the row that fills it
+REPIN-CHECK FAIL (3)
+## 3d75ed5d4, the committed repin_check.py
+OK  GEN16  labels=1 block_sha=65b02f09daacba48
+OK  MACRO  \chiPaper printed 3
+OK  MACRO  \fluxBand printed 1; \fvval{q2d-fluxband} printed 0 (RP42)
+OK  MACRO  \pullRMS printed 1
+OK  MACRO  \ratioTot printed 3
+OK  MACRO  \sigTwoD printed 1
+OK  MACRO  \uqIntegral printed 1; \fvval{q2d-sigma-int} printed 0 (RP42)
+OK  MACRO  \uqMedian printed 1; \fvval{q2d-sigma-med} printed 0 (RP42)
+OK  PENDING #981 FD-PRR -> group prr: FILLED (RP43 fills it at the re-pin)
+OK  PENDING #981 LL5D -> group ll5d: FILLED (RP43 fills it at the re-pin)
+OK  PENDING #981 V-HALF -> group vhalf: FILLED (RP43 fills it at the re-pin)
+REPIN-CHECK PASS

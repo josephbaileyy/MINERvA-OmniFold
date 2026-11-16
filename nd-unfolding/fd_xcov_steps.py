@@ -65,6 +65,25 @@ COMMITTED = {   # sha256 of each committed input K reads (each also fixed by the
 }
 CMODEL_R = REPO / "docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/cmodel/cmodel_R.json"
 COMMITTED[CMODEL_R] = "571b1e8bd9fe1de6ebf18d70bd1311aec63d2470a7c8daa01cb2b3303d5c0569"   # partc-r2/SHA256SUMS:15
+# xk (the director's XCOV ruling and its design rulings, 2026-11-16): `k --products g2r` re-points K's 2D side to COV2D-G2R
+# (D1). Q_R and S5_R become RE-2-shapes route A's (S5_R's band_<b> blocks are G2R's rebuilt band blocks, K1's 2D
+# reference), the 2D band vectors become G2R's A_<b>_<i> products, C-R becomes cr's readout on route A's Q_R, and
+# cmodel_R.json becomes route A's. C_PL_R, the S3 laterals, the stat replicas and the whole 5D side are unchanged.
+# `--products re2` (the default) is K as it ran (fd/xcov/run/k/k.json); its readout carries no "products" key.
+G2R_OUT = P / "cov2d-g2r-20261112/out"
+ROUTE_A = P / "cov2d-re2shapes-20261115/g2r"
+CR_G2R = FD / "fd/receipts-cov2d/g2r/cr/run/node/g2r/overlap_refined.json"
+CMODEL_R_G2R = FD / "fd/receipts-cov2d/g2r/re2shapes/run2/g2r/cmodel/cmodel_R.json"
+INPUTS_G2R = FD / "fd/receipts-cov2d/g2r/xk/INPUTS-g2r.sha256"
+COMMITTED[CR_G2R] = "0734cf4afa1fce4459c836f02e6362f928affac9a9f7bfcb74c76b291e80a1a0"       # cr receipt, run/node/NODE-SHA256
+COMMITTED[CMODEL_R_G2R] = "0525217d140f44cc1aeb5ad5409b21f4ad4108c4ec8dcb0b933737cd70097efb"  # run2/g2r/SHA256SUMS
+PRODUCTS = {
+    "re2": {"q_r": Q_R, "s5_r": S5_R, "cr": CR, "cmodel_r": CMODEL_R, "pins": (),
+            "uni2d": lambda b, i: RE2 / f"partb/out/U_{b}_{i}/xsec.root"},
+    "g2r": {"q_r": ROUTE_A / "combination/s5_plus_playlist.npz", "s5_r": ROUTE_A / "s5/production_cov.npz",
+            "cr": CR_G2R, "cmodel_r": CMODEL_R_G2R, "pins": (INPUTS_G2R,),
+            "uni2d": lambda b, i: G2R_OUT / f"A_{b}_{i}/xsec.root"},
+}
 V1_FULL_CAP_S = 1.75 * 3600                     # the full run's cap in seconds of one node (declaration section 6)
 LATERAL_BANDS = list(sa.LATERAL_BANDS)                                    # BeamAngleX ... Muon_Energy_MINOS
 K_TOL = 1e-10
@@ -420,7 +439,9 @@ def cmd_k(a) -> int:
     out = a.run_dir / "k"
     if out.exists():
         raise X.Stop("-", f"refusing to overwrite {out}: K runs once (a stop is final)")
-    inp = X.Inputs()
+    prod = getattr(a, "products", "re2")
+    pr = PRODUCTS[prod]
+    inp = X.Inputs() if not pr["pins"] else X.Inputs(X.pins((X.INPUTS_E, X.INPUTS_X) + pr["pins"]))
     ctrl = {}
 
     def check(name, ok, detail=""):
@@ -433,8 +454,10 @@ def cmd_k(a) -> int:
         raise X.Stop("K", f"BOOT has not ended ({bs}); K runs once, after it")
     v1 = v1_state(a.run_dir)
     rec = {"schema": "fd-xcov-k/1", "boot": bs, "v1_source": v1["source"]}
+    if prod != "re2":
+        rec["products"] = prod
     try:
-        res = k_compute(a, inp, check, v0, bs, v1)
+        res = k_compute(a, inp, check, v0, bs, v1, pr=pr)
         rec.update(res)
         rc = 0
     except X.Stop as e:                      # a stop is recorded, so K cannot be rerun on another route (ruling A2)
@@ -497,18 +520,20 @@ def k_own_tail(a, check, v0, bs, A, U, C16q, C2q, S16stat, S2stat, vec2) -> dict
     return out
 
 
-def k_compute(a, inp, check, v0, bs, v1, stage_root: Path | None = None) -> dict:
-    """K (declaration sections 3-5). With stage_root given (the dry run, v1 None): the own-side controls only."""
+def k_compute(a, inp, check, v0, bs, v1, stage_root: Path | None = None, pr: dict | None = None) -> dict:
+    """K (declaration sections 3-5). With stage_root given (the dry run, v1 None): the own-side controls only. pr: the
+    2D products (PRODUCTS[...]); None is re2, K as it ran."""
+    pr = PRODUCTS["re2"] if pr is None else pr
     own_only = stage_root is not None
     sroot = stage_root if own_only else a.run_dir
     defn = json.loads(DEFINITION.read_text())
     U = gc.cell_matrix()
-    qz, pl, s5 = inp.npz(Q_R), inp.npz(CPL_R), inp.npz(S5_R)
+    qz, pl, s5 = inp.npz(pr["q_r"]), inp.npz(CPL_R), inp.npz(pr["s5_r"])
     cells2d, area, x = np.asarray(pl["cells"], int), np.asarray(qz["area"], float), np.asarray(qz["cells_x_EU"], float)
     _, (e_pt, e_pz) = gc.root_hist(inp.bytes(RE2 / "partb/out/ER/xsec.root"), "hXSec2D")
     A, B = X.quadrant_vectors(defn, cells2d, area, np.asarray(e_pt, float), np.asarray(e_pz, float))
     blk = np.load(io.BytesIO(read_committed(CPL_BLOCK)), allow_pickle=False)
-    dp, cr = json.loads(read_committed(DP)), json.loads(read_committed(CR))["quadrants"]
+    dp, cr = json.loads(read_committed(DP)), json.loads(read_committed(pr["cr"]))["quadrants"]
     f = np.asarray(blk["f"], float)
     s1 = inp.npz(S1_NPZ)
     S16 = np.array([cr[q]["S16"] for q in X.QNAMES])
@@ -523,7 +548,7 @@ def k_compute(a, inp, check, v0, bs, v1, stage_root: Path | None = None) -> dict
     check("K0 C-R's sigma16 and 2D sigma are sqrt(diag) of C16q and B Q_R B^T (1e-12)",
           np.allclose(np.sqrt(np.diag(C16q)), [cr[q]["sigma16_reported"] for q in X.QNAMES], rtol=1e-12, atol=0)
           and np.allclose(np.sqrt(np.diag(Q2q)), [cr[q]["2D"]["sigma"] for q in X.QNAMES], rtol=1e-12, atol=0))
-    cm2, cmr = json.loads(read_committed(CMODEL2)), json.loads(read_committed(CMODEL_R))
+    cm2, cmr = json.loads(read_committed(CMODEL2)), json.loads(read_committed(pr["cmodel_r"]))
     check("K0 C_model,2D's cells are C_PL_R's (the 205-cell index C-R used)", list(cm2["cells"]) == cells2d.tolist())
     check("K0 cmodel_R.json was built from this cmodel_2d.json",
           cmr["inputs"]["cmodel_json"]["sha256"] == COMMITTED[CMODEL2])
@@ -555,6 +580,8 @@ def k_compute(a, inp, check, v0, bs, v1, stage_root: Path | None = None) -> dict
         """K1 on one band's two sides (X.k1_band); a band null on both sides is listed by name, side and ratio."""
         r = X.k1_band(p16, c16, p2, c2, C16q, C2q)
         ratios = f"16 max ratio {r['ratio16']:.3g} of C16q, 2D {r['ratio2']:.3g} of C2q"
+        # xk: every band's ratios to stdout (log only; k.json unchanged), so a re2 run and a g2r run print them side by side
+        print(f"[K1 ratios] {label}: kind {r['kind']}; ratio16 {r['ratio16']!r} ratio2 {r['ratio2']!r}", flush=True)
         if r["kind"] == "null":
             nulls.extend({"band": label, "side": sd, "max_ratio": r[f"ratio{k}"]} for sd, k in (("16", "16"), ("2D", "2")))
             print(f"[K1 null] {label}: {ratios}", flush=True)
@@ -574,7 +601,7 @@ def k_compute(a, inp, check, v0, bs, v1, stage_root: Path | None = None) -> dict
         for i in idx:
             committed_sha(S1DIR / f"S1_{b}_{i}.npz", s1meta[f"S1_{b}_{i}.npz"], "S1 product")
         X16 = np.array([A @ (U @ sa.xs(S1DIR / f"S1_{b}_{i}.npz")) for i in sorted(idx)])
-        X2 = np.array([B @ vec2(RE2 / f"partb/out/U_{b}_{i}/xsec.root") for i in sorted(idx)])
+        X2 = np.array([B @ vec2(pr["uni2d"](b, i)) for i in sorted(idx)])
         ww = w if b == sa.FLUX else None
         k1(f"band {b}", X.cross_cov(X16, X16, ww), own16(f"C_band_{b}"), X.cross_cov(X2, X2, ww), own2(f"band_{b}"),
            f"K1 16 band {b}: the products give S1's block (1e-10)", f"K1 2D band {b}: the products give S5_R's block (1e-10)")

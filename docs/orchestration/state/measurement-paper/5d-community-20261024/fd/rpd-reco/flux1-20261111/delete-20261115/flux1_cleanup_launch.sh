@@ -5,11 +5,13 @@
 # script runs at nice 19 under /usr/bin/python3 -B, and the copy is removed afterwards. ssh's rc is read unpiped.
 # The load survey and the COV2D fence use rpd_flux1_launch.sh's approved survey and fence modes.
 # Usage: bash flux1_cleanup_launch.sh inventory <new empty session dir> <login node>   (step A, read-only)
-MODE=${1:?inventory}; F=${2:?session dir}; NODE=${3:-}
+#        bash flux1_cleanup_launch.sh delete    <new empty session dir> <login node>   (step B, the deletion)
+MODE=${1:?inventory|delete}; F=${2:?session dir}; NODE=${3:-}
 HERE=$(cd "$(dirname "$0")" && pwd)
 [ -d "$F" ] && [ -z "$(ls -A "$F")" ] || { echo "STOP: $F is not a new empty directory"; exit 9; }
 case "$MODE" in
   inventory) S="$HERE/flux1_inventory.py"; SHA=074c56a9362881ffb9168b9cba74717e578d12d5eb04ccebb46df6d4b2f6e600 ;;
+  delete)    S="$HERE/flux1_delete.py"; SHA=eb5315459e2dd077c40d19e47eaa5f1fb2baa40f509a1289b932f24ef25c5e56 ;;
   *) echo "STOP: mode $MODE"; exit 9 ;;
 esac
 case "$NODE" in login[0-9][0-9]) ;; *) echo "STOP: '$NODE' is not a login node name"; exit 9 ;; esac

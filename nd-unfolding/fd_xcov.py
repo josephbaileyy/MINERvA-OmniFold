@@ -383,6 +383,8 @@ def build_args(argv=None):
         s.add_argument("--dry", action="store_true", help="v1 only: every lookup, no weight array read, nothing written")
         s.add_argument("--own-only", action="store_true",
                        help="k only: K0, K1 and K2 on each side's own matrices; no cross block, z or chi2; nothing written")
+        s.add_argument("--products", choices=("re2", "g2r"), default="re2",
+                       help="k only: the 2D products K reads; re2 (default) is K as it ran, g2r is xk (COV2D-G2R, D1)")
     s = sub.add_parser("boot")
     s.add_argument("--run-dir", type=Path, required=True)
     s.add_argument("--replicas", required=True, help="first:last of the bootstrap seeds this lane runs")

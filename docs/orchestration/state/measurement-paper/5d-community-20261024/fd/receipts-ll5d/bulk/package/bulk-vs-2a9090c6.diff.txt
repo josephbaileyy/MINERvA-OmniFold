@@ -1,0 +1,98 @@
+--- /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/connect-bulk.2a9090c6.sh	2026-11-10 08:35:40
++++ connect-bulk.sh	2026-11-10 08:49:32
+@@ -1,17 +1,17 @@
+ #!/bin/bash
+ # LL5D section 11 step 6: the bulk, ll5d_bulk_01 ... ll5d_bulk_10, DRAFT for the director's review (binding 3 ruling 4;
+ # A1b section 5). Ten exclusive regular CPU nodes, --time 08:00:00 each (section 9: 80.0 node-h reserved, about 37.6
+-# expected), 8 lanes a node at one BLAS thread: the 1,649 items of section 9 not in the pilot, at most 21 a lane
++# expected), 8 lanes a node, each an srun step of 32 CPUs and 56G at --threads 32 (as 1B staged): the 1,649 items of section 9 not in the pilot, at most 21 a lane
+ # (21 x 1,062 s = 22,302 s, under section 9's 22-item line of 23,364 s and the 0.9 line 25,920 s). The partition is
+ # bulk-lanes.tsv, pinned by its sha256 here and asserted in every job against ll5d_b.items and ll5d_b.PILOT.
+ # Submitted only after ALL of section 11 step 6 (each placeholder refuses until filled from git or the named record):
+ #   the gate PASS at all four evaluations (both gate records, as in the pilot connect);
+-#   the pilot's walls PASS and every procedure control passing;
++#   the pilot's walls PASS and every procedure control passing (controls.json PASS, amendment A1b.1);
+ #   clipcheck PROCEED;
+ #   the projection gate, with this connect's 80.0;
+ #   the audit's written acknowledgement.
+ # Products go into the pilot's directory $U (ll5d_b's unfold keeps an existing product). Nothing to CFS. Not under set -u.
+-M=639ef907250a2a7909b7b9ba89b2e85e70c9b767
++M=FILL-WITH-M_A1B1                                 # the merge that carries amendment A1b.1 (ll5d_ctl.py), once bound
+ L5=2b0224c6fe52c5bb2d3fe64d461ac9edb80ebd191b0ab2f892dec605a0b56a14        # ll5d.py's sha256 at M
+ P=/pscratch/sd/j/josephrb; ND=$P/MINERvA-OmniFold/nd-unfolding
+ W=$P/ll5d-bulk-r1; DD=$W/deploy; U=$P/ll5d-unfolds-r1; PW=$P/ll5d-pilot-r1
+@@ -20,16 +20,14 @@
+ AR23GATE=FILL-FROM-THE-GATE-2-AR23-RECEIPT        # sha256 of gate-ar23.json
+ WALLSSHA=FILL-FROM-THE-PILOT-RECEIPT              # sha256 of the pilot's walls.json
+ CLIPSHA=FILL-FROM-THE-PILOT-RECEIPT               # sha256 of the pilot's clipcheck.json
+-CTLSHA=FILL-FROM-THE-CONTROLS-RECORD              # OPEN: sha256 of the record that the four procedure controls pass (see the cover note)
+-CTLREC=FILL-FROM-THE-CONTROLS-RECORD              # OPEN: that record's path under $PW
++CTLSHA=FILL-FROM-THE-PILOT-RECEIPT                # sha256 of the pilot's controls.json (amendment A1b.1, ll5d_ctl.py)
+ AUDITACK=FILL-WITH-THE-AUDIT-ACKNOWLEDGEMENT-URL  # the audit's written acknowledgement (a PR comment URL)
+ LANESHA=315f004bb6869345400dd87f3bee2d31f380713492e33ce3c5a7582a6c41ede7
+ CAP=148.0; THIS=80.0; TL=08:00:00; NODES="01 02 03 04 05 06 07 08 09 10"
+ stop() { echo "STOP $*"; echo "end=$(date -u +%FT%TZ)"; exit 2; }
+ for v in "$G18GATE" "$AR23GATE" "$WALLSSHA" "$CLIPSHA" "$CTLSHA" "$L5" "$LANESHA"; do [[ $v =~ ^[0-9a-f]{64}$ ]] || { echo "STOP a placeholder is not filled"; exit 2; }; done
+-[[ $M =~ ^[0-9a-f]{40}$ ]] || { echo "STOP M is not a sha"; exit 2; }
++[[ $M =~ ^[0-9a-f]{40}$ ]] || { echo "STOP M is not filled"; exit 2; }
+ [[ $AUDITACK =~ ^https://github\.com/josephbaileyy/MINERvA-OmniFold/pull/[0-9]+#issuecomment-[0-9]+$ ]] || { echo "STOP the audit's acknowledgement is not filled"; exit 2; }
+-[[ $CTLREC == "$PW"/* ]] || { echo "STOP the controls record is not filled"; exit 2; }
+ [ -e "$W" ] && { echo "STOP $W exists"; exit 2; }
+ mkdir -p "$W/logs" || exit 2
+ exec >> "$W/logs/connect-bulk.log" 2>&1
+@@ -53,12 +51,11 @@
+   [ "$(sha256sum "$GW/gate-$T.json" | cut -d' ' -f1)" = "$GS" ] || stop "gate-$T.json's digest is not the receipt's"
+   python3 -c 'import json,sys; g=json.load(open(sys.argv[1])); ok=g.get("truth")==sys.argv[2] and g.get("verdict")=="PASS"; print("gate", sys.argv[2], "truth=%s verdict=%s" % (g.get("truth"), g.get("verdict"))); sys.exit(0 if ok else 1)' "$GW/gate-$T.json" "$T" || stop "gate $T is not PASS"
+ done
+-for f in "walls.json|$WALLSSHA|PASS" "clipcheck.json|$CLIPSHA|PROCEED"; do
++for f in "walls.json|$WALLSSHA|PASS" "controls.json|$CTLSHA|PASS" "clipcheck.json|$CLIPSHA|PROCEED"; do
+   IFS='|' read -r name want verdict <<< "$f"
+   [ "$(sha256sum "$PW/$name" | cut -d' ' -f1)" = "$want" ] || stop "the pilot's $name digest is not the receipt's"
+   python3 -c 'import json,sys; v=json.load(open(sys.argv[1])).get("verdict"); print(sys.argv[1], "verdict=%s" % v); sys.exit(0 if v==sys.argv[2] else 1)' "$PW/$name" "$verdict" || stop "the pilot's $name is not $verdict"
+ done
+-[ "$(sha256sum "$CTLREC" | cut -d' ' -f1)" = "$CTLSHA" ] || stop "the controls record's digest is not the named one"
+ k=$(ls "$U" | grep -c '\.npz$'); echo "products before the bulk: $k"
+ [ "$k" = "13" ] || stop "the products directory does not hold exactly the pilot's 13 products"
+ git clone --quiet https://github.com/josephbaileyy/MINERvA-OmniFold "$DD" && git -C "$DD" checkout --quiet --detach "$M" || stop clone
+@@ -86,6 +83,7 @@
+ 7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185  nd-unfolding/s5p_numerics.py
+ 24f87f119073c4f125c2f753310507d4375b6f8a1b7751e59d3615dd50e90582  nd-unfolding/omnifold_nn_core.py
+ fc95f53459a5caafea4aa05a24a406535968e25b0bcca52567a38caf4caf3de5  2d-unfolding/uq/coverage_fixed_truth/score_coverage.py
++a9f09557ec1b6022b1205f14e8d2241257336d9028b166061a3b33118243a936  nd-unfolding/ll5d_ctl.py
+ SUMS
+ (cd "$DD" && sha256sum -c "$W/bound.sha256") || stop "bound blobs differ"
+ cat > "$W/bulk-lanes.tsv" <<'LANES'
+@@ -180,7 +178,7 @@
+ [ "$(sha256sum "$W/bulk-lanes.tsv" | cut -d' ' -f1)" = "$LANESHA" ] || stop "bulk-lanes.tsv is not the pinned partition"
+ cat > "$W/sbatch-ll5d-bulk.sh" <<'JOB'
+ #!/bin/bash
+-# ll5d_bulk_<NN>'s job: one BLAS thread per lane, asserted; the deploy at M with porcelain 0 and the bound blobs; the
++# ll5d_bulk_<NN>'s job: 8 lanes, each an srun step (32 CPUs, 56G, --threads 32); the deploy at M with porcelain 0 and the bound blobs; the
+ # partition asserted against ll5d_b; this node's 8 lanes (ll5d_b.py unfold, one truth and role per call). Not under
+ # set -u. Writes only under $W and $U.
+ DD=$1; M=$2; W=$3; U=$4; NODE=$5
+@@ -192,8 +190,11 @@
+ (cd "$DD" && sha256sum -c "$W/bound.sha256") || stop "bound blobs differ"
+ source "$DD/setup_salloc_env.sh" > "$W/logs/env-job-$NODE.log" 2>&1
+ case "$(python3 -V 2>&1)" in *3.11*) ;; *) stop "environment did not activate ($(python3 -V 2>&1))" ;; esac
+-export PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
+-echo "threads OMP=$OMP_NUM_THREADS OPENBLAS=$OPENBLAS_NUM_THREADS MKL=$MKL_NUM_THREADS NUMEXPR=$NUMEXPR_NUM_THREADS"
++export PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
++# The unfolds run as 1B staged ran them, and as S1 made the controls' references (meta threads 32): each lane one srun
++# step with 32 CPUs and 56G (section 9's 8 lanes; the RSS limit is 75 % of 56 GiB), --threads 32. The one-thread rule
++# is the gate's and the calibration's (section 9, 936-C2), not the unfolds'.
++echo "lanes 8 x (srun --exact -n1 -c 32 --mem 56G) --threads 32"
+ python3 -B - "$DD/nd-unfolding" "$W/bulk-lanes.tsv" <<'PY' || stop "the partition is not section 9's bulk"
+ import sys
+ from collections import Counter
+@@ -220,8 +221,8 @@
+   local L=$1 rc=0 nd l t r its
+   while IFS=$'\t' read -r nd l t r its; do
+     [ "$nd" = "$NODE" ] && [ "$l" = "$L" ] || continue
+-    /usr/bin/time -v python3 -B "$DD/nd-unfolding/ll5d_b.py" unfold "${WORLD[@]}" --truth "$t" --role "$r" --items "$its" \
+-      --out "$U" --threads 1 >> "$W/lanes/node$NODE-lane$L.out" 2>> "$W/lanes/node$NODE-lane$L.time"
++    srun --exact -n1 -c 32 --mem 56G --job-name "lane$L" /usr/bin/time -v python3 -B "$DD/nd-unfolding/ll5d_b.py" unfold "${WORLD[@]}" --truth "$t" --role "$r" --items "$its" \
++      --out "$U" --threads 32 >> "$W/lanes/node$NODE-lane$L.out" 2>> "$W/lanes/node$NODE-lane$L.time"
+     s=$?; echo "node $NODE lane $L $t $r rc=$s" >> "$W/lanes/node$NODE-lane$L.out"; rc=$((rc | s))
+   done < <(grep -v '^#' "$W/bulk-lanes.tsv")
+   return $rc

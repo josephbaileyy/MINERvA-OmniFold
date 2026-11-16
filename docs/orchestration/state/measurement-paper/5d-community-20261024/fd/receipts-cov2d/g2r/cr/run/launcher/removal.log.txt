@@ -1,0 +1,5 @@
+1a583b17122b25f4a1f120c716f1e1925875a3569620f2d9eea0c00e5b6b2c1b  /dev/shm/josephrb-g2r-cr.sh
+d53a2b87e1da094840091b22a063e6cfb566685eea896f2d0f67a30245ad346a  /dev/shm/josephrb-g2r-cr.log
+rm -f /dev/shm/josephrb-g2r-cr.sh /dev/shm/josephrb-g2r-cr.log rc=0
+ls: cannot access '/dev/shm/josephrb-g2r-cr.sh': No such file or directory
+ls: cannot access '/dev/shm/josephrb-g2r-cr.log': No such file or directory

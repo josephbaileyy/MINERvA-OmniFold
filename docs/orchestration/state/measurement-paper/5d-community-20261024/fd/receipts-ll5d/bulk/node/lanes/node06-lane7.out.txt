@@ -1,0 +1,23 @@
+{"out": "ll5d_ar23_block_NormNCRES_1.npz", "seconds_unfold": 822.245}
+{"out": "ll5d_ar23_block_RDecBR1gamma_0.npz", "seconds_unfold": 809.065}
+{"out": "ll5d_ar23_block_RDecBR1gamma_1.npz", "seconds_unfold": 813.576}
+{"out": "ll5d_ar23_block_Rvn1pi_0.npz", "seconds_unfold": 814.969}
+{"out": "ll5d_ar23_block_Rvn1pi_1.npz", "seconds_unfold": 814.89}
+{"out": "ll5d_ar23_block_Rvn2pi_0.npz", "seconds_unfold": 820.949}
+{"out": "ll5d_ar23_block_Rvn2pi_1.npz", "seconds_unfold": 801.787}
+{"out": "ll5d_ar23_block_Rvp2pi_0.npz", "seconds_unfold": 815.244}
+{"out": "ll5d_ar23_block_Rvp2pi_1.npz", "seconds_unfold": 807.408}
+{"out": "ll5d_ar23_block_Theta_Delta2Npi_0.npz", "seconds_unfold": 816.946}
+{"out": "ll5d_ar23_block_Theta_Delta2Npi_1.npz", "seconds_unfold": 810.32}
+{"out": "ll5d_ar23_block_VecFFCCQEshape_0.npz", "seconds_unfold": 813.779}
+{"out": "ll5d_ar23_block_VecFFCCQEshape_1.npz", "seconds_unfold": 810.004}
+node 06 lane 7 ar23 block rc=8
+{"out": "ll5d_ar23_stat_2.npz", "seconds_unfold": 656.613}
+{"out": "ll5d_ar23_stat_3.npz", "seconds_unfold": 641.157}
+{"out": "ll5d_ar23_stat_4.npz", "seconds_unfold": 637.445}
+{"out": "ll5d_ar23_stat_5.npz", "seconds_unfold": 637.328}
+{"out": "ll5d_ar23_stat_6.npz", "seconds_unfold": 633.443}
+{"out": "ll5d_ar23_stat_7.npz", "seconds_unfold": 637.314}
+{"out": "ll5d_ar23_stat_8.npz", "seconds_unfold": 639.688}
+{"out": "ll5d_ar23_stat_9.npz", "seconds_unfold": 642.495}
+node 06 lane 7 ar23 stat rc=0
