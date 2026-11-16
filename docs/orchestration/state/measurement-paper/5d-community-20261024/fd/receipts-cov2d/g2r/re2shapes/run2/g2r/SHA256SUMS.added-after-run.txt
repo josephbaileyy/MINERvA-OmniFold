@@ -1,0 +1,12 @@
+# Files added to /pscratch/sd/j/josephrb/cov2d-re2shapes-20261115/g2r/ AFTER the run, so not in ./SHA256SUMS beside
+# this note (coverage-5b-audit's major on Fig. 1; the director's option (b), 2026-11-16). They were written by
+# re2c_fig1_local.sh refined (main 7fc9ce93, clean) at 2026-11-16T03:52Z. Receipt: ../../fig1/route-a/. A later
+# identity comparison against this tree should name exactly these 7 files as later additions (as c0_sums R2 does
+# for partc-r2's fig1/). Digests read O_NOATIME on the node after the copy:
+a87bcaea1687026f5dd858db027993d1a4607093853c60510b911e8a931e652b  ./fig1/RUN-fig1.txt
+8683d81513a0c1d3f9563813d704046e5722b7ed1d085afe5354afee19f41d9e  ./fig1/fig1_run.log
+1ead58a2223ecf88f3de505d7cbcca76ab306af49814ea7c9d50ec0f2c373e0c  ./fig1/fig1_validation.pdf
+57f3cc601281950cf9251b04a627efa3e0d803eca6620178839c48f9d4b0782a  ./fig1/fig2_joint_localization.pdf
+e9d1bb01fc79e061b95b6e058a2aa2a03275429db5c4531b5e3d9ec63d65fa93  ./fig1/fig3_generator_context.pdf
+5f99adb56adb8b5d47cf571e396753bfe5c7287fffe28845b93cb4dd2cede465  ./fig1/pins.json
+536f0aaaac13c6502ec3454407912375234863c6f790298e6a7a9ba6fa6b4eb7  ./fig1/uqmedian.tex
