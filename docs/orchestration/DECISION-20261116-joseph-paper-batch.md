@@ -1,4 +1,4 @@
-# DECISION 2026-11-16 — Joseph: the batch of paper, Supplement and note decisions (A–F); "Descriptive" kept and explained; Fig. 1's histogram panel
+# DECISION 2026-11-16 — Joseph: the batch of paper, Supplement and note decisions (A–F); "Descriptive" kept and explained; Fig. 1's histogram panel; a shorter abstract; §4 "Comparisons on data"
 
 **Recorded by** the paper-tighten lane, as director.
 
@@ -127,6 +127,38 @@ The two reads are in `stageF/methods/secondary-results/referee-descriptive-fig1-
 17. **§4's title** is open, pending a referee read. The question arises because §5.4, the sixteen-cell comparison with
     binned iterative unfolding on data, moves to §4.5 under F5. Until Joseph rules, the title and Table 1's block
     heading stay as they are.
+
+## Joseph's third and fourth answers, verbatim
+
+> For the abstract: Isn't the abstract supposed to be abstract and isn't it too specific to mention specific cells in it? what does the referee think? This is partially why a short abstract is nice. Maybe this occurs in the abstract with things other than the coverage too right? For section for, lets do your recommendation. we can keep the data preservation paragraph for now, since we will be editing it more as we start uploading the files
+
+sha256 of the text plus a final newline begins `842cce3b935a7e6d`. Then, after the abstract read:
+
+> yes I like the new abstract and we can use the lowercase stop
+
+sha256 begins `8ab070873e258359`. The two reads are in
+`stageF/methods/secondary-results/referee-abstract-s4title-20261116/`.
+
+**These supersede item 14's abstract bullet and item 17:**
+
+18. **The abstract is replaced whole** by the referee's 198-word form (`abstract/answer.txt` §3). It names no cells,
+    tunes or band variants, and keeps the descriptive disclosure.
+    - Each sentence gets a meaning read against the paper and its summary table before it prints, and is keyed.
+    - Where the read shows a sentence is not true as written, the sentence is narrowed to what is true, and Joseph sees
+      the final text and its diff before the push.
+    - The introduction's findings paragraph gains what leaves the abstract (`abstract/answer.txt` §4):
+      - the two flagged truths, and binned unfolding's directional overshoot;
+      - the averaging trade-off;
+      - both estimators' under-coverage, with the tests' restricted scope and the second five-observable test's
+        descriptive status;
+      - the run-period inconsistency.
+19. **§4's title** becomes "Comparisons on data", the director's recommendation after the referee read. Table 1's
+    block heading changes to match. §4.2 becomes "Paired comparisons of two-dimensional unfoldings", and the new §4.5
+    becomes "Algorithm dependence of the sixteen-cell result". The referee's optional edits to the introduction and to
+    §7 are not made.
+20. **The data-preservation paragraph** stays as it now reads on draft/note-round2-20261108 (`721fe926a`), including
+    E2's one-sentence change. It will be edited further as the deposit's files are uploaded.
+21. **"STOP" becomes "stop"** in every printed site of the paper and the Supplement.
 
 ## CITABLE FOR / NOT CITABLE FOR
 

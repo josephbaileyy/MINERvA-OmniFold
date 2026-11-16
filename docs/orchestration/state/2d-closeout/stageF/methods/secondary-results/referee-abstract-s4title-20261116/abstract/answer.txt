@@ -1,0 +1,55 @@
+Yes. The abstract should identify **what failed** and the limits of that conclusion. Cell labels, tune identities, detector-band names, and test bookkeeping generally belong elsewhere. Brevity should come from removing those details, while retaining distinct failures.
+
+One numbering point: this build’s principal-results summary is **Table 4**. Table 1 lists purities and diagonal fractions, which §7 also cites as a limitation. I checked both.
+
+**1. Current abstract, sentence by sentence**
+
+The last column also maps every current sentence into the replacement below. “A” denotes its sentence number.
+
+| Current sentence opening | Judgment and reason | Destination |
+|---|---|---|
+| 1. “We benchmark…” | **Keep.** Establishes method, data, scope, and purpose. OmniFold is an essential method name. | A1, with the diagnostic aims expressed through the findings. |
+| 2. “A descriptive two-dimensional benchmark…” | **Generalize.** Normalization agreement and shape disagreement matter. “Within about 1%” is optional detail. | A2. Numerical agreement to introduction. |
+| 3. “On our inputs, OmniFold differs…” | **Generalize.** Keep the algorithm disagreement. “Beyond paired noise” is compressed jargon, and “the publication’s method” interrupts the result. The generic comparator name is useful. | A3, merged with current sentence 13. Publication-method link and comparison criterion to introduction. |
+| 4. “Under controlled truth changes…” | **Keep, clarify.** Prior retention and opposite movement are distinct failures. “Them” has an awkward antecedent. Generic regions are appropriate here. | A4–5. |
+| 5. “Fake-data studies at a GiBUU hybrid truth…” | **Generalize.** The named generator, hybrid construction, and particular tilt identify test cases rather than the principal finding. “Uncertainty-based criteria” needs definition elsewhere. | A6. Truth identities to introduction, construction to body. |
+| 6. “On noise-free pseudo-data at both truths…” | **Generalize.** Keep directional overshoot. The simulation mechanics and backward reference to “both truths” burden comprehension. | A10. Noise-free setup to body. |
+| 7. “The five-observable estimator’s results…” | **Keep, simplify.** Rounding instability is a principal failure. “Beyond its stability requirement” is awkward. | A11. |
+| 8. “The two-observable estimator’s covariance…” | **Generalize.** Keep under-coverage at both held-out truths. Rebuilding the covariance is procedural detail. | A14–15. Rebuilding to body. |
+| 9. “The reported five-observable intervals…” | **Keep.** This is an essential interpretation limit. | A17, broadened to match §6’s statement about all reported intervals. |
+| 10. “A corresponding test…” | **Move to body**, retaining its scope limit. This sentence combines an unflagged bias result, test construction, and three omitted uncertainty groups. “Corresponding” and “those tunes” require reconstruction by the reader. | Restricted scope in A14. Unflagged bias result to introduction. Exact omissions to body. |
+| 11. “For its two tunes…” | **Generalize.** Keep failure throughout the tested cases. “Both in each variant” is hard to parse, and the neutron/proton band identities are unnecessary. | A15. Variant definitions to body. |
+| 12. “The test ran with a repair…” | **Keep.** Required disclosure, already brief. | A16. |
+| 13. “On data, the sixteen reported cells…” | **Generalize and merge.** Repeats algorithm dependence. Sixteen is unnecessary, and “differs from them” has an unclear referent. | A3. Cell count to body. |
+| 14. “We therefore present…” | **Keep.** States the permitted interpretation plainly. | A18. |
+
+The current abstract contains **no named cells**. Its excess specificity lies mainly in truth identities, covariance construction, and detector-band variants. It also omits principal negatives concerning local bias screening, attempted stabilization, and run-period consistency.
+
+**2. Proposed coverage replacement**
+
+| Proposed sentence | Judgment |
+|---|---|
+| “At those tunes, where separate tests flag no bias…” | **Move most detail to body.** Distinguishing what is drawn from what enters the graded covariance is necessary in §6, but excessive here. “Flag no bias” should become “do not trigger the bias criteria.” Passing those criteria does not establish absence of bias. |
+| “Both variants…also flag cell R07 at AR23.” | **Generalize.** Joint under-coverage throughout the tested cases belongs in the abstract. Band identities, the named cell, and tune label do not. The local flag adds location rather than a new failure category. |
+| “Under the pre-specified rule…” | **Keep only the required disclosure.** The entry check, timing relative to unfolding and grading, and visibility of other gates belong in the body. Their accumulation obscures why the result is descriptive. |
+
+The proposal improves technical precision but makes the abstract less readable. Its useful safeguard is the distinction between a restricted covariance test and validation of the full reported uncertainties.
+
+**3. Replacement abstract — 198 words**
+
+We benchmark simultaneous unbinned unfolding in five observables with OmniFold on MINERvA open data. A descriptive two-observable benchmark agrees with the published normalization but differs in shape. OmniFold differs from binned iterative unfolding on shared inputs in both the benchmark and five-observable results. The five-observable estimator retains part of its prior. Some regions move opposite to imposed truth changes or overshoot them. Simulated tests flag bias beyond uncertainty-based criteria at two truths. Local bias also exceeds half the truth’s departure from the prior in some regions. Some reporting regions have substantial event migration. Tested settings change prior retention but do not remove both bias flags. At the two flagged truths, binned unfolding overshoots along the prior-to-truth direction. Rounding-level input changes violate the stability requirement. Averaging fits meets this requirement on simulated data but worsens bias at one truth. A run-period inconsistency survives unfolding. Coverage tests omit some reported uncertainty terms. They find joint under-coverage for both estimators at both held-out truths in all tested configurations. The second five-observable coverage test is descriptive because it used a repair chosen after an earlier run stopped. No reported interval has validated coverage. We present the five-observable output only as an illustration.
+
+The half-departure criterion remains explicit to distinguish that failure from bias judged against uncertainties. No cell identities or numerical results are needed.
+
+**4. What the introduction should gain**
+
+Expand its findings paragraph to include:
+
+- The two flagged fake-data truths, directional overshoot by binned unfolding, and failure of the separate local bias screen.
+- The failed stabilization tradeoff: averaging meets the simulated-data stability criterion but worsens bias at one truth.
+- Under-coverage for both estimators, the restricted scope of those tests, and the second five-observable test’s descriptive status.
+- The unexplained run-period inconsistency that survives unfolding.
+
+The introduction already contains normalization/shape disagreement, algorithm disagreement, prior retention, and opposite movement or overshoot. Those need no duplication. Cell identities, low diagonal fractions, band definitions, covariance bookkeeping, and repair chronology can remain in the body.
+
+Sources: :codex-file-citation{path="/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/absref/paper-current.pdf" purpose="source"} :codex-file-citation{path="/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/absref/paper-current.txt" purpose="source"} :codex-file-citation{path="/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/absref/proposed-coverage-sentences.txt" purpose="source"}
