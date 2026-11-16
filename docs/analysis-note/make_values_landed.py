@@ -36,6 +36,12 @@ READOUTS = {  # name: (path, sha256 as the OUTCOME record states it)
             "27374aab74793444ee20561ced1066247b225a40067092d7d181e186128b9ec2"),
     # The first grade (superseded; App. I): the toy count, which the regrade's record does not repeat, and the check
     # that the regrade kept the first grade's verdict, joint counts, thresholds and flagged cells
+    # Tier 2 (a) at C_T' (#1150): the joint test truncated to the best-determined eigen-directions, as the paper keys it
+    # (t2aar23, t2ag18; ported 2026-11-16 for sec. 5.3's truncation sentence, check_t2a_port.py)
+    "t2aar23": (f"{FD}/receipts-cov2d/g2r/t2a/run/t2a_g2r_AR23.json",
+                "74fab014ea403fb0e5f56e2ee9768a68c12e441cd59ff6167adede9f5496170e"),
+    "t2ag18": (f"{FD}/receipts-cov2d/g2r/t2a/run/t2a_g2r_G18.json",
+               "b1310d44b1929e2f649048e6a2e16c065e2d60ebc6be731f34385611e4c6b9ff"),
     "ar23old": (f"{FD}/receipts-cov2d/readout/AR23/score_AR23.json",
                 "fe5263e904f65892ce26b75fb279441230713c38675c2a3615c59d561c4f5ce1"),
     "g18old": (f"{FD}/receipts-cov2d/readout/G18/score_G18.json",
@@ -233,6 +239,21 @@ def build(R):
     # --- extended-fiducial tier shares (note-b8/ledger.md row E7)
     V["fps-tier1-pct"] = record("fpsledger", 81, "6")
     V["fps-tier2-pct"] = record("fpsledger", 81, "28")
+    # --- Tier 2 (a) at C_T', the truncated joint test (the paper's t2a_values, ported: only t2a-r1 and t2a-r2 print)
+    for t in ("ar23", "g18"):
+        x = R["t2a" + t]
+        expect(x["schema"] == "t2a/1" and all(c["pass"] for c in x["controls"].values()), f"t2a {t} controls")
+        expect(x["inputs_sha256"]["score"] == READOUTS[t][1], f"t2a {t} was not computed from the pinned regrade")
+        tr = x["truncated"]
+        r1, r2 = sorted(int(k) for k in tr)
+        expect((r1, r2) == (73, 139), f"t2a {t} ranks")
+        for r in (r1, r2):
+            z = tr[str(r)]
+            expect(z["in_region_count"] == 0 and z["of"] == int(V["cov2d-ntoys"]) and z["at_or_below_k_joint"],
+                   f"t2a {t}: the truncated joint test at rank {r} is not none of {V['cov2d-ntoys']} in the region")
+        expect(x["precision"]["n_unresolved"] == 0 and all(c["agree"] for c in x["precision"]["truncated_counts"].values()),
+               f"t2a {t} precision")
+    V["t2a-r1"], V["t2a-r2"] = "73", "139"
     if A:
         sys.exit("FAIL: a record no longer says what the prose states: " + "; ".join(A))
     return V
