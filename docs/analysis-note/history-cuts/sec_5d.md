@@ -58,6 +58,8 @@ and macros unchanged.
 
 Each row restates the body. "Already seen" is "--" in all three, because §9 does not state what had been seen.
 
+**App. I pass, 2026-11-15:** D8, the stabilization probe, was removed from App. I (history-cuts/app_devhistory.md, I5). The probe's negative result stays in §9.3 (:101).
+
 ## Disclosure checklist
 
 | disclosure | in §9? | survives |
@@ -88,6 +90,17 @@ Each row restates the body. "Already seen" is "--" in all three, because §9 doe
   F3's "declared in advance" (the rule) as NEEDED.
 - The director ruled (A), with "specified" for "declared" and question 1 read against the attached records (pass 3).
 
+## Style pass B, 2026-11-15 (the director's approval of the style-recheck plan, items 1, 2, 3 and 5)
+
+**Source:** the codex style recheck `note-style-recheck-6c38249bcf5c.md` (codex-school, style only). **Base:** this
+section at `80e8fb416307bb48c75e97fbb5c9c871c423fc69`, line numbers the base's; each removed passage stays at that sha and line, its ledger home. The
+director's condition: keep whatever the read classes NEEDED. The line count is unchanged (`%` lines hold the
+numbering).
+
+| id | base line | old text | new text | ledger home |
+|---|---|---|---|---|
+| F4 | :294 | "The covariance does not meet the acceptance criteria of its specification, and its metadata mark it as not passing and as not to be used. The specification requires the null bound to be fixed before production, which was not done for this covariance, so it cannot meet that requirement. This note nevertheless uses this covariance and its projection." (style item 3; the referee's item 6, a disclosure that stays) | "This note uses them with the restrictions stated in this section. The covariance does not meet the acceptance criteria of its specification: its metadata mark it as not passing and as not to be used, and the null bound that the specification requires to be fixed before production was not fixed for it." Kept: the checksum identity and its citation, the non-passing metadata, the missing preproduction null bound, "The use does not extend to any other covariance …, including the two companion covariances", and the four measurements (unchanged). Not adopted from the recheck: "used only for the estimator-seed diagnostics" (the note also uses the projection's uncertainties as the scale of the seed shifts, sec_eavailw.tex:118, and $C_Z$'s per-source decomposition for attribution, sec_systematics.tex:160); pass 1 of the read failed the first wording, "for the purposes, and within the limits, stated in Table~\ref{tab:result-status}", because Table 1's "Technical diagnostic of estimator-seed sensitivity only" does not cover those two uses; the use is now bounded by the section's own restrictions. numdiff: none removed, none added. | 80e8fb416:sec_5d.tex:294 |
+
 ## Meaning read (codex-school gpt-6.1-sol, high, read-only; reads/PROMPT-two-question.txt plus records.txt; pass 3 as stated)
 
 - **Pass 1, on the first wording:** OVERALL FAIL.
@@ -100,3 +113,7 @@ Each row restates the body. "Already seen" is "--" in all three, because §9 doe
 - **Pass 3, ruling (A), on the wording above:** OVERALL PASS, with no FAILs. Question 1 was read against the attached
   records (reads/sec_5d-pass3-prompt.txt, reads/sec_5d-pass3-records.txt): F1–F3, M1–M4 and D8–D10 pass. Nothing was
   removed, and no disclosure was lost. reads/sec_5d-pass3.txt.
+
+**Style pass B, meaning read (codex-school gpt-6.1-sol, high, read-only; rows S6, C8, F4 and T8 read together, records attached):**
+- **Pass 1:** OVERALL FAIL on F4 only ("for the purposes, and within the limits, stated in Table~\ref{tab:result-status}" imported Table 1's estimator-seed-only scope, which omits sec_eavailw.tex:118 and sec_systematics.tex:160). S6, C8 and T8 passed; every removed item was LEDGER or NEEDED and retained; no disclosure lost. reads/styleB-pass1.txt.
+- **Pass 2, F4 revised to "with the restrictions stated in this section":** OVERALL PASS, with no FAILs; no NEEDED item lost; no disclosure lost. reads/styleB-pass2.txt.

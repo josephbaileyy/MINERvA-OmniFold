@@ -101,6 +101,17 @@ seen.
 
 No site in §10 changes its citation. `UNRELEASED-SUPPORT.md` is unchanged.
 
+## Style pass B, 2026-11-15 (the director's approval of the style-recheck plan, items 1, 2, 3 and 5)
+
+**Source:** the codex style recheck `note-style-recheck-6c38249bcf5c.md` (codex-school, style only). **Base:** this
+section at `80e8fb416307bb48c75e97fbb5c9c871c423fc69`, line numbers the base's; each removed passage stays at that sha and line, its ledger home. The
+director's condition: keep whatever the read classes NEEDED. The line count is unchanged (`%` lines hold the
+numbering).
+
+| id | base line | old text | new text | ledger home |
+|---|---|---|---|---|
+| T8 | :196 | "The block was chosen after the period differences had been seen. Before it was added, an audit examined its overlap with the existing blocks, …; its noise treatment, …; why its cell pattern differs from the projection of the two-dimensional period offsets, although their sizes agree; and the stability of its rank-two construction. Before any of its numbers were read, the audit stated that the block would not be added if … None of those results occurred. The addition therefore followed the data. Passing the audit establishes neither …" (style item 5) | "The block was chosen after the period differences had been seen, so its addition followed the data. Three conditions under which it would not be added were fixed before any of the measurements that decide them was computed: [O, N, R as before; R now says "in the median replica"]. None occurred. That result establishes neither …" The rest of :196 is unchanged. Cut: the audit's four-item agenda. Checked against the records: the conditions are clauses O, N and R of FD-CT-5B-AUDIT-DECLARATION.md:91–95 (first committed 28499ab5a, 2026-10-30 11:05 -0700, as the design freeze; "MEASURES: nothing" :30); the report FD-CT-5B-AUDIT-REPORT.md:23, :42 (8b5be08b0, 14:20 -0700) gives stop = false. The declaration's author had read 5B's reported numbers first (:52–:75, including σ at 9.0 times its noise floor, so "N and R are not expected to fire", :72), so the recheck's "Before evaluating its numbers" and the base's "Before any of its numbers were read" are both replaced by the narrower object, the measurements that decide the conditions. numdiff: none removed, none added. | 80e8fb416:sec_fived16.tex:196; FD-CT-5B-AUDIT-DECLARATION.md §1–§7 (the agenda) |
+
 ## Meaning read (codex-school gpt-6.1-sol, high, read-only; reads/sec_fived16-prompt.txt, the form of §9's pass 3, with reads/sec_fived16-records.txt)
 
 - **Pass 1:** OVERALL FAIL.
@@ -110,3 +121,7 @@ No site in §10 changes its citation. `UNRELEASED-SUPPORT.md` is unchanged.
   - reads/sec_fived16-pass1.txt.
 - **Pass 2, T3 and D12 fixed as above:** OVERALL PASS, with no FAILs. T1–T7, M1–M3, D11 and D12 pass; no NEEDED item
   lost; no disclosure lost. reads/sec_fived16-pass2.txt.
+
+**Style pass B, meaning read (codex-school gpt-6.1-sol, high, read-only; rows S6, C8, F4 and T8 read together, records attached):**
+- **Pass 1:** OVERALL FAIL on F4 only ("for the purposes, and within the limits, stated in Table~\ref{tab:result-status}" imported Table 1's estimator-seed-only scope, which omits sec_eavailw.tex:118 and sec_systematics.tex:160). S6, C8 and T8 passed; every removed item was LEDGER or NEEDED and retained; no disclosure lost. reads/styleB-pass1.txt.
+- **Pass 2, F4 revised to "with the restrictions stated in this section":** OVERALL PASS, with no FAILs; no NEEDED item lost; no disclosure lost. reads/styleB-pass2.txt.

@@ -88,6 +88,17 @@ The note-wide list, `UNRELEASED-SUPPORT.md`, already includes §4's sites:
 
 None changes here.
 
+## Style pass B, 2026-11-15 (the director's approval of the style-recheck plan, items 1, 2, 3 and 5)
+
+**Source:** the codex style recheck `note-style-recheck-6c38249bcf5c.md` (codex-school, style only). **Base:** this
+section at `80e8fb416307bb48c75e97fbb5c9c871c423fc69`, line numbers the base's; each removed passage stays at that sha and line, its ledger home. The
+director's condition: keep whatever the read classes NEEDED. The line count is unchanged (`%` lines hold the
+numbering).
+
+| id | base line | old text | new text | ledger home |
+|---|---|---|---|---|
+| S6 | :282–286 | the paragraph "Comparison with the earlier 2D budget", three sub-paragraphs (style item 1) | one paragraph (:282, :284, :286, with `%` lines :283 and :285). Kept: "the following defects" (open, no count), each defect and its correction, S4b (first-order cancellation), S4c (input and code revision not available, "May" → "earlier"), S4d (0.088 % with its referent, the band), "no conclusion about the published analysis's implementation follows", 60 of 205 with its qualifier, "The values printed … were not changed". Cut: S4a "(the May sweep)" (LEDGER, pass 1), the EtaNCEL demonstration "even an EtaNCEL universe that leaves the event weights essentially unchanged differs in all 205 truth-input cells" (new; for this read), S4e (LEDGER, pass 1), S4f (NEEDED, retained in §4.1, pass 1), "the two bands" → "the bands". numdiff: one "205" removed, none added. | 80e8fb416:sec_systematics.tex:282-286 |
+
 ## Meaning read (codex-school gpt-6.1-sol, high, read-only; the director's two-question form, reads/PROMPT-two-question.txt)
 
 - **Pass 1:** OVERALL FAIL.
@@ -101,3 +112,7 @@ None changes here.
   - Question 2: S5 is LEDGER and leaves; S4's items are retained.
   - No disclosure was lost.
   - The answer is in reads/sec_systematics-pass2.txt.
+
+**Style pass B, meaning read (codex-school gpt-6.1-sol, high, read-only; rows S6, C8, F4 and T8 read together, records attached):**
+- **Pass 1:** OVERALL FAIL on F4 only ("for the purposes, and within the limits, stated in Table~\ref{tab:result-status}" imported Table 1's estimator-seed-only scope, which omits sec_eavailw.tex:118 and sec_systematics.tex:160). S6, C8 and T8 passed; every removed item was LEDGER or NEEDED and retained; no disclosure lost. reads/styleB-pass1.txt.
+- **Pass 2, F4 revised to "with the restrictions stated in this section":** OVERALL PASS, with no FAILs; no NEEDED item lost; no disclosure lost. reads/styleB-pass2.txt.

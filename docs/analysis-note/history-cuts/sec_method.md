@@ -98,6 +98,17 @@ Each row restates the body and adds no claim. The guide to the appendices gains 
 - **:15 (§3.1)**, the configuration-(e) effective-sample-size sentence: it cites `UnfoldedWeightsESS2026` (Ref. [31]).
   Whether that record is released is for the director to check. It is not changed here.
 
+## Style pass B, 2026-11-15 (the director's approval of the style-recheck plan, items 1, 2, 3 and 5)
+
+**Source:** the codex style recheck `note-style-recheck-6c38249bcf5c.md` (codex-school, style only). **Base:** this
+section at `80e8fb416307bb48c75e97fbb5c9c871c423fc69`, line numbers the base's; each removed passage stays at that sha and line, its ledger home. The
+director's condition: keep whatever the read classes NEEDED. The line count is unchanged (`%` lines hold the
+numbering).
+
+| id | base line | old text | new text | ledger home |
+|---|---|---|---|---|
+| C8 | :48 | "The quoted central value records its run configuration; it repeats to $9\times10^{-12}$ and equals the refined 2D data unfold of App.~… to $7\times10^{-12}$. The purity-subtracted seed-42 central value has no recorded run configuration. An independent rerun reproduces it to $1.4\times10^{-11}$, and so does a regeneration whose run configuration is recorded (Ref.~…)" (style item 2) | "The quoted central value records its run configuration, repeats numerically and agrees with the refined 2D data unfold of App.~…. The purity-subtracted seed-42 central value has no recorded run configuration, although an independent rerun and a regeneration whose run configuration is recorded both reproduce it (Ref.~…)." The seed-attribution sentence (C1's controls and $\lesssim2\times10^{-11}$) is unchanged; C2's distinction (recording vs reproducing from the record) is kept. numdiff: 9e-12, 7e-12 and 1.4e-11 removed, none added. | 80e8fb416:sec_method.tex:48 |
+
 ## Meaning read (codex-school, gpt-6.1-sol, high, read-only; the old and new section, this log and the appendix)
 
 - **First pass, on C1–C6 and D1–D3:** OVERALL FAIL (C1, C2, C3, C4, C5, D2). C6, D1 and D3 passed, and no
@@ -105,3 +116,7 @@ Each row restates the body and adds no claim. The guide to the appendices gains 
   D2 was reworded.
 - **Second pass, on the revised section:** OVERALL PASS. C6, C1–C5 reverted (the printed text is identical outside C6), D1–D3 supported, and no disclosure lost.
 - Both passes' prompts and answers: `history-cuts/reads/sec_method-pass1.txt` and `-pass2.txt`.
+
+**Style pass B, meaning read (codex-school gpt-6.1-sol, high, read-only; rows S6, C8, F4 and T8 read together, records attached):**
+- **Pass 1:** OVERALL FAIL on F4 only ("for the purposes, and within the limits, stated in Table~\ref{tab:result-status}" imported Table 1's estimator-seed-only scope, which omits sec_eavailw.tex:118 and sec_systematics.tex:160). S6, C8 and T8 passed; every removed item was LEDGER or NEEDED and retained; no disclosure lost. reads/styleB-pass1.txt.
+- **Pass 2, F4 revised to "with the restrictions stated in this section":** OVERALL PASS, with no FAILs; no NEEDED item lost; no disclosure lost. reads/styleB-pass2.txt.

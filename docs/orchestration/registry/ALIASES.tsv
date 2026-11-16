@@ -1,5 +1,5 @@
 estimator	kind	alias	pattern	identifying	grep	source	line	quote	line_sha256
-a-central-lgbm	paper-label	configuration (a)	[Cc]onfiguration[~ ]\(a\)	yes	default	docs/analysis-note/sec_method.tex	48	configuration~(a)	1c4502e5333b3303
+a-central-lgbm	paper-label	configuration (a)	[Cc]onfiguration[~ ]\(a\)	yes	default	docs/analysis-note/sec_method.tex	48	configuration~(a)	22a09c6ba5012e5f
 a-central-lgbm	paper-table	(a) central value: LightGBM, seed 42 in 2D	\(a\) central[- ]value	yes	default	docs/analysis-note/sec_method.tex	128	(a) central-value estimator	e861e584658a53e7
 a-central-lgbm	note-table	(a) central-value estimator	\(a\) central[- ]value	yes	default	docs/analysis-note/sec_method.tex	128	(a) central-value estimator	e861e584658a53e7
 a-central-lgbm	note-label-old	configuration 1 (note, before register batch b5)	configuration 1: .the 2D central value	yes	default	docs/orchestration/state/2d-closeout/stageF/methods/note-g0/REVIEW.md	116	configuration 1: "the 2D central value and its	6caa1947e73d10ad

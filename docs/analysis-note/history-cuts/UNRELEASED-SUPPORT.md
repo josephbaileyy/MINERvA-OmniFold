@@ -16,7 +16,7 @@ The director's list (2026-11-13), for Joseph's decision at the end of the restru
 
 | file:line | ref | sentence (as printed source, comments stripped) |
 |---|---|---|
-| `sec_method.tex:48` | [34] NoteRecords2026 | An independent rerun reproduces it to $1.4\times10^{-11}$, and so does a regeneration whose run configuration is recorded (Ref.~\cite{NoteRecords2026}, \recentry{2d-central-value}). |
+| `sec_method.tex:48` | [34] NoteRecords2026 | The purity-subtracted seed-42 central value has no recorded run configuration, although an independent rerun and a regeneration whose run configuration is recorded both reproduce it (Ref.~\cite{NoteRecords2026}, \recentry{2d-central-value}). (Reworded in style pass B, 2026-11-15: history-cuts/sec_method.md C8; the site is unchanged.) |
 | `sec_systematics.tex:121` | [34] NoteRecords2026 | Seven universes of the sweep used by the quoted universe block (\S\ref{sec:uq-universes}) are reproduced to $\le1.4\times10^{-11}$ by the committed driver; the others are accepted by inference, becaus |
 | `sec_systematics.tex:143` | [34] NoteRecords2026 | The flux-universe index identity behind the $1/\Phi_{u}$ rescale is established by the code chain and by an exact test: 900 events $\times$ 100 universes match to $5.5\times10^{-14}$, and a control sh |
 | `sec_systematics.tex:332` | [34] NoteRecords2026 | Subtracting the background separately in each of the 187 universe unfolds and in the CV changes the square-root trace of the combined block sum by \SI{0.28}{\percent} and $C_Z$ by \SI{0.18}{\percent}, |
