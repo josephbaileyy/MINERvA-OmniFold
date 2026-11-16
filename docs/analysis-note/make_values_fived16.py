@@ -57,6 +57,9 @@ READOUTS = {
     # five-observable coverage test's grade at each truth and reading, mapped by ll5d_verdicts()
     "ll5dg18": (f"{FD}/fd/receipts-ll5d/readout/node/readout-g18.json", "7bd6d390"),
     "ll5dar23": (f"{FD}/fd/receipts-ll5d/readout/node/readout-ar23.json", "5b3fbbf5"),
+    # D2 (DECISION-20261112-joseph-consult-d1-d7.md item 2): the two GEANT4 bands' mu_max in LL5D's own graded matrix
+    # (#1172; fd/receipts-ll5d/mumax/README.md): chi2(M - G)/chi2(M) lies in [1, 1/(1 - mu_max)], M = C_T (all)
+    "ll5dmumax": (f"{FD}/fd/receipts-ll5d/mumax/run/node/mumax.json", "422db056"),
     # the pion-constant departure of Eq. (1), as full-covariance norms of its first-order shift under each arm's matrix
     # (ASSESSMENT-20261031-eavail-charged-pion-mass-switch-pricing.md section 7.3; JSON despite the suffix)
     "eav": ("docs/orchestration/state/eavail-switch-pricing-20261031/step0/step0_metric.txt", "3e8bd546"),
@@ -1929,6 +1932,7 @@ def groupb_values(d):
     v.update(prr_levels_values(d))
     v.update(vhalf_band_values(d))
     v.update(t2a_values(d))
+    v.update(mumax_values(d))
     v.update(period_values(d))
     v.update(t2b_values(d))
     v.update(lrows_values(d))
@@ -2332,6 +2336,23 @@ def vhalf_band_values(d):
     assert rule["half"] == 0.5 and rule["floor"] == 0.01 and rule["b"] == "r (1 + d)"
     assert rule["sigma_m"] == "sqrt(((1 + d) nu)^2 + (0.5 sgn(d) - |r|)^2 sigma_d^2)", "S10's sentence states these two terms"
     return {"vhalf-k": f"{rule['K']:g}"}
+
+
+def mumax_values(d):
+    """D2: the bound on how much the two GEANT4 bands' block in LL5D's graded covariance can change a chi2, per tune, from
+    the primary matrix C_T (all): 1/(1 - mu_max), with mu_max the largest generalized eigenvalue of (G, M)."""
+    r, v = d["ll5dmumax"], {}
+    assert r["schema"] == "ll5d-mumax/1" and r["verdict"] == "PASS" and not r["stop"]
+    for t in ("g18", "ar23"):
+        x = r["truths"][t]
+        assert x["products_match"] and x["made_from_match"] and x["removal_control_on_G"]["passes"]
+        assert x["removal_control_ll5d_b"]["passes"]
+        p = x["primary C_T (all)"]
+        assert abs(p["chi2_ratio_bound"] - 1 / (1 - p["mu_max"])) < 1e-12
+        v[f"ll5d-mumax-{t}"] = f"{p['mu_max']:.3f}"
+        v[f"ll5d-mumax-bound-{t}"] = f"{math.ceil(1000 * p['chi2_ratio_bound']) / 1000:.3f}"   # an upper bound, rounded up
+        assert p["chi2_ratio_bound"] <= float(v[f"ll5d-mumax-bound-{t}"])
+    return v
 
 
 def t2a_values(d):
