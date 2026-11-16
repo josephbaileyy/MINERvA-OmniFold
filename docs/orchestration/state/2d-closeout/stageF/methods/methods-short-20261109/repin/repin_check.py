@@ -3,8 +3,9 @@ LaTeX comments (an unescaped % to the end of the line) are stripped and whitespa
 will read. resource rows must count 1; fd16row rows must each be a row of tab:fd16 with \\newline read as a space; keys
 rows must each be printed (\\fvval{key} at least once); term rows (old|new) need new printed and old absent;
 drop and code rows are listed only. Exit 1 if any resource,
-fd16row, keys or term check fails."""
-import hashlib, os, re, subprocess, sys
+fd16row, keys or term check fails, or any guard (GEN16, MACRO, PENDING, CODEMAP, LABELMAP) does.
+argv[2], optional: a label map to check in place of the head's committed label-map.tsv (a what-if or a plant)."""
+import hashlib, os, re, subprocess, sys, tempfile
 
 N = sys.argv[1]
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -127,5 +128,43 @@ else:
     bad += not ok
     print(f"{'OK ' if ok else 'BAD'} CODEMAP tab:codemap block_sha={tsha[:16]}"
           + ("" if ok else "  tab:codemap CHANGED: re-check RP44's map against it"))
+# RP45: #981's README prints each file's table, figure or section number from methods-short-20261109/label-map.tsv at
+# PAPER_REF, and its build checks only that each label exists. The map must equal what make_label_map.py writes from a
+# fresh build of the head's paper and Supplement (git archive of docs/analysis-note, latexmk), or #981 prints stale
+# numbers. Each label #981 names (its build at PKG_REF) that differs is listed; any other differing row is counted.
+PKG_REF = "91f9cb615"
+LM = "docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/label-map.tsv"
+MLM = "docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/make_label_map.py"
+bp = subprocess.run(["git", "show", f"{PKG_REF}:docs/orchestration/state/2d-closeout/stageF/methods/result-package-20261109/"
+                     "build_package.py"], capture_output=True, text=True, check=True).stdout
+used = sorted(set(re.findall(r'"((?:sec|tab|fig|eq|app|supp):[A-Za-z0-9-]+)"', bp)))
+committed = (open(sys.argv[2]).read() if len(sys.argv) > 2 else
+             subprocess.run(["git", "show", f"{N}:{LM}"], capture_output=True, text=True, check=True).stdout)
+with tempfile.TemporaryDirectory() as td:
+    arc = subprocess.run(["git", "archive", N, "docs/analysis-note", MLM], capture_output=True, check=True).stdout
+    subprocess.run(["tar", "-x", "-C", td], input=arc, check=True)
+    an = os.path.join(td, "docs/analysis-note")
+    rcs = [subprocess.run(["latexmk", "-pdf", "-g", "-interaction=nonstopmode", "-halt-on-error", f], cwd=an,
+                          capture_output=True).returncode for f in ("main_paper.tex", "main_supplement.tex")]
+    fresh = None
+    if rcs == [0, 0]:
+        out = os.path.join(td, "label-map.tsv")
+        subprocess.run([sys.executable, "-B", os.path.join(td, MLM), os.path.join(an, "main_paper.aux"),
+                        os.path.join(an, "main_supplement.aux"), out], capture_output=True, check=True)
+        fresh = open(out).read()
+if fresh is None:
+    bad += 1
+    print(f"BAD LABELMAP the head's paper or Supplement did not build (latexmk rc {rcs}): the map cannot be checked")
+else:
+    rd = lambda t: {r.split("\t")[0]: tuple(r.split("\t")[1:]) for r in t.splitlines()[1:] if r}
+    cm_, fr_ = rd(committed), rd(fresh)
+    nd = [a for a in used if cm_.get(a) != fr_.get(a)]
+    other = [a for a in set(cm_) | set(fr_) if a not in used and cm_.get(a) != fr_.get(a)]
+    for a in nd:
+        print(f"BAD LABELMAP {a}: the map has {cm_.get(a)}, a fresh build prints {fr_.get(a)}")
+    bad += bool(nd or other)
+    print(f"{'OK ' if not (nd or other) else 'BAD'} LABELMAP {len(used)} labels #981 names, {len(nd)} stale; "
+          f"{len(other)} other rows differ ({len(cm_)} in the map, {len(fr_)} in a fresh build)"
+          + ("" if not (nd or other) else "  regenerate label-map.tsv at the head (make_label_map.py)"))
 print("REPIN-CHECK", "PASS" if not bad else f"FAIL ({bad})")
 sys.exit(1 if bad else 0)

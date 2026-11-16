@@ -1,4 +1,4 @@
-#977 head adbacc6fc61353bc7931cfa8fe53c770c867fc08; 53 rows
+#977 head 26af095d545a5be781c60bda66789af7c24e2107; 54 rows
 OK  RP01   resource paper      count=1  The sixteen-cell cross section that the estimator gives on the data il
 OK  RP02   resource paper      count=1  The held-out-tune tests provide partial evidence on bias at truths hel
 OK  RP02b  resource paper      count=1  The held-out-tune tests are not independent of each other or of $C_{\m
@@ -61,6 +61,7 @@ OK  RP39w  resource paper      count=1  In each systematic-universe unfolding, t
 --  RP42   code     B465-468 B586-598  helper-3's D1 prep (prep/d1-cnew-20261114 at 1f3279bf7, not yet in the draft) ma
 --  RP43   code     B715-730 B1131-1137 B1151-1159 B1235-1242 R4 R332-341  #981 hard-codes PENDING = FD-PRR, LL5D, V-HALF (B715-719) and writes pending/<na
 --  RP44   code     new: a README section, a build check, snapshot/code/  the director's request of 2026-11-16: #981's README gains the Supplement's code-
+--  RP45   code     B55 B1101-1110 B1203-1208 P3-4 R157  #981's README prints each file's table, figure or section number from methods-sh
 OK  GEN16  labels=1 block_sha=65b02f09daacba48
 OK  MACRO  \chiPaper printed 3
 OK  MACRO  \fluxBand printed 0; \fvval{q2d-fluxband} printed 1 (RP42)
@@ -74,4 +75,13 @@ OK  PENDING #981 LL5D -> group ll5d: FILLED (RP43 fills it at the re-pin)
 OK  PENDING #981 V-HALF -> group vhalf: FILLED (RP43 fills it at the re-pin)
 OK  CODEMAP 19 entries: every file at its pinned sha256 and every anchor in its lines
 OK  CODEMAP tab:codemap block_sha=0b9ab61090d43251
-REPIN-CHECK PASS
+BAD LABELMAP fig:ratio16: the map has ('supplement', 'S1', 'figure'), a fresh build prints ('supplement', 'S4', 'figure')
+BAD LABELMAP supp:validity: the map has ('supplement', 'S11', 'section'), a fresh build prints ('supplement', 'S10', 'section')
+BAD LABELMAP tab:cmodel16: the map has ('supplement', 'S8', 'table'), a fresh build prints ('supplement', 'S17', 'table')
+BAD LABELMAP tab:fd16: the map has ('paper', '2', 'table'), a fresh build prints ('paper', '5', 'table')
+BAD LABELMAP tab:fived16-cells: the map has ('supplement', 'S2', 'table'), a fresh build prints ('supplement', 'S3', 'table')
+BAD LABELMAP tab:fived16-corr: the map has ('supplement', 'S5', 'table'), a fresh build prints ('supplement', 'S8', 'table')
+BAD LABELMAP tab:fived16-groups: the map has ('supplement', 'S4', 'table'), a fresh build prints ('supplement', 'S7', 'table')
+BAD LABELMAP tab:gen16: the map has ('supplement', 'S7', 'table'), a fresh build prints ('supplement', 'S16', 'table')
+BAD LABELMAP 14 labels #981 names, 8 stale; 73 other rows differ (75 in the map, 117 in a fresh build)  regenerate label-map.tsv at the head (make_label_map.py)
+REPIN-CHECK FAIL (1)
