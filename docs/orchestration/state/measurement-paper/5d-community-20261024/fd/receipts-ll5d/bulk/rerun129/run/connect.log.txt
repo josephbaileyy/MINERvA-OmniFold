@@ -1,0 +1,48 @@
+host=login02 start=2026-11-14T03:54:31Z pid=552766 audit_ack=https://github.com/josephbaileyy/MINERvA-OmniFold/pull/1123#issuecomment-6840388077
+squeue: []
+group C marker absent: /pscratch/sd/j/josephrb/note-figstyle-20261114/RUNNING
+== iris
+m3246               2599.1            10000.0     18749.5      20000.0
+balance_node_h=1250.5 half=625.2 cap=148.0
+projection charged=96.980 held=0.000 this=2.5 total=99.480 cap=148.0
+gate g18 truth=g18 verdict=PASS
+gate ar23 truth=ar23 verdict=PASS
+/pscratch/sd/j/josephrb/ll5d-pilot-r2/walls.json verdict=PASS
+/pscratch/sd/j/josephrb/ll5d-pilot-r2/controls.json verdict=PASS
+/pscratch/sd/j/josephrb/ll5d-pilot-r2/clipcheck.json verdict=PROCEED
+products in $U: 1662
+rerun lane: 01 0 ar23 toy items=5 all_4761060,all_4761061,all_4761062,all_4761063,all_4761064
+rerun lane: 01 1 ar23 toy items=5 all_4761065,all_4761066,all_4761067,all_4761068,all_4761069
+rerun lane: 01 2 ar23 toy items=5 all_4761070,all_4761071,all_4761072,all_4761073,all_4761074
+rerun lane: 01 3 ar23 toy items=5 all_4761075,all_4761076,all_4761077,all_4761078,all_4761079
+the 20 items are in $U (names only; nothing there is opened)
+overlap check: 8 WORLD paths x 18 G2R inputs, hits []
+deploy porcelain_lines=0 head=4231b14de5ea693e92cb31b1358a816b5c2f6625
+nd-unfolding/ll5d.py: OK
+nd-unfolding/fd_1b_c2.py: OK
+nd-unfolding/fd_1b_mc.py: OK
+nd-unfolding/fd_1b_toys.py: OK
+nd-unfolding/fd_1b_inv.py: OK
+nd-unfolding/s1_assemble.py: OK
+nd-unfolding/s5p_universe.py: OK
+nd-unfolding/fd_1b_score.py: OK
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/clip/clip_probe2.py: OK
+2d-unfolding/cov2d/cov2d.py: OK
+docs/orchestration/state/2d-closeout/stageF/methods/sf1/manifest/inputs-sha256.txt: OK
+nd-unfolding/pv-ladder/readouts/h2_definition.json: OK
+setup_salloc_env.sh: OK
+nd-unfolding/s5e_candidate.py: OK
+nd-unfolding/s5e_deform.py: OK
+nd-unfolding/ll5d_b.py: OK
+nd-unfolding/fd_1b_null.py: OK
+nd-unfolding/s5n_pseudo.py: OK
+nd-unfolding/s5p_numerics.py: OK
+nd-unfolding/omnifold_nn_core.py: OK
+2d-unfolding/uq/coverage_fixed_truth/score_coverage.py: OK
+nd-unfolding/ll5d_ctl.py: OK
+job script sha256 d45cdf2fac9918674429da40fff4582b5eb6010a41deb460d70b0fe4b122090a
+atime-pre 1146 files at 2026-11-14T03:55:47Z
+Submitted batch job 61255888 (ll5d_rerun129_01)
+TimeLimit=02:30:00
+61255888 ll5d_rerun129_01 PENDING 2:30:00 1
+end=2026-11-14T03:55:48Z

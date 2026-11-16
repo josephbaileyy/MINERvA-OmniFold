@@ -1,0 +1,222 @@
+compare_rerun allow-list ['slurm_job', 'seconds_unfold', 'peak_rss_kib', 'refinement/seconds']; names 20 (want 20)
+INFO ll5d_ar23_toy_all_4761060.npz file sha256 orig a6c926f94452e185b5539f4b42bb883405daf04524a1fe0873ff6e5bb23f9379 rerun 717915f3461bc47d510aeb339c2d89811a2c7ff7c405bd38092033374a7b69e1: comparing by member
+EQUAL ll5d_ar23_toy_all_4761060.npz clip_reco_fine.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761060.npz clip_tdw_fine.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761060.npz clip_truth_wt_fine.npy: dtype float64 shape (65856,) bytes equal
+ALLOW ll5d_ar23_toy_all_4761060.npz meta.npy slurm_job: orig '61214614' rerun '61255888'
+ALLOW ll5d_ar23_toy_all_4761060.npz meta.npy seconds_unfold: orig 918.171 rerun 915.139
+ALLOW ll5d_ar23_toy_all_4761060.npz meta.npy peak_rss_kib: orig 19979216 rerun 19905316
+ALLOW ll5d_ar23_toy_all_4761060.npz meta.npy refinement/seconds: orig 31.341 rerun 31.637
+EQUAL ll5d_ar23_toy_all_4761060.npz meta.npy: 125 keys equal outside the allow-list
+EQUAL ll5d_ar23_toy_all_4761060.npz xsec_flat.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761060.npz xtrue_flat.npy: dtype float64 shape (65856,) bytes equal
+INFO ll5d_ar23_toy_all_4761061.npz file sha256 orig 8e95059ccabfb736f090816c9ecfa5b064b7a6b132c13ed7d816e4dedba9ed0a rerun 0aa326036eb11a59ec7ca3c08c6cee55d6458845c5434c073de2b075d65ff210: comparing by member
+EQUAL ll5d_ar23_toy_all_4761061.npz clip_reco_fine.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761061.npz clip_tdw_fine.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761061.npz clip_truth_wt_fine.npy: dtype float64 shape (65856,) bytes equal
+ALLOW ll5d_ar23_toy_all_4761061.npz meta.npy slurm_job: orig '61214614' rerun '61255888'
+ALLOW ll5d_ar23_toy_all_4761061.npz meta.npy seconds_unfold: orig 890.511 rerun 882.752
+ALLOW ll5d_ar23_toy_all_4761061.npz meta.npy peak_rss_kib: orig 20238116 rerun 20239892
+ALLOW ll5d_ar23_toy_all_4761061.npz meta.npy refinement/seconds: orig 13.55 rerun 13.7
+EQUAL ll5d_ar23_toy_all_4761061.npz meta.npy: 125 keys equal outside the allow-list
+EQUAL ll5d_ar23_toy_all_4761061.npz xsec_flat.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761061.npz xtrue_flat.npy: dtype float64 shape (65856,) bytes equal
+INFO ll5d_ar23_toy_all_4761062.npz file sha256 orig 78d7d780c3f9db9e5086c23c251fbfad3ea67ce1c724840f9d1964201810386b rerun b757f7c33ce857d3e12768d95a039147dc76df65ddd1d1cdb472537371eaccf0: comparing by member
+EQUAL ll5d_ar23_toy_all_4761062.npz clip_reco_fine.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761062.npz clip_tdw_fine.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761062.npz clip_truth_wt_fine.npy: dtype float64 shape (65856,) bytes equal
+ALLOW ll5d_ar23_toy_all_4761062.npz meta.npy slurm_job: orig '61214614' rerun '61255888'
+ALLOW ll5d_ar23_toy_all_4761062.npz meta.npy seconds_unfold: orig 892.784 rerun 892.603
+ALLOW ll5d_ar23_toy_all_4761062.npz meta.npy peak_rss_kib: orig 20238116 rerun 20239892
+ALLOW ll5d_ar23_toy_all_4761062.npz meta.npy refinement/seconds: orig 12.566 rerun 12.242
+EQUAL ll5d_ar23_toy_all_4761062.npz meta.npy: 125 keys equal outside the allow-list
+EQUAL ll5d_ar23_toy_all_4761062.npz xsec_flat.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761062.npz xtrue_flat.npy: dtype float64 shape (65856,) bytes equal
+INFO ll5d_ar23_toy_all_4761063.npz file sha256 orig 4836c9a5b50d448163e735786fab5cd237824ca18e9cb01ffaa7c3aaa7ddde5a rerun 23afcd183f582af5180fa338bb693376f51b4cffbc16da0a39df15cfba7d64b6: comparing by member
+EQUAL ll5d_ar23_toy_all_4761063.npz clip_reco_fine.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761063.npz clip_tdw_fine.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761063.npz clip_truth_wt_fine.npy: dtype float64 shape (65856,) bytes equal
+ALLOW ll5d_ar23_toy_all_4761063.npz meta.npy slurm_job: orig '61214614' rerun '61255888'
+ALLOW ll5d_ar23_toy_all_4761063.npz meta.npy seconds_unfold: orig 884.076 rerun 882.16
+ALLOW ll5d_ar23_toy_all_4761063.npz meta.npy peak_rss_kib: orig 20238116 rerun 20262780
+ALLOW ll5d_ar23_toy_all_4761063.npz meta.npy refinement/seconds: orig 11.51 rerun 11.647
+EQUAL ll5d_ar23_toy_all_4761063.npz meta.npy: 125 keys equal outside the allow-list
+EQUAL ll5d_ar23_toy_all_4761063.npz xsec_flat.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761063.npz xtrue_flat.npy: dtype float64 shape (65856,) bytes equal
+INFO ll5d_ar23_toy_all_4761064.npz file sha256 orig ab5e080488df4cbafbf32dbcb60e2cd413d2171a3c481a7c778e5192a0399ea0 rerun 1369127234c875ccc30d842624a2fafc80d8519fdeba43282fd440bfe0c563a9: comparing by member
+EQUAL ll5d_ar23_toy_all_4761064.npz clip_reco_fine.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761064.npz clip_tdw_fine.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761064.npz clip_truth_wt_fine.npy: dtype float64 shape (65856,) bytes equal
+ALLOW ll5d_ar23_toy_all_4761064.npz meta.npy slurm_job: orig '61214614' rerun '61255888'
+ALLOW ll5d_ar23_toy_all_4761064.npz meta.npy seconds_unfold: orig 895.46 rerun 891.622
+ALLOW ll5d_ar23_toy_all_4761064.npz meta.npy peak_rss_kib: orig 20245896 rerun 20310176
+ALLOW ll5d_ar23_toy_all_4761064.npz meta.npy refinement/seconds: orig 13.43 rerun 13.431
+EQUAL ll5d_ar23_toy_all_4761064.npz meta.npy: 125 keys equal outside the allow-list
+EQUAL ll5d_ar23_toy_all_4761064.npz xsec_flat.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761064.npz xtrue_flat.npy: dtype float64 shape (65856,) bytes equal
+INFO ll5d_ar23_toy_all_4761065.npz file sha256 orig 08e2bb6311331ec40f90b12954a7e9daa61785c92355838e847a2034ebad8c2c rerun 3f7f2c83dc42fdab40d0b0ca49cf7fd8499c65419cf46b0cfa1041f68df8a2ac: comparing by member
+EQUAL ll5d_ar23_toy_all_4761065.npz clip_reco_fine.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761065.npz clip_tdw_fine.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761065.npz clip_truth_wt_fine.npy: dtype float64 shape (65856,) bytes equal
+ALLOW ll5d_ar23_toy_all_4761065.npz meta.npy slurm_job: orig '61214614' rerun '61255888'
+ALLOW ll5d_ar23_toy_all_4761065.npz meta.npy seconds_unfold: orig 915.35 rerun 933.614
+ALLOW ll5d_ar23_toy_all_4761065.npz meta.npy peak_rss_kib: orig 20337272 rerun 20034052
+ALLOW ll5d_ar23_toy_all_4761065.npz meta.npy refinement/seconds: orig 12.771 rerun 31.667
+EQUAL ll5d_ar23_toy_all_4761065.npz meta.npy: 125 keys equal outside the allow-list
+EQUAL ll5d_ar23_toy_all_4761065.npz xsec_flat.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761065.npz xtrue_flat.npy: dtype float64 shape (65856,) bytes equal
+INFO ll5d_ar23_toy_all_4761066.npz file sha256 orig 086c6f9230b0501abf1d9cab546f97f11e62da48c2fb6b8378bbdb61e80aeb66 rerun 2c118eeb72af47fa20c892183ab9c81384166ea587228e1cc86c11ca74201b45: comparing by member
+EQUAL ll5d_ar23_toy_all_4761066.npz clip_reco_fine.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761066.npz clip_tdw_fine.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761066.npz clip_truth_wt_fine.npy: dtype float64 shape (65856,) bytes equal
+ALLOW ll5d_ar23_toy_all_4761066.npz meta.npy slurm_job: orig '61214614' rerun '61255888'
+ALLOW ll5d_ar23_toy_all_4761066.npz meta.npy seconds_unfold: orig 910.151 rerun 905.468
+ALLOW ll5d_ar23_toy_all_4761066.npz meta.npy peak_rss_kib: orig 20337272 rerun 20192256
+ALLOW ll5d_ar23_toy_all_4761066.npz meta.npy refinement/seconds: orig 12.047 rerun 11.822
+EQUAL ll5d_ar23_toy_all_4761066.npz meta.npy: 125 keys equal outside the allow-list
+EQUAL ll5d_ar23_toy_all_4761066.npz xsec_flat.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761066.npz xtrue_flat.npy: dtype float64 shape (65856,) bytes equal
+INFO ll5d_ar23_toy_all_4761067.npz file sha256 orig 3858780dacf25ddb87460493532f9e1177d4d7d2c141b5d89dc90529b9d6dcb0 rerun 8ca8b9feb31e8798f4e4afd37cd1add940f76fdf025b4ed38e8642b0d17c9282: comparing by member
+EQUAL ll5d_ar23_toy_all_4761067.npz clip_reco_fine.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761067.npz clip_tdw_fine.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761067.npz clip_truth_wt_fine.npy: dtype float64 shape (65856,) bytes equal
+ALLOW ll5d_ar23_toy_all_4761067.npz meta.npy slurm_job: orig '61214614' rerun '61255888'
+ALLOW ll5d_ar23_toy_all_4761067.npz meta.npy seconds_unfold: orig 888.293 rerun 881.246
+ALLOW ll5d_ar23_toy_all_4761067.npz meta.npy peak_rss_kib: orig 20337272 rerun 20192256
+ALLOW ll5d_ar23_toy_all_4761067.npz meta.npy refinement/seconds: orig 12.035 rerun 11.894
+EQUAL ll5d_ar23_toy_all_4761067.npz meta.npy: 125 keys equal outside the allow-list
+EQUAL ll5d_ar23_toy_all_4761067.npz xsec_flat.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761067.npz xtrue_flat.npy: dtype float64 shape (65856,) bytes equal
+INFO ll5d_ar23_toy_all_4761068.npz file sha256 orig d0c4122925c377e0268bed45245acaf8cbc4b9ee6a04e64007e0386cdb38e28a rerun dc7e28cc52fa5ae3a60006f9a56a8c82b13f964150efa30849019e338e0593ed: comparing by member
+EQUAL ll5d_ar23_toy_all_4761068.npz clip_reco_fine.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761068.npz clip_tdw_fine.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761068.npz clip_truth_wt_fine.npy: dtype float64 shape (65856,) bytes equal
+ALLOW ll5d_ar23_toy_all_4761068.npz meta.npy slurm_job: orig '61214614' rerun '61255888'
+ALLOW ll5d_ar23_toy_all_4761068.npz meta.npy seconds_unfold: orig 878.323 rerun 871.655
+ALLOW ll5d_ar23_toy_all_4761068.npz meta.npy peak_rss_kib: orig 20337272 rerun 20192256
+ALLOW ll5d_ar23_toy_all_4761068.npz meta.npy refinement/seconds: orig 10.703 rerun 10.719
+EQUAL ll5d_ar23_toy_all_4761068.npz meta.npy: 125 keys equal outside the allow-list
+EQUAL ll5d_ar23_toy_all_4761068.npz xsec_flat.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761068.npz xtrue_flat.npy: dtype float64 shape (65856,) bytes equal
+INFO ll5d_ar23_toy_all_4761069.npz file sha256 orig ef6dd1ac5343b980dd9058fbade20bb9875446fda5adbcdda9f07ba86d28fd4a rerun 1bb1e734885cacc3b503fa76d341ad144d1d6d77d2e6321a566aec21083ead35: comparing by member
+EQUAL ll5d_ar23_toy_all_4761069.npz clip_reco_fine.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761069.npz clip_tdw_fine.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761069.npz clip_truth_wt_fine.npy: dtype float64 shape (65856,) bytes equal
+ALLOW ll5d_ar23_toy_all_4761069.npz meta.npy slurm_job: orig '61214614' rerun '61255888'
+ALLOW ll5d_ar23_toy_all_4761069.npz meta.npy seconds_unfold: orig 884.794 rerun 878.514
+ALLOW ll5d_ar23_toy_all_4761069.npz meta.npy peak_rss_kib: orig 20337272 rerun 20192256
+ALLOW ll5d_ar23_toy_all_4761069.npz meta.npy refinement/seconds: orig 10.715 rerun 10.684
+EQUAL ll5d_ar23_toy_all_4761069.npz meta.npy: 125 keys equal outside the allow-list
+EQUAL ll5d_ar23_toy_all_4761069.npz xsec_flat.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761069.npz xtrue_flat.npy: dtype float64 shape (65856,) bytes equal
+INFO ll5d_ar23_toy_all_4761070.npz file sha256 orig 55e92d954cfb7390f9f05f7e0e43ad4ad70602c7c28435d78328888521ec68a4 rerun 7648e8520f2396ddfc54cd57720dcdeb51d36a8d1f920122c339e2da87600e80: comparing by member
+EQUAL ll5d_ar23_toy_all_4761070.npz clip_reco_fine.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761070.npz clip_tdw_fine.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761070.npz clip_truth_wt_fine.npy: dtype float64 shape (65856,) bytes equal
+ALLOW ll5d_ar23_toy_all_4761070.npz meta.npy slurm_job: orig '61214614' rerun '61255888'
+ALLOW ll5d_ar23_toy_all_4761070.npz meta.npy seconds_unfold: orig 894.559 rerun 918.82
+ALLOW ll5d_ar23_toy_all_4761070.npz meta.npy peak_rss_kib: orig 20337272 rerun 19915520
+ALLOW ll5d_ar23_toy_all_4761070.npz meta.npy refinement/seconds: orig 11.462 rerun 29.854
+EQUAL ll5d_ar23_toy_all_4761070.npz meta.npy: 125 keys equal outside the allow-list
+EQUAL ll5d_ar23_toy_all_4761070.npz xsec_flat.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761070.npz xtrue_flat.npy: dtype float64 shape (65856,) bytes equal
+INFO ll5d_ar23_toy_all_4761071.npz file sha256 orig 34aa7dee75e73f90b33687af05cd8d5d710d5cc0ae17495ec0f1791dcce96c7a rerun cb92815ba9833e9d2ab31d91234c849354ebf1ba0c304bc572bcb86b3f59ddd1: comparing by member
+EQUAL ll5d_ar23_toy_all_4761071.npz clip_reco_fine.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761071.npz clip_tdw_fine.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761071.npz clip_truth_wt_fine.npy: dtype float64 shape (65856,) bytes equal
+ALLOW ll5d_ar23_toy_all_4761071.npz meta.npy slurm_job: orig '61214614' rerun '61255888'
+ALLOW ll5d_ar23_toy_all_4761071.npz meta.npy seconds_unfold: orig 892.781 rerun 883.327
+ALLOW ll5d_ar23_toy_all_4761071.npz meta.npy peak_rss_kib: orig 20337272 rerun 20194376
+ALLOW ll5d_ar23_toy_all_4761071.npz meta.npy refinement/seconds: orig 10.186 rerun 10.276
+EQUAL ll5d_ar23_toy_all_4761071.npz meta.npy: 125 keys equal outside the allow-list
+EQUAL ll5d_ar23_toy_all_4761071.npz xsec_flat.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761071.npz xtrue_flat.npy: dtype float64 shape (65856,) bytes equal
+INFO ll5d_ar23_toy_all_4761072.npz file sha256 orig 3c13f60b2e82a5b5b9f0bfd030da80613618cc9cbcc38ad8063fb6323ab8dca2 rerun 4b9a8274cdbf0f4eceb0370afdef64a0a4c2297d9d7e684dd6c019dec9713af4: comparing by member
+EQUAL ll5d_ar23_toy_all_4761072.npz clip_reco_fine.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761072.npz clip_tdw_fine.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761072.npz clip_truth_wt_fine.npy: dtype float64 shape (65856,) bytes equal
+ALLOW ll5d_ar23_toy_all_4761072.npz meta.npy slurm_job: orig '61214614' rerun '61255888'
+ALLOW ll5d_ar23_toy_all_4761072.npz meta.npy seconds_unfold: orig 889.186 rerun 877.881
+ALLOW ll5d_ar23_toy_all_4761072.npz meta.npy peak_rss_kib: orig 20337272 rerun 20233192
+ALLOW ll5d_ar23_toy_all_4761072.npz meta.npy refinement/seconds: orig 10.685 rerun 10.821
+EQUAL ll5d_ar23_toy_all_4761072.npz meta.npy: 125 keys equal outside the allow-list
+EQUAL ll5d_ar23_toy_all_4761072.npz xsec_flat.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761072.npz xtrue_flat.npy: dtype float64 shape (65856,) bytes equal
+INFO ll5d_ar23_toy_all_4761073.npz file sha256 orig 3a7b8d8b1b65cb0f69c827fb398049750678c40c57499deac8c0938f693552ce rerun 6d4e0bf32d09b014f0cc941b7bd10029c9121fdd78f045829768c59fb45defab: comparing by member
+EQUAL ll5d_ar23_toy_all_4761073.npz clip_reco_fine.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761073.npz clip_tdw_fine.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761073.npz clip_truth_wt_fine.npy: dtype float64 shape (65856,) bytes equal
+ALLOW ll5d_ar23_toy_all_4761073.npz meta.npy slurm_job: orig '61214614' rerun '61255888'
+ALLOW ll5d_ar23_toy_all_4761073.npz meta.npy seconds_unfold: orig 918.946 rerun 907.826
+ALLOW ll5d_ar23_toy_all_4761073.npz meta.npy peak_rss_kib: orig 20337272 rerun 20233192
+ALLOW ll5d_ar23_toy_all_4761073.npz meta.npy refinement/seconds: orig 12.598 rerun 12.549
+EQUAL ll5d_ar23_toy_all_4761073.npz meta.npy: 125 keys equal outside the allow-list
+EQUAL ll5d_ar23_toy_all_4761073.npz xsec_flat.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761073.npz xtrue_flat.npy: dtype float64 shape (65856,) bytes equal
+INFO ll5d_ar23_toy_all_4761074.npz file sha256 orig 82173c0d81b5c06864fb5d603f18eceb78e4607a85df4f1f1801cb81ad5e71a8 rerun ed14e17dbc8b4047d1820de7c293b66891eb23305b27876fc4a91393f8696a90: comparing by member
+EQUAL ll5d_ar23_toy_all_4761074.npz clip_reco_fine.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761074.npz clip_tdw_fine.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761074.npz clip_truth_wt_fine.npy: dtype float64 shape (65856,) bytes equal
+ALLOW ll5d_ar23_toy_all_4761074.npz meta.npy slurm_job: orig '61214614' rerun '61255888'
+ALLOW ll5d_ar23_toy_all_4761074.npz meta.npy seconds_unfold: orig 901.007 rerun 889.875
+ALLOW ll5d_ar23_toy_all_4761074.npz meta.npy peak_rss_kib: orig 20337272 rerun 20233192
+ALLOW ll5d_ar23_toy_all_4761074.npz meta.npy refinement/seconds: orig 12.588 rerun 12.291
+EQUAL ll5d_ar23_toy_all_4761074.npz meta.npy: 125 keys equal outside the allow-list
+EQUAL ll5d_ar23_toy_all_4761074.npz xsec_flat.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761074.npz xtrue_flat.npy: dtype float64 shape (65856,) bytes equal
+INFO ll5d_ar23_toy_all_4761075.npz file sha256 orig 95c180f4015b608b92c496644b45eb3b5afc7d90964a12ed1376cbe4a215aa66 rerun 3b971c3c1ca7efe45be47b20a0dadb437a42444de94cf25653387f84af6a0017: comparing by member
+EQUAL ll5d_ar23_toy_all_4761075.npz clip_reco_fine.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761075.npz clip_tdw_fine.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761075.npz clip_truth_wt_fine.npy: dtype float64 shape (65856,) bytes equal
+ALLOW ll5d_ar23_toy_all_4761075.npz meta.npy slurm_job: orig '61214614' rerun '61255888'
+ALLOW ll5d_ar23_toy_all_4761075.npz meta.npy seconds_unfold: orig 899.552 rerun 915.97
+ALLOW ll5d_ar23_toy_all_4761075.npz meta.npy peak_rss_kib: orig 20337272 rerun 19989960
+ALLOW ll5d_ar23_toy_all_4761075.npz meta.npy refinement/seconds: orig 11.93 rerun 30.792
+EQUAL ll5d_ar23_toy_all_4761075.npz meta.npy: 125 keys equal outside the allow-list
+EQUAL ll5d_ar23_toy_all_4761075.npz xsec_flat.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761075.npz xtrue_flat.npy: dtype float64 shape (65856,) bytes equal
+INFO ll5d_ar23_toy_all_4761076.npz file sha256 orig c83297e026c56d5350e5e0cdc59c79fd1cbada312e74cc5a767ed9615c48bcb8 rerun 7a54e9fbeca4dc54efc209cc34568a053eb46f83b940e892887cb73a79f484a3: comparing by member
+EQUAL ll5d_ar23_toy_all_4761076.npz clip_reco_fine.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761076.npz clip_tdw_fine.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761076.npz clip_truth_wt_fine.npy: dtype float64 shape (65856,) bytes equal
+ALLOW ll5d_ar23_toy_all_4761076.npz meta.npy slurm_job: orig '61214614' rerun '61255888'
+ALLOW ll5d_ar23_toy_all_4761076.npz meta.npy seconds_unfold: orig 896.428 rerun 879.442
+ALLOW ll5d_ar23_toy_all_4761076.npz meta.npy peak_rss_kib: orig 20337272 rerun 20106644
+ALLOW ll5d_ar23_toy_all_4761076.npz meta.npy refinement/seconds: orig 10.328 rerun 9.996
+EQUAL ll5d_ar23_toy_all_4761076.npz meta.npy: 125 keys equal outside the allow-list
+EQUAL ll5d_ar23_toy_all_4761076.npz xsec_flat.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761076.npz xtrue_flat.npy: dtype float64 shape (65856,) bytes equal
+INFO ll5d_ar23_toy_all_4761077.npz file sha256 orig c4a4132942e5815122e9a3b2605d559aa010425295ff07e942f671ae5146943b rerun d642433b13a3656a5423d45e0df5fa2bffca254c8834128ae6d352bf7ca03f11: comparing by member
+EQUAL ll5d_ar23_toy_all_4761077.npz clip_reco_fine.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761077.npz clip_tdw_fine.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761077.npz clip_truth_wt_fine.npy: dtype float64 shape (65856,) bytes equal
+ALLOW ll5d_ar23_toy_all_4761077.npz meta.npy slurm_job: orig '61214614' rerun '61255888'
+ALLOW ll5d_ar23_toy_all_4761077.npz meta.npy seconds_unfold: orig 897.545 rerun 888.628
+ALLOW ll5d_ar23_toy_all_4761077.npz meta.npy peak_rss_kib: orig 20337272 rerun 20114384
+ALLOW ll5d_ar23_toy_all_4761077.npz meta.npy refinement/seconds: orig 10.573 rerun 10.382
+EQUAL ll5d_ar23_toy_all_4761077.npz meta.npy: 125 keys equal outside the allow-list
+EQUAL ll5d_ar23_toy_all_4761077.npz xsec_flat.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761077.npz xtrue_flat.npy: dtype float64 shape (65856,) bytes equal
+INFO ll5d_ar23_toy_all_4761078.npz file sha256 orig 3c3911a3e3e93330504b8a89e5c3d08b861dbc2e9e9a9d437d99fb4136207684 rerun 7c9d3db3c6f6547eb59c9968ae669e4a2ab5fe70fc212b56f0b9b7b252bbd419: comparing by member
+EQUAL ll5d_ar23_toy_all_4761078.npz clip_reco_fine.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761078.npz clip_tdw_fine.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761078.npz clip_truth_wt_fine.npy: dtype float64 shape (65856,) bytes equal
+ALLOW ll5d_ar23_toy_all_4761078.npz meta.npy slurm_job: orig '61214614' rerun '61255888'
+ALLOW ll5d_ar23_toy_all_4761078.npz meta.npy seconds_unfold: orig 897.87 rerun 887.772
+ALLOW ll5d_ar23_toy_all_4761078.npz meta.npy peak_rss_kib: orig 20337272 rerun 20114384
+ALLOW ll5d_ar23_toy_all_4761078.npz meta.npy refinement/seconds: orig 9.957 rerun 10.102
+EQUAL ll5d_ar23_toy_all_4761078.npz meta.npy: 125 keys equal outside the allow-list
+EQUAL ll5d_ar23_toy_all_4761078.npz xsec_flat.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761078.npz xtrue_flat.npy: dtype float64 shape (65856,) bytes equal
+INFO ll5d_ar23_toy_all_4761079.npz file sha256 orig 27c42c6a93e5cb06add87dadcad0f2b64f99edb027e33d14a4fcdd449bd2a7f3 rerun bd3a0a78a892066002b2beca2512a10031c9449fb6cf022dcbfef318f8333295: comparing by member
+EQUAL ll5d_ar23_toy_all_4761079.npz clip_reco_fine.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761079.npz clip_tdw_fine.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761079.npz clip_truth_wt_fine.npy: dtype float64 shape (65856,) bytes equal
+ALLOW ll5d_ar23_toy_all_4761079.npz meta.npy slurm_job: orig '61214614' rerun '61255888'
+ALLOW ll5d_ar23_toy_all_4761079.npz meta.npy seconds_unfold: orig 906.654 rerun 893.715
+ALLOW ll5d_ar23_toy_all_4761079.npz meta.npy peak_rss_kib: orig 20337272 rerun 20239872
+ALLOW ll5d_ar23_toy_all_4761079.npz meta.npy refinement/seconds: orig 12.794 rerun 12.416
+EQUAL ll5d_ar23_toy_all_4761079.npz meta.npy: 125 keys equal outside the allow-list
+EQUAL ll5d_ar23_toy_all_4761079.npz xsec_flat.npy: dtype float64 shape (65856,) bytes equal
+EQUAL ll5d_ar23_toy_all_4761079.npz xtrue_flat.npy: dtype float64 shape (65856,) bytes equal
+COMPARE-RERUN EQUAL (20 names)

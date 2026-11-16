@@ -1,0 +1,260 @@
+2,13c2,13
+< # LL5D bulk: the rc-129 rerun (the director's ruling 2, 2026-11-14, under LL5D-DECLARATION.md:70), DRAFT for the
+< # director's review. ll5d_bulk_09's lane 4 (ar23 toy all_4761060 ... all_4761079) exited 129: its 20 products were
+< # written, then ROOT segfaulted while Python exited. This reruns that call's 20 items once, unchanged: ONE job (-N 1 --exclusive,
+< # --time 02:30:00, 2.5 node-h) of 4 lanes of 5 items (the director's revision: the bulk ran 8 such lanes a node), each
+< # lane one srun step (32 CPUs, 56G, --threads 32), the same bound code (M, bound.sha256) and the
+< # same WORLD inputs, on a FRESH deploy clone at M that no other job reads, into a FRESH out directory $UO outside $U.
+< # The 20 items are taken from the bulk's pinned partition (bulk-lanes.tsv, node 09 lane 4), never retyped, and must
+< # be exactly the 20 names already in $U. Nothing under $U is written, moved or deleted. One job means its single start
+< # check (sha256sum -c) runs before all 4 calls, so the bulk's rc-8 mechanism (a later job's start check moving the
+< # deploy manifest under a running call) cannot occur. The comparison with $U's 20 products is a separate step
+< # (compare_rerun.py), after the job ends. Submitted only after the director's go on this file's sha256. Nothing to CFS.
+< # Not under set -u.
+---
+> # LL5D section 11 step 7: the null at G18 and AR23 (ll5d_b.py null, one call per truth, both readings and both
+> # matrices inside), DRAFT for the director's review. The director's ruling (a), 2026-11-14: run as bound; the
+> # products_digest moves are the declared deviation of LL5D-DECLARATION.md:672-673. At 4231b14d null_step opens the
+> # products through the atime watch (ll5d_b.py:499 remade, _x :366-368), and only then hashes them with a plain open
+> # (:502 products_digest, :477; s5c_unfold.py:87-89). So each call's record should list exactly those products in
+> # atime.moved and exit 8 with verdict PASS. That expected set is fixed here before the run: the job recomputes it from
+> # the bound module and must reproduce EXP_<T>_SHA256 (227 paths per truth: central T, seed T, 175 blocks, stat 1-50),
+> # or it stops before any call. CLEAN per truth = rc exactly 8, verdict PASS, atime.moved set-equal to the fixed set.
+> # Anything else (rc 0, 13, any extra or missing path) is NOT-CLEAN and goes to the director unrepaired.
+> # ONE job (-N 1 --exclusive, --time 01:00:00, 1.0 node-h) on a FRESH deploy clone at M that no other job reads; its
+> # single start check (sha256sum -c) runs before both calls, which run one after the other, so no plain read of a
+> # watched file runs while a call is in flight (B1). Writes only under $W; $U is read. Nothing to CFS. Not under set -u.
+17,19c17,20
+< W=$P/ll5d-rerun129-r1; DD=$W/deploy; U=$P/ll5d-unfolds-r2; PW=$P/ll5d-pilot-r2   # $U is read-only here (names)
+< UO=$P/ll5d-unfolds-rerun129-r1   # the rerun's fresh out directory (refused if it exists)
+< BW=$P/ll5d-bulk-r1               # the bulk's namespace: its pinned bulk-lanes.tsv is read (plainly; not an LL5D input)
+---
+> W=$P/ll5d-null-r1; DD=$W/deploy; U=$P/ll5d-unfolds-r2; PW=$P/ll5d-pilot-r2   # $U: the bulk's 1662 products, read
+> STAGED=$P/fd-1b-inv-20261101/i0/in   # --staged (setup reads s1/s1_assembly.npz through via_noatime)
+> CONSTRAINT=$P/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt
+> CMODELSHA=3cfdc6a5b8c6cea5f99b4678e27f6ca5f7973ee57a79b9d139798f0751cfcd60   # nd-unfolding/pv-ladder/readouts/cmodel_5d.json at M
+28,29c29
+< LANESHA=315f004bb6869345400dd87f3bee2d31f380713492e33ce3c5a7582a6c41ede7
+< CAP=148.0; THIS=2.5; TL=02:30:00; NODES="01"   # 4 lanes of 5: 5 x 1,062 s = 5,310 s + setup < 9,000 s
+---
+> CAP=148.0; THIS=1.0; TL=01:00:00; NODES="01"   # two null calls, one after the other, on one node
+31c31
+< for v in "$G18GATE" "$AR23GATE" "$WALLSSHA" "$CLIPSHA" "$CTLSHA" "$L5" "$LANESHA"; do [[ $v =~ ^[0-9a-f]{64}$ ]] || { echo "STOP a placeholder is not filled"; exit 2; }; done
+---
+> for v in "$G18GATE" "$AR23GATE" "$WALLSSHA" "$CLIPSHA" "$CTLSHA" "$L5" "$CMODELSHA"; do [[ $v =~ ^[0-9a-f]{64}$ ]] || { echo "STOP a placeholder is not filled"; exit 2; }; done
+36c36
+< exec >> "$W/logs/connect-rerun129.log" 2>&1
+---
+> exec >> "$W/logs/connect-null.log" 2>&1
+43d42
+< [ -e "$UO" ] && stop "$UO exists"
+70,109d68
+< [ "$(sha256sum "$BW/bulk-lanes.tsv" | cut -d' ' -f1)" = "$LANESHA" ] || stop "the bulk's bulk-lanes.tsv is not the pinned partition"
+< awk -F'\t' '$1 == "09" && $2 == "4"' "$BW/bulk-lanes.tsv" > "$W/bulk-09-4.tsv"
+< [ "$(awk 'END {print NR}' "$W/bulk-09-4.tsv")" = "1" ] || stop "bulk-lanes.tsv does not hold exactly one node 09 lane 4 row"
+< # the director's split: consecutive slices of 5 in the row's own order (items 1-5, 6-10, 11-15, 16-20) -> lanes 0-3
+< awk -F'\t' '{n = split($5, a, ","); if (n != 20) exit 3; for (l = 0; l < 4; l++) {s = a[5*l+1]; for (j = 2; j <= 5; j++) s = s "," a[5*l+j]; print "01\t" l "\t" $3 "\t" $4 "\t" s}}' \
+<   "$W/bulk-09-4.tsv" > "$W/rerun-lanes.tsv" || stop "the node 09 lane 4 row does not hold 20 items"
+< [ "$(awk 'END {print NR}' "$W/rerun-lanes.tsv")" = "4" ] || stop "the split did not give 4 lanes"
+< [ "$(cut -f5 "$W/rerun-lanes.tsv" | paste -sd, -)" = "$(cut -f5 "$W/bulk-09-4.tsv")" ] || stop "the 4 slices, joined in order, are not the row"
+< [ "$(cut -f5 "$W/rerun-lanes.tsv" | tr ',' '\n' | sort -u | awk 'END {print NR}')" = "20" ] || stop "the 4 slices are not 20 distinct items"
+< while IFS=$'\t' read -r nd l t r its; do echo "rerun lane: $nd $l $t $r items=$(echo "$its" | tr ',' '\n' | awk 'END {print NR}') $its"; done < "$W/rerun-lanes.tsv"
+< n20=0; for it in $(cut -f5 "$W/rerun-lanes.tsv" | tr ',' ' '); do
+<   [ -e "$U/ll5d_ar23_toy_$it.npz" ] || stop "$U/ll5d_ar23_toy_$it.npz is not there"; n20=$((n20 + 1)); done
+< [ "$n20" = "20" ] || stop "the lanes hold $n20 items, not 20"
+< echo "the 20 items are in \$U (names only; nothing there is opened)"
+< # the overlap check: none of the 18 G2R inputs is, or lies under, a WORLD path (realpath and device:inode)
+< python3 - "$ND" "$P" <<'OVL' || stop "a WORLD path overlaps a G2R input"
+< import os, sys
+< nd, p = sys.argv[1], sys.argv[2]
+< world = [f"{nd}/of_inputs_5d.npz", f"{p}/s5c-20260924/runs/p2/bkg_dump.npz", f"{nd}/bank_sweep_5d_bkgaware",
+<          f"{p}/s5p-20260926/bank_detector", f"{p}/fd-1b-20261030/pins.json",
+<          f"{p}/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt",
+<          f"{p}/fd-1b-staged-20261102/stage1/in/flux_universes.npz", f"{p}/fd-f1-20261027/f1b3/prep"]
+< d2 = f"{p}/MINERvA-OmniFold/2d-unfolding"
+< g2r = [f"{d2}/runEventLoopOmniFold_{x}_universes_full.root" for x in
+<        ("1A", "1B", "1C", "1D", "1E", "1F", "1G", "1L", "1M", "1N", "1O", "1P", "MEFHC")]
+< g2r += [f"{d2}/baseline_flux/runEventLoopMC_MEFHC.root", f"{d2}/baseline_flux/flux_integral_universes_MEFHC.root",
+<         f"{p}/cov2d-g2r-20261112/prepare/g2r_map.npz", f"{p}/cov2d-run-20261104/pseudo/G18/b/data_5721000.root",
+<         f"{p}/cov2d-run-20261104/pseudo/AR23-a2/b/data_5731000.root"]
+< assert len(world) == 8 and len(g2r) == 18
+< ino = lambda x: (os.stat(x).st_dev, os.stat(x).st_ino)
+< hits = []
+< for w in world:
+<     rw = os.path.realpath(w)
+<     for g in g2r:
+<         rg = os.path.realpath(g)
+<         if rg == rw or rg.startswith(rw.rstrip("/") + "/") or (os.path.isfile(w) and os.path.exists(g) and ino(w) == ino(g)):
+<             hits.append((w, g))
+< print(f"overlap check: {len(world)} WORLD paths x {len(g2r)} G2R inputs, hits {hits}")
+< sys.exit(1 if hits else 0)
+< OVL
+139c98,102
+< cat > "$W/sbatch-ll5d-rerun129.sh" <<'JOB'
+---
+> [ "$(sha256sum "$DD/nd-unfolding/pv-ladder/readouts/cmodel_5d.json" | cut -d' ' -f1)" = "$CMODELSHA" ] || stop "cmodel_5d.json is not M's"
+> echo "cmodel_5d.json $CMODELSHA OK"
+> ls "$U" > "$W/u-names.txt" || stop "ls \$U"
+> echo "u-names $(awk 'END {print NR}' "$W/u-names.txt") lines sha256 $(sha256sum "$W/u-names.txt" | cut -d' ' -f1)"
+> cat > "$W/sbatch-ll5d-null.sh" <<'JOB'
+141,145c104,111
+< # ll5d_rerun129_01's job: 4 lanes of 5 items, each an srun step (32 CPUs, 56G, --threads 32); the deploy at M with
+< # porcelain 0 and the bound blobs, checked ONCE here, before all 4 calls; the lanes asserted against ll5d_b; 4 ll5d_b.py
+< # unfold calls (ar23 toy, 5 items each, the 20 between them). Not under set -u. Writes only under $W and $UO (passed as the 4th argument).
+< DD=$1; M=$2; W=$3; U=$4; NODE=$5   # here U is $UO, the fresh out directory
+< P=/pscratch/sd/j/josephrb; ND=$P/MINERvA-OmniFold/nd-unfolding
+---
+> # ll5d_null_01's job: the deploy at M with porcelain 0 and the bound blobs, checked ONCE here, before both calls; the
+> # expected moved set recomputed from the bound module and pinned; then ll5d_b.py null for g18, then for ar23, one after
+> # the other; after each, its record checked against the fixed set. Not under set -u. Writes only under $W.
+> DD=$1; M=$2; W=$3; U=$4; NODE=$5
+> P=/pscratch/sd/j/josephrb; STAGED=$P/fd-1b-inv-20261101/i0/in
+> CONSTRAINT=$P/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt
+> EXP_g18_SHA256=ec363fd10db805005306e12955bc8651a02a340d5e53b8e81097bc53cb0e1e01; EXP_g18_N=227
+> EXP_ar23_SHA256=923681b295f1226360ca9ba9ee73c783ad7d9e2d559abd0106bc20d6320f3a93; EXP_ar23_N=227
+154,160c120,124
+< # The unfolds run as 1B staged ran them, and as S1 made the controls' references (meta threads 32): each lane one srun
+< # step with 32 CPUs and 56G (section 9's 8 lanes; the RSS limit is 75 % of 56 GiB), --threads 32. The one-thread rule
+< # is the gate's and the calibration's (section 9, 936-C2), not the unfolds'.
+< echo "lanes 4 x (srun --exact -n1 -c 32 --mem 56G) --threads 32"
+< python3 -B - "$DD/nd-unfolding" "$W/rerun-lanes.tsv" <<'PY' || stop "the row is not the bulk's node 09 lane 4"
+< import sys
+< from collections import Counter
+---
+> # the expected moved set (the director's ruling (a)): remade's opened products (bands_of, sa.EXPECT, STAT_REPLICAS,
+> # product_name over READINGS) intersected with products_digest's set (TAG, BLOCK_ROLES) applied to $U's names
+> for T in g18 ar23; do
+>   python3 -B - "$DD/nd-unfolding" "$W/u-names.txt" "$U" "$T" "$W/expected_moved_$T.txt" <<'EXPECT' || stop "expected set $T"
+> import hashlib, sys
+162,200c126,175
+< import ll5d_b
+< rows = [l.rstrip("\n").split("\t") for l in open(sys.argv[2]) if l.strip() and not l.startswith("#")]
+< got = [(t, r, i) for _, _, t, r, its in rows for i in its.split(",")]
+< per_lane = Counter((nd, ln) for nd, ln, t, r, its in rows for i in its.split(","))
+< want = {(t, r, i) for t in ll5d_b.TRUTHS for r, i in ll5d_b.items(t)} - set(ll5d_b.PILOT)
+< print(f"items={len(got)} unique={len(set(got))} in_section9_bulk={set(got) <= want} lanes={len(per_lane)} truth_role={sorted({(t, r) for t, r, _ in got})}")
+< sys.exit(0 if len(got) == 20 and len(set(got)) == 20 and set(got) <= want and len(per_lane) == 4 and set(per_lane.values()) == {5}
+<          and {(t, r) for t, r, _ in got} == {("ar23", "toy")} else 1)
+< PY
+< WORLD=(--npz "$ND/of_inputs_5d.npz" --bkg "$P/s5c-20260924/runs/p2/bkg_dump.npz" --bank "$ND/bank_sweep_5d_bkgaware"
+<   --detector-dir "$P/s5p-20260926/bank_detector" --pins "$P/fd-1b-20261030/pins.json"
+<   --expect-pins-sha256 5adcd576eb46f443fe4133b05044cd315c0eeb0f281e21acee5f2318b4bab248
+<   --flux-constraint "$P/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt"
+<   --flux-table "$P/fd-1b-staged-20261102/stage1/in/flux_universes.npz"
+<   --expect-flux-table-sha256 cdc3da788c385da72826b2a74b1987320bbe399af212722826914df4d2fe15a5
+<   --prep "$P/fd-f1-20261027/f1b3/prep"
+<   --manifest "$DD/docs/orchestration/state/2d-closeout/stageF/methods/sf1/manifest/inputs-sha256.txt"
+<   --expect-manifest-sha256 3a50f502b5a425bc4d116245c36f79bbc279cbd876b87aa72bd0298b001b5031)
+< mkdir -p "$W/lanes" || stop mkdir
+< lane() {
+<   local L=$1 rc=0 nd l t r its
+<   while IFS=$'\t' read -r -u 3 nd l t r its; do   # the table on fd 3, never stdin (the pilot r1 STOP)
+<     [ "$nd" = "$NODE" ] && [ "$l" = "$L" ] || continue
+<     srun --exact -n1 -c 32 --mem 56G --job-name "lane$L" /usr/bin/time -v python3 -B "$DD/nd-unfolding/ll5d_b.py" unfold "${WORLD[@]}" --truth "$t" --role "$r" --items "$its" \
+<       --out "$U" --threads 32 < /dev/null >> "$W/lanes/node$NODE-lane$L.out" 2>> "$W/lanes/node$NODE-lane$L.time"
+<     s=$?; echo "node $NODE lane $L $t $r rc=$s" >> "$W/lanes/node$NODE-lane$L.out"; rc=$((rc | s))
+<   done 3< <(grep -v '^#' "$W/rerun-lanes.tsv")
+<   return $rc
+< }
+< pids=(); for L in 0 1 2 3; do lane $L & pids+=($!); done
+< urc=0; for k in 0 1 2 3; do wait ${pids[$k]}; s=$?; echo "lane $k rc=$s"; urc=$((urc | s)); done
+< echo "unfold lanes rc=$urc"
+< case "$urc" in
+<   0) echo "RERUN-EXIT clean rc=0" ;;
+<   8) echo "RERUN-EXIT rc=8: ll5d_b's atime sidecar lists a move; to the director with the sidecar, nothing graded until explained" ;;
+<   *) echo "RERUN-EXIT NOT-CLEAN rc=$urc: to the director unrepaired; nothing graded even if the comparison is equal" ;;
+< esac
+< grep -h "rc=" "$W"/lanes/node$NODE-lane*.out
+< grep -h -E "Elapsed|Maximum resident|Exit status" "$W"/lanes/node$NODE-lane*.time
+---
+> import ll5d, ll5d_b as b
+> names = [l.strip() for l in open(sys.argv[2]) if l.strip()]
+> U, T = sys.argv[3].rstrip("/"), sys.argv[4]
+> opened = set()
+> for rd in ll5d.READINGS:
+>     opened |= {b.product_name(T, "central", "T"), b.product_name(T, "seed", "T")}
+>     opened |= {b.product_name(T, "block", f"{band}_{i}") for band in b.bands_of(rd) for i in range(b.sa.EXPECT[band])}
+>     opened |= {b.product_name(T, "stat", str(x)) for x in b.STAT_REPLICAS}
+> dig = {n for n in names if n.startswith(f"{b.TAG}_{T}_") and n.endswith(".npz") and ".partial-" not in n
+>         and n.split("_")[2] in b.BLOCK_ROLES}
+> body = "".join(f"{U}/{n}\n" for n in sorted(opened & dig))
+> open(sys.argv[5], "w").write(body)
+> print(f"expected {T}: opened {len(opened)} digested {len(dig)} absent {len(opened - set(names))} moved {len(opened & dig)} "
+>       f"sha256 {hashlib.sha256(body.encode()).hexdigest()}")
+> sys.exit(1 if opened - set(names) else 0)
+> EXPECT
+>   eval "want=\$EXP_${T}_SHA256; wn=\$EXP_${T}_N"
+>   [ "$(sha256sum "$W/expected_moved_$T.txt" | cut -d' ' -f1)" = "$want" ] && [ "$(awk 'END {print NR}' "$W/expected_moved_$T.txt")" = "$wn" ] \
+>     || stop "the expected moved set at $T is not the fixed one ($want, $wn paths)"
+>   echo "expected moved $T: $wn paths, sha256 $want (fixed)"
+> done
+> urc=0
+> for T in g18 ar23; do
+>   /usr/bin/time -v python3 -B "$DD/nd-unfolding/ll5d_b.py" null --staged "$STAGED" \
+>     --definition "$DD/nd-unfolding/pv-ladder/readouts/h2_definition.json" --unfolds "$U" \
+>     --cmodel-json "$DD/nd-unfolding/pv-ladder/readouts/cmodel_5d.json" --flux-constraint "$CONSTRAINT" \
+>     --truth "$T" --out "$W/null-$T.json" < /dev/null > "$W/null-$T.out" 2> "$W/null-$T.time"; s=$?
+>   echo "null $T rc=$s: $(tail -1 "$W/null-$T.out")"
+>   python3 -B - "$W/null-$T.json" "$W/null-$T.invalid.json" "$W/expected_moved_$T.txt" "$s" "$T" <<'CHECK'
+> import json, os, sys
+> rec_p, inv_p, exp_p, rc, T = sys.argv[1], sys.argv[2], sys.argv[3], int(sys.argv[4]), sys.argv[5]
+> exp = sorted(l for l in open(exp_p).read().splitlines() if l)
+> p = rec_p if os.path.exists(rec_p) else inv_p if os.path.exists(inv_p) else None
+> if p is None:
+>     print(f"NULL-EXIT {T} NOT-CLEAN rc={rc}: no record; to the director unrepaired"); sys.exit(1)
+> rec = json.load(open(p))
+> moved = sorted(rec.get("atime", {}).get("moved", []))
+> extra, missing = sorted(set(moved) - set(exp)), sorted(set(exp) - set(moved))
+> print(f"null {T}: record {os.path.basename(p)} verdict {rec.get('verdict')} moved {len(moved)} expected {len(exp)} "
+>       f"extra {len(extra)} {extra[:5]} missing {len(missing)} {missing[:5]}")
+> ok = rc == 8 and p == rec_p and rec.get("verdict") == "PASS" and not extra and not missing
+> print(f"NULL-EXIT {T} " + ("CLEAN: rc 8, verdict PASS, moved == the fixed set (the declared deviation)" if ok else
+>       f"NOT-CLEAN rc={rc}: to the director unrepaired; nothing is read from this null"))
+> sys.exit(0 if ok else 1)
+> CHECK
+>   c=$?; urc=$((urc | c))
+> done
+> sha256sum "$W"/null-*.json "$W"/null-*.out "$W"/expected_moved_*.txt 2>/dev/null
+> grep -h -E "Elapsed|Maximum resident|Exit status" "$W"/null-*.time
+> echo "null checks rc=$urc"
+204c179
+< echo "job script sha256 $(sha256sum "$W/sbatch-ll5d-rerun129.sh" | cut -d' ' -f1)"
+---
+> echo "job script sha256 $(sha256sum "$W/sbatch-ll5d-null.sh" | cut -d' ' -f1)"
+209a185,200
+> python3 - "$W/atime-pre.tsv" "$STAGED" "$CONSTRAINT" "$DD" "$U" "$W/u-names.txt" <<'COVER' || stop "a declared protected input is not in atime-pre"
+> # The null's declared inputs (ll5d_b.setup, remade, made_from at 4231b14d): the staged S1 assembly and the flux
+> # constraint (protected: each must be in atime-pre), the deploy's definition and cmodel json, and the $U products
+> # of the two truths' central/seed/block/stat roles (LL5D's own outputs). Classified by path against atime-pre.
+> import os, sys
+> pre = {l.split("\t", 1)[1] for l in open(sys.argv[1]).read().splitlines()}
+> staged, constraint, dd, U = sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5].rstrip("/")
+> prot = [f"{staged}/s1/s1_assembly.npz", constraint]
+> deploy = [f"{dd}/nd-unfolding/pv-ladder/readouts/h2_definition.json", f"{dd}/nd-unfolding/pv-ladder/readouts/cmodel_5d.json"]
+> prods = [f"{U}/{n}" for n in open(sys.argv[6]).read().split() if n.split("_")[1:2] in (["g18"], ["ar23"])
+>          and n.split("_")[2:3] and n.split("_")[2] in ("central", "seed", "block", "stat") and n.endswith(".npz")]
+> missing = [p for p in prot + deploy if not os.path.exists(p)]
+> print(f"declared inputs: protected {len(prot)} (in atime-pre: {sum(p in pre for p in prot)}), deploy {len(deploy)} "
+>       f"(in atime-pre: {sum(p in pre for p in deploy)}), products {len(prods)} (in atime-pre: {sum(p in pre for p in prods)}), missing {missing}")
+> sys.exit(0 if all(p in pre for p in prot) and not missing and not any(p in pre for p in deploy + prods) else 1)
+> COVER
+212,213c203,204
+<   jid=$(sbatch --parsable -A m3246 -q regular -C cpu -N 1 --exclusive --no-requeue -t "$TL" -J "ll5d_rerun129_$NN" \
+<     -o "$W/logs/%x_%j.out" "$W/sbatch-ll5d-rerun129.sh" "$DD" "$M" "$W" "$UO" "$NN")
+---
+>   jid=$(sbatch --parsable -A m3246 -q regular -C cpu -N 1 --exclusive --no-requeue -t "$TL" -J "ll5d_null_$NN" \
+>     -o "$W/logs/%x_%j.out" "$W/sbatch-ll5d-null.sh" "$DD" "$M" "$W" "$U" "$NN")
+215,216c206,207
+<   [ -n "$jid" ] || { [ ${#ids[@]} -gt 0 ] && scancel "${ids[@]}"; stop "sbatch for ll5d_rerun129_$NN returned no id: cancelled ${ids[*]}"; }
+<   ids+=("$jid"); echo "Submitted batch job $jid (ll5d_rerun129_$NN)"
+---
+>   [ -n "$jid" ] || { [ ${#ids[@]} -gt 0 ] && scancel "${ids[@]}"; stop "sbatch for ll5d_null_$NN returned no id: cancelled ${ids[*]}"; }
+>   ids+=("$jid"); echo "Submitted batch job $jid (ll5d_null_$NN)"
+218c209
+<   [ "$tl" = "TimeLimit=02:30:00" ] || { scancel "${ids[@]}"; stop "ll5d_rerun129_$NN's time limit parsed as ${tl#TimeLimit=}, not 02:30:00: cancelled ${ids[*]}"; }
+---
+>   [ "$tl" = "TimeLimit=01:00:00" ] || { scancel "${ids[@]}"; stop "ll5d_null_$NN's time limit parsed as ${tl#TimeLimit=}, not 01:00:00: cancelled ${ids[*]}"; }
+220c211
+< squeue --me -h -o '%i %j %T %l %D' | grep ll5d_rerun129_
+---
+> squeue --me -h -o '%i %j %T %l %D' | grep ll5d_null_

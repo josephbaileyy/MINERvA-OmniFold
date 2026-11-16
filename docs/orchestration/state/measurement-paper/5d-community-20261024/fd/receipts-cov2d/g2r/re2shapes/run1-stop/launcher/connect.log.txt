@@ -1,0 +1,24 @@
+host=login02 start=2026-11-15T22:49:25Z pid=625449 B=903fb78b941a2f889bfcc5092e41ce27f5add898 M=9855389f255ffe4b42f9f729f7c57754170df627 PKG=5e0bd4a62a9e58d963d632b43285d34b18e1a62f nproc=244 OMP_NUM_THREADS=unset
+squeue rc=0: [JOBID|NAME|STATE|TIME_LIMIT|NODES]
+sacct rdx_s1_1A rc=0: [61315648|rdx_s1_1A|COMPLETED|2026-11-14T20:24:41]
+sacct all since 2026-11-01 rc=0: 156 rows
+fence (start) clear: every query rc 0, rdx_s1_1A ended, no job queued, running or unended, group C marker absent
+partc-r2 SHA256SUMS OK (128 lines)
+deploy porcelain_lines=0 head=903fb78b941a2f889bfcc5092e41ce27f5add898
+re2c_rollup_g2r.py: OK
+re2c_run_g2r.sh: OK
+c0_sums.py: OK
+c1_compare.py: OK
+products.tsv.txt: OK
+re2c_determinism.py: OK
+arm identity start=2026-11-15T22:50:37Z
+arm identity rc=0 end=2026-11-15T22:53:31Z
+RUN COMPLETE (refined)
+driver: G2R-DRIVER mode=identity rollup_rc=0 redirected labels=0 calls=0
+c0 comparator rc=1
+C0 STOP: lines 128/128 mkdtemp tmp6hw50588/tmpfu2k112s counts {"OTHER": 1, "bitwise": 62, "path-pairs": 26, "scratch (id.json: equal after the path pairs and the mkdtemp name)": 1, "scratch (inj.json: equal after the path pairs and the mkdtemp name, inj.root digest)": 1, "scratch (inj.root: TFile time; digest = its run's inj.json record)": 1, "skipped: PDF: creation date; compared through its PNG twin": 22, "skipped: run logs or caches": 14} other ['receipts/receipt_model_chi2.json'] comparator FAIL differ ['SHA256SUMS', 'receipts/receipt_model_chi2.json'] extra ['fig1-a2-cabbbbc3/RUN-fig1.txt', 'fig1-a2-cabbbbc3/fig1_run.log', 'fig1-a2-cabbbbc3/pins.json', 'fig1-a2-cabbbbc3/uqmedian.tex', 'fig1/RUN-fig1.txt', 'fig1/fig1_run.log', 'fig1/pins.json', 'fig1/uqmedian.tex', 'receipts/receipt_model_chi2.json']
+c0_sums rc=1
+STOP C0 did not pass: see /pscratch/sd/j/josephrb/cov2d-re2shapes-20261114/c0-sums.json and /pscratch/sd/j/josephrb/cov2d-re2shapes-20261114/c0-determinism.json
+RE2SHAPES INVALID (connect)
+end=2026-11-15T22:53:38Z
+DONE

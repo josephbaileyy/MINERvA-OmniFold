@@ -1,0 +1,24 @@
+{"out": "ll5d_g18_toy_all_4751295.npz", "seconds_unfold": 923.903}
+{"out": "ll5d_g18_toy_all_4751296.npz", "seconds_unfold": 897.126}
+{"out": "ll5d_g18_toy_all_4751297.npz", "seconds_unfold": 896.099}
+{"out": "ll5d_g18_toy_all_4751298.npz", "seconds_unfold": 899.769}
+{"out": "ll5d_g18_toy_all_4751299.npz", "seconds_unfold": 885.669}
+node 05 lane 7 g18 toy rc=8
+{"out": "ll5d_ar23_seed_T.npz", "seconds_unfold": 810.64}
+node 05 lane 7 ar23 seed rc=0
+{"out": "ll5d_ar23_block_2p2h_0.npz", "seconds_unfold": 821.403}
+{"out": "ll5d_ar23_block_2p2h_1.npz", "seconds_unfold": 802.703}
+{"out": "ll5d_ar23_block_2p2h_2.npz", "seconds_unfold": 804.807}
+{"out": "ll5d_ar23_block_AGKYxF1pi_0.npz", "seconds_unfold": 800.306}
+{"out": "ll5d_ar23_block_AGKYxF1pi_1.npz", "seconds_unfold": 805.724}
+{"out": "ll5d_ar23_block_AhtBY_0.npz", "seconds_unfold": 804.337}
+{"out": "ll5d_ar23_block_AhtBY_1.npz", "seconds_unfold": 805.297}
+{"out": "ll5d_ar23_block_BhtBY_0.npz", "seconds_unfold": 805.416}
+{"out": "ll5d_ar23_block_BhtBY_1.npz", "seconds_unfold": 807.258}
+{"out": "ll5d_ar23_block_CCQEPauliSupViaKF_0.npz", "seconds_unfold": 803.401}
+{"out": "ll5d_ar23_block_CCQEPauliSupViaKF_1.npz", "seconds_unfold": 800.581}
+{"out": "ll5d_ar23_block_CV1uBY_0.npz", "seconds_unfold": 804.887}
+{"out": "ll5d_ar23_block_CV1uBY_1.npz", "seconds_unfold": 808.274}
+{"out": "ll5d_ar23_block_CV2uBY_0.npz", "seconds_unfold": 804.467}
+{"out": "ll5d_ar23_block_CV2uBY_1.npz", "seconds_unfold": 807.058}
+node 05 lane 7 ar23 block rc=8

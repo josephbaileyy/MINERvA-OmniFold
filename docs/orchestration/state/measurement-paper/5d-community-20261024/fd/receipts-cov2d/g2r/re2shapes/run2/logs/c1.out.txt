@@ -1,0 +1,11 @@
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+C1 PASS: (a) max_scaled=7.311559097428637e-16 n_above=0 worst={'i': 111, 'j': 127, 'Q_A': 3.634918298325739e-86, 'C_new': 3.6349182983257424e-86}; (i) per-entry max_rel=5.800344509600607e-13 n_above_1e-15=1880 worst={'i': 69, 'j': 107, 'Q_A': 6.810223802622453e-85, 'C_new': 6.810223802626403e-85}; (ii) 2.580856884329175e-16; (iv) bitwise=False; (b) rows=14 failing=[]; (c) rows=20 failing=[]; (d) x=True F=True; universe_delta_scaled_rel=5.758541080103807e-14
+c1 rc=0

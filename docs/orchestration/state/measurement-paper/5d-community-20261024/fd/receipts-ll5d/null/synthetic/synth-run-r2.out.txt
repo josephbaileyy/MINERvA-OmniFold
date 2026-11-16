@@ -1,0 +1,19 @@
+host=login32 utc=2026-11-14T11:31:42Z
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+code/nd-unfolding/ll5d_b.py: OK
+code/nd-unfolding/fd_1b_inv.py: OK
+code/nd-unfolding/s5n_pseudo.py: OK
+test_null_order.py: OK
+python=/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3 Python 3.11.14
+control: atime before 1794655994000000000 after a plain read 1794655996000000000 moved=True
+bound: digest 6e813a3d5f3d4a62b72ed2476ed867ee479854f900b330d3477b6b59d5db8b1a watched 6 moved 6
+mutant: digest 6e813a3d5f3d4a62b72ed2476ed867ee479854f900b330d3477b6b59d5db8b1a watched 6 moved 0
+bound: moved == the opened set: True
+mutant: moved empty: True
+digest equal between bound and mutant (same names and bytes): True
+NULL-ORDER TEST PASS
+removed 15 entries and /pscratch/sd/j/josephrb/ll5d-null-synth-r2/work; left=False
+test rc=0
+left in place for removal by the user: /pscratch/sd/j/josephrb/ll5d-null-synth-r2/code and /pscratch/sd/j/josephrb/ll5d-null-synth-r2/test_null_order.py
+end=2026-11-14T11:33:24Z
+ssh_rc=0

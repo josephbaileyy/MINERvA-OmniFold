@@ -1,0 +1,1 @@
+LL5D-READOUT verdict={'g18/minus2': 'UNDER-COVERS', 'g18/all': 'UNDER-COVERS'}

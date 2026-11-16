@@ -1,0 +1,17 @@
+{
+ "schema": "re2c-rollup-g2r-driver/1",
+ "mode": "identity",
+ "driver_sha256": "619ae62bca7cac28e3bbc4154be5e2de3bf63ebbe9a562457b0be8c4b95127dc",
+ "rollup_sha256": "53840b0bc687511995466b74bef185412f0b4db3244f170e6204629b516b74d8",
+ "products_tsv": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/g2r/readout/data/products.tsv.txt",
+ "products_tsv_staged": "/pscratch/sd/j/josephrb/cov2d-re2shapes-20261115/stage/products.tsv.txt",
+ "products_tsv_sha256": "a0f86fe191d6e02e4d4a9f9616dff6edaa2fadfb4384e9d56c333a92f771b8cf",
+ "g2r_out": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out",
+ "n_mapped": 175,
+ "mapping": {},
+ "rollup_rc": 0,
+ "redirected": {
+  "n_labels": 0,
+  "n_calls": 0
+ }
+}

@@ -1,0 +1,718 @@
+{
+ "schema": "re2c-rollup-g2r-driver/1",
+ "mode": "g2r",
+ "driver_sha256": "619ae62bca7cac28e3bbc4154be5e2de3bf63ebbe9a562457b0be8c4b95127dc",
+ "rollup_sha256": "53840b0bc687511995466b74bef185412f0b4db3244f170e6204629b516b74d8",
+ "products_tsv": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/g2r/readout/data/products.tsv.txt",
+ "products_tsv_staged": "/pscratch/sd/j/josephrb/cov2d-re2shapes-20261115/stage/products.tsv.txt",
+ "products_tsv_sha256": "a0f86fe191d6e02e4d4a9f9616dff6edaa2fadfb4384e9d56c333a92f771b8cf",
+ "g2r_out": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out",
+ "n_mapped": 175,
+ "mapping": {
+  "U_2p2h_0": {
+   "digest": "021a56ef47372912daef81b7c2c1c0bc68358536ea48675da1f2388bffa02a87",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_2p2h_0/xsec.root"
+  },
+  "U_2p2h_1": {
+   "digest": "def156137db131747d6f707432e6dbe43aafaf32f2db8a6b5c723d08914af8ac",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_2p2h_1/xsec.root"
+  },
+  "U_2p2h_2": {
+   "digest": "32dccfbac9bf7b00c6c7021f3041939187960b1eee69511988811b0d5ab3d0db",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_2p2h_2/xsec.root"
+  },
+  "U_AGKYxF1pi_0": {
+   "digest": "4dc69ab4cf53bf4de4683ede924faa40fdc0ff1517ed89f667900771e182e7f4",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_AGKYxF1pi_0/xsec.root"
+  },
+  "U_AGKYxF1pi_1": {
+   "digest": "c8cba4cfd076b4d91b9abdafb316d5aba3b3f650f3740f975f2ae5a3e9a90bd6",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_AGKYxF1pi_1/xsec.root"
+  },
+  "U_AhtBY_0": {
+   "digest": "482df6cee88e77f607a76a582c8d321b3028c059ad0e32287dbf49a4989efdd1",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_AhtBY_0/xsec.root"
+  },
+  "U_AhtBY_1": {
+   "digest": "b09fc89307ec4b378dd8428f92c2fb35844991692081551f904991199e70c658",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_AhtBY_1/xsec.root"
+  },
+  "U_BhtBY_0": {
+   "digest": "66db1f90bf0ea4cde0cac3a72e5c52692d4b5eb2771330619c99e58407197151",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_BhtBY_0/xsec.root"
+  },
+  "U_BhtBY_1": {
+   "digest": "4f26df1a1ec21566302b7e70884f14e09d6ad47433a54e6e6118dbf30349d491",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_BhtBY_1/xsec.root"
+  },
+  "U_CCQEPauliSupViaKF_0": {
+   "digest": "b4d4146150d894367e398963c25420d8eba6e769b809dd70c0c2d33a44724d0a",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_CCQEPauliSupViaKF_0/xsec.root"
+  },
+  "U_CCQEPauliSupViaKF_1": {
+   "digest": "6fd9d11e41cf0b1d084d974bab56514108b8e5883d4b01cf227e31bac0f12fd7",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_CCQEPauliSupViaKF_1/xsec.root"
+  },
+  "U_CV1uBY_0": {
+   "digest": "2f6b893b0f222b1d0ad429c6cb33ec383760d1be6ccbf2bae65458963f15b5d9",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_CV1uBY_0/xsec.root"
+  },
+  "U_CV1uBY_1": {
+   "digest": "89d4849b3dbc33a5229765e8037f74d809872d09ec3f9a3d988f3b5effe15bcc",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_CV1uBY_1/xsec.root"
+  },
+  "U_CV2uBY_0": {
+   "digest": "e20f221443d0af9c6eeb1dc224dbdc08ff817e8f4a39fa19ecf5a90188fa4295",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_CV2uBY_0/xsec.root"
+  },
+  "U_CV2uBY_1": {
+   "digest": "44c514ae667d15a90e804430bba96b530f26d87dd6fc9fa151eecd1ce4714d1d",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_CV2uBY_1/xsec.root"
+  },
+  "U_EtaNCEL_0": {
+   "digest": "fc3543adc1abfae0c4625d4cef39e47b701b2059a0fd0ac40e9f65f3da3784fc",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_EtaNCEL_0/xsec.root"
+  },
+  "U_EtaNCEL_1": {
+   "digest": "6504dfc80d705620c64ccee67c3ca594ef752a5f9a3a3c0d458ff98a63815c1f",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_EtaNCEL_1/xsec.root"
+  },
+  "U_Flux_0": {
+   "digest": "99cad6aff867cf98ac1d85bb4cfbbf8068de934ad5f380a46e03ed1c9d7f6011",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_0/xsec.root"
+  },
+  "U_Flux_1": {
+   "digest": "2828a4a2efe13638babbb0dfa3fb67a218dfdc26a4505571f167d4b0dd0830c4",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_1/xsec.root"
+  },
+  "U_Flux_10": {
+   "digest": "96e104dc3866e25692b8f2e8841e29369300eb55af73af6ccb6d7687dfbde79a",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_10/xsec.root"
+  },
+  "U_Flux_11": {
+   "digest": "193207158b7dd39a4762b43809691abe6d153f40e0473fd0b13bd892b75f0dd0",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_11/xsec.root"
+  },
+  "U_Flux_12": {
+   "digest": "17a2b2612cca6af040f9c90272f543e847aff3003acc1af288ac2cdd1b7efda8",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_12/xsec.root"
+  },
+  "U_Flux_13": {
+   "digest": "044850229ad39d7ac631e1d1f0510954e26a1fd6815bbb5783fe2a718925ecec",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_13/xsec.root"
+  },
+  "U_Flux_14": {
+   "digest": "a83edcc4093b1acd27c3987d014952549cac0e6a2831b6e4ade718c801e7a96f",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_14/xsec.root"
+  },
+  "U_Flux_15": {
+   "digest": "601d249ceb5ff9b522e175815a5ede2d1492444277e798f9aedffc0a7b288189",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_15/xsec.root"
+  },
+  "U_Flux_16": {
+   "digest": "b3998f2566cc9b6af3cdfd1345e684c931050b7e8cfed7b05cdf3f003e93f2e0",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_16/xsec.root"
+  },
+  "U_Flux_17": {
+   "digest": "c52aae76fe6e8b608aa6d32a67a4cb567a68975fbca72ce2335d50f078d018d8",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_17/xsec.root"
+  },
+  "U_Flux_18": {
+   "digest": "c882da4785d1a568323940f9893e5e1e6c54df3bbf812f34c263c39fb38913eb",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_18/xsec.root"
+  },
+  "U_Flux_19": {
+   "digest": "2a48ab65ac1cf22e61a44c92c3aac4c6671e2f63f715b13b09b48f5d5355fb60",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_19/xsec.root"
+  },
+  "U_Flux_2": {
+   "digest": "fddb70d1934ff5c152c13962965dc134b174b5ad73e85ccd69708fdda6887b6d",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_2/xsec.root"
+  },
+  "U_Flux_20": {
+   "digest": "5ebf16ca5d4b1b7105e741d269b7c881c5be30011e8ab20ba85dd6feee75030e",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_20/xsec.root"
+  },
+  "U_Flux_21": {
+   "digest": "1bd5361c08609f284ef35791eace4b447e0e5f4585f5f975ff46eda475ec2b1e",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_21/xsec.root"
+  },
+  "U_Flux_22": {
+   "digest": "46ce8c4ffb56820c488d1a57cd1a836f5838aa05b8bb81b002cf7dfe96f760f8",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_22/xsec.root"
+  },
+  "U_Flux_23": {
+   "digest": "dccdfad9d82f83cdc82abff2e166922d1eb17395a34f47acdbc90643c585b942",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_23/xsec.root"
+  },
+  "U_Flux_24": {
+   "digest": "1ee9cb459cd42464cf25fcf4360a6efb8d74d736942e29350dcb408f7c692972",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_24/xsec.root"
+  },
+  "U_Flux_25": {
+   "digest": "6f135cde18f4de5712bc9df18382c70bc5c4fd3dd0abcd98925ee7164d310020",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_25/xsec.root"
+  },
+  "U_Flux_26": {
+   "digest": "77231155ba662686d22518d5070fb40fbf78bfce2682731355cb77ff5db0ec34",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_26/xsec.root"
+  },
+  "U_Flux_27": {
+   "digest": "253deb11fad6723847131c2a32e830e0b7f3377b6648ce2efaeb87c6146301a3",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_27/xsec.root"
+  },
+  "U_Flux_28": {
+   "digest": "0797d079661d022ec34d55a8752b322e74b1938f5d9da361597105bfc673e7c7",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_28/xsec.root"
+  },
+  "U_Flux_29": {
+   "digest": "f0e9ff9f5074d18bab56bd084cf0606d0319b5e0c2ea58a0352577206dbed031",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_29/xsec.root"
+  },
+  "U_Flux_3": {
+   "digest": "4cffc97250e82bf405b2db4b1f9575c5f8cb64ef6ed0750f2ad86a527ef1dc26",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_3/xsec.root"
+  },
+  "U_Flux_30": {
+   "digest": "376b577f7c242c0f014bc15d3fcc51e02248a26a3f22f196d8e48f371a4624c2",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_30/xsec.root"
+  },
+  "U_Flux_31": {
+   "digest": "f0939b21abd88ad2e4a55f17c44be64a94173c8c290ac118c243067e0fbde5f1",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_31/xsec.root"
+  },
+  "U_Flux_32": {
+   "digest": "01dbf5e2e979f1e3ec7919bb70ca0a155a4a159d7ac4c8b466a92aab02e26f6b",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_32/xsec.root"
+  },
+  "U_Flux_33": {
+   "digest": "ca66bc82b14a7825768c15cbb07e1cc4ab31a8861188111e7fff72706c2a2e45",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_33/xsec.root"
+  },
+  "U_Flux_34": {
+   "digest": "6f3a800f2b69ec34d9ce8b9e50277c09459262aa15a99d9d23749fa6603cc754",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_34/xsec.root"
+  },
+  "U_Flux_35": {
+   "digest": "11f051445791c198fe5c219f1b97b90e1f98616b16827ec6ac1c531b7a467524",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_35/xsec.root"
+  },
+  "U_Flux_36": {
+   "digest": "5ece34bb88057fed70f1ade80f5ef72642cbb2641c8527be21358937bb60c415",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_36/xsec.root"
+  },
+  "U_Flux_37": {
+   "digest": "782cfc1d7699e618f98035e741d593d0d01e736445a60b266a55531c5b6b75b4",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_37/xsec.root"
+  },
+  "U_Flux_38": {
+   "digest": "23fbae1f37c1da1539466e7ff2eda1c3b653a8d39d07bd4d6106c72b2a2398d4",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_38/xsec.root"
+  },
+  "U_Flux_39": {
+   "digest": "ead79c05372e631556651b4ae2b1ce4b36fbfaad34397a39c703656d02a8706a",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_39/xsec.root"
+  },
+  "U_Flux_4": {
+   "digest": "48d2ea0ae550d1f36d1825a119e782f3f78b1a016e512f1667ae0d8c4ea0d92a",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_4/xsec.root"
+  },
+  "U_Flux_40": {
+   "digest": "0e5e1efda51e6f3b57665d6e1706f3501a79884d8bce49307a65dbee45e1fd15",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_40/xsec.root"
+  },
+  "U_Flux_41": {
+   "digest": "d6d34cd0a1905d0d0c363657e25c6b7367a8e85868d156dc3e3b6dc053422b86",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_41/xsec.root"
+  },
+  "U_Flux_42": {
+   "digest": "ceaefbd1e3472c14e4a1ab0503a1e79ea7d0034faa3c0a166c75e9cf0f1a817d",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_42/xsec.root"
+  },
+  "U_Flux_43": {
+   "digest": "011dda230f3ac20ad08186c381ca44db8f16e6c974e797e8a7c1eaf279207d7e",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_43/xsec.root"
+  },
+  "U_Flux_44": {
+   "digest": "601e1ebe3e073b3bb67aaf975e58581caeca1bb8ccc8233a205d96283add8c31",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_44/xsec.root"
+  },
+  "U_Flux_45": {
+   "digest": "ef53925737fa2f588ed7ea1b1318479c6e6f97ec454255a33f1f5ea4190751ca",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_45/xsec.root"
+  },
+  "U_Flux_46": {
+   "digest": "3345574c30834170b55a5c60de75a82988b19a471b7326b6fb04860ee47780c7",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_46/xsec.root"
+  },
+  "U_Flux_47": {
+   "digest": "8dce358be6ccac80754fc1b0ffea4417089d9002186a92d2f44745c5cd865ac2",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_47/xsec.root"
+  },
+  "U_Flux_48": {
+   "digest": "5eb0e20beadaf210a412e26cc3dff3e0f011e890def6596408bcf0dfcd79c8bd",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_48/xsec.root"
+  },
+  "U_Flux_49": {
+   "digest": "0aaa0b08a5fa138bc81b4bc5b662fa1427ee6072a5edac4ff7daecc4ce3f3bd7",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_49/xsec.root"
+  },
+  "U_Flux_5": {
+   "digest": "48672a7cdd4c93c6548abcd0f86430d6fe81160b6e4ffe9b688c5160accf03a4",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_5/xsec.root"
+  },
+  "U_Flux_50": {
+   "digest": "8d06dfaf7ee162943855adffd41bec40744a46667c936b3e0eb732b319d0e41d",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_50/xsec.root"
+  },
+  "U_Flux_51": {
+   "digest": "6843bbc9eba5e7d8f63a702648e8892a7aa06f91bdd1acd98e0315382f7dd7de",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_51/xsec.root"
+  },
+  "U_Flux_52": {
+   "digest": "093abbc15925d4ac77ac758f07dd2e90c8cec50aee4475229fc08fa3b43f5a15",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_52/xsec.root"
+  },
+  "U_Flux_53": {
+   "digest": "44d332a55e82a4f251c693adaf0a27abf154343ab623796d77b9a52fae60feaa",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_53/xsec.root"
+  },
+  "U_Flux_54": {
+   "digest": "0e5619fc45dd613deae5b8c1505a2dd0284a6b1c2a07126d8d4b817808c86d76",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_54/xsec.root"
+  },
+  "U_Flux_55": {
+   "digest": "63ea5ba523b68c1d304f68d14d42919883606b5cb9f45aed62e0e3e465be7947",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_55/xsec.root"
+  },
+  "U_Flux_56": {
+   "digest": "c35d2806a0ccb2fe612f9c65fbf90834c13cb4128c28eb786a354c5d357b6889",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_56/xsec.root"
+  },
+  "U_Flux_57": {
+   "digest": "87628f98b90c32ef225973031ea79973a2a3682477a2a0282a21de57deec1793",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_57/xsec.root"
+  },
+  "U_Flux_58": {
+   "digest": "1fc2206d9cba46f44b2b6c34806924502bfdc4a3a651fb770a190db2d1150bae",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_58/xsec.root"
+  },
+  "U_Flux_59": {
+   "digest": "431335b6039d2223cfb06e9dd2a8cdccd7b37610e18aa5141b5feb418c8d78fb",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_59/xsec.root"
+  },
+  "U_Flux_6": {
+   "digest": "219cbf7cffcc5fd0178c9152cf18aa06365a0092d1c3dabe0f82bd72559ff9d9",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_6/xsec.root"
+  },
+  "U_Flux_60": {
+   "digest": "c8d1d7109659d56dafeea62484bf49812db0f595774ec35c880b3f1f2681ff17",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_60/xsec.root"
+  },
+  "U_Flux_61": {
+   "digest": "69c145da3bdb2968999a1e7d0bdddd0076075f65ea2c9529c7e19bbfbb6608e5",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_61/xsec.root"
+  },
+  "U_Flux_62": {
+   "digest": "999d8397e896a61c5192d72cb24423ec8bf3b6d87120519d5d9c88b3c82b71ce",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_62/xsec.root"
+  },
+  "U_Flux_63": {
+   "digest": "eae3984beb0dfce3f5d1296305ae958543d09cd53bf0f7538cbfe0daa2302966",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_63/xsec.root"
+  },
+  "U_Flux_64": {
+   "digest": "a56f95d134605c8edba9d8004ce166ae4431bf015b950319007d75488b7d81ce",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_64/xsec.root"
+  },
+  "U_Flux_65": {
+   "digest": "6800c1ac3d71fb38851b6d6412affea3fb482aa2fcce4609e5ee8c3bff5a0adf",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_65/xsec.root"
+  },
+  "U_Flux_66": {
+   "digest": "6474f0f1d85724cc8926674378d68404e8736f1d3d22032ac6e2341079fd7695",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_66/xsec.root"
+  },
+  "U_Flux_67": {
+   "digest": "9614e4cc9617a0f9ba552a85994d8671c21890130928ea9d3c5f65f781ea91fc",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_67/xsec.root"
+  },
+  "U_Flux_68": {
+   "digest": "5bdbd934d9a89a78a78e09259925e217feac5e683f40187e77732e8097c3edf3",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_68/xsec.root"
+  },
+  "U_Flux_69": {
+   "digest": "98f199792adde0524c2de03cea5c9c398e006ede02a0ffdfad0dfc3025f74f2c",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_69/xsec.root"
+  },
+  "U_Flux_7": {
+   "digest": "78125ec3a19558fb7b142aad8e06187ce5ecbffc5f892021f0bb9ffbd7f1c13c",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_7/xsec.root"
+  },
+  "U_Flux_70": {
+   "digest": "d898e5270d4dcb159b59a6e1249f59f4059332b6077fe10057a1250bbd86c50f",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_70/xsec.root"
+  },
+  "U_Flux_71": {
+   "digest": "aef576ad22a6d12c8ba0f51bac0f32931b40d550430b8880f42ad92d13459a5e",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_71/xsec.root"
+  },
+  "U_Flux_72": {
+   "digest": "6beb062b2f8fcb6062533aeccaba4a66b4c0854e4039d07c80411cf8ea97f063",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_72/xsec.root"
+  },
+  "U_Flux_73": {
+   "digest": "24419e972163e3b701312db99317ebe83ae795107fa945359ed692b3480393fa",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_73/xsec.root"
+  },
+  "U_Flux_74": {
+   "digest": "6b24e0ec507db7ed6aedcf5477bc9bc8b02668d0dcc75c2536cee02c4db5fd40",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_74/xsec.root"
+  },
+  "U_Flux_75": {
+   "digest": "347ec315ed3ff15214c6ad1cb9d1d1660b6580fe88d9bbbd499e05c311389469",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_75/xsec.root"
+  },
+  "U_Flux_76": {
+   "digest": "1c55a2320f2349a016ec348e6ea010651a5a1d6efefd9633c0349907533cd2b2",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_76/xsec.root"
+  },
+  "U_Flux_77": {
+   "digest": "eb9c83f896cfc4379039003b6b499144c643f43dc34d566fa19ed46183254da7",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_77/xsec.root"
+  },
+  "U_Flux_78": {
+   "digest": "541a1a8b7cb0cb940b80536e29daec74517e896f0936b612c279ce294cc6063e",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_78/xsec.root"
+  },
+  "U_Flux_79": {
+   "digest": "73c9786dc5b74181a58d27ec96913ee3c6502ec507efee719066faef14af0df3",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_79/xsec.root"
+  },
+  "U_Flux_8": {
+   "digest": "8c07c76978ad7c4bea7862d1f2a57450fcdf673e4937a74374f36cb74f63c293",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_8/xsec.root"
+  },
+  "U_Flux_80": {
+   "digest": "94869759066ab776b5d01f8748703ae4d19851235f4e6342c6b9c30c0b479531",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_80/xsec.root"
+  },
+  "U_Flux_81": {
+   "digest": "e8c38b89f12215bde5272690b6f8aa36d6ebd3014d7d938c140b42873b3ad4cc",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_81/xsec.root"
+  },
+  "U_Flux_82": {
+   "digest": "3ecc4051dfe7673222aaa30bbe72a8fd2fc75e64f91a2cd0a1c560c975eb3b2a",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_82/xsec.root"
+  },
+  "U_Flux_83": {
+   "digest": "88e97de58cabb41b0e1d5464192390eab1fdc6d5f4401c93160836b97bab3368",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_83/xsec.root"
+  },
+  "U_Flux_84": {
+   "digest": "251d7340fab1a6740b4f02c9d3160e93288e5eeaf975527028be7c79b481191b",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_84/xsec.root"
+  },
+  "U_Flux_85": {
+   "digest": "1a6251e2723ea75b969b66f89f09a8230d15db9aac86b0caf6731b9e8937f44b",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_85/xsec.root"
+  },
+  "U_Flux_86": {
+   "digest": "f0acd30f18f30905e838d75ae76a9f26f4dab98a893a9950685b3dfc8e723ebb",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_86/xsec.root"
+  },
+  "U_Flux_87": {
+   "digest": "c1d73a43084bc24624dfbb05541f5d9707cc97fe3fd7f455da5d1bdd0abc850f",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_87/xsec.root"
+  },
+  "U_Flux_88": {
+   "digest": "ce3af78a968db00a66081467909ccbd652fe69f3d4bd0cda809d75f1e86f4c63",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_88/xsec.root"
+  },
+  "U_Flux_89": {
+   "digest": "0d8f699f2565663200961e79c503a0f078aa1dbacce77639d1eafc366e4693ce",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_89/xsec.root"
+  },
+  "U_Flux_9": {
+   "digest": "4b40c609f084bb2dfe44dd0cc2155465e06f7d7b56ce1b3f2b21d6512b98eff7",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_9/xsec.root"
+  },
+  "U_Flux_90": {
+   "digest": "03864cf33cb6363a0c6f55a7e6343d0cd6009db6d2c100401f21a4953d7b0b12",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_90/xsec.root"
+  },
+  "U_Flux_91": {
+   "digest": "9c0a989efb70011ebcac40965dde7b202392ba5c180abbd83eb40f66938acec2",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_91/xsec.root"
+  },
+  "U_Flux_92": {
+   "digest": "0e089e3c3a093baf0be08e9cae3398453ef4ff4de8b076d52ddfb65a0db9f1e6",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_92/xsec.root"
+  },
+  "U_Flux_93": {
+   "digest": "b89f83d20527e4d463afe284c1fb2a80d31d09b9c842b2b05d74bf75e3beb63b",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_93/xsec.root"
+  },
+  "U_Flux_94": {
+   "digest": "faee5b079f46f240d1301d6a5e21f59d783d51be5b6a6f10ee11152a373cd706",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_94/xsec.root"
+  },
+  "U_Flux_95": {
+   "digest": "576e30e5de61593d0e2467bb9f1b44d9765ab5b5ad27bec78fdbaa4b63d14266",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_95/xsec.root"
+  },
+  "U_Flux_96": {
+   "digest": "e9a70aa469ba40fb8ea93c0e85d5ca049e4b056c5729bc4ccb09c2f8597604ce",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_96/xsec.root"
+  },
+  "U_Flux_97": {
+   "digest": "08b75130843647bd621d2749093aedd4c84765b14354292504a55a7340a3be0e",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_97/xsec.root"
+  },
+  "U_Flux_98": {
+   "digest": "1cf8aedd3f7eb8c9f6394672079325e15b716f297cba840f82d6b16bdda549fc",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_98/xsec.root"
+  },
+  "U_Flux_99": {
+   "digest": "63a148061ad33f319b3c9b650a7d9e83d79cbc8ef18cadb02c88de622ad73a82",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Flux_99/xsec.root"
+  },
+  "U_FrAbs_N_0": {
+   "digest": "c54a3b02768e6591c91eb74db777f8ccce67700cf024dac24e29dd9c8cdb239e",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_FrAbs_N_0/xsec.root"
+  },
+  "U_FrAbs_N_1": {
+   "digest": "c81dfb673d96972c22a8fcb956b4047711b3d9518af84a7084b1d14600bb0c82",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_FrAbs_N_1/xsec.root"
+  },
+  "U_FrAbs_pi_0": {
+   "digest": "4538e0a00a31c0da3718628d1dd0a497147726458493dfa6b7f9f5b9ca37c0b3",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_FrAbs_pi_0/xsec.root"
+  },
+  "U_FrAbs_pi_1": {
+   "digest": "0d3e7158871c3d7e205c25ade808825d817eff0c7aa6bbfe345e65f3fcafdcfb",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_FrAbs_pi_1/xsec.root"
+  },
+  "U_FrCEx_N_0": {
+   "digest": "242b2b2fd921ae6eea315f5514fd8f4130157f4af12cdcdef0698206dcc38ac2",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_FrCEx_N_0/xsec.root"
+  },
+  "U_FrCEx_N_1": {
+   "digest": "1ebd9ec58e2bd66a487f146dfea4d7777c35c0e2e0c3f519ee2c51caf605e570",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_FrCEx_N_1/xsec.root"
+  },
+  "U_FrCEx_pi_0": {
+   "digest": "5150758d646d986c228e47784099c52aa8528ad628dbb2223cfd513f1a843ea5",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_FrCEx_pi_0/xsec.root"
+  },
+  "U_FrCEx_pi_1": {
+   "digest": "5912f8bfb558b9ee0296a6633717f0591c97760064f7a50fa02d7387dd18db5d",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_FrCEx_pi_1/xsec.root"
+  },
+  "U_FrElas_N_0": {
+   "digest": "ba5232e79f72302cdddbce12395a30136fa4b9ef2260216aef8b6539d614b80b",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_FrElas_N_0/xsec.root"
+  },
+  "U_FrElas_N_1": {
+   "digest": "b70fb2df05353c7f83039b08c889181df1770a15360b57709aa3e9f46305efaa",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_FrElas_N_1/xsec.root"
+  },
+  "U_FrElas_pi_0": {
+   "digest": "98ef2a37d1353bd875cc648aabd770c9f9746470469370c77e47684dc6066adf",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_FrElas_pi_0/xsec.root"
+  },
+  "U_FrElas_pi_1": {
+   "digest": "94bcc2b2c39c11286d85be6f26cfaceb2f776f3fa3658bf1d07b0d202e4c53a4",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_FrElas_pi_1/xsec.root"
+  },
+  "U_FrInel_N_0": {
+   "digest": "02d0315dca106784232f480c07aae11e163b6c2b47c64e8e3969838a1f8a2351",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_FrInel_N_0/xsec.root"
+  },
+  "U_FrInel_N_1": {
+   "digest": "d741c55d8b72772dc1927be09c529c7410ac2724ea06e410ed85b81218fa78b1",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_FrInel_N_1/xsec.root"
+  },
+  "U_FrPiProd_N_0": {
+   "digest": "de38ce23f7ebe607f3bb739561b0c588200c73efe2de642b9848796a6e588dc8",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_FrPiProd_N_0/xsec.root"
+  },
+  "U_FrPiProd_N_1": {
+   "digest": "a25dc8df94dfc77300351b9559b5529e38404bc2ef089595204535d72f883a1e",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_FrPiProd_N_1/xsec.root"
+  },
+  "U_FrPiProd_pi_0": {
+   "digest": "cb5d95146f4890c75ac0c8c75723f25640af9cb98acb43cee8493a8c15525028",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_FrPiProd_pi_0/xsec.root"
+  },
+  "U_FrPiProd_pi_1": {
+   "digest": "6a98646fa06dc654d6785588d9b612081f0344d6ee959bc4b8437bdb25d61ad2",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_FrPiProd_pi_1/xsec.root"
+  },
+  "U_GEANT_Neutron_0": {
+   "digest": "0f5dd83055da4a76b5d10b7d81673087be1c9b80638e371e0cb73e582a351f21",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_GEANT_Neutron_0/xsec.root"
+  },
+  "U_GEANT_Neutron_1": {
+   "digest": "c93779afebe3fb3fecb036b60df88b6c84508d50afdd525a8d1967f426232c67",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_GEANT_Neutron_1/xsec.root"
+  },
+  "U_GEANT_Pion_0": {
+   "digest": "9c08162ca85e692dcbdbb007f32e8e7ee4be3fdf47f091603b09bb495a2533fd",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_GEANT_Pion_0/xsec.root"
+  },
+  "U_GEANT_Pion_1": {
+   "digest": "9d8bdfbfece75eaae0f4e80b4e38aee0d3f63b4164b032be2227bd58c87584ac",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_GEANT_Pion_1/xsec.root"
+  },
+  "U_GEANT_Proton_0": {
+   "digest": "08767a819a61c4a7796aa46966291bc60229b2d909647b1d36de095708d53967",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_GEANT_Proton_0/xsec.root"
+  },
+  "U_GEANT_Proton_1": {
+   "digest": "dfb8c607fa13b8c3945fc223d0fa64d9fa772fb10884e29bfd1b5b06b7ab54a0",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_GEANT_Proton_1/xsec.root"
+  },
+  "U_HighQ2_0": {
+   "digest": "16bc29ae5c587e3524142a0b9487ffde3dac318804feb8fcf7ea2a608418082a",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_HighQ2_0/xsec.root"
+  },
+  "U_HighQ2_1": {
+   "digest": "1c48e5ba5c204c1ad30ee0e8f09d1915b6c3ea8c111bb06675fd09b97a5e2d6e",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_HighQ2_1/xsec.root"
+  },
+  "U_LowQ2_0": {
+   "digest": "17f6cba881aa319d9ac518eff43039b8daed35f7aa24c41c7764f38c6d033844",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_LowQ2_0/xsec.root"
+  },
+  "U_LowQ2_1": {
+   "digest": "c8a187680e57e46ada060bc16c057829cf69a964f0f67fde0f4e5fbbb9b9805e",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_LowQ2_1/xsec.root"
+  },
+  "U_MFP_N_0": {
+   "digest": "78e3cb5afae55540b22d43c9fff5ca24532303ab32cc1721835cc6cfc40d36d0",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_MFP_N_0/xsec.root"
+  },
+  "U_MFP_N_1": {
+   "digest": "75c10fc5e46eeeac29854c6b74ff7e02a56a15de5fbfd1b1aae317ca94e9f752",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_MFP_N_1/xsec.root"
+  },
+  "U_MFP_pi_0": {
+   "digest": "dff07e05bafe9e0bf774e0a13c7bf9bf09a531e91df3ae3b85f502b9347e0d71",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_MFP_pi_0/xsec.root"
+  },
+  "U_MFP_pi_1": {
+   "digest": "c8cc3807c672cad94351eac7f3c90f060527b5bc38a806e40077f2146ee68514",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_MFP_pi_1/xsec.root"
+  },
+  "U_MaCCQE_0": {
+   "digest": "a34e9161b9abbffe0ba8f1a62a8d8c8c970a6bd1f274ec7ffeb88af1ccd1c08c",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_MaCCQE_0/xsec.root"
+  },
+  "U_MaCCQE_1": {
+   "digest": "346c375a495d3a8f72bbd5387b0f307d4620e5bcc08356760d3e3032df492a74",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_MaCCQE_1/xsec.root"
+  },
+  "U_MaNCEL_0": {
+   "digest": "b1dcddb2e9da7bd5bc4024fb065195ed37dde9b938abc655ecbd2eafe8254dfd",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_MaNCEL_0/xsec.root"
+  },
+  "U_MaNCEL_1": {
+   "digest": "5d35571b9a6938407df9794df48e2904f665d86f1fd315af2dc2caa45fe28c55",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_MaNCEL_1/xsec.root"
+  },
+  "U_MaRES_0": {
+   "digest": "cf83ef47fd5478a12d80015dd7aef68004dc2d0b84bd35470fc7780464daba15",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_MaRES_0/xsec.root"
+  },
+  "U_MaRES_1": {
+   "digest": "a9974cd1c95fe6358ef429044cf61d90d472b2f79ec881e5e4a1eba44144af3f",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_MaRES_1/xsec.root"
+  },
+  "U_MinosEfficiency_0": {
+   "digest": "2ce45cd85c8c6d57f3aaae7ff5ae8b03d19b07c1df83839ec1e850ec2c4aa264",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_MinosEfficiency_0/xsec.root"
+  },
+  "U_MinosEfficiency_1": {
+   "digest": "bdba31cda92009a7986c6c4f82693f69aad23ea22a74893c1cce418986fb6c6a",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_MinosEfficiency_1/xsec.root"
+  },
+  "U_MvRES_0": {
+   "digest": "e449c08400fe539371effc23c5b18fb50c51e500dccc68e8d2e2c1ce8df0bdde",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_MvRES_0/xsec.root"
+  },
+  "U_MvRES_1": {
+   "digest": "cdaef487dd64416b44a4ea427826a9b4f7f40ada54572f2d780b9a190a4bfce2",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_MvRES_1/xsec.root"
+  },
+  "U_NormDISCC_0": {
+   "digest": "d175f9b392f26670128de2d4df58e0356f4cb380c85d5cf67fb81bd5c4d4d335",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_NormDISCC_0/xsec.root"
+  },
+  "U_NormDISCC_1": {
+   "digest": "1cf396379c23bff74c8c0c802b03e80fa283a4d5b4e83a9122cc3c400d9ea0e3",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_NormDISCC_1/xsec.root"
+  },
+  "U_NormNCRES_0": {
+   "digest": "e8173a26fad5001d82226d69621c6ec325b052182eb9119a89220032703e0920",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_NormNCRES_0/xsec.root"
+  },
+  "U_NormNCRES_1": {
+   "digest": "4d0f65aa47809832a487bf5e01b2d9aa37efc56c0d25c54f8a17233ba2fd5aea",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_NormNCRES_1/xsec.root"
+  },
+  "U_RDecBR1gamma_0": {
+   "digest": "c6bac77e8dcf7a6769f5fb1f26aa49d115a8c076de1e14fdc1b1ac35cf71519b",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_RDecBR1gamma_0/xsec.root"
+  },
+  "U_RDecBR1gamma_1": {
+   "digest": "481747d76dbe02c8a87a1a2cf59f2d4cda2347687990eaf9446892dfb355c33d",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_RDecBR1gamma_1/xsec.root"
+  },
+  "U_Rvn1pi_0": {
+   "digest": "60536422f48fa74fb10e43fd6c62bae2b626764552534d6fddb7801b870b8928",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Rvn1pi_0/xsec.root"
+  },
+  "U_Rvn1pi_1": {
+   "digest": "e96ffa475e3333eb823174610d2b12a81bb514d86592f2e4911ea66bf9c1c4de",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Rvn1pi_1/xsec.root"
+  },
+  "U_Rvn2pi_0": {
+   "digest": "a289d429156780f89f6f7bae15d1281da5219ab6208b5d1bced8dcba7bf1f0b3",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Rvn2pi_0/xsec.root"
+  },
+  "U_Rvn2pi_1": {
+   "digest": "a7fc537dceb1de3eba37f47a2b907b0830bf8dbae7c9022633ce2c0900be8537",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Rvn2pi_1/xsec.root"
+  },
+  "U_Rvp2pi_0": {
+   "digest": "b19cb49362e0d49ce5717b5104fd1dc96df6d6235b6889f21f606190d3fbbcab",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Rvp2pi_0/xsec.root"
+  },
+  "U_Rvp2pi_1": {
+   "digest": "ced9414648e15d6cdefd9e9b644062496a27e3c4bba0f8814e1d62870324b4e1",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Rvp2pi_1/xsec.root"
+  },
+  "U_Theta_Delta2Npi_0": {
+   "digest": "8c01f08c400592c02b6672467b39acdcd758b415f386b014d5aef5050fe21532",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Theta_Delta2Npi_0/xsec.root"
+  },
+  "U_Theta_Delta2Npi_1": {
+   "digest": "5797e7bec61834220a293031a62c8fecfdc8c40b722513d51ab577bbc8173f96",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_Theta_Delta2Npi_1/xsec.root"
+  },
+  "U_VecFFCCQEshape_0": {
+   "digest": "cc25e9e7712f726e25655f9fb820b9fccba230546bed9a6c4fa262b752cab78d",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_VecFFCCQEshape_0/xsec.root"
+  },
+  "U_VecFFCCQEshape_1": {
+   "digest": "77692af5bac52f1e2bcf2ee059fa2aa8361baab7d49bb69d5c3344607a9cd5f5",
+   "path": "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/out/A_VecFFCCQEshape_1/xsec.root"
+  }
+ },
+ "rollup_rc": 0,
+ "redirected": {
+  "n_labels": 175,
+  "n_calls": 175
+ }
+}

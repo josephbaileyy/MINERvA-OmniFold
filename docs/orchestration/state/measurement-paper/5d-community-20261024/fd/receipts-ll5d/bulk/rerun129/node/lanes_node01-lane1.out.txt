@@ -1,0 +1,6 @@
+{"out": "ll5d_ar23_toy_all_4761065.npz", "seconds_unfold": 933.614}
+{"out": "ll5d_ar23_toy_all_4761066.npz", "seconds_unfold": 905.468}
+{"out": "ll5d_ar23_toy_all_4761067.npz", "seconds_unfold": 881.246}
+{"out": "ll5d_ar23_toy_all_4761068.npz", "seconds_unfold": 871.655}
+{"out": "ll5d_ar23_toy_all_4761069.npz", "seconds_unfold": 878.514}
+node 01 lane 1 ar23 toy rc=0

@@ -1,0 +1,6 @@
+q6: evidence (g) entries 20
+q6: the 20 originals vs bulk-evidence (g) sha256: all 20 equal
+sidecar atime-ar23-toy-61255888-804395.json files 318 moved []
+sidecar atime-ar23-toy-61255888-804396.json files 318 moved []
+sidecar atime-ar23-toy-61255888-804397.json files 326 moved []
+sidecar atime-ar23-toy-61255888-804398.json files 326 moved []
