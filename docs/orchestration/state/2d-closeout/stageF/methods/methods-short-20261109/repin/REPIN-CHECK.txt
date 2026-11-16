@@ -1,4 +1,4 @@
-#977 head 26af095d545a5be781c60bda66789af7c24e2107; 54 rows
+#977 head 6e92be1fb8b0cff0d84ff03f46530a90df579198; 54 rows
 OK  RP01   resource paper      count=1  The sixteen-cell cross section that the estimator gives on the data il
 OK  RP02   resource paper      count=1  The held-out-tune tests provide partial evidence on bias at truths hel
 OK  RP02b  resource paper      count=1  The held-out-tune tests are not independent of each other or of $C_{\m
@@ -75,13 +75,5 @@ OK  PENDING #981 LL5D -> group ll5d: FILLED (RP43 fills it at the re-pin)
 OK  PENDING #981 V-HALF -> group vhalf: FILLED (RP43 fills it at the re-pin)
 OK  CODEMAP 19 entries: every file at its pinned sha256 and every anchor in its lines
 OK  CODEMAP tab:codemap block_sha=0b9ab61090d43251
-BAD LABELMAP fig:ratio16: the map has ('supplement', 'S1', 'figure'), a fresh build prints ('supplement', 'S4', 'figure')
-BAD LABELMAP supp:validity: the map has ('supplement', 'S11', 'section'), a fresh build prints ('supplement', 'S10', 'section')
-BAD LABELMAP tab:cmodel16: the map has ('supplement', 'S8', 'table'), a fresh build prints ('supplement', 'S17', 'table')
-BAD LABELMAP tab:fd16: the map has ('paper', '2', 'table'), a fresh build prints ('paper', '5', 'table')
-BAD LABELMAP tab:fived16-cells: the map has ('supplement', 'S2', 'table'), a fresh build prints ('supplement', 'S3', 'table')
-BAD LABELMAP tab:fived16-corr: the map has ('supplement', 'S5', 'table'), a fresh build prints ('supplement', 'S8', 'table')
-BAD LABELMAP tab:fived16-groups: the map has ('supplement', 'S4', 'table'), a fresh build prints ('supplement', 'S7', 'table')
-BAD LABELMAP tab:gen16: the map has ('supplement', 'S7', 'table'), a fresh build prints ('supplement', 'S16', 'table')
-BAD LABELMAP 14 labels #981 names, 8 stale; 73 other rows differ (75 in the map, 117 in a fresh build)  regenerate label-map.tsv at the head (make_label_map.py)
-REPIN-CHECK FAIL (1)
+OK  LABELMAP 14 labels #981 names, 0 stale; 0 other rows differ (117 in the map, 117 in a fresh build)
+REPIN-CHECK PASS
