@@ -18,6 +18,11 @@ run's own SHA256SUMS.
 ANCHORS.tsv rows, one per printed value:
   T <id> <file> <table row id> <anchor>                          a values_table.tsv row, field refined_rendered
   J <id> <file> <json file> <dotted key> <scale> <format> <anchor>  a value of a JSON product, format(scale * value)
+  K <id> <file> <old json> <new json> <dotted key> <scale> <format> <sums file> <entry> <anchor>
+     as J, with the two files named (repository-relative) and the new one checked against <sums file>'s <entry>.
+     A make_values-generated value (values_fived16.tex) is re-keyed by its generator; its K row checks the result.
+Sets: ANCHORS.tsv / ledger.tsv (the G2R re-key) and ANCHORS-cr.tsv / ledger-cr.tsv (the cr re-key, #1169). build
+and apply take --set cr; check and --self-test run every set.
 <file> is relative to docs/analysis-note. <anchor> is printed text (LaTeX comments removed, whitespace collapsed)
 that occurs exactly once in <file> before the re-key and contains the old value exactly once.
 
@@ -100,6 +105,10 @@ def jget(path, key):
 
 
 def values(repo, row, which):
+    if row[0] == "K":
+        _, _, _, oj, nj, key, scale, fmt = row[:8]
+        jf = oj if which == "old" else nj
+        return format(float(scale) * jget(repo / jf, key), fmt), "K:" + nj, key
     base = repo / (OLD_DIR if which == "old" else NEW_DIR)
     if row[0] == "T":
         return table(base / "values_table.tsv")[row[3]]["refined_rendered"], "values_table.tsv", row[3]
@@ -107,9 +116,13 @@ def values(repo, row, which):
     return format(float(scale) * jget(base / jf, key), fmt), jf, key
 
 
-def anchors():
+SETS = {"main": ("ANCHORS.tsv", "ledger.tsv"), "cr": ("ANCHORS-cr.tsv", "ledger-cr.tsv")}
+SET = "main"
+
+
+def anchors(which=None):
     rows = []
-    for line in open(HERE / "ANCHORS.tsv"):
+    for line in open(HERE / SETS[which or SET][0]):
         if line.strip() and not line.startswith("#"):
             rows.append(line.rstrip("\n").split("\t"))
     return rows
@@ -140,8 +153,8 @@ def build(repo):
                 if a <= q and q + len(o) <= a + len(anchor):
                     ctx = ctx[: q - a] + nw + ctx[q - a + len(o):]
             out.append(["V", vid, f, old, new, ctx, anchor, src, key])
-    with open(HERE / "ledger.tsv", "w") as fh:
-        fh.write("# G2R fact ledger, built by g2r_ledger.py build from ANCHORS.tsv; columns: V id file old new "
+    with open(HERE / SETS[SET][1], "w") as fh:
+        fh.write(f"# G2R fact ledger, built by g2r_ledger.py build from {SETS[SET][0]}; columns: V id file old new "
                  "new-context old-context source key\n")
         for r in out:
             fh.write("\t".join(r) + "\n")
@@ -149,7 +162,7 @@ def build(repo):
 
 
 def ledger(path=None):
-    return [l.rstrip("\n").split("\t") for l in open(path or HERE / "ledger.tsv") if l.startswith("V\t")]
+    return [l.rstrip("\n").split("\t") for l in open(path or HERE / SETS[SET][1]) if l.startswith("V\t")]
 
 
 def apply(repo):
@@ -228,6 +241,7 @@ def check(repo, rows=None):
     posted = posted_files(repo)
     ptext = {f: printed(repo / NOTE / f) for f in posted}
     arows = {r[1]: r for r in anchors()}
+    ksums = {r[1]: (r[8], r[9], r[4]) for r in arows.values() if r[0] == "K"}
     used = set()
     for r in rows or ledger():
         vid, f, old, new, ctx, octx, src, key = r[1:9]
@@ -248,6 +262,14 @@ def check(repo, rows=None):
             for g, pt in ptext.items():
                 if octx in pt:
                     fails.append(f"{vid}: the old context still prints in posted {g}: {octx!r}")
+    for vid, (sf, entry, nj) in ksums.items():
+        listed = {}
+        for line in open(repo / sf):
+            h, name = line.split(None, 1)
+            listed[name.strip().lstrip("./")] = h
+        if listed.get(entry.lstrip("./")) != sha256(repo / nj):
+            fails.append(f"{vid}: {nj} is not listed with its sha256 as {entry} in {sf}")
+    used = {u for u in used if not u.startswith("K:")}
     for s in sorted(used):
         h = sums.get(s)
         if h is None:
@@ -277,6 +299,8 @@ def self_test(repo):
 
 if __name__ == "__main__":
     cmd, repo = sys.argv[1], Path(sys.argv[2]).resolve()
+    if "--set" in sys.argv:
+        SET = sys.argv[sys.argv.index("--set") + 1]
     if cmd == "build":
         build(repo)
     elif cmd == "apply":
@@ -284,8 +308,14 @@ if __name__ == "__main__":
     elif cmd == "annotate":
         annotate(repo)
     elif cmd == "check":
-        sys.exit(1 if check(repo) else 0)
+        bad = False
+        for SET in SETS:
+            bad |= bool(check(repo))
+        sys.exit(1 if bad else 0)
     elif cmd == "--self-test":
-        sys.exit(0 if self_test(repo) else 1)
+        good = True
+        for SET in SETS:
+            good &= self_test(repo)
+        sys.exit(0 if good else 1)
     else:
         raise SystemExit(__doc__)

@@ -63,3 +63,25 @@ commit).
 **Meaning read of the two wording items (codex-school gpt-6.1-sol, high, read-only; reads/):**
 - **Pass 1:** FAIL on both. N1's "only" omitted run 2's projection-equality check, and H1's "complete list" claim was unsupported.
 - **Pass 2,** both revised: OVERALL PASS.
+
+## The cr re-key (2026-11-16)
+
+**Under** the director's approval of 2026-11-16 and the XCOV ruling. #1169 (main 7831e7a3) re-ran `fd_gencmp.py
+overlap --arm refined` on route A's Q_R. Its control first reproduced step C-R exactly. The readout is
+`fd/receipts-cov2d/g2r/cr/run/node/g2r/overlap_refined.json` (0734cf4a…), listed in `run/node/out.sha256.txt`.
+
+**The re-key** is done by the generator, not by hand:
+- `make_values_fived16.py` READOUTS["cr"] is repointed from step C-R's readout (f1f2fb78) to #1169's, and
+  values_fived16.tex is regenerated.
+- Of 3617 values, five change: cr-QA/QB/QC/QD-sig2 and cr-QC-nopl-rhostar, each in the fourth decimal.
+- Every reading (agree / agree below a correlation, with and without C_PL5D) is unchanged, so sec_fived16.tex's
+  "All four agree…" sentences stay true.
+- `--check` and `--self-test` both PASS.
+
+**The cr ledger:**
+- `ANCHORS-cr.tsv` has five K rows, each a JSON key with both files named; the formats are those of
+  quadrant_values().
+- `ledger-cr.tsv` is built against the pre-regeneration values_fived16.tex.
+- `g2r_ledger.py check` and `--self-test` now run both sets. Both PASS, and each K row's new file is sha-checked
+  against out.sha256.txt.
+- director-helper-3's D1 commit repoints the same READOUTS entry on the paper branch, so the cr-* keys match.
