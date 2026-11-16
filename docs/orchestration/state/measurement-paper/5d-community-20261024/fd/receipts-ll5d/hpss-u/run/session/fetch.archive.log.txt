@@ -1,0 +1,72 @@
+node login14 loadavg 15.31 17.14 17.53 start=2026-11-16T13:50:58Z slurm_job=''
+script sha256 2f330bc9684a0115ccd496b94d538cda2da43d0dceb66c97f47645c5feef69f1
+list sha256 980bb95e20eac386a220bb7d0dbb16a5a3477248688f9a72bc07671a7ad5842d rows 1759
+tools: /usr/bin/hsi /usr/bin/htar /global/common/software/nersc/bin/hpssquota /usr/bin/timeout /usr/bin/sha256sum 
+home check hsi rc=0
+target check hsi rc=64 (HPSS_ENOENT)
+hpssquota before rc=0
+| josephrb usage on HPSS charged to m3246 |  460.25GiB |   512.00GiB |          89.9% |          - |           - |              - |
+preflight: used 494189674496 quota 549755813888 free 55566139392 files 1759 source bytes 503722891 archive estimate 523861504 need (x1.2) 628633805
+PREFLIGHT OK
+hsi mkdir rc=0
+== group null_roles start 2026-11-16T13:50:58Z
+STAGE OK null_roles: 454 files, 76233291 bytes, every sha256 equal to its pin
+manifest null_roles sha256 929202da37b2105db84d21deaeace9dcafbb4b6b2057216696e41d559e045c69 lines 454
+htar null_roles rc=0
+HTAR: Verify complete. 0 total errors, 456 total objects (456 Files,0 Dirs,0 Hard Links,0 symlinks) wallclock/user/sys: 0.523 0.435 0.057 seconds
+HTAR: HTAR SUCCESSFUL
+hashcreate null_roles rc=0
+hashverify null_roles rc=0: /home/j/josephrb/mnv-ll5d-unfolds-r2-20261116/null_roles.tar: (md5) OK 
+retrieve null_roles rc=0
+RETRIEVE OK null_roles: 454 members re-read from HPSS, every sha256 equal to its manifest line and pin
+== group null_roles PASS 2026-11-16T13:51:06Z
+== group toys start 2026-11-16T13:51:06Z
+STAGE OK toys: 1200 files, 421937891 bytes, every sha256 equal to its pin
+manifest toys sha256 00d13797bfc7123c15c6bafe1d6f2a4c1b4596d533911ca21383e2bb253b7e12 lines 1200
+htar toys rc=0
+HTAR: Verify complete. 0 total errors, 1202 total objects (1202 Files,0 Dirs,0 Hard Links,0 symlinks) wallclock/user/sys: 2.531 2.427 0.226 seconds
+HTAR: HTAR SUCCESSFUL
+hashcreate toys rc=0
+hashverify toys rc=0: /home/j/josephrb/mnv-ll5d-unfolds-r2-20261116/toys.tar: (md5) OK 
+retrieve toys rc=0
+RETRIEVE OK toys: 1200 members re-read from HPSS, every sha256 equal to its manifest line and pin
+== group toys PASS 2026-11-16T13:51:27Z
+== group extras start 2026-11-16T13:51:27Z
+STAGE OK extras: 8 files, 1135872 bytes, every sha256 equal to its pin
+manifest extras sha256 964de49fd1b4ffadde90954e88c766e6eaa94ef340d7a3159e23c528e59bf1de lines 8
+htar extras rc=0
+HTAR: Verify complete. 0 total errors, 10 total objects (10 Files,0 Dirs,0 Hard Links,0 symlinks) wallclock/user/sys: 0.266 0.008 0.000 seconds
+HTAR: HTAR SUCCESSFUL
+hashcreate extras rc=0
+hashverify extras rc=0: /home/j/josephrb/mnv-ll5d-unfolds-r2-20261116/extras.tar: (md5) OK 
+retrieve extras rc=0
+RETRIEVE OK extras: 8 members re-read from HPSS, every sha256 equal to its manifest line and pin
+== group extras PASS 2026-11-16T13:51:29Z
+== group sidecars start 2026-11-16T13:51:29Z
+STAGE OK sidecars: 97 files, 4415837 bytes, every sha256 equal to its pin
+manifest sidecars sha256 710759e9d97345df712ca5cfa8981e2fbbb3121d5b0ce093aaedc7e4ff318546 lines 97
+htar sidecars rc=0
+HTAR: Verify complete. 0 total errors, 99 total objects (99 Files,0 Dirs,0 Hard Links,0 symlinks) wallclock/user/sys: 0.270 0.022 0.012 seconds
+HTAR: HTAR SUCCESSFUL
+hashcreate sidecars rc=0
+hashverify sidecars rc=0: /home/j/josephrb/mnv-ll5d-unfolds-r2-20261116/sidecars.tar: (md5) OK 
+retrieve sidecars rc=0
+RETRIEVE OK sidecars: 97 members re-read from HPSS, every sha256 equal to its manifest line and pin
+== group sidecars PASS 2026-11-16T13:51:33Z
+hsi ls rc=0
+
+/home/j/josephrb/mnv-ll5d-unfolds-r2-20261116:
+-rw-r-----    1 josephrb  josephrb     1145344 Nov 16 05:51 extras.tar
+-rw-r-----    1 josephrb  josephrb        5928 Nov 16 05:51 extras.tar.idx
+-rw-r-----    1 josephrb  josephrb    76614656 Nov 16 05:51 null_roles.tar
+-rw-r-----    1 josephrb  josephrb      241448 Nov 16 05:51 null_roles.tar.idx
+-rw-r-----    1 josephrb  josephrb     4505600 Nov 16 05:51 sidecars.tar
+-rw-r-----    1 josephrb  josephrb       53032 Nov 16 05:51 sidecars.tar.idx
+-rw-r-----    1 josephrb  josephrb   423021056 Nov 16 05:51 toys.tar
+-rw-r-----    1 josephrb  josephrb      635176 Nov 16 05:51 toys.tar.idx
+hpssquota after rc=0
+| josephrb usage on HPSS charged to m3246 |  460.25GiB |   512.00GiB |          89.9% |          - |           - |              - |
+ARCHIVE PASS: all three groups archived, hash-verified and every member re-read from HPSS
+removal of /dev/shm/josephrb-hpss-ll5d-u rc=0 ; present after: no
+hpss archive rc=0 2026-11-16T13:51:34Z
+9e775e05ea6f8e292f5d158dbc74281fb5f033adc6d2f1fb587a22314f5f7cfe  post.tar.gz

@@ -1,0 +1,10 @@
+
+/home/j/josephrb/mnv-ll5d-unfolds-r2-20261116:
+-rw-r-----    1 josephrb  josephrb     1145344 Nov 16 05:51 extras.tar
+-rw-r-----    1 josephrb  josephrb        5928 Nov 16 05:51 extras.tar.idx
+-rw-r-----    1 josephrb  josephrb    76614656 Nov 16 05:51 null_roles.tar
+-rw-r-----    1 josephrb  josephrb      241448 Nov 16 05:51 null_roles.tar.idx
+-rw-r-----    1 josephrb  josephrb     4505600 Nov 16 05:51 sidecars.tar
+-rw-r-----    1 josephrb  josephrb       53032 Nov 16 05:51 sidecars.tar.idx
+-rw-r-----    1 josephrb  josephrb   423021056 Nov 16 05:51 toys.tar
+-rw-r-----    1 josephrb  josephrb      635176 Nov 16 05:51 toys.tar.idx

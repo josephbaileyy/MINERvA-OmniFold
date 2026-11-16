@@ -37,3 +37,36 @@ hashcreate and hashverify, then every member retrieved and re-hashed. The target
 0.5 GB. Nothing is deleted on pscratch or HPSS.
 
 **CANNOT AUTHORIZE:** any removal of $U. That stays Joseph's, after this archive is verified.
+
+## Run of 2026-11-16 (the director's go): `ARCHIVE PASS`
+
+The launcher ran three modes in order. `run/session/` holds each mode's stdout and stderr (stderr is the NERSC login
+banner), and `fetch.archive.log.txt` is the archive log as fetched.
+1. **survey** ran on login02 at 13:49:07Z. It printed tools, quotas and /dev/shm.
+2. **probe** ran on login14 at 13:49:37Z. The HPSS home exists. The target printed `HPSS_ENOENT` (rc 64), and `ls` of the output
+   dir printed "No such file or directory". O_NOATIME was True, and two stat passes printed 1759 ok.
+3. **archive** ran on login14 from 13:50:58Z to 13:51:34Z. The staged script's sha256 was 2f330bc9…, equal to
+   `hpss_ll5d_u.sh`. The launcher printed rc 0.
+
+`run/cluster/` is the fetched output tree (`post.tar.gz`, sha256 9e775e05…, recorded in the fetched log's last line).
+It holds `logs/` (each `.log` stored as `.log.txt`, since the repository ignores `*.log`) and `manifests/`. Two files were left out because they are byte-identical to committed ones: the run's
+script copy (sha256 2f330bc9…, equal to `hpss_ll5d_u.sh`) and its `archive_list.tsv` (980bb95e…, equal to
+`hpss_ll5d_u_list.tsv`). `logs/archive.log.txt` printed `PREFLIGHT OK` and then these lines for each group:
+
+| group | staged files | bytes | manifest sha256 | htar | hashverify | retrieve |
+|---|---|---|---|---|---|---|
+| null_roles | 454 | 76,233,291 | 929202da… | rc 0, 0 verify errors | (md5) OK | 454 re-read, equal to pin |
+| toys | 1200 | 421,937,891 | 00d13797… | rc 0, 0 verify errors | (md5) OK | 1200 re-read, equal to pin |
+| extras | 8 | 1,135,872 | 964de49f… | rc 0, 0 verify errors | (md5) OK | 8 re-read, equal to pin |
+| sidecars | 97 | 4,415,837 | 710759e9… | rc 0, 0 verify errors | (md5) OK | 97 re-read, equal to pin |
+
+Each `manifests/SHA256SUMS.<group>` hashes to the sha256 above. On HPSS, `hsi ls` (`logs/hsi-ls-after.txt`) lists
+extras.tar 1,145,344, null_roles.tar 76,614,656, sidecars.tar 4,505,600 and toys.tar 423,021,056 bytes, each with its
+.idx. hpssquota printed 460.25 GiB of 512 GiB both before and after. The log ends with `ARCHIVE PASS` and
+`hpss archive rc=0`. The staging dir /dev/shm/josephrb-hpss-ll5d-u was removed ("present after: no"). Nothing was
+deleted on pscratch or HPSS.
+
+The final line reads "all three groups". That wording is left over from RSN's kit, and this run has four groups; all
+four printed `PASS`. It is a follow-up low for the kit, and the code is unchanged.
+
+$U still sits on pscratch. Removing it remains Joseph's decision.
