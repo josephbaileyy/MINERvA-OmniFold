@@ -151,3 +151,43 @@ The abstract is now 199 words.
 - **app_release.tex:9: minor note, not applied.** "Extended" reads as additions only, but B′ replaces RC7's text panel.
   The read proposes "... extended to draw this analysis's band and, in place of RC7's text panel, the distribution of
   standardized bin differences", for the director. RL-25's row already says "in place of the text panel".
+
+## The final referee read's paper-side corrections (referee-paper-26af095d545a.md; the director, 2026-11-16)
+
+**The six edits:**
+1. **§4.5,** two changes:
+   - the sign of the differences: "IBU minus the five-observable result as fractions of the five-observable
+     result";
+   - the IBU's bins, after the read: "its reconstructed bins are the fine-grid cells inside the reconstruction window,
+     and its truth bins are the boxes from which the sixteen cells are formed". In the paper "the coarse grid" is the
+     3^5 grid, and the IBU's truth grid is the 32 H2 boxes (REF-G1-DECLARATION.md:48). The second S7 pointer is
+     dropped.
+2. **Table 1's median move:** "with an injected change larger than 2 % in magnitude". The producer, a_recovery.py:40,
+   selects np.abs(i) > 0.02.
+3. **The introduction:** "the origin of that difference", which refers to the OmniFold-IBU paired difference (§4.2
+   :294, §7).
+4. **Fig. 1's caption:** "has no standard-normal reference distribution".
+5. **Table 8's caption:** the run-period block "is neither drawn nor included in the graded covariance", as §6.2 and
+   COV2D-DECLARATION.md:214 say.
+6. **§5.2's unresolved-class sentence:** a pointer to S10, which defines the class through K.
+
+**The read** (independent, read-only): PASS on 3-6, and items 1 and 2 were fixed as above.
+- **The sign:** ibu16-dof is 100 delta_over_e with Δ = f_IBU − f. R11 is +20.7 and R05 +11.5, so IBU lies above; R06
+  is −18.1, so IBU lies below.
+- **Noted, not changed:** rec-thr is typed as "2" in make_values (the producer's threshold), and S7 :727 uses the same
+  ambiguous "coarse grid" phrase. That one is journal-editor's, on the Supplement side.
+
+**The note pointer** (from an independent note read, via the director): \nsec{sec:eavailw-adopted}, which is the note's
+§9.6 "Status" paragraph on C_Z, becomes \nsec{sec:gbdt-model-dependence} (§9.4) at both sites, the deformation figure's
+caption and the withheld-shapes sentence.
+- §9.4 holds W1-W3: sec_fived16.tex at 721fe926a says "the historical shapes W1, W2 and W3 of
+  \S\ref{sec:gbdt-model-dependence}", and its figures plot the residuals over supported cells.
+- The label is in note_release_labels.tex (9.4) and in the note at 721fe926a (sec_5d.tex:118).
+- The pin is not moved, on the director's instruction.
+
+**The label map** (RP45, #1188): make_label_map.py gains a build mode with no arguments and a --check mode. The
+committed map had gone stale: it carried six labels no longer defined, lacked 42, and printed tab:fd16 as 2 against a
+fresh build's 5.
+- --check failed on the stale map, listing eight rows that differ.
+- It was regenerated with 117 labels, and --check then passes.
+- The draft's gate runs it.

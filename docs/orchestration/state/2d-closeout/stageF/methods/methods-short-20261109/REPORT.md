@@ -73,8 +73,10 @@ and both exited rc 0.
 
 Each moved paragraph names its round-5 line in a comment, and keeps that line's evidence route.
 
-**The label map** for the result package is `label-map.tsv`, with 75 labels across the paper and the Supplement, read
-from the build's `.aux` files by `make_label_map.py`.
+**The label map** for the result package is `label-map.tsv`, read from the `.aux` files of a fresh build of the paper
+and the Supplement by `make_label_map.py`; 117 labels at the 2026-11-16 regeneration. `make_label_map.py --check`
+fails unless the committed map equals a fresh build, and the draft's gate runs it (RP45, #1188). Regenerate it at each
+head that renumbers, and once more at the freeze head before the re-pin.
 
 ## Placeholders
 
