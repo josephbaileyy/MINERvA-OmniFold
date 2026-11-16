@@ -74,6 +74,7 @@ reads `all $(set -- $GROUPS_IN_ORDER; echo $#) groups ($GROUPS_IN_ORDER)`, which
 extras sidecars)` here. This is the template's sixth line changed against RSN's (`template-vs-rsn-7aaa9a06.diff.txt`,
 regenerated). `hpss_ll5d_u.sh` was rebuilt with `make_hpss_script.py`, and its embedded list still equals
 `hpss_ll5d_u_list.tsv`. The launcher's script pin moved with it (`launch-vs-rsn-cd826dbd.diff.txt`, regenerated).
+
 | file | as run (8fcdd4bb) | now |
 |---|---|---|
 | `hpss_ll5d_u.template.sh` | 59a51895… | c525be7a… |
