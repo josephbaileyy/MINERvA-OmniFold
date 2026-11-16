@@ -1,0 +1,30 @@
+90c90
+<     gb = fig.add_gridspec(1, 2, wspace=0.28, left=0.08, right=0.97, top=0.43, bottom=0.07)
+---
+>     gb = fig.add_gridspec(1, 2, wspace=0.42, left=0.08, right=0.97, top=0.43, bottom=0.07)
+134,135c134,135
+<     # inset numbers
+<     tx = fig.add_subplot(gb[0, 1]); tx.axis("off")
+---
+>     # MOCK-UP (F4): pull histogram in place of the text panel
+>     hx = fig.add_subplot(gb[0, 1])
+138,142c138,150
+<     ours_txt = f"{uq_median}%" if uq_median else "not in these arrays"
+<     tx.text(0.08, 0.80, "Median relative uncertainty", fontsize=9, weight="bold")
+<     tx.text(0.12, 0.66, f"This work    {ours_txt}\nPublished    {pubmed:.2f}%", fontsize=9, va="top", linespacing=1.5)
+<     tx.text(0.08, 0.36, r"Published-$\sigma$ standardized residuals", fontsize=9, weight="bold")
+<     tx.text(0.12, 0.22, f"mean = {p.mean():.3f},  RMS = {p.std():.3f}  ({m.sum()} bins)", fontsize=9, va="top")
+---
+>     ours_txt = f"{uq_median}%" if uq_median else "n/a"
+>     bins = np.linspace(-3.0, 3.0, 25)
+>     hx.hist(np.clip(p, -2.999, 2.999), bins=bins, histtype="stepfilled", color="#c0392b", alpha=0.35,
+>             edgecolor="#c0392b", lw=1.0, label=f"{m.sum()} reported bins")
+>     hx.set_xlim(-3, 3); hx.set_ylim(bottom=0)
+>     hx.set_xlabel(r"(OmniFold $-$ published)$/\sigma_{\mathrm{published}}$")
+>     hx.set_ylabel("bins")
+>     hx.axvline(0, color="k", lw=0.6)
+>     hx.legend(frameon=False, loc="upper left", fontsize=7)
+>     hx.text(0.98, 0.97, f"mean {p.mean():.3f}\nRMS {p.std():.3f}", transform=hx.transAxes, ha="right",
+>             va="top", fontsize=7.5)
+>     hx.text(0.98, 0.70, f"median rel. unc.\nthis work {ours_txt}\npublished {pubmed:.2f}%",
+>             transform=hx.transAxes, ha="right", va="top", fontsize=7.5)
