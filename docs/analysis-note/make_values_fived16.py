@@ -1906,6 +1906,9 @@ def groupb_values(d):
     v["c2c1-dibu-mid-lo"], v["c2c1-dibu-mid-hi"] = f"{min(mid):.2f}", f"{max(mid):.2f}"
     assert max(mid) < c["D_E_R"], "the text says IBU stays below the 2D result's distance for two to fifteen iterations"
     v["c1-nrep"] = str(c1["n_replicas"])
+    # D2 (an independent referee, 2026-11-15): the number of directions T_delta tests, floor(N/4) (Supplement S7)
+    assert c1["rank"] == c1["n_replicas"] // 4
+    v["c1-rank-word"] = {12: "twelve"}[c1["rank"]]
     v["c1-below-pct"] = f"{100 * (1 - c1['T'] / c1['q95']):.0f}"
     g = d["refg1"]
     assert g["schema"] == "ref-g1-readout/1" and g["R1"]["reading"] == "differ"
@@ -2853,6 +2856,14 @@ def g_rows_values(d):
         v[f"rp-{tag}-unf"], v[f"rp-{tag}-unf-se"] = f"{q['unfolded_step_pct']:.2f}", f"{q['unfolded_step_noise_pct']:.2f}"
     assert (v["rp-pb-unf"], v["rp-pb-unf-se"]) == (v["pp-step-re2"], v["pp-step-re2-se"])
     assert (v["rp-pb-reco"], v["rp-pc-reco"], v["rp-pc-unf"], v["rp-pc-unf-se"]) == ("5.99", "1.26", "1.85", "0.64")
+    # B6 (an independent referee, 2026-11-15): below 8 GeV/c, every 1N-1P bin lies above 1A-1F at both levels; its
+    # per-bin range in percent (the record holds per-bin ratios, not the integrated yields the step uses)
+    e = rp["pz_edges_GeV"]
+    lo = [i for i in range(len(e) - 1) if e[i] >= 1.5 and e[i + 1] <= 8.0]
+    for lvl, tag in (("reco_ratio", "reco"), ("unfolded_ratio", "unf")):
+        x = [rp["panels"]["PC"][lvl][i] for i in lo]
+        assert min(x) > 1, "every 1N-1P bin below 8 GeV/c lies above 1A-1F"
+        v[f"rp-pc-lev-{tag}-lo"], v[f"rp-pc-lev-{tag}-hi"] = f"{100 * (min(x) - 1):.1f}", f"{100 * (max(x) - 1):.1f}"
     src = ROOT / READOUTS["runper"][0].replace("runperiod_values.json", "runperiod.pdf")
     got = OUT.parent / "figures" / "methods_short" / "paper_runperiod.pdf"
     hs = {hashlib.sha256(x.read_bytes()).hexdigest() for x in (src, got)}
@@ -3004,6 +3015,16 @@ def all_values(d=None, d_nopl=None):
         fall5 += [1 - float(v[f"g-{k}-carbon-{part}-chi2"]) / float(v[f"g-{k}-carbon-{part}-chi2-nopl"]) for k in ("nuwro", "gibuu")]
         assert min(fall5) > 0, f"a {part} chi2 rises with the block"
         v[f"pl-chi2fall-b5-{part}-lo"], v[f"pl-chi2fall-b5-{part}-hi"] = f"{100 * min(fall5):.1f}", f"{100 * max(fall5):.1f}"
+    # B4 (an independent referee, 2026-11-15): the data's IBU-OmniFold difference in the three cells with the largest
+    # fractional differences, in units of the cell's reported relative sigma (both in percent of the cell's result)
+    cells16 = [f"R{c:02d}" for c in range(16)]
+    big = sorted(cells16, key=lambda c: -abs(float(v[f"ibu16-dof-{c}"])))[:3]
+    assert big == ["R11", "R06", "R05"], ("the text names R11, R06 and R05", big)
+    rat = {c: abs(float(v[f"ibu16-dof-{c}"])) / float(v[f"sig-reported-{c}"]) for c in cells16}
+    for c in big:
+        v[f"ibu16-dsig-{c}"] = f"{rat[c]:.1f}"
+    v["ibu16-dsig-max"] = f"{max(rat.values()):.1f}"
+    assert max(rat, key=rat.get) == "R06", "the largest in units of sigma is R06"
     for k in sorted(k for k in v if PAPER_PREC.match(k)):
         for nk, x in paper_prec(k, v[k]).items():
             assert v.get(nk, x) == x, f"{nk}: {v[nk]!r} against the paper form {x!r}"
