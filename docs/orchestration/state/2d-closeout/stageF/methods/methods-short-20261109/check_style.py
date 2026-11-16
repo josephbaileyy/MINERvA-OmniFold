@@ -79,6 +79,10 @@ ABSTRACT_TARGETS = ("semi", "so", "wps")
 ENVS = r"table|figure|equation|align|eqnarray|thebibliography|tabular|xltabular|longtable"
 
 
+# dropping a variant's key and class before counting (2026-11-16); the self-test turns it off to show the old count
+DROP_VARIANT_KEYS = True
+
+
 def paragraphs(s):
     s = "\n".join(l for l in s.split("\n") if not l.lstrip().startswith("%"))
     s = re.sub(r"(?<!\\)%.*", "", s)
@@ -86,6 +90,12 @@ def paragraphs(s):
     s = re.sub(r"\$\$.*?\$\$|\\\[.*?\\\]", "", s, flags=re.S)
 
     def clean(p):
+        # a variant's key and class (and a group's name) are not printed: dropped before counting, so that a lowercase
+        # class name after a full stop does not hide a sentence end, nor count as words (2026-11-16, the introduction's
+        # keyed findings sentences); the alternatives' own text is still measured, every alternative included
+        if DROP_VARIANT_KEYS:
+            p = re.sub(r"\\fvcase\{[^}]*\}\{[^}]*\}", "", p)
+            p = re.sub(r"\\fvgroup(alt)?\{[^}]*\}", "", p)
         p = re.sub(r"\\(cite|ref|eqref|label|[a-z]*ref|fvval|nsec|ssec|sfig|stab|napp)\*?\{[^}]*\}", "X", p)
         p = re.sub(r"\$[^$]*\$", "X", p)
         p = re.sub(r"\\[a-zA-Z]+\*?(\[[^]]*\])?", "", p)
@@ -212,6 +222,21 @@ def self_test():
     ab = "\n\n".join(["See Sec.~\\ref{a} and ref.~\\cite{b} and Fig.~\\ref{c} and Eq.~(\\ref{d}) for these numbers, e.g. Here " + good] * 5)
     if metrics(paragraphs(ab))["wps"] != round(metrics(paragraphs(ab))["words"] / 15, 1):     # three sentences per paragraph
         print("self-test: an abbreviation before a reference counts as a sentence end:", metrics(paragraphs(ab))); ok = False
+    # a keyed sentence after a full stop: its key and class are not printed words and must not hide the sentence end.
+    # Each paragraph prints 3 + 1 sentences of ten words (the arm's), and the empty arm prints nothing.
+    keyed = "\n\n".join([good + r" \fvgroup{prr}{\fvcase{prr-abs}{less-less}{ This sentence has exactly ten words in it for tests.}"
+                         r"\fvcase{prr-abs}{more-more}{}}"] * 5)
+    km = metrics(paragraphs(keyed))
+    if km["words"] != 200 or km["wps"] != 10.0:
+        print("self-test: a \\fvcase key or class is counted as words or hides a sentence end:", km); ok = False
+    global DROP_VARIANT_KEYS
+    DROP_VARIANT_KEYS = False                         # the mutant: the cleaner before 2026-11-16
+    mm = metrics(paragraphs(keyed))
+    DROP_VARIANT_KEYS = True
+    if mm["words"] == 200 and mm["wps"] == 10.0:
+        print("self-test: the mutant without the key drop is not caught:", mm); ok = False
+    else:
+        print(f"  ok   the old cleaner miscounts the keyed case: words {mm['words']} (want 200), wps {mm['wps']} (want 10.0)")
     am, _ = abstract_metrics([good, good.replace("for tests. This", "for tests; this", 1)])
     if am["semi"] == 0:
         print("self-test: NOT CAUGHT a semicolon in one abstract case of two"); ok = False
