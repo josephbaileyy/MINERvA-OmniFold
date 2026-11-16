@@ -207,3 +207,44 @@ These supersede J1's digests for the first three files.
 3. **The s0 go** is given at this addendum.
 
 Nothing is submitted, deposited or tagged.
+
+## Binding 1, addendum J3: the c1 fix after the uproot STOP (director, 2026-11-16)
+
+**Binds** the c1 fix, as merged in PR #1166 at **M_RDXC = `11e36cf1a5643ef6db2d480f3d345364d3247592`**. The
+audited head is `1ce8941b`. The director re-hashed each file at both commits, and each is byte-identical:
+
+| file | sha256 (prefix) |
+|---|---|
+| `nd-unfolding/rdx/rdx_connect.sh` | `eae946894be8ce02` |
+| `nd-unfolding/rdx/rdx_connect_launch.sh` | `602c728a7b4326f2` |
+| `nd-unfolding/rdx/smoke_rdx_stages.sh` | `f02ca57acdfab743` |
+| `nd-unfolding/rdx/sbatch_rdx_evloop.sh` (unchanged from J2) | `7ce210dcab5909fa` |
+| `nd-unfolding/rdx/setup_salloc_env.exports` (unchanged from J2) | `e0d3b70088500bdc` |
+
+These supersede J2's digests for the connect and the launcher. The job deploy stays at M_RDXS `ad0535c4`: the
+checker-path code there equals the PR head, as the audit confirmed.
+
+**Why:** c1 at M_RDXS STOPped on login27 at 22:18:56Z on 2026-11-15 (receipt `run-c1-20261115/`). root_6_28 has PyROOT
+but no uproot, and the smoke's python stub had answered the connect's `import uproot` check itself.
+
+**What the director checked:**
+- **coverage-5b-audit's clearance** at `1ce8941b`, with no blockers or majors:
+  - every checker runs under omnifold_py310 behind `chkenv`, which fails closed (rc 8) without uproot, `omnifile_io`
+    or the interpreter;
+  - the auditor's own py3.10 control: the real align and rows checkers PASS, and give COULD_NOT_CHECK without uproot;
+  - tests 18/18, mutants 36/36 killed, smoke exit 0.
+- **Lows for the follow-up list (not blocking):**
+  - r1, pre-existing: the rerun reuses the staged `base_cv.root` without re-checking its sha. It fails closed
+    through align.
+  - r2: `chkenv` prints the numpy and uproot versions but does not pin them.
+
+**Rulings:**
+1. **Every later RDX connect uses M_RDXC's launcher and connect.** The job deploy stays at M_RDXS. J1's order, cap and
+   fences, and J2's ruling 2, are otherwise unchanged.
+2. **The c1 go** is given at this addendum, for one run:
+   `bash rdx_connect_launch.sh <new empty dir> <loginNN> c1 ad0535c4a62ac0a20711a4a00f2266ddaf926d7c`.
+   - The launcher and connect come from M_RDXC, with their sha256 checked first.
+   - Every fence and other lane's hold is checked before the connect.
+   - Any STOP comes to the director unrepaired.
+
+Nothing is submitted, deposited or tagged.
