@@ -63,3 +63,18 @@ of these files).
 numdiff on each of the four files: none removed, none added. Line counts unchanged.
 
 **Meaning read of Q10–Q13 (codex-school gpt-6.1-sol, high, read-only):** pass 1 FAIL on Q13 only (an absence claim beyond its search, and a weakened retention requirement); pass 2, Q13 corrected, OVERALL PASS with no FAILs and no NEEDED item lost. reads/pass-D-rulings-pass1.txt, -pass2.txt.
+
+## Joseph's rulings, 2026-11-15 ("D sounds good for all"; C1 "lets do final wording"), relayed by the director
+
+| id | site | old | new |
+|---|---|---|---|
+| J1 | app_release.tex:44 (App. G, AUD-N4) | "This description is provisional until the methods package (\href{…/pull/981}{PR~981}) is re-pinned." | "This description is provisional until the package's contents are finalized." |
+| J2 | main_note.tex:133–134 (the AI-use statement, C1) | "The first author set the scientific questions and approved every claim and its wording." | "The first author set the scientific questions and approved the claims and their final wording." C2 and C5 are unchanged; C3 and C4 are on hold (Joseph's question, a referee weighing in). The paper's condensed statement takes its own form of the same choice (director-helper-3). |
+
+Kept as written, by the same ruling: T9/I10 (the run-period audit disclosure), and the ES and guide wording (E4, I11).
+**Meaning read** (codex-school gpt-6.1-sol, high, read-only): OVERALL PASS, J1 and J2. reads/joseph-rulings-pass1.txt.
+
+**The RE-2 figure G rows** (the director's approval): re2-integration/ledger.tsv's G rows for 15 figures are retired
+as comment lines that keep the old row. The figures are fig6/7 and the 13 re-installed by the note figure style. Each
+figures/ copy equals its live install_printstyle_fig pin. `check_ledger.py --figures`: 28 failures → PASS. push_gate
+now runs it.

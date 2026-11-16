@@ -1,0 +1,6 @@
+# Joseph's rulings (C1, AUD-N4) meaning read: codex-school gpt-6.1-sol, high, read-only; prompt joseph-rulings-prompt.txt, texts joseph-rulings-texts.txt, records joseph-rulings-records.txt
+**C1: PASS.** The new sentence exactly matches R1: “The first author set the scientific questions and approved the claims and their final wording.” Nothing else in the passage changed, including C3 and C4. The sentence parses and creates no dangling reference. A careful referee may understand “the claims” as all claims in the note, although its scope is less explicit than “every claim”; “final wording” specifies approval of the final formulation. These changes come directly from R1.
+
+**AUD-N4: PASS.** R1’s shorthand “provisional until #981 is re-pinned” identifies the old sentence’s condition containing the linked PR 981 reference. That condition alone becomes exactly “provisional until the package's contents are finalized.” Everything else is unchanged. Removing the PR link is part of replacing that condition; no surviving reference depends on it. A careful referee will likely read “the package” as the planned Zenodo reproduction package and understand provisional status to end upon finalization of its contents. The new wording no longer provides a PR-based tracking reference; that follows from R1’s replacement.
+
+OVERALL: PASS — FAILs: none.
