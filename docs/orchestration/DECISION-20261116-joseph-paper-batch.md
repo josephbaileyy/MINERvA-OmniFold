@@ -1,4 +1,4 @@
-# DECISION 2026-11-16 — Joseph: the batch of paper, Supplement and note decisions (A5, A6, B, C, E2, F); A1–A4 reopened
+# DECISION 2026-11-16 — Joseph: the batch of paper, Supplement and note decisions (A–F); "Descriptive" kept and explained; Fig. 1's histogram panel
 
 **Recorded by** the paper-tighten lane, as director.
 
@@ -75,6 +75,58 @@ sha256 of the text plus a final newline begins `9c5c7fb1afab1163`.
 12. **F5.** One bounded editorial pass on §7 and §5.4 only, after the prep branches are merged into the draft.
 13. **F6.** The note's executive summary is aligned with the paper's framing: the sixteen-cell output is an
     illustration of the method, not "the principal result".
+
+## Joseph's second answer, after the two referee reads, verbatim
+
+> I like the recommendation for A1-A4. for fig 1, lets do B' and change RMS. For the section 4 title, can we get a referee read on this too?
+
+sha256 of the text plus a final newline begins `fa9b15589e6dabe5`.
+
+The two reads are in `stageF/methods/secondary-results/referee-descriptive-fig1-20261116/`, each with its prompt and its answer verbatim:
+- `descriptive/` covers A1–A4;
+- `fig1/` covers F4.
+
+**This supersedes item 1 and item 11 above:**
+
+14. **A1–A4: the referee's option (b).** "Descriptive" is kept and explained precisely. It is not redefined as
+    "influenced by results".
+    - Every tune and variant keeps the status **Descriptive**.
+    - **The caption adds:** "For the second five-observable coverage test, 'Descriptive' means that the criteria fixed in
+      advance were applied, but a repair was chosen after an entry-check STOP. No coverage pseudo-experiment had been
+      unfolded or graded; other gate readings were already visible."
+    - **The repair paragraph (§6.3):** "At both tunes, an event-matching entry check stopped the earlier run because it
+      compared float64 and float32 weight keys and reported every row unmatched. The repair, chosen after this STOP,
+      keyed both sides at float32 before any coverage pseudo-experiment was unfolded or graded, but after other gate
+      readings were visible. It changed no rule, threshold, bound or reporting cell. Under the rule fixed before the
+      result, the rerun is reported as descriptive (Supplement, §S8.5)." The Supplement pointer is checked against
+      its target.
+    - **The abstract.** Only its coverage and repair sentences take the referee's form. Every other sentence keeps its
+      current wording. The abstract stays at or under 250 words, and the diff goes to Joseph.
+    - **The Table 2 entry and Supplement row 10** take the referee's text. It opens with "Descriptive.", gives the flags
+      per tune and variant, then the repair clause and the over-coverage qualifier.
+    - **§7:** the referee's three replacements are applied:
+      - the opening coverage passage;
+      - the five-check parenthesis;
+      - limitation 5's second-test sentence.
+    - Each changed sentence gets a meaning read, and its numbers are keyed.
+15. **F4: Fig. 1 takes version B′.**
+    - The bottom-right text panel becomes a histogram of the 205 standardized bin differences r_i:
+      - full range and no clipping;
+      - zero centred in a bin;
+      - no Gaussian or other reference curve;
+      - "205 bins, mean, SD" printed in the panel;
+      - the colour bar labelled r_i.
+    - The two median relative uncertainties move into the caption.
+    - The caption describes the distribution as descriptive: the results share data and systematic uncertainties,
+      their cross-covariance is unavailable, and the distribution is no compatibility test.
+    - The producer (`publication/release/figs/make_figs.py`) changes, so its pins and the figure's records are
+      re-pinned under the usual identity rule. The drawn data are unchanged.
+16. **"RMS" becomes "standard deviation".** The printed 0.535 (`\pullRMS`) is `numpy.std`, the spread about the mean.
+    The root mean square is 0.539. Every printed "RMS" of this quantity is relabelled "standard deviation", in the
+    paper, the figure and the note. The value is unchanged.
+17. **§4's title** is open, pending a referee read. The question arises because §5.4, the sixteen-cell comparison with
+    binned iterative unfolding on data, moves to §4.5 under F5. Until Joseph rules, the title and Table 1's block
+    heading stay as they are.
 
 ## CITABLE FOR / NOT CITABLE FOR
 
