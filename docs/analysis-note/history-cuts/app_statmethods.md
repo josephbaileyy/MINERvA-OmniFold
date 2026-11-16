@@ -71,3 +71,7 @@ No site in App. A changes its citation. `UNRELEASED-SUPPORT.md` is unchanged.
 
 - **Pass 1:** OVERALL PASS, with no FAILs. A1–A3 pass; A1 and A2 are LEDGER; no NEEDED item lost; no disclosure lost.
   reads/app_statmethods-pass1.txt.
+
+## E2 (2026-11-16, DECISION-20261116-joseph-paper-batch.md item 7)
+
+Two cuts of superseded history, logged with the other 35 sites in `E2-unreleased-support.md`, rows 12-13: the exact-split 1.47 sentence of limit (ii) (cut), and the earlier split bootstrap's result in "The real obstruction is statistical" (shortened). Ledger rows L-thin-C22 and L-thin-C23 are DROPs. Meaning read: `reads/e2-meaning-read.md`.

@@ -111,3 +111,7 @@ silent.
 **The xk ledger:** `ANCHORS-xk.tsv` has 18 K rows. The max-|z| keys read their maximum's position, the same in both
 readouts. x-chi2-hi is a rounded-up bound, so it is checked by make_values' own assertion. `ledger-xk.tsv` is built
 against the pre-regeneration text. `g2r_ledger.py check` and `--self-test` run all three sets and PASS.
+
+**Re-pinned 2026-11-16 (note lane, E2 branch):** the new contexts of g2r-pull-comb-rms, g2r-audit-pull-rms and
+g2r-audit-pull-rms-b, after "RMS" was relabelled "standard deviation" (the producer, compare_to_paper_fullcov.py:313,
+computes `pull[mask].std()`; DECISION-20261116-joseph-paper-batch.md item 16). Values unchanged.
