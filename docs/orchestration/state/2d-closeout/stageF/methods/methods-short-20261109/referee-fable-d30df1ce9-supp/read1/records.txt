@@ -1,0 +1,136 @@
+### A. Published paper arXiv:2106.16210v2 (Ruterbories et al.), extracted text
+## abstract and section II (exposure)
+deep inelastic scattering are presented. The data recorded corresponds to 10.61 × 1020 protons on
+target with a peak neutrino energy of approximately 6 GeV. The higher energy and larger statistics
+This analysis uses data that correspond to 10.61 × 1020
+protons on target (POT), received between September
+2013 and February 2017 while the horn polarity was set to
+## section IV, p.5 (iteration choice)
+The predicted background contributions are subtracted from the sample. Detector resolution eﬀects (see
+Figs. 3 and 4) are then removed using the D’Agostini
+unfolding method [39, 40], via the implementation in
+RooUnfold [41]. To understand the necessary regularization strength, 10 diﬀerent model predictions as pseudodata were unfolded using the MINERvA Tune v1. The
+unfolded models were then compared to their true distributions via a χ2 test taking full consideration of correlations. The optimal number of iterations was determined when the χ2 approached one per degree of freedom and was not changing as a function of the number
+of iterations. Only statistical uncertainties were considered in determining the number of iterations. In all variations the required number of iterations was no more
+than 10. In addition, a ﬁt to the data in reconstructed
+pt -p|| was performed, and the MINERvA Tune v1 prediction reweighted to the data as an additional fake data
+sample. Reweighting is done in true kinematic quantities and propagated through the Monte Carlo detector
+response prediction. Based on these studies, the data
+was unfolded using 10 iterations.
+## section V (systematic uncertainties) and the legend of figs. 6-8
+Systematic uncertainties in this analysis fall under
+three diﬀerent categories: ﬂux, detector response, and
+neutrino interaction model uncertainties. The uncertainties from individual sources are evaluated by reextracting the cross section using modiﬁed simulations.
+The size of each modiﬁcation is related to the uncertainty in each source. Flux uncertainty, a typical leading uncertainty in neutrino cross section measurements,
+is below 4% for almost all the phase space because of
+the ﬂux constraint that comes from a measurement of
+neutrino-electron scattering in the same beam [19]. The
+normalization uncertainty of 1.4% corresponds to the uncertainty in the number of target nucleons and is based on
+material assays and weight measurements of productionquality scintillator planes.
+Uncertainty in the detector response to hadrons is evaluated using shifts determined by in situ measurements of
+a smaller version of the detector in a test beam [37]. Uncertainties in inelastic interaction cross sections for particles in the detector material are independently varied
+based on data-Monte Carlo diﬀerences between GEANT
+particle cross sections and world data on neutrons [42–
+45], pions [46–49], and protons [50–52]. Muon reconstruction uncertainty is dominated by the muon energy
+scale uncertainty, which is constrained by a ﬁt to the visible neutrino energy distribution for low recoil neutrino
+charged-current events, whose cross section is known to
+be ﬂat as a function of neutrino energy. As described
+in more detail in Ref. [53], the resulting uncertainty in
+the muon energy scale is 1%. Uncertainty in the matching eﬃciency is from imperfect modeling of the eﬃciency
+loss from accidental activity in the MINOS near detector when matching muon tracks from MINERvA to MINOS. This last eﬃciency is also determined by a datasimulation comparison as a function of instantaneous
+neutrino beam intensity.
+Interaction model uncertainties are evaluated using the
+standard GENIE reweighting infrastructure. Because
+this is an inclusive analysis with very low backgrounds
+and few selection cuts, model uncertainties are never the
+dominant uncertainty in any pt -p|| bin. These uncertainties are most signiﬁcant at the highest pt bins where the
+geometric acceptance changes dramatically and at low
+pt bins where the backgrounds are the largest.
+The fractional uncertainties in the one-dimensional
+projections are shown in Figs. 6 and 7. The fractional
+uncertainties in the two-dimensional result are shown in
+Fig. 8. The dominant uncertainties are the muon momentum scale uncertainty and the ﬂux normalization.
+Fractional Uncertainty||SYSTEMATIC UNCERTAINTIES|0.14||Total Uncertainty|Flux|Models|Normalization||0.12||Statistical|Hadronic Response|Muon Reconstruction||0.1|0.08|0.06|0.04|0.02|0|0||0.5||
+
+### B. Project records on the exposure
+- **Published exposure.** The paper quotes 10.61e20 POT, 0.34 % above this value. This known difference
+  of production is recorded at
+  `docs/publication/corrections-20261008/RECORD-20261008-release-audit-corrections.md:90`; it is not a
+| D02 1.057e21 POT (not an audit finding; checked while reading 2106.16210) | Published: 10.61×10²⁰. This analysis: 1.057394e21, from the analysed files' summed `dataPOTUsed`, with an independent hadd POT check (`AUDIT-FINDINGS-20260820`) | No change. The article quotes the exposure of the files it analysed (an earlier production). The 0.35 % difference is recorded here only. |
+
+### C. D9: the two chi2 keys' producers (make_values_fived16.py) and record values
+    # S5.2: RE-2's period comparison and its run-period block (periods/analysis.json; budget_Q; combination; the
+    # 1A-1F reference block in RE-2's playlist_term.json, READOUTS["plterm"])
+    b = d["re2per"]["comparisons"]["bias_PB"]
+    assert max(b["pz_marg_z_max"], b["pt_marg_z_max"]) < 0.7           # printed as a bound ("every marginal z is below 0.7")
+    v["re2per-zmarg-bound"] = "0.7"
+    v["re2per-chi2-pz"], v["re2per-noise-pz"] = f"{b['chi2_pz_marginal']:.1f}", f"{b['noise']['expected_chi2']['pz']:.1f}"
+    c = d["budgetq"]["C_PL"]
+    v["bq-pl-med"], v["bq-pl-p84"], v["bq-pl-max"] = (f"{c[k]:.2f}" for k in ("median_pct", "p84_pct", "max_pct"))
+    v["bq-pl-pz-lo"], v["bq-pl-pz-hi"] = f"{min(c['pz_sigma_pct']):.2f}", f"{max(c['pz_sigma_pct']):.2f}"
+    v["bq-pl-int"] = f"{c['integral_sigma_pct']:.2f}"
+    v["bq-stat-med"] = f"{d['budgetq']['stat']['median_pct']:.3f}"
+    assert d["budgetq"]["provenance"]["inputs"]["playlist_npz"]["sha256"].startswith("dbb067aa")
+    cb = d["re2comb"]["report"]
+    v["re2comb-sigma-inc"] = f"{cb['effect_of_C_PL_on_S5']['cell_sigma_increase_pct']['median']:.1f}"
+    raw = cb["reference_scenario_algebraic"]["bias_PB_raw_frozen"]
+    v["re2comb-chi2-s5"], v["re2comb-chi2-s5pl"] = f"{raw['pz_vs_S5']:.1f}", f"{raw['pz_vs_S5_plus_C_PL']:.2f}"
+    s = d["plterm"]["report"]["S_ref"]
+periods/analysis.json bias_PB chi2_pz_marginal = 34.42079993125393 noise expected pz = 2.0044006026402004
+combination.json reference_scenario_algebraic.bias_PB_raw_frozen = {"pz_vs_VL175": 34.42079993125393, "pz_vs_VL175_plus_C_PL": 1.9946164336258378, "pz_vs_S5": 34.77811249680186, "pz_vs_S5_plus_C_PL": 2.592399460174356, "pt_vs_VL175": 1.724663656133951, "pt_vs_VL175_plus_C_PL": 0.49660486557302624, "pt_vs_S5": 1.982841177048113, "pt_vs_S5_plus_C_PL": 0.5643816087331868, "first_order_in_span_bound": null}
+budget names: ['VL175', 'S5_universe', 'S5_stat', 'S5_c08', 'S5_total', 'C_PL', 'S5_total_plus_C_PL']
+
+### D. A2: producers of the keys the rewritten paragraph prints
+    # S4.3: the prior against the data, and the exact-split iteration check (prose only: VALIDATION_LEDGER.md:1604-1605,
+    # 2D_OMNIFOLD_STUDY_STATUS.md:211)
+    (r,) = _prose_anchor("ledger", r"data/MC\(sig\+bkg\) = \*\*([0-9.]+)\*\*")
+    v["ledger-datamc-pct"] = f"{100 * (float(r) - 1):.0f}"
+    v["ledger-datamc-lo"], v["ledger-datamc-hi"] = _prose_anchor("ledger", r"pT from ([0-9.]+) to ~([0-9.]+)\)")
+    (v["status-iter-pct"],) = _prose_anchor("status2d", r"5-iter total σ within ([0-9.]+) % of 10-iter")
+    # S4.4: the recovery check's nominal closure, printed as a bound ("at most 0.1 % in every supported cell")
+    # S4.5: the histogram estimator's chi2/ndf, and LightGBM's at five and ten iterations, which is seed 1 (2.645 to
+    # 2.657), not \chiPaperPurity's seed 42 (prose only: 2D_OMNIFOLD_STUDY_STATUS.md:233-234)
+    (v["status-hgbt-chi2"],) = _prose_anchor("status2d", r"vs HistGBT ([0-9.]+)±")
+    it5, it10 = _prose_anchor("status2d", r"\(lgbm 5→10 iter: ([0-9.]+)→([0-9.]+)\)")
+    v["status-lgbm-it5"], v["status-lgbm-it10"] = (str(Decimal(s).quantize(Decimal("0.01"), ROUND_HALF_UP)) for s in (it5, it10))
+values: ledger-datamc-pct 12, -lo 0.88, -hi 1.2, status-iter-pct 0.026, status-lgbm-it5 2.65, status-lgbm-it10 2.66 (values_fived16.tex)
+2866:\@namedef{fv@ledger-datamc-hi}{1.2}
+2867:\@namedef{fv@ledger-datamc-lo}{0.88}
+2868:\@namedef{fv@ledger-datamc-pct}{12}
+4181:\@namedef{fv@status-iter-pct}{0.026}
+4182:\@namedef{fv@status-lgbm-it10}{2.66}
+4183:\@namedef{fv@status-lgbm-it5}{2.65}
+S4.5 sentence the paragraph points to (unchanged):
+463:With purity-based subtraction, using the published configuration's ten iterations instead of five changes the LightGBM $\chi^{2}/\mathrm{ndf}$ from \fvval{status-lgbm-it5} to \fvval{status-lgbm-it10} (\napp{sec:tension}). The purity-subtracted exact-split result differs from the central value by a median of \SI{\fvval{partc-learner-med}}{\percent} per bin (maximum \SI{\fvval{partc-learner-max}
+
+### E. D6: the paper's comment at paper_body.tex:131 and equation
+The cross section in a bin of the observables $x_1,\dots,x_n$ is
+\begin{equation}
+\frac{d^{n}\sigma}{dx_{1}\cdots dx_{n}}=\frac{U}{\Phi\,N_{\mathrm{T}}\,P\,\Delta x_{1}\cdots\Delta x_{n}},
+\label{eq:xsec}
+\end{equation}
+with $U$ the unfolded yield, the sum of the final weights of the simulated signal truth events in the bin, including those without a reconstructed partner. $\Phi$ is the integrated flux per unit area and per proton on target, $N_{\mathrm{T}}$ the number of nucleons in the fiducial volume, $P$ the data exposure in protons on target, and $\Delta x_i$ the bin widths.
+% Joseph's critique of 2026-11-12 (joseph-critique-20261113.txt; RESPONSE.md section J; it supersedes DECISION-20261111-joseph-ibu-distance-and-zenodo.md item 1 where they conflict), item 2: the completeness c, 1 by construction, leaves the equation; the efficiency sentence of the paragraph above answers referee 1.1; journal-editor removes S4.1's mention of it.
+% Referee recheck (gpt-6.1-sol, 2026-11-11; RESPONSE.md row 1.1, 1.2): the equation and c = 1 from the note's sec_method.tex:178-186 (at 4219869a2 and acf934d71) and nd-unfolding/s5c_unfold.py:135-144 at abdc88c5; the regressor's equal weights from omnifold_nn_core.py:258-260 at abdc88c5 (reg.fit without sample_weight); ess-nrp-min/max from the ESS record (READOUTS ess d4f1268d).
+
+### F. D7: the paper's earlier removal of kappa (paper_body.tex:287) and remaining kappa mentions in the Supplement
+% Referee recheck (gpt-6.1-sol, 2026-11-11; RESPONSE.md row s2, 4.5): their own subsection; kappa and its class reading dropped (OUTCOME-20261106-ref-c2c1-read.md:32-37: no mechanism; read-2/readout.json keeps only the range's end points), kept in S8.
+1
+
+### G. D8: the paper's hold block (draft-only, red [HOLD]) naming the rule
+} and the note's section~\ref*{N-sec:coverage-tunes}. Record \holdrec{OUTCOME-20261108-cov2d-both-tunes-under-cover.md}. The usage-recommendation and prior-spread rules: section~\ref{sec:vhalf}, \ssec{S10}{supp:validity} and the note's section~\ref*{N-sec:fived16-fd}, which also prints the prior-spread rule's results that this paper withholds. Records \holdrec{OUTCOME-20261107-valid-region.md} and the decisio
+
+### H. A2: the status record's iteration lines (2d-unfolding/2D_OMNIFOLD_STUDY_STATUS.md:211-212, 226-236) and the note's sentence (docs/analysis-note/sec_validation.tex:204)
+- **Iteration**: 5-iter total σ within 0.026 % of 10-iter (per-bin shape
+  RMS 1.54 %); HistGBT/exact-GBT agree on total σ to 0.04 %.
+**Tension anatomy (paper-cov χ²=3.66)** — `diagnose_tension.py`,
+`docs/technote/app_statmethods.tex §sec:tension`. The central values agree
+**not** the θ_μ<20° acceptance edge. This is where Flux + Muon_Energy
+dominate → motivates the Bashyal joint block (open question #1).
+**Methodological band**: the GBDT estimator moves χ² ~1 unit (exact-GBT
+production **3.66** vs HistGBT 2.70±0.04 vs lgbm 2.65); iteration is
+negligible (lgbm 5→10 iter: 2.645→2.657). So ~1 χ²-unit is OmniFold
+regularization, the rest a real correlated shape difference in the peak.
+
+\paragraph{Stability and efficiency.} With five and with ten iterations the total cross section agrees to within \SI{0.026}{\percent}; the per-bin shape differs by \SI{1.54}{\percent} RMS. The histogram-based and exact-split backends agree on the total cross section to \SI{0.04}{\percent}. Both comp
+new key: status-iter-shape-rms = 1.54 (values_fived16.tex)

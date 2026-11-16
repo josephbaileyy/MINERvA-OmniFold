@@ -2386,7 +2386,10 @@ def supp_literal_values(d):
     (r,) = _prose_anchor("ledger", r"data/MC\(sig\+bkg\) = \*\*([0-9.]+)\*\*")
     v["ledger-datamc-pct"] = f"{100 * (float(r) - 1):.0f}"
     v["ledger-datamc-lo"], v["ledger-datamc-hi"] = _prose_anchor("ledger", r"pT from ([0-9.]+) to ~([0-9.]+)\)")
-    (v["status-iter-pct"],) = _prose_anchor("status2d", r"5-iter total σ within ([0-9.]+) % of 10-iter")
+    # and the per-bin shape difference on the same record line (the note's sec_validation.tex:204 prints both; the
+    # independent referee read of d30df1ce9, item A2, 2026-11-16)
+    v["status-iter-pct"], v["status-iter-shape-rms"] = _prose_anchor(
+        "status2d", r"5-iter total σ within ([0-9.]+) % of 10-iter \(per-bin shape\s+RMS ([0-9.]+) %\)")
     # S4.4: the recovery check's nominal closure, printed as a bound ("at most 0.1 % in every supported cell")
     assert d["recov"]["nominal_closure_max_abs_supported"] <= 0.001
     v["rec-r0-bound"] = "0.1"
@@ -2538,6 +2541,7 @@ def supp_literal_values(d):
             "s5n-corner-pur": "1.66", "s5n-corner-ref": "0.24", "s5n-total-data": "3", "s5n-total-sim": "2",
             "s5n-clip-lo": "0.01", "s5n-clip-hi": "0.05",
             "ledger-datamc-pct": "12", "ledger-datamc-lo": "0.88", "ledger-datamc-hi": "1.2", "status-iter-pct": "0.026",
+            "status-iter-shape-rms": "1.54",
             "s5p-k5": "0.314", "s5p-k10plus": "0.384", "s5p-cap-gain": "8",
             "status-hgbt-chi2": "2.70", "status-lgbm-it5": "2.65", "status-lgbm-it10": "2.66",
             "re1-pur-max": "5.9", "re1-ref-max": "0.44", "partc-learner-med": "1.03", "partc-learner-max": "17.6",

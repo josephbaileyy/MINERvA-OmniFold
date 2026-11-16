@@ -19,6 +19,7 @@ CONSTANTS = [
     ("4.5", r"\pT < \SI{4.5}", "phase space", "the muon phase-space cut, pT < 4.5 GeV/c"),
     ("3.2353", r"nucleons", "data constant", "the fiducial volume's nucleon count (the note's value)"),
     ("1.057", r"protons on targ", "data constant", "the exposure in POT (the note's value)"),
+    ("10.61", r"$10.61\times10^{20}$ protons on target in ref", "data constant", "the published exposure in POT (arXiv:2106.16210, abstract and section II)"),
     ("2.5", r"\bar M=(1.5M_{n}+M_{p})/2.5", "definition", "the mean struck-nucleon mass's weights (1.5 M_n + M_p)/2.5"),
     ("1.17", r"1.17\times$ calorimetric", "definition", "the reconstructed Eavail calorimetric factor (CVUniverse.h)"),
     ("1.17", r"E_{\rm avail}^{\rm reco}=1.17", "definition", "the reconstructed Eavail calorimetric factor (CVUniverse.h)"),

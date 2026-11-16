@@ -1,0 +1,16 @@
+You are checking the meaning of a set of edits to the Supplemental Material of a short JINST methods paper (OmniFold unfolding of MINERvA open data). Read change.diff (the source diff of supplemental_body.tex, make_values_fived16.py and values_fived16.tex), records.txt (the evidence: excerpts of the published paper arXiv:2106.16210v2, project records, producer code and record values), and the rendered pages page-*.png (the built Supplement at the final commit). Comment lines (starting with %) are provenance and are not printed claims, but check that what they say about the evidence is true.
+
+The edits:
+1. Table S1 (page 2): the publication's exposure is stated (10.61e20 POT) instead of "the same exposure".
+2. S4.3 (pages 10-11): the case for five iterations. The prior-data difference is now said to be in shape as well as normalization; the two two-dimensional checks are stated as integral checks; a per-bin shape difference between five and ten iterations (new key status-iter-shape-rms) and an existing chi2/ndf at five and ten iterations are added.
+3. S4.1 step 3 (page 8): the completeness c, 1 by construction, is removed from the cross-section step.
+4. S6.1 (page 20): the second 1G-1M p|| chi2 is described as the same raw shift against a different covariance.
+5. S6.2 (page 22): what the published analysis did about its iteration count and uncertainty sources.
+6. S7 (page 23): a paragraph defining a descriptive ratio kappa and its interval is removed.
+7. S10 (page 37): a withheld rule is no longer named; its disclosure stays.
+
+For each edit, check: (a) every printed number equals its record and key; (b) every printed sentence is supported by records.txt, with no claim stronger than the evidence, and no meaning lost that the evidence requires (in particular, check whether edit 2's selection of evidence is balanced and whether the chi2/ndf sentence is correctly attributed: which configuration, against what, under which covariance); (c) edit 5's statements about arXiv:2106.16210 are exactly what its sections IV and V say; (d) edit 3 leaves the step's description correct; (e) the removal in edit 6 leaves no dangling reference to kappa in the printed text; (f) the rendered pages match the source. Also flag any internal project language in printed text (receipts, lanes, sessions, gate names, record file names, PR numbers).
+
+This is round 2. round1-out.txt holds the first round's problems; check that both are fixed in change.diff and on page-10.png/page-11.png, then recheck everything else.
+
+Output a ranked numbered list of problems, each with file:line evidence and a concrete fix, or "1. No problems." Then a final line VERDICT: PASS or VERDICT: FAIL (FAIL if any printed claim is wrong or unsupported).
