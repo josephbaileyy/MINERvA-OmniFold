@@ -150,6 +150,7 @@ is quoted in `docs/orchestration/state/2d-closeout/stageF/methods/records-redit-
 | id | old sha256 | new sha256 | reason | authority |
 |---|---|---|---|---|
 | R-EDIT-1 | de3e8f2f96e0d5a1a630fca2cd5962eb89060915bf6604bb77538164df87520d | 8c9ed3d73e270f129bed3ba965dc669ccacaa83ccc85407bedce05ddb5770c28 | App. G tracker row `rvp1pi`: the Rvn1pi/Rvp1pi account prints at sec:uq-2d-scope since note register round n1 (#384), no longer at sec:uq-2d-construction; the pointer is retargeted, nothing else changes | director ruling 2026-10-26, quoted in methods/records-redit-20261026/REPORT.md |
+| R-EDIT-2 | 8f74f07a4b2f449132afff155d0ab3bdeea36781632ed29b74d8a29a10c553d2 | 060025459c709492d98812ff466d9b35c2c56f54b28b03abb1fc88a0d8aa82eb | App. G's index row `coverage-toys`: the same-ensemble pull diagnostic prints at sec:pull-diagnostic (App. A.8) since the history restructure (2026-11-13, history-cuts/sec_validation.md V2), no longer at sec:val-other; the pointer is retargeted, nothing else changes (history-cuts/pass-D.md, Q4) | director ruling 2026-11-15 ("app_provenance.tex:34: repoint its coverage-toys row to A.8"), relayed to the note lane |
 
 ## Records additions (note register round n2; director rulings 2026-10-26)
 

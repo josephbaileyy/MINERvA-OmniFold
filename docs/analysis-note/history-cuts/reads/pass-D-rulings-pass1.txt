@@ -1,0 +1,21 @@
+# D leftovers meaning read, pass 1: codex-school gpt-6.1-sol, high, read-only; prompt pass-D-rulings-prompt.txt, records pass-D-rulings-records.txt
+Question 1
+
+- **Q10 PASS** — B2 explicitly links `coverage-toys` to `sec:pull-diagnostic`, so the replacement corrects the pointer without changing the diagnostic’s meaning.
+- **Q11 PASS** — “Fixed in advance” describes the construction: full covariance inversion without truncation makes \(p\) the cell count, rather than asserting a separate timing claim requiring a named object.
+- **Q12 PASS** — Both replacements of “declared” with “specified” are method uses authorized by R4, retaining the operating point, packing qualification and all numbers.
+- **Q13 FAIL** — (a) the stored field and value remain, (b) no resolution is implied, and (c) the treatment of this projection matches B1, but (d) “no later record decides it” exceeds R2’s bounded search at one snapshot, while “The package carries” also replaces “must carry … until that is decided,” weakening the explicit retention requirement and asserting package contents.
+
+Question 2
+
+| Row | Removed or replaced phrase | Classification and disposition |
+|---|---|---|
+| Q10 | `\S\ref{sec:val-other}` | **NEEDED** pointer function; retained through the supported, corrected destination. |
+| Q11 | Nothing removed; “fixed in advance” retained | **NEEDED** construction property; no loss. |
+| Q12 | “declared” in “its declared ten-iteration operating point” | **LEDGER** as declaration history; the **NEEDED** operating-point specification remains. |
+| Q12 | “declared” in “at the declared packing” | **LEDGER** as declaration history; the **NEEDED** packing qualification remains. |
+| Q13 | Field/value and “when the projection was built, it had not been decided whether an acceptance correction is needed at the destination binning” | **NEEDED** product identity and limitation; retained. |
+| Q13 | “must carry this field with its value until that is decided” | **NEEDED** preservation requirement and duration; weakened by the replacement, hence **FAIL**. |
+| Q13 | “so that no default in the data format makes that scientific choice” | **NEEDED** limitation on interpreting the metadata; retained as preventing a default from answering the question. |
+
+OVERALL: FAIL — FAILs: Q13 (claim exceeds R2; retention requirement weakened).
