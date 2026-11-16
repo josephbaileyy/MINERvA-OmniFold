@@ -122,6 +122,8 @@ def build(R):
                f"{t}: the regrade changed the verdict, joint count, threshold, ndf or flagged cells")
         expect(len(g["counts"]) == len(o["counts"]) and max(g["counts"]) <= int(V["cov2d-ntoys"]), f"{t} counts")
         expect(all(g["counts"][c] == o["counts"][c] for c in g["flagged_cells"]), f"{t}: a flagged cell's count moved")
+    # ES-1: the abstract and the ES print one joint count "at each" tune, so both tunes' counts must be equal
+    expect(R["ar23"]["grade"]["joint_count"] == R["g18"]["grade"]["joint_count"], "the two tunes' joint counts differ")
     for t in ("ar23", "g18"):
         g = R[t]["grade"]
         expect(R[t]["verdict"] == "UNDER-COVERS" and g["verdict"] == "UNDER-COVERS", f"{t} verdict")
