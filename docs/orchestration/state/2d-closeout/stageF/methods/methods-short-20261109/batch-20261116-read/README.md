@@ -191,3 +191,45 @@ fresh build's 5.
 - --check failed on the stale map, listing eight rows that differ.
 - It was regenerated with 117 labels, and --check then passes.
 - The draft's gate runs it.
+
+## Joseph's wordings after the final referee read (the director, relaying Joseph 2026-11-16; items 36-37 for the last two)
+
+The applied texts, verbatim:
+- **Abstract:** "Tested settings of the five-observable estimator change prior retention but remove neither bias flag."
+- **Abstract:** "The coverage tests exclude the run-period term from the tested covariance, and the five-observable test also
+  excludes the response term. They find joint under-coverage for the two- and five-observable estimators at both
+  held-out truths in all completed coverage variants."
+- **Abstract:** "A descriptive local screen also finds bias exceeding half the truth's departure from the prior in some
+  regions."
+- **§7:** "Whether a difference between the data's and the simulation's hadronic distributions at fixed muon
+  kinematics contributes to the two-dimensional shape difference is open."
+- **app_release.tex:9 and RL-25:** "... extended to draw this analysis's band and, in place of RC7's text panel, the
+  distribution of standardized bin differences".
+
+The abstract is 224 words, and check_round's abstract count agrees.
+
+**The read of the first five** (independent, read-only):
+- **PASS:** "of the five-observable estimator" (every OmniFold level stays flagged at both truths); both coverage
+  exclusions (COV2D-DECLARATION.md:214, :221; §6); "all completed coverage variants" (2D joint count 0 at both tunes;
+  all four 5D readings joint); the local screen (9/5/2, "Descriptive" in Table 1); and the app_release sentence and
+  RL-25 against make_figs.py's diff.
+- **Two flags, both put to Joseph and approved as items 36-37:**
+  - the §7 sentence first read "bias in the hadronic distributions", which the 2D benchmark, with muon inputs only,
+    cannot have;
+  - "both estimators" could be read as OmniFold and IBU.
+
+**The style gate:** the abstract's words per sentence rose from 11.1 to 12.3. That is judged under 6349ff3f0's rule,
+which the director approved as option (i): a rise up to the references' median, 20.85, is not worse.
+
+**note_release_labels.tex** is regenerated at the unchanged pin acf934d71, because the §9.4 repoint left
+sec:eavailw-adopted uncited.
+
+**The read of items 36-37** (independent, read-only): both PASS.
+- **(B)** is meaningful for a muon-only 2D estimator. Its step-1 regressor takes the mean weight at fixed truth (§3.1),
+  so efficiency, migration and background in (pT, p∥) average over the simulation's hadronic distribution. "Is open"
+  asserts nothing, the two following sentences give necessary conditions, and nothing in the paper attributes the
+  shape difference.
+- **(C):** "They" is the coverage tests. The 2D joint count is 0 at both tunes, ll5d-alljoint is "all", and
+  "completed" leaves out the first 5D test.
+- **Optional, not applied:** "the pattern" in the older next-but-one sentence has no clear antecedent; "cannot produce
+  such contrasts" would fix it.
