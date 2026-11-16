@@ -100,5 +100,32 @@ for name, grp in PENDING_MAP.items():
     print(f"{'OK ' if ok else 'BAD'} PENDING #981 {name} -> group {grp}: {state}"
           + (f" ({FILLS[name]} fills it at the re-pin)" if state == "FILLED" and name in FILLS else "")
           + ("" if ok else "  #981 would ship a stale pending note: add the row that fills it"))
+# RP44: the code-location map #981's README gains (codemap.tsv). Each entry's file must have its pinned sha256 at its
+# commit, and its anchor must lie inside its cited lines. The Supplement's tab:codemap block is pinned by sha256 while
+# it exists: a change means RP44's map must be re-checked against it; once journal-editor cuts it, RP44 is the source.
+CODEMAP_TABLE_SHA = "11de5b171ea0f3e11cee7eecc10f15108cc4b944227889ed9d2c9113fa96c9d2"   # at f03dbd758
+cm = [l.split("\t") for l in open(os.path.join(HERE, "codemap.tsv")).read().splitlines()
+      if l and not l.startswith("#") and not l.startswith("step\t")]
+nbad = 0
+for step, path, commit, lines, want, anchor in cm:
+    b = subprocess.run(["git", "show", f"{commit}:{path}"], capture_output=True, check=True).stdout
+    a, z = map(int, lines.split("-"))
+    seg = b"\n".join(b.split(b"\n")[a - 1:z]).decode()
+    ok = hashlib.sha256(b).hexdigest() == want and anchor in seg
+    nbad += not ok
+    if not ok:
+        print(f"BAD CODEMAP {path}:{lines} @{commit} ({step}): sha or anchor differs")
+bad += nbad
+print(f"{'OK ' if not nbad else 'BAD'} CODEMAP {len(cm)} entries: every file at its pinned sha256 and every anchor in its lines")
+i = raw.find(r"\label{tab:codemap}")
+if i < 0:
+    print("OK  CODEMAP tab:codemap is cut from the Supplement; RP44's map is the source")
+else:
+    blk = raw[raw.rfind(r"\begin{table", 0, i):raw.find(r"\end{table", i)]
+    tsha = hashlib.sha256(blk.encode()).hexdigest()
+    ok = raw.count(r"\label{tab:codemap}") == 1 and tsha == CODEMAP_TABLE_SHA
+    bad += not ok
+    print(f"{'OK ' if ok else 'BAD'} CODEMAP tab:codemap block_sha={tsha[:16]}"
+          + ("" if ok else "  tab:codemap CHANGED: re-check RP44's map against it"))
 print("REPIN-CHECK", "PASS" if not bad else f"FAIL ({bad})")
 sys.exit(1 if bad else 0)
