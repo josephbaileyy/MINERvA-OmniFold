@@ -4,6 +4,7 @@
      4.5  phase space        the muon phase-space cut, pT < 4.5 GeV/c  [at: \pT < \SI{4.5}]
   3.2353  data constant      the fiducial volume's nucleon count (the note's value)  [at: nucleons]
    1.057  data constant      the exposure in POT (the note's value)  [at: protons on targ]
+   10.61  data constant      the published exposure in POT (arXiv:2106.16210, abstract and section II)  [at: $10.61\times10^{20}$ protons on target in ref]
   3.2353  data constant      the fiducial volume's nucleon count (the note's value)  [at: nucleons]
      2.5  definition         the mean struck-nucleon mass's weights (1.5 M_n + M_p)/2.5  [at: \bar M=(1.5M_{n}+M_{p})/2.5]
     1.17  definition         the reconstructed Eavail calorimetric factor (CVUniverse.h)  [at: 1.17\times$ calorimetric]
