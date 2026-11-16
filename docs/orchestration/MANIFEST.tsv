@@ -3920,6 +3920,7 @@ docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/repin
 docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/repin/READS-a5e3005fd.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/repin/READS-a87137996.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/repin/REPIN-CHECK.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/repin/codemap.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/repin/comment_strip_measure.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/repin/dryrun.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/repin/g2r-transcription-20261114/FLUXBAND-PLANTS.out	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes

@@ -1,0 +1,23 @@
+# RP44: the code-location map #981's README gains at the freeze (the Supplement's tab:codemap at the code commit of the
+# reported result, abdc88c5, plus the prior-retention runner options of the tab:prr-levels caption at FD-PRR's M a5235714).
+# Columns: step, path, commit, lines (a-b), file sha256 at that commit, anchor (a verbatim substring of the cited lines).
+step	path	commit	lines	sha256	anchor
+Refinement of the measured side	nd-unfolding/s5n_pseudo.py	abdc88c5	222-229	8981f97b96b418cfe46f1e940cb120f174053d7d3429f3b0b01a229c6c02ee6c	def signed_sample(
+Refinement of the measured side	nd-unfolding/s5n_pseudo.py	abdc88c5	264-282	8981f97b96b418cfe46f1e940cb120f174053d7d3429f3b0b01a229c6c02ee6c	def refine(feat
+Refinement of the measured side	2d-unfolding/unfold_2d_omnifold_unbinned.py	abdc88c5	409-454	8ebe0277ee4c277f6f697712a901b14d6ba24ed5dcadfc3c66b29276acf81b5e	def refine_stay_positive(
+Refinement of the measured side: the capacity	nd-unfolding/s5e_candidate.py	abdc88c5	33-33	bda8c48ce2365e173bbba083b18233d6f6b7c2dfbab5179156073860c8281ec7	"n_estimators": 400, "num_leaves": 31
+Iterations	nd-unfolding/omnifold_nn_core.py	abdc88c5	248-266	24f87f119073c4f125c2f753310507d4375b6f8a1b7751e59d3615dd50e90582	for it in range(num_iterations):
+Step 1: classifier settings	nd-unfolding/omnifold_nn_core.py	abdc88c5	143-148	24f87f119073c4f125c2f753310507d4375b6f8a1b7751e59d3615dd50e90582	n_estimators=100, num_leaves=8
+Step 1: the restriction of p	nd-unfolding/omnifold_nn_core.py	abdc88c5	152-155	24f87f119073c4f125c2f753310507d4375b6f8a1b7751e59d3615dd50e90582	np.clip(p, 1e-6, 1 - 1e-6)
+Events without a reconstructed partner	nd-unfolding/omnifold_nn_core.py	abdc88c5	258-260	24f87f119073c4f125c2f753310507d4375b6f8a1b7751e59d3615dd50e90582	new_w[~pass_reco] = reg.predict(MCgen[~pass_reco])
+Pull weight	nd-unfolding/omnifold_nn_core.py	abdc88c5	261-261	24f87f119073c4f125c2f753310507d4375b6f8a1b7751e59d3615dd50e90582	w_pull = w_push * new_w
+Step 2	nd-unfolding/omnifold_nn_core.py	abdc88c5	263-266	24f87f119073c4f125c2f753310507d4375b6f8a1b7751e59d3615dd50e90582	w_push = fit_reweight(clf2, s2x, s2y, s2w, MCgen)
+Cross section	nd-unfolding/s5c_unfold.py	abdc88c5	136-146	510d749a2e82fa448de6172753ae2adc9ebd81a89d4f18bf76beb5faa8bb3968	extract_cross_section_nd(unf, comp
+Cross section	nd-unfolding/xsec_nd.py	abdc88c5	54-54	454001f3c9ac3aa6485d184aadb8aba65dd71dba124816962b9c3b6344920fa5	def extract_cross_section_nd(
+Reported cells	nd-unfolding/s1_assemble.py	fe5d79c61	119-122	b157250af21a2ef74e4164db6009a40ac596e225f33ac655475798ef49f613f7	def functional_matrix(
+Prior-retention study: training statistics (--mc-fraction)	nd-unfolding/s5p_nullexp.py	a5235714	275-275	789271bb76e0d589e8b3252ce72ef7e4fab40acdf1ab4744162bd64e339fd2ab	ap.add_argument("--mc-fraction"
+Prior-retention study: capacity (--capacity)	nd-unfolding/s5p_nullexp.py	a5235714	277-277	789271bb76e0d589e8b3252ce72ef7e4fab40acdf1ab4744162bd64e339fd2ab	ap.add_argument("--capacity"
+Prior-retention study: iterations (--iters)	nd-unfolding/s5p_nullexp.py	a5235714	278-278	789271bb76e0d589e8b3252ce72ef7e4fab40acdf1ab4744162bd64e339fd2ab	ap.add_argument("--iters"
+Prior-retention study: the observables' column masks	nd-unfolding/prior_retention/prr_probe.py	a5235714	116-122	f87ee90c58d2b8904fe881931edc61966a6adda8be7eb503da6644797a3d1232	MASKS = {
+Prior-retention study: the tested levels	nd-unfolding/prior_retention/prr_probe.py	a5235714	124-138	f87ee90c58d2b8904fe881931edc61966a6adda8be7eb503da6644797a3d1232	LEVELS = {
+Prior-retention study: the mask on the inputs of all three	nd-unfolding/prior_retention/prr_probe.py	a5235714	287-316	f87ee90c58d2b8904fe881931edc61966a6adda8be7eb503da6644797a3d1232	def column_mask(
