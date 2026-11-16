@@ -5,8 +5,10 @@
 # LL5D's own functions (ll5d_b.setup, remade; products O_NOATIME) and lrows-g's geant_full.summarize. Controls in the
 # script: made_from and the products' O_NOATIME digest equal LL5D's null records'; the removal control on the G used.
 # The S1 reproduction control (geant_full's 0.081346592967004 and 0.04097223733043594) ran locally and is committed.
-# Login node, setup_salloc_env (python 3.11, as LL5D's readout ran). Every input is read O_NOATIME; atime-pre and
-# atime-post over the declared inputs (the pending bulk HPSS copy of $U) must show none moved, else a STOP.
+# Login node, setup_salloc_env (python 3.11, as LL5D's readout ran). Every input outside this connect's own deploy is
+# read O_NOATIME (the deploy's definition and cmodel json are read plainly by LL5D's setup, made_from and cmodel_parts);
+# atime-pre and atime-post over the watch list (`ll5d_mumax.py inputs`: the staged S1, the constraint, both truths'
+# null-role products, plus the two null records; the pending bulk HPSS copy of $U) must show none moved, else a STOP.
 # The fence is RE-2-shapes rev 3's, verbatim. Writes only under $W and $LOG. 0 node-h. Not under set -u (conda).
 # Run: setsid nohup bash /dev/shm/josephrb-g2r-d2.sh >/dev/null 2>&1 </dev/null &
 PKG=__PKG__                                  # the lane's package commit (branch lane/d2-mumax-20261116)

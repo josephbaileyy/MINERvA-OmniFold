@@ -12,7 +12,10 @@ by the data's f f^T); mu_max does not depend on that scaling, the eigenmode shar
 Steps (python3 -I from the repository root):
   s1-control   the same mumax_record on S1's committed data blocks (geant_full's construction) must reproduce
                geant_full.json's mu_max for C_total and for the reported covariance to 1e-12 relative. Exit 0 PASS.
-  inputs       print the declared inputs of `ll5d` for one truth (the atime watch list), one path per line.
+  inputs       print the atime watch list of `ll5d` for the given truths, one path per line: the inputs the run must
+               not move (the staged S1 assembly, the constraint, every product at T in the null's roles). The
+               definition and the cmodel json are left out: they are files of the connect's own fresh deploy, which
+               LL5D's setup, made_from and cmodel_parts read plainly (coverage-5b-audit blocker 1).
   ll5d         per truth, reading only through LL5D's own functions (ll5d_b.setup, remade; products O_NOATIME):
                (0) --null gives LL5D's committed null record per truth (the connect checks its sha256 first); the
                    truth, products_sha256 and made_from are read from it, and mc.made_from(a, U) must equal its made_from
@@ -126,7 +129,7 @@ def cmd_s1_control(a) -> int:
 
 def declared_inputs(a, truth: str) -> list[str]:
     import ll5d_b as lb
-    out = [str(a.staged / "s1" / "s1_assembly.npz"), str(a.definition), str(a.cmodel_json), str(a.flux_constraint)]
+    out = [str(a.staged / "s1" / "s1_assembly.npz"), str(a.flux_constraint)]     # not the deploy's definition/cmodel
     out += sorted(str(p) for p in a.unfolds.glob(f"{lb.TAG}_{truth}_*.npz") if p.name.split("_")[2] in lb.BLOCK_ROLES)
     return out
 

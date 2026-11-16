@@ -19,9 +19,11 @@ fractional matrices (divided by X_T X_T^T).
   digest, built as ll5d_b.products_digest builds it but read O_NOATIME, to equal the record's products_sha256.
 - **The removal control on the G used:** max |C_T(minus2) - (C_T(all) - G)| <= 1e-12 max |C_T(all)|, together with
   ll5d_b.removal_control itself.
-- **atime-pre/post over the declared inputs:** every product at T in the null's roles, the staged S1 assembly, the
-  definition, the cmodel json, the constraint and the two null records. None may move; the bulk HPSS copy of $U is
-  pending.
+- **atime-pre/post over the watch list:** every product at T in the null's roles, the staged S1 assembly, the
+  constraint and the two null records. None may move; the bulk HPSS copy of $U is pending. The connect's own deploy
+  files (the definition and the cmodel json) are not on it. LL5D's setup, made_from and cmodel_parts read them
+  plainly, and they are lane-made, the same class as LL5D's deploy manifest (coverage-5b-audit blocker 1; the
+  director's fix).
 
 | file | what |
 |---|---|
