@@ -1,0 +1,13 @@
+PASS clean (rc 0): CR PASS: control reproduced step C-R; g2r arm rc 0
+PASS clean: deploy at PKG, the real comparison PASSed, porcelain 0 after
+PASS control-reading (rc 2): STOP the control did not reproduce step C-R's committed readout
+PASS control-reading: the real comparison found 1 difference; the g2r arm did not run
+PASS control-rc (rc 2): STOP control rc=3 (see $TMP//tcr.n8OTFJ/control-rc/p/cov2d-cr-g2r-
+PASS g2r-rc (rc 2): STOP g2r rc=4 (see $TMP//tcr.n8OTFJ/g2r-rc/p/cov2d-cr-g2r-20261116
+PASS g2r-rc: out.sha256 and porcelain still recorded
+PASS job-queued (rc 2): STOP a job of josephrb is queued or running (the fence refuses every job)
+PASS squeue-fails (rc 2): STOP squeue failed (rc 1): the fence is not clear
+PASS late-job (rc 2): STOP a job of josephrb is queued or running (the fence refuses every job)
+PASS late-job: the control ran and passed, the second fence STOPped before the g2r arm
+PASS w-exists (rc 2): STOP $TMP//tcr.n8OTFJ/w-exists/p/cov2d-cr-g2r-20261116 exists
+CR CONNECT TEST PASS

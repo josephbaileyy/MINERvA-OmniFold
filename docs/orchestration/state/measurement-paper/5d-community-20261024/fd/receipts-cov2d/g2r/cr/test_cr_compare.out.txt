@@ -1,0 +1,7 @@
+PASS moved deploy and argv rc 0 | CR-CONTROL PASS: 0 difference(s) after dropping argv and the deploy prefix
+PASS reading quadrants/QA/S16 changed rc 1 | CR-CONTROL STOP: 1 difference(s) after dropping argv and the deploy prefix
+PASS an input digest changed rc 1 | CR-CONTROL STOP: 1 difference(s) after dropping argv and the deploy prefix
+PASS atime_unchanged False rc 1 | CR-CONTROL STOP: 1 difference(s) after dropping argv and the deploy prefix
+PASS an extra key rc 1 | CR-CONTROL STOP: 1 difference(s) after dropping argv and the deploy prefix
+PASS code_sha256 changed rc 1 | CR-CONTROL STOP: 4 difference(s) after dropping argv and the deploy prefix
+CR-COMPARE TEST PASS
