@@ -1,0 +1,5 @@
+8631262de43d476ddfb9ab6394328e334e250d8ed9ed7430d9630fbd5b290746  /dev/shm/josephrb-g2r-re2shapes.sh
+1fc39ae31321a6022d0c1e075ebbf89e18d8f4f53f3f7c79719dabd86196bab3  /dev/shm/josephrb-g2r-re2shapes.log
+rm -f /dev/shm/josephrb-g2r-re2shapes.sh /dev/shm/josephrb-g2r-re2shapes.log rc=0
+ls: cannot access '/dev/shm/josephrb-g2r-re2shapes.sh': No such file or directory
+ls: cannot access '/dev/shm/josephrb-g2r-re2shapes.log': No such file or directory

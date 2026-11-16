@@ -1,0 +1,136 @@
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+{
+ "checks": {
+  "grid_equals_E_U_axes": true,
+  "x_vs_E_U_rel": 0.0,
+  "control_dr_step": {
+   "value": 0.06888084964241115,
+   "frozen": 0.06888084964241115,
+   "rel": 0.0
+  },
+  "control_bias_PB_chi2_pz": {
+   "value": 34.42079993125393,
+   "frozen": 34.42079993125393,
+   "rel": 0.0
+  },
+  "identity_sum_e_g": 2.992397996059992e-16,
+  "symmetry_rel": 0.0,
+  "min_eig_over_max": -4.951492677900627e-16,
+  "rank": 2,
+  "functionals_from_vectors_rel": 4.454936432475757e-16,
+  "functionals_projected_estimator_rel": 5.568670540594696e-16
+ },
+ "C_PL": {
+  "cell_rel_sigma_pct": {
+   "median": 2.086517580693274,
+   "p84": 3.3389563202938413,
+   "max": 6.475972067566826
+  },
+  "integral_rel_sigma_pct": 1.96973095562161,
+  "pt_rel_sigma_pct": [
+   2.214,
+   1.1756,
+   1.5847,
+   1.5157,
+   1.7746,
+   2.1765,
+   2.0021,
+   2.0126,
+   1.8479,
+   2.0043,
+   2.2087,
+   2.434,
+   1.9288,
+   2.5918
+  ],
+  "pz_rel_sigma_pct": [
+   1.7582,
+   1.3397,
+   1.6836,
+   1.6795,
+   1.8362,
+   1.9637,
+   1.9843,
+   2.7425,
+   3.362,
+   3.253,
+   2.3431,
+   2.6657,
+   1.8341,
+   1.7244,
+   1.7234,
+   1.1748
+  ],
+  "median_sigma_ratio_to_VL175": 0.34545861985800885
+ },
+ "reference_scenario": {
+  "b_PB_dr": {
+   "pz_vs_VL175": 33.455822744161836,
+   "pz_vs_VL175_plus_C_PL": 0.6764585844972026,
+   "pt_vs_VL175": 2.8208069533506297,
+   "pt_vs_VL175_plus_C_PL": 0.5598142668728205,
+   "out_of_span": {
+    "euclid": 0.007119311944394434,
+    "pz_vl175_chi2_fraction": 0.000631178482070614
+   },
+   "first_order_in_span_bound": 0.6833378267038563
+  },
+  "b_PC_dr": {
+   "pz_vs_VL175": 2.861190791848504,
+   "pz_vs_VL175_plus_C_PL": 0.30582575757993774,
+   "pt_vs_VL175": 0.877448077513812,
+   "pt_vs_VL175_plus_C_PL": 0.25123891450858354,
+   "out_of_span": {
+    "euclid": 0.005228696936333445,
+    "pz_vl175_chi2_fraction": 0.0006359828885466118
+   },
+   "first_order_in_span_bound": 0.3401730842186354
+  },
+  "bias_PB_raw_frozen": {
+   "pz_vs_VL175": 34.42079993125393,
+   "pz_vs_VL175_plus_C_PL": 1.9946164336258378,
+   "pt_vs_VL175": 1.724663656133951,
+   "pt_vs_VL175_plus_C_PL": 0.49660486557302624,
+   "out_of_span": {
+    "euclid": 0.4625072222242799,
+    "pz_vl175_chi2_fraction": 0.057311511798645846
+   },
+   "first_order_in_span_bound": null
+  },
+  "bias_PC_raw_frozen": {
+   "pz_vs_VL175": 2.490423599918435,
+   "pz_vs_VL175_plus_C_PL": 0.38963451717194486,
+   "pt_vs_VL175": 0.6584134584220058,
+   "pt_vs_VL175_plus_C_PL": 0.2134908738428637,
+   "out_of_span": {
+    "euclid": 0.1325628928208048,
+    "pz_vl175_chi2_fraction": 0.476884484794289
+   },
+   "first_order_in_span_bound": null
+  },
+  "note": "no pass/fail: the dr vectors lie in C_PL's span to first order, so their chi2 against VL175 + C_PL is bounded by an e-only constant whatever the data (DESIGN \u00a74, \u00a76 item 1)"
+ },
+ "noise_share": {
+  "boot": {
+   "median_cell_variance_share": 0.0856987631735397,
+   "median_pz_marginal_variance_share": 0.020293169744163692
+  },
+  "seed": {
+   "median_cell_variance_share": 0.0022562697691977996,
+   "median_pz_marginal_variance_share": 0.0002755175618781962
+  },
+  "total": {
+   "median_cell_variance_share": 0.08776587685267272,
+   "median_pz_marginal_variance_share": 0.02056868730604189
+  },
+  "n_boot": 10
+ }
+}
