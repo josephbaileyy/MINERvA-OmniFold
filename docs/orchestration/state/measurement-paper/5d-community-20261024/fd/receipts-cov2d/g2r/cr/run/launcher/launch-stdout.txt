@@ -1,0 +1,56 @@
+fence host=login02 utc=2026-11-16T04:20:01Z
+squeue:
+sacct unended cov2d:
+fence end
+FENCE_CLEAR (other lanes' jobs are recorded above; the director sequences them)
+staged rc=0 node=1a583b17122b25f4a1f120c716f1e1925875a3569620f2d9eea0c00e5b6b2c1b local=1a583b17122b25f4a1f120c716f1e1925875a3569620f2d9eea0c00e5b6b2c1b go=1a583b17122b25f4a1f120c716f1e1925875a3569620f2d9eea0c00e5b6b2c1b
+DIGEST_MATCH
+launched rc=0 at 2026-11-16T04:20:55Z
+last line: DONE (polls=5 of 360, done_seen=1)
+fetched connect log rc=0
+host=login02 start=2026-11-16T04:20:53Z pid=1720657 PKG=31cdef263907eb5a61a93e1b469aa1e006651415 nproc=244 OMP_NUM_THREADS=unset
+squeue rc=0: [JOBID|NAME|STATE|TIME_LIMIT|NODES]
+sacct rdx_s1_1A rc=0: [61315648|rdx_s1_1A|COMPLETED|2026-11-14T20:24:41]
+sacct all since 2026-11-01 rc=0: 156 rows
+fence (start) clear: every query rc 0, rdx_s1_1A ended, no job queued, running or unended, group C marker absent
+deploy porcelain_lines=0 head=31cdef263907eb5a61a93e1b469aa1e006651415
+python 3.10.19
+numpy 2.2.6
+uproot 5.6.9
+executable /global/homes/j/josephrb/.conda/envs/omnifold_py310/bin/python
+control start=2026-11-16T04:22:03Z
+control rc=0 end=2026-11-16T04:22:04Z
+PASS control C-R3D every quadrant's 3D row equals step C's committed one (to 1e-12)
+{"wrote": "/pscratch/sd/j/josephrb/cov2d-cr-g2r-20261116/control/overlap_refined.json", "sha256": "1118c99209cd648fed3a0e9b99c897f56abe5593045d53e8834ac2784d0e35df"}
+[C] QA 2D agree; 3D agree at the sigma_16 scale (descriptive)
+[C] QB 2D agree below a correlation; 3D agree at the sigma_16 scale (descriptive)
+[C] QC 2D agree below a correlation; 3D agree at the sigma_16 scale (descriptive)
+[C] QD 2D agree below a correlation; 3D agree at the sigma_16 scale (descriptive)
+CR-CONTROL PASS: 0 difference(s) after dropping argv and the deploy prefix
+squeue rc=0: [JOBID|NAME|STATE|TIME_LIMIT|NODES]
+sacct rdx_s1_1A rc=0: [61315648|rdx_s1_1A|COMPLETED|2026-11-14T20:24:41]
+sacct all since 2026-11-01 rc=0: 156 rows
+fence (before the g2r arm) clear: every query rc 0, rdx_s1_1A ended, no job queued, running or unended, group C marker absent
+g2r start=2026-11-16T04:22:04Z
+g2r rc=0 end=2026-11-16T04:22:05Z
+PASS control C-R3D every quadrant's 3D row equals step C's committed one (to 1e-12)
+{"wrote": "/pscratch/sd/j/josephrb/cov2d-cr-g2r-20261116/g2r/overlap_refined.json", "sha256": "0734cf4afa1fce4459c836f02e6362f928affac9a9f7bfcb74c76b291e80a1a0"}
+[C] QA 2D agree; 3D agree at the sigma_16 scale (descriptive)
+[C] QB 2D agree below a correlation; 3D agree at the sigma_16 scale (descriptive)
+[C] QC 2D agree below a correlation; 3D agree at the sigma_16 scale (descriptive)
+[C] QD 2D agree below a correlation; 3D agree at the sigma_16 scale (descriptive)
+deploy porcelain after: 0
+e22f1a35f7cb82e6158d4b256848d8801872c3db7e42aaa6e1314d64a65e2441  environment.txt
+1118c99209cd648fed3a0e9b99c897f56abe5593045d53e8834ac2784d0e35df  control/overlap_refined.json
+903fbe1f0e210e93c4ac5e27bbb697063a8f6b68c45ab89df0657586213b23f6  control/compare.out
+0734cf4afa1fce4459c836f02e6362f928affac9a9f7bfcb74c76b291e80a1a0  g2r/overlap_refined.json
+CR PASS: control reproduced step C-R; g2r arm rc 0
+end=2026-11-16T04:22:07Z
+DONE
+removal rc=2
+1a583b17122b25f4a1f120c716f1e1925875a3569620f2d9eea0c00e5b6b2c1b  /dev/shm/josephrb-g2r-cr.sh
+d53a2b87e1da094840091b22a063e6cfb566685eea896f2d0f67a30245ad346a  /dev/shm/josephrb-g2r-cr.log
+rm -f /dev/shm/josephrb-g2r-cr.sh /dev/shm/josephrb-g2r-cr.log rc=0
+ls: cannot access '/dev/shm/josephrb-g2r-cr.sh': No such file or directory
+ls: cannot access '/dev/shm/josephrb-g2r-cr.log': No such file or directory
+launcher rc=0
