@@ -1,0 +1,29 @@
+# D1 misses-limitation meaning read, pass 1: codex-school gpt-6.1-sol, high, read-only; prompt misses-pass1-prompt.txt, texts misses-pass1-texts.txt, records misses-pass1-records.txt
+For Question 1:
+
+- **PASS — Missed-event weights:** R1’s VALID row explicitly supports “each event that fails reconstruction carries that universe’s own truth weight,” and R1b identifies those per-event weights.
+- **PASS — Earlier construction:** R1b supports the description of central-value weights followed by division by universe completeness.
+- **FAIL — Rebuild date:** “was rebuilt without that approximation on 2026-11-14” assigns the rebuild a date that R2 establishes for adoption, without establishing when the rebuild occurred; R3’s wording approval supplies no additional timing evidence.
+- **PASS — Comparison status:** R2 item 2 and R3 support keeping the earlier covariance only as a documented comparison.
+- **PASS — New App. I construction and applicability cells:** R1’s VALID row and R2 support replacing the approximation and stating that the reported covariance does not use it.
+- **PASS — “Already seen” cell:** R1’s header establishes that the outcome table preceded its numerical readout, while R2 records adoption after the condition was met, consistent with the VALID row’s proposed adoption.
+- **PASS — D5:** “the yardstick of the retraining test” accurately describes the retained retraining sentence’s explicit use of the earlier ten-seed block’s σ.
+- **FAIL — Remaining subsection:** “the approximation … whose effect has not been measured beyond the low-sensitivity test below” still presents the removed approximation as an active limitation and points to a test no longer printed below.
+
+For Question 2, applying R4:
+
+- **LEDGER — “The central value has completeness 1…”:** This explains the retired construction and is unnecessary to understand the corrected covariance.
+- **LEDGER — “The approximation is not corrected.”:** This superseded status would misdescribe the reported covariance.
+- **LEDGER — Two universes and seeds:** The MaRES_0/Flux:23 tests at seeds 42 and 43 concern the retired approximation.
+- **LEDGER — No effect resolved above training-seed noise:** This qualifies those historical tests, rather than the corrected construction.
+- **NEEDED — Earlier ten-seed σ being about 3.7 times the current training-seed block’s σ:** That scale relation remains necessary to interpret the retained retraining result against the current training-seed uncertainty, and its disappearance from both section and appendix is a **FAIL**.
+- **LEDGER — Excluding only a median effect above twice that σ:** This sensitivity limit belongs to the retired approximation tests.
+- **LEDGER — Retraining shifts of 1.13–1.23 times that σ:** The specific historical two-universe result can move to the ledger because the retained six-universe paragraph already conveys the retraining limitation and its scale.
+
+OVERALL: FAIL
+
+FAILs:
+
+- Unsupported exact rebuild date.
+- Remaining text still lists the removed approximation as an active limitation.
+- Loss of the 3.7× relation needed to interpret the retained retraining yardstick.

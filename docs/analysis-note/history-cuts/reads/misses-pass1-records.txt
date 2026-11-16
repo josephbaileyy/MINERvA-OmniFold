@@ -1,0 +1,43 @@
+=== R1. COV2D-G2R-DECLARATION.md:1 and :225-232 (the outcome table, its header and VALID row)
+# DECLARATION COV2D-G2R: the 2D universes' misses approximation removed, the systematic block rebuilt at the data, and the 2D coverage test regraded at both tunes (2026-11-11)
+## 10. The outcome table, fixed now, before any number is read
+
+**Part (a), at the data:**
+
+| (a) | the reported 2D covariance | limitation 7 |
+|---|---|---|
+| **VALID** | **Proposed for Joseph:** the corrected covariance C_new replaces C_rep in the paper and the note, whatever ε reads, since it is the declared procedure with the approximation removed. The numbers it feeds (the 6.41 % and 4.76 % uncertainties, and every quantity graded against the 2D covariance at the data) are recomputed from it. The §3 readings are reported in the note, and ε with its floor in the response to the referee. | removed. The covariance text states that the systematic-universe unfoldings weight each missed event at its universe's truth weight. |
+| **INVALID / STOP / not run before 2026-12-19** | unchanged | stands, with one added clause: a consistent rebuild was attempted and produced no reading |
+
+=== R1b. the same, :34-45 (the approximation and its correction)
+
+## 1. What the approximation is
+
+In dump mode, every universe weight of an appended truth-only miss row (a truth event with no reconstructed partner)
+is the CV truth weight (P5 DESIGN §1-2: `runEventLoopOmniFold.cpp` `AppendTruthOnlyMisses` sets every universe weight
+to `w_truth`). In a `--universe BAND:IDX` unfold, the driver reads those proxies from `mc_signal_reco`'s miss rows
+(`re2_driver.py` `collect_signal_arrays_2d`, the universe branch swap) and divides each cell by the universe's
+completeness, which departs from 1 where truth weights vary (P5 DESIGN §1). The correct per-event universe truth weight
+of every miss row is in the same file's `mc_truth_denom` tree, as `w_truth_<band>_<idx>` (P5 DESIGN §2), so the
+repair is re-unfolds only, with no new event loop.
+
+**Which unfolds carry it.** Only `--universe` unfolds of `$UNI` (the 175 universes of the 38 weight bands). A CV-mode
+
+=== R2. DECISION-20261114-joseph-d1-g2r-adopted.md, What is decided
+## What is decided
+
+1. In D1, "the held-out constructions validate" means that the held-out tunes' runs are valid under their declared
+   controls. It does not mean that they cover.
+2. The condition is met, so the rebuilt covariance (COV2D-G2R's C_T') becomes the reported 2D covariance. The current
+   covariance stays as a documented comparison.
+3. As D1 says, the paper reports the coverage counts under the unchanged rule. They are unchanged: under-covers at both
+   tunes, with the same flagged cells and joint counts. Every result that depends on the 2D covariance is updated from
+   the G2R readout records. The construction's correction (per-universe weights on the missed-event rows) is described.
+4. T2A's descriptive decomposition and its truncated joint counts, which the G2R code did not produce, are computed for
+   C_T' as a descriptive step before the dependent text is updated.
+
+## CITABLE FOR / NOT CITABLE FOR
+
+=== R3. the director's go, 2026-11-16: proposed :245 approved with the addition "the earlier covariance is kept only as a documented comparison (App. I)"; the App. I row and moving the MaRES_0/Flux:23 tests to the ledger approved, subject to this read classing them LEDGER.
+
+=== R4. the history rule (verbatim): History stays in the note only if removing it would change a reader's understanding of the reported object, its reproducibility, its evidential independence or its limitations. Everything else goes to the ledger.

@@ -116,3 +116,22 @@ numbering).
 **Style pass B, meaning read (codex-school gpt-6.1-sol, high, read-only; rows S6, C8, F4 and T8 read together, records attached):**
 - **Pass 1:** OVERALL FAIL on F4 only ("for the purposes, and within the limits, stated in Table~\ref{tab:result-status}" imported Table 1's estimator-seed-only scope, which omits sec_eavailw.tex:118 and sec_systematics.tex:160). S6, C8 and T8 passed; every removed item was LEDGER or NEEDED and retained; no disclosure lost. reads/styleB-pass1.txt.
 - **Pass 2, F4 revised to "with the restrictions stated in this section":** OVERALL PASS, with no FAILs; no NEEDED item lost; no disclosure lost. reads/styleB-pass2.txt.
+
+## The D1 follow-on, 2026-11-16 (row S7; the director's go)
+
+**Under** DECISION-20261114-joseph-d1-g2r-adopted.md items 2 and 3, and COV2D-G2R-DECLARATION.md §10's VALID row:
+"removed. The covariance text states that the systematic-universe unfoldings weight each missed event at its
+universe's truth weight." The director approved the wording, with the clause on the earlier covariance. This is a
+limitation change, for Joseph's batch.
+
+| id | base line | old text | new text | ledger home |
+|---|---|---|---|---|
+| S7 | :245 (base `2fc6777ec`) | "In the systematic-universe unfolds, an event that fails reconstruction keeps the central-value weight and is then divided by that universe's completeness, rather than receiving the universe's own truth weight. The central value has completeness 1, so that division does not change it. The approximation is not corrected. It was tested in two of the 187 universes, \texttt{MaRES\_0} and the flux universe with the largest median completeness change (\texttt{Flux:23}), each at seeds 42 and 43. In neither was an effect resolved above the training-seed noise. The tests compared the difference with the $\sigma$ of the earlier ten-seed block, which is about 3.7 times that of the training-seed block used here. They exclude only a median effect above twice that $\sigma$, so an effect below the training noise is not excluded. Separately, retraining moves these two universes' shifts by a median 1.13--1.23 times that $\sigma$." | "In the systematic-universe unfolds, each event that fails reconstruction carries that universe's own truth weight. An earlier construction kept the central-value weight and divided it by the universe's completeness. The covariance adopted on 2026-11-14 is the rebuild without that approximation, and the earlier covariance is kept only as a documented comparison (App.~\ref{app:devhistory})." (the director's text, with the date placed on the adoption: pass 1 of the read failed "rebuilt … on 2026-11-14", since the records date the adoption, not the rebuild) | 2fc6777ec:sec_systematics.tex:245 |
+
+Also: :224, the list item "the approximation in how the systematic-universe unfolds weight events that fail reconstruction, whose effect has not been measured beyond the low-sensitivity test below" (what the covariance does not include), is removed and its line kept as a comment (pass 1 found it). :273 gains "which is about 3.7 times that of the training-seed block used here": pass 1 classed that relation NEEDED for the retained retraining result. App. I gains D16 for the approximation, and D5's applicability narrows to "the retraining test" (the cut test was
+the completeness one): history-cuts/app_devhistory.md I12. numdiff: removed 42, 43, 187, 23 (Flux:23),
+1.13, 1.23 and "1" (completeness 1), the cut tests' own numbers; added 2026-11-14. Line count unchanged.
+
+**Meaning read of S7 (codex-school gpt-6.1-sol, high, read-only; the declaration's §10, the decision and the director's go attached):**
+- **Pass 1:** FAIL on three points: the date (rebuild versus adoption), the :224 item still listed the approximation as active, and the 3.7 relation was classed NEEDED. reads/misses-pass1.txt.
+- **Pass 2,** all three fixed: OVERALL PASS. Every moved test is LEDGER, and the 3.7 relation is NEEDED and retained at :273. reads/misses-pass2.txt.
