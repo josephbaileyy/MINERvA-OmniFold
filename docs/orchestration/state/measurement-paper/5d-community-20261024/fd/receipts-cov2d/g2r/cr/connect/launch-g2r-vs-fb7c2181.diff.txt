@@ -1,0 +1,9 @@
+9c9
+< # Usage: launch-g2r.sh envtest|envtest-r2|envtest-r3|diag-tune|prepare|D_Ua|D_Ub|<a remaining unfold job>|readout-<data|G18|AR23>|re2shapes <sha256>
+---
+> # Usage: launch-g2r.sh envtest|envtest-r2|envtest-r3|diag-tune|prepare|D_Ua|D_Ub|<a remaining unfold job>|readout-<data|G18|AR23>|re2shapes|cr <sha256>
+31c31,32
+<   *) echo "usage: launch-g2r.sh envtest|envtest-r2|envtest-r3|diag-tune|prepare|D_Ua|D_Ub|D_Uc|D_Ud|G18_Ua|G18_Ub|G18_Uc|G18_Ud|AR23_Ua|AR23_Ub|AR23_Uc|AR23_Ud|readout-data|readout-G18|readout-AR23|re2shapes <sha256>"; exit 2 ;;
+---
+>   cr) SRC=$H/cr/connect-g2r-cr.sh; ARG="" ;;   # cr: fd_gencmp overlap, step C-R control then route A's Q_R (login node; log $SHM/josephrb-g2r-cr.log)
+>   *) echo "usage: launch-g2r.sh envtest|envtest-r2|envtest-r3|diag-tune|prepare|D_Ua|D_Ub|D_Uc|D_Ud|G18_Ua|G18_Ub|G18_Uc|G18_Ud|AR23_Ua|AR23_Ub|AR23_Uc|AR23_Ud|readout-data|readout-G18|readout-AR23|re2shapes|cr <sha256>"; exit 2 ;;
