@@ -1,0 +1,14 @@
+PASS clean (rc 0): XK PASS: control reproduced the committed k.json; g2r arm rc 0
+PASS clean: code shas OK, universes file at X's pin, real comparison PASS
+PASS uni-bad (rc 2): STOP the MEFHC universes file is not at X's pin: V1's pairing does not carry to G2R's products
+PASS uni-bad: no K ran
+PASS copy-bad (rc 2): STOP the copies did not complete
+PASS control-route (rc 2): STOP the control did not reproduce the committed k.json
+PASS control-route: the real comparison found 1 difference; g2r did not run
+PASS control-rc (rc 2): STOP control rc=1 (see $TMP//txk.PmjCTr/control-rc/p/cov2d-xk-g2r-
+PASS g2r-rc (rc 2): STOP g2r rc=1 (see $TMP//txk.PmjCTr/g2r-rc/p/cov2d-xk-g2r-20261116
+PASS job-queued (rc 2): STOP a job of josephrb is queued or running (the fence refuses every job)
+PASS late-job (rc 2): STOP a job of josephrb is queued or running (the fence refuses every job)
+PASS late-job: the control passed, the second fence STOPped before g2r
+PASS w-exists (rc 2): STOP $TMP//txk.PmjCTr/w-exists/p/cov2d-xk-g2r-20261116 exists
+XK CONNECT TEST PASS
