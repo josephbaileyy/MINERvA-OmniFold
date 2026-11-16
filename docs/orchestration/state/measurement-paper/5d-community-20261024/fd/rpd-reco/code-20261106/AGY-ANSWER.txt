@@ -1,0 +1,75 @@
+### Independent Read-Only Review: RPD-RECO Implementation (d1/d2)
+
+**Review Commit:** `3e5a13bc02741f30b4f4ebbe49c0ec35084de866`  
+**Worktree:** `../MINERvA-OmniFold-rpd-reco-review-20261106` (verified clean, detached HEAD at review commit before and after inspection).  
+**Test Suite Execution:** `~/miniconda3/bin/python -m pytest nd-unfolding/tests/test_fd_rpd_reco.py` -> 66 passed in 100.16s.
+
+---
+
+### 1. Findings by Severity
+
+#### [MAJOR] Mutant Survival in Required Mutation Test Suite (`REQUIRED_GUARD_PREDICTION_SHA`)
+- **Location:** `nd-unfolding/tests/fd_rpd_reco_mutation.py:236-247`, `nd-unfolding/tests/test_fd_rpd_reco.py:305-325`, `nd-unfolding/fd_rpd_reco.py:359, 375, 381`
+- **Failure Path:**
+  1. Execution of `~/miniconda3/bin/python nd-unfolding/tests/fd_rpd_reco_mutation.py --out /tmp/mutation_report.json` exits with code 1 (`all_killed: false`), with 82 mutants killed and 1 mutant reporting `SURVIVED_OR_ERROR: REQUIRED_GUARD_PREDICTION_SHA`.
+  2. In `fd_rpd_reco.py`, `PREDICTION_SHA` is guarded via `require()` at line 359 (`require(path.is_file(), "PREDICTION_SHA", ...)`) and line 381 (`require(local.is_file() and digest(local) == expected, "PREDICTION_SHA", ...)`). In addition, line 375 re-raises `Refused("PREDICTION_SHA", "prediction record digest differs")` when `stage_copy()` raises `INPUT_DIGEST` or `STAGED_DIGEST`.
+  3. `Mutator.visit_Call` in `fd_rpd_reco_mutation.py` neutralizes calls to `require(..., "PREDICTION_SHA", ...)` by replacing the condition with `True`. It does not intercept or mutate the explicit `raise Refused("PREDICTION_SHA", ...)` statement at line 375.
+  4. In `test_fd_rpd_reco.py::test_prediction_required_committed_and_exact`, lines 312–318 only test `PREDICTION_SHA` by mutating the on-disk bytes of `prediction` (`prediction.write_text(...)`), which causes `stage_copy` to fail digest verification (`INPUT_DIGEST`), triggering the line 375 `except` handler.
+  5. Because lines 359 and 381 are not uniquely exercised against failure by `test_prediction_required_committed_and_exact`, neutralizing them leaves the test passing via the re-raise at line 375. The mutant survives.
+- **Remedy:**
+  - In `test_fd_rpd_reco.py`: Add distinct sub-tests in `test_prediction_required_committed_and_exact` asserting refusal when `prediction` path does not exist (exercising line 359) and when local `d2-predict.json` is modified while the committed file is unmodified (exercising line 381).
+  - In `fd_rpd_reco_mutation.py`: Ensure `Mutator` also catches/neutralizes the line 375 re-raise when mutating `REQUIRED_GUARD_PREDICTION_SHA`.
+
+---
+
+#### [MINOR / OPERATIONAL] Git Worktree Dependency for Pre-Data Prediction
+- **Location:** `nd-unfolding/fd_rpd_reco.py:406-429`
+- **Path:** `require_prediction()` invokes `git -C str(path.parent) rev-parse --show-toplevel` and `git show HEAD:<relative>` to verify committed bytes at `HEAD`.
+- **Note:** In production on cluster login nodes, the prediction file must reside within an intact git worktree tracking the committed prediction at `HEAD`. Staging outside a git tree or from a detached export will trigger `PREDICTION_COMMITTED` refusal.
+
+---
+
+### 2. Contract & Implementation Audit
+
+1. **Pre-Data Guard & Predecessor Order:**
+   - Order implemented: `pins -> p0 -> d2-predict -> step0 -> c0 -> d1 -> d2`.
+   - Verified that all access to the `"measured"` key (and data-bearing stages `c0`, `d1`, `d2`) strictly requires a committed, matching `d2-predict` record and product digest matching `HEAD`.
+   - Predecessor chain is unbroken; any non-PASS or missing predecessor raises `PREDECESSOR` and produces `{step}.STOP.json` with exit code 4.
+
+2. **I/O, Staging, and Platform Guards:**
+   - All declared files are staged via `stage_copy` with `O_NOATIME` (`noatime_flag()`).
+   - `sys.addaudithook(_audit_open)` actively audits file opens under protected input roots, preventing unflagged reads.
+   - Zero `ROOT` or `TFile` imports exist; `uproot` alone is imported in `read_flux_histogram` on staged ROOT files. No foreign checkout imports on `sys.path`.
+
+3. **Bootstrap Pairing & Accounting:**
+   - Paired Poisson draws use `SeedSequence([20261104, 11, k + 1])` (k=0..199).
+   - Draws are shared simultaneously across all 8 axes, muon conditional strata, reference ratios, and both primary/mirror flux swaps.
+   - Full event row membership is conserved; 16 reporting cells, unreported boxes (2, 6, 10, 14), and overflow bins are explicitly tracked and accounted for.
+
+4. **C-0 Exactness & Calibration Gates:**
+   - Data row allocation is exact via shuffled playlist repetition array matching data counts. Signal/background use independent categorical draws at real weight fractions.
+   - $C_0$ evaluates $R=20$ partitions $\times$ 8 axes $\times$ 12 playlists = 1,920 $p$-values. Gates enforce $p < 0.05 \in [0.03, 0.075]$, $p < 0.001 \le 0.004$, and zero family-wise firing ($p < 0.001/12$).
+   - Shape $\chi^2$ enforces weighted-mean subtraction, $\text{ndf} = n_{\text{used}} - 1$, and simulation-only $P \ge 25$ inclusion.
+
+5. **$E_\nu$ Inversion & C-E Controls:**
+   - Correctly inverts $W^2$ formula with pinned nucleon and muon masses; evaluated across reconstructed $p_\parallel$ strata $[1.5, 8)$, $[8, 15)$, $[15, 60]$.
+   - Evaluates $C\text{-}E1$ ($\ge 99.9\%$) and $C\text{-}E3$ (median discrepancy $\le 0.002$, 99th percentile $\le 0.03$).
+   - P-F premise verified via exact text hashes and MAT git commit verification; out-of-range weight cap $\le 0.1\%$ enforced on primary swap.
+
+6. **d1 & d2 Classifiers:**
+   - R-d1.0 evaluates two-sided step ($|s| \ge 3\sigma$).
+   - R-d1.3 hadronic classification strictly separates unconditional from conditional ($p < 0.001/48$) muon-strata tests.
+   - d2 implements the ordered exhaustive classification table, paired $\sigma_f$ and residual size test ($\chi^2_{\text{pred}}$, 12 dof), background bracket consistency check, and descriptive-only mirror/PC.
+
+---
+
+### 3. Material Dependencies
+- **Dump Inputs:** 24 pinned NPZ files under `/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/` matching `INPUTS.sha256`.
+- **Flux Files & MAT Source:** 3 selected ROOT files from C-N candidate inventory and MAT `FluxReweighter.cxx` at pinned commit `git_sha`.
+- **Environment:** Linux runtime supporting native `os.O_NOATIME`, single-threaded execution (`nice 19`).
+
+---
+
+### 4. Code-Readiness Verdict
+
+**VERDICT: Code implementation satisfies scientific, mathematical, and contract specifications, but code readiness for Binding 2 is CONDITIONAL on resolving the mutation harness gap where `REQUIRED_GUARD_PREDICTION_SHA` survives.**

@@ -1,0 +1,22 @@
+REFUSED: connect-g2r-D_Uc.sh is 031819cc2fe5ca456cadf62168a5c64204aa5feac5506fba7cfb698e655fd7de, not the go's 0000
+  rc=2
+REFUSED: connect-g2r-D_Ud.sh is 900df2baf42a896c168e710595636bcc72195b7323f91ad9db60c4fc1a8b870e, not the go's 0000
+  rc=2
+REFUSED: connect-g2r-G18_Ua.sh is a5948d2e3205b54429dd8b29e22ca61e6453e636b8c5a6c686071df8c4f63555, not the go's 0000
+  rc=2
+REFUSED: connect-g2r-G18_Ub.sh is 5307f0bf75e810f84cc98d0289c9bb32740c8691d046ae9e15e1ae61ff7b39d7, not the go's 0000
+  rc=2
+REFUSED: connect-g2r-G18_Uc.sh is defd72911ba782fc461ca06bffa8c10447352c8dd4043c7f2f4523cffe0df13b, not the go's 0000
+  rc=2
+REFUSED: connect-g2r-G18_Ud.sh is e59b87dc6a0025114057ddfebe0eb9226e240a7078be164184b178c936ee443d, not the go's 0000
+  rc=2
+REFUSED: connect-g2r-AR23_Ua.sh is 5d67b5025c264913226c6b943ab0630aa3ab3a31ce5ce621a752048326cffcfe, not the go's 0000
+  rc=2
+REFUSED: connect-g2r-AR23_Ub.sh is 426c6e06dbd97e02c67914c647981b725eef79d030abea65f11e193c5c7929c4, not the go's 0000
+  rc=2
+REFUSED: connect-g2r-AR23_Uc.sh is ff10dec107a3492eaf54d9d059164a591afb0821d766a5e619ead0d28b8b268a, not the go's 0000
+  rc=2
+REFUSED: connect-g2r-AR23_Ud.sh is 1f277af0c741c561be0f3a20296c85a68354b82cabb9e0964b9c37ec56d2ac9d, not the go's 0000
+  rc=2
+usage: launch-g2r.sh envtest|envtest-r2|envtest-r3|diag-tune|prepare|D_Ua|D_Ub|D_Uc|D_Ud|G18_Ua|G18_Ub|G18_Uc|G18_Ud|AR23_Ua|AR23_Ub|AR23_Uc|AR23_Ud <sha256>
+  rc=2

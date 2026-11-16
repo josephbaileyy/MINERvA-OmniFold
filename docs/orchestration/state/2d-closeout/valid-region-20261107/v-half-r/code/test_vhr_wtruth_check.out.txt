@@ -1,0 +1,17 @@
+test_bad_weights_outside_omega_are_descriptive (__main__.Check.test_bad_weights_outside_omega_are_descriptive) ... ok
+test_h2def_sha_refused (__main__.Check.test_h2def_sha_refused) ... ok
+test_main_exit_codes_and_no_overwrite (__main__.Check.test_main_exit_codes_and_no_overwrite) ... ok
+test_missing_key_refused (__main__.Check.test_missing_key_refused) ... ok
+test_negative_in_shares_fails (__main__.Check.test_negative_in_shares_fails) ... ok
+test_nonfinite_in_tilt_only_fails (__main__.Check.test_nonfinite_in_tilt_only_fails) ... ok
+test_npz_sha_refused (__main__.Check.test_npz_sha_refused) ... ok
+test_omega_is_the_pinned_fine_map (__main__.Check.test_omega_is_the_pinned_fine_map) ... ok
+test_pass (__main__.Check.test_pass) ... ok
+test_tampered_map_refused (__main__.Check.test_tampered_map_refused) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.296s
+
+OK
+VHR-WTRUTH FAIL: all rows 1 nonfinite 0 negative 1; pass_truth rows 1 nonfinite 0 negative 1; shares rows 1 nonfinite 0 negative 1; tilt rows 1 nonfinite 0 negative 1
+REFUSED: the npz's sha256 differs from the pin

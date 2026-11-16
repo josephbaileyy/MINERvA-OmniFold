@@ -1,0 +1,23 @@
+{"out": "ll5d_g18_block_Rvn2pi_0.npz", "seconds_unfold": 827.874}
+{"out": "ll5d_g18_block_Rvn2pi_1.npz", "seconds_unfold": 798.283}
+{"out": "ll5d_g18_block_Rvp2pi_0.npz", "seconds_unfold": 811.836}
+{"out": "ll5d_g18_block_Rvp2pi_1.npz", "seconds_unfold": 805.59}
+{"out": "ll5d_g18_block_Theta_Delta2Npi_0.npz", "seconds_unfold": 809.747}
+{"out": "ll5d_g18_block_Theta_Delta2Npi_1.npz", "seconds_unfold": 811.848}
+{"out": "ll5d_g18_block_VecFFCCQEshape_0.npz", "seconds_unfold": 810.685}
+{"out": "ll5d_g18_block_VecFFCCQEshape_1.npz", "seconds_unfold": 812.748}
+node 02 lane 0 g18 block rc=8
+{"out": "ll5d_g18_stat_1.npz", "seconds_unfold": 665.987}
+{"out": "ll5d_g18_stat_2.npz", "seconds_unfold": 641.704}
+{"out": "ll5d_g18_stat_3.npz", "seconds_unfold": 634.87}
+{"out": "ll5d_g18_stat_4.npz", "seconds_unfold": 635.142}
+{"out": "ll5d_g18_stat_5.npz", "seconds_unfold": 637.707}
+{"out": "ll5d_g18_stat_6.npz", "seconds_unfold": 634.866}
+{"out": "ll5d_g18_stat_7.npz", "seconds_unfold": 635.499}
+{"out": "ll5d_g18_stat_8.npz", "seconds_unfold": 645.576}
+{"out": "ll5d_g18_stat_9.npz", "seconds_unfold": 636.2}
+{"out": "ll5d_g18_stat_10.npz", "seconds_unfold": 640.248}
+{"out": "ll5d_g18_stat_11.npz", "seconds_unfold": 638.351}
+{"out": "ll5d_g18_stat_12.npz", "seconds_unfold": 635.399}
+{"out": "ll5d_g18_stat_13.npz", "seconds_unfold": 637.345}
+node 02 lane 0 g18 stat rc=0

@@ -1,0 +1,153 @@
+node login40 2026-11-10T05:14:35Z
+connect script sha256 2f35f99f873a0ff462e3666e81ff7745ad214ae0b4cd63c73d3b7527d44dac44
+products listed: 70
+== 1. stat before 2026-11-10T05:14:36Z
+regular file|882727271964607333|1|184592|1793869988|1793873922|1793869988|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/closure/A7_genie_cv/stab_control_A7_genie_cv_s991000.npz
+regular file|882727271964607359|1|184661|1793870206|1793873922|1793870206|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/closure/A7_genie_mec/stab_control_A7_genie_mec_s991000.npz
+regular file|882727271964607420|1|184716|1793870907|1793873922|1793870907|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/closure/A7_gibuu/stab_control_A7_gibuu_s991000.npz
+regular file|882727265857700452|1|184571|1793839063|1793873922|1793839063|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/closure/A7_mnvtune/stab_control_A7_mnvtune_s991000.npz
+regular file|882727271964607389|1|184458|1793870488|1793873922|1793870488|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/closure/A7_nuwro/stab_control_A7_nuwro_s991000.npz
+regular file|882727265857700444|1|184789|1793838643|1793873922|1793838643|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/closure/closure_nuwro/stab_control_closure_nuwro_s991000.npz
+regular file|882727265857700431|1|184571|1793838582|1793873922|1793838582|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/closure/nominal/stab_control_nominal_s991000.npz
+regular file|882727271964607529|1|184705|1793872187|1793873922|1793872187|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/closure/P1g/stab_control_P1g_s991000.npz
+regular file|882727271964607451|1|184722|1793871077|1793873922|1793871077|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/closure/P1r/stab_control_P1r_s991000.npz
+regular file|882727271964607543|1|184812|1793872601|1793873922|1793872601|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/closure/P2g/stab_control_P2g_s991000.npz
+regular file|882727271964607466|1|184746|1793871390|1793873922|1793871390|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/closure/P2r/stab_control_P2r_s991000.npz
+regular file|882727271964607572|1|184732|1793872916|1793873922|1793872916|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/closure/P3g/stab_control_P3g_s991000.npz
+regular file|882727271964607488|1|184822|1793871595|1793873922|1793871595|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/closure/P3r/stab_control_P3r_s991000.npz
+regular file|882727271964607232|1|184810|1793868848|1793873922|1793868848|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/closure/q3/stab_control_q3_s991000.npz
+regular file|882727271964607269|1|184799|1793869290|1793873922|1793869290|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/closure/stage0c_gibuu/stab_control_stage0c_gibuu_s991000.npz
+regular file|882727271964607117|1|184689|1793867595|1793873922|1793867595|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/closure/W1/stab_control_W1_s991000.npz
+regular file|882727271964607149|1|184789|1793868113|1793873922|1793868113|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/closure/W2/stab_control_W2_s991000.npz
+regular file|882727271964607223|1|184701|1793868797|1793873922|1793868797|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/closure/W3/stab_control_W3_s991000.npz
+regular file|882727271964606754|1|184256|1793859400|1793873922|1793859400|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j10.npz
+regular file|882727271964606762|1|184218|1793859769|1793873922|1793859769|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j11.npz
+regular file|882727271964606769|1|184277|1793860136|1793873922|1793860136|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j12.npz
+regular file|882727271964606749|1|184256|1793859113|1793873922|1793859113|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j13.npz
+regular file|882727271964606756|1|184284|1793859493|1793873922|1793859493|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j14.npz
+regular file|882727271964606764|1|184249|1793859865|1793873922|1793859865|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j15.npz
+regular file|882727271964606781|1|184278|1793860248|1793873922|1793860248|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j16.npz
+regular file|882727271964606817|1|184267|1793860601|1793873922|1793860601|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j17.npz
+regular file|882727271964606825|1|184304|1793860985|1793873922|1793860985|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j18.npz
+regular file|882727271964606833|1|184229|1793861377|1793873922|1793861377|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j19.npz
+regular file|882727265857700446|1|184291|1793838676|1793873922|1793838676|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j1.npz
+regular file|882727271964606841|1|184299|1793861745|1793873922|1793861745|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j20.npz
+regular file|882727271964606822|1|184283|1793860897|1793873922|1793860897|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j21.npz
+regular file|882727271964606830|1|184274|1793861265|1793873922|1793861265|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j22.npz
+regular file|882727271964606838|1|184241|1793861644|1793873922|1793861644|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j23.npz
+regular file|882727271964606858|1|184234|1793862024|1793873922|1793862024|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j24.npz
+regular file|882727271964606883|1|184247|1793862193|1793873922|1793862193|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j25.npz
+regular file|882727271964606896|1|184312|1793862578|1793873922|1793862578|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j26.npz
+regular file|882727271964606902|1|184279|1793862945|1793873922|1793862945|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j27.npz
+regular file|882727271964606910|1|184272|1793863317|1793873922|1793863317|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j28.npz
+regular file|882727271964606893|1|184275|1793862477|1793873922|1793862477|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j29.npz
+regular file|882727271964606684|1|184250|1793857776|1793873922|1793857776|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j2.npz
+regular file|882727271964606900|1|184263|1793862852|1793873922|1793862852|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j30.npz
+regular file|882727271964606907|1|184246|1793863220|1793873922|1793863220|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j31.npz
+regular file|882727271964606920|1|184281|1793863598|1793873922|1793863598|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j32.npz
+regular file|882727271964606947|1|184312|1793863783|1793873922|1793863783|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j33.npz
+regular file|882727271964606966|1|184245|1793864208|1793873922|1793864208|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j34.npz
+regular file|882727271964606974|1|184265|1793864586|1793873922|1793864586|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j35.npz
+regular file|882727271964606981|1|184253|1793864961|1793873922|1793864961|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j36.npz
+regular file|882727271964606965|1|184220|1793864194|1793873922|1793864194|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j37.npz
+regular file|882727271964606973|1|184250|1793864569|1793873922|1793864569|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j38.npz
+regular file|882727271964606980|1|184278|1793864944|1793873922|1793864944|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j39.npz
+regular file|882727271964606692|1|184259|1793858184|1793873922|1793858184|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j3.npz
+regular file|882727271964606998|1|184255|1793865321|1793873922|1793865321|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j40.npz
+regular file|882727271964607009|1|184262|1793865386|1793873922|1793865386|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j41.npz
+regular file|882727271964607037|1|184245|1793865768|1793873922|1793865768|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j42.npz
+regular file|882727271964607044|1|184289|1793866143|1793873922|1793866143|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j43.npz
+regular file|882727271964607052|1|184285|1793866515|1793873922|1793866515|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j44.npz
+regular file|882727271964607040|1|184286|1793865966|1793873922|1793865966|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j45.npz
+regular file|882727271964607048|1|184282|1793866354|1793873922|1793866354|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j46.npz
+regular file|882727271964607061|1|184237|1793866741|1793873922|1793866741|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j47.npz
+regular file|882727271964607092|1|184264|1793867134|1793873922|1793867134|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j48.npz
+regular file|882727271964607075|1|184269|1793867002|1793873922|1793867002|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j49.npz
+regular file|882727271964606708|1|184258|1793858555|1793873922|1793858555|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j4.npz
+regular file|882727271964607108|1|184239|1793867438|1793873922|1793867438|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j50.npz
+regular file|882727271964607138|1|184302|1793867846|1793873922|1793867846|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j51.npz
+regular file|882727271964606679|1|184257|1793857453|1793873922|1793857453|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j5.npz
+regular file|882727271964606687|1|184216|1793857849|1793873922|1793857849|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j6.npz
+regular file|882727271964606695|1|184259|1793858225|1793873922|1793858225|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j7.npz
+regular file|882727271964606715|1|184259|1793858605|1793873922|1793858605|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j8.npz
+regular file|882727271964606746|1|184237|1793859000|1793873922|1793859000|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j9.npz
+regular file|882727271964606676|1|184261|1793857375|1793873922|1793857375|/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j-.npz
+== 2. read (O_NOATIME) 2026-11-10T05:14:36Z
+runs/control/closure/A7_genie_cv/stab_control_A7_genie_cv_s991000.npz 184592 bytes sha256 0f5c32936c590bee1a90a0a03292105a73eee6ca9dd017b36571ef020e45af19 OK
+runs/control/closure/A7_genie_mec/stab_control_A7_genie_mec_s991000.npz 184661 bytes sha256 9e2dd31b05fb7dba3ed3622fe72ffdab77fc975ffef0f17b0a780658efae8134 OK
+runs/control/closure/A7_gibuu/stab_control_A7_gibuu_s991000.npz 184716 bytes sha256 b4d2ba5c34199352f90aab36b3a3c1cc9ad55c3cab79b375eb2c398746435179 OK
+runs/control/closure/A7_mnvtune/stab_control_A7_mnvtune_s991000.npz 184571 bytes sha256 e651ea2f65618372008d733aaf9c89822b902ffef161d18a12c3582ed8437c5c OK
+runs/control/closure/A7_nuwro/stab_control_A7_nuwro_s991000.npz 184458 bytes sha256 dc8964923578d8e07efb43bd02f537b413017b4f92d7cfc0c0189d6abcc2be3f OK
+runs/control/closure/closure_nuwro/stab_control_closure_nuwro_s991000.npz 184789 bytes sha256 7faa946fb4c13876f8901560187f92ec839837ec99140b6ba65a4729e2d14d9d OK
+runs/control/closure/nominal/stab_control_nominal_s991000.npz 184571 bytes sha256 3753f4149fdcda5b7a67fad0eddb5b783e4642636d1574849743b9eb733f6cf4 OK
+runs/control/closure/P1g/stab_control_P1g_s991000.npz 184705 bytes sha256 95e2e352a34149badd49225a1d31204f6e62d314385d9d6e2bb23c20b137c618 OK
+runs/control/closure/P1r/stab_control_P1r_s991000.npz 184722 bytes sha256 d35c9125ee67705c9767cd7ef8079203f2c1667be6d1c476c9b98851b4ddd45c OK
+runs/control/closure/P2g/stab_control_P2g_s991000.npz 184812 bytes sha256 b365e638e6a48848d09b62b82560b010bdc5c54b007a00fcc57cae968d0ee6a5 OK
+runs/control/closure/P2r/stab_control_P2r_s991000.npz 184746 bytes sha256 cd770c4a825e5852914076b4c23c1ecca2379eacb306c88bfed4d5cf107ef030 OK
+runs/control/closure/P3g/stab_control_P3g_s991000.npz 184732 bytes sha256 6ef2c11570f3d4706c7789d264b7016ef2045fc3bbb6a01c78978ff954091b18 OK
+runs/control/closure/P3r/stab_control_P3r_s991000.npz 184822 bytes sha256 e3e145a99e9427297543a6b1b46670b8634983633b971a3876ef5611406d1698 OK
+runs/control/closure/q3/stab_control_q3_s991000.npz 184810 bytes sha256 a197610a55ab0e1f9fafb5ae16ddd43eb15f0d4ca9e21ffaef75eccb729a8392 OK
+runs/control/closure/stage0c_gibuu/stab_control_stage0c_gibuu_s991000.npz 184799 bytes sha256 604837020b7b6837f46c6c474d20d7cf170ec6d39f9c5ba3b286cbaff05b7ee9 OK
+runs/control/closure/W1/stab_control_W1_s991000.npz 184689 bytes sha256 b88374383c78159fc6d8b36d7780e7a78543b9c734f9373c5da993aac30be720 OK
+runs/control/closure/W2/stab_control_W2_s991000.npz 184789 bytes sha256 fc6c57316ea66eba131706d6eac81572dcecf193a9f99d828164c550cb3ba3cf OK
+runs/control/closure/W3/stab_control_W3_s991000.npz 184701 bytes sha256 20443186044b4744fe68762dea1798a38ff658debac0cdba241e6cdeacf61dc6 OK
+runs/control/stability/stab_control_b-_j10.npz 184256 bytes sha256 531f735102e5ca8ec2fd3f824848bbc05d14b2afe245a0eef3fc4943914d820d OK
+runs/control/stability/stab_control_b-_j11.npz 184218 bytes sha256 ef260a1574b21d7fa0122648bead6af62c77e5036e6e5fe54bec8dda312aa812 OK
+runs/control/stability/stab_control_b-_j12.npz 184277 bytes sha256 233b7cc8e693faa95edb01fdd1516a43263dbbb60e96f3ace2e3996038c3cb35 OK
+runs/control/stability/stab_control_b-_j13.npz 184256 bytes sha256 af3b3890f93c9808b08a2af0369c7a346201102b96029c568b0893bbd8ce2e4d OK
+runs/control/stability/stab_control_b-_j14.npz 184284 bytes sha256 4ebc038a48e2536cf7c937b16512c1417fd8abe27340a2ececceb9952e165d30 OK
+runs/control/stability/stab_control_b-_j15.npz 184249 bytes sha256 0dd8e30a64fc7a595e2f8659d9e005e598ed8c35ea2c4e8f4c7d46f106441227 OK
+runs/control/stability/stab_control_b-_j16.npz 184278 bytes sha256 aa5e5d9d7f7da72c1a803c6e58a5590363131c8ac12a9416b311594af9712bff OK
+runs/control/stability/stab_control_b-_j17.npz 184267 bytes sha256 e4b8d2ef0ca43c5e8818b8fbf9d1f2e94643605d036eb279b37167261554d274 OK
+runs/control/stability/stab_control_b-_j18.npz 184304 bytes sha256 e6baf14ec95fb511adedca1abdf236365554e3d6613a6779d8a06c3ea5c88222 OK
+runs/control/stability/stab_control_b-_j19.npz 184229 bytes sha256 bfc8810ea37c31589773b790b85ea1315bcb1154100770eebc94c2c8446ae441 OK
+runs/control/stability/stab_control_b-_j1.npz 184291 bytes sha256 e0f9180380843f8d212ba3113ff839a3e2db56dac937b3b61d5882e55990a59b OK
+runs/control/stability/stab_control_b-_j20.npz 184299 bytes sha256 99d9e9b4e2ca80028e64c6eab7967411ec36caae1ddaa85b6ba5f8cd42d9e895 OK
+runs/control/stability/stab_control_b-_j21.npz 184283 bytes sha256 c61378101bbc38178ebe05c81be0a5171cf2c599caa84cf98c744e0eae74f1e8 OK
+runs/control/stability/stab_control_b-_j22.npz 184274 bytes sha256 cd1cb9664b6b72376ffc9176ee6e8d475d287a5afc1769675696cd52514d17d6 OK
+runs/control/stability/stab_control_b-_j23.npz 184241 bytes sha256 14905540e1f8138b8394debaffc1015ab1fa23522b30b3c6e5ab97cadafb33b2 OK
+runs/control/stability/stab_control_b-_j24.npz 184234 bytes sha256 32c1145ecb97d23877d0b5e402be36897d05959abb0c71d3f46087128c59d787 OK
+runs/control/stability/stab_control_b-_j25.npz 184247 bytes sha256 30f6544bad3a4de78dd48463aa899244a01043ebd4e1f80b9dbbc19f861ba92b OK
+runs/control/stability/stab_control_b-_j26.npz 184312 bytes sha256 1a1cf34846f7197d05b485b96d8383db9a915c2b3b426bf328320613d957257e OK
+runs/control/stability/stab_control_b-_j27.npz 184279 bytes sha256 af079ba57d7fd05c3072a1ebfa8ce1b81879c30fc96396ef08cd96e5fa723e65 OK
+runs/control/stability/stab_control_b-_j28.npz 184272 bytes sha256 791803bb2a3a65a2322132f7258113d7a32c0c92506c6141c6f3e867d755ac6b OK
+runs/control/stability/stab_control_b-_j29.npz 184275 bytes sha256 3adca9d3e35a89960da8963f2da65d5cd7ba21bd678c9f1687e4a12e506635d2 OK
+runs/control/stability/stab_control_b-_j2.npz 184250 bytes sha256 ae432bcd71e2ed336bf5b858eba7929ce0a21a9b87d7abf491ad7085815569d7 OK
+runs/control/stability/stab_control_b-_j30.npz 184263 bytes sha256 9104752c5f45631ec88beb43037e2279db2631ee167d13c75ed3b0ee09c865da OK
+runs/control/stability/stab_control_b-_j31.npz 184246 bytes sha256 cff19627e1aed319fb0c4631bb34659ff840ce336dd26cbe5749fd2c940be1c9 OK
+runs/control/stability/stab_control_b-_j32.npz 184281 bytes sha256 c351dd2df43d3e6536cc5656b8ecdb20458482e7f7a591e28bc3137d50518171 OK
+runs/control/stability/stab_control_b-_j33.npz 184312 bytes sha256 a63ee3ff5be4a9ff84e68047221462d954647905f8e6688a8d5796f0662fed2e OK
+runs/control/stability/stab_control_b-_j34.npz 184245 bytes sha256 59267633bbe80852cbd8d053991ffb14f4b56a8e1367fe9db12972c421d3ec74 OK
+runs/control/stability/stab_control_b-_j35.npz 184265 bytes sha256 bab7d6a48d29edf476772669f3d2b035660177247fb467dccc2dc750bce56158 OK
+runs/control/stability/stab_control_b-_j36.npz 184253 bytes sha256 bd2002c8fe1cac7cfcc85ac15617db5b5079e2dad1bfc0105592a878f2fab517 OK
+runs/control/stability/stab_control_b-_j37.npz 184220 bytes sha256 058607e6711651ab83d4c916640471d218a651de6862bcc9ad9996f79166d079 OK
+runs/control/stability/stab_control_b-_j38.npz 184250 bytes sha256 6e90c16537afe00ce930e4cb887d87aa89965869db9d5cf939269fd5f00d4c3f OK
+runs/control/stability/stab_control_b-_j39.npz 184278 bytes sha256 7d84cbba44e3ad401f510d926f7e25b2863ba739a0bbc82913d811d1883d1c5c OK
+runs/control/stability/stab_control_b-_j3.npz 184259 bytes sha256 432028e045a12f392fb325472addef0761a0281515c2683f6cc39373e74155ab OK
+runs/control/stability/stab_control_b-_j40.npz 184255 bytes sha256 4266e950c76ea90f6603c65665c430711f239345b61b5e67387abfcd0398c1f9 OK
+runs/control/stability/stab_control_b-_j41.npz 184262 bytes sha256 5ae1d765420eaeff9177c552c6b12c73f4bd5a4f99402170e1e5e0fdb6ba6cd6 OK
+runs/control/stability/stab_control_b-_j42.npz 184245 bytes sha256 fb7a9bb5ba81dc7cb16b691d23d0d803fab0399e058e9928b19b549d2a5e4e67 OK
+runs/control/stability/stab_control_b-_j43.npz 184289 bytes sha256 16516e38bf5a09cfd1663397a293d747cc420d824b3b4eda30616d511070c418 OK
+runs/control/stability/stab_control_b-_j44.npz 184285 bytes sha256 5bca062994552d86a63756070369da195a580a88597e2a349c876a7070939769 OK
+runs/control/stability/stab_control_b-_j45.npz 184286 bytes sha256 b192c9f0572913b43c490912302027e975e14a45fd292eb343edf0fae7c70d40 OK
+runs/control/stability/stab_control_b-_j46.npz 184282 bytes sha256 2c247fc7a0448402cf4fd86156a884af33cff7c6dc4ece9683ed83ef8cf5c25a OK
+runs/control/stability/stab_control_b-_j47.npz 184237 bytes sha256 b57b3de52cedc5721b537c7be6773681dd3188986e331e92fe4253ec818c6c92 OK
+runs/control/stability/stab_control_b-_j48.npz 184264 bytes sha256 dce4d13ca07d643a81dd4f2d2239815fc7c09df9f91cf44f49ac39c15275c11e OK
+runs/control/stability/stab_control_b-_j49.npz 184269 bytes sha256 56794a85763ac7d757e0a500e806739d95152684d0ce91d0d1920e30401bab70 OK
+runs/control/stability/stab_control_b-_j4.npz 184258 bytes sha256 e191ce02b06fc06aaf6026518c9056be7dfba6c69b450f53a87df6d6cbd754e2 OK
+runs/control/stability/stab_control_b-_j50.npz 184239 bytes sha256 6fc0840b505661ad47f756f9f60dec2e7a7d02f24a621f2a047eb3da6a6f5583 OK
+runs/control/stability/stab_control_b-_j51.npz 184302 bytes sha256 48c80680ffec4b9d127a8a1e4924a065dbe4aa56de7f405696dc613a4ce7a596 OK
+runs/control/stability/stab_control_b-_j5.npz 184257 bytes sha256 47664358261fa44779f10ff329401c717fd1b6c4afd0a41318d37243a1b0e42f OK
+runs/control/stability/stab_control_b-_j6.npz 184216 bytes sha256 04fd7b68babcd9d4fa9faf69a2a04693496a80f102140c17b9c84accf9ed9a5e OK
+runs/control/stability/stab_control_b-_j7.npz 184259 bytes sha256 308581ad9890e00ff6af30504f33919a23f70107f3863375836cd17e6aab4c02 OK
+runs/control/stability/stab_control_b-_j8.npz 184259 bytes sha256 5aebce67f5dcd555f59602963b2de442374671750aed8d3e72c9d24bd83d76e8 OK
+runs/control/stability/stab_control_b-_j9.npz 184237 bytes sha256 3ebe77fa4973cf796f80a00bb60b27054d07fe73a45f8648428e0233ab6cfb86 OK
+runs/control/stability/stab_control_b-_j-.npz 184261 bytes sha256 f7871a93cba0db2923bbf36a5d7ea7d5cbece8c8b36af66630c2f3fd683fae43 OK
+bundle: 210 arrays, 12909680 bytes, sha256 8199bd269a7d30cccfa6496feaffd5d72a7ec8c1de095d6efa36e57c17536885
+== BEGIN bv96-o1 bundle base64
+[226486 base64 lines removed for the repository: they decode to the bundle of sha256 8199bd269a7d30cccfa6496feaffd5d72a7ec8c1de095d6efa36e57c17536885 (12,909,680 bytes, kept outside the repository by the director's ruling). The full stdout as received had sha256 697270c12c7014318cc144acef0435113290a198b3e880eabfec4ad6c05449c9.]
+== END bv96-o1 bundle base64
+read rc=0 2026-11-10T05:14:40Z
+== 3. stat after 2026-11-10T05:14:40Z
+stat: all 70 byte-identical before and after
+== bv96-o1 rc=0 2026-11-10T05:14:41Z

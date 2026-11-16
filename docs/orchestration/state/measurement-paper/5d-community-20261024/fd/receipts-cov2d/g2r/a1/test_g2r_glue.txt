@@ -1,0 +1,9 @@
+.................usage: test_g2r_glue.py tune [-h] --truth {AR23,G18} --products PRODUCTS
+                             --map-sha MAP_SHA --out OUT
+test_g2r_glue.py tune: error: argument --truth: invalid choice: 'X' (choose from AR23, G18)
+.
+----------------------------------------------------------------------
+Ran 18 tests in 59.190s
+
+OK
+rc=0

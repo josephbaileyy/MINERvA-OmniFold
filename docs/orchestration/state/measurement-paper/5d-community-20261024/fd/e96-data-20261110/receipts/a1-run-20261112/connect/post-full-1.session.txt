@@ -1,0 +1,12 @@
+node login16 staged sha256 386d77a87681a0a0ada2adfe6948c925c21d9d137d656d9adaf1eb09b56ef2ed
+detached pid 1632914, output /dev/shm/e96d-post-full.1632477.sh.out
+post full host=login16 utc=2026-11-13T04:30:23Z
+job 61202343
+== atime reading (stat only; the director's ruling for LL5D's gate receipts)
+stat utc=2026-11-13T04:30:23Z atime=1794536081 mtime=1782610308 size=1548438020 /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz
+stat utc=2026-11-13T04:30:23Z atime=1794536081 mtime=1790319104 size=16017201 /pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz
+stat utc=2026-11-13T04:30:23Z atime=1794494966 mtime=1790450957 size=95564 /pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j-.npz
+61202343|e96data_full|RUNNING|2026-11-12T18:14:17|Unknown|02:16:06|1|255
+61202343 e96data_full RUNNING 2:16:06 4:15:00 2026-11-12T18:14:17 None
+NOT ENDED: RUNNING
+script rc=10

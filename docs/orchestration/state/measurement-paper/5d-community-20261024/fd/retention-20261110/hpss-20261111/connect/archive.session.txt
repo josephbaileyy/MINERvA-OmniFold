@@ -1,0 +1,4 @@
+ssh rc=0
+node login27 staged sha256 388cadb42b723237ffd16df9652bd0f05a3bc1baae337db66f191692f834e5a5
+detached pid 519387, output /dev/shm/hpssa-archive.518973.sh.out
+script rc=0

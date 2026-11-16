@@ -1,0 +1,73 @@
+{
+  "tested_head": "0fbbbf8448f16e9e18741a330e1dd9d8cb35f88b",
+  "prior_required": 217,
+  "new_required": 11,
+  "new_outcomes": [
+    {
+      "name": "REQUIRED_EXIT_INSTRUMENT_PIN_ENFORCEMENT",
+      "status": "KILLED",
+      "selector": "test_other_classes_cover_late_library_opens and instrument",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_EXIT_OVIS_PIN_REQUIRED",
+      "status": "KILLED",
+      "selector": "test_ovis_inventory_covers_committed_exit_loads",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_EXIT_PLATFORM_PIN_ENFORCEMENT",
+      "status": "KILLED",
+      "selector": "test_ovis_inventory_covers_committed_exit_loads",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_EXIT_POST_CHECK_REQUIRED",
+      "status": "KILLED",
+      "selector": "test_real_atexit_library_load_is_checked_after_worker",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_EXIT_SUFFIXLESS_ELF_REQUIRED",
+      "status": "KILLED",
+      "selector": "test_post_exit_library_verification and suffixless",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_EXIT_PIN_CONTENT_REQUIRED",
+      "status": "KILLED",
+      "selector": "test_post_exit_library_verification and digest",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_EXIT_INSTRUMENT_DIGEST_REQUIRED",
+      "status": "KILLED",
+      "selector": "test_instrument_post_exit_digest_refuses",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_PREPARED_MAPPED_IDENTITY_REQUIRED",
+      "status": "KILLED",
+      "selector": "test_prepared_mapping_identity_refuses",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_CUSTODY_PLATFORM_LATE_ROOT",
+      "status": "KILLED",
+      "selector": "test_exit_inventory_refuses_before_plain_read and (protected or escape)",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_CUSTODY_PLATFORM_LATE_PRESENT",
+      "status": "KILLED",
+      "selector": "test_exit_inventory_refuses_before_plain_read and missing",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_CUSTODY_PLATFORM_PREPARE_SUBSET",
+      "status": "KILLED",
+      "selector": "test_prepare_mapped_subset_refuses",
+      "returncode": 1
+    }
+  ]
+}

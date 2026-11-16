@@ -1,0 +1,59 @@
+{
+  "tested_head": "477d51ead59943af7286ddee3258814f846fa865",
+  "fixture_manifest": {
+    "source_commit": "68a36cf8f013aab145faf3cf7ed8d64971a433d8",
+    "source_file": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/prologue4-20261108/run/prologue.strace",
+    "source_sha256": "e925be68626e21f88d8ffb2dc5a2295bfe1b3047a00450b4a843ef307105d4ad",
+    "source_bytes": 446312,
+    "fixtures": {
+      "interleaved_failures": {
+        "file": "interleaved_failures.strace.txt",
+        "source_lines": [
+          37,
+          896,
+          897,
+          898,
+          899
+        ],
+        "sha256": "1a0c0d56ff1d6e4e8ca6dc962f30cc1978a39c09dcaae2b1097bcdcd108c8a73"
+      },
+      "exact_clone_chdir": {
+        "file": "exact_clone_chdir.strace.txt",
+        "source_lines": [
+          37,
+          1740,
+          1741
+        ],
+        "sha256": "02e16edd28165e2d7d5d3e26303827ab045326ceb1db41a19bdde4d749c416ad"
+      },
+      "split_success": {
+        "file": "split_success.strace.txt",
+        "source_lines": [
+          37,
+          999,
+          1001
+        ],
+        "sha256": "2514248361d316c20c5ade833643715e7e7805a96101147cd50594c6f3bed98d"
+      }
+    },
+    "revision": "68a36cf8f013aab145faf3cf7ed8d64971a433d8"
+  },
+  "full_trace_replay": {
+    "source_lines": 2709,
+    "paired_calls": 67,
+    "exact_clone_chdir_calls": 2,
+    "violations": [],
+    "status": "PASS",
+    "successful_open_counts": {
+      "system": 296,
+      "instrument_directory": 7,
+      "python_directory": 9,
+      "environment": 552,
+      "platform_system": 57,
+      "run": 16,
+      "private_prepare": 2,
+      "pinned_mat_libs": 6
+    },
+    "scope": "Classifier-only offline replay with production policy builder. The observed Darshan symlink target is supplied from trace line 1625 because the author machine cannot resolve a platform symlink. No native library pin identity or production readiness is established."
+  }
+}

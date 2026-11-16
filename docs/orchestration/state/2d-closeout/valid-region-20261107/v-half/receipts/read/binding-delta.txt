@@ -1,0 +1,21 @@
+Receipt-binding inventory delta from docs/orchestration/state/2d-closeout/valid-region-20261107/v-half/receipts/read/readout.json
+(the V-HALF read, valid-region lane, 2026-11-09; the director's ruling, as in PR #1008).
+
+receipt_inventory() rows on the branch, with and without that record (docs/orchestration/verify_hash_bindings.py's own
+collect(), tracked_paths() and receipt_inventory(), over docs/**/*.json and nd-unfolding/**/*.json, fixtures excluded;
+lane/binding_delta.py, run before the constant moved):
+  without: 167 rows, sha256 18818a17805efb7d230532627c17580e20c91572460a800759cab0483e568482 (constant 167 / 18818a17805efb7d230532627c17580e20c91572460a800759cab0483e568482)
+  with:    169 rows, sha256 a9f3a844d9afb07684b5a345bd0c6276446bab70463351eefb35b081d5bad4b7
+  ADDED   docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/read/cluster/readout.json 9238f22b
+  ADDED   docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/readout/fd_f0b_readout.json 5f542830
+The two rows are the record's "inputs": {"H1": {path, sha256}, "H2": {path, sha256}}, the two pins v_half.py checked
+(INPUTS.sha256 and PRR-READOUT.sha256). Both files on main hash to them. Nothing was removed or repointed. The record is
+v_half.py's own output, committed byte for byte (sha256 e7423390…), so its keys were not renamed.
+
+After the bump (RECEIPT_BINDING_COUNT 167 -> 169, RECEIPT_BINDING_SHA256 18818a17 -> a9f3a844):
+  unflipped: verify_hash_bindings.py rc 0, "ALL BINDINGS INTACT".
+Power test: each pin's final hex digit flipped in a temporary copy of the record, then restored from the run's output and
+cmp-verified (sha256 e74233901038bd71496a8859aaf76997e253fad9a8bd0ebda9f183453723492e):
+  9238f22b flipped: rc 1, inventory_changed_lines=1, MISMATCH docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/read/cluster/readout.json; (restored, cmp OK)
+  5f542830 flipped: rc 1, inventory_changed_lines=1, MISMATCH docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/readout/fd_f0b_readout.json; (restored, cmp OK)
+restored rc=0

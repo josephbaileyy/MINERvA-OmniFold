@@ -1,0 +1,91 @@
+## coverage-5b-audit: delta audit of the round-1 environment-guard split. **NO-GO** at `3da5ee12` (executable head `7a1b5d0c`)
+
+I measured this against the director's requirement of 11-07 06:54:59Z.
+
+### Reproduced
+- **The executable files are unchanged between the two heads.** All eight blobs, and their sha256s, match `SOURCE-IDENTITIES.json` at `3da5ee12`. The packet's `SHA256SUMS` matches 9 of 9.
+- **The suite** passed 170 locally (python 3.12, pytest 8.3.4) with rc 0.
+- **The lane's harness** (`fd_rpd_reco_mutation.py --out`) gave:
+  - the comment-only custody control: 170 passed;
+  - 159 required, 159 executed, 159 killed, all with rc 1;
+  - no collection errors;
+  - worktree porcelain 0 afterwards.
+- **Unchanged areas:**
+  - the two shell wrappers are unchanged;
+  - the only code change in `fd_rpd_reco.py` is `check_prepare_receipt`, with nothing touching ROOT import order or launch;
+  - the new STOP writer rechecks `OUTPUT_LOCATION` first, and `test_prologue_worker_stop_records_values_and_cfs_guard` covers that;
+  - `NERSC_PYMON_UUID` is not excluded: `ENVIRONMENT_EXCLUSIONS == {"_"}`, and a test pins it;
+  - no cause is claimed: the code, `REPORT.md` and the four commit messages state none. The REPORT calls the PYMON and ROOT_INCLUDE_PATH readings hypotheses.
+- **Fingerprints and credentials:**
+  - the fingerprint comparison works: a changed credential STOPs (my X09 and X10 are killed);
+  - the credential values stay out of the STOP details (killed by the `credential` case).
+
+### My extras
+These are single-site mutants in a scratch worktree, each restored from git, against a byte-only control that passes 170. A survivor below survived the **full** suite.
+
+| | Mutant | Result |
+|---|---|---|
+| X01 | run detail: observed := prepared | KILLED |
+| X02 | connect detail: observed := prepared | **SURVIVED** |
+| X03 | connect detail: prepared := None | **SURVIVED** |
+| X04 | age detail: now_ns := None | **SURVIVED** |
+| X05 | age detail: observed_age_ns := None | **SURVIVED** |
+| X06 | env diff `changed`: observed := the prepared value | **SURVIVED** |
+| X07 | env diff `added`: value := None | **SURVIVED** |
+| X08 | env diff `removed`: value := None | **SURVIVED** |
+| X09 | `changed` compared on the display value, not the fingerprint | KILLED |
+| X10 | fingerprint of the redacted display value | KILLED |
+| X11 | `added` reported only for protected-family keys | **SURVIVED** |
+| X12 | comparison silently drops `NERSC_*` keys | **SURVIVED** |
+| X13 | comparison silently drops `HOME` on both sides | **SURVIVED** |
+| X14, X15 | display diff not refused; only `changed` refuses | KILLED |
+| X16 | presence: values/fingerprints key equality dropped | SURVIVED (low) |
+| X17 | presence: `environment_snapshot` not required | **SURVIVED** |
+| X18, X19 | protected family `DYLD_` / `CPPYY` dropped | SURVIVED (low) |
+| X20 | STOP details not printed to stderr | SURVIVED (low) |
+| X21 | STOP json details := None | KILLED |
+| X22 | STOP written outside `--worker` | SURVIVED (low) |
+| X23, X24 | age bound inclusive at 0; upper bound ×10 | SURVIVED (low, pre-existing bound) |
+| X25 | details attached only for the ENVIRONMENT STOP | KILLED |
+| X26, X27 | URL-userinfo redaction off; `API_KEY` dropped | KILLED |
+| X28 | `TOKEN` dropped from the credential pattern | SURVIVED (low, pre-existing) |
+
+### Blockers
+
+**848-R1-C1. The recorded values are untested (requirement 1).**
+- **The defect:** each STOP's details can lose a compared value, or record the wrong side, and every test passes. That holds for connect (X02, X03), age (X04, X05) and all three environment-diff sections (X06, X07, X08). X06 means a `changed` entry could show the prepared value twice.
+- **Why it blocks:** this diff is round 1's deliverable. Round 2's exclusions come only from the fresh prologue's recorded diff.
+- **X17:** REPORT.md says "Reusing the earlier #881 prepare refuses MAT_PREPARE_PRESENT", but the only PRESENT case is `prestage=None`. Under X17, a prepare without `environment_snapshot` raises `KeyError`, not the named STOP.
+- **Required:**
+  - a test asserting the exact values recorded on both sides at every sub-guard's STOP;
+  - a test asserting the exact display values in `added` (observed), `removed` (prepared) and `changed` (both), with a credential field showing only its redacted display;
+  - the PRESENT STOP tested on a #881-shaped prepare (no `environment_snapshot`), recording both its required and its observed fields;
+  - each of these with a REQUIRED mutant.
+
+**848-R1-C2. "The whole environment is compared" is untested at the comparison site (requirement 2).**
+- **The defect:** only the exclusions dict is pinned. A filter inside `environment_diff` passes the whole suite:
+  - one that drops non-protected keys (X12: every `NERSC_*` key, `NERSC_PYMON_UUID` included; X13: `HOME`);
+  - one that reports `added` only for protected families (X11). The one `added` case is `LD_PRELOAD`.
+- **Required:**
+  - tests in which a non-protected key is added, removed and changed, each STOPping with that key in the diff;
+  - one of them using `NERSC_PYMON_UUID` (#910);
+  - or, alternatively, one test that perturbs every key of the environment in turn and requires a STOP for each key except `_`;
+  - each with a REQUIRED mutant.
+
+### Held as lows under the freeze (not blocking)
+- X16;
+- X18 and X19: the protected prefixes beyond the three required ones are unexercised;
+- X20: stderr;
+- X22;
+- X23 and X24: the age bound, unchanged from before;
+- X28;
+- a `CustodyRefused` from `environment_diff` passes through `check_prepare_receipt`'s `except Refused`, so it carries no details.
+
+### A condition for the run lane, not a code finding
+- **The defect:** `prologue-prepare.json` now carries an unsalted SHA-256 of **every** environment value, credential fields included.
+- **The condition:** the fresh prologue's receipt should not commit `environment_snapshot.fingerprints` for redacted keys. (At #881 the only redacted key was `SSH_AUTH_SOCK`.)
+
+CI run 42440724180 was still `in_progress` when I checked.
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+

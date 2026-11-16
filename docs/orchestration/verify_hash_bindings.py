@@ -504,8 +504,25 @@ FIXTURE_SET_SHA256 = "36355204b4b82fa4f901740b75667ee1efd0152864067196f17e23e3ed
 #:   ADDED   docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/stage0/readout.json 05be73ee
 #: Power-tested after the bump: one flipped hex digit in each of the five pins gives MISMATCH on that path, rc 1.
 #: Delta and controls: docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/precheck-attribution/binding-delta.txt.
-RECEIPT_BINDING_COUNT = 166
-RECEIPT_BINDING_SHA256 = "6a2ac9747880c12033efe4ab152ba023e67406a75ec055400beb71951a1f1f74"
+#: 166 -> 167, digest 6a2ac974 -> 18818a17 (2026-11-09, the s5e A3 rounding-shift extraction, PR #1008; the
+#: director's ruling (a), after the 107233af precedent). Its record
+#: (state/s5e/cand/a3-rounding-shifts-20261109/cluster/a3_rounding_shifts.json, written on the cluster) pins the
+#: producer it ran. Enumerated before the constant moved (receipt_inventory() rows with and without that record on the
+#: branch): one ADDED, nothing removed or repointed, OK:
+#:   ADDED   nd-unfolding/s5e_analyze_candidate.py cc00829e
+#: Power-tested after the bump: one flipped hex digit in that pin gives MISMATCH on that path, rc 1.
+#: Delta and controls: docs/orchestration/state/s5e/cand/a3-rounding-shifts-20261109/binding-delta.txt.
+#: 167 -> 169, digest 18818a17 -> a9f3a844 (2026-11-09, the V-HALF read, PR #1009; the director's ruling, as in
+#: PR #1008). Its record
+#: (state/2d-closeout/valid-region-20261107/v-half/receipts/read/readout.json, v_half.py's output) pins the two inputs
+#: it checked, H1 and H2. Enumerated before the constant moved (receipt_inventory() rows with and without that record on
+#: the branch): two ADDED, nothing removed or repointed, both OK:
+#:   ADDED   docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/read/cluster/readout.json 9238f22b
+#:   ADDED   docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/readout/fd_f0b_readout.json 5f542830
+#: Power-tested after the bump: one flipped hex digit in each of the two pins gives MISMATCH on that path, rc 1.
+#: Delta and controls: docs/orchestration/state/2d-closeout/valid-region-20261107/v-half/receipts/read/binding-delta.txt.
+RECEIPT_BINDING_COUNT = 169
+RECEIPT_BINDING_SHA256 = "a9f3a844d9afb07684b5a345bd0c6276446bab70463351eefb35b081d5bad4b7"
 
 
 FIELD_PIN_FILE = "docs/orchestration/state/canonical-namespace-field-pins-20260817.json"

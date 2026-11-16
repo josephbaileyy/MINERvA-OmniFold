@@ -1,0 +1,23 @@
+ssh rc=0
+node login27 staged sha256 b8f8c2af4b70384db4bb278d9d4ca11600b1fc1f2b1131e0c237b5a11fb0661e
+detached pid 2140950, output /dev/shm/rsnj1.2140552.sh.out
+node login27 2026-11-12T13:13:40Z slurm_job=''; connect script sha256 b8f8c2af4b70384db4bb278d9d4ca11600b1fc1f2b1131e0c237b5a11fb0661e
+deploy HEAD af7112989417f180e846573c31d101e44e6b02f9, porcelain 0; sbatch_rsn.sh f889a0cf4de4a78aa7096bc01341ab6f3e6cdb41438267918519da7a527051d6; r1 recorded=deployed=bound 661608d81ccf7ca0ab08aee853f5934d4c0dab89677e82f8292239fee60b7652
+squeue --me:
+
+fence.txt sha256 5934e32776a9142661188f2239bb91c1fb3f276f50afdbd666f1030d4cfa5894:
+cov2d
+t2a
+ll5d
+e96data
+rpd_
+== the bound launcher's smoke mode for J1 (no npz read)
+STEP rsn_nc python /pscratch/sd/j/josephrb/rsn-20261112/deploy/nd-unfolding/mnv_guarded_run.py --expect-root /pscratch/sd/j/josephrb/rsn-20261112/deploy --inventory /pscratch/sd/j/josephrb/rsn-20261112/out/inventory/rsn_nc.jsonl --label rsn:rsn_nc -- /pscratch/sd/j/josephrb/rsn-20261112/deploy/nd-unfolding/rsn/rsn_unfold.py --regressor-weight none --truth ratio --rung L-5D-PV --arm e --features all --ratio /pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV/tune_v1.json --expect-ratio-sha256 13bb1eae4ce0db4023bb29a5b98ca8b7e1e22288a1547f6a31a735fa1445435b --npz /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz --expect-npz-sha256 07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f --bkg /pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz --expect-bkg-sha256 2addac8f26055c5ed69862e7afe29e12ac51dbe23a8d6eeed79d71bec9d82955 --estimator-seed 42 --threads 32 --iters 5 --out /pscratch/sd/j/josephrb/rsn-20261112/out/products/rsn_nc.npz
+[rsn] smoke: checks passed, 1 steps
+smoke rc=0
+== submit J1 2026-11-12T13:13:43Z
+sbatch rc=0 jobid=61168780
+JOBID|NAME|STATE|TIME_LIMIT|PARTITION|QOS|NODES
+61168780|rsn_J1|PENDING|19:00|regular_milan_ss11|regular_1|1
+J1 SUBMITTED: jobid 61168780, rsn_J1, limit 0:19:00, deploy /pscratch/sd/j/josephrb/rsn-20261112/deploy at af7112989417f180e846573c31d101e44e6b02f9, out /pscratch/sd/j/josephrb/rsn-20261112/out
+script rc=0

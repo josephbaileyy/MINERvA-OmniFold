@@ -1,0 +1,12 @@
+# command: /opt/homebrew/bin/python3.13 -I run_vi.py /Users/josephbailey/cov2d-work/wt-diag/nd-unfolding/tests
+# checkout /Users/josephbailey/cov2d-work/wt-diag at HEAD a95cc39f7437170af0b65ba042934fad079e0ee2 (porcelain 0); python numpy: 3.13.7 2.4.4; date 2026-11-10T04:40:18Z
+{"calibration": "timing", "fine_cells_kept": 48, "set_seconds_measured": 0.07369399070739746, "workers": 2, "projected_seconds": 1.9049739837646484, "budget_seconds": 10000000.0, "projection_line_seconds": 9000000.0}
+.
+----------------------------------------------------------------------
+Ran 1 test in 3.691s
+
+OK
+VERDICT STOP READS {"g18/minus2": "option (3)", "g18/all": "option (3)"}
+VI {"signal_rows_in_phase_space": 2980, "signal_rows_unmatched": 2980, "truth_rows": 50, "truth_rows_unmatched": 50, "largest_cell_unmatched_share": 1.0}
+ROW_MATCH_INPUTS {"n_sig": 2980, "n_td": 50, "wt_eq_tdw_any": false, "gen_rows_in_td": 0, "dtypes": {"gen": "float64", "wt": "float64", "td": "float64", "tdw": "float64"}}
+# rc=0

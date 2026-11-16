@@ -1,0 +1,5 @@
+900df2baf42a896c168e710595636bcc72195b7323f91ad9db60c4fc1a8b870e  /dev/shm/josephrb-g2r-D_Ud.sh
+725c9822a391aaa9bcfedcab06da007ea4a3ca12ccb3b296f0c69888a66ae3dd  /dev/shm/josephrb-g2r-D_Ud.log
+rm -f /dev/shm/josephrb-g2r-D_Ud.sh /dev/shm/josephrb-g2r-D_Ud.log rc=0
+ls: cannot access '/dev/shm/josephrb-g2r-D_Ud.sh': No such file or directory
+ls: cannot access '/dev/shm/josephrb-g2r-D_Ud.log': No such file or directory

@@ -1,0 +1,7 @@
+2026-11-11T15:25:12Z
+referee round 4 on #977 at 2bfb1410cc581e42b8a2106403a7dc7bfe822542; paper.blind 11065 words, supp.blind 15818; reader gpt-6.1-sol high (codex-school)
+27024dccefa78e6ce853a2a434b6f5c1a1bfbdc926d334ed74369f8dcfeeff7f  scratchpad/referee4/prompt.txt
+33265a16d7133d03df9cde8816847d0927ad755c315795855a53b6d2df512bf4  scratchpad/referee4/input.txt
+44c90b84b19a4fc65ddd71f5c89a9d0732bd2660904448f4b8465edc61985fbb  scratchpad/referee4/paper.blind.txt
+52138c2b2e8e2c8a8659aa29eb38985ac542bba49334532bf56d6de00a7490fe  scratchpad/referee4/supp.blind.txt
+gpt rc=0

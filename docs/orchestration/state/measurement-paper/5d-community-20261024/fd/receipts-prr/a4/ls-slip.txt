@@ -1,0 +1,36 @@
+FD-PRR addendum A4: a slip by the valid-region lane, recorded as the director ruled (2026-11-09).
+
+The session: one read-only ssh session to saul.nersc.gov. It landed on login30 and printed 2026-11-09T18:34:37Z. Its
+purpose was to check the A4 trace's cluster-only conditions: whether any path in the chain is a symlink, $SCRATCH, and
+the TMPDIR line of setup_salloc_env.sh.
+
+What it ran, in order:
+  hostname; date -u +%FT%TZ
+  realpath on $OUT, $OUT/stage, $OUT/queues, $OUT/deploy-ibu-2 and /pscratch/sd/j/josephrb/s5p-20260926/ratios/nullsF
+  echo "SCRATCH=$SCRATCH"
+  ls -la /pscratch/sd/j/josephrb/s5p-20260926/ratios/nullsF/ | head      <- the slip
+  grep -n "TMPDIR\|PYTHONPATH" $OUT/deploy-ibu-2/setup_salloc_env.sh
+
+The slip: `ls -la` listed the directory /pscratch/sd/j/josephrb/s5p-20260926/ratios/nullsF/. That directory is shared
+and outside this study's $OUT. Listing a directory can move that directory's atime, the effect FD-PRR-DECLARATION.md
+§10.4 cites from ENS1's listing of the bank directory (#940). The listing was not needed for the check.
+
+What it did not do: it opened no file in that directory. `ls -la` stats each entry (lstat), which does not move a
+file's atime, and reads no file's contents. realpath only stats. The grep read the study's own deploy copy of
+setup_salloc_env.sh.
+
+Its output, as the session printed it (the head of the listing):
+  total 220
+  drwxrwx--- 2 josephrb josephrb  4096 Sep 27 02:10 .
+  drwxrwx--- 8 josephrb josephrb  4096 Sep 27 07:11 ..
+  -rw-rw---- 1 josephrb josephrb 11450 Sep 27 02:10 null-genie_cv-F.json
+  -rw-rw---- 1 josephrb josephrb 11443 Sep 27 02:10 null-genie_mec-F.json
+  -rw-rw---- 1 josephrb josephrb 11523 Sep 27 02:10 null-gibuu_cv-F.json
+  -rw-rw---- 1 josephrb josephrb 11427 Sep 27 02:10 null-nuwro_cv-F.json
+  -rw-rw---- 1 josephrb josephrb 37568 Sep 27 02:10 rho-genie_cv-F.npz
+  -rw-rw---- 1 josephrb josephrb 37982 Sep 27 02:10 rho-genie_mec-F.npz
+  -rw-rw---- 1 josephrb josephrb 39772 Sep 27 02:10 rho-gibuu_cv-F.npz
+
+The lane's own fix: no directory listing outside $OUT in any later session. The staging connect
+(prr_stage_a4.sh.template) reads only the four files it stages, through prr_probe.stage's O_NOATIME copy, and stats
+each one before and after.

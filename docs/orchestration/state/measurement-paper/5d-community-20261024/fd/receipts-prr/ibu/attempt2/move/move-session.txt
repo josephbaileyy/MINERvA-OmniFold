@@ -1,0 +1,41 @@
+session node login08 2026-11-09T21:20:42Z
+staged sha256 518fc8b85110035d5df7cd053c551849d98b0361720fe21a7baf22ca81e261a7
+== iris (m3246)
+m3246               2443.7            10000.0     18368.7      20000.0
+== squeue --me
+61040235 ll5d_gate_AR23 RUNNING
+61040163 ll5d_gate_G18 RUNNING
+== the move script
+node login08 2026-11-09T21:20:42Z
+log-ibu/env.log: OK
+log-ibu/FAILED: OK
+log-ibu/ibu.log: OK
+log-ibu/verify-stage.log: OK
+== before
+d 4096 log-ibu
+f 388 log-ibu/env.log
+f 5 log-ibu/FAILED
+f 151 log-ibu/ibu.log
+d 4096 log-ibu/tasks
+f 0 log-ibu/verify-stage.log
+d 4096 route2
+986cd8be1cbe0a1a8b5640e6417203f8bfedea06b9284be5b62163521c164608  log-ibu/env.log
+9830ce9d409097e8147e1ce53d55c9b0539a7344c241bd2caad75ca441f08355  log-ibu/FAILED
+6c0c07e7bc387fb7b6f1edcfe7c5106c9c4c4114e419e1ea1fdb19083763b1e6  log-ibu/ibu.log
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  log-ibu/verify-stage.log
+== after
+d 4096 log-ibu
+f 388 log-ibu/env.log
+f 5 log-ibu/FAILED
+f 151 log-ibu/ibu.log
+d 4096 log-ibu/tasks
+f 0 log-ibu/verify-stage.log
+d 4096 route2
+986cd8be1cbe0a1a8b5640e6417203f8bfedea06b9284be5b62163521c164608  log-ibu/env.log
+9830ce9d409097e8147e1ce53d55c9b0539a7344c241bd2caad75ca441f08355  log-ibu/FAILED
+6c0c07e7bc387fb7b6f1edcfe7c5106c9c4c4114e419e1ea1fdb19083763b1e6  log-ibu/ibu.log
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  log-ibu/verify-stage.log
+ls: cannot access '/pscratch/sd/j/josephrb/fd-prr-20261108/log-ibu': No such file or directory
+ls: cannot access '/pscratch/sd/j/josephrb/fd-prr-20261108/route2': No such file or directory
+moved rc=0 2026-11-09T21:20:42Z
+script rc=0; staged copy removed: yes

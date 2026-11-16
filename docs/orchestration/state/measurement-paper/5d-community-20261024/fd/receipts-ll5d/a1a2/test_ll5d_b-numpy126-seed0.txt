@@ -1,0 +1,19 @@
+# test_ll5d_b.py at PYTHONHASHSEED=0, numpy 1.26
+# date 2026-11-10T05:18:00Z  made at HEAD 9d906bf40994e9814ee63a2386e7fd7e14da5b4e, a clean checkout (porcelain 0)
+# python 3.12.2 numpy 1.26.4
+# 2b0224c6fe52c5bb2d3fe64d461ac9edb80ebd191b0ab2f892dec605a0b56a14  ll5d.py
+# 24312ca86f9e70ed86699772d634c19d9bcacb2bb87bff5aaa8c9f7c2661f3cb  ll5d_b.py
+# 522d7edd71643df61d0c5ef5a7488834e664eb36d20c3e0c0b46e10a5808f02f  fd_1b_c2.py
+# 6fa5510efd8fde01b1879cd8a1ec984f5e28699445a022450d2166af7c6c493c  tests/test_ll5d.py
+# 5391a42f82d5690c488a7b7d1309f5298ad2b55730d559d26da003779266f5d7  tests/test_ll5d_b.py
+# 584216348761248026734ada1ad3d25eab355cdbfab20db66416cf9a518346c1  tests/ll5d_a1a_mutation.py
+# 1b09bf22969b26984cac245d30d734e654088e61af43bedd3add341911389f61  tests/ll5d_a1b_mutation.py
+....................<frozen importlib._bootstrap>:530: DeprecationWarning: the load_module() method is deprecated and slated for removal in Python 3.12; use exec_module() instead
+LL5D-NULL INVALID (the seed check failed: estimator seed 45 differs from 42 at T)
+{"calibration": "timing", "fine_cells_kept": 48, "set_seconds_measured": 0.08221006393432617, "workers": 2, "projected_seconds": 2.1191775798797607, "budget_seconds": 10000000.0, "projection_line_seconds": 9000000.0}
+.........
+----------------------------------------------------------------------
+Ran 29 tests in 20.076s
+
+OK
+# rc=0

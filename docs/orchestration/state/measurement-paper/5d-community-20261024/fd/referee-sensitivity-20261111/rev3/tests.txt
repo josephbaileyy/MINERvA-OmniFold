@@ -1,0 +1,70 @@
+# HEAD 0336ba64f4c9ee47bf5ba138dce7bc2dd485d6c6
+# clean clone /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/rsn-clean-3, serial, nice 19, OMP/MKL/OPENBLAS/NUMEXPR threads 1, Python 3.12.2, numpy 1.26.4, 2026-11-12T00:07:41Z
+# 7b0fc567776d2016897173b1f8ab723fd99daedd34454537b36cd42bd03194be  rsn_prep.py
+# 5796bb6043a0ff646043206ef3ef623cbaf19d003875331da54a5642454e3690  rsn_unfold.py
+# ab63292122bffbc30e5d85efc2a5ae3f96c7f917891a856c48e2d26414848a48  rsn_cmodel.py
+# 661608d81ccf7ca0ab08aee853f5934d4c0dab89677e82f8292239fee60b7652  rsn_regrade.py
+# 4dd37197f6aa6c7f013b3ffea5558fd8d8fd1bc124047f761269adafce87e484  rsn_read.py
+# f889a0cf4de4a78aa7096bc01341ab6f3e6cdb41438267918519da7a527051d6  sbatch_rsn.sh
+# 354bd16dd4d8b9dd5462f1daf6114e7beb467be3ab80e28b8ff212f51ea55616  rsn_tasks.tsv
+# 887dbccd648e8648c03810e8d7ef335e09e5dfc7d97d4098c608db8de7bcaf29  test_rsn.py
+# 8075fe8c9befed9184924fbab614ed81bf8c46bcfa112c7420a8c1a34d33f483  rsn_mutation.py
+# status: 0 changed files
+test_a_transfer_step_that_moved_the_loop_refuses (nd-unfolding.rsn.test_rsn.CModel.test_a_transfer_step_that_moved_the_loop_refuses) ... ok
+test_each_wrong_meta_field_refuses (nd-unfolding.rsn.test_rsn.CModel.test_each_wrong_meta_field_refuses) ... ok
+test_nc_alone_passes_and_refuses_a_differing_product (nd-unfolding.rsn.test_rsn.CModel.test_nc_alone_passes_and_refuses_a_differing_product) ... ok
+test_the_arms_are_built_from_the_declared_rows (nd-unfolding.rsn.test_rsn.CModel.test_the_arms_are_built_from_the_declared_rows) ... ok
+test_the_nc_and_nc_s_refuse (nd-unfolding.rsn.test_rsn.CModel.test_the_nc_and_nc_s_refuse) ... ok
+test_the_task_table (nd-unfolding.rsn.test_rsn.CModel.test_the_task_table) ... ok
+test_without_sm_reweights_the_sm_arm_is_not_built (nd-unfolding.rsn.test_rsn.CModel.test_without_sm_reweights_the_sm_arm_is_not_built) ... ok
+test_a_changed_reweight_or_an_existing_product_refuses (nd-unfolding.rsn.test_rsn.Launcher.test_a_changed_reweight_or_an_existing_product_refuses) ... ok
+test_every_job_waits_on_the_nc_r_pass (nd-unfolding.rsn.test_rsn.Launcher.test_every_job_waits_on_the_nc_r_pass) ... ok
+test_j1_is_the_nc_alone (nd-unfolding.rsn.test_rsn.Launcher.test_j1_is_the_nc_alone) ... ok
+test_j2_needs_its_gate_the_nc_pass_and_the_committed_reweights (nd-unfolding.rsn.test_rsn.Launcher.test_j2_needs_its_gate_the_nc_pass_and_the_committed_reweights) ... ok
+test_j2_runs_the_eight_declared_steps (nd-unfolding.rsn.test_rsn.Launcher.test_j2_runs_the_eight_declared_steps) ... ok
+test_j3_runs_the_four_f1_closures_after_the_nc (nd-unfolding.rsn.test_rsn.Launcher.test_j3_runs_the_four_f1_closures_after_the_nc) ... ok
+test_the_deploy_name_and_limit_checks (nd-unfolding.rsn.test_rsn.Launcher.test_the_deploy_name_and_limit_checks) ... ok
+test_the_fence_fails_closed_and_matches_at_the_start_only (nd-unfolding.rsn.test_rsn.Launcher.test_the_fence_fails_closed_and_matches_at_the_start_only) ... ok
+test_a_frozen_reweight_that_normalize_does_not_reproduce_refuses (nd-unfolding.rsn.test_rsn.PrepRun.test_a_frozen_reweight_that_normalize_does_not_reproduce_refuses) ... ok
+test_the_prep_refuses_on_each_control (nd-unfolding.rsn.test_rsn.PrepRun.test_the_prep_refuses_on_each_control) ... ok
+test_the_prep_writes_g6_and_reproduces_its_controls (nd-unfolding.rsn.test_rsn.PrepRun.test_the_prep_writes_g6_and_reproduces_its_controls) ... ok
+test_the_radius_ladder (nd-unfolding.rsn.test_rsn.PrepRun.test_the_radius_ladder) ... ok
+test_the_smoothed_reweights_are_written_at_the_passing_radius (nd-unfolding.rsn.test_rsn.PrepRun.test_the_smoothed_reweights_are_written_at_the_passing_radius) ... ok
+test_a_step_marks_both_neighbours_and_a_small_one_marks_none (nd-unfolding.rsn.test_rsn.PrepUnits.test_a_step_marks_both_neighbours_and_a_small_one_marks_none) ... ok
+test_box_sum_matches_a_brute_force_box (nd-unfolding.rsn.test_rsn.PrepUnits.test_box_sum_matches_a_brute_force_box) ... ok
+test_g6_is_off_above_6_and_the_frozen_rho_rescaled_below (nd-unfolding.rsn.test_rsn.PrepUnits.test_g6_is_off_above_6_and_the_frozen_rho_rescaled_below) ... ok
+test_smoothing_a_constant_reweight_gives_one (nd-unfolding.rsn.test_rsn.PrepUnits.test_smoothing_a_constant_reweight_gives_one) ... ok
+test_smoothing_is_the_weighted_box_mean_renormalized (nd-unfolding.rsn.test_rsn.PrepUnits.test_smoothing_is_the_weighted_box_mean_renormalized) ... ok
+test_the_manipulation_check_boundaries (nd-unfolding.rsn.test_rsn.PrepUnits.test_the_manipulation_check_boundaries) ... ok
+test_the_closure_classes (nd-unfolding.rsn.test_rsn.Readings.test_the_closure_classes) ... ok
+test_the_deformed_truth_classes (nd-unfolding.rsn.test_rsn.Readings.test_the_deformed_truth_classes) ... ok
+test_the_held_out_reading (nd-unfolding.rsn.test_rsn.Readings.test_the_held_out_reading) ... ok
+test_the_listed_classes (nd-unfolding.rsn.test_rsn.Readings.test_the_listed_classes) ... ok
+test_the_readout_applies_the_tables (nd-unfolding.rsn.test_rsn.Readings.test_the_readout_applies_the_tables) ... ok
+test_the_readout_refuses_a_nominal_that_is_not_the_committed_one (nd-unfolding.rsn.test_rsn.Readings.test_the_readout_refuses_a_nominal_that_is_not_the_committed_one) ... ok
+test_the_rounding_floor_reproduces_the_printed_figures_and_refuses_otherwise (nd-unfolding.rsn.test_rsn.Readings.test_the_rounding_floor_reproduces_the_printed_figures_and_refuses_otherwise) ... ok
+test_the_sigma_classes_and_their_boundaries (nd-unfolding.rsn.test_rsn.Readings.test_the_sigma_classes_and_their_boundaries) ... ok
+test_the_transfer_classes (nd-unfolding.rsn.test_rsn.Readings.test_the_transfer_classes) ... ok
+test_the_wr_classes_and_their_boundaries (nd-unfolding.rsn.test_rsn.Readings.test_the_wr_classes_and_their_boundaries) ... ok
+test_c_inv_holds_for_a_gibuu_only_change_and_catches_any_other (nd-unfolding.rsn.test_rsn.Regrade.test_c_inv_holds_for_a_gibuu_only_change_and_catches_any_other) ... ok
+test_each_grade_uses_the_arm_s_rows_with_the_own_vertex_left_out (nd-unfolding.rsn.test_rsn.Regrade.test_each_grade_uses_the_arm_s_rows_with_the_own_vertex_left_out) ... ok
+test_nc_r_reproduces_and_refuses_on_any_differing_field (nd-unfolding.rsn.test_rsn.Regrade.test_nc_r_reproduces_and_refuses_on_any_differing_field) ... ok
+test_the_estimates_are_fd_f0_regrade_s (nd-unfolding.rsn.test_rsn.Regrade.test_the_estimates_are_fd_f0_regrade_s) ... ok
+test_the_nominal_only_gate_needs_no_arm_file_and_refuses_a_mismatch (nd-unfolding.rsn.test_rsn.Regrade.test_the_nominal_only_gate_needs_no_arm_file_and_refuses_a_mismatch) ... ok
+test_the_regrade_runs_end_to_end_and_refuses_a_wrong_pin_or_nominal_s (nd-unfolding.rsn.test_rsn.Regrade.test_the_regrade_runs_end_to_end_and_refuses_a_wrong_pin_or_nominal_s) ... ok
+test_wr_directions_grade_each_vector_against_its_truth_s_matrix (nd-unfolding.rsn.test_rsn.Regrade.test_wr_directions_grade_each_vector_against_its_truth_s_matrix) ... ok
+test_a_declared_truth_refuses_off_a_closure_a_non_identity_ratio_and_a_changed_hypothesis (nd-unfolding.rsn.test_rsn.WeightedRegressor.test_a_declared_truth_refuses_off_a_closure_a_non_identity_ratio_and_a_changed_hypothesis) ... ok
+test_a_declared_truth_replaces_the_identity_reweight (nd-unfolding.rsn.test_rsn.WeightedRegressor.test_a_declared_truth_replaces_the_identity_reweight) ... ok
+test_an_instrumented_step_refuses_to_write_when_the_regressor_never_ran (nd-unfolding.rsn.test_rsn.WeightedRegressor.test_an_instrumented_step_refuses_to_write_when_the_regressor_never_ran) ... ok
+test_main_records_the_options_and_restores_every_patch (nd-unfolding.rsn.test_rsn.WeightedRegressor.test_main_records_the_options_and_restores_every_patch) ... ok
+test_the_regressor_is_fitted_on_w_push_times_w_truth_of_the_reco_passing_truth_rows (nd-unfolding.rsn.test_rsn.WeightedRegressor.test_the_regressor_is_fitted_on_w_push_times_w_truth_of_the_reco_passing_truth_rows) ... ok
+test_the_transfer_diagnostic_leaves_the_loop_untouched_and_records_every_iteration (nd-unfolding.rsn.test_rsn.WeightedRegressor.test_the_transfer_diagnostic_leaves_the_loop_untouched_and_records_every_iteration) ... ok
+test_the_transfer_summary (nd-unfolding.rsn.test_rsn.WeightedRegressor.test_the_transfer_summary) ... ok
+test_the_wrapper_refuses_extra_arguments_wrong_rows_missing_fits_and_bad_weights (nd-unfolding.rsn.test_rsn.WeightedRegressor.test_the_wrapper_refuses_extra_arguments_wrong_rows_missing_fits_and_bad_weights) ... ok
+test_unit_weights_and_no_push_reproduce_nothing_but_the_weighting_changes_the_loop (nd-unfolding.rsn.test_rsn.WeightedRegressor.test_unit_weights_and_no_push_reproduce_nothing_but_the_weighting_changes_the_loop) ... ok
+
+----------------------------------------------------------------------
+Ran 52 tests in 17.201s
+
+OK
+# exit 0

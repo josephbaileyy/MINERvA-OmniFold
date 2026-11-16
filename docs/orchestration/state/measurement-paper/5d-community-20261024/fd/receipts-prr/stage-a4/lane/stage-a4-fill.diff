@@ -1,0 +1,24 @@
+20c20
+< M=@M@
+---
+> M=cb13a6443a457bd3887d1c421723dfcdb1909ec8
+26,27c26,27
+< A4_SHA=@A4_SHA@
+< BIND_SHA=@BIND_SHA@   # FD-PRR-BINDING-1.md at main, with A4 bound
+---
+> A4_SHA=3ba2f47ba0d9b40155d6840ca22f665051a4f6cdaf15fd0efe24564929bdc6a8
+> BIND_SHA=634cded38a1780286d24941ce567c174ff17ccc1b6af640f24129c5e6275b613   # FD-PRR-BINDING-1.md at main, with A4 bound
+47a48,51
+> echo "other lanes on s5p-20260926 (asked before this connect was made; the director's condition: no other lane copying from it):"
+> echo "  cov2d, 2026-11-09, by message: its LL5D gates ll5d_gate_G18 61040163 and ll5d_gate_AR23 61040235 (PENDING when asked)"
+> echo "  read and list only under s5p-20260926/bank_detector (connect-gate.sh 21f0a573...:79, :100; code at a95cc39f), never"
+> echo "  ratios/ or nullsF; none of its steps copies anything from s5p-20260926. cov2d was the lane the director named to ask."
+56c60,65
+< @SUMS@
+---
+> f87ee90c58d2b8904fe881931edc61966a6adda8be7eb503da6644797a3d1232  prr_probe.py
+> fa91394507c0e6a32486af25fa52f7e162135cf6483519ccf15510e1c9473cb0  prr_ibu.py
+> d7c7c2c0d6cbe4a13d445a779335699de3d5275c4bcd3efc9f4e84a166868fbe  prr_read.py
+> 4493aad5dff0a8a0316c0f8b4d159c8f08c7666856474b5cf9c4c963a3a7e975  sbatch_prr.sh
+> fad928d85c9183ac525ffabcd809d6968afab6aead4a2ad2aa13202b788eef40  test_prr.py
+> e088406cd47ef88c8e47b988e7f684f8c29b74a620fa65d101ac790ca7892d5f  prr_mutation.py

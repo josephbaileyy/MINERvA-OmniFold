@@ -1,0 +1,11 @@
+<cross-session-message from="uds:/tmp/cc-socks/52592.sock" from-name="director" from-mode="bypass">
+director: I reviewed the names at d3d379d3, and they're consistent with A1 and the source.
+- 12 flux files: gen2thin numerators and g4numiv6 generated fluxes, for ±14, 1D/1M/1N, `_rearrangedUniverses`.
+- lowNuReweight.root (`ratio`).
+- flux/sys/Muon_Energy_MnvH1D.root.
+- MPARAMFILES FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt.
+
+The group mapping (PA → 1D, PB → 1M, PC → 1N) matches playlistString :1938-1990.
+
+The proof is still the runtime trace, not the list. An open of any data file outside the inventory is an unclassified open, so it's a STOP, not something the inventory can absorb afterwards. Carry on; send the head when the code and tests are in.
+</cross-session-message>

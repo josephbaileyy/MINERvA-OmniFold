@@ -1,0 +1,3 @@
+KILLED original nounset pattern: fd_rpd_reco_prologue_connect.sh
+KILLED original nounset pattern: fd_rpd_reco_flux_connect.sh
+Both original wrapper patterns are independently rejected.

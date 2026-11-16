@@ -1,0 +1,36 @@
+{
+  "schema": "fd-rpd-reco-import-pin-paths-verification/1",
+  "tested_head": "225d894939b2c02fab8946d12a35c1c038168d2e",
+  "baseline": "dfd942962dbd65c5d82809e717579f0912164f29",
+  "suite": {
+    "passed": 238,
+    "seconds": 162.5,
+    "returncode": 0
+  },
+  "comment_only_custody_control": {
+    "passed": 238,
+    "seconds": 163.1,
+    "returncode": 0
+  },
+  "mutation": {
+    "required": 196,
+    "executed": 196,
+    "killed": 196,
+    "complete": true,
+    "all_killed": true,
+    "returncode": 0
+  },
+  "raw_report_sha256": "8afc26497ac113f9d93b6d8f070e083601ffa5e47eb96f6b5737bf7c075ea031",
+  "raw_report_recovery": "Remove receipt_annotation and disposable_fixture_artifact_paths; json.dumps(indent=2) plus newline reproduces the original bytes.",
+  "production_logic": "AST/byte identical to baseline; custody comment line range corrected",
+  "static_checks": {
+    "black": "PASS",
+    "ruff": "PASS",
+    "strict_production_mypy": "PASS",
+    "optional_external_stubs": "ignore_missing_imports",
+    "shell_syntax": "PASS"
+  },
+  "source_commit_hooks": 21,
+  "host_credential_value_and_fingerprint_scan": "PASS",
+  "native_platform": "not run in this lane; awaits delta audit"
+}

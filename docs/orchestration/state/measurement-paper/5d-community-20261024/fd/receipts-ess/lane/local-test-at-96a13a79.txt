@@ -1,0 +1,43 @@
+clean clone HEAD 96a13a792e4e010aa895f47fb5915d6ef9987d1f porcelain        0
+4755681f6ba8bd5060fe6ed4902e940b71e3b641d87c978a1f8016faaec468da  /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/5d61e7d7-c2cc-4084-a179-c751bf301f61/scratchpad/ess/clean-tool/nd-unfolding/ess_e/ess_capture.py
+7ceb35bbc839ae3c7a1d7937ac3d7b07c431cf14f0bc8f7e44ab80eb313909c2  /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/5d61e7d7-c2cc-4084-a179-c751bf301f61/scratchpad/ess/clean-tool/nd-unfolding/ess_e/sbatch_ess.sh
+8687e85be161bfc993ea5a2c8be7b83dc92b5eb94caa13768261ea0ecbe5667e  /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/5d61e7d7-c2cc-4084-a179-c751bf301f61/scratchpad/ess/clean-tool/nd-unfolding/ess_e/test_ess_capture.py
+python 3.11.15 1.26.4 4.6.0
+{
+ "result": "ALL PASS",
+ "pass": {
+  "rc": 0,
+  "n_eff_R00_B": 120.53482735864024,
+  "checks": {
+   "recomputed_xs_bytes_equal": true,
+   "edges_equal_fine_grid": true,
+   "event_index_counts_equal": true,
+   "fine_map_digest_equal": true,
+   "volume_equal": true,
+   "f_vs_data_product_max_rel": 0.0,
+   "cell_sum_vs_f_max_rel": 2.220446049250313e-16,
+   "events_in_cells_with_zero_denominator": 0
+  },
+  "data_side": {
+   "n_eff_refined": 3997.677668256597,
+   "n_eff_signed_abs": 4366.911599296103
+  }
+ },
+ "stop": {
+  "rc": 8,
+  "n_differ": 1
+ },
+ "wrong_pin": {
+  "rc": 9
+ },
+ "guard": [
+  "plain refused",
+  "flagged ok",
+  "allowed ok"
+ ],
+ "fixture_in_slurm": {
+  "rc": 2
+ },
+ "summary": "ok"
+}
+test rc=0

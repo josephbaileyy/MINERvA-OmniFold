@@ -1,0 +1,58 @@
+ssh rc=0
+node login27 staged sha256 b576be1629163822ebe794617f464f50c5662836ae5ec844f87b1ec291eee39d
+detached pid 2232343, output /dev/shm/rsnj23.2232005.sh.out
+node login27 2026-11-12T13:47:46Z step nc slurm_job=''; connect script sha256 b576be1629163822ebe794617f464f50c5662836ae5ec844f87b1ec291eee39d
+squeue --me:
+
+sacct J1: 61168780|rsn_J1|COMPLETED|0:0|00:11:45
+J1 log /pscratch/sd/j/josephrb/rsn-20261112/out/logs/rsn_J1_61168780.out: rc=0; rsn_nc.npz sha256 5d7ca77325af35f66b2fd6576e389f4bfbed810d69a9fae3da387558f4faa9c4 (logged = on disk)
+[rsn] job=J1 slurm=61168780 node=nid005251 tasks=1 mem_per_step=463411M cpus_per_step=42 start=2026-11-12T13:14:53Z
+[rsn] job=J1 rc=0 end=2026-11-12T13:26:24Z
+python Python 3.11.14; numpy 1.26.4
+== 2 clone at M_P1 5e43e509d08d9b294594988f2c21e50e281e7ad8 into /pscratch/sd/j/josephrb/rsn-20261112/deploy-p1
+HEAD 5e43e509d08d9b294594988f2c21e50e281e7ad8; porcelain lines (untracked included) 0
+sha256 7b0fc567776d2016897173b1f8ab723fd99daedd34454537b36cd42bd03194be nd-unfolding/rsn/rsn_prep.py
+sha256 5796bb6043a0ff646043206ef3ef623cbaf19d003875331da54a5642454e3690 nd-unfolding/rsn/rsn_unfold.py
+sha256 ab63292122bffbc30e5d85efc2a5ae3f96c7f917891a856c48e2d26414848a48 nd-unfolding/rsn/rsn_cmodel.py
+sha256 661608d81ccf7ca0ab08aee853f5934d4c0dab89677e82f8292239fee60b7652 nd-unfolding/rsn/rsn_regrade.py
+sha256 4dd37197f6aa6c7f013b3ffea5558fd8d8fd1bc124047f761269adafce87e484 nd-unfolding/rsn/rsn_read.py
+sha256 f889a0cf4de4a78aa7096bc01341ab6f3e6cdb41438267918519da7a527051d6 nd-unfolding/rsn/sbatch_rsn.sh
+sha256 354bd16dd4d8b9dd5462f1daf6114e7beb467be3ab80e28b8ff212f51ea55616 nd-unfolding/rsn/rsn_tasks.tsv
+sha256 887dbccd648e8648c03810e8d7ef335e09e5dfc7d97d4098c608db8de7bcaf29 nd-unfolding/rsn/test_rsn.py
+sha256 8075fe8c9befed9184924fbab614ed81bf8c46bcfa112c7420a8c1a34d33f483 nd-unfolding/rsn/rsn_mutation.py
+rsn-prep-SHA256SUMS committed = connect 1's: 13cf043e0a05d4070302a41fa989a1913e01fae08e57916cf6000c5c742c66ef
+P5 sha256 e36f3b25459e068cec9dba941f7b3aea8f48c6e22c931fde7c9d315e7b1e8de2
+== 3 rsn_cmodel.py nc
+rsn_cmodel.py nc rc=0
+[rsn] NC PASS: rsn_nc equals P5 and L-5D-PV_e_tune_v1 bitwise
+== FILE nc.json sha256 d05c50251dbe43fd77d165457a80f12f1e8a18f1476c25790304150bb2c47fc6
+{
+ "schema": "rsn-nc/1",
+ "product_sha256": "5d7ca77325af35f66b2fd6576e389f4bfbed810d69a9fae3da387558f4faa9c4",
+ "nominal_control": {
+  "a_full_grid_bitwise": true,
+  "b_cells_bitwise": true,
+  "b_cells": {
+   "max_rel_diff": 0.0,
+   "tol": 1e-05,
+   "bitwise": true,
+   "pass": true
+  },
+  "c_integration_routes_bitwise": true
+ },
+ "verdict": "PASS",
+ "code_sha256": {
+  "rsn_cmodel.py": "ab63292122bffbc30e5d85efc2a5ae3f96c7f917891a856c48e2d26414848a48"
+ }
+}
+== END nc.json
+NC PASS: schema rsn-nc/1, product 5d7ca77325af35f66b2fd6576e389f4bfbed810d69a9fae3da387558f4faa9c4, rsn_cmodel.py ab63292122bffbc30e5d85efc2a5ae3f96c7f917891a856c48e2d26414848a48
+== 4 the gate files
+== FILE gates/J2.ok sha256 ee4eaf33e87b06db1249ce7fb529aa10c53e875b75df510c86acaa302616c5c8
+pin=5e43e509d08d9b294594988f2c21e50e281e7ad8
+== FILE gates/J3.ok sha256 ee4eaf33e87b06db1249ce7fb529aa10c53e875b75df510c86acaa302616c5c8
+pin=5e43e509d08d9b294594988f2c21e50e281e7ad8
+deploy porcelain after (untracked included) 0
+NC STEP PASS: J1 COMPLETED; NC PASS; deploy clean at 5e43e509d08d9b294594988f2c21e50e281e7ad8; gates name it. J2 and J3 wait for the receipt and the director's go.
+== rsn connect j23 nc rc=0 2026-11-12T13:48:29Z
+script rc=0

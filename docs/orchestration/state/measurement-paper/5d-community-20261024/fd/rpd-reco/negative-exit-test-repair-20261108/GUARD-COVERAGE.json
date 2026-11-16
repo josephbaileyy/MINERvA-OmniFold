@@ -1,0 +1,17 @@
+{
+  "tested_head": "4fb2add1871c95b203e7ec0a3ff38f1424d281c8",
+  "audit_site": "848-R4-C1 / Y30",
+  "production_site": "fd_rpd_reco_custody.py:1703 @ 0fbbbf8448f16e9e18741a330e1dd9d8cb35f88b",
+  "test_cases": [
+    "unpinned suffixless ELF: post-exit STOP and exact public receipt",
+    "pinned counterpart: PASS and no trace STOP"
+  ],
+  "outcomes": [
+    {
+      "name": "REQUIRED_NEGATIVE_AFTER_EXIT_CHECK",
+      "status": "KILLED",
+      "selector": "test_negative_check_after_exit_library_custody and unpinned",
+      "returncode": 1
+    }
+  ]
+}

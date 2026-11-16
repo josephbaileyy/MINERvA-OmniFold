@@ -1,0 +1,33 @@
+2d-unfolding/cov2d/g2r/g2r.py sha256 dbcc416d35565c183d73d6ce03a9efa89dddf8cbda618fa3e6eb00bbe08d28ec
+2d-unfolding/cov2d/g2r/g2r_readout.py sha256 590ffba1cb8cb65410abee93cd8b3c679b05d4e77155591d619a2f24ba4a0cf1
+2d-unfolding/re2/re2_driver.py sha256 e226daf3f51954c7079cc7b3ab509e464865502f5dbde4acf11876409971dd67
+2d-unfolding/cov2d/g2r/g2r_prepare.py sha256 bb97fba12034e39c4b6dd5679b93f8259bcc4fab2b69890931c95c1311c7eb57
+UNMUTATED PASS test_g2r.py tests=27 expected=27 skipped=False rc=0
+UNMUTATED PASS test_re2_miss_map.py tests=11 expected=11 skipped=False rc=0
+UNMUTATED PASS test_g2r_glue.py tests=18 expected=18 skipped=False rc=0
+MUTATION KILLED the flag silently ignored (an all-NaN override) [MissMapLoader.test_the_override_from_the_map] sha256=89b32e2a8d292722
+MUTATION KILLED the override applied to a passing row [MissMapLoader.test_loader_guards] sha256=36f5282a1656ac00
+MUTATION KILLED a universe's override from another column (the CV w_truth) [MissMapLoader.test_the_override_from_the_map] sha256=ba47f13ecbe0ec7e
+MUTATION KILLED eps on the full space, not the retained eigensystem [Readings.test_a_null_direction_does_not_enter_eps_and_coupling_sees_it] sha256=de19a3d81c066087
+MUTATION KILLED the regrade reading the old C_T [RegradeCore.test_the_grade_reads_the_errors_against_c_t_prime] sha256=b1bf72803f628dfd
+MUTATION KILLED the null left at the old laws [RegradeCore.test_the_null_is_from_the_corrected_bands_and_c_t_prime] sha256=49685133e5c5a7a5
+MUTATION KILLED the subsequence order unchecked [Map.test_each_alignment_check_refuses] sha256=040e504d2b644bbd
+MUTATION KILLED the complement unchecked [Map.test_each_alignment_check_refuses] sha256=1917ac1409e4c490
+MUTATION KILLED a miss row's proxy unchecked per universe [Map.test_universe_check_refuses_a_non_proxy_miss_and_a_complement_mismatch] sha256=8b4998de44277930
+MUTATION KILLED the override at the wrong truth rows [Map.test_override_equals_p5_builder_semantics] sha256=f283c9788b1f6d65
+MUTATION KILLED C_T' with the lateral check dropped [CTPrime.test_a_tampered_lateral_block_refuses] sha256=99cb63749a0edcc7
+MUTATION KILLED G7 ignoring the integer fields [ReadoutCores.test_grade_reproduction] sha256=f23a0610b5b4c2d5
+MUTATION KILLED state carried between universes (a cached override) [MissMapLoader.test_no_state_is_carried_between_universes] sha256=e2a933982650cf1b
+MUTATION KILLED G11 comparing the override with itself [Map.test_the_spot_check_passes_and_refuses] sha256=cff7ca981c5913fa
+MUTATION KILLED the g2rMissMap provenance line removed [MainWithMissMap.test_a_miss_map_run_reaches_training_with_its_provenance] sha256=05c547d5160b634e
+MUTATION KILLED the provenance line broken (B1 restored) [MainWithMissMap.test_a_miss_map_run_reaches_training_with_its_provenance] sha256=8abee6347313105e
+MUTATION KILLED a product's universe unchecked [ReadProducts.test_the_rules] sha256=2f4ce9e8e77918dc
+MUTATION KILLED G6's result not enforced in phase_tune [PhaseTuneTampered.test_a_failing_g6_is_invalid_before_the_products] sha256=4e348b781ca910c5
+MUTATION KILLED G6's tolerance opened [CTPrime.test_g6_tolerates_rounding_and_refuses_beyond_1e_12] sha256=82b8ccc445e21519
+MUTATION KILLED the null at C_T' not written [PhaseTune.test_the_null_rebuilt_at_c_t_prime_equals_the_committed_null] sha256=b9ccae7c58312a3e
+MUTATION KILLED the prepare skipping G11 [Prepare.test_the_prepare_end_to_end] sha256=25f45dc7d6e68dd7
+MUTATION KILLED a missing per-playlist file not a STOP [Prepare.test_a_missing_per_playlist_file_is_the_directors_stop] sha256=9392b8c43faeb7a6
+MUTATION KILLED part (a) not subtracting the old universe block [ReadoutCores.test_data_core_replaces_only_the_universe_bands] sha256=661bf4efa3582e1a
+SOURCES RESTORED OK
+ALL-KILLED
+rc=0

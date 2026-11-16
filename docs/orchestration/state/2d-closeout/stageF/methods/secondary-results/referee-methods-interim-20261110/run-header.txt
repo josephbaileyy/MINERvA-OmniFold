@@ -1,0 +1,9 @@
+2026-11-10T07:23:42Z
+interim round on #977 at 7de6c603; paper.blind 9,649 words, supp.blind 13,662; readers gpt-6.1-sol high (codex-school) and gemini-3.8-flash-high (agy)
+27024dccefa78e6ce853a2a434b6f5c1a1bfbdc926d334ed74369f8dcfeeff7f  /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/interim/prompt.txt
+5ffe59ef83a14593d3859e6e121b91fcf5fd5dd1be7f5d9d3583ace7ec2538d2  /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/interim/out/paper.blind.txt
+8f7c5b7c4e19c50059043bd55d438469162a9d733df401f816a1b17d2dc507e3  /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/interim/out/supp.blind.txt
+gpt rc=1
+gemini rc=0
+codex-school out of credits; GPT read rerun on codex-school2
+gpt (codex-school2) rc=0

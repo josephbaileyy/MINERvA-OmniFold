@@ -1,0 +1,8 @@
+node login27 staged sha256 16a2a5cd5e36f0a3d48577afd3c4b1d4adebe6baf72fcf228d7c85275739754a
+detached pid 2298338, output /dev/shm/hpssa-fence.2297984.sh.out
+fence host=login27 utc=2026-11-12T14:08:50Z
+squeue: 61170761|rsn_J3|PENDING
+squeue: 61170759|rsn_J2|PENDING
+sacct cov2d/t2a rows (14 days): 28, none unended
+FENCE CLEAR
+script rc=0

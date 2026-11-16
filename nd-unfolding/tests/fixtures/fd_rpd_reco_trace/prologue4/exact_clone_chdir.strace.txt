@@ -1,0 +1,3 @@
+1600512 openat(AT_FDCWD, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+1600512 chdir("/dev/shm/limres-rpd-prologue4-20261108/repo") = 0
+1600512 chdir("/dev/shm/limres-rpd-prologue4-20261108/repo") = 0

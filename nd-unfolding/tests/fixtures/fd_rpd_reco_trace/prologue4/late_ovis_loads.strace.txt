@@ -1,0 +1,15 @@
+1600512 openat(AT_FDCWD, "/proc/self/maps", O_RDONLY|O_CLOEXEC) = 4</proc/1600512/maps>
+1600512 openat(AT_FDCWD, "/dev/shm/limres-rpd-prologue4-20261108/run/prologue-worker.json", O_WRONLY|O_CREAT|O_EXCL|O_CLOEXEC, 0666) = 4</dev/shm/limres-rpd-prologue4-20261108/run/prologue-worker.json>
+1600512 openat(AT_FDCWD, "/opt/ovis-ldms/lib/libldms.so", O_RDONLY|O_CLOEXEC) = 4</opt/ovis-ldms/lib/libldms.so.0.0.0>
+1600512 openat(AT_FDCWD, "/opt/ovis-ldms/lib/libovis_json.so.0", O_RDONLY|O_CLOEXEC) = 4</opt/ovis-ldms/lib/libovis_json.so.0.0.0>
+1600512 openat(AT_FDCWD, "/opt/ovis-ldms/lib/libovis_event.so.0", O_RDONLY|O_CLOEXEC) = 4</opt/ovis-ldms/lib/libovis_event.so.0.0.0>
+1600512 openat(AT_FDCWD, "/opt/ovis-ldms/lib/libmmalloc.so.0", O_RDONLY|O_CLOEXEC) = 4</opt/ovis-ldms/lib/libmmalloc.so.0.0.0>
+1600512 openat(AT_FDCWD, "/opt/ovis-ldms/lib/libzap.so.0", O_RDONLY|O_CLOEXEC) = 4</opt/ovis-ldms/lib/libzap.so.0.0.0>
+1600512 openat(AT_FDCWD, "/opt/ovis-ldms/lib/libovis_thrstats.so.0", O_RDONLY|O_CLOEXEC) = 4</opt/ovis-ldms/lib/libovis_thrstats.so.0.0.0>
+1600512 openat(AT_FDCWD, "/opt/ovis-ldms/lib/libovis_log.so.0", O_RDONLY|O_CLOEXEC) = 4</opt/ovis-ldms/lib/libovis_log.so.0.0.0>
+1600512 openat(AT_FDCWD, "/opt/ovis-ldms/lib/libovis_ev.so.0", O_RDONLY|O_CLOEXEC) = 4</opt/ovis-ldms/lib/libovis_ev.so.0.0.0>
+1600512 openat(AT_FDCWD, "/opt/ovis-ldms/lib/libcoll.so.0", O_RDONLY|O_CLOEXEC) = 4</opt/ovis-ldms/lib/libcoll.so.0.0.0>
+1600512 openat(AT_FDCWD, "/opt/ovis-ldms/lib/libovis_third.so.0", O_RDONLY|O_CLOEXEC) = 4</opt/ovis-ldms/lib/libovis_third.so.0.0.0>
+1600512 openat(AT_FDCWD, "/opt/ovis-ldms/lib/libovis_util.so.0", O_RDONLY|O_CLOEXEC) = 4</opt/ovis-ldms/lib/libovis_util.so.0.0.0>
+1600512 openat(AT_FDCWD, "/opt/ovis-ldms/lib/ovis-ldms/libzap_sock.so", O_RDONLY|O_CLOEXEC) = 4</opt/ovis-ldms/lib/ovis-ldms/libzap_sock.so.0.0.0>
+1600512 openat(AT_FDCWD, "/opt/ovis-ldms/lib/libldms_auth_munge.so", O_RDONLY|O_CLOEXEC) = 4</opt/ovis-ldms/lib/libldms_auth_munge.so.0.0.0>

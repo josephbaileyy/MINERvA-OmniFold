@@ -1,0 +1,18 @@
+{
+  "scope": "Scientific function AST identity only, not a runtime or scientific validation",
+  "baseline": "2cfa1a1ea6f474471dda43bb95d292edea2a73e3",
+  "head": "7a1b5d0cd415a739a2bef0588446593be185e95d",
+  "all_equal": true,
+  "functions": {
+    "mat_flux_swap": true,
+    "zero_pattern_counts": true,
+    "aggregate": true,
+    "classify_flux_swap": true,
+    "_c0": true,
+    "_d1": true,
+    "_d2": true,
+    "prediction_controls": true,
+    "common_flux_integral_ratio": true,
+    "common_flux_units": true
+  }
+}

@@ -1,0 +1,22 @@
+
+/home/j/josephrb/mnv-at-risk-20261111:
+-rw-r-----    1 josephrb  josephrb       99328 Nov 10 18:54 central.tar
+-rw-r-----    1 josephrb  josephrb        2344 Nov 10 18:54 central.tar.idx
+-rw-r-----    1 josephrb  josephrb     3934720 Nov 10 18:46 cpl.tar
+-rw-r-----    1 josephrb  josephrb       21800 Nov 10 18:46 cpl.tar.idx
+-rw-r-----    1 josephrb  josephrb     2849280 Nov 10 18:53 cstat.tar
+-rw-r-----    1 josephrb  josephrb       17704 Nov 10 18:53 cstat.tar.idx
+-rw-r-----    1 josephrb  josephrb  1590736896 Nov 10 18:46 f0b.tar
+-rw-r-----    1 josephrb  josephrb     5888808 Nov 10 18:52 f0b.tar.idx
+-rw-r-----    1 josephrb  josephrb    33495552 Nov 10 18:54 prr.tar
+-rw-r-----    1 josephrb  josephrb       97064 Nov 10 18:54 prr.tar.idx
+-rw-r-----    1 josephrb  josephrb  1577486336 Nov 10 18:53 rpd_dumps.tar
+-rw-r-----    1 josephrb  josephrb       14120 Nov 10 18:53 rpd_dumps.tar.idx
+-rw-r-----    1 josephrb  josephrb     2289664 Nov 10 18:44 s1_cmodel_cresp_tables.tar
+-rw-r-----    1 josephrb  josephrb        4392 Nov 10 18:45 s1_cmodel_cresp_tables.tar.idx
+-rw-r-----    1 josephrb  josephrb  1564460032 Nov 10 18:54 shared_inputs.tar
+-rw-r-----    1 josephrb  josephrb        2856 Nov 10 18:54 shared_inputs.tar.idx
+-rw-r-----    1 josephrb  josephrb  2164736000 Nov 10 18:53 tier3_inputs.tar
+-rw-r-----    1 josephrb  josephrb        7976 Nov 10 18:53 tier3_inputs.tar.idx
+-rw-r-----    1 josephrb  josephrb  4841755648 Nov 10 18:45 zero_loops.tar
+-rw-r-----    1 josephrb  josephrb       20264 Nov 10 18:46 zero_loops.tar.idx

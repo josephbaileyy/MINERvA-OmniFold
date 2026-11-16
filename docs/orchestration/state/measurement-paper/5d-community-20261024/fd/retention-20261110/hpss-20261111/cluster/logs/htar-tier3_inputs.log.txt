@@ -1,0 +1,23 @@
+HTAR: a   SHA256SUMS.tier3_inputs
+HTAR: a   pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/cv.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/closure/A7_gibuu/stab_control_A7_gibuu_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/closure/nominal/stab_control_nominal_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV/nuwro.json
+HTAR: a   pscratch/sd/j/josephrb/s5p-20260926/ratios/nullsF/rho-genie_cv-F.npz
+HTAR: a   pscratch/sd/j/josephrb/s5p-20260926/ratios/nullsF/rho-genie_mec-F.npz
+HTAR: a   pscratch/sd/j/josephrb/s5p-20260926/ratios/nullsF/rho-gibuu_cv-F.npz
+HTAR: a   pscratch/sd/j/josephrb/s5p-20260926/ratios/nullsF/rho-nuwro_cv-F.npz
+HTAR: a   /tmp/HTAR_CF_CHK_578189_1794365602
+HTAR Create complete for /home/j/josephrb/mnv-at-risk-20261111/tier3_inputs.tar. 2164736000 bytes written for 9 member files, max threads: 8 Transfer time: 13.194 seconds (164.072 MB/s) wallclock/user/sys: 13.297 18.054 4.144 seconds
+HTAR: v SHA256SUMS.tier3_inputs, 1183 bytes, 4 media blocks
+HTAR: v pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/cv.npz, 2163648810 bytes, 4225878 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/closure/A7_gibuu/stab_control_A7_gibuu_s991000.npz, 184716 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/closure/nominal/stab_control_nominal_s991000.npz, 184571 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV/nuwro.json, 547429 bytes, 1071 media blocks
+HTAR: v pscratch/sd/j/josephrb/s5p-20260926/ratios/nullsF/rho-genie_cv-F.npz, 37568 bytes, 75 media blocks
+HTAR: v pscratch/sd/j/josephrb/s5p-20260926/ratios/nullsF/rho-genie_mec-F.npz, 37982 bytes, 76 media blocks
+HTAR: v pscratch/sd/j/josephrb/s5p-20260926/ratios/nullsF/rho-gibuu_cv-F.npz, 39772 bytes, 79 media blocks
+HTAR: v pscratch/sd/j/josephrb/s5p-20260926/ratios/nullsF/rho-nuwro_cv-F.npz, 42605 bytes, 85 media blocks
+HTAR: v /tmp/HTAR_CF_CHK_578189_1794365602, 256 bytes, 2 media blocks
+HTAR: Verify complete. 0 total errors, 10 total objects (10 Files,0 Dirs,0 Hard Links,0 symlinks) wallclock/user/sys: 13.085 12.880 1.366 seconds
+HTAR: HTAR SUCCESSFUL

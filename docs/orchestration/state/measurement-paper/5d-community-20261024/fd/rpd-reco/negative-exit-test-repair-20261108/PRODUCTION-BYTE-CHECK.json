@@ -1,0 +1,39 @@
+{
+  "baseline": "e9d575277c2cead2ae5510ac32a5967f79fdadd2",
+  "tested_head": "4fb2add1871c95b203e7ec0a3ff38f1424d281c8",
+  "all_eight_production_instrument_files_byte_equal": true,
+  "files": {
+    "nd-unfolding/fd_rpd_reco.py": {
+      "byte_equal": true,
+      "sha256": "f748c8971919dfc39ecf111920bb01ef2479082e98134f26c83569d60d79627c"
+    },
+    "nd-unfolding/fd_rpd_reco_custody.py": {
+      "byte_equal": true,
+      "sha256": "cd6df11fd53c187397f6ea4beae3e94067186cfd3cfe62545fef038f14c633a5"
+    },
+    "nd-unfolding/fd_rpd_reco_prologue.py": {
+      "byte_equal": true,
+      "sha256": "33122fde093fce52e33a554431b4a6ab9fcdbb65b689405e5511f4b6323fbf5c"
+    },
+    "nd-unfolding/fd_rpd_reco_flux_connect.sh": {
+      "byte_equal": true,
+      "sha256": "32db52355a4811bd4bf5f8b8cc0b5c397c7b403a0996048bcafd8c8c665cc76e"
+    },
+    "nd-unfolding/fd_rpd_reco_prologue_connect.sh": {
+      "byte_equal": true,
+      "sha256": "c375e94a47b859ee57be9126ccc2aabb544374ac0ed528a095352164175d6dc5"
+    },
+    "nd-unfolding/tests/fd_rpd_reco_mat_check.py": {
+      "byte_equal": true,
+      "sha256": "06360100038f0203b0d994f71c171b12cd955697edf32d1d744c4ce271ceb26d"
+    },
+    "nd-unfolding/fd_rpd_inputs.py": {
+      "byte_equal": true,
+      "sha256": "6e4ed0f1d7f55b7bfe2f26752eeb28bb9cbe33325a9d91cc7c06d9494a0b0a70"
+    },
+    "nd-unfolding/fd_ct_period_inputs.py": {
+      "byte_equal": true,
+      "sha256": "4d005f265ea6abf4ee7cfec988fe7c06553556ca7984387929f77409dfc244b1"
+    }
+  }
+}

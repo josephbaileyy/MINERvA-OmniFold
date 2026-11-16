@@ -1,0 +1,11 @@
+HTAR: a   SHA256SUMS.shared_inputs
+HTAR: a   pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz
+HTAR: a   pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz
+HTAR: a   /tmp/HTAR_CF_CHK_582637_1794365646
+HTAR Create complete for /home/j/josephrb/mnv-at-risk-20261111/shared_inputs.tar. 1564460032 bytes written for 3 member files, max threads: 3 Transfer time: 9.434 seconds (165.834 MB/s) wallclock/user/sys: 9.538 13.455 2.421 seconds
+HTAR: v SHA256SUMS.shared_inputs, 261 bytes, 2 media blocks
+HTAR: v pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz, 1548438020 bytes, 3024295 media blocks
+HTAR: v pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz, 16017201 bytes, 31285 media blocks
+HTAR: v /tmp/HTAR_CF_CHK_582637_1794365646, 256 bytes, 2 media blocks
+HTAR: Verify complete. 0 total errors, 4 total objects (4 Files,0 Dirs,0 Hard Links,0 symlinks) wallclock/user/sys: 9.062 9.304 1.199 seconds
+HTAR: HTAR SUCCESSFUL

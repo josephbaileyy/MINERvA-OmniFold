@@ -1,0 +1,1 @@
+{"mode": "full", "tasks": 50, "ended": 50, "rc": 0, "job": "61202343", "pin": "b438ab2710b2dcfd30238107187caa3628393b11", "teardown": ""}

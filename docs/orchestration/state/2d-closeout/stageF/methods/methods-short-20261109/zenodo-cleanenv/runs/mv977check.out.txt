@@ -1,0 +1,1 @@
+VALUES-FIVED16 :: PASS (4258 values, readouts pinned, 2 figures equal their sources, 10 listed-truth sentences agree)

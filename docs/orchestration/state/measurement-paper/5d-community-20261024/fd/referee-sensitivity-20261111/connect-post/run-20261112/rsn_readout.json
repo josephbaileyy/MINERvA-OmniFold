@@ -1,0 +1,938 @@
+{
+ "schema": "rsn-readout/1",
+ "conclusions": {
+  "P1": "the fake-data bias exceeds the reporting criteria at two truths (the GiBUU-family truth and the q3 tilt)",
+  "P2": "the other fake-data truths meet the criteria only with the broader covariance terms, C_model among them",
+  "P3": "the bias meets both criteria at the four held-out GENIE v3 records",
+  "P4": "C_model is dominated by the GiBUU shift (0.890 of its trace)",
+  "P5": "the reported per-cell relative uncertainty of the sixteen released cells",
+  "P6": "the sixteen released central values, whose unmatched-event weights come from an unweighted regression",
+  "P7": "the noise-free closures at the prior, at NuWro's shape, at the A7 GiBUU hybrid and at the q3 tilt",
+  "P8": "the misses' step-1 weights transfer from the reconstructed events at fixed truth (limitation 8)"
+ },
+ "arms": {
+  "G6": {
+   "P4": {
+    "gibuu_trace_share": 0.9225384185911943,
+    "gibuu_trace_share_nominal": 0.8904043913856358,
+    "trace_ratio": 1.4148382542820817,
+    "q": [
+     1.2312463056532046,
+     1.2847889550639469,
+     1.2713273120978867,
+     1.1259739582942423,
+     1.1203196252029624,
+     0.652825387964493,
+     0.7120077192041262,
+     0.6496427526321781,
+     1.0107327206247718,
+     1.1713126928705693,
+     0.9319886628057564,
+     1.492743864232649,
+     1.7741632889909864,
+     0.5421678706884896,
+     1.231249490920725,
+     0.7554660138922696
+    ],
+    "q_median": 1.1231467917486024,
+    "class": "C_model similar"
+   },
+   "P5": {
+    "reported_sigma_ratio": [
+     1.0009346657584095,
+     1.002520013076633,
+     1.18433867207504,
+     1.0702295286765293,
+     1.0043082491682087,
+     0.9462804798576823,
+     0.9397247443774651,
+     0.9505802595453351,
+     1.000732629564974,
+     1.0406693270053793,
+     0.9857954778044197,
+     1.338295843115778,
+     1.0057294221843167,
+     0.8642983519558729,
+     1.0053614869085714,
+     0.9258851019666002
+    ],
+    "median": 1.0017273394175212,
+    "min": 0.8642983519558729,
+    "max": 1.338295843115778
+   },
+   "P1": {
+    "listed_nominal": [
+     "q3",
+     "A7_gibuu"
+    ],
+    "listed": [
+     "q3",
+     "A7_gibuu"
+    ],
+    "class": "unchanged"
+   },
+   "P2": {
+    "by_group_nominal": {
+     "prior": {
+      "truths": 2,
+      "cells": 32,
+      "cells_abs_z_gt_2": 0,
+      "truths_p_lt_0.01": 0,
+      "by_family": {
+       "nominal": {
+        "truths": 1,
+        "cells_abs_z_gt_2": 0,
+        "truths_p_lt_0.01": 0
+       },
+       "A7_mnvtune": {
+        "truths": 1,
+        "cells_abs_z_gt_2": 0,
+        "truths_p_lt_0.01": 0
+       }
+      }
+     },
+     "vertex-family": {
+      "truths": 8,
+      "cells": 128,
+      "cells_abs_z_gt_2": 2,
+      "truths_p_lt_0.01": 1,
+      "by_family": {
+       "nuwro": {
+        "truths": 4,
+        "cells_abs_z_gt_2": 0,
+        "truths_p_lt_0.01": 0
+       },
+       "genie_mec": {
+        "truths": 2,
+        "cells_abs_z_gt_2": 0,
+        "truths_p_lt_0.01": 0
+       },
+       "gibuu": {
+        "truths": 2,
+        "cells_abs_z_gt_2": 2,
+        "truths_p_lt_0.01": 1
+       }
+      }
+     },
+     "non-vertex": {
+      "truths": 2,
+      "cells": 32,
+      "cells_abs_z_gt_2": 0,
+      "truths_p_lt_0.01": 1,
+      "by_family": {
+       "q3": {
+        "truths": 1,
+        "cells_abs_z_gt_2": 0,
+        "truths_p_lt_0.01": 1
+       },
+       "A7_genie_cv": {
+        "truths": 1,
+        "cells_abs_z_gt_2": 0,
+        "truths_p_lt_0.01": 0
+       }
+      }
+     },
+     "held-out": {
+      "truths": 4,
+      "cells": 64,
+      "cells_abs_z_gt_2": 0,
+      "truths_p_lt_0.01": 0,
+      "by_family": {
+       "F1_genie_v3_g18": {
+        "truths": 1,
+        "cells_abs_z_gt_2": 0,
+        "truths_p_lt_0.01": 0
+       },
+       "F1_closure_genie_v3_g18": {
+        "truths": 1,
+        "cells_abs_z_gt_2": 0,
+        "truths_p_lt_0.01": 0
+       },
+       "F1_genie_v3_ar23": {
+        "truths": 1,
+        "cells_abs_z_gt_2": 0,
+        "truths_p_lt_0.01": 0
+       },
+       "F1_closure_genie_v3_ar23": {
+        "truths": 1,
+        "cells_abs_z_gt_2": 0,
+        "truths_p_lt_0.01": 0
+       }
+      }
+     }
+    },
+    "by_group": {
+     "prior": {
+      "truths": 2,
+      "cells": 32,
+      "cells_abs_z_gt_2": 0,
+      "truths_p_lt_0.01": 0,
+      "by_family": {
+       "nominal": {
+        "truths": 1,
+        "cells_abs_z_gt_2": 0,
+        "truths_p_lt_0.01": 0
+       },
+       "A7_mnvtune": {
+        "truths": 1,
+        "cells_abs_z_gt_2": 0,
+        "truths_p_lt_0.01": 0
+       }
+      }
+     },
+     "vertex-family": {
+      "truths": 8,
+      "cells": 128,
+      "cells_abs_z_gt_2": 2,
+      "truths_p_lt_0.01": 1,
+      "by_family": {
+       "nuwro": {
+        "truths": 4,
+        "cells_abs_z_gt_2": 0,
+        "truths_p_lt_0.01": 0
+       },
+       "genie_mec": {
+        "truths": 2,
+        "cells_abs_z_gt_2": 0,
+        "truths_p_lt_0.01": 0
+       },
+       "gibuu": {
+        "truths": 2,
+        "cells_abs_z_gt_2": 2,
+        "truths_p_lt_0.01": 1
+       }
+      }
+     },
+     "non-vertex": {
+      "truths": 2,
+      "cells": 32,
+      "cells_abs_z_gt_2": 0,
+      "truths_p_lt_0.01": 1,
+      "by_family": {
+       "q3": {
+        "truths": 1,
+        "cells_abs_z_gt_2": 0,
+        "truths_p_lt_0.01": 1
+       },
+       "A7_genie_cv": {
+        "truths": 1,
+        "cells_abs_z_gt_2": 0,
+        "truths_p_lt_0.01": 0
+       }
+      }
+     },
+     "held-out": {
+      "truths": 4,
+      "cells": 64,
+      "cells_abs_z_gt_2": 0,
+      "truths_p_lt_0.01": 0,
+      "by_family": {
+       "F1_genie_v3_g18": {
+        "truths": 1,
+        "cells_abs_z_gt_2": 0,
+        "truths_p_lt_0.01": 0
+       },
+       "F1_closure_genie_v3_g18": {
+        "truths": 1,
+        "cells_abs_z_gt_2": 0,
+        "truths_p_lt_0.01": 0
+       },
+       "F1_genie_v3_ar23": {
+        "truths": 1,
+        "cells_abs_z_gt_2": 0,
+        "truths_p_lt_0.01": 0
+       },
+       "F1_closure_genie_v3_ar23": {
+        "truths": 1,
+        "cells_abs_z_gt_2": 0,
+        "truths_p_lt_0.01": 0
+       }
+      }
+     }
+    },
+    "chi2": {
+     "nominal": [
+      0.0016649187437261593,
+      0.0017596053389738815
+     ],
+     "W1": [
+      4.818890045842726,
+      5.518933649058834
+     ],
+     "W2": [
+      0.4975496474264043,
+      0.4990212910395044
+     ],
+     "W3": [
+      27.409176772100132,
+      28.403942955497335
+     ],
+     "q3": [
+      52.48412753402656,
+      59.829678138966415
+     ],
+     "stage0c_gibuu": [
+      24.572190321955425,
+      24.572190321955425
+     ],
+     "closure_nuwro": [
+      10.661869189722362,
+      10.898344272570288
+     ],
+     "A7_mnvtune": [
+      0.003143032927007381,
+      0.0031426919884769153
+     ],
+     "A7_genie_cv": [
+      15.584269639632993,
+      16.025901130426455
+     ],
+     "A7_genie_mec": [
+      13.653461424892885,
+      13.617052936362178
+     ],
+     "A7_nuwro": [
+      23.86366632465905,
+      24.62742691470701
+     ],
+     "A7_gibuu": [
+      171.00610782945503,
+      171.00610782945503
+     ],
+     "P1r": [
+      38.93059833710986,
+      39.57364676229609
+     ],
+     "P2r": [
+      33.88833856671236,
+      37.11018051059168
+     ],
+     "P3r": [
+      2.0931265004740185,
+      2.004336978395083
+     ],
+     "P1g": [
+      75.53479665852139,
+      78.2920053330624
+     ],
+     "P2g": [
+      36.44809134924056,
+      34.93628351788626
+     ],
+     "P3g": [
+      21.599970121101737,
+      21.54402450583912
+     ],
+     "F1_genie_v3_g18": [
+      9.263149136145817,
+      9.110251024688644
+     ],
+     "F1_closure_genie_v3_g18": [
+      9.141803511290767,
+      8.913934719293788
+     ],
+     "F1_genie_v3_ar23": [
+      14.058838796004459,
+      14.187979775283543
+     ],
+     "F1_closure_genie_v3_ar23": [
+      13.433661147390143,
+      13.522618781836087
+     ]
+    }
+   },
+   "P3": {
+    "both_criteria_met_at_the_four_held_out_records": true
+   },
+   "verdict": "the fake-data conclusions survive G6"
+  },
+  "SM": {
+   "P4": {
+    "gibuu_trace_share": 0.66427060772604,
+    "gibuu_trace_share_nominal": 0.8904043913856358,
+    "trace_ratio": 0.11212911242343115,
+    "q": [
+     0.2487065718891111,
+     0.758716931392066,
+     0.10940414536748681,
+     0.09809821409900588,
+     0.7820508390541588,
+     0.7183608599471131,
+     0.26679017206681616,
+     0.8713938230332472,
+     1.3517432574464354,
+     0.5028234050702567,
+     0.2320890426376767,
+     0.30386302718596564,
+     2.2272376675166656,
+     0.4901520408666574,
+     0.7936553171702049,
+     0.2616656813741379
+    ],
+    "q_median": 0.49648772296845706,
+    "class": "C_model smaller"
+   },
+   "P5": {
+    "reported_sigma_ratio": [
+     0.9982983251266989,
+     0.9983531236793499,
+     0.5953523396411273,
+     0.6799629444146523,
+     0.993405114708671,
+     0.9548926742663564,
+     0.8830317704122814,
+     0.9797238412557104,
+     1.0277089076538253,
+     0.9128504144867603,
+     0.8926877637205832,
+     0.6445517664854685,
+     1.0105406005614272,
+     0.8530951376629529,
+     0.996136409802854,
+     0.8308170329896217
+    ],
+    "median": 0.9338715443765584,
+    "min": 0.5953523396411273,
+    "max": 1.0277089076538253
+   },
+   "P1": {
+    "listed_nominal": [
+     "q3",
+     "A7_gibuu"
+    ],
+    "listed": [
+     "q3",
+     "A7_nuwro",
+     "A7_gibuu"
+    ],
+    "class": "more flagged"
+   },
+   "P2": {
+    "by_group_nominal": {
+     "prior": {
+      "truths": 2,
+      "cells": 32,
+      "cells_abs_z_gt_2": 0,
+      "truths_p_lt_0.01": 0,
+      "by_family": {
+       "nominal": {
+        "truths": 1,
+        "cells_abs_z_gt_2": 0,
+        "truths_p_lt_0.01": 0
+       },
+       "A7_mnvtune": {
+        "truths": 1,
+        "cells_abs_z_gt_2": 0,
+        "truths_p_lt_0.01": 0
+       }
+      }
+     },
+     "vertex-family": {
+      "truths": 8,
+      "cells": 128,
+      "cells_abs_z_gt_2": 2,
+      "truths_p_lt_0.01": 1,
+      "by_family": {
+       "nuwro": {
+        "truths": 4,
+        "cells_abs_z_gt_2": 0,
+        "truths_p_lt_0.01": 0
+       },
+       "genie_mec": {
+        "truths": 2,
+        "cells_abs_z_gt_2": 0,
+        "truths_p_lt_0.01": 0
+       },
+       "gibuu": {
+        "truths": 2,
+        "cells_abs_z_gt_2": 2,
+        "truths_p_lt_0.01": 1
+       }
+      }
+     },
+     "non-vertex": {
+      "truths": 2,
+      "cells": 32,
+      "cells_abs_z_gt_2": 0,
+      "truths_p_lt_0.01": 1,
+      "by_family": {
+       "q3": {
+        "truths": 1,
+        "cells_abs_z_gt_2": 0,
+        "truths_p_lt_0.01": 1
+       },
+       "A7_genie_cv": {
+        "truths": 1,
+        "cells_abs_z_gt_2": 0,
+        "truths_p_lt_0.01": 0
+       }
+      }
+     },
+     "held-out": {
+      "truths": 4,
+      "cells": 64,
+      "cells_abs_z_gt_2": 0,
+      "truths_p_lt_0.01": 0,
+      "by_family": {
+       "F1_genie_v3_g18": {
+        "truths": 1,
+        "cells_abs_z_gt_2": 0,
+        "truths_p_lt_0.01": 0
+       },
+       "F1_closure_genie_v3_g18": {
+        "truths": 1,
+        "cells_abs_z_gt_2": 0,
+        "truths_p_lt_0.01": 0
+       },
+       "F1_genie_v3_ar23": {
+        "truths": 1,
+        "cells_abs_z_gt_2": 0,
+        "truths_p_lt_0.01": 0
+       },
+       "F1_closure_genie_v3_ar23": {
+        "truths": 1,
+        "cells_abs_z_gt_2": 0,
+        "truths_p_lt_0.01": 0
+       }
+      }
+     }
+    },
+    "by_group": {
+     "prior": {
+      "truths": 2,
+      "cells": 32,
+      "cells_abs_z_gt_2": 0,
+      "truths_p_lt_0.01": 0,
+      "by_family": {
+       "nominal": {
+        "truths": 1,
+        "cells_abs_z_gt_2": 0,
+        "truths_p_lt_0.01": 0
+       },
+       "A7_mnvtune": {
+        "truths": 1,
+        "cells_abs_z_gt_2": 0,
+        "truths_p_lt_0.01": 0
+       }
+      }
+     },
+     "vertex-family": {
+      "truths": 8,
+      "cells": 128,
+      "cells_abs_z_gt_2": 2,
+      "truths_p_lt_0.01": 2,
+      "by_family": {
+       "nuwro": {
+        "truths": 4,
+        "cells_abs_z_gt_2": 0,
+        "truths_p_lt_0.01": 1
+       },
+       "genie_mec": {
+        "truths": 2,
+        "cells_abs_z_gt_2": 0,
+        "truths_p_lt_0.01": 0
+       },
+       "gibuu": {
+        "truths": 2,
+        "cells_abs_z_gt_2": 2,
+        "truths_p_lt_0.01": 1
+       }
+      }
+     },
+     "non-vertex": {
+      "truths": 2,
+      "cells": 32,
+      "cells_abs_z_gt_2": 0,
+      "truths_p_lt_0.01": 1,
+      "by_family": {
+       "q3": {
+        "truths": 1,
+        "cells_abs_z_gt_2": 0,
+        "truths_p_lt_0.01": 1
+       },
+       "A7_genie_cv": {
+        "truths": 1,
+        "cells_abs_z_gt_2": 0,
+        "truths_p_lt_0.01": 0
+       }
+      }
+     },
+     "held-out": {
+      "truths": 4,
+      "cells": 64,
+      "cells_abs_z_gt_2": 0,
+      "truths_p_lt_0.01": 0,
+      "by_family": {
+       "F1_genie_v3_g18": {
+        "truths": 1,
+        "cells_abs_z_gt_2": 0,
+        "truths_p_lt_0.01": 0
+       },
+       "F1_closure_genie_v3_g18": {
+        "truths": 1,
+        "cells_abs_z_gt_2": 0,
+        "truths_p_lt_0.01": 0
+       },
+       "F1_genie_v3_ar23": {
+        "truths": 1,
+        "cells_abs_z_gt_2": 0,
+        "truths_p_lt_0.01": 0
+       },
+       "F1_closure_genie_v3_ar23": {
+        "truths": 1,
+        "cells_abs_z_gt_2": 0,
+        "truths_p_lt_0.01": 0
+       }
+      }
+     }
+    },
+    "chi2": {
+     "nominal": [
+      0.0016649187437261593,
+      0.0012252295291413822
+     ],
+     "W1": [
+      4.818890045842726,
+      5.260486034711016
+     ],
+     "W2": [
+      0.4975496474264043,
+      0.4587152595931795
+     ],
+     "W3": [
+      27.409176772100132,
+      27.908880059154285
+     ],
+     "q3": [
+      52.48412753402656,
+      51.48009984976018
+     ],
+     "stage0c_gibuu": [
+      24.572190321955425,
+      24.71569231404206
+     ],
+     "closure_nuwro": [
+      10.661869189722362,
+      13.361001875721444
+     ],
+     "A7_mnvtune": [
+      0.003143032927007381,
+      0.0033893996999401163
+     ],
+     "A7_genie_cv": [
+      15.584269639632993,
+      12.287871109174644
+     ],
+     "A7_genie_mec": [
+      13.653461424892885,
+      8.701766821303702
+     ],
+     "A7_nuwro": [
+      23.86366632465905,
+      34.32863491494351
+     ],
+     "A7_gibuu": [
+      171.00610782945503,
+      217.83669831088235
+     ],
+     "P1r": [
+      38.93059833710986,
+      35.07235690747899
+     ],
+     "P2r": [
+      33.88833856671236,
+      56.69968117296327
+     ],
+     "P3r": [
+      2.0931265004740185,
+      1.8546955493159807
+     ],
+     "P1g": [
+      75.53479665852139,
+      69.29009159896754
+     ],
+     "P2g": [
+      36.44809134924056,
+      54.63960165439481
+     ],
+     "P3g": [
+      21.599970121101737,
+      16.58172654642304
+     ],
+     "F1_genie_v3_g18": [
+      9.263149136145817,
+      22.81665780961633
+     ],
+     "F1_closure_genie_v3_g18": [
+      9.141803511290767,
+      20.973817447287896
+     ],
+     "F1_genie_v3_ar23": [
+      14.058838796004459,
+      15.778090793555798
+     ],
+     "F1_closure_genie_v3_ar23": [
+      13.433661147390143,
+      14.460815842620173
+     ]
+    }
+   },
+   "P3": {
+    "both_criteria_met_at_the_four_held_out_records": true
+   },
+   "verdict": "a fake-data conclusion changes under SM",
+   "radius": 2
+  },
+  "WR": {
+   "P6": {
+    "delta": [
+     -0.0012256085488759894,
+     0.0006231152070914625,
+     -0.002278169776454675,
+     -0.002445239616994166,
+     0.0002455832612318076,
+     0.007189790216405978,
+     -5.051894491114872e-05,
+     -0.0024901571733887407,
+     0.00342394115931266,
+     0.00149355180978894,
+     0.001728975972136615,
+     0.004414759924013412,
+     0.0009087877491955609,
+     -0.001769782244084639,
+     -0.00024132105348861899,
+     -0.0006153091975820146
+    ],
+    "delta_over_floor": [
+     1.5734188041888584,
+     0.5748948562311668,
+     1.2925447502853153,
+     1.2493538079963693,
+     0.4470574639338786,
+     2.849674430380961,
+     0.0288368933996639,
+     1.1059748003875414,
+     2.1790600784867316,
+     1.579927054244393,
+     0.8471882607286628,
+     2.8561630488751093,
+     1.0707761225735268,
+     1.576701071530634,
+     0.35292214828983504,
+     0.5551046538999393
+    ],
+    "delta_over_sigma": [
+     0.017243007181833796,
+     0.008205634906045048,
+     0.01621465622806731,
+     0.019215114893015958,
+     0.005119519341463105,
+     0.08857718790977101,
+     0.0007702186480082465,
+     0.029462841336687973,
+     0.054685619640554045,
+     0.021798934246195917,
+     0.01990025664954361,
+     0.03178798011779057,
+     0.013016327883385187,
+     0.015547735009006206,
+     0.004248572389729923,
+     0.007425155583652453
+    ],
+    "class": "W1",
+    "cells_at_half_sigma": [],
+    "chi2": 0.2447671454796353,
+    "top_directions": [
+     {
+      "rank": 11,
+      "component": 0.33089719420582514
+     },
+     {
+      "rank": 15,
+      "component": 0.24340587460805846
+     },
+     {
+      "rank": 9,
+      "component": 0.2165777466406168
+     }
+    ]
+   },
+   "P7": {
+    "floor": {
+     "max_abs_weighted": 3.207944255156914e-05,
+     "max_abs_equal_weights": 3.2179640496732276e-05,
+     "breaks_the_prior_closure": false
+    },
+    "nuwro": {
+     "rms_weighted": 0.026847938478493687,
+     "rms_equal_weights": 0.026925978935759723,
+     "max_abs_change": 0.0022205274824375065,
+     "rms_class": "comparable",
+     "chi2_weighted": 11.341964973285855,
+     "chi2_equal_weights": 10.661869189721966,
+     "flag_weighted": false,
+     "flag_equal_weights": false,
+     "change_along_equal_weight_bias": 0.09763806182264761,
+     "change_top_directions": [
+      {
+       "rank": 15,
+       "component": 0.14626165801229643
+      },
+      {
+       "rank": 11,
+       "component": -0.10461011710337856
+      },
+      {
+       "rank": 9,
+       "component": 0.05630087685943871
+      }
+     ]
+    },
+    "gibuu": {
+     "rms_weighted": 0.13076189537379485,
+     "rms_equal_weights": 0.12950961996371982,
+     "max_abs_change": 0.0045323982113568695,
+     "rms_class": "comparable",
+     "chi2_weighted": 176.61469110722152,
+     "chi2_equal_weights": 173.05384299406163,
+     "flag_weighted": true,
+     "flag_equal_weights": true,
+     "change_along_equal_weight_bias": 0.12806971193544778,
+     "change_top_directions": [
+      {
+       "rank": 11,
+       "component": -0.3353354431847483
+      },
+      {
+       "rank": 15,
+       "component": 0.21144715910638015
+      },
+      {
+       "rank": 10,
+       "component": -0.10326581037558166
+      }
+     ],
+     "class": "immaterial"
+    },
+    "q3": {
+     "rms_weighted": 0.06499544080341971,
+     "rms_equal_weights": 0.0645804356957516,
+     "max_abs_change": 0.002158750343602467,
+     "rms_class": "comparable",
+     "chi2_weighted": 52.78492165039523,
+     "chi2_equal_weights": 51.53874043645052,
+     "flag_weighted": true,
+     "flag_equal_weights": true,
+     "change_along_equal_weight_bias": 0.08555126477728289,
+     "change_top_directions": [
+      {
+       "rank": 13,
+       "component": 0.0793860666573904
+      },
+      {
+       "rank": 12,
+       "component": 0.07039077669232316
+      },
+      {
+       "rank": 14,
+       "component": -0.05325341040103093
+      }
+     ],
+     "class": "immaterial"
+    }
+   },
+   "verdict": "in pvl's noise-free signal-only closures, the equal-weight regression is immaterial at the A7 GiBUU hybrid and the q3 tilt, and the data move below half the reported sigma",
+   "scope": "a stated sensitivity of pvl's noise-free signal-only full-MC closure, WR against WU; it does not attribute F0b's flags, which were made in the background-inclusive half-MC construction: that attribution is T3's B0/MW reading, at the same weight"
+  },
+  "TR": {
+   "P8": {
+    "data": {
+     "class": "T1",
+     "cells_beyond_half_sigma": [],
+     "rel_bias": -0.00037301028144496446,
+     "rel_rms": 0.06726694228678361,
+     "cell_bias": [
+      0.00016909910981954823,
+      -0.000475440614863043,
+      -0.002008101149849173,
+      -0.00646697276311603,
+      0.001211807024560363,
+      -0.005398854285557642,
+      0.0022819973661671877,
+      -0.0029109857102880277,
+      -0.0026280477654915257,
+      0.0017402037753717625,
+      -0.009858416818158244,
+      -0.009695758008497646,
+      0.00026906082501465534,
+      -0.0020610567393933854,
+      -0.0003652166003487167,
+      -0.0009043953628851131
+     ],
+     "lowest_vs_highest_acceptance": [
+      -0.0002475531988245236,
+      0.0010083111556621943
+     ]
+    },
+    "gibuu": {
+     "class": "T1",
+     "cells_beyond_half_sigma": [],
+     "rel_bias": 0.00024281071368989368,
+     "rel_rms": 0.03252368723782279,
+     "cell_bias": [
+      0.00016369166109164723,
+      0.000496204795630284,
+      0.008958514348217594,
+      -8.736778408002799e-05,
+      0.00045186092999394134,
+      -0.00014552068006978836,
+      0.002349822797379497,
+      -0.0058681250287118125,
+      6.748693432867547e-05,
+      -0.0014050317032785475,
+      0.001975171364413608,
+      -0.0011084309357800581,
+      0.00033068927518353775,
+      -0.0025607971854126887,
+      -3.7965218548818847e-05,
+      5.1186181873053016e-05
+     ],
+     "lowest_vs_highest_acceptance": [
+      -0.00255542093226585,
+      -0.000892974044926577
+     ]
+    },
+    "q3": {
+     "class": "T0",
+     "cells_beyond_half_sigma": [],
+     "rel_bias": 0.00013037447940732015,
+     "rel_rms": 0.015516618617602037,
+     "cell_bias": [
+      0.0005000888639457024,
+      0.00022650479756780584,
+      0.0005585242741599217,
+      0.0019087411901046458,
+      -6.208645705563232e-05,
+      -0.0008984951419720444,
+      0.0003604506757606263,
+      0.0013667600296300986,
+      -0.0006923751366794129,
+      -0.0004544743269658813,
+      -0.0007278940370445408,
+      -0.001690150680407121,
+      -1.486914896942082e-05,
+      5.6859666593966907e-05,
+      0.0007552524004932337,
+      2.9167190878531812e-05
+     ],
+     "lowest_vs_highest_acceptance": [
+      -0.0011172029199170614,
+      -9.210341620080106e-05
+     ]
+    }
+   },
+   "scope": "the classes bound the transfer bias plus the 80 % probe's own estimation noise; no noise reference is made"
+  }
+ },
+ "label": "sensitivities of the stated construction; not calibrated uncertainties; nothing here enters a reported covariance"
+}

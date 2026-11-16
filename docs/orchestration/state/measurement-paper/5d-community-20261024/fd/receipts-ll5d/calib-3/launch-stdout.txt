@@ -1,0 +1,41 @@
+fence host=login02 utc=2026-11-10T06:11:27Z
+squeue:
+sacct unended cov2d:
+fence end
+FENCE_CLEAR (other lanes' jobs are recorded above; the director sequences them)
+staged rc=0 node=e81b4787efcb79bee71bb2fa8acc1a60171229cdb6eab7fd01f8f44e0feb2dc5 local=e81b4787efcb79bee71bb2fa8acc1a60171229cdb6eab7fd01f8f44e0feb2dc5 go=e81b4787efcb79bee71bb2fa8acc1a60171229cdb6eab7fd01f8f44e0feb2dc5
+DIGEST_MATCH
+launched rc=0 at 2026-11-10T06:11:51Z
+last line: end=2026-11-10T06:13:02Z
+fetched connect log rc=0
+host=login02 start=2026-11-10T06:11:49Z pid=898326
+squeue: []
+== iris
+m3246               2457.2            10000.0     18414.3      20000.0
+balance_node_h=1585.7 half=792.9 cap=148.0
+projection charged=23.087 held=0.000 this=5.0 total=28.087 cap=148.0
+deploy porcelain_lines=0 head=639ef907250a2a7909b7b9ba89b2e85e70c9b767
+nd-unfolding/ll5d.py: OK
+nd-unfolding/fd_1b_c2.py: OK
+nd-unfolding/fd_1b_mc.py: OK
+nd-unfolding/fd_1b_toys.py: OK
+nd-unfolding/fd_1b_inv.py: OK
+nd-unfolding/s1_assemble.py: OK
+nd-unfolding/s5p_universe.py: OK
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/clip/clip_probe2.py: OK
+2d-unfolding/cov2d/cov2d.py: OK
+docs/orchestration/state/2d-closeout/stageF/methods/sf1/manifest/inputs-sha256.txt: OK
+nd-unfolding/pv-ladder/readouts/h2_definition.json: OK
+setup_salloc_env.sh: OK
+nd-unfolding/s5e_candidate.py: OK
+nd-unfolding/s5e_deform.py: OK
+job script sha256 52859995f5b250c6f4c41a53f7382e8908b2a5c95631f2a7134d1dc2587b3f26
+atime-pre 749 files at 2026-11-10T06:13:02Z
+Submitted batch job 61075496
+TimeLimit=05:00:00
+JobName=ll5d_calib Account=m3246 QOS=regular_1 JobState=PENDING TimeLimit=05:00:00 Partition=regular_milan_ss11 NumNodes=1-1 OverSubscribe=NO 
+end=2026-11-10T06:13:02Z
+removal rc=2
+e81b4787efcb79bee71bb2fa8acc1a60171229cdb6eab7fd01f8f44e0feb2dc5  /dev/shm/josephrb-ll5d-calib3.sh
+rm -f /dev/shm/josephrb-ll5d-calib3.sh rc=0
+ls: cannot access '/dev/shm/josephrb-ll5d-calib3.sh': No such file or directory

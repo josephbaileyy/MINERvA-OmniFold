@@ -1,0 +1,149 @@
+node login27 loadavg 11.40 13.48 14.81 start=2026-11-11T02:44:58Z
+script sha256 388cadb42b723237ffd16df9652bd0f05a3bc1baae337db66f191692f834e5a5
+list sha256 00e275762a7de9d07e30c0d2b0de76f92209a104339e0223e4ff1f3e6777334a rows 8846
+target check hsi rc=64
+hpssquota before rc=0
+| josephrb usage on HPSS charged to m3246 |  449.25GiB |   512.00GiB |          87.7% |          - |           - |              - |
+preflight: used 482378514432 quota 549755813888 live_free 67377299456 joseph_free 62700000000 free 62700000000
+preflight: files 8846 source bytes 11772306708 archive estimate 11806295552 need (x1.2) 14167554662
+PREFLIGHT OK
+hsi mkdir rc=0
+== group s1_cmodel_cresp_tables start 2026-11-11T02:44:59Z
+STAGE OK s1_cmodel_cresp_tables: 5 files, 2282491 bytes, smallest /pscratch/sd/j/josephrb/cmodel5d-20261024/out/cmodel_5d.npz
+manifest s1_cmodel_cresp_tables sha256 e5ffe13aae5c81274ef83b21aae91b4bced7814839880325d5fc26faa2f098ee lines 5
+htar s1_cmodel_cresp_tables rc=0
+HTAR: Verify complete. 0 total errors, 7 total objects (7 Files,0 Dirs,0 Hard Links,0 symlinks) wallclock/user/sys: 0.260 0.014 0.002 seconds
+HTAR: HTAR SUCCESSFUL
+hashcreate s1_cmodel_cresp_tables rc=0
+hashverify s1_cmodel_cresp_tables rc=0: /home/j/josephrb/mnv-at-risk-20261111/s1_cmodel_cresp_tables.tar: (md5) OK 
+retrieve s1_cmodel_cresp_tables rc=0
+retrieved /pscratch/sd/j/josephrb/cmodel5d-20261024/out/cmodel_5d.npz 3008d8f6b1f295cdd648f14e1ab2c20d864ce054a19f97e90e1620d22484e882 manifest 3008d8f6b1f295cdd648f14e1ab2c20d864ce054a19f97e90e1620d22484e882
+== group s1_cmodel_cresp_tables PASS 2026-11-11T02:45:01Z
+== group zero_loops start 2026-11-11T02:45:01Z
+STAGE OK zero_loops: 12 files, 4841729276 bytes, smallest /pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1L_zero.root
+manifest zero_loops sha256 c6c641ca607b2c77ef6f9c3066c47f9411ca80d32072fd100d912edfe44524cb lines 12
+htar zero_loops rc=0
+HTAR: Verify complete. 0 total errors, 14 total objects (14 Files,0 Dirs,0 Hard Links,0 symlinks) wallclock/user/sys: 28.848 28.819 3.315 seconds
+HTAR: HTAR SUCCESSFUL
+hashcreate zero_loops rc=0
+hashverify zero_loops rc=0: /home/j/josephrb/mnv-at-risk-20261111/zero_loops.tar: (md5) OK 
+retrieve zero_loops rc=0
+retrieved /pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1L_zero.root d2b4dafc61d1756554d1c7ff3085410faaa2266cd14a260175bc0e533fe2030c manifest d2b4dafc61d1756554d1c7ff3085410faaa2266cd14a260175bc0e533fe2030c
+== group zero_loops PASS 2026-11-11T02:46:27Z
+== group cpl start 2026-11-11T02:46:27Z
+STAGE OK cpl: 38 files, 3898100 bytes, smallest /pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PC/5b_PC_b3008_j-.npz
+manifest cpl sha256 e97c197e167f8797c642c8055479396a8acc746b60c376584e883963d69cd966 lines 38
+htar cpl rc=0
+HTAR: Verify complete. 0 total errors, 40 total objects (40 Files,0 Dirs,0 Hard Links,0 symlinks) wallclock/user/sys: 0.260 0.027 0.000 seconds
+HTAR: HTAR SUCCESSFUL
+hashcreate cpl rc=0
+hashverify cpl rc=0: /home/j/josephrb/mnv-at-risk-20261111/cpl.tar: (md5) OK 
+retrieve cpl rc=0
+retrieved /pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PC/5b_PC_b3008_j-.npz e513c03fa7b71011a40a4b333f6bb855ee519cd343cd8a643461fa7bb1412b62 manifest e513c03fa7b71011a40a4b333f6bb855ee519cd343cd8a643461fa7bb1412b62
+== group cpl PASS 2026-11-11T02:46:30Z
+== group f0b start 2026-11-11T02:46:30Z
+STAGE OK f0b: 8545 files, 1581514109 bytes, smallest /pscratch/sd/j/josephrb/5d-stage0-20261023/runs/new_gibuu/eavail_shape_a1_s801004.npz
+manifest f0b sha256 07d248ef0a88f7f490cd7f97b152a03285ad7b7ea5f668dd14f82674dd4abb6f lines 8545
+htar f0b rc=0
+HTAR: Verify complete. 0 total errors, 8547 total objects (8547 Files,0 Dirs,0 Hard Links,0 symlinks) wallclock/user/sys: 353.327 8.554 2.986 seconds
+HTAR: HTAR SUCCESSFUL
+hashcreate f0b rc=0
+hashverify f0b rc=0: /home/j/josephrb/mnv-at-risk-20261111/f0b.tar: (md5) OK 
+retrieve f0b rc=0
+retrieved /pscratch/sd/j/josephrb/5d-stage0-20261023/runs/new_gibuu/eavail_shape_a1_s801004.npz 2dc56c30b5ca5d01023ae21d59aa4eee8183b478108275c08c0b817bb3cb284f manifest 2dc56c30b5ca5d01023ae21d59aa4eee8183b478108275c08c0b817bb3cb284f
+== group f0b PASS 2026-11-11T02:52:48Z
+== group rpd_dumps start 2026-11-11T02:52:48Z
+STAGE OK rpd_dumps: 24 files, 1577462973 bytes, smallest /pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1L_bkg.npz
+manifest rpd_dumps sha256 7638f94f56ad0471769445cffe68ff538c9b68158f48415e7c3cafa7ee95a295 lines 24
+htar rpd_dumps rc=0
+HTAR: Verify complete. 0 total errors, 26 total objects (26 Files,0 Dirs,0 Hard Links,0 symlinks) wallclock/user/sys: 9.198 9.306 1.131 seconds
+HTAR: HTAR SUCCESSFUL
+hashcreate rpd_dumps rc=0
+hashverify rpd_dumps rc=0: /home/j/josephrb/mnv-at-risk-20261111/rpd_dumps.tar: (md5) OK 
+retrieve rpd_dumps rc=0
+retrieved /pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1L_bkg.npz 6839edd4c6fe0563e6167a0e4bda83638d88d2afdbf4a620e0c7de55028fe69f manifest 6839edd4c6fe0563e6167a0e4bda83638d88d2afdbf4a620e0c7de55028fe69f
+== group rpd_dumps PASS 2026-11-11T02:53:18Z
+== group tier3_inputs start 2026-11-11T02:53:18Z
+STAGE OK tier3_inputs: 8 files, 2164723453 bytes, smallest /pscratch/sd/j/josephrb/s5p-20260926/ratios/nullsF/rho-genie_cv-F.npz
+manifest tier3_inputs sha256 1402bc1f29570ffdb9fbb8213c316d711ed3053ff14a9e011d10b3fd58c47925 lines 8
+htar tier3_inputs rc=0
+HTAR: Verify complete. 0 total errors, 10 total objects (10 Files,0 Dirs,0 Hard Links,0 symlinks) wallclock/user/sys: 13.085 12.880 1.366 seconds
+HTAR: HTAR SUCCESSFUL
+hashcreate tier3_inputs rc=0
+hashverify tier3_inputs rc=0: /home/j/josephrb/mnv-at-risk-20261111/tier3_inputs.tar: (md5) OK 
+retrieve tier3_inputs rc=0
+retrieved /pscratch/sd/j/josephrb/s5p-20260926/ratios/nullsF/rho-genie_cv-F.npz 124e726163b38d24735bacfc67e2d88bec1e47634dc5d294f6460fe4223efb8b manifest 124e726163b38d24735bacfc67e2d88bec1e47634dc5d294f6460fe4223efb8b
+== group tier3_inputs PASS 2026-11-11T02:53:57Z
+== group cstat start 2026-11-11T02:53:57Z
+STAGE OK cstat: 30 files, 2821266 bytes, smallest /pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b48_j148.npz
+manifest cstat sha256 360ae931cc21fda6f699761d85abb27f815a20652f0751aa750ae697698a0f9c lines 30
+htar cstat rc=0
+HTAR: Verify complete. 0 total errors, 32 total objects (32 Files,0 Dirs,0 Hard Links,0 symlinks) wallclock/user/sys: 0.260 0.020 0.000 seconds
+HTAR: HTAR SUCCESSFUL
+hashcreate cstat rc=0
+hashverify cstat rc=0: /home/j/josephrb/mnv-at-risk-20261111/cstat.tar: (md5) OK 
+retrieve cstat rc=0
+retrieved /pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b48_j148.npz 9ff1bc4a8d37ae10afe28cf16bd649f4d2653afc628a9d9e01a901cca5155e44 manifest 9ff1bc4a8d37ae10afe28cf16bd649f4d2653afc628a9d9e01a901cca5155e44
+== group cstat PASS 2026-11-11T02:54:00Z
+== group central start 2026-11-11T02:54:00Z
+STAGE OK central: 1 files, 95564 bytes, smallest /pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j-.npz
+manifest central sha256 b501f7ec509a7ec01f5787e15df94a4222b6c3b11b6203b3c184a18197892d5a lines 1
+htar central rc=0
+HTAR: Verify complete. 0 total errors, 3 total objects (3 Files,0 Dirs,0 Hard Links,0 symlinks) wallclock/user/sys: 0.260 0.000 0.001 seconds
+HTAR: HTAR SUCCESSFUL
+hashcreate central rc=0
+hashverify central rc=0: /home/j/josephrb/mnv-at-risk-20261111/central.tar: (md5) OK 
+retrieve central rc=0
+retrieved /pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j-.npz fb5cc6798b97b5902ad8f0fecbc49990271f7772f98d3063c1dc8596340e680c manifest fb5cc6798b97b5902ad8f0fecbc49990271f7772f98d3063c1dc8596340e680c
+== group central PASS 2026-11-11T02:54:03Z
+== group shared_inputs start 2026-11-11T02:54:03Z
+STAGE OK shared_inputs: 2 files, 1564455221 bytes, smallest /pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz
+manifest shared_inputs sha256 7c839d0aba8fe1f650a6f0a66a9257e3e6aebbd44e8700cafcb5789985895d5a lines 2
+htar shared_inputs rc=0
+HTAR: Verify complete. 0 total errors, 4 total objects (4 Files,0 Dirs,0 Hard Links,0 symlinks) wallclock/user/sys: 9.062 9.304 1.199 seconds
+HTAR: HTAR SUCCESSFUL
+hashcreate shared_inputs rc=0
+hashverify shared_inputs rc=0: /home/j/josephrb/mnv-at-risk-20261111/shared_inputs.tar: (md5) OK 
+retrieve shared_inputs rc=0
+retrieved /pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz 2addac8f26055c5ed69862e7afe29e12ac51dbe23a8d6eeed79d71bec9d82955 manifest 2addac8f26055c5ed69862e7afe29e12ac51dbe23a8d6eeed79d71bec9d82955
+== group shared_inputs PASS 2026-11-11T02:54:31Z
+== group prr start 2026-11-11T02:54:31Z
+STAGE OK prr: 181 files, 33324255 bytes, smallest /pscratch/sd/j/josephrb/fd-prr-20261108/runs/MCq/A7_nuwro/prr_MCq_A7_nuwro_s991000.npz
+manifest prr sha256 ffb84f757274fe1ad8e1e9716ee287da557e3dcd493e94452abe6c5b2c2a8bdf lines 181
+htar prr rc=0
+HTAR: Verify complete. 0 total errors, 183 total objects (183 Files,0 Dirs,0 Hard Links,0 symlinks) wallclock/user/sys: 0.262 0.214 0.010 seconds
+HTAR: HTAR SUCCESSFUL
+hashcreate prr rc=0
+hashverify prr rc=0: /home/j/josephrb/mnv-at-risk-20261111/prr.tar: (md5) OK 
+retrieve prr rc=0
+retrieved /pscratch/sd/j/josephrb/fd-prr-20261108/runs/MCq/A7_nuwro/prr_MCq_A7_nuwro_s991000.npz 9bb69e26379b9f6ffa91c2e1e3b5ff9ac59c0dfb91334348a8f4acb89adb35f0 manifest 9bb69e26379b9f6ffa91c2e1e3b5ff9ac59c0dfb91334348a8f4acb89adb35f0
+== group prr PASS 2026-11-11T02:54:34Z
+hsi ls rc=0
+
+/home/j/josephrb/mnv-at-risk-20261111:
+-rw-r-----    1 josephrb  josephrb       99328 Nov 10 18:54 central.tar
+-rw-r-----    1 josephrb  josephrb        2344 Nov 10 18:54 central.tar.idx
+-rw-r-----    1 josephrb  josephrb     3934720 Nov 10 18:46 cpl.tar
+-rw-r-----    1 josephrb  josephrb       21800 Nov 10 18:46 cpl.tar.idx
+-rw-r-----    1 josephrb  josephrb     2849280 Nov 10 18:53 cstat.tar
+-rw-r-----    1 josephrb  josephrb       17704 Nov 10 18:53 cstat.tar.idx
+-rw-r-----    1 josephrb  josephrb  1590736896 Nov 10 18:46 f0b.tar
+-rw-r-----    1 josephrb  josephrb     5888808 Nov 10 18:52 f0b.tar.idx
+-rw-r-----    1 josephrb  josephrb    33495552 Nov 10 18:54 prr.tar
+-rw-r-----    1 josephrb  josephrb       97064 Nov 10 18:54 prr.tar.idx
+-rw-r-----    1 josephrb  josephrb  1577486336 Nov 10 18:53 rpd_dumps.tar
+-rw-r-----    1 josephrb  josephrb       14120 Nov 10 18:53 rpd_dumps.tar.idx
+-rw-r-----    1 josephrb  josephrb     2289664 Nov 10 18:44 s1_cmodel_cresp_tables.tar
+-rw-r-----    1 josephrb  josephrb        4392 Nov 10 18:45 s1_cmodel_cresp_tables.tar.idx
+-rw-r-----    1 josephrb  josephrb  1564460032 Nov 10 18:54 shared_inputs.tar
+-rw-r-----    1 josephrb  josephrb        2856 Nov 10 18:54 shared_inputs.tar.idx
+-rw-r-----    1 josephrb  josephrb  2164736000 Nov 10 18:53 tier3_inputs.tar
+-rw-r-----    1 josephrb  josephrb        7976 Nov 10 18:53 tier3_inputs.tar.idx
+-rw-r-----    1 josephrb  josephrb  4841755648 Nov 10 18:45 zero_loops.tar
+-rw-r-----    1 josephrb  josephrb       20264 Nov 10 18:46 zero_loops.tar.idx
+hpssquota after rc=0
+| josephrb usage on HPSS charged to m3246 |  449.25GiB |   512.00GiB |          87.7% |          - |           - |              - |
+ARCHIVE PASS: all ten groups archived, hash-verified and retrieval-checked
+removal of /dev/shm/josephrb-hpss-atrisk rc=0 ; present after: no
+hpss archive rc=0 2026-11-11T02:54:35Z
+0a0fbd586f08fe7012941378701c0a7097f1b929ac822ff5a0da160e89e9ebcf  post.tar.gz

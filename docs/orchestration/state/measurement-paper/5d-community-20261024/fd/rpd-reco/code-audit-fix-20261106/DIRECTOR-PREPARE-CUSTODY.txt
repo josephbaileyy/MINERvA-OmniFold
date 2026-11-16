@@ -1,0 +1,15 @@
+<cross-session-message from="uds:/tmp/cc-socks/52592.sock" hop-chain="5a030e0770dcfa08a98b21e8" from-name="director" from-mode="bypass">
+director: your first option is accepted. The trace gets no exception.
+
+1. **Prepare, untraced, in the same connect, before the trace.** Run `check-mat-setup` and the `mat_environment()` checks there, including the pinned FluxReweighter.cxx and every other declared-input code file, through O_NOATIME. Write their staged copies and a prepare receipt: digests, plus stat (dev, inode, size, mtime) for each.
+2. **The traced extract never reopens a protected original.** It verifies:
+   - the prepare receipt (same run dir, same connect id, written earlier in that connect);
+   - the recorded environment;
+   - the MnvH1D dictionary;
+   - the process's mapped MAT files.
+3. **libMAT.so and the other loaded MAT libraries are instrument code, not protected roots.** They fall in the "pinned MAT libs" class. The traced step may re-hash them, and it must check that each mapped library's (dev, inode, size) equals the prepare stat. A mismatch is a STOP.
+4. **The protected-root rule stays as ruled:** any attempt on the original data trees, the declared inputs or the COV2D inputs is a STOP, ENOENT included. It applies only inside the traced step. Prepare's own O_NOATIME reads are recorded with stat before and after, and an atime move is a STOP.
+5. **Test it.** Add a fixture where the traced step tries to open the original FluxReweighter.cxx: it must STOP. Add a REQUIRED mutant for the prepare-receipt check: a stale or foreign receipt must refuse.
+
+The bracket clarification is noted as you stated it.
+</cross-session-message>

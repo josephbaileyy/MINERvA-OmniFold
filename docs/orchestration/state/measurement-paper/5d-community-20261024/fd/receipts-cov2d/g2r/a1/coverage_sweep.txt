@@ -1,0 +1,13 @@
+test_g2r.py rc=0
+test_re2_miss_map.py rc=0
+test_g2r_glue.py rc=0
+== 2d-unfolding/cov2d/g2r/g2r.py: 183 executable in scope, 0 never executed
+== 2d-unfolding/cov2d/g2r/g2r_prepare.py: 108 executable in scope, 2 never executed
+   137 | rec["verdict"], rc_ = "STOP", rc_ | RC_ATIME
+   144 | sys.exit(main())
+== 2d-unfolding/cov2d/g2r/g2r_readout.py: 263 executable in scope, 2 never executed
+   246 | rec["controls_failed"].append("section 9.8: C_T' is not symmetric PSD at 1e-12")
+   343 | sys.exit(main())
+== 2d-unfolding/re2/re2_driver.py: 59 executable in scope, 2 never executed
+   845 | raise RuntimeError("[FAIL] miss_weight_override: not every finite entry was applied")  # G
+   1441 | raise RuntimeError(f"[FAIL] {branch}: {col.shape[0]} values for {t_truth_denom.GetEntries(

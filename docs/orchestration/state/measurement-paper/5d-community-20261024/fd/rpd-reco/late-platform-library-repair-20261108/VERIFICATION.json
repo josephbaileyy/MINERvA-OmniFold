@@ -1,0 +1,42 @@
+{
+  "schema": "fd-rpd-reco-exit-library-verification/1",
+  "tested_head": "0fbbbf8448f16e9e18741a330e1dd9d8cb35f88b",
+  "baseline": "d38a4fdf34cf7f20a51a0b6527c390ba6b6d5712",
+  "suite": {
+    "passed": 288,
+    "seconds": 412.4,
+    "returncode": 0
+  },
+  "comment_only_custody_control": {
+    "passed": 288,
+    "seconds": 213.84,
+    "returncode": 0
+  },
+  "mutation": {
+    "required": 228,
+    "executed": 228,
+    "killed": 228,
+    "complete": true,
+    "all_killed": true,
+    "returncode": 0
+  },
+  "raw_report_sha256": "780d550cba6c21c0cb21408f017192f8bc02085bb2fb2e66346cc6bca636f2da",
+  "raw_report_recovery": "Remove receipt_annotation and disposable_fixture_artifact_paths; json.dumps(indent=2) plus newline reproduces the original bytes.",
+  "static_checks": {
+    "black": "PASS",
+    "ruff": "PASS",
+    "strict_production_mypy": "PASS",
+    "optional_external_stubs": "ignore_missing_imports",
+    "shell_syntax": "PASS"
+  },
+  "source_commit_hooks": 21,
+  "test_thread_environment": {
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "NUMEXPR_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1"
+  },
+  "host_credential_value_and_fingerprint_scan": "PASS",
+  "native_platform": "not run in this lane; prologue5 awaits delta audit and run-lane release"
+}

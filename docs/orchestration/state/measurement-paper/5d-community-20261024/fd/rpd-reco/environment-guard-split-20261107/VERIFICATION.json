@@ -1,0 +1,37 @@
+{
+  "schema": "fd-rpd-reco-environment-round1/1",
+  "tested_head": "7a1b5d0cd415a739a2bef0588446593be185e95d",
+  "scope": "Local synthetic fixtures. Actual platform environment mismatch remains unidentified.",
+  "suite": {
+    "passed": 170,
+    "seconds": 389.15,
+    "returncode": 0
+  },
+  "mutation": {
+    "required": 159,
+    "executed": 159,
+    "killed": 159,
+    "all_killed": true,
+    "complete": true,
+    "returncode": 0
+  },
+  "comment_only_custody_control": {
+    "passed": 170,
+    "seconds": 389.12,
+    "returncode": 0
+  },
+  "raw_report_sha256": "261f506c1b0a2f39c5eb744fbe1e423bcbd52660582fe44fb96b8dc1af037e67",
+  "raw_report_recovery": "Remove receipt_annotation and disposable_fixture_artifact_paths; json.dumps(indent=2) plus a newline reproduces the raw report bytes.",
+  "static_checks": {
+    "black": "PASS",
+    "ruff": "PASS",
+    "mypy_strict": "PASS",
+    "optional_external_stubs": "ignore_missing_imports",
+    "bash_syntax": "PASS"
+  },
+  "source_commit_hook_checks": 24,
+  "exclusions": [
+    "_"
+  ],
+  "platform_next": "delta audit, fresh prologue with actual diff, evidence-based round 2; full flux connect held"
+}

@@ -1,0 +1,161 @@
+{
+  "check_code_sha256": "06360100038f0203b0d994f71c171b12cd955697edf32d1d744c4ce271ceb26d",
+  "class_name": "PlotUtils::MnvH1D",
+  "code_sha256": "f748c8971919dfc39ecf111920bb01ef2479082e98134f26c83569d60d79627c",
+  "energy": [
+    20.31,
+    74.999,
+    75.0,
+    75.001
+  ],
+  "environment": {
+    "ROOT": "6.28/12",
+    "instrument_sha256": "6e4ed0f1d7f55b7bfe2f26752eeb28bb9cbe33325a9d91cc7c06d9494a0b0a70",
+    "interpreter": "/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3",
+    "mapped_mat_files": [
+      "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/libMAT.so"
+    ],
+    "mat_sha256": {
+      "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/MATDict.rootmap": "bd66930866410c2302a29b3c1bb70a45ea5de489e025852e28455bc5090d38aa",
+      "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/MAT_rdict.pcm": "9eedbfd94a452f3bb9b267ca890b52d7a5567c0da86059e2b1fb90aac480550a",
+      "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/libMAT.so": "5901f18ab069824b04c90e89ade74405a3336c827215a41dfaabdf9d2d66dc48"
+    },
+    "plotutils_mnvh1d_dictionary": true,
+    "python": "3.11.14",
+    "setup_check_output": "{\"mat_setup_scripts\": 6, \"mismatches\": 0}\n",
+    "setup_sha256": {
+      "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup.sh": "e22a5b93d327111bf6ffc80f15ef36b908fab642072a6ef296e8bb9cd3719ba6",
+      "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup_MAT-MINERvA.sh": "c259101619ac365dcc57043d8ac4926908e51a8a87dad08f601394c9b418c3ac",
+      "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup_MAT.sh": "733e9cd839a0f75186d109eaab3dfe746a921d6d7b0347fbd6662b6f1ced3c0e",
+      "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup_UnfoldUtils.sh": "bd305c17ddcd507f88ab49cbfcf5fe5a14075e0c1a173e631addcb3423212cd9",
+      "/pscratch/sd/j/josephrb/MINERvA-OmniFold/setup_salloc_env.sh": "ea3c6998d33f45c831b80da5e5228032a19fc392018ede54a7f52f2f283d1d48",
+      "/pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/build/setup.sh": "40ff3a3d0c0308a82d90fd6cb4858696931fa00563277e5865141f8ebdc84598"
+    },
+    "symlink": {
+      "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/libMATDict.so": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/libMAT.so"
+    }
+  },
+  "expected": [
+    2.2330157415078706,
+    2.205479592794242,
+    2.2054794520547945,
+    2.2054794520547945
+  ],
+  "factors": [
+    2.2330157415078706,
+    2.205479592794242,
+    2.2054794520547945,
+    2.2054794520547945
+  ],
+  "outside": [
+    false,
+    false,
+    false,
+    false
+  ],
+  "ownership": "TH1 auto-directory disabled while streaming; nominal detached, Python-owned proxy released before close; no MnvH1D clones",
+  "patterns": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "probe_sha256": "d9704aa45c016b044284d9e3cfc8c6d5c07cda0835a445866d5f792c8ac82840",
+  "real_histogram_root_witnesses": [
+    {
+      "energy": 20.031,
+      "value": 1.2898563333494134e-07
+    },
+    {
+      "energy": 74.999,
+      "value": 1.3094480965485515e-10
+    },
+    {
+      "energy": 75.0,
+      "value": 1.3091650212611936e-10
+    },
+    {
+      "energy": 75.001,
+      "value": 1.3091650212611936e-10
+    }
+  ],
+  "schema": "fd-rpd-reco-real-mnv-check/1",
+  "scope": "non-input real-class fixture; no campaign input or P0 permission",
+  "status": "PASS",
+  "worker_exit_code": 0,
+  "worker_receipt_sha256": "d28022d344cf1c6cb8606985a8f6e337852ddc8587bac38cad773af88b836f2e",
+  "zero_results": [
+    {
+      "factor": [
+        3.0,
+        3.0,
+        3.0,
+        3.0
+      ],
+      "pattern": 0
+    },
+    {
+      "factor": [
+        1.5,
+        1.5,
+        1.5,
+        1.5
+      ],
+      "pattern": 1
+    },
+    {
+      "factor": [
+        2.0,
+        2.0,
+        2.0,
+        2.0
+      ],
+      "pattern": 2
+    },
+    {
+      "factor": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "pattern": 3
+    },
+    {
+      "factor": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "pattern": 4
+    },
+    {
+      "factor": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "pattern": 5
+    },
+    {
+      "factor": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "pattern": 6
+    },
+    {
+      "factor": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "pattern": 7
+    }
+  ]
+}

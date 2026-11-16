@@ -1,0 +1,35 @@
+deploy HEAD 401733bce290ce122cfbf38f1526e120f174b3ec
+(a) runs 529, labels 529, distinct 529, duplicated []
+    unfold jobs 12: D_Ua 44, D_Ub 44, D_Uc 44, D_Ud 45, G18_Ua 44, G18_Ub 44, G18_Uc 44, G18_Ud 43, AR23_Ua 44, AR23_Ub 44, AR23_Uc 44, AR23_Ud 43; envtest 2
+(b) $O paths named in g2r_job.sbatch and g2r_preflight at M:
+    per job lane: $O/SHA256SUMS.$JOB.${want#$JOB.}
+    shared dir (mkdir -p): $O/inventory
+    per label: $O/inventory/$label.jsonl
+    shared dir (mkdir -p): $O/logs
+    per label: $O/logs/$label.log
+    per job: $O/logs/check-$JOB-$SLURM_JOB_ID.json
+    per job id: $O/logs/mat-${SLURM_JOB_ID:-local}.json
+    shared dir (mkdir -p): $O/out
+    per label: $O/out/$label
+    per label: $O/out/$label/xsec.root
+    read: $O/tables/jobs_g2r.tsv
+    read: $O/tables/runs_g2r.tsv
+    per job id: $O/tmp/${SLURM_JOB_ID:-dry}
+    per job id: $O/tmp/${SLURM_JOB_ID:-local}
+    per job lane: $O/walls.$JOB.${want#$JOB.}.tsv
+    per job name and id: /pscratch/sd/j/josephrb/cov2d-g2r-20261112/logs/%x-%j.out
+    write sets: D_Ua 184, D_Ub 184, D_Uc 184, D_Ud 188, G18_Ua 184, G18_Ub 184, G18_Uc 184, G18_Ud 180, AR23_Ua 184, AR23_Ub 184, AR23_Uc 184, AR23_Ud 180
+    pairs checked 66; pairs sharing a path or label: 0 []
+    D_Ua per-job paths: SHA256SUMS.D_Ua.1 SHA256SUMS.D_Ua.2 logs/check-D_Ua-61225732.json logs/cov2dg2r-D_Ua-61225732.out logs/mat-61225732.json tmp/61225732/ walls.D_Ua.1.tsv walls.D_Ua.2.tsv
+    D_Ub per-job paths: SHA256SUMS.D_Ub.1 SHA256SUMS.D_Ub.2 logs/check-D_Ub-61226353.json logs/cov2dg2r-D_Ub-61226353.out logs/mat-61226353.json tmp/61226353/ walls.D_Ub.1.tsv walls.D_Ub.2.tsv
+    D_Uc per-job paths: SHA256SUMS.D_Uc.1 SHA256SUMS.D_Uc.2 logs/check-D_Uc-<D_Uc id>.json logs/cov2dg2r-D_Uc-<D_Uc id>.out logs/mat-<D_Uc id>.json tmp/<D_Uc id>/ walls.D_Uc.1.tsv walls.D_Uc.2.tsv
+    D_Ud per-job paths: SHA256SUMS.D_Ud.1 SHA256SUMS.D_Ud.2 logs/check-D_Ud-<D_Ud id>.json logs/cov2dg2r-D_Ud-<D_Ud id>.out logs/mat-<D_Ud id>.json tmp/<D_Ud id>/ walls.D_Ud.1.tsv walls.D_Ud.2.tsv
+    G18_Ua per-job paths: SHA256SUMS.G18_Ua.1 SHA256SUMS.G18_Ua.2 logs/check-G18_Ua-<G18_Ua id>.json logs/cov2dg2r-G18_Ua-<G18_Ua id>.out logs/mat-<G18_Ua id>.json tmp/<G18_Ua id>/ walls.G18_Ua.1.tsv walls.G18_Ua.2.tsv
+    G18_Ub per-job paths: SHA256SUMS.G18_Ub.1 SHA256SUMS.G18_Ub.2 logs/check-G18_Ub-<G18_Ub id>.json logs/cov2dg2r-G18_Ub-<G18_Ub id>.out logs/mat-<G18_Ub id>.json tmp/<G18_Ub id>/ walls.G18_Ub.1.tsv walls.G18_Ub.2.tsv
+    G18_Uc per-job paths: SHA256SUMS.G18_Uc.1 SHA256SUMS.G18_Uc.2 logs/check-G18_Uc-<G18_Uc id>.json logs/cov2dg2r-G18_Uc-<G18_Uc id>.out logs/mat-<G18_Uc id>.json tmp/<G18_Uc id>/ walls.G18_Uc.1.tsv walls.G18_Uc.2.tsv
+    G18_Ud per-job paths: SHA256SUMS.G18_Ud.1 SHA256SUMS.G18_Ud.2 logs/check-G18_Ud-<G18_Ud id>.json logs/cov2dg2r-G18_Ud-<G18_Ud id>.out logs/mat-<G18_Ud id>.json tmp/<G18_Ud id>/ walls.G18_Ud.1.tsv walls.G18_Ud.2.tsv
+    AR23_Ua per-job paths: SHA256SUMS.AR23_Ua.1 SHA256SUMS.AR23_Ua.2 logs/check-AR23_Ua-<AR23_Ua id>.json logs/cov2dg2r-AR23_Ua-<AR23_Ua id>.out logs/mat-<AR23_Ua id>.json tmp/<AR23_Ua id>/ walls.AR23_Ua.1.tsv walls.AR23_Ua.2.tsv
+    AR23_Ub per-job paths: SHA256SUMS.AR23_Ub.1 SHA256SUMS.AR23_Ub.2 logs/check-AR23_Ub-<AR23_Ub id>.json logs/cov2dg2r-AR23_Ub-<AR23_Ub id>.out logs/mat-<AR23_Ub id>.json tmp/<AR23_Ub id>/ walls.AR23_Ub.1.tsv walls.AR23_Ub.2.tsv
+    AR23_Uc per-job paths: SHA256SUMS.AR23_Uc.1 SHA256SUMS.AR23_Uc.2 logs/check-AR23_Uc-<AR23_Uc id>.json logs/cov2dg2r-AR23_Uc-<AR23_Uc id>.out logs/mat-<AR23_Uc id>.json tmp/<AR23_Uc id>/ walls.AR23_Uc.1.tsv walls.AR23_Uc.2.tsv
+    AR23_Ud per-job paths: SHA256SUMS.AR23_Ud.1 SHA256SUMS.AR23_Ud.2 logs/check-AR23_Ud-<AR23_Ud id>.json logs/cov2dg2r-AR23_Ud-<AR23_Ud id>.out logs/mat-<AR23_Ud id>.json tmp/<AR23_Ud id>/ walls.AR23_Ud.1.tsv walls.AR23_Ud.2.tsv
+G2R-PATHS PASS 

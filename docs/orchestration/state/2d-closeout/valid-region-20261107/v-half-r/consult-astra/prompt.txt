@@ -1,0 +1,32 @@
+You are an independent senior reviewer: an experimental neutrino physicist who knows unfolding, binning choices and
+pre-specified validation. Joseph Bailey, the project's author, asks for your view of a DRAFT rebinning declaration
+before it goes to audit. Give your own judgement; you are not bound by its recommendations. The working directory is a
+clean, read-only checkout at dec8b86c. Read files; do not write, run jobs or use the network. Cite file:line for every
+fact you rely on.
+
+THE DRAFT: docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/DECLARATION.md (V-HALF-R), a
+merge-only rebinning of the 16 reporting cells R00-R15, so that the per-cell validity rule V-HALF can be re-applied.
+
+CONTEXT TO READ:
+- The rule and its 16-cell result: docs/orchestration/DECISION-20261109-joseph-bias-half-rule.md;
+  .../valid-region-20261107/v-half/DECLARATION.md, BINDING-1.md and receipts/read/readout.txt (5 valid, 9 not valid,
+  2 unresolved). The advisor's original suggestion was to modify the observable or binning if any bin fails; Joseph
+  reserved that consequence (decision item 5).
+- The cost assessment: .../valid-region-20261107/v-half/rebin-assessment-20261109/README.md and purge-check/.
+- The cell definition: nd-unfolding/pv-ladder/h2_definition.py and its readout h2_definition.json.
+- A recent independent consult on V-HALF: docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/
+  consult-astra-vhalf-20261109/answer.txt (its five safeguards for any rebinning).
+- The methods paper does not wait on this; a result enters it only by Joseph's decision.
+
+WHAT TO ANSWER (about 1,200 words, plain language)
+1. Is this a sound pre-specified procedure, or tuning in disguise? The rule is being set after the 16-cell result is
+   known. Does the draft's design (a simulation-only purity criterion, the disclosure, one shot, terminal outcomes)
+   adequately protect against choosing merges that make cells pass? What would a referee still object to?
+2. Each of the seven decisions in its section 6: your recommendation and why, especially the purity threshold
+   tau_R = 0.5 and whether it is chosen on genuinely a-priori grounds; R-cell unions vs H2-box unions; no p_parallel
+   joins; the minimum count; and the LL5D coverage-test option (16 cells, merged, or both).
+3. Is anything missing: a failure mode, a cancellation issue when merging signed biases, how the covariance and the
+   noise treatment carry over, what the merged cells can and cannot be cited for, the interaction with the rest of
+   the pipeline (FD-PRR, F0b, LL5D)?
+4. Overall: worth doing for the follow-up paper, worth doing now, or not worth doing? Why.
+Be direct.

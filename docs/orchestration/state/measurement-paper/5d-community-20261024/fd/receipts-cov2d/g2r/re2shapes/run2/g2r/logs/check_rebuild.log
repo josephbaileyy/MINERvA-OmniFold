@@ -1,0 +1,6 @@
+[PASS] C_chi2_Q_std_cell_identity_pass_line
+[PASS] C_chi2_Q_lognormal_cell_identity_pass_line
+[PASS] C_chi2_Q_substat_cell_identity_pass_line
+[PASS] D_fig67_Q_cell_identity_four_pass_lines  4
+[PASS] D_fig67_projections_eq_budget_Q_le_1e-12  3.4798127599706265e-16
+re2c_check_rebuild: 5/5 passed

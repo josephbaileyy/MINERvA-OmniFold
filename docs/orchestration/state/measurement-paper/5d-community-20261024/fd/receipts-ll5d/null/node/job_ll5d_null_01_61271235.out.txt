@@ -1,0 +1,48 @@
+host=nid004198 job=61271235 node=01 start=2026-11-14T11:49:59Z
+deploy head=4231b14de5ea693e92cb31b1358a816b5c2f6625 porcelain_lines=0
+nd-unfolding/ll5d.py: OK
+nd-unfolding/fd_1b_c2.py: OK
+nd-unfolding/fd_1b_mc.py: OK
+nd-unfolding/fd_1b_toys.py: OK
+nd-unfolding/fd_1b_inv.py: OK
+nd-unfolding/s1_assemble.py: OK
+nd-unfolding/s5p_universe.py: OK
+nd-unfolding/fd_1b_score.py: OK
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/clip/clip_probe2.py: OK
+2d-unfolding/cov2d/cov2d.py: OK
+docs/orchestration/state/2d-closeout/stageF/methods/sf1/manifest/inputs-sha256.txt: OK
+nd-unfolding/pv-ladder/readouts/h2_definition.json: OK
+setup_salloc_env.sh: OK
+nd-unfolding/s5e_candidate.py: OK
+nd-unfolding/s5e_deform.py: OK
+nd-unfolding/ll5d_b.py: OK
+nd-unfolding/fd_1b_null.py: OK
+nd-unfolding/s5n_pseudo.py: OK
+nd-unfolding/s5p_numerics.py: OK
+nd-unfolding/omnifold_nn_core.py: OK
+2d-unfolding/uq/coverage_fixed_truth/score_coverage.py: OK
+nd-unfolding/ll5d_ctl.py: OK
+expected g18: opened 227 digested 227 absent 0 moved 227 sha256 ec363fd10db805005306e12955bc8651a02a340d5e53b8e81097bc53cb0e1e01
+expected moved g18: 227 paths, sha256 ec363fd10db805005306e12955bc8651a02a340d5e53b8e81097bc53cb0e1e01 (fixed)
+expected ar23: opened 227 digested 227 absent 0 moved 227 sha256 923681b295f1226360ca9ba9ee73c783ad7d9e2d559abd0106bc20d6320f3a93
+expected moved ar23: 227 paths, sha256 923681b295f1226360ca9ba9ee73c783ad7d9e2d559abd0106bc20d6320f3a93 (fixed)
+null g18 rc=8: LL5D-NULL verdict=PASS
+null g18: record null-g18.json verdict PASS moved 227 expected 227 extra 0 [] missing 0 []
+NULL-EXIT g18 CLEAN: rc 8, verdict PASS, moved == the fixed set (the declared deviation)
+null ar23 rc=8: LL5D-NULL verdict=PASS
+null ar23: record null-ar23.json verdict PASS moved 227 expected 227 extra 0 [] missing 0 []
+NULL-EXIT ar23 CLEAN: rc 8, verdict PASS, moved == the fixed set (the declared deviation)
+a0544ab9f6f0ec55c9866bee689d2563b13c9d07f4b3fdc37ce4762718a23933  /pscratch/sd/j/josephrb/ll5d-null-r1/null-ar23.json
+73dbaf9517374646c719ff589015cb12c1a6a2eafd5579e1074ef700bde703c2  /pscratch/sd/j/josephrb/ll5d-null-r1/null-g18.json
+0af70f4beada4e5181a487ed628c34b51e654c6ee9d6bcd5b963c6e81d8bee98  /pscratch/sd/j/josephrb/ll5d-null-r1/null-ar23.out
+0af70f4beada4e5181a487ed628c34b51e654c6ee9d6bcd5b963c6e81d8bee98  /pscratch/sd/j/josephrb/ll5d-null-r1/null-g18.out
+923681b295f1226360ca9ba9ee73c783ad7d9e2d559abd0106bc20d6320f3a93  /pscratch/sd/j/josephrb/ll5d-null-r1/expected_moved_ar23.txt
+ec363fd10db805005306e12955bc8651a02a340d5e53b8e81097bc53cb0e1e01  /pscratch/sd/j/josephrb/ll5d-null-r1/expected_moved_g18.txt
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:17.68
+	Maximum resident set size (kbytes): 509924
+	Exit status: 8
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:18.04
+	Maximum resident set size (kbytes): 510140
+	Exit status: 8
+null checks rc=0
+end=2026-11-14T11:50:47Z

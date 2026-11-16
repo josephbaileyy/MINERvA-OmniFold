@@ -206,3 +206,56 @@ misc (limits ≥ 1 h) were unaffected.
 3. **The PRR read** runs from M_A3's `prr_read.py` (A2's bytes) once prr_ibu has completed.
 
 Nothing is submitted, deposited or tagged.
+
+## Binding 1, addendum A4: route 2 reads its stage record once and the shared rho files through a staged copy (director, 2026-11-09)
+
+**Binds** [`FD-PRR-ADDENDUM-A4.md`](FD-PRR-ADDENDUM-A4.md) and its code, as merged in PR #1000 at
+**M_A4 = `cb13a6443a457bd3887d1c421723dfcdb1909ec8`**. The audited head is `ea1742b4`; the addendum and every file
+under `nd-unfolding/prior_retention/` are identical at `ea1742b4` and M_A4. This **supersedes M_A3** for prr_ibu and
+the PRR read.
+
+| file | sha256 (prefix) |
+|---|---|
+| `FD-PRR-ADDENDUM-A4.md` | `3ba2f47ba0d9b401` |
+| `nd-unfolding/prior_retention/prr_ibu.py` | `fa91394507c0e6a3` |
+| `nd-unfolding/prior_retention/test_prr.py` | `fad928d85c9183ac` |
+| `nd-unfolding/prior_retention/prr_mutation.py` | `e088406cd47ef88c` |
+| `nd-unfolding/prior_retention/prr_read.py` (A2's) | `d7c7c2c0d6cbe4a1` |
+| `nd-unfolding/prior_retention/sbatch_prr.sh` (A3's) | `4493aad5dff0a8a0` |
+| `nd-unfolding/prior_retention/prr_probe.py` (M's) | `f87ee90c58d2b890` |
+
+**What led to it.** prr_ibu attempt 2 (job 61043652, FAILED after 132 s; receipt #997, move #1001) refused a plain
+read of `$OUT/stage.json` inside `prr_ibu.py`'s read guard. The director ordered a full static trace of the run path
+before any fix went to audit. It found the next cluster-only defect: the four fine-ratio hypotheses' `rho_npz` files
+under `/pscratch/sd/j/josephrb/s5p-20260926/` are read in place, plainly. The same reads by dry, iter, cap and misc are
+recorded in `OUTCOME-20261109-fd-prr-104-plain-reads.md`, whose products stand.
+
+**What the director checked:**
+- coverage-5b-audit's GO at `ea1742b4`, with no blockers
+  (https://github.com/josephbaileyy/MINERvA-OmniFold/pull/1000#issuecomment-6753163443):
+  - 116 tests pass;
+  - the REQUIRED end-to-end test runs route 2 with `ref_g1.PROTECTED` over the test's temp root. It fails at M_A3 (on
+    stage.json) and at `0d6656be` (on the shared rho path), and passes at A4 with products written;
+  - the trace finds 0 reads the guard would refuse;
+  - 81 of 81 mutants are killed, and the kill table is identical to the receipt;
+  - 5 of the auditor's 6 own mutants are killed. The survivor removes `verify_stage(stage_rec)` from `run()`; it is held
+    as a low, since sbatch's tested verify-stage step runs just before it.
+- The director ran `test_prr.py` from a `git archive` of M_A4 (one thread, `PYTHONHASHSEED=0`, own TMPDIR): 116 passed.
+
+**Rulings:**
+1. **prr_ibu attempt 3 and the PRR read run from M_A4.** Binding 1's rulings and addenda A1–A3 stand otherwise. No
+   limit, the cap or any reading changes.
+2. **The A4 staging step** copies exactly the four `rho-*-F.npz` through O_NOATIME into `$OUT/stage/s5p-nullsF/`, by
+   the bound `prr_probe.py stage`, with stat records before and after and each copy's sha256 checked against its
+   committed hypothesis. It writes `$OUT/stage-a4.json` beside `stage.json`. Its filled script pins M_A4 and this file's
+   sha256 as it is on main after this addendum merges. It goes to the director before it runs, and it runs only while
+   no other lane is copying from `s5p-20260926`.
+3. **Attempt 3** uses TAG=`ibu-3` on the connect side. It pins both earlier attempts in sacct (61035510 FAILED 41;
+   61043652 FAILED 132) and requires `$OUT/log-ibu`, `$OUT/route2` and `deploy-ibu-3` to be absent and
+   `$OUT/stage-a4.json` present. Its post reads `logs/ibu-3.jobid`. The study is then at most 7.4267 + 0.5 = 7.9267 of
+   27.0 node-h.
+4. The audit's lows L-1000-a (`verify_stage` in `run()` untested) and L-1000-b (the staging template reaches A2 only
+   through BIND_SHA) are on the follow-up list.
+   <!-- absence-ok: the audit's own low, quoted as it held it (#1000 verdict); not a claim that a result does not exist -->
+
+Nothing is submitted, deposited or tagged.

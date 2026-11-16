@@ -1,0 +1,17 @@
+C1 PASS: (a) max_scaled=0.0 n_above=0 worst={'i': 0, 'j': 0, 'Q_A': 0.00018613947964226673, 'C_new': 0.00018613947964226673}; (i) per-entry max_rel=0.0 n_above_1e-15=0 worst={'i': 0, 'j': 0, 'Q_A': 0.00018613947964226673, 'C_new': 0.00018613947964226673}; (ii) 0.0; (iv) bitwise=True; (b) rows=14 failing=[]; (c) rows=20 failing=[]; (d) x=True F=True; universe_delta_scaled_rel=0.0
+PASS bitwise rc 0 want 0
+C1 PASS: (a) max_scaled=5.000000071511791e-15 n_above=0 worst={'i': 154, 'j': 167, 'Q_A': 3.9224299979999756e-10, 'C_new': 3.9224299885122124e-10}; (i) per-entry max_rel=2.418848317174326e-09 n_above_1e-15=2 worst={'i': 154, 'j': 167, 'Q_A': 3.9224299979999756e-10, 'C_new': 3.9224299885122124e-10}; (ii) 3.590715700535422e-15; (iv) bitwise=False; (b) rows=14 failing=[]; (c) rows=20 failing=[]; (d) x=True F=True; universe_delta_scaled_rel=0.0
+PASS small-offdiag-within-scaled rc 0 want 0
+C1 FAIL: (a) max_scaled=2.999999988417109e-14 n_above=2 worst={'i': 154, 'j': 167, 'Q_A': 3.9224300454387904e-10, 'C_new': 3.9224299885122124e-10}; (i) per-entry max_rel=1.4513089639440036e-08 n_above_1e-15=2 worst={'i': 154, 'j': 167, 'Q_A': 3.9224300454387904e-10, 'C_new': 3.9224299885122124e-10}; (ii) 2.1544293811896586e-14; (iv) bitwise=False; (b) rows=14 failing=[]; (c) rows=20 failing=[]; (d) x=True F=True; universe_delta_scaled_rel=0.0
+PASS offdiag-above-scaled rc 1 want 1
+C1 FAIL: (a) max_scaled=0.0 n_above=0 worst={'i': 0, 'j': 0, 'Q_A': 0.00018613947964226673, 'C_new': 0.00018613947964226673}; (i) per-entry max_rel=0.0 n_above_1e-15=0 worst={'i': 0, 'j': 0, 'Q_A': 0.00018613947964226673, 'C_new': 0.00018613947964226673}; (ii) 0.0; (iv) bitwise=True; (b) rows=14 failing=[]; (c) rows=20 failing=['band-flux', 'hist-flux']; (d) x=True F=True; universe_delta_scaled_rel=0.0
+PASS g2r-band-median-differs rc 1 want 1
+C1 FAIL: (a) max_scaled=0.0 n_above=0 worst={'i': 0, 'j': 0, 'Q_A': 0.00018613947964226673, 'C_new': 0.00018613947964226673}; (i) per-entry max_rel=0.0 n_above_1e-15=0 worst={'i': 0, 'j': 0, 'Q_A': 0.00018613947964226673, 'C_new': 0.00018613947964226673}; (ii) 0.0; (iv) bitwise=True; (b) rows=14 failing=[]; (c) rows=20 failing=['sys-minos-integral']; (d) x=True F=True; universe_delta_scaled_rel=0.0
+PASS lateral-differs-from-partc-r2 rc 1 want 1
+C1 FAIL: (a) max_scaled=0.0 n_above=0 worst={'i': 0, 'j': 0, 'Q_A': 0.00018613947964226673, 'C_new': 0.00018613947964226673}; (i) per-entry max_rel=0.0 n_above_1e-15=0 worst={'i': 0, 'j': 0, 'Q_A': 0.00018613947964226673, 'C_new': 0.00018613947964226673}; (ii) 0.0; (iv) bitwise=True; (b) rows=14 failing=['tabuq-q-median', 'tabuq-caption-q-median', 'tabvs-q-median', 'tabcomb-q-median', 'comb-q-median-prose', 'worked-q-median', 'audit-q-median', 'hist-q-median', 'hist-q-median-b']; (c) rows=20 failing=[]; (d) x=True F=True; universe_delta_scaled_rel=0.0
+PASS route-a-budget-Q-median-differs rc 1 want 1
+C1 FAIL: (a) max_scaled=0.0 n_above=0 worst={'i': 0, 'j': 0, 'Q_A': 0.00018613947964226673, 'C_new': 0.00018613947964226673}; (i) per-entry max_rel=0.0 n_above_1e-15=0 worst={'i': 0, 'j': 0, 'Q_A': 0.00018613947964226673, 'C_new': 0.00018613947964226673}; (ii) 0.0; (iv) bitwise=True; (b) rows=14 failing=[]; (c) rows=20 failing=[]; (d) x=False F=True; universe_delta_scaled_rel=0.0
+PASS x-differs rc 1 want 1
+C1 DIGEST $TMP/tmpv6_9xxj0/digest/data_g2r.npz: 51185aff0b26b3710ca9eebc758bf14ea77b6b8632826890558b01ee17af1911, not a228e98206bb43696dd7fdd39ead93699a660f4d632df4becaab00be9d04655e
+PASS digest rc 2 want 2
+C1 TEST PASS

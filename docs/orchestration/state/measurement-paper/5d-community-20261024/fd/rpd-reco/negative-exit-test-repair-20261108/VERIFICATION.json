@@ -1,0 +1,43 @@
+{
+  "schema": "fd-rpd-reco-negative-exit-test-verification/1",
+  "tested_head": "4fb2add1871c95b203e7ec0a3ff38f1424d281c8",
+  "baseline": "e9d575277c2cead2ae5510ac32a5967f79fdadd2",
+  "suite": {
+    "passed": 290,
+    "seconds": 272.73,
+    "returncode": 0
+  },
+  "comment_only_custody_control": {
+    "passed": 290,
+    "seconds": 311.14,
+    "returncode": 0
+  },
+  "mutation": {
+    "required": 229,
+    "executed": 229,
+    "killed": 229,
+    "complete": true,
+    "all_killed": true,
+    "returncode": 0
+  },
+  "all_production_bytes_unchanged": true,
+  "raw_report_sha256": "c21570bddeed42563df1b9ee8087ac451110faa4b3ebf93762b25fa753d8d529",
+  "raw_report_recovery": "Remove receipt_annotation and disposable_fixture_artifact_paths; json.dumps(indent=2) plus newline reproduces original bytes.",
+  "test_thread_environment": {
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "NUMEXPR_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1"
+  },
+  "static_checks": {
+    "black": "PASS",
+    "ruff": "PASS",
+    "strict_production_mypy": "PASS",
+    "optional_external_stubs": "ignore_missing_imports",
+    "shell_syntax": "PASS"
+  },
+  "source_commit_hooks": 21,
+  "host_credential_value_and_fingerprint_scan": "PASS",
+  "native_platform": "not run; pending delta audit and native-lane release"
+}

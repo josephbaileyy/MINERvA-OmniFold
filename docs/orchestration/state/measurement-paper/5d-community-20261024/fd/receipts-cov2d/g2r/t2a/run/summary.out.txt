@@ -1,0 +1,20 @@
+===== G18: controls {'pin blocks': True, 'pin score': True, 'pin null': True, 'pin capture': True, 'pin nd-unfolding/fd_1b_null.py': True, 'pin 2d-unfolding/cov2d/cov2d_null.py': True, 'pin 2d-unfolding/cov2d/cov2d.py': True, "E_npz is the capture's, and the capture is OK with A0 equal": True, 'A4': True, 'A1': True, 'A2': True, 'A3': True}
+  A3: q_joint rebuilt 0.6963645 record 0.6963645 abs_diff 0 se 0.000325
+  C_T' (G2R): ndf 205 mean_chi2/ndf 25.0338; ebar'C+ebar 4470.36 (/ndf 21.8066); tr(C+S) 661.576 (/ndf 3.2272); share mean 0.871086
+    rank 73: in_region 0/300 k_joint 193 at_or_below True null_q 0.699987 mean_chi2/rank 8.67972
+    rank 139: in_region 0/300 k_joint 190 at_or_below True null_q 0.691922 mean_chi2/rank 21.4777
+    precision: n_unresolved 0 truncated agree [True, True]
+  C_T (committed T2A): ndf 205 mean_chi2/ndf 24.1735; ebar'C+ebar 4298.53 (/ndf 20.9684); tr(C+S) 657.048 (/ndf 3.20511); share mean 0.867412
+    rank 73: in_region 0/300 k_joint 193 at_or_below True null_q 0.700188 mean_chi2/rank 8.99177
+    rank 139: in_region 0/300 k_joint 191 at_or_below True null_q 0.692882 mean_chi2/rank 21.203
+    precision: n_unresolved 0 truncated agree [True, True]
+===== AR23: controls {'pin blocks': True, 'pin score': True, 'pin null': True, 'pin capture': True, 'pin nd-unfolding/fd_1b_null.py': True, 'pin 2d-unfolding/cov2d/cov2d_null.py': True, 'pin 2d-unfolding/cov2d/cov2d.py': True, "E_npz is the capture's, and the capture is OK with A0 equal": True, 'A4': True, 'A1': True, 'A2': True, 'A3': True}
+  A3: q_joint rebuilt 0.69201 record 0.69201 abs_diff 0 se 0.000326
+  C_T' (G2R): ndf 204 mean_chi2/ndf 16.4085; ebar'C+ebar 2753.55 (/ndf 13.4978); tr(C+S) 593.782 (/ndf 2.9107); share mean 0.82261
+    rank 73: in_region 0/300 k_joint 192 at_or_below True null_q 0.698011 mean_chi2/rank 10.0472
+    rank 139: in_region 0/300 k_joint 190 at_or_below True null_q 0.689179 mean_chi2/rank 15.7256
+    precision: n_unresolved 0 truncated agree [True, True]
+  C_T (committed T2A): ndf 204 mean_chi2/ndf 16.551; ebar'C+ebar 2776.89 (/ndf 13.6122); tr(C+S) 599.525 (/ndf 2.93885); share mean 0.822437
+    rank 73: in_region 0/300 k_joint 193 at_or_below True null_q 0.69909 mean_chi2/rank 10.4574
+    rank 139: in_region 0/300 k_joint 190 at_or_below True null_q 0.690742 mean_chi2/rank 15.4553
+    precision: n_unresolved 0 truncated agree [True, True]

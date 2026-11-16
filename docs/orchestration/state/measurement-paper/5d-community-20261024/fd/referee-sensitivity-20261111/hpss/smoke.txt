@@ -1,0 +1,152 @@
+# RSN HPSS archive smoke, kit rev 2 (local, macOS; stubs for hsi, htar, hpssquota, timeout, and for the launcher ssh, scp,
+# stat, squeue, nproc; synthetic sources with real sha256 pins; the stub ssh runs each remote string locally, never connects)
+# template sha256 7aaa9a060e4acfa40f75fe46f7642954fb3b378bafd1652fe60f78fa2e2449a3
+# hpss_rsn.sh sha256 012a9618adf7e4b493700954747f5afd1ea4235907c1b2f794e754e2062311d8
+# launcher sha256 cd826dbde2acc571fab313c87d76c5be65df0dbaf2ca67589b14139d7ed49ab9 (the launcher cases re-run at this sha after the accept-new change; output equal but for timestamps)
+# exit codes:
+#   atime rc=8
+#   pass rc=0
+#   badpin rc=8
+#   exists rc=9
+#   host rc=9
+#   slurm rc=9
+#   nohsi rc=9
+#   homerc1 rc=9
+#   targetrc1 rc=9
+#   targetrc127 rc=9
+#   targetrc124 rc=9
+#   targetrc64noenoent rc=9
+#   quotarc rc=9
+#   quotaline rc=9
+#   rows rc=8
+#   corrupt rc=8
+#   probe rc=0
+#   archive rc=0
+#   archive-dtn rc=9
+#   survey-dtn rc=9
+#   probe-nonempty rc=9
+## case atime
+tools: <smoke>/bin/hsi <smoke>/bin/htar <smoke>/bin/hpssquota <smoke>/bin/timeout /sbin/sha256sum 
+home check hsi rc=0
+target check hsi rc=64 (HPSS_ENOENT)
+hpssquota before rc=0
+hsi mkdir rc=0
+STAGE STOP pvl_prep: <smoke>/src/pvl_prep/f0.bin: size, mtime or atime changed by the copy
+STOP: stage pvl_prep rc=8
+removal of <smoke>/shm-atime rc=0 ; present after: no
+hpss archive rc=8
+## case pass
+tools: <smoke>/bin/hsi <smoke>/bin/htar <smoke>/bin/hpssquota <smoke>/bin/timeout /sbin/sha256sum 
+home check hsi rc=0
+target check hsi rc=64 (HPSS_ENOENT)
+hpssquota before rc=0
+hsi mkdir rc=0
+STAGE OK pvl_prep: 3 files, 3111 bytes, every sha256 equal to its pin
+htar pvl_prep rc=0
+hashcreate pvl_prep rc=0
+hashverify pvl_prep rc=0: /home/j/josephrb/rsn-pass/pvl_prep.tar: (md5) OK 
+retrieve pvl_prep rc=0
+RETRIEVE OK pvl_prep: 3 members re-read from HPSS, every sha256 equal to its manifest line and pin
+== group pvl_prep PASS
+STAGE OK pvl_products: 2 files, 2037 bytes, every sha256 equal to its pin
+htar pvl_products rc=0
+hashcreate pvl_products rc=0
+hashverify pvl_products rc=0: /home/j/josephrb/rsn-pass/pvl_products.tar: (md5) OK 
+retrieve pvl_products rc=0
+RETRIEVE OK pvl_products: 2 members re-read from HPSS, every sha256 equal to its manifest line and pin
+== group pvl_products PASS
+STAGE OK cpl_block: 1 files, 1000 bytes, every sha256 equal to its pin
+htar cpl_block rc=0
+hashcreate cpl_block rc=0
+hashverify cpl_block rc=0: /home/j/josephrb/rsn-pass/cpl_block.tar: (md5) OK 
+retrieve cpl_block rc=0
+RETRIEVE OK cpl_block: 1 members re-read from HPSS, every sha256 equal to its manifest line and pin
+== group cpl_block PASS
+hsi ls rc=0
+hpssquota after rc=0
+ARCHIVE PASS: all three groups archived, hash-verified and every member re-read from HPSS
+removal of <smoke>/shm-pass rc=0 ; present after: no
+hpss archive rc=0
+## case badpin
+tools: <smoke>/bin/hsi <smoke>/bin/htar <smoke>/bin/hpssquota <smoke>/bin/timeout /sbin/sha256sum 
+home check hsi rc=0
+target check hsi rc=64 (HPSS_ENOENT)
+hpssquota before rc=0
+hsi mkdir rc=0
+STAGE OK pvl_prep: 3 files, 3111 bytes, every sha256 equal to its pin
+htar pvl_prep rc=0
+hashcreate pvl_prep rc=0
+hashverify pvl_prep rc=0: /home/j/josephrb/rsn-badpin/pvl_prep.tar: (md5) OK 
+retrieve pvl_prep rc=0
+RETRIEVE OK pvl_prep: 3 members re-read from HPSS, every sha256 equal to its manifest line and pin
+== group pvl_prep PASS
+STAGE STOP pvl_products: <smoke>/src/pvl_products/f0.bin: sha256 9275be2d7cc8d4b896c43181b7b6136905c3b7fdee139faaa9cbb658299365d7 is not its committed pin ffffbe2d7cc8d4b896c43181b7b6136905c3b7fdee139faaa9cbb658299365d7
+STOP: stage pvl_products rc=8
+removal of <smoke>/shm-badpin rc=0 ; present after: no
+hpss archive rc=8
+## case exists
+REFUSED (nothing written): /home/j/josephrb/rsn-exists exists
+(no OUT created; nothing written)
+## case host
+REFUSED (nothing written): host DN0a236367 is not a login node
+(no OUT created; nothing written)
+## case slurm
+REFUSED (nothing written): a Slurm job is set (123)
+(no OUT created; nothing written)
+## case nohsi
+REFUSED (nothing written): hsi is not on PATH
+(no OUT created; nothing written)
+## case homerc1
+REFUSED (nothing written): hsi ls -d /home/j/josephrb rc=1: stub hsi home rc 1
+(no OUT created; nothing written)
+## case targetrc1
+REFUSED (nothing written): target check hsi rc=1 is not hsi's not-found (rc 64, HPSS_ENOENT): stub hsi target rc 1
+(no OUT created; nothing written)
+## case targetrc127
+REFUSED (nothing written): target check hsi rc=127 is not hsi's not-found (rc 64, HPSS_ENOENT): stub hsi target rc 127
+(no OUT created; nothing written)
+## case targetrc124
+REFUSED (nothing written): target check hsi rc=124 is not hsi's not-found (rc 64, HPSS_ENOENT): stub hsi target rc 124
+(no OUT created; nothing written)
+## case targetrc64noenoent
+REFUSED (nothing written): target check hsi rc=64 is not hsi's not-found (rc 64, HPSS_ENOENT): stub hsi target rc 64
+(no OUT created; nothing written)
+## case quotarc
+REFUSED (nothing written): hpssquota rc=2: stub hpssquota forced rc
+(no OUT created; nothing written)
+## case quotaline
+REFUSED (nothing written): hpssquota has no single HPSS usage line
+(no OUT created; nothing written)
+## case rows
+STOP: the list has        6 rows, not 7
+removal of <smoke>/shm-rows rc=0 ; present after: no
+hpss archive rc=8
+## case corrupt
+tools: <smoke>/bin/hsi <smoke>/bin/htar <smoke>/bin/hpssquota <smoke>/bin/timeout /sbin/sha256sum 
+home check hsi rc=0
+target check hsi rc=64 (HPSS_ENOENT)
+hpssquota before rc=0
+hsi mkdir rc=0
+STAGE OK pvl_prep: 3 files, 3111 bytes, every sha256 equal to its pin
+htar pvl_prep rc=0
+hashcreate pvl_prep rc=0
+hashverify pvl_prep rc=0: /home/j/josephrb/rsn-corrupt/pvl_prep.tar: (md5) OK 
+retrieve pvl_prep rc=0
+RETRIEVE STOP pvl_prep: 0 missing, 0 extra, 1 differing
+STOP: retrieved pvl_prep differs
+removal of <smoke>/shm-corrupt rc=0 ; present after: no
+hpss archive rc=8
+## launcher probe login27 (paths absent locally, so stat counts nothing; the 67 rows arrive on stdin)
+list rows       67
+stat pass 1
+stat pass 2
+## launcher archive login27 (staged at the pinned sha; macOS has no setsid, so the detached run stops there)
+ssh rc=0
+node DN0a236367.SUNet staged sha256 012a9618adf7e4b493700954747f5afd1ea4235907c1b2f794e754e2062311d8
+detached pid N, output <smoke>/devshm/hpssr-archive.N.sh.out
+bash: setsid: command not found
+script rc=127
+## launcher refusals
+STOP: 'dtn01' is not a login node name
+STOP: 'dtn01' is not a login node name
+STOP: <smoke>/L-archive is not a new empty directory

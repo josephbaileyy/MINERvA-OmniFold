@@ -1,0 +1,24 @@
+Command exited with non-zero status 3
+	Command being timed: "python3 -B /pscratch/sd/j/josephrb/ll5d-gate-g18-20261108/deploy/nd-unfolding/ll5d.py gate --truth g18 --npz /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz --bkg /pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz --bank /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware --detector-dir /pscratch/sd/j/josephrb/s5p-20260926/bank_detector --pins /pscratch/sd/j/josephrb/fd-1b-20261030/pins.json --expect-pins-sha256 5adcd576eb46f443fe4133b05044cd315c0eeb0f281e21acee5f2318b4bab248 --flux-constraint /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt --flux-table /pscratch/sd/j/josephrb/fd-1b-staged-20261102/stage1/in/flux_universes.npz --expect-flux-table-sha256 cdc3da788c385da72826b2a74b1987320bbe399af212722826914df4d2fe15a5 --definition /pscratch/sd/j/josephrb/ll5d-gate-g18-20261108/deploy/nd-unfolding/pv-ladder/readouts/h2_definition.json --prep /pscratch/sd/j/josephrb/fd-f1-20261027/f1b3/prep --manifest /pscratch/sd/j/josephrb/ll5d-gate-g18-20261108/deploy/docs/orchestration/state/2d-closeout/stageF/methods/sf1/manifest/inputs-sha256.txt --expect-manifest-sha256 3a50f502b5a425bc4d116245c36f79bbc279cbd876b87aa72bd0298b001b5031 --staged /pscratch/sd/j/josephrb/fd-1b-inv-20261101/i0/in --calibration /pscratch/sd/j/josephrb/ll5d-calib-2-20261109/calibration.json --expect-calibration-sha256 ea039893e8ec98a9cd3da15dd7811a82a99563da8fbb253e6fc0766eb960fb17 --expect-calibration-npz-sha256 b31ddd12d050163396b4811705777fc1fa28f77757575af73c8dc5976b3c1a7c --time-limit-seconds 111600 --out /pscratch/sd/j/josephrb/ll5d-gate-g18-20261108/gate-g18.json"
+	User time (seconds): 31332.25
+	System time (seconds): 7774.00
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 10:51:55
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 285712092
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 86
+	Minor (reclaiming a frame) page faults: 279930571
+	Voluntary context switches: 11688
+	Involuntary context switches: 160259
+	Swaps: 0
+	File system inputs: 143522720
+	File system outputs: 1049000
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 3

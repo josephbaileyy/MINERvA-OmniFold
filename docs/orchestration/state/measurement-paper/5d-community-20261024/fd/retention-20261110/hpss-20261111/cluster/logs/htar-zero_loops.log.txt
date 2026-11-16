@@ -1,0 +1,31 @@
+HTAR: a   SHA256SUMS.zero_loops
+HTAR: a   pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1A_zero.root
+HTAR: a   pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1B_zero.root
+HTAR: a   pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1C_zero.root
+HTAR: a   pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1D_zero.root
+HTAR: a   pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1E_zero.root
+HTAR: a   pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1F_zero.root
+HTAR: a   pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1G_zero.root
+HTAR: a   pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1L_zero.root
+HTAR: a   pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1M_zero.root
+HTAR: a   pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1N_zero.root
+HTAR: a   pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1O_zero.root
+HTAR: a   pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1P_zero.root
+HTAR: a   /tmp/HTAR_CF_CHK_520560_1794365111
+HTAR Create complete for /home/j/josephrb/mnv-at-risk-20261111/zero_loops.tar. 4841755648 bytes written for 13 member files, max threads: 3 Transfer time: 29.125 seconds (166.240 MB/s) wallclock/user/sys: 29.316 40.353 9.152 seconds
+HTAR: v SHA256SUMS.zero_loops, 2052 bytes, 6 media blocks
+HTAR: v pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1A_zero.root, 398375296 bytes, 778078 media blocks
+HTAR: v pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1B_zero.root, 106517598 bytes, 208044 media blocks
+HTAR: v pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1C_zero.root, 204230889 bytes, 398890 media blocks
+HTAR: v pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1D_zero.root, 596287802 bytes, 1164626 media blocks
+HTAR: v pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1E_zero.root, 495761736 bytes, 968286 media blocks
+HTAR: v pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1F_zero.root, 689044069 bytes, 1345791 media blocks
+HTAR: v pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1G_zero.root, 581501093 bytes, 1135746 media blocks
+HTAR: v pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1L_zero.root, 56587445 bytes, 110524 media blocks
+HTAR: v pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1M_zero.root, 862899975 bytes, 1685353 media blocks
+HTAR: v pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1N_zero.root, 499729347 bytes, 976035 media blocks
+HTAR: v pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1O_zero.root, 150945068 bytes, 294816 media blocks
+HTAR: v pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1P_zero.root, 199848958 bytes, 390331 media blocks
+HTAR: v /tmp/HTAR_CF_CHK_520560_1794365111, 256 bytes, 2 media blocks
+HTAR: Verify complete. 0 total errors, 14 total objects (14 Files,0 Dirs,0 Hard Links,0 symlinks) wallclock/user/sys: 28.848 28.819 3.315 seconds
+HTAR: HTAR SUCCESSFUL

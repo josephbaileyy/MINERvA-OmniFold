@@ -1,0 +1,34 @@
+{"mat_setup_scripts": 6, "mismatches": 0}
+MAT setup exit status: 0
+{"status": "PASS", "class_name": "PlotUtils::MnvH1D", "worker_exit": 0}
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+FRW: this is the flux file I'm using: /pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run/mat-data/PLOTUTILSROOT/data/flux/flux-gen2thin-pdg14-minervame1D_rearrangedUniverses.root
+FRW: this is the flux file I'm using: /pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run/mat-data/PLOTUTILSROOT/data/flux/flux-gen2thin-pdg-14-minervame1D_rearrangedUniverses.root
+FRW: this is the flux file I'm using: /pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run/mat-data/PLOTUTILSROOT/data/flux/flux-g4numiv6-pdg14-minervame1D_rearrangedUniverses.root
+FRW: this is the flux file I'm using: /pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run/mat-data/PLOTUTILSROOT/data/flux/flux-g4numiv6-pdg-14-minervame1D_rearrangedUniverses.root
+FRW: this is the flux file I'm using: /pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run/mat-data/PLOTUTILSROOT/data/flux/flux-gen2thin-pdg14-minervame1M_rearrangedUniverses.root
+FRW: this is the flux file I'm using: /pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run/mat-data/PLOTUTILSROOT/data/flux/flux-gen2thin-pdg-14-minervame1M_rearrangedUniverses.root
+FRW: this is the flux file I'm using: /pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run/mat-data/PLOTUTILSROOT/data/flux/flux-g4numiv6-pdg14-minervame1M_rearrangedUniverses.root
+FRW: this is the flux file I'm using: /pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run/mat-data/PLOTUTILSROOT/data/flux/flux-g4numiv6-pdg-14-minervame1M_rearrangedUniverses.root
+FRW: this is the flux file I'm using: /pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run/mat-data/PLOTUTILSROOT/data/flux/flux-gen2thin-pdg14-minervame1N_rearrangedUniverses.root
+FRW: this is the flux file I'm using: /pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run/mat-data/PLOTUTILSROOT/data/flux/flux-gen2thin-pdg-14-minervame1N_rearrangedUniverses.root
+FRW: this is the flux file I'm using: /pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run/mat-data/PLOTUTILSROOT/data/flux/flux-g4numiv6-pdg14-minervame1N_rearrangedUniverses.root
+FRW: this is the flux file I'm using: /pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run/mat-data/PLOTUTILSROOT/data/flux/flux-g4numiv6-pdg-14-minervame1N_rearrangedUniverses.root
+{"dry_run": false, "status": "PASS", "step": "flux-extract"}

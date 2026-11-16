@@ -1,0 +1,48 @@
+  ok   a wrong sha256 pin is refused
+  ok   --check fails on a file with R06's z printed as 1.8
+  ok   --check passes a fresh file
+  ok   a data product whose H2 counts differ from the definition's is refused
+  ok   a data product whose boxes differ from H2's is refused
+  ok   an F1 readout that re-grades an F0b truth differently is refused
+  ok   an F1 readout that lists a held-out record is refused
+  ok   an F1 readout that gives AR23's closure no model-only cell beyond 2 sigma is refused
+  ok   an F1 readout that gives a G18 record a model-only cell beyond 2 sigma is refused
+  ok   an F1 readout that has a held-out cell with |b| above its sigma is refused
+  ok   an H2 definition whose four lowest-stability cells differ from the decided ones is refused
+  ok   a GENCMP readout that has a sample that failed B0 is refused
+  ok   a GENCMP readout that gives a Table IV chi2 that is not its 2 x 2 corner is refused
+  ok   a GENCMP readout that moves a cell by 0.08 sigma is refused
+  ok   a GENCMP readout that gives GiBUU's GENIE-hydrogen total above carbon is refused
+  ok   a GENCMP readout that has native NuWro disagree is refused
+  ok   a GENCMP readout that puts a quadrant sum above the 3D central value is refused
+  ok   a GENCMP readout that has a diag readout computed from another Stage G readout is refused
+  ok   a GENCMP readout that ran Stage G's chain on another NuWro is refused
+  ok   an E2 readout that gives a carbon chi2 that is not Table IV's is refused
+  ok   an E2 readout that puts GiBUU's CH total with CH shape ratios above its carbon value is refused
+  ok   an E2 readout that changes GENIE + MEC's component is refused
+  ok   an E2 readout that leaves NuWro's component unchanged is refused
+  ok   an E2 readout that leaves NuWro's chi2 unmoved is refused
+  ok   an E2 readout that records a failed control is refused
+  ok   a quadrant readout that puts a quadrant beyond one standard deviation is refused
+  ok   a quadrant readout that measures the statistical correlation is refused
+  ok   a quadrant readout that bounds a fifth band is refused
+  ok   a quadrant readout that changes its reading inside the family is refused
+  ok   a quadrant readout that has a d that is not C-R's is refused
+  ok   a quadrant readout that gives a chi2 at r = 0 that its blocks do not is refused
+  ok   a quadrant readout that gives a chi2 at r = 1 below that at r = 0 is refused
+  ok   the chi2 bound rounded to nearest is refused
+  ok   the p bound rounded up is refused
+  ok   the 10 committed listed-truth sentences agree with the pinned F0b readouts
+  ok   the arms' readouts exchanged fail exactly the 6 sentences that tell them apart
+  ok   a paper_body.tex sentence that keys a truth the readout does not list fails
+  ok   a paper_body.tex sentence that drops a listed truth's keys fails
+  ok   a paper_body.tex sentence that names the wrong truth as listed only without the block fails
+  ok   a sec_fived16.tex sentence that drops the truth listed only without the block fails
+  ok   a sec_fived16.tex sentence that drops a GiBUU truth of its family fails
+  ok   a paper_body.tex sentence that omits a truth F0 lists fails
+  ok   a main_paper.tex sentence that loses its anchor fails
+  ok   a readout that lists one more truth fails both enumerating sentences
+  ok   f0b-listed-names name the listed truths with and without the block, in the readouts' order
+  ok   a without-block value outside the matrix-dependent families that differs is refused
+  ok   an installed figure that differs from its committed source fails --check
+VALUES-FIVED16 SELF-TEST :: PASS

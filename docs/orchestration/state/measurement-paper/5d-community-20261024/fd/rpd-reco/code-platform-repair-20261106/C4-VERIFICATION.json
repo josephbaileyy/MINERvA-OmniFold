@@ -1,0 +1,44 @@
+{
+  "schema": "fd-rpd-reco-c4-verification/1",
+  "tested_head": "36ab485167c78ffc9268260b6439935bba9b5866",
+  "scope": "local shell and synthetic contract tests; native MAT activation and ordered platform checks require run-lane receipts",
+  "suite": {
+    "passed": 158,
+    "seconds": 177.56,
+    "returncode": 0
+  },
+  "focused": {
+    "passed": 5,
+    "deselected": 153,
+    "seconds": 0.19,
+    "returncode": 0
+  },
+  "counterfactual": {
+    "original_prologue_wrapper": "KILLED",
+    "original_flux_wrapper": "KILLED"
+  },
+  "static": {
+    "black": "PASS",
+    "ruff": "PASS",
+    "bash_syntax_both_wrappers": "PASS"
+  },
+  "source_hook_checks": 21,
+  "source_identities": "C4-SOURCE-IDENTITIES.json",
+  "prior_mutation_scope": {
+    "tested_head": "4ea4a113f72f32465f2a8c4eddd7bbaa2db5683c",
+    "required": 149,
+    "killed": 149,
+    "rerun_for_C4": false,
+    "unchanged": [
+      "producer",
+      "custody",
+      "prologue",
+      "real-class checker",
+      "mutation harness"
+    ]
+  },
+  "main_integration": {
+    "base": "7af865e8c3984679f589affaf4c50e2fb44626fb",
+    "executable_bytes_preserved": true
+  }
+}

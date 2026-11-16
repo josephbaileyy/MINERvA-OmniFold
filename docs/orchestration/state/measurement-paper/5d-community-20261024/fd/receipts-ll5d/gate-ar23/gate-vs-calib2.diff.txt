@@ -1,0 +1,110 @@
+2,16c2,11
+< # LL5D section 11 step 3: ll5d_calib RUN 2, the INVALID rerun of job 61014290 (LL5D BINDING 2 ruling 5 and its addendum,
+< # #987: A1a.1 at M_A1a.1 = a95cc39f, the candidate installed at calib_main's entry). The same declared seeds and N.
+< # One exclusive regular CPU node,
+< # --time 05:00:00 (5.0 node-h reserved, section 9; 0.9 line 16,200 s), 64 single-threaded workers (A2.1's), N = 3,000,
+< # 10,000 replicate sets per truth, both readings. Login-node steps, in order:
+< #   1. refuse if ll5d_calib is queued or $W exists; record squeue and any unended cov2d-* (the flux constraint is a
+< #      COV2D input: section 9's fence), refusing on the latter;
+< #   2. iris: the cap 148.0 node-h must be at most half the m3246 balance (R11);
+< #   3. section 9's projection gate: charged so far over every ll5d_* job (sacct, ended: ElapsedRaw x NNodes), plus the
+< #      full --time x nodes of every ll5d_* job submitted and not ended (squeue, which sacct lags), plus this job's
+< #      5.0, must be at most 148.0;
+< #   4. a fresh clone at M_A1a in a new pscratch directory, porcelain 0, the bound blobs checked;
+< #   5. the job script written from this file (its sha256 printed), an atime snapshot of the declared inputs;
+< #   6. sbatch, and scontrol's TimeLimit must read 05:00:00 or the job is cancelled.
+< # Nothing to CFS; writes only under $W. Not under set -u (it aborts the root_6_28 activation). Run detached.
+---
+> # LL5D section 11 step 4: ll5d_gate_<T> for ONE truth (argument 1: g18 or ar23), LL5D BINDING 2, A1a.1 at M_A1a.1. One
+> # exclusive regular CPU node, --time 31:00:00 (31.0 node-h reserved, section 9, A1a section 5a; the job's own 0.9 line
+> # 100,440 s), one BLAS thread. The calibration is ll5d_calib's, by the digests below (filled from its receipt before
+> # this connect's sha256 goes to the director; the placeholders refuse). Steps as connect-calib.sh: the fence (refusing on
+> # an unended cov2d-* or this truth's gate already queued), iris against the cap, section 9's projection gate with
+> # this job's 31.0, a fresh clone at M_A1a.1 with the bound blobs, the job script and an atime snapshot, sbatch, TimeLimit.
+> # The gate writes gate-<T>.json, gate-<T>.receipt.npz and the SEALED gate-<T>.clipprep.npz (A1a section 5j: its path,
+> # size and sha256 only; no one opens or summarizes it before binding 3). Nothing to CFS. Not under set -u.
+> T=$1
+> case "$T" in g18) J=ll5d_gate_G18 ;; ar23) J=ll5d_gate_AR23 ;; *) echo "STOP truth '$T' is not g18 or ar23"; exit 2 ;; esac
+19,20c14,18
+< W=$P/ll5d-calib-2-20261109; DD=$W/deploy
+< CAP=148.0; THIS=5.0; TL=05:00:00
+---
+> W=$P/ll5d-gate-$T-20261108; DD=$W/deploy
+> CAL=$P/ll5d-calib-2-20261109/calibration.json
+> CALSHA=ea039893e8ec98a9cd3da15dd7811a82a99563da8fbb253e6fc0766eb960fb17
+> CALNPZSHA=b31ddd12d050163396b4811705777fc1fa28f77757575af73c8dc5976b3c1a7c
+> CAP=148.0; THIS=31.0; TL=31:00:00; TLS=111600
+21a20
+> case "$CALSHA$CALNPZSHA" in *FILL*) echo "STOP the calibration digests are not filled"; exit 2 ;; esac
+24,25c23,24
+< exec >> "$W/logs/connect-calib-2.log" 2>&1
+< echo "host=$(hostname) start=$(date -u +%FT%TZ) pid=$$"
+---
+> exec >> "$W/logs/connect-gate-$T.log" 2>&1
+> echo "host=$(hostname) start=$(date -u +%FT%TZ) pid=$$ truth=$T"
+27c26
+< [ "$(squeue --me -h -o %j | grep -cx ll5d_calib)" = "0" ] || stop "ll5d_calib is already queued"
+---
+> [ "$(squeue --me -h -o %j | grep -cx "$J")" = "0" ] || stop "$J is already queued"
+38a38,39
+> [ "$(sha256sum "$CAL" | cut -d' ' -f1)" = "$CALSHA" ] || stop "the calibration's digest differs"
+> [ "$(sha256sum "${CAL%.json}.npz" | cut -d' ' -f1)" = "$CALNPZSHA" ] || stop "the calibration npz's digest differs"
+49a51
+> c6c9a45fa93c6590c4fdf0d9b7d29f01cccf97b281e469fa29a3d2f34b4618fd  nd-unfolding/fd_1b_score.py
+59c61
+< cat > "$W/sbatch-ll5d-calib.sh" <<'JOB'
+---
+> cat > "$W/sbatch-ll5d-gate.sh" <<'JOB'
+61,63c63,65
+< # ll5d_calib's job: one BLAS thread (A2.1 ruling (a)), asserted; the deploy at M with porcelain 0 and the bound blobs;
+< # setup_salloc_env.sh (Python 3.11); ll5d.py calib. Not under set -u. Writes only under $W.
+< DD=$1; M=$2; W=$3
+---
+> # ll5d_gate_<T>'s job: one BLAS thread, asserted; the deploy at M with porcelain 0 and the bound blobs; ll5d.py gate.
+> # The sealed clip-prep file is hashed and sized here, never read. Not under set -u. Writes only under $W.
+> DD=$1; M=$2; W=$3; T=$4; CAL=$5; CALSHA=$6; CALNPZSHA=$7; TLS=$8
+66c68
+< echo "host=$(hostname) job=$SLURM_JOB_ID start=$(date -u +%FT%TZ)"
+---
+> echo "host=$(hostname) job=$SLURM_JOB_ID truth=$T start=$(date -u +%FT%TZ)"
+75c77
+< /usr/bin/time -v python3 -B "$DD/nd-unfolding/ll5d.py" calib \
+---
+> /usr/bin/time -v python3 -B "$DD/nd-unfolding/ll5d.py" gate --truth "$T" \
+85,86c87,89
+<   --draws 3000 --sets 10000 --workers 64 --budget-seconds 16200 --time-limit-seconds 18000 \
+<   --out "$W/calibration.json" > "$W/calibration.out" 2> "$W/calibration.time"
+---
+>   --staged "$P/fd-1b-inv-20261101/i0/in" --calibration "$CAL" --expect-calibration-sha256 "$CALSHA" \
+>   --expect-calibration-npz-sha256 "$CALNPZSHA" --time-limit-seconds "$TLS" \
+>   --out "$W/gate-$T.json" > "$W/gate.out" 2> "$W/gate.time"
+88,91c91,95
+< echo "calib rc=$rc"
+< cat "$W/calibration.out"
+< grep -E "Elapsed|Maximum resident|Percent of CPU|Exit status" "$W/calibration.time"
+< sha256sum "$W"/calibration.json "$W"/calibration.npz "$W"/calibration.out "$W"/calibration.time "$W"/calibration.*.json 2>/dev/null
+---
+> echo "gate rc=$rc"
+> cat "$W/gate.out"
+> grep -E "Elapsed|Maximum resident|Percent of CPU|Exit status" "$W/gate.time"
+> sha256sum "$W/gate-$T.json" "$W/gate-$T.receipt.npz" "$W"/gate.out "$W"/gate.time "$W"/gate-$T.*.json 2>/dev/null
+> [ -e "$W/gate-$T.clipprep.npz" ] && echo "SEALED gate-$T.clipprep.npz bytes=$(stat -c %s "$W/gate-$T.clipprep.npz") sha256=$(sha256sum "$W/gate-$T.clipprep.npz" | cut -d' ' -f1)"
+95c99
+< echo "job script sha256 $(sha256sum "$W/sbatch-ll5d-calib.sh" | cut -d' ' -f1)"
+---
+> echo "job script sha256 $(sha256sum "$W/sbatch-ll5d-gate.sh" | cut -d' ' -f1)"
+98c102,103
+<   "$P/fd-1b-staged-20261102/stage1/in/flux_universes.npz" "$P/fd-f1-20261027/f1b3/prep" -type f -printf "%A@\t%p\n" | sort -k2 > "$W/atime-pre.tsv" || stop "atime snapshot"
+---
+>   "$P/fd-1b-staged-20261102/stage1/in/flux_universes.npz" "$P/fd-f1-20261027/f1b3/prep" "$P/fd-1b-inv-20261101/i0/in" \
+>   -type f -printf "%A@\t%p\n" | sort -k2 > "$W/atime-pre.tsv" || stop "atime snapshot"
+100,101c105,106
+< jid=$(sbatch --parsable -A m3246 -q regular -C cpu -N 1 --exclusive -t "$TL" -J ll5d_calib -o "$W/logs/%x_%j.out" \
+<   "$W/sbatch-ll5d-calib.sh" "$DD" "$M" "$W") || stop sbatch
+---
+> jid=$(sbatch --parsable -A m3246 -q regular -C cpu -N 1 --exclusive -t "$TL" -J "$J" -o "$W/logs/%x_%j.out" \
+>   "$W/sbatch-ll5d-gate.sh" "$DD" "$M" "$W" "$T" "$CAL" "$CALSHA" "$CALNPZSHA" "$TLS") || stop sbatch
+104c109
+< [ "$tl" = "TimeLimit=$TL" ] || { scancel "$jid"; stop "the time limit parsed as ${tl#TimeLimit=}, not $TL: cancelled $jid"; }
+---
+> [ "$tl" = "TimeLimit=1-07:00:00" ] || { scancel "$jid"; stop "the time limit parsed as ${tl#TimeLimit=}, not 1-07:00:00 (31 h): cancelled $jid"; }

@@ -1,0 +1,1708 @@
+{
+ "schema": "s5e-a3-rounding-shifts/1",
+ "what": "the 153 per-quantity A3 rounding shifts, max over the two jitteredge perturbations of |U f - U f_upcast| over the data-bootstrap sigma (100 replicas), by s5e_analyze_candidate.py:147-151 at 2f958652",
+ "first_pinned_here": "these 103 inputs' sha256 are recorded here for the first time; the check is the identity of the computed median, max and argmax with assess_receipt.json's",
+ "producer": {
+  "path": "nd-unfolding/s5e_analyze_candidate.py",
+  "sha256": "cc00829eb7baf2e64cbeb9165fd89a3ef232c54fdb7d354c3688542d6e73514a",
+  "lines": [
+   147,
+   148,
+   150,
+   151
+  ],
+  "lines_text_sha256": "01aee82c24adb408142de2698b093fa7117dd0d21c313dd4b6fcc1e892d8d97c",
+  "summary_lines": [
+   153,
+   154
+  ]
+ },
+ "contract": {
+  "path": "/pscratch/sd/j/josephrb/s5e-a3-extract-20261109/deploy/docs/orchestration/state/s5c/contract.json",
+  "sha256": "d54fd7c9641901736e58430e666db1ee782a54d9c95bf4439541872567c39c93"
+ },
+ "receipt": {
+  "path": "/pscratch/sd/j/josephrb/s5e-a3-extract-20261109/assess_receipt.json",
+  "sha256": "84266e309d1aae0d2db1db315750b8164413a7d0125fcaa4a6c9b25834261a2c",
+  "A3": {
+   "median": 0.7829505732456221,
+   "max": 2.5837789197284393,
+   "argmax": "J145"
+  }
+ },
+ "computed": {
+  "median": 0.7829505732456221,
+  "max": 2.5837789197284393,
+  "argmax": "J145"
+ },
+ "match": {
+  "median": true,
+  "max": true,
+  "argmax": true
+ },
+ "gate": true,
+ "numpy": "1.26.4",
+ "python": "3.11.14",
+ "o_noatime": true,
+ "local_test": false,
+ "threads": {
+  "OMP_NUM_THREADS": "1",
+  "OPENBLAS_NUM_THREADS": "1",
+  "MKL_NUM_THREADS": "1"
+ },
+ "inputs": {
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b1.npz": {
+   "sha256": "1aeabea1490dabbecca1d364471e41e04b89455714c5b11c51556d2a6347c8ed",
+   "bytes": 93845,
+   "stat_before": {
+    "size": 93845,
+    "mtime_ns": 1790413621000000000,
+    "atime_ns": 1792866717000000000,
+    "ino": 882726744153392766
+   },
+   "stat_after": {
+    "size": 93845,
+    "mtime_ns": 1790413621000000000,
+    "atime_ns": 1792866717000000000,
+    "ino": 882726744153392766
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b10.npz": {
+   "sha256": "e79ea2c9e79b72f86547c72e068c643ab934cfcc6e1596a533ef8ce782e320ac",
+   "bytes": 93883,
+   "stat_before": {
+    "size": 93883,
+    "mtime_ns": 1790416121000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726744153392808
+   },
+   "stat_after": {
+    "size": 93883,
+    "mtime_ns": 1790416121000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726744153392808
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b100.npz": {
+   "sha256": "85a92288f67b11faf3c0731d1fdf7be270a2e20f8bccae559e0c9795e8e1a510",
+   "bytes": 93605,
+   "stat_before": {
+    "size": 93605,
+    "mtime_ns": 1790415164000000000,
+    "atime_ns": 1792865895000000000,
+    "ino": 882726755075359957
+   },
+   "stat_after": {
+    "size": 93605,
+    "mtime_ns": 1790415164000000000,
+    "atime_ns": 1792865895000000000,
+    "ino": 882726755075359957
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b11.npz": {
+   "sha256": "184ca3649a1d235cfc1782dd993d2e3da658ef272b884bc9a9c47f96b0b10721",
+   "bytes": 93787,
+   "stat_before": {
+    "size": 93787,
+    "mtime_ns": 1790413645000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726744153392771
+   },
+   "stat_after": {
+    "size": 93787,
+    "mtime_ns": 1790413645000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726744153392771
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b12.npz": {
+   "sha256": "b3537e8f1b44f26138e2cf4edd2cd6a0e63b097d3f2f9dc0a2c2a531d4477322",
+   "bytes": 93862,
+   "stat_before": {
+    "size": 93862,
+    "mtime_ns": 1790414270000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726744153392780
+   },
+   "stat_after": {
+    "size": 93862,
+    "mtime_ns": 1790414270000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726744153392780
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b13.npz": {
+   "sha256": "2c654c1019d0332e506fa2edb252baed73541f181a8d20a46fdef44f227c069e",
+   "bytes": 93906,
+   "stat_before": {
+    "size": 93906,
+    "mtime_ns": 1790414892000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726744153392799
+   },
+   "stat_after": {
+    "size": 93906,
+    "mtime_ns": 1790414892000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726744153392799
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b14.npz": {
+   "sha256": "bd3d418bed26df65e6d6ca8cbd9e98e95e36039d9bc26a1bc8bfe72a69b8db1b",
+   "bytes": 93830,
+   "stat_before": {
+    "size": 93830,
+    "mtime_ns": 1790415511000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726744153392803
+   },
+   "stat_after": {
+    "size": 93830,
+    "mtime_ns": 1790415511000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726744153392803
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b15.npz": {
+   "sha256": "b6fe1dac2f8673f92ad4fb4e8bfe4221cf463f408830281ed318808761c1d101",
+   "bytes": 93918,
+   "stat_before": {
+    "size": 93918,
+    "mtime_ns": 1790416130000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726744153392811
+   },
+   "stat_after": {
+    "size": 93918,
+    "mtime_ns": 1790416130000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726744153392811
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b16.npz": {
+   "sha256": "7f06b23609b3361791d2229b50794f004e55a49e270d2bcd6695f3026cf529c1",
+   "bytes": 93964,
+   "stat_before": {
+    "size": 93964,
+    "mtime_ns": 1790413658000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726744153392773
+   },
+   "stat_after": {
+    "size": 93964,
+    "mtime_ns": 1790413658000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726744153392773
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b17.npz": {
+   "sha256": "797144d8d9a0f94dff9f586f6c3a9077d8e1e446e53eb71618c0d5d8a2f3b679",
+   "bytes": 94041,
+   "stat_before": {
+    "size": 94041,
+    "mtime_ns": 1790414285000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726744153392781
+   },
+   "stat_after": {
+    "size": 94041,
+    "mtime_ns": 1790414285000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726744153392781
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b18.npz": {
+   "sha256": "bf937f67086b8c725b0c2f10365e5b347ac3547832e7c572ebeedcee00730494",
+   "bytes": 93818,
+   "stat_before": {
+    "size": 93818,
+    "mtime_ns": 1790414911000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726744153392800
+   },
+   "stat_after": {
+    "size": 93818,
+    "mtime_ns": 1790414911000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726744153392800
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b19.npz": {
+   "sha256": "196eba710b9cb149addb15d486a4a22d40533fa46b1ff924e6b1d5d2640e5e63",
+   "bytes": 93786,
+   "stat_before": {
+    "size": 93786,
+    "mtime_ns": 1790415534000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726744153392804
+   },
+   "stat_after": {
+    "size": 93786,
+    "mtime_ns": 1790415534000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726744153392804
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b2.npz": {
+   "sha256": "b28fa3864fbc5a492eceedad8736ca26af9d4d25c9b68a9c42fb63c23f6db71d",
+   "bytes": 93867,
+   "stat_before": {
+    "size": 93867,
+    "mtime_ns": 1790414250000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726744153392778
+   },
+   "stat_after": {
+    "size": 93867,
+    "mtime_ns": 1790414250000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726744153392778
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b20.npz": {
+   "sha256": "6152fdcf0c38cd36272e53ea11ed226ae5d17fcd4e5407175c45dd90a8a09eb3",
+   "bytes": 93950,
+   "stat_before": {
+    "size": 93950,
+    "mtime_ns": 1790416157000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726744153392814
+   },
+   "stat_after": {
+    "size": 93950,
+    "mtime_ns": 1790416157000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726744153392814
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b21.npz": {
+   "sha256": "4ab771c2e312ad81bb0f9a7947ca23dcd81f175c9ae7d2d0cbb6f3eb00b59e57",
+   "bytes": 93870,
+   "stat_before": {
+    "size": 93870,
+    "mtime_ns": 1790409057000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359499
+   },
+   "stat_after": {
+    "size": 93870,
+    "mtime_ns": 1790409057000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359499
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b22.npz": {
+   "sha256": "616c8190b0e18fa14c1bedf4422bc5df6ccb3065280fbcdda8bfaf4855786e19",
+   "bytes": 93918,
+   "stat_before": {
+    "size": 93918,
+    "mtime_ns": 1790409684000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359507
+   },
+   "stat_after": {
+    "size": 93918,
+    "mtime_ns": 1790409684000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359507
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b23.npz": {
+   "sha256": "c7cbf514c5c9a52a5ba6391b7531e4403d9a3736cd9521ffe31c1a5915b78d42",
+   "bytes": 93834,
+   "stat_before": {
+    "size": 93834,
+    "mtime_ns": 1790410311000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359515
+   },
+   "stat_after": {
+    "size": 93834,
+    "mtime_ns": 1790410311000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359515
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b24.npz": {
+   "sha256": "6a025fdaf2d0ebc291146c40d56011185e5867164b8a01e1838b10fd0226c39b",
+   "bytes": 93840,
+   "stat_before": {
+    "size": 93840,
+    "mtime_ns": 1790410940000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359523
+   },
+   "stat_after": {
+    "size": 93840,
+    "mtime_ns": 1790410940000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359523
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b25.npz": {
+   "sha256": "38e53d4ceb7eef0d701d94ccdd3d9cfd2247903e7545dd1d6a0267695ac6c381",
+   "bytes": 93788,
+   "stat_before": {
+    "size": 93788,
+    "mtime_ns": 1790411569000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359534
+   },
+   "stat_after": {
+    "size": 93788,
+    "mtime_ns": 1790411569000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359534
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b26.npz": {
+   "sha256": "a93bf50b28c105caf9a94d2afb908d098966663d9565f835a42eee66bfb77f4c",
+   "bytes": 93806,
+   "stat_before": {
+    "size": 93806,
+    "mtime_ns": 1790409059000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359500
+   },
+   "stat_after": {
+    "size": 93806,
+    "mtime_ns": 1790409059000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359500
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b27.npz": {
+   "sha256": "2fac323b60ffe02496c6741501dcddbcfc6aba0a0cbdfc5242cd41b1dc926cb9",
+   "bytes": 93924,
+   "stat_before": {
+    "size": 93924,
+    "mtime_ns": 1790409687000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359508
+   },
+   "stat_after": {
+    "size": 93924,
+    "mtime_ns": 1790409687000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359508
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b28.npz": {
+   "sha256": "a2fb4911bd2a9df538e2e19e84fc59d720e5a5c547e677805fe0e2b042d54253",
+   "bytes": 93846,
+   "stat_before": {
+    "size": 93846,
+    "mtime_ns": 1790410318000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359516
+   },
+   "stat_after": {
+    "size": 93846,
+    "mtime_ns": 1790410318000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359516
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b29.npz": {
+   "sha256": "739b94247a2f9b2e6403424245f118c6c6ab1848df995b45c5bc2ac1b39c727c",
+   "bytes": 93764,
+   "stat_before": {
+    "size": 93764,
+    "mtime_ns": 1790410942000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359524
+   },
+   "stat_after": {
+    "size": 93764,
+    "mtime_ns": 1790410942000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359524
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b3.npz": {
+   "sha256": "4ce987532b4ca7b38c25c81466be893d30af37945b6e77c14351759f95f02fd4",
+   "bytes": 93844,
+   "stat_before": {
+    "size": 93844,
+    "mtime_ns": 1790414875000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726744153392797
+   },
+   "stat_after": {
+    "size": 93844,
+    "mtime_ns": 1790414875000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726744153392797
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b30.npz": {
+   "sha256": "f88757a89ff858f9f4fc2285cef2e29f8377d4b05a071fb510db251784c65c80",
+   "bytes": 93876,
+   "stat_before": {
+    "size": 93876,
+    "mtime_ns": 1790411561000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359531
+   },
+   "stat_after": {
+    "size": 93876,
+    "mtime_ns": 1790411561000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359531
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b31.npz": {
+   "sha256": "63b53fb20e75c2876aa4ed118b71c2868ba02b23163dd3380fca5723afa5fb02",
+   "bytes": 93706,
+   "stat_before": {
+    "size": 93706,
+    "mtime_ns": 1790409065000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359502
+   },
+   "stat_after": {
+    "size": 93706,
+    "mtime_ns": 1790409065000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359502
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b32.npz": {
+   "sha256": "d31343b6db145f83c06e373aa4a0b32f60172415eea2edcc981fd2661c12ce2b",
+   "bytes": 93844,
+   "stat_before": {
+    "size": 93844,
+    "mtime_ns": 1790409692000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359509
+   },
+   "stat_after": {
+    "size": 93844,
+    "mtime_ns": 1790409692000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359509
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b33.npz": {
+   "sha256": "5b0cae623fe4e3f1a9a9ded22402d1805d266d7c00c2f2864a281af2061d0ea6",
+   "bytes": 93802,
+   "stat_before": {
+    "size": 93802,
+    "mtime_ns": 1790410319000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359518
+   },
+   "stat_after": {
+    "size": 93802,
+    "mtime_ns": 1790410319000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359518
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b34.npz": {
+   "sha256": "7213f63a76ca94a4cae72addc2dc1622c0bd2df628a1c90f8fe1cab97dc20b31",
+   "bytes": 93836,
+   "stat_before": {
+    "size": 93836,
+    "mtime_ns": 1790410948000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359526
+   },
+   "stat_after": {
+    "size": 93836,
+    "mtime_ns": 1790410948000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359526
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b35.npz": {
+   "sha256": "33ec52f974612618092013d8e3eae2a9215203600589d8b0268863ff837dbf3a",
+   "bytes": 93807,
+   "stat_before": {
+    "size": 93807,
+    "mtime_ns": 1790411578000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359540
+   },
+   "stat_after": {
+    "size": 93807,
+    "mtime_ns": 1790411578000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359540
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b36.npz": {
+   "sha256": "b24349495fa397939bd77ede5f3d21bb99cac01122595f3b2f965242865160a3",
+   "bytes": 93728,
+   "stat_before": {
+    "size": 93728,
+    "mtime_ns": 1790409065000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359501
+   },
+   "stat_after": {
+    "size": 93728,
+    "mtime_ns": 1790409065000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359501
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b37.npz": {
+   "sha256": "6f2010ea73b1cacbd59d50fcdfcf82cc7e5de2f11a4eda511e3d0e6e8bfd729d",
+   "bytes": 93867,
+   "stat_before": {
+    "size": 93867,
+    "mtime_ns": 1790409692000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359510
+   },
+   "stat_after": {
+    "size": 93867,
+    "mtime_ns": 1790409692000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359510
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b38.npz": {
+   "sha256": "0d1d35c4b93c05e50cc67ace36b135b976d3e69390ef3cba0bb84e06c56da67d",
+   "bytes": 93815,
+   "stat_before": {
+    "size": 93815,
+    "mtime_ns": 1790410319000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359517
+   },
+   "stat_after": {
+    "size": 93815,
+    "mtime_ns": 1790410319000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359517
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b39.npz": {
+   "sha256": "c0cf15cd8e9f88045a306873f0d053ad4ea97283bb0d05d1bed6ee96c5a8aea3",
+   "bytes": 93955,
+   "stat_before": {
+    "size": 93955,
+    "mtime_ns": 1790410946000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359525
+   },
+   "stat_after": {
+    "size": 93955,
+    "mtime_ns": 1790410946000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359525
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b4.npz": {
+   "sha256": "03ce77da2c6831ddb5641b85b85aa97edb87485ba732dd1132b0b33172eaea5c",
+   "bytes": 93966,
+   "stat_before": {
+    "size": 93966,
+    "mtime_ns": 1790415497000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726744153392801
+   },
+   "stat_after": {
+    "size": 93966,
+    "mtime_ns": 1790415497000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726744153392801
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b40.npz": {
+   "sha256": "79e06027a6137978e30a8b1aa843fa2940a71bc7a7b2f089d20ac98d4d404893",
+   "bytes": 93822,
+   "stat_before": {
+    "size": 93822,
+    "mtime_ns": 1790411570000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359537
+   },
+   "stat_after": {
+    "size": 93822,
+    "mtime_ns": 1790411570000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359537
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b41.npz": {
+   "sha256": "dca570397cd46acceb7c2e4aec27113d2dc2881f965fabb67a94f57755ce7f0d",
+   "bytes": 93792,
+   "stat_before": {
+    "size": 93792,
+    "mtime_ns": 1790409416000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359503
+   },
+   "stat_after": {
+    "size": 93792,
+    "mtime_ns": 1790409416000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359503
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b42.npz": {
+   "sha256": "7997f7459db4f8583b90c37e20f2dbac031176d7a48b76c19564e12fa5784f1f",
+   "bytes": 93799,
+   "stat_before": {
+    "size": 93799,
+    "mtime_ns": 1790410045000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359511
+   },
+   "stat_after": {
+    "size": 93799,
+    "mtime_ns": 1790410045000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359511
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b43.npz": {
+   "sha256": "6bfddb786fa33cd21a92cc8f6ad379c1536b0db5279d345eb2569a5faaab8f79",
+   "bytes": 93958,
+   "stat_before": {
+    "size": 93958,
+    "mtime_ns": 1790410675000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359519
+   },
+   "stat_after": {
+    "size": 93958,
+    "mtime_ns": 1790410675000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359519
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b44.npz": {
+   "sha256": "cc90821a6691d03eeffb7d2fdb345b8b7cb07fccbe19738109c8332a9d4797d3",
+   "bytes": 93887,
+   "stat_before": {
+    "size": 93887,
+    "mtime_ns": 1790411304000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359527
+   },
+   "stat_after": {
+    "size": 93887,
+    "mtime_ns": 1790411304000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359527
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b45.npz": {
+   "sha256": "06ace4b104f667ce1af4b7231529b9e5305c1ddf78555d066c37c1c1bf4f0dab",
+   "bytes": 93678,
+   "stat_before": {
+    "size": 93678,
+    "mtime_ns": 1790411936000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359719
+   },
+   "stat_after": {
+    "size": 93678,
+    "mtime_ns": 1790411936000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359719
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b46.npz": {
+   "sha256": "9f57e9aee0b53d5ff4f138f67f0e1142e4049379fd86436c31ad8556c65fcde5",
+   "bytes": 93780,
+   "stat_before": {
+    "size": 93780,
+    "mtime_ns": 1790409462000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359504
+   },
+   "stat_after": {
+    "size": 93780,
+    "mtime_ns": 1790409462000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359504
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b47.npz": {
+   "sha256": "0aebe7bba0b62cd70220b6a7cab96b560280cfb86e2ec40bd7c1e44efa9ba969",
+   "bytes": 93753,
+   "stat_before": {
+    "size": 93753,
+    "mtime_ns": 1790410090000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359512
+   },
+   "stat_after": {
+    "size": 93753,
+    "mtime_ns": 1790410090000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359512
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b48.npz": {
+   "sha256": "644aa310d4d0d319309edbdd3c862ca96907d3ad98ca383675c4913bae4e24f7",
+   "bytes": 93680,
+   "stat_before": {
+    "size": 93680,
+    "mtime_ns": 1790410716000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359520
+   },
+   "stat_after": {
+    "size": 93680,
+    "mtime_ns": 1790410716000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359520
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b49.npz": {
+   "sha256": "b6ad3f0d6a4fc92f6120fc4d216601677ff85630caeb5ad88a00725c3038f614",
+   "bytes": 93758,
+   "stat_before": {
+    "size": 93758,
+    "mtime_ns": 1790411346000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359528
+   },
+   "stat_after": {
+    "size": 93758,
+    "mtime_ns": 1790411346000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359528
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b5.npz": {
+   "sha256": "3d18d579bd450ea189a51badeb356ba9f8c7292969b4ce69e3b473b7dfda5742",
+   "bytes": 93648,
+   "stat_before": {
+    "size": 93648,
+    "mtime_ns": 1790416116000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726744153392805
+   },
+   "stat_after": {
+    "size": 93648,
+    "mtime_ns": 1790416116000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726744153392805
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b50.npz": {
+   "sha256": "807316c3760ba3804048947a0c605337c37ad9308fc5c682ac8a1ac6bed1042f",
+   "bytes": 93703,
+   "stat_before": {
+    "size": 93703,
+    "mtime_ns": 1790411976000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359769
+   },
+   "stat_after": {
+    "size": 93703,
+    "mtime_ns": 1790411976000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359769
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b51.npz": {
+   "sha256": "c5b430ea744e0b5149c4edecb0473201ca5406618e6a3ca6cec130e7a0d25551",
+   "bytes": 93804,
+   "stat_before": {
+    "size": 93804,
+    "mtime_ns": 1790409473000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359506
+   },
+   "stat_after": {
+    "size": 93804,
+    "mtime_ns": 1790409473000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359506
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b52.npz": {
+   "sha256": "28d5736e8d6dfe0f559cc475c25931e001f3715390c7b8f8aeba630653b96a18",
+   "bytes": 93700,
+   "stat_before": {
+    "size": 93700,
+    "mtime_ns": 1790410099000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359514
+   },
+   "stat_after": {
+    "size": 93700,
+    "mtime_ns": 1790410099000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359514
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b53.npz": {
+   "sha256": "21810734fcb9bb9de501c9c0e8b68c33dbbac6058ec1f8aecafa1d4581b98b26",
+   "bytes": 93842,
+   "stat_before": {
+    "size": 93842,
+    "mtime_ns": 1790410727000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359522
+   },
+   "stat_after": {
+    "size": 93842,
+    "mtime_ns": 1790410727000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359522
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b54.npz": {
+   "sha256": "d666f24ee6cf40a54d199281de633ef0cb21be0ac5b1252c390c9777b2c6c47b",
+   "bytes": 94055,
+   "stat_before": {
+    "size": 94055,
+    "mtime_ns": 1790411352000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359529
+   },
+   "stat_after": {
+    "size": 94055,
+    "mtime_ns": 1790411352000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359529
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b55.npz": {
+   "sha256": "b499bf6a41a3cf8278d3602401e96690624cca76c64d15963b308705c1844f3a",
+   "bytes": 93830,
+   "stat_before": {
+    "size": 93830,
+    "mtime_ns": 1790411980000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359771
+   },
+   "stat_after": {
+    "size": 93830,
+    "mtime_ns": 1790411980000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359771
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b56.npz": {
+   "sha256": "0a74ccde534f20ce801fbe6ed17a3b748befcc2a90d10e6963b50353e477ffd5",
+   "bytes": 93867,
+   "stat_before": {
+    "size": 93867,
+    "mtime_ns": 1790409468000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359505
+   },
+   "stat_after": {
+    "size": 93867,
+    "mtime_ns": 1790409468000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359505
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b57.npz": {
+   "sha256": "707c6ecd27d398d0ef7909ac6e76cc2274184566a174fd4de82eab7f0b379990",
+   "bytes": 93659,
+   "stat_before": {
+    "size": 93659,
+    "mtime_ns": 1790410097000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359513
+   },
+   "stat_after": {
+    "size": 93659,
+    "mtime_ns": 1790410097000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359513
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b58.npz": {
+   "sha256": "e1ccd5d69786ef25af74befced9f31f275e01cde6327c775b435076e7c66c2a2",
+   "bytes": 93810,
+   "stat_before": {
+    "size": 93810,
+    "mtime_ns": 1790410726000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359521
+   },
+   "stat_after": {
+    "size": 93810,
+    "mtime_ns": 1790410726000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359521
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b59.npz": {
+   "sha256": "ec09eb8870610d72e1c3c4c01f9bafb1a65d741d62ed7e78b47ba1b3f949bae3",
+   "bytes": 93870,
+   "stat_before": {
+    "size": 93870,
+    "mtime_ns": 1790411355000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359530
+   },
+   "stat_after": {
+    "size": 93870,
+    "mtime_ns": 1790411355000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359530
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b6.npz": {
+   "sha256": "3de481ba3f0d138ce8cba8f923f45d5aeb867d975410c16a3d95ba23e0b2413a",
+   "bytes": 93853,
+   "stat_before": {
+    "size": 93853,
+    "mtime_ns": 1790413634000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726744153392768
+   },
+   "stat_after": {
+    "size": 93853,
+    "mtime_ns": 1790413634000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726744153392768
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b60.npz": {
+   "sha256": "8f018907a4373fe2fa1bb83ed69b9d222843ad80bf59721f5e27ced8b9a2a269",
+   "bytes": 93848,
+   "stat_before": {
+    "size": 93848,
+    "mtime_ns": 1790411983000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359774
+   },
+   "stat_after": {
+    "size": 93848,
+    "mtime_ns": 1790411983000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359774
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b61.npz": {
+   "sha256": "fe1e7a93eea7d6103740b908c914910b3f4262a472776553a2498306b4403de5",
+   "bytes": 93779,
+   "stat_before": {
+    "size": 93779,
+    "mtime_ns": 1790412248000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359911
+   },
+   "stat_after": {
+    "size": 93779,
+    "mtime_ns": 1790412248000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359911
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b62.npz": {
+   "sha256": "d84caedb3b16f599d6999ababcb215038b9b6a21961edd029ea85639cd7d6dc9",
+   "bytes": 93929,
+   "stat_before": {
+    "size": 93929,
+    "mtime_ns": 1790412882000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359919
+   },
+   "stat_after": {
+    "size": 93929,
+    "mtime_ns": 1790412882000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359919
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b63.npz": {
+   "sha256": "97eebed1be39dbfc888140faac3ec3bb6270a441e741b2f34e00d0d94a5ae159",
+   "bytes": 93923,
+   "stat_before": {
+    "size": 93923,
+    "mtime_ns": 1790413508000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359927
+   },
+   "stat_after": {
+    "size": 93923,
+    "mtime_ns": 1790413508000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359927
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b64.npz": {
+   "sha256": "aba7ef6163ee5daba026ffdee59f47f5607f9b76a0820199e961bda4d63c291a",
+   "bytes": 93854,
+   "stat_before": {
+    "size": 93854,
+    "mtime_ns": 1790414137000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359935
+   },
+   "stat_after": {
+    "size": 93854,
+    "mtime_ns": 1790414137000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359935
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b65.npz": {
+   "sha256": "cb3e441c46ac92ed2d3b8d08c8b34b64d9d2e7bfe2a0b91f4a46299e5d0aded1",
+   "bytes": 94043,
+   "stat_before": {
+    "size": 94043,
+    "mtime_ns": 1790414768000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359945
+   },
+   "stat_after": {
+    "size": 94043,
+    "mtime_ns": 1790414768000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359945
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b66.npz": {
+   "sha256": "68ccd4aa05f0b300374102729f6cf895e20d65b52d77cf5ce4602549a60ed4a1",
+   "bytes": 93928,
+   "stat_before": {
+    "size": 93928,
+    "mtime_ns": 1790412247000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359910
+   },
+   "stat_after": {
+    "size": 93928,
+    "mtime_ns": 1790412247000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359910
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b67.npz": {
+   "sha256": "c14b1d8898992d33946203c8c8e59132fcdac7b5a0a0f4a4043d2d423eeeae5b",
+   "bytes": 93969,
+   "stat_before": {
+    "size": 93969,
+    "mtime_ns": 1790412876000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359918
+   },
+   "stat_after": {
+    "size": 93969,
+    "mtime_ns": 1790412876000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359918
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b68.npz": {
+   "sha256": "451e4f2a7b29bf6fbf6e750f1e69397c5ab8468cdd5d91a4b9914d86a0cfdd85",
+   "bytes": 93910,
+   "stat_before": {
+    "size": 93910,
+    "mtime_ns": 1790413504000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359926
+   },
+   "stat_after": {
+    "size": 93910,
+    "mtime_ns": 1790413504000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359926
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b69.npz": {
+   "sha256": "43f2da929c9883b857312ed4cd1d0e30c86b7518db539e252988e0604f950f99",
+   "bytes": 93695,
+   "stat_before": {
+    "size": 93695,
+    "mtime_ns": 1790414132000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359934
+   },
+   "stat_after": {
+    "size": 93695,
+    "mtime_ns": 1790414132000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359934
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b7.npz": {
+   "sha256": "bc0f0bef46a3bc899567670cefeb2aac4ab086471af841a489874d9a0af84e67",
+   "bytes": 93862,
+   "stat_before": {
+    "size": 93862,
+    "mtime_ns": 1790414262000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726744153392779
+   },
+   "stat_after": {
+    "size": 93862,
+    "mtime_ns": 1790414262000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726744153392779
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b70.npz": {
+   "sha256": "60dd32f36284c15932cd949b0f4ace4228952b6db5715918d04d9e60e41291bf",
+   "bytes": 93734,
+   "stat_before": {
+    "size": 93734,
+    "mtime_ns": 1790414757000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359942
+   },
+   "stat_after": {
+    "size": 93734,
+    "mtime_ns": 1790414757000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359942
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b71.npz": {
+   "sha256": "c7c758e8497b72501439481902c428e241b80ff0a21f4807743e0d86b5f3e791",
+   "bytes": 93899,
+   "stat_before": {
+    "size": 93899,
+    "mtime_ns": 1790412267000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359912
+   },
+   "stat_after": {
+    "size": 93899,
+    "mtime_ns": 1790412267000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359912
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b72.npz": {
+   "sha256": "80f7efcc6160d3241c01144b51dfe6fcfe430f1cd9858e0fefa3a5986805279d",
+   "bytes": 93783,
+   "stat_before": {
+    "size": 93783,
+    "mtime_ns": 1790412893000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359920
+   },
+   "stat_after": {
+    "size": 93783,
+    "mtime_ns": 1790412893000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359920
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b73.npz": {
+   "sha256": "26c877bab27d82105a29ec609d5247ad0bea6d61358a41e000933336cd190e54",
+   "bytes": 93853,
+   "stat_before": {
+    "size": 93853,
+    "mtime_ns": 1790413521000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359928
+   },
+   "stat_after": {
+    "size": 93853,
+    "mtime_ns": 1790413521000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359928
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b74.npz": {
+   "sha256": "de342deeb1c374f4a0fbddd7cb885d59dfb30395d527459d37bf94bc7f8ccc20",
+   "bytes": 93865,
+   "stat_before": {
+    "size": 93865,
+    "mtime_ns": 1790414146000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359936
+   },
+   "stat_after": {
+    "size": 93865,
+    "mtime_ns": 1790414146000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359936
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b75.npz": {
+   "sha256": "6c5aa1fe16cbe19fe366e195a9c4b881f2a63ef6062a8541a667b1b793d58c4a",
+   "bytes": 93956,
+   "stat_before": {
+    "size": 93956,
+    "mtime_ns": 1790414774000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359948
+   },
+   "stat_after": {
+    "size": 93956,
+    "mtime_ns": 1790414774000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359948
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b76.npz": {
+   "sha256": "705306d816744c17267fdaa8484e292d4c476709148bf1b8bc256f8e8448ccd3",
+   "bytes": 93984,
+   "stat_before": {
+    "size": 93984,
+    "mtime_ns": 1790412268000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359913
+   },
+   "stat_after": {
+    "size": 93984,
+    "mtime_ns": 1790412268000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359913
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b77.npz": {
+   "sha256": "f8bb0c0bbee415ff39013a05d30201d5ea4801efb15ca9337968fbbba8a61bd9",
+   "bytes": 93938,
+   "stat_before": {
+    "size": 93938,
+    "mtime_ns": 1790412896000000000,
+    "atime_ns": 1792866746000000000,
+    "ino": 882726755075359921
+   },
+   "stat_after": {
+    "size": 93938,
+    "mtime_ns": 1790412896000000000,
+    "atime_ns": 1792866746000000000,
+    "ino": 882726755075359921
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b78.npz": {
+   "sha256": "98195ce8d7901af62dc8d5e968dfed297aef0ed6be9d1688da620d782fcb28d2",
+   "bytes": 93894,
+   "stat_before": {
+    "size": 93894,
+    "mtime_ns": 1790413524000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359929
+   },
+   "stat_after": {
+    "size": 93894,
+    "mtime_ns": 1790413524000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359929
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b79.npz": {
+   "sha256": "470dd0e4d6c10ea602455051726d59f9949861b1ca0043c17bb76defce4eada2",
+   "bytes": 93807,
+   "stat_before": {
+    "size": 93807,
+    "mtime_ns": 1790414150000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359937
+   },
+   "stat_after": {
+    "size": 93807,
+    "mtime_ns": 1790414150000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359937
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b8.npz": {
+   "sha256": "9ad0a89e19d5917123a2ea3995b9d956d79fc374fa58bb3f4cf62454a288daaf",
+   "bytes": 93961,
+   "stat_before": {
+    "size": 93961,
+    "mtime_ns": 1790414886000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726744153392798
+   },
+   "stat_after": {
+    "size": 93961,
+    "mtime_ns": 1790414886000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726744153392798
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b80.npz": {
+   "sha256": "603aa7bd7d11f89a62930915c541c9f4e5c454bf24daa6bff75a26ca5dc7845b",
+   "bytes": 93740,
+   "stat_before": {
+    "size": 93740,
+    "mtime_ns": 1790414779000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359951
+   },
+   "stat_after": {
+    "size": 93740,
+    "mtime_ns": 1790414779000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359951
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b81.npz": {
+   "sha256": "ffc1cf21f2fb6b2b14ef6a0f4d1051e2995ef367107fd41e055c23e8f77ed735",
+   "bytes": 93766,
+   "stat_before": {
+    "size": 93766,
+    "mtime_ns": 1790412617000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359914
+   },
+   "stat_after": {
+    "size": 93766,
+    "mtime_ns": 1790412617000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359914
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b82.npz": {
+   "sha256": "32134544bc8d70686a6169e1c200101c024a95b7075f7035f9b3dc5142496f3e",
+   "bytes": 93978,
+   "stat_before": {
+    "size": 93978,
+    "mtime_ns": 1790413247000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359922
+   },
+   "stat_after": {
+    "size": 93978,
+    "mtime_ns": 1790413247000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359922
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b83.npz": {
+   "sha256": "fa3bb4be206d3326146379b1ad6bca7f664b487e6d9fbf9e4106c300aa86bdf3",
+   "bytes": 93736,
+   "stat_before": {
+    "size": 93736,
+    "mtime_ns": 1790413875000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359930
+   },
+   "stat_after": {
+    "size": 93736,
+    "mtime_ns": 1790413875000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359930
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b84.npz": {
+   "sha256": "d4ea0eb81539fb418252c277c9cce643c90445b1aa316285778865d27f36af78",
+   "bytes": 93869,
+   "stat_before": {
+    "size": 93869,
+    "mtime_ns": 1790414505000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359938
+   },
+   "stat_after": {
+    "size": 93869,
+    "mtime_ns": 1790414505000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359938
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b85.npz": {
+   "sha256": "fdc547892599f19bad57bf3ae8fc4f8cf2956f1a6c707471d450180978632391",
+   "bytes": 93696,
+   "stat_before": {
+    "size": 93696,
+    "mtime_ns": 1790415129000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359954
+   },
+   "stat_after": {
+    "size": 93696,
+    "mtime_ns": 1790415129000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359954
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b86.npz": {
+   "sha256": "5d00eafba1f4fc2a338e1cf5c94a57618100cfd3868c12ed44684c46700e900f",
+   "bytes": 93842,
+   "stat_before": {
+    "size": 93842,
+    "mtime_ns": 1790412653000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359915
+   },
+   "stat_after": {
+    "size": 93842,
+    "mtime_ns": 1790412653000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359915
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b87.npz": {
+   "sha256": "4e2a16a42153ba74ce315af61c55265f2e34a6161e2d37103cf3d5b861115b50",
+   "bytes": 93948,
+   "stat_before": {
+    "size": 93948,
+    "mtime_ns": 1790413281000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359923
+   },
+   "stat_after": {
+    "size": 93948,
+    "mtime_ns": 1790413281000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359923
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b88.npz": {
+   "sha256": "e99f925a5b51b58f330100ba02f53cbf9cc7f92035fc7c54cfa708be21f1aad0",
+   "bytes": 93812,
+   "stat_before": {
+    "size": 93812,
+    "mtime_ns": 1790413911000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359931
+   },
+   "stat_after": {
+    "size": 93812,
+    "mtime_ns": 1790413911000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359931
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b89.npz": {
+   "sha256": "662536bdd7f23422ff0ff028a6d540becace963438233f8375727c16893bf268",
+   "bytes": 93934,
+   "stat_before": {
+    "size": 93934,
+    "mtime_ns": 1790414541000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359939
+   },
+   "stat_after": {
+    "size": 93934,
+    "mtime_ns": 1790414541000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359939
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b9.npz": {
+   "sha256": "2fc9a5f6ffc1b804ea5d911600acf142d9c93f847136077240d6890bf3797778",
+   "bytes": 93931,
+   "stat_before": {
+    "size": 93931,
+    "mtime_ns": 1790415503000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726744153392802
+   },
+   "stat_after": {
+    "size": 93931,
+    "mtime_ns": 1790415503000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726744153392802
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b90.npz": {
+   "sha256": "68bd754d6372b87c027bb217b4822e3d145546eb05aa66477bb6796c6f608215",
+   "bytes": 93846,
+   "stat_before": {
+    "size": 93846,
+    "mtime_ns": 1790415168000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359960
+   },
+   "stat_after": {
+    "size": 93846,
+    "mtime_ns": 1790415168000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359960
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b91.npz": {
+   "sha256": "8c6e0347d153dd9d42bee3c326defe8f701d6339aa850a565cf31a475e5f4965",
+   "bytes": 93920,
+   "stat_before": {
+    "size": 93920,
+    "mtime_ns": 1790412665000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359917
+   },
+   "stat_after": {
+    "size": 93920,
+    "mtime_ns": 1790412665000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359917
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b92.npz": {
+   "sha256": "c5d79afdb95b66aee23d4bb4a3531ec35557ea510a454b53001f047b9582c604",
+   "bytes": 93744,
+   "stat_before": {
+    "size": 93744,
+    "mtime_ns": 1790413295000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359925
+   },
+   "stat_after": {
+    "size": 93744,
+    "mtime_ns": 1790413295000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359925
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b93.npz": {
+   "sha256": "c1359a9acada820ada2193017742a72f65d1aa56d7a41fe994cc3ad32e7261e7",
+   "bytes": 93809,
+   "stat_before": {
+    "size": 93809,
+    "mtime_ns": 1790413925000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359933
+   },
+   "stat_after": {
+    "size": 93809,
+    "mtime_ns": 1790413925000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359933
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b94.npz": {
+   "sha256": "c778e32f68296bf652bcdc24970739faa24e113da3699d33899a5000cddd4f9f",
+   "bytes": 93773,
+   "stat_before": {
+    "size": 93773,
+    "mtime_ns": 1790414553000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359941
+   },
+   "stat_after": {
+    "size": 93773,
+    "mtime_ns": 1790414553000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359941
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b95.npz": {
+   "sha256": "0fcf404a140acf7f16c73df3cf04d9ea5b1cb16661419a4aa29526cbd5414832",
+   "bytes": 93921,
+   "stat_before": {
+    "size": 93921,
+    "mtime_ns": 1790415178000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359963
+   },
+   "stat_after": {
+    "size": 93921,
+    "mtime_ns": 1790415178000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359963
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b96.npz": {
+   "sha256": "feec64ec58e495a8a21dd272c0ca428530016f68f521b9f525e12f0ab4f863b8",
+   "bytes": 93709,
+   "stat_before": {
+    "size": 93709,
+    "mtime_ns": 1790412660000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359916
+   },
+   "stat_after": {
+    "size": 93709,
+    "mtime_ns": 1790412660000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359916
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b97.npz": {
+   "sha256": "5018092e8beada4ea6b23910f894d83e3d5f3668502f6c6f73606f5cac3bf68f",
+   "bytes": 93984,
+   "stat_before": {
+    "size": 93984,
+    "mtime_ns": 1790413288000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359924
+   },
+   "stat_after": {
+    "size": 93984,
+    "mtime_ns": 1790413288000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359924
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b98.npz": {
+   "sha256": "f31083c52cbc1338175613b793ed2f254695bc3aa25d2b5d1e084750c999c893",
+   "bytes": 93728,
+   "stat_before": {
+    "size": 93728,
+    "mtime_ns": 1790413916000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359932
+   },
+   "stat_after": {
+    "size": 93728,
+    "mtime_ns": 1790413916000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359932
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/boot/boot_b99.npz": {
+   "sha256": "bd98204e2f7710e266b30c90e80a68a95355b7d5d208bab9144b981e5e431af6",
+   "bytes": 93792,
+   "stat_before": {
+    "size": 93792,
+    "mtime_ns": 1790414542000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359940
+   },
+   "stat_after": {
+    "size": 93792,
+    "mtime_ns": 1790414542000000000,
+    "atime_ns": 1792865905000000000,
+    "ino": 882726755075359940
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/data_R_upcast.npz": {
+   "sha256": "edef0104753c112a382e2424518dee5bd38d941b344d0f51f7491421259d9789",
+   "bytes": 970030,
+   "stat_before": {
+    "size": 970030,
+    "mtime_ns": 1790408779000000000,
+    "atime_ns": 1791473621000000000,
+    "ino": 882726755075359358
+   },
+   "stat_after": {
+    "size": 970030,
+    "mtime_ns": 1790408779000000000,
+    "atime_ns": 1791473621000000000,
+    "ino": 882726755075359358
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/data_R_jitteredge1.npz": {
+   "sha256": "cf215217432709694bd696184415f75647702703d492480c56c7bc1a69719b53",
+   "bytes": 970024,
+   "stat_before": {
+    "size": 970024,
+    "mtime_ns": 1790408789000000000,
+    "atime_ns": 1792865889000000000,
+    "ino": 882726755075359364
+   },
+   "stat_after": {
+    "size": 970024,
+    "mtime_ns": 1790408789000000000,
+    "atime_ns": 1792865889000000000,
+    "ino": 882726755075359364
+   }
+  },
+  "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/data/data_R_jitteredge2.npz": {
+   "sha256": "f9b6af81fe9c78a8cfe26af352c613fc7813afa13ba1addb7d197aa5dfa8b7c2",
+   "bytes": 969804,
+   "stat_before": {
+    "size": 969804,
+    "mtime_ns": 1790408786000000000,
+    "atime_ns": 1791473621000000000,
+    "ino": 882726755075359360
+   },
+   "stat_after": {
+    "size": 969804,
+    "mtime_ns": 1790408786000000000,
+    "atime_ns": 1791473621000000000,
+    "ino": 882726755075359360
+   }
+  }
+ },
+ "csv": {
+  "name": "a3_rounding_shifts.csv",
+  "sha256": "9ac8f7d8b74f090c28efc9023a21729ef5505090864ee1459fd998667e2c3987",
+  "rows": 153
+ }
+}

@@ -1,0 +1,8 @@
+2026-11-11T18:06:54Z
+fresh referee round on #977 at 9ab00ec944744c816858dee891822134bf1b5686; paper.blind 11188 words, supp.blind 16797; reader gpt-6.1-sol high (codex-school), saved session
+27024dccefa78e6ce853a2a434b6f5c1a1bfbdc926d334ed74369f8dcfeeff7f  prompt.txt
+033c327b4e90248bd3e19a4ba4a9d8f6b6ce48b163ccf5a767ce724f092ae635  input.txt
+50f471296396390789d6237542e84f9753d807c04fc7f2fb68d4e16d523d0e2b  paper.blind.txt
+583207d7bfb3537474ef19970ece17475b3d0295f9f4c2cd0756c0bbaeae6721  supp.blind.txt
+gpt rc=0
+session id: 01a1cbca-add4-7c72-ade0-e5f887c28bb7

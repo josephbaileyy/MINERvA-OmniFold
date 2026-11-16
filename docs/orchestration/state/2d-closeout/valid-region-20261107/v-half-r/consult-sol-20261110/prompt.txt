@@ -1,0 +1,25 @@
+You are an independent senior reviewer: an experimental neutrino physicist who knows unfolding, binning choices, response-matrix stability and pre-specified validation. Joseph Bailey, the project's author, asks for your view on six design choices for a follow-up study before he decides them. Give your own judgement; you are not bound by any recommendation in the files. The working directory is a read-only checkout of main at 88bf25892, with three files added from other branches (listed below). Read files; do not write, run jobs or use the network. Cite file:line for every fact you rely on.
+
+THE STUDY: V-HALF-R, a pre-specified rebinning and candidate-observable study for a FOLLOW-UP paper. The methods paper does not wait on it. Its advisor suggested "pick different observables so they all pass" the per-cell validity rule V-HALF (bias at most half the truth's departure from the prior). The 16 reporting cells gave 5 valid, 9 not valid and 2 unresolved.
+
+READ:
+- the draft declaration: docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/DECLARATION.md (from #1016);
+- an earlier independent consult on it: .../v-half-r/consult-astra/answer.txt;
+- the decision packet with six open choices and its recommendations: .../v-half-r/CHOICES-FOR-JOSEPH-20261110.md;
+- the referee remark that motivates choice 1: docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-methods-confirm-20261110/claude.txt:174-176;
+- the cell definition: nd-unfolding/pv-ladder/h2_definition.py.
+Joseph has already decided the "must-include" choice: C6 (pT, p_parallel) and C7 (E_avail, q3) are both required. Do not revisit it, except where it interacts with the six below.
+
+THE SIX CHOICES (the packet's recommendation in brackets):
+1. The binning criterion: [min(purity, diagonal fraction) >= 0.5, one threshold, also used to order joins] against the draft's purity >= 0.5 alone.
+2. The candidate list: [C0-C8 as drafted].
+4. The phase space: [the 16-cell reported domain].
+5. The disclosure: [the draft's text plus a sentence that the rule was set after the 16-cell result and the referee's remark were known].
+6. Whether the criterion is a final requirement for every reported bin: [yes].
+7. The cancellation listing level: [fine cells for C1-C8, R-cells for C0].
+
+WHAT TO ANSWER (about 900 words, plain language)
+1. For each of the six, agree or disagree, and why. Be especially concrete on choice 1: is min(purity, diagonal fraction) >= 0.5 a sound, standard-enough criterion; is 0.5 defensible a priori; what does it cost in bin count and in candidates that end before grading; does choosing it after the V-HALF classes and the referee's remark were known make it tuning, and is the disclosure enough?
+2. Does anything in the six interact badly with the decided must-include C6 and C7 (for example, a criterion so strict that C6 or C7 cannot produce a reportable binning, which would then be the reported outcome)?
+3. Anything the packet or the declaration misses that should be fixed before the declaration is amended and bound.
+Be direct.

@@ -1,0 +1,96 @@
+node login21 nproc=244 loadavg 22.03 19.88 18.98 start=2026-11-10T17:37:28Z
+connect script sha256 b2e39ada378f2fe53c01315cd7234d559c7355d6aed2d6e1cd8e0949f6935257
+squeue --me before:
+  61078463|ll5d_gate_G18|PENDING
+  61078506|ll5d_gate_AR23|PENDING
+== AR23: M=ac25b66533788ceb18b1d4e5add259c53b216669 D=80274e52c23365e5c6f84fad977576e54507bf186e1d04a8da8d596a75b0ac76
+toys present and non-empty: 300 of 300
+porcelain_before_lines=0 head=ac25b66533788ceb18b1d4e5add259c53b216669
+READOUT-SHA OK d1a3cff9768cb3913c9b95c9c6c1bb7402c5a14103f1dd22f5131c16aacda297
+origin/main=badf525b6fc501a99bf665695684cbb66a0353f2
+NULL-ON-MAIN OK 80274e52c23365e5c6f84fad977576e54507bf186e1d04a8da8d596a75b0ac76
+SCORE-ON-MAIN OK fe5263e904f65892ce26b75fb279441230713c38675c2a3615c59d561c4f5ce1
+CAPTURE-SHA OK dfee305eb95a64ab8033a1b44808b53cf778552f19b9f30402959003ed61ae7b
+{"mat_setup_scripts": 6, "mismatches": 0}
+python=/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python TMPDIR=/dev/shm/josephrb-cov2d-s-AR23/tmp
+3.11.14 numpy 1.26.4 ROOT 6.28/12
+MAT preflight file: /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_1A.root sha256 d54d2a2c6e0454b035c69d82aff3d3ac2c8cb5e589fea09f2b439804854b1107
+MAT preflight: MnvH1D PlotUtils::MnvH1D 14 bins
+COV2D-SCORE AR23 UNDER-COVERS
+T2A-CAPTURE AR23 OK rc=0: A0 EQUAL; E written
+	Command being timed: "python -B /dev/shm/josephrb-cov2d-s-AR23/tool/capture_e.py --cov2d-dir /dev/shm/josephrb-cov2d-s-AR23/deploy/2d-unfolding/cov2d --truth AR23 --null-digest 80274e52c23365e5c6f84fad977576e54507bf186e1d04a8da8d596a75b0ac76 --out /dev/shm/josephrb-cov2d-s-AR23/out --ref-score /dev/shm/josephrb-cov2d-s-AR23/ref/score_AR23.json --ref-score-sha256 fe5263e904f65892ce26b75fb279441230713c38675c2a3615c59d561c4f5ce1"
+	User time (seconds): 9.72
+	System time (seconds): 0.96
+	Percent of CPU this job got: 97%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:10.96
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 403512
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 128257
+	Voluntary context switches: 2459
+	Involuntary context switches: 87
+	Swaps: 0
+	File system inputs: 50744
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+CAPTURE AR23 rc=0 T2A-CAPTURE AR23 OK rc=0: A0 EQUAL; E written
+porcelain_after_lines=0 head=ac25b66533788ceb18b1d4e5add259c53b216669
+blobs unchanged
+COPY AR23 verified (3 files)
+removal: host=login21 2026-11-10T17:38:11Z 1.3G /dev/shm/josephrb-cov2d-s-AR23
+rm rc=0
+TUNE AR23 rc=0
+== G18: M=b1d56e4f08e62983784e34b2278f38a09a68eca0 D=6bd5259d61b062af7b3a8b09af78fc544e3eba48e35a062a28fdcd923b90f6e0
+toys present and non-empty: 300 of 300
+porcelain_before_lines=0 head=b1d56e4f08e62983784e34b2278f38a09a68eca0
+READOUT-SHA OK 0c3ad137be128691cce7bbe3ec72493b76791e761e6cd897f75aaf0a4fc7444f
+origin/main=badf525b6fc501a99bf665695684cbb66a0353f2
+NULL-ON-MAIN OK 6bd5259d61b062af7b3a8b09af78fc544e3eba48e35a062a28fdcd923b90f6e0
+SCORE-ON-MAIN OK 849766942b3ecd9e6e72fd5db9d1a59815796b3f917875f8d0122b0c639088ec
+CAPTURE-SHA OK dfee305eb95a64ab8033a1b44808b53cf778552f19b9f30402959003ed61ae7b
+{"mat_setup_scripts": 6, "mismatches": 0}
+python=/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python TMPDIR=/dev/shm/josephrb-cov2d-s-G18/tmp
+3.11.14 numpy 1.26.4 ROOT 6.28/12
+MAT preflight file: /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_1A.root sha256 d54d2a2c6e0454b035c69d82aff3d3ac2c8cb5e589fea09f2b439804854b1107
+MAT preflight: MnvH1D PlotUtils::MnvH1D 14 bins
+COV2D-SCORE G18 UNDER-COVERS
+T2A-CAPTURE G18 OK rc=0: A0 EQUAL; E written
+	Command being timed: "python -B /dev/shm/josephrb-cov2d-s-G18/tool/capture_e.py --cov2d-dir /dev/shm/josephrb-cov2d-s-G18/deploy/2d-unfolding/cov2d --truth G18 --null-digest 6bd5259d61b062af7b3a8b09af78fc544e3eba48e35a062a28fdcd923b90f6e0 --out /dev/shm/josephrb-cov2d-s-G18/out --ref-score /dev/shm/josephrb-cov2d-s-G18/ref/score_G18.json --ref-score-sha256 849766942b3ecd9e6e72fd5db9d1a59815796b3f917875f8d0122b0c639088ec"
+	User time (seconds): 10.19
+	System time (seconds): 1.12
+	Percent of CPU this job got: 98%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:11.53
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 400176
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 128057
+	Voluntary context switches: 2381
+	Involuntary context switches: 111
+	Swaps: 0
+	File system inputs: 49362
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+CAPTURE G18 rc=0 T2A-CAPTURE G18 OK rc=0: A0 EQUAL; E written
+porcelain_after_lines=0 head=b1d56e4f08e62983784e34b2278f38a09a68eca0
+blobs unchanged
+COPY G18 verified (3 files)
+removal: host=login21 2026-11-10T17:38:48Z 1.3G /dev/shm/josephrb-cov2d-s-G18
+rm rc=0
+TUNE G18 rc=0
+SUMMARY AR23 rc=0 G18 rc=0

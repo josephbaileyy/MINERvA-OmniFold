@@ -1,0 +1,39 @@
+{
+ "exception_as_listed": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt",
+ "original_resolved": "/pscratch/sd/j/josephrb/minerva/minerva_large_files/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt",
+ "problems": [],
+ "reads": "one stat-bracketed staging, with two O_NOATIME reads (custody copy(): noatime_digest, then stage_copy)",
+ "schema": "rpd-flux1-protected-read/1",
+ "sha256_measured_by_prepare": "e38ad7d28354d071577113a18c8c569f88b6239f7fb193d20285273f172fc0c2",
+ "staged_copies_sha256": {
+  "/pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run/mat-data/MPARAMFILES/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt": "e38ad7d28354d071577113a18c8c569f88b6239f7fb193d20285273f172fc0c2",
+  "/pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run/original-inputs/9129a33666de8e29-sorted_NuEConstraint_FHC_RHC_IMD.txt": "e38ad7d28354d071577113a18c8c569f88b6239f7fb193d20285273f172fc0c2"
+ },
+ "staged_originals": 54,
+ "staged_originals_overlapping_protected": [
+  "/pscratch/sd/j/josephrb/minerva/minerva_large_files/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt"
+ ],
+ "staging_utc": {
+  "ended": "2026-11-13T01:58:22.010592+00:00",
+  "started": "2026-11-13T01:58:22.004832+00:00"
+ },
+ "staging_utc_ns": {
+  "ended": 1794535102010592592,
+  "started": 1794535102004832324
+ },
+ "stat_after": {
+  "atime_ns": 1793891894000000000,
+  "bytes": 25403,
+  "device": 3592384858,
+  "inode": 882722362129162055,
+  "mtime_ns": 1630424966000000000
+ },
+ "stat_before": {
+  "atime_ns": 1793891894000000000,
+  "bytes": 25403,
+  "device": 3592384858,
+  "inode": 882722362129162055,
+  "mtime_ns": 1630424966000000000
+ },
+ "status": "PASS"
+}

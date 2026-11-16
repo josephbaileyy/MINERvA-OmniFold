@@ -1,0 +1,159 @@
+You are an independent expert in neutrino cross-section unfolding, covariance construction and coverage testing. You are advising the authors of a JINST methods paper (a diagnostic study of OmniFold on MINERvA open data) on one decision. Below are (1) the paper's text on its two-dimensional covariance and its coverage test, (2) the referee's request, and (3) three options with their compute costs. Compute is cheap relative to the authors' allocation (about 1500 node-hours available); the costs matter mostly as time and complexity.
+
+Answer:
+A. Which option you recommend, and why, in one or two paragraphs. Include whether the referee's request is answered adequately by each option.
+B. Given the paper's own decomposition of the joint chi-square (mean-error part versus spread part), how likely is it that correcting the approximation changes the qualitative coverage verdict (severe under-coverage at both tunes)? Reason from the numbers given; do not invent others.
+C. If the authors choose the cheaper option (a), state a concrete, pre-specified criterion on its result that would make the regrade (a+) necessary.
+D. Anything the authors should state in the paper whichever option they choose.
+Be concrete. Where the text is silent, say so.
+
+===== (1) THE PAPER'S TEXT =====
+[Section 3.2, the two-dimensional covariance]
+The two-dimensional covariance is the sum of four
+blocks, each from LightGBM unfoldings with the central
+value’s estimator: systematic universes (185 universes in
+43 bands, plus the normalization), statistical (300 bootstrap replicas), run period (three period groups), and
+training seed (five seed settings, so its size is poorly determined). The resulting relative uncertainty has a median
+of 6.41 % per bin and is 4.76 % on the integrated cross section, compared with 6.85 % and 4.61 % for the publication.
+The covariance omits the approximation in the systematicuniverse unfoldings for events that fail reconstruction, the
+learner dependence of section 4.1, and the dependence on
+the regularization (supplementary material, section S6).
+
+The dependence on the prior’s generator shape is reported
+separately as a covariance Cmodel , constructed from the
+change in the result when the prior is reweighted to each
+generator’s (pT , p∥ ) shape. Its median is 3.71 % per bin.
+
+[Section 7.1, limitation 7]
+7. The systematic-universe unfoldings of the twodimensional covariance approximate the weighting
+of events that fail reconstruction. The approximation is not corrected. Tested in two universes, its
+effect is excluded only above twice the spread of
+an earlier training-seed block (section 3.2; ref. [14],
+
+[Section 6.2(a), the two-dimensional coverage test, with Table 5]
+
+6.2.
+
+Calibration of the uncertainties
+
+Each coverage test in this section asks whether a covariance, rebuilt at a held-out truth by the reported procedure,
+covers the errors of pseudo-experiments drawn about that
+truth. The target is the nominal content of each interval:
+per cell, the fraction of errors ec with |ec | ≤ σc , which is
+0.6827 for a Gaussian error, and jointly the fraction with
+χ2 below its null distribution’s quantile at that content.
+Because the drawn uncertainties are two-point or discrete,
+each test replaces the Gaussian content with one matched
+to its draws, and flags under-coverage when a count of
+the pseudo-experiments falls to a binomial threshold of
+that content; over-coverage is reported and is not a failure (supplementary material, section S9). Each such test
+grades the procedure’s covariance as rebuilt at its truths;
+none grades the reported intervals at the data. These are
+conditional tests of covariance adequacy: the systematic
+parameters are drawn from their bands’ discrete or Gaussian laws, the covariance is rebuilt once at each tune and
+then held fixed, the lateral uncertainties are represented
+by a surrogate, the nominal Gaussian content is replaced
+by a content matched to the draws, some terms are included in the covariance without being drawn and others
+are left out, and the truths are gated, normalized shape
+deformations from two tunes (supplementary material,
+section S9).
+a. The two-dimensional test. The procedure’s twodimensional covariance was tested for coverage with 300
+pseudo-experiments at each of the two held-out GENIE v3
+tunes, the uncertainties propagated linearly as in the covariance’s construction, and the covariance rebuilt by
+the same procedure at each tune, with Cmodel included;
+the run-period block was not drawn. G18_10a_02_11b
+shares its 2p2h model family with one of Cmodel ’s generators. The test’s false-flag rate under its null distribution
+is at most 0.0348 and 0.0363 per tune.
+It under-covers at both tunes. At AR23_20i_00_000,
+none of the 300 pseudo-experiments lies in the joint region, a range of χ2 fixed in advance from the test’s null
+distribution, where that null expects 207.6. The test
+flags under-coverage when 190 or fewer lie in this region. The mean χ2 /ndf is 16.55 ± 0.17 for 204 degrees of
+freedom. At G18_10a_02_11b, none lies in the region,
+against an expected 209.2 and a threshold of 192, and
+χ2 /ndf = 24.17 ± 0.37 for 205 degrees of freedom. The
+degrees of freedom are the rank of each tune’s rebuilt
+covariance above 10−12 of its largest eigenvalue, which
+drops one direction at AR23_20i_00_000.
+Per cell, table 5 gives the counts against their thresholds;
+the nominal Gaussian content of 300 is 205. The percell tests raise three flags, each attributed to bias: one
+
+TABLE 5. The two-dimensional coverage test at the two
+tunes, each with 300 pseudo-experiments: the reference contents matched to the draws, the thresholds and the counts.
+The covariance is rebuilt once per tune and held fixed; the
+run-period block is not drawn. A count at or below its threshold flags under-coverage; the per-cell entries give the median
+expected and observed counts and the ranges of counts and
+thresholds over the cells.
+AR23_20i_00_000 G18_10a_02_11b
+ndf
+expected, joint
+threshold, joint
+count, joint
+mean χ2 /ndf
+expected, per cell
+median, per cell
+counts, per cell
+thresholds, per cell
+over-covering cells
+false-flag rate, max
+
+204
+207.6
+190
+0
+16.55 ± 0.17
+203.7
+229
+148–300
+145–176
+90
+0.0348
+
+205
+209.2
+192
+0
+24.17 ± 0.37
+203.9
+219
+148–300
+144–178
+67
+0.0363
+
+cell at both tunes and one more at AR23_20i_00_000
+(section S6). By the same rule applied the other way,
+some cells over-cover (table 5).
+A descriptive decomposition, made after this result,
+shows where the χ2 sits. Its mean splits into a part
+from the pseudo-experiments’ mean error ē, ē⊤ CT+ ē, and
+a part from their spread S, tr(CT+ S). The mean-error
+part is 82 % and 87 % of it at AR23_20i_00_000 and
+G18_10a_02_11b, 13.6 and 21.0 per degree of freedom;
+the spread part is 2.94 and 3.21 per degree of freedom,
+where 1 would mean that CT describes the spread. In CT ’s
+eigenbasis, the 32 directions with the largest eigenvalues
+carry under 1 % of the mean-error part, and the directions
+beyond the 73 largest carry 77 % and 87 %. Truncated
+to its 73 or 139 largest-eigenvalue directions, the joint
+test still finds none of the 300 pseudo-experiments in
+its region at either tune. The under-coverage is thus
+dominated by mean bias concentrated in the poorly determined directions of CT , with the spread also exceeding
+CT ’s prediction, and truncation to the better-determined
+directions does not remove it. The decomposition locates
+the χ2 and leaves its cause open (supplementary material,
+section S9).
+
+===== (2) THE REFEREE'S REQUEST (major issue 3) =====
+3. **The two-dimensional systematic-universe approximation must be corrected or bounded against the relevant uncertainty.**
+
+   The covariance omits an approximation affecting events that fail reconstruction. Its effect was examined in only two universes and bounded relative to an earlier training-seed spread. That is not a physically persuasive bound on its contribution to the final covariance, particularly when the coverage test finds spread contributions of approximately three per degree of freedom and still fails after substantial eigenmode truncation.
+
+   The authors should rebuild the affected universe propagation consistently, or demonstrate a sufficiently tight bound across representative and potentially adverse bands. The relevant comparison is with the final covariance and the directions driving under-coverage, rather than with a superseded seed variation.
+
+   This need not make the coverage failure disappear. It would establish that the published diagnostic concerns the intended covariance procedure rather than an avoidable propagation approximation. Agreement between eigensolvers, already documented, addresses numerical inversion accuracy but does not resolve this issue.
+
+===== (3) THE OPTIONS =====
+The approximation: in the 185 systematic-universe unfoldings of the 2D covariance, events that fail reconstruction are not given their universe's own truth weight.
+(a) Consistent rebuild: rerun the 185 weight universes with each missed event at its universe truth weight, rebuild the systematic block, and compare it with the reported 2D covariance along the failing eigen-directions of the coverage test. About 3.3 node-hours expected (cap 8.75), 1-2 h wall. It does not regrade coverage.
+(a+) Option (a), plus rebuilding the coverage test's covariance C_T at both tunes and regrading the 2D coverage test (the 300 pseudo-experiments per tune). About 6.7 node-hours more expected (cap 17.5 more); if the 300 errors per tune are not stored, a rerun of the test.
+(b) Bound only: the 25 universes carrying the most weight in the failing directions, two seeds, both treatments; compare. About 1 node-hour expected (cap 2.5).

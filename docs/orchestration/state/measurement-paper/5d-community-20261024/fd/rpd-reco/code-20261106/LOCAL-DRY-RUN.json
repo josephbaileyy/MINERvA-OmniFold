@@ -1,0 +1,1125 @@
+{
+  "scope": "local synthetic real-format NPZ and TH1 ROOT fixtures only",
+  "disposable_fixture_artifact_paths": [
+    "/tmp/rpd-reco-disposable-fixture/lat_1A.npz",
+    "/tmp/rpd-reco-disposable-fixture/lat_1A_bkg.npz",
+    "/tmp/rpd-reco-disposable-fixture/lat_1B.npz",
+    "/tmp/rpd-reco-disposable-fixture/lat_1B_bkg.npz",
+    "/tmp/rpd-reco-disposable-fixture/lat_1C.npz",
+    "/tmp/rpd-reco-disposable-fixture/lat_1C_bkg.npz",
+    "/tmp/rpd-reco-disposable-fixture/lat_1D.npz",
+    "/tmp/rpd-reco-disposable-fixture/lat_1D_bkg.npz",
+    "/tmp/rpd-reco-disposable-fixture/lat_1E.npz",
+    "/tmp/rpd-reco-disposable-fixture/lat_1E_bkg.npz",
+    "/tmp/rpd-reco-disposable-fixture/lat_1F.npz",
+    "/tmp/rpd-reco-disposable-fixture/lat_1F_bkg.npz",
+    "/tmp/rpd-reco-disposable-fixture/lat_1G.npz",
+    "/tmp/rpd-reco-disposable-fixture/lat_1G_bkg.npz",
+    "/tmp/rpd-reco-disposable-fixture/lat_1L.npz",
+    "/tmp/rpd-reco-disposable-fixture/lat_1L_bkg.npz",
+    "/tmp/rpd-reco-disposable-fixture/lat_1M.npz",
+    "/tmp/rpd-reco-disposable-fixture/lat_1M_bkg.npz",
+    "/tmp/rpd-reco-disposable-fixture/lat_1N.npz",
+    "/tmp/rpd-reco-disposable-fixture/lat_1N_bkg.npz",
+    "/tmp/rpd-reco-disposable-fixture/lat_1O.npz",
+    "/tmp/rpd-reco-disposable-fixture/lat_1O_bkg.npz",
+    "/tmp/rpd-reco-disposable-fixture/lat_1P.npz",
+    "/tmp/rpd-reco-disposable-fixture/lat_1P_bkg.npz",
+    "/tmp/rpd-reco-disposable-fixture/nn_1A.npz",
+    "/tmp/rpd-reco-disposable-fixture/nn_1B.npz",
+    "/tmp/rpd-reco-disposable-fixture/nn_1C.npz",
+    "/tmp/rpd-reco-disposable-fixture/nn_1D.npz",
+    "/tmp/rpd-reco-disposable-fixture/nn_1E.npz",
+    "/tmp/rpd-reco-disposable-fixture/nn_1F.npz",
+    "/tmp/rpd-reco-disposable-fixture/nn_1G.npz",
+    "/tmp/rpd-reco-disposable-fixture/nn_1L.npz",
+    "/tmp/rpd-reco-disposable-fixture/nn_1M.npz",
+    "/tmp/rpd-reco-disposable-fixture/nn_1N.npz",
+    "/tmp/rpd-reco-disposable-fixture/nn_1O.npz",
+    "/tmp/rpd-reco-disposable-fixture/nn_1P.npz"
+  ],
+  "fixture_path_note": "Absolute /tmp paths above are a normalized namespace for disposable fixtures, not surviving files or binary deliverables. Recreate with this driver.",
+  "path_normalization": "$FIXTURE/$REPO/$HOME replace private paths; fixture pin and configuration digests refer to original local bytes",
+  "runs": [
+    {
+      "seed": 17,
+      "known_sibling_open_count": 0,
+      "native_noatime_available": false,
+      "test_only_flag": "O_NONBLOCK",
+      "records": [
+        {
+          "argv": [
+            "pins",
+            "--config",
+            "$FIXTURE/config.json",
+            "--config-sha256",
+            "20ce298542409726d89048b31224553b373adb979c3f21044affa78d309e8a65",
+            "--run",
+            "$FIXTURE/run",
+            "--dry-run"
+          ],
+          "code_sha256": "353085b37a9076ee9adaa23cc8cb40b8db80904c110b964be6fc14c78fb4dd3c",
+          "config_sha256": "20ce298542409726d89048b31224553b373adb979c3f21044affa78d309e8a65",
+          "does_not_license": [
+            "which period or flux is correct",
+            "correction or exclusion",
+            "change to estimator or covariance",
+            "validation or coverage",
+            "removing the unknown-cause clause",
+            "paper use without Joseph's decision"
+          ],
+          "dry_run": true,
+          "input_sha256": {
+            "/private$FIXTURE/INPUTS.sha256": "784990e3bbd9f339c99cd26066951a586745398562eb293f74d6587e6641406d",
+            "/private$FIXTURE/config.json": "20ce298542409726d89048b31224553b373adb979c3f21044affa78d309e8a65",
+            "/private$FIXTURE/dumps/lat_1A.npz": "5e24a10dd44a59176e84915966bd634f97847d53e85a21dc7456f9358856d213",
+            "/private$FIXTURE/dumps/lat_1A_bkg.npz": "849afc40f3afaf3eb76e122427d7bb01162cce340e13e883e259fa6d966e7752",
+            "/private$FIXTURE/dumps/lat_1B.npz": "48ff44ae2db83fd47f7e5156b7cbbb72869df3760737d9483a034cc00adaaba7",
+            "/private$FIXTURE/dumps/lat_1B_bkg.npz": "51c86860787d62a2d12a5c0f5f26902e9501274ade8420fa6a9389d6732b3e32",
+            "/private$FIXTURE/dumps/lat_1C.npz": "1742c9e778855ac0a04cf8527a1d1408eb50281e6914903534e7a211d9d2db54",
+            "/private$FIXTURE/dumps/lat_1C_bkg.npz": "25cadc06c278415a3b5687cd735d10e03bfb27ede492ac73010554345d831e3d",
+            "/private$FIXTURE/dumps/lat_1D.npz": "256152159fd7989d866e4a33f7bf66ef2b8b833f0bfb624d8c98aa3e91afb3f3",
+            "/private$FIXTURE/dumps/lat_1D_bkg.npz": "8cad32893062ad22417ef6689c8fe27adf7df9684e71aae363e7172c37d78448",
+            "/private$FIXTURE/dumps/lat_1E.npz": "6dc0cee17740e5a650194fc388e46637f986db558266257175459e9e959233c1",
+            "/private$FIXTURE/dumps/lat_1E_bkg.npz": "9e4f564ef838f84b29a2d53aab73c8516ec99e9e9cf7d7b5128a47ffaccb948e",
+            "/private$FIXTURE/dumps/lat_1F.npz": "75b9247e48040fcad80d171eb3e588b60db1ffd036ee71d485c06aaca5c37253",
+            "/private$FIXTURE/dumps/lat_1F_bkg.npz": "d9bb0d64fa175e50df31939d14bf677db6864cd9971b637e7a5c9b3ec2b72b76",
+            "/private$FIXTURE/dumps/lat_1G.npz": "85bb2c5e979639f6359630fdb12baf57df8695fcc97c47cec0b3b2333f92b5c0",
+            "/private$FIXTURE/dumps/lat_1G_bkg.npz": "6138be11cff21f31be729878364122c35463298eaaf43fd3f23764b075774e25",
+            "/private$FIXTURE/dumps/lat_1L.npz": "f60e55e871e299961c17cc269c91551538dc5c5ed349656139f4d68a86baadcc",
+            "/private$FIXTURE/dumps/lat_1L_bkg.npz": "38a325816d022252e02541193815d8ae39a442300152f597b5e71fddd3cbfd21",
+            "/private$FIXTURE/dumps/lat_1M.npz": "54b16c57c665b07d5f424bae6e44fbdc2cae9b822778fa1dfcf8d26f4509b9e0",
+            "/private$FIXTURE/dumps/lat_1M_bkg.npz": "5ec8eb533ef6d0ac255956e525cb43975a78383e75457ac4598edb3c0e32a7f3",
+            "/private$FIXTURE/dumps/lat_1N.npz": "7ffa2ce84a78dbe3205100754fafe7d2943382a9a12a5f50b8d6dcd2f2cc4a41",
+            "/private$FIXTURE/dumps/lat_1N_bkg.npz": "111f76f182052462b11e2c68f993df7380212d879202aa1cf772ba6ff06e5fd7",
+            "/private$FIXTURE/dumps/lat_1O.npz": "f29335b25cc694c90dd355bb470c226cb1684fe3cddf9dbaebf0f26efd879b18",
+            "/private$FIXTURE/dumps/lat_1O_bkg.npz": "0ae531d1e70748066cf16ed90cf5cc7972e13cfe96810836470b4052b45454db",
+            "/private$FIXTURE/dumps/lat_1P.npz": "989964984c9e6334d515338a6908742f8ab0f745a75ea32ab58fa0b172242678",
+            "/private$FIXTURE/dumps/lat_1P_bkg.npz": "353d1b120636d295c1a4ce9d4571a8fc963ff63d3872447444ab836a287f50bf"
+          },
+          "keys_read": [],
+          "predecessor_sha256": null,
+          "result": {
+            "files": {
+              "lat_1A.npz": {
+                "sha256": "5e24a10dd44a59176e84915966bd634f97847d53e85a21dc7456f9358856d213",
+                "staged": "/private$FIXTURE/run/staged/baea625378830abe-lat_1A.npz"
+              },
+              "lat_1A_bkg.npz": {
+                "sha256": "849afc40f3afaf3eb76e122427d7bb01162cce340e13e883e259fa6d966e7752",
+                "staged": "/private$FIXTURE/run/staged/a26fc1259e14a800-lat_1A_bkg.npz"
+              },
+              "lat_1B.npz": {
+                "sha256": "48ff44ae2db83fd47f7e5156b7cbbb72869df3760737d9483a034cc00adaaba7",
+                "staged": "/private$FIXTURE/run/staged/8182f66e77717b86-lat_1B.npz"
+              },
+              "lat_1B_bkg.npz": {
+                "sha256": "51c86860787d62a2d12a5c0f5f26902e9501274ade8420fa6a9389d6732b3e32",
+                "staged": "/private$FIXTURE/run/staged/e3a98ec671607fc2-lat_1B_bkg.npz"
+              },
+              "lat_1C.npz": {
+                "sha256": "1742c9e778855ac0a04cf8527a1d1408eb50281e6914903534e7a211d9d2db54",
+                "staged": "/private$FIXTURE/run/staged/6d21e99982b7424c-lat_1C.npz"
+              },
+              "lat_1C_bkg.npz": {
+                "sha256": "25cadc06c278415a3b5687cd735d10e03bfb27ede492ac73010554345d831e3d",
+                "staged": "/private$FIXTURE/run/staged/bf395d4ac3f733de-lat_1C_bkg.npz"
+              },
+              "lat_1D.npz": {
+                "sha256": "256152159fd7989d866e4a33f7bf66ef2b8b833f0bfb624d8c98aa3e91afb3f3",
+                "staged": "/private$FIXTURE/run/staged/16d83dac7cfec9ed-lat_1D.npz"
+              },
+              "lat_1D_bkg.npz": {
+                "sha256": "8cad32893062ad22417ef6689c8fe27adf7df9684e71aae363e7172c37d78448",
+                "staged": "/private$FIXTURE/run/staged/12207bcd4f9a5cad-lat_1D_bkg.npz"
+              },
+              "lat_1E.npz": {
+                "sha256": "6dc0cee17740e5a650194fc388e46637f986db558266257175459e9e959233c1",
+                "staged": "/private$FIXTURE/run/staged/818efcc7c993880c-lat_1E.npz"
+              },
+              "lat_1E_bkg.npz": {
+                "sha256": "9e4f564ef838f84b29a2d53aab73c8516ec99e9e9cf7d7b5128a47ffaccb948e",
+                "staged": "/private$FIXTURE/run/staged/2ff3cdf143c6e9fa-lat_1E_bkg.npz"
+              },
+              "lat_1F.npz": {
+                "sha256": "75b9247e48040fcad80d171eb3e588b60db1ffd036ee71d485c06aaca5c37253",
+                "staged": "/private$FIXTURE/run/staged/91004c34f6c5ed8a-lat_1F.npz"
+              },
+              "lat_1F_bkg.npz": {
+                "sha256": "d9bb0d64fa175e50df31939d14bf677db6864cd9971b637e7a5c9b3ec2b72b76",
+                "staged": "/private$FIXTURE/run/staged/5a3a74da33f9ea2a-lat_1F_bkg.npz"
+              },
+              "lat_1G.npz": {
+                "sha256": "85bb2c5e979639f6359630fdb12baf57df8695fcc97c47cec0b3b2333f92b5c0",
+                "staged": "/private$FIXTURE/run/staged/6c1323b8dfcbcf06-lat_1G.npz"
+              },
+              "lat_1G_bkg.npz": {
+                "sha256": "6138be11cff21f31be729878364122c35463298eaaf43fd3f23764b075774e25",
+                "staged": "/private$FIXTURE/run/staged/f40c79153991f180-lat_1G_bkg.npz"
+              },
+              "lat_1L.npz": {
+                "sha256": "f60e55e871e299961c17cc269c91551538dc5c5ed349656139f4d68a86baadcc",
+                "staged": "/private$FIXTURE/run/staged/e11572824c574260-lat_1L.npz"
+              },
+              "lat_1L_bkg.npz": {
+                "sha256": "38a325816d022252e02541193815d8ae39a442300152f597b5e71fddd3cbfd21",
+                "staged": "/private$FIXTURE/run/staged/83ed3c322fe0b144-lat_1L_bkg.npz"
+              },
+              "lat_1M.npz": {
+                "sha256": "54b16c57c665b07d5f424bae6e44fbdc2cae9b822778fa1dfcf8d26f4509b9e0",
+                "staged": "/private$FIXTURE/run/staged/4c2f3afd9a6aa8ea-lat_1M.npz"
+              },
+              "lat_1M_bkg.npz": {
+                "sha256": "5ec8eb533ef6d0ac255956e525cb43975a78383e75457ac4598edb3c0e32a7f3",
+                "staged": "/private$FIXTURE/run/staged/3363b419fddccb82-lat_1M_bkg.npz"
+              },
+              "lat_1N.npz": {
+                "sha256": "7ffa2ce84a78dbe3205100754fafe7d2943382a9a12a5f50b8d6dcd2f2cc4a41",
+                "staged": "/private$FIXTURE/run/staged/801f0316945f6cd2-lat_1N.npz"
+              },
+              "lat_1N_bkg.npz": {
+                "sha256": "111f76f182052462b11e2c68f993df7380212d879202aa1cf772ba6ff06e5fd7",
+                "staged": "/private$FIXTURE/run/staged/485d34a248e74b58-lat_1N_bkg.npz"
+              },
+              "lat_1O.npz": {
+                "sha256": "f29335b25cc694c90dd355bb470c226cb1684fe3cddf9dbaebf0f26efd879b18",
+                "staged": "/private$FIXTURE/run/staged/751923039e2d58f4-lat_1O.npz"
+              },
+              "lat_1O_bkg.npz": {
+                "sha256": "0ae531d1e70748066cf16ed90cf5cc7972e13cfe96810836470b4052b45454db",
+                "staged": "/private$FIXTURE/run/staged/2faaa3ed28203ee6-lat_1O_bkg.npz"
+              },
+              "lat_1P.npz": {
+                "sha256": "989964984c9e6334d515338a6908742f8ab0f745a75ea32ab58fa0b172242678",
+                "staged": "/private$FIXTURE/run/staged/a0bda055a4942dc4-lat_1P.npz"
+              },
+              "lat_1P_bkg.npz": {
+                "sha256": "353d1b120636d295c1a4ce9d4571a8fc963ff63d3872447444ab836a287f50bf",
+                "staged": "/private$FIXTURE/run/staged/86422333899ab678-lat_1P_bkg.npz"
+              }
+            },
+            "known_siblings_stat_only": [
+              {
+                "bytes": 26,
+                "mtime_ns": 1793979183885313193,
+                "name": "nn_1A.npz"
+              },
+              {
+                "bytes": 26,
+                "mtime_ns": 1793979183885545736,
+                "name": "nn_1B.npz"
+              },
+              {
+                "bytes": 26,
+                "mtime_ns": 1793979183885689903,
+                "name": "nn_1C.npz"
+              },
+              {
+                "bytes": 26,
+                "mtime_ns": 1793979183885801445,
+                "name": "nn_1D.npz"
+              },
+              {
+                "bytes": 26,
+                "mtime_ns": 1793979183885925238,
+                "name": "nn_1E.npz"
+              },
+              {
+                "bytes": 26,
+                "mtime_ns": 1793979183886034738,
+                "name": "nn_1F.npz"
+              },
+              {
+                "bytes": 26,
+                "mtime_ns": 1793979183886135781,
+                "name": "nn_1G.npz"
+              },
+              {
+                "bytes": 26,
+                "mtime_ns": 1793979183886232323,
+                "name": "nn_1L.npz"
+              },
+              {
+                "bytes": 26,
+                "mtime_ns": 1793979183886332823,
+                "name": "nn_1M.npz"
+              },
+              {
+                "bytes": 26,
+                "mtime_ns": 1793979183886434366,
+                "name": "nn_1N.npz"
+              },
+              {
+                "bytes": 26,
+                "mtime_ns": 1793979183886535699,
+                "name": "nn_1O.npz"
+              },
+              {
+                "bytes": 26,
+                "mtime_ns": 1793979183886636450,
+                "name": "nn_1P.npz"
+              }
+            ],
+            "n_files": 24
+          },
+          "run_class": "local_fixture",
+          "schema": "fd-rpd-reco-step/1",
+          "status": "PASS",
+          "step": "pins"
+        },
+        {
+          "argv": [
+            "p0",
+            "--config",
+            "$FIXTURE/config.json",
+            "--config-sha256",
+            "20ce298542409726d89048b31224553b373adb979c3f21044affa78d309e8a65",
+            "--run",
+            "$FIXTURE/run",
+            "--dry-run"
+          ],
+          "code_sha256": "353085b37a9076ee9adaa23cc8cb40b8db80904c110b964be6fc14c78fb4dd3c",
+          "config_sha256": "20ce298542409726d89048b31224553b373adb979c3f21044affa78d309e8a65",
+          "does_not_license": [
+            "which period or flux is correct",
+            "correction or exclusion",
+            "change to estimator or covariance",
+            "validation or coverage",
+            "removing the unknown-cause clause",
+            "paper use without Joseph's decision"
+          ],
+          "dry_run": true,
+          "input_sha256": {
+            "$REPO/MINERvA101/MINERvA-101-Cross-Section/event/CVUniverse.h": "900d7368d6184d503399bd99c0fd30085212df0327b8be374182495b85a3677d",
+            "/private$FIXTURE/INPUTS.sha256": "784990e3bbd9f339c99cd26066951a586745398562eb293f74d6587e6641406d",
+            "/private$FIXTURE/candidates.tsv": "d177f2c1ac19af7457041cae11bf3de430e5411d8cd489979c692278e5ea33c7",
+            "/private$FIXTURE/config.json": "20ce298542409726d89048b31224553b373adb979c3f21044affa78d309e8a65",
+            "/private$FIXTURE/dumps/lat_1A.npz": "5e24a10dd44a59176e84915966bd634f97847d53e85a21dc7456f9358856d213",
+            "/private$FIXTURE/dumps/lat_1A_bkg.npz": "849afc40f3afaf3eb76e122427d7bb01162cce340e13e883e259fa6d966e7752",
+            "/private$FIXTURE/dumps/lat_1B.npz": "48ff44ae2db83fd47f7e5156b7cbbb72869df3760737d9483a034cc00adaaba7",
+            "/private$FIXTURE/dumps/lat_1B_bkg.npz": "51c86860787d62a2d12a5c0f5f26902e9501274ade8420fa6a9389d6732b3e32",
+            "/private$FIXTURE/dumps/lat_1C.npz": "1742c9e778855ac0a04cf8527a1d1408eb50281e6914903534e7a211d9d2db54",
+            "/private$FIXTURE/dumps/lat_1C_bkg.npz": "25cadc06c278415a3b5687cd735d10e03bfb27ede492ac73010554345d831e3d",
+            "/private$FIXTURE/dumps/lat_1D.npz": "256152159fd7989d866e4a33f7bf66ef2b8b833f0bfb624d8c98aa3e91afb3f3",
+            "/private$FIXTURE/dumps/lat_1D_bkg.npz": "8cad32893062ad22417ef6689c8fe27adf7df9684e71aae363e7172c37d78448",
+            "/private$FIXTURE/dumps/lat_1E.npz": "6dc0cee17740e5a650194fc388e46637f986db558266257175459e9e959233c1",
+            "/private$FIXTURE/dumps/lat_1E_bkg.npz": "9e4f564ef838f84b29a2d53aab73c8516ec99e9e9cf7d7b5128a47ffaccb948e",
+            "/private$FIXTURE/dumps/lat_1F.npz": "75b9247e48040fcad80d171eb3e588b60db1ffd036ee71d485c06aaca5c37253",
+            "/private$FIXTURE/dumps/lat_1F_bkg.npz": "d9bb0d64fa175e50df31939d14bf677db6864cd9971b637e7a5c9b3ec2b72b76",
+            "/private$FIXTURE/dumps/lat_1G.npz": "85bb2c5e979639f6359630fdb12baf57df8695fcc97c47cec0b3b2333f92b5c0",
+            "/private$FIXTURE/dumps/lat_1G_bkg.npz": "6138be11cff21f31be729878364122c35463298eaaf43fd3f23764b075774e25",
+            "/private$FIXTURE/dumps/lat_1L.npz": "f60e55e871e299961c17cc269c91551538dc5c5ed349656139f4d68a86baadcc",
+            "/private$FIXTURE/dumps/lat_1L_bkg.npz": "38a325816d022252e02541193815d8ae39a442300152f597b5e71fddd3cbfd21",
+            "/private$FIXTURE/dumps/lat_1M.npz": "54b16c57c665b07d5f424bae6e44fbdc2cae9b822778fa1dfcf8d26f4509b9e0",
+            "/private$FIXTURE/dumps/lat_1M_bkg.npz": "5ec8eb533ef6d0ac255956e525cb43975a78383e75457ac4598edb3c0e32a7f3",
+            "/private$FIXTURE/dumps/lat_1N.npz": "7ffa2ce84a78dbe3205100754fafe7d2943382a9a12a5f50b8d6dcd2f2cc4a41",
+            "/private$FIXTURE/dumps/lat_1N_bkg.npz": "111f76f182052462b11e2c68f993df7380212d879202aa1cf772ba6ff06e5fd7",
+            "/private$FIXTURE/dumps/lat_1O.npz": "f29335b25cc694c90dd355bb470c226cb1684fe3cddf9dbaebf0f26efd879b18",
+            "/private$FIXTURE/dumps/lat_1O_bkg.npz": "0ae531d1e70748066cf16ed90cf5cc7972e13cfe96810836470b4052b45454db",
+            "/private$FIXTURE/dumps/lat_1P.npz": "989964984c9e6334d515338a6908742f8ab0f745a75ea32ab58fa0b172242678",
+            "/private$FIXTURE/dumps/lat_1P_bkg.npz": "353d1b120636d295c1a4ce9d4571a8fc963ff63d3872447444ab836a287f50bf",
+            "/private$FIXTURE/flux/1D.root": "2ff0143103a2ce22845a412ff79de60c16adce13b971d62d8725db709bcfa73d",
+            "/private$FIXTURE/flux/1M.root": "036d9d7dfed273930e322b6c1d01f1c0dfc6e04f3770fc747d2368f2e49b62ee",
+            "/private$FIXTURE/flux/1N.root": "fc314ac2a400f3b4c5310d9cf16230ac2f2d2dd26a038d3435d73203ad710881",
+            "/private$FIXTURE/mat-source/FluxReweighter.cxx": "87f21e2d444b059b178edb6e062f792072a78040eaa2f09678e24df5ea42b488"
+          },
+          "keys_read": [
+            {
+              "file": "lat_1A.npz",
+              "key": "w_reco"
+            },
+            {
+              "file": "lat_1A_bkg.npz",
+              "key": "bkg_w"
+            },
+            {
+              "file": "lat_1B.npz",
+              "key": "w_reco"
+            },
+            {
+              "file": "lat_1B_bkg.npz",
+              "key": "bkg_w"
+            },
+            {
+              "file": "lat_1C.npz",
+              "key": "w_reco"
+            },
+            {
+              "file": "lat_1C_bkg.npz",
+              "key": "bkg_w"
+            },
+            {
+              "file": "lat_1D.npz",
+              "key": "w_reco"
+            },
+            {
+              "file": "lat_1D_bkg.npz",
+              "key": "bkg_w"
+            },
+            {
+              "file": "lat_1E.npz",
+              "key": "w_reco"
+            },
+            {
+              "file": "lat_1E_bkg.npz",
+              "key": "bkg_w"
+            },
+            {
+              "file": "lat_1F.npz",
+              "key": "w_reco"
+            },
+            {
+              "file": "lat_1F_bkg.npz",
+              "key": "bkg_w"
+            },
+            {
+              "file": "lat_1G.npz",
+              "key": "w_reco"
+            },
+            {
+              "file": "lat_1G_bkg.npz",
+              "key": "bkg_w"
+            },
+            {
+              "file": "lat_1L.npz",
+              "key": "w_reco"
+            },
+            {
+              "file": "lat_1L_bkg.npz",
+              "key": "bkg_w"
+            },
+            {
+              "file": "lat_1M.npz",
+              "key": "w_reco"
+            },
+            {
+              "file": "lat_1M_bkg.npz",
+              "key": "bkg_w"
+            },
+            {
+              "file": "lat_1N.npz",
+              "key": "w_reco"
+            },
+            {
+              "file": "lat_1N_bkg.npz",
+              "key": "bkg_w"
+            },
+            {
+              "file": "lat_1O.npz",
+              "key": "w_reco"
+            },
+            {
+              "file": "lat_1O_bkg.npz",
+              "key": "bkg_w"
+            },
+            {
+              "file": "lat_1P.npz",
+              "key": "w_reco"
+            },
+            {
+              "file": "lat_1P_bkg.npz",
+              "key": "bkg_w"
+            }
+          ],
+          "predecessor_sha256": "dd42de7dd548d68b65524d8c256a6ce937453d423f6fc9eb07aed3f30a83931b",
+          "result": {
+            "P-F": {
+              "evidence": {
+                "common_generation_denominator": {
+                  "lines": [
+                    2,
+                    2
+                  ],
+                  "sha256": "488db6e47d11150ca46d1b7832b84be0c40a8910a67d0c02f5ba3e90aaa313f2",
+                  "text": "common_generator_histogram_is_denominator"
+                },
+                "cv_numerator": {
+                  "lines": [
+                    1,
+                    1
+                  ],
+                  "sha256": "c3eb23a2ad3cea0d7d1c9f44924f5e492a5b04e3ff4888457adc4c830948acc1",
+                  "text": "selected_CV_spectrum_is_numerator"
+                },
+                "per_pot_units": {
+                  "lines": [
+                    4,
+                    4
+                  ],
+                  "sha256": "c3458560986d4b90f2a23cd4d5632ba497549aef7633c2fc76e24155d975ce41",
+                  "text": "all_spectra_are_per_POT_per_GeV"
+                },
+                "playlist_mapping": {
+                  "lines": [
+                    3,
+                    3
+                  ],
+                  "sha256": "489c102164fd68d89f7eaa41982476e32adeb88cf07b887271fdaa442a289930",
+                  "text": "playlist_mapping_is_1D_1M_1N"
+                }
+              },
+              "git_sha": "023147a38ec738f713e74066188588f732c7a0ec",
+              "pass": true,
+              "source_sha256": "87f21e2d444b059b178edb6e062f792072a78040eaa2f09678e24df5ea42b488"
+            },
+            "constants_GeV": {
+              "M_n": 0.93956536,
+              "M_p": 0.938272013
+            },
+            "keys_read": [],
+            "runtime_estimate": {
+              "data_rows_estimate_not_read": 834,
+              "exceeds_two_hours": false,
+              "mc_background_rows": 960,
+              "needs_director_price": false,
+              "node_hours_authorized": 0,
+              "planning_seconds_with_factor_10": 2.6925411098801533,
+              "poisson_draws": 7726800,
+              "poisson_only_seconds": 0.2692541109880153,
+              "timing_sample_draws": 262144,
+              "timing_seconds": 0.009134874679148197,
+              "unmeasured_costs": [
+                "NPZ decompression",
+                "histogramming",
+                "sorting weighted quantiles"
+              ]
+            },
+            "spectra": {
+              "1D": {
+                "edges": [
+                  0.0,
+                  1.0,
+                  2.0,
+                  4.0,
+                  8.0,
+                  16.0,
+                  32.0,
+                  64.0,
+                  128.0
+                ],
+                "histogram": "CV",
+                "integral": 128.0,
+                "original_path": "$FIXTURE/flux/1D.root",
+                "path_opened": "/private$FIXTURE/run/staged/1796d3abacf1dee7-1D.root",
+                "retention": "local disposable fixture",
+                "sha256": "2ff0143103a2ce22845a412ff79de60c16adce13b971d62d8725db709bcfa73d",
+                "values": [
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0
+                ]
+              },
+              "1M": {
+                "edges": [
+                  0.0,
+                  1.0,
+                  2.0,
+                  4.0,
+                  8.0,
+                  16.0,
+                  32.0,
+                  64.0,
+                  128.0
+                ],
+                "histogram": "CV",
+                "integral": 129.538,
+                "original_path": "$FIXTURE/flux/1M.root",
+                "path_opened": "/private$FIXTURE/run/staged/0f970443c61137d7-1M.root",
+                "retention": "local disposable fixture",
+                "sha256": "036d9d7dfed273930e322b6c1d01f1c0dfc6e04f3770fc747d2368f2e49b62ee",
+                "values": [
+                  1.0,
+                  1.002,
+                  1.004,
+                  1.006,
+                  1.008,
+                  1.01,
+                  1.012,
+                  1.014
+                ]
+              },
+              "1N": {
+                "edges": [
+                  0.0,
+                  1.0,
+                  2.0,
+                  4.0,
+                  8.0,
+                  16.0,
+                  32.0,
+                  64.0,
+                  128.0
+                ],
+                "histogram": "CV",
+                "integral": 131.07600000000002,
+                "original_path": "$FIXTURE/flux/1N.root",
+                "path_opened": "/private$FIXTURE/run/staged/c5cd4636c2e40487-1N.root",
+                "retention": "local disposable fixture",
+                "sha256": "fc314ac2a400f3b4c5310d9cf16230ac2f2d2dd26a038d3435d73203ad710881",
+                "values": [
+                  1.0,
+                  1.004,
+                  1.008,
+                  1.012,
+                  1.016,
+                  1.02,
+                  1.024,
+                  1.028
+                ]
+              }
+            }
+          },
+          "run_class": "local_fixture",
+          "schema": "fd-rpd-reco-step/1",
+          "status": "PASS",
+          "step": "p0"
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "known_sibling_open_count": 0,
+      "native_noatime_available": false,
+      "test_only_flag": "O_NONBLOCK",
+      "records": [
+        {
+          "argv": [
+            "pins",
+            "--config",
+            "$FIXTURE/config.json",
+            "--config-sha256",
+            "0848ccda21642bf06ef5a82c735cc8a1a3560409db24ea6e2da3e9ff956383a8",
+            "--run",
+            "$FIXTURE/run",
+            "--dry-run"
+          ],
+          "code_sha256": "353085b37a9076ee9adaa23cc8cb40b8db80904c110b964be6fc14c78fb4dd3c",
+          "config_sha256": "0848ccda21642bf06ef5a82c735cc8a1a3560409db24ea6e2da3e9ff956383a8",
+          "does_not_license": [
+            "which period or flux is correct",
+            "correction or exclusion",
+            "change to estimator or covariance",
+            "validation or coverage",
+            "removing the unknown-cause clause",
+            "paper use without Joseph's decision"
+          ],
+          "dry_run": true,
+          "input_sha256": {
+            "/private$FIXTURE/INPUTS.sha256": "cb35191d84902e3e53ffd38567a03393f5698d57eb7b5dd2710335de081e4c62",
+            "/private$FIXTURE/config.json": "0848ccda21642bf06ef5a82c735cc8a1a3560409db24ea6e2da3e9ff956383a8",
+            "/private$FIXTURE/dumps/lat_1A.npz": "a07de4f53be9df91f526c21fe36e5df279bc01ed25bff36fde502aef6ed68633",
+            "/private$FIXTURE/dumps/lat_1A_bkg.npz": "dc93c616f25677bb9abc1138ae0db883599f2cf425d1de6a10ec43cd9f6a1278",
+            "/private$FIXTURE/dumps/lat_1B.npz": "73a1c2960504af8505170aea693dfc31d8ba3fbedd374fc6201a4287d630ca5f",
+            "/private$FIXTURE/dumps/lat_1B_bkg.npz": "c67206bd56d25cd068544b7d2f6607638f3c1e2ca238e94d524b54c11b203c63",
+            "/private$FIXTURE/dumps/lat_1C.npz": "ebd687c539d2dc20cacd4f80b18f85377ca2a3e70350b469bad5ed999f6e4f88",
+            "/private$FIXTURE/dumps/lat_1C_bkg.npz": "aee82d2be38e6aa0d57245dc003f85e04ffe68e6bd75a9cefee6de9b94407cd7",
+            "/private$FIXTURE/dumps/lat_1D.npz": "f9e9395ca6a5cd139e8b4092f2d02ed79b45bb0d7c686c2af48b0a0b1fd64ddc",
+            "/private$FIXTURE/dumps/lat_1D_bkg.npz": "aa354d12f3d678678f5928c69b4d5f7853d41f382ab2a953781f88961b32b9af",
+            "/private$FIXTURE/dumps/lat_1E.npz": "000301a7654f97b84e77c871b934d2c728b75a5a480f977fd949335a2671f668",
+            "/private$FIXTURE/dumps/lat_1E_bkg.npz": "3c482a9609e4480de24c1706806289b3e7c184eefbefa5123da7ccf8751ac32e",
+            "/private$FIXTURE/dumps/lat_1F.npz": "6f6ef835b049aebe8ce4df18f13cedc89e98f10daa220274ad0e6e2a9c159f21",
+            "/private$FIXTURE/dumps/lat_1F_bkg.npz": "d9fa52c96e60a9e459f4eba93586a7582892d65d9f53b515e53c61dd0da9f2e1",
+            "/private$FIXTURE/dumps/lat_1G.npz": "67cb03552d4870f83245b11d73e66bf4e4dd825d26610f3a9ead5526e728b6bd",
+            "/private$FIXTURE/dumps/lat_1G_bkg.npz": "810cce226675f218e8786df7efdb649ae6ee1227acf71373eb70802753379232",
+            "/private$FIXTURE/dumps/lat_1L.npz": "7f83f87174e7db61d9db2c05cecd2d373a815c7aeb8eaacf9439fb505d3a86d3",
+            "/private$FIXTURE/dumps/lat_1L_bkg.npz": "60ce76263abbe86d91060780ed44cdef575cc1654ba6a3725f827dbde081bbdd",
+            "/private$FIXTURE/dumps/lat_1M.npz": "9e4100cabbb053664e3eb07e840d216d492ded6c2f3dc5c70151a7cecadd9819",
+            "/private$FIXTURE/dumps/lat_1M_bkg.npz": "85144cb06f8cbec4012d9b650bc9869a4c8032185faef40bdb1d0f443f21eb17",
+            "/private$FIXTURE/dumps/lat_1N.npz": "2dcf7708bbee3f8da83f3790b0d8ad9f0abcab1409aeadcf6752de4f86ae51a9",
+            "/private$FIXTURE/dumps/lat_1N_bkg.npz": "214bc0df40f9c60c804c4a72411039077dcfa1572fd632d9e466a50f37d864fa",
+            "/private$FIXTURE/dumps/lat_1O.npz": "1e634ddcd8caec057a5ed9d41f7f861b08fbd7f0c3d4475d6700eaf693d5e6d3",
+            "/private$FIXTURE/dumps/lat_1O_bkg.npz": "0a42bbb4a153474713fbaf099108168f58acd76ce575154eaca10973cee087d2",
+            "/private$FIXTURE/dumps/lat_1P.npz": "da4a924b935261bc9cb39dea2572c99795702e0eba456c96d697299fba2ae5a5",
+            "/private$FIXTURE/dumps/lat_1P_bkg.npz": "45bca10de3f676d76fe7eec092bc62fb907017509973cd7c07131d7be90c3b6b"
+          },
+          "keys_read": [],
+          "predecessor_sha256": null,
+          "result": {
+            "files": {
+              "lat_1A.npz": {
+                "sha256": "a07de4f53be9df91f526c21fe36e5df279bc01ed25bff36fde502aef6ed68633",
+                "staged": "/private$FIXTURE/run/staged/46af74d16fd7d0ca-lat_1A.npz"
+              },
+              "lat_1A_bkg.npz": {
+                "sha256": "dc93c616f25677bb9abc1138ae0db883599f2cf425d1de6a10ec43cd9f6a1278",
+                "staged": "/private$FIXTURE/run/staged/110d50932e4ce264-lat_1A_bkg.npz"
+              },
+              "lat_1B.npz": {
+                "sha256": "73a1c2960504af8505170aea693dfc31d8ba3fbedd374fc6201a4287d630ca5f",
+                "staged": "/private$FIXTURE/run/staged/37a1ab3be148042a-lat_1B.npz"
+              },
+              "lat_1B_bkg.npz": {
+                "sha256": "c67206bd56d25cd068544b7d2f6607638f3c1e2ca238e94d524b54c11b203c63",
+                "staged": "/private$FIXTURE/run/staged/d075910712097e12-lat_1B_bkg.npz"
+              },
+              "lat_1C.npz": {
+                "sha256": "ebd687c539d2dc20cacd4f80b18f85377ca2a3e70350b469bad5ed999f6e4f88",
+                "staged": "/private$FIXTURE/run/staged/72f5b40c34e3eeb9-lat_1C.npz"
+              },
+              "lat_1C_bkg.npz": {
+                "sha256": "aee82d2be38e6aa0d57245dc003f85e04ffe68e6bd75a9cefee6de9b94407cd7",
+                "staged": "/private$FIXTURE/run/staged/202b31cf1e7e59a9-lat_1C_bkg.npz"
+              },
+              "lat_1D.npz": {
+                "sha256": "f9e9395ca6a5cd139e8b4092f2d02ed79b45bb0d7c686c2af48b0a0b1fd64ddc",
+                "staged": "/private$FIXTURE/run/staged/cc687083f9dd8bb8-lat_1D.npz"
+              },
+              "lat_1D_bkg.npz": {
+                "sha256": "aa354d12f3d678678f5928c69b4d5f7853d41f382ab2a953781f88961b32b9af",
+                "staged": "/private$FIXTURE/run/staged/059f6c53a3d62f5f-lat_1D_bkg.npz"
+              },
+              "lat_1E.npz": {
+                "sha256": "000301a7654f97b84e77c871b934d2c728b75a5a480f977fd949335a2671f668",
+                "staged": "/private$FIXTURE/run/staged/c9f0cfa2e64bcf90-lat_1E.npz"
+              },
+              "lat_1E_bkg.npz": {
+                "sha256": "3c482a9609e4480de24c1706806289b3e7c184eefbefa5123da7ccf8751ac32e",
+                "staged": "/private$FIXTURE/run/staged/d5ba642d52603681-lat_1E_bkg.npz"
+              },
+              "lat_1F.npz": {
+                "sha256": "6f6ef835b049aebe8ce4df18f13cedc89e98f10daa220274ad0e6e2a9c159f21",
+                "staged": "/private$FIXTURE/run/staged/3d1b82aeaf59ff46-lat_1F.npz"
+              },
+              "lat_1F_bkg.npz": {
+                "sha256": "d9fa52c96e60a9e459f4eba93586a7582892d65d9f53b515e53c61dd0da9f2e1",
+                "staged": "/private$FIXTURE/run/staged/eefe5bbab0677fb6-lat_1F_bkg.npz"
+              },
+              "lat_1G.npz": {
+                "sha256": "67cb03552d4870f83245b11d73e66bf4e4dd825d26610f3a9ead5526e728b6bd",
+                "staged": "/private$FIXTURE/run/staged/ac28447100b8e948-lat_1G.npz"
+              },
+              "lat_1G_bkg.npz": {
+                "sha256": "810cce226675f218e8786df7efdb649ae6ee1227acf71373eb70802753379232",
+                "staged": "/private$FIXTURE/run/staged/39d8bc15ac13389a-lat_1G_bkg.npz"
+              },
+              "lat_1L.npz": {
+                "sha256": "7f83f87174e7db61d9db2c05cecd2d373a815c7aeb8eaacf9439fb505d3a86d3",
+                "staged": "/private$FIXTURE/run/staged/3b2eb22b8083edda-lat_1L.npz"
+              },
+              "lat_1L_bkg.npz": {
+                "sha256": "60ce76263abbe86d91060780ed44cdef575cc1654ba6a3725f827dbde081bbdd",
+                "staged": "/private$FIXTURE/run/staged/22550f96507108e3-lat_1L_bkg.npz"
+              },
+              "lat_1M.npz": {
+                "sha256": "9e4100cabbb053664e3eb07e840d216d492ded6c2f3dc5c70151a7cecadd9819",
+                "staged": "/private$FIXTURE/run/staged/5996ea731b2d0524-lat_1M.npz"
+              },
+              "lat_1M_bkg.npz": {
+                "sha256": "85144cb06f8cbec4012d9b650bc9869a4c8032185faef40bdb1d0f443f21eb17",
+                "staged": "/private$FIXTURE/run/staged/524373c2aa6768fe-lat_1M_bkg.npz"
+              },
+              "lat_1N.npz": {
+                "sha256": "2dcf7708bbee3f8da83f3790b0d8ad9f0abcab1409aeadcf6752de4f86ae51a9",
+                "staged": "/private$FIXTURE/run/staged/4f1244465227a0d0-lat_1N.npz"
+              },
+              "lat_1N_bkg.npz": {
+                "sha256": "214bc0df40f9c60c804c4a72411039077dcfa1572fd632d9e466a50f37d864fa",
+                "staged": "/private$FIXTURE/run/staged/5a69151bd5181471-lat_1N_bkg.npz"
+              },
+              "lat_1O.npz": {
+                "sha256": "1e634ddcd8caec057a5ed9d41f7f861b08fbd7f0c3d4475d6700eaf693d5e6d3",
+                "staged": "/private$FIXTURE/run/staged/ee67098c74c8e158-lat_1O.npz"
+              },
+              "lat_1O_bkg.npz": {
+                "sha256": "0a42bbb4a153474713fbaf099108168f58acd76ce575154eaca10973cee087d2",
+                "staged": "/private$FIXTURE/run/staged/78861a21a137c72b-lat_1O_bkg.npz"
+              },
+              "lat_1P.npz": {
+                "sha256": "da4a924b935261bc9cb39dea2572c99795702e0eba456c96d697299fba2ae5a5",
+                "staged": "/private$FIXTURE/run/staged/7fbca1cd4f2deeb8-lat_1P.npz"
+              },
+              "lat_1P_bkg.npz": {
+                "sha256": "45bca10de3f676d76fe7eec092bc62fb907017509973cd7c07131d7be90c3b6b",
+                "staged": "/private$FIXTURE/run/staged/90bd5804ab9b6bac-lat_1P_bkg.npz"
+              }
+            },
+            "known_siblings_stat_only": [
+              {
+                "bytes": 26,
+                "mtime_ns": 1793979185357066763,
+                "name": "nn_1A.npz"
+              },
+              {
+                "bytes": 26,
+                "mtime_ns": 1793979185357189305,
+                "name": "nn_1B.npz"
+              },
+              {
+                "bytes": 26,
+                "mtime_ns": 1793979185357296181,
+                "name": "nn_1C.npz"
+              },
+              {
+                "bytes": 26,
+                "mtime_ns": 1793979185357405640,
+                "name": "nn_1D.npz"
+              },
+              {
+                "bytes": 26,
+                "mtime_ns": 1793979185357509474,
+                "name": "nn_1E.npz"
+              },
+              {
+                "bytes": 26,
+                "mtime_ns": 1793979185357619974,
+                "name": "nn_1F.npz"
+              },
+              {
+                "bytes": 26,
+                "mtime_ns": 1793979185357731683,
+                "name": "nn_1G.npz"
+              },
+              {
+                "bytes": 26,
+                "mtime_ns": 1793979185357841517,
+                "name": "nn_1L.npz"
+              },
+              {
+                "bytes": 26,
+                "mtime_ns": 1793979185357942851,
+                "name": "nn_1M.npz"
+              },
+              {
+                "bytes": 26,
+                "mtime_ns": 1793979185358036601,
+                "name": "nn_1N.npz"
+              },
+              {
+                "bytes": 26,
+                "mtime_ns": 1793979185358138477,
+                "name": "nn_1O.npz"
+              },
+              {
+                "bytes": 26,
+                "mtime_ns": 1793979185358252228,
+                "name": "nn_1P.npz"
+              }
+            ],
+            "n_files": 24
+          },
+          "run_class": "local_fixture",
+          "schema": "fd-rpd-reco-step/1",
+          "status": "PASS",
+          "step": "pins"
+        },
+        {
+          "argv": [
+            "p0",
+            "--config",
+            "$FIXTURE/config.json",
+            "--config-sha256",
+            "0848ccda21642bf06ef5a82c735cc8a1a3560409db24ea6e2da3e9ff956383a8",
+            "--run",
+            "$FIXTURE/run",
+            "--dry-run"
+          ],
+          "code_sha256": "353085b37a9076ee9adaa23cc8cb40b8db80904c110b964be6fc14c78fb4dd3c",
+          "config_sha256": "0848ccda21642bf06ef5a82c735cc8a1a3560409db24ea6e2da3e9ff956383a8",
+          "does_not_license": [
+            "which period or flux is correct",
+            "correction or exclusion",
+            "change to estimator or covariance",
+            "validation or coverage",
+            "removing the unknown-cause clause",
+            "paper use without Joseph's decision"
+          ],
+          "dry_run": true,
+          "input_sha256": {
+            "$REPO/MINERvA101/MINERvA-101-Cross-Section/event/CVUniverse.h": "900d7368d6184d503399bd99c0fd30085212df0327b8be374182495b85a3677d",
+            "/private$FIXTURE/INPUTS.sha256": "cb35191d84902e3e53ffd38567a03393f5698d57eb7b5dd2710335de081e4c62",
+            "/private$FIXTURE/candidates.tsv": "3757d19f3fa0624e5c9051cc118265e90b6d70e3c2e673dbd070571f3fc38a7b",
+            "/private$FIXTURE/config.json": "0848ccda21642bf06ef5a82c735cc8a1a3560409db24ea6e2da3e9ff956383a8",
+            "/private$FIXTURE/dumps/lat_1A.npz": "a07de4f53be9df91f526c21fe36e5df279bc01ed25bff36fde502aef6ed68633",
+            "/private$FIXTURE/dumps/lat_1A_bkg.npz": "dc93c616f25677bb9abc1138ae0db883599f2cf425d1de6a10ec43cd9f6a1278",
+            "/private$FIXTURE/dumps/lat_1B.npz": "73a1c2960504af8505170aea693dfc31d8ba3fbedd374fc6201a4287d630ca5f",
+            "/private$FIXTURE/dumps/lat_1B_bkg.npz": "c67206bd56d25cd068544b7d2f6607638f3c1e2ca238e94d524b54c11b203c63",
+            "/private$FIXTURE/dumps/lat_1C.npz": "ebd687c539d2dc20cacd4f80b18f85377ca2a3e70350b469bad5ed999f6e4f88",
+            "/private$FIXTURE/dumps/lat_1C_bkg.npz": "aee82d2be38e6aa0d57245dc003f85e04ffe68e6bd75a9cefee6de9b94407cd7",
+            "/private$FIXTURE/dumps/lat_1D.npz": "f9e9395ca6a5cd139e8b4092f2d02ed79b45bb0d7c686c2af48b0a0b1fd64ddc",
+            "/private$FIXTURE/dumps/lat_1D_bkg.npz": "aa354d12f3d678678f5928c69b4d5f7853d41f382ab2a953781f88961b32b9af",
+            "/private$FIXTURE/dumps/lat_1E.npz": "000301a7654f97b84e77c871b934d2c728b75a5a480f977fd949335a2671f668",
+            "/private$FIXTURE/dumps/lat_1E_bkg.npz": "3c482a9609e4480de24c1706806289b3e7c184eefbefa5123da7ccf8751ac32e",
+            "/private$FIXTURE/dumps/lat_1F.npz": "6f6ef835b049aebe8ce4df18f13cedc89e98f10daa220274ad0e6e2a9c159f21",
+            "/private$FIXTURE/dumps/lat_1F_bkg.npz": "d9fa52c96e60a9e459f4eba93586a7582892d65d9f53b515e53c61dd0da9f2e1",
+            "/private$FIXTURE/dumps/lat_1G.npz": "67cb03552d4870f83245b11d73e66bf4e4dd825d26610f3a9ead5526e728b6bd",
+            "/private$FIXTURE/dumps/lat_1G_bkg.npz": "810cce226675f218e8786df7efdb649ae6ee1227acf71373eb70802753379232",
+            "/private$FIXTURE/dumps/lat_1L.npz": "7f83f87174e7db61d9db2c05cecd2d373a815c7aeb8eaacf9439fb505d3a86d3",
+            "/private$FIXTURE/dumps/lat_1L_bkg.npz": "60ce76263abbe86d91060780ed44cdef575cc1654ba6a3725f827dbde081bbdd",
+            "/private$FIXTURE/dumps/lat_1M.npz": "9e4100cabbb053664e3eb07e840d216d492ded6c2f3dc5c70151a7cecadd9819",
+            "/private$FIXTURE/dumps/lat_1M_bkg.npz": "85144cb06f8cbec4012d9b650bc9869a4c8032185faef40bdb1d0f443f21eb17",
+            "/private$FIXTURE/dumps/lat_1N.npz": "2dcf7708bbee3f8da83f3790b0d8ad9f0abcab1409aeadcf6752de4f86ae51a9",
+            "/private$FIXTURE/dumps/lat_1N_bkg.npz": "214bc0df40f9c60c804c4a72411039077dcfa1572fd632d9e466a50f37d864fa",
+            "/private$FIXTURE/dumps/lat_1O.npz": "1e634ddcd8caec057a5ed9d41f7f861b08fbd7f0c3d4475d6700eaf693d5e6d3",
+            "/private$FIXTURE/dumps/lat_1O_bkg.npz": "0a42bbb4a153474713fbaf099108168f58acd76ce575154eaca10973cee087d2",
+            "/private$FIXTURE/dumps/lat_1P.npz": "da4a924b935261bc9cb39dea2572c99795702e0eba456c96d697299fba2ae5a5",
+            "/private$FIXTURE/dumps/lat_1P_bkg.npz": "45bca10de3f676d76fe7eec092bc62fb907017509973cd7c07131d7be90c3b6b",
+            "/private$FIXTURE/flux/1D.root": "0dc35ae39c68bb71570fe9d04a2310e4bdcb020e625b4cbcb46e49d0617dd569",
+            "/private$FIXTURE/flux/1M.root": "f9027c7105a27ad02978cb6a6f92615a5601a827685f307961b57eb382d65093",
+            "/private$FIXTURE/flux/1N.root": "82de9961f8f936e90f73415eddd3234fe4fddbc2fa22bcf2d3bb5a919144d75f",
+            "/private$FIXTURE/mat-source/FluxReweighter.cxx": "87f21e2d444b059b178edb6e062f792072a78040eaa2f09678e24df5ea42b488"
+          },
+          "keys_read": [
+            {
+              "file": "lat_1A.npz",
+              "key": "w_reco"
+            },
+            {
+              "file": "lat_1A_bkg.npz",
+              "key": "bkg_w"
+            },
+            {
+              "file": "lat_1B.npz",
+              "key": "w_reco"
+            },
+            {
+              "file": "lat_1B_bkg.npz",
+              "key": "bkg_w"
+            },
+            {
+              "file": "lat_1C.npz",
+              "key": "w_reco"
+            },
+            {
+              "file": "lat_1C_bkg.npz",
+              "key": "bkg_w"
+            },
+            {
+              "file": "lat_1D.npz",
+              "key": "w_reco"
+            },
+            {
+              "file": "lat_1D_bkg.npz",
+              "key": "bkg_w"
+            },
+            {
+              "file": "lat_1E.npz",
+              "key": "w_reco"
+            },
+            {
+              "file": "lat_1E_bkg.npz",
+              "key": "bkg_w"
+            },
+            {
+              "file": "lat_1F.npz",
+              "key": "w_reco"
+            },
+            {
+              "file": "lat_1F_bkg.npz",
+              "key": "bkg_w"
+            },
+            {
+              "file": "lat_1G.npz",
+              "key": "w_reco"
+            },
+            {
+              "file": "lat_1G_bkg.npz",
+              "key": "bkg_w"
+            },
+            {
+              "file": "lat_1L.npz",
+              "key": "w_reco"
+            },
+            {
+              "file": "lat_1L_bkg.npz",
+              "key": "bkg_w"
+            },
+            {
+              "file": "lat_1M.npz",
+              "key": "w_reco"
+            },
+            {
+              "file": "lat_1M_bkg.npz",
+              "key": "bkg_w"
+            },
+            {
+              "file": "lat_1N.npz",
+              "key": "w_reco"
+            },
+            {
+              "file": "lat_1N_bkg.npz",
+              "key": "bkg_w"
+            },
+            {
+              "file": "lat_1O.npz",
+              "key": "w_reco"
+            },
+            {
+              "file": "lat_1O_bkg.npz",
+              "key": "bkg_w"
+            },
+            {
+              "file": "lat_1P.npz",
+              "key": "w_reco"
+            },
+            {
+              "file": "lat_1P_bkg.npz",
+              "key": "bkg_w"
+            }
+          ],
+          "predecessor_sha256": "4cfbd628f2eb135af4fe0e8adbd538181d5e9fd7bc8c6d722759d6433264e4b4",
+          "result": {
+            "P-F": {
+              "evidence": {
+                "common_generation_denominator": {
+                  "lines": [
+                    2,
+                    2
+                  ],
+                  "sha256": "488db6e47d11150ca46d1b7832b84be0c40a8910a67d0c02f5ba3e90aaa313f2",
+                  "text": "common_generator_histogram_is_denominator"
+                },
+                "cv_numerator": {
+                  "lines": [
+                    1,
+                    1
+                  ],
+                  "sha256": "c3eb23a2ad3cea0d7d1c9f44924f5e492a5b04e3ff4888457adc4c830948acc1",
+                  "text": "selected_CV_spectrum_is_numerator"
+                },
+                "per_pot_units": {
+                  "lines": [
+                    4,
+                    4
+                  ],
+                  "sha256": "c3458560986d4b90f2a23cd4d5632ba497549aef7633c2fc76e24155d975ce41",
+                  "text": "all_spectra_are_per_POT_per_GeV"
+                },
+                "playlist_mapping": {
+                  "lines": [
+                    3,
+                    3
+                  ],
+                  "sha256": "489c102164fd68d89f7eaa41982476e32adeb88cf07b887271fdaa442a289930",
+                  "text": "playlist_mapping_is_1D_1M_1N"
+                }
+              },
+              "git_sha": "2b58123f4075c93c29831ccf3053059fbc580ece",
+              "pass": true,
+              "source_sha256": "87f21e2d444b059b178edb6e062f792072a78040eaa2f09678e24df5ea42b488"
+            },
+            "constants_GeV": {
+              "M_n": 0.93956536,
+              "M_p": 0.938272013
+            },
+            "keys_read": [],
+            "runtime_estimate": {
+              "data_rows_estimate_not_read": 834,
+              "exceeds_two_hours": false,
+              "mc_background_rows": 960,
+              "needs_director_price": false,
+              "node_hours_authorized": 0,
+              "planning_seconds_with_factor_10": 2.511132521142656,
+              "poisson_draws": 7726800,
+              "poisson_only_seconds": 0.2511132521142656,
+              "timing_sample_draws": 262144,
+              "timing_seconds": 0.008519417140632868,
+              "unmeasured_costs": [
+                "NPZ decompression",
+                "histogramming",
+                "sorting weighted quantiles"
+              ]
+            },
+            "spectra": {
+              "1D": {
+                "edges": [
+                  0.0,
+                  1.0,
+                  2.0,
+                  4.0,
+                  8.0,
+                  16.0,
+                  32.0,
+                  64.0,
+                  128.0
+                ],
+                "histogram": "CV",
+                "integral": 128.0,
+                "original_path": "$FIXTURE/flux/1D.root",
+                "path_opened": "/private$FIXTURE/run/staged/aa188664ff58dec7-1D.root",
+                "retention": "local disposable fixture",
+                "sha256": "0dc35ae39c68bb71570fe9d04a2310e4bdcb020e625b4cbcb46e49d0617dd569",
+                "values": [
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0
+                ]
+              },
+              "1M": {
+                "edges": [
+                  0.0,
+                  1.0,
+                  2.0,
+                  4.0,
+                  8.0,
+                  16.0,
+                  32.0,
+                  64.0,
+                  128.0
+                ],
+                "histogram": "CV",
+                "integral": 129.538,
+                "original_path": "$FIXTURE/flux/1M.root",
+                "path_opened": "/private$FIXTURE/run/staged/2f39c5539af3e25a-1M.root",
+                "retention": "local disposable fixture",
+                "sha256": "f9027c7105a27ad02978cb6a6f92615a5601a827685f307961b57eb382d65093",
+                "values": [
+                  1.0,
+                  1.002,
+                  1.004,
+                  1.006,
+                  1.008,
+                  1.01,
+                  1.012,
+                  1.014
+                ]
+              },
+              "1N": {
+                "edges": [
+                  0.0,
+                  1.0,
+                  2.0,
+                  4.0,
+                  8.0,
+                  16.0,
+                  32.0,
+                  64.0,
+                  128.0
+                ],
+                "histogram": "CV",
+                "integral": 131.07600000000002,
+                "original_path": "$FIXTURE/flux/1N.root",
+                "path_opened": "/private$FIXTURE/run/staged/49fa225c8597b7a0-1N.root",
+                "retention": "local disposable fixture",
+                "sha256": "82de9961f8f936e90f73415eddd3234fe4fddbc2fa22bcf2d3bb5a919144d75f",
+                "values": [
+                  1.0,
+                  1.004,
+                  1.008,
+                  1.012,
+                  1.016,
+                  1.02,
+                  1.024,
+                  1.028
+                ]
+              }
+            }
+          },
+          "run_class": "local_fixture",
+          "schema": "fd-rpd-reco-step/1",
+          "status": "PASS",
+          "step": "p0"
+        }
+      ]
+    }
+  ]
+}

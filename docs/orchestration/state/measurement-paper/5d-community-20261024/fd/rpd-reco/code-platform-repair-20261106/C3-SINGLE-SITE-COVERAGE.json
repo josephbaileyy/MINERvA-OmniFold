@@ -1,0 +1,96 @@
+{
+  "scope": "named guard and order/call mutations; actual selected outcomes in MUTATIONS.json",
+  "rows": [
+    {
+      "mutant": "REQUIRED_CUSTODY_MAT_INVENTORY",
+      "target": "MAT_INVENTORY",
+      "changed_sites": 1,
+      "selector": "test_prepare_firing_guards and inventory",
+      "result": "KILLED"
+    },
+    {
+      "mutant": "REQUIRED_CUSTODY_STAGE_SOURCE_STAT",
+      "target": "STAGE_SOURCE_STAT",
+      "changed_sites": 1,
+      "selector": "test_prepare_firing_guards and atime",
+      "result": "KILLED"
+    },
+    {
+      "mutant": "REQUIRED_CUSTODY_NATIVE_SELECTION",
+      "target": "NATIVE_SELECTION",
+      "changed_sites": 1,
+      "selector": "test_prepare_firing_guards and native",
+      "result": "KILLED"
+    },
+    {
+      "mutant": "REQUIRED_CUSTODY_RUN_PROTECTED_OVERLAP",
+      "target": "RUN_PROTECTED_OVERLAP",
+      "changed_sites": 1,
+      "selector": "test_run_overlaps_protected_guard",
+      "result": "KILLED"
+    },
+    {
+      "mutant": "REQUIRED_CUSTODY_NEGATIVE_EXPECTED_GUARD",
+      "target": "NEGATIVE_EXPECTED_GUARD",
+      "changed_sites": 1,
+      "selector": "test_negative_expected_guard",
+      "result": "KILLED"
+    },
+    {
+      "mutant": "REQUIRED_CUSTODY_TRACE_EXTRACT_IDENTITY",
+      "target": "TRACE_EXTRACT_IDENTITY",
+      "changed_sites": 1,
+      "selector": "test_trace_extract_identity_guard",
+      "result": "KILLED"
+    },
+    {
+      "mutant": "REQUIRED_CUSTODY_PREPARE_FENCE",
+      "target": "PREPARE_FENCE",
+      "changed_sites": 1,
+      "selector": "test_prepare_firing_guards and fence_status",
+      "result": "KILLED"
+    },
+    {
+      "mutant": "REQUIRED_CUSTODY_INSTRUMENT_DIRECTORIES",
+      "target": "INSTRUMENT_DIRECTORIES",
+      "changed_sites": 1,
+      "selector": "test_instrument_directories_required",
+      "result": "KILLED"
+    },
+    {
+      "mutant": "REQUIRED_DICTIONARY_BEFORE_MAPS",
+      "target": "checked_prepared_mat",
+      "changed_sites": 1,
+      "selector": "test_lazy_dictionary_before_maps",
+      "result": "KILLED"
+    },
+    {
+      "mutant": "REQUIRED_PREPARE_CALLS_FENCE",
+      "target": "prepare",
+      "changed_sites": 1,
+      "selector": "test_prepare_firing_guards and fence_call",
+      "result": "KILLED"
+    },
+    {
+      "mutant": "REQUIRED_GUARD_MAT_MAPPED_STAT",
+      "target": "MAT_MAPPED_STAT",
+      "changed_sites": 1,
+      "selector": "test_prepared_mapped_stats_and_staged_digest and (size or inode)",
+      "result": "KILLED"
+    },
+    {
+      "mutant": "REQUIRED_GUARD_MAT_INSTRUMENT_DIGEST",
+      "target": "MAT_INSTRUMENT_DIGEST",
+      "changed_sites": 1,
+      "selector": "test_prepared_mapped_stats_and_staged_digest and staged_digest",
+      "result": "KILLED"
+    },
+    {
+      "mutant": "REQUIRED_GUARD_FLUX_CONSTRUCTOR_SELECTION",
+      "target": "FLUX_CONSTRUCTOR_SELECTION",
+      "changed_sites": 1,
+      "selector": "test_extract_selection_guard",
+      "result": "KILLED"
+    }
+  ]
+}

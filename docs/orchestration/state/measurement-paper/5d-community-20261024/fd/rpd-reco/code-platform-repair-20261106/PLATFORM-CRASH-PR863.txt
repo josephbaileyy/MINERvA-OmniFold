@@ -1,0 +1,22 @@
+The director's go of 2026-11-06: Codex2's standalone real-class check, `fd_rpd_reco_mat_check.py`, at #848's frozen code head `d9740563`. It ran from a fresh clone on login27 at 0 node-h.
+
+**Result: CRASH, not PASS.** The check segfaulted inside ROOT's `TFile::Close` (TFile::Close → TDirectoryFile::Close → THashList::Delete → TList::Delete, called from Python) and exited 129. It wrote no `real-mnv-check.json`. It is reported unrepaired.
+
+**Everything before the check was clean:**
+- `HEAD` equals d9740563, with empty porcelain;
+- the probe's digest equals the script's `PROBE_SHA256` (d9704aa4);
+- `check-mat-setup` ran before sourcing: 6 scripts, 0 mismatches;
+- `setup_salloc_env.sh` sourced with rc 0 and an empty log;
+- PLOTUTILSROOT and MINERVA_PREFIX are the pinned paths;
+- MAT_PYTHON is root_6_28's python3 (Python 3.11.14), the interpreter `receipts-rpd/root_tests_login.log` measured in this environment.
+
+**Not determined:** which of the check's two `TFile::Close` calls crashed: the one inside `read_flux_histogram`, or the check's own call after cloning. Nothing was patched or rerun.
+
+**Fence:** a recorded line (two cov2d jobs running). The check reads only the committed non-input probe and the pinned MAT files, and no COV2D input.
+
+**Cleanup:** scratch was under `/dev/shm`, removed by literal path; a stat confirms it is gone.
+
+**The receipt:** `fd/rpd-reco/real-mnv-check-20261106/`. It holds the connect as run, the full transcript, the env record, the cleanup check and SHA256SUMS. Pre-commit passed (21 checks) and `generate_manifest --check --at-sha HEAD` is OK.
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+

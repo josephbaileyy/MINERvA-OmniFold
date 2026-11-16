@@ -1,0 +1,27 @@
+node login27 staged sha256 129d5e36ad08f1e92af472247022518896ff3560ccdd7db736ebde07db4334c5
+detached pid 65069, output /dev/shm/g3jit-stat.64678.sh.out
+node login27 2026-11-12T09:27:13Z
+script sha256 129d5e36ad08f1e92af472247022518896ff3560ccdd7db736ebde07db4334c5
+stat|/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j-.npz|size=95564|mtime=1790450957|atime=1794385480
+stat|/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j1.npz|size=95610|mtime=1790450956|atime=1792791155
+stat|/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j2.npz|size=95542|mtime=1790451621|atime=1792791155
+stat|/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j3.npz|size=95574|mtime=1790452285|atime=1792791155
+stat|/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j4.npz|size=95584|mtime=1790452948|atime=1792791155
+stat|/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j5.npz|size=95544|mtime=1790453611|atime=1792791155
+stat|/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j6.npz|size=95584|mtime=1790454273|atime=1792791155
+stat|/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j7.npz|size=95558|mtime=1790454933|atime=1792791155
+stat|/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j8.npz|size=95578|mtime=1790452953|atime=1792791155
+stat|/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j9.npz|size=95549|mtime=1790453613|atime=1792791155
+stat|/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j10.npz|size=95561|mtime=1790454277|atime=1792791155
+stat|/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j11.npz|size=95606|mtime=1790454941|atime=1792791155
+stat|/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j12.npz|size=95541|mtime=1790455603|atime=1792791155
+stat|/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j13.npz|size=95575|mtime=1790456266|atime=1792791155
+stat|/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j14.npz|size=95614|mtime=1790456928|atime=1792791155
+stat|/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j15.npz|size=95557|mtime=1790455665|atime=1792791155
+stat|/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j16.npz|size=95587|mtime=1790456324|atime=1792791155
+stat|/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j17.npz|size=95576|mtime=1790456987|atime=1792791155
+stat|/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j18.npz|size=95548|mtime=1790457641|atime=1792791155
+stat|/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j19.npz|size=95621|mtime=1790458299|atime=1792791155
+stat|/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j20.npz|size=95582|mtime=1790458957|atime=1792791155
+present 21 of 21; missing 0
+script rc=0

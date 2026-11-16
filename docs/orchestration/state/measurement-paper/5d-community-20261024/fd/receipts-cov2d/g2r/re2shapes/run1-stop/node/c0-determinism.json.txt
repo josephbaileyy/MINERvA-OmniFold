@@ -1,0 +1,188 @@
+{
+ "compared": 68,
+ "equal": 66,
+ "differ": [
+  {
+   "file": "SHA256SUMS",
+   "stopped": "bf259be46ef1c4ddf8e6a18bfd49e1626b04f9a284e42a4024403e66ed60e25b",
+   "rerun_normalized": "006702bc70bafa615992c3d7dfe7c9765a7c22a1d625cd1e31c5b77ca210fddb"
+  },
+  {
+   "file": "receipts/receipt_model_chi2.json",
+   "stopped": "a17c6d84fba11bd26f4ccfd9365dd825fd21a92fb13093c37b27bb746d78f6dc",
+   "rerun_normalized": "77105617b66c1ed469cb233f1a92cfd0f531452eb1867a0ae9f7c26573788ef1"
+  }
+ ],
+ "skipped": {
+  "PDF: creation date; compared through its PNG twin": 28,
+  "run logs or caches": 29,
+  "ROOT: TFile creation time; compared through its npz twin": 5,
+  "scratch (a tmp component; the period selftest's mkdtemp directory has a random name)": 10,
+  "the values table: its spec is what the amendment changed": 2
+ },
+ "only_stopped": [
+  "fig1-a2-cabbbbc3/RUN-fig1.txt",
+  "fig1-a2-cabbbbc3/fig1_run.log",
+  "fig1-a2-cabbbbc3/pins.json",
+  "fig1-a2-cabbbbc3/uqmedian.tex",
+  "fig1/RUN-fig1.txt",
+  "fig1/fig1_run.log",
+  "fig1/pins.json",
+  "fig1/uqmedian.tex"
+ ],
+ "only_rerun": [],
+ "path_pairs": [
+  "/cov2d-re2shapes-20261114/c0=/2d-closeout-re2-20261023/partc-r2",
+  "/cov2d-re2shapes-20261114/deploy-903fb78b=/2d-closeout-re2-20261023/deploy-903fb78b"
+ ],
+ "root_untabled": [],
+ "digest_pairs": {
+  "71c26c422e29a9337d84fbea68df253fa5cce4e636da5dff43ea44f0e795b58b": {
+   "stopped": "81dcf2d0367d931eaee272bf3be9392a9e355c48f477eaf41dab56ba64ed3231",
+   "learned_from": "chain.json",
+   "reason": "equal"
+  },
+  "d07ebc4c01bc17d6421d58fb5e0dcb018db801ce0d698c83405c129af44efd5a": {
+   "stopped": "05a711d42d4f0eec7e521ca345b9db19846b2b117db55007dc53268c2930c458",
+   "learned_from": "chi2/chi2_Q_lognormal.txt",
+   "reason": "equal"
+  },
+  "8900aaa4a3ae1f5ac4f81f3114d67537b42244065ac7e8b2f791f33eb78f1b70": {
+   "stopped": "fad788809f3b88340b6dc070d1a7996e0b3355d261f3e9e5adb7699a4a37e571",
+   "learned_from": "chi2/chi2_Q_std.txt",
+   "reason": "equal"
+  },
+  "960e56f412f861c9ea3b8e9ba716f3ac270850e3ac5190d6b37e73b0e1dd6a57": {
+   "stopped": "e6dacc1878353608b8f564f47b17641ef9195d46bdf9fa1d3e500b54fd37a2b9",
+   "learned_from": "chi2/chi2_Q_substat.txt",
+   "reason": "equal"
+  },
+  "482f7252bfb5417c701ea99de7f78e8caf799819842f1f8f37eb0b6db84017de": {
+   "stopped": "571b1e8bd9fe1de6ebf18d70bd1311aec63d2470a7c8daa01cb2b3303d5c0569",
+   "learned_from": "cmodel/cmodel_R.json",
+   "reason": "equal"
+  },
+  "a7416bf74ba2e282b2413221696a122d608c92ece52f37a477fd60754aa9a211": {
+   "stopped": "c663eadb168835bdf965644f1e65531b3dc5eaea9b8d08fc72fa161b6a3009ea",
+   "learned_from": "combination/combination.json",
+   "reason": "equal"
+  },
+  "28060be620fc476660562b603eec2c576dcbd257bcbc04c7bbeaecc2eb33bf8e": {
+   "stopped": "5ba2bca9191e2aba8e2cf37decfb8af1c74a3f1a4484bdec1045b528a605f9c2",
+   "learned_from": "fig67/MEFHC_fig6_7_uncertainty_summary.txt",
+   "reason": "equal"
+  },
+  "59859ccba554b3d0ba3abe45a777ef820a409686d339b11a21d570c6a4666f78": {
+   "stopped": "dda60969d1ed2a273e42795fedbd3140c87abe241adeac8f270d32f335a17158",
+   "learned_from": "outA/SHA256SUMS",
+   "reason": "equal"
+  },
+  "0b9cf50d94467009d5e5bc6a7f28591c2491225a3e83048938e4be2cbe7e8a81": {
+   "stopped": "e4907491fab077634dee65a53245db18de34dac137df284d1c7fb937647de533",
+   "learned_from": "outA/block_c08.root",
+   "reason": "root-twin outA/cov2d_Q_205.npz"
+  },
+  "78f576b29996b04a0d142667ff895355d3a4d62183c93a8e9d1643d6fc3afafc": {
+   "stopped": "47286bb9f1bf8c0df165a464d1dcf04517ee09337bf40ec6b72f752fdc3c50b3",
+   "learned_from": "outA/block_playlist.root",
+   "reason": "root-twin outA/cov2d_Q_205.npz"
+  },
+  "4d5f309bcd26db40c1699ab27cc50e97a9cdc3c6423378402333416ecee69fa9": {
+   "stopped": "4a4a24e460304e56031c8d698400af13716178ba5ee93d24d1b1572827cec28b",
+   "learned_from": "outA/block_stat.root",
+   "reason": "root-twin outA/cov2d_Q_205.npz"
+  },
+  "b1eb41982d670afd2f546d5b55ad2891adff67c9267d708fa24d5f95f43f8d88": {
+   "stopped": "bbe13622656e9f43978d9cb022ac74ca4ba059b1cf56fed9e082bfb3b1be03aa",
+   "learned_from": "outA/budget_Q.json",
+   "reason": "equal"
+  },
+  "7857f42fde4f805753b6d1d0fbb5da57c93397efe78ea03d6893daabb496a736": {
+   "stopped": "ef4c67d240659703f9ed32d4b2dd0b9dcd37293ed04a8a7b47a3e93142d6fcde",
+   "learned_from": "outA/cov2d_Q_205.json",
+   "reason": "equal"
+  },
+  "7f1df775a4d185f6a884ced75934a70ef7c512243cdd91256d167d6ba4e12f6a": {
+   "stopped": "819cbeb1a2d79886536000f921c7b6d2d599752b4f1fc7e3cd6fc91545e3eb56",
+   "learned_from": "outA/uq_adopted_covariance.root",
+   "reason": "root-twin outA/cov2d_Q_205.npz"
+  },
+  "163916f74bcce521248f491197893e44ef7d86e1b4a408a6ef705920c8d65050": {
+   "stopped": "46519daa878a950299f07b3da43766866638029cf7deb44fd233f1c231579c9d",
+   "learned_from": "partc_numbers.json",
+   "reason": "equal"
+  },
+  "e3f8c1ba6068b6e163928166d23e5c1df4051887533e7ef49e38cbbe0ea8d8c9": {
+   "stopped": "2ce5d5dab3e566590504ba0f186a90b0334e7e691dbda011403fc99a8c8d92cd",
+   "learned_from": "periods/analysis.json",
+   "reason": "equal"
+  },
+  "a7a9a18f15db9d50be146ef78ac6d5e44f28739f2a4e774a02c1479e35ae0280": {
+   "stopped": "69a36e479b0acb33ee1e363b9a90d4c0e315c804a144b4d72dade805aaf164ff",
+   "learned_from": "pins_q.json",
+   "reason": "equal"
+  },
+  "905746d6b45e4fe4b6023edd5e0124b15e60eea0f9dc899b84fe4b447617a689": {
+   "stopped": "a952adda441e1fa7d29eb44e064b11991a09ded3682c2530193222e45164ed26",
+   "learned_from": "playlist/playlist_term.json",
+   "reason": "equal"
+  },
+  "821a87838be0d0e28d33092a09d44120f8ef3329f689029d08e067eeaa297c7a": {
+   "stopped": "07b0027fa3e376f2edb0686aee555ace1ed19df7d4221f8ba07b3a6d178d2c4b",
+   "learned_from": "receipts/RECEIPT-agreement-windows.json",
+   "reason": "json-rule"
+  },
+  "4ef9c407b0d2b6efdcc88482be4716f4494705fbf1fc3241aafba844a3471ca0": {
+   "stopped": "504ab4b3ee7e4cc47efb7673dbd228212961ba658d4b8175ea5ba5b14e6651a7",
+   "learned_from": "receipts/chi2_paperonly.txt",
+   "reason": "equal"
+  },
+  "7682bfa19dab21e129d4af488f16a0891f3db94666c5d8ee0884c9345fc5f206": {
+   "stopped": "bc8a0ffb617302d0bad883b0cc8bfe48dc291c817d2af4ca13a0f46f3a68af5f",
+   "learned_from": "receipts/figs/models.log",
+   "reason": "equal"
+  },
+  "710422bcacbc7daea7241b7703bd5855f84fce505fe30db74d76a6427995aca6": {
+   "stopped": "fa1eb967cb3aab5d443c3adc6436e10a1c1ef58b096fef9677e725885c6d5e27",
+   "learned_from": "receipts/figs/tension.log",
+   "reason": "equal"
+  },
+  "bf41ac9a3ebef38d12953f5b57ebf3fd9f95fc037ec7c2e85b47bbe74ed448a4": {
+   "stopped": "51164ead9fe2ac7a4456383eb8426e1393d000e5240c237949dd5ae6b9dbf0d3",
+   "learned_from": "receipts/tune.log",
+   "reason": "equal"
+  },
+  "afcb58245f22e600b0bc53bf398b6c7def8916bc83f15c91d587ebf2d7391fc0": {
+   "stopped": "823f16b1b694477b053e71cc8a1fdc13cebf9ee51a99df3f88752c1447f4184e",
+   "learned_from": "reduce.json",
+   "reason": "equal"
+  },
+  "1a0da23159c58934d6b18abcdb3147298dec9cfadea9c56755e144d8d9b02f81": {
+   "stopped": "ec4a407b33200cb2c9792e943c924b1e2043974f12b81eacdc605bccc52b90c2",
+   "learned_from": "s5/s5.json",
+   "reason": "equal"
+  },
+  "e0acf81d8b96e2484af073553bba3bfc52a16599c69d5f326a57d836b1324ac2": {
+   "stopped": "1f5a8e39db7650e58e0a41aa3d78d33e7aa86d9d8761e021d409a24bd8074008",
+   "learned_from": "s5/uq_production_covariance.root",
+   "reason": "root-twin s5/production_cov.npz"
+  },
+  "3724850d8ad5dbb208fb1c8ab9cfb05c21d5a56133e4bbc8653ba091b0f6efdf": {
+   "stopped": "002e6ede4bf34a36638d4def341215c040169b376b17460069e22eed20919117",
+   "learned_from": "work_cov/cov_controls.json",
+   "reason": "equal"
+  }
+ },
+ "fixpoint_iterations": 4,
+ "fields_excluded": {
+  "receipts/RECEIPT-agreement-windows.json": [
+   "hostname",
+   "git_head_at_run"
+  ],
+  "receipts/receipt_model_chi2.json": [
+   "generated_utc",
+   "host"
+  ]
+ },
+ "verdict": "FAIL"
+}

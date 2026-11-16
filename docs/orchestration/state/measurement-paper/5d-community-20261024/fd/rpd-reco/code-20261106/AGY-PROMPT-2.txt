@@ -1,0 +1,11 @@
+Second and final bounded read-only review of RPD-RECO.
+
+Pinned commit: be373cebad2fe2dfad2999a33b8d567c31382431. The same isolated reviewer worktree ../MINERvA-OmniFold-rpd-reco-review-20261106 is clean and detached at this commit. Verify clean HEAD before and after; do not edit, stage, commit, merge, spawn agents, contact a cluster or run production analysis.
+
+Preserve your first review; this is the response to its MAJOR finding, not a replacement. Inspect the delta from 3e5a13b: prediction test now checks missing committed path and mismatched local prediction, and the mutator disables explicit Refused raises as well as require predicates. The new OUTPUT_LOCATION guard refuses CFS before mkdir and before writing a STOP receipt; its test intercepts forbidden mkdir calls. Run the full suite and full REQUIRED harness if useful; all inputs remain local synthetic real-format fixtures, with the disclosed macOS noatime stand-in. Interpreter ~/miniconda3/bin/python.
+
+Confirm whether the prior mutant survives, whether every REQUIRED mutant is killed by an actual test failure, and whether these changes introduce any blocking/major defect. Inspect actual new guard and BOTH positive and negative paths. Return concise findings with file:line, dependencies still unverified, and one code-readiness verdict. This does not grant binding 2, scientific adoption, or run permission.
+
+One outstanding input-layout question is with the director: fd_rpd_inputs.py also writes dumps/nn_<PL>.npz while the declared 24 pins contain only lat pairs. The current guard deliberately refuses every unexpected file in dump_root; no speculative relaxation is included. Treat the production directory layout as an unverified preflight dependency.
+
+Return your answer verbatim as a standard open-agent-bridge reply in this conversation, so exact prompt and answer can be committed. Do not request action from the human.

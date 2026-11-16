@@ -1,0 +1,112 @@
+FD-PRR addendum A4: the search: the 181 queue lines and the committed json the runner names (search_json.py, at ef9411a3)
+date_utc: 2026-11-09T20:03:02Z  host: Josephs-MacBook-Pro-9
+clone: a clean clone, HEAD febf481f67467971a385b9792a9e9b8555f5c1fa, porcelain lines before: 0
+python: 3.12.2  numpy: 1.26.4  scipy: 1.15.2  bash: GNU bash, version 3.2.57(1)-release (arm64-apple-darwin25)
+thread caps: OMP=1 MKL=1 OPENBLAS=1 NUMEXPR=1 VECLIB=1; nice -n 19; one serial process
+f87ee90c58d2b8904fe881931edc61966a6adda8be7eb503da6644797a3d1232  prr_probe.py
+fa91394507c0e6a32486af25fa52f7e162135cf6483519ccf15510e1c9473cb0  prr_ibu.py
+d7c7c2c0d6cbe4a13d445a779335699de3d5275c4bcd3efc9f4e84a166868fbe  prr_read.py
+4493aad5dff0a8a0316c0f8b4d159c8f08c7666856474b5cf9c4c963a3a7e975  sbatch_prr.sh
+fad928d85c9183ac525ffabcd809d6968afab6aead4a2ad2aa13202b788eef40  test_prr.py
+e088406cd47ef88c8e47b988e7f684f8c29b74a620fa65d101ac790ca7892d5f  prr_mutation.py
+command: python3 -I search_json.py <clone> ef9411a3 <closure list>
+----
+absolute paths in the 181 queue lines (runs/<level>/<truth> folded):
+   181  /pscratch/sd/j/josephrb/fd-prr-20261108/runs/<level>/<truth>
+   181  /pscratch/sd/j/josephrb/fd-prr-20261108/stage/bank
+   181  /pscratch/sd/j/josephrb/fd-prr-20261108/stage/bkg_dump.npz
+   181  /pscratch/sd/j/josephrb/fd-prr-20261108/stage/no-detector-band-is-drawn
+   181  /pscratch/sd/j/josephrb/fd-prr-20261108/stage/of_inputs_5d.npz
+    13  /pscratch/sd/j/josephrb/fd-prr-20261108/stage/pvl/prep/ratios/L-5D-PV/nuwro.json
+
+repo-relative json named as queue arguments: 10; .json literals in the 32 modules: 31
+of them committed at ef9411a3 (resolved): 15
+  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ref-g1/a1-read/readout.json: 1 absolute path value(s)
+      .gibu1_product.path = /pscratch/sd/j/josephrb/ref-g1-20261106/gibu1/gibu1.npz
+  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/stab/no-ratio.json: 0 absolute path value(s)
+  docs/orchestration/state/measurement-paper/5d-design-20261023/stage0/receipts-A/eavail-ratio-gibuu-over-genie-fluxfix.json: 5 absolute path value(s)
+      .numerator.path = /pscratch/sd/j/josephrb/s5p-20260926/gen5d/gibuu_cv_xsec5d.npz
+      .denominator.path = /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_cv_xsec5d_full.npz
+      .control.old_numerator.path = /pscratch/sd/j/josephrb/s5p-20260926/gen5d/gibuu_cv_xsec5d.npz
+      .control.old_denominator.path = /pscratch/sd/j/josephrb/s5p-20260926/gen5d/genie_cv_xsec5d.npz
+      .control.s5n_ratio.path = /pscratch/sd/j/josephrb/5d-stage0-20261023/repo/docs/orchestration/state/s5n/eavail-ratio-gibuu-over-genie.json
+  docs/orchestration/state/s5e/w2-genie-mec-over-cv-eavailW.json: 2 absolute path value(s)
+      .numerator.path = /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/genie_mec_xsec_eavailW.root
+      .denominator.path = /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/genie_cv_xsec_eavailW.root
+  docs/orchestration/state/s5e/w3-nuwro-over-genie-pt-pz-eavail.json: 2 absolute path value(s)
+      .numerator.path = /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/nuwro_cv_xsec3d.root
+      .denominator.path = /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/genie_cv_xsec3d.root
+  docs/orchestration/state/s5n/eavail-ratio-nuwro-over-genie.json: 2 absolute path value(s)
+      .numerator.path = /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/nuwro_cv_xsec3d.root
+      .denominator.path = /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/genie_cv_xsec3d.root
+  docs/orchestration/state/s5p/ratios/nullsF/null-genie_cv-F.json: 3 absolute path value(s)
+      .numerator.path = /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_cv_xsec5d_full.npz
+      .denominator.path = /pscratch/sd/j/josephrb/s5p-20260926/gen5d/mnvtune_v1_xsec5d.npz
+      .rho_npz.path = /pscratch/sd/j/josephrb/s5p-20260926/ratios/nullsF/rho-genie_cv-F.npz
+  docs/orchestration/state/s5p/ratios/nullsF/null-genie_mec-F.json: 3 absolute path value(s)
+      .numerator.path = /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_mec_xsec5d_full.npz
+      .denominator.path = /pscratch/sd/j/josephrb/s5p-20260926/gen5d/mnvtune_v1_xsec5d.npz
+      .rho_npz.path = /pscratch/sd/j/josephrb/s5p-20260926/ratios/nullsF/rho-genie_mec-F.npz
+  docs/orchestration/state/s5p/ratios/nullsF/null-gibuu_cv-F.json: 3 absolute path value(s)
+      .numerator.path = /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/gibuu_cv_xsec5d_fluxfix.npz
+      .denominator.path = /pscratch/sd/j/josephrb/s5p-20260926/gen5d/mnvtune_v1_xsec5d.npz
+      .rho_npz.path = /pscratch/sd/j/josephrb/s5p-20260926/ratios/nullsF/rho-gibuu_cv-F.npz
+  docs/orchestration/state/s5p/ratios/nullsF/null-nuwro_cv-F.json: 3 absolute path value(s)
+      .numerator.path = /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/nuwro_cv_xsec5d_full.npz
+      .denominator.path = /pscratch/sd/j/josephrb/s5p-20260926/gen5d/mnvtune_v1_xsec5d.npz
+      .rho_npz.path = /pscratch/sd/j/josephrb/s5p-20260926/ratios/nullsF/rho-nuwro_cv-F.npz
+  docs/orchestration/state/s5p/ratios/nullsJ/null-mnvtune_v1-J.json: 2 absolute path value(s)
+      .numerator.path = /pscratch/sd/j/josephrb/s5p-20260926/gen5d/mnvtune_v1_xsec5d.npz
+      .denominator.path = /pscratch/sd/j/josephrb/s5p-20260926/gen5d/mnvtune_v1_xsec5d.npz
+  nd-unfolding/ibu1/config.json: 25 absolute path value(s)
+      .inputs.of_inputs_5d = /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz
+      .inputs.bkg_dump = /pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz
+      .units[0].comparator.template = /pscratch/sd/j/josephrb/s5c-20260924/runs/s_valid/nominal_a0_s{seed}.npz
+      .units[1].comparator.template = /pscratch/sd/j/josephrb/s5c-20260924/runs/s_valid/eavail_tilt_a0.2_s{seed}.npz
+      .units[2].comparator.paths.1 = /pscratch/sd/j/josephrb/s5c-20260924/runs/p3/p3_nominal_s1.npz
+      .units[2].comparator.paths.4 = /pscratch/sd/j/josephrb/s5c-20260924/runs/d1/d1_split_s4.npz
+      .units[2].comparator.paths.5 = /pscratch/sd/j/josephrb/s5c-20260924/runs/d1/d1_split_s5.npz
+      .units[2].comparator.paths.6 = /pscratch/sd/j/josephrb/s5c-20260924/runs/d1/d1_split_s6.npz
+      .units[2].comparator.paths.7 = /pscratch/sd/j/josephrb/s5c-20260924/runs/d1/d1_split_s7.npz
+      .units[2].comparator.paths.8 = /pscratch/sd/j/josephrb/s5c-20260924/runs/d1/d1_split_s8.npz
+      .units[2].comparator.paths.9 = /pscratch/sd/j/josephrb/s5c-20260924/runs/d1/d1_split_s9.npz
+      .units[2].comparator.paths.10 = /pscratch/sd/j/josephrb/s5c-20260924/runs/d1/d1_split_s10.npz
+      .units[2].comparator.paths.11 = /pscratch/sd/j/josephrb/s5c-20260924/runs/d1/d1_split_s11.npz
+      .units[3].comparator_base = /pscratch/sd/j/josephrb/s5c-20260924/runs/s_sigma/boot_b1.npz
+      .units[4].comparator.template = /pscratch/sd/j/josephrb/s5n-20260925/runs/dev/nominal_a0_s{seed}.npz
+      .units[6].comparator.template = /pscratch/sd/j/josephrb/s5n-20260925/runs/dev/eavail_shape_a1_s{seed}.npz
+      .units[7].comparator.template = /pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/eavail_gibuu/eavail_shape_a1_s{seed}.npz
+      .units[8].comparator.template = /pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/nominal/nominal_a0_s{seed}.npz
+      .units[9].comparator.template = /pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/W1/eavail_shape_a1_s{seed}.npz
+      .units[10].comparator.template = /pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/W2/ratio_nd_a1_s{seed}.npz
+      .units[11].comparator.template = /pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/W3/ratio_nd_a1_s{seed}.npz
+      .units[12].comparator_base = /pscratch/sd/j/josephrb/s5n-20260925/runs/sigma/boot_b1.npz
+      .units[13].comparator_base = /pscratch/sd/j/josephrb/s5e-20260925/runs/cand/dev/sigma/boot_b1.npz
+      .data_comparators.a_root.path = /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/5d/xsec_5d_MEFHC_5iter_lgbm.root
+      .data_comparators.e_npz.path = /pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j-.npz
+  nd-unfolding/pv-ladder/readouts/cmodel_5d.json: 4 absolute path value(s)
+      .argv[2] = /pscratch/sd/j/josephrb/pv-ladder-20261024/products
+      .argv[4] = /pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/5d/k1_p5_rerun.npz
+      .argv[6] = /pscratch/sd/j/josephrb/cmodel5d-20261024/out/cmodel_5d.json
+      .argv[8] = /pscratch/sd/j/josephrb/cmodel5d-20261024/out/cmodel_5d.npz
+  nd-unfolding/pv-ladder/readouts/h2_definition.json: 0 absolute path value(s)
+  nd-unfolding/ref_g1/config.json: 15 absolute path value(s)
+      .inputs.of_inputs_5d = /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz
+      .inputs.bkg_dump = /pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz
+      .inputs.bank = /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware
+      .inputs.detector_dir = /pscratch/sd/j/josephrb/s5p-20260926/bank_detector
+      .inputs.flux_universe_file = /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/flux_integral_universes_MEFHC.root
+      .inputs.flux_constraint = /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt
+      .ratios.dir = /pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV
+      .e_products.central = /pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j-.npz
+      .e_products.replica = /pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b{b}_j{j}.npz
+      .e_products.universe = /pscratch/sd/j/josephrb/s1-20261024/runs/uni/S1_{tag}.npz
+      .e_products.ladder = /pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-5D-PV_e_{name}.npz
+      .e_products.closure = /pscratch/sd/j/josephrb/pv-ladder-20261024/products/{product}.npz
+      .e_products.s1_assembly = /pscratch/sd/j/josephrb/s1-20261024/s1_assembly.npz
+      .gibu1_reference.path = /pscratch/sd/j/josephrb/ibu1-20261022/run/products/D_N.npz
+      .gibu1_environment.interpreter = /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3
+----
+rc=0
+porcelain lines after: 0
+date_utc: 2026-11-09T20:03:14Z

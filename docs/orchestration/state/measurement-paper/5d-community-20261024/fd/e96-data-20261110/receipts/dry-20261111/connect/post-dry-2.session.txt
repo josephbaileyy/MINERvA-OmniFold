@@ -1,0 +1,76 @@
+node login04 staged sha256 824002aca72c07892f2e44b7bf60f6fd39878cb197444cb614f64ce1dda3e82d
+detached pid 439558, output /dev/shm/e96d-post-dry.438943.sh.out
+post dry host=login04 utc=2026-11-11T08:26:31Z
+job 61137569
+== atime reading (stat only; the director's ruling for LL5D's gate receipts)
+stat utc=2026-11-11T08:26:31Z atime=1794384571 mtime=1782610308 size=1548438020 /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz
+stat utc=2026-11-11T08:26:31Z atime=1794384571 mtime=1790319104 size=16017201 /pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz
+stat utc=2026-11-11T08:26:31Z atime=1794385480 mtime=1790450957 size=95564 /pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j-.npz
+61137569|e96data_dry|COMPLETED|2026-11-11T00:09:02|2026-11-11T00:24:40|00:15:38|1|30
+== job .out
+[e96data] mode=dry job=61137569 host=nid004272 pin=1d25f8e791c503f8ef2ef6f6642546ee2008cc41 lanes=8 start=2026-11-11T08:09:27Z
+[e96data] queue rc=0 end=2026-11-11T08:24:38Z
+[e96data] gate rc=8 (/pscratch/sd/j/josephrb/e96data-20261111/log-dry/GATE.json)
+== receipts
+DONE: {"mode": "dry", "tasks": 2, "ended": 2, "rc": 0, "job": "61137569", "pin": "1d25f8e791c503f8ef2ef6f6642546ee2008cc41", "teardown": ""}
+e96data_E.end e96data_k001.end 
+== GATE.json
+{
+ "schema": "e96-data/1/gate",
+ "pin": "1d25f8e791c503f8ef2ef6f6642546ee2008cc41",
+ "controls": {
+  "A-D0 (e)'s product is fb5cc679": {
+   "pass": true
+  },
+  "A-D0 U @ (e)'s xsec_flat equals the data product's f to 1e-12": {
+   "pass": true,
+   "detail": {
+    "max_rel": 0.0
+   }
+  },
+  "A-D1 the control product exists": {
+   "pass": true
+  },
+  "A-D1 the control equals (e)'s xsec_flat bitwise, and is the declared call": {
+   "pass": true,
+   "detail": {
+    "problems": []
+   }
+  },
+  "G k = 1's product exists": {
+   "pass": true
+  },
+  "G k = 1 is the declared call": {
+   "pass": true,
+   "detail": {
+    "problems": []
+   }
+  },
+  "G the control and k = 1 ran one code": {
+   "pass": true
+  },
+  "G the projection fits the full run's limit: lane_max x t + 300 s <= 0.9 x the limit": {
+   "pass": false,
+   "detail": {
+    "lane_max": 14,
+    "t_seconds": 907.572,
+    "projected_s": 13006.008,
+    "limit_s": 12600.0,
+    "times": {
+     "k1": 907.572,
+     "control": 883.2570000000001
+    }
+   }
+  }
+ },
+ "full_queue_sha256": "3d49f92f915dfaa58d3d4660441aece8bcd1861659a2aa0fdf87d543ce14c21a",
+ "pass": false
+}
+== gate.log
+E96-DATA gate FAIL; controls failed: ["G the projection fits the full run's limit: lane_max x t + 300 s <= 0.9 x the limit"]
+== SHA256SUMS
+061862d0a7d32c200e3804a40c0dc4d068781c61ddab2da5755d82df7af1383e  runs/control/e96data_E_b-_j-.npz
+fcf1de9c5a3f5d39b869ab3df6764645078be8eff66d1d3d2c792323adacbe26  runs/ensemble/e96data_k001_b-_j0.npz
+be2fe104b386529cb00866f16f4a0435540652c7565f4aff921b85c14a014e66  /pscratch/sd/j/josephrb/e96data-20261111/post-dry.tar.gz
+post dry rc=0 state=COMPLETED
+script rc=0

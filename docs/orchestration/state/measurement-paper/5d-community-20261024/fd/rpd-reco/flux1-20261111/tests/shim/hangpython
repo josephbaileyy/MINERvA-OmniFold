@@ -1,0 +1,4 @@
+#!/bin/bash
+# stand-in MAT_PYTHON for the TERM test: hangs at the wrapper's first call (its CFS check names /global/cfs)
+for a in "$@"; do case "$a" in */global/cfs*) exec sleep 600 ;; esac; done
+exec "$HANG_REAL_PY" "$@"

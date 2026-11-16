@@ -1,0 +1,53 @@
+--- connect-gate.sh	2026-11-09 08:25:16
++++ connect-gate-2.sh	2026-11-09 23:45:35
+@@ -1,26 +1,27 @@
+ #!/bin/bash
+-# LL5D section 11 step 4: ll5d_gate_<T> for ONE truth (argument 1: g18 or ar23), LL5D BINDING 2, A1a.1 at M_A1a.1. One
+-# exclusive regular CPU node, --time 31:00:00 (31.0 node-h reserved, section 9, A1a section 5a; the job's own 0.9 line
+-# 100,440 s), one BLAS thread. The calibration is ll5d_calib's, by the digests below (filled from its receipt before
+-# this connect's sha256 goes to the director; the placeholders refuse). Steps as connect-calib.sh: the fence (refusing on
+-# an unended cov2d-* or this truth's gate already queued), iris against the cap, section 9's projection gate with
+-# this job's 31.0, a fresh clone at M_A1a.1 with the bound blobs, the job script and an atime snapshot, sbatch, TimeLimit.
+-# The gate writes gate-<T>.json, gate-<T>.receipt.npz and the SEALED gate-<T>.clipprep.npz (A1a section 5j: its path,
+-# size and sha256 only; no one opens or summarizes it before binding 3). Nothing to CFS. Not under set -u.
++# LL5D A1a.2 section 6: ll5d_gate_<T> RERUN for ONE truth (argument 1: g18 or ar23) on R00-R15, the rerun Joseph decided
++# (DECISION-20261110-joseph-ll5d-rerun-16-cells.md, #1018) after both gates' STOP of 2026-11-10 and the fix A1a.2. It
++# runs after ll5d_vicheck PASSes and calibration run 3 is receipted. Otherwise as connect-gate.sh: one exclusive regular
++# CPU node, --time 31:00:00 (31.0 node-h reserved; 0.9 line 100,440 s), one BLAS thread; the fence, iris, the projection
++# gate with this job's 31.0, a fresh clone at M_A1a.2 with the bound blobs, the calibration's two digests (from run 3's
++# merged receipt), the job script and an atime snapshot, sbatch, TimeLimit. The gate writes gate-<T>.json,
++# gate-<T>.receipt.npz and the SEALED gate-<T>.clipprep.npz (its path, size and sha256 only; no one opens or summarizes it
++# before binding 3). Nothing to CFS. Not under set -u. Every placeholder refuses until filled from git.
+ T=$1
+ case "$T" in g18) J=ll5d_gate_G18 ;; ar23) J=ll5d_gate_AR23 ;; *) echo "STOP truth '$T' is not g18 or ar23"; exit 2 ;; esac
+-M=a95cc39f7437170af0b65ba042934fad079e0ee2
++M=639ef907250a2a7909b7b9ba89b2e85e70c9b767
++L5=2b0224c6fe52c5bb2d3fe64d461ac9edb80ebd191b0ab2f892dec605a0b56a14        # ll5d.py's sha256 at M
+ P=/pscratch/sd/j/josephrb; ND=$P/MINERvA-OmniFold/nd-unfolding
+-W=$P/ll5d-gate-$T-20261108; DD=$W/deploy
+-CAL=$P/ll5d-calib-2-20261109/calibration.json
+-CALSHA=ea039893e8ec98a9cd3da15dd7811a82a99563da8fbb253e6fc0766eb960fb17
++W=$P/ll5d-gate-2-$T-20261110; DD=$W/deploy
++CAL=$P/ll5d-calib-3-20261110/calibration.json
++CALSHA=e9584339098c98ff9059279299329b1e84efca4f81583f4ebc71417b2fdb571b
+ CALNPZSHA=b31ddd12d050163396b4811705777fc1fa28f77757575af73c8dc5976b3c1a7c
+ CAP=148.0; THIS=31.0; TL=31:00:00; TLS=111600
+ stop() { echo "STOP $*"; echo "end=$(date -u +%FT%TZ)"; exit 2; }
+-case "$CALSHA$CALNPZSHA" in *FILL*) echo "STOP the calibration digests are not filled"; exit 2 ;; esac
++[[ $M =~ ^[0-9a-f]{40}$ && $L5 =~ ^[0-9a-f]{64}$ && $CALSHA =~ ^[0-9a-f]{64}$ && $CALNPZSHA =~ ^[0-9a-f]{64}$ ]] || { echo "STOP the A1a.2 or calibration placeholders are not filled"; exit 2; }
+ [ -e "$W" ] && { echo "STOP $W exists"; exit 2; }
+ mkdir -p "$W/logs" || exit 2
+-exec >> "$W/logs/connect-gate-$T.log" 2>&1
++exec >> "$W/logs/connect-gate-2-$T.log" 2>&1
+ echo "host=$(hostname) start=$(date -u +%FT%TZ) pid=$$ truth=$T"
+ echo "squeue: [$(squeue --me -h -o '%i %j %T %l %D' | tr '\n' ';')]"
+ [ "$(squeue --me -h -o %j | grep -cx "$J")" = "0" ] || stop "$J is already queued"
+@@ -41,7 +42,7 @@
+ n=$(git -C "$DD" status --porcelain | wc -l); h=$(git -C "$DD" rev-parse HEAD); echo "deploy porcelain_lines=$n head=$h"
+ [ "$n" = "0" ] && [ "$h" = "$M" ] || stop "deploy not clean at M"
+ cat > "$W/bound.sha256" <<SUMS
+-b49f5d5f793265ef0cf569abe1912838cce9280e692f4dd61100d05c133aec1f  nd-unfolding/ll5d.py
++$L5  nd-unfolding/ll5d.py
+ 522d7edd71643df61d0c5ef5a7488834e664eb36d20c3e0c0b46e10a5808f02f  nd-unfolding/fd_1b_c2.py
+ 936e1957d330e24d3eaab5f6c53d30b5be42a96f76daac07d527be97c0af30e2  nd-unfolding/fd_1b_mc.py
+ 869a65c3bcce1a3b56ecd197ecdf3b6cf2741e0611f91b582c3064f67967bc08  nd-unfolding/fd_1b_toys.py

@@ -1,0 +1,369 @@
+HTAR: a   SHA256SUMS.prr
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/A7_genie_cv/prr_B0_A7_genie_cv_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/A7_genie_mec/prr_B0_A7_genie_mec_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/A7_gibuu/prr_B0_A7_gibuu_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/A7_gibuu/prr_B0_A7_gibuu_s994001.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/A7_gibuu/prr_B0_A7_gibuu_s994002.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/A7_gibuu/prr_B0_A7_gibuu_s994003.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/A7_gibuu/prr_B0_A7_gibuu_s994004.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/A7_mnvtune/prr_B0_A7_mnvtune_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/A7_nuwro/prr_B0_A7_nuwro_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/W1/prr_B0_W1_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/W2/prr_B0_W2_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/W3/prr_B0_W3_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/closure_nuwro/prr_B0_closure_nuwro_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/nominal/prr_B0_nominal_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/nominal/prr_B0_nominal_s994001.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/nominal/prr_B0_nominal_s994002.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/nominal/prr_B0_nominal_s994003.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/nominal/prr_B0_nominal_s994004.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/q3/prr_B0_q3_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/stage0c_gibuu/prr_B0_stage0c_gibuu_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/C1000/A7_genie_cv/prr_C1000_A7_genie_cv_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/C1000/A7_genie_mec/prr_C1000_A7_genie_mec_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/C1000/A7_gibuu/prr_C1000_A7_gibuu_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/C1000/A7_mnvtune/prr_C1000_A7_mnvtune_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/C1000/A7_nuwro/prr_C1000_A7_nuwro_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/C1000/W1/prr_C1000_W1_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/C1000/W2/prr_C1000_W2_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/C1000/W3/prr_C1000_W3_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/C1000/closure_nuwro/prr_C1000_closure_nuwro_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/C1000/nominal/prr_C1000_nominal_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/C1000/q3/prr_C1000_q3_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/C1000/stage0c_gibuu/prr_C1000_stage0c_gibuu_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/C25/A7_genie_cv/prr_C25_A7_genie_cv_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/C25/A7_genie_mec/prr_C25_A7_genie_mec_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/C25/A7_gibuu/prr_C25_A7_gibuu_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/C25/A7_mnvtune/prr_C25_A7_mnvtune_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/C25/A7_nuwro/prr_C25_A7_nuwro_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/C25/W1/prr_C25_W1_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/C25/W2/prr_C25_W2_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/C25/W3/prr_C25_W3_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/C25/closure_nuwro/prr_C25_closure_nuwro_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/C25/nominal/prr_C25_nominal_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/C25/q3/prr_C25_q3_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/C25/stage0c_gibuu/prr_C25_stage0c_gibuu_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/C400/A7_genie_cv/prr_C400_A7_genie_cv_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/C400/A7_genie_mec/prr_C400_A7_genie_mec_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/C400/A7_gibuu/prr_C400_A7_gibuu_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/C400/A7_gibuu/prr_C400_A7_gibuu_s994001.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/C400/A7_gibuu/prr_C400_A7_gibuu_s994002.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/C400/A7_gibuu/prr_C400_A7_gibuu_s994003.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/C400/A7_gibuu/prr_C400_A7_gibuu_s994004.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/C400/A7_mnvtune/prr_C400_A7_mnvtune_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/C400/A7_nuwro/prr_C400_A7_nuwro_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/C400/W1/prr_C400_W1_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/C400/W2/prr_C400_W2_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/C400/W3/prr_C400_W3_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/C400/closure_nuwro/prr_C400_closure_nuwro_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/C400/nominal/prr_C400_nominal_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/C400/q3/prr_C400_q3_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/C400/stage0c_gibuu/prr_C400_stage0c_gibuu_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K10/A7_genie_cv/prr_K10_A7_genie_cv_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K10/A7_genie_mec/prr_K10_A7_genie_mec_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K10/A7_gibuu/prr_K10_A7_gibuu_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K10/A7_mnvtune/prr_K10_A7_mnvtune_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K10/A7_nuwro/prr_K10_A7_nuwro_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K10/W1/prr_K10_W1_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K10/W2/prr_K10_W2_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K10/W3/prr_K10_W3_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K10/closure_nuwro/prr_K10_closure_nuwro_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K10/nominal/prr_K10_nominal_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K10/q3/prr_K10_q3_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K10/stage0c_gibuu/prr_K10_stage0c_gibuu_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K2/A7_genie_cv/prr_K2_A7_genie_cv_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K2/A7_genie_mec/prr_K2_A7_genie_mec_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K2/A7_gibuu/prr_K2_A7_gibuu_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K2/A7_mnvtune/prr_K2_A7_mnvtune_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K2/A7_nuwro/prr_K2_A7_nuwro_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K2/W1/prr_K2_W1_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K2/W2/prr_K2_W2_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K2/W3/prr_K2_W3_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K2/closure_nuwro/prr_K2_closure_nuwro_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K2/nominal/prr_K2_nominal_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K2/q3/prr_K2_q3_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K2/stage0c_gibuu/prr_K2_stage0c_gibuu_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K20/A7_genie_cv/prr_K20_A7_genie_cv_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K20/A7_genie_mec/prr_K20_A7_genie_mec_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K20/A7_gibuu/prr_K20_A7_gibuu_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K20/A7_gibuu/prr_K20_A7_gibuu_s994001.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K20/A7_gibuu/prr_K20_A7_gibuu_s994002.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K20/A7_gibuu/prr_K20_A7_gibuu_s994003.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K20/A7_gibuu/prr_K20_A7_gibuu_s994004.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K20/A7_mnvtune/prr_K20_A7_mnvtune_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K20/A7_nuwro/prr_K20_A7_nuwro_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K20/W1/prr_K20_W1_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K20/W2/prr_K20_W2_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K20/W3/prr_K20_W3_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K20/closure_nuwro/prr_K20_closure_nuwro_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K20/nominal/prr_K20_nominal_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K20/q3/prr_K20_q3_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K20/stage0c_gibuu/prr_K20_stage0c_gibuu_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K50/A7_genie_cv/prr_K50_A7_genie_cv_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K50/A7_genie_mec/prr_K50_A7_genie_mec_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K50/A7_gibuu/prr_K50_A7_gibuu_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K50/A7_mnvtune/prr_K50_A7_mnvtune_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K50/A7_nuwro/prr_K50_A7_nuwro_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K50/W1/prr_K50_W1_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K50/W2/prr_K50_W2_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K50/W3/prr_K50_W3_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K50/closure_nuwro/prr_K50_closure_nuwro_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K50/nominal/prr_K50_nominal_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K50/q3/prr_K50_q3_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/K50/stage0c_gibuu/prr_K50_stage0c_gibuu_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/MCq/A7_genie_cv/prr_MCq_A7_genie_cv_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/MCq/A7_genie_mec/prr_MCq_A7_genie_mec_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/MCq/A7_gibuu/prr_MCq_A7_gibuu_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/MCq/A7_gibuu/prr_MCq_A7_gibuu_s994001.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/MCq/A7_gibuu/prr_MCq_A7_gibuu_s994002.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/MCq/A7_gibuu/prr_MCq_A7_gibuu_s994003.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/MCq/A7_gibuu/prr_MCq_A7_gibuu_s994004.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/MCq/A7_mnvtune/prr_MCq_A7_mnvtune_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/MCq/A7_nuwro/prr_MCq_A7_nuwro_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/MCq/W1/prr_MCq_W1_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/MCq/W2/prr_MCq_W2_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/MCq/W3/prr_MCq_W3_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/MCq/closure_nuwro/prr_MCq_closure_nuwro_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/MCq/nominal/prr_MCq_nominal_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/MCq/q3/prr_MCq_q3_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/MCq/stage0c_gibuu/prr_MCq_stage0c_gibuu_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O2/A7_genie_cv/prr_O2_A7_genie_cv_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O2/A7_genie_mec/prr_O2_A7_genie_mec_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O2/A7_gibuu/prr_O2_A7_gibuu_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O2/A7_gibuu/prr_O2_A7_gibuu_s994001.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O2/A7_gibuu/prr_O2_A7_gibuu_s994002.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O2/A7_gibuu/prr_O2_A7_gibuu_s994003.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O2/A7_gibuu/prr_O2_A7_gibuu_s994004.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O2/A7_mnvtune/prr_O2_A7_mnvtune_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O2/A7_nuwro/prr_O2_A7_nuwro_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O2/W1/prr_O2_W1_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O2/W2/prr_O2_W2_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O2/W3/prr_O2_W3_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O2/closure_nuwro/prr_O2_closure_nuwro_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O2/nominal/prr_O2_nominal_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O2/q3/prr_O2_q3_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O2/stage0c_gibuu/prr_O2_stage0c_gibuu_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O3/A7_genie_cv/prr_O3_A7_genie_cv_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O3/A7_genie_mec/prr_O3_A7_genie_mec_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O3/A7_gibuu/prr_O3_A7_gibuu_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O3/A7_mnvtune/prr_O3_A7_mnvtune_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O3/A7_nuwro/prr_O3_A7_nuwro_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O3/W1/prr_O3_W1_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O3/W2/prr_O3_W2_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O3/W3/prr_O3_W3_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O3/closure_nuwro/prr_O3_closure_nuwro_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O3/nominal/prr_O3_nominal_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O3/q3/prr_O3_q3_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O3/stage0c_gibuu/prr_O3_stage0c_gibuu_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O4/A7_genie_cv/prr_O4_A7_genie_cv_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O4/A7_genie_mec/prr_O4_A7_genie_mec_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O4/A7_gibuu/prr_O4_A7_gibuu_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O4/A7_mnvtune/prr_O4_A7_mnvtune_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O4/A7_nuwro/prr_O4_A7_nuwro_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O4/W1/prr_O4_W1_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O4/W2/prr_O4_W2_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O4/W3/prr_O4_W3_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O4/closure_nuwro/prr_O4_closure_nuwro_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O4/nominal/prr_O4_nominal_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O4/q3/prr_O4_q3_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O4/stage0c_gibuu/prr_O4_stage0c_gibuu_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O4r/A7_genie_cv/prr_O4r_A7_genie_cv_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O4r/A7_genie_mec/prr_O4r_A7_genie_mec_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O4r/A7_gibuu/prr_O4r_A7_gibuu_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O4r/A7_mnvtune/prr_O4r_A7_mnvtune_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O4r/A7_nuwro/prr_O4r_A7_nuwro_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O4r/W1/prr_O4r_W1_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O4r/W2/prr_O4r_W2_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O4r/W3/prr_O4r_W3_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O4r/closure_nuwro/prr_O4r_closure_nuwro_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O4r/nominal/prr_O4r_nominal_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O4r/q3/prr_O4r_q3_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O4r/stage0c_gibuu/prr_O4r_stage0c_gibuu_s991000.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-prr-20261108/runs/O5/nominal/prr_O5_nominal_s991000.npz
+HTAR: a   /tmp/HTAR_CF_CHK_585502_1794365672
+HTAR Create complete for /home/j/josephrb/mnv-at-risk-20261111/prr.tar. 33495552 bytes written for 182 member files, max threads: 50 Transfer time: 0.052 seconds (642.404 MB/s) wallclock/user/sys: 0.276 0.174 0.121 seconds
+HTAR: v SHA256SUMS.prr, 27461 bytes, 55 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/A7_genie_cv/prr_B0_A7_genie_cv_s991000.npz, 184282 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/A7_genie_mec/prr_B0_A7_genie_mec_s991000.npz, 184350 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/A7_gibuu/prr_B0_A7_gibuu_s991000.npz, 184401 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/A7_gibuu/prr_B0_A7_gibuu_s994001.npz, 184316 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/A7_gibuu/prr_B0_A7_gibuu_s994002.npz, 184476 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/A7_gibuu/prr_B0_A7_gibuu_s994003.npz, 184414 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/A7_gibuu/prr_B0_A7_gibuu_s994004.npz, 184335 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/A7_mnvtune/prr_B0_A7_mnvtune_s991000.npz, 184265 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/A7_nuwro/prr_B0_A7_nuwro_s991000.npz, 184154 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/W1/prr_B0_W1_s991000.npz, 184369 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/W2/prr_B0_W2_s991000.npz, 184458 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/W3/prr_B0_W3_s991000.npz, 184354 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/closure_nuwro/prr_B0_closure_nuwro_s991000.npz, 184459 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/nominal/prr_B0_nominal_s991000.npz, 184263 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/nominal/prr_B0_nominal_s994001.npz, 184261 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/nominal/prr_B0_nominal_s994002.npz, 184398 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/nominal/prr_B0_nominal_s994003.npz, 184380 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/nominal/prr_B0_nominal_s994004.npz, 184279 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/q3/prr_B0_q3_s991000.npz, 184471 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/stage0c_gibuu/prr_B0_stage0c_gibuu_s991000.npz, 184478 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/C1000/A7_genie_cv/prr_C1000_A7_genie_cv_s991000.npz, 184282 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/C1000/A7_genie_mec/prr_C1000_A7_genie_mec_s991000.npz, 184253 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/C1000/A7_gibuu/prr_C1000_A7_gibuu_s991000.npz, 184366 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/C1000/A7_mnvtune/prr_C1000_A7_mnvtune_s991000.npz, 184290 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/C1000/A7_nuwro/prr_C1000_A7_nuwro_s991000.npz, 184209 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/C1000/W1/prr_C1000_W1_s991000.npz, 184379 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/C1000/W2/prr_C1000_W2_s991000.npz, 184472 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/C1000/W3/prr_C1000_W3_s991000.npz, 184360 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/C1000/closure_nuwro/prr_C1000_closure_nuwro_s991000.npz, 184403 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/C1000/nominal/prr_C1000_nominal_s991000.npz, 184286 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/C1000/q3/prr_C1000_q3_s991000.npz, 184533 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/C1000/stage0c_gibuu/prr_C1000_stage0c_gibuu_s991000.npz, 184423 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/C25/A7_genie_cv/prr_C25_A7_genie_cv_s991000.npz, 184302 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/C25/A7_genie_mec/prr_C25_A7_genie_mec_s991000.npz, 184299 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/C25/A7_gibuu/prr_C25_A7_gibuu_s991000.npz, 184416 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/C25/A7_mnvtune/prr_C25_A7_mnvtune_s991000.npz, 184266 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/C25/A7_nuwro/prr_C25_A7_nuwro_s991000.npz, 184228 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/C25/W1/prr_C25_W1_s991000.npz, 184436 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/C25/W2/prr_C25_W2_s991000.npz, 184495 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/C25/W3/prr_C25_W3_s991000.npz, 184364 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/C25/closure_nuwro/prr_C25_closure_nuwro_s991000.npz, 184495 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/C25/nominal/prr_C25_nominal_s991000.npz, 184263 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/C25/q3/prr_C25_q3_s991000.npz, 184498 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/C25/stage0c_gibuu/prr_C25_stage0c_gibuu_s991000.npz, 184432 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/C400/A7_genie_cv/prr_C400_A7_genie_cv_s991000.npz, 184321 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/C400/A7_genie_mec/prr_C400_A7_genie_mec_s991000.npz, 184296 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/C400/A7_gibuu/prr_C400_A7_gibuu_s991000.npz, 184388 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/C400/A7_gibuu/prr_C400_A7_gibuu_s994001.npz, 184342 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/C400/A7_gibuu/prr_C400_A7_gibuu_s994002.npz, 184499 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/C400/A7_gibuu/prr_C400_A7_gibuu_s994003.npz, 184460 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/C400/A7_gibuu/prr_C400_A7_gibuu_s994004.npz, 184312 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/C400/A7_mnvtune/prr_C400_A7_mnvtune_s991000.npz, 184224 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/C400/A7_nuwro/prr_C400_A7_nuwro_s991000.npz, 184207 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/C400/W1/prr_C400_W1_s991000.npz, 184351 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/C400/W2/prr_C400_W2_s991000.npz, 184491 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/C400/W3/prr_C400_W3_s991000.npz, 184373 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/C400/closure_nuwro/prr_C400_closure_nuwro_s991000.npz, 184449 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/C400/nominal/prr_C400_nominal_s991000.npz, 184223 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/C400/q3/prr_C400_q3_s991000.npz, 184513 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/C400/stage0c_gibuu/prr_C400_stage0c_gibuu_s991000.npz, 184427 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K10/A7_genie_cv/prr_K10_A7_genie_cv_s991000.npz, 184256 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K10/A7_genie_mec/prr_K10_A7_genie_mec_s991000.npz, 184304 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K10/A7_gibuu/prr_K10_A7_gibuu_s991000.npz, 184361 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K10/A7_mnvtune/prr_K10_A7_mnvtune_s991000.npz, 184283 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K10/A7_nuwro/prr_K10_A7_nuwro_s991000.npz, 184179 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K10/W1/prr_K10_W1_s991000.npz, 184361 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K10/W2/prr_K10_W2_s991000.npz, 184462 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K10/W3/prr_K10_W3_s991000.npz, 184346 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K10/closure_nuwro/prr_K10_closure_nuwro_s991000.npz, 184457 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K10/nominal/prr_K10_nominal_s991000.npz, 184283 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K10/q3/prr_K10_q3_s991000.npz, 184511 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K10/stage0c_gibuu/prr_K10_stage0c_gibuu_s991000.npz, 184444 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K2/A7_genie_cv/prr_K2_A7_genie_cv_s991000.npz, 184309 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K2/A7_genie_mec/prr_K2_A7_genie_mec_s991000.npz, 184295 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K2/A7_gibuu/prr_K2_A7_gibuu_s991000.npz, 184408 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K2/A7_mnvtune/prr_K2_A7_mnvtune_s991000.npz, 184320 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K2/A7_nuwro/prr_K2_A7_nuwro_s991000.npz, 184218 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K2/W1/prr_K2_W1_s991000.npz, 184419 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K2/W2/prr_K2_W2_s991000.npz, 184468 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K2/W3/prr_K2_W3_s991000.npz, 184352 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K2/closure_nuwro/prr_K2_closure_nuwro_s991000.npz, 184438 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K2/nominal/prr_K2_nominal_s991000.npz, 184316 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K2/q3/prr_K2_q3_s991000.npz, 184549 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K2/stage0c_gibuu/prr_K2_stage0c_gibuu_s991000.npz, 184447 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K20/A7_genie_cv/prr_K20_A7_genie_cv_s991000.npz, 184316 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K20/A7_genie_mec/prr_K20_A7_genie_mec_s991000.npz, 184315 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K20/A7_gibuu/prr_K20_A7_gibuu_s991000.npz, 184385 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K20/A7_gibuu/prr_K20_A7_gibuu_s994001.npz, 184318 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K20/A7_gibuu/prr_K20_A7_gibuu_s994002.npz, 184455 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K20/A7_gibuu/prr_K20_A7_gibuu_s994003.npz, 184423 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K20/A7_gibuu/prr_K20_A7_gibuu_s994004.npz, 184363 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K20/A7_mnvtune/prr_K20_A7_mnvtune_s991000.npz, 184253 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K20/A7_nuwro/prr_K20_A7_nuwro_s991000.npz, 184165 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K20/W1/prr_K20_W1_s991000.npz, 184361 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K20/W2/prr_K20_W2_s991000.npz, 184434 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K20/W3/prr_K20_W3_s991000.npz, 184365 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K20/closure_nuwro/prr_K20_closure_nuwro_s991000.npz, 184422 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K20/nominal/prr_K20_nominal_s991000.npz, 184250 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K20/q3/prr_K20_q3_s991000.npz, 184537 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K20/stage0c_gibuu/prr_K20_stage0c_gibuu_s991000.npz, 184435 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K50/A7_genie_cv/prr_K50_A7_genie_cv_s991000.npz, 184270 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K50/A7_genie_mec/prr_K50_A7_genie_mec_s991000.npz, 184316 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K50/A7_gibuu/prr_K50_A7_gibuu_s991000.npz, 184437 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K50/A7_mnvtune/prr_K50_A7_mnvtune_s991000.npz, 184278 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K50/A7_nuwro/prr_K50_A7_nuwro_s991000.npz, 184216 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K50/W1/prr_K50_W1_s991000.npz, 184342 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K50/W2/prr_K50_W2_s991000.npz, 184473 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K50/W3/prr_K50_W3_s991000.npz, 184375 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K50/closure_nuwro/prr_K50_closure_nuwro_s991000.npz, 184453 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K50/nominal/prr_K50_nominal_s991000.npz, 184274 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K50/q3/prr_K50_q3_s991000.npz, 184529 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/K50/stage0c_gibuu/prr_K50_stage0c_gibuu_s991000.npz, 184452 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/MCq/A7_genie_cv/prr_MCq_A7_genie_cv_s991000.npz, 181376 bytes, 356 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/MCq/A7_genie_mec/prr_MCq_A7_genie_mec_s991000.npz, 181437 bytes, 356 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/MCq/A7_gibuu/prr_MCq_A7_gibuu_s991000.npz, 181549 bytes, 356 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/MCq/A7_gibuu/prr_MCq_A7_gibuu_s994001.npz, 181596 bytes, 356 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/MCq/A7_gibuu/prr_MCq_A7_gibuu_s994002.npz, 181715 bytes, 356 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/MCq/A7_gibuu/prr_MCq_A7_gibuu_s994003.npz, 181639 bytes, 356 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/MCq/A7_gibuu/prr_MCq_A7_gibuu_s994004.npz, 181463 bytes, 356 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/MCq/A7_mnvtune/prr_MCq_A7_mnvtune_s991000.npz, 181400 bytes, 356 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/MCq/A7_nuwro/prr_MCq_A7_nuwro_s991000.npz, 181358 bytes, 356 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/MCq/W1/prr_MCq_W1_s991000.npz, 181527 bytes, 356 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/MCq/W2/prr_MCq_W2_s991000.npz, 181602 bytes, 356 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/MCq/W3/prr_MCq_W3_s991000.npz, 181481 bytes, 356 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/MCq/closure_nuwro/prr_MCq_closure_nuwro_s991000.npz, 181567 bytes, 356 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/MCq/nominal/prr_MCq_nominal_s991000.npz, 181394 bytes, 356 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/MCq/q3/prr_MCq_q3_s991000.npz, 181648 bytes, 356 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/MCq/stage0c_gibuu/prr_MCq_stage0c_gibuu_s991000.npz, 181611 bytes, 356 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O2/A7_genie_cv/prr_O2_A7_genie_cv_s991000.npz, 184245 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O2/A7_genie_mec/prr_O2_A7_genie_mec_s991000.npz, 184341 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O2/A7_gibuu/prr_O2_A7_gibuu_s991000.npz, 184470 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O2/A7_gibuu/prr_O2_A7_gibuu_s994001.npz, 184335 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O2/A7_gibuu/prr_O2_A7_gibuu_s994002.npz, 184513 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O2/A7_gibuu/prr_O2_A7_gibuu_s994003.npz, 184468 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O2/A7_gibuu/prr_O2_A7_gibuu_s994004.npz, 184355 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O2/A7_mnvtune/prr_O2_A7_mnvtune_s991000.npz, 184250 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O2/A7_nuwro/prr_O2_A7_nuwro_s991000.npz, 184239 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O2/W1/prr_O2_W1_s991000.npz, 184435 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O2/W2/prr_O2_W2_s991000.npz, 184465 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O2/W3/prr_O2_W3_s991000.npz, 184372 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O2/closure_nuwro/prr_O2_closure_nuwro_s991000.npz, 184433 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O2/nominal/prr_O2_nominal_s991000.npz, 184249 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O2/q3/prr_O2_q3_s991000.npz, 184512 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O2/stage0c_gibuu/prr_O2_stage0c_gibuu_s991000.npz, 184409 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O3/A7_genie_cv/prr_O3_A7_genie_cv_s991000.npz, 184271 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O3/A7_genie_mec/prr_O3_A7_genie_mec_s991000.npz, 184306 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O3/A7_gibuu/prr_O3_A7_gibuu_s991000.npz, 184386 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O3/A7_mnvtune/prr_O3_A7_mnvtune_s991000.npz, 184297 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O3/A7_nuwro/prr_O3_A7_nuwro_s991000.npz, 184227 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O3/W1/prr_O3_W1_s991000.npz, 184369 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O3/W2/prr_O3_W2_s991000.npz, 184473 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O3/W3/prr_O3_W3_s991000.npz, 184336 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O3/closure_nuwro/prr_O3_closure_nuwro_s991000.npz, 184395 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O3/nominal/prr_O3_nominal_s991000.npz, 184289 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O3/q3/prr_O3_q3_s991000.npz, 184488 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O3/stage0c_gibuu/prr_O3_stage0c_gibuu_s991000.npz, 184384 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O4/A7_genie_cv/prr_O4_A7_genie_cv_s991000.npz, 184296 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O4/A7_genie_mec/prr_O4_A7_genie_mec_s991000.npz, 184301 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O4/A7_gibuu/prr_O4_A7_gibuu_s991000.npz, 184399 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O4/A7_mnvtune/prr_O4_A7_mnvtune_s991000.npz, 184290 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O4/A7_nuwro/prr_O4_A7_nuwro_s991000.npz, 184192 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O4/W1/prr_O4_W1_s991000.npz, 184391 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O4/W2/prr_O4_W2_s991000.npz, 184445 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O4/W3/prr_O4_W3_s991000.npz, 184314 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O4/closure_nuwro/prr_O4_closure_nuwro_s991000.npz, 184446 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O4/nominal/prr_O4_nominal_s991000.npz, 184284 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O4/q3/prr_O4_q3_s991000.npz, 184457 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O4/stage0c_gibuu/prr_O4_stage0c_gibuu_s991000.npz, 184494 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O4r/A7_genie_cv/prr_O4r_A7_genie_cv_s991000.npz, 184321 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O4r/A7_genie_mec/prr_O4r_A7_genie_mec_s991000.npz, 184284 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O4r/A7_gibuu/prr_O4r_A7_gibuu_s991000.npz, 184405 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O4r/A7_mnvtune/prr_O4r_A7_mnvtune_s991000.npz, 184259 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O4r/A7_nuwro/prr_O4r_A7_nuwro_s991000.npz, 184164 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O4r/W1/prr_O4r_W1_s991000.npz, 184374 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O4r/W2/prr_O4r_W2_s991000.npz, 184429 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O4r/W3/prr_O4r_W3_s991000.npz, 184308 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O4r/closure_nuwro/prr_O4r_closure_nuwro_s991000.npz, 184442 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O4r/nominal/prr_O4r_nominal_s991000.npz, 184252 bytes, 361 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O4r/q3/prr_O4r_q3_s991000.npz, 184519 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O4r/stage0c_gibuu/prr_O4r_stage0c_gibuu_s991000.npz, 184447 bytes, 362 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-prr-20261108/runs/O5/nominal/prr_O5_nominal_s991000.npz, 184280 bytes, 361 media blocks
+HTAR: v /tmp/HTAR_CF_CHK_585502_1794365672, 256 bytes, 2 media blocks
+HTAR: Verify complete. 0 total errors, 183 total objects (183 Files,0 Dirs,0 Hard Links,0 symlinks) wallclock/user/sys: 0.262 0.214 0.010 seconds
+HTAR: HTAR SUCCESSFUL

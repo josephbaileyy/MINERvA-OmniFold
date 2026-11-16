@@ -1,0 +1,6 @@
+node login06 staged sha256 16a2a5cd5e36f0a3d48577afd3c4b1d4adebe6baf72fcf228d7c85275739754a
+fence host=login06 utc=2026-11-13T01:42:12Z
+squeue: 61202343|e96data_full|PENDING
+sacct cov2d/t2a rows (14 days): 28, none unended
+FENCE CLEAR
+script rc=0

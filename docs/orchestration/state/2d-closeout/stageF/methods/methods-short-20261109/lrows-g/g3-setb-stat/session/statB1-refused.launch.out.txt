@@ -1,0 +1,1 @@
+STOP: /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/5d61e7d7-c2cc-4084-a179-c751bf301f61/scratchpad/g3jit/statB1 is not a new empty directory

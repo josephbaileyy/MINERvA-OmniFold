@@ -1,0 +1,5 @@
+029ff7fb3455c2e27289d1ecf68cb9483aa0dd212bf7384f2ca02e631e7d49a3  /dev/shm/josephrb-g2r-readout-G18.sh
+6e10e8ec5093db10a5c47b9d8a22977bd0267a1d3779890aef8e710166080b55  /dev/shm/josephrb-g2r-readout-G18.log
+rm -f /dev/shm/josephrb-g2r-readout-G18.sh /dev/shm/josephrb-g2r-readout-G18.log rc=0
+ls: cannot access '/dev/shm/josephrb-g2r-readout-G18.sh': No such file or directory
+ls: cannot access '/dev/shm/josephrb-g2r-readout-G18.log': No such file or directory

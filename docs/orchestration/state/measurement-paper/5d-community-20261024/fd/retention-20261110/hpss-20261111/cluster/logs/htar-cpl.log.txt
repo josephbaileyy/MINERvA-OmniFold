@@ -1,0 +1,83 @@
+HTAR: a   SHA256SUMS.cpl
+HTAR: a   pscratch/sd/j/josephrb/fd-ct-5b-20261030/truth/truth_ALL.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-ct-5b-20261030/truth/truth_PA.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-ct-5b-20261030/truth/truth_PB.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-ct-5b-20261030/truth/truth_PC.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/ALL/5b_ALL_b-_j-.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PA/5b_PA_b-_j-.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PA/5b_PA_b1001_j-.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PA/5b_PA_b1002_j-.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PA/5b_PA_b1003_j-.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PA/5b_PA_b1004_j-.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PA/5b_PA_b1005_j-.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PA/5b_PA_b1006_j-.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PA/5b_PA_b1007_j-.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PA/5b_PA_b1008_j-.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PA/5b_PA_b1009_j-.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PA/5b_PA_b1010_j-.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PB/5b_PB_b-_j-.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PB/5b_PB_b2001_j-.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PB/5b_PB_b2002_j-.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PB/5b_PB_b2003_j-.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PB/5b_PB_b2004_j-.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PB/5b_PB_b2005_j-.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PB/5b_PB_b2006_j-.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PB/5b_PB_b2007_j-.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PB/5b_PB_b2008_j-.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PB/5b_PB_b2009_j-.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PB/5b_PB_b2010_j-.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PC/5b_PC_b-_j-.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PC/5b_PC_b3001_j-.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PC/5b_PC_b3002_j-.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PC/5b_PC_b3003_j-.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PC/5b_PC_b3004_j-.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PC/5b_PC_b3005_j-.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PC/5b_PC_b3006_j-.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PC/5b_PC_b3007_j-.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PC/5b_PC_b3008_j-.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PC/5b_PC_b3009_j-.npz
+HTAR: a   pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PC/5b_PC_b3010_j-.npz
+HTAR: a   /tmp/HTAR_CF_CHK_528446_1794365188
+HTAR Create complete for /home/j/josephrb/mnv-at-risk-20261111/cpl.tar. 3934720 bytes written for 39 member files, max threads: 40 Transfer time: 0.022 seconds (181.113 MB/s) wallclock/user/sys: 0.270 0.054 0.000 seconds
+HTAR: v SHA256SUMS.cpl, 5055 bytes, 11 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-ct-5b-20261030/truth/truth_ALL.npz, 224711 bytes, 440 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-ct-5b-20261030/truth/truth_PA.npz, 217756 bytes, 427 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-ct-5b-20261030/truth/truth_PB.npz, 211952 bytes, 415 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-ct-5b-20261030/truth/truth_PC.npz, 204984 bytes, 402 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/ALL/5b_ALL_b-_j-.npz, 95555 bytes, 188 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PA/5b_PA_b-_j-.npz, 93260 bytes, 184 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PA/5b_PA_b1001_j-.npz, 91354 bytes, 180 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PA/5b_PA_b1002_j-.npz, 91477 bytes, 180 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PA/5b_PA_b1003_j-.npz, 91394 bytes, 180 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PA/5b_PA_b1004_j-.npz, 91566 bytes, 180 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PA/5b_PA_b1005_j-.npz, 91325 bytes, 180 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PA/5b_PA_b1006_j-.npz, 91612 bytes, 180 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PA/5b_PA_b1007_j-.npz, 91580 bytes, 180 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PA/5b_PA_b1008_j-.npz, 91547 bytes, 180 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PA/5b_PA_b1009_j-.npz, 91355 bytes, 180 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PA/5b_PA_b1010_j-.npz, 91328 bytes, 180 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PB/5b_PB_b-_j-.npz, 91180 bytes, 180 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PB/5b_PB_b2001_j-.npz, 89248 bytes, 176 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PB/5b_PB_b2002_j-.npz, 89266 bytes, 176 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PB/5b_PB_b2003_j-.npz, 89143 bytes, 176 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PB/5b_PB_b2004_j-.npz, 89067 bytes, 175 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PB/5b_PB_b2005_j-.npz, 89098 bytes, 176 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PB/5b_PB_b2006_j-.npz, 89197 bytes, 176 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PB/5b_PB_b2007_j-.npz, 88971 bytes, 175 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PB/5b_PB_b2008_j-.npz, 89217 bytes, 176 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PB/5b_PB_b2009_j-.npz, 88857 bytes, 175 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PB/5b_PB_b2010_j-.npz, 89105 bytes, 176 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PC/5b_PC_b-_j-.npz, 88734 bytes, 175 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PC/5b_PC_b3001_j-.npz, 86570 bytes, 171 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PC/5b_PC_b3002_j-.npz, 86518 bytes, 170 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PC/5b_PC_b3003_j-.npz, 86565 bytes, 171 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PC/5b_PC_b3004_j-.npz, 86478 bytes, 170 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PC/5b_PC_b3005_j-.npz, 86466 bytes, 170 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PC/5b_PC_b3006_j-.npz, 86286 bytes, 170 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PC/5b_PC_b3007_j-.npz, 86375 bytes, 170 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PC/5b_PC_b3008_j-.npz, 86227 bytes, 170 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PC/5b_PC_b3009_j-.npz, 86409 bytes, 170 media blocks
+HTAR: v pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/PC/5b_PC_b3010_j-.npz, 86367 bytes, 170 media blocks
+HTAR: v /tmp/HTAR_CF_CHK_528446_1794365188, 256 bytes, 2 media blocks
+HTAR: Verify complete. 0 total errors, 40 total objects (40 Files,0 Dirs,0 Hard Links,0 symlinks) wallclock/user/sys: 0.260 0.027 0.000 seconds
+HTAR: HTAR SUCCESSFUL

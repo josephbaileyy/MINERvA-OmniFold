@@ -1,0 +1,78 @@
+{
+ "schema": "lrows-g5-reconcile/1",
+ "branch": "60d144395f68ae16bd7b569a4571d178a3af0211",
+ "period_step": {
+  "purity": {
+   "file": "docs/orchestration/state/2d-closeout/period-unfold-20261014/outputs/analysis.json",
+   "digest": "05edff61673fed987f487f8c19ad25ec055db8118491815b9c263f3a7c3de72b",
+   "key": "comparisons/dr_PB/PA/step",
+   "value_pct": 6.942682814976497,
+   "noise_sigma_pct": 0.4134920058013659
+  },
+  "refined": {
+   "file": "docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/periods/analysis.json",
+   "digest": "2ce5d5dab3e566590504ba0f186a90b0334e7e691dbda011403fc99a8c8d92cd",
+   "key": "comparisons/dr_PB/PA/step",
+   "value_pct": 6.888084964241115,
+   "noise_sigma_pct": 0.4593732759588371
+  },
+  "values_table": {
+   "file": "docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/values_table.tsv",
+   "digest": "d0a8f47b084b786db8a45416e9b636cdf95f5e0a37e818586344fd0963a64d65",
+   "rows": {
+    "pl-step": {
+     "where": "N/sec_systematics.tex:300",
+     "printed": "6.94",
+     "refined_rendered": "6.89",
+     "source": "analysis_json"
+    },
+    "pl-step-sigma": {
+     "where": "N/sec_systematics.tex:300",
+     "printed": "0.41",
+     "refined_rendered": "0.46",
+     "source": "analysis_json"
+    }
+   }
+  }
+ },
+ "residual_endpoints": {
+  "s5e_assess": {
+   "file": "docs/orchestration/state/s5e/cand/assess_receipt.json",
+   "digest": "84266e309d1aae0d2db1db315750b8164413a7d0125fcaa4a6c9b25834261a2c",
+   "key": "points/<W>/ew_max_abs_pct"
+  },
+  "recovery_check_a": {
+   "file": "docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-figure-deformation-20261112/check-a/a_recovery.json",
+   "digest": "75db95a11ea3cd4754437e78b8a2f98269efa65b96da72f2eae24f7dd040dc20",
+   "key": "shapes/<W>/max_abs_residual_supported"
+  },
+  "shapes": {
+   "W1": {
+    "all_cells_max_pct": 31.315024704313892,
+    "all_cells_argmax": "EW29",
+    "supported_max_pct": 31.315024704313892,
+    "supported_argmax": "EW29"
+   },
+   "W2": {
+    "all_cells_max_pct": 16.37640016282051,
+    "all_cells_argmax": "EW37",
+    "supported_max_pct": 8.784611861942883,
+    "supported_argmax": "EW9"
+   },
+   "W3": {
+    "all_cells_max_pct": 23.665240657047963,
+    "all_cells_argmax": "EW29",
+    "supported_max_pct": 23.665240657047963,
+    "supported_argmax": "EW29"
+   }
+  },
+  "all_cells_range_pct": [
+   16.37640016282051,
+   31.315024704313892
+  ],
+  "supported_range_pct": [
+   8.784611861942883,
+   31.315024704313892
+  ]
+ }
+}

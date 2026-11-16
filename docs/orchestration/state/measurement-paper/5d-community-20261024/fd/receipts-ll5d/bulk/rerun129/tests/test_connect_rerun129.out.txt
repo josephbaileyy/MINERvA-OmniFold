@@ -1,0 +1,14 @@
+block: 42 lines; LANESHA=315f004bb6869345400dd87f3bee2d31f380713492e33ce3c5a7582a6c41ede7
+PASS pass rc=0
+PASS pass-lines
+PASS lanes-0-3-slices-join-to-bulk-09-4-and-are-disjoint
+    lane 0: all_4761060,all_4761061,all_4761062,all_4761063,all_4761064
+    lane 1: all_4761065,all_4761066,all_4761067,all_4761068,all_4761069
+    lane 2: all_4761070,all_4761071,all_4761072,all_4761073,all_4761074
+    lane 3: all_4761075,all_4761076,all_4761077,all_4761078,all_4761079
+PASS u-one-short rc=2
+PASS one-of-20-missing rc=2
+PASS partition-altered rc=2
+PASS overlap-planted rc=2
+PASS overlap-detector-fired
+CONNECT-RERUN129 BLOCK TEST PASS

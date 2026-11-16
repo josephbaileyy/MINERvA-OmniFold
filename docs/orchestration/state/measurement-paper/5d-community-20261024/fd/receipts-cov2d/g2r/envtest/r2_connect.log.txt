@@ -1,0 +1,49 @@
+host=login02 start=2026-11-13T06:51:59Z pid=1867344 user=josephrb M=401733bce290ce122cfbf38f1526e120f174b3ec
+squeue: [61214601 ll5d_bulk_02 PENDING 8:00:00 1;61214597 ll5d_bulk_01 PENDING 8:00:00 1;61214615 ll5d_bulk_10 PENDING 8:00:00 1;61214614 ll5d_bulk_09 PENDING 8:00:00 1;61214612 ll5d_bulk_08 PENDING 8:00:00 1;61214610 ll5d_bulk_07 PENDING 8:00:00 1;61214609 ll5d_bulk_06 PENDING 8:00:00 1;61214607 ll5d_bulk_05 PENDING 8:00:00 1;61214605 ll5d_bulk_04 PENDING 8:00:00 1;61214604 ll5d_bulk_03 PENDING 8:00:00 1;]
+== iris
+m3246               2485.2            10000.0     18616.0      20000.0
+balance_node_h=1384.0 half=692.0 cap=110.0
+recompute spent=0.000 held=0.000 this=1.067 total=1.067 cap=110.0
+deploy porcelain_ignored=0 head=401733bce290ce122cfbf38f1526e120f174b3ec
+2d-unfolding/cov2d/g2r/jobs/g2r_jobs.py: OK
+2d-unfolding/cov2d/g2r/jobs/g2r_env.sh: OK
+2d-unfolding/cov2d/g2r/jobs/g2r_job.sbatch: OK
+2d-unfolding/cov2d/g2r/jobs/g2r_envtest.sbatch: OK
+2d-unfolding/cov2d/g2r/jobs/g2r_prepare.sbatch: OK
+2d-unfolding/cov2d/g2r/jobs/g2r_submit.sh: OK
+2d-unfolding/re2/re2_driver.py: OK
+2d-unfolding/cov2d/g2r/g2r.py: OK
+2d-unfolding/cov2d/g2r/g2r_prepare.py: OK
+2d-unfolding/cov2d/g2r/g2r_readout.py: OK
+2d-unfolding/cov2d/jobs/cov2d_jobs.py: OK
+2d-unfolding/cov2d/jobs/cov2d_env.sh: OK
+2d-unfolding/cov2d/cov2d.py: OK
+2d-unfolding/cov2d/cov2d_receipt.py: OK
+nd-unfolding/mnv_guarded_run.py: OK
+nd-unfolding/fd_rpd_inputs.py: OK
+docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partb_runs.tsv: OK
+setup_salloc_env.sh: OK
+unbinned_unfolding/python/omnifold.py: OK
+deploy-pre porcelain_ignored=0 head=a60547692df5f963e428cdfe4661fc51ab785b7b
+2d-unfolding/re2/re2_driver.py: OK
+unbinned_unfolding/python/omnifold.py: OK
+suites place=/dev/shm/josephrb-g2r-suites.toyD3P clone head=401733bce290ce122cfbf38f1526e120f174b3ec porcelain_ignored=0 bound sums 19 OK TMPDIR=/dev/shm/josephrb-g2r-suites.toyD3P/tmp
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+suites env: python numpy ROOT = 3.11.14 1.26.4 6.28/12
+suite test_g2r rc=0 Ran 27 tests in 27.709s OK 
+suite test_re2_miss_map rc=0 Ran 11 tests in 41.079s OK 
+suite test_g2r_glue rc=1 Ran 18 tests in 333.447s FAILED (failures=1) 
+suite test_g2r_jobs rc=0 Ran 58 tests in 47.371s OK 
+suites clone porcelain_ignored after the suites=0
+removed the suites place /dev/shm/josephrb-g2r-suites.toyD3P rc=0 left=no
+STOP the suites under the jobs' environment (rc 1)
+end=2026-11-13T07:00:04Z
+DONE

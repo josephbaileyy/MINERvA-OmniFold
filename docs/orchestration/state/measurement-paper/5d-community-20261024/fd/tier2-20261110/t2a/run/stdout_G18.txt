@@ -1,0 +1,1 @@
+T2A G18 OK rc=0 -> /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/5d61e7d7-c2cc-4084-a179-c751bf301f61/scratchpad/t2/t2a-run-1/t2a_G18.json; controls failed: []

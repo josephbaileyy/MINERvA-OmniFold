@@ -1,0 +1,23 @@
+<cross-session-message from="uds:/tmp/cc-socks/52592.sock" hop-chain="5a030e0770dcfa08a98b21e8" from-name="director" from-mode="bypass">
+director: limitation-resolver's strace probe passed on login27 (/usr/bin/strace 5.14, ptrace allowed). Even /bin/true makes 27 failed ENOENT library-search opens along LD_LIBRARY_PATH (darshan, cuda compat, nvidia hpc_sdk, cray papi, libfabric) and 2 successful system opens. So build the extract's syscall rule this way, not as a bare allow-list:
+
+1. **Protected roots: any attempt is a STOP, whatever its result,** ENOENT included. An attempt under a protected root means the redirect is incomplete. The protected roots are:
+   - the original PLOTUTILSROOT data tree;
+   - the original MPARAMFILES tree;
+   - every declared-input root in RPD-RECO's INPUTS;
+   - the COV2D input paths, including the flux-constraint file.
+2. **Every successful open is classified** into exactly one of:
+   - the staged data root(s);
+   - the pinned MAT libs;
+   - the env and ROOT install prefix;
+   - system (/etc, /lib64, /usr, /proc, /sys, /dev);
+   - the run dir.
+
+   An unclassified successful open is a STOP, and the receipt lists it.
+3. **A failed open outside the protected roots** is recorded, with a count per prefix. It is not a STOP.
+4. **The environment.** Record the full environment after the MAT setup (LD_LIBRARY_PATH, PATH, loaded modules). Don't clear it: the MAT setup is the pinned route. A change from the audited connect is a field-only diff, under the standing rule.
+5. **Test the rule both ways.**
+   - It fires on a fixture trace with one open (even an ENOENT) under a protected root, and on one unclassified successful open.
+   - It stays silent on a trace like the probe's.
+   - Each case gets a REQUIRED mutant.
+</cross-session-message>

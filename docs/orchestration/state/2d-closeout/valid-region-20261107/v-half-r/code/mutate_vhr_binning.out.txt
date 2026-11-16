@@ -1,0 +1,54 @@
+unmutated: PASS (rc 0)
+killed   criterion 0.5 -> 0.4
+killed   share 0.2 -> 0.25
+killed   veto crossing: before <= -> <
+killed   veto crossing: after > -> >=
+killed   veto skips untouched -> skips touched
+killed   structural & -> |
+killed   final two pieces -> one
+killed   strip refusal off
+killed   p_par edge: <= -> <
+killed   C0 refuses pt instead of pz
+killed   candidate low: or -> and
+killed   repro low ignores support
+killed   join order: best -> worst union
+killed   value: min -> max
+killed   reco_all needs pass_truth
+killed   truth_reco ignores pass_reco
+killed   truth_sel weight w_truth -> w_reco
+killed   support: and -> or
+killed   T3 diagonal fraction dropped
+killed   1D floor 3 -> 2
+killed   C0 per side 4 -> 3
+killed   weights: negative allowed
+killed   in_share uses the row sums
+killed   Ω: every fine cell
+killed   grid adjacency one-sided
+killed   landmark 0.8 -> 0.4
+killed   veto off in merge
+killed   outcome: structural branch dropped
+killed   outcome: final branch dropped
+killed   final check never computed
+killed   C7 2D rules off
+killed   C6 2D rules off
+killed   C2 p_par edge unfrozen
+killed   C6 p_par edge unfrozen
+killed   status ignores the outcome
+killed   2D floor 6 -> 5
+killed   final check on empty lines
+killed   veto empty-line guard dropped
+killed   npz pin off
+killed   h2_definition pin off
+killed   fine-map check off
+killed   main skips check_weights
+killed   reproduction mismatch ignored
+killed   reproduction in candidate mode
+killed   low ties: highest first index
+killed   the highest low goes first
+killed   partner ties: highest axis
+killed   partner ties: highest first index
+killed   w_reco set narrowed
+killed   excluded region over-named
+killed   C0 unmasked
+killed   non-finite record skipped (audit x1)
+MUTANTS: 52/52 killed

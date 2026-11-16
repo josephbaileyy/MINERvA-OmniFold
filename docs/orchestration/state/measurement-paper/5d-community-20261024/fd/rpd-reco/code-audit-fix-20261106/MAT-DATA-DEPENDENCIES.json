@@ -1,0 +1,473 @@
+{
+  "schema": "fd-rpd-reco-mat-dependencies/1",
+  "status": "STATIC_SOURCE_INVENTORY_NOT_RUNTIME_VERIFIED",
+  "constructor": {
+    "api": "PlotUtils::FluxReweighter(int,bool,std::string,EFluxVersion,EG4NumiVersion,int)",
+    "nu_pdg": 14,
+    "apply_nue_constraint": true,
+    "flux_version": "gen2thin",
+    "generation_version": "g4numiv6",
+    "n_flux_universes": 100,
+    "playlist_groups": [
+      "1D",
+      "1M",
+      "1N"
+    ],
+    "source_citations": [
+      {
+        "repository": "MinervaExpt/MAT",
+        "file": "PlotUtils/FluxReweighter.cxx",
+        "lines": [
+          372,
+          431
+        ],
+        "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+      },
+      {
+        "repository": "MinervaExpt/MAT",
+        "file": "PlotUtils/FluxReweighter.cxx",
+        "lines": [
+          42,
+          98
+        ],
+        "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+      },
+      {
+        "repository": "MinervaExpt/MAT",
+        "file": "PlotUtils/FluxReweighter.cxx",
+        "lines": [
+          2187,
+          2196
+        ],
+        "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+      }
+    ]
+  },
+  "entries": [
+    {
+      "environment_key": "PLOTUTILSROOT",
+      "relative_path": "data/flux/flux-gen2thin-pdg14-minervame1D_rearrangedUniverses.root",
+      "role": "constrained-numerator-input",
+      "playlist_group": "1D",
+      "pdg": 14,
+      "histogram": "flux_E_cvweighted",
+      "source_citations": [
+        {
+          "repository": "MinervaExpt/MAT",
+          "file": "PlotUtils/FluxReweighter.cxx",
+          "lines": [
+            396,
+            429
+          ],
+          "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+        },
+        {
+          "repository": "MinervaExpt/MAT",
+          "file": "PlotUtils/FluxReweighter.cxx",
+          "lines": [
+            883,
+            945
+          ],
+          "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+        }
+      ]
+    },
+    {
+      "environment_key": "PLOTUTILSROOT",
+      "relative_path": "data/flux/flux-g4numiv6-pdg14-minervame1D_rearrangedUniverses.root",
+      "role": "fixed-own-MC-generation",
+      "playlist_group": "1D",
+      "pdg": 14,
+      "histogram": "flux_E_unweighted",
+      "source_citations": [
+        {
+          "repository": "MinervaExpt/MAT",
+          "file": "PlotUtils/FluxReweighter.cxx",
+          "lines": [
+            396,
+            429
+          ],
+          "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+        },
+        {
+          "repository": "MinervaExpt/MAT",
+          "file": "PlotUtils/FluxReweighter.cxx",
+          "lines": [
+            883,
+            945
+          ],
+          "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+        }
+      ]
+    },
+    {
+      "environment_key": "PLOTUTILSROOT",
+      "relative_path": "data/flux/flux-gen2thin-pdg-14-minervame1D_rearrangedUniverses.root",
+      "role": "constrained-numerator-input",
+      "playlist_group": "1D",
+      "pdg": -14,
+      "histogram": "flux_E_cvweighted",
+      "source_citations": [
+        {
+          "repository": "MinervaExpt/MAT",
+          "file": "PlotUtils/FluxReweighter.cxx",
+          "lines": [
+            396,
+            429
+          ],
+          "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+        },
+        {
+          "repository": "MinervaExpt/MAT",
+          "file": "PlotUtils/FluxReweighter.cxx",
+          "lines": [
+            883,
+            945
+          ],
+          "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+        }
+      ]
+    },
+    {
+      "environment_key": "PLOTUTILSROOT",
+      "relative_path": "data/flux/flux-g4numiv6-pdg-14-minervame1D_rearrangedUniverses.root",
+      "role": "fixed-own-MC-generation",
+      "playlist_group": "1D",
+      "pdg": -14,
+      "histogram": "flux_E_unweighted",
+      "source_citations": [
+        {
+          "repository": "MinervaExpt/MAT",
+          "file": "PlotUtils/FluxReweighter.cxx",
+          "lines": [
+            396,
+            429
+          ],
+          "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+        },
+        {
+          "repository": "MinervaExpt/MAT",
+          "file": "PlotUtils/FluxReweighter.cxx",
+          "lines": [
+            883,
+            945
+          ],
+          "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+        }
+      ]
+    },
+    {
+      "environment_key": "PLOTUTILSROOT",
+      "relative_path": "data/flux/flux-gen2thin-pdg14-minervame1M_rearrangedUniverses.root",
+      "role": "constrained-numerator-input",
+      "playlist_group": "1M",
+      "pdg": 14,
+      "histogram": "flux_E_cvweighted",
+      "source_citations": [
+        {
+          "repository": "MinervaExpt/MAT",
+          "file": "PlotUtils/FluxReweighter.cxx",
+          "lines": [
+            396,
+            429
+          ],
+          "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+        },
+        {
+          "repository": "MinervaExpt/MAT",
+          "file": "PlotUtils/FluxReweighter.cxx",
+          "lines": [
+            883,
+            945
+          ],
+          "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+        }
+      ]
+    },
+    {
+      "environment_key": "PLOTUTILSROOT",
+      "relative_path": "data/flux/flux-g4numiv6-pdg14-minervame1M_rearrangedUniverses.root",
+      "role": "fixed-own-MC-generation",
+      "playlist_group": "1M",
+      "pdg": 14,
+      "histogram": "flux_E_unweighted",
+      "source_citations": [
+        {
+          "repository": "MinervaExpt/MAT",
+          "file": "PlotUtils/FluxReweighter.cxx",
+          "lines": [
+            396,
+            429
+          ],
+          "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+        },
+        {
+          "repository": "MinervaExpt/MAT",
+          "file": "PlotUtils/FluxReweighter.cxx",
+          "lines": [
+            883,
+            945
+          ],
+          "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+        }
+      ]
+    },
+    {
+      "environment_key": "PLOTUTILSROOT",
+      "relative_path": "data/flux/flux-gen2thin-pdg-14-minervame1M_rearrangedUniverses.root",
+      "role": "constrained-numerator-input",
+      "playlist_group": "1M",
+      "pdg": -14,
+      "histogram": "flux_E_cvweighted",
+      "source_citations": [
+        {
+          "repository": "MinervaExpt/MAT",
+          "file": "PlotUtils/FluxReweighter.cxx",
+          "lines": [
+            396,
+            429
+          ],
+          "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+        },
+        {
+          "repository": "MinervaExpt/MAT",
+          "file": "PlotUtils/FluxReweighter.cxx",
+          "lines": [
+            883,
+            945
+          ],
+          "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+        }
+      ]
+    },
+    {
+      "environment_key": "PLOTUTILSROOT",
+      "relative_path": "data/flux/flux-g4numiv6-pdg-14-minervame1M_rearrangedUniverses.root",
+      "role": "fixed-own-MC-generation",
+      "playlist_group": "1M",
+      "pdg": -14,
+      "histogram": "flux_E_unweighted",
+      "source_citations": [
+        {
+          "repository": "MinervaExpt/MAT",
+          "file": "PlotUtils/FluxReweighter.cxx",
+          "lines": [
+            396,
+            429
+          ],
+          "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+        },
+        {
+          "repository": "MinervaExpt/MAT",
+          "file": "PlotUtils/FluxReweighter.cxx",
+          "lines": [
+            883,
+            945
+          ],
+          "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+        }
+      ]
+    },
+    {
+      "environment_key": "PLOTUTILSROOT",
+      "relative_path": "data/flux/flux-gen2thin-pdg14-minervame1N_rearrangedUniverses.root",
+      "role": "constrained-numerator-input",
+      "playlist_group": "1N",
+      "pdg": 14,
+      "histogram": "flux_E_cvweighted",
+      "source_citations": [
+        {
+          "repository": "MinervaExpt/MAT",
+          "file": "PlotUtils/FluxReweighter.cxx",
+          "lines": [
+            396,
+            429
+          ],
+          "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+        },
+        {
+          "repository": "MinervaExpt/MAT",
+          "file": "PlotUtils/FluxReweighter.cxx",
+          "lines": [
+            883,
+            945
+          ],
+          "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+        }
+      ]
+    },
+    {
+      "environment_key": "PLOTUTILSROOT",
+      "relative_path": "data/flux/flux-g4numiv6-pdg14-minervame1N_rearrangedUniverses.root",
+      "role": "fixed-own-MC-generation",
+      "playlist_group": "1N",
+      "pdg": 14,
+      "histogram": "flux_E_unweighted",
+      "source_citations": [
+        {
+          "repository": "MinervaExpt/MAT",
+          "file": "PlotUtils/FluxReweighter.cxx",
+          "lines": [
+            396,
+            429
+          ],
+          "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+        },
+        {
+          "repository": "MinervaExpt/MAT",
+          "file": "PlotUtils/FluxReweighter.cxx",
+          "lines": [
+            883,
+            945
+          ],
+          "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+        }
+      ]
+    },
+    {
+      "environment_key": "PLOTUTILSROOT",
+      "relative_path": "data/flux/flux-gen2thin-pdg-14-minervame1N_rearrangedUniverses.root",
+      "role": "constrained-numerator-input",
+      "playlist_group": "1N",
+      "pdg": -14,
+      "histogram": "flux_E_cvweighted",
+      "source_citations": [
+        {
+          "repository": "MinervaExpt/MAT",
+          "file": "PlotUtils/FluxReweighter.cxx",
+          "lines": [
+            396,
+            429
+          ],
+          "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+        },
+        {
+          "repository": "MinervaExpt/MAT",
+          "file": "PlotUtils/FluxReweighter.cxx",
+          "lines": [
+            883,
+            945
+          ],
+          "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+        }
+      ]
+    },
+    {
+      "environment_key": "PLOTUTILSROOT",
+      "relative_path": "data/flux/flux-g4numiv6-pdg-14-minervame1N_rearrangedUniverses.root",
+      "role": "fixed-own-MC-generation",
+      "playlist_group": "1N",
+      "pdg": -14,
+      "histogram": "flux_E_unweighted",
+      "source_citations": [
+        {
+          "repository": "MinervaExpt/MAT",
+          "file": "PlotUtils/FluxReweighter.cxx",
+          "lines": [
+            396,
+            429
+          ],
+          "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+        },
+        {
+          "repository": "MinervaExpt/MAT",
+          "file": "PlotUtils/FluxReweighter.cxx",
+          "lines": [
+            883,
+            945
+          ],
+          "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+        }
+      ]
+    },
+    {
+      "environment_key": "PLOTUTILSROOT",
+      "relative_path": "data/lowNuReweight/lowNuReweight.root",
+      "role": "string-constructor-lowNu-spline-input",
+      "histogram": "ratio",
+      "source_citations": [
+        {
+          "repository": "MinervaExpt/MAT",
+          "file": "PlotUtils/FluxReweighter.cxx",
+          "lines": [
+            425,
+            431
+          ],
+          "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+        },
+        {
+          "repository": "MinervaExpt/MAT",
+          "file": "PlotUtils/FluxReweighter.cxx",
+          "lines": [
+            948,
+            972
+          ],
+          "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+        }
+      ]
+    },
+    {
+      "environment_key": "PLOTUTILSROOT",
+      "relative_path": "data/flux/sys/Muon_Energy_MnvH1D.root",
+      "role": "string-constructor-flux-systematics-map",
+      "histogram": "Muon_Energy_MnvH1D",
+      "source_citations": [
+        {
+          "repository": "MinervaExpt/MAT",
+          "file": "PlotUtils/FluxReweighter.cxx",
+          "lines": [
+            1054,
+            1067
+          ],
+          "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+        },
+        {
+          "repository": "MinervaExpt/MAT",
+          "file": "PlotUtils/FluxReweighter.cxx",
+          "lines": [
+            1892,
+            1913
+          ],
+          "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+        }
+      ]
+    },
+    {
+      "environment_key": "MPARAMFILES",
+      "relative_path": "FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt",
+      "role": "nu-e-FHC-RHC-IMD-universe-constraint-weights",
+      "histogram": null,
+      "source_citations": [
+        {
+          "repository": "MinervaExpt/MAT",
+          "file": "PlotUtils/FluxReweighter.cxx",
+          "lines": [
+            486,
+            534
+          ],
+          "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+        },
+        {
+          "repository": "MinervaExpt/MAT",
+          "file": "PlotUtils/MnvFluxConstraint.cxx",
+          "lines": [
+            128,
+            165
+          ],
+          "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+        }
+      ]
+    }
+  ],
+  "runtime_next": "Run lane verifies existence stat-only, stages each source through O_NOATIME with measured/pinned SHA256, and returns a pinned stage receipt. Missing dependencies and any syscall open outside the approved stage/environment sets STOP. This inventory supplies no runtime digest and no run authorization.",
+  "constraint_custody": {
+    "required_fence": "cov2d_fence.sh exit 0 after the running COV2D jobs end",
+    "stage": "fresh O_NOATIME copy from original MPARAMFILES path; no prior RPD/REF/COV2D copies",
+    "record": [
+      "source stat before and after",
+      "source atime_ns unchanged",
+      "SHA256 of fresh staged copy"
+    ],
+    "runtime_verified": false
+  }
+}

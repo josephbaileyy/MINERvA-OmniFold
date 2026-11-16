@@ -1,0 +1,3 @@
+numpy 1.26.4 scipy 1.15.2
+AR23: ndf 204; lambda_min/lambda_max 9.99e-13; eps perturbations: ['ndf 204 rel 8.07e-08', 'ndf 204 rel 5.07e-08', 'ndf 204 rel 5.05e-08', 'ndf 204 rel 6.22e-08', 'ndf 204 rel 6.17e-09']; evr: ndf 204, mean-chi2 rel diff 4.04e-09
+G18: ndf 205; lambda_min/lambda_max 1.05e-12; eps perturbations: ['ndf 205 rel 1.15e-06', 'ndf 205 rel 2.72e-08', 'ndf 205 rel 2.43e-07', 'ndf 205 rel 4.47e-08', 'ndf 205 rel 1.28e-06']; evr: ndf 205, mean-chi2 rel diff 8.99e-10

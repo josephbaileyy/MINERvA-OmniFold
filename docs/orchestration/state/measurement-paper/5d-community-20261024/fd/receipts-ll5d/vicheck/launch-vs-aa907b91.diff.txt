@@ -1,0 +1,11 @@
+3c3
+< # Usage: launch-ll5d.sh ovl | calib | calib2 | gate-g18 | gate-ar23 <expected connect sha256>
+---
+> # Usage: launch-ll5d.sh ovl | calib | calib2 | gate-g18 | gate-ar23 | vicheck | calib3 | gate2-g18 | gate2-ar23 <sha256>
+18c18,21
+<   *) echo "usage: launch-ll5d.sh ovl|calib|calib2|gate-g18|gate-ar23 <sha256>"; exit 2 ;;
+---
+>   vicheck) SRC=$H/connect-vicheck.sh; ARG=""; LOGP=/pscratch/sd/j/josephrb/ll5d-vicheck-20261110/logs/connect-vicheck.log ;;
+>   calib3) SRC=$H/connect-calib-3.sh; ARG=""; LOGP=/pscratch/sd/j/josephrb/ll5d-calib-3-20261110/logs/connect-calib-3.log ;;
+>   gate2-g18|gate2-ar23) T=${N#gate2-}; SRC=$H/connect-gate-2.sh; ARG=$T; LOGP=/pscratch/sd/j/josephrb/ll5d-gate-2-$T-20261110/logs/connect-gate-2-$T.log ;;
+>   *) echo "usage: launch-ll5d.sh ovl|calib|calib2|gate-g18|gate-ar23|vicheck|calib3|gate2-g18|gate2-ar23 <sha256>"; exit 2 ;;

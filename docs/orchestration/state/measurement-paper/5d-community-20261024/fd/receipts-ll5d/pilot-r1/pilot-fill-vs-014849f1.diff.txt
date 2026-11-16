@@ -1,0 +1,40 @@
+--- /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/connect-pilot.014849f1.sh	2026-11-12 05:28:05
++++ connect-pilot.sh	2026-11-12 05:28:38
+@@ -8,18 +8,18 @@
+ # the four procedure controls bitwise against S1's committed products) and clipcheck (section 5.3; TO_JOSEPH goes to
+ # Joseph before any bulk). The sealed clip-prep files are read only inside ll5d_b.read_clip_prep, by
+ # the sha256 each gate record carries (binding 3 ruling 3); this connect hashes neither and opens neither.
+-# The fence, iris, the projection gate with this job's 1.0, a fresh clone at M_A1a.2 with the bound blobs, the job
++# The fence, iris, the projection gate with this job's 1.0, a fresh clone at M_A1b.1 with the bound blobs, the job
+ # script and an atime snapshot, sbatch, TimeLimit. Nothing to CFS. Not under set -u.
+ J=ll5d_pilot
+-M=FILL-WITH-M_A1B1                                 # the merge that carries amendment A1b.1 (ll5d_ctl.py), once bound
++M=4231b14de5ea693e92cb31b1358a816b5c2f6625         # M_A1b.1 (LL5D-BINDING-3.md addendum A1b.1): the merge that carries ll5d_ctl.py
+ L5=2b0224c6fe52c5bb2d3fe64d461ac9edb80ebd191b0ab2f892dec605a0b56a14        # ll5d.py's sha256 at M
+ P=/pscratch/sd/j/josephrb; ND=$P/MINERvA-OmniFold/nd-unfolding
+ W=$P/ll5d-pilot-r1; DD=$W/deploy; U=$P/ll5d-unfolds-r1
+ G18W=$P/ll5d-gate-2-g18-20261110; AR23W=$P/ll5d-gate-2-ar23-20261110
+-G18GATE=FILL-FROM-THE-GATE-2-G18-RECEIPT          # sha256 of gate-g18.json (node-sha256.txt of the merged receipt)
+-AR23GATE=FILL-FROM-THE-GATE-2-AR23-RECEIPT        # sha256 of gate-ar23.json
+-G18CP=FILL-FROM-THE-GATE-2-G18-RECEIPT            # the SEALED line's sha256 of gate-g18.clipprep.npz
+-AR23CP=FILL-FROM-THE-GATE-2-AR23-RECEIPT          # the SEALED line's sha256 of gate-ar23.clipprep.npz
++G18GATE=a5d66b7e506a98d5a0b555dbe171aa6c1e931eb93df793c3e515d7d44466fc70   # sha256 of gate-g18.json (node-sha256.txt of the merged receipt)
++AR23GATE=35a20c471cb06f428c49daaaebfc6646babb7f7fb060039d4c63139da51d0a4c  # sha256 of gate-ar23.json
++G18CP=76154b205691bcd5e19b0c0e2274f35615dec4dd857a6033b976aaf2f30aacba     # the SEALED line's sha256 of gate-g18.clipprep.npz
++AR23CP=c567183d94d9b0be9b1d7ec1513cdb58db14bcffa5ef6eb630c7b77d4c5ff6d1    # the SEALED line's sha256 of gate-ar23.clipprep.npz
+ CAP=148.0; THIS=1.0; TL=01:00:00
+ stop() { echo "STOP $*"; echo "end=$(date -u +%FT%TZ)"; exit 2; }
+ for v in "$G18GATE" "$AR23GATE" "$G18CP" "$AR23CP" "$L5"; do [[ $v =~ ^[0-9a-f]{64}$ ]] || { echo "STOP a placeholder is not filled"; exit 2; }; done
+@@ -31,8 +31,10 @@
+ echo "host=$(hostname) start=$(date -u +%FT%TZ) pid=$$"
+ echo "squeue: [$(squeue --me -h -o '%i %j %T %l %D' | tr '\n' ';')]"
+ [ "$(squeue --me -h -o %j | grep -c '^ll5d_')" = "0" ] || stop "an ll5d_ job is queued or running (the gates must have ended)"
+-cv=$(sacct -X -n -P -S 2026-11-04 -u josephrb -o JobID,JobName,State | awk -F'|' '$2 ~ /^cov2d-/ && $3 !~ /^(COMPLETED|FAILED|CANCELLED|TIMEOUT|OUT_OF_MEMORY|NODE_FAIL|PREEMPTED|BOOT_FAIL|DEADLINE)/')
+-[ -z "$cv" ] || stop "a cov2d job is unended: $cv"
++# the director's queue order (2026-11-12): no atime-snapshot connect while another lane's reader of our inputs is queued or running
++[ "$(squeue --me -h -o %j | grep -cE '^(rsn_|e96data|rdx_)')" = "0" ] || stop "an rsn_, e96data or rdx_ job is queued or running"
++cv=$(sacct -X -n -P -S 2026-11-04 -u josephrb -o JobID,JobName,State | awk -F'|' '$2 ~ /^cov2d/ && $3 !~ /^(COMPLETED|FAILED|CANCELLED|TIMEOUT|OUT_OF_MEMORY|NODE_FAIL|PREEMPTED|BOOT_FAIL|DEADLINE)/')
++[ -z "$cv" ] || stop "a cov2d job is unended: $cv"   # ^cov2d, not ^cov2d-: it also matches COV2D-G2R's cov2dg2r-<job> names
+ echo "== iris"; row=$(iris 2>&1 | grep -E '^m3246 ' | head -1); echo "$row"
+ bal=$(echo "$row" | awk 'NF>=5 {printf "%.1f", $5-$4}'); [ -n "$bal" ] || stop "could not read the m3246 balance"
+ echo "balance_node_h=$bal half=$(awk -v b=$bal 'BEGIN{printf "%.1f", b/2}') cap=$CAP"

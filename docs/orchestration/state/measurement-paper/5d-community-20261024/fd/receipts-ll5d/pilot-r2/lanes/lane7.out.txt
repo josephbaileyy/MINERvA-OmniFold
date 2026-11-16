@@ -1,0 +1,3 @@
+{"out": "ll5d_ar23_clipmean_minus2.npz", "seconds_unfold": 889.193}
+{"out": "ll5d_ar23_clipmean_all.npz", "seconds_unfold": 871.763}
+lane 7 ar23 clipmean rc=0

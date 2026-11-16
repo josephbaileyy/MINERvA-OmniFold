@@ -1,0 +1,8 @@
+squeue:[] rc=0
+partc mkdtemp dirs: ['tmp8lbdy9iq']
+partc-r2 mkdtemp dirs: ['tmp6hw50588']
+id.json equal_after_names 41181 41184  6858036c8cf6e97a
+id.txt raw_equal 2247 2247  4a79bf1b117655d3
+inj.json DIFFER 43338 43356 contains_dirname 755e8f75669179ea
+inj.root DIFFER 62276 62288 contains_dirname 07086aec899757d2
+inj.txt raw_equal 2247 2247  c63419d187f88ccb

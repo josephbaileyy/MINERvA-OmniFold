@@ -1,0 +1,4 @@
+{"out": "ll5d_ar23_central_T.npz", "seconds_unfold": 817.027}
+lane 5 ar23 central rc=0
+{"out": "ll5d_g18_toy_all_4751000.npz", "seconds_unfold": 906.743}
+lane 5 g18 toy rc=0

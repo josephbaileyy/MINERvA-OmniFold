@@ -1,0 +1,39 @@
+You are an independent senior reviewer: an experimental neutrino physicist who also knows ML unfolding (OmniFold) and
+pre-specified validation rules. Joseph Bailey, the project's author, asks what you recommend doing about a validity-rule
+result. Give your own judgement; you are not bound by any recommendation in the files. The working directory is a
+clean, read-only checkout at main a64274f56. Read files; do not write, run jobs or use the network. Cite file:line for
+every fact you rely on, and say where a file contradicts this brief.
+
+THE RULE AND ITS RESULT
+- The rule, V-HALF: docs/orchestration/DECISION-20261109-joseph-bias-half-rule.md (Joseph's decision), its
+  declaration docs/orchestration/state/2d-closeout/valid-region-20261107/v-half/DECLARATION.md and binding
+  BINDING-1.md. Per cell and graded fake-data truth: d = (truth - prior)/prior, b = bias/prior; the rule applies where
+  |d| >= 0.01 and passes where |b| <= 0.5|d|.
+- The result: .../v-half/receipts/read/readout.txt and readout.json. Of 16 cells: 5 valid, 9 not valid, 2 unresolved
+  (noise). Read the per-cell detail, including h* and which truths fail.
+- The two earlier validity rules (V-ATLAS, V-PRIOR) each passed 14 of 16: docs/orchestration/OUTCOME-20261107-valid-region.md.
+- The advisor's original suggestion (paraphrased in the decision record): the rule should apply to every histogram
+  bin, "so we'd require the observable and or binning to be modified if any bin fails". Joseph reserved that
+  consequence (decision item 5).
+- Context: the related prior-retention study's read: docs/orchestration/state/measurement-paper/5d-community-20261024/
+  fd/receipts-prr/read/cluster/readout.txt (descriptive at the graded truths; no setting removes the two flagged truths;
+  binned IBU retains less of the prior than the estimator).
+- The paper: docs/analysis-note/paper_body.tex and main_paper.tex on main are older than the working draft; the plan
+  decision docs/orchestration/DECISION-20261109-joseph-methods-baseline-and-plan.md fixes the paper as a short methods
+  paper in which the data result is an illustration, not a measurement.
+
+THE OPTIONS (you may propose others)
+1. Report V-HALF in the methods paper as a diagnostic, with no rebinning: the counts and a per-cell map, as a finding
+   about where fake-data bias exceeds half the prior departure. Zero compute.
+2. Rebin per the advisor's rule: redefine the cells so every cell passes, and redo the sixteen-cell result and its
+   covariance and the tests that depend on them. Large compute and time.
+3. Change the rule now (threshold, floor). The director advises against choosing a rule after seeing its result.
+
+WHAT TO ANSWER (about 1,200 words, plain language)
+1. Your recommendation for this paper, and why. What the paper may and may not say about V-HALF under its licence.
+2. Read the failures: is there a pattern (which truths, which cells, the size of h*, cells where |d| is barely above
+   the 1% floor) that a referee would ask about, and does the result say anything about the rule itself? Say only what
+   the records support; mark speculation as such.
+3. If rebinning were done later (next paper), what would make it a sound, pre-specified procedure rather than tuning?
+4. How this result should be put to the advisor.
+Be direct.

@@ -1,0 +1,42 @@
+{
+  "schema": "fd-rpd-reco-private-native-verification/1",
+  "tested_head": "c3c1330f834e6d68e4d100be510de88092c638e2",
+  "producer_source_head": "c3c1330f834e6d68e4d100be510de88092c638e2",
+  "baseline": "2ed446b4ba78269565ee1104462fc9e15b63afba",
+  "scope": "Local code and libc semantics, not native MAT readiness",
+  "suite": {
+    "passed": 226,
+    "seconds": 162.68,
+    "returncode": 0
+  },
+  "mutation": {
+    "required": 195,
+    "executed": 195,
+    "killed": 195,
+    "all_killed": true,
+    "complete": true,
+    "returncode": 0
+  },
+  "comment_only_custody_control": {
+    "passed": 226,
+    "seconds": 162.57,
+    "returncode": 0
+  },
+  "raw_report_sha256": "10cb7f668f93571900dbaa995f5ba75a7ca5a00b78761673be50d41f1e9e467c",
+  "raw_report_recovery": "Remove receipt_annotation and disposable_fixture_artifact_paths; json.dumps(indent=2) plus a newline reproduces the raw report bytes.",
+  "static_checks": {
+    "black": "PASS",
+    "ruff": "PASS",
+    "mypy_strict_production": "PASS",
+    "optional_external_stubs": "ignore_missing_imports",
+    "bash_syntax_both_connects": "PASS"
+  },
+  "source_commit_hook_checks": 21,
+  "cross_process_exclusions": [
+    "_",
+    "NERSC_PYMON_UUID"
+  ],
+  "post_import_exclusions": [],
+  "host_credential_value_and_fingerprint_scan": "PASS",
+  "platform_next": "delta audit, data-free prologue, separate real-MnvH1D and full-connect gates"
+}

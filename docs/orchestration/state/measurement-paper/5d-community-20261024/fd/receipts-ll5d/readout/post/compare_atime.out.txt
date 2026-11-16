@@ -1,0 +1,7 @@
+host=login25 utc=2026-11-15T02:21:21Z
+find_rc=0 end_utc=2026-11-15T02:21:21Z
+pre 1146 lines (1146 paths), post 1146 lines (1146 paths)
+only in pre: []
+only in post: []
+moved 0
+ATIME-POST SAME-SET-NONE-MOVED

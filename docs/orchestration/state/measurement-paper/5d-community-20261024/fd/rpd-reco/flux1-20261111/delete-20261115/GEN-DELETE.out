@@ -1,0 +1,45 @@
+generated docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/delete-20261115/flux1_delete.py: sha256 eb5315459e2dd077c40d19e47eaa5f1fb2baa40f509a1289b932f24ef25c5e56
+staged copies 69 (originals on pscratch 64, repository originals 5); records 37; clone/ by its listing digest 9a85268d4f113460; kept files 15
+delete trees ['clone', 'run/original-inputs', 'run/mat-data', 'run/prepare-check', 'run/staged', 'run/real-mnv-check', 'run/tmp', 'tools']; delete files 26; keep after 18 entries
+git check: run/original-inputs/14b0bc45cf3605e2-INPUTS.sha256 = 763ab4dd:docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/INPUTS.sha256 sha256 7638f94f56ad0471769445cffe68ff538c9b68158f48415e7c3cafa7ee95a295
+git check: run/original-inputs/1b2d014681c4892e-MAT-DATA-DEPENDENCIES.json = 763ab4dd:docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-audit-fix-20261106/MAT-DATA-DEPENDENCIES.json sha256 b056487e592e7704c2a98c14243b26f44c82821382837a263b75c169859cce0b
+git check: run/original-inputs/7954b8ff9b67e1bf-h2_definition.json = 763ab4dd:nd-unfolding/pv-ladder/readouts/h2_definition.json sha256 b67907615fe2e903e60ae6caa1c141fa007676c0a1b3ae9f42490d331bfdda89
+git check: run/original-inputs/bab9d8b21c5310c0-energy-spectrum-candidates.tsv = 763ab4dd:docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/flux-pot-provenance-20261104/energy-spectrum-candidates.tsv sha256 e60609e756e35fbc9846ae5983c1d848999bc17c7504e3ca876c22c9bcc0e88f
+git check: run/original-inputs/d877092f5479c1c4-CVUniverse.h = 763ab4dd:MINERvA101/MINERvA-101-Cross-Section/event/CVUniverse.h sha256 900d7368d6184d503399bd99c0fd30085212df0327b8be374182495b85a3677d
+record c3-check.txt  <-  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/run-61206960/records/c3-check.txt  986518b7d27a2c8f
+record connect.log  <-  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/run-61206960/records/connect.log  e995144fd250695d
+record exception-stat-outer.txt  <-  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/run-61206960/records/exception-stat-outer.txt  9f76ef8f7d3dccf4
+record fence-overlap.txt  <-  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/run-61206960/records/fence-overlap.txt  dad9d7c8f412ee28
+record job-host.txt  <-  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/run-61206960/records/job-host.txt  966bc80df6778379
+record job.err  <-  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/run-61206960/records/job.err  e3b0c44298fc1c14
+record job.id  <-  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/run-61206960/records/job.id  76adce4d7379b7fe
+record job.out  <-  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/run-61206960/records/job.out  8ba573e8d5daedda
+record job.rc  <-  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/run-61206960/records/job.rc  aef415b814cb031b
+record production-config.ready.json  <-  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/production-config.ready.json  cde8d02904b0257d
+record protected-read.json  <-  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/run-61206960/records/protected-read.json  a1f2bfa68a70c0f9
+record redaction-check.txt  <-  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/run-61206960/records/redaction-check.txt  8d0d776e806b35d9
+record rpd_flux1_job.sh  <-  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/run-61206960/records/rpd_flux1_job.sh  4198103b3a1d94eb
+record run/cov2d-fence.json  <-  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/run-61206960/records/run/cov2d-fence.json  9e0930b604cf4a9c
+record run/extract-config.json  <-  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/run-61206960/records/run/extract-config.json  7b014d5c3d5c9172
+record run/flux-custody.json  <-  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/run-61206960/records/run/flux-custody.json  84db31cab75feb2d
+record run/flux-extract.strace  <-  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/run-61206960/records/run/flux-extract.strace  faedee5679812431
+record run/missing-dependency-check.json  <-  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/run-61206960/records/run/missing-dependency-check.json  faff0fdcabc620b6
+record run/missing-dependency.STOP.json  <-  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/run-61206960/records/run/missing-dependency.STOP.json  80c3cf8886c34b8e
+record run/missing-dependency.strace  <-  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/run-61206960/records/run/missing-dependency.strace  3ddbcca0035cf31a
+record run/negative-policy.checked.json  <-  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/run-61206960/records/run/negative-policy.checked.json  7572805ae714af40
+record run/original-config.json  <-  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/run-61206960/records/run/original-config.json  cde8d02904b0257d
+record run/prepare-check/staged/14b0bc45cf3605e2-INPUTS.sha256  <-  prestage.json files: the original named INPUTS.sha256  7638f94f56ad0471
+record run/prepare-check/staged/bab9d8b21c5310c0-energy-spectrum-candidates.tsv  <-  prestage.json files: the original named energy-spectrum-candidates.tsv  e60609e756e35fbc
+record run/prepare-check/staged/config.json  <-  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/production-config.ready.json  cde8d02904b0257d
+record run/prestage-reference.json  <-  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/run-61206960/records/run/prestage-reference.json  a0e232ead4b9f072
+record run/real-mnv-check/non-input-probe.root  <-  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/run-61206960/records/run/real-mnv-check/non-input-probe.root  d9704aa45c016b04
+record run/real-mnv-check/real-mnv-check.json  <-  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/run-61206960/records/run/real-mnv-check/real-mnv-check.json  a4b6646466028827
+record run/real-mnv-check/real-mnv-worker.json  <-  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/run-61206960/records/run/real-mnv-check/real-mnv-worker.json  bc33c25ce3a42596
+record run/real-mnv-check/worker.stderr.txt  <-  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/run-61206960/records/run/real-mnv-check/worker.stderr.txt  c0b89ac88c4dea66
+record run/real-mnv-check/worker.stdout.txt  <-  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/run-61206960/records/run/real-mnv-check/worker.stdout.txt  89625f3fc3737c00
+record run/staged/config.json  <-  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/run-61206960/records/run/extract-config.json  7b014d5c3d5c9172
+record run/staged/prestage-reference.json  <-  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/run-61206960/records/run/prestage-reference.json  a0e232ead4b9f072
+record run/trace-policy.checked.json  <-  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/run-61206960/records/run/trace-policy.checked.json  7572805ae714af40
+record run/trace-policy.json  <-  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/run-61206960/records/run/trace-policy.json  7572805ae714af40
+record strace-probe.txt  <-  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/run-61206960/records/strace-probe.txt  c05c3e4a33e7d4c3
+record tools/fence_overlap.py  <-  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/tools/fence_overlap.py  baa7630936db399a

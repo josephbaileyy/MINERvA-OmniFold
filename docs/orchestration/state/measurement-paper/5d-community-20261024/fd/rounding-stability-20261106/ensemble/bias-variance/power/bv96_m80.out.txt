@@ -1,0 +1,19 @@
+mean rounding variance 0.778884; expected gain G 0.770770
+nominal         SD(d_m) rho 0    0.54  rho 0.9    0.57  M80         6  node-h per truth        12
+W1              SD(d_m) rho 0   20.73  rho 0.9   20.77  M80      7887  node-h per truth     15498
+W2              SD(d_m) rho 0    4.13  rho 0.9    4.14  M80       314  node-h per truth       617
+W3              SD(d_m) rho 0   17.57  rho 0.9   17.64  M80      5692  node-h per truth     11185
+q3              SD(d_m) rho 0   12.18  rho 0.9   12.16  M80      2714  node-h per truth      5333
+stage0c_gibuu   SD(d_m) rho 0   42.29  rho 0.9   42.21  M80     32710  node-h per truth     64276
+closure_nuwro   SD(d_m) rho 0   31.20  rho 0.9   31.20  M80     17801  node-h per truth     34980
+A7_genie_cv     SD(d_m) rho 0   24.15  rho 0.9   24.00  M80     10663  node-h per truth     20954
+A7_genie_mec    SD(d_m) rho 0   20.41  rho 0.9   20.45  M80      7647  node-h per truth     15026
+A7_nuwro        SD(d_m) rho 0   53.81  rho 0.9   53.42  M80     52959  node-h per truth    104065
+A7_gibuu        SD(d_m) rho 0   63.97  rho 0.9   64.29  M80     75606  node-h per truth    148568
+P1r             SD(d_m) rho 0   21.71  rho 0.9   21.75  M80      8651  node-h per truth     17000
+P2r             SD(d_m) rho 0   19.39  rho 0.9   19.26  M80      6878  node-h per truth     13516
+P3r             SD(d_m) rho 0    7.35  rho 0.9    7.25  M80       989  node-h per truth      1943
+P1g             SD(d_m) rho 0   35.66  rho 0.9   35.62  M80     23254  node-h per truth     45695
+P2g             SD(d_m) rho 0   27.71  rho 0.9   27.76  M80     14100  node-h per truth     27706
+P3g             SD(d_m) rho 0   20.57  rho 0.9   20.57  M80      7741  node-h per truth     15212
+the 14 non-nominal non-GiBUU truths: M80 min 314, median 7814, max 52959 (A7_nuwro)

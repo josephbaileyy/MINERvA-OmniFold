@@ -1,0 +1,1 @@
+E96-DATA gate FAIL; controls failed: ["G the projection fits the full run's limit: lane_max x t + 300 s <= 0.9 x the limit"]

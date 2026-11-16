@@ -1,0 +1,24 @@
+# test_ll5d.py at PYTHONHASHSEED=0, numpy 1.26
+# date 2026-11-10T16:41:56Z  made at HEAD dd90a0d702e0016f9a45b523f88dd899eb3ec4ae, a clean checkout (porcelain 0)
+# python 3.12.2 numpy 1.26.4
+# a9f09557ec1b6022b1205f14e8d2241257336d9028b166061a3b33118243a936  nd-unfolding/ll5d_ctl.py
+# fb91b93edef2f37c96ab88200d6c22caa75dd05f943769424b87c55fd50a1f1d  nd-unfolding/tests/test_ll5d_ctl.py
+# aa7c3abed4f9b529e3976097531dd4ddcce524b943c4c61083241579dfec397f  nd-unfolding/tests/ll5d_a1b1_mutation.py
+# 24312ca86f9e70ed86699772d634c19d9bcacb2bb87bff5aaa8c9f7c2661f3cb  nd-unfolding/ll5d_b.py
+# 2b0224c6fe52c5bb2d3fe64d461ac9edb80ebd191b0ab2f892dec605a0b56a14  nd-unfolding/ll5d.py
+................<frozen importlib._bootstrap>:530: DeprecationWarning: the load_module() method is deprecated and slated for removal in Python 3.12; use exec_module() instead
+..............LL5D-CALIBRATION verdict=CALIBRATED atime_moved=1
+LL5D-GATE g18 verdict=STOP atime_moved=1
+LL5D-GATE g18 verdict=PASS
+LL5D-CALIBRATION INVALID (bad input)
+LL5D-GATE g18 REPRICE (slow)
+LL5D-CALIBRATION verdict=POWER_SHORT_TO_DIRECTOR
+{"calibration": "timing", "fine_cells_kept": 48, "set_seconds_measured": 0.09631013870239258, "workers": 2, "projected_seconds": 4.571738243103027, "budget_seconds": 1000000.0, "projection_line_seconds": 9000000.0}
+............{"calibration": "timing", "fine_cells_kept": 48, "set_seconds_measured": 0.09472203254699707, "workers": 2, "projected_seconds": 2.4983270168304443, "budget_seconds": 10000000.0, "projection_line_seconds": 9000000.0}
+.................{"calibration": "timing", "fine_cells_kept": 48, "set_seconds_measured": 0.08065605163574219, "workers": 2, "projected_seconds": 2.0792829990386963, "budget_seconds": 10000000.0, "projection_line_seconds": 9000000.0}
+.......................
+----------------------------------------------------------------------
+Ran 82 tests in 43.450s
+
+OK
+# rc=0

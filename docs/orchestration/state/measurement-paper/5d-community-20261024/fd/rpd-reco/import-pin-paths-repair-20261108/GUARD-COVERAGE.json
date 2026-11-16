@@ -1,0 +1,27 @@
+{
+  "tested_head": "225d894939b2c02fab8946d12a35c1c038168d2e",
+  "audit_site": "848-R2-C1 / R06",
+  "single_site_condition": "after != value and key in diff['changed']",
+  "new_cases": {
+    "keys": [
+      "CLING_STANDARD_PCH",
+      "CPPYY_API_PATH",
+      "CPPYY_NO_ROOT_FILTER"
+    ],
+    "paths": [
+      "added_wrong",
+      "never_set",
+      "unchanged_wrong",
+      "added_correct"
+    ],
+    "count": 12
+  },
+  "outcomes": [
+    {
+      "name": "REQUIRED_IMPORT_PIN_CHANGED_ONLY",
+      "status": "KILLED",
+      "selector": "test_import_pin_added_missing_and_unchanged",
+      "returncode": 1
+    }
+  ]
+}

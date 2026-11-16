@@ -1,0 +1,45 @@
+**I agree with the six recommendations, with qualifications.** I would bind them as a development protocol only after resolving the gaps below. The strongest remaining concern is preserving useful physics resolution, rather than merely obtaining passing coarse integrals.
+
+Citation keys:
+
+- **D**: `docs/orchestration/state/2d-closeout/valid-region-20261107/v-half-r/DECLARATION.md`
+- **P**: the same directory’s `CHOICES-FOR-JOSEPH-20261110.md`
+- **A**: the same directory’s `consult-astra/answer.txt`
+- **H**: `nd-unfolding/pv-ladder/h2_definition.py`
+- **F**: `docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-methods-confirm-20261110/claude.txt`
+
+1. **Binning criterion: agree with both fractions at least 0.5, including for join ordering.** Purity measures contamination into a bin; diagonal fraction measures migration out of it, conditional on reconstruction. Requiring both addresses two different weaknesses. The denominator matters: this diagonal fraction is **not total detection efficiency**. (`H:68–87`.)
+
+   I consider this a sound, standard-enough response-quality convention. I would not present it as a universally prescribed unfolding criterion. **0.5 is defensible prospectively** because “at least half stays associated with its own bin, in both directions” is intelligible and symmetric. It supplies no guarantee of conditioning or bias control. As a mathematical counterexample under these definitions, two indistinguishable bins with 50:50 migration satisfy both thresholds while their response is singular. (`H:68–74`.)
+
+   Using the same minimum fraction to choose joins is coherent and deterministic; it avoids advertising one objective while optimizing another. Nevertheless, it remains a greedy heuristic, not a search for the finest acceptable partition. (`P:78–80`; `D:216–217`.)
+
+   The cost is lost resolution and possible termination before grading. The floors are three bins for 1D, six for 2D, and eight for C0, four per side. Thus C6 or C7 reaching five bins already terminates, however good its remaining response fractions. (`D:107–110,202–205`.) **The numerical cost is unknown:** the draft says candidate binnings and threshold comparisons were not computed. Neither a surviving-bin count nor a number of terminal candidates is justified. The referee’s “cost little” does not establish a small information loss. (`D:56–61`; `F:174–176`.)
+
+2. **Candidate list: agree with C0–C8.** It offers a bounded examination of the original reporting cells, all five scalar marginals, and three specified two-dimensional projections. (`D:115–134`.) I would retain that list because it asks useful, interpretable questions—not because removing a candidate now would automatically be improper.
+
+   Freeze it, report every outcome, and retain the prohibition on rebinning after grading. Those safeguards are already explicit. (`D:136–142,207–208`.) Passing optional candidates must not compensate for failure of the required pair. (`D:150–151`.)
+
+4. **Phase space: agree with the 16-cell domain.** Changing resolution and enlarging the domain simultaneously would make the comparison harder to interpret. The draft correctly identifies these as distributions restricted to the union of R00–R15, rather than fully inclusive distributions. (`D:76–80`.)
+
+   Make that restriction visible in labels and reusable bin definitions. C6’s shared axes alone do not establish equivalence to the companion 2D measurement: the packet explicitly leaves the domain comparison unchecked. (`D:128`; `P:137–141`.) I would require that comparison before describing C6 as directly comparable.
+
+5. **Disclosure: agree with the added sentence, but disclosure has a limited job.** Yes, this is informed development—“tuning” in the broad sense—because the choices follow the observed classes and a referee’s identification of low-diagonal-fraction cells. Simulation-only execution cannot erase that human information. The draft acknowledges informed selection; the packet identifies the referee remark as informing the new criterion. (`D:49–64`; `P:75–82`.)
+
+   That does not establish that thresholds were scanned until something passed. The recorded account says those comparisons were not tabulated. (`D:56–58`.) The proposed disclosure is enough for honestly labelled development, **not independent validation**. Reserved truths remain necessary; the declaration names that step but does not specify it. (`P:150–158`; `D:21–30`.)
+
+6. **Final requirement: agree.** Every measurement bin should satisfy the advertised response and support requirements. Otherwise “0.5” becomes an aspiration with exceptions discovered after construction. The draft currently makes residual low bins terminal. (`D:104–106`.)
+
+   Preserve those failures as study results. Also fix the outcome table: its reportable row currently mentions purity but omits support, and T3’s quoted explanation mentions only the threshold despite including support failures. Both fractions and support should appear consistently. (`D:200–205`.)
+
+7. **Cancellation listing: agree with fine cells for C1–C8 and R-cells for C0.** C1–C8 generally cut across R-cells, so whole-R-cell attribution cannot describe their contributions faithfully. (`D:188–189`; `P:179–181`.)
+
+   Supply machine-readable signed contributions, absolute totals, and lost-applicability truths, with compact summaries for readers. (`D:212–215`.) Specify the weighting algebra: the listing must reconcile to the scored bin quantities, whose ratios are recomputed from integrals and whose bias uses the hybrid construction. Averaging constituent ratios would not suffice. (`D:157–177`.)
+
+**The interaction with required C6/C7 is acceptable only if failure remains an acceptable outcome.** Either can terminate through insufficient bins, residual response/support failure, or V-HALF failure. That means this declared procedure failed to produce a reportable required observable; it neither proves impossibility nor permits substitution. (`D:150–151,202–217`.)
+
+Before binding, I would require three further clarifications:
+
+- **Define useful two-dimensional resolution.** Six rectangles could be six strips integrating over the entire second axis. The present rectangle rule and six-bin floor permit that. Specify the contrasts or boundaries C6 and C7 must retain, without consulting their biases. Naming both axes does not ensure their joint information survives. (`D:93–94,107–111,123–124,146–149`; `A:30`.)
+- **Specify domain-boundary migration accounting.** Define projected bins as rectangles intersected with the fixed 5D mask, and state how truth outside that mask feeds reconstructed bins and vice versa. Preserve the distinct numerator and denominator populations when generalizing the existing response calculation. (`D:70–78`; `H:79–87`.)
+- **Resolve freezing and diagnostic rules.** C2/C6 currently allow joins across their axes, while later instructions assume they preserve the \(p_\parallel=4.5\) split. Clarify that before binding. Freeze the graded estimator explicitly, and specify reserved-truth selection and joint acceptance before those truths are examined. (`D:119,123,278–279`; `P:190–195`.)

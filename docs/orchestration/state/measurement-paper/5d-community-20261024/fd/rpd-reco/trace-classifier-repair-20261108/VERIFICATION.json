@@ -1,0 +1,45 @@
+{
+  "schema": "fd-rpd-reco-trace-classifier-verification/1",
+  "tested_head": "477d51ead59943af7286ddee3258814f846fa865",
+  "baseline": "6a287e1ab6fb53bf3e1a42309202d5c28e04c4de",
+  "suite": {
+    "passed": 270,
+    "seconds": 169.63,
+    "returncode": 0
+  },
+  "comment_only_custody_control": {
+    "passed": 270,
+    "seconds": 170.64,
+    "returncode": 0
+  },
+  "mutation": {
+    "required": 217,
+    "executed": 217,
+    "killed": 217,
+    "complete": true,
+    "all_killed": true,
+    "returncode": 0
+  },
+  "raw_report_sha256": "2f585c888e90094d3906adba279c8d5583f9fa0ef7dabdcf97e8955033ba1889",
+  "raw_report_recovery": "Remove receipt_annotation and disposable_fixture_artifact_paths; json.dumps(indent=2) plus newline reproduces the original bytes.",
+  "static_checks": {
+    "black": "PASS",
+    "ruff": "PASS",
+    "strict_production_mypy": "PASS",
+    "optional_external_stubs": "ignore_missing_imports",
+    "shell_syntax": "PASS"
+  },
+  "source_commit_hooks": 21,
+  "host_credential_value_and_fingerprint_scan": "PASS",
+  "native_platform": "not run in this lane; prologue5 awaits delta audit and run-lane release",
+  "historical_binding_metadata_check": {
+    "result": "ALL BINDINGS INTACT",
+    "returncode": 0,
+    "trace_provenance_and_replay_tests": {
+      "passed": 2,
+      "seconds": 0.41,
+      "returncode": 0
+    },
+    "executable_and_test_bytes_unchanged": true
+  }
+}

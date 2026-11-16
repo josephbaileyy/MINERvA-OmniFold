@@ -1,0 +1,2 @@
+cd975b64402325da489ae608277faf5f6d7a7cbebe4974465f90b07c336e083f  data_g2r.json
+3b8cc7ceaef97c3dc6bbcd2c5cfdf853442c347e37e23f64eca54898d0e9eb4b  data_g2r.npz

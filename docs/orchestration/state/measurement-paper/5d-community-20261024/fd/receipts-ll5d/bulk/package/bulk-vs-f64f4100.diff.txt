@@ -1,0 +1,27 @@
+--- /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/connect-bulk.sh.f64f4100	2026-11-12 11:14:06
++++ connect-bulk.sh	2026-11-12 11:14:06
+@@ -14,7 +14,7 @@
+ M=FILL-WITH-M_A1B1                                 # the merge that carries amendment A1b.1 (ll5d_ctl.py), once bound
+ L5=2b0224c6fe52c5bb2d3fe64d461ac9edb80ebd191b0ab2f892dec605a0b56a14        # ll5d.py's sha256 at M
+ P=/pscratch/sd/j/josephrb; ND=$P/MINERvA-OmniFold/nd-unfolding
+-W=$P/ll5d-bulk-r1; DD=$W/deploy; U=$P/ll5d-unfolds-r1; PW=$P/ll5d-pilot-r1
++W=$P/ll5d-bulk-r1; DD=$W/deploy; U=$P/ll5d-unfolds-r2; PW=$P/ll5d-pilot-r2   # the pilot's r2 namespace
+ G18W=$P/ll5d-gate-2-g18-20261110; AR23W=$P/ll5d-gate-2-ar23-20261110
+ G18GATE=FILL-FROM-THE-GATE-2-G18-RECEIPT          # sha256 of gate-g18.json
+ AR23GATE=FILL-FROM-THE-GATE-2-AR23-RECEIPT        # sha256 of gate-ar23.json
+@@ -219,12 +219,12 @@
+ mkdir -p "$W/lanes" || stop mkdir
+ lane() {
+   local L=$1 rc=0 nd l t r its
+-  while IFS=$'\t' read -r nd l t r its; do
++  while IFS=$'\t' read -r -u 3 nd l t r its; do   # the table on fd 3, never stdin (the pilot r1 STOP)
+     [ "$nd" = "$NODE" ] && [ "$l" = "$L" ] || continue
+     srun --exact -n1 -c 32 --mem 56G --job-name "lane$L" /usr/bin/time -v python3 -B "$DD/nd-unfolding/ll5d_b.py" unfold "${WORLD[@]}" --truth "$t" --role "$r" --items "$its" \
+-      --out "$U" --threads 32 >> "$W/lanes/node$NODE-lane$L.out" 2>> "$W/lanes/node$NODE-lane$L.time"
++      --out "$U" --threads 32 < /dev/null >> "$W/lanes/node$NODE-lane$L.out" 2>> "$W/lanes/node$NODE-lane$L.time"
+     s=$?; echo "node $NODE lane $L $t $r rc=$s" >> "$W/lanes/node$NODE-lane$L.out"; rc=$((rc | s))
+-  done < <(grep -v '^#' "$W/bulk-lanes.tsv")
++  done 3< <(grep -v '^#' "$W/bulk-lanes.tsv")
+   return $rc
+ }
+ pids=(); for L in 0 1 2 3 4 5 6 7; do lane $L & pids+=($!); done

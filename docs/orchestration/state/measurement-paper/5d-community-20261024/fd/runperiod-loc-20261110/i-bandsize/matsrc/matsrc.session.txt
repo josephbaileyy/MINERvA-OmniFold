@@ -1,0 +1,4 @@
+ssh rc=0
+node login27 staged sha256 a35c07f00bf5cf21ae8b9d3494d330e115753256f92f4a39dd352e1463ad70e5
+detached pid 466119, output /dev/shm/rplm-matsrc.465747.sh.out
+script rc=0

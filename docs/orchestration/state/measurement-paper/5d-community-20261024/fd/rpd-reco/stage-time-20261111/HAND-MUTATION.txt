@@ -1,0 +1,8 @@
+== hand mutation: the staging_utc_ns line deleted from copy() (restored after this run)
+ nd-unfolding/fd_rpd_reco_custody.py    |  3 +++
+ nd-unfolding/tests/test_fd_rpd_reco.py | 38 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 41 insertions(+)
+nd-unfolding/tests/test_fd_rpd_reco.py:2597: KeyError
+=========================== short test summary info ============================
+FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_prepare_records_stat_bracket_and_staging_time
+1 failed, 299 deselected in 0.56s

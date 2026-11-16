@@ -1,0 +1,98 @@
+{
+  "tested_head": "477d51ead59943af7286ddee3258814f846fa865",
+  "baseline": "6a287e1ab6fb53bf3e1a42309202d5c28e04c4de",
+  "files_at_issue": {
+    "nd-unfolding/fd_rpd_reco.py": {
+      "sha256": "f748c8971919dfc39ecf111920bb01ef2479082e98134f26c83569d60d79627c",
+      "git_blob": "7d163c15c0d8dd9d316077b11ba5475b7e6ed848"
+    },
+    "nd-unfolding/fd_rpd_reco_custody.py": {
+      "sha256": "5fedca1fb40e58a3be558d77a629cfa8e8909247f4749cda40876f34d195bbbd",
+      "git_blob": "458ad2cfea6e663dcc8eb4d40dc592bbadbd23ca"
+    },
+    "nd-unfolding/fd_rpd_reco_prologue.py": {
+      "sha256": "8d60df0d30747b3eedd3caa9d7ca22d1f25a6213298eb3bde65c5289baae0e5c",
+      "git_blob": "34f3176a66c2979ce1a35309121b2d26c52cd172"
+    },
+    "nd-unfolding/fd_rpd_reco_flux_connect.sh": {
+      "sha256": "32db52355a4811bd4bf5f8b8cc0b5c397c7b403a0996048bcafd8c8c665cc76e",
+      "git_blob": "ecbe372a2d4e3c39942b261492f3cafc0a41b52d"
+    },
+    "nd-unfolding/fd_rpd_reco_prologue_connect.sh": {
+      "sha256": "c375e94a47b859ee57be9126ccc2aabb544374ac0ed528a095352164175d6dc5",
+      "git_blob": "b2872a6c0632f0ceb258f4c1cfbf4b23cbc51319"
+    },
+    "nd-unfolding/tests/test_fd_rpd_reco.py": {
+      "sha256": "29f78b565436f4e59fa30626836e749ab84c7d288feb83f75670c894bc5f680a",
+      "git_blob": "d54ebc064d79074f8010f2a1218819102c781836"
+    },
+    "nd-unfolding/tests/fd_rpd_reco_mutation.py": {
+      "sha256": "d5fa467e3ea1012956c3f1b5cf1ee30d92fd1792bd311221cb7fdc3e475a06a1",
+      "git_blob": "6c98bf189938f204e3ea9d6f0be37463373e173b"
+    },
+    "nd-unfolding/tests/fd_rpd_reco_mat_check.py": {
+      "sha256": "06360100038f0203b0d994f71c171b12cd955697edf32d1d744c4ce271ceb26d",
+      "git_blob": "00e6ff121401de5f216b411a97ee90ecefc4c0bc"
+    },
+    "nd-unfolding/fd_rpd_inputs.py": {
+      "sha256": "6e4ed0f1d7f55b7bfe2f26752eeb28bb9cbe33325a9d91cc7c06d9494a0b0a70",
+      "git_blob": "7c2e018f1169a9be0c5642daab991c664acbefcf"
+    },
+    "nd-unfolding/fd_ct_period_inputs.py": {
+      "sha256": "4d005f265ea6abf4ee7cfec988fe7c06553556ca7984387929f77409dfc244b1",
+      "git_blob": "81fc77890264e26ce38661a27e11c3da74c22284"
+    },
+    "nd-unfolding/tests/fixtures/fd_rpd_reco_trace/prologue4/exact_clone_chdir.strace.txt": {
+      "sha256": "02e16edd28165e2d7d5d3e26303827ab045326ceb1db41a19bdde4d749c416ad",
+      "git_blob": "7815af07279779ebfbea24718d03cedb80bdc837"
+    },
+    "nd-unfolding/tests/fixtures/fd_rpd_reco_trace/prologue4/interleaved_failures.strace.txt": {
+      "sha256": "1a0c0d56ff1d6e4e8ca6dc962f30cc1978a39c09dcaae2b1097bcdcd108c8a73",
+      "git_blob": "30d1bbfdc9902482e4bae1c16fd9f3a7fcd0ade9"
+    },
+    "nd-unfolding/tests/fixtures/fd_rpd_reco_trace/prologue4/manifest.json": {
+      "sha256": "d2c1f075111262f5e6e0ffc909ef9b7b2da3278b1a74ead1423a8df1900628b9",
+      "git_blob": "2085a47eaad42025a498e083694b3c794afd3646"
+    },
+    "nd-unfolding/tests/fixtures/fd_rpd_reco_trace/prologue4/split_success.strace.txt": {
+      "sha256": "2514248361d316c20c5ade833643715e7e7805a96101147cd50594c6f3bed98d",
+      "git_blob": "804f0ed2e46c616a3ba9496a2538deae9dad9383"
+    },
+    "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/trace-classifier-repair-20261108/production-config.draft.json": {
+      "sha256": "d749b3aad03c06c50462676502138cdc6c0f54f785050c0f9ca187fee22798a8",
+      "git_blob": "a6f8d642f2e426d72efa9e208cdda038e5c8543f"
+    }
+  },
+  "metadata_only_followup": {
+    "reason": "The immutable source trace must be revision-pinned, rather than adding a live-worktree receipt binding. No runtime policy, fixture cut, executable or test/harness bytes changed.",
+    "updates": [
+      {
+        "record": "nd-unfolding/tests/fixtures/fd_rpd_reco_trace/prologue4/manifest.json",
+        "source_revision": "68a36cf8f013aab145faf3cf7ed8d64971a433d8",
+        "source_file": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/prologue4-20261108/run/prologue.strace",
+        "source_sha256": "e925be68626e21f88d8ffb2dc5a2295bfe1b3047a00450b4a843ef307105d4ad",
+        "before_sha256": "d2c1f075111262f5e6e0ffc909ef9b7b2da3278b1a74ead1423a8df1900628b9",
+        "after_sha256": "95acb837fe6e4c9c19fe4d62b0b69372255748ecc83dc5c700ccd56e983b0c54",
+        "revision": "68a36cf8f013aab145faf3cf7ed8d64971a433d8"
+      },
+      {
+        "record": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/trace-classifier-repair-20261108/production-config.draft.json",
+        "source_revision": "68a36cf8f013aab145faf3cf7ed8d64971a433d8",
+        "source_file": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/prologue4-20261108/run/prologue.strace",
+        "source_sha256": "e925be68626e21f88d8ffb2dc5a2295bfe1b3047a00450b4a843ef307105d4ad",
+        "before_sha256": "d749b3aad03c06c50462676502138cdc6c0f54f785050c0f9ca187fee22798a8",
+        "after_sha256": "37115129f038670a2809170a38b0d86adbe1ffbde45875aae9f033809a53959f",
+        "revision": "68a36cf8f013aab145faf3cf7ed8d64971a433d8"
+      },
+      {
+        "record": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/trace-classifier-repair-20261108/TRACE-EVIDENCE.json",
+        "source_revision": "68a36cf8f013aab145faf3cf7ed8d64971a433d8",
+        "source_file": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/prologue4-20261108/run/prologue.strace",
+        "source_sha256": "e925be68626e21f88d8ffb2dc5a2295bfe1b3047a00450b4a843ef307105d4ad",
+        "before_sha256": "f796153b68d434f693f3b80b3069cf44c8b0400dfe128d7994228206b5f96d2e",
+        "after_sha256": "7cf96e8a9d0b98278c00e408523540f175ad257020529a9d34e169b9ccf25835",
+        "revision": "68a36cf8f013aab145faf3cf7ed8d64971a433d8"
+      }
+    ]
+  }
+}

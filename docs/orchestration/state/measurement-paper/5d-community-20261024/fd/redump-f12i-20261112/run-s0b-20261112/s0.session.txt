@@ -1,0 +1,201 @@
+ssh rc=0
+node login27 staged sha256 11e7ef921bcc227255200347277d7b976d927c5fee2824dd613d31896c968827
+detached pid 2304162, output /dev/shm/rdxc.2303777.sh.out
+node login27 2026-11-12T08:52:35Z step s0 pin ad0535c4a62ac0a20711a4a00f2266ddaf926d7c; connect script sha256 11e7ef921bcc227255200347277d7b976d927c5fee2824dd613d31896c968827
+== the purge-exposed MP-1 inputs (stat only)
+{
+ "files": [
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s0/evloop/base_cv.root",
+   "bytes": 398375089,
+   "mtime": "2026-10-20T06:15:41Z",
+   "atime": "2026-10-20T13:05:40Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1A_zero.root",
+   "bytes": 398375296,
+   "mtime": "2026-10-20T15:11:30Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1B_zero.root",
+   "bytes": 106517598,
+   "mtime": "2026-10-20T14:41:11Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1C_zero.root",
+   "bytes": 204230889,
+   "mtime": "2026-10-20T14:49:14Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1D_zero.root",
+   "bytes": 596287802,
+   "mtime": "2026-10-20T15:49:28Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1E_zero.root",
+   "bytes": 495761736,
+   "mtime": "2026-10-20T15:38:18Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1F_zero.root",
+   "bytes": 689044069,
+   "mtime": "2026-10-20T15:29:27Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1G_zero.root",
+   "bytes": 581501093,
+   "mtime": "2026-10-20T15:47:38Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1L_zero.root",
+   "bytes": 56587445,
+   "mtime": "2026-10-20T14:38:19Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1M_zero.root",
+   "bytes": 862899975,
+   "mtime": "2026-10-20T15:56:42Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1N_zero.root",
+   "bytes": 499729347,
+   "mtime": "2026-10-20T15:38:35Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1O_zero.root",
+   "bytes": 150945068,
+   "mtime": "2026-10-20T14:45:15Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1P_zero.root",
+   "bytes": 199848958,
+   "mtime": "2026-10-20T15:16:09Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_zero.npz",
+   "bytes": 1548311762,
+   "mtime": "2026-10-20T18:31:31Z",
+   "atime": "2026-10-30T08:53:42Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_zero_bkg.npz",
+   "bytes": 28494557,
+   "mtime": "2026-10-20T18:31:33Z",
+   "atime": "2026-10-30T08:53:42Z"
+  }
+ ],
+ "missing": [],
+ "verdict": "PRESENT"
+}
+squeue --me:
+61078463|ll5d_gate_G18|RUNNING
+61078506|ll5d_gate_AR23|RUNNING
+{
+ "protected": [
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/ER/xsec.root",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root",
+  "/pscratch/sd/j/josephrb/cov2d-run-20261104",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root",
+  "/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root"
+ ],
+ "never_read": [
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz",
+  "/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz",
+  "/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root",
+  "/pscratch/sd/j/josephrb/cov2d-inputs-20261104",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware",
+  "/pscratch/sd/j/josephrb/fd-f1-20261027/f1b3/prep",
+  "/pscratch/sd/j/josephrb/fd-1b-inv-20261101/i0/in"
+ ],
+ "reads": [
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/MINERvA-101-Cross-Section",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib",
+  "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s0/build/MANIFEST.sha256",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data"
+ ],
+ "hits": [],
+ "verdict": "CLEAR"
+}
+patching file runEventLoopOmniFold.cpp
+{
+ "mode": "rdx-provenance",
+ "pins": {
+  "runEventLoopOmniFold.cpp": "57792e42fe3f5a663016f94b91a5631fc50349135c92b35a08eaefcb85812be3",
+  "event/CVUniverse.h": "900d7368d6184d503399bd99c0fd30085212df0327b8be374182495b85a3677d",
+  "cuts/MaxPtMu.h": "ae4adeb3a5ff0e2f8cab46a4dd9dc40d7b42da6b936311d776fdb7612e2d73ca",
+  "CMakeLists.txt": "d77791ad0e866704d70ab5cf3db0c0c3c7a5aed0218c144c20f86081ad6814b0",
+  "cuts/MaxPzMu.h": "c50f6b5ae4e95e85de3f7a50b704232ead767231c1604951a597e9faafb3e56c",
+  "systematics/Systematics.h": "1bdfa4f028e7e5f3d4e39a60d2cadc0c05b366fd12ff345d5183177a9b555086"
+ },
+ "so_checked": 7,
+ "synced_vs_s0_src_base": {
+  "changed": [],
+  "only_in_synced": [],
+  "only_in_s0": []
+ },
+ "failures": [],
+ "verdict": "PASS"
+}
+== provenance
+{
+ "mode": "rdx-provenance",
+ "pins": {
+  "runEventLoopOmniFold.cpp": "57792e42fe3f5a663016f94b91a5631fc50349135c92b35a08eaefcb85812be3",
+  "event/CVUniverse.h": "900d7368d6184d503399bd99c0fd30085212df0327b8be374182495b85a3677d",
+  "cuts/MaxPtMu.h": "ae4adeb3a5ff0e2f8cab46a4dd9dc40d7b42da6b936311d776fdb7612e2d73ca",
+  "CMakeLists.txt": "d77791ad0e866704d70ab5cf3db0c0c3c7a5aed0218c144c20f86081ad6814b0",
+  "cuts/MaxPzMu.h": "c50f6b5ae4e95e85de3f7a50b704232ead767231c1604951a597e9faafb3e56c",
+  "systematics/Systematics.h": "1bdfa4f028e7e5f3d4e39a60d2cadc0c05b366fd12ff345d5183177a9b555086"
+ },
+ "so_checked": 7,
+ "synced_vs_s0_src_base": {
+  "changed": [],
+  "only_in_synced": [],
+  "only_in_s0": []
+ },
+ "failures": [],
+ "verdict": "PASS"
+}
+== environment
+# modules
+
+Currently Loaded Modules:
+  1) craype-x86-milan                10) craype/2.7.36
+  2) libfabric/2.3.1                 11) perftools-base/26.03.0
+  3) craype-network-ofi              12) cpe/26.03
+  4) xpmem/2.11.5-1.3_g73ade43320bc  13) cudatoolkit/13.2
+  5) gcc-native/14                   14) craype-accel-nvidia80
+  6) cray-dsmml/0.3.1                15) gpu/1.0
+  7) PrgEnv-gnu/8.7.0                16) sqs/2.0
+  8) cray-libsci/26.03.0             17) darshan/default
+  9) cray-mpich/9.1.0
+
+ 
+
+# compiler
+c++ (conda-forge gcc 12.4.0-2) 12.4.0
+# ROOT
+6.28/12
+== binaries
+8b758ce5234515fed46b4c026220bb9a  /pscratch/sd/j/josephrb/rdx-20261112b/build/bld_base/runEventLoopOmniFold
+38398191bb0a86d3fa58be3602943117  /pscratch/sd/j/josephrb/rdx-20261112b/build/bld_rdx/runEventLoopOmniFold
+base md5 beside S0's a6b85ec3068536b0cb278b68d6f40359 (reported, not gated)
+== RUNTIME.sha256 39712d5f7dee41c113282f029a9f84fd71ab71010ac2d0f540475373bbdf6777 (9 files)
+== rdx connect s0 rc=0 2026-11-12T08:53:05Z
+script rc=0

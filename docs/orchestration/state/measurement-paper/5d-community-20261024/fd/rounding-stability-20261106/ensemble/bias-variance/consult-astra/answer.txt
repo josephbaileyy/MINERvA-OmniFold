@@ -1,0 +1,78 @@
+**Stop BV96 in its present form. I support a redesigned bias study only if Joseph first specifies a result that would justify advancing E96 toward a future measurement.** A more measurable endpoint is not automatically a useful decision.
+
+Citations use these repository-relative abbreviations:
+
+- **O** = `docs/orchestration`
+- **B** = `O/state/measurement-paper/5d-community-20261024/fd/rounding-stability-20261106/ensemble/bias-variance`
+- **D** = `B/BV96-DECLARATION.md`
+- **S**, **P**, **I** = `B/power/bv96_power_sim.py`, `bv96_power_sim.out.txt`, `bv96_power_inputs.json`, respectively.
+
+**1. The power analysis supports stopping, but its interpretation needs correction.**
+
+The fundamental calculation is sound. Under equal mean bias, write the errors as a shared component \(b+s\), plus rounding deviations \(u\) and \(v\). Then
+\[
+e_E^2-e_F^2=2(b+s)(v-u)+v^2-u^2.
+\]
+The expected improvement is quadratic in rounding scale; its sampling noise contains a term linear in that scale and in the common bias. Pairing removes much statistical noise, but cannot remove this cross-term. That is precisely the simulation’s construction. [S:6–17,48–73]
+
+My arithmetic from the committed inputs gives mean rounding variance **0.778884**, and expected E96 gain **0.770770** after multiplying by \(95/96\). The draft’s approximately 0.78 is correct under this model. Its illustrative cell calculation also checks: noise/gain are approximately **1.12/0.0181 statistical variances**, requiring roughly **34,500 draws** for the stated three-sigma comparison. [I:9315; D:61–70]
+
+However, the large-sample extrapolation does not fully check. Using the model’s moments at \(\rho=0.9\), I obtain SD approximately **53.43** at A7 NuWro. The normal approximation
+\[
+M_{80}\simeq[(2.241+0.842)\,53.43/(0.77077-0.05)]^2
+\]
+gives approximately **52,200 experiments**, exceeding the draft’s claimed maximum of 28,000. That discrepancy strengthens futility but should be corrected. These are my arithmetic calculations, not a rerun of the simulation. [I:315,10931; S:39,48–73; D:352–353]
+
+The **0.001 is a planning summary**, not measured power at R1 and R2: it is the minimum over three correlation assumptions of the median product of powers across 136 development-truth pairs. The code also does not combine E-better with absence of harm to estimate the complete PREFER_E96 probability. [S:19–25,105–115; D:265]
+
+Its assumptions are substantial: one closure supplies each bias; one stability input supplies rounding behavior everywhere; shared statistical fluctuations cancel exactly between estimators; E96’s residual is an independent row scaled by \(1/\sqrt{96}\). These assumptions suffice for a warning, not precise forecasting. [S:6–15; B/power/bv96_power_derive.py:78–108]
+
+**The MSE definition itself is not wrong.** The draft correctly measures variance across pseudo-experiments and explicitly avoids adding rounding variance twice. [D:281–308] What is wrong is treating the power result as “NO_PREFERENCE whatever happens.” It establishes poor sensitivity to the **equal-bias, variance-only improvement**; a substantial bias change could remain detectable. [D:71–72,354–356]
+
+Large-bias MSE is a legitimate risk measure. It is insufficient for adoption: choosing the less inaccurate estimator does not establish that either can resolve the intended physics.
+
+**2. Choose (a), with a conditional redesign of (b); reject (c) as the adoption test.**
+
+ENS1 already establishes stability improvement on its declared input and a BIAS_WORSE verdict at one truth. Neither should be erased. [O/OUTCOME-20261109-ens1-stab-pass-bias-worse.md:19–41; ensemble/ENS1-DECLARATION.md:353–356, relative to B’s parent]
+
+A prospective bias comparison could answer something new. For each truth and functional, estimate
+\[
+\delta_j=\operatorname{mean}_m(e^E_{mj}-e^F_{mj}),
+\]
+alongside **both absolute biases**, their uncertainties, and the variance across experiments. A signed shift alone has no “better” direction: its meaning depends on the original bias.
+
+The advertised precision needs qualification. Under the planning model,
+\[
+SE(\hat\delta_j)=sd_j\sqrt{(1+1/96)/30}.
+\]
+This gives **0.107 sigma_rel at the median functional and 0.462 at the maximum**, not universal resolution of 0.1. Approximate individual 95% half-widths are **0.21 and 0.90**; simultaneous claims require more. [I:12573–12580; S:13–15] The expected cost checks: \(6016\times0.020258+0.414722=122.287\) node-hours. [D:218–220,361–377]
+
+Before spending that, declare:
+
+- A small primary set of physics contrasts and acceptable **absolute bias**, justified by the measurement’s intended use.
+- A noninferiority margin for additional bias, with simultaneous uncertainty bounds and explicit inconclusive outcomes.
+- A meaningful variance-reduction target, measured across experiments.
+- What happens after success, including the cost of validating E96’s own uncertainty procedure.
+
+**What would change my decision:** acceptable absolute bias and convincingly bounded additional harm at both reserved truths, together with useful variance reduction, would justify advancing E96 to uncertainty and coverage validation. It would not yet justify adopting its measurement.
+
+**What would not:** nonsignificant bias differences, a small average signed shift hiding opposing changes, or another stability pass. Material absolute bias would defeat the measurement case even if E96 improved slightly upon (e). This restores the original consultation’s emphasis on intended physics contrasts. [O/state/2d-closeout/stageF/methods/secondary-results/consult-astra-publishable-path-20261109/answer.txt:25–27]
+
+Choosing nominal-like truths because they produce favorable power would answer an easier, narrower question. They could be controls, but should not replace the reserved-truth assessment. The simulation’s nominal-truth success illustrates exactly that distinction. [P:22–38]
+
+**3. GiBUU planning use is scientifically defensible, but the licensing distinction matters.**
+
+Development observations may inform feasibility without contaminating untouched evaluation truths. I would permit GiBUU as a **disclosed sensitivity analysis**, retaining the non-GiBUU calculation as the primary planning basis.
+
+But “planning only” is not a complete procedural defense: the headline feeds a criterion determining whether M stands. [S:23–25] The earlier rule forbids GiBUU magnitudes in criteria beyond “no worse,” and ENS1’s outcome uses broader exclusionary wording. [O/state/measurement-paper/5d-community-20261024/FD-STAB-DECLARATION.md:206–209; O/OUTCOME-20261109-ens1-stab-pass-bias-worse.md:63–70]
+
+Disclose which inputs entered, what decision they informed, and the exclusion sensitivity. The draft reports **0.0007 without GiBUU**, so the practical futility conclusion does not depend on accepting that use. A broader licence should be explicit, not inferred retrospectively. [D:339–344]
+
+**4. The draft also needs these repairs.**
+
+- **Materiality:** adding 0.05 statistical-variance units is not a 5% change in bias-dominated MSE. The same error affects the harm guard’s RMS justification. [D:244–260]
+- **Inference:** normal critical values with estimated standard errors at M=30 do not guarantee the claimed familywise rates. The harm threshold itself contains estimated variance. Calibrate the procedure before asserting those guarantees. [D:239–260]
+- **Decomposition:** with sample variance \(s^2\), direct mean squared error equals \(\bar e^2+(M-1)s^2/M\), not \(\bar e^2+s^2\). [D:281–284]
+- **Scope:** R2 shares a prior study’s model family, partitions reuse the simulation bank, and the comparison changes dtype as well as averaging. Preserve those limitations. [D:95–96,128–130,166–172]
+
+I would authorize a rewritten decision-oriented design for review—not automatically purchase option (b) because option (a) failed.

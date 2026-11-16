@@ -1,0 +1,31 @@
+== the read log (every path the three tools opened, realpath; the interpreter's own prefixes and /usr, /proc,
+   /sys, /dev, /etc are counted but not listed)
+-- build:       30 paths
+  <w>/p-pass/pv-ladder-20261024/products/L-5D-PV_e_tune_v1.npz
+  <w>/p-pass/rsn-20261112/deploy-p1/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-f1/run/cluster/f1b3/prep/k1_p5_rerun.npz
+  <w>/p-pass/rsn-20261112/out/cmodel/rsn_cmodel.json
+  <w>/p-pass/rsn-20261112/out/cmodel/rsn_cmodel.npz
+  <w>/p-pass/rsn-20261112/out/products/G6_gibuu.npz
+  <w>/p-pass/rsn-20261112/tmp-post/smoke-tools/__pycache__/common.cpython-312.pyc
+  <w>/p-pass/rsn-20261112/tmp-post/smoke-tools/cmodel.py
+  <w>/p-pass/rsn-20261112/tmp-post/smoke-tools/common.py
+-- regrade:       32 paths
+  <w>/p-pass/rsn-20261112/out/cmodel/rsn_cmodel.json
+  <w>/p-pass/rsn-20261112/out/cmodel/rsn_cmodel.npz
+  <w>/p-pass/rsn-20261112/out/regrade.json
+  <w>/p-pass/rsn-20261112/out/stage/cpl_block.npz
+  <w>/p-pass/rsn-20261112/out/stage/fd_f1_experiments.npz
+  <w>/p-pass/rsn-20261112/out/stage/s1_assembly.npz
+  <w>/p-pass/rsn-20261112/out/stage/sorted_NuEConstraint_FHC_RHC_IMD.txt
+  <w>/p-pass/rsn-20261112/tmp-post/smoke-tools/__pycache__/common.cpython-312.pyc
+  <w>/p-pass/rsn-20261112/tmp-post/smoke-tools/common.py
+  <w>/p-pass/rsn-20261112/tmp-post/smoke-tools/regrade.py
+-- read:       29 paths
+  <w>/p-pass/rsn-20261112/out/cmodel/rsn_cmodel.json
+  <w>/p-pass/rsn-20261112/out/prep/prep.json
+  <w>/p-pass/rsn-20261112/out/regrade.json
+  <w>/p-pass/rsn-20261112/out/rsn_readout.json
+  <w>/p-pass/rsn-20261112/tmp-post/smoke-tools/__pycache__/common.cpython-312.pyc
+  <w>/p-pass/rsn-20261112/tmp-post/smoke-tools/common.py
+  <w>/p-pass/rsn-20261112/tmp-post/smoke-tools/read.py
+READ SET HELD: every opened path is under the deploy, RSN's own out/, the frozen products or the environment

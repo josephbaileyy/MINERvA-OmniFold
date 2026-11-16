@@ -1,0 +1,379 @@
+FD-PRR readout: COMPLETE
+floor: s_F {'F1': 0.0023377215802034717, 'F2': 0.0009797751536834596, 'F3': 0.0017675397487514604, 'F4': 0.0015668249241088173}, s_IBU 0.001113, bars {'F1': 0.05, 'F2': 0.05, 'F3': 0.05, 'F4': 0.05, 'IBU': 0.05}
+A7_gibuu: PR-1 {'F1': 'no effect', 'F2': 'increases', 'F3': 'no effect', 'F4': 'increases'}; PR-2a IBU retains less; PR-2b falls; labels ['consistent with an implementation-specific share', 'sensitive to the observable set']
+q3: PR-1 {'F1': 'increases', 'F2': 'increases', 'F3': 'no effect', 'F4': 'increases'}; PR-2a IBU retains less; PR-2b falls; labels ['consistent with an implementation-specific share', 'sensitive to the observable set']
+PR-3 B0: does not clear at these truths; without new flags False []
+PR-3 K2: does not clear at these truths; without new flags False ['A7_nuwro', 'W3', 'stage0c_gibuu']
+PR-3 K10: does not clear at these truths; without new flags False []
+PR-3 K20: does not clear at these truths; without new flags False []
+PR-3 K50: does not clear at these truths; without new flags False []
+PR-3 C25: does not clear at these truths; without new flags False ['A7_nuwro', 'W3', 'stage0c_gibuu']
+PR-3 C400: does not clear at these truths; without new flags False []
+PR-3 C1000: does not clear at these truths; without new flags False []
+PR-3 MCq: does not clear at these truths; without new flags False []
+PR-3 O4r: does not clear at these truths; without new flags False []
+PR-3 O4: does not clear at these truths; without new flags False ['A7_nuwro']
+PR-3 O3: does not clear at these truths; without new flags False []
+PR-3 O2: does not clear at these truths; without new flags False ['A7_genie_cv', 'A7_nuwro', 'W1', 'W3', 'closure_nuwro', 'stage0c_gibuu']
+PR-3 IBU_K5: does not clear at these truths; without new flags False ['A7_nuwro', 'W3', 'closure_nuwro', 'stage0c_gibuu']
+B0/nominal/s991000: rho None (|S| 0), rms b 0.0009647, chi2 0.01175, p 1, max|z| 0.0223, flagged False
+B0/W1/s991000: rho 0.14690677349916273 (|S| 16), rms b 0.01925, chi2 4.965, p 0.996, max|z| 0.624, flagged False
+B0/W2/s991000: rho 0.09380337722462097 (|S| 16), rms b 0.006099, chi2 0.6913, p 1, max|z| 0.159, flagged False
+B0/W3/s991000: rho 0.21627657837473527 (|S| 15), rms b 0.0352, chi2 24.87, p 0.0722, max|z| 1.02, flagged False
+B0/q3/s991000: rho 0.17852905299277708 (|S| 16), rms b 0.06042, chi2 54.88, p 3.71e-06, max|z| 1.56, flagged True
+B0/stage0c_gibuu/s991000: rho 0.23899352919123382 (|S| 16), rms b 0.04627, chi2 25.13, p 0.0676, max|z| 1.75, flagged False
+B0/closure_nuwro/s991000: rho -0.02160043138668077 (|S| 14), rms b 0.02607, chi2 11.86, p 0.753, max|z| 0.536, flagged False
+B0/A7_mnvtune/s991000: rho None (|S| 0), rms b 0.0009647, chi2 0.01175, p 1, max|z| 0.0223, flagged False
+B0/A7_genie_cv/s991000: rho 0.00947430608826859 (|S| 16), rms b 0.01887, chi2 15.89, p 0.46, max|z| 0.376, flagged False
+B0/A7_genie_mec/s991000: rho 0.007053561404887685 (|S| 16), rms b 0.01659, chi2 14.25, p 0.58, max|z| 0.299, flagged False
+B0/A7_nuwro/s991000: rho 0.31995622497039145 (|S| 16), rms b 0.0504, chi2 23.19, p 0.109, max|z| 1.25, flagged False
+B0/A7_gibuu/s991000: rho 0.125000768884699 (|S| 16), rms b 0.07187, chi2 175, p 8.49e-29, max|z| 4.55, flagged True
+K2/nominal/s991000: rho None (|S| 0), rms b 0.0007491, chi2 0.007908, p 1, max|z| 0.0199, flagged False
+K2/W1/s991000: rho 0.23722951135076212 (|S| 16), rms b 0.02665, chi2 8.22, p 0.942, max|z| 0.909, flagged False
+K2/W2/s991000: rho 0.15427448569295676 (|S| 16), rms b 0.008761, chi2 0.7022, p 1, max|z| 0.217, flagged False
+K2/W3/s991000: rho 0.29855164083616165 (|S| 15), rms b 0.04117, chi2 39.89, p 0.000809, max|z| 1.14, flagged True
+K2/q3/s991000: rho 0.235069168218984 (|S| 16), rms b 0.06462, chi2 58.08, p 1.1e-06, max|z| 1.41, flagged True
+K2/stage0c_gibuu/s991000: rho 0.30547237683362727 (|S| 16), rms b 0.05991, chi2 46.77, p 7.39e-05, max|z| 2.27, flagged True
+K2/closure_nuwro/s991000: rho 0.13208482667464364 (|S| 14), rms b 0.0259, chi2 10.25, p 0.853, max|z| 0.793, flagged False
+K2/A7_mnvtune/s991000: rho None (|S| 0), rms b 0.0007491, chi2 0.007908, p 1, max|z| 0.0199, flagged False
+K2/A7_genie_cv/s991000: rho 0.10958369444730295 (|S| 16), rms b 0.01908, chi2 15.99, p 0.453, max|z| 0.331, flagged False
+K2/A7_genie_mec/s991000: rho 0.06980034324784797 (|S| 16), rms b 0.0178, chi2 14.84, p 0.536, max|z| 0.327, flagged False
+K2/A7_nuwro/s991000: rho 0.4427831835491816 (|S| 16), rms b 0.0609, chi2 39.57, p 0.000899, max|z| 1.37, flagged True
+K2/A7_gibuu/s991000: rho 0.16835752787138528 (|S| 16), rms b 0.08211, chi2 245.9, p 0, max|z| 5.43, flagged True
+K10/nominal/s991000: rho None (|S| 0), rms b 0.001011, chi2 0.01346, p 1, max|z| 0.0222, flagged False
+K10/W1/s991000: rho 0.13374830204342075 (|S| 16), rms b 0.01798, chi2 4.468, p 0.998, max|z| 0.615, flagged False
+K10/W2/s991000: rho 0.0883779198528004 (|S| 16), rms b 0.005563, chi2 0.588, p 1, max|z| 0.15, flagged False
+K10/W3/s991000: rho 0.21320070538925268 (|S| 15), rms b 0.03607, chi2 23.97, p 0.0902, max|z| 1.03, flagged False
+K10/q3/s991000: rho 0.17242324005535808 (|S| 16), rms b 0.05996, chi2 56.31, p 2.16e-06, max|z| 1.62, flagged True
+K10/stage0c_gibuu/s991000: rho 0.20851702563375465 (|S| 16), rms b 0.04017, chi2 17.98, p 0.325, max|z| 1.58, flagged False
+K10/closure_nuwro/s991000: rho -0.042327667807398245 (|S| 14), rms b 0.02825, chi2 13.02, p 0.671, max|z| 0.6, flagged False
+K10/A7_mnvtune/s991000: rho None (|S| 0), rms b 0.001011, chi2 0.01346, p 1, max|z| 0.0222, flagged False
+K10/A7_genie_cv/s991000: rho -0.010602286404543155 (|S| 16), rms b 0.01855, chi2 14.65, p 0.55, max|z| 0.365, flagged False
+K10/A7_genie_mec/s991000: rho 0.006622101502143279 (|S| 16), rms b 0.01553, chi2 13.57, p 0.631, max|z| 0.27, flagged False
+K10/A7_nuwro/s991000: rho 0.2977796951660041 (|S| 16), rms b 0.04807, chi2 21.52, p 0.159, max|z| 1.21, flagged False
+K10/A7_gibuu/s991000: rho 0.11290979384171498 (|S| 16), rms b 0.068, chi2 150.4, p 6.63e-24, max|z| 4.46, flagged True
+K20/nominal/s991000: rho None (|S| 0), rms b 0.0009919, chi2 0.01405, p 1, max|z| 0.022, flagged False
+K20/W1/s991000: rho 0.12737969723632317 (|S| 16), rms b 0.01746, chi2 4.161, p 0.999, max|z| 0.623, flagged False
+K20/W2/s991000: rho 0.09308249209925289 (|S| 16), rms b 0.005554, chi2 0.5213, p 1, max|z| 0.151, flagged False
+K20/W3/s991000: rho 0.20702292901338645 (|S| 15), rms b 0.03675, chi2 22.69, p 0.122, max|z| 1.03, flagged False
+K20/q3/s991000: rho 0.1716903313862641 (|S| 16), rms b 0.06037, chi2 55.54, p 2.9e-06, max|z| 1.63, flagged True
+K20/stage0c_gibuu/s991000: rho 0.18389329788913544 (|S| 16), rms b 0.03546, chi2 13.6, p 0.629, max|z| 1.45, flagged False
+K20/closure_nuwro/s991000: rho -0.043603084725673535 (|S| 14), rms b 0.02848, chi2 14.37, p 0.571, max|z| 0.601, flagged False
+K20/A7_mnvtune/s991000: rho None (|S| 0), rms b 0.0009919, chi2 0.01405, p 1, max|z| 0.022, flagged False
+K20/A7_genie_cv/s991000: rho -0.009268637957509797 (|S| 16), rms b 0.01871, chi2 14.43, p 0.567, max|z| 0.358, flagged False
+K20/A7_genie_mec/s991000: rho 0.005155608845561031 (|S| 16), rms b 0.01524, chi2 13.97, p 0.601, max|z| 0.281, flagged False
+K20/A7_nuwro/s991000: rho 0.2905583228115718 (|S| 16), rms b 0.04811, chi2 23.31, p 0.106, max|z| 1.25, flagged False
+K20/A7_gibuu/s991000: rho 0.10359183049366101 (|S| 16), rms b 0.06715, chi2 161.5, p 4.18e-26, max|z| 4.39, flagged True
+K50/nominal/s991000: rho None (|S| 0), rms b 0.0009986, chi2 0.01799, p 1, max|z| 0.0238, flagged False
+K50/W1/s991000: rho 0.11474634815674183 (|S| 16), rms b 0.01627, chi2 3.425, p 1, max|z| 0.582, flagged False
+K50/W2/s991000: rho 0.10319932928651157 (|S| 16), rms b 0.006263, chi2 0.7588, p 1, max|z| 0.171, flagged False
+K50/W3/s991000: rho 0.2049404831415064 (|S| 15), rms b 0.0375, chi2 23.58, p 0.0991, max|z| 0.993, flagged False
+K50/q3/s991000: rho 0.16281010141894403 (|S| 16), rms b 0.06065, chi2 54.52, p 4.27e-06, max|z| 1.66, flagged True
+K50/stage0c_gibuu/s991000: rho 0.14673261112131772 (|S| 16), rms b 0.02859, chi2 8.729, p 0.924, max|z| 1.19, flagged False
+K50/closure_nuwro/s991000: rho -0.048925667177482535 (|S| 14), rms b 0.02875, chi2 15.84, p 0.464, max|z| 0.62, flagged False
+K50/A7_mnvtune/s991000: rho None (|S| 0), rms b 0.0009986, chi2 0.01799, p 1, max|z| 0.0238, flagged False
+K50/A7_genie_cv/s991000: rho -0.015378281933893033 (|S| 16), rms b 0.01848, chi2 13.9, p 0.606, max|z| 0.35, flagged False
+K50/A7_genie_mec/s991000: rho -0.003416078440841986 (|S| 16), rms b 0.01485, chi2 13.36, p 0.646, max|z| 0.311, flagged False
+K50/A7_nuwro/s991000: rho 0.29993375059554445 (|S| 16), rms b 0.04669, chi2 23.41, p 0.103, max|z| 1.13, flagged False
+K50/A7_gibuu/s991000: rho 0.09429608525825453 (|S| 16), rms b 0.06659, chi2 172.3, p 2.97e-28, max|z| 4.3, flagged True
+C25/nominal/s991000: rho None (|S| 0), rms b 0.0003962, chi2 0.004633, p 1, max|z| 0.00841, flagged False
+C25/W1/s991000: rho 0.4483431309162001 (|S| 16), rms b 0.04603, chi2 23.13, p 0.11, max|z| 1.59, flagged False
+C25/W2/s991000: rho 0.22420866986638538 (|S| 16), rms b 0.01028, chi2 0.9415, p 1, max|z| 0.234, flagged False
+C25/W3/s991000: rho 0.7233424577455716 (|S| 15), rms b 0.08137, chi2 117.6, p 1.58e-17, max|z| 2.27, flagged True
+C25/q3/s991000: rho 0.4991837335221669 (|S| 16), rms b 0.1005, chi2 110.1, p 4.21e-16, max|z| 2.69, flagged True
+C25/stage0c_gibuu/s991000: rho 0.44456892705179635 (|S| 16), rms b 0.08019, chi2 86.48, p 1.11e-11, max|z| 2.9, flagged True
+C25/closure_nuwro/s991000: rho 0.42197613402366685 (|S| 14), rms b 0.04178, chi2 30.19, p 0.017, max|z| 1.4, flagged False
+C25/A7_mnvtune/s991000: rho None (|S| 0), rms b 0.0003962, chi2 0.004633, p 1, max|z| 0.00841, flagged False
+C25/A7_genie_cv/s991000: rho 0.3818441631834822 (|S| 16), rms b 0.03699, chi2 22.62, p 0.124, max|z| 0.664, flagged False
+C25/A7_genie_mec/s991000: rho 0.2857696095242415 (|S| 16), rms b 0.03546, chi2 19.77, p 0.231, max|z| 0.644, flagged False
+C25/A7_nuwro/s991000: rho 0.7054002097003954 (|S| 16), rms b 0.09029, chi2 132.4, p 2.22e-20, max|z| 1.93, flagged True
+C25/A7_gibuu/s991000: rho 0.35543905996625536 (|S| 16), rms b 0.1509, chi2 978.8, p 0, max|z| 11.1, flagged True
+C400/nominal/s991000: rho None (|S| 0), rms b 0.002295, chi2 0.1618, p 1, max|z| 0.0618, flagged False
+C400/W1/s991000: rho 0.1332687872291943 (|S| 16), rms b 0.01712, chi2 5.168, p 0.995, max|z| 0.515, flagged False
+C400/W2/s991000: rho 0.09142271878938144 (|S| 16), rms b 0.006223, chi2 1.44, p 1, max|z| 0.161, flagged False
+C400/W3/s991000: rho 0.1022288558842944 (|S| 15), rms b 0.01717, chi2 9.699, p 0.882, max|z| 0.64, flagged False
+C400/q3/s991000: rho 0.1581245133026602 (|S| 16), rms b 0.058, chi2 45.47, p 0.000117, max|z| 1.48, flagged True
+C400/stage0c_gibuu/s991000: rho 0.23154458927556681 (|S| 16), rms b 0.04425, chi2 25.53, p 0.061, max|z| 1.54, flagged False
+C400/closure_nuwro/s991000: rho -0.07600232464029981 (|S| 14), rms b 0.01623, chi2 17.09, p 0.38, max|z| 0.531, flagged False
+C400/A7_mnvtune/s991000: rho None (|S| 0), rms b 0.002295, chi2 0.1618, p 1, max|z| 0.0618, flagged False
+C400/A7_genie_cv/s991000: rho -0.05149395642865746 (|S| 16), rms b 0.02056, chi2 10, p 0.867, max|z| 0.509, flagged False
+C400/A7_genie_mec/s991000: rho -0.029520827138447735 (|S| 16), rms b 0.01409, chi2 8.541, p 0.931, max|z| 0.345, flagged False
+C400/A7_nuwro/s991000: rho 0.20270459185274176 (|S| 16), rms b 0.03553, chi2 24.19, p 0.0855, max|z| 1, flagged False
+C400/A7_gibuu/s991000: rho 0.10310556288240219 (|S| 16), rms b 0.05368, chi2 93.78, p 5.01e-13, max|z| 3.76, flagged True
+C1000/nominal/s991000: rho None (|S| 0), rms b 0.003236, chi2 0.3313, p 1, max|z| 0.111, flagged False
+C1000/W1/s991000: rho 0.12988599484254162 (|S| 16), rms b 0.01758, chi2 6.475, p 0.982, max|z| 0.489, flagged False
+C1000/W2/s991000: rho 0.09436394629122256 (|S| 16), rms b 0.006952, chi2 2.045, p 1, max|z| 0.203, flagged False
+C1000/W3/s991000: rho 0.10954441621208053 (|S| 15), rms b 0.01755, chi2 9.972, p 0.868, max|z| 0.605, flagged False
+C1000/q3/s991000: rho 0.1633785826473624 (|S| 16), rms b 0.05842, chi2 48.67, p 3.72e-05, max|z| 1.45, flagged True
+C1000/stage0c_gibuu/s991000: rho 0.23525177445330014 (|S| 16), rms b 0.04448, chi2 26.75, p 0.0444, max|z| 1.51, flagged False
+C1000/closure_nuwro/s991000: rho -0.07438070403005496 (|S| 14), rms b 0.01558, chi2 14.54, p 0.559, max|z| 0.537, flagged False
+C1000/A7_mnvtune/s991000: rho None (|S| 0), rms b 0.003236, chi2 0.3313, p 1, max|z| 0.111, flagged False
+C1000/A7_genie_cv/s991000: rho -0.03503934900208049 (|S| 16), rms b 0.02058, chi2 9.843, p 0.875, max|z| 0.494, flagged False
+C1000/A7_genie_mec/s991000: rho -0.01326033613588801 (|S| 16), rms b 0.01444, chi2 8.421, p 0.935, max|z| 0.336, flagged False
+C1000/A7_nuwro/s991000: rho 0.22003115178104518 (|S| 16), rms b 0.03587, chi2 24.79, p 0.0736, max|z| 0.985, flagged False
+C1000/A7_gibuu/s991000: rho 0.10205562223494619 (|S| 16), rms b 0.05357, chi2 101.4, p 1.91e-14, max|z| 3.76, flagged True
+MCq/nominal/s991000: rho None (|S| 0), rms b 0.0009894, chi2 0.01518, p 1, max|z| 0.0231, flagged False
+MCq/W1/s991000: rho 0.14469224771087721 (|S| 16), rms b 0.01883, chi2 4.866, p 0.996, max|z| 0.629, flagged False
+MCq/W2/s991000: rho 0.09378293836782929 (|S| 16), rms b 0.006082, chi2 0.7491, p 1, max|z| 0.144, flagged False
+MCq/W3/s991000: rho 0.2237658932651665 (|S| 15), rms b 0.03575, chi2 24.95, p 0.0707, max|z| 1.04, flagged False
+MCq/q3/s991000: rho 0.1794552844174193 (|S| 16), rms b 0.06028, chi2 53.57, p 6.1e-06, max|z| 1.56, flagged True
+MCq/stage0c_gibuu/s991000: rho 0.24392821052438374 (|S| 16), rms b 0.04712, chi2 25.66, p 0.059, max|z| 1.78, flagged False
+MCq/closure_nuwro/s991000: rho -0.015504518009879505 (|S| 14), rms b 0.02668, chi2 11.88, p 0.752, max|z| 0.56, flagged False
+MCq/A7_mnvtune/s991000: rho None (|S| 0), rms b 0.0009894, chi2 0.01518, p 1, max|z| 0.0231, flagged False
+MCq/A7_genie_cv/s991000: rho 0.006088453078199072 (|S| 16), rms b 0.01841, chi2 15.89, p 0.461, max|z| 0.362, flagged False
+MCq/A7_genie_mec/s991000: rho 0.009173115801498101 (|S| 16), rms b 0.01635, chi2 14.45, p 0.565, max|z| 0.299, flagged False
+MCq/A7_nuwro/s991000: rho 0.3172769030849727 (|S| 16), rms b 0.05059, chi2 23.2, p 0.108, max|z| 1.25, flagged False
+MCq/A7_gibuu/s991000: rho 0.12580692544158423 (|S| 16), rms b 0.07043, chi2 167.1, p 3.24e-27, max|z| 4.56, flagged True
+O4r/nominal/s991000: rho None (|S| 0), rms b 0.0009867, chi2 0.01201, p 1, max|z| 0.0208, flagged False
+O4r/W1/s991000: rho 0.14559165050459844 (|S| 16), rms b 0.01882, chi2 4.523, p 0.998, max|z| 0.61, flagged False
+O4r/W2/s991000: rho 0.10410738206092779 (|S| 16), rms b 0.006426, chi2 0.6953, p 1, max|z| 0.181, flagged False
+O4r/W3/s991000: rho 0.21649919620114158 (|S| 15), rms b 0.03506, chi2 23.52, p 0.101, max|z| 1.03, flagged False
+O4r/q3/s991000: rho 0.18593865605825147 (|S| 16), rms b 0.05922, chi2 52.57, p 8.85e-06, max|z| 1.51, flagged True
+O4r/stage0c_gibuu/s991000: rho 0.23756118644785562 (|S| 16), rms b 0.04627, chi2 24.45, p 0.0801, max|z| 1.73, flagged False
+O4r/closure_nuwro/s991000: rho -0.013501089726530559 (|S| 14), rms b 0.0283, chi2 12.67, p 0.697, max|z| 0.607, flagged False
+O4r/A7_mnvtune/s991000: rho None (|S| 0), rms b 0.0009867, chi2 0.01201, p 1, max|z| 0.0208, flagged False
+O4r/A7_genie_cv/s991000: rho 0.03744630175808579 (|S| 16), rms b 0.01909, chi2 16.56, p 0.415, max|z| 0.327, flagged False
+O4r/A7_genie_mec/s991000: rho 0.03212721891694338 (|S| 16), rms b 0.01803, chi2 16.42, p 0.424, max|z| 0.298, flagged False
+O4r/A7_nuwro/s991000: rho 0.32101935092985545 (|S| 16), rms b 0.05189, chi2 25.13, p 0.0676, max|z| 1.31, flagged False
+O4r/A7_gibuu/s991000: rho 0.12687951712940973 (|S| 16), rms b 0.07318, chi2 181.9, p 3.55e-30, max|z| 4.66, flagged True
+O4/nominal/s991000: rho None (|S| 0), rms b 0.0009936, chi2 0.01266, p 1, max|z| 0.0219, flagged False
+O4/W1/s991000: rho 0.13956459061366877 (|S| 16), rms b 0.01865, chi2 4.677, p 0.997, max|z| 0.64, flagged False
+O4/W2/s991000: rho 0.09038632348790425 (|S| 16), rms b 0.006349, chi2 1.039, p 1, max|z| 0.205, flagged False
+O4/W3/s991000: rho 0.21855969514134455 (|S| 15), rms b 0.03571, chi2 26.54, p 0.0469, max|z| 0.957, flagged False
+O4/q3/s991000: rho 0.20562609548750183 (|S| 16), rms b 0.05694, chi2 45.69, p 0.000109, max|z| 1.33, flagged True
+O4/stage0c_gibuu/s991000: rho 0.2351486044555847 (|S| 16), rms b 0.04632, chi2 24.06, p 0.0882, max|z| 1.65, flagged False
+O4/closure_nuwro/s991000: rho 0.008679461809581342 (|S| 14), rms b 0.02849, chi2 17.94, p 0.327, max|z| 0.641, flagged False
+O4/A7_mnvtune/s991000: rho None (|S| 0), rms b 0.0009936, chi2 0.01266, p 1, max|z| 0.0219, flagged False
+O4/A7_genie_cv/s991000: rho 0.05819703123796012 (|S| 16), rms b 0.02056, chi2 18.04, p 0.322, max|z| 0.345, flagged False
+O4/A7_genie_mec/s991000: rho 0.05453906131012282 (|S| 16), rms b 0.01965, chi2 19.01, p 0.268, max|z| 0.381, flagged False
+O4/A7_nuwro/s991000: rho 0.3610934388361702 (|S| 16), rms b 0.05776, chi2 33.62, p 0.00611, max|z| 1.54, flagged True
+O4/A7_gibuu/s991000: rho 0.11674931238546422 (|S| 16), rms b 0.07947, chi2 189.4, p 0, max|z| 4.3, flagged True
+O3/nominal/s991000: rho None (|S| 0), rms b 0.001081, chi2 0.01407, p 1, max|z| 0.0217, flagged False
+O3/W1/s991000: rho 0.18737861794175428 (|S| 16), rms b 0.02105, chi2 3.971, p 0.999, max|z| 0.622, flagged False
+O3/W2/s991000: rho 0.05726216599078751 (|S| 16), rms b 0.004335, chi2 0.2546, p 1, max|z| 0.146, flagged False
+O3/W3/s991000: rho 0.24872377805879642 (|S| 15), rms b 0.03213, chi2 22.88, p 0.117, max|z| 0.993, flagged False
+O3/q3/s991000: rho 0.19837335466047484 (|S| 16), rms b 0.05444, chi2 38.22, p 0.00141, max|z| 1.38, flagged True
+O3/stage0c_gibuu/s991000: rho 0.22469613039403655 (|S| 16), rms b 0.0462, chi2 30.79, p 0.0143, max|z| 1.63, flagged False
+O3/closure_nuwro/s991000: rho 0.05399454409487047 (|S| 14), rms b 0.02072, chi2 15.12, p 0.516, max|z| 0.507, flagged False
+O3/A7_mnvtune/s991000: rho None (|S| 0), rms b 0.001081, chi2 0.01407, p 1, max|z| 0.0217, flagged False
+O3/A7_genie_cv/s991000: rho 0.04671013045001171 (|S| 16), rms b 0.0257, chi2 23.53, p 0.1, max|z| 0.677, flagged False
+O3/A7_genie_mec/s991000: rho 0.0631086765826235 (|S| 16), rms b 0.0207, chi2 20.72, p 0.19, max|z| 0.369, flagged False
+O3/A7_nuwro/s991000: rho 0.33636754376319383 (|S| 16), rms b 0.0466, chi2 25.43, p 0.0626, max|z| 1.37, flagged False
+O3/A7_gibuu/s991000: rho 0.15058342938887498 (|S| 16), rms b 0.08129, chi2 216.3, p 0, max|z| 4.76, flagged True
+O2/nominal/s991000: rho None (|S| 0), rms b 0.001458, chi2 0.08108, p 1, max|z| 0.0493, flagged False
+O2/W1/s991000: rho 0.9319879032528697 (|S| 16), rms b 0.09114, chi2 70.44, p 8.35e-09, max|z| 2.93, flagged True
+O2/W2/s991000: rho 0.8965414888195998 (|S| 16), rms b 0.04233, chi2 9.784, p 0.878, max|z| 0.982, flagged False
+O2/W3/s991000: rho 0.7871156064768743 (|S| 15), rms b 0.09339, chi2 108.9, p 7.23e-16, max|z| 2.27, flagged True
+O2/q3/s991000: rho 0.3924816975859361 (|S| 16), rms b 0.09569, chi2 66.35, p 4.3e-08, max|z| 2.68, flagged True
+O2/stage0c_gibuu/s991000: rho 0.9244383029636302 (|S| 16), rms b 0.1655, chi2 349.3, p 0, max|z| 6.89, flagged True
+O2/closure_nuwro/s991000: rho 0.8517473789313703 (|S| 14), rms b 0.07589, chi2 80.1, p 1.6e-10, max|z| 3.03, flagged True
+O2/A7_mnvtune/s991000: rho None (|S| 0), rms b 0.001458, chi2 0.08108, p 1, max|z| 0.0493, flagged False
+O2/A7_genie_cv/s991000: rho 0.6872866340299185 (|S| 16), rms b 0.06854, chi2 46.61, p 7.84e-05, max|z| 1.63, flagged True
+O2/A7_genie_mec/s991000: rho 0.3751362997730097 (|S| 16), rms b 0.04289, chi2 16.81, p 0.398, max|z| 0.721, flagged False
+O2/A7_nuwro/s991000: rho 0.9759349766381276 (|S| 16), rms b 0.115, chi2 309.3, p 0, max|z| 3.01, flagged True
+O2/A7_gibuu/s991000: rho 0.46294522772617724 (|S| 16), rms b 0.158, chi2 1035, p 0, max|z| 12.6, flagged True
+O5/nominal/s991000: rho None (|S| 0), rms b 0.0009647, chi2 0.01175, p 1, max|z| 0.0223, flagged False
+B0/A7_gibuu/s994001: rho 0.12341883538882045 (|S| 16), rms b 0.07142, chi2 166.6, p 3.97e-27, max|z| 4.51, flagged True
+K20/A7_gibuu/s994001: rho 0.10258227722910883 (|S| 16), rms b 0.06862, chi2 168, p 2.1e-27, max|z| 4.37, flagged True
+C400/A7_gibuu/s994001: rho 0.10143879145718568 (|S| 16), rms b 0.053, chi2 98.43, p 6.81e-14, max|z| 3.71, flagged True
+MCq/A7_gibuu/s994001: rho 0.12399861148195704 (|S| 16), rms b 0.07089, chi2 172, p 3.34e-28, max|z| 4.46, flagged True
+O2/A7_gibuu/s994001: rho 0.46324633326954673 (|S| 16), rms b 0.158, chi2 1038, p 0, max|z| 12.6, flagged True
+B0/nominal/s994001: rho None (|S| 0), rms b 0.0006498, chi2 0.04042, p 1, max|z| 0.0273, flagged False
+B0/A7_gibuu/s994002: rho 0.12653640830618135 (|S| 16), rms b 0.07199, chi2 172.1, p 3.15e-28, max|z| 4.59, flagged True
+K20/A7_gibuu/s994002: rho 0.10764073231413171 (|S| 16), rms b 0.06813, chi2 166, p 5.32e-27, max|z| 4.45, flagged True
+C400/A7_gibuu/s994002: rho 0.1042229231131682 (|S| 16), rms b 0.05393, chi2 97.05, p 1.23e-13, max|z| 3.72, flagged True
+MCq/A7_gibuu/s994002: rho 0.12335183056957008 (|S| 16), rms b 0.0711, chi2 170.9, p 5.5e-28, max|z| 4.51, flagged True
+O2/A7_gibuu/s994002: rho 0.46408963444853385 (|S| 16), rms b 0.1578, chi2 1034, p 0, max|z| 12.6, flagged True
+B0/nominal/s994002: rho None (|S| 0), rms b 0.001471, chi2 0.04261, p 1, max|z| 0.052, flagged False
+B0/A7_gibuu/s994003: rho 0.121246148416849 (|S| 16), rms b 0.07046, chi2 169.1, p 1.29e-27, max|z| 4.45, flagged True
+K20/A7_gibuu/s994003: rho 0.09598721478549076 (|S| 16), rms b 0.06712, chi2 158.9, p 1.34e-25, max|z| 4.29, flagged True
+C400/A7_gibuu/s994003: rho 0.09731434572587502 (|S| 16), rms b 0.05293, chi2 98.29, p 7.24e-14, max|z| 3.61, flagged True
+MCq/A7_gibuu/s994003: rho 0.12192547683860286 (|S| 16), rms b 0.07131, chi2 166.1, p 5e-27, max|z| 4.43, flagged True
+O2/A7_gibuu/s994003: rho 0.4626325710782546 (|S| 16), rms b 0.1578, chi2 1028, p 0, max|z| 12.6, flagged True
+B0/nominal/s994003: rho None (|S| 0), rms b 0.001022, chi2 0.01821, p 1, max|z| 0.0274, flagged False
+B0/A7_gibuu/s994004: rho 0.12475321789538617 (|S| 16), rms b 0.07132, chi2 173.2, p 1.92e-28, max|z| 4.52, flagged True
+K20/A7_gibuu/s994004: rho 0.10233217284685503 (|S| 16), rms b 0.06775, chi2 165.9, p 5.44e-27, max|z| 4.33, flagged True
+C400/A7_gibuu/s994004: rho 0.10103855139369564 (|S| 16), rms b 0.05217, chi2 96.43, p 1.61e-13, max|z| 3.59, flagged True
+MCq/A7_gibuu/s994004: rho 0.1232379974322567 (|S| 16), rms b 0.07088, chi2 171.8, p 3.65e-28, max|z| 4.5, flagged True
+O2/A7_gibuu/s994004: rho 0.4646012586125724 (|S| 16), rms b 0.1581, chi2 1030, p 0, max|z| 12.6, flagged True
+B0/nominal/s994004: rho None (|S| 0), rms b 0.001385, chi2 0.03301, p 1, max|z| 0.0287, flagged False
+IBU K1/nominal/s991000: rho None, chi2 0.0813, p 1
+IBU K2/nominal/s991000: rho None, chi2 0.2415, p 1
+IBU K3/nominal/s991000: rho None, chi2 0.4307, p 1
+IBU K4/nominal/s991000: rho None, chi2 0.6321, p 1
+IBU K5/nominal/s991000: rho None, chi2 0.8375, p 1
+IBU K10/nominal/s991000: rho None, chi2 1.793, p 1
+IBU K20/nominal/s991000: rho None, chi2 2.984, p 1
+IBU K50/nominal/s991000: rho None, chi2 3.474, p 1
+IBU K200/nominal/s991000: rho None, chi2 2.516, p 1
+IBU K1/W1/s991000: rho 0.41411965886059415, chi2 20.1, p 0.216
+IBU K2/W1/s991000: rho 0.09435776150084971, chi2 11.08, p 0.805
+IBU K3/W1/s991000: rho -0.1012978237491958, chi2 11.13, p 0.801
+IBU K4/W1/s991000: rho -0.22654412393461557, chi2 12, p 0.744
+IBU K5/W1/s991000: rho -0.3090441652682565, chi2 12.81, p 0.687
+IBU K10/W1/s991000: rho -0.45435714735277505, chi2 18.99, p 0.269
+IBU K20/W1/s991000: rho -0.45480815424911103, chi2 42.72, p 0.000308
+IBU K50/W1/s991000: rho -0.37794394457140446, chi2 95.31, p 2.6e-13
+IBU K200/W1/s991000: rho -0.24495241423635597, chi2 112.6, p 1.44e-16
+IBU K1/W2/s991000: rho 0.2982570122058989, chi2 1.145, p 1
+IBU K2/W2/s991000: rho 0.0757957698014829, chi2 1.237, p 1
+IBU K3/W2/s991000: rho -0.014527672867452442, chi2 1.907, p 1
+IBU K4/W2/s991000: rho -0.06018131683891762, chi2 2.799, p 1
+IBU K5/W2/s991000: rho -0.0856490406639247, chi2 3.819, p 0.999
+IBU K10/W2/s991000: rho -0.11206246856757815, chi2 8.671, p 0.926
+IBU K20/W2/s991000: rho -0.08440093111349327, chi2 15.57, p 0.483
+IBU K50/W2/s991000: rho -0.039799330349189616, chi2 26.83, p 0.0434
+IBU K200/W2/s991000: rho -0.0003675329200992365, chi2 33.5, p 0.00634
+IBU K1/W3/s991000: rho 0.3929568758436188, chi2 45.34, p 0.000123
+IBU K2/W3/s991000: rho 0.0716098486657506, chi2 30.77, p 0.0144
+IBU K3/W3/s991000: rho -0.11424517354884375, chi2 30.37, p 0.0162
+IBU K4/W3/s991000: rho -0.23154963858455607, chi2 33.42, p 0.0065
+IBU K5/W3/s991000: rho -0.31051164517032753, chi2 38.33, p 0.00136
+IBU K10/W3/s991000: rho -0.47718349644615105, chi2 72.5, p 3.63e-09
+IBU K20/W3/s991000: rho -0.5400774018537999, chi2 140.2, p 6.55e-22
+IBU K50/W3/s991000: rho -0.5404371312016906, chi2 318.7, p 0
+IBU K200/W3/s991000: rho -0.4779973457728993, chi2 584.4, p 0
+IBU K1/q3/s991000: rho 0.36037632466100994, chi2 73.45, p 2.46e-09
+IBU K2/q3/s991000: rho 0.10275645092541616, chi2 47.58, p 5.54e-05
+IBU K3/q3/s991000: rho -0.019718576172918993, chi2 40.28, p 0.000709
+IBU K4/q3/s991000: rho -0.08726575916498962, chi2 34.63, p 0.00447
+IBU K5/q3/s991000: rho -0.1297912601859747, chi2 31.59, p 0.0113
+IBU K10/q3/s991000: rho -0.22520770018049877, chi2 55.35, p 3.11e-06
+IBU K20/q3/s991000: rho -0.28378123902100766, chi2 193.5, p 0
+IBU K50/q3/s991000: rho -0.3282892730686674, chi2 559.8, p 0
+IBU K200/q3/s991000: rho -0.37731182413898023, chi2 850.1, p 0
+IBU K1/stage0c_gibuu/s991000: rho 0.42939424791622494, chi2 82.17, p 6.76e-11
+IBU K2/stage0c_gibuu/s991000: rho 0.20141867067657562, chi2 32.05, p 0.00986
+IBU K3/stage0c_gibuu/s991000: rho 0.08819220023326245, chi2 22.02, p 0.143
+IBU K4/stage0c_gibuu/s991000: rho 0.01922996431778576, chi2 29.44, p 0.0211
+IBU K5/stage0c_gibuu/s991000: rho -0.026897305980470364, chi2 45.46, p 0.000118
+IBU K10/stage0c_gibuu/s991000: rho -0.12071770008559757, chi2 147.1, p 2.97e-23
+IBU K20/stage0c_gibuu/s991000: rho -0.1516095483992969, chi2 303.2, p 0
+IBU K50/stage0c_gibuu/s991000: rho -0.17971206530771702, chi2 569.6, p 0
+IBU K200/stage0c_gibuu/s991000: rho -0.19629570620187783, chi2 823.1, p 0
+IBU K1/closure_nuwro/s991000: rho 0.3290874578887644, chi2 16.32, p 0.431
+IBU K2/closure_nuwro/s991000: rho -0.08534465856362647, chi2 11.69, p 0.765
+IBU K3/closure_nuwro/s991000: rho -0.35583980851983876, chi2 27.31, p 0.0382
+IBU K4/closure_nuwro/s991000: rho -0.5435193841580748, chi2 48, p 4.75e-05
+IBU K5/closure_nuwro/s991000: rho -0.6795832471006662, chi2 69.58, p 1.18e-08
+IBU K10/closure_nuwro/s991000: rho -1.0127368236726644, chi2 164.3, p 1.16e-26
+IBU K20/closure_nuwro/s991000: rho -1.2150544852264513, chi2 280.3, p 0
+IBU K50/closure_nuwro/s991000: rho -1.359362258580589, chi2 377.6, p 0
+IBU K200/closure_nuwro/s991000: rho -1.3802627120525768, chi2 407.2, p 0
+IBU K1/A7_mnvtune/s991000: rho None, chi2 0.0813, p 1
+IBU K2/A7_mnvtune/s991000: rho None, chi2 0.2415, p 1
+IBU K3/A7_mnvtune/s991000: rho None, chi2 0.4307, p 1
+IBU K4/A7_mnvtune/s991000: rho None, chi2 0.6321, p 1
+IBU K5/A7_mnvtune/s991000: rho None, chi2 0.8375, p 1
+IBU K10/A7_mnvtune/s991000: rho None, chi2 1.793, p 1
+IBU K20/A7_mnvtune/s991000: rho None, chi2 2.984, p 1
+IBU K50/A7_mnvtune/s991000: rho None, chi2 3.474, p 1
+IBU K200/A7_mnvtune/s991000: rho None, chi2 2.516, p 1
+IBU K1/A7_genie_cv/s991000: rho 0.2703887321829738, chi2 11.53, p 0.775
+IBU K2/A7_genie_cv/s991000: rho -0.04336634308890444, chi2 8.72, p 0.924
+IBU K3/A7_genie_cv/s991000: rho -0.21607577552066926, chi2 12.65, p 0.698
+IBU K4/A7_genie_cv/s991000: rho -0.3198534631957269, chi2 17.55, p 0.351
+IBU K5/A7_genie_cv/s991000: rho -0.38340148216376396, chi2 22.54, p 0.127
+IBU K10/A7_genie_cv/s991000: rho -0.46369214323264535, chi2 41.37, p 0.000489
+IBU K20/A7_genie_cv/s991000: rho -0.4228262679758453, chi2 55.19, p 3.31e-06
+IBU K50/A7_genie_cv/s991000: rho -0.3392174003802332, chi2 70.15, p 9.41e-09
+IBU K200/A7_genie_cv/s991000: rho -0.24006348566841765, chi2 90.93, p 1.69e-12
+IBU K1/A7_genie_mec/s991000: rho 0.15928480309176174, chi2 10.45, p 0.842
+IBU K2/A7_genie_mec/s991000: rho -0.026102651489353524, chi2 6.975, p 0.974
+IBU K3/A7_genie_mec/s991000: rho -0.13191424575803676, chi2 6.832, p 0.976
+IBU K4/A7_genie_mec/s991000: rho -0.1998169236065477, chi2 8.113, p 0.945
+IBU K5/A7_genie_mec/s991000: rho -0.2439951080915823, chi2 9.981, p 0.868
+IBU K10/A7_genie_mec/s991000: rho -0.3123970780332201, chi2 18.99, p 0.269
+IBU K20/A7_genie_mec/s991000: rho -0.29812740712058283, chi2 28.13, p 0.0305
+IBU K50/A7_genie_mec/s991000: rho -0.2470394077169015, chi2 39.31, p 0.000979
+IBU K200/A7_genie_mec/s991000: rho -0.18369545757851027, chi2 52.15, p 1.04e-05
+IBU K1/A7_nuwro/s991000: rho 0.53852870153644, chi2 68.6, p 1.75e-08
+IBU K2/A7_nuwro/s991000: rho 0.2714055865753076, chi2 25.75, p 0.0577
+IBU K3/A7_nuwro/s991000: rho 0.09391630039802015, chi2 27.04, p 0.041
+IBU K4/A7_nuwro/s991000: rho -0.036842893199764186, chi2 42.2, p 0.000368
+IBU K5/A7_nuwro/s991000: rho -0.14040438866209207, chi2 61.53, p 2.88e-07
+IBU K10/A7_nuwro/s991000: rho -0.47573487825221167, chi2 146.9, p 3.24e-23
+IBU K20/A7_nuwro/s991000: rho -0.8232288924501131, chi2 224.7, p 0
+IBU K50/A7_nuwro/s991000: rho -1.203607086728716, chi2 323.1, p 0
+IBU K200/A7_nuwro/s991000: rho -1.4161679363103679, chi2 450.2, p 0
+IBU K1/A7_gibuu/s991000: rho 0.23006794189344681, chi2 402.1, p 0
+IBU K2/A7_gibuu/s991000: rho 0.0727650820982626, chi2 124.2, p 8.35e-19
+IBU K3/A7_gibuu/s991000: rho -0.015873287863901714, chi2 157.7, p 2.32e-25
+IBU K4/A7_gibuu/s991000: rho -0.07459877666002594, chi2 293.8, p 0
+IBU K5/A7_gibuu/s991000: rho -0.11634466944677492, chi2 457.1, p 0
+IBU K10/A7_gibuu/s991000: rho -0.2162895403418996, chi2 1016, p 0
+IBU K20/A7_gibuu/s991000: rho -0.2633150458526176, chi2 1080, p 0
+IBU K50/A7_gibuu/s991000: rho -0.2745314774601947, chi2 958.3, p 0
+IBU K200/A7_gibuu/s991000: rho -0.2465208234141013, chi2 1460, p 0
+IBU K1/A7_gibuu/s994001: rho 0.22967691360291062, chi2 411.8, p 0
+IBU K2/A7_gibuu/s994001: rho 0.07223595456343143, chi2 127.1, p 2.37e-19
+IBU K3/A7_gibuu/s994001: rho -0.01625663716559897, chi2 147.2, p 2.8e-23
+IBU K4/A7_gibuu/s994001: rho -0.0747407670989276, chi2 267.8, p 0
+IBU K5/A7_gibuu/s994001: rho -0.11622070909427779, chi2 416.1, p 0
+IBU K10/A7_gibuu/s994001: rho -0.2150099338038524, chi2 922.5, p 0
+IBU K20/A7_gibuu/s994001: rho -0.2607109813554314, chi2 977.6, p 0
+IBU K50/A7_gibuu/s994001: rho -0.27081459593134183, chi2 999.1, p 0
+IBU K200/A7_gibuu/s994001: rho -0.2417823979698444, chi2 1709, p 0
+IBU K1/nominal/s994001: rho None, chi2 0.1806, p 1
+IBU K2/nominal/s994001: rho None, chi2 0.4815, p 1
+IBU K3/nominal/s994001: rho None, chi2 0.7857, p 1
+IBU K4/nominal/s994001: rho None, chi2 1.073, p 1
+IBU K5/nominal/s994001: rho None, chi2 1.343, p 1
+IBU K10/nominal/s994001: rho None, chi2 2.459, p 1
+IBU K20/nominal/s994001: rho None, chi2 4.014, p 0.999
+IBU K50/nominal/s994001: rho None, chi2 7.116, p 0.971
+IBU K200/nominal/s994001: rho None, chi2 17.54, p 0.351
+IBU K1/A7_gibuu/s994002: rho 0.23070107235583986, chi2 405, p 0
+IBU K2/A7_gibuu/s994002: rho 0.0730346186369943, chi2 132.3, p 2.25e-20
+IBU K3/A7_gibuu/s994002: rho -0.01568670678027679, chi2 168.5, p 1.66e-27
+IBU K4/A7_gibuu/s994002: rho -0.07433914202512977, chi2 303.6, p 0
+IBU K5/A7_gibuu/s994002: rho -0.11593440644940939, chi2 463.3, p 0
+IBU K10/A7_gibuu/s994002: rho -0.21495558519150326, chi2 992.5, p 0
+IBU K20/A7_gibuu/s994002: rho -0.2607004053501226, chi2 1026, p 0
+IBU K50/A7_gibuu/s994002: rho -0.27053734591482065, chi2 950.7, p 0
+IBU K200/A7_gibuu/s994002: rho -0.24259886991655627, chi2 1498, p 0
+IBU K1/nominal/s994002: rho None, chi2 0.05317, p 1
+IBU K2/nominal/s994002: rho None, chi2 0.1287, p 1
+IBU K3/nominal/s994002: rho None, chi2 0.2108, p 1
+IBU K4/nominal/s994002: rho None, chi2 0.2982, p 1
+IBU K5/nominal/s994002: rho None, chi2 0.3905, p 1
+IBU K10/nominal/s994002: rho None, chi2 0.9013, p 1
+IBU K20/nominal/s994002: rho None, chi2 1.832, p 1
+IBU K50/nominal/s994002: rho None, chi2 2.635, p 1
+IBU K200/nominal/s994002: rho None, chi2 1.036, p 1
+IBU K1/A7_gibuu/s994003: rho 0.2266376800432672, chi2 405.7, p 0
+IBU K2/A7_gibuu/s994003: rho 0.06855003481098856, chi2 132.3, p 2.25e-20
+IBU K3/A7_gibuu/s994003: rho -0.020286608721139358, chi2 161.1, p 4.87e-26
+IBU K4/A7_gibuu/s994003: rho -0.07896435062735427, chi2 286.3, p 0
+IBU K5/A7_gibuu/s994003: rho -0.12055537828992342, chi2 436, p 0
+IBU K10/A7_gibuu/s994003: rho -0.21949412355897485, chi2 934.4, p 0
+IBU K20/A7_gibuu/s994003: rho -0.2650109401694721, chi2 967.8, p 0
+IBU K50/A7_gibuu/s994003: rho -0.2742999651408687, chi2 944.9, p 0
+IBU K200/A7_gibuu/s994003: rho -0.24574333244419527, chi2 1578, p 0
+IBU K1/nominal/s994003: rho None, chi2 0.0539, p 1
+IBU K2/nominal/s994003: rho None, chi2 0.1724, p 1
+IBU K3/nominal/s994003: rho None, chi2 0.3205, p 1
+IBU K4/nominal/s994003: rho None, chi2 0.4812, p 1
+IBU K5/nominal/s994003: rho None, chi2 0.6447, p 1
+IBU K10/nominal/s994003: rho None, chi2 1.369, p 1
+IBU K20/nominal/s994003: rho None, chi2 2.26, p 1
+IBU K50/nominal/s994003: rho None, chi2 3.409, p 1
+IBU K200/nominal/s994003: rho None, chi2 5.418, p 0.993
+IBU K1/A7_gibuu/s994004: rho 0.22985242015516727, chi2 408.6, p 0
+IBU K2/A7_gibuu/s994004: rho 0.07198187760187942, chi2 132, p 2.67e-20
+IBU K3/A7_gibuu/s994004: rho -0.01689948594912663, chi2 159.4, p 1.08e-25
+IBU K4/A7_gibuu/s994004: rho -0.07569189651113056, chi2 284.7, p 0
+IBU K5/A7_gibuu/s994004: rho -0.11740782375432592, chi2 435.2, p 0
+IBU K10/A7_gibuu/s994004: rho -0.21677665726424963, chi2 935.8, p 0
+IBU K20/A7_gibuu/s994004: rho -0.2626650287783668, chi2 955.5, p 0
+IBU K50/A7_gibuu/s994004: rho -0.27263303624882906, chi2 913.9, p 0
+IBU K200/A7_gibuu/s994004: rho -0.24384134499778623, chi2 1569, p 0
+IBU K1/nominal/s994004: rho None, chi2 0.05328, p 1
+IBU K2/nominal/s994004: rho None, chi2 0.1568, p 1
+IBU K3/nominal/s994004: rho None, chi2 0.2893, p 1
+IBU K4/nominal/s994004: rho None, chi2 0.4453, p 1
+IBU K5/nominal/s994004: rho None, chi2 0.6195, p 1
+IBU K10/nominal/s994004: rho None, chi2 1.613, p 1
+IBU K20/nominal/s994004: rho None, chi2 3.377, p 1
+IBU K50/nominal/s994004: rho None, chi2 5.677, p 0.991
+IBU K200/nominal/s994004: rho None, chi2 7.694, p 0.957

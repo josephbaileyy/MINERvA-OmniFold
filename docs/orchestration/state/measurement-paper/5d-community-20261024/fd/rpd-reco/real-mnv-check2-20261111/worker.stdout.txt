@@ -1,0 +1,3 @@
+REAL_MNV before reader
+REAL_MNV reader returned; file closed and only plain arrays retained
+REAL_MNV worker checks complete; entering process teardown

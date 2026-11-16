@@ -1,0 +1,8 @@
+c2a, as committed: Q == s5_total + C_PL bitwise: True ; s5_total == universe + stat + c08 bitwise: True
+derivation: universe - C_univ_old + C_univ_new, s5_total - C_univ_old + C_univ_new
+  C_new == s5_total' + C_PL: 10867 of 42025 entries differ; largest |residual|/max|C_new| 6.452e-17
+  s5_total' == universe' + stat + c08: 9025 of 42025 entries differ; largest |residual|/max|C_new| 6.452e-17
+derivation: universe + (C_univ_new - C_univ_old), s5_total + (C_univ_new - C_univ_old)
+  C_new == s5_total' + C_PL: 10242 of 42025 entries differ; largest |residual|/max|C_new| 1.290e-16
+  s5_total' == universe' + stat + c08: 5143 of 42025 entries differ; largest |residual|/max|C_new| 6.452e-17
+package universe block - C_univ_old: eigenvalues above 1e-12 of the largest: 6; smallest/largest -3.473e-16

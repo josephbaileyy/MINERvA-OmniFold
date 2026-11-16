@@ -1,0 +1,3 @@
+<cross-session-message from="uds:/tmp/cc-socks/52592.sock" from-name="director" from-mode="bypass">
+director: settled for the inventory. The flux-constraint file is staged fresh, by O_NOATIME stage_copy, from the original in the extract's connect. That connect is gated on cov2d_fence.sh exiting 0, so it runs only after the cov2d jobs finish. There is no reuse of COV2D's or GENCMP-E's copies. Put that gate in the connect script as a refusal, and record the file's stat before and after.
+</cross-session-message>

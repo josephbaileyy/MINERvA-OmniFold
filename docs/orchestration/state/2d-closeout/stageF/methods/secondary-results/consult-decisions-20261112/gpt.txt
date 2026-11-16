@@ -1,0 +1,66 @@
+I would submit after closing the remaining scientific checks and depositing the package. Severe under-coverage can be a publishable diagnostic result; uncertainty about which implementation produced it is a much larger obstacle. The repeated LLM scores are useful prompts for scrutiny, but they are not independent referee opinions.
+
+**D1 — Adopt the rebuilt covariance as primary if it validates; retain the current covariance as a documented comparison.**
+
+**Reasoning:** The rebuild removes a known approximation, so choosing which covariance to report should not depend on which gives the more attractive coverage result. Validation at the data supports replacing the reported covariance; the held-out constructions must also validate before reporting the rebuilt coverage assessment. If severe under-coverage persists, the diagnostic conclusion becomes stronger; if it improves substantially, revise the conclusion accordingly. If validation fails, investigate the failure before treating the rebuild as authoritative—the current covariance does not become validated by default.
+
+**Main risk:** Changing the covariance without updating every dependent result could leave the paper internally inconsistent.
+
+**Check before deciding:** Confirm complete universe sets, consistent normalization and event selection, and usable covariance matrices at all three evaluation points. Preserve the coverage rule, pseudo-experiments and matrix treatment; update all affected uncertainties, comparisons and archived products. Report the actual new coverage counts and intervals rather than carrying forward 0/300.
+
+**D2 — Print the quantification, but do not present it as a complete resolution of the mismatch.**
+
+**Reasoning:** An explicitly bounded, unresolved implementation effect is more defensible than an unexplained exclusion. The variance shares provide useful evidence that these bands contribute little to the sixteen-cell marginal uncertainties. However, small diagonal contributions and fractional trace do not establish a small effect on a correlated joint statistic, especially along tightly constrained directions. The approximate chi-square comparison supports a qualified sensitivity statement, not an exact claim that the discrepancy is immaterial.
+
+**Main risk:** A referee interprets the paragraph as dismissing an unexplained estimator behaviour using a calculation that does not test the relevant covariance structure.
+
+**Check before deciding:** State explicitly that the primary five-observable coverage reading excludes these bands. Verify their effect using the full covariance in the actual test space, through an inclusion/exclusion comparison or a conservative bound on the affected eigenmodes; the sixteen reporting cells may not span that space. If quoting the +0.57 chi-square change, identify the diagonal approximation and its 0.76% reproduction discrepancy. A full mechanism study can follow the paper, but the scope and quantitative consequences of the unresolved behaviour must be clear now.
+
+**D3 — Unlock both passages for a controlled rewrite, preserving the scientific commitments and requiring author review.**
+
+**Reasoning:** Earlier approval protects the agreed meaning; it need not freeze a difficult presentation permanently. B0 would benefit from separating seed reproducibility, bootstrap perturbations and the interpretation of the maximum shift. RS1 should distinguish the mechanism demonstrated on one pseudo-experiment from the untested location of the tie effect within the refinement stage. These changes would improve scientific precision as well as readability.
+
+**Main risk:** A smoother rewrite accidentally strengthens the causal claim or implies that including perturbations in bootstrap replicas establishes adequate uncertainty calibration.
+
+**Check before deciding:** Use a claim-by-claim comparison against the approved text. Preserve variance versus standard-deviation distinctions, the different cell sets, the 20-perturbation summary versus the two-perturbation maximum, and the one-pseudo-experiment limitation. Check the meaning of “below a tenth of any total uncertainty,” and retain the explicit statement that ties acting within refinement were not directly tested.
+
+**D4 — Correct (a) now; defer blanket synchronization in (b); move (c) only where referees can access the evidence.**
+
+**Reasoning:** The obsolete background statement is a factual error and should be corrected before submission, including the fact that out-of-phase-space signal is subtracted with the background. The 38 stylistic rewrites do not justify reopening the entire note: keep its own prose, record the divergence, and reconcile any substantive differences. Detailed stopped-test diagnostics may move into a public, versioned note or repository attachment, while the Supplement retains the stopping reason, affected bands and essential conclusions. An internal note alone is an inadequate destination for evidence needed to assess the paper.
+
+**Main risk:** Compression creates an inaccessible evidential dependency, or independently maintained documents develop conflicting scientific statements.
+
+**Check before deciding:** Establish the denominator of the approximately 10% figure and its playlist scope; do not turn it into a general background fraction. Audit substantive agreement in selections, subtraction, numerical results and limitations. Correct factual inconsistencies before submission; defer stylistic synchronization and optional document restructuring.
+
+**D5 — Stop chasing an absolute score; use one bounded editorial pass and a human technical read as the stopping criterion.**
+
+**Reasoning:** A rater that gives a published JINST reference 6/10 does not support treating 9/10 as a publication threshold. Matching reference-paper prose metrics also cannot establish clarity, although it weakens the case for continued metric-driven editing. Clear the concrete problems that obstruct understanding, then have a knowledgeable reader assess whether the implementation, tests and limitations are understandable. A blinded pairwise comparison can supplement that assessment, but reaching 7/10 should not become another submission gate.
+
+**Main risk:** Stopping leaves a few dense passages that distract referees from otherwise adequate science.
+
+**Check before deciding:** Ask the reader to explain back the two covariance constructions, rounding result, coverage conclusions and illustrative status of the output. Resolve misunderstandings revealed by that exercise; do not reopen settled prose solely because the numerical score remains unchanged.
+
+**D6 — Publish the Zenodo package before submission, after incorporating the final adopted scientific results.**
+
+**Reasoning:** For an implementation-specific diagnostic paper, accessible products and provenance materially strengthen the submission. JINST explicitly encourages depositing data and related supplementary material in public repositories, including Zenodo. ([JINST guidance](https://jinst.sissa.it/jinst/help/helpLoader.jsp?pgType=submissionFAQ)) Describe the deposit precisely as regeneration from archived products and selected diagnostic reproduction; make its event-level limitations prominent. Subsequent revisions can receive linked version records, so acceptance need not precede the initial release. ([Zenodo versioning](https://help.zenodo.org/docs/deposit/manage-versions/))
+
+**Main risk:** The package appears to promise broader reproducibility than it provides, particularly for the headline diagnostic claims.
+
+**Check before deciding:** Test the documented commands in a clean environment and map each headline claim to executable regeneration or archived supporting results with provenance. Include the final covariance version, configurations, software versions, source revision and coverage records, with a clear list of what cannot be rerun. Cite the specific deposited version and verify public access: reserving a Zenodo DOI alone does not register it. ([Zenodo deposit guidance](https://help.zenodo.org/docs/deposit/create-new-upload/))
+
+**D7 — Keep the decision not to wait, provided the current required studies support the paper’s stated scope.**
+
+**Reasoning:** The additional truth-variable study would extend the diagnosis, but every plausible extension need not precede a bounded implementation paper. If the deformed-truth regression checks pass and \(C_{\mathrm{model}}\) is robust to the tested construction choices, submit without waiting and incorporate the optional study if ready. If either reveals a material failure, hold submission until that failure is corrected or quantitatively incorporated into the paper’s central conclusions; the optional study becomes necessary only if it is needed to establish that account. If it arrives before submission and contradicts a claim, revise the claim rather than treating the study’s optional status as grounds to disregard it.
+
+**Main risk:** Unfolded-variable-only regression misses dependence on other truth variables that matters outside the tested deformations.
+
+**Check before deciding:** Confirm that the paper claims performance only within the tested configurations and deformations, and states the regression’s conditioning limitation. Check whether any existing observation already points to the omitted dependence; that would make this a targeted investigation rather than an optional extension.
+
+**Priority order for acceptance:**
+
+1. Read out and act on the deformed-truth regression and \(C_{\mathrm{model}}\) robustness results.
+2. Validate and adopt the corrected 2D covariance; report its unchanged-rule coverage assessment.
+3. Disclose and adequately bound the GEANT4 mismatch in the relevant test space.
+4. Deposit a package whose contents and limitations match the paper’s claims.
+5. Correct factual inconsistencies and rewrite the two dense passages.
+6. Finish a bounded human clarity check. Defer wholesale note synchronization, further score chasing and the optional study unless new evidence makes them scientifically necessary.

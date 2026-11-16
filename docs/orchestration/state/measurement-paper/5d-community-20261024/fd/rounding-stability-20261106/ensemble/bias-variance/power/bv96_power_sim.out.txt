@@ -1,0 +1,58 @@
+inputs sha256 c713759c6dbfbda287ab87a651fb1c70b3586711e1c84b74887e4d1953eefd80; seed 20261110; reps 2000; truths 17
+bias scale per truth (median |b_j| in sigma_rel; RMS cell bias):
+  nominal          median|b|    0.462  max|b|     2.143  rms cell 0.00096
+  W1               median|b|   27.458  max|b|   158.716  rms cell 0.02244
+  W2               median|b|    4.530  max|b|    53.764  rms cell 0.00616
+  W3               median|b|   27.194  max|b|   201.860  rms cell 0.03845
+  q3               median|b|   25.952  max|b|   158.474  rms cell 0.06536
+  stage0c_gibuu    median|b|   37.269  max|b|   219.626  rms cell 0.05596
+  closure_nuwro    median|b|   46.849  max|b|   321.126  rms cell 0.02699
+  A7_genie_cv      median|b|   17.656  max|b|   219.197  rms cell 0.01719
+  A7_genie_mec     median|b|   16.993  max|b|   119.068  rms cell 0.01505
+  A7_nuwro         median|b|   62.431  max|b|   293.156  rms cell 0.04620
+  A7_gibuu         median|b|   47.382  max|b|   368.143  rms cell 0.13046
+  P1r              median|b|   30.286  max|b|   208.573  rms cell 0.03951
+  P2r              median|b|   13.916  max|b|   325.400  rms cell 0.06126
+  P3r              median|b|    5.229  max|b|   335.598  rms cell 0.00598
+  P1g              median|b|   44.060  max|b|   239.564  rms cell 0.04266
+  P2g              median|b|   19.897  max|b|   208.391  rms cell 0.06409
+  P3g              median|b|   16.086  max|b|   256.852  rms cell 0.01951
+
+per truth, P(E-better) / P(F-better) / P(harm), at M = 30:
+  nominal          rho 0.0: 1.000/0.000/0.000  rho 0.5: 1.000/0.000/0.000  rho 0.9: 1.000/0.000/0.000
+  W1               rho 0.0: 0.030/0.011/0.011  rho 0.5: 0.025/0.005/0.015  rho 0.9: 0.029/0.006/0.016
+  W2               rho 0.0: 0.107/0.000/0.005  rho 0.5: 0.101/0.001/0.004  rho 0.9: 0.119/0.000/0.003
+  W3               rho 0.0: 0.032/0.004/0.018  rho 0.5: 0.027/0.011/0.015  rho 0.9: 0.030/0.009/0.013
+  q3               rho 0.0: 0.042/0.005/0.022  rho 0.5: 0.030/0.006/0.020  rho 0.9: 0.037/0.007/0.025
+  stage0c_gibuu    rho 0.0: 0.022/0.017/0.019  rho 0.5: 0.021/0.015/0.026  rho 0.9: 0.020/0.013/0.018
+  closure_nuwro    rho 0.0: 0.028/0.006/0.013  rho 0.5: 0.029/0.010/0.018  rho 0.9: 0.029/0.006/0.016
+  A7_genie_cv      rho 0.0: 0.025/0.009/0.013  rho 0.5: 0.018/0.011/0.017  rho 0.9: 0.019/0.013/0.012
+  A7_genie_mec     rho 0.0: 0.023/0.013/0.009  rho 0.5: 0.022/0.009/0.014  rho 0.9: 0.024/0.011/0.011
+  A7_nuwro         rho 0.0: 0.023/0.007/0.018  rho 0.5: 0.032/0.007/0.017  rho 0.9: 0.021/0.011/0.015
+  A7_gibuu         rho 0.0: 0.033/0.011/0.021  rho 0.5: 0.035/0.007/0.025  rho 0.9: 0.032/0.007/0.022
+  P1r              rho 0.0: 0.026/0.013/0.013  rho 0.5: 0.021/0.011/0.019  rho 0.9: 0.026/0.008/0.017
+  P2r              rho 0.0: 0.027/0.013/0.015  rho 0.5: 0.024/0.011/0.015  rho 0.9: 0.022/0.008/0.015
+  P3r              rho 0.0: 0.049/0.004/0.004  rho 0.5: 0.049/0.004/0.004  rho 0.9: 0.047/0.002/0.002
+  P1g              rho 0.0: 0.019/0.011/0.019  rho 0.5: 0.026/0.011/0.021  rho 0.9: 0.020/0.015/0.018
+  P2g              rho 0.0: 0.024/0.017/0.015  rho 0.5: 0.018/0.015/0.017  rho 0.9: 0.015/0.017/0.020
+  P3g              rho 0.0: 0.021/0.016/0.013  rho 0.5: 0.021/0.012/0.011  rho 0.9: 0.017/0.017/0.013
+
+P(E-better at both) over the 136 pairs (median / 10th pct / min), and the headline:
+  M 20 rho 0.0: 0.001 / 0.000 / 0.000
+  M 20 rho 0.5: 0.001 / 0.000 / 0.000
+  M 20 rho 0.9: 0.001 / 0.000 / 0.000
+  M 20 HEADLINE (min over rho of the median): 0.001   [4076 unfolds, 83.0 node-h expected]
+  M 30 rho 0.0: 0.001 / 0.001 / 0.000
+  M 30 rho 0.5: 0.001 / 0.000 / 0.000
+  M 30 rho 0.9: 0.001 / 0.000 / 0.000
+  M 30 HEADLINE (min over rho of the median): 0.001   [6016 unfolds, 122.3 node-h expected]
+  M 40 rho 0.0: 0.001 / 0.000 / 0.000
+  M 40 rho 0.5: 0.001 / 0.000 / 0.000
+  M 40 rho 0.9: 0.001 / 0.000 / 0.000
+  M 40 HEADLINE (min over rho of the median): 0.001   [7956 unfolds, 161.6 node-h expected]
+  M 60 rho 0.0: 0.001 / 0.000 / 0.000
+  M 60 rho 0.5: 0.001 / 0.000 / 0.000
+  M 60 rho 0.9: 0.001 / 0.001 / 0.000
+  M 60 HEADLINE (min over rho of the median): 0.001   [11836 unfolds, 240.2 node-h expected]
+
+BV96-POWER :: M = 30 BELOW 0.8 (headline 0.001); smallest M reaching 0.8: none of (20, 30, 40, 60)

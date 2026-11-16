@@ -1,0 +1,4 @@
+== cleanup cost (2026-11-11, macOS APFS, a stand-in for tmpfs, which is faster)
+the e2e clone of #848: 1.2G, 24279 entries; rm -rf of a cp -a copy: 2.35 s (rc 0)
+trap total, upper bound: process-group stop <= 10 s + rm -rf ~2.4 s + two small writes ~ 13 s
+lead chosen: --signal=B:TERM@300 (the director's minimum), ~23x the measured cost; the dummy TERM's cleanup took ~3 s end to end (E2E.txt)

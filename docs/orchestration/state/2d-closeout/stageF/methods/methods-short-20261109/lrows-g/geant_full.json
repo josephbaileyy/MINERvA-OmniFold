@@ -1,0 +1,450 @@
+{
+ "schema": "lrows-d2-geant-full/1",
+ "cells": [
+  "R00",
+  "R01",
+  "R02",
+  "R03",
+  "R04",
+  "R05",
+  "R06",
+  "R07",
+  "R08",
+  "R09",
+  "R10",
+  "R11",
+  "R12",
+  "R13",
+  "R14",
+  "R15"
+ ],
+ "controls": {
+  "detector_relative_sigma_max_rel_diff": 2.4646951146678475e-14
+ },
+ "G_offdiagonal_abs_share": 0.8677151210535274,
+ "matrices": {
+  "C_total (C_e + C_model_abs, at the data)": {
+   "mu_max": 0.081346592967004,
+   "mu_top3": [
+    0.081346592967004,
+    0.044839077883599754,
+    1.4568771556003346e-17
+   ],
+   "chi2_ratio_bound": 1.0885498190549705,
+   "mu_max_direction_cells": {
+    "R00": -1.0,
+    "R04": 0.9641,
+    "R05": 0.6663,
+    "R12": -0.5167,
+    "R03": 0.4598
+   },
+   "eigenmode_shares_smallest_first": [
+    {
+     "k": 0,
+     "lambda": 1.543396742614486e-05,
+     "share": 0.0075207900463815135
+    },
+    {
+     "k": 1,
+     "lambda": 3.576257658767554e-05,
+     "share": 0.005052951786773175
+    },
+    {
+     "k": 2,
+     "lambda": 8.848828773456127e-05,
+     "share": 0.024570984473497356
+    },
+    {
+     "k": 3,
+     "lambda": 9.953868085116576e-05,
+     "share": 0.021925408997552073
+    },
+    {
+     "k": 4,
+     "lambda": 0.00013174621117167397,
+     "share": 0.013351831800662455
+    },
+    {
+     "k": 5,
+     "lambda": 0.0003294815076280862,
+     "share": 0.023771481588084457
+    },
+    {
+     "k": 6,
+     "lambda": 0.0003741057802156895,
+     "share": 0.022742221248669342
+    },
+    {
+     "k": 7,
+     "lambda": 0.0004964706511869514,
+     "share": 0.0008763236705126805
+    },
+    {
+     "k": 8,
+     "lambda": 0.0008156550342175316,
+     "share": 0.0018270140484474581
+    },
+    {
+     "k": 9,
+     "lambda": 0.0008653776615393965,
+     "share": 0.0022968251808062282
+    },
+    {
+     "k": 10,
+     "lambda": 0.0015621413239856208,
+     "share": 0.0005533908465736393
+    },
+    {
+     "k": 11,
+     "lambda": 0.005263297704286037,
+     "share": 0.00016064199126514006
+    },
+    {
+     "k": 12,
+     "lambda": 0.009043236837205197,
+     "share": 0.00025672767076127004
+    },
+    {
+     "k": 13,
+     "lambda": 0.011994931737961852,
+     "share": 0.0007331181984502703
+    },
+    {
+     "k": 14,
+     "lambda": 0.03127392015145392,
+     "share": 0.00044385765958429227
+    },
+    {
+     "k": 15,
+     "lambda": 0.05109102802244094,
+     "share": 0.00010210164257806647
+    }
+   ],
+   "max_eigenmode_share": 0.024570984473497356,
+   "smallest4_eigenmode_shares": [
+    0.0075207900463815135,
+    0.005052951786773175,
+    0.024570984473497356,
+    0.021925408997552073
+   ]
+  },
+  "reported (C_total + C_resp + C_PL5D)": {
+   "mu_max": 0.04097223733043594,
+   "mu_top3": [
+    0.04097223733043594,
+    0.019104527582925027,
+    8.583718748352704e-18
+   ],
+   "chi2_ratio_bound": 1.042722681162415,
+   "mu_max_direction_cells": {
+    "R08": -1.0,
+    "R00": 0.976,
+    "R02": -0.7952,
+    "R12": 0.6831,
+    "R06": 0.6579
+   },
+   "eigenmode_shares_smallest_first": [
+    {
+     "k": 0,
+     "lambda": 2.205023091653014e-05,
+     "share": 0.006832223826798682
+    },
+    {
+     "k": 1,
+     "lambda": 5.5860686414897e-05,
+     "share": 0.00012474693080672902
+    },
+    {
+     "k": 2,
+     "lambda": 0.00011194323896343167,
+     "share": 0.0015704532808926614
+    },
+    {
+     "k": 3,
+     "lambda": 0.00012649880542937476,
+     "share": 0.026136505871213564
+    },
+    {
+     "k": 4,
+     "lambda": 0.00022309863497523683,
+     "share": 0.004402138243241182
+    },
+    {
+     "k": 5,
+     "lambda": 0.0004401388078655734,
+     "share": 0.00028109162638373483
+    },
+    {
+     "k": 6,
+     "lambda": 0.0005217110089132823,
+     "share": 0.009304022586059953
+    },
+    {
+     "k": 7,
+     "lambda": 0.0008335622360697614,
+     "share": 0.0077508001643475264
+    },
+    {
+     "k": 8,
+     "lambda": 0.0009661491113876125,
+     "share": 0.0003425762855973458
+    },
+    {
+     "k": 9,
+     "lambda": 0.00163322310400632,
+     "share": 0.000470007399453933
+    },
+    {
+     "k": 10,
+     "lambda": 0.004669028903271275,
+     "share": 0.000697857317487584
+    },
+    {
+     "k": 11,
+     "lambda": 0.007109565023902229,
+     "share": 0.0004558565163163759
+    },
+    {
+     "k": 12,
+     "lambda": 0.009313948476182075,
+     "share": 0.0002520935521544525
+    },
+    {
+     "k": 13,
+     "lambda": 0.014551544003890344,
+     "share": 0.0010130206587547958
+    },
+    {
+     "k": 14,
+     "lambda": 0.03810775876362553,
+     "share": 0.00037419726364975507
+    },
+    {
+     "k": 15,
+     "lambda": 0.05177844516390598,
+     "share": 6.917339020368507e-05
+    }
+   ],
+   "max_eigenmode_share": 0.026136505871213564,
+   "smallest4_eigenmode_shares": [
+    0.006832223826798682,
+    0.00012474693080672902,
+    0.0015704532808926614,
+    0.026136505871213564
+   ]
+  }
+ },
+ "f0b_graded_truths": [
+  {
+   "truth": "nominal",
+   "chi2": 0.001664027799640885,
+   "chi2_without": 0.0016790336357249247,
+   "delta_chi2": 1.5005836084039685e-05,
+   "delta_rel": 0.009017779683295018,
+   "mu_max": 0.04093822292992339,
+   "chi2_ratio_bound": 1.042685699616754,
+   "max_eigenmode_share": 0.026129172076816583,
+   "smallest4_eigenmode_shares": [
+    0.006810214526152347,
+    0.00012415949095273942,
+    0.0015664670350239638,
+    0.026129172076816583
+   ]
+  },
+  {
+   "truth": "W1",
+   "chi2": 4.7961242671321624,
+   "chi2_without": 4.832682571430543,
+   "delta_chi2": 0.036558304298380584,
+   "delta_rel": 0.007622468114288578,
+   "mu_max": 0.042305987954651375,
+   "chi2_ratio_bound": 1.0441748485659823,
+   "max_eigenmode_share": 0.025197474212635247,
+   "smallest4_eigenmode_shares": [
+    0.006775052217390491,
+    0.0009037736019883578,
+    0.0068418586569247266,
+    0.025197474212635247
+   ]
+  },
+  {
+   "truth": "W2",
+   "chi2": 0.4937560874843938,
+   "chi2_without": 0.49978017795918117,
+   "delta_chi2": 0.006024090474787358,
+   "delta_rel": 0.012200539147738127,
+   "mu_max": 0.04431162816399693,
+   "chi2_ratio_bound": 1.046366189513082,
+   "max_eigenmode_share": 0.02325348588054442,
+   "smallest4_eigenmode_shares": [
+    0.010123014850661138,
+    0.00010308875355932834,
+    0.0007053279134742133,
+    0.006836309097239912
+   ]
+  },
+  {
+   "truth": "W3",
+   "chi2": 27.321674461913823,
+   "chi2_without": 27.358972105011482,
+   "delta_chi2": 0.03729764309765926,
+   "delta_rel": 0.0013651302064100006,
+   "mu_max": 0.04226613852929112,
+   "chi2_ratio_bound": 1.0441314025008854,
+   "max_eigenmode_share": 0.025233423738724878,
+   "smallest4_eigenmode_shares": [
+    0.006740983181153406,
+    0.0009034361315482046,
+    0.006816802940643316,
+    0.025233423738724878
+   ]
+  },
+  {
+   "truth": "q3",
+   "chi2": 52.26821447707331,
+   "chi2_without": 52.836369467117564,
+   "delta_chi2": 0.5681549900442562,
+   "delta_rel": 0.010869990408673116,
+   "mu_max": 0.04081897592948523,
+   "chi2_ratio_bound": 1.0425560711744069,
+   "max_eigenmode_share": 0.026132111260455844,
+   "smallest4_eigenmode_shares": [
+    0.006721772334265808,
+    0.00011988193897437875,
+    0.0015474707116123663,
+    0.026132111260455844
+   ]
+  },
+  {
+   "truth": "stage0c_gibuu",
+   "chi2": 24.519173351475736,
+   "chi2_without": 24.728448053519827,
+   "delta_chi2": 0.20927470204409104,
+   "delta_rel": 0.008535145090097233,
+   "mu_max": 0.05511798719606164,
+   "chi2_ratio_bound": 1.058333195519829,
+   "max_eigenmode_share": 0.022873895990879755,
+   "smallest4_eigenmode_shares": [
+    0.0038622702962210816,
+    0.002947978944049228,
+    0.005138495360185509,
+    0.022873895990879755
+   ]
+  },
+  {
+   "truth": "closure_nuwro",
+   "chi2": 10.661869189723006,
+   "chi2_without": 10.691268983349529,
+   "delta_chi2": 0.029399793626522452,
+   "delta_rel": 0.002757470862131845,
+   "mu_max": 0.042412419538080164,
+   "chi2_ratio_bound": 1.0442909039376025,
+   "max_eigenmode_share": 0.02525504305114037,
+   "smallest4_eigenmode_shares": [
+    0.0068640343313723035,
+    0.0009067340341284981,
+    0.006845074528024921,
+    0.02525504305114037
+   ]
+  },
+  {
+   "truth": "A7_mnvtune",
+   "chi2": 0.0031427848028174154,
+   "chi2_without": 0.003174031013736925,
+   "delta_chi2": 3.124621091950969e-05,
+   "delta_rel": 0.009942205044232861,
+   "mu_max": 0.04092400561870296,
+   "chi2_ratio_bound": 1.0426702428779935,
+   "max_eigenmode_share": 0.026116152609219182,
+   "smallest4_eigenmode_shares": [
+    0.006802589630701747,
+    0.00012450803002133905,
+    0.001570139078990112,
+    0.026116152609219182
+   ]
+  },
+  {
+   "truth": "A7_genie_cv",
+   "chi2": 15.504950820520971,
+   "chi2_without": 15.706564084344393,
+   "delta_chi2": 0.20161326382342182,
+   "delta_rel": 0.01300315403494118,
+   "mu_max": 0.040895904642362466,
+   "chi2_ratio_bound": 1.0426396934809385,
+   "max_eigenmode_share": 0.026133597313507815,
+   "smallest4_eigenmode_shares": [
+    0.006777309575106831,
+    0.00012258163358910368,
+    0.0015541612735365975,
+    0.026133597313507815
+   ]
+  },
+  {
+   "truth": "A7_genie_mec",
+   "chi2": 13.581641059880743,
+   "chi2_without": 13.829269913607513,
+   "delta_chi2": 0.2476288537267699,
+   "delta_rel": 0.018232616561944706,
+   "mu_max": 0.04444632939086562,
+   "chi2_ratio_bound": 1.0465136922790872,
+   "max_eigenmode_share": 0.023270896576651344,
+   "smallest4_eigenmode_shares": [
+    0.010234737584118421,
+    0.00010538072069999233,
+    0.0007045839517956831,
+    0.006842638606329482
+   ]
+  },
+  {
+   "truth": "A7_nuwro",
+   "chi2": 23.854786133324453,
+   "chi2_without": 23.862955493427343,
+   "delta_chi2": 0.008169360102890266,
+   "delta_rel": 0.0003424620978461804,
+   "mu_max": 0.042326778520542,
+   "chi2_ratio_bound": 1.0441975170352509,
+   "max_eigenmode_share": 0.025343512507263417,
+   "smallest4_eigenmode_shares": [
+    0.006793294872554836,
+    0.0009032990973847137,
+    0.00670469315132955,
+    0.025343512507263417
+   ]
+  },
+  {
+   "truth": "A7_gibuu",
+   "chi2": 170.96271202974418,
+   "chi2_without": 171.08188956916592,
+   "delta_chi2": 0.11917753942174159,
+   "delta_rel": 0.0006970966827024071,
+   "mu_max": 0.05501479718818103,
+   "chi2_ratio_bound": 1.0582176281961702,
+   "max_eigenmode_share": 0.022853953564588688,
+   "smallest4_eigenmode_shares": [
+    0.0037811242052188526,
+    0.0029526101344420947,
+    0.0051266723770319565,
+    0.022853953564588688
+   ]
+  }
+ ],
+ "scope": {
+  "covered": "S1's GEANT blocks at the data, against C_total (LL5D's matrix form), the reported covariance, and F0b's 12 grade matrices (N_T diagonal), on R00-R15",
+  "not_covered": "LL5D's own C_T at G18 and AR23, whose GEANT blocks are rebuilt from 8 detector-universe unfolds per truth (LL5D-DECLARATION.md:291-296) and exist only once LL5D runs"
+ },
+ "inputs_sha256": {
+  "s1_json": "81e5ef3fe8e7b055360dc43b8a8240c9b5c39c8aa6e7c507b3211d305b326b21",
+  "dp_cpl": "d6752d2c64aad4426375c03a3171a7015f031e2027928cf89aea6cd3bbb84d50",
+  "cmodel": "3cfdc6a5b8c6cea5f99b4678e27f6ca5f7973ee57a79b9d139798f0751cfcd60",
+  "f0b": "5f542830561731b567f2b97d78e5e9677a9802a35ef9c21855828bf184e6f3d6",
+  "definition": "b67907615fe2e903e60ae6caa1c141fa007676c0a1b3ae9f42490d331bfdda89",
+  "docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly/S1_GEANT_Neutron_0.npz": "80bf94adb34a479028a95e74ee96f4d85727d9e69f7d5e44542c8234cee70c39",
+  "docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly/S1_GEANT_Neutron_1.npz": "28c56bb6d6449177614e0bcd373bf1f72dff83a64e84a00bcb63441e1ec770d8",
+  "docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly/S1_GEANT_Pion_0.npz": "2972f5a33a8464da9d9f7e8b98d2c3a428f5a1c35db02eda7e5f73309a7b817a",
+  "docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly/S1_GEANT_Pion_1.npz": "e19630cc3f3b6732ac3b3289e6189cdb498eb36a81573e431c79cd03cb3d89ba",
+  "docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly/S1_GEANT_Proton_0.npz": "3adbd777d38a70f80685a7105b6a475418df7c20e1b2308faa7f53308c980da2",
+  "docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly/S1_GEANT_Proton_1.npz": "b426f38909c59657efe4bd95d7492267985c8dd869f87330bc027b54d2fb5768",
+  "docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly/S1_MinosEfficiency_0.npz": "cddecf18c5e60190aebc9db859e72de0d2fd359542d7ea648833325ba2d0d56b",
+  "docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly/S1_MinosEfficiency_1.npz": "aa30947b8678da24bdf620e8e6aab78e262e649cc801491502a09423fe3f4dac"
+ }
+}

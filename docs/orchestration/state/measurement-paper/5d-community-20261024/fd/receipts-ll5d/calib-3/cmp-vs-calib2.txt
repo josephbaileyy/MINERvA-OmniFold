@@ -1,0 +1,10 @@
+e9584339098c98ff9059279299329b1e84efca4f81583f4ebc71417b2fdb571b fetch/calibration.json
+b31ddd12d050163396b4811705777fc1fa28f77757575af73c8dc5976b3c1a7c fetch/calibration.npz
+ea039893e8ec98a9cd3da15dd7811a82a99563da8fbb253e6fc0766eb960fb17 ../run-calib2/fetch/calibration.json
+b31ddd12d050163396b4811705777fc1fa28f77757575af73c8dc5976b3c1a7c ../run-calib2/fetch/calibration.npz
+npz keys equal: True 14
+npz arrays differing bitwise: []
+json fields identical: ['checks', 'constants', 'control_law', 'control_linearisation', 'draws_per_set', 'evaluations', 'fd_1b_c2_source', 'inputs', 'outputs_descriptive', 'power', 'ratio_mean_per_cell', 'rule', 'salt', 'schema', 'sd300_per_cell', 'seeds', 'sets', 'step', 'threads', 'truths', 'verdict']
+json fields differing: []
+set aside: ['atime', 'code_sha256', 'peak_rss_kib', 'timing']
+code_sha256 differs only in: ['ll5d.py']

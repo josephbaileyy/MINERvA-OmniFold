@@ -1,0 +1,82 @@
+test_19_62_19_is_structural (__main__.A34.test_19_62_19_is_structural) ... ok
+test_70_10_10_10_fails_the_final_check (__main__.A34.test_70_10_10_10_fails_the_final_check) ... ok
+test_balanced_line_passes_structural (__main__.A34.test_balanced_line_passes_structural) ... ok
+test_empty_line_listed_not_failed (__main__.A34.test_empty_line_listed_not_failed) ... ok
+test_largest_share_never_falls_under_joins (__main__.A34.test_largest_share_never_falls_under_joins) ... ok
+test_line_already_above_80_does_not_veto (__main__.A34.test_line_already_above_80_does_not_veto) ... ok
+test_one_cell_above_80_is_structural (__main__.A34.test_one_cell_above_80_is_structural) ... ok
+test_two_pieces_pass_the_final_check (__main__.A34.test_two_pieces_pass_the_final_check) ... ok
+test_veto_in_merge (__main__.A34.test_veto_in_merge) ... ok
+test_veto_refuses_a_push_from_exactly_80 (__main__.A34.test_veto_refuses_a_push_from_exactly_80) ... ok
+test_veto_refuses_largest_above_80 (__main__.A34.test_veto_refuses_largest_above_80) ... ok
+test_2d_floor (__main__.BuildLevel.test_2d_floor) ... ok
+test_c0_in_share_counts_truth_outside_omega (__main__.BuildLevel.test_c0_in_share_counts_truth_outside_omega) ... ok
+test_c0_mask (__main__.BuildLevel.test_c0_mask) ... ok
+test_c2_keeps_the_pz_edge (__main__.BuildLevel.test_c2_keeps_the_pz_edge) ... ok
+test_c6_keeps_the_pz_edge (__main__.BuildLevel.test_c6_keeps_the_pz_edge) ... ok
+test_c7_empty_row_is_exempt_and_guarded (__main__.BuildLevel.test_c7_empty_row_is_exempt_and_guarded) ... ok
+test_c7_final_failure_ends_at_t2 (__main__.BuildLevel.test_c7_final_failure_ends_at_t2) ... ok
+test_c7_structural_ends_at_t2 (__main__.BuildLevel.test_c7_structural_ends_at_t2) ... ok
+test_candidate_table (__main__.BuildLevel.test_candidate_table) ... ok
+test_excluded_region_named (__main__.BuildLevel.test_excluded_region_named) ... ok
+test_w_reco_on_a_truth_side_row_stops (__main__.BuildLevel.test_w_reco_on_a_truth_side_row_stops) ... ok
+test_low_uses_the_smaller_fraction (__main__.Criterion.test_low_uses_the_smaller_fraction) ... ok
+test_union_is_chosen_by_the_smaller_fraction (__main__.Criterion.test_union_is_chosen_by_the_smaller_fraction) ... ok
+test_unsupported_bin_is_low_in_candidate_mode (__main__.Criterion.test_unsupported_bin_is_low_in_candidate_mode) ... ok
+test_veto_allows_exactly_80 (__main__.Criterion.test_veto_allows_exactly_80) ... ok
+test_build_c3_and_c0 (__main__.EndToEnd.test_build_c3_and_c0) ... ok
+test_c0_refuses_pz_joins (__main__.Geometry.test_c0_refuses_pz_joins) ... ok
+test_pz_edge_in_merge (__main__.Geometry.test_pz_edge_in_merge) ... ok
+test_pz_edge_refused_for_c2 (__main__.Geometry.test_pz_edge_refused_for_c2) ... ok
+test_strip_refused (__main__.Geometry.test_strip_refused) ... ok
+test_failed_reproduction_writes_nothing (__main__.Main.test_failed_reproduction_writes_nothing) ... ok
+test_negative_weight_stops_main (__main__.Main.test_negative_weight_stops_main) ... ok
+test_non_finite_figure_stops_and_writes_nothing (__main__.Main.test_non_finite_figure_stops_and_writes_nothing) ... ok
+test_pins_refuse (__main__.Main.test_pins_refuse) ... ok
+test_writes_reproduction_and_candidates_with_provenance (__main__.Main.test_writes_reproduction_and_candidates_with_provenance) ... ok
+test_in_share_counts_truth_outside_the_base_cells (__main__.Mask.test_in_share_counts_truth_outside_the_base_cells) ... ok
+test_reco_outside_omega_enters_truth_reco_only (__main__.Mask.test_reco_outside_omega_enters_truth_reco_only) ... ok
+test_same_needs_both_passes (__main__.Mask.test_same_needs_both_passes) ... ok
+test_shares_count_truth_sel_within_omega_only (__main__.Mask.test_shares_count_truth_sel_within_omega_only) ... ok
+test_truth_outside_omega_enters_reco_all_only (__main__.Mask.test_truth_outside_omega_enters_reco_all_only) ... ok
+test_truth_reco_needs_pass_reco (__main__.Mask.test_truth_reco_needs_pass_reco) ... ok
+test_c7_landmarks (__main__.Outcomes.test_c7_landmarks) ... ok
+test_each_t3_quantity (__main__.Outcomes.test_each_t3_quantity) ... ok
+test_floor_1d (__main__.Outcomes.test_floor_1d) ... ok
+test_floor_c0_per_side (__main__.Outcomes.test_floor_c0_per_side) ... ok
+test_repro_equals_h2_merge (__main__.Repro.test_repro_equals_h2_merge) ... ok
+test_response_matches_h2_stats (__main__.Repro.test_response_matches_h2_stats) ... ok
+test_unsupported_bins_are_never_low_in_repro (__main__.Repro.test_unsupported_bins_are_never_low_in_repro) ... ok
+test_each_mismatch_stops (__main__.Reproduction.test_each_mismatch_stops) ... ok
+test_reproduces_the_synthetic_record (__main__.Reproduction.test_reproduces_the_synthetic_record) ... ok
+test_equal_lows_take_the_lowest_first_index (__main__.TieBreaks.test_equal_lows_take_the_lowest_first_index) ... ok
+test_partner_ties_take_the_lowest_axis_then_first_index (__main__.TieBreaks.test_partner_ties_take_the_lowest_axis_then_first_index) ... ok
+test_the_lowest_low_goes_first (__main__.TieBreaks.test_the_lowest_low_goes_first) ... ok
+test_value_zero_ties_on_empty_corners (__main__.TieBreaks.test_value_zero_ties_on_empty_corners) ... ok
+test_negative_w_truth_stops (__main__.Weights.test_negative_w_truth_stops) ... ok
+test_nonfinite_w_reco_stops (__main__.Weights.test_nonfinite_w_reco_stops) ... ok
+test_nonfinite_w_truth_stops (__main__.Weights.test_nonfinite_w_truth_stops) ... ok
+test_outside_omega_is_not_counted (__main__.Weights.test_outside_omega_is_not_counted) ... ok
+test_small_negative_w_truth_stops (__main__.Weights.test_small_negative_w_truth_stops) ... ok
+
+----------------------------------------------------------------------
+Ran 60 tests in 3.367s
+
+OK
+STOP: the reproduction of R00-R15 failed: flags
+STOP: a counted w_truth is negative or not finite
+STOP: binning_C3.json holds a non-finite figure: Out of range float values are not JSON compliant: nan
+{
+ "C3": {
+  "n_bins": 6,
+  "status": "proceeds to grading",
+  "outcome": []
+ },
+ "C0": {
+  "n_bins": 25,
+  "status": "terminal (binning alone)",
+  "outcome": [
+   "T3: [{'bin': {'h2_cells': [9, 25]}, 'failing': ['purity']}]"
+  ]
+ }
+}

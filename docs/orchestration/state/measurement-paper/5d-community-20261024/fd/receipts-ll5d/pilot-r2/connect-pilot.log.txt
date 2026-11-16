@@ -1,0 +1,38 @@
+host=login02 start=2026-11-12T19:21:35Z pid=1911830
+squeue: []
+== iris
+m3246               2481.4            10000.0     18557.7      20000.0
+balance_node_h=1442.3 half=721.1 cap=148.0
+projection charged=46.115 held=0.000 this=1.0 total=47.115 cap=148.0
+gate g18 truth=g18 verdict=PASS clip_prep_sha256_matches=True
+gate ar23 truth=ar23 verdict=PASS clip_prep_sha256_matches=True
+deploy porcelain_lines=0 head=4231b14de5ea693e92cb31b1358a816b5c2f6625
+nd-unfolding/ll5d.py: OK
+nd-unfolding/fd_1b_c2.py: OK
+nd-unfolding/fd_1b_mc.py: OK
+nd-unfolding/fd_1b_toys.py: OK
+nd-unfolding/fd_1b_inv.py: OK
+nd-unfolding/s1_assemble.py: OK
+nd-unfolding/s5p_universe.py: OK
+nd-unfolding/fd_1b_score.py: OK
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/clip/clip_probe2.py: OK
+2d-unfolding/cov2d/cov2d.py: OK
+docs/orchestration/state/2d-closeout/stageF/methods/sf1/manifest/inputs-sha256.txt: OK
+nd-unfolding/pv-ladder/readouts/h2_definition.json: OK
+setup_salloc_env.sh: OK
+nd-unfolding/s5e_candidate.py: OK
+nd-unfolding/s5e_deform.py: OK
+nd-unfolding/ll5d_b.py: OK
+nd-unfolding/fd_1b_null.py: OK
+nd-unfolding/s5n_pseudo.py: OK
+nd-unfolding/s5p_numerics.py: OK
+nd-unfolding/omnifold_nn_core.py: OK
+2d-unfolding/uq/coverage_fixed_truth/score_coverage.py: OK
+nd-unfolding/ll5d_ctl.py: OK
+job script sha256 cd7e146a44a07bd927a2e5c3009d4e119edae19ea406f19716d92926dd477e8a
+lanes sha256 0718aa238488a8f385d44e5cf5630a73fcb2161bb1a59b3a4b745282cbb84c67
+atime-pre 1146 files at 2026-11-12T19:22:37Z
+Submitted batch job 61184880
+TimeLimit=01:00:00
+JobName=ll5d_pilot Account=m3246 QOS=regular_1 JobState=PENDING TimeLimit=01:00:00 Partition=regular_milan_ss11 NumNodes=1-1 OverSubscribe=NO 
+end=2026-11-12T19:22:38Z

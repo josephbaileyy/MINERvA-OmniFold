@@ -59,12 +59,16 @@ it; no cause is claimed) after both products existed. The guard re-ran it once; 
   reported estimator at 16 and worse at one (Stage 0c GiBUU, by its RMS bias), by the criterion fixed before the test;
   it is therefore not adopted."
 - **The consequence:** the reported estimator, configuration (e), is unchanged.
+- **Amended 2026-11-10 by Joseph's decision** ([`DECISION-20261110-joseph-ens1-deficit-licence.md`](DECISION-20261110-joseph-ens1-deficit-licence.md)),
+  for this sentence only: "At the one truth where it was worse (Stage 0c GiBUU), the ensemble average's RMS closure
+  bias over the 16 cells exceeded the reported estimator's by 0.000512 (0.056467 against 0.055955), 1.23 times the
+  declared floor of 0.000418; its maximum-bias excess, 0.000929, was within its floor of 0.001783."
 
 ## NOT CITABLE FOR
 
 - **That E₉₆ is a stabilised variant** (§5.3: "BIAS_WORSE: … E₉₆ is not described as a stabilised variant").
 - **That the rounding instability is fixed or removed** for the reported result.
-- **Any use of the GiBUU bias magnitudes** beyond "no worse".
+- **Any use of the GiBUU bias magnitudes** beyond "no worse" and the one amended sentence above.
 - **Any statement about the real data**, or that the stage-0c excess is or is not noise. The declared familywise rate
   is a property of the criterion, not a reading of this result.
 - **Any absolute statement about E₉₆'s bias**, or a ranking of the two estimators beyond the verdict.

@@ -1,0 +1,59 @@
+4,5c4,6
+< # written, then ROOT segfaulted while Python exited. This reruns that one call once, unchanged: ONE job (-N 1 --exclusive,
+< # --time 07:00:00, 7.0 node-h), one srun step (32 CPUs, 56G, --threads 32), the same bound code (M, bound.sha256) and the
+---
+> # written, then ROOT segfaulted while Python exited. This reruns that call's 20 items once, unchanged: ONE job (-N 1 --exclusive,
+> # --time 02:30:00, 2.5 node-h) of 4 lanes of 5 items (the director's revision: the bulk ran 8 such lanes a node), each
+> # lane one srun step (32 CPUs, 56G, --threads 32), the same bound code (M, bound.sha256) and the
+9c10
+< # check (sha256sum -c) runs before its one call, so the bulk's rc-8 mechanism (a later job's start check moving the
+---
+> # check (sha256sum -c) runs before all 4 calls, so the bulk's rc-8 mechanism (a later job's start check moving the
+28c29
+< CAP=148.0; THIS=7.0; TL=07:00:00; NODES="01"   # 20 x 1,062 s = 21,240 s + setup < 25,200 s < the 0.9 line 25,920 s
+---
+> CAP=148.0; THIS=2.5; TL=02:30:00; NODES="01"   # 4 lanes of 5: 5 x 1,062 s = 5,310 s + setup < 9,000 s
+70,72c71,79
+< awk -F'\t' '$1 == "09" && $2 == "4" {print "01\t0\t" $3 "\t" $4 "\t" $5}' "$BW/bulk-lanes.tsv" > "$W/rerun-lanes.tsv"
+< [ "$(awk 'END {print NR}' "$W/rerun-lanes.tsv")" = "1" ] || stop "bulk-lanes.tsv does not hold exactly one node 09 lane 4 row"
+< echo "rerun row: $(cut -f1-4 "$W/rerun-lanes.tsv") items=$(cut -f5 "$W/rerun-lanes.tsv" | tr ',' '\n' | awk 'END {print NR}')"
+---
+> awk -F'\t' '$1 == "09" && $2 == "4"' "$BW/bulk-lanes.tsv" > "$W/bulk-09-4.tsv"
+> [ "$(awk 'END {print NR}' "$W/bulk-09-4.tsv")" = "1" ] || stop "bulk-lanes.tsv does not hold exactly one node 09 lane 4 row"
+> # the director's split: consecutive slices of 5 in the row's own order (items 1-5, 6-10, 11-15, 16-20) -> lanes 0-3
+> awk -F'\t' '{n = split($5, a, ","); if (n != 20) exit 3; for (l = 0; l < 4; l++) {s = a[5*l+1]; for (j = 2; j <= 5; j++) s = s "," a[5*l+j]; print "01\t" l "\t" $3 "\t" $4 "\t" s}}' \
+>   "$W/bulk-09-4.tsv" > "$W/rerun-lanes.tsv" || stop "the node 09 lane 4 row does not hold 20 items"
+> [ "$(awk 'END {print NR}' "$W/rerun-lanes.tsv")" = "4" ] || stop "the split did not give 4 lanes"
+> [ "$(cut -f5 "$W/rerun-lanes.tsv" | paste -sd, -)" = "$(cut -f5 "$W/bulk-09-4.tsv")" ] || stop "the 4 slices, joined in order, are not the row"
+> [ "$(cut -f5 "$W/rerun-lanes.tsv" | tr ',' '\n' | sort -u | awk 'END {print NR}')" = "20" ] || stop "the 4 slices are not 20 distinct items"
+> while IFS=$'\t' read -r nd l t r its; do echo "rerun lane: $nd $l $t $r items=$(echo "$its" | tr ',' '\n' | awk 'END {print NR}') $its"; done < "$W/rerun-lanes.tsv"
+75c82
+< [ "$n20" = "20" ] || stop "the row holds $n20 items, not 20"
+---
+> [ "$n20" = "20" ] || stop "the lanes hold $n20 items, not 20"
+134,136c141,143
+< # ll5d_rerun129_01's job: ONE lane, one srun step (32 CPUs, 56G, --threads 32); the deploy at M with porcelain 0 and
+< # the bound blobs, checked ONCE here, before the one call; the row asserted against ll5d_b; the one ll5d_b.py unfold
+< # call (ar23 toy, the 20 items). Not under set -u. Writes only under $W and $UO (passed as the 4th argument).
+---
+> # ll5d_rerun129_01's job: 4 lanes of 5 items, each an srun step (32 CPUs, 56G, --threads 32); the deploy at M with
+> # porcelain 0 and the bound blobs, checked ONCE here, before all 4 calls; the lanes asserted against ll5d_b; 4 ll5d_b.py
+> # unfold calls (ar23 toy, 5 items each, the 20 between them). Not under set -u. Writes only under $W and $UO (passed as the 4th argument).
+150c157
+< echo "lanes 1 x (srun --exact -n1 -c 32 --mem 56G) --threads 32"
+---
+> echo "lanes 4 x (srun --exact -n1 -c 32 --mem 56G) --threads 32"
+161c168
+< sys.exit(0 if len(got) == 20 and len(set(got)) == 20 and set(got) <= want and len(per_lane) == 1
+---
+> sys.exit(0 if len(got) == 20 and len(set(got)) == 20 and set(got) <= want and len(per_lane) == 4 and set(per_lane.values()) == {5}
+184,185c191,192
+< pids=(); for L in 0; do lane $L & pids+=($!); done
+< urc=0; for k in 0; do wait ${pids[$k]}; s=$?; echo "lane $k rc=$s"; urc=$((urc | s)); done
+---
+> pids=(); for L in 0 1 2 3; do lane $L & pids+=($!); done
+> urc=0; for k in 0 1 2 3; do wait ${pids[$k]}; s=$?; echo "lane $k rc=$s"; urc=$((urc | s)); done
+211c218
+<   [ "$tl" = "TimeLimit=07:00:00" ] || { scancel "${ids[@]}"; stop "ll5d_rerun129_$NN's time limit parsed as ${tl#TimeLimit=}, not 07:00:00: cancelled ${ids[*]}"; }
+---
+>   [ "$tl" = "TimeLimit=02:30:00" ] || { scancel "${ids[@]}"; stop "ll5d_rerun129_$NN's time limit parsed as ${tl#TimeLimit=}, not 02:30:00: cancelled ${ids[*]}"; }

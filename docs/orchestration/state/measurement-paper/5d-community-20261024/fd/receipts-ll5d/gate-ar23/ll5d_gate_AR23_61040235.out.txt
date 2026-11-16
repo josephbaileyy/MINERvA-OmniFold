@@ -1,0 +1,30 @@
+host=nid006874 job=61040235 truth=ar23 start=2026-11-09T16:33:58Z
+deploy head=a95cc39f7437170af0b65ba042934fad079e0ee2 porcelain_lines=0
+nd-unfolding/ll5d.py: OK
+nd-unfolding/fd_1b_c2.py: OK
+nd-unfolding/fd_1b_mc.py: OK
+nd-unfolding/fd_1b_toys.py: OK
+nd-unfolding/fd_1b_inv.py: OK
+nd-unfolding/s1_assemble.py: OK
+nd-unfolding/s5p_universe.py: OK
+nd-unfolding/fd_1b_score.py: OK
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/clip/clip_probe2.py: OK
+2d-unfolding/cov2d/cov2d.py: OK
+docs/orchestration/state/2d-closeout/stageF/methods/sf1/manifest/inputs-sha256.txt: OK
+nd-unfolding/pv-ladder/readouts/h2_definition.json: OK
+setup_salloc_env.sh: OK
+nd-unfolding/s5e_candidate.py: OK
+nd-unfolding/s5e_deform.py: OK
+threads OMP=1 OPENBLAS=1 MKL=1 NUMEXPR=1
+gate rc=3
+LL5D-GATE ar23 verdict=STOP
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 11:00:08
+	Maximum resident set size (kbytes): 285660780
+	Exit status: 3
+2fe1e99dafa1cb6dc3bd209e4fb0cf2c3793f3d5f6c12f6171e8a05a2cadb9de  /pscratch/sd/j/josephrb/ll5d-gate-ar23-20261108/gate-ar23.json
+988b26d2fad83b6420f4912de4857449f0452bba4421666ff113e3ec4661ca64  /pscratch/sd/j/josephrb/ll5d-gate-ar23-20261108/gate-ar23.receipt.npz
+46b33b364e8c27a50be35c9619f3f710be81385482e39e9c899db6ab6f98dd95  /pscratch/sd/j/josephrb/ll5d-gate-ar23-20261108/gate.out
+d356d797cf881d7faf5eeed74bd5732d7a849bfd250d9f7ee7c7bb630e326dea  /pscratch/sd/j/josephrb/ll5d-gate-ar23-20261108/gate.time
+SEALED gate-ar23.clipprep.npz bytes=535686808 sha256=c567183d94d9b0be9b1d7ec1513cdb58db14bcffa5ef6eb630c7b77d4c5ff6d1
+end=2026-11-10T03:34:15Z

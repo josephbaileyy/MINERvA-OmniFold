@@ -1,0 +1,2 @@
+scp rc=0
+8bd13f5cda042b485af342f5c0c8a0ec2ca1743a0e82ab656f36d490ce10053f  fetchfull1/post-full.tar.gz

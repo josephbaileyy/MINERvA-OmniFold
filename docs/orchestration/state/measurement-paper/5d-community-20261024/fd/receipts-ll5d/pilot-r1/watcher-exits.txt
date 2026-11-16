@@ -1,0 +1,12 @@
+     549
+JOB-EVENT 2026-11-12T18:29:22Z 61181899|ll5d_pilot|PENDING|00:00:00|Unknown|Unknown|0:0
+
+[exited with code 0]
+3a0767d3a212bdfac845d76a7b14197af3612eb69f9996fc6c9af746970ce40f  watch-gates2e.sh
+RES-GONE 2026-11-12T18:30:00Z Reservation maintenance_20261111 not found scontrol_rc=1 
+
+[exited with code 0]
+8042e2b65d3666433a3e1e5c30eef47687b15ace6b659ad3f6556532df79b774  watch-gates2h.sh
+JOB-EVENT 2026-11-12T19:01:39Z 61181899|ll5d_pilot|FAILED|00:30:19|2026-11-12T10:30:39|2026-11-12T11:00:58|4:0
+
+[exited with code 0]

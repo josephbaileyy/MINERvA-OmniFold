@@ -1,0 +1,42 @@
+### Focused Review Addendum: Production Dump Layout Ruling (commit 6b690fbc8)
+
+**Review Commit:** `6b690fbc89520de53cc3df742270ac07640853ea`  
+**Worktree:** `../MINERvA-OmniFold-rpd-reco-review-20261106` (verified clean detached HEAD at `6b690fbc89520de53cc3df742270ac07640853ea` before and after inspection).  
+**Prior Full Reviews:** Preserved; this addendum evaluates solely the delta addressing the `dump_root` co-located sibling preflight ruling.
+
+---
+
+### 1. Delta Inspection & Contract Verification
+
+1. **Exact Closed Name Set (`nd-unfolding/fd_rpd_reco.py:340-357`):**
+   - `known_sibling_names` is defined strictly as `{f"nn_{playlist}.npz" for playlist in PLAYLISTS}`, matching the exact 12 authorized playlist names. No wildcards or glob relaxations are used.
+   - Enforces `expected <= actual and actual <= expected | known_sibling_names`.
+   - Missing declared dumps continue to fail `PIN_SET`. Any extraneous file outside the 24 declared pairs and the 12 authorized `nn_<PL>.npz` siblings (including an unauthorized 13th file such as `nn_2A.npz`) continues to trigger `Refused("PIN_SET")`.
+
+2. **Zero Ingestion / Stat-Only Guarantee:**
+   - Sibling handling in `load_pins()` calls only `sibling_path.stat()`. Sibling files are neither opened, loaded into numpy, hashed, nor staged.
+   - `self.pins` retains strictly the 24 `lat_*` signal and background pairs (`n_files == 24`). Zero `nn_*` files enter downstream analysis pipelines.
+   - The stage record explicitly logs `"known_siblings_stat_only"` with strictly `{"name", "bytes", "mtime_ns"}` fields.
+
+3. **Targeted Tests & Audit Hook (`nd-unfolding/tests/test_fd_rpd_reco.py:1150-1198`):**
+   - `test_known_siblings_are_stat_only` is parametrized over seeds `[17, 43]` and extra files `["extra.npz", "nn_2A.npz"]`.
+   - A dedicated `sys.addaudithook(forbid_sibling_open)` actively intercepts open events, asserting that no `nn_<PL>.npz` sibling in `dump_root` is ever opened.
+   - All 4 parametrized cases pass cleanly in 1.20s.
+
+4. **Mutation Discrimination (`nd-unfolding/tests/fd_rpd_reco_mutation.py`):**
+   - All three new required sibling mutants were executed and confirmed **KILLED**:
+     - `REQUIRED_KNOWN_SIBLING_ALLOWED` -> **KILLED** (refusing presence of valid siblings fails).
+     - `REQUIRED_UNKNOWN_SIBLING_REFUSED` -> **KILLED** (permitting `nn_2A.npz` fails test assertion).
+     - `REQUIRED_SIBLING_NEVER_OPENED` -> **KILLED** (inserting `digest(sibling_path)` triggers the test audit hook assertion).
+
+---
+
+### 2. Preserved Runtime Caveats
+- Native `os.O_NOATIME` is mandatory on production Linux filesystems (macOS continues to use the documented test stand-in).
+- MAT flux spectra selection and provenance must match the 3 files in the C-N candidates inventory.
+
+---
+
+### 3. Verdict
+
+**VERDICT: Production layout delta at `6b690fbc8` is CLEAN, fully verified, introduces no regressions, and satisfactorily resolves the dump-root sibling preflight question without weakening input integrity.**

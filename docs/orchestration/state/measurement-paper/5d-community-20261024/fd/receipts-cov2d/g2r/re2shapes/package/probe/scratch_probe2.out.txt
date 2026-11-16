@@ -1,0 +1,20 @@
+--- 
++++ 
+@@ -12,2 +12,2 @@
+-   "s42": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partc/periods_ns/tmp/tmp8lbdy9iq/inj.root",
+-   "s43": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partc/periods_ns/tmp/tmp8lbdy9iq/inj.root",
++   "s42": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partc-r2/periods_ns/tmp/tmp6hw50588/inj.root",
++   "s43": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partc-r2/periods_ns/tmp/tmp6hw50588/inj.root",
+@@ -15 +15 @@
+-    "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partc/periods_ns/tmp/tmp8lbdy9iq/inj.root"
++    "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partc-r2/periods_ns/tmp/tmp6hw50588/inj.root"
+@@ -28 +28 @@
+-   "path": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partc/work_cov/work_cov.npz",
++   "path": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partc-r2/work_cov/work_cov.npz",
+@@ -44,3 +44,3 @@
+-  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partc/periods_ns/tmp/tmp8lbdy9iq/inj.root": {
+-   "path": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partc/periods_ns/tmp/tmp8lbdy9iq/inj.root",
+-   "sha256": "5b8c33967c5b0c3c3d4d5f8a7a076b4b44bcbde529d8e287ab417ed08a412aef",
++  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partc-r2/periods_ns/tmp/tmp6hw50588/inj.root": {
++   "path": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partc-r2/periods_ns/tmp/tmp6hw50588/inj.root",
++   "sha256": "07086aec899757d2b18014a4dcd0afb4009247ec3ce84f9a4b95c9c84614594d",

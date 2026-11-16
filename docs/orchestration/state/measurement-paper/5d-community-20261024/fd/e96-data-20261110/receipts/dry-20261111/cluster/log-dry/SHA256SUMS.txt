@@ -1,0 +1,2 @@
+061862d0a7d32c200e3804a40c0dc4d068781c61ddab2da5755d82df7af1383e  runs/control/e96data_E_b-_j-.npz
+fcf1de9c5a3f5d39b869ab3df6764645078be8eff66d1d3d2c792323adacbe26  runs/ensemble/e96data_k001_b-_j0.npz

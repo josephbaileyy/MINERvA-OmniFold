@@ -122,7 +122,7 @@ That totals 26,736 s, or 7.4267 node-h, against the cap of 27.0. This job's shar
 - **Attempt 1's files** stay where they are (`../attempt1/`). The attempt-2 connect wrote only names with "ibu-2"; the
   job wrote prr_ibu_61043652.out, log-ibu/ and route2/.
 
-## What comes next (the director's ruling, recorded here; nothing done yet)
+## What comes next (the director's ruling, recorded here; the move is done since: see the addendum below)
 
 - **The move.** After this record merges, one ssh session moves $OUT/log-ibu and $OUT/route2 into $OUT/ibu-attempt2/,
   with a listing and the sha256 of every moved file before and after. That output is added to this record as a short
@@ -137,3 +137,34 @@ That totals 26,736 s, or 7.4267 node-h, against the cap of 27.0. This job's shar
 - `cluster/sacct.txt`: the job's sacct rows and the study's prr_* rows.
 - `lane/iris-before.txt`, `lane/launch-session.txt`, `lane/remote-listing.txt` (the listing, the sha256, the absent
   paths, squeue and sacct, in one session) and `lane/remote-sha256.txt`.
+
+## Addendum (2026-11-09): the move
+
+The director's go of 2026-11-09 covered `prr_move_attempt2.sh` at sha256
+518fc8b85110035d5df7cd053c551849d98b0361720fe21a7baf22ca81e261a7 (`move/prr_move_attempt2.sh`), after this record had
+merged (ef9411a3). The session ran in the foreground. ssh's rc was read unpiped: 0.
+
+- **The session** (`move/move-session.txt`, sha256 dbf7b4f18cd990cb99dcaeacfdfe9ba968c1bf7368fe27f40db67a91b48e0870),
+  on login08 at 2026-11-09T21:20:42Z. It was one ssh session:
+  - The script went to /dev/shm, was checked at its sha256, and was removed at the end.
+  - It printed iris's m3246 row and `squeue --me` (`move/move-session.txt:3-7`). The two jobs listed are
+    ll5d_gate_AR23 61040235 and ll5d_gate_G18 61040163, and neither is a prr_* job.
+- **The script's checks:** log-ibu and route2 were present and ibu-attempt2 absent; no prr_* job in squeue; the four
+  log-ibu files were at this record's sha256 (`lane/remote-sha256.txt`), with 4 OK lines (`:10-13`); route2 and
+  log-ibu held 4 files in all (the script stops otherwise).
+- **The move:** `mkdir $OUT/ibu-attempt2`, then `mv` of `log-ibu` and `route2` into it.
+- **Before and after:** the listings and the four sha256 are identical (`move/move-session.txt:14-37`):
+  - env.log 986cd8be…;
+  - FAILED 9830ce9d…;
+  - ibu.log 6c0c07e7…;
+  - verify-stage.log e3b0c442… (empty);
+  - `log-ibu/tasks/` and `route2/` are empty directories.
+- **After the move**, `$OUT/log-ibu` and `$OUT/route2` are gone: `ls -d` printed "No such file or directory" for both
+  (`:38-39`). The script printed "moved rc=0" and the session "script rc=0" (`:40-41`).
+  <!-- absence-ok: shown by the session's own ls -d of both paths, move/move-session.txt:38-39 -->
+- **Attempt 3** therefore writes `$OUT/log-ibu` and `$OUT/route2` fresh. Its connect (FD-PRR-ADDENDUM-A4 §10)
+  requires `$OUT/ibu-attempt2/log-ibu` and `$OUT/ibu-attempt2/route2`.
+
+CITABLE FOR: attempt 2's four files and two empty directories are at `$OUT/ibu-attempt2/`, unchanged by sha256; the two
+paths attempt 3 writes are free.
+NOT CITABLE FOR: anything about the staging step or attempt 3, neither of which has run.

@@ -1,0 +1,81 @@
+2,23c2,21
+< # COV2D-G2R connect ENVTEST-R2 (addendum J1 §4; COV2D-G2R-BINDING-1.md addendum J1): the envtest connect again, after
+< # r1 (connect-g2r-envtest.sh 1b392259, 2026-11-13T06:02Z) STOPped at the suite gate: test_g2r_glue's 13 errors were
+< # the open audit (cov2d_blocks.OpenAudit, GUARDED = /global/cfs, /pscratch) refusing the tests' plain opens,
+< # because r1 ran them under /pscratch: their TMPDIR under $O and their code and data in $C. Reproduced locally (guard
+< # stand-in holding $O and $C: "Ran 11 tests ... FAILED (errors=13)"). The director's ruling 3 (2026-11-13): the
+< # narrowest fix, the open audit unchanged. Changes from r1, nothing else:
+< #   - the suites run from a shared clone of $C at M (clean, the bound sums re-checked) with their TMPDIR beside it,
+< #     both in a fresh mktemp under /dev/shm, refused if it resolves under a guarded tree, $O or $C, removed on exit
+< #     with the removal logged (the block between the >>> and <<< markers, run verbatim by test_envtest_r2_tmpdir.sh).
+< #     coverage-5b-audit's B1 (2026-11-13): r1's log also holds 4 refusals of the tests' plain reads of committed files
+< #     in $C (blocks_AR23.npz x3, E_AR23.npz), and shutil.rmtree's dir_fd opens resolve against a cwd inside $C; a
+< #     TMPDIR move alone leaves "Ran 14 tests ... FAILED (errors=11)" in the cluster's layout;
+< #   - r1 made $O, $C and $PRE: this connect reuses them, each clean (porcelain --ignored 0) at its commit, the bound
+< #     sums re-checked; its own records go to $O/logs/envtest-r2/, refused if that exists; no envtest dir and no
+< #     submissions.log may exist yet (r1 submitted nothing);
+< #   - the fence drops ll5d_ (the audited overlap fence, f40d1000; the director's ruling 4 of 2026-11-13: the envtest
+< #     and the prepare may run during the LL5D bulk).
+< # On a login node it runs: the fence (no rsn_, e96data, rdx_, t2a or cov2d* job queued or running, no cov2d* job
+< # unended); iris (the cap at most half the balance; the balance printed); the independent recompute of the 110 node-h
+< # cap (spent over cov2dg2r-* plus held plus this job's 1.067); the deploy checks; the four G2R suites under the jobs'
+< # root_6_28 environment (numpy 1.26) from the /dev/shm clone, each rc 0, the clone and the deploy clean after; then
+< # the bound g2r_submit.sh, once: envtest.
+---
+> # COV2D-G2R connect ENVTEST-R3 (addendum J1 §4; COV2D-G2R-BINDING-1.md addendum J1): the envtest connect a third time.
+> # r1 (1b392259) STOPped on the open audit (the suites ran under /pscratch); r2 (2ef9ce12) fixed that (the suites from
+> # a shared clone of $C at M with TMPDIR beside it, all under /dev/shm) and STOPped on test_g2r_glue's PhaseTune: its
+> # record said STOP, "atime moved on 170 inputs" (diag-tune 84af1613, 2026-11-13T07:13Z), all of them the test's own
+> # stand-in products in its TMPDIR. The mechanism: the test patches os.O_NOATIME to 0 (test_g2r_glue.py, PhaseTune
+> # setUpClass, for macOS), so read_pinned's reads of its stand-ins are plain; on Linux tmpfs (relatime, coarse
+> # timestamps) the test's own sha256 read right after the write leaves atime <= mtime, and the read after Run.watch
+> # moves it. Probed on a login node with that pattern: /dev/shm moved 39 of 40, $HOME (GPFS, relatime) 0 of 40. The
+> # bound code is not affected (the real readout's O_NOATIME is real). Changes from r2, nothing else:
+> #   - the suites' place parent is $HOME/g2r-suites-place (GPFS, outside GUARDED) instead of /dev/shm; the block
+> #     between the >>> and <<< markers is r2's, byte for byte;
+> #   - before the suites, an atime probe in the place's TMPDIR does the test's pattern on 40 files (write; read; 10 ms;
+> #     stat; read; stat) and refuses (exit 10) if any atime moved, so a filesystem that would fail the test's ledger is
+> #     named before the suites run;
+> #   - its records go to $O/logs/envtest-r3/ and its log to /dev/shm/josephrb-g2r-envtest-r3.log.
+> # What r2 established stays: the deploys r1 made are reused, each clean at its commit, the bound sums re-checked; no
+> # envtest dir and no submissions.log may exist yet; the fence drops ll5d_ (ruling 4).
+> # On a login node it runs: the fence; iris (the cap at most half the balance; the balance printed); the independent
+> # recompute of the 110 node-h cap; the deploy checks; the four G2R suites under the jobs' root_6_28 environment (numpy
+> # 1.26) from the clone, each rc 0, the clone and the deploy clean after; then the bound g2r_submit.sh, once: envtest.
+26c24
+< # Run: setsid nohup bash /dev/shm/josephrb-g2r-envtest-r2.sh >/dev/null 2>&1 </dev/null &
+---
+> # Run: setsid nohup bash /dev/shm/josephrb-g2r-envtest-r3.sh >/dev/null 2>&1 </dev/null &
+32,33c30,31
+< LOG=/dev/shm/josephrb-g2r-envtest-r2.log
+< SHM_BASE=/dev/shm                                  # the suites' TMPDIR parent (outside GUARDED)
+---
+> LOG=/dev/shm/josephrb-g2r-envtest-r3.log
+> SHM_BASE=/global/homes/j/josephrb/g2r-suites-place  # the suites' place parent: $HOME's GPFS (outside GUARDED)
+56c54,55
+< R2=$O/logs/envtest-r2
+---
+> R2=$O/logs/envtest-r3
+> mkdir -p "$SHM_BASE" || stop "mkdir $SHM_BASE"
+113a113,133
+>     # the atime probe: the glue tests' own pattern (their O_NOATIME patched to 0) must not move an atime here
+>     mkdir "$TMPDIR/atprobe" || exit 10
+>     python - "$TMPDIR/atprobe" <<'PROBE' || exit 10
+> import os, sys, time
+> d, moved, n = sys.argv[1], 0, 40
+> for i in range(n):
+>     p = os.path.join(d, f"f{i}")
+>     with open(p, "wb") as f:
+>         f.write(b"x" * 4096)
+>     with open(p, "rb") as f:
+>         f.read()
+>     time.sleep(0.01)
+>     a0 = os.stat(p).st_atime_ns
+>     with open(p, "rb") as f:
+>         f.read()
+>     moved += os.stat(p).st_atime_ns != a0
+>     os.remove(p)
+> print(f"atime probe: moved {moved} of {n} in {d}")
+> sys.exit(1 if moved else 0)
+> PROBE
+>     rmdir "$TMPDIR/atprobe" || exit 10

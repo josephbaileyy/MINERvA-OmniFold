@@ -1,0 +1,61 @@
+{
+  "schema": "fd-rpd-reco-audit-head-verification/1",
+  "scope": "local fixtures only; native MAT/atime/syscall gates remain unverified",
+  "tested_head": "d9740563f014c1642546edf314559887003b9920",
+  "worktree": "/Users/josephbailey/local-research/MINERvA-OmniFold-rpd-reco-code-20261106",
+  "tracked_clean_during_execution": true,
+  "suite": {
+    "command": "/Users/josephbailey/miniconda3/bin/python -m pytest -q nd-unfolding/tests/test_fd_rpd_reco.py",
+    "returncode": 0,
+    "passed": 134,
+    "seconds": 216.92
+  },
+  "mutation": {
+    "command": "/Users/josephbailey/miniconda3/bin/python nd-unfolding/tests/fd_rpd_reco_mutation.py --out <local-report>",
+    "returncode": 0,
+    "required": 130,
+    "executed": 130,
+    "killed": 130,
+    "all_killed": true,
+    "complete": true,
+    "raw_report_sha256": "8c8bc127b9562010865ff7331620794c8d5d47b9fa4beb1b27a683d23a031118",
+    "packet_annotation": "Only fixture-context fields were added; outcomes and captured stdout/stderr match the raw runner report exactly.",
+    "raw_report_recovery": "Remove receipt_annotation and disposable_fixture_artifact_paths from MUTATIONS.json; json.dumps(..., indent=2) plus one newline reproduces raw_report_sha256 exactly."
+  },
+  "static_checks": {
+    "black": "PASS",
+    "ruff": "PASS",
+    "mypy_strict": "PASS",
+    "bash_syntax": "PASS",
+    "mypy_python_executable": "/Users/josephbailey/miniconda3/bin/python",
+    "optional_external_ROOT_and_scipy_stubs": "ignore_missing_imports"
+  },
+  "receipt_note": "A subsequent receipt-only commit binds these outputs; no listed executable bytes change. No Linux or real-MAT success is inferred.",
+  "files_at_issue": {
+    "nd-unfolding/fd_rpd_reco.py": {
+      "sha256": "6e5df35d48f398be18582e6635a5ffd6c977864a5663214babd9b697fc091847",
+      "git_blob": "36d334dd21eb13e78aa75b8744d5f588887eab0f"
+    },
+    "nd-unfolding/fd_rpd_reco_custody.py": {
+      "sha256": "54a99ff81d9fe0bbf21798e6b67a63c0314062285c063ac434e751ce6ae2ee0e",
+      "git_blob": "ed9d073c4ba063bb876814bdf4a9dfa2627737a1"
+    },
+    "nd-unfolding/fd_rpd_reco_flux_connect.sh": {
+      "sha256": "bf713530f6fb3cc6c92f4e97e677d18e0a6b2905896353246c30877f9e9275a9",
+      "git_blob": "a3aee0b4412369ae6de991490b686f9e698fedcf"
+    },
+    "nd-unfolding/tests/test_fd_rpd_reco.py": {
+      "sha256": "585aedd46610040d62a8d58c426a0ee456af4f3d0513f58da81da01f62c3a315",
+      "git_blob": "d770af235b3f1f99f74108582644542be904869c"
+    },
+    "nd-unfolding/tests/fd_rpd_reco_mutation.py": {
+      "sha256": "e57933151fc8cda942ac5615aee841264e90afe056f3ebdc7311ccf915592477",
+      "git_blob": "920300053887f63ed62f3a4b04ce6bafcb53137d"
+    },
+    "nd-unfolding/tests/fd_rpd_reco_mat_check.py": {
+      "sha256": "d11f98d5e6e721c8daf1f9ef5ba2a1032c5c7645d8881658f0b52e224a0609c8",
+      "git_blob": "afdff2a451e71b94595881ae2c34c4d95754e9e8"
+    }
+  },
+  "open_closure_search": "Includes lowercase open, uppercase ROOT Open and ReadObj, plus listed read/write/archive methods. Static-only MAT boundary files remain explicitly unexercised."
+}

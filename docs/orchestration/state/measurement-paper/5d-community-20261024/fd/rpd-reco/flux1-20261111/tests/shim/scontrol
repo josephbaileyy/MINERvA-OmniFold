@@ -1,0 +1,2 @@
+#!/bin/bash
+echo "JobId=4242 JobName=${FAKE_JOBNAME:-rpd_flux1} UserId=josephrb(1) Account=m3246 QOS=shared Partition=shared_milan_ss11 TimeLimit=${FAKE_TIMELIMIT:-03:00:00} NumNodes=1 NumCPUs=4 MinMemoryNode=16G JobState=PENDING"

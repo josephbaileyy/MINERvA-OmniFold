@@ -1,0 +1,10 @@
+# command: /opt/homebrew/bin/python3.13 -I run_a21_vi.py /Users/josephbailey/cov2d-work/wt-diag/nd-unfolding/tests
+# checkout /Users/josephbailey/cov2d-work/wt-diag at HEAD a95cc39f7437170af0b65ba042934fad079e0ee2 (porcelain 0); python numpy: 3.13.7 2.4.4; date 2026-11-10T04:40:22Z
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.950s
+
+OK
+REF_VI {"largest_cell_unmatched_share": 1.0, "signal_rows_in_phase_space": 2980, "signal_rows_unmatched": 2980, "truth_rows": 50, "truth_rows_unmatched": 50}
+LL5D_VI {"signal_rows_in_phase_space": 2980, "signal_rows_unmatched": 2980, "truth_rows": 50, "truth_rows_unmatched": 50, "largest_cell_unmatched_share": 1.0}
+# rc=0
