@@ -68,6 +68,9 @@ PY
 build normal
 build rater
 
+# A hold span that crosses a page break can carry the next page's first block inside it (2026-11-16): move that block
+# out of the span first, or removing the span would delete paper text from the rater copy.
+python3 -I "$TOOLS/fix_hold_split.py" "$B/normal.txt" "$B/rater.txt"
 cp "$B/rater.txt" "$OUT"
 cp "$B/normal.txt" "${OUT%.txt}.normal.txt"
 if ! python3 -I "$TOOLS/holddiff.py" "$B/normal.txt" "$B/rater.txt" > "${OUT%.txt}.holddiff.txt"; then
