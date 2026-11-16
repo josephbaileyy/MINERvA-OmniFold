@@ -1,10 +1,10 @@
-#977 head f03dbd758; 52 rows
+#977 head 1515a6abe; 52 rows
 OK  RP01   resource paper      count=1  The sixteen-cell cross section that the estimator gives on the data il
 OK  RP02   resource paper      count=1  The held-out-tune tests provide partial evidence on bias at truths hel
 OK  RP02b  resource paper      count=1  The held-out-tune tests are not independent of each other or of $C_{\m
 OK  RP03   resource paper      count=1  The dependence on the prior's generator shape is reported separately a
 OK  RP04   resource paper      count=1  The model term $C_{\mathrm{model}}$ is constructed from the change in 
-OK  RP05   resource paper      count=1  The two-dimensional covariance is the sum of four blocks, each from Li
+OK  RP05   resource paper      count=1  is the sum of four blocks, each from LightGBM unfoldings with the cent
 OK  RP06   resource abstract   count=1  The reported five-observable intervals lack validated coverage.
 OK  RP07   resource paper      count=1  On this analysis's inputs, OmniFold and binned IBU, the publication's 
 OK  RP07p  code     paper      count=1  On this analysis's inputs, OmniFold and binned IBU, the publication's 
@@ -72,5 +72,5 @@ OK  PENDING #981 FD-PRR -> group prr: FILLED (RP43 fills it at the re-pin)
 OK  PENDING #981 LL5D -> group ll5d: PENDING
 OK  PENDING #981 V-HALF -> group vhalf: FILLED (RP43 fills it at the re-pin)
 OK  CODEMAP 19 entries: every file at its pinned sha256 and every anchor in its lines
-OK  CODEMAP tab:codemap block_sha=11de5b171ea0f3e1
+OK  CODEMAP tab:codemap block_sha=0b9ab61090d43251
 REPIN-CHECK PASS
