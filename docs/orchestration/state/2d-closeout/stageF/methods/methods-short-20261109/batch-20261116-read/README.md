@@ -1,0 +1,51 @@
+# Joseph's batch of 2026-11-16: the meaning reads of A5, B, F1 and F2
+
+Decision: DECISION-20261116-joseph-paper-batch.md (PR #1181), items 2 (A5), 4 (B), 8 (F1) and 9 (F2). The director's
+go and his approval of F2's text and sites (2026-11-16) are relayed messages. Each reader was an independent
+general-purpose subagent, read-only.
+
+## F2: the covariance-noise qualification (paper §6, the "conditional tests" paragraph; Supplement S8.3)
+
+**Read 1, on the draft: REVISE.** All four fixes were adopted before the text went to the director:
+- "Inflate the spread" became "make χ² and each |e_c|/σ_c larger than this null allows". Estimation noise biases χ²
+  upward, because the small sample eigenvalues come out low.
+- "Weakly constrained eigenmodes" became "smallest-eigenvalue directions". The old phrase can be read as the
+  large-variance directions.
+- "Replicas and universes" became "finite ensembles", the limitations item's phrase. The pseudo-data may share C_T's
+  universes.
+- Site S moved to after the test-size sentence, so that "this constructed null" follows the null's definition.
+- "The verdicts stand" alone implies that they would survive a correction. Joseph's item 9 requires it, so it became
+  "stand as graded under this null".
+
+**The director's checks:**
+- Each paragraph carries an absence waiver, `method scope: no Hartlap-type or other covariance-noise correction is
+  applied`.
+- grep of the paper, the Supplement and the LL5D and coverage records, 2026-11-16: "Hartlap" occurs only in S7's IBU
+  comparison (REF-G1) and in two August search scripts for an unrelated study.
+- Site S's $e^{\top}C_T^{+}e$ is S8.3's own notation (supplemental :1044).
+
+## A5, B and F1: PASS, with two follow-on fixes adopted
+
+- **A5:** the sentence prints only under ll5d-alljoint = all, in both status arms, after the sentence stating the joint
+  flags. "Untested" holds:
+  - LL5D-DECLARATION.md:322: "An under-coverage under C_T is not shown to persist under the full covariance at T";
+  - the readout has no full-covariance regrade;
+  - the only C_resp + C_PL,5D computation is D2's block-share bound, not a coverage test.
+  <!-- absence-ok: reports the read's check of A5's scoping sentence against LL5D-DECLARATION.md:322 -->
+- **B:** checked against readout.json at split 991000, with Δρ measured from B0.
+  - **Increases beyond 0.05:** K2 at q3 (+0.0565; GiBUU +0.0434); C25 at both (+0.230, +0.321); O2 at both (+0.338,
+    +0.214). No other level crosses, and the largest fall is −0.0307.
+  - **New flags:** K2 3, C25 3, O2 6 (PR-3 new_flags), of 12 − 2 = 10 other graded truths.
+  - **Noise-free:** the declaration says so at :24 and :32.
+  - **W levels:** max |Δρ| over O4r, O4 and O3 is 0.0271, so "less than 0.03" holds.
+  - **Fixed:** the existing next sentence, "In each case some tested level raised ρ ...", would have read as if about
+    the W levels. It is replaced by "No tested level of any setting lowered ρ by as much as the threshold."
+    make_values' tier1_values asserts that no level of any factor falls by the bar.
+- **F1:** the 1A claim holds: q2-opendata-20261014 REPORT :27-29, and data-survey-20261022 SURVEY.md :35, where the
+  other playlists match file for file by size. "The 2,374 input files" lost its owner when "its" was dropped, so it
+  now reads "This analysis's 2,374 input files".
+- **Not applied, for Joseph via the director:**
+  - "match the current release in file size" would expose that the match is by name and size (SURVEY :272);
+  - "production" in the Data availability text against "processing" in §2 and S1;
+  - O4 also newly flags A7_nuwro;
+  - §5.3 does not cite tab:prr-levels, which alone defines "all three learners".

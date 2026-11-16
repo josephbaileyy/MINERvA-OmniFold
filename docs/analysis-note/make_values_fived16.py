@@ -1964,6 +1964,7 @@ def groupb_values(d):
         assert i5["rho"] < e["rho"], "the text says IBU at five iterations retains less"
     v.update(tier1_values(d))
     v.update(prr_levels_values(d))
+    v.update(prr_s53_values(d))
     v.update(vhalf_band_values(d))
     v.update(t2a_values(d))
     v.update(d1_values(d))
@@ -2361,6 +2362,39 @@ def prr_levels_values(d):
             v[f"prr-lev-{L}-rho-{tt}"] = f"{x:.3f}"
             v[f"prr-lev-{L}-d-{tt}"] = f"{x - b0:+.3f}"
             assert v[f"prr-lev-{L}-d-{tt}"] not in ("+0.000", "-0.000"), (L, tt)
+    return v
+
+
+# Joseph's batch of 2026-11-16, item 4 (DECISION-20261116-joseph-paper-batch.md): section 5.3's settings sentences.
+# The readout names its levels only, so their parameters are FD-PRR-DECLARATION.md section 3.3's (:166-172): B0 is 5
+# iterations and (100 trees, 8 leaves); K2 is 2 iterations; C25 is (25, 4); O2 shows all three learners (pT, p_par).
+PRR_LEVEL_PARAMS = {"B0": {"iters": 5, "trees": 100, "leaves": 8}, "K2": {"iters": 2}, "C25": {"trees": 25, "leaves": 4}}
+PRR_NUMBER_WORDS = {2: "two", 4: "four", 5: "five", 10: "ten"}
+
+
+def prr_s53_values(d):
+    """Section 5.3's four sentences. Each settings claim is recomputed from the readout's table: the (level, truth)
+    pairs whose rho rises by more than the threshold are exactly K2 at the q3 tilt and C25 and O2 at both flagged
+    truths; dropping W (O4r, O4) or W and q3 (O3) moves rho by less than the printed bound at both truths."""
+    r, v = d["prr"], {}
+    t, floor = r["table"], r["readings"]["floor"]["bar_floor"]
+    lp = PRR_LEVEL_PARAMS
+    assert lp["K2"]["iters"] == int("K2"[1:]) and lp["C25"]["trees"] == int("C25"[1:]) and PRR_LEVELS["F1"][0] == ["K2"]
+    assert PRR_LEVELS["F2"][0] == ["C25"] and PRR_LEVELS["F4"][0] == ["O4r", "O4", "O3", "O2"]
+    levels = [L for f in PRR_FACTOR for part in PRR_LEVELS[f] for L in part]
+    dr = {(L, tt): t[f"{L}/{T}/s991000"]["rho"] - t[f"B0/{T}/s991000"]["rho"] for L in levels for tt, T in PRR_TRUTHS.items()}
+    up = {k for k, x in dr.items() if x >= floor}
+    assert up == {("K2", "q3"), ("C25", "gibuu"), ("C25", "q3"), ("O2", "gibuu"), ("O2", "q3")}, up
+    assert all(dr[k] > floor for k in up), "beyond the threshold"
+    w = max(abs(dr[(L, tt)]) for L in ("O4r", "O4", "O3") for tt in PRR_TRUTHS)
+    v["prr-s53-w-dmax"] = f"{math.ceil(100 * w) / 100:.2f}"
+    assert w < float(v["prr-s53-w-dmax"]) <= floor
+    v["prr-s53-b0-iters"] = PRR_NUMBER_WORDS[lp["B0"]["iters"]]
+    v["prr-s53-k2-iters"] = PRR_NUMBER_WORDS[lp["K2"]["iters"]]
+    v["prr-s53-c25-trees"] = str(lp["C25"]["trees"])
+    v["prr-s53-c25-leaves"] = PRR_NUMBER_WORDS[lp["C25"]["leaves"]]
+    graded = sorted({k.split("/")[1] for k in t if k.startswith("B0/") and k.endswith("/s991000")})
+    v["prr-lev-nother-word"] = PRR_NUMBER_WORDS[len(graded) - len(PRR_TRUTHS)]
     return v
 
 
