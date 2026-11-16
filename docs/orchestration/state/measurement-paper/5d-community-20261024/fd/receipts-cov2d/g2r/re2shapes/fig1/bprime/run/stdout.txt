@@ -1,0 +1,31 @@
+wrote ['fig1_validation.pdf', 'fig2_joint_localization.pdf', 'fig3_generator_context.pdf']
+wrote ['fig1_validation.pdf', 'fig2_joint_localization.pdf', 'fig3_generator_context.pdf']
+PASS F0 both producers ran: rc 0 / 0; figures ['fig1_validation.pdf', 'fig2_joint_localization.pdf', 'fig3_generator_context.pdf']
+PASS F1 PDF digests as given: old/fig1_validation.pdf 1ead58a2, new/fig1_validation.pdf ef466621, old/fig2_joint_localization.pdf 57f3cc60, new/fig2_joint_localization.pdf 57f3cc60, old/fig3_generator_context.pdf e9d1bb01, new/fig3_generator_context.pdf e9d1bb01
+PASS F2 fig2_joint_localization.pdf unchanged: 6 items, PDF 57f3cc601281950c
+PASS F2 fig3_generator_context.pdf unchanged: 20 items, PDF e9d1bb01fc79e061
+PASS F3a seven axes: 7 / 7
+PASS F3b the six other axes draw the same items: 23 items; differing axes []
+PASS F4 texts equal except the colour bar label: other axes differing []; removed {(7.5, '(OmniFold $-$ published)$/\\sigma_{\\mathrm{published}}$'): 1}; added {(8.0, '$r_i$'): 1}; colour bar old {'label': '(OmniFold $-$ published)$/\\sigma_{\\mathrm{published}}$', 'title': ''}, new {'label': '', 'title': '$r_i$'}
+PASS F5 the panel's histogram is of the 205 r_i: old panel items 0; hist calls 1; values == r_i: True (205); width 0.25..0.25; min |centre| 0; bins -3.125..3.125 cover r_i -2.572..1.910; counts 205; lines 1 (x [0.0, 0.0]); other kinds []
+PASS F6 printed count, mean and SD: old ('0.060', '0.535', '205'); new ('205', '0.060', '0.535'); from the arrays ('205', '0.060', '0.535')
+PASS F7 changed pixels inside the panel and the colour bar's label boxes: 147167 changed pixels (x 943..2093, y 1019..1839); 0 outside; image 2100x1860
+FIG1 IDENTITY PASS
+wrote ['fig1_validation.pdf', 'fig2_joint_localization.pdf', 'fig3_generator_context.pdf']
+wrote ['fig1_validation.pdf', 'fig2_joint_localization.pdf', 'fig3_generator_context.pdf']
+PASS F0 both producers ran: rc 0 / 0; figures ['fig1_validation.pdf', 'fig2_joint_localization.pdf', 'fig3_generator_context.pdf']
+PASS F1 PDF digests as given: old/fig1_validation.pdf 71a2ea48, new/fig1_validation.pdf fee46c1a, old/fig2_joint_localization.pdf 57f3cc60, new/fig2_joint_localization.pdf 57f3cc60, old/fig3_generator_context.pdf e9d1bb01, new/fig3_generator_context.pdf e9d1bb01
+PASS F2 fig2_joint_localization.pdf unchanged: 6 items, PDF 57f3cc601281950c
+PASS F2 fig3_generator_context.pdf unchanged: 20 items, PDF e9d1bb01fc79e061
+PASS F3a seven axes: 7 / 7
+PASS F3b the six other axes draw the same items: 23 items; differing axes []
+PASS F4 texts equal except the colour bar label: other axes differing []; removed {(7.5, '(OmniFold $-$ published)$/\\sigma_{\\mathrm{published}}$'): 1}; added {(8.0, '$r_i$'): 1}; colour bar old {'label': '(OmniFold $-$ published)$/\\sigma_{\\mathrm{published}}$', 'title': ''}, new {'label': '', 'title': '$r_i$'}
+PASS F5 the panel's histogram is of the 205 r_i: old panel items 0; hist calls 1; values == r_i: True (205); width 0.25..0.25; min |centre| 0; bins -3.125..3.125 cover r_i -2.572..1.910; counts 205; lines 1 (x [0.0, 0.0]); other kinds []
+PASS F6 printed count, mean and SD: old ('0.060', '0.535', '205'); new ('205', '0.060', '0.535'); from the arrays ('205', '0.060', '0.535')
+PASS F7 changed pixels inside the panel and the colour bar's label boxes: 147169 changed pixels (x 943..2093, y 1019..1839); 0 outside; image 2100x1860
+FIG1 IDENTITY PASS
+# run_bprime.sh 80edaa973b5b59c24198d2a16aadc874bd756842fcb0c44d391faeaee12e3c35, fig1_identity.py d50604b03407a6e9268856d988517ed5dc2d81e7d6e8c7262d2056688faa1f12
+old make_figs.py: 4e18c26681fc86dcfef2861c7c0126aa2df4839376d967b18f08a7d77664ee67 (7fc9ce93:publication/release/figs/make_figs.py)
+a: ef466621b97f7d2a55bb18c335aa5de32be529eb10f2215844ee8fa075886de0  fig1_validation.pdf; identity FIG1 IDENTITY PASS
+c: fee46c1a8b60a09701444373e9dbfbf106bffdd42759928b0979c8eeb57135d1  fig1_validation.pdf; identity FIG1 IDENTITY PASS
+BPRIME PASS: both arms drawn, fig2 and fig3 unchanged, identity PASS in both; no cluster access

@@ -153,3 +153,30 @@ These name `4e18c266` or `71a2ea48` as what ran, or what the paper prints today.
 As first packaged (`2dcc7d70`), the colour bar's side label `$r_i$` sat just left of the histogram's y-axis title and
 could read as part of it. The director reviewed #1182 at 64554d73 and moved it to a title above the bar (`9a575b36`).
 In the render it now sits above the bar's top end, clear of the histogram.
+
+## 9. The record run (2026-11-16): BPRIME PASS (`run/`)
+
+**Go:** the director's, on #1182 head `62157934`. **Where it ran:** a clean detached worktree at that head
+(`commit: 62157934… clean=yes` in each `RUN-fig1.txt`), with the section 5 command. It used the laptop only, and
+the worktree's porcelain was 0 before and after. Exit code 0.
+
+| arm | old Fig. 1 (redrawn by `4e18c266`) | new `fig1_validation.pdf` | fig2, fig3 | identity |
+|---|---|---|---|---|
+| `a`, route A | `1ead58a2…` | `ef466621b97f7d2a55bb18c335aa5de32be529eb10f2215844ee8fa075886de0` | `57f3cc60…`, `e9d1bb01…` | PASS, 10 of 10 checks |
+| `c`, amendment 3 | `71a2ea48…` | `fee46c1a8b60a09701444373e9dbfbf106bffdd42759928b0979c8eeb57135d1` | `57f3cc60…`, `e9d1bb01…` | PASS, 10 of 10 checks |
+
+- Both arms' inputs equal their reference records. Arm `a`'s four committed files are byte-equal to `run2/g2r/`.
+- Arm `a`'s `tmp/fig_arrays_q.npz` is `28daab09…`. That is the arrays file `test_bprime.sh` used.
+- Arm `c`'s new Fig. 1 equals the control arm's K1 in `re2c_fig1_local.sh`.
+
+**Committed in `run/`:**
+- `RUN-bprime.txt` and `stdout.txt`;
+- per arm: `RUN-fig1.txt`, `fig1_run.log.txt`, `identity.log.txt`, `identity/identity.json` and the new
+  `fig1_validation.pdf`.
+
+**Not committed, each by its digest in `workdir.sha256.txt`:**
+- the copied inputs and `tmp/fig_arrays_q.npz`;
+- `old/make_figs.py`, the git blob `4e18c266`;
+- fig2 and fig3, byte-identical to `../route-a/`'s committed copies;
+- the identity check's own renders: its old Fig. 1s are the committed `1ead58a2` and `71a2ea48`, and its new ones
+  equal the committed new Fig. 1s.
