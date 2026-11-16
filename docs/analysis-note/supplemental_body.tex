@@ -1014,6 +1014,28 @@ In $C_T$'s eigenbasis, ordered by decreasing eigenvalue, the \fvval{t2a-ntop} la
 % The director's option (a), 2026-11-09 (ledger.md "Style integration", ruling 1): the second test's clipping record is out of the paper's main text and here, in its own Supplement; reversible by Joseph, whose R5 (DECISION-20261102-joseph-1b-redesign.md:88) names the note. ll5d-clip-record is filled from the readout (ll5d_b @ ffbbb7455): each graded reading's weakened passes (weakened.weakened_cells), the flags meeting the clipping-artefact condition (clipping_artefact_reading), and clipcheck's largest |o_c| with its cell and the bound.
 The second five-observable test's design is the shared one of section~\ref{supp:covdesign} (table~\ref{tab:cov-design}). Its primary variant leaves out the GEANT4 neutron and proton bands, the two bands whose pseudo-experiment and simulation-side blocks disagreed in the checks of the stopped first test (section~\ref{supp:study-cov1}, below), for a reason not identified. The second variant includes them and is reported beside it. Negative expected counts in its pseudo-data are clipped to zero, and checks test the effect of the clipping before the main run, on a sample whose first 300 draws are the coverage pseudo-experiments' draws, at the same seeds. \fvgroup{ll5d}{Each cell's clipping offset $o_c$ is the response of its unfolded result to the mean mass that clipping adds to the pseudo-data, minus the clipping's shift of its truth, in units of $\sigma_c=\sqrt{(C_T)_{cc}}$, where $C_T$ is the covariance rebuilt at the tune. A flagged cell with $|o_c|\geq\delta^*=\fvval{ll5d-dstar}$, a bound fixed in advance at the offset that lowers the content of a unit Gaussian's $\pm1\sigma$ interval by \fvval{ll5d-cellres}, about the test's per-cell resolution in coverage, is read as a possible clipping artefact, a reading that cannot remove the flag. The clipping checks gave the following: \fvval{ll5d-clip-record}.\fvcase{ll5d-route}{offset-proceeded}{ The run continued past a check fixed in advance by a decision made after the check was seen: \fvval{ll5d-route-record}.}\fvcase{ll5d-route}{repaired}{ An earlier run stopped at a check fixed in advance, and the test then ran with a repair chosen after that stop was seen: \fvval{ll5d-route-record}. Its readings are therefore descriptive.}}
 
+% Added 2026-11-16 (the codex referee read at 3d75ed5d4, minor 4; the director): the test's four readings in one table, each cell a key
+% of director-helper-3's ll5d_verdicts (5a250dd52) from the graded readouts. Over-coverage is fd_1b_mc.grade's over_covers:
+% P(Bin(N, 1-p_c) <= N - n) < alpha_cell, the per-cell rule's upper tail; the chi2 se is std/sqrt(N)/ndf (fd_1b_mc.py :683-690).
+Table~\ref{tab:ll5d-results} gives the test's results.
+
+\begin{table}[htbp]
+\centering
+\caption{The second five-observable coverage test at the two held-out tunes, without (the primary variant) and with the GEANT4 neutron and proton bands. Joint count: the number of the \fvval{ll5d-ntoys} pseudo-experiments with $\chi^2\leq F^{-1}_{\chi^2_n}(P_0)$; the joint test flags under-coverage when the count is at most the value in parentheses (section~\ref{supp:covdesign-sec}). Mean $\chi^2/\mathrm{ndf}$: over the pseudo-experiments, with its standard error. Flagged cells: each flagged cell with its count of errors inside the interval and its flag threshold. Over-covering cells: the cells whose count lies in the upper tail at the per-cell level, $P(\mathrm{Bin}(\fvval{ll5d-ntoys},p_c)\geq\text{count})<\fvval{null-alpha}/16$; over-coverage is reported and is not a failure.\fvcase{ll5d-route}{repaired}{ The readings are descriptive, because the repair was chosen after the stop was seen.}\fvcase{ll5d-route}{offset-proceeded}{ The readings are descriptive, because the run continued past a check by a decision made after the check was seen.}}
+\label{tab:ll5d-results}
+\small
+\begin{tabular}{@{}llrr>{\raggedright\arraybackslash}p{0.16\textwidth}>{\raggedright\arraybackslash}p{0.3\textwidth}@{}}
+\toprule
+Tune & Bands & Joint count & Mean $\chi^2/\mathrm{ndf}$ & Flagged cells & Over-covering cells \\
+\midrule
+\fvval{f1-tune-g18-short} & without & \fvval{ll5d-g18-minus2-njoint} ($\leq$\fvval{ll5d-g18-minus2-kjoint}) & $\fvval{ll5d-g18-minus2-chi2ndf}\pm\fvval{ll5d-g18-minus2-chi2se}$ & \fvval{ll5d-g18-minus2-cells-tab} & \fvval{ll5d-g18-minus2-over-cells} \\
+\fvval{f1-tune-g18-short} & with & \fvval{ll5d-g18-all-njoint} ($\leq$\fvval{ll5d-g18-all-kjoint}) & $\fvval{ll5d-g18-all-chi2ndf}\pm\fvval{ll5d-g18-all-chi2se}$ & \fvval{ll5d-g18-all-cells-tab} & \fvval{ll5d-g18-all-over-cells} \\ \addlinespace
+\fvval{f1-tune-ar23-short} & without & \fvval{ll5d-ar23-minus2-njoint} ($\leq$\fvval{ll5d-ar23-minus2-kjoint}) & $\fvval{ll5d-ar23-minus2-chi2ndf}\pm\fvval{ll5d-ar23-minus2-chi2se}$ & \fvval{ll5d-ar23-minus2-cells-tab} & \fvval{ll5d-ar23-minus2-over-cells} \\
+\fvval{f1-tune-ar23-short} & with & \fvval{ll5d-ar23-all-njoint} ($\leq$\fvval{ll5d-ar23-all-kjoint}) & $\fvval{ll5d-ar23-all-chi2ndf}\pm\fvval{ll5d-ar23-all-chi2se}$ & \fvval{ll5d-ar23-all-cells-tab} & \fvval{ll5d-ar23-all-over-cells} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 % Batch 3 (the interim round #1025, group A item 9, 2026-11-10): S9 reorganized into separately labelled studies; its diagnosis, led by the paper's sentence on the stop.
 \subsection{Preliminary checks and redesign}
 \label{supp:study-cov1}

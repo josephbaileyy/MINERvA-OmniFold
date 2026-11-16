@@ -1,0 +1,96 @@
+== values_fived16.tex: every ll5d key the table and caption print, and the readings' prose keys (-stats, -cells) and class keys
+\@namedef{fv@f1-tune-ar23-short}{AR23}
+\@namedef{fv@f1-tune-g18-short}{G18}
+\@namedef{fv@ll5d-ntoys}{300}
+\@namedef{fv@null-alpha}{0.025}
+\@namedef{fv@ll5d-ar23-all}{under-coverage flagged}
+\@namedef{fv@ll5d-ar23-all-cells}{cell R07 (167 of 300 within its interval, flagged at 178 or fewer)}
+\@namedef{fv@ll5d-ar23-all-cells-tab}{R07 (167, $\leq$178)}
+\@namedef{fv@ll5d-ar23-all-chi2ndf}{3.69}
+\@namedef{fv@ll5d-ar23-all-chi2se}{0.10}
+\@namedef{fv@ll5d-ar23-all-clip-cells}{none}
+\@namedef{fv@ll5d-ar23-all-kjoint}{195}
+\@namedef{fv@ll5d-ar23-all-names}{cell R07}
+\@namedef{fv@ll5d-ar23-all-njoint}{4}
+\@namedef{fv@ll5d-ar23-all-over-cells}{R02, R03, R05, R06, R09, R11 and R15}
+\@namedef{fv@ll5d-ar23-all-stats}{4 of 300 in the joint region, flagged at 195 or fewer, mean $\chi^2/\mathrm{ndf}=3.69\pm0.10$}
+\@namedef{fv@ll5d-ar23-all-weak-cells}{none}
+\@namedef{fv@ll5d-ar23-all-why}{none}
+\@namedef{fv@ll5d-ar23-minus2}{under-coverage flagged}
+\@namedef{fv@ll5d-ar23-minus2-cells}{cell R07 (163 of 300 within its interval, flagged at 178 or fewer)}
+\@namedef{fv@ll5d-ar23-minus2-cells-tab}{R07 (163, $\leq$178)}
+\@namedef{fv@ll5d-ar23-minus2-chi2ndf}{3.70}
+\@namedef{fv@ll5d-ar23-minus2-chi2se}{0.10}
+\@namedef{fv@ll5d-ar23-minus2-clip-cells}{none}
+\@namedef{fv@ll5d-ar23-minus2-kjoint}{195}
+\@namedef{fv@ll5d-ar23-minus2-names}{cell R07}
+\@namedef{fv@ll5d-ar23-minus2-njoint}{1}
+\@namedef{fv@ll5d-ar23-minus2-over-cells}{R02, R03, R06, R09, R11 and R15}
+\@namedef{fv@ll5d-ar23-minus2-stats}{1 of 300 in the joint region, flagged at 195 or fewer, mean $\chi^2/\mathrm{ndf}=3.70\pm0.10$}
+\@namedef{fv@ll5d-ar23-minus2-weak-cells}{none}
+\@namedef{fv@ll5d-ar23-minus2-why}{none}
+\@namedef{fv@ll5d-g18-all}{under-coverage flagged}
+\@namedef{fv@ll5d-g18-all-cells}{none}
+\@namedef{fv@ll5d-g18-all-cells-tab}{none}
+\@namedef{fv@ll5d-g18-all-chi2ndf}{3.04}
+\@namedef{fv@ll5d-g18-all-chi2se}{0.08}
+\@namedef{fv@ll5d-g18-all-clip-cells}{none}
+\@namedef{fv@ll5d-g18-all-kjoint}{195}
+\@namedef{fv@ll5d-g18-all-names}{none}
+\@namedef{fv@ll5d-g18-all-njoint}{14}
+\@namedef{fv@ll5d-g18-all-over-cells}{R02, R03, R06 and R09}
+\@namedef{fv@ll5d-g18-all-stats}{14 of 300 in the joint region, flagged at 195 or fewer, mean $\chi^2/\mathrm{ndf}=3.04\pm0.08$}
+\@namedef{fv@ll5d-g18-all-weak-cells}{none}
+\@namedef{fv@ll5d-g18-all-why}{none}
+\@namedef{fv@ll5d-g18-minus2}{under-coverage flagged}
+\@namedef{fv@ll5d-g18-minus2-cells}{none}
+\@namedef{fv@ll5d-g18-minus2-cells-tab}{none}
+\@namedef{fv@ll5d-g18-minus2-chi2ndf}{3.07}
+\@namedef{fv@ll5d-g18-minus2-chi2se}{0.08}
+\@namedef{fv@ll5d-g18-minus2-clip-cells}{none}
+\@namedef{fv@ll5d-g18-minus2-kjoint}{195}
+\@namedef{fv@ll5d-g18-minus2-names}{none}
+\@namedef{fv@ll5d-g18-minus2-njoint}{12}
+\@namedef{fv@ll5d-g18-minus2-over-cells}{R02, R03, R05, R06 and R09}
+\@namedef{fv@ll5d-g18-minus2-stats}{12 of 300 in the joint region, flagged at 195 or fewer, mean $\chi^2/\mathrm{ndf}=3.07\pm0.08$}
+\@namedef{fv@ll5d-g18-minus2-weak-cells}{none}
+\@namedef{fv@ll5d-g18-minus2-why}{none}
+== nd-unfolding/fd_1b_mc.py :658-692 (grade)
+   658	    """Section 5.1-5.2 for one matrix: counts, the flags against the null, the chi2 statistics, pulls, attribution.
+   659	
+   660	    At full rank the non-null chi2 is cross-checked against a Cholesky chi2 to the relative ``chol_tol``. 1B's default
+   661	    (1e-9) is unchanged; COV2D-BINDING-2 addendum A5 passes max(1e-9, 10 kappa_2(C) eps). ``chol_out``, if given,
+   662	    receives the compared values (``ndf``, ``max_rel_diff``, ``tol``); a refusal carries the same dict as
+   663	    ``.compared``."""
+   664	    thr = fn.thresholds(null, E.shape[0])
+   665	    sigma = np.sqrt(np.diag(C))
+   666	    inside = np.sum(np.abs(E) <= sigma, axis=0)
+   667	    chi2, ndf = fn.chi2_nonnull(E, C)
+   668	    if ndf == C.shape[0]:
+   669	        L = np.linalg.cholesky(C)
+   670	        ref = np.sum(np.linalg.solve(L, E.T) ** 2, axis=0)
+   671	        compared = {"ndf": ndf, "max_rel_diff": float(np.max(np.abs(chi2 / ref - 1))), "tol": float(chol_tol)}
+   672	        if chol_out is not None:
+   673	            chol_out.update(compared)
+   674	        if compared["max_rel_diff"] > chol_tol:
+   675	            e = Refusal("the non-null chi2 and the Cholesky chi2 differ")
+   676	            e.compared = compared
+   677	            raise e
+   678	    elif chol_out is not None:
+   679	        chol_out.update({"ndf": ndf, "max_rel_diff": None, "tol": float(chol_tol)})
+   680	    joint = int(np.sum(chi2 <= null["chi2_cut"]))
+   681	    cell_flag = [bool(int(n) <= k) for n, k in zip(inside, thr["k_cell"])]
+   682	    joint_flag = joint <= thr["k_joint"]
+   683	    attribution = {f"R{c:02d}": fn.attribute(E[:, c], sigma[c], thr["k_cell"][c]) for c in range(E.shape[1]) if cell_flag[c]}
+   684	    over = [bool(fn.binom_cdf(E.shape[0] - int(n), E.shape[0], 1 - float(p)) < thr["alpha_cell"])
+   685	            for n, p in zip(inside, null["p_cell"])]
+   686	    z = E / sigma
+   687	    s_c = [float(np.quantile(np.abs(E[:, c]), min(float(null["p_cell"][c]), 1.0)) / sigma[c]) for c in range(E.shape[1])]
+   688	    return {"counts": inside.tolist(), "k_cell": thr["k_cell"], "cell_flag": cell_flag, "joint_count": joint,
+   689	            "k_joint": thr["k_joint"], "joint_flag": joint_flag, "ndf": ndf, "chi2_mean_over_ndf": float(chi2.mean() / ndf),
+   690	            "chi2_mean_over_ndf_se": float(chi2.std(ddof=1) / math.sqrt(chi2.size) / ndf), "over_covers": over,
+   691	            "pull_mean": z.mean(axis=0).tolist(), "pull_sd": z.std(axis=0, ddof=1).tolist(), "s_c": s_c,
+   692	            "attribution": attribution, "size": fn.size(null, thr),
+== supplemental_body.tex: the shared null and flag rule (unchanged)
+992:A cell under-covers when its count of the \fvval{null-ntoys} errors inside the interval is at most the largest $k$ with $P(\mathrm{Bin}(\fvval{null-ntoys},p_c)\leq k)<\fvval{null-alpha}/N_{\mathrm{cells}}$, and the joint region under-covers when its count is at most the largest $k$ with $P(\mathrm{Bin}(\fvval{null-ntoys},q)\leq k)<\fvval{null-alpha}$. The rule is one-sided: over-coverage is reported and is not a failure. The test size per tune (and, in the second five-observable test, per variant) is at most \fvval{null-size}. A cell whose clipping narrows the drawn spread below \fvval{cov-weak} of its variance reads ``passes, weakened by clipping'' when it is not flagged.
+990:With $e_c$ a pseudo-experiment's error in cell $c$, the nominal content of each per-cell interval $|e_c|\leq\sigma_c$ is $P_0=\fvval{null-p0}$ for a Gaussian error. Because the band draws are two-point or discrete, each test replaces $P_0$ with a draw-matched null content. The null error is the sum of one draw from each drawn band's centred discrete law at the tune (its universes' shifts with their draw probabilities) and one Gaussian with the remaining blocks' summed covariance, including $C_{\mathrm{model}}$. The components must reproduce $C_T$ to $\fvval{null-tol}$ of its scale. From $\fvval{null-nmc}$ simulated null errors, the null gives each cell's content $p_c$, the probability that $|e_c|\leq\sigma_c$, and the joint content $q$, the probability that $\chi^2=e^{\top}C_T^{+}e\leq F^{-1}_{\chi^2_{n}}(P_0)$, with $C_T^{+}$ the inverse on $C_T$'s non-null subspace and $n$ its dimension. The joint region is one-sided: it has an upper boundary only. Each content is lowered by \fvval{null-se-word} Monte Carlo standard errors before use.
