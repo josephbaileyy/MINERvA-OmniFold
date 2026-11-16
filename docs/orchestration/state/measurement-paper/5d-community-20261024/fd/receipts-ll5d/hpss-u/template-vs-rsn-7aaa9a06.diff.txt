@@ -12,3 +12,7 @@
 ---
 > GROUPS_IN_ORDER="null_roles toys extras sidecars"
 > N_ROWS=1759
+245c245
+< echo "ARCHIVE PASS: all three groups archived, hash-verified and every member re-read from HPSS"
+---
+> echo "ARCHIVE PASS: all $(set -- $GROUPS_IN_ORDER; echo $#) groups ($GROUPS_IN_ORDER) archived, hash-verified and every member re-read from HPSS"

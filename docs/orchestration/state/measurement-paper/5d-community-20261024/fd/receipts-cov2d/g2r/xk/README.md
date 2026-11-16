@@ -71,3 +71,18 @@ is sent by sha.
 
 `/pscratch/sd/j/josephrb/cov2d-xk-g2r-20261116/` (the two run directories with their copies, and the deploy clone),
 after this receipt merges. The original X run directory `gencmp-x-20261102/` is unchanged.
+
+## Follow-up (2026-11-16, the director's order): xk_copy's docstring line numbers
+
+`xk_copy.py`'s docstring cited `fd_xcov_steps.py` line numbers from before #1170 (d670e9a5c). They now cite
+`fd_xcov_steps.py` at sha256 `060db550`:
+- cmd_k's v0 read: :451;
+- v1_state: :428;
+- boot_state's native lanes: :417, and its xcov lanes: :421;
+- k_compute's paired replicas: :661-667, and its flux5: :614.
+
+Only the docstring changed. `xk_copy.py`'s sha256 goes from 50e0b850 to 1b9ed114. `test_xk_tools.py` still passes,
+and its output equals `test_xk_tools.out.txt` except for the temp-dir names.
+
+The filled connect (`connect/connect-g2r-xk.sh`) and `run/node/code.sha256.txt` pin 50e0b850, the version that ran.
+They are records and stay as they are. A new connect filled by `fill_connect_xk.py` takes the current sha.

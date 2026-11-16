@@ -1,0 +1,18 @@
+PASS inputs: all 11 equal ../control/RUN-fig1.txt
+PASS control: rc 0 (K1: fig1_validation.pdf reproduces 71a2ea48 (amendment 3's refined Fig. 1) byte for byte; no cluster write)
+PASS control: fig1_validation.pdf is 71a2ea48, K1 line printed
+PASS control: no ssh and no upload (no cluster write)
+PASS control: 9 fetches, each from partc-r2 except fig_arrays.npz
+PASS control: all three outputs equal the 2026-11-16 control's
+PASS control-with-dir: rc 2 (control: takes no part C directory (it reads /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partc-r2))
+PASS control-with-dir: refused before the workdir
+PASS purity-gone: rc 2 (arm: control or refined, not 'purity')
+PASS purity-gone: the retired arm refuses
+PASS control-chain: rc 3 (in/chain.json: sha256 5e13c380d6093b4b5dd681fff7b8205620d0417a71a287636ce0e0221a188a7f != 81dcf2d0367d931eaee2)
+PASS control-chain: a chain.json other than amendment 3's refuses before any other input
+PASS refined-no-dir: rc 2 (refined: name the part C directory)
+PASS refined: rc 0 (copied to saul.nersc.gov:/x/partc/fig1/)
+PASS refined: unchanged behaviour (fetches from <partc dir>, dir check by ssh, upload to <partc dir>/fig1/)
+PASS mutant-k1-pin: rc 3 (out/fig1_validation.pdf: sha256 71a2ea488ab758a466d40b7d5a7a061ebd95b1cdb90a79427c3da968238b6427 != 71a2ea498a)
+PASS mutant-k1-pin: the K1 check fires
+FIG1 CONTROL-ARM TEST PASS
