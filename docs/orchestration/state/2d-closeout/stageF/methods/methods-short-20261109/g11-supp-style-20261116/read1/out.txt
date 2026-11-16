@@ -1,0 +1,7 @@
+1. **S6 drops NEEDED limitations.** `change.diff:168,170` states that per-band endpoint displacements are not stored, the stored mean-shift norm is not quoted, and a single-throw superposition probe cannot test nonlinear response. The replacement (`change.diff:172`, rendered on page 20) omits all three. These qualify reproducibility and the test’s limitations under `records.txt:14`. Restore these qualifications and identify the test as a joint ensemble; leave procedural mechanics behind the pointer.
+
+2. **The hyperparameter claim becomes narrower.** The old unqualified “No hyperparameter search was performed on data” (`change.diff:98`) becomes restricted to the two OmniFold classifiers and missed-event regressor (`change.diff:100`, page 10). This no longer makes the same general claim, also stated in `records.txt:9`. Restore the unqualified sentence, retaining the explanation that refinement capacity and five-observable iteration count were chosen in simulation.
+
+3. **One configuration letter remains outside the table.** `change.diff:38` still says “the refinement classifier of (e),” printed on page 7. This violates the letters-only-in-`tab:configs` scope (`records.txt:17`). Replace it with “the refinement classifier of the five-observable estimator.”
+
+VERDICT: FAIL
