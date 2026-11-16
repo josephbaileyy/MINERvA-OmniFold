@@ -1,0 +1,10 @@
+# family 7 identity (identity_family7.py), 2026-11-16T04:31Z; base producer = the file at 748605637 (sha256 6165b50ed5ecace3...), new = this commit's
+# drawing interpreter: figenv mpl3108np126 (matplotlib 3.10.8, numpy 1.26.4, the run's versions); comparison: figenv mpl3108 (PyMuPDF)
+a. pt: words differ 0; 12 path groups, mismatches 0, max 0.0000 pt; raster (500, 761, 3) differing 0 -> PASS
+a. pz: words differ 0; 12 path groups, mismatches 0, max 0.0000 pt; raster (500, 761, 3) differing 0 -> PASS
+a. mutant ('Total' x 1.01 in pt): path mismatches found True -> KILLED
+b. pt: base and new default PDFs byte-identical True -> PASS
+b. pz: base and new default PDFs byte-identical True -> PASS
+c. pt: 10 step artists, data/label/colour/linestyle equal True -> PASS
+c. pz: 10 step artists, data/label/colour/linestyle equal True -> PASS
+ALL PASS

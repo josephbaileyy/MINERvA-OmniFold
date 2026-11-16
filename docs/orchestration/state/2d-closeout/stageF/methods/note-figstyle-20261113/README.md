@@ -351,3 +351,28 @@ Families 3 and 4 ran after sacct showed rdx_s1_1A (61315648) COMPLETED (`runs/fa
 
 **NOT CITABLE FOR:** any value, caption or reading; any figure not listed above; Joseph's approval of the look, which
 comes in the end-of-task batch.
+
+## Family 7: fig6/7 on RE-2-shapes run 2 (2026-11-15)
+
+**Under** the director's approval of 2026-11-15 (the G2R follow-on). The figures were held for the regenerated covariance
+(C_new) and are now drawn from RE-2-shapes run 2 (`fd/receipts-cov2d/g2r/re2shapes/run2/g2r/`, main d58d0d18, #1167).
+
+**The method.** `2d-unfolding/uq/plot_uncertainty_fig6_7_style.py` gains two opt-in flags:
+- `--from-projections FILE` draws from a `--projections-json` dump and reads no ROOT input;
+- `--print-style` sets the note's fonts and printed width (0.49 of the text width), scales line widths by 0.6, puts
+  the legend below the axes and reserves the tag's header band.
+Neither flag changes a drawn value. Run 2's `fig67_projections.json` holds every drawn curve, and the argv comes from
+`logs/steps.tsv`, row fig67 (`--include-ml always --ml-label "Training seed"`, the extra block "Run period").
+
+**Identity** (`tools/identity_family7.py`, with `tools/fakeroot7`, under which any ROOT use raises). Output:
+`runs/family7/IDENTITY.txt`, ALL PASS.
+- (a) The JSON path, without print style, reproduces run 2's committed PDFs (7bd24d16…, d390560e…): 0 word
+  differences, 0 path mismatches, and 0 differing pixels at pdftoppm -r 100. A mutant (one curve × 1.01) is killed.
+- (b) The default `draw_one` writes PDFs byte-identical to the base producer's (SOURCE_DATE_EPOCH fixed).
+- (c) The print style leaves every StepPatch's values, edges, label, colour and line style equal.
+- Drawn with matplotlib 3.10.8 and numpy 1.26.4, the run's versions (its PDFs name matplotlib v3.10.8).
+
+**Installed:** `figs/MEFHC_fig6_7_uncertainty_{pt,pz}.pdf`, pinned in make_figures.sh (031b12a1…, b1cfd7cc…).
+`runs/family7/INPUTS.tsv` holds every sha. The RE-2 part C `install_re2_fig` lines for these two figures are
+commented out. The RE-2 integration ledger's G rows for them (re2-integration/ledger.tsv) record that earlier
+install and no longer match make_figures.sh. That checker runs in no build or test.

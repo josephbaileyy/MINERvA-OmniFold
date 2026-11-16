@@ -223,8 +223,8 @@ install_re2_fig() {  # install_re2_fig <basename under $RE2G and in $FIGDIR> <sh
   fi
   echo "  installed $1 ($want)"
 }
-install_re2_fig MEFHC_fig6_7_uncertainty_pt.pdf        6055be9534cfaa1e149d59ec54cde0be7bc28272cbe584bafb5aab9751b97cd3
-install_re2_fig MEFHC_fig6_7_uncertainty_pz.pdf        ef0de3504fcbfb49d83073f0cf59ef7af5abf00ce1bda22fe5943a49bb0e6f62
+# install_re2_fig MEFHC_fig6_7_uncertainty_pt.pdf        6055be9534cfaa1e149d59ec54cde0be7bc28272cbe584bafb5aab9751b97cd3   # G2R (2026-11-15): replaced by the print-style install below, drawn from RE-2-shapes run 2
+# install_re2_fig MEFHC_fig6_7_uncertainty_pz.pdf        ef0de3504fcbfb49d83073f0cf59ef7af5abf00ce1bda22fe5943a49bb0e6f62   # G2R (2026-11-15): replaced by the print-style install below, drawn from RE-2-shapes run 2
 install_re2_fig uq_spread_2d.pdf                       a51bc4ee186a2c3bba942f6de6cd4bed74b8de7508e763e0b0bc698a0a78e9de
 install_re2_fig uq_corr_2d.pdf                         fea063cc6eeba9925bef2ac7c096118fdd23a7f443aea8afde4392de214c75b1
 # install_re2_fig MEFHC_5iter_fig13.pdf                  4924917e903b5e4ee6133f5e37b91aa11f301d7ea7242561680ea1ba10a4fb3b
@@ -353,6 +353,10 @@ install_printstyle_fig fps_pilot_compare_MEFHC.pdf           a910ccca6084b5f652d
 install_printstyle_fig fps_prior_envelope_MEFHC.pdf          55b3aeeb06e3fffcdcbfd7b0d30450378cee91fdc1e885095f677a6e873e68de
 install_printstyle_fig eavailW_band.pdf                      c9e7fcdbefa35e609272ec56616a449c85896cadc6e18b7b2f6366384722144a
 install_printstyle_fig paper_joint_nulls.pdf                 66888ffc0f3e8e9d41b78e4962063cbc67f2649af6cdef82532c26313d5865bb
+# fig6/7 (family 7; the director's approval of 2026-11-15): plot_uncertainty_fig6_7_style.py --from-projections on RE-2-shapes
+# run 2's fig67_projections.json (main d58d0d18, #1167) --print-style; identity: note-figstyle-20261113/runs/family7/
+install_printstyle_fig MEFHC_fig6_7_uncertainty_pt.pdf      031b12a1c0c52f59baf8c14360d652c87b000232a3294a131c11f71068f8624f
+install_printstyle_fig MEFHC_fig6_7_uncertainty_pz.pdf      b1cfd7ccf1ca2f563f1c684422aefc915c011db041cd09d9deb03dd2164ba9f4
 
 echo
 echo "== paper-only vector crops =="
