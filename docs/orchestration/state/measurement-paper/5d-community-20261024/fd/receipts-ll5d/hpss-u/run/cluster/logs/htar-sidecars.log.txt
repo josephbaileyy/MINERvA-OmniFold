@@ -1,0 +1,201 @@
+HTAR: a   SHA256SUMS.sidecars
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-block-61214607-814630.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-block-61214609-419920.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-block-61214609-419930.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-block-61214609-419933.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-block-61214609-419934.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-block-61214609-419944.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-block-61214609-419946.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-block-61214609-419947.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-block-61214609-419948.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-central-61184880-1892566.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-clipmean-61184880-1892597.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-seed-61214607-813696.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-stat-61184880-1894437.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-stat-61214609-436062.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-stat-61214610-626960.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-stat-61214610-626961.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214610-626922.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214610-626923.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214610-626943.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214610-626944.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214610-626958.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214610-626959.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214612-713900.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214612-713917.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214612-713922.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214612-713935.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214612-713936.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214612-713937.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214612-713938.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214612-713939.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214614-904526.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214614-904528.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214614-904547.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214614-904548.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214614-904561.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214614-904562.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214614-904563.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214614-904564.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214615-1092219.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214615-1092220.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214615-1092221.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214615-1092236.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214615-1092237.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214615-1092238.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214615-1092240.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214615-1092241.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-data-control-61184880-1892565.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-data-control-61184880-1892593.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-data-control-61184880-1892595.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-data-control-61184880-1892596.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-block-61214597-684539.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-block-61214597-684540.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-block-61214597-684554.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-block-61214597-684557.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-block-61214597-684565.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-block-61214597-684567.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-block-61214597-684568.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-block-61214597-686201.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-block-61214601-1906963.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-central-61184880-1892570.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-clipmean-61184880-1892589.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-seed-61214597-684561.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-stat-61214601-1906944.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-stat-61214601-1906975.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-stat-61214601-1917133.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61184880-1894634.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61184880-1894712.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214601-1906943.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214601-1906960.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214601-1906969.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214601-1906972.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214601-1906974.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214601-1922472.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214604-571052.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214604-571053.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214604-571054.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214604-571055.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214604-571067.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214604-571069.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214604-571070.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214604-571071.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214605-733291.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214605-733293.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214605-733300.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214605-733309.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214605-733314.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214605-733316.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214605-733317.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214605-733318.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214607-805732.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214607-805749.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214607-805750.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214607-805753.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214607-805763.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214607-805764.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214607-805765.json
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214607-805766.json
+HTAR: a   /tmp/HTAR_CF_CHK_1378108_1794837091
+HTAR Create complete for /home/j/josephrb/mnv-ll5d-unfolds-r2-20261116/sidecars.tar. 4505600 bytes written for 98 member files, max threads: 50 Transfer time: 0.014 seconds (331.955 MB/s) wallclock/user/sys: 0.275 0.022 0.032 seconds
+HTAR: v SHA256SUMS.sidecars, 13835 bytes, 29 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-block-61214607-814630.json, 13789 bytes, 28 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-block-61214609-419920.json, 18115 bytes, 37 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-block-61214609-419930.json, 18091 bytes, 37 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-block-61214609-419933.json, 12419 bytes, 26 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-block-61214609-419934.json, 18077 bytes, 37 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-block-61214609-419944.json, 18115 bytes, 37 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-block-61214609-419946.json, 18115 bytes, 37 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-block-61214609-419947.json, 18143 bytes, 37 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-block-61214609-419948.json, 17901 bytes, 36 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-central-61184880-1892566.json, 2380 bytes, 6 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-clipmean-61184880-1892597.json, 2546 bytes, 6 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-seed-61214607-813696.json, 2379 bytes, 6 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-stat-61184880-1894437.json, 2380 bytes, 6 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-stat-61214609-436062.json, 2379 bytes, 6 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-stat-61214610-626960.json, 2512 bytes, 6 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-stat-61214610-626961.json, 2512 bytes, 6 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214610-626922.json, 67073 bytes, 133 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214610-626923.json, 65587 bytes, 130 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214610-626943.json, 64840 bytes, 128 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214610-626944.json, 68555 bytes, 135 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214610-626958.json, 64105 bytes, 127 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214610-626959.json, 66330 bytes, 131 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214612-713900.json, 65579 bytes, 130 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214612-713917.json, 64840 bytes, 128 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214612-713922.json, 64844 bytes, 128 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214612-713935.json, 66322 bytes, 131 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214612-713936.json, 64844 bytes, 128 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214612-713937.json, 66326 bytes, 131 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214612-713938.json, 64101 bytes, 127 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214612-713939.json, 65587 bytes, 130 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214614-904526.json, 69636 bytes, 138 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214614-904528.json, 67407 bytes, 133 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214614-904547.json, 68150 bytes, 135 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214614-904548.json, 65450 bytes, 129 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214614-904561.json, 68893 bytes, 136 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214614-904562.json, 67403 bytes, 133 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214614-904563.json, 71118 bytes, 140 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214614-904564.json, 66668 bytes, 132 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214615-1092219.json, 66664 bytes, 132 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214615-1092220.json, 68142 bytes, 135 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214615-1092221.json, 68889 bytes, 136 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214615-1092236.json, 68150 bytes, 135 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214615-1092237.json, 67403 bytes, 133 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214615-1092238.json, 67407 bytes, 133 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214615-1092240.json, 68146 bytes, 135 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-ar23-toy-61214615-1092241.json, 68885 bytes, 136 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-data-control-61184880-1892565.json, 2954 bytes, 7 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-data-control-61184880-1892593.json, 2875 bytes, 7 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-data-control-61184880-1892595.json, 2211 bytes, 6 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-data-control-61184880-1892596.json, 2950 bytes, 7 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-block-61214597-684539.json, 17856 bytes, 36 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-block-61214597-684540.json, 18114 bytes, 37 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-block-61214597-684554.json, 18194 bytes, 37 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-block-61214597-684557.json, 18148 bytes, 37 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-block-61214597-684565.json, 18086 bytes, 37 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-block-61214597-684567.json, 18114 bytes, 37 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-block-61214597-684568.json, 18114 bytes, 37 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-block-61214597-686201.json, 17507 bytes, 36 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-block-61214601-1906963.json, 8623 bytes, 18 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-central-61184880-1892570.json, 2379 bytes, 6 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-clipmean-61184880-1892589.json, 2543 bytes, 6 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-seed-61214597-684561.json, 2378 bytes, 6 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-stat-61214601-1906944.json, 2511 bytes, 6 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-stat-61214601-1906975.json, 2511 bytes, 6 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-stat-61214601-1917133.json, 2378 bytes, 6 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61184880-1894634.json, 30924 bytes, 62 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61184880-1894712.json, 29576 bytes, 59 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214601-1906943.json, 67068 bytes, 132 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214601-1906960.json, 64100 bytes, 127 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214601-1906969.json, 66329 bytes, 131 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214601-1906972.json, 66321 bytes, 131 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214601-1906974.json, 64847 bytes, 128 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214601-1922472.json, 56513 bytes, 112 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214604-571052.json, 64851 bytes, 128 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214604-571053.json, 67811 bytes, 134 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214604-571054.json, 68562 bytes, 135 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214604-571055.json, 63357 bytes, 125 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214604-571067.json, 64843 bytes, 128 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214604-571069.json, 67072 bytes, 132 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214604-571070.json, 64847 bytes, 128 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214604-571071.json, 67076 bytes, 133 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214605-733291.json, 68278 bytes, 135 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214605-733293.json, 67547 bytes, 133 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214605-733300.json, 68278 bytes, 135 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214605-733309.json, 67547 bytes, 133 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214605-733314.json, 69760 bytes, 138 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214605-733316.json, 68282 bytes, 135 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214605-733317.json, 69764 bytes, 138 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214605-733318.json, 64843 bytes, 128 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214607-805732.json, 69029 bytes, 136 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214607-805749.json, 68278 bytes, 135 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214607-805750.json, 67543 bytes, 133 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214607-805753.json, 59362 bytes, 117 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214607-805763.json, 69768 bytes, 138 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214607-805764.json, 68286 bytes, 135 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214607-805765.json, 71250 bytes, 141 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/atime-g18-toy-61214607-805766.json, 68282 bytes, 135 media blocks
+HTAR: v /tmp/HTAR_CF_CHK_1378108_1794837091, 256 bytes, 2 media blocks
+HTAR: Verify complete. 0 total errors, 99 total objects (99 Files,0 Dirs,0 Hard Links,0 symlinks) wallclock/user/sys: 0.270 0.022 0.012 seconds
+HTAR: HTAR SUCCESSFUL

@@ -1,0 +1,5 @@
+ssh rc=0
+node login14 staged sha256 2f330bc9684a0115ccd496b94d538cda2da43d0dceb66c97f47645c5feef69f1
+detached pid 1376079, output /dev/shm/hpssr-archive.1375470.sh.out
+script rc=0
+launcher rc=0

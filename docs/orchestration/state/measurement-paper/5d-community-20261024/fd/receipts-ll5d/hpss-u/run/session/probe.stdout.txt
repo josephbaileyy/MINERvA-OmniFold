@@ -1,0 +1,27 @@
+ssh rc=0
+host login14 2026-11-16T13:49:37Z slurm_job=''
+/usr/bin/hsi
+/usr/bin/htar
+/global/common/software/nersc/bin/hpssquota
+/usr/bin/timeout
+/usr/bin/setsid
+/usr/bin/sha256sum
+/usr/bin/python3
+tmpfs           353G   54G  299G  16% /dev/shm
+|                                pscratch |   17.83TiB |    20.00TiB |          89.1% |      5.29M |      10.00M |          52.9% |
+| josephrb usage on HPSS charged to m3246 |  460.25GiB |   512.00GiB |          89.9% |          - |           - |              - |
++-----------------------------------------+------------+-------------+----------------+------------+-------------+----------------+
+/home/j:
+josephrb/  
+home rc=0
+*** ls: No such file or directory [-2: HPSS_ENOENT] 
+    /home/j/josephrb/mnv-ll5d-unfolds-r2-20261116
+target rc=64
+ls: cannot access '/pscratch/sd/j/josephrb/hpss-ll5d-u-20261116': No such file or directory
+O_NOATIME True
+squeue rc=0
+list rows 1759
+stat pass 1
+   1759 ok
+stat pass 2
+   1759 ok
