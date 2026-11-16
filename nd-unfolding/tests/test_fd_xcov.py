@@ -519,5 +519,40 @@ class V1Lookup(unittest.TestCase):
                 self.assertEqual(XS.npy_shape(p), (37,))
 
 
+class XkProducts(unittest.TestCase):
+    """xk (k --products g2r): re2 is K as it ran, constant for constant; g2r re-points exactly Q_R, S5_R, C-R, cmodel_R
+    and the 2D band vectors, and pins every product K reads; the CLI default is re2."""
+
+    def test_re2_is_k_as_it_ran(self):
+        r = XS.PRODUCTS["re2"]
+        self.assertEqual((r["q_r"], r["s5_r"], r["cr"], r["cmodel_r"], r["pins"]), (XS.Q_R, XS.S5_R, XS.CR, XS.CMODEL_R, ()))
+        self.assertEqual(r["uni2d"]("2p2h", 0), XS.RE2 / "partb/out/U_2p2h_0/xsec.root")
+
+    def test_g2r_repoints_exactly_the_2d_products(self):
+        g = XS.PRODUCTS["g2r"]
+        self.assertEqual(g["q_r"], XS.P / "cov2d-re2shapes-20261115/g2r/combination/s5_plus_playlist.npz")
+        self.assertEqual(g["s5_r"], XS.P / "cov2d-re2shapes-20261115/g2r/s5/production_cov.npz")
+        self.assertEqual(g["uni2d"]("Flux", 7), XS.P / "cov2d-g2r-20261112/out/A_Flux_7/xsec.root")
+        self.assertEqual(set(XS.PRODUCTS["re2"]), set(g))
+
+    def test_g2r_committed_inputs_are_at_their_digests(self):
+        g = XS.PRODUCTS["g2r"]
+        for path in (g["cr"], g["cmodel_r"]):
+            XS.committed_sha(path, XS.COMMITTED[path], "xk input")     # raises X.Stop unless the committed bytes match
+
+    def test_g2r_pins_cover_every_universe_and_both_matrices(self):
+        g = XS.PRODUCTS["g2r"]
+        pins = X.pins((X.INPUTS_E, X.INPUTS_X) + g["pins"])
+        want = [str(g["uni2d"](b, i)) for b, i in XS.universe_list()] + [str(g["q_r"]), str(g["s5_r"])]
+        self.assertEqual(len(want), 177)
+        self.assertEqual([w for w in want if w not in pins], [])
+
+    def test_the_cli_default_is_re2(self):
+        self.assertEqual(X.build_args(["k", "--run-dir", "/x"]).products, "re2")
+        self.assertEqual(X.build_args(["k", "--run-dir", "/x", "--products", "g2r"]).products, "g2r")
+        with self.assertRaises(SystemExit):
+            X.build_args(["k", "--run-dir", "/x", "--products", "u"])
+
+
 if __name__ == "__main__":
     unittest.main()
