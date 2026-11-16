@@ -1,0 +1,27 @@
+1. **Use B with the median uncertainties moved to the caption.** The histogram makes the concentration, asymmetry and tails visible; A supplies only two moments. Beside the map, it gives a useful summary without requiring readers to infer a distribution from colors. Keep mean and standard deviation in one small annotation, and explicitly describe the histogram as descriptive. The gain is modest but worthwhile; A is defensible, and replacing it is not a prerequisite for submission.
+
+2. **B does invite a conventional “pull distribution” reading.** Omitting the Gaussian helps, but does not eliminate that association. Use “standardized bin differences,” avoid “pulls,” and put the shared-data/cross-covariance qualification in the caption. Neither a narrow distribution nor a near-zero mean establishes compatibility or uncertainty calibration.
+
+The map contains the same underlying values, but communicates their **locations and spatial patterns**. The histogram communicates their **frequency distribution**, while discarding locations and correlations. Each reported bin gets equal weight, regardless of physical area or event content; the 205 entries are not independent repetitions.
+
+3. Concrete fixes:
+
+- **Correct “RMS.”** The code prints `p.std()`, which is the standard deviation about the mean. Label 0.535 “SD,” and revise the surrounding text accordingly. If retaining “RMS,” calculate \(\sqrt{\langle r^2\rangle}\), approximately **0.538** from the rounded numbers. This applies to A too. :codex-file-citation{path="/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/figref/make_figs.diff" purpose="source"}
+- **Labels:** define \(r_i\) once in the caption; label the histogram x-axis “Standardized bin difference \(r_i\)” and color bar simply \(r_i\). Repeating the full formula on both is unnecessary. Use “Number of reported bins” on the y-axis.
+- **Binning:** the present width, 0.25, is reasonable. Center one histogram interval on zero, so zero lies within the central bar rather than on a boundary. Keep the thin zero line; omit Gaussian fits and reference curves.
+- **Tails:** remove `np.clip`. Show the full range, or explicitly mark underflow/overflow and their counts. The diff establishes clipping is enabled; it does **not** establish that any values actually exceed the limits.
+- **Annotations:** remove the histogram legend and median block. Put “205 bins / mean 0.060 / SD 0.535” together in the upper-right whitespace.
+- **Typography/layout:** target roughly 8–9 pt at final printed width for annotations and ticks. Align the bottom-right plotting box with the upper-right panels; B currently shifts it right and narrows the map.
+
+Suggested replacement caption text for the bottom-right panel, with medians moved into the caption:
+
+> Bottom right: distribution of \(r_i=(\sigma_i^{\mathrm{OmniFold}}-\sigma_i^{\mathrm{published}})/\sqrt{C_{ii}^{\mathrm{published}}}\) over the 205 reported two-dimensional bins, each counted once (mean 0.060, standard deviation 0.535). The results share data and systematic uncertainties; their cross-covariance is unavailable. This descriptive distribution has no assumed \(N(0,1)\) reference and provides no calibrated compatibility test. Median relative uncertainties over these bins are 6.46% for this work and 6.85% for the published result.
+
+Use that wording after resolving the numerical discrepancy below.
+
+4. Other fixes, ranked:
+
+1. **Numerical consistency—essential:** the whole-paper PDF prints **6.41%**, whereas the supplied A/B figures print **6.46%**. Reconcile the figure version and median definition before submission. :codex-file-citation{path="/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/figref/paper-full.pdf" purpose="source"}
+2. **Band interpretation—substantive:** state how the ratio bands are constructed. Readers should not mistake separately rescaled uncertainties for a propagated uncertainty on the correlated ratio. Keep the covariance-component exclusion explicit when quoting the medians.
+3. **Map interpretation—moderate:** retain the equal-cell explanation; strengthen it to “cell widths are not proportional to physical bin widths.” Add a small gray/hatch key for unreported cells, which currently resemble near-zero cells.
+4. **Navigation—cosmetic:** add panel letters and identify the logarithmic \(p_\parallel\) scale. The overall arrangement and top-panel legend otherwise work well.

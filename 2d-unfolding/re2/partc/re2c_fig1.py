@@ -11,6 +11,10 @@
     - check 1 requires cov2d_Q_205.npz's x to equal that E_R, and production_cov.npz and playlist_term.npz to carry
       arm = refined (cov2d_Q_205.npz is build_q's own output and has no arm key);
     - the inset's \\uqMedian is Q_R's (budget_Q.json), as before.
+Fig. 1 version B' (make_figs.py since 2026-11-16, DECISION-20261116-joseph-paper-batch.md item 15) no longer prints
+\\uqMedian: the bottom-right panel is the histogram of the 205 r_i, and the medians are in the caption. The --values
+check is kept. It still requires exactly one \\uqMedian, equal to budget_Q.json's Q median at 2 decimals, so the
+uqmedian.tex a run records stays validated against its budget.
 
 The original docstring follows.
 
@@ -46,7 +50,7 @@ import numpy as np
 PINS = {
     "npz": "72394a2b4eff9f14b01903ff97525bcb690c2adee58ccaf573a8d95139b415b8",
     "reduce": "2ecfc243ab4a6c508a69df0e231676019106f3ad86f34e3ac3423f7bd2bca9ce",
-    "make_figs": "4e18c26681fc86dcfef2861c7c0126aa2df4839376d967b18f08a7d77664ee67",
+    "make_figs": "9a575b36fb332dfe3e85c9eda65e4df3524b497b41de4e96fe6f8f0c9e25c0c1",
     "s5_npz": "6689d2fc2a795a72e66ee953a32d94c7906dd81a866771979f379c5f163a9ddc",
     "playlist_npz": "c1723cb5e185ae7a6176fbbe523432ab87877c8cddcfe721eaed71f0a43b9476",
     "combination": "050e256023277ec9da492ffa7b9d129275c3afa2bfc6c47091999d88de5bf18d",

@@ -1,0 +1,12 @@
+24,26c24,26
+< OUT=/pscratch/sd/j/josephrb/hpss-rsn-20261111
+< H=/home/j/josephrb/mnv-rsn-inputs-20261111
+< LIST="$HERE/hpss_rsn_list.tsv"; LIST_SHA=0dafaac8e3664875f496974fb79f73e319ada7647eb5106dbe6626cefa9d99c6
+---
+> OUT=/pscratch/sd/j/josephrb/hpss-ll5d-u-20261116
+> H=/home/j/josephrb/mnv-ll5d-unfolds-r2-20261116
+> LIST="$HERE/hpss_ll5d_u_list.tsv"; LIST_SHA=980bb95e20eac386a220bb7d0dbb16a5a3477248688f9a72bc07671a7ad5842d
+48c48
+<     S="$HERE/hpss_rsn.sh"; SHA=012a9618adf7e4b493700954747f5afd1ea4235907c1b2f794e754e2062311d8
+---
+>     S="$HERE/hpss_ll5d_u.sh"; SHA=a620d482b8bbb2cc99b0ff46bf8a47c179e96669515e2ba46bdbbc5dab84aa3f

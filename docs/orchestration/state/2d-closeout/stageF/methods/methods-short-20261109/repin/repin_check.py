@@ -103,7 +103,7 @@ for name, grp in PENDING_MAP.items():
 # RP44: the code-location map #981's README gains (codemap.tsv). Each entry's file must have its pinned sha256 at its
 # commit, and its anchor must lie inside its cited lines. The Supplement's tab:codemap block is pinned by sha256 while
 # it exists: a change means RP44's map must be re-checked against it; once journal-editor cuts it, RP44 is the source.
-CODEMAP_TABLE_SHA = "11de5b171ea0f3e11cee7eecc10f15108cc4b944227889ed9d2c9113fa96c9d2"   # at f03dbd758
+CODEMAP_TABLE_SHA = "0b9ab61090d432517a6dee76a94f04b8d4f4cedcf8d22e4c90c929cbf8f81be6"   # at 1515a6abe (journal-editor shortened the caption; the 13 rows equal f03dbd758's, 11de5b17)
 cm = [l.split("\t") for l in open(os.path.join(HERE, "codemap.tsv")).read().splitlines()
       if l and not l.startswith("#") and not l.startswith("step\t")]
 nbad = 0

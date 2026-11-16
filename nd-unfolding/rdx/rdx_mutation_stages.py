@@ -20,7 +20,7 @@ FILES = ("rdx_cap.py", "rdx_merge.py", "rdx_paths.py", "sbatch_rdx_evloop.sh", "
          "rdx_connect.sh", "rdx_connect_launch.sh", "rdx_tasks.tsv", "rdx_common.py", "rdx_dump.py", "test_rdx_stages.py",
          "setup_salloc_env.exports")
 CP, MG, PA, EV, SM, AR, CN, LA, TT = FILES[:9]
-EXPECTED_TESTS = 16
+EXPECTED_TESTS = 18
 MUTATIONS = [
     ("unlisted submissions ignored", CP, '        if kv["id"] not in listed:\n', "        if False:\n",
      "test_spent_held_unlisted_and_the_wanted_ceiling"),
@@ -71,6 +71,23 @@ MUTATIONS = [
      "test_the_event_loop_job_allows_the_connects_b"),
     ("the connect changed under its pin", CN, "# RDX's connect (RDX-DECLARATION.md", "# RDX connect (RDX-DECLARATION.md",
      "test_the_launcher_pins_the_connect_script"),
+    # the c1 STOP of 2026-11-15: the checker python's env check, pinned
+    ("CHKPY back on root_6_28", CN, "CHKPY=/global/homes/j/josephrb/.conda/envs/omnifold_py310/bin/python",
+     "CHKPY=/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3", "test_every_checker_runs_under_chkpy_behind_chkenv"),
+    ("c1 align back on $PY", CN, '  $CHKPY -I -B "$R/rdx_align.py" "$OUT/stage/base_cv.root"',
+     '  $PY -I -B "$R/rdx_align.py" "$OUT/stage/base_cv.root"', "test_every_checker_runs_under_chkpy_behind_chkenv"),
+    ("c1 checkers without chkenv", CN, '  chkenv\n  $CHKPY -I -B "$R/rdx_align.py"', '  $CHKPY -I -B "$R/rdx_align.py"',
+     "test_every_checker_runs_under_chkpy_behind_chkenv"),
+    ("c2 without chkenv", CN, '  chkenv; mkdir -p "$OUT/checks" "$OUT/stage/zero"', '  mkdir -p "$OUT/checks" "$OUT/stage/zero"',
+     "test_every_checker_runs_under_chkpy_behind_chkenv"),
+    ("cm without chkenv", CN, '  chkenv\n  $CHKPY -I -B "$R/rdx_truthx_npz.py"', '  $CHKPY -I -B "$R/rdx_truthx_npz.py"',
+     "test_every_checker_runs_under_chkpy_behind_chkenv"),
+    ("chkenv drops the uproot import", CN, "import numpy, uproot, omnifile_io, compare_omnifiles\n",
+     "import numpy, omnifile_io, compare_omnifiles\n", "test_every_checker_runs_under_chkpy_behind_chkenv"),
+    ("chkenv neutered (|| true)", CN, "<<'EOF' || stop \"the checker python", "<<'EOF' || true \"the checker python",
+     "test_chkenv_fails_closed_without_uproot_or_the_modules"),
+    ("chkenv runs nothing", CN, "  $CHKPY -I -B - \"$DEP\" <<'EOF' || stop", "  true <<'EOF' || stop",
+     "test_chkenv_fails_closed_without_uproot_or_the_modules"),
 ]
 
 def mirror(root: Path) -> Path:

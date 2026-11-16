@@ -1,0 +1,24 @@
+You are an independent PRD/JINST referee and statistics editor, read-only. Advise the author of a diagnostic methods paper (OmniFold on MINERvA open data) on ONE labelling question and its consequences. Files in this directory:
+- paper-approved.txt, paper-referee.txt, supp-approved.txt: current paper/Supplement text (the referee build has the abstract's alternative form and finer table words).
+- LL5D-DECLARATION.md: the pre-registered design of the second five-observable coverage test (LL5D). See its STOP rule (lines ~66-71: "Any repair after a STOP is disclosed in the paper and the note as chosen after that STOP was seen"), seeds §3.6 (the gate sample's first 300 draws ARE the coverage toys' draws), and the gate §5.2.
+- DECISION-20261108-joseph-ll5d-stop-rule.md: the author's "Decide at the STOP" rule.
+- DECISION-20261109-joseph-coverage-case-wording.md: the author's own rule, fixed 2026-11-09, BEFORE any LL5D result: item 2, "A run that continued past a check fixed in advance, or ran with a repair after a stop, gets the Table 1 status Descriptive, whatever its readings", with the caption definition.
+- independent-read-20261109.txt: the independent read that recommended that rule (note its last paragraph of (b): "repaired need not mean permanently descriptive").
+- gate-g18-STOP-README.md: the 2026-11-10 gate STOP: an event-matching entry check (vi) found every row unmatched (float64 vs float32 keys). Every other gate reading passed and was visible: the variance gates, gate_n, the backstop, D1-D3, r_positive, first_300_bitwise.
+- LL5D-AMENDMENT-A1A2.md: the repair (key both sides at float32); it changes no rule, threshold, bound or cell. LL5D-AMENDMENT-A1A1.md: an earlier precedent ruling that a fix made when "nothing was read that could inform a choice" is not a post-hoc repair.
+- DECISION-20261110-joseph-ll5d-rerun-16-cells.md: the relaunch decision. gate-2-g18-README.md: the rerun gate. readout-README.md: the final coverage readout (joint under-coverage at both tunes, G18 and AR23, in both variants; AR23 cell R07 also per cell).
+- earlier-referee-answer.txt: a previous referee's answers (A1-A5) that assumed the label stays.
+
+The author's question, in their words: "I feel like we didn't look at the actual results right? So we don't need to call it descriptive. Maybe we should redefine descriptive to mean something along the lines of influenced by results, which is less strong of a description but maybe more honest?"
+
+Answer concretely, citing file:line:
+Q1. The premise. Exactly what was visible when the repair was chosen? Was any coverage pseudo-experiment unfolded or graded? Could the visible readings (computed in part on the coverage toys' own pre-unfold draws) plausibly have informed the repair or the coverage outcome? Is "we didn't look at the actual results" accurate, and how should it be stated?
+Q2. The rule. The author fixed the Descriptive rule before the result. The result is adverse (a joint failure). Changing the label now is itself a choice made after the result. Does that matter here, given the change would present an adverse finding with more, not less, inferential weight? What would a referee who reads the decision records conclude under each option?
+Q3. Options; recommend one, with exact text for the table status, the caption's definition of the status, and the §6.3 repair sentence:
+  (a) keep "Descriptive" and the current definition;
+  (b) keep the word but redefine it in the caption to say precisely what happened (e.g. a mechanical repair chosen after a stop, with no coverage reading seen);
+  (c) a different status word that keeps the pre-specified grade visible (e.g. "Under-coverage flagged (repaired after a stop)" or "Pre-specified, repaired"), with the repair disclosed;
+  (d) treat the result as a pre-specified test with full disclosure, as the independent read's last paragraph allows, and say what argument would be required;
+  (e) the author's proposal: redefine "descriptive" as "influenced by results". Is that accurate for this test? Note "descriptive" is used elsewhere in the paper for comparisons with no grading rule (see paper-approved.txt lines ~305-309, 338-341, 359): would a redefinition conflict with those uses?
+Q4. Under your recommended option, re-evaluate and give exact replacement text for: the abstract's coverage and repair sentences (the abstract must stay <=250 words; count it), the Table 2 entry and Supplement row-10 wording, and any §7 sentence that relies on the label.
+Be concise. If you think the question has a clear answer, say so plainly.

@@ -1,10 +1,10 @@
-#977 head f03dbd758; 52 rows
+#977 head f60fff2c8; 53 rows
 OK  RP01   resource paper      count=1  The sixteen-cell cross section that the estimator gives on the data il
 OK  RP02   resource paper      count=1  The held-out-tune tests provide partial evidence on bias at truths hel
 OK  RP02b  resource paper      count=1  The held-out-tune tests are not independent of each other or of $C_{\m
 OK  RP03   resource paper      count=1  The dependence on the prior's generator shape is reported separately a
 OK  RP04   resource paper      count=1  The model term $C_{\mathrm{model}}$ is constructed from the change in 
-OK  RP05   resource paper      count=1  The two-dimensional covariance is the sum of four blocks, each from Li
+OK  RP05   resource paper      count=1  is the sum of four blocks, each from LightGBM unfoldings with the cent
 OK  RP06   resource abstract   count=1  The reported five-observable intervals lack validated coverage.
 OK  RP07   resource paper      count=1  On this analysis's inputs, OmniFold and binned IBU, the publication's 
 OK  RP07p  code     paper      count=1  On this analysis's inputs, OmniFold and binned IBU, the publication's 
@@ -55,6 +55,7 @@ OK  RP33k  resource paper      count=1  Keeping the \fvval{re2-modes-4} directio
 --  RP37   code     B545-549 B586-598 R205-210  fig-validation_result2d.csv: the x column is unchanged (the rebuild changes no c
 --  RP38   code     B465-470  sec-repro2d_benchmark.csv rows median_relative_uncertainty (6.41 -> 6.46) and in
 --  RP39   code     B1297-1303 P102-109 B533-536 R212 R218 R242  PROVENANCE's "THE 2D ARRAYS" names cov2d_Q_205.npz (7153b194…) as the arrays' so
+--  RP39w  code     B534 R218 R212 R242  the quote: "In each systematic-universe unfolding, truth events without a recons
 --  RP40   code     B765-767 R304-307 B849-871 P186-204  2D SCOPE line and the OUTCOME-20261108 record quotes: under C_T' the coverage co
 --  RP41   code     B103-106 B561-571 B586-612  follow-up to RP36 (director 11-14): after the LL5D HOLD is lifted, if cheap, cov
 --  RP42   code     B465-468 B586-598  helper-3's D1 prep (prep/d1-cnew-20261114 at 1f3279bf7, not yet in the draft) ma
@@ -72,5 +73,5 @@ OK  PENDING #981 FD-PRR -> group prr: FILLED (RP43 fills it at the re-pin)
 OK  PENDING #981 LL5D -> group ll5d: PENDING
 OK  PENDING #981 V-HALF -> group vhalf: FILLED (RP43 fills it at the re-pin)
 OK  CODEMAP 19 entries: every file at its pinned sha256 and every anchor in its lines
-OK  CODEMAP tab:codemap block_sha=11de5b171ea0f3e1
+OK  CODEMAP tab:codemap block_sha=0b9ab61090d43251
 REPIN-CHECK PASS

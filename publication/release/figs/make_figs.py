@@ -7,9 +7,10 @@ this script's output directly (docs/analysis-note/figures/paper_fig1_validation.
 paper_fig3_generators.pdf are copies of fig1_validation.pdf, fig2_joint_localization.pdf and
 fig3_generator_context.pdf), so a release built from this version regenerates the printed figures, not only
 their quantities.
-Fig. 1's inset prints two median relative uncertainties. "Published" is recomputed from the arrays. "This work"
-(the VL170/VL172 2D budget) is not in the arrays, so it is read from the article's values.tex (macro uqMedian) when
---values is given; without --values the inset says it is not in the arrays.
+Fig. 1's bottom-right panel is the histogram of the 205 standardized bin differences r_i of its residual map (bins
+0.25 wide, one centred on zero, the full range), with their count, mean and standard deviation (Joseph's version B',
+DECISION-20261116-joseph-paper-batch.md item 15). The two median relative uncertainties it printed before are in the
+article's caption. --values is still read (macro uqMedian) and passed to fig1(), which no longer draws it.
 
   python3 make_figs.py --npz fig_arrays.npz --outdir figs_out [--values values.tex]
 """
@@ -75,7 +76,8 @@ def edge_ticks(ax, axis, edges, every=2):
 
 def fig1(z, out: Path, uq_median: str | None = None):
     """Two-dimensional reproduction: p_T and p_parallel projections with ratios to the published result and its
-    uncertainty band, the published-sigma residual map on the reported grid, and the inset numbers."""
+    uncertainty band, the published-sigma residual map on the reported grid, and the histogram of its residuals.
+    uq_median is accepted and not drawn (version B')."""
     m = z["mask_reported"].astype(bool)
     pt_e, pz_e = z["pt_edges"], z["pz_edges"]
     cov = z["cov_total"]
@@ -130,16 +132,19 @@ def fig1(z, out: Path, uq_median: str | None = None):
     edge_ticks(ax, "x", pt_e); edge_ticks(ax, "y", pz_e)
     ax.set_xlabel(r"$p_T$ (GeV/$c$), bin edges"); ax.set_ylabel(r"$p_\parallel$ (GeV/$c$), bin edges")
     cb = fig.colorbar(im, ax=ax, pad=0.02, fraction=0.06)
-    cb.set_label(r"(OmniFold $-$ published)$/\sigma_{\mathrm{published}}$", fontsize=7.5)
-    # inset numbers
-    tx = fig.add_subplot(gb[0, 1]); tx.axis("off")
+    cb.ax.set_title(r"$r_i$", fontsize=8)
+    # the distribution of the r_i, in place of the text panel (version B')
+    hx = fig.add_subplot(gb[0, 1])
     p = pull[m]
-    pubmed = 100.0 * float(np.median(d[m] / z["paper_v"][m]))
-    ours_txt = f"{uq_median}%" if uq_median else "not in these arrays"
-    tx.text(0.08, 0.80, "Median relative uncertainty", fontsize=9, weight="bold")
-    tx.text(0.12, 0.66, f"This work    {ours_txt}\nPublished    {pubmed:.2f}%", fontsize=9, va="top", linespacing=1.5)
-    tx.text(0.08, 0.36, r"Published-$\sigma$ standardized residuals", fontsize=9, weight="bold")
-    tx.text(0.12, 0.22, f"mean = {p.mean():.3f},  RMS = {p.std():.3f}  ({m.sum()} bins)", fontsize=9, va="top")
+    w = 0.25
+    lo = w * (np.floor(p.min() / w - 0.5) + 0.5); hi = w * (np.ceil(p.max() / w + 0.5) - 0.5)
+    bins = np.arange(min(lo, -3 - w / 2), max(hi, 3 + w / 2) + 1e-9, w)
+    hx.hist(p, bins=bins, histtype="stepfilled", color="#c0392b", alpha=0.35, edgecolor="#c0392b", lw=1.0)
+    hx.axvline(0, color="k", lw=0.6)
+    hx.set_xlim(bins[0], bins[-1]); hx.set_ylim(bottom=0)
+    hx.set_xlabel(r"Standardized bin difference $r_i$"); hx.set_ylabel("Number of reported bins")
+    hx.text(0.97, 0.96, f"{m.sum()} bins\nmean {p.mean():.3f}\nSD {p.std():.3f}", transform=hx.transAxes,
+            ha="right", va="top", fontsize=8)
     fig.savefig(out / "fig1_validation.pdf", metadata=PDF_META); plt.close(fig)
 
 
@@ -205,7 +210,7 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
     ap.add_argument("--npz", type=Path, required=True)
     ap.add_argument("--outdir", type=Path, required=True)
-    ap.add_argument("--values", type=Path, default=None, help="values.tex, for the printed \\uqMedian in Fig. 1")
+    ap.add_argument("--values", type=Path, default=None, help="values.tex (its \\uqMedian is read, not drawn)")
     a = ap.parse_args(argv)
     uq = None
     if a.values:

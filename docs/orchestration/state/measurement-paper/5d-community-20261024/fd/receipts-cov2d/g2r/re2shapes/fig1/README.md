@@ -45,3 +45,46 @@ their node digests in `../run2/g2r/SHA256SUMS.added-after-run.txt` (beside that 
 
 `*/RUN-fig1.txt`, `*/fig1_run.log.txt` and `*/stdout.txt` for each step; `route-a/` also holds the three PDFs,
 `pins.json` and `uqmedian.tex`, identical to the node copies.
+
+## Follow-up (2026-11-16, the director's order): the control arm replaces the stale K1
+
+`re2c_fig1_local.sh`'s `purity` arm is gone. Its K1 (82665808) could no longer pass, as section 1 records. A `control`
+arm replaces it: `bash re2c_fig1_local.sh control <workdir> <python>` is section 2's control built into the script.
+- It runs the refined arm on amendment 3's part C directory, `/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partc-r2`.
+  It takes no directory argument.
+- It pins that directory's `chain.json` to `81dcf2d0…`, the one amendment 3's redraw read
+  (`stageF/methods/re2/run/partc_a3/RUN-fig1.txt`, and `control/RUN-fig1.txt` above).
+- It requires `out/fig1_validation.pdf` to be `71a2ea48…`, amendment 3's refined Fig. 1. That is the copy
+  `docs/analysis-note/make_figures.sh` installs, pinned there at :195.
+- It never writes to the cluster: no ssh, no upload. Section 2's run reached its rc 4 only because `partc-r2/fig1` is
+  not empty. The control arm no longer depends on that.
+
+The refined arm is unchanged. The script's sha256 goes from 02c3090f to 4988c720.
+(Corrected 2026-11-16: this line first said 71ac4861, the digest of an intermediate edit. The committed script at
+a3fd95c6 is 4988c720, from `git show a3fd95c6:2d-unfolding/re2/partc/re2c_fig1_local.sh | shasum -a 256`.)
+
+RE2-DECLARATION-C and its binding amendments 1-3 pin `02c3090f`, as do part C's preflight lists. Those are the records
+of the bound procedure that ran, at the commits they name, and they are not re-pinned here. The same goes for
+section 1 above, which ran the script at `02c3090f`.
+
+**Test (`control-arm/`).** `test_fig1_local_control.sh` runs the real script, `re2c_fig1.py` and `make_figs.py` in the
+recorded environment, with `scp` and `ssh` shimmed. Fetches are served from the local copy of section 2's inputs; the
+test first checks all 11 against `control/RUN-fig1.txt`. Nothing reaches the cluster. It checks the following:
+- the control prints the K1 line and gives 71a2ea48;
+- the control makes no ssh call and no upload;
+- the control's 9 fetches all come from partc-r2, except fig_arrays.npz;
+- the control's three outputs equal section 2's;
+- a control given a directory refuses (rc 2);
+- the retired `purity` arm refuses (rc 2);
+- a chain.json other than amendment 3's refuses before any other fetch (rc 3);
+- refined without a directory refuses;
+- refined still checks the dir by ssh and uploads to `<partc dir>/fig1/`;
+- a mutant with the K1 pin changed exits rc 3 at the K1 check.
+
+The output is in `test_fig1_local_control.out.txt`.
+
+## Version B′ (2026-11-16): the K1 moves
+
+Fig. 1 version B′ (`DECISION-20261116-joseph-paper-batch.md` item 15) changes `make_figs.py`, so amendment 3's
+inputs no longer redraw `71a2ea48`. The control arm's K1 becomes `fee46c1a…`, the B′ redraw of the same inputs, and
+`test_fig1_local_control.sh` moves with it. The package, its identity check and its record are in `bprime/`.
