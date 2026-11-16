@@ -1,22 +1,30 @@
 """cr's control: the rerun of GENCMP amendment E step C-R (fd_gencmp overlap --arm refined on partc-r2's Q_R, exactly
 fd/gencmp-e/c-r/e_cr.sh's arguments) must reproduce the committed fd/gencmp-e/c-r/overlap_refined.json.
 Equal means: the parsed JSON objects are identical after (1) dropping "argv" (it names the output path) and (2)
-rewriting every "inputs" key's deploy prefix from the rerun's deploy to step C-R's
-(/pscratch/sd/j/josephrb/gencmp-e-20261101/deploy). Everything else must be equal exactly, including code_sha256,
+rewriting every "inputs" key's deploy prefix from the rerun's deploy (as given, or its realpath: the recorder may
+resolve symlinks) to step C-R's (/pscratch/sd/j/josephrb/gencmp-e-20261101/deploy). Everything else must be equal exactly, including code_sha256,
 every input's sha256/pinned/atime_unchanged, atime_deviations and every reading. Exit 0 PASS, 1 STOP.
     python3 cr_compare.py --rerun overlap_refined.json --committed <committed overlap_refined.json> --rerun-deploy D
 """
 import argparse
 import json
+import os
 import sys
 
 STEP_CR_DEPLOY = "/pscratch/sd/j/josephrb/gencmp-e-20261101/deploy"
 
 
-def norm(d, deploy):
+def norm(d, deploys):
     d = dict(d)
     d.pop("argv", None)
-    d["inputs"] = {(STEP_CR_DEPLOY + k[len(deploy):] if k.startswith(deploy + "/") else k): v for k, v in d["inputs"].items()}
+    out = {}
+    for k, v in d["inputs"].items():
+        for dep in deploys:
+            if k.startswith(dep + "/"):
+                k = STEP_CR_DEPLOY + k[len(dep):]
+                break
+        out[k] = v
+    d["inputs"] = out
     return d
 
 
@@ -41,8 +49,9 @@ def main():
     for k in ("--rerun", "--committed", "--rerun-deploy"):
         ap.add_argument(k, required=True)
     a = ap.parse_args()
-    c = norm(json.load(open(a.committed)), STEP_CR_DEPLOY)
-    r = norm(json.load(open(a.rerun)), a.rerun_deploy.rstrip("/"))
+    c = norm(json.load(open(a.committed)), [STEP_CR_DEPLOY])
+    dep = a.rerun_deploy.rstrip("/")
+    r = norm(json.load(open(a.rerun)), sorted({dep, os.path.realpath(dep)}, key=len, reverse=True))
     d = diff(c, r)
     for line in d[:40]:
         print("DIFF", line)
