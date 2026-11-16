@@ -1,0 +1,44 @@
+# App. I meaning read, pass 2: codex-school gpt-6.1-sol, high, read-only; prompt app_devhistory-pass2-prompt.txt, body app_devhistory-pass2-body.txt
+**Question 1**
+
+| Item | Verdict | Reason |
+|---|---|---|
+| I1 | **PASS** | The expanded scope describes the table, I9 repairs the previously identified omission, and the five remaining dashes do not contradict a stated exposure chronology, as detailed below. |
+| I2 | **PASS** | The caption accurately includes the choices represented by D13–D15. |
+| I3 | **PASS** | `sec_execsummary.tex:38` and `sec_5d.tex:294` support retention of the identified covariance with the referenced restrictions, without extending its use to companion covariances. |
+| I4 | **PASS** | `sec_systematics.tex:143,166,282–286` support the corrected construction defects, preservation of the earlier printed values, and the stated comparison uses. |
+| I6 | **PASS** | `sec_fived16.tex:283` explicitly supports the staged test, covariance rebuilt at each tune, and termination at its first stage. |
+| I7 | **PASS** | The shortening preserves Stage 0’s failure, the reconstruction-information study’s incomplete status and unmet requirement, abandonment of the route, and subsequent unscaled adoption. |
+| I8 | **PASS** | `sec_fived16.tex:279` explicitly supports stopping at a gate before any coverage pseudo-experiment ran. |
+| I9 | **PASS** | `sec_fived16.tex:110–115` places the first two tests’ findings before unscaled adoption, and “results” does not imply that the incomplete second study was completed. |
+| D13 | **PASS** | The cited passages support assignment from observed period differences, containment by construction, its limitations, the sixteen-cell exclusion conditions and their timing, and reporting with and without the block. |
+| D14 | **PASS** | `sec_joint.tex:126` supports both data-informed elements, the design timing, budget extension, unchanged rules, and familywise-bound statement. |
+| D15 | **PASS** | `sec_joint.tex:134,254` support the comparison’s timing, criterion, negative finding, and exclusion from the decision family. |
+
+For I1, the five remaining dashes require distinguishing a reported test outcome from a disclosure of results already seen when a change or choice was made:
+
+| Row with dash | I1 verdict | Does the body state that prior exposure? |
+|---|---|---|
+| Earlier 2D budget | **PASS** | **No:** `sec_systematics.tex:282–286` identifies defects and their correction but does not state what results had been seen when the replacement budget was chosen. |
+| Earlier ten-seed block | **PASS** | **No:** `sec_systematics.tex:99,245,273` explains the interaction, replacement construction and continuing comparison uses without dating the choice relative to observed results. |
+| End-to-end five-dimensional coverage test | **PASS** | **No:** `sec_5d.tex:237` reports the failed test and its limitations, with the futility criterion set beforehand, but discloses no subsequent change’s exposure chronology. |
+| Staged sixteen-cell coverage test | **PASS** | **No:** `sec_fived16.tex:283` reports the draws triggering a previously fixed stop rule, without disclosing an additional choice made after seeing them. |
+| Sixteen-cell coverage test without the run-period block | **PASS** | **No:** `sec_fived16.tex:279` reports the gate failure in a test specified before pseudo-experiment generation, without stating a later choice’s prior exposure. |
+
+No unsupported number, changed value key, wrong referent or wrong pointer appears in the requested revisions.
+
+**Question 2**
+
+| Removed or shortened item | Classification | Reason |
+|---|---|---|
+| I4’s defect list | **LEDGER** | All three defects and their corrections remain explicit in `sec_systematics.tex:282–286`. |
+| I4’s “Its printed values are unchanged” | **LEDGER** | The body explicitly preserves that fact, and the revised cell retains it through “Printed uncorrected.” |
+| I5’s stabilization-probe row | **LEDGER** | `sec_5d.tex:101` preserves the variants, advance specification, negative finding and unchanged estimator. |
+| I7’s shortening | **LEDGER** | The substantive distinctions remain in the table and are fully stated in `sec_fived16.tex:110–115`. |
+| I3’s “That result only” | **LEDGER** | `sec_5d.tex:294` explicitly restricts use to the identified covariance and excludes the companion covariances. |
+
+No **NEEDED** item is lost.
+
+No additional choice explicitly disclosed as made after results were seen is missing in a way that falsifies the opening: unscaled adoption is covered by I7/I9, and D13–D15 cover the newly identified choices. The other two studies in `sec_joint.tex:134` followed the decisions, but the passage does not establish that their specifications were chosen after the outcomes were known.
+
+OVERALL: PASS — FAILs: none.

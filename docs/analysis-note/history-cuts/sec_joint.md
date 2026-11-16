@@ -81,6 +81,8 @@ No new row. §11 reports no superseded configuration and no stopped test. Its lo
 superseded by the recovery's observed outcomes, as :241 says ("The observed outcomes of the lost draws supersede the
 finding of the sensitivity analysis described above"), and both stay printed in §11.6 as required disclosures.
 
+**App. I pass, 2026-11-15:** the director's widening of App. I to consequential changes and exposures adds D14 (the joint-test design's two data-informed elements, :126) and D15 (the matched projection comparison specified after the outcomes, :134, :254). See history-cuts/app_devhistory.md.
+
 ## Disclosure checklist
 
 | disclosure | in §11? | survives |
