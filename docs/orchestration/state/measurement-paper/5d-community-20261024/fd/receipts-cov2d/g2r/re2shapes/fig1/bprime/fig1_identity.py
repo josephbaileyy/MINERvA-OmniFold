@@ -14,16 +14,17 @@ FAIL:
   F2  fig2 and fig3: the same items, the same texts and the same PDF bytes in both versions;
   F3  Fig. 1 has 7 axes in both versions, and on the six that are not the bottom-right panel the multiset of item
       hashes is equal (data, colours and styles, bit for bit);
-  F4  the texts of those six axes are equal, except the colour bar's label, which must change from
-      "(OmniFold $-$ published)$/\\sigma_{\\mathrm{published}}$" (7.5 pt) to "$r_i$" (8 pt);
+  F4  the texts of those six axes are equal, except the colour bar's: its side label
+      "(OmniFold $-$ published)$/\\sigma_{\\mathrm{published}}$" (7.5 pt) must go, leaving no side label, and its
+      axes title must become "$r_i$" (8 pt), from none;
   F5  the panel: the old one draws no data item; the new one draws exactly one Axes.hist call, whose values equal,
       bit for bit, r_i = (ours_v - paper_v) / sqrt(diag cov_total) on mask_reported, computed here from the arrays
       (205 values); its bins are 0.25 wide, one is centred on zero, they cover min and max of r_i (no clipping) and
       the counts sum to 205; its only line is the vertical line at zero (no reference curve);
   F6  the panel's printed count, mean and spread equal the old panel's printed ones and f"{r.mean():.3f}",
       f"{r.std():.3f}" of the r_i here; the old label "RMS" becomes "SD";
-  F7  every pixel that differs between the two 300-dpi rasters lies inside the panel's box (old or new, tight, 2 px
-      margin) or the colour bar label's box (old or new, 2 px margin).
+  F7  every pixel that differs between the two 300-dpi rasters lies inside the panel's box (old or new, tight), the
+      colour bar's side label box or its title box (each where non-empty, old or new), each with a 2 px margin.
 Writes DIR/identity.json and prints one line per check and FIG1 IDENTITY PASS or FAIL (exit 0 or 1)."""
 import argparse
 import hashlib
@@ -96,8 +97,12 @@ def run(make_figs, arrays, values, outdir):
         boxes = {}
         if len(fig.axes) == 7:
             boxes["panel"] = fig.axes[6].get_tightbbox(rend).extents.tolist()
-            boxes["cblabel"] = fig.axes[5].yaxis.label.get_window_extent(rend).extents.tolist()
-        caps[name] = {"items": index, "arrays": arrays, "texts": axes_texts(fig), "img": img, "boxes": boxes,
+            cb = fig.axes[5]
+            for k, t in (("cblabel", cb.yaxis.label), ("cbtitle", cb.title)):
+                if t.get_text().strip():
+                    boxes[k] = t.get_window_extent(rend).extents.tolist()
+        cbt = ({"label": fig.axes[5].get_ylabel(), "title": fig.axes[5].get_title()} if len(fig.axes) == 7 else {})
+        caps[name] = {"cb": cbt, "items": index, "arrays": arrays, "texts": axes_texts(fig), "img": img, "boxes": boxes,
                       "hist": getattr(fig, "_b_hist", []), "n_axes": len(fig.axes)}
 
     spec = importlib.util.spec_from_file_location(f"make_figs_{abs(hash(str(make_figs)))}", make_figs)
@@ -151,8 +156,11 @@ def main(argv=None):
     check("F3b the six other axes draw the same items", not diff_ax, f"{nk} items; differing axes {diff_ax}")
     tdiff = [k for k in range(6) if k != 5 and o["texts"][k] != n["texts"][k]]
     cb_o = Counter(o["texts"][5]) - Counter(n["texts"][5]); cb_n = Counter(n["texts"][5]) - Counter(o["texts"][5])
+    cbo, cbn = o["cb"], n["cb"]
     check("F4 texts equal except the colour bar label", not tdiff and dict(cb_o) == {(7.5, OLD_CB): 1}
-          and dict(cb_n) == {(8.0, NEW_CB): 1}, f"other axes differing {tdiff}; removed {dict(cb_o)}; added {dict(cb_n)}")
+          and dict(cb_n) == {(8.0, NEW_CB): 1} and cbo == {"label": OLD_CB, "title": ""}
+          and cbn == {"label": "", "title": NEW_CB},
+          f"other axes differing {tdiff}; removed {dict(cb_o)}; added {dict(cb_n)}; colour bar old {cbo}, new {cbn}")
     z = np.load(a.arrays, allow_pickle=False)
     m = z["mask_reported"].astype(bool)
     dd = np.sqrt(np.where(np.diag(z["cov_total"]) > 0, np.diag(z["cov_total"]), np.nan))
@@ -186,18 +194,18 @@ def main(argv=None):
           f"from the arrays {want6}")
     io_, in_ = o["img"], n["img"]
     if io_.shape != in_.shape:
-        check("F7 changed pixels inside the panel and the colour bar label", False, f"shapes {io_.shape} {in_.shape}")
+        check("F7 changed pixels inside the panel and the colour bar's label boxes", False, f"shapes {io_.shape} {in_.shape}")
     else:
         H = io_.shape[0]
         chg = np.any(io_ != in_, axis=2)
         allow = np.zeros_like(chg)
-        for b in (o["boxes"]["panel"], n["boxes"]["panel"], o["boxes"]["cblabel"], n["boxes"]["cblabel"]):
+        for b in [v for c in (o, n) for v in c["boxes"].values()]:
             x0, y0, x1, y1 = b
             allow[max(0, int(np.floor(H - y1)) - 2):int(np.ceil(H - y0)) + 2, max(0, int(np.floor(x0)) - 2):int(np.ceil(x1)) + 2] = True
         out = chg & ~allow
         ys, xs = np.nonzero(chg)
         bb = f"x {xs.min()}..{xs.max()}, y {ys.min()}..{ys.max()}" if xs.size else "none"
-        check("F7 changed pixels inside the panel and the colour bar label", not out.any(),
+        check("F7 changed pixels inside the panel and the colour bar's label boxes", not out.any(),
               f"{int(chg.sum())} changed pixels ({bb}); {int(out.sum())} outside; image {io_.shape[1]}x{H}")
     rec = {"arrays": {"path": str(a.arrays), "sha256": sha(a.arrays)}, "values_sha256": sha(a.values),
            "old_make_figs": {"path": str(a.old), "sha256": sha(a.old)},

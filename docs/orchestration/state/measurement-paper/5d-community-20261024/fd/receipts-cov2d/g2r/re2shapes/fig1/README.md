@@ -86,5 +86,5 @@ The output is in `test_fig1_local_control.out.txt`.
 ## Version B′ (2026-11-16): the K1 moves
 
 Fig. 1 version B′ (`DECISION-20261116-joseph-paper-batch.md` item 15) changes `make_figs.py`, so amendment 3's
-inputs no longer redraw `71a2ea48`. The control arm's K1 becomes `507b6015…`, the B′ redraw of the same inputs, and
+inputs no longer redraw `71a2ea48`. The control arm's K1 becomes `fee46c1a…`, the B′ redraw of the same inputs, and
 `test_fig1_local_control.sh` moves with it. The package, its identity check and its record are in `bprime/`.

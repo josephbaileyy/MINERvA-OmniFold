@@ -41,8 +41,8 @@ grep -q "^\[FAIL\] make_figs: sha256 4e18c26681fc86dcfef2861c7c0126aa2df4839376d
   && ok "stale-pin: re2c_fig1.py refuses make_figs.py 4e18c266 (rc $rc2: $(head -1 "$T0/stale2.out" | cut -c1-60)...)" || { bad "stale-pin: refusal (rc $rc2)"; cat "$T0/stale2.out"; }
 [ "$rc" = 1 ] && ok "stale-pin: the unmodified script also refuses (rc $rc, at its first pin)" || bad "stale-pin: unmodified rc $rc"
 L=$REPO/2d-unfolding/re2/partc/re2c_fig1_local.sh
-grep -q '^    want out/fig1_validation.pdf 507b60152d20f9a1cfbd4347a85509aefe2d0ff3152327249004d697957ec92f$' "$L" && ! grep -q 'want out/fig1_validation.pdf 71a2ea48' "$L" \
-  && ok "stale-pin: the control arm's K1 is 507b6015, not 71a2ea48" || bad "stale-pin: control arm K1"
+grep -q '^    want out/fig1_validation.pdf fee46c1a8b60a09701444373e9dbfbf106bffdd42759928b0979c8eeb57135d1$' "$L" && ! grep -q 'want out/fig1_validation.pdf 71a2ea48' "$L" \
+  && ok "stale-pin: the control arm's K1 is fee46c1a, not 71a2ea48" || bad "stale-pin: control arm K1"
 # --- identity
 idrun() {  # idrun <name> <make_figs> [extra args]; output in $T0/<name>.out, rc in $T0/<name>.rc
   local name=$1 mf=$2; shift 2
@@ -77,6 +77,7 @@ mutant hist-width "F5" 'width 0.2\.\.0.2;' '    w = 0.25' '    w = 0.2'
 mutant hist-off-zero "F5" 'min \|centre\| 0.1;' 'bins = np.arange(min(lo, -3 - w / 2), max(hi' 'bins = 0.1 + np.arange(min(lo, -3 - w / 2), max(hi'
 mutant ref-curve "F5" 'lines 2 ' '    hx.axvline(0, color="k", lw=0.6)' '    hx.axvline(0, color="k", lw=0.6); hx.plot(bins, 0 * bins + 1)'
 mutant sd-is-rms "F6" "new \\('205', '0.060', '0.539'\\)" 'SD {p.std():.3f}' 'SD {np.sqrt((p ** 2).mean()):.3f}'
+mutant cb-side-label "F4" "colour bar old .*, new \\{'label': '\\\$r_i\\\$', 'title': ''\\}" '    cb.ax.set_title(r"$r_i$", fontsize=8)' '    cb.set_label(r"$r_i$", fontsize=8)'
 mutant fig-text "F7" '; [1-9][0-9]* outside' '    fig.savefig(out / "fig1_validation.pdf", metadata=PDF_META)' '    fig.text(0.3, 0.7, "x"); fig.savefig(out / "fig1_validation.pdf", metadata=PDF_META)'
 mutant fig2-text "F2 fig2" 'PDF bae0383f' 'fontsize=6.3,' 'fontsize=6.4,'
 find "$T0" -type f -exec rm -f {} + 2>/dev/null; find "$T0" -type l -exec rm -f {} + 2>/dev/null; find "$T0" -depth -type d -exec rmdir {} \; 2>/dev/null

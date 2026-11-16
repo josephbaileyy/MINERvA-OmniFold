@@ -50,7 +50,7 @@ import numpy as np
 PINS = {
     "npz": "72394a2b4eff9f14b01903ff97525bcb690c2adee58ccaf573a8d95139b415b8",
     "reduce": "2ecfc243ab4a6c508a69df0e231676019106f3ad86f34e3ac3423f7bd2bca9ce",
-    "make_figs": "2dcc7d70c97568875ab21df1a6dcd350d4ef1b1fa9f5effc22b1a14d15c8be08",
+    "make_figs": "9a575b36fb332dfe3e85c9eda65e4df3524b497b41de4e96fe6f8f0c9e25c0c1",
     "s5_npz": "6689d2fc2a795a72e66ee953a32d94c7906dd81a866771979f379c5f163a9ddc",
     "playlist_npz": "c1723cb5e185ae7a6176fbbe523432ab87877c8cddcfe721eaed71f0a43b9476",
     "combination": "050e256023277ec9da492ffa7b9d129275c3afa2bfc6c47091999d88de5bf18d",

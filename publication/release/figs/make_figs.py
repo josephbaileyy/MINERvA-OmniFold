@@ -132,7 +132,7 @@ def fig1(z, out: Path, uq_median: str | None = None):
     edge_ticks(ax, "x", pt_e); edge_ticks(ax, "y", pz_e)
     ax.set_xlabel(r"$p_T$ (GeV/$c$), bin edges"); ax.set_ylabel(r"$p_\parallel$ (GeV/$c$), bin edges")
     cb = fig.colorbar(im, ax=ax, pad=0.02, fraction=0.06)
-    cb.set_label(r"$r_i$", fontsize=8)
+    cb.ax.set_title(r"$r_i$", fontsize=8)
     # the distribution of the r_i, in place of the text panel (version B')
     hx = fig.add_subplot(gb[0, 1])
     p = pull[m]
