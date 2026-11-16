@@ -19,7 +19,9 @@ Mode "identity" (control C0) installs the same two patches with an identity mapp
 paths. It must reproduce partc-r2's products.
 A sidecar (--sidecar, a path outside the run's <outdir>, so that the identity run's tree and its SHA256SUMS stay
 partc-r2's file set) records the mode, the mapping, the redirect counts and the sha256 values of the driver, the rollup
-and products.tsv.
+and products.tsv. products.tsv's repository path and digest are keyed products_tsv_path and products_tsv_digest, which do
+not pair as <role>/<role>_sha256: such a pair would join the receipt binding inventory (the lane's follow-up, 2026-11-16;
+run 2's committed sidecars, made before this, carry the old keys and are committed as .json.txt).
 In mode g2r the driver exits 3 unless exactly 175 Path calls were redirected (each J2 universe once).
     python3 re2c_rollup_g2r.py --driver-mode {g2r|identity} --deploy D --products-tsv T --sidecar J <re2c_rollup.py arguments>
 D is the deploy (re2c_run.sh's $D), from which re2c_rollup.py is imported; T must have sha256 PRODUCTS_SHA.
@@ -90,7 +92,7 @@ def main(argv) -> int:
     ro.partb_sums, ro.Path = partb_sums, path
     side_path = OrigPath(opt["--sidecar"])
     side = {"schema": "re2c-rollup-g2r-driver/1", "mode": mode, "driver_sha256": sha(here), "rollup_sha256": sha(roll),
-            "products_tsv": PRODUCTS, "products_tsv_staged": str(tsv), "products_tsv_sha256": PRODUCTS_SHA, "g2r_out": G2R_OUT, "n_mapped": len(g2r),
+            "products_tsv_path": PRODUCTS, "products_tsv_staged": str(tsv), "products_tsv_digest": PRODUCTS_SHA, "g2r_out": G2R_OUT, "n_mapped": len(g2r),
             "mapping": {k: {"digest": v[0], "path": v[1]} for k, v in sorted(g2r.items())} if mode == "g2r" else {}}
     rc = ro.main()
     rc = rc if isinstance(rc, int) else 0

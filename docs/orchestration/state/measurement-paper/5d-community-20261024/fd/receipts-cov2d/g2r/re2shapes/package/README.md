@@ -50,3 +50,11 @@ exactly two named rules: R1 compares that receipt with only repo_commit set asid
 pair; R2 accepts only_stopped only when it equals those 8 files by name, none listed in partc-r2's SHA256SUMS.
 test_c0 has both rules, with STOP mutants: a second differing receipt field, a ninth only_stopped file, and one of
 the 8 missing. The next connect reruns everything in a new namespace, `cov2d-re2shapes-20261115`.
+
+**Follow-up (2026-11-16): the driver's sidecar keys.** Run 2's sidecars recorded products.tsv's repository path and
+digest as `products_tsv` and `products_tsv_sha256`. That <role>/<role>_sha256 pair joins the receipt binding
+inventory, which is why run 2 committed them as `.json.txt`. Before any further run that uses the driver, the keys are
+renamed to `products_tsv_path` and `products_tsv_digest`, which do not pair (the director's order). The driver's sha256
+changes from 619ae62b to 80324d99; nothing else in it changes. test_driver.sh still passes and the 4 mutants are still
+killed (`test_driver.out.txt`, `mutants.out.txt`, regenerated). The committed run records are unchanged, since they are
+what ran.
