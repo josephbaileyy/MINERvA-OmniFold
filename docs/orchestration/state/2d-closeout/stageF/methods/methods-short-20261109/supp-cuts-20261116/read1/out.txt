@@ -1,0 +1,121 @@
+The cuts cannot all be approved from this record. Cut 2 introduces an overbroad claim, and several claimed surviving copies are truncated before the facts they are supposed to hold.
+
+I distinguish **confirmed LEDGER** from **unverified holdings** below. An unverified holding fails the cut’s acceptance condition; it does not, by itself, prove that the fact is intrinsically NEEDED.
+
+**Cut 1 — RESTORE the unverified weight definitions.**
+
+(a) Removed facts:
+
+| Fact | Classification and surviving location |
+|---|---|
+| Per-event, iterated likelihood-ratio reweighting without fixed bins | **LEDGER:** retained opening sentence, rendered p. 6. |
+| Two classification steps per iteration | **LEDGER:** paper line 119, records B. |
+| Push-weight is a truth-level weight, initially one, updated each iteration | **NEEDED for reproducibility unless duplicated below.** Neither records B nor the supplied note excerpt establishes the initial value. The claimed surviving estimator steps were not supplied. |
+| Detector classifier compares data with reconstruction weighted by current push-weights | **LEDGER:** note step 1, records E, line 9. |
+| Calibrated output gives \(w=p/(1-p)\) | **LEDGER:** note step 1; the odds formula also remains under “Training details,” p. 6. |
+| Truth/reconstruction pairing transfers weights to truth | **LEDGER:** paper line 119. |
+| Pull-weight equals the new likelihood-ratio weight times the current push-weight | **NEEDED for reproducibility unless duplicated below.** The note’s step-1 excerpt stops before this definition; no supplied surviving passage establishes it. |
+| Misses receive weights from a truth-coordinate regressor fitted on reconstructed events | **LEDGER:** paper line 119 and remaining training paragraph, p. 6. |
+| No separate efficiency correction | **LEDGER:** paper line 119. |
+| Truth classifier compares original truth simulation with its pulled-back weighted version | **LEDGER:** note step 2, records E, line 10. |
+| Its smooth reweight becomes the next push-weight | **LEDGER:** the same note excerpt. |
+| Final push-weights define an efficiency-corrected truth sample | **LEDGER:** note line 12. |
+| Subsequently chosen histogram bins give the unfolded spectrum | **LEDGER:** note line 12. |
+| Iteration count and capacity regularize unfolding | **LEDGER:** retained sentence, p. 6. |
+
+(b) The paper pointer accurately describes paper line 119. However, that paragraph does not contain all the deleted weight definitions or final histogramming prescription. Facts held only in note lines 9–12 need a pointer to that algorithm passage, unless the surviving estimator steps demonstrably contain them. The provenance comment cannot establish that coverage.
+
+(c) `sec:method-algo` remains. No orphan is visible on the supplied pages. The promised steps “below” cannot be checked from those pages.
+
+(d) Page 6 matches the replacement paragraph.
+
+Restore the initial push-weight and pull-weight product unless their surviving definitions are shown. Verify the remaining step list and add a precise note pointer for material delegated there.
+
+**Cut 2 — RESTORE the restriction on the permutation comparison; verify the remaining delegated facts.**
+
+(a) Removed facts:
+
+| Fact | Classification and surviving location |
+|---|---|
+| Twelve separate playlist unfoldings, each with its own simulation and bootstrap replicas | **LEDGER:** records G. |
+| Offset is the sixteen-cell double ratio relative to the exposure-weighted twelve-playlist mean | **LEDGER:** records G. |
+| \(F\) is the group-mean share of exposure-weighted squared offsets, using the inverse relative \(C_{\mathrm{total}}+C_{\mathrm{resp}}\) metric | **LEDGER:** records G. |
+| Three-period \(F=\texttt{rpd-fflux}\), maximal among `rpd-npart-flux` partitions of sizes six, three and three | **LEDGER eligibility, holding unverified:** G stops before this result. |
+| Minimum attainable permutation \(p=1/\texttt{rpd-npart-flux-math}=\texttt{rpd-pflux}\) | **LEDGER:** records F explicitly licenses delegation of the test and its p-values, although the numerical copy is not shown. |
+| Unequal exposures imply unequal noise and nonexchangeable labels; permutation is approximate and requires simulated-null validation | **LEDGER eligibility, holding unverified:** no printed continuation is supplied. E’s line 179 is a comment. |
+| Null uses `rpd-datasets` datasets, independent offsets from an estimated common covariance scaled by 0, 0.5, 1 or 2, plus playlist-specific bootstrap and simulation noise | **LEDGER eligibility, holding unverified.** |
+| False-positive fraction `rpd-alpha-lo`–`rpd-alpha-hi`, within `rpd-alpha-gate` | **LEDGER eligibility, holding unverified.** |
+| Alternative chronological groups of five, two, two and three, with the specified playlist membership | **LEDGER eligibility, holding unverified.** |
+| Alternative \(p=\texttt{rpd-pera}\) over `rpd-npart-era` partitions | **LEDGER:** covered by F’s delegation decision; numerical copy not shown. |
+| Alternative comparison is descriptive | **LEDGER eligibility, holding unverified.** |
+
+The retained run-period sentence is explicitly licensed by records F. It does **not** force the test or its p-values back into the Supplement.
+
+(b) “Against every other division of the playlists” exceeds the removed text. The exhaustive comparison was restricted to divisions into groups of **six, three and three**. Restore that restriction:
+
+> “…tests the three run-period groups against every other division into groups of six, three and three.”
+
+The note target’s opening is confirmed by G; its results, calibration and qualifications require an untruncated copy.
+
+(c) The subsection label remains, and its title loses “and the per-playlist test.” No orphan \(F\) or deleted-test reference is visible in the supplied material.
+
+(d) The pointer on p. 19 matches the source—including its overstatement. The revised subsection title is outside the supplied render.
+
+Restore the group-size restriction. Pending verification of the note continuation, retain the calibration, numerical results and descriptive qualification rather than approving their deletion.
+
+**Cut 3 — RESTORE pending verification of the classification passage.**
+
+(a) Removed facts:
+
+| Fact | Classification and surviving location |
+|---|---|
+| Eligibility requires residuals above 2% | **LEDGER:** records H establishes the threshold. |
+| Eligibility requires classification stable under truth resolution and response weighting | **LEDGER only partly established:** H establishes truth-resolution stability but truncates before the response-weighting condition. |
+| Eligible count `did-n-eligible` | **Unverified holding:** not printed in the supplied note excerpt. |
+| Weakly constrained count `did-n-weak` | **Unverified holding.** |
+| Weak constraints refer to the binned response at analysis exposure | **Unverified holding.** |
+| Cramér–Rao widths above 10%, with median `did-weak-width-med` | **Unverified holding.** |
+| Tree approximation dominates `did-n-approx` residuals | **Unverified holding.** |
+| Of these, `did-n-approx-id` are identified quantities | **Unverified holding.** |
+| “Identified” means relative Cramér–Rao width at or below the stated bound | **Unverified holding.** The numerical bound in a provenance comment is not a printed claim. |
+| Both classifications are defined in the note’s `sec:val-departure` | **Unverified:** H ends before those definitions. |
+| Scope is binned, signal-only, noise-free simulation at the simulation’s detector response | **LEDGER partly confirmed:** H establishes the binned, noise-free signal-only diagnostic; p. 23 retains the simulation context and limitations. H additionally distinguishes the W2 comparator with background and its unchanged outcome without background. |
+
+These are candidates for delegation because the paper does not use the classification (records C). Their complete surviving holding nevertheless has not been demonstrated.
+
+(b) The pointer adds no numerical or causal claim. “This comparison” has a clear antecedent. However, the supplied target excerpt does not reach the promised classification, so target coverage cannot be certified.
+
+(c) No deleted classification symbol, count or label remains visibly orphaned. The preceding comparison remains intelligible.
+
+(d) Page 23 matches the replacement and preserves the preceding comparison’s limitations.
+
+Restore the classification paragraph until the complete release-revision passage verifies the eligibility conditions, counts, widths, definitions and scope.
+
+**Cut 4 — KEEP-CUT.**
+
+(a) Every deleted configuration description is held:
+
+| Fact | Classification and surviving location |
+|---|---|
+| None supplies a reported result | **LEDGER:** retained opening sentence. |
+| Superseded estimator uses nominal LightGBM, purity subtraction and seed 42 in two-dimensional runs | **LEDGER:** `tab:configs` row (a), with the common capacity description on p. 6/table caption. |
+| It supplied the note’s five-observable central value and covariance before discovery of the purity bias | **LEDGER:** retained sentence; row (a) holds the result identity. |
+| Exact-split uses scikit-learn exact splits and purity subtraction | **LEDGER:** row (b). |
+| It supplied an earlier two-dimensional central value and the exact-split studies | **LEDGER:** row (b). |
+| Those studies were not recomputed | **LEDGER:** explicitly retained. |
+| Deterministic purity variant uses deterministic LightGBM and purity subtraction | **LEDGER:** row (c). |
+| Lower-capacity variant adds negative-weight treatment and a 100-tree, 8-leaf refinement | **LEDGER:** row (d), including “as (c).” |
+| Lower-capacity variant is used in `fig:supp-lowcap` | **LEDGER:** row (d). |
+| Configuration history is in the note | **LEDGER:** retained pointer. |
+
+(b) The new table pointer accurately identifies all four superseded rows and adds no unsupported claim.
+
+(c) The table retains the figure reference and the configuration identities. “Their history” remains intelligible; `supp:superseded` remains.
+
+(d) Pages 7 and 14 match records D and the replacement paragraph.
+
+Other problems:
+
+1. **The verification record is incomplete.** Supply untruncated release-revision algorithm, permutation-test and residual-classification passages, plus the surviving estimator steps. A complete Supplement source or PDF is also required to certify the requested document-wide orphan-reference check. No additional printed defect is established by the supplied pages.
+
+VERDICT: FAIL

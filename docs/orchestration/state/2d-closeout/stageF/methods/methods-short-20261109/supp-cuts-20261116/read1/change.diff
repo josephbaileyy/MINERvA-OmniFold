@@ -1,0 +1,60 @@
+diff --git a/docs/analysis-note/supplemental_body.tex b/docs/analysis-note/supplemental_body.tex
+index 8d87e098b..94c74a56d 100644
+--- a/docs/analysis-note/supplemental_body.tex
++++ b/docs/analysis-note/supplemental_body.tex
+@@ -202,12 +202,8 @@ This section gives the algorithm and the reported estimator (section~\ref{supp:a
+ 
+ % source: sec_method.tex, note label sec:method-algo, paragraph 1 (adapted 2026-11-12: DESYNCED, the director's D1, step 7's sentence pass (semicolons and ", so" split), restyled, wording only; earlier: adapted since seeding: wording edits read in the meaning check of 2026-11-10 (ledger); comments stripped; its search record or waiver carried from the note)
+ \label{sec:method-algo}
+-OmniFold~\cite{Andreassen:2019cjw,Andreassen:2021zzk} unfolds per-event observables by iterated reweighting with machine-learned likelihood ratios, without fixed histogram bins. Each iteration has two steps:
+-\begin{enumerate}[itemsep=2pt]
+-  \item \textbf{Step 1 (detector space).} Each simulated event carries a push-weight, a truth-level weight that is one at the start and that each iteration updates. A classifier separates measured data from reconstructed simulation weighted by the current push-weights. Its calibrated output $p$ gives the likelihood-ratio reweight $w = p/(1-p)$ for each reconstructed simulated event. Each simulated event is a (truth, reco) pair, allowing the weight to be \emph{pulled back} directly to its truth record, where the product of $w$ and the push-weight is the pull weight. Truth events without a reconstructed partner (``misses'') receive step-1 weights from a regressor trained on the reconstructed subsample, $w(\mathrm{truth\ features})$. OmniFold thus accounts for acceptance without a separate efficiency correction.
+-  \item \textbf{Step 2 (truth space).} A second classifier separates the original truth-level simulation from the same sample carrying the pulled-back step-1 weights. Its smooth truth-space reweight becomes the next iteration's push-weight.
+-\end{enumerate}
+-After $n$ iterations, the push-weights define an efficiency-corrected, reweighted truth-level simulation sample. Histogramming this sample in any subsequently chosen binning gives the unfolded spectrum. The iteration count and learner capacity regularize the unfolding.
++% Restyled 2026-11-16 (the director's optional cuts from a read-only Supplement pass, under the two-question rule), cut 1: the generic two-step description (LEDGER: the paper's iteration paragraph in its unfolding section, and the step list of this section with every term it uses); the label stays.
++OmniFold~\cite{Andreassen:2019cjw,Andreassen:2021zzk} unfolds per-event observables by iterated reweighting with machine-learned likelihood ratios, without fixed histogram bins. The paper's \psec{sec:unfolding} describes one iteration, and the steps of the reported estimator are given below. The iteration count and learner capacity regularize the unfolding.
+ 
+ % source: sec_method.tex, note label sec:method-algo, paragraph 2 (adapted 2026-11-12: DESYNCED, the director's D1, step 7's sentence pass (semicolons and ", so" split), restyled, wording only; earlier: restyled 2026-11-09, wording only; the note keeps the original; comments stripped; its search record or waiver carried from the note); adapted 2026-11-10, one content fix: its last sentence said no effective sample size is computed, which the ESS record (#1027, fd/receipts-ess) has since made false for the reported result; it now points to that paragraph; 2026-11-12 (step 2): "at the end of this section" became "in Sec. S4.4"
+ % after the restructure (DESYNCED, the director's D1)
+@@ -449,7 +445,8 @@ Neither the weighted-regressor tests nor the matched-event transfer test shows t
+ % (the configuration paragraph's last sentences at 60d144395, (a) as record check 1), then (e)'s selection sentence and
+ % (f)'s rebuild sentences, verbatim from the (e) and (f) list items except "it" -> "configuration~(f)", and the three
+ % selection paragraphs that followed the floor paragraph. Their own provenance comments follow.
+-None of these four configurations gives one of this paper's reported results. The superseded central-value estimator, the nominal LightGBM learner with purity-based subtraction (seed~42 in its two-dimensional runs), gave the companion note's five-observable central value and covariance before the bias of the purity-based subtraction (section~\ref{supp:bkg}) was found. The exact-split cross-check, scikit-learn's exact splits with purity-based subtraction, was the quoted two-dimensional central value in an earlier version of the analysis. Studies labeled \emph{exact-split} use it and have not been recomputed. The deterministic purity-based variant is a deterministic LightGBM learner with purity-based subtraction. The lower-capacity variant of figure~\ref{fig:supp-lowcap} adds to it the negative-weight treatment with a 100-tree, 8-leaf refinement. Their history is in \nsec{sec:method-config}.
++% Restyled 2026-11-16 (the director's optional cuts from a read-only Supplement pass, under the two-question rule), cut 4: each superseded configuration's description is its tab:configs row (LEDGER); kept (NEEDED): the purity bias that retired the superseded estimator and that the exact-split studies were not recomputed.
++None of the four superseded configurations of table~\ref{tab:configs} gives one of this paper's reported results. The superseded central-value estimator gave the companion note's five-observable central value and covariance before the bias of the purity-based subtraction (section~\ref{supp:bkg}) was found. Studies labeled \emph{exact-split} use the exact-split cross-check and have not been recomputed. Their history is in \nsec{sec:method-config}.
+ 
+ The two reported configurations were chosen as follows. The five-observable estimator was selected before the joint-test design was fixed (ref.~\cite{AnalysisNote2026}, section~\ref*{N-sec:joint5d}). The two-dimensional central value and its covariance were rebuilt with the two-observable estimator after a two-dimensional closure test with backgrounds found the purity bias (ref.~\cite{AnalysisNote2026}, appendix~\ref*{N-sec:negweight-footing}). The closure test determined the change before the distance between the rebuilt and published results was computed. The rebuilt result was adopted after that distance was known.
+ 
+@@ -620,7 +617,7 @@ $C_{\mathrm{PL,5D}}$ & three exposure-weighted run-period groups, rank \fvval{pl
+ \end{tabular}
+ \end{table}
+ 
+-\subsection{The run-period block and the per-playlist test}
++\subsection{The run-period block}
+ \label{supp:cov16-pl}
+ % Added 2026-11-12 (journal-editor, style2 ranked change 7): S5's run-period construction
+ 
+@@ -636,9 +633,8 @@ As for the two-dimensional result (section~\ref{sec:uq-combine}, ref.~\cite{Anal
+ The block's size rests on three periods. Treated as draws of one Gaussian period effect, their exposure-weighted spread has $\nu=\fvval{ct5b-nu}$ effective (Satterthwaite) degrees of freedom. The $\chi^{2}_{\nu}$ interval on the ratio of the block's true to its estimated $\sigma$ is then \fvval{pl-sigratio-lo}--\fvval{pl-sigratio-hi} at 68\,\%. It depends only on the exposure shares, which were known before the data were seen, and is an uncalibrated illustration under that model.
+ 
+ % source: sec_fived16.tex, note label sec:fived16-pl, paragraph 1 (adapted 2026-11-12: DESYNCED, the director's D1, step 7's sentence pass (semicolons and ", so" split), restyled, wording only; earlier: restyled 2026-11-09, wording only; the note keeps the original; comments stripped; its search record or waiver carried from the note)
+-Each of the twelve playlists was also unfolded on its own, with its own simulation and bootstrap replicas. A playlist's offset is its double ratio on the sixteen cells relative to the exposure-weighted mean of the twelve. The statistic $F$ of a division of the playlists into groups is the share of the offsets' exposure-weighted squared size, measured with the inverse of the relative $C_{\mathrm{total}}+C_{\mathrm{resp}}$, that the groups' exposure-weighted mean offsets carry. For the three run-period groups $F=\fvval{rpd-fflux}$, the largest of all \fvval{rpd-npart-flux} divisions of the twelve playlists into groups of six, three and three. The permutation $p$-value is therefore $1/\fvval{rpd-npart-flux-math}=\fvval{rpd-pflux}$, the smallest the test can give.
+-
+-The permutation is approximate: the playlists differ in exposure and hence in noise. Their labels are therefore not exchangeable, and the test's validity rests on a simulated null. In each of \fvval{rpd-datasets} simulated datasets the playlists' offsets are drawn independently from one covariance, estimated from the twelve playlists and scaled by 0, 0.5, 1 or 2, with each playlist's own bootstrap and simulation noise added. The share of datasets with $p<0.05$ is \fvval{rpd-alpha-lo}--\fvval{rpd-alpha-hi} over the four scales, within the bound of \fvval{rpd-alpha-gate}. For an alternative chronological division into groups of five, two, two and three playlists (1A--1E, 1F and 1G, 1L and 1M, and 1N--1P), the same statistic gives $p=\fvval{rpd-pera}$ over its \fvval{rpd-npart-era} divisions. This comparison is descriptive.
++% Restyled 2026-11-16 (the director's optional cuts from a read-only Supplement pass, under the two-question rule), cut 2: the per-playlist permutation test (LEDGER: the note's sec:fived16-pl carries it; the paper neither prints nor points to it).
++Ref.~\cite{AnalysisNote2026}, section~\ref*{N-sec:fived16-pl}, also unfolds each of the twelve playlists on its own and tests the division into the three run-period groups against every other division of the playlists.
+ 
+ \subsection{Selection history and decision rules}
+ \label{supp:cov16-history}
+@@ -781,7 +777,8 @@ Longer exact iteration removes much of the residual of the GiBUU-to-GENIE change
+ % stable under the truth resolution and the response weighting, 144 of 376; identified = relative Cramer-Rao width at
+ % or below 2.5 %), without adding a number; its evidence route is that line's source comment there.
+ % Fixed 2026-11-13 (the director's D6 ruling D, journal-editor): "at or below", as gbdt/comparator.py classifies identified (s <= IDENTIFIED_SIGMA).
+-In the same noise-free comparison, \fvval{did-n-eligible} residuals are counted: those above \SI{2}{\percent} whose classification does not change with the truth resolution or the response weighting. Of these, \fvval{did-n-weak} lie in quantities that the binned response constrains weakly at the analysis exposure, with Cram\'er--Rao widths above \SI{10}{\percent} (median \SI{\fvval{did-weak-width-med}}{\percent}). The tree approximation dominates \fvval{did-n-approx}, of which \fvval{did-n-approx-id} lie in identified quantities, those whose relative Cram\'er--Rao width is at or below a bound set there. Both terms are defined in \nsec{sec:val-departure}. This holds for a binned, signal-only, noise-free comparison at the simulation's detector response.
++% Restyled 2026-11-16 (the director's optional cuts from a read-only Supplement pass, under the two-question rule), cut 3: the Cramer-Rao classification of the residuals (LEDGER: the note's sec:val-departure defines and gives it; the paper neither prints nor points to it).
++Ref.~\cite{AnalysisNote2026}, section~\ref*{N-sec:val-departure}, classifies the residuals of this comparison by how well the binned response constrains each quantity and by whether the tree approximation dominates them.
+ 
+ \section{Designs of the coverage and fake-data tests}
+ \label{supp:tests}

@@ -1,0 +1,49 @@
+### A. The two-question rule
+Detail stays if removing it would change a reader's understanding of the reported object, its reproducibility, its evidential independence or its limitations (NEEDED). Otherwise it may go if the note (ref. [2], cited at its release revision) or a record holds it and a pointer remains (LEDGER).
+
+### B. The paper's iteration paragraph (paper_body.tex:119, section sec:unfolding)
+Each OmniFold iteration has two classification steps. A reconstruction-level classifier distinguishes data from simulated events and defines a likelihood-ratio weight. The pairing of reconstructed and true events transfers that weight to truth, including unmatched events, and a truth-level classifier propagates a smooth reweighting to the next iteration. Because events that fail reconstruction enter as truth events without a reconstructed partner, no separate efficiency correction is applied. Their step-1 weight comes from a regressor of that weight on the truth coordinates, fitted to the events that have a partner. Each simulated event contributes equally to the regressor fit, which therefore estimates the mean weight at fixed truth without the events' simulation weights. Events without a reconstructed partner carry \SIrange{\fvval{ess-nrp-min}}{\fvval{ess-nrp-max}}{\percent} of a cell's final weight (\ssecc{S4}{supp:estimators}).
+
+### C. Does the paper print or point to the per-playlist test or the Cramer-Rao classification? (grep of paper_body.tex, comments excluded)
+(no lines above = neither)
+
+### D. tab:configs rows (supplemental_body.tex, unchanged by this edit)
+\label{tab:configs}
+\small
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.2\textwidth}>{\raggedright\arraybackslash}p{0.2\textwidth}>{\raggedright\arraybackslash}p{0.22\textwidth}>{\raggedright\arraybackslash}p{0.3\textwidth}@{}}
+\toprule
+Estimator (label in ref.~\cite{AnalysisNote2026}) & Learner & Background treatment & Results \\
+\midrule
+\multicolumn{4}{@{}l}{\emph{Reported configurations}} \\ \addlinespace
+(e) five-observable estimator & LightGBM, deterministic & negative weights; refinement classifier 400 trees, 31 leaves & in ref.~\cite{AnalysisNote2026}: the sixteen-cell five-dimensional result (section~\ref*{N-sec:fived16}), the 3D and 4D central values (section~\ref*{N-sec:3d}), the generator tests (section~\ref*{N-sec:joint5d}), the study of generator shapes held out of its development (section~\ref*{N-sec:val-departure}) and the precision study (section~\ref*{N-sec:gbdt-model-dependence}) \\ \addlinespace
+(f) two-observable estimator & nominal LightGBM; refinement seeded at the estimator seed plus three & as (e) & the two-dimensional central value and its uncertainty ensembles \\ \midrule
+\multicolumn{4}{@{}l}{\emph{Superseded configurations (section~\ref{supp:superseded})}} \\ \addlinespace
+(a) superseded central-value estimator & LightGBM (seed~42 in its two-dimensional runs) & purity-based subtraction & the companion note's five-observable central value and covariance; purity-subtracted two-dimensional comparisons \\ \addlinespace
+(b) exact-split cross-check & scikit-learn exact splits & purity-based subtraction & an earlier version's two-dimensional central value; studies labeled \emph{exact-split} \\ \addlinespace
+(c) deterministic purity-based variant & LightGBM, deterministic & purity-based subtraction & background bias and a coverage test (ref.~\cite{AnalysisNote2026}, sections~\ref*{N-sec:val-negweight} and~\ref*{N-sec:coverage-5d}) \\ \addlinespace
+(d) lower-capacity variant & as (c) & negative weights; refinement classifier 100 trees, 8 leaves & background bias; the generator-sized change of figure~\ref{fig:supp-lowcap} \\
+\bottomrule
+\end{tabular}
+
+### E. The note at its release revision acf934d71fce: where it holds the cut material
+174:On the sixteen cells, the unfolded results of the three run-period groups (playlists 1A--1F, 1G--1M and 1N--1P), each over its own simulated truth (the double ratio), differ from one another by more than the scatter of their bootstrap replicas. The offsets of the twelve playlists differ between the three period groups by more than expected from their playlist-to-playlist scatter. The cause is 
+176:Each of the twelve playlists was also unfolded on its own, with its own simulation and bootstrap replicas, in a study whose tests, bounds and readings were fixed before any playlist result was read. A playlist's offset is its double ratio on the sixteen cells relative to the exposure-weighted mean of the twelve. The statistic $F$ of a division of the playlists into groups is the share of the o
+179:% RPD (DECISION-20261104-joseph-rpd-sentence.md item 2, #751 at 0469aa858; ledger rpd-sentence-paper-20261104/ledger.md): the run-period diagnosis, FD-RPD-DECLARATION.md sec. 5 (R2: the (6, 3, 3) flux-file permutation test, F = Q_b/Q_tot in 5B's metric M = (C_total + C_resp)/(f f^T), p_flux with ties and pi_flux counted, the approximate permutation and its simulated null S0 at a in {0, 0.5, 1,
+---
+84:\paragraph{Comparison with exact binned unfolding.} A diagnostic in simulation compares the boosted-tree residual with that of an exact binned iterative unfolding. The binned unfolding unfolds the same simulated events, with their exact efficiency and the response binned in the 10,499 occupied five-dimensional reconstructed cells, starting from the nominal prior. The comparison uses noise-free signal-only pseudo-data, the 109 supported fine joint cells (J cells) and the fixed historical truth
+---
+9:  \item \textbf{Step 1 (detector space).} A classifier separates measured data from reconstructed simulation weighted by the current push-weights. Its calibrated output $p$ gives the likelihood-ratio reweight $w = p/(1-p)$ for each reconstructed simulated event. Each simulated event is a (truth, r
+10:  \item \textbf{Step 2 (truth space).} A second classifier separates the original truth-level simulation from the same sample carrying the pulled-back step-1 weights. Its smooth truth-space reweight becomes the next iteration's push-weight.
+12:After $n$ iterations, the push-weights define an efficiency-corrected truth-level reweighted simulation ensemble. Histogramming this ensemble in any binning chosen afterwards gives the unfolded spectrum. The iteration count and learner capacity regularize the unfolding.
+103:Configuration (c) is the deterministic variant with purity-based subtraction, and (d) is the same variant with negative weights and a nominal-capacity refinement; they serve the background-bias, generator-sized-change and coverage studies listed in the table. The five-dimensional central value o
+131:    \pcell{0.20\textwidth}{(b) exact-split cross-check} & \pcell{0.20\textwidth}{scikit-learn exact splits; seed not fixed} &
+167:  \item At histogramming, each simulated truth event carries its final OmniFold push-weight times its central-value simulation weight, including MINERvA Tune~v1 reweighting. No efficiency-histogram division is applied: the step-1 regression for unreconstructed truth events already gives an effic
+
+### F. The run-period paragraph that stays (supplemental_body.tex, paragraph 0 of the note's sec:fived16-pl), and Joseph's decision of 2026-11-04 (DECISION-20261104-joseph-rpd-sentence.md, restated): the licensed sentence 'The offsets of the twelve playlists differ between the three period groups by more than ... playlist-to-playlist scatter' goes in with a pointer to the note; the note carries the permutation test and its p-values.
+626:On the sixteen cells, the unfolded results of the three run-period groups (playlists 1A--1F, 1G--1M and 1N--1P), each over its own simulated truth (the double ratio), differ from one another by more than the scatter of their bootstrap replicas. The offsets of the twelve playlists differ between the three period groups by more than expected from their playlist-to-playlist scatter. The cause is not known, and these data cannot establish which period, if any, is right.
+
+### G. The note at acf934d71, sec_fived16.tex:176 (the permutation test, first 600 chars)
+Each of the twelve playlists was also unfolded on its own, with its own simulation and bootstrap replicas, in a study whose tests, bounds and readings were fixed before any playlist result was read. A playlist's offset is its double ratio on the sixteen cells relative to the exposure-weighted mean of the twelve. The statistic $F$ of a division of the playlists into groups is the share of the offsets' exposure-weighted squared size, measured with the inverse of the relative $C_{\mathrm{total}}+C_{\mathrm{resp}}$, that the groups' exposure-weighted mean offsets carry. For the three run-period gr
+
+### H. The note at acf934d71, sec_5d.tex:84 (first 900 chars)
+\paragraph{Comparison with exact binned unfolding.} A diagnostic in simulation compares the boosted-tree residual with that of an exact binned iterative unfolding. The binned unfolding unfolds the same simulated events, with their exact efficiency and the response binned in the 10,499 occupied five-dimensional reconstructed cells, starting from the nominal prior. The comparison uses noise-free signal-only pseudo-data, the 109 supported fine joint cells (J cells) and the fixed historical truth deformations D1, W1, W3 and the $q_3$ stress, pooled with W2 (all defined in \S\ref{sec:gbdt-model-dependence}). The boosted-tree comparator for W2 includes background; the outcome is unchanged without it. A residual is eligible when its diagnosis is stable under the truth resolution: of the 376 J-cell and deformation combinations with residuals above \SI{2}{\percent}, 232 changed classification wit
