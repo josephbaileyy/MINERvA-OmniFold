@@ -1,0 +1,3 @@
+No problems found. The renamed classifiers match `records.txt:2`. “All three” still means the two classifiers and the regressor. Mask scope is unchanged: truth columns serve step 2 and the regressor; reconstructed columns serve step 1, including O4r’s unchanged truth inputs (`records.txt:10–15`).
+
+VERDICT: PASS

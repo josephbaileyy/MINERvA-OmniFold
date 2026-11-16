@@ -50,3 +50,5 @@
     0.25  bin edges          a cell's pT edges  [at: $\pT=0.25$--0.33]
    21.09  version            the generator version  [at: NuWro~21.09]
      1.1  bin edges          the first fine W bin's upper edge  [at: for $W<\SI{1.1}{GeV}$]
+     0.5  threshold          the bias-half rule's factor  [at: $0.5\,|d_c|$]
+     0.5  threshold          the bias-half rule's factor  [at: $0.5\,|d_c|$]

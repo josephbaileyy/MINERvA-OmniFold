@@ -1,0 +1,31 @@
+Meaning read of the draft-side referee fixes (codex referee report at 3d75ed5d4: Minor 2, Minor 5, Minor 6, the
+conclusions' quadrant scope, the Table 6 caption). An independent general-purpose subagent, read-only, 2026-11-15, of
+diff-as-read.txt (byte-identical to the live diff).
+
+1. §3.2 traces: the share at :162 is OK; the two ratios at :165 are a DEFECT. "Fractional" is right for all three
+   numbers: trace_share_by_vertex = tr(S^2)/tr(C) on rel_shift = x/x_nom - 1 (build_cmodel5d.py:161, :246;
+   pv2d_lib.py:197-198), and the json form reads "fractional; C_abs = diag(x) C_model diag(x)". The RSN trace_ratio is
+   fractional over fractional (rsn_read.py:167; rsn_cmodel.py:161-165, :201-203). But the paper's symbol C_model is in
+   cross-section units (Supplement :492; §4.4 :359), so ":165 ... times that of C_model" and "of C_model's" compare a
+   fractional trace with a cross-section trace (the referee's 1.282 and 0.256). Fix: "C_model's fractional form".
+2. §3.2 chi2 convention: OK. "Profiled out" is the lambda -> infinity idealization the Supplement quantifies (below
+   3e-5 of f^T C^-1 f at lambda = 100, :589). "Counts the rank" is right for both coverage tests (S8: the dimension of
+   C_T's non-null subspace; §6.2 :567, the 1e-12 cutoff). S5 is cited twice in adjacent sentences.
+3. Table 4 row: OK. r = (unfolded - truth)/truth against the changed truth (a_recovery.py:7); the printed value is
+   max |r| on supported cells (:52), and the signed r at each maximum is positive, so the ranges hold either way. The
+   median is over supported cells with |injected| > 2 % (a_recovery.py:41), a cut the row (old and new) does not state.
+4. §7 quadrant clause: OK (§4.4 :318, "The agreement holds throughout this family").
+5. Table 6 caption: OK (prr_read.py:20, :262, :284; the IBU's rms the same expression, :414). "Relative to the prior"
+   could read as Xhat - P; "relative to the prior cross section" (as :413) avoids that.
+6. No other change; grammar fine.
+
+NOTE, outside the diff: Supplement :504 and :505 (journal-editor's file) still give the 1.41 and 0.112 traces against
+C_model in cross-section units.
+
+Verdict: DEFECT (paper_body.tex:165's denominators).
+
+Disposition (director-helper-3, 2026-11-15):
+- Item 1: fixed. All three trace statements now say "C_model's fractional form".
+- Item 5: fixed. The caption now says "relative to the prior cross section".
+- The 2 % cut: unchanged in the row, as before. Not raised for this round.
+- The Supplement note is sent to journal-editor, who owns Minor 2's Supplement side.

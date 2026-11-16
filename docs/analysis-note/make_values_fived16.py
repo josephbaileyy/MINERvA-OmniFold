@@ -1634,6 +1634,9 @@ def groupb_values(d):
     v["c2c1-dibu-mid-lo"], v["c2c1-dibu-mid-hi"] = f"{min(mid):.2f}", f"{max(mid):.2f}"
     assert max(mid) < c["D_E_R"], "the text says IBU stays below the 2D result's distance for two to fifteen iterations"
     v["c1-nrep"] = str(c1["n_replicas"])
+    # D2 (an independent referee, 2026-11-15): the number of directions T_delta tests, floor(N/4) (Supplement S7)
+    assert c1["rank"] == c1["n_replicas"] // 4
+    v["c1-rank-word"] = {12: "twelve"}[c1["rank"]]
     v["c1-below-pct"] = f"{100 * (1 - c1['T'] / c1['q95']):.0f}"
     g = d["refg1"]
     assert g["schema"] == "ref-g1-readout/1" and g["R1"]["reading"] == "differ"
@@ -1651,6 +1654,8 @@ def groupb_values(d):
         v[f"prr-chi2-e-{t}"], v[f"prr-chi2-ibu-{t}"] = f"{e['grade']['chi2']:.1f}", f"{i5['grade']['chi2']:.1f}"
         assert i5["rho"] < e["rho"], "the text says IBU at five iterations retains less"
     v.update(tier1_values(d))
+    v.update(prr_levels_values(d))
+    v.update(vhalf_band_values(d))
     v.update(t2a_values(d))
     v.update(d1_values(d))
     v.update(period_values(d))
@@ -2001,6 +2006,55 @@ def tier1_values(d):
     v["ens1-g-dmax"], v["ens1-g-maxfloor"] = f"{bw['max'] - bw['max_control']:.6f}", f"{bw['delta_max']:.6f}"
     assert (v["ens1-g-drms"], v["ens1-g-ratio"], v["ens1-g-dmax"], v["ens1-g-maxfloor"]) == ("0.000512", "1.23", "0.000929", "0.001783")
     return v
+
+
+def prr_levels_values(d):
+    """S8.2's settings table, tab:prr-levels (the codex referee read at 3d75ed5d4, Major 1). Each FD-PRR level
+    (FD-PRR-DECLARATION.md:165-172): its rho at the two flagged truths and its change from B0 (table.*.rho, split 991000),
+    each setting's PR-1 class, the threshold, and PR-3's newly flagged graded truths, recomputed from the table's grades
+    and asserted equal to the readout's own list. Nothing is typed."""
+    r, v = d["prr"], {}
+    rd, t = r["readings"], r["table"]
+    fl = rd["floor"]
+    # every setting's threshold is the floor (sec. 5.1 :282): T_Q s_F stays below it, so one number serves all four
+    tqs = {f: fl["T_Q"] * fl["s_F"][f] for f in PRR_FACTOR}
+    assert all(fl["bars"][f] == fl["bar_floor"] == max(fl["bar_floor"], tqs[f]) for f in PRR_FACTOR)
+    # printed as an upper bound ("below"): the maximum rounded up at the third decimal, asserted above the maximum
+    v["prr-lev-tqs-max"] = f"{math.ceil(1000 * max(tqs.values())) / 1000:.3f}"
+    assert max(tqs.values()) < float(v["prr-lev-tqs-max"]) < fl["bar_floor"]
+    levels = [L for f in PRR_FACTOR for part in PRR_LEVELS[f] for L in part]
+    assert sorted(levels) == sorted(set(rd["PR-3"]) - {"B0", "IBU_K5"}), "the table's rows are PR-3's levels"
+    graded = sorted({k.split("/")[1] for k in t if k.startswith("B0/") and k.endswith("/s991000")})
+    flagged0 = {T for T in graded if t[f"B0/{T}/s991000"]["grade"]["flagged"]}
+    assert len(graded) == 12 and flagged0 == set(PRR_TRUTHS.values()), "B0 flags exactly the two flagged truths"
+    v["prr-lev-nother"] = str(len(graded) - len(flagged0))
+    names = {"no effect": "no detected change", "increases": "increases", "reduces": "reduces", "both": "both"}
+    for f in PRR_FACTOR:
+        for tt, T in PRR_TRUTHS.items():
+            v[f"prr-lev-cls-{f}-{tt}"] = names[rd["PR-1"][T][f]]
+    for L in levels:
+        p3 = rd["PR-3"][L]
+        # the caption: no level clears either flagged truth (PR-3's "does not clear at these truths", read per truth)
+        assert p3["reading"] == "does not clear at these truths"
+        assert all(t[f"{L}/{T}/s991000"]["grade"]["flagged"] for T in PRR_TRUTHS.values()), L
+        new = {T for T in graded if t[f"{L}/{T}/s991000"]["grade"]["flagged"]} - flagged0
+        assert new == set(p3["new_flags"]), (L, new, p3["new_flags"])
+        v[f"prr-lev-{L}-nnew"] = str(len(new))
+        for tt, T in PRR_TRUTHS.items():
+            x, b0 = t[f"{L}/{T}/s991000"]["rho"], t[f"B0/{T}/s991000"]["rho"]
+            v[f"prr-lev-{L}-rho-{tt}"] = f"{x:.3f}"
+            v[f"prr-lev-{L}-d-{tt}"] = f"{x - b0:+.3f}"
+            assert v[f"prr-lev-{L}-d-{tt}"] not in ("+0.000", "-0.000"), (L, tt)
+    return v
+
+
+def vhalf_band_values(d):
+    """S10's bias-half noise band (the codex referee read at 3d75ed5d4, minor 8): its multiplier K, from the V-HALF
+    readout's own rule record (readings.rule; v-half/DECLARATION.md sec. 4 :134-142), with the bound's 0.5 asserted."""
+    rule = d["vhalf"]["readings"]["rule"]
+    assert rule["half"] == 0.5 and rule["floor"] == 0.01 and rule["b"] == "r (1 + d)"
+    assert rule["sigma_m"] == "sqrt(((1 + d) nu)^2 + (0.5 sgn(d) - |r|)^2 sigma_d^2)", "S10's sentence states these two terms"
+    return {"vhalf-k": f"{rule['K']:g}"}
 
 
 def t2a_values(d):
@@ -2571,6 +2625,14 @@ def g_rows_values(d):
         v[f"rp-{tag}-unf"], v[f"rp-{tag}-unf-se"] = f"{q['unfolded_step_pct']:.2f}", f"{q['unfolded_step_noise_pct']:.2f}"
     assert (v["rp-pb-unf"], v["rp-pb-unf-se"]) == (v["pp-step-re2"], v["pp-step-re2-se"])
     assert (v["rp-pb-reco"], v["rp-pc-reco"], v["rp-pc-unf"], v["rp-pc-unf-se"]) == ("5.99", "1.26", "1.85", "0.64")
+    # B6 (an independent referee, 2026-11-15): below 8 GeV/c, every 1N-1P bin lies above 1A-1F at both levels; its
+    # per-bin range in percent (the record holds per-bin ratios, not the integrated yields the step uses)
+    e = rp["pz_edges_GeV"]
+    lo = [i for i in range(len(e) - 1) if e[i] >= 1.5 and e[i + 1] <= 8.0]
+    for lvl, tag in (("reco_ratio", "reco"), ("unfolded_ratio", "unf")):
+        x = [rp["panels"]["PC"][lvl][i] for i in lo]
+        assert min(x) > 1, "every 1N-1P bin below 8 GeV/c lies above 1A-1F"
+        v[f"rp-pc-lev-{tag}-lo"], v[f"rp-pc-lev-{tag}-hi"] = f"{100 * (min(x) - 1):.1f}", f"{100 * (max(x) - 1):.1f}"
     src = ROOT / READOUTS["runper"][0].replace("runperiod_values.json", "runperiod.pdf")
     got = OUT.parent / "figures" / "methods_short" / "paper_runperiod.pdf"
     hs = {hashlib.sha256(x.read_bytes()).hexdigest() for x in (src, got)}
@@ -2722,6 +2784,16 @@ def all_values(d=None, d_nopl=None):
         fall5 += [1 - float(v[f"g-{k}-carbon-{part}-chi2"]) / float(v[f"g-{k}-carbon-{part}-chi2-nopl"]) for k in ("nuwro", "gibuu")]
         assert min(fall5) > 0, f"a {part} chi2 rises with the block"
         v[f"pl-chi2fall-b5-{part}-lo"], v[f"pl-chi2fall-b5-{part}-hi"] = f"{100 * min(fall5):.1f}", f"{100 * max(fall5):.1f}"
+    # B4 (an independent referee, 2026-11-15): the data's IBU-OmniFold difference in the three cells with the largest
+    # fractional differences, in units of the cell's reported relative sigma (both in percent of the cell's result)
+    cells16 = [f"R{c:02d}" for c in range(16)]
+    big = sorted(cells16, key=lambda c: -abs(float(v[f"ibu16-dof-{c}"])))[:3]
+    assert big == ["R11", "R06", "R05"], ("the text names R11, R06 and R05", big)
+    rat = {c: abs(float(v[f"ibu16-dof-{c}"])) / float(v[f"sig-reported-{c}"]) for c in cells16}
+    for c in big:
+        v[f"ibu16-dsig-{c}"] = f"{rat[c]:.1f}"
+    v["ibu16-dsig-max"] = f"{max(rat.values()):.1f}"
+    assert max(rat, key=rat.get) == "R06", "the largest in units of sigma is R06"
     for k in sorted(k for k in v if PAPER_PREC.match(k)):
         for nk, x in paper_prec(k, v[k]).items():
             assert v.get(nk, x) == x, f"{nk}: {v[nk]!r} against the paper form {x!r}"

@@ -1,0 +1,68 @@
+== FD-PRR-DECLARATION.md :280-300
+   280	
+   281	At T ∈ {A7 GiBUU, q3} and factor F with non-baseline levels L, at split 991000:
+   282	- **The bar** is δ_F = max(0.05, 9.03 s_F).
+   283	  - 9.03 is the two-sided Student-t quantile on 4 degrees of freedom at 0.01/12, Bonferroni over the 12 primary
+   284	    readings of §5.1 and §5.2 at familywise 0.01. The code uses 9.02936702750999 (`prr_read.T_Q`), and
+   285	    `test_t_quantile` recomputes it with `scipy.stats.t.ppf`.
+   286	  - The absolute floor of 0.05 keeps a tiny s from making a trivial change "real".
+   287	- **The classes:**
+   288	  - **reduces** if some L has ρ_L ≤ ρ_B0 − δ_F and none has ρ_L ≥ ρ_B0 + δ_F;
+   289	  - **increases** if the reverse;
+   290	  - **both** if each happens at some level;
+   291	  - **no effect** if every |ρ_L − ρ_B0| < δ_F;
+   292	  - **undefined** if ρ is undefined at T. That truth's χ² of §5.3 is printed instead.
+   293	
+   294	### 5.2 PR-2: IBU against (e) on the same pseudo-data (4 readings)
+   295	
+   296	At each flagged truth T:
+   297	- **PR-2a.** At K = 5, Δ = ρ_IBU(5) − ρ_B0 against δ_IBU = max(0.05, 9.03 s_IBU). The classes are **IBU retains
+   298	  less**, **IBU retains more** and **same**.
+   299	- **PR-2b.** IBU's retention against K: **falls** if ρ_IBU(200) ≤ ρ_IBU(5) − 0.05; **rises** if ρ_IBU(200) ≥
+   300	  ρ_IBU(5) + 0.05; otherwise **flat**.
+== nd-unfolding/prior_retention/prr_read.py :296-317
+   296	def bar(s: float) -> float:
+   297	    return max(BAR_FLOOR, T_Q * s)
+   298	
+   299	
+   300	def factor_class(rho0: float | None, rhos: list[float | None], delta: float) -> str:
+   301	    if rho0 is None or any(v is None for v in rhos):
+   302	        return "undefined"
+   303	    lo = any(v <= rho0 - delta for v in rhos)
+   304	    hi = any(v >= rho0 + delta for v in rhos)
+   305	    return "both" if lo and hi else "reduces" if lo else "increases" if hi else "no effect"
+   306	
+   307	
+   308	def ibu_class(d: float | None, delta: float) -> str:
+   309	    if d is None:
+   310	        return "undefined"
+   311	    return "IBU retains less" if d <= -delta else "IBU retains more" if d >= delta else "same"
+   312	
+   313	
+   314	def ibu_k_class(r5: float | None, r200: float | None) -> str:
+   315	    if r5 is None or r200 is None:
+   316	        return "undefined"
+   317	    return "falls" if r200 <= r5 - BAR_FLOOR else "rises" if r200 >= r5 + BAR_FLOOR else "flat"
+== FD-1B-INV-DECLARATION.md :225-229 and :258-263
+   225	| mode | the unfolding MC | object |
+   226	|---|---|---|
+   227	| **A** (S1 at the nominal truth) | `universe_inputs` exactly: truth and reco weights, completeness denominator and background template → universe u's (non-finite weights zeroed, as S1's loader does) | S1's mechanism, at gate D's truth |
+   228	| **B** (response in the MC) | reco weights × k_wr × g_f and background template × k_b, the factors gate D's source uses. Truth weights and denominator are CV | the response alone, moved on the MC side |
+   229	| **C** (prior in the MC) | `prior_inputs`' construction with r = the fine-cell mean of k_wt: truth and reco weights × r, and the denominator by the same per-cell factor, computed before it is applied. The response within each fine cell is CV | the prior alone |
+   258	**Readouts,** each group sum built with the pair estimator and carried by g as gate D's E is:
+   259	- for the interaction group, per cell, A_c, B_c and C_c, beside E_c (gate D) and M_c (S1);
+   260	- three factors whose product is the gate's interaction ratio, exactly:
+   261	
+   262	      √(E/M) = F_src · F_prior · F_truth,   F_src = √(E/B),   F_prior = √(B/A),   F_truth = √(A/M).
+   263	
+== FD-1B-INV-I2-REPORT.md :10-16 and :271
+    10	
+    11	**The reading: rule I2 attributes 14 of the interaction group's 15 out-of-window cells to F_prior (H1) and 1 to
+    12	F_truth (H3, R05).** No cell is attributed to F_src (H4), and none is unresolved.
+    13	- **The headline is H1, outcome O1:** gate D compared unlike objects. The fixed-truth toys' block matches the response
+    14	  alone moved in the MC (F_src = 0.986–1.015 in every cell). S1's full universe at the same truth gives a different
+    15	  block, by F_prior = √(B/A), with median 2.72 and range 0.49–6.51.
+    16	- **H3 and H4 are each refuted as the account** (1 and 0 cells, the level being 3 or fewer). They are counted
+- **What this limits.** F_prior = √(B/A) compares the response alone with S1's whole universe at the same truth.
+== the analysis note (app_statmethods_nd.tex:96 at the note's pinned revision), as the audit quotes it
+The interaction response-only/full-universe spread ratio is **2.72 (0.49–6.51)** in both documents. The note explicitly identifies **response-only / full-universe** (p. 123; `app_statmethods_nd.tex:96`). The Supplement says the full-universe block “differs from” the response block by that factor without naming the numerator (p. 33; `supplemental_body.tex:1031`). **AGREE numerically; direction underspecified in the Supplement.** Do not infer a new inverse ratio or a new measurement from that wording.
