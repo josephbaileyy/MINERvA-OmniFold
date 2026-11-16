@@ -160,6 +160,30 @@ sha256 begins `8ab070873e258359`. The two reads are in
     E2's one-sentence change. It will be edited further as the deposit's files are uploaded.
 21. **"STOP" becomes "stop"** in every printed site of the paper and the Supplement.
 
+## Joseph's fifth answer, verbatim
+
+The meaning read of item 18's abstract found that one sentence overstated, and three smaller points. The director put
+four recommendations to Joseph.
+
+> I like your recommendations for all 4 decisions
+
+sha256 of the text plus a final newline begins `5126ab22378d993b`.
+
+22. **The overshoot sentence** reads "At the two flagged truths, binned unfolding at five iterations overshoots along
+    the prior-to-truth direction." Its readout's ρ is positive at one and two iterations and turns negative only from
+    three, so the unqualified form overstated.
+23. **The settings sentence** reads "Tested settings change prior retention but remove neither bias flag." Every tested
+    OmniFold level leaves both truths flagged, so "do not remove both" understated.
+24. **"Descriptive" in the body.**
+    - Table 1's caption defines the status for both uses: the second five-observable coverage test, and the per-cell
+      bias-half diagnostic.
+    - The Supplement's "the bias-half rule, is graded" becomes "is applied descriptively", or the nearest accurate
+      wording after a meaning read.
+    - Both go in the F5 editorial pass.
+25. **The release appendix's plotting-code sentence** (RL-25) reads "with RC7's plotting code extended to draw this
+    analysis's band and the distribution of standardized bin differences". The director took the first of the two
+    options offered: update it now.
+
 ## CITABLE FOR / NOT CITABLE FOR
 
 - **Citable for:** the wording choices above as Joseph's; A1–A4 as open.
