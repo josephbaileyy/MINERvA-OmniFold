@@ -126,10 +126,23 @@ def judge(m, keys, targets):
     return [f"{k} {m[k]} > {targets[k]}" for k in keys if m[k] > targets[k]]
 
 
-def worse(m, base, keys):
-    """The metrics worse than the base by more than TOLERANCE."""
-    return [f"{k} {m[k]}, worse than the base's {base[k]} by more than {TOLERANCE[k]}" for k in keys
-            if m[k] > base[k] + TOLERANCE[k] + 1e-9]
+# The abstract's words per sentence (the director, 2026-11-16, option (i)): a rise is "worse" only past the references'
+# median. Joseph's short abstract sits far below the references' range, so a rise toward their median is not a
+# regression, and anything past the median still fails. The self-test turns it off to show the old judgment.
+ABSTRACT_WPS_UP_TO_MEDIAN = True
+
+
+def worse(m, base, keys, ceiling=None):
+    """The metrics worse than the base by more than TOLERANCE; a metric in `ceiling` is not worse while it is at or
+    below that ceiling."""
+    ceiling = ceiling or {}
+    return [f"{k} {m[k]}, worse than the base's {base[k]} by more than {TOLERANCE[k]}"
+            + (f" and above the references' median {ceiling[k]:g}" if k in ceiling else "") for k in keys
+            if m[k] > base[k] + TOLERANCE[k] + 1e-9 and not (k in ceiling and m[k] <= ceiling[k] + 1e-9)]
+
+
+def abstract_ceiling():
+    return {"wps": bounds(references())["wps"][0]} if ABSTRACT_WPS_UP_TO_MEDIAN else {}
 
 
 def against(m, base, keys):
@@ -186,7 +199,8 @@ def run(wt, report, parts=("body", "supplement", "abstract"), base="@{u}"):
     same = all(at_rev(wt, rev, f) == (wt / NOTE / f).read_text() for f in ("main_paper.tex", "values_fived16.tex"))
     ab = am if same else abstract_metrics(abstract_texts(wt, rev))[0]      # the base renders the same text: reuse it
     if "abstract" in parts:
-        fails += [f"abstract (worst of {len(texts)} rendered cases): {x}" for x in worse(am, ab, ABSTRACT_TARGETS)]
+        fails += [f"abstract (worst of {len(texts)} rendered cases): {x}"
+                  for x in worse(am, ab, ABSTRACT_TARGETS, abstract_ceiling())]
     print(f"STYLE abstract{'' if 'abstract' in parts else ' (not judged)'}, worst of {len(texts)} rendered cases\n"
           f"{against(am, ab, ABSTRACT_TARGETS)}")
     for x in fails:
@@ -237,6 +251,21 @@ def self_test():
         print("self-test: the mutant without the key drop is not caught:", mm); ok = False
     else:
         print(f"  ok   the old cleaner miscounts the keyed case: words {mm['words']} (want 200), wps {mm['wps']} (want 10.0)")
+    # the abstract's wps ceiling: a rise from 11.1 to 12.3 (the short abstract, 2026-11-16) stays at or below the
+    # references' median and is not worse; a rise past the median is; the mutant (the rule off) judges 12.3 worse
+    med = bounds(refs)["wps"][0]
+    lo, mid, hi = {"wps": 11.1}, {"wps": 12.3}, {"wps": round(med + 1, 1)}
+    if worse(mid, lo, ["wps"], abstract_ceiling()) or not worse(hi, lo, ["wps"], abstract_ceiling()):
+        print("self-test: the abstract's wps ceiling misjudges a rise below or past the references' median"); ok = False
+    global ABSTRACT_WPS_UP_TO_MEDIAN
+    ABSTRACT_WPS_UP_TO_MEDIAN = False                 # the mutant: the judgment before 2026-11-16
+    judged = worse(mid, lo, ["wps"], abstract_ceiling())
+    ABSTRACT_WPS_UP_TO_MEDIAN = True
+    if not judged:
+        print("self-test: the mutant without the abstract's wps ceiling is not caught"); ok = False
+    else:
+        print(f"  ok   without the ceiling, the abstract's 11.1 -> 12.3 is judged worse (the old rule); with it, not "
+              f"(the references' median {med:g})")
     am, _ = abstract_metrics([good, good.replace("for tests. This", "for tests; this", 1)])
     if am["semi"] == 0:
         print("self-test: NOT CAUGHT a semicolon in one abstract case of two"); ok = False
