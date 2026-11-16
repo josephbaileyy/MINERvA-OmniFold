@@ -86,3 +86,18 @@ approved it and a referee is reading the whole abstract. Two measurements are ke
 - the referee form rendered at 249 words;
 - the style gate needs both its semicolon and its colon split, which gives a words-per-sentence of 18.5 against the
   base's 18.5.
+
+## Item 15 (Fig. 1 version B'): the caption
+
+**The read** was by an independent general-purpose subagent, on the rendered caption, the PDF (ef466621) and make_figs
+9a575b36's fig1(). **Verdict: PASS.**
+- Every caption statement is drawn: the r_i map on equal-size cells with unreported cells grey; the colour bar titled
+  r_i at ±3, with no r_i clipped; and hist(pull[m]) of the 205 values with no reference curve, labelled
+  "205 bins / mean 0.060 / SD 0.535".
+- r_i is defined once, at bottom left.
+- **The two medians** are both over the 205 reported bins:
+  - ours is q2d-sigma-med, data_g2r.json readings.sigma.median_pct[1] = 6.463025, equal to route A's uqmedian.tex;
+  - the published one is 100 median(sqrt(diag cov_total)/paper_v) over mask_reported = 6.8525, which is uqPaper, 6.85.
+- **Adopted (optional):** the band sentence had "the four-block covariance of section~\ref{sec:cov16}, without
+  C_model", which can be read as the sixteen-cell C_rep minus one term. It now reads "the two-dimensional covariance of
+  section~\ref{sec:cov16}, the sum of four blocks without C_model".

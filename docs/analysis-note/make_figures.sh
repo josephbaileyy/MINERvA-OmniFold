@@ -188,12 +188,14 @@ install_receipt_fig() {  # install_receipt_fig <source under $RB> <figure basena
 # refined redraw below.
 
 echo
-echo "== Fig. 1 from COV2D-G2R's RE-2-shapes route A (E_R and C_new; digest-checked copy) =="
-# Source: #1168's redraw on the adopted 2D covariance (D1: COV2D-G2R's C_new), drawn by re2c_fig1.py 2aadeac8... on
-# route A's outputs (fd/receipts-cov2d/g2r/re2shapes/fig1/route-a/RUN-fig1.txt). Before D1: RE-2 part C amendment 3's
-# redraw, re2-integration/fig1/fig1_validation.pdf 71a2ea48....
-RE2F="$REPO/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/g2r/re2shapes/fig1/route-a"
-src="$RE2F/fig1_validation.pdf"; want=1ead58a2223ecf88f3de505d7cbcca76ab306af49814ea7c9d50ec0f2c373e0c
+echo "== Fig. 1 version B' from COV2D-G2R's RE-2-shapes route A (E_R and C_new; digest-checked copy) =="
+# Source: #1182's version B' (DECISION-20261116-joseph-paper-batch.md item 15: the text panel becomes the histogram
+# of the 205 r_i, the colour bar is titled r_i), drawn by re2c_fig1.py 08fad881... with make_figs.py 9a575b36... on
+# route A's inputs (fd/receipts-cov2d/g2r/re2shapes/fig1/bprime/run/a/RUN-fig1.txt; bprime/README.md section 9:
+# the identity check against make_figs 4e18c266 redrew route A's 1ead58a2 byte for byte). Before B': route A's
+# 1ead58a2... (#1168, D1: C_new); before D1: RE-2 part C amendment 3's redraw on Q_R, 71a2ea48....
+RE2F="$REPO/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/g2r/re2shapes/fig1/bprime/run/a"
+src="$RE2F/fig1_validation.pdf"; want=ef466621b97f7d2a55bb18c335aa5de32be529eb10f2215844ee8fa075886de0
 if [[ "$(sha256_of "$src")" != "$want" ]]; then echo "REFUSE install: $src does not have sha256 $want" >&2; exit 1; fi
 cp "$src" "$FIGDIR/paper_fig1_validation.pdf"
 if [[ "$(sha256_of "$FIGDIR/paper_fig1_validation.pdf")" != "$want" ]]; then
