@@ -45,7 +45,7 @@ case "$MODE" in
     cut -f3 "$LIST" | hop "$NODE" "$R" ;;
   archive)
     login "$NODE"
-    S="$HERE/hpss_ll5d_u.sh"; SHA=2f330bc9684a0115ccd496b94d538cda2da43d0dceb66c97f47645c5feef69f1
+    S="$HERE/hpss_ll5d_u.sh"; SHA=a620d482b8bbb2cc99b0ff46bf8a47c179e96669515e2ba46bdbbc5dab84aa3f
     [ "$(shasum -a 256 "$S" | cut -d' ' -f1)" = "$SHA" ] || { echo "STOP: the local archive script is not the approved one"; exit 8; }
     R="f=/dev/shm/hpssr-$MODE.\$\$.sh; o=\$f.out; umask 077; cat > \"\$f\"; h=\$(sha256sum \"\$f\" | cut -d' ' -f1); if [ \"\$h\" != $SHA ]; then rm -f -- \"\$f\"; echo \"STOP: /dev/shm copy sha256 \$h is not $SHA\"; exit 8; fi; echo \"node \$(hostname) staged sha256 \$h\"; setsid nohup bash \"\$f\" \"\$f\" > \"\$o\" 2>&1 < /dev/null & p=\$!; echo \"detached pid \$p, output \$o\"; wait \$p; r=\$?; cat \"\$o\"; rm -f -- \"\$o\"; echo \"script rc=\$r\""
     hop "$NODE" "$R" < "$S" ;;

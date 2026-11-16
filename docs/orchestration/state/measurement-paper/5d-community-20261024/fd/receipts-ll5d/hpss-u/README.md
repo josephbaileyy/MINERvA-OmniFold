@@ -8,7 +8,7 @@ The kit is RSN's reviewed one (fd/referee-sensitivity-20261111/hpss/, kit rev 2;
 PASS`). Only its list and target change:
 - `hpss_ll5d_u.template.sh` is `hpss_rsn.template.sh` (7aaa9a06) with five lines changed: OUT, H, W, GROUPS_IN_ORDER
   and N_ROWS (`template-vs-rsn-7aaa9a06.diff.txt`). Its header comments still describe RSN's run; the code is
-  unchanged.
+  unchanged. (After the run, a sixth line changed: see "Follow-up" below.)
 - `hpss_ll5d_u_launch.sh` is `hpss_rsn_launch.sh` (cd826dbd) with four lines changed: OUT, H, the list with its
   sha256, and the archive script with its sha256 (`launch-vs-rsn-cd826dbd.diff.txt`).
 - `make_hpss_script.py` is byte-identical (d2f2a43a). `hpss_ll5d_u.sh` is the template with the list embedded; the
@@ -46,11 +46,11 @@ banner), and `fetch.archive.log.txt` is the archive log as fetched.
 2. **probe** ran on login14 at 13:49:37Z. The HPSS home exists. The target printed `HPSS_ENOENT` (rc 64), and `ls` of the output
    dir printed "No such file or directory". O_NOATIME was True, and two stat passes printed 1759 ok.
 3. **archive** ran on login14 from 13:50:58Z to 13:51:34Z. The staged script's sha256 was 2f330bc9…, equal to
-   `hpss_ll5d_u.sh`. The launcher printed rc 0.
+   `hpss_ll5d_u.sh` as run (commit 8fcdd4bb). The launcher printed rc 0.
 
 `run/cluster/` is the fetched output tree (`post.tar.gz`, sha256 9e775e05…, recorded in the fetched log's last line).
 It holds `logs/` (each `.log` stored as `.log.txt`, since the repository ignores `*.log`) and `manifests/`. Two files were left out because they are byte-identical to committed ones: the run's
-script copy (sha256 2f330bc9…, equal to `hpss_ll5d_u.sh`) and its `archive_list.tsv` (980bb95e…, equal to
+script copy (sha256 2f330bc9…, equal to `hpss_ll5d_u.sh` at 8fcdd4bb) and its `archive_list.tsv` (980bb95e…, equal to
 `hpss_ll5d_u_list.tsv`). `logs/archive.log.txt` printed `PREFLIGHT OK` and then these lines for each group:
 
 | group | staged files | bytes | manifest sha256 | htar | hashverify | retrieve |
@@ -67,6 +67,20 @@ extras.tar 1,145,344, null_roles.tar 76,614,656, sidecars.tar 4,505,600 and toys
 deleted on pscratch or HPSS.
 
 The final line reads "all three groups". That wording is left over from RSN's kit, and this run has four groups; all
-four printed `PASS`. It is a follow-up low for the kit, and the code is unchanged.
+four printed `PASS`.
+
+**Follow-up (2026-11-16, the director's order): the final line prints the group count.** The template's last echo now
+reads `all $(set -- $GROUPS_IN_ORDER; echo $#) groups ($GROUPS_IN_ORDER)`, which prints `all 4 groups (null_roles toys
+extras sidecars)` here. This is the template's sixth line changed against RSN's (`template-vs-rsn-7aaa9a06.diff.txt`,
+regenerated). `hpss_ll5d_u.sh` was rebuilt with `make_hpss_script.py`, and its embedded list still equals
+`hpss_ll5d_u_list.tsv`. The launcher's script pin moved with it (`launch-vs-rsn-cd826dbd.diff.txt`, regenerated).
+
+| file | as run (8fcdd4bb) | now |
+|---|---|---|
+| `hpss_ll5d_u.template.sh` | 59a51895… | c525be7a… |
+| `hpss_ll5d_u.sh` | 2f330bc9… | a620d482… |
+| `hpss_ll5d_u_launch.sh` | 371d05bf… | 32fc13bf… |
+
+The run records above are unchanged, since they are what ran. A rerun of the changed kit would refuse: the template refuses when $OUT or $H exists (`hpss_ll5d_u.template.sh:58` and `:66`), and both do.
 
 $U still sits on pscratch. Removing it remains Joseph's decision.

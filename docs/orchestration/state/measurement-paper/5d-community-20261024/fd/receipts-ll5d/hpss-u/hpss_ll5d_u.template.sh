@@ -242,6 +242,6 @@ done
 
 timeout 300 hsi -q "ls -l $H" > "$OUT/logs/hsi-ls-after.txt" 2>&1; echo "hsi ls rc=$?"; cat "$OUT/logs/hsi-ls-after.txt"
 timeout 300 hpssquota > "$OUT/logs/quota-after.txt" 2>&1; echo "hpssquota after rc=$?"; grep -i 'HPSS' "$OUT/logs/quota-after.txt"
-echo "ARCHIVE PASS: all three groups archived, hash-verified and every member re-read from HPSS"
+echo "ARCHIVE PASS: all $(set -- $GROUPS_IN_ORDER; echo $#) groups ($GROUPS_IN_ORDER) archived, hash-verified and every member re-read from HPSS"
 finish 0
 exit 9

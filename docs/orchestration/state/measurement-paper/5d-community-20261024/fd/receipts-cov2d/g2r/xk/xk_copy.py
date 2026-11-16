@@ -1,11 +1,12 @@
 """xk's run directories (the director's design ruling 1, 2026-11-16): digest-checked copies of the records the original
 GENCMP X run's K read from its run directory. V0, V1 and BOOT read no 2D covariance product, so they are reused, not
-rerun. The copied set is exactly what fd_xcov_steps.cmd_k / k_compute read from --run-dir:
-  v0-a1/v0.json                 (cmd_k :430, boot_state)
-  v1-a2/v1.json                 (v1_state :409)
-  boot/native/lane_*.json       (boot_state :398)
-  boot/xcov/*                   (boot_state :402; the paired replicas, k_compute :634-640)
-  inputs/of_inputs_5d.npz       (k_compute :587, flux5; the other inputs/ files K re-stages itself, digest-checked)
+rerun. The copied set is exactly what fd_xcov_steps.cmd_k / k_compute read from --run-dir (line numbers in
+nd-unfolding/fd_xcov_steps.py at sha256 060db550):
+  v0-a1/v0.json                 (cmd_k :451, boot_state)
+  v1-a2/v1.json                 (v1_state :428)
+  boot/native/lane_*.json       (boot_state :417)
+  boot/xcov/*                   (boot_state :421; the paired replicas, k_compute :661-667)
+  inputs/of_inputs_5d.npz       (k_compute :614, flux5; the other inputs/ files K re-stages itself, digest-checked)
 Each file is read O_NOATIME from the original run directory and written to every destination, and must equal its
 sha256 in fd/xcov/run/hpss/files.sha256 (the committed list of that run directory, paths under gencmp-x-20261102/).
 A file listed there but absent, a digest mismatch, or an existing destination file is a refusal (exit 2).
