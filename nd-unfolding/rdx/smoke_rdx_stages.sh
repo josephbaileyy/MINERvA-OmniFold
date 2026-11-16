@@ -96,20 +96,36 @@ echo "$MD5  $W/B/build/bld_rdx/runEventLoopOmniFold" > "$W/B/build/MANIFEST.md5"
 # the policy file is the COMMITTED one at the path the connect names (stubs may override contents, never existence)
 POL=$(sed -n 's/^POLICY_REL=//p' "$HERE/rdx_connect.sh")
 mkdir -p "$D/$(dirname "$POL")"; git -C "$HERE/../.." show "HEAD:$POL" > "$D/$POL" || { echo "STOP: the connect's policy file $POL is not in the repo"; exit 9; }
+# the checkers' mp1/w2 modules, COMMITTED, at the deploy paths the connect's env check imports them from
+for f in measurement-paper/phase1/mp1/omnifile_io.py publication/w2/compare_omnifiles.py; do
+  mkdir -p "$D/$(dirname "$f")"; git -C "$HERE/../.." show "HEAD:$f" > "$D/$f" || { echo "STOP: $f is not in the repo"; exit 9; }; done
 mkdir -p "$D/nd-unfolding/rdx"; for f in rdx_paths.py rdx_cap.py rdx_provenance.py runEventLoopOmniFold-truthx.patch sbatch_rdx_evloop.sh sbatch_rdx_merge.sh sbatch_rdx_arms.sh; do cp "$HERE/$f" "$D/nd-unfolding/rdx/"; done
 git -C "$D" add -A && git -C "$D" -c user.name=s -c user.email=s@invalid commit -q -m "smoke 2"; PIN2=$(git -C "$D" rev-parse HEAD)
-# stub checkers for c1: the root_6_28 python (align, rows, the uproot check) and the salloc env's python (the probe)
+# stub pythons: root_6_28 (provenance, at s0 only), the omnifold_py310 checker python (align, rows, truthx_npz) and the
+# salloc env's python (the probe). The checker stub fakes only the checkers' OUTPUT: the connect's env check (a script
+# on stdin) runs for real under python3 against the deploy's committed mp1/w2 modules, and SMOKE_CHK=nouproot hides
+# uproot from it, as root_6_28 lacked it on login27 (the c1 STOP of 2026-11-15)
 cat > "$W/pystub" <<'PYSTUB'
 #!/bin/bash
 out=""; prev=""; for a in "$@"; do [ "$prev" = --out ] && out="$a"; prev="$a"; done
 case "$*" in
-  *"import uproot"*) exit 0 ;;
-  *rdx_align.py*) echo '{"verdict": "'"$([ "${SMOKE_ALIGN_RC:-0}" = 0 ] && echo PASS || echo FAIL)"'"}' > "$out"; exit "${SMOKE_ALIGN_RC:-0}" ;;
-  *rdx_truthx_rows.py*) echo '{"verdict": "PASS"}' > "$out"; exit 0 ;;
   *rdx_provenance.py*) echo '{"verdict": "PASS", "stub": true}' > "$out"; exit 0 ;;
   *) exec python3 "$@" ;;
 esac
 PYSTUB
+cat > "$W/chkstub" <<'CHKSTUB'
+#!/bin/bash
+out=""; prev=""; for a in "$@"; do [ "$prev" = --out ] && out="$a"; prev="$a"; done
+case "$*" in
+  *rdx_align.py*) echo '{"verdict": "'"$([ "${SMOKE_ALIGN_RC:-0}" = 0 ] && echo PASS || echo FAIL)"'"}' > "$out"; exit "${SMOKE_ALIGN_RC:-0}" ;;
+  *rdx_truthx_rows.py*|*rdx_truthx_npz.py*) echo '{"verdict": "PASS"}' > "$out"; exit 0 ;;
+esac
+if [ "${SMOKE_CHK:-}" = nouproot ]; then
+  while [ "$1" = -I ] || [ "$1" = -B ]; do shift; done; [ "$1" = - ] && shift
+  exec python3 -I -B -c 'import sys; sys.modules["uproot"] = None; sys.argv = ["-"] + sys.argv[1:]; exec(compile(sys.stdin.read(), "<stdin>", "exec"))' "$@"
+fi
+exec python3 "$@"
+CHKSTUB
 cat > "$W/bin/python" <<'PROBESTUB'
 #!/bin/bash
 out=""; prev=""; for a in "$@"; do [ "$prev" = --out ] && out="$a"; prev="$a"; done
@@ -120,7 +136,7 @@ case "$*" in
   *) exec python3 "$@" ;;
 esac
 PROBESTUB
-chmod +x "$W/pystub" "$W/bin/python"
+chmod +x "$W/pystub" "$W/chkstub" "$W/bin/python"
 # the env stub exports every name setup_salloc_env.sh is measured to add (setup_salloc_env.exports), BUILD with conda's
 # real value, so a launcher variable it would clobber fails here as it did on login27 (the s0 STOP of 2026-11-12)
 while read -r v; do
@@ -135,12 +151,13 @@ s = open(src).read()
 for a, b in (("B=/pscratch/sd/j/josephrb/rdx-20261112b", f"B={w}/B"), ("CANON=/pscratch/sd/j/josephrb/MINERvA-OmniFold", f"CANON={w}/canon"),
              ("MP1=/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1", f"MP1={w}/mp1"),
              ("PY=/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3", f"PY={w}/pystub"), ("SYSPY=/usr/bin/python3", "SYSPY=python3"),
+             ("CHKPY=/global/homes/j/josephrb/.conda/envs/omnifold_py310/bin/python", f"CHKPY={w}/chkstub"),
              ('case "$(hostname -s)" in login[0-9][0-9])', 'case "${FAKE_HOST:-login27}" in login[0-9][0-9])')):
     assert s.count(a) == 1, a
     s = s.replace(a, b)
 open(dst, "w").write(s)
 EOF
-cn() { cp "$W/connect.sh" "$W/c.self.sh"; rm -f "$W/sbatch.argv"; env RDX_SMOKE= RDX_CANON="$W/canon" RDX_ANATUPLE_ROOT="$W/ana/" "$@" bash "$W/c.self.sh" "$W/c.self.sh" $CN_ARGS 2>&1 | sed -e "s|$W|<w>|g" -e "s|$PIN2|<pin>|g" | grep -E 'REFUSED|STOP|SUBMIT|rc=|^pin=|^limit=|smoke:|CHECKS PASS' | tail -4; echo "  sbatch called: $([ -s "$W/sbatch.argv" ] && sed -e "s|$W|<w>|g" -e "s|$PIN2|<pin>|g" "$W/sbatch.argv" || echo no)"; }
+cn() { cp "$W/connect.sh" "$W/c.self.sh"; rm -f "$W/sbatch.argv"; env RDX_SMOKE= RDX_CANON="$W/canon" RDX_ANATUPLE_ROOT="$W/ana/" "$@" bash "$W/c.self.sh" "$W/c.self.sh" $CN_ARGS 2>&1 | sed -e "s|$W|<w>|g" -e "s|$PIN2|<pin>|g" | grep -E 'REFUSED|STOP|SUBMIT|rc=|^pin=|^limit=|smoke:|CHECKS PASS|^checker python' | sed -E 's|^(checker python )[^ ]+|\1<py>|' | tail -4; echo "  sbatch called: $([ -s "$W/sbatch.argv" ] && sed -e "s|$W|<w>|g" -e "s|$PIN2|<pin>|g" "$W/sbatch.argv" || echo no)"; }
 echo "## connect gs2 writes the gate";        CN_ARGS="gs2 $PIN2" cn
 echo "## connect gs2 refuses to overwrite";   CN_ARGS="gs2 $PIN2" cn
 echo "## connect gmerge without a limit";     CN_ARGS="gmerge $PIN2" cn
@@ -154,7 +171,11 @@ echo out > "$W/B/out/evloop/runEventLoopOmniFold_RDX_1A.root"
 echo "## connect c1 with a failing walk probe";    CN_ARGS="c1 $PIN2" cn SMOKE_PROBE=fail
 echo "## connect c1 with a probe that cannot run"; rm -f "$W/B/out/checks/walk_probe.json"; CN_ARGS="c1 $PIN2" cn SMOKE_PROBE=norun
 echo "## connect c1 with a failing alignment";     CN_ARGS="c1 $PIN2" cn SMOKE_ALIGN_RC=1
+echo "## connect c1 with a checker python that has no uproot"; CN_ARGS="c1 $PIN2" cn SMOKE_CHK=nouproot
 echo "## connect c1 passes";                       CN_ARGS="c1 $PIN2" cn
+echo "## connect c2 with a checker python that has no uproot"; CN_ARGS="c2 $PIN2" cn SMOKE_CHK=nouproot
+echo "## connect cm with a checker python that has no uproot"; CN_ARGS="cm $PIN2" cn SMOKE_CHK=nouproot
+echo "## connect cm passes";                       CN_ARGS="cm $PIN2" cn
 # s0, end to end, in a fresh B: the clone, the patch, provenance (stubbed), the O_NOATIME manifest, the builds (stubbed)
 CS="$W/canon/MINERvA101/MINERvA-101-Cross-Section"; OP="$W/canon/MINERvA101/opt"
 mkdir -p "$CS" "$OP/lib" "$OP/etc/MParamFiles/data/FluxConstraints" "$W/mp1/s0/build"
@@ -186,6 +207,7 @@ s = open(src).read()
 for a, b in (("B=/pscratch/sd/j/josephrb/rdx-20261112b", f"B={w}/B0"), ("CANON=/pscratch/sd/j/josephrb/MINERvA-OmniFold", f"CANON={w}/canon"),
              ("MP1=/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1", f"MP1={w}/mp1"),
              ("PY=/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3", f"PY={w}/pystub"), ("SYSPY=/usr/bin/python3", f"SYSPY={w}/syspy"),
+             ("CHKPY=/global/homes/j/josephrb/.conda/envs/omnifold_py310/bin/python", f"CHKPY={w}/chkstub"),
              ("REPO=https://github.com/josephbaileyy/MINERvA-OmniFold.git", f"REPO={d}"),
              ('case "$(hostname -s)" in login[0-9][0-9])', 'case "${FAKE_HOST:-login27}" in login[0-9][0-9])')):
     assert s.count(a) == 1, a

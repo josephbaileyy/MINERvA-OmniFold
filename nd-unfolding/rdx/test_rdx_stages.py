@@ -10,6 +10,7 @@ import json
 import math
 import os
 import re
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -290,6 +291,72 @@ class Tables(unittest.TestCase):
     def test_the_launcher_pins_the_connect_script(self):
         sha = hashlib.sha256((HERE / "rdx_connect.sh").read_bytes()).hexdigest()
         self.assertIn(f'SHA={sha}', (HERE / "rdx_connect_launch.sh").read_text())
+
+
+CHECKERS = ("rdx_align.py", "rdx_truthx_rows.py", "rdx_truthx_npz.py")
+
+
+def chkenv_source(con: str) -> str:
+    """The connect's chkenv() definition, verbatim: from its first line to the closing brace after the heredoc."""
+    start = con.index("chkenv() {")
+    end = con.index("\nEOF\n}\n", start) + len("\nEOF\n}\n")
+    return con[start:end]
+
+
+class CheckerEnv(unittest.TestCase):
+    """The c1 STOP of 2026-11-15: root_6_28 has no uproot, and the smoke's stub answered the connect's own check."""
+
+    def test_every_checker_runs_under_chkpy_behind_chkenv(self):
+        con = (HERE / "rdx_connect.sh").read_text()
+        self.assertRegex(con, r"(?m)^CHKPY=/global/homes/j/josephrb/\.conda/envs/omnifold_py310/bin/python(\s|$)")
+        body = chkenv_source(con)
+        self.assertIn('$CHKPY -I -B - "$DEP" <<\'EOF\' || stop "', body)
+        self.assertIn("import numpy, uproot, omnifile_io, compare_omnifiles\n", body)
+        for ln in con.splitlines():
+            if any(c in ln for c in CHECKERS):
+                self.assertTrue(ln.lstrip().startswith('$CHKPY -I -B "$R/'), ln)
+        call = re.compile(r"(?m)^\s*(?:[^#\n]*;\s*)?chkenv\s*(?:;|$)")
+        for step, nxt in (("c1", "s2"), ("c2", "m"), ("cm", "s3a|s3b")):
+            block = con[con.index(f"\n{step})\n"):con.index(f"\n{nxt})\n")]
+            first = min(block.index(c) for c in CHECKERS if c in block)
+            m = call.search(block)
+            self.assertIsNotNone(m, f"{step} never calls chkenv")
+            self.assertLess(m.start(), first, f"{step} runs a checker before chkenv")
+
+    def test_chkenv_fails_closed_without_uproot_or_the_modules(self):
+        con = (HERE / "rdx_connect.sh").read_text()
+        fn = chkenv_source(con)
+        with tempfile.TemporaryDirectory() as d:
+            d = Path(d)
+            dep = d / "deploy"
+            for rel in ("measurement-paper/phase1/mp1/omnifile_io.py", "publication/w2/compare_omnifiles.py"):
+                (dep / rel).parent.mkdir(parents=True, exist_ok=True)
+                (dep / rel).write_bytes((ROOT / rel).read_bytes())
+            nodep = d / "nodeploy"
+            nodep.mkdir()
+
+            def wrapper(name, inject):  # a checker python: drops -I -B -, then runs the heredoc with uproot set
+                w = d / name
+                code = (f"import sys, types; {inject}; sys.argv = ['-'] + sys.argv[1:]; "
+                        "exec(compile(sys.stdin.read(), '<stdin>', 'exec'))")
+                w.write_text("#!/bin/bash\nwhile [ \"$1\" = -I ] || [ \"$1\" = -B ] || [ \"$1\" = - ]; do shift; done\n"
+                             f"exec {sys.executable} -c \"{code}\" \"$@\"\n")
+                w.chmod(0o755)
+                return w
+            have = wrapper("have", "m = types.ModuleType('uproot'); m.__version__ = 'stub'; sys.modules['uproot'] = m")
+            lack = wrapper("lack", "sys.modules['uproot'] = None")
+
+            def run(chkpy, deploy):
+                script = (f'stop() {{ echo "STOP: $*"; exit 8; }}\nCHKPY={chkpy}\nDEP={deploy}\n{fn}chkenv\necho PASSED\n')
+                p = subprocess.run(["bash", "-c", script], capture_output=True, text=True, timeout=120)
+                return p.returncode, p.stdout
+            rc, out = run(have, dep)
+            self.assertEqual((rc, "PASSED" in out), (0, True), out)
+            for chkpy, deploy in ((lack, dep), (have, nodep)):
+                rc, out = run(chkpy, deploy)
+                self.assertEqual(rc, 8, out)
+                self.assertIn("STOP: the checker python", out)
+                self.assertNotIn("PASSED", out)
 
 
 if __name__ == "__main__":
