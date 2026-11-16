@@ -1,6 +1,7 @@
-#977 head 3027c9596; 50 rows
+#977 head f03dbd758; 52 rows
 OK  RP01   resource paper      count=1  The sixteen-cell cross section that the estimator gives on the data il
 OK  RP02   resource paper      count=1  The held-out-tune tests provide partial evidence on bias at truths hel
+OK  RP02b  resource paper      count=1  The held-out-tune tests are not independent of each other or of $C_{\m
 OK  RP03   resource paper      count=1  The dependence on the prior's generator shape is reported separately a
 OK  RP04   resource paper      count=1  The model term $C_{\mathrm{model}}$ is constructed from the change in 
 OK  RP05   resource paper      count=1  The two-dimensional covariance is the sum of four blocks, each from Li
@@ -35,7 +36,7 @@ OK  RP23   keys     paper      printed=1  \fvval{ens1-bar-median}
 OK  RP23   keys     paper      printed=1  \fvval{ens1-bar-max}
 OK  RP23   keys     paper      printed=4  \fvval{ens1-ntruths}
 OK  RP23   keys     paper      printed=1  \fvval{ens1-nnoworse}
-OK  RP24   term     paper      old=0 new=14  reporting cells -> reported cells
+OK  RP24   term     paper      old=0 new=15  reporting cells -> reported cells
 --  RP25   code     B772 R311  #981's own run-period scope sentence "nor the cause of the shape difference" bec
 --  RP26   code     B765-766 R305  #981's own 2D scope sentence "At two held-out GENIE v3 tunes (AR23 and G18_10a_0
 --  RP27   code     B397  build_tunes: c.key for f1-tune-g18 and f1-tune-ar23 compares r"\mbox{" + name + 
@@ -58,6 +59,7 @@ OK  RP33k  resource paper      count=1  Keeping the \fvval{re2-modes-4} directio
 --  RP41   code     B103-106 B561-571 B586-612  follow-up to RP36 (director 11-14): after the LL5D HOLD is lifted, if cheap, cov
 --  RP42   code     B465-468 B586-598  helper-3's D1 prep (prep/d1-cnew-20261114 at 1f3279bf7, not yet in the draft) ma
 --  RP43   code     B715-730 B1131-1137 B1151-1159 B1235-1242 R4 R332-341  #981 hard-codes PENDING = FD-PRR, LL5D, V-HALF (B715-719) and writes pending/<na
+--  RP44   code     new: a README section, a build check, snapshot/code/  the director's request of 2026-11-16: #981's README gains the Supplement's code-
 OK  GEN16  labels=1 block_sha=65b02f09daacba48
 OK  MACRO  \chiPaper printed 3
 OK  MACRO  \fluxBand printed 1; \fvval{q2d-fluxband} printed 0 (RP42)
@@ -69,4 +71,6 @@ OK  MACRO  \uqMedian printed 1; \fvval{q2d-sigma-med} printed 0 (RP42)
 OK  PENDING #981 FD-PRR -> group prr: FILLED (RP43 fills it at the re-pin)
 OK  PENDING #981 LL5D -> group ll5d: PENDING
 OK  PENDING #981 V-HALF -> group vhalf: FILLED (RP43 fills it at the re-pin)
+OK  CODEMAP 19 entries: every file at its pinned sha256 and every anchor in its lines
+OK  CODEMAP tab:codemap block_sha=11de5b171ea0f3e1
 REPIN-CHECK PASS
