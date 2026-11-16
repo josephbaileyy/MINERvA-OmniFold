@@ -184,6 +184,46 @@ sha256 of the text plus a final newline begins `5126ab22378d993b`.
     analysis's band and the distribution of standardized bin differences". The director took the first of the two
     options offered: update it now.
 
+## Joseph's sixth answer, verbatim
+
+After the final paper referee read (minor revision, 7.0/10) and an independent Fable 5.2 read of the note, the director
+put Joseph seven paper wording items and seven note decisions, each with a recommendation.
+
+> I agree with your recommendations except I think we can do the cutdown because Ben probably won't ever read the whole note. I can have fable do it if you want, just give me the prompt
+
+sha256 of the text plus a final newline begins `7f8edd6d7a76d5bf`.
+
+**The paper.**
+
+26. **The abstract:**
+    - "Tested settings of the five-observable estimator change prior retention but remove neither bias flag."
+    - The coverage scope: "The coverage tests exclude the run-period term from the tested covariance, and the
+      five-observable test also excludes the response term. They find joint under-coverage for both estimators at both
+      held-out truths in all completed coverage variants."
+    - "A descriptive local screen also finds bias exceeding half the truth's departure from the prior in some regions."
+    - The abstract is not restructured, and no numbers are added.
+27. **The release appendix's RL-25 sentence:** "…extended to draw this analysis's band and, in place of RC7's text
+    panel, the distribution of standardized bin differences".
+28. **§7:** "Whether bias in the hadronic distributions, correlated with the muon kinematics, contributes to the
+    two-dimensional shape difference is open."
+
+**The note.**
+
+29. **Framing:** a methods study. This decides OI-205 (`docs/OPEN_ITEMS.md`), whose closure the limitations lane
+    records.
+30. **Generator predictions:** the carbon predictions are primary, as in the paper. The CH-corrected predictions are a
+    secondary table with their caveat.
+31. **The five-axis covariance (C_Z):** the executive summary's status sentence is narrowed to what holds. C_Z is not
+    supported as an uncertainty product; §9 uses it only as a descriptive scale for configuration-(a) bias comparisons.
+32. **The abstract and the executive summary** add that the two-observable covariance under-covers at both held-out
+    tunes, and that no reported interval has validated coverage.
+33. **§12 (extended fiducial)** is reduced to one paragraph, with its caveat.
+34. **The note is cut down now**, not after Ben's read: the methods-study target of about 45,900 words, under the
+    2026-11-13 history rule. A Fable session makes the cuts on its own branch, from the prompt at
+    `~/codex-reports/PROMPT-fable-note-cutdown.txt`, which is not tracked. It starts after the note's corrections branch
+    is merged. The director reviews and merges.
+35. **The paper and Supplement go to Ben first.** The note follows when its corrections and cutdown land.
+
 ## CITABLE FOR / NOT CITABLE FOR
 
 - **Citable for:** the wording choices above as Joseph's; A1–A4 as open.
