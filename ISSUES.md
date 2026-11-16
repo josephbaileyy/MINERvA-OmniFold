@@ -1318,4 +1318,10 @@ From the codex-school audit `~/codex-reports/crossdoc-numbers-3027c959…-6c3824
   - **P7, 13:** ledger rows L10, L-bhi5, L-bhi8, L-thin-C06, -C13, -C21 (x2), -C39, -C48 (x2), -C53, -C65 and -C71. Each pins a note sentence that a later edit changed: the history restructure of 2026-11-13/14 (C06, C21, C53, C65, C71), the 2026-10-26 reflow (C13, C48's first probe), style pass B (C39, C48's second, 4c6756fde), the rulings and E (L10, bhi8; bb8e03b20, 6e4ea3a8f), and the release appendix (bhi5, e2c37c0d2).
   - **P6, 1, and P8, 1:** sec_validation.tex's coverage-toys citation left with the same-ensemble diagnostic's move to App. A.8 (history-cuts/sec_validation.md V2), and no drop row lists it.
   *Fix:* re-pin each N: probe to its edited sentence, and list the coverage-toys move as a drop or citation move, each checked against the probe.  
-  *Status:* **OPEN, by ruling** (the director, 2026-11-15): a records-document item on the follow-up list, to fix before the note's release. The G2R commit re-pinned its own L8 (0.388 → 0.389) and added L-g2r-1, which holds.
+  *Status:* **RESOLVED** (the director, 2026-11-15: "Fix REC-1 now, since this lane's edits caused it").
+  - Re-pinned to the current sentence: L10, L-bhi8, C13, C39, C48 (two) and C53.
+  - N: probe retired where the restructure cut the sentence, with the row's D: or X: probe kept: L-bhi5, C06, C21 (two) and C65.
+  - C71 now pins the paragraph at its new home, App. A.8, with a D: row for its departure from sec_validation.tex (this also clears P6 and P8).
+  - Each row notes its change in its edit column ("REC-1, 2026-11-15").
+  - The probe passes: RECORDS-MOVE :: PASS, exit 0, and its self-test passes (41 of 41 plants fire).
+  - The note lane's push_gate.sh now runs the probe inside its if, so a push cannot leave it failing.
