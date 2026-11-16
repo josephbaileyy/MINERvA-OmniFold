@@ -379,6 +379,7 @@ LL5D_PAIR = tuple(f"{a}-{b}" for i, a in enumerate(_TO) for b in _TO[i:]) + ("na
 LL5D_SOME = ("some", "none", "na")
 LL5D_CLOSE = ("scope", "none", "na")    # "none" when no reading was graded; the scope itself is stated once (the style pass)
 LL5D_ALLJOINT = ("all", "notall", "na")   # every (tune, reading) flags jointly (§7 and §7.1 carry it; the codex referee's Minor 3)
+LL5D_SAME = ("same", "differ", "na")   # Table 1 and row 10 (item 14): each tune's class and flagged cells equal in both variants
 LL5D_STATUS = ("graded", "descriptive", "invalid", "stopped")   # Table 1's status (its caption); no outcome summary: DECISION-20261109-joseph-coverage-case-wording.md item 3
 VHALF_O = ("none-fail", "some-fail")                  # DECISION-20261109-joseph-bias-half-rule.md item 1 (counts below)
 PENDING_GROUPS = {
@@ -429,6 +430,7 @@ for _x in ("anypass", "cellflags", "anyweak", "anyover"):
     PENDING[f"ll5d-{_x}"] = ("ll5d", LL5D_SOME)     # derived
 PENDING["ll5d-status"] = ("ll5d", LL5D_STATUS)      # derived
 PENDING["ll5d-alljoint"] = ("ll5d", LL5D_ALLJOINT)  # derived
+PENDING["ll5d-sameflags"] = ("ll5d", LL5D_SAME)     # derived
 PENDING["vhalf-outcome"] = ("vhalf", VHALF_O)
 for _c in ("valid", "notvalid", "notassessed", "unresolved"):
     PENDING[f"vhalf-n-{_c}"] = ("vhalf", None)
@@ -560,12 +562,13 @@ VERDICTS = {
     'll5d-repair': 'the correction of an implementation defect in that check, which compared event weights stored at two precisions. The repair changed no rule, threshold, bound or cell',
     'll5d-route': 'repaired',
     'll5d-route-record': "at both tunes, an entry check that matches each simulated truth event across two of the test's inputs found every event unmatched, against a bound of 5\\,\\% on the largest unmatched share in any cell, and the run stopped. The entry checks had used the coverage pseudo-experiments' draws (as above), but at that point none had been unfolded or graded. Every other entry check had passed, and their readings were visible when the repair was chosen. A diagnosis classed the failure as an implementation defect: the check compared event weights stored at two floating-point precisions, so no event could match. The repair compares them at one precision and adds a check of the matching on the real inputs, which passed. It changed no rule, threshold, bound or cell. The entry checks were then rerun at both tunes and passed. A later trial run of the procedure's controls and one pseudo-experiment stopped at a check on computing time and memory, which found an output file missing before any pseudo-experiment was graded, and was rerun with a change to its batch script only. The diagnosed defect is in this test's entry check. The disagreement of the two GEANT4 bands in the first test (above), which led to the primary variant, remains unexplained",
+    'll5d-sameflags': 'same',
     'll5d-status': 'descriptive',
     'll5d-stop-what': 'an event-matching entry check, which found every event unmatched at both tunes',
 }
 DERIVED = {"prr": ("prr-abs",),
            "ll5d": ("ll5d-abs-minus2", "ll5d-abs-all", "ll5d-abs-close", "ll5d-anypass", "ll5d-cellflags",
-                    "ll5d-anyweak", "ll5d-anyover", "ll5d-status", "ll5d-alljoint")}
+                    "ll5d-anyweak", "ll5d-anyover", "ll5d-status", "ll5d-alljoint", "ll5d-sameflags")}
 
 
 def prr_derived(v):
@@ -837,6 +840,9 @@ def ll5d_derived(v):
     out["ll5d-anyweak"] = some(any(v[f"ll5d-{t}-{r}-weak"] == "some" for t, r in tr))
     out["ll5d-anyover"] = some(any(v[f"ll5d-{t}-{r}-over"] == "some" for t, r in tr))
     out["ll5d-alljoint"] = "all" if all(c in ("under-joint", "under-joint-only") for c in cls) else "notall"
+    flagged = lambda t, r: v[f"ll5d-{t}-{r}-names"] if v[f"ll5d-{t}-{r}"] in ("under-cells", "under-joint") else ""  # noqa: E731
+    out["ll5d-sameflags"] = "same" if all(v[f"ll5d-{t}-minus2"] == v[f"ll5d-{t}-all"] and flagged(t, "minus2") == flagged(t, "all")
+                                          for t in ("g18", "ar23")) else "differ"
     # an adaptive route is Descriptive whatever its readings; otherwise no outcome is summarized (the decision, items 2-3)
     out["ll5d-status"] = ("descriptive" if v["ll5d-route"] in ("offset-proceeded", "repaired") else
                           "invalid" if all(c == "invalid" for c in cls) else "graded")
@@ -1969,6 +1975,7 @@ def groupb_values(d):
     v.update(t2a_values(d))
     v.update(d1_values(d))
     v.update(mumax_values(d))
+    v.update(ll5d_repair_words())
     v.update(period_values(d))
     v.update(t2b_values(d))
     v.update(lrows_values(d))
@@ -2405,6 +2412,15 @@ def vhalf_band_values(d):
     assert rule["half"] == 0.5 and rule["floor"] == 0.01 and rule["b"] == "r (1 + d)"
     assert rule["sigma_m"] == "sqrt(((1 + d) nu)^2 + (0.5 sgn(d) - |r|)^2 sigma_d^2)", "S10's sentence states these two terms"
     return {"vhalf-k": f"{rule['K']:g}"}
+
+
+def ll5d_repair_words():
+    """Section 6.3's repair paragraph (item 14, the referee's text): the two precisions, from amendment A1a.2's own
+    statement of the defect and the fix (LL5D-AMENDMENT-A1A2.md :11-13, :59-60), asserted present there."""
+    a = (ROOT / "docs/orchestration/state/measurement-paper/5d-community-20261024/LL5D-AMENDMENT-A1A2.md").read_text()
+    assert "is float64 and the bank's tdw is float32" in " ".join(a.split())
+    assert "rounds both sides' key columns to float32" in " ".join(a.split())
+    return {"ll5d-a1a2-keys": "float64 and float32", "ll5d-a1a2-at": "float32"}
 
 
 def mumax_values(d):

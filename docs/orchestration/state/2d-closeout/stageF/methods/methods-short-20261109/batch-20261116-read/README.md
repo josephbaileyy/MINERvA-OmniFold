@@ -49,3 +49,40 @@ general-purpose subagent, read-only.
   - "production" in the Data availability text against "processing" in §2 and S1;
   - O4 also newly flags A7_nuwro;
   - §5.3 does not cite tab:prr-levels, which alone defines "all three learners".
+
+## Item 14 (A1-A4, the referee's option (b)): the table entry, S row 10, the caption, §6.3 and §7
+
+**The texts** are the decision's and answer.txt's, verbatim. Only these were substituted:
+- the keyed values (tunes, cell names, and A1a.2's "float64 and float32" and "float32");
+- \ssec{S8.5}{supp:study-ll5d} for "(Supplement, §S8.5)";
+- section~\ref{sec:ll5d} for "(§6.2)".
+
+The read was by an independent general-purpose subagent, read-only, on the rendered texts.
+
+**Verdict: REVISE, one sentence that the decision does not fix; the fix is adopted.** "For the second five-observable
+coverage test the finding gives one entry for each tune and variant" now contradicted the entry's "With the bands: the
+same flags at each tune". It became "The finding of the second five-observable coverage test gives its flags at each
+tune in each variant, the primary variant ... first".
+
+**The facts it checked:**
+- Both gates STOPped: G18 is job 61040163 and AR23 is job 61040235. Every signal and truth row was unmatched, a share
+  of 1.0 in all 16 cells. The cause was w_truth stored as float64 against tdw stored as float32 (A1A2 "Under:").
+- The fix rounds the key columns to float32 on both sides (A1A2 §1-2).
+- The STOP fell at the gate stage, with the variance gates, gate_n, the backstop and D1-D3 visible.
+- The repair changed no rule, threshold, bound or cell.
+- The flags, from readout-g18.json and readout-ar23.json: G18 joint only (joint counts 12 and 14); AR23 joint and R07
+  (counts 1 and 4), against a threshold of 195. ll5d-sameflags is "same".
+- Every reading has 4 to 6 over-covering cells.
+- **The §6.3 pointer:** S8.5's repaired case prints the route record and "Its readings are therefore descriptive."
+
+**Notes, not applied (for Joseph via the director):**
+- The decided texts mix "STOP" (table, caption, §6.3, §7, limitation 5) with "stop" (the abstract's former referee
+  form, and the Supplement).
+- The first "STOP" a reader meets is in the Table 1 caption.
+- §6.3's per-variant sentence states the same flags twice.
+
+**The abstract:** it is left as at 11aa69d8b, on the director's instruction of 2026-11-16, because Joseph has not
+approved it and a referee is reading the whole abstract. Two measurements are kept for that ruling:
+- the referee form rendered at 249 words;
+- the style gate needs both its semicolon and its colon split, which gives a words-per-sentence of 18.5 against the
+  base's 18.5.
