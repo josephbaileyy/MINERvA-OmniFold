@@ -533,6 +533,9 @@ class XkProducts(unittest.TestCase):
         self.assertEqual(g["q_r"], XS.P / "cov2d-re2shapes-20261115/g2r/combination/s5_plus_playlist.npz")
         self.assertEqual(g["s5_r"], XS.P / "cov2d-re2shapes-20261115/g2r/s5/production_cov.npz")
         self.assertEqual(g["uni2d"]("Flux", 7), XS.P / "cov2d-g2r-20261112/out/A_Flux_7/xsec.root")
+        self.assertEqual(g["cr"], X.FD / "fd/receipts-cov2d/g2r/cr/run/node/g2r/overlap_refined.json")
+        self.assertEqual(g["cmodel_r"], X.FD / "fd/receipts-cov2d/g2r/re2shapes/run2/g2r/cmodel/cmodel_R.json")
+        self.assertEqual(g["pins"], (X.FD / "fd/receipts-cov2d/g2r/xk/INPUTS-g2r.sha256",))
         self.assertEqual(set(XS.PRODUCTS["re2"]), set(g))
 
     def test_g2r_committed_inputs_are_at_their_digests(self):
