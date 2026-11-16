@@ -1,0 +1,7 @@
+| choice | value | source or reason |
+|---|---|---|
+| algorithm | D'Agostini with a known additive reco term, `did.ibu` | reused through IBU-1's `unfold_ibu` (`ibu1.py:173-200`); never re-implemented |
+| reco binning | the fine 5D reco cells of `s5e_trace.flat_index` inside IA-7's reco window | IBU-1's (`ibu1.py:96-146`) |
+| truth grid | the **H2 coarse cells**, `s5p_stage1_inspect.coarse_map(H2_EDGES)` (`s5p_stage1_inspect.py:77, 261`), empty cells dropped by `did.make_grid` | R00–R15 are unions of H2 cells (`DECISION-20261024-joseph-h2-16-cell-definition.md`), so no truth cell straddles a reporting-cell boundary. Whether IBU-1's J grid nests in R00–R15 is not checked here |
+| within-cell spreading | `did.share_matrix` on the nominal truth | IBU-1's (`ibu1.py:195`) |
+| prior | the analysis simulation's own truth (Tune v1), full MC × 1 | as (e) and IBU-1's data unit (`ibu1.py:484-485`) |
