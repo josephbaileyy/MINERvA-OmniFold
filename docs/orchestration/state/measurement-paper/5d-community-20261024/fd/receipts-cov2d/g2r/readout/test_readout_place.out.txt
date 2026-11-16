@@ -1,0 +1,10 @@
+connects data=56c34ad6 G18=029ff7fb AR23=6bec8fad checkout 401733bce290ce122cfbf38f1526e120f174b3ec porcelain=0
+PASS place: 6/6 operations OK from the /dev/shm stand-in clone (budget_Q at its digest); removed
+PASS ctl-dep: from the deploy under the guard, 6/6 operations REFUSED
+PASS m-O: killed (rc=6, nothing left)
+PASS m-C: killed (rc=6, nothing left)
+PASS m-commit: killed (rc=7, the bound sums fail at PRE_M, removed)
+PASS verdict: 9/9 phase x verdict cases as main() returns; graded verdict recorded; old classifier killed (UNDER-COVERS -> INVALID)
+PASS copy-out: writable -> copied, verified, removed; read-only -> rc 9, W KEPT with outputs, log, TSV; old trap (mutant) deletes them (killed)
+PASS static: the three differ only in PH; readout from $DD, TSV and out in $W; TMPDIR=$W/tmp; copy-out after
+READOUT PLACE TEST PASS

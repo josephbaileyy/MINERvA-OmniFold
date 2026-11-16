@@ -1,0 +1,63 @@
+#!/bin/bash
+# ll5d_rerun129_01's job: 4 lanes of 5 items, each an srun step (32 CPUs, 56G, --threads 32); the deploy at M with
+# porcelain 0 and the bound blobs, checked ONCE here, before all 4 calls; the lanes asserted against ll5d_b; 4 ll5d_b.py
+# unfold calls (ar23 toy, 5 items each, the 20 between them). Not under set -u. Writes only under $W and $UO (passed as the 4th argument).
+DD=$1; M=$2; W=$3; U=$4; NODE=$5   # here U is $UO, the fresh out directory
+P=/pscratch/sd/j/josephrb; ND=$P/MINERvA-OmniFold/nd-unfolding
+stop() { echo "STOP $*"; echo "end=$(date -u +%FT%TZ)"; exit 2; }
+echo "host=$(hostname) job=$SLURM_JOB_ID node=$NODE start=$(date -u +%FT%TZ)"
+h=$(git -C "$DD" rev-parse HEAD); n=$(git -C "$DD" status --porcelain | wc -l); echo "deploy head=$h porcelain_lines=$n"
+[ "$h" = "$M" ] && [ "$n" = "0" ] || stop "deploy not clean at M"
+(cd "$DD" && sha256sum -c "$W/bound.sha256") || stop "bound blobs differ"
+source "$DD/setup_salloc_env.sh" > "$W/logs/env-job-$NODE.log" 2>&1
+case "$(python3 -V 2>&1)" in *3.11*) ;; *) stop "environment did not activate ($(python3 -V 2>&1))" ;; esac
+export PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+# The unfolds run as 1B staged ran them, and as S1 made the controls' references (meta threads 32): each lane one srun
+# step with 32 CPUs and 56G (section 9's 8 lanes; the RSS limit is 75 % of 56 GiB), --threads 32. The one-thread rule
+# is the gate's and the calibration's (section 9, 936-C2), not the unfolds'.
+echo "lanes 4 x (srun --exact -n1 -c 32 --mem 56G) --threads 32"
+python3 -B - "$DD/nd-unfolding" "$W/rerun-lanes.tsv" <<'PY' || stop "the row is not the bulk's node 09 lane 4"
+import sys
+from collections import Counter
+sys.path.insert(0, sys.argv[1])
+import ll5d_b
+rows = [l.rstrip("\n").split("\t") for l in open(sys.argv[2]) if l.strip() and not l.startswith("#")]
+got = [(t, r, i) for _, _, t, r, its in rows for i in its.split(",")]
+per_lane = Counter((nd, ln) for nd, ln, t, r, its in rows for i in its.split(","))
+want = {(t, r, i) for t in ll5d_b.TRUTHS for r, i in ll5d_b.items(t)} - set(ll5d_b.PILOT)
+print(f"items={len(got)} unique={len(set(got))} in_section9_bulk={set(got) <= want} lanes={len(per_lane)} truth_role={sorted({(t, r) for t, r, _ in got})}")
+sys.exit(0 if len(got) == 20 and len(set(got)) == 20 and set(got) <= want and len(per_lane) == 4 and set(per_lane.values()) == {5}
+         and {(t, r) for t, r, _ in got} == {("ar23", "toy")} else 1)
+PY
+WORLD=(--npz "$ND/of_inputs_5d.npz" --bkg "$P/s5c-20260924/runs/p2/bkg_dump.npz" --bank "$ND/bank_sweep_5d_bkgaware"
+  --detector-dir "$P/s5p-20260926/bank_detector" --pins "$P/fd-1b-20261030/pins.json"
+  --expect-pins-sha256 5adcd576eb46f443fe4133b05044cd315c0eeb0f281e21acee5f2318b4bab248
+  --flux-constraint "$P/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt"
+  --flux-table "$P/fd-1b-staged-20261102/stage1/in/flux_universes.npz"
+  --expect-flux-table-sha256 cdc3da788c385da72826b2a74b1987320bbe399af212722826914df4d2fe15a5
+  --prep "$P/fd-f1-20261027/f1b3/prep"
+  --manifest "$DD/docs/orchestration/state/2d-closeout/stageF/methods/sf1/manifest/inputs-sha256.txt"
+  --expect-manifest-sha256 3a50f502b5a425bc4d116245c36f79bbc279cbd876b87aa72bd0298b001b5031)
+mkdir -p "$W/lanes" || stop mkdir
+lane() {
+  local L=$1 rc=0 nd l t r its
+  while IFS=$'\t' read -r -u 3 nd l t r its; do   # the table on fd 3, never stdin (the pilot r1 STOP)
+    [ "$nd" = "$NODE" ] && [ "$l" = "$L" ] || continue
+    srun --exact -n1 -c 32 --mem 56G --job-name "lane$L" /usr/bin/time -v python3 -B "$DD/nd-unfolding/ll5d_b.py" unfold "${WORLD[@]}" --truth "$t" --role "$r" --items "$its" \
+      --out "$U" --threads 32 < /dev/null >> "$W/lanes/node$NODE-lane$L.out" 2>> "$W/lanes/node$NODE-lane$L.time"
+    s=$?; echo "node $NODE lane $L $t $r rc=$s" >> "$W/lanes/node$NODE-lane$L.out"; rc=$((rc | s))
+  done 3< <(grep -v '^#' "$W/rerun-lanes.tsv")
+  return $rc
+}
+pids=(); for L in 0 1 2 3; do lane $L & pids+=($!); done
+urc=0; for k in 0 1 2 3; do wait ${pids[$k]}; s=$?; echo "lane $k rc=$s"; urc=$((urc | s)); done
+echo "unfold lanes rc=$urc"
+case "$urc" in
+  0) echo "RERUN-EXIT clean rc=0" ;;
+  8) echo "RERUN-EXIT rc=8: ll5d_b's atime sidecar lists a move; to the director with the sidecar, nothing graded until explained" ;;
+  *) echo "RERUN-EXIT NOT-CLEAN rc=$urc: to the director unrepaired; nothing graded even if the comparison is equal" ;;
+esac
+grep -h "rc=" "$W"/lanes/node$NODE-lane*.out
+grep -h -E "Elapsed|Maximum resident|Exit status" "$W"/lanes/node$NODE-lane*.time
+echo "end=$(date -u +%FT%TZ)"
+exit $urc

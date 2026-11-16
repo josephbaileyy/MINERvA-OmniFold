@@ -1,0 +1,1 @@
+RESULT-PACKAGE :: FAIL (not inside a git checkout; the build reads the paper at PAPER_REF through git)

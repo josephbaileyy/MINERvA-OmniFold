@@ -1,0 +1,30 @@
+{
+ "verdict": "FAIL",
+ "compared": 68,
+ "equal": 66,
+ "skipped": {
+  "PDF: creation date; compared through its PNG twin": 28,
+  "run logs or caches": 29,
+  "ROOT: TFile creation time; compared through its npz twin": 5,
+  "scratch (a tmp component; the period selftest's mkdtemp directory has a random name)": 10,
+  "the values table: its spec is what the amendment changed": 2
+ },
+ "fixpoint_iterations": 4,
+ "digest_pairs": 27,
+ "differ": [
+  "SHA256SUMS",
+  "receipts/receipt_model_chi2.json"
+ ],
+ "only_stopped": [
+  "fig1-a2-cabbbbc3/RUN-fig1.txt",
+  "fig1-a2-cabbbbc3/fig1_run.log",
+  "fig1-a2-cabbbbc3/pins.json",
+  "fig1-a2-cabbbbc3/uqmedian.tex",
+  "fig1/RUN-fig1.txt",
+  "fig1/fig1_run.log",
+  "fig1/pins.json",
+  "fig1/uqmedian.tex"
+ ],
+ "only_rerun": [],
+ "root_untabled": []
+}

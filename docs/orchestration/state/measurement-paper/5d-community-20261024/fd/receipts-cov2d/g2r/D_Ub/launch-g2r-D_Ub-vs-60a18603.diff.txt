@@ -1,0 +1,38 @@
+--- launch-g2r.sh (60a18603)	2026-11-13 05:57:47
++++ launch-g2r.sh	2026-11-13 05:57:47
+@@ -6,7 +6,7 @@
+ # 15 s, up to 90 min), then fetched. The staged copy and the log are removed (logged) ONLY if the fetched log ends with
+ # DONE; otherwise both stay, and the launcher prints TIMEOUT with the log's last lines and exits 5 (the audit's B1). The
+ # job itself is watched apart. Every ssh's rc is read directly (no pipe).
+-# Usage: launch-g2r.sh envtest|envtest-r2|envtest-r3|diag-tune|prepare|D_Ua <sha256>
++# Usage: launch-g2r.sh envtest|envtest-r2|envtest-r3|diag-tune|prepare|D_Ua|D_Ub <sha256>
+ # Exit: 0 launched, fetched and removed; 2 refused before staging; 3 digest mismatch; 4 the launch ssh failed (STOP);
+ # 5 TIMEOUT or the fetched log does not end with DONE (both files left in place).
+ # Test mode (test_launch_g2r.sh only): G2R_LAUNCH_TEST=1 lets G2R_SHM, G2R_TEST_SRC, G2R_WAIT_N and G2R_POLL_S stand
+@@ -24,7 +24,8 @@
+   diag-tune) SRC=$H/connect-g2r-diag-tune.sh; ARG="" ;;     # envtest-r2 STOP diagnostic (PhaseTune STOP)
+   prepare) SRC=$H/connect-g2r-prepare.sh; ARG="" ;;
+   D_Ua) SRC=$H/connect-g2r-D_Ua.sh; ARG="" ;;              # the first unfold job (J1 §2)
+-  *) echo "usage: launch-g2r.sh envtest|envtest-r2|envtest-r3|diag-tune|prepare|D_Ua <sha256>"; exit 2 ;;
++  D_Ub) SRC=$H/connect-g2r-D_Ub.sh; ARG="" ;;              # runs beside D_Ua: the fence admits cov2dg2r-* jobs
++  *) echo "usage: launch-g2r.sh envtest|envtest-r2|envtest-r3|diag-tune|prepare|D_Ua|D_Ub <sha256>"; exit 2 ;;
+ esac
+ if [ "${G2R_LAUNCH_TEST:-}" = 1 ]; then
+   SHM=${G2R_SHM:-$SHM}; SRC=${G2R_TEST_SRC:-$SRC}; WAIT_N=${G2R_WAIT_N:-$WAIT_N}; POLL_S=${G2R_POLL_S:-$POLL_S}
+@@ -38,14 +39,14 @@
+ cat > "$OUT/fence.sh" <<'FENCE'
+ echo "fence host=$(hostname) utc=$(date -u +%FT%TZ)"
+ echo "squeue:"; squeue -u josephrb -h -o '%i %j %T'
+-echo "sacct unended cov2d:"; sacct -X -n -P -S 2026-11-04 -u josephrb -o JobID,JobName,State | awk -F'|' '$2 ~ /^cov2d/ && $3 !~ /^(COMPLETED|FAILED|CANCELLED|TIMEOUT|OUT_OF_MEMORY|NODE_FAIL|PREEMPTED|BOOT_FAIL|DEADLINE)/'
++echo "sacct unended cov2d:"; sacct -X -n -P -S 2026-11-04 -u josephrb -o JobID,JobName,State | awk -F'|' '$2 ~ /^cov2d/ && $2 !~ /^cov2dg2r-/ && $3 !~ /^(COMPLETED|FAILED|CANCELLED|TIMEOUT|OUT_OF_MEMORY|NODE_FAIL|PREEMPTED|BOOT_FAIL|DEADLINE)/'
+ echo "fence end"
+ FENCE
+ r < "$OUT/fence.sh" > "$OUT/fence.txt" 2>&1; frc=$?
+ cat "$OUT/fence.txt"
+ [ "$frc" = 0 ] && grep -q '^fence end$' "$OUT/fence.txt" || { echo "REFUSED fence fetch rc=$frc"; exit 2; }
+ [ "$(sed -n '/^sacct unended cov2d:$/,/^fence end$/p' "$OUT/fence.txt" | grep -vc -e '^sacct unended cov2d:$' -e '^fence end$')" = 0 ] \
+-  || { echo "REFUSED: a cov2d job is unended"; exit 2; }
++  || { echo "REFUSED: a cov2d (not cov2dg2r-) job is unended"; exit 2; }
+ echo "FENCE_CLEAR (other lanes' jobs are recorded above; the director sequences them)"
+ SH=$SHM/josephrb-g2r-$N.sh
+ ssh -o ControlPath=none saul.nersc.gov "ssh -o BatchMode=yes -o LogLevel=QUIET login02 'umask 077; test ! -e $SH && cat > $SH'" < "$SRC"; src=$?

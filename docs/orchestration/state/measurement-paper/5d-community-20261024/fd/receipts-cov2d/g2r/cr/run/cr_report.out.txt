@@ -1,0 +1,52 @@
+QA 2D S: step C-R 7.979906853766595e-39 | new 7.979906853766595e-39
+QA 2D sigma: step C-R 5.319417102983426e-40 | new 5.316975000502899e-40
+QA 2D d: step C-R 1.1255870537912082e-41 | new 1.1255870537912082e-41
+QA 2D d_pct: step C-R 0.14105265567854186 | new 0.14105265567854186
+QA 2D outcome: step C-R 'agree' | new 'agree'
+QA 2D rho_star: step C-R 1.0003056188697892 | new 1.0003180237815859
+QA 2D z_rho0: step C-R 0.014760277358295222 | new 0.01476357496702905
+QA 2D bound_any_rho: step C-R 2.893682772242239e-41 | new 2.942524821852777e-41
+QA 2D bound_rho0: step C-R 1.5251570501940906e-39 | new 1.524816389397474e-39
+QA 2D without C_PL5D outcome: step C-R 'agree below a correlation' | new 'agree below a correlation'
+QA 2D without C_PL5D rho_star: step C-R 0.999946505246731 | new 0.9999475809747097
+QA 2D without C_PL5D z_rho0: step C-R 0.014946123558304571 | new 0.014949547331303778
+QA 3D outcome: step C-R 'agree at the sigma_16 scale (descriptive)' | new 'agree at the sigma_16 scale (descriptive)'
+QB 2D S: step C-R 6.789868552092421e-39 | new 6.789868552092421e-39
+QB 2D sigma: step C-R 3.2795733879198848e-40 | new 3.278576201074086e-40
+QB 2D d: step C-R -1.4751590100963532e-41 | new -1.4751590100963532e-41
+QB 2D d_pct: step C-R -0.2172588465857328 | new -0.2172588465857328
+QB 2D outcome: step C-R 'agree below a correlation' | new 'agree below a correlation'
+QB 2D rho_star: step C-R 0.9997474077080662 | new 0.9997470484338332
+QB 2D z_rho0: step C-R -0.031822986251274145 | new -0.03182782989431043
+QB 2D bound_any_rho: step C-R 7.081687677703157e-43 | new 5.087313986105435e-43
+QB 2D bound_rho0: step C-R 9.27102817094854e-40 | new 9.269617281447478e-40
+QB 2D without C_PL5D outcome: step C-R 'agree' | new 'agree'
+QB 2D without C_PL5D rho_star: step C-R 1.0115419225733029 | new 1.0114949508429034
+QB 2D without C_PL5D z_rho0: step C-R -0.03414516407138054 | new -0.034151147525252196
+QB 3D outcome: step C-R 'agree at the sigma_16 scale (descriptive)' | new 'agree at the sigma_16 scale (descriptive)'
+QC 2D S: step C-R 6.791130979018671e-39 | new 6.791130979018671e-39
+QC 2D sigma: step C-R 3.472961183133892e-40 | new 3.4750995007427383e-40
+QC 2D d: step C-R -1.00399248023911e-40 | new -1.00399248023911e-40
+QC 2D d_pct: step C-R -1.4783877432801185 | new -1.4783877432801185
+QC 2D outcome: step C-R 'agree below a correlation' | new 'agree below a correlation'
+QC 2D rho_star: step C-R 0.9901664356224347 | new 0.9901567661083405
+QC 2D z_rho0: step C-R -0.20172255519862078 | new -0.2016620889565918
+QC 2D bound_any_rho: step C-R 1.8430150788194488e-41 | new 1.800248726642524e-41
+QC 2D bound_rho0: step C-R 9.954191580119092e-40 | new 9.957176239062182e-40
+QC 2D without C_PL5D outcome: step C-R 'agree below a correlation' | new 'agree below a correlation'
+QC 2D without C_PL5D rho_star: step C-R 0.9903322440786112 | new 0.9903709824125719
+QC 2D without C_PL5D z_rho0: step C-R -0.20962024386054134 | new -0.2095523963879596
+QC 3D outcome: step C-R 'agree at the sigma_16 scale (descriptive)' | new 'agree at the sigma_16 scale (descriptive)'
+QD 2D S: step C-R 9.126475284119431e-39 | new 9.126475284119431e-39
+QD 2D sigma: step C-R 5.151540864583348e-40 | new 5.153270512823297e-40
+QD 2D d: step C-R 6.606769573720177e-41 | new 6.606769573720177e-41
+QD 2D d_pct: step C-R 0.7239125037917127 | new 0.7239125037917127
+QD 2D outcome: step C-R 'agree below a correlation' | new 'agree below a correlation'
+QD 2D rho_star: step C-R 0.9981522151321194 | new 0.9981605610370599
+QD 2D z_rho0: step C-R 0.09170367908890395 | new 0.09168793788422444
+QD 2D bound_any_rho: step C-R 2.3012754265647985e-41 | new 2.3358683913637834e-41
+QD 2D bound_rho0: step C-R 1.4408952049383128e-39 | new 1.441142581276641e-39
+QD 2D without C_PL5D outcome: step C-R 'agree' | new 'agree'
+QD 2D without C_PL5D rho_star: step C-R 1.0034944917531545 | new 1.0035314740895682
+QD 2D without C_PL5D z_rho0: step C-R 0.09541753905944875 | new 0.09539980724895362
+QD 3D outcome: step C-R 'agree at the sigma_16 scale (descriptive)' | new 'agree at the sigma_16 scale (descriptive)'

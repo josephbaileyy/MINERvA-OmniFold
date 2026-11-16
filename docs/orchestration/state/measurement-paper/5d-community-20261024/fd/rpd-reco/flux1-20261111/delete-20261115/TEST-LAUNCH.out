@@ -1,0 +1,28 @@
+## 1. plumbing: staged, sha checked on the node, script run, copy removed
+ssh rc=4
+node Josephs-MacBook-Pro-9.local staged sha256 074c56a9362881ffb9168b9cba74717e578d12d5eb04ccebb46df6d4b2f6e600
+STOP: os.O_NOATIME is not available
+script rc=4; /dev/shm copy removed: yes
+launcher rc=4
+   left in the /dev/shm stand-in: 0
+## 2. the local script altered: refused before any ssh
+STOP: the local inventory script is not the approved one
+launcher rc=8
+## 3. a node name that is not a login node
+STOP: 'saul' is not a login node name
+launcher rc=9
+## 4. a session dir that is not empty
+STOP: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp.knJJ91RLQ5/s4 is not a new empty directory
+launcher rc=9
+## 5. a staged copy that differs on the node: the shim's cat appends a byte, so the node-side sha check must refuse
+ssh rc=8
+STOP: /dev/shm copy sha256 6fac42959be403bc8da7d0902c8dd2972dcf9348966fb61dd10a88e6afb628d7 is not 074c56a9362881ffb9168b9cba74717e578d12d5eb04ccebb46df6d4b2f6e600
+xlauncher rc=8
+   left in the /dev/shm stand-in: 0
+## 6. delete mode: staged and sha-checked like inventory (the script refuses here: no O_NOATIME on macOS)
+ssh rc=4
+node Josephs-MacBook-Pro-9.local staged sha256 eb5315459e2dd077c40d19e47eaa5f1fb2baa40f509a1289b932f24ef25c5e56
+STOP: os.O_NOATIME is not available
+script rc=4; /dev/shm copy removed: yes
+launcher rc=4
+   left in the /dev/shm stand-in: 0

@@ -1,0 +1,11 @@
+PASS check-clean
+PASS check-rc8-moved
+PASS check-rc0-but-moved
+PASS check-only-invalid
+PASS check-no-evaluations
+PASS check-no-record
+PASS cover-pass rc=0: declared inputs: protected 2 (in atime-pre: 2), deploy 7 (in atime-pre: 0), products 1654 (in atime-pre: 0), missing []
+PASS cover-counts (454 + 1200 products; deploy 7)
+PASS cover-null-record-in-pre rc=1: declared inputs: protected 2 (in atime-pre: 2), deploy 7 (in atime-pre: 1), products 1654 (in atime-pre: 0), missing []
+PASS cover-gate-missing rc=1: declared inputs: protected 2 (in atime-pre: 2), deploy 7 (in atime-pre: 0), products 1654 (in atime-pre: 0), missing ['/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T//trb.JN5JjT/c9/ar23w/gate-ar23.json']
+READOUT BLOCK TEST PASS

@@ -1,0 +1,5 @@
+56c34ad69b2c3423128b982a3e12b328bbe3e53ccbbba9d8e6126a3c76103b3c  /dev/shm/josephrb-g2r-readout-data.sh
+957750e57a6bc43ac62b629d6d140cd0b9479c2db93744937b29a1555a3e21c3  /dev/shm/josephrb-g2r-readout-data.log
+rm -f /dev/shm/josephrb-g2r-readout-data.sh /dev/shm/josephrb-g2r-readout-data.log rc=0
+ls: cannot access '/dev/shm/josephrb-g2r-readout-data.sh': No such file or directory
+ls: cannot access '/dev/shm/josephrb-g2r-readout-data.log': No such file or directory

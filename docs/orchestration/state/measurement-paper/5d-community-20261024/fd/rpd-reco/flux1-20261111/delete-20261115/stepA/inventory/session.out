@@ -1,0 +1,164 @@
+node login06 staged sha256 074c56a9362881ffb9168b9cba74717e578d12d5eb04ccebb46df6d4b2f6e600
+inventory host login06 python 3.6.15 start 2026-11-15T02:49:16Z root /pscratch/sd/j/josephrb/rpd-reco-flux-20261111
+root dev 3592384858 ino 882727459953338490 uid 112498 mode 40700
+entry	d	0	.rpd-private	
+entry	d	0	.rpd-private/7170edc8f89501fb36113e3b0a587f14e17ccbb74c3f6800a355fc8d62149777	
+entry	f	258133	.rpd-private/7170edc8f89501fb36113e3b0a587f14e17ccbb74c3f6800a355fc8d62149777/prestage.json	
+entry	f	1381	c3-check.txt	
+entry	f	4682	connect.log	
+entry	f	281	exception-stat-outer.txt	
+entry	f	405	fence-overlap.txt	
+entry	f	98	job-host.txt	
+entry	f	0	job.err	
+entry	f	9	job.id	
+entry	f	1990	job.out	
+entry	f	41	job.rc	
+entry	f	15004	production-config.ready.json	
+entry	f	1755	protected-read.json	
+entry	f	3991	redaction-check.txt	
+entry	f	7869	rpd_flux1_job.sh	
+entry	d	0	run	
+entry	f	387	run/cov2d-fence.json	
+entry	f	16324	run/extract-config.json	
+entry	f	2729959	run/flux-custody.json	
+entry	f	456334	run/flux-extract.json	
+entry	f	597140	run/flux-extract.strace	
+entry	f	48277710	run/flux-factors-1A.npz	
+entry	f	12979296	run/flux-factors-1B.npz	
+entry	f	24781824	run/flux-factors-1C.npz	
+entry	f	72060660	run/flux-factors-1D.npz	
+entry	f	60296364	run/flux-factors-1E.npz	
+entry	f	83877390	run/flux-factors-1F.npz	
+entry	f	70604694	run/flux-factors-1G.npz	
+entry	f	6909696	run/flux-factors-1L.npz	
+entry	f	106505136	run/flux-factors-1M.npz	
+entry	f	61488270	run/flux-factors-1N.npz	
+entry	f	18756900	run/flux-factors-1O.npz	
+entry	f	24707808	run/flux-factors-1P.npz	
+entry	d	0	run/mat-data	
+entry	d	0	run/mat-data/MPARAMFILES	
+entry	d	0	run/mat-data/MPARAMFILES/FluxConstraints	
+entry	f	25403	run/mat-data/MPARAMFILES/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt	
+entry	d	0	run/mat-data/PLOTUTILSROOT	
+entry	d	0	run/mat-data/PLOTUTILSROOT/data	
+entry	d	0	run/mat-data/PLOTUTILSROOT/data/flux	
+entry	f	3130612	run/mat-data/PLOTUTILSROOT/data/flux/flux-g4numiv6-pdg-14-minervame1D_rearrangedUniverses.root	
+entry	f	3127208	run/mat-data/PLOTUTILSROOT/data/flux/flux-g4numiv6-pdg-14-minervame1M_rearrangedUniverses.root	
+entry	f	3135889	run/mat-data/PLOTUTILSROOT/data/flux/flux-g4numiv6-pdg-14-minervame1N_rearrangedUniverses.root	
+entry	f	3184947	run/mat-data/PLOTUTILSROOT/data/flux/flux-g4numiv6-pdg14-minervame1D_rearrangedUniverses.root	
+entry	f	3185381	run/mat-data/PLOTUTILSROOT/data/flux/flux-g4numiv6-pdg14-minervame1M_rearrangedUniverses.root	
+entry	f	3186949	run/mat-data/PLOTUTILSROOT/data/flux/flux-g4numiv6-pdg14-minervame1N_rearrangedUniverses.root	
+entry	f	3132419	run/mat-data/PLOTUTILSROOT/data/flux/flux-gen2thin-pdg-14-minervame1D_rearrangedUniverses.root	
+entry	f	3136251	run/mat-data/PLOTUTILSROOT/data/flux/flux-gen2thin-pdg-14-minervame1M_rearrangedUniverses.root	
+entry	f	3130100	run/mat-data/PLOTUTILSROOT/data/flux/flux-gen2thin-pdg-14-minervame1N_rearrangedUniverses.root	
+entry	f	3188849	run/mat-data/PLOTUTILSROOT/data/flux/flux-gen2thin-pdg14-minervame1D_rearrangedUniverses.root	
+entry	f	3187397	run/mat-data/PLOTUTILSROOT/data/flux/flux-gen2thin-pdg14-minervame1M_rearrangedUniverses.root	
+entry	f	3182011	run/mat-data/PLOTUTILSROOT/data/flux/flux-gen2thin-pdg14-minervame1N_rearrangedUniverses.root	
+entry	d	0	run/mat-data/PLOTUTILSROOT/data/flux/sys	
+entry	f	5469	run/mat-data/PLOTUTILSROOT/data/flux/sys/Muon_Energy_MnvH1D.root	
+entry	d	0	run/mat-data/PLOTUTILSROOT/data/lowNuReweight	
+entry	f	5013	run/mat-data/PLOTUTILSROOT/data/lowNuReweight/lowNuReweight.root	
+entry	f	2121346	run/missing-dependency-check.json	
+entry	f	1893	run/missing-dependency.STOP.json	
+entry	f	460914	run/missing-dependency.strace	
+entry	f	91191	run/negative-policy.checked.json	
+entry	f	15004	run/original-config.json	
+entry	d	0	run/original-inputs	
+entry	f	3360491	run/original-inputs/03053d12eefd54a9-lat_1G_bkg.npz	
+entry	f	3130100	run/original-inputs/08500b2e58a20f66-flux-gen2thin-pdg-14-minervame1N_rearrangedUniverses.root	
+entry	f	639	run/original-inputs/0a5c6adb429e437c-setup_UnfoldUtils.sh	
+entry	f	3000	run/original-inputs/14b0bc45cf3605e2-INPUTS.sha256	
+entry	f	630	run/original-inputs/19360bf36c1b67dd-setup_MAT.sh	
+entry	f	13738	run/original-inputs/1b2d014681c4892e-MAT-DATA-DEPENDENCIES.json	
+entry	f	2888635	run/original-inputs/1b55ce2d601762d2-lat_1E_bkg.npz	
+entry	f	3186949	run/original-inputs/1c2439cc11e2101b-flux-g4numiv6-pdg14-minervame1N_rearrangedUniverses.root	
+entry	f	1985624	run/original-inputs/1dead4f249ff3a35-libMAT.so	
+entry	f	1194780	run/original-inputs/1f6898cee4f592a7-lat_1C_bkg.npz	
+entry	f	33980383	run/original-inputs/23ba7b3e4f03097e-lat_1B.npz	
+entry	f	612	run/original-inputs/2c20ac85fd963fcf-setup_MAT-MINERvA.sh	
+entry	f	3132419	run/original-inputs/325a46f9785553e4-flux-gen2thin-pdg-14-minervame1D_rearrangedUniverses.root	
+entry	f	17061	run/original-inputs/3bd5bbeda15cec00-MAT_rdict.pcm	
+entry	f	3119697	run/original-inputs/5709f1805650942f-lat_1N_bkg.npz	
+entry	f	186899533	run/original-inputs/589e8e7c32a32b9e-lat_1G.npz	
+entry	f	1407	run/original-inputs/5d205f38d4577979-setup_salloc_env.sh	
+entry	f	18061361	run/original-inputs/60dce5f309f75068-lat_1L.npz	
+entry	f	47673627	run/original-inputs/60dd95f990447c08-lat_1O.npz	
+entry	f	159089937	run/original-inputs/6408e97fafde39fd-lat_1N.npz	
+entry	f	3127208	run/original-inputs/693f7f4d9f82b8af-flux-g4numiv6-pdg-14-minervame1M_rearrangedUniverses.root	
+entry	f	638389	run/original-inputs/71033ac432cf9dd6-lat_1B_bkg.npz	
+entry	f	5469	run/original-inputs/7128515c686cb2a7-Muon_Energy_MnvH1D.root	
+entry	f	4114	run/original-inputs/7498526864f517fc-MATDict.rootmap	
+entry	f	65471177	run/original-inputs/74fa63fbf271176e-lat_1C.npz	
+entry	f	4027113	run/original-inputs/76420fe9021e8fbb-lat_1F_bkg.npz	
+entry	f	11270	run/original-inputs/7954b8ff9b67e1bf-h2_definition.json	
+entry	f	1316555	run/original-inputs/7ac5fc566723b2e4-lat_1P_bkg.npz	
+entry	f	158814144	run/original-inputs/83f24b7f787a7c47-lat_1E.npz	
+entry	f	3130612	run/original-inputs/882ab7fbaedcdf83-flux-g4numiv6-pdg-14-minervame1D_rearrangedUniverses.root	
+entry	f	5283519	run/original-inputs/8ad9727f32b0e55c-lat_1M_bkg.npz	
+entry	f	221027198	run/original-inputs/8be5eb94426af3a4-lat_1F.npz	
+entry	f	89876	run/original-inputs/8c563645b31a023e-FluxReweighter.cxx	
+entry	f	3187397	run/original-inputs/903203ab39c23eba-flux-gen2thin-pdg14-minervame1M_rearrangedUniverses.root	
+entry	f	127968221	run/original-inputs/90ba74ab9f17d469-lat_1A.npz	
+entry	f	25403	run/original-inputs/9129a33666de8e29-sorted_NuEConstraint_FHC_RHC_IMD.txt	
+entry	f	5013	run/original-inputs/93dd6519c6dcfefe-lowNuReweight.root	
+entry	f	192006622	run/original-inputs/a22a361fe047d9a5-lat_1D.npz	
+entry	f	63445665	run/original-inputs/a3536bff2d297cb8-lat_1P.npz	
+entry	f	816	run/original-inputs/a8bbdb8c6847827e-setup.sh	
+entry	f	3184947	run/original-inputs/b52e8aaa3c94ac0f-flux-g4numiv6-pdg14-minervame1D_rearrangedUniverses.root	
+entry	f	1898	run/original-inputs/bab9d8b21c5310c0-energy-spectrum-candidates.tsv	
+entry	f	2311555	run/original-inputs/c058e5c64a0e9d4a-lat_1A_bkg.npz	
+entry	f	274076044	run/original-inputs/c2364bb69fb3a8ef-lat_1M.npz	
+entry	f	361915	run/original-inputs/d05d233ebaa252cd-lat_1L_bkg.npz	
+entry	f	345	run/original-inputs/d7ce15f86e01762d-setup.sh	
+entry	f	18146	run/original-inputs/d877092f5479c1c4-CVUniverse.h	
+entry	f	997512	run/original-inputs/d9b014a27bac0e30-lat_1O_bkg.npz	
+entry	f	3448900	run/original-inputs/dc14631f127c53d2-lat_1D_bkg.npz	
+entry	f	3135889	run/original-inputs/dcee86a3be368d65-flux-g4numiv6-pdg-14-minervame1N_rearrangedUniverses.root	
+entry	f	3188849	run/original-inputs/efe4bfe8f63f0609-flux-gen2thin-pdg14-minervame1D_rearrangedUniverses.root	
+entry	f	3136251	run/original-inputs/f044d6329f826af0-flux-gen2thin-pdg-14-minervame1M_rearrangedUniverses.root	
+entry	f	3182011	run/original-inputs/f1444640e8cbebc0-flux-gen2thin-pdg14-minervame1N_rearrangedUniverses.root	
+entry	f	3185381	run/original-inputs/fce6a37d72dc687e-flux-g4numiv6-pdg14-minervame1M_rearrangedUniverses.root	
+entry	d	0	run/prepare-check	
+entry	d	0	run/prepare-check/staged	
+entry	f	3000	run/prepare-check/staged/14b0bc45cf3605e2-INPUTS.sha256	
+entry	f	1898	run/prepare-check/staged/bab9d8b21c5310c0-energy-spectrum-candidates.tsv	
+entry	f	15004	run/prepare-check/staged/config.json	
+entry	f	490	run/prestage-reference.json	
+entry	f	249294	run/prestage.json	
+entry	d	0	run/real-mnv-check	
+entry	f	3136251	run/real-mnv-check/non-input-probe.root	
+entry	f	4411	run/real-mnv-check/real-mnv-check.json	
+entry	f	4200	run/real-mnv-check/real-mnv-worker.json	
+entry	f	1164	run/real-mnv-check/worker.stderr.txt	
+entry	f	151	run/real-mnv-check/worker.stdout.txt	
+entry	d	0	run/staged	
+entry	f	16324	run/staged/config.json	
+entry	f	490	run/staged/prestage-reference.json	
+entry	d	0	run/tmp	
+entry	f	91191	run/trace-policy.checked.json	
+entry	f	91191	run/trace-policy.json	
+entry	f	4996	strace-probe.txt	
+entry	d	0	tools	
+entry	f	4676	tools/fence_overlap.py	
+clone/ entries 24283 (d=2093 f=22069 l=121) bytes 1166884424 listing-sha256 9a85268d4f113460ef94c682f15ca7578534ffc7ce46da1348eefd6d848fd71f
+top .rpd-private entries 3 bytes 258133
+top c3-check.txt entries 1 bytes 1381
+top clone entries 24283 bytes 1166884424
+top connect.log entries 1 bytes 4682
+top exception-stat-outer.txt entries 1 bytes 281
+top fence-overlap.txt entries 1 bytes 405
+top job-host.txt entries 1 bytes 98
+top job.err entries 1 bytes 0
+top job.id entries 1 bytes 9
+top job.out entries 1 bytes 1990
+top job.rc entries 1 bytes 41
+top production-config.ready.json entries 1 bytes 15004
+top protected-read.json entries 1 bytes 1755
+top redaction-check.txt entries 1 bytes 3991
+top rpd_flux1_job.sh entries 1 bytes 7869
+top run entries 120 bytes 2256851244
+top strace-probe.txt entries 1 bytes 4996
+top tools entries 2 bytes 4676
+tree entries 24422 files 22190 bytes 3424040979 listing-sha256 6e9a273506598728091867436ef2fa562f3418f9726175d2d43bfb0ddce6ee89 problems 0 seconds 7.7
+INVENTORY :: DONE end 2026-11-15T02:49:23Z (nothing was read but metadata; nothing was written or removed)
+script rc=0; /dev/shm copy removed: yes

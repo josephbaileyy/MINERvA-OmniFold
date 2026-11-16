@@ -1,0 +1,50 @@
+host=login02 start=2026-11-13T11:20:46Z pid=729171 user=josephrb M=401733bce290ce122cfbf38f1526e120f174b3ec
+squeue: [61214604 ll5d_bulk_03 RUNNING 8:00:00 1;61214605 ll5d_bulk_04 RUNNING 8:00:00 1;61214601 ll5d_bulk_02 RUNNING 8:00:00 1;61214597 ll5d_bulk_01 RUNNING 8:00:00 1;61214607 ll5d_bulk_05 RUNNING 8:00:00 1;61214609 ll5d_bulk_06 RUNNING 8:00:00 1;61214614 ll5d_bulk_09 RUNNING 8:00:00 1;61214615 ll5d_bulk_10 RUNNING 8:00:00 1;61214610 ll5d_bulk_07 RUNNING 8:00:00 1;61214612 ll5d_bulk_08 RUNNING 8:00:00 1;]
+== iris
+m3246               2504.8            10000.0     18643.6      20000.0
+balance_node_h=1356.4 half=678.2 cap=110.0
+recompute spent=0.236 held=0.000 this=2.0 total=2.236 cap=110.0
+deploy porcelain=0 ignored=0 head=401733bce290ce122cfbf38f1526e120f174b3ec
+2d-unfolding/cov2d/g2r/jobs/g2r_jobs.py: OK
+2d-unfolding/cov2d/g2r/jobs/g2r_env.sh: OK
+2d-unfolding/cov2d/g2r/jobs/g2r_job.sbatch: OK
+2d-unfolding/cov2d/g2r/jobs/g2r_envtest.sbatch: OK
+2d-unfolding/cov2d/g2r/jobs/g2r_prepare.sbatch: OK
+2d-unfolding/cov2d/g2r/jobs/g2r_submit.sh: OK
+2d-unfolding/re2/re2_driver.py: OK
+2d-unfolding/cov2d/g2r/g2r.py: OK
+2d-unfolding/cov2d/g2r/g2r_prepare.py: OK
+2d-unfolding/cov2d/g2r/g2r_readout.py: OK
+2d-unfolding/cov2d/jobs/cov2d_jobs.py: OK
+2d-unfolding/cov2d/jobs/cov2d_env.sh: OK
+2d-unfolding/cov2d/cov2d.py: OK
+2d-unfolding/cov2d/cov2d_receipt.py: OK
+nd-unfolding/mnv_guarded_run.py: OK
+nd-unfolding/fd_rpd_inputs.py: OK
+docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partb_runs.tsv: OK
+setup_salloc_env.sh: OK
+unbinned_unfolding/python/omnifold.py: OK
+origin/main=c78b1a16eba52b7524ec8128c5ff0a9dd76a8f6c
+envtest record on origin/main: verdict=PASS sha256=c4a0720d3a12265403d22e273e219d4594b03ba0a592afe671618ed72cbf0272
+input /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root size=171117087867 atime=2026-11-13T10:39:23Z
+input /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1A_universes_full.root size=13967417576 atime=2026-10-14T23:11:40Z
+input /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1B_universes_full.root size=3754793236 atime=2026-10-14T23:12:36Z
+input /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1C_universes_full.root size=7169588316 atime=2026-10-14T23:13:26Z
+input /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1D_universes_full.root size=20851499421 atime=2026-10-14T23:22:45Z
+input /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1E_universes_full.root size=17441223965 atime=2026-10-14T23:15:17Z
+input /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1F_universes_full.root size=24243358082 atime=2026-10-14T23:16:13Z
+input /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1G_universes_full.root size=20516184032 atime=2026-10-14T23:17:11Z
+input /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1L_universes_full.root size=2004991684 atime=2026-10-14T23:18:08Z
+input /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1M_universes_full.root size=30899666424 atime=2026-10-14T23:24:46Z
+input /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1N_universes_full.root size=17753623260 atime=2026-10-14T23:24:48Z
+input /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1O_universes_full.root size=5408394362 atime=2026-10-14T23:20:36Z
+input /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1P_universes_full.root size=7125876607 atime=2026-10-14T23:21:29Z
+{"spent": 0.2361111111111111, "held": 0.0, "lagging_ids": [], "want": "prepare", "want_node_h": 2.0, "total": 2.236111111111111, "cap": 110.0, "pass": true, "not_yet_submitted": ["D_Ua", "D_Ub", "D_Uc", "D_Ud", "G18_Ua", "G18_Ub", "G18_Uc", "G18_Ud", "AR23_Ua", "AR23_Ub", "AR23_Uc", "AR23_Ud"], "projection": 109.43611111111112, "stop": false}
+2026-11-13T11:21:02Z M=401733bce290ce122cfbf38f1526e120f174b3ec job=prepare id=61223390 limit=02:00:00
+sacct lists 61223390
+submit prepare rc=0
+2026-11-13T09:41:52Z M=401733bce290ce122cfbf38f1526e120f174b3ec job=envtest id=61220039 limit=01:04:00
+2026-11-13T11:21:02Z M=401733bce290ce122cfbf38f1526e120f174b3ec job=prepare id=61223390 limit=02:00:00
+JobId=61223390 JobName=cov2dg2r-prepare Account=m3246 QOS=regular_1 JobState=PENDING TimeLimit=02:00:00 Partition=regular_milan_ss11 NumNodes=1-1 OverSubscribe=NO 
+end=2026-11-13T11:21:13Z
+DONE

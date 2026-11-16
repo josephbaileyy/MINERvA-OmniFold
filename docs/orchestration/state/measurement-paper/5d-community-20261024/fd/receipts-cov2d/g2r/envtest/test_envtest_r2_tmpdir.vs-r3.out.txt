@@ -1,0 +1,10 @@
+connect 08ef621281636a6c4735314ec7f5925c49455dc2194ebfc5584a093ef3254ddd checkout 401733bce290ce122cfbf38f1526e120f174b3ec porcelain=0
+PASS place: 4 suites rc 0, glue Ran 18 tests OK under the guard; clone clean; removed
+PASS ctl-c: the cluster layout with only TMPDIR moved fails: Ran 14, errors=11, refusals in $C/docs
+PASS ctl-r1: r1's layout fails as r1 did: Ran 11, errors=13
+PASS early: rc=4, removed
+PASS m-O: killed (rc=6, nothing left)
+PASS m-C: killed (rc=6, nothing left)
+PASS m-commit: killed (rc=7, the bound sums fail at PRE_M, removed)
+PASS static: GUARDED (/global/cfs /pscratch) refused; suites cd $SC; one TMPDIR assignment
+ENVTEST-R2 SUITES-PLACE TEST PASS

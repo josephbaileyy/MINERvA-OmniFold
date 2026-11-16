@@ -1,0 +1,2 @@
+JobID|JobName|State|ExitCode|Start|End|Elapsed|NodeList|NNodes|Timelimit
+61272425|ll5d_readout_01|COMPLETED|0:0|2026-11-14T12:31:11|2026-11-14T12:31:41|00:00:30|nid006482|1|01:00:00

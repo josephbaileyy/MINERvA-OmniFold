@@ -1,0 +1,10 @@
+9c9
+< # Usage: launch-g2r.sh envtest|envtest-r2|prepare <sha256>
+---
+> # Usage: launch-g2r.sh envtest|envtest-r2|diag-tune|prepare <sha256>
+22a23
+>   diag-tune) SRC=$H/connect-g2r-diag-tune.sh; ARG="" ;;     # envtest-r2 STOP diagnostic (PhaseTune STOP)
+24c25
+<   *) echo "usage: launch-g2r.sh envtest|envtest-r2|prepare <sha256>"; exit 2 ;;
+---
+>   *) echo "usage: launch-g2r.sh envtest|envtest-r2|diag-tune|prepare <sha256>"; exit 2 ;;

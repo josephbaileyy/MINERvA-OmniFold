@@ -1,0 +1,22 @@
+{
+ "C_chi2_Q_std_cell_identity_pass_line": {
+  "ok": true,
+  "detail": null
+ },
+ "C_chi2_Q_lognormal_cell_identity_pass_line": {
+  "ok": true,
+  "detail": null
+ },
+ "C_chi2_Q_substat_cell_identity_pass_line": {
+  "ok": true,
+  "detail": null
+ },
+ "D_fig67_Q_cell_identity_four_pass_lines": {
+  "ok": true,
+  "detail": 4
+ },
+ "D_fig67_projections_eq_budget_Q_le_1e-12": {
+  "ok": true,
+  "detail": 3.4798127599706265e-16
+ }
+}

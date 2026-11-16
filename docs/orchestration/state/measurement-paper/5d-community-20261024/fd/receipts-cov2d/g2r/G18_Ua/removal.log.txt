@@ -1,0 +1,5 @@
+a5948d2e3205b54429dd8b29e22ca61e6453e636b8c5a6c686071df8c4f63555  /dev/shm/josephrb-g2r-G18_Ua.sh
+93e5cf4b64ae948a1f9cbd0738bb942884e72c070711db5a3881cac5327d8ba1  /dev/shm/josephrb-g2r-G18_Ua.log
+rm -f /dev/shm/josephrb-g2r-G18_Ua.sh /dev/shm/josephrb-g2r-G18_Ua.log rc=0
+ls: cannot access '/dev/shm/josephrb-g2r-G18_Ua.sh': No such file or directory
+ls: cannot access '/dev/shm/josephrb-g2r-G18_Ua.log': No such file or directory

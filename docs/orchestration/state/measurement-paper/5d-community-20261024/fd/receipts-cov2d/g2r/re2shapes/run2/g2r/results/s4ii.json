@@ -1,0 +1,268 @@
+{
+ "S4ii": "PASS",
+ "analyze_prod_sha256": "4789b36d9c6d1d9979e272544f0a6d4bd46e675779b699983f59d1ba88c587f0",
+ "arm": "refined",
+ "item": "S4ii",
+ "july_identity_seed42": {
+  "2p2h:0": {
+   "source": "k1_j7.json faa4656d",
+   "verdict": "PASS"
+  },
+  "Flux:23": {
+   "source": "k1_j7.json faa4656d",
+   "verdict": "PASS"
+  },
+  "MaCCQE:0": {
+   "source": "k1_j7.json faa4656d",
+   "verdict": "PASS"
+  },
+  "MaRES:0": {
+   "source": "k1_j7.json faa4656d",
+   "verdict": "PASS"
+  },
+  "MinosEfficiency:0": {
+   "source": "k1_j7.json faa4656d",
+   "verdict": "PASS"
+  },
+  "Muon_Energy_MINOS:0": {
+   "verdict": "NO REFINED REFERENCE",
+   "why": "no refined product reproduces this purity reference (RE2-DECLARATION-B.md \u00a75.1); not part of the item verdict"
+  },
+  "NormDISCC:0": {
+   "source": "k1_j7.json faa4656d",
+   "verdict": "PASS"
+  }
+ },
+ "null_vs_cv": {
+  "s42": {
+   "argmax_globalid": 223,
+   "cells_over_tol": [],
+   "exactly_equal_cells": 0,
+   "integral_rel_diff": 3.3306690738754696e-16,
+   "max_rel_diff_cells": 5.095590616122081e-12,
+   "median_rel_diff_cells": 6.483702463810914e-14,
+   "n_cells": 205,
+   "n_cells_over_tol": 0,
+   "new": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/S4U_NormDISCC0_s42/xsec.root",
+   "ref": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/C0_cv/xsec.root",
+   "tolerance": 1e-08,
+   "verdict": "PASS"
+  },
+  "s45": {
+   "argmax_globalid": 223,
+   "cells_over_tol": [],
+   "exactly_equal_cells": 0,
+   "integral_rel_diff": 6.439293542825908e-14,
+   "max_rel_diff_cells": 3.902322909254963e-12,
+   "median_rel_diff_cells": 2.878808302853031e-13,
+   "n_cells": 205,
+   "n_cells_over_tol": 0,
+   "new": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/S4U_NormDISCC0_s45/xsec.root",
+   "ref": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/S4CV_s45/xsec.root",
+   "tolerance": 1e-08,
+   "verdict": "PASS"
+  },
+  "s48": {
+   "argmax_globalid": 223,
+   "cells_over_tol": [],
+   "exactly_equal_cells": 0,
+   "integral_rel_diff": 8.626432901337466e-14,
+   "max_rel_diff_cells": 5.592526441944301e-12,
+   "median_rel_diff_cells": 1.652011860642233e-13,
+   "n_cells": 205,
+   "n_cells_over_tol": 0,
+   "new": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/S4U_NormDISCC0_s48/xsec.root",
+   "ref": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/S4CV_s48/xsec.root",
+   "tolerance": 1e-08,
+   "verdict": "PASS"
+  },
+  "s51": {
+   "argmax_globalid": 159,
+   "cells_over_tol": [],
+   "exactly_equal_cells": 0,
+   "integral_rel_diff": 1.6131540547803525e-13,
+   "max_rel_diff_cells": 1.1980416658730064e-12,
+   "median_rel_diff_cells": 2.2537527399890678e-13,
+   "n_cells": 205,
+   "n_cells_over_tol": 0,
+   "new": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/S4U_NormDISCC0_s51/xsec.root",
+   "ref": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/S4CV_s51/xsec.root",
+   "tolerance": 1e-08,
+   "verdict": "PASS"
+  },
+  "s54": {
+   "argmax_globalid": 191,
+   "cells_over_tol": [],
+   "exactly_equal_cells": 1,
+   "integral_rel_diff": 3.2307490016592055e-14,
+   "max_rel_diff_cells": 2.332356530132529e-12,
+   "median_rel_diff_cells": 8.248957072964913e-14,
+   "n_cells": 205,
+   "n_cells_over_tol": 0,
+   "new": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/S4U_NormDISCC0_s54/xsec.root",
+   "ref": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/S4CV_s54/xsec.root",
+   "tolerance": 1e-08,
+   "verdict": "PASS"
+  }
+ },
+ "out_root": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out",
+ "pins_failed": {},
+ "provenance": {
+  "2dc_P_S4CV_s45": {
+   "bad": {},
+   "ok": true
+  },
+  "2dc_P_S4CV_s48": {
+   "bad": {},
+   "ok": true
+  },
+  "2dc_P_S4CV_s51": {
+   "bad": {},
+   "ok": true
+  },
+  "2dc_P_S4CV_s54": {
+   "bad": {},
+   "ok": true
+  },
+  "2dc_P_S4U_2p2h0_s42": {
+   "bad": {},
+   "ok": true
+  },
+  "2dc_P_S4U_2p2h0_s45": {
+   "bad": {},
+   "ok": true
+  },
+  "2dc_P_S4U_2p2h0_s48": {
+   "bad": {},
+   "ok": true
+  },
+  "2dc_P_S4U_2p2h0_s51": {
+   "bad": {},
+   "ok": true
+  },
+  "2dc_P_S4U_2p2h0_s54": {
+   "bad": {},
+   "ok": true
+  },
+  "2dc_P_S4U_Flux23_s42": {
+   "bad": {},
+   "ok": true
+  },
+  "2dc_P_S4U_Flux23_s45": {
+   "bad": {},
+   "ok": true
+  },
+  "2dc_P_S4U_Flux23_s48": {
+   "bad": {},
+   "ok": true
+  },
+  "2dc_P_S4U_Flux23_s51": {
+   "bad": {},
+   "ok": true
+  },
+  "2dc_P_S4U_Flux23_s54": {
+   "bad": {},
+   "ok": true
+  },
+  "2dc_P_S4U_MaCCQE0_s42": {
+   "bad": {},
+   "ok": true
+  },
+  "2dc_P_S4U_MaCCQE0_s45": {
+   "bad": {},
+   "ok": true
+  },
+  "2dc_P_S4U_MaCCQE0_s48": {
+   "bad": {},
+   "ok": true
+  },
+  "2dc_P_S4U_MaCCQE0_s51": {
+   "bad": {},
+   "ok": true
+  },
+  "2dc_P_S4U_MaCCQE0_s54": {
+   "bad": {},
+   "ok": true
+  },
+  "2dc_P_S4U_MaRES0_s42": {
+   "bad": {},
+   "ok": true
+  },
+  "2dc_P_S4U_MaRES0_s45": {
+   "bad": {},
+   "ok": true
+  },
+  "2dc_P_S4U_MaRES0_s48": {
+   "bad": {},
+   "ok": true
+  },
+  "2dc_P_S4U_MaRES0_s51": {
+   "bad": {},
+   "ok": true
+  },
+  "2dc_P_S4U_MaRES0_s54": {
+   "bad": {},
+   "ok": true
+  },
+  "2dc_P_S4U_MinosEfficiency0_s42": {
+   "bad": {},
+   "ok": true
+  },
+  "2dc_P_S4U_MinosEfficiency0_s45": {
+   "bad": {},
+   "ok": true
+  },
+  "2dc_P_S4U_MinosEfficiency0_s48": {
+   "bad": {},
+   "ok": true
+  },
+  "2dc_P_S4U_MinosEfficiency0_s51": {
+   "bad": {},
+   "ok": true
+  },
+  "2dc_P_S4U_MinosEfficiency0_s54": {
+   "bad": {},
+   "ok": true
+  },
+  "2dc_P_S4U_Muon_Energy_MINOS0_s42": {
+   "bad": {},
+   "ok": true
+  },
+  "2dc_P_S4U_Muon_Energy_MINOS0_s45": {
+   "bad": {},
+   "ok": true
+  },
+  "2dc_P_S4U_Muon_Energy_MINOS0_s48": {
+   "bad": {},
+   "ok": true
+  },
+  "2dc_P_S4U_Muon_Energy_MINOS0_s51": {
+   "bad": {},
+   "ok": true
+  },
+  "2dc_P_S4U_Muon_Energy_MINOS0_s54": {
+   "bad": {},
+   "ok": true
+  },
+  "2dc_P_S4U_NormDISCC0_s42": {
+   "bad": {},
+   "ok": true
+  },
+  "2dc_P_S4U_NormDISCC0_s45": {
+   "bad": {},
+   "ok": true
+  },
+  "2dc_P_S4U_NormDISCC0_s48": {
+   "bad": {},
+   "ok": true
+  },
+  "2dc_P_S4U_NormDISCC0_s51": {
+   "bad": {},
+   "ok": true
+  },
+  "2dc_P_S4U_NormDISCC0_s54": {
+   "bad": {},
+   "ok": true
+  }
+ }
+}

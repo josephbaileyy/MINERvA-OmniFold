@@ -1,0 +1,30 @@
+# merge_sim.sh's tree (#977 a5e3005fd with #981's package from 91f9cb615), with RP27, RP28 and the proposed RP33
+# applied to build_package.py in that scratch tree only (never committed), then dryrun.py a5e3005fd run there on
+# Python 3.12.2; 3.10.20 and 3.11.15 printed byte-identical output. The change:
+#   -        c.key(fn, f"f1-tune-{tune}", gen.removeprefix("genie_v3_").replace("_", r"\_"))
+#   +        c.key(fn, f"f1-tune-{tune}", r"\mbox{" + gen.removeprefix("genie_v3_").replace("_", r"\_") + "}")
+#   -    c.printed(fn, r"Integral ratio $\ratioTot$; $\chi^2/\mathrm{ndf}=\chiPaper$ (ndf $=205$) against a covariance of "
+#   -                  r"condition number $1.5\times10^{12}$")
+#   -    c.printed(fn, rf"its normalization part is $\chi^{{2}}={v['tens-chi2-norm']}$, against {v['tens-chi2-shape']} for the "
+#   -                  rf"shape")
+#   -    c.printed(fn, rf"{n73} of its 205 eigenvalues exceed $10^{{-4}}$ of the largest")
+#   -    c.printed(fn, rf"Keeping the {n73} directions with $\lambda/\lambda_{{\max}}>10^{{-4}}$ gives $\chi^{{2}}={chi73}$, and "
+#   -                  rf"the {n139} with $\lambda/\lambda_{{\max}}>10^{{-6}}$ give $\chi^{{2}}={chi139}$.")
+#   +    for k, got in (("re2-cond", r"1.5\times10^{12}"), ("re2-chi2-norm", v["tens-chi2-norm"]),
+#   +                   ("re2-chi2-shape", v["tens-chi2-shape"]), ("re2-modes-4", str(n73)), ("re2-modes-6", str(n139)),
+#   +                   ("re2-chi2-4", chi73), ("re2-chi2-6", chi139)):
+#   +        c.key(fn, k, got)
+#   +    c.printed(fn, r"Integral ratio $\ratioTot$; descriptive $\chi^2/\mathrm{ndf}=\chiPaper$ (ndf $=205$) against a "
+#   +                  r"covariance of condition number $\fvval{re2-cond}$")
+#   +    c.printed(fn, r"its normalization part is $\chi^{2}=\fvval{re2-chi2-norm}$, against \fvval{re2-chi2-shape} for the shape")
+#   +    c.printed(fn, r"\fvval{re2-modes-4} of its 205 eigenvalues exceed $10^{-4}$ of the largest")
+#   +    c.printed(fn, r"Keeping the \fvval{re2-modes-4} directions with $\lambda/\lambda_{\max}>10^{-4}$ gives "
+#   +                  r"$\chi^{2}=\fvval{re2-chi2-4}$, and the \fvval{re2-modes-6} with $\lambda/\lambda_{\max}>10^{-6}$ give "
+#   +                  r"$\chi^{2}=\fvval{re2-chi2-6}$.")
+#   -    fv = parse_fvval((NOTE / "values_fived16.tex").read_text())
+#   -    need(fv == fresh, "values_fived16.tex is not a fresh generation of make_values_fived16.py; regenerate it first")
+#   +    vf = (NOTE / "values_fived16.tex").read_text()
+#   +    fv = parse_fvval(vf)
+#   +    need(vf == mv.render(fresh), "values_fived16.tex is not a fresh generation of make_values_fived16.py; regenerate it first")
+#977 head a5e3005fd; ruled failures: 44
+DRYRUN PASS (only ruled failures)

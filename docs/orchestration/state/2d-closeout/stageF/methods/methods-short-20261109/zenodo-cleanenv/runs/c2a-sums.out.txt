@@ -1,0 +1,15 @@
+c2a.err: OK
+c2a.out: OK
+decode.out: OK
+fence-mac.out: OK
+README.txt: OK
+survey.txt: OK
+transcribe_c2a.py: OK
+transcribe.out: OK
+transcription/cov2d_C_PL.csv: OK
+transcription/cov2d_c08.csv: OK
+transcription/cov2d_Q.csv: OK
+transcription/cov2d_s5_total.csv: OK
+transcription/cov2d_stat.csv: OK
+transcription/cov2d_universe.csv: OK
+transcription/cov2d_x.csv: OK

@@ -1,0 +1,6 @@
+# node sha256 of $O/readout/data/, read O_NOATIME (the data subset of ../d1/node-sha256.raw.txt)
+cd975b64402325da489ae608277faf5f6d7a7cbebe4974465f90b07c336e083f  readout/data/data_g2r.json
+3b8cc7ceaef97c3dc6bbcd2c5cfdf853442c347e37e23f64eca54898d0e9eb4b  readout/data/data_g2r.npz
+d90dcf41790957323a53921b911436148f049422c04c7fb5eddb3f8987728b00  readout/data/out.sha256
+a0f86fe191d6e02e4d4a9f9616dff6edaa2fadfb4384e9d56c333a92f771b8cf  readout/data/products.tsv
+56a11b49de96e9005f0ebb1aba64d2f308009ee420bcba1de1b894bbad49969e  readout/data/readout.log

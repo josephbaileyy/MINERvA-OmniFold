@@ -1,0 +1,4 @@
+# cr (the director's XCOV ruling: fd_gencmp cmd_overlap re-run under C_new, on the RE-2-shapes production's Q_R):
+# route A's Q_R in RE-2's shapes, combination/s5_plus_playlist.npz of the g2r arm (RE2SHAPES PASS, #1167; its digest in
+# run2/g2r/SHA256SUMS and out.sha256). Used with fd/gencmp/INPUTS.sha256 and fd/gencmp-e/INPUTS.sha256, as step C-R was.
+81fdd16f58a113d48870f0e42548e301545cba23b50169811ffcd2fe1e5dc8ad  /pscratch/sd/j/josephrb/cov2d-re2shapes-20261115/g2r/combination/s5_plus_playlist.npz

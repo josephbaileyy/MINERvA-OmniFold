@@ -1,0 +1,51 @@
+host=login02 start=2026-11-14T04:00:54Z pid=596119 user=josephrb M=401733bce290ce122cfbf38f1526e120f174b3ec PH=G18
+squeue: [61255888 ll5d_rerun129_01 PENDING 2:30:00 1;]
+readout place=/dev/shm/josephrb-g2r-readout-G18.4lbzTe clone head=401733bce290ce122cfbf38f1526e120f174b3ec porcelain_ignored=0 bound sums 19 OK TMPDIR=/dev/shm/josephrb-g2r-readout-G18.4lbzTe/tmp
+map_sha256=956531e3b761aaf08d40c6ab8d917ba5f19dab5947b72607e6a34d0d3f7f83ae
+175 products for G18
+products.tsv 175 rows sha256 f367f10a81c128650a7e5f6910f139f00aa3b062b01b5730f8f8716f8d5d4a6f
+{"mat_setup_scripts": 6, "mismatches": 0}
+python=/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python TMPDIR=/dev/shm/josephrb-g2r-readout-G18.4lbzTe/tmp
+3.11.14 numpy 1.26.4 ROOT 6.28/12
+MAT preflight file: /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_1A.root sha256 d54d2a2c6e0454b035c69d82aff3d3ac2c8cb5e589fea09f2b439804854b1107
+MAT preflight: MnvH1D PlotUtils::MnvH1D 14 bins
+G2R-TUNE verdict=UNDER-COVERS controls_failed=[] stop=[]
+	Command being timed: "python -B g2r_readout.py tune --truth G18 --products /dev/shm/josephrb-g2r-readout-G18.4lbzTe/products.tsv --map-sha 956531e3b761aaf08d40c6ab8d917ba5f19dab5947b72607e6a34d0d3f7f83ae --out /dev/shm/josephrb-g2r-readout-G18.4lbzTe/out"
+	User time (seconds): 128.66
+	System time (seconds): 192.58
+	Percent of CPU this job got: 97%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 5:27.87
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 1066720
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 80216740
+	Voluntary context switches: 2703
+	Involuntary context switches: 910663
+	Swaps: 0
+	File system inputs: 5734540
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+READOUT-G18 PASS rc=0 verdict=UNDER-COVERS
+outputs: 3
+55ad7cc4faa4680b49391a9d68f52fcaa707150bd1300915063d66a16be9bfbe  blocks_g2r_G18.npz
+d6b84ec086477d615a3240f3bdf4ea677ad0f24f801cfe912b885ac1e225f003  null_g2r_G18.json
+27374aab74793444ee20561ced1066247b225a40067092d7d181e186128b9ec2  score_g2r_G18.json
+clone porcelain_ignored after=0 head=401733bce290ce122cfbf38f1526e120f174b3ec
+blobs unchanged
+blocks_g2r_G18.npz: OK
+null_g2r_G18.json: OK
+score_g2r_G18.json: OK
+copied to /pscratch/sd/j/josephrb/cov2d-g2r-20261112/readout/G18: blocks_g2r_G18.npz null_g2r_G18.json out.sha256 products.tsv readout.log score_g2r_G18.json 
+removed the readout place /dev/shm/josephrb-g2r-readout-G18.4lbzTe rc=0 left=no
+readout subshell rc=0
+READOUT-G18 PASS
+end=2026-11-14T04:07:05Z
+DONE

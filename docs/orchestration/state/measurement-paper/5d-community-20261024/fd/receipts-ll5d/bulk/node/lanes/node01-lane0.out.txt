@@ -1,0 +1,23 @@
+{"out": "ll5d_g18_seed_T.npz", "seconds_unfold": 824.607}
+node 01 lane 0 g18 seed rc=0
+{"out": "ll5d_g18_block_2p2h_0.npz", "seconds_unfold": 829.654}
+{"out": "ll5d_g18_block_2p2h_1.npz", "seconds_unfold": 816.837}
+{"out": "ll5d_g18_block_2p2h_2.npz", "seconds_unfold": 809.533}
+{"out": "ll5d_g18_block_AGKYxF1pi_0.npz", "seconds_unfold": 812.136}
+{"out": "ll5d_g18_block_AGKYxF1pi_1.npz", "seconds_unfold": 811.251}
+{"out": "ll5d_g18_block_AhtBY_0.npz", "seconds_unfold": 817.423}
+{"out": "ll5d_g18_block_AhtBY_1.npz", "seconds_unfold": 814.937}
+{"out": "ll5d_g18_block_BhtBY_0.npz", "seconds_unfold": 811.085}
+{"out": "ll5d_g18_block_BhtBY_1.npz", "seconds_unfold": 818.091}
+{"out": "ll5d_g18_block_CCQEPauliSupViaKF_0.npz", "seconds_unfold": 810.894}
+{"out": "ll5d_g18_block_CCQEPauliSupViaKF_1.npz", "seconds_unfold": 815.09}
+{"out": "ll5d_g18_block_CV1uBY_0.npz", "seconds_unfold": 808.118}
+{"out": "ll5d_g18_block_CV1uBY_1.npz", "seconds_unfold": 818.922}
+{"out": "ll5d_g18_block_CV2uBY_0.npz", "seconds_unfold": 814.789}
+{"out": "ll5d_g18_block_CV2uBY_1.npz", "seconds_unfold": 810.129}
+{"out": "ll5d_g18_block_EtaNCEL_0.npz", "seconds_unfold": 813.118}
+{"out": "ll5d_g18_block_EtaNCEL_1.npz", "seconds_unfold": 814.719}
+{"out": "ll5d_g18_block_Flux_0.npz", "seconds_unfold": 798.718}
+{"out": "ll5d_g18_block_Flux_1.npz", "seconds_unfold": 795.566}
+{"out": "ll5d_g18_block_Flux_2.npz", "seconds_unfold": 799.332}
+node 01 lane 0 g18 block rc=8

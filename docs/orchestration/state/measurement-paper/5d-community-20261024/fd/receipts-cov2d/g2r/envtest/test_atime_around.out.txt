@@ -1,0 +1,11 @@
+wrapper cc28788f74ca9e44f7a4fddff9cbea23e7769e1e28b349f078cf5637cac43ce8 script 346656a7c2c5c41a3d6f70111e8103c6278b2f3c01789a9332b1bfd4edb75dbe
+PASS none pre_rc=0 (want 0) post_rc=0 (want 0)
+PASS moved pre_rc=0 (want 0) post_rc=4 (want 4)
+PASS missing pre_rc=0 (want 0) post_rc=3 (want 3)
+PASS badlist pre_rc=3 (want 3) post_rc=- (want -)
+PASS short pre_rc=3 (want 3) post_rc=- (want -)
+PASS twice rc=2
+ATIME-AROUND TEST PASS
+m1 KILLED: moved 
+m2 KILLED: short 
+m3 KILLED: missing badlist short 

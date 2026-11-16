@@ -1,0 +1,20 @@
+# Refusal tests of transcribe_g2r.py (sha256 b9da5999da9e19de288def742293a267a8a9840aaa50902a6c7aa4ff1f6ca500), run from the top of the
+# checkout on 2026-11-14T10:44:09Z with Python 3.12.2 numpy 1.26.4. Each must exit nonzero with its refusal; outputs go to scratch.
+## 1. a different file (data_g2r.json given as the npz)
+TRANSCRIBE: /Users/josephbailey/cov2d-work/g2r/readout-fetch/node/readout/data/data_g2r.json has sha256 cd975b64402325da489ae608277faf5f6d7a7cbebe4974465f90b07c336e083f, bound 3b8cc7ceaef97c3dc6bbcd2c5cfdf853442c347e37e23f64eca54898d0e9eb4b
+rc=1
+## 2. an output directory that is not empty
+TRANSCRIBE: /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/7e3f49f7-e8e4-452d-b380-399d4f6c529e/scratchpad/g2rtest2/o2 is not empty
+rc=1
+## 3. a lossy writer: a scratch copy of the script writes 15 significant digits instead of repr
+g2r_C_new.csv: ids in order and matrix bitwise equal to the npz: False
+g2r_C_univ_old.csv: ids in order and matrix bitwise equal to the npz: False
+g2r_C_univ_new.csv: ids in order and matrix bitwise equal to the npz: False
+g2r_bands.csv: 38 bands, 175 universe rows, labels in order and every row bitwise equal to the npz: False
+TRANSCRIBE: the round trip is not exact
+rc=1
+## 4. a wrong cell order: a scratch copy of the script reverses the c2a Q rows and columns
+   lines changed: 1
+C_new equals c2a's Q - C_univ_old + C_univ_new byte for byte (the npz is in c2a's cell order): False
+TRANSCRIBE: the npz's cell order is not established
+rc=1

@@ -1,0 +1,409 @@
+{
+ "schema": "re2shapes-c1/2",
+ "inputs": {
+  "data_npz": [
+   "/pscratch/sd/j/josephrb/cov2d-g2r-20261112/readout/data/data_g2r.npz",
+   "3b8cc7ceaef97c3dc6bbcd2c5cfdf853442c347e37e23f64eca54898d0e9eb4b"
+  ],
+  "route_a_q205": "ff66b91d6d2c574a1786b057ce7566e8ed7184700a45b989fa41ae0eb8cb0295",
+  "route_a_s5": "1ee45dcd94ccb4e6340a6694bb0ce90c157f0b5c4bb81e18711d51e74a331d1b",
+  "route_a_budget_Q": "7ed733c62433855cfe5943b6d28956f25c21f75230bd95a26c40b8435ec907d8",
+  "q_r": "7153b194b95c27f80db5997bdde35fe2475f2b1c40c9ff456edd409850cf47d2",
+  "budget_r": "bbe13622656e9f43978d9cb022ac74ca4ba059b1cf56fed9e082bfb3b1be03aa",
+  "s5_r": "631cf255fff43b5cb35acd9cefdcee99e5ee95b85dc2f30d8e0aca513095eea1",
+  "constraint": [
+   "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt",
+   "e38ad7d28354d071577113a18c8c569f88b6239f7fb193d20285273f172fc0c2"
+  ]
+ },
+ "shape": [
+  [
+   205,
+   205
+  ],
+  [
+   205,
+   205
+  ]
+ ],
+ "a_entries": {
+  "max_scaled": 7.311559097428637e-16,
+  "tol": 1e-14,
+  "n_above": 0,
+  "worst": {
+   "i": 111,
+   "j": 127,
+   "Q_A": 3.634918298325739e-86,
+   "C_new": 3.6349182983257424e-86
+  },
+  "pass": true
+ },
+ "i_per_entry_rel": {
+  "max": 5.800344509600607e-13,
+  "n_above_1e-15": 1880,
+  "n": 42025,
+  "worst": {
+   "i": 69,
+   "j": 107,
+   "Q_A": 6.810223802622453e-85,
+   "C_new": 6.810223802626403e-85
+  }
+ },
+ "ii_scaled_by_max": 2.580856884329175e-16,
+ "iii_max_diag_scaled": 7.311559097428637e-16,
+ "iv_bitwise_equal": false,
+ "d_x_equal_partc_r2": true,
+ "d_F_equal_partc_r2": true,
+ "b_q_printed": {
+  "rows": [
+   {
+    "id": "m-uqMedian",
+    "path": "Q.median_pct",
+    "fmt": ".2f",
+    "printed_purity": "6.45",
+    "route_a_metrics": "6.46",
+    "c_new_metrics": "6.46",
+    "route_a_budget": "6.46",
+    "pass": true
+   },
+   {
+    "id": "m-uqIntegral",
+    "path": "Q.integral_sigma_pct",
+    "fmt": ".2f",
+    "printed_purity": "4.75",
+    "route_a_metrics": "4.76",
+    "c_new_metrics": "4.76",
+    "route_a_budget": "4.76",
+    "pass": true
+   },
+   {
+    "id": "tabuq-q-median",
+    "path": "Q.median_pct",
+    "fmt": ".3f",
+    "printed_purity": "6.448",
+    "route_a_metrics": "6.463",
+    "c_new_metrics": "6.463",
+    "route_a_budget": "6.463",
+    "pass": true
+   },
+   {
+    "id": "tabuq-caption-q-median",
+    "path": "Q.median_pct",
+    "fmt": ".3f",
+    "printed_purity": "6.448",
+    "route_a_metrics": "6.463",
+    "c_new_metrics": "6.463",
+    "route_a_budget": "6.463",
+    "pass": true
+   },
+   {
+    "id": "tabvs-q-median",
+    "path": "Q.median_pct",
+    "fmt": ".3f",
+    "printed_purity": "6.448",
+    "route_a_metrics": "6.463",
+    "c_new_metrics": "6.463",
+    "route_a_budget": "6.463",
+    "pass": true
+   },
+   {
+    "id": "tabcomb-q-median",
+    "path": "Q.median_pct",
+    "fmt": ".3f",
+    "printed_purity": "6.448",
+    "route_a_metrics": "6.463",
+    "c_new_metrics": "6.463",
+    "route_a_budget": "6.463",
+    "pass": true
+   },
+   {
+    "id": "comb-q-median-prose",
+    "path": "Q.median_pct",
+    "fmt": ".3f",
+    "printed_purity": "6.448",
+    "route_a_metrics": "6.463",
+    "c_new_metrics": "6.463",
+    "route_a_budget": "6.463",
+    "pass": true
+   },
+   {
+    "id": "worked-q-integral",
+    "path": "Q.integral_sigma_pct",
+    "fmt": ".2f",
+    "printed_purity": "4.75",
+    "route_a_metrics": "4.76",
+    "c_new_metrics": "4.76",
+    "route_a_budget": "4.76",
+    "pass": true
+   },
+   {
+    "id": "worked-q-median",
+    "path": "Q.median_pct",
+    "fmt": ".3f",
+    "printed_purity": "6.448",
+    "route_a_metrics": "6.463",
+    "c_new_metrics": "6.463",
+    "route_a_budget": "6.463",
+    "pass": true
+   },
+   {
+    "id": "audit-q-median",
+    "path": "Q.median_pct",
+    "fmt": ".3f",
+    "printed_purity": "6.448",
+    "route_a_metrics": "6.463",
+    "c_new_metrics": "6.463",
+    "route_a_budget": "6.463",
+    "pass": true
+   },
+   {
+    "id": "hist-q-median",
+    "path": "Q.median_pct",
+    "fmt": ".3f",
+    "printed_purity": "6.448",
+    "route_a_metrics": "6.463",
+    "c_new_metrics": "6.463",
+    "route_a_budget": "6.463",
+    "pass": true
+   },
+   {
+    "id": "hist-q-median-2",
+    "path": "Q.median_pct",
+    "fmt": ".2f",
+    "printed_purity": "6.45",
+    "route_a_metrics": "6.46",
+    "c_new_metrics": "6.46",
+    "route_a_budget": "6.46",
+    "pass": true
+   },
+   {
+    "id": "hist-q-integral",
+    "path": "Q.integral_sigma_pct",
+    "fmt": ".2f",
+    "printed_purity": "4.75",
+    "route_a_metrics": "4.76",
+    "c_new_metrics": "4.76",
+    "route_a_budget": "4.76",
+    "pass": true
+   },
+   {
+    "id": "hist-q-median-b",
+    "path": "Q.median_pct",
+    "fmt": ".3f",
+    "printed_purity": "6.448",
+    "route_a_metrics": "6.463",
+    "c_new_metrics": "6.463",
+    "route_a_budget": "6.463",
+    "pass": true
+   }
+  ],
+  "pass": true
+ },
+ "c_band_printed": {
+  "rows": [
+   {
+    "id": "m-fluxBand",
+    "path": "bands.Flux.median_pct",
+    "fmt": ".2f",
+    "printed_purity": "3.75",
+    "reference": "g2r band__Flux (wcov)",
+    "route_a_budget": "3.72",
+    "reference_rendered": "3.72",
+    "pass": true
+   },
+   {
+    "id": "band-minos-e",
+    "path": "bands.Muon_Energy_MINOS.median_pct",
+    "fmt": ".3f",
+    "printed_purity": "2.390",
+    "reference": "partc-r2 budget_Q (not rebuilt by G2R)",
+    "route_a_budget": "2.358",
+    "reference_rendered": "2.358",
+    "pass": true
+   },
+   {
+    "id": "band-minerva-e",
+    "path": "bands.Muon_Energy_MINERvA.median_pct",
+    "fmt": ".3f",
+    "printed_purity": "1.376",
+    "reference": "partc-r2 budget_Q (not rebuilt by G2R)",
+    "route_a_budget": "1.435",
+    "reference_rendered": "1.435",
+    "pass": true
+   },
+   {
+    "id": "band-minoseff",
+    "path": "bands.MinosEfficiency.median_pct",
+    "fmt": ".3f",
+    "printed_purity": "1.578",
+    "reference": "g2r band__MinosEfficiency (wcov)",
+    "route_a_budget": "1.505",
+    "reference_rendered": "1.505",
+    "pass": true
+   },
+   {
+    "id": "band-flux",
+    "path": "bands.Flux.median_pct",
+    "fmt": ".3f",
+    "printed_purity": "3.747",
+    "reference": "g2r band__Flux (wcov)",
+    "route_a_budget": "3.723",
+    "reference_rendered": "3.723",
+    "pass": true
+   },
+   {
+    "id": "band-mares",
+    "path": "bands.MaRES.median_pct",
+    "fmt": ".3f",
+    "printed_purity": "0.600",
+    "reference": "g2r band__MaRES (wcov)",
+    "route_a_budget": "0.507",
+    "reference_rendered": "0.507",
+    "pass": true
+   },
+   {
+    "id": "band-mvres",
+    "path": "bands.MvRES.median_pct",
+    "fmt": ".3f",
+    "printed_purity": "0.374",
+    "reference": "g2r band__MvRES (wcov)",
+    "route_a_budget": "0.404",
+    "reference_rendered": "0.404",
+    "pass": true
+   },
+   {
+    "id": "band-maccqe",
+    "path": "bands.MaCCQE.median_pct",
+    "fmt": ".3f",
+    "printed_purity": "0.368",
+    "reference": "g2r band__MaCCQE (wcov)",
+    "route_a_budget": "0.328",
+    "reference_rendered": "0.328",
+    "pass": true
+   },
+   {
+    "id": "sys-band-minos-e",
+    "path": "bands.Muon_Energy_MINOS.median_pct",
+    "fmt": ".2f",
+    "printed_purity": "2.39",
+    "reference": "partc-r2 budget_Q (not rebuilt by G2R)",
+    "route_a_budget": "2.36",
+    "reference_rendered": "2.36",
+    "pass": true
+   },
+   {
+    "id": "sys-band-minoseff",
+    "path": "bands.MinosEfficiency.median_pct",
+    "fmt": ".2f",
+    "printed_purity": "1.58",
+    "reference": "g2r band__MinosEfficiency (wcov)",
+    "route_a_budget": "1.50",
+    "reference_rendered": "1.50",
+    "pass": true
+   },
+   {
+    "id": "sys-band-minerva-e",
+    "path": "bands.Muon_Energy_MINERvA.median_pct",
+    "fmt": ".2f",
+    "printed_purity": "1.38",
+    "reference": "partc-r2 budget_Q (not rebuilt by G2R)",
+    "route_a_budget": "1.44",
+    "reference_rendered": "1.44",
+    "pass": true
+   },
+   {
+    "id": "sys-minos-integral",
+    "path": "bands.Muon_Energy_MINOS.integral_sigma_pct",
+    "fmt": ".2f",
+    "printed_purity": "0.31",
+    "reference": "partc-r2 budget_Q (not rebuilt by G2R)",
+    "route_a_budget": "0.30",
+    "reference_rendered": "0.30",
+    "pass": true
+   },
+   {
+    "id": "hist-flux",
+    "path": "bands.Flux.median_pct",
+    "fmt": ".3f",
+    "printed_purity": "3.747",
+    "reference": "g2r band__Flux (wcov)",
+    "route_a_budget": "3.723",
+    "reference_rendered": "3.723",
+    "pass": true
+   },
+   {
+    "id": "hist-flux-2",
+    "path": "bands.Flux.median_pct",
+    "fmt": ".2f",
+    "printed_purity": "3.75",
+    "reference": "g2r band__Flux (wcov)",
+    "route_a_budget": "3.72",
+    "reference_rendered": "3.72",
+    "pass": true
+   },
+   {
+    "id": "hist-band-minos-e",
+    "path": "bands.Muon_Energy_MINOS.median_pct",
+    "fmt": ".3f",
+    "printed_purity": "2.390",
+    "reference": "partc-r2 budget_Q (not rebuilt by G2R)",
+    "route_a_budget": "2.358",
+    "reference_rendered": "2.358",
+    "pass": true
+   },
+   {
+    "id": "hist-band-minerva-e",
+    "path": "bands.Muon_Energy_MINERvA.median_pct",
+    "fmt": ".3f",
+    "printed_purity": "1.376",
+    "reference": "partc-r2 budget_Q (not rebuilt by G2R)",
+    "route_a_budget": "1.435",
+    "reference_rendered": "1.435",
+    "pass": true
+   },
+   {
+    "id": "hist-band-minoseff",
+    "path": "bands.MinosEfficiency.median_pct",
+    "fmt": ".3f",
+    "printed_purity": "1.578",
+    "reference": "g2r band__MinosEfficiency (wcov)",
+    "route_a_budget": "1.505",
+    "reference_rendered": "1.505",
+    "pass": true
+   },
+   {
+    "id": "hist-band-mares",
+    "path": "bands.MaRES.median_pct",
+    "fmt": ".3f",
+    "printed_purity": "0.600",
+    "reference": "g2r band__MaRES (wcov)",
+    "route_a_budget": "0.507",
+    "reference_rendered": "0.507",
+    "pass": true
+   },
+   {
+    "id": "hist-band-mvres",
+    "path": "bands.MvRES.median_pct",
+    "fmt": ".3f",
+    "printed_purity": "0.374",
+    "reference": "g2r band__MvRES (wcov)",
+    "route_a_budget": "0.404",
+    "reference_rendered": "0.404",
+    "pass": true
+   },
+   {
+    "id": "hist-band-maccqe",
+    "path": "bands.MaCCQE.median_pct",
+    "fmt": ".3f",
+    "printed_purity": "0.368",
+    "reference": "g2r band__MaCCQE (wcov)",
+    "route_a_budget": "0.328",
+    "reference_rendered": "0.328",
+    "pass": true
+   }
+  ],
+  "pass": true
+ },
+ "universe_delta_scaled_rel": 5.758541080103807e-14,
+ "verdict": "PASS"
+}

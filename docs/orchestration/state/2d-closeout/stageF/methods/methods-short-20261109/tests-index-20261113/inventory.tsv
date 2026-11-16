@@ -1,16 +1,16 @@
 id	test	old_table	old_column	clause	how	now_prints_at	locator
-C001	1	S11	Estimator	2D	moved	supplemental_body.tex:671	The benchmark compares the two-dimensional estimator's result on the data
-C002	1	S11	Truth(s)	the data	moved	supplemental_body.tex:671	The benchmark compares the two-dimensional estimator's result on the data
-C003	1	S11	Simulation	the full simulation	moved	supplemental_body.tex:671	unfolded with the full simulation, with the published result
-C004	1	S11	What is varied	--- (comparison with the published result)	moved	supplemental_body.tex:671	unfolded with the full simulation, with the published result
-C005	1	S11	Repetitions	covariance from \fvval{cov2d-nuniv} universes in \fvval{cov2d-nunivbands} bands plus the normalization	moved	supplemental_body.tex:671	Its covariance is built from \fvval{cov2d-nuniv} universes in \fvval{cov2d-nunivbands} bands plus the normalization
-C006	1	S11	Repetitions	\fvval{cov2d-nstat} bootstrap replicas	moved	supplemental_body.tex:671	\fvval{cov2d-nstat} bootstrap replicas
-C007	1	S11	Repetitions	\fvval{cov2d-nperiod-word} period groups	moved	supplemental_body.tex:671	\fvval{cov2d-nperiod-word} period groups
-C008	1	S11	Repetitions	\fvval{cov2d-nseed-word} seed settings	moved	supplemental_body.tex:671	\fvval{cov2d-nseed-word} seed settings
-C009	1	S12	Statistic	ratio of integrated cross sections, 2D to published	index	supplemental_body.tex:807	1. Two-dimensional benchmark & ratio of integrated cross sections
-C010	1	S12	Statistic	$\chi^2/\mathrm{ndf}$ against the published result under its covariance (ndf $=205$)	index	supplemental_body.tex:807	against the published result under its covariance (ndf $=205$). Descriptive, no threshold
-C011	1	S12	Threshold	none (descriptive)	index	supplemental_body.tex:807	Descriptive, no threshold & ratio
-C012	1	S12	Result	ratio $\ratioTot$, $\chi^2/\mathrm{ndf}=\chiPaper$	index	supplemental_body.tex:807	& ratio $\ratioTot$, $\chi^2/\mathrm{ndf}=\chiPaper$ & \ref{supp:cov2d-bench}
+C001	1	S11	Estimator	2D	moved	supplemental_body.tex:672	The benchmark compares the two-dimensional estimator's result on the data
+C002	1	S11	Truth(s)	the data	moved	supplemental_body.tex:672	The benchmark compares the two-dimensional estimator's result on the data
+C003	1	S11	Simulation	the full simulation	moved	supplemental_body.tex:672	unfolded with the full simulation, with the published result
+C004	1	S11	What is varied	--- (comparison with the published result)	moved	supplemental_body.tex:672	unfolded with the full simulation, with the published result
+C005	1	S11	Repetitions	covariance from \fvval{cov2d-nuniv} universes in \fvval{cov2d-nunivbands} bands plus the normalization	moved	supplemental_body.tex:672	Its covariance is built from \fvval{cov2d-nuniv} universes in \fvval{cov2d-nunivbands} bands plus the normalization
+C006	1	S11	Repetitions	\fvval{cov2d-nstat} bootstrap replicas	moved	supplemental_body.tex:672	\fvval{cov2d-nstat} bootstrap replicas
+C007	1	S11	Repetitions	\fvval{cov2d-nperiod-word} period groups	moved	supplemental_body.tex:672	\fvval{cov2d-nperiod-word} period groups
+C008	1	S11	Repetitions	\fvval{cov2d-nseed-word} seed settings	moved	supplemental_body.tex:672	\fvval{cov2d-nseed-word} seed settings
+C009	1	S12	Statistic	ratio of integrated cross sections, 2D to published	index	supplemental_body.tex:808	1. Two-dimensional benchmark & ratio of integrated cross sections
+C010	1	S12	Statistic	$\chi^2/\mathrm{ndf}$ against the published result under its covariance (ndf $=205$)	index	supplemental_body.tex:808	against the published result under its covariance (ndf $=205$). Descriptive, no threshold
+C011	1	S12	Threshold	none (descriptive)	index	supplemental_body.tex:808	Descriptive, no threshold & ratio
+C012	1	S12	Result	ratio $\ratioTot$, $\chi^2/\mathrm{ndf}=\chiPaper$	index	supplemental_body.tex:808	& ratio $\ratioTot$, $\chi^2/\mathrm{ndf}=\chiPaper$ & \ref{supp:cov2d-bench}
 C013	2	S11	Estimator	the estimator	moved	supplemental_body.tex:365	The closure test of the paper's \psec{sec:closure} unfolds pseudo-data with the reported estimator
 C014	2	S11	Truth(s)	the simulation's prior	moved	supplemental_body.tex:365	with the reported estimator at the simulation's prior and at changed truths
 C015	2	S11	Truth(s)	GiBUU-to-GENIE and NuWro $\Eavail$ shapes	moved	supplemental_body.tex:365	The changed truths are the GiBUU-to-GENIE and NuWro $\Eavail$ shapes
@@ -21,85 +21,85 @@ C019	2	S11	Simulation	half split	moved	supplemental_body.tex:365	There are \fvva
 C020	2	S11	What is varied	the truth	moved	supplemental_body.tex:365	at the simulation's prior and at changed truths
 C021	2	S11	Repetitions	\fvval{s5e-nom-n} at the prior	moved	supplemental_body.tex:365	\fvval{s5e-nom-n} pseudo-experiments at the prior
 C022	2	S11	Repetitions	\fvval{s5e-shape-n} at each changed truth	moved	supplemental_body.tex:365	\fvval{s5e-shape-n} at each changed truth
-C023	2	S12	Statistic	$|t|$ of the mean residual of each of \fvval{s5e-nquant} quantities	index	supplemental_body.tex:808	2. Closure and truth changes & $|t|$ of the mean residual
-C024	2	S12	Statistic	and the largest $(\Eavail,W)$ residual	index	supplemental_body.tex:808	quantities, and the largest $(\Eavail,W)$ residual. At the prior
-C025	2	S12	Threshold	at the prior, no $|t|>\fvval{s5e-tcrit}$	index	supplemental_body.tex:808	At the prior, no $|t|>\fvval{s5e-tcrit}$
-C026	2	S12	Threshold	changed truths descriptive	index	supplemental_body.tex:808	Changed truths descriptive & prior:
-C027	2	S12	Result	prior: largest $|t|=\fvval{s5e-nom-tmax}$	index	supplemental_body.tex:808	prior: largest $|t|=\fvval{s5e-nom-tmax}$
-C028	2	S12	Result	largest $(\Eavail,W)$ residual \SI{\fvval{s5e-nom-ewmax}}{\percent}	index	supplemental_body.tex:808	\SI{\fvval{s5e-nom-ewmax}}{\percent}
-C029	2	S12	Result	changed truths: largest residual \SIrange{lo}{hi} (three shapes, over all cells, including unsupported ones)	index	supplemental_body.tex:808	(three shapes, over all cells, including unsupported ones)
-C030	2	S12	Result	\SI{\fvval{s5e-q3-ewmax}}{\percent} ($q_3$ tilt)	index	supplemental_body.tex:808	\SI{\fvval{s5e-q3-ewmax}}{\percent} ($q_3$ tilt)
-C031	2	S12	Result	\SI{\fvval{s5e-gibuu-ewmax}}{\percent} (GiBUU-to-GENIE $\Eavail$)	index	supplemental_body.tex:808	\SI{\fvval{s5e-gibuu-ewmax}}{\percent} (GiBUU-to-GENIE $\Eavail$)
-C032	3a	S11	Estimator	the estimator	already	supplemental_body.tex:828	truths and unfolded with configuration~(e)
-C033	3a	S11	Truth(s)	the \fvval{f0b-all-truths} graded truths	already	supplemental_body.tex:828	Pseudo-data are generated at \fvval{f0b-all-truths} truths
-C034	3a	S11	Simulation	half split	moved	supplemental_body.tex:840	The pseudo-data of every truth use the half split.
-C035	3a	S11	What is varied	the truth	already	supplemental_body.tex:828	compare the estimator's bias at truths other than the simulation
-C036	3a	S11	Repetitions	\fvval{f0b-nominal-n} at the prior	moved	supplemental_body.tex:840	There are \fvval{f0b-nominal-n} pseudo-experiments at the prior
-C037	3a	S11	Repetitions	\fvval{f0b-W1-n} at each of four shape changes and the $q_3$ tilt	moved	supplemental_body.tex:840	\fvval{f0b-W1-n} at each of four shape changes and the $q_3$ tilt
-C038	3a	S11	Repetitions	\fvval{f0b-A7_gibuu-n} at each of five hybrids	moved	supplemental_body.tex:840	\fvval{f0b-A7_gibuu-n} at each of five hybrids
-C039	3a	S11	Repetitions	one noise-free closure	moved	supplemental_body.tex:840	five hybrids, and one noise-free closure.
-C040	3a	S12	Statistic	$\chi^2_{16}$ of the mean bias	index	supplemental_body.tex:809	3a. Fake-data bias & $\chi^2_{16}$ of the mean bias
-C041	3a	S12	Statistic	against the reported covariance, without the truth's own $C_{\mathrm{model}}$ component, plus the noise of the mean	moved	supplemental_body.tex:840	The mean bias is compared with the reported covariance, without the truth's own $C_{\mathrm{model}}$ component, plus the noise of the mean.
-C042	3a	S12	Statistic	the per-cell $z$	index	supplemental_body.tex:809	of the mean bias, and the per-cell $z$. Flagged
-C043	3a	S12	Threshold	flagged if $p<\fvval{trig-p}$ or any $|z|>\fvval{trig-z}$	index	supplemental_body.tex:809	Flagged if $p<\fvval{trig-p}$ or any $|z|>\fvval{trig-z}$ & flagged
-C044	3a	S12	Result	flagged: the GiBUU hybrid truth and the $q_3$ tilt	index	supplemental_body.tex:809	& flagged: the GiBUU hybrid truth and the $q_3$ tilt &
-C045	3b	S11	Estimator	the estimator	moved	supplemental_body.tex:870	Their pseudo-data use the half split and are unfolded with configuration~(e).
-C046	3b	S11	Truth(s)	\fvval{f1-tune-g18} (\fvval{f1-tune-g18-short}), \fvval{f1-tune-ar23} (\fvval{f1-tune-ar23-short})	moved	supplemental_body.tex:870	The two tunes are \fvval{f1-tune-g18} (\fvval{f1-tune-g18-short}) and \fvval{f1-tune-ar23} (\fvval{f1-tune-ar23-short})
-C047	3b	S11	Simulation	half split	moved	supplemental_body.tex:870	Their pseudo-data use the half split
-C048	3b	S11	What is varied	the truth	already	supplemental_body.tex:846	Two truths are held out of the analysis
-C049	3b	S11	Repetitions	\fvval{f1-n} at each, and a noise-free closure	already	supplemental_body.tex:846	At each tune, \fvval{f1-n} Poisson pseudo-experiments on half the simulation and a noise-free closure
-C050	3b	S12	Statistic	as 3a, against the full reported covariance	index	supplemental_body.tex:810	3b. Held-out tunes & as 3a, against the full reported covariance
-C051	3b	S12	Threshold	as 3a	index	supplemental_body.tex:810	3b. Held-out tunes & as 3a, against the full reported covariance
-C052	3b	S12	Result	$\chi^2$ at the two tunes, for 16 degrees of freedom, none flagged	index	supplemental_body.tex:810	for 16 degrees of freedom, none flagged & \ref{supp:study-fd}
-C053	4	S11	Estimator	the estimator	moved	supplemental_body.tex:919	the study varies one setting of the five-observable estimator at a time
-C054	4	S11	Estimator	IBU	already	supplemental_body.tex:914	for the five-observable estimator and for IBU at five iterations
-C055	4	S11	Truth(s)	the GiBUU hybrid truth and the $q_3$ tilt	moved	supplemental_body.tex:919	\paragraph{The study's design.} At the GiBUU hybrid truth and the $q_3$ tilt
-C056	4	S11	Simulation	half split, noise-free	moved	supplemental_body.tex:919	Each level gives one noise-free unfold at each truth, on a half split
-C057	4	S11	Simulation	four more splits for the noise floor	moved	supplemental_body.tex:919	four more splits give the noise floor
-C058	4	S11	What is varied	for the estimator, one factor at a time	moved	supplemental_body.tex:919	the study varies one setting of the five-observable estimator at a time
-C059	4	S11	What is varied	iterations (\fvval{prr-nlev-iter} levels)	moved	supplemental_body.tex:919	These are its iterations (\fvval{prr-nlev-iter} levels)
-C060	4	S11	What is varied	capacity (\fvval{prr-nlev-cap})	moved	supplemental_body.tex:919	capacity (\fvval{prr-nlev-cap})
-C061	4	S11	What is varied	training statistics (\fvval{prr-nlev-stat})	moved	supplemental_body.tex:919	training statistics (\fvval{prr-nlev-stat})
-C062	4	S11	What is varied	observables (\fvval{prr-nlev-obs})	moved	supplemental_body.tex:919	observables (\fvval{prr-nlev-obs})
-C063	4	S11	What is varied	For IBU, its iterations	moved	supplemental_body.tex:919	For IBU the study varies the iterations.
-C064	4	S11	Repetitions	one noise-free unfold per level and truth	moved	supplemental_body.tex:919	Each level gives one noise-free unfold at each truth
-C065	4	S12	Statistic	retained fraction $\rho$	index	supplemental_body.tex:811	4. Prior retention & retained fraction $\rho$.
-C066	4	S12	Statistic	(section~\ref{supp:prr}): its definition's section	index	supplemental_body.tex:811	& \ref{supp:study-prr} (\psec{sec:prr}, table~\ref*{P-tab:prr16})
-C067	4	S12	Threshold	a level changes $\rho$ if it moves it by at least $\max(\fvval{prr-floor},\,\fvval{prr-tq}\,s)$, with $s$ the paired difference's spread over five splits	index	supplemental_body.tex:811	A level changes $\rho$ if it moves it by at least $\max(\fvval{prr-floor},\,\fvval{prr-tq}\,s)$, with $s$ the paired difference's spread over five splits &
-C068	4	S12	Result	\fvgroup{prr}{...}: the reduced settings' class and the no-detected-change settings, unchanged	index	supplemental_body.tex:811	& \fvgroup{prr}{a reduced setting (\fvval{prr-pr1-reduced-kinds}) raises $\rho$
-C069	4	S12	Result	(in the prr group) Every higher iteration count and capacity lowers $\rho$, by at most \fvval{prr-more-dmax}	moved	supplemental_body.tex:945	\fvgroup{prr}{Every higher iteration count and capacity lowers $\rho$, by at most \fvval{prr-more-dmax}.}
-C070	4	S12	Result	IBU at five iterations: $\rho<0$ at both truths	index	supplemental_body.tex:811	IBU at five iterations: $\rho<0$ at both truths & \ref{supp:study-prr}
-C071	4	S12	Result	an overshoot along the prior-to-truth direction (of IBU at five iterations)	moved	supplemental_body.tex:945	IBU at five iterations has $\rho<0$ at both truths, an overshoot along the prior-to-truth direction.
-C072	4	S12	Result	(the paper's table~\ref*{P-tab:prr16})	index	supplemental_body.tex:811	(\psec{sec:prr}, table~\ref*{P-tab:prr16})
-C073	5	S11	Estimator	the estimator against IBU-5	index	supplemental_body.tex:812	sixteen cells (the estimator against IBU-5)
-C074	5	S11	Estimator	2D against IBU-10	index	supplemental_body.tex:812	Two dimensions (2D against IBU-10, and the estimator on the 2D inputs)
-C075	5	S11	Estimator	the estimator on the 2D inputs	index	supplemental_body.tex:812	Two dimensions (2D against IBU-10, and the estimator on the 2D inputs)
-C076	5	S11	Truth(s)	the data	moved	supplemental_body.tex:713	In each, both sides unfold the data with
-C077	5	S11	Simulation	the same simulation, template and weight-only universes on both sides	moved	supplemental_body.tex:713	In each, both sides unfold the data with the same simulation, background template and weight-only systematic universes.
-C078	5	S11	What is varied	the unfolding algorithm	already	supplemental_body.tex:713	The paper makes three comparisons with binned iterative Bayesian unfolding (IBU).
-C079	5	S11	Repetitions	\fvval{ibu16-nrep} paired replicas	index	supplemental_body.tex:812	on \fvval{ibu16-nrep} paired replicas
-C080	5	S11	Repetitions	and the paired universes (sixteen cells)	already	supplemental_body.tex:715	each systematic universe is paired with the five-observable estimator's product
-C081	5	S11	Repetitions	\fvval{c2c1-nrep} paired replicas (2D against IBU-10)	index	supplemental_body.tex:812	$T_\delta$ on \fvval{c2c1-nrep} and \fvval{c1-nrep} paired replicas
-C082	5	S11	Repetitions	\fvval{c1-nrep} (the estimator on the 2D inputs)	index	supplemental_body.tex:812	$T_\delta$ on \fvval{c2c1-nrep} and \fvval{c1-nrep} paired replicas
-C083	5	S12	Statistic	$T=\Delta^{\top}C_\Delta^{-1}\Delta$ (sixteen cells)	index	supplemental_body.tex:812	$T=\Delta^{\top}C_\Delta^{-1}\Delta$ on
-C084	5	S12	Statistic	$T_\delta$ (two dimensions)	index	supplemental_body.tex:812	$T_\delta$ on \fvval{c2c1-nrep}
-C085	5	S12	Statistic	with a rank-truncated pseudo-inverse	already	supplemental_body.tex:754	with $C_\delta^{+}$ the pseudo-inverse truncated to the
-C086	5	S12	Threshold	sixteen cells: the null's 95th and 99.7th percentiles, \fvval{ibu16-q95} and \fvval{ibu16-q997}	index	supplemental_body.tex:812	against the null's 95th and 99.7th percentiles, \fvval{ibu16-q95} and \fvval{ibu16-q997}
-C087	5	S12	Threshold	Two dimensions: the leave-one-out null's 95th percentile and maximum	index	supplemental_body.tex:812	against the leave-one-out null's 95th percentile and maximum & sixteen cells
-C088	5	S12	Result	sixteen cells: $T=\fvval{ibu16-T}$, differ	index	supplemental_body.tex:812	& sixteen cells: $T=\fvval{ibu16-T}$, differ.
-C089	5	S12	Result	2D IBU: $T_\delta=\fvval{c2c1-T}$ against a maximum of \fvval{c2c1-max}, differ	index	supplemental_body.tex:812	2D IBU: $T_\delta=\fvval{c2c1-T}$ against a maximum of \fvval{c2c1-max}, differ.
-C090	5	S12	Result	The estimator in 2D: \fvval{c1-T} against \fvval{c1-q95}, no difference detected	index	supplemental_body.tex:812	The estimator in 2D: \fvval{c1-T} against \fvval{c1-q95}, no difference detected
-C091	6	S11	Estimator	the estimator	moved	supplemental_body.tex:1167	It uses the estimator's bias $b_c$ from test 3a and the departure $d_c$ from test 4's noise-free split
-C092	6	S11	Truth(s)	the \fvval{f0b-all-truths} graded truths, where $|d_c|\geq\SI{1}{\percent}$	moved	supplemental_body.tex:1167	It applies at each of the \fvval{f0b-all-truths} graded truths where $|d_c|\geq\SI{1}{\percent}$.
-C093	6	S11	Simulation	bias from 3a	moved	supplemental_body.tex:1167	bias $b_c$ from test 3a
-C094	6	S11	Simulation	departure from 4's noise-free split	moved	supplemental_body.tex:1167	the departure $d_c$ from test 4's noise-free split
-C095	6	S11	What is varied	the truth	moved	supplemental_body.tex:1167	It applies at each of the \fvval{f0b-all-truths} graded truths
-C096	6	S11	Repetitions	as 3a	moved	supplemental_body.tex:1167	bias $b_c$ from test 3a
-C097	6	S11	Repetitions	with the departure's noise from five splits	moved	supplemental_body.tex:1167	with the departure's noise from five splits.
-C098	6	S12	Statistic	$|b_c|$ against $0.5\,|d_c|$ at each applicable truth	index	supplemental_body.tex:813	6. Bias-half rule & $|b_c|$ against $0.5\,|d_c|$ at each applicable truth.
-C099	6	S12	Threshold	a cell passes if it meets the bound at every applicable truth	index	supplemental_body.tex:813	A cell passes if it meets the bound at every applicable truth.
-C100	6	S12	Threshold	and is unresolved if its class at a truth changes within the noise band	index	supplemental_body.tex:813	It is unresolved if its class at a truth changes within the noise band
-C101	6	S12	Result	\fvgroup{vhalf}{...} (pass, fail, not assessed, unresolved), unchanged	index	supplemental_body.tex:813	\fvgroup{vhalf}{\fvval{vhalf-n-valid} of 16 pass, \fvval{vhalf-n-notvalid} fail, \fvval{vhalf-n-notassessed} not assessed
+C023	2	S12	Statistic	$|t|$ of the mean residual of each of \fvval{s5e-nquant} quantities	index	supplemental_body.tex:809	2. Closure and truth changes & $|t|$ of the mean residual
+C024	2	S12	Statistic	and the largest $(\Eavail,W)$ residual	index	supplemental_body.tex:809	quantities, and the largest $(\Eavail,W)$ residual. At the prior
+C025	2	S12	Threshold	at the prior, no $|t|>\fvval{s5e-tcrit}$	index	supplemental_body.tex:809	At the prior, no $|t|>\fvval{s5e-tcrit}$
+C026	2	S12	Threshold	changed truths descriptive	index	supplemental_body.tex:809	Changed truths descriptive & prior:
+C027	2	S12	Result	prior: largest $|t|=\fvval{s5e-nom-tmax}$	index	supplemental_body.tex:809	prior: largest $|t|=\fvval{s5e-nom-tmax}$
+C028	2	S12	Result	largest $(\Eavail,W)$ residual \SI{\fvval{s5e-nom-ewmax}}{\percent}	index	supplemental_body.tex:809	\SI{\fvval{s5e-nom-ewmax}}{\percent}
+C029	2	S12	Result	changed truths: largest residual \SIrange{lo}{hi} (three shapes, over all cells, including unsupported ones)	index	supplemental_body.tex:809	(three shapes, over all cells, including unsupported ones)
+C030	2	S12	Result	\SI{\fvval{s5e-q3-ewmax}}{\percent} ($q_3$ tilt)	index	supplemental_body.tex:809	\SI{\fvval{s5e-q3-ewmax}}{\percent} ($q_3$ tilt)
+C031	2	S12	Result	\SI{\fvval{s5e-gibuu-ewmax}}{\percent} (GiBUU-to-GENIE $\Eavail$)	index	supplemental_body.tex:809	\SI{\fvval{s5e-gibuu-ewmax}}{\percent} (GiBUU-to-GENIE $\Eavail$)
+C032	3a	S11	Estimator	the estimator	already	supplemental_body.tex:829	truths and unfolded with configuration~(e)
+C033	3a	S11	Truth(s)	the \fvval{f0b-all-truths} graded truths	already	supplemental_body.tex:829	Pseudo-data are generated at \fvval{f0b-all-truths} truths
+C034	3a	S11	Simulation	half split	moved	supplemental_body.tex:841	The pseudo-data of every truth use the half split.
+C035	3a	S11	What is varied	the truth	already	supplemental_body.tex:829	compare the estimator's bias at truths other than the simulation
+C036	3a	S11	Repetitions	\fvval{f0b-nominal-n} at the prior	moved	supplemental_body.tex:841	There are \fvval{f0b-nominal-n} pseudo-experiments at the prior
+C037	3a	S11	Repetitions	\fvval{f0b-W1-n} at each of four shape changes and the $q_3$ tilt	moved	supplemental_body.tex:841	\fvval{f0b-W1-n} at each of four shape changes and the $q_3$ tilt
+C038	3a	S11	Repetitions	\fvval{f0b-A7_gibuu-n} at each of five hybrids	moved	supplemental_body.tex:841	\fvval{f0b-A7_gibuu-n} at each of five hybrids
+C039	3a	S11	Repetitions	one noise-free closure	moved	supplemental_body.tex:841	five hybrids, and one noise-free closure.
+C040	3a	S12	Statistic	$\chi^2_{16}$ of the mean bias	index	supplemental_body.tex:810	3a. Fake-data bias & $\chi^2_{16}$ of the mean bias
+C041	3a	S12	Statistic	against the reported covariance, without the truth's own $C_{\mathrm{model}}$ component, plus the noise of the mean	moved	supplemental_body.tex:841	The mean bias is compared with the reported covariance, without the truth's own $C_{\mathrm{model}}$ component, plus the noise of the mean.
+C042	3a	S12	Statistic	the per-cell $z$	index	supplemental_body.tex:810	of the mean bias, and the per-cell $z$. Flagged
+C043	3a	S12	Threshold	flagged if $p<\fvval{trig-p}$ or any $|z|>\fvval{trig-z}$	index	supplemental_body.tex:810	Flagged if $p<\fvval{trig-p}$ or any $|z|>\fvval{trig-z}$ & flagged
+C044	3a	S12	Result	flagged: the GiBUU hybrid truth and the $q_3$ tilt	index	supplemental_body.tex:810	& flagged: the GiBUU hybrid truth and the $q_3$ tilt &
+C045	3b	S11	Estimator	the estimator	moved	supplemental_body.tex:871	Their pseudo-data use the half split and are unfolded with configuration~(e).
+C046	3b	S11	Truth(s)	\fvval{f1-tune-g18} (\fvval{f1-tune-g18-short}), \fvval{f1-tune-ar23} (\fvval{f1-tune-ar23-short})	moved	supplemental_body.tex:871	The two tunes are \fvval{f1-tune-g18} (\fvval{f1-tune-g18-short}) and \fvval{f1-tune-ar23} (\fvval{f1-tune-ar23-short})
+C047	3b	S11	Simulation	half split	moved	supplemental_body.tex:871	Their pseudo-data use the half split
+C048	3b	S11	What is varied	the truth	already	supplemental_body.tex:847	Two truths are held out of the analysis
+C049	3b	S11	Repetitions	\fvval{f1-n} at each, and a noise-free closure	already	supplemental_body.tex:847	At each tune, \fvval{f1-n} Poisson pseudo-experiments on half the simulation and a noise-free closure
+C050	3b	S12	Statistic	as 3a, against the full reported covariance	index	supplemental_body.tex:811	3b. Held-out tunes & as 3a, against the full reported covariance
+C051	3b	S12	Threshold	as 3a	index	supplemental_body.tex:811	3b. Held-out tunes & as 3a, against the full reported covariance
+C052	3b	S12	Result	$\chi^2$ at the two tunes, for 16 degrees of freedom, none flagged	index	supplemental_body.tex:811	for 16 degrees of freedom, none flagged & \ref{supp:study-fd}
+C053	4	S11	Estimator	the estimator	moved	supplemental_body.tex:920	the study varies one setting of the five-observable estimator at a time
+C054	4	S11	Estimator	IBU	already	supplemental_body.tex:915	for the five-observable estimator and for IBU at five iterations
+C055	4	S11	Truth(s)	the GiBUU hybrid truth and the $q_3$ tilt	moved	supplemental_body.tex:920	\paragraph{The study's design.} At the GiBUU hybrid truth and the $q_3$ tilt
+C056	4	S11	Simulation	half split, noise-free	moved	supplemental_body.tex:920	Each level gives one noise-free unfold at each truth, on a half split
+C057	4	S11	Simulation	four more splits for the noise floor	moved	supplemental_body.tex:920	four more splits give the noise floor
+C058	4	S11	What is varied	for the estimator, one factor at a time	moved	supplemental_body.tex:920	the study varies one setting of the five-observable estimator at a time
+C059	4	S11	What is varied	iterations (\fvval{prr-nlev-iter} levels)	moved	supplemental_body.tex:920	These are its iterations (\fvval{prr-nlev-iter} levels)
+C060	4	S11	What is varied	capacity (\fvval{prr-nlev-cap})	moved	supplemental_body.tex:920	capacity (\fvval{prr-nlev-cap})
+C061	4	S11	What is varied	training statistics (\fvval{prr-nlev-stat})	moved	supplemental_body.tex:920	training statistics (\fvval{prr-nlev-stat})
+C062	4	S11	What is varied	observables (\fvval{prr-nlev-obs})	moved	supplemental_body.tex:920	observables (\fvval{prr-nlev-obs})
+C063	4	S11	What is varied	For IBU, its iterations	moved	supplemental_body.tex:920	For IBU the study varies the iterations.
+C064	4	S11	Repetitions	one noise-free unfold per level and truth	moved	supplemental_body.tex:920	Each level gives one noise-free unfold at each truth
+C065	4	S12	Statistic	retained fraction $\rho$	index	supplemental_body.tex:812	4. Prior retention & retained fraction $\rho$.
+C066	4	S12	Statistic	(section~\ref{supp:prr}): its definition's section	index	supplemental_body.tex:812	& \ref{supp:study-prr} (\psec{sec:prr}, table~\ref*{P-tab:prr16})
+C067	4	S12	Threshold	a level changes $\rho$ if it moves it by at least $\max(\fvval{prr-floor},\,\fvval{prr-tq}\,s)$, with $s$ the paired difference's spread over five splits	index	supplemental_body.tex:812	A level changes $\rho$ if it moves it by at least $\max(\fvval{prr-floor},\,\fvval{prr-tq}\,s)$, with $s$ the paired difference's spread over five splits &
+C068	4	S12	Result	\fvgroup{prr}{...}: the reduced settings' class and the no-detected-change settings, unchanged	index	supplemental_body.tex:812	& \fvgroup{prr}{a reduced setting (\fvval{prr-pr1-reduced-kinds}) raises $\rho$
+C069	4	S12	Result	(in the prr group) Every higher iteration count and capacity lowers $\rho$, by at most \fvval{prr-more-dmax}	moved	supplemental_body.tex:946	\fvgroup{prr}{Every higher iteration count and capacity lowers $\rho$, by at most \fvval{prr-more-dmax}.}
+C070	4	S12	Result	IBU at five iterations: $\rho<0$ at both truths	index	supplemental_body.tex:812	IBU at five iterations: $\rho<0$ at both truths & \ref{supp:study-prr}
+C071	4	S12	Result	an overshoot along the prior-to-truth direction (of IBU at five iterations)	moved	supplemental_body.tex:946	IBU at five iterations has $\rho<0$ at both truths, an overshoot along the prior-to-truth direction.
+C072	4	S12	Result	(the paper's table~\ref*{P-tab:prr16})	index	supplemental_body.tex:812	(\psec{sec:prr}, table~\ref*{P-tab:prr16})
+C073	5	S11	Estimator	the estimator against IBU-5	index	supplemental_body.tex:813	sixteen cells (the estimator against IBU-5)
+C074	5	S11	Estimator	2D against IBU-10	index	supplemental_body.tex:813	Two dimensions (2D against IBU-10, and the estimator on the 2D inputs)
+C075	5	S11	Estimator	the estimator on the 2D inputs	index	supplemental_body.tex:813	Two dimensions (2D against IBU-10, and the estimator on the 2D inputs)
+C076	5	S11	Truth(s)	the data	moved	supplemental_body.tex:714	In each, both sides unfold the data with
+C077	5	S11	Simulation	the same simulation, template and weight-only universes on both sides	moved	supplemental_body.tex:714	In each, both sides unfold the data with the same simulation, background template and weight-only systematic universes.
+C078	5	S11	What is varied	the unfolding algorithm	already	supplemental_body.tex:714	The paper makes three comparisons with binned iterative Bayesian unfolding (IBU).
+C079	5	S11	Repetitions	\fvval{ibu16-nrep} paired replicas	index	supplemental_body.tex:813	on \fvval{ibu16-nrep} paired replicas
+C080	5	S11	Repetitions	and the paired universes (sixteen cells)	already	supplemental_body.tex:716	each systematic universe is paired with the five-observable estimator's product
+C081	5	S11	Repetitions	\fvval{c2c1-nrep} paired replicas (2D against IBU-10)	index	supplemental_body.tex:813	$T_\delta$ on \fvval{c2c1-nrep} and \fvval{c1-nrep} paired replicas
+C082	5	S11	Repetitions	\fvval{c1-nrep} (the estimator on the 2D inputs)	index	supplemental_body.tex:813	$T_\delta$ on \fvval{c2c1-nrep} and \fvval{c1-nrep} paired replicas
+C083	5	S12	Statistic	$T=\Delta^{\top}C_\Delta^{-1}\Delta$ (sixteen cells)	index	supplemental_body.tex:813	$T=\Delta^{\top}C_\Delta^{-1}\Delta$ on
+C084	5	S12	Statistic	$T_\delta$ (two dimensions)	index	supplemental_body.tex:813	$T_\delta$ on \fvval{c2c1-nrep}
+C085	5	S12	Statistic	with a rank-truncated pseudo-inverse	already	supplemental_body.tex:755	with $C_\delta^{+}$ the pseudo-inverse truncated to the
+C086	5	S12	Threshold	sixteen cells: the null's 95th and 99.7th percentiles, \fvval{ibu16-q95} and \fvval{ibu16-q997}	index	supplemental_body.tex:813	against the null's 95th and 99.7th percentiles, \fvval{ibu16-q95} and \fvval{ibu16-q997}
+C087	5	S12	Threshold	Two dimensions: the leave-one-out null's 95th percentile and maximum	index	supplemental_body.tex:813	against the leave-one-out null's 95th percentile and maximum & sixteen cells
+C088	5	S12	Result	sixteen cells: $T=\fvval{ibu16-T}$, differ	index	supplemental_body.tex:813	& sixteen cells: $T=\fvval{ibu16-T}$, differ.
+C089	5	S12	Result	2D IBU: $T_\delta=\fvval{c2c1-T}$ against a maximum of \fvval{c2c1-max}, differ	index	supplemental_body.tex:813	2D IBU: $T_\delta=\fvval{c2c1-T}$ against a maximum of \fvval{c2c1-max}, differ.
+C090	5	S12	Result	The estimator in 2D: \fvval{c1-T} against \fvval{c1-q95}, no difference detected	index	supplemental_body.tex:813	The estimator in 2D: \fvval{c1-T} against \fvval{c1-q95}, no difference detected
+C091	6	S11	Estimator	the estimator	moved	supplemental_body.tex:1168	It uses the estimator's bias $b_c$ from test 3a and the departure $d_c$ from test 4's noise-free split
+C092	6	S11	Truth(s)	the \fvval{f0b-all-truths} graded truths, where $|d_c|\geq\SI{1}{\percent}$	moved	supplemental_body.tex:1168	It applies at each of the \fvval{f0b-all-truths} graded truths where $|d_c|\geq\SI{1}{\percent}$.
+C093	6	S11	Simulation	bias from 3a	moved	supplemental_body.tex:1168	bias $b_c$ from test 3a
+C094	6	S11	Simulation	departure from 4's noise-free split	moved	supplemental_body.tex:1168	the departure $d_c$ from test 4's noise-free split
+C095	6	S11	What is varied	the truth	moved	supplemental_body.tex:1168	It applies at each of the \fvval{f0b-all-truths} graded truths
+C096	6	S11	Repetitions	as 3a	moved	supplemental_body.tex:1168	bias $b_c$ from test 3a
+C097	6	S11	Repetitions	with the departure's noise from five splits	moved	supplemental_body.tex:1168	with the departure's noise from five splits.
+C098	6	S12	Statistic	$|b_c|$ against $0.5\,|d_c|$ at each applicable truth	index	supplemental_body.tex:814	6. Bias-half rule & $|b_c|$ against $0.5\,|d_c|$ at each applicable truth.
+C099	6	S12	Threshold	a cell passes if it meets the bound at every applicable truth	index	supplemental_body.tex:814	A cell passes if it meets the bound at every applicable truth.
+C100	6	S12	Threshold	and is unresolved if its class at a truth changes within the noise band	index	supplemental_body.tex:814	It is unresolved if its class at a truth changes within the noise band
+C101	6	S12	Result	\fvgroup{vhalf}{...} (pass, fail, not assessed, unresolved), unchanged	index	supplemental_body.tex:814	\fvgroup{vhalf}{\fvval{vhalf-n-valid} of 16 pass, \fvval{vhalf-n-notvalid} fail, \fvval{vhalf-n-notassessed} not assessed
 C102	7	S11	Estimator	the estimator	moved	supplemental_body.tex:409	The reported estimator is tested on the data, under two perturbations.
 C103	7	S11	Estimator	Variants: cross-fitting and two tree regularizations	moved	supplemental_body.tex:409	Its variants, cross-fitting and two tree regularizations, are tested in simulation
 C104	7	S11	Estimator	Ensemble: the average of \fvval{ens1-n} fits	moved	supplemental_body.tex:409	The ensemble average of \fvval{ens1-n} fits is tested there
@@ -110,37 +110,37 @@ C108	7	S11	What is varied	rounding-level perturbations of the inputs	moved	suppl
 C109	7	S11	Repetitions	two perturbations of the data	moved	supplemental_body.tex:409	on the data, under two perturbations.
 C110	7	S11	Repetitions	\fvval{stab-npairs} disjoint perturbation pairs (variants)	moved	supplemental_body.tex:409	on \fvval{stab-npairs} disjoint perturbation pairs.
 C111	7	S11	Repetitions	\fvval{ens1-pairs} pairs (ensemble)	moved	supplemental_body.tex:409	on \fvval{ens1-pairs} pairs.
-C112	7	S12	Statistic	median and maximum, over \fvval{s5e-nquant} quantities, of the shift in statistical standard deviations	index	supplemental_body.tex:814	7. Stability & median and maximum, over \fvval{s5e-nquant} quantities, of the shift in statistical standard deviations.
-C113	7	S12	Threshold	median $\leq\fvval{ens1-bar-median}$, maximum $\leq\fvval{ens1-bar-max}$	index	supplemental_body.tex:814	Median $\leq\fvval{ens1-bar-median}$, maximum $\leq\fvval{ens1-bar-max}$
-C114	7	S12	Result	estimator on the data: median and maximum, fails	index	supplemental_body.tex:814	& estimator on the data: \fvval{s5e-round-median} and \fvval{s5e-round-max}, fails.
-C115	7	S12	Result	No variant passes	index	supplemental_body.tex:814	fails. No variant passes.
-C116	7	S12	Result	Ensemble: median and maximum, passes, but is worse in bias at one of \fvval{ens1-ntruths} truths, and it does not replace the reported estimator	index	supplemental_body.tex:814	but is worse in bias at one of \fvval{ens1-ntruths} truths, and it does not replace the reported estimator &
-C117	8	S11	Estimator	2D	moved	supplemental_body.tex:963	The two-dimensional test unfolds its pseudo-data with the 2D estimator
-C118	8	S11	Truth(s)	\fvval{f1-tune-g18-short}, \fvval{f1-tune-ar23-short}	already	supplemental_body.tex:973	Truths & \fvval{f1-tune-g18-short} and \fvval{f1-tune-ar23-short}, each as its gated reweighting
-C119	8	S11	Simulation	pseudo-experiments drawn from the full simulation's universes, unfolded with the nominal simulation	moved	supplemental_body.tex:963	The pseudo-experiments are drawn from the full simulation's universes. The pseudo-data are unfolded once with the nominal simulation
-C120	8	S11	What is varied	systematic universes, Poisson counts, lateral signs, normalization	already	supplemental_body.tex:963	a sign for each lateral band, and a Gaussian normalization factor
-C121	8	S11	Repetitions	\fvval{cov2d-ntoys} per tune	already	supplemental_body.tex:975	Pseudo-experiments & \fvval{null-ntoys} per tune & \fvval{null-ntoys} per tune, shared by two variants
-C122	8	S12	Statistic	per cell, the count of errors with $|e_c|\leq\sigma_c$, and jointly, the count with $\chi^2\leq F^{-1}_{\chi^2_n}(P_0)$	index	supplemental_body.tex:815	8. Two-dimensional coverage & per cell, the count of errors with $|e_c|\leq\sigma_c$
-C123	8	S12	Threshold	one-sided binomial against the draw-matched null: $\fvval{null-alpha}/205$ per cell, \fvval{null-alpha} jointly	index	supplemental_body.tex:815	One-sided binomial against the draw-matched null: $\fvval{null-alpha}/205$ per cell, \fvval{null-alpha} jointly
-C124	8	S12	Result	under-covers at both tunes: no pseudo-experiment of \fvval{cov2d-ntoys} in the joint region at either tune	index	supplemental_body.tex:815	under-covers at both tunes: no pseudo-experiment of \fvval{cov2d-ntoys} lies in the joint region at either tune
-C125	8	S12	Result	Flagged cells at each tune (counts and cell lists)	index	supplemental_body.tex:815	Flagged cells: \fvval{cov2d-nflags-ar23} at \fvval{f1-tune-ar23-short}
-C126	9	S11	Estimator	the estimator	moved	supplemental_body.tex:1028	It is unfolded with the estimator and the nominal simulation
-C127	9	S11	Truth(s)	\fvval{f1-tune-g18-short}, \fvval{f1-tune-ar23-short} (the two tunes)	already	supplemental_body.tex:1028	A first coverage test of the five-observable covariance at the two tunes gave no coverage result.
-C128	9	S11	Truth(s)	and a plug-in truth: corrected to the record, declared as an option and not included	moved	supplemental_body.tex:1028	The design allowed an optional plug-in truth, which was not used.
-C129	9	S11	Simulation	as 10: replaced by its record's terms (nominal simulation; simulation and template resampled)	moved	supplemental_body.tex:1028	with the simulation and background template resampled. It is unfolded with the estimator and the nominal simulation
-C130	9	S11	What is varied	as 10: replaced by its record's terms (every group drawn; no band variants)	moved	supplemental_body.tex:1028	Each pseudo-experiment draws every uncertainty group (statistical, flux, interaction, detector, lateral and normalization)
-C131	9	S11	Repetitions	\fvval{fd1b-ntoys} per truth	moved	supplemental_body.tex:1028	Its staged redesign specified \fvval{fd1b-ntoys} pseudo-experiments at each tune.
-C132	9	S12	Statistic	as 10: per cell |e_c| <= sigma_c, jointly chi2 <= F^-1(P0), on the sixteen cells	index	supplemental_body.tex:817	9. First five-observable coverage & per cell, the count of errors with $|e_c|\leq\sigma_c$
-C133	9	S12	Threshold	as 10: one-sided binomial against the draw-matched null, $\fvval{fd1b-alpha}/16$ per cell, \fvval{fd1b-alpha} jointly	index	supplemental_body.tex:817	One-sided binomial against the draw-matched null: $\fvval{fd1b-alpha}/16$ per cell, \fvval{fd1b-alpha} jointly &
-C134	9	S12	Threshold	(home) the same counts and levels	moved	supplemental_body.tex:1028	The per-cell and joint in-interval counts are read against a draw-matched null, at $\fvval{fd1b-alpha}/16$ per cell
-C135	9	S12	Result	No coverage result: ... (the Supplement's account; ruling 1), unchanged	index	supplemental_body.tex:817	jointly & No coverage result: a preliminary check
-C136	10	S11	Estimator	the estimator	moved	supplemental_body.tex:963	and the second five-observable test with the estimator.
-C137	10	S11	Truth(s)	\fvval{f1-tune-g18-short}, \fvval{f1-tune-ar23-short}	already	supplemental_body.tex:973	Truths & \fvval{f1-tune-g18-short} and \fvval{f1-tune-ar23-short}, each as its gated reweighting
-C138	10	S11	Simulation	as 8, with the nominal simulation resampled	already	supplemental_body.tex:979	the simulation and background template resampled with each pseudo-experiment
-C139	10	S11	What is varied	as 8, in two variants, without and with the GEANT4 neutron and proton bands	already	supplemental_body.tex:976	Primary variant: without the GEANT4 neutron and proton bands. Second variant: every band
-C140	10	S11	Repetitions	\fvval{null-ntoys} per tune, shared by the variants	already	supplemental_body.tex:975	\fvval{null-ntoys} per tune, shared by two variants
-C141	10	S12	Statistic	as 8, on the sixteen cells	index	supplemental_body.tex:818	10. Second five-observable coverage & as 8, on the sixteen cells
-C142	10	S12	Threshold	as 8, with $\fvval{null-alpha}/16$ per cell	index	supplemental_body.tex:818	with $\fvval{null-alpha}/16$ per cell & \fvgroupalt{ll5d}
-C143	10	S12	Result	\fvgroupalt{ll5d}{pending}{\fvgroup{ll5d}{...}} with every \fvcase arm, unchanged	index	supplemental_body.tex:818	& \fvgroupalt{ll5d}{pending}{\fvgroup{ll5d}{\fvcase{ll5d-campaign}{graded}
-C144	-	S8 text	introduction	Table~\ref{tab:tests-spec} specifies ..., and table~\ref{tab:tests-result} gives ... (repointed)	index	supplemental_body.tex:783	Table~\ref{tab:tests} gives each headline test's statistic, criterion and reading
-C145	-	S10 text	first paragraph	table~\ref{tab:tests-result} (test 6) (repointed)	index	supplemental_body.tex:1167	and in table~\ref{tab:tests} (test 6).
+C112	7	S12	Statistic	median and maximum, over \fvval{s5e-nquant} quantities, of the shift in statistical standard deviations	index	supplemental_body.tex:815	7. Stability & median and maximum, over \fvval{s5e-nquant} quantities, of the shift in statistical standard deviations.
+C113	7	S12	Threshold	median $\leq\fvval{ens1-bar-median}$, maximum $\leq\fvval{ens1-bar-max}$	index	supplemental_body.tex:815	Median $\leq\fvval{ens1-bar-median}$, maximum $\leq\fvval{ens1-bar-max}$
+C114	7	S12	Result	estimator on the data: median and maximum, fails	index	supplemental_body.tex:815	& estimator on the data: \fvval{s5e-round-median} and \fvval{s5e-round-max}, fails.
+C115	7	S12	Result	No variant passes	index	supplemental_body.tex:815	fails. No variant passes.
+C116	7	S12	Result	Ensemble: median and maximum, passes, but is worse in bias at one of \fvval{ens1-ntruths} truths, and it does not replace the reported estimator	index	supplemental_body.tex:815	but is worse in bias at one of \fvval{ens1-ntruths} truths, and it does not replace the reported estimator &
+C117	8	S11	Estimator	2D	moved	supplemental_body.tex:964	The two-dimensional test unfolds its pseudo-data with the 2D estimator
+C118	8	S11	Truth(s)	\fvval{f1-tune-g18-short}, \fvval{f1-tune-ar23-short}	already	supplemental_body.tex:974	Truths & \fvval{f1-tune-g18-short} and \fvval{f1-tune-ar23-short}, each as its gated reweighting
+C119	8	S11	Simulation	pseudo-experiments drawn from the full simulation's universes, unfolded with the nominal simulation	moved	supplemental_body.tex:964	The pseudo-experiments are drawn from the full simulation's universes. The pseudo-data are unfolded once with the nominal simulation
+C120	8	S11	What is varied	systematic universes, Poisson counts, lateral signs, normalization	already	supplemental_body.tex:964	a sign for each lateral band, and a Gaussian normalization factor
+C121	8	S11	Repetitions	\fvval{cov2d-ntoys} per tune	already	supplemental_body.tex:976	Pseudo-experiments & \fvval{null-ntoys} per tune & \fvval{null-ntoys} per tune, shared by two variants
+C122	8	S12	Statistic	per cell, the count of errors with $|e_c|\leq\sigma_c$, and jointly, the count with $\chi^2\leq F^{-1}_{\chi^2_n}(P_0)$	index	supplemental_body.tex:816	8. Two-dimensional coverage & per cell, the count of errors with $|e_c|\leq\sigma_c$
+C123	8	S12	Threshold	one-sided binomial against the draw-matched null: $\fvval{null-alpha}/205$ per cell, \fvval{null-alpha} jointly	index	supplemental_body.tex:816	One-sided binomial against the draw-matched null: $\fvval{null-alpha}/205$ per cell, \fvval{null-alpha} jointly
+C124	8	S12	Result	under-covers at both tunes: no pseudo-experiment of \fvval{cov2d-ntoys} in the joint region at either tune	index	supplemental_body.tex:816	under-covers at both tunes: no pseudo-experiment of \fvval{cov2d-ntoys} lies in the joint region at either tune
+C125	8	S12	Result	Flagged cells at each tune (counts and cell lists)	index	supplemental_body.tex:816	Flagged cells: \fvval{cov2d-nflags-ar23} at \fvval{f1-tune-ar23-short}
+C126	9	S11	Estimator	the estimator	moved	supplemental_body.tex:1029	It is unfolded with the estimator and the nominal simulation
+C127	9	S11	Truth(s)	\fvval{f1-tune-g18-short}, \fvval{f1-tune-ar23-short} (the two tunes)	already	supplemental_body.tex:1029	A first coverage test of the five-observable covariance at the two tunes gave no coverage result.
+C128	9	S11	Truth(s)	and a plug-in truth: corrected to the record, declared as an option and not included	moved	supplemental_body.tex:1029	The design allowed an optional plug-in truth, which was not used.
+C129	9	S11	Simulation	as 10: replaced by its record's terms (nominal simulation; simulation and template resampled)	moved	supplemental_body.tex:1029	with the simulation and background template resampled. It is unfolded with the estimator and the nominal simulation
+C130	9	S11	What is varied	as 10: replaced by its record's terms (every group drawn; no band variants)	moved	supplemental_body.tex:1029	Each pseudo-experiment draws every uncertainty group (statistical, flux, interaction, detector, lateral and normalization)
+C131	9	S11	Repetitions	\fvval{fd1b-ntoys} per truth	moved	supplemental_body.tex:1029	Its staged redesign specified \fvval{fd1b-ntoys} pseudo-experiments at each tune.
+C132	9	S12	Statistic	as 10: per cell |e_c| <= sigma_c, jointly chi2 <= F^-1(P0), on the sixteen cells	index	supplemental_body.tex:818	9. First five-observable coverage & per cell, the count of errors with $|e_c|\leq\sigma_c$
+C133	9	S12	Threshold	as 10: one-sided binomial against the draw-matched null, $\fvval{fd1b-alpha}/16$ per cell, \fvval{fd1b-alpha} jointly	index	supplemental_body.tex:818	One-sided binomial against the draw-matched null: $\fvval{fd1b-alpha}/16$ per cell, \fvval{fd1b-alpha} jointly &
+C134	9	S12	Threshold	(home) the same counts and levels	moved	supplemental_body.tex:1029	The per-cell and joint in-interval counts are read against a draw-matched null, at $\fvval{fd1b-alpha}/16$ per cell
+C135	9	S12	Result	No coverage result: ... (the Supplement's account; ruling 1), unchanged	index	supplemental_body.tex:818	jointly & No coverage result: a preliminary check
+C136	10	S11	Estimator	the estimator	moved	supplemental_body.tex:964	and the second five-observable test with the estimator.
+C137	10	S11	Truth(s)	\fvval{f1-tune-g18-short}, \fvval{f1-tune-ar23-short}	already	supplemental_body.tex:974	Truths & \fvval{f1-tune-g18-short} and \fvval{f1-tune-ar23-short}, each as its gated reweighting
+C138	10	S11	Simulation	as 8, with the nominal simulation resampled	already	supplemental_body.tex:980	the simulation and background template resampled with each pseudo-experiment
+C139	10	S11	What is varied	as 8, in two variants, without and with the GEANT4 neutron and proton bands	already	supplemental_body.tex:977	Primary variant: without the GEANT4 neutron and proton bands. Second variant: every band
+C140	10	S11	Repetitions	\fvval{null-ntoys} per tune, shared by the variants	already	supplemental_body.tex:976	\fvval{null-ntoys} per tune, shared by two variants
+C141	10	S12	Statistic	as 8, on the sixteen cells	index	supplemental_body.tex:819	10. Second five-observable coverage & as 8, on the sixteen cells
+C142	10	S12	Threshold	as 8, with $\fvval{null-alpha}/16$ per cell	index	supplemental_body.tex:819	with $\fvval{null-alpha}/16$ per cell & \fvgroupalt{ll5d}
+C143	10	S12	Result	\fvgroupalt{ll5d}{pending}{\fvgroup{ll5d}{...}} with every \fvcase arm, unchanged	index	supplemental_body.tex:819	& \fvgroupalt{ll5d}{pending}{\fvgroup{ll5d}{\fvcase{ll5d-campaign}{graded}
+C144	-	S8 text	introduction	Table~\ref{tab:tests-spec} specifies ..., and table~\ref{tab:tests-result} gives ... (repointed)	index	supplemental_body.tex:784	Table~\ref{tab:tests} gives each headline test's statistic, criterion and reading
+C145	-	S10 text	first paragraph	table~\ref{tab:tests-result} (test 6) (repointed)	index	supplemental_body.tex:1168	and in table~\ref{tab:tests} (test 6).

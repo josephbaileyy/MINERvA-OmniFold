@@ -1,0 +1,8 @@
+#977 head a5e3005fd; ruled failures: 46
+NEW FAILURE - sec-repro2d_benchmark.csv: the paper at a5e3005f does not print 'its normalization part is $\\chi^{2}=0.04$, against 465 for the shape'
+NEW FAILURE - sec-repro2d_benchmark.csv: the paper prints 'its normalization part is $\\chi^{2}=0.04$, against 465 for the shape' 0 times, not once
+NEW FAILURE - sec-repro2d_benchmark.csv: the paper at a5e3005f does not print '73 of its 205 eigenvalues exceed $10^{-4}$ of the largest'
+NEW FAILURE - sec-repro2d_benchmark.csv: the paper prints '73 of its 205 eigenvalues exceed $10^{-4}$ of the largest' 0 times, not once
+NEW FAILURE - sec-repro2d_benchmark.csv: the paper at a5e3005f does not print 'Keeping the 73 directions with $\\lambda/\\lambda_{\\max}>10^{-4}$ gives $\\chi^{2}=136$, and the 139 with $\\lambda/\\lambda_{\\max}>10^{-6}$ give $\\chi^
+NEW FAILURE - sec-repro2d_benchmark.csv: the paper prints 'Keeping the 73 directions with $\\lambda/\\lambda_{\\max}>10^{-4}$ gives $\\chi^{2}=136$, and the 139 with $\\lambda/\\lambda_{\\max}>10^{-6}$ give $\\chi^{2}=285$.' 0 times, 
+DRYRUN NEW FAILURES (6)

@@ -1,0 +1,68 @@
+# Job-name families whose code reads or atime-watches the NuE constraint this connect hashes plainly
+# (BR.INPUTS["constraint"] = .../FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt), from origin/main 8c13d025,
+# 2026-11-15 (the director's M3b). Method:
+#   readers = git grep -l -E 'flux[_-]constraint|NuEConstraint|PIN\["constraint"\]|INPUTS\["constraint"\]' -- '*.py' '*.sh' '*.sbatch'
+#   then every file that sets a job name (--job-name / #SBATCH -J / sbatch -J) and names a reader or the constraint path.
+# Families found (job names as the scripts set them; $ variables expanded by the script):
+#   ll5d_*     ll5d_calib, ll5d_vicheck, ll5d_gate*/ll5d_gate-2*, ll5d_pilot*, ll5d_bulk_NN, ll5d_rerun129_NN, ll5d_null_NN, ll5d_readout_NN
+#   fd1b_*     fd1b_d0, fd1b_mc_s1_N (fd_1b_inv/fd_1b_mc); coverage-5b-audit adds fd1b_bdg_*, fd1b_pfd_*
+#   fd_*       fd_c2c1r (refc2c1 replicas/completion); fd_refg1, fd_refg1a1, fd_refg1_timing, gibu1 (ref_g1_read);
+#              coverage-5b-audit adds fd_c2c1u, fd_stab*
+#   rdx_*      rdx_s1_1A and the rdx_ stages (sbatch_rdx_evloop.sh)
+#   rsn_*      rsn_J1, rsn_J2, rsn_J3 (rsn_regrade)
+#   rpd_*      rpd_flux1 (fd_rpd_reco_custody)
+#   cov2d*     cov2d-e3 and the cov2d/cov2dg2r- jobs (cov2d.py)
+#   sb1_*      (stageC production manifest; historical)
+#   and the families earlier fences named: e96data, t2a
+# The heuristic can miss a family (the audit found four it did not), so the fence does not rely on this list: it refuses
+# EVERY job of josephrb queued, running or unended since 2026-11-01, of any name, and fails closed on any query error.
+# The rows the grep printed (file, job names, the readers it names):
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/stage0/connect26-deploy-d0.sh	fd1b_d0	fd_1b_inv.py
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/stage1/connect32-s1-0.sh	fd1b_mc_s1_0	<constraint path>,fd_1b_mc.py,make_stage1_tables.py,mutation_mc.py
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/envtest/connect-e3.sh	cov2d-e3	cov2d.py
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/bulk/node/node_sbatch-ll5d-bulk.sh.txt	lane$L	<constraint path>,ll5d_b.py
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/bulk/package/bulk-vs-2a9090c6.diff.txt	lane$L	connect-bulk.sh,ll5d.py,ll5d_b.py
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/bulk/package/bulk-vs-f64f4100.diff.txt	lane$L	connect-bulk.sh,ll5d.py,ll5d_b.py
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/bulk/package/bulk-vs-pilot.diff.txt	$J,lane$L,ll5d_bulk_$NN	<constraint path>,connect-bulk.sh,connect-pilot.sh,ll5d.py,ll5d_b.py,sbatch-ll5d-pilot.sh
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/bulk/package/connect-bulk.sh	lane$L,ll5d_bulk_$NN	<constraint path>,cov2d.py,fd_1b_c2.py,fd_1b_inv.py,fd_1b_mc.py,fd_1b_score.py,fd_1b_toys.py,ll5d.py,ll5d_b.py,s1_assemble.py
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/bulk/rerun129/node/sbatch-ll5d-rerun129.sh.txt	lane$L	<constraint path>,ll5d_b.py
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/bulk/rerun129/package/connect-rerun129.bcf1c552.txt	lane$L,ll5d_rerun129_$NN	<constraint path>,cov2d.py,fd_1b_c2.py,fd_1b_inv.py,fd_1b_mc.py,fd_1b_score.py,fd_1b_toys.py,ll5d.py,ll5d_b.py,s1_assemble.py,sbatch-ll5d-rerun129.sh
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/bulk/rerun129/package/connect-rerun129.sh	lane$L,ll5d_rerun129_$NN	<constraint path>,cov2d.py,fd_1b_c2.py,fd_1b_inv.py,fd_1b_mc.py,fd_1b_score.py,fd_1b_toys.py,ll5d.py,ll5d_b.py,s1_assemble.py,sbatch-ll5d-rerun129.sh
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/bulk/rerun129/package/sbatch-ll5d-rerun129.sh	lane$L	<constraint path>,ll5d_b.py
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/calib-1-invalid/connect-calib.sh	ll5d_calib	<constraint path>,cov2d.py,fd_1b_c2.py,fd_1b_inv.py,fd_1b_mc.py,fd_1b_toys.py,ll5d.py,s1_assemble.py,sbatch-ll5d-calib.sh
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/calib-2/connect-calib-2.sh	ll5d_calib	<constraint path>,cov2d.py,fd_1b_c2.py,fd_1b_inv.py,fd_1b_mc.py,fd_1b_toys.py,ll5d.py,s1_assemble.py,sbatch-ll5d-calib.sh
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/calib-3/connect-calib-3.sh	ll5d_calib	<constraint path>,connect-calib-2.sh,cov2d.py,fd_1b_c2.py,fd_1b_inv.py,fd_1b_mc.py,fd_1b_toys.py,ll5d.py,s1_assemble.py,sbatch-ll5d-calib.sh
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/gate-2-ar23/connect-gate-2.sh	$J	<constraint path>,connect-gate.sh,cov2d.py,fd_1b_c2.py,fd_1b_inv.py,fd_1b_mc.py,fd_1b_score.py,fd_1b_toys.py,ll5d.py,s1_assemble.py,sbatch-ll5d-gate.sh
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/gate-2-g18/connect-gate-2.sh	$J	<constraint path>,connect-gate.sh,cov2d.py,fd_1b_c2.py,fd_1b_inv.py,fd_1b_mc.py,fd_1b_score.py,fd_1b_toys.py,ll5d.py,s1_assemble.py,sbatch-ll5d-gate.sh
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/gate-ar23/connect-gate.sh	$J	<constraint path>,connect-calib.sh,cov2d.py,fd_1b_c2.py,fd_1b_inv.py,fd_1b_mc.py,fd_1b_score.py,fd_1b_toys.py,ll5d.py,s1_assemble.py,sbatch-ll5d-gate.sh
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/gate-ar23/gate-vs-calib2.diff.txt	$J,ll5d_calib	connect-calib.sh,fd_1b_score.py,ll5d.py,sbatch-ll5d-calib.sh,sbatch-ll5d-gate.sh
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/gate-g18/connect-gate.sh	$J	<constraint path>,connect-calib.sh,cov2d.py,fd_1b_c2.py,fd_1b_inv.py,fd_1b_mc.py,fd_1b_score.py,fd_1b_toys.py,ll5d.py,s1_assemble.py,sbatch-ll5d-gate.sh
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/gate-g18/gate-vs-calib2.diff.txt	$J,ll5d_calib	connect-calib.sh,fd_1b_score.py,ll5d.py,sbatch-ll5d-calib.sh,sbatch-ll5d-gate.sh
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/null/package/null-vs-rerun129-0fb2f282.diff.txt	lane$L,ll5d_null_$NN,ll5d_rerun129_$NN	<constraint path>,ll5d_b.py,sbatch-ll5d-null.sh,sbatch-ll5d-rerun129.sh
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/null/package/parent-connect-rerun129.0fb2f282.sh.txt	lane$L,ll5d_rerun129_$NN	<constraint path>,cov2d.py,fd_1b_c2.py,fd_1b_inv.py,fd_1b_mc.py,fd_1b_score.py,fd_1b_toys.py,ll5d.py,ll5d_b.py,s1_assemble.py,sbatch-ll5d-rerun129.sh
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/null/package/sbatch-null-vs-rerun129-d45cdf2f.diff.txt	lane$L	<constraint path>,ll5d_b.py
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/pilot-r1/connect-pilot.sh	$J,lane$L	<constraint path>,cov2d.py,fd_1b_c2.py,fd_1b_inv.py,fd_1b_mc.py,fd_1b_score.py,fd_1b_toys.py,ll5d.py,ll5d_b.py,s1_assemble.py,sbatch-ll5d-pilot.sh
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/pilot-r1/sbatch-ll5d-pilot.sh	lane$L	<constraint path>,ll5d_b.py
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/pilot-r2/connect-pilot.sh	$J,lane$L	<constraint path>,cov2d.py,fd_1b_c2.py,fd_1b_inv.py,fd_1b_mc.py,fd_1b_score.py,fd_1b_toys.py,ll5d.py,ll5d_b.py,s1_assemble.py,sbatch-ll5d-pilot.sh
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/pilot-r2/pilot-r2-vs-177f4f4d.diff.txt	lane$L	connect-pilot.sh,ll5d.py,ll5d_b.py
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/pilot-r2/sbatch-ll5d-pilot.sh	lane$L	<constraint path>,ll5d_b.py
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/vicheck/connect-vicheck.sh	ll5d_vicheck	<constraint path>,connect-calib-2.sh,cov2d.py,fd_1b_c2.py,fd_1b_inv.py,fd_1b_mc.py,fd_1b_toys.py,ll5d.py,s1_assemble.py,sbatch-ll5d-vicheck.sh
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/vicheck/vicheck-vs-calib2.diff.txt	ll5d_calib,ll5d_vicheck	connect-calib-2.sh,ll5d.py,sbatch-ll5d-calib.sh,sbatch-ll5d-vicheck.sh
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ref-c2c1/step2/units-replicas/completion-attempt-1/refc2c1_completion_submit.sh	fd_c2c1r,r$J-l$l	<constraint path>,refc2c1_completion_submit.sh
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ref-c2c1/step2/units-replicas/completion-attempt-1/survey/diff-submit-outside-payloads.txt	fd_c2c1r	<constraint path>,refc2c1_completion_submit.sh,refc2c1_replicas_submit.sh
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ref-c2c1/step2/units-replicas/completion-attempt-2-guard/refc2c1_completion_submit.sh	fd_c2c1r,r$J-l$l	<constraint path>,refc2c1_completion_submit.sh
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ref-c2c1/step2/units-replicas/completion/refc2c1_completion_submit.sh	fd_c2c1r,r$J-l$l	<constraint path>,refc2c1_completion_submit.sh
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ref-c2c1/step2/units-replicas/timeout/refc2c1_replicas_submit.sh	fd_c2c1r,r$J-l$l	<constraint path>,refc2c1_replicas_submit.sh
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ref-g1/a1-connect1/refg1a1_c1_job.sbatch	gibu1	ref_g1_read.py
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ref-g1/a1-connect1/refg1a1_c1_submit.sh	fd_refg1a1,gibu1	ref_g1_mutation.py,ref_g1_read.py
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ref-g1/batch/refg1_batch_submit.sh	fd_refg1	ref_g1_mutation.py,ref_g1_read.py
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ref-g1/timing/refg1_timing_submit.sh	fd_refg1_timing	ref_g1_mutation.py,ref_g1_read.py
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/redump-f12i-20261112/launch/smoke.txt	rdx_s1_1A	sbatch_rdx_evloop.sh,smoke_rdx_stages.sh
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/referee-sensitivity-20261111/connect-j1/rsn_connect_j1.sh	rsn_J1	rsn_regrade.py
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/referee-sensitivity-20261111/connect-j23/rsn_connect_j23.sh	rsn_J2,rsn_J3	rsn_regrade.py
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/rpd_flux1_connect.sh	rpd_flux1	<constraint path>,fd_rpd_reco_custody.py,fence_overlap.py,rpd_flux1_connect.sh,rpd_flux1_job.sh
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/run-61206960/records/rpd_flux1_job.sh	rpd_flux1	<constraint path>,fd_rpd_reco_custody.py,rpd_flux1_connect.sh
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux1-20261111/tools/rpd_flux1_job.template.sh	rpd_flux1	<constraint path>,rpd_flux1_connect.sh
+docs/orchestration/state/next-preparation-20261009/sb1-prep/tests/test_package_consistency.py	sb1_{job	make_manifest.py
+nd-unfolding/rdx/rdx_connect.sh	$name	sbatch_rdx_evloop.sh
+nd-unfolding/rdx/sbatch_rdx_evloop.sh	rdx_s	<constraint path>,sbatch_rdx_evloop.sh

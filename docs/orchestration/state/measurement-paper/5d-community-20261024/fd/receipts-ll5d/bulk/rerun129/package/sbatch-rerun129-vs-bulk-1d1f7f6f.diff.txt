@@ -1,0 +1,39 @@
+2,5c2,5
+< # ll5d_bulk_<NN>'s job: 8 lanes, each an srun step (32 CPUs, 56G, --threads 32); the deploy at M with porcelain 0 and the bound blobs; the
+< # partition asserted against ll5d_b; this node's 8 lanes (ll5d_b.py unfold, one truth and role per call). Not under
+< # set -u. Writes only under $W and $U.
+< DD=$1; M=$2; W=$3; U=$4; NODE=$5
+---
+> # ll5d_rerun129_01's job: 4 lanes of 5 items, each an srun step (32 CPUs, 56G, --threads 32); the deploy at M with
+> # porcelain 0 and the bound blobs, checked ONCE here, before all 4 calls; the lanes asserted against ll5d_b; 4 ll5d_b.py
+> # unfold calls (ar23 toy, 5 items each, the 20 between them). Not under set -u. Writes only under $W and $UO (passed as the 4th argument).
+> DD=$1; M=$2; W=$3; U=$4; NODE=$5   # here U is $UO, the fresh out directory
+18,19c18,19
+< echo "lanes 8 x (srun --exact -n1 -c 32 --mem 56G) --threads 32"
+< python3 -B - "$DD/nd-unfolding" "$W/bulk-lanes.tsv" <<'PY' || stop "the partition is not section 9's bulk"
+---
+> echo "lanes 4 x (srun --exact -n1 -c 32 --mem 56G) --threads 32"
+> python3 -B - "$DD/nd-unfolding" "$W/rerun-lanes.tsv" <<'PY' || stop "the row is not the bulk's node 09 lane 4"
+28,29c28,30
+< print(f"items={len(got)} unique={len(set(got))} want={len(want)} lanes={len(per_lane)} max_per_lane={max(per_lane.values())}")
+< sys.exit(0 if len(got) == len(set(got)) and set(got) == want and max(per_lane.values()) <= 22 and len(per_lane) == 80 else 1)
+---
+> print(f"items={len(got)} unique={len(set(got))} in_section9_bulk={set(got) <= want} lanes={len(per_lane)} truth_role={sorted({(t, r) for t, r, _ in got})}")
+> sys.exit(0 if len(got) == 20 and len(set(got)) == 20 and set(got) <= want and len(per_lane) == 4 and set(per_lane.values()) == {5}
+>          and {(t, r) for t, r, _ in got} == {("ar23", "toy")} else 1)
+48c49
+<   done 3< <(grep -v '^#' "$W/bulk-lanes.tsv")
+---
+>   done 3< <(grep -v '^#' "$W/rerun-lanes.tsv")
+51,52c52,53
+< pids=(); for L in 0 1 2 3 4 5 6 7; do lane $L & pids+=($!); done
+< urc=0; for k in 0 1 2 3 4 5 6 7; do wait ${pids[$k]}; s=$?; echo "lane $k rc=$s"; urc=$((urc | s)); done
+---
+> pids=(); for L in 0 1 2 3; do lane $L & pids+=($!); done
+> urc=0; for k in 0 1 2 3; do wait ${pids[$k]}; s=$?; echo "lane $k rc=$s"; urc=$((urc | s)); done
+53a55,59
+> case "$urc" in
+>   0) echo "RERUN-EXIT clean rc=0" ;;
+>   8) echo "RERUN-EXIT rc=8: ll5d_b's atime sidecar lists a move; to the director with the sidecar, nothing graded until explained" ;;
+>   *) echo "RERUN-EXIT NOT-CLEAN rc=$urc: to the director unrepaired; nothing graded even if the comparison is equal" ;;
+> esac

@@ -1,0 +1,5 @@
+MUTANT [G2R_OUT / f"A_{b}_{i}/xsec.root"|RE2 / f"partb/out/U_{b}_{i}/xsec.root"] -> 1 failed, 4 passed, 60 deselected in 0.16s
+MUTANT ["re2": {"q_r": Q_R,|"re2": {"q_r": ROUTE_A / "combination/s5_plus_playlist.npz",] -> 1 failed, 4 passed, 60 deselected in 0.16s
+MUTANT ["cr": CR_G2R,|"cr": CR,] -> 1 failed, 4 passed, 60 deselected in 0.17s
+MUTANT ["cmodel_r": CMODEL_R_G2R,|"cmodel_r": CMODEL_R,] -> 1 failed, 4 passed, 60 deselected in 0.16s
+MUTANT [if prod != "re2":|if True:] -> 5 passed, 60 deselected in 0.14s

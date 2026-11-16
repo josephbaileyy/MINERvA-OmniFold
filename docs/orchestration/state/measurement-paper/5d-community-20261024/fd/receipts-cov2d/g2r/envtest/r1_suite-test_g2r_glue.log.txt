@@ -1,0 +1,493 @@
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+EEEEEEEEEEEEusage: python -m unittest tune [-h] --truth {AR23,G18} --products PRODUCTS
+                               --map-sha MAP_SHA --out OUT
+python -m unittest tune: error: argument --truth: invalid choice: 'X' (choose from 'AR23', 'G18')
+E
+======================================================================
+ERROR: setUpClass (test_g2r_glue.PhaseData)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/g2r/g2r_readout.py", line 285, in phase_data
+    budget_raw = gzip.decompress((OUTA / "budget_Q.json.gz").read_bytes())
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/pathlib.py", line 1050, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/pathlib.py", line 1044, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/cov2d_blocks.py", line 215, in audited_open
+    self.check(file, "open")
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/cov2d_blocks.py", line 199, in check
+    raise c.Refusal(f"open audit: {how}({p}) is not a pinned O_NOATIME copy")
+cov2d.Refusal: open audit: open(/pscratch/sd/j/josephrb/cov2d-g2r-20261112/tmp-suites.GPZzaY/tmpv9kwy_0m/outA/budget_Q.json.gz) is not a pinned O_NOATIME copy
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/g2r/tests/test_g2r_glue.py", line 415, in setUpClass
+    cls.rec, k = phase_data_run(cls.td.name)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/g2r/tests/test_g2r_glue.py", line 402, in phase_data_run
+    rec = gr.phase_data(tsv, map_sha, out)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/g2r/g2r_readout.py", line 266, in phase_data
+    with tempfile.TemporaryDirectory(dir=os.environ.get("TMPDIR")) as td:
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/tempfile.py", line 943, in __exit__
+    self.cleanup()
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/tempfile.py", line 947, in cleanup
+    self._rmtree(self.name, ignore_errors=self._ignore_cleanup_errors)
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/tempfile.py", line 929, in _rmtree
+    _shutil.rmtree(name, onerror=onerror)
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/shutil.py", line 748, in rmtree
+    onerror(os.open, path, sys.exc_info())
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/shutil.py", line 745, in rmtree
+    fd = os.open(path, os.O_RDONLY | os.O_NONBLOCK, dir_fd=dir_fd)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/cov2d_blocks.py", line 219, in audited_os_open
+    self.check(path, "os.open", noatime=bool(bit and flags & bit))
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/cov2d_blocks.py", line 199, in check
+    raise c.Refusal(f"open audit: {how}({p}) is not a pinned O_NOATIME copy")
+cov2d.Refusal: open audit: os.open(/pscratch/sd/j/josephrb/cov2d-g2r-20261112/tmp-suites.GPZzaY/tmppgjzu094) is not a pinned O_NOATIME copy
+
+======================================================================
+ERROR: test_a_budget_off_its_digest_refuses (test_g2r_glue.PhaseDataFailures.test_a_budget_off_its_digest_refuses)
+----------------------------------------------------------------------
+cov2d.Refusal: open audit: open(/pscratch/sd/j/josephrb/cov2d-g2r-20261112/tmp-suites.GPZzaY/tmp7k9i_7am/s5.npz) is not a pinned O_NOATIME copy
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/g2r/tests/test_g2r_glue.py", line 458, in test_a_budget_off_its_digest_refuses
+    with tempfile.TemporaryDirectory() as td, self.assertRaisesRegex(c.Refusal, "budget_Q.json"):
+AssertionError: "budget_Q.json" does not match "open audit: open(/pscratch/sd/j/josephrb/cov2d-g2r-20261112/tmp-suites.GPZzaY/tmp7k9i_7am/s5.npz) is not a pinned O_NOATIME copy"
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/g2r/tests/test_g2r_glue.py", line 458, in test_a_budget_off_its_digest_refuses
+    with tempfile.TemporaryDirectory() as td, self.assertRaisesRegex(c.Refusal, "budget_Q.json"):
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/tempfile.py", line 943, in __exit__
+    self.cleanup()
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/tempfile.py", line 947, in cleanup
+    self._rmtree(self.name, ignore_errors=self._ignore_cleanup_errors)
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/tempfile.py", line 929, in _rmtree
+    _shutil.rmtree(name, onerror=onerror)
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/shutil.py", line 748, in rmtree
+    onerror(os.open, path, sys.exc_info())
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/shutil.py", line 745, in rmtree
+    fd = os.open(path, os.O_RDONLY | os.O_NONBLOCK, dir_fd=dir_fd)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/cov2d_blocks.py", line 219, in audited_os_open
+    self.check(path, "os.open", noatime=bool(bit and flags & bit))
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/cov2d_blocks.py", line 199, in check
+    raise c.Refusal(f"open audit: {how}({p}) is not a pinned O_NOATIME copy")
+cov2d.Refusal: open audit: os.open(/pscratch/sd/j/josephrb/cov2d-g2r-20261112/tmp-suites.GPZzaY/tmp7k9i_7am) is not a pinned O_NOATIME copy
+
+======================================================================
+ERROR: test_x_mismatch_and_budget_off_are_invalid (test_g2r_glue.PhaseDataFailures.test_x_mismatch_and_budget_off_are_invalid)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/g2r/tests/test_g2r_glue.py", line 450, in test_x_mismatch_and_budget_off_are_invalid
+    rec, k = phase_data_run(td, x_mismatch=True, budget_off=True)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/g2r/tests/test_g2r_glue.py", line 347, in phase_data_run
+    np.savez(d / "s5.npz", **s5)
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/lib/npyio.py", line 639, in savez
+    _savez(file, args, kwds, False)
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/lib/npyio.py", line 736, in _savez
+    zipf = zipfile_factory(file, mode="w", compression=compression)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/lib/npyio.py", line 103, in zipfile_factory
+    return zipfile.ZipFile(file, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/zipfile.py", line 1311, in __init__
+    self.fp = io.open(file, filemode)
+              ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/cov2d_blocks.py", line 215, in audited_open
+    self.check(file, "open")
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/cov2d_blocks.py", line 199, in check
+    raise c.Refusal(f"open audit: {how}({p}) is not a pinned O_NOATIME copy")
+cov2d.Refusal: open audit: open(/pscratch/sd/j/josephrb/cov2d-g2r-20261112/tmp-suites.GPZzaY/tmpgl6p2dy4/s5.npz) is not a pinned O_NOATIME copy
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/g2r/tests/test_g2r_glue.py", line 449, in test_x_mismatch_and_budget_off_are_invalid
+    with tempfile.TemporaryDirectory() as td:
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/tempfile.py", line 943, in __exit__
+    self.cleanup()
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/tempfile.py", line 947, in cleanup
+    self._rmtree(self.name, ignore_errors=self._ignore_cleanup_errors)
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/tempfile.py", line 929, in _rmtree
+    _shutil.rmtree(name, onerror=onerror)
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/shutil.py", line 748, in rmtree
+    onerror(os.open, path, sys.exc_info())
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/shutil.py", line 745, in rmtree
+    fd = os.open(path, os.O_RDONLY | os.O_NONBLOCK, dir_fd=dir_fd)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/cov2d_blocks.py", line 219, in audited_os_open
+    self.check(path, "os.open", noatime=bool(bit and flags & bit))
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/cov2d_blocks.py", line 199, in check
+    raise c.Refusal(f"open audit: {how}({p}) is not a pinned O_NOATIME copy")
+cov2d.Refusal: open audit: os.open(/pscratch/sd/j/josephrb/cov2d-g2r-20261112/tmp-suites.GPZzaY/tmpgl6p2dy4) is not a pinned O_NOATIME copy
+
+======================================================================
+ERROR: setUpClass (test_g2r_glue.PhaseTune)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/g2r/tests/test_g2r_glue.py", line 237, in setUpClass
+    B = dict(np.load(gr.COMMITTED[T]["blocks"][0], allow_pickle=False))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/lib/npyio.py", line 427, in load
+    fid = stack.enter_context(open(os_fspath(file), "rb"))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/cov2d_blocks.py", line 215, in audited_open
+    self.check(file, "open")
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/cov2d_blocks.py", line 199, in check
+    raise c.Refusal(f"open audit: {how}({p}) is not a pinned O_NOATIME copy")
+cov2d.Refusal: open audit: open(/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/readout/AR23/blocks_AR23.npz) is not a pinned O_NOATIME copy
+
+======================================================================
+ERROR: test_a_bad_e_refuses (test_g2r_glue.PhaseTuneRefusals.test_a_bad_e_refuses)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/g2r/tests/test_g2r_glue.py", line 514, in test_a_bad_e_refuses
+    z = np.load(gr.COMMITTED["AR23"]["E"][0])
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/lib/npyio.py", line 427, in load
+    fid = stack.enter_context(open(os_fspath(file), "rb"))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/cov2d_blocks.py", line 215, in audited_open
+    self.check(file, "open")
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/cov2d_blocks.py", line 199, in check
+    raise c.Refusal(f"open audit: {how}({p}) is not a pinned O_NOATIME copy")
+cov2d.Refusal: open audit: open(/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/tier2-20261110/t2a/AR23/E_AR23.npz) is not a pinned O_NOATIME copy
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/g2r/tests/test_g2r_glue.py", line 512, in test_a_bad_e_refuses
+    with tempfile.TemporaryDirectory() as td, contextlib.ExitStack() as st:
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/tempfile.py", line 943, in __exit__
+    self.cleanup()
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/tempfile.py", line 947, in cleanup
+    self._rmtree(self.name, ignore_errors=self._ignore_cleanup_errors)
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/tempfile.py", line 929, in _rmtree
+    _shutil.rmtree(name, onerror=onerror)
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/shutil.py", line 748, in rmtree
+    onerror(os.open, path, sys.exc_info())
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/shutil.py", line 745, in rmtree
+    fd = os.open(path, os.O_RDONLY | os.O_NONBLOCK, dir_fd=dir_fd)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/cov2d_blocks.py", line 219, in audited_os_open
+    self.check(path, "os.open", noatime=bool(bit and flags & bit))
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/cov2d_blocks.py", line 199, in check
+    raise c.Refusal(f"open audit: {how}({p}) is not a pinned O_NOATIME copy")
+cov2d.Refusal: open audit: os.open(/pscratch/sd/j/josephrb/cov2d-g2r-20261112/tmp-suites.GPZzaY/tmp2u59lwi3) is not a pinned O_NOATIME copy
+
+======================================================================
+ERROR: test_cells_that_differ_refuse (test_g2r_glue.PhaseTuneRefusals.test_cells_that_differ_refuse)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/g2r/tests/test_g2r_glue.py", line 524, in test_cells_that_differ_refuse
+    B = np.load(gr.COMMITTED["AR23"]["blocks"][0])
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/lib/npyio.py", line 427, in load
+    fid = stack.enter_context(open(os_fspath(file), "rb"))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/cov2d_blocks.py", line 215, in audited_open
+    self.check(file, "open")
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/cov2d_blocks.py", line 199, in check
+    raise c.Refusal(f"open audit: {how}({p}) is not a pinned O_NOATIME copy")
+cov2d.Refusal: open audit: open(/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/readout/AR23/blocks_AR23.npz) is not a pinned O_NOATIME copy
+
+======================================================================
+ERROR: test_a_failing_g6_is_invalid_before_the_products (test_g2r_glue.PhaseTuneTampered.test_a_failing_g6_is_invalid_before_the_products)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/g2r/tests/test_g2r_glue.py", line 305, in test_a_failing_g6_is_invalid_before_the_products
+    B = dict(np.load(gr.COMMITTED["AR23"]["blocks"][0], allow_pickle=False))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/lib/npyio.py", line 427, in load
+    fid = stack.enter_context(open(os_fspath(file), "rb"))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/cov2d_blocks.py", line 215, in audited_open
+    self.check(file, "open")
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/cov2d_blocks.py", line 199, in check
+    raise c.Refusal(f"open audit: {how}({p}) is not a pinned O_NOATIME copy")
+cov2d.Refusal: open audit: open(/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/readout/AR23/blocks_AR23.npz) is not a pinned O_NOATIME copy
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/g2r/tests/test_g2r_glue.py", line 303, in test_a_failing_g6_is_invalid_before_the_products
+    with tempfile.TemporaryDirectory() as td:
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/tempfile.py", line 943, in __exit__
+    self.cleanup()
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/tempfile.py", line 947, in cleanup
+    self._rmtree(self.name, ignore_errors=self._ignore_cleanup_errors)
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/tempfile.py", line 929, in _rmtree
+    _shutil.rmtree(name, onerror=onerror)
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/shutil.py", line 748, in rmtree
+    onerror(os.open, path, sys.exc_info())
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/shutil.py", line 745, in rmtree
+    fd = os.open(path, os.O_RDONLY | os.O_NONBLOCK, dir_fd=dir_fd)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/cov2d_blocks.py", line 219, in audited_os_open
+    self.check(path, "os.open", noatime=bool(bit and flags & bit))
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/cov2d_blocks.py", line 199, in check
+    raise c.Refusal(f"open audit: {how}({p}) is not a pinned O_NOATIME copy")
+cov2d.Refusal: open audit: os.open(/pscratch/sd/j/josephrb/cov2d-g2r-20261112/tmp-suites.GPZzaY/tmpr9h_bem_) is not a pinned O_NOATIME copy
+
+======================================================================
+ERROR: test_a_missing_per_playlist_file_is_the_directors_stop (test_g2r_glue.Prepare.test_a_missing_per_playlist_file_is_the_directors_stop)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/g2r/tests/test_g2r_glue.py", line 123, in setUp
+    self.uni.write_bytes(b"x" * 1234)
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/pathlib.py", line 1067, in write_bytes
+    with self.open(mode='wb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/pathlib.py", line 1044, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/cov2d_blocks.py", line 215, in audited_open
+    self.check(file, "open")
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/cov2d_blocks.py", line 199, in check
+    raise c.Refusal(f"open audit: {how}({p}) is not a pinned O_NOATIME copy")
+cov2d.Refusal: open audit: open(/pscratch/sd/j/josephrb/cov2d-g2r-20261112/tmp-suites.GPZzaY/tmp647di78o/uni.root) is not a pinned O_NOATIME copy
+
+======================================================================
+ERROR: test_a_wrong_merged_count_is_invalid (test_g2r_glue.Prepare.test_a_wrong_merged_count_is_invalid)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/g2r/tests/test_g2r_glue.py", line 123, in setUp
+    self.uni.write_bytes(b"x" * 1234)
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/pathlib.py", line 1067, in write_bytes
+    with self.open(mode='wb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/pathlib.py", line 1044, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/cov2d_blocks.py", line 215, in audited_open
+    self.check(file, "open")
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/cov2d_blocks.py", line 199, in check
+    raise c.Refusal(f"open audit: {how}({p}) is not a pinned O_NOATIME copy")
+cov2d.Refusal: open audit: open(/pscratch/sd/j/josephrb/cov2d-g2r-20261112/tmp-suites.GPZzaY/tmpo1rsw4xe/uni.root) is not a pinned O_NOATIME copy
+
+======================================================================
+ERROR: test_a_wrong_size_is_invalid (test_g2r_glue.Prepare.test_a_wrong_size_is_invalid)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/g2r/tests/test_g2r_glue.py", line 123, in setUp
+    self.uni.write_bytes(b"x" * 1234)
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/pathlib.py", line 1067, in write_bytes
+    with self.open(mode='wb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/pathlib.py", line 1044, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/cov2d_blocks.py", line 215, in audited_open
+    self.check(file, "open")
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/cov2d_blocks.py", line 199, in check
+    raise c.Refusal(f"open audit: {how}({p}) is not a pinned O_NOATIME copy")
+cov2d.Refusal: open audit: open(/pscratch/sd/j/josephrb/cov2d-g2r-20261112/tmp-suites.GPZzaY/tmpgdkzklfd/uni.root) is not a pinned O_NOATIME copy
+
+======================================================================
+ERROR: test_the_prepare_end_to_end (test_g2r_glue.Prepare.test_the_prepare_end_to_end)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/g2r/tests/test_g2r_glue.py", line 123, in setUp
+    self.uni.write_bytes(b"x" * 1234)
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/pathlib.py", line 1067, in write_bytes
+    with self.open(mode='wb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/pathlib.py", line 1044, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/cov2d_blocks.py", line 215, in audited_open
+    self.check(file, "open")
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/cov2d_blocks.py", line 199, in check
+    raise c.Refusal(f"open audit: {how}({p}) is not a pinned O_NOATIME copy")
+cov2d.Refusal: open audit: open(/pscratch/sd/j/josephrb/cov2d-g2r-20261112/tmp-suites.GPZzaY/tmp5scx1j0p/uni.root) is not a pinned O_NOATIME copy
+
+======================================================================
+ERROR: test_the_real_block_sizes_refuse_unequal_trees (test_g2r_glue.Prepare.test_the_real_block_sizes_refuse_unequal_trees)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/g2r/tests/test_g2r_glue.py", line 123, in setUp
+    self.uni.write_bytes(b"x" * 1234)
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/pathlib.py", line 1067, in write_bytes
+    with self.open(mode='wb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/pathlib.py", line 1044, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/cov2d_blocks.py", line 215, in audited_open
+    self.check(file, "open")
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/cov2d_blocks.py", line 199, in check
+    raise c.Refusal(f"open audit: {how}({p}) is not a pinned O_NOATIME copy")
+cov2d.Refusal: open audit: open(/pscratch/sd/j/josephrb/cov2d-g2r-20261112/tmp-suites.GPZzaY/tmpbe9znds0/uni.root) is not a pinned O_NOATIME copy
+
+======================================================================
+ERROR: test_arguments_and_exit_codes (test_g2r_glue.ReadoutCLI.test_arguments_and_exit_codes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/g2r/tests/test_g2r_glue.py", line 478, in test_arguments_and_exit_codes
+    with tempfile.TemporaryDirectory() as td, mock.patch.object(gr, "phase_tune", tune), \
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/tempfile.py", line 943, in __exit__
+    self.cleanup()
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/tempfile.py", line 947, in cleanup
+    self._rmtree(self.name, ignore_errors=self._ignore_cleanup_errors)
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/tempfile.py", line 929, in _rmtree
+    _shutil.rmtree(name, onerror=onerror)
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/shutil.py", line 748, in rmtree
+    onerror(os.open, path, sys.exc_info())
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/shutil.py", line 745, in rmtree
+    fd = os.open(path, os.O_RDONLY | os.O_NONBLOCK, dir_fd=dir_fd)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/cov2d_blocks.py", line 219, in audited_os_open
+    self.check(path, "os.open", noatime=bool(bit and flags & bit))
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/cov2d_blocks.py", line 199, in check
+    raise c.Refusal(f"open audit: {how}({p}) is not a pinned O_NOATIME copy")
+cov2d.Refusal: open audit: os.open(/pscratch/sd/j/josephrb/cov2d-g2r-20261112/tmp-suites.GPZzaY/tmp53ou23vb) is not a pinned O_NOATIME copy
+
+----------------------------------------------------------------------
+Ran 11 tests in 3.479s
+
+FAILED (errors=13)
+Traceback (most recent call last):
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/weakref.py", line 666, in _exitfunc
+    f()
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/weakref.py", line 590, in __call__
+    return info.func(*info.args, **(info.kwargs or {}))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/tempfile.py", line 933, in _cleanup
+    cls._rmtree(name, ignore_errors=ignore_errors)
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/tempfile.py", line 929, in _rmtree
+    _shutil.rmtree(name, onerror=onerror)
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/shutil.py", line 748, in rmtree
+    onerror(os.open, path, sys.exc_info())
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/shutil.py", line 745, in rmtree
+    fd = os.open(path, os.O_RDONLY | os.O_NONBLOCK, dir_fd=dir_fd)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/cov2d_blocks.py", line 219, in audited_os_open
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/cov2d_blocks.py", line 199, in check
+cov2d.Refusal: open audit: os.open(/pscratch/sd/j/josephrb/cov2d-g2r-20261112/tmp-suites.GPZzaY/tmpbe9znds0) is not a pinned O_NOATIME copy
+Traceback (most recent call last):
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/weakref.py", line 666, in _exitfunc
+    f()
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/weakref.py", line 590, in __call__
+    return info.func(*info.args, **(info.kwargs or {}))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/tempfile.py", line 933, in _cleanup
+    cls._rmtree(name, ignore_errors=ignore_errors)
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/tempfile.py", line 929, in _rmtree
+    _shutil.rmtree(name, onerror=onerror)
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/shutil.py", line 748, in rmtree
+    onerror(os.open, path, sys.exc_info())
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/shutil.py", line 745, in rmtree
+    fd = os.open(path, os.O_RDONLY | os.O_NONBLOCK, dir_fd=dir_fd)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/cov2d_blocks.py", line 219, in audited_os_open
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/cov2d_blocks.py", line 199, in check
+cov2d.Refusal: open audit: os.open(/pscratch/sd/j/josephrb/cov2d-g2r-20261112/tmp-suites.GPZzaY/tmp5scx1j0p) is not a pinned O_NOATIME copy
+Traceback (most recent call last):
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/weakref.py", line 666, in _exitfunc
+    f()
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/weakref.py", line 590, in __call__
+    return info.func(*info.args, **(info.kwargs or {}))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/tempfile.py", line 933, in _cleanup
+    cls._rmtree(name, ignore_errors=ignore_errors)
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/tempfile.py", line 929, in _rmtree
+    _shutil.rmtree(name, onerror=onerror)
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/shutil.py", line 748, in rmtree
+    onerror(os.open, path, sys.exc_info())
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/shutil.py", line 745, in rmtree
+    fd = os.open(path, os.O_RDONLY | os.O_NONBLOCK, dir_fd=dir_fd)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/cov2d_blocks.py", line 219, in audited_os_open
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/cov2d_blocks.py", line 199, in check
+cov2d.Refusal: open audit: os.open(/pscratch/sd/j/josephrb/cov2d-g2r-20261112/tmp-suites.GPZzaY/tmpgdkzklfd) is not a pinned O_NOATIME copy
+Traceback (most recent call last):
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/weakref.py", line 666, in _exitfunc
+    f()
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/weakref.py", line 590, in __call__
+    return info.func(*info.args, **(info.kwargs or {}))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/tempfile.py", line 933, in _cleanup
+    cls._rmtree(name, ignore_errors=ignore_errors)
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/tempfile.py", line 929, in _rmtree
+    _shutil.rmtree(name, onerror=onerror)
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/shutil.py", line 748, in rmtree
+    onerror(os.open, path, sys.exc_info())
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/shutil.py", line 745, in rmtree
+    fd = os.open(path, os.O_RDONLY | os.O_NONBLOCK, dir_fd=dir_fd)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/cov2d_blocks.py", line 219, in audited_os_open
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/cov2d_blocks.py", line 199, in check
+cov2d.Refusal: open audit: os.open(/pscratch/sd/j/josephrb/cov2d-g2r-20261112/tmp-suites.GPZzaY/tmpo1rsw4xe) is not a pinned O_NOATIME copy
+Traceback (most recent call last):
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/weakref.py", line 666, in _exitfunc
+    f()
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/weakref.py", line 590, in __call__
+    return info.func(*info.args, **(info.kwargs or {}))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/tempfile.py", line 933, in _cleanup
+    cls._rmtree(name, ignore_errors=ignore_errors)
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/tempfile.py", line 929, in _rmtree
+    _shutil.rmtree(name, onerror=onerror)
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/shutil.py", line 748, in rmtree
+    onerror(os.open, path, sys.exc_info())
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/shutil.py", line 745, in rmtree
+    fd = os.open(path, os.O_RDONLY | os.O_NONBLOCK, dir_fd=dir_fd)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/cov2d_blocks.py", line 219, in audited_os_open
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/cov2d_blocks.py", line 199, in check
+cov2d.Refusal: open audit: os.open(/pscratch/sd/j/josephrb/cov2d-g2r-20261112/tmp-suites.GPZzaY/tmp647di78o) is not a pinned O_NOATIME copy
+Traceback (most recent call last):
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/weakref.py", line 666, in _exitfunc
+    f()
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/weakref.py", line 590, in __call__
+    return info.func(*info.args, **(info.kwargs or {}))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/tempfile.py", line 933, in _cleanup
+    cls._rmtree(name, ignore_errors=ignore_errors)
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/tempfile.py", line 929, in _rmtree
+    _shutil.rmtree(name, onerror=onerror)
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/shutil.py", line 748, in rmtree
+    onerror(os.open, path, sys.exc_info())
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/shutil.py", line 745, in rmtree
+    fd = os.open(path, os.O_RDONLY | os.O_NONBLOCK, dir_fd=dir_fd)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/cov2d_blocks.py", line 219, in audited_os_open
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/cov2d_blocks.py", line 199, in check
+cov2d.Refusal: open audit: os.open(/pscratch/sd/j/josephrb/cov2d-g2r-20261112/tmp-suites.GPZzaY/tmp0ani6wfr) is not a pinned O_NOATIME copy
+Traceback (most recent call last):
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/weakref.py", line 666, in _exitfunc
+    f()
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/weakref.py", line 590, in __call__
+    return info.func(*info.args, **(info.kwargs or {}))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/tempfile.py", line 933, in _cleanup
+    cls._rmtree(name, ignore_errors=ignore_errors)
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/tempfile.py", line 929, in _rmtree
+    _shutil.rmtree(name, onerror=onerror)
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/shutil.py", line 748, in rmtree
+    onerror(os.open, path, sys.exc_info())
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/shutil.py", line 745, in rmtree
+    fd = os.open(path, os.O_RDONLY | os.O_NONBLOCK, dir_fd=dir_fd)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/cov2d_blocks.py", line 219, in audited_os_open
+  File "/pscratch/sd/j/josephrb/cov2d-g2r-deploy-j1/2d-unfolding/cov2d/cov2d_blocks.py", line 199, in check
+cov2d.Refusal: open audit: os.open(/pscratch/sd/j/josephrb/cov2d-g2r-20261112/tmp-suites.GPZzaY/tmpv9kwy_0m) is not a pinned O_NOATIME copy

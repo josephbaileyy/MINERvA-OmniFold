@@ -1,0 +1,15 @@
+3c3,5
+< # stdin is ONE tar holding code/nd-unfolding (git archive of 4231b14d) and test_null_order.py; this script is passed as
+---
+> # stdin is ONE tar holding code/{nd-unfolding,2d-unfolding,<the clip dir>} (git archive of 4231b14d; r1 STOPped on
+> # an import of 2d-unfolding/uq/coverage_fixed_truth/score_coverage.py, absent from its nd-unfolding-only tar) and
+> # test_null_order.py; this script is passed as
+5c7,8
+< #   git -C <checkout> archive --prefix=code/ -o synth.tar 4231b14de5ea693e92cb31b1358a816b5c2f6625 nd-unfolding
+---
+> #   git -C <checkout> archive --prefix=code/ -o synth.tar 4231b14de5ea693e92cb31b1358a816b5c2f6625 nd-unfolding 2d-unfolding \
+> #     docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/clip
+11c14
+< P=/pscratch/sd/j/josephrb; R=$P/ll5d-null-synth-r1; A=$P/MINERvA-OmniFold
+---
+> P=/pscratch/sd/j/josephrb; R=$P/ll5d-null-synth-r2; A=$P/MINERvA-OmniFold

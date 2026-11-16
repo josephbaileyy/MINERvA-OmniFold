@@ -1,0 +1,3 @@
+87aa0b654609ccd74fa75c42279116c405690cc645a97157f3995a34351b88d2  /dev/shm/josephrb-ll5d-null.sh
+rm -f /dev/shm/josephrb-ll5d-null.sh rc=0
+ls: cannot access '/dev/shm/josephrb-ll5d-null.sh': No such file or directory
