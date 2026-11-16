@@ -1,0 +1,52 @@
+host=login02 start=2026-11-16T03:14:35Z pid=370909 B=903fb78b941a2f889bfcc5092e41ce27f5add898 M=9855389f255ffe4b42f9f729f7c57754170df627 PKG=e7db5f22204258917fa3d5bdb052161b75cb2946 nproc=244 OMP_NUM_THREADS=unset
+squeue rc=0: [JOBID|NAME|STATE|TIME_LIMIT|NODES]
+sacct rdx_s1_1A rc=0: [61315648|rdx_s1_1A|COMPLETED|2026-11-14T20:24:41]
+sacct all since 2026-11-01 rc=0: 156 rows
+fence (start) clear: every query rc 0, rdx_s1_1A ended, no job queued, running or unended, group C marker absent
+partc-r2 SHA256SUMS OK (128 lines)
+deploy porcelain_lines=0 head=903fb78b941a2f889bfcc5092e41ce27f5add898
+re2c_rollup_g2r.py: OK
+re2c_run_g2r.sh: OK
+c0_sums.py: OK
+c1_compare.py: OK
+products.tsv.txt: OK
+re2c_determinism.py: OK
+arm identity start=2026-11-16T03:15:55Z
+arm identity rc=0 end=2026-11-16T03:18:51Z
+RUN COMPLETE (refined)
+driver: G2R-DRIVER mode=identity rollup_rc=0 redirected labels=0 calls=0
+c0 comparator rc=1
+C0 PASS: lines 128/128 mkdtemp tmp6hw50588/tmp54xgxooz counts {"R1": 1, "bitwise": 62, "path-pairs": 26, "scratch (id.json: equal after the path pairs and the mkdtemp name)": 1, "scratch (inj.json: equal after the path pairs and the mkdtemp name, inj.root digest)": 1, "scratch (inj.root: TFile time; digest = its run's inj.json record)": 1, "skipped: PDF: creation date; compared through its PNG twin": 22, "skipped: run logs or caches": 14} other [] comparator FAIL differ ['SHA256SUMS', 'receipts/receipt_model_chi2.json'] extra []
+c0_sums rc=0
+squeue rc=0: [JOBID|NAME|STATE|TIME_LIMIT|NODES]
+sacct rdx_s1_1A rc=0: [61315648|rdx_s1_1A|COMPLETED|2026-11-14T20:24:41]
+sacct all since 2026-11-01 rc=0: 156 rows
+fence (before the g2r arm) clear: every query rc 0, rdx_s1_1A ended, no job queued, running or unended, group C marker absent
+arm g2r start=2026-11-16T03:18:58Z
+arm g2r rc=0 end=2026-11-16T03:21:39Z
+RUN COMPLETE (refined)
+driver: G2R-DRIVER mode=g2r rollup_rc=0 redirected labels=175 calls=175
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+C1 PASS: (a) max_scaled=7.311559097428637e-16 n_above=0 worst={'i': 111, 'j': 127, 'Q_A': 3.634918298325739e-86, 'C_new': 3.6349182983257424e-86}; (i) per-entry max_rel=5.800344509600607e-13 n_above_1e-15=1880 worst={'i': 69, 'j': 107, 'Q_A': 6.810223802622453e-85, 'C_new': 6.810223802626403e-85}; (ii) 2.580856884329175e-16; (iv) bitwise=False; (b) rows=14 failing=[]; (c) rows=20 failing=[]; (d) x=True F=True; universe_delta_scaled_rel=5.758541080103807e-14
+c1 rc=0
+46730e69b62e5646a142aa8d55f718cf145a298793d213b32b26e68bba5e1135  c0-determinism.json
+2d679760583a18f65517d1cf48a09d42a2f6147b9ab302edc20f65d15dd47e90  c0-sums.json
+bbac827e2db7a4cef0164c86c1fe76e78c29d35ca1262d057b7361b980635119  c1.json
+b1125f4ebe64b93bc0dbce9bd9a3c264699c9638adc188cca86e119b3f7ee938  c0.g2r_driver.json
+d5e8aa88543d0c46d883a6d6b63a13ecdf1ec0dac83a421d8894331859daa72f  g2r.g2r_driver.json
+2de2a78885274e72f06d72bedce75373f1409ae4fdcb0398f8bc00541c0bdf3e  c0/SHA256SUMS
+ae994593d4e40fd6095be8ff4b9fcaf8ba99035010466edd5106ba97ed40adad  g2r/SHA256SUMS
+1ee45dcd94ccb4e6340a6694bb0ce90c157f0b5c4bb81e18711d51e74a331d1b  g2r/s5/production_cov.npz
+ff66b91d6d2c574a1786b057ce7566e8ed7184700a45b989fa41ae0eb8cb0295  g2r/outA/cov2d_Q_205.npz
+81fdd16f58a113d48870f0e42548e301545cba23b50169811ffcd2fe1e5dc8ad  g2r/combination/s5_plus_playlist.npz
+RE2SHAPES PASS: C0 PASS, g2r arm rc 0 with 175 redirects, C1 PASS
+end=2026-11-16T03:21:45Z
+DONE

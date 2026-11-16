@@ -1,0 +1,3 @@
+c0 comparator rc=1
+C0 PASS: lines 128/128 mkdtemp tmp6hw50588/tmp54xgxooz counts {"R1": 1, "bitwise": 62, "path-pairs": 26, "scratch (id.json: equal after the path pairs and the mkdtemp name)": 1, "scratch (inj.json: equal after the path pairs and the mkdtemp name, inj.root digest)": 1, "scratch (inj.root: TFile time; digest = its run's inj.json record)": 1, "skipped: PDF: creation date; compared through its PNG twin": 22, "skipped: run logs or caches": 14} other [] comparator FAIL differ ['SHA256SUMS', 'receipts/receipt_model_chi2.json'] extra []
+c0_sums rc=0
