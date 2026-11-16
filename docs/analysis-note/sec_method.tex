@@ -147,7 +147,7 @@ Configuration (c) is the deterministic variant with purity-based subtraction, an
   \end{tabular}
 \end{table}
 
-\paragraph{Hyperparameter choice.} The settings of the two OmniFold classifiers and the missed-event regressor were fixed \emph{a priori}. No hyperparameter search was performed on data. The joint-test estimator keeps five iterations under the rule in \S\ref{sec:gbdt-model-dependence}. Its refinement classifier, 400 trees and 31 leaves, was selected before the joint-test design was fixed (\S\ref{sec:joint5d}).
+\paragraph{Hyperparameter choice.} No hyperparameter search for the two OmniFold classifiers or the missed-event regressor was performed on data. The joint-test estimator keeps five iterations under the rule in \S\ref{sec:gbdt-model-dependence}. Its refinement classifier, 400 trees and 31 leaves, was selected before the joint-test design was fixed (\S\ref{sec:joint5d}).
 
 The fixed settings are the scikit-learn \texttt{GradientBoosting} defaults: 100 trees, learning rate $0.1$, and depth-3 capacity. The LightGBM learner of the central value and its ensembles uses matched capacity ($\texttt{num\_leaves}=8=2^{3}$), giving these learners the same deliberately modest capacity, one of OmniFold's regularizers (\S\ref{sec:method-algo}).
 
