@@ -1,0 +1,50 @@
+	Command being timed: "python3 -B /pscratch/sd/j/josephrb/ll5d-bulk-r1/deploy/nd-unfolding/ll5d_b.py unfold --npz /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz --bkg /pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz --bank /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware --detector-dir /pscratch/sd/j/josephrb/s5p-20260926/bank_detector --pins /pscratch/sd/j/josephrb/fd-1b-20261030/pins.json --expect-pins-sha256 5adcd576eb46f443fe4133b05044cd315c0eeb0f281e21acee5f2318b4bab248 --flux-constraint /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt --flux-table /pscratch/sd/j/josephrb/fd-1b-staged-20261102/stage1/in/flux_universes.npz --expect-flux-table-sha256 cdc3da788c385da72826b2a74b1987320bbe399af212722826914df4d2fe15a5 --prep /pscratch/sd/j/josephrb/fd-f1-20261027/f1b3/prep --manifest /pscratch/sd/j/josephrb/ll5d-bulk-r1/deploy/docs/orchestration/state/2d-closeout/stageF/methods/sf1/manifest/inputs-sha256.txt --expect-manifest-sha256 3a50f502b5a425bc4d116245c36f79bbc279cbd876b87aa72bd0298b001b5031 --truth g18 --role seed --items T --out /pscratch/sd/j/josephrb/ll5d-unfolds-r2 --threads 32"
+	User time (seconds): 14884.56
+	System time (seconds): 35.96
+	Percent of CPU this job got: 1772%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 14:01.88
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 19764000
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 959
+	Minor (reclaiming a frame) page faults: 1509597
+	Voluntary context switches: 195478
+	Involuntary context switches: 58228
+	Swaps: 0
+	File system inputs: 500738
+	File system outputs: 400
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+[ll5d-b] DEVIATION: atime moved on ['/pscratch/sd/j/josephrb/ll5d-bulk-r1/deploy/docs/orchestration/state/2d-closeout/stageF/methods/sf1/manifest/inputs-sha256.txt']
+Command exited with non-zero status 8
+	Command being timed: "python3 -B /pscratch/sd/j/josephrb/ll5d-bulk-r1/deploy/nd-unfolding/ll5d_b.py unfold --npz /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz --bkg /pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz --bank /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware --detector-dir /pscratch/sd/j/josephrb/s5p-20260926/bank_detector --pins /pscratch/sd/j/josephrb/fd-1b-20261030/pins.json --expect-pins-sha256 5adcd576eb46f443fe4133b05044cd315c0eeb0f281e21acee5f2318b4bab248 --flux-constraint /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt --flux-table /pscratch/sd/j/josephrb/fd-1b-staged-20261102/stage1/in/flux_universes.npz --expect-flux-table-sha256 cdc3da788c385da72826b2a74b1987320bbe399af212722826914df4d2fe15a5 --prep /pscratch/sd/j/josephrb/fd-f1-20261027/f1b3/prep --manifest /pscratch/sd/j/josephrb/ll5d-bulk-r1/deploy/docs/orchestration/state/2d-closeout/stageF/methods/sf1/manifest/inputs-sha256.txt --expect-manifest-sha256 3a50f502b5a425bc4d116245c36f79bbc279cbd876b87aa72bd0298b001b5031 --truth g18 --role block --items 2p2h_0,2p2h_1,2p2h_2,AGKYxF1pi_0,AGKYxF1pi_1,AhtBY_0,AhtBY_1,BhtBY_0,BhtBY_1,CCQEPauliSupViaKF_0,CCQEPauliSupViaKF_1,CV1uBY_0,CV1uBY_1,CV2uBY_0,CV2uBY_1,EtaNCEL_0,EtaNCEL_1,Flux_0,Flux_1,Flux_2 --out /pscratch/sd/j/josephrb/ll5d-unfolds-r2 --threads 32"
+	User time (seconds): 294223.63
+	System time (seconds): 661.74
+	Percent of CPU this job got: 1813%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 4:30:56
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 20546356
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 258
+	Minor (reclaiming a frame) page faults: 28196116
+	Voluntary context switches: 2552118
+	Involuntary context switches: 1042868
+	Swaps: 0
+	File system inputs: 15495842
+	File system outputs: 7576
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 8
+srun: error: nid006272: task 0: Exited with exit code 8
+srun: Terminating StepId=61214597.8

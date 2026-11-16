@@ -1,0 +1,68 @@
+host=nid006094 job=61214605 node=04 start=2026-11-13T08:08:52Z
+deploy head=4231b14de5ea693e92cb31b1358a816b5c2f6625 porcelain_lines=0
+nd-unfolding/ll5d.py: OK
+nd-unfolding/fd_1b_c2.py: OK
+nd-unfolding/fd_1b_mc.py: OK
+nd-unfolding/fd_1b_toys.py: OK
+nd-unfolding/fd_1b_inv.py: OK
+nd-unfolding/s1_assemble.py: OK
+nd-unfolding/s5p_universe.py: OK
+nd-unfolding/fd_1b_score.py: OK
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/clip/clip_probe2.py: OK
+2d-unfolding/cov2d/cov2d.py: OK
+docs/orchestration/state/2d-closeout/stageF/methods/sf1/manifest/inputs-sha256.txt: OK
+nd-unfolding/pv-ladder/readouts/h2_definition.json: OK
+setup_salloc_env.sh: OK
+nd-unfolding/s5e_candidate.py: OK
+nd-unfolding/s5e_deform.py: OK
+nd-unfolding/ll5d_b.py: OK
+nd-unfolding/fd_1b_null.py: OK
+nd-unfolding/s5n_pseudo.py: OK
+nd-unfolding/s5p_numerics.py: OK
+nd-unfolding/omnifold_nn_core.py: OK
+2d-unfolding/uq/coverage_fixed_truth/score_coverage.py: OK
+nd-unfolding/ll5d_ctl.py: OK
+lanes 8 x (srun --exact -n1 -c 32 --mem 56G) --threads 32
+items=1649 unique=1649 want=1649 lanes=80 max_per_lane=21
+lane 0 rc=8
+lane 1 rc=8
+lane 2 rc=8
+lane 3 rc=8
+lane 4 rc=8
+lane 5 rc=8
+lane 6 rc=8
+lane 7 rc=8
+unfold lanes rc=8
+node 04 lane 0 g18 toy rc=8
+node 04 lane 1 g18 toy rc=8
+node 04 lane 2 g18 toy rc=8
+node 04 lane 3 g18 toy rc=8
+node 04 lane 4 g18 toy rc=8
+node 04 lane 5 g18 toy rc=8
+node 04 lane 6 g18 toy rc=8
+node 04 lane 7 g18 toy rc=8
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 5:12:25
+	Maximum resident set size (kbytes): 20303996
+	Exit status: 8
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 5:11:01
+	Maximum resident set size (kbytes): 20397448
+	Exit status: 8
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 5:10:53
+	Maximum resident set size (kbytes): 20267804
+	Exit status: 8
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 5:11:01
+	Maximum resident set size (kbytes): 20264296
+	Exit status: 8
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 5:11:49
+	Maximum resident set size (kbytes): 20345676
+	Exit status: 8
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 5:12:07
+	Maximum resident set size (kbytes): 20260032
+	Exit status: 8
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 5:11:47
+	Maximum resident set size (kbytes): 20313832
+	Exit status: 8
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 5:10:53
+	Maximum resident set size (kbytes): 20310024
+	Exit status: 8
+end=2026-11-13T13:21:33Z

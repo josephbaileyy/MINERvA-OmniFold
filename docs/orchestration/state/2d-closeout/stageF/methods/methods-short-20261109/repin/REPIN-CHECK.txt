@@ -1,4 +1,4 @@
-#977 head a8d1746f2; 49 rows
+#977 head 3027c9596; 50 rows
 OK  RP01   resource paper      count=1  The sixteen-cell cross section that the estimator gives on the data il
 OK  RP02   resource paper      count=1  The held-out-tune tests provide partial evidence on bias at truths hel
 OK  RP03   resource paper      count=1  The dependence on the prior's generator shape is reported separately a
@@ -57,6 +57,7 @@ OK  RP33k  resource paper      count=1  Keeping the \fvval{re2-modes-4} directio
 --  RP40   code     B765-767 R304-307 B849-871 P186-204  2D SCOPE line and the OUTCOME-20261108 record quotes: under C_T' the coverage co
 --  RP41   code     B103-106 B561-571 B586-612  follow-up to RP36 (director 11-14): after the LL5D HOLD is lifted, if cheap, cov
 --  RP42   code     B465-468 B586-598  helper-3's D1 prep (prep/d1-cnew-20261114 at 1f3279bf7, not yet in the draft) ma
+--  RP43   code     B715-730 B1131-1137 B1151-1159 B1235-1242 R4 R332-341  #981 hard-codes PENDING = FD-PRR, LL5D, V-HALF (B715-719) and writes pending/<na
 OK  GEN16  labels=1 block_sha=65b02f09daacba48
 OK  MACRO  \chiPaper printed 3
 OK  MACRO  \fluxBand printed 1; \fvval{q2d-fluxband} printed 0 (RP42)
@@ -65,4 +66,7 @@ OK  MACRO  \ratioTot printed 3
 OK  MACRO  \sigTwoD printed 1
 OK  MACRO  \uqIntegral printed 1; \fvval{q2d-sigma-int} printed 0 (RP42)
 OK  MACRO  \uqMedian printed 1; \fvval{q2d-sigma-med} printed 0 (RP42)
+OK  PENDING #981 FD-PRR -> group prr: FILLED (RP43 fills it at the re-pin)
+OK  PENDING #981 LL5D -> group ll5d: PENDING
+OK  PENDING #981 V-HALF -> group vhalf: FILLED (RP43 fills it at the re-pin)
 REPIN-CHECK PASS

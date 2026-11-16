@@ -29,14 +29,90 @@ STEP A, THE INVENTORY (this commit; read-only)
   staged run and copy removal; an altered local script (rc 8); a non-login node name (rc 9); a session dir that is not
   empty (rc 9); and a copy that differs on the node (rc 8, nothing left).
 
-STEP B, THE DELETION (after step A's output is committed)
-- flux1_delete.py will carry, as constants: the root's literal path; step A's listing digest and entry count; and the
-  digests the records hold, namely the 12 factor products (../run-61206960/records/run/flux-extract.json) and the 63
-  staged copies (54 files and 9 instrument files in prestage.json, whose sha256 99528ac8... is listed in the run
-  README). It recomputes the listing with step A's code and requires the same digest. It reads each declared file
-  with O_NOATIME and requires its digest. Only then does it remove the root by its literal path, and it verifies the
-  root is absent. Exit 0 removed and absent; 4 STOP with nothing removed; 8 still present; 9 a removal failed.
-- Its sha256 goes to the director before it runs, under the same launcher pattern.
+STEP A, THE RUN (2026-11-15, on the director's go "go 074c56a9 52957587 for step A, the read-only inventory, run
+once"; stepA/)
+- Shas from main's bytes at 9855389f2: flux1_inventory.py 074c56a9..., flux1_cleanup_launch.sh 52957587...,
+  rpd_flux1_launch.sh 8354aece..., cov2d_fence.sh 16a2a5cd.... Certificate valid 2026-11-14T10:36:00Z to
+  2026-11-15T10:37:34Z (TZ=UTC ssh-keygen -L, read only).
+- Survey (stepA/survey/, 02:48Z): login05, 06, 08, 09 and 10 answered, and the root exists on each. login07 printed
+  nothing. login06 had the lowest 1-minute load (41.30).
+- Fence (stepA/fence/, login06, 02:49:01Z): FENCE CLEAR. squeue held only RDX's rdx_s1_1A (RUNNING), whose inputs are
+  outside the root (tier3-design's notice).
+- Inventory (stepA/inventory/, login06, 02:49:16Z to 02:49:23Z): ssh rc 0, the staged copy's sha256 equal to the
+  approved one, script rc 0, the /dev/shm copy removed. Python 3.6.15.
+  - root: dev 3592384858, ino 882727459953338490, uid 112498, mode 40700;
+  - 24,422 entries, 22,190 files, 3,424,040,979 bytes; listing sha256
+    6e9a273506598728091867436ef2fa562f3418f9726175d2d43bfb0ddce6ee89; problems 0 (every entry on the root's device and
+    owned by this uid, no other kinds, no symlink outside the root);
+  - clone/: 24,283 entries (2,093 directories, 22,069 files, 121 symlinks), 1,166,884,424 bytes, listing sha256
+    9a85268d4f113460ef94c682f15ca7578534ffc7ce46da1348eefd6d848fd71f;
+  - run/: 120 entries, 2,256,851,244 bytes: the 12 factor products (591,245,748 bytes), run/original-inputs (54
+    staged files, 1,617,556,047 bytes), run/mat-data (the staged MAT tree, 37,943,898 bytes), run/real-mnv-check,
+    run/prepare-check, run/staged, run/tmp and the run's records;
+  - the job's files at the top (job.out, job.rc, connect.log and the rest), tools/fence_overlap.py, and
+    .rpd-private/<hash>/prestage.json (the private prepare record, 258,133 bytes).
+
+STEP B, THE DELETION (built 2026-11-15; runs only on the director's go by sha)
+- The director's scope (2026-11-15): delete the clone, the 69 staged copies (each verified against its original's
+  recorded stat first) and the records (each digest checked). Keep in place the 12 factor products,
+  run/flux-extract.json, run/prestage.json and the .rpd-private record (until RPD-RECO closes). NEEDS.txt has the
+  reasons.
+- gen_delete.py builds flux1_delete.py (GEN-DELETE.out) from step A's committed inventory, the held-out prestage.json
+  (sha256 99528ac8..., checked; a copy stays on pscratch, kept) and the committed files the digests come from. It
+  copies step A's listing() and canon() verbatim, by AST. It classifies all 22,190 files and asserts none is left
+  over:
+  - 22,069 clone files, deleted on clone/'s listing digest 9a85268d... (a checkout of 763ab4dd);
+  - 69 staged copies, each by its recorded sha256 read with O_NOATIME. 64 have a pscratch original that must lstat
+    (no read) to its recorded stat_before size and mtime_ns. The 5 whose originals were files of the job's
+    /dev/shm repository copy were checked at generation against git blobs at 763ab4dd (equal);
+  - 37 records, each by the sha256 of its committed counterpart (run-61206960/records/, ../production-config.ready.json,
+    ../tools/fence_overlap.py; the two prepare-check copies by their originals' recorded digests);
+  - 15 files kept.
+- flux1_delete.py (sha256 eb5315459e2dd077c40d19e47eaa5f1fb2baa40f509a1289b932f24ef25c5e56) removes nothing unless
+  every check passes:
+  1. a login node;
+  2. the whole listing equals step A's (6e9a2735..., 24,422 entries), and so does clone/'s;
+  3. every staged copy and original as above;
+  4. every record's digest.
+  It then removes 26 files by literal path and 8 trees (clone, run/original-inputs, run/mat-data,
+  run/prepare-check, run/staged, run/real-mnv-check, run/tmp, tools) with shutil.rmtree, which does not follow
+  symlinks. It requires the remaining listing to be exactly the 18 kept entries. Exit 0 done; 4 STOP with nothing
+  removed; 8 the remaining tree differs; 9 a removal failed.
+- flux1_cleanup_launch.sh gains a delete mode with that sha (launcher sha256 bf6302161d94a00cebccead08ac4cad9561f33ab6bcafe90f392b98edca7eeab; the inventory mode is unchanged).
+- Tests: test_delete.py, 11 tests, OK on Python 3.12 and 3.10, with its constants replaced by a fixture's:
+  - the happy path keeps exactly the kept set and leaves the originals untouched;
+  - each STOP shows, through an audit hook on os.remove, os.rmdir and shutil.rmtree, that nothing was removed: a
+    changed staged byte, a missing original, an original's moved mtime, an extra entry, a changed record, an off-login
+    host, a symlinked root;
+  - a failed removal returns 9, and a wrong kept set returns 8;
+  - the committed script's constants are consistent with step A and the scope.
+  Deleting the STOP gate fails 4 of them. test_launch.sh case 6 stages the delete mode the same way (TEST-LAUNCH.out).
+  The script parses as Python 3.6.
+
+STEP B, THE RUN (2026-11-15, on the director's go "go eb531545 bf630216 (flux1 step B, delete mode), run once on a
+login node after the certificate, survey and fence"; stepB/)
+- Shas from main's bytes at bc56c253d: flux1_delete.py eb531545..., flux1_cleanup_launch.sh bf630216...,
+  rpd_flux1_launch.sh 8354aece..., cov2d_fence.sh 16a2a5cd.... Certificate valid to 2026-11-15T10:37:34Z (TZ=UTC
+  ssh-keygen -L, read only).
+- Survey (stepB/survey/, 03:13Z): login05, 06, 08, 09 and 10 answered, and the root exists on each. login07 printed
+  nothing. login06 had the lowest 1-minute load (38.06).
+- Fence (stepB/fence/, login06, 03:13:40Z): FENCE CLEAR. squeue held only RDX's rdx_s1_1A (RUNNING); step B lstat's
+  originals that RDX reads, which reads no contents.
+- Delete (stepB/delete/, login06, 03:14:05Z to 03:14:21Z): ssh rc 0, the staged copy's sha256 equal to the approved
+  one, script rc 0, the /dev/shm copy removed. Python 3.6.15.
+  - listing: 24,422 entries, sha256 6e9a2735..., equal to step A's; clone/ 9a85268d..., equal; problems 0;
+  - checks passed at 03:14:13Z: 69 of 69 staged copies equal to their recorded digests, with 64 pscratch originals
+    present at their recorded size and mtime and 5 committed in git; 37 of 37 records equal to their committed
+    counterparts;
+  - removed 26 files by literal path, then the 8 trees, with no removal error;
+  - after: 18 entries, exactly the kept set: run/, the 12 factor products, run/flux-extract.json, run/prestage.json,
+    and .rpd-private/ with its hash directory and record. "DELETE :: DONE end 2026-11-15T03:14:21Z".
+- About 2.83 GB freed. 0 node-h, no Slurm job.
+
+FOLLOW-UP (the director, 2026-11-15)
+- F-KEEP-HPSS: the kept files (the 12 factor products, flux-extract.json, prestage.json, about 592 MB) are exposed to
+  pscratch's purge, and P0 pins them by sha256. They should get an HPSS copy before the purge window, in a separate
+  package when convenient. The .rpd-private record is deleted when RPD-RECO closes.
 
 Nothing is submitted, deposited or tagged, and no file leaves the repository.
 <!-- absence-ok: the document's own status line -->

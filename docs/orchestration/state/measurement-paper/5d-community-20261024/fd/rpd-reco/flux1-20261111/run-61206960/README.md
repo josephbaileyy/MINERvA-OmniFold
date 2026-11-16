@@ -148,5 +148,11 @@ The root `/pscratch/sd/j/josephrb/rpd-reco-flux-20261111` stays in place: the 12
 the clone and the private record. They are deleted after this receipt merges, by a separate connect under a ledger
 row.
 
+**Update, 2026-11-15:** the cleanup ran in two connects on the director's go
+([`../delete-20261115/README.txt`](../delete-20261115/README.txt)). The clone, the staged copies and the records are
+deleted. The 12 factor products, `run/flux-extract.json`, `run/prestage.json` and the private record stay, because
+RPD-RECO's pending P0 reads the products and the extract (`../delete-20261115/NEEDS.txt`). Follow-up F-KEEP-HPSS: an
+HPSS copy of the kept files before pscratch's purge window.
+
 Nothing is submitted, deposited or tagged.
 <!-- absence-ok: the document's own status line -->

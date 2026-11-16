@@ -1,0 +1,19 @@
+2,9c2,10
+< # Stat-only atime reading of LL5D's 1146 snapshot paths, around the G2R envtest (the director's empirical overlap check,
+< # 2026-11-13: if any listed path's atime moves, the overlap fence change is void and it is a STOP to the director).
+< # The list is column 2 of the pilot r2 atime-pre.tsv on pscratch, pinned by the sha256 that #1123's node-sha256.txt
+< # records. stat opens no listed file, so it moves no listed atime. It is a list, not a find (the r2 atime-post's find
+< # took 78 min). Output: one "atime_seconds<TAB>path" line per listed path, sorted by path in the C locale, then a closing
+< # summary line. Run on a login node:  ssh saul.nersc.gov 'bash -s' < atime-stat-list.sh > <out>
+< L=/pscratch/sd/j/josephrb/ll5d-pilot-r2/atime-pre.tsv
+< WANT=712ac1624d8a1527d360eaacb7cbd8255669c9bb9c7ca98f11ace9450598f92e
+---
+> # Stat-only atime-post for the LL5D bulk (ll5d-bulk-r1). It reads the atime of each of the 1146 paths in the bulk's own
+> # atime-pre.tsv, /pscratch/sd/j/josephrb/ll5d-bulk-r1/atime-pre.tsv (sha256 908d3922..., 1146 lines), pinned below.
+> # stat opens no listed file, so it moves no listed atime. It works from the list rather than a find (the pilot r2
+> # atime-post's find took 78 min; this list's stat took 1 s around the G2R envtest). Output: one
+> # "atime_seconds<TAB>path" line per listed path, sorted by path in the C locale, then a closing summary line. The
+> # comparison with atime-pre is done locally on the fetched output, not here.
+> # Run on a login node:  ssh saul.nersc.gov 'bash -s' < atime-post-bulk.sh > <out>
+> L=/pscratch/sd/j/josephrb/ll5d-bulk-r1/atime-pre.tsv
+> WANT=908d3922e81fa25eff7e61932ed690fc55a1cd8f04c5b26dbc1905c5b0da04f3
