@@ -1,0 +1,43 @@
+host=login02 start=2026-11-16T08:27:13Z pid=2247591 PKG=c450f2b46a771dba014e6acdd0a8190818a46710 nproc=244 OMP_NUM_THREADS=unset
+squeue rc=0: [JOBID|NAME|STATE|TIME_LIMIT|NODES]
+sacct rdx_s1_1A rc=0: [61315648|rdx_s1_1A|COMPLETED|2026-11-14T20:24:41]
+sacct all since 2026-11-01 rc=0: 156 rows
+fence (start) clear: every query rc 0, rdx_s1_1A ended, no job queued, running or unended, group C marker absent
+deploy porcelain_lines=0 head=c450f2b46a771dba014e6acdd0a8190818a46710
+nd-unfolding/fd_xcov.py: OK
+nd-unfolding/fd_xcov_steps.py: OK
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/g2r/xk/xk_copy.py: OK
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/g2r/xk/xk_compare.py: OK
+python 3.10.19
+numpy 2.2.6
+uproot 5.6.9
+executable /global/homes/j/josephrb/.conda/envs/omnifold_py310/bin/python
+login02
+244
+universes file sha256 220c479efa9751116fd396ea32398de5631f8b755e6b16a94ce090975f011418 (X's pin 220c479efa9751116fd396ea32398de5631f8b755e6b16a94ce090975f011418)
+XK-COPY OK: 112 files to 2 destination(s), each equal to fd/xcov/run/hpss/files.sha256
+control start=2026-11-16T08:31:49Z
+control rc=0 end=2026-11-16T08:31:56Z
+{"wrote": "/pscratch/sd/j/josephrb/cov2d-xk-g2r-20261116/ctl/k/k.json", "sha256": "f3dc2a3483a4c7015cf3831132f6c2059f61bc03ddfb736d306260b9d8aaf6c2"}
+[K] A: agree
+k wall 7.12 s rss 1560576 KB
+XK-CONTROL PASS: 0 difference(s); bytes identical
+squeue rc=0: [JOBID|NAME|STATE|TIME_LIMIT|NODES]
+sacct rdx_s1_1A rc=0: [61315648|rdx_s1_1A|COMPLETED|2026-11-14T20:24:41]
+sacct all since 2026-11-01 rc=0: 156 rows
+fence (before the g2r arm) clear: every query rc 0, rdx_s1_1A ended, no job queued, running or unended, group C marker absent
+g2r start=2026-11-16T08:31:57Z
+g2r rc=0 end=2026-11-16T08:32:03Z
+{"wrote": "/pscratch/sd/j/josephrb/cov2d-xk-g2r-20261116/run/k/k.json", "sha256": "204e4c893992889bc06f16f83e7d4018f94fe2e9a9334e9891c73b98abfd18af"}
+[K] A: agree
+k wall 6.21 s rss 1527808 KB
+deploy porcelain after: 0
+8ae8ab1e756cc158a32a63c39cabdd9c0a06f4b7b849cefd269ac8e8764aa594  environment.txt
+8e77a3fe172317eb38a3586f00417e81bf9c61e8ab005b89aba14c186e20b406  code.sha256
+f3dc2a3483a4c7015cf3831132f6c2059f61bc03ddfb736d306260b9d8aaf6c2  ctl/k/k.json
+204e4c893992889bc06f16f83e7d4018f94fe2e9a9334e9891c73b98abfd18af  run/k/k.json
+a1e0614b718ab8339f48681aa0891d719d60bd7fa89915f0e16bd8359c3e4721  logs/ctl-k.log
+0a165e15382200c185f70c60ff3f307abc9eba1563060684a505a34b3809728f  logs/g2r-k.log
+94a5b364fa60649080c1aa1fa3eb23c86f38fffb2ed42a2bd39400f07427dc87  logs/ctl-compare.out
+4d7b6daa97728d42bb825bff3fe78255414eebe900cbf65c371152641ab3d9ac  logs/copy.out
+XK PASS: control reproduced the committed k.json; g2r arm rc 0
