@@ -1,0 +1,22 @@
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+wrote ['fig1_validation.pdf', 'fig2_joint_localization.pdf', 'fig3_generator_context.pdf']
+cov2d_Q_205.npz and budget_Q.json match step A SHA256SUMS
+values file sha256 a5d37f06261ddbd8db7b5e3f8a7bc15938765475f664f5261a4a27fc4ba0e92a uqMedian 6.45
+checks passed: cells, diag(Q) = diag(S5) + diag(C_PL), per-cell sigma vs combination.json; {'median': 6.44790002221861, 'p84': 9.183913776753062, 'max': 23.636160075468148}
