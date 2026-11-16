@@ -85,3 +85,29 @@ overlap --arm refined` on route A's Q_R. Its control first reproduced step C-R e
 - `g2r_ledger.py check` and `--self-test` now run both sets. Both PASS, and each K row's new file is sha-checked
   against out.sha256.txt.
 - director-helper-3's D1 commit repoints the same READOUTS entry on the paper branch, so the cr-* keys match.
+
+## The xk re-key (2026-11-16)
+
+**Under** the director's XCOV ruling and request of 2026-11-16. #1170 (main d04c7c4f) re-ran GENCMP X's step K with
+`--products g2r` on COV2D-G2R's products. Its control reproduced step K's readout byte for byte (f3dc2a34). The new
+readout is `fd/receipts-cov2d/g2r/xk/run/node/run/k/k.json` (204e4c89…), listed in `run/node/out.sha256.txt`.
+
+**The re-key.** `make_values_fived16.py` READOUTS["xk"] is repointed and values_fived16.tex regenerated.
+- 19 of 3617 values change, each in its last printed digits. Every outcome is still "agree".
+- The band counts (34 paired, 38 in all, 4 bounded), the lateral count and the implied correlations are unchanged.
+- x-chi2-hi, the printed bound, becomes 1.24, a value the paper's sentence already used.
+- `--check` and `--self-test` both PASS.
+
+**The hand-typed readings** in sec_fived16.tex, checked against the new readouts and now asserted in
+make_values_fived16.py:
+- "the largest |z| is x-zmax, in QC at r = 1": 0.9813, QC at r = 1. This is a new assert.
+- the implied-correlation range "QC–QA" at both ends: QC 0.7688/0.9588 is lowest, QA 0.9181/0.9921 highest. The
+  assert was already there.
+- :47's "QA at every rho and the others below correlations of QC to QB" (cr): QA has rho* 1.00032 > 1, and QC 0.99016
+  and QB 0.99975 are the lowest and highest of the other three. This is a new assert.
+Each new assert was mutation-tested: one changed field in a copy of the readout kills it, and the real readouts are
+silent.
+
+**The xk ledger:** `ANCHORS-xk.tsv` has 18 K rows. The max-|z| keys read their maximum's position, the same in both
+readouts. x-chi2-hi is a rounded-up bound, so it is checked by make_values' own assertion. `ledger-xk.tsv` is built
+against the pre-regeneration text. `g2r_ledger.py check` and `--self-test` run all three sets and PASS.

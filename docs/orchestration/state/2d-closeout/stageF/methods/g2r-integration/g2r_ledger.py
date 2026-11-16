@@ -21,7 +21,7 @@ ANCHORS.tsv rows, one per printed value:
   K <id> <file> <old json> <new json> <dotted key> <scale> <format> <sums file> <entry> <anchor>
      as J, with the two files named (repository-relative) and the new one checked against <sums file>'s <entry>.
      A make_values-generated value (values_fived16.tex) is re-keyed by its generator; its K row checks the result.
-Sets: ANCHORS.tsv / ledger.tsv (the G2R re-key) and ANCHORS-cr.tsv / ledger-cr.tsv (the cr re-key, #1169). build
+Sets: ANCHORS.tsv / ledger.tsv (the G2R re-key) and ANCHORS-cr.tsv / ledger-cr.tsv (the cr re-key, #1169) and ANCHORS-xk.tsv / ledger-xk.tsv (the xk re-key, #1170). build
 and apply take --set cr; check and --self-test run every set.
 <file> is relative to docs/analysis-note. <anchor> is printed text (LaTeX comments removed, whitespace collapsed)
 that occurs exactly once in <file> before the re-key and contains the old value exactly once.
@@ -116,7 +116,8 @@ def values(repo, row, which):
     return format(float(scale) * jget(base / jf, key), fmt), jf, key
 
 
-SETS = {"main": ("ANCHORS.tsv", "ledger.tsv"), "cr": ("ANCHORS-cr.tsv", "ledger-cr.tsv")}
+SETS = {"main": ("ANCHORS.tsv", "ledger.tsv"), "cr": ("ANCHORS-cr.tsv", "ledger-cr.tsv"),
+        "xk": ("ANCHORS-xk.tsv", "ledger-xk.tsv")}
 SET = "main"
 
 

@@ -3653,10 +3653,12 @@ docs/orchestration/state/2d-closeout/stageF/methods/fived16/writer/WRITER-BRIEF.
 docs/orchestration/state/2d-closeout/stageF/methods/fived16/writer/abstract-proposals.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/stageF/methods/fived16/writer/changes-W.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/stageF/methods/g2r-integration/ANCHORS-cr.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/g2r-integration/ANCHORS-xk.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/g2r-integration/ANCHORS.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/g2r-integration/README.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/stageF/methods/g2r-integration/g2r_ledger.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/g2r-integration/ledger-cr.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/g2r-integration/ledger-xk.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/g2r-integration/ledger.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/g2r-integration/reads/pass1-prompt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/g2r-integration/reads/pass1-records.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes

@@ -89,7 +89,10 @@ READOUTS = {
     # Q_R (fd/receipts-cov2d/g2r/cr/README.md; run/node/out.sha256.txt lists it). Before, GENCMP step C-R on partc-r2's
     # Q_R: fd/gencmp-e/c-r/overlap_refined.json (f1f2fb78)
     "cr": (f"{FD}/fd/receipts-cov2d/g2r/cr/run/node/g2r/overlap_refined.json", "0734cf4a"),
-    "xk": (f"{FD}/fd/xcov/run/k/k.json", "f3dc2a34"),
+    # xk under C_new (the director's XCOV ruling, 2026-11-16): #1170's `k --products g2r`, GENCMP X step K on COV2D-G2R's
+    # products (fd/receipts-cov2d/g2r/xk/README.md; run/node/out.sha256.txt lists it; its control reproduced f3dc2a34 byte
+    # for byte). Before, step K as it ran: fd/xcov/run/k/k.json (f3dc2a34)
+    "xk": (f"{FD}/fd/receipts-cov2d/g2r/xk/run/node/run/k/k.json", "204e4c89"),
     # the run-period diagnosis's readout (FD-RPD-DECLARATION.md sec. 5; DECISION-20261104-joseph-rpd-sentence.md item 2),
     # computed once from the per-playlist unfolds, so both arms read the same file
     "rpd": (f"{FD}/fd/receipts-rpd/run/readout/fd_rpd.json", "c0b06cfd"),
@@ -523,6 +526,13 @@ def quadrant_values(d):
         v[f"cr-{n}-nopl-reading"], v[f"cr-{n}-nopl-rhostar"] = word[o["outcome"]], f"{o['rho_star']:.4f}"
         # "agree" is |d| within the any-correlation band (rho* above 1); "agree below a correlation", rho* at most 1
         assert (t["outcome"] == "agree") == (t["rho_star"] > 1) and (o["outcome"] == "agree") == (o["rho_star"] > 1)
+    # sec_fived16.tex :47 names the readings by hand: "All four agree, QA at every rho and the others below correlations of
+    # cr-QC-rhostar (QC) to cr-QB-rhostar (QB)". Guard each named choice, so a readout that changes one stops the run
+    oc = {n: q[n]["2D"]["outcome"] for n in Q}
+    assert oc["QA"] == "agree" and all(oc[n] == "agree below a correlation" for n in ("QB", "QC", "QD")), \
+        "sec_fived16 :47's readings changed: QA at every rho, the others below a correlation"
+    rs = {n: q[n]["2D"]["rho_star"] for n in ("QB", "QC", "QD")}
+    assert min(rs, key=rs.get) == "QC" and max(rs, key=rs.get) == "QB", "sec_fived16 :47's rho* range (QC to QB) changed"
     # the paper: "the sums differ by -1.5 to +0.7 per cent"
     pct = [q[n]["2D"]["d_pct"] for n in Q]
     assert min(pct) < 0 < max(pct), "the paper prints a signed range of the quadrant differences"
@@ -580,6 +590,8 @@ def quadrant_values(d):
         "a printed bound is not a bound: chi2 <= x-chi2-hi and p >= x-p-min must hold"
     zmax = max(abs(z) for r in ("r0", "r1") for z in p[r]["z"])
     assert zmax < 1, "the paper says no quadrant lies beyond one standard deviation"
+    # sec_fived16.tex names where it lies: "the largest |z| is x-zmax, in QC at r = 1"
+    assert abs(p["r1"]["z"][Q.index("QC")]) == zmax, "the largest |z| is no longer QC's at r = 1, as sec_fived16 says"
     v["x-zmax"] = f"{zmax:.3f}"
     return v
 
