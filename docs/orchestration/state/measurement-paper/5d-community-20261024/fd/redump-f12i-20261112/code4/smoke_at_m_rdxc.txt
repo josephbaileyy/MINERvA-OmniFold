@@ -1,0 +1,37 @@
+# the smoke at HEAD d76b932c75f5912a8d1a57061dee274055ef4306 with nd-unfolding/rdx/rdx_connect.sh replaced by M_RDXC's (11e36cf1a5643ef6db2d480f3d345364d3247592, sha256 eae946894be8ce02354e8bd6aaf038d78bd8f574772a359b90eaeb0d1dfd985d), 2026-11-17T01:32:09Z
+# only the c2 and m cases are shown; the SYSPY stub refuses -c as /usr/bin/python3 (3.6) fails the module's import
+## connect c2 with a checker python that has no uproot
+STOP: the checker python <w>/chkstub cannot import uproot, numpy, omnifile_io and compare_omnifiles
+== rdx connect c2 rc=8 2026-11-17T01:32:16Z
+  sbatch called: no
+## connect c2 with a zero loop off its pin
+checker python <py> 3.12.2: numpy 1.26.4, uproot 5.6.2
+STOP: no zero-loop pin for 1A
+== rdx connect c2 rc=8 2026-11-17T01:32:16Z
+  sbatch called: no
+## connect c2 with a failing alignment
+checker python <py> 3.12.2: numpy 1.26.4, uproot 5.6.2
+STOP: no zero-loop pin for 1A
+== rdx connect c2 rc=8 2026-11-17T01:32:17Z
+  sbatch called: no
+## connect c2 passes
+checker python <py> 3.12.2: numpy 1.26.4, uproot 5.6.2
+STOP: no zero-loop pin for 1A
+== rdx connect c2 rc=8 2026-11-17T01:32:17Z
+  sbatch called: no
+  staged zero loops: 0; c2 records: 0; c1's align_1A.json: {"verdict": "PASS"}
+## connect c2 refuses a second run
+checker python <py> 3.12.2: numpy 1.26.4, uproot 5.6.2
+STOP: no zero-loop pin for 1A
+== rdx connect c2 rc=8 2026-11-17T01:32:17Z
+  sbatch called: no
+## connect m with a checker python that has no uproot
+STOP: no loops.sha256
+== rdx connect m rc=8 2026-11-17T01:32:18Z
+  sbatch called: no
+## connect m reads MP-1's pins and submits
+STOP: no loops.sha256
+== rdx connect m rc=8 2026-11-17T01:32:18Z
+  sbatch called: no
+## connect cm with a checker python that has no uproot
+# exit 0

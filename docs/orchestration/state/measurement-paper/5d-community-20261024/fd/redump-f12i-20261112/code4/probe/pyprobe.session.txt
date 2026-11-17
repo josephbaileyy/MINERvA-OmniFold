@@ -1,0 +1,18 @@
+node login27 2026-11-17T01:17:20Z
+deploy HEAD ad0535c4a62ac0a20711a4a00f2266ddaf926d7c porcelain 0
+fd_ct_period_inputs.py sha256 4d005f265ea6abf4ee7cfec988fe7c06553556ca7984387929f77409dfc244b1
+== 1. /usr/bin/python3 -V
+Python 3.6.15
+rc=0
+== 2. line 192 under SYSPY
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/pscratch/sd/j/josephrb/rdx-20261112b/deploy/nd-unfolding/fd_ct_period_inputs.py", line 37
+    from __future__ import annotations
+    ^
+SyntaxError: future feature annotations is not defined
+rc=1
+== 3. line 192 under CHKPY
+2745e38c45a50fa644e32913c6d8bc9763edc96e21b6d058cde4dbee6714c192
+rc=0
+deploy porcelain after 0
