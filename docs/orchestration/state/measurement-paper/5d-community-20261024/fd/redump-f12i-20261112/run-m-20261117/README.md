@@ -17,7 +17,7 @@ banner.
   - `squeue --me` was empty (102-103).
 - **What it wrote:** `out/gates/merge.ok`, with the lines `pin=ad0535c4a62ac0a20711a4a00f2266ddaf926d7c`,
   `limit=0:45:00` and `utc=2026-11-17T02:37:55Z` (104-106). gmerge STOPs if the gate file is already there
-  (`rdx_connect.sh:98` at M_RDXC, the same line at M_RDXD), and it exited rc 0, so this run created it.
+  (`rdx_connect.sh:100` at M_RDXD), and it exited rc 0, so this run created it.
 - **Exit codes:** launcher, ssh and script all rc 0 (1, 107-109).
 - **Charge:** none (no job).
 
