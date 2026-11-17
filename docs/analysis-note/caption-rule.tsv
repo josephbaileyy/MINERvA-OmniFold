@@ -1,0 +1,7 @@
+# check_caption_rule.py's rules file: label<TAB>exempt|development<TAB>reason (COMBINED-PLAN sec. 3(b), the caption rule).
+# development: the caption begins "Development check:" (rule 1). exempt: no error-model stamp applies (rule 2); the reason says why.
+# A caption owner adds an exempt row with its reason; a row whose label no figure carries fails the check.
+fig:gbdt-recovery	development	a development test of the five-dimensional estimator (sec_5d.tex, the precision study)
+fig:gbdt-bias-spread	development	a development test of the five-dimensional estimator (sec_5d.tex, the precision study)
+fig:gbdt-coverage	development	a development test of the five-dimensional estimator (sec_5d.tex, the precision study)
+fig:gbdt-prior	development	a development test of the five-dimensional estimator (sec_5d.tex, the precision study)

@@ -1,0 +1,9 @@
+id	kind	from (file:line at 2fe070fec)	to	text_sha256	receiving_lane	note
+H3-001	input-order	main_note.tex:104 \input{sec_fived16}	main_note.tex, before \input{sec_5d}	-	-	DECISION-20261117b item 3: the sixteen-cell section ahead of the 5D development tests; no text moves, the file is unchanged
+H3-002	input-order	main_note.tex:106 \input{sec_fps}	main_note.tex, after \input{app_devhistory} (App. J)	-	-	DECISION-20261117b item 3: the extended-fiducial study to App. J; no text moves; \S\ref{sec:fps} now prints "§J" (my file fixed to App.~\ref; other owners notified)
+H3-003	framing-delete	sec_execsummary.tex:6 ", which cites it." and "It holds the diagnostics to which the paper and Supplement point."	(deleted)	-	-	framing map A6: pointers to the shelved paper and Supplement (DECISION-20261117 item 2); no limitation of this note
+H3-004	framing-delete	sec_execsummary.tex:8 "The work is a methods and benchmark study of that unfolding." and "as in the methods paper"	(deleted)	-	-	framing map A7 (document level and [W]); the carbon comparison is the note's own (DECISION-20261116 item 30; sec_fived16.tex states it)
+H3-005	framing-delete	sec_execsummary.tex:79 "The methods paper does not report this correction."	(deleted)	-	-	framing map A13: describes the shelved paper; the CH-correction caveats of this note are kept
+H3-006	framing-delete	sec_intro.tex:40 "The methods paper and its Supplement cite this note for technical detail (p.~\pageref{sec:execsummary})."	(deleted)	-	-	framing map A14: pointer to the shelved paper
+H3-007	framing-replace	app_release.tex:44 "before the methods paper is submitted"	"before the note is submitted"	-	-	DECISION-20261117b item 5 (A19); the DOI hold is kept
+H3-008	units	app_release.tex:65, :86, :89 the unit of q_3	GeV -> GeV/c	-	-	the director's ruling of 2026-11-17: q_3 in GeV/c throughout, like pT and p_par; units only, the same numeric tokens

@@ -110,6 +110,8 @@ evloop3d_*.err
 # LaTeX build artifacts
 *.aux
 *.toc
+*.lof
+*.lot
 *.synctex.gz
 *.fls
 *.fdb_latexmk
