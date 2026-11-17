@@ -11,7 +11,8 @@
 #   c1  O_NOATIME copy of S0's base_cv.root; C-ALIGN-1A; C-TRUTHX; the z3 walk-timing probe.
 #   s2  submit the other eleven playlists (rdx_s2_<PL>), each behind its own cap gate; needs c1's PASSes and the
 #       director's gates/s2.ok naming PIN.
-#   c2  per playlist: O_NOATIME copy of S1's zero loop, C-ALIGN-PL, C-TRUTHX; writes out/loops.sha256 only if all pass.
+#   c2  the policy check over its 24 reads; per playlist: O_NOATIME copy of S1's zero loop, C-ALIGN-PL, C-TRUTHX, into
+#       checks/*_<PL>_pl.json (never c1's names); writes out/loops.sha256 only if all pass.
 #   m   O_NOATIME copies of lat_zero.npz and lat_zero_bkg.npz; submit the merge job (rdx_s2_merge, LIMIT from
 #       gates/merge.ok, set from the probe).
 #   cm  C-TRUTHX-NPZ on the merged dump and sidecar; requires k1.json's PASS.
@@ -36,7 +37,8 @@ PLS="1A 1B 1C 1D 1E 1F 1G 1L 1M 1N 1O 1P"
 PY=/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3
 CHKPY=/global/homes/j/josephrb/.conda/envs/omnifold_py310/bin/python   # align, rows, truthx_npz: uproot + numpy, no ROOT
 # (root_6_28 has PyROOT but no uproot: the c1 STOP of 2026-11-15); the walk probe stays under setup_salloc_env
-SYSPY=/usr/bin/python3
+SYSPY=/usr/bin/python3   # 3.6.15 on the login nodes: only rdx_paths.py and rdx_cap.py, never -c or a deploy module
+# (fd_ct_period_inputs.py needs 3.7+ and numpy: the probe of 2026-11-17); its pins are read under CHKPY, behind chkenv
 REPO=https://github.com/josephbaileyy/MINERvA-OmniFold.git
 POLICY_REL=docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/prologue5-20261108/policy-config.json
 FENCE='^(cov2d|t2a|ll5d|e96data|rpd_|rsn_|rdx_)'   # s1 and m: no other rdx_ job either
@@ -185,14 +187,17 @@ EOF
 c2)
   chkenv; mkdir -p "$OUT/checks" "$OUT/stage/zero"
   [ ! -e "$OUT/loops.sha256" ] || stop "$OUT/loops.sha256 exists"
+  READS=(); for pl in $PLS; do READS+=("$ZERO/runEventLoopOmniFold_5D_${pl}_zero.root" "$OUT/evloop/runEventLoopOmniFold_RDX_${pl}.root"); done
+  policy "${READS[@]}"
   ok=1; : > "$OUT/checks/loops.sha256.partial"
   for pl in $PLS; do
     F=$OUT/evloop/runEventLoopOmniFold_RDX_${pl}.root; [ -s "$F" ] || stop "no output for $pl"
     Z=$ZERO/runEventLoopOmniFold_5D_${pl}_zero.root
-    ZSHA=$($SYSPY -I -B -c "import sys; sys.path.insert(0, sys.argv[1]); import fd_ct_period_inputs as C; print(C.ZERO_LOOPS[sys.argv[2]])" "$DEP/nd-unfolding" "$pl") || stop "no zero-loop pin for $pl"
+    ZSHA=$($CHKPY -I -B -c "import sys; sys.path.insert(0, sys.argv[1]); import fd_ct_period_inputs as C; print(C.ZERO_LOOPS[sys.argv[2]])" "$DEP/nd-unfolding" "$pl") \
+      && [[ "$ZSHA" =~ ^[0-9a-f]{64}$ ]] || stop "no zero-loop pin for $pl"
     [ -e "$OUT/stage/zero/$(basename "$Z")" ] || $SYSPY -I -B "$R/rdx_paths.py" stage --dest "$OUT/stage/zero" "$Z" "$ZSHA" || stop "staging $Z"
-    $CHKPY -I -B "$R/rdx_align.py" "$OUT/stage/zero/$(basename "$Z")" "$F" --out "$OUT/checks/align_$pl.json" || ok=0
-    $CHKPY -I -B "$R/rdx_truthx_rows.py" "$F" --out "$OUT/checks/truthx_rows_$pl.json" || ok=0
+    $CHKPY -I -B "$R/rdx_align.py" "$OUT/stage/zero/$(basename "$Z")" "$F" --out "$OUT/checks/align_${pl}_pl.json" || ok=0
+    $CHKPY -I -B "$R/rdx_truthx_rows.py" "$F" --out "$OUT/checks/truthx_rows_${pl}_pl.json" || ok=0
     echo "$(sha256sum "$F" | cut -d' ' -f1)  $(basename "$F")" >> "$OUT/checks/loops.sha256.partial"
   done
   [ $ok -eq 1 ] || stop "a per-playlist check did not pass (loops.sha256 not written)"
@@ -203,7 +208,8 @@ m)
   grep -qx "pin=$PIN" "$OUT/gates/merge.ok" 2>/dev/null && [ -n "$LIMIT" ] && grep -qx "limit=$LIMIT" "$OUT/gates/merge.ok" \
     || stop "no gates/merge.ok naming $PIN and limit $LIMIT"
   policy "$LATD/lat_zero.npz" "$LATD/lat_zero_bkg.npz" "$OUT/evloop"
-  read -r LZ LB < <($SYSPY -I -B -c "import sys; sys.path.insert(0, sys.argv[1]); import fd_ct_period_inputs as C; print(C.MP1_ZERO['lat_npz'], C.MP1_ZERO['lat_bkg'])" "$DEP/nd-unfolding")
+  chkenv
+  read -r LZ LB < <($CHKPY -I -B -c "import sys; sys.path.insert(0, sys.argv[1]); import fd_ct_period_inputs as C; print(C.MP1_ZERO['lat_npz'], C.MP1_ZERO['lat_bkg'])" "$DEP/nd-unfolding")
   [[ "$LZ" =~ ^[0-9a-f]{64}$ && "$LB" =~ ^[0-9a-f]{64}$ ]] || stop "could not read MP-1's lat_zero pins"
   for pair in "lat_zero.npz $LZ" "lat_zero_bkg.npz $LB"; do
     set -- $pair; [ -e "$OUT/stage/$1" ] || $SYSPY -I -B "$R/rdx_paths.py" stage --dest "$OUT/stage" "$LATD/$1" "$2" || stop "staging $1"

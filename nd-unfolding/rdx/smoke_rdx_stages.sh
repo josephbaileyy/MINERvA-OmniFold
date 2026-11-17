@@ -2,10 +2,12 @@
 # Local smoke of RDX's launcher tranche (macOS or Linux; never connects, never submits). Usage:
 #   bash smoke_rdx_stages.sh <new empty work dir>
 # A tiny git deploy holds what the three job scripts read from it (manifests, the AnaTuple table, rdx_tasks.tsv, the
-# inputs sums, pv-ladder's prep sums, a stand-in fd_ct_period_inputs.py whose MP1_ZERO pins the smoke's own lat_zero
-# files); fake AnaTuples, dumps and gates sit under the work dir. Each job script runs in its own RDX_SMOKE mode. The
-# connect runs as a copy with only its constants pointed at the work dir, a stub python path set to python3, and stubs
-# for hostname, squeue, sacct and sbatch.
+# inputs sums, pv-ladder's prep sums, a stand-in fd_ct_period_inputs.py whose MP1_ZERO and ZERO_LOOPS pin the smoke's
+# own lat_zero files and zero loops, and which starts with the real module's `from __future__ import annotations`);
+# fake AnaTuples, dumps and gates sit under the work dir. Each job script runs in its own RDX_SMOKE mode. The connect
+# runs as a copy with only its constants pointed at the work dir, stub pythons, and stubs for hostname, squeue, sacct
+# and sbatch. The SYSPY stub stands in for the login nodes' /usr/bin/python3 (3.6.15): it runs rdx_paths.py and
+# rdx_cap.py only and refuses -c, so a pin read moved back to SYSPY fails here as it would on the node.
 W=${1:?work dir}
 HERE=$(cd "$(dirname "$0")" && pwd)
 [ -d "$W" ] && [ -z "$(ls -A "$W")" ] || { echo "STOP: $W is not a new empty directory"; exit 9; }
@@ -42,7 +44,7 @@ for f in lat_RDX_ALL.npz lat_RDX_ALL_bkg.npz truthx_RDX_ALL.npz; do echo "$f" > 
 (cd "$W/B/out/dumps" && sha256sum lat_RDX_ALL.npz lat_RDX_ALL_bkg.npz truthx_RDX_ALL.npz | sed 's/  /  .\//') > "$D/nd-unfolding/rdx/rdx-inputs-SHA256SUMS"
 echo lz > "$W/mp1lat/lat_zero.npz"; echo lb > "$W/mp1lat/lat_zero_bkg.npz"; echo tune > "$W/prep/ratios/L-5D-PV/tune_v1.json"
 echo "$(sha256sum "$W/prep/ratios/L-5D-PV/tune_v1.json" | cut -d' ' -f1)  ./ratios/L-5D-PV/tune_v1.json" > "$D/nd-unfolding/pv-ladder/prep-SHA256SUMS"
-printf 'MP1_ZERO = {"lat_npz": "%s", "lat_bkg": "%s"}\n' "$(sha256sum "$W/mp1lat/lat_zero.npz" | cut -d' ' -f1)" \
+printf 'from __future__ import annotations\nMP1_ZERO = {"lat_npz": "%s", "lat_bkg": "%s"}\n' "$(sha256sum "$W/mp1lat/lat_zero.npz" | cut -d' ' -f1)" \
   "$(sha256sum "$W/mp1lat/lat_zero_bkg.npz" | cut -d' ' -f1)" > "$D/nd-unfolding/fd_ct_period_inputs.py"
 cp "$HERE/rdx_tasks.tsv" "$D/nd-unfolding/rdx/"
 git -C "$D" init -q && git -C "$D" add -A && git -C "$D" -c user.name=s -c user.email=s@invalid commit -q -m smoke
@@ -91,6 +93,9 @@ ln -s "$D" "$W/B/deploy"; rm -f "$W/B/out/gates/merge.ok"
 mkdir -p "$W/mp1/s0/evloop" "$W/mp1/s1/evloop/zero" "$W/mp1/s1/lateral" "$W/B/build"
 echo cv > "$W/mp1/s0/evloop/base_cv.root"
 for pl in 1A 1B 1C 1D 1E 1F 1G 1L 1M 1N 1O 1P; do echo z > "$W/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_${pl}_zero.root"; done
+{ printf 'ZERO_LOOPS = {'; for pl in 1A 1B 1C 1D 1E 1F 1G 1L 1M 1N 1O 1P; do
+    printf '"%s": "%s", ' "$pl" "$(sha256sum "$W/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_${pl}_zero.root" | cut -d' ' -f1)"; done
+  printf '}\n'; } >> "$D/nd-unfolding/fd_ct_period_inputs.py"
 cp "$W/mp1lat/"*.npz "$W/mp1/s1/lateral/"
 echo "$MD5  $W/B/build/bld_rdx/runEventLoopOmniFold" > "$W/B/build/MANIFEST.md5"; mkdir -p "$W/B/build/bld_rdx"; cp "$W/rdx.bin" "$W/B/build/bld_rdx/runEventLoopOmniFold"
 # the policy file is the COMMITTED one at the path the connect names (stubs may override contents, never existence)
@@ -137,6 +142,16 @@ case "$*" in
 esac
 PROBESTUB
 chmod +x "$W/pystub" "$W/chkstub" "$W/bin/python"
+cat > "$W/syspy" <<'SYSPY'
+#!/bin/bash
+# stands in for /usr/bin/python3 (3.6.15 on the login nodes): runs only rdx_paths.py and rdx_cap.py, never -c or stdin
+# (the deploy's fd_ct_period_inputs.py needs 3.7+: the probe of 2026-11-17); drops -I -B; on macOS gives os an
+# O_NOATIME of 0 (Linux has the real flag)
+while [ "$1" = -I ] || [ "$1" = -B ]; do shift; done
+case "$1" in */rdx_paths.py|*/rdx_cap.py) ;; *) echo "syspy: refused '$1' (the 3.6 python runs rdx_paths.py and rdx_cap.py only)" >&2; exit 1 ;; esac
+exec python3 -c 'import os, runpy, sys; os.O_NOATIME = getattr(os, "O_NOATIME", 0); sys.argv = sys.argv[1:]; runpy.run_path(sys.argv[0], run_name="__main__")' "$@"
+SYSPY
+chmod +x "$W/syspy"
 # the env stub exports every name setup_salloc_env.sh is measured to add (setup_salloc_env.exports), BUILD with conda's
 # real value, so a launcher variable it would clobber fails here as it did on login27 (the s0 STOP of 2026-11-12)
 while read -r v; do
@@ -150,7 +165,7 @@ src, dst, w = sys.argv[1:4]
 s = open(src).read()
 for a, b in (("B=/pscratch/sd/j/josephrb/rdx-20261112b", f"B={w}/B"), ("CANON=/pscratch/sd/j/josephrb/MINERvA-OmniFold", f"CANON={w}/canon"),
              ("MP1=/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1", f"MP1={w}/mp1"),
-             ("PY=/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3", f"PY={w}/pystub"), ("SYSPY=/usr/bin/python3", "SYSPY=python3"),
+             ("PY=/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3", f"PY={w}/pystub"), ("SYSPY=/usr/bin/python3", f"SYSPY={w}/syspy"),
              ("CHKPY=/global/homes/j/josephrb/.conda/envs/omnifold_py310/bin/python", f"CHKPY={w}/chkstub"),
              ('case "$(hostname -s)" in login[0-9][0-9])', 'case "${FAKE_HOST:-login27}" in login[0-9][0-9])')):
     assert s.count(a) == 1, a
@@ -174,6 +189,19 @@ echo "## connect c1 with a failing alignment";     CN_ARGS="c1 $PIN2" cn SMOKE_A
 echo "## connect c1 with a checker python that has no uproot"; CN_ARGS="c1 $PIN2" cn SMOKE_CHK=nouproot
 echo "## connect c1 passes";                       CN_ARGS="c1 $PIN2" cn
 echo "## connect c2 with a checker python that has no uproot"; CN_ARGS="c2 $PIN2" cn SMOKE_CHK=nouproot
+# c2's pass path: the twelve RDX outputs; the pins read under CHKPY from the stand-in module; the real O_NOATIME staging
+for pl in 1A 1B 1C 1D 1E 1F 1G 1L 1M 1N 1O 1P; do echo "out $pl" > "$W/B/out/evloop/runEventLoopOmniFold_RDX_${pl}.root"; done
+rm -f "$W/B/out/loops.sha256"; ZC="$W/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1C_zero.root"
+echo off >> "$ZC"; echo "## connect c2 with a zero loop off its pin"; CN_ARGS="c2 $PIN2" cn; echo z > "$ZC"
+echo "## connect c2 with a failing alignment";       CN_ARGS="c2 $PIN2" cn SMOKE_ALIGN_RC=1
+echo "## connect c2 passes";                         CN_ARGS="c2 $PIN2" cn
+echo "  staged zero loops: $(ls "$W/B/out/stage/zero" | wc -l | tr -d ' '); c2 records: $(ls "$W/B/out/checks" | grep -c '_pl\.json$'); c1's align_1A.json: $(cat "$W/B/out/checks/align_1A.json")"
+echo "## connect c2 refuses a second run";           CN_ARGS="c2 $PIN2" cn
+printf 'pin=%s\nlimit=0:40:00\n' "$PIN2" > "$W/B/out/gates/merge.ok"
+echo "## connect m with a checker python that has no uproot"; CN_ARGS="m $PIN2 0:40:00" cn SMOKE_CHK=nouproot
+mv "$W/B/out/dumps" "$W/dumps.keep"; mv "$W/B/out/checks" "$W/checks.keep"   # as mg does: the merge job refuses over them
+echo "## connect m reads MP-1's pins and submits";  CN_ARGS="m $PIN2 0:40:00" cn
+mv "$W/dumps.keep" "$W/B/out/dumps"; mv "$W/checks.keep" "$W/B/out/checks"
 echo "## connect cm with a checker python that has no uproot"; CN_ARGS="cm $PIN2" cn SMOKE_CHK=nouproot
 echo "## connect cm passes";                       CN_ARGS="cm $PIN2" cn
 # s0, end to end, in a fresh B: the clone, the patch, provenance (stubbed), the O_NOATIME manifest, the builds (stubbed)
@@ -184,13 +212,6 @@ echo lib > "$OP/lib/libMAT.so"; echo nue > "$OP/etc/MParamFiles/data/FluxConstra
 for f in "$OP/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt"; do
   python3 -c "import os,sys; s=os.stat(sys.argv[1]); os.utime(sys.argv[1], (s.st_mtime + 10, s.st_mtime))" "$f"; done
 echo "# s0 MANIFEST stand-in" > "$W/mp1/s0/build/MANIFEST.sha256"
-cat > "$W/syspy" <<'SYSPY'
-#!/bin/bash
-# stands in for /usr/bin/python3: drops -I -B; on macOS gives os an O_NOATIME of 0 (Linux has the real flag)
-while [ "$1" = -I ] || [ "$1" = -B ]; do shift; done
-if [ "$1" = -c ]; then shift; exec python3 -c "$@"; fi
-exec python3 -c 'import os, runpy, sys; os.O_NOATIME = getattr(os, "O_NOATIME", 0); sys.argv = sys.argv[1:]; runpy.run_path(sys.argv[0], run_name="__main__")' "$@"
-SYSPY
 cat > "$W/bin/cmake" <<'CMK'
 #!/bin/bash
 echo "stub cmake $*"; [ -d "$1" ] || { echo "source dir $1 missing"; exit 1; }; touch CMakeCache.txt
@@ -199,7 +220,7 @@ cat > "$W/bin/make" <<'MK'
 #!/bin/bash
 [ -f CMakeCache.txt ] || exit 2; echo "binary built in $(pwd)" > runEventLoopOmniFold
 MK
-chmod +x "$W/syspy" "$W/bin/cmake" "$W/bin/make"
+chmod +x "$W/bin/cmake" "$W/bin/make"
 python3 - "$HERE/rdx_connect.sh" "$W/connect_s0.sh" "$W" "$D" <<'EOF'
 import sys
 src, dst, w, d = sys.argv[1:5]
