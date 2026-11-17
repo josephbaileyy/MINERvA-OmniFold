@@ -1,0 +1,61 @@
+1: # DECLARATION: the audit of the 5B run-period block C_PL,5D, with its stop condition fixed before it runs (2026-10-30)
+2: 
+3: **By** the measurement session `coverage-5b-audit` (ListAgents), for the director to bind.
+4: 
+5: **Under** [`DECISION-20261030-joseph-4b-not-now-5b-audit-then-add.md`](../../../DECISION-20261030-joseph-4b-not-now-5b-audit-then-add.md)
+6: (sha256 `2c3031d1…`) item 2: "The 5B run-period block is audited, then added to the 16-cell reported covariance", with
+7: an audit that "is declared and bound as usual" and "states before it runs what result would stop the addition". The
+8: standing constraints are [`HANDOFF-20261029-coverage-session.md`](HANDOFF-20261029-coverage-session.md) §1.
+9: 
+10: **After:**
+11: - [`FD-CT-5B-DECLARATION.md`](FD-CT-5B-DECLARATION.md) (`bdfb23fd…`), its binding, and
+12:   [`FD-CT-5B-REPORT.md`](FD-CT-5B-REPORT.md) (`62ab9dea…`), whose readout `fd/readout/fd_ct_5b_periods.json`
+13:   (`a5b17895…`) holds C_PL,5D;
+14: - [`FD-CT-READERS-5A-REPORT.md`](FD-CT-READERS-5A-REPORT.md) and its readout `fd/readout/fd_ct_period.json` (`d7d518ac…`);
+15: - 2D's construction, `2d-closeout/playlist-term/DESIGN.md` §2–§4.
+16: 
+17: **Declares:**
+18: - the audit's four measurements, their methods and units, and a STOP CONDITION (§7);
+19: - the exact revised covariance and every product it would flow into (§8);
+20: - the reader `nd-unfolding/fd_ct_5b_audit.py`, its tests, a mutation receipt, an independent review, the exact
+21:   commands and the pins (§9, §10, §14).
+22: 
+23: **The order.** §2–§8 were first committed as a design freeze (PR #546, `28499ab5`), in the order 2D's DESIGN used
+24: (`2d-closeout/playlist-term/DESIGN.md` §5). The director then ruled by message, on 2026-10-30, that the code be folded
+25: into this PR and bound once: "The STOP condition is accepted as frozen design: O, N and R, with a refused control
+26: leaving the question undecided and the block not added. Don't change those thresholds while you write the code. If
+27: the code shows one can't be computed as written, tell me before changing it." No threshold changed. §13 lists what
+28: writing the code corrected or found, each item named.
+29: 
+30: **MEASURES:** nothing. No audit quantity has been computed; the code has run only on synthetic fixtures.
+50: `docs/orchestration/state/`. `$P` = `/pscratch/sd/j/josephrb`, and `$B5` = `$P/fd-ct-5b-20261030`.
+51: 
+52: ### What this session read before writing the stop condition
+53: 
+54: The decision's third reason for the audit is that the block "was chosen after the data were seen". So the reads behind
+55: this design are listed in full:
+56: - **numbers already reported:** every table of `FD-CT-5B-REPORT.md` and `FD-CT-READERS-5A-REPORT.md`; S1's per-group
+57:   σ table (`S1-REPORT.md` §6); 2D's committed noise share (`2d-closeout/playlist-term/outputs/playlist_term.json`
+58:   `report.noise_share`);
+59: - **structure only:** the key layout of the 5B and 5A readouts; the object names and classes in
+60:   `fd/receipts-ct/5b/flux/runEventLoopMC_PA.root` and in two files of `$P/MINERvA-OmniFold/2d-unfolding/baseline_flux/`
+61:   (copied to this session's scratchpad); `ls` of `$B5/unf/`, `$B5/truth/`, `$P/2d-closeout-period-unfold-20261014/out/`
+62:   and `$P/tmp-playlist-term-20261016/`; the sha256 of the committed files pinned in §1;
+63: - **arithmetic on constants only:** the χ² and Beta quantiles and the ν_eff interval quoted below.
+64: 
+65: **Not read:**
+66: - no block of `s1_assembly.npz` or `cresp.npz`, and no eigenvector of any block;
+67: - no overlap, no replica-built block and no 5A noise;
+68: - no prediction or generator χ².
+69: <!-- absence-ok: a scoping statement about this session's own reads, listed in full above -->
+70: 
+71: **What the reported numbers already imply, said before the run:**
+72: - 5B reports C_PL,5D's σ at a median 9.0 times its noise floor. So clauses N and R (§7) are not expected to fire. They
+73:   are declared because that floor comes from the same ten replicas, and the replica-built blocks test it directly.
+74: - In the reported table, the two cells where PB's and PC's offsets are smallest, R00 and R08, are the two cells with
+75:   E_avail < 0.8 GeV and p_∥ < 4.5 GeV/c. Any test of that is post hoc, and §5 labels it so.
+76: 
+77: ## 0. Summary
+78: 
+79: **The object.** C_PL,5D is the 16 × 16 relative block P of the 5B readout (`C_PL5D.C_PL5D_rel`). It is DESIGN §2 on
+80: R00–R15: m = Σ e_X r_X, g_X = r_X/m − 1, P = k Σ_X e_X g_X g_Xᵀ, with k = V2/(1 − V2) = 0.6691. Its rank is 2.
