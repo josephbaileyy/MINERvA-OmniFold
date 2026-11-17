@@ -1643,6 +1643,9 @@ def currency_values(d, base):
     v.update(t2b_values(d))
     v.update(e96d_values(d))
     v.update(rsn_values(d, base["cmodel-trace-gibuu"]))
+    # U10's TR sentence (sec_method.tex): no cell beyond half its reported sigma at the data or at the two flagged truths
+    tr = d["rsn"]["arms"]["TR"]["P8"]
+    assert all(tr[t]["cells_beyond_half_sigma"] == [] for t in ("data", "gibuu", "q3")), "a TR cell lies beyond half sigma"
     # RS1's arm ratios (supp_literal_values() at 5bbb9d269, S8.4) and the tie-keeping residual (literal_values())
     st, ro = d["rs1read"]["statistics"]["ratio"], d["rs1read"]["readouts"]
     for arm, tag in (("S_ref", "sref"), ("S_omni", "somni"), ("B1023", "b1023")):
