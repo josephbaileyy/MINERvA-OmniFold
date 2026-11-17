@@ -12,6 +12,70 @@
 % Search: held-out simulation; held-out-MC re-test; S1 has not been coverage-tested; coverage statement about Q_R (the search of its home, sec_systematics.tex sec:uq-boot) @ ddf16f10 Review fix (outline: the \covTwoDCTwo uses are not touched; check_dead_containment.py counts four prints). The sentence that prints it, the second of this paragraph, is unchanged in n2. Note consolidation (DECISION-20261027 item 1, cost-list R01; director's ruling: a summary points to the body home, never to another summary): the other limitations are no longer restated here; each is named once with a pointer to its body home. The 2D coverage sentence is kept unchanged (a \covTwoDCTwo use, out of scope). Of the absence claims listed above, "has had no coverage test" still prints in this paragraph, and the 3D and 4D one prints as "the absence of a 3D or 4D covariance" (stage-2 review fix: a bare topic there read as if 3D and 4D uncertainties existed).
 % - Note round 1 (2026-11-08, draft): COV2D sentence, OUTCOME-20261108-cov2d-both-tunes-under-cover.md @ b551b05f :99-104 (CITABLE FOR) and :110, :115 (NOT CITABLE FOR); the frozen KI-85 sentence before it is unchanged.
 
+% The test index (COMBINED-PLAN sec. 3(d)): each row restates a test's criterion and outcome as the section it points to
+% states them, in that section's words, and adds no number (the numbers stay at their homes; the numbers diff). Checked
+% row by row against Tables 6, 7, 14, 20, 30 and 38 and the sections named. Status words: passed, failed, descriptive
+% (no criterion set before the test, or reported as descriptive under its own rule), stopped without result.
+% Rows' sources (2fe070fec): closures sec_validation.tex:27-33, :90-101, :133; fixed-truth coverage sec_validation.tex
+% sec:coverage and app_devhistory.tex (the completeness-divided band row); held-out tunes sec_validation.tex:190 and
+% Table tab:validation-questions; 5D coverage sec_5d.tex:238; generator-sized change sec_5d.tex:62 and Table
+% tab:validation-design-5d; data stability sec_5d.tex:100; quadrants sec_fived16.tex:72; IBU sec_fived16.tex
+% sec:fived16-ibu; fake data sec_fived16.tex:200, :230; sixteen-cell coverage sec_5d.tex:238, sec_fived16.tex:295 and
+% the two Table tab:devhistory rows; joint tests sec_joint.tex and Table tab:joint5d; projections Table tab:devhistory;
+% publication comparison sec_execsummary.tex:72 and Table tab:validation-design-5d.
+% absence-ok: "has had no coverage test" and "no frequentist coverage is claimed" restate sec_systematics.tex sec:uq-boot and sec_5d.tex sec:coverage-5d; their Search lines are at those homes and with this section's opening paragraph
+Table~\ref{tab:test-index} lists the tests whose outcome limits a reported result, with the criterion each was graded against and where it is stated.
+
+\begingroup\setlength{\LTcapwidth}{\textwidth}
+\begin{xltabular}{\textwidth}{@{}>{\footnotesize\RaggedRight\arraybackslash\hsize=0.95\hsize}X>{\footnotesize\RaggedRight\arraybackslash\hsize=1.05\hsize}X>{\footnotesize\RaggedRight\arraybackslash\hsize=0.6\hsize}X>{\footnotesize\RaggedRight\arraybackslash\hsize=1.4\hsize}X@{}}
+\caption[Test index]{Test index: each test that limits a reported result, its criterion, its status and its reading, as the section named states them.}
+\label{tab:test-index}\\
+\toprule
+Test & Criterion & Status & Reading \\
+\midrule
+\endfirsthead
+\toprule
+Test & Criterion & Status & Reading \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+2D injected closures (\S\ref{sec:validation}, Table~\ref{tab:closure-map}) & A residual threshold for each family & passed, except one arm & The deliberately large hidden-variable arm exceeds its threshold; passes depend on the deformation and the amplitude. \\
+\addlinespace
+Three- and four-observable closures, configuration~(a) (\S\ref{sec:3d-closure}) & None specified before they ran & descriptive & The injected-$\Eavail$ closure does not extend to configuration~(e) (\S\ref{sec:3d}). \\
+\addlinespace
+Five-dimensional $W$ closure (\S\ref{sec:closure-map}) & A residual-ratio threshold, set before the test was run & passed & A narrow pass in the $W$ marginal only; the same unfolding leaves joint $(\Eavail,W)$ cells in the peak column low. \\
+\addlinespace
+Fixed-truth coverage of the earlier 2D statistical bands (\S\ref{sec:coverage}) & Coverage windows specified before any toy was generated & failed & The first-built band undercovers in its tails. The quoted 2D statistical block has had no coverage test (\S\ref{sec:uq-boot}). \\
+% Search: held-out simulation; held-out-MC re-test; S1 has not been coverage-tested; coverage statement about Q_R (the search of its home, sec_systematics.tex sec:uq-boot) @ ddf16f10
+\addlinespace
+Held-out-tune coverage of the 2D covariance (\S\ref{sec:coverage-tunes}) & Specified before it ran; the threshold rule fixed before any pseudo-experiment was read & failed & Under-covers jointly at both held-out tunes; the flagged cells are attributed to bias (Table~\ref{tab:coverage-tunes}). It is not a coverage rate of the reported intervals (\S\ref{sec:uq-2d-scope}). \\
+\addlinespace
+End-to-end coverage of a five-dimensional estimator variant (\S\ref{sec:coverage-5d}) & A futility criterion, set before the test was run & failed & No frequentist coverage is claimed for any five-dimensional interval. Its $q_3$ truth did not implement the intended reweighting, and the verdict does not depend on it. \\
+\addlinespace
+Generator-sized truth change, configuration~(d) (\S\ref{sec:val-negweight}) & A recovery requirement & failed & The unfolding does not follow a GiBUU-to-GENIE $\Eavail$ shape reweighting of the truth; the residuals arise from the estimator (\S\ref{sec:val-departure}). \\
+\addlinespace
+Data stability under rounding-level input changes, configuration~(e) (\S\ref{sec:val-departure}) & A criterion set before the test was run & failed & Rounding-level input perturbations move the functionals beyond the criterion; the baseline estimator's shifts place this instability in the estimator family. \\
+\addlinespace
+Fake-data tests on the sixteen cells (\S\ref{sec:fived16-fd}, Table~\ref{tab:fived16-fd}) & Listing criteria on $p$ and on each cell's $|z|$, fixed before any test was graded & failed & Under the reported covariance, the GiBUU hybrid truth and the $q_3$ tilt are listed. These are not held-out truths, and the detector response is not probed. \\
+\addlinespace
+First coverage test of the sixteen-cell covariance, and its staged redesign (\S\ref{sec:fived16-fd}; Table~\ref{tab:devhistory}) & Fail-closed rules fixed before each ran & stopped without result & The first test stopped at a gate before any coverage result; its staged redesign stopped at its first stage. \\
+\addlinespace
+Second coverage test of the sixteen-cell covariance (\S\ref{sec:fived16-fd}) & Criteria fixed in advance & descriptive & Reported as descriptive under the rule fixed before the result, because a repair was chosen after an entry-check stop. It flags joint under-coverage at both held-out tunes for a covariance without the response and run-period terms. \\
+\addlinespace
+Quadrant sums of the sixteen cells against the 2D result (\S\ref{sec:fived16-quadrants}) & A rule fixed before the comparison was made & passed & The two results agree at every value of the cross-covariance parameter and in every reading. \\
+\addlinespace
+Sixteen cells against a binned IBU unfolding (\S\ref{sec:fived16-ibu}) & Specified before it ran, with bars calibrated on its own null & failed & The two results differ; the reported cells depend on the unfolding algorithm. \\
+\addlinespace
+Joint five-dimensional generator tests (\S\ref{sec:joint5d}, Table~\ref{tab:joint5d}) & Protocol fixed before the observed statistics & all rejected & All ten simple hypotheses are rejected under six stated conditions (\S\ref{sec:joint5d-conditions}). The rejections are not physical exclusions. \\
+\addlinespace
+Matched coarse projections (\S\ref{sec:joint5d-projections}) & A criterion for additional discrimination & failed & No test meets its criterion; the study provides no evidence of additional discrimination. \\
+\addlinespace
+Comparison with the published 2D measurement (\S\ref{sec:results}) & None; descriptive & descriptive & The comparison is not an independent test of the method (\S\ref{sec:method-config}). \\
+\end{xltabular}
+\endgroup
+
+
 Table~\ref{tab:result-status} gives each result component's construction, checks and limits.
 
 % Layout (director, 2026-11-13): an xltabular at \textwidth, so the table breaks between rows and stays inside the
