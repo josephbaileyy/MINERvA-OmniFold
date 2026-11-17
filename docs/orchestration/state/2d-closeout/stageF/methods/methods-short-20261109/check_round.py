@@ -52,10 +52,16 @@
      cite must be in it. The fill test also rebuilds the file from the note at NOTE_RELEASE_REV (make_note_labels.py
      --check) and fails unless it is byte-identical. Changing the release revision means changing NOTE_RELEASE_REV and
      rerunning make_note_labels.py --rev, in one commit.
+  14. HOLD INVENTORY (the director, relaying Joseph 2026-11-16). The record inventory that section 7 printed as a
+     \\pubhold is carried by the draft-only cover sheet HOLD-INVENTORY.md, and section 7 prints nothing in its place.
+     check_hold_inventory.py fails unless the sheet lists exactly the holds the paper and the Supplement print, and its
+     paper, Supplement and note numbers, records and release revision agree with the tree. The fill test also checks
+     check_hold_inventory.paper_maps against the built main_paper.aux for every paper label the sheet names.
 NOTE (printed on every run; not checked here). The figures sit where the blind rater copy passes its hold-diff check
 (rater-calibration/make_rater_copy.sh). A float near section 7 split the long section 7 hold ("A citable home ...")
-across a page break, and the copy failed. Any reflow of sections 6-7 (a float moved, a caption or paragraph
-lengthened) can split it again: rebuild the rater copy after one (ledger.md, "Figures 1 and 2").
+across a page break, and the copy failed. That hold moved to the cover sheet on 2026-11-16, but the two short holds
+(acknowledgments, Data availability) still print, and a hold that a page break splits still fails the copy: rebuild
+the rater copy after any reflow (ledger.md, "Figures 1 and 2").
 usage: check_round.py <worktree> [--base SHA] [--fill-test] [--printed FILE ...] [--note-rev REV]   (exit 1 on any failure)
        check_round.py <worktree> --self-test                  (each planted defect must be caught)"""
 import importlib.util
@@ -332,8 +338,17 @@ def run(wt, base):
              + check_sec4_tests(wt) + check_figures(wt) + check_abstract(wt)
              + check_free_text(mv.PENDING, mv.VERDICTS)
              + check_literal_keys({**cur, "supplemental_body.tex": supp}, (wt / NOTE / "values_fived16.tex").read_text())
-             + check_note_release(wt / NOTE))
+             + check_note_release(wt / NOTE)
+             + hold_inventory(wt).check(wt))
     return fails
+
+
+def hold_inventory(wt):
+    """Check 14's module, check_hold_inventory.py beside this file."""
+    spec = importlib.util.spec_from_file_location("check_hold_inventory", HERE / "check_hold_inventory.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
 
 
 IDENT = ("Joseph Bailey", "josephrb@stanford.edu", "josephbaileyy")   # the author line, the email, the repository URL
@@ -576,6 +591,15 @@ def fill_test(wt):
             bad = printed_class_names(txt, mv)
             if bad:
                 fails.append(f"fill test {i}: a class name prints: {bad}")
+            if i == 0:                                  # check 14: the sheet's paper numbers come from paper_maps
+                hi = hold_inventory(wt)
+                aux = {m.group(1): m.group(2) for m in
+                       re.finditer(r"\\newlabel\{([^}]*)\}\{\{([^}]*)\}", (d / "main_paper.aux").read_text(errors="replace"))}
+                pm = hi.paper_maps((d / "paper_body.tex").read_text())
+                sheet = (wt / hi.SHEET).read_text() if (wt / hi.SHEET).exists() else ""
+                for _, lab in hi.PAPER_REF.findall(sheet):
+                    if aux.get(lab) != pm.get(lab):
+                        fails.append(f"fill test: paper_maps gives {lab} {pm.get(lab)}, the build {aux.get(lab)}")
             print(f"fill test {i}: built, {len(txt.split())} words")
     return fails
 
@@ -684,6 +708,8 @@ def self_test():
             if not fn():
                 print("self-test: check 13 NOT CAUGHT:", name); ok = False
     del EMPTY["e"]
+    if not hold_inventory(ROOT).self_test(ROOT):      # check 14's planted defects
+        print("self-test: check 14 FAILED its self-test"); ok = False
     print("self-test:", "PASS" if ok else "FAIL")
     return 0 if ok else 1
 
@@ -710,8 +736,8 @@ def main(argv):
         print(f"SUPP-SYNC :: not run ({exc})")
     if "--fill-test" in argv:
         fails += fill_test(wt)
-    print("NOTE a reflow of sections 6-7 can split the section 7 hold across a page break and fail the blind rater"
-          " copy's hold-diff check: rebuild it (make_rater_copy.sh) after any such change")
+    print("NOTE a reflow can split a printed hold (acknowledgments, Data availability) across a page break and fail the"
+          " blind rater copy's hold-diff check: rebuild it (make_rater_copy.sh) after any such change")
     for f in fails:
         print("FAIL", f)
     print(f"CHECK-ROUND methods-short :: {'PASS' if not fails else 'FAIL'} ({len(fails)} failures)")

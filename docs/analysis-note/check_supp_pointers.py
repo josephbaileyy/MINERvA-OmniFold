@@ -61,8 +61,8 @@ ANCHORS = [
     (r"the dependence on the regularization", [(None, None)]),
     (r"called the joint cells \(\\ssec\{S8\.7\}\{supp:joint\}\)", [("supp:joint", r"support rule")]),
     (r"contribute only to the total", [(None, None)]),
-    (r"\\ssec\{S4\.4\}\{supp:diagnostics\} and \\ssecc\{S8\}\{supp:tests\} only",
-     [("supp:diagnostics", r"ensemble average"), ("supp:tests", r"ensemble average")]),
+    # The hold's ensemble-average row (S4.4 and S8) moved with the record inventory to the cover sheet HOLD-INVENTORY.md
+    # (the director, relaying Joseph 2026-11-16); check_hold_inventory.py's ANCHORS ties it to its targets.
 ]
 
 

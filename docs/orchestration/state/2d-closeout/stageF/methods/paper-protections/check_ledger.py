@@ -16,6 +16,9 @@ paper:
   4. protected text is byte-identical to the base:
      - main_paper.tex from \\title to \\end{abstract} (the title and the abstracts' final wording);
      - every \\pubhold{...} hold of either file, and its definition line;
+     - (2026-11-16, the director, relaying Joseph) the record inventory, which section 7 printed as a hold from
+       2026-11-11, is carried by the draft-only cover sheet methods-short-20261109/HOLD-INVENTORY.md: it may not print
+       in paper_body.tex again, and the sheet must exist (check_round's check 14 checks the sheet against the tree);
      - main_paper.tex from \\begin{acknowledgments} to \\end{document}, except the Data Availability statement
        (item 2: released), which may differ from its base only by DA_PAIRS, each pinned by sha256 in DA_PINS;
   5. "Interval coverage has not been validated." still prints in paper_body.tex (item 4);
@@ -114,6 +117,10 @@ def check(wt, cur, old, ledger_text, da_pairs=None, da_pins=None):
     for f in FILES:
         if hold.findall(old[f]) != hold.findall(cur[f]):
             fails.append(f"PROTECTED: the \\pubhold holds of {f} differ from base")
+    if re.search(r"\\pubhold\{Where each record", "\n".join(re.sub(r"(?<!\\)%.*", "", l) for l in cur["paper_body.tex"].split("\n"))):
+        fails.append("HOLD CARRIER: the record inventory prints in paper_body.tex; its carrier is HOLD-INVENTORY.md")
+    if not (HERE.parent / "methods-short-20261109/HOLD-INVENTORY.md").exists():
+        fails.append("HOLD CARRIER: methods-short-20261109/HOLD-INVENTORY.md, the record inventory's carrier, is missing")
     tail_o, tail_c = span(mp_o, "\\begin{acknowledgments}", "\\end{document}"), span(mp_c, "\\begin{acknowledgments}", "\\end{document}")
     da_o = da_span(mp_o)
     exp = da_o
@@ -165,6 +172,8 @@ def main():
             ("undeclared DA edit", {**cur, "main_paper.tex": mp.replace(da, da.replace(word, word + "s", 1))}, lt, {}),
             ("declared but unpinned DA pair", {**cur, "main_paper.tex": mp.replace(da, da.replace(word, word + "s", 1))}, lt,
              {"da_pairs": [("T-DA", word, word + "s")], "da_pins": {}}),
+            ("the record inventory printed again", {**cur, "paper_body.tex": cur["paper_body.tex"].replace(
+                "\\subsection{Limitations}", "\\pubhold{Where each record this paper relies on is published.}\n\n\\subsection{Limitations}", 1)}, lt, {}),
             ("the kept coverage sentence dropped", {**cur, "paper_body.tex": cur["paper_body.tex"].replace(KEEP_SENTENCE, "")}, lt, {}),
             ("a hand-typed numeral added", {**cur, "paper_body.tex": cur["paper_body.tex"].replace(
                 "\\subsection{Limitations}", "\\subsection{Limitations}\nThe cells number 17 in all.", 1)}, lt, {}),

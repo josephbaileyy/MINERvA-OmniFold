@@ -81,11 +81,33 @@ ENVS = r"table|figure|equation|align|eqnarray|thebibliography|tabular|xltabular|
 
 # dropping a variant's key and class before counting (2026-11-16); the self-test turns it off to show the old count
 DROP_VARIANT_KEYS = True
+# A \pubhold prints only in drafts (main_paper.tex:4) and the blind rater copy renders it as nothing, so its text is not
+# prose: dropped before counting, on both sides of every comparison (2026-11-16: the record inventory left section 7 for
+# the cover sheet HOLD-INVENTORY.md, and its short "Record ..." sentences had been lowering the body's words per sentence)
+DROP_HOLDS = True
+
+
+def drop_holds(s):
+    """s without its \\pubhold{...} spans (braces matched)."""
+    out, i = [], 0
+    for m in re.finditer(r"\\pubhold\{", s):
+        if m.start() < i or s[max(0, m.start() - 12):m.start()].endswith("\\newcommand{"):
+            continue
+        depth, j = 1, m.end()
+        while depth and j < len(s):
+            depth += {"{": 1, "}": -1}.get(s[j], 0)
+            j += 1
+        out.append(s[i:m.start()])
+        i = j
+    out.append(s[i:])
+    return "".join(out)
 
 
 def paragraphs(s):
     s = "\n".join(l for l in s.split("\n") if not l.lstrip().startswith("%"))
     s = re.sub(r"(?<!\\)%.*", "", s)
+    if DROP_HOLDS:
+        s = drop_holds(s)
     s = re.sub(r"\\begin\{(" + ENVS + r")\*?\}.*?\\end\{\1\*?\}", "", s, flags=re.S)
     s = re.sub(r"\$\$.*?\$\$|\\\[.*?\\\]", "", s, flags=re.S)
 
@@ -243,6 +265,18 @@ def self_test():
     km = metrics(paragraphs(keyed))
     if km["words"] != 200 or km["wps"] != 10.0:
         print("self-test: a \\fvcase key or class is counted as words or hides a sentence end:", km); ok = False
+    # a hold is not prose: a paragraph of short hold sentences changes no metric; the mutant (holds counted) does
+    held = "\n\n".join([good] * 5) + "\n\n\\pubhold{Where each record is. Record A. Record B. Record C. Record D. Record E. Record F. Record G. Record H. Record I. Record J. Record K. Record L.}"
+    plain = metrics(paragraphs("\n\n".join([good] * 5)))
+    if metrics(paragraphs(held)) != plain:
+        print("self-test: a \\pubhold's text is counted as prose:", metrics(paragraphs(held))); ok = False
+    global DROP_HOLDS
+    DROP_HOLDS = False
+    if metrics(paragraphs(held)) == plain:
+        print("self-test: the mutant that counts holds is not caught"); ok = False
+    else:
+        print("  ok   a \\pubhold's text is not prose; the mutant that counts it is caught")
+    DROP_HOLDS = True
     global DROP_VARIANT_KEYS
     DROP_VARIANT_KEYS = False                         # the mutant: the cleaner before 2026-11-16
     mm = metrics(paragraphs(keyed))
