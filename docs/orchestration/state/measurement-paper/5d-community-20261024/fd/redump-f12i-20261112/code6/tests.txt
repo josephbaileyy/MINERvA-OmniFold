@@ -1,0 +1,32 @@
+# HEAD 372bd471067ec20e6462dca6dfd65fa395995f11
+# clean clone, serial, Python 3.12.2, numpy 1.26.4, 2026-11-17T21:50:40Z
+# 3ff59b611e50558654485cb83ecd5fc8bb1b1fbe837b2e0efb3dfd3ae12ba9fb  rdx_read.py
+# 403933879eeabbeed69655aca52198df17a125f398b53a6eb311a52d674f6e03  test_rdx_read.py
+# cad7fe4ab6ad37d8ed7665e630bb3583c9bc61af05a062091e0624a0d1da2b83  rdx_read_mutation.py
+# 4dd37197f6aa6c7f013b3ffea5558fd8d8fd1bc124047f761269adafce87e484  ../rsn/rsn_read.py
+# aaa81575b211f50e007fa75d318fd8d4f48bfb98ac5ae62b398dbf33db37d4ca  ../pv-ladder/build_cmodel5d.py
+# command: python3 -B -m unittest -v nd-unfolding/rdx/test_rdx_read.py
+test_a_clean_set_is_checked_and_read (nd-unfolding.rdx.test_rdx_read.Guards.test_a_clean_set_is_checked_and_read) ... ok
+test_a_product_that_is_not_its_declared_task_refuses (nd-unfolding.rdx.test_rdx_read.Guards.test_a_product_that_is_not_its_declared_task_refuses) ... ok
+test_a_sha_that_is_not_the_jobs_refuses (nd-unfolding.rdx.test_rdx_read.Guards.test_a_sha_that_is_not_the_jobs_refuses) ... ok
+test_a_transfer_step_needs_five_records (nd-unfolding.rdx.test_rdx_read.Guards.test_a_transfer_step_needs_five_records) ... ok
+test_nc_x_refuses_and_reads_nothing (nd-unfolding.rdx.test_rdx_read.Guards.test_nc_x_refuses_and_reads_nothing) ... ok
+test_parameters_must_be_x0s (nd-unfolding.rdx.test_rdx_read.Guards.test_parameters_must_be_x0s) ... ok
+test_phi_and_sigma_come_from_the_committed_records (nd-unfolding.rdx.test_rdx_read.Guards.test_phi_and_sigma_come_from_the_committed_records) ... ok
+test_the_logs_must_print_each_task_exactly_once (nd-unfolding.rdx.test_rdx_read.Guards.test_the_logs_must_print_each_task_exactly_once) ... ok
+test_a_nonpositive_reference_refuses (nd-unfolding.rdx.test_rdx_read.Readings.test_a_nonpositive_reference_refuses) ... ok
+test_an_excess_beyond_half_sigma_is_a_named_sensitivity (nd-unfolding.rdx.test_rdx_read.Readings.test_an_excess_beyond_half_sigma_is_a_named_sensitivity) ... ok
+test_r2_classes_x1w_against_x1 (nd-unfolding.rdx.test_rdx_read.Readings.test_r2_classes_x1w_against_x1) ... ok
+test_r3_reads_the_last_iteration_and_the_difference (nd-unfolding.rdx.test_rdx_read.Readings.test_r3_reads_the_last_iteration_and_the_difference) ... ok
+test_r3_reports_whether_the_probe_left_the_loop_untouched (nd-unfolding.rdx.test_rdx_read.Readings.test_r3_reports_whether_the_probe_left_the_loop_untouched) ... ok
+test_r4_at_the_prior_subtracts_the_refit_null (nd-unfolding.rdx.test_rdx_read.Readings.test_r4_at_the_prior_subtracts_the_refit_null) ... ok
+test_r4_q3_and_the_weight_at_the_prior (nd-unfolding.rdx.test_rdx_read.Readings.test_r4_q3_and_the_weight_at_the_prior) ... ok
+test_r4_reads_each_closure_against_its_own_truth (nd-unfolding.rdx.test_rdx_read.Readings.test_r4_reads_each_closure_against_its_own_truth) ... ok
+test_the_excess_is_beyond_the_null (nd-unfolding.rdx.test_rdx_read.Readings.test_the_excess_is_beyond_the_null) ... ok
+test_the_refit_null_at_w2_makes_r1_unattributable (nd-unfolding.rdx.test_rdx_read.Readings.test_the_refit_null_at_w2_makes_r1_unattributable) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 0.427s
+
+OK
+# exit 0

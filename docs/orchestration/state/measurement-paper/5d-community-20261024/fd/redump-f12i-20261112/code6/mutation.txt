@@ -1,0 +1,33 @@
+# HEAD 372bd471067ec20e6462dca6dfd65fa395995f11
+# clean clone, serial, Python 3.12.2, numpy 1.26.4, 2026-11-17T21:50:42Z
+# 3ff59b611e50558654485cb83ecd5fc8bb1b1fbe837b2e0efb3dfd3ae12ba9fb  rdx_read.py
+# 403933879eeabbeed69655aca52198df17a125f398b53a6eb311a52d674f6e03  test_rdx_read.py
+# cad7fe4ab6ad37d8ed7665e630bb3583c9bc61af05a062091e0624a0d1da2b83  rdx_read_mutation.py
+# 4dd37197f6aa6c7f013b3ffea5558fd8d8fd1bc124047f761269adafce87e484  ../rsn/rsn_read.py
+# aaa81575b211f50e007fa75d318fd8d4f48bfb98ac5ae62b398dbf33db37d4ca  ../pv-ladder/build_cmodel5d.py
+# command: python3 -B nd-unfolding/rdx/rdx_read_mutation.py --jobs 4
+unmutated suite: 18 tests OK, in the mirrored tree
+KILLED    NC-X not checked                                 by test_nc_x_refuses_and_reads_nothing
+KILLED    sha not compared with the job's                  by test_a_sha_that_is_not_the_jobs_refuses
+KILLED    a missing log line allowed                       by test_the_logs_must_print_each_task_exactly_once
+KILLED    a duplicated log line allowed                    by test_the_logs_must_print_each_task_exactly_once
+KILLED    an undeclared product allowed                    by test_the_logs_must_print_each_task_exactly_once
+KILLED    identity not enforced                            by test_a_product_that_is_not_its_declared_task_refuses
+KILLED    background pin of X0_lat taken from RDX's        by test_a_product_that_is_not_its_declared_task_refuses
+KILLED    estimator parameters not compared                by test_parameters_must_be_x0s
+KILLED    transfer record count unchecked                  by test_a_transfer_step_needs_five_records
+KILLED    the null not subtracted in R1                    by test_the_excess_is_beyond_the_null
+KILLED    half sigma read as one sigma                     by test_an_excess_beyond_half_sigma_is_a_named_sensitivity
+KILLED    refit null W2 not decisive                       by test_the_refit_null_at_w2_makes_r1_unattributable
+KILLED    R4 read against X0's truth                       by test_r4_reads_each_closure_against_its_own_truth
+KILLED    R4 prior without the null                        by test_r4_at_the_prior_subtracts_the_refit_null
+KILLED    R4 q3 left out of the outcome                    by test_r4_q3_and_the_weight_at_the_prior
+KILLED    the weight made an outcome change                by test_r4_q3_and_the_weight_at_the_prior
+KILLED    R2 against X0                                    by test_r2_classes_x1w_against_x1
+KILLED    R3 reads the first iteration                     by test_r3_reads_the_last_iteration_and_the_difference
+KILLED    R3 difference drops a missing cell               by test_r3_reads_the_last_iteration_and_the_difference
+KILLED    loop-untouched always true                       by test_r3_reports_whether_the_probe_left_the_loop_untouched
+KILLED    a nonpositive reference allowed                  by test_a_nonpositive_reference_refuses
+KILLED    sigma unchecked                                  by test_phi_and_sigma_come_from_the_committed_records
+MUTATION CHECK :: PASS (22 mutations)
+# exit 0
