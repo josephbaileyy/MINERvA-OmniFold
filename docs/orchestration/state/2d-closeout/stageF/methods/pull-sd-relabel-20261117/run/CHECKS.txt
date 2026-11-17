@@ -1,0 +1,17 @@
+PASS K1 installed figure: MEFHC_5iter_pull_full.pdf fd84d992f3b2 (want fd84d992f3b2)
+PASS K2 identity before: RASTER :: EQUAL :: 1 page(s), 0 differing pixel(s)
+PASS K2 identity off: RASTER :: EQUAL :: 1 page(s), 0 differing pixel(s)
+PASS K3 data, log and inputs: before vs after: equal  pull_full/MEFHC_5iter_pull_full.png.json: 36 data artists |   equal  output logs/pull_full.log |   equal  inputs pull_full: 3 rows | COMPARE :: PASS
+PASS K3 data, log and inputs: before vs off: equal  pull_full/MEFHC_5iter_pull_full.png.json: 36 data artists |   equal  output logs/pull_full.log |   equal  inputs pull_full: 3 rows | COMPARE :: PASS
+PASS K4 text: off draws before's texts: 46 texts
+PASS K4 text: after changes the label alone: old label in 1 text(s); differing rows [19]; after: '14.5\tmean=0.06 SD = 0.54 $\\chi^2$/ndf paper = 2.27'
+PASS K5 layout: off's boxes are before's: 50 rows
+PASS K5 layout: after moves nothing but the changed text, inside its box: rows changed [22, 23]; box (0.5737, 0.7492, 0.7506, 0.9091)
+PASS K6 pixels: changed only inside the label's box: 6396 differing pixel(s), 0 outside x 2063-2704, y 134-378 of 3600x1500
+PASS K6 pixels: the left half is pixel-equal: 0 in the left half
+PASS K7 overlap gate (after): OVERLAP :: PASS
+PASS K7 printed text >= 4.0 pt (after): ok   MEFHC_5iter_pull_full              texts   46  min  5.12 pt  median  5.12 pt  smallest '0' | TEXTSIZE :: PASS (floor 4.0 pt)
+PASS K7 no raw _ or ^ in after's PDF text: 0 line(s)
+PASS K7 after's PDF text has the new label, not the old
+PASS K8 after's page 864 x 360 pt: 864 x 360
+CHECK_SD :: PASS

@@ -5,7 +5,10 @@
 [FOLLOW-UP-DURING-BEN-REVIEW.md](../methods-short-20261109/FOLLOW-UP-DURING-BEN-REVIEW.md) row 2. The director gave
 this package to cov2d on 2026-11-17.
 
-**Status.** Package only. Nothing has run on the cluster. The run needs the director's go on the filled connect's sha.
+**Status.** Run and installed (section 7).
+- The director's go covered connect `d78007ac` at PKG 110a90e8.
+- The run passed on 2026-11-17, and check_sd.py passed all 16 checks.
+- The note's figure is now b01c1b6c, installed by install_pin.py.
 The install (section 5) follows the run, its record and `check_sd.py` PASS.
 
 **Scope.** This package covers the note figure only: `docs/analysis-note/figures/MEFHC_5iter_pull_full.pdf`, note
@@ -30,7 +33,7 @@ long as "rms =0.54". The box keeps its place and size, because its widest line i
 B′ prints "SD 0.535" in its panel. The label is one string in the producer. If the director or Joseph wants other
 words, they need a box that fits, which is a layout change.
 
-## 2. The run (not run; needs the director's go on the filled connect's sha)
+## 2. The run
 
 [connect-sd.template.sh](connect-sd.template.sh) is filled by [fill_connect_sd.py](fill_connect_sd.py) from git at the
 package commit PKG. The connect is one login-node script with no Slurm and 0 node-h. It follows the restyle's method
@@ -131,3 +134,37 @@ The note build and its gates then run, by the usual route.
 - **The 3D note figure** `eavail_marginal_vs_paper_pull_full` (`sec_3d.tex:97`) is drawn by the same producer
   (`make_figures.sh:126`), so it also prints "rms". It is not in this package. Its quantity is a different
   comparison, and item 16 names only this one.
+
+## 7. The run and the install (2026-11-17)
+
+**The go.** The director gave it for connect `connect/connect-sd.sh` (d78007ac) at PKG 110a90e8. tier3-design acked an
+RDX hold before the connect, and was sent the end message after it.
+
+**The run** (login02, no Slurm, 0 node-h). The connect was staged at `/dev/shm/josephrb-pullsd.sh`, and its node sha
+matched the go. It started at 17:36:51Z and ended DONE at 17:38:31Z (`run/logs/connect.log`).
+- Both fences were clear.
+- All 12 code shas were OK, and the deploy was clean at PKG.
+- The environment was python 3.11.14, ROOT 6.28/12, matplotlib 3.10.8 and numpy 1.26.4 (`run/environment.txt`).
+- E_R (a5c13fc3) and the covariance (6c6dce72) matched their pins, hashed O_NOATIME (`run/inputs.sha256`).
+- The three arms ran with rc 0, and each log ends `pull mean / rms : 0.060 / 0.535`.
+- No file was newer than the marker, and the deploy was still clean afterwards.
+
+**Fetched files.** `run/` holds `before/`, `off/` and `after/` (no PNGs), `SHA256SUMS` (33 files, all verified after
+the fetch), `code.sha256`, `inputs.sha256` and `environment.txt`.
+- The connect's own copy of its log, `logs/connect.log`, was taken before its last two lines. It was replaced by the
+  full `/dev/shm` log, whose sha 23988164 the removal log records.
+- The staged connect and the log were then removed (`run/logs/shm-removal.log`).
+
+**The checks.** `run/CHECKS.txt`: `CHECK_SD :: PASS`, all 16 checks.
+- **K2:** "before" and "off" are pixel-equal to fd84d992.
+- **K3:** 36 data artists bit for bit, the log byte-equal, the inputs identical.
+- **K6:** 6,396 pixels changed, all inside the label's box; the left half is equal.
+- **K7:** the gates passed, with the smallest printed text at 5.12 pt.
+
+**The install** (`install_pin.py`):
+- the note's `MEFHC_5iter_pull_full.pdf` fd84d992 → b01c1b6c, with its copy in `figs/`;
+- the make_figures.sh line and the ledger G row re-pointed, and `DIGESTS.tsv` written;
+- `check_ledger.py --figures` passes: G 16 rows and Fig. 1, 0 failures.
+
+The tracked crop `figures/paper_validation_residual.pdf` (the figure's left half) is unchanged, which K6 supports. No
+`.tex` includes it. The note PDF is rebuilt by the usual route.
