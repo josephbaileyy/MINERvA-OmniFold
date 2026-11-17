@@ -1,0 +1,33 @@
+host=login02 start=2026-11-16T09:43:52Z pid=324845 PKG=00855c17a169f3dc383dc7c302a1819e4b84081d nproc=244 OMP_NUM_THREADS=unset
+squeue rc=0: [JOBID|NAME|STATE|TIME_LIMIT|NODES]
+sacct rdx_s1_1A rc=0: [61315648|rdx_s1_1A|COMPLETED|2026-11-14T20:24:41]
+sacct all since 2026-11-01 rc=0: 156 rows
+fence (start) clear: every query rc 0, rdx_s1_1A ended, no job queued, running or unended, group C marker absent
+deploy porcelain_lines=0 head=00855c17a169f3dc383dc7c302a1819e4b84081d
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/mumax/ll5d_mumax.py: OK
+nd-unfolding/ll5d_b.py: OK
+docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/lrows-g/geant_full.py: OK
+python 3.11.14
+numpy 1.26.4
+login02
+244
+null records OK: g18 73dbaf9517374646c719ff589015cb12c1a6a2eafd5579e1074ef700bde703c2 ar23 a0544ab9f6f0ec55c9866bee689d2563b13c9d07f4b3fdc37ce4762718a23933
+declared inputs: 458
+mumax start=2026-11-16T09:44:56Z
+mumax rc=0 end=2026-11-16T09:45:02Z
+[g18] mu_max C_T 0.06543743477027143 (1/(1-mu) 1.0700193194172998); C_T^- 0.06544993734286615 (1.0700336343210737); removal dev 7.491e-96
+[ar23] mu_max C_T 0.08611205096408803 (1/(1-mu) 1.0942260493257738); C_T^- 0.09851537916779254 (1.109281264362389); removal dev 7.491e-96
+MUMAX PASS: []
+mumax wall 5.76 s rss 69632 KB
+atime: 458 declared inputs, moved 0
+deploy porcelain after: 0
+64556856ce86950d99691f63abd724f0e52a705e633c1e94e434ac3e1a02d6b8  environment.txt
+115affe3d463ffdcb85039a9161cee3b5dd9207a0ce501f4d3d7d9fab3543f94  code.sha256
+d63d5e81460a22890c7201782fbdaa449335292a60fd97381ad4f878375b50f5  inputs.txt
+99b9c99f5b6d60d43955baaa75f63ffbe05a62bd1e430edb0335f9907d9650b0  atime-pre.txt
+99b9c99f5b6d60d43955baaa75f63ffbe05a62bd1e430edb0335f9907d9650b0  atime-post.txt
+422db056ba1c4c1c00f414a64e5e003cbe1a81d6bdf8b8c1215ed0a832e18aa0  mumax.json
+3f42abc14b27cf0f36d9385e99a6faad03c2d7540a726eb38c7bfbd27f9d758e  logs/mumax.log
+D2 PASS: controls held, mu_max recorded for g18 and ar23, no atime moved
+end=2026-11-16T09:45:04Z
+DONE
