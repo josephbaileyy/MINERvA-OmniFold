@@ -19,6 +19,7 @@ instruction: no claim changes.
 | `read12/` | the batch, against the old text, the route record, the A6/item-14 decision, the band inventory code and the ppbench readout | PASS (one note: the prompt's sign convention for delta; the printed text is right) |
 | `read13/` | cold read 3.12 (S8.7's outcome paragraph becomes a pointer, by the director's ruling) and 3.16 (S7's q3 stress test is the synthetic q3 tilt: d-id's config, q3_given_eavail_w at amplitude 0.3), at `ae1705188` | PASS |
 | `read14/` | the deferred table layouts at `a5e1c2732` (Table S2's formula lines and widths; S15-S17 pinned): content unchanged | first answer (`answer-first.txt`) FAIL only on the $ delimiters that split one expression at its line break; rerun with that allowed, PASS |
+| `read15/` | the cold read of d5363e09e's three edits at `b46aaeac5`: the overview's first part, S4.2's 'two-dimensional result', S8.5's paragraph breaks | PASS |
 
 Not done, with reasons:
 - **Table S11's restructure:** r3 moves the criteria out of the index. The paper's table 4 caption points readers to S8 for every test's criteria, thresholds and classes, and the index is already a multipage table with repeated headings.
