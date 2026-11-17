@@ -1,0 +1,11 @@
+No remaining defects; no fixes required. Both read-4 fixes are correct.
+
+1. **S8.5:** Expanding the two precision keys reproduces Joseph’s item-14 paragraph verbatim, allowing only whitespace normalization, item 21’s lowercase “stop,” and removal of the self-pointer. The keys match `paper_body.tex`. The full record remains intact. Both accounts agree: repair after the stop, before any coverage unfolding or grading, with other gate readings visible. The precision repair and added matching check are consistent with unchanged rules, thresholds, bounds and reporting cells. The later batch-script repair remains distinct.
+
+   The added sentence, “The entry check that stopped the run was fixed in advance,” correctly preserves the old arm’s explicit statement and is consistent with the record. Nothing in the old arm is lost, including descriptive status.
+
+2. **S4.5:** The definition now matches the source: median of \(|\hat f/f_{\rm true}-1|/|f_{\rm true}/f_0-1|\), over supported cells with \(|f_{\rm true}/f_0-1|>0.01\). Its use remains median across eligible cells for each truth change, then maximum across development truths. The surrounding comparison is unchanged.
+
+Neither edit strengthens coverage, validation, detector-inadequacy or localization claims. Descriptive status remains explicit; the diagnosed implementation defect stays confined to this test’s entry check, while the first test’s GEANT4 disagreement remains unexplained.
+
+VERDICT: PASS

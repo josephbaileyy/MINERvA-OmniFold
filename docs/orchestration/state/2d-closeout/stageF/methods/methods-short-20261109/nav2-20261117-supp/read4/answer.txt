@@ -1,0 +1,16 @@
+1. **Moderate — S4.5 omits the absolute values.** At `ev/new_supplemental_body.tex:478`, “relative residual divided by … relative departure” permits signed quantities. The source caption (`ev/note_sec_5d.tex:185`) defines
+   \[
+   \operatorname{median}_{c:\,|f_{\rm true,c}/f_{0,c}-1|>0.01}
+   \frac{|\hat f_c/f_{\rm true,c}-1|}{|f_{\rm true,c}/f_{0,c}-1|}
+   \]
+   over supported cells. **Fix:** explicitly say “absolute relative residual” and “absolute relative departure,” including in the eligibility condition, or print this formula. Otherwise the aggregation is faithful: median across eligible cells for each truth change, then maximum across development truths. The reported 0.314, ≥0.384 and 8% reduction agree with the note.
+
+2. **Minor — S8.5 loses the explicit statement that the stopping check was fixed in advance.** The old repaired arm states this directly; the replacement identifies a *status rule* fixed before the result, which does not explicitly establish when the entry check was fixed. **Fix:** after the approved paragraph, add “The stopped entry check was fixed in advance,” before introducing the full record. This preserves the approved paragraph verbatim.
+
+**Verbatimness passes.** Expanding `ll5d-a1a2-keys` and `ll5d-a1a2-at` produces item 14’s exact paragraph, with item 21’s lowercase “stop” and only the self-pointer removed. The keys match those in `paper_body.tex`.
+
+**The two repair accounts are consistent.** The repair followed the entry-check stop, before any coverage unfolding or grading, while other gate readings were visible. The summary’s precision change agrees with the full record’s matching repair; the added matching check does not contradict unchanged rules, thresholds, bounds or reporting cells. The later trial and batch-script repair occur afterward. The full `ll5d-route-record` remains intact, and descriptive status remains explicit. Apart from defect 2, the old arm’s content is retained.
+
+Neither edit strengthens coverage, validation, detector-inadequacy or localization claims. The diagnosed defect remains confined to this test’s entry check; the first test’s GEANT4 disagreement remains unexplained.
+
+VERDICT: FAIL
