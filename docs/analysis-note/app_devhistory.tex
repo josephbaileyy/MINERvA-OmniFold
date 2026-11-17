@@ -2,7 +2,7 @@
 % note-history restructure; the referee's structure, noteref out.txt section 4). Built section by section with the
 % restructure; each row restates what the body says, with a pointer to it, and adds no claim. Each section's cut log is
 % docs/analysis-note/history-cuts/<section>.md. Placed last so that no other appendix letter moves.
-\section{Development history}
+\section{Development history and choices made after results were seen}
 \label{app:devhistory}
 
 This appendix lists configurations and tests that were superseded, stopped or changed during the analysis, and choices made after results had been seen, where they matter for reading a released result. Where the body states it, each row gives what had already been seen when the change or choice was made; a dash means the note does not state it. The chronology behind the rows is kept in the analysis repository's records~\cite{NoteRecords2026} and its commit history.
@@ -65,3 +65,24 @@ Universe-misses approximation in the 2D systematic block (\S\ref{sec:uq-2d-scope
 % d1-g2r-adopted.md item 3); the first grade's readouts stay pinned in make_values_landed.py (ar23old, g18old).
 First grade of the held-out-tune coverage test of the 2D covariance (\S\ref{sec:coverage-tunes}) & The test graded against the covariance with the universe-misses approximation & Superseded by the regrade against the adopted covariance: the verdict, the joint counts and their thresholds, and the flagged cells and their in-interval counts are unchanged; \fvval{f1-tune-g18}'s cell~29 threshold changes from \lrval{cov2d-g18-29-kc-first} to \lrval{cov2d-g18-29-kc}, and the mean $\chi^{2}/\mathrm{ndf}$, the false-flag bounds and the flagged cells' other diagnostics also change & Held-out-tune test (\S\ref{sec:coverage-tunes}) & The printed numbers are the regrade's & -- \\
 \end{xltabular}}
+
+% Move pair CX-04..CX-21 (the Codex writer lane; history-cuts/move-manifest-cx-20261117.tsv sends, history-cuts/move-manifest-je-20261117.tsv receives): the three paragraphs of sec_joint.tex:237-241 @ 2fe070fec,
+% verbatim, with their source comments (:242-249); sec:joint5d-lost keeps the outcome beside Table tab:joint5d.
+\subsection{Lost pseudo-experiments of the generator tests}
+\label{app:devhistory-lost}
+
+This is the account of the generator tests' lost pseudo-experiments and their recovery, whose outcome \S\ref{sec:joint5d-lost} states.
+
+Computing time limits interrupted or prevented \jtLostCal{} of the submitted calibration pseudo-experiments (\jtLostInterrupted{} interrupted, \jtLostNever{} never started) and \jtLostPow{} power pseudo-experiments. The decisions in Table~\ref{tab:joint5d} were evaluated on the completed draws. A sensitivity analysis computed before the lost outcomes were known showed that every decision could change under a realizable assignment of them. Had every interrupted draw exceeded the observed statistic, no test would have been rejected ($p$ \jtWorstIntLo--\jtWorstIntHi). Among completed draws, runtime is not associated with the statistic ($|\rho|\le\jtRuntimeRho$), which supports but does not certify the decisions.
+
+The lost seeds were rerun under a procedure that was fixed, and reviewed independently, before the rerun~\cite{JointTestRecovery2026}. A determinism check fixed before the rerun (16 of 16 completed seeds rerun bitwise identically) shows that each recovered draw is the lost draw, so every submitted draw has been observed. No recovered draw reaches the observed statistic in any test, claim variant or robustness variant, so no assignment of the lost draws changes any decision. The closest margin is 4.6 units of $T$ below the observed value of 868.6 (GENIE~2.12.10 + MEC shape, $\pm\jtMoneKappaRobust\,\delta_{\mathrm{fine}}$ variant). The next is 49.8 (GENIE~2.12.10 shape, same variant). With complete batches the stopping rule, fixed before any production pseudo-experiment, would have stopped the Tune~v1, GENIE~2.12.10, GENIE~2.12.10 + MEC and GiBUU nulls one batch earlier ($B=1200$), with the same decisions.
+
+The recovered draws were evaluated in two ways: with the variant shifts of the primary evaluation held fixed (the \emph{fixed-shift} evaluation), and with the shifts recomputed on all draws (the \emph{recomputed-shift} evaluation). The recovery's checks are narrower in scope than the main recomputation. Only the fixed-shift evaluation was cross-checked independently. The recomputed-shift evaluation was reproduced only by a standalone rerun of the same code, a consistency check rather than an independent recomputation. The earlier stops rest on the calibration run's own re-application of the sequential rule and have no independent check. The decisions of Table~\ref{tab:joint5d} remain those of the evaluation before recovery, at the $B$ at which its rule stopped. The observed outcomes of the lost draws supersede the finding of the sensitivity analysis described above.
+% Search: earlier-stop; earlier stop; independent check of the earlier stops; standalone rerun @ 1a015eef
+% r22 Step 2 (B10): the cross-check's count (856 of 856 quantities) is in app_provenance.tex, joint-5d.
+% Deposit pass: the disposition label Joseph selected (DECISION-20261005-s5p-recompute-extension-and-lost-seed-
+% recovery.md sec. 5) restated as its content, that section's "What it changes" and required disclosures 1-5, all
+% of which this subsection prints; old text in git history.
+% Source: RECORD-20261006-s5p-lost-seed-recovery-resolution.md (recovery, margins 4.6/49.8 T units, earlier
+% stops, power over the complete sets); RECORD-20261005 sec. 5 (pre-recovery sensitivity, |rho| <= 0.06);
+% DECISION-20261005-s5p-recompute-extension-and-lost-seed-recovery.md sec. 5 (Joseph's disposition).
