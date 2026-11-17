@@ -89,3 +89,22 @@ latter now sits in App. A.8, with its line to be re-measured in the list's next 
   - Question 2: V1a and V1b are LEDGER; V2 is NEEDED and kept verbatim in App. A.
   - No disclosure was lost.
   - The answer is in reads/sec_validation-pass1.txt.
+
+## Cutdown, 2026-11-16 (lane/note-cutdown-20261116)
+
+**Under** Joseph's go for the cutdown (DECISION-20261116-joseph-paper-batch.md at main `99aefd3f0`, sixth answer,
+items 29 and 34) and the editor's brief of the same day. **The rule (2026-11-13):** history or detail stays in the
+note only if removing it would change a reader's understanding of the reported object, its reproducibility, its
+evidential independence or its limitations; everything else goes to the ledger or the records document.
+
+**Base:** `sec_validation.tex` at `8342963c16d74bc10d740e5637d602300557e53a`. Line numbers are the base's; removed text stays at that sha and line.
+
+| id | base line | words cut | disposition | old text | new text | home of the content | why not NEEDED |
+|---|---|---|---|---|---|---|---|
+| K1 | :152 | 98 | cut to ledger | "The failure is in the width alone. The per-bin pattern, which is descriptive and post hoc, is uneven in both directions. … The … bins with pull RMS above 2 carry …% of the C₂ deficit." (how many bins are too wide and too narrow, the median bin's pull RMS, the bins with low per-bin C₂ and where they lie) | cut | 8342963c1:sec_validation.tex:152; the test's record is the records entry `coverage-fixed-truth` (R1.1) | A post hoc description of where a band that is no longer quoted failed. The failure, its criteria, the positive control, the attribution and the post hoc rescoring all stay, and so does the statement that the quoted block has not been tested. The paragraph before it already gives the pull RMS and that the mean pull is consistent with zero. |
+
+**Kept, though the cutdown table proposed shortening §5.2 to about 300 words:** records probes pin five of its
+sentences (the band scored, the quoted block being a separate ensemble, what was fixed before any toy, the rebuild and
+post hoc rescoring, the untested re-test on held-out simulation); `check_sec4_receipts.py` reads two of its numbers
+where they print; and App. I's two rows on the bands point here for the attribution rule. The closure bullets of the
+section's opening also stay: they are the section's statement of the 2D closure results, which the Supplement cites.

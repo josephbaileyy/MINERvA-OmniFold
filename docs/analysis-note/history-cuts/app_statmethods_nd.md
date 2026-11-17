@@ -66,3 +66,12 @@ No site in App. B changes its citation. `UNRELEASED-SUPPORT.md` is unchanged.
 - **Pass 1:** OVERALL FAIL on B2, whose first wording strengthened the record's timing. B1 passed, and its worked
   example was classed LEDGER. No NEEDED item was lost, and no disclosure. reads/app_statmethods_nd-pass1.txt.
 - **Pass 2, B2 reworded:** OVERALL PASS, with no FAILs. reads/app_statmethods_nd-pass2.txt.
+
+## Cutdown, 2026-11-16 (lane/note-cutdown-20261116)
+
+**Under** Joseph's decision of 2026-11-16 (DECISION-20261116-joseph-paper-batch.md at main `99aefd3f0`, items 33 and
+34). **Base:** `app_statmethods_nd.tex` at `8342963c16d74bc10d740e5637d602300557e53a`; line numbers are the base's.
+
+| id | base line | words cut | disposition | old text | new text | home of the content | why not NEEDED |
+|---|---|---|---|---|---|---|---|
+| K1 | :50–:54 | 72 | cut to ledger | §B.3 "Extended-fiducial statistical-band and pull fractions" (label sec:fps-fractions): the scalar statistical band's containment of closure bin–toy cells, the same-ensemble pull fraction and mean absolute pull, and the split-sample fractions in the published and extension regions; "neither is used to certify a covariance" | cut | 8342963c1:app_statmethods_nd.tex:50–54 | It elaborated the containment diagnostic of §12, which the reduction of §12 to one paragraph removes (history-cuts/sec_fps.md, K3). Nothing else cited the subsection or its label. The later subsections of App. B keep their labels; their letters move up by one, and no pointer from the paper or the Supplement names them (they cite B.2 only). |

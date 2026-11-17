@@ -1,4 +1,4 @@
-\section{Validation of the two-dimensional measurement}
+\section{Validation of the two-dimensional result}
 \label{sec:validation}
 
 In a simulated experiment, \emph{truth} is the known target distribution, the \emph{prior} is the starting simulated truth distribution, and the \emph{response} describes reconstruction and selection conditional on truth. A closure test compares the unfolded estimate with its known target under a specified deformation. Bias is the mean estimate minus that target over repeated experiments. A single closure residual also contains sampling fluctuations. Coverage is the fraction of repeated intervals containing the specified truth, and tests the estimator and interval procedure together. Table~\ref{tab:validation-questions} separates these questions before the results. Repeating a numerical calculation checks neither the coverage and width of the intervals nor the adequacy of the physical model.
@@ -149,7 +149,7 @@ At the interim analysis ($N_{\text{toy}}=\covTwoDNtoy$, 205 bins) the completene
 
 The positive control rescales the band on the same toys. At $\times0.7$ and $\times1.3$, $C_2$ moves to $\covTwoDCTwoLowCtl$ and $\covTwoDCTwoHighCtl$, and the test flags both directions.
 
-The failure is in the width alone. The per-bin pattern, which is descriptive and post hoc, is uneven in both directions. The band is too wide in $\covTwoDNwide$ bins (pull RMS below 0.9) and too narrow in $\covTwoDNnarrow$ (above 1.1). The pooled $C_1$ is nominal partly through this cancellation. The median bin's pull RMS is $\covTwoDBinRMSmed$. $\covTwoDNlowCTwo$ bins have a per-bin $C_2$ below 0.85. Of these, 21 form a block at $\pPar\ge\SI{15}{GeV/c}$ and $\pT<\SI{0.55}{GeV/c}$. Six more lie in the highest-$\pT$ row (\SIrange{2.5}{4.5}{GeV/c}) at $\pPar$ \SIrange{6}{20}{GeV/c}. The $\covTwoDNedge$ bins with pull RMS above~2 carry \SI{\covTwoDDeficitShare}{\percent} of the $C_2$ deficit.
+% Cutdown 2026-11-16 (history-cuts/sec_validation.md, row K1): the paragraph on the post hoc per-bin pattern of the completeness-divided band's failure cut; its text stays at 8342963c1:sec_validation.tex:152.
 
 Unlike the band's replicas, the central value has completeness exactly~1. A secondary analysis, added after the pilot, applies the band's division to the toys. Scored against the same band, the divided toys overcover: $C_1=\covTwoDRepCOne$, with its interval above the window. The attribution rule was fixed before the full run, but its clause for the undercoverage outcome was written after the pilot pulls had been seen. Under this rule the primary undercoverage is attributed to the completeness term of the band. The attribution is partial: in the replica form, the $\pPar$ \SIrange{40}{60}{GeV/c} column still undercovers.
 

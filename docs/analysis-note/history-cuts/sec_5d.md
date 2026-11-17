@@ -117,3 +117,45 @@ numbering).
 **Style pass B, meaning read (codex-school gpt-6.1-sol, high, read-only; rows S6, C8, F4 and T8 read together, records attached):**
 - **Pass 1:** OVERALL FAIL on F4 only ("for the purposes, and within the limits, stated in Table~\ref{tab:result-status}" imported Table 1's estimator-seed-only scope, which omits sec_eavailw.tex:118 and sec_systematics.tex:160). S6, C8 and T8 passed; every removed item was LEDGER or NEEDED and retained; no disclosure lost. reads/styleB-pass1.txt.
 - **Pass 2, F4 revised to "with the restrictions stated in this section":** OVERALL PASS, with no FAILs; no NEEDED item lost; no disclosure lost. reads/styleB-pass2.txt.
+
+## Cutdown, 2026-11-16 (lane/note-cutdown-20261116): §9.6, the five-axis covariance C_Z
+
+**Under** Joseph's go for the cutdown (DECISION-20261116-joseph-paper-batch.md at main `99aefd3f0`, sixth answer,
+items 31 and 34) and the editor's brief of the same day: the construction, centring, projection and conditioning of
+C_Z move to the records document; the status paragraph, the four measurements and what the Supplement cites stay.
+**The rule:** as at the head of this file.
+
+**Base:** `sec_5d.tex` at `8342963c16d74bc10d740e5637d602300557e53a`. Line numbers are the base's. The moved text is
+in `app_release_records.tex`, under "Construction and audit record of the (E_avail,W) covariance", word for word.
+
+| id | base line | words cut | disposition | old text | new text | home of the content | why not NEEDED |
+|---|---|---|---|---|---|---|---|
+| K1 | :326, sentences 4–7 | 73 | moved to main_records | "The same inflation of the vertical bands can be transferred onto a sweep block, … only if … (a condition set in July 2026). This transfer is positive-semidefinite by construction, … It does not put every projected variance above that baseline. A direct rank-N swap is not positive-semidefinite." | removed from the note | `app_release_records.tex`, "Moved from the note's §…eavailw-construction" (ledger row L-cut-Z1) | A property of a transfer that no reported result uses. |
+| K2 | :328–:339 | 102 | moved to main_records | "Centering, explicitly." with Eq. zcentering: the per-band blocks' centring, the identity between the CV-centred and mean-centred unified-throw covariances, that the covariance used is the CV-centred variant, the mean-centred variant's √Tr C lower by 7.13%, and that a file's variant is identified by its metadata | removed from the note | as K1 (row L-cut-Z2; row L-thin-C51 re-pinned) | §9.6 "Status" still says which variant is used and that the use extends to no other covariance. The comparison of the two variants concerns a covariance the note uses for no reported result. |
+| K3 | :341 | 160 | moved to main_records | "The projection to (E_avail,W)." | removed from the note | as K1 (row L-cut-Z3; row L-thin-C52 re-pinned) | How a 42-cell projection is formed and paired by checksum; the note quotes nothing from that projection except the four measurements, which say what they are computed on. |
+| K4 | :343 | 148 | moved to main_records | "Conditioning, and why no rank is quoted." | removed from the note | as K1 (row L-cut-Z4; row L-thin-C53 re-pinned) | The note inverts this covariance nowhere and quotes no rank for it. |
+| K5 | :326, end | +37 | pointer inserted | — | "The terms of Eq. zassembly, the transfer of this inflation onto a sweep block, the two centerings, the projection to (E_avail,W) and the conditioning are in the records document (Ref. NoteRecords2026, construction and audit record)." | — (row L-cut-Z5 pins the citation; row L-thin-C50 re-pinned) | The pointer the moved text needs; it states no result. |
+
+**Kept in §9.6:** "Status"; the opening of "Construction" with Eqs. zassembly and zinflation and the definitions under
+them; "What the covariance supports" with its four measurements; the closing sentence. The two equations stay for two
+reasons. They are where the joint (unified-throw) ensemble enters, which is what the Supplement's pointer to this
+subsection is for (`supplemental_body.tex`, the joint-ensemble linearity test). And five note sentences
+(`sec_systematics.tex` twice, `app_statmethods.tex` twice, `app_release.tex`) and three records paragraphs cite them by
+number. The records' own text (`app_history.tex:273`) says the three requirements of the construction "remain in the
+body in the Construction paragraph", which the kept opening sentences are.
+
+**Pointers changed with the move:** `app_statmethods.tex` (§A.2.5, "Scope of mean-centering"): "(§…eavailw-construction,
+Eqs. zinflation and zcentering)" becomes "(§…eavailw-construction, Eq. zinflation)"; the kept definition under
+Eq. zinflation says the unified-throw diagonal is centred on the central value, which is what that sentence cites.
+`app_guide.tex`: "the two centerings of the five-axis covariance (§…eavailw-construction)" becomes "the centering of
+the five-axis covariance (§…)", since the body now describes one in words.
+
+### Corrections after the second-model reads of the cutdown (director's ruling, 2026-11-16)
+
+Two second-model reads of this branch at `56c91c6f6` were made for the director; one passed, and one failed two
+pointers. The director ruled both fixes. Line numbers are this branch's at `56c91c6f6`.
+
+| id | site | old | new | reason |
+|---|---|---|---|---|
+| K6 | sec_5d.tex:326, the pointer sentence of row K5 | "The terms of Eq. zassembly, the transfer of this inflation onto a sweep block, the two centerings, the projection to (E_avail,W) and the conditioning are in the records document (Ref. NoteRecords2026, construction and audit record)." | "The transfer of this inflation onto a sweep block, the two centerings, the projection to (E_avail,W) and the conditioning are in the records document (Ref. NoteRecords2026, construction and audit record)." | The note keeps Eq. zassembly, so the pointer must name only what moved. The citation is unchanged, and row L-cut-Z5's probe still holds. The ML term of that equation, moved from §4.7 (history-cuts/sec_systematics.md K2), is in the same records subsection and is reached by the same citation; the sentence no longer names it. |
+| K7 | app_release_records.tex, lead-in of "Moved from the note's §…eavailw-construction" | "The four paragraphs that follow stood in the note until its cutdown of 2026-11-16, after Eqs. zassembly–zinflation, which the note keeps." | "The transfer sentences in this paragraph, and the three paragraphs that follow, stood in the note until its cutdown of 2026-11-16, after Eqs. zassembly–zinflation, which the note keeps." | The transfer sentences continue the lead-in's own paragraph; only three paragraphs follow it. The moved text itself is unchanged. |
