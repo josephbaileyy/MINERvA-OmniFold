@@ -14415,7 +14415,7 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/redump-f12i-
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/redump-f12i-20261112/run-c2-20261117/README.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/redump-f12i-20261112/run-c2-20261117/c2.session.err.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/redump-f12i-20261112/run-c2-20261117/c2.session.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
-docs/orchestration/state/measurement-paper/5d-community-20261024/fd/redump-f12i-20261112/run-cm-20261117/README.md	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/redump-f12i-20261112/run-cm-20261117/README.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/redump-f12i-20261112/run-cm-20261117/cm.session.err.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/redump-f12i-20261112/run-cm-20261117/cm.session.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/redump-f12i-20261112/run-m-20261117/README.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
