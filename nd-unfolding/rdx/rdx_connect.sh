@@ -17,9 +17,11 @@
 #       gates/merge.ok, set from the probe).
 #   cm  C-TRUTHX-NPZ on the merged dump and sidecar; requires k1.json's PASS.
 #   gs2, gmerge, gs3a, gs3b  write the director's gate file (gates/s2.ok, merge.ok, S3a.ok, S3b.ok) naming PIN (and,
-#       for gmerge, LIMIT), on the director's go; never overwrite one.
-#   s3a, s3b  submit stage 3's arms (rdx_s3_a, rdx_s3_b, 0:22:00) from the second deploy at PIN (the pin that commits
-#       nd-unfolding/rdx/rdx-inputs-SHA256SUMS), after gates/S3a.ok or S3b.ok.
+#       for gmerge, LIMIT), on the director's go; never overwrite one. gs3a first clones the stage-3 deploy (deploy3) at
+#       PIN, the pin that commits nd-unfolding/rdx/rdx-inputs-SHA256SUMS; gs3b, s3a and s3b STOP without deploy3, and
+#       all four check it is clean at PIN, so S3a.ok and S3b.ok name the pin the arms run at.
+#   s3a, s3b  the policy check over stage 3's reads; submit stage 3's arms (rdx_s3_a, rdx_s3_b, 0:22:00) from deploy3,
+#       after gates/S3a.ok or S3b.ok.
 # Every step: refuses unless the host is loginNN and no Slurm job is set; prints the purge-exposed MP-1 inputs' stat
 # (S0's base_cv.root, S1's twelve zero loops, lat_zero.npz and lat_zero_bkg.npz) and STOPs if one is missing; checks
 # the step's read set against the pinned policy-config.json and RDX's never-read list. No set -u.
@@ -33,6 +35,7 @@ MP1=/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1
 S0MAN=$MP1/s0/build/MANIFEST.sha256
 BASECV=$MP1/s0/evloop/base_cv.root; BASECV_SHA=c76256a495d2deb7c213c2f8203b284bea640d90e697c495f5e11cedc830846b
 ZERO=$MP1/s1/evloop/zero; LATD=$MP1/s1/lateral
+PVL_RATIO=/pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV/tune_v1.json   # the arms' frozen reweight
 PLS="1A 1B 1C 1D 1E 1F 1G 1L 1M 1N 1O 1P"
 PY=/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3
 CHKPY=/global/homes/j/josephrb/.conda/envs/omnifold_py310/bin/python   # align, rows, truthx_npz: uproot + numpy, no ROOT
@@ -50,12 +53,13 @@ case "$(hostname -s)" in login[0-9][0-9]) ;; *) bail "host $(hostname -s) is not
 [ -z "$SLURM_JOB_ID" ] || bail "a Slurm job is set ($SLURM_JOB_ID)"
 case "$STEP" in s0|s1|c1|s2|c2|m|cm|s3a|s3b|gs2|gmerge|gs3a|gs3b) ;; *) bail "step $STEP" ;; esac
 [[ "$PIN" =~ ^[0-9a-f]{40}$ ]] || bail "pin $PIN is not a 40-hex commit"
-DEP=$D; [[ "$STEP" == s3a || "$STEP" == s3b ]] && DEP=$D3
-if [ "$STEP" = s0 ] || { [[ "$STEP" == s3a ]] && [ ! -e "$D3" ]; }; then
+DEP=$D; case "$STEP" in gs3a|gs3b|s3a|s3b) DEP=$D3 ;; esac   # stage 3's gates and submits share deploy3, at the stage-3 pin
+if [ "$STEP" = s0 ] || { [ "$STEP" = gs3a ] && [ ! -e "$D3" ]; }; then
   [ ! -e "$DEP" ] || bail "$DEP exists"
   git clone --quiet "$REPO" "$DEP" || bail "clone failed"
   git -C "$DEP" -c advice.detachedHead=false checkout --quiet "$PIN" || stop "checkout of $PIN failed"
 fi
+case "$STEP" in gs3b|s3a|s3b) [ -e "$D3" ] || stop "no $D3 (gs3a clones it at the stage-3 pin)" ;; esac
 head=$(git -C "$DEP" rev-parse HEAD 2>/dev/null); porc=$(git -C "$DEP" status --porcelain --untracked-files=all | wc -l)
 [ "$head" = "$PIN" ] && [ "$porc" -eq 0 ] || stop "the deploy $DEP is not $PIN clean (HEAD=$head, $porc lines)"
 R=$DEP/nd-unfolding/rdx
@@ -227,6 +231,8 @@ cm)
   ;;
 s3a|s3b)
   J=S3a; N=rdx_s3_a; [ "$STEP" = s3b ] && { J=S3b; N=rdx_s3_b; }
+  policy "$OUT/dumps/lat_RDX_ALL.npz" "$OUT/dumps/lat_RDX_ALL_bkg.npz" "$OUT/dumps/truthx_RDX_ALL.npz" \
+    "$OUT/stage/lat_zero.npz" "$OUT/stage/lat_zero_bkg.npz" "$PVL_RATIO"
   RDX_SMOKE=1 bash "$R/sbatch_rdx_arms.sh" "$DEP" "$PIN" "$B" "$J" || stop "the arms launcher's smoke failed"
   submit "$N" 0:22:00 "$R/sbatch_rdx_arms.sh" "$DEP" "$PIN" "$B" "$J"
   ;;
