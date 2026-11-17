@@ -1,0 +1,17 @@
+No claim-changing defects found.
+
+1. **Minor evidence-record inconsistency; no Supplement correction needed.** [ppbench_R5bar.txt](ev/ppbench_R5bar.txt) stores negative `delta` and `fraction` values, using **ABC − AC**, whereas the formula in your prompt uses **AC − ABC**. The underlying debiased values support the printed increase: \(2.93293-2.24026=0.69267\), divided by \(2.24026\), gives \(0.30919\). Fix the formula’s documented sign convention; retain S6.2’s positive “farther … by 0.69 … fraction 0.31.”
+
+The item checks are:
+
+- **1 — US spellings:** “neighbor,” “centered” and “artifact” replace their British forms without changing meaning. No targeted British spellings remain in printed lines of either new TeX file.
+
+- **2 — S9:** The heading is exactly requested. Its opening now leads with the restriction on fitting and constraining models. All four reasons remain: unvalidated interval coverage, bias exceeding criteria at two truths, four low-diagonal-fraction cells, and the run-period block’s addition after seeing period differences. The sixteen-cell result, covariance pointer, five descriptive generator comparisons, carbon qualification and figure pointer also remain.
+
+- **3 — S8.5:** Every fact from the old repaired arm and route record still prints. The single expanded account retains both tunes, matching across two inputs, the 5% largest-unmatched-share bound, every event unmatched, the stop, the float64/float32 keys, and the implementation-defect diagnosis confined to this entry check. It retains the already-used draws without unfolding or grading, every other entry check passing and its readings being visible, float32 keying, the successful real-input matching check, the repair’s timing, “no rule, threshold, bound or reporting cell,” and successful entry-check reruns at both tunes. The later trial-run stop retains its controls and one pseudo-experiment, computing-time/memory check, missing output, timing before grading, and batch-script-only rerun. The old record’s final GEANT4 fact prints **after the descriptive-status implication**: the disagreement remains unexplained and led to the primary variant. The check’s advance specification and the result rule’s advance specification both remain. The reason for descriptive status agrees with decision item 14: repair chosen after the stop, with other readings visible, despite no coverage pseudo-experiment yet being unfolded or graded.
+
+- **4 — Opening:** All destinations survive: S1–S3, S4–S6, S7–S8 and S9–S10. Details compressed out of the overview remain printed: algorithm in S4.1, learner settings in S4.3, configuration history in S4.5, run-period constructions in S5.3 and S6.1, test index in S8/Table S11, and the stopped first test in S8.6. The coverage limitation remains explicit.
+
+- **5 — Cold-read clarifications:** S8.7’s **34 = 33 plus Rvp1pi** distinction matches the supplied excerpt’s set comparison and explicit exclusion of Rvp1pi from the reported covariance. The surrounding conditions and limitations remain intact. S6.2 correctly identifies the noise-subtracted comparison; the underlying values support both 0.69 and 0.31. Neither clarification changes the reported findings or their qualifications.
+
+VERDICT: PASS
