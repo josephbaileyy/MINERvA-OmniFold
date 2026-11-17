@@ -5,3 +5,5 @@ fig:gbdt-recovery	development	a development test of the five-dimensional estimat
 fig:gbdt-bias-spread	development	a development test of the five-dimensional estimator (sec_5d.tex, the precision study)
 fig:gbdt-coverage	development	a development test of the five-dimensional estimator (sec_5d.tex, the precision study)
 fig:gbdt-prior	development	a development test of the five-dimensional estimator (sec_5d.tex, the precision study)
+fig:negweight-ratio	exempt	a ratio map of two central values: no uncertainty is drawn, and the 2D covariance exists, so none of the three stamps applies
+fig:bkg-residual-note	development+exempt	a background closure from estimator development (Table tab:validation-design-5d); its bars are the standard error of the mean over pseudo-experiments, which none of the three stamps describes

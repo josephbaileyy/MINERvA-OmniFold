@@ -74,7 +74,7 @@ With identical unfolding settings, the histogram backend and a common classifier
 
 \begin{table}[t]
   \centering
-  \caption{Binned purity versus unbinned negative-weight background subtraction on the 2D ME~FHC measurement (common estimator and seed). The per-bin figures are the negative-weight/purity ratio over the populated cross-section bins.}
+  \caption[Purity versus negative-weight background subtraction in 2D]{Binned purity versus unbinned negative-weight background subtraction on the 2D ME~FHC measurement (common estimator and seed). The per-bin figures are the negative-weight/purity ratio over the populated cross-section bins.}
   \label{tab:negweight}
   \begin{tabular}{lcc}
     \hline\hline
@@ -92,7 +92,7 @@ With identical unfolding settings, the histogram backend and a common classifier
 \begin{figure}[t]
   \centering
   \includegraphics[width=0.62\textwidth]{negweight_ratio_2d}
-  \caption{Negative-weight/binned-purity cross-section ratio in populated bins of the 2D ME~FHC measurement, with common estimator and seed. The median is $\nwMedianBin$ (near-white). Only the low-$p_T$, high-background edge bin departs by more than a few percent. Background is largest there, and the $\max(0,\cdot)$/structural floor of \S\ref{sec:negweight-estimator} governs the result.}
+  \caption[Negative-weight/purity cross-section ratio in 2D]{Only the low-$p_T$, high-background edge bin departs by more than a few percent in the negative-weight/binned-purity cross-section ratio. The map shows that ratio in populated bins of the 2D ME~FHC measurement, with common estimator and seed. The median is $\nwMedianBin$ (near-white). The color scale saturates; the largest single-bin deviation is in Table~\ref{tab:negweight}. Background is largest in the edge bin, and the $\max(0,\cdot)$/structural floor of \S\ref{sec:negweight-estimator} governs the result there.}
   \label{fig:negweight-ratio}
 \end{figure}
 
@@ -170,7 +170,7 @@ The closure of the five-dimensional pseudo-experiments with backgrounds, under p
 \begin{figure}[tbp]
 \centering
 \includegraphics[width=\linewidth]{paper_fig_bkg_residual}
-\caption{Nominal-truth fractional closure residual, (unfolded$-$truth)/truth, with backgrounds and deterministic LightGBM. Circles: purity subtraction (9 pseudo-experiments). Squares: unbinned negative-weight subtraction, 100-tree/8-leaf refinement (60). The pseudo-experiments are unpaired. (a)~42 $(\Eavail,W)$ cells grouped by $\Eavail$ bin. (b)~\jtNcells{} coarse joint cells indexed in the $3^{5}$ grid, followed by the integrated total. Bars: standard error of the mean.}
+\caption[Closure residual with backgrounds: purity and negative-weight subtraction]{Development check: purity-based subtraction leaves a bias in the highest-$W$ column at nominal truth, and refined negative-weight subtraction reduces it there, while some joint cells remain high (\S\ref{sec:val-negweight}). Bars: standard error of the mean. The plotted quantity is the nominal-truth fractional closure residual, (unfolded$-$truth)/truth, with backgrounds and deterministic LightGBM. Circles: purity subtraction (9 pseudo-experiments). Squares: unbinned negative-weight subtraction, 100-tree/8-leaf refinement (60). The pseudo-experiments are unpaired. (a)~42 $(\Eavail,W)$ cells grouped by $\Eavail$ bin. (b)~\jtNcells{} coarse joint cells indexed in the $3^{5}$ grid, followed by the integrated total.}
 \label{fig:bkg-residual-note}
 \end{figure}
 
