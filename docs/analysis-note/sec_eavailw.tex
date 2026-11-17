@@ -31,7 +31,7 @@ The configuration-(a) five-dimensional unfolding in $(\pT,\pPar,\Eavail,q_{3},W)
 Table~\ref{tab:observables-impl} gives the implemented truth and reconstructed definitions of the five unfolded observables. $E_{\mu}$, $p_{\mu}$, and $\theta_{\mu}$ are the muon energy, momentum, and angle. $q_{0}$ is the calorimetric estimate of the energy transfer. $M$ is the struck-nucleon mass, $\bar M=(1.5M_{n}+M_{p})/2.5$.  Exact $Q^{2}$ is $-(k-k')^{2}$ from the generator's four-vectors. Truth $W$ instead uses the massless-muon $Q^{2}$ with $\theta_{\mu}$ from the beam axis, a difference whose effect on $W$ is given below.
 
 \begin{table}[htbp]
-  \caption{The five implemented observables share reconstructed inputs. Truth and reconstructed definitions and their conventions are listed separately.}
+  \caption[Implemented observable definitions]{The five implemented observables share reconstructed inputs. Truth and reconstructed definitions and their conventions are listed separately.}
   \label{tab:observables-impl}
   \centering\small
   \begin{tabular}{@{}llll@{}}
@@ -88,7 +88,7 @@ The analysis excludes events with negative truth $W^{2}$, a weight fraction of $
 Table~\ref{tab:generators-impl} lists the generator predictions compared in this note and tested in \S\ref{sec:joint5d}.  All are per nucleon of the stated target and are binned with the same fine-grid-to-cell map.
 
 \begin{table}[htbp]
-  \caption{The generator predictions differ in target and neutrino-energy coverage. All are per nucleon of the stated target and use the same fine-grid-to-cell map (\S\ref{sec:eavailw-generators}).}
+  \caption[Generator predictions and domains]{The generator predictions differ in target and neutrino-energy coverage. All are per nucleon of the stated target and use the same fine-grid-to-cell map (\S\ref{sec:eavailw-generators}).}
   \label{tab:generators-impl}
   \centering\small
   \begin{tabular}{@{}llll@{}}
@@ -123,7 +123,7 @@ Estimator-seed shifts of central values are a small fraction of the projected un
   \centering
   \includegraphics[width=0.55\textwidth]{paper_fig2_joint}
 
-  \caption{The central-value $(\Eavail,W)$ map locates the excess over the MINERvA Tune~v1 prior. No uncertainty is drawn; the descriptive scope is stated in \S\ref{sec:3d}. Shown are unfolded data and the prior (GENIE~2.12.6 with analysis weights). Top: dimensionless data/Tune ($0.5$--$1.5$ color scale). Bottom: cell-integrated data$-$Tune ($10^{-40}\,\si{cm^2/nucleon}$). Equal-size display cells carry physical edges of the $7\times6$ grid (App.~\ref{app:release-edges}); each final $[3,100]\,\si{GeV}$ interval is a catch bin. Ratios are independent of cell area. Integrated differences include $\Delta\Eavail\,\Delta W$, so wide catch bins carry larger values. Percentage shares use cell-integrated positive excess.}
+  \caption[Available-energy and hadronic-mass map, central values only]{The central-value $(\Eavail,W)$ map locates the excess over the MINERvA Tune~v1 prior. No uncertainty is drawn; the descriptive scope is stated in \S\ref{sec:3d}. Shown are unfolded data and the prior (GENIE~2.12.6 with analysis weights). Top: dimensionless data/Tune ($0.5$--$1.5$ color scale). Bottom: cell-integrated data$-$Tune ($10^{-40}\,\si{cm^2/nucleon}$). Equal-size display cells carry physical edges of the $7\times6$ grid (App.~\ref{app:release-edges}); each final $[3,100]\,\si{GeV}$ interval is a catch bin. Ratios are independent of cell area. Integrated differences include $\Delta\Eavail\,\Delta W$, so wide catch bins carry larger values. Percentage shares use cell-integrated positive excess.}
   % tune weights: \texttt{w\_truth}
 
   \label{fig:eavailWexcess}
@@ -153,7 +153,7 @@ Valencia 2p2h raises the GENIE$+$MEC integrated prediction while leaving the cor
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.99\textwidth]{eavailW_band}
-  \caption{Central values only: both GENIE predictions lie above data in the $W$ transition region (\S\ref{sec:eavailw-band}). No uncertainty is drawn; no covariance-based compatibility metric is quoted (\S\ref{sec:eavailw-band}). Shown are projections of the unfolded $(\Eavail,W)$ cross section onto $\Eavail$ (left) and $W$ (right), with the predictions of four generators (GENIE~CV, GENIE$+$MEC, NuWro, GiBUU; GENIE and NuWro flux-corrected, \S\ref{sec:3d-models}).}
+  \caption[Generator projections, central values only]{Central values only: both GENIE predictions lie above data in the $W$ transition region (\S\ref{sec:eavailw-band}). No uncertainty is drawn; no covariance-based compatibility metric is quoted (\S\ref{sec:eavailw-band}). Shown are projections of the unfolded $(\Eavail,W)$ cross section onto $\Eavail$ (left) and $W$ (right), with the predictions of four generators (GENIE~CV, GENIE$+$MEC, NuWro, GiBUU; GENIE and NuWro flux-corrected, \S\ref{sec:3d-models}).}
   \label{fig:eavailWband}
 \end{figure}
 

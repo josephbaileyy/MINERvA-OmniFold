@@ -59,7 +59,7 @@ Because the $\Delta_{b}$ come from the observed data, the null distributions are
 
 \providecommand{\pcell}[2]{\parbox[t]{#1}{\raggedright\strut#2\strut}}
 \begin{table}[htbp]
-  \caption{Nuisance draws act on the pseudo-data source only in the calibration model. Left: the flow of one test, repeated over $B$ pseudo-experiments. Right: what each element of a pseudo-experiment does, and the corresponding element of the data analysis.}
+  \caption[Generative model of the calibration]{Nuisance draws act on the pseudo-data source only in the calibration model. Left: the flow of one test, repeated over $B$ pseudo-experiments. Right: what each element of a pseudo-experiment does, and the corresponding element of the data analysis.}
   \label{tab:joint5d-genmodel}
   \centering\small
   \begin{minipage}[t]{0.40\textwidth}
@@ -185,7 +185,7 @@ Every pseudo-experiment resamples the same simulated events, so the null distrib
 Table~\ref{tab:joint5d} lists the ten decisions. Every test is rejected at familywise $\alpha=\jtAlpha$; nine have $k=0$, and NuWro's shape test has $k=1$. Each rejection also survives the robustness variants at $\pm\jtMoneKappaRobust\,\delta_{\mathrm{fine}}$, the upper end of the extrapolation in condition~(i). Figure~\ref{fig:joint5d-nulls} shows each null's calibrated distribution with the observed statistic. The Tune~v1 null is centered at small values, whereas the external nulls are displaced far upward by the estimator's pull toward its prior.
 
 \begin{table}[htbp]
-  \caption{Every joint five-dimensional generator test is rejected under the six conditions of \S\ref{sec:joint5d-conditions}. The tests are listed in Holm order. $B$ is the number of completed calibration pseudo-experiments at the stop set by the sequential rule (1400 submitted per null, NuWro 1800; the rest were lost to time limits and later recovered for reporting only, \S\ref{sec:joint5d-lost}), and $k$ the number at least as extreme as the data; claim $p=(k+1)/(B+1)$ is never zero.}
+  \caption[Joint generator-test decisions]{Every joint five-dimensional generator test is rejected under the six conditions of \S\ref{sec:joint5d-conditions}. The tests are listed in Holm order. $B$ is the number of completed calibration pseudo-experiments at the stop set by the sequential rule (1400 submitted per null, NuWro 1800; the rest were lost to time limits and later recovered for reporting only, \S\ref{sec:joint5d-lost}), and $k$ the number at least as extreme as the data; claim $p=(k+1)/(B+1)$ is never zero.}
   \label{tab:joint5d}
   \centering
   \small
@@ -211,7 +211,7 @@ Table~\ref{tab:joint5d} lists the ten decisions. Every test is rejected at famil
 \begin{figure}[tbp]
   \centering
   \includegraphics[width=\textwidth]{paper_joint_nulls}
-  \caption{All ten joint tests reject under the six conditions of \S\ref{sec:joint5d-conditions}. The figure shows calibrated null distributions by prediction (columns), total (top) and shape (bottom). Shown: decision variant with largest null median. Vertical: observed statistic; $k/B$ as in Table~\ref{tab:joint5d}. Horizontal axis: logarithmic. Every draw in a shifted null receives the same fixed vector $s\in\{0,\tfrac12D,D,+\jtMoneKappa\,\delta_{\mathrm{fine}},-\jtMoneKappa\,\delta_{\mathrm{fine}}\}$ before forming the statistic. The decision uses the maximum $p$ over these separate shifts, which need not match the shown variant and bounds neither combined shifts nor other directions. Sufficient inputs: App.~\ref{app:release}.}
+  \caption[Calibrated joint-test null distributions]{All ten joint tests reject under the six conditions of \S\ref{sec:joint5d-conditions}. The figure shows calibrated null distributions by prediction (columns), total (top) and shape (bottom). Shown: decision variant with largest null median. Vertical: observed statistic; $k/B$ as in Table~\ref{tab:joint5d}. Horizontal axis: logarithmic. Every draw in a shifted null receives the same fixed vector $s\in\{0,\tfrac12D,D,+\jtMoneKappa\,\delta_{\mathrm{fine}},-\jtMoneKappa\,\delta_{\mathrm{fine}}\}$ before forming the statistic. The decision uses the maximum $p$ over these separate shifts, which need not match the shown variant and bounds neither combined shifts nor other directions. Sufficient inputs: App.~\ref{app:release}.}
   % Shortening pass: the article's caption sentences added (nd-unfolding/s5p_joint.py:228-258; M2-AUDIT.md:61, :146-150).
   % The article's figure was regenerated 2026-10-20 with the legend string only changed
   % (figures/plot_joint_null_distributions_physlabels.py, sha256 bb1d7389...; Slurm job 60029158).
@@ -257,7 +257,7 @@ Under the criterion, a test would count as evidence of additional joint discrimi
 
 % Deposit pass: W1-RECORD-20261006.md sec. 1 (identical under both D2 readings; independently reproduced, sec. 4, 40 of 40). Values copied as recorded.
 \begin{table}[htbp]
-  \caption{Every test has $p<0.05$ in at least one matched projection. The joint tests are restricted to matched $3\times3$ coarse projections of the same cells (for GiBUU, 6 and 8 cells of its domain), with all submitted calibration draws, the same variants and the same claim rule. The GENIE~2.12.10 values in the $(\pT,\pPar)$ column are a post hoc observation.}
+  \caption[Matched-projection test probabilities]{Every test has $p<0.05$ in at least one matched projection. The joint tests are restricted to matched $3\times3$ coarse projections of the same cells (for GiBUU, 6 and 8 cells of its domain), with all submitted calibration draws, the same variants and the same claim rule. The GENIE~2.12.10 values in the $(\pT,\pPar)$ column are a post hoc observation.}
   \label{tab:joint5d-projections}
   \centering\small
   \begin{tabular}{@{}llll@{}}
@@ -289,7 +289,7 @@ In an exploratory sensitivity study of the response~\cite{JointTestRecoil2026}, 
 
 % Deposit pass: W2B-REPORT-20261006.md sec. 5, "Observed statistics" (descriptive) and the k/B table; values copied as recorded. Null medians are the frozen unshifted (c = 0) null medians.
 \begin{table}[htbp]
-  \caption{All ten tests remain rejected when the simulation's reconstructed recoil energy is scaled by $\pm4\%$ against unchanged null distributions. The observed joint statistics are shown beside the recorded values and the median of each unshifted null distribution, which is not regenerated. Every test keeps $k=0$ at both signs except NuWro's shape test ($k=1$ of 1751 at $-4\%$, 3 at $+4\%$). The values are descriptive.}
+  \caption[Descriptive recoil-scale sensitivity of the observed statistics]{All ten tests remain rejected when the simulation's reconstructed recoil energy is scaled by $\pm4\%$ against unchanged null distributions. The observed joint statistics are shown beside the recorded values and the median of each unshifted null distribution, which is not regenerated. Every test keeps $k=0$ at both signs except NuWro's shape test ($k=1$ of 1751 at $-4\%$, 3 at $+4\%$). The values are descriptive.}
   \label{tab:joint5d-recoil}
   \centering\small
   \begin{tabular}{@{}lrrrrrrrr@{}}
