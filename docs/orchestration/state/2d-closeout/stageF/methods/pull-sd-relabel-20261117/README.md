@@ -81,8 +81,8 @@ save.
   - Ten mutants each fail the check named: one ulp (K3), one more log line (K3), another input (K3), a changed x label
     (K4), no flag (K4), the box moved (K5 and K6), the flag in "off" (K2), a wrong installed digest (K1) and the full
     words (K7 overlap).
-- **[test_connect_sd.sh](test_connect_sd.sh)**, a stand-in run of the filled connect, output in
-  `test_connect_sd.out.txt`.
+- **[test_connect_sd.sh](test_connect_sd.sh)**, a stand-in run of the filled connect
+  ([connect/connect-sd.sh](connect/connect-sd.sh), filled at PKG 110a90e8), output in `connect/test_connect_sd.out.txt`.
   - It uses a real clone at PKG, a real base archive and real code-sha checks.
   - Shims answer for squeue, sacct and the O_NOATIME hash, and the toy stands in for the producer.
   - The clean scenario's arms then pass check_sd.py.
