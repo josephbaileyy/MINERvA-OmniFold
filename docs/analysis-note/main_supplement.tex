@@ -81,6 +81,9 @@ further detail.
 % definition and cites where it is given in full. Unnumbered and not a float, so that no Supplement table or section
 % number moves (the paper's \stab and \ssec pointers print them). The two senses of "Descriptive" are the paper's
 % table tab:outcomes caption, as DECISION-20261116-joseph-paper-batch.md items 14 and 24 fixed it.
+% Updated 2026-11-17 (readability round 2): the Descriptive entry follows the caption as director-helper-3's 7264f975a
+% rewrote it ("a comparison without a grading rule, or a test continued, or fixed and rerun, after one of its checks was
+% seen"), and the paper's section 6.2 sentence on the repair's timing.
 \clearpage
 \noindent{\large\bfseries Definitions and conventions.} The most-used terms, each with the section that defines it in
 full (S: this Supplement; P: the paper).\par\smallskip
@@ -110,7 +113,7 @@ $V_g$; shape-only $\chi^2$ & A prediction's diagonal sum of squared event weight
 $C_T$; $C_T^{+}$ & A coverage test's covariance, rebuilt once per held-out tune; its inverse on its non-null subspace (\ref{supp:covdesign-sec}) \\
 \addlinespace[2pt]
 \multicolumn{2}{@{}l}{\emph{Status words}} \\
-Descriptive & A comparison without a grading rule (P\ref*{P-sec:strategy}). Two rows of the paper's table~\ref*{P-tab:outcomes} use it in a specific sense: the bias-half rule, a diagnostic that changes nothing in the reported result and was defined after the fake-data biases it classifies had been seen; and the second five-observable coverage test, whose criteria fixed in advance were applied, but whose repair was chosen after an entry-check stop, when no coverage pseudo-experiment had been unfolded or graded and other gate readings were already visible (\ref{supp:study-ll5d}) \\
+Descriptive & A comparison without a grading rule, or a test continued, or fixed and rerun, after one of its checks was seen (P\ref*{P-sec:strategy}, P\ref*{P-sec:ll5d}). For the bias-half rule, it marks a diagnostic that changes nothing in the reported result and was defined after the fake-data biases it classifies had been seen. In the second five-observable coverage test, an entry check was fixed and the test rerun after an earlier run stopped, before any coverage pseudo-experiment was unfolded or graded but when other gate readings were already visible (\ref{supp:study-ll5d}) \\
 Flagged & Bias with $p<\fvval{trig-p}$ under $\chi^2_{16}$, or a cell with $|z|>\fvval{trig-z}$; the fake-data tests grade bias only (\ref{supp:study-fd}) \\
 Under-covers; over-covers & A coverage count at or below the draw-matched null's threshold; one in its upper tail, reported and not a failure (\ref{supp:covdesign-sec}; table~\ref{tab:ll5d-results}) \\
 Clipping readings & ``Passes, weakened by clipping'': unflagged, its drawn spread narrowed below \fvval{cov-weak} of its variance (\ref{supp:covdesign-sec}); ``possible clipping artefact'': flagged, with clipping offset $|o_c|\geq\delta^*$, which cannot remove the flag (\ref{supp:study-ll5d}) \\
