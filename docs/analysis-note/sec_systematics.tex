@@ -30,7 +30,7 @@ Ranked by per-bin median fractional standard deviation, the largest bands of the
   \centering
   \includegraphics[width=0.49\textwidth]{MEFHC_fig6_7_uncertainty_pt}
   \includegraphics[width=0.49\textwidth]{MEFHC_fig6_7_uncertainty_pz}
-  \caption{2D cross-section fractional uncertainty projected onto $\pT$ (left) and $\pPar$ (right), grouped as in Figs.~6--7 of Ref.~\cite{MINERvA:2021owq} by flux, interaction models, normalization, hadronic response, muon reconstruction, the statistical band, the training-seed block and the run-period block, with the total and the published total.}
+  \caption[Fractional uncertainty of the 2D cross section by source]{The flux band is the largest, as in the published measurement. Uncertainties: the 2D covariance, projected exactly onto each axis. Shown: the 2D cross-section fractional uncertainty projected onto $\pT$ (left) and $\pPar$ (right), grouped as in Figs.~6--7 of Ref.~\cite{MINERvA:2021owq} by flux, interaction models, normalization, hadronic response, muon reconstruction, the statistical band, the training-seed block and the run-period block, with the total and the published total.}
   % Q_R (RE-2 integration: re2-integration/figs/MEFHC_fig6_7_uncertainty_{pt,pz}.pdf, RE-2 part C step fig67 on E_R and G2R (2026-11-15): now the print-style draw of RE-2-shapes run 2's fig67_projections.json (make_figures.sh, family 7; note-figstyle-20261113/runs/family7/).
   % outA/uq_adopted_covariance.root). Was Q (rebuild/outputs/fig67/, legend "Training seed" = C08, "Run period" = C_PL;
   % labels kept, J3/J4 provisional (DECISION-20261018, packet W10)).
@@ -87,7 +87,7 @@ The fixed-truth coverage studies of \S\ref{sec:coverage} scored two earlier stat
   \centering
   \includegraphics[width=0.49\textwidth]{uq_spread_2d}
   \includegraphics[width=0.49\textwidth]{uq_corr_2d}
-  \caption{300-replica Poisson bootstrap of the statistical block: per-bin spread $\sigma$ relative to the central value of the unfolded 2D cross section, labeled std/mean on the color bar (left), and correlation matrix for the 205 reported bins (right).}
+  \caption[Statistical block of the 2D cross section]{The statistical block of the 2D cross section, from a Poisson bootstrap in which every replica is fully re-unfolded. Shown: the 300-replica Poisson bootstrap of the statistical block: per-bin spread $\sigma$ relative to the central value of the unfolded 2D cross section, labeled std/mean on the color bar (left), and correlation matrix for the 205 reported bins (right).}
   % RE-2 integration (caption; approved, DECISION-20261024-joseph-approve-integration-wording-s1-compute-preserve.md): re2-integration/figs/uq_{spread,corr}_2d.pdf, RE-2 part C stat_figs
   % (plot_bootstrap_figs.py on partc-r2 outA/block_stat.root, hRel2D = sqrt(diag stat)/x with x = E_R; RE2-PARTC-REPORT.md
   % sec. 12). Was rebuild/outputs/stat/uq_{spread,corr}_2d.pdf (hRel2D = sqrt(diag stat)/E_U).
@@ -169,6 +169,8 @@ The run-period block $C_{\mathrm{PL}}$ is an uncertainty assigned for an observe
 The block is built from separate seed-42 unfolds of three run periods, the playlist groups 1A--1F, 1G--1M and 1N--1P, each unfolded through its own simulated detector response. The block uses each period's unfolded result over that period's own simulated truth. Each period is compared with the exposure-weighted mean of the three. This avoids choosing a reference period. The spread, applied to the central value, gives the block. It is added after the other blocks. It has rank two, and with three period groups its own size is poorly determined. Its per-bin median fractional standard deviation is \SI{2.09}{\percent} (84th percentile \SI{3.34}{\percent}, maximum \SI{6.48}{\percent}). The fractional standard deviation is \SIrange{1.17}{3.36}{\percent} on the $\pPar$ projections and \SI{1.97}{\percent} on the integrated cross section. Added to the other blocks, it raises the per-bin $\sigma$ by a median of \SI{5.8}{\percent} (Table~\ref{tab:pl-added}). Taking 1A--1F as the reference would give a smaller block (per-bin median \SI{1.38}{\percent}, integral \SI{1.09}{\percent}).
 
 \begin{table}[htbp]
+  \caption[Effect of the run-period block on the 2D uncertainty]{Adding the run-period block to the other blocks raises the total uncertainty, per bin, on the $\pPar$ projections and for the integrated cross section.}
+  \label{tab:pl-added}
   \centering
   \begin{tabular}{@{}lcc@{}}
     \toprule
@@ -180,8 +182,6 @@ The block is built from separate seed-42 unfolds of three run periods, the playl
     Integrated cross section & \SI{9.9}{\percent} & \SI{17.1}{\percent} \\
     \bottomrule
   \end{tabular}
-  \caption{The run-period block added to the other blocks.}
-  \label{tab:pl-added}
 \end{table}
 
 The block's interpretation is limited by the small number of period groups, by possible shrinkage from the regularization, and by the statistical and training noise it retains. Because the block is built from the observed differences among the periods, it contains them by construction. That containment gives no information about coverage or whether the size is right. For the same reason, the double-ratio $\chi^{2}$ against any total that contains the block is bounded whatever the data. It does not test the block. The raw 1G--1M $\pPar$ $\chi^{2}$ is 33.8 against the other blocks alone and 2.60 with the block added. These values indicate sensitivity only. % G2R: RE-2-shapes run 2 (C_new), g2r-integration/ledger.tsv g2r-cpl-raw-vs-s5, g2r-cpl-raw-vs-q; a source comment citing RE-2 part C for this value gives the earlier value
