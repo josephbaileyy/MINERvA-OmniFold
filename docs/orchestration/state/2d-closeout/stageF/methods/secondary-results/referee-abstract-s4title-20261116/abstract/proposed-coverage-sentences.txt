@@ -1,0 +1,5 @@
+CURRENT (in the build) coverage + repair sentences:
+A corresponding test of the five-observable estimator's covariance at those tunes, where the fake-data bias is not flagged, uses pseudo-data that omit the model, response and run-period variations. For its two tunes, it finds under-coverage at both in each variant, with and without the detector's neutron and proton interaction bands. The test ran with a repair chosen after an earlier run stopped, and is descriptive.
+
+PROPOSED by an earlier referee (would bring the abstract to 249 words):
+At those tunes, where separate tests flag no bias, a five-observable test draws pseudo-data without model, response or run-period variations; its graded covariance includes the model term but omits response and run-period terms. Both variants, without and with the detector's neutron and proton bands, flag joint under-coverage at both tunes and also flag cell R07 at AR23. Under the pre-specified rule, this test is descriptive: an entry-check repair followed a stop, before any coverage pseudo-experiment was unfolded or graded, with other gate readings visible.

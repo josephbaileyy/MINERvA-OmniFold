@@ -1,0 +1,2 @@
+#977 head adbacc6fc61353bc7931cfa8fe53c770c867fc08; ruled failures: 52
+DRYRUN PASS (only ruled failures)
