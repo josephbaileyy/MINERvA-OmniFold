@@ -1,0 +1,3 @@
+S1-CONTROL C_total (C_e + C_model_abs, at the data): mu_max 0.081346592967004 vs geant_full.json 0.081346592967004, rel 0.00e+00
+S1-CONTROL reported (C_total + C_resp + C_PL5D): mu_max 0.04097223733043594 vs geant_full.json 0.04097223733043594, rel 0.00e+00
+S1-CONTROL PASS
