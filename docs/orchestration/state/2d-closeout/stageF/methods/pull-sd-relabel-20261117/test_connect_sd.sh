@@ -28,6 +28,7 @@ cat > "$SH/sacct" <<'EOF'
 #!/bin/bash
 if [[ "$*" == *"--name rdx_s1_1A"* ]]; then printf '%b' "61300000|rdx_s1_1A|COMPLETED|2026-11-14T20:00:00\n"
 else printf '%b' "61300000|rdx_s1_1A|COMPLETED\n61443055|rdx_s2_merge|COMPLETED\n"; [ -n "${SC_UNENDED:-}" ] && printf '%b' "61500000|rdx_s3_a|RUNNING\n"; fi
+exit 0
 EOF
 printf '#!/bin/bash\necho 256\n' > "$SH/nproc"; printf '#!/bin/bash\necho login99\n' > "$SH/hostname"
 printf '#!/bin/bash\nshift; exec "$@"\n' > "$SH/timeout"
