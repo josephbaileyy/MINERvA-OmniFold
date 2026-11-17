@@ -2,11 +2,12 @@ label	document	printed	kind
 eq:crep	paper	3.2	equation
 eq:eavail	paper	2.1	equation
 eq:xsec	paper	3.1	equation
-fig:bias-cells	paper	4	figure
-fig:deformation	paper	3	figure
-fig:rounding-shifts	paper	5	figure
-fig:runperiod	paper	2	figure
-fig:validation	paper	1	figure
+fig:bias-cells	paper	5	figure
+fig:deformation	paper	4	figure
+fig:diagnostics	paper	1	figure
+fig:rounding-shifts	paper	6	figure
+fig:runperiod	paper	3	figure
+fig:validation	paper	2	figure
 sec:bench	paper	4	section
 sec:calib	paper	6.2	section
 sec:closure	paper	5.1	section

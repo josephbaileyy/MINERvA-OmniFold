@@ -183,10 +183,13 @@ CHECKS = [
     # variant of VL151 (the Supplement's figure) is one clause after it
     # the figure referee read's check A (2026-11-12): the opening was rewritten around the median fraction followed; the
     # same value is now printed as the cell's residual "reaches" (anchor moved, value and key unchanged)
+    # the readability batch (r2 #1, the director, relaying Joseph 2026-11-16): the example now opens section 5.1, its
+    # residual sentence starts a sentence, and the lower-capacity clause reads "gives the same ... residual" (anchors moved,
+    # values and keys unchanged)
     ("the reported estimator at the GiBUU/GENIE shape, high W (s5e)", "paper_body.tex",
-     r"the residual against the changed truth reaches \\SI\{([0-9.]+)\}\{\\percent\}", e_gibuu_max, "round"),
+     r"[Tt]he residual against the changed truth reaches \\SI\{([0-9.]+)\}\{\\percent\}", e_gibuu_max, "round"),
     ("regularization bias at high W, the lower-capacity variant (VL151)", "paper_body.tex",
-     r"gives the same \\SI\{([0-9.]+)\}\{\\percent\} in that cell", regularization_max, "round"),
+     r"gives the same \\SI\{([0-9.]+)\}\{\\percent\} residual", regularization_max, "round"),
     # The referee recheck of 2026-11-11 (RESPONSE.md s8; the director's ruling): the paper's sentence is cut because the note
     # carries it at its release revision (acf934d71, and 4219869a2): sec_5d.tex sec:coverage-5d, "coverage as low as 0.060".
     ("an earlier estimator's 68% coverage under the rate reduction (s5c tier S)", "sec_5d.tex",

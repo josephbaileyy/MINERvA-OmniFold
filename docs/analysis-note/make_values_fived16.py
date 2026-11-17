@@ -329,7 +329,8 @@ TRUTH_LABEL = {"nominal": ("the simulation prior", "simulation prior"),
 LISTED_CLAIMS = [
     ("paper_body.tex", "the flagged truths ($p<", {"kind": "keys"}),
     ("paper_body.tex", "also meets the flagging criterion", {"kind": "without"}),
-    ("paper_body.tex", "Thus the fake-data bias exceeds the stated thresholds", {"kind": "both"}),
+    # the paper's "Thus the fake-data bias exceeds the stated thresholds" sentence (kind "both") was a repeated verdict, cut by the
+    # readability batch (r2 #16, the director, relaying Joseph 2026-11-16); its truths are the "keys" and "without" rows' sentences
     ("paper_body.tex", r"Under $C_{\mathrm{total}}$ alone, the right-hand columns", {"kind": "ctotal"}),
     ("sec_fived16.tex", "truths meet the listing criterion ($p<", {"kind": "keys"}),
     ("sec_fived16.tex", "truths meet it: the GiBUU", {"kind": "without"}),
@@ -338,8 +339,9 @@ LISTED_CLAIMS = [
     # the abstract read of 2026-11-12 dropped the second "at" (to fit "move opposite the change" at 250 words)
     # style round 4 (the director's approved item, 2026-11-12): the abstract names the truth as the body does, "GiBUU hybrid truth"
     # Joseph's short abstract (the director, relaying Joseph 2026-11-16) counts them; the introduction names them
-    ("main_paper.tex", "flag bias beyond uncertainty-based criteria at two truths", {"kind": "n", "n": 2}),
-    ("paper_body.tex", "Fake-data tests flag bias beyond uncertainty-based criteria at two truths, a GiBUU hybrid and a synthetic",
+    # the readability batch (the director, relaying Joseph 2026-11-16): the abstract's and the introduction's new sentences
+    ("main_paper.tex", "fake-data tests flag bias at two truths that no tested", {"kind": "n", "n": 2}),
+    ("paper_body.tex", "Fake-data tests flag bias beyond uncertainty-based criteria at a GiBUU hybrid truth and a synthetic",
      {"kind": "count", "gibuu": 1, "also": ["q3"], "n": 2}),
     ("main_note.tex", "At a GiBUU-like truth and a synthetic momentum-transfer tilt", {"kind": "count", "gibuu": 1, "also": ["q3"]}),
 ]
@@ -3500,7 +3502,7 @@ def self_test():
             ("keys a truth the readout does not list", "paper_body.tex", "the flagged truths ($p<",
              lambda t: t.replace(r"by $p$ alone ($p\fvval{f0b-q3-prel}$)", r"by $p$ alone ($p\fvval{f0b-q3-prel}$, $\fvval{f0b-W3-pr}$)", 1)),
             ("drops a listed truth's keys", "paper_body.tex", "the flagged truths ($p<",
-             lambda t: t.replace(r"($p\fvval{f0b-A7_gibuu-prel}$; cells \fvval{f0b-A7_gibuu-cells})", "", 1)),
+             lambda t: t.replace(r"($p\fvval{f0b-A7_gibuu-prel}$ and cells \fvval{f0b-A7_gibuu-cells})", "", 1)),   # r2 #16: "; cells" -> " and cells"
             ("names the wrong truth as listed only without the block", "paper_body.tex", "also meets the flagging criterion",
              lambda t: t.replace(r"the GiBUU $\Eavail$ shape also meets", r"the NuWro $\Eavail$ shape also meets", 1)),
             ("drops the truth listed only without the block", "sec_fived16.tex",
@@ -3512,8 +3514,8 @@ def self_test():
             ("omits a truth F0 lists", "paper_body.tex", r"Under $C_{\mathrm{total}}$ alone, the right-hand columns",
              lambda t: t.replace(r"the synthetic $q_3$ tilt and the NuWro $(\pT,\pPar,\Eavail)$ shape, the last by $p$ alone",
                                  r"and the synthetic $q_3$ tilt, the last by $p$ alone", 1)),
-            ("loses its anchor", "main_paper.tex", "flag bias beyond uncertainty-based criteria at two truths",
-             lambda t: t.replace("criteria at two truths", "criteria at both truths", 1))):
+            ("loses its anchor", "main_paper.tex", "fake-data tests flag bias at two truths that no tested",
+             lambda t: t.replace("flag bias at two truths that no tested", "flag bias at both truths that no tested", 1))):
         planted = dict(texts, **{name: edit(texts[name])})
         if planted[name] == texts[name]:
             print(f"  FAIL the plant that {what} did not apply"); ok = False

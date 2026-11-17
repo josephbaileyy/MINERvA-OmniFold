@@ -187,6 +187,11 @@ The director, 2026-11-09:
 - **The first hold's results have no citable source for a JINST reader:** the IBU comparisons, the gate diagnosis, the
   per-period benchmark, the rounding studies, the 2D held-out-tune coverage test and the validity rules. These are
   banked for Joseph with W-19 and W-21: the deposit, and what the note must carry.
+- **The record inventory moved off the page (2026-11-16, the director, relaying Joseph 2026-11-16).** The section 7 hold
+  that listed each record's published place is now the draft-only cover sheet `HOLD-INVENTORY.md`, with its open gates.
+  Section 7 prints nothing in its place, and the paper prints two holds: funding and the deposit identifier. Row 7 was
+  corrected in the move, because the note at 8342963c1 now prints the first test's staged stop and pre-check. Check 14
+  of check_round (`check_hold_inventory.py`) holds the sheet to the tree. check_holds and make_note_labels read the sheet too.
 - **The AGENTS.md refresh** (the stale 2D value and Q's 6.45/4.75) is on the director's follow-up list, not on #977.
 - **A typography-only redraw of Figs 1 and 2** (the director, 2026-11-10) waits on pinning their full operand chains.
   The fetched operands (director-helper-2's verified read of the release manifest's sources) do not reproduce the
