@@ -5,6 +5,7 @@ launchers' tables against the declaration.
 """
 from __future__ import annotations
 
+import ast
 import hashlib
 import json
 import math
@@ -357,6 +358,98 @@ class CheckerEnv(unittest.TestCase):
                 self.assertEqual(rc, 8, out)
                 self.assertIn("STOP: the checker python", out)
                 self.assertNotIn("PASSED", out)
+
+
+def step_block(con: str, step: str, nxt: str) -> str:
+    return con[con.index(f"\n{step})\n"):con.index(f"\n{nxt})\n")]
+
+
+class PinLookup(unittest.TestCase):
+    """The c2 probe of 2026-11-17: /usr/bin/python3 is 3.6.15 on the login nodes, and fd_ct_period_inputs.py starts
+    with `from __future__ import annotations` (3.7+) and imports numpy, so c2's and m's pin reads under SYSPY STOP."""
+
+    def test_syspy_runs_only_the_36_tools_and_the_pins_are_read_under_chkpy_behind_chkenv(self):
+        con = (HERE / "rdx_connect.sh").read_text()
+        for ln in con.splitlines():
+            if "$SYSPY" in ln:
+                self.assertRegex(ln, r'\$SYSPY -I -B "\$R/(rdx_paths|rdx_cap)\.py" ', ln)
+                self.assertNotRegex(ln, r"\$SYSPY[^|;&]*\s-c\s", ln)
+        for f in ("rdx_paths.py", "rdx_cap.py"):  # what SYSPY runs must stay 3.6-safe
+            self.assertNotIn("from __future__ import annotations", (HERE / f).read_text(), f)
+        reads = [ln for ln in con.splitlines() if "import fd_ct_period_inputs" in ln]
+        self.assertEqual(len(reads), 2, reads)
+        for ln in reads:
+            self.assertRegex(ln, r'[$<]\(\$CHKPY -I -B -c "import sys; sys\.path\.insert\(0, sys\.argv\[1\]\); import '
+                                 r'fd_ct_period_inputs as C; ', ln)
+        call = re.compile(r"(?m)^\s*(?:[^#\n]*;\s*)?chkenv\s*(?:;|$)")
+        for step, nxt in (("c2", "m"), ("m", "cm")):
+            block = step_block(con, step, nxt)
+            m = call.search(block)
+            self.assertIsNotNone(m, f"{step} never calls chkenv")
+            self.assertLess(m.start(), block.index("import fd_ct_period_inputs"), f"{step} reads a pin before chkenv")
+
+    def test_the_pin_reads_give_every_committed_pin_and_fail_closed(self):
+        con = (HERE / "rdx_connect.sh").read_text()
+        pls = re.search(r'(?m)^PLS="([^"]+)"', con).group(1).split()
+        c2 = step_block(con, "c2", "m").splitlines()
+        i = next(k for k, ln in enumerate(c2) if ln.lstrip().startswith("ZSHA=$("))
+        zline = "\n".join(c2[i:i + 2]) + "\n"
+        self.assertIn("|| stop", c2[i + 1])
+        mb = step_block(con, "m", "cm").splitlines()
+        j = next(k for k, ln in enumerate(mb) if ln.lstrip().startswith("read -r LZ LB < <($CHKPY"))
+        mline = "\n".join(mb[j:j + 2]) + "\n"
+        self.assertIn("|| stop", mb[j + 1])
+        mod_src = (ND / "fd_ct_period_inputs.py").read_text()
+        tree = ast.parse(mod_src)
+        consts = {t.targets[0].id: ast.literal_eval(t.value) for t in tree.body
+                  if isinstance(t, ast.Assign) and isinstance(t.targets[0], ast.Name)
+                  and t.targets[0].id in ("ZERO_LOOPS", "MP1_ZERO")}
+        self.assertEqual(sorted(consts["ZERO_LOOPS"]), sorted(pls))
+        with tempfile.TemporaryDirectory() as d:
+            d = Path(d)
+
+            def deploy(name, src):
+                (d / name / "nd-unfolding").mkdir(parents=True)
+                (d / name / "nd-unfolding/fd_ct_period_inputs.py").write_text(src)
+                return d / name
+            real = deploy("real", mod_src)
+            bad = deploy("bad", mod_src.replace(consts["ZERO_LOOPS"]["1C"], "not-a-pin"))
+            none = d / "none"
+            (none / "nd-unfolding").mkdir(parents=True)
+
+            def run(line, dep, pl, show):
+                script = (f'stop() {{ echo "STOP: $*"; exit 8; }}\nCHKPY={sys.executable}\nDEP={dep}\npl={pl}\n'
+                          f'{line}echo "GOT {show}"\n')
+                p = subprocess.run(["bash", "-c", script], capture_output=True, text=True, timeout=120)
+                return p.returncode, p.stdout
+            for pl in pls:
+                rc, out = run(zline, real, pl, "$ZSHA")
+                self.assertEqual((rc, out.strip().splitlines()[-1]), (0, f"GOT {consts['ZERO_LOOPS'][pl]}"), out)
+            rc, out = run(mline, real, "-", "$LZ $LB")
+            self.assertEqual((rc, out.strip()), (0, f"GOT {consts['MP1_ZERO']['lat_npz']} {consts['MP1_ZERO']['lat_bkg']}"))
+            for dep, pl in ((bad, "1C"), (none, "1A")):
+                rc, out = run(zline, dep, pl, "$ZSHA")
+                self.assertEqual(rc, 8, out)
+                self.assertIn(f"STOP: no zero-loop pin for {pl}", out)
+            rc, out = run(mline, none, "-", "$LZ $LB")
+            self.assertEqual(rc, 8, out)
+            self.assertIn("STOP: could not read MP-1's lat_zero pins", out)
+
+    def test_c2_checks_its_reads_and_never_writes_c1s_records(self):
+        con = (HERE / "rdx_connect.sh").read_text()
+        c2 = step_block(con, "c2", "m")
+        self.assertIn('READS=(); for pl in $PLS; do READS+=("$ZERO/runEventLoopOmniFold_5D_${pl}_zero.root" '
+                      '"$OUT/evloop/runEventLoopOmniFold_RDX_${pl}.root"); done\n', c2)
+        self.assertIn('  policy "${READS[@]}"\n', c2)
+        pol = c2.index('  policy "${READS[@]}"\n')
+        for later in ('rdx_paths.py" stage', "rdx_align.py", "rdx_truthx_rows.py", "sha256sum"):
+            self.assertLess(pol, c2.index(later), later)
+        outs = re.findall(r'--out "\$OUT/checks/([^"]+)"', c2)
+        self.assertEqual(outs, ["align_${pl}_pl.json", "truthx_rows_${pl}_pl.json"])
+        c1_outs = set(re.findall(r'--out "\$OUT/checks/([^"]+)"', step_block(con, "c1", "s2")))
+        self.assertEqual(c1_outs, {"align_1A.json", "truthx_rows_1A.json", "walk_probe.json"})
+        for pl in re.search(r'(?m)^PLS="([^"]+)"', con).group(1).split():
+            self.assertFalse({o.replace("${pl}", pl) for o in outs} & c1_outs, pl)
 
 
 if __name__ == "__main__":

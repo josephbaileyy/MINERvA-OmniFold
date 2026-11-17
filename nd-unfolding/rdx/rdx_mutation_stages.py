@@ -20,7 +20,7 @@ FILES = ("rdx_cap.py", "rdx_merge.py", "rdx_paths.py", "sbatch_rdx_evloop.sh", "
          "rdx_connect.sh", "rdx_connect_launch.sh", "rdx_tasks.tsv", "rdx_common.py", "rdx_dump.py", "test_rdx_stages.py",
          "setup_salloc_env.exports")
 CP, MG, PA, EV, SM, AR, CN, LA, TT = FILES[:9]
-EXPECTED_TESTS = 18
+EXPECTED_TESTS = 21
 MUTATIONS = [
     ("unlisted submissions ignored", CP, '        if kv["id"] not in listed:\n', "        if False:\n",
      "test_spent_held_unlisted_and_the_wanted_ceiling"),
@@ -88,6 +88,22 @@ MUTATIONS = [
      "test_chkenv_fails_closed_without_uproot_or_the_modules"),
     ("chkenv runs nothing", CN, "  $CHKPY -I -B - \"$DEP\" <<'EOF' || stop", "  true <<'EOF' || stop",
      "test_chkenv_fails_closed_without_uproot_or_the_modules"),
+    ("c2 pin read back on SYSPY", CN, "    ZSHA=$($CHKPY -I -B -c ", "    ZSHA=$($SYSPY -I -B -c ", "test_syspy_runs_only_the_36_tools_and_the_pins_are_read_under_chkpy_behind_chkenv"),
+    ("m pin read back on SYSPY", CN, "  read -r LZ LB < <($CHKPY -I -B -c ", "  read -r LZ LB < <($SYSPY -I -B -c ", "test_syspy_runs_only_the_36_tools_and_the_pins_are_read_under_chkpy_behind_chkenv"),
+    ("m without chkenv", CN, '"$OUT/evloop"\n  chkenv\n  read -r LZ LB', '"$OUT/evloop"\n  read -r LZ LB', "test_syspy_runs_only_the_36_tools_and_the_pins_are_read_under_chkpy_behind_chkenv"),
+    ("rdx_paths needs 3.7", PA, '"""\nimport argparse\n', '"""\nfrom __future__ import annotations\nimport argparse\n', "test_syspy_runs_only_the_36_tools_and_the_pins_are_read_under_chkpy_behind_chkenv"),
+    ("c2 pin not checked as 64 hex", CN, '      && [[ "$ZSHA" =~ ^[0-9a-f]{64}$ ]] || stop "no zero-loop pin for $pl"\n',
+     '      || stop "no zero-loop pin for $pl"\n', "test_the_pin_reads_give_every_committed_pin_and_fail_closed"),
+    ("c2 reads 1A's pin for every playlist", CN, 'print(C.ZERO_LOOPS[sys.argv[2]])" "$DEP/nd-unfolding" "$pl")',
+     'print(C.ZERO_LOOPS[\'1A\'])" "$DEP/nd-unfolding" "$pl")', "test_the_pin_reads_give_every_committed_pin_and_fail_closed"),
+    ("m reads lat_bkg twice", CN, "print(C.MP1_ZERO['lat_npz'], C.MP1_ZERO['lat_bkg'])",
+     "print(C.MP1_ZERO['lat_bkg'], C.MP1_ZERO['lat_bkg'])", "test_the_pin_reads_give_every_committed_pin_and_fail_closed"),
+    ("c2 without the policy check", CN, '  policy "${READS[@]}"\n', "", "test_c2_checks_its_reads_and_never_writes_c1s_records"),
+    ("c2 policy without the zero loops", CN, 'READS+=("$ZERO/runEventLoopOmniFold_5D_${pl}_zero.root" "$OUT/evloop',
+     'READS+=("$OUT/evloop', "test_c2_checks_its_reads_and_never_writes_c1s_records"),
+    ("c2 align on c1's names", CN, '--out "$OUT/checks/align_${pl}_pl.json"', '--out "$OUT/checks/align_$pl.json"', "test_c2_checks_its_reads_and_never_writes_c1s_records"),
+    ("c2 rows on c1's names", CN, '--out "$OUT/checks/truthx_rows_${pl}_pl.json"', '--out "$OUT/checks/truthx_rows_$pl.json"',
+     "test_c2_checks_its_reads_and_never_writes_c1s_records"),
 ]
 
 def mirror(root: Path) -> Path:
