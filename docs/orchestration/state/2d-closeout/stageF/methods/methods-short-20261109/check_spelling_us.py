@@ -10,7 +10,8 @@ names) and \newlabel. Command names are removed too.
 
 The list is explicit, with its inflections generated. It is not a suffix rule: a rule like "-ise" would also flag
 "precise", "otherwise" and "rise". The groups are -our, -ise/-isation, -yse, -re, doubled -ll-, and grey, artefact,
-towards, whilst and amongst (style). "analyses" is not flagged, because it is also the US plural of analysis. A word in
+towards and the other -wards forms (afterwards, backwards, ...; the cold read of d5363e09e), whilst and amongst
+(style). "analyses" is not flagged, because it is also the US plural of analysis. A word in
 ALLOW (a proper name or a quoted title) is skipped.
 """
 import re
@@ -31,7 +32,9 @@ RE = {"centre": "center", "metre": "meter", "fibre": "fiber", "litre": "liter", 
 LL = ["label", "model", "travel", "cancel", "signal", "level", "total", "channel", "fuel", "counsel", "tunnel",
       "marshal", "model", "pedal", "dial", "equal", "rival", "funnel", "jewel", "shovel", "tranquil"]
 OTHER = {"grey": "gray", "greys": "grays", "greyed": "grayed", "artefact": "artifact", "artefacts": "artifacts",
-         "towards": "toward", "whilst": "while", "amongst": "among", "programme": "program", "programmes": "programs",
+         "towards": "toward", "afterwards": "afterward", "backwards": "backward", "forwards": "forward",
+         "upwards": "upward", "downwards": "downward", "inwards": "inward", "outwards": "outward",
+         "whilst": "while", "amongst": "among", "programme": "program", "programmes": "programs",
          "catalogue": "catalog", "catalogues": "catalogs", "dialogue": "dialog", "licence": "license", "defence": "defense",
          "offence": "offense", "judgement": "judgment", "ageing": "aging", "sceptical": "skeptical", "aluminium": "aluminum",
          "manoeuvre": "maneuver", "enrol": "enroll", "fulfil": "fulfill", "skilful": "skillful", "wilful": "willful",
@@ -96,12 +99,12 @@ def hits(text, table=None):
 
 def self_test():
     ok = True
-    plant = ("The centred shape is labelled. We normalised the colour and analysed it, towards a grey artefact.\n"
+    plant = ("The centred shape is labelled. We normalised the colour and analysed it, towards a grey artefact afterwards.\n"
              "% a comment's colour is not printed\n\\label{sec:colour} \\texttt{normalise.py} The analyses are fine.\n"
              "Precise, otherwise, rise and wise are not British forms. The behaviour of neighbouring cells.")
     got = sorted({w for _, w, _ in hits(plant)})
     want = sorted(["centred", "labelled", "normalised", "colour", "analysed", "towards", "grey", "artefact",
-                   "behaviour", "neighbouring"])
+                   "behaviour", "neighbouring", "afterwards"])
     if got != want:
         print("self-test: got", got, "want", want); ok = False
     if hits("Precise, otherwise, rise, wise, analyses, four hours, your parameters, metres") != \
