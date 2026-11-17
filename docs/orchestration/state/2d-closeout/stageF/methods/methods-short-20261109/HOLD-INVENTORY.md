@@ -20,8 +20,8 @@ below are what the inventory and the two printed holds wait on.
 
 1. **Where each record below is published.** The Data availability hold's deposit identifier and access route wait on the
    separately authorized release decision.
-2. **The note's release revision.** `NOTE_RELEASE_REV` (`check_round.py`) is `8342963c1`. The note's numbers below are
-   that revision's. The pin moves again at the freeze, after the note's cutdown (the director, 2026-11-16).
+2. **The note's release revision.** `NOTE_RELEASE_REV` (`check_round.py`) is `87cee1c86`. The note's numbers below are
+   that revision's. It moved there on 2026-11-17, after the note's cutdown (the director), and moves again only at a later note freeze.
 3. **Funding and grant acknowledgments**, to be supplied by the authors.
 4. **The bias-half rule**, which row 12 lists as pending, in the paper and Supplement only.
 
@@ -56,7 +56,7 @@ are relative to `docs/orchestration/`. "Only" means that the note at its release
 7. The first five-observable coverage test's preliminary check and its stop: section 6.2 (`sec:calib`), S8.6
    (`supp:study-cov1`) and the note's section 10.5 (`N-sec:fived16-fd`). The check's diagnosis and the staged redesign's
    stop: S8.6 (`supp:study-cov1`) and the note's section 10.5 (`N-sec:fived16-fd`). The investigation of that check and
-   the pre-check of the test's flux and detector groups: S8.6 (`supp:study-cov1`) and the note's appendix B.6
+   the pre-check of the test's flux and detector groups: S8.6 (`supp:study-cov1`) and the note's appendix B.5
    (`N-sec:cov1b-gate`). Records for these three sentences:
    `state/measurement-paper/5d-community-20261024/FD-1B-DIAG-REPORT.md`,
    `state/measurement-paper/5d-community-20261024/FD-1B-INV-I2-REPORT.md`, `OUTCOME-20261108-1b-precheck-part1.md` and
@@ -105,4 +105,9 @@ or the staged redesign's stop), "the test's flux and detector groups", and "Reco
 replaced by FD-1B-DIAG-REPORT.md (the band-set diagnosis, its :40; fd/receipts-1b/diag/diag.json, which
 make_values_fived16.py reads) and FD-1B-INV-I2-REPORT.md (the investigation). Neither the paper nor the note prints I0's
 result (H2 rejected), and the row cites what supports the printed text.
+
+Pin move (2026-11-17, the director: the note draft 87cee1c86, the cutdown merged). Of the 49 cited labels, only
+N-sec:cov1b-gate changed number (B.6 -> B.5, the same title; its text still prints the investigation and the pre-check).
+Three titles changed "measurement" to "result" with the same objects, and the rest changed page only. The hold's
+search terms were searched again at 87cee1c86, and no count changed from 8342963c1.
 -->
