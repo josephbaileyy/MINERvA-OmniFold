@@ -302,3 +302,57 @@ job script or deploy module changes.
 3. **m** (the merge submit) keeps its own go, after c2's PASS receipt is merged.
 
 Nothing is submitted, deposited or tagged.
+
+## Binding 1, addendum J5: the merge job's limit, and the gmerge and m goes (director, 2026-11-17)
+
+**Under:**
+- c2's PASS receipt (#1197, merged at main `165203c2`): all 12 zero loops staged on their pins, C-ALIGN-PL and C-TRUTHX
+  PASS for all 12, and `out/loops.sha256` written.
+- J4's M_RDXD launcher `256003a1b997a57d` and connect `52ad6a0edf92b4ed`. The deploy stays at `ad0535c4`.
+
+**A departure from the declaration's wording (`RDX-DECLARATION.md`:334), ruled by the director:**
+- **The rule as written.** The declaration sets the merge limit at "1.5 × the vectorized walk's ×12.25 projection".
+  c1's probe projects 175 s for that walk, so the literal limit would be about 0:04:23.
+- **Why it cannot apply literally.** The merge job runs four steps, `sbatch_rdx_merge.sh`:74-79: merge, nndump, dump
+  and k1. 5B's merge step alone took 3:00 (`FD-CT-5B-REPORT.md`:87). A literal limit would TIMEOUT by construction.
+- **What the rule was for.** Binding 1 ruling 3 (low z3) asked that the kept-row walk, unmeasured against the old
+  0:20 limit, should not push the price past the cap. The walk projection is therefore one term of the whole job's
+  limit, not the whole of it.
+  <!-- absence-ok: a scoping statement about a projected wall time (as in ruling 3's own waiver above), not a claim that a result does not exist -->
+- **The limit used: 0:45:00.**
+  - 5B job A's ALL-lane steps, scaled as follows: merge × 1.52, the RDX/base file-size ratio; the loop walk replaced
+    by the vectorized walk, plus a full truthx read for the sidecar.
+  - That gives 1,352 s.
+  - Then the declaration's own event-loop factor (× 1.5) and rounding (next 15 minutes).
+- **Memory:** one exclusive node, 512 GB, against about 36 GiB, which is 5B's per-lane MaxRSS scaled by 1.52.
+- **The cap still binds,** as the declaration requires. `rdx_cap.py` projects these totals, with each later job held
+  at its ceiling:
+  - 1.5809 after m;
+  - 1.9475 after s3a;
+  - 2.3142 after s3b;
+  - 2.3142 is under 2.5, with 0.186 node-h of headroom.
+
+  Any projection above 2.5 STOPs to the director. A merge TIMEOUT bills at most 0.75.
+
+**Rulings:**
+1. **The gmerge go**, one run, 0 node-h:
+   `bash rdx_connect_launch.sh <new empty dir> <loginNN> gmerge ad0535c4a62ac0a20711a4a00f2266ddaf926d7c 0:45:00`.
+   It writes `out/gates/merge.ok` naming the pin and `limit=0:45:00`.
+2. **The m go**, one run, only after gmerge exits rc 0 with merge.ok as described:
+   `bash rdx_connect_launch.sh <new empty dir> <loginNN> m ad0535c4a62ac0a20711a4a00f2266ddaf926d7c 0:45:00`.
+   - Before the connect: cov2d's ack, and every fence and hold checked.
+   - The connect's own checks must all pass, in order:
+     - loops.sha256;
+     - merge.ok;
+     - policy;
+     - chkenv;
+     - the MP1_ZERO pins;
+     - the O_NOATIME staging of the two lat_zero files;
+     - the launcher smoke;
+     - fence;
+     - the cap gate at 1.5809.
+   - After submit, status comes from sacct over the job id, never squeue alone.
+   - Any STOP, or any job failure or TIMEOUT, comes to the director unrepaired. Nothing relaunches.
+3. **cm** gets its own go, after m's receipt is merged.
+
+Nothing is submitted, deposited or tagged.
