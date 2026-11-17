@@ -45,26 +45,13 @@ diagnostic study''}
 % Restyled 2026-11-12 (journal-editor's Supplement style pass; style1's opening-paragraph item, a short contents guide
 % grouped by definitions, implementation, uncertainties and tests, and data products; "two per-cell validity rules" was
 % stale after the director's D3 and D4: S10 defines one rule).
+% Rewritten 2026-11-17 on prep/after-ben-20261117 (the director, relaying Joseph and a JINST-style referee he agrees
+% with, item 4): an overview by scientific purpose in place of the section directory; every destination kept.
 % Restyled 2026-11-17 (the Supplement navigation batch; the director, relaying Joseph 2026-11-16; readability report r3,
 % item 2): the road map, one sentence per section group; S10's sentence names what it gives of the bias-half rule
 % (its inputs and noise band, supplemental_body.tex S10's first paragraph); the last sentence is S9's "no interval has
 % validated coverage", restated for every reported interval as the paper states it.
-This Supplement gives the definitions and checks behind the paper's results.
-Sections~\ref{supp:selection}--\ref{supp:cells} define the event selection, the five observables, and the sixteen
-reporting cells with their machine-readable files.
-Section~\ref{supp:estimators} describes the estimators: the algorithm, the background treatment, the learner settings,
-the diagnostics of the estimators and the history of the configurations.
-Sections~\ref{supp:cov16} and~\ref{supp:cov2d} construct the five-observable and two-dimensional covariances,
-including their run-period blocks.
-Section~\ref{supp:ibu} sets out the comparisons with binned iterative Bayesian unfolding, which probe the results'
-dependence on the unfolding algorithm.
-Section~\ref{supp:tests} indexes the tests and sets out the fake-data and prior-retention studies, the coverage tests,
-including the first five-observable test, which stopped, and the joint tests of the generator predictions.
-Section~\ref{supp:output} gives the illustrative output on data with its descriptive comparisons with generator
-predictions.
-Section~\ref{supp:validity} defines the usage-recommendation rule, a per-cell bias-screening rule adapted from
-ref.~\cite{ATLAS:2024jets}, and gives the inputs and noise band of the bias-half rule.
-% Readability round 2, 2026-11-17: Joseph's item 3 wording, as the paper now prints it (director-helper-3).
+This Supplement gives the definitions and evidence behind the paper's results, in four parts. The first defines what is measured: the signal and selection, the five observables and the sixteen reporting cells, with their machine-readable files (sections~\ref{supp:selection}--\ref{supp:cells}). The second describes how the results are produced: the estimators, their background treatment and diagnostics, and the five-observable and two-dimensional covariances (sections~\ref{supp:estimators}--\ref{supp:cov2d}). The third gives the evidence on the method's behavior: the comparisons with binned iterative Bayesian unfolding, and the fake-data, prior-retention, coverage and joint generator tests (sections~\ref{supp:ibu} and~\ref{supp:tests}). The fourth gives the illustrative five-observable results on data, with descriptive generator comparisons, and the per-cell bias-screening rules: the usage-recommendation rule, adapted from ref.~\cite{ATLAS:2024jets}, and the bias-half rule's inputs and noise band (sections~\ref{supp:output} and~\ref{supp:validity}).
 Coverage of the reported intervals has not been validated.
 % absence-ok: the paper's stated limitation in Joseph's item 3 wording (the coverage tests of S8 under-cover or are descriptive; none validates the reported intervals), not a search claim
 
@@ -116,7 +103,7 @@ $C_T$; $C_T^{+}$ & A coverage test's covariance, rebuilt once per held-out tune;
 Descriptive & A comparison without a grading rule, or a test continued, or fixed and rerun, after one of its checks was seen (P\ref*{P-sec:strategy}, P\ref*{P-sec:ll5d}). For the bias-half rule, it marks a diagnostic that changes nothing in the reported result and was defined after the fake-data biases it classifies had been seen. In the second five-observable coverage test, an entry check was fixed and the test rerun after its earlier run stopped. The repair was chosen after that stop, before any coverage pseudo-experiment was unfolded or graded but when other gate readings were already visible (\ref{supp:study-ll5d}) \\
 Flagged & Bias with $p<\fvval{trig-p}$ under $\chi^2_{16}$, or a cell with $|z|>\fvval{trig-z}$; the fake-data tests grade bias only (\ref{supp:study-fd}) \\
 Under-covers; over-covers & A coverage count at or below the draw-matched null's threshold; one in its upper tail, reported and not a failure (\ref{supp:covdesign-sec}; table~\ref{tab:ll5d-results}) \\
-Clipping readings & ``Passes, weakened by clipping'': unflagged, its drawn spread narrowed below \fvval{cov-weak} of its variance (\ref{supp:covdesign-sec}); ``possible clipping artefact'': flagged, with clipping offset $|o_c|\geq\delta^*$, which cannot remove the flag (\ref{supp:study-ll5d}) \\
+Clipping readings & ``Passes, weakened by clipping'': unflagged, its drawn spread narrowed below \fvval{cov-weak} of its variance (\ref{supp:covdesign-sec}); ``possible clipping artifact'': flagged, with clipping offset $|o_c|\geq\delta^*$, which cannot remove the flag (\ref{supp:study-ll5d}) \\
 $\rho$ and its classes & The retained fraction: 1 at the prior, 0 at the truth, negative for an overshoot along the prior-to-truth direction; a setting's classes, from its effect on $\rho$ (\ref{supp:study-prr}) \\
 \addlinespace[2pt]
 \multicolumn{2}{@{}l}{\emph{Cells and grids}} \\

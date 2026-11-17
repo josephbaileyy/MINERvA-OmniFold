@@ -523,7 +523,7 @@ VERDICTS = {
     'll5d-cellflags': 'some',
     'll5d-chi2ndf-max': '3.7',
     'll5d-chi2ndf-min': '3.0',
-    'll5d-clip-record': "no cell reads ``passes, weakened by clipping'', no flagged cell is read as a possible clipping artefact, and the largest clipping offset is $|o_c|=0.048$ under $C_T$, in R05 at \\fvval{f1-tune-ar23-short} in the variant with the two bands, against $\\delta^*=0.667$",
+    'll5d-clip-record': "no cell reads ``passes, weakened by clipping'', no flagged cell is read as a possible clipping artifact, and the largest clipping offset is $|o_c|=0.048$ under $C_T$, in R05 at \\fvval{f1-tune-ar23-short} in the variant with the two bands, against $\\delta^*=0.667$",
     'll5d-g18-all': 'under-joint-only',
     'll5d-g18-all-cells': 'none',
     'll5d-g18-all-cells-tab': 'none',
@@ -562,7 +562,7 @@ VERDICTS = {
     'll5d-offset': '$|o_c|=0.048$ under $C_T$, in R05 at \\fvval{f1-tune-ar23-short} in the variant with the two bands, against $\\delta^*=0.667$',
     'll5d-repair': 'the correction of an implementation defect in that check, which compared event weights stored at two precisions. The repair changed no rule, threshold, bound or cell',
     'll5d-route': 'repaired',
-    'll5d-route-record': "at both tunes, an entry check that matches each simulated truth event across two of the test's inputs found every event unmatched, against a bound of 5\\,\\% on the largest unmatched share in any cell, and the run stopped. The entry checks had used the coverage pseudo-experiments' draws (as above), but at that point none had been unfolded or graded. Every other entry check had passed, and their readings were visible when the repair was chosen. A diagnosis classed the failure as an implementation defect: the check compared event weights stored at two floating-point precisions, so no event could match. The repair compares them at one precision and adds a check of the matching on the real inputs, which passed. It changed no rule, threshold, bound or cell. The entry checks were then rerun at both tunes and passed. A later trial run of the procedure's controls and one pseudo-experiment stopped at a check on computing time and memory, which found an output file missing before any pseudo-experiment was graded, and was rerun with a change to its batch script only. The diagnosed defect is in this test's entry check. The disagreement of the two GEANT4 bands in the first test (above), which led to the primary variant, remains unexplained",
+    'll5d-route-record': "at both tunes, an event-matching entry check fixed in advance, which matches each simulated truth event across two of the test's inputs against a bound of 5\\,\\% on the largest unmatched share in any cell, found every event unmatched, and the run stopped. The check compared \\fvval{ll5d-a1a2-keys} weight keys, so no event could match, and a diagnosis classed the failure as an implementation defect in this test's entry check. The entry checks had used the coverage pseudo-experiments' draws (as above), but none had been unfolded or graded. Every other entry check had passed, and its readings were visible when the repair was chosen. The repair keyed both sides at \\fvval{ll5d-a1a2-at} and added a check of the matching on the real inputs, which passed. It was chosen after the stop and before any coverage pseudo-experiment was unfolded or graded, and it changed no rule, threshold, bound or reporting cell. The entry checks were then rerun at both tunes and passed. A later trial run of the procedure's controls and one pseudo-experiment stopped at a check on computing time and memory, which found an output file missing before any pseudo-experiment was graded, and was rerun with a change to its batch script only",
     'll5d-sameflags': 'same',
     'll5d-status': 'descriptive',
     'll5d-stop-what': 'an event-matching entry check, which found every event unmatched at both tunes',
@@ -679,21 +679,19 @@ LL5D_ROUTE_TEXT = {
     # evaluates clipped-variance ratios on its draws (LL5D-DECLARATION.md:359-372), the first 300 of which are the
     # toys' draws (sec. 3.6); a toy is drawn and then unfolded (:152), first in the pilot; the calibration's null uses
     # other seeds (sec. 3.6, from 4,770,500). So the draws existed, and none was unfolded or graded.
-    "ll5d-route-record": ("at both tunes, an entry check that matches each simulated truth event across two of the "
-                          "test's inputs found every event unmatched, against a bound of 5\\,\\% on the largest unmatched share in "
-                          "any cell, and the run stopped. The entry checks "
-                          "had used the coverage pseudo-experiments' draws (as above), but at that point none had been "
-                          "unfolded or "
-                          "graded. Every other entry check had passed, and their readings were visible when the "
-                          "repair was chosen. A diagnosis classed the failure as an implementation defect: the check compared "
-                          "event weights stored at two floating-point precisions, so no event could match. The repair "
-                          "compares them at one precision and adds a check of the matching on the real inputs, which "
-                          "passed. It changed no rule, threshold, bound or cell. The entry checks were then rerun at "
-                          "both tunes and passed. A later trial run of the procedure's controls and one pseudo-experiment "
-                          "stopped at a check on computing time and memory, which found an output file missing before any "
-                          "pseudo-experiment was graded, and was rerun with a change to its batch script only. The "
-                          "diagnosed defect is in this test's entry check. The disagreement of the two GEANT4 bands in "
-                          "the first test (above), which led to the primary variant, remains unexplained"),
+    "ll5d-route-record": ("at both tunes, an event-matching entry check fixed in advance, which matches each simulated truth ev"
+                          "ent across two of the test's inputs against a bound of 5\\,\\% on the largest unmatched share in any c"
+                          "ell, found every event unmatched, and the run stopped. The check compared \\fvval{ll5d-a1a2-keys} wei"
+                          "ght keys, so no event could match, and a diagnosis classed the failure as an implementation defect i"
+                          "n this test's entry check. The entry checks had used the coverage pseudo-experiments' draws (as abov"
+                          "e), but none had been unfolded or graded. Every other entry check had passed, and its readings were "
+                          "visible when the repair was chosen. The repair keyed both sides at \\fvval{ll5d-a1a2-at} and added a "
+                          "check of the matching on the real inputs, which passed. It was chosen after the stop and before any "
+                          "coverage pseudo-experiment was unfolded or graded, and it changed no rule, threshold, bound or repor"
+                          "ting cell. The entry checks were then rerun at both tunes and passed. A later trial run of the proce"
+                          "dure's controls and one pseudo-experiment stopped at a check on computing time and memory, which fou"
+                          "nd an output file missing before any pseudo-experiment was graded, and was rerun with a change to it"
+                          "s batch script only"),
 }
 _LL5D_CLASS = {(True, True): "under-joint", (True, False): "under-joint-only", (False, True): "under-cells"}
 
@@ -776,7 +774,7 @@ def ll5d_verdicts(d):
     # S8's term for a weakened pass (supplemental_body.tex, the shared design: "passes, weakened by clipping"); the
     # artefact reading, LL5D-DECLARATION.md:479-480
     text["clip-record"] = ("no cell reads ``passes, weakened by clipping''" if not weak else "[weakened passes]") + (
-        ", no flagged cell is read as a possible clipping artefact, and the largest clipping offset is "
+        ", no flagged cell is read as a possible clipping artifact, and the largest clipping offset is "
         f"{text['offset']}")
     assert not any(f == "some" for (_, _, x), f in flags.items() if x == "clip"), "a clipping artefact: reword"
     v = ll5d_case("graded", per, text["ll5d-route"], flags, cells,

@@ -292,7 +292,7 @@ def check_literal_keys(texts, values_tex, entries=None):
 # moved to 3257d7c61 the same day with no change to any label (all 217 compared), so the named revision stands until the
 # director names another. Moved 2026-11-16 to 8342963c1, draft/note-round2-20261108 with the note's corrections merged,
 # for Ben's paper version (the director); it moves once more at the freeze, after the note's Fable cutdown.
-NOTE_RELEASE_REV = "87cee1c86e468bdfb595ff12a28579281c0f7621"
+NOTE_RELEASE_REV = "8342963c16d74bc10d740e5637d602300557e53a"
 
 
 def check_note_release(d, release=None):

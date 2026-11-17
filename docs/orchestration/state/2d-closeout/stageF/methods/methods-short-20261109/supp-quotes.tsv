@@ -9,7 +9,8 @@ Q04	count=1	line=632	section_label=supp:validity	\label{supp:validity}
 Q05	count=1	line=588	section_label=tab:gen16	\label{tab:gen16}
 Q06	count=1	line=611	section_label=tab:cmodel16	\label{tab:cmodel16}
 Q07	count=1	line=570	section_label=fig:ratio16	\label{fig:ratio16}
-Q08	count=1	line=562	section_label=sec:fived16-fd	Illustrative output on data: not for fitting or for constraining models
+# Q08 re-sourced 2026-11-17 (the director, relaying Joseph and a JINST-style referee he agrees with, on prep/after-ben-20261117): S9's heading is "Illustrative five-observable results on data"; the not-for-fitting restriction leads S9's opening paragraph; #981's re-pin follows.
+Q08	count=1	line=562	section_label=sec:fived16-fd	Illustrative five-observable results on data
 # Q09 removed 2026-11-12 (D4, director, 2026-11-12): the prior-spread rule's definition left the Supplement for the note; #981's re-pin re-sources or drops it (RESPONSE.md, the #981 re-pin list). Was: Q09 | count=1 | line=634 | section_label=supp:validity | The second rule is ours, not taken from Ref.~\cite{ATLAS:2024jets}
 Q10	count=1	line=634	section_label=supp:validity	its recommended test of correlation assumptions on pseudo-data is not met here
 Q11	count=1	line=601	section_label=tab:gen16	In NuWro's free-proton sample, the supplement generated at neutrino energies of 50--100~GeV is flagged: the events lost to generator aborts there were not shown to be negligible

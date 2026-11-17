@@ -110,13 +110,6 @@ def lookup(path, key):
     return float(obj)
 
 
-# Posted files that the note deleted after their F rows were recorded, with the commit that deleted them. A row whose
-# file is listed here and absent is reported RETIRED; any other missing file still fails. (Follow-up item 3, 2026-11-17:
-# full mode crashed on the first; FOLLOW-UP-DURING-BEN-REVIEW.md.)
-RETIRED_FILES = {"result_status_rows.tex": "deleted in 57147f2b8, note-n4 Batch F, with the result status table; its "
-                                           "readiness sentence moved verbatim to the executive summary"}
-
-
 def check_rows(wt, ledger, figures_only=False):
     note = wt / "docs/analysis-note"
     posted = [] if figures_only else posted_files(note)
@@ -124,7 +117,7 @@ def check_rows(wt, ledger, figures_only=False):
     macros = [] if figures_only else re.findall(r"\\newcommand\{\\([A-Za-z]+)\}\{([^}]*)\}",
                                                  cache.get("values.tex", printed(note / "values.tex")))
     tables = {}
-    fails, failed, counts, retired = 0, set(), {"V": 0, "M": 0, "F": 0, "G": 0}, []
+    fails, failed, counts = 0, set(), {"V": 0, "M": 0, "F": 0, "G": 0}
     mkfig = (note / "make_figures.sh").read_text()
 
     def fail(rid, msg):
@@ -193,23 +186,16 @@ def check_rows(wt, ledger, figures_only=False):
             if len(c) != 7:
                 fail(c[1] if len(c) > 1 else "?", "MALFORMED F row"); continue
             _, rid, f, new, old, src, lit = c
-            if f in RETIRED_FILES and not (note / f).is_file():
-                # a posted file the note removed after the edit was recorded: the row is retired, not failed, and its
-                # source literal is still checked below (follow-up item 3, 2026-11-17)
-                retired.append(f"{rid} ({f}: {RETIRED_FILES[f]})")
-            else:
-                if f not in cache:
-                    cache[f] = printed(note / f)
-                if norm(new) not in cache[f]:
-                    fail(rid, f"NEW NOT PRINTED in {f}: {new!r}")
+            if f not in cache:
+                cache[f] = printed(note / f)
+            if norm(new) not in cache[f]:
+                fail(rid, f"NEW NOT PRINTED in {f}: {new!r}")
             if old != "-":
                 stale(rid, old)
             sp = wt / src
             if not sp.is_file() or norm(lit) not in norm(read_text(sp)):
                 fail(rid, f"SOURCE LITERAL NOT FOUND in {src}: {lit!r}")
     print(f"  rows: V {counts['V']}, M {counts['M']}, F {counts['F']}, G {counts['G']}; old-text sweep over {len(posted)} posted files")
-    for r in retired:
-        print(f"  RETIRED {r}")
     return counts, fails, failed
 
 
