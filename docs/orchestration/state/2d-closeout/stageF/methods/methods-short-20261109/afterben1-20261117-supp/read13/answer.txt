@@ -1,0 +1,9 @@
+Ranked defects: **none. No fixes required.**
+
+1. **S8.7 satisfies the design/outcome ruling.** Apart from the authorized final pointer, its sentences describe hypotheses, statistics, calibration, decision rules, or validity limits. Statements that fine-grid convergence is unshown, hadronic-response completeness is unestablished, and a data-like null rejection rate is unmeasured are limitations of the test design, not reported test outcomes. No remaining sentence asserts a generator rejection or exclusion. See [S8.7](ev/supplemental_body.tex:1222).
+
+   The cut removes no unique design fact needed by the paper’s two S8.7 references: [the estimator identity](ev/paper_body.tex:124) and [the supported joint cells](ev/paper_body.tex:236) remain explicit. The deleted sentence about reproducing prior pull explains the retained full-chain calibration with the five-observable estimator. The deleted response and fine-grid qualifications also remain in the specification’s conditions. The rejection outcomes and their interpretation can therefore move behind the one-sentence note pointer without breaking those references.
+
+2. **“The synthetic \(q_3\) tilt” is supported.** The comparison’s configuration selects `q3_given_eavail_w` with amplitude `0.3` ([configuration](ev/did_config_excerpt.json:13)). The [implementation](ev/s5c_truth_weight.py:18) uses truth-weighted, within-\((E_{\rm avail},W)\)-cell standardized \(q_3\), clips and recenters it, applies \(1+a\tilde z\), and leaves outside-grid events unchanged. This matches [S8.1’s definition](ev/supplemental_body.tex:922), whose [amplitude is also 0.3](ev/q3tilt.txt:1). The identification concerns the deformation and amplitude; S7’s retained statement that the comparison uses its own truth grid preserves the distinction between study setups.
+
+VERDICT: PASS
