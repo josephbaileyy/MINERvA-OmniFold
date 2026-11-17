@@ -1,0 +1,23 @@
+diff --git a/2d-unfolding/compare_to_paper_fullcov.py b/2d-unfolding/compare_to_paper_fullcov.py
+index b10f64e0c..992eb13f0 100644
+--- a/2d-unfolding/compare_to_paper_fullcov.py
++++ b/2d-unfolding/compare_to_paper_fullcov.py
+@@ -202,6 +202,9 @@ def main():
+                          "not double-counted against the paper's stat block. "
+                          "Stat-only and PAPER (full cov) chi^2 lines are "
+                          "unaffected; only the combined number changes.")
++    ap.add_argument("--sd-label", action="store_true",
++                    help="Label the pull spread in the plot 'SD', its standard deviation (numpy.std), not 'rms' "
++                         "(DECISION-20261116-joseph-paper-batch.md item 16). Plot only; the printed log is unchanged.")
+     import restyle_2026_10 as rs
+     rs.add_option(ap)
+     args = ap.parse_args()
+@@ -312,7 +315,7 @@ def main():
+     axs[1].set_title(f"Pull distribution ({int(mask.sum())} reported bins)")
+     mu, sd = pull[mask].mean(), pull[mask].std()
+     headline = (
+-        f"mean={mu:.2f}\nrms ={sd:.2f}\n"
++        f"mean={mu:.2f}\n{'SD = ' if args.sd_label else 'rms ='}{sd:.2f}\n"
+         f"$\\chi^2$/ndf paper = {chi2_tot/ndf_stat:.2f}"
+         + (f"\n$\\chi^2$/ndf comb. = {chi2_combined/ndf_stat:.2f}"
+            if chi2_combined is not None else "")

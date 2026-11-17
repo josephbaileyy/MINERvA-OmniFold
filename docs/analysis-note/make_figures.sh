@@ -257,7 +257,7 @@ install_restyle_fig() {  # install_restyle_fig <basename under $RSG and in $FIGD
 install_restyle_fig MEFHC_5iter_fig13.pdf                 a5530bfc0c3220a0a522dfcaa52f143752dd67465c525237acb0ad8cf722237f
 install_restyle_fig MEFHC_5iter_xsec_proj_pt.pdf          bfff6d0b8034436f6bd46d92a9d67e029812fb545f38a36eeb30ca5cbad157c2
 install_restyle_fig MEFHC_5iter_xsec_proj_pz.pdf          ff27c7d477af3c4099631c39e462972842b9fe805264c507876b8b40570f9e58
-install_restyle_fig MEFHC_5iter_pull_full.pdf             fd84d992f3b212be3be6da06badbe3dfb5123f160f34f10e81d7f65cc80afd3d
+# install_restyle_fig MEFHC_5iter_pull_full.pdf           fd84d992f3b212be3be6da06badbe3dfb5123f160f34f10e81d7f65cc80afd3d
 install_restyle_fig MEFHC_5iter_xsec_paper_pt_slices.pdf  ed6fb4162bdf84f6c57fedde39912fff13d0f387e5e5bc6d7a028af3ecdb2cdd
 install_restyle_fig MEFHC_5iter_xsec_paper_pz_slices.pdf  18252c59b3a0572d490c63770df1ec2e38b8989bf3be8165985cbac799d6daf4
 install_restyle_fig tension_spectrum.pdf                  5de8157fb9831a9b6b895f231ac771488e1eef1334c0bef7e19885e676b83c5d
@@ -265,6 +265,12 @@ install_restyle_fig tension_chi2_map.pdf                  7161ded1a2a6666de6c04d
 install_restyle_fig tension_mode_maps.pdf                 7ea2d004150d1633b7e92b655d9664f7d183444a46fd48830b43f7592cfc2c71
 install_restyle_fig model_comp_projections.pdf            44f2a7b7800b5c59821e0bda87e12c137237f1bed89fe9fae87a2a4aa15294c0
 install_restyle_fig model_comp_ratio_maps.pdf             838e5fc4669cf4d58b20f81dbda29f5131c1a57a9d34202948b9830ab51648bd
+# 2026-11-17: MEFHC_5iter_pull_full.pdf prints the spread of its standardized differences as "SD", their standard
+# deviation (numpy.std), not "rms" (DECISION-20261116-joseph-paper-batch.md item 16; pull-sd-relabel-20261117/
+# README.md). It is installed from that package's figs/, the "after" arm of its login-node run (run/SHA256SUMS),
+# whose data artists are run-a2's bit for bit (check_sd.py K3); its fig-restyle line above stays as a comment.
+RSG="$REPO/docs/orchestration/state/2d-closeout/stageF/methods/pull-sd-relabel-20261117/figs"
+install_restyle_fig MEFHC_5iter_pull_full.pdf             b01c1b6c9a0b0cfdc811e21d180ec8aaafc5a8f055ea0834844ae6905e27a029
 
 echo
 echo "== 3D/4D configuration-(e) figures from RE-1 run 2 F2 (digest-checked copy) =="

@@ -1,0 +1,14 @@
+# 2026-11-17T17:14:42Z at 110a90e89a94e37fa73e21b11db196cde6b61b0e, bash test_check_sd.sh . miniconda3/bin/python3
+PASS clean: 16 checks PASS, rc 0 (PASS K6 pixels: changed only inside the label's box: 6396 differing pixel(s), 0 outside x )
+PASS mutant ulp: FAIL K3 data, log and inputs: before vs after: equal  output logs/pull_full.log |   equal  inputs pull_full: 1
+PASS mutant log: FAIL K3 data, log and inputs: before vs after: equal  pull_full/MEFHC_5iter_pull_full.png.json: 36 data artist
+PASS mutant input: FAIL K3 data, log and inputs: before vs after: equal  pull_full/MEFHC_5iter_pull_full.png.json: 36 data artist
+PASS mutant xlabel: FAIL K4 text: after changes the label alone: old label in 1 text(s); differing rows [19, 20]; after: '14.5\tme
+PASS mutant noflag: FAIL K4 text: after changes the label alone: old label in 1 text(s); differing rows []; after: None
+PASS mutant move: FAIL K5 layout: after moves nothing but the changed text, inside its box: rows changed [22, 23]; box (0.5861, 
+PASS mutant move-pixels: FAIL K6 pixels: changed only inside the label's box: 32081 differing pixel(s), 3151 outside x 2108-2749, y 134
+PASS mutant offflag: FAIL K2 identity off: RASTER :: DIFFER :: 1 page(s), 6396 differing pixel(s)
+PASS mutant wrong-installed: FAIL K1 installed figure: MEFHC_5iter_pull_full.pdf a8c929d3cc53 (want 000000000000)
+PASS mutant long-words: FAIL K7 overlap gate (after): OVERLAP :: FAIL (1 figure(s))
+CHECK_SD TEST PASS
+rc=0

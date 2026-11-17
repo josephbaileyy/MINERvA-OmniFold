@@ -1,0 +1,149 @@
+ssh rc=0
+node login27 staged sha256 1760327b21f2195820149329b9f60b10a57a4c0bb550ab9975727c4b20fe6f34
+detached pid 1142156, output /dev/shm/rdxc.1141268.sh.out
+node login27 2026-11-17T17:43:49Z step s3b pin 95d1d529dc7c0d677c849e37bf3def06a5f76827; connect script sha256 1760327b21f2195820149329b9f60b10a57a4c0bb550ab9975727c4b20fe6f34
+== the purge-exposed MP-1 inputs (stat only)
+{
+ "files": [
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s0/evloop/base_cv.root",
+   "bytes": 398375089,
+   "mtime": "2026-10-20T06:15:41Z",
+   "atime": "2026-10-20T13:05:40Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1A_zero.root",
+   "bytes": 398375296,
+   "mtime": "2026-10-20T15:11:30Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1B_zero.root",
+   "bytes": 106517598,
+   "mtime": "2026-10-20T14:41:11Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1C_zero.root",
+   "bytes": 204230889,
+   "mtime": "2026-10-20T14:49:14Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1D_zero.root",
+   "bytes": 596287802,
+   "mtime": "2026-10-20T15:49:28Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1E_zero.root",
+   "bytes": 495761736,
+   "mtime": "2026-10-20T15:38:18Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1F_zero.root",
+   "bytes": 689044069,
+   "mtime": "2026-10-20T15:29:27Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1G_zero.root",
+   "bytes": 581501093,
+   "mtime": "2026-10-20T15:47:38Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1L_zero.root",
+   "bytes": 56587445,
+   "mtime": "2026-10-20T14:38:19Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1M_zero.root",
+   "bytes": 862899975,
+   "mtime": "2026-10-20T15:56:42Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1N_zero.root",
+   "bytes": 499729347,
+   "mtime": "2026-10-20T15:38:35Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1O_zero.root",
+   "bytes": 150945068,
+   "mtime": "2026-10-20T14:45:15Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1P_zero.root",
+   "bytes": 199848958,
+   "mtime": "2026-10-20T15:16:09Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_zero.npz",
+   "bytes": 1548311762,
+   "mtime": "2026-10-20T18:31:31Z",
+   "atime": "2026-10-30T08:53:42Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_zero_bkg.npz",
+   "bytes": 28494557,
+   "mtime": "2026-10-20T18:31:33Z",
+   "atime": "2026-10-30T08:53:42Z"
+  }
+ ],
+ "missing": [],
+ "verdict": "PRESENT"
+}
+squeue --me:
+
+{
+ "protected": [
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/ER/xsec.root",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root",
+  "/pscratch/sd/j/josephrb/cov2d-run-20261104",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root",
+  "/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root"
+ ],
+ "never_read": [
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz",
+  "/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz",
+  "/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root",
+  "/pscratch/sd/j/josephrb/cov2d-inputs-20261104",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware",
+  "/pscratch/sd/j/josephrb/fd-f1-20261027/f1b3/prep",
+  "/pscratch/sd/j/josephrb/fd-1b-inv-20261101/i0/in"
+ ],
+ "reads": [
+  "/pscratch/sd/j/josephrb/rdx-20261112b/out/dumps/lat_RDX_ALL.npz",
+  "/pscratch/sd/j/josephrb/rdx-20261112b/out/dumps/lat_RDX_ALL_bkg.npz",
+  "/pscratch/sd/j/josephrb/rdx-20261112b/out/dumps/truthx_RDX_ALL.npz",
+  "/pscratch/sd/j/josephrb/rdx-20261112b/out/stage/lat_zero.npz",
+  "/pscratch/sd/j/josephrb/rdx-20261112b/out/stage/lat_zero_bkg.npz",
+  "/pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV/tune_v1.json"
+ ],
+ "hits": [],
+ "verdict": "CLEAR"
+}
+STEP X1pc python /pscratch/sd/j/josephrb/rdx-20261112b/deploy3/nd-unfolding/mnv_guarded_run.py --expect-root /pscratch/sd/j/josephrb/rdx-20261112b/deploy3 --inventory /pscratch/sd/j/josephrb/rdx-20261112b/out/inventory/X1pc.jsonl --label rdx:X1pc -- /pscratch/sd/j/josephrb/rdx-20261112b/deploy3/nd-unfolding/rdx/rdx_unfold.py --regressor-features wide --regressor-weight none --truth ratio --truthx-sidecar /pscratch/sd/j/josephrb/rdx-20261112b/out/dumps/truthx_RDX_ALL.npz --expect-truthx-sha256 641ba34c5ebde6d1881c705b862fab144a6fbb8a58ef3d84e59f1c8ba030a79e --truthx-permute 20261113 --closure --rung L-5D-PV --arm e --features all --ratio /pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV/tune_v1.json --expect-ratio-sha256 13bb1eae4ce0db4023bb29a5b98ca8b7e1e22288a1547f6a31a735fa1445435b --npz /pscratch/sd/j/josephrb/rdx-20261112b/out/dumps/lat_RDX_ALL.npz --expect-npz-sha256 6ca02c3d8b09dfd168b5184c03d433a7bd65749f5f6fc4cefecdbed7b6ce052f --bkg /pscratch/sd/j/josephrb/rdx-20261112b/out/dumps/lat_RDX_ALL_bkg.npz --expect-bkg-sha256 0e005fb11ccb9addf00a3b88096ada1084fc6ecab3db57c47cf6abec2b195ce3 --estimator-seed 42 --threads 32 --iters 5 --out /pscratch/sd/j/josephrb/rdx-20261112b/out/products/X1pc.npz
+STEP X1wc python /pscratch/sd/j/josephrb/rdx-20261112b/deploy3/nd-unfolding/mnv_guarded_run.py --expect-root /pscratch/sd/j/josephrb/rdx-20261112b/deploy3 --inventory /pscratch/sd/j/josephrb/rdx-20261112b/out/inventory/X1wc.jsonl --label rdx:X1wc -- /pscratch/sd/j/josephrb/rdx-20261112b/deploy3/nd-unfolding/rdx/rdx_unfold.py --regressor-features wide --regressor-weight w_push_w_truth --truth ratio --truthx-sidecar /pscratch/sd/j/josephrb/rdx-20261112b/out/dumps/truthx_RDX_ALL.npz --expect-truthx-sha256 641ba34c5ebde6d1881c705b862fab144a6fbb8a58ef3d84e59f1c8ba030a79e --closure --rung L-5D-PV --arm e --features all --ratio /pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV/tune_v1.json --expect-ratio-sha256 13bb1eae4ce0db4023bb29a5b98ca8b7e1e22288a1547f6a31a735fa1445435b --npz /pscratch/sd/j/josephrb/rdx-20261112b/out/dumps/lat_RDX_ALL.npz --expect-npz-sha256 6ca02c3d8b09dfd168b5184c03d433a7bd65749f5f6fc4cefecdbed7b6ce052f --bkg /pscratch/sd/j/josephrb/rdx-20261112b/out/dumps/lat_RDX_ALL_bkg.npz --expect-bkg-sha256 0e005fb11ccb9addf00a3b88096ada1084fc6ecab3db57c47cf6abec2b195ce3 --estimator-seed 42 --threads 32 --iters 5 --out /pscratch/sd/j/josephrb/rdx-20261112b/out/products/X1wc.npz
+STEP X0t python /pscratch/sd/j/josephrb/rdx-20261112b/deploy3/nd-unfolding/mnv_guarded_run.py --expect-root /pscratch/sd/j/josephrb/rdx-20261112b/deploy3 --inventory /pscratch/sd/j/josephrb/rdx-20261112b/out/inventory/X0t.jsonl --label rdx:X0t -- /pscratch/sd/j/josephrb/rdx-20261112b/deploy3/nd-unfolding/rdx/rdx_unfold.py --regressor-features std --regressor-weight none --truth ratio --transfer --rung L-5D-PV --arm e --features all --ratio /pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV/tune_v1.json --expect-ratio-sha256 13bb1eae4ce0db4023bb29a5b98ca8b7e1e22288a1547f6a31a735fa1445435b --npz /pscratch/sd/j/josephrb/rdx-20261112b/out/dumps/lat_RDX_ALL.npz --expect-npz-sha256 6ca02c3d8b09dfd168b5184c03d433a7bd65749f5f6fc4cefecdbed7b6ce052f --bkg /pscratch/sd/j/josephrb/rdx-20261112b/out/dumps/lat_RDX_ALL_bkg.npz --expect-bkg-sha256 0e005fb11ccb9addf00a3b88096ada1084fc6ecab3db57c47cf6abec2b195ce3 --estimator-seed 42 --threads 32 --iters 5 --out /pscratch/sd/j/josephrb/rdx-20261112b/out/products/X0t.npz
+STEP X0g python /pscratch/sd/j/josephrb/rdx-20261112b/deploy3/nd-unfolding/mnv_guarded_run.py --expect-root /pscratch/sd/j/josephrb/rdx-20261112b/deploy3 --inventory /pscratch/sd/j/josephrb/rdx-20261112b/out/inventory/X0g.jsonl --label rdx:X0g -- /pscratch/sd/j/josephrb/rdx-20261112b/deploy3/nd-unfolding/rdx/rdx_unfold.py --regressor-features std --regressor-weight none --truth a7_gibuu --closure --rung L-5D-PV --arm e --features all --ratio /pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV/tune_v1.json --expect-ratio-sha256 13bb1eae4ce0db4023bb29a5b98ca8b7e1e22288a1547f6a31a735fa1445435b --npz /pscratch/sd/j/josephrb/rdx-20261112b/out/dumps/lat_RDX_ALL.npz --expect-npz-sha256 6ca02c3d8b09dfd168b5184c03d433a7bd65749f5f6fc4cefecdbed7b6ce052f --bkg /pscratch/sd/j/josephrb/rdx-20261112b/out/dumps/lat_RDX_ALL_bkg.npz --expect-bkg-sha256 0e005fb11ccb9addf00a3b88096ada1084fc6ecab3db57c47cf6abec2b195ce3 --estimator-seed 42 --threads 32 --iters 5 --out /pscratch/sd/j/josephrb/rdx-20261112b/out/products/X0g.npz
+STEP X1g python /pscratch/sd/j/josephrb/rdx-20261112b/deploy3/nd-unfolding/mnv_guarded_run.py --expect-root /pscratch/sd/j/josephrb/rdx-20261112b/deploy3 --inventory /pscratch/sd/j/josephrb/rdx-20261112b/out/inventory/X1g.jsonl --label rdx:X1g -- /pscratch/sd/j/josephrb/rdx-20261112b/deploy3/nd-unfolding/rdx/rdx_unfold.py --regressor-features wide --regressor-weight none --truth a7_gibuu --truthx-sidecar /pscratch/sd/j/josephrb/rdx-20261112b/out/dumps/truthx_RDX_ALL.npz --expect-truthx-sha256 641ba34c5ebde6d1881c705b862fab144a6fbb8a58ef3d84e59f1c8ba030a79e --closure --rung L-5D-PV --arm e --features all --ratio /pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV/tune_v1.json --expect-ratio-sha256 13bb1eae4ce0db4023bb29a5b98ca8b7e1e22288a1547f6a31a735fa1445435b --npz /pscratch/sd/j/josephrb/rdx-20261112b/out/dumps/lat_RDX_ALL.npz --expect-npz-sha256 6ca02c3d8b09dfd168b5184c03d433a7bd65749f5f6fc4cefecdbed7b6ce052f --bkg /pscratch/sd/j/josephrb/rdx-20261112b/out/dumps/lat_RDX_ALL_bkg.npz --expect-bkg-sha256 0e005fb11ccb9addf00a3b88096ada1084fc6ecab3db57c47cf6abec2b195ce3 --estimator-seed 42 --threads 32 --iters 5 --out /pscratch/sd/j/josephrb/rdx-20261112b/out/products/X1g.npz
+STEP X0q python /pscratch/sd/j/josephrb/rdx-20261112b/deploy3/nd-unfolding/mnv_guarded_run.py --expect-root /pscratch/sd/j/josephrb/rdx-20261112b/deploy3 --inventory /pscratch/sd/j/josephrb/rdx-20261112b/out/inventory/X0q.jsonl --label rdx:X0q -- /pscratch/sd/j/josephrb/rdx-20261112b/deploy3/nd-unfolding/rdx/rdx_unfold.py --regressor-features std --regressor-weight none --truth q3 --closure --rung L-5D-PV --arm e --features all --ratio /pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV/tune_v1.json --expect-ratio-sha256 13bb1eae4ce0db4023bb29a5b98ca8b7e1e22288a1547f6a31a735fa1445435b --npz /pscratch/sd/j/josephrb/rdx-20261112b/out/dumps/lat_RDX_ALL.npz --expect-npz-sha256 6ca02c3d8b09dfd168b5184c03d433a7bd65749f5f6fc4cefecdbed7b6ce052f --bkg /pscratch/sd/j/josephrb/rdx-20261112b/out/dumps/lat_RDX_ALL_bkg.npz --expect-bkg-sha256 0e005fb11ccb9addf00a3b88096ada1084fc6ecab3db57c47cf6abec2b195ce3 --estimator-seed 42 --threads 32 --iters 5 --out /pscratch/sd/j/josephrb/rdx-20261112b/out/products/X0q.npz
+STEP X1q python /pscratch/sd/j/josephrb/rdx-20261112b/deploy3/nd-unfolding/mnv_guarded_run.py --expect-root /pscratch/sd/j/josephrb/rdx-20261112b/deploy3 --inventory /pscratch/sd/j/josephrb/rdx-20261112b/out/inventory/X1q.jsonl --label rdx:X1q -- /pscratch/sd/j/josephrb/rdx-20261112b/deploy3/nd-unfolding/rdx/rdx_unfold.py --regressor-features wide --regressor-weight none --truth q3 --truthx-sidecar /pscratch/sd/j/josephrb/rdx-20261112b/out/dumps/truthx_RDX_ALL.npz --expect-truthx-sha256 641ba34c5ebde6d1881c705b862fab144a6fbb8a58ef3d84e59f1c8ba030a79e --closure --rung L-5D-PV --arm e --features all --ratio /pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV/tune_v1.json --expect-ratio-sha256 13bb1eae4ce0db4023bb29a5b98ca8b7e1e22288a1547f6a31a735fa1445435b --npz /pscratch/sd/j/josephrb/rdx-20261112b/out/dumps/lat_RDX_ALL.npz --expect-npz-sha256 6ca02c3d8b09dfd168b5184c03d433a7bd65749f5f6fc4cefecdbed7b6ce052f --bkg /pscratch/sd/j/josephrb/rdx-20261112b/out/dumps/lat_RDX_ALL_bkg.npz --expect-bkg-sha256 0e005fb11ccb9addf00a3b88096ada1084fc6ecab3db57c47cf6abec2b195ce3 --estimator-seed 42 --threads 32 --iters 5 --out /pscratch/sd/j/josephrb/rdx-20261112b/out/products/X1q.npz
+[rdx-arms] smoke: checks passed, 7 steps
+{"spent": 1.4097638888888886, "held": 0.0, "unlisted_ids": [], "want": "rdx_s3_b", "want_ceiling": 0.36666666666666664, "total": 1.7764305555555553, "cap": 2.5, "pass": true}
+SUBMIT id=61481240 name=rdx_s3_b limit=0:22:00 utc=2026-11-17T17:44:22Z
+JOBID|NAME|STATE|TIME_LIMIT|QOS
+61481240|rdx_s3_b|PENDING|22:00|regular_1
+== rdx connect s3b rc=0 2026-11-17T17:44:22Z
+script rc=0

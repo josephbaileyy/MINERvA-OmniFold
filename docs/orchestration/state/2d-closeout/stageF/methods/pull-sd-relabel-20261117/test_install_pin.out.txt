@@ -1,0 +1,13 @@
+# 2026-11-17T17:16:07Z at 110a90e89a94e37fa73e21b11db196cde6b61b0e, bash test_install_pin.sh . miniconda3/bin/python3
+PASS 1. before the install: LEDGER FIGURES :: PASS (G 16 rows and Fig. 1; 0 failures) (37 files)
+PASS 2. install_pin.py: wrote docs/orchestration/state/2d-closeout/stageF/methods/pull-sd-relabel-20261117/DIGESTS.tsv; MEFHC_5iter_pull_full.pdf: fd84d992f3b2 -> f7351d4ea473
+PASS 2. after the install: LEDGER FIGURES :: PASS (G 16 rows and Fig. 1; 0 failures)
+PASS 2. the G row is re-pointed to docs/orchestration/state/2d-closeout/stageF/methods/pull-sd-relabel-20261117/figs and run/SHA256SUMS
+PASS 3. make_figures.sh parses
+PASS 3. make_figures.sh diff: the old line commented, the new block (1 line out, 7 in)
+PASS 3. the install block runs: 11 installed, pull_full f7351d4ea473, fig13 still figs-a2's a5530bfc
+PASS 4. a tampered committed copy fails check_ledger.py
+PASS 4. a second install is refused, writing nothing: AssertionError: install_restyle_fig MEFHC_5iter_pull_full.pd
+PASS 4. a run listing that is not the PDF's digest is refused: AssertionError: the run's after PDF is not its SHA256SUMS digest
+INSTALL PIN TEST PASS
+rc=0

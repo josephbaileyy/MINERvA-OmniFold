@@ -1,0 +1,6 @@
+d78007ac96e0e58a41404ab9a535341a5f3a0c9b00767e1e5417f6291d06e6f5  /dev/shm/josephrb-pullsd.sh
+2398816465b349097aed00f564ed22891e9d912796d6e86a42d49930286da391  /dev/shm/josephrb-pullsd.log
+rm rc=0
+ls: cannot access '/dev/shm/josephrb-pullsd.sh': No such file or directory
+ls: cannot access '/dev/shm/josephrb-pullsd.log': No such file or directory
+2026-11-17T17:39:37Z

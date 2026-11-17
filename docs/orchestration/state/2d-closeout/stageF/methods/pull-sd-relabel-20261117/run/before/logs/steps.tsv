@@ -1,0 +1,2 @@
+step	rc	seconds	deploy	argv
+pull_full	0	6	/pscratch/sd/j/josephrb/note-pullsd-20261117/base	--ours /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/ER/xsec.root --out-prefix /pscratch/sd/j/josephrb/note-pullsd-20261117/before/out/MEFHC_5iter --style restyle-2026-10 
