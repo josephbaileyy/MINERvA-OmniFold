@@ -340,7 +340,7 @@ LISTED_CLAIMS = [
     # style round 4 (the director's approved item, 2026-11-12): the abstract names the truth as the body does, "GiBUU hybrid truth"
     # Joseph's short abstract (the director, relaying Joseph 2026-11-16) counts them; the introduction names them
     # the readability batch (the director, relaying Joseph 2026-11-16): the abstract's and the introduction's new sentences
-    ("main_paper.tex", "fake-data tests flag bias at two truths that no tested", {"kind": "n", "n": 2}),
+    ("main_paper.tex", "Fake-data tests flag bias at two truths that no tested", {"kind": "n", "n": 2}),
     ("paper_body.tex", "Fake-data tests flag bias beyond uncertainty-based criteria at a GiBUU hybrid truth and a synthetic",
      {"kind": "count", "gibuu": 1, "also": ["q3"], "n": 2}),
     ("main_note.tex", "At a GiBUU-like truth and a synthetic momentum-transfer tilt", {"kind": "count", "gibuu": 1, "also": ["q3"]}),
@@ -2410,7 +2410,8 @@ def vhalf_band_values(d):
 
 
 def ll5d_repair_words():
-    """Section 6.3's repair paragraph (item 14, the referee's text): the two precisions, from amendment A1a.2's own
+    """Supplement S8.5's repair detail (item 14, the referee's text, moved there from the paper by Joseph's readability
+    item 5, 2026-11-16): the two precisions, from amendment A1a.2's own
     statement of the defect and the fix (LL5D-AMENDMENT-A1A2.md :11-13, :59-60), asserted present there."""
     a = (ROOT / "docs/orchestration/state/measurement-paper/5d-community-20261024/LL5D-AMENDMENT-A1A2.md").read_text()
     assert "is float64 and the bank's tdw is float32" in " ".join(a.split())
@@ -3514,7 +3515,7 @@ def self_test():
             ("omits a truth F0 lists", "paper_body.tex", r"Under $C_{\mathrm{total}}$ alone, the right-hand columns",
              lambda t: t.replace(r"the synthetic $q_3$ tilt and the NuWro $(\pT,\pPar,\Eavail)$ shape, the last by $p$ alone",
                                  r"and the synthetic $q_3$ tilt, the last by $p$ alone", 1)),
-            ("loses its anchor", "main_paper.tex", "fake-data tests flag bias at two truths that no tested",
+            ("loses its anchor", "main_paper.tex", "Fake-data tests flag bias at two truths that no tested",
              lambda t: t.replace("flag bias at two truths that no tested", "flag bias at both truths that no tested", 1))):
         planted = dict(texts, **{name: edit(texts[name])})
         if planted[name] == texts[name]:
