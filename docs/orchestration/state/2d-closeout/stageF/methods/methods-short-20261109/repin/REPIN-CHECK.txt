@@ -1,4 +1,4 @@
-#977 head 6e92be1fb8b0cff0d84ff03f46530a90df579198; 54 rows
+#977 head 3d4d331449531fa5a6def1d797d4889adad99682; 54 rows
 OK  RP01   resource paper      count=1  The sixteen-cell cross section that the estimator gives on the data il
 OK  RP02   resource paper      count=1  The held-out-tune tests provide partial evidence on bias at truths hel
 OK  RP02b  resource paper      count=1  The held-out-tune tests are not independent of each other or of $C_{\m

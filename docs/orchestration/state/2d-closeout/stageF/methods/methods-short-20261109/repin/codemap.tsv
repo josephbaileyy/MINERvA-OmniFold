@@ -20,4 +20,4 @@ Prior-retention study: capacity (--capacity)	nd-unfolding/s5p_nullexp.py	a523571
 Prior-retention study: iterations (--iters)	nd-unfolding/s5p_nullexp.py	a5235714	278-278	789271bb76e0d589e8b3252ce72ef7e4fab40acdf1ab4744162bd64e339fd2ab	ap.add_argument("--iters"
 Prior-retention study: the observables' column masks	nd-unfolding/prior_retention/prr_probe.py	a5235714	116-122	f87ee90c58d2b8904fe881931edc61966a6adda8be7eb503da6644797a3d1232	MASKS = {
 Prior-retention study: the tested levels	nd-unfolding/prior_retention/prr_probe.py	a5235714	124-138	f87ee90c58d2b8904fe881931edc61966a6adda8be7eb503da6644797a3d1232	LEVELS = {
-Prior-retention study: the mask on the inputs of all three	nd-unfolding/prior_retention/prr_probe.py	a5235714	287-316	f87ee90c58d2b8904fe881931edc61966a6adda8be7eb503da6644797a3d1232	def column_mask(
+Prior-retention study: the mask on the inputs of the learners named in the Applies to column	nd-unfolding/prior_retention/prr_probe.py	a5235714	287-316	f87ee90c58d2b8904fe881931edc61966a6adda8be7eb503da6644797a3d1232	def column_mask(
