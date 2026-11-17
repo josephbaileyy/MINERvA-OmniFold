@@ -17,6 +17,7 @@ instruction: no claim changes.
 | read | what it read | verdict |
 |---|---|---|
 | `read12/` | the batch, against the old text, the route record, the A6/item-14 decision, the band inventory code and the ppbench readout | PASS (one note: the prompt's sign convention for delta; the printed text is right) |
+| `read13/` | cold read 3.12 (S8.7's outcome paragraph becomes a pointer, by the director's ruling) and 3.16 (S7's q3 stress test is the synthetic q3 tilt: d-id's config, q3_given_eavail_w at amplitude 0.3), at `ae1705188` | PASS |
 
 **CITABLE FOR:** the wording as read against its cited sources.
 **NOT CITABLE FOR:** any result; a locked wording.
