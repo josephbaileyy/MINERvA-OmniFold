@@ -135,3 +135,24 @@ the completeness one): history-cuts/app_devhistory.md I12. numdiff: removed 42, 
 **Meaning read of S7 (codex-school gpt-6.1-sol, high, read-only; the declaration's §10, the decision and the director's go attached):**
 - **Pass 1:** FAIL on three points: the date (rebuild versus adoption), the :224 item still listed the approximation as active, and the 3.7 relation was classed NEEDED. reads/misses-pass1.txt.
 - **Pass 2,** all three fixed: OVERALL PASS. Every moved test is LEDGER, and the 3.7 relation is NEEDED and retained at :273. reads/misses-pass2.txt.
+
+## Cutdown, 2026-11-16 (lane/note-cutdown-20261116)
+
+**Under** Joseph's go for the cutdown (DECISION-20261116-joseph-paper-batch.md at main `99aefd3f0`, sixth answer,
+items 29 and 34) and the editor's brief of the same day, which moves the construction, centring, projection and
+conditioning of C_Z to the records document. **The rule:** as at the head of this file.
+
+**Base:** `sec_systematics.tex` at `8342963c16d74bc10d740e5637d602300557e53a`. Line numbers are the base's. Every
+removed passage stays in the commit history at that sha and line.
+
+| id | base line | words cut | disposition | old text | new text | home of the content | why not NEEDED |
+|---|---|---|---|---|---|---|---|
+| K1 | :306, sentences 5–8 | 91 | moved to main_records | "Replacing the single-pass lateral-band block by the re-selected one moves that block's square-root trace by … A small share of the aggregate variance does not make a bin irrelevant to a quoted result." (the trace move, the per-bin ratio ranges over all cells and over the 1% with the largest variance) | removed from the note | `app_release_records.tex`, "Moved from the note's §…: the lateral-band block of C_Z", word for word (records-move-ledger.md row L-cut-S1) | Sizes of one block of C_Z, a covariance the note uses for no reported result. The note keeps what a reader of the quoted results needs: the two event-loop modes, which one supplies the lateral bands, and that single-pass products are not used for any quoted uncertainty. |
+| K2 | :311 (with its comments, :312–:325) | 156 | moved to main_records | "The ML term C_ML of C_Z (Eq. zassembly) is the split-varied band: … Both bands are minor components, about three percent of the combined budget in √Tr C." | removed from the note | `app_release_records.tex`, "Moved from the note's §…: the ML term of C_Z", word for word, with its source comments (row L-cut-S2) | The definition and size of one term of C_Z. §9.6 keeps the assembly equation and now points to the records for its terms. |
+| K3 | :327 (with its comments, :328–:330) | 21 | cut to ledger | "C_Z is a separate construction in which the unified-throw covariance is centered on the central value (the CV-centered variant, cv; §…eavailw-construction)." | cut | The same statement prints at sec_5d.tex, §9.6 "Status" ("the variant centered on the central value (cv)"); 8342963c1:sec_systematics.tex:327 | A repeat of §9.6's status sentence. |
+
+**Kept, though the cutdown table proposed shortening them:** §4.4 (its flux-index sentence is pinned by a records
+probe, and the three checks state the reproducibility of the quoted block); §4.5's first paragraph (App. A.2.4, which
+the Supplement cites for the joint-ensemble test, sends the reader here for the construction); §4.6's comparison with
+the earlier budget (a records probe pins its second item, App. I points to it, and comparisons against that budget
+are printed in §4.5 and §4.6); §4.6's seed-related terms (each is a stated omission of the quoted covariance).

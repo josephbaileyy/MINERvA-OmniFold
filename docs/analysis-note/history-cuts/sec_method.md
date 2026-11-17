@@ -120,3 +120,22 @@ numbering).
 **Style pass B, meaning read (codex-school gpt-6.1-sol, high, read-only; rows S6, C8, F4 and T8 read together, records attached):**
 - **Pass 1:** OVERALL FAIL on F4 only ("for the purposes, and within the limits, stated in Table~\ref{tab:result-status}" imported Table 1's estimator-seed-only scope, which omits sec_eavailw.tex:118 and sec_systematics.tex:160). S6, C8 and T8 passed; every removed item was LEDGER or NEEDED and retained; no disclosure lost. reads/styleB-pass1.txt.
 - **Pass 2, F4 revised to "with the restrictions stated in this section":** OVERALL PASS, with no FAILs; no NEEDED item lost; no disclosure lost. reads/styleB-pass2.txt.
+
+## Cutdown, 2026-11-16 (lane/note-cutdown-20261116)
+
+**Under** Joseph's go for the cutdown (DECISION-20261116-joseph-paper-batch.md at main `99aefd3f0`, sixth answer,
+items 29 and 34) and the editor's brief of the same day. **The rule:** as at the head of this file.
+
+**Base:** `sec_method.tex` at `8342963c16d74bc10d740e5637d602300557e53a`. Line numbers are the base's. Every removed
+passage stays in the commit history at that sha and line, which is its ledger home.
+
+| id | base line | words cut | disposition | old text | new text | home of the content | why not NEEDED |
+|---|---|---|---|---|---|---|---|
+| K1 | :48, sentences 2 and 3 | 74 | cut to ledger | "With the purity-based subtraction (configuration (a)), the seed-42 central value differs from the seed-1 one by a per-bin median of 0.18% (maximum 1.79%), or 0.30 (maximum 1.28) of the per-bin standard deviation of the earlier statistical band, built at seed 1. Two regenerations, with one driver and one input and differing only in the seed, reproduce the two central values to ≲2×10⁻¹¹, so the difference is attributable to the seed." | cut | 8342963c1:sec_method.tex:48. The records entry `2d-central-value` (R1.12) names the product but does not print these four numbers, so the ledger is their only home; their sources are named in the comments that stay below the paragraph (re2c_values_unmatched.tsv; the XR report, L0 and L1). | A seed comparison of the purity-subtracted configuration (a), which is not the quoted two-dimensional result. The quoted result's own seed sensitivity is the sentence that stays ("at most 1.4% in a cell"). Its reproducibility is the next sentence, which stays. |
+| K2 | :79, sentence 5 | 24 | cut to ledger | "The reseeded run's median agrees with the 0.18% LightGBM seed-1 to seed-42 median above, but the agreement is coincidental." | cut | 8342963c1:sec_method.tex:79 | A remark that two medians coincide by chance; it reports no result, and K1 removes the sentence it points back to. The reseeded run's own numbers (0.18%, 1.6%, χ²/ndf) stay in the sentences before it. |
+
+**Kept, though considered:** the over-dispersion sentence of :48 (an unfavourable statement about seed 42 with no
+counterpart for the refined configuration); the seed-choice sentence (it says the seed was chosen on cost, which
+bears on evidential independence); the migration description at :209 (it says why the hadronic axes migrate
+asymmetrically, which bears on the limitations of the hadronic cells); everything the Supplement cites in §3.2 (the
+history, the iteration check, the 1.03% and 17.6%).
