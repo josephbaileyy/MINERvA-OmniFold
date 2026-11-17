@@ -356,3 +356,60 @@ Nothing is submitted, deposited or tagged.
 3. **cm** gets its own go, after m's receipt is merged.
 
 Nothing is submitted, deposited or tagged.
+
+## Binding 1, addendum J6: code5 and the stage-3 pin; the stage-3 goes (director, 2026-11-17)
+
+**Binds** code5 (#1205) and the five-line input pin (#1204). The stage-3 pin is #1204's merge commit, **P3 =
+`95d1d529dc7c0d677c849e37bf3def06a5f76827`**, which contains both PRs, as coverage-5b-audit required. The director
+re-hashed each file at P3:
+
+| file | sha256 (prefix) |
+|---|---|
+| `nd-unfolding/rdx/rdx_connect.sh` | `1760327b21f21958` |
+| `nd-unfolding/rdx/rdx_connect_launch.sh` | `def31c020870bc66` |
+| `nd-unfolding/rdx/sbatch_rdx_arms.sh` | `f77c89a5dd3f59ce` |
+| `nd-unfolding/rdx/rdx-inputs-SHA256SUMS` (5 lines) | `e5baf9cc20bb1744` |
+
+These supersede J4's digests for the connect and the launcher.
+
+**Why:** tier3-design traced stage 3 before any go and found two defects. A read-only probe on login27
+(`code5/probe/`) confirmed F1.
+- **F1.** The arms read their pins under PATH's python3, which on login27 is /usr/bin/python3.6, Python 3.6.15. The
+  pin module needs 3.7 or later.
+- **F2.** gs3a and gs3b checked a different deploy and pin from s3a and s3b, so no order could pass.
+
+**What the director checked:**
+- **coverage-5b-audit's clearance** of #1205 and #1204, audited together on main `7effa70f`, with no blockers or
+  majors.
+  - Every stage-3 step's interpreter–module pair: SYSPY 3.6 runs only stdlib tools; no Python reads a pin; the job's
+    3.11 import closure is unchanged.
+  - Tests 24/24 under 3.12 and 3.10; mutants 55/55 killed; the smoke exits 0.
+  - The auditor's own kill of SUMS line 5 fails the test.
+- **F1 fix (option (a)):** `rdx-inputs-SHA256SUMS` carries the two lat_zero lines at MP1_ZERO's pins (`6ca02c3d…`,
+  `f09727d0…`), and the arms read all five by awk.
+- **A wording reconciliation:** RDX-DECLARATION:302's input table already names the staged lat_zero copies "at the
+  digests the stage-3 pin commits". The three-dump wording at :346 is reconciled to :302.
+- `lat_RDX_ALL.npz` and `lat_zero.npz` share sha256 `6ca02c3d…` by design (cm README:39).
+- **F2 fix:** gs3a, gs3b, s3a and s3b all use deploy3. gs3a clones it at P3, and the other three STOP if it is
+  absent.
+- **s1:** policy() runs over s3a's and s3b's six reads.
+- **Lows for the follow-up list (not blocking):**
+  - q2: a failed checkout after gs3a's clone leaves deploy3 to be removed by hand. It fails closed.
+  - q3: a 3.6-grammar parse test for the TimeLimit heredoc.
+  - q4: no record shows lightgbm importing in the job env; that closure is unchanged by code5.
+  - m1: cm has no policy check.
+
+**Rulings:**
+1. **The stage-3 goes, in order, each one run, PIN = P3:**
+   - gs3a: `bash rdx_connect_launch.sh <new empty dir> <loginNN> gs3a 95d1d529dc7c0d677c849e37bf3def06a5f76827`.
+     0 node-h.
+   - s3a: the same command with step s3a, only after gs3a exits rc 0 and S3a.ok names P3.
+   - gs3b, then s3b: the same, after s3a's job ends COMPLETED 0:0 and its receipt is merged.
+2. **Before every connect:**
+   - check the launcher and connect against this table, and the arms and SUMS at P3 in deploy3 after gs3a's clone;
+   - every fence and hold, cov2d's ack before each submit and the end message after.
+3. **The cap still binds.** It projects 1.5159 after s3a and at most 1.8825 after s3b, both under 2.5.
+4. **Status** comes from sacct over the job ids, never squeue alone.
+5. **Any STOP**, cap refusal, job failure or TIMEOUT comes to the director unrepaired. Nothing relaunches.
+
+Nothing is submitted, deposited or tagged.
