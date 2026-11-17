@@ -36,9 +36,10 @@ N_SIG = {"1A": 1736833, "1B": 469084, "1C": 894027, "1D": 2595088, "1E": 2165554
          "1L": 232123, "1M": 3583806, "1N": 2042233, "1O": 593359, "1P": 782010}  # proxy_hists_meta.json
 FENCE = ("cov2d", "t2a", "ll5d", "e96data", "rpd_", "rsn_")
 POLICY_PATH_TOKEN = "<policy>"
-LATER = {"nd-unfolding/rdx/rdx-inputs-SHA256SUMS"}
+SUMS = "nd-unfolding/rdx/rdx-inputs-SHA256SUMS"  # stage 3's pin (section 2c): cm's three lines, committed after cm passed
+CM_SESSION = DECL.parent / "run-cm-20261117/cm.session.txt"  # cm's PASS receipt (#1201); its lines 286-288 are the sums
 FLOOR = {"BUILD", "HOST", "CC", "CXX", "CPP", "AR", "LD", "NM", "RANLIB", "STRIP", "PREFIX", "CFLAGS", "CXXFLAGS",
-         "LDFLAGS", "CPPFLAGS"}  # the hand list, a floor under the measured setup_salloc_env.exports  # the one declared path that is written later, by stage 3's pin
+         "LDFLAGS", "CPPFLAGS"}  # the hand list, a floor under the measured setup_salloc_env.exports
 
 
 def sacct(*rows):
@@ -247,10 +248,23 @@ class Tables(unittest.TestCase):
         self.assertTrue(any("policy-config.json" in t for t in found))
         exists = lambda t: subprocess.run(["git", "cat-file", "-e", f"HEAD:{t}"], cwd=ROOT,  # noqa: E731
                                           capture_output=True).returncode == 0
-        missing = [t for t in sorted(found - LATER) if not exists(t)]
+        missing = [t for t in sorted(found) if not exists(t)]
         self.assertEqual(missing, [])
-        self.assertTrue(LATER <= found)
-        self.assertFalse(any(exists(t) for t in LATER))  # committed only at stage 3's pin (section 2c)
+        self.assertIn(SUMS, found)
+        # the sums, in the arms launcher's "<sha256>  ./<name>" form: cm's three printed lines byte for byte, then MP-1's
+        # two lat_zero pins, equal to fd_ct_period_inputs.MP1_ZERO (the director's ruling (a), 2026-11-17)
+        session = CM_SESSION.read_text().splitlines()
+        self.assertEqual(session[288], "MERGE CHECKS PASS")
+        lines = (ROOT / SUMS).read_text().splitlines(keepends=True)
+        self.assertEqual("".join(lines[:3]), "\n".join(session[285:288]) + "\n")
+        tree = ast.parse((ND / "fd_ct_period_inputs.py").read_text())
+        mp1 = next(ast.literal_eval(t.value) for t in tree.body if isinstance(t, ast.Assign)
+                   and isinstance(t.targets[0], ast.Name) and t.targets[0].id == "MP1_ZERO")
+        self.assertEqual(lines[3:], [f"{mp1['lat_npz']}  ./lat_zero.npz\n", f"{mp1['lat_bkg']}  ./lat_zero_bkg.npz\n"])
+        rows = [ln.split("  ") for ln in (ROOT / SUMS).read_text().splitlines()]
+        self.assertEqual([n for _, n in rows], ["./lat_RDX_ALL.npz", "./lat_RDX_ALL_bkg.npz", "./truthx_RDX_ALL.npz",
+                                                "./lat_zero.npz", "./lat_zero_bkg.npz"])
+        self.assertTrue(all(re.fullmatch(r"[0-9a-f]{64}", h) for h, _ in rows))
 
     def test_c1_stops_on_the_walk_probe_and_s2_requires_its_pass(self):
         con = (HERE / "rdx_connect.sh").read_text()
