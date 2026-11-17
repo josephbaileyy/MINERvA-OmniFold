@@ -243,6 +243,71 @@ sha256 of the text plus a final newline begins `e28f96ed986afb80`.
 37. **The abstract:** "They find joint under-coverage for the two- and five-observable estimators at both held-out
     truths in all completed coverage variants."
 
+## Joseph's eighth and ninth answers, verbatim: the record inventory and the readability batch
+
+Joseph asked for the paper to be made as easy to read as possible, in journal prose, before Ben's read. He named four
+problems:
+- the abstract tries to say too much, is too technical, and leaves the contribution unclear;
+- the introduction is clear but not compelling;
+- some passages are hard to read on a first pass;
+- the Supplement is hard to navigate.
+
+He supplied an online LLM's review he largely agreed with. Three codex reviewers drafted proposals:
+- r1 (codex-school): the abstract and introduction;
+- r2 (codex-school2): the 20 hardest passages;
+- r3 (codex-school): Supplement navigation.
+
+The director proposed a grouped abstract. Helper-3 listed the paper's three printed holds.
+
+> 1. (the inventory) I like your recommendation.
+
+sha256 of the text plus a final newline begins `fcf42ff8c36306a1`. Then, on the readability proposals:
+
+> this misses the fact that the published measurement is a binned unfolding. In general I like this rewrited version more though. 2. and 3. , lets adopt these 4. yes lets do that, can we add the heatmap to a list of things to look at while I give Ben the papers to review? 5. lets do it
+
+sha256 of the text plus a final newline (as pasted, with its leading space) begins `1f1b8af11e3c6807`.
+
+38. **The §7 record inventory leaves the paper.**
+    - It moves, unchanged apart from the corrected first-test row, to a tracked draft-only cover sheet beside the draft
+      that carries the same gates. §7 prints nothing in its place.
+    - The corrected row cites FD-1B-DIAG-REPORT.md, FD-1B-INV-I2-REPORT.md, OUTCOME-20261108-1b-precheck-part1.md and
+      OUTCOME-20261106-1b-stage1-receipt-stop.md, and adds the note pointers.
+    - This supersedes the 2026-11-11 placement of the inventory in §7.
+    - The funding and deposit holds stay in the paper until Joseph supplies the text and authorizes the release.
+39. **The abstract is replaced whole** by the director's grouped form. It carries Joseph's correction: the published
+    measurement is named as a binned unfolding. This supersedes items 18, 22, 23, 26 and 37's abstract sentences.
+
+    > Unbinned machine-learning unfolding can pass conventional closure tests and still fail more demanding ones. We show this for one OmniFold implementation that unfolds five observables simultaneously in MINERvA open data. A descriptive benchmark against the published two-observable measurement, made with binned iterative unfolding, agrees in normalization but differs in shape. On the same inputs, OmniFold also differs from binned iterative unfolding. When the simulated truth is changed, the five-observable estimator retains part of its prior. Some regions move opposite to the change, and fake-data tests flag bias at two truths that no tested estimator setting removes. Rounding-level changes of the inputs violate its stability requirement, although its training is reproducible. Coverage tests of both estimators' covariances, which omit the run-period and, for five observables, the response terms, find joint under-coverage at both held-out truths. The five-observable coverage result is descriptive because its repair was chosen after an earlier run stopped. No reported interval has validated coverage, and the five-observable output is presented only as an illustration. From these studies we give five checks to make before the intervals of an unbinned unfolding are interpreted.
+
+    Five findings leave the abstract for the introduction's findings paragraphs:
+    - the descriptive bias-half screen;
+    - event migration in some regions;
+    - binned unfolding's overshoot at five iterations;
+    - the averaging trade-off;
+    - the run-period inconsistency.
+40. **The introduction:** r1's rewrite.
+    - The opening asks a motivating question, then says why MINERvA open data are a good test case.
+    - The findings paragraphs lead with a plain sentence. They carry the five items that leave the abstract.
+    - A closing contribution sentence states the study's bounds.
+    - The roadmap sentences are cut.
+41. **The 20 hardest passages:** r2's rewrites, in result, interpretation, qualification order, plus its items (a)–(c).
+    - (a) The two screens' pass counts are side by side.
+    - (b) The ensemble's bias deterioration is given with its size.
+    - (c) Fig. 4 gets a pointer.
+    - Rewrite #3 moves item 3's GEANT4 bound sentence from §6.2 to Supplement S8.5, verbatim.
+42. **A schematic figure at §3.3:** closure → changed-truth recovery → stability → coverage, drawn without data, with
+    r2's caption.
+43. **Supplement navigation:** r3's proposals.
+    - A one-page definitions table at the front.
+    - A road map.
+    - One-sentence redirects in place of trips to the note.
+    - Repetition merged behind pointers.
+    - Table-layout fixes.
+44. **A follow-up list for Ben's review period** (`methods-short-20261109/FOLLOW-UP-DURING-BEN-REVIEW.md`). Its first
+    item is a heatmap of Fig. 3's recovery over (E_avail, W).
+
+Every edit gets a meaning read; nothing is dropped and no claim changes.
+
 ## CITABLE FOR / NOT CITABLE FOR
 
 - **Citable for:** the wording choices above as Joseph's; A1–A4 as open.
