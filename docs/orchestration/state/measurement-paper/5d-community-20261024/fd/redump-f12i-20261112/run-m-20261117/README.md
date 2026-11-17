@@ -53,9 +53,40 @@ banner.
   regular_1 (162-164).
 - **Exit codes:** launcher, ssh and script all rc 0 (1, 165-167).
 
-## The job's outcome
+## The job's outcome: COMPLETED 0:0 in 19:06
 
-To be added from sacct over 61443055 when it ends. The watch reads sacct only, never squeue.
+**The watch.** `m-job/watch_m.sh` (sha256 `e21bab50…`) ran on this laptop. Every 5 min it read
+`sacct -X -n -P -j 61443055` over ssh to saul, never squeue. It was to stop at a terminal state, after a full read of
+every step with MaxRSS, or after 6 unusable reads in a row. `m-job/watch.log.txt` holds every read.
+- **Lines 1-4:** PENDING at 02:38:52Z, then RUNNING at 02:43:56Z, started 18:39:27 PST.
+- **Lines 5-16:** six reads from 02:48:59Z to 03:16:01Z got ssh rc 255 with no rows. The watch's stderr file is empty,
+  so ssh recorded no reason. The watch then exited 4, "WATCH UNUSABLE", as designed. It did not read a stopped job as
+  running.
+- **Lines 17-22:** this session took the next read by hand at 04:41:57Z, with the same command plus the all-steps read.
+  ssh rc was 0. The job had already ended at 18:58:33 PST (02:58:33Z). The 86 min between the watch's exit and the
+  manual read changed nothing: no job was waiting on it, and nothing relaunches.
+
+**The final read,** `m-job/sacct.psv` (= `watch.log.txt:20-22`). Start and End are Perlmutter local time, PST
+(UTC−8).
+
+| step | state | elapsed | MaxRSS | start → end (PST) |
+|---|---|---|---|---|
+| `61443055` (`rdx_s2_merge`) | COMPLETED 0:0 | 00:19:06 (1146 s) | n/a | 18:39:27 → 18:58:33 |
+| `61443055.batch` | COMPLETED 0:0 | 00:19:06 | 34,552,876 KiB (32.95 GiB) | 18:39:27 → 18:58:33 |
+| `61443055.extern` | COMPLETED 0:0 | 00:19:09 | n/a | 18:39:27 → 18:58:36 |
+
+- **Against the projection** (J5): 1,146 s against the projected 1,352 s, 85% of it, and 42% of the 0:45:00 limit.
+- **Memory:** MaxRSS 32.95 GiB against the projected ~36 GiB, on a 512 GB node.
+- **What the exit means:** the job exits 5 if any step's rc is non-zero (`sbatch_rdx_merge.sh:94`), so 0:0 means all
+  four steps returned 0. Whether K1 recorded PASS is in `out/checks/k1.json`, which cm requires. This receipt does not
+  read it.
+
+**The charge:** an exclusive job is billed wall time × nodes, so 1146 s × 1 node = **0.3183 node-h**. RDX's total
+spent is 1.1492 of the 2.5 cap: s1 0.0704, s2 0.7605 and m 0.3183. With s3a and s3b still to come at their 0.7333
+ceiling, the projection is 1.8825.
+
+**Not read here:** the job's log (`out/logs/rdx_s2_merge_61443055.out`), its outputs (the merged file, the four npz
+and `k1.json`) and their sha256s. They are cm's to check, under its own go.
 
 ## CITABLE FOR / NOT CITABLE FOR
 
@@ -63,6 +94,7 @@ To be added from sacct over 61443055 when it ends. The watch reads sacct only, n
   - the merge gate's contents;
   - m's pre-submit checks and staging;
   - the job id, its limit and the cap gate's total;
-  - the launcher and connect shas that ran.
-- **Not citable for:** the job's outcome (recorded in a later commit), any K1 or C-TRUTHX-NPZ verdict (cm's, under its
-  own go), or any RDX reading.
+  - the launcher and connect shas that ran;
+  - the job's sacct state, elapsed time, MaxRSS and charge.
+- **Not citable for:** the job's log or outputs, any K1 or C-TRUTHX-NPZ verdict (cm's, under its own go), or any RDX
+  reading.
