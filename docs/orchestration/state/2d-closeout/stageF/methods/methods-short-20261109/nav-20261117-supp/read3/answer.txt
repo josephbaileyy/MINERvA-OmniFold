@@ -1,0 +1,28 @@
+No ranked meaning defects found; no required fixes. The S8.7 rewrite preserves the specification and limitations. The deliberate omission of **1.4% is harmless because that size remains explicit elsewhere in the Supplement**.
+
+The source checks below use `ev/note_sec_joint.tex`; quoted numerical macros are expanded using `ev/macro_values.txt`.
+
+| S8.7 statement | Supporting note text |
+|---|---|
+| Five predictions; hybrid null; fixed fine-cell integrals with varied composition below the grid | Line 19: “the true cross section equals \(G\) on every cell of a fine five-dimensional grid”; below it, “the MINERvA Tune v1 simulation’s event composition, varied in each pseudo-experiment by the drawn interaction-model universes. Every fine-cell integral is held fixed in that variation.” The five predictions are listed in the same paragraph. Splitting the null definition into sentences preserves its scope. |
+| Ten total/shape tests; 109 supported coarse cells; GiBUU’s 72-cell domain | Line 19: “Each prediction is tested in total (rate and shape together) and in shape alone: 10 tests.” Line 29: “evaluated on a coarse \(3^{5}\) grid” and “restricted to the 109 supported cells”; GiBUU’s domain is “the 72 cells with \(\pPar<6\) GeV/\(c\).” Thus **“the coarse cells that meet the support rule”** clarifies “supported joint cells” without adding a new numerical criterion. |
+| Total and shape statistics; fixed pilot metric plus prediction variance; power versus size | Line 34 gives \(T_{\mathrm{tot}}=r^\top\Sigma^{-1}r\), \(r=F-\mu_G\), and says the shape statistic has “the same form on the normalized cell fractions.” It defines \(\Sigma=V+\operatorname{diag}\operatorname{Var}(\mu_G)\), with \(V\) from pilot pseudo-experiments at Tune v1. Line 37: “\(V\) was fixed before the calibration.” Line 34: “The null calibration below, not the metric, sets each test’s size.” |
+| Full-chain calibration; simulation halves; independent background; nuisance draws; one full-simulation data unfolding | Lines 43–48 specify the full chain, joint-test estimator, Poisson pseudo-data, independent background, other-half unfolding, flux/model/detector/lateral draws, normalization, rounding noise and prediction residual. Line 53 explicitly says: “the flux universe and the band universes are drawn independently, and their weight ratios multiply.” Line 50: “The data are unfolded once, with the full simulation.” The surrogate applies to the lateral bands; the note’s table distinguishes “four weight bands at \(\pm1\sigma\); lateral bands by linear surrogate” (line 102). |
+| Maximum claim \(p\), simulation-size and \(\pm2\delta_{\mathrm{fine}}\) variants; refinement definition | Line 50: the claim \(p\) is “the largest over the specified claim variants, which shift the null,” using the simulation-size bound and \(\pm2\delta_{\mathrm{fine}}\). Line 152 defines \(\delta_{\mathrm{fine}}\) as “the change of the noise-free unfolded result when the null truth is refined from the twofold-merged grid to the fine grid.” Both variant families survive. |
+| Holm at 0.05; 95% Clopper–Pearson requirement; all ten rejected | Line 113: “Holm procedure … at familywise level \(\alpha=0.05\)” and “a step rejects only when the 95% Clopper–Pearson interval … lies entirely below its Holm threshold.” Line 185: “Every test is rejected at familywise \(\alpha=0.05\).” |
+| All six conditions and calibration limitations | Line 149 says convergence “has not shown convergence” and the residual is “unmeasured and potentially material.” Line 178 specifies the missing recoil-energy-scale band, unestablished hadronic-response completeness, all 34 interaction bands drawn in every pseudo-experiment, and GiBUU’s energy truncation. Line 156 specifies half versus full simulation; line 154 specifies the predictions’ finite samples. Line 126 preserves the fidelity qualification and states: “No rejection rate has been measured for null pseudo-data processed like the data.” |
+| Conditional hybrid rejections; no physical exclusions or demonstrated added discrimination; prior pull reproduced | Line 154 permits transfer to \(G\) itself only under a bound on the below-grid replacement. Line 359 requires “a response band drawn through the calibration and a demonstrated bound on the residual below the fine grid.” Line 312 makes the rejections conditional on hadronic response. Line 254: “no evidence of additional discrimination from the joint five-observable information.” Line 185 attributes the displaced external nulls to “the estimator’s pull toward its prior.” |
+
+The normalization size remains printed in **`ev/new_supplemental_body.tex:637`**, table `tab:construction`: **“normalization & one outer product, a 1.4% normalization”**. It also appears at **line 761**: **“the 1.4% normalization applied to \(\Delta\)”**. S8.7 still includes the normalization draw; only its locally repeated size disappears.
+
+No paragraph split changes an antecedent:
+
+- “with it” still refers to the five-observable estimator.
+- “It measures sensitivity” still refers to the difference on data; “This study” remains the refinement study.
+- “these data,” “these double ratios,” and “its own size” retain the period-comparison data, double ratios, and covariance block.
+- The coverage-test “It” remains the individual pseudo-experiment; the later diagnostic explicitly names “the first test’s check.”
+- In S8.7, “Its metric” refers to the total statistic, “shift it” to the null, and “The third” continues the six conditions across the paragraph break.
+
+The citation-parenthesis replacement of “;” with “and” retains both destinations and changes no assertion. No other content is dropped.
+
+VERDICT: PASS
