@@ -57,6 +57,9 @@
      check_hold_inventory.py fails unless the sheet lists exactly the holds the paper and the Supplement print, and its
      paper, Supplement and note numbers, records and release revision agree with the tree. The fill test also checks
      check_hold_inventory.paper_maps against the built main_paper.aux for every paper label the sheet names.
+  15. US SPELLING (the director, 2026-11-17; Joseph writes American English). check_spelling_us.py finds British forms
+     in printed text: -our, -ise/-isation, -yse, -re, doubled -ll-, grey, artefact, towards, whilst, amongst. The paper
+     fails on any hit. The Supplement is reported until SPELLING_SUPPLEMENT_GATED is set.
 NOTE (printed on every run; not checked here). The figures sit where the blind rater copy passes its hold-diff check
 (rater-calibration/make_rater_copy.sh). A float near section 7 split the long section 7 hold ("A citable home ...")
 across a page break, and the copy failed. That hold moved to the cover sheet on 2026-11-16, but the two short holds
@@ -292,7 +295,7 @@ def check_literal_keys(texts, values_tex, entries=None):
 # moved to 3257d7c61 the same day with no change to any label (all 217 compared), so the named revision stands until the
 # director names another. Moved 2026-11-16 to 8342963c1, draft/note-round2-20261108 with the note's corrections merged,
 # for Ben's paper version (the director); it moves once more at the freeze, after the note's Fable cutdown.
-NOTE_RELEASE_REV = "8342963c16d74bc10d740e5637d602300557e53a"
+NOTE_RELEASE_REV = "87cee1c86e468bdfb595ff12a28579281c0f7621"
 
 
 def check_note_release(d, release=None):
@@ -339,7 +342,31 @@ def run(wt, base):
              + check_free_text(mv.PENDING, mv.VERDICTS)
              + check_literal_keys({**cur, "supplemental_body.tex": supp}, (wt / NOTE / "values_fived16.tex").read_text())
              + check_note_release(wt / NOTE)
-             + hold_inventory(wt).check(wt))
+             + hold_inventory(wt).check(wt)
+             + check_spelling(wt))
+    return fails
+
+
+# Check 15 (the director, 2026-11-17): US spelling in printed text. The paper fails on any British form. The Supplement
+# is reported until journal-editor's spelling pass lands; journal-editor sets SPELLING_SUPPLEMENT_GATED = True with it.
+SPELLING_PAPER = ("main_paper.tex", "paper_body.tex")
+SPELLING_SUPPLEMENT = ("main_supplement.tex", "supplemental_body.tex")
+SPELLING_SUPPLEMENT_GATED = False
+
+
+def check_spelling(wt):
+    spec = importlib.util.spec_from_file_location("check_spelling_us", HERE / "check_spelling_us.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    fails = []
+    for files, gated in ((SPELLING_PAPER, True), (SPELLING_SUPPLEMENT, SPELLING_SUPPLEMENT_GATED)):
+        for f in files:
+            for n, w, us in mod.hits((wt / NOTE / f).read_text()):
+                msg = f"US spelling: {f}:{n}: {w} -> {us}"
+                if gated:
+                    fails.append(msg)
+                else:
+                    print("REPORT", msg)
     return fails
 
 
@@ -708,6 +735,11 @@ def self_test():
             if not fn():
                 print("self-test: check 13 NOT CAUGHT:", name); ok = False
     del EMPTY["e"]
+    sp = importlib.util.spec_from_file_location("check_spelling_us", HERE / "check_spelling_us.py")
+    spm = importlib.util.module_from_spec(sp)
+    sp.loader.exec_module(spm)
+    if not spm.self_test():                             # check 15's planted forms and its mutant
+        print("self-test: check 15 FAILED its self-test"); ok = False
     if not hold_inventory(ROOT).self_test(ROOT):      # check 14's planted defects
         print("self-test: check 14 FAILED its self-test"); ok = False
     print("self-test:", "PASS" if ok else "FAIL")
