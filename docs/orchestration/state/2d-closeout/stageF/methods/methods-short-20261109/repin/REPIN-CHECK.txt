@@ -1,4 +1,4 @@
-#977 head ed2b57a3cf5eb324d3f6fecc20b0f87b7642dc40; 55 rows
+#977 head 7264f975a1e6209c63d736db973188470c1cb6df; 55 rows
 OK  RP01   resource paper      count=1  The sixteen-cell cross section produced from the data is presented sol
 OK  RP02   resource paper      count=1  The held-out-tune tests provide partial evidence on bias at truths hel
 OK  RP02b  resource paper      count=1  The held-out-tune tests are not independent of each other or of $C_{\m
@@ -6,7 +6,7 @@ OK  RP03   resource paper      count=1  The dependence on the prior's generator 
 OK  RP04   resource paper      count=1  The term is constructed from the change in the unfolded data when the 
 OK  RP04b  resource paper      count=1  The model term $C_{\mathrm{model}}$ measures the result's unscaled dep
 OK  RP05   resource paper      count=1  is the sum of four blocks, each from LightGBM unfoldings with the cent
-OK  RP06   resource abstract   count=1  No reported interval has validated coverage
+OK  RP06   resource abstract   count=1  Coverage of the reported intervals has not been validated
 OK  RP07   resource paper      count=1  On this analysis's inputs, OmniFold and binned IBU, the publication's 
 OK  RP07p  code     paper      count=1  On this analysis's inputs, OmniFold and binned IBU, the publication's 
 OK  RP08   resource paper      count=1  C_{\mathrm{rep}}=C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D
