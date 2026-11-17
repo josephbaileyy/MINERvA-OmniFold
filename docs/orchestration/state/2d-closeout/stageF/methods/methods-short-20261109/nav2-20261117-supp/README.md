@@ -23,6 +23,8 @@ is director-helper-3's.
 | `read4/` | items 1 and 2 at `20d0cbc49` | FAIL, two defects: the proxy's absolute values; S8.5 lost "fixed in advance" |
 | `read5/` | the fixes at `b6129ba49` | PASS |
 | `read6/` | item 3 at `096fcfeb5` | PASS |
+| `read7/` | the definitions table's Descriptive entry, rewritten to follow the paper's new table 4 caption (director-helper-3's `7264f975a`), at `d2bd98a77` | FAIL: the timing read as the rerun's |
+| `read8/` | the fix at `f6528e1c2` (the timing attaches to choosing the repair) | PASS |
 
 **CITABLE FOR:** the wording as read against its cited sources.
 **NOT CITABLE FOR:** any result; a locked wording.
