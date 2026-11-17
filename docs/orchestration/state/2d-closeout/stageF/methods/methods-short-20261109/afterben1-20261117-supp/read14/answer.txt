@@ -1,0 +1,3 @@
+No content changes found: all formula terms, symbols, words, and values are unchanged. The two added `$` delimiters close and reopen the reconstructed \(W\) expression around the line break.
+
+VERDICT: PASS
