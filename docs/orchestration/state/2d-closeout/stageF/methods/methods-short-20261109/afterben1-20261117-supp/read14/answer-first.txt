@@ -1,0 +1,3 @@
+The reconstructed \(W\) cell adds two `$` delimiters around the new line break, beyond the permitted `\\ ` and width changes. All other cell characters match; no formula terms, words, or values changed.
+
+VERDICT: FAIL
