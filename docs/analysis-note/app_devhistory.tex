@@ -92,6 +92,43 @@ Unlike the band's replicas, the central value has completeness exactly~1. A seco
 The band was then rebuilt without this term. The resulting undivided band was rescored only post hoc (\S\ref{sec:coverage}), and the quoted statistical block has not been tested.
 % Search: S1 has not been coverage-tested; coverage statement about Q_R; held-out-MC re-test @ ddf16f10
 
+% Move pairs LR-01..LR-16 (limitation-resolver; history-cuts/move-manifest-lr-20261117.tsv sends, move-manifest-je-20261117.tsv
+% receives): sentences of sec_fived16.tex:193, :276, :283 and :295 at 2fe070fec, verbatim and in their source order, with the
+% source comments of :276 and :283; the body keeps each outcome and points here.
+\subsection{The sixteen-cell run-period block: its conditions}
+\label{app:devhistory-fived16pl}
+
+This is the account of the conditions under which the sixteen-cell run-period block $C_{\mathrm{PL,5D}}$ of \S\ref{sec:fived16-pl} would not be added.
+
+Three conditions under which it would not be added were fixed before any of the measurements that decide them was computed: one existing component, within two standard deviations of its own size, explaining at least half of both period-group patterns; a replica spread of the block's median per-cell width above half that width; or, in the median replica, less than half of the replica-built block's variance lying in the observed block's plane. The conditions were set after the block's reported numbers had been read, and the second and third were not expected to fire. None occurred. That result establishes neither the block's size nor the absence of overlap: descriptively, one detector-response pair, a pion-interaction band with the meson response shift, reproduces one period's offset pattern within noise and part of the other two.
+% absence-ok: "were not" and "establishes neither ... nor the absence of overlap" are the source paragraph's own statements (sec_fived16.tex:193 @ 2fe070fec, LR-02 and LR-04), moved verbatim
+
+\subsection{The coverage tests of the sixteen-cell covariance: stops and repair}
+\label{app:devhistory-fived16cov}
+
+This is the account of the coverage tests of the sixteen-cell covariance at the two held-out tunes of \S\ref{sec:fived16-fd}: the first test, its staged redesign, and the second test's entry-check stop and repair. \S\ref{sec:fived16-fd} states their outcomes.
+
+A first coverage test at these two tunes, specified before any pseudo-experiment was generated, for the covariance without the run-period block, with pseudo-experiments that also draw the flux, interaction and detector uncertainties (the lateral and normalization ones as surrogates, and $C_{\mathrm{model}}$ and $C_{\mathrm{resp}}$ not at all), was stopped before any coverage pseudo-experiment ran. At one of its gates, the ratio of each cell's uncertainty reproduced through the pseudo-experiments to that of the drawn covariance lay outside \fvval{cov1b-win-lo}--\fvval{cov1b-win-hi} in \fvval{cov1b-ncells-out} of the 16 cells, ranging from \fvval{cov1b-rho-min} to \fvval{cov1b-rho-max}. Replacing the pseudo-experiments' values by the covariance's for any \fvval{cov1b-kmax-word} or fewer of the \fvval{cov1b-nbands} drawn bands does not bring every cell inside that window.
+% F16-2 (2026-11-16): the tests numbered as the paper and Supplement number them (paper_body.tex "The first five-observable
+% test"; supplemental_body.tex S8: "A first coverage test ... A staged redesign then stopped at its first stage"): this gate-
+% stopped test is the first, the staged run below is its redesign, and LL5D is the second; App. I's two rows say the same.
+
+A staged redesign of that first test, at the two tunes and with the covariance rebuilt by the same procedure at each tune, also ended without a coverage result. Each of its pseudo-experiments is drawn from a simulated world built from randomly drawn systematic universes; in each cell, that world's denominator is the first drawn universe's denominator plus each later universe's departure from the central-value denominator. A rule fixed before the first stage ran stops that stage if any draw gives a non-positive denominator in a cell that is positive at the central value. \lrval{stop-flagged} of the \lrval{stop-draws} draws did so, with at most \lrval{stop-maxcells} such cells in a draw, and the first stage stopped. The record does not establish why those cells are non-positive.
+% absence-ok: "The record does not establish why those cells are non-positive" is the source paragraph's own statement (sec_fived16.tex:283 @ 2fe070fec, LR-12), moved verbatim
+
+% LL5D paragraph (2026-11-16; the coordinator's go, step 2): DECISION-20261116-joseph-paper-batch.md items 14, 21 and
+% 24, mirroring the paper's approved sentences at draft/methods-short-20261109 037431430 (the Table 4 caption's definition
+% of Descriptive, the section 6.3 repair paragraph, and the section 7 sentences), with "stop" in lowercase (item 21).
+% LL5D-DECLARATION.md sec. 13's note items: sec. 6's resolution and size (:482-486: at most 0.025 over the cells and
+% 0.025 joint per tune and variant; about 0.10 per cell, \fvval{ll5d-cellres}, and 0.08 jointly), the overlaps (sec. 3.1,
+% "held out is not independent": the tune overlaps stated above), the d_T-at-means block standing in for a per-toy block
+% (:288-293, :323-324), and the laterals carried (sec. 3.8, :274-280). The repair: LL5D-AMENDMENT-A1A2.md (vi keyed at
+% float32; no rule, threshold, bound or cell changed, :18-26); the route repaired and the status Descriptive,
+% DECISION-20261109-joseph-coverage-case-wording.md item 2(b). Values: \fvval{ll5d-*}, ported from the paper branch
+% (check_ll5d_port.py); the per-tune classes are hand-typed and asserted against the readout by make_values_fived16.py
+% (LL5D_PRINTED_CLASS).
+At both tunes, an event-matching entry check stopped the earlier run because it compared \fvval{ll5d-a1a2-keys} weight keys and reported every row unmatched. The repair, chosen after this stop, keyed both sides at \fvval{ll5d-a1a2-at} before any coverage pseudo-experiment was unfolded or graded, but after other gate readings were visible. It changed no rule, threshold, bound or reporting cell. Under the rule fixed before the result, the rerun is reported as descriptive: the criteria fixed in advance were applied, but a repair was chosen after an entry-check stop.
+
 % Move pair CX-04..CX-21 (the Codex writer lane; history-cuts/move-manifest-cx-20261117.tsv sends, history-cuts/move-manifest-je-20261117.tsv receives): the three paragraphs of sec_joint.tex:237-241 @ 2fe070fec,
 % verbatim, with their source comments (:242-249); sec:joint5d-lost keeps the outcome beside Table tab:joint5d.
 \subsection{Lost pseudo-experiments of the generator tests}
