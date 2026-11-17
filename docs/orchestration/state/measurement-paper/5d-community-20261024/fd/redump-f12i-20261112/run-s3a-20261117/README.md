@@ -5,8 +5,9 @@ at main `d4c8cb9b`). One run each. Both steps used the launcher and connect at P
 `95d1d529dc7c0d677c849e37bf3def06a5f76827`. They were taken by `git show P3:nd-unfolding/rdx/<f>` and checked by
 `shasum -a 256` before the connects: `rdx_connect_launch.sh` `def31c02…` and `rdx_connect.sh` `1760327b…`, J6's digests.
 
-`*.session.txt` is the launcher's stdout byte for byte, after the line `ssh rc=N` that the launcher prints first.
-`*.session.err.txt` is the ssh session's stderr, NERSC's login banner. The two are byte-identical.
+`*.session.txt` is the launcher's stdout byte for byte: its line 1, `ssh rc=N`, is the launcher's own, and the rest is
+the ssh session's stdout. `*.session.err.txt` is the ssh session's stderr, NERSC's login banner; gs3a's and s3a's are
+byte-identical.
 
 ## gs3a: login27, 2026-11-17T11:12:02Z, rc 0
 
@@ -15,7 +16,8 @@ at main `d4c8cb9b`). One run each. Both steps used the launcher and connect at P
   - the 15 purge-exposed MP-1 inputs were PRESENT, by stat only (5-100);
   - `squeue --me` was empty (102-103).
 - **The clone:** gs3a's clone branch (`rdx_connect.sh:57-61` at P3) runs when `$D3` is absent. It clones deploy3 and
-  checks it out at P3. deploy3 at P3 after this run (below) is that clone. Then gs3a checked that deploy3's HEAD is P3 with 0 porcelain lines (63-64), as every stage-3 step does.
+  checks it out at P3. deploy3 at P3 after this run (below) is that clone. Then gs3a checked that deploy3's HEAD is P3
+  with 0 porcelain lines (63-64), as every stage-3 step does.
 - **What it wrote:** `out/gates/S3a.ok`, with the lines `pin=95d1d529dc7c0d677c849e37bf3def06a5f76827` and
   `utc=2026-11-17T11:12:03Z` (104-105). gs3a STOPs if the gate file is already there (`rdx_connect.sh:103` at P3), and it
   exited rc 0, so this run created it.
