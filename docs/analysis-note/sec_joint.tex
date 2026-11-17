@@ -59,7 +59,7 @@ Because the $\Delta_{b}$ come from the observed data, the null distributions are
 
 \providecommand{\pcell}[2]{\parbox[t]{#1}{\raggedright\strut#2\strut}}
 \begin{table}[htbp]
-  \caption{Generative model of the calibration.  Left: the flow of one test, repeated over $B$ pseudo-experiments.  Right: what each element of a pseudo-experiment does, and the corresponding element of the data analysis.  Nuisance draws act on the pseudo-data source only.}
+  \caption{Nuisance draws act on the pseudo-data source only in the calibration model. Left: the flow of one test, repeated over $B$ pseudo-experiments. Right: what each element of a pseudo-experiment does, and the corresponding element of the data analysis.}
   \label{tab:joint5d-genmodel}
   \centering\small
   \begin{minipage}[t]{0.40\textwidth}
@@ -89,19 +89,19 @@ Because the $\Delta_{b}$ come from the observed data, the null distributions are
     \end{picture}
   \end{minipage}\hfill
   \begin{minipage}[t]{0.57\textwidth}
-    \vspace{0pt}\scriptsize
+    \vspace{0pt}\scriptsize\setlength{\tabcolsep}{3pt}
     \begin{tabular}{@{}lll@{}}
       \toprule
-      \pcell{0.15\textwidth}{Element} & \pcell{0.24\textwidth}{Pseudo-experiment} & \pcell{0.14\textwidth}{Data analysis} \\
+      \pcell{0.22\textwidth}{Element} & \pcell{0.46\textwidth}{Pseudo-experiment} & \pcell{0.27\textwidth}{Data analysis} \\
       \midrule
-      \pcell{0.15\textwidth}{Truth} & \pcell{0.24\textwidth}{source half reweighted per fine cell to $G$} & \pcell{0.14\textwidth}{unknown} \\
-      \pcell{0.15\textwidth}{Unfolding simulation} & \pcell{0.24\textwidth}{other half at Tune~v1 weights (the prior)} & \pcell{0.14\textwidth}{full simulation at Tune~v1 weights} \\
-      \pcell{0.15\textwidth}{Background} & \pcell{0.24\textwidth}{Poisson source and template from disjoint halves; Tune~v1 with its bands} & \pcell{0.14\textwidth}{full background template} \\
-      \pcell{0.15\textwidth}{Flux} & \pcell{0.24\textwidth}{one of \jtFluxUniverses{} universes on the source (changes the rate, not $\sigma$)} & \pcell{0.14\textwidth}{central flux} \\
-      \pcell{0.15\textwidth}{Interaction model} & \pcell{0.24\textwidth}{\jtModelBands{} bands, one universe each; signal renormalized per fine truth cell; two bands clipped} & \pcell{0.14\textwidth}{Tune~v1} \\
-      \pcell{0.15\textwidth}{Detector} & \pcell{0.24\textwidth}{four weight bands at $\pm1\sigma$; lateral bands by linear surrogate} & \pcell{0.14\textwidth}{nominal} \\
-      \pcell{0.15\textwidth}{Added terms} & \pcell{0.24\textwidth}{\SI{1.4}{\percent} normalization; rounding noise; prediction residual} & \pcell{0.14\textwidth}{none} \\
-      \pcell{0.15\textwidth}{Statistic} & \pcell{0.24\textwidth}{$T_{\mathrm{tot}}$, $T_{\mathrm{sh}}$ with fixed $\Sigma$} & \pcell{0.14\textwidth}{the same} \\
+      \pcell{0.22\textwidth}{Truth} & \pcell{0.46\textwidth}{source half reweighted per fine cell to $G$} & \pcell{0.27\textwidth}{unknown} \\
+      \pcell{0.22\textwidth}{Unfolding simulation} & \pcell{0.46\textwidth}{other half at Tune~v1 weights (the prior)} & \pcell{0.27\textwidth}{full simulation at Tune~v1 weights} \\
+      \pcell{0.22\textwidth}{Background} & \pcell{0.46\textwidth}{Poisson source and template from disjoint halves; Tune~v1 with its bands} & \pcell{0.27\textwidth}{full background template} \\
+      \pcell{0.22\textwidth}{Flux} & \pcell{0.46\textwidth}{one of \jtFluxUniverses{} universes on the source (changes the rate, not $\sigma$)} & \pcell{0.27\textwidth}{central flux} \\
+      \pcell{0.22\textwidth}{Interaction model} & \pcell{0.46\textwidth}{\jtModelBands{} bands, one universe each; signal renormalized per fine truth cell; two bands clipped} & \pcell{0.27\textwidth}{Tune~v1} \\
+      \pcell{0.22\textwidth}{Detector} & \pcell{0.46\textwidth}{four weight bands at $\pm1\sigma$; lateral bands by linear surrogate} & \pcell{0.27\textwidth}{nominal} \\
+      \pcell{0.22\textwidth}{Added terms} & \pcell{0.46\textwidth}{\SI{1.4}{\percent} normalization; rounding noise; prediction residual} & \pcell{0.27\textwidth}{none} \\
+      \pcell{0.22\textwidth}{Statistic} & \pcell{0.46\textwidth}{$T_{\mathrm{tot}}$, $T_{\mathrm{sh}}$ with fixed $\Sigma$} & \pcell{0.27\textwidth}{the same} \\
       \bottomrule
     \end{tabular}
   \end{minipage}
@@ -133,7 +133,7 @@ The joint-test estimator (\S\ref{sec:joint5d-calibration}) was chosen before the
 % Methods-paper shortening pass (2026-10-21, DECISION-20261020-joseph-refined-estimator-shorten-delta.md item 2): the article's post hoc paragraph (its Sec. VIII C).
 Three studies followed the decisions: the scan of the shift multiplier (\S\ref{sec:joint5d-kappa}), the rerun of the lost pseudo-experiments (\S\ref{sec:joint5d-lost}), and the matched coarse-projection comparison (\S\ref{sec:joint5d-projections}). They are for reporting only, outside the decision rule. Each was specified before it ran; the projection comparison was specified after the five-dimensional outcomes were known.
 
-\subsection{Conditions}
+\subsection{Six conditions attached to the ten rejections}
 \label{sec:joint5d-conditions}
 
 Each decision holds under six conditions of the specified model. They are restated here in the terms of this note, numbered (i)--(vi) as in the test specification, and fall into three kinds.
@@ -179,12 +179,14 @@ Every pseudo-experiment resamples the same simulated events, so the null distrib
 % M2-AUDIT.md Q4d, :183-184.
 % Search: recoil-energy-scale band; calorimetric response band; linear surrogate; endpoint symmetry @ ddf16f10
 
-\subsection{Decisions}
+\subsection{Decisions on the ten hypotheses}
 \label{sec:joint5d-results}
 
 Table~\ref{tab:joint5d} lists the ten decisions. Every test is rejected at familywise $\alpha=\jtAlpha$; nine have $k=0$, and NuWro's shape test has $k=1$. Each rejection also survives the robustness variants at $\pm\jtMoneKappaRobust\,\delta_{\mathrm{fine}}$, the upper end of the extrapolation in condition~(i). Figure~\ref{fig:joint5d-nulls} shows each null's calibrated distribution with the observed statistic. The Tune~v1 null is centered at small values, whereas the external nulls are displaced far upward by the estimator's pull toward its prior.
 
 \begin{table}[htbp]
+  \caption{Every joint five-dimensional generator test is rejected under the six conditions of \S\ref{sec:joint5d-conditions}. The tests are listed in Holm order. $B$ is the number of completed calibration pseudo-experiments at the stop set by the sequential rule (1400 submitted per null, NuWro 1800; the rest were lost to time limits and later recovered for reporting only, \S\ref{sec:joint5d-lost}), and $k$ the number at least as extreme as the data; claim $p=(k+1)/(B+1)$ is never zero.}
+  \label{tab:joint5d}
   \centering
   \small
   \begin{tabular}{@{}llrrlll@{}}
@@ -203,15 +205,13 @@ Table~\ref{tab:joint5d} lists the ten decisions. Every test is rejected at famil
     NuWro 21.09 & shape & 1751 & 1 & 2/1752 & 0.05 & $[0.0000145, 0.00318]$ \\
     \bottomrule
   \end{tabular}
-  \caption{Joint five-dimensional generator tests, in Holm order; every test is rejected. $B$ is the number of completed calibration pseudo-experiments at the stop set by the sequential rule (1400 submitted per null, NuWro 1800; the rest were lost to time limits and later recovered for reporting only, \S\ref{sec:joint5d-lost}), and $k$ the number at least as extreme as the data; claim $p=(k+1)/(B+1)$ is never zero.}
-  \label{tab:joint5d}
   % Source: RECORD-20261005-s5p-joint-5d-inference-result.md sec. 2, joint-evaluate.json sha256 b9604502...; robustness: robust-labels.json 206655f9...
 \end{table}
 
 \begin{figure}[tbp]
   \centering
   \includegraphics[width=\textwidth]{paper_joint_nulls}
-  \caption{Joint calibrated nulls by prediction (columns), total (top) and shape (bottom). Shown: decision variant with largest null median. Vertical: observed statistic; $k/B$ as in Table~\ref{tab:joint5d}. Horizontal axis: logarithmic. Every draw in a shifted null receives the same fixed vector $s\in\{0,\tfrac12D,D,+\jtMoneKappa\,\delta_{\mathrm{fine}},-\jtMoneKappa\,\delta_{\mathrm{fine}}\}$ before forming the statistic. The decision uses the maximum $p$ over these separate shifts, which need not match the shown variant and bounds neither combined shifts nor other directions. Sufficient inputs: App.~\ref{app:release}.}
+  \caption{All ten joint tests reject under the six conditions of \S\ref{sec:joint5d-conditions}. The figure shows calibrated null distributions by prediction (columns), total (top) and shape (bottom). Shown: decision variant with largest null median. Vertical: observed statistic; $k/B$ as in Table~\ref{tab:joint5d}. Horizontal axis: logarithmic. Every draw in a shifted null receives the same fixed vector $s\in\{0,\tfrac12D,D,+\jtMoneKappa\,\delta_{\mathrm{fine}},-\jtMoneKappa\,\delta_{\mathrm{fine}}\}$ before forming the statistic. The decision uses the maximum $p$ over these separate shifts, which need not match the shown variant and bounds neither combined shifts nor other directions. Sufficient inputs: App.~\ref{app:release}.}
   % Shortening pass: the article's caption sentences added (nd-unfolding/s5p_joint.py:228-258; M2-AUDIT.md:61, :146-150).
   % The article's figure was regenerated 2026-10-20 with the legend string only changed
   % (figures/plot_joint_null_distributions_physlabels.py, sha256 bb1d7389...; Slurm job 60029158).
@@ -234,16 +234,12 @@ Because every test rejects, power serves here only as context: the test specific
 \subsection{Lost pseudo-experiments and their recovery}
 \label{sec:joint5d-lost}
 
-Computing time limits interrupted or prevented \jtLostCal{} of the submitted calibration pseudo-experiments (\jtLostInterrupted{} interrupted, \jtLostNever{} never started) and \jtLostPow{} power pseudo-experiments. The decisions in Table~\ref{tab:joint5d} were evaluated on the completed draws. A sensitivity analysis computed before the lost outcomes were known showed that every decision could change under a realizable assignment of them. Had every interrupted draw exceeded the observed statistic, no test would have been rejected ($p$ \jtWorstIntLo--\jtWorstIntHi). Among completed draws, runtime is not associated with the statistic ($|\rho|\le\jtRuntimeRho$), which supports but does not certify the decisions.
-
-The lost seeds were rerun under a procedure that was fixed, and reviewed independently, before the rerun~\cite{JointTestRecovery2026}. A determinism check fixed before the rerun (16 of 16 completed seeds rerun bitwise identically) shows that each recovered draw is the lost draw, so every submitted draw has been observed. No recovered draw reaches the observed statistic in any test, claim variant or robustness variant, so no assignment of the lost draws changes any decision. The closest margin is 4.6 units of $T$ below the observed value of 868.6 (GENIE~2.12.10 + MEC shape, $\pm\jtMoneKappaRobust\,\delta_{\mathrm{fine}}$ variant). The next is 49.8 (GENIE~2.12.10 shape, same variant). With complete batches the stopping rule, fixed before any production pseudo-experiment, would have stopped the Tune~v1, GENIE~2.12.10, GENIE~2.12.10 + MEC and GiBUU nulls one batch earlier ($B=1200$), with the same decisions.
-
-The recovered draws were evaluated in two ways: with the variant shifts of the primary evaluation held fixed (the \emph{fixed-shift} evaluation), and with the shifts recomputed on all draws (the \emph{recomputed-shift} evaluation). The recovery's checks are narrower in scope than the main recomputation. Only the fixed-shift evaluation was cross-checked independently. The recomputed-shift evaluation was reproduced only by a standalone rerun of the same code, a consistency check rather than an independent recomputation. The earlier stops rest on the calibration run's own re-application of the sequential rule and have no independent check. The decisions of Table~\ref{tab:joint5d} remain those of the evaluation before recovery, at the $B$ at which its rule stopped. The observed outcomes of the lost draws supersede the finding of the sensitivity analysis described above.
+Computing time limits interrupted or prevented \jtLostCal{} of the submitted calibration pseudo-experiments (\jtLostInterrupted{} interrupted, \jtLostNever{} never started) and \jtLostPow{} power pseudo-experiments. Every submitted draw has been observed, and no recovered draw reaches the observed statistic in any test, claim variant or robustness variant. The decisions in Table~\ref{tab:joint5d} remain those of the evaluation before recovery, at the $B$ at which its rule stopped (App.~\ref{app:devhistory}).
 % Search: earlier-stop; earlier stop; independent check of the earlier stops; standalone rerun @ 1a015eef
 % r22 Step 2 (B10): the cross-check's count (856 of 856 quantities) is in app_provenance.tex, joint-5d.
 % Deposit pass: the disposition label Joseph selected (DECISION-20261005-s5p-recompute-extension-and-lost-seed-
-% recovery.md sec. 5) restated as its content, that section's "What it changes" and required disclosures 1-5, all
-% of which this subsection prints; old text in git history.
+% recovery.md sec. 5) restated as its content, that section's "What it changes" and required disclosures 1-5,
+% printed in the body summary and App. devhistory; old text in git history.
 % Source: RECORD-20261006-s5p-lost-seed-recovery-resolution.md (recovery, margins 4.6/49.8 T units, earlier
 % stops, power over the complete sets); RECORD-20261005 sec. 5 (pre-recovery sensitivity, |rho| <= 0.06);
 % DECISION-20261005-s5p-recompute-extension-and-lost-seed-recovery.md sec. 5 (Joseph's disposition).
@@ -251,7 +247,9 @@ The recovered draws were evaluated in two ways: with the variant shifts of the p
 \subsection{Matched coarse projections}
 \label{sec:joint5d-projections}
 
-The same calibrated tests are restricted to matched $3\times3$ coarse projections of the same cells, onto $(\pT,\pPar)$ and onto $(\Eavail,W)$. The comparison uses the same calibration ensembles, with the recovered draws included, and the same variants and claim rule. Its $p$ values were reproduced independently~\cite{JointTestProjections2026}. The projected tests do not enter the Holm family and change no decision of Table~\ref{tab:joint5d}. The comparison and its criterion were specified after the five-dimensional outcomes were known but before the comparison was run. Under the criterion, a test would count as evidence of additional joint discrimination only if both of its projected claim $p$ values were at least 0.05 in both the fixed-shift and the recomputed-shift evaluations. No test meets it, and the values are identical in the two evaluations. Every test has $p<0.05$, without a multiplicity correction, in at least one of the two projections. This study therefore provides no evidence of additional discrimination from the joint five-observable information. Table~\ref{tab:joint5d-projections} gives every projected claim $p$ value. In the muon-only $(\pT,\pPar)$ projection, GENIE~2.12.10 is not rejected ($p=\woneGcvPtTot$ in total, $\woneGcvPtShape$ in shape; a post hoc observation), whereas its $(\Eavail,W)$ projection is. Hadronic information therefore participates in that rejection. This does not establish added power of the joint test over all matched projections, or accept GENIE as true. The powers of the joint and projected tests have not been compared.
+The same calibrated tests are restricted to matched $3\times3$ coarse projections of the same cells, onto $(\pT,\pPar)$ and onto $(\Eavail,W)$. The comparison uses the same calibration ensembles, with the recovered draws included, and the same variants and claim rule. Its $p$ values were reproduced independently~\cite{JointTestProjections2026}. The projected tests do not enter the Holm family and change no decision of Table~\ref{tab:joint5d}. The comparison and its criterion were specified after the five-dimensional outcomes were known but before the comparison was run.
+
+Under the criterion, a test would count as evidence of additional joint discrimination only if both of its projected claim $p$ values were at least 0.05 in both the fixed-shift and the recomputed-shift evaluations. No test meets it, and the values are identical in the two evaluations. Every test has $p<0.05$, without a multiplicity correction, in at least one of the two projections. This study therefore provides no evidence of additional discrimination from the joint five-observable information. Table~\ref{tab:joint5d-projections} gives every projected claim $p$ value. In the muon-only $(\pT,\pPar)$ projection, GENIE~2.12.10 is not rejected ($p=\woneGcvPtTot$ in total, $\woneGcvPtShape$ in shape; a post hoc observation), whereas its $(\Eavail,W)$ projection is. Hadronic information therefore participates in that rejection. This does not establish added power of the joint test over all matched projections, or accept GENIE as true. The powers of the joint and projected tests have not been compared.
 % PACKET-20261005-publication-decision.md sec. 6 (W1, "Criteria, fixed now"): "The marginal tests are report-only.
 % They do not enter the Holm family and change no frozen decision." (docs/publication/, :252)
 % Register round r12 (2026-10-21): moved from the article's Sec. VII E; source W1-RECORD-20261006.md (no power comparison).
@@ -259,6 +257,8 @@ The same calibrated tests are restricted to matched $3\times3$ coarse projection
 
 % Deposit pass: W1-RECORD-20261006.md sec. 1 (identical under both D2 readings; independently reproduced, sec. 4, 40 of 40). Values copied as recorded.
 \begin{table}[htbp]
+  \caption{Every test has $p<0.05$ in at least one matched projection. The joint tests are restricted to matched $3\times3$ coarse projections of the same cells (for GiBUU, 6 and 8 cells of its domain), with all submitted calibration draws, the same variants and the same claim rule. The GENIE~2.12.10 values in the $(\pT,\pPar)$ column are a post hoc observation.}
+  \label{tab:joint5d-projections}
   \centering\small
   \begin{tabular}{@{}llll@{}}
     \toprule
@@ -276,8 +276,6 @@ The same calibrated tests are restricted to matched $3\times3$ coarse projection
     GiBUU~2019          & shape & 0.00071 (0/1400) & 0.00071 (0/1400) \\
     \bottomrule
   \end{tabular}
-  \caption{The joint tests restricted to matched $3\times3$ coarse projections of the same cells (for GiBUU, 6 and 8 cells of its domain), with all submitted calibration draws, the same variants and the same claim rule. Every test has $p<0.05$ in at least one projection. The GENIE~2.12.10 values in the $(\pT,\pPar)$ column are a post hoc observation.}
-  \label{tab:joint5d-projections}
 \end{table}
 
 \subsection{Hadronic-response condition and recoil-energy sensitivity}
@@ -291,6 +289,8 @@ In an exploratory sensitivity study of the response~\cite{JointTestRecoil2026}, 
 
 % Deposit pass: W2B-REPORT-20261006.md sec. 5, "Observed statistics" (descriptive) and the k/B table; values copied as recorded. Null medians are the frozen unshifted (c = 0) null medians.
 \begin{table}[htbp]
+  \caption{All ten tests remain rejected when the simulation's reconstructed recoil energy is scaled by $\pm4\%$ against unchanged null distributions. The observed joint statistics are shown beside the recorded values and the median of each unshifted null distribution, which is not regenerated. Every test keeps $k=0$ at both signs except NuWro's shape test ($k=1$ of 1751 at $-4\%$, 3 at $+4\%$). The values are descriptive.}
+  \label{tab:joint5d-recoil}
   \centering\small
   \begin{tabular}{@{}lrrrrrrrr@{}}
     \toprule
@@ -305,8 +305,6 @@ In an exploratory sensitivity study of the response~\cite{JointTestRecoil2026}, 
     GiBUU~2019          & 2867 & 3129 & 2665 & 1791 & 4013 & 4154 & 3901 & 1975 \\
     \bottomrule
   \end{tabular}
-  \caption{Observed joint statistics with the simulation's reconstructed recoil energy scaled by $\pm4\%$, beside the recorded values and the median of each unshifted null distribution, which is not regenerated. Every test keeps $k=0$ at both signs except NuWro's shape test ($k=1$ of 1751 at $-4\%$, 3 at $+4\%$); all ten remain rejected. The values are descriptive.}
-  \label{tab:joint5d-recoil}
 \end{table}
 
 The study measures the sensitivity of the observed statistics and decisions to one coherent scale of reconstructed available energy and recoil energy, applied after the energy calibration at a single magnitude. It leaves untested (a) the response of the null distributions, which were not regenerated with the variation although they are simulated through the same detector model, so the size of this omission is unmeasured for these strongly non-central nulls; (b) particle-species, energy-dependent or resolution effects, and a response difference applied before calibration; and (c) larger variations. The rejections are therefore conditional on the simulation's hadronic response, and the response model is not shown to be complete.
@@ -319,7 +317,7 @@ The study measures the sensitivity of the observed statistics and decisions to o
 \label{sec:joint5d-ch}
 
 % Methods-paper rewrite draft 5 (DECISION-20261020-joseph-nuwro-ch-claim.md, provisional "for now"). Sources: B = docs/orchestration/state/measurement-paper/phase1/mp3b/REPORT.md (NuWro on CH); C = docs/orchestration/state/measurement-paper/phase1/mp3c/REPORT.md (GiBUU on CH); M = docs/orchestration/state/measurement-paper/phase1/a7margins/RECEIPT.md (frozen margins).
-NuWro~21.09 and GiBUU~2019 were generated on carbon, while the data and the other predictions are per nucleon of CH. This study corrects the two predictions to CH and re-evaluates their tests against the null distributions used for the decisions. These target-corrected evaluations are descriptive; the decisions of Table~\ref{tab:joint5d} are unchanged. The methods paper does not use this correction in its generator comparison and shows NuWro and GiBUU on carbon only. This section records the correction.
+NuWro~21.09 and GiBUU~2019 were generated on carbon, while the data and the other predictions are per nucleon of CH. This study corrects the two predictions to CH and re-evaluates their tests against the null distributions used for the decisions. These target-corrected evaluations are descriptive. The decisions of Table~\ref{tab:joint5d} are unchanged. The primary comparisons use NuWro and GiBUU on carbon (\S\ref{sec:fived16-gen}). This section records the correction.
 % Descriptive, decisions unchanged: DECISION-20261020-joseph-nuwro-ch-claim.md:37 ("the replays are descriptive and
 % do not re-grade A7"), reworded on the director's ruling of 2026-10-25 (register round n1).
 
@@ -341,7 +339,9 @@ NuWro~21.09 and GiBUU~2019 were generated on carbon, while the data and the othe
 % 3.18 and 3.58 -> 2.24; frozen positions, no re-sort; kappa = 3 also rejected). M:65-78 (frozen margins).
 % B:129 (W_CH: both rejected, no change); C:76.
 
-\paragraph{Generation checks.} For GiBUU, the sampling-closure check failed on the hydrogen sample. A bias check of that check's premise was added post hoc. Its criterion, a change of at most $0.1\,\sigma_{c}$ in every cell, was specified before the check was computed. The check met the criterion: it moved the CH prediction by at most $5.1\times10^{-4}\,\sigma_{c}$. Here $\sigma_{c}$ is the standard deviation of the cell's result over NuWro's null distribution used for the decisions ($B=1751$). The GiBUU re-evaluation is reported under the label ``B3 (sampling closure) failed on hydrogen; a post-hoc bias check of its premise passed at $\le0.1\,\sigma_{c}$''. It has a further limitation: GiBUU's deep-inelastic events on hydrogen, 46\% of its hydrogen sample, do not conserve energy.  They lose a median of \SI{45}{MeV}, with a median transverse-momentum imbalance of \SI{31}{MeV}, while its other hydrogen events balance exactly. The cause has not been identified. The available energy of those events may be low, and the non-conservation may also affect GiBUU's carbon prediction, which cannot be checked in this way. In NuWro's hydrogen generation, four chunks aborted and were rerun on alternate seeds. The fraction of events this excludes is estimated as $1.8\times10^{-5}$ in the main sample and $3.8\times10^{-5}$ in the 50--\SI{100}{GeV} supplement, or $1.9\times10^{-5}$ and $6.2\times10^{-5}$ including the first attempt. These estimates rest on four to six events.  The supplement's 95\% upper bound of $1.8\times10^{-4}$ exceeds the $10^{-4}$ level set for it, so the supplement is flagged rather than assumed negligible.
+\paragraph{Generation checks.} For GiBUU, the sampling-closure check failed on the hydrogen sample. A bias check of that check's premise was added post hoc. Its criterion, a change of at most $0.1\,\sigma_{c}$ in every cell, was specified before the check was computed. The check met the criterion: it moved the CH prediction by at most $5.1\times10^{-4}\,\sigma_{c}$. Here $\sigma_{c}$ is the standard deviation of the cell's result over NuWro's null distribution used for the decisions ($B=1751$). The GiBUU re-evaluation is reported under the label ``B3 (sampling closure) failed on hydrogen; a post-hoc bias check of its premise passed at $\le0.1\,\sigma_{c}$''. It has a further limitation: GiBUU's deep-inelastic events on hydrogen, 46\% of its hydrogen sample, do not conserve energy.  They lose a median of \SI{45}{MeV}, with a median transverse-momentum imbalance of \SI{31}{MeV}, while its other hydrogen events balance exactly. The cause has not been identified. The available energy of those events may be low, and the non-conservation may also affect GiBUU's carbon prediction, which cannot be checked in this way.
+
+In NuWro's hydrogen generation, four chunks aborted and were rerun on alternate seeds. The fraction of events this excludes is estimated as $1.8\times10^{-5}$ in the main sample and $3.8\times10^{-5}$ in the 50--\SI{100}{GeV} supplement, or $1.9\times10^{-5}$ and $6.2\times10^{-5}$ including the first attempt. These estimates rest on four to six events.  The supplement's 95\% upper bound of $1.8\times10^{-4}$ exceeds the $10^{-4}$ level set for it, so the supplement is flagged rather than assumed negligible.
 % C:7-8 (the required label, verbatim), :23-44 (declaration 00efbb25..., recorded before computing; max |Delta_c/sigma_c|
 % 5.1e-4 against the 0.1 acceptance). B:48-56 (NuWro hydrogen chunks: 3 + 1 aborts rerun on alternate seeds; excluded
 % fraction 1.8e-5 main, 3.8e-5 supplement; the supplement's 95% bound 1.8e-4 above the 1e-4 bar, FLAGGED).
@@ -356,7 +356,7 @@ NuWro~21.09 and GiBUU~2019 were generated on carbon, while the data and the othe
 \subsection{What the tests establish}
 \label{sec:joint5d-reading}
 
-The comparisons recover the generator disagreements already established by the published two-dimensional measurement on the same data~\cite{MINERvA:2021owq}. Their methodological contribution is calibration within the implemented simulation model, which puts the estimator's bias toward its prior and the specified nuisances into each null distribution. The rejections are global assessments of the five specified predictions under the specified model. Assigning a discrepancy to a kinematic region or nuclear mechanism would require separate tests. The rejections apply to the generator versions listed in \S\ref{sec:eavailw-band}, and they retain all six conditions of \S\ref{sec:joint5d-conditions}. Extending the inference would require a response band drawn through the calibration and a demonstrated bound on the residual below the fine grid.
+The comparisons recover the generator disagreements already established by the published two-dimensional measurement on the same data~\cite{MINERvA:2021owq}. What they add is calibration within the implemented simulation model, which puts the estimator's bias toward its prior and the specified nuisances into each null distribution. The rejections are global assessments of the five specified predictions under the specified model. Assigning a discrepancy to a kinematic region or nuclear mechanism would require separate tests. The rejections apply to the generator versions listed in \S\ref{sec:eavailw-band}, and they retain all six conditions of \S\ref{sec:joint5d-conditions}. Extending the inference would require a response band drawn through the calibration and a demonstrated bound on the residual below the fine grid.
 % Search: validated uncertainty bound; response band drawn; bound on the residual below the fine grid @ 1a015eef
 % Source: docs/orchestration/RECORD-20261005-s5p-joint-5d-inference-result.md (decisions, B, k, p, the six
 % conditions); DELIVERY-20261006-s5p-campaign-terminal.md; W1 (docs/publication/w1/W1-RECORD-20261006.md);
