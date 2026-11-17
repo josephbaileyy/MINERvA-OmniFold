@@ -288,10 +288,17 @@ UNIT_REQUIRED = {"0.564": "%", "1.008": "%", "0.563": "%", "2.26": "%", "3.65": 
 #              distance +4.99 sigma" (GENCMP amendment E's with-arm fd_g_fig_modes.json plotted.panels, sigma
 #              0.0685528; the figure the note prints since the E round, 2026-11-01); struck as `6.86\%` (the
 #              superseded 2D per-bin median relative sigma). Only the figure's "= 6.86%, distance" context is removed.
+# Added 2026-11-17 (the note's currency batch A, limitation-resolver), verified at the source:
+#     0.377 -> the live retained fraction of IBU at 200 iterations at the q3 tilt, printed negative as "-0.377" in
+#              sec_fived16.tex's prior-retention paragraph (values_fived16.tex prr-rho-ibu200-q3, the FD-PRR readout
+#              9238f22b); struck as `0.377\%` (the superseded per-bin median of MaCCQE, app_history.tex:56). Only a
+#              0.377 preceded by a minus sign and not followed by a digit, a point or a percent sign is removed, and
+#              only in main_note.
 CONTEXT_EXEMPT = {
     ("main_note", "1.014"): (r"mean\s+weight\s+1\.014(?!\d|\.\d)", "sec_validation.tex", "(mean weight 1.014)"),
     ("main_note", "0.912"): (r"C\s*2\s*=\s*0\.912(?!\d|\.\d)", "values.tex", r"\newcommand{\covTwoDCTwo}{0.912}"),
     ("main_note", "1.65"): (r"(?<![\d.])1\.65(?![\d.])(?!\s*\u00d7)", "values_fived16.tex", r"\@namedef{fv@g-tune-pull-R15}{1.65}"),
+    ("main_note", "0.377"): (r"[\u2212-]\s*0\.377(?![\d.%])", "values_fived16.tex", r"\@namedef{fv@prr-rho-ibu200-q3}{-0.377}"),
     ("main_note", "6.86"): (r"=\s*6\.86%,\s*distance",
                             "../orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/figures/fd_g_fig_modes.json",
                             '"sigma": 0.06855283880067227'),

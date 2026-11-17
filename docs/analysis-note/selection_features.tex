@@ -1,6 +1,8 @@
 Event selection determines which observations enter the analysis and which truth population is being estimated. Classifier features determine what the learner can use within that population. A muon can therefore be required for selection even when its momentum is absent from the classifier.
 
 \begin{table}[H]
+\caption[Selection and classifier information]{Selection and classifier information are separate choices. Reporting bins are not classifier inputs. Extended fiducial domain: App.~\ref{sec:fps}. PET remains diagnostic method development; its design-study recovery does not validate real-data background subtraction.}
+\label{tab:selection-features}
 \centering\footnotesize
 \begin{tabular}{@{}p{0.18\textwidth}p{0.24\textwidth}p{0.24\textwidth}p{0.25\textwidth}@{}}
 \toprule
@@ -17,7 +19,5 @@ Full-event PET candidate & Same MINOS-based reconstructed selection & Extended t
 PET design studies & Signal-only simulation samples with fixed selection and sampling & Specified sample population & Muon and cloud features; finalists add detector energy summaries \\
 \bottomrule
 \end{tabular}
-\caption{Selection and classifier information are separate choices. Reporting bins are not classifier inputs. Extended fiducial domain: App.~\ref{sec:fps}. PET remains diagnostic method development; its design-study recovery does not validate real-data background subtraction.}
-\label{tab:selection-features}
 \end{table}
 % Sources: sec_experiment, sec_fps, sec_pet (input contracts and extended population), sec_pet_campaigns; nd-unfolding/pet/final_design/DECISION_RECORD-pet-final-design.md.

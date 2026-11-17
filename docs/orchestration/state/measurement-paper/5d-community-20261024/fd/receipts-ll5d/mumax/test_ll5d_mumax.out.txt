@@ -1,0 +1,9 @@
+PASS digest: O_NOATIME construction equals ll5d_b.products_digest (6 products, toy excluded)
+PASS digest: a partial product refuses
+PASS clean: PASS, removal dev 7.49e-96, mu_max equals geant_full.summarize
+PASS a wrong expected products digest STOPs
+PASS a made_from different from the null's STOPs
+PASS a minus2 C_T that is not C_T - G STOPs
+PASS mutant G perturbed by 1e-9: the removal control STOPs
+PASS mutant G from GEANT_Neutron alone: the removal control STOPs
+LL5D-MUMAX TEST PASS

@@ -1,0 +1,4 @@
+python 3.11.14
+numpy 1.26.4
+login02
+244
