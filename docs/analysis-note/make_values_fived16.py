@@ -2345,6 +2345,17 @@ def prr_levels_values(d):
     assert sorted(levels) == sorted(set(rd["PR-3"]) - {"B0", "IBU_K5"}), "the table's rows are PR-3's levels"
     graded = sorted({k.split("/")[1] for k in t if k.startswith("B0/") and k.endswith("/s991000")})
     flagged0 = {T for T in graded if t[f"B0/{T}/s991000"]["grade"]["flagged"]}
+    # Fable's fresh cold read of 7264f975a, 3.1 (the director, 2026-11-16): IBU at five iterations removes the q3-tilt
+    # flag (p just above the criterion), keeps the GiBUU hybrid's, and newly flags PR-3's four other truths
+    ib = r["ibu"]
+    assert not ib[f"K5/{PRR_TRUTHS['q3']}/s991000"]["grade"]["flagged"]
+    assert ib[f"K5/{PRR_TRUTHS['gibuu']}/s991000"]["grade"]["flagged"]
+    q3k = f"K5/{PRR_TRUTHS['q3']}/s991000"
+    v["prr-ibu5-q3-p"] = f"{ib[q3k]['grade']['p']:.3f}"
+    assert float(v["prr-ibu5-q3-p"]) > 0.01
+    new5 = {T for T in graded if ib[f"K5/{T}/s991000"]["grade"]["flagged"]} - flagged0
+    assert new5 == set(rd["PR-3"]["IBU_K5"]["new_flags"]), (new5, rd["PR-3"]["IBU_K5"]["new_flags"])
+    v["prr-ibu5-nnew-word"] = PRR_NUMBER_WORDS[len(new5)]
     assert len(graded) == 12 and flagged0 == set(PRR_TRUTHS.values()), "B0 flags exactly the two flagged truths"
     v["prr-lev-nother"] = str(len(graded) - len(flagged0))
     names = {"no effect": "no detected change", "increases": "increases", "reduces": "reduces", "both": "both"}
