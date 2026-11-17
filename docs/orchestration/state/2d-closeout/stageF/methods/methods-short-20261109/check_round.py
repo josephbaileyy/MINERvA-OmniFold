@@ -351,7 +351,7 @@ def run(wt, base):
 # is reported until journal-editor's spelling pass lands; journal-editor sets SPELLING_SUPPLEMENT_GATED = True with it.
 SPELLING_PAPER = ("main_paper.tex", "paper_body.tex")
 SPELLING_SUPPLEMENT = ("main_supplement.tex", "supplemental_body.tex")
-SPELLING_SUPPLEMENT_GATED = False
+SPELLING_SUPPLEMENT_GATED = True
 
 
 def check_spelling(wt):
