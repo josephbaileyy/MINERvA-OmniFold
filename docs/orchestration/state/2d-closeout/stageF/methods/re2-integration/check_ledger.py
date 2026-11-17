@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Check the RE-2 integration against its fact ledger (ledger.tsv beside this file).
 
+FULL MODE RETIRED 2026-11-17 (see main()): only --figures runs. The text below describes the retired full mode too.
+
 usage: check_ledger.py <worktree> [--base REF] [--ledger FILE] [--self-test]
 
 Modelled on re1-integration/check_ledger.py. Paths in the ledger are relative to the repository root, except a V row's
@@ -259,6 +261,14 @@ def main():
     if "--ledger" in args:
         i = args.index("--ledger"); ledger = Path(args[i + 1]); del args[i:i + 2]
     wt = Path(args[0]).resolve()
+    if not figures_only:
+        # Full mode RETIRED (the director, 2026-11-17; FOLLOW-UP-DURING-BEN-REVIEW.md item 3). RE-2's ledger of 10-31
+        # was a one-time integration record. Its V, M and F rows pin the text of that time, and 134 no longer match a
+        # paper that has moved on since. The live value checks are make_values_fived16.py --check, g2r-integration's
+        # ledger and the gate. --figures (the G rows and Fig. 1) stays live, and the gate runs it.
+        print("LEDGER :: full mode RETIRED (2026-11-17): RE-2's one-time integration record; the live checks are "
+              "make_values_fived16.py --check, g2r-integration's ledger and the gate. Use --figures for the G rows and Fig. 1.")
+        sys.exit(2)
     if self_test and not figures_only:
         bad = ("V\tSELFTEST-V\tvalues.tex\t125\t2.65\t2.64\t\\newcommand{\\chiPaper}{2.64}\t-\t"
                "re2/run/partc_r2/partc-r2/values_table.tsv\tm-chiPaper\trefined_rendered\n"

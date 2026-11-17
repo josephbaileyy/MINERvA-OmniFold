@@ -92,3 +92,15 @@ results index and manifest were regenerated. Then:
   ("eightfold"), as listed in `DRAFTS.md`.
 - **The standalone note repository** (open site 9) is synchronized after the merge.
 
+
+
+## Full mode retired (2026-11-17)
+
+The director, 2026-11-17 (FOLLOW-UP-DURING-BEN-REVIEW.md item 3): `check_ledger.py`'s full mode is **retired**.
+- **Why:** this ledger, of 10-31, was a one-time integration record. By 2026-11-17, 134 of its V, M and F rows no
+  longer matched the paper, which had moved on through later decisions. Full mode had also crashed on
+  `result_status_rows.tex`, which 57147f2b8 deleted.
+- **What runs instead:** the live value checks are `make_values_fived16.py --check`, g2r-integration's ledger and the
+  paper's gate.
+- **What stays:** `--figures` (the G rows and Fig. 1) stays live, and the gate runs it. Full mode now prints RETIRED and
+  exits 2.
