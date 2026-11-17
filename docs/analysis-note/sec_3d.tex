@@ -1,7 +1,7 @@
 \section{Higher-dimensional extensions: available energy and momentum transfer}
 \label{sec:3d}
 
-Unbinned OmniFold adds an observable by adding an input to the step-1 and step-2 classifiers, without an explicit migration matrix or per-bin response tensor. It avoids the combinatorial binning penalty of matrix unfolding but still has a dimensional cost: classifier training, acceptance and support coverage, sample sparsity and uncertainty quantification become more demanding as observables are added. The primary methodological motivation is the absence of a practical analog of D'Agostini iterative Bayesian unfolding (IBU). We extend the measurement to $d^{3}\sigma/(d\pT\,d\pPar\,d\Eavail)$ with available energy as a third axis.
+Unbinned OmniFold adds an observable by adding an input to the step-1 and step-2 classifiers, without an explicit migration matrix or per-bin response tensor. It avoids the combinatorial binning penalty of matrix unfolding but still has a dimensional cost: classifier training, acceptance and support coverage, sample sparsity and uncertainty quantification become more demanding as observables are added. The primary methodological motivation is the absence of a practical analog of D'Agostini iterative Bayesian unfolding (IBU). We extend the unfolding to $d^{3}\sigma/(d\pT\,d\pPar\,d\Eavail)$ with available energy as a third axis.
 
 MINERvA has published binned triple-differential results (Fig.~\ref{fig:landscape}, Table~\ref{tab:landscape}), including recent comparisons between low- and medium-energy beams~\cite{MINERvA:2026qeleme}. The latter measure $\pT$, $\pPar$, and available recoil energy for a quasielastic-like signal, for which the available energy is the sum of proton kinetic energies. This differs from the inclusive signal and species-dependent energy definition used here. What distinguishes this analysis is not the number of dimensions by itself but the unbinned, simultaneous CC-inclusive unfolding of three, four and five recorded high-level observables.
 
@@ -76,11 +76,11 @@ The unfolded $d\sigma/d\Eavail$, the 1D projection of the 3D result (Fig.~\ref{f
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.66\textwidth]{eavail_spectrum}
-  \caption{Unfolded $d\sigma/d\Eavail$, the 1D projection of the 3D measurement. The wide $[3,100]\,\si{GeV}$ catch bin is excluded from the axis; its value is annotated.}
+  \caption{Unfolded $d\sigma/d\Eavail$, the 1D projection of the 3D result. The wide $[3,100]\,\si{GeV}$ catch bin is excluded from the axis; its value is annotated.}
   \label{fig:eavail}
 \end{figure}
 
-\subsection{Validation against the 2D measurement}
+\subsection{Validation against the 2D result}
 \label{sec:3d-anchor}
 Marginalizing over $\Eavail$ should reproduce the 2D result of \S\ref{sec:results}, our validation reference in the absence of a directly matched published CC-inclusive 3D reference for this signal and phase space. The 3D marginal (configuration~(e)) and the 2D result ((f)) share the refined negative-weight subtraction but differ in learner (Table~\ref{tab:3d-configs}). The \emph{normalization} agrees closely: the marginal's area-weighted total over the 205 reported cells agrees with the 2D result's to \SI{0.141}{\percent}, and the median per-bin ratio is $1.0010$. The \emph{shape} agrees less closely. The per-bin ratio of the marginal to the 2D result scatters by $\sim\SI{3.7}{\percent}$ (standard deviation over the 205 cells). With the published covariance, the indicative distance of the marginal from the published result is $\chi^{2}/\mathrm{ndf}=4.52$, above the 2D values: $\chiPaper$ for the quoted LightGBM central value and $\chiPaperExact$ for the exact-split cross-check. Figure~\ref{fig:eavail-marg} (configuration~(a)) gives $4.98$. Because the two results share data and their cross-covariance is unavailable, this number is not a calibrated goodness-of-fit statistic.
 % RE-1 integration, review fixes 2-3 (director, 2026-10-23): the total and the median ratio are against E_U on its 205

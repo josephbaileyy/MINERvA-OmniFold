@@ -179,7 +179,7 @@ The higher-dimensional MINERvA driver (App.~\ref{app:codebase}) extends the 2D d
         % Development history: a failure mode that occurred once in
         % development and was caught by the marginal self-validation gate
         % (\S\ref{sec:validation}).
-  \item \textbf{Closure mirrors production.} In closure tests the pseudo-data are simulated events passing both the reconstructed and truth selections, weighted identically to the production data path, so closure exercises the same code path as the measurement.
+  \item \textbf{Closure mirrors production.} In closure tests the pseudo-data are simulated events passing both the reconstructed and truth selections, weighted identically to the production data path, so closure exercises the same code path as the data unfolding.
 \end{itemize}
 
 % "What the pipeline refuses to do" (test-suite discipline) moved to app_codebase.tex.
@@ -218,4 +218,4 @@ The structure differs qualitatively between the muon and hadron sides. The spect
 \subsection{Related developments and estimator scope}
 Profile OmniFold~\cite{Zhu:2025profile} extends classifier-based EM to forward-model nuisance parameters. Its distinct algorithmic construction complements earlier unbinned profiled unfolding~\cite{Chan:2023tbf}. Profiling nuisances with observed data would change our inference model, which propagates an external nuisance ensemble through a fixed procedure. Neither a profiled estimator nor its uncertainty is used here.
 
-SPINUP learns a forward mapping~\cite{Butter:2025spinup}; AUSSIE replaces OmniFold's second step with a different loss and avoids the outer iteration~\cite{Ore:2026aussie}. Both offer possible future cross-checks with different algorithmic assumptions. Reduced simulation-prior dependence does not establish detector-model independence, adequate phase-space support, or coverage for this measurement. Comparisons would require matched signal, selection, normalization, and uncertainty definitions.
+SPINUP learns a forward mapping~\cite{Butter:2025spinup}; AUSSIE replaces OmniFold's second step with a different loss and avoids the outer iteration~\cite{Ore:2026aussie}. Both offer possible future cross-checks with different algorithmic assumptions. Reduced simulation-prior dependence does not establish detector-model independence, adequate phase-space support, or coverage for this result. Comparisons would require matched signal, selection, normalization, and uncertainty definitions.
