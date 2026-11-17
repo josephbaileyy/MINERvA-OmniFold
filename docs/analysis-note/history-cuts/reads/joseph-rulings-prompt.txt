@@ -1,0 +1,5 @@
+You are checking two wording edits to a HEP technical note, made under rulings by the first author (records.txt, R1), for MEANING and faithful application only. Files: texts.txt (each passage old and new), records.txt.
+
+For each edit (C1 in the AI-use statement; AUD-N4 in the release appendix): (1) is the new text exactly what R1 specifies, applied to the right sentence, with nothing else in the passage changed? (2) Does the replacement change the meaning of anything beyond what R1 itself changes (for example, a dangling reference, a removed link a reader needs, a sentence that no longer parses)? (3) Note, without judging the ruling itself, any reading a careful referee might take from the new wording (for example, scope of "the claims"). Give each edit PASS or FAIL with reasons; quote the text when you object.
+
+End with one line: "OVERALL: PASS" or "OVERALL: FAIL", followed by the list of FAILs.

@@ -1,0 +1,60 @@
+=== R1. FD-CT-5B-AUDIT-DECLARATION.md:52-75
+### What this session read before writing the stop condition
+
+The decision's third reason for the audit is that the block "was chosen after the data were seen". So the reads behind
+this design are listed in full:
+- **numbers already reported:** every table of `FD-CT-5B-REPORT.md` and `FD-CT-READERS-5A-REPORT.md`; S1's per-group
+  σ table (`S1-REPORT.md` §6); 2D's committed noise share (`2d-closeout/playlist-term/outputs/playlist_term.json`
+  `report.noise_share`);
+- **structure only:** the key layout of the 5B and 5A readouts; the object names and classes in
+  `fd/receipts-ct/5b/flux/runEventLoopMC_PA.root` and in two files of `$P/MINERvA-OmniFold/2d-unfolding/baseline_flux/`
+  (copied to this session's scratchpad); `ls` of `$B5/unf/`, `$B5/truth/`, `$P/2d-closeout-period-unfold-20261014/out/`
+  and `$P/tmp-playlist-term-20261016/`; the sha256 of the committed files pinned in §1;
+- **arithmetic on constants only:** the χ² and Beta quantiles and the ν_eff interval quoted below.
+
+**Not read:**
+- no block of `s1_assembly.npz` or `cresp.npz`, and no eigenvector of any block;
+- no overlap, no replica-built block and no 5A noise;
+- no prediction or generator χ².
+<!-- absence-ok: a scoping statement about this session's own reads, listed in full above -->
+
+**What the reported numbers already imply, said before the run:**
+- 5B reports C_PL,5D's σ at a median 9.0 times its noise floor. So clauses N and R (§7) are not expected to fire. They
+  are declared because that floor comes from the same ten replicas, and the replica-built blocks test it directly.
+- In the reported table, the two cells where PB's and PC's offsets are smallest, R00 and R08, are the two cells with
+  E_avail < 0.8 GeV and p_∥ < 4.5 GeV/c. Any test of that is post hoc, and §5 labels it so.
+=== R1b. the same file :91-95 (the clauses O, N, R)
+**THE STOP CONDITION** (§7, fixed here): the block is **not added** if any one of these holds:
+- **O:** one existing component of C_total + C_resp, at no more than 2σ of its own size, explains at least half of the
+  noise-weighted pattern of both g_PB and g_PC, after a free normalization per period;
+- **N:** the ten replica-built blocks' median per-cell σ has an SD over the replicas above half the observed median σ;
+- **R:** in the median replica, less than half of the replica block's variance lies in the observed block's plane.
+
+=== R2. sec_eavailw.tex:118
+Estimator-seed shifts of central values are a small fraction of the projected uncertainties (\S\ref{sec:eavailw-adopted}). The response-mismatch closure of Appendix~\ref{app:response-mismatch} is designed to test whether an incorrect hadronic response can move strength into or out of the low-$W$ component. It has not yet produced a result.
+
+=== R3. sec_systematics.tex:155-160
+\label{sec:uq-combine}
+The nominal covariance is the block sum $C = C_{\mathrm{syst}} + C_{\mathrm{stat}} + C_{\mathrm{ML}} + C_{\mathrm{PL}}$. This sum assumes independent blocks and a linear response to simultaneous perturbations. Under those assumptions, the per-band covariances add. The \emph{unified throw} tests linearity directly (App.~\ref{sec:universes}; \S\ref{sec:eavailw-construction}) by perturbing all reweightable bands and the flux universes simultaneously in each event and re-unfolding jointly. The procedure interpolates asymmetrically between actual $-1\sigma$ and $+1\sigma$ event-weight endpoints, fixes the estimator seed for every throw, and centers the joint covariance on the throw mean. That mean's displacement from CV is stored separately as a per-bin vector and its norm. Per-band endpoint displacements are not stored. The matched block-sum comparator re-unfolds both endpoints of each band using MAT's universe-mean centering and biased $1/N$ normalization. A single-throw superposition probe is insufficient to test nonlinear response. No scalar run-to-run jitter floor is subtracted. The configuration-(a) 5D result uses the strict joint ensemble and matched-endpoint comparator. No two-dimensional comparison of a joint throw with the block sum is reported, and the stored mean-shift norm is not quoted.
+
+In the five-axis covariance of the configuration-(a) central value, $C_Z$, the per-source decomposition is retained for attribution and the joint throws enter through the inflation of Eq.~\eqref{eq:zinflation} (\S\ref{sec:eavailw-construction}).
+
+=== R4. sec_5d.tex:294 and :344-360 (the covariance's section)
+The five-axis covariance used in this note is the variant centered on the central value (\texttt{cv}); its $(\Eavail,W)$ projection has \zprojCells\ cells. The file and the projection are identified by their SHA-256 checksums (Ref.~\cite{NoteRecords2026}, identities already fixed). This note uses them with the restrictions stated in this section. The covariance does not meet the acceptance criteria of its specification: its metadata mark it as not passing and as not to be used, and the null bound that the specification requires to be fixed before production was not fixed for it. The use does not extend to any other covariance built to the same specification, including the two companion covariances of the measurements below.
+\paragraph{What the covariance supports.}
+
+Four measurements limit what the covariance supports. Items 1, 2 and 4 use two companion covariances built at two estimator-seed settings; only item 3 describes this file.
+
+\begin{enumerate}
+
+\item Estimator-seed sensitivity exceeds its limit. Companion covariances at seed offsets $\{0,1200\}$ give the correlation-sensitive measure $s_{\mathrm{proj}}=\sprojMeasured\,\%$, against the movement limit of \sprojBound\,\%, fixed on 2026-09-18 before production as a direct tolerance at the scale of the ensemble's own precision. A 160-throw ensemble determines a standard deviation only to a relative precision of about $1/\sqrt{2(N-1)}\approx\SI{5.6}{\percent}$ for independent Gaussian throws, so a smaller seed-induced drift could not be resolved against the width it would change. The limit is a specified stability tolerance, not a derived confidence threshold for a maximum over correlated projections. $s_{\mathrm{proj}}$ is the maximum, over those seed offsets and over the \zprojCells\ projected cells plus the total rate, of the relative change in $\sqrt{u^{\mathsf T}Cu}$. $s_{\mathrm{agg}}$ is the maximum relative change in $\sqrt{\mathrm{Tr}\,C}$, and $s_{\mathrm{med}}$ is the maximum relative change in the median of the per-bin relative standard deviations; both read the diagonal only. The diagonal-only measures pass ($s_{\mathrm{agg}}=\saggMeasured\,\%$, $s_{\mathrm{med}}=\smedMeasured\,\%$); $s_{\mathrm{proj}}$ probes the off-diagonal structure used by projections.
+\item Within the limits stated below, the sensitivity is not the statistic's own resampling noise, which would fall with $N$. With the throw ensemble fixed and only the seed changed, the sensitivity does not fall over the tested ensemble sizes: mean $\seedEffectNforty\,\%$ over four disjoint 40-throw subsets, $\seedEffectNeighty\,\%$ over two 80-throw halves, and $\sprojMeasured\,\%$ over all $N=160$ throws. The same-seed resampling floor falls steeply from $\floorNforty\,\%$ at $N=40$ to $\floorNeighty\,\%$ at $N=80$, with two-point exponent $\floorExponent$; no floor measurement exists at $N=160$. Three limits rule out a statement about infinite ensembles. First, the $40$- and $80$-throw points are nested subsets of the same 160 throws, not independent ensembles. The flatness therefore holds within one ensemble, over a factor of four in $N$; the behaviour at larger $N$ is unmeasured. Second, the quoted $\pm\seedEffectScatter\,\%$ is subset scatter at a single seed pair (offsets $\{0,1200\}$); the width of the distribution over seed pairs is unmeasured. Third, the statistic is a maximum over the specified offset set, so additional pairs can only raise it.
+\item Five of the covariance's 45 bands fall outside the seed variation. The endpoint convention fixes the estimator seed for the muon-energy, muon-resolution and beam-angle blocks, so the offset cannot reach them. They carry $\pinnedBandsSqrtTr\,\%$ of $\sqrt{\mathrm{Tr}\,C}$ and move by exactly zero; their seed sensitivity is unmeasured. Allowing them to vary could move the total in either direction, and neither is measured, because $s_{\mathrm{proj}}$ maximizes relative changes over functionals rather than summing nonnegative component contributions.
+\item Seed shifts in central values are a small fraction of their uncertainty. Across the comparison's 43 projection functionals (\zprojCells\ destinations plus the all-ones total rate), shifts reach $\cvMoveProjMax\,\%$, versus relative uncertainties of order ten percent. They reach at most $\cvMoveOverSigmaMax\,\%$ of quoted uncertainty, with median $\cvMoveOverSigmaMed\,\%$. The largest shift occurs in the destination cell driving the covariance result. Individual five-axis bins reach $\cvMoveBinOverSigmaMax\,\%$ of their uncertainty; summing bins suppresses this movement in projections.
+
+\end{enumerate}
+
+\noindent The estimator-seed magnitude criterion specified before production \emph{has not been computed} for this covariance. It was computed only for the two companion covariances built for that purpose, and their outcomes do not transfer to this covariance (Ref.~\cite{NoteRecords2026}, \recentry{z-cv-record}).
+
+=== R5. app_devhistory.tex:8 (App. I opening)
+This appendix lists configurations and tests that were superseded, stopped or changed during the analysis, and choices made after results had been seen, where they matter for reading a released result. Where the body states it, each row gives what had already been seen when the change or choice was made; a dash means the note does not state it. The chronology behind the rows is kept in the analysis repository's records~\cite{NoteRecords2026} and its commit history.

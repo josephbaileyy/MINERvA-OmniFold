@@ -1,0 +1,31 @@
+# App. I meaning read, pass 1: codex-school gpt-6.1-sol, high, read-only; prompt app_devhistory-prompt.txt, body app_devhistory-body.txt
+**Question 1**
+
+| Item | Verdict | Reason |
+|---|---|---|
+| I1 | **FAIL** | The expanded scope fits, but “a dash means the note does not state it” is false for the calibrated-model route: `sec_fived16.tex:110–115` states the test findings preceding adoption of unscaled \(C_{\mathrm{model}}\), while that row’s “Already seen” cell remains a dash. |
+| I2 | **PASS** | The caption accurately adds the choices represented by D13–D15. |
+| I3 | **PASS** | The body supports retention of the central value and covariance with the referenced restrictions, including exclusion of other covariances. |
+| I4 | **PASS** | The body supports the corrected construction defects, unchanged earlier printed values, and the stated comparison uses. |
+| I6 | **PASS** | `sec_fived16.tex:283` supports the staged test, covariance rebuilt at each tune, and stop at its first stage. |
+| I7 | **PASS** | The shortening preserves the distinction between Stage 0’s failure and the incomplete reconstruction-information study, followed by adoption of the unscaled term. |
+| I8 | **PASS** | `sec_fived16.tex:279` explicitly supports the gate stop before any coverage pseudo-experiment ran. |
+| D13 | **PASS** | The passages support the blocks’ dependence on observed differences, their limitations, and the timing and outcome of the sixteen-cell exclusion conditions. |
+| D14 | **PASS** | The body supports the design timing, both data-informed elements, the budget extension, unchanged rules, and the familywise-bound statement. |
+| D15 | **PASS** | The body supports the comparison’s timing, criterion, negative finding, and exclusion from the Holm decision family. |
+
+No unsupported numerical change appears in these revisions.
+
+**Question 2**
+
+| Removed or shortened item | Classification | Reason |
+|---|---|---|
+| I4’s defect list | **LEDGER** | The body explicitly describes all three defects and their corrections. |
+| I4’s “Its printed values are unchanged” | **LEDGER** | The body explicitly states this, and “Printed uncorrected” retains the point in the table. |
+| I5’s stabilization-probe row | **LEDGER** | `sec_5d.tex:101` preserves the tested variants, negative result, and unchanged estimator. |
+| I7’s shortening | **LEDGER** | The body preserves the findings, incomplete status, abandonment of the route, and subsequent unscaled adoption. |
+| I3’s “That result only” | **LEDGER** | `sec_5d.tex:294` explicitly limits use to the identified covariance and excludes companion covariances. |
+
+**No NEEDED item is lost.**
+
+The supplied passages establish no additional, wholly omitted choice with explicit timing after results were seen: the unscaled \(C_{\mathrm{model}}\) adoption is already present, but its exposure cell is missing the disclosed preceding findings. The covariance restrictions do not themselves establish when retention was chosen, and studies following decisions do not necessarily mean their designs were chosen afterward. Thus the demonstrated opening failure is its dash explanation; populate the model-route exposure cell or qualify that explanation.

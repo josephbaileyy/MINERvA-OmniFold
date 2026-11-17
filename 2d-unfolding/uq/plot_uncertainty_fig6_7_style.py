@@ -13,6 +13,12 @@ style from the current 2D OmniFold UQ products:
 The projection is covariance-exact: C_1D = P C_2D P^T, where P contains
 the orthogonal-axis bin widths used to turn d^2sigma/(dpT dpz) into
 d sigma/dpT or d sigma/dpz.
+
+Opt-in (note figure style; the director's approval of 2026-11-15): --from-projections FILE draws from a
+--projections-json dump with no ROOT input read, every curve as dumped and in its order; --print-style draws in the
+note's print style (note_print_style: the paper's fonts, the printed width of sec_systematics.tex's
+includegraphics, line widths scaled by PRINT_LW, the legend below the axes). Neither changes a drawn value. With
+neither, the figures are drawn as before.
 """
 from __future__ import annotations
 import sys as _sys, pathlib as _pathlib
@@ -239,10 +245,24 @@ def fractional_projection(cov: np.ndarray, proj: np.ndarray, central: np.ndarray
     return frac
 
 
+PRINT_LW = 0.6   # print style: line widths scaled for the printed size (0.49 of the text width)
+
+
+def _print_style():
+    """note_print_style from the repository root, applied; returned for its figsize()."""
+    root = Path(__file__).resolve().parents[2]
+    if str(root) not in sys.path:
+        sys.path.insert(0, str(root))
+    import note_print_style as nps
+    nps.apply()
+    return nps
+
+
 def draw_one(axis: str, edges: np.ndarray, curves: OrderedDict[str, np.ndarray],
              out_png: str, title: str | None, ymax: float | None,
-             ml_label: str = "ML", extra_labels: tuple[str, ...] = ()) -> None:
-    fig, ax = plt.subplots(figsize=(7.6, 5.0))
+             ml_label: str = "ML", extra_labels: tuple[str, ...] = (), print_style: bool = False) -> None:
+    nps = _print_style() if print_style else None
+    fig, ax = plt.subplots(figsize=nps.figsize(0.49, 0.95) if print_style else (7.6, 5.0))
     order = [
         "Total",
         "Published total",
@@ -262,7 +282,10 @@ def draw_one(axis: str, edges: np.ndarray, curves: OrderedDict[str, np.ndarray],
     for label in order:
         if label not in curves:
             continue
-        ax.stairs(curves[label], edges, label=label, **style[label])
+        kw = dict(style[label])
+        if print_style:
+            kw["linewidth"] = kw["linewidth"] * PRINT_LW
+        ax.stairs(curves[label], edges, label=label, **kw)
 
     ax.set_xlim(edges[0], edges[-1])
     if ymax is None:
@@ -277,12 +300,22 @@ def draw_one(axis: str, edges: np.ndarray, curves: OrderedDict[str, np.ndarray],
     if title:
         ax.set_title(title)
     ax.grid(True, alpha=0.25, linewidth=0.7)
-    ax.legend(loc="upper center", ncol=3, fontsize=9, frameon=False)
+    if print_style:
+        handles, labels = ax.get_legend_handles_labels()
+        fig.legend(handles, labels, loc="lower center", ncol=2, frameon=False, fontsize=7.0,
+                   handlelength=2.2, columnspacing=1.0, bbox_to_anchor=(0.5, 0.0))
+    else:
+        ax.legend(loc="upper center", ncol=3, fontsize=9, frameon=False)
     for spine in ax.spines.values():
-        spine.set_linewidth(1.2)
-    ax.tick_params(width=1.1)
+        spine.set_linewidth(1.2 * PRINT_LW if print_style else 1.2)
+    ax.tick_params(width=1.1 * PRINT_LW if print_style else 1.1)
     technote_style.minerva_tag(ax)
-    fig.tight_layout()
+    if print_style:
+        rows = -(-len(ax.get_legend_handles_labels()[1]) // 2)
+        # the legend's rows below, and technote_style's header band for the tag above (its minerva_tag docstring)
+        fig.tight_layout(rect=(0, (rows * 1.45 * 7.0 / 72 + 0.05) / fig.get_size_inches()[1], 1, 0.94))
+    else:
+        fig.tight_layout()
     fig.savefig(out_png, dpi=180)
     plt.close(fig)
 
@@ -314,9 +347,25 @@ def main() -> None:
                         help="Further covariance block (repeatable): added to the total and drawn as its own line.")
     parser.add_argument("--projections-json", default="",
                         help="Also write every drawn curve at full precision to this JSON file.")
+    parser.add_argument("--from-projections", default="",
+                        help="Draw from a --projections-json dump instead of the ROOT inputs (none is read).")
+    parser.add_argument("--print-style", action="store_true", help="Draw in the note's print style.")
     args = parser.parse_args()
     if args.ml_label != "ML" and (args.ml_label in STYLE or args.ml_label in CATEGORY_ORDER):
         die(f"--ml-label {args.ml_label!r} collides with an existing curve")
+
+    if args.from_projections:
+        import json
+        with open(args.from_projections) as fh:
+            dump = json.load(fh, object_pairs_hook=OrderedDict)
+        title = None if args.no_title else args.title
+        for axis, edges, suffix in (("pz", PZ_EDGES, "pz"), ("pt", PT_EDGES, "pt")):
+            curves = OrderedDict((k, np.asarray(v, dtype=float)) for k, v in dump[axis].items())
+            extra_labels = tuple(k for k in curves if k not in STYLE and k != args.ml_label)
+            out_png = f"{args.out_prefix}_{suffix}.png"
+            draw_one(axis, edges, curves, out_png, title, args.ymax, args.ml_label, extra_labels, args.print_style)
+            print(f"[wrote] {out_png}")
+        return
 
     ROOT.gROOT.SetBatch(True)
 

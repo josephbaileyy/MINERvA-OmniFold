@@ -1,0 +1,56 @@
+# app_response_mismatch meaning read, pass 1 (the proposal, since reverted): reader codex-school gpt-6.1-sol, high, read-only; prompt app_response_mismatch-prompt.txt, records app_response_mismatch-records.txt
+**Question 1 — remaining changed text**
+
+**D-1: FAIL overall.** Its three replacement sentences assess as follows:
+
+| Sentence | Verdict | Reason |
+|---|---|---|
+| “A reconstruction-only test … implemented but not yet run.” | PASS | This preserves the implementation and execution status. |
+| “It scales …” through “reported separately.” | FAIL | “It scales the reconstructed … pseudo-data” drops “changes **only** the reconstructed pseudo-data record” and the explicit fixed truth coordinates, weights and membership, weakening the definition of the perturbation. |
+| “No output … not a result or an uncertainty component.” | PASS | This preserves the absence of output and a threshold, and the test’s non-result status. |
+
+The factors \(1+\epsilon\), both signs, and the \(W<1.1\,\mathrm{GeV}\) boundary are preserved; the completed shifted-response results and value keys are unchanged.
+
+D-2–D-4 contain cuts rather than replacement sentences and are assessed below. **There are no new App. I rows for this appendix.**
+
+**Question 2 — removed or shortened items**
+
+“Lost” below means absent from both the revised appendix and App. I; a ledger pointer does not satisfy the requirement to retain a NEEDED item in printed text.
+
+| Item | Classification | Assessment |
+|---|---|---|
+| D-1a: appendix-as-protocol and “first stage” framing | LEDGER | This describes the organization of an unexecuted plan and may leave with the D-1 pointer. |
+| D-1b: implemented, unrun, no output, no threshold, no result or uncertainty component | NEEDED | These delimit the evidence available and remain in the opening paragraph. |
+| D-2a: ordinary five-dimensional closure sample and perturbation after copying but before background mixing or training | NEEDED | These specify the implemented test’s scope and processing order, and are **lost**. |
+| D-2b: only reconstructed pseudo-data changes; simulation, truth coordinates, weights and membership stay fixed | NEEDED | These define what the response perturbation isolates, and are **lost**. |
+| D-2c: scaling equation, both signs and nominal unfolding response | NEEDED | These define the diagnostic’s central operation and are retained in D-1. |
+| D-2d: amplitude “fixed before the results are examined” | NEEDED | This constrains selection using the reconstruction-only test’s results and is **lost**, although it does not claim an amplitude was already fixed. |
+| D-2e: required amplitude justification and the reconstructed-energy factor being insufficient by itself | NEEDED | These qualify the basis for the tested response envelope and are **lost**. |
+| D-2f: full residual, projection and ratio-map output inventory | LEDGER | These auxiliary outputs belong to the unexecuted protocol and may leave with the D-2 pointer. |
+| D-2g: primary signed bias versus \(W\), separating low \(W\) from the high-\(W\) tail | NEEDED | The retained signed-bias-versus-\(W\) description and separately reported low-\(W\) region preserve this distinction. |
+| D-2h: global integral is a control, not the decision statistic | NEEDED | This excludes a particular interpretation of the diagnostic and is **lost**. |
+| D-2i: pseudo-data-only and five-observable restrictions; incompatibility with truth-reweight injection and bootstrapping | NEEDED | These are explicit implementation limitations and are **lost**. |
+| D-2j: every output is a diagnostic “that must not be quoted” | NEEDED | This restriction on future outputs is stronger than the present statement that no result exists and is **lost**. |
+| D-2k: guard locations, commits and accuracy-fix comments | LEDGER | These are source comments rather than printed disclosures and may leave with the D-2 pointer. |
+| D-3a: computational inexpensive character | LEDGER | The computational-cost description is dispensable history with a D-3 pointer. |
+| D-3b: adversarial stress test, “not a detector model” | NEEDED | This limits the meaning of the retained reconstruction-only test and is **lost**. |
+| D-3c: proposed quasielastic selection, nucleon shifts and recomputation of observables and selection | LEDGER | This is a contingent future procedure and may leave with the D-3 pointer. |
+| D-3d: current outputs contain only scalars, requiring dedicated low-level diagnostic output | NEEDED | This states a current capability and reproducibility limitation and is **lost**. |
+| D-3e: follow-up deferred unless material bias appears or the collaboration requests it | LEDGER | This is a contingent scheduling decision and may leave with the D-3 pointer. |
+| D-4a: quoted central value and current covariance construction remain unchanged | NEEDED | This explicitly delimits the test’s effect on the reported analysis and is **lost**; “not … an uncertainty component” does not fully preserve it. |
+| D-4b: small bias supports stability “only within the tested response envelope” | NEEDED | This is an explicit limitation on inference and is **lost**. |
+| D-4c: large bias requires a response-model or uncertainty decision and cannot be silently absorbed into non-closure error | NEEDED | This constrains how the diagnostic may affect the analysis and is **lost**. |
+
+**Yes, NEEDED items were lost**, as identified above.
+
+**The three references in `records.txt`**
+
+| Reference | Still describes App. D? |
+|---|---|
+| `app_guide.tex:6` | **Partly:** the rescaling and nominal-response description remains accurate, but “the protocol” now overstates the retained synopsis, whose execution controls were removed. |
+| `sec_eavailw.tex:118` | **Yes:** the low-\(W\) response-mismatch purpose and absence of a reconstruction-only result remain supported. |
+| `sec_validation.tex:120–121` | **Partly:** scaling and “implemented, not run” remain supported, but App. D no longer explicitly states that this test is five-dimensional. |
+
+**Post-results choices:** No explicit disclosure of a choice made after seeing results disappeared from the printed text. The completed closures’ deferred-settings/no-threshold statement survives; the deleted amplitude requirement was prospective, not a disclosure of an actual post-results choice.
+
+OVERALL: FAIL — Q1: D-1; lost NEEDED items in Q2: D-2a, D-2b, D-2d, D-2e, D-2h, D-2i, D-2j, D-3b, D-3d, D-4a, D-4b, D-4c.

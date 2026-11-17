@@ -1,0 +1,18 @@
+# app_statmethods_nd meaning read, pass 2 (B2 reworded): reader codex-school gpt-6.1-sol, high, read-only; prompt and records as pass 1
+Question 1:
+
+- **B1 — PASS:** In context, “For fixed residuals an uncorrected bias inflates $\chi^{2}$ and overstates tension” preserves the finite-ensemble-bias claim and its fixed-residual qualification; the surrounding assumptions and correction limitations remain.
+- **B2 — PASS:** “A rank cut fixed before the results are seen” matches the records’ “fixed BEFORE looking at results” requirement for the N-D difference-statistics rank cut, without asserting that a particular cut was actually chosen.
+- **App. I:** No new row belongs to this section, so there is no additional row to assess.
+
+Question 2:
+
+- **B1, superseded-covariance numerical example — LEDGER:** Removing $N=160$, $p=100$, $58/160\simeq0.363$ and the $\simeq2.76$ precision inflation removes a worked illustration without changing the reported object or its applicable qualifications; the cut log points to `ae4285e94:app_statmethods_nd.tex:16`.
+- **B1, shortened consequence statement — NEEDED, retained:** The fixed-residual qualification and the warning that uncorrected bias inflates $\chi^{2}$ and overstates tension remain printed, together with the confidence-region warning and correction limitations.
+- **B2, replaced timing phrase — NEEDED, retained:** The requirement to fix the rank cut before seeing results remains printed with its timing made explicit.
+
+**No NEEDED item was lost.**
+
+No disclosure of a choice made after results were seen disappeared from the printed text; the passage covering “stops decided with results visible” and budget extensions remains unchanged.
+
+OVERALL: PASS — FAILs: none.

@@ -1,0 +1,17 @@
+You are checking an editorial revision of one appendix of a HEP technical note (App. I, "Development history", a table) for MEANING only (not style, not the physics). Files here:
+- old.tex: the appendix before the edit (LaTeX; lines starting with % are source comments, not printed).
+- new.tex: the appendix after the edit.
+- cutlog.md: the edit log: rows I1-I8 (changed or removed cells) and D13-D15 (new rows), each with the body text it restates.
+- body.txt: the printed body passages each row restates (comments stripped), with their file and line, and at its end the answer of pass 1 of this read, which failed I1 on D11's dash (now filled, row I9 of the cut log).
+
+The appendix's rule: each row restates what the body says, with a pointer to it, and adds no claim. The adopted history rule, verbatim: "History stays in the note only if removing it would change a reader's understanding of the reported object, its reproducibility, its evidential independence or its limitations. Everything else goes to the ledger."
+
+Answer two separate questions.
+
+QUESTION 1 (remaining and new text). For each changed row (I1-I4, I6-I8) and each new row (D13-D15): does it say anything the body passages in body.txt do not support, or change meaning (a strengthened, weakened or widened claim, a lost qualifier, a wrong referent or pointer, any new or changed number)? For I1, also judge whether the new opening accurately describes the table as it now stands, including its dashes: for EACH of the five rows whose last cell is still a dash (the earlier 2D budget, the earlier ten-seed block, the end-to-end five-dimensional coverage test, and the two sixteen-cell coverage tests), say whether the body passages state what had already been seen when that change was made; if one does, I1 fails for that row. Also judge the new row I9. Give each row PASS or FAIL with one sentence; quote the text when you object.
+
+QUESTION 2 (removed or shortened items). Classify each removed or shortened item (I4's defect list and "Its printed values are unchanged"; I5, the stabilization-probe row; I7's shortening; I3's "That result only") as NEEDED (removing it from App. I would change a reader's understanding of the reported object, its reproducibility, its evidential independence or its limitations, AND the body does not state it) or LEDGER. A NEEDED item lost is a FAIL.
+
+Also: is any choice made after results were seen, that the body discloses at the cited places, still missing from the table in a way that makes the new opening false?
+
+End with one line: "OVERALL: PASS" or "OVERALL: FAIL", followed by the list of FAILs.

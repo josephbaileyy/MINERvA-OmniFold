@@ -1,0 +1,23 @@
+  equal  fig13/MEFHC_5iter_fig13.png.json: 450 data artists
+  equal  models/model_comp_projections.png.json: 6 data artists
+  equal  models/model_comp_ratio_maps.png.json: 6 data artists
+  equal  paper_slices/MEFHC_5iter_xsec_paper_pt_slices.png.json: 112 data artists
+  equal  paper_slices/MEFHC_5iter_xsec_paper_pz_slices.png.json: 128 data artists
+  equal  pull_full/MEFHC_5iter_pull_full.png.json: 36 data artists
+  equal  tension/tension_chi2_map.png.json: 3 data artists
+  equal  tension/tension_mode_maps.png.json: 18 data artists
+  equal  tension/tension_spectrum.png.json: 3 data artists
+  equal  xsec_proj/MEFHC_5iter_xsec_eff_heatmap.png.json: 3 data artists
+  equal  xsec_proj/MEFHC_5iter_xsec_proj_pt.png.json: 16 data artists
+  equal  xsec_proj/MEFHC_5iter_xsec_proj_pz.png.json: 16 data artists
+  equal  xsec_proj/MEFHC_5iter_xsec_pt_slices.png.json: 112 data artists
+  equal  xsec_proj/MEFHC_5iter_xsec_pz_slices.png.json: 128 data artists
+  equal  output out/model_comp_report.txt
+  equal  output out/tension_report.txt
+  equal  inputs fig13: 4 rows
+  equal  inputs models: 3 rows
+  equal  inputs paper_slices: 2 rows
+  equal  inputs pull_full: 3 rows
+  equal  inputs tension: 3 rows
+  equal  inputs xsec_proj: 2 rows
+COMPARE :: PASS

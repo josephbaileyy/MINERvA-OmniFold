@@ -1,0 +1,2 @@
+scp rc=0
+68c13d2deaf8a68a5112dd5cc55ee905bcd4edcc3539f475d5d1afb79a4ac1e7  f6fetch/post-f6.tar.gz

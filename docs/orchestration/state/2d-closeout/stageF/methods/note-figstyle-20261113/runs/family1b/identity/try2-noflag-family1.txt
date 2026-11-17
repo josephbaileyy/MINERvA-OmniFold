@@ -1,0 +1,82 @@
+[ctrl] POT scale (data/mc) = 0.302000
+[ctrl] pt      data=366827 mc(sig+bkg)=222158 data/mc=1.6512
+[ctrl] pz      data=371342 mc(sig+bkg)=219001 data/mc=1.6956
+[ctrl] eavail  data=328327 mc(sig+bkg)=202386 data/mc=1.6223
+[ctrl] q3      data=333036 mc(sig+bkg)=205354 data/mc=1.6218
+[ctrl] W       data=318898 mc(sig+bkg)=193139 data/mc=1.6511
+[ctrl] wrote <scratch>/make_control_plots/base/control_plots.png
+[mig] pt      diagonal P median=0.745 min=0.734 max=1.000
+[mig] pz      diagonal P median=0.749 min=0.736 max=1.000
+[mig] eavail  diagonal P median=0.752 min=0.735 max=0.761
+[mig] q3      diagonal P median=0.752 min=0.740 max=0.761
+[mig] W       diagonal P median=0.752 min=0.748 max=0.759
+[mig] wrote <scratch>/make_control_plots/base/migration_resolution.png
+[ctrl] POT scale (data/mc) = 0.302000
+[ctrl] wrote <scratch>/make_control_plots/dump.npz
+[ctrl] pt      data=366827 mc(sig+bkg)=222158 data/mc=1.6512
+[ctrl] pz      data=371342 mc(sig+bkg)=219001 data/mc=1.6956
+[ctrl] eavail  data=328327 mc(sig+bkg)=202386 data/mc=1.6223
+[ctrl] q3      data=333036 mc(sig+bkg)=205354 data/mc=1.6218
+[ctrl] W       data=318898 mc(sig+bkg)=193139 data/mc=1.6511
+[ctrl] wrote <scratch>/make_control_plots/new/control_plots.png
+[mig] pt      diagonal P median=0.745 min=0.734 max=1.000
+[mig] pz      diagonal P median=0.749 min=0.736 max=1.000
+[mig] eavail  diagonal P median=0.752 min=0.735 max=0.761
+[mig] q3      diagonal P median=0.752 min=0.740 max=0.761
+[mig] W       diagonal P median=0.752 min=0.748 max=0.759
+[mig] wrote <scratch>/make_control_plots/new/migration_resolution.png
+[ctrl] pt      data=366827 mc(sig+bkg)=222158 data/mc=1.6512
+[ctrl] pz      data=371342 mc(sig+bkg)=219001 data/mc=1.6956
+[ctrl] eavail  data=328327 mc(sig+bkg)=202386 data/mc=1.6223
+[ctrl] q3      data=333036 mc(sig+bkg)=205354 data/mc=1.6218
+[ctrl] W       data=318898 mc(sig+bkg)=193139 data/mc=1.6511
+[ctrl] wrote <scratch>/make_control_plots/from/control_plots.png
+[mig] pt      diagonal P median=0.745 min=0.734 max=1.000
+[mig] pz      diagonal P median=0.749 min=0.736 max=1.000
+[mig] eavail  diagonal P median=0.752 min=0.735 max=0.761
+[mig] q3      diagonal P median=0.752 min=0.740 max=0.761
+[mig] W       diagonal P median=0.752 min=0.748 max=0.759
+[mig] wrote <scratch>/make_control_plots/from/migration_resolution.png
+ok   make_control_plots control_plots.png: base == new
+ok   make_control_plots control_plots.png: base == from
+ok   make_control_plots migration_resolution.png: base == new
+ok   make_control_plots migration_resolution.png: base == from
+     make_control_plots dump 17666 bytes
+[corner] pz      vs pt       r_mc=+0.005  r_data=+0.009
+[corner] eavail  vs pt       r_mc=-0.007  r_data=-0.006
+[corner] eavail  vs pz       r_mc=+0.000  r_data=+0.002
+[corner] q3      vs pt       r_mc=-0.001  r_data=+0.009
+[corner] q3      vs pz       r_mc=-0.009  r_data=-0.002
+[corner] q3      vs eavail   r_mc=-0.001  r_data=+0.003
+[corner] W       vs pt       r_mc=-0.005  r_data=-0.001
+[corner] W       vs pz       r_mc=-0.002  r_data=+0.003
+[corner] W       vs eavail   r_mc=-0.007  r_data=+0.005
+[corner] W       vs q3       r_mc=+0.003  r_data=+0.003
+[corner] wrote <scratch>/plot_control_corner/base/control_corner.png / .pdf
+[corner] wrote <scratch>/plot_control_corner/dump.npz
+[corner] pz      vs pt       r_mc=+0.005  r_data=+0.009
+[corner] eavail  vs pt       r_mc=-0.007  r_data=-0.006
+[corner] eavail  vs pz       r_mc=+0.000  r_data=+0.002
+[corner] q3      vs pt       r_mc=-0.001  r_data=+0.009
+[corner] q3      vs pz       r_mc=-0.009  r_data=-0.002
+[corner] q3      vs eavail   r_mc=-0.001  r_data=+0.003
+[corner] W       vs pt       r_mc=-0.005  r_data=-0.001
+[corner] W       vs pz       r_mc=-0.002  r_data=+0.003
+[corner] W       vs eavail   r_mc=-0.007  r_data=+0.005
+[corner] W       vs q3       r_mc=+0.003  r_data=+0.003
+[corner] wrote <scratch>/plot_control_corner/new/control_corner.png / .pdf
+[corner] pz      vs pt       r_mc=+0.005  r_data=+0.009
+[corner] eavail  vs pt       r_mc=-0.007  r_data=-0.006
+[corner] eavail  vs pz       r_mc=+0.000  r_data=+0.002
+[corner] q3      vs pt       r_mc=-0.001  r_data=+0.009
+[corner] q3      vs pz       r_mc=-0.009  r_data=-0.002
+[corner] q3      vs eavail   r_mc=-0.001  r_data=+0.003
+[corner] W       vs pt       r_mc=-0.005  r_data=-0.001
+[corner] W       vs pz       r_mc=-0.002  r_data=+0.003
+[corner] W       vs eavail   r_mc=-0.007  r_data=+0.005
+[corner] W       vs q3       r_mc=+0.003  r_data=+0.003
+[corner] wrote <scratch>/plot_control_corner/from/control_corner.png / .pdf
+ok   plot_control_corner control_corner.png: base == new
+ok   plot_control_corner control_corner.png: base == from
+     plot_control_corner dump 19180 bytes
+IDENTITY-FAMILY1 :: PASS

@@ -1,0 +1,16 @@
+You are an experienced referee, expert in neutrino cross-section measurements, unfolding (including machine-learning unfolding such as OmniFold), statistical inference and systematic-uncertainty treatment. You are assessing a companion technical note that its authors intend to post on arXiv beside a methods paper. The note is meant to be the complete, citable technical record behind that paper: the paper cites it for detail, validation and limitations. You see only the note text (title, authors, acknowledgments and the reference list removed). You do not have the methods paper or any of the records the note cites by tag or reference number.
+
+Write a full referee report on the note:
+
+1. Summary of what the note documents and what it claims (5-8 sentences).
+2. Recommendation: post as is / minor revision / major revision / not ready to post, with one paragraph of reasons.
+3. Accuracy. Numbered. Every place where the note is internally inconsistent (a number, status, definition or claim that differs between sections, between text and a table or figure, or between the abstract or summary and the body), or where a statement looks wrong on its face. Quote both sides and give their locations (section, table or figure).
+4. Completeness as a citable record. Numbered. For a reader who cites this note for a result, a validation or a limitation, what is missing or left in a state a reader cannot rely on: a test that is described but whose outcome is not given, a status that reads as pending or provisional, an uncertainty or limitation that is named but not quantified, a procedure that cannot be followed from the text. Say what the note must add.
+5. Self-containment. Numbered. Where does following the note's argument require a document the reader does not have (an internal record, a repository file, the methods paper)? Separate what is acceptable for a technical note (a pointer to supporting detail) from what is not (a result, definition or decision stated only by reference).
+6. Support for claims. Numbered. Every claim, especially in the abstract, the executive summary and the summary, that the evidence in the note does not support, or that is stated more strongly than that evidence allows. Say what the evidence supports instead.
+7. Minor issues and presentation (register, clarity, length, organization, figures and tables), numbered.
+8. Scores. (i) Readiness to post as is, as an integer from 1 (not ready: major gaps or errors) to 10 (ready to post as is), on its own line in the form "SCORE: n/10". (ii) One sentence stating what the note establishes as you read it. (iii) The three changes that would most improve it, one line each.
+
+Be concrete and quote the note where useful. Do not invent facts about the analysis that the text does not state; where the text is silent, say so.
+
+The note follows.

@@ -1,0 +1,34 @@
+# sec_fived16 meaning read, pass 2: codex-school gpt-6.1-sol, high, read-only; prompt sec_fived16-prompt.txt, records sec_fived16-records.txt
+**Question 1 — Remaining changed text**
+
+| Row | Verdict | Reason |
+|---|---|---|
+| T1 | PASS | The declaration and binding precede the comparison report and support fixing this agreement rule before the comparison. |
+| T2 | PASS | F0 specifies the descriptive, ungraded treatment before grading, and F0b carries it forward despite already knowing F0’s result. |
+| T3 | PASS | The record explicitly fixes the coverage protocol before any toy, while allowing later stages to be specified separately. |
+| T4 | PASS | The fail-closed stop rule was recorded before the receipt stage ran. |
+| T5 | PASS | The declaration and binding support specifying the IBU comparison before it ran. |
+| T6 | PASS | The cellwise comparison rule appears in the declaration and binding before the comparison report. |
+| T7 | PASS | The wording preserves the probe diagnostic’s exclusion from the specified test and makes the stipulated timing meaning explicit. |
+| M1 | PASS | Replacing “declared swap” with “specified swap” changes neither the operation nor its qualifications. |
+| M2 | PASS | All three substitutions preserve the draws, their counts and the composition to which the stop applies. |
+| M3 | PASS | “Specified grid” identifies the same grid without changing the caption’s claim. |
+| D11 | PASS | The summary preserves the distinction between the earlier calibrated route and adopted unscaled \(C_{\mathrm{model}}\), including Stage 0’s failed first part, the second study’s incompleteness and unvalidated coverage. |
+| D12 | PASS | The summary preserves the tested covariance, stop before coverage pseudo-experiments, affected-cell count and absence of a coverage result. |
+
+The body’s printed numbers and value macros are unchanged.
+
+**Question 2 — Removed or shortened items**
+
+There are no passage cuts or substantive historical omissions in the body; the ten logged changes replace wording. The appendix adds two summaries whose fuller accounts remain printed:
+
+| Item | Classification | Reason and retention |
+|---|---|---|
+| Earlier calibrated-model-term route, summarized in D11 | NEEDED | Its unsuccessful tests and incomplete study explain the limitation on \(C_{\mathrm{model}}\)’s coverage, and the full account remains in the section alongside D11. |
+| Coverage attempt without the run-period block, summarized in D12 | NEEDED | Its stop and lack of a coverage result constrain the evidential status of the intervals, and its detailed account and qualifications remain in the section alongside D12. |
+
+No NEEDED item was lost, and no substantive item departed to the ledger; the staged coverage stop also remains in the section and D10.
+
+No disclosure of a choice made after results were seen disappeared: the run-period block’s addition after observing period differences, adoption of unscaled \(C_{\mathrm{model}}\) after the earlier route failed, and the GiBUU check “added post hoc” remain printed.
+
+OVERALL: PASS — FAILs: none.

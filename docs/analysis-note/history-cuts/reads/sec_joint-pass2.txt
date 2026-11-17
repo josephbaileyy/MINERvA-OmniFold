@@ -1,0 +1,27 @@
+# sec_joint meaning read, pass 2: reader codex-school gpt-6.1-sol, high, read-only; prompt sec_joint-prompt.txt, records sec_joint-records.txt
+**Question 1 — remaining text**
+
+| Row | Verdict | Reason |
+|---|---|---|
+| J1 | PASS | “Specified model” preserves the model referent and six conditions without changing a timing claim. |
+| J2 | PASS | “Specified claim variants” preserves which variants determine the claim \(p\) value. |
+| J3 | PASS | The six conditions and their applicability to each decision are unchanged. |
+| J4 | PASS | “Specified alternatives” preserves the alternatives, powers and numerical qualifications. |
+| J5 | PASS | The nuisance model still includes the reweights and excludes a calorimetric response band. |
+| J6 | PASS | “Specified nuisances” preserves what enters each null distribution. |
+| J7 | PASS | “Specified model” preserves the scope of the global assessments. |
+| J8 | PASS | The procedure explicitly fixes the determinism check and criterion before it runs, and the resolution records the subsequent 16/16 result, supporting “fixed before the rerun.” |
+| J9 | PASS | The production-admission record explicitly freezes the contract before any production job or observed joint statistic and includes the sequential stopping rule, supporting “fixed before any production pseudo-experiment.” |
+| J10 | PASS | “Specified before the check was computed” preserves the existing timing, criterion and referent, while the post hoc origin of the check remains disclosed. |
+
+There are no new App. I rows for this section to assess. No changed sentence alters a number or loses a substantive qualifier.
+
+**Question 2 — removed or shortened items**
+
+There are no removed or substantively shortened items to classify as NEEDED or LEDGER: the actual diff contains only the ten wording substitutions. No NEEDED item was lost.
+
+The referee’s proposed item-7 cut was **not implemented**: both the complete-batch stopping counterfactual and the limitation that those earlier stops have no independent check remain printed in §11.6, consistent with Joseph’s required disclosures.
+
+No disclosure of a choice made after results were seen disappeared. The printed text retains the design exposure, budget extension while observed claim \(p\) values were visible, projection comparison specified after the five-dimensional outcomes were known, post hoc GENIE observation and post hoc bias check.
+
+OVERALL: PASS — FAILs: none.

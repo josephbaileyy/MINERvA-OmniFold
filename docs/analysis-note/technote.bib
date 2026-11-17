@@ -3,6 +3,14 @@
 % entries marked "% eprint-only" carry the arXiv identifier as the primary ref
 % and should have their journal line confirmed before submission.
 
+@misc{UnfoldedWeightsESS2026,
+  title = {{Effective sample size and weight tails of configuration (e)'s final unfolded weights on the sixteen reported cells}},
+  year = {2026},
+  howpublished = {Designated for inclusion in the Zenodo reproduction package, DOI \textbf{[Zenodo DOI pending deposit]}; MINERvA-OmniFold analysis record, \url{https://github.com/josephbaileyy/MINERvA-OmniFold/blob/b18426156335b7d2848d141358e7bc6dc4561462/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ess/README.md}},
+  url = {https://github.com/josephbaileyy/MINERvA-OmniFold/blob/b18426156335b7d2848d141358e7bc6dc4561462/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ess/README.md},
+  note = {Weight diagnostic only; not an uncertainty, coverage or validity statement},
+}
+
 % ============================================================
 % Unfolding methodology: OmniFold and its applications
 % ============================================================
@@ -764,8 +772,12 @@ primaryClass  = {hep-ph},
 }
 
 @article{Nachman:2025staypositive,
-  author  = {Nachman, Benjamin and Noll, Jesse},
-  title   = {{Stay Positive: Neural Refinement of Sample Weights}},
+  author  = {Nachman, Benjamin and Noll, Dennis},
+  title   = {{Neural refinement of sample weights}},
+  journal = {Phys. Rev. D},
+  volume  = {112},
+  pages   = {096009},
+  doi     = {10.1103/yx16-h7n9},
   year    = {2025},
   eprint  = {2505.03724},
   archivePrefix = {arXiv},
@@ -959,7 +971,7 @@ primaryClass  = {hep-ph},
 @misc{TwoDFollowup2026,
   title        = {{Two-dimensional uncertainty budget: defects in the earlier version and feasibility of a calibration test}},
   year         = {2026},
-  howpublished = {MINERvA-OmniFold repository record, \url{https://github.com/josephbaileyy/MINERvA-OmniFold/blob/3892e769/docs/orchestration/state/next-preparation-20261009/two-d-followup/REPORT.md}}
+  howpublished = {Designated for inclusion in the Zenodo reproduction package, DOI \textbf{[Zenodo DOI pending deposit]}; MINERvA-OmniFold repository record, \url{https://github.com/josephbaileyy/MINERvA-OmniFold/blob/3892e769/docs/orchestration/state/next-preparation-20261009/two-d-followup/REPORT.md}}
 }
 
 @online{PETIntervalDiagnosis2026,
@@ -983,7 +995,7 @@ primaryClass  = {hep-ph},
 @misc{ReleaseCandidate2026,
   title        = {{Candidate release package for the article: replay of the joint tests and regeneration of the figures}},
   year         = {2026},
-  howpublished = {MINERvA-OmniFold repository record, \url{https://github.com/josephbaileyy/MINERvA-OmniFold/blob/3892e769/docs/publication/release/RC7-README.md}}
+  howpublished = {Designated for inclusion in the Zenodo reproduction package, DOI \textbf{[Zenodo DOI pending deposit]}; MINERvA-OmniFold repository record, \url{https://github.com/josephbaileyy/MINERvA-OmniFold/blob/3892e769/docs/publication/release/RC7-README.md}}
 }
 
 % plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2): theme D, title in physics terms; the url
@@ -993,7 +1005,7 @@ primaryClass  = {hep-ph},
 @misc{AnaTuplePreservation2026,
   title        = {{SHA256 checksums of the AnaTuple input files and preservation of the data files}},
   year         = {2026},
-  howpublished = {MINERvA-OmniFold repository record, \url{https://github.com/josephbaileyy/MINERvA-OmniFold/blob/3892e769/docs/publication/corrections-20261008/RECORD-20261010-ost61-hashed-and-data-addition.md}}
+  howpublished = {Designated for inclusion in the Zenodo reproduction package, DOI \textbf{[Zenodo DOI pending deposit]}; MINERvA-OmniFold repository record, \url{https://github.com/josephbaileyy/MINERvA-OmniFold/blob/3892e769/docs/publication/corrections-20261008/RECORD-20261010-ost61-hashed-and-data-addition.md}}
 }
 
 % DECISION-20261021-joseph-da-and-note-records.md item 2: the note's records (provenance, fixed identities and audit
@@ -1007,5 +1019,13 @@ primaryClass  = {hep-ph},
   author       = {Bailey, Joseph and Nachman, Benjamin},
   title        = {{Records of the analysis note: provenance, fixed identities and audit record, test-suite discipline, and superseded values and withdrawn results}},
   year         = {2026},
-  howpublished = {Internal record of the MINERvA-OmniFold repository, not posted; built from \texttt{main\_records.tex} by \texttt{build\_all.sh}, \url{https://github.com/josephbaileyy/MINERvA-OmniFold/tree/3c3a6f742d3aca583924903bd45f4cdea7b0b642/docs/analysis-note}}
+  howpublished = {The entries cited in the analysis note are designated for inclusion in the Zenodo reproduction package, DOI \textbf{[Zenodo DOI pending deposit]}; built from \texttt{main\_records.tex} by \texttt{build\_all.sh}, \url{https://github.com/josephbaileyy/MINERvA-OmniFold/tree/3c3a6f742d3aca583924903bd45f4cdea7b0b642/docs/analysis-note}}
+}
+
+% PET-1 / I-1 (2026-11-16): the PET companion document the pointer appendix cites (pet_note.tex, built by build_all.sh)
+@misc{PETNote2026,
+  author       = {Bailey, Joseph and Nachman, Benjamin},
+  title        = {{Companion Note: Point-cloud (PET) method development for unbinned OmniFold of MINERvA charged-current inclusive data}},
+  year         = {2026},
+  howpublished = {Companion document of the analysis note, built from \texttt{pet\_note.tex} by \texttt{build\_all.sh}, \url{https://github.com/josephbaileyy/MINERvA-OmniFold/tree/3c3a6f742d3aca583924903bd45f4cdea7b0b642/docs/analysis-note}}
 }

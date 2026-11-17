@@ -1,0 +1,174 @@
+Note round 1 (2026-11-08): currency audit of the analysis note against main's OUTCOME and DECISION records from
+2026-11-01 on. Records only. limitation-resolver lane, for the director.
+
+Base: main b551b05f. Every note line below is file:line@b551b05f under docs/analysis-note/; every record line is
+docs/orchestration/<record>:line @ b551b05f.
+Method: five read-only subagents each audited one slice of the note (front matter, ES, intro, experiment, method,
+summary; sec_fived16; sec_5d, sec_joint, sec_fps; sec_systematics, sec_validation, sec_results, sec_3d, sec_eavailw;
+the nine appendices) against all 43 records. The lane re-read every line it edited, and the records' governing
+lines, before drafting.
+Excluded: OUTCOME-20261106-ref-c2c1-read.md and every REF-C2C1 readout. This lane may not read or quote them. No note
+line in any slice mentions REF-C2C1.
+
+Wording gate (applies to every EDITED row): COV2D :118, per-period :24-25 and :183, valid-region :142-143, pre-check
+:74, RS1 :142, 1B STOP :116-118 and the methods-study decision :55-56 route note wording through a PRD-referee read and
+Joseph. Round 1's edits are a draft on draft/note-round1-20261108 for those reads; nothing merges before them.
+
+== EDITED in round 1 (draft) ==
+
+E1  HIGH  MISSING  COV2D's held-out-tune result is nowhere in the note.
+    Record: OUTCOME-20261108-cov2d-both-tunes-under-cover.md CITABLE FOR :99-106; NOT CITABLE FOR :108-119; sec. 12 facts
+    :123-125.
+    Edit: new subsection sec:coverage-tunes after sec:coverage in sec_validation.tex (verdict, joint count, flagged cells
+    with counts, pull means and widths and attribution, chi2/ndf, false-flag rate, limits, scope, "adds to" the
+    fixed-truth result); a row in tab:validation-questions; pointers at sec_validation.tex:199 ("the 2D coverage
+    statement is the fixed-truth test"), sec_systematics.tex:53, sec_systematics.tex:214 (Status of the 2D result) and
+    the ES limitations paragraph sec_execsummary.tex:21. The frozen KI-85 sentences (ES:21 and sec_summary.tex:15,
+    note-n4/outline.md sec. 4) are byte-identical; the ES sentence is added after the frozen one.
+    Not in this round: the note content sec. 12 lists (:127-129) and DECISION-20261103-joseph-coverage-clip-rule.md
+    :74-77 (clipping rule and residuals, outlier cell 216, weakened cells, +-1 sigma endpoints, shared universes, cross
+    terms, single realization, fixed simulation, C08 detail).
+
+E2  MED   MISSING  The 1B STOP's rule and counts.
+    Note: sec_fived16.tex:253 ("ended without a coverage result ... fail-closed rule declared in advance") states the
+    status only; sec_5d.tex:216 (the "one statement of the five-dimensional interval status") does not mention 1B.
+    Record: OUTCOME-20261106-1b-stage1-receipt-stop.md :101-104 ("a description of that rule and of the counts"),
+    counts :27-30, limits :106-114.
+    Edit: rule and counts (892 of 900 draws; at most 62 cells) after sec_fived16.tex:253; a pointer sentence in
+    sec_5d.tex:216.
+
+E3  MED   MISSING  The 1B pre-check Part 1 (flux and detector groups).
+    Note: sec_fived16.tex:253, "this account says nothing about the parts carried by the flux and detector
+    uncertainties" (true of the interaction account, but the groups now have a reading).
+    Record: OUTCOME-20261108-1b-precheck-part1.md CITABLE FOR :49-62; NOT CITABLE FOR :64-74.
+    Edit: one sentence after it (both groups reproduce within the window; the GEANT neutron and proton bands depart in
+    the named cells, no cause). F_side and F_truth accounts not added (licensed, but their objects would need the note
+    to define them).
+
+E4  MED   MISSING  The valid-region classes of the 16 cells.
+    Note: sec_fived16.tex:218 (the fake-data listing paragraph).
+    Record: OUTCOME-20261107-valid-region.md CITABLE FOR :21-25; NOT CITABLE FOR :27-37.
+    Edit: V-ATLAS (14 valid; not R02, R06, from the GiBUU hybrid truth alone), V-PRIOR named as ours (14 valid; not
+    R08, R15), 12 valid under both; "neither is a coverage test, and no cell is excluded or changed". Reading (3) not
+    used.
+
+E5  MED   MISSING  The per-period 2D benchmark.
+    Note: sec_results.tex:134 ("the source of the shape difference has not been identified").
+    Record: OUTCOME-20261107-per-period-2d-benchmark.md CITABLE FOR :13-16; combined sentence :152; R5-bar :77-79;
+    noise :167-171; NOT CITABLE FOR :18-25.
+    Edit: the combined sentence (printed verbatim from readout.json) and the R5-bar sentence after :134.
+    Not in this round: sec_systematics.tex:165 (the run-period paragraph) and app_statmethods.tex:511-559 (the tension
+    anatomy, same K73 split), which could carry a pointer.
+
+E6  LOW   MISSING  RS1's mechanism readings.
+    Note: sec_5d.tex:91 (the stability paragraph).
+    Record: OUTCOME-20261108-rs1-rounding-mechanism.md CITABLE FOR :128-129 in the wording :56-58 (K1) and :63 (K5);
+    NOT CITABLE FOR :136-144.
+    Edit: the K1 and K5 statements, "on one pseudo-experiment", not about the data, ties not a defect.
+    :142 ("Any change ... to any wording on main (sec. 5.2: no outcome changes them)") is read as "the outcome itself
+    rewrites no existing text"; the director confirmed that reading on 2026-11-08 (keep E6).
+
+E7  MED   OVERCLAIM  The 2D comparison called a validation.
+    Note: sec_intro.tex:18 ("It validates the method directly against a published binned measurement"),
+    sec_intro.tex:30 ("provides a quantitative validation"), sec_method.tex:152 ("reproduces an independently published
+    binned measurement").
+    Records: the note's own disclosure (sec_method.tex:79, sec:method-config); DECISION-20261105-joseph-765-abstract-and-
+    2d-disclosure.md:61-63; DECISION-20261105-joseph-ar23-stop-external-and-765-phrases.md:86-87 (both rule on paper
+    text; the note contradicted its own disclosure).
+    Edit: "compares ... descriptive, not a blind validation"; "a quantitative, descriptive comparison"; "reproduces the
+    integrated cross section of".
+
+E8  LOW   STALE  ES: the CH correction unscoped.
+    Note: sec_execsummary.tex:15 ("moves both toward the data").
+    Record: DECISION-20261101-joseph-gencmp-paper-adoption.md:96-98.
+    Edit: "on the joint cells; on the sixteen cells GiBUU's total chi2 rises (sec:joint5d-ch)".
+
+E9  MED   MISSING  The response-only sensitivity Joseph sent to the note (was N3; the director's go, 2026-11-08).
+    Note: sec_fived16.tex:253.
+    Record: DECISION-20261101-joseph-1b-keep-block-redesign-test.md:38-40.
+    Edit: "a median 1.65 times ... (range 0.42--6.50 over the cells); it depends on the fine-cell grid and is not a
+    bound". The numbers are derived in make_values_landed.py as sqrt(B/M) per cell from fd/receipts-1b/inv/i2/i2.json
+    (a9d3dc9c, as the receipt's SHA256SUMS pins it), checked against FD-1B-INV-I2-REPORT.md:299 (median 1.654, range
+    0.416-6.501) and against the decision's :38-39, and printed at the decision's precision.
+
+E10 LOW   MISSING  ES: the second post hoc choice (was N7; the director's go, 2026-11-08).
+    Note: sec_execsummary.tex:9.
+    Records: the note's own sec_method.tex:79 (LightGBM) and :103 (the background treatment: "decided on that closure
+    test, before the rebuilt result's distance from the published result was computed, and the rebuilt result was
+    adopted after that distance was known"); DECISION-20261105-joseph-765-abstract-and-2d-disclosure.md:61-63.
+    Edit: one sentence after the LightGBM sentence, ending "the comparison with the publication is therefore not an
+    independent test of the method".
+
+== NOT DRAFTED: a decision is needed first ==
+Held by the director (2026-11-08): N1 and N2 go to Joseph; N6 goes with N1; N4 and N5 hold.
+Joseph ruled on N1 and N2 in DECISION-20261108-joseph-note-framing-and-estimator-dependence.md (#947, merged at af73565):
+- the current note archived first: archive-note-measurement-framed-20261108/ (commit 3b3f8ce4);
+- N2 drafted as a stated limitation, new sec:fived16-ibu (commit 12186634);
+- N1 and N6 drafted: the abstract, the ES opening, sec_fived16's title and opening (the 16 cells as the paper's
+  round-5 draft presents them: illustrative output, not for fitting or for constraining models, with its reasons),
+  and the four appendix sites. The title ("Analysis Note: Unbinned OmniFold analysis of MINERvA charged-current
+  inclusive data") is neutral and unchanged. Remaining uses of "this measurement" in sec_method.tex:210,
+  sec_results.tex:23, :35, :164, app_statmethods.tex:39 and app_negweight.tex:40, :153 refer to the 2D unbinned
+  result and are left as they are.
+N4 and N5 stay held.
+
+N1  HIGH  STALE (framing)  The note is framed as a measurement.
+    Note: main_note.tex:73 (abstract: "We present a simultaneous measurement ..."); sec_execsummary.tex:6 ("The principal
+    result is the sixteen-cell cross section"); sec_fived16.tex:1,5 ("The sixteen-cell five-observable measurement");
+    app_landscape.tex:59; app_statmethods.tex:5; app_statmethods_nd.tex:62; app_negweight.tex:149.
+    Record: DECISION-20261106-joseph-methods-study-and-archive.md:53-56 (working target the methods and benchmark
+    study; the measurement-framed paper and note archived, :57-61; Joseph may revisit after Ben, :62-63).
+    Why not drafted: the abstract and title are frozen (note-n4/outline.md sec. 4), the decision reframes "the paper
+    lane", and a reframing is a wording choice for Joseph through a PRD-referee read.
+
+N2  HIGH  MISSING  REF-G1's algorithm dependence of the 16 cells is nowhere in the note.
+    Record: OUTCOME-20261106-ref-g1-r1-differ.md:40-41 ("the reported cells depend on the unfolding algorithm at the
+    level of T"); NOT CITABLE FOR :42-47.
+    Why not drafted: :51-54, "No text is drafted before his decision" (uncertainty, limitation, or both). No later
+    record decides it.
+
+N3  (drafted as E9 on the director's go.)
+
+N4  LOW-MED  STALE?  The release appendix still specifies the measurement release.
+    Note: app_release.tex:4, :58; the archive package (state/2d-closeout/stageF/methods/archive-measurement-framed-20261106/)
+    is not mentioned.
+    Record: DECISION-20261106-joseph-methods-study-and-archive.md:57-61, :64-67 ("Publication, release and contact acts
+    stay Joseph's"). The decision does not withdraw the schema; a question for the director or Joseph.
+
+N5  LOW   MISSING  Event-loop preservation.
+    Note: app_release.tex:50, :53.
+    Record: DECISION-20261101-joseph-eventloops-copy-to-cfs.md:28-34, :38-48 (no CITABLE FOR block).
+
+N6  LOW   STALE  The note abstract was not resynced after the paper abstract's 11-05 change.
+    Note: main_note.tex:73 ("residual bias exceeds predeclared uncertainty-based thresholds").
+    Record: DECISION-20261105-joseph-765-abstract-and-2d-disclosure.md:57-59. The abstract is frozen; Joseph's.
+
+N7  (drafted as E10 on the director's go.)
+
+== FLAGGED, no record contradicts; for the referee read ==
+
+L1  Localization in the extra dimensions (descriptive central-value statements; none cites the valid-region record,
+    which is NOT CITABLE FOR localization in either direction, OUTCOME-20261107-valid-region.md:36):
+    sec_execsummary.tex:13; sec_3d.tex:140, :173; sec_eavailw.tex:124 (caption), :151; sec_joint.tex:237, :269.
+    Round 1 adds no localization claim.
+L2  Cause statements in the tension anatomy: app_statmethods.tex:536, :554, :559. The per-period record withholds any
+    cause and finds a run-period dependence in the poorly determined directions (:126); no record contradicts these
+    earlier exact-split statements.
+L3  sec_validation.tex:39, "The five-dimensional estimator ... is validated in sec:val-fiveaxis" (closure checks; reads
+    strongly beside the 1B STOP and valid-region :28).
+L4  sec_method.tex:150, the training-seed band as the ML-stochasticity control: true for configuration (f); for (e) the
+    training-seed block is zero while rounding moves results by up to 2.6 sigma_stat
+    (DECISION-20261106-joseph-b0-reconciliation-sentence.md:8).
+
+== Checked, current (no change) ==
+
+- The 2D and 5D coverage-status sentences (abstract; ES:21 "No result's intervals have validated coverage";
+  sec_fived16.tex:99, :253 "has not been validated"; sec_validation.tex:163 "a re-test on held-out simulation ... has
+  not been run").
+- sec_5d.tex:91, the B4 NONE_PASS sentence (OUTCOME-20261105-fd-stab-none-pass.md:20, :43;
+  DECISION-20261106-joseph-b0-reconciliation-sentence.md:34-35).
+- sec_fived16.tex:174, :176, :178 (the run-period cause not known; the RPD numbers; no localization of the step).
+- sec_systematics.tex:165 "These data cannot establish which period, if any, is correct"; :186; :229.
+- sec_joint.tex:309 (GiBUU's total chi2 rises with the CH correction) and :342.
+- sec_3d.tex:42 (the 135 MeV constant; DECISION-20261101-joseph-eavail-keep-135.md:30-38).
+- sec_fps.tex (all); app_guide.tex, app_pet_pointer.tex (all); app_codebase.tex:28-37; app_response_mismatch.tex:4.

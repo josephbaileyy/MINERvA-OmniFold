@@ -1,0 +1,12 @@
+You are checking one paragraph of a HEP technical note, the AI-use statement, for accuracy against its records. Read-only. Files here:
+- old-statement.tex: the paragraph before the change, with its LaTeX source comments (lines starting with %).
+- new-statement.tex: the paragraph after the change.
+- decision.md: the record of the PI's decision. Its section "The note's full statement" is the approved wording, and "What led to it" is a census of the repository's records.
+- census.txt: counts of the commit co-author trailers over the repository's history, and of record files that mention each model string.
+
+Answer three questions.
+1. Is new-statement.tex's paragraph exactly the approved wording in decision.md ("The note's full statement"), apart from line breaks? Quote any difference.
+2. Does any sentence of the new paragraph state more than decision.md and census.txt support? Check each model and version named, each claim about who did what, and each claim about how results were verified. Give each sentence PASS or FLAG with one sentence; a FLAG means the records given do not support it (say what would be needed). Note where decision.md itself records a limit (for example, that a version is the PI's best knowledge, not from the records).
+3. Does the new paragraph drop anything the old one stated that is still true and that a reader needs? List it, or say none.
+
+End with one line: "OVERALL: PASS" if question 1 finds no difference and question 2 has no FLAG that the records contradict, otherwise "OVERALL: FAIL", followed by the items.

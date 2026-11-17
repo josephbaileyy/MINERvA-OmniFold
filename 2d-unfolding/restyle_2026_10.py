@@ -41,14 +41,26 @@ PZ = r"$p_\parallel$"
 GEVC = r"(GeV/$c$)"
 
 
+# The paper's fonts, for the note's font-only pass over these figures (note-figstyle-20261113, group R; the director's
+# rulings of 2026-11-14: font family and mathtext only, the sizes above unchanged). The three keys of
+# note_print_style.PRINT_RC that name fonts; docs/analysis-note/test_note_print_style.py pins them to it.
+PRINT_FONT = {"font.family": "serif", "font.serif": ["DejaVu Serif"], "mathtext.fontset": "cm"}
+
+
 def add_option(ap):
-    """Add the off-by-default --style option to an argparse parser."""
+    """Add the off-by-default --style option, and --print-font, to an argparse parser."""
     ap.add_argument("--style", choices=[STYLE], default=None,
                     help=f"{STYLE}: the note's restyle of Figs. 7-14 (presentation only; off by default)")
+    ap.add_argument("--print-font", action="store_true",
+                    help=f"with --style {STYLE}: the paper's serif and mathtext fonts (font only; off by default)")
 
 
 def on(args):
-    return getattr(args, "style", None) == STYLE
+    """True under --style; with --print-font as well, also sets PRINT_FONT (every producer calls this before drawing)."""
+    restyled = getattr(args, "style", None) == STYLE
+    if restyled and getattr(args, "print_font", False):
+        mpl.rcParams.update(PRINT_FONT)
+    return restyled
 
 
 def apply(base=7.0):

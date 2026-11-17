@@ -1,0 +1,492 @@
+{
+ "artists_py_sha256": "feb486fefd363c0d80174fc034c82f53874558de718736af2c34c6b5344de041",
+ "size_in": [
+  19.0,
+  5.0
+ ],
+ "items": [
+  {
+   "kind": "QuadMesh",
+   "axes": 0,
+   "label": "_child0",
+   "hash": "cebb47725516e761d1cba8cf88f37c8d1070a2ec4c66e76ce0d00d44ee4f612d",
+   "dhash": "dc05c8222f4155f2a1d45c15a636c684eee7651e2ab4df49802ae97195d6600a",
+   "xhash": "dc05c8222f4155f2a1d45c15a636c684eee7651e2ab4df49802ae97195d6600a"
+  },
+  {
+   "kind": "line",
+   "axes": 0,
+   "label": "_child1",
+   "hash": "2d3bd4aa99050e743efcb216e875cdc11d35bf21afca358c01d2688acf3408c2",
+   "dhash": "a39528dc1c26ff37bb0ab6d7bdeb2c107d5d385da3277b4526a893a3d1c8be51",
+   "xhash": "0e09a136d3dee5fd6122bda74656a6b78fc704875cb0042205f9195f79d19bcd"
+  },
+  {
+   "kind": "line",
+   "axes": 0,
+   "label": "_child2",
+   "hash": "13c9b2db36fc8ec6302aba1ce5d76f15fc5dfa47555aa91654c328902bacff61",
+   "dhash": "955b1b57056110927f8b72c8c8badf9c09972b60675e59bf8f7cfcbd5cf17c3a",
+   "xhash": "128c936b9bca5cb1ec17b2a58f10ef9650a440129633101f974b6e6fb6eccae3"
+  },
+  {
+   "kind": "line",
+   "axes": 0,
+   "label": "_child3",
+   "hash": "1b5f9dcbef3315abf04e739e5b50beee9bf3cf6a9cdea17c47422f8501403197",
+   "dhash": "ded63f142cf20d0b9e6e84d4f4769774651146cfc8e2634d7ad2096de46be65c",
+   "xhash": "1c39bc7f44749179f2d9fc92c590eb5c728e1712e46bd264ecd36529b97907c7"
+  },
+  {
+   "kind": "QuadMesh",
+   "axes": 1,
+   "label": "_child0",
+   "hash": "afe16aa4468efc666297a8b90030ba1b0b9835b85021e2c8f11b900b7c4747d8",
+   "dhash": "1ad666d6f021149c81f951658f0f0181195ae26aebf921ba1f1253b829b61411",
+   "xhash": "1ad666d6f021149c81f951658f0f0181195ae26aebf921ba1f1253b829b61411"
+  },
+  {
+   "kind": "line",
+   "axes": 1,
+   "label": "_child1",
+   "hash": "2d3bd4aa99050e743efcb216e875cdc11d35bf21afca358c01d2688acf3408c2",
+   "dhash": "a39528dc1c26ff37bb0ab6d7bdeb2c107d5d385da3277b4526a893a3d1c8be51",
+   "xhash": "0e09a136d3dee5fd6122bda74656a6b78fc704875cb0042205f9195f79d19bcd"
+  },
+  {
+   "kind": "line",
+   "axes": 1,
+   "label": "_child2",
+   "hash": "13c9b2db36fc8ec6302aba1ce5d76f15fc5dfa47555aa91654c328902bacff61",
+   "dhash": "955b1b57056110927f8b72c8c8badf9c09972b60675e59bf8f7cfcbd5cf17c3a",
+   "xhash": "128c936b9bca5cb1ec17b2a58f10ef9650a440129633101f974b6e6fb6eccae3"
+  },
+  {
+   "kind": "line",
+   "axes": 1,
+   "label": "_child3",
+   "hash": "1b5f9dcbef3315abf04e739e5b50beee9bf3cf6a9cdea17c47422f8501403197",
+   "dhash": "ded63f142cf20d0b9e6e84d4f4769774651146cfc8e2634d7ad2096de46be65c",
+   "xhash": "1c39bc7f44749179f2d9fc92c590eb5c728e1712e46bd264ecd36529b97907c7"
+  },
+  {
+   "kind": "QuadMesh",
+   "axes": 2,
+   "label": "_child0",
+   "hash": "b608a8bd4a4b2ae4ace1d646aa439905cc7fd67c2a1e95558ab087b1d8bf7f61",
+   "dhash": "4bebc8268db53c81e1b198fb4859d579175f0e6017e7eccf487c1ab8db01f435",
+   "xhash": "4bebc8268db53c81e1b198fb4859d579175f0e6017e7eccf487c1ab8db01f435"
+  },
+  {
+   "kind": "line",
+   "axes": 2,
+   "label": "_child1",
+   "hash": "2d3bd4aa99050e743efcb216e875cdc11d35bf21afca358c01d2688acf3408c2",
+   "dhash": "a39528dc1c26ff37bb0ab6d7bdeb2c107d5d385da3277b4526a893a3d1c8be51",
+   "xhash": "0e09a136d3dee5fd6122bda74656a6b78fc704875cb0042205f9195f79d19bcd"
+  },
+  {
+   "kind": "line",
+   "axes": 2,
+   "label": "_child2",
+   "hash": "13c9b2db36fc8ec6302aba1ce5d76f15fc5dfa47555aa91654c328902bacff61",
+   "dhash": "955b1b57056110927f8b72c8c8badf9c09972b60675e59bf8f7cfcbd5cf17c3a",
+   "xhash": "128c936b9bca5cb1ec17b2a58f10ef9650a440129633101f974b6e6fb6eccae3"
+  },
+  {
+   "kind": "line",
+   "axes": 2,
+   "label": "_child3",
+   "hash": "1b5f9dcbef3315abf04e739e5b50beee9bf3cf6a9cdea17c47422f8501403197",
+   "dhash": "ded63f142cf20d0b9e6e84d4f4769774651146cfc8e2634d7ad2096de46be65c",
+   "xhash": "1c39bc7f44749179f2d9fc92c590eb5c728e1712e46bd264ecd36529b97907c7"
+  },
+  {
+   "kind": "LineCollection",
+   "axes": 3,
+   "label": "_child0",
+   "hash": "c78f26eeb0efecdcc1a13ce55d6ce9d339e615e455c8f4efbfa1316d7269473f",
+   "dhash": "2062b477c651b3fc38ee2bc7849247c25be032f05a382689d12fc1abf3db4447",
+   "xhash": "2062b477c651b3fc38ee2bc7849247c25be032f05a382689d12fc1abf3db4447"
+  },
+  {
+   "kind": "QuadMesh",
+   "axes": 3,
+   "label": "_child1",
+   "hash": "cf6441e8395225ba499cbef72fcfed72c78ccabfbe7fecc5fe3f6c5beae03683",
+   "dhash": "1b47cdf22c1c43ed8f291c2b8ae33e5726a2f9ca8ed4d6e1ecee1ffcc58864f3",
+   "xhash": "1b47cdf22c1c43ed8f291c2b8ae33e5726a2f9ca8ed4d6e1ecee1ffcc58864f3"
+  },
+  {
+   "kind": "LineCollection",
+   "axes": 4,
+   "label": "_child0",
+   "hash": "c78f26eeb0efecdcc1a13ce55d6ce9d339e615e455c8f4efbfa1316d7269473f",
+   "dhash": "2062b477c651b3fc38ee2bc7849247c25be032f05a382689d12fc1abf3db4447",
+   "xhash": "2062b477c651b3fc38ee2bc7849247c25be032f05a382689d12fc1abf3db4447"
+  },
+  {
+   "kind": "QuadMesh",
+   "axes": 4,
+   "label": "_child1",
+   "hash": "cf6441e8395225ba499cbef72fcfed72c78ccabfbe7fecc5fe3f6c5beae03683",
+   "dhash": "1b47cdf22c1c43ed8f291c2b8ae33e5726a2f9ca8ed4d6e1ecee1ffcc58864f3",
+   "xhash": "1b47cdf22c1c43ed8f291c2b8ae33e5726a2f9ca8ed4d6e1ecee1ffcc58864f3"
+  },
+  {
+   "kind": "LineCollection",
+   "axes": 5,
+   "label": "_child0",
+   "hash": "c78f26eeb0efecdcc1a13ce55d6ce9d339e615e455c8f4efbfa1316d7269473f",
+   "dhash": "2062b477c651b3fc38ee2bc7849247c25be032f05a382689d12fc1abf3db4447",
+   "xhash": "2062b477c651b3fc38ee2bc7849247c25be032f05a382689d12fc1abf3db4447"
+  },
+  {
+   "kind": "QuadMesh",
+   "axes": 5,
+   "label": "_child1",
+   "hash": "3c7cdeb8eee88ba22117dff6ddd6d39ce1ba09f4e459a46a9bcb1c6d7be66c10",
+   "dhash": "5b08a917b980e6dde6d1153eb46f9f56c66b6e9b722880f0d90f556ff9127e38",
+   "xhash": "5b08a917b980e6dde6d1153eb46f9f56c66b6e9b722880f0d90f556ff9127e38"
+  }
+ ],
+ "texts": [
+  [
+   11.0,
+   "(a) anchor ratio"
+  ],
+  [
+   10.0,
+   "p_T bin (extended)"
+  ],
+  [
+   10.0,
+   "0.0"
+  ],
+  [
+   10.0,
+   "2.5"
+  ],
+  [
+   10.0,
+   "5.0"
+  ],
+  [
+   10.0,
+   "7.5"
+  ],
+  [
+   10.0,
+   "10.0"
+  ],
+  [
+   10.0,
+   "12.5"
+  ],
+  [
+   10.0,
+   "15.0"
+  ],
+  [
+   10.0,
+   "p_|| bin (extended)"
+  ],
+  [
+   10.0,
+   "0.0"
+  ],
+  [
+   10.0,
+   "2.5"
+  ],
+  [
+   10.0,
+   "5.0"
+  ],
+  [
+   10.0,
+   "7.5"
+  ],
+  [
+   10.0,
+   "10.0"
+  ],
+  [
+   10.0,
+   "12.5"
+  ],
+  [
+   10.0,
+   "15.0"
+  ],
+  [
+   10.0,
+   "17.5"
+  ],
+  [
+   10.0,
+   "20.0"
+  ],
+  [
+   11.0,
+   "(b) prior-swap ratio"
+  ],
+  [
+   10.0,
+   "p_T bin (extended)"
+  ],
+  [
+   10.0,
+   "0.0"
+  ],
+  [
+   10.0,
+   "2.5"
+  ],
+  [
+   10.0,
+   "5.0"
+  ],
+  [
+   10.0,
+   "7.5"
+  ],
+  [
+   10.0,
+   "10.0"
+  ],
+  [
+   10.0,
+   "12.5"
+  ],
+  [
+   10.0,
+   "15.0"
+  ],
+  [
+   10.0,
+   "p_|| bin (extended)"
+  ],
+  [
+   10.0,
+   "0.0"
+  ],
+  [
+   10.0,
+   "2.5"
+  ],
+  [
+   10.0,
+   "5.0"
+  ],
+  [
+   10.0,
+   "7.5"
+  ],
+  [
+   10.0,
+   "10.0"
+  ],
+  [
+   10.0,
+   "12.5"
+  ],
+  [
+   10.0,
+   "15.0"
+  ],
+  [
+   10.0,
+   "17.5"
+  ],
+  [
+   10.0,
+   "20.0"
+  ],
+  [
+   11.0,
+   "(c) abs. xsec (log$_{10}$)"
+  ],
+  [
+   10.0,
+   "p_T bin (extended)"
+  ],
+  [
+   10.0,
+   "0.0"
+  ],
+  [
+   10.0,
+   "2.5"
+  ],
+  [
+   10.0,
+   "5.0"
+  ],
+  [
+   10.0,
+   "7.5"
+  ],
+  [
+   10.0,
+   "10.0"
+  ],
+  [
+   10.0,
+   "12.5"
+  ],
+  [
+   10.0,
+   "15.0"
+  ],
+  [
+   10.0,
+   "p_|| bin (extended)"
+  ],
+  [
+   10.0,
+   "0.0"
+  ],
+  [
+   10.0,
+   "2.5"
+  ],
+  [
+   10.0,
+   "5.0"
+  ],
+  [
+   10.0,
+   "7.5"
+  ],
+  [
+   10.0,
+   "10.0"
+  ],
+  [
+   10.0,
+   "12.5"
+  ],
+  [
+   10.0,
+   "15.0"
+  ],
+  [
+   10.0,
+   "17.5"
+  ],
+  [
+   10.0,
+   "20.0"
+  ],
+  [
+   10.0,
+   "0.80"
+  ],
+  [
+   10.0,
+   "0.85"
+  ],
+  [
+   10.0,
+   "0.90"
+  ],
+  [
+   10.0,
+   "0.95"
+  ],
+  [
+   10.0,
+   "1.00"
+  ],
+  [
+   10.0,
+   "1.05"
+  ],
+  [
+   10.0,
+   "1.10"
+  ],
+  [
+   10.0,
+   "1.15"
+  ],
+  [
+   10.0,
+   "1.20"
+  ],
+  [
+   10.0,
+   "0.80"
+  ],
+  [
+   10.0,
+   "0.85"
+  ],
+  [
+   10.0,
+   "0.90"
+  ],
+  [
+   10.0,
+   "0.95"
+  ],
+  [
+   10.0,
+   "1.00"
+  ],
+  [
+   10.0,
+   "1.05"
+  ],
+  [
+   10.0,
+   "1.10"
+  ],
+  [
+   10.0,
+   "1.15"
+  ],
+  [
+   10.0,
+   "1.20"
+  ],
+  [
+   10.0,
+   "\u221244"
+  ],
+  [
+   10.0,
+   "\u221243"
+  ],
+  [
+   10.0,
+   "\u221242"
+  ],
+  [
+   10.0,
+   "\u221241"
+  ],
+  [
+   10.0,
+   "\u221240"
+  ],
+  [
+   10.0,
+   "\u221239"
+  ],
+  [
+   10.0,
+   "\u221238"
+  ],
+  [
+   10.0,
+   "\u221237"
+  ],
+  [
+   8.0,
+   "MINERvA ME FHC, $1.06\\times10^{21}$ POT"
+  ]
+ ],
+ "text_overlaps": []
+}

@@ -1,0 +1,18 @@
+# app_statmethods_nd meaning read, pass 1: reader codex-school gpt-6.1-sol, high, read-only; prompt app_statmethods_nd-prompt.txt, records app_statmethods_nd-records.txt
+Question 1 — remaining changed text:
+
+- **B1: PASS.** In the finite-ensemble inverse-bias context, the replacement preserves the consequence for fixed residuals and the surrounding qualifications; the numerical example is removed without introducing or changing a retained number.
+- **B2: FAIL.** “Fixed before any observed statistic is computed” strengthens the timing requirement beyond “fixed BEFORE looking at results” in records.txt: computing a statistic and seeing its result are different milestones.
+- **New App. I rows:** None were added for this section.
+
+Question 2 — removed or shortened items:
+
+- **B1 worked example: LEDGER.** The superseded covariance’s \(N=160\), \(p=100\), factor \(58/160\simeq0.363\), and precision inflation \(\simeq2.76\) illustrate a retained principle without defining a released result or its limitations, and cutlog.md supplies the archival pointer.
+- **B1 fixed-residual consequence: NEEDED, retained.** Its qualification and consequence remain in the replacement sentence, alongside the confidence-region warning and restrictions on applying a correction.
+- **B2 advance-fixing requirement: NEEDED, retained with a meaning error.** The requirement matters for evidential independence, but its replacement asserts an unsupported earlier deadline, as flagged in question 1.
+
+**No NEEDED item was lost from the printed text.**
+
+**No disclosure of a choice made after results were seen disappeared.** The familywise-error discussion still explicitly includes “stops decided with results visible” and budget extensions.
+
+OVERALL: FAIL — B2 (question 1: unsupported strengthening from before looking at results to before computing any observed statistic).

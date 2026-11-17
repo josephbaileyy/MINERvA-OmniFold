@@ -1,0 +1,19 @@
+# app_negweight meaning read, pass 1: reader codex-school gpt-6.1-sol, high, read-only; prompt app_negweight-prompt.txt
+**Question 1 — remaining text**
+
+- **C1 — PASS:** Both surviving sentences preserve their claims: the same existing endpoints used purity established by elimination, and current production records each endpoint’s treatment, changing the recording rather than the treatment; no surviving number or evidential qualifier changes.
+- **App. I:** No new rows belong to this edit; D2 and D3 are existing rows.
+
+**Question 2 — removed or shortened items**
+
+- **“produced in July 2026” — LEDGER:** The surrounding text already identifies the endpoints by their chain and role, so removing their production date changes none of the rule’s protected understandings.
+- **“a configuration object that rejects every other mode” — LEDGER:** This implementation detail can leave because the standard chain’s actual purity treatment remains explicit.
+- **The job script explicitly passing `--bkg-mode` from that configuration — LEDGER:** This wiring detail adds no essential reproducibility information beyond the retained treatment, provenance pointer, and recording of every new endpoint’s mode.
+
+All three have the cut-log pointer `6b9b5be5c:app_negweight.tex:122` and record `bkg-mode-elimination`.
+
+The **NEEDED** content in the shortened passage survives: the existing endpoints’ treatment was established by elimination, new endpoints record their treatment individually, and the treatment itself did not change. **No NEEDED item was lost.**
+
+No disclosure of a choice made after results were seen disappeared: App. I D2 retains adoption after the rebuilt distance was known, and App. C retains the decision basis for keeping purity, including preservation of the covariance then just chosen for use.
+
+OVERALL: PASS — FAILs: none.

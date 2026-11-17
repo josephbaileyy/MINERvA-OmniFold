@@ -1,0 +1,68 @@
+=== N1. app_statmethods.tex:347, OLD (pre-G2R, as printed)
+The log-normal $\chi^{2}$ uses $\delta_{i}=\ln x^{\ours}_{i}-\ln x^{\paper}_{i}$ and $\mathbf{C}^{\ln}_{ij}=\big(\texttt{TotalCov}+\mathbf{C}^{\tot}\big)_{ij}/(x^{\paper}_{i}x^{\paper}_{j})$; both covariances are scaled by the paper's values. This is the definition used for the quoted value: of five definitions recomputed, only this one reproduces $\chiCombinedLog$. The others give $1.197$ (our covariance scaled by our own values), $0.958$ (both scaled by ours), $0.963$ (scaled by the geometric mean) and $1.015$ ($\ln(1+\mathbf{C}/(x_{i}x_{j}))$ in place of the ratio). Adding the OmniFold error budget lowers the summed-covariance distance from $\chiPaper$ to $\chiCombined$ per bin. It is a descriptive distance, not a validation result, and three limits apply to every use of it.
+
+=== N1. NEW
+The log-normal $\chi^{2}$ uses $\delta_{i}=\ln x^{\ours}_{i}-\ln x^{\paper}_{i}$ and $\mathbf{C}^{\ln}_{ij}=\big(\texttt{TotalCov}+\mathbf{C}^{\tot}\big)_{ij}/(x^{\paper}_{i}x^{\paper}_{j})$; both covariances are scaled by the paper's values. This is the definition used for the quoted value. On an earlier covariance, before the refined estimator was adopted, an independent recomputation of five definitions found that only this one reproduced the value then quoted; the others gave $1.197$ (our covariance scaled by our own values), $0.958$ (both scaled by ours), $0.963$ (scaled by the geometric mean) and $1.015$ ($\ln(1+\mathbf{C}/(x_{i}x_{j}))$ in place of the ratio). The quoted $\chiCombined$ and $\chiCombinedLog$ have no independent recomputation: they are the production run's own outputs, and its checks confirm only that the covariance's reported cells are the paper's. Adding the OmniFold error budget lowers the summed-covariance distance from $\chiPaper$ to $\chiCombined$ per bin. It is a descriptive distance, not a validation result, and three limits apply to every use of it. % G2R no-recompute sentence (the director, 2026-11-15): RE-2-shapes run 2 has no independent chi2 recompute (cov2d, 2026-11-15); its check_rebuild (g2r/logs/check_rebuild.log, 5/5) checks the chi2 files' cell identity (chi2_Q_std.txt: 'cell identity OK: ... hReportedCells equals the paper StatOnly set') and fig6/7 against budget_Q. The five-definition recompute is the Stage F rebuild's, on its Q (comment below).
+
+=== the source comment below it (lines 348-352)
+% Review m8: the attribution to the paper's Table I is not carried here.
+% J3/J4 provisional (DECISION-20261018, packet W4): rebuild REPORT §5 (independent recompute, rebuild/outputs/recompute/:
+% 0.987 reproduces only with delta = ln E_U - ln paper and C_ln = (Total + Q)/(p_i p_j); our-value scaling of Q 1.197;
+% both by ours 0.958; geometric mean 0.963; ln(1 + C/pp) 1.015). The script: compare_to_paper_fullcov.py.
+% The "about 63 %" reduction (a ratio of two receipt values) and the exact-split 3.661 -> 1.472 (VL172, not
+
+=== H1. app_history.tex, the NEW paragraph and table (lines 99-124) and the existing table it follows (lines 71-97)
+\paragraph{Superseded on 2026-10-24: Q by $\mathrm{Q_R}$.}
+\label{app:history-qr}
+On 2026-10-24 the 2D result moved to the refined estimator, configuration~(f), and its covariance from Q to $\mathrm{Q_R}$, the same construction rebuilt on that estimator (RE-2 part~C; \texttt{DECISION-20261024-joseph-adopt-re2-2d-refined.md} item~1). The Replacement column of the rows struck on 2026-10-18 above, and the bracketed 2026-10-18 notes of App.~\ref{app:history-errata-context} and App.~\ref{app:history-combine}, give Q's values. They are superseded, not retracted, so they are not struck; the current values are these.
+
+{\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.50\textwidth}
+                  >{\raggedright\arraybackslash}p{0.22\textwidth}
+                  >{\raggedright\arraybackslash}p{0.22\textwidth}@{}}
+\toprule
+Quantity (where it was printed) & With Q (2026-10-17) & With $\mathrm{Q_R}$ (2026-10-24) \\
+\midrule
+\endhead
+2D combined (block-sum) per-bin median relative $\sigma$ (Tables~\ref{tab:uq}, \ref{tab:combine} and~\ref{tab:variance-sources}; \S\ref{sec:chisq}, \S\ref{sec:assemble}), printed as \SI{6.09}{\percent} (\texttt{\textbackslash uqMedian}) in the article, the primer, the executive summary and \S\ref{sec:results-uq} & $6.448\%$ ($6.45\%$) & $6.414\%$ ($6.41\%$) \\
+2D Flux band per-bin median (Table~\ref{tab:band-medians}; \texttt{\textbackslash fluxBand} in \S\ref{sec:systematics}, \S\ref{sec:results-uq}, the article and primer) & $3.747\%$ ($3.75\%$) & $3.712\%$ ($3.71\%$) \\
+2D combined $\chi^{2}/\mathrm{ndf}$, its log-normal form, and the stat-subtracted diagnostic (\texttt{\textbackslash chiCombined}, \texttt{\textbackslash chiCombinedLog}, \texttt{\textbackslash chiCombinedSubStat}) & $0.964$, $0.987$, $6.01$ & $0.929$, $0.945$, $6.72$ \\
+Our width-weighted total $\sigma$ in the worked example of \S\ref{sec:chisq} & $4.75\%$ & $4.76\%$ \\
+Combined pull mean and RMS (\S\ref{sec:pull}, \S\ref{sec:assemble}) & $0.042$, $0.398$ & $0.034$, $0.388$ \\
+2D systematic total median and $\sqrt{\Tr\mathbf{C}}$, combined $\sqrt{\Tr\mathbf{C}}$, universe $+$ bootstrap median, and the combined median against the exact-split cross-check (Tables~\ref{tab:uq}, \ref{tab:band-medians}, \ref{tab:combine}; \S\ref{sec:results-uq}) & $5.969\%$, $2.735\times10^{-39}$, $2.866\times10^{-39}$, $6.040\%$ (universe $+$ statistical), $6.410\%$ & $5.935\%$, $2.689\times10^{-39}$, $2.821\times10^{-39}$, $5.982\%$ (universe $+$ statistical), $6.462\%$ \\
+Per-bin medians of Muon\_Energy\_MINOS, Muon\_Energy\_MINERvA, MinosEfficiency, MaRES, MvRES, MaCCQE (Table~\ref{tab:band-medians}; printed as $2.28$, $1.29$, $1.47$ in \S\ref{sec:systematics}) & $2.390\%$, $1.376\%$, $1.578\%$, $0.600\%$, $0.374\%$, $0.368\%$ & $2.358\%$, $1.435\%$, $1.505\%$, $0.627\%$, $0.362\%$, $0.336\%$ \\
+Grouped medians of App.~\ref{app:statmethods} (muon reconstruction, models, hadronic response) & $3.455\%$, $1.581\%$, $0.799\%$ & $3.437\%$, $1.401\%$, $0.743\%$ \\
+2D statistical per-bin median and $\sqrt{\Tr\mathbf{C}}$, and the grouped \emph{Statistical} median (Tables~\ref{tab:uq}, \ref{tab:combine}, \ref{tab:variance-sources}; \S\ref{sec:bootstrap}, \S\ref{sec:rank}; the article) & $0.684\%$, $1.984\times10^{-40}$ & $0.676\%$, $1.886\times10^{-40}$ \\
+\bottomrule
+\end{longtable}
+}
+
+% Source: re2/run/partc_r2/partc-r2/values_table.tsv rows hist-* (control PASS), as RE-2 integration ledger rows hist-*; the Q column is origin/main's Replacement column. Added after the records move, so outside records-inventory-base.json; the paragraphs above are unchanged (check_note_records.py P5).
+
+\paragraph{Superseded on 2026-11-14: $\mathrm{Q_R}$ by the RE-2-shapes $\mathrm{Q_R}$ ($C_{\mathrm{new}}$).}
+\label{app:history-qr-g2r}
+On 2026-11-14 the reported 2D covariance was replaced by its rebuild with the corrected construction (per-universe weights on the missed-event rows), and every result that depends on it is updated from the rebuild's records (\texttt{DECISION-20261114-joseph-d1-g2r-adopted.md} items~2 and~3). The $\mathrm{Q_R}$ column of the table above keeps the values printed from 2026-10-24. Its rows that change at their printed precision are these; the other rows are unchanged. The complete list of the note's re-keyed values, each with its source, is \texttt{g2r-integration/ledger.tsv}.
+
+{\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.50\textwidth}
+                  >{\raggedright\arraybackslash}p{0.22\textwidth}
+                  >{\raggedright\arraybackslash}p{0.22\textwidth}@{}}
+\toprule
+Quantity (where it is printed) & With $\mathrm{Q_R}$ (2026-10-24) & With the RE-2-shapes $\mathrm{Q_R}$ (2026-11-14) \\
+\midrule
+\endhead
+2D combined (block-sum) per-bin median relative $\sigma$ (Tables~\ref{tab:uq}, \ref{tab:combine} and~\ref{tab:variance-sources}; \S\ref{sec:chisq}, \S\ref{sec:assemble}; \texttt{\textbackslash uqMedian} in the article, the primer, the executive summary and \S\ref{sec:results-uq}) & $6.414\%$ ($6.41\%$)  & $6.463\%$ ($6.46\%$)  \\
+2D Flux band per-bin median (Table~\ref{tab:band-medians}; \texttt{\textbackslash fluxBand} in \S\ref{sec:systematics}, \S\ref{sec:results-uq}, the article and primer) & $3.712\%$ ($3.71\%$)  & $3.723\%$ ($3.72\%$)  \\
+2D combined $\chi^{2}/\mathrm{ndf}$, its log-normal form, and the stat-subtracted diagnostic (\texttt{\textbackslash chiCombined}, \texttt{\textbackslash chiCombinedLog}, \texttt{\textbackslash chiCombinedSubStat}) & $0.929$, $0.945$, $6.72$  & $0.943$, $0.959$, $6.95$  \\
+Combined pull mean and RMS (\S\ref{sec:pull}, \S\ref{sec:assemble}) & $0.034$, $0.388$  & $0.034$, $0.389$  \\
+2D systematic total median and $\sqrt{\Tr\mathbf{C}}$, combined $\sqrt{\Tr\mathbf{C}}$, universe $+$ bootstrap median, and the combined median against the exact-split cross-check (Tables~\ref{tab:uq}, \ref{tab:band-medians}, \ref{tab:combine}; \S\ref{sec:results-uq}) & $5.935\%$, $2.689\times10^{-39}$, $2.821\times10^{-39}$, $5.982\%$ (universe $+$ statistical), $6.462\%$  & $5.926\%$, $2.686\times10^{-39}$, $2.818\times10^{-39}$, $5.976\%$ (universe $+$ statistical), $6.468\%$  \\
+Per-bin medians of Muon\_Energy\_MINOS, Muon\_Energy\_MINERvA, MinosEfficiency, MaRES, MvRES, MaCCQE (Table~\ref{tab:band-medians}) & $2.358\%$, $1.435\%$, $1.505\%$, $0.627\%$, $0.362\%$, $0.336\%$  & $2.358\%$, $1.435\%$, $1.505\%$, $0.507\%$, $0.404\%$, $0.328\%$  \\
+Grouped medians of App.~\ref{app:statmethods} (muon reconstruction, models, hadronic response) & $3.437\%$, $1.401\%$, $0.743\%$  & $3.437\%$, $1.428\%$, $0.752\%$  \\
+\bottomrule
+\end{longtable}
+}
+
+% Source: the RE-2-shapes run 2 values_table.tsv (docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/g2r/re2shapes/run2/g2r/, sha256 798b837c..., listed in that run's SHA256SUMS), rows hist-* (refined_rendered), placed at the positions of the RE-2 integration ledger's hist-* rows in the table above (g2r-integration/README.md); the 2026-10-24 column copies the table above. Records addition L-g2r-1 (records-move-ledger.md).
+

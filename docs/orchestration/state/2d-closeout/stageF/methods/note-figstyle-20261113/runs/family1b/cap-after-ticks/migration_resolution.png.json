@@ -1,0 +1,1055 @@
+{
+ "artists_py_sha256": "feb486fefd363c0d80174fc034c82f53874558de718736af2c34c6b5344de041",
+ "size_in": [
+  6.435,
+  3.6036
+ ],
+ "items": [
+  {
+   "kind": "image",
+   "axes": 0,
+   "label": "_child0",
+   "hash": "4048f7ddb3d64a3f5f0c1224a0d2fb18600a067d2f2b9122b536cf6895ea889d",
+   "dhash": "519ab5375f19775e044fdedd6f00a67d7543ec8b6c27e0741f69507edb5c7af4",
+   "xhash": "519ab5375f19775e044fdedd6f00a67d7543ec8b6c27e0741f69507edb5c7af4"
+  },
+  {
+   "kind": "line",
+   "axes": 0,
+   "label": "_child1",
+   "hash": "bb103dd72da7f63e9a58582b0c4e482c56bbef9cb38abc4e8ec3a974baf26567",
+   "dhash": "e66e0004f9df9fd1044b64f97f7e6c4e497ff3265db42fea0056eeaca3400b63",
+   "xhash": "fed2153079036bf99df79a4daa17631bf73983159de7faa8d5ed336ba58651e9"
+  },
+  {
+   "kind": "image",
+   "axes": 1,
+   "label": "_child0",
+   "hash": "5251cf781cac7a8374a6a9a2f4d0b0f4ed85ce49f30ddd60d9eb5c0f5e78e1d6",
+   "dhash": "7c8b5b0605c3bfab8b67f33a142e4e9af0aaf3ba2b8416ad485184b3a21e0f0c",
+   "xhash": "7c8b5b0605c3bfab8b67f33a142e4e9af0aaf3ba2b8416ad485184b3a21e0f0c"
+  },
+  {
+   "kind": "line",
+   "axes": 1,
+   "label": "_child1",
+   "hash": "d885c4860fa4a0f845d91e0e4b6e5bb4da2f46313e620cc2ae06f8b86c4807a8",
+   "dhash": "7bfacae8176433c1f2d80b8aa19e8bdae186ecce10c68cc5d0c26b1057a90d3b",
+   "xhash": "ab1b5a86d85898cb378b76dc38fd2071838ea0c0dce5f6f10ebc8d14a92bcdab"
+  },
+  {
+   "kind": "image",
+   "axes": 2,
+   "label": "_child0",
+   "hash": "20f8fb2bb2092b3e8f0817f85766f705c7a9793c19dbd36c5c7ac06ef8bc07c3",
+   "dhash": "ab4e5b5562f9bbcf00febd11a40ec8f6fcb2cb54f2c9d19ef0e20080b62935a7",
+   "xhash": "ab4e5b5562f9bbcf00febd11a40ec8f6fcb2cb54f2c9d19ef0e20080b62935a7"
+  },
+  {
+   "kind": "line",
+   "axes": 2,
+   "label": "_child1",
+   "hash": "f3f83c6532eb102a3aee4fa31aafa5c3ec74d865fbc69b9ea7fb1bf00c1c1139",
+   "dhash": "02a711297247f5db17bc9874fe91d67bf75f5ba3f4b0baaf864fa322e5d2269b",
+   "xhash": "49ae23e2ce98fc861939ce1f9d4d0fb9e12e37a08114e39a06edfeee5ec52d78"
+  },
+  {
+   "kind": "image",
+   "axes": 3,
+   "label": "_child0",
+   "hash": "2ed3d0a468ff4ecd09dabab0136472884f5d9614929a7f7c29d709ac69424cdd",
+   "dhash": "3fdc6062e383d0356ae2993c0fb9a4acf8251feca4a7fce85535f88d9c379fd1",
+   "xhash": "3fdc6062e383d0356ae2993c0fb9a4acf8251feca4a7fce85535f88d9c379fd1"
+  },
+  {
+   "kind": "line",
+   "axes": 3,
+   "label": "_child1",
+   "hash": "f3f83c6532eb102a3aee4fa31aafa5c3ec74d865fbc69b9ea7fb1bf00c1c1139",
+   "dhash": "02a711297247f5db17bc9874fe91d67bf75f5ba3f4b0baaf864fa322e5d2269b",
+   "xhash": "49ae23e2ce98fc861939ce1f9d4d0fb9e12e37a08114e39a06edfeee5ec52d78"
+  },
+  {
+   "kind": "image",
+   "axes": 4,
+   "label": "_child0",
+   "hash": "40af04ab13578c55a6eb5e795b8bf32a3a2bc30a0ef32d595d4cd10f37440c17",
+   "dhash": "d8aecfdb8d612f0f96cbbd3af1be49ab3fbbd42d87464565d21554166d9669cc",
+   "xhash": "d8aecfdb8d612f0f96cbbd3af1be49ab3fbbd42d87464565d21554166d9669cc"
+  },
+  {
+   "kind": "line",
+   "axes": 4,
+   "label": "_child1",
+   "hash": "d2aea8605bd5e13c373442c1d0e474b5ea45c03bccd77dcc93fc58a61d7a6e03",
+   "dhash": "97ffe8b043fd69b675dc0021bf77ac367d30f4c21b5193775bfc9a45aae0489b",
+   "xhash": "88b160f0a9ae6b008655b70c56a91a0c1785ca6894eb62121841980835496bb8"
+  },
+  {
+   "kind": "patch",
+   "axes": 5,
+   "label": "_nolegend_",
+   "hash": "d863fd7b672fb0fd847fcb6c084a5cb1a2fec99e68758a81dd814ca5583053b7",
+   "dhash": "81da5c242d6e929b6a2029fdac8cf964b5cbe4ab69f168013d0785547b4a183c",
+   "xhash": "81da5c242d6e929b6a2029fdac8cf964b5cbe4ab69f168013d0785547b4a183c"
+  },
+  {
+   "kind": "patch",
+   "axes": 5,
+   "label": "_nolegend_",
+   "hash": "eb740819d7b336303eef26151872de018840f87742108336797c46c5a98bdcc3",
+   "dhash": "adcf540db0651c34445abd0127a3961ecb6c07495459925a42e94233e78b0775",
+   "xhash": "adcf540db0651c34445abd0127a3961ecb6c07495459925a42e94233e78b0775"
+  },
+  {
+   "kind": "patch",
+   "axes": 5,
+   "label": "_nolegend_",
+   "hash": "4ce41a72d525cdc4b4d55f91aaace77580d93a7314b5c16d2b96b2dae6a10c32",
+   "dhash": "b376bee1d58e846c42fe17d003e92351826717eecbcdc05c9678a4612ed7f0f9",
+   "xhash": "b376bee1d58e846c42fe17d003e92351826717eecbcdc05c9678a4612ed7f0f9"
+  },
+  {
+   "kind": "patch",
+   "axes": 5,
+   "label": "_nolegend_",
+   "hash": "a0ac6f3cd5dc0fefdc86c8e7ea1f129eeb1a06572833d25af0246c843158df14",
+   "dhash": "9b598c218338631005d4136783759f805bd71f07504f8e947b1f12e0b8acf6e4",
+   "xhash": "9b598c218338631005d4136783759f805bd71f07504f8e947b1f12e0b8acf6e4"
+  },
+  {
+   "kind": "patch",
+   "axes": 5,
+   "label": "_nolegend_",
+   "hash": "4341726ce2cc796209c730bd688c240b5a47057565f048ce41d0fc317c5f8884",
+   "dhash": "212e4fd6b2a3437a5b0564e100dc4e0c1674169cdc2c856523e4a7b9569f0477",
+   "xhash": "212e4fd6b2a3437a5b0564e100dc4e0c1674169cdc2c856523e4a7b9569f0477"
+  },
+  {
+   "kind": "patch",
+   "axes": 5,
+   "label": "_nolegend_",
+   "hash": "c6406b8c09c526fadc510b7aff242d5c57695c169eacf1669d1712edcc34ef59",
+   "dhash": "cc8da307eb6b0022d1ac37c3da2bc05e6efc91de597b0d25a80f78bea54aa514",
+   "xhash": "cc8da307eb6b0022d1ac37c3da2bc05e6efc91de597b0d25a80f78bea54aa514"
+  },
+  {
+   "kind": "patch",
+   "axes": 5,
+   "label": "_nolegend_",
+   "hash": "9943586d186f937ceb940b56a2054216be3cee2aa530e2e6c72514b84eebd8e0",
+   "dhash": "cc6015030e62a72b3c3e7882e5a6c1646d279d28e6b1512438825ae359ca953c",
+   "xhash": "cc6015030e62a72b3c3e7882e5a6c1646d279d28e6b1512438825ae359ca953c"
+  },
+  {
+   "kind": "patch",
+   "axes": 5,
+   "label": "_nolegend_",
+   "hash": "476390e03c8a4c6ec054507caa352bcc63555fa0d5a4c260211af06ffcf40209",
+   "dhash": "11d33e9beca7ca8299e927448a8a75db7d8b443416d0bc4e99e43bdd6c93a679",
+   "xhash": "11d33e9beca7ca8299e927448a8a75db7d8b443416d0bc4e99e43bdd6c93a679"
+  },
+  {
+   "kind": "patch",
+   "axes": 5,
+   "label": "_nolegend_",
+   "hash": "52edb63d17591313b551c16f73857cad3683d8298d2e445a5ee7880983ec9817",
+   "dhash": "f512680cc462ba7d885fd437aa5d9a517f4f4e272c8237917ab65c8a62799e4d",
+   "xhash": "f512680cc462ba7d885fd437aa5d9a517f4f4e272c8237917ab65c8a62799e4d"
+  },
+  {
+   "kind": "patch",
+   "axes": 5,
+   "label": "_nolegend_",
+   "hash": "fc4856d843a21b1acc6f38d9293665b4a1732a22fc711c4cb85ecd40cb96d91c",
+   "dhash": "af11ea97401863586dce0a83e385cb71aced565545a619b9e2c48d235b6acc39",
+   "xhash": "af11ea97401863586dce0a83e385cb71aced565545a619b9e2c48d235b6acc39"
+  },
+  {
+   "kind": "patch",
+   "axes": 5,
+   "label": "_nolegend_",
+   "hash": "d72b66ac3b9bdad087ac0c05324bb4a4049d2160f5eb18590e854b18926bb58e",
+   "dhash": "d874f433b56507d3c7b4dc23adfee19ff7ebfd0fa8709c00d7004a18fc358f66",
+   "xhash": "d874f433b56507d3c7b4dc23adfee19ff7ebfd0fa8709c00d7004a18fc358f66"
+  },
+  {
+   "kind": "patch",
+   "axes": 5,
+   "label": "_nolegend_",
+   "hash": "b07ebda7035a07a5b04a4c3ed302ae9435748700418615715fd043054152ad19",
+   "dhash": "c0efa5ef88525fe44f35b73baca3550c33f33448387fa3d50b79015f755e20ae",
+   "xhash": "c0efa5ef88525fe44f35b73baca3550c33f33448387fa3d50b79015f755e20ae"
+  },
+  {
+   "kind": "patch",
+   "axes": 5,
+   "label": "_nolegend_",
+   "hash": "cc62be19bb1e327141922c15f9757d5d4b928b7b26d0e8022952acc6caee21c5",
+   "dhash": "9a8d1b2bfefb946d3e84f1e9ceb5538c6c79fffde47f3ae652a834804799c1e9",
+   "xhash": "9a8d1b2bfefb946d3e84f1e9ceb5538c6c79fffde47f3ae652a834804799c1e9"
+  },
+  {
+   "kind": "patch",
+   "axes": 5,
+   "label": "_nolegend_",
+   "hash": "f10abbd04ec7e1bb431043622a9d906fa1c1e1838da8099de712ae3be3318d3b",
+   "dhash": "87e10a9d725ea7c9eac8bee818f2bd3b67b1343bdf71e1fc3bfef76b146c535a",
+   "xhash": "87e10a9d725ea7c9eac8bee818f2bd3b67b1343bdf71e1fc3bfef76b146c535a"
+  },
+  {
+   "kind": "patch",
+   "axes": 6,
+   "label": "_nolegend_",
+   "hash": "7412189bcc4efd48e58a6f82f36c61e24c1605fd6afe9a2f860c518a7a27a024",
+   "dhash": "1b9f80a3fb3650493beb14aa910aaf1708364b723eefd52ee11037cae0f649f8",
+   "xhash": "1b9f80a3fb3650493beb14aa910aaf1708364b723eefd52ee11037cae0f649f8"
+  },
+  {
+   "kind": "patch",
+   "axes": 6,
+   "label": "_nolegend_",
+   "hash": "3cfc0b77cf4edf40547b87894f38010cc8815a3f314bd3361fc80fcfdd58c56f",
+   "dhash": "9bcd354827f68f33c1cb35889511748d0f80571fd0505499ce4a9e42d02a8742",
+   "xhash": "9bcd354827f68f33c1cb35889511748d0f80571fd0505499ce4a9e42d02a8742"
+  },
+  {
+   "kind": "patch",
+   "axes": 6,
+   "label": "_nolegend_",
+   "hash": "80b99a782b09c9bf4996f6cdbec69a7540424fd12c2c3ed6a08428bdbbf30605",
+   "dhash": "069f63e08bc34e542d4650748d0aaaee69af55a77fcbff1f7e779cbfe2c64f53",
+   "xhash": "069f63e08bc34e542d4650748d0aaaee69af55a77fcbff1f7e779cbfe2c64f53"
+  },
+  {
+   "kind": "patch",
+   "axes": 6,
+   "label": "_nolegend_",
+   "hash": "86af3b6e6e644c85990afc672b3b0a1852fcb853eed6fe547cc36e13aa86c739",
+   "dhash": "4f9dcb58aa418f22a33c729d7617db2a2d04ed1bc84bcfd318b3c0de70b02e76",
+   "xhash": "4f9dcb58aa418f22a33c729d7617db2a2d04ed1bc84bcfd318b3c0de70b02e76"
+  },
+  {
+   "kind": "patch",
+   "axes": 6,
+   "label": "_nolegend_",
+   "hash": "d64c295b57f527caa9fc99babd440028f06a7f85875c61e18155a6b6c4ce68d8",
+   "dhash": "587151626a94fccbdfc5fdcd59f0448a692e13de208bfbea221c57190e52a74f",
+   "xhash": "587151626a94fccbdfc5fdcd59f0448a692e13de208bfbea221c57190e52a74f"
+  },
+  {
+   "kind": "patch",
+   "axes": 6,
+   "label": "_nolegend_",
+   "hash": "c6910d7f4d346fb9718f61cc70e4dfcd88c8be426d8efe36c3da3687cab411f0",
+   "dhash": "437134b3679923e7ca6e518488106616d7b76afebd03c123ed093dad1db99ae2",
+   "xhash": "437134b3679923e7ca6e518488106616d7b76afebd03c123ed093dad1db99ae2"
+  },
+  {
+   "kind": "patch",
+   "axes": 6,
+   "label": "_nolegend_",
+   "hash": "14044ca70ec85ef0bec5d60b0511abb1223911012418f77e4718b74bdef7ec2c",
+   "dhash": "4b632681bc37852cada24898ff666ec1c5a3217d0d31dae328dd4a7db595221f",
+   "xhash": "4b632681bc37852cada24898ff666ec1c5a3217d0d31dae328dd4a7db595221f"
+  },
+  {
+   "kind": "patch",
+   "axes": 6,
+   "label": "_nolegend_",
+   "hash": "2d31edfbffd8c1ea24027be06da8c6708ebcd09c98d8166e465b5e1a137ca75c",
+   "dhash": "e47fce49ed78d6395526719325b9cc9437f5086d1f45acc5add70f3b5dae4002",
+   "xhash": "e47fce49ed78d6395526719325b9cc9437f5086d1f45acc5add70f3b5dae4002"
+  },
+  {
+   "kind": "patch",
+   "axes": 6,
+   "label": "_nolegend_",
+   "hash": "7730cfc4b8e6632551b1e1e94c7dddd6a406a5bff338a9b885516adc5646e8d3",
+   "dhash": "167f4291fec26f0fffc2ca4ca3651ff4c7f0bf0aeaedcc62174402dc32c19149",
+   "xhash": "167f4291fec26f0fffc2ca4ca3651ff4c7f0bf0aeaedcc62174402dc32c19149"
+  },
+  {
+   "kind": "patch",
+   "axes": 6,
+   "label": "_nolegend_",
+   "hash": "d89d6079d06905ece7d3f26f48561c1a7472e8fa022a3e9d40f5c1dd081517d3",
+   "dhash": "f0606b12f1521a896148ae4fed87d6d16ff97a2a77453d39905988f66c5c6684",
+   "xhash": "f0606b12f1521a896148ae4fed87d6d16ff97a2a77453d39905988f66c5c6684"
+  },
+  {
+   "kind": "patch",
+   "axes": 6,
+   "label": "_nolegend_",
+   "hash": "e91cca03872cfda2d789b3b37731acf0ac01a20b5281a0bdaf088594b932c4ae",
+   "dhash": "1fc3ec4d7bbbabea678d95790a30437e1135084b09fdbfd9ce3886ff947d6761",
+   "xhash": "1fc3ec4d7bbbabea678d95790a30437e1135084b09fdbfd9ce3886ff947d6761"
+  },
+  {
+   "kind": "patch",
+   "axes": 6,
+   "label": "_nolegend_",
+   "hash": "eb89312ebed08cabb6ba51d43f08376cdfde7b086d84d4366a7908bb574ef615",
+   "dhash": "7cd738d7d02a0d67b2a7190873ec2321928197a3df0a922ff1020fd5c6ec9398",
+   "xhash": "7cd738d7d02a0d67b2a7190873ec2321928197a3df0a922ff1020fd5c6ec9398"
+  },
+  {
+   "kind": "patch",
+   "axes": 6,
+   "label": "_nolegend_",
+   "hash": "70f4c364059b9af006419404236d0af2f93a39c25ebee2da84166032d520bb1b",
+   "dhash": "3287501643928781573a71a31ad8fa18cc51dab1c50d21fb0decf7656b9613df",
+   "xhash": "3287501643928781573a71a31ad8fa18cc51dab1c50d21fb0decf7656b9613df"
+  },
+  {
+   "kind": "patch",
+   "axes": 6,
+   "label": "_nolegend_",
+   "hash": "9a6d68985dca180f02f53a2d660f91bb7392c7909ba8ea738ac0cfa4c22580bb",
+   "dhash": "9662cf1d7089dcab030ccd56719972760024280005742db29fb1c37c30af4d12",
+   "xhash": "9662cf1d7089dcab030ccd56719972760024280005742db29fb1c37c30af4d12"
+  },
+  {
+   "kind": "patch",
+   "axes": 6,
+   "label": "_nolegend_",
+   "hash": "fa5b29c1bf329423c27c4438e32892b923eb5ffbc0c9e1804d06e1dcf6c6dcb7",
+   "dhash": "e8ea0ddb0c0d7c8d285eb628bb03b0d9da53e3908b248c94de1c7eae9f7db611",
+   "xhash": "e8ea0ddb0c0d7c8d285eb628bb03b0d9da53e3908b248c94de1c7eae9f7db611"
+  },
+  {
+   "kind": "patch",
+   "axes": 6,
+   "label": "_nolegend_",
+   "hash": "994129f0b55a43dbd93af10a7bd22e58e5581e326f6e1ce1dd9bcf6f6fdf9174",
+   "dhash": "fcdcd5cb943a5b09ab994d352a1f6abd0795fa06406bcd3fc167f7304ab97f14",
+   "xhash": "fcdcd5cb943a5b09ab994d352a1f6abd0795fa06406bcd3fc167f7304ab97f14"
+  },
+  {
+   "kind": "patch",
+   "axes": 7,
+   "label": "_nolegend_",
+   "hash": "619a350e444c46fd87329980342879dc089d0273773626ced00166789e443baf",
+   "dhash": "3331ace4bed9ee09e98569eeab829c64cca8788f93dd2f693eb0c333dd3000ed",
+   "xhash": "3331ace4bed9ee09e98569eeab829c64cca8788f93dd2f693eb0c333dd3000ed"
+  },
+  {
+   "kind": "patch",
+   "axes": 7,
+   "label": "_nolegend_",
+   "hash": "b84ead772cee6d0fc7307155af11ef9dce360d14690f83b0bc55532e9b42afdf",
+   "dhash": "1ddcefd12ba0267340bfb75ed828fa192b2e9aaab41aba37aa2db3346f9f3851",
+   "xhash": "1ddcefd12ba0267340bfb75ed828fa192b2e9aaab41aba37aa2db3346f9f3851"
+  },
+  {
+   "kind": "patch",
+   "axes": 7,
+   "label": "_nolegend_",
+   "hash": "5852693a2deaba14ca41c176638847e3afbc2b23b318e214359156ec19147462",
+   "dhash": "c671416af1a217bff8aa030d7fcff6ec0470e58144307bcc547d95abafd6f7ec",
+   "xhash": "c671416af1a217bff8aa030d7fcff6ec0470e58144307bcc547d95abafd6f7ec"
+  },
+  {
+   "kind": "patch",
+   "axes": 7,
+   "label": "_nolegend_",
+   "hash": "9980b74e79678313523846b9e4ff105ccd6ca58365baea6f4ee514c8096e6b45",
+   "dhash": "8e312b53274863cb6090ea82a3a10316c13933b59905819b05c6bfb7aba43ac5",
+   "xhash": "8e312b53274863cb6090ea82a3a10316c13933b59905819b05c6bfb7aba43ac5"
+  },
+  {
+   "kind": "patch",
+   "axes": 7,
+   "label": "_nolegend_",
+   "hash": "b68a25fab0386cf67115bf201c3af4db6c0c5d52ba352df2f53e9f202849813e",
+   "dhash": "ddc267ff851ad03839bfd577a9217293e4c0e27230bee2ad9f14063e5cfbe80e",
+   "xhash": "ddc267ff851ad03839bfd577a9217293e4c0e27230bee2ad9f14063e5cfbe80e"
+  },
+  {
+   "kind": "patch",
+   "axes": 7,
+   "label": "_nolegend_",
+   "hash": "7d23983c559e07da478226a90969b98deead56b99ae09c57143b271823bc57de",
+   "dhash": "f960db2acfe268de8ac39eb5220a4829ed08265f8fbdbc47c626d7ce1d2fab55",
+   "xhash": "f960db2acfe268de8ac39eb5220a4829ed08265f8fbdbc47c626d7ce1d2fab55"
+  },
+  {
+   "kind": "patch",
+   "axes": 8,
+   "label": "_nolegend_",
+   "hash": "26a0302050314c5ac7614e228a7303d68ac33e6b2cfa72e6785f176dff72806a",
+   "dhash": "9d265c0151aac8895055338c311926e532403b3c735dbe2632cf2f002ddb10df",
+   "xhash": "9d265c0151aac8895055338c311926e532403b3c735dbe2632cf2f002ddb10df"
+  },
+  {
+   "kind": "patch",
+   "axes": 8,
+   "label": "_nolegend_",
+   "hash": "f062bed3af3c8d44cb8a88c0e9acf97684e94b044d711e0beb27b18ea2a3074b",
+   "dhash": "fc3d0ad957f99a921dc50fcfe352c7f82cf02416d74fe694c2fe09899959b397",
+   "xhash": "fc3d0ad957f99a921dc50fcfe352c7f82cf02416d74fe694c2fe09899959b397"
+  },
+  {
+   "kind": "patch",
+   "axes": 8,
+   "label": "_nolegend_",
+   "hash": "7d4d44108b47f0388dd510f8e6c39583cc7b806f136b42f46bbc842a0227c855",
+   "dhash": "f428a5a7dce18a477f6a3640a531d2251b677d3bb70ac584a8d8a6aa1ae4b1c6",
+   "xhash": "f428a5a7dce18a477f6a3640a531d2251b677d3bb70ac584a8d8a6aa1ae4b1c6"
+  },
+  {
+   "kind": "patch",
+   "axes": 8,
+   "label": "_nolegend_",
+   "hash": "b880bd2619c850160c01cfa94756b49387404e81ad02e448b7f8898045138e9b",
+   "dhash": "6289befe0649e69cf736b67dacc839e699c6d7bc9a8f6ae4604ddedb134fcef6",
+   "xhash": "6289befe0649e69cf736b67dacc839e699c6d7bc9a8f6ae4604ddedb134fcef6"
+  },
+  {
+   "kind": "patch",
+   "axes": 8,
+   "label": "_nolegend_",
+   "hash": "68032524fd08395fd8318f8b7662e29f3ef48690f9a74b81e41591b5598e7372",
+   "dhash": "8963e53e9544df70b43c7becd53b393a63658037a0846f70e742ba57e5e597b6",
+   "xhash": "8963e53e9544df70b43c7becd53b393a63658037a0846f70e742ba57e5e597b6"
+  },
+  {
+   "kind": "patch",
+   "axes": 8,
+   "label": "_nolegend_",
+   "hash": "f4145c603025e0f458b13a7449ead9b8fd9cf548d7e6458f97e8db86b3269aaf",
+   "dhash": "94f98d5a541129f43546013ca8a2eb1f5995913803d5fcdb748c98f306ce59c0",
+   "xhash": "94f98d5a541129f43546013ca8a2eb1f5995913803d5fcdb748c98f306ce59c0"
+  },
+  {
+   "kind": "patch",
+   "axes": 9,
+   "label": "_nolegend_",
+   "hash": "9d38d331c666a63acda88c417a94f2f27076e660aec49e9ab600c35eeca2fa05",
+   "dhash": "6d9bc8bf78464ca0964eeefd33d525933325e6b2f1d8acebd84ed8771967dc02",
+   "xhash": "6d9bc8bf78464ca0964eeefd33d525933325e6b2f1d8acebd84ed8771967dc02"
+  },
+  {
+   "kind": "patch",
+   "axes": 9,
+   "label": "_nolegend_",
+   "hash": "8cd79a28e36a95bcb32b0e9f0d028a1aa94ef9c51b5735f9d7e4762d0de341c8",
+   "dhash": "a71340f4744386223ccd82efdf1e99718c9655b67645750ec69d71c52e24b190",
+   "xhash": "a71340f4744386223ccd82efdf1e99718c9655b67645750ec69d71c52e24b190"
+  },
+  {
+   "kind": "patch",
+   "axes": 9,
+   "label": "_nolegend_",
+   "hash": "befb9091f58636234c8f95adb94944af738cdabff21421acabc503ee8cf7df46",
+   "dhash": "5ca02b9f965d883422725670fa3b79c7610fd30505c4ff2fae6e3e0702559845",
+   "xhash": "5ca02b9f965d883422725670fa3b79c7610fd30505c4ff2fae6e3e0702559845"
+  },
+  {
+   "kind": "patch",
+   "axes": 9,
+   "label": "_nolegend_",
+   "hash": "2a1f3494e1a9cd910450a41a127f4c704259878d2dbf0acc771a4b217e9a9ee3",
+   "dhash": "67d696e17364bf875207e58b8eb72aa2d218b304eeb1a2978daefd2975ece245",
+   "xhash": "67d696e17364bf875207e58b8eb72aa2d218b304eeb1a2978daefd2975ece245"
+  },
+  {
+   "kind": "patch",
+   "axes": 9,
+   "label": "_nolegend_",
+   "hash": "07e7c159037b157163b481e400c6efb2472edf3da1d8275c92176d60dfe67137",
+   "dhash": "455711605097919ffd3cdae0b81190f04ec39abc4603701ceeb6ee95d9c0db9d",
+   "xhash": "455711605097919ffd3cdae0b81190f04ec39abc4603701ceeb6ee95d9c0db9d"
+  },
+  {
+   "kind": "LineCollection",
+   "axes": 10,
+   "label": "_child0",
+   "hash": "c78f26eeb0efecdcc1a13ce55d6ce9d339e615e455c8f4efbfa1316d7269473f",
+   "dhash": "2062b477c651b3fc38ee2bc7849247c25be032f05a382689d12fc1abf3db4447",
+   "xhash": "2062b477c651b3fc38ee2bc7849247c25be032f05a382689d12fc1abf3db4447"
+  },
+  {
+   "kind": "QuadMesh",
+   "axes": 10,
+   "label": "_child1",
+   "hash": "cbd4255dc59ed16c0b4f4a183d894c848ebe3f0804421949c3e481d987b051d5",
+   "dhash": "012540386aa876faf4a7b59e5ac7d743d23b72c212629baa8fd526f6f28811c8",
+   "xhash": "012540386aa876faf4a7b59e5ac7d743d23b72c212629baa8fd526f6f28811c8"
+  }
+ ],
+ "texts": [
+  [
+   6.5,
+   "diag median 0.58"
+  ],
+  [
+   7.5,
+   "truth bin"
+  ],
+  [
+   7.0,
+   "0"
+  ],
+  [
+   7.0,
+   "10"
+  ],
+  [
+   7.0,
+   "20"
+  ],
+  [
+   7.5,
+   "reco bin"
+  ],
+  [
+   7.0,
+   "0.0"
+  ],
+  [
+   7.0,
+   "2.5"
+  ],
+  [
+   7.0,
+   "5.0"
+  ],
+  [
+   7.0,
+   "7.5"
+  ],
+  [
+   7.0,
+   "10.0"
+  ],
+  [
+   7.0,
+   "12.5"
+  ],
+  [
+   7.0,
+   "15.0"
+  ],
+  [
+   6.5,
+   "diag median 0.59"
+  ],
+  [
+   7.5,
+   "truth bin"
+  ],
+  [
+   7.0,
+   "0"
+  ],
+  [
+   7.0,
+   "10"
+  ],
+  [
+   7.0,
+   "20"
+  ],
+  [
+   7.0,
+   "0"
+  ],
+  [
+   7.0,
+   "5"
+  ],
+  [
+   7.0,
+   "10"
+  ],
+  [
+   7.0,
+   "15"
+  ],
+  [
+   7.0,
+   "20"
+  ],
+  [
+   6.5,
+   "diag median 0.59"
+  ],
+  [
+   7.5,
+   "truth bin"
+  ],
+  [
+   7.0,
+   "0"
+  ],
+  [
+   7.0,
+   "5"
+  ],
+  [
+   7.0,
+   "10"
+  ],
+  [
+   7.0,
+   "0"
+  ],
+  [
+   7.0,
+   "1"
+  ],
+  [
+   7.0,
+   "2"
+  ],
+  [
+   7.0,
+   "3"
+  ],
+  [
+   7.0,
+   "4"
+  ],
+  [
+   7.0,
+   "5"
+  ],
+  [
+   7.0,
+   "6"
+  ],
+  [
+   6.5,
+   "diag median 0.61"
+  ],
+  [
+   7.5,
+   "truth bin"
+  ],
+  [
+   7.0,
+   "0"
+  ],
+  [
+   7.0,
+   "5"
+  ],
+  [
+   7.0,
+   "10"
+  ],
+  [
+   7.0,
+   "0"
+  ],
+  [
+   7.0,
+   "1"
+  ],
+  [
+   7.0,
+   "2"
+  ],
+  [
+   7.0,
+   "3"
+  ],
+  [
+   7.0,
+   "4"
+  ],
+  [
+   7.0,
+   "5"
+  ],
+  [
+   7.0,
+   "6"
+  ],
+  [
+   6.5,
+   "diag median 0.60"
+  ],
+  [
+   7.5,
+   "truth bin"
+  ],
+  [
+   7.0,
+   "0.0"
+  ],
+  [
+   7.0,
+   "2.5"
+  ],
+  [
+   7.0,
+   "5.0"
+  ],
+  [
+   7.0,
+   "0"
+  ],
+  [
+   7.0,
+   "1"
+  ],
+  [
+   7.0,
+   "2"
+  ],
+  [
+   7.0,
+   "3"
+  ],
+  [
+   7.0,
+   "4"
+  ],
+  [
+   7.0,
+   "5"
+  ],
+  [
+   7.5,
+   "$p_T$ (GeV/c) truth bin"
+  ],
+  [
+   7.0,
+   "\u221210"
+  ],
+  [
+   7.0,
+   "0"
+  ],
+  [
+   7.0,
+   "10"
+  ],
+  [
+   7.0,
+   "20"
+  ],
+  [
+   7.5,
+   "P(reco bin = truth bin)"
+  ],
+  [
+   7.0,
+   "0.0"
+  ],
+  [
+   7.0,
+   "0.2"
+  ],
+  [
+   7.0,
+   "0.4"
+  ],
+  [
+   7.0,
+   "0.6"
+  ],
+  [
+   7.0,
+   "0.8"
+  ],
+  [
+   7.0,
+   "1.0"
+  ],
+  [
+   7.5,
+   "$p_\\parallel$ (GeV/c) truth bin"
+  ],
+  [
+   7.0,
+   "\u221210"
+  ],
+  [
+   7.0,
+   "0"
+  ],
+  [
+   7.0,
+   "10"
+  ],
+  [
+   7.0,
+   "20"
+  ],
+  [
+   7.0,
+   "0.0"
+  ],
+  [
+   7.0,
+   "0.2"
+  ],
+  [
+   7.0,
+   "0.4"
+  ],
+  [
+   7.0,
+   "0.6"
+  ],
+  [
+   7.0,
+   "0.8"
+  ],
+  [
+   7.0,
+   "1.0"
+  ],
+  [
+   7.5,
+   "$E_{\\mathrm{avail}}$ (GeV) truth bin"
+  ],
+  [
+   7.0,
+   "\u22125"
+  ],
+  [
+   7.0,
+   "0"
+  ],
+  [
+   7.0,
+   "5"
+  ],
+  [
+   7.0,
+   "10"
+  ],
+  [
+   7.0,
+   "0.0"
+  ],
+  [
+   7.0,
+   "0.2"
+  ],
+  [
+   7.0,
+   "0.4"
+  ],
+  [
+   7.0,
+   "0.6"
+  ],
+  [
+   7.0,
+   "0.8"
+  ],
+  [
+   7.0,
+   "1.0"
+  ],
+  [
+   7.5,
+   "$q_3$ (GeV) truth bin"
+  ],
+  [
+   7.0,
+   "\u22125"
+  ],
+  [
+   7.0,
+   "0"
+  ],
+  [
+   7.0,
+   "5"
+  ],
+  [
+   7.0,
+   "10"
+  ],
+  [
+   7.0,
+   "0.0"
+  ],
+  [
+   7.0,
+   "0.2"
+  ],
+  [
+   7.0,
+   "0.4"
+  ],
+  [
+   7.0,
+   "0.6"
+  ],
+  [
+   7.0,
+   "0.8"
+  ],
+  [
+   7.0,
+   "1.0"
+  ],
+  [
+   7.5,
+   "$W$ (GeV) truth bin"
+  ],
+  [
+   7.0,
+   "\u22125"
+  ],
+  [
+   7.0,
+   "0"
+  ],
+  [
+   7.0,
+   "5"
+  ],
+  [
+   7.0,
+   "10"
+  ],
+  [
+   7.0,
+   "0.0"
+  ],
+  [
+   7.0,
+   "0.2"
+  ],
+  [
+   7.0,
+   "0.4"
+  ],
+  [
+   7.0,
+   "0.6"
+  ],
+  [
+   7.0,
+   "0.8"
+  ],
+  [
+   7.0,
+   "1.0"
+  ],
+  [
+   7.0,
+   "0.0"
+  ],
+  [
+   7.0,
+   "0.2"
+  ],
+  [
+   7.0,
+   "0.4"
+  ],
+  [
+   7.0,
+   "0.6"
+  ],
+  [
+   7.0,
+   "0.8"
+  ],
+  [
+   7.0,
+   "1.0"
+  ]
+ ],
+ "text_overlaps": [
+  [
+   "reco bin",
+   "5.0",
+   15.1
+  ],
+  [
+   "reco bin",
+   "7.5",
+   20.3
+  ],
+  [
+   "$p_T$ (GeV/c) truth bin",
+   "0",
+   55.0
+  ],
+  [
+   "$p_T$ (GeV/c) truth bin",
+   "10",
+   111.2
+  ],
+  [
+   "P(reco bin = truth bin)",
+   "0.0",
+   6.5
+  ],
+  [
+   "P(reco bin = truth bin)",
+   "0.2",
+   81.0
+  ],
+  [
+   "P(reco bin = truth bin)",
+   "0.4",
+   81.0
+  ],
+  [
+   "P(reco bin = truth bin)",
+   "0.6",
+   81.0
+  ],
+  [
+   "P(reco bin = truth bin)",
+   "0.8",
+   81.0
+  ],
+  [
+   "P(reco bin = truth bin)",
+   "1.0",
+   24.5
+  ],
+  [
+   "$p_\\parallel$ (GeV/c) truth bin",
+   "0",
+   55.0
+  ],
+  [
+   "$p_\\parallel$ (GeV/c) truth bin",
+   "10",
+   111.2
+  ],
+  [
+   "$E_{\\mathrm{avail}}$ (GeV) truth bin",
+   "0",
+   55.0
+  ],
+  [
+   "$E_{\\mathrm{avail}}$ (GeV) truth bin",
+   "5",
+   55.0
+  ],
+  [
+   "$q_3$ (GeV) truth bin",
+   "0",
+   55.0
+  ],
+  [
+   "$q_3$ (GeV) truth bin",
+   "5",
+   55.0
+  ],
+  [
+   "$W$ (GeV) truth bin",
+   "0",
+   55.0
+  ],
+  [
+   "$W$ (GeV) truth bin",
+   "5",
+   55.0
+  ]
+ ]
+}

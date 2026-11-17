@@ -1,0 +1,17 @@
+You are checking an editorial compression of one section of a HEP technical note, for MEANING only (not style, not the physics). Files here:
+- old.tex: the section before the edit (LaTeX; lines starting with % are source comments, not printed).
+- new.tex: the section after the edit.
+- cutlog.md: the edit log: each row has the old text, the new text or "cut", and where the old text is kept.
+- app_devhistory.tex: the note's Development-history appendix (App. I); the cut log names the rows added for this section.
+
+The rule adopted by the author, verbatim: "History stays in the note only if removing it would change a reader's understanding of the reported object, its reproducibility, its evidential independence or its limitations. Everything else goes to the ledger. Each 'fixed before' names its object: before generating the pseudo-experiments, before seeing pilot pulls, before grading, or before seeing observed statistics. 'Declared' alone is replaced."
+
+Answer two separate questions.
+
+QUESTION 1 (remaining text). For every sentence that remains but was changed (each changed row of the cut log, and each new App. I row for this section): does its meaning change? A strengthened, weakened or widened claim, a lost qualifier, a wrong referent, or any new or changed number is a FAIL. Give each row PASS or FAIL with one sentence; quote the text when you object.
+
+QUESTION 2 (removed or shortened items). Classify each removed or shortened item against the rule as NEEDED (removing it would change a reader's understanding of the reported object, its reproducibility, its evidential independence or its limitations; a lost limitation is NEEDED) or LEDGER (it fails the rule and may leave the note, with the pointer in the cut log). A LEDGER item leaving is not a failure; a NEEDED item leaving the printed text without being kept in the section or in App. I is a FAIL. Give each item NEEDED or LEDGER with one sentence, and say whether any NEEDED item was lost.
+
+Also: did any disclosure of a choice made after results were seen disappear from the printed text?
+
+End with one line: "OVERALL: PASS" or "OVERALL: FAIL", followed by the list of FAILs (rows from question 1, lost NEEDED items from question 2).

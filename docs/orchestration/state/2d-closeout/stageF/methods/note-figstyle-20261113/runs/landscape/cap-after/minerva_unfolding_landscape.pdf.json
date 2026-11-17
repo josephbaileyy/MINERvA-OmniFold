@@ -1,0 +1,378 @@
+{
+ "artists_py_sha256": "feb486fefd363c0d80174fc034c82f53874558de718736af2c34c6b5344de041",
+ "size_in": [
+  6.305,
+  4.413499999999999
+ ],
+ "items": [
+  {
+   "kind": "PathCollection",
+   "axes": 0,
+   "label": "_child2",
+   "hash": "cb7f6b1219c609697fdd3ff69678d14625fa0a7245fcdd98baaddc7f9588b54b",
+   "dhash": "6a6ce77dae74f0925c2afcc8d7d9ec1b9c64b543d6fe1b6733981b95420e642a",
+   "xhash": "6a6ce77dae74f0925c2afcc8d7d9ec1b9c64b543d6fe1b6733981b95420e642a"
+  },
+  {
+   "kind": "PathCollection",
+   "axes": 0,
+   "label": "_child3",
+   "hash": "436c19ea9424791fe4d7130c45607b5dc38460e0b2af1a0becd4095af6e6d11e",
+   "dhash": "655e114f8aa1b58bd612838f9e9183c2359072028f910430eb96b3d166b3865b",
+   "xhash": "655e114f8aa1b58bd612838f9e9183c2359072028f910430eb96b3d166b3865b"
+  },
+  {
+   "kind": "PathCollection",
+   "axes": 0,
+   "label": "_child4",
+   "hash": "5f906bd96b2993f8d1386706197e63201882d78187e8085eeae0049e2cdbfd4c",
+   "dhash": "32ace0d3a563f2ad07d72f76a49efd0b8b2b843754ade88b66a830606cd371bb",
+   "xhash": "32ace0d3a563f2ad07d72f76a49efd0b8b2b843754ade88b66a830606cd371bb"
+  },
+  {
+   "kind": "PathCollection",
+   "axes": 0,
+   "label": "_child5",
+   "hash": "266cca420c227a4f03af49568b387b99f8e00db3583b50b37bba8cb9905eefac",
+   "dhash": "90683ea9ecdb21aa678c486418a9b156a433d6236c93f1bde8b9f46149cd91bd",
+   "xhash": "90683ea9ecdb21aa678c486418a9b156a433d6236c93f1bde8b9f46149cd91bd"
+  },
+  {
+   "kind": "PathCollection",
+   "axes": 0,
+   "label": "_child6",
+   "hash": "0c1ce8e0f9783c4c59cd7df6e03566a2ed300438eb7d932e9183bd77e83a1262",
+   "dhash": "b17428e6dc0557a40d55dfaea0281c61446e41e7577dfc5593c0d3231159b6e1",
+   "xhash": "b17428e6dc0557a40d55dfaea0281c61446e41e7577dfc5593c0d3231159b6e1"
+  },
+  {
+   "kind": "PathCollection",
+   "axes": 0,
+   "label": "_child7",
+   "hash": "b15e6d3050495e023f2998cf75d445f754b2ab5e200a956f24c75398428a18a5",
+   "dhash": "8765e19c327cde7e547f9f95cb1c7dfc44d89e0cfcbbaeac6feac2ac1a34e9b1",
+   "xhash": "8765e19c327cde7e547f9f95cb1c7dfc44d89e0cfcbbaeac6feac2ac1a34e9b1"
+  },
+  {
+   "kind": "PathCollection",
+   "axes": 0,
+   "label": "_child8",
+   "hash": "c20385a08ce4b369be146b35d46d2a9beaa133b069b6908e756ef7d5eca19f97",
+   "dhash": "47dbbf2421f7a04ca22608452c82b9583aa6f991a12afdd2b27abbedf9bdb17e",
+   "xhash": "47dbbf2421f7a04ca22608452c82b9583aa6f991a12afdd2b27abbedf9bdb17e"
+  },
+  {
+   "kind": "PathCollection",
+   "axes": 0,
+   "label": "_child9",
+   "hash": "6e0a60c7e3961b58fd5b77fe47aea60facf99e750ef3696e04f97dfad758001e",
+   "dhash": "6d84243e07fa8e7c23313b7f4c0494ef737f124b705fb253e8788ff72d457940",
+   "xhash": "6d84243e07fa8e7c23313b7f4c0494ef737f124b705fb253e8788ff72d457940"
+  },
+  {
+   "kind": "PathCollection",
+   "axes": 0,
+   "label": "_child10",
+   "hash": "988a619943167e4cc7b38d7fd7570d0ee58b6068ac65ee89d760156b664ac948",
+   "dhash": "1f654fdb9219bd0d05ef05920950fe0069333e49295fcc57d2b7dc89def29ac7",
+   "xhash": "1f654fdb9219bd0d05ef05920950fe0069333e49295fcc57d2b7dc89def29ac7"
+  },
+  {
+   "kind": "PathCollection",
+   "axes": 0,
+   "label": "_child11",
+   "hash": "2bdec590248234931590a8d18754435705315957f86a39886aad6210aeb8ebca",
+   "dhash": "38c46e3eb7b568a6a9e7ac801024555a54c8d23f1226a341fa967a665c16075f",
+   "xhash": "38c46e3eb7b568a6a9e7ac801024555a54c8d23f1226a341fa967a665c16075f"
+  },
+  {
+   "kind": "PathCollection",
+   "axes": 0,
+   "label": "_child12",
+   "hash": "143f639d7fb887a6cb0c6b94c1570f9285aa930fdf2f4205edf864b80aeb743d",
+   "dhash": "a15894d8dc9255b39ce8339a28fd482ab65c7c3a8b623ae0efb0611928e43b13",
+   "xhash": "a15894d8dc9255b39ce8339a28fd482ab65c7c3a8b623ae0efb0611928e43b13"
+  },
+  {
+   "kind": "PathCollection",
+   "axes": 0,
+   "label": "_child13",
+   "hash": "b71f4402bfef7ccb08085b6ed56e7d27aa9321471526665f0ccc29640be23027",
+   "dhash": "6ec299b6d0eda8d97c04e5c52977b78662e7a59a9b81737ad1583ce90a9bcbf4",
+   "xhash": "6ec299b6d0eda8d97c04e5c52977b78662e7a59a9b81737ad1583ce90a9bcbf4"
+  },
+  {
+   "kind": "PathCollection",
+   "axes": 0,
+   "label": "_child14",
+   "hash": "63d3877612566da7dda8c3b926284df613b706d88013baf792aa2ccbd0310642",
+   "dhash": "7ee04fa615eac85c139f41afe75734b175a1858da6d360b4924cc648ad7580f1",
+   "xhash": "7ee04fa615eac85c139f41afe75734b175a1858da6d360b4924cc648ad7580f1"
+  },
+  {
+   "kind": "PathCollection",
+   "axes": 0,
+   "label": "_child15",
+   "hash": "239f3c358df4c3091301afbf39d58f089045a0a37c36651aa57101751d47136a",
+   "dhash": "17c558e87361ba5d201fad4a7fbeeacfa29b4dfbbc19f586e180a89f410922d0",
+   "xhash": "17c558e87361ba5d201fad4a7fbeeacfa29b4dfbbc19f586e180a89f410922d0"
+  },
+  {
+   "kind": "PathCollection",
+   "axes": 0,
+   "label": "_child16",
+   "hash": "4171365af15f186ae21de8c7cdd08df3757ff4b1b05bb2613a5d552b6c427378",
+   "dhash": "60841a67cd92d88fd1cbab575a4edeee4d369d66c68d1b0df649e9c525195c85",
+   "xhash": "60841a67cd92d88fd1cbab575a4edeee4d369d66c68d1b0df649e9c525195c85"
+  },
+  {
+   "kind": "PathCollection",
+   "axes": 0,
+   "label": "_child17",
+   "hash": "aa36b083dd8b3902090c630f15a4213887356e4567aba95458818ed446cf8338",
+   "dhash": "7b52bed24bfb975f39e43a705965b345fc45abdbbe991efb2b53db418b0c506d",
+   "xhash": "7b52bed24bfb975f39e43a705965b345fc45abdbbe991efb2b53db418b0c506d"
+  },
+  {
+   "kind": "PathCollection",
+   "axes": 0,
+   "label": "_child18",
+   "hash": "e725ece73dbc349508a4728a4bdc4fa84eb2bd5ca9fb498ea52fdf2cb7c16302",
+   "dhash": "1966ee0acedff522480e2bea365fef1153849bfc8470e77c1062f61889c480f4",
+   "xhash": "1966ee0acedff522480e2bea365fef1153849bfc8470e77c1062f61889c480f4"
+  },
+  {
+   "kind": "PathCollection",
+   "axes": 0,
+   "label": "_child19",
+   "hash": "4526f183bc422d6143f47bace6782925f8597d1f249d37d8e8e4ec9dab9ee3e3",
+   "dhash": "a737d5faf9a8accbce7f79cc8e6d25cc663b835840df2cf9d7443c6528cfc713",
+   "xhash": "a737d5faf9a8accbce7f79cc8e6d25cc663b835840df2cf9d7443c6528cfc713"
+  },
+  {
+   "kind": "PathCollection",
+   "axes": 0,
+   "label": "_child20",
+   "hash": "af89e5fc7deb6f5e3c91b55ef2db730d6e2dddf1864b5384f235463944aa3d21",
+   "dhash": "969abadade6a2024f4f72e1e60a6e82a672ae96731dfa3b495b426d8f67bba59",
+   "xhash": "969abadade6a2024f4f72e1e60a6e82a672ae96731dfa3b495b426d8f67bba59"
+  },
+  {
+   "kind": "PathCollection",
+   "axes": 0,
+   "label": "_child21",
+   "hash": "bb5c2d56e5c0ccf01917282617817a93f40a8b82f07bd7b9c00b1a321d52db63",
+   "dhash": "50ea4ab8735b549a64154120009e5ea0401c466d7a94994a1d310fdc907fe330",
+   "xhash": "50ea4ab8735b549a64154120009e5ea0401c466d7a94994a1d310fdc907fe330"
+  },
+  {
+   "kind": "PathCollection",
+   "axes": 0,
+   "label": "_child22",
+   "hash": "f5920e7c1ab8aa8504d70b86dc99fda5d909f2c51c9e2a28c19a6d1e5d6abe08",
+   "dhash": "517a0572e0f5721a76c13b1048c9d2e3e0b64212ee88926c251f7f9046007510",
+   "xhash": "517a0572e0f5721a76c13b1048c9d2e3e0b64212ee88926c251f7f9046007510"
+  },
+  {
+   "kind": "PathCollection",
+   "axes": 0,
+   "label": "_child23",
+   "hash": "05603483ceed99e56a4728de26c4c3821ab81c16cf64f56a1fbae07a973ff751",
+   "dhash": "9a92a8ee659cc89134b6e295cd4ecfa73f0d39c04d829fdabbe3914b881a30b6",
+   "xhash": "9a92a8ee659cc89134b6e295cd4ecfa73f0d39c04d829fdabbe3914b881a30b6"
+  },
+  {
+   "kind": "PathCollection",
+   "axes": 0,
+   "label": "_child24",
+   "hash": "2c6b289f7acc079ea5dab916f85f34abc26a1a94487a418f11d15db4983946ad",
+   "dhash": "511e80992079fe2cb8af4a789707a6223f29f8963cac7b83c065f35470990156",
+   "xhash": "511e80992079fe2cb8af4a789707a6223f29f8963cac7b83c065f35470990156"
+  },
+  {
+   "kind": "PathCollection",
+   "axes": 0,
+   "label": "_child25",
+   "hash": "3e49eeb21dbf57354d46787e81f692f4d44cde2bdba2e672c366d0f9b006bb3a",
+   "dhash": "f1e67cc572e1615490b110c1f406696b7cb928504ca762a8e77b2639583b24af",
+   "xhash": "f1e67cc572e1615490b110c1f406696b7cb928504ca762a8e77b2639583b24af"
+  },
+  {
+   "kind": "PathCollection",
+   "axes": 0,
+   "label": "_child26",
+   "hash": "393f86e9268e4c301f3a37d31480103e358b8f243102b55dda934bf2ec97a697",
+   "dhash": "66c03deb8f682ff7986d4167482287bdc4027b376574b904fc4175dd5a49a926",
+   "xhash": "66c03deb8f682ff7986d4167482287bdc4027b376574b904fc4175dd5a49a926"
+  },
+  {
+   "kind": "PathCollection",
+   "axes": 0,
+   "label": "_child27",
+   "hash": "7c629b9c90942d7740cf6a9ddfbffbc99f0f049940dabf819f4b21078a31117a",
+   "dhash": "366991033d6f196fb1e5bec9542f408e775f650be3a7e517e0fdd467e0cc831f",
+   "xhash": "366991033d6f196fb1e5bec9542f408e775f650be3a7e517e0fdd467e0cc831f"
+  },
+  {
+   "kind": "PathCollection",
+   "axes": 0,
+   "label": "_child28",
+   "hash": "eafdaa2d72301c75498cec60885e131c329d1c4aa51b3b266e9b874c06d49712",
+   "dhash": "21cbab9f811e072171a69be87b4d151cc135471d27432ec4ae2e00412fe6dc14",
+   "xhash": "21cbab9f811e072171a69be87b4d151cc135471d27432ec4ae2e00412fe6dc14"
+  },
+  {
+   "kind": "PathCollection",
+   "axes": 0,
+   "label": "_child29",
+   "hash": "a17b304ef9c8c086a873df1b9b6545c1ae234f5a674a4a7b3bc7b74613b3ea21",
+   "dhash": "5e96a81f11b99dd4c60fe42abfdd8402fae2981d28d518cb18a3f6e04184f040",
+   "xhash": "5e96a81f11b99dd4c60fe42abfdd8402fae2981d28d518cb18a3f6e04184f040"
+  },
+  {
+   "kind": "PathCollection",
+   "axes": 0,
+   "label": "_child30",
+   "hash": "0a7d87ffefc1f8a9fc92f1b17ebba354b76d478814dbb49ba4865d41305c34e4",
+   "dhash": "fbc7391c0a48ec5ef572042497d06b2acc278c9fa35b688a9ec0ef02c9dfbd18",
+   "xhash": "fbc7391c0a48ec5ef572042497d06b2acc278c9fa35b688a9ec0ef02c9dfbd18"
+  },
+  {
+   "kind": "PathCollection",
+   "axes": 0,
+   "label": "_child31",
+   "hash": "6de0b46c505b8101e0c69aecc3395cb7422d8fe3601a831d02990af240988741",
+   "dhash": "eca2b16719837f1386d3111a848f790739f54879efbaadba60d44a7d3266a04c",
+   "xhash": "eca2b16719837f1386d3111a848f790739f54879efbaadba60d44a7d3266a04c"
+  },
+  {
+   "kind": "PathCollection",
+   "axes": 0,
+   "label": "_child32",
+   "hash": "4cc077d18be90eb367bee13d324253555c1426bf772796e375811ed4d20c6da3",
+   "dhash": "76cbed4ba789d5d069f3f38fef3706c145c251e6dbb3ae8cbe39493a4a4a98e6",
+   "xhash": "76cbed4ba789d5d069f3f38fef3706c145c251e6dbb3ae8cbe39493a4a4a98e6"
+  }
+ ],
+ "texts": [
+  [
+   8.5,
+   "binned D'Agostini IBU: 29 of 30 measurements at $\\leq 2$ simultaneously unfolded variables"
+  ],
+  [
+   9.0,
+   "this work \u2014 unbinned OmniFold ($p_T$, $p_\\parallel$, $E_{\\rm avail}$, $q_3$, $W$)"
+  ],
+  [
+   8.5,
+   "and beyond \u2014 point-cloud inputs (toward the full final state)"
+  ],
+  [
+   7.0,
+   "[target] 2106.16210"
+  ],
+  [
+   7.0,
+   "triple-differential 2203.08022"
+  ],
+  [
+   9.3,
+   "Publication year"
+  ],
+  [
+   8.3,
+   "2012"
+  ],
+  [
+   8.3,
+   "2014"
+  ],
+  [
+   8.3,
+   "2016"
+  ],
+  [
+   8.3,
+   "2018"
+  ],
+  [
+   8.3,
+   "2020"
+  ],
+  [
+   8.3,
+   "2022"
+  ],
+  [
+   8.3,
+   "2024"
+  ],
+  [
+   8.3,
+   "2026"
+  ],
+  [
+   8.3,
+   "2028"
+  ],
+  [
+   9.3,
+   "Kinematic variables unfolded simultaneously"
+  ],
+  [
+   8.3,
+   "1"
+  ],
+  [
+   8.3,
+   "2"
+  ],
+  [
+   8.3,
+   "3"
+  ],
+  [
+   8.3,
+   "4"
+  ],
+  [
+   8.3,
+   "5"
+  ],
+  [
+   8.0,
+   "CC inclusive"
+  ],
+  [
+   8.0,
+   "CCQE / QE-like (incl. TKI)"
+  ],
+  [
+   8.0,
+   "Pion production (CC & coherent)"
+  ],
+  [
+   8.0,
+   "DIS / kaon"
+  ],
+  [
+   8.0,
+   "$\\nu_e$"
+  ],
+  [
+   8.0,
+   "Nuclear-target ratio"
+  ],
+  [
+   8.0,
+   "this work, OmniFold (5D)"
+  ]
+ ],
+ "text_overlaps": [
+  [
+   "Pion production (CC & coherent)",
+   "$\\nu_e$",
+   7.6
+  ]
+ ]
+}

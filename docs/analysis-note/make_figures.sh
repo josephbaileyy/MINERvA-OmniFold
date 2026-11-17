@@ -137,7 +137,9 @@ run products/5d/control_corner.png       nd-unfolding  python plot_control_corne
 # The configuration-(a) run that stood here is kept, commented out; rerunning it would overwrite the (e) figure.
 # run figures/ascencio_fullcov_compare_central.png docs/analysis-note  python redraw_central_only.py --xsec4d "$REPO/nd-unfolding/products/4d/xsec_4d_MEFHC_5iter_lgbm.root" --supplemental "$REPO/3d-unfolding/genie/ascencio_2110.13372_supplemental.txt" --outdir figures --only ascencio
 # run products/4d/ascencio_fullcov_compare.png nd-unfolding  python compare_ascencio_fullcov.py
-run minerva_unfolding_landscape.png      3d-unfolding  python plot_minerva_landscape.py
+# 2026-11-13: --print-style draws the note's print style (note_print_style.py); the installed PDF is the committed
+# note-figstyle-20261113 copy (below, after the sync loop).
+run minerva_unfolding_landscape.png      3d-unfolding  python plot_minerva_landscape.py --print-style
 
 echo
 echo "==================== SUMMARY ===================="
@@ -188,11 +190,12 @@ install_receipt_fig() {  # install_receipt_fig <source under $RB> <figure basena
 # refined redraw below.
 
 echo
-echo "== Fig. 1 from RE-2 part C amendment 3 (E_R and Q_R; digest-checked copy) =="
-# Source: the committed copy of the amendment-3 redraw (RE2-PARTC-A3-REPORT.md sec. 3; run/partc_a3/RUN-fig1.txt,
-# out/fig1_validation.pdf 71a2ea48...), drawn by re2c_fig1.py 2aadeac8... with make_figs.py 4e18c266....
-RE2F="$REPO/docs/orchestration/state/2d-closeout/stageF/methods/re2-integration/fig1"
-src="$RE2F/fig1_validation.pdf"; want=71a2ea488ab758a466d40b7d5a7a061ebd95b1cdb90a79427c3da968238b6427
+echo "== Fig. 1 from COV2D-G2R's RE-2-shapes route A (E_R and C_new; digest-checked copy) =="
+# Source: #1168's redraw on the adopted 2D covariance (D1: COV2D-G2R's C_new), drawn by re2c_fig1.py 2aadeac8... on
+# route A's outputs (fd/receipts-cov2d/g2r/re2shapes/fig1/route-a/RUN-fig1.txt). Before D1: RE-2 part C amendment 3's
+# redraw, re2-integration/fig1/fig1_validation.pdf 71a2ea48....
+RE2F="$REPO/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/g2r/re2shapes/fig1/route-a"
+src="$RE2F/fig1_validation.pdf"; want=1ead58a2223ecf88f3de505d7cbcca76ab306af49814ea7c9d50ec0f2c373e0c
 if [[ "$(sha256_of "$src")" != "$want" ]]; then echo "REFUSE install: $src does not have sha256 $want" >&2; exit 1; fi
 cp "$src" "$FIGDIR/paper_fig1_validation.pdf"
 if [[ "$(sha256_of "$FIGDIR/paper_fig1_validation.pdf")" != "$want" ]]; then
@@ -221,8 +224,8 @@ install_re2_fig() {  # install_re2_fig <basename under $RE2G and in $FIGDIR> <sh
   fi
   echo "  installed $1 ($want)"
 }
-install_re2_fig MEFHC_fig6_7_uncertainty_pt.pdf        6055be9534cfaa1e149d59ec54cde0be7bc28272cbe584bafb5aab9751b97cd3
-install_re2_fig MEFHC_fig6_7_uncertainty_pz.pdf        ef0de3504fcbfb49d83073f0cf59ef7af5abf00ce1bda22fe5943a49bb0e6f62
+# install_re2_fig MEFHC_fig6_7_uncertainty_pt.pdf        6055be9534cfaa1e149d59ec54cde0be7bc28272cbe584bafb5aab9751b97cd3   # G2R (2026-11-15): replaced by the print-style install below, drawn from RE-2-shapes run 2
+# install_re2_fig MEFHC_fig6_7_uncertainty_pz.pdf        ef0de3504fcbfb49d83073f0cf59ef7af5abf00ce1bda22fe5943a49bb0e6f62   # G2R (2026-11-15): replaced by the print-style install below, drawn from RE-2-shapes run 2
 install_re2_fig uq_spread_2d.pdf                       a51bc4ee186a2c3bba942f6de6cd4bed74b8de7508e763e0b0bc698a0a78e9de
 install_re2_fig uq_corr_2d.pdf                         fea063cc6eeba9925bef2ac7c096118fdd23a7f443aea8afde4392de214c75b1
 # install_re2_fig MEFHC_5iter_fig13.pdf                  4924917e903b5e4ee6133f5e37b91aa11f301d7ea7242561680ea1ba10a4fb3b
@@ -254,17 +257,17 @@ install_restyle_fig() {  # install_restyle_fig <basename under $RSG and in $FIGD
   fi
   echo "  installed $1 ($want)"
 }
-install_restyle_fig MEFHC_5iter_fig13.pdf                 a5530bfc0c3220a0a522dfcaa52f143752dd67465c525237acb0ad8cf722237f
-install_restyle_fig MEFHC_5iter_xsec_proj_pt.pdf          bfff6d0b8034436f6bd46d92a9d67e029812fb545f38a36eeb30ca5cbad157c2
-install_restyle_fig MEFHC_5iter_xsec_proj_pz.pdf          ff27c7d477af3c4099631c39e462972842b9fe805264c507876b8b40570f9e58
-install_restyle_fig MEFHC_5iter_pull_full.pdf             fd84d992f3b212be3be6da06badbe3dfb5123f160f34f10e81d7f65cc80afd3d
-install_restyle_fig MEFHC_5iter_xsec_paper_pt_slices.pdf  ed6fb4162bdf84f6c57fedde39912fff13d0f387e5e5bc6d7a028af3ecdb2cdd
-install_restyle_fig MEFHC_5iter_xsec_paper_pz_slices.pdf  18252c59b3a0572d490c63770df1ec2e38b8989bf3be8165985cbac799d6daf4
-install_restyle_fig tension_spectrum.pdf                  5de8157fb9831a9b6b895f231ac771488e1eef1334c0bef7e19885e676b83c5d
-install_restyle_fig tension_chi2_map.pdf                  7161ded1a2a6666de6c04d55652c00bf2435a72a38e8ef0e422a6105c002ef08
-install_restyle_fig tension_mode_maps.pdf                 7ea2d004150d1633b7e92b655d9664f7d183444a46fd48830b43f7592cfc2c71
-install_restyle_fig model_comp_projections.pdf            44f2a7b7800b5c59821e0bda87e12c137237f1bed89fe9fae87a2a4aa15294c0
-install_restyle_fig model_comp_ratio_maps.pdf             838e5fc4669cf4d58b20f81dbda29f5131c1a57a9d34202948b9830ab51648bd
+# install_restyle_fig MEFHC_5iter_fig13.pdf                 a5530bfc0c3220a0a522dfcaa52f143752dd67465c525237acb0ad8cf722237f   (font-only pass, 2026-11-14: installed below)
+# install_restyle_fig MEFHC_5iter_xsec_proj_pt.pdf          bfff6d0b8034436f6bd46d92a9d67e029812fb545f38a36eeb30ca5cbad157c2   (font-only pass, 2026-11-14: installed below)
+# install_restyle_fig MEFHC_5iter_xsec_proj_pz.pdf          ff27c7d477af3c4099631c39e462972842b9fe805264c507876b8b40570f9e58   (font-only pass, 2026-11-14: installed below)
+# install_restyle_fig MEFHC_5iter_pull_full.pdf             fd84d992f3b212be3be6da06badbe3dfb5123f160f34f10e81d7f65cc80afd3d   (font-only pass, 2026-11-14: installed below)
+# install_restyle_fig MEFHC_5iter_xsec_paper_pt_slices.pdf  ed6fb4162bdf84f6c57fedde39912fff13d0f387e5e5bc6d7a028af3ecdb2cdd   (font-only pass, 2026-11-14: installed below)
+# install_restyle_fig MEFHC_5iter_xsec_paper_pz_slices.pdf  18252c59b3a0572d490c63770df1ec2e38b8989bf3be8165985cbac799d6daf4   (font-only pass, 2026-11-14: installed below)
+# install_restyle_fig tension_spectrum.pdf                  5de8157fb9831a9b6b895f231ac771488e1eef1334c0bef7e19885e676b83c5d   (font-only pass, 2026-11-14: installed below)
+# install_restyle_fig tension_chi2_map.pdf                  7161ded1a2a6666de6c04d55652c00bf2435a72a38e8ef0e422a6105c002ef08   (font-only pass, 2026-11-14: installed below)
+# install_restyle_fig tension_mode_maps.pdf                 7ea2d004150d1633b7e92b655d9664f7d183444a46fd48830b43f7592cfc2c71   (font-only pass, 2026-11-14: installed below)
+# install_restyle_fig model_comp_projections.pdf            44f2a7b7800b5c59821e0bda87e12c137237f1bed89fe9fae87a2a4aa15294c0   (font-only pass, 2026-11-14: installed below)
+# install_restyle_fig model_comp_ratio_maps.pdf             838e5fc4669cf4d58b20f81dbda29f5131c1a57a9d34202948b9830ab51648bd   (font-only pass, 2026-11-14: installed below)
 
 echo
 echo "== 3D/4D configuration-(e) figures from RE-1 run 2 F2 (digest-checked copy) =="
@@ -288,6 +291,73 @@ install_re1_fig generators_vs_unfolded_band_central.pdf 48210da26e8e84bd8cae0d83
 install_re1_fig mode_decomp_eavail_central.pdf          009a26be4dc3b1a8ec7bfc51ee1e038c74b6a62e6490e027ece08b63f4febc12
 install_re1_fig compare_mec_eavail_central.pdf          09e2b824cfa10671f3bbab33764778424493011081e40ea507073e3307fd63f4
 install_re1_fig ascencio_fullcov_compare_central.pdf    9bd4316e8bd94ecd6b0681ef955579fbf0e867847a6f43274fda64349584d2a5
+
+echo
+echo "== note print style (2026-11-13; digest-checked copy) =="
+# The methods paper's figure style for the note's figures (director, 2026-11-13; note_print_style.py): serif CM text at
+# the paper's sizes, each canvas at its printed width. Producers run with --print-style; the plotted data are the
+# committed outputs', bit for bit (note-figstyle-20261113/README.md: three arms, capture_any.py / compare_any.py).
+# Recipes: nd-unfolding/gbdt_model_dependence/analyze.py --print-style --out <dir> (its package results/ stay in the
+# default style), and plot_minerva_landscape.py --print-style (run above). Also after the sync loop.
+NPS="$REPO/docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/figs"
+install_printstyle_fig() {  # install_printstyle_fig <basename under $NPS and in $FIGDIR> <sha256>
+  local src="$NPS/$1" dst="$FIGDIR/$1" want="$2"
+  if [[ "$(sha256_of "$src")" != "$want" ]]; then
+    echo "REFUSE install: $src does not have sha256 $want" >&2; exit 1
+  fi
+  cp "$src" "$dst"
+  if [[ "$(sha256_of "$dst")" != "$want" ]]; then
+    echo "REFUSE install: $dst differs from $src after the copy" >&2; exit 1
+  fi
+  echo "  installed $1 ($want)"
+}
+install_printstyle_fig gbdt_recovery.pdf                62bf4a8337115ffa4ca4227bf15d2883c6a74771583f672122ca5b14dcf69e11
+install_printstyle_fig gbdt_bias_spread.pdf             f1786f4862eea1a3439b79ef7af2132969e95f7fb087bddcf9661802cf6310c2
+install_printstyle_fig gbdt_coverage.pdf                422ef3f7c8e53b47d371cbeee68742a869ec372394c81a8324a121c18a10fd54
+install_printstyle_fig gbdt_prior_response.pdf          445374318044846a72b8a71da3a474d3d63820e8f5491ac6d5eb06a42745a2d3
+install_printstyle_fig minerva_unfolding_landscape.pdf  bf1f14eae609fdf06f01a248674a175a1df72bd0ed1b4c8f269b860e66b78372
+# Group C, family 1 (2026-11-14): drawn locally with --from-arrays --print-style from the dumps of one cluster pass
+# (note-figstyle-20261113/runs/family1/dumps/; recipe: make_control_plots.py / plot_control_corner.py --from-arrays <dump> --print-style).
+install_printstyle_fig migration_resolution.pdf         7ea7fd45dd7276b193f2ca4554a8247c6ee528a2e59acace4666e9486af8cc9b
+install_printstyle_fig control_corner.pdf               09f291027d63f4f018e651d66be1e6e53aa95ee3ba8c028905621fd2ff0aa477
+# Family 1b (2026-11-14): Fig. 1 from the extended-display dump of one cluster pass (runs/family1b/dumps/), with
+# --from-arrays <dump> --extended-display --print-style.
+install_printstyle_fig control_plots.pdf                dcea96fa289c03a4c204804c2852242d4236ff96330d28877bbd0ac1e3a94602
+# Family 2, group R (2026-11-14): the eleven 2D figures of 10-31 in the paper fonts (restyle_2026_10 --print-font,
+# font family and mathtext only), from one login-node pass (note-figstyle-20261113/runs/family2/). Data, colours and
+# styles bit-equal to the restyle (compare.py COMPARE :: PASS); the restyle install lines above are now comments.
+install_printstyle_fig MEFHC_5iter_fig13.pdf                 d9bb9a951ef13b6d6a6146f7de2a7b83ef07c425a9c2572d1069a3ec1056551e
+install_printstyle_fig MEFHC_5iter_xsec_proj_pt.pdf          a770d7477cad9aabe25faf1f0694654a67606a7977028898ca7bed8c1332bacc
+install_printstyle_fig MEFHC_5iter_xsec_proj_pz.pdf          52a0724ee3e9d25d007c116d92969e6641ca2e2a73a32a21db7818b1414654dd
+install_printstyle_fig MEFHC_5iter_pull_full.pdf             a9510fb997ba90577a95b6bead042781bbc882abee0c34baa736516619793add
+install_printstyle_fig MEFHC_5iter_xsec_paper_pt_slices.pdf  c97195af5d71d1401782446bf9ac1260d4f07bf081b344052dafc4c47661713f
+install_printstyle_fig MEFHC_5iter_xsec_paper_pz_slices.pdf  9c18ea23b4525375b76eca054d4db6db4e64c902326607e313b3c41e60ed73a9
+install_printstyle_fig tension_spectrum.pdf                  d358068b707b8b677cbe2c1f0304427621df76d2da03c9f051822cb38371fdd7
+install_printstyle_fig tension_chi2_map.pdf                  dfc675ac425b90c94890e386b2630482e48d55867839100bc242bcbc64381ed5
+install_printstyle_fig tension_mode_maps.pdf                 049647417c6aaaf889a885a573f311b61d2e6819cdf4bbe174894a5e1e376996
+install_printstyle_fig model_comp_projections.pdf            ae7f5a54efd234e80388c9f6990721d022dc5df0278637d190b78b2f4938ec19
+install_printstyle_fig model_comp_ratio_maps.pdf             49f0d76c0eb17dc9e22522a472baa28fd5e436d9b2863bb9be3a6e59135b7307
+# Families 3-6, group C (2026-11-15): drawn locally with --print-style from the dumps of one cluster pass per family
+# (note-figstyle-20261113/runs/family3..family6/); the four RE-1 central redraws by tools/restyle_family4.py from their
+# pinned figure pickles; eavailW_band is a new matplotlib rendering of the ROOT figure (numerical check, runs/family5/).
+# Each one's drawn data equal its cluster off arm's (the README gives the checks and their one environmental exception).
+install_printstyle_fig uq_spread_2d.pdf                      41347061d6064aaae142895cbfeaf5d5c2449cdd9c72f8a4b6f153cd9fbf5031
+install_printstyle_fig uq_corr_2d.pdf                        f202c729700676096b4274be73ab5d30ffa31d94823c070c3d3491b4784d0b02
+install_printstyle_fig eavail_spectrum.pdf                   906a6473311775703dc4ff92ee52bdd61deb7b1173b7998c41331fbe1723723e
+install_printstyle_fig generators_vs_unfolded_band_central.pdf9ee744b3a36761ae2e854e7ddce23aa35633f636a532fd751c798bebea459884
+install_printstyle_fig mode_decomp_eavail_central.pdf        35498b2d0e92d61ac056bbef1e0d432716546bf627a7fee662f7770631961568
+install_printstyle_fig compare_mec_eavail_central.pdf        a43a2499d84c1c95c096fa0edd4d941ed088c664489cb28304503a50de896005
+install_printstyle_fig ascencio_fullcov_compare_central.pdf  ae1e5e59d641c3457a0db11c826c1a064fd1f1ae96e282657750a6b49aa50a4a
+install_printstyle_fig q3_excess_projection.pdf              1b86a31b2fc2ae2000e451c22253be5d207146a66cf8663f09e0e80ae02fd85b
+install_printstyle_fig fps_acceptance_MEFHC.pdf              ab63256c62c14945aa111333fca73edefcca57b2d3a9a98283d7cfe26b1219c8
+install_printstyle_fig fps_pilot_compare_MEFHC.pdf           a910ccca6084b5f652df0840e65a0d95117a154b22f22a87d519d85f26e5181f
+install_printstyle_fig fps_prior_envelope_MEFHC.pdf          55b3aeeb06e3fffcdcbfd7b0d30450378cee91fdc1e885095f677a6e873e68de
+install_printstyle_fig eavailW_band.pdf                      c9e7fcdbefa35e609272ec56616a449c85896cadc6e18b7b2f6366384722144a
+install_printstyle_fig paper_joint_nulls.pdf                 66888ffc0f3e8e9d41b78e4962063cbc67f2649af6cdef82532c26313d5865bb
+# fig6/7 (family 7; the director's approval of 2026-11-15): plot_uncertainty_fig6_7_style.py --from-projections on RE-2-shapes
+# run 2's fig67_projections.json (main d58d0d18, #1167) --print-style; identity: note-figstyle-20261113/runs/family7/
+install_printstyle_fig MEFHC_fig6_7_uncertainty_pt.pdf      031b12a1c0c52f59baf8c14360d652c87b000232a3294a131c11f71068f8624f
+install_printstyle_fig MEFHC_fig6_7_uncertainty_pz.pdf      b1cfd7ccf1ca2f563f1c684422aefc915c011db041cd09d9deb03dd2164ba9f4
 
 echo
 echo "== paper-only vector crops =="

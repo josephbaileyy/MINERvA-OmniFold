@@ -1,0 +1,219 @@
+=== R1. FD-CT-5B-AUDIT-DECLARATION.md lines 1-35 (first committed 28499ab5a 2026-10-30 11:05:12 -0700)
+# DECLARATION: the audit of the 5B run-period block C_PL,5D, with its stop condition fixed before it runs (2026-10-30)
+
+**By** the measurement session `coverage-5b-audit` (ListAgents), for the director to bind.
+
+**Under** [`DECISION-20261030-joseph-4b-not-now-5b-audit-then-add.md`](../../../DECISION-20261030-joseph-4b-not-now-5b-audit-then-add.md)
+(sha256 `2c3031d1…`) item 2: "The 5B run-period block is audited, then added to the 16-cell reported covariance", with
+an audit that "is declared and bound as usual" and "states before it runs what result would stop the addition". The
+standing constraints are [`HANDOFF-20261029-coverage-session.md`](HANDOFF-20261029-coverage-session.md) §1.
+
+**After:**
+- [`FD-CT-5B-DECLARATION.md`](FD-CT-5B-DECLARATION.md) (`bdfb23fd…`), its binding, and
+  [`FD-CT-5B-REPORT.md`](FD-CT-5B-REPORT.md) (`62ab9dea…`), whose readout `fd/readout/fd_ct_5b_periods.json`
+  (`a5b17895…`) holds C_PL,5D;
+- [`FD-CT-READERS-5A-REPORT.md`](FD-CT-READERS-5A-REPORT.md) and its readout `fd/readout/fd_ct_period.json` (`d7d518ac…`);
+- 2D's construction, `2d-closeout/playlist-term/DESIGN.md` §2–§4.
+
+**Declares:**
+- the audit's four measurements, their methods and units, and a STOP CONDITION (§7);
+- the exact revised covariance and every product it would flow into (§8);
+- the reader `nd-unfolding/fd_ct_5b_audit.py`, its tests, a mutation receipt, an independent review, the exact
+  commands and the pins (§9, §10, §14).
+
+**The order.** §2–§8 were first committed as a design freeze (PR #546, `28499ab5`), in the order 2D's DESIGN used
+(`2d-closeout/playlist-term/DESIGN.md` §5). The director then ruled by message, on 2026-10-30, that the code be folded
+into this PR and bound once: "The STOP condition is accepted as frozen design: O, N and R, with a refused control
+leaving the question undecided and the block not added. Don't change those thresholds while you write the code. If
+the code shows one can't be computed as written, tell me before changing it." No threshold changed. §13 lists what
+writing the code corrected or found, each item named.
+
+**MEASURES:** nothing. No audit quantity has been computed; the code has run only on synthetic fixtures.
+
+**CANNOT AUTHORIZE:**
+- running the reader, which needs the director's binding;
+- the addition itself. If the stop condition does not fire, the addition is its own declared step (§8.3);
+- any write to the reported matrix C_total + C_resp, to `s1_assembly.npz`, to `cresp.npz` or to any committed readout;
+
+=== R1 cont., lines 52-97
+### What this session read before writing the stop condition
+
+The decision's third reason for the audit is that the block "was chosen after the data were seen". So the reads behind
+this design are listed in full:
+- **numbers already reported:** every table of `FD-CT-5B-REPORT.md` and `FD-CT-READERS-5A-REPORT.md`; S1's per-group
+  σ table (`S1-REPORT.md` §6); 2D's committed noise share (`2d-closeout/playlist-term/outputs/playlist_term.json`
+  `report.noise_share`);
+- **structure only:** the key layout of the 5B and 5A readouts; the object names and classes in
+  `fd/receipts-ct/5b/flux/runEventLoopMC_PA.root` and in two files of `$P/MINERvA-OmniFold/2d-unfolding/baseline_flux/`
+  (copied to this session's scratchpad); `ls` of `$B5/unf/`, `$B5/truth/`, `$P/2d-closeout-period-unfold-20261014/out/`
+  and `$P/tmp-playlist-term-20261016/`; the sha256 of the committed files pinned in §1;
+- **arithmetic on constants only:** the χ² and Beta quantiles and the ν_eff interval quoted below.
+
+**Not read:**
+- no block of `s1_assembly.npz` or `cresp.npz`, and no eigenvector of any block;
+- no overlap, no replica-built block and no 5A noise;
+- no prediction or generator χ².
+<!-- absence-ok: a scoping statement about this session's own reads, listed in full above -->
+
+**What the reported numbers already imply, said before the run:**
+- 5B reports C_PL,5D's σ at a median 9.0 times its noise floor. So clauses N and R (§7) are not expected to fire. They
+  are declared because that floor comes from the same ten replicas, and the replica-built blocks test it directly.
+- In the reported table, the two cells where PB's and PC's offsets are smallest, R00 and R08, are the two cells with
+  E_avail < 0.8 GeV and p_∥ < 4.5 GeV/c. Any test of that is post hoc, and §5 labels it so.
+
+## 0. Summary
+
+**The object.** C_PL,5D is the 16 × 16 relative block P of the 5B readout (`C_PL5D.C_PL5D_rel`). It is DESIGN §2 on
+R00–R15: m = Σ e_X r_X, g_X = r_X/m − 1, P = k Σ_X e_X g_X g_Xᵀ, with k = V2/(1 − V2) = 0.6691. Its rank is 2.
+
+**The four measurements** (decision item 2's list; §3–§6):
+
+| item | question | primary measurement | stop clause |
+|---|---|---|---|
+| 1, overlap | Is P already in the flux, detector-response or any other existing block? | identification of the period offsets' pattern by one existing component; the duplication bound OV per group | **O** |
+| 2, noise and stability | Is P's size determined, given ten bootstrap replicas per period? | the spread of ten replica-built blocks; the floor's jackknife; the three-period interval | **N** |
+| 3, 5A against 5B | Why do the cell patterns differ while the sizes agree? | the uniform share of each block; 5A's noise; the angle between the planes | none (§5.4) |
+| 4, rank two | What can a rank-two block represent? | the plane's stability under the replicas; the largest χ² reduction it can cause | **R** |
+
+**THE STOP CONDITION** (§7, fixed here): the block is **not added** if any one of these holds:
+- **O:** one existing component of C_total + C_resp, at no more than 2σ of its own size, explains at least half of the
+  noise-weighted pattern of both g_PB and g_PC, after a free normalization per period;
+- **N:** the ten replica-built blocks' median per-cell σ has an SD over the replicas above half the observed median σ;
+- **R:** in the median replica, less than half of the replica block's variance lies in the observed block's plane.
+
+Any refused control is a STOP that leaves the condition undecided, and the block is not added until a bound rerun
+
+=== R2. FD-CT-5B-AUDIT-REPORT.md lines 1-50 (committed 8b5be08b0 2026-10-30 14:20:08 -0700)
+# REPORT: the audit of the 5B run-period block C_PL,5D (2026-10-30)
+
+**By** the measurement session `coverage-5b-audit`, for the director.
+
+**Under** [`FD-CT-5B-AUDIT-BINDING.md`](FD-CT-5B-AUDIT-BINDING.md) (PR #552), which binds
+[`FD-CT-5B-AUDIT-DECLARATION.md`](FD-CT-5B-AUDIT-DECLARATION.md) (`65213f15a68010e5…`) at deploy pin `6dd41539`, under
+[`DECISION-20261030-joseph-4b-not-now-5b-audit-then-add.md`](../../../DECISION-20261030-joseph-4b-not-now-5b-audit-then-add.md)
+item 2.
+
+**MEASURES:**
+- the bound deploy and tests (§10.1) and the single run of the reader (§10.2), with their receipts;
+- every control's outcome;
+- the stop condition's verdict, as the reader wrote it;
+- the audit's descriptive numbers, copied from the committed readout by `make_audit_report_tables.py`.
+
+**CANNOT AUTHORIZE:**
+- the addition of C_PL,5D. That is its own declared step (declaration §8, binding "CANNOT AUTHORIZE");
+- any change to the reported matrix C_total + C_resp, to a claim or to printed wording;
+- a cause of the period differences, or which period is right.
+
+**CITABLE FOR:**
+- that the audit ran once as bound, with every control passed;
+- `stop` = false: none of O, N and R fired, at the thresholds frozen before the run;
+- the descriptive numbers, as labelled in the readout.
+
+**NOT CITABLE FOR** (the readout's `labels.not_citable_for`): the cause of a period difference, or which period is right; a validated size: a block built from the observed differences contains them by construction; a coverage or calibration statement; the addition, which is its own declared step.
+
+**Receipts:** [`fd/receipts-ct/5b/audit/run/`](fd/receipts-ct/5b/audit/run/):
+- the step scripts `s1_deploy.sh` and `s2_run.sh`. The run's argv is the declaration's §10.2 block, verbatim;
+- `deploy.log`, `deploy-tests.log`, `audit.out`, `audit.err` (empty) and `run.log`, copied from `$BA/logs/`;
+- `make_audit_report_tables.py`, and its output `report-tables.md`, from which every table below is copied.
+
+**The readout:** [`fd/readout/fd_ct_5b_audit.json`](fd/readout/fd_ct_5b_audit.json)
+(`6d34d7f8034ea956cf22c092fb31d608f330daabdd721285302868806d50692c`). It equals the sha256 the reader printed.
+
+## 0. Summary
+
+- **Deploy and tests** (binding condition 1): all held. HEAD was the pin, with 0/0 porcelain lines, the declaration's
+  sha256 `65213f15…`, 19 of 19 §14 digests, and "Ran 210 tests, OK" with **no skip** (§1).
+- **The run** (condition 2): once, exit 0, in 8 s on login37 at 0 node-h. Controls S and A0–A3 passed, and the A4 and
+  A5 assertions held (§2).
+- **THE STOP CONDITION: `stop` = false.** O, N and R all stayed silent (§3):
+
+| clause | statistic | threshold | fires | decided by |
+|---|---|---|---|---|
+| **O** (§3.3) | the largest min(E_PB, E_PC) over 51 candidates is 0.158, at \|a\| of 5.7 and 13.3; no candidate has E ≥ 0.5 in both periods | E_PB, E_PC ≥ 0.5 and \|a_PB\|, \|a_PC\| ≤ 2 | false | none (`O_decided_by` []) |
+| **N** (§4.1) | s_med = 0.0240 | > 0.5 | false | the ten replica blocks |
+| **R** (§6.3) | median_k R_k = 0.9902 | < 0.5 | false | the ten replica blocks |
+
+- **The next step** is §8's addition, as its own declaration (§8 below).
+
+=== R3. sec_execsummary.tex:38, the Table 1 (tab:result-status) row for C_Z
+5D covariance ($C_Z$) & Constructed for configuration~(a) central value with 45 systematic bands and statistical variations & Used in this note; the estimator-seed criterion specified before production has not been computed for it (\S\ref{sec:eavailw-adopted}). & Technical diagnostic of estimator-seed sensitivity only. Its use as a benchmark yardstick or uncertainty product remains unsupported. No generator significance based on this covariance may be quoted. \\
+
+=== R4. sec_eavailw.tex:118 (a use of the projection's uncertainties)
+Estimator-seed shifts of central values are a small fraction of the projected uncertainties (\S\ref{sec:eavailw-adopted}). The response-mismatch closure of Appendix~\ref{app:response-mismatch} is designed to test whether an incorrect hadronic response can move strength into or out of the low-$W$ component. It has not yet produced a result.
+
+=== R5. sec_systematics.tex:160 (a use of C_Z's decomposition)
+In the five-axis covariance of the configuration-(a) central value, $C_Z$, the per-source decomposition is retained for attribution and the joint throws enter through the inflation of Eq.~\eqref{eq:zinflation} (\S\ref{sec:eavailw-construction}).
+
+=== R6. the earlier read of sec_systematics (pass 1), classes for S4
+# sec_systematics meaning read, pass 1: codex-school gpt-6.1-sol, high, read-only; prompt: PROMPT-two-question.txt
+**Question 1 — remaining changed text**
+
+Pure deletions are assessed under Question 2.
+
+| Row | Verdict | Reason |
+|---|---|---|
+| S1 | PASS | The test, scope and finding remain unchanged, and the cut log’s quoted source supports the threshold timing. |
+| S2 | PASS | This makes the same supported clarification as S1 while retaining the counts and applicability limits. |
+| S3 | FAIL | “Gate fixed before the measurement” strengthens “predeclared”: the original’s measurement timing qualifies the coarser cell, and cannot simply be transferred to the gate. |
+| S4 | FAIL | “Show three defects” adds an explicit count to “show the following defects,” changing the original’s nonexhaustive framing, while the shortened paragraph also has the losses identified below. |
+| S4d | FAIL | In “the configured nonresonant-pion tune (0.088%),” the number no longer clearly denotes the **band’s uncertainty**, as “The band is small, 0.088%” did. |
+| S4f — surviving clause | PASS | The retained statement that the statistical block draws background simulation as its own bootstrap stream preserves its meaning. |
+| D4 | FAIL | “Three construction defects” repeats S4’s newly explicit count; the unchanged-values and continuing-comparison statements otherwise match the original. |
+| D5 | FAIL | “The training-seed block before the fixed-seed statistical block” introduces a chronology between different blocks, whereas the original identifies an earlier training-seed block without dating it relative to the statistical block’s introduction. |
+
+**Question 2 — removed or shortened items**
+
+| Item | Classification | Reason and disposition |
+|---|---|---|
+| S1 | NEEDED | The test’s declaration status concerns evidential independence and remains through the supported threshold-timing statement. |
+| S2 | NEEDED | The same declaration information remains, alongside the test’s limited applicability. |
+| S3 | NEEDED | Advance specification of the gate matters for reproducibility and independence, but its replacement introduces the timing problem flagged in Question 1. |
+| S4 overall | NEEDED | The earlier budget remains a comparator, so its defects and corrections matter; most remain, but S4b and S4c are lost. |
+| S4a | LEDGER | “The May sweep” adds an internal name to an already identified earlier budget, and its ledger pointer suffices. |
+| S4b | NEEDED — **lost** | “A common displacement cancels to first order in the MAT mean-centered covariance” limits the interpretation of this mismatch, and neither the generic “does not invalidate the entire covariance” nor Appendix I preserves that specific qualification. |
+| S4c | NEEDED — **lost** | “Because the May input and code revision are not available” discloses a reproducibility limitation that “cannot be attributed more specifically” does not preserve. |
+| S4d | NEEDED | The band’s size and the double-counting defect matter and remain numerically and substantively, although the number’s referent fails Question 1. |
+| S4e | LEDGER | “So neglecting them everywhere is unsupported” restates the retained characterization as a construction defect, supported by the retained diagnostic and its qualification. |
+| S4f | NEEDED — retained elsewhere | Re-selected lateral universes define the quoted construction, and that information remains explicitly in §4.1. |
+| S5 | LEDGER | The superseded 5D variants supply neither a used covariance nor a quoted magnitude, so their history may leave with the recorded pointer. |
+
+**Needed information was lost:** S4b’s cancellation qualification and S4c’s unavailable-input/code disclosure; Appendix I restores neither, and source comments do not count as printed retention.
+
+**Post-results disclosures:** None disappeared in this edit: the run-period block’s construction from observed differences and the identification of the 52 cells after the measurement remain printed.
+
+OVERALL: FAIL — Question 1: S3, S4, S4d, D4, D5; Question 2: lost NEEDED items S4b, S4c.
+
+=== R7. the earlier read of sec_method (pass 1)
+# sec_method meaning read, pass 1: codex-school gpt-6.1-sol, reasoning high, sandbox read-only; files: old/new sec_method.tex, cutlog.md, app_devhistory.tex at that pass
+## prompt
+You are checking an editorial compression of one section of a HEP technical note, for MEANING only (not style, not the physics). Files here:
+- old_sec_method.tex: the section before the edit (LaTeX; lines starting with % are source comments, not printed).
+- new_sec_method.tex: the section after the edit.
+- cutlog.md: the edit log, rows C1-C6, each with old text, new text or "cut", and where the old text is kept.
+- app_devhistory.tex: a new appendix whose rows D1-D3 restate what the section says.
+
+The rule the edit follows: history may leave the note only if removing it does not change a reader's understanding of the reported object, its reproducibility, its evidential independence or its limitations. Disclosures of choices made after results were seen must stay.
+
+For EACH row C1-C6 and D1-D3, answer: (a) does the new text (or the cut) preserve every fact a reader needs on those four grounds? (b) does the new text add or alter any claim (including any new or changed number)? (c) verdict PASS or FAIL, with one sentence of reason. Then: did any disclosure of a choice made after results were seen disappear from the printed text? Are rows D1-D3 each supported by the section's own text? Finish with one line: "OVERALL: PASS" or "OVERALL: FAIL", and list each FAIL. Be concrete and brief; quote text when you object.
+## answer
+I treated `%` source comments as unprinted and assessed meaning only.
+
+| Row | (a) Needed facts preserved? | (b) Claim added or altered? | Verdict and reason |
+|---|---|---|---|
+| C1 | No. | Removes the explicit controls and reproduction tolerance; adds no number. | **FAIL:** “Matched reruns” does not explicitly preserve “one driver and one input and differing only in the seed” or reproduction to \(\lesssim2\times10^{-11}\), which establish the attribution’s reproducibility. |
+| C2 | Yes, but with stronger provenance claims. | “From its recorded run configuration” and “from a recorded run configuration” strengthen the old wording; numbers are unchanged. | **FAIL:** Recording a run’s configuration and reproducing its output do not themselves establish that the reproduction was performed **from** that record. |
+| C3 | No. | Removes the bounded comparison and the specific operation being costed. | **FAIL:** “The cheaper way” omits that only **two costed ways** were compared and that the cheaper operation was building the statistical band at seed 42. |
+| C4 | No. | Deletes the claim that the matching medians are coincidental; adds nothing. | **FAIL:** Both 0.18% medians remain printed, but removing “the agreement is coincidental” loses an explicit limitation on interpreting their agreement as corroboration. |
+| C5 | No. | Narrows the surviving timing claim’s subject. | **FAIL:** The deleted “It was selected” refers to the joint-test estimator, whereas the surviving sentence says only “Its refinement classifier … was selected” before the design was fixed. |
+| C6 | Yes. | Removes the date 2026-10-11 and recasts non-recomputation as non-repetition for the quoted estimator. | **PASS:** The earlier central value’s identity and the studies’ limited applicability remain clear; the calendar date is unnecessary on the four stated grounds. |
+| D1 | Yes. | No substantive addition or changed number. | **PASS:** The section supports the replacement, missing matched covariance, unrepeated studies and knowledge of both publication comparisons before choosing LightGBM. |
+| D2 | Not fully. | Adds the exclusive retention claim “Kept only for the purity-subtracted comparisons.” | **FAIL:** The section identifies purity-subtracted comparisons but does not establish this exclusive disposition of the earlier **central value and covariance**, particularly the covariance. |
+| D3 | Yes. | No substantive addition, reading “Not rebuilt” as not replaced by the refined configuration. | **PASS:** The section retains configuration (a) for this result, dates its production before the bias discovery and refinement, and separately assigns the sixteen-cell result to (e). |
+
+**Did a disclosure of a choice made after results were seen disappear?** No. Both remain printed: LightGBM was chosen “after both comparisons with the publication were known,” and the rebuilt result was adopted “after that distance was known.”
+
+**Are D1–D3 supported by the section’s own printed text?** D1: yes. D2: only partially—the exclusive retention claim is unsupported. D3: yes, as a statement of configuration and chronology, rather than a causal explanation for retaining the older result.
+
+Failures: C1, C2, C3, C4, C5, D2.
+
+OVERALL: FAIL

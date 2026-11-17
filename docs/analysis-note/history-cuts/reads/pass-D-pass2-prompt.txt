@@ -1,0 +1,12 @@
+You are checking a set of small edits to a HEP technical note for MEANING only (not style, not the physics). Files here:
+- old_<file>.tex and new_<file>.tex for eight files; each edit is one phrase or sentence (LaTeX; % lines are source comments).
+- cutlog.md: rows Q1-Q9 (stale cross-references, a cut orphaned clause, process words), each with old text, new text and its support.
+- records.txt: the body passages and records the rows cite (B1-B6, R1-R4), the director's classification (R5), and the answer of pass 1 of this read.
+
+The adopted rule, verbatim: "History stays in the note only if removing it would change a reader's understanding of the reported object, its reproducibility, its evidential independence or its limitations. Everything else goes to the ledger. Each 'fixed before' names its object, and 'declared' alone is replaced." In this project "declared" means specified before the run; "specified" without timing is a method use.
+
+QUESTION 1. For each row Q1-Q9: does the new text say anything its support does not, or change meaning (strengthened, weakened or widened claim, lost qualifier, wrong referent or pointer, new or changed number)? In particular: Q1, does the new pointer reach the diagnostic the sentence relies on (B1 vs B2)? Q7, is the new timing supported by B3 for the same object? Q8, is "eight" right (B6), and is anything a reader needs lost with the numbers? Q9, is the reworded construction (simulated world, denominator, the stopping rule, the counts, the stop's scope) supported by R1-R4 (R3 is the amendment in force when stage 1 ran; pass 1 lacked it), with no qualifier lost (the stop says nothing about coverage in either direction; the cause is not established)? For Q6b and Q6c, the director has classed both table cells as method uses (R5); judge whether, under that classification, anything other than the timing changes, and say separately whether you still see a timing loss a reader would need. Give each row PASS or FAIL with one sentence; quote the text when you object.
+
+QUESTION 2. Classify each removed item (Q3's clause; Q8's control numbers; Q9's "fail-closed", "specified draw", "natures' composite denominator" and "specified composition of the natures") as NEEDED or LEDGER under the rule; a NEEDED item lost is a FAIL.
+
+End with one line: "OVERALL: PASS" or "OVERALL: FAIL", followed by the list of FAILs.

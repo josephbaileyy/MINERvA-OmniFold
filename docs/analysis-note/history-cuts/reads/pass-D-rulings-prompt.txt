@@ -1,0 +1,9 @@
+You are checking four small items in a HEP technical note for MEANING only (not style, not the physics). Files: old_/new_ pairs for app_provenance, sec_pet_campaigns and app_release (LaTeX; % lines are comments); sec_fived16.tex (unchanged; row Q11 concerns its line 182); cutlog.md (rows Q10-Q13); records.txt (B1-B2, R1-R4).
+
+The adopted rule, verbatim: "History stays in the note only if removing it would change a reader's understanding of the reported object, its reproducibility, its evidential independence or its limitations. Everything else goes to the ledger. Each 'fixed before' names its object, and 'declared' alone is replaced."
+
+QUESTION 1. For each row: does the new text say anything its support does not, or change meaning (strengthened, weakened or widened claim, lost qualifier, wrong referent or pointer, new or changed number)? For Q11, is "fixed in advance" at sec_fived16.tex:182 a property of the construction rather than a timing claim needing a named object? For Q13, does the new paragraph (a) keep the stored field and its value, (b) avoid inferring or implying a resolution of the acceptance question, (c) state the note's treatment accurately against B1, and (d) is "no later record decides it" supported by R2? Give each row PASS or FAIL with one sentence; quote the text when you object.
+
+QUESTION 2. Classify each removed or replaced phrase NEEDED or LEDGER; a NEEDED item lost is a FAIL.
+
+End with one line: "OVERALL: PASS" or "OVERALL: FAIL", followed by the list of FAILs.

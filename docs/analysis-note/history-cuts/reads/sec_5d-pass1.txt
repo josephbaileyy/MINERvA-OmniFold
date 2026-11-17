@@ -1,0 +1,17 @@
+# sec_5d meaning read, pass 1: codex-school gpt-6.1-sol, high, read-only; prompt: PROMPT-two-question.txt plus a records.txt line (excerpts of the cited records and of sec_fived16.tex:279, :287)
+Question 1. Under the stated no-strengthening test, evidence supporting a new timing assertion does not make it equivalent to the old wording.
+
+| Row | Verdict | Reason |
+|---|---|---|
+| F1 | FAIL | “Declared before it ran” adds temporal priority absent from “a declared probe”; the records’ separate bindings and amended full-run declaration do not make those expressions equivalent. |
+| F2 | FAIL | “Declared before it ran” strengthens “a declared study” with a before-execution assertion, although the record’s “Nothing has run” supports that added assertion. |
+| F3 | FAIL | “Declared before it ran” adds timing for the coverage test, while “fixed before that stage ran” asserts fixation rather than merely advance declaration, even though the recorded chronology supports the stage-rule timing. |
+| D8 | PASS | The row accurately summarizes the stabilization probe, its unsuccessful outcome and the unchanged estimator without claiming that it tested the data’s spread. |
+| D9 | PASS | The row preserves the deterministic variant’s failed futility test, invalid deformation, verdict independence and absence of a frequentist coverage claim. |
+| D10 | PASS | The row faithfully summarizes the staged test at two tunes described in the supplied other-section excerpt, including its first-stage stop and absence of a coverage result. |
+
+Question 2. There are **no removed or shortened printed items in the section** to classify as NEEDED or LEDGER: the diff contains only the three timing substitutions. The appendix summaries supplement the retained body accounts. **No NEEDED item was lost.**
+
+No disclosure of a choice made after results were seen disappeared. In particular, the section still states that the null bound was not fixed before covariance production, that the covariance fails its specification, and that the note nevertheless uses it.
+
+OVERALL: FAIL — Q1: F1, F2, F3; Q2: no lost NEEDED items.

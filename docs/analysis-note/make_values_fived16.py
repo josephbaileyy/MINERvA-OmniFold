@@ -85,11 +85,23 @@ READOUTS = {
     # the quadrant sums against the adopted 2D result (DECISION-20261102-joseph-quadrant-sentence-sec4-and-validations.md
     # item 1): step C-R's bound rule (FD-GENCMP-AMENDMENT-E-REPORT.md sec. 3.2) and GENCMP X's cross-covariance test
     # (FD-GENCMP-X-REPORT.md sec. 1). Each is computed once, from the reported matrix, so both arms read the same files
-    "cr": (f"{FD}/fd/gencmp-e/c-r/overlap_refined.json", "f1f2fb78"),
-    "xk": (f"{FD}/fd/xcov/run/k/k.json", "f3dc2a34"),
+    # cr under C_new (the director's XCOV ruling and approval of 2026-11-16): #1169's g2r arm, the same command on route A's
+    # Q_R (fd/receipts-cov2d/g2r/cr/README.md; run/node/out.sha256.txt lists it). Before, GENCMP step C-R on partc-r2's
+    # Q_R: fd/gencmp-e/c-r/overlap_refined.json (f1f2fb78)
+    "cr": (f"{FD}/fd/receipts-cov2d/g2r/cr/run/node/g2r/overlap_refined.json", "0734cf4a"),
+    # xk under C_new (the director's XCOV ruling, 2026-11-16): #1170's `k --products g2r`, GENCMP X step K on COV2D-G2R's
+    # products (fd/receipts-cov2d/g2r/xk/README.md; run/node/out.sha256.txt lists it; its control reproduced f3dc2a34 byte
+    # for byte). Before, step K as it ran: fd/xcov/run/k/k.json (f3dc2a34)
+    "xk": (f"{FD}/fd/receipts-cov2d/g2r/xk/run/node/run/k/k.json", "204e4c89"),
     # the run-period diagnosis's readout (FD-RPD-DECLARATION.md sec. 5; DECISION-20261104-joseph-rpd-sentence.md item 2),
     # computed once from the per-playlist unfolds, so both arms read the same file
     "rpd": (f"{FD}/fd/receipts-rpd/run/readout/fd_rpd.json", "c0b06cfd"),
+    # LL5D, the second five-observable coverage test (ported 2026-11-16 from the paper branch's make_values_fived16.py at
+    # draft/methods-short-20261109 037431430, same paths and pins; ll5d_port_values below): its readout (#1157; job
+    # 61272425; nd-unfolding/ll5d_b.py readout_reading) at each truth, and its declaration (text)
+    "ll5dg18": (f"{FD}/fd/receipts-ll5d/readout/node/readout-g18.json", "7bd6d390"),
+    "ll5dar23": (f"{FD}/fd/receipts-ll5d/readout/node/readout-ar23.json", "5b3fbbf5"),
+    "ll5ddecl": (f"{FD}/LL5D-DECLARATION.md", "6748d418"),
 }
 # the committed readouts without the run-period block, for the "-nopl" keys
 NOPL_READOUTS = dict(READOUTS, **{
@@ -141,7 +153,7 @@ def paper_prec(k, x):
 FIGURES = {"fd_g_fig_ratio.pdf": ("fd/gencmp-e/rerun1/chain/chdefs/with/figures-a2", "6214ed78"),
            "fd_g_fig_modes.pdf": ("fd/gencmp-e/rerun1/chain/chdefs/with/figures-a2", "0d6fe57c")}
 # the readouts that are text receipts, not JSON
-TEXT_READOUTS = {"gprobe", "e2sens", "s1code"}
+TEXT_READOUTS = {"gprobe", "e2sens", "s1code", "ll5ddecl"}
 CELLS = [f"R{i:02d}" for i in range(16)]
 BLOCK = {"stat": "statistical", "interaction": "interaction", "flux": "flux", "detector": "detector",
          "lateral": "lateral", "normalization": "normalization", "seed": "training seed", "C_resp": r"$C_{\mathrm{resp}}$",
@@ -181,7 +193,9 @@ LISTED_CLAIMS = [
     ("sec_fived16.tex", "The fake-data bias therefore exceeds the stated thresholds", {"kind": "both"}),
     ("sec_fived16.tex", "so the GiBUU comparison carries that limitation", {"kind": "both", "family": "gibuu"}),
     ("main_paper.tex", "at a GiBUU-like truth and at a synthetic momentum-transfer tilt find", {"kind": "count", "gibuu": 1, "also": ["q3"]}),
-    ("main_note.tex", "At a GiBUU-like truth and a synthetic momentum-transfer tilt", {"kind": "count", "gibuu": 1, "also": ["q3"]}),
+    # main_note.tex: the abstract sentence re-declared when the note was reframed and its fake-data sentence resynced to the
+    # paper's (note round 1, N1 + N6; DECISION-20261108-joseph-note-framing-and-estimator-dependence.md, #947)
+    ("main_note.tex", "Fake-data studies at a GiBUU-like truth and at a synthetic momentum-transfer tilt find", {"kind": "count", "gibuu": 1, "also": ["q3"]}),
 ]
 
 
@@ -518,6 +532,13 @@ def quadrant_values(d):
         v[f"cr-{n}-nopl-reading"], v[f"cr-{n}-nopl-rhostar"] = word[o["outcome"]], f"{o['rho_star']:.4f}"
         # "agree" is |d| within the any-correlation band (rho* above 1); "agree below a correlation", rho* at most 1
         assert (t["outcome"] == "agree") == (t["rho_star"] > 1) and (o["outcome"] == "agree") == (o["rho_star"] > 1)
+    # sec_fived16.tex :47 names the readings by hand: "All four agree, QA at every rho and the others below correlations of
+    # cr-QC-rhostar (QC) to cr-QB-rhostar (QB)". Guard each named choice, so a readout that changes one stops the run
+    oc = {n: q[n]["2D"]["outcome"] for n in Q}
+    assert oc["QA"] == "agree" and all(oc[n] == "agree below a correlation" for n in ("QB", "QC", "QD")), \
+        "sec_fived16 :47's readings changed: QA at every rho, the others below a correlation"
+    rs = {n: q[n]["2D"]["rho_star"] for n in ("QB", "QC", "QD")}
+    assert min(rs, key=rs.get) == "QC" and max(rs, key=rs.get) == "QB", "sec_fived16 :47's rho* range (QC to QB) changed"
     # the paper: "the sums differ by -1.5 to +0.7 per cent"
     pct = [q[n]["2D"]["d_pct"] for n in Q]
     assert min(pct) < 0 < max(pct), "the paper prints a signed range of the quadrant differences"
@@ -575,6 +596,8 @@ def quadrant_values(d):
         "a printed bound is not a bound: chi2 <= x-chi2-hi and p >= x-p-min must hold"
     zmax = max(abs(z) for r in ("r0", "r1") for z in p[r]["z"])
     assert zmax < 1, "the paper says no quadrant lies beyond one standard deviation"
+    # sec_fived16.tex names where it lies: "the largest |z| is x-zmax, in QC at r = 1"
+    assert abs(p["r1"]["z"][Q.index("QC")]) == zmax, "the largest |z| is no longer QC's at r = 1, as sec_fived16 says"
     v["x-zmax"] = f"{zmax:.3f}"
     return v
 
@@ -922,6 +945,10 @@ def values(d, arm="with"):
     assert len(ext) == 3 and v["g-gibuu-total-ndf"] == "8" and "tune" not in ext
     v["g-ext-chi2int-min16"] = str(min(int(v[f"g-{k}-total-chi2int"]) for k in ext))
     v["g-ext-chi2int-max16"] = str(max(int(v[f"g-{k}-total-chi2int"]) for k in ext))
+    # F16-1 (2026-11-16): the ES prints this range "with NuWro and GiBUU on carbon" (the paper's primary comparison); it
+    # is the same range with NuWro's carbon chi2 in place of the CH one, since NuWro sets neither end
+    assert int(v["g-ext-chi2int-min16"]) < int(v["g-nuwro-carbon-total-chi2int"]) < int(v["g-ext-chi2int-max16"])
+    assert int(v["g-ext-chi2int-min16"]) < int(v["g-nuwro-total-chi2int"]) < int(v["g-ext-chi2int-max16"])
     # 3D, the flux-correlation bootstrap (FD-FLUX-BOOT-REPORT.md; DECISION-20261027 limitation plan item 3). Under
     # FD-FLUX-BOOT-BINDING ruling 2 only the correlation variant's 16-84% percentile band of the total chi2 may be
     # described, beside Stage G's chi2 and the offset (median - chi2), as estimation scatter given these universes under
@@ -1048,6 +1075,71 @@ def values(d, arm="with"):
     assert rv["verdict"] == "INCOMPLETE" and rv["passing"] == [] and rv["n_decisive"] == len(rv["per_config"])
     assert all(x["leg_b_departures"] == 0 for x in rv["per_config"].values())
     v["r10-nconfig"] = str(rv["n_decisive"])
+    v.update(ll5d_port_values(d))
+    return v
+
+
+# LL5D (ported 2026-11-16, DECISION-20261116-joseph-paper-batch.md items 14 and 24; the coordinator's go): only the
+# keys sec_fived16.tex's LL5D paragraph prints, computed as the paper branch's make_values_fived16.py computes them
+# (draft/methods-short-20261109 037431430: ll5d_verdicts' class mapping and magnitude clause, the ll5d-ntoys and
+# ll5d-cellres lines of its declaration-text values, and ll5d_repair_words, verbatim in substance). No readout changes.
+# check_ll5d_port.py compares every key here with the paper branch's values_fived16.tex.
+LL5D_PORTED = ("ll5d-a1a2-keys", "ll5d-a1a2-at", "ll5d-ntoys", "ll5d-cellres", "ll5d-njoint-min", "ll5d-njoint-max",
+               "ll5d-kjoint-all", "ll5d-chi2ndf-min", "ll5d-chi2ndf-max", "ll5d-ar23-minus2-names", "ll5d-ar23-all-names")
+_LL5D_CLASS = {(True, True): "under-joint", (True, False): "under-joint-only", (False, True): "under-cells"}
+# the paragraph's hand-typed reading of each (truth, reading)'s class, asserted against the readout below
+LL5D_PRINTED_CLASS = {("g18", "minus2"): "under-joint-only", ("g18", "all"): "under-joint-only",
+                      ("ar23", "minus2"): "under-joint", ("ar23", "all"): "under-joint"}
+
+
+def _ll5d_cells(cs):
+    return cs[0] if len(cs) == 1 else ", ".join(cs[:-1]) + " and " + cs[-1]
+
+
+def ll5d_repair_words():
+    """The repair's two precisions, from amendment A1a.2's own statement of the defect and the fix
+    (LL5D-AMENDMENT-A1A2.md :11-13, :59-60), asserted present there (the paper's ll5d_repair_words)."""
+    a = (ROOT / f"{FD}/LL5D-AMENDMENT-A1A2.md").read_text()
+    assert "is float64 and the bank's tdw is float32" in " ".join(a.split())
+    assert "rounds both sides' key columns to float32" in " ".join(a.split())
+    return {"ll5d-a1a2-keys": "float64 and float32", "ll5d-a1a2-at": "float32"}
+
+
+def ll5d_port_values(d):
+    """LL5D's printed keys from the two pinned readout records and the pinned declaration text."""
+    v, per, nj, cn, ks = {}, {}, [], [], set()
+    for t in ("g18", "ar23"):
+        x = d["ll5d" + t]
+        assert x["schema"] == "ll5d-b/1" and x["step"] == "readout" and x["truth"] == t, (t, x["schema"], x["step"])
+        assert set(x["evaluations"]) == {f"{t}/all", f"{t}/minus2"} and x["clipcheck_sha256"].startswith("9632540e")
+        for r in ("minus2", "all"):
+            e = x["evaluations"][f"{t}/{r}"]
+            assert x["verdicts"][f"{t}/{r}"] == e["verdict"] and all(q["passes"] for q in e["reading_rule"].values())
+            g = e["grade"]
+            assert g["ndf"] == 16 and len(g["cell_flag"]) == len(g["counts"]) == len(g["k_cell"]) == 16
+            fl = [f"R{c:02d}" for c, f in enumerate(g["cell_flag"]) if f]
+            assert all(g["counts"][c] <= g["k_cell"][c] for c, f in enumerate(g["cell_flag"]) if f)
+            assert g["joint_flag"] == (g["joint_count"] <= g["k_joint"])
+            if e["verdict"] == "COVERS":
+                assert not g["joint_flag"] and not fl
+                per[(t, r)] = "covers"
+            else:
+                assert e["verdict"] == "UNDER-COVERS", e["verdict"]
+                per[(t, r)] = _LL5D_CLASS[(bool(g["joint_flag"]), bool(fl))]
+            if t == "ar23":
+                v[f"ll5d-{t}-{r}-names"] = ("cell " if len(fl) == 1 else "cells ") + _ll5d_cells(fl) if fl else "none"
+            nj.append(g["joint_count"]); cn.append(g["chi2_mean_over_ndf"]); ks.add(g["k_joint"])
+    assert per == LL5D_PRINTED_CLASS, f"the paragraph's hand-typed classes differ from the readout: {per}"
+    assert len(ks) == 1 and max(nj) <= min(ks), "one joint threshold, every reading at or below it"
+    v["ll5d-njoint-min"], v["ll5d-njoint-max"], v["ll5d-kjoint-all"] = str(min(nj)), str(max(nj)), str(ks.pop())
+    v["ll5d-chi2ndf-min"], v["ll5d-chi2ndf-max"] = f"{min(cn):.1f}", f"{max(cn):.1f}"
+    l5 = d["ll5ddecl"]
+    (res,) = re.findall(r"by §6's per-cell resolution, ([0-9.]+)", l5)
+    v["ll5d-cellres"] = res
+    ((lo, hi),) = re.findall(r"\| toys \(both readings, shared\) \| ([0-9,]+)–([0-9,]+) \|", l5)
+    v["ll5d-ntoys"] = str(int(hi.replace(",", "")) - int(lo.replace(",", "")) + 1)
+    v.update(ll5d_repair_words())
+    assert set(v) == set(LL5D_PORTED), sorted(set(v) ^ set(LL5D_PORTED))
     return v
 
 

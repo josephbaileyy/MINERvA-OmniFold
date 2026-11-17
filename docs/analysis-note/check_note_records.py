@@ -1318,6 +1318,31 @@ def _unlink_cite(path: Path, tag: str) -> None:
     path.write_text(t.replace(old, ""))
 
 
+def _restore_record_fixture(inv: dict, work: Path, ledger: Path) -> None:
+    """Restore the frozen paragraph only in temporary copies used by the plants."""
+    base_paragraphs = [p for p in inv["record_paragraphs"] if _R_ANCHOR in p]
+    history = work / "app_history.tex"
+    chunks = re.split(r"(\n\s*\n)", history.read_text())
+    positions = [i for i, chunk in enumerate(chunks) if _R_ANCHOR in chunk]
+    if len(base_paragraphs) != 1 or len(positions) != 1:
+        raise SystemExit("self-test fixture: expected one base and one current rank paragraph")
+    chunks[positions[0]] = base_paragraphs[0]
+    history.write_text("".join(chunks))
+    old_digest = digest(base_paragraphs[0])
+    # A real correction's binding is stale when its base text is restored for a plant.
+    rows = []
+    for line in ledger.read_text().splitlines():
+        cells = [cell.strip() for cell in line.split("|")]
+        if (
+            len(cells) > 2
+            and re.fullmatch(r"R-(?:EDIT|FIX)-\d+", cells[1])
+            and cells[2] == old_digest
+        ):
+            continue
+        rows.append(line)
+    ledger.write_text("\n".join(rows) + "\n")
+
+
 def _digest_message_check(inv: dict, new: Path, ledger: Path, thin: Counter | None, head: dict[str, str] | None) -> bool:
     """A recorded pointer edit whose row's new digest is the real one with its last hex digit changed must fail with a
     message that prints both digests in full, and they must differ (12-character prefixes printed them as equal)."""
@@ -1327,13 +1352,15 @@ def _digest_message_check(inv: dict, new: Path, ledger: Path, thin: Counter | No
                                                                  "*.fdb_latexmk", "*.out", "*.toc", "*.run.xml",
                                                                  "*.blg", "figures", "archive", "release-package-*",
                                                                  "__pycache__"))
+        led = Path(d) / "digest-message.ledger.md"
+        shutil.copyfile(ledger, led)
+        _restore_record_fixture(inv, work, led)
         hist = work / "app_history.tex"
         hist.write_text(hist.read_text().replace(_R_ANCHOR, _R_POINTER, 1))
         row = _redit_row(inv, _R_POINTER)
         real = row.split("|")[3].strip()
         wrong = real[:-1] + ("0" if real[-1] != "0" else "1")
-        led = Path(d) / "digest-message.ledger.md"
-        led.write_text(ledger.read_text() + "\n" + row.replace(real, wrong) + "\n")
+        led.write_text(led.read_text() + "\n" + row.replace(real, wrong) + "\n")
         got = [f for f in probe_fails(inv, work, led, thin, head) if "is not the row's new text" in f]
         shown = re.findall(r"[0-9a-f]{64}", got[0]) if got else []
         ok = len(shown) == 2 and shown[0] == real and shown[1] == wrong and shown[0] != shown[1]
@@ -1362,6 +1389,11 @@ def self_test(base: Path, new: Path, ledger: Path) -> int:
             led = work / LEDGER if ledger == new / LEDGER else Path(d) / (work.name + ".ledger.md")
             if led != work / LEDGER:
                 shutil.copyfile(ledger, led)
+            _restore_record_fixture(inv, work, led)
+            if not fired and not silent:
+                fixture_failures = probe_fails(inv, work, led, thin, head)
+                if fixture_failures:
+                    failures.append(f"the restored plant fixture is not silent: {fixture_failures[:3]}")
             target = led if fname == LEDGER else work / fname
             text = target.read_text()
             if callable(old):

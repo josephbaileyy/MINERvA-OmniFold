@@ -1,0 +1,23 @@
+# sec_joint meaning read, pass 1: reader codex-school gpt-6.1-sol, high, read-only; prompt sec_joint-prompt.txt, records sec_joint-records.txt (without the amendment-7 excerpt)
+For question 1:
+
+| Row | Verdict and reason |
+|---|---|
+| J1 | PASS — “specified model” preserves the method meaning without adding timing. |
+| J2 | PASS — “specified claim variants” preserves the variants and their role. |
+| J3 | PASS — The six conditions and their scope are unchanged. |
+| J4 | PASS — “specified alternatives” preserves the alternatives, numbers and qualifications. |
+| J5 | PASS — The nuisance model’s contents and missing response band remain unchanged. |
+| J6 | PASS — “specified nuisances” preserves what enters each null distribution. |
+| J7 | PASS — “specified model” preserves the scope of the generator assessments. |
+| J8 | PASS — The procedure fixes the determinism check before it runs, and the resolution places that check before recovery, supporting “fixed before the rerun.” |
+| J9 | FAIL — “fixed before any production pseudo-experiment” is not established by records.txt’s references to the “frozen rule”; the unchanged assertion in §11.3 does not supply the record support your timing criterion requires. |
+| J10 | PASS — “specified before the check was computed” preserves the existing timing, criterion and post hoc qualification. |
+
+There are no new App. I rows for this section.
+
+For question 2, there are **no removed or shortened substantive items** to classify as NEEDED or LEDGER: the actual diff contains only the ten wording substitutions. No NEEDED item was lost. The referee’s proposed item 7 cut was not made: both the counterfactual stopping statement and the limitation on its independent verification remain printed.
+
+**No disclosure of a choice made after results were seen disappeared.** The design exposure, budget adaptation, projection comparison timing, post hoc GENIE observation and post hoc bias check all remain.
+
+OVERALL: FAIL — FAILs: J9; lost NEEDED items: none.

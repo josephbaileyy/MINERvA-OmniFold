@@ -1,0 +1,29 @@
+Fresh codex-school2 exec; gpt-6.1-sol; reasoning high; sandbox read-only.
+Session: 01a1d9dd-d160-7a93-91e2-985714f888a6.
+Prompt: app_release-prompt.txt (verbatim PROMPT-two-question.txt); attached records: app_release-records.txt.
+Inputs: old.tex at 6b9b5be5c, new.tex, cutlog.md, unchanged app_devhistory.tex.
+
+**Question 1 — remaining text**
+
+- **G1 — PASS for the remaining paragraph:** its surviving sentences are unchanged; the deleted RC1 sentence is assessed under Question 2.
+- **G2 — PASS:** “the specified centering variant” preserves the method identity expressed by “the declared centering variant,” without adding timing or changing its referent.
+- **G3 — PASS:** “$g$ was specified as $1$” preserves both the pinned-mask definition and the value $1$, without adding timing.
+- **G4 — PASS:** “without a specified regularization” preserves the regularization requirement, its explanation and the following limitation on significance.
+- **G5 — PASS:** “Unspecified acceptance field” preserves the meaning because the unchanged body retains `acceptance_question: UNDECLARED`, the unresolved decision at projection-build time and the requirement to preserve that field.
+
+There are no new App. I rows for this section.
+
+**Question 2 — removed or shortened items**
+
+- **G1, RC1 replay sentence — LEDGER:** the independent replay concerns an earlier candidate, not RC7, whose own verification and reproduction limits remain explicit; the cut log supplies both the exact base-text pointer and the replay-receipt pointer.
+- **G1, supporting source comment — LEDGER:** this unprinted comment supports only the removed historical sentence and adds no printed qualification.
+- **G2, centering-variant wording — NEEDED, retained:** the centering identity matters to the reported covariance and remains specified in the section.
+- **G3, pinned-mask wording — NEEDED, retained:** the zero-denominator condition and $g=1$ convention matter to reproduction and remain in the section.
+- **G4, regularization wording — NEEDED, retained:** the restriction on inversion and its limitations remain in the section.
+- **G5, acceptance-field heading — NEEDED, retained:** the unresolved acceptance choice and its preservation requirement remain explicit in the section.
+
+No NEEDED item was lost from the printed text.
+
+No disclosure of a choice made after results were seen disappeared: the only removed printed sentence reports an earlier candidate’s replay, and G2–G5 add no timing claim.
+
+OVERALL: PASS — FAILs: none.
