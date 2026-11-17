@@ -25,6 +25,8 @@ for f in sys.argv[2:]:
     b = json.load(open(f"{d}/arm1/capture/family4/{f}.pdf.texts"))["text_overlaps"]
     print(f, len(a), "->", len(b), [o[:2] for o in b])
 PY
-echo "## arm 1 PDFs as installed (figs/), sha256"
-for f in $F; do cmp -s "$A1/$f.pdf" "$N/figs/$f.pdf" && echo "$(shasum -a 256 "$N/figs/$f.pdf")" || echo "MISMATCH $f"; done
+echo "## the installed copies (figs/) against this arm 1 (bytes apart from the date), and their sha256"
+args=(); for f in $F; do args+=("$N/figs/$f.pdf" "$A1/$f.pdf"); done
+"$P" -I "$N/tools/bytes_but_date.py" "${args[@]}"; echo "installed-vs-arm1 rc=$?"
+for f in $F; do shasum -a 256 "$N/figs/$f.pdf"; done
 find "$T" -type f -delete; rmdir "$T"

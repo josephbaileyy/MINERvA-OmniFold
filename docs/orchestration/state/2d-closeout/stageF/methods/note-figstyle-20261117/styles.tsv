@@ -1,3 +1,4 @@
 # Line styles and markers an identity takes where this pass changes one (compare.py --styles). Points only: a sparse-point series keeps linestyle None.
 identity	linestyle	marker
 genie_cv_points	None	v
+genie_cv_legend	-	v

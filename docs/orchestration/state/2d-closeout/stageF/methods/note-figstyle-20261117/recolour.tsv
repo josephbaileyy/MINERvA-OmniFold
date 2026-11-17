@@ -1,4 +1,4 @@
-# Each figure's colours as installed (measured from the arm-0 capture, runs/<family>/arm0/capture) and the note-palette identity each takes. Mapping read from the producers: nd-unfolding/re1/redraw_central_only_p3.py:133-146 (Fig. 19), :210-221 (Fig. 20), :268-273 (Fig. 21); redraw_central_only_p4.py:378-381 (Fig. 22).
+# Each figure's colours as installed (measured from the arm-0 capture, runs/<family>/arm0/capture) and the note-palette identity each takes. Mapping read from the producers: nd-unfolding/re1/redraw_central_only_p3.py:133-146 (Fig. 19), :210-221 (Fig. 20), :268-273 (Fig. 21); redraw_central_only_p4.py:378-381 (Fig. 22). Fig. 25 (eavailW_band): 3d-unfolding/genie/overlay_eavailW_band.py:221-222 MPL_COLOR, where GENIE+MEC is the Tune blue #4C72B0. Fig. 23 (q3_excess_projection): nd-unfolding/q3_excess_projection.py:150, the E_avail marginal of the unfolded / prior ratio in firebrick; its black (the q3 marginal and the colour bar's dividers share it) is left as drawn. Fig. 16 (eavail_spectrum): every drawn series is the unfolded result (its step, error bars and bar ends), so black and #C44E52 both take this work. Fig. 1 (control_plots): nd-unfolding/make_control_plots.py, legend "MC signal (MnvTune v1)" (#4C72B0) and "MC background" (#DD8452, grey in the note palette); the data and the MC stat band stay.
 figure	before_rgb	identity
 generators_vs_unfolded_band_central	#000000	this_work
 generators_vs_unfolded_band_central	#C44E52	genie_cv
@@ -17,3 +17,13 @@ compare_mec_eavail_central	#CFE3FF	genie_cv_fill
 compare_mec_eavail_central	#D62728	genie_mec
 ascencio_fullcov_compare_central	#000000	this_work
 ascencio_fullcov_compare_central	#FF0000	published
+eavailW_band	#000000	this_work
+eavailW_band	#C44E52	genie_cv
+eavailW_band	#4C72B0	genie_mec
+eavailW_band	#2CA02C	nuwro
+eavailW_band	#9467BD	gibuu
+q3_excess_projection	#B22222	this_work
+eavail_spectrum	#000000	this_work
+eavail_spectrum	#C44E52	this_work
+control_plots	#4C72B0	tune_v1
+control_plots	#DD8452	mc_background

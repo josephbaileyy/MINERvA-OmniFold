@@ -12,7 +12,9 @@ and the director assigned this pass to cov2d.
 | family | figures | state |
 |---|---|---|
 | 4 | 19, 20, 21, 22 | installed |
-| tier 1, others | 25, 23, 1, 5, 16, 26–29 | to do |
+| band, q3, spec, ctrl | 25, 23, 16, 1 | installed |
+| stat | 5 | unchanged (the director's ruling: the palette changes nothing, and its label stays) |
+| gbdt | 26–29 | arm 0 byte-equal; the titles to do |
 | tier 1b | 30, 34, then 31 | to do |
 | tier 2 | 8, 7, 9–10, 6, 11–14 | to do (the inputs were fetched on 2026-11-17) |
 
@@ -43,6 +45,23 @@ and the director assigned this pass to cov2d.
 - **Arm 1** draws in the note palette. Its captured data artists must equal arm 0's on the colour- and style-free
   hash, and each colour and line style must be exactly what the tables map. That check is fig-restyle-20261031's
   `compare.py --recolour --palette --styles --restyle`, unchanged.
+- **The edits:** `tools/palette_lib.py` makes every edit the tables declare, and nothing else.
+  - **Tables:** `recolour.tsv`; `restyle.tsv` with `styles.tsv`; `hatches.tsv`; and `text_fixes.tsv`, whose
+    figure-specific text replacements must each be found.
+  - **Text:** the note's notation (E_{\rm avail}, p_∥).
+  - **Legends:** frameless. One is rebuilt from its artists where every entry has one; otherwise its own keys are
+    recoloured in place. A rebuilt legend keeps its anchor and transform, and an entry lost anywhere stops the run.
+  - **Power of ten:** the y axis's power of ten goes into its label. The label is tried on two lines, then on one,
+    and kept only if it fits the canvas; otherwise the factor stays as a math-text ×10ⁿ.
+- **Recipes:**
+  - `tools/palette_run.py` runs an unchanged producer and applies the edits once per figure, before its first save.
+  - `tools/palette_family4.py` does the same on the family-4 pickles.
+  - Not one producer byte changes.
+- **Running the arms:** `tools/arms.sh` runs both arms of one figure and its checks: bytes_but_date, raster, compare,
+  and text overlaps. Each arm must capture at least one figure, and the same files, because compare.py alone passes
+  on none.
+- **Installing:** `tools/install_palette.py` copies an arm-1 PDF to `figs/` and the note. It comments out the old
+  install line and adds an `install_palette_fig` line.
 - **Capture:** `tools/capture_palette.py` records each saved figure: the full `artists.py` index, with colours and
   styles, as `compare.py` reads it, plus texts and capture_any.py's text overlaps.
 - **Environments:** venvs built for this pass on the laptop with `uv`, run under `env -i` with an empty HOME, all on
@@ -71,3 +90,43 @@ and the director assigned this pass to cov2d.
   - Fig. 22's Ascencio point is a black open square.
 - **Install:** `make_figures.sh` installs the four from `figs/` (`install_palette_fig`). Their print-style lines stay
   as comments.
+
+## Figs. 25, 23, 16 and 1 (installed)
+
+Each was run with `tools/arms.sh` under matplotlib 3.10.8, with the fake-ROOT stand-in its family used on 11-13.
+Arm 0 reproduces the file installed at `2fe070fec` (EQUAL-BUT-DATE, 0 px), and arm 1's compare passes. Each
+`runs/<family>/CHECKS.txt` ends with the installed copy against that arm 1.
+
+- **Fig. 25 (`band`):** `overlay_eavailW_band.py --from-arrays …/family5/dumps/band_arrays.npz --print-style`.
+  - Its GENIE+MEC was the Tune blue (`MPL_COLOR`); it is now the paper's orange.
+  - GENIE CV is pink down-triangles, and the data are this work's red.
+  - The figure legend is rebuilt at its anchor.
+- **Fig. 23 (`q3`):** `q3_excess_projection.py --from-arrays …/q3_arrays.npz --print-style`.
+  - The axis labels are in math, with units in parentheses.
+  - The ratio reads "unfolded / GENIE prior", as the producer computes (its docstring: the unfolded counts over the
+    GENIE prior). The director accepted this over the plan's "Unfolded / Tune v1".
+  - The E_avail marginal (firebrick) takes this work's red. Black is left as drawn, because the colour bar's dividers
+    share it.
+  - The text-overlap count rises from 23 to 29. Every added pair is the longer y label against the heatmap's in-cell
+    numbers, which the colour bar separates in the drawn figure.
+- **Fig. 16 (`spec`):** `plot_eavail_spectrum.py --from-arrays …/family4/dumps/eavail_spectrum_arrays.npz
+  --print-style`.
+  - All of it is this work, now in red.
+  - ×10⁻³⁸ is in the y label, and the catch bin reads 6.74×10⁻⁴¹.
+- **Fig. 1 (`ctrl`):** `make_control_plots.py --from-arrays …/family1b/dumps/control_plots_ext_arrays.npz
+  --extended-display --print-style`.
+  - The MC signal (MnvTune v1) is Tune blue, and the MC background is grey.
+  - The same run draws Fig. 3 (`migration_resolution`, which the primer shares). It is not reinstalled, by the
+    director's ruling.
+- **Not changed, by the director's rulings:**
+  - Fig. 5: hRel2D's "std/mean" could not be traced to f_CV in the producer of the installed dump.
+  - Fig. 3.
+
+## CI: three inherited failures
+
+The record-checks steps at this branch's commits pass, apart from three that fail identically at the base
+`2fe070fec`. That was rerun in a clean worktree on 2026-11-17, and the director approved the push with them
+documented:
+- `test_check_sec4_receipts.py` expects the old partc-r2 budget path. Its two files are byte-identical at the base.
+- `check_note_records.py --self-test`: "40 of 41 planted defects".
+- `reflow_tex.py --note --check`: 12 sources.
