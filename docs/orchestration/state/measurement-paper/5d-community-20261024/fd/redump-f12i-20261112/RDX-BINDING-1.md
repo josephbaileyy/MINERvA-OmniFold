@@ -248,3 +248,57 @@ but no uproot, and the smoke's python stub had answered the connect's `import up
    - Any STOP comes to the director unrepaired.
 
 Nothing is submitted, deposited or tagged.
+
+## Binding 1, addendum J4: the c2 and m pin-read fix (director, 2026-11-17)
+
+**Binds** the c2/m fix, as merged in PR #1195 at **M_RDXD = `9a333f9f6ca9fb339bbb0734767109de217da5d2`**. The audited
+head is `aba25e5f`. The director re-hashed each file at both commits, and each is byte-identical:
+
+| file | sha256 (prefix) |
+|---|---|
+| `nd-unfolding/rdx/rdx_connect.sh` | `52ad6a0edf92b4ed` |
+| `nd-unfolding/rdx/rdx_connect_launch.sh` | `256003a1b997a57d` |
+| `nd-unfolding/rdx/smoke_rdx_stages.sh` | `916473e546c60b13` |
+| `nd-unfolding/rdx/sbatch_rdx_evloop.sh` (unchanged from J2) | `7ce210dcab5909fa` |
+| `nd-unfolding/rdx/setup_salloc_env.exports` (unchanged from J2) | `e0d3b70088500bdc` |
+
+These supersede J3's digests for the connect and the launcher. The job deploy stays at M_RDXS `ad0535c4`. No checker,
+job script or deploy module changes.
+
+**Why:** tier3-design read the c2 packet and found the defect before any c2 connect.
+- c2's ZERO_LOOPS read and m's MP1_ZERO read imported the deploy's `fd_ct_period_inputs.py` under `/usr/bin/python3`.
+  That interpreter is Python 3.6.15 on the login nodes, and the module's `from __future__ import annotations` needs 3.7.
+- A read-only probe on login27 (2026-11-17T01:17:20Z; `code4/probe/`) confirmed it. Under SYSPY the import raises
+  SyntaxError at :37. Under CHKPY it returns the 1A pin `2745e38c…`.
+- c2 would therefore have stopped at its first playlist every time.
+
+**What the director checked:**
+- **coverage-5b-audit's clearance** at `aba25e5f`, with no blockers:
+  - SYSPY runs only `rdx_paths.py` and `rdx_cap.py`, at :66, :70, :74, :116, :149, :198 and :215, never with `-c`;
+  - c2's policy covers its 24 reads;
+  - the PASS-path smoke uses the real `rdx_paths stage`;
+  - each stub past chkenv was checked against the real code;
+  - tests 21/21, mutants 47/47 killed, smoke exit 0;
+  - the auditor's own SYSPY mutant stops in the smoke.
+- **l1:** c2's outputs are `*_<PL>_pl.json`, so c1's records are not overwritten.
+- **l2:** a policy check runs over c2's reads.
+- **Lows for the follow-up list (not blocking):**
+  - p1: the policy list's completeness; the check is lexical.
+  - p2: a 3.6-grammar parse test of `rdx_paths.py` and `rdx_cap.py`.
+  - p3: the smoke's pin module is a stand-in.
+  - p4: the aligns' RSS on a login node is unmeasured. The 3.94 GB in the audit's first note was the walk probe's,
+    not an align's. c1 ran the 1A align on login27 without incident.
+    <!-- absence-ok: a risk note (no record measures the aligns' RSS), per coverage-5b-audit's corrected p4; not a result claim -->
+
+**Rulings:**
+1. **Every later RDX connect uses M_RDXD's launcher and connect.** J1's order, cap and fences, J2's ruling 2 and J3's
+   ruling 1 are otherwise unchanged.
+2. **The c2 go** is given at this addendum, for one run:
+   `bash rdx_connect_launch.sh <new empty dir> <loginNN> c2 ad0535c4a62ac0a20711a4a00f2266ddaf926d7c`.
+   - The launcher and connect come from M_RDXD, with their sha256 checked first.
+   - Every fence and other lane's hold is checked before the connect.
+   - The session log records each align's peak RSS, if the checker prints it.
+   - Any STOP comes to the director unrepaired.
+3. **m** (the merge submit) keeps its own go, after c2's PASS receipt is merged.
+
+Nothing is submitted, deposited or tagged.
