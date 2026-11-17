@@ -1,4 +1,5 @@
-\section{Uncertainty quantification: constructing the covariance blocks}
+% COMBINED-PLAN sec. 3(a): titles in sentence case that name the product (DECISION-20261117b; the director's go, 2026-11-17).
+\section{Uncertainty of the two-dimensional cross section}
 \label{sec:systematics}
 
 The uncertainty budget sums four blocks: systematic universes, statistical bootstraps, ML training-seed variation, and a run-period block (\S\ref{sec:uq-combine}). Their independence is an assumption: distinct random streams and physics sources do not by themselves establish it after unfolding. The universe, statistical and training-seed blocks are computed with the LightGBM estimator of the quoted 2D central value (\S\ref{sec:method-config}); the universe and statistical blocks use its training seed (seed~42), and the training-seed block uses five seed settings that include it. A 3D budget built with the analogous 3D grid construction is not quoted, and no 4D uncertainty magnitude is reported (\S\ref{sec:4d}). App.~\ref{app:statmethods} gives the full mathematics and worked examples using the reported numbers (N-D declarations in App.~\ref{app:statmethods-nd}). The resulting budget and its agreement with the published total are in \S\ref{sec:results-uq}; what the covariance includes and omits, and the conventions it follows, are in \S\ref{sec:uq-2d-scope}.
@@ -299,7 +300,7 @@ One systematic category provided in the input products, \texttt{NormDISCC}, is i
 % §S5 universe row (D10 KI-93).
 % Search: May sweep; May input; truth-input mismatch; background-template statistics; Rvp1pi @ ddf16f10
 
-\subsection{What changes for the higher-dimensional products}
+\subsection{Which uncertainty pieces exist in three to five dimensions}
 \label{sec:uq-higherdim}
 Two event-loop modes supply the lateral bands. The single-pass event loop, which writes every universe in one pass, stores each lateral universe's shifted observables only for events that pass the selection at the central value, so it omits events that the shift moves into the selection. Re-selected event loops re-run the selection with one lateral universe active at a time, so they include these migrations. For the five kinematic bands (beam angle BeamAngleX/Y, muon resolution MuonResolution, and the muon energy scales Muon\_Energy\_MINERvA/MINOS), the re-selected event loops supply the lateral-band block of $C_Z$; higher-dimensional products built from the single-pass shifted observables are not used for any quoted uncertainty.
 % Cutdown 2026-11-16 (history-cuts/sec_systematics.md, rows K1-K3): the lateral-band block's numbers and the ML term of C_Z moved to the records document (app_release_records.tex, the construction and audit record of the (E_avail,W) covariance); the one-sentence paragraph on the CV-centered variant cut, its content at sec:eavailw-adopted.

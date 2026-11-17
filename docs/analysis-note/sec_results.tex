@@ -1,4 +1,5 @@
-\section{Results}
+% COMBINED-PLAN sec. 3(a): the only section called "Results" holds only the 2D result.
+\section{Two-dimensional muon cross section}
 \label{sec:results}
 
 
@@ -125,7 +126,8 @@ The largest band is the flux, as in the publication (Fig.~\ref{fig:uqbands}), an
     \bottomrule
   \end{tabular}
 \end{table}
-\subsection{Eigenmode analysis of the published-covariance tension, $\chi^{2}=\chiPaper$}
+% COMBINED-PLAN sec. 3(a): the title's number was the one skimmers misread against Fig. fig:pull; it prints in the subsection's first paragraph.
+\subsection{Where the tension with the published covariance lies}
 \label{sec:results-tension}
 With the published uncertainties as a descriptive scale, the central values have a pull standard deviation of $\pullRMS$ (a diagonal-only $\chi^{2}/\mathrm{ndf}$ would be $0.29$), whereas $\chi^{2}$ per bin with the full published covariance is $\chiPaper$. The eightfold increase lies entirely in the off-diagonal structure of the published covariance. It is a difference in \emph{shape}. Normalization does not explain it ($\chi^{2}_{\mathrm{norm}}=0.04$ against $\chi^{2}_{\mathrm{shape}}=465$). The eigenmode decomposition (Fig.~\ref{fig:tension}) spreads it over many modes: the largest has a paper-covariance-standardized component of magnitude $4.7$, and the next nine $3.4$--$3.8$. The 10 smallest-$\lambda$ modes carry \SI{9.6}{\percent} of the total $\chi^{2}$. Of the five largest contributors, two lie in the smallest-$\lambda$ tenth of the spectrum. Restricted to the 73 best-measured directions, $\chi^{2}=136$ ($\chi^{2}/205=0.66$; the divisor is the number of reported bins, not the number of directions kept). Of the six leading modes, the three in the highest-$\pPar$ bins are all poorly determined directions ($\lambda/\lambda_{\max}\lesssim4\times10^{-9}$). The other three are moderate-$\lambda$ modes ($\lambda/\lambda_{\max}$ between $4\times10^{-6}$ and $6\times10^{-5}$) and lie below the highest $\pPar$ bins (Fig.~\ref{fig:tensionmodes}). No single $\pT$ or $\pPar$ band carries more than \SI{15.2}{\percent} of the total. % D2 (crossdoc audit 2026-11-15): per-period-benchmark-20261106/receipts/read/readout.json:61 abs_z 4.746664876937429 (the 4.8 rounded the rounded 4.75, :62); the Supplement prints pp-mode-max, 4.7
 % Revision D' 2026-11-06 (referee reads of D, both ACCEPT; Sonnet and the interpreter: print the raw chi2 and the directions kept): docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/receipts/figs/tension_report.txt:56 prints "1e-04  0.662  73" (chi2/205, modes kept) and no raw truncated chi2. Arithmetic: 0.662 x 205 = 135.7; 0.662 rounds a value in [0.6615, 0.6625), so chi2 is in [135.6, 135.8], 136 at three figures.
