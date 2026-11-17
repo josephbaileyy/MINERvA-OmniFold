@@ -57,7 +57,9 @@ for rid, ruled, resp, sites, action, doc, quote, note in rows:
         print(f"--  {rid:6} {action:8} {sites}  {note[:80]}")
 # The director's standing order: if tab:gen16 is touched at any head, STOP to the director. #981 binds tab-gen16.csv to
 # that label. The table block (from \begin{table to \end{table around the label, raw text) is pinned by sha256.
-GEN16_SHA = "65b02f09daacba487ca8a82ff7cb7553fe0309dd953b834e5b8c454c9bcbf7e2"   # unchanged from 1ccb08c29 to a5e3005fd
+GEN16_SHA = "d41ae276e681fc6477c61ee7ec106ce28f132449f6a01b55ea3dbfde5be2a51d"   # re-pinned at ed2b57a3c (director, 11-16):
+# 697699e0d changed only \scriptsize to \small and added a comment; rows, values, caption, label byte-identical.
+# Before: 65b02f09daacba48..., unchanged from 1ccb08c29 to 0cb2bf172.
 raw = subprocess.run(["git", "show", f"{N}:docs/analysis-note/{DOCS['supplement']}"], capture_output=True, text=True,
                      check=True).stdout
 i = raw.find(r"\label{tab:gen16}")

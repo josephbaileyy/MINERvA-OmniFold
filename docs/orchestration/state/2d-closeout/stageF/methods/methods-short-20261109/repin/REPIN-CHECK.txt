@@ -1,4 +1,4 @@
-#977 head 0cb2bf1722d091616819190e32bfda41d2ec3724; 55 rows
+#977 head 2948bbbca899b80612fc7bc038bfa75a80b6e6b0; 55 rows
 OK  RP01   resource paper      count=1  The sixteen-cell cross section produced from the data is presented sol
 OK  RP02   resource paper      count=1  The held-out-tune tests provide partial evidence on bias at truths hel
 OK  RP02b  resource paper      count=1  The held-out-tune tests are not independent of each other or of $C_{\m
@@ -6,7 +6,7 @@ OK  RP03   resource paper      count=1  The dependence on the prior's generator 
 OK  RP04   resource paper      count=1  The term is constructed from the change in the unfolded data when the 
 OK  RP04b  resource paper      count=1  The model term $C_{\mathrm{model}}$ measures the result's unscaled dep
 OK  RP05   resource paper      count=1  is the sum of four blocks, each from LightGBM unfoldings with the cent
-OK  RP06   resource abstract   count=1  No reported interval has validated coverage
+OK  RP06   resource abstract   count=1  Coverage of the reported intervals has not been validated
 OK  RP07   resource paper      count=1  On this analysis's inputs, OmniFold and binned IBU, the publication's 
 OK  RP07p  code     paper      count=1  On this analysis's inputs, OmniFold and binned IBU, the publication's 
 OK  RP08   resource paper      count=1  C_{\mathrm{rep}}=C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D
@@ -63,7 +63,7 @@ OK  RP39w  resource paper      count=1  In each systematic-universe unfolding, t
 --  RP43   code     B715-730 B1131-1137 B1151-1159 B1235-1242 R4 R332-341  #981 hard-codes PENDING = FD-PRR, LL5D, V-HALF (B715-719) and writes pending/<na
 --  RP44   code     new: a README section, a build check, snapshot/code/  the director's request of 2026-11-16: #981's README gains the Supplement's code-
 --  RP45   code     B55 B1101-1110 B1203-1208 P3-4 R157  #981's README prints each file's table, figure or section number from methods-sh
-OK  GEN16  labels=1 block_sha=65b02f09daacba48
+OK  GEN16  labels=1 block_sha=d41ae276e681fc64
 OK  MACRO  \chiPaper printed 3
 OK  MACRO  \fluxBand printed 0; \fvval{q2d-fluxband} printed 1 (RP42)
 OK  MACRO  \pullRMS printed 1
