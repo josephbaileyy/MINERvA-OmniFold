@@ -27,8 +27,9 @@ for arm in arm0 arm1; do
      PYTHONDONTWRITEBYTECODE=1 PYTHONPATH="$PP" python3 "$N/tools/capture_palette.py" "$C" ${wrap[@]+"${wrap[@]}"} "${args[@]}" \
      > "$O/log.txt" 2>&1) || { echo "FAIL $FAM $arm: rc $? ($(tail -2 "$O/log.txt" | tr '\n' ' '))"; ok=0; }
 done
-inst=$(mktemp); git -C "$W" show "$BASE:docs/analysis-note/figures/$STEM.pdf" > "$inst"
-echo "== $FAM ($STEM): arm 0 against the file installed at $BASE"
+INST=${INSTALLED:-$STEM.pdf}   # the installed file name, when the producer writes another (Figs. 30 and 34)
+inst=$(mktemp); git -C "$W" show "$BASE:docs/analysis-note/figures/$INST" > "$inst"
+echo "== $FAM ($STEM): arm 0 against the file installed at $BASE ($INST)"
 "$P" -I "$N/tools/bytes_but_date.py" "$inst" "$FIGRUN/$FAM/arm0/$STEM.pdf" || ok=0
 echo "raster: $("$P" -I "$R/fig-restyle-20261031/tools/raster.py" "$inst" "$FIGRUN/$FAM/arm0/$STEM.pdf")" || ok=0
 rm -f "$inst"

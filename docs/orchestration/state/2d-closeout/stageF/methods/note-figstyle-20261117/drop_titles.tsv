@@ -1,0 +1,6 @@
+# Figures whose baked-in figure title (suptitle) is removed, its content being the caption's (COMBINED-PLAN.md section 5(b): "Figs. 26-29 lose their baked-in titles"). nd-unfolding/gbdt_model_dependence/analyze.py:388, :441, :465, :526.
+figure
+gbdt_recovery
+gbdt_bias_spread
+gbdt_coverage
+gbdt_prior_response

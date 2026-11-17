@@ -14,8 +14,9 @@ and the director assigned this pass to cov2d.
 | 4 | 19, 20, 21, 22 | installed |
 | band, q3, spec, ctrl | 25, 23, 16, 1 | installed |
 | stat | 5 | unchanged (the director's ruling: the palette changes nothing, and its label stays) |
-| gbdt | 26–29 | arm 0 byte-equal; the titles to do |
-| tier 1b | 30, 34, then 31 | to do |
+| gbdt | 26–29 | installed |
+| cov5d, bkg5d | 30, 34 | pinned: the palette changes nothing; install lines added |
+| tier 1b | 31 | to do |
 | tier 2 | 8, 7, 9–10, 6, 11–14 | to do (the inputs were fetched on 2026-11-17) |
 
 ## The palette and its rules
@@ -47,7 +48,7 @@ and the director assigned this pass to cov2d.
   `compare.py --recolour --palette --styles --restyle`, unchanged.
 - **The edits:** `tools/palette_lib.py` makes every edit the tables declare, and nothing else.
   - **Tables:** `recolour.tsv`; `restyle.tsv` with `styles.tsv`; `hatches.tsv`; and `text_fixes.tsv`, whose
-    figure-specific text replacements must each be found.
+    figure-specific text replacements must each be found; and `drop_titles.tsv`.
   - **Text:** the note's notation (E_{\rm avail}, p_∥).
   - **Legends:** frameless. One is rebuilt from its artists where every entry has one; otherwise its own keys are
     recoloured in place. A rebuilt legend keeps its anchor and transform, and an entry lost anywhere stops the run.
@@ -122,11 +123,39 @@ Arm 0 reproduces the file installed at `2fe070fec` (EQUAL-BUT-DATE, 0 px), and a
   - Fig. 5: hRel2D's "std/mean" could not be traced to f_CV in the producer of the installed dump.
   - Fig. 3.
 
-## CI: three inherited failures
+## Figs. 26–29 (`gbdt`, installed)
 
-The record-checks steps at this branch's commits pass, apart from three that fail identically at the base
-`2fe070fec`. That was rerun in a clean worktree on 2026-11-17, and the director approved the push with them
-documented:
+- **Recipe:** `nd-unfolding/gbdt_model_dependence/analyze.py --out <dir> --print-style`, under matplotlib 3.11.2.
+- **Arm 0** is byte-equal to the four files installed at `2fe070fec` (EQUAL; these PDFs carry no date).
+- **Arm 1's edit** is `drop_titles.tsv`. Each figure's baked-in figure title (the producer's suptitle,
+  analyze.py:388, :441, :465, :526) is cleared, its content being the caption's. Every axes is stretched upward into
+  the freed height, so no blank band is left.
+- **Colours unchanged:** the series are truths and studies (D1, q3 stress, W1, W3; nominal, W2), not palette
+  identities.
+- **Checks** (`runs/gbdt/CHECKS.txt`):
+  - the compare passes;
+  - text overlaps go 1→0 in gbdt_recovery and stay 0→0 in the other three;
+  - the installed copies equal a fresh arm 1 exactly.
+
+## Figs. 30 and 34 (pinned)
+
+- **Recipes:** `docs/analysis-note/figures/methods_m3/fig_m3_coverage.py` and `fig_m3_background.py`, each with
+  `--repo <worktree> --outdir <dir>`. They run under the laptop's base conda (matplotlib 3.10.1, numpy 1.26.4), the
+  version that drew the installed files.
+- **Arm 0** writes `m3_fig3_coverage.pdf` and `m3_fig1_background.pdf`. They are byte-equal to the installed
+  `paper_fig_coverage.pdf` and `paper_fig_bkg_residual.pdf`, the hand-renamed copies (`INSTALLED=` in arms.sh).
+- **No palette edit:** no identity is drawn. Blue and red are the 68 % and 95 % intervals in Fig. 30, and the two
+  background methods in Fig. 34.
+- **Install lines:** both gain an `install_palette_fig` line, so their installed bytes are pinned for the first time
+  (COMBINED-PLAN.md section 5(b), tier 1b). The plan's panel split and labels for these figures are not made.
+
+## CI: inherited failures
+
+The record-checks steps at this branch's commits pass, apart from the failures below. Each fails identically at the
+base it came from, rerun in a clean worktree on 2026-11-17, and the director approved the push with them documented.
+The first three fail at `2fe070fec`; the fourth came in with the merge of 95ae9114 and fails identically there:
 - `test_check_sec4_receipts.py` expects the old partc-r2 budget path. Its two files are byte-identical at the base.
 - `check_note_records.py --self-test`: "40 of 41 planted defects".
-- `reflow_tex.py --note --check`: 12 sources.
+- `reflow_tex.py --note --check`: 12 sources at the base, and 14 after the merge.
+- `test_build_all.py`: 7 failures (ResultLineNamesItsObjectTest ×3, StruckOnlyInHistoryTest, PostedNoteIsOutwardTest,
+  ExemptionGuardTest ×2), identical at 95ae9114.

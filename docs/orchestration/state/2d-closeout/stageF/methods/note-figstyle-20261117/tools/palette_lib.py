@@ -9,7 +9,8 @@ apply(fig, name) makes, on a drawn figure named by its saved file's stem, every 
 2. restyle: each line restyle.tsv names (figure, colour, linestyle, marker) takes styles.tsv's linestyle and marker;
 3. hatches: each patch hatches.tsv names (figure, "face" or "edge", its colour before the recolour) takes that hatch
    ("-" for none);
-4. text only: the note's notation (E_{\\rm avail}, p_\\parallel for p_z) and text_fixes.tsv's figure-specific
+4. drop_titles.tsv: the figure title cleared, the axes stretched into its height;
+5. text only: the note's notation (E_{\\rm avail}, p_\\parallel for p_z) and text_fixes.tsv's figure-specific
    replacements (figure, old, new; each must be found in that figure) on axis labels, titles, figure texts and every
    artist's and container's own label; each axes legend rebuilt frameless from its own artists, in its own order and
    place (a legend copies its handles' properties when made); each y axis's "1e-38"-style offset moved into its
@@ -51,6 +52,7 @@ HATCHES = {(r[0], r[1], r[2].upper()): (None if r[3] == "-" else r[3]) for r in 
 TEXT_FIXES = {}
 for r in table("text_fixes.tsv"):
     TEXT_FIXES.setdefault(r[0], []).append((r[1], r[2]))
+DROP_TITLES = {r[0] for r in table("drop_titles.tsv")}   # figures whose figure title (suptitle) the caption carries
 GLOBAL_FIXES = (("E_{avail}", r"E_{\rm avail}"), ("p_z", r"p_\parallel"))
 for (fig, ident) in [((k[0]), v) for k, v in RECOLOUR.items()]:
     if ident not in PAL:
@@ -221,6 +223,26 @@ def power_of_ten(fig, check_fit=True):
             ax.yaxis.set_major_formatter(f)
 
 
+def drop_title(fig, name):
+    """drop_titles.tsv: the figure's suptitle is cleared and every axes is stretched upward into the freed height
+    (bottoms fixed, tops raised by the title's height in figure fraction, at most to 0.98), so no blank band is left.
+    Text and layout only."""
+    if name not in DROP_TITLES:
+        return
+    st = getattr(fig, "_suptitle", None)
+    if st is None or not st.get_text().strip():
+        raise SystemExit(f"drop_titles.tsv: {name} has no figure title")
+    fig.canvas.draw()
+    h = st.get_window_extent().transformed(fig.transFigure.inverted()).height
+    st.set_text("")
+    boxes = [ax.get_position() for ax in fig.axes]
+    bottom, top = min(b.y0 for b in boxes), max(b.y1 for b in boxes)
+    new_top = min(0.98, top + h)
+    k = (new_top - bottom) / (top - bottom)
+    for ax, b in zip(fig.axes, boxes):
+        ax.set_position([b.x0, bottom + (b.y0 - bottom) * k, b.width, b.height * k])
+
+
 def legend_entries(fig):
     legs = list(fig.legends) + [ax.get_legend() for ax in fig.axes if ax.get_legend() is not None]
     return sorted(t.get_text() for leg in legs for t in leg.get_texts())
@@ -231,6 +253,7 @@ def apply(fig, name, check_fit=True):
     fig._note_palette_name = name
     recolour(fig, name)
     relabel(fig, name)
+    drop_title(fig, name)
     before = legend_entries(fig)
     rebuild_legends(fig)
     power_of_ten(fig, check_fit)

@@ -311,10 +311,10 @@ install_printstyle_fig() {  # install_printstyle_fig <basename under $NPS and in
   fi
   echo "  installed $1 ($want)"
 }
-install_printstyle_fig gbdt_recovery.pdf                62bf4a8337115ffa4ca4227bf15d2883c6a74771583f672122ca5b14dcf69e11
-install_printstyle_fig gbdt_bias_spread.pdf             f1786f4862eea1a3439b79ef7af2132969e95f7fb087bddcf9661802cf6310c2
-install_printstyle_fig gbdt_coverage.pdf                422ef3f7c8e53b47d371cbeee68742a869ec372394c81a8324a121c18a10fd54
-install_printstyle_fig gbdt_prior_response.pdf          445374318044846a72b8a71da3a474d3d63820e8f5491ac6d5eb06a42745a2d3
+# install_printstyle_fig gbdt_recovery.pdf                62bf4a8337115ffa4ca4227bf15d2883c6a74771583f672122ca5b14dcf69e11   (note palette, 2026-11-17: installed below)
+# install_printstyle_fig gbdt_bias_spread.pdf             f1786f4862eea1a3439b79ef7af2132969e95f7fb087bddcf9661802cf6310c2   (note palette, 2026-11-17: installed below)
+# install_printstyle_fig gbdt_coverage.pdf                422ef3f7c8e53b47d371cbeee68742a869ec372394c81a8324a121c18a10fd54   (note palette, 2026-11-17: installed below)
+# install_printstyle_fig gbdt_prior_response.pdf          445374318044846a72b8a71da3a474d3d63820e8f5491ac6d5eb06a42745a2d3   (note palette, 2026-11-17: installed below)
 install_printstyle_fig minerva_unfolding_landscape.pdf  bf1f14eae609fdf06f01a248674a175a1df72bd0ed1b4c8f269b860e66b78372
 # Group C, family 1 (2026-11-14): drawn locally with --from-arrays --print-style from the dumps of one cluster pass
 # (note-figstyle-20261113/runs/family1/dumps/; recipe: make_control_plots.py / plot_control_corner.py --from-arrays <dump> --print-style).
@@ -387,6 +387,12 @@ install_palette_fig eavailW_band.pdf                         ded40ea27702a8654d9
 install_palette_fig q3_excess_projection.pdf                 8a3a5bb5d44156432b249d7165e56cbcfed464b6c7ff69d0bd37ee2e94df3d88
 install_palette_fig eavail_spectrum.pdf                      457fa20edec3de6520de49e99b04f4c989e7cc175289edc4b96d62383807dac1
 install_palette_fig control_plots.pdf                        9bfd50652a470a7f2edf5d6bd7fd30b20983b3f0264dfe44444c4768088af4ab
+install_palette_fig gbdt_recovery.pdf                        215f740a4b25a46519cc7b2bad5240730aa90aec4cb0d4cc7f1d0f3e3f8c191e
+install_palette_fig gbdt_bias_spread.pdf                     625b9452d4c28299c4a6a38eda3e14fa40670ffeccde9fa67ab154cbedff033e
+install_palette_fig gbdt_coverage.pdf                        511817bdc1e17211141c812f56057ab5f04bbd8ede171978010c1a75a82a87fe
+install_palette_fig gbdt_prior_response.pdf                  aa0b997e73a7babc002b6c4ca4bca23d7c004004f317c9d52e5eb8428c6bfb7e
+install_palette_fig paper_fig_coverage.pdf                   247239f0fec1ca9446195a6a11c2457a66c3041d20d35e4710e678fc05dd088e
+install_palette_fig paper_fig_bkg_residual.pdf               3cac32b105aa9617706bf38d4398fb2ddc9e1d24c5cab65690d726ddfbf72c4d
 
 echo
 echo "== paper-only vector crops =="
