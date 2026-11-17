@@ -341,7 +341,8 @@ LISTED_CLAIMS = [
     # Joseph's short abstract (the director, relaying Joseph 2026-11-16) counts them; the introduction names them
     # the readability batch (the director, relaying Joseph 2026-11-16): the abstract's and the introduction's new sentences
     ("main_paper.tex", "Fake-data tests flag bias at two truths that no tested", {"kind": "n", "n": 2}),
-    ("paper_body.tex", "Fake-data tests flag bias beyond uncertainty-based criteria at a GiBUU hybrid truth and a synthetic",
+    # after-Ben prep (the director, relaying Joseph 2026-11-17): the introduction's shortened preview
+    ("paper_body.tex", "criteria at two truths, a GiBUU hybrid and a synthetic momentum-transfer tilt, and no tested",
      {"kind": "count", "gibuu": 1, "also": ["q3"], "n": 2}),
     ("main_note.tex", "At a GiBUU-like truth and a synthetic momentum-transfer tilt", {"kind": "count", "gibuu": 1, "also": ["q3"]}),
 ]
