@@ -62,7 +62,7 @@ Event-loop outputs are preserved on the analysis's NERSC storage. The planned Ze
 The broader result package must contain every item below; RC7 does not contain all of them. A $\checkmark$ marks identities or values already fixed (bin edges: \S\ref{app:release-edges}; checksums: Ref.~\cite{NoteRecords2026}, identities already fixed); the rest are packaging. A fixed identity specifies which object is meant, not whether the object is scientifically qualified.
 
 \begin{enumerate}[itemsep=2pt]
-  \item \textbf{Reporting bin edges and units, per axis} $\checkmark$: $\pT$ and $\pPar$ in \si{GeV/c}, $\Eavail$, $q_{3}$ and $W$ in \si{GeV}, with each wide terminal catch bin identified.
+  \item \textbf{Reporting bin edges and units, per axis} $\checkmark$: $\pT$, $\pPar$ and $q_{3}$ in \si{GeV/c}, $\Eavail$ and $W$ in \si{GeV}, with each wide terminal catch bin identified.
   \item \textbf{The flattened-cell ordering} $\checkmark$: the dense $14\times16\times7\times7\times6$ grid in C order, with the reported subset supplied as an explicit index array, never inferred from a positivity cut.
   \item \textbf{Central values}: the five-axis array and every projection quoted, each with its own checksum, on the density scale in \si{cm^2/nucleon} divided by the product of its kept axes' units.
   \item \textbf{Covariances} $\checkmark$: the five-axis covariance of the configuration-(a) central value and its $(\Eavail,W)$ projection, with the algebra of Eqs.~\eqref{eq:zassembly}--\eqref{eq:zinflation}, the specified centering variant, and the band partition.
@@ -83,10 +83,10 @@ The broader result package must contain every item below; RC7 does not contain a
   \item $\pT$, \si{GeV/c}: $0$, $0.07$, $0.15$, $0.25$, $0.33$, $0.40$, $0.47$, $0.55$, $0.70$, $0.85$, $1.00$, $1.25$, $1.50$, $2.50$, $4.50$ (14 bins).
   \item $\pPar$, \si{GeV/c}: $1.5$, $2$, $2.5$, $3$, $3.5$, $4$, $4.5$, $5$, $6$, $7$, $8$, $9$, $10$, $15$, $20$, $40$, $60$ (16 bins).
   \item $\Eavail$, \si{GeV}: $0$, $0.1$, $0.2$, $0.4$, $0.8$, $1.5$, $3.0$, $100$ (7 bins).
-  \item $q_{3}$, \si{GeV}: $0$, $0.2$, $0.4$, $0.6$, $0.8$, $1.2$, $2.0$, $100$ (7 bins).
+  \item $q_{3}$, \si{GeV/c}: $0$, $0.2$, $0.4$, $0.6$, $0.8$, $1.2$, $2.0$, $100$ (7 bins).
   \item $W$, \si{GeV}: $0$, $1.1$, $1.4$, $1.8$, $2.2$, $3.0$, $100$ (6 bins).
 \end{itemize}
-The last bin on $\Eavail$, $q_{3}$ and $W$ is a catch bin to \SI{100}{GeV}, and the $\pT\times\pPar$ grid carries the 19 unreported high-$\pT$, low-$\pPar$ acceptance cells of \S\ref{sec:method-binning}.
+The last bin on $\Eavail$, $q_{3}$ and $W$ is a catch bin to 100 in the axis unit (\si{GeV}, or \si{GeV/c} for $q_{3}$), and the $\pT\times\pPar$ grid carries the 19 unreported high-$\pT$, low-$\pPar$ acceptance cells of \S\ref{sec:method-binning}.
 
 \subsection{One minimal projection example}
 \label{app:release-example}
