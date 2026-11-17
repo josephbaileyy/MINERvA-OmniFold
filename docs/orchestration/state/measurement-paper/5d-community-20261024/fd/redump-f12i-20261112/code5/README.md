@@ -41,7 +41,7 @@ Both were found by tracing stage 3's steps for the director's packet, before any
 | `rdx_connect.sh` | `52ad6a0edf92b4ed…` | `1760327b21f21958…` |
 | `rdx_connect_launch.sh` | `256003a1b997a57d…` | `def31c020870bc66…` |
 | `sbatch_rdx_arms.sh` | `e3e031e754351847…` | `f77c89a5dd3f59ce…` |
-| `smoke_rdx_stages.sh` | `916473e546c60b13…` | `49c9e62e57deccb7…` |
+| `smoke_rdx_stages.sh` | `916473e546c60b13…` | `274ecd02afcdcb23…` |
 | `test_rdx_stages.py` | | `adad784a48d5ea67…` |
 | `rdx_mutation_stages.py` | | `d9fe7c2d1473f7ef…` |
 
