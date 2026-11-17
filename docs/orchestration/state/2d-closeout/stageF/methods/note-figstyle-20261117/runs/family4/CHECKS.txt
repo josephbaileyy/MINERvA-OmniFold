@@ -1,0 +1,32 @@
+# Family 4 (Figs. 19-22), the note palette pass, 2026-11-17T21:35:19Z; base 2fe070feca48256639797278eff0e1ac6f17abd7
+## arm 0 (note-figstyle-20261113/tools/restyle_family4.py, unchanged) against the files installed at the base
+EQUAL-BUT-DATE generators_vs_unfolded_band_central.pdf: /CreationDate (D:20261115144353-07'00') vs /CreationDate (D:20261117133339-07'00')
+EQUAL-BUT-DATE mode_decomp_eavail_central.pdf: /CreationDate (D:20261115144353-07'00') vs /CreationDate (D:20261117133340-07'00')
+EQUAL-BUT-DATE compare_mec_eavail_central.pdf: /CreationDate (D:20261115144353-07'00') vs /CreationDate (D:20261117133341-07'00')
+EQUAL-BUT-DATE ascencio_fullcov_compare_central.pdf: /CreationDate (D:20261115144353-07'00') vs /CreationDate (D:20261117133341-07'00')
+bytes_but_date rc=0
+raster generators_vs_unfolded_band_central: RASTER :: EQUAL :: 1 page(s), 0 differing pixel(s)
+raster mode_decomp_eavail_central: RASTER :: EQUAL :: 1 page(s), 0 differing pixel(s)
+raster compare_mec_eavail_central: RASTER :: EQUAL :: 1 page(s), 0 differing pixel(s)
+raster ascencio_fullcov_compare_central: RASTER :: EQUAL :: 1 page(s), 0 differing pixel(s)
+## arm 1 (tools/palette_family4.py) against arm 0: fig-restyle-20261031/tools/compare.py
+  equal  family4/ascencio_fullcov_compare_central.pdf.json: 10 data artists, colours as the palette maps them, line styles as declared
+  equal  family4/ascencio_fullcov_compare_central.png.json: 10 data artists, colours as the palette maps them, line styles as declared
+  equal  family4/compare_mec_eavail_central.pdf.json: 13 data artists, colours as the palette maps them, line styles as declared
+  equal  family4/compare_mec_eavail_central.png.json: 13 data artists, colours as the palette maps them, line styles as declared
+  equal  family4/generators_vs_unfolded_band_central.pdf.json: 27 data artists, colours as the palette maps them, line styles as declared
+  equal  family4/generators_vs_unfolded_band_central.png.json: 27 data artists, colours as the palette maps them, line styles as declared
+  equal  family4/mode_decomp_eavail_central.pdf.json: 31 data artists, colours as the palette maps them, line styles as declared
+  equal  family4/mode_decomp_eavail_central.png.json: 31 data artists, colours as the palette maps them, line styles as declared
+COMPARE :: PASS
+compare rc=0
+## text overlaps (capture_any.py's measure), arm 0 -> arm 1
+generators_vs_unfolded_band_central 1 -> 0 []
+mode_decomp_eavail_central 2 -> 2 [['GENIE-CV COH', 'data $-$ GENIE-CV (2p2h-shaped gap)'], ['data $-$ GENIE-CV (2p2h-shaped gap)', 'unfolded data']]
+compare_mec_eavail_central 0 -> 0 []
+ascencio_fullcov_compare_central 1 -> 1 [['this work (4D marginal, $p_\\parallel<20$)', 'Ascencio et al.']]
+## arm 1 PDFs as installed (figs/), sha256
+1563f52b347938593bc4033fcaff22fa32cd33eb463f23d8b1ff9533e5252b7d  /Users/josephbailey/cov2d-work/wt-figs/docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261117/figs/generators_vs_unfolded_band_central.pdf
+270237928effabf36fa59be7de86d6a8c4023bc9187b8a7c8978ee2b6090cf31  /Users/josephbailey/cov2d-work/wt-figs/docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261117/figs/mode_decomp_eavail_central.pdf
+2e81a44506e958fda4f063c5b88350a4d3eb6f00d4d02c4906c34bb94e39a2aa  /Users/josephbailey/cov2d-work/wt-figs/docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261117/figs/compare_mec_eavail_central.pdf
+0d65baa9b139a7b45da54e54042b6b18c3a08b2d3c82fd05d64629d86452a1ab  /Users/josephbailey/cov2d-work/wt-figs/docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261117/figs/ascencio_fullcov_compare_central.pdf

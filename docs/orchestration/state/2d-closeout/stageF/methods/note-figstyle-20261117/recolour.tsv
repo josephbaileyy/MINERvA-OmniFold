@@ -1,0 +1,19 @@
+# Each figure's colours as installed (measured from the arm-0 capture, runs/<family>/arm0/capture) and the note-palette identity each takes. Mapping read from the producers: nd-unfolding/re1/redraw_central_only_p3.py:133-146 (Fig. 19), :210-221 (Fig. 20), :268-273 (Fig. 21); redraw_central_only_p4.py:378-381 (Fig. 22).
+figure	before_rgb	identity
+generators_vs_unfolded_band_central	#000000	this_work
+generators_vs_unfolded_band_central	#C44E52	genie_cv
+generators_vs_unfolded_band_central	#4C72B0	tune_v1
+generators_vs_unfolded_band_central	#2CA02C	nuwro
+generators_vs_unfolded_band_central	#9467BD	gibuu
+mode_decomp_eavail_central	#000000	this_work
+mode_decomp_eavail_central	#FF0000	this_work
+mode_decomp_eavail_central	#1F77B4	mode_QE
+mode_decomp_eavail_central	#2CA02C	mode_RES
+mode_decomp_eavail_central	#FF7F0E	mode_DIS
+mode_decomp_eavail_central	#9467BD	mode_COH
+compare_mec_eavail_central	#000000	this_work
+compare_mec_eavail_central	#1F77B4	genie_cv
+compare_mec_eavail_central	#CFE3FF	genie_cv_fill
+compare_mec_eavail_central	#D62728	genie_mec
+ascencio_fullcov_compare_central	#000000	this_work
+ascencio_fullcov_compare_central	#FF0000	published

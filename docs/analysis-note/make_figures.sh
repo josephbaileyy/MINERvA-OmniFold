@@ -344,10 +344,10 @@ install_printstyle_fig model_comp_ratio_maps.pdf             49f0d76c0eb17dc9e22
 install_printstyle_fig uq_spread_2d.pdf                      41347061d6064aaae142895cbfeaf5d5c2449cdd9c72f8a4b6f153cd9fbf5031
 install_printstyle_fig uq_corr_2d.pdf                        f202c729700676096b4274be73ab5d30ffa31d94823c070c3d3491b4784d0b02
 install_printstyle_fig eavail_spectrum.pdf                   906a6473311775703dc4ff92ee52bdd61deb7b1173b7998c41331fbe1723723e
-install_printstyle_fig generators_vs_unfolded_band_central.pdf9ee744b3a36761ae2e854e7ddce23aa35633f636a532fd751c798bebea459884
-install_printstyle_fig mode_decomp_eavail_central.pdf        35498b2d0e92d61ac056bbef1e0d432716546bf627a7fee662f7770631961568
-install_printstyle_fig compare_mec_eavail_central.pdf        a43a2499d84c1c95c096fa0edd4d941ed088c664489cb28304503a50de896005
-install_printstyle_fig ascencio_fullcov_compare_central.pdf  ae1e5e59d641c3457a0db11c826c1a064fd1f1ae96e282657750a6b49aa50a4a
+# install_printstyle_fig generators_vs_unfolded_band_central.pdf9ee744b3a36761ae2e854e7ddce23aa35633f636a532fd751c798bebea459884   (note palette, 2026-11-17: installed below)
+# install_printstyle_fig mode_decomp_eavail_central.pdf        35498b2d0e92d61ac056bbef1e0d432716546bf627a7fee662f7770631961568   (note palette, 2026-11-17: installed below)
+# install_printstyle_fig compare_mec_eavail_central.pdf        a43a2499d84c1c95c096fa0edd4d941ed088c664489cb28304503a50de896005   (note palette, 2026-11-17: installed below)
+# install_printstyle_fig ascencio_fullcov_compare_central.pdf  ae1e5e59d641c3457a0db11c826c1a064fd1f1ae96e282657750a6b49aa50a4a   (note palette, 2026-11-17: installed below)
 install_printstyle_fig q3_excess_projection.pdf              1b86a31b2fc2ae2000e451c22253be5d207146a66cf8663f09e0e80ae02fd85b
 install_printstyle_fig fps_acceptance_MEFHC.pdf              ab63256c62c14945aa111333fca73edefcca57b2d3a9a98283d7cfe26b1219c8
 install_printstyle_fig fps_pilot_compare_MEFHC.pdf           a910ccca6084b5f652df0840e65a0d95117a154b22f22a87d519d85f26e5181f
@@ -358,6 +358,31 @@ install_printstyle_fig paper_joint_nulls.pdf                 66888ffc0f3e8e9d41b
 # run 2's fig67_projections.json (main d58d0d18, #1167) --print-style; identity: note-figstyle-20261113/runs/family7/
 install_printstyle_fig MEFHC_fig6_7_uncertainty_pt.pdf      031b12a1c0c52f59baf8c14360d652c87b000232a3294a131c11f71068f8624f
 install_printstyle_fig MEFHC_fig6_7_uncertainty_pz.pdf      b1cfd7ccf1ca2f563f1c684422aefc915c011db041cd09d9deb03dd2164ba9f4
+
+echo "== note palette (2026-11-17; digest-checked copy) =="
+# The note's figure palette (Joseph, 2026-11-17; COMBINED-PLAN.md section 5; note_palette.py and its test): the paper's
+# colours, #CC79A7 for GENIE CV, this work in red in every figure. Each figure is drawn locally by its recipe in
+# note-figstyle-20261117/README.md; its arm 0 reproduces the installed print-style file (bytes apart from the creation
+# date), and its arm 1's data artists equal arm 0's, with each colour as recolour.tsv and palette.tsv map it
+# (fig-restyle-20261031/tools/compare.py --recolour --palette --styles --restyle). The print-style lines above stay
+# as comments. Also after the sync loop.
+NPAL="$REPO/docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261117/figs"
+install_palette_fig() {  # install_palette_fig <basename under $NPAL and in $FIGDIR> <sha256>
+  local src="$NPAL/$1" dst="$FIGDIR/$1" want="$2"
+  if [[ "$(sha256_of "$src")" != "$want" ]]; then
+    echo "REFUSE install: $src does not have sha256 $want" >&2; exit 1
+  fi
+  cp "$src" "$dst"
+  if [[ "$(sha256_of "$dst")" != "$want" ]]; then
+    echo "REFUSE install: $dst differs from $src after the copy" >&2; exit 1
+  fi
+  echo "  installed $1 ($want)"
+}
+# Family 4 (Figs. 19-22): tools/palette_family4.py on the pinned pickles (matplotlib 3.10.8); runs/family4/.
+install_palette_fig generators_vs_unfolded_band_central.pdf  1563f52b347938593bc4033fcaff22fa32cd33eb463f23d8b1ff9533e5252b7d
+install_palette_fig mode_decomp_eavail_central.pdf           270237928effabf36fa59be7de86d6a8c4023bc9187b8a7c8978ee2b6090cf31
+install_palette_fig compare_mec_eavail_central.pdf           2e81a44506e958fda4f063c5b88350a4d3eb6f00d4d02c4906c34bb94e39a2aa
+install_palette_fig ascencio_fullcov_compare_central.pdf     0d65baa9b139a7b45da54e54042b6b18c3a08b2d3c82fd05d64629d86452a1ab
 
 echo
 echo "== paper-only vector crops =="
