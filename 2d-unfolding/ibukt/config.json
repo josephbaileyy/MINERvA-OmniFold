@@ -1,0 +1,110 @@
+{
+  "schema": "ibukt-config/1",
+  "truths": [
+    "nominal",
+    "genie_mec",
+    "nuwro",
+    "bump",
+    "tilt",
+    "within_plus",
+    "within_minus"
+  ],
+  "seeds": [
+    771001,
+    771002,
+    771003,
+    771004,
+    771005
+  ],
+  "pt_edges": [
+    0,
+    0.07,
+    0.15,
+    0.25,
+    0.33,
+    0.4,
+    0.47,
+    0.55,
+    0.7,
+    0.85,
+    1.0,
+    1.25,
+    1.5,
+    2.5,
+    4.5
+  ],
+  "pz_edges": [
+    1.5,
+    2,
+    2.5,
+    3,
+    3.5,
+    4,
+    4.5,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    15,
+    20,
+    40,
+    60
+  ],
+  "ratios": {
+    "genie_mec": "2d-unfolding/pv2d/ratios/genie_mec.json",
+    "nuwro": "2d-unfolding/pv2d/ratios/nuwro.json"
+  },
+  "argv": [
+    "--iters",
+    "5",
+    "--use-weights",
+    "--estimator",
+    "lgbm",
+    "--seed",
+    "42",
+    "--branch-select",
+    "all",
+    "--bkg-mode",
+    "negweight-refined",
+    "--refine-n-estimators",
+    "400",
+    "--refine-num-leaves",
+    "31"
+  ],
+  "inputs": {
+    "cv": {
+      "filename": "cv.root",
+      "sha256": "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df"
+    },
+    "flux": {
+      "filename": "flux.root",
+      "sha256": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316"
+    },
+    "er": {
+      "filename": "er.root",
+      "sha256": "a5c13fc38d64242bc9ee459fac87568a2f97fddf7a3ac97cc6f91eb4c2a31cef"
+    },
+    "c2": {
+      "filename": "c2.npz",
+      "sha256": "929d0e78011ead72e9677a05bad06eec80e914e181c8d02f94bbdea1c43b76f4"
+    },
+    "paper": {
+      "filename": "paper.root",
+      "sha256": "6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3"
+    },
+    "library": {
+      "filename": "libRooUnfold.so",
+      "sha256": "0b34e1e39102b0dddc5923dad7f69e59c70cd6a2fcbcef07728b72cf2933fefd"
+    }
+  },
+  "code_sha256": {
+    "2d-unfolding/re2/re2_driver.py": "e226daf3f51954c7079cc7b3ab509e464865502f5dbde4acf11876409971dd67",
+    "unbinned_unfolding/python/omnifold.py": "e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a",
+    "2d-unfolding/ref_c2c1/ref_c2c1.py": "285dd138363d090a4ce5dea3361be81fada8680bd782b918e9d95198d1b5d6ea",
+    "2d-unfolding/compare_to_paper_fullcov.py": "7e641754515d64b0361cdfbfe17966d514485ed819ea594298a262ea2c6de6dd",
+    "2d-unfolding/pv2d/ratios/genie_mec.json": "cfaaf4d663a392ce7283c1427ef25845a76663f9d218b906613de72ee5a79143",
+    "2d-unfolding/pv2d/ratios/nuwro.json": "785180dd9dba80a0dfd24ce2e3b9fc1973f31e3df4678f21f4003cf3c1c0d804"
+  }
+}
