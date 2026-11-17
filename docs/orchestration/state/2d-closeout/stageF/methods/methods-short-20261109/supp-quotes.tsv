@@ -1,0 +1,28 @@
+# Copied unchanged below from limitation-resolver's list (2026-11-09; its sha256 a56018860c1097da), for check_restyle.py.
+# #981 quotes from docs/analysis-note/supplemental_body.tex at 531fefe42fe000dd69008a5f9ccbf180c1f61041, as build_package.py checks them (#981 head b0db0a35).
+# Matching: whitespace runs collapse to one space, ** and ` are removed, then exact substring; each must count 1 except \label tokens (presence).
+# build failures at this head (all paper-side, already ruled): 10
+Q01	count=1	line=128	section_label=tab:fived16-cells	\label{tab:fived16-cells}
+Q02	count=1	line=336	section_label=tab:fived16-corr	\label{tab:fived16-corr}
+Q03	count=1	line=300	section_label=tab:fived16-groups	\label{tab:fived16-groups}
+Q04	count=1	line=632	section_label=supp:validity	\label{supp:validity}
+Q05	count=1	line=588	section_label=tab:gen16	\label{tab:gen16}
+Q06	count=1	line=611	section_label=tab:cmodel16	\label{tab:cmodel16}
+Q07	count=1	line=570	section_label=fig:ratio16	\label{fig:ratio16}
+Q08	count=1	line=562	section_label=sec:fived16-fd	Illustrative output on data: not for fitting or for constraining models
+# Q09 removed 2026-11-12 (D4, director, 2026-11-12): the prior-spread rule's definition left the Supplement for the note; #981's re-pin re-sources or drops it (RESPONSE.md, the #981 re-pin list). Was: Q09 | count=1 | line=634 | section_label=supp:validity | The second rule is ours, not taken from Ref.~\cite{ATLAS:2024jets}
+Q10	count=1	line=634	section_label=supp:validity	its recommended test of correlation assumptions on pseudo-data is not met here
+Q11	count=1	line=601	section_label=tab:gen16	In NuWro's free-proton sample, the supplement generated at neutrino energies of 50--100~GeV is flagged: the events lost to generator aborts there were not shown to be negligible
+Q12	count=1	line=601	section_label=tab:gen16	Corrected to CH with GiBUU's own free-proton sample
+Q13	count=1	line=601	section_label=tab:gen16	That sample failed its sampling-closure check
+Q14	count=1	line=122	section_label=sec:fived16-result	its cell-integrated cross section $f$
+Q15	count=1	line=569	section_label=supp:output	Data over prediction, $f/g$
+Q16	count=1	line=299	section_label=sec:fived16-cov	$C_{\mathrm{e}}$ is the sum of the first six groups and the training-seed block (zero in every cell); $C_{\mathrm{total}}=C_{\mathrm{e}}+C_{\mathrm{model}}$.
+Q17	count=1	line=361	section_label=tab:fived16-corr	Each comparison with a prediction adds $V_g$, its diagonal sum of squared event weights
+Q18	count=1	line=587	section_label=sec:gen16	Shape-only $\chi^2$ frees the normalization
+# Q19 re-sourced 2026-11-12 (D3, director, 2026-11-12): "valid under it" -> "pass it"; #981's re-pin follows (RESPONSE.md, the #981 re-pin list; build_package.py:440-443). Was: Q19 | count=1 | line=634 | section_label=supp:validity | Fourteen cells are valid under it; R02 and R06 fail
+Q19	count=1	line=634	section_label=supp:validity	Fourteen cells pass it; R02 and R06 fail
+Q20	count=1	line=634	section_label=supp:validity	Fourteen cells are valid under it; R08 (
+Q21	count=1	line=634	section_label=supp:validity	) and R15 (
+Q22	count=1	line=634	section_label=supp:validity	Twelve cells are valid under both rules.
+Q23	count=1	line=399	section_label=sec:uq-combine	In the 132 poorly determined directions, the combination of the other two run-period groups is farther from the published result than the three-group combination, by 0.69 per direction

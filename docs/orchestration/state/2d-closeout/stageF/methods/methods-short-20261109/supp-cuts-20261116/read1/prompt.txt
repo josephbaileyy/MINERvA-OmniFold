@@ -1,0 +1,11 @@
+You are checking four cuts to the Supplemental Material of a short JINST methods paper (OmniFold unfolding of MINERvA open data). Read change.diff (the source diff of supplemental_body.tex), removed.txt (the removed text of each cut, in full), records.txt (the cut rule in section A, the paper's own text, the configurations table, the note's copies at its release revision, and a decision about the run-period sentence) and the rendered pages page-*.png. Comment lines (starting with %) are provenance, not printed claims.
+
+Each cut replaces material with a pointer. A cut may stand only if every fact it removes is LEDGER under the rule in records.txt section A: it does not change a reader's understanding of the reported object, its reproducibility, its evidential independence or its limitations, and the paper, the remaining Supplement text or the note (ref. [2]) holds it, with a pointer left.
+
+For each cut (1: the generic OmniFold description; 2: the per-playlist permutation test; 3: the Cramer-Rao classification of the noise-free residuals; 4: the superseded configurations' descriptions):
+(a) list each removed fact and class it NEEDED or LEDGER, naming where it is still held (the paper's line, the remaining Supplement text, the tab:configs row, or the note excerpt in records.txt);
+(b) check the pointer sentence says nothing the removed text did not support, and that its target holds the material;
+(c) check nothing printed elsewhere now refers to removed text (for example "these", a removed symbol, a removed label, or a section title);
+(d) check the rendered pages match the source.
+
+Then give, per cut, a verdict KEEP-CUT or RESTORE (with the facts to restore). Then a ranked numbered list of any other problems with concrete fixes, or "1. No problems." End with VERDICT: PASS if every cut is KEEP-CUT and no other problem exists, else VERDICT: FAIL.

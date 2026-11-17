@@ -1,0 +1,19 @@
+Both first-round problems are fixed in the current source diff. However, the supplied rendered table still contains the old, incorrect threshold bound.
+
+1. **Table and producer:** All numerical body entries, classes, and new-flag counts agree with the readout. Each \(\rho\) is rounded to three decimals; each \(\Delta\rho\) uses the unrounded level value minus configuration (e), then rounds (`change.diff:39–54`; `new-values.txt:1–69`; `records.txt:79–236`). The levels and order match the declaration and code. “Applies to” correctly distinguishes O4r from O4/O3/O2, identifies the three estimators, and preserves refinement at 400/31 (`change.diff:125–145`; `records.txt:4–16,53–76`).
+
+   The caption’s unchanged sixteen cells, runner/mask route, new-flags definition, and statement that every level still flags both original flagged truths are supported (`change.diff:116`; `records.txt:37–50,80–236`). The producer checks the individual flags, rather than inferring both from “does not clear” (`change.diff:44–48`). Nothing claims improvement, adoption, or clearance. Both pointer additions are faithful (`change.diff:94,109,157`).
+
+2. **Fractional covariance:** Correct for both alternatives, including the trace ratios and GiBUU shares. No additional uncertainty claim is introduced (`change.diff:84–87`; `records.txt:269`).
+
+3. **Stability Reading:** The variant names match S4.4. The ensemble passes stability but fails its separate requirement of closure no worse at every truth, being worse at one. The old Reading’s substantive content, including retaining the reported estimator, remains (`change.diff:97–100`; `records.txt:265–267`).
+
+4. **Bias-half band:** The first-round missing coefficient is now fixed exactly. The margin, \(b_c=r_c(1+d_c)\), both first-order variance terms, GiBUU measurement and transfer of departure noise, \(K\), boundary inequalities, unresolved remainder, and noise-free reduction match the declaration (`change.diff:175`; `records.txt:242–263`). The producer reads the recorded \(K\) and asserts the declared formula (`change.diff:58–64`; `new-values.txt:71`). No classification or rule changes.
+
+5. **Other meaning changes:** None found beyond the rendered-caption discrepancy below.
+
+Ranked problems:
+
+1. **The rendered caption still prints the first-round false upper bound.** In `table-page.png` (page 29, caption), it says “is at most 0.021.” The governing product exceeds that bound (`records.txt:78`), as already identified in `round1-out.txt:25`. The source now correctly rounds upward, asserts a strict upper bound, and says “is below” (`change.diff:29–31,116`), with the existing corrected value in `new-values.txt:70`. **Concrete fix:** regenerate the rendered table from the current diff and values so its caption prints “is below 0.022.” The floor-dominated threshold conclusion remains correct.
+
+VERDICT: FAIL

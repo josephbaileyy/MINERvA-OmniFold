@@ -1,0 +1,7 @@
+id	file	section	base	current
+M002	paper_body.tex	Closure and generator-sized changes	Figure~\ref{fig:deformation} does not show the sixteen-cell result or its reported covariance.	
+M003	paper_body.tex	Closure and generator-sized changes	The three shape changes it shows were not used while the estimator was chosen.	
+M010	paper_body.tex	Closure and generator-sized changes		Figure~\ref{fig:deformation} does not show the sixteen-cell result or its reported covariance.
+M011	paper_body.tex	Closure and generator-sized changes		The three shape changes it shows were not used while the estimator was chosen.
+M012	paper_body.tex	What moves the retained prior		A tested level clears a flagged truth if the truth is no longer flagged under the criterion of section~\ref{sec:strategy} applied to the noise-free pseudo-data.
+M013	paper_body.tex	What moves the retained prior	A tested level clears a flagged truth if the truth is no longer flagged under the criterion of section~\ref{sec:strategy} applied to the noise-free pseudo-data.	

@@ -1,0 +1,17 @@
+You are a meaning referee for a JINST methods paper's Supplemental Material. Read-only. All evidence is in ./ev/.
+
+The change: ev/diff.txt (old -> new of supplemental_body.tex and main_supplement.tex). Full old and new files are ev/old_* and ev/new_*; ev/new_supplement_rendered.txt is the built PDF's text (macros filled); ev/macro_values.txt gives macro values. The paper is ev/paper_body.tex (labels ev/paper_labels.tex: P-<label> numbers). The companion note's sources: ev/note_sec_joint.tex (section 11, the joint tests) and ev/note_sec_eavailw.tex (section 8). Records: ev/DECISION-20261116-joseph-paper-batch.md (item 3 = A6 wording; items 14 and 24 = "Descriptive"), the 1B records ev/FD-1B-STAGE2-REPORT.md, ev/FD-1B-DIAG-REPORT.md, ev/DECISION-20261101-joseph-1b-keep-block-redesign-test.md, ev/OUTCOME-20261106-1b-stage1-receipt-stop.md, ev/OUTCOME-20261108-1b-precheck-part1.md.
+
+The batch (as instructed): (1) a one-page definitions table at the front (each entry must restate a definition printed in the paper, Supplement or note, and cite where it is defined); (2) a road-map paragraph; (3) redirects: one sentence wherever the Supplement sent the reader to the note to understand a conclusion, S8.7's joint tests being the big one, using only facts printed in the three documents; (4) repetition: one full account kept, the others replaced by pointers; (5) table-layout fixes (values unchanged); (6) S8.5 gains the GEANT4 bound sentence, Joseph's A6 wording VERBATIM (in a graded arm); plus (7) S8.6 reordered so that the preliminary check stopped the FIRST test, and the staged redesign followed and stopped at its own first stage.
+
+Check, and report a ranked list of defects with a concrete fix each:
+A. NOTHING DROPPED: for every removed or rewritten sentence, is each fact, qualifier, number, pointer and limitation still printed somewhere in the Supplement (name where)? A cut of a repeat is fine only if the kept account carries every qualifier.
+B. SUPPORT: is every new or changed statement true as written against its cited source (paper, Supplement, note, record)? Quote the source. Flag any number not printed in a source.
+C. NO STRENGTHENING: no new claim beyond the sources. In particular the Supplement must not claim: that the five-observable result validates the full distribution; that a bias-screening rule identifies detector inadequacy; that the two-dimensional mismodeling is localized in the extra dimensions; any coverage statement beyond what is reported. The S8.7 specification must not make the rejections read as physical generator exclusions.
+D. A6: is the S8.5 sentence verbatim against DECISION item 3 (macros = the numbers)?
+E. S8.6: is the new order true against the 1B records' dates and contents? Is every design sentence attached to the right test?
+F. Definitions table: is each entry accurate and is its "defined in" pointer right (S-section contains the definition; P-section is the paper's section)? Are the two senses of "Descriptive" as the paper's table caption gives them?
+G. Tables: did any layout change alter a value, column meaning or caption sense?
+End with exactly one line: VERDICT: PASS (no defect that changes meaning or drops content) or VERDICT: FAIL.
+
+This is read 2. Read 1's answer is ev/read1_answer.txt (VERDICT: FAIL, three defects). Check that each of its three fixes is now correct and supported (quote the source), and re-check the whole diff as above; report any defect read 1 missed.

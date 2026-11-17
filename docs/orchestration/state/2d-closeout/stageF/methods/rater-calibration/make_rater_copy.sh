@@ -26,7 +26,11 @@ B=$CAL/build/$tag
 rm -rf "$B"; mkdir -p "$B"
 echo "source: $WT ($(git -C "$WT" rev-parse --short HEAD 2>/dev/null || echo 'not a git tree'); dirty files in analysis-note: $(git -C "$WT" status --short -- docs/analysis-note 2>/dev/null | wc -l | tr -d ' '))"
 
-python3 -I "$TOOLS/check_holds.py" "$SRC"/*.tex
+# 2026-11-16 (the director, relaying Joseph): the record inventory is carried by the draft-only cover sheet; when the tree
+# has one, the holds found must be exactly its list
+INV=$WT/docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/HOLD-INVENTORY.md
+if [ -f "$INV" ]; then python3 -I "$TOOLS/check_holds.py" --inventory "$INV" "$SRC"/*.tex
+else python3 -I "$TOOLS/check_holds.py" "$SRC"/*.tex; fi
 
 DEF='\newcommand{\pubhold}[1]{\textcolor{red}{[HOLD: #1]}}'
 n=$(grep -cF "$DEF" "$SRC/main_paper.tex" || true)
@@ -68,6 +72,9 @@ PY
 build normal
 build rater
 
+# A hold span that crosses a page break can carry the next page's first block inside it (2026-11-16): move that block
+# out of the span first, or removing the span would delete paper text from the rater copy.
+python3 -I "$TOOLS/fix_hold_split.py" "$B/normal.txt" "$B/rater.txt"
 cp "$B/rater.txt" "$OUT"
 cp "$B/normal.txt" "${OUT%.txt}.normal.txt"
 if ! python3 -I "$TOOLS/holddiff.py" "$B/normal.txt" "$B/rater.txt" > "${OUT%.txt}.holddiff.txt"; then

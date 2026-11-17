@@ -1,0 +1,12 @@
+Baseline: 169 / a9f3a844d9afb07684b5a345bd0c6276446bab70463351eefb35b081d5bad4b7
+Current: 178 / 5824d1baf16fe1ed21cbd314ba07789b02b1a1273e8c17d4b56171628afe8621
+No removals or repoints. Excluding only the new carbon-figure receipts reproduces the baseline exactly.
+ADDED	docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/figures-a2/fd_g_fig_ratio.json	271a68f41d9c2573d58d2810fc6a532d9d4a02898e580fe9ba22abced2295b90
+ADDED	docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_diag_readout.json	522bfafa3016fadbd62c72f9f34153e17cd514a3b06acf282030d550f5dc1855
+ADDED	docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_followup_readout.json	586cd74105d0837c69290d0370f6327cda75a92ee31f2d437658c626b4ab1e8f
+ADDED	docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_readout.json	a19009e0bd83b9bb8f9ad65fb65804e6f62c8953310103fbfe6fce5f84995875
+ADDED	docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_sens2_readout.json	4bc21dfda9c49762227fc4c486ee9decc349863aaea095f94347ad4b963d4513
+ADDED	docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/pins/predictions-chdefs.json	857fe5edeaca2ad6dfe7b75f6f242a8adc9ea6addad265b92ad86f07457980c4
+ADDED	docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp/readout/defs.json	544f4f4343095b5e78b59e0782ac3ce5ef5974b2e24dbb59be3708b5937556f8
+ADDED	docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp/readout/rebuild_b.json	e2ba8d54cfbd122d1951613aea82121422708c96fcf4f66edd6bd55797a4ccca
+ADDED	docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json	81e5ef3fe8e7b055360dc43b8a8240c9b5c39c8aa6e7c507b3211d305b326b21

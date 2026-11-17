@@ -1,0 +1,206 @@
+# Short methods paper: figures lane
+
+Baseline: PR #977, e97d2b20d. This branch changes no manuscript source. director-helper-3 integrates;
+journal-editor reviews. Owner: figures lane (Codex). Decision: which existing diagnostics can support
+three additional figures for the reported estimator? No new training, unfolding, ensembles or scheduler
+work. Terminal condition: reproducible assets or an explicit operand gap. Review budget: one referee
+pass and at most two focused repair cycles. This is figure preparation, not scientific adoption.
+
+## Delivery
+
+`make_figures.py` is the plotting producer. Run with a Python containing NumPy, SciPy and Matplotlib:
+
+```
+MPLCONFIGDIR=/private/tmp/minerva-mpl /Users/josephbailey/miniconda3/bin/python3 docs/analysis-note/figures/methods_short/make_figures.py
+```
+
+Every input is SHA256-pinned in `inputs.json`; changes fail closed. The output PDFs and PNG previews
+are generated in code, never edited. `numbers.json` preserves every plotted number. `captions.tex`
+provides self-contained captions and proposed citation positions, for the integrator. No Table 2 move:
+the director's bridge ruling keeps all three column groups intact. No submission or deposit.
+
+### Bias by reported cell
+
+`paper_bias_cells.pdf`: signed z, paired heatmaps with/without the run-period block, 12 graded truths
+in Table 2's names and order. All six descriptive alternatives are excluded. Black outlines mean |z|>2.
+Readouts are precisely the with/without F0b products pinned by `make_values_fived16.py`. The numerical
+producer is `nd-unfolding/fd_f0_regrade.py`: its header defines bias, noise of the mean, leave-own-generator
+out, and z. Its `estimator_problems` requires configuration (e): five iterations; seed 42; deterministic
+all-row LightGBM classifiers 100 trees/8 leaves; refinement 400 trees/31 leaves at seed 45; candidate R.
+The readout records that producer's code digest. The plotting script checks byte identities rather than
+revalidating raw cluster metadata or rerunning the producer's grading.
+
+Checks: all 384 plotted z are the committed readouts' values with no rounding; all 24 arm/truth maximum
+|z| values equal the generated `values_fived16.tex` values at two decimals; all flagged-cell lists equal
+the readouts; all twelve biases are identical across arms; the Table 2 truth order is parsed and checked.
+Table 2 prints maximum |z| only in the primary group, not every per-cell z; the other maxima are generated
+keys in values_fived16.tex. This is the precise meaning of agreement, not a claim that the table prints
+384 z values. The plot does not encode the joint p criterion: Table 2 remains essential.
+
+### Prior sensitivity
+
+`paper_prior_response.pdf`: same numbers as the note's `gbdt_prior_response.pdf` in sec_5d,
+sec:gbdt-model-dependence. Numerical producer: `gbdt_model_dependence/analyze.py`, `_prior_rows`;
+plot logic mirrors that producer's `_figures` prior-response panel, resized for the article.
+Its horizontal is minus `trace_b0_w3`'s fifth-iteration noise-free relative residual; vertical is
+`(prior_d4-CV)/CV`. W3/D4 is the historical NuWro (pT,p_parallel,E_avail) deformation.
+The frozen operand archive is checked against the inventory's own full digest. The selected prior
+product's committed metadata are checked for R, five iterations, seed 42 and refinement override
+400/31. `s5e_candidate.py` defines R by that override; the OmniFold classification remains 100/8.
+The noise-free convergence comparator is signal-only (`asimov_same`) so no background refinement runs;
+its b0 name does not imply the lower-capacity background refinement. The prior product includes R's
+background refinement. The three maps have 109/27/39 supported cells, not the sixteen-cell product.
+This is exactly the note diagnostic cited in section 7; no inferred real-data bias is plotted.
+
+## Rounding figure: exact operand gap
+
+The paper's 0.8/2.6 statement comes from `s5e_analyze_candidate.py` A3, not from the later mechanism
+study. It computes, for each of 153 functionals (42 EW + 109 J + two totals), the larger absolute shift
+under real-data edge-safe jitters 1 and 2, relative to the float64 upcast baseline, divided by the
+SD of 100 real-data bootstrap replicas (ddof=1). `assess_receipt.json` preserves only median
+0.7829505732456221, maximum 2.5837789197284393 and argmax J145. These are not enough to reconstruct
+a distribution. Independent `review2/r2_recompute.json` agrees and records 51 values above 1, but
+also does not preserve the array. `review2/r2_recompute.py` reads cluster `r2_cache.npz`; no such
+cache is tracked at the baseline.
+
+The available committed `gbdt_model_dependence/inputs/operands.npz` has 20 different real-data
+jitters and 50 bootstrap replicas and adds H2 integrals. FD-STAB's `estimator_stability_analyze.py`
+uses one GiBUU-like simulated pseudo-experiment and 51 jitters, evaluated as 25 consecutive pairs,
+with a nominal pseudo-data bootstrap sigma; its committed fd_stab.json stores summaries. RS1's
+`rounding_mechanism_analyze.py` uses 20 jitters on a simulated pseudo-experiment, not the original
+two real-data perturbations. These cannot honestly be labelled the requested distribution.
+
+Needed: a committed array/cache containing the original two data jitters, baseline and 100-replica
+sigma (or the 153 computed maxima), with their identities and configuration. No extraction, training
+or new compute was run to fill this gap. Director notified over bridge before rendering any substitute.
+
+## Validation and integration
+
+Both PNGs visually inspected: labels visible, no clipping. Plot script completes with all assertions.
+Only figure assets, plotting code and handover files under docs/analysis-note/figures/methods_short are changed; scientific analysis
+modules, manuscript sources, hash-bound numerical producers and note sources are untouched. Integration
+must include the paper builds/check_round/check_restyle/check_registry and the repository's standalone
+note synchronization rule for any source/assets director-helper-3 adds under docs/analysis-note.
+The lane has not performed that manuscript integration or claimed standalone synchronization.
+
+Additional checks: all 175 prior-response points reproduce `results/prior.csv` exactly in both
+coordinates. A deliberately wrong input pin is rejected. Python compilation and `git diff --check`
+pass. Ruff, Black and mypy are not installed in the available plotting environment; those checks
+were attempted and could not run. The repository's scientific test suite does not import this
+standalone plotting script, which imports only NumPy/Matplotlib and the pure prior reduction;
+no scientific implementation changed.
+
+## Referee repair, 2026-11-09
+
+Applied journal-editor's read of 364c7da0e/5db5a5ca0:
+
+- Bias label/caption use r-bar instead of the paper's prior-normalized b. Caption identifies q3's
+  joint-p-only flag explicitly; outlines encode only per-cell flags. Threshold is read from trig-z
+  and compared to the pinned numerical producer's Z_TRIGGER. Outlined z are printed. Caption states
+  N=0 for noise-free closure (fd_f0_regrade.py line 743), names panels and excludes the total-only arm.
+- Prior caption defines both axes, explicitly states signal-only/no-refinement comparator versus
+  refined data estimator, identifies y=x as reference/no fit, and states no panel is the sixteen-cell
+  result. Panel letters and grid names agree. Counts and the undefined word "supported" removed
+  from printed captions/titles. Grid definitions are cited in the note's section and appendix,
+  app_statmethods_nd.tex sec:gbdt-diagnostic-definitions (which also states the >=1000 expected
+  reconstructed signal AND selected truth-weight selection). Correlation and fraction diagnostics
+  remain in numbers.json only, not in printed text.
+- Both regenerated PNGs visually inspected. Numerical assertions unchanged and passing. Snippets
+  compile from docs/analysis-note using their relative asset paths, and both floats/captions appear
+  in extracted text of a standalone caption-check build. This checks asset resolution and TeX syntax,
+  not the integrated manuscript or blinded rater copy. director-helper-3 must check those on integration.
+
+No numerical analysis or manuscript source was changed in this repair.
+
+
+## Integrator repair: portable assets and live manuscript checks
+
+The package now lives in docs/analysis-note/figures/methods_short, so make_rater_copy.sh's
+analysis-note rsync includes the PDFs and captions. Captions use figures/methods_short paths.
+Only data products and numerical producer source are pinned. paper_body.tex and values_fived16.tex
+are deliberately NOT pinned. make_figures.check_against(paper_body, values_tex) accepts their
+current text contents and returns a list of failures (empty on agreement). It checks truth order,
+all 24 maximum-z values at generated precision, and trig-z against the plotted threshold read from
+the pinned numerical producer. main() calls it; check_round can import and call it without drawing.
+Normal prose edits do not invalidate the producer. Mutation checks reject changed threshold,
+maximum-z and truth order. Input-byte failures still raise ValueError.
+
+Final printed captions use words for the mean fractional residual, state “These tests assess only
+bias”, identify the data estimator's background refinement explicitly, and omit the bias-bound clause.
+The plots' population counts remain in the numerical audit, with their original note definition route,
+not in printed labels. This update supersedes earlier packaging/path and manuscript-pin descriptions.
+
+Because assets now live under docs/analysis-note, director-helper-3 must synchronize these sources/assets
+to the standalone note repository as part of its integration, build/verify it, commit/push both repositories
+and record both remote heads. This lane has neither edited that checkout nor claimed synchronization.
+The integrated paper/blinded-copy checks and standalone synchronization remain integrator work.
+
+
+Final caption qualification: restored the prior-correlation limitation with an explicit note-section
+citation, as requested by journal-editor and allowed by director-helper-3 when supported by a record.
+Source: committed sec_5d.tex:198 and :204, sec:gbdt-model-dependence, explicitly say the shifts do not
+guarantee bias bounds and correlation supplies no per-cell bound. The canonical analyze.py prior plot
+also prints this limitation. No correlation or fraction numbers enter the caption. This supersedes
+the earlier omission of the bias-bound clause. No plotted numbers or PDF assets changed.
+
+
+Second referee read repairs: removed X_changed/X_nominal notation from the prior caption (X is
+already truth in the paper); retained the cited correlation limitation; mapped grids explicitly to
+J/H2/EW in the caption. Only the cell of maximum |z| in an outlined row now receives a numerical
+label, at two decimals as in the table. Thus every printed maximum is covered by check_against;
+no nonmaximum cell is numerically annotated. The hard-to-read negative nonmaximum label is removed.
+Colourbar starts with z. Inputs, plotted coordinates and scientific claims unchanged.
+
+
+Integrator's final count request: caption now prints J/H2/EW with 109/27/39, explicitly sourced to
+app_statmethods_nd.tex:25 and verified by the pinned reduction. This supersedes earlier count removal.
+The caption source comment quotes sec_5d.tex:204 verbatim for the correlation/bias limitation.
+
+
+## Rounding figure delivered from committed CSV (supersedes operand gap)
+
+Merged main's authorized receipt #1008 at 13d714bf by merge commit 0e23c6632. The actual route
+was the original producer's four lines on the 103 inputs, not a read of r2_cache.npz; see receipt
+README.md. No cluster access by figures lane. New data source is
+`docs/orchestration/state/s5e/cand/a3-rounding-shifts-20261109/cluster/a3_rounding_shifts.csv`,
+sha256 `9ac8f7d8b74f090c28efc9023a21729ef5505090864ee1459fd998667e2c3987`.
+The JSON is also pinned and binds the 103 inputs for the first time (not retrospectively).
+
+`make_figures.py:rounding_figure` draws an empirical cumulative distribution from CSV alone.
+Every quantity contributes its larger absolute shift under edge-safe perturbations 1 and 2,
+relative to the upcast data baseline, divided by SD of 100 refitted data bootstrap replicas
+(ddof=1). Exact float comparisons reproduce the assess receipt and new extraction JSON:
+median 0.7829505732456221; maximum 2.5837789197284393; argmax J145. Indices 0–152 and all
+quantity names match the original assess receipt in order: 42 EW quantities, EW_all_ones,
+109 J integrals, total_integrated. No H2/sixteen-cell quantities or later jitters substituted.
+
+Configuration (e) check: frozen amendment 3 defines R with data rounding through s5e_trace
+--refine-capacity 400,31. The original committed review2/r2_integrity.json records all 103
+products' metadata and is now pinned: each is five iterations, seed 42, OmniFold 100/8,
+refinement 400/31 at seed 45; the two jitters record float64 edge_safe seeds 1 and 2.
+The extraction's exact summary match is its stated identity test, not an earlier input-digest
+measurement. Numeric points in the plot come only from CSV; metadata and JSON validate provenance.
+
+Vertical lines use amendment 3's frozen limits, 0.3 for median and 1.0 for maximum. The median
+and maximum J145 are labeled at two decimals. This is a distribution over different quantities,
+not coverage or repeated experiments. Caption facts come from producer lines 147–154, amendment
+3, the extraction's CITABLE FOR, and the original perturbation implementation. US spelling.
+
+Deliverables: paper_rounding_shifts.pdf, PNG preview, added rounding block in numbers.json,
+new pins, producer function and final captions.tex snippet. Proposed citation position is §6.1
+immediately after the median/max instability statement. director-helper-3 chooses float placement,
+runs integrated/blinded checks, and owns standalone note synchronization/remote-head record.
+
+
+## Rounding figure referee repair
+
+Caption now distinguishes the study's sigma (100 refitted replicas; assess_receipt.json data.data_boot_replicas)
+from the reported statistical block (50; S1 s1_assembly.json meta.stat_replicas), both checked by producer and
+pinned as data. EW population is explicitly all 42, including the three not supported for the prior-response
+plot; the pinned diagnostic definition checks 42 flags with 39 true. The 109 J cells are named supported.
+Median/maximum labels now match the protected text's one decimal (0.8/2.6); full precision stays in numbers.json.
+The plot drops the undefined J145 label, while retaining its exact argmax check in the numerical audit.
+Axis now distinguishes each quantity's larger of TWO shifts from the maximum over quantities.
+Caption describes shifts rather than opening with a conclusion; it states edge-safe behavior exactly as
+s5e_trace.jitter_coords implements it (grid-edge values fixed, other inputs moved within half a float32 ULP).
+Ledger provenance must say recomputed, reproducing the receipt, not original array; no r2_cache was read.

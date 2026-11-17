@@ -1,0 +1,75 @@
+### General Evaluation across All Abstract Versions
+
+#### Scope and Strength
+1. **Two-dimensional benchmark:**  
+   *“reproduces the published muon-kinematic cross-section integral within about 1%, but differs in shape for an unidentified reason.”*  
+   *Assessment:* While numerically accurate (ratio 1.010, Section 4.1), this statement omits a crucial caveat from Section 4.1: the LightGBM learner and refined negative-weight background subtraction were selected specifically *after* inspecting comparisons against the published data. Section 4.1 states: *“The two-dimensional comparison is therefore conditional on both choices and is descriptive, not a blind validation.”* Without qualifying this, the abstract implies an independent validation.
+2. **Prior retention:**  
+   *Body match:* Accurately matches Section 5.2 (Table 2) and Section 5.3 regarding GiBUU and $q_3$ tilt bias.
+3. **Numerical instability:**  
+   *Body match:* Accurately matches Section 6.1 (median 0.8, max 2.6 statistical standard deviations against thresholds 0.3 and 1.0).
+4. **Dependence on unfolding algorithm:**  
+   *Body match:* Matches Section 5.4 ($T = 194.4$, exceeding the null 99.7th percentile).
+
+#### Coherence and Terminology
+- **Undefined terminology:** The phrase *“the reported cells”* appears abruptly in the penultimate sentence (*“On data, binned iterative unfolding differs from the reported cells...”*). The abstract has not introduced the 16-cell reporting binning (Section 2), leaving the reader unaware of what cells are being referenced.
+- **Jargon:** *“synthetic momentum-transfer tilt”* is understandable, but linking it parenthetically to $q_3$ would assist clarity.
+
+#### Central Missing Finding
+- **Run-period discrepancy:** Section 1, Section 4.2, Section 7, and Table 1 elevate the $+6.10\%$ run-period step in the reconstructed data to a primary finding. Section 7 explicitly lists *“the run-period effect”* among the core blockers that relegate the data output to an illustration. All three abstract versions omit this entirely.
+
+---
+
+### Evaluation of Specific Versions
+
+#### 1. SHORTEST (`ll5d-campaign: stop`)
+- **Coverage Sentence:**  
+  *“A corresponding five-observable test of the procedure's covariance at those tunes stopped at a check fixed in advance, before its pseudo-experiments, and gives no coverage result.”*
+- **Scope & Body Support:** Fully supported by Section 6.2 (the first test stopped at a preliminary check comparing unlike quantities).
+- **Coherence:** Reads cleanly. Logical progression from the 2D under-coverage to the 5D stoppage, then to the data test and illustrative conclusion.
+- **Missing Findings:** Aside from the shared omissions (run-period step, 16-cell definition), none.
+
+#### 2. LONGEST (`ll5d-campaign: graded`, `offset-proceeded`)
+- **Coverage Sentence:**  
+  *“A corresponding five-observable test of the procedure's covariance at those tunes, where the fake-data bias is not flagged, without drawing the model, response and run-period terms, finds, for its two tunes, under-coverage and an invalid reading without the detector's neutron and proton interaction bands (its primary variant) and no under-coverage and an invalid reading with them; it continued past a check fixed in advance, by a decision taken after seeing it, and is descriptive.”*
+- **Scope & Body Support:** Based on the pending Section 6.3 framework and Table 1. However:
+  - *“where the fake-data bias is not flagged”* is misplaced and confusing; in the body (Section 5.2), the two held-out tunes pass bias criteria, but here it reads as if qualifying the test environment.
+  - *“without drawing the model, response and run-period terms”* compresses technical pseudo-data construction details (Section 6.3) into undefined shorthand.
+- **Coherence:** Severely deficient. At 84 words with multiple nested clauses, it violates JINST standards for clarity. Phrases like *“an invalid reading”* are meaningless in an abstract without Table 1's definition (*“a control of the test fails”*).
+
+#### 3. LONGEST WITH BOTH VARIANTS THE SAME (`merged clause`)
+- **Coverage Sentence:**  
+  *“A corresponding five-observable test of the procedure's covariance at those tunes, where the fake-data bias is not flagged, without drawing the model, response and run-period terms, finds, for its two tunes, invalid readings at both in each variant, with and without the detector's neutron and proton interaction bands, and it gives no coverage result; it continued past a check fixed in advance, by a decision taken after seeing it, and is descriptive.”*
+- **Scope & Body Support:** Matches the alternative failure branch in Table 1.
+- **Coherence:** Slightly cleaner than Version 2 because the outcomes are symmetric, but still bloated (78 words) and burdened by uncontextualized operational jargon (*“drawing... terms”*, *“invalid readings”*, *“interaction bands”*).
+
+---
+
+### Overall Verdict
+
+- **SHORTEST** is well-structured, coherent, and suitable for publication subject to minor edits.
+- **LONGEST** and **LONGEST WITH BOTH VARIANTS THE SAME** are unsuitable in their current form: their coverage sentences are dense, confusing run-on clauses loaded with undefined procedural jargon.
+- **All versions** need to introduce the 16-cell reporting basis, clarify that the 2D benchmark configuration was tuned post-hoc, and mention the run-period discrepancy.
+
+---
+
+### Five Concrete Fixes
+
+1. **Clarify the benchmark scope (All versions):**
+   > *Replace:* "As a benchmark, the two-observable unfolding reproduces the published muon-kinematic cross-section integral within about 1%, but differs in shape for an unidentified reason."  
+   > *With:* "In an unblinded benchmark, a tuned two-observable unfolding reproduces the published muon-kinematic cross-section integral within about 1%, but exhibits a correlated shape difference of unidentified origin."
+
+2. **Add the run-period finding and introduce reporting cells (All versions):**
+   > *Insert after numerical instability:* "The data also exhibit an unexplained $\sim 6\%$ step between run periods that originates before unfolding. When evaluated across 16 coarse kinematic cells, binned iterative unfolding..."
+
+3. **Streamline the 5D coverage stoppage in SHORTEST:**
+   > *Replace:* "A corresponding five-observable test of the procedure's covariance at those tunes stopped at a check fixed in advance, before its pseudo-experiments, and gives no coverage result."  
+   > *With:* "A five-observable coverage test at those tunes halted at a pre-specified validation check, yielding no coverage determination."
+
+4. **De-jargon and untangle the coverage sentence in LONGEST:**
+   > *Replace:* "A corresponding five-observable test... and is descriptive."  
+   > *With:* "A five-observable coverage test at these tunes continued past a failed pre-check as an exploratory study; depending on the detector-systematic model, it indicates either under-coverage or failed control diagnostics."
+
+5. **De-jargon and untangle the coverage sentence in LONGEST (MERGED):**
+   > *Replace:* "A corresponding five-observable test... and is descriptive."  
+   > *With:* "A five-observable coverage test at these tunes continued past a failed pre-check as an exploratory study, but test controls failed across both tunes and model variants, providing no valid coverage result."

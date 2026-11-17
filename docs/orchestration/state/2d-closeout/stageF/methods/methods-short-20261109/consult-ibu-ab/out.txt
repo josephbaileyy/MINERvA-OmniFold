@@ -1,0 +1,26 @@
+**Decision 1: use a tightened Option B.** The author is right that agreement with a published binned unfolding does not establish greater reliability. The paired test establishes that these two implementations produce different results on the same inputs. It does not identify what causes the discrepancy with the publication or isolate binning as the responsible feature.
+
+Option A invites that stronger interpretation. Moreover, both options retain “lies close,” which exceeds the stated declaration’s wording licence. Report the numerical comparison without that characterization; no override is needed.
+
+My preferred wording for §4.2 is:
+
+> The published measurement used binned D’Agostini iterative Bayesian unfolding with ten iterations. Applied to this analysis’s inputs, ten-iteration binned IBU and two-observable OmniFold give descriptive χ²/ndf values of 1.03 and 2.27, respectively, relative to the published result. These comparisons use an ill-conditioned published covariance and lack the cross-covariance required for a statistical comparison of results sharing data. The two implementations also differ beyond paired replica noise. The origin of the difference has not been identified. Agreement with the published result measures consistency with another unfolding of these data; accuracy against known truths is evaluated separately in simulation.
+
+For the abstract, introduction, and conclusions, shorten consistently:
+
+> The two-observable OmniFold result reproduces the published integral within approximately 1% but shows a correlated shape difference. A comparison using identical inputs establishes a difference between OmniFold and binned IBU beyond paired replica noise; its origin remains unidentified.
+
+Keep the numerical comparisons and their descriptive qualification in the summary table. The main risk is turning an implementation-specific observation into an explanation of the published discrepancy—or a ranking of accuracy.
+
+**Include the input limitation once, in §4.2:**
+
+> Whether the documented input differences relative to the publication affect the two methods differently was not tested.
+
+This states an untested question without assigning responsibility to input differences. It need not appear in the abstract or recur throughout the paper.
+
+**Decision 2: rewrite all four.** The contrasts convey useful distinctions, but affirmative wording preserves them more economically. The main risk is deleting a substantive definition while removing the stylistic pattern.
+
+- **(a)** “Each simulated event contributes equally to the regressor fit.”
+- **(b)** “The definition fixes the subtraction constant at 135 MeV.”
+- **(c)** “The lateral uncertainties are implemented through shifts in the reconstructed muon kinematics and beam angle.”
+- **(d)** “Each point represents a distinct quantity.”

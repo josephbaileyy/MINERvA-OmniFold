@@ -521,8 +521,12 @@ FIXTURE_SET_SHA256 = "36355204b4b82fa4f901740b75667ee1efd0152864067196f17e23e3ed
 #:   ADDED   docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/readout/fd_f0b_readout.json 5f542830
 #: Power-tested after the bump: one flipped hex digit in each of the two pins gives MISMATCH on that path, rc 1.
 #: Delta and controls: docs/orchestration/state/2d-closeout/valid-region-20261107/v-half/receipts/read/binding-delta.txt.
-RECEIPT_BINDING_COUNT = 169
-RECEIPT_BINDING_SHA256 = "a9f3a844d9afb07684b5a345bd0c6276446bab70463351eefb35b081d5bad4b7"
+#: 169 -> 178 (2026-11-10): the carbon-only ratio figure pins nine existing readouts/sidecars.
+#: Excluding only fd/gencmp/carbon-figure's new receipts reproduces 169 / a9f3a844 exactly;
+#: no existing binding is removed or repointed. Full paths and hashes are enumerated in
+#: state/measurement-paper/5d-community-20261024/fd/gencmp/carbon-figure/binding-delta.txt.
+RECEIPT_BINDING_COUNT = 178
+RECEIPT_BINDING_SHA256 = "5824d1baf16fe1ed21cbd314ba07789b02b1a1273e8c17d4b56171628afe8621"
 
 
 FIELD_PIN_FILE = "docs/orchestration/state/canonical-namespace-field-pins-20260817.json"

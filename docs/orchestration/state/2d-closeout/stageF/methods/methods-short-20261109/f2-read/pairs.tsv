@@ -1,0 +1,10 @@
+id	file	section	base	current
+M001	paper_body.tex	The second five-observable test.	The primary variant leaves out the two bands whose pseudo-experiment and simulation-side blocks disagreed in the first test's checks, for a reason not identified (\ssec{S8.4}{supp:study-cov1}).	The primary variant leaves out the two bands whose pseudo-experiment and simulation-side blocks disagreed in the first test's checks.
+M002	paper_body.tex	The second five-observable test.		The two constructions match in each operation checked, and what separates them lies inside the estimator and is unclassified (\ssec{S8.4}{supp:study-cov1}).
+M003	supplemental_body.tex	What each side does.	For the GEANT4 neutron and proton bands, which of these operations differs between the pseudo-data side and the simulation side is not yet identified.	
+M004	supplemental_body.tex	What each side does.		For the GEANT4 neutron and proton bands, the two constructions match in each of these operations.
+M005	supplemental_body.tex	What each side does.		The truth weights change the $\sigma$ ratio between the two simulation-side blocks by at most $2\times10^{-7}$.
+M006	supplemental_body.tex	What each side does.		The flux and denominator are unchanged for these bands.
+M007	supplemental_body.tex	What each side does.		Simulation resampling is not part of either compared object, and clipping is not exercised.
+M008	supplemental_body.tex	What each side does.		The pseudo-data and the simulation side carry the same factor on the same reconstructed rows inside the window, for every detector universe.
+M009	supplemental_body.tex	What each side does.		What separates the two sides lies inside the estimator and is unclassified, and the second test's primary reading excludes the two bands.

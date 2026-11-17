@@ -1,0 +1,46 @@
+{
+  "baseline": "3045fcbb5",
+  "input_sha256": {
+    "docs/orchestration/state/s5n/stage1/dev_receipt.json": "1ef4096c39e2cfb2ded7d7e70c649eebcea09fbd0b31dca97e7b9d16c9878526",
+    "docs/orchestration/state/s5n/stage1/truth_check.json": "14ee280030f326484222da56245507006a1533f4f0e41e778823ab586a95c046",
+    "docs/orchestration/state/s5e/cand/assess_receipt.json": "84266e309d1aae0d2db1db315750b8164413a7d0125fcaa4a6c9b25834261a2c",
+    "docs/analysis-note/figures/methods_short/presentation_original_arrays.json": "fc6d4d2e25b8c87b35bc8c269f01a19be293905ffeee3f9e02240bb9404a76f7"
+  },
+  "exact_output_checks": {
+    "m3_fig2_deformation_arrays.json": {
+      "byte_identical_to_3045fcbb5": true,
+      "sha256": "d64452d2d289dfb3affc7d1b4e71cf1d4406bb19014c630949090ccc48a9595f"
+    },
+    "m3_fig2_deformation_numbers.json": {
+      "byte_identical_to_3045fcbb5": true,
+      "sha256": "2b3a53f1fcca64c9ceba92101580effebfaa30f4b73efdf4efb93e8c229e92da"
+    }
+  },
+  "original_array_reference_exactly_equal": true,
+  "figure_geometry": {
+    "before": {
+      "width_pt": 508.0,
+      "height_pt": 496.8
+    },
+    "after": {
+      "width_pt": 508.0,
+      "height_pt": 374.4
+    }
+  },
+  "height_reduction_percent": 24.6376811594203,
+  "all_authored_font_sizes_unchanged": true,
+  "printed_fonts_at_508pt": {
+    "before_min_median_max_pt": [
+      3.0,
+      8.3,
+      9.3
+    ],
+    "after_min_median_max_pt": [
+      3.0,
+      8.3,
+      9.3
+    ],
+    "caption_median_pt": 9.0
+  },
+  "regenerated_pdf_sha256": "1bc7bc266e2e31339c2b2ea4bfa0ca37a2263526dbff98a760febed0937e8546"
+}

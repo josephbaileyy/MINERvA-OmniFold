@@ -1,0 +1,127 @@
+LL5D-DECLARATION.md (at origin/main; line numbers as printed)
+--- :66,71
+    66	**The STOP rule (§8, row R3): Joseph ruled "Decide at the STOP"** (`DECISION-20261108-joseph-ll5d-stop-rule.md`).
+    67	- No stop rule is fixed in advance.
+    68	- Each STOP goes to the director and to Joseph unrepaired. Nothing relaunches, and no repair is declared, until Joseph
+    69	  decides for that STOP.
+    70	- An INVALID may still be rerun unchanged under the director's authority.
+    71	- Any repair after a STOP is disclosed in the paper and the note as chosen after that STOP was seen.
+--- :146,152
+   146	- **r_T > 0 on every row** is a control (§10). Clipping before or after applying r_T is then the same.
+   147	- **"Held out" is not "independent".** G18's Valencia 2p2h shares the GENIE + MEC shift's family, and AR23 shares G18's
+   148	  Nieves quasielastic model (1B's staged declaration §3). §7 reports the leave-out-MEC variant.
+   149	
+   150	### 3.2 The natures: every drawn group
+   151	
+   152	One toy is one nature. It is drawn by `fd_1b_toys.draw_for_seed(seed, flux_p, groups)`, unchanged, then unfolded once.
+--- :246,258
+   246	  (`UNFOLD_MC_KEYS` = `fd_1b_inv.MC_KEYS` + flux, `fd_1b_precheck_fd.py:68`, `:140`), exactly as Dnom does (`:149-152`).
+   247	- **The unfold** is S1's estimator, `toys.CONFIG`, `toys.ITERS` and estimator seed 42.
+   248	- **The error** is e = U x̂ − U T_D on the 16 reporting cells, after the lateral and normalization surrogates.
+   249	
+   250	### 3.6 Seeds
+   251	
+   252	| what | G18 | AR23 |
+   253	|---|---|---|
+   254	| toys (both readings, shared) | 4,751,000–4,751,299 | 4,761,000–4,761,299 |
+   255	| the gate sample (§5.2), whose first 300 are the toys' draws (11-04 item 1) | 4,751,000 to 4,751,000 + N − 1 | 4,761,000 to 4,761,000 + N − 1 |
+   256	| the realization d̃_T for the stat block (§4) | 4,770,100 | 4,770,200 |
+   257	| the grading null, `minus2` / `all` | 4,770,310 / 4,770,320 | 4,770,410 / 4,770,420 |
+   258	| the gate calibration's null replicates | from 4,770,500 | from 4,770,600 |
+--- :326,330
+   326	## 5. Before the bulk: the receipt, the clipping gate and clipcheck
+   327	
+   328	### 5.1 The receipt (inside the gate jobs, §9)
+   329	
+   330	This is run exactly in float64, in compose's order, over every declared draw of both readings at both truths: 2 × 2
+--- :359,377
+   359	### 5.2 The clipping gate (Joseph's 11-03 clip rule and gates, with 11-04's large sample)
+   360	
+   361	**C2's fixed reading** (`fd/receipts-cov2d/clip/c2_reading.txt`, sha256 `b5b4fc4b…`) is applied unchanged as a hard
+   362	stop. Its variance part is replaced by Joseph's 16-cell gate. Its R_c rules and row-match bound are unchanged
+   363	(`DECISION-20261103-joseph-1b-variance-gate.md` item 3).
+   364	
+   365	**The 16-cell variance gate, per evaluation.** The clipped-composition variance ratios r_c (C2's definition) are
+   366	evaluated on the gate sample of N draws from the same code, configuration and clip rule as the 300 declared draws.
+   367	The gate passes if all hold:
+   368	- (i) at most 2 of 16 cells have |r_c − 1| > 0.20;
+   369	- (ii) |mean log r_c| ≤ t_ii;
+   370	- (iii) max |r_c − 1| ≤ t_iii;
+   371	- t_ii and t_iii are recalibrated by null simulation at N, before any 5D draw is examined, on the correlated null
+   372	  including the reference variance's noise (11-04 item 2).
+   373	
+   374	**The population: the director's mapping of Joseph's 11-03 and 11-04 rules onto this population**, which Joseph may
+   375	override (the director's ruling 3):
+   376	- **four evaluations:** {G18, AR23} × {`minus2`, `all`};
+   377	- the joint noise-only false-stop budget is **1 % over the four**;
+--- :422,445
+   422	nothing proceeds, and it goes to the director.
+   423	
+   424	**The backstop** (11-04 item 5). On the 300 declared draws, (iii) at 4.3 SD per cell by rule (α), and (i) at k = 2,
+   425	as a loose check. A config hash shared by the gate sample and the toys is logged.
+   426	
+   427	**A failed gate, at either reading or either tune, means nothing launches,** and the test returns to Joseph (11-03
+   428	variance gate, item 3).
+   429	
+   430	### 5.3 clipcheck: the clipping offset up front (the 11-02 redesign's addition (ii), per row)
+   431	
+   432	- **The clipmean,** per truth and per reading: one unfold of d_T plus the mean over the 300 declared draws of each
+   433	  row's |λ⁻|. That is the response to the clipped data mass around d_T.
+   434	- **The truth side,** at no unfold: τ_c is the mean over the 300 draws of U·(T_D(clipped) − T_D(unclipped tdw and wt,
+   435	  with T kept only where the unclipped denominator is > 0)), over σ_c.
+   436	- **The offset:** o_c = U(x̂_clipmean − x̂_T)_c / σ_c − τ_c. Its sign is the error's, e = x̂ − T.
+   437	- **σ_c's proxy before the bulk** is S1's reported σ at the data (`fd_1b_score.reported_matrix`), as amendment 2 §5b
+   438	  used it. The final readout recomputes o_c with C_T.
+   439	- **The rule, fixed now.** If any cell at any (truth, reading) has |o_c| ≥ δ* = 0.667, the verdict is `TO_JOSEPH`,
+   440	  and the case goes to Joseph before any bulk. Otherwise the verdict is `PROCEED`.
+   441	  - δ* is the offset that lowers a unit Gaussian's ±1σ content by §6's per-cell resolution, 0.10
+   442	    (amendment 2 §5).
+   443	
+   444	## 6. Grading, fixed before any number is read
+   445	
+--- :469,486
+   469	| reading | condition |
+   470	|---|---|
+   471	| **cell c under-covers** | #{\|e_tc\| ≤ σ_c} ≤ k_c(T), the largest k with P(Bin(300, p_c(T)) ≤ k) < 0.025/16 |
+   472	| **joint under-coverage** | #{χ²_t in region} ≤ k_J(T), the largest k with P(Bin(300, q(T)) ≤ k) < 0.025 |
+   473	| **COVERS at (T, reading)** | no cell under-covers, and no joint under-coverage |
+   474	| **UNDER-COVERS at (T, reading)** | otherwise; each cell is named, with whether the joint fraction is under too |
+   475	| **INVALID at (T, reading)** | any §10 control fails for it, or the Cholesky reading rule fails. Reported unrepaired |
+   476	
+   477	- **The rule is one-sided.** Over-coverage is reported, but it is not a failure.
+   478	- **The weakened pass:** a pass in a cell whose clipped variance ratio is below 0.9 counts as weakened (the director's
+   479	  ruling recorded in the 11-03 clip rule, item 4).
+   480	- **The flagged cell and the clipping offset:** a flagged cell with |o_c| ≥ 0.667 under C_T is read "the flag may be
+   481	  the clipping artefact". That reading cannot un-flag a cell.
+   482	- **Size,** per (truth, reading): at most 0.05 by the union bound (0.025 over the cells, 0.025 joint). Over the two
+   483	  tunes within one reading, at most 0.10.
+   484	  - The two readings are correlated by construction, so no size across readings is stated, and none is needed: the
+   485	    primary reading is `minus2`.
+   486	- **Resolution,** for orientation from 1B's staged `arith.out`: about 0.10 in content per cell and 0.08 jointly.
+--- :603,618
+   603	- A job that times out is INVALID, goes to the director unrepaired, and is rerun only on the director's go.
+   604	
+   605	**The projection gate,** before every submission:
+   606	- charged so far, from sacct over every `ll5d_*` job: ElapsedRaw × NNodes;
+   607	- plus the full `--time` × nodes of every `ll5d_*` job that has been submitted but is not yet ended in sacct. This
+   608	  guards against sacct lagging its own sbatch;
+   609	- plus this job's `--time` × nodes;
+   610	- must be ≤ 148.0 node-h. Otherwise nothing is submitted, and it goes to the director.
+   611	
+   612	**The in-job cost guards:**
+   613	- each gate job projects its total at the calibrated N from its one-off steps and its first two blocks. If the
+   614	  projection exceeds 0.9 × `--time` (100,440 s), it exits before the remaining blocks. That is a REPRICE to the
+   615	  director, not a STOP;
+   616	- `ll5d_calib` projects the same way against 0.9 × `--time` (16,200 s);
+   617	- after the pilot, every unfold's wall must be ≤ 1,062 s and its peak RSS within S1's per-lane limit, or REPRICE (an
+   618	  amendment).
+--- :668,676
+   668	- the toys' seeds are exactly §3.6's: none missing and none extra.
+   669	
+   670	**Reads:**
+   671	- every input not made by this lane is read with `O_NOATIME`. EPERM is raised, never retried;
+   672	- each job writes an atime sidecar and exits with 8 set on any move. A move is a deviation, reported unprompted and
+   673	  never restored.
+   674	
+   675	## 11. Order, connects and routing
+   676	

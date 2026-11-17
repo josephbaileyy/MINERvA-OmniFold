@@ -1,0 +1,442 @@
+# Record excerpts, with line numbers (files as in the repository at this head)
+
+## FD-1B-STAGED-DECLARATION.md lines 1-70
+1: # DECLARATION 1B staged method coverage, revision 2: stage 0 κ as the hard gate, then held-out-tune coverage with the covariance remade at each truth (2026-11-01)
+2: 
+3: **By** the measurement session `coverage-5b`, for `coverage-5b-audit` to review and the director to bind.
+4: 
+5: **What changed from revision 1** (head `589cfcbc`), on `coverage-5b-audit`'s review (issuecomment-6570466640),
+6: upheld by the director:
+7: - **R1.** §4.5's power argument now rests on the estimator's prior dependence, measured by I2's mode C (C/A median
+8:   0.476), not on F_truth, and it states what is expected at first order if the procedure is sound.
+9: - **R2.** §5.2's null is no longer the Gaussian P₀. It is simulated from the declared draw laws under an exactly
+10:   matched C_T, by a declared function (`nd-unfolding/fd_1b_null.py`, new here with 23 tests and an 18-of-18 mutation
+11:   receipt), evaluated at each truth before any toy error is read.
+12:   - The family size per truth is now ≤ 0.05 by construction (0.025 over the cells, 0.025 joint), against revision 1's
+13:     0.074. Across truths it is ≤ 0.10, or ≤ 0.15 with the plug-in.
+14:   - `arith.py` checks the null at the data's point from committed readouts, with the lateral split bracketed.
+15: - **R3.** §4.2 states one composition rule. It reduces exactly to S1's single-universe arrays and keeps S1's
+16:   treatment of zero, negative and non-finite weights. §9 adds a bitwise control against κ's nature, and binding 2's
+17:   first receipt counts the rows where the rule departs from a pure product.
+18: - **M1:** every flag gets a bias-versus-width attribution (§5.1), and §5.4 adds the predicted offset of the
+19:   un-centred draws. **M2:** sizes are stated per truth and across truths (§5.2), and clause F carries them (§12).
+20:   **m1:** clause P's χ² carry-over needs ndf = 16. **m2:** §6's control (b) is labelled a plumbing check.
+21: - **Stage 0 is untouched** and stays byte-identical to `55435ec0`.
+22: 
+23: **What changed from revision 0** (head `466b6ac7`), on the director's two points before the audit's review:
+24: - **Point 1.** A pass carries over to the procedure's full covariance at the ensemble's truth T, not to the reported
+25:   covariance made at the data's point. This is reworded at every site that stated it (§4.3, §13), and §12's paper
+26:   text claims no more.
+27:   - Clause F no longer says "lower bounds" (§12).
+28: - **Point 2.** The tunes' overlaps with C_model and with each other are in the paper text's scope in every outcome
+29:   (§12, clause T: G18 "only partly held out").
+30:   - The leave-out-MEC variant's reading is fixed before any number is read (§5.4).
+31: - **The director ruled on §14.2:** a stage-0 PARTIAL waits for Joseph.
+32: - **#655 is closed unmerged,** with a pointer to this PR.
+33: 
+34: **Under** [`DECISION-20261101-joseph-1b-staged-method-coverage.md`](../../../DECISION-20261101-joseph-1b-staged-method-coverage.md)
+35: (#663; Joseph: "Staged method-coverage (Recommended)"), every item, and the director's brief of 2026-11-01. The consult
+36: behind it is `FD-1B-MODED-CONSULT-{PROMPT,ANSWER}.txt` (#660).
+37: 
+38: **After:**
+39: - mode D's declaration, [`FD-1B-MODED-DECLARATION.md`](FD-1B-MODED-DECLARATION.md), revision 1 at #655 head `55435ec0`,
+40:   acknowledged by `coverage-5b-audit`. It is carried here byte-identical as the record of the design finding (§14);
+41: - the original 1B protocol, [`FD-1B-DECLARATION.md`](FD-1B-DECLARATION.md), whose draws, surrogates and transfer
+42:   rule stage 1 reuses where §4 says so;
+43: - S1's assembly (`nd-unfolding/s1_assemble.py`, `S1-REPORT.md`), whose procedure stage 1 reruns at each truth.
+44: 
+45: **This declares:**
+46: - stage 0, carried unchanged from #655 (§2);
+47: - the record that neither tune entered C_model, the estimator or any tuning (§3);
+48: - stage 1's design (§4) and grading (§5), fixed before any number is read;
+49: - the plug-in truth (§6) and the truth-dependence readouts (§7);
+50: - the price (§8), the controls (§9), the order (§10) and the code still to come (§11);
+51: - the paper's text in each outcome, fixed now (§12).
+52: 
+53: **MEASURES:** nothing. No job ran and no connect was made. The arithmetic is
+54: `fd/receipts-1b/staged/arith.py`, with its output in `arith.out`. The record queries are `provenance.py`, with their
+55: output in `provenance.out`. Both ran on this branch from `a4cd6ffc`, at 0 node-h.
+56: 
+57: **CANNOT AUTHORIZE:** any job before the director's binding, or stage 1 before stage 0's PASS and the binding of
+58: §11's code. It cannot authorize any change to the reported covariance, an interval, a claim or the paper's wording,
+59: except the text §12 fixes for Joseph, and only after a result lands.
+60: 
+61: ## 1. Fixed by the decision, and unchanged here
+62: 
+63: - **The reported covariance is not under revision.** No outcome inflates, replaces or re-weights a block without
+64:   Joseph (decision item 5).
+65: - **Stage 0 is κ, with a hard gate** (decision item 1, item 6).
+66: - **Stage 1** is held-out-tune method coverage at G18_10a_02_11b and AR23_20i_00_000:
+67:   - every uncertainty group is drawn;
+68:   - each pseudo-dataset is unfolded with the nominal simulation by the production procedure;
+69:   - the covariance is remade at each tune's truth by the reported procedure.
+70: - **Grading is per tune.** With two truths there is no coverage rate (decision item 2).
+
+## FD-1B-STAGED-DECLARATION.md lines 170-246
+170: ## 4. Stage 1: the design
+171: 
+172: ### 4.1 The truths
+173: 
+174: | truth | definition | pin |
+175: |---|---|---|
+176: | **G18** | G18_10a_02_11b, F1's gated, k-normalised bridged ratio, applied as `s5n_pseudo.truth_weight("ratio_nd", …, 1.0, ratio)`, as the original 1B toys apply it (`fd_1b_toys.truth_ratio`, `truth_model`) | the committed `f1-prep-SHA256SUMS` digest, checked by `fd_1b_toys.truth_ratio` |
+177: | **AR23** | AR23_20i_00_000, the same | the same |
+178: | **plug-in** (optional, §6) | the unfolding's own final truth weights at the data | the capture product's digest |
+179: 
+180: ### 4.2 The pseudo-data: every group drawn
+181: 
+182: One toy is one nature, drawn from `numpy.random.default_rng([seed, DRAW_SALT])` in `fd_1b_toys.draw`'s order, then
+183: unfolded once.
+184: 
+185: | group | the nature drawn | as in |
+186: |---|---|---|
+187: | stat | Poisson pseudo-data at data size on every reco-passing MC row and every background row, plus set A's MC and template Poisson(1) streams at the toy's seed | `fd_1b_toys.build_full`, `mc_template_streams` |
+188: | flux | one of the 100 PPFX universes, with probability w_u / Σw. Nature's flux, truth weights, reco weights, denominator and background are u's | S1's flux block (weights from `s1_assemble.flux_weights`); u's arrays as `s5p_universe.universe_inputs` gives them |
+189: | interaction | each of the 33 bands at one of its universes, uniformly: a pair band at either endpoint with probability ½, 2p2h at one of 3. **Nature = universe:** truth weights, reco weights, denominator and background all become the universe's, **not** truth-preserving | mode D (#655 §2), which κ gates. This replaces the original toys' truth-preserving g_f, the cause of gate D's mismatch |
+190: | detector | the 4 weight-only bands, each at endpoint 0 or 1 with probability ½, from the detector dump (reco and background weights) | the original toys; S1 choice 7 |
+191: | lateral | the declared surrogate: x̂ += Σ_b s_b Δ_b(T) / 2 with s_b = ±1, and Δ_b(T) S1's lateral endpoint difference transferred to the truth (§4.4) | `fd_1b_score.surrogate`; `FD-1B-DECLARATION.md` §3 |
+192: | normalization | x̂ × (1 + 0.014 z), z ~ N(0, 1) | S1's 1.4 % |
+193: | seed | not drawn. The estimator seed is 42, and S1 measured the block as exactly zero | S1-REPORT §7 |
+194: 
+195: **Composition: one rule (revision 2, the audit's R3).**
+196: 
+197: **Loading.** Each drawn universe's arrays are first loaded exactly as S1's block and κ load them:
+198: `s5p_universe.weights(bank, tag, nonfinite="zero")` (the detector dump for the detector bands), then
+199: `s5p_universe.universe_inputs`. So non-finite weights are zeroed, and negative weights are kept.
+200: 
+201: **The rule.** Take a draw D = (u₁, …, u_k) in `fd_1b_toys.draw`'s order: the flux universe, the interaction bands
+202: sorted, then the detector bands. Each per-row array a ∈ {w_truth, w_reco, bkg_w, tdw} composes as follows.
+203: - **On rows where a_CV ≠ 0:** a_D = a_{u₁} ⊙ Π_{j≥2} (a_{u_j} / a_CV). Negative ratios are kept, and nothing is
+204:   clipped.
+205: - **On rows where a_CV = 0,** where no ratio exists: a_D = a_{u₁} + Σ_{j≥2} a_{u_j}.
+206: 
+207: **What it reduces to.** For k = 1 the product and the sum are empty, so a_D = a_{u₁} exactly. A single drawn universe is
+208: therefore S1's and κ's nature bitwise. This is a §9 control and a test in binding 2.
+209: 
+210: **The other arrays:**
+211: - **The denominator** is `s5p_universe.denominator` of the composite tdw, as `universe_inputs` builds it.
+212:   - A detector-dump universe that carries its own `denom_nd` histogram enters by its cell ratio to the CV's
+213:     histogram, on cells where the CV is > 0. For k = 1 this again gives `universe_inputs`' array.
+214:   - Binding 2's first receipt compares each detector universe's `denom_nd` with the CV's. If they are bitwise equal,
+215:     the factor is 1 and the branch is inert, and the receipt says which.
+216: - **The flux histogram** is the one flux universe's (`flux_universe_bins`), as in `universe_inputs`.
+217: 
+218: **Not used:** the `ne.ModelCache` / `checked_ratio` path (ratio 1 where the CV ≤ 0, negatives clipped, no tdw), which
+219: revision 1 named by mistake.
+220: 
+221: **Counted before S1-0, in the real bank, by binding 2's first receipt (login node, 0 node-h),** per universe and
+222: array:
+223: - rows with a_CV = 0 and a_u ≠ 0;
+224: - rows with a_CV < 0;
+225: - rows with a_u < 0;
+226: - rows non-finite before zeroing.
+227: 
+228: These are the rows where the rule departs from a pure product of ratios, or where S1's loader alters a weight.
+229: 
+230: **Each toy's truth** is the nature's own: `true_xsec` over the composite truth weights × r_T, with the composite
+231: denominator and the nature's flux. The error is **e = U x̂ − U x_true**, after the lateral and normalization
+232: surrogates.
+233: - So coverage is graded over natures drawn about T under the systematic model, each against its own truth. At T =
+234:   nominal, this is κ's construction, with the other groups and the Poisson draws added.
+235: 
+236: **Toys:** 300 per truth, at seeds 3,620,000–3,620,299 (G18), 3,630,000–3,630,299 (AR23) and 3,640,000–3,640,299
+237: (plug-in). `arith.py` checks these ranges and the stat-realization seeds of §4.3 against every `.tsv`, `.py`, `.sh`,
+238: `.json` and `.md` file: none occurs (`declared_seeds_found_in_repo: []`).
+239: - A first choice, 2,72x,xxx, collided with an unrelated index (`2720019`, in a G2 receipt), and was moved.
+240: 
+241: **Not drawn:**
+242: - C_model: a fixed-truth draw cannot produce it. Nature's departure from the MC is real here, and C_model is what
+243:   should cover it;
+244: - C_resp: the decision's nominal-response scope;
+245: - C_PL,5D: built from the data's run-period groups, which no simulation draw produces.
+246: 
+
+## FD-1B-STAGED-DECLARATION.md lines 247-260
+247: ### 4.3 The covariance remade at each truth
+248: 
+249: **The reported procedure** is `s1_assemble.py`:
+250: - C_e = C_stat + Σ_b C_b + C_norm + C_seed, with C_total = C_e + C_model_abs;
+251: - the reported covariance adds C_resp and C_PL,5D (`paper_body.tex:81`).
+252: 
+253: **At truth T, the data are replaced by T's pseudo-data at their means** (nominal response, every Poisson draw at its
+254: mean): d_T. Each block is then remade as S1 made it from the data:
+255: 
+256: | block | at T | unfolds per truth |
+257: |---|---|---:|
+258: | central x̂_T | d_T unfolded with the nominal MC | 1 |
+259: | flux | d_T unfolded with each Flux universe's MC (`universe_inputs`, flux file), constraint-weighted `mat_cov` | 100 |
+260: | interaction | d_T with each interaction universe's MC, MAT mean-centred per band (`mat_cov`), summed over 33 bands. This is I2's mode A, at T instead of the nominal truth | 67 |
+
+## FD-1B-STAGED-DECLARATION.md lines 335-415
+335: ## 5. Grading, fixed before any number is read
+336: 
+337: **One implementation.** Every threshold is computed by `nd-unfolding/fd_1b_null.py`:
+338: - at each truth, from its null, by §11's scorer, which imports the module;
+339: - here, by `arith.py`, which imports it too and checks its binomial duality against scipy's Clopper–Pearson.
+340: 
+341: The module's tests and mutation receipt are in this PR. The numbers below are committed in `arith.out`.
+342: 
+343: ### 5.1 Statistics per truth T, over its 300 toys
+344: 
+345: - **Per-cell in-interval fraction** p̂_c = #{t : |e_tc| ≤ σ_c} / 300, with σ_c = √(C_T)_cc. It is read against the
+346:   draw-matched null content p_c(T) of §5.2, not against the Gaussian P₀ = erf(1/√2) = 0.682689, which is printed
+347:   beside it.
+348:   - It is reported with its Clopper–Pearson interval at 95 %, two-sided.
+349: - **χ² on the non-null subspace.** Eigendecompose C_T and keep the eigenvalues above 10⁻¹² of the largest (S1's
+350:   rank convention, S1-REPORT §4). Then χ²_t = Σ_k (v_kᵀ e_t)² / λ_k over the kept k, with ndf the number kept.
+351:   - If ndf = 16, the code checks that χ²_t equals the Cholesky χ² the paper uses (`paper_body.tex`, "Every χ² …
+352:     by Cholesky decomposition") to 10⁻⁹ relative, or INVALID.
+353: - **The joint in-region fraction** q̂ = #{t : χ²_t ≤ F⁻¹_{χ²(ndf)}(P₀)} / 300, with its Clopper–Pearson interval. It
+354:   is read against the null's q(T).
+355: - **Pulls,** per cell: the mean and standard deviation of e_tc / σ_c, with their standard errors.
+356: - **The bias-versus-width attribution, for every flagged cell** (the audit's M1; `fd_1b_null.attribute`):
+357:   - the pull mean and the pull standard deviation, with their standard errors;
+358:   - the count of the centred errors, #{|e_tc − ē_c| ≤ σ_c}.
+359:   - The reading is fixed now:
+360:     - **"bias"** if the centred count is not flagged;
+361:     - **"width"** if it is flagged and the pull mean is within 2 standard errors of 0;
+362:     - **"both"** otherwise.
+363:   - A flag from a bias inside an MSE-exact C_T is real under-coverage at that truth, but a different finding from
+364:     "too narrow". The attribution names which.
+365: - **Mean χ²/ndf** with its standard error (0.020 at ndf 16 for an exact χ²). Descriptive.
+366: - **The under-coverage factor,** per cell: s_c = Q_{p_c(T)}(|e_tc|) / σ_c, the scale σ_c would need to hold the null
+367:   content. Descriptive. It is the "by a factor" of §12's failure text.
+368: 
+369: ### 5.2 The rule, per truth (revision 2: a null matched to the draws)
+370: 
+371: **Why not P₀.** The declared draws are partly two-point: 32 pair and 4 detector bands at ±endpoints, 2p2h at one of
+372: 3, and the 5 lateral bands at s_b = ±1. A sum dominated by one two-point term holds less than P₀ inside its own exact
+373: σ. In the audit's bracket, with one lateral band carrying the lateral block, R00, R01 and R12 would hold 0.648–0.658
+374: under an exactly correct covariance. Against P₀, the per-truth false-flag rate would then be about 0.14, not the
+375: declared 0.035.
+376: 
+377: **The null, a declared function of the remade blocks** (`fd_1b_null.null_contents`), evaluated at each truth T after
+378: the remade blocks exist and **before any toy error is read**:
+379: - **The laws.** Each drawn band is a discrete law: its universes' centred shift vectors at T, with their draw
+380:   probabilities.
+381:   - A pair band's two endpoints at ½ each, 2p2h's three at ⅓, the 100 flux universes at w_u / Σw, a detector band's
+382:     two endpoints, and a lateral band's ±Δ_b(T)/2.
+383:   - Centring removes the probability-weighted mean, so each law's covariance is its band's block exactly. The tests
+384:     check this against `s1_assemble.mat_cov`.
+385: - **The Gaussian part.** Stat, normalization and C_model_abs(T) are one Gaussian with their summed covariance.
+386:   - C_model is in the null's error on purpose. The rule asks whether C_T's intervals hold their nominal content given
+387:     the draws' shape, and a Gaussian share holds P₀ by definition.
+388:   - Leaving C_model out of the error, as the audit's bracket did, would raise the null to about 0.75 where C_model is
+389:     large. The rule would then flag the bias C_model is built to absorb.
+390: - **The match.** The components must sum to C_T to 10⁻¹² relative, or the null refuses (`check_matched`).
+391: - **The simulation.** 2,000,000 error vectors at seed 3,642,000 give p_c(T) per cell and q(T) for the χ² region.
+392:   - The Monte Carlo standard error is at most 3.3 × 10⁻⁴.
+393:   - Each flag count is computed at the content minus 3 standard errors. That can only lower the count, and so the
+394:     false-flag rate.
+395: - **Where it runs:** in the readout on a login node, at 0 node-h.
+396: 
+397: | reading | condition |
+398: |---|---|
+399: | **cell c under-covers** | #{|e_tc| ≤ σ_c} ≤ k_c(T), the largest k with P(Bin(300, p_c(T)) ≤ k) < 0.025/16. This is the exact one-sided Clopper–Pearson duality, with Bonferroni over the 16 cells |
+400: | **joint under-coverage** | #{χ²_t in region} ≤ k_J(T), the largest k with P(Bin(300, q(T)) ≤ k) < 0.025 |
+401: | **COVERS at T** | no cell under-covers, and there is no joint under-coverage |
+402: | **UNDER-COVERS at T** | otherwise. The report names each cell and states whether the joint fraction is under too |
+403: | **INVALID at T** | any §9 control fails for T. Reported unrepaired; the other truths are still graded if their controls pass |
+404: 
+405: **The rule is one-sided.** Over-coverage is reported, but it is not a failure:
+406: - a cell **over-covers** if its one-sided lower bound at 1 − 0.025/16 is above p_c(T). At p_c = P₀ that is a count of at
+407:   least 229;
+408: - C_model is an unscaled envelope, so over-coverage where it dominates is expected, and the paper text states the
+409:   fractions (§12).
+410: 
+411: **Size** (the audit's M2):
+412: - **Per truth,** the family (16 cell flags and the joint flag) has size at most 0.025 + 0.025 = **0.05** by the union
+413:   bound, whatever p_c(T) and q(T) turn out to be. `fd_1b_null.size` prints the exact sum at the null for each truth.
+414: - **Across truths,** at most **0.10** for the two tunes and **0.15** with the plug-in. A "one tune under-covers"
+415:   outcome carries that size.
+
+## FD-1B-STAGED-DECLARATION.md lines 470-480
+470: ## 6. The plug-in truth (optional, priced separately)
+471: 
+472: **What it is:** the nominal MC's truth reweighted by the unfolding's own final per-event push weights at the data. It
+473: is the unfolding's estimate of nature, made by the production run on the data, the consult's first choice.
+474: 
+475: **The code change is small and does not touch production code.**
+476: - `s5c_unfold.unfold` takes the push weights from `onc.omnifold_loop` (`s5c_unfold.py:124`), where `onc` is the module
+477:   `omnifold_nn_core`, imported by name (`s5c_unfold.py:47`). It discards them after the histogram
+478:   (`s5c_unfold.py:138`).
+479: - `s5n_pseudo.unfold_negweight` accepts an `unfold_fn` (`s5n_pseudo.py:330`).
+480: - **The capture** is an `unfold_fn` that calls `s5c_unfold.unfold` unchanged while `s5c_unfold.onc.omnifold_loop` is
+
+## FD-1B-STAGED-BINDING-3.md lines 40-60
+40:   - 0 of 1,147 declared-input atimes moved. Spent: 9.85 node-h.
+41: - **The full mutation receipt** at the frozen code `9b87a85c`, plan 387: 370 of 370 applicable killed, 15 not applicable,
+42:   2 equivalent with proving tests, and all 7 REQUIRED killed. It re-runs at M for the test-only change (EXPECTED_B3) and
+43:   comes with stage 3's report.
+44: - **The audit** (coverage-5b-audit):
+45:   - §11's B1–B5 are closed: the no-plug-in path, the price, stage records identified by path, job, head, pin and sha,
+46:     undeclared scripts waiting for a read, and guard_scan failing on empty populations;
+47:   - P1 is closed under ruling (i);
+48:   - stage 3's two connects raise no blocker; the auditor verified all 14 blobs at M.
+49: 
+50: ## Rulings
+51: 
+52: 1. **Binding 3 is the no-plug-in path:** G18 and AR23 only, with a bulk of 6 jobs. Whether the plug-in truth belongs in 1B
+53:    is deferred to Joseph's publication-scope decision. Adding it later would need its own binding: S1-0 with the
+54:    capture, all three c2checks with the push, and a new pin, at about 120 node-h or more. Binding 3's bulk products would
+55:    not resume under that.
+56: 2. **The price.**
+57:    - The ceiling is **72.0 CPU node-h** at caps for this population, and about 9.85 of it is spent.
+58:    - The director reports it to Joseph as within the standing grant. It is far below half the balance.
+59:    - Every job is under 12 h, and every `--time` is written HH:MM:SS with the TimeLimit check.
+60: 3. **A fixed conditional sequence for stages 3–7** (§11). Each stage proceeds when the previous stage's PASS record,
+
+## DECISION-20261101-joseph-1b-staged-method-coverage.md lines 1-69
+1: # DECISION 2026-11-01 (latest) — Joseph: 1B proceeds as a staged method-coverage design
+2: 
+3: **Recorded by** the paper-tighten lane, as director.
+4: 
+5: ## What led to it
+6: 
+7: - **The previous decision.**
+8:   [`DECISION-20261101-joseph-1b-keep-block-redesign-test.md`](DECISION-20261101-joseph-1b-keep-block-redesign-test.md)
+9:   (#654) kept S1's full-simulation block. Next it was to run a redesigned test (mode D), and if that passed, the
+10:   coverage ensemble.
+11: - **The redesign's finding.** Mode D's declaration (#655, head `55435ec0`, acknowledged by `coverage-5b-audit`) found
+12:   that no pseudo-data construction compared with the reported block M has power. M depends on the truth point at
+13:   which it is made: I2's F_truth is in the window in 1 of 16 cells. The audit's corrected reasoning is in its comments
+14:   on #655.
+15: - **What was left, and its limits.**
+16:   - The fallback, a symmetry check κ at the nominal truth, is expected to pass by closure at first order.
+17:   - A κ PASS licenses only method coverage, graded against a block remade at the ensemble's own truth.
+18: - **The consult.** An independent Sonnet consult is verbatim in
+19:   `state/measurement-paper/5d-community-20261024/FD-1B-MODED-CONSULT-{PROMPT,ANSWER}.txt` (#660). It recommended
+20:   option (c). The director agreed. The reasons:
+21:   - the paper's qualification (`paper_body.tex:80`) is about coverage "at truths held out of its construction", which
+22:     is method coverage at held-out truths;
+23:   - κ alone cannot change the paper.
+24: 
+25: ## Joseph's answer, verbatim
+26: 
+27: Asked how 1B should proceed, now that the reported covariance cannot be tested directly against simulation:
+28: 
+29: > Staged method-coverage (Recommended)
+30: 
+31: sha256 of the text plus a final newline begins `fd622fc17106ead8`.
+32: 
+33: ## What is decided
+34: 
+35: 1. **One staged declaration,** by coverage-5b. coverage-5b-audit reviews it, and the director binds it before anything
+36:    runs.
+37:    - **Stage 0:** κ (#655's Dnom against uncarried A), with a hard gate. A κ FAIL stops the campaign, and the result
+38:      goes to Joseph.
+39:    - **Stage 1:** a method-coverage ensemble at the GENIE v3 tunes G18 and AR23.
+40:      - The declaration must show from the records that neither tune was used to build C_model or the estimator.
+41:      - Pseudo-data are drawn with every uncertainty group (statistical, flux, interaction, detector, lateral,
+42:        normalization), not interaction only.
+43:      - Each pseudo-dataset is unfolded with the nominal simulation by the production procedure.
+44:      - At each tune, the covariance is rebuilt by the same procedure as the reported one, at that tune's truth.
+45:    - **Optional, only if cheap:** a plug-in truth reweighted to the unfolded data. This needs the unfolding's final
+46:      truth weights exposed, which is a code change bound with the rest.
+47: 2. **Grading.** Fixed before any number is read:
+48:    - per-tune pulls and χ² on the covariance's non-null subspace;
+49:    - the in-interval fraction per cell, with a binomial interval;
+50:    - a pass/fail rule per tune.
+51:    With two tunes, the result is per-tune statements, not a population coverage rate.
+52: 3. **The truth dependence is a readout.** Each truth's blocks against the nominal block (A_tune/A_nom), and against M
+53:    where a plug-in truth exists. It is reported as a fact beside the coverage result.
+54: 4. **Price.** From measured per-unfold costs (I2's 850 s maximum, S1's per-replica and per-universe costs), before
+55:    binding.
+56:    - The standing compute approval covers it.
+57:    - A campaign above half the group's balance comes back to Joseph.
+58: 5. **The paper, in each outcome:**
+59:    <!-- absence-ok: quotes the paper's existing qualifier (paper_body.tex:80) that a pass would replace -->
+60:    - **Pass:** the paper's coverage qualifier at `paper_body.tex:80` is replaced by the measured result, with its scope: held-out
+61:      tunes, a covariance remade by the same procedure, and per-tune χ² and in-interval fractions. The truth dependence
+62:      of the block is stated as a fact.
+63:    - **Failure:** reported by cell and tune, as under-coverage. No covariance is inflated without Joseph.
+64:    - **Until a result lands:** the stopped-attempt disclosure stays.
+65: 6. **Mode D is folded into stage 0** rather than run on its own (κ only, or κ + Ddl, as #655 declared it). Its κ becomes
+66:    stage 0. #655 is closed unmerged, or merged as the record of the design's finding, whichever the lane prefers, with
+67:    the director's ruling recorded.
+68: 
+69: Nothing is submitted, deposited or tagged.
+
+## OUTCOME-20261106-1b-stage1-receipt-stop.md lines 40-121
+40: 
+41: **Per truth:**
+42: 
+43: | truth | draws | flagged |
+44: |---|---|---:|
+45: | G18 | 0–299 | 297 of 300 |
+46: | AR23 | 300–599 | 298 of 300 |
+47: | the plug-in | 600–899 | 297 of 300 |
+48: 
+49: - Binding 3 runs G18 and AR23 only. The receipt checks all 900 declared draws, and the truth labels only the seed range.
+50: - **The universes in each draw**, by construction: 38, of which 34 depart in the composite denominator (1 flux and 33
+51:   interaction). The 4 detector universes carry the CV's denominator.
+52: - **The per-row record beside it:** `wr` has a clipped fraction per draw with median 0.0064 and maximum 0.0393.
+53: - **Not in the record:**
+54:   - the cell identities, because `receipt.json`'s `denominator` block keeps only the draw list, `max_cells` and `n1`;
+55:   - the per-draw distribution below its maximum;
+56:   - whether the flagged cells are sparse ones with low d_CV;
+57:   - what the 8 clean draws' universes are.
+58: 
+59: **A disclosure on reads.** Before the director narrowed the request, coverage-5b read one declared input to rebuild
+60: the clean draws' universes. The input was the flux constraint `sorted_NuEConstraint_FHC_RHC_IMD.txt` (sha `e38ad7d2`).
+61: The lane reports:
+62: - the read was once, through O_NOATIME, from login;
+63: - the file's stat before and after was identical;
+64: - it discarded everything derived from the read, deleted its local copy, and committed nothing that depends on it.
+65: 
+66: Those derived frequency differences are not findings. They are unadjusted, over about 67 comparisons, and are not in
+67: the record. The breakdown request is where that read came from: the director's item 5 asked for something only the
+68: inputs could answer.
+69: 
+70: ## The rule that decides it
+71: 
+72: 1. **The STOP.** Amendment 2 says at `FD-1B-STAGED-AMENDMENT-2.md:222` @ `b3f27fab`: "**STOP** is only N1 … or §2b
+73:    (`denominator.draws_with_nonpositive_cells` non-empty), on a receipt that completed and wrote `receipt.json`". Here
+74:    §2b is non-empty and the receipt completed, so this is a STOP. It is not an INVALID.
+75: 2. **Its consequence.** Amendment 2 §8 at `:378-382` @ `b3f27fab`, carrying decision item 2 (iii):
+76: 
+77:    > A STOP of the new receipt, or of `n1` at any truth, ends stage 1 unless Joseph rules otherwise (decision item 2
+78:    > (iii)). It goes to the director and to Joseph unrepaired, with no further redesign.
+79: 
+80:    Joseph adopted that rule in `DECISION-20261102-joseph-1b-redesign.md:78`, through his answer "Run, with additions
+81:    (Recommended)". Its sha256 begins `9a38b7a8e8f30bb5`. The first STOP was stage 1's N1 stop
+82:    (`FD-1B-STAGED-STAGE1-STOP-REPORT.md`, #696), and this is the second.
+83: 3. **The mechanism, as the declaration anticipated it.** Amendment 2 says at `:464-471` @ `b3f27fab` that, in a toy
+84:    fixture, first order's sum of about 37 per-universe departures "drove a sparse cell's composite denominator to ≤ 0".
+85:    It added: "The same mechanism could operate there in sparse cells. §2b then fails closed, and the receipt reports it
+86:    as a STOP, as designed."
+87: 
+88:    The record is consistent with that mechanism, but it does not test it: the breakdown above lists what the record does
+89:    not hold. <!-- absence-ok: scoping the mechanism reading to what the record measures -->
+90: 
+91: **So stage 1 has ended, unrepaired.** S1-0b, `clipcheck` and the bulk (binding 3's stages 4–7) do not run. No
+92: redesign is opened. coverage-5b holds and launches nothing. The campaign branch stays as it is.
+93: 
+94: **Joseph may rule otherwise.** That would mean a new, post-hoc declaration that he authorizes. The director doesn't
+95: recommend it: none of the options named below (a product form, fewer universes, coarser cells, excluding cells) was
+96: declared before the STOP. Any of them would be chosen after seeing it, and the first-order composition was itself
+97: the redesign after the first STOP.
+98: 
+99: ## What this licenses, and what it does not
+100: 
+101: **It licenses:**
+102: - "the declared 5D coverage test (1B) did not run to a result": its stage-1 receipt stopped under a declared
+103:   fail-closed rule;
+104: - in the note and the report, a description of that rule and of the counts above.
+105: 
+106: **It does not license:**
+107: - **any statement about whether the 5D intervals cover**, in either direction. The STOP concerns the declared
+108:   composition of the natures, not the estimator's coverage;
+109: - "first-order composition is invalid in 5D", or any mechanism claim. The record does not test a mechanism; see §3 above;
+110:   <!-- absence-ok: scoping what this record licenses, not a claim that a result does not exist -->
+111: - **anything about the 2D result.** The 2D receipt's truth cells are a different binning, and there no declared draw
+112:   made a cell non-positive. The smallest draw-to-CV ratio was 0.379 at G18 and 0.369 at AR23
+113:   (`COV2D-DECLARATION.md:473` @ `3d976a76`). That is a property of COV2D's receipt, not of its result, which is not yet
+114:   reported.
+115: 
+116: **The paper and the note.** This record changes no text. The paper's existing statement on 5D coverage stands as it is.
+117: Any change in wording, and the question of whether the measurement's headline narrows, belong to the publication-scope
+118: decision (OI-205). That decision is Joseph's, and its wording options go through a PRD-referee read first.
+119: 
+120: **Moot unless Joseph overrides (iii):** binding 3 ruling 1's reserved item, whether the plug-in truth belongs in 1B
+121: (`FD-1B-STAGED-BINDING-3.md:52` @ `3d976a76`).

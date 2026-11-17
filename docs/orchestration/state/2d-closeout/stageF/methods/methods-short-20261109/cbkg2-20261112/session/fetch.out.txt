@@ -1,0 +1,40 @@
+ssh rc=0
+node login27 staged sha256 4819fb424d72ae982c87821d3acae4a916c2c9ba2dda8cb15a900c0cbf6a19e8
+session host=login27 utc=2026-11-12T05:50:09Z
+squeue: 61078463|ll5d_gate_G18|RUNNING
+squeue: 61078506|ll5d_gate_AR23|RUNNING
+sacct cov2d/t2a rows (14 days): 28, none unended
+rpd_ jobs: none queued or running
+FENCE CLEAR
+FILE /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/MAT-MINERvA/utilities/TargetUtils.h bytes=23157 sha256=579cad600ca6e8b12919ca43cfcba22e1921da8afcd597570f26642e25b4e30f stat_unchanged=True
+FILE /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/MAT-MINERvA/utilities/TargetUtils.cxx bytes=38295 sha256=64f47c7c9932b8562afbce77dc5d9335c0d06e3cb23263be51486aff8c40eb39 stat_unchanged=True
+FILE /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/MAT-MINERvA/calculators/CCInclusiveSignal.h bytes=4067 sha256=cf9ee8c47a983070487db8f94bfa7c3b2831d52a25e66ee3e2ff972cbd9660ca stat_unchanged=True
+FILE /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/include/PlotUtils/TargetUtils.h bytes=23157 sha256=579cad600ca6e8b12919ca43cfcba22e1921da8afcd597570f26642e25b4e30f stat_unchanged=True
+FILE /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/include/PlotUtils/TargetUtils.cxx bytes=38295 sha256=64f47c7c9932b8562afbce77dc5d9335c0d06e3cb23263be51486aff8c40eb39 stat_unchanged=True
+FILE /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/include/PlotUtils/CCInclusiveSignal.h bytes=4067 sha256=cf9ee8c47a983070487db8f94bfa7c3b2831d52a25e66ee3e2ff972cbd9660ca stat_unchanged=True
+FILE /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/include/utilities/TargetUtils.h bytes=23157 sha256=579cad600ca6e8b12919ca43cfcba22e1921da8afcd597570f26642e25b4e30f stat_unchanged=True
+FILE /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/include/utilities/TargetUtils.cxx bytes=38295 sha256=64f47c7c9932b8562afbce77dc5d9335c0d06e3cb23263be51486aff8c40eb39 stat_unchanged=True
+FILE /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/include/calculators/CCInclusiveSignal.h bytes=4067 sha256=cf9ee8c47a983070487db8f94bfa7c3b2831d52a25e66ee3e2ff972cbd9660ca stat_unchanged=True
+FILE /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/MAT/.git/HEAD bytes=21 sha256=28d25bf82af4c0e2b72f50959b2beb859e3e60b9630a5e8c603dad4ddb2b6e80 stat_unchanged=True
+FILE /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/MAT/.git/refs/heads/main bytes=41 sha256=641e5db9f0bae0e288bd895a2e777f7e5d4eb44daa67fbbadca21adad83b5371 stat_unchanged=True
+FILE /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/MAT-MINERvA/.git/HEAD bytes=21 sha256=28d25bf82af4c0e2b72f50959b2beb859e3e60b9630a5e8c603dad4ddb2b6e80 stat_unchanged=True
+FILE /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/MAT-MINERvA/.git/refs/heads/main bytes=41 sha256=3ea155477cc0d714b8adc26656582a1ecdfd54386d9319ed5ed7840d79ba4818 stat_unchanged=True
+SOURCE {"files": ["/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/MAT-MINERvA/utilities/TargetUtils.h", "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/MAT-MINERvA/utilities/TargetUtils.cxx", "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/MAT-MINERvA/calculators/CCInclusiveSignal.h", "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/include/PlotUtils/TargetUtils.h", "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/include/PlotUtils/TargetUtils.cxx", "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/include/PlotUtils/CCInclusiveSignal.h", "/pscratch/sd/j/jo
+FILE /pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s0/evloop/base_cv.root bytes=398375089 sha256=c76256a495d2deb7c213c2f8203b284bea640d90e697c495f5e11cedc830846b pin_ok=True stat_unchanged=True
+FILE /pscratch/sd/j/josephrb/tmp-playlist-coverage-20261014/work_proxy.npz bytes=187598 sha256=42ce788bb28919c098041f14b5a4fb8b22aca06aa7f962ca38dd398149f23621 pin_ok=True stat_unchanged=True
+READ /pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s0/evloop/base_cv.root stat_unchanged=True
+READ /pscratch/sd/j/josephrb/tmp-playlist-coverage-20261014/work_proxy.npz stat_unchanged=True
+READ /pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s0/evloop/base_cv.root stat_unchanged=True
+CONTROL {"rows": 52626, "max_abs_diff_vs_work_proxy": 0.0, "scale": 1474.8418943278407, "pass": true}
+B {"control": {"rows": 52626, "max_abs_diff_vs_work_proxy": 0.0, "scale": 1474.8418943278407, "pass": true}, "port": "nd-unfolding/bkg_channel_split.py:58-70", "frac_w_oops": 0.10411611421785756, "frac_w_cc_out_of_fiducial": 0.8239755094380643, "frac_w_other_flavor_sign_nc": 0.07190837634407794, "rows_in_grid": 49551, "rows_oops": 5670, "rows_cc_oofv": 40036, "rows_other": 3845, "closure_max_abs": 9.094947017729282e-13, "closure_pass": true, "boundary_1mm": {"rows": 1333, "frac_w": 0.025134858111789744}}
+MATBKG OK exit=0 ok
+script rc=0
+179a51fbee24b0a9f3484b09b6d063f2a61888724cf1f637653faa103b31ed6f  run1/session.tar
+OK  cbkg2_hists.npz 5be4796a7f6bd691dee9105eb08f285d85eaf5333954895bcecd00d93d10d72f
+OK  cbkg2_summary.json 22bb7782f941f96588c14e857128c42156dae667e6b27f8f84585fa8a61bf745
+OK  manifest.json 4d245025c8b07bbc83413fdd29dd86e6fb1a6085ac466ef3488ba9b06eb402a0
+OK  mat_source.json b6ba132cdf3597e01c5eca6caaafc2c0da9c5a1086e6b2532215fe4d6192f797
+CONTROL {"rows": 52626, "max_abs_diff_vs_work_proxy": 0.0, "scale": 1474.8418943278407, "pass": true}
+classes {'frac_w_oops': 0.10411611421785756, 'frac_w_cc_out_of_fiducial': 0.8239755094380643, 'frac_w_other_flavor_sign_nc': 0.07190837634407794, 'boundary_1mm': {'rows': 1333, 'frac_w': 0.025134858111789744}}
+MATBKG-977 OK (now compare mat_source.json with port 1 line by line)
+fetch rc=0

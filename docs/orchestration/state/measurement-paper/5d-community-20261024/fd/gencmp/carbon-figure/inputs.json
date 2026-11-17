@@ -1,0 +1,46 @@
+{
+  "g_readout": {
+    "path": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_readout.json",
+    "sha256": "a19009e0bd83b9bb8f9ad65fb65804e6f62c8953310103fbfe6fce5f84995875"
+  },
+  "g_diag_readout": {
+    "path": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_diag_readout.json",
+    "sha256": "522bfafa3016fadbd62c72f9f34153e17cd514a3b06acf282030d550f5dc1855"
+  },
+  "g_followup_readout": {
+    "path": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_followup_readout.json",
+    "sha256": "586cd74105d0837c69290d0370f6327cda75a92ee31f2d437658c626b4ab1e8f"
+  },
+  "g_sens2_readout": {
+    "path": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_sens2_readout.json",
+    "sha256": "4bc21dfda9c49762227fc4c486ee9decc349863aaea095f94347ad4b963d4513"
+  },
+  "f0b_readout": {
+    "path": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/readout/fd_f0b_readout.json",
+    "sha256": "5f542830561731b567f2b97d78e5e9677a9802a35ef9c21855828bf184e6f3d6"
+  },
+  "definition": {
+    "path": "nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "sha256": "b67907615fe2e903e60ae6caa1c141fa007676c0a1b3ae9f42490d331bfdda89"
+  },
+  "carbon_definitions": {
+    "path": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp/readout/defs.json",
+    "sha256": "544f4f4343095b5e78b59e0782ac3ce5ef5974b2e24dbb59be3708b5937556f8"
+  },
+  "rebuild": {
+    "path": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp/readout/rebuild_b.json",
+    "sha256": "e2ba8d54cfbd122d1951613aea82121422708c96fcf4f66edd6bd55797a4ccca"
+  },
+  "parent_model": {
+    "path": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/figures-a2/fd_g_fig_ratio.json",
+    "sha256": "271a68f41d9c2573d58d2810fc6a532d9d4a02898e580fe9ba22abced2295b90"
+  },
+  "predictions": {
+    "path": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/pins/predictions-chdefs.json",
+    "sha256": "857fe5edeaca2ad6dfe7b75f6f242a8adc9ea6addad265b92ad86f07457980c4"
+  },
+  "assembly": {
+    "path": "docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "sha256": "81e5ef3fe8e7b055360dc43b8a8240c9b5c39c8aa6e7c507b3211d305b326b21"
+  }
+}

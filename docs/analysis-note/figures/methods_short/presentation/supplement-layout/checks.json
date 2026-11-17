@@ -1,0 +1,133 @@
+{
+  "baseline": "7de6c6031",
+  "text_outside_s6_byte_identical": true,
+  "s6_caption_byte_identical": true,
+  "s6_table_cell_contents_byte_identical": true,
+  "s6_flow_node_contents_preserved": true,
+  "flow_node_count": 9,
+  "flow_table_text_sha256": {
+    "nodes": "78f80487ddc0081b1670f28e6479610891dbd702ad86c44cd48b23c8662d0d00",
+    "cells": "c8b0d5f81d50d9ceaa2e300adc5edecc043fc9ecf88e020b18023b25f21abd48"
+  },
+  "scientific_macro_occurrences_unchanged": true,
+  "all_flow_text_inside_its_boxes": true,
+  "flow_boxes_pairwise_nonoverlapping": true,
+  "word_diff": {
+    "method": "pdftotext -raw; NFKC; join hyphens between Latin letters across optional line breaks; compare word-token multisets",
+    "before_tokens": 12313,
+    "after_tokens": 12313,
+    "removed": {},
+    "added": {},
+    "normalized_multiset_sha256": "668fb67c5439058e6648495b08331cd8b4fc02a82230a7f870ce3f07725500ea"
+  },
+  "number_diff": {
+    "method": "remove each page footer, then compare numeric-token multisets",
+    "before_tokens": 2118,
+    "after_tokens": 2118,
+    "removed": {},
+    "added": {}
+  },
+  "float_pages_before": [
+    [
+      "tab:observables-impl",
+      "S1",
+      "2"
+    ],
+    [
+      "tab:fived16-cells",
+      "S2",
+      "4"
+    ],
+    [
+      "tab:estimators-matrix",
+      "S3",
+      "7"
+    ],
+    [
+      "tab:fived16-groups",
+      "S4",
+      "11"
+    ],
+    [
+      "tab:fived16-corr",
+      "S5",
+      "11"
+    ],
+    [
+      "tab:joint5d-genmodel",
+      "S6",
+      "16"
+    ],
+    [
+      "fig:ratio16",
+      "S1",
+      "22"
+    ],
+    [
+      "tab:gen16",
+      "S7",
+      "23"
+    ],
+    [
+      "tab:cmodel16",
+      "S8",
+      "23"
+    ]
+  ],
+  "float_pages_after": [
+    [
+      "tab:observables-impl",
+      "S1",
+      "2"
+    ],
+    [
+      "tab:fived16-cells",
+      "S2",
+      "4"
+    ],
+    [
+      "tab:estimators-matrix",
+      "S3",
+      "7"
+    ],
+    [
+      "tab:fived16-groups",
+      "S4",
+      "11"
+    ],
+    [
+      "tab:fived16-corr",
+      "S5",
+      "11"
+    ],
+    [
+      "tab:joint5d-genmodel",
+      "S6",
+      "16"
+    ],
+    [
+      "fig:ratio16",
+      "S1",
+      "21"
+    ],
+    [
+      "tab:gen16",
+      "S7",
+      "22"
+    ],
+    [
+      "tab:cmodel16",
+      "S8",
+      "23"
+    ]
+  ],
+  "packages_added": [
+    "tikz"
+  ],
+  "tikz_libraries": [
+    "arrows.meta",
+    "matrix",
+    "positioning"
+  ],
+  "supplement_overfull_boxes": 0
+}

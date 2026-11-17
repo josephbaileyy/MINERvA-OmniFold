@@ -1,0 +1,22 @@
+{
+ "control": {
+  "rows": 52626,
+  "max_abs_diff_vs_work_proxy": 0.0,
+  "scale": 1474.8418943278407,
+  "pass": true
+ },
+ "port": "nd-unfolding/bkg_channel_split.py:58-70",
+ "frac_w_oops": 0.10411611421785756,
+ "frac_w_cc_out_of_fiducial": 0.8239755094380643,
+ "frac_w_other_flavor_sign_nc": 0.07190837634407794,
+ "rows_in_grid": 49551,
+ "rows_oops": 5670,
+ "rows_cc_oofv": 40036,
+ "rows_other": 3845,
+ "closure_max_abs": 9.094947017729282e-13,
+ "closure_pass": true,
+ "boundary_1mm": {
+  "rows": 1333,
+  "frac_w": 0.025134858111789744
+ }
+}

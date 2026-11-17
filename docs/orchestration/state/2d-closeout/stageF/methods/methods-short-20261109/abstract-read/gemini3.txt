@@ -1,0 +1,38 @@
+## Review of the new clause and both abstract versions
+
+### The new clause: "though some cells move opposite"
+
+**Accuracy.** The clause summarizes section 5.1 faithfully in substance: the median (Eavail, W) cell moves 56–88 % of a generator-sized change (= "retains part of its prior"), and individual cells range from moving opposite the injected change to overshooting it.
+
+**Clarity.** "Move opposite" is ambiguous and potentially misleading. The preceding clause says the result "retains part of its prior"; a reader will naturally parse "move opposite" as *opposite to retaining the prior*, i.e. overshooting the truth. The body means the reverse: moving opposite *to the truth change* (further from the truth than the prior). The two readings contradict each other.
+
+**Fix.** Replace "some cells move opposite" with **"some cells move opposite the change"** (+2 words). Recover one word later in the same sentence: "and at a synthetic" → "and a synthetic" (the second "at" is dispensable). Net: +1 word.
+
+---
+
+### Longest version
+
+1. **"a retained fraction similar to the five-observable estimator's at the tilt."** Table 4 gives ρ = 0.179 (5D) vs ρ = −0.130 (IBU, five iterations) at the q3 tilt — opposite signs. "Similar" overclaims unless a pending redefinition changes the comparison. Likewise, **"an undefined one at the GiBUU-like truth"** conflicts with table 4's ρ = −0.116 for IBU there. If these are outcome-dependent placeholders, they must match the body at publication.
+
+2. **"retained fraction"** is used without definition. A reader of the abstract alone cannot tell whether it is ρ, a coverage fraction, or something else. The body defines it in section 5.3; the abstract needs at least a parenthetical gloss or must avoid the term.
+
+3. No other sentence overclaims relative to the body.
+
+**Verdict: revise.** Three fixes:
+- *"some cells move opposite"* → *"some cells move opposite the change"* (and drop "at" before "a synthetic" to stay within the limit).
+- *"similar … at the tilt and an undefined one at the GiBUU-like truth"* → verify against the final body's IBU ρ values; if table 4 stands, "similar" is wrong and "undefined" is wrong.
+- Either define "retained fraction" briefly (e.g. "retained fraction of the prior") or replace with wording that doesn't require a definition.
+
+---
+
+### Shortest version
+
+1. **"at both, the retained fraction of binned iterative unfolding is undefined."** Same conflict with table 4, which gives definite negative ρ at both truths. If the body is final, this sentence is inaccurate.
+
+2. Same "move opposite" ambiguity as above.
+
+3. No other overclaim. All other sentences track the body.
+
+**Verdict: revise.** Two fixes (the third from the longest version doesn't apply):
+- *"some cells move opposite"* → *"some cells move opposite the change"* (same word-saving edit).
+- *"the retained fraction … is undefined"* → reconcile with the body; if ρ is defined and negative, say so (e.g. "binned iterative unfolding overshoots the truth along the prior-to-truth direction at both," matching the printed abstract in the paper body).

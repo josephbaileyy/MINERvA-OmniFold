@@ -1,0 +1,3 @@
+No defects found; no fixes needed. Both replacements preserve the absence-of-validation meaning, limited to the reported intervals, without strengthening or weakening it. The roadmap sentence and S9’s embedded clause are grammatical in context; S9’s other reasons remain unchanged.
+
+VERDICT: PASS

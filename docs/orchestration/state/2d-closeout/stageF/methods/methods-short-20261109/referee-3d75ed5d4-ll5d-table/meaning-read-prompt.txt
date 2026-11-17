@@ -1,0 +1,10 @@
+You are a meaning referee for a JINST methods paper's Supplement (OmniFold unfolding of MINERvA open data). Judge meaning and fidelity to the records only, not style. Do not propose new numbers. Work read-only, from the files in this directory.
+
+change.diff adds Table S14 (tab:ll5d-results) to section S8.5, the second five-observable coverage test's four readings (two tunes, without and with the GEANT4 neutron and proton bands), and one pointer sentence. Lines starting with % are provenance comments, not printed. \fvval{key} prints a value; records.txt lists every printed key's value, the existing prose keys for the same readings (-stats, -cells), the grading code (fd_1b_mc.py grade) and the Supplement's unchanged flag-rule sentences. table-page.png is the rendered page.
+
+Check, citing file:line:
+1. Does each table entry equal the readings' existing prose keys (joint count and its flag threshold, mean chi2/ndf with its standard error, flagged cells with count and threshold, over-covering cells), for the right tune and variant (minus2 = without the two bands, the primary variant; all = with them)?
+2. Is every caption claim supported: the joint count's definition and flag direction, "mean over the pseudo-experiments, with its standard error" (the code's se), the flagged-cell entry's meaning, the over-coverage rule (the code's over_covers), "over-coverage is reported and is not a failure", and the descriptive sentence under the repaired route?
+3. Does the table or caption state any coverage claim beyond the readings (e.g. that the covariance fails or passes beyond these joint and cell flags, or a cause)?
+4. Anything else that changes meaning.
+End with a ranked list of problems, each with a concrete fix (or "No problems"), then one final line exactly "VERDICT: PASS" or "VERDICT: FAIL".

@@ -1,0 +1,61 @@
+I read all four files in full. One correction needs a further qualification; the other six preserve the documented meaning.
+
+The ranked problem list has one entry:
+
+1. **Item 3: the new exclusion row is incomplete for the primary five-observable variant.** Every listed exclusion is supported, but the paper also says that the primary variant omits the GEANT4 neutron and proton bands “from its pseudo-data and from its covariance alike” (paper, line 623). S14 mentions those bands under **“Bands drawn”**, which does not explicitly describe their exclusion from \(C_T\). The new, unqualified **“Excluded from \(C_T\)”** row therefore gives an incomplete covariance summary.
+
+   **Concrete fix:** make its five-observable entry: “\(C_{\mathrm{resp}}\), \(C_{\mathrm{PL,5D}}\); in the primary variant, also the GEANT4 neutron and proton bands.” No result or grading rule needs changing.
+
+The seven-item assessment follows.
+
+1. **Learner masks — accurate; no substantive change.**
+
+   S13 explicitly pairs “no \(W\) in step 1” with “step-1 classifier”; its other observable rows pair “no \(W\),” \((p_T,p_\parallel,E_{\mathrm{avail}})\), and \((p_T,p_\parallel)\) with “all three” (Supplement, lines 966–969). The caption still states: “The refinement classifier keeps 400 trees, 31 leaves and all five observables at every level.”
+
+   Referring to the learners named in the column repairs the contradictory blanket description. It preserves the actual tested interventions, results, and refinement qualification.
+
+2. **Units — accurate; no change to binning or scope.**
+
+   The paper states, “Momenta are given in GeV/\(c\), energies in GeV” (line 43). The cells-table caption specifies “\(p_T\), \(p_\parallel\) and \(q_3\) in GeV/\(c\); \(E_{\mathrm{avail}}\) and \(W\) in GeV” (Supplement, line 160).
+
+   Both edits align the units with those conventions. Numerical edges, catch bins, and the stated exhaustiveness remain unchanged. This corrects a unit label without rescaling the grid.
+
+3. **Covariance exclusions — listed entries accurate, but incomplete as described above.**
+
+   For 2D, the source states: “The run-period block was neither drawn nor included in the graded covariance” (paper, line 579).
+
+   For 5D, it states: “The graded covariance includes the model term … and leaves out the response and run-period terms” (paper, line 621). The paper identifies these latter terms as \(C_{\mathrm{resp}}\) and \(C_{\mathrm{PL,5D}}\).
+
+   Thus **no listed exclusion contradicts an inclusion**. In particular, \(C_{\mathrm{model}}\) is correctly absent from the exclusion row and explicitly included in both entries immediately above it. “Not drawn” remains distinct from “excluded from \(C_T\).”
+
+   The missing exclusions are the primary variant’s GEANT4 neutron and proton bands. This is an incompleteness in the new summary, not evidence that any calculation changed.
+
+4. **Joint significance level — accurate; no strengthened coverage claim.**
+
+   Test 8 already says “\(\alpha/205\) per cell, \(\alpha\) jointly” (Supplement, line 829). The shared procedure uses a binomial tail threshold “\(<\alpha/N_{\mathrm{cells}}\)” per cell and “\(<\alpha\)” jointly, and states: “The rule is one-sided: over-coverage is reported and is not a failure” (line 1047).
+
+   The new test-10 wording explicitly prints the joint level already inherited through “as 8.” It changes neither threshold nor interpretation and adds no coverage result.
+
+5. **“Descriptive” caption — accurate; qualifications retained.**
+
+   The benchmark rows also say “descriptive \(\chi^2/\mathrm{ndf}\)” (paper, lines 234–235). The caption’s two explanations concern different, specially qualified rows: the bias-half diagnostic “was defined after the fake-data biases it classifies had been seen,” whereas the second coverage test applied advance criteria after a repair selected following an entry-check stop (line 228).
+
+   “Two rows use ‘Descriptive’ in a specific sense” identifies those explanations without asserting that the table contains only two descriptive uses. Their timing and evidentiary limitations remain intact.
+
+6. **IBU truth boxes — accurate; dropping “coarse grid” loses no identifying information.**
+
+   The record specifies “the **H2 coarse cells**” and “empty cells dropped by `did.make_grid`,” and explains that “R00–R15 are unions of H2 cells” ([record, line 5](/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/2929ca26-b0ae-42b9-82fa-8300158500d3/scratchpad/rr/ref_g1_decl_44_50.txt:5)).
+
+   The referenced S3 identifies the underlying boxes through “one interior edge dividing each axis once,” gives their edge keys, and describes their support and merging rules (Supplement, line 155). This distinguishes them from the paper’s “coarse \(3^5\) grid” (line 194). The new wording also matches paper section 4.5.
+
+   “The boxes” identifies the underlying geometric partition; it does **not explicitly state** the empty-bin removal. That omission is harmless here: the old wording also omitted it, and the revision does not assert that empty boxes are retained. Empty-bin removal must not be confused with S3’s separate support-based merging and reporting decisions. No qualifier present in the old sentence is lost.
+
+7. **“Such contrasts” — accurate antecedent; same required check.**
+
+   The immediately preceding sentence says: “Testing it needs contrasts within fixed muon-kinematic regions, with their joint uncertainty.” The next sentence requires checking that “plausible changes of the unfolding and detector response cannot produce such contrasts,” followed by “That test is a next step” (paper, line 650).
+
+   “Such contrasts” refers directly to those conditional contrasts. It clarifies the ambiguous “pattern” while retaining the same unfolding/response robustness requirement. It reports neither a completed check nor a localization of the 2D discrepancy.
+
+None of the seven edits introduces the forbidden claims. The paper retains “The benchmark does not validate the five-observable distribution”; the bias-screening rules “neither assess[] the detector model”; whether hadronic differences contribute to the 2D shape difference “is open”; and “No reported interval has validated coverage.” The descriptive status, restricted covariance, fixed-covariance null, and limits on coverage inference remain stated.
+
+VERDICT: FAIL

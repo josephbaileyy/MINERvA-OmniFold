@@ -1,0 +1,24 @@
+All four earlier problems are resolved. The full recheck found no meaning changes or lost clauses.
+
+- **C117:** new source line 958 explicitly restores draws from the **full simulation’s universes**, followed by unfolding with the nominal simulation. The existing resampling qualification for test 10 remains.
+- **C045/C047:** line 869 now assigns configuration (e) and the defined **half split** specifically to the held-out tunes.
+- **C075:** line 713 explicitly applies the same simulation, background template and weight-only systematic universes to **all three comparisons**.
+- **C115/C124/C131:** lines 958 and 1018 now state the estimator assignments for tests 8, 10 and 9.
+
+I checked all **140 inventory entries**. Every locator occurs at its stated line. The “already” destinations supply the clauses for the correct tests, and the moved sentences preserve their old scope and qualifications.
+
+The remaining checks also pass:
+
+- **Completeness:** no old-table clause, qualification or limitation is missing from both the inventory and new text. All **75 distinct old-table `\fvval` keys** survive. The `prr` and `vhalf` groups are character-identical.
+- **Row 9’s “as 10” expansion:** line 1018 preserves the inherited estimator, simulation, variations, statistic and thresholds. Through test 10, this retains nominal-simulation resampling and both band variants. It separately retains test 9’s repetitions and plug-in truth, without implying that coverage pseudo-experiments ran.
+- **New prose:** the closure, stability, benchmark, fake-data, prior-retention, shared-coverage and bias-half additions introduce no stronger, broader or more definite claim.
+- **C130:** row 9’s reading is character-identical between old and new source: **314 characters**.
+- **C138:** row 10’s complete reading is character-identical: **821 characters**, including all **seven `\fvcase` arms** and the pending alternative.
+- **Details:** every Supplement section number and parenthesised paper pointer resolves to sections setting out the corresponding test. The rendered index retains the readings and qualifications.
+- No other change in the source diff changes the Supplement’s claims.
+
+The inherited mismatch with `paper_body.tex:626` is excluded as instructed.
+
+Ranked problems: **none. No fixes required.**
+
+VERDICT: PASS

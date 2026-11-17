@@ -1,0 +1,20 @@
+**Verdict: minor changes.** At full text width, the marker series and main residual patterns are readable. The injected-change curves are substantially harder to identify, particularly in grayscale.
+
+1. **Give the four injected-change curves distinct line styles and individual legend samples.** “Same colour” is insufficient for grayscale readers, and the blue/purple curves are difficult to separate. Several steps coincide or nearly coincide, especially around −15% and in the highest-energy bin. Where distinct styles still conceal one another, annotate the coincidence or use separate panels.
+
+2. **Retain the four marker shapes, but strengthen their separation.** Circles, triangles, diamonds and squares provide useful redundant encoding. Slightly larger markers, contrasting outlines, and some open symbols would improve crowded cells and grayscale reproduction. Darken the pale green dashed curve.
+
+3. **Move or compact the legend.** It occupies much of the positive-residual plotting area. I see no clearly obscured marker, but the highest red square sits close to the legend’s right edge. Placing the legend above the axes would remove that ambiguity.
+
+4. **Clarify what a plotted point represents.** The caption should explicitly identify the markers as means over 20 pseudo-experiments and identify any error bars. Suggested caption wording: “Markers show mean fractional residuals over 20 pseudo-experiments, each evaluated against its own half-sample truth; error bars show standard errors of the mean.” Use the error-bar clause only if bars are actually drawn.
+
+5. **Provide the complete W-bin definition and simplify the header.** Repeated ticks 1–6 are readable, but most physical W boundaries cannot be recovered from this caption. Add a compact bin key or a precise reference. Move “400 trees, 31 leaves” into the caption and identify the reported estimator as five-observable there. The top energy labels and axis labels are otherwise legible.
+
+6. **Keep the support shading, but explain its consequence.** The three shaded cells match the caption and are visible. State whether their points remain diagnostic results excluded from reporting. A slightly stronger gray or light hatching would help print reproduction.
+
+7. **Limit the claims attributed to this figure.** It supports substantial cellwise residuals and identifies the conspicuous high-W GiBUU/GENIE discrepancy. It does not identify the “largest cells” by population or cross section, establish covariance-based criteria, or demonstrate the development/withholding history. Those claims need their cited supporting material.
+
+Two issues go beyond readability:
+
+- **The caption’s “Each point … its own pseudo-experiment” is misleading** if each marker is an ensemble mean. The normalization belongs to each constituent pseudo-experiment.
+- **“Recovers only part” is not established uniformly by this plot.** Assuming the injected change uses nominal truth as its denominator, the highlighted red cell has approximately a −30% injection and a +74% residual. An unchanged nominal estimate would give about +43%. Thus this cell does not illustrate simple partial recovery toward the changed truth. Qualify the interpretation or supply the nominal unfolding comparison needed to establish recovery.

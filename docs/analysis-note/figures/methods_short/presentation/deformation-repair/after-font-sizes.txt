@@ -1,0 +1,6 @@
+p6 figure 437pt wide: 475 chars, min 1.3pt, median 6.5pt, max 7.8pt | caption median 9.0pt
+p7 figure 201pt wide: 55 chars, min 1.6pt, median 4.8pt, max 5.7pt | caption median 9.0pt
+p8 figure 508pt wide: 592 chars, min 3.0pt, median 8.3pt, max 9.3pt | caption median 9.0pt
+p9 figure 508pt wide: 415 chars, min 2.6pt, median 8.3pt, max 9.3pt | caption median 9.0pt
+p11 figure 245pt wide: 178 chars, min 3.0pt, median 8.3pt, max 9.3pt | caption median 9.0pt
+p12 figure 508pt wide: 242 chars, min 3.0pt, median 8.6pt, max 9.3pt | caption median 9.0pt

@@ -1,0 +1,14 @@
+**F1** (abstract)
+- "binned iterative unfolding of **noise-free pseudo-data**": the definitions say "IBU here is noise-free and exact given the binned response, so its only noise is the split", and PR-2 compares IBU "on the same pseudo-data" as (e). The noise-free property belongs to the IBU analogue, not to the pseudo-data, and PR-3 scopes the result to "the noise-free analogue only". Suggested wording: "noise-free binned iterative unfolding of the same pseudo-data".
+- The rest matches. "retains less … at both" corresponds to PR-2a = "IBU retains less" at A7_gibuu and q3, and "five iterations" corresponds to K = 5.
+
+**F3** (section 5.3)
+- "by more than its threshold of **0.05**" (stated for both truths): §5.2 defines the PR-2a threshold as δ_IBU = max(0.05, 9.03 s_IBU), and the record gives only floor.bars.IBU = 0.05, which is the floor. The record does not show that the threshold actually applied was 0.05. Either say "its threshold (floor 0.05)" or confirm that 9.03 s_IBU < 0.05 at both truths.
+- The remaining sentences match the record:
+  - "falls by at least the fixed margin" matches PR-2b = falls (ρ_IBU(200) ≤ ρ_IBU(5) − 0.05).
+  - The two labels match the declared labels at both truths.
+  - "No tested level clears" and "The IBU at five iterations does not clear" match PR-3, where all 14 entries read "does not clear at these truths".
+
+**F2** (Table 1): no flags. The cells match the record at both truths (GiBUU hybrid, q3 tilt). I took the F1–F4 order to be iterations, capacity, training statistics, observables, inferred from the §5.4 label conditions because the excerpt does not define the factors directly.
+
+FLAGGED 2 of 3

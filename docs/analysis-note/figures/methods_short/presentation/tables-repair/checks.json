@@ -1,0 +1,22 @@
+{
+  "tab:outcomes": {
+    "before_cell_text_sha256": "019121fa1a76d69d7256f4af4ce5ed01fa298f8e40235ad249b551aae1ba8c83",
+    "after_cell_text_sha256": "019121fa1a76d69d7256f4af4ce5ed01fa298f8e40235ad249b551aae1ba8c83",
+    "after": {
+      "page": 5,
+      "width_pt": 508.095,
+      "body_height_pt": 434.105,
+      "median_font_pt": 7.970100000000002
+    }
+  },
+  "tab:fd16": {
+    "before_cell_text_sha256": "8dd00a64ac3b92ce696c4dd53227b0bcf7e549a2e0eb2ba0d9853a6634fab94f",
+    "after_cell_text_sha256": "8dd00a64ac3b92ce696c4dd53227b0bcf7e549a2e0eb2ba0d9853a6634fab94f",
+    "after": {
+      "page": 8,
+      "width_pt": 508.095,
+      "body_height_pt": 197.92999999999998,
+      "median_font_pt": 7.970100000000002
+    }
+  }
+}

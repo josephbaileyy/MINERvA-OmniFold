@@ -1,0 +1,18 @@
+# PRD referee read: §6.1 E96D data sentence (paper_body.tex:545, methods-short a66f96a0f)
+
+**Verdict: accept with one edit.**
+
+1. Clarity. One pass works for the first clause, and it answers "what does the ensemble do on the data". Two snags. (a) "per cell" does not say which cells; the paragraph's earlier numbers are on 153 quantities, but these are the 16 reported cells (E96D readout R00-R15). (b) The parenthesis reads as the same cell's 0.24 % expressed in sigma. The two maxima are in different cells (R05 for the %, R06 for the sigma; make_values_fived16.py:2031).
+2. Adoption / uncertainty reading. Low risk. Nothing says "should", "bias" or "uncertainty", and the preceding "is kept" fixes the decision. Quoting the difference in units of C_e's sigma is a scale, and it does not read as a new error term. No wording change is needed on this ground.
+3. Placement. Acceptable. "On the data" marks the turn from pseudo-data. The S4 pointer just before it covers the closure values only (S4 has no E96D numbers), and the edit below keeps the data result in its own sentences after that pointer.
+4. float64 tie-in. Weak as written. A reader cannot tell why a float64 clause sits in the ensemble paragraph. The reason is that the ensemble's fits perturb a float64 copy (E96D-DECLARATION.md:20-21, :50, base "separates the float64 change from the averaging"). The reader also gets no link to RS1's "bitwise equal" at :532. State the role and point back.
+
+**Edit 1 (paper_body.tex:545, last sentence).**
+
+Old:
+> On the data, the ensemble average differs from the reported result by at most \SI{\fvval{e96d-maxpct}}{\percent} per cell (\fvval{e96d-maxsig} of the standard deviation from $C_{\mathrm{e}}$), and the reported estimator on a float64 copy of the inputs gives the same result to double precision.
+
+New:
+> On the sixteen reported cells of the data, the ensemble average differs from the reported result by at most \SI{\fvval{e96d-maxpct}}{\percent}, and by at most \fvval{e96d-maxsig} of a cell's standard deviation from $C_{\mathrm{e}}$. Its fits use rounding-level perturbations of a float64 copy of the inputs, and on that copy the reported estimator gives the reported result to double precision, as float32 and float64 inputs did on the pseudo-experiment above.
+
+Check: the new text keeps both keys, uses no "not" or "rather than", and keeps the declaration's Licence (description only; no adoption, uncertainty, bias or ranking). Re-run make_values and its --self-test after applying the edit.

@@ -1,0 +1,80 @@
+[
+ {
+  "claim": "family N, GiBUU/GENIE E_avail: max |residual| over 42 EW cells (paper 'up to 74% at high W'), %",
+  "value": [
+   74.07,
+   "EW29"
+  ]
+ },
+ {
+  "claim": "family N, GiBUU/GENIE E_avail: EW7 residual (record: 'largest cells several percent off'), %",
+  "value": -6.66
+ },
+ {
+  "claim": "R, W2 (GENIE MEC): max |residual| over EW (paper lower end '16%'), %",
+  "value": [
+   16.38,
+   "EW37"
+  ]
+ },
+ {
+  "claim": "R, W1 (NuWro E_avail): max |residual| over EW (paper upper end '31%'), %",
+  "value": [
+   31.32,
+   "EW29"
+  ]
+ },
+ {
+  "claim": "R, W3 (NuWro 3D): max |residual| over EW inside 16-31%, %",
+  "value": [
+   23.67,
+   "EW29"
+  ]
+ },
+ {
+  "claim": "R: cells with max_W |residual| <= adopted total sigma (a record only: no longer printed, W-15), of 42",
+  "value": 20
+ },
+ {
+  "claim": "R, GiBUU/GENIE E_avail (s11c): max |residual| over EW (paper s5e-gibuu-ewmax '73.86' at high W), %",
+  "value": [
+   73.86,
+   "EW29"
+  ]
+ },
+ {
+  "claim": "m5: max |injected change| W1, W2, W3 (m5_injected.json max_abs_injected_pct), %",
+  "value": [
+   [
+    21.39,
+    "EW6"
+   ],
+   [
+    14.84,
+    "EW37"
+   ],
+   [
+    27.51,
+    "EW7"
+   ]
+  ]
+ },
+ {
+  "claim": "family N nominal (C3): max |residual| over EW, %",
+  "value": [
+   0.39,
+   "EW36"
+  ]
+ },
+ {
+  "claim": "R nominal (A1): max |residual| over EW, %",
+  "value": [
+   0.09,
+   "EW41"
+  ]
+ },
+ {
+  "claim": "family N GiBUU: median |residual| over EW, %",
+  "value": 10.79
+ }
+]

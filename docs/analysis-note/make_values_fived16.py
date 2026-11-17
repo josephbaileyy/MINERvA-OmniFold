@@ -12,6 +12,7 @@ with the suffix "-nopl", and a key outside the matrix-dependent families that di
 values_fived16.tex equals a fresh generation (the build and CI run it, as for records_entry_numbers.tex).
 """
 import ast
+import gzip
 import hashlib
 import json
 import math
@@ -26,6 +27,7 @@ _top = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=Tr
 ROOT = Path(_top.stdout.strip()) if _top.returncode == 0 else Path(__file__).resolve().parents[2]
 OUT = Path(__file__).with_name("values_fived16.tex")
 FD = "docs/orchestration/state/measurement-paper/5d-community-20261024"
+RSN = "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/referee-sensitivity-20261111/connect-post/run-20261112"
 READOUTS = {
     "h2": ("nd-unfolding/pv-ladder/readouts/h2_definition.json", "b6790761"),
     "stage1": ("docs/orchestration/state/s5p/stage1/stage1_inspect.json", "def4c67c"),
@@ -47,6 +49,17 @@ READOUTS = {
     # the two tunes' generation records, for their names; their digests are the F1c pin's f1b3-SHA256SUMS
     "f1meta-g18": (f"{FD}/fd/receipts-f1/run/cluster/f1b3/gen5d/genie_v3_g18_xsec5d.meta.json", "4fe333b8"),
     "f1meta-ar23": (f"{FD}/fd/receipts-f1/run/cluster/f1b3/gen5d/genie_v3_ar23_xsec5d.meta.json", "d7d136e5"),
+    # FD-PRR read (#1006, verdict COMPLETE); filled into the short paper by DECISION-20261109-joseph-abstract-length-prr-fill.md item 2
+    "prr": (f"{FD}/fd/receipts-prr/read/cluster/readout.json", "9238f22b"),
+    # V-HALF read (#1009); filled into the short paper as a diagnostic (the director, 2026-11-10: Joseph confirmed it)
+    "vhalf": ("docs/orchestration/state/2d-closeout/valid-region-20261107/v-half/receipts/read/readout.json", "e7423390"),
+    # LL5D's readout (#1157; job 61272425; nd-unfolding/ll5d_b.py readout_reading at M_A1b.1 4231b14d): the second
+    # five-observable coverage test's grade at each truth and reading, mapped by ll5d_verdicts()
+    "ll5dg18": (f"{FD}/fd/receipts-ll5d/readout/node/readout-g18.json", "7bd6d390"),
+    "ll5dar23": (f"{FD}/fd/receipts-ll5d/readout/node/readout-ar23.json", "5b3fbbf5"),
+    # D2 (DECISION-20261112-joseph-consult-d1-d7.md item 2): the two GEANT4 bands' mu_max in LL5D's own graded matrix
+    # (#1172; fd/receipts-ll5d/mumax/README.md): chi2(M - G)/chi2(M) lies in [1, 1/(1 - mu_max)], M = C_T (all)
+    "ll5dmumax": (f"{FD}/fd/receipts-ll5d/mumax/run/node/mumax.json", "422db056"),
     # the pion-constant departure of Eq. (1), as full-covariance norms of its first-order shift under each arm's matrix
     # (ASSESSMENT-20261031-eavail-charged-pion-mass-switch-pricing.md section 7.3; JSON despite the suffix)
     "eav": ("docs/orchestration/state/eavail-switch-pricing-20261031/step0/step0_metric.txt", "3e8bd546"),
@@ -85,11 +98,151 @@ READOUTS = {
     # the quadrant sums against the adopted 2D result (DECISION-20261102-joseph-quadrant-sentence-sec4-and-validations.md
     # item 1): step C-R's bound rule (FD-GENCMP-AMENDMENT-E-REPORT.md sec. 3.2) and GENCMP X's cross-covariance test
     # (FD-GENCMP-X-REPORT.md sec. 1). Each is computed once, from the reported matrix, so both arms read the same files
-    "cr": (f"{FD}/fd/gencmp-e/c-r/overlap_refined.json", "f1f2fb78"),
-    "xk": (f"{FD}/fd/xcov/run/k/k.json", "f3dc2a34"),
+    # cr under C_new (the director's XCOV ruling and approval of 2026-11-16): #1169's g2r arm, the same command on route A's
+    # Q_R (fd/receipts-cov2d/g2r/cr/README.md; run/node/out.sha256.txt lists it). Before, GENCMP step C-R on partc-r2's
+    # Q_R: fd/gencmp-e/c-r/overlap_refined.json (f1f2fb78)
+    "cr": (f"{FD}/fd/receipts-cov2d/g2r/cr/run/node/g2r/overlap_refined.json", "0734cf4a"),
+    # xk under C_new (the director's XCOV ruling, 2026-11-16): #1170's `k --products g2r`, GENCMP X step K on COV2D-G2R's
+    # products (fd/receipts-cov2d/g2r/xk/README.md; run/node/out.sha256.txt lists it; its control reproduced f3dc2a34 byte
+    # for byte). Before, step K as it ran: fd/xcov/run/k/k.json (f3dc2a34)
+    "xk": (f"{FD}/fd/receipts-cov2d/g2r/xk/run/node/run/k/k.json", "204e4c89"),
     # the run-period diagnosis's readout (FD-RPD-DECLARATION.md sec. 5; DECISION-20261104-joseph-rpd-sentence.md item 2),
     # computed once from the per-playlist unfolds, so both arms read the same file
     "rpd": (f"{FD}/fd/receipts-rpd/run/readout/fd_rpd.json", "c0b06cfd"),
+    # ENS1, the ensemble-averaged estimator (OUTCOME-20261109-ens1-stab-pass-bias-worse.md): stage 1's stability readout
+    # (#940) and stage 2's bias readout (#957), each computed once, so both arms read the same files
+    "ens1s1": (f"{FD}/fd/rounding-stability-20261106/ensemble/receipts/stage1-a1-analysis/ens1_stage1.json", "7f5a9ce4"),
+    "ens1s2": (f"{FD}/fd/rounding-stability-20261106/ensemble/receipts/stage2-a1-analysis/ens1_stage2.json", "c2ee701d"),
+    # s5e's assessment of candidate R, the reported estimator (e): the generator-sized change and the rounding probe
+    "s5e": ("docs/orchestration/state/s5e/cand/assess_receipt.json", "84266e30"),
+    # s5n's development receipt: the lower-capacity variant's GiBUU-to-GENIE experiments (the Supplement's figure S1)
+    "s5ndev": ("docs/orchestration/state/s5n/stage1/dev_receipt.json", "1ef4096c"),
+    # group B (#1025): the two-dimensional comparisons' read (REF-C2C1, read 2) and the sixteen-cell IBU comparison (REF-G1)
+    "c2c1": (f"{FD}/fd/receipts-ref-c2c1/step2/read-2/readout.json", "0ee21301"),
+    "refg1": (f"{FD}/fd/receipts-ref-g1/a1-read/readout.json", "4db170d3"),
+    # group B3a: the synthetic q3 tilt's truth check (s5n stage 1) and its weight function (read as text, never imported)
+    "s5ntruth": ("docs/orchestration/state/s5n/stage1/truth_check.json", "14ee2800"),
+    "s5cpseudo": ("nd-unfolding/s5c_pseudo.py", "d81d4f46"),
+    # group B3b: the held-out tunes' ratio gate (F1's prep config and its log of the gate's tiers and k, a text receipt)
+    "f1config": (f"{FD}/fd/receipts-f1/run/cluster/f1b3/prep/config-f1.json", "b0c7a0d9"),
+    "f1prep": (f"{FD}/fd/receipts-f1/run/cluster/f1b3/logs/prep.log", "f31a996a"),
+    # group B2: the two coverage tests' designs, from their declarations, and the null's constants from its code (text)
+    "cov2ddecl": (f"{FD}/COV2D-DECLARATION.md", "0328c916"),
+    "ll5ddecl": (f"{FD}/LL5D-DECLARATION.md", "6748d418"),
+    "nullcode": ("nd-unfolding/fd_1b_null.py", "ec1402db"),
+    # group B1: the headline tests' tables. s5e's contract (C3's |t| cut), REF-G1's bars, the two-dimensional coverage
+    # test's score records, and the declarations that alone state FD-STAB's pairs and the first 5D test's toys (text)
+    "s5econtract": ("docs/orchestration/state/s5e/contract-amendment-3-candidate-R-and-assessment.json", "f6d3791c"),
+    "refg1bars": (f"{FD}/fd/receipts-ref-g1/a1-connect1/bars.json", "ba4b6985"),
+    # D1 (DECISION-20261114-joseph-d1-g2r-adopted.md): the reported 2D covariance is COV2D-G2R's C_T', so the coverage
+    # test's score and null are G2R's regrade (COV2D-G2R-DECLARATION.md §4-5; #1143-#1150). The first grade, with the
+    # universes' misses approximation, stays pinned as cov2dold* for S6.1's comparison sentence.
+    "cov2dar23": (f"{FD}/fd/receipts-cov2d/g2r/readout/AR23/score_g2r_AR23.json", "fb6d1f7f"),
+    "cov2dg18": (f"{FD}/fd/receipts-cov2d/g2r/readout/G18/score_g2r_G18.json", "27374aab"),
+    "cov2doldar23": (f"{FD}/fd/receipts-cov2d/readout/AR23/score_AR23.json", "fe5263e9"),
+    "cov2doldg18": (f"{FD}/fd/receipts-cov2d/readout/G18/score_G18.json", "84976694"),
+    # T1-2: the two-dimensional test's draw-matched nulls (each score's null_digest is asserted to be its file's sha256)
+    "cov2dnullar23": (f"{FD}/fd/receipts-cov2d/g2r/readout/AR23/null_g2r_AR23.json", "ae82601d"),
+    "cov2dnullg18": (f"{FD}/fd/receipts-cov2d/g2r/readout/G18/null_g2r_G18.json", "d6b84ec0"),
+    # D1: C_T' at the data (G2R part (a)): readings.sigma gives the median per-bin and integrated relative sigma before
+    # ([0], the reported Q) and after ([1], C_new)
+    "g2rdata": (f"{FD}/fd/receipts-cov2d/g2r/readout/data/data_g2r.json", "cd975b64"),
+    # D1: RE-2's derived records on C_new, from COV2D-G2R's RE-2-shapes route A run 2 (#1167; its SHA256SUMS ae994593):
+    # Q's budget (C_PL and the statistical block print from it; Q's sigmas are asserted equal to data_g2r's), C_model's
+    # record (\qrCmodelMedian becomes q2d-qr-cmodel-med) and the values table (a cross-check of the printed G2R values)
+    "g2rbudget": (f"{FD}/fd/receipts-cov2d/g2r/re2shapes/run2/g2r/outA/budget_Q.json.gz", "a5ccddf2"),
+    "g2rcmodel": (f"{FD}/fd/receipts-cov2d/g2r/re2shapes/run2/g2r/cmodel/cmodel_R.json", "0525217d"),
+    "g2rvt": (f"{FD}/fd/receipts-cov2d/g2r/re2shapes/run2/g2r/values_table.tsv", "798b837c"),
+    # D1: the Flux band's median relative sigma under C_new, transcribed from G2R's data products by #1148
+    # (repin/g2r-transcription-20261114/fluxband_g2r.py; limitation-resolver): keyed from its output, not recomputed
+    "fluxbandg2r": ("docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/repin/g2r-transcription-20261114/FLUXBAND.out", "15af01f5"),
+    # T1-2: Tier 2 (a), the descriptive split of the two-dimensional test's chi2 (#1041; T2A declaration, T2-BINDING-1)
+    # T1-3: Tier 2 (b), the fake-data biases against smaller matrices (#1039; T2B declaration, T2-BINDING-1: descriptive)
+    "t2b": (f"{FD}/fd/tier2-20261110/t2b/t2b.json", "0e281a61"),
+    # T1-3: the per-period two-dimensional benchmark's read (OUTCOME-20261107-per-period-2d-benchmark.md, #879)
+    "ppbench": ("docs/orchestration/state/2d-closeout/per-period-benchmark-20261106/receipts/read/readout.json", "4872df32"),
+    # D1: T2A's split at C_T' (#1150), on the same 300 error vectors per tune
+    "t2aar23": (f"{FD}/fd/receipts-cov2d/g2r/t2a/run/t2a_g2r_AR23.json", "74fab014"),
+    "t2ag18": (f"{FD}/fd/receipts-cov2d/g2r/t2a/run/t2a_g2r_G18.json", "b1310d44"),
+    "stabdecl": (f"{FD}/FD-STAB-DECLARATION.md", "6c91c0cc"),
+    "fd1bdecl": (f"{FD}/FD-1B-STAGED-DECLARATION.md", "50d9e883"),
+    # group C (#1027): the Kish effective sample size of configuration (e)'s final weights on the sixteen cells
+    "ess": (f"{FD}/fd/receipts-ess/cluster/ess/ess.json", "d4f1268d"),
+    # the two validity rules' read (valid-region lane): V-ATLAS's per-cell effective number and statistical uncertainty
+    # T1-1: RS1's R0 read, sigma_J/f on the sixteen cells over the data jitters (the paper's 0.133 % and its range)
+    "rs1r0": (f"{FD}/fd/rounding-stability-20261106/receipts/full-a1/read/rs1_r0.json", "724f0c3a"),
+    "vregion": ("docs/orchestration/state/2d-closeout/valid-region-20261107/receipts/read/readout.json", "91bb604e"),
+    # B1 row 1 and section 3.2: the adopted 2D covariance Q's block sizes. S5's record (statistical replicas, seeds) and
+    # Q's budget (its derived counts), both RE-2 part C r2; the run-period term's record (its period unfoldings)
+    "s5q": ("docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/s5/s5.json.gz", "5c489837"),
+    "budgetq": ("docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/outA/budget_Q.json.gz", "971e8a9d"),
+    # the run-period block as Q adopted it: RE-2's partc-r2 playlist term (npz dbb067aa, the npz budget_Q pins as
+    # A0_pin_playlist_npz). Re-pinned 2026-11-13 from the pre-RE-2 playlist-term/outputs record (5b023478, npz c1723cb5;
+    # median 2.137, max 5.694), which journal-editor's literal trace found; it fed only cov2d-nperiod-word, the same three
+    # periods in both records, so no printed value changed
+    "plterm": ("docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/playlist/playlist_term.json", "a952adda"),
+    # #977's L rows (RESPONSE.md 4.2/F4.3, 4.3, F5.3, F5.4, 3.3, m5/Fm7, s11c): one derived readout (l_rows.py) from the
+    # read-only pscratch session's receipt (pscr-20261112, f70e805c) and committed sources
+    # the figure referee read's check A: how far the unfolded (E_avail, W) cells follow each truth change (recovered
+    # fraction f per supported cell, net of the nominal closure); a_recovery.py
+    "recov": ("docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-figure-deformation-20261112/check-a/a_recovery.json", "75db95a1"),
+    # C-BKG-2 (#977 RESPONSE.md 4.2): the 1A background template's classes with the analysis's own fiducial test
+    # (MAT-MINERvA calculators/CCInclusiveSignal.h truth::Apothem/ZRange, read from source; port 1 identical)
+    "cbkg2": ("docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/cbkg2-20261112/members/cbkg2_summary.json", "22bb7782"),
+    "lrows": ("docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/l-rows-20261112/derived/l_rows.json", "dc3bf511"),
+    # the fresh referee round on 283f3044 (#977 RESPONSE.md section G), director-helper-2's lrows-g (PR #1102):
+    # G1, Clopper-Pearson 95 % intervals on the 2D coverage counts; G3, the rounding jitter's share of the bootstrap
+    # variance (diagonal only, under R0b's additivity)
+    "cpint": ("docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/lrows-g/cp_intervals.json", "73e25db3"),
+    "rdecomp": ("docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/lrows-g/rounding_decomp.json", "46c6f8f3"),
+    # G5 (minor 6): the period step after RE-2's refined background, the reported two-dimensional configuration
+    # (lrows-g/reconcile.json ecdb66a2 traces the paper's earlier 6.94 to the pre-RE-2 period unfold)
+    "re2per": ("docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/periods/analysis.json", "2ce5d5da"),
+    # G4 (major 8): the run-period figure's plotted values, both levels against 1A-1F (PR #1104; the director's ruling of
+    # 2026-11-12 adopts that single reference for the text); the installed PDF is asserted equal to its source below
+    "runper": ("docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/lrows-g/g4-runperiod/runperiod_values.json", "f63074b1"),
+    # the RSN referee sensitivities (RSN-DECLARATION.md rev 3; receipt #1114): G6, SM, WR and TR, and SM's and G6's
+    # regrade of the fake-data records; the text is Joseph's approval of 2026-11-12 (DECISION-20261112-joseph-consult-d1-d7.md, addendum)
+    "rsn": (f"{RSN}/rsn_readout.json", "6291f48d"),
+    "rsnregrade": (f"{RSN}/regrade.json", "cb5f5d17"),
+    # E96D: the 96-fit ensemble average and the float64 copy on the data, beside (e)'s result (E96D-DECLARATION.md,
+    # #1130); in the paper by Joseph's decision of 2026-11-12 (E96D-BINDING-1 ruling 5; RESPONSE.md section J3)
+    "e96d": (f"{FD}/fd/e96-data-20261110/receipts/a1-run-20261112/cluster/analysis/ANALYSIS.json.txt", "b42208ef"),
+    # printed literals keyed after helper-2's D6 clean-environment test (#1132; the director, 2026-11-12): VL155's
+    # joint-cell rounding medians, the lower-capacity variant's rounding maximum, RE-2's tension anatomy, RS1's ratios
+    "s5p2": ("docs/orchestration/state/s5p/stage2/stage2_receipt.json", "0daa7cd8"),
+    "s5er2": ("docs/orchestration/state/s5e/cand/review2/r2_recompute.json", "c0f20299"),
+    "tension": ("docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/receipts/figs/tension_report.txt", "dee699e5"),
+    "rs1read": (f"{FD}/fd/rounding-stability-20261106/receipts/full-a1/read/rs1_read.json", "9938e168"),
+    # the coarse 3^5 grid's cells, for the unsupported cells' share of the expected signal (M4-DEFINITIONS.md:218: "The
+    # 25 unsupported cells with signal (0.47% of signal) stay in the total. A re-count from partition_scan_2.json
+    # reproduces 109 and 25"); the support rule is s5p_stage1_inspect.py:49 and :273
+    "s5cscan": ("docs/orchestration/state/s5c/b1/partition_scan_2.json", "7b49b52d"),
+    # the Supplement's printed literals, keyed (the director's D6 item, 2026-11-13; journal-editor's supp_literal_values()):
+    # S1-S2 (the 1A copy; the W and axis conventions)
+    "q2agg": ("docs/orchestration/state/2d-closeout/stageD-inputs/q2-opendata-20261014/triage/outputs/agg_full.json", "262415aa"),
+    "m4womni": ("docs/orchestration/state/2d-closeout/stageF/methods/m4-w/probe_omni.json", "d1231bc9"),
+    "m4wmad": ("docs/orchestration/state/2d-closeout/stageF/methods/m4-w/probe_mad.json", "5e7573b3"),
+    "mp5": ("docs/orchestration/state/measurement-paper/phase1/mp5/out/eval/mp5_results.json", "7a8ed135"),
+    # S4 (the configurations, iterations and the background treatment)
+    "s5cd1": ("docs/orchestration/state/s5c/d1/d1_summary.json", "f5c802e3"),
+    "re1c2": ("docs/orchestration/state/2d-closeout/stageF/methods/re1/run2/readouts/c2_supplement.json", "445b630c"),
+    "partc": ("docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/partc_numbers.json", "46519daa"),
+    # S5 (the run-period block, RE-2's: budget_Q's provenance names its npz dbb067aa)
+    "ct5b": (f"{FD}/fd/readout/fd_ct_5b_audit.json", "6d34d7f8"),
+    # D1: the run-period combination on C_new (#1167 run 2); before, RE-2's partc-r2 combination.json (c663eadb)
+    "re2comb": (f"{FD}/fd/receipts-cov2d/g2r/re2shapes/run2/g2r/combination/combination.json", "fb9fe357"),
+    # S5: the published flux median, computed from the release (stageB/verify-c04-x01/VERIFICATION.md:130: 4.014 %)
+    "pubflux": ("2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV_flux.txt", "a2ba53fd"),
+    "pubresult": ("2d-unfolding/minerva_paper_anc/data_result_ptpl_2D_minerva_inclusive_6GeV.txt", "02153e7a"),
+    "pubbins": ("2d-unfolding/minerva_paper_anc/bin_mapping.txt", "d21a41eb"),
+    # S7 (the noise-free comparison with exact binned unfolding: d-id's results; its tables.npz is read in supp_literal_values)
+    "didres": ("docs/orchestration/state/next-preparation-20261009/d-id/outputs/results.json", "2234c0c0"),
+    # S8.6 (the stopped first five-observable test: the source-swap factors and the like-for-like control)
+    "i2inv": (f"{FD}/fd/receipts-1b/inv/i2/i2.json", "a9d3dc9c"),
+    "fd1bstage0": (f"{FD}/fd/receipts-1b/staged/stage0/readout.json", "05be73ee"),
+    # S9 (GENIE's carbon-only over CH cross section per nucleon, W < 1.1 GeV; r5_genie_events.py:114, :126-127)
+    "r5genie": ("docs/orchestration/state/inelastic-high-region-20261011/results/r5_genie_events.json", "c2ce15ae"),
 }
 # the committed readouts without the run-period block, for the "-nopl" keys
 NOPL_READOUTS = dict(READOUTS, **{
@@ -136,12 +289,13 @@ def paper_prec(k, x):
     return {base: pr, base[:i] + "-prel" + base[i + 3:]: pr if pr.startswith("<") else "=" + pr}
 # the figures the note and the paper print, copied into figures/: each must equal its committed source (with the block)
 # and the digest its sidecar records (FD-G-FIGURES-REPORT.md section 1; FD-CT-5B-ADDITION-REPORT.md section 3)
-# Both are E-1's with-arm figures as addendum E-A2 redrew them, from the same readouts, without the hydrogen flags on
-# the legend (FD-GENCMP-AMENDMENT-E-ADDENDUM-EA2-REPORT.md, #712; the caveat cut list's move MV07F)
-FIGURES = {"fd_g_fig_ratio.pdf": ("fd/gencmp-e/rerun1/chain/chdefs/with/figures-a2", "6214ed78"),
+# The ratio uses carbon-only NuWro and GiBUU analysis predictions (fd/gencmp/carbon-figure/REPORT.md).
+# The modes retain E-A2's with-arm source (FD-GENCMP-AMENDMENT-E-ADDENDUM-EA2-REPORT.md).
+FIGURES = {"fd_g_fig_ratio.pdf": ("fd/gencmp/carbon-figure", "1e6d550e"),
            "fd_g_fig_modes.pdf": ("fd/gencmp-e/rerun1/chain/chdefs/with/figures-a2", "0d6fe57c")}
 # the readouts that are text receipts, not JSON
-TEXT_READOUTS = {"gprobe", "e2sens", "s1code"}
+TEXT_READOUTS = {"g2rvt", "fluxbandg2r", "tension", "gprobe", "e2sens", "s1code", "s5cpseudo", "f1prep", "cov2ddecl", "ll5ddecl", "nullcode", "stabdecl", "fd1bdecl"}
+TEXT_READOUTS |= {"pubflux", "pubresult", "pubbins"}     # the Supplement's release files (supp_literal_values)
 CELLS = [f"R{i:02d}" for i in range(16)]
 BLOCK = {"stat": "statistical", "interaction": "interaction", "flux": "flux", "detector": "detector",
          "lateral": "lateral", "normalization": "normalization", "seed": "training seed", "C_resp": r"$C_{\mathrm{resp}}$",
@@ -168,22 +322,638 @@ TRUTH_LABEL = {"nominal": ("the simulation prior", "simulation prior"),
 #   "without": it names (types) every truth listed only without the block, and every truth it names or keys is listed
 #              without the block;
 #   "both": the truths it types (of the family, if given) equal the truths listed with or without the block;
-#   "count": exactly `gibuu` GiBUU truths are listed with the block, and every truth in `also`.
+#   "count": exactly `gibuu` GiBUU truths are listed with the block, and every truth in `also` (and, given `n`, n in all);
+#   "n": exactly `n` truths are listed with the block (a sentence that counts them in words).
 #   "ctotal": the truths it types equal F0's listed set, under C_total alone (Table I's right-hand columns).
 # The anchor is the sentence's distinguishing clause; a missing anchor fails, so a moved sentence must be re-declared.
 LISTED_CLAIMS = [
     ("paper_body.tex", "the flagged truths ($p<", {"kind": "keys"}),
     ("paper_body.tex", "also meets the flagging criterion", {"kind": "without"}),
-    ("paper_body.tex", "Thus the fake-data bias exceeds the stated thresholds", {"kind": "both"}),
+    # the paper's "Thus the fake-data bias exceeds the stated thresholds" sentence (kind "both") was a repeated verdict, cut by the
+    # readability batch (r2 #16, the director, relaying Joseph 2026-11-16); its truths are the "keys" and "without" rows' sentences
     ("paper_body.tex", r"Under $C_{\mathrm{total}}$ alone, the right-hand columns", {"kind": "ctotal"}),
     ("sec_fived16.tex", "truths meet the listing criterion ($p<", {"kind": "keys"}),
     ("sec_fived16.tex", "truths meet it: the GiBUU", {"kind": "without"}),
     ("sec_fived16.tex", "The fake-data bias therefore exceeds the stated thresholds", {"kind": "both"}),
     ("sec_fived16.tex", "so the GiBUU comparison carries that limitation", {"kind": "both", "family": "gibuu"}),
-    ("main_paper.tex", "at a GiBUU-like truth and at a synthetic momentum-transfer tilt find", {"kind": "count", "gibuu": 1, "also": ["q3"]}),
+    # the abstract read of 2026-11-12 dropped the second "at" (to fit "move opposite the change" at 250 words)
+    # style round 4 (the director's approved item, 2026-11-12): the abstract names the truth as the body does, "GiBUU hybrid truth"
+    # Joseph's short abstract (the director, relaying Joseph 2026-11-16) counts them; the introduction names them
+    # the readability batch (the director, relaying Joseph 2026-11-16): the abstract's and the introduction's new sentences
+    ("main_paper.tex", "Fake-data tests flag bias at two truths that no tested", {"kind": "n", "n": 2}),
+    ("paper_body.tex", "Fake-data tests flag bias beyond uncertainty-based criteria at a GiBUU hybrid truth and a synthetic",
+     {"kind": "count", "gibuu": 1, "also": ["q3"], "n": 2}),
     ("main_note.tex", "At a GiBUU-like truth and a synthetic momentum-transfer tilt", {"kind": "count", "gibuu": 1, "also": ["q3"]}),
 ]
 
+# Pending verdicts of the short methods paper (stageF/methods/methods-short-20261109/variants.md). A sentence that
+# depends on a pending verdict is written once per class, \fvcase{key}{class}{text}, inside \fvgroup{group}{...}. While a
+# group is pending, the group prints one [PENDING: ...] and no variant; filling it means pinning the record's readout in
+# READOUTS and giving every key of the group its class in VERDICTS, which prints exactly one variant per key and writes
+# no prose. Each class set is the declaration's, at the line given (paths relative to FD unless they start with docs/).
+PR1 = ("reduces", "increases", "both", "no-effect", "undefined")            # FD-PRR-DECLARATION.md:287-292
+PR2A = ("less", "more", "same", "undefined")     # FD-PRR-DECLARATION.md:297-298; "undefined": prr_read.ibu_class @ cf76aec7 :308-311
+PR2B = ("falls", "rises", "flat", "undefined")   # FD-PRR-DECLARATION.md:299-300; "undefined": prr_read.ibu_k_class @ cf76aec7 :314-317
+PR3 = ("clears", "not")                                                    # FD-PRR-DECLARATION.md:307-309
+LABEL = ("holds", "not")                                                   # FD-PRR-DECLARATION.md:321-330
+# the abstract's IBU sentence, both flagged truths (the pre-read ruling 13, #998): one class per (GiBUU hybrid, q3 tilt)
+PRR_ABS = tuple(f"{g}-{q}" for g in PR2A for q in PR2A)
+# LL5D-DECLARATION.md §6 :469-481. COVERS / UNDER-COVERS / INVALID at (T, reading); UNDER-COVERS split by what :474
+# names (the cells, and whether the joint fraction is under): under-cells (cells, not joint), under-joint (joint and
+# cells), under-joint-only (joint, no cell). na: the campaign is not graded. A reading is INVALID when the Cholesky
+# reading rule fails (ll5d_b.readout_reading @ ffbbb7455), or the whole step is (its "why").
+LL5D_T = ("covers", "under-cells", "under-joint", "under-joint-only", "invalid", "na")
+LL5D_FLAG = ("none", "some", "na")       # per (T, reading): weakened passes :478; over-coverage :477; clipping artefact :480-481
+# the campaign: graded, or stopped at a gate (§5.2 :427), by the clipping-offset routing (§5.3 :439-440, :692, when the
+# decision after it stops the test), or at another STOP trigger fixed in advance (§5.1 :333-335, §11 :684). What follows
+# a STOP is decided after it (:66-71; DECISION-20261108-joseph-ll5d-stop-rule.md:28-35).
+LL5D_C = ("graded", "gate-failed", "offset-stopped", "stop")
+# how a graded campaign got there: directly; past the offset routing by a decision to proceed (:439-440); or with a
+# repair chosen after an earlier run stopped (:71; the stop-rule decision item 4). Both of the latter make the readings
+# descriptive (the pre-read ruling 8, pending Joseph). na: not graded.
+LL5D_ROUTE = ("direct", "offset-proceeded", "repaired", "na")
+# The abstract-form switch (its approved and referee clauses) was retired 2026-11-16: the abstract is Joseph's
+# approved short form, keyed on ll5d-campaign, ll5d-alljoint and ll5d-route (main_paper.tex).
+# one variant's two tunes, unordered (the pre-read ruling 4: one abstract clause per variant, keeping the cell-versus-
+# joint distinction): c covers, uc cells only, uj joint only, ujc joint and cells, i invalid
+_TL = {"covers": "c", "under-cells": "uc", "under-joint-only": "uj", "under-joint": "ujc", "invalid": "i"}
+_TO = ("c", "uc", "uj", "ujc", "i")
+LL5D_PAIR = tuple(f"{a}-{b}" for i, a in enumerate(_TO) for b in _TO[i:]) + ("na",)
+LL5D_SOME = ("some", "none", "na")
+LL5D_CLOSE = ("scope", "none", "na")    # "none" when no reading was graded; the scope itself is stated once (the style pass)
+LL5D_ALLJOINT = ("all", "notall", "na")   # every (tune, reading) flags jointly (§7 and §7.1 carry it; the codex referee's Minor 3)
+LL5D_SAME = ("same", "differ", "na")   # Table 1 and row 10 (item 14): each tune's class and flagged cells equal in both variants
+LL5D_STATUS = ("graded", "descriptive", "invalid", "stopped")   # Table 1's status (its caption); no outcome summary: DECISION-20261109-joseph-coverage-case-wording.md item 3
+VHALF_O = ("none-fail", "some-fail")                  # DECISION-20261109-joseph-bias-half-rule.md item 1 (counts below)
+PENDING_GROUPS = {
+    # printed inside [PENDING: ...]: descriptive names only, no internal study labels (round 6, the editor's C4)
+    "prr": "the study of what changes the retained prior",
+    "ll5d": "the second five-observable coverage test",
+    "vhalf": "the per-cell bias-half validity rule",
+}
+PENDING = {}                                         # key -> (group, class set, or None for a printed value)
+for _t in ("gibuu", "q3"):
+    for _f in ("F1", "F2", "F3", "F4"):
+        PENDING[f"prr-pr1-{_f}-{_t}"] = ("prr", PR1)
+    PENDING[f"prr-pr2a-{_t}"] = ("prr", PR2A)
+    PENDING[f"prr-pr2b-{_t}"] = ("prr", PR2B)
+    for _l in ("fir", "info", "impl", "obs", "stat", "unattr"):
+        PENDING[f"prr-label-{_l}-{_t}"] = ("prr", LABEL)
+PENDING["prr-pr3-any"] = ("prr", PR3)               # "clears" if some level clears at these truths
+PENDING["prr-pr3-ibu"] = ("prr", PR3)
+PENDING["prr-pr3-levels"] = ("prr", None)           # the levels that clear, as printed words
+PENDING["prr-ibu-bar"] = ("prr", None)              # the IBU's bar, prr_read floor.bars.IBU (the pre-read ruling 14)
+PENDING["prr-abs"] = ("prr", PRR_ABS)               # derived: prr_derived()
+PENDING["ll5d-campaign"] = ("ll5d", LL5D_C)
+PENDING["ll5d-route"] = ("ll5d", LL5D_ROUTE)
+PENDING["ll5d-stop-what"] = ("ll5d", None)          # the gate or check a STOP fired at (gate-failed; stop; repaired)
+PENDING["ll5d-repair"] = ("ll5d", None)             # the repair, as the record names it (repaired)
+PENDING["ll5d-offset"] = ("ll5d", None)             # clipcheck's largest |o_c|, its cell and the bound (offset routes)
+PENDING["ll5d-clip-record"] = ("ll5d", None)        # the Supplement S9 clipping record (the director's option (a))
+PENDING["ll5d-route-record"] = ("ll5d", None)       # S9, adaptive routes: the exceeded quantity and its bound, what was visible, the reason, every repair (DECISION-20261109-joseph-coverage-case-wording.md item 2)
+for _k in ("njoint-min", "njoint-max", "kjoint-all", "chi2ndf-min", "chi2ndf-max"):   # §6.3's magnitude clause (the director, (d))
+    PENDING[f"ll5d-{_k}"] = ("ll5d", None)
+for _t in ("g18", "ar23"):
+    for _r in ("minus2", "all"):
+        PENDING[f"ll5d-{_t}-{_r}"] = ("ll5d", LL5D_T)
+        PENDING[f"ll5d-{_t}-{_r}-cells"] = ("ll5d", None)   # the flagged cells with their coverage fractions (counts/300)
+        PENDING[f"ll5d-{_t}-{_r}-stats"] = ("ll5d", None)   # joint_count, k_joint, chi2_mean_over_ndf and its se, ndf
+        PENDING[f"ll5d-{_t}-{_r}-why"] = ("ll5d", None)     # the failed control, for an invalid reading
+        PENDING[f"ll5d-{_t}-{_r}-names"] = ("ll5d", None)   # the flagged cells by name only ("cell R07"), for the abstract's referee form
+        for _k in ("njoint", "kjoint", "chi2ndf", "chi2se", "cells-tab"):   # the S8.5 results table (journal-editor, Minor 4)
+            PENDING[f"ll5d-{_t}-{_r}-{_k}"] = ("ll5d", None)
+        for _x in ("weak", "over", "clip"):
+            PENDING[f"ll5d-{_t}-{_r}-{_x}"] = ("ll5d", LL5D_FLAG)
+            PENDING[f"ll5d-{_t}-{_r}-{_x}-cells"] = ("ll5d", None)
+for _r in ("minus2", "all"):
+    PENDING[f"ll5d-abs-{_r}"] = ("ll5d", LL5D_PAIR)  # derived: ll5d_derived()
+PENDING["ll5d-abs-close"] = ("ll5d", LL5D_CLOSE)    # derived
+for _x in ("anypass", "cellflags", "anyweak", "anyover"):
+    PENDING[f"ll5d-{_x}"] = ("ll5d", LL5D_SOME)     # derived
+PENDING["ll5d-status"] = ("ll5d", LL5D_STATUS)      # derived
+PENDING["ll5d-alljoint"] = ("ll5d", LL5D_ALLJOINT)  # derived
+PENDING["ll5d-sameflags"] = ("ll5d", LL5D_SAME)     # derived
+PENDING["vhalf-outcome"] = ("vhalf", VHALF_O)
+for _c in ("valid", "notvalid", "notassessed", "unresolved"):
+    PENDING[f"vhalf-n-{_c}"] = ("vhalf", None)
+PENDING["vhalf-cells-notvalid"] = ("vhalf", None)
+# The words \fvval prints for a class key (Table 1). A class key with no entry here cannot be printed by \fvval: its
+# value is an \errmessage, so no raw class name reaches a build (round 6 pre-read, NOTES item 24; the director's item 8).
+# The finer-words option for Table 2 and the Supplement's row 10, put to Joseph in the director's batch (2026-11-15;
+# journal-editor's item 3, the director recommending it). False keeps DECISION-20261109 item 3's scheme, the default
+# until Joseph answers; his answer is this one line.
+LL5D_FINER_WORDS = False
+LL5D_T_WORDS = {
+    False: {"covers": "no under-coverage detected", "under-cells": "under-coverage flagged",
+            "under-joint": "under-coverage flagged", "under-joint-only": "under-coverage flagged", "invalid": "invalid",
+            "na": ""},
+    True: {"covers": "no under-coverage detected", "under-cells": "under-coverage flagged per cell",
+           "under-joint": "under-coverage flagged jointly and per cell",
+           "under-joint-only": "under-coverage flagged jointly", "invalid": "invalid", "na": ""},
+}
+WORDS = {
+    **{k: {"reduces": "reduces", "increases": "increases", "both": "reduces and increases", "no-effect": "no detected change",
+           "undefined": "undefined"} for k, (_, c) in PENDING.items() if c is PR1},
+    # Table 1's entry per tune and variant (DECISION-20261109-joseph-coverage-case-wording.md item 3), or, if Joseph
+    # chooses it, the finer words that separate a joint-only flag from a joint and per-cell one (LL5D_FINER_WORDS)
+    **{k: LL5D_T_WORDS[LL5D_FINER_WORDS] for k, (_, c) in PENDING.items() if c is LL5D_T},
+}
+# filled when a record lands: key -> class (or printed value); a group is filled only when every key has one
+# The prior-retention group, from the FD-PRR readout (READOUTS["prr"]) by prr_verdicts() below; main() refuses any
+# difference between these and a fresh mapping of the pinned readout. DECISION-20261109-joseph-abstract-length-prr-fill.md
+# item 2: filled from the pre-written cases; the readings are descriptive and no level is adopted (BINDING 1 rulings 2-3).
+VERDICTS = {
+    "prr-pr1-F1-gibuu": "no-effect", "prr-pr1-F2-gibuu": "increases", "prr-pr1-F3-gibuu": "no-effect",
+    "prr-pr1-F4-gibuu": "increases",
+    "prr-pr1-F1-q3": "increases", "prr-pr1-F2-q3": "increases", "prr-pr1-F3-q3": "no-effect", "prr-pr1-F4-q3": "increases",
+    "prr-pr2a-gibuu": "less", "prr-pr2a-q3": "less", "prr-pr2b-gibuu": "falls", "prr-pr2b-q3": "falls",
+    "prr-label-fir-gibuu": "not", "prr-label-info-gibuu": "not", "prr-label-impl-gibuu": "holds",
+    "prr-label-obs-gibuu": "holds", "prr-label-stat-gibuu": "not", "prr-label-unattr-gibuu": "not",
+    "prr-label-fir-q3": "not", "prr-label-info-q3": "not", "prr-label-impl-q3": "holds",
+    "prr-label-obs-q3": "holds", "prr-label-stat-q3": "not", "prr-label-unattr-q3": "not",
+    "prr-pr3-any": "not", "prr-pr3-ibu": "not", "prr-pr3-levels": "none", "prr-ibu-bar": "0.05",
+    "prr-abs": "less-less",
+    # the per-cell bias-half rule, from the V-HALF readout (READOUTS["vhalf"]) by vhalf_verdicts(); main() refuses any
+    # difference from a fresh mapping of the pinned readout
+    "vhalf-outcome": "some-fail", "vhalf-n-valid": "5", "vhalf-n-notvalid": "9", "vhalf-n-notassessed": "0",
+    "vhalf-n-unresolved": "2", "vhalf-cells-notvalid": "R03, R05, R07, R08, R10, R11, R12, R13, R15",
+    # the second five-observable coverage test, from LL5D's readout (READOUTS ll5dg18, ll5dar23) by ll5d_verdicts(),
+    # with LL5D_ROUTE_TEXT's route (the director's ruling of 2026-11-15, pending Joseph); main() refuses any difference
+    # from a fresh mapping of the pinned records
+    'll5d-abs-all': 'uj-ujc',
+    'll5d-abs-close': 'scope',
+    'll5d-abs-minus2': 'uj-ujc',
+    'll5d-alljoint': 'all',
+    'll5d-anyover': 'some',
+    'll5d-anypass': 'none',
+    'll5d-anyweak': 'none',
+    'll5d-ar23-all': 'under-joint',
+    'll5d-ar23-all-cells': 'cell R07 (167 of 300 within its interval, flagged at 178 or fewer)',
+    'll5d-ar23-all-cells-tab': 'R07 (167, $\\leq$178)',
+    'll5d-ar23-all-chi2ndf': '3.69',
+    'll5d-ar23-all-chi2se': '0.10',
+    'll5d-ar23-all-clip': 'none',
+    'll5d-ar23-all-clip-cells': 'none',
+    'll5d-ar23-all-kjoint': '195',
+    'll5d-ar23-all-names': 'cell R07',
+    'll5d-ar23-all-njoint': '4',
+    'll5d-ar23-all-over': 'some',
+    'll5d-ar23-all-over-cells': 'R02, R03, R05, R06, R09, R11 and R15',
+    'll5d-ar23-all-stats': '4 of 300 in the joint region, flagged at 195 or fewer, mean $\\chi^2/\\mathrm{ndf}=3.69\\pm0.10$',
+    'll5d-ar23-all-weak': 'none',
+    'll5d-ar23-all-weak-cells': 'none',
+    'll5d-ar23-all-why': 'none',
+    'll5d-ar23-minus2': 'under-joint',
+    'll5d-ar23-minus2-cells': 'cell R07 (163 of 300 within its interval, flagged at 178 or fewer)',
+    'll5d-ar23-minus2-cells-tab': 'R07 (163, $\\leq$178)',
+    'll5d-ar23-minus2-chi2ndf': '3.70',
+    'll5d-ar23-minus2-chi2se': '0.10',
+    'll5d-ar23-minus2-clip': 'none',
+    'll5d-ar23-minus2-clip-cells': 'none',
+    'll5d-ar23-minus2-kjoint': '195',
+    'll5d-ar23-minus2-names': 'cell R07',
+    'll5d-ar23-minus2-njoint': '1',
+    'll5d-ar23-minus2-over': 'some',
+    'll5d-ar23-minus2-over-cells': 'R02, R03, R06, R09, R11 and R15',
+    'll5d-ar23-minus2-stats': '1 of 300 in the joint region, flagged at 195 or fewer, mean $\\chi^2/\\mathrm{ndf}=3.70\\pm0.10$',
+    'll5d-ar23-minus2-weak': 'none',
+    'll5d-ar23-minus2-weak-cells': 'none',
+    'll5d-ar23-minus2-why': 'none',
+    'll5d-campaign': 'graded',
+    'll5d-cellflags': 'some',
+    'll5d-chi2ndf-max': '3.7',
+    'll5d-chi2ndf-min': '3.0',
+    'll5d-clip-record': "no cell reads ``passes, weakened by clipping'', no flagged cell is read as a possible clipping artefact, and the largest clipping offset is $|o_c|=0.048$ under $C_T$, in R05 at \\fvval{f1-tune-ar23-short} in the variant with the two bands, against $\\delta^*=0.667$",
+    'll5d-g18-all': 'under-joint-only',
+    'll5d-g18-all-cells': 'none',
+    'll5d-g18-all-cells-tab': 'none',
+    'll5d-g18-all-chi2ndf': '3.04',
+    'll5d-g18-all-chi2se': '0.08',
+    'll5d-g18-all-clip': 'none',
+    'll5d-g18-all-clip-cells': 'none',
+    'll5d-g18-all-kjoint': '195',
+    'll5d-g18-all-names': 'none',
+    'll5d-g18-all-njoint': '14',
+    'll5d-g18-all-over': 'some',
+    'll5d-g18-all-over-cells': 'R02, R03, R06 and R09',
+    'll5d-g18-all-stats': '14 of 300 in the joint region, flagged at 195 or fewer, mean $\\chi^2/\\mathrm{ndf}=3.04\\pm0.08$',
+    'll5d-g18-all-weak': 'none',
+    'll5d-g18-all-weak-cells': 'none',
+    'll5d-g18-all-why': 'none',
+    'll5d-g18-minus2': 'under-joint-only',
+    'll5d-g18-minus2-cells': 'none',
+    'll5d-g18-minus2-cells-tab': 'none',
+    'll5d-g18-minus2-chi2ndf': '3.07',
+    'll5d-g18-minus2-chi2se': '0.08',
+    'll5d-g18-minus2-clip': 'none',
+    'll5d-g18-minus2-clip-cells': 'none',
+    'll5d-g18-minus2-kjoint': '195',
+    'll5d-g18-minus2-names': 'none',
+    'll5d-g18-minus2-njoint': '12',
+    'll5d-g18-minus2-over': 'some',
+    'll5d-g18-minus2-over-cells': 'R02, R03, R05, R06 and R09',
+    'll5d-g18-minus2-stats': '12 of 300 in the joint region, flagged at 195 or fewer, mean $\\chi^2/\\mathrm{ndf}=3.07\\pm0.08$',
+    'll5d-g18-minus2-weak': 'none',
+    'll5d-g18-minus2-weak-cells': 'none',
+    'll5d-g18-minus2-why': 'none',
+    'll5d-kjoint-all': '195',
+    'll5d-njoint-max': '14',
+    'll5d-njoint-min': '1',
+    'll5d-offset': '$|o_c|=0.048$ under $C_T$, in R05 at \\fvval{f1-tune-ar23-short} in the variant with the two bands, against $\\delta^*=0.667$',
+    'll5d-repair': 'the correction of an implementation defect in that check, which compared event weights stored at two precisions. The repair changed no rule, threshold, bound or cell',
+    'll5d-route': 'repaired',
+    'll5d-route-record': "at both tunes, an entry check that matches each simulated truth event across two of the test's inputs found every event unmatched, against a bound of 5\\,\\% on the largest unmatched share in any cell, and the run stopped. The entry checks had used the coverage pseudo-experiments' draws (as above), but at that point none had been unfolded or graded. Every other entry check had passed, and their readings were visible when the repair was chosen. A diagnosis classed the failure as an implementation defect: the check compared event weights stored at two floating-point precisions, so no event could match. The repair compares them at one precision and adds a check of the matching on the real inputs, which passed. It changed no rule, threshold, bound or cell. The entry checks were then rerun at both tunes and passed. A later trial run of the procedure's controls and one pseudo-experiment stopped at a check on computing time and memory, which found an output file missing before any pseudo-experiment was graded, and was rerun with a change to its batch script only. The diagnosed defect is in this test's entry check. The disagreement of the two GEANT4 bands in the first test (above), which led to the primary variant, remains unexplained",
+    'll5d-sameflags': 'same',
+    'll5d-status': 'descriptive',
+    'll5d-stop-what': 'an event-matching entry check, which found every event unmatched at both tunes',
+}
+DERIVED = {"prr": ("prr-abs",),
+           "ll5d": ("ll5d-abs-minus2", "ll5d-abs-all", "ll5d-abs-close", "ll5d-anypass", "ll5d-cellflags",
+                    "ll5d-anyweak", "ll5d-anyover", "ll5d-status", "ll5d-alljoint", "ll5d-sameflags")}
+
+
+def prr_derived(v):
+    """The prior-retention group's derived key: the abstract's class, from both flagged truths' PR-2a classes."""
+    return {"prr-abs": f"{v['prr-pr2a-gibuu']}-{v['prr-pr2a-q3']}"}
+
+
+# prr_read's strings (nd-unfolding/prior_retention/prr_read.py @ db0e801f1: factor_class :300-306, ibu_class :309-312,
+# ibu_k_class :315-318, labels_for :321-333, clears :336-340) -> the declared classes of PR1, PR2A, PR2B, LABEL, PR3
+PRR_TRUTHS = {"gibuu": "A7_gibuu", "q3": "q3"}
+PRR_LABELS = {"fir": "consistent with finite-iteration regularization",
+              "info": "consistent with an information limit at these settings",
+              "impl": "consistent with an implementation-specific share",
+              "obs": "sensitive to the observable set", "stat": "sensitive to training statistics", "unattr": "unattributed"}
+PRR_PR2A = {"IBU retains less": "less", "IBU retains more": "more", "same": "same", "undefined": "undefined"}
+PRR_PR3 = {"clears at these truths": "clears", "does not clear at these truths": "not"}
+
+
+def prr_verdicts(r):
+    """Every key of the prior-retention group from the FD-PRR readout alone (readout keys only; no number is computed)."""
+    assert r["schema"] == "prr-readout/1" and r["verdict"] == "COMPLETE", "the FD-PRR readout is not a COMPLETE prr-readout/1"
+    rd, v = r["readings"], {}
+    for t, T in PRR_TRUTHS.items():
+        for f in ("F1", "F2", "F3", "F4"):
+            v[f"prr-pr1-{f}-{t}"] = rd["PR-1"][T][f].replace(" ", "-")
+        v[f"prr-pr2a-{t}"] = PRR_PR2A[rd["PR-2a"][T]]
+        v[f"prr-pr2b-{t}"] = rd["PR-2b"][T]
+        got = set(rd["labels"][T])
+        assert got <= set(PRR_LABELS.values()), f"an unknown label at {T}: {got}"
+        for k, text in PRR_LABELS.items():
+            v[f"prr-label-{k}-{t}"] = "holds" if text in got else "not"
+    levels = {k: PRR_PR3[x["reading"]] for k, x in rd["PR-3"].items()}
+    v["prr-pr3-ibu"] = levels.pop("IBU_K5")
+    v["prr-pr3-any"] = "clears" if "clears" in levels.values() else "not"
+    v["prr-pr3-levels"] = ", ".join(k for k, c in levels.items() if c == "clears") or "none"
+    v["prr-ibu-bar"] = f"{rd['floor']['bars']['IBU']:g}"
+    v.update(prr_derived(v))
+    for k, x in v.items():
+        cls = PENDING[k][1]
+        assert cls is None or x in cls, f"{k}: {x!r} is not a declared class {cls}"
+    return v
+
+
+# the V-HALF readout's per-cell classes (readings.cells[c].class, counts) -> the paper's printed keys
+VHALF_CLASSES = {"valid": "valid", "not valid": "notvalid", "rule applies at no truth": "notassessed",
+                 "unresolved (noise)": "unresolved"}
+
+
+def vhalf_verdicts(r):
+    """Every key of the bias-half group from the V-HALF readout alone (its per-cell classes; no number computed)."""
+    assert r["schema"] == "v-half-readout/1", "the V-HALF readout is not a v-half-readout/1"
+    cells = r["readings"]["cells"]
+    assert len(cells) == 16, f"the V-HALF readout has {len(cells)} cells"
+    cls = {c: x["class"] for c, x in cells.items()}
+    bad = sorted(c for c, k in cls.items() if k not in VHALF_CLASSES)
+    assert not bad, f"V-HALF cells with a class the paper does not print: {[(c, cls[c]) for c in bad]}"
+    n = {v: sum(1 for k in cls.values() if VHALF_CLASSES[k] == v) for v in VHALF_CLASSES.values()}
+    counts = r["readings"]["counts"]
+    assert all(counts.get(k, 0) == n[v] for k, v in VHALF_CLASSES.items()) and counts.get("no d", 0) == 0, \
+        f"the V-HALF readout's counts {counts} disagree with its cells"
+    notvalid = sorted(c for c, k in cls.items() if k == "not valid")
+    # the paper no longer prints the not-assessed class or its count (Joseph's read of 2026-11-12, item 1): it is empty
+    assert n["notassessed"] == 0, "a V-HALF cell is not assessed: §5.2 must print the class and its definition again"
+    return {"vhalf-outcome": "some-fail" if notvalid else "none-fail",
+            **{f"vhalf-n-{v}": str(n[v]) for v in ("valid", "notvalid", "notassessed", "unresolved")},
+            "vhalf-cells-notvalid": ", ".join(notvalid) if notvalid else "none"}
+
+
+def check_vhalf_verdicts(d):
+    """VERDICTS' bias-half keys equal a fresh mapping of the pinned V-HALF readout."""
+    want = vhalf_verdicts(d["vhalf"])
+    have = {k: x for k, x in VERDICTS.items() if PENDING.get(k, ("",))[0] == "vhalf"}
+    return [f"{k}: VERDICTS {have.get(k)!r}, the readout {want.get(k)!r}" for k in sorted(set(want) | set(have))
+            if have.get(k) != want.get(k)]
+
+
+# LL5D's route, ruled by the director on 2026-11-15 from the declaration's text, pending Joseph with the wording:
+# `repaired`. Both first gates STOPped (fd/receipts-ll5d/gate-g18/README.md:1, gate-ar23 the same); Joseph decided the
+# relaunch "after the STOP" (DECISION-20261110-joseph-ll5d-rerun-16-cells.md item 1); amendment A1a.2, written "Under:
+# The STOP of both LL5D gates" (LL5D-AMENDMENT-A1A2.md:9), changed bound code after that STOP was seen, with the
+# gate's other readings visible (:11). LL5D-DECLARATION.md:71 and DECISION-20261109-joseph-coverage-case-wording.md
+# item 2(b) then make the route `repaired` and the status Descriptive. A1a.1's "not a post-hoc repair" (A1A1:7-10)
+# rested on nothing having been read and does not carry. Pilot r1 was a REPRICE (pilot-r1/README.md:10-17;
+# LL5D-DECLARATION.md:614-618), not a STOP, so A1a.2 is the only repair. The disclosure states that it fixed an
+# implementation defect (fd/receipts-ll5d/gate-vi-diagnosis/README.md:13-15, #1015) and changed no rule, threshold,
+# bound or cell (A1A2:18-26); the gate reruns passed (gate-2-g18/README.md:1, gate-2-ar23/README.md:1) and the real-
+# data preflight passed (vicheck/README.md:1). These three keys are written prose, not mapped from the readout.
+LL5D_ROUTE_TEXT = {
+    "ll5d-route": "repaired",
+    "ll5d-stop-what": "an event-matching entry check, which found every event unmatched at both tunes",
+    "ll5d-repair": ("the correction of an implementation defect in that check, which compared event weights stored at "
+                    "two precisions. The repair changed no rule, threshold, bound or cell"),
+    # The pilot (the director's ruling (a), 2026-11-15): pilot r1's walls check, on wall time and peak RSS, read
+    # REPRICE on a missing toy output, `missing ll5d_g18_toy_minus2_4751000.npz`, with 10 of 13 items run
+    # (pilot-r1/README.md:1, :10-17; LL5D-DECLARATION.md:558, :614-618); r2 changed the connect script only
+    # (pilot-r2/README.md:3-8); a disclosure, not a repair, and no cause is stated beyond the record's. "Before any
+    # pseudo-experiment was graded": the pilot's 13 items unfold and check only (LL5D-DECLARATION.md:558); grading is
+    # over each (truth, reading)'s 300 toys (sec. 6), and the only grade is the readout after the bulk (job 61272425,
+    # #1157). The band
+    # disagreement (ruling (d); journal-editor, 2026-11-15): stated as unexplained, with no claim that the defect is
+    # unrelated to it, which no record shows.
+    # The exceeded quantity and its bound (the PRD read, 2026-11-15): vi's largest_cell_unmatched_share 1.0 against
+    # MISMATCH_BOUND = 0.05 (gate-g18/README.md:28-33, clip_probe2.py:60; vicheck/README.md:18-19).
+    # The order (journal-editor's round 2): the STOPs (gate-g18 and gate-ar23 README.md:1, jobs 61040163 and 61040235,
+    # 2026-11-10; "Nothing was relaunched or changed", :10-11), the reruns' PASS (gate-2-g18 and gate-2-ar23
+    # README.md:1, jobs 61078463 and 61078506, 2026-11-12), then the first pilot (pilot-r1, job 61181899). The gate
+    # evaluates clipped-variance ratios on its draws (LL5D-DECLARATION.md:359-372), the first 300 of which are the
+    # toys' draws (sec. 3.6); a toy is drawn and then unfolded (:152), first in the pilot; the calibration's null uses
+    # other seeds (sec. 3.6, from 4,770,500). So the draws existed, and none was unfolded or graded.
+    "ll5d-route-record": ("at both tunes, an entry check that matches each simulated truth event across two of the "
+                          "test's inputs found every event unmatched, against a bound of 5\\,\\% on the largest unmatched share in "
+                          "any cell, and the run stopped. The entry checks "
+                          "had used the coverage pseudo-experiments' draws (as above), but at that point none had been "
+                          "unfolded or "
+                          "graded. Every other entry check had passed, and their readings were visible when the "
+                          "repair was chosen. A diagnosis classed the failure as an implementation defect: the check compared "
+                          "event weights stored at two floating-point precisions, so no event could match. The repair "
+                          "compares them at one precision and adds a check of the matching on the real inputs, which "
+                          "passed. It changed no rule, threshold, bound or cell. The entry checks were then rerun at "
+                          "both tunes and passed. A later trial run of the procedure's controls and one pseudo-experiment "
+                          "stopped at a check on computing time and memory, which found an output file missing before any "
+                          "pseudo-experiment was graded, and was rerun with a change to its batch script only. The "
+                          "diagnosed defect is in this test's entry check. The disagreement of the two GEANT4 bands in "
+                          "the first test (above), which led to the primary variant, remains unexplained"),
+}
+_LL5D_CLASS = {(True, True): "under-joint", (True, False): "under-joint-only", (False, True): "under-cells"}
+
+
+def _cells(cs):
+    return cs[0] if len(cs) == 1 else ", ".join(cs[:-1]) + " and " + cs[-1]
+
+
+def ll5d_verdicts(d):
+    """Every readout-mapped key of the LL5D group from the two pinned readout records (ll5d_b.py readout_reading):
+    each (truth, reading)'s class from its grade's joint_flag and cell_flag (LL5D-DECLARATION.md sec. 6 :469-481),
+    the weak, over and clip flags from weakened.weakened_cells, grade.over_covers and clipping_artefact_reading, the
+    printed cells and statistics, and the clipping record. The route keys are LL5D_ROUTE_TEXT's."""
+    per, flags, cells, text, oc = {}, {}, {}, dict(LL5D_ROUTE_TEXT), []
+    (dstar,) = re.findall(r"\|o_c\| ≥ δ\* = ([0-9.]+), the verdict is `TO_JOSEPH`", d["ll5ddecl"])
+    dstar = float(dstar)
+    # route-record's "as above" resolves only inside S9's paragraph (journal-editor, 2026-11-15): the paper must not print it
+    assert "ll5d-route-record" not in (ROOT / "docs/analysis-note/paper_body.tex").read_text() + (
+        ROOT / "docs/analysis-note/main_paper.tex").read_text(), "route-record printed outside S9: replace its 'as above'"
+    for t in ("g18", "ar23"):
+        x = d["ll5d" + t]
+        assert x["schema"] == "ll5d-b/1" and x["step"] == "readout" and x["truth"] == t, (t, x["schema"], x["step"])
+        assert set(x["evaluations"]) == {f"{t}/all", f"{t}/minus2"} and x["clipcheck_sha256"].startswith("9632540e")
+        for r in ("minus2", "all"):
+            e = x["evaluations"][f"{t}/{r}"]
+            assert x["verdicts"][f"{t}/{r}"] == e["verdict"] and all(q["passes"] for q in e["reading_rule"].values())
+            g = e["grade"]
+            assert g["ndf"] == 16 and len(g["cell_flag"]) == len(g["counts"]) == len(g["k_cell"]) == 16
+            fl = [f"R{c:02d}" for c, f in enumerate(g["cell_flag"]) if f]
+            assert all(g["counts"][c] <= g["k_cell"][c] for c, f in enumerate(g["cell_flag"]) if f)
+            assert g["joint_flag"] == (g["joint_count"] <= g["k_joint"])
+            if e["verdict"] == "COVERS":
+                assert not g["joint_flag"] and not fl
+                per[(t, r)] = "covers"
+            else:
+                assert e["verdict"] == "UNDER-COVERS", e["verdict"]
+                per[(t, r)] = _LL5D_CLASS[(bool(g["joint_flag"]), bool(fl))]
+            wk, ov = e["weakened"]["weakened_cells"], [f"R{c:02d}" for c, f in enumerate(g["over_covers"]) if f]
+            ca = e["clipping_artefact_reading"]
+            assert set(ca) == set(fl), "the clipping-artefact reading is for the flagged cells only"
+            art = sorted(c for c, b in ca.items() if b)
+            flags[(t, r, "weak")] = "some" if wk else "none"
+            flags[(t, r, "over")] = "some" if ov else "none"
+            flags[(t, r, "clip")] = "some" if art else "none"
+            cells[(t, r)] = ("cell " if len(fl) == 1 else "cells ") + _cells(
+                [f"{c} ({g['counts'][int(c[1:])]} of 300 within its interval, flagged at {g['k_cell'][int(c[1:])]} "
+                 "or fewer)" for c in fl]) if fl else "none"
+            cells[(t, r, "over")] = _cells(ov) if ov else "none"
+            cells[(t, r, "names")] = ("cell " if len(fl) == 1 else "cells ") + _cells(fl) if fl else "none"
+            cells[(t, r, "weak")] = _cells(wk) if wk else "none"
+            cells[(t, r, "clip")] = _cells(art) if art else "none"
+            text[(t, r, "stats")] = (f"{g['joint_count']} of 300 in the joint region, flagged at {g['k_joint']} or "
+                                     f"fewer, mean $\\chi^2/\\mathrm{{ndf}}={g['chi2_mean_over_ndf']:.2f}\\pm"
+                                     f"{g['chi2_mean_over_ndf_se']:.2f}$")
+            text[(t, r, "why")] = "none"
+            text[(t, r, "njoint")], text[(t, r, "kjoint")] = str(g["joint_count"]), str(g["k_joint"])
+            text[(t, r, "chi2ndf")], text[(t, r, "chi2se")] = (f"{g['chi2_mean_over_ndf']:.2f}", f"{g['chi2_mean_over_ndf_se']:.2f}")
+            assert text[(t, r, "stats")].endswith(f"{text[(t, r, 'chi2ndf')]}\\pm{text[(t, r, 'chi2se')]}$"), "the table and -stats"
+            assert max(g["counts"]) <= 300 and g["joint_count"] <= 300
+            text[(t, r, "cells-tab")] = ", ".join(f"{c} ({g['counts'][int(c[1:])]}, $\\leq${g['k_cell'][int(c[1:])]})"
+                                                  for c in fl) or "none"
+            o = e["readouts"]["clipping"]["o_c_under_C_T"]
+            assert len(o) == 16 and all(abs(z) < dstar for z in o), "an offset at or above delta* (sec. 5.3)"
+            i = max(range(16), key=lambda c: abs(o[c]))
+            oc.append((abs(o[i]), t, r, i))
+    m, t, r, i = max(oc)
+    # §6.3's magnitude clause over the four readings: the joint counts' range against their common threshold, and the
+    # mean chi2/ndf's range at one decimal (the director's ruling (d), 2026-11-15)
+    J = {(t_, r_): d["ll5d" + t_]["evaluations"][f"{t_}/{r_}"]["grade"] for t_ in ("g18", "ar23") for r_ in ("minus2", "all")}
+    ks = {g_["k_joint"] for g_ in J.values()}
+    assert len(ks) == 1, "the clause states one threshold"
+    nj, cn = [g_["joint_count"] for g_ in J.values()], [g_["chi2_mean_over_ndf"] for g_ in J.values()]
+    assert max(nj) <= min(ks), "every reading is at or below the threshold"
+    text["njoint-min"], text["njoint-max"], text["kjoint-all"] = str(min(nj)), str(max(nj)), str(ks.pop())
+    text["chi2ndf-min"], text["chi2ndf-max"] = f"{min(cn):.1f}", f"{max(cn):.1f}"
+    tune = {"g18": "\\fvval{f1-tune-g18-short}", "ar23": "\\fvval{f1-tune-ar23-short}"}
+    var = {"all": "in the variant with the two bands", "minus2": "in the primary variant, without them"}
+    text["offset"] = f"$|o_c|={m:.3f}$ under $C_T$, in R{i:02d} at {tune[t]} {var[r]}, against $\\delta^*={dstar:g}$"
+    weak = any(f == "some" for (_, _, x), f in flags.items() if x == "weak")
+    # S8's term for a weakened pass (supplemental_body.tex, the shared design: "passes, weakened by clipping"); the
+    # artefact reading, LL5D-DECLARATION.md:479-480
+    text["clip-record"] = ("no cell reads ``passes, weakened by clipping''" if not weak else "[weakened passes]") + (
+        ", no flagged cell is read as a possible clipping artefact, and the largest clipping offset is "
+        f"{text['offset']}")
+    assert not any(f == "some" for (_, _, x), f in flags.items() if x == "clip"), "a clipping artefact: reword"
+    v = ll5d_case("graded", per, text["ll5d-route"], flags, cells,
+                  {"stop-what": text["ll5d-stop-what"], "repair": text["ll5d-repair"], "offset": text["offset"],
+                   "clip-record": text["clip-record"], "route-record": text["ll5d-route-record"],
+                   **{k: text[k] for k in ("njoint-min", "njoint-max", "kjoint-all", "chi2ndf-min", "chi2ndf-max")},
+                   **{k: x for k, x in text.items() if isinstance(k, tuple)}})
+    for k, x in v.items():
+        cls = PENDING[k][1]
+        assert cls is None or x in cls, f"{k}: {x!r} is not a declared class {cls}"
+        assert cls is not None or "[" not in x, f"{k}: a placeholder survived: {x!r}"
+    return v
+
+
+def check_ll5d_verdicts(d):
+    """VERDICTS' LL5D keys equal a fresh mapping of the pinned readout records."""
+    want = ll5d_verdicts(d)
+    have = {k: x for k, x in VERDICTS.items() if PENDING.get(k, ("",))[0] == "ll5d"}
+    return [f"{k}: VERDICTS {have.get(k)!r}, the readout {want.get(k)!r}" for k in sorted(set(want) | set(have))
+            if have.get(k) != want.get(k)]
+
+
+def check_prr_verdicts(d):
+    """VERDICTS' prior-retention keys equal a fresh mapping of the pinned readout."""
+    want = prr_verdicts(d["prr"])
+    have = {k: x for k, x in VERDICTS.items() if PENDING.get(k, ("",))[0] == "prr"}
+    return [f"{k}: VERDICTS {have.get(k)!r}, the readout {want.get(k)!r}" for k in sorted(set(want) | set(have))
+            if have.get(k) != want.get(k)]
+
+
+def ll5d_derived(v):
+    """The like-for-like group's derived keys, from the campaign and the four (tune, reading) classes (variants.md)."""
+    camp = v["ll5d-campaign"]
+    tr = [(t, r) for t in ("g18", "ar23") for r in ("minus2", "all")]
+    if camp != "graded":
+        assert all(v[f"ll5d-{t}-{r}"] == "na" for t, r in tr), "a per-tune class on an ungraded campaign"
+        assert v["ll5d-route"] == "na", "a route on an ungraded campaign"
+        assert all(v[f"ll5d-{t}-{r}-{x}"] == "na" for t, r in tr for x in ("weak", "over", "clip")), "a flag, ungraded"
+        return {**{k: "na" for k in DERIVED["ll5d"]}, "ll5d-status": "stopped"}
+    assert v["ll5d-route"] != "na" and all(v[f"ll5d-{t}-{r}"] != "na" for t, r in tr), "a graded campaign with na"
+    for t, r in tr:                                  # the flags read only where the (tune, reading) was graded
+        c = v[f"ll5d-{t}-{r}"]
+        for x in ("weak", "over", "clip"):
+            assert (v[f"ll5d-{t}-{r}-{x}"] == "na") == (c == "invalid"), f"{t}/{r}: the {x} flag against {c}"
+        if c in ("covers", "under-joint-only"):
+            assert v[f"ll5d-{t}-{r}-clip"] == "none", "a clipping-artefact reading with no flagged cell"
+    out = {}
+    for r in ("minus2", "all"):
+        a, b = sorted((_TL[v[f"ll5d-{t}-{r}"]] for t in ("g18", "ar23")), key=_TO.index)
+        out[f"ll5d-abs-{r}"] = f"{a}-{b}"
+    cls = [v[f"ll5d-{t}-{r}"] for t, r in tr]
+    some = lambda cond: "some" if cond else "none"  # noqa: E731
+    out["ll5d-abs-close"] = "none" if all(c == "invalid" for c in cls) else "scope"
+    out["ll5d-anypass"] = some("covers" in cls)
+    out["ll5d-cellflags"] = some(any(c in ("under-cells", "under-joint") for c in cls))
+    out["ll5d-anyweak"] = some(any(v[f"ll5d-{t}-{r}-weak"] == "some" for t, r in tr))
+    out["ll5d-anyover"] = some(any(v[f"ll5d-{t}-{r}-over"] == "some" for t, r in tr))
+    out["ll5d-alljoint"] = "all" if all(c in ("under-joint", "under-joint-only") for c in cls) else "notall"
+    flagged = lambda t, r: v[f"ll5d-{t}-{r}-names"] if v[f"ll5d-{t}-{r}"] in ("under-cells", "under-joint") else ""  # noqa: E731
+    out["ll5d-sameflags"] = "same" if all(v[f"ll5d-{t}-minus2"] == v[f"ll5d-{t}-all"] and flagged(t, "minus2") == flagged(t, "all")
+                                          for t in ("g18", "ar23")) else "differ"
+    # an adaptive route is Descriptive whatever its readings; otherwise no outcome is summarized (the decision, items 2-3)
+    out["ll5d-status"] = ("descriptive" if v["ll5d-route"] in ("offset-proceeded", "repaired") else
+                          "invalid" if all(c == "invalid" for c in cls) else "graded")
+    return out
+
+
+def ll5d_case(campaign, per=None, route="direct", flags=None, cells=None, text=None):
+    """One consistent filling of the like-for-like group, with its derived keys (fill tests and the pre-read pack).
+
+    per[(tune, reading)] -> class (graded only); flags[(tune, reading, x)] -> "some" (x in weak, over, clip), else
+    "none" on a graded reading and "na" otherwise; cells[(tune, reading)] or cells[(tune, reading, x)] -> printed
+    text; text[key] overrides a printed value (stop-what, repair, offset, -stats, -why).
+    """
+    per, flags, cells, text = per or {}, flags or {}, cells or {}, text or {}
+    graded = campaign == "graded"
+    v = {"ll5d-campaign": campaign, "ll5d-route": route if graded else "na",
+         "ll5d-stop-what": text.get("stop-what", "[the gate or check]"), "ll5d-repair": text.get("repair", "[the repair]"),
+         "ll5d-offset": text.get("offset", "[the largest offset, its cell, and the bound]"),
+         "ll5d-clip-record": text.get("clip-record", "[the clipping record]"),
+         "ll5d-route-record": text.get("route-record", "[the exceeded quantity and its bound, what was visible when the decision was made, its reason, and every repair]"),
+         **{f"ll5d-{k}": text.get(k, f"[{k}]") for k in ("njoint-min", "njoint-max", "kjoint-all", "chi2ndf-min", "chi2ndf-max")}}
+    for t in ("g18", "ar23"):
+        for r in ("minus2", "all"):
+            c = per.get((t, r), "covers") if graded else "na"
+            v[f"ll5d-{t}-{r}"] = c
+            v[f"ll5d-{t}-{r}-cells"] = cells.get((t, r), "[cells R.., with their coverage fractions]")
+            v[f"ll5d-{t}-{r}-stats"] = text.get((t, r, "stats"), "[joint region: n of 300, flagged at k or fewer, mean chi2/ndf]")
+            v[f"ll5d-{t}-{r}-why"] = text.get((t, r, "why"), "[the failed control]")
+            v[f"ll5d-{t}-{r}-names"] = cells.get((t, r, "names"), "[cells R..]")
+            for k in ("njoint", "kjoint", "chi2ndf", "chi2se", "cells-tab"):
+                v[f"ll5d-{t}-{r}-{k}"] = text.get((t, r, k), f"[{k}]")
+            for x in ("weak", "over", "clip"):
+                v[f"ll5d-{t}-{r}-{x}"] = "na" if c in ("na", "invalid") else flags.get((t, r, x), "none")
+                v[f"ll5d-{t}-{r}-{x}-cells"] = cells.get((t, r, x), "[cells R..]")
+    v.update(ll5d_derived(v))
+    return v
+
+
+def ll5d_fill_cases():
+    """Consistent fillings that between them give every class of every like-for-like key (check_round --fill-test)."""
+    out, seen = [], set()
+    order = list(_TL)
+    for i, a in enumerate(order):                    # every per-variant pair, in each variant, with mixed partners
+        for b in order[i:]:
+            j = len(out)
+            pm = (a, b) if j % 2 else (b, a)
+            pa = (order[(j + 1) % 5], order[(j + 3) % 5])
+            per = {("g18", "minus2"): pm[0], ("ar23", "minus2"): pm[1], ("g18", "all"): pa[0], ("ar23", "all"): pa[1]}
+            flags = {}
+            for (t, r), c in per.items():
+                if c != "invalid":
+                    flags[(t, r, "weak")] = "some" if (j + len(t)) % 2 else "none"
+                    flags[(t, r, "over")] = "some" if (j + len(r)) % 3 == 0 else "none"
+                    if c in ("under-cells", "under-joint"):
+                        flags[(t, r, "clip")] = "some" if j % 2 else "none"
+            route = LL5D_ROUTE[j % 3]
+            out.append(ll5d_case("graded", per, route, flags))
+            for r in ("minus2", "all"):                # the same pair in the other variant
+                seen.add((r, out[-1][f"ll5d-abs-{r}"]))
+    for a in order:                                  # the pairs each variant has not yet had
+        for b in order[order.index(a):]:
+            pr = f"{_TL[a]}-{_TL[b]}" if _TO.index(_TL[a]) <= _TO.index(_TL[b]) else f"{_TL[b]}-{_TL[a]}"
+            for r, o in (("minus2", "all"), ("all", "minus2")):
+                if (r, pr) not in seen:
+                    per = {("g18", r): a, ("ar23", r): b, ("g18", o): "covers", ("ar23", o): "covers"}
+                    out.append(ll5d_case("graded", per))
+                    seen.add((r, pr))
+    out.append(ll5d_case("graded", {(t, r): "covers" for t in ("g18", "ar23") for r in ("minus2", "all")}))
+    out.append(ll5d_case("graded", {(t, r): "invalid" for t in ("g18", "ar23") for r in ("minus2", "all")}))
+    out.append(ll5d_case("graded", {(t, r): "under-cells" for t in ("g18", "ar23") for r in ("minus2", "all")}))
+    out.append(ll5d_case("graded", {("g18", r): "under-joint-only" for r in ("minus2", "all")}
+                         | {("ar23", r): "under-joint" for r in ("minus2", "all")}, "repaired", None,
+                         {("ar23", r, "names"): "cell R07" for r in ("minus2", "all")}))
+    out += [ll5d_case("gate-failed"), ll5d_case("offset-stopped"), ll5d_case("stop")]
+    return out
+
+
+def prr_fill_cases():
+    """Every PR-2a pair (and so every abstract class), with PR-2b cycled."""
+    out = []
+    for i, cls in enumerate(PRR_ABS):
+        g, q = cls.split("-")
+        out.append({"prr-pr2a-gibuu": g, "prr-pr2a-q3": q, "prr-pr2b-gibuu": PR2B[i % 4], "prr-pr2b-q3": PR2B[(i + 1) % 4],
+                    "prr-abs": cls})
+    return out
+
+
+def pending_lines(verdicts=None):
+    """The TeX for the pending groups and keys: a group's state, each key's class (\\fvcase) and printed value."""
+    verdicts = VERDICTS if verdicts is None else verdicts
+    out = []
+    for g in PENDING_GROUPS:
+        keys = [k for k, (gg, _) in PENDING.items() if gg == g]
+        have = [k for k in keys if k in verdicts]
+        assert not have or len(have) == len(keys), f"group {g} is part-filled: {sorted(set(keys) - set(have))[:4]}"
+        if have and g in DERIVED:
+            want = (ll5d_derived if g == "ll5d" else prr_derived)(verdicts)
+            assert all(verdicts[k] == x for k, x in want.items()), f"{g} derived keys {want} disagree with the verdicts"
+        out.append(rf"\@namedef{{fvg@{g}}}{{{'FILLED' if have else 'PENDING'}}}")
+        out.append(rf"\@namedef{{fvgd@{g}}}{{{PENDING_GROUPS[g]}}}")
+    for k, (g, classes) in sorted(PENDING.items()):
+        x = verdicts.get(k)
+        if x is None:
+            out.append(rf"\@namedef{{fvc@{k}}}{{PENDING}}")
+            out.append(rf"\@namedef{{fv@{k}}}{{\fvpending{{{k}}}}}")
+        elif classes is None:
+            out.append(rf"\@namedef{{fvc@{k}}}{{{x}}}")
+            out.append(rf"\@namedef{{fv@{k}}}{{{x}}}")
+        else:
+            assert x in classes, f"{k}: {x!r} is not a declared class {classes}"
+            out.append(rf"\@namedef{{fvc@{k}}}{{{x}}}")
+            if k in WORDS:
+                out.append(rf"\@namedef{{fv@{k}}}{{{WORDS[k][x]}}}")
+            else:
+                out.append(rf"\@namedef{{fv@{k}}}{{\errmessage{{values_fived16: the class key '{k}' has no printed words}}}}")
+    return out
 
 def load(readouts=None):
     data = {}
@@ -192,6 +962,8 @@ def load(readouts=None):
         sha = hashlib.sha256(raw).hexdigest()
         if not sha.startswith(pin):
             sys.exit(f"make_values_fived16: {rel} has sha256 {sha[:12]}, pinned {pin}: refusing")
+        if rel.endswith(".gz"):          # pinned as the committed .gz bytes, read decompressed
+            raw = gzip.decompress(raw)
         data[key] = raw.decode() if key in TEXT_READOUTS else json.loads(raw)
     return data
 
@@ -265,6 +1037,12 @@ def gencmp_values(d, arm):
     v["gdef-dmax"], v["gdef-dmax-bound"] = f"{dmax:.3f}", f"{math.ceil(100 * dmax) / 100:.2f}"
     assert (v["gdef-dmax"], v["gdef-dmax-bound"]) == ("0.063", "0.07"), "the method sentence's figures changed"
     assert not any(gd["generators"][n]["CH"]["seed_spread_flag"] for n in GENCMP4)
+    # group B5 (#1025; the director's ruling (b)): the same bound over the predictions the Supplement's comparison keeps,
+    # GENIE CV and GENIE + MEC on CH (as generated) and NuWro and GiBUU on carbon only, from the same readout's fields
+    b5 = [x for n in ("genie_cv", "genie_mec") for x in gd["generators"][n]["CH"]["delta_over_sigma"]] + \
+         [x for n in ("nuwro", "gibuu") for x in gd["generators"][n]["carbon"]["delta_over_sigma"]]
+    d5 = max(abs(x) for x in b5)
+    v["gdef-b5-dmax"], v["gdef-b5-dmax-bound"] = f"{d5:.3f}", f"{math.ceil(100 * d5) / 100:.2f}"
     v["gdef-seedmax"] = f"{max(x for n in GENCMP4 for x in gd['generators'][n]['CH']['seed_spread_over_sigma']):.3f}"
     # Q08: NuWro and GiBUU on carbon in the analysis definitions (the text and the note), and the change to CH
     ana = {(n, t): gd["generators"][n][t]["analysis_definitions"]["chi2"][mat] for n in ("nuwro", "gibuu")
@@ -274,6 +1052,7 @@ def gencmp_values(d, arm):
             x = ana[n, "carbon"][part]["chi2"]
             v[f"g-{PRED[n]}-carbon-{part}-chi2"], v[f"g-{PRED[n]}-carbon-{part}-chi2int"] = f"{x:.2f}", f"{x:.0f}"
             v[f"g-{PRED[n]}-carbon-{part}-chi2r1"] = f"{x:.1f}"
+            v[f"g-{PRED[n]}-carbon-{part}-ndf"] = str(ana[n, "carbon"][part]["ndf"])   # group B5: Table S7's block headings
     rise = ana["gibuu", "CH"]["total"]["chi2"] - ana["gibuu", "carbon"]["total"]["chi2"]
     assert rise > 0 and ana["gibuu", "CH"]["shape_only"]["chi2"] < ana["gibuu", "carbon"]["shape_only"]["chi2"], \
         "the clause says GiBUU's total chi2 rises with the correction and its shape-only chi2 falls"
@@ -518,6 +1297,13 @@ def quadrant_values(d):
         v[f"cr-{n}-nopl-reading"], v[f"cr-{n}-nopl-rhostar"] = word[o["outcome"]], f"{o['rho_star']:.4f}"
         # "agree" is |d| within the any-correlation band (rho* above 1); "agree below a correlation", rho* at most 1
         assert (t["outcome"] == "agree") == (t["rho_star"] > 1) and (o["outcome"] == "agree") == (o["rho_star"] > 1)
+    # sec_fived16.tex :47 names the readings by hand: "All four agree, QA at every rho and the others below correlations of
+    # cr-QC-rhostar (QC) to cr-QB-rhostar (QB)". Guard each named choice, so a readout that changes one stops the run
+    oc = {n: q[n]["2D"]["outcome"] for n in Q}
+    assert oc["QA"] == "agree" and all(oc[n] == "agree below a correlation" for n in ("QB", "QC", "QD")), \
+        "sec_fived16 :47's readings changed: QA at every rho, the others below a correlation"
+    rs = {n: q[n]["2D"]["rho_star"] for n in ("QB", "QC", "QD")}
+    assert min(rs, key=rs.get) == "QC" and max(rs, key=rs.get) == "QB", "sec_fived16 :47's rho* range (QC to QB) changed"
     # the paper: "the sums differ by -1.5 to +0.7 per cent"
     pct = [q[n]["2D"]["d_pct"] for n in Q]
     assert min(pct) < 0 < max(pct), "the paper prints a signed range of the quadrant differences"
@@ -575,6 +1361,8 @@ def quadrant_values(d):
         "a printed bound is not a bound: chi2 <= x-chi2-hi and p >= x-p-min must hold"
     zmax = max(abs(z) for r in ("r0", "r1") for z in p[r]["z"])
     assert zmax < 1, "the paper says no quadrant lies beyond one standard deviation"
+    # sec_fived16.tex names where it lies: "the largest |z| is x-zmax, in QC at r = 1"
+    assert abs(p["r1"]["z"][Q.index("QC")]) == zmax, "the largest |z| is no longer QC's at r = 1, as sec_fived16 says"
     v["x-zmax"] = f"{zmax:.3f}"
     return v
 
@@ -727,6 +1515,8 @@ def values(d, arm="with"):
         base = short_label(next(q for q in d["g"]["predictions"] if q["name"] == name))
         assert base == v[f"gs-label-{PRED[name]}"], f"{name}: the readouts name the prediction differently"
         v[f"label-{PRED[name]}"] = base + (" (CH)" if name in ("nuwro", "gibuu") else "")
+        if name in ("nuwro", "gibuu"):   # group B5 (#1025): the Supplement shows them on carbon only
+            v[f"label-{PRED[name]}-carbon"] = base + " (carbon only)"
         v[f"{k}-ncells"] = str(len(p["cells"]))
         WORDS = {7: "seven", 8: "eight", 9: "nine", 16: "sixteen"}   # the abstracts print the count in words
         v[f"{k}-ncells-word"] = WORDS[len(p["cells"])]
@@ -750,6 +1540,19 @@ def values(d, arm="with"):
     joint = [r["chi2"] for r in recs if r["family"] == "c_e_systematic" and r["alpha"] == 1.0 and len(r["cells"]) == 16]
     assert len(joint) == 4
     v["sens-joint-chi2-min"] = f"{math.floor(min(joint)):.0f}"
+    # group B5 (#1025; the director's ruling (b)): the same bounds over the 16-cell predictions without the CH-corrected
+    # NuWro (GENIE CV, GENIE + MEC, Tune v1), from the same records; the readouts hold no carbon-only NuWro record
+    def ratios5(fam, alpha):
+        return [r["chi2"] / r["chi2_at_alpha_0"] for r in recs if r["family"] == fam and abs(r["alpha"] - alpha) < 1e-12
+                and len(r["cells"]) == 16 and r["prediction"] != "nuwro"]
+    fl5, other5 = ratios5("flux", 0.1), ratios5("detector", 0.1) + ratios5("lateral", 0.1)
+    assert len(fl5) == 3 and len(other5) == 6
+    v["sens-b5-flux-fall-lo"], v["sens-b5-flux-fall-hi"] = f"{100 * (1 - max(fl5)):.0f}", f"{100 * (1 - min(fl5)):.0f}"
+    v["sens-b5-detlat-fall-max"] = f"{math.ceil(100 * (1 - min(other5))):.0f}"
+    joint5 = [r["chi2"] for r in recs if r["family"] == "c_e_systematic" and r["alpha"] == 1.0 and len(r["cells"]) == 16
+              and r["prediction"] != "nuwro"]
+    assert len(joint5) == 3
+    v["sens-b5-joint-chi2-min"] = f"{math.floor(min(joint5)):.0f}"
     # C_resp by species, the sigma ratio, and the trace shares
     for sp in ("C_resp_proton", "C_resp_meson", "C_resp_em", "C_resp_other", "C_resp_xtalk"):
         vals = [cr[sp][c] for c in CELLS] if isinstance(cr[sp], dict) else cr[sp]
@@ -850,6 +1653,12 @@ def values(d, arm="with"):
     rest = [stab[k] for k in stab if k not in lowstab]                 # the note prints the other twelve's range beside them
     assert len(rest) == 12
     v["h2-stab-rest-min"], v["h2-stab-rest-max"] = f"{min(rest):.2f}", f"{max(rest):.2f}"
+    # the paper's compact cell table (the interim referee round, #1025, group A item 6; the director: purity and the
+    # diagonal fraction, the record's "stability", only): per reported cell, from the pinned record, two decimals
+    for c in h2["reporting_cells"]:
+        if c["reported"]:
+            v[f"cell-purity-R{c['id']:02d}"] = f"{c['purity']:.2f}"
+            v[f"cell-diag-R{c['id']:02d}"] = f"{c['stability']:.2f}"
     # C_model,5D: its vertices' trace shares, and the numbers its labels state (parsed, so a changed label stops here)
     for k, x in d["cmodel"]["trace_share_by_vertex"].items():
         v[f"cmodel-trace-{k}"] = f"{x:.3f}"
@@ -947,6 +1756,12 @@ def values(d, arm="with"):
     v["fb-edge-min"] = f"{math.floor(1000 * min(edge)) / 10:.1f}"
     v["fb-edge-max"] = f"{math.ceil(1000 * max(edge)) / 10:.1f}"
     v["fb-offset-relmax"] = f"{math.ceil(1000 * max(off)) / 10:.1f}"
+    # group B5 (#1025; the director's ruling (b)): over the 16-cell predictions without the CH-corrected NuWro
+    e5 = [max(band[n]["chi2_stage_g"] - band[n]["total"]["percentiles"]["16"], band[n]["total"]["percentiles"]["84"]
+              - band[n]["chi2_stage_g"]) / band[n]["chi2_stage_g"] for n in ("genie_cv", "genie_mec", "mnvtune_v1")]
+    o5 = [band[n]["total"]["offset_median_minus_centre"] / band[n]["chi2_stage_g"] for n in ("genie_cv", "genie_mec", "mnvtune_v1")]
+    assert all(band[n]["ndf"] == 16 for n in ("genie_cv", "genie_mec", "mnvtune_v1")) and min(o5) > 0
+    v["fb-b5-edge-max"], v["fb-b5-offset-relmax"] = f"{math.ceil(1000 * max(e5)) / 10:.1f}", f"{math.ceil(1000 * max(o5)) / 10:.1f}"
     v["fb-replicates"] = str(fb["constants"]["replicates"])
     v["fb-universes"] = str(fb["constants"]["universes"])
     pcts = fb["constants"]["percentiles"]
@@ -966,7 +1781,11 @@ def values(d, arm="with"):
     sig = f1[A["f1sig"]]["C_total"]          # the per-cell relative sigma of the reported matrix
     zmax, bsig, mo = [], [], []
     for tune in ("g18", "ar23"):
-        v[f"f1-tune-{tune}"] = d[f"f1meta-{tune}"]["generator"].removeprefix("genie_v3_").replace("_", r"\_")
+        # in \mbox, so that a tune name never breaks at a hyphenation point (journal-editor, 2026-11-10)
+        v[f"f1-tune-{tune}"] = r"\mbox{" + d[f"f1meta-{tune}"]["generator"].removeprefix("genie_v3_").replace("_", r"\_") + "}"
+        # the short name defined at first use and printed after it (Joseph's read of 2026-11-12, item 7): G18, AR23
+        v[f"f1-tune-{tune}-short"] = d[f"f1meta-{tune}"]["generator"].removeprefix("genie_v3_").split("_")[0]
+        assert v[f"f1-tune-{tune}-short"] == tune.upper(), v[f"f1-tune-{tune}-short"]
         for rec, k in ((f"F1_genie_v3_{tune}", f"f1-{tune}"), (f"F1_closure_genie_v3_{tune}", f"f1-closure-{tune}")):
             t = held.pop(rec)
             assert t["graded"] and t["own_vertex"] is None and t["grade_matrix"] == A["rep"]
@@ -1048,6 +1867,1316 @@ def values(d, arm="with"):
     assert rv["verdict"] == "INCOMPLETE" and rv["passing"] == [] and rv["n_decisive"] == len(rv["per_config"])
     assert all(x["leg_b_departures"] == 0 for x in rv["per_config"].values())
     v["r10-nconfig"] = str(rv["n_decisive"])
+    # ENS1 (OUTCOME-20261109-ens1-stab-pass-bias-worse.md): stage 1 STAB_PASS against FD-STAB's bars; stage 2 BIAS_WORSE at
+    # exactly one truth, Stage 0c GiBUU, by its RMS (the MAX within its floor). Each clause the sentence states is asserted
+    e1, e2 = d["ens1s1"], d["ens1s2"]
+    st = e1["stability_E96"]
+    assert e1["verdict"] == "STAB_PASS" and e1["g0_informative"] and st["passes"] and e1["N"] == 96
+    assert st["mean_median"] <= e1["bars"]["median"] and st["mean_max"] <= e1["bars"]["max"]
+    assert not e1["stability_F_P10"]["passes"]
+    v["ens1-n"] = str(e1["N"])
+    v["ens1-median"], v["ens1-max"] = f"{st['mean_median']:.2f}", f"{st['mean_max']:.2f}"
+    v["ens1-bar-median"], v["ens1-bar-max"] = f"{e1['bars']['median']:.1f}", f"{e1['bars']['max']:.1f}"
+    assert e2["verdict"] == "BIAS_WORSE" and e2["worse"] == ["stage0c_gibuu"] and len(e2["truths_judged"]) == 17
+    bw = e2["bias"]["stage0c_gibuu"]
+    assert bw["valid"] and not bw["no_worse"] and bw["max"] - bw["max_control"] <= bw["delta_max"]
+    assert all(e2["bias"][t]["no_worse"] and e2["bias"][t]["valid"] for t in e2["truths_judged"] if t != "stage0c_gibuu")
+    v["ens1-ntruths"] = str(len(e2["truths_judged"]))
+    v["ens1-nnoworse"] = str(len(e2["truths_judged"]) - len(e2["worse"]))
+    v["ens1-rms-ratio"] = f"{(bw['rms'] - bw['rms_control']) / bw['delta_rms']:.2f}"
+    # s5e's assessment of the reported estimator, candidate R = (e) (OUTCOME-20260926-s5e-oi192:68,85; the director's
+    # ruling of 2026-11-10 on the interim round's row 2): at the GiBUU-to-GENIE E_avail change, (e)'s largest (E_avail,W)
+    # residual and that of the lower-capacity variant (the s5n reference), both in EW29, the cell 0.8 <= E_avail < 1.5 GeV,
+    # W >= 3 GeV that the text names; and EW7, the record's "largest cells", several percent off (fig_m3_deformation.py's
+    # own test, -10 < r < -2). Then the data rounding probe's median and largest shift, in data sigma (paper and Fig 5)
+    a = d["s5e"]
+    assert a["candidate"] == "R"
+    eg, lc = a["points"]["eavail_gibuu"], a["B0_reference_s5n"]["eavail"]
+    assert eg["ew_argmax"] == lc["ew_argmax"] == "EW29"
+    assert -10 < 100 * eg["per_functional"]["mean_rel"][7] < -2
+    v["s5e-gibuu-ewmax"], v["s5e-gibuu-ewmax-lowcap"] = f"{eg['ew_max_abs_pct']:.0f}", f"{lc['ew_max_abs_pct']:.0f}"
+    assert eg["n"] == 20 and lc["n"] == 60
+    # the figures' standard errors of the mean, largest over the 42 (E_avail,W) cells (the director's ruling on the batch 2
+    # read, M019/M089): Fig 3's three shapes for (e), and Fig S1's GiBUU-to-GENIE experiments for the variant
+    se_e = max(100 * x for w in ("W1", "W2", "W3") for x in a["points"][w]["per_functional"]["se_rel"][:42])
+    se_lc = max(100 * x for x in d["s5ndev"]["grid"]["C4_eavail_shape"]["per_functional"]["se_rel"][:42])
+    # an upper bound is rounded UP (#977 fig3-read: 0.2246 had printed as "at most 0.22")
+    up2 = lambda x: f"{math.ceil(100 * x - 1e-9) / 100:.2f}"  # noqa: E731
+    v["s5e-shapes-semax"], v["s5n-gibuu-semax"] = up2(se_e), up2(se_lc)
+    assert float(v["s5e-shapes-semax"]) >= se_e and float(v["s5n-gibuu-semax"]) >= se_lc
+    # #977 s11c: Fig 3 now also draws (e) at the GiBUU-to-GENIE change; its caption's one bound must cover that series too
+    assert max(100 * x for x in eg["per_functional"]["se_rel"][:42]) <= se_e
+    v.update(groupb_values(d))
+    v.update(ess_values(d))
+    rp = a["A3"]["data_rounding_probe_over_data_sigma"]
+    v["s5e-round-median"], v["s5e-round-max"] = f"{rp['median']:.1f}", f"{rp['max']:.1f}"
+    return v
+
+
+def groupb_values(d):
+    """Group B of the interim round (#1025): the numbers limitation-resolver's drafts print, each from its record.
+    B6 and section 4.1: the IBU-to-2D distance ratio kappa (the readout's rho; renamed so that rho is only the retained
+    fraction), its interval over the paired replicas and the comparisons' statistics (REF-C2C1 read 2). B4a: IBU at five
+    iterations against (e), Delta = f_IBU - f_(e) (REF-G1-DECLARATION.md:76), per cell as a fraction of f_(e) and in units
+    of sqrt((C_Delta)_cc) (printed_beside_R1, the declared fold_K5). B4b: the retained fractions at the two flagged
+    truths (the FD-PRR readout, B0 and IBU K5 and K200 at split s991000) and the noise floor."""
+    v = {}
+    c = d["c2c1"]
+    assert c["schema"] == "ref-c2c1-readout/1" and c["controls"]["done"]["pass"]
+    k10, c1 = c["K10"], c["C1-R1"]
+    assert k10["C2-R1"]["reading"] == "differ" and c1["reading"] == "equivalent"
+    v["c2c1-kappa"] = f"{k10['rho']:.3f}"
+    v["c2c1-kappa-lo"], v["c2c1-kappa-hi"] = (f"{x:.3f}" for x in k10["rho_interval"])
+    assert k10["rho"] < k10["rho_interval"][0], "the text says the point estimate lies below the interval"
+    v["c2c1-nrep"] = str(k10["C2-R1"]["n_replicas"])
+    v["c2c1-T"], v["c2c1-q95"], v["c2c1-max"] = (f"{k10['C2-R1'][x]:.1f}" for x in ("T", "q95", "max"))
+    v["c1-T"], v["c1-q95"] = f"{c1['T']:.2f}", f"{c1['q95']:.2f}"
+    # the fresh referee read (2026-11-11, RESPONSE.md F4.2): the IBU's own distance from the published result, beside the
+    # 2D result's, as the record prints them ("printed and read by nothing"; descriptive, no attribution)
+    v["c2c1-dibu"], v["c2c1-dibu-k5"], v["c2c1-der"] = f"{k10['D_IBU']:.2f}", f"{c['K5']['D_IBU']:.2f}", f"{c['D_E_R']:.2f}"
+    assert abs(k10["D_IBU"] / c["D_E_R"] - k10["rho"]) < 1e-9, "D_IBU / D_E_R is the record's rho"
+    assert v["c2c1-der"] == "2.27", "D_E_R is the paper's chi2/ndf against the published covariance"
+    # the K scan (the director's ruling on the PRD read of the D_IBU paragraph, 2026-11-11): K = 1, 2-15 and 20
+    ek = {int(k): x for k, x in c["D_IBU_every_K"].items()}
+    assert sorted(ek) == [1, 2, 3, 4, 5, 10, 15, 20] and abs(ek[10] - k10["D_IBU"]) < 1e-12
+    mid = [ek[k] for k in ek if 2 <= k <= 15]
+    v["c2c1-dibu-k1"], v["c2c1-dibu-k20"] = f"{ek[1]:.2f}", f"{ek[20]:.2f}"
+    v["c2c1-dibu-mid-lo"], v["c2c1-dibu-mid-hi"] = f"{min(mid):.2f}", f"{max(mid):.2f}"
+    assert max(mid) < c["D_E_R"], "the text says IBU stays below the 2D result's distance for two to fifteen iterations"
+    v["c1-nrep"] = str(c1["n_replicas"])
+    # D2 (an independent referee, 2026-11-15): the number of directions T_delta tests, floor(N/4) (Supplement S7)
+    assert c1["rank"] == c1["n_replicas"] // 4
+    v["c1-rank-word"] = {12: "twelve"}[c1["rank"]]
+    v["c1-below-pct"] = f"{100 * (1 - c1['T'] / c1['q95']):.0f}"
+    g = d["refg1"]
+    assert g["schema"] == "ref-g1-readout/1" and g["R1"]["reading"] == "differ"
+    pb = g["printed_beside_R1"]
+    assert pb["delta_over_e"] == pb["every_k_and_variant_delta_over_e"]["fold_K5"] and len(pb["pulls"]) == 16
+    for i, (x, z) in enumerate(zip(pb["delta_over_e"], pb["pulls"])):
+        v[f"ibu16-dof-R{i:02d}"], v[f"ibu16-pull-R{i:02d}"] = f"{100 * x:+.1f}", f"{z:+.2f}"
+    v["ibu16-T"] = f"{g['R1']['T']:.1f}"
+    r = d["prr"]
+    for t, T in PRR_TRUTHS.items():
+        e, i5, i200 = r["table"][f"B0/{T}/s991000"], r["ibu"][f"K5/{T}/s991000"], r["ibu"][f"K200/{T}/s991000"]
+        assert e["n_S"] == 16
+        v[f"prr-rho-e-{t}"], v[f"prr-rho-ibu-{t}"], v[f"prr-rho-ibu200-{t}"] = (f"{x['rho']:.3f}" for x in (e, i5, i200))
+        v[f"prr-rms-e-{t}"], v[f"prr-rms-ibu-{t}"] = f"{e['rms_b']:.3f}", f"{i5['rms_b']:.3f}"
+        v[f"prr-chi2-e-{t}"], v[f"prr-chi2-ibu-{t}"] = f"{e['grade']['chi2']:.1f}", f"{i5['grade']['chi2']:.1f}"
+        assert i5["rho"] < e["rho"], "the text says IBU at five iterations retains less"
+    v.update(tier1_values(d))
+    v.update(prr_levels_values(d))
+    v.update(prr_s53_values(d))
+    v.update(vhalf_band_values(d))
+    v.update(t2a_values(d))
+    v.update(d1_values(d))
+    v.update(mumax_values(d))
+    v.update(ll5d_repair_words())
+    v.update(period_values(d))
+    v.update(t2b_values(d))
+    v.update(lrows_values(d))
+    v.update(recov_values(d))
+    v.update(g_rows_values(d))
+    v.update(cbkg2_values(d))
+    v.update(e96d_values(d))
+    v.update(literal_values(d))
+    s = supp_literal_values(d)
+    assert not s.keys() & v.keys(), sorted(s.keys() & v.keys())
+    v.update(s)
+    v.update(rsn_values(d, f'{d["cmodel"]["trace_share_by_vertex"]["gibuu"]:.3f}'))
+    # B3a: the synthetic q3 tilt, r = 1 + a z~ (s5c_pseudo.py truth_weight "q3_given_eavail_w"); a and the clip from the
+    # code, the event count, the range and in-cell spread of the weight and the two preservation checks from the truth check
+    q = d["s5ntruth"]["departures"]["q3_given_eavail_w"]
+    m = re.search(r"z = np\.clip\(\(q - mu\[cell\]\) / np\.sqrt\(np\.where\(var > 0, var, 1\.0\)\)\[cell\], -([0-9.]+), ([0-9.]+)\)",
+                  d["s5cpseudo"])
+    assert m and m.group(1) == m.group(2), "the q3 tilt's clip changed"
+    v["q3tilt-clip"] = f"{float(m.group(1)):g}"
+    v["q3tilt-a"] = f"{q['amplitude']:g}"
+    assert q["rows_outside_grid_with_r_not_1"] == 0 and q["weight_marginal_preserved_1e-6"]
+    n = d["s5ntruth"]["rows_in_grid"]
+    v["q3tilt-nrows"] = rf"{n / 10 ** 7:.2f}\times10^{{7}}"
+    assert 1e7 <= n < 1e8
+    v["q3tilt-rmin"], v["q3tilt-rmax"] = f"{q['r_min']:.3f}", f"{q['r_max']:.3f}"
+    v["q3tilt-std-lo"], v["q3tilt-std-hi"], v["q3tilt-std-med"] = (f"{q[k]:.2f}" for k in ("in_cell_r_std_min", "in_cell_r_std_max",
+                                                                                   "in_cell_r_std_median"))
+    def sci(x):
+        e = math.floor(math.log10(x)); return rf"{x / 10 ** e:.0f}\times10^{{{e}}}" if round(x / 10 ** e) < 10 else rf"1\times10^{{{e + 1}}}"
+    def sci1(x):
+        e = math.floor(math.log10(x)); return rf"{x / 10 ** e:.1f}\times10^{{{e}}}"
+    v["q3tilt-ewdev"] = sci(q["weight_marginal_EW_ratio_max_abs_dev"])
+    m1 = [abs(x - 1) for x in q["M1_ratio"][:42]]
+    assert len(q["M1_ratio"]) == 43
+    v["q3tilt-m1dev"], v["q3tilt-nfunc"] = sci1(max(m1)), str(len(m1))
+    # B3b: the held-out tunes' gated shape ratio (pvl_ratios.py, run unchanged by F1's prep): the gate (stat_max), each
+    # tune's events, its tiers and prior-weight shares and the normalization k, as the prep logged them; the region is the
+    # sum of the tiers, the same for both tunes
+    v["f1-statmax"] = f"{d['f1config']['ratio']['stat_max']:g}"
+    nev = {d[f"f1meta-{t}"]["normalisation"]["N_events_in_file"] for t in ("g18", "ar23")}
+    assert len(nev) == 1
+    v["f1-nevents"] = rf"{nev.pop() / 10 ** 6:.2f}\times10^{{6}}"
+    region = set()
+    for t in ("g18", "ar23"):
+        lm = re.search(r"genie_v3_%s: tiers (\{.*\}), k=([0-9.]+)," % t, d["f1prep"])
+        tiers, k = json.loads(lm.group(1)), float(lm.group(2))
+        cells = [tiers[x]["cells"] for x in ("own ratio", "coarse cell", "r = 1")]
+        share = [tiers[x]["prior_weight_share"] for x in ("own ratio", "coarse cell", "r = 1")]
+        assert abs(sum(share) - 1) < 1e-9
+        region.add(sum(cells))
+        for x, c, sh in zip(("own", "pooled", "one"), cells, share):
+            v[f"f1-{t}-tier-{x}"], v[f"f1-{t}-share-{x}"] = f"{c:,}".replace(",", "{,}"), f"{sh:.3f}"
+        v[f"f1-{t}-k"] = f"{k:.5f}"
+    assert len(region) == 1
+    v["f1-region-cells"] = f"{region.pop():,}".replace(",", "{,}")
+    # B2: each design number from its declaration's table row, each null constant from fd_1b_null.py (unchanged since
+    # cf0505d9); a declaration or code edit that moves one stops here
+    def one(pat, txt, what):
+        m = re.findall(pat, txt)
+        assert len(m) == 1, f"{what}: found {len(m)} times"
+        return m[0]
+    c2, l5, nc = d["cov2ddecl"], d["ll5ddecl"], d["nullcode"]
+    nb, nu, fx, pp, tp = one(r"(\d+) bands, (\d+) universes \(Flux (\d+), 2p2h (\d+), (\d+) bands at 2\)", c2, "COV2D's bank")
+    assert int(nb) == 2 + int(tp) and int(nu) == int(fx) + int(pp) + 2 * int(tp)
+    v["cov2d-nbands"], v["cov2d-fluxu"], v["cov2d-2p2h"], v["cov2d-twopt"] = nb, fx, pp, tp
+    v["cov2d-statrep"] = one(r"\| statistical \| (\d+) three-stream bootstrap replicas", c2, "COV2D's statistical block")
+    nrm = {one(r"x̂ × \(1 \+ ([0-9.]+) z\), z ~ N\(0, 1\)", t, w) for t, w in ((c2, "COV2D"), (l5, "LL5D"))}
+    assert len(nrm) == 1
+    v["cov-norm"] = nrm.pop()
+    wk = {one(r"variance ratio from C2 is below ([0-9.]+)", c2, "COV2D weakened"),
+          one(r"a pass in a cell whose clipped variance ratio is below ([0-9.]+)", l5, "LL5D weakened")}
+    assert len(wk) == 1
+    v["cov-weak"] = wk.pop()
+    v["ll5d-nint"] = one(r"\| \*\*interaction\*\* \| each of the (\d+) bands", l5, "LL5D interaction")
+    v["ll5d-ndet"] = one(r"\| \*\*detector\*\* \| each of the (\d+) bands", l5, "LL5D detector")
+    v["ll5d-statrep"] = one(r"replicas b = 1–(\d+) by `s5n_pseudo\.bootstrap_replica`", l5, "LL5D statistical block")
+    # S9's clipping definition (LL5D-DECLARATION.md:439-441): the bound delta* and the per-cell resolution it rests on
+    v["ll5d-dstar"] = one(r"\|o_c\| ≥ δ\* = ([0-9.]+), the verdict is `TO_JOSEPH`", l5, "LL5D delta*")
+    v["ll5d-cellres"] = one(r"by §6's per-cell resolution, ([0-9.]+)", l5, "LL5D per-cell resolution")
+    # the S8.5 results table's denominator: the toys per (truth, reading), from sec. 3.6's shared toy seeds (G18's range)
+    lo, hi = (int(x.replace(",", "")) for x in one(r"\| toys \(both readings, shared\) \| ([0-9,]+)–([0-9,]+) \|", l5, "LL5D toys"))
+    v["ll5d-ntoys"] = str(hi - lo + 1)
+    const = {}
+    for k in ("P0", "N_TOYS", "ALPHA_CELLS", "ALPHA_JOINT", "N_MC", "SE_MARGIN", "MATCH_TOL"):
+        m = re.findall(r"^%s = ([^#\n]+)" % k, nc, re.M)
+        assert len(m) == 1, f"fd_1b_null.py's {k}: found {len(m)} times"
+        const[k] = m[0].strip()
+    assert const["P0"] == "math.erf(1 / math.sqrt(2))"
+    v["null-p0"] = f"{math.erf(1 / math.sqrt(2)):.4f}"
+    v["null-ntoys"] = str(int(const["N_TOYS"]))
+    a_c, a_j = float(const["ALPHA_CELLS"]), float(const["ALPHA_JOINT"])
+    assert a_c == a_j
+    v["null-alpha"], v["null-size"] = f"{a_c:g}", f"{a_c + a_j:g}"
+    nmc = int(const["N_MC"].replace("_", ""))
+    assert nmc == 2 * 10 ** 6
+    v["null-nmc"] = rf"{nmc // 10 ** 6}\times10^{{6}}"
+    se = float(const["SE_MARGIN"])
+    v["null-se-word"] = {3.0: "three"}[se]
+    tol = float(const["MATCH_TOL"])
+    v["null-tol"] = rf"10^{{{round(math.log10(tol))}}}"
+    # B1 (and the paper's sentences that print the same numbers): s5e's closure at the prior and its changed truths
+    a = d["s5e"]
+    pts, ct = a["points"], d["s5econtract"]["criteria"]["C3"]
+    assert pts["nominal"]["n_abs_t_gt_3.6"] == 0 and ct["t_crit"] == 3.6
+    v["s5e-tcrit"] = f"{ct['t_crit']:g}"
+    v["s5e-nom-n"] = str(pts["nominal"]["n"])
+    assert {pts[w]["n"] for w in ("W1", "W2", "W3", "q3", "eavail_gibuu")} == {20}
+    v["s5e-shape-n"] = "20"
+    v["s5e-nquant"] = str(len(a["functional_names"]))
+    v["s5e-nom-tmax"], v["s5e-nom-ewmax"] = f"{pts['nominal']['max_abs_t']:.1f}", f"{pts['nominal']['ew_max_abs_pct']:.2f}"
+    sh = [pts[w]["ew_max_abs_pct"] for w in ("W1", "W2", "W3")]
+    v["s5e-shapes-ewmax-lo"], v["s5e-shapes-ewmax-hi"] = f"{min(sh):.0f}", f"{max(sh):.0f}"
+    v["s5e-q3-ewmax"] = f"{pts['q3']['ew_max_abs_pct']:.0f}"     # whole percent, as the other residuals of Table S10's row 2 (journal-editor, 2026-11-10)
+    # REF-G1's thresholds (bars.json: the parametric bootstrap's 0.95 and 0.997 quantiles) and replicas
+    b = d["refg1bars"]
+    assert b["schema"] == "ref-g1-bars/1" and b["quantile_levels"] == [0.95, 0.997] and b["norm_fraction"] == 0.014
+    v["ibu16-q95"], v["ibu16-q997"] = (f"{x:.2f}" for x in b["bars"])
+    v["ibu16-nrep"] = str(b["n_replicas"])
+    # FD-PRR's tested levels per factor (PR-3's levels: iterations K*, capacity C*, statistics MC*, observables O*)
+    lv = set(r["readings"]["PR-3"]) - {"B0", "IBU_K5"}       # the tested levels (the table also holds O5, F4's baseline)
+    for f, pre in (("iter", "K"), ("cap", "C"), ("stat", "MC"), ("obs", "O")):
+        v[f"prr-nlev-{f}"] = str(sum(1 for x in lv if x.startswith(pre)))
+    assert sum(int(v[f"prr-nlev-{f}"]) for f in ("iter", "cap", "stat", "obs")) == len(lv)
+    # FD-STAB's disjoint pairs (its declaration) and ENS1's pairs (its stage-1 readout)
+    v["stab-npairs"] = one(r"form (\d+) disjoint pairs", d["stabdecl"], "FD-STAB's pairs")
+    v["ens1-pairs"] = str(d["ens1s1"]["pairs"])
+    # the two-dimensional coverage test: each tune's joint count and flagged cells (score records), its ndf
+    for t, key in (("ar23", "cov2dar23"), ("g18", "cov2dg18")):
+        gr = d[key]["grade"]
+        assert gr["joint_flag"] if "joint_flag" in gr else True
+        v[f"cov2d-joint-{t}"] = str(gr["joint_count"])
+        fc = gr["flagged_cells"]
+        v[f"cov2d-flags-{t}"] = " and ".join(str(c) for c in fc) if len(fc) <= 2 else ", ".join(str(c) for c in fc)
+        v[f"cov2d-nflags-{t}"] = {1: "one", 2: "two", 3: "three"}[len(fc)]
+        # T1-2: the section 6.2 paragraph's numbers, read from the same score record (were typed at r5:202)
+        assert gr["verdict"] == "UNDER-COVERS" and len(gr["counts"]) == len(gr["k_cell"]) == 205
+        v[f"cov2d-kjoint-{t}"], v[f"cov2d-ndf-{t}"] = str(gr["k_joint"]), str(gr["ndf"])
+        v[f"cov2d-chi2ndf-{t}"], v[f"cov2d-chi2ndf-se-{t}"] = f"{gr['chi2_mean_over_ndf']:.2f}", f"{gr['chi2_mean_over_ndf_se']:.2f}"
+        v[f"cov2d-size-{t}"] = f"{gr['size']['per_truth_union_bound']:.4f}"
+        v[f"cov2d-kcell-lo-{t}"], v[f"cov2d-kcell-hi-{t}"] = str(min(gr["k_cell"])), str(max(gr["k_cell"]))
+        v[f"cov2d-count-lo-{t}"], v[f"cov2d-count-hi-{t}"] = str(min(gr["counts"])), str(max(gr["counts"]))
+        v[f"cov2d-nover-{t}"] = str(sum(1 for x in gr["over_covers"] if x))
+        v[f"cov2d-nunder-{t}"] = str(sum(1 for c, k in zip(gr["counts"], gr["k_cell"]) if c <= k))
+        assert int(v[f"cov2d-nunder-{t}"]) == len(fc), "the flagged cells are those at or below their threshold"
+        # the median count beside the median draw-matched expectation (the director, 2026-11-10: the test's reference is
+        # the draw-matched content p_c, not P0); the graded null is "null" ("null_minus" serves leave_out_mec only,
+        # COV2D-ADDENDUM-A4.md:40, :190)
+        nk = "cov2dnull" + t
+        nf = ROOT / READOUTS[nk][0]
+        assert hashlib.sha256(nf.read_bytes()).hexdigest() == d[key]["null_digest"], "the score was graded on another null"
+        nl = d[nk]["null"]
+        assert len(nl["p_cell"]) == 205 and nl["ndf"] == gr["ndf"]
+        nt = int(one(r"### 5\.1 Statistics per tune, over its (\d+) toys", d["cov2ddecl"], "COV2D's toys"))
+        assert max(gr["counts"]) <= nt
+        c, pc = sorted(gr["counts"]), sorted(nl["p_cell"])
+        v[f"cov2d-count-med-{t}"] = str(c[102])
+        v[f"cov2d-pexp-med-{t}"] = f"{nt * pc[102]:.1f}"
+        v[f"cov2d-jexp-{t}"] = f"{nt * nl['q_joint']:.1f}"
+    assert (v["cov2d-ndf-ar23"], v["cov2d-ndf-g18"]) == ("204", "205"), "the text says the rank drops one direction at AR23"
+    # the first five-observable coverage test's declared toys
+    v["fd1b-ntoys"] = one(r"\*\*Toys:\*\* (\d+) per truth", d["fd1bdecl"], "FD-1B's toys")
+    v["cov2d-ntoys"] = one(r"### 5\.1 Statistics per tune, over its (\d+) toys", d["cov2ddecl"], "COV2D's toys")
+    # the nominal Gaussian content of the 300 toys, P0 = erf(1/sqrt 2) (fd_1b_null.py:42-52), printed only beside the
+    # draw-matched expectation
+    v["cov2d-nominal"] = f"{int(v['cov2d-ntoys']) * math.erf(2 ** -0.5):.0f}"
+    assert {d[k]["grade"]["joint_count"] for k in ("cov2dar23", "cov2dg18")} == {0}, "B1 row 8 says no error lies in the region"
+    v["prr-floor"] = f"{r['readings']['floor']['bar_floor']:g}"
+    # F0b's repetitions as B1 row 3a states them: 20 at each shape change and the q3 tilt, 16 at each hybrid
+    f0t = {t["name"]: t["n_experiments"] for t in d["f0b"]["truths"]}
+    assert {f0t[t] for t in ("W1", "W2", "W3", "stage0c_gibuu", "q3")} == {20}
+    assert {f0t[t] for t in f0t if t.startswith("A7_")} == {16} and len([t for t in f0t if t.startswith("A7_")]) == 5
+    fl = r["readings"]["floor"]
+    v["prr-sibu"], v["prr-tq"] = f"{fl['s_IBU']:.4f}", f"{fl['T_Q']:.2f}"
+    assert f"{fl['bars']['IBU']:g}" == f"{max(fl['bar_floor'], fl['T_Q'] * fl['s_IBU']):g}" and "a transfer" in fl["transfer"]
+    return v
+
+
+def ess_values(d):
+    """Group C: the Kish n_eff = (sum w)^2 / sum w^2 of the reported result's simulated events in each of R00-R15
+    (fd/receipts-ess README; CITABLE FOR the per-cell and global numbers, NOT CITABLE FOR an uncertainty, coverage or
+    validity statement). The printed definition is (B), each event's contribution to the cell integral; (A), the final
+    weight wpush * w_truth, must agree with it to the printed figures, so the text may name both."""
+    e = d["ess"]
+    assert e["schema"] == "ess-e-central/1" and e["verdict"].startswith("PASS"), e["verdict"]
+    assert e["binding"]["xsec_flat_bytes_equal"] and e["checks"]["events_in_cells_with_zero_denominator"] == 0
+    cells = e["cells"]
+    assert sorted(cells) == [f"R{i:02d}" for i in range(16)]
+    g = e["global"]["reported_16_cells"]
+    for c in list(cells.values()) + [g]:
+        a, b = c["A_final_weight"], c["B_contribution"]
+        assert a["n_negative"] == b["n_negative"] == 0 and a["n_zero"] == b["n_zero"] == 0, "the text says every weight is positive"
+        assert f"{a['n_eff_over_n']:.3f}" == f"{b['n_eff_over_n']:.3f}" and abs(a["n_eff"] / b["n_eff"] - 1) < 1e-6
+        assert f"{a['max_share']:.1e}" == f"{b['max_share']:.1e}"
+    fr = {k: c["B_contribution"]["n_eff_over_n"] for k, c in cells.items()}
+    v = {}
+    # the cells split at 0.9 with a gap: the two low cells are below 0.7, every other cell is at least 0.9
+    low = sorted((k for k in fr if fr[k] < 0.9), key=lambda k: fr[k])
+    high = [k for k in fr if fr[k] >= 0.9]
+    assert len(low) == 2 and max(fr[k] for k in low) < 0.7, low
+    v["ess-low1-cell"], v["ess-low1"] = low[0], f"{fr[low[0]]:.3f}"
+    v["ess-low2-cell"], v["ess-low2"] = low[1], f"{fr[low[1]]:.3f}"
+    v["ess-nhigh"] = str(len(high))
+    v["ess-high-min"] = f"{min(fr[k] for k in high):.3f}"
+    kmax = max(fr, key=fr.get)
+    v["ess-max-cell"], v["ess-max"] = kmax, f"{fr[kmax]:.3f}"
+    ne = {k: c["B_contribution"]["n_eff"] for k, c in cells.items()}
+    kmin = min(ne, key=ne.get)
+    assert round(cells[kmin]["A_final_weight"]["n_eff"]) == round(ne[kmin]), "the smallest n_eff prints the same under (A)"
+    v["ess-neff-min-cell"], v["ess-neff-min"] = kmin, f"{round(ne[kmin]):,}".replace(",", "\\,")
+    ms = max(c["B_contribution"]["max_share"] for c in cells.values())
+    mant, ex = f"{ms:.1e}".split("e")
+    v["ess-maxshare"] = f"{mant}\\times10^{{{int(ex)}}}"
+    v["ess-global"] = f"{g['B_contribution']['n_eff_over_n']:.3f}"
+    v["ess-global-prior"] = f"{g['prior_w_truth']['n_eff_over_n']:.3f}"
+    nrp = [100 * c["no_reco_partner"]["share_of_sum_B"] for c in cells.values()]
+    v["ess-nrp-min"], v["ess-nrp-max"] = f"{min(nrp):.1f}", f"{max(nrp):.1f}"
+    # V-ATLAS's first condition (S11) read the prior weights' n_eff; the ESS record's prior_w_truth is the same quantity
+    # on the same events, so the two records must agree cell by cell before S11 sets them side by side
+    r = d["vregion"]
+    assert r["schema"] == "valid-region-readout/1"
+    va = r["readings"]["V-ATLAS"]["cells"]
+    assert sorted(va) == sorted(cells)
+    for k in cells:
+        assert abs(va[k]["mc_neff_truth"] / cells[k]["prior_w_truth"]["n_eff"] - 1) < 1e-9, k
+    kp = min(va, key=lambda k: va[k]["mc_neff_truth"])
+    v["vatlas-neff-min-cell"], v["vatlas-neff-min"] = kp, f"{round(va[kp]['mc_neff_truth']):,}".replace(",", "\\,")
+    ks = max(va, key=lambda k: va[k]["stat_rel"])
+    v["vatlas-stat-max-cell"], v["vatlas-stat-max"] = ks, f"{100 * va[ks]['stat_rel']:.3f}"
+    # the guide's threshold, 5000 effective events, holds under both definitions in every cell
+    assert min(ne.values()) > 5000 and va[kp]["mc_neff_truth"] > 5000
+    v.update(cov2d_block_values(d))
+    return v
+
+
+def cov2d_block_values(d):
+    """B1 row 1 and section 3.2: the sizes of the adopted 2D covariance Q's blocks. The universe block (the director's
+    ruling, option (i), 2026-11-10): S5's check refined_j2_38_bands_175_universes gives the weight bands and their
+    universes; S5's production outputs 2dc_P_S3_<band><i> give the lateral bands, two universes each; Q's budget lists
+    the 43 bands plus the flat normalization. 187 was the July sweep's count (may_44_bands_187_universes), Rvp1pi
+    included."""
+    s5, bq, pl = d["s5q"], d["budgetq"], d["plterm"]
+    assert s5["arm"] == "refined" and bq["arm"] == "refined"
+    po = s5["inputs"]["production_outputs"]
+    chk = s5["checks"]["refined_j2_38_bands_175_universes"]
+    assert chk["ok"] and s5["checks"]["universe_bands_43_plus_norm"]["ok"]
+    nwb, nwu = chk["value"]
+    wbands = {re.match(r"U_(.+)_\d+$", k).group(1) for k in po if k.startswith("U_")}
+    assert len(wbands) == nwb and sum(1 for k in po if k.startswith("U_")) == nwu
+    lat = {}
+    for k in po:
+        m = re.fullmatch(r"2dc_P_S3_(.+?)(\d)", k)
+        if m:
+            lat.setdefault(m.group(1), set()).add(m.group(2))
+    assert all(u == {"0", "1"} for u in lat.values()), lat
+    nlu = sum(len(u) for u in lat.values())
+    qb = {b.replace("_", "") for b in bq["bands"]} - {"Normalizationflat"}
+    assert "__Normalization_flat" in bq["bands"] and len(bq["bands"]) == bq["s5_copied"]["derived_counts_not_copied"]["bands_in_npz"]
+    assert qb == {b.replace("_", "") for b in wbands | set(lat)}, "Q's bands are the weight bands and the laterals"
+    assert (nwb, nwu, len(lat), nlu) == (38, 175, 5, 10) and nwu + nlu == 185 and nwb + len(lat) == 43 == len(qb)
+    nstat = sum(1 for k in po if re.fullmatch(r"2dc_P_S1_\d{3}", k))
+    dc = bq["s5_copied"]["derived_counts_not_copied"]
+    assert nstat == dc["stat_replicas_S1"] == 300
+    seeds = {re.match(r"2dc_P_S4B_s(\d+)_\d+$", k).group(1) for k in po if k.startswith("2dc_P_S4B_")}
+    assert len(seeds) + 1 == dc["seed_triplets_S4B_seeds_plus_seed42"], seeds   # the S4B seeds and seed 42
+    periods = {m.group(1) for k in pl["runs"] for m in [re.search(r"/pu_(P[A-Z])_s42/", k)] if m}
+    assert pl["checks_passed"] and pl["npz"]["sha256"] == bq["checks"]["A0_pin_playlist_npz"]["value"], "C_PL is not Q's"
+    assert pl["npz"]["sha256"].startswith("dbb067aa")      # C_PL as Q adopted it (RE-2's partc-r2)
+    words = {3: "three", 5: "five"}
+    return {"cov2d-nuniv": str(nwu + nlu), "cov2d-nunivbands": str(nwb + len(lat)),
+            "cov2d-nstat": str(nstat),
+            "cov2d-nseed-word": words[dc["seed_triplets_S4B_seeds_plus_seed42"]],
+            "cov2d-nperiod-word": words[len(periods)]}
+
+
+# T1-1 (the confirming round): FD-PRR's levels (FD-PRR-DECLARATION.md:165-172) in the order "reduced, B0, more"
+PRR_LEVELS = {"F1": (["K2"], ["K10", "K20", "K50"]), "F2": (["C25"], ["C400", "C1000"]),
+              "F3": (["MCq"], []), "F4": (["O4r", "O4", "O3", "O2"], [])}
+PRR_FACTOR = {"F1": "iterations", "F2": "capacity", "F3": "training statistics", "F4": "observables"}
+
+
+def tier1_values(d):
+    """T1-1's keys. (i) PR-1's classes with their direction: FD-PRR section 5.1 classes a factor "increases" when some
+    level raises rho by at least the bar and none lowers it by the bar, so the class names no direction of "more". Here
+    every "increases" is asserted to come from a reduced setting (fewer iterations, lower capacity, fewer observables or a
+    quarter of the training statistics), and every higher iteration count and capacity is asserted to lower rho, by less
+    than the bar; the summary and the largest such fall are printed. (ii) IBU at five iterations against (e): its rho is
+    asserted negative at both truths, and the root-mean-square bias and the chi2 asserted to move the same way, so one word
+    per truth says which way. (iii) RS1 R0's sixteen-cell rounding spread. (iv) ENS1's one deficit, under the amended
+    licence (DECISION-20261110-joseph-ens1-deficit-licence.md item 1): every number of its one sentence."""
+    v, r = {}, d["prr"]
+    rd = r["readings"]
+    bar = {f: rd["floor"]["bars"][f] for f in PRR_FACTOR}
+    cls = {t: rd["PR-1"][T] for t, T in PRR_TRUTHS.items()}
+    falls = []
+    for t, T in PRR_TRUTHS.items():
+        b0 = r["table"][f"B0/{T}/s991000"]["rho"]
+        for f, (reduced, more) in PRR_LEVELS.items():
+            dl = {L: r["table"][f"{L}/{T}/s991000"]["rho"] - b0 for L in reduced + more}
+            up = [L for L, x in dl.items() if x >= bar[f]]
+            down = [L for L, x in dl.items() if x <= -bar[f]]
+            assert not down, (f, T, down)
+            assert (cls[t][f] == "increases") == bool(up) and (cls[t][f] == "no effect") == (not up), (f, T, cls[t][f])
+            assert set(up) <= set(reduced), (f, T, up)
+            for L in more:
+                assert -bar[f] < dl[L] < 0, (f, T, L, dl[L])
+                falls.append(-dl[L])
+    v["prr-more-dmax"] = f"{max(falls):.3f}"
+    # the summary, grouped by class: "both truths" when the two agree
+    parts = {}
+    for c in ("increases", "no effect"):
+        items = []
+        for f in PRR_FACTOR:
+            on = (cls["gibuu"][f] == c, cls["q3"][f] == c)
+            if any(on):
+                items.append(f"{PRR_FACTOR[f]} " + {(True, True): "at both truths", (True, False): "at the GiBUU hybrid truth",
+                                                  (False, True): "at the $q_3$ tilt"}[on])
+        parts[c] = items
+    assert {c for t in cls for c in cls[t].values()} <= {"increases", "no effect"}
+    join = lambda xs: xs[0] if len(xs) == 1 else ", ".join(xs[:-1]) + " and " + xs[-1]
+    v["prr-pr1-increases"], v["prr-pr1-noeffect"] = join(parts["increases"]), join(parts["no effect"])
+    kinds = {"F1": "fewer iterations", "F2": "lower capacity", "F3": "a quarter of the training statistics", "F4": "fewer observables"}
+    inc = [f for f in PRR_FACTOR if "increases" in (cls["gibuu"][f], cls["q3"][f])]
+    v["prr-pr1-reduced-kinds"] = join([kinds[f] for f in inc]).replace(" and ", " or ") if len(inc) > 1 else kinds[inc[0]]
+    # (ii) IBU at five iterations against (e)
+    for t, T in PRR_TRUTHS.items():
+        e, i5 = r["table"][f"B0/{T}/s991000"], r["ibu"][f"K5/{T}/s991000"]
+        assert i5["rho"] < 0 < e["rho"], "the text says IBU's rho is negative: it moves past the truth"
+        sr, sc = i5["rms_b"] > e["rms_b"], i5["grade"]["chi2"] > e["grade"]["chi2"]
+        assert sr == sc, "the root-mean-square bias and the chi2 must move the same way for one word to say it"
+        v[f"prr-cmp-{t}"] = "larger" if sr else "smaller"
+    # (iii) RS1 R0
+    r0 = d["rs1r0"]
+    assert r0["controls"]["sigma_J_over_f_pct_reproduces"] == [0.133, 0.055, 0.252] and len(r0["sigma_J_over_f"]) == 16
+    # the fresh referee read (RESPONSE.md F6.1): the sixteen cells' rounding spread over each cell's statistical sigma (R0a)
+    ra = r0["R0a_summary"]
+    v["rnd16-r0a-median"], v["rnd16-r0a-min"], v["rnd16-r0a-max"] = (f"{ra[k]:.2f}" for k in ("median", "min", "max"))
+    assert sorted(r0["R0a"])[0] == ra["min"] and len(r0["R0a"]) == 16
+    sj = sorted(r0["sigma_J_over_f"])
+    v["rnd16-median"] = f"{100 * (sj[7] + sj[8]) / 2:.3f}"
+    v["rnd16-min"], v["rnd16-max"] = f"{100 * sj[0]:.3f}", f"{100 * sj[-1]:.3f}"
+    assert (v["rnd16-median"], v["rnd16-min"], v["rnd16-max"]) == ("0.133", "0.055", "0.252")
+    # (iv) ENS1's one deficit
+    bw = d["ens1s2"]["bias"]["stage0c_gibuu"]
+    v["ens1-g-rms"], v["ens1-g-rmsc"] = f"{bw['rms']:.6f}", f"{bw['rms_control']:.6f}"
+    # the paper's rounded pair (the fresh referee round's minor 8, the director's Gm8 ruling of 2026-11-12); the
+    # six-decimal pair stays in the Supplement
+    v["ens1-g-rms-r"], v["ens1-g-rmsc-r"] = f"{bw['rms']:.4f}", f"{bw['rms_control']:.4f}"
+    v["ens1-g-rms-dpct"] = f"{100 * (bw['rms'] / bw['rms_control'] - 1):.0f}"
+    assert (v["ens1-g-rms-r"], v["ens1-g-rmsc-r"], v["ens1-g-rms-dpct"]) == ("0.0565", "0.0560", "1")
+    v["ens1-g-drms"], v["ens1-g-floor"] = f"{bw['rms'] - bw['rms_control']:.6f}", f"{bw['delta_rms']:.6f}"
+    v["ens1-g-ratio"] = f"{(bw['rms'] - bw['rms_control']) / bw['delta_rms']:.2f}"
+    v["ens1-g-dmax"], v["ens1-g-maxfloor"] = f"{bw['max'] - bw['max_control']:.6f}", f"{bw['delta_max']:.6f}"
+    assert (v["ens1-g-drms"], v["ens1-g-ratio"], v["ens1-g-dmax"], v["ens1-g-maxfloor"]) == ("0.000512", "1.23", "0.000929", "0.001783")
+    return v
+
+
+def prr_levels_values(d):
+    """S8.2's settings table, tab:prr-levels (the codex referee read at 3d75ed5d4, Major 1). Each FD-PRR level
+    (FD-PRR-DECLARATION.md:165-172): its rho at the two flagged truths and its change from B0 (table.*.rho, split 991000),
+    each setting's PR-1 class, the threshold, and PR-3's newly flagged graded truths, recomputed from the table's grades
+    and asserted equal to the readout's own list. Nothing is typed."""
+    r, v = d["prr"], {}
+    rd, t = r["readings"], r["table"]
+    fl = rd["floor"]
+    # every setting's threshold is the floor (sec. 5.1 :282): T_Q s_F stays below it, so one number serves all four
+    tqs = {f: fl["T_Q"] * fl["s_F"][f] for f in PRR_FACTOR}
+    assert all(fl["bars"][f] == fl["bar_floor"] == max(fl["bar_floor"], tqs[f]) for f in PRR_FACTOR)
+    # printed as an upper bound ("below"): the maximum rounded up at the third decimal, asserted above the maximum
+    v["prr-lev-tqs-max"] = f"{math.ceil(1000 * max(tqs.values())) / 1000:.3f}"
+    assert max(tqs.values()) < float(v["prr-lev-tqs-max"]) < fl["bar_floor"]
+    levels = [L for f in PRR_FACTOR for part in PRR_LEVELS[f] for L in part]
+    assert sorted(levels) == sorted(set(rd["PR-3"]) - {"B0", "IBU_K5"}), "the table's rows are PR-3's levels"
+    graded = sorted({k.split("/")[1] for k in t if k.startswith("B0/") and k.endswith("/s991000")})
+    flagged0 = {T for T in graded if t[f"B0/{T}/s991000"]["grade"]["flagged"]}
+    # Fable's fresh cold read of 7264f975a, 3.1 (the director, 2026-11-16): IBU at five iterations removes the q3-tilt
+    # flag (p just above the criterion), keeps the GiBUU hybrid's, and newly flags PR-3's four other truths
+    ib = r["ibu"]
+    assert not ib[f"K5/{PRR_TRUTHS['q3']}/s991000"]["grade"]["flagged"]
+    assert ib[f"K5/{PRR_TRUTHS['gibuu']}/s991000"]["grade"]["flagged"]
+    q3k = f"K5/{PRR_TRUTHS['q3']}/s991000"
+    v["prr-ibu5-q3-p"] = f"{ib[q3k]['grade']['p']:.3f}"
+    assert float(v["prr-ibu5-q3-p"]) > 0.01
+    new5 = {T for T in graded if ib[f"K5/{T}/s991000"]["grade"]["flagged"]} - flagged0
+    assert new5 == set(rd["PR-3"]["IBU_K5"]["new_flags"]), (new5, rd["PR-3"]["IBU_K5"]["new_flags"])
+    v["prr-ibu5-nnew-word"] = PRR_NUMBER_WORDS[len(new5)]
+    assert len(graded) == 12 and flagged0 == set(PRR_TRUTHS.values()), "B0 flags exactly the two flagged truths"
+    v["prr-lev-nother"] = str(len(graded) - len(flagged0))
+    names = {"no effect": "no detected change", "increases": "increases", "reduces": "reduces", "both": "both"}
+    for f in PRR_FACTOR:
+        for tt, T in PRR_TRUTHS.items():
+            v[f"prr-lev-cls-{f}-{tt}"] = names[rd["PR-1"][T][f]]
+    for L in levels:
+        p3 = rd["PR-3"][L]
+        # the caption: no level clears either flagged truth (PR-3's "does not clear at these truths", read per truth)
+        assert p3["reading"] == "does not clear at these truths"
+        assert all(t[f"{L}/{T}/s991000"]["grade"]["flagged"] for T in PRR_TRUTHS.values()), L
+        new = {T for T in graded if t[f"{L}/{T}/s991000"]["grade"]["flagged"]} - flagged0
+        assert new == set(p3["new_flags"]), (L, new, p3["new_flags"])
+        v[f"prr-lev-{L}-nnew"] = str(len(new))
+        for tt, T in PRR_TRUTHS.items():
+            x, b0 = t[f"{L}/{T}/s991000"]["rho"], t[f"B0/{T}/s991000"]["rho"]
+            v[f"prr-lev-{L}-rho-{tt}"] = f"{x:.3f}"
+            v[f"prr-lev-{L}-d-{tt}"] = f"{x - b0:+.3f}"
+            assert v[f"prr-lev-{L}-d-{tt}"] not in ("+0.000", "-0.000"), (L, tt)
+    return v
+
+
+# Joseph's batch of 2026-11-16, item 4 (DECISION-20261116-joseph-paper-batch.md): section 5.3's settings sentences.
+# The readout names its levels only, so their parameters are FD-PRR-DECLARATION.md section 3.3's (:166-172): B0 is 5
+# iterations and (100 trees, 8 leaves); K2 is 2 iterations; C25 is (25, 4); O2 shows all three learners (pT, p_par).
+PRR_LEVEL_PARAMS = {"B0": {"iters": 5, "trees": 100, "leaves": 8}, "K2": {"iters": 2}, "C25": {"trees": 25, "leaves": 4}}
+PRR_NUMBER_WORDS = {2: "two", 4: "four", 5: "five", 10: "ten"}
+
+
+def prr_s53_values(d):
+    """Section 5.3's four sentences. Each settings claim is recomputed from the readout's table: the (level, truth)
+    pairs whose rho rises by more than the threshold are exactly K2 at the q3 tilt and C25 and O2 at both flagged
+    truths; dropping W (O4r, O4) or W and q3 (O3) moves rho by less than the printed bound at both truths."""
+    r, v = d["prr"], {}
+    t, floor = r["table"], r["readings"]["floor"]["bar_floor"]
+    lp = PRR_LEVEL_PARAMS
+    assert lp["K2"]["iters"] == int("K2"[1:]) and lp["C25"]["trees"] == int("C25"[1:]) and PRR_LEVELS["F1"][0] == ["K2"]
+    assert PRR_LEVELS["F2"][0] == ["C25"] and PRR_LEVELS["F4"][0] == ["O4r", "O4", "O3", "O2"]
+    levels = [L for f in PRR_FACTOR for part in PRR_LEVELS[f] for L in part]
+    dr = {(L, tt): t[f"{L}/{T}/s991000"]["rho"] - t[f"B0/{T}/s991000"]["rho"] for L in levels for tt, T in PRR_TRUTHS.items()}
+    up = {k for k, x in dr.items() if x >= floor}
+    assert up == {("K2", "q3"), ("C25", "gibuu"), ("C25", "q3"), ("O2", "gibuu"), ("O2", "q3")}, up
+    assert all(dr[k] > floor for k in up), "beyond the threshold"
+    w = max(abs(dr[(L, tt)]) for L in ("O4r", "O4", "O3") for tt in PRR_TRUTHS)
+    v["prr-s53-w-dmax"] = f"{math.ceil(100 * w) / 100:.2f}"
+    assert w < float(v["prr-s53-w-dmax"]) <= floor
+    v["prr-s53-b0-iters"] = PRR_NUMBER_WORDS[lp["B0"]["iters"]]
+    v["prr-s53-k2-iters"] = PRR_NUMBER_WORDS[lp["K2"]["iters"]]
+    v["prr-s53-c25-trees"] = str(lp["C25"]["trees"])
+    v["prr-s53-c25-leaves"] = PRR_NUMBER_WORDS[lp["C25"]["leaves"]]
+    graded = sorted({k.split("/")[1] for k in t if k.startswith("B0/") and k.endswith("/s991000")})
+    v["prr-lev-nother-word"] = PRR_NUMBER_WORDS[len(graded) - len(PRR_TRUTHS)]
+    return v
+
+
+def vhalf_band_values(d):
+    """S10's bias-half noise band (the codex referee read at 3d75ed5d4, minor 8): its multiplier K, from the V-HALF
+    readout's own rule record (readings.rule; v-half/DECLARATION.md sec. 4 :134-142), with the bound's 0.5 asserted."""
+    rule = d["vhalf"]["readings"]["rule"]
+    assert rule["half"] == 0.5 and rule["floor"] == 0.01 and rule["b"] == "r (1 + d)"
+    assert rule["sigma_m"] == "sqrt(((1 + d) nu)^2 + (0.5 sgn(d) - |r|)^2 sigma_d^2)", "S10's sentence states these two terms"
+    return {"vhalf-k": f"{rule['K']:g}"}
+
+
+def ll5d_repair_words():
+    """Supplement S8.5's repair detail (item 14, the referee's text, moved there from the paper by Joseph's readability
+    item 5, 2026-11-16): the two precisions, from amendment A1a.2's own
+    statement of the defect and the fix (LL5D-AMENDMENT-A1A2.md :11-13, :59-60), asserted present there."""
+    a = (ROOT / "docs/orchestration/state/measurement-paper/5d-community-20261024/LL5D-AMENDMENT-A1A2.md").read_text()
+    assert "is float64 and the bank's tdw is float32" in " ".join(a.split())
+    assert "rounds both sides' key columns to float32" in " ".join(a.split())
+    return {"ll5d-a1a2-keys": "float64 and float32", "ll5d-a1a2-at": "float32"}
+
+
+def mumax_values(d):
+    """D2: the bound on how much the two GEANT4 bands' block in LL5D's graded covariance can change a chi2, per tune, from
+    the primary matrix C_T (all): 1/(1 - mu_max), with mu_max the largest generalized eigenvalue of (G, M)."""
+    r, v = d["ll5dmumax"], {}
+    assert r["schema"] == "ll5d-mumax/1" and r["verdict"] == "PASS" and not r["stop"]
+    for t in ("g18", "ar23"):
+        x = r["truths"][t]
+        assert x["products_match"] and x["made_from_match"] and x["removal_control_on_G"]["passes"]
+        assert x["removal_control_ll5d_b"]["passes"]
+        p = x["primary C_T (all)"]
+        assert abs(p["chi2_ratio_bound"] - 1 / (1 - p["mu_max"])) < 1e-12
+        v[f"ll5d-mumax-{t}"] = f"{p['mu_max']:.3f}"
+        v[f"ll5d-mumax-bound-{t}"] = f"{math.ceil(1000 * p['chi2_ratio_bound']) / 1000:.3f}"   # an upper bound, rounded up
+        assert p["chi2_ratio_bound"] <= float(v[f"ll5d-mumax-bound-{t}"])
+    return v
+
+
+def t2a_values(d):
+    """Tier 2 (a): where the two-dimensional coverage test's chi2 sits, at each tune (descriptive; its label: no new
+    verdict, no cause, no coverage statement at the data's point). split.*: mean chi2 = ebar' C+ ebar + tr(C+ S). by_rank:
+    b_k, f_k in C_T's eigenbasis by decreasing eigenvalue; the shares and per-rank means are sums of the recorded
+    components. truncated.*: the joint test at the 73 and 139 largest-eigenvalue directions. precision.*: two solvers."""
+    v = {}
+    ntop = 32          # the director's reading of 2026-11-10: "the 32 largest-eigenvalue directions"
+    v["t2a-ntop"] = str(ntop)
+    dmax = []
+    for t, key in (("ar23", "t2aar23"), ("g18", "t2ag18")):
+        x = d[key]
+        assert x["schema"] == "t2a/1" and all(c["pass"] for c in x["controls"].values())
+        assert x["inputs_sha256"]["score"].startswith(READOUTS["cov2d" + t][1])
+        sp, br, tr, pr = x["split"], x["by_rank"], x["truncated"], x["precision"]
+        b, f, lam = br["b_k"], br["f_k"], br["lambda_over_lambda1"]
+        n = len(b)
+        assert n == sp["ndf"] and all(lam[i] >= lam[i + 1] for i in range(n - 1))
+        assert abs(sum(b) - sp["ebar_Cplus_ebar"]) < 1e-9 * sp["ebar_Cplus_ebar"] and abs(sum(f) - sp["trace_Cplus_S"]) < 1e-9 * sp["trace_Cplus_S"]
+        v[f"t2a-bias-share-{t}"] = f"{100 * sp['share_of_ebar_Cplus_ebar']:.0f}"
+        v[f"t2a-bias-ndf-{t}"], v[f"t2a-spread-ndf-{t}"] = f"{sp['ebar_Cplus_ebar_over_ndf']:.1f}", f"{sp['trace_Cplus_S_over_ndf']:.2f}"
+        # D1: at C_T' the top-32 share is 1.2 % at AR23, so "under 1 %" no longer holds; it is printed per tune
+        top = sum(b[:ntop]) / sum(b)
+        v[f"t2a-top-{t}"] = f"{100 * top:.1f}"
+        r1, r2 = sorted(int(k) for k in tr)
+        assert (r1, r2) == (73, 139)
+        beyond = sum(b[r1:]) / sum(b)
+        assert abs(beyond - (1 - br["cumulative_at"][str(r1)]["b"] / sp["ebar_Cplus_ebar"])) < 1e-9, "the record's own sum"
+        # section 6.2's "dominated by mean bias concentrated in the poorly determined directions ..., with the spread
+        # also exceeding C_T's prediction" (the director's ruling 3, 2026-11-14): each word's plain reading
+        assert sp["share_of_ebar_Cplus_ebar"] > 0.5 and beyond > 0.5 and sp["trace_Cplus_S_over_ndf"] > 1, t
+        assert top < beyond
+        v[f"t2a-beyond1-{t}"] = f"{100 * beyond:.0f}"
+        v[f"t2a-flow-{t}"] = f"{sum(f[:r1]) / r1:.1f}"
+        v[f"t2a-fmid-{t}"] = f"{sum(f[r1:r2]) / (r2 - r1):.1f}"
+        v[f"t2a-fhigh-{t}"] = f"{sum(f[r2:]) / (n - r2):.1f}"
+        for r in (r1, r2):
+            z = tr[str(r)]
+            assert z["in_region_count"] == 0 and z["of"] == 300 and z["at_or_below_k_joint"]
+            v[f"t2a-kj{r}-{t}"] = str(z["k_joint"])
+        assert pr["n_unresolved"] == 0 and all(c["agree"] for c in pr["truncated_counts"].values())
+        dmax.append(pr["max_d"])
+    v["t2a-r1"], v["t2a-r2"] = "73", "139"
+    m, e = f"{max(dmax):.1e}".split("e")
+    v["t2a-dmax"] = f"{m}\\times10^{{{int(e)}}}"
+    return v
+
+
+# values.tex macros whose values move with the 2D covariance (D1); the paper and Supplement print keys instead
+COV_MACROS = ("uqMedian", "uqIntegral", "fluxBand", "qrCmodelMedian", "chiCombined", "chiCombinedLog", "chiCombinedSubStat",
+              "uqSFiveMedian", "rhoFluxMuon", "nwSystRatio", r"covTwoD[A-Za-z]*")   # covTwoD*: the earlier 2D coverage study
+
+
+def d1_values(d):
+    """D1 (DECISION-20261114-joseph-d1-g2r-adopted.md; the director's rulings of 2026-11-14): COV2D-G2R's C_T' is the
+    reported 2D covariance. Section 3.2's median per-bin and integrated relative sigma come from G2R part (a)'s data
+    record, readings.sigma [1] (C_new); S6.1's comparison sentence prints [0], the reported Q before the correction, and
+    states that the coverage test's joint counts and flagged cells are the same under both (asserted below from the
+    first grade, cov2dold*, against the regrade). Q's block sizes keep their RE-2 pins (ruling 5), with G2R's rebuilt
+    weight bands asserted to be Q's."""
+    g = d["g2rdata"]
+    assert g["schema"] == "cov2d-g2r/1" and g["step"] == "data" and g["verdict"] == "PASS"
+    assert g["controls_failed"] == [] and not g["stop"] and not g["atime_moved"] and g["G6"]["pass"] and g["G10"]["pass"]
+    s, bq = g["readings"]["sigma"], d["budgetq"]["Q"]
+    for k in ("median_pct", "integral_sigma_pct"):
+        assert s[k][0] == bq[k] == g["G10"]["values"][k][1], f"readings.sigma.{k}[0] is not the reported Q's"
+    v = {"q2d-sigma-med": f"{s['median_pct'][1]:.2f}", "q2d-sigma-int": f"{s['integral_sigma_pct'][1]:.2f}",
+         "q2d-sigma-med-old": f"{s['median_pct'][0]:.2f}", "q2d-sigma-int-old": f"{s['integral_sigma_pct'][0]:.2f}"}
+    (fb,) = re.findall(r"^FLUXBAND :: PASS  Flux band median relative sigma under C_new = ([0-9.]+) %  \(printed ([0-9.]+); "
+                       r"RE-2's value under the current covariance is ([0-9.]+), printed ([0-9.]+)\)$", d["fluxbandg2r"], re.M)
+    assert f"{float(fb[0]):.2f}" == fb[1] and f"{float(fb[2]):.2f}" == fb[3] == "3.71", fb   # 3.71: values.tex's \fluxBand
+    v["q2d-fluxband"] = fb[1]
+    po = d["s5q"]["inputs"]["production_outputs"]
+    wbands = {re.match(r"U_(.+)_\d+$", k).group(1) for k in po if k.startswith("U_")}
+    assert set(g["G6"]["per_band"]) == wbands and len(wbands) == 38, "G2R rebuilt Q's 38 weight bands"
+    cp = d["cpint"]["tunes"]
+    for t, T in (("ar23", "AR23"), ("g18", "G18")):
+        n, o = d["cov2d" + t], d["cov2dold" + t]
+        assert n["schema"] == "cov2d-g2r/1" and n["step"] == "tune" and n["controls_failed"] == [] and not n["stop"]
+        assert n["G6"]["pass"] and n["G7"]["pass"] and n["section_9_8"]["pass"] and not n["atime_moved"]
+        gn, go = n["grade"], o["grade"]
+        assert (gn["joint_count"], gn["flagged_cells"], gn["verdict"]) == (go["joint_count"], go["flagged_cells"],
+                                                                          go["verdict"]), "S6.1: the same joint counts and flagged cells"
+        # the CP intervals (lrows-g G1) were made from the first grade's counts: they hold for C_T' only if the
+        # joint count and each flagged cell's count are the regrade's
+        assert cp[T]["joint"]["count"] == gn["joint_count"]
+        assert [(f["i"], f["count"]) for f in cp[T]["cells"]["flagged"]] == [(i, gn["counts"][i]) for i in gn["flagged_cells"]]
+    # C_new's budget (#1167) carries the same Q sigmas as data_g2r's [1]
+    gb = d["g2rbudget"]["Q"]
+    for k in ("median_pct", "integral_sigma_pct"):
+        assert abs(gb[k] - s[k][1]) <= 1e-12 * s[k][1], (k, gb[k], s[k][1])
+    # \qrCmodelMedian (Supplement S6): the median relative sigma of C_new + C_model, from C_model's record on C_new
+    cm = d["g2rcmodel"]["cell_rel_sigma"]
+    assert abs(100 * cm["Q_R"]["median"] - s["median_pct"][1]) <= 1e-9, "cmodel_R's Q_R is C_new"
+    v["q2d-qr-cmodel-med"] = f"{100 * cm['Q_R_plus_C_model']['median']:.2f}"
+    # the values table on C_new (#1167) prints the same values as the keys, from the same numbers
+    rows = {ln.split("\t")[0]: ln.split("\t") for ln in d["g2rvt"].splitlines()[1:] if ln.strip()}
+    for row, key, x in (("m-uqMedian", "q2d-sigma-med", s["median_pct"][1]), ("m-uqIntegral", "q2d-sigma-int", s["integral_sigma_pct"][1]),
+                        ("m-fluxBand", "q2d-fluxband", float(v["q2d-fluxband"]))):
+        r = rows[row]
+        assert r[3] == v[key] and abs(float(r[10]) - x) <= (1e-12 * x if row != "m-fluxBand" else 0.005), (row, r[3], r[10], v[key])
+    # the paper prints no covariance-dependent values.tex macro, so a later merge of the note's values.tex cannot set an old
+    # value beside a new key (the director, 2026-11-16)
+    for f in ("paper_body.tex", "main_paper.tex", "supplemental_body.tex"):
+        t = re.sub(r"(?m)(?<!\\)%.*$", "", (ROOT / "docs/analysis-note" / f).read_text())
+        bad = [m for m in COV_MACROS if re.search(r"\\" + m + r"(?![A-Za-z])", t)]
+        assert not bad, f"{f} prints covariance-dependent macros {bad}: key them (q2d-*)"
+
+    return v
+
+
+def period_values(d):
+    """T1-3: the per-period benchmark's two readings of the run-period groups against the published result. R5: in the
+    73 best-determined directions, removing 1G-1M changes nothing beyond noise (3 sigma resolved, and its share of the
+    three-group distance). R5bar: in the other 132, the combination without 1G-1M is farther, by delta per direction (a
+    fraction of the three-group value). Both noise models must print the same figures. The licensed "about 15 %" share
+    of the resolved change stays typed: it is 14 % or 15 % by noise model (OUTCOME-20261107-per-period-2d-benchmark.md)."""
+    r = d["ppbench"]
+    assert r["verdict"] == "READ" and r["readings"]["n_replicas"] == 10
+    out = []
+    for m, x in r["readings"]["by_model"].items():
+        a, b = x["R5"], x["R5bar"]
+        assert a["class"] == "no change" and b["class"] == "farther without 1G-1M" and b["delta"] < 0
+        out.append({"pp-k": str(a["ABC"]["k"]), "pp-kbar": str(b["ABC"]["k"]), "pp-res": f"{a['resolved_3sigma']:.2f}",
+                    "pp-dbar": f"{-b['delta']:.2f}",
+                    "pp-fbar": f"{-b['fraction']:.2f}"})
+    assert all(o == out[0] for o in out), out
+    v = dict(out[0])
+    v["pp-nrep"] = str(r["readings"]["n_replicas"])
+    assert int(v["pp-k"]) + int(v["pp-kbar"]) == r["readings"]["n_cells"]
+    return v
+
+
+def cbkg2_values(d):
+    """C-BKG-2: the out-of-phase-space share of the 1A background template (weighted), with the analysis's own fiducial
+    test; one playlist of twelve, printed to two significant figures (the director, 2026-11-12)."""
+    s = d["cbkg2"]
+    assert s["control"]["pass"] and s["control"]["max_abs_diff_vs_work_proxy"] == 0.0 and s["closure_pass"]
+    assert s["port"] == "nd-unfolding/bkg_channel_split.py:58-70"
+    v = {"cbkg2-oops-1a": f"{100 * s['frac_w_oops']:.0f}"}
+    assert v["cbkg2-oops-1a"] == "10" and s["frac_w_cc_out_of_fiducial"] > 0.5   # "mostly out-of-fiducial nu_mu CC"
+    return v
+
+
+def sci(x, sig=2):
+    """A number as the paper prints it in scientific form: mantissa \\times10^{exponent}."""
+    m, e = f"{x:.{sig - 1}e}".split("e")
+    return rf"{m}\times10^{{{int(e)}}}"
+
+
+def literal_values(d):
+    """Numbers the paper printed as typed literals (#1132), now keyed with their sources asserted."""
+    v = {}
+    # section 6.1: the data rounding spread and the bootstrap statistical uncertainty, medians per joint cell (VL155),
+    # and the rounding share of the bootstrap variance (B0's "about 37 %", KI-80)
+    j = d["s5p2"]["study_N"]["N1_data"]["J"]
+    v["vl155-rnd-j-median"] = f"{j['median_sigma_num_base_pct']:.2f}"
+    v["vl155-boot-j-median"] = f"{j['median_sigma_boot_pct']:.2f}"
+    v["vl155-rnd-j-share"] = f"{100 * j['median_absorption']:.0f}"
+    # section 6.1: the lower-capacity variant's largest rounding shift, in the candidate's data sigma (B0 probe diag)
+    b0 = d["s5er2"]["assessment"]["B0_rounding_probe_diag"]
+    assert b0["fails_A3_bounds_on_R_data_sigma"] and b0["metas"][0]["refine_capacity"] is None
+    v["s5e-round-max-lowcap"] = f"{b0['over_R_data_sigma_max']:.1f}"
+    # section 4.1 and Table 4: RE-2's tension anatomy of the 2D benchmark against the published covariance
+    t = d["tension"]
+    cond = float(re.search(r"cond\(V\) = ([0-9.e+-]+)", t).group(1))
+    v["re2-cond"] = sci(cond)
+    rc = {m.group(1): (float(m.group(2)), int(m.group(3)))
+          for m in re.finditer(r"^\s+(1e-\d\d)\s+([0-9.]+)\s+(\d+)\s*$", t, re.M)}
+    nb = int(re.search(r"reported bins: (\d+)", t).group(1))
+    assert nb == 205
+    for tag, rcond in (("4", "1e-04"), ("6", "1e-06")):
+        chi_ndf, kept = rc[rcond]
+        v[f"re2-modes-{tag}"], v[f"re2-chi2-{tag}"] = str(kept), f"{chi_ndf * nb:.0f}"
+    norm = float(re.search(r"chi2_norm\s*=\s*([0-9.]+)", t).group(1))
+    shape = float(re.search(r"chi2_shape\s*=\s*([0-9.]+)", t).group(1))
+    v["re2-chi2-norm"], v["re2-chi2-shape"] = f"{norm:.2f}", f"{shape:.0f}"
+    # section 6.1, RS1: the tie-keeping perturbation's residual spread ratios, and K4's permutation shift (its order)
+    st = d["rs1read"]["statistics"]
+    v["rs1-ratio-v153"], v["rs1-ratio-v16"] = sci(st["ratio"]["V"]["functionals_153"]["M"]), sci(st["ratio"]["V"]["cells_16"]["M"], 3)
+    dp = [st["K4_D_P"]["functionals_153"], st["K4_D_P"]["cells_16"]]
+    assert {round(math.log10(x)) for x in dp} == {-10}, dp
+    v["rs1-k4-order"] = "10^{-10}"
+    # section 3.3: the coarse cells outside the support rule (both the expected reconstructed signal and the truth weight
+    # at the data exposure at least 1000) carry this share of the expected reconstructed signal
+    h3 = d["s5cscan"]["levels"]["H3"]
+    rs, tw = h3["per_cell"]["expected_reco_signal"], h3["per_cell"]["truth"]
+    assert h3["n_cells"] == 243 == len(rs) == len(tw)
+    sup = [a >= 1000.0 and b >= 1000.0 for a, b in zip(rs, tw)]
+    assert sum(sup) == 109 and sum(1 for k, a in zip(sup, rs) if not k and a > 0) == 25, "M4-DEFINITIONS.md:218's 109 and 25"
+    v["jt-unsup-share"] = f"{100 * sum(a for k, a in zip(sup, rs) if not k) / sum(rs):.2f}"
+    want = {"vl155-rnd-j-median": "0.23", "vl155-boot-j-median": "0.37", "vl155-rnd-j-share": "37",
+            "s5e-round-max-lowcap": "2.5", "re2-cond": r"1.5\times10^{12}", "re2-modes-4": "73", "re2-chi2-4": "136",
+            "re2-modes-6": "139", "re2-chi2-6": "285", "re2-chi2-norm": "0.04", "re2-chi2-shape": "465",
+            "rs1-ratio-v153": r"6.2\times10^{-7}", "rs1-ratio-v16": r"1.07\times10^{-6}", "rs1-k4-order": "10^{-10}",
+            "jt-unsup-share": "0.47"}
+    assert v == want, {k: v[k] for k in v if v[k] != want.get(k)}
+    return v
+
+
+# the Supplement's numbers whose only committed source is prose (the director's D6 ruling B, 2026-11-13): each is read
+# from an exact text anchor that must occur once in its committed file. These files are working documents, so they are
+# not sha-pinned; the anchor is the check.
+SUPP_PROSE = {
+    "ledger": "VALIDATION_LEDGER.md",
+    "status2d": "2d-unfolding/2D_OMNIFOLD_STUDY_STATUS.md",
+}
+# d-id's tables.npz, read without numpy (stdlib zip and .npy headers); pinned as its committed bytes
+SUPP_NPZ = {"didtab": ("docs/orchestration/state/next-preparation-20261009/d-id/outputs/tables.npz", "2aab2270")}
+
+
+def _prose_anchor(key, pattern):
+    """The groups of `pattern`, which must match exactly once in SUPP_PROSE[key]'s committed text."""
+    t = (ROOT / SUPP_PROSE[key]).read_text()
+    m = list(re.finditer(pattern, t))
+    assert len(m) == 1, (SUPP_PROSE[key], pattern, len(m))
+    return m[0].groups()
+
+
+def _npz(key, members):
+    """Members of a pinned .npz as {name: list}; each must be a 1-D little-endian <f8, <i8 or <U array."""
+    import struct
+    import zipfile
+    from io import BytesIO
+    rel, pin = SUPP_NPZ[key]
+    raw = (ROOT / rel).read_bytes()
+    sha = hashlib.sha256(raw).hexdigest()
+    if not sha.startswith(pin):
+        sys.exit(f"make_values_fived16: {rel} has sha256 {sha[:12]}, pinned {pin}: refusing")
+    out = {}
+    with zipfile.ZipFile(BytesIO(raw)) as z:
+        for name in members:
+            b = z.read(name + ".npy")
+            assert b[:6] == b"\x93NUMPY" and b[6] == 1, name
+            hl = struct.unpack("<H", b[8:10])[0]
+            h = ast.literal_eval(b[10:10 + hl].decode("latin1"))
+            assert h["fortran_order"] is False and len(h["shape"]) == 1, (name, h)
+            body, (n,) = b[10 + hl:], h["shape"]
+            if h["descr"] in ("<f8", "<i8"):
+                out[name] = list(struct.unpack(f"<{n}{'d' if h['descr'] == '<f8' else 'q'}", body))
+            else:
+                assert h["descr"].startswith("<U"), (name, h)
+                w = int(h["descr"][2:])
+                out[name] = [body[4 * w * i:4 * w * (i + 1)].decode("utf-32-le").rstrip("\x00") for i in range(n)]
+    return out
+
+
+def supp_literal_values(d):
+    """Numbers the Supplement printed as typed literals (the director's D6 item, 2026-11-13), now keyed with their
+    sources asserted. journal-editor's block; director-helper-3's literal_values() holds the paper's. The design
+    constants that stay typed are listed in methods-short-20261109/literals-20261112/supplement-constants.txt."""
+    from decimal import ROUND_HALF_UP, Decimal
+    # a dict literal keeps the last of two equal keys without a word: READOUTS' keys must be distinct
+    (rd,) = [n.value for n in ast.parse(Path(__file__).read_text()).body
+             if isinstance(n, ast.Assign) and [getattr(x, "id", None) for x in n.targets] == ["READOUTS"]]
+    rk = [k.value for k in rd.keys]
+    assert len(rk) == len(set(rk)), sorted({k for k in rk if rk.count(k) > 1})
+    v = {}
+
+    def r1(x):           # a two-sided 68 % (or 99.9 %) range [lo, hi] printed as one symmetric integer
+        assert round(-x[0]) == round(x[1]), x
+        return str(round(x[1]))
+
+    # S1: the re-downloaded 1A copy's selected yield per POT (the triage of q2-opendata-20261014), in units of 1e-5
+    a = d["q2agg"]
+    v["q2-selpot-data"], v["q2-selpot-mc"] = (f"{a[s]['sel_per_pot_rel_change'] / 1e-5:.1f}" for s in ("data", "mc"))
+    # S2: truth W from (pT, p||, q3) about the fixed beam axis (m4-w's probes; the two clauses are both weighted, the
+    # director's ruling A3), and the generators' own neutrino axis
+    t = d["m4womni"]["truth"]
+    v["m4w-resid68"] = r1(t["resid_Mbar_MeV"]["r68"])
+    lo, hi = t["resid_Mbar_MeV"]["r99.9"]
+    v["m4w-resid999-lo"], v["m4w-resid999-hi"] = f"{lo:+.0f}", f"{hi:+.0f}"
+    v["m4w-wbin-pct"] = f"{100 * t['bin_change']['J_frac_weighted_Mbar']:.2f}"
+    v["m4w-noreal-pct"] = f"{100 * t['q3sq_minus_pt2_negative_wfrac']:.3f}"
+    v["m4w-negw2"] = f"{t['w_frac_W_nonfinite_in_ps'] / 1e-5:.1f}"
+    rs = d["m4womni"]["reco_sim"]                    # S2: the reconstructed W^2 clamp at W = 0, simulated events
+    v["m4w-w2clamp-pct"] = f"{100 * rs['n_W2_clamp'] / rs['n_pass_finite']:.1f}"
+    v["m4w-axis68"] = r1(d["m4wmad"]["axis_choice_effect"]["pT_beam_minus_pT_nu_MeV"]["r68"])
+    a = d["mp5"]["a"]
+    rc, z = a["R_c"]["R"], a["GENIE_CV_native"]["z_on_domain"]["a_sd_null_result"]
+    v["mp5-rc-min"], v["mp5-rc-max"], v["mp5-rc-median"] = f"{rc['min']:.4f}", f"{rc['max']:.4f}", f"{rc['median']:.6f}"
+    v["mp5-z-min"], v["mp5-z-max"] = f"{z['min']:+.2f}", f"{z['max']:+.2f}"
+    # S4: the negative-weight treatment's highest-W column, the same six cells on both sides (the corner EW41 apart,
+    # the director's ruling A4): purity (s5c d1, split_F2) against refined (s5n stage 1, C3_nominal)
+    six = [f"EW{c}" for c in (5, 11, 17, 23, 29, 35)]
+    pur = {w["name"]: abs(w["mean_rel_pct"]) for w in d["s5cd1"]["groups"]["split_F2"]["worst"]}
+    hw = d["s5ndev"]["grid"]["C3_nominal"]["high_W"]
+    assert set(six) <= set(pur) and set(six) | {"EW41"} == set(hw), (sorted(pur), sorted(hw))
+    v["s5c-highw-pur-lo"], v["s5c-highw-pur-hi"] = f"{min(pur[c] for c in six):.1f}", f"{max(pur[c] for c in six):.1f}"
+    ref = [hw[c]["mean_rel_pct"] for c in six]
+    v["s5n-highw-ref-lo"], v["s5n-highw-ref-hi"] = f"{min(ref):.2f}", f"{max(ref):.2f}"
+    v["s5n-corner-pur"], v["s5n-corner-ref"] = f"{pur['EW41']:.2f}", f"{hw['EW41']['mean_rel_pct']:.2f}"
+    # S4: the refinement's signed total and clipping, each with its sample (the director's ruling A5): the data
+    # (control C7) to 3e-6; the simulation (C3_nominal's 60 products) to about 2e-5, clipping 0.01-0.05 %
+    dv = d["s5ndev"]
+    x = dv["controls"]["C7"]["refinement_data"]["refined_over_signed"] - 1
+    assert 1e-6 <= x < 1e-5
+    v["s5n-total-data"] = f"{x / 1e-6:.0f}"
+    rf = dv["grid"]["C3_nominal"]["refinement"]
+    x = max(abs(rf["refined_over_signed"][k] - 1) for k in ("min", "max"))
+    assert 1e-5 <= x < 1e-4
+    v["s5n-total-sim"] = f"{x / 1e-5:.0f}"
+    v["s5n-clip-lo"], v["s5n-clip-hi"] = (f"{100 * rf['clipped_fraction'][k]:.2f}" for k in ("min", "max"))
+    # S4.3: the prior against the data, and the exact-split iteration check (prose only: VALIDATION_LEDGER.md:1604-1605,
+    # 2D_OMNIFOLD_STUDY_STATUS.md:211)
+    (r,) = _prose_anchor("ledger", r"data/MC\(sig\+bkg\) = \*\*([0-9.]+)\*\*")
+    v["ledger-datamc-pct"] = f"{100 * (float(r) - 1):.0f}"
+    v["ledger-datamc-lo"], v["ledger-datamc-hi"] = _prose_anchor("ledger", r"pT from ([0-9.]+) to ~([0-9.]+)\)")
+    # and the per-bin shape difference on the same record line (the note's sec_validation.tex:204 prints both; the
+    # independent referee read of d30df1ce9, item A2, 2026-11-16)
+    v["status-iter-pct"], v["status-iter-shape-rms"] = _prose_anchor(
+        "status2d", r"5-iter total σ within ([0-9.]+) % of 10-iter \(per-bin shape\s+RMS ([0-9.]+) %\)")
+    # S4.4: the recovery check's nominal closure, printed as a bound ("at most 0.1 % in every supported cell")
+    assert d["recov"]["nominal_closure_max_abs_supported"] <= 0.001
+    v["rec-r0-bound"] = "0.1"
+    # S4.5: the five-observable estimator's iterations (s5p stage 2, study K, H2 measure)
+    k = d["s5p2"]["study_K"]
+    v["s5p-k5"] = f"{k['b0']['M']['H2']['5']['M']:.3f}"
+    v["s5p-k10plus"] = f"{min(k['b0']['M']['H2'][n]['M'] for n in ('10', '15', '20')):.3f}"
+    v["s5p-cap-gain"] = f"{100 * (1 - k['cap10']['M']['H2']['5']['M'] / k['b0']['M']['H2']['5']['M']):.0f}"
+    # S4.5: the histogram estimator's chi2/ndf, and LightGBM's at five and ten iterations, which is seed 1 (2.645 to
+    # 2.657), not \chiPaperPurity's seed 42 (prose only: 2D_OMNIFOLD_STUDY_STATUS.md:233-234)
+    (v["status-hgbt-chi2"],) = _prose_anchor("status2d", r"vs HistGBT ([0-9.]+)±")
+    it5, it10 = _prose_anchor("status2d", r"\(lgbm 5→10 iter: ([0-9.]+)→([0-9.]+)\)")
+    v["status-lgbm-it5"], v["status-lgbm-it10"] = (str(Decimal(s).quantize(Decimal("0.01"), ROUND_HALF_UP)) for s in (it5, it10))
+    # S4.5: the background treatment's closure (RE-1 run 2) and the exact-split learner difference (RE-2 part C)
+    c2 = d["re1c2"]
+    v["re1-pur-max"] = f"{c2['purity']['mean_residual_in_stat_sigma']['max_abs']:.1f}"
+    v["re1-ref-max"] = f"{c2['refined']['mean_residual_in_stat_sigma']['max_abs']:.2f}"
+    p = d["partc"]["learner_vs_E_C_pct"]
+    v["partc-learner-med"], v["partc-learner-max"] = f"{p['median_abs']:.2f}", f"{p['max_abs']:.1f}"
+    # S5.1: the three periods' effective degrees of freedom (the 5B audit, item 2)
+    v["ct5b-nu"] = f"{d['ct5b']['item2_stability']['three_periods']['nu_eff']:.2f}"
+    # S5.2: RE-2's period comparison and its run-period block (periods/analysis.json; budget_Q; combination; the
+    # 1A-1F reference block in RE-2's playlist_term.json, READOUTS["plterm"])
+    b = d["re2per"]["comparisons"]["bias_PB"]
+    assert max(b["pz_marg_z_max"], b["pt_marg_z_max"]) < 0.7           # printed as a bound ("every marginal z is below 0.7")
+    v["re2per-zmarg-bound"] = "0.7"
+    v["re2per-chi2-pz"], v["re2per-noise-pz"] = f"{b['chi2_pz_marginal']:.1f}", f"{b['noise']['expected_chi2']['pz']:.1f}"
+    # D1: from C_new's budget (#1167 run 2); RE-2's budgetq stays pinned for Q's block sizes and data_g2r's [0] check
+    c = d["g2rbudget"]["C_PL"]
+    v["bq-pl-med"], v["bq-pl-p84"], v["bq-pl-max"] = (f"{c[k]:.2f}" for k in ("median_pct", "p84_pct", "max_pct"))
+    v["bq-pl-pz-lo"], v["bq-pl-pz-hi"] = f"{min(c['pz_sigma_pct']):.2f}", f"{max(c['pz_sigma_pct']):.2f}"
+    v["bq-pl-int"] = f"{c['integral_sigma_pct']:.2f}"
+    v["bq-stat-med"] = f"{d['g2rbudget']['stat']['median_pct']:.3f}"
+    for k in ("budgetq", "g2rbudget"):
+        assert d[k]["provenance"]["inputs"]["playlist_npz"]["sha256"].startswith("dbb067aa")
+    cb = d["re2comb"]["report"]
+    v["re2comb-sigma-inc"] = f"{cb['effect_of_C_PL_on_S5']['cell_sigma_increase_pct']['median']:.1f}"
+    raw = cb["reference_scenario_algebraic"]["bias_PB_raw_frozen"]
+    v["re2comb-chi2-s5"], v["re2comb-chi2-s5pl"] = f"{raw['pz_vs_S5']:.1f}", f"{raw['pz_vs_S5_plus_C_PL']:.2f}"
+    s = d["plterm"]["report"]["S_ref"]
+    v["plref-med"], v["plref-int"] = f"{s['cell_rel_sigma_pct']['median']:.2f}", f"{s['integral_rel_sigma_pct']:.2f}"
+    # S5.3: the 2D benchmark's eigenmodes against the published covariance (the per-period benchmark's control 6 for
+    # the largest, 4.7467, the director's ruling A1; RE-2's tension report for the next nine and the ten smallest)
+    m0 = d["ppbench"]["controls"][5]["modes"][0]["abs_z"]
+    rows = [(int(g[0]), abs(float(g[1])))
+            for g in re.findall(r"^\s+(\d+)\s+[0-9.e+-]+\s+\d+/205\s+([+-][0-9.]+)\s+[0-9.]+\s+[0-9.]+\s*$", d["tension"], re.M)]
+    assert [n for n, _ in rows[:10]] == list(range(10)) and abs(rows[0][1] - m0) < 0.005
+    v["pp-mode-max"] = f"{m0:.1f}"
+    v["tension-next9-lo"], v["tension-next9-hi"] = f"{min(z for _, z in rows[1:10]):.1f}", f"{max(z for _, z in rows[1:10]):.1f}"
+    (sh,) = re.findall(r"chi2 share from the 10 smallest-lambda modes:\s+([0-9.]+)", d["tension"])
+    v["tension-small10-pct"] = f"{100 * float(sh):.1f}"
+    # S5.3: the published flux median, computed from the release's flux covariance and result (205 reported cells)
+    gid = {(int(a), int(b)): int(g) for g, a, b, *_ in (ln.split(",") for ln in d["pubbins"].splitlines()[1:] if ln)}
+    cv = {gid[(int(a), int(b))]: float(x) for a, b, x, *_ in (ln.split(",") for ln in d["pubresult"].splitlines()[1:] if ln)}
+    dg = {int(i): float(x) for i, j, x in (ln.split(",") for ln in d["pubflux"].splitlines()[1:] if ln) if i == j}
+    rel = sorted(100 * math.sqrt(dg[g]) / x for g, x in cv.items() if x != 0)
+    assert len(rel) == 205
+    med = rel[102]
+    assert f"{med:.3f}" == "4.014", med             # VERIFICATION.md:130's 4.014 %
+    v["pub-flux-med"] = f"{med:.2f}"
+    # S5.3: the per-period benchmark's published high-to-low ratio uncertainties (R4, by group)
+    sp = [x["R4"][g]["sigma_pub"] for x in d["ppbench"]["readings"]["by_model"].values() for g in ("PA", "PB", "PC")]
+    v["pp-sigpub-lo"], v["pp-sigpub-hi"] = f"{100 * min(sp):.1f}", f"{100 * max(sp):.1f}"
+    # S7: the alternative thresholds beside R1 (REF-G1's printed-beside list): chi2_16's 0.997 quantile for T, and the
+    # Hartlap-corrected T against its own 0.997 Hotelling limit (the director's ruling A2: the record's pairing)
+    pb = d["refg1"]["printed_beside_R1"]
+    v["refg1-chi2-q997"] = f"{pb['chi2_bars'][1]:.2f}"
+    v["refg1-hartlap-T"], v["refg1-hartlap-q997"] = f"{pb['hartlap']['T']:.1f}", f"{pb['hartlap']['F_bars'][1]:.2f}"
+    assert d["refg1"]["R1"]["T"] > pb["chi2_bars"][1] and pb["hartlap"]["T"] > pb["hartlap"]["F_bars"][1]
+    # S7: the noise-free comparison with exact binned unfolding on the 109 joint cells (d-id): medians of |r| at K = 5
+    # (exact T2 IBU, nominal weighting; the boosted trees) and of exact IBU at K = 200, per truth change
+    sm = d["didres"]["summaries"]
+    for dep in ("gibuu", "w1", "w3", "q3"):
+        j = sm[dep]["J"]
+        v[f"did-ibu5-{dep}"] = f"{100 * j['r_ibu_T2_nom_K5']['median']:.1f}"
+        v[f"did-gbdt5-{dep}"] = f"{100 * j['r_gbdt_K5']['median']:.1f}"
+        v[f"did-ibu200-{dep}"] = f"{100 * j['r_ibu_T2_nom_K200']['median']:.1f}"
+    # S7: the eligible residuals' labels (d-id's frozen classification, gbdt/comparator.py: eligible above 2 %;
+    # identified at or below 0.025; weakly identified above 0.10), and the weakly identified ones' T1 Cramer-Rao widths
+    mp, lab = d["didres"]["decision"]["maps"]["J"], d["didres"]["decision"]["labels"]
+    el = [(dep, x) for dep in lab for x in lab[dep]["J"] if x["eligible"]]
+    weak = [(dep, x) for dep, x in el if x["T2_nom"]["identifiability"] == "weakly-identified"]
+    ad = [x for _, x in el if x["T2_nom"]["iteration"] == "approximation-dominated"]
+    ad_id = [x for x in ad if x["T2_nom"]["identifiability"] == "identified-at-target"]
+    assert len(el) == mp["n_eligible"] and round(mp["shares"]["C"] * len(el)) == len(weak)
+    assert round(mp["shares"]["A"] * len(el)) == len(ad_id)
+    v["did-n-eligible"], v["did-n-weak"], v["did-n-approx"], v["did-n-approx-id"] = map(str, (len(el), len(weak), len(ad), len(ad_id)))
+    tb = _npz("didtab", ["names", "f183"] + sorted({f"T1/{dep}/widths_nom/sigma_rel" for dep, _ in weak}))
+    names = [tb["names"][i] for i in tb["f183"]]
+    w = sorted(tb[f"T1/{dep}/widths_nom/sigma_rel"][names.index(x["functional"])] for dep, x in weak)
+    assert all(math.isfinite(y) for y in w) and min(w) > 0.10 and len(w) % 2 == 1
+    v["did-weak-width-med"] = f"{100 * w[len(w) // 2]:.0f}"
+    # S8.4 (RS1 is S4.4): the rounding mechanism's median spread ratios to A0 (refinement-only, OmniFold-loop-only,
+    # finer binning), and the spread's growth to the fifth iteration (OUTCOME-20261108-rs1-rounding-mechanism.md)
+    st, ro = d["rs1read"]["statistics"]["ratio"], d["rs1read"]["readouts"]
+    for arm, tag in (("S_ref", "sref"), ("S_omni", "somni"), ("B1023", "b1023")):
+        v[f"rs1-ratio-{tag}-153"] = f"{st[arm]['functionals_153']['M']:.3f}"
+        v[f"rs1-ratio-{tag}-16"] = f"{st[arm]['cells_16']['M']:.3f}"
+    it = ro["per_iteration_spread_over_iteration_1"]
+    assert len(it) == 5 and it[0] == 1.0
+    v["rs1-iter5"] = f"{it[4]:.2f}"
+    # S8.4: the two-dimensional coverage test's flagged cells (COV2D score records, grade.s_c and grade.attribution)
+    pw = []
+    for tu, cells in (("ar23", (29, 56)), ("g18", (29,))):
+        g = d["cov2d" + tu]["grade"]
+        assert [i for i, f in enumerate(g["cell_flag"]) if f] == list(cells), (tu, g["flagged_cells"])
+        for cc in cells:
+            at = g["attribution"][f"R{cc}"]
+            assert at["driven_by"] == "bias"
+            v[f"cov2d-sc-{tu}-{cc}"] = f"{g['s_c'][cc]:.3f}"
+            v[f"cov2d-pm-{tu}-{cc}"] = f"{at['pull_mean']:+.3f}"
+            pw.append(at["pull_sd"])
+    v["cov2d-psd-lo"], v["cov2d-psd-hi"] = f"{min(pw):.3f}", f"{max(pw):.3f}"
+    # S8.5: the GiBUU hybrid truth on the eight p|| < 4.5 GeV/c cells (F0b's descriptive subset)
+    (tr,) = [x for x in d["f0b"]["truths"] if x["name"] == "A7_gibuu"]
+    e8 = tr["p_parallel_lt_4p5"]
+    assert e8["ndf"] == 8 and e8["cells"] == ["R00", "R01", "R02", "R03", "R08", "R09", "R10", "R11"]
+    v["f0b-gibuu-pz8-chisq"] = f"{e8['chi2']:.1f}"
+    # matrix-dependent (an f0b- key, so it also prints as -nopl): the Supplement prints the reported covariance's, to one
+    # decimal ("-chisq", not "-chi2", so PAPER_PREC's two-decimal fake-data form does not apply)
+    arm = {"C_total minus gibuu + C_resp + C_PL5D": "132.4", "C_total minus gibuu + C_resp": "133.9"}
+    assert v["f0b-gibuu-pz8-chisq"] == arm[tr["grade_matrix"]], (tr["grade_matrix"], v["f0b-gibuu-pz8-chisq"])
+    # S8.6: the source swap's factors (1B's I2: F_src = sqrt(E/B), F_prior = sqrt(B/A)), and the like-for-like
+    # control (stage 0, mode D) inside gate D's window in all 16 cells
+    fs, fp = d["i2inv"]["factors"]["F_src"], sorted(d["i2inv"]["factors"]["F_prior"])
+    assert len(fs) == len(fp) == 16
+    v["i2-fsrc-lo"], v["i2-fsrc-hi"] = f"{min(fs):.3f}", f"{max(fs):.3f}"
+    v["i2-fprior-med"] = f"{(fp[7] + fp[8]) / 2:.2f}"
+    v["i2-fprior-lo"], v["i2-fprior-hi"] = f"{fp[0]:.2f}", f"{fp[-1]:.2f}"
+    s0 = d["fd1bstage0"]
+    assert s0["window"] == d["gated"]["window"] and s0["rule_K"]["cells_in_window"] == 16 and s0["rule_K"]["verdict"] == "PASS"
+    # S9: GENIE's carbon-only over CH per nucleon below W = 1.1 GeV
+    v["r5-conly-w0-pct"] = f"{100 * (d['r5genie']['regions']['W0']['Conly_over_CH_per_nucleon'] - 1):.1f}"
+    # S10: the usage-recommendation rule's failing cells: their z at the GiBUU hybrid truth (valid-region readout)
+    zz = d["vregion"]["readings"]["V-ATLAS"]["cells"]
+    v["vatlas-z-R02"], v["vatlas-z-R06"] = f"{zz['R02']['z']['A7_gibuu']:+.2f}", f"{zz['R06']['z']['A7_gibuu']:+.2f}"
+    # S8.6 and table S11 test 9: the first five-observable test's levels, from its staged declaration's rule table
+    # (FD-1B-STAGED-DECLARATION.md, sec. 5.2: per cell < alpha/16, joint < alpha); the S8 index restructure, Joseph via the director
+    tx = d["fd1bdecl"]
+    pc = re.findall(r"P\(Bin\(300, p_c\(T\)\) ≤ k\) < ([0-9.]+)/16\.", tx)
+    pj = re.findall(r"P\(Bin\(300, q\(T\)\) ≤ k\) < ([0-9.]+) \|", tx)
+    assert len(pc) == 1 and pc == pj, (pc, pj)
+    v["fd1b-alpha"] = pc[0]
+    want = {"fd1b-alpha": "0.025", "q2-selpot-data": "-0.9", "q2-selpot-mc": "-1.8",
+            "m4w-resid68": "2", "m4w-resid999-lo": "-49", "m4w-resid999-hi": "+67", "m4w-wbin-pct": "0.25",
+            "m4w-noreal-pct": "0.086", "m4w-negw2": "4.9", "m4w-axis68": "4", "m4w-w2clamp-pct": "1.5", "rec-r0-bound": "0.1",
+            "mp5-rc-min": "0.9965", "mp5-rc-max": "1.0035", "mp5-rc-median": "1.000008", "mp5-z-min": "-0.47", "mp5-z-max": "+0.53",
+            "s5c-highw-pur-lo": "3.5", "s5c-highw-pur-hi": "4.1", "s5n-highw-ref-lo": "0.11", "s5n-highw-ref-hi": "0.23",
+            "s5n-corner-pur": "1.66", "s5n-corner-ref": "0.24", "s5n-total-data": "3", "s5n-total-sim": "2",
+            "s5n-clip-lo": "0.01", "s5n-clip-hi": "0.05",
+            "ledger-datamc-pct": "12", "ledger-datamc-lo": "0.88", "ledger-datamc-hi": "1.2", "status-iter-pct": "0.026",
+            "status-iter-shape-rms": "1.54",
+            "s5p-k5": "0.314", "s5p-k10plus": "0.384", "s5p-cap-gain": "8",
+            "status-hgbt-chi2": "2.70", "status-lgbm-it5": "2.65", "status-lgbm-it10": "2.66",
+            "re1-pur-max": "5.9", "re1-ref-max": "0.44", "partc-learner-med": "1.03", "partc-learner-max": "17.6",
+            "ct5b-nu": "1.82", "re2per-zmarg-bound": "0.7", "re2per-chi2-pz": "34.4", "re2per-noise-pz": "2.0",
+            "bq-pl-med": "2.09", "bq-pl-p84": "3.34", "bq-pl-max": "6.48", "bq-pl-pz-lo": "1.17", "bq-pl-pz-hi": "3.36",
+            # D1: re2comb's chi2s on C_new (#1167 run 2's combination.json); before, 34.8 and 2.59 (RE-2 partc-r2)
+            "bq-pl-int": "1.97", "bq-stat-med": "0.676", "re2comb-sigma-inc": "5.8", "re2comb-chi2-s5": "33.8",
+            "re2comb-chi2-s5pl": "2.60", "plref-med": "1.38", "plref-int": "1.09",
+            "pp-mode-max": "4.7", "tension-next9-lo": "3.4", "tension-next9-hi": "3.8", "tension-small10-pct": "9.6",
+            "pub-flux-med": "4.01", "pp-sigpub-lo": "4.1", "pp-sigpub-hi": "4.6",
+            "refg1-chi2-q997": "35.89", "refg1-hartlap-T": "185.2", "refg1-hartlap-q997": "46.09",
+            "did-ibu5-gibuu": "8.3", "did-ibu5-w1": "5.4", "did-ibu5-w3": "4.9", "did-ibu5-q3": "5.3",
+            "did-gbdt5-gibuu": "9.5", "did-gbdt5-w1": "5.4", "did-gbdt5-w3": "5.6", "did-gbdt5-q3": "4.3",
+            "did-ibu200-gibuu": "3.3", "did-ibu200-w1": "3.3", "did-ibu200-w3": "4.4", "did-ibu200-q3": "6.6",
+            "did-n-eligible": "144", "did-n-weak": "121", "did-n-approx": "15", "did-n-approx-id": "2",
+            "did-weak-width-med": "31",
+            "rs1-ratio-sref-153": "0.959", "rs1-ratio-sref-16": "0.890", "rs1-ratio-somni-153": "0.947",
+            "rs1-ratio-somni-16": "0.857", "rs1-ratio-b1023-153": "0.950", "rs1-ratio-b1023-16": "0.945", "rs1-iter5": "1.35",
+            # D1: the regrade at C_T' (score_g2r_<T>.json); the first grade's were 1.165, 1.316, 1.347, -0.851,
+            # +1.039, -0.964, 0.636 and 0.709
+            "cov2d-sc-ar23-29": "1.160", "cov2d-sc-ar23-56": "1.311", "cov2d-sc-g18-29": "1.340",
+            "cov2d-pm-ar23-29": "-0.848", "cov2d-pm-ar23-56": "+1.037", "cov2d-pm-g18-29": "-0.959",
+            "cov2d-psd-lo": "0.634", "cov2d-psd-hi": "0.707", "f0b-gibuu-pz8-chisq": v["f0b-gibuu-pz8-chisq"],
+            "i2-fsrc-lo": "0.986", "i2-fsrc-hi": "1.015", "i2-fprior-med": "2.72", "i2-fprior-lo": "0.49", "i2-fprior-hi": "6.51",
+            "r5-conly-w0-pct": "8.3", "vatlas-z-R02": "+4.19", "vatlas-z-R06": "+4.53"}
+    assert v == want, {k: v.get(k) for k in set(v) | set(want) if v.get(k) != want.get(k)}
+    return v
+
+
+def e96d_values(d):
+    """E96D's data result (descriptive; E96D-DECLARATION.md Licence: how the ensemble average and the float64 change move
+    the data result; no adoption, no uncertainty or bias, no ranking). §6.1 prints the two maxima."""
+    r = d["e96d"]
+    assert r["schema"] == "e96-data/1/analysis" and r["label"].startswith("descriptive")
+    assert all(c["pass"] for c in r["controls"].values()), "an E96D control failed"
+    t = r["sixteen"]
+    assert "relative_sigma.C_e alone" in t["label"], "the record's sigma is not C_e's relative sigma"
+    rel, z = [abs(x) for x in t["E96_over_e_minus_1"]], [abs(x) for x in t["E96_minus_e_over_sigma_Ce"]]
+    cells = [c["cell"] for c in r["cells"]]
+    assert len(rel) == len(z) == len(cells) == 16
+    assert cells[rel.index(max(rel))] == "R05" and cells[z.index(max(z))] == "R06"
+    assert abs(r["quotable"]["E96_max_abs_over_sigma_Ce"]["value"] - max(z)) < 1e-15
+    # the float64 copy: every cell's ratio to (e) is exactly 1 in double precision (not a bitwise comparison of the
+    # products; hence the text's "the same result to double precision")
+    assert all(x == 0.0 for x in t["F64_over_e_minus_1"]) and r["quotable"]["F64_max_abs_over_sigma_Ce"]["value"] == 0.0
+    v = {"e96d-maxpct": f"{100 * max(rel):.2f}", "e96d-maxsig": f"{max(z):.2f}"}
+    assert v == {"e96d-maxpct": "0.24", "e96d-maxsig": "0.05"}, v
+    return v
+
+
+def rsn_values(d, share_nominal):
+    """The RSN readings (RSN-DECLARATION.md rev 3, §2 and §9) as the approved text prints them: §3.1, §3.2, §5.2, Table 3's
+    caption, §7.1 item 3 and Supplement S4 and S5. The classes the text states in words are asserted here."""
+    a, rg = d["rsn"]["arms"], d["rsnregrade"]["arms"]
+    g6, sm, wr, tr = a["G6"], a["SM"], a["WR"], a["TR"]["P8"]
+    v = {}
+    # G6, GiBUU's ratio on the common phase space p_par < 6 GeV/c; SM, the radius-R prior-weighted moving average
+    for arm, x in (("g6", g6), ("sm", sm)):
+        assert f"{x['P4']['gibuu_trace_share_nominal']:.3f}" == share_nominal, "the nominal share is cmodel-trace-gibuu"
+        assert x["P3"]["both_criteria_met_at_the_four_held_out_records"], "the held-out tunes still satisfy both bias criteria"
+        q, s = x["P4"]["q"], x["P5"]
+        v[f"rsn-{arm}-share"] = f"{x['P4']['gibuu_trace_share']:.3f}"
+        v[f"rsn-{arm}-sig-med"], v[f"rsn-{arm}-sig-lo"], v[f"rsn-{arm}-sig-hi"] = (f"{s[k]:.3f}" for k in ("median", "min", "max"))
+        assert abs(sorted(s["reported_sigma_ratio"])[8] + sorted(s["reported_sigma_ratio"])[7] - 2 * s["median"]) < 1e-12
+    v["rsn-g6-trace"] = f"{g6['P4']['trace_ratio']:.2f}"
+    v["rsn-g6-qmed"], v["rsn-g6-qlo"], v["rsn-g6-qhi"] = (f"{x:.2f}" for x in (g6["P4"]["q_median"], min(g6["P4"]["q"]), max(g6["P4"]["q"])))
+    v["rsn-sm-trace"] = f"{sm['P4']['trace_ratio']:.3f}"
+    v["rsn-sm-qmed"] = f"{sm['P4']['q_median']:.2f}"
+    v["rsn-sm-qlo"], v["rsn-sm-qhi"] = f"{min(sm['P4']['q']):.2g}", f"{max(sm['P4']['q']):.3g}"
+    assert sm["radius"] == 2
+    v["rsn-sm-radius"] = "two"
+    # the flag lists: G6 unchanged; SM adds the NuWro hybrid truth, by p alone
+    assert g6["P1"]["class"] == "unchanged" and g6["P1"]["listed"] == g6["P1"]["listed_nominal"]
+    assert sm["P1"]["class"] == "more flagged" and set(sm["P1"]["listed"]) - set(sm["P1"]["listed_nominal"]) == {"A7_nuwro"}
+    nw = next(x for x in rg["SM"]["records"] if x["name"] == "A7_nuwro")["grade"]
+    assert nw["p_lt_0.01"] and not nw["cells_abs_z_gt_2"], "flagged by p alone, no cell beyond 2 sigma"
+    v["rsn-sm-nuwro-p"] = f"{nw['p']:.2g}"
+    # WR: the data shift (P6, class W1) and the four noise-free closures (P7)
+    p6, p7 = wr["P6"], wr["P7"]
+    fl, sg = [abs(x) for x in p6["delta_over_floor"]], [abs(x) for x in p6["delta_over_sigma"]]
+    assert p6["class"] == "W1" and max(sg) < 0.5 and any(x > 2 for x in fl), "at least one cell above 2 floors, every cell below half sigma"
+    v["rsn-wr-floor-max"], v["rsn-wr-sig-max"] = f"{max(fl):.1f}", f"{max(sg):.2f}"
+    assert not p7["floor"]["breaks_the_prior_closure"] and p7["nuwro"]["rms_class"] == "comparable"
+    for t in ("gibuu", "q3"):
+        c = p7[t]
+        assert c["class"] == "immaterial" and c["flag_weighted"] == c["flag_equal_weights"]
+        assert abs(c["chi2_weighted"] - c["chi2_equal_weights"]) <= 0.25 * c["chi2_equal_weights"], "within a quarter"
+    assert "does not attribute F0b's flags" in wr["scope"]
+    # TR: the matched-event transfer probe's classes (T1 within half sigma, T0 within twice the floor)
+    assert (tr["data"]["class"], tr["gibuu"]["class"], tr["q3"]["class"]) == ("T1", "T1", "T0")
+    approved = {"rsn-g6-trace": "1.41", "rsn-g6-share": "0.923", "rsn-g6-qmed": "1.12", "rsn-g6-qlo": "0.54",
+                "rsn-g6-qhi": "1.77", "rsn-g6-sig-med": "1.002", "rsn-g6-sig-lo": "0.864", "rsn-g6-sig-hi": "1.338",
+                "rsn-sm-radius": "two", "rsn-sm-trace": "0.112", "rsn-sm-share": "0.664", "rsn-sm-qmed": "0.50",
+                "rsn-sm-qlo": "0.098", "rsn-sm-qhi": "2.23", "rsn-sm-sig-med": "0.934", "rsn-sm-sig-lo": "0.595",
+                "rsn-sm-sig-hi": "1.028", "rsn-sm-nuwro-p": "0.0049", "rsn-wr-floor-max": "2.9", "rsn-wr-sig-max": "0.09"}
+    assert v == approved, f"the RSN values differ from the approved draft: {sorted(k for k in v if v[k] != approved.get(k))}"
+    return v
+
+
+def g_rows_values(d):
+    """The fresh referee round on 283f3044 (#977 RESPONSE.md section G). G1: the Clopper-Pearson 95 % intervals on the
+    two-dimensional coverage test's joint fraction and flagged cells (two-sided, one fraction each; not the test's flag
+    rule). G3: the rounding jitter's share of each cell's bootstrap variance and the reported sigma's change without it
+    (diagonal only, under R0b's additivity). G5: the RE-2 period step. Descriptive."""
+    c, r, p = d["cpint"], d["rdecomp"], d["re2per"]
+    assert c["schema"] == "lrows-g1-cp/1" and c["level"] == 0.95 and r["schema"] == "lrows-g3-rounding/1"
+    T = c["tunes"]
+    v = {}
+    hi = {t: T[t]["joint"]["cp95"][1] for t in ("AR23", "G18")}
+    assert all(T[t]["joint"]["count"] == 0 and T[t]["joint"]["of"] == 300 and T[t]["joint"]["cp95"][0] == 0 for t in T)
+    assert f"{hi['AR23']:.3f}" == f"{hi['G18']:.3f}"
+    v["cp-joint-hi"] = f"{hi['AR23']:.3f}"
+    for t, tag in (("AR23", "ar23"), ("G18", "g18")):
+        v[f"cp-qnull-{tag}"] = f"{T[t]['joint']['q_null']:.3f}"
+        v[f"cp-nabove-{tag}"] = str(T[t]["cells"]["null_content_above_cp95"])
+        for f in T[t]["cells"]["flagged"]:
+            assert f["flagged"] and f["null_vs_cp"] == "above"
+            v[f"cp-{tag}-c{f['i']}-lo"], v[f"cp-{tag}-c{f['i']}-hi"] = f"{f['cp95'][0]:.3f}", f"{f['cp95'][1]:.3f}"
+    assert sorted(f["i"] for f in T["AR23"]["cells"]["flagged"]) == [29, 56] and [f["i"] for f in T["G18"]["cells"]["flagged"]] == [29]
+    js, rd = r["summary_jitter_share"], r["summary_reported_sigma_drop"]
+    v["rdec-share-med"], v["rdec-share-lo"], v["rdec-share-hi"] = (f"{100 * js['median']:.0f}", f"{100 * js['min']:.0f}",
+                                                                  f"{100 * js['max']:.0f}")
+    v["rdec-boot-drop-med"] = f"{100 * r['summary_bootstrap_sigma_drop']['median']:.0f}"
+    v["rdec-rep-drop-max"] = f"{math.ceil(1e4 * rd['max'] - 1e-9) / 100:.2f}"   # percent, an upper bound, rounded up
+    assert (v["rdec-share-med"], v["rdec-share-hi"], v["rdec-rep-drop-max"]) == ("26", "67", "0.05")
+    st = p["comparisons"]["dr_PB/PA"]["step"]
+    assert len(st["boot_draws"]) == 10
+    v["pp-step-re2"], v["pp-step-re2-se"] = f"{100 * st['value']:.2f}", f"{100 * st['noise_sigma']:.2f}"
+    assert (v["pp-step-re2"], v["pp-step-re2-se"]) == ("6.89", "0.46")
+    # G4: the run-period figure (figures/methods_short/paper_runperiod.pdf), its steps at 8 GeV/c against 1A-1F
+    rp = d["runper"]
+    for k, tag in (("PB", "pb"), ("PC", "pc")):
+        q = rp["panels"][k]
+        assert q["reference"] == "1A\u20131F"
+        v[f"rp-{tag}-reco"] = f"{q['reco_step_pct']:.2f}"
+        v[f"rp-{tag}-unf"], v[f"rp-{tag}-unf-se"] = f"{q['unfolded_step_pct']:.2f}", f"{q['unfolded_step_noise_pct']:.2f}"
+    assert (v["rp-pb-unf"], v["rp-pb-unf-se"]) == (v["pp-step-re2"], v["pp-step-re2-se"])
+    assert (v["rp-pb-reco"], v["rp-pc-reco"], v["rp-pc-unf"], v["rp-pc-unf-se"]) == ("5.99", "1.26", "1.85", "0.64")
+    # B6 (an independent referee, 2026-11-15): below 8 GeV/c, every 1N-1P bin lies above 1A-1F at both levels; its
+    # per-bin range in percent (the record holds per-bin ratios, not the integrated yields the step uses)
+    e = rp["pz_edges_GeV"]
+    lo = [i for i in range(len(e) - 1) if e[i] >= 1.5 and e[i + 1] <= 8.0]
+    for lvl, tag in (("reco_ratio", "reco"), ("unfolded_ratio", "unf")):
+        x = [rp["panels"]["PC"][lvl][i] for i in lo]
+        assert min(x) > 1, "every 1N-1P bin below 8 GeV/c lies above 1A-1F"
+        v[f"rp-pc-lev-{tag}-lo"], v[f"rp-pc-lev-{tag}-hi"] = f"{100 * (min(x) - 1):.1f}", f"{100 * (max(x) - 1):.1f}"
+    src = ROOT / READOUTS["runper"][0].replace("runperiod_values.json", "runperiod.pdf")
+    got = OUT.parent / "figures" / "methods_short" / "paper_runperiod.pdf"
+    hs = {hashlib.sha256(x.read_bytes()).hexdigest() for x in (src, got)}
+    assert len(hs) == 1 and next(iter(hs)).startswith("242f7a36"), "paper_runperiod.pdf is not PR #1104's runperiod.pdf"
+    return v
+
+
+def recov_values(d):
+    """The figure referee read's check A (secondary-results/referee-figure-deformation-20261112): per truth, over the
+    supported (E_avail, W) cells with |injected| > 2 %, the recovered fraction f = [(1+r)(1+i) - (1+r_nom)]/i and the
+    counts of cells moving opposite to the change (f < 0), partially (0 <= f <= 1) and overshooting (f > 1), with the
+    cells lying within three standard errors of a class boundary. Descriptive."""
+    r = d["recov"]
+    assert r["schema"] == "figure-referee-check-a/1"
+    S = r["shapes"]
+    v = {"rec-thr": "2"}
+    for k, tag in (("GiBUU", "g"), ("W1", "w1"), ("W2", "w2"), ("W3", "w3")):
+        s = S[k]
+        assert s["n_opposite"] + s["n_partial"] + s["n_overshoot"] == s["n_cells"]
+        v[f"rec-{tag}-n"], v[f"rec-{tag}-opp"] = str(s["n_cells"]), str(s["n_opposite"])
+        v[f"rec-{tag}-part"], v[f"rec-{tag}-over"] = str(s["n_partial"]), str(s["n_overshoot"])
+        v[f"rec-{tag}-fmed"], v[f"rec-{tag}-near"] = f"{100 * s['f_median']:.0f}", str(s["n_within_3sigma_of_a_class_boundary"])
+    # the text names EW29 (E_avail 0.8-1.5 GeV, W >= 3 GeV) as opposite at GiBUU and at W1 and W3
+    assert all("EW29" in S[k]["opposite_cells"] for k in ("GiBUU", "W1", "W3")) and S["W2"]["n_opposite"] == 0
+    w = [S[k] for k in ("W1", "W2", "W3")]
+    v["rec-w-fmed-lo"], v["rec-w-fmed-hi"] = f"{100 * min(s['f_median'] for s in w):.0f}", f"{100 * max(s['f_median'] for s in w):.0f}"
+    v["rec-w-opp-lo"], v["rec-w-opp-hi"] = str(min(s["n_opposite"] for s in w)), str(max(s["n_opposite"] for s in w))
+    v["rec-near-total"] = str(sum(s["n_within_3sigma_of_a_class_boundary"] for s in S.values()))
+    assert (v["rec-g-fmed"], v["rec-g-opp"], v["rec-g-n"], v["rec-w-fmed-lo"], v["rec-w-fmed-hi"], v["rec-w-opp-hi"]) == ("63", "12", "39", "56", "88", "10")
+    sfm = max(s["sigma_f_max"] for s in S.values())
+    v["rec-sigf-max"] = f"{math.ceil(100 * sfm - 1e-9) / 100:.2f}"      # an upper bound, rounded up
+    assert sfm < 0.05 and float(v["rec-sigf-max"]) >= sfm
+    v["rec-all-opp-max"] = str(max(s["n_opposite"] for s in S.values()))
+    assert max(S, key=lambda k: S[k]["n_opposite"]) == "GiBUU"   # the limitation prints "up to rec-all-opp-max of rec-g-n"
+    for k, tag in (("GiBUU", "g"), ("W1", "w1"), ("W2", "w2"), ("W3", "w3")):
+        v[f"rec-{tag}-near0"], v[f"rec-{tag}-near1"] = str(S[k]["n_within_3sigma_of_f0"]), str(S[k]["n_within_3sigma_of_f1"])
+        assert S[k]["n_within_3sigma_of_f0"] + S[k]["n_within_3sigma_of_f1"] == S[k]["n_within_3sigma_of_a_class_boundary"]
+    v["rec-w-over-lo"], v["rec-w-over-hi"] = str(min(s["n_overshoot"] for s in w)), str(max(s["n_overshoot"] for s in w))
+    # the withheld shapes' most affected SUPPORTED cell (the meaning read: s5e-shapes-ewmax-lo's 16 % is W2's EW37, unsupported)
+    sup = [100 * s["max_abs_residual_supported"] for s in w]
+    v["rec-w-supmax-lo"], v["rec-w-supmax-hi"] = f"{min(sup):.0f}", f"{max(sup):.0f}"
+    assert (v["rec-w-supmax-lo"], v["rec-w-supmax-hi"]) == ("9", "31")
+    e = S["GiBUU"]["EW29"]
+    v["rec-g-ew29-inj"], v["rec-g-ew29-unf"] = f"{100 * e['injected']:.0f}", f"{100 * e['unfolded_vs_nominal']:.0f}"
+    assert (v["rec-g-ew29-inj"], v["rec-g-ew29-unf"]) == ("-30", "21") and e["f"] < 0
+    return v
+
+
+def lrows_values(d):
+    """#977's L rows from l_rows.json (descriptive). F5.3: weighted fractions of the selected simulated signal (pass_reco,
+    w_reco) reconstructed outside the window and with truth outside the grid. F5.4: the four unreported H2 boxes' share
+    of the truth weight and of the expected reconstructed signal. 4.2/F4.3: the background template subtracted before
+    unfolding over the selected data in the 2D grid, full sample and per playlist (its split into genuine background
+    and out-of-phase-space signal is not recorded). 4.3: the same fraction on the largest contributors to the
+    published-covariance chi2 (the cells, in decreasing order, until their sum first reaches half of it), and its rank
+    correlation with the contribution over the 205 cells. 3.3: the fake-data grades with only GiBUU left out of
+    C_model."""
+    r = d["lrows"]
+    assert r["schema"] == "methods-short-l-rows/1"
+
+    def sci2(x):         # two significant figures, scientific
+        m, e = f"{x:.1e}".split("e")
+        return rf"{m}\times10^{{{int(e)}}}"
+    f, b, t, q, h = r["f53"], r["bkg_42"], r["bkg_43"], r["r33"], r["f54"]
+    v = {"f53-win": sci2(f["weighted_outside_reco_window"]), "f53-grid": sci2(f["weighted_gen_outside_grid"])}
+    assert (v["f53-win"], v["f53-grid"]) == (r"2.0\times10^{-5}", r"1.1\times10^{-4}")
+    assert h["boxes"] == [2, 6, 10, 14]
+    v["f54-truth"], v["f54-reco"] = sci2(h["share_truth_weight"]), sci2(h["share_expected_reco_signal"])
+    v["bkg42-frac"] = f"{100 * b['fraction_full_sample']:.2f}"
+    pl = b["per_playlist"].values()
+    v["bkg42-pl-lo"], v["bkg42-pl-hi"] = f"{100 * min(pl):.2f}", f"{100 * max(pl):.2f}"
+    assert b["compare_E_U"]["data_equal"] and abs(b["compare_E_U"]["background_rel_diff"]) < 0.005
+    assert f"{100 * b['compare_E_U']['E_U_fraction']:.2f}" == v["bkg42-frac"] == "2.91"
+    assert t["chi2"] == 465.41527219152636 and t["rule"].startswith("largest contributors")
+    v["bkg43-n"], v["bkg43-share"] = str(t["n_cells_T"]), f"{100 * t['chi2_share_T']:.0f}"
+    v["bkg43-frac"], v["bkg43-rho"] = f"{100 * t['fraction_T']:.2f}", f"{t['spearman_fraction_vs_contribution_205']:.2f}"
+    assert t["fraction_T"] > b["fraction_full_sample"] and abs(t["spearman_fraction_vs_contribution_205"]) < 0.2
+    assert q["records_count_moved"] == {"q3": [0, 1]} and q["chi2_rise_max_record"] == "q3"
+    assert q["q3_cells_abs_z_gt_2_added"] == ["R15"]   # the text: the same one cell as without C_model (t2b-n2-cell)
+    v["r33-dchi2-max"] = f"{q['chi2_rise_max']:.1f}"
+    v["r33-z-from"], v["r33-z-to"] = (f"{z:.2f}" for z in q["q3_max_abs_z"])
+    assert sorted(q["unchanged_own_gibuu"]) == ["A7_gibuu", "stage0c_gibuu"]
+    # Fm7: fig:deformation shades the (E_avail, W) cells failing the support rule; the caption names them by edges
+    # (EW11: E_avail 0.1-0.2 GeV, W >= 3 GeV; EW36, EW37: E_avail >= 3 GeV, W < 1.4 GeV) and gives their truth weights
+    m = r["m5"]
+    assert m["unsupported_EW"] == ["EW11", "EW36", "EW37"] and all(x < 1000 for x in m["unsupported_truth_weight"])
+    v["fm7-tw-lo"], v["fm7-tw-hi"] = f"{min(m['unsupported_truth_weight']):.0f}", f"{max(m['unsupported_truth_weight']):.0f}"
+    assert m["controls_pass"] == [True, True] and set(m["support_cells_empty_in_every_seed"].values()) == {0}
+    return v
+
+
+def t2b_values(d):
+    """Tier 2 (b): each of the 16 fake-data records' mean bias against M1 = C_e + C_resp (no C_model), M2 = the statistical
+    block and M3 = the statistical block + C_resp, each with the record's own noise of its mean, beside the existing grade's
+    matrix. Descriptive: no p-value, no grade or criterion changes. The two closures at the prior (the simulation prior and
+    the Tune v1 hybrid, group "prior") are named apart, as the record's own rows."""
+    t = d["t2b"]
+    assert t["schema"] == "t2b/1" and all(c.get("pass") for c in t["controls"].values())
+    R = t["records"]
+    assert len(R) == 16
+    prior = [k for k, r in R.items() if r["group"] == "prior"]
+    assert sorted(prior) == ["A7_mnvtune", "nominal"]
+    v = {}
+    dz = {k: r["M1"]["max_abs_z"] - r["existing"]["max_abs_z"] for k, r in R.items()}
+    kz = max(dz, key=dz.get)
+    assert kz == "F1_genie_v3_g18", kz          # the text names the tune
+    v["t2b-dz-max"] = f"{dz[kz]:.2f}"
+    v["t2b-dz-from"], v["t2b-dz-to"] = f"{R[kz]['existing']['max_abs_z']:.2f}", f"{R[kz]['M1']['max_abs_z']:.2f}"
+    moved = {k: (set(r["M1"]["cells_abs_z_gt_2"]), set(r["existing"]["cells_abs_z_gt_2"])) for k, r in R.items()}
+    moved = {k: (a, b) for k, (a, b) in moved.items() if a != b}
+    assert list(moved) == ["q3"] and moved["q3"][0] - moved["q3"][1] == {"R15"} and moved["q3"][1] <= moved["q3"][0]
+    v["t2b-n2-cell"] = "R15"
+    for m in ("M2", "M3"):
+        x = {k: r[m]["chi2"] for k, r in R.items() if k not in prior}
+        lo, hi = min(x, key=x.get), max(x, key=x.get)
+        assert (lo, hi) == ("W2", "A7_gibuu"), (m, lo, hi)
+        v[f"t2b-{m.lower()}-lo"] = f"{x[lo]:,.0f}".replace(",", "\\,")
+        v[f"t2b-{m.lower()}-hi"] = f"{x[hi]:,.0f}".replace(",", "\\,")
+    v["t2b-lo-name"], v["t2b-hi-name"] = TRUTH_LABEL["W2"][0], TRUTH_LABEL["A7_gibuu"][0]
+    assert all(R[k][m]["chi2"] < 0.5 for k in prior for m in ("existing", "M1", "M2", "M3"))
+    v["t2b-prior-max"] = "0.5"
     return v
 
 
@@ -1071,6 +3200,23 @@ def all_values(d=None, d_nopl=None):
         fall = [1 - gw[n][part]["chi2"] / go[n][part]["chi2"] for n in PRED]
         assert min(fall) > 0, f"a {part} chi2 rises with the block"
         v[f"pl-chi2fall-{part}-lo"], v[f"pl-chi2fall-{part}-hi"] = f"{100 * min(fall):.1f}", f"{100 * max(fall):.1f}"
+    # group B5 (#1025; the director's ruling (b)): the same falls over Table S7's rows after B5, GENIE CV, GENIE + MEC and
+    # Tune v1 (Table IV's chi2, both arms) and NuWro and GiBUU on carbon only (defs.json, reported and without_C_PL5D)
+    for part in ("total", "shape_only"):
+        fall5 = [1 - gw[n][part]["chi2"] / go[n][part]["chi2"] for n in ("genie_cv", "genie_mec", "mnvtune_v1")]
+        fall5 += [1 - float(v[f"g-{k}-carbon-{part}-chi2"]) / float(v[f"g-{k}-carbon-{part}-chi2-nopl"]) for k in ("nuwro", "gibuu")]
+        assert min(fall5) > 0, f"a {part} chi2 rises with the block"
+        v[f"pl-chi2fall-b5-{part}-lo"], v[f"pl-chi2fall-b5-{part}-hi"] = f"{100 * min(fall5):.1f}", f"{100 * max(fall5):.1f}"
+    # B4 (an independent referee, 2026-11-15): the data's IBU-OmniFold difference in the three cells with the largest
+    # fractional differences, in units of the cell's reported relative sigma (both in percent of the cell's result)
+    cells16 = [f"R{c:02d}" for c in range(16)]
+    big = sorted(cells16, key=lambda c: -abs(float(v[f"ibu16-dof-{c}"])))[:3]
+    assert big == ["R11", "R06", "R05"], ("the text names R11, R06 and R05", big)
+    rat = {c: abs(float(v[f"ibu16-dof-{c}"])) / float(v[f"sig-reported-{c}"]) for c in cells16}
+    for c in big:
+        v[f"ibu16-dsig-{c}"] = f"{rat[c]:.1f}"
+    v["ibu16-dsig-max"] = f"{max(rat.values()):.1f}"
+    assert max(rat, key=rat.get) == "R06", "the largest in units of sigma is R06"
     for k in sorted(k for k in v if PAPER_PREC.match(k)):
         for nk, x in paper_prec(k, v[k]).items():
             assert v.get(nk, x) == x, f"{nk}: {v[nk]!r} against the paper form {x!r}"
@@ -1085,9 +3231,21 @@ def render(v):
              "% not landed; it prints [PENDING: what], which build_all.sh refuses (the PDF text check), so it never ships.",
              r"\makeatletter",
              r"\providecommand{\fvval}[1]{\@ifundefined{fv@#1}{\errmessage{values_fived16: no value '#1'}}{\@nameuse{fv@#1}}}",
-             r"\providecommand{\fvpending}[1]{\textbf{[PENDING: #1]}}"]
+             r"\providecommand{\fvpending}[1]{\textbf{[PENDING: #1]}}",
+             "% \\fvgroup{group}{text} prints text once the group's record has landed, else one [PENDING: ...]; inside it,",
+             "% \\fvcase{key}{class}{text} prints text only when key has that class (methods-short-20261109/variants.md).",
+             "% \\fvgroupalt{group}{pending text}{filled text} prints the first while the group is pending, with no marker.",
+             "% \\fvlist{...\\fvitem{a}...\\fvitem{b}...} prints the items that print, separated by '; ' (a list of \\fvcase items).",
+             r"\newif\iffv@listfirst",
+             r"\providecommand{\fvlist}[1]{\fv@listfirsttrue#1}",
+             r"\providecommand{\fvitem}[1]{\iffv@listfirst\fv@listfirstfalse\else; \fi#1}",
+             r"\def\fv@PENDING{PENDING}",
+             r"\providecommand{\fvgroup}[2]{\@ifundefined{fvg@#1}{\errmessage{values_fived16: no group '#1'}}{\expandafter\ifx\csname fvg@#1\endcsname\fv@PENDING\fvpending{\@nameuse{fvgd@#1}}\else#2\fi}}",
+             r"\providecommand{\fvgroupalt}[3]{\@ifundefined{fvg@#1}{\errmessage{values_fived16: no group '#1'}}{\expandafter\ifx\csname fvg@#1\endcsname\fv@PENDING#2\else#3\fi}}",
+             r"\providecommand{\fvcase}[3]{\@ifundefined{fvc@#1}{\errmessage{values_fived16: no verdict key '#1'}}{\def\fv@tmp{#2}\expandafter\ifx\csname fvc@#1\endcsname\fv@tmp#3\fi}}"]
     for k in sorted(v):
         lines.append(rf"\@namedef{{fv@{k}}}{{{v[k]}}}")
+    lines.extend(pending_lines())
     lines.append(r"\makeatother")
     return "\n".join(lines) + "\n"
 
@@ -1149,8 +3307,11 @@ def check_listed_claims(f0b, texts, f0b_nopl=None, f0=None):
         elif kind == "both":
             fam = (lambda t: rule["family"] in t.lower()) if "family" in rule else (lambda t: True)
             ok = typed == {t for t in listed | without if fam(t)}
+        elif kind == "n":
+            ok = len(listed) == rule["n"]
         else:
-            ok = sum("gibuu" in t for t in listed) == rule["gibuu"] and all(t in listed for t in rule["also"])
+            ok = (sum("gibuu" in t for t in listed) == rule["gibuu"] and all(t in listed for t in rule["also"])
+                  and len(listed) == rule.get("n", len(listed)))
         if not ok:
             bad.append(f"{name}: {anchor!r} ({kind}) disagrees with the pinned F0b readouts: {got}")
     return bad
@@ -1353,7 +3514,7 @@ def self_test():
             ("keys a truth the readout does not list", "paper_body.tex", "the flagged truths ($p<",
              lambda t: t.replace(r"by $p$ alone ($p\fvval{f0b-q3-prel}$)", r"by $p$ alone ($p\fvval{f0b-q3-prel}$, $\fvval{f0b-W3-pr}$)", 1)),
             ("drops a listed truth's keys", "paper_body.tex", "the flagged truths ($p<",
-             lambda t: t.replace(r"($p\fvval{f0b-A7_gibuu-prel}$; cells \fvval{f0b-A7_gibuu-cells})", "", 1)),
+             lambda t: t.replace(r"($p\fvval{f0b-A7_gibuu-prel}$ and cells \fvval{f0b-A7_gibuu-cells})", "", 1)),   # r2 #16: "; cells" -> " and cells"
             ("names the wrong truth as listed only without the block", "paper_body.tex", "also meets the flagging criterion",
              lambda t: t.replace(r"the GiBUU $\Eavail$ shape also meets", r"the NuWro $\Eavail$ shape also meets", 1)),
             ("drops the truth listed only without the block", "sec_fived16.tex",
@@ -1365,8 +3526,8 @@ def self_test():
             ("omits a truth F0 lists", "paper_body.tex", r"Under $C_{\mathrm{total}}$ alone, the right-hand columns",
              lambda t: t.replace(r"the synthetic $q_3$ tilt and the NuWro $(\pT,\pPar,\Eavail)$ shape, the last by $p$ alone",
                                  r"and the synthetic $q_3$ tilt, the last by $p$ alone", 1)),
-            ("loses its anchor", "main_paper.tex", "at a GiBUU-like truth and at a synthetic momentum-transfer tilt find",
-             lambda t: t.replace("at a GiBUU-like truth and at a synthetic", "at GiBUU-like truths and at a synthetic", 1))):
+            ("loses its anchor", "main_paper.tex", "Fake-data tests flag bias at two truths that no tested",
+             lambda t: t.replace("flag bias at two truths that no tested", "flag bias at both truths that no tested", 1))):
         planted = dict(texts, **{name: edit(texts[name])})
         if planted[name] == texts[name]:
             print(f"  FAIL the plant that {what} did not apply"); ok = False
@@ -1421,6 +3582,10 @@ def main(argv):
     if argv[:1] == ["--self-test"]:
         return self_test()
     d = load()
+    bad = check_prr_verdicts(d) + check_vhalf_verdicts(d) + check_ll5d_verdicts(d)
+    if bad:
+        sys.exit("VALUES-FIVED16 :: FAIL (VERDICTS differ from a pinned readout (FD-PRR, V-HALF or LL5D))\n  "
+                 + "\n  ".join(bad))
     text = render(all_values(d))
     bad = check_listed_claims(d["f0b"], read_claim_texts())
     if bad:
@@ -1432,11 +3597,11 @@ def main(argv):
         bad = check_figures()
         if bad:
             sys.exit("VALUES-FIVED16 :: FAIL (a printed figure differs from its committed source)\n  " + "\n  ".join(bad))
-        print(f"VALUES-FIVED16 :: PASS ({sum(1 for l in text.splitlines() if l.startswith(chr(92) + "@namedef"))} values, "
+        print(f"VALUES-FIVED16 :: PASS ({sum(1 for l in text.splitlines() if l.startswith(chr(92) + '@namedef'))} values, "
               f"readouts pinned, {len(FIGURES)} figures equal their sources, {len(LISTED_CLAIMS)} listed-truth sentences agree)")
         return 0
     OUT.write_text(text)
-    print(f"wrote {OUT.name}: {sum(1 for l in text.splitlines() if l.startswith(chr(92) + "@namedef"))} values")
+    print(f"wrote {OUT.name}: {sum(1 for l in text.splitlines() if l.startswith(chr(92) + '@namedef'))} values")
     return 0
 
 

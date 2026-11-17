@@ -1,0 +1,39 @@
+# E96D sentence (§6.1 ensemble paragraph): meaning read
+Worktree methods-short @ a66f96a0f (uncommitted diff); record sha256 b42208efdbb7… (6adbd9ae2); producer @ 71259e2eb.
+
+**VERDICT: MINOR.** No DEFECT. One MINOR (Q4, where the sentence sits relative to the S4 pointer) and some NOTEs.
+
+1. **Licence: OK.** The sentence describes how E96 and F64 move the data result, which is the Licence's CITABLE FOR
+   (E96D-DECLARATION.md:151-153). It has no adoption, "stabilised", uncertainty, bias, coverage or "right" wording.
+   The σ_Ce unit is the declared quotable (:141-145), so it is licensed and is not an uncertainty statement.
+   Placement after "the reported estimator is kept": no ranking word. NOTE: a reader may take the coda as "the choice
+   hardly matters on data". That is the reader's inference. The text does not state it, and the declaration fixed this summary.
+   NOTE: 0.24 % is the max of the quotable sixteen-cell table. It is not one of the two pre-fixed summary maxima, but it
+   is an unselected max over all 16, so this is not cherry-picking. The cells (R05, R06) are not named; the Licence allows that.
+2. **Numbers: OK.** Re-measured from the record: max|E96/(e)−1| = 0.0024120 (R05), which gives "0.24". Max|z| = 0.050552
+   (R06), equal to quotable.E96_max_abs_over_sigma_Ce, which gives "0.05". Runners-up are 0.0023281 (R06) and 0.04399 (R05),
+   so neither rounding is at an edge. "Per cell" is right: the population is the 16 reported cells R00–R15 (record `cells`
+   = the data product's cells). **σ: OK.** The producer (:439-441) divides the relative difference by
+   relative_sigma.C_e, so z = (E96−e)/(f_e·σ_rel) = the difference in units of C_e's standard deviation. C_e (eq. crep,
+   paper_body.tex:152) is the sum of the statistical through normalization blocks, so "the standard deviation from C_e" is the
+   record label's "sigma_Ce ... relative_sigma.C_e alone". The record used data product b79556f0 (the -nopl dp).
+   I measured its f and relative_sigma.C_e: both are identical to the paper's with-cpl dp (d6752d2c).
+3. **F64: OK.** All 16 F64/(e)−1 are 0.0, and F64_minus_e_over_sigma_Ce is all 0.0. For normal doubles, fl(a/b) = 1 only
+   if a == b. I checked this on 4e5 adjacent-float pairs and found 0 exceptions. So the 16 projected cells U@x_b and
+   U@x_e are equal as doubles. "The same result to double precision" is accurate, even conservative. The ratio says
+   nothing about bitwise equality of the raw xsec_flat arrays, so avoiding "identical" is right. "A float64 copy of the
+   inputs" matches the declaration's F64 (:46, "the float64 copy, with no jitter"). The producer's base mode is
+   `jittered(inputs, bkg, None)`, seed 0, no δ (:14, :23, :137), and control A-D2 confirms it was the declared call.
+   "Reported estimator" with no jitter mentioned implies no jitter.
+4. **Reading: MINOR.** "The exact values and their accounting are in S4" now sits between the pseudo-data numbers and the
+   data sentence. S4 (supplemental_body.tex:409) holds only ENS1's pseudo-data bias accounting. No .tex other than
+   paper_body carries E96D, and the note does not either. So the data numbers have no pointer, and a reader looking for
+   the per-cell table may look in S4 and not find it. Moving the data sentence before the pointer would be worse: S4 would
+   then seem to hold the data values. Suggested fix: scope the pointer ("The pseudo-data values and their accounting are in
+   S4"), or state that the data comparison is not tabulated. Adding a pointer needs a home that does not exist yet.
+   NOTE: omitting the SD of E96's mean does not mislead; the differences are 10–18x it (max 0.024 %), not ensemble noise.
+5. **e96d_values(): OK.** I ran it standalone on the record and it returns {0.24, 0.05}. Its asserts pass and match the
+   record: schema, a "descriptive" label, 8/8 controls passing, 16 cells, R05 = argmax rel, R06 = argmax z, quotable = max z
+   to 1e-15, F64 all zero, the printed strings pinned; load() refuses a sha mismatch (:606-612). NOTE: comments cite "J"; it is J3.
+   NOTE (optional hardening): it does not assert the sixteen label's σ_Ce definition. It also does not assert that
+   inputs_sha256.data_product's f and C_e equal the paper's d["dp"]. Both hold today by measurement (Q2).

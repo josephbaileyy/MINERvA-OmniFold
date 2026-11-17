@@ -1,0 +1,28 @@
+ssh rc=0
+node login27 staged sha256 d78340d2c20eea66024ec2af58c4e877f83100898b86bb251e98e96469a3af7d
+session host=login27 utc=2026-11-12T05:22:00Z
+squeue: 61078463|ll5d_gate_G18|RUNNING
+squeue: 61078506|ll5d_gate_AR23|RUNNING
+sacct cov2d/t2a rows (14 days): 28, none unended
+FENCE CLEAR
+FILE /pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s0/evloop/base_cv.root bytes=398375089 sha256=c76256a495d2deb7c213c2f8203b284bea640d90e697c495f5e11cedc830846b pin_ok=True stat_unchanged=True whole=True
+FILE /pscratch/sd/j/josephrb/tmp-playlist-coverage-20261014/work_proxy.npz bytes=187598 sha256=42ce788bb28919c098041f14b5a4fb8b22aca06aa7f962ca38dd398149f23621 pin_ok=True stat_unchanged=True whole=True
+READ /pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s0/evloop/base_cv.root stat_unchanged=True
+A branches missing: []
+READ /pscratch/sd/j/josephrb/tmp-playlist-coverage-20261014/work_proxy.npz stat_unchanged=True
+READ /pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s0/evloop/base_cv.root stat_unchanged=True
+CONTROL {"rows": 52626, "rows_total": 52626, "max_abs_diff_vs_work_proxy": 0.0, "scale": 1474.8418943278407, "sum_w_in_grid": 44360.495004169585, "sum_w_work_proxy": 44360.495004169585, "pass": true}
+B inner {"frac_w_oops": 0.09638408687595379, "frac_w_cc_out_of_fiducial": 0.8317075367799682, "frac_w_other_flavor_sign_nc": 0.07190837634407794, "rows_oops": 5245, "rows_cc_oofv": 40461, "rows_other": 3845, "closure_max_abs": 9.094947017729282e-13, "closure_pass": true}
+B outer {"frac_w_oops": 0.3202425450618757, "frac_w_cc_out_of_fiducial": 0.6078490785940464, "frac_w_other_flavor_sign_nc": 0.07190837634407794, "rows_oops": 16647, "rows_cc_oofv": 29059, "rows_other": 3845, "closure_max_abs": 9.094947017729282e-13, "closure_pass": true}
+CBKG OK exit=0 ok
+script rc=0
+826a924fe8414d1334b4c0c2307e00b162d7b9d3cd70c5044fce34575fbb6ed8  run1/session.tar
+OK  branches.json c43d58be49c1789df8bdcf52a1d4f501df5f43628183de7bcfef3b227e1b4aaf
+OK  cbkg_hists.npz 7903ea68d98a186a8c02362f622cca3556e30e47448e64307444cb5c71ece8c0
+OK  cbkg_summary.json d4421b957c72702492b1cda3383cb54627537e1481e67ee9352ccb0cf0930890
+OK  manifest.json 27d836fdfb773483121eb70fb72700bd5e6065239e687fcd3048826602218d8b
+CONTROL {"rows": 52626, "rows_total": 52626, "max_abs_diff_vs_work_proxy": 0.0, "scale": 1474.8418943278407, "sum_w_in_grid": 44360.495004169585, "sum_w_work_proxy": 44360.495004169585, "pass": true}
+inner {'frac_w_oops': 0.09638408687595379, 'frac_w_cc_out_of_fiducial': 0.8317075367799682, 'frac_w_other_flavor_sign_nc': 0.07190837634407794}
+outer {'frac_w_oops': 0.3202425450618757, 'frac_w_cc_out_of_fiducial': 0.6078490785940464, 'frac_w_other_flavor_sign_nc': 0.07190837634407794}
+CBKG-977 OK
+fetch rc=0

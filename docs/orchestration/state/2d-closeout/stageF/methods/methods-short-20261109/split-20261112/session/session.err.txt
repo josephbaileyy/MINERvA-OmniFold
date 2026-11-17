@@ -1,0 +1,61 @@
+***************************************************************************
+                          NOTICE TO USERS
+
+Lawrence Berkeley National Laboratory operates this computer system under 
+contract to the U.S. Department of Energy.  This computer system is the 
+property of the United States Government and is for authorized use only.
+Users (authorized or unauthorized) have no explicit or implicit 
+expectation of privacy.
+
+Any or all uses of this system and all files on this system may be
+intercepted, monitored, recorded, copied, audited, inspected, and disclosed
+to authorized site, Department of Energy, and law enforcement personnel,
+as well as authorized officials of other agencies, both domestic and foreign.
+By using this system, the user consents to such interception, monitoring,
+recording, copying, auditing, inspection, and disclosure at the discretion
+of authorized site or Department of Energy personnel.
+
+Unauthorized or improper use of this system may result in administrative
+disciplinary action and civil and criminal penalties. By continuing to use
+this system you indicate your awareness of and consent to these terms and
+conditions of use. LOG OFF IMMEDIATELY if you do not agree to the conditions
+stated in this warning.
+
+*****************************************************************************
+
+Login connection to host x3115c0s15b0n0:
+
+node login27 staged sha256 6784499d2a7d1b70e26c39bfc1da5e0dc663b32ff17dc4033781eb705f02ded9
+session host=login27 utc=2026-11-12T00:48:03Z
+squeue: 61078463|ll5d_gate_G18|RUNNING
+squeue: 61078506|ll5d_gate_AR23|RUNNING
+sacct cov2d/t2a rows (14 days): 28, none unended
+FENCE CLEAR
+FILE /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1A.root bytes=176231152 sha256=9e56ba6855521fdfd4e599a840d0fa0d334076df364ae8698260923b04e65453 stat_unchanged=True whole=True mtime=2026-05-15T05:04:59Z
+FILE /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1B.root bytes=47169324 sha256=ec03ba5d776cea66020451813c736ea502e21bb2685e1f6f2ab277a9e943b3b7 stat_unchanged=True whole=True mtime=2026-05-15T07:26:32Z
+FILE /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1C.root bytes=90403772 sha256=e6502e38f5e46cad1f51cb808c446652c3243c1dd08a81d63bc1c07ddbce2423 stat_unchanged=True whole=True mtime=2026-05-15T07:42:38Z
+FILE /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1D.root bytes=263666751 sha256=c63d224cefabb432053a0e5d7f34d7140fdcc8fed79b8cb7b29da4198b243c8b stat_unchanged=True whole=True mtime=2026-05-15T10:09:52Z
+FILE /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1E.root bytes=219367258 sha256=bc2898b5d8cf7e1aae483ec7b0074c47866370a729d8a1825e56493bb1cdbbc4 stat_unchanged=True whole=True mtime=2026-05-18T08:51:05Z
+FILE /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1F.root bytes=304896181 sha256=397dd1d6f8e5e7e4a4ddfc00e4fc176b6138c34aa4f2d6fc2fcdb6c2a3eeab8d stat_unchanged=True whole=True mtime=2026-05-15T10:34:39Z
+FILE /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1G.root bytes=257639835 sha256=c060835c00da5324b15ebecd577750d5ccff330fb53b4541041e574c9a558c50 stat_unchanged=True whole=True mtime=2026-05-15T09:43:07Z
+FILE /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1L.root bytes=25071003 sha256=3b0ba3bf81c73bcccf3bfeef510f50b6423bcd238401c45b3014a6dfa568f777 stat_unchanged=True whole=True mtime=2026-05-15T07:45:34Z
+FILE /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1M.root bytes=382873832 sha256=d1bd9d0891acaee1ecb572b963c1951d2f3e7f837efae1a5389a52cc75f99355 stat_unchanged=True whole=True mtime=2026-05-15T08:55:37Z
+FILE /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1N.root bytes=221391219 sha256=15367193b8bc8477c8dbe01c5ad932532b51669d6d46573083eebf8d3ff97b3e stat_unchanged=True whole=True mtime=2026-05-15T09:59:26Z
+FILE /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1O.root bytes=66979991 sha256=68f20baa8d5fe2474970d8179e895f1933e9b63beb7741e6bcad81e84f2fb3d9 stat_unchanged=True whole=True mtime=2026-05-15T08:16:33Z
+FILE /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1P.root bytes=88639735 sha256=ee42dcab1aa9c946062bedabd0206d78d20932fa3cc16d4dc0f951ded273094c stat_unchanged=True whole=True mtime=2026-05-15T08:10:21Z
+FILE /pscratch/sd/j/josephrb/tmp-playlist-coverage-20261014/work_proxy.npz bytes=187598 sha256=42ce788bb28919c098041f14b5a4fb8b22aca06aa7f962ca38dd398149f23621 stat_unchanged=True whole=True mtime=2026-10-14T23:10:28Z
+READ /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1A.root stat_unchanged=True
+READ /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1B.root stat_unchanged=True
+READ /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1C.root stat_unchanged=True
+READ /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1D.root stat_unchanged=True
+READ /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1E.root stat_unchanged=True
+READ /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1F.root stat_unchanged=True
+READ /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1G.root stat_unchanged=True
+READ /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1L.root stat_unchanged=True
+READ /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1M.root stat_unchanged=True
+READ /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1N.root stat_unchanged=True
+READ /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1O.root stat_unchanged=True
+READ /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1P.root stat_unchanged=True
+A branches missing: {"1A": ["bkg_nuPDG", "bkg_current", "bkg_vtx_x", "bkg_vtx_y", "bkg_vtx_z"], "1B": ["bkg_nuPDG", "bkg_current", "bkg_vtx_x", "bkg_vtx_y", "bkg_vtx_z"], "1C": ["bkg_nuPDG", "bkg_current", "bkg_vtx_x", "bkg_vtx_y", "bkg_vtx_z"], "1D": ["bkg_nuPDG", "bkg_current", "bkg_vtx_x", "bkg_vtx_y", "bkg_vtx_z"], "1E": ["bkg_nuPDG", "bkg_current", "bkg_vtx_x", "bkg_vtx_y", "bkg_vtx_z"], "1F": ["bkg_nuPDG", "bkg_current", "bkg_vtx_x", "bkg_vtx_y", "bkg_vtx_z"], "1G": ["bkg_nuPDG", "bkg_current", "bkg_vtx_x", "bkg_vtx_y", "bkg_vtx_z"], "1L": ["bkg_nuPDG", "bkg_current", "bkg_vtx_x", "bkg_vtx_y", "bkg_vtx_z"], "1M": ["bkg_nuPDG", "bkg_current", "bkg_vtx_x", "bkg_vtx_y", "bkg_vtx_z"], "1N": ["bkg_nuPDG", "bkg_current", "bkg_vtx_x", "bkg_vtx_y", "bkg_vtx_z"], "1O": ["bkg_nuPDG", "bkg_current", "bkg_vtx_x", "bkg_vtx_y", "bkg_vtx_z"], "1P": ["bkg_nuPDG", "bkg_current", "bkg_vtx_x", "bkg_vtx_y", "bkg_vtx_z"]}
+SPLIT STOP exit=6 probe (a): bkg_* branches absent in 1A,1B,1C,1D,1E,1F,1G,1L,1M,1N,1O,1P
+script rc=6

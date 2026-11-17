@@ -1,0 +1,51 @@
+Ranked problems: **none found. No corrective edits are required.**
+
+I read all seven supplied files in full. The whole-paper comparison and a reconstruction of section 7 using only the authorized edits show no additional textual changes.
+
+**(A) Section and table moves: PASS.** All seven sentences of old section 5.4 survive in section 4.5, word for word except “an IBU” → “a binned IBU.” The sixteen-cell table row is identical. The titles and block heading match the specified changes.
+
+Section 4.5 reads correctly after 4.4: agreement between quadrant sums and algorithm dependence of individual sixteen-cell results are different comparisons. The new subsection explicitly identifies its comparison, so “it” refers to the five-observable estimator, “the difference” to the IBU–OmniFold difference, and “that null” to this comparison’s null. The reported covariance remains distinguished from the comparison covariance; all omitted-block qualifications remain.
+
+Section 4.2 defines \(T\), the null of exact agreement, and the noise-level meaning of “differs” before section 4.5 uses them. I found no surviving prose description of sections 4 or 5 made false by the move. The roadmap remains accurate, the references use the preserved label, and the supplied label change correctly gives 4.5.
+
+**(B) Caption: PASS.** Both added sentences are exactly those specified; every old caption sentence, including the coverage-test explanation, is unchanged. Each substantive element is supported:
+
+- **Diagnostic.** [decision_items.txt, line 4](/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/2929ca26-b0ae-42b9-82fa-8300158500d3/scratchpad/f5/decision_items.txt:4): “V-HALF goes into the methods paper as a diagnostic on R00–R15”.
+- **Changes nothing in the reported result.** Under “CANNOT AUTHORIZE,” [vhalf_decl_22_46.txt, lines 5–6](/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/2929ca26-b0ae-42b9-82fa-8300158500d3/scratchpad/f5/vhalf_decl_22_46.txt:5) says: “any change to the reported result, its cells, its observables, its binning or its covariance”; and “any reading of a non-valid cell as excluded, wrong or unreported”. Decision item 2 additionally resolves the proposed consequence: “no rebinning” (line 8). Together these support the caption’s description of the diagnostic’s role in this paper.
+- **Defined after the classified fake-data biases had been seen.** The declaration’s line 12 introduces “Disclosure: what was seen before this rule was declared”. Lines 17–18 say the valid-region read “printed I1’s per-cell pulls at every graded truth”; line 20 connects those readings to the diagnostic: “V-HALF’s r is I1’s `bias`, which is z × σ.” Lines 20–21 explicitly say a failure at two pairs was “foreseeable” and that “V-HALF is not blind at those two pairs.”
+
+No element exceeds its record, given the stipulated house-style substitution of “defined” for “declared.” The caption specifies **biases**, not all inputs or final classifications. It therefore preserves the distinction in line 22: “No d has been seen.” The last disclosure bullet concerns what was printed **while mapping schemas during drafting**, and does not negate the earlier exposure.
+
+This also supplies the explicit exception contemplated by the paper’s “unless a test says otherwise” qualification. It does not imply that the bias-half screen was fixed prospectively.
+
+**(C) Supplement wording: PASS.** Only the two specified substitutions occur. The definitions, truth scope, departure threshold, noise treatment, and pass/fail/unresolved rules remain identical. “Applies” and “applied descriptively” preserve the classification performed while avoiding an implication of prospective grading for the bias-half rule. Neither change adds detector-validation or coverage content.
+
+**(D) Introduction split: PASS.** After normalizing paragraph whitespace, the old and new passages are identical. No word, qualifier, reference, or conditional macro changes.
+
+**(E) Section 7: PASS.** The sentence-by-sentence comparison finds **no sentence lost, added, or altered beyond the listed changes**. Specifically:
+
+- All benchmark and open-question sentences survive in the opening.
+- Both bias-screening sentences survive at the end of the final limitation, with only “grade” → “classify.”
+- The testing sentence becomes the two specified sentences.
+- Limitation 4 receives exactly the specified clause rewrite.
+- The detector-response sentence becomes the specified assertion followed immediately by its exception.
+- The checklist, its assessment paragraph, the coverage branches, the “Until … illustration” sentence, and the other limitations remain unchanged.
+
+The moved sentences retain their meanings in context:
+
+- **“The benchmark”** remains the benchmark already identified earlier in the paragraph. Placing “The benchmark does not validate the five-observable distribution” after quadrant agreement preserves its meaning and bounds the inference readers may draw from that agreement. Section 4.4 already places the corresponding warning after its quadrant results.
+- **“The difference”** remains attached to the immediately stated OmniFold–IBU comparison. Its unidentified origin is retained.
+- **“Testing it”** refers to testing the preceding open hadronic-origin question. **“It also”** continues that testing requirement. Both joint uncertainty and the unfolding/detector-response check remain necessary; **“That test”** still refers to the proposed investigation as a whole.
+- **“Them”** in limitation 4 still refers explicitly to “the reported cells.”
+- **“The rules”** immediately follows “The bias-screening rules,” preserving its antecedent and the prohibition on identifying detector inadequacy.
+- **“The exceptions are”** preserves “beyond”: both identify the descriptive shifted-recoil closures as exceptions to the preceding response-not-varied statement. “Descriptive,” the response shift, and the section reference all survive. The following coverage sentence’s “it” still refers to the simulated detector response.
+
+The requested support for limitation 4 appears in [new_paper.tex, line 335, section 4.5](/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/2929ca26-b0ae-42b9-82fa-8300158500d3/scratchpad/f5/new_paper.tex:335):
+
+> “The reported covariance has no term for the choice of unfolding method.”
+
+The dependence itself remains expressly stated in section 4.5 and the conclusion’s opening, so removing its duplicate independent clause loses no claim.
+
+Across (A)–(E), no changed sentence moves toward any prohibited claim. Full-distribution validation remains explicitly denied; detector inadequacy remains outside the bias-screening rules’ remit; hadronic localization remains an open question requiring further tests; and the coverage statements retain their descriptive status, tested truths and variants, omitted covariance terms, and untested extension to the full covariance.
+
+VERDICT: PASS

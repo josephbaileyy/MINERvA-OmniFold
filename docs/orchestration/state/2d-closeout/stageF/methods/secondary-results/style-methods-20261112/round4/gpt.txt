@@ -1,0 +1,147 @@
+The paper has a clear underlying story and often explains technical distinctions precisely, particularly bias versus coverage and reproducibility versus numerical stability. Sections 4–6 provide a sensible results sequence, and the tables make many comparisons accessible. However, the presentation repeatedly interrupts that story with qualifications, configuration history, decision rules and statements about what each result does not establish. An outside physicist can reconstruct the argument, but would struggle to absorb it in one pass. The supplement contains useful reference material but frequently reads as an internal audit trail. This assessment concerns the supplied prose and captions; extraction artifacts and unseen visual layout are not graded.
+
+**STYLE SCORE: 6/10**
+
+**Most important changes, ranked**
+
+1. **Throughout; especially Introduction, §§3.3, 5.2, 6.2, 7 and 7.1: consolidate repeated qualifications.**
+
+   The same boundaries recur in definitions, results, captions, conclusions and limitations. For example:
+
+   > “These tests assess bias alone” (§5.2).
+
+   > “The fake-data tests grade bias only” (§7.1).
+
+   > “Like every fake-data test, it grades bias only” (S10).
+
+   These distinctions matter, but their repetition buries the findings. Define each test’s interpretation once in §3.3, retain qualifications specific to an individual result, and collect the overall boundaries in §7.1. Repeat only the essential output-status warning in the abstract, conclusion and supplement’s data-output section.
+
+2. **Abstract and Introduction: give the reader a hierarchy of findings.**
+
+   The abstract reads as a succession of test outcomes, each carrying its own qualification:
+
+   > “Fake-data studies at a GiBUU-like truth and a synthetic momentum-transfer tilt find residual bias beyond uncertainty-based criteria fixed before grading.”
+
+   It then adds the IBU comparison, rounding sensitivity, two-dimensional coverage, five-observable coverage and algorithm dependence. The reader has to determine which findings organize the paper.
+
+   Lead with the contribution, group the principal findings, and leave procedural qualifications to the methods. For example:
+
+   > “We benchmark a five-observable OmniFold implementation on MINERvA open data. A two-observable benchmark reproduces the published cross-section integral within about 1%, but differs in shape. Controlled truth changes reveal residual prior dependence, and rounding-level input perturbations exceed the specified stability limits.”
+
+   Follow with a compact uncertainty-calibration statement and the illustrative status of the output. In the Introduction, introduce both estimators before summarizing their findings. Remove metatext such as:
+
+   > “The abstract calls the GiBUU hybrid truth GiBUU-like” (§3.3).
+
+   Use one name consistently instead. Resolve every “[PENDING…]” into integrated prose before circulation; this is an editorial completeness issue, independent of the eventual result.
+
+3. **§§3.1–3.3 and S4: distinguish the current method from its development history.**
+
+   The method section repeatedly moves between what the estimators do and why earlier alternatives were retained or rejected:
+
+   > “the stability probe and the ensemble average of section 6.1 were tested against it, and neither replaced it” (§3.1).
+
+   Table S4 compounds this by mixing the two current estimators with four superseded configurations and a long list of analysis-note products.
+
+   Keep the main method section focused on the current estimators, their inputs, training and covariance construction. Retain short disclosures about choices informed by the benchmark. Put the detailed chronology in S4.5 or the companion note. Split table S4 into current configurations and historical configurations, with compact “used for” entries.
+
+4. **§6.1 and S4.4: organize paragraphs around findings rather than successive qualifications.**
+
+   Section 6.1 opens with:
+
+   > “Reproducibility and rounding stability are distinct properties.”
+
+   The next paragraph again announces instability, followed by several spreads measured on different grids and ensembles. Those quantities are distinct, but their relationship is difficult to retain. The mechanism discussion also starts three sentences with:
+
+   > “On this pseudo-experiment…”
+
+   Put table 7 before the numerical account and organize the prose into four units: reproducibility; failure of the stability requirement; contribution to the reported uncertainty; mechanism and mitigation. State the mechanism study’s scope once:
+
+   > “The mechanism study used one simulated pseudo-experiment. Preserving ties among equal float32 inputs reduced the residual spread to about \(10^{-6}\) of its original value. Perturbing the refinement input alone reproduced the spread; the tests did not establish whether the ties acted at that stage.”
+
+   This preserves the qualification while giving each paragraph a clear purpose.
+
+5. **§6.2 and S8: simplify the coverage narrative and make the supplement searchable by purpose.**
+
+   The main paper explains the shared design, several layers of conditionality, the two-dimensional result, the second five-observable design and the stopped first test. The supplement then supplies overlapping accounts in tables S11, S12 and S15 and §§S8.3–S8.6.
+
+   Audit-style sentences interrupt the explanation:
+
+   > “A run continued or repaired after a check was seen is descriptive” (§6.2).
+
+   Present §6.2 in the order **question → shared procedure → results → interpretation**. Move detailed stopping and repair rules to the supplement. In S8, use descriptive headings—“Shared coverage procedure,” “Two-dimensional results,” “Five-observable results,” and “Preliminary checks and redesign”—and keep historical chronology last. A reader looking up the current procedure should not have to reconstruct it from the stopped test.
+
+6. **§§3.3, 5.2–5.3 and S8.2: reduce labels and disentangle sentences carrying several logical levels.**
+
+   The reader must distinguish “graded,” “descriptive,” “withheld,” “held-out,” “unresolved,” “not assessed,” “increases,” and several “consistent with…” classes. Some are useful statuses; others turn straightforward findings into a classification system.
+
+   For example:
+
+   > “A setting is reported as changing ρ at a flagged truth when some tested level moves ρ from the reported configuration’s value by more than a threshold” (§5.3).
+
+   Rewrite directly:
+
+   > “For each setting, we compare the tested levels with the baseline. We report a change when the difference in ρ exceeds the specified threshold.”
+
+   Define necessary statuses together in a small key. Replace unnecessary coined labels with ordinary descriptions. Also split nested qualification chains, such as the §4.2 sentence beginning “Because the IBU and the published result share data…”. The dominant sentence problem is accumulated qualification and procedural phrasing, rather than sentence length alone.
+
+7. **§7 and §7.1: give conclusions and limitations separate jobs.**
+
+   Section 7 summarizes the findings, lists five checks, repeats the findings against those checks, revisits the benchmark’s boundaries and proposes a next step. Section 7.1 repeats many of the same points:
+
+   > “The unfolded result retains part of its prior” (§7.1), following the same finding in §7.
+
+   Keep the conclusion to the contribution, principal findings and status of the output. Place the five general checks in one compact discussion paragraph or table. Consolidate limitations into a few grouped paragraphs with references, rather than eight items of markedly different scope and length. Move the proposed next step before the final conclusion.
+
+8. **Figures and tables: preserve self-contained interpretation while removing duplicated protocol.**
+
+   The captions usually define symbols and uncertainties carefully. Figure 2 is particularly useful: it explains the ratios, uncertainty bars and step definition. Other captions carry too much material. Figure 3 includes classifier capacity, half-sample provenance, standard-error bounds, unsupported-cell details, every W edge and references.
+
+   Keep the plotted quantities, uncertainty meaning and unsupported-cell warning; move training details and full bin definitions to the methods or supplement. Figure 5 similarly needs the quantity set and stability limits, but can reference the detailed perturbation protocol.
+
+   Tables 4 and S12 both become miniature results sections. Shorten their findings and use references for qualifications. Tables S3 and S9 work well as lookup material. Table S14 duplicates main-paper table 6; a cross-reference would suffice. Figure S4 is discussed in S9 but appears after S10 in the extraction; verify its placement near S9.2. Visual crowding cannot be assessed from this text.
+
+**Smaller line-level fixes — paper**
+
+- **§2:** “without (‘GENIE CV’) and with (‘GENIE + MEC’)…”  
+  Rewrite: “GENIE 2.12.10 without the Valencia 2p2h component (‘GENIE CV’) and with it (‘GENIE + MEC’).”
+
+- **§3.1:** “We quote its result as the central value because its covariance uses the same estimator.”  
+  Condense to: “The two-dimensional central value and covariance use the same estimator.”
+
+- **§3.3:** “given in the Est. column of table 4.”  
+  The supplied table embeds estimator labels in the test names. Correct the cross-reference or add the named column.
+
+- **§4.4:** “The five-observable result agrees with the two-dimensional normalization in each muon-kinematic quadrant.”  
+  Delete: it repeats the paragraph’s opening finding.
+
+- **§5.3 title:** “What moves the retained prior.”  
+  Use “Dependence of prior retention on estimator settings.”
+
+- **§5.4:** “Agreement…would leave open…, and a difference leaves open…”  
+  Condense to: “This comparison establishes algorithm dependence on the present inputs.”
+
+**Smaller line-level fixes — supplement**
+
+- **Opening roadmap:** “Sections S1–S3…with their machine-readable files and joint tests.”  
+  Direct readers to S3 for files and S8.7 for joint tests.
+
+- **S4.2:** “the natural treatment for the larger backgrounds of the extended-fiducial analysis.”  
+  Remove or identify that analysis; it is unexplained here.
+
+- **S4.3:** “The checks support n = 5.”  
+  Specify the estimator and checks immediately, instead of making readers reconcile current and historical configurations.
+
+- **S4.4:** “The misses regressor, weighted.”  
+  Use “Weighted regression for events without a reconstructed partner.”
+
+- **S8.4:** “under-coverage factors.”  
+  Define the quantity mathematically at first use.
+
+- **S8.6:** “No set of three or fewer…brings every cell inside the window.”  
+  Define the window before this sentence.
+
+- **Throughout:** Standardize “variant” versus “reading,” “reporting cells” versus “reported cells,” and “two-dimensional” versus “two-observable” according to whether the text means a grid, result or estimator.
+
+**To reach 9/10**
+
+The paper needs a structural edit before a sentence polish: one clear hierarchy of findings; one authoritative location for each general qualification; a method description centered on the current estimators; results paragraphs led by findings; and a shorter conclusion. The supplement should become a reference document organized around definitions, procedures and results, with development history clearly separated. Consistent terminology, corrected cross-references, leaner captions and fully integrated placeholder text would then bring the presentation close to journal-ready quality. These changes require editing and reorganization, not additional scientific work.

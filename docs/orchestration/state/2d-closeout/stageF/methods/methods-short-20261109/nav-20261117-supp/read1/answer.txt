@@ -1,0 +1,38 @@
+I found three defects, ranked below. I found no loss of the old scientific content, and the A6 insertion is verbatim.
+
+1. **The definitions table misdefines \(C_{\mathrm{resp}}\).**  
+   `ev/new_main_supplement.tex:105` calls it “the sum of four deposit-category scale shifts.” Shifts are vectors; the reported covariance sums their outer products.
+
+   The defining source, S5.1 (`ev/new_supplemental_body.tex:528`), says: “Each category’s contribution is the outer product of the half-difference of the two unfolded shifts … and \(C_{\mathrm{resp}}\) is their sum.”
+
+   **Fix:** Replace the glossary phrase with “the sum of the outer products of the half-differences of the four deposit categories’ endpoint unfolds.”
+
+2. **S8.7’s new specification omits the claim variants that determine the reported decisions.**  
+   `ev/new_supplemental_body.tex:1191` describes simulated null distributions, then applies Holm and the Clopper–Pearson requirement to “its tail fraction.” It never identifies the maximization over shifted nulls. That leaves the compact specification describing an incomplete decision procedure.
+
+   Note §11.2 (`ev/note_sec_joint.tex:50`) defines the actual quantity: “The \(p\) value on which each decision rests, the *claim* \(p\) value, is the largest over the specified *claim variants*, which shift the null.” The same paragraph specifies the simulation-size bound and the \(\pm2\delta_{\mathrm{fine}}\) shifts.
+
+   **Fix:** Before the Holm sentence, add: “The decisions use the largest tail probability over the claim variants, which shift the null by the simulation-size bound and by \(\pm2\delta_{\mathrm{fine}}\) (ref. [2], §11.2).” Preserve the existing qualification that the below-grid bound has not been demonstrated.
+
+3. **Two definitions-table pointers do not contain the complete definition or qualification attributed to them.**
+
+   - **\(C_{\mathrm{PL,5D}}\), `ev/new_main_supplement.tex:104`:** S5.3 contains the construction and rank, but the explicit independent-validation limitation is in **S5.4**, `ev/new_supplemental_body.tex:664`: “its size and coverage have not been independently validated.”  
+     **Fix:** Cite S5.3 for construction and S5.4 for that limitation.
+   - **“Under-covers; over-covers,” line 113:** S8.3 defines the lower-tail under-coverage thresholds and says over-coverage is reported without constituting failure. The explicit upper-tail definition is in **S8.5, table S15’s caption**, line 1119: \(P(\mathrm{Bin}(300,p_c)\geq\mathrm{count})<0.025/16\).  
+     **Fix:** Add S8.5/table S15 as the pointer for “over-covers.”
+
+The remaining checks are satisfactory:
+
+| Check | Finding and retained location |
+|---|---|
+| **A: removed/reworded material** | No factual deletion found. The background fraction and playlist-1A-only composition remain in table S1; S2 retains the redundancy, axis-convention and reliability qualifications; S3 retains the cell construction, merging and diagonal-fraction limitations. |
+| **A: consolidated repetitions** | The closure-based settings choices remain in S4.3/S4.5. The five-versus-ten-iteration numbers and note appendix pointer remain in S4.3; the publication’s ten iterations remain explicit in S6.2 and S7. Bitwise equality and the zero seed block remain in S5.1. |
+| **A: other consolidations** | The three-period size model and its uncalibrated interpretation remain in S5.3; the playlist permutation account is moved within that subsection. Shared IBU inputs remain at S7’s opening. Tune pooling, fallback-to-one, normalization and detector-response qualifications remain in S8.1. Carbon-only reasons remain in S9.1; \(V_g\)’s definition remains in S5.2 and table S16’s caption. |
+| **B: other additions and numbers** | The support threshold and purity definition match paper §2; the hybrid-truth and grid definitions match paper §3.3; the external-\(W\) convention matches note §8.1 and Supplement S9.1. No unsupported new numerical value found. |
+| **C: strengthening** | No claim of full-distribution validation, detector-inadequacy identification, or localization of two-dimensional mismodeling was introduced. S8.7 explicitly retains: “The rejections are not physical exclusions.” The restricted coverage interpretation remains intact. |
+| **D: A6** | **Exact match** to DECISION item 3 after expanding the macros and normalizing PDF whitespace/apostrophes: **1.071 at G18; 1.095 at AR23**. Both limiting sentences survive. The insertion is inside the `graded` arm. |
+| **E: S8.6** | The order is correct: November 1 gate-D stop and diagnosis; later November 1 redesign decision; November 6 terminal stage-1 receipt stop; November 8 flux/detector diagnostic follow-up. The coverage-design sentences are attached to the staged redesign, and the response-only comparison/window to the first test’s preliminary check. |
+| **F: other definitions** | The other definitions and P-section numbers agree with their sources. The two special senses of **Descriptive** reproduce the paper’s table 4 caption, including that no coverage pseudo-experiment had been unfolded or graded and other gate readings were visible. The definitions table occupies one rendered page. |
+| **G: tables** | No value, column assignment or caption meaning changed in the existing tables. All twelve edited tables retain identical numerical-macro inventories; the reflowed IBU table preserves every cell/value pair. The spanners and split rows preserve their original meanings. |
+
+VERDICT: FAIL

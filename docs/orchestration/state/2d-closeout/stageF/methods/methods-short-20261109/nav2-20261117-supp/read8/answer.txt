@@ -1,0 +1,9 @@
+No defects found; no fixes required.
+
+Read 7’s fix is correct: the timing qualifier now explicitly modifies **choosing the repair**, matching P6.2 and S8.5.
+
+The full entry preserves the caption’s definition and bias-half explanation without strengthening or dropping either. Its account of the entry-check repair, rerun, earlier stop, and already-visible gate readings agrees with the paper and S8.5.
+
+The pointers are appropriate: P3.3 (`sec:strategy`) carries the general definition and outcomes caption; P6.2 (`sec:ll5d`) explains the descriptive repair route and timing; S8.5 (`supp:study-ll5d`) supplies the detailed stop-and-repair account.
+
+VERDICT: PASS

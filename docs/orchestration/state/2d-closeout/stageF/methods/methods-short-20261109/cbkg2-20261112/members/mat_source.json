@@ -1,0 +1,3262 @@
+{
+ "files": [
+  {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/MAT-MINERvA/utilities/TargetUtils.h",
+   "bytes": 23157,
+   "sha256": "579cad600ca6e8b12919ca43cfcba22e1921da8afcd597570f26642e25b4e30f",
+   "stat_unchanged": true,
+   "whole": true,
+   "excerpts": {
+    "IsInHexagon": [
+     [
+      [
+       397,
+       "      bool IsInHexagon( double x, double y, double apothem = 850. ) const;"
+      ],
+      [
+       398,
+       ""
+      ],
+      [
+       399,
+       "      //! What daisy petal is the (x,y) coordinate in? Include apothem (mm) cut"
+      ],
+      [
+       400,
+       "      int GetDaisyPetal( double x, double y, double apothem = 850. ) const;"
+      ],
+      [
+       401,
+       ""
+      ],
+      [
+       402,
+       "      //=========================================="
+      ],
+      [
+       403,
+       "      // Functions for Tracker"
+      ],
+      [
+       404,
+       "      //=========================================="
+      ],
+      [
+       405,
+       "      //! Get the pass of a number of planes of tracker (g)"
+      ],
+      [
+       406,
+       "      double GetTrackerMass( double nPlanes, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       407,
+       "      double GetTrackerMass( double minZ, double maxZ, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       408,
+       "      //! Get the number of atoms in tracker"
+      ],
+      [
+       409,
+       "      double GetTrackerNAtoms( double nPlanes, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       410,
+       "      double GetTrackerNAtoms( double minZ, double maxZ, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       411,
+       "      //! Get the number of protons in tracker"
+      ],
+      [
+       412,
+       "      double GetTrackerNProtons( double nPlanes, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       413,
+       "      double GetTrackerNProtons( double minZ, double maxZ, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       414,
+       "      //! Get the number of neutrons in tracker"
+      ],
+      [
+       415,
+       "      double GetTrackerNNeutrons( double nPlanes, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       416,
+       "      double GetTrackerNNeutrons( double minZ, double maxZ, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       417,
+       "      //! Get the number of nucleons (n+p) in tracker"
+      ],
+      [
+       418,
+       "      double GetTrackerNNucleons( double nPlanes, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       419,
+       "      double GetTrackerNNucleons( double minZ, double maxZ, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       420,
+       ""
+      ],
+      [
+       421,
+       "      //get information about elements of the tracker"
+      ],
+      [
+       422,
+       "      double GetTrackerElementMassFraction( int targetZ, bool isMC ) const;"
+      ],
+      [
+       423,
+       "      double GetTrackerElementA( int targetZ ) const;"
+      ],
+      [
+       424,
+       "      double GetTrackerElementAtomsPerGram( int targetZ ) const;"
+      ],
+      [
+       425,
+       ""
+      ],
+      [
+       426,
+       "      //! Get the number of EL atoms in tracker"
+      ],
+      [
+       427,
+       "      double GetTrackerElementNAtoms( int elementZ, double nPlanes, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       428,
+       "      double GetTrackerElementNAtoms( int elementZ, double minZ, double maxZ, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       429,
+       "      //! Get the number of C atoms in tracker (used frequently so is gets a special function)"
+      ],
+      [
+       430,
+       "      double GetTrackerNCarbonAtoms( double nPlanes, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       431,
+       "      double GetTrackerNCarbonAtoms( double minZ, double maxZ, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       432,
+       ""
+      ],
+      [
+       433,
+       "      //! In tracker?"
+      ],
+      [
+       434,
+       "      bool InTrackerZ( double vtx_z ) const;"
+      ],
+      [
+       435,
+       "      bool InTracker( double vtx_x, double vtx_y, double vtx_z, double apothem = 850. ) const;"
+      ],
+      [
+       436,
+       ""
+      ],
+      [
+       437,
+       "      //! In nuclear target region?"
+      ],
+      [
+       438,
+       "      bool InNukeRegionZ( double vtx_z );"
+      ],
+      [
+       439,
+       "      bool InNukeRegion( double vtx_x, double vtx_y, double vtx_z, double apothem = 850. );"
+      ],
+      [
+       440,
+       ""
+      ],
+      [
+       441,
+       "      //=========================================="
+      ],
+      [
+       442,
+       "      // Functions for Passive Targets"
+      ],
+      [
+       443,
+       "      //=========================================="
+      ],
+      [
+       444,
+       "      //! Get the area of a passive target (mm^2)"
+      ],
+      [
+       445,
+       "      double GetPassiveTargetArea( int targetID, int targetZ, double apothem = 850. ) const;"
+      ],
+      [
+       446,
+       "      //! Get the areal density of a passive target ( g/mm^2 )"
+      ],
+      [
+       447,
+       "      double GetPassiveTargetArealDensity( int targetID, int targetZ, bool isMC ) const;"
+      ],
+      [
+       448,
+       "      //! Get the mass of a passive target (g)"
+      ],
+      [
+       449,
+       "      double GetPassiveTargetMass( int targetID, int targetZ, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       450,
+       "      //! Get the number of protons in a passive target"
+      ],
+      [
+       451,
+       "      double GetPassiveTargetNProtons( int targetID, int targetZ, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       452,
+       "      //! Get the number of protons in a passive target"
+      ],
+      [
+       453,
+       "      double GetPassiveTargetNNeutrons( int targetID, int targetZ, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       454,
+       "      //! Get the number of nucleons( n+p ) in a passive target"
+      ],
+      [
+       455,
+       "      double GetPassiveTargetNNucleons( int targetID, int targetZ, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       456,
+       ""
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/MAT-MINERvA/utilities/TargetUtils.cxx",
+   "bytes": 38295,
+   "sha256": "64f47c7c9932b8562afbce77dc5d9335c0d06e3cb23263be51486aff8c40eb39",
+   "stat_unchanged": true,
+   "whole": true,
+   "excerpts": {
+    "IsInHexagon": [
+     [
+      [
+       34,
+       "bool TargetUtils::IsInHexagon( double x, double y, double apothem /*= 850. */ ) const"
+      ],
+      [
+       35,
+       "{"
+      ],
+      [
+       36,
+       "   double lenOfSide = apothem*(2/sqrt(3)); "
+      ],
+      [
+       37,
+       "   double slope     = (lenOfSide/2.0)/apothem;"
+      ],
+      [
+       38,
+       "   double xp        = fabs(x);"
+      ],
+      [
+       39,
+       "   double yp        = fabs(y);"
+      ],
+      [
+       40,
+       "   "
+      ],
+      [
+       41,
+       "   if( (xp*xp + yp*yp) < apothem*apothem )             return true;"
+      ],
+      [
+       42,
+       "   else if( xp <= apothem && yp*yp < lenOfSide/2.0 )   return true; "
+      ],
+      [
+       43,
+       "   else if( xp <= apothem && yp < lenOfSide-xp*slope ) return true;"
+      ],
+      [
+       44,
+       ""
+      ],
+      [
+       45,
+       "   return false;"
+      ],
+      [
+       46,
+       "}"
+      ]
+     ],
+     [
+      [
+       51,
+       "  if( !IsInHexagon( x, y, apothem ) ) return -1;"
+      ],
+      [
+       52,
+       "  double angle = atan2(y,x) / ( 2 * TMath::Pi() );"
+      ],
+      [
+       53,
+       "  if ( angle < 0 ) angle += 1;"
+      ],
+      [
+       54,
+       "  int out = floor(12*angle);"
+      ],
+      [
+       55,
+       "  return out;"
+      ],
+      [
+       56,
+       "} "
+      ],
+      [
+       57,
+       ""
+      ],
+      [
+       58,
+       ""
+      ],
+      [
+       59,
+       ""
+      ],
+      [
+       60,
+       "//! Get the pass of a number of planes"
+      ],
+      [
+       61,
+       "double TargetUtils::GetTrackerMass( double nPlanes, bool isMC, double apothem /* = 850. */ ) const"
+      ],
+      [
+       62,
+       "{"
+      ]
+     ],
+     [
+      [
+       265,
+       "  if( !IsInHexagon( vtx_x, vtx_y, apothem ) ) return false;"
+      ],
+      [
+       266,
+       "   "
+      ],
+      [
+       267,
+       "  return true; "
+      ],
+      [
+       268,
+       "}"
+      ],
+      [
+       269,
+       "bool TargetUtils::InTrackerZ( double vtx_z ) const"
+      ],
+      [
+       270,
+       "{"
+      ]
+     ],
+     [
+      [
+       284,
+       "  if( !IsInHexagon( vtx_x, vtx_y, apothem ) ) return false;"
+      ],
+      [
+       285,
+       ""
+      ],
+      [
+       286,
+       "  return true;"
+      ],
+      [
+       287,
+       "}"
+      ],
+      [
+       288,
+       "bool TargetUtils::InNukeRegionZ( double vtx_z )"
+      ],
+      [
+       289,
+       "{"
+      ]
+     ],
+     [
+      [
+       625,
+       "  if ( !IsInHexagon(vtx_x, vtx_y, apothem) ) return false;"
+      ],
+      [
+       626,
+       ""
+      ],
+      [
+       627,
+       "  return true; "
+      ],
+      [
+       628,
+       "}"
+      ],
+      [
+       629,
+       ""
+      ],
+      [
+       630,
+       "bool TargetUtils::InPassiveTargetVolMC( double vtx_x, double vtx_y, double vtx_z, double apothem /* = 850. */, bool excludeBuffer /* = false */ )"
+      ],
+      [
+       631,
+       "{"
+      ]
+     ],
+     [
+      [
+       737,
+       "   if ( !IsInHexagon(vtx_x, vtx_y, apothem) ) return false;"
+      ],
+      [
+       738,
+       ""
+      ],
+      [
+       739,
+       "   double u = GetCoordU(vtx_x, vtx_y);"
+      ],
+      [
+       740,
+       "   double udist = u - PlotUtils::TargetProp::offset_pb_fe;"
+      ],
+      [
+       741,
+       ""
+      ],
+      [
+       742,
+       "   //Is this on the right side on the divide?"
+      ],
+      [
+       743,
+       "   //  If we want to exclude the buffer, is it outside the buffer?  "
+      ],
+      [
+       744,
+       "   return ( udist < 0.0 && ( excludeBuffer ? fabs(udist) > distToDivCut_ : true ) );"
+      ],
+      [
+       745,
+       "}"
+      ],
+      [
+       746,
+       ""
+      ],
+      [
+       747,
+       "bool TargetUtils::InLead1VolMC(double vtx_x, double vtx_y, double vtx_z, double apothem/*default=850.0mm*/, bool excludeBuffer/*default=false*/)"
+      ],
+      [
+       748,
+       "{"
+      ]
+     ],
+     [
+      [
+       753,
+       "   if ( !IsInHexagon(vtx_x, vtx_y, apothem) ) return false;"
+      ],
+      [
+       754,
+       ""
+      ],
+      [
+       755,
+       "   double u = GetCoordU(vtx_x, vtx_y);"
+      ],
+      [
+       756,
+       "   double udist = u - PlotUtils::TargetProp::offset_pb_fe;"
+      ],
+      [
+       757,
+       "   //Is this on the right side on the divide?"
+      ],
+      [
+       758,
+       "   //  If we want to exclude the buffer, is it outside the buffer?  "
+      ],
+      [
+       759,
+       "   return ( udist >= 0.0 && ( excludeBuffer ? fabs(udist) > distToDivCut_ : true ) );"
+      ],
+      [
+       760,
+       "}"
+      ],
+      [
+       761,
+       ""
+      ],
+      [
+       762,
+       "bool TargetUtils::InIron2VolMC(double vtx_x, double vtx_y, double vtx_z, double apothem, bool excludeBuffer)"
+      ],
+      [
+       763,
+       "{"
+      ]
+     ],
+     [
+      [
+       768,
+       "   if ( !IsInHexagon(vtx_x, vtx_y, apothem) ) return false;"
+      ],
+      [
+       769,
+       ""
+      ],
+      [
+       770,
+       "   double d = GetCoordD(vtx_x, vtx_y);"
+      ],
+      [
+       771,
+       "   double ddist = d - PlotUtils::TargetProp::offset_pb_fe;"
+      ],
+      [
+       772,
+       ""
+      ],
+      [
+       773,
+       "   //Is this on the right side on the divide?"
+      ],
+      [
+       774,
+       "   //  If we want to exclude the buffer, is it outside the buffer?  "
+      ],
+      [
+       775,
+       "   return ( ddist < 0.0 && ( excludeBuffer ? fabs(ddist) > distToDivCut_ : true ) );"
+      ],
+      [
+       776,
+       "}"
+      ],
+      [
+       777,
+       ""
+      ],
+      [
+       778,
+       "bool TargetUtils::InLead2VolMC(double vtx_x, double vtx_y, double vtx_z, double apothem, bool excludeBuffer)"
+      ],
+      [
+       779,
+       "{"
+      ]
+     ],
+     [
+      [
+       784,
+       "   if ( !IsInHexagon(vtx_x, vtx_y, apothem) ) return false;"
+      ],
+      [
+       785,
+       ""
+      ],
+      [
+       786,
+       "   double d = GetCoordD(vtx_x, vtx_y);"
+      ],
+      [
+       787,
+       "   double ddist = d - PlotUtils::TargetProp::offset_pb_fe;"
+      ],
+      [
+       788,
+       ""
+      ],
+      [
+       789,
+       "   //Is this on the right side on the divide?"
+      ],
+      [
+       790,
+       "   //  If we want to exclude the buffer, is it outside the buffer?  "
+      ],
+      [
+       791,
+       "   return ( ddist >= 0.0 && ( excludeBuffer ? fabs(ddist) > distToDivCut_ : true ) );"
+      ],
+      [
+       792,
+       "}"
+      ],
+      [
+       793,
+       ""
+      ],
+      [
+       794,
+       "bool TargetUtils::InCarbon3VolMC(double vtx_x, double vtx_y, double vtx_z, double apothem, bool excludeBuffer)"
+      ],
+      [
+       795,
+       "{"
+      ]
+     ],
+     [
+      [
+       800,
+       "   if ( !IsInHexagon(vtx_x, vtx_y, apothem) ) return false;"
+      ],
+      [
+       801,
+       ""
+      ],
+      [
+       802,
+       "   double c = GetCoordC(vtx_x, vtx_y);"
+      ],
+      [
+       803,
+       "   double cdist = c;"
+      ],
+      [
+       804,
+       ""
+      ],
+      [
+       805,
+       "   //Is this on the right side on the divide?"
+      ],
+      [
+       806,
+       "   //  If we want to exclude the buffer, is it outside the buffer?  "
+      ],
+      [
+       807,
+       "   return ( cdist >= 0.0 && ( excludeBuffer ? fabs(cdist) > distToDivCut_ : true ) );"
+      ],
+      [
+       808,
+       "}"
+      ],
+      [
+       809,
+       ""
+      ],
+      [
+       810,
+       "bool TargetUtils::InIron3VolMC(double vtx_x, double vtx_y, double vtx_z, double apothem, bool excludeBuffer)"
+      ],
+      [
+       811,
+       "{"
+      ]
+     ],
+     [
+      [
+       816,
+       "   if ( !IsInHexagon(vtx_x, vtx_y, apothem) ) return false;"
+      ],
+      [
+       817,
+       ""
+      ],
+      [
+       818,
+       "   double c = GetCoordC(vtx_x, vtx_y);"
+      ],
+      [
+       819,
+       "   double cdist = c;"
+      ],
+      [
+       820,
+       ""
+      ],
+      [
+       821,
+       "   //Is this on the right side on the divide?"
+      ],
+      [
+       822,
+       "   //  If we want to exclude the buffer, is it outside the buffer?  "
+      ],
+      [
+       823,
+       "   return ( cdist < 0.0 && vtx_x < 0.0 && ( excludeBuffer ? fabs(cdist) > distToDivCut_ && fabs(vtx_x) > distToDivCut_ : true ) );"
+      ],
+      [
+       824,
+       "}"
+      ],
+      [
+       825,
+       ""
+      ],
+      [
+       826,
+       "bool TargetUtils::InLead3VolMC(double vtx_x, double vtx_y, double vtx_z, double apothem, bool excludeBuffer)"
+      ],
+      [
+       827,
+       "{"
+      ]
+     ],
+     [
+      [
+       832,
+       "   if ( !IsInHexagon(vtx_x, vtx_y, apothem) ) return false;"
+      ],
+      [
+       833,
+       ""
+      ],
+      [
+       834,
+       "   double c = GetCoordC(vtx_x, vtx_y);"
+      ],
+      [
+       835,
+       "   double cdist = c;"
+      ],
+      [
+       836,
+       ""
+      ],
+      [
+       837,
+       "   //Is this on the right side on the divide?"
+      ],
+      [
+       838,
+       "   //  If we want to exclude the buffer, is it outside the buffer?  "
+      ],
+      [
+       839,
+       "   return ( cdist < 0.0 && vtx_x >= 0.0 && ( excludeBuffer ? fabs(cdist) > distToDivCut_ && fabs(vtx_x) > distToDivCut_ : true ) );"
+      ],
+      [
+       840,
+       "}"
+      ],
+      [
+       841,
+       ""
+      ],
+      [
+       842,
+       "bool TargetUtils::InLead4VolMC(double vtx_x, double vtx_y, double vtx_z, double apothem)"
+      ],
+      [
+       843,
+       "{"
+      ]
+     ],
+     [
+      [
+       848,
+       "   if ( !IsInHexagon(vtx_x, vtx_y, apothem) ) return false;"
+      ],
+      [
+       849,
+       ""
+      ],
+      [
+       850,
+       "   return true;"
+      ],
+      [
+       851,
+       "}"
+      ],
+      [
+       852,
+       ""
+      ],
+      [
+       853,
+       "bool TargetUtils::InIron5VolMC(double vtx_x, double vtx_y, double vtx_z, double apothem, bool excludeBuffer)"
+      ],
+      [
+       854,
+       "{"
+      ]
+     ],
+     [
+      [
+       859,
+       "   if ( !IsInHexagon(vtx_x, vtx_y, apothem) ) return false;"
+      ],
+      [
+       860,
+       ""
+      ],
+      [
+       861,
+       "   double u = GetCoordU(vtx_x, vtx_y);"
+      ],
+      [
+       862,
+       "   double udist = u - PlotUtils::TargetProp::offset_pb_fe;"
+      ],
+      [
+       863,
+       ""
+      ],
+      [
+       864,
+       "   //Is this on the right side on the divide?"
+      ],
+      [
+       865,
+       "   //  If we want to exclude the buffer, is it outside the buffer?  "
+      ],
+      [
+       866,
+       "   return ( udist < 0.0 && ( excludeBuffer ? fabs(udist) > distToDivCut_ : true ) );"
+      ],
+      [
+       867,
+       "}"
+      ],
+      [
+       868,
+       ""
+      ],
+      [
+       869,
+       "bool TargetUtils::InLead5VolMC(double vtx_x, double vtx_y, double vtx_z, double apothem, bool excludeBuffer)"
+      ],
+      [
+       870,
+       "{"
+      ]
+     ],
+     [
+      [
+       875,
+       "   if ( !IsInHexagon(vtx_x, vtx_y, apothem) ) return false;"
+      ],
+      [
+       876,
+       ""
+      ],
+      [
+       877,
+       "   double u = GetCoordU(vtx_x, vtx_y);"
+      ],
+      [
+       878,
+       "   double udist = u - PlotUtils::TargetProp::offset_pb_fe;"
+      ],
+      [
+       879,
+       ""
+      ],
+      [
+       880,
+       "   //Is this on the right side on the divide?"
+      ],
+      [
+       881,
+       "   //  If we want to exclude the buffer, is it outside the buffer?  "
+      ],
+      [
+       882,
+       "   return ( udist >= 0.0 && ( excludeBuffer ? fabs(udist) > distToDivCut_ : true ) );"
+      ],
+      [
+       883,
+       "}"
+      ],
+      [
+       884,
+       ""
+      ],
+      [
+       885,
+       "double TargetUtils::GetCoordU(double vtx_x, double vtx_y)"
+      ],
+      [
+       886,
+       "{//see equation 5 of docdb 9069"
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/MAT-MINERvA/calculators/CCInclusiveSignal.h",
+   "bytes": 4067,
+   "sha256": "cf9ee8c47a983070487db8f94bfa7c3b2831d52a25e66ee3e2ff972cbd9660ca",
+   "stat_unchanged": true,
+   "whole": true,
+   "excerpts": {
+    "Apothem": [
+     [
+      [
+       92,
+       "  class Apothem: public PlotUtils::SignalConstraint<UNIVERSE>"
+      ],
+      [
+       93,
+       "  {"
+      ],
+      [
+       94,
+       "    public:"
+      ],
+      [
+       95,
+       "      Apothem(const double apothem): PlotUtils::SignalConstraint<UNIVERSE>(std::string(\"Apothem \") + std::to_string(apothem)), fApothem(apothem)"
+      ],
+      [
+       96,
+       "      {"
+      ],
+      [
+       97,
+       "      }"
+      ],
+      [
+       98,
+       ""
+      ],
+      [
+       99,
+       "    private:"
+      ],
+      [
+       100,
+       "      bool checkConstraint(const UNIVERSE& univ) const override"
+      ],
+      [
+       101,
+       "      {"
+      ],
+      [
+       102,
+       "        const auto vertex = univ.GetTrueVertex();"
+      ],
+      [
+       103,
+       "        return (fabs(vertex.y()) < fSlope*fabs(vertex.x()) + 2.*fApothem/sqrt(3.))"
+      ],
+      [
+       104,
+       "               && (fabs(vertex.x()) < fApothem);"
+      ],
+      [
+       105,
+       "      }"
+      ],
+      [
+       106,
+       ""
+      ],
+      [
+       107,
+       "      const double fApothem;"
+      ],
+      [
+       108,
+       "      const double fSlope = -1./sqrt(3.); //A regular hexagon has angles of 2*M_PI/3, so I can find this is 1/tan(M_PI/3.)"
+      ],
+      [
+       109,
+       "  };"
+      ]
+     ]
+    ],
+    "ZRange": [
+     [
+      [
+       112,
+       "  class ZRange: public PlotUtils::SignalConstraint<UNIVERSE>"
+      ],
+      [
+       113,
+       "  {"
+      ],
+      [
+       114,
+       "    public:"
+      ],
+      [
+       115,
+       "      ZRange(const std::string& name, const double zMin, const double zMax): PlotUtils::SignalConstraint<UNIVERSE>(name), fMin(zMin), fMax(zMax)"
+      ],
+      [
+       116,
+       "      {"
+      ],
+      [
+       117,
+       "      }"
+      ],
+      [
+       118,
+       ""
+      ],
+      [
+       119,
+       "    private:"
+      ],
+      [
+       120,
+       "      bool checkConstraint(const UNIVERSE& univ) const override"
+      ],
+      [
+       121,
+       "      {"
+      ],
+      [
+       122,
+       "        return univ.GetTrueVertex().z() >= fMin && univ.GetTrueVertex().z() <= fMax;"
+      ],
+      [
+       123,
+       "      }"
+      ],
+      [
+       124,
+       ""
+      ],
+      [
+       125,
+       "      const double fMin;"
+      ],
+      [
+       126,
+       "      const double fMax;"
+      ],
+      [
+       127,
+       "  };"
+      ]
+     ]
+    ],
+    "namespace_truth_lines": [
+     7
+    ]
+   }
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/include/PlotUtils/TargetUtils.h",
+   "bytes": 23157,
+   "sha256": "579cad600ca6e8b12919ca43cfcba22e1921da8afcd597570f26642e25b4e30f",
+   "stat_unchanged": true,
+   "whole": true,
+   "excerpts": {
+    "IsInHexagon": [
+     [
+      [
+       397,
+       "      bool IsInHexagon( double x, double y, double apothem = 850. ) const;"
+      ],
+      [
+       398,
+       ""
+      ],
+      [
+       399,
+       "      //! What daisy petal is the (x,y) coordinate in? Include apothem (mm) cut"
+      ],
+      [
+       400,
+       "      int GetDaisyPetal( double x, double y, double apothem = 850. ) const;"
+      ],
+      [
+       401,
+       ""
+      ],
+      [
+       402,
+       "      //=========================================="
+      ],
+      [
+       403,
+       "      // Functions for Tracker"
+      ],
+      [
+       404,
+       "      //=========================================="
+      ],
+      [
+       405,
+       "      //! Get the pass of a number of planes of tracker (g)"
+      ],
+      [
+       406,
+       "      double GetTrackerMass( double nPlanes, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       407,
+       "      double GetTrackerMass( double minZ, double maxZ, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       408,
+       "      //! Get the number of atoms in tracker"
+      ],
+      [
+       409,
+       "      double GetTrackerNAtoms( double nPlanes, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       410,
+       "      double GetTrackerNAtoms( double minZ, double maxZ, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       411,
+       "      //! Get the number of protons in tracker"
+      ],
+      [
+       412,
+       "      double GetTrackerNProtons( double nPlanes, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       413,
+       "      double GetTrackerNProtons( double minZ, double maxZ, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       414,
+       "      //! Get the number of neutrons in tracker"
+      ],
+      [
+       415,
+       "      double GetTrackerNNeutrons( double nPlanes, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       416,
+       "      double GetTrackerNNeutrons( double minZ, double maxZ, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       417,
+       "      //! Get the number of nucleons (n+p) in tracker"
+      ],
+      [
+       418,
+       "      double GetTrackerNNucleons( double nPlanes, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       419,
+       "      double GetTrackerNNucleons( double minZ, double maxZ, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       420,
+       ""
+      ],
+      [
+       421,
+       "      //get information about elements of the tracker"
+      ],
+      [
+       422,
+       "      double GetTrackerElementMassFraction( int targetZ, bool isMC ) const;"
+      ],
+      [
+       423,
+       "      double GetTrackerElementA( int targetZ ) const;"
+      ],
+      [
+       424,
+       "      double GetTrackerElementAtomsPerGram( int targetZ ) const;"
+      ],
+      [
+       425,
+       ""
+      ],
+      [
+       426,
+       "      //! Get the number of EL atoms in tracker"
+      ],
+      [
+       427,
+       "      double GetTrackerElementNAtoms( int elementZ, double nPlanes, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       428,
+       "      double GetTrackerElementNAtoms( int elementZ, double minZ, double maxZ, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       429,
+       "      //! Get the number of C atoms in tracker (used frequently so is gets a special function)"
+      ],
+      [
+       430,
+       "      double GetTrackerNCarbonAtoms( double nPlanes, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       431,
+       "      double GetTrackerNCarbonAtoms( double minZ, double maxZ, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       432,
+       ""
+      ],
+      [
+       433,
+       "      //! In tracker?"
+      ],
+      [
+       434,
+       "      bool InTrackerZ( double vtx_z ) const;"
+      ],
+      [
+       435,
+       "      bool InTracker( double vtx_x, double vtx_y, double vtx_z, double apothem = 850. ) const;"
+      ],
+      [
+       436,
+       ""
+      ],
+      [
+       437,
+       "      //! In nuclear target region?"
+      ],
+      [
+       438,
+       "      bool InNukeRegionZ( double vtx_z );"
+      ],
+      [
+       439,
+       "      bool InNukeRegion( double vtx_x, double vtx_y, double vtx_z, double apothem = 850. );"
+      ],
+      [
+       440,
+       ""
+      ],
+      [
+       441,
+       "      //=========================================="
+      ],
+      [
+       442,
+       "      // Functions for Passive Targets"
+      ],
+      [
+       443,
+       "      //=========================================="
+      ],
+      [
+       444,
+       "      //! Get the area of a passive target (mm^2)"
+      ],
+      [
+       445,
+       "      double GetPassiveTargetArea( int targetID, int targetZ, double apothem = 850. ) const;"
+      ],
+      [
+       446,
+       "      //! Get the areal density of a passive target ( g/mm^2 )"
+      ],
+      [
+       447,
+       "      double GetPassiveTargetArealDensity( int targetID, int targetZ, bool isMC ) const;"
+      ],
+      [
+       448,
+       "      //! Get the mass of a passive target (g)"
+      ],
+      [
+       449,
+       "      double GetPassiveTargetMass( int targetID, int targetZ, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       450,
+       "      //! Get the number of protons in a passive target"
+      ],
+      [
+       451,
+       "      double GetPassiveTargetNProtons( int targetID, int targetZ, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       452,
+       "      //! Get the number of protons in a passive target"
+      ],
+      [
+       453,
+       "      double GetPassiveTargetNNeutrons( int targetID, int targetZ, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       454,
+       "      //! Get the number of nucleons( n+p ) in a passive target"
+      ],
+      [
+       455,
+       "      double GetPassiveTargetNNucleons( int targetID, int targetZ, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       456,
+       ""
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/include/PlotUtils/TargetUtils.cxx",
+   "bytes": 38295,
+   "sha256": "64f47c7c9932b8562afbce77dc5d9335c0d06e3cb23263be51486aff8c40eb39",
+   "stat_unchanged": true,
+   "whole": true,
+   "excerpts": {
+    "IsInHexagon": [
+     [
+      [
+       34,
+       "bool TargetUtils::IsInHexagon( double x, double y, double apothem /*= 850. */ ) const"
+      ],
+      [
+       35,
+       "{"
+      ],
+      [
+       36,
+       "   double lenOfSide = apothem*(2/sqrt(3)); "
+      ],
+      [
+       37,
+       "   double slope     = (lenOfSide/2.0)/apothem;"
+      ],
+      [
+       38,
+       "   double xp        = fabs(x);"
+      ],
+      [
+       39,
+       "   double yp        = fabs(y);"
+      ],
+      [
+       40,
+       "   "
+      ],
+      [
+       41,
+       "   if( (xp*xp + yp*yp) < apothem*apothem )             return true;"
+      ],
+      [
+       42,
+       "   else if( xp <= apothem && yp*yp < lenOfSide/2.0 )   return true; "
+      ],
+      [
+       43,
+       "   else if( xp <= apothem && yp < lenOfSide-xp*slope ) return true;"
+      ],
+      [
+       44,
+       ""
+      ],
+      [
+       45,
+       "   return false;"
+      ],
+      [
+       46,
+       "}"
+      ]
+     ],
+     [
+      [
+       51,
+       "  if( !IsInHexagon( x, y, apothem ) ) return -1;"
+      ],
+      [
+       52,
+       "  double angle = atan2(y,x) / ( 2 * TMath::Pi() );"
+      ],
+      [
+       53,
+       "  if ( angle < 0 ) angle += 1;"
+      ],
+      [
+       54,
+       "  int out = floor(12*angle);"
+      ],
+      [
+       55,
+       "  return out;"
+      ],
+      [
+       56,
+       "} "
+      ],
+      [
+       57,
+       ""
+      ],
+      [
+       58,
+       ""
+      ],
+      [
+       59,
+       ""
+      ],
+      [
+       60,
+       "//! Get the pass of a number of planes"
+      ],
+      [
+       61,
+       "double TargetUtils::GetTrackerMass( double nPlanes, bool isMC, double apothem /* = 850. */ ) const"
+      ],
+      [
+       62,
+       "{"
+      ]
+     ],
+     [
+      [
+       265,
+       "  if( !IsInHexagon( vtx_x, vtx_y, apothem ) ) return false;"
+      ],
+      [
+       266,
+       "   "
+      ],
+      [
+       267,
+       "  return true; "
+      ],
+      [
+       268,
+       "}"
+      ],
+      [
+       269,
+       "bool TargetUtils::InTrackerZ( double vtx_z ) const"
+      ],
+      [
+       270,
+       "{"
+      ]
+     ],
+     [
+      [
+       284,
+       "  if( !IsInHexagon( vtx_x, vtx_y, apothem ) ) return false;"
+      ],
+      [
+       285,
+       ""
+      ],
+      [
+       286,
+       "  return true;"
+      ],
+      [
+       287,
+       "}"
+      ],
+      [
+       288,
+       "bool TargetUtils::InNukeRegionZ( double vtx_z )"
+      ],
+      [
+       289,
+       "{"
+      ]
+     ],
+     [
+      [
+       625,
+       "  if ( !IsInHexagon(vtx_x, vtx_y, apothem) ) return false;"
+      ],
+      [
+       626,
+       ""
+      ],
+      [
+       627,
+       "  return true; "
+      ],
+      [
+       628,
+       "}"
+      ],
+      [
+       629,
+       ""
+      ],
+      [
+       630,
+       "bool TargetUtils::InPassiveTargetVolMC( double vtx_x, double vtx_y, double vtx_z, double apothem /* = 850. */, bool excludeBuffer /* = false */ )"
+      ],
+      [
+       631,
+       "{"
+      ]
+     ],
+     [
+      [
+       737,
+       "   if ( !IsInHexagon(vtx_x, vtx_y, apothem) ) return false;"
+      ],
+      [
+       738,
+       ""
+      ],
+      [
+       739,
+       "   double u = GetCoordU(vtx_x, vtx_y);"
+      ],
+      [
+       740,
+       "   double udist = u - PlotUtils::TargetProp::offset_pb_fe;"
+      ],
+      [
+       741,
+       ""
+      ],
+      [
+       742,
+       "   //Is this on the right side on the divide?"
+      ],
+      [
+       743,
+       "   //  If we want to exclude the buffer, is it outside the buffer?  "
+      ],
+      [
+       744,
+       "   return ( udist < 0.0 && ( excludeBuffer ? fabs(udist) > distToDivCut_ : true ) );"
+      ],
+      [
+       745,
+       "}"
+      ],
+      [
+       746,
+       ""
+      ],
+      [
+       747,
+       "bool TargetUtils::InLead1VolMC(double vtx_x, double vtx_y, double vtx_z, double apothem/*default=850.0mm*/, bool excludeBuffer/*default=false*/)"
+      ],
+      [
+       748,
+       "{"
+      ]
+     ],
+     [
+      [
+       753,
+       "   if ( !IsInHexagon(vtx_x, vtx_y, apothem) ) return false;"
+      ],
+      [
+       754,
+       ""
+      ],
+      [
+       755,
+       "   double u = GetCoordU(vtx_x, vtx_y);"
+      ],
+      [
+       756,
+       "   double udist = u - PlotUtils::TargetProp::offset_pb_fe;"
+      ],
+      [
+       757,
+       "   //Is this on the right side on the divide?"
+      ],
+      [
+       758,
+       "   //  If we want to exclude the buffer, is it outside the buffer?  "
+      ],
+      [
+       759,
+       "   return ( udist >= 0.0 && ( excludeBuffer ? fabs(udist) > distToDivCut_ : true ) );"
+      ],
+      [
+       760,
+       "}"
+      ],
+      [
+       761,
+       ""
+      ],
+      [
+       762,
+       "bool TargetUtils::InIron2VolMC(double vtx_x, double vtx_y, double vtx_z, double apothem, bool excludeBuffer)"
+      ],
+      [
+       763,
+       "{"
+      ]
+     ],
+     [
+      [
+       768,
+       "   if ( !IsInHexagon(vtx_x, vtx_y, apothem) ) return false;"
+      ],
+      [
+       769,
+       ""
+      ],
+      [
+       770,
+       "   double d = GetCoordD(vtx_x, vtx_y);"
+      ],
+      [
+       771,
+       "   double ddist = d - PlotUtils::TargetProp::offset_pb_fe;"
+      ],
+      [
+       772,
+       ""
+      ],
+      [
+       773,
+       "   //Is this on the right side on the divide?"
+      ],
+      [
+       774,
+       "   //  If we want to exclude the buffer, is it outside the buffer?  "
+      ],
+      [
+       775,
+       "   return ( ddist < 0.0 && ( excludeBuffer ? fabs(ddist) > distToDivCut_ : true ) );"
+      ],
+      [
+       776,
+       "}"
+      ],
+      [
+       777,
+       ""
+      ],
+      [
+       778,
+       "bool TargetUtils::InLead2VolMC(double vtx_x, double vtx_y, double vtx_z, double apothem, bool excludeBuffer)"
+      ],
+      [
+       779,
+       "{"
+      ]
+     ],
+     [
+      [
+       784,
+       "   if ( !IsInHexagon(vtx_x, vtx_y, apothem) ) return false;"
+      ],
+      [
+       785,
+       ""
+      ],
+      [
+       786,
+       "   double d = GetCoordD(vtx_x, vtx_y);"
+      ],
+      [
+       787,
+       "   double ddist = d - PlotUtils::TargetProp::offset_pb_fe;"
+      ],
+      [
+       788,
+       ""
+      ],
+      [
+       789,
+       "   //Is this on the right side on the divide?"
+      ],
+      [
+       790,
+       "   //  If we want to exclude the buffer, is it outside the buffer?  "
+      ],
+      [
+       791,
+       "   return ( ddist >= 0.0 && ( excludeBuffer ? fabs(ddist) > distToDivCut_ : true ) );"
+      ],
+      [
+       792,
+       "}"
+      ],
+      [
+       793,
+       ""
+      ],
+      [
+       794,
+       "bool TargetUtils::InCarbon3VolMC(double vtx_x, double vtx_y, double vtx_z, double apothem, bool excludeBuffer)"
+      ],
+      [
+       795,
+       "{"
+      ]
+     ],
+     [
+      [
+       800,
+       "   if ( !IsInHexagon(vtx_x, vtx_y, apothem) ) return false;"
+      ],
+      [
+       801,
+       ""
+      ],
+      [
+       802,
+       "   double c = GetCoordC(vtx_x, vtx_y);"
+      ],
+      [
+       803,
+       "   double cdist = c;"
+      ],
+      [
+       804,
+       ""
+      ],
+      [
+       805,
+       "   //Is this on the right side on the divide?"
+      ],
+      [
+       806,
+       "   //  If we want to exclude the buffer, is it outside the buffer?  "
+      ],
+      [
+       807,
+       "   return ( cdist >= 0.0 && ( excludeBuffer ? fabs(cdist) > distToDivCut_ : true ) );"
+      ],
+      [
+       808,
+       "}"
+      ],
+      [
+       809,
+       ""
+      ],
+      [
+       810,
+       "bool TargetUtils::InIron3VolMC(double vtx_x, double vtx_y, double vtx_z, double apothem, bool excludeBuffer)"
+      ],
+      [
+       811,
+       "{"
+      ]
+     ],
+     [
+      [
+       816,
+       "   if ( !IsInHexagon(vtx_x, vtx_y, apothem) ) return false;"
+      ],
+      [
+       817,
+       ""
+      ],
+      [
+       818,
+       "   double c = GetCoordC(vtx_x, vtx_y);"
+      ],
+      [
+       819,
+       "   double cdist = c;"
+      ],
+      [
+       820,
+       ""
+      ],
+      [
+       821,
+       "   //Is this on the right side on the divide?"
+      ],
+      [
+       822,
+       "   //  If we want to exclude the buffer, is it outside the buffer?  "
+      ],
+      [
+       823,
+       "   return ( cdist < 0.0 && vtx_x < 0.0 && ( excludeBuffer ? fabs(cdist) > distToDivCut_ && fabs(vtx_x) > distToDivCut_ : true ) );"
+      ],
+      [
+       824,
+       "}"
+      ],
+      [
+       825,
+       ""
+      ],
+      [
+       826,
+       "bool TargetUtils::InLead3VolMC(double vtx_x, double vtx_y, double vtx_z, double apothem, bool excludeBuffer)"
+      ],
+      [
+       827,
+       "{"
+      ]
+     ],
+     [
+      [
+       832,
+       "   if ( !IsInHexagon(vtx_x, vtx_y, apothem) ) return false;"
+      ],
+      [
+       833,
+       ""
+      ],
+      [
+       834,
+       "   double c = GetCoordC(vtx_x, vtx_y);"
+      ],
+      [
+       835,
+       "   double cdist = c;"
+      ],
+      [
+       836,
+       ""
+      ],
+      [
+       837,
+       "   //Is this on the right side on the divide?"
+      ],
+      [
+       838,
+       "   //  If we want to exclude the buffer, is it outside the buffer?  "
+      ],
+      [
+       839,
+       "   return ( cdist < 0.0 && vtx_x >= 0.0 && ( excludeBuffer ? fabs(cdist) > distToDivCut_ && fabs(vtx_x) > distToDivCut_ : true ) );"
+      ],
+      [
+       840,
+       "}"
+      ],
+      [
+       841,
+       ""
+      ],
+      [
+       842,
+       "bool TargetUtils::InLead4VolMC(double vtx_x, double vtx_y, double vtx_z, double apothem)"
+      ],
+      [
+       843,
+       "{"
+      ]
+     ],
+     [
+      [
+       848,
+       "   if ( !IsInHexagon(vtx_x, vtx_y, apothem) ) return false;"
+      ],
+      [
+       849,
+       ""
+      ],
+      [
+       850,
+       "   return true;"
+      ],
+      [
+       851,
+       "}"
+      ],
+      [
+       852,
+       ""
+      ],
+      [
+       853,
+       "bool TargetUtils::InIron5VolMC(double vtx_x, double vtx_y, double vtx_z, double apothem, bool excludeBuffer)"
+      ],
+      [
+       854,
+       "{"
+      ]
+     ],
+     [
+      [
+       859,
+       "   if ( !IsInHexagon(vtx_x, vtx_y, apothem) ) return false;"
+      ],
+      [
+       860,
+       ""
+      ],
+      [
+       861,
+       "   double u = GetCoordU(vtx_x, vtx_y);"
+      ],
+      [
+       862,
+       "   double udist = u - PlotUtils::TargetProp::offset_pb_fe;"
+      ],
+      [
+       863,
+       ""
+      ],
+      [
+       864,
+       "   //Is this on the right side on the divide?"
+      ],
+      [
+       865,
+       "   //  If we want to exclude the buffer, is it outside the buffer?  "
+      ],
+      [
+       866,
+       "   return ( udist < 0.0 && ( excludeBuffer ? fabs(udist) > distToDivCut_ : true ) );"
+      ],
+      [
+       867,
+       "}"
+      ],
+      [
+       868,
+       ""
+      ],
+      [
+       869,
+       "bool TargetUtils::InLead5VolMC(double vtx_x, double vtx_y, double vtx_z, double apothem, bool excludeBuffer)"
+      ],
+      [
+       870,
+       "{"
+      ]
+     ],
+     [
+      [
+       875,
+       "   if ( !IsInHexagon(vtx_x, vtx_y, apothem) ) return false;"
+      ],
+      [
+       876,
+       ""
+      ],
+      [
+       877,
+       "   double u = GetCoordU(vtx_x, vtx_y);"
+      ],
+      [
+       878,
+       "   double udist = u - PlotUtils::TargetProp::offset_pb_fe;"
+      ],
+      [
+       879,
+       ""
+      ],
+      [
+       880,
+       "   //Is this on the right side on the divide?"
+      ],
+      [
+       881,
+       "   //  If we want to exclude the buffer, is it outside the buffer?  "
+      ],
+      [
+       882,
+       "   return ( udist >= 0.0 && ( excludeBuffer ? fabs(udist) > distToDivCut_ : true ) );"
+      ],
+      [
+       883,
+       "}"
+      ],
+      [
+       884,
+       ""
+      ],
+      [
+       885,
+       "double TargetUtils::GetCoordU(double vtx_x, double vtx_y)"
+      ],
+      [
+       886,
+       "{//see equation 5 of docdb 9069"
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/include/PlotUtils/CCInclusiveSignal.h",
+   "bytes": 4067,
+   "sha256": "cf9ee8c47a983070487db8f94bfa7c3b2831d52a25e66ee3e2ff972cbd9660ca",
+   "stat_unchanged": true,
+   "whole": true,
+   "excerpts": {
+    "Apothem": [
+     [
+      [
+       92,
+       "  class Apothem: public PlotUtils::SignalConstraint<UNIVERSE>"
+      ],
+      [
+       93,
+       "  {"
+      ],
+      [
+       94,
+       "    public:"
+      ],
+      [
+       95,
+       "      Apothem(const double apothem): PlotUtils::SignalConstraint<UNIVERSE>(std::string(\"Apothem \") + std::to_string(apothem)), fApothem(apothem)"
+      ],
+      [
+       96,
+       "      {"
+      ],
+      [
+       97,
+       "      }"
+      ],
+      [
+       98,
+       ""
+      ],
+      [
+       99,
+       "    private:"
+      ],
+      [
+       100,
+       "      bool checkConstraint(const UNIVERSE& univ) const override"
+      ],
+      [
+       101,
+       "      {"
+      ],
+      [
+       102,
+       "        const auto vertex = univ.GetTrueVertex();"
+      ],
+      [
+       103,
+       "        return (fabs(vertex.y()) < fSlope*fabs(vertex.x()) + 2.*fApothem/sqrt(3.))"
+      ],
+      [
+       104,
+       "               && (fabs(vertex.x()) < fApothem);"
+      ],
+      [
+       105,
+       "      }"
+      ],
+      [
+       106,
+       ""
+      ],
+      [
+       107,
+       "      const double fApothem;"
+      ],
+      [
+       108,
+       "      const double fSlope = -1./sqrt(3.); //A regular hexagon has angles of 2*M_PI/3, so I can find this is 1/tan(M_PI/3.)"
+      ],
+      [
+       109,
+       "  };"
+      ]
+     ]
+    ],
+    "ZRange": [
+     [
+      [
+       112,
+       "  class ZRange: public PlotUtils::SignalConstraint<UNIVERSE>"
+      ],
+      [
+       113,
+       "  {"
+      ],
+      [
+       114,
+       "    public:"
+      ],
+      [
+       115,
+       "      ZRange(const std::string& name, const double zMin, const double zMax): PlotUtils::SignalConstraint<UNIVERSE>(name), fMin(zMin), fMax(zMax)"
+      ],
+      [
+       116,
+       "      {"
+      ],
+      [
+       117,
+       "      }"
+      ],
+      [
+       118,
+       ""
+      ],
+      [
+       119,
+       "    private:"
+      ],
+      [
+       120,
+       "      bool checkConstraint(const UNIVERSE& univ) const override"
+      ],
+      [
+       121,
+       "      {"
+      ],
+      [
+       122,
+       "        return univ.GetTrueVertex().z() >= fMin && univ.GetTrueVertex().z() <= fMax;"
+      ],
+      [
+       123,
+       "      }"
+      ],
+      [
+       124,
+       ""
+      ],
+      [
+       125,
+       "      const double fMin;"
+      ],
+      [
+       126,
+       "      const double fMax;"
+      ],
+      [
+       127,
+       "  };"
+      ]
+     ]
+    ],
+    "namespace_truth_lines": [
+     7
+    ]
+   }
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/include/utilities/TargetUtils.h",
+   "bytes": 23157,
+   "sha256": "579cad600ca6e8b12919ca43cfcba22e1921da8afcd597570f26642e25b4e30f",
+   "stat_unchanged": true,
+   "whole": true,
+   "excerpts": {
+    "IsInHexagon": [
+     [
+      [
+       397,
+       "      bool IsInHexagon( double x, double y, double apothem = 850. ) const;"
+      ],
+      [
+       398,
+       ""
+      ],
+      [
+       399,
+       "      //! What daisy petal is the (x,y) coordinate in? Include apothem (mm) cut"
+      ],
+      [
+       400,
+       "      int GetDaisyPetal( double x, double y, double apothem = 850. ) const;"
+      ],
+      [
+       401,
+       ""
+      ],
+      [
+       402,
+       "      //=========================================="
+      ],
+      [
+       403,
+       "      // Functions for Tracker"
+      ],
+      [
+       404,
+       "      //=========================================="
+      ],
+      [
+       405,
+       "      //! Get the pass of a number of planes of tracker (g)"
+      ],
+      [
+       406,
+       "      double GetTrackerMass( double nPlanes, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       407,
+       "      double GetTrackerMass( double minZ, double maxZ, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       408,
+       "      //! Get the number of atoms in tracker"
+      ],
+      [
+       409,
+       "      double GetTrackerNAtoms( double nPlanes, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       410,
+       "      double GetTrackerNAtoms( double minZ, double maxZ, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       411,
+       "      //! Get the number of protons in tracker"
+      ],
+      [
+       412,
+       "      double GetTrackerNProtons( double nPlanes, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       413,
+       "      double GetTrackerNProtons( double minZ, double maxZ, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       414,
+       "      //! Get the number of neutrons in tracker"
+      ],
+      [
+       415,
+       "      double GetTrackerNNeutrons( double nPlanes, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       416,
+       "      double GetTrackerNNeutrons( double minZ, double maxZ, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       417,
+       "      //! Get the number of nucleons (n+p) in tracker"
+      ],
+      [
+       418,
+       "      double GetTrackerNNucleons( double nPlanes, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       419,
+       "      double GetTrackerNNucleons( double minZ, double maxZ, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       420,
+       ""
+      ],
+      [
+       421,
+       "      //get information about elements of the tracker"
+      ],
+      [
+       422,
+       "      double GetTrackerElementMassFraction( int targetZ, bool isMC ) const;"
+      ],
+      [
+       423,
+       "      double GetTrackerElementA( int targetZ ) const;"
+      ],
+      [
+       424,
+       "      double GetTrackerElementAtomsPerGram( int targetZ ) const;"
+      ],
+      [
+       425,
+       ""
+      ],
+      [
+       426,
+       "      //! Get the number of EL atoms in tracker"
+      ],
+      [
+       427,
+       "      double GetTrackerElementNAtoms( int elementZ, double nPlanes, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       428,
+       "      double GetTrackerElementNAtoms( int elementZ, double minZ, double maxZ, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       429,
+       "      //! Get the number of C atoms in tracker (used frequently so is gets a special function)"
+      ],
+      [
+       430,
+       "      double GetTrackerNCarbonAtoms( double nPlanes, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       431,
+       "      double GetTrackerNCarbonAtoms( double minZ, double maxZ, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       432,
+       ""
+      ],
+      [
+       433,
+       "      //! In tracker?"
+      ],
+      [
+       434,
+       "      bool InTrackerZ( double vtx_z ) const;"
+      ],
+      [
+       435,
+       "      bool InTracker( double vtx_x, double vtx_y, double vtx_z, double apothem = 850. ) const;"
+      ],
+      [
+       436,
+       ""
+      ],
+      [
+       437,
+       "      //! In nuclear target region?"
+      ],
+      [
+       438,
+       "      bool InNukeRegionZ( double vtx_z );"
+      ],
+      [
+       439,
+       "      bool InNukeRegion( double vtx_x, double vtx_y, double vtx_z, double apothem = 850. );"
+      ],
+      [
+       440,
+       ""
+      ],
+      [
+       441,
+       "      //=========================================="
+      ],
+      [
+       442,
+       "      // Functions for Passive Targets"
+      ],
+      [
+       443,
+       "      //=========================================="
+      ],
+      [
+       444,
+       "      //! Get the area of a passive target (mm^2)"
+      ],
+      [
+       445,
+       "      double GetPassiveTargetArea( int targetID, int targetZ, double apothem = 850. ) const;"
+      ],
+      [
+       446,
+       "      //! Get the areal density of a passive target ( g/mm^2 )"
+      ],
+      [
+       447,
+       "      double GetPassiveTargetArealDensity( int targetID, int targetZ, bool isMC ) const;"
+      ],
+      [
+       448,
+       "      //! Get the mass of a passive target (g)"
+      ],
+      [
+       449,
+       "      double GetPassiveTargetMass( int targetID, int targetZ, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       450,
+       "      //! Get the number of protons in a passive target"
+      ],
+      [
+       451,
+       "      double GetPassiveTargetNProtons( int targetID, int targetZ, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       452,
+       "      //! Get the number of protons in a passive target"
+      ],
+      [
+       453,
+       "      double GetPassiveTargetNNeutrons( int targetID, int targetZ, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       454,
+       "      //! Get the number of nucleons( n+p ) in a passive target"
+      ],
+      [
+       455,
+       "      double GetPassiveTargetNNucleons( int targetID, int targetZ, bool isMC, double apothem = 850. ) const;"
+      ],
+      [
+       456,
+       ""
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/include/utilities/TargetUtils.cxx",
+   "bytes": 38295,
+   "sha256": "64f47c7c9932b8562afbce77dc5d9335c0d06e3cb23263be51486aff8c40eb39",
+   "stat_unchanged": true,
+   "whole": true,
+   "excerpts": {
+    "IsInHexagon": [
+     [
+      [
+       34,
+       "bool TargetUtils::IsInHexagon( double x, double y, double apothem /*= 850. */ ) const"
+      ],
+      [
+       35,
+       "{"
+      ],
+      [
+       36,
+       "   double lenOfSide = apothem*(2/sqrt(3)); "
+      ],
+      [
+       37,
+       "   double slope     = (lenOfSide/2.0)/apothem;"
+      ],
+      [
+       38,
+       "   double xp        = fabs(x);"
+      ],
+      [
+       39,
+       "   double yp        = fabs(y);"
+      ],
+      [
+       40,
+       "   "
+      ],
+      [
+       41,
+       "   if( (xp*xp + yp*yp) < apothem*apothem )             return true;"
+      ],
+      [
+       42,
+       "   else if( xp <= apothem && yp*yp < lenOfSide/2.0 )   return true; "
+      ],
+      [
+       43,
+       "   else if( xp <= apothem && yp < lenOfSide-xp*slope ) return true;"
+      ],
+      [
+       44,
+       ""
+      ],
+      [
+       45,
+       "   return false;"
+      ],
+      [
+       46,
+       "}"
+      ]
+     ],
+     [
+      [
+       51,
+       "  if( !IsInHexagon( x, y, apothem ) ) return -1;"
+      ],
+      [
+       52,
+       "  double angle = atan2(y,x) / ( 2 * TMath::Pi() );"
+      ],
+      [
+       53,
+       "  if ( angle < 0 ) angle += 1;"
+      ],
+      [
+       54,
+       "  int out = floor(12*angle);"
+      ],
+      [
+       55,
+       "  return out;"
+      ],
+      [
+       56,
+       "} "
+      ],
+      [
+       57,
+       ""
+      ],
+      [
+       58,
+       ""
+      ],
+      [
+       59,
+       ""
+      ],
+      [
+       60,
+       "//! Get the pass of a number of planes"
+      ],
+      [
+       61,
+       "double TargetUtils::GetTrackerMass( double nPlanes, bool isMC, double apothem /* = 850. */ ) const"
+      ],
+      [
+       62,
+       "{"
+      ]
+     ],
+     [
+      [
+       265,
+       "  if( !IsInHexagon( vtx_x, vtx_y, apothem ) ) return false;"
+      ],
+      [
+       266,
+       "   "
+      ],
+      [
+       267,
+       "  return true; "
+      ],
+      [
+       268,
+       "}"
+      ],
+      [
+       269,
+       "bool TargetUtils::InTrackerZ( double vtx_z ) const"
+      ],
+      [
+       270,
+       "{"
+      ]
+     ],
+     [
+      [
+       284,
+       "  if( !IsInHexagon( vtx_x, vtx_y, apothem ) ) return false;"
+      ],
+      [
+       285,
+       ""
+      ],
+      [
+       286,
+       "  return true;"
+      ],
+      [
+       287,
+       "}"
+      ],
+      [
+       288,
+       "bool TargetUtils::InNukeRegionZ( double vtx_z )"
+      ],
+      [
+       289,
+       "{"
+      ]
+     ],
+     [
+      [
+       625,
+       "  if ( !IsInHexagon(vtx_x, vtx_y, apothem) ) return false;"
+      ],
+      [
+       626,
+       ""
+      ],
+      [
+       627,
+       "  return true; "
+      ],
+      [
+       628,
+       "}"
+      ],
+      [
+       629,
+       ""
+      ],
+      [
+       630,
+       "bool TargetUtils::InPassiveTargetVolMC( double vtx_x, double vtx_y, double vtx_z, double apothem /* = 850. */, bool excludeBuffer /* = false */ )"
+      ],
+      [
+       631,
+       "{"
+      ]
+     ],
+     [
+      [
+       737,
+       "   if ( !IsInHexagon(vtx_x, vtx_y, apothem) ) return false;"
+      ],
+      [
+       738,
+       ""
+      ],
+      [
+       739,
+       "   double u = GetCoordU(vtx_x, vtx_y);"
+      ],
+      [
+       740,
+       "   double udist = u - PlotUtils::TargetProp::offset_pb_fe;"
+      ],
+      [
+       741,
+       ""
+      ],
+      [
+       742,
+       "   //Is this on the right side on the divide?"
+      ],
+      [
+       743,
+       "   //  If we want to exclude the buffer, is it outside the buffer?  "
+      ],
+      [
+       744,
+       "   return ( udist < 0.0 && ( excludeBuffer ? fabs(udist) > distToDivCut_ : true ) );"
+      ],
+      [
+       745,
+       "}"
+      ],
+      [
+       746,
+       ""
+      ],
+      [
+       747,
+       "bool TargetUtils::InLead1VolMC(double vtx_x, double vtx_y, double vtx_z, double apothem/*default=850.0mm*/, bool excludeBuffer/*default=false*/)"
+      ],
+      [
+       748,
+       "{"
+      ]
+     ],
+     [
+      [
+       753,
+       "   if ( !IsInHexagon(vtx_x, vtx_y, apothem) ) return false;"
+      ],
+      [
+       754,
+       ""
+      ],
+      [
+       755,
+       "   double u = GetCoordU(vtx_x, vtx_y);"
+      ],
+      [
+       756,
+       "   double udist = u - PlotUtils::TargetProp::offset_pb_fe;"
+      ],
+      [
+       757,
+       "   //Is this on the right side on the divide?"
+      ],
+      [
+       758,
+       "   //  If we want to exclude the buffer, is it outside the buffer?  "
+      ],
+      [
+       759,
+       "   return ( udist >= 0.0 && ( excludeBuffer ? fabs(udist) > distToDivCut_ : true ) );"
+      ],
+      [
+       760,
+       "}"
+      ],
+      [
+       761,
+       ""
+      ],
+      [
+       762,
+       "bool TargetUtils::InIron2VolMC(double vtx_x, double vtx_y, double vtx_z, double apothem, bool excludeBuffer)"
+      ],
+      [
+       763,
+       "{"
+      ]
+     ],
+     [
+      [
+       768,
+       "   if ( !IsInHexagon(vtx_x, vtx_y, apothem) ) return false;"
+      ],
+      [
+       769,
+       ""
+      ],
+      [
+       770,
+       "   double d = GetCoordD(vtx_x, vtx_y);"
+      ],
+      [
+       771,
+       "   double ddist = d - PlotUtils::TargetProp::offset_pb_fe;"
+      ],
+      [
+       772,
+       ""
+      ],
+      [
+       773,
+       "   //Is this on the right side on the divide?"
+      ],
+      [
+       774,
+       "   //  If we want to exclude the buffer, is it outside the buffer?  "
+      ],
+      [
+       775,
+       "   return ( ddist < 0.0 && ( excludeBuffer ? fabs(ddist) > distToDivCut_ : true ) );"
+      ],
+      [
+       776,
+       "}"
+      ],
+      [
+       777,
+       ""
+      ],
+      [
+       778,
+       "bool TargetUtils::InLead2VolMC(double vtx_x, double vtx_y, double vtx_z, double apothem, bool excludeBuffer)"
+      ],
+      [
+       779,
+       "{"
+      ]
+     ],
+     [
+      [
+       784,
+       "   if ( !IsInHexagon(vtx_x, vtx_y, apothem) ) return false;"
+      ],
+      [
+       785,
+       ""
+      ],
+      [
+       786,
+       "   double d = GetCoordD(vtx_x, vtx_y);"
+      ],
+      [
+       787,
+       "   double ddist = d - PlotUtils::TargetProp::offset_pb_fe;"
+      ],
+      [
+       788,
+       ""
+      ],
+      [
+       789,
+       "   //Is this on the right side on the divide?"
+      ],
+      [
+       790,
+       "   //  If we want to exclude the buffer, is it outside the buffer?  "
+      ],
+      [
+       791,
+       "   return ( ddist >= 0.0 && ( excludeBuffer ? fabs(ddist) > distToDivCut_ : true ) );"
+      ],
+      [
+       792,
+       "}"
+      ],
+      [
+       793,
+       ""
+      ],
+      [
+       794,
+       "bool TargetUtils::InCarbon3VolMC(double vtx_x, double vtx_y, double vtx_z, double apothem, bool excludeBuffer)"
+      ],
+      [
+       795,
+       "{"
+      ]
+     ],
+     [
+      [
+       800,
+       "   if ( !IsInHexagon(vtx_x, vtx_y, apothem) ) return false;"
+      ],
+      [
+       801,
+       ""
+      ],
+      [
+       802,
+       "   double c = GetCoordC(vtx_x, vtx_y);"
+      ],
+      [
+       803,
+       "   double cdist = c;"
+      ],
+      [
+       804,
+       ""
+      ],
+      [
+       805,
+       "   //Is this on the right side on the divide?"
+      ],
+      [
+       806,
+       "   //  If we want to exclude the buffer, is it outside the buffer?  "
+      ],
+      [
+       807,
+       "   return ( cdist >= 0.0 && ( excludeBuffer ? fabs(cdist) > distToDivCut_ : true ) );"
+      ],
+      [
+       808,
+       "}"
+      ],
+      [
+       809,
+       ""
+      ],
+      [
+       810,
+       "bool TargetUtils::InIron3VolMC(double vtx_x, double vtx_y, double vtx_z, double apothem, bool excludeBuffer)"
+      ],
+      [
+       811,
+       "{"
+      ]
+     ],
+     [
+      [
+       816,
+       "   if ( !IsInHexagon(vtx_x, vtx_y, apothem) ) return false;"
+      ],
+      [
+       817,
+       ""
+      ],
+      [
+       818,
+       "   double c = GetCoordC(vtx_x, vtx_y);"
+      ],
+      [
+       819,
+       "   double cdist = c;"
+      ],
+      [
+       820,
+       ""
+      ],
+      [
+       821,
+       "   //Is this on the right side on the divide?"
+      ],
+      [
+       822,
+       "   //  If we want to exclude the buffer, is it outside the buffer?  "
+      ],
+      [
+       823,
+       "   return ( cdist < 0.0 && vtx_x < 0.0 && ( excludeBuffer ? fabs(cdist) > distToDivCut_ && fabs(vtx_x) > distToDivCut_ : true ) );"
+      ],
+      [
+       824,
+       "}"
+      ],
+      [
+       825,
+       ""
+      ],
+      [
+       826,
+       "bool TargetUtils::InLead3VolMC(double vtx_x, double vtx_y, double vtx_z, double apothem, bool excludeBuffer)"
+      ],
+      [
+       827,
+       "{"
+      ]
+     ],
+     [
+      [
+       832,
+       "   if ( !IsInHexagon(vtx_x, vtx_y, apothem) ) return false;"
+      ],
+      [
+       833,
+       ""
+      ],
+      [
+       834,
+       "   double c = GetCoordC(vtx_x, vtx_y);"
+      ],
+      [
+       835,
+       "   double cdist = c;"
+      ],
+      [
+       836,
+       ""
+      ],
+      [
+       837,
+       "   //Is this on the right side on the divide?"
+      ],
+      [
+       838,
+       "   //  If we want to exclude the buffer, is it outside the buffer?  "
+      ],
+      [
+       839,
+       "   return ( cdist < 0.0 && vtx_x >= 0.0 && ( excludeBuffer ? fabs(cdist) > distToDivCut_ && fabs(vtx_x) > distToDivCut_ : true ) );"
+      ],
+      [
+       840,
+       "}"
+      ],
+      [
+       841,
+       ""
+      ],
+      [
+       842,
+       "bool TargetUtils::InLead4VolMC(double vtx_x, double vtx_y, double vtx_z, double apothem)"
+      ],
+      [
+       843,
+       "{"
+      ]
+     ],
+     [
+      [
+       848,
+       "   if ( !IsInHexagon(vtx_x, vtx_y, apothem) ) return false;"
+      ],
+      [
+       849,
+       ""
+      ],
+      [
+       850,
+       "   return true;"
+      ],
+      [
+       851,
+       "}"
+      ],
+      [
+       852,
+       ""
+      ],
+      [
+       853,
+       "bool TargetUtils::InIron5VolMC(double vtx_x, double vtx_y, double vtx_z, double apothem, bool excludeBuffer)"
+      ],
+      [
+       854,
+       "{"
+      ]
+     ],
+     [
+      [
+       859,
+       "   if ( !IsInHexagon(vtx_x, vtx_y, apothem) ) return false;"
+      ],
+      [
+       860,
+       ""
+      ],
+      [
+       861,
+       "   double u = GetCoordU(vtx_x, vtx_y);"
+      ],
+      [
+       862,
+       "   double udist = u - PlotUtils::TargetProp::offset_pb_fe;"
+      ],
+      [
+       863,
+       ""
+      ],
+      [
+       864,
+       "   //Is this on the right side on the divide?"
+      ],
+      [
+       865,
+       "   //  If we want to exclude the buffer, is it outside the buffer?  "
+      ],
+      [
+       866,
+       "   return ( udist < 0.0 && ( excludeBuffer ? fabs(udist) > distToDivCut_ : true ) );"
+      ],
+      [
+       867,
+       "}"
+      ],
+      [
+       868,
+       ""
+      ],
+      [
+       869,
+       "bool TargetUtils::InLead5VolMC(double vtx_x, double vtx_y, double vtx_z, double apothem, bool excludeBuffer)"
+      ],
+      [
+       870,
+       "{"
+      ]
+     ],
+     [
+      [
+       875,
+       "   if ( !IsInHexagon(vtx_x, vtx_y, apothem) ) return false;"
+      ],
+      [
+       876,
+       ""
+      ],
+      [
+       877,
+       "   double u = GetCoordU(vtx_x, vtx_y);"
+      ],
+      [
+       878,
+       "   double udist = u - PlotUtils::TargetProp::offset_pb_fe;"
+      ],
+      [
+       879,
+       ""
+      ],
+      [
+       880,
+       "   //Is this on the right side on the divide?"
+      ],
+      [
+       881,
+       "   //  If we want to exclude the buffer, is it outside the buffer?  "
+      ],
+      [
+       882,
+       "   return ( udist >= 0.0 && ( excludeBuffer ? fabs(udist) > distToDivCut_ : true ) );"
+      ],
+      [
+       883,
+       "}"
+      ],
+      [
+       884,
+       ""
+      ],
+      [
+       885,
+       "double TargetUtils::GetCoordU(double vtx_x, double vtx_y)"
+      ],
+      [
+       886,
+       "{//see equation 5 of docdb 9069"
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/include/calculators/CCInclusiveSignal.h",
+   "bytes": 4067,
+   "sha256": "cf9ee8c47a983070487db8f94bfa7c3b2831d52a25e66ee3e2ff972cbd9660ca",
+   "stat_unchanged": true,
+   "whole": true,
+   "excerpts": {
+    "Apothem": [
+     [
+      [
+       92,
+       "  class Apothem: public PlotUtils::SignalConstraint<UNIVERSE>"
+      ],
+      [
+       93,
+       "  {"
+      ],
+      [
+       94,
+       "    public:"
+      ],
+      [
+       95,
+       "      Apothem(const double apothem): PlotUtils::SignalConstraint<UNIVERSE>(std::string(\"Apothem \") + std::to_string(apothem)), fApothem(apothem)"
+      ],
+      [
+       96,
+       "      {"
+      ],
+      [
+       97,
+       "      }"
+      ],
+      [
+       98,
+       ""
+      ],
+      [
+       99,
+       "    private:"
+      ],
+      [
+       100,
+       "      bool checkConstraint(const UNIVERSE& univ) const override"
+      ],
+      [
+       101,
+       "      {"
+      ],
+      [
+       102,
+       "        const auto vertex = univ.GetTrueVertex();"
+      ],
+      [
+       103,
+       "        return (fabs(vertex.y()) < fSlope*fabs(vertex.x()) + 2.*fApothem/sqrt(3.))"
+      ],
+      [
+       104,
+       "               && (fabs(vertex.x()) < fApothem);"
+      ],
+      [
+       105,
+       "      }"
+      ],
+      [
+       106,
+       ""
+      ],
+      [
+       107,
+       "      const double fApothem;"
+      ],
+      [
+       108,
+       "      const double fSlope = -1./sqrt(3.); //A regular hexagon has angles of 2*M_PI/3, so I can find this is 1/tan(M_PI/3.)"
+      ],
+      [
+       109,
+       "  };"
+      ]
+     ]
+    ],
+    "ZRange": [
+     [
+      [
+       112,
+       "  class ZRange: public PlotUtils::SignalConstraint<UNIVERSE>"
+      ],
+      [
+       113,
+       "  {"
+      ],
+      [
+       114,
+       "    public:"
+      ],
+      [
+       115,
+       "      ZRange(const std::string& name, const double zMin, const double zMax): PlotUtils::SignalConstraint<UNIVERSE>(name), fMin(zMin), fMax(zMax)"
+      ],
+      [
+       116,
+       "      {"
+      ],
+      [
+       117,
+       "      }"
+      ],
+      [
+       118,
+       ""
+      ],
+      [
+       119,
+       "    private:"
+      ],
+      [
+       120,
+       "      bool checkConstraint(const UNIVERSE& univ) const override"
+      ],
+      [
+       121,
+       "      {"
+      ],
+      [
+       122,
+       "        return univ.GetTrueVertex().z() >= fMin && univ.GetTrueVertex().z() <= fMax;"
+      ],
+      [
+       123,
+       "      }"
+      ],
+      [
+       124,
+       ""
+      ],
+      [
+       125,
+       "      const double fMin;"
+      ],
+      [
+       126,
+       "      const double fMax;"
+      ],
+      [
+       127,
+       "  };"
+      ]
+     ]
+    ],
+    "namespace_truth_lines": [
+     7
+    ]
+   }
+  }
+ ],
+ "revisions": {
+  "MAT": {
+   "git_dir": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/MAT/.git",
+   "HEAD": "ref: refs/heads/main",
+   "ref_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+  },
+  "MAT-MINERvA": {
+   "git_dir": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/MAT-MINERvA/.git",
+   "HEAD": "ref: refs/heads/main",
+   "ref_sha": "50d7631416d1c93edd4db6886a2ca29da64fee60"
+  }
+ }
+}

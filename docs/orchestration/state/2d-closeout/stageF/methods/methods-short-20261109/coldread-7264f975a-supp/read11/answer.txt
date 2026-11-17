@@ -1,0 +1,7 @@
+No defects found; no fixes required.
+
+1. **The added clause is true and preserves Descriptive status.** `ev/route_record.txt` records the later trial-run stop: a computing-time-and-memory check found an output file missing before any pseudo-experiment was graded, and the trial was rerun with only its batch script changed. The paper accurately summarizes this. Decision item 2 still requires **Descriptive** because the entry-check repair was chosen after a stop, whatever the readings; unchanged scientific rules do not remove that status.
+
+2. **S8.5 now gives one reason in the repaired arm.** At `ev/supplemental_body.tex:1132`, the repair chosen after the stop leads to the descriptive classification; the table caption at line 1146 states that reason explicitly. The expanded route record retains the unexplained GEANT4 disagreement, and line 1142 retains its unclassified origin, without making either a reason for “descriptive.” The former “Its readings are therefore descriptive” inference is absent. The alternative `offset-proceeded` arm describes a separate route and introduces no competing reason for this repaired run.
+
+VERDICT: PASS

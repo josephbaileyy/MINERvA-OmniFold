@@ -1,0 +1,4 @@
+Y03 | LESS | "quoted 2D central value until 2026-10-11" -> "quoted 2D central value in an earlier version of the analysis" | The specific date the exact-split value stopped being quoted is dropped, and it is not restated elsewhere in the table.
+Y08 | LESS | "at least fifteen-fold" -> "by about an order of magnitude" | The stated lower bound on the bias reduction is replaced by a vaguer approximate factor.
+Y09 | LESS | "reproduces an independently published binned measurement" -> "reproduces the integrated cross section of an independently published binned measurement" | The agreement is narrowed from the whole measurement to its integrated cross section only.
+FLAGGED 3 of 9 rows

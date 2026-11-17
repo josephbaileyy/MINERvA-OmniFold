@@ -37,8 +37,9 @@ and whitespace collapsed. Row kinds:
   current tree, while the figure pins still do.
 
 Also:
-  - Fig. 1: docs/analysis-note/figures/paper_fig1_validation.pdf and the committed copy fig1/fig1_validation.pdf both
-    have sha256 71a2ea48... (RE2-PARTC-A3-REPORT.md sec. 3);
+  - Fig. 1: docs/analysis-note/figures/paper_fig1_validation.pdf and the committed copy FIG_COPY (#1182, version B'
+    on COV2D-G2R's RE-2-shapes route A, item 15) both have sha256 ef466621...; before B', route A's 1ead58a2...
+    (#1168); before D1, fig1/fig1_validation.pdf at 71a2ea48...;
   - check_sec4_receipts.py reads Q_R's budget (BUDGET_Q names re2/run/partc_r2/partc-r2/outA/budget_Q.json.gz);
   - protected text is untouched: main_paper.tex has no diff against BASE, and no added or removed line of any changed
     .tex deliverable matches the protected patterns (holds, acknowledgments, funding, AI-use, data availability).
@@ -59,7 +60,8 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 METHODS = HERE.parent
-FIG_SHA = "71a2ea488ab758a466d40b7d5a7a061ebd95b1cdb90a79427c3da968238b6427"
+FIG_SHA = "ef466621b97f7d2a55bb18c335aa5de32be529eb10f2215844ee8fa075886de0"
+FIG_COPY = "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/g2r/re2shapes/fig1/bprime/run/a/fig1_validation.pdf"
 BUDGET_QR = "2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/outA/budget_Q.json.gz"
 PROTECTED = re.compile(r"\\pubhold|acknowledg|funding|DE-AC|DE-SC|Claude|AI-use|AI use|data availability|"
                        r"artificial intelligence", re.I)
@@ -199,7 +201,7 @@ def check_rows(wt, ledger, figures_only=False):
 
 def check_fig(wt):
     fails = 0
-    for p in (wt / "docs/analysis-note/figures/paper_fig1_validation.pdf", HERE / "fig1/fig1_validation.pdf"):
+    for p in (wt / "docs/analysis-note/figures/paper_fig1_validation.pdf", wt / FIG_COPY):
         h = hashlib.sha256(p.read_bytes()).hexdigest() if p.is_file() else "missing"
         ok = h == FIG_SHA
         print(f"  figure {p.relative_to(wt) if p.is_relative_to(wt) else p} {h} {'OK' if ok else '!= ' + FIG_SHA}")

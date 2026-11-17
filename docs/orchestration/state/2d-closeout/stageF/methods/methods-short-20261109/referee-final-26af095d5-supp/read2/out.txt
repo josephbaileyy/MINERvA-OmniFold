@@ -1,0 +1,76 @@
+I read all four files in full. **No substantive meaning change requires correction.** The exclusions in item 3 are complete, and the qualifications on interpretation and coverage remain intact.
+
+The ranked list contains one optional precision improvement:
+
+1. **Item 6: make the empty-box convention explicit.** “The boxes” identifies the correct grid, but does not reproduce every implementation detail in the record. An exact formulation would be: “its truth bins are the nonempty boxes of the grid defined in section~\ref{supp:cells}; the sixteen reporting cells are unions of these boxes.” This is optional: the old sentence also omitted empty-box removal.
+
+The individual assessments follow. Here \(\alpha\) denotes the value printed by `\fvval{null-alpha}`.
+
+1. **S13 caption: learners receiving the observable mask.**
+
+   **(a) Accurate.** The observable rows specify “no \(W\) in step 1” with “step-1 classifier,” followed by “no \(W\),” \((p_T,p_\parallel,E_{\mathrm{avail}})\), and \((p_T,p_\parallel)\), each with “all three.” The caption still defines “all three” and states: “The refinement classifier keeps 400 trees, 31 leaves and all five observables at every level.”
+
+   **(b)** The correction removes the caption’s erroneous blanket assertion that every observable mask affects all three learners. It preserves the study described by the rows, including the refinement exception and “one setting varied at a time.” No result or scientific inference changes.
+
+2. **Binning units.**
+
+   **(a) Accurate.** The paper identifies \(q_3\) as “the magnitude of the three-momentum transfer” and states: “Momenta are given in GeV/\(c\), energies in GeV.” S3’s cells-table caption likewise specifies “\(p_T\), \(p_\parallel\) and \(q_3\) in GeV/\(c\); \(E_{\mathrm{avail}}\) and \(W\) in GeV.”
+
+   **(b)** These are dimensional corrections to the labels. No numerical edge, range, catch-bin condition, reconstruction-window treatment, or exhaustiveness claim changes.
+
+3. **S14: exclusions from \(C_T\).**
+
+   **(a) Every listed exclusion is supported:**
+
+   | Entry | Supporting text in paper §6.2 |
+   |---|---|
+   | Two-dimensional run-period block | “The run-period block was neither drawn nor included in the graded covariance.” |
+   | Five-observable \(C_{\mathrm{resp}}\) and \(C_{\mathrm{PL,5D}}\) | “The graded covariance includes the model term … and leaves out the response and run-period terms.” |
+   | GEANT4 neutron and proton bands, primary variant only | “The primary variant leaves out the two bands … from its pseudo-data and from its covariance alike.” |
+
+   \(C_{\mathrm{PL,5D}}\) is explicitly defined elsewhere as the run-period term. **Nothing listed as excluded is said to be included.** In particular, \(C_{\mathrm{model}}\) is correctly absent from the exclusion row: the paper says it is included, and both existing “Covariance \(C_T\)” entries retain “\(C_{\mathrm{model}}\) included.”
+
+   **No stated exclusion is missing** after adding the primary variant’s two bands. Those bands remain included in the second variant.
+
+   **(b)** The row consolidates existing statements without changing the covariance or test. It correctly distinguishes “not drawn” from “excluded from \(C_T\)”: \(C_{\mathrm{model}}\) is not drawn in the pseudo-experiments but is included in the graded covariance. No coverage conclusion is added.
+
+4. **S11, test 10: joint significance level.**
+
+   **(a) Accurate.** Test 8 already specifies “\(\alpha/205\) per cell, \(\alpha\) jointly.” The shared procedure states that the cell threshold uses
+   \(P(\mathrm{Bin}(\ldots,p_c)\leq k)<\alpha/N_{\mathrm{cells}}\), while the joint threshold uses
+   \(P(\mathrm{Bin}(\ldots,q)\leq k)<\alpha\).
+
+   **(b)** “As 8” already imported the joint rule. The new wording makes that inheritance explicit while replacing 205 with 16 for the cell tests. Neither threshold changes. “Alpha jointly” describes the joint test’s significance level; it does not claim simultaneous coverage of all sixteen marginal intervals.
+
+5. **Outcomes caption: “Descriptive.”**
+
+   **(a) Accurate.** The two designated rows are the bias-half rule and the second five-observable coverage test. Their explanations remain explicit: the former “changes nothing in the reported result and was defined after the fake-data biases it classifies had been seen”; the latter applied advance criteria, “but a repair was chosen after an entry-check stop.”
+
+   Other rows do use the word: the benchmark reports a “descriptive \(\chi^2/\mathrm{ndf}\),” and the paired two-dimensional comparison also gives descriptive distances.
+
+   **(b)** “Two rows use … in a specific sense” identifies the two explanations without claiming that the table contains only two uses of the word. It preserves the timing disclosures, including “No coverage pseudo-experiment had been unfolded or graded; other gate readings were already visible.” No evidential status is strengthened.
+
+6. **S7: IBU truth bins.**
+
+   **(a) Accurate at the stated descriptive level.** S3 defines the construction grid as having “one interior edge dividing each axis once,” then describes merging its boxes into the sixteen reporting cells. The supplied record specifies “the **H2 coarse cells**,” with “empty cells dropped by `did.make_grid`,” and explains: “R00–R15 are unions of H2 cells … so no truth cell straddles a reporting-cell boundary.”
+
+   The paper separately defines “A coarse \(3^5\) grid” for the joint cells. The new S3 pointer therefore resolves a real naming ambiguity and agrees with paper §4.5.
+
+   **(b)** Dropping the label “coarse grid” loses no grid-definition information: S3 supplies the construction and edges. The sentence still distinguishes IBU’s truth bins from the final sixteen reporting cells.
+
+   It **harmlessly omits**, rather than explicitly states, empty-box removal. The record’s occupied truth bins remain boxes of that construction grid; removing empty boxes does not change the occupied partition. Empty-box removal was not a qualifier present in the old wording. Neither version licenses discarding nonempty boxes merely because they are unreported. The optional formulation above makes the record fully explicit.
+
+7. **Discussion: “such contrasts.”**
+
+   **(a) Accurate reference.** The immediately preceding sentence requires “contrasts within fixed muon-kinematic regions, with their joint uncertainty.” “Such contrasts” refers to those contrasts, in the context of the open question about hadronic differences contributing to the two-dimensional shape difference.
+
+   **(b)** The required check remains the same prospective robustness check: establish whether plausible changes of unfolding and detector response could themselves produce the contrasts being investigated. “Plausible,” both sources of variation, and the joint-uncertainty requirement remain. “That test is a next step” still makes clear that the check has not been completed. The wording does not assert that such contrasts have already been established or that their origin is known.
+
+None of the seven corrections moves toward the forbidden claims. The retained text says:
+
+- “The benchmark does not validate the five-observable distribution.”
+- The bias-screening rules “do not identify where the detector model is inadequate.”
+- Whether hadronic differences contribute to the two-dimensional shape difference “is open”; no localization in the extra dimensions is asserted.
+- “No reported interval has validated coverage,” and “Simultaneous coverage of all of them is not graded.” The restricted covariance, tune, variant, and descriptive-status qualifications remain.
+
+VERDICT: PASS

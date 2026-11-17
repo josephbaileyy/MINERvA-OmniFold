@@ -1,0 +1,3 @@
+p1 figure 508pt wide: 592 chars, min 3.0pt, median 8.3pt, max 9.3pt
+p2 figure 508pt wide: 326 chars, min 3.0pt, median 8.3pt, max 9.3pt
+p3 figure 468pt wide: 330 chars, min 3.0pt, median 8.3pt, max 9.3pt

@@ -1,0 +1,19 @@
+## FD-1B-STAGED-DECLARATION.md lines 233-240
+233: - So coverage is graded over natures drawn about T under the systematic model, each against its own truth. At T =
+234:   nominal, this is κ's construction, with the other groups and the Poisson draws added.
+235: 
+236: **Toys:** 300 per truth, at seeds 3,620,000–3,620,299 (G18), 3,630,000–3,630,299 (AR23) and 3,640,000–3,640,299
+237: (plug-in). `arith.py` checks these ranges and the stat-realization seeds of §4.3 against every `.tsv`, `.py`, `.sh`,
+238: `.json` and `.md` file: none occurs (`declared_seeds_found_in_repo: []`).
+239: - A first choice, 2,72x,xxx, collided with an unrelated index (`2720019`, in a G2 receipt), and was moved.
+240: 
+## FD-1B-STAGED-DECLARATION.md lines 64-69
+64:   Joseph (decision item 5).
+65: - **Stage 0 is κ, with a hard gate** (decision item 1, item 6).
+66: - **Stage 1** is held-out-tune method coverage at G18_10a_02_11b and AR23_20i_00_000:
+67:   - every uncertainty group is drawn;
+68:   - each pseudo-dataset is unfolded with the nominal simulation by the production procedure;
+69:   - the covariance is remade at each tune's truth by the reported procedure.
+## The Supplement paragraph (supplemental_body.tex:1028), new
+A first coverage test of the five-observable covariance at the two tunes gave no coverage result. Its staged redesign specified \fvval{fd1b-ntoys} pseudo-experiments at each tune. Each pseudo-experiment draws every uncertainty group (statistical, flux, interaction, detector, lateral and normalization), with the simulation and background template resampled. It is unfolded with the estimator and the nominal simulation, and graded against a covariance remade at the tune by the reported procedure. The per-cell and joint in-interval counts are read against a draw-matched null, at $\fvval{fd1b-alpha}/16$ per cell and \fvval{fd1b-alpha} jointly. The design allowed an optional plug-in truth, which was not used. One of its preliminary checks stopped it before any coverage pseudo-experiment ran. That check compared pseudo-experiments that move only the detector response at fixed truth with blocks built from the prior and the response together. A staged redesign then stopped at its first stage, under its stopping rules. The check required, in every cell, the ratio of the pseudo-experiments' standard deviation to that of the reported block to lie in the window \fvval{cov1b-win-lo}--\fvval{cov1b-win-hi}. The diagnostic study of that check gave the following results. No set of \fvval{cov1b-kmax-word} or fewer of the \fvval{cov1b-nbands} drawn bands brings every cell inside the window. In R08, the cell with the largest ratio, the interaction bands MaRES, MaCCQE and MvRES carry most of the excess. Estimator noise is rejected as the explanation for every failing cell.
+(vval{fd1b-ntoys} prints 300, read from line 236's 'Toys: 300 per truth'.)

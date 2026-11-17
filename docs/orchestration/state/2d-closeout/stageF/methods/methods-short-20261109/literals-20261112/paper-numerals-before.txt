@@ -1,0 +1,81 @@
+===== paper_body.tex 68
+         0 x22  | laylists (1A--1G and 1L--1P), corresponding to $1.057\times10^{21}$ protons on target, with an avera
+     0.025 x1  |  the cell tests raise a false flag with probability at most 0.025, and so does the joint test. Becau
+      0.04 x1  | lated shape difference: its normalization part is $\chi^{2}=0.04$, against 465 for the shape. Keepin
+      0.08 x1  | resholds, whose resolution is about   coverage per cell and 0.08 jointly. In one variant at one tune
+       0.1 x1  | the three cells that do not meet the support rule, $\Eavail=0.1$--\SI{0.2}{GeV} with $W\ge\SI{3}{GeV
+       0.2 x1  | cells that do not meet the support rule, $\Eavail=0.1$--\SI{0.2}{GeV} with $W\ge\SI{3}{GeV}$ and $\E
+      0.23 x1  | he data, the reported quantities scatter by a median of \SI{0.23}{\percent} per joint cell, against 
+       0.3 x4  | ing-level changes of its inputs move its results by at most 0.3 statistical standard deviations in t
+      0.37 x1  | inst a median data-bootstrap statistical uncertainty of \SI{0.37}{\percent} over 50 replicas, as in 
+      0.47 x1  | ts, called the joint cells. The remaining cells contain \SI{0.47}{\percent} of the expected signal a
+       0.8 x1  |  classes are defined in  ).  One of the former is the cell $0.8\le\Eavail<\SI{1.5}{GeV}$, $W\ge\SI{3
+         1 x27  |      \newcommand{\pcell}[2]{\parbox[t]{#1}{\raggedright\strut#2\strut}} \newcomma
+       1.0 x4  |  most 0.3 statistical standard deviations in the median and 1.0 at maximum. A coverage test grades t
+     1.057 x1  | eriods, or playlists (1A--1G and 1L--1P), corresponding to $1.057\times10^{21}$ protons on target, w
+      1.07 x1  | ead ratios of $6.2\times10^{-7}$ on the 153 quantities and $1.07\times10^{-6}$ on the 16 cells. Stor
+       1.1 x1  | ossed with 7 $\Eavail$, 7 $q_{3}$, and 6 $W$ bins (edges at 1.1, 1.4, 1.8, 2.2 and \SI{3}{GeV}). A c
+      1.17 x1  | the constant on the result ( ). Reconstructed $\Eavail$ is $1.17$ times the calorimetric recoil ener
+       1.4 x2  |  with 7 $\Eavail$, 7 $q_{3}$, and 6 $W$ bins (edges at 1.1, 1.4, 1.8, 2.2 and \SI{3}{GeV}). A coarse
+       1.5 x5  | tral-tracker fiducial volume with $\theta_\mu<20^{\circ}$, $1.5<\pPar<\SI{60}{GeV/c}$ and $\pT<\SI{4
+       1.8 x1  |  7 $\Eavail$, 7 $q_{3}$, and 6 $W$ bins (edges at 1.1, 1.4, 1.8, 2.2 and \SI{3}{GeV}). A coarse $3^{
+         2 x64  |      \newcommand{\pcell}[2]{\parbox[t]{#1}{\raggedright\strut#2\st
+      2.12 x1  | ake-data truths we use the predictions of the untuned GENIE~2.12.10 without the Valencia 2p2h model 
+       2.2 x1  | Eavail$, 7 $q_{3}$, and 6 $W$ bins (edges at 1.1, 1.4, 1.8, 2.2 and \SI{3}{GeV}). A coarse $3^{5}$ g
+       2.5 x1  | eviations, and those of the lower-capacity variant by up to 2.5. The estimator therefore fails a dat
+         3 x25  |  hadronic energy $\Eavail$, the three-momentum transfer $q_{3}$, and the hadronic invariant mass $W$
+         4 x10  | R02 &   &   & R10 &   &   \\ R03 &   &   & R11 &   &   \\ R04 &   &   & R12 &   &   \\ R05 &   &   &
+       4.5 x1  | ta_\mu<20^{\circ}$, $1.5<\pPar<\SI{60}{GeV/c}$ and $\pT<\SI{4.5}{GeV/c}$, the phase space of ref.~ .
+         5 x9  | he five-observable results are reported on 16 cells, R00--R15. A box or cell is supported, or meets 
+         6 x18  | protons on target, with an average neutrino energy near \SI{6}{GeV}~ . We use pre-selected analysis 
+       6.2 x1  | urbation that kept the ties left residual spread ratios of $6.2\times10^{-7}$ on the 153 quantities 
+         7 x9  | R05 &   &   & R13 &   &   \\ R06 &   &   & R14 &   &   \\ R07 &   &   & R15 &   &   \\ \bottomrule  
+         8 x8  | & Diag. & Cell & Purity & Diag. \\ \midrule R00 &   &   & R08 &   &   \\ R01 &   &   & R09 &   &   \
+         9 x5  | g. \\ \midrule R00 &   &   & R08 &   &   \\ R01 &   &   & R09 &   &   \\ R02 &   &   & R10 &   &   \
+        10 x10  | ata truths we use the predictions of the untuned GENIE~2.12.10 without the Valencia 2p2h model of me
+        12 x4  | 05$) against a covariance of condition number $1.5\times10^{12}$ &   \\ Binned IBU of the same two-d
+        14 x3  | se.   The fine grid is the analysis binning: the published $14\times16$ muon-momentum bins, of which
+        15 x2  |  five-observable estimator uses five iterations because 10, 15, or 20 iterations did not reduce its 
+        16 x18  |  unfolding.     The five-observable results are reported on 16 cells, R00--R15. A box or cell is sup
+        17 x1  | r fake-data bias than the current estimator at three of the 17 truths it was graded on.    An ensemb
+        20 x9  | ons in the central-tracker fiducial volume with $\theta_\mu<20^{\circ}$, $1.5<\pPar<\SI{60}{GeV/c}$ 
+        21 x1  | lists (1A--1G and 1L--1P), corresponding to $1.057\times10^{21}$ protons on target, with an average 
+     21.09 x1  | (MEC)~  (``GENIE CV'') and with it (``GENIE + MEC''), NuWro~21.09~  and GiBUU~2019~ . NuWro and GiBU
+        31 x1  | d subtraction with a refinement classifier at 400 trees and 31 leaves. The two estimators differ in 
+        37 x1  | n the finer joint cells, the rounding variance is about \SI{37}{\percent} of the statistical varianc
+     39.04 x1  |  detected: $T=194.4$, above the null's 99.7th percentile of 39.04 &   \\ Per-cell bias at most half 
+        42 x3  | ounding and prior-response studies \\ $(\Eavail,W)$ cells & 42, 7 $\times$ 6 & the truth-recovery, r
+        50 x4  | data & 20 rounding-level perturbations of the data, against 50 bootstrap replicas \\ Data-stability 
+        60 x1  | iducial volume with $\theta_\mu<20^{\circ}$, $1.5<\pPar<\SI{60}{GeV/c}$ and $\pT<\SI{4.5}{GeV/c}$, t
+        73 x3  | ovariance has a condition number of $1.5\times10^{12}$, and 73 of its 205 eigenvalues exceed $10^{-4
+        95 x2  | d, joint &   &   \\ count, joint & 0 & 0 \\ joint fraction, 95\,\% CI & 0--  & 0--  \\ mean $\chi^2/
+        99 x3  | lls (5D) & Difference detected: $T=194.4$, above the null's 99.7th percentile of 39.04 &   \\ Per-ce
+       100 x5  | ons, gradient-boosted decision trees~  of nominal capacity (100 trees, 8 leaves) in both OmniFold st
+       109 x2  | eplicas \\ Data-stability requirement & 153 quantities: the 109 joint cells, the 42 $(\Eavail,W)$ ce
+       135 x2  | avail={}&\sum_{p}(E_{p}-m_{p})+\sum_{\pi^{\pm}}(E_{\pi}-\SI{135}{MeV})\\ &+\sum_{\pi^{0}}E_{\pi}+\su
+       136 x1  | tions with $\lambda/\lambda_{\max}>10^{-4}$ gives $\chi^{2}=136$, and the 139 with $\lambda/\lambda_
+     138.5 x1  | Difference detected: $T=382.8$, above the null's maximum of 138.5; IBU is the published method; desc
+       139 x1  | ambda/\lambda_{\max}>10^{-4}$ gives $\chi^{2}=136$, and the 139 with $\lambda/\lambda_{\max}>10^{-6}
+       153 x6  | ainst 50 bootstrap replicas \\ Data-stability requirement & 153 quantities: the 109 joint cells, the
+     194.4 x1  | me data on the sixteen cells (5D) & Difference detected: $T=194.4$, above the null's 99.7th percenti
+       200 x3  | d $ $ for the five-observable estimator, and $ $ and $ $ at 200 iterations. The five-observable esti
+       205 x7  | mes16$ muon-momentum bins, of which the publication reports 205, crossed with 7 $\Eavail$, 7 $q_{3}$
+       285 x1  | he 139 with $\lambda/\lambda_{\max}>10^{-6}$ give $\chi^{2}=285$. Most of the $\chi^{2}$ therefore l
+       300 x1  | o the sixteen cells. At each of the same two tunes it draws 300 pseudo-experiments in each variant, 
+     382.8 x1  |  same two-dimensional inputs (2D) & Difference detected: $T=382.8$, above the null's maximum of 138.
+       400 x1  | ight background subtraction with a refinement classifier at 400 trees and 31 leaves. The two estimat
+       465 x1  | ference: its normalization part is $\chi^{2}=0.04$, against 465 for the shape. Keeping the 73 direct
+      1000 x1  | and its truth weight at the data exposure are both at least 1000 events. The cells come from the   b
+      2019 x1  | V'') and with it (``GENIE + MEC''), NuWro~21.09~  and GiBUU~2019~ . NuWro and GiBUU are generated on
+===== main_paper.tex 11
+         1 x3  | wcommand{\Eavail}{E_{\mathrm{avail}}} \newcommand{\pubhold}[1]{\textcolor{red}{[HOLD: #1]}}  \input{
+         2 x2  | criptaddress,nofootinbib,floatfix,longbibliography]{revtex4-2}  \usepackage[T1]{fontenc} \usepackage
+         6 x1  | \input{values} \input{values_inference} \input{values_fived16}  \renewcommand{\thesection}{\arabic{s
+        16 x1  | are regenerated by a candidate release package of about \SI{16}{MB}, not yet deposited, that require
+        55 x1  | ackage{xr-hyper} \usepackage[colorlinks=true,allcolors=blue!55!black]{hyperref} \input{note_release_
+        56 x1  | f that release; its 2,374 input files are identified by SHA256 checksum in the records cited in  .  
+       101 x1  | the authors of the MINERvA Analysis Toolkit and the MINERvA-101 cross-section framework on which thi
+       246 x1  |  of Energy Office of Science User Facility, under project m3246.  \pubhold{funding and grant acknowl
+       374 x1  |  analysis used an earlier production of that release; its 2,374 input files are identified by SHA256
+     94025 x1  | LAC National Accelerator Laboratory, Menlo Park, California 94025, USA}  \date{\today}              
+     94305 x2  | tment of Physics, Stanford University, Stanford, California 94305, USA} \author{Benjamin Nachman} \e

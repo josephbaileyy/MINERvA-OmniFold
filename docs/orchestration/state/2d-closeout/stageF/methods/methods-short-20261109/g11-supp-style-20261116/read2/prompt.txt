@@ -1,0 +1,15 @@
+You are checking the meaning of a style edit to the Supplemental Material of a short JINST methods paper (OmniFold unfolding of MINERvA open data). Read change.diff (the source diff of supplemental_body.tex), records.txt (the paper's own terms, the cut rule, and the scope) and the rendered pages page-*.png. Comment lines (starting with %) are provenance, not printed claims.
+
+The edit renames the estimator configurations (a)-(f) by role, replaces block symbols with words, cuts some procedural detail in S6, moves two items to footnotes, drops three labels and rewrites one sentence about hyperparameters. It is meant to change wording only, except the S6 cut, which must follow the rule in records.txt section B.
+
+Check:
+(a) every renamed reference points to the same configuration as its letter did (use tab:configs in the diff as the key: (a) superseded central-value estimator, (b) exact-split cross-check, (c) deterministic purity-based variant, (d) lower-capacity variant, (e) five-observable estimator, (f) two-observable estimator), and no sentence became ambiguous or wrong (for example "the reported estimator" where more than one is meant);
+(b) the S6 replacement keeps every fact the rule calls NEEDED (the assumptions, the scope of the linearity test, and any limitation such as what is not reported), and says nothing the removed text did not support;
+(c) the block names in words match the paper's names for the same blocks (records.txt section A, paper_body.tex:178);
+(d) the hyperparameter rewrite claims no more or less than the old text about what was and was not tuned;
+(e) the footnotes carry their content unchanged and attach at sensible places;
+(f) the rendered pages match the source, and no internal project language appears in printed text.
+
+This is round 2. round1-out.txt holds the first round's three problems; check each is fixed in change.diff and on the pages, then recheck everything else.
+
+Output a ranked numbered list of problems, each with file:line evidence and a concrete fix, or "1. No problems." Then a final line VERDICT: PASS or VERDICT: FAIL (FAIL if any printed meaning changed or a NEEDED fact was dropped).

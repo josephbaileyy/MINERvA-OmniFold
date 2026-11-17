@@ -1,0 +1,4 @@
+M026 | NEWCLAIM | "73 best-determined directions" (base table, M031) -> "73 largest-eigenvalue directions" | Run-period row: "best-determined" (smallest uncertainty) is not the same as "largest-eigenvalue" of a covariance (largest variance), so the table now describes a different set of directions.
+M037 | DIFF | "the best-determined directions ... those directions" -> "these 73 largest-eigenvalue directions ... they" | Same relabeling: the subspace in which the χ² is being apportioned is described differently.
+M038 | DIFF | "73 best-determined directions of its covariance" -> "73 largest-eigenvalue directions of its covariance" | Same relabeling: "best-determined" is not equivalent to "largest-eigenvalue".
+FLAGGED 3 of 40 rows

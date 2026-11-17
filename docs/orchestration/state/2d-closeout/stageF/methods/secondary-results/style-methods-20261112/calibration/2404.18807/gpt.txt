@@ -1,0 +1,80 @@
+The paper has a recognizable, useful structure: methods, two benchmarks, and an outlook. Most local explanations are readable, and the main findings are recoverable. However, a reader outside the collaboration must work to distinguish method families, benchmark tasks, and several meanings of “unfolding.” Important qualifications arrive late, terminology shifts, and implementation details interrupt the argument. The prose needs a substantial editorial pass, especially in the method descriptions and comparative discussion. This assessment concerns the supplied text and captions; visual layout cannot be judged from the extraction.
+
+**STYLE SCORE: 7/10**
+
+### Most important changes, ranked
+
+1. **Make the scope and benchmark distinctions consistent from the abstract onward.**  
+   **Locations:** Abstract; Introduction; §§3.2.1, 4.1; Appendix A.  
+   The abstract says, “The performance of these approaches are evaluated on the same two datasets,” but §4.1 specifies that the second benchmark compares generative methods. More seriously, Appendix A introduces a distinction that readers need before interpreting the main results: “The (b)OmniFold curves do not show unfolding, but learned densities from noisy data.”
+
+   **Fix:** State the comparison structure early and use consistent task names throughout. For example:
+
+   > We compare three families of ML-based unfolding methods using a Z+jets benchmark, with a separate noisy-data reweighting benchmark for (b)OmniFold. We also compare conditional generative methods for parton-level unfolding in top-pair production.
+
+   Likewise, reconcile “only a single step” in the Introduction with “this first iteration” in §2.1. The reader should not have to infer whether *step* and *iteration* mean the same thing.
+
+2. **Give readers a conceptual map before the long method derivations.**  
+   **Location:** §2, especially §§2.2–2.3.  
+   The opening promises “one of two approaches,” then introduces a “hybrid approach”; the Outlook presents three families. Meanwhile, the reader encounters SB, DiDi, cINN, CFM, Transfermer, TraCFM, and VLD before receiving a compact comparison.
+
+   **Fix:** Introduce the three-family organization explicitly. Add a short overview table covering what each family learns, whether it uses paired events, and what it produces. Identify which implementations are established, upgraded, or new—the abstract currently promises that distinction without making it easy to find. Give each method the same explanatory sequence: purpose, learned object, training, application.
+
+3. **Resolve the apparent contradiction about individual events.**  
+   **Location:** §2.3.  
+   The text says there is “no notion of unfolding single events,” then shortly afterward says, “we can also take single measured events and run them through the model any number of times.” Both statements may convey the intended distinction, but their wording makes readers stop and reconcile them.
+
+   **Fix:** Explain that distinction once:
+
+   > A conditional model can generate multiple particle-level samples for a measured event. These samples describe a conditional distribution under the simulation prior; they do not identify a unique particle-level counterpart.
+
+   Then use “conditional samples” consistently when discussing repeated generation.
+
+4. **Separate findings from implementation inventories, and give dense paragraphs one job.**  
+   **Locations:** Transformer-CFM discussion in §2.3.2; §§3.3–3.4; §4.2.  
+   The long TraCFM paragraph moves through embedding construction, unsuccessful alternatives, encoder attention, decoder attention, cross-attention, and output layers. In §4.2, the paragraph beginning “We again use an RQS-cINN implementation” similarly catalogs several architectures and training choices.
+
+   **Fix:** Split architecture descriptions into input representation, information flow, and output. Move routine implementation settings into an expanded Appendix B or compact configuration tables. Preserve the defining equations and conceptual differences in the main text. Replace process narration such as “We experimented with more sophisticated embedding strategies” with the direct result: “More elaborate embeddings did not improve performance.”
+
+5. **Shorten chained explanations and remove conversational commentary.**  
+   **Locations:** §3.5; §4.3; §5.  
+   The sentence beginning “We emphasize that unpaired training seems to bring DiDi-like implementations closer to describing the actual detector” chains together resemblance, an artifact, two sources of noise, and their lack of relationship.
+
+   **Fix:**
+
+   > The broader migration in unpaired DiDi resembles the detector migration only coincidentally. Detector fluctuations and noise from unpaired training have different origins.
+
+   Also replace “So physics helps, as it tends to” (§4.3) with a specific statement about the parametrization, and “the percent-level precision we got used to” with “percent-level precision.” In §3.5, two successive paragraphs begin “Finally”; use a transition that names the next purpose, such as “To assess correlations beyond the displayed marginals…”.
+
+6. **Consolidate repeated qualifications and make the Outlook synthesize.**  
+   **Locations:** Introduction; §§2, 2.1, 4.1; §5.  
+   The postponement of model-dependence questions appears repeatedly: “part of a follow-up,” “a dedicated second study,” and “a later paper.” The Outlook then largely repeats the results section, including figure-by-figure references, and twice says the methods are ready for further study.
+
+   **Fix:** Put the general scope qualification in one clear introductory paragraph, retaining local qualifications only where they explain a distinct quantity or result. In §5, organize the synthesis around the methods’ stated differences and strengths rather than retracing the figures. End with one concise closing paragraph. This would keep caveats visible without repeatedly interrupting the findings.
+
+7. **Make captions and tables useful independently of the surrounding prose.**  
+   **Locations:** Table 1; Figs. 3, 6, 8, 10, 12.  
+   Table 1 packs three metrics into slash-separated cells such as “0.59098 / 0.12493 / 13.72203,” requiring repeated consultation of the caption. Figure 6 does not expand its plotted method labels. Figure 8 says both “From the top” and “each row sums to one,” leaving *row* potentially ambiguous. Figure 10’s caption lists cINN and Transfermer although §4.3 says these are dropped.
+
+   **Fix:** Give each metric a labeled column or separate table block and use fewer displayed digits. Captions should identify the task, expand variant labels, and state the reference used in ratios and uncertainty bands. Distinguish panel rows from matrix-bin normalization in Fig. 8. Correct Fig. 10’s method list. Figure 12’s caption should explicitly identify its contents and the distinct status of the noisy-data benchmark.
+
+### Smaller line-level fixes: paper
+
+- **Abstract:** “The performance of these approaches are evaluated” → “We evaluate these approaches.” Replace “known, upgraded, and new” with a concrete contribution statement.
+- **Introduction:** “forward inferences approach” → “forward-inference approach”; “App. A just combine results” → “Appendix A collects the Z+jets comparisons.”
+- **§2 opening:** Replace “encoded in the corresponding samples, in the sense of unsupervised density estimation in ML-terms” with a direct definition of the four distributions and their samples.
+- **Terminology throughout:** Standardize *OmniFold*, *PyTorch*, *transformer*, *reweighting*, and *percent*. Define BNN, VLD, MAP, and bSB explicitly at first use.
+- **§§2–4 notation:** State how *particle level*, *parton level*, and *hard level* relate to the shared \(x_{\mathrm{part}}\) notation. Define the relationship between jet width \(w\) in the figures and \(\tau_1^{(\beta=1)}\) in §3.1.
+- **§3.2.1:** “The two methods were not separately optimized, we just started…” → “We used the same baseline configuration for both methods, adding Bayesian layers for bOmniFold.”
+- **§3.3:** “both introduced in Sec. 2.2.1” → “introduced in Secs. 2.2.1 and 2.2.2.” Remove duplicated “and” and “the.”
+- **§4.2:** “VLD does naturally includes” → “VLD naturally includes”; “they only require to correlate” → “they require correlations between.”
+- **§4.3 and captions:** Correct “paramerization,” “there a are,” “50 amples,” and “classifer.”
+- **Appendices A–B:** The organization is suitable for lookup, although Appendix A repeats explanatory caveats better placed earlier. Replace the unexplained “Part*” in Table 5 with “particle/parton.”
+
+### Smaller line-level fixes: supplement
+
+Not applicable: no separate supplemental material was supplied. Appendices A–B are assessed above as part of the paper.
+
+### What would bring it to 9/10
+
+A reader should be able to identify the contribution, comparison scope, and principal findings from the abstract and Introduction alone. Reaching 9/10 would require consistent benchmark framing, an early method overview, uniform terminology, shorter architecture paragraphs, consolidated qualifications, and captions that stand independently. The Outlook should then offer a compact synthesis of the stated findings rather than another tour through the results. These are editorial changes; none requires additional scientific studies.

@@ -1,0 +1,20 @@
+All four rows match their assigned tune and variant: `minus2` is “without” and primary; `all` is “with” the two GEANT4 bands (`change.diff:7`, `change.diff:23–26`).
+
+- **G18, without:** joint count 12, flag threshold ≤195; mean 3.07±0.08; no flagged cells; over-covering cells R02, R03, R05, R06 and R09. All match the existing prose and recorded keys (`records.txt:45–55`).
+- **G18, with:** joint count 14, flag threshold ≤195; mean 3.04±0.08; no flagged cells; over-covering cells R02, R03, R06 and R09. All match (`records.txt:32–42`).
+- **AR23, without:** joint count 1, flag threshold ≤195; mean 3.70±0.10; R07 flagged with count 163 and threshold ≤178; over-covering cells R02, R03, R06, R09, R11 and R15. All match (`records.txt:19–29`).
+- **AR23, with:** joint count 4, flag threshold ≤195; mean 3.69±0.10; R07 flagged with count 167 and threshold ≤178; over-covering cells R02, R03, R05, R06, R09, R11 and R15. All match (`records.txt:6–16`).
+
+Every caption claim is supported (`change.diff:16`):
+
+- The joint count counts pseudo-experiments inside the stated chi-square boundary, and the flag uses the lower-count direction, including equality. This agrees with the unchanged joint-region definition and grading code (`records.txt:96`, `records.txt:81–83`).
+- “Mean over the pseudo-experiments, with its standard error” correctly describes the code’s mean and sample standard deviation divided by the square root of the sample size, then by `ndf` (`records.txt:90–91`).
+- Flagged-cell entries give the count of errors satisfying the interval condition and the inclusive lower-count flag threshold (`records.txt:67`, `records.txt:82`, `records.txt:95`).
+- The over-coverage formula is equivalent to `over_covers`: the upper-tail probability for a binomial count equals the lower-tail probability for its complementary count. The strict inequality is preserved (`records.txt:85–86`). The stated per-cell level and “over-coverage is reported and is not a failure” agree with the unchanged rule (`records.txt:95`) and the rendered page’s explicit per-cell level.
+- The repaired-route sentence preserves the existing statement that the repair followed the observed stop and that the readings are therefore descriptive (`change.diff:7`, `change.diff:16`).
+
+The table and caption assert no broader covariance pass/fail conclusion and assign no cause to the flags. The pointer sentence merely introduces the results (`change.diff:12`). The rendered `table-page.png` preserves the values, row associations, and caption meaning. Provenance comments are excluded from this assessment as printed claims.
+
+1. No problems.
+
+VERDICT: PASS

@@ -1,0 +1,136 @@
+% ====================================================================
+% Supplemental Material of the methods paper (main_paper.tex). Round-5 draft, 2026-11-08: Joseph asked for referee
+% rounds on the paper, the Supplement and the note (the round-4 referees' self-containment item, referee-methods-
+% round4-20261106/README.md item 5). Build: latexmk -pdf main_supplement.tex.
+% The Supplement takes the definitions the paper needs from the analysis note's own text
+% (supplemental_body.tex names each block's source); pointers it keeps into the note resolve, with the prefix N-,
+% through note_release_labels.tex, the labels of the note revision named for release, as the paper's do. No wording is approved: draft for the referee reads
+% and Joseph.
+% ====================================================================
+\documentclass[11pt]{article}
+\usepackage{xr-hyper}
+\usepackage{tikz}
+\usepackage{xltabular} % Table S11, the headline-test index (2026-11-13): tabularx X columns across a page break
+\usetikzlibrary{arrows.meta,matrix,positioning}
+\input{preamble}
+\NOTEtrue
+\input{values}
+\input{values_inference}
+\input{values_fived16}
+\addbibresource{publication.bib}
+\addbibresource{technote.bib}% for DAgostini:1994fjx, cited in S7 as the paper cites it (the paper reads both files)
+\input{note_release_labels}
+% The paper's labels that the Supplement cites (make_paper_labels.py; check_round.py's fill test reruns it with --check):
+% \psec{<paper label>} prints the paper's section number (the director's ruling (a), 2026-11-12).
+\input{paper_labels}
+\providecommand{\psec}[1]{section~\ref*{P-#1}}
+\newcommand{\pubhold}[1]{\textcolor{red}{[HOLD: #1]}}
+% Short paper (methods-short-20261109): the pointers of the text moved here from the paper print as in the Supplement's own text.
+\providecommand{\nsec}[1]{ref.~\cite{AnalysisNote2026}, section~\ref*{N-#1}}
+\providecommand{\napp}[1]{ref.~\cite{AnalysisNote2026}, appendix~\ref*{N-#1}}
+
+\renewcommand{\thesection}{S\arabic{section}}
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\thefigure}{S\arabic{figure}}
+\renewcommand{\theequation}{S\arabic{equation}}
+
+\title{Supplemental Material for ``Five-observable unbinned unfolding of MINERvA open data with OmniFold: a benchmark and
+diagnostic study''}
+\author{Joseph Bailey and Benjamin Nachman}
+\date{}
+
+\begin{document}
+\maketitle
+
+% Restyled 2026-11-12 (journal-editor's Supplement style pass; style1's opening-paragraph item, a short contents guide
+% grouped by definitions, implementation, uncertainties and tests, and data products; "two per-cell validity rules" was
+% stale after the director's D3 and D4: S10 defines one rule).
+% Restyled 2026-11-17 (the Supplement navigation batch; the director, relaying Joseph 2026-11-16; readability report r3,
+% item 2): the road map, one sentence per section group; S10's sentence names what it gives of the bias-half rule
+% (its inputs and noise band, supplemental_body.tex S10's first paragraph); the last sentence is S9's "no interval has
+% validated coverage", restated for every reported interval as the paper states it.
+This Supplement gives the definitions and checks behind the paper's results.
+Sections~\ref{supp:selection}--\ref{supp:cells} define the event selection, the five observables, and the sixteen
+reporting cells with their machine-readable files.
+Section~\ref{supp:estimators} describes the estimators: the algorithm, the background treatment, the learner settings,
+the diagnostics of the estimators and the history of the configurations.
+Sections~\ref{supp:cov16} and~\ref{supp:cov2d} construct the five-observable and two-dimensional covariances,
+including their run-period blocks.
+Section~\ref{supp:ibu} sets out the comparisons with binned iterative Bayesian unfolding, which probe the results'
+dependence on the unfolding algorithm.
+Section~\ref{supp:tests} indexes the tests and sets out the fake-data and prior-retention studies, the coverage tests,
+including the first five-observable test, which stopped, and the joint tests of the generator predictions.
+Section~\ref{supp:output} gives the illustrative output on data with its descriptive comparisons with generator
+predictions.
+Section~\ref{supp:validity} defines the usage-recommendation rule, a per-cell bias-screening rule adapted from
+ref.~\cite{ATLAS:2024jets}, and gives the inputs and noise band of the bias-half rule.
+% Readability round 2, 2026-11-17: Joseph's item 3 wording, as the paper now prints it (director-helper-3).
+Coverage of the reported intervals has not been validated.
+% absence-ok: the paper's stated limitation in Joseph's item 3 wording (the coverage tests of S8 under-cover or are descriptive; none validates the reported intervals), not a search claim
+
+% Gloss at first use (the director's ruling, 2026-11-12): the name is kept, glossed as the paper glosses it (paper_body.tex,
+% "a per-cell bias-screening rule adapted from ref. [ATLAS]", the director's wording; helper-3's 71d4bb19).
+% Rewritten 2026-11-11 (the director, on Joseph's adoption of the independent consult's "full record" recommendation), with
+% supplemental_body.tex's one sentence on the shared text: no blanket claim that the text is taken from the note.
+Several sections reproduce or adapt material from the companion analysis note~\cite{AnalysisNote2026}. Other studies
+are documented in this Supplement and the accompanying paper. References to the note identify the sections containing
+further detail.
+
+% Added 2026-11-17 (the Supplement navigation batch; the director, relaying Joseph 2026-11-16; readability report r3,
+% item 1, condensed to one page of the most-used terms by the director's instruction): every entry restates a printed
+% definition and cites where it is given in full. Unnumbered and not a float, so that no Supplement table or section
+% number moves (the paper's \stab and \ssec pointers print them). The two senses of "Descriptive" are the paper's
+% table tab:outcomes caption, as DECISION-20261116-joseph-paper-batch.md items 14 and 24 fixed it.
+% Updated 2026-11-17 (readability round 2): the Descriptive entry follows the caption as director-helper-3's 7264f975a
+% rewrote it ("a comparison without a grading rule, or a test continued, or fixed and rerun, after one of its checks was
+% seen"), and the paper's section 6.2 sentence on the repair's timing.
+\clearpage
+\noindent{\large\bfseries Definitions and conventions.} The most-used terms, each with the section that defines it in
+full (S: this Supplement; P: the paper).\par\smallskip
+
+\noindent{\footnotesize\setlength{\tabcolsep}{4pt}\renewcommand{\arraystretch}{0.9}%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.175\textwidth}>{\raggedright\arraybackslash}p{0.8\textwidth}@{}}
+\toprule
+Term & Meaning \\
+\midrule
+\multicolumn{2}{@{}l}{\emph{Estimators}} \\
+The estimator; five-observable estimator; 5D; (e) & Deterministic LightGBM OmniFold on the five observables, five iterations, negative-weight background subtraction with a refinement classifier of 400 trees and 31 leaves: every five-observable result (\ref{supp:algo}, P\ref*{P-sec:unfolding}) \\
+Two-observable estimator; 2D; (f) & Seeded LightGBM OmniFold on $(\pT,\pPar)$, with the same background treatment and refinement capacity: the two-dimensional result and its covariance (\ref{supp:algo}) \\
+IBU-$n$ & Binned D'Agostini iterative Bayesian unfolding at $n$ iterations, a cross-check only (\ref{supp:ibu}) \\
+\addlinespace[2pt]
+\multicolumn{2}{@{}l}{\emph{Truths and pseudo-data}} \\
+Prior; hybrid truth & MINERvA Tune~v1, the simulation and initial truth of every unfolding (P\ref*{P-sec:data}); a generator prediction in every fine cell, with Tune~v1's event composition within each (P\ref*{P-sec:strategy}) \\
+Held-out tunes & \fvval{f1-tune-g18-short} and \fvval{f1-tune-ar23-short}, GENIE~v3 tunes generated for the tests and not used in developing the analysis, each a gated, normalized shape deformation of the prior (\ref{supp:tunes}) \\
+Half split; noise-free & Pseudo-data drawn from one half of the simulation and unfolded with the other half (\ref{supp:tests}); pseudo-data with every Poisson draw replaced by its mean (P\ref*{P-sec:strategy}) \\
+\addlinespace[2pt]
+\multicolumn{2}{@{}l}{\emph{Covariances}} \\
+$C_{\mathrm{e}}$ & The estimator's statistical, flux, interaction, detector, lateral and normalization blocks and its training-seed block, which is zero (\ref{supp:cov16-blocks}) \\
+$C_{\mathrm{model}}^{\mathrm{frac}}$; $C_{\mathrm{model}}$ & The unscaled sum of the outer products of three generators' relative shifts of the data result; its cross-section-unit form. Not a calibrated bound (\ref{supp:cov16-blocks}) \\
+$C_{\mathrm{PL,5D}}$ & The rank-\fvval{pl-rank} run-period block, from the three period groups' double ratios. Its size is not independently validated (\ref{supp:cov16-pl}, \ref{supp:cov16-history}) \\
+$C_{\mathrm{total}}$; $C_{\mathrm{resp}}$; $C_{\mathrm{rep}}$ & $C_{\mathrm{e}}+C_{\mathrm{model}}$; the sum of the outer products of the four deposit categories' half-difference shifts (\ref{supp:cov16-blocks}); the reported covariance of the sixteen cells, $C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}$, of which ``without the run-period block'' means $C_{\mathrm{total}}+C_{\mathrm{resp}}$ (\ref{supp:cov16}) \\
+Two-dimensional covariance & The sum of the systematic-universe, statistical, training-seed and run-period blocks of the two-observable estimator, its model term reported separately (\ref{supp:cov2d-construction}, P\ref*{P-sec:cov16}) \\
+$V_g$; shape-only $\chi^2$ & A prediction's diagonal sum of squared event weights, added in each comparison with it; the $\chi^2$ with $100\,ff^{T}$ added to the matrix, with one degree of freedom fewer (\ref{supp:cov16-conv}) \\
+$C_T$; $C_T^{+}$ & A coverage test's covariance, rebuilt once per held-out tune; its inverse on its non-null subspace (\ref{supp:covdesign-sec}) \\
+\addlinespace[2pt]
+\multicolumn{2}{@{}l}{\emph{Status words}} \\
+Descriptive & A comparison without a grading rule, or a test continued, or fixed and rerun, after one of its checks was seen (P\ref*{P-sec:strategy}, P\ref*{P-sec:ll5d}). For the bias-half rule, it marks a diagnostic that changes nothing in the reported result and was defined after the fake-data biases it classifies had been seen. In the second five-observable coverage test, an entry check was fixed and the test rerun after its earlier run stopped. The repair was chosen after that stop, before any coverage pseudo-experiment was unfolded or graded but when other gate readings were already visible (\ref{supp:study-ll5d}) \\
+Flagged & Bias with $p<\fvval{trig-p}$ under $\chi^2_{16}$, or a cell with $|z|>\fvval{trig-z}$; the fake-data tests grade bias only (\ref{supp:study-fd}) \\
+Under-covers; over-covers & A coverage count at or below the draw-matched null's threshold; one in its upper tail, reported and not a failure (\ref{supp:covdesign-sec}; table~\ref{tab:ll5d-results}) \\
+Clipping readings & ``Passes, weakened by clipping'': unflagged, its drawn spread narrowed below \fvval{cov-weak} of its variance (\ref{supp:covdesign-sec}); ``possible clipping artefact'': flagged, with clipping offset $|o_c|\geq\delta^*$, which cannot remove the flag (\ref{supp:study-ll5d}) \\
+$\rho$ and its classes & The retained fraction: 1 at the prior, 0 at the truth, negative for an overshoot along the prior-to-truth direction; a setting's classes, from its effect on $\rho$ (\ref{supp:study-prr}) \\
+\addlinespace[2pt]
+\multicolumn{2}{@{}l}{\emph{Cells and grids}} \\
+Fine grid & The published $14\times16$ $(\pT,\pPar)$ bins, of which 205 are reported, crossed with 7 $\Eavail$, 7 $q_3$ and 6 $W$ bins (\ref{supp:cells}, P\ref*{P-sec:strategy}) \\
+R00--R15 & The sixteen reporting cells, formed from \fvval{h2-nboxes} boxes by merging (\ref{supp:cells}) \\
+Supported; purity; diagonal fraction & Expected reconstructed signal and truth weight each at least 1000 events at the data exposure; the fraction of the signal reconstructed in a box that was generated there; the fraction reconstructed in a cell of the signal generated there and reconstructed (P\ref*{P-sec:data}) \\
+J; $(\Eavail,W)$ cells; H2 & The \jtNcells{} supported cells of the coarse $3^5$ grid, the joint cells, and the 42 cells of the $(\Eavail,W)$ projection (P\ref*{P-sec:strategy}); the 27 coarser joint cells of figure~\ref{fig:prior-response}, which are not the sixteen reporting cells (\napp{sec:gbdt-diagnostic-definitions}) \\
+\bottomrule
+\end{tabular}}
+\clearpage
+
+\input{supplemental_body}
+
+% Referee recheck (2026-11-11; RESPONSE.md m10): floats print before the references, so the blinded copy, cut at the references, keeps every figure.
+\clearpage
+\printbibliography
+\end{document}

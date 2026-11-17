@@ -281,7 +281,9 @@ def padded(vals: list[float]) -> list[float]:
     return [float(np.floor((lo - pad) * 20) / 20), float(np.ceil((hi + pad) * 20) / 20)]
 
 
-def ratio_model(r: dict, form: str, gibuu_axis: str = GIBUU_AXES[0], name: str = BLOCK) -> dict:
+def ratio_model(r: dict, form: str, gibuu_axis: str = GIBUU_AXES[0], name: str = BLOCK,
+                *, carbon: dict | None = None) -> dict:
+    """Build the ratio model, optionally using committed carbon-only analysis predictions."""
     g, b = r["g_readout"], r["f0b_readout"]
     P = {p["name"]: p for p in g["predictions"]}
     cells = list(g["cells"])
@@ -326,22 +328,38 @@ def ratio_model(r: dict, form: str, gibuu_axis: str = GIBUU_AXES[0], name: str =
                           text="data / prediction" if form == "data-over-prediction" else "prediction / data"))
     for n in ORDER:
         p, a = P[n], axes_of[n]
+        prediction_source = f"{src.format(n=n)}.g"
+        text = legend_text(n)
+        if carbon is not None and n in ("nuwro", "gibuu"):
+            corner = carbon["generators"][n]["carbon"]["analysis_definitions"]
+            readout = corner["chi2"]["reported"]
+            report("K2", f"{n}: carbon analysis definitions use the same cells and data",
+                   readout["cells"] == p["cells"] and np.array_equal(readout["f"], p["f"]))
+            report("K2", f"{n}: carbon prediction agrees with the corner's vector",
+                   np.array_equal(readout["g"], corner["g"]) and np.all(np.array(readout["g"]) > 0))
+            p = {**p, "g": readout["g"], "g_over_f_minus_1": readout["g_over_f_minus_1"]}
+            prediction_source = f"defs.json generators.{n}.carbon.analysis_definitions.chi2.reported.g"
+            text = display(SHORT[n] + ": carbon only" +
+                           ("; p_parallel < 4.5 cells only" if n == "gibuu" else ""))
         x = [i + OFFSET[n] for i in cell_index(p["cells"])]
         style = {"color": COLORS[n], "marker": MARKERS[n], "ls": "None"}
         if form == "data-over-prediction":
             y = np.array(p["f"]) / np.array(p["g"])
             e = y * np.array(p["sigma_total_over_f"])
-            items.append(item(f"ratio:{n}", "line", [f"{src.format(n=n)}.f", f"{src.format(n=n)}.g"], a,
+            items.append(item(f"ratio:{n}", "line", [f"{src.format(n=n)}.f", prediction_source], a,
                               x=x, y=y.tolist(), cells=p["cells"], style=style))
-            items.append(item(f"ratio:{n}:err", "yerr", [f"{src.format(n=n)}.f", f"{src.format(n=n)}.g",
+            items.append(item(f"ratio:{n}:err", "yerr", [f"{src.format(n=n)}.f", prediction_source,
                                                          f"{src.format(n=n)}.sigma_total_over_f"], a,
                               x=x, lo=(y - e).tolist(), hi=(y + e).tolist(), cells=p["cells"],
                               style={"color": COLORS[n]}))
         else:
             y = 1.0 + np.array(p["g_over_f_minus_1"])
-            items.append(item(f"ratio:{n}", "line", [f"{src.format(n=n)}.g_over_f_minus_1"], a, x=x, y=y.tolist(),
+            ratio_source = (prediction_source.rsplit(".", 1)[0] + ".g_over_f_minus_1")
+            items.append(item(f"ratio:{n}", "line", [ratio_source], a, x=x, y=y.tolist(),
                               cells=p["cells"], style=style))
-        items.append(item(f"ratio:{n}:legend", "legend", [f"{src.format(n=n)}.label"], None, text=legend_text(n),
+        label_source = ([prediction_source] if carbon is not None and n in ("nuwro", "gibuu")
+                        else [f"{src.format(n=n)}.label"])
+        items.append(item(f"ratio:{n}:legend", "legend", label_source, None, text=text,
                           legend="ratio", series=f"ratio:{n}"))
     for row, axn in enumerate(KEY_ROWS):
         dy = -21.0 - 10.5 * row

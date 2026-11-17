@@ -1,0 +1,18 @@
+T2B OK rc=0 -> /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpzosaldz8/t2b.json; controls failed: []
+nominal                      own=-         chi2      0.00 ->      0.00  |z|>2 0 -> 0  max|z| 0.01 -> 0.01
+W1                           own=nuwro     chi2      5.01 ->      6.24  |z|>2 0 -> 0  max|z| 0.70 -> 0.79
+W2                           own=genie_mec chi2      0.57 ->      0.57  |z|>2 0 -> 0  max|z| 0.12 -> 0.15
+W3                           own=nuwro     chi2     30.83 ->     32.32  |z|>2 0 -> 0  max|z| 1.04 -> 1.17
+q3                           own=-         chi2     53.42 ->     63.12  |z|>2 0 -> 1  max|z| 1.62 -> 2.02
+stage0c_gibuu                own=gibuu     chi2     25.46 ->     25.46  |z|>2 1 -> 1  max|z| 2.01 -> 2.01
+closure_nuwro                own=nuwro     chi2     11.60 ->     12.73  |z|>2 0 -> 0  max|z| 0.54 -> 0.80
+A7_mnvtune                   own=-         chi2      0.01 ->      0.01  |z|>2 0 -> 0  max|z| 0.01 -> 0.01
+A7_genie_cv                  own=-         chi2     16.14 ->     16.58  |z|>2 0 -> 0  max|z| 0.38 -> 0.46
+A7_genie_mec                 own=genie_mec chi2     14.54 ->     14.54  |z|>2 0 -> 0  max|z| 0.32 -> 0.37
+A7_nuwro                     own=nuwro     chi2     24.92 ->     31.31  |z|>2 0 -> 0  max|z| 1.34 -> 1.46
+A7_gibuu                     own=gibuu     chi2    175.13 ->    175.13  |z|>2 3 -> 3  max|z| 5.17 -> 5.17
+F1_genie_v3_g18              own=-         chi2     11.84 ->     12.33  |z|>2 0 -> 0  max|z| 0.62 -> 0.93
+F1_closure_genie_v3_g18      own=-         chi2     11.44 ->     12.01  |z|>2 0 -> 0  max|z| 0.61 -> 0.91
+F1_genie_v3_ar23             own=-         chi2     16.86 ->     17.06  |z|>2 0 -> 0  max|z| 0.64 -> 0.70
+F1_closure_genie_v3_ar23     own=-         chi2     16.05 ->     16.16  |z|>2 0 -> 0  max|z| 0.60 -> 0.65
+R33 OK

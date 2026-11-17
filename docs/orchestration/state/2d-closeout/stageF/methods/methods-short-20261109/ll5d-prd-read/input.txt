@@ -1,0 +1,46 @@
+You are an experienced Physical Review D referee for a neutrino-physics methods paper. Read the material in this
+directory, read-only, and report. Do not edit any file.
+
+THE PAPER benchmarks an unbinned five-observable OmniFold implementation on MINERvA open data. One of its headline
+tests is a coverage test of the five-observable covariance at two held-out generator tunes (G18 and AR23), in two
+variants: a primary variant without the GEANT4 neutron and proton bands, and one with them. The test has just finished.
+The paper's text for its outcome was written in advance, and its values are now filled from the test's readout records.
+
+FILES
+- filled-text.txt: the filled text as a reader sees it, in the abstract, Table 2 (the principal tests), the section on
+  the coverage tests, the Discussion, the Limitations, the Supplement's index row 10, and the Supplement's study
+  section S9. (PDF text extraction: some symbols are flattened. "C_T" is the covariance rebuilt at the tune, "o_c" the
+  clipping offset and "δ*" its bound.) The Limitations extract also shows a following item about the 2D covariance,
+  which belongs to another change; ignore it.
+- readout-digest.json: the readout records' fields for each (tune, variant): the verdict, the joint count against its
+  threshold k_joint, chi2/ndf with its standard error, the flagged cells with [count, threshold], the over-covering
+  cells, the weakened cells, the clipping-artefact reading, the largest |o_c| and the bias attribution.
+- declaration-excerpts.txt: the test's pre-registered declaration, the lines on the STOP rule (:66-71), toys and
+  seeds, the entry checks before the main run (sec. 5), the grading (sec. 6) and deviations.
+- route-records.txt: the records of the campaign's route. Both first entry-gate runs STOPped. A diagnosis found an
+  implementation defect. The PI decided the relaunch. Amendment A1a.2 changed code, the gates were rerun and passed,
+  the real-data preflight passed, and the pilots followed. It also holds the PI's decision on how such a route is
+  labelled (case-wording decision, item 2: a run "with a repair after a stop" gets the status Descriptive).
+
+THE ROUTE RULING (already made; review its disclosure, not the ruling). Under the declaration's :71 and the
+case-wording decision's item 2(b), the coordinator ruled that the test ran with a repair chosen after a STOP was seen,
+so its readings are descriptive. The repair fixed an implementation defect and changed no rule, threshold, bound or
+cell.
+
+REPORT, in order, under 1,200 words:
+1. Accuracy. Check every number and class in filled-text.txt against readout-digest.json, and every statement about
+   the route against route-records.txt and declaration-excerpts.txt. Name anything that the records do not support,
+   with the record line.
+2. Disclosure. Would a PRD referee find the descriptive status, the stop and the repair disclosed adequately and
+   proportionately in the paper (abstract, Table 2, section 6.2, Discussion) and in the Supplement (row 10, S9)? Is
+   anything missing that a referee would ask for, such as what was visible when the repair was chosen? Is anything
+   overstated or understated, for example language suggesting that the coverage result is validated, or that the
+   repair was trivial?
+3. Clarity. List sentences that a physicist reader would misread or stumble on. Give a replacement for each, keeping
+   the claim. Watch for internal jargon, undefined symbols and the sentence order of consequence and grounds.
+4. Consistency across the abstract, Table 2, section 6.2, the Discussion, row 10 and S9: the same facts in compatible
+   words.
+5. Table 2 and row 10 print "under-coverage flagged" at all four (tune, variant) entries, although G18 flags only
+   jointly and AR23 also flags cell R07. An alternative wording is "under-coverage flagged jointly" and
+   "under-coverage flagged jointly and per cell". Give your recommendation in one paragraph.
+End with a verdict line: ACCEPT, ACCEPT WITH EDITS (list them, most important first), or REVISE.

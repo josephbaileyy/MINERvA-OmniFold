@@ -1,0 +1,83 @@
+The manuscript is precise about what each result means, and its broad progression—method, benchmark, truth recovery, stability, calibration—is sensible. Tables 2–3 provide useful orientation, and the distinction between bias and coverage is clearly stated. However, a physicist outside the collaboration would struggle to follow the detailed argument in one pass. Findings repeatedly compete with qualifications, configuration history, procedural status labels, and cross-references. The supplement has useful reference material but often reads as an internal analysis record. These are substantial editorial problems, although the underlying narrative is recoverable. This assessment concerns the supplied text and captions; apparent extraction damage is not treated as an authorial writing fault.
+
+**STYLE SCORE: 6/10**
+
+**Most important changes, ranked**
+
+1. **Give qualifications a clear home and remove their repeated restatement.**  
+   **Location:** Introduction; §§3.3, 5.2, 6.2, 7 and 7.1; supplement §§S3, S8–S10.  
+   **Problem:** The same interpretive boundaries recur throughout. For example, §3.3 says, “The fake-data tests grade bias alone”; §5.2 repeats, “These tests assess bias alone”; §7.1 repeats, “The fake-data tests assess only bias.” Similarly, the illustrative status of the data output is repeatedly re-established. This makes individual findings feel provisional even after their scope has been defined.  
+   **Fix:** Define the distinctions once in §3.3, give each results section only its specific qualification, and consolidate the remaining boundaries in §7.1. For example: “These tests assess bias under the simulated detector response. Coverage results are reported in section 6.2.” Preserve the qualifications while reducing their recurrence.
+
+2. **Rewrite the abstract around a contribution and three findings.**  
+   **Location:** Abstract and Introduction.  
+   **Problem:** The abstract presents a succession of tests without enough hierarchy: “On noise-free pseudo-data at both truths, binned iterative unfolding overshoots the truth along the prior-to-truth direction” interrupts the broader account with a specialized diagnostic. “The procedure’s two-dimensional covariance” also leaves the reader to infer which estimator is meant. The Introduction’s “We report three findings” supplies a clearer organizing principle.  
+   **Fix:** Use that principle in the abstract. An opening could read:  
+   > “We benchmark a five-observable OmniFold implementation on MINERvA open data and characterize its truth recovery, numerical stability, and uncertainty calibration. A separate two-observable benchmark reproduces the published integrated cross section within 1%, while showing a correlated shape difference.”  
+   
+   Then summarize the three diagnostic findings and close with the illustrative status of the data output. Keep secondary comparisons in the body. Resolve the `[PENDING: …]` passages consistently across the abstract, tables, results, conclusions, and supplement before finalizing the prose; this is an editorial completion issue.
+
+3. **Make each results subsection lead with its answer, then explain the test.**  
+   **Location:** Especially §§5.3 and 6.2.  
+   **Problem:** Definitions and procedural qualifications sometimes arrive before the reader knows the point, while essential definitions arrive after their results. Section 5.3 reports numerical values of “retained fraction ρ, defined below” before defining it. Section 6.2 opens with two dense paragraphs of test construction and conditions before reaching the result.  
+   **Fix:** In §5.3, define ρ briefly before its first numerical use, then group the results by setting. In §6.2, lead with the outcome: “The two-dimensional covariance under-covers at both held-out tunes.” Follow with the test’s target, principal counts, and interpretation; move detailed draw construction to §S8.3.
+
+4. **Separate the reported procedure from its development history.**  
+   **Location:** §§3.1, 6.1; supplement §§S4.1–S4.5 and S8.4.  
+   **Problem:** Readers repeatedly have to determine whether a passage describes the reported estimator, a historical variant, or a rejected alternative. Section S4.3 says, “The learner settings were fixed a priori,” whereas §S4.5 separately narrates choices of implementation, refinement capacity, and iterations. The intended distinctions require too much reconstruction.  
+   **Fix:** Present the current procedure first, with one compact settings table. Put selection timing and superseded configurations together in §S4.5, explicitly distinguishing fixed settings from choices made during development. Retain a short selection-history disclosure in the main paper, with a precise reference. Replace passive process narration such as “specified before the mechanism study was read” with a concise statement of when the decision rule was fixed.
+
+5. **Reduce the classification vocabulary and simplify the headline table.**  
+   **Location:** Table 4; §§3.3 and 5.3; supplement §S8.2.  
+   **Problem:** Table 4 requires a long glossary covering “Pass,” “Fail,” “Flagged,” “Differ,” “Mixed per cell,” “Graded,” “Not adopted,” and other statuses. The reader must learn a local reporting language before interpreting the results. Section 5.3 adds phrases such as “clears a flagged truth” and “a share specific to the implementation.”  
+   **Fix:** Use ordinary statements in the main text: “bias threshold exceeded,” “difference detected,” or “variant not adopted.” For example:  
+   > “None of the tested variants or the five-iteration IBU removed the bias flags at either truth.”  
+   
+   Simplify Table 4 to test, principal finding, and section, identifying the estimator within the test name. Put thresholds and formal classification rules in the supplement.
+
+6. **Edit paragraphs for one function and sentences for direct subjects.**  
+   **Location:** §§3.2, 4.2, 5.3 and 6.1.  
+   **Problem:** Paragraphs often combine construction, result, qualification, and history. The rounding discussion in §6.1 repeatedly changes between 16 cells, 109 cells, and 153 quantities, and between spreads and individual shifts. Section 4.2 compresses several comparisons into: “On this analysis’s own inputs and grid, a binned IBU lies at χ²/ndf = 1.03 … (0.83–1.59 for two to fifteen iterations, 2.16 at twenty and 3.95 at one).”  
+   **Fix:** Give each paragraph a single job. For that sentence: “At ten iterations, IBU gives a descriptive distance of χ²/ndf = 1.03 from the published result, compared with 2.27 for OmniFold.” Move the iteration sweep to the supplement. Introduce Table 7 before the rounding results and use its study names consistently. The dominant sentence tics are repeated “not” qualifications, “therefore,” and “by construction,” rather than excessive semicolons.
+
+7. **Consolidate the conclusions and limitations.**  
+   **Location:** §§7 and 7.1.  
+   **Problem:** Section 7 restates findings as five general checks, then adds another benchmark summary; §7.1 restates many of the same findings again. Compare “Here part of the prior is retained” in §7 with “The unfolded result retains part of its prior” in limitation 1.  
+   **Fix:** Let §7 state the contribution and principal findings in two or three paragraphs. Let §7.1 collect interpretation boundaries without reprinting the associated numerical results. If the five-check framework is retained, shorten it substantially or place it in a compact table. This would give the paper an ending rather than another traversal of the results.
+
+8. **Organize the supplement by lookup task.**  
+   **Location:** §§S3–S8.  
+   **Problem:** Section S3 mixes cell definitions, machine-readable products, and interpretation of the note’s generator tests. Section S5 covers covariance construction, period studies, and the audit preceding a block’s adoption without numbered subsections. Figure S3 concerns prior sensitivity but appears within §S8.3, “The two-dimensional coverage test.”  
+   **Fix:** Add numbered subsections for covariance blocks and run-period construction. Keep §S3 focused on grids, cells, and files; move joint-test interpretation to a dedicated test subsection. Place Figure S3 beside the prior-sensitivity discussion. Compress the stopped-test history in §S8.4 into purpose, mismatch identified, and consequence for the second design; leave the detailed chronology in the companion note.
+
+9. **Make captions and tables support the narrative with less duplication.**  
+   **Location:** Table 1; Tables 4–6; Figures 3–4; supplement Tables S11–S12 and Figure S4.  
+   **Problem:** Several captions are commendably explicit about uncertainties, but they also carry substantial methods detail. Figure 3’s caption combines estimator settings, sample construction, support exclusions, bin edges, and cross-references. Table 1 gives cell diagnostics without the cell boundaries, requiring a supplementary lookup. Tables S11 and S12 require readers to match design and result across two long tables.  
+   **Fix:** Retain in captions the plotted quantity, sample, uncertainty meaning, and essential exclusions; move detailed construction to the referenced methods section. Consider placing Table 1 beside Table S3 and summarizing its range in the main text. Give S11–S12 identical, short test identifiers, or combine them into compact entries. Main Table 6 and supplementary Table S14 need not reproduce exactly the same numbers. Numbering is coherent overall; Figure S3’s thematic placement is the clearest placement problem visible in the supplied text.
+
+**Smaller fixes — paper**
+
+- **§2:** “The one playlist that predates the current release” → “Playlist 1A predates the current release.” Name it immediately.
+- **§3.2:** “Two covariances are reported: the sixteen-cell result’s…” → “We report covariances for the sixteen-cell and two-dimensional results.”
+- **§3.2:** “supplementary material, section S5 gives…” → capitalize the sentence opening.
+- **§3.3:** “were generated for these tests and held out of it” → “were generated for these tests and were not used in developing the analysis.”
+- **§4.2:** “two other unfoldings” promises two comparisons, but the subsection describes only IBU. Identify the second explicitly or change the count.
+- **§5.3:** Combine the two nearly identical paragraphs beginning “At the GiBUU hybrid truth…” and “At the q3 tilt…”.
+- **§5.2:** State explicitly whether \(C\) and \(N\) in the definition of \(z\) are fractional or cross-section covariances; the surrounding prose alternates between fractional residuals and cross-section units.
+- **Throughout:** Standardize “per cent” versus “%,” and prefer the established “two-observable” and “five-observable” names over shifting shorthand.
+
+**Smaller fixes — supplement**
+
+- **§S2:** “These are separate questions” is vague. Name the distinction: added information versus changed classifier behavior.
+- **§S4.1:** Introduce “push-weight” and “pull weight” with their roles, or use the corresponding symbols consistently.
+- **§S4.2:** Delete the repeated explanation that each data event receives the purity weight.
+- **§S4.4:** “the refinement is a sufficient entry” → “perturbing the refinement inputs alone reproduces the spread.”
+- **§S5:** “The run-period block … is described in Sec. S5” is a self-reference without navigation value. Point to a numbered subsection.
+- **§S5:** Distinguish fractional and dimensional versions of \(C_{\mathrm{model}}\) typographically instead of assigning both the same symbol.
+- **§S8.1:** Replace “historical shapes W1, W2 and W3” with descriptive shape names, retaining the codes only for correspondence with the note.
+- **§S9.1:** Split the sentence beginning “NuWro 21.09 and GiBUU 2019…”; it stacks target choice and several sample-history qualifications.
+- **§S10:** Shorten “usage-recommendation rule” to “bias-screening rule,” with its source stated once.
+
+**To reach 9/10**
+
+The paper needs a substantive structural edit followed by a sentence edit: a shorter abstract; findings before procedural accounting; one authoritative location for each recurring qualification; stable estimator and covariance terminology; and a conclusion that synthesizes rather than repeats. The supplement should let readers locate the current definition, configuration, test, or output directly, with development history clearly separated. Captions should remain explicit about uncertainties while shedding duplicated methods detail. Those changes can be made using the existing material.

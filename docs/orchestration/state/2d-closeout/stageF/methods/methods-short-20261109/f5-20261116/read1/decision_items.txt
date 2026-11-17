@@ -1,0 +1,14 @@
+## What is decided
+
+1. **The methods paper proceeds to submission readiness as fast as the remaining gates allow.**
+2. **V-HALF goes into the methods paper as a diagnostic on R00–R15,** filled from its pinned readout (#1009) through the
+   usual route and the meaning read.
+   - The director reads "keep going down the path of getting a comprehensive paper out", together with the advisor's
+     reply, as Joseph's confirmation of item (1). Joseph may reverse this.
+   - Item 5 of `DECISION-20261109-joseph-bias-half-rule.md` is resolved for this paper: no rebinning.
+3. **#1016 widens into a pre-declared candidate-observable list** for the follow-up paper. It stays a DRAFT until
+   Joseph's §7 choices are made, and it runs nothing.
+4. **Style:** "X, not Y" contrasts are a guideline to keep in mind for the paper, the note and public-facing text. They
+   are not a hard rule.
+
+## CITABLE FOR / NOT CITABLE FOR

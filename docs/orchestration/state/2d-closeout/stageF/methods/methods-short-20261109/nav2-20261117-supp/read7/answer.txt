@@ -1,0 +1,7 @@
+1. **Medium — the timing qualifier can incorrectly apply to the rerun.** In `ev/main_supplement.tex:116`, “the test rerun … before any coverage pseudo-experiment was unfolded or graded” reads as placing the rerun itself before unfolding. P6.2 (`ev/paper_body.tex:735`) attaches that timing to **choosing the repair**; S8.5 (`ev/supplemental_body.tex:1120`) likewise places the repair before coverage unfolding.
+
+   **Fix:** “In the second five-observable coverage test, an entry check was fixed and the test rerun after its earlier run stopped. The repair was chosen after that stop, before any coverage pseudo-experiment was unfolded or graded but when other gate readings were already visible.”
+
+No other meaning defects found. The general definition and bias-half explanation reproduce the caption without strengthening or dropping their content. The pointers are appropriate: P3.3 defines comparisons without grading rules and contains the outcomes caption; P6.2 defines the continued/repaired sense and repair timing; S8.5 supplies the stop-and-repair account.
+
+VERDICT: FAIL

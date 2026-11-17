@@ -1,0 +1,55 @@
+{
+  "baseline": "8320315bd",
+  "input_sha256": {
+    "docs/orchestration/state/s5n/stage1/dev_receipt.json": "1ef4096c39e2cfb2ded7d7e70c649eebcea09fbd0b31dca97e7b9d16c9878526",
+    "docs/orchestration/state/s5n/stage1/truth_check.json": "14ee280030f326484222da56245507006a1533f4f0e41e778823ab586a95c046",
+    "docs/orchestration/state/s5e/cand/assess_receipt.json": "84266e309d1aae0d2db1db315750b8164413a7d0125fcaa4a6c9b25834261a2c",
+    "docs/analysis-note/figures/methods_short/presentation_original_arrays.json": "fc6d4d2e25b8c87b35bc8c269f01a19be293905ffeee3f9e02240bb9404a76f7"
+  },
+  "exact_unchanged_output_sha256": {
+    "m3_fig2_deformation_arrays.json": "d64452d2d289dfb3affc7d1b4e71cf1d4406bb19014c630949090ccc48a9595f",
+    "m3_fig2_deformation_numbers.json": "2b3a53f1fcca64c9ceba92101580effebfaa30f4b73efdf4efb93e8c229e92da"
+  },
+  "paper_configuration": {
+    "candidate": "R",
+    "refinement": {
+      "n_estimators": 400,
+      "num_leaves": 31
+    },
+    "identity_source": "nd-unfolding/s5e_candidate.py:CANDIDATES; docs/orchestration/state/s5e/contract-amendment-3-candidate-R-and-assessment.json:candidate; estimator_stability_probe.py:12 identifies R as configuration (e)",
+    "experiments_per_truth": 20
+  },
+  "supplement_configuration": {
+    "refinement": {
+      "n_estimators": 100,
+      "num_leaves": 8
+    },
+    "identity_source": "s5n dev receipt controls.C2.refinement_params; grid.C4_eavail_shape",
+    "experiments": 60
+  },
+  "geometry": {
+    "m3_fig2_deformation": {
+      "width_pt": 508.0,
+      "height_pt": 201.6,
+      "height_in": 2.8,
+      "pdf_sha256": "85fec88c2ec2bcf09e30dbd86ee394daca321677b4190c28d696dacb14fb68d7",
+      "png_sha256": "15a8aea3770e96cf62308cf88698e14804814c08e3727cd6b0bdc220e8669a9d"
+    },
+    "m3_fig2_deformation_lowcap": {
+      "width_pt": 468.0,
+      "height_pt": 201.6,
+      "height_in": 2.8,
+      "pdf_sha256": "b87e466e0c173d26874fee7f3448defdf0501ef7603adf2bb74c6059c3e2a80f",
+      "png_sha256": "e34191e618215f6f89fe5d0885231730076769185a5b2419e39720e6f469939b"
+    }
+  },
+  "printed_fonts": {
+    "before_median_pt": 8.3,
+    "paper_median_pt": 8.3,
+    "supplement_median_pt": 8.3,
+    "axis_labels_pt": 9.3,
+    "tick_legend_title_pt": 8.3
+  },
+  "panel_letters_absent": true,
+  "manuscript_and_caption_edits": false
+}

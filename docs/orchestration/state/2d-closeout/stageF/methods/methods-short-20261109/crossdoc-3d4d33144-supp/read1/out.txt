@@ -1,0 +1,31 @@
+Neither correction strengthens a claim. I found one minor, inherited wording problem.
+
+1. **Low priority: the third requirement omits the median-replica qualification.** In `new_supplement.tex:646`, “at least half of a replica block’s variance” is less precise than the note’s “in the median replica.” This omission predates the corrections, but prevents calling the entire three-requirement restatement exact. **Concrete fix:** write “and that, in the median replica, at least half of the replica-built block’s variance lies in the observed block’s plane.”
+
+The declaration supports correction 1 as follows, using its **original line numbers**:
+
+- **Reported numbers read before writing the stop condition:** line 52 introduces “What this session read before writing the stop condition”; lines 56–58 list “**numbers already reported:** every table of `FD-CT-5B-REPORT.md` and `FD-CT-READERS-5A-REPORT.md`; S1’s per-group σ table …; 2D’s committed noise share …”.
+- **No audit measurement computed:** line 30 states, “**MEASURES:** nothing. No audit quantity has been computed; the code has run only on synthetic fixtures.”
+- **N and R not expected to fire:** lines 71–73 state, “**What the reported numbers already imply, said before the run:**” and “5B reports C_PL,5D’s σ at a median 9.0 times its noise floor. So clauses N and R (§7) are not expected to fire. They are declared because that floor comes from the same ten replicas, and the replica-built blocks test it directly.”
+
+Thus every newly added assertion is supported: the rule followed the reported-number reads, preceded computation of its deciding audit measurements, and had anticipated outcomes for N and R. The note’s source comment explicitly identifies its second and third conditions as N and R.
+
+The order is unchanged:
+
+| Clause | Note: stop condition | Supplement: positive requirement |
+|---|---|---|
+| O, first | An existing component explains at least half of both patterns | No such component does |
+| N, second | Replica spread exceeds half the width | Spread is at most half |
+| R, third | Median-replica plane fraction is below half | Plane fraction is at least half, subject to the qualification above |
+
+For these complementary failure/pass conditions, **“not expected to fire” → “expected to hold” preserves the intended meaning**. It reports an expectation, not independent validation or a guarantee.
+
+The opening sentence remains verbatim: “The run-period block was added after the period differences had been seen.” The revised chronology does not make the decision more prospective than the record permits: only the deciding audit measurements remained uncomputed; the block’s reported numbers were already known.
+
+**Correction 2 is correct.** In `note_sec_eavailw.tex`, subsection 8.2 begins at lines 26–27. Its line 70 contains the beam-axis factors **0.9965–1.0035**, median **1.000008**, GENIE shifts **−0.47 to +0.53**, and “not reliably determined” for GENIE with MEC, NuWro and GiBUU. These belong to **8.2**, not 8.1. The diff also adds the corresponding imported label.
+
+Subsection **8.1**, beginning at lines 11–12, gives the external predictions’ \(W\) convention at line 14: neutron mass for every event and placement of \(W^2\leq0\) events in the lowest bin. The Supplement correctly retains that citation to `N-sec:eavailw-axis`.
+
+Neither correction introduces full-distribution validation, interprets bias screening as detector inadequacy, localizes two-dimensional mismodeling in the additional dimensions, or extends coverage claims. The surrounding limitations remain explicit, including the illustrative status of the output and the absence of independent validation of the run-period block’s size and coverage.
+
+VERDICT: PASS

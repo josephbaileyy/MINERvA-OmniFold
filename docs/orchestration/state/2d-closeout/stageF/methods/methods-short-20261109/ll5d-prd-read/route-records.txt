@@ -1,0 +1,314 @@
+=== fd/receipts-ll5d/gate-g18/README.md (lines 1-24)
+     1	# LL5D ll5d_gate_G18 (job 61040163): the step ended rc 3 and printed `verdict=STOP` (2026-11-10)
+     2	
+     3	**By** the `cov2d` session, under LL5D BINDING 2. The director's go named `connect-gate.sh` `21f0a573…` (run with
+     4	`gate-g18`) and `launch-ll5d.sh` `aa907b91…`, back to back with the other truth's gate. The calibration is run 2's
+     5	(`../calib-2/`).
+     6	
+     7	- **The step's own result:** the job log reads `gate rc=3`, and `gate.time` reads `Exit status: 3`. The step printed
+     8	  `LL5D-GATE g18 verdict=STOP` (`gate.out.txt`). sacct reads FAILED, ExitCode 3:0, Elapsed 10:52:09; that is ll5d.py's
+     9	  `RC["STOP"]` = 3, passed through by the job's `exit $rc`. The record's `why` is `the gate or the backstop failed`.
+    10	- **Routing:** this STOP goes to the director and Joseph unrepaired (BINDING 2 ruling 5). Nothing was relaunched or
+    11	  changed.
+    12	- **CANNOT AUTHORIZE:** a rerun, a repair, the pilot or the bulk. The pilot and bulk need a PASS for the reading
+    13	  concerned (BINDING 3 ruling 4).
+    14	
+    15	## The condition that set the verdict
+    16	
+    17	`ll5d.py:1016` at `a95cc39f7437170af0b65ba042934fad079e0ee2` is
+    18	`ok = all(v == "option (1)" for v in rec["reads"].values()) and all(b["passes"] for b in back.values())`.
+    19	Recomputed on the full record `gate-g18.json`, it gives False. The record's fields, as written (all also in
+    20	`gate-g18.fields.txt`):
+    21	
+    22	| evaluation | `reads` | `option_1_qualifies` | `option_3_applies` | `mismatch_bounded` | `gate_n.passes` | `backstop.passes` |
+    23	|---|---|---|---|---|---|---|
+    24	| g18/all | option (3) | True | True | False | True | True |
+=== fd/receipts-ll5d/gate-2-g18/README.md (lines 1-24)
+     1	# LL5D ll5d_gate_G18 rerun (job 61078463): the step ended rc 0 and printed `verdict=PASS` (2026-11-12)
+     2	
+     3	**By** the `cov2d` session. This is the A1a.2 section 6 rerun on R00-R15 that Joseph decided
+     4	(`DECISION-20261110-joseph-ll5d-rerun-16-cells.md`, #1018). The director's go named `connect-gate-2.sh` `e22d094c…`
+     5	(run with `g18`) and `launch-ll5d.sh` `b86004df…` (case `gate2-g18`), back to back with the AR23 rerun. The calibration
+     6	is run 3's (`../calib-3/`).
+     7	
+     8	- **The step's own result:**
+     9	  - the job log reads `gate rc=0`, and `gate.time` reads `Exit status: 0`;
+    10	  - the step printed `LL5D-GATE g18 verdict=PASS` (`gate.out.txt`);
+    11	  - sacct reads COMPLETED, ExitCode 0:0, Elapsed 10:53:49.
+    12	- **CANNOT AUTHORIZE:** the pilot, the bulk, or any opening or summary of the sealed clipprep file. Each needs its own
+    13	  go from the director.
+    14	
+    15	## The condition that set the verdict
+    16	
+    17	`nd-unfolding/ll5d.py:1038` at `639ef907250a2a7909b7b9ba89b2e85e70c9b767` (sha256 `2b0224c6…`, the connect's `L5`) is
+    18	`ok = all(v == "option (1)" for v in rec["reads"].values()) and all(b["passes"] for b in back.values())`.
+    19	The record's fields, as written (all also in `gate-g18.fields.txt`):
+    20	
+    21	| evaluation | `reads` | `option_1_qualifies` | `option_3_applies` | `mismatch_bounded` | `gate_n.passes` | `backstop.passes` |
+    22	|---|---|---|---|---|---|---|
+    23	| g18/all | option (1) | True | False | True | True | True |
+    24	| g18/minus2 | option (1) | True | False | True | True | True |
+=== fd/receipts-ll5d/gate-2-ar23/README.md (lines 1-24)
+     1	# LL5D ll5d_gate_AR23 rerun (job 61078506): the step ended rc 0 and printed `verdict=PASS` (2026-11-12)
+     2	
+     3	**By** the `cov2d` session. This is the A1a.2 section 6 rerun on R00-R15 that Joseph decided
+     4	(`DECISION-20261110-joseph-ll5d-rerun-16-cells.md`, #1018). The director's go named `connect-gate-2.sh` `e22d094c…`
+     5	(run with `ar23`) and `launch-ll5d.sh` `b86004df…` (case `gate2-ar23`), back to back with the G18 rerun. The calibration
+     6	is run 3's (`../calib-3/`).
+     7	
+     8	- **The step's own result:**
+     9	  - the job log reads `gate rc=0`, and `gate.time` reads `Exit status: 0`;
+    10	  - the step printed `LL5D-GATE ar23 verdict=PASS` (`gate.out.txt`);
+    11	  - sacct reads COMPLETED, ExitCode 0:0, Elapsed 10:27:21.
+    12	- **CANNOT AUTHORIZE:** the pilot, the bulk, or any opening or summary of the sealed clipprep file. Each needs its own
+    13	  go from the director.
+    14	
+    15	## The condition that set the verdict
+    16	
+    17	`nd-unfolding/ll5d.py:1038` at `639ef907250a2a7909b7b9ba89b2e85e70c9b767` (sha256 `2b0224c6…`, the connect's `L5`) is
+    18	`ok = all(v == "option (1)" for v in rec["reads"].values()) and all(b["passes"] for b in back.values())`.
+    19	The record's fields, as written (all also in `gate-ar23.fields.txt`):
+    20	
+    21	| evaluation | `reads` | `option_1_qualifies` | `option_3_applies` | `mismatch_bounded` | `gate_n.passes` | `backstop.passes` |
+    22	|---|---|---|---|---|---|---|
+    23	| ar23/all | option (1) | True | False | True | True | True |
+    24	| ar23/minus2 | option (1) | True | False | True | True | True |
+=== fd/receipts-ll5d/gate-vi-diagnosis/README.md (lines 1-24)
+     1	# LL5D gate STOP: why vi reports every row unmatched (read-only diagnosis, 2026-11-10)
+     2	
+     3	**By** the `cov2d` session, at the director's request after the STOP of both LL5D gates (`../gate-g18/`,
+     4	`../gate-ar23/`).
+     5	
+     6	- **Scope.** Nothing ran on the cluster, no bound file changed, nothing was repaired, and no sealed clip-prep file was
+     7	  opened. This receipt proposes no fix.
+     8	- **Code read.** All code is read at `a95cc39f7437170af0b65ba042934fad079e0ee2` (M_A1a.1, the gates' deploy).
+     9	  `fd_1b_c2.py` there is blob `0cb727612a6658f27fe14e51f8120450da581a15`, the verbatim copy from 342c0ce5.
+    10	- **INFERENCE.** Steps marked INFERENCE rest on reading code, not on the real files. The rest are code read at the
+    11	  stated lines, or the outputs of the three scripts here.
+    12	
+    13	**Classification: an implementation defect. vi's row key cannot match by construction, because the two sides store
+    14	the CV weight at different precisions.** It is not a data mismatch of the kind the check exists to catch. One step,
+    15	the real files' dtypes, is INFERENCE (section 3).
+    16	
+    17	## 1. What vi hashes
+    18	
+    19	- **The call:** `ll5d.py:974` calls `c2.c2_vi(P, cv, fm, geo)`.
+    20	- **The two row sets:** `fd_1b_c2.py:1090-1098` (`c2_vi`) builds them for `row_match`:
+    21	  - the signal side: `inputs["MCgen"]` (5 columns) with weight `cv["wt"]`, on rows `pass_truth & (P["cells"] >= 0)`;
+    22	  - the denominator side: `bank_cv["td_pt","td_pz","td_ea","td_q3","td_w"]` with weight `world["tdw_cv"]`.
+    23	- **The key:** `fd_1b_c2.py:554-560` (`row_match`) keys each row by `cp2.row_hash` of the five coordinates and the
+    24	  weight, each cast to float64. `clip_probe2.py:77-85` (`row_hash`) mixes the raw float64 bit patterns, so a key
+=== fd/receipts-ll5d/pilot-r1/README.md (lines 1-24)
+     1	# LL5D ll5d_pilot (job 61181899): the step ended rc 4 and walls printed `verdict=REPRICE`; 10 of the 13 pilot items ran (2026-11-12)
+     2	
+     3	**By** the `cov2d` session, under LL5D BINDING 3 and its addendum A1b.1 (M_A1b.1 `4231b14d…`). The director's go was
+     4	given in the gap before E96D's rerun:
+     5	- `connect-pilot.sh` `177f4f4d…`: the fill of cov2d's draft `014849f1`, diff `pilot-fill-vs-014849f1.diff.txt`;
+     6	- `launch-ll5d.sh` `d4155c14…`: a `pilot` case and its fence's `/^cov2d/` correction, diff `launch-vs-b86004df.diff.txt`.
+     7	
+     8	The watcher was `watch-gates2h.sh` `8042e2b6…`, which accepts PENDING; diff `watch2h-vs-2g.diff.txt`.
+     9	
+    10	- **The step's own result:**
+    11	  - sacct reads FAILED, ExitCode 4:0, Elapsed 00:30:19 (1,819 s), on nid004886;
+    12	  - the job log reads `walls rc=4` and `LL5D-WALLS verdict=REPRICE`;
+    13	  - `walls.json`'s `why` is `missing ll5d_g18_toy_minus2_4751000.npz`;
+    14	  - the job log also reads `controls rc=0`, `LL5D-CONTROLS verdict=PASS failed=[]`, and `clipcheck rc=0`,
+    15	    `LL5D-CLIPCHECK verdict=PROCEED`;
+    16	  - the job's exit status is walls' rc.
+    17	- **Routing:** reported to the director unrepaired. Nothing was relaunched or changed.
+    18	- **CANNOT AUTHORIZE:** a rerun, a repair, or the bulk.
+    19	
+    20	## What ran
+    21	
+    22	- `pilot-lanes.tsv` lists ll5d_b.PILOT's 13 items in 11 rows over 8 lanes. Lanes 0, 4 and 5 carry two rows each.
+    23	- The 8 lanes each ended rc 0. In each of lanes 0, 4 and 5, only the first row was unfolded:
+    24	  `lanes/lane{0,4,5}.out.txt` each hold one product line and one `rc=` line.
+=== fd/receipts-ll5d/pilot-r2/README.md (lines 1-24)
+     1	# LL5D ll5d_pilot r2 (job 61184880): the step ended rc 0; walls `verdict=PASS`, controls PASS, clipcheck PROCEED; 13 of the 13 pilot items ran (2026-11-12)
+     2	
+     3	**By** the `cov2d` session, under LL5D BINDING 3 and its addendum A1b.1 (M_A1b.1 `4231b14d…`). This is the rerun
+     4	after the r1 STOP (job 61181899, `../pilot-r1/`), with the director's go on:
+     5	- `connect-pilot.sh` `0945ba5fd63e12e0cb9ba61fb773c2c4c23824d01eb4d60596cd7d5c1a14ba10`, diff
+     6	  `pilot-r2-vs-177f4f4d.diff.txt` against r1's connect. The diff carries two changes:
+     7	  - the namespace moved to r2 (`W=$P/ll5d-pilot-r2`, `U=$P/ll5d-unfolds-r2`);
+     8	  - the lane loop reads its table on fd 3 (`read -r -u 3 … done 3< <(…)`), and its `srun` takes `< /dev/null`.
+     9	- `launch-ll5d.sh` `4cd22193a1dcce3c3b1666a24c52ef94422fe9303df0cdac020ba5e697aa7bf5`: the pilot's log path set to
+    10	  r2. Diff `launch-vs-d4155c14.diff.txt`.
+    11	
+    12	The watcher was `watch-gates2h.sh` `8042e2b6…`, committed in `../pilot-r1/`.
+    13	
+    14	- **The step's own result:**
+    15	  - the watcher's last sacct line reads COMPLETED, ExitCode 0:0, Elapsed 00:30:31 (1,831 s), Start
+    16	    2026-11-12T11:23:45 and End 11:54:16 (Perlmutter local time, PST);
+    17	  - the job log reads `walls rc=0` / `LL5D-WALLS verdict=PASS`, `controls rc=0` /
+    18	    `LL5D-CONTROLS verdict=PASS failed=[]`, and `clipcheck rc=0` / `LL5D-CLIPCHECK verdict=PROCEED`.
+    19	- **Routing:** reported to the director.
+    20	- **CANNOT AUTHORIZE:** the bulk. Its connect is filled from this receipt and goes to the director first.
+    21	
+    22	## The lane-loop repair test
+    23	
+    24	`test-lane-loop.sh` (`4ca3b313…`) runs each connect's own lanes table and its own `lane()` function, extracted
+=== fd/receipts-ll5d/vicheck/README.md (lines 1-24)
+     1	# LL5D ll5d_vicheck (job 61075015): the step ended rc 0 and printed `verdict=PASS` (2026-11-10)
+     2	
+     3	**By** the `cov2d` session. This is step 1 of the rerun that Joseph decided (`DECISION-20261110-joseph-ll5d-rerun-16-cells.md`,
+     4	#1018), under amendment A1a.2 (bound in #1021; M_A1a.2 = `639ef907250a2a7909b7b9ba89b2e85e70c9b767`). The director's go
+     5	named `connect-vicheck.sh` `6f8b1e6f…` and `launch-ll5d.sh` `b86004df…`. The director ruled this preflight part of the
+     6	rerun #1018 authorizes.
+     7	
+     8	- **The step's own result:** the job log reads `vicheck rc=0`, and `vicheck.time` reads `Exit status: 0`. The step
+     9	  printed `LL5D-VICHECK verdict=PASS` (`vicheck.out.txt`). sacct reads COMPLETED 0:0 with Elapsed 00:01:37 (`joblog.txt`).
+    10	- **Routing, as the director set it:** a PASS continues to step 2, the calibration (calib-3). That connect goes to
+    11	  the director with its sha256 for its own go.
+    12	- **CANNOT AUTHORIZE:** the calibration or the gates. Each needs its own go.
+    13	
+    14	## The record's fields, as written (`vicheck.json`)
+    15	
+    16	This receipt reports the fields and draws no coverage conclusion.
+    17	
+    18	- **`verdict` PASS.** `mismatch_bound` is 0.05, and `vi.largest_cell_unmatched_share` is 0.0. All 16 per-cell shares
+    19	  are 0.0 on both sides.
+    20	- **`vi`** is the key the fixed gate uses (`ll5d.vi_inputs`, float32 on both sides):
+    21	  - signal_rows_unmatched is 0 of signal_rows_in_phase_space 32,846,302;
+    22	  - truth_rows_unmatched is 2,801 of truth_rows 32,849,103.
+    23	- **`vi_unrounded`** is the call the gates of 2026-11-10 made. It reads share 1.0: 32,846,302 of 32,846,302 signal rows
+    24	  and 32,849,103 of 32,849,103 truth rows unmatched. That is the gates' record, reproduced.
+=== LL5D-AMENDMENT-A1A2.md (lines 1-30)
+     1	# AMENDMENT A1a.2: vi keyed at one precision on both sides, the test that would have caught it, and a real-data preflight (2026-11-10)
+     2	
+     3	**By** the `cov2d` session, at the director's request, for `coverage-5b-audit` to audit and the director to bind as an
+     4	addendum to LL5D binding 2. **DRAFT: nothing has run.** Joseph has decided the relaunch
+     5	(`DECISION-20261110-joseph-ll5d-rerun-16-cells.md`, #1018): once this amendment is audited and bound, the gates rerun
+     6	on R00–R15, the sixteen reporting cells. Each step still takes the director's go on its connect's sha256.
+     7	
+     8	**Under:**
+     9	- **The STOP of both LL5D gates** (ll5d_gate_G18 61040163, ll5d_gate_AR23 61040235; receipts `fd/receipts-ll5d/gate-g18/`
+    10	  and `gate-ar23/`). Each read option (3) in every evaluation because vi read every row unmatched. Every other
+    11	  reading passed: the variance gates, gate_n, the backstop, and D1, D2 and D3.
+    12	- **The read-only diagnosis** (`fd/receipts-ll5d/gate-vi-diagnosis/`, PR #1015) classifies it as an implementation
+    13	  defect. `fd_1b_c2.row_match` keys rows on the bit patterns of five coordinates plus the weight. The npz's `w_truth`
+    14	  is float64 and the bank's tdw is float32, so no key can match.
+    15	- **LL5D BINDING 2** (A1a, now at A1a.1 `a95cc39f7437170af0b65ba042934fad079e0ee2`) and **BINDING 3** (A1b). Each file
+    16	  this amendment changes is named in §1.
+    17	
+    18	**The cells.** R00–R15 are the sixteen cells the gates already read (`N_CELLS = 16` at `s1_assemble.py:51`, through
+    19	the H2 definition's map). This amendment changes no cell, and a merged-cell run is outside it (#1018 item 2).
+    20	
+    21	**MEASURES:** nothing. **CANNOT AUTHORIZE:**
+    22	- any step (the preflight, the calibration or the gates) before this amendment is bound and the director gives the go
+    23	  on that step's connect;
+    24	- the preflight (§5) under #1018 alone. #1018 authorizes the rerun "and nothing beyond it", so whether `vicheck`
+    25	  counts as part of that rerun or needs its own decision is the director's call;
+    26	- any change to the gate's rule, thresholds or mismatch bound;
+    27	- opening the sealed clip-prep files.
+    28	
+    29	**CITABLE FOR:**
+    30	- the fix;
+=== LL5D-AMENDMENT-A1A1.md (lines 1-14)
+     1	# AMENDMENT A1a.1: the candidate's install at LL5D's entry points, and the entry points tested over the real chain (2026-11-09)
+     2	
+     3	**By** the `cov2d` session, for `coverage-5b-audit` to audit and the director to bind as an addendum to LL5D binding 2.
+     4	The calibration's rerun waits for that addendum and the director's go.
+     5	
+     6	**Under:**
+     7	- **The director's ruling on ll5d_calib run 1** (job 61014290, INVALID; receipt PR #963), 2026-11-09, by message. It is
+     8	  an implementation defect found before any result was computed: `calibration.json` was never written, and nothing was
+     9	  read that could inform a choice. So it is not a STOP under #939, and the fix is not a post-hoc repair. It changes
+    10	  bound code, so it comes as amendment A1a.1, then the audit, then a binding 2 addendum, then the go on the rerun.
+    11	- **LL5D BINDING 2** (A1a at `e92e946759772d13e21055b21c69189c8b007183`) and **BINDING 3** (A1b). Each file this
+    12	  amendment changes is named in §1.
+    13	- **The rerun** uses the same declared seeds and N = 3,000. Nothing about the calibration's design changes.
+    14	
+=== DECISION-20261110-joseph-ll5d-rerun-16-cells.md
+     1	# DECISION 2026-11-10 — Joseph: after the vi defect is fixed, the LL5D gates rerun on the sixteen reporting cells; a merged-cell LL5D run is conditional and later
+     2	
+     3	**Recorded by** the paper-tighten lane, as director.
+     4	
+     5	## What led to it
+     6	
+     7	- **Both LL5D gates STOPped** (jobs 61040163 and 61040235; receipts #1013 and #1014). Every reading was overridden to option (3) by fd_1b_c2's mismatch bound, because c2_vi reported 100 % of rows unmatched.
+     8	- **The diagnosis** (#1015) classifies this as an implementation defect, not a measured mismatch. vi keys rows on coordinates and weight together, and the two sides store the weight at different precisions (float64 and float32), so no key can match. It was reproduced locally with its controls. The fix is being drafted as amendment A1a.2.
+     9	- **The V-HALF-R rebinning draft** (#1016) asked which cells an LL5D rerun should test: (i) the 16 cells, (ii) merged cells, or (iii) both. An independent consult (codex-school gpt-6-astra, high, at `dec8b86c`; committed with #1016) recommended (i) now, with a merged run conditional and later. The director recommended the same.
+    10	
+    11	## Joseph's answer, verbatim
+    12	
+    13	> yes I agree
+    14	
+    15	The director's question was whether the LL5D rerun after the precision fix should test the 16 cells the paper reports. The sha256 of the text plus a final newline begins `be0aac0f92f1ecb8`.
+    16	
+    17	## What is decided
+    18	
+    19	1. **The LL5D gates rerun on R00–R15**, the sixteen reporting cells, once amendment A1a.2 is audited and bound.
+    20	   - This is Joseph's decision on the relaunch after the STOP, under LL5D binding 2 ruling 5. It authorizes that rerun and nothing beyond it.
+    21	   - Its connect comes to the director with its sha256, as usual.
+    22	   - The price is about 22 node-h for the two gates, from the 2026-11-10 measured times, plus a calibration rerun if A1a.2 requires one. It stays inside LL5D's 148.0 node-h cap.
+    23	2. **A merged-cell LL5D run** is conditional. It is considered only if V-HALF-R is declared, bound and run, and only if a scientifically useful merged candidate survives. It would then carry separate claims and a declared comparison, with no selection of whichever passes. It needs its own decision.
+    24	3. **LL5D does not wait on rebinning.**
+    25	
+    26	## CITABLE FOR / NOT CITABLE FOR
+    27	
+    28	- **Citable for:** the rerun's cell set and its authorization after A1a.2.
+    29	- **Not citable for:** any coverage result; any rebinning decision; the cause of the STOP beyond #1015's diagnosis.
+    30	
+    31	Nothing is submitted, deposited or tagged.
+=== DECISION-20261109-joseph-coverage-case-wording.md
+     1	# DECISION 2026-11-09 — Joseph: the second five-observable coverage test's pre-written cases print a per-tune, per-variant status, label adaptive routes "Descriptive", and use the approved pass wording; nothing is locked
+     2	
+     3	**Recorded by** the paper-tighten lane, as director.
+     4	
+     5	## What led to it
+     6	
+     7	- **The pre-read.** The paper (#977) pre-writes the text for every outcome of the second five-observable coverage test
+     8	  (LL5D). A Sonnet and a Gemini agent referee read the cases (`secondary-results/preread-outcomes-20261109/`, #998),
+     9	  and the director's rulings were applied on #977.
+    10	- **The style integration** (#977 at `46ed923d`, restored at `9b6f5cb2`) rewrote the cases in plain declarative form.
+    11	  It followed `DECISION-20261102-joseph-1b-redesign.md` item 4 strictly: clipping detail moved out of the main text,
+    12	  there is no "does not test" clause, and R5's facts are printed once.
+    13	- **The director put three questions to Joseph:**
+    14	  - (a) the pass wording;
+    15	  - (b) the label for a result reached after the test continued past a check, or after a repair;
+    16	  - (c) the Table 1 status when the variants or tunes disagree.
+    17	- **The independent read.** A fresh codex-school2 gpt-6.1-sol session read (b) and (c), read-only at `46ed923d`
+    18	  (`secondary-results/independent-read-coverage-status-20261109/`, with `answer.txt` verbatim). It recommended:
+    19	  - the status "Descriptive" for adaptive routes;
+    20	  - a status for each tune and variant in place of "Mixed";
+    21	  - the rank-16 condition on the carry-over sentence.
+    22	  The director recommended adopting all three.
+    23	
+    24	## Joseph's answer, verbatim
+    25	
+    26	> yes lets apply it
+    27	
+    28	sha256 of the text plus a final newline begins `2a2af2dcc3d31c56`.
+    29	
+    30	## What is decided
+    31	
+    32	1. **(a) The pass wording** is the integrated text at `9b6f5cb2`, with three additions:
+    33	   - "The graded covariance includes the model term, whose role is to cover each tune's departure from the
+    34	     simulation";
+    35	   - "The data result remains an illustration";
+    36	   - on the carry-over sentence, the declaration's condition for the joint reading, that both matrices have rank 16
+    37	     (`LL5D-DECLARATION.md`:317-324).
+    38	2. **(b) Adaptive routes.** A run that continued past a check fixed in advance, or ran with a repair after a stop,
+    39	   gets the Table 1 status **Descriptive**, whatever its readings.
+    40	   - The readings print in the Result text.
+    41	   - The caption defines this status: the criteria fixed in advance were applied, but the run continued, or was
+    42	     repaired, by a decision made after a check was seen.
+    43	   - The abstract and §6.3 keep their disclosure.
+    44	   - Supplement S9 records what the reader needs: the exceeded quantity and its bound, what was visible when the
+    45	     decision was made, its reason, every repair, and the fact that the gate sample shares its first 300 seeds with
+    46	     the coverage pseudo-experiments (`LL5D-DECLARATION.md`:250-255).
+    47	3. **(c) No "Mixed" status.**
+    48	   - Table 1 gives one entry for each tune and variant ("No under-coverage detected", "Under-coverage flagged" or
+    49	     "Invalid"), with the primary variant marked.
+    50	   - The abstract's per-variant wording stays.
+    51	   - No reading of a secondary variant is promoted over the primary, and no overall "any flag" status is formed.
+    52	4. **Nothing is locked.** Every sentence stays open to the PRD-referee read and to Joseph. A coverage sentence prints
+    53	   only from the test's outcome record, once it lands.
+    54	
+    55	## CITABLE FOR / NOT CITABLE FOR
+    56	
+    57	- **Citable for:** the case wording and the status scheme as Joseph's choice.
+    58	- **Not citable for:** any coverage result; the independent read's views as findings; a locked wording.
+    59	
+    60	Nothing is submitted, deposited or tagged.

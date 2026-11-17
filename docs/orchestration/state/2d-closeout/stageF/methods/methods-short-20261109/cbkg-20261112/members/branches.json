@@ -1,0 +1,17 @@
+{
+ "1A_base_cv": [
+  "bkg_current",
+  "bkg_inttype",
+  "bkg_nuPDG",
+  "bkg_vtx_x",
+  "bkg_vtx_y",
+  "bkg_vtx_z",
+  "sim_background",
+  "sim_background_W",
+  "sim_background_eavail",
+  "sim_background_pass",
+  "sim_background_pz",
+  "sim_background_q3",
+  "w_bkg"
+ ]
+}

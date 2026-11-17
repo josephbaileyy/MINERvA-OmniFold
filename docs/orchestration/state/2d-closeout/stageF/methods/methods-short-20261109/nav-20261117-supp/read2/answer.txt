@@ -1,0 +1,43 @@
+No remaining defect found that changes meaning or drops content. All three read-1 fixes are correct and supported; the full diff revealed no additional defect requiring a fix.
+
+The read-1 findings are resolved, in their original ranked order:
+
+1. **\(C_{\mathrm{resp}}\) now has the correct definition.**  
+   `ev/new_main_supplement.tex:105` specifies “the sum of the outer products of the four deposit categories’ half-difference shifts.”
+
+   Its defining source, **S5.1**, says: “Each category’s contribution is the outer product of the half-difference of the two unfolded shifts … and \(C_{\mathrm{resp}}\) is their sum.” (`ev/new_supplemental_body.tex:528`.) The revised entry describes covariance contributions rather than adding shift vectors.
+
+2. **S8.7 now includes the claim variants that determine the decisions.**  
+   `ev/new_supplemental_body.tex:1191` specifies the largest claim \(p\) value over variants shifting the null by the simulation-size bound and by \(\pm2\delta_{\mathrm{fine}}\), and defines \(\delta_{\mathrm{fine}}\).
+
+   **Note §11.2** says: “The \(p\) value on which each decision rests, the *claim* \(p\) value, is the largest over the specified *claim variants*, which shift the null.” It then specifies the simulation-size bound and \(\pm\jtMoneKappa\,\delta_{\mathrm{fine}}\). (`ev/note_sec_joint.tex:50`; the supplied macro value is **2**.) The new definition of \(\delta_{\mathrm{fine}}\) matches note §11.4, line 152.
+
+   The limitation survives in **S8.7**: “A rejection extends to a generator prediction only if the residual below the fine grid is bounded, and no such bound has been shown.” (Line 1198.)
+
+3. **Both incomplete definition pointers are repaired.**
+   - **\(C_{\mathrm{PL,5D}}\):** the entry now cites **S5.3 and S5.4**. S5.3 supplies the construction and rank; S5.4 states that “its size and coverage have not been independently validated.” (`ev/new_supplemental_body.tex:664`.)
+   - **Under-covers; over-covers:** the entry now cites **S8.3 and table S15**. S8.3 supplies the lower-tail threshold. Table S15’s caption supplies the upper-tail definition, \(P(\mathrm{Bin}(300,p_c)\geq\mathrm{count})<0.025/16\), and says “over-coverage is reported and is not a failure.” (`ev/new_supplemental_body.tex:1119`, macros expanded.)
+
+The remaining audit gives the following results.
+
+| Check | Finding |
+|---|---|
+| **A: opening and selection** | The road map retains the previous destinations and scope. The split background rows retain the full-sample fraction, playlist range, subtraction, and **playlist-1A-only** composition in **table S1**. |
+| **A: observables and cells** | **S2** retains the redundancy, unmeasured-information, axis-convention and unreliable-transfer qualifications. **S3** retains the construction, support, merges, unsupported boxes and diagonal-fraction limitations. The configuration row preserves its results and note destinations; the note’s sixteen-cell result remains referenced elsewhere, including S2. |
+| **A: estimator repetitions** | The simulation-closure basis for the settings remains in **S4.3 and S4.5**. The five-versus-ten LightGBM values, single-seed qualification, covariance convention, convergence limitation and note appendix pointer remain together in **S4.3**. The publication’s ten iterations remain explicit in **S6.2 and S7**. |
+| **A: covariance repetitions** | Bitwise seed equality and the zero seed block remain in **S5.1**. **S5.3** retains the three-period construction, Gaussian assumption, effective degrees of freedom, interval, exposure-only dependence and uncalibrated interpretation. The playlist-permutation account is moved within S5.3. |
+| **A: other consolidations** | Shared IBU inputs remain at **S7’s opening**. Tune pooling, fallback to one, normalization and the fixed detector response remain in **S8.1**. Carbon-only reasons remain in **S9.1**. \(V_g\) remains defined in **S5.2 and table S16’s caption**. |
+| **B: support and numbers** | The added support threshold and purity definition match **paper §2**; hybrid truths and grids match **paper §3.3**; the external-\(W\) convention matches **note §8.1**, with the sixteen-cell exception preserved from **S9.1**. The S8.7 additions agree with note §§11.1–11.5 and the supplied macros. No unsupported new number found. |
+| **C: strengthening** | No new assertion validates the full distribution, makes bias screening identify detector inadequacy, or localizes the two-dimensional discrepancy in extra dimensions. Coverage remains restricted to the reported tests and matrices. S8.7 explicitly says: **“The rejections are not physical exclusions.”** |
+| **F: definitions** | Each entry restates a printed definition; the S-section and P-section references agree with their destinations and supplied labels. The rendered definitions table occupies **one page, page 2**. |
+| **G: tables** | All **twelve changed existing tables** retain identical numerical-macro inventories. Cell/value assignments, column meanings and caption senses survive the row splits, IBU reflow, spanners and type-size changes. |
+
+**D — A6 is verbatim.** After expanding the four macros and normalizing whitespace, both inserted sentences exactly match DECISION item 3: **“1.071 at G18 and 1.095 at AR23”**, including the limitation that the bound applies to the covariance block “not to the bands’ pseudo-data draws” and the statement that the block difference “remains unclassified.” The insertion is inside the **`graded` arm**, and it prints in the supplied rendered text.
+
+**E — S8.6’s order and attachment are correct.** The November 1 stage-2 report states: “Gate D read **FAIL**, which is the protocol’s STOP before any coverage toy,” and “No coverage toy ran.” The later November 1 redesign decision explains: “Gate D’s pseudo-experiments realize a response-only shift at fixed truth,” whereas the reported interaction block is the “full-universe shift: the response and the prior move together.” The November 6 outcome states: “**So stage 1 has ended, unrepaired**,” and excludes any coverage conclusion.
+
+The rewritten paragraph therefore correctly attaches the response-only comparison and window to the **first test’s preliminary check**, and the ensemble design to the **staged redesign**. Its stage-1 stop precedes any coverage reading. The November 8 flux/detector results remain diagnostic follow-up.
+
+**F — Both special senses of “Descriptive” are preserved.** The glossary matches the paper’s table 4 caption: the bias-half diagnostic changes nothing in the reported result and was defined after seeing its classified biases; the second coverage test applied criteria fixed in advance but used a repair chosen after an entry-check stop. The caption explicitly says: **“No coverage pseudo-experiment had been unfolded or graded; other gate readings were already visible.”** (`ev/paper_body.tex:228`.) This agrees with DECISION items 14 and 24.
+
+VERDICT: PASS (no defect that changes meaning or drops content)

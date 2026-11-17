@@ -1,0 +1,25 @@
+**MEASURES (once bound and run):** for each of the 16 reporting cells R00–R15, its V-HALF class (§5).
+
+**CANNOT AUTHORIZE:**
+- any paper or note wording;
+- any change to the reported result, its cells, its observables, its binning or its covariance;
+- any reading of a non-valid cell as excluded, wrong or unreported;
+- anything outward.
+
+**The advisor's consequence is not decided here** (decision item 5). That is modifying the observable or the binning if
+a cell fails. It goes back to Joseph with the result.
+
+## 0. Disclosure: what was seen before this rule was declared
+
+- **What V-PRIOR's declaration (§0) records this lane had seen** of F0b's readout I1, the paper's tab:fd16 and its
+  comments, and FD-F0b-REPORT. It carries over unchanged. The A7 GiBUU hybrid is flagged in R02, R06 and R07, and
+  Stage 0c GiBUU in R06.
+- **The valid-region read** (`OUTCOME-20261107-valid-region.md`, receipt #897) printed I1's per-cell pulls at every
+  graded truth.
+  - The largest are A7 GiBUU in R02 (z = +4.19) and in R06 (z = +4.53). Every other truth–cell pair has |z| ≤ 2.
+  - V-HALF's r is I1's `bias`, which is z × σ. So **where d is small, a V-HALF fail at A7 GiBUU in R02 and R06 is
+    foreseeable.** V-HALF is not blind at those two pairs.
+- **No d has been seen.** FD-PRR's products exist only on pscratch, and no FD-PRR read has run. The dry-run receipt
+  (#972) carries timings and checks, not d. <!-- absence-ok: a statement about this lane's own process; FD-PRR's readout does not exist yet -->
+- **What was mapped while drafting:** only I1's keys and its truths' names, rows, groups and own vertices, and FD-PRR's
+  readout schema (`prr_read.py` @ `cf76aec7`, M_A2). No bias, noise or z value was printed.

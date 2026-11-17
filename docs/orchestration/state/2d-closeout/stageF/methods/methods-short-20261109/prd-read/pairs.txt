@@ -1,0 +1,107 @@
+### 1 (replace)
+OLD: First, a benchmark against the published double-differential cross section $d^{2}\sigma/(d\pT\,d\pPar)$ from the same data~\cite{MINERvA:2021owq} shows agreement in normalization and a correlated shape difference that accompanies the unfolding method on fixed inputs and whose mechanism has not been identified (section~\ref{sec:bench}).
+NEW: First, a benchmark against the published double-differential cross section $d^{2}\sigma/(d\pT\,d\pPar)$ from the same data~\cite{MINERvA:2021owq} shows agreement in normalization and a correlated shape difference (section~\ref{sec:bench}). On fixed inputs, a binned unfolding lies closer to the published shape, and the mechanism of the difference has not been identified.
+
+### 2 (replace)
+OLD: The check compares selected samples, not these inputs with the published analysis's (\ssec{S1}{supp:selection}).
+NEW: The check compares the selected samples of the two productions. It does not compare these inputs with those of the published analysis (\ssec{S1}{supp:selection}).
+
+### 3 (replace)
+OLD: These events carry \SIrange{\fvval{ess-nrp-min}}{\fvval{ess-nrp-max}}{\percent} of a cell's final weight (\ssecc{S4}{supp:estimators}).
+NEW: Events without a reconstructed partner carry \SIrange{\fvval{ess-nrp-min}}{\fvval{ess-nrp-max}}{\percent} of a cell's final weight (\ssecc{S4}{supp:estimators}).
+
+### 4 (replace)
+OLD: These are the diagonal elements only.
+NEW: Both figures are for the diagonal elements only.
+
+### 5 (replace)
+OLD: It was added after the differences were observed and is constructed from the double ratios among the groups: each group's unfolded result divided by its own simulated truth, with no group chosen as the reference.
+NEW: The block was added after the differences were observed and is constructed from the double ratios among the groups: each group's unfolded result divided by its own simulated truth, with no group chosen as the reference.
+
+### 6 (replace)
+OLD: \ssec{S5}{supp:cov16} gives an illustrative interval on its size under a stated model, and that interval describes no uncertainty in the block's orientation.
+NEW: An illustrative interval on its size under a stated model is given in \ssec{S5}{supp:cov16}, and that interval describes no uncertainty in the block's orientation.
+
+### 7 (insert)
+OLD: 
+NEW: They share a quasielastic cross-section model, and \fvval{f1-tune-g18} and the GENIE + MEC component of $C_{\mathrm{model}}$ use Valencia-family MEC models.
+
+### 8 (replace)
+OLD: The comparison of the ensemble average with the baseline (section~\ref{sec:cov5d}) uses noise-free pseudo-data at all \fvval{ens1-ntruths} distinct truths, graded and descriptive, since the Tune~v1 hybrid equals the prior. The grading rules and their timing are stated with the individual tests; comparisons without a grading rule are descriptive.
+NEW: The comparison of the ensemble average with the baseline (section~\ref{sec:cov5d}) uses noise-free pseudo-data at all \fvval{ens1-ntruths} distinct truths, graded and descriptive. The Tune~v1 hybrid and the prior count once there, because they are equal. The grading rules and their timing are stated with the individual tests. Comparisons without a grading rule are descriptive.
+
+### 9 (replace)
+OLD: The two-dimensional benchmark (section~\ref{sec:bench}) concerns the two-observable estimator. The truth-recovery and stability findings (sections~\ref{sec:prior} and~\ref{sec:cov5d}) concern the five-observable estimator, whose rounding sensitivity is carried in its statistical uncertainty (section~\ref{sec:cov5d}).
+NEW: The estimator behind each finding is given in table~\ref{tab:estimators}.
+
+### 10 (replace)
+OLD: The two results share the data and the flux, detector and generator systematics, and their cross-covariance is unavailable, so the significance of their difference cannot be calibrated.
+NEW: The two results share the data and the flux, detector and generator systematics. Because their cross-covariance is unavailable, the significance of their difference cannot be calibrated.
+
+### 11 (delete)
+OLD: Removing the 1G--1M group, whose step is given in section~\ref{sec:closure2d}, leaves this distance unchanged beyond noise in the \fvval{pp-k} largest-eigenvalue directions and increases it in the other \fvval{pp-kbar}. Neither reading establishes which period is right or the cause of the step (\ssecc{S6}{supp:cov2d}).
+NEW: 
+
+### 12 (insert)
+OLD: 
+NEW: The five-observable estimator, run on the two-dimensional inputs, reproduces the two-dimensional central value within its paired noise: $T=\fvval{c1-T}$ over \fvval{c1-nrep} paired replicas, \SI{\fvval{c1-below-pct}}{\percent} below its 95th-percentile threshold of \fvval{c1-q95}: no difference is detected in the twelve directions tested, at that resolution.
+
+### 13 (replace)
+OLD: The effect of the 1G--1M step on the distance to the published result is given with that distance (section~\ref{sec:repro2d}).
+NEW: Removing the 1G--1M group leaves the distance to the published result of section~\ref{sec:repro2d} unchanged beyond noise in the \fvval{pp-k} largest-eigenvalue directions and increases it in the other \fvval{pp-kbar}. Neither reading establishes which period is right or the cause of the step (\ssecc{S6}{supp:cov2d}).
+
+### 14 (replace)
+OLD: The statistical correlation, and that of four systematic terms that could not be evaluated directly, are bounded within a one-parameter family of valid covariances, with each such cross term taken as a common fraction, from zero to one, of its fully correlated value.
+NEW: The statistical correlation and the correlations of four systematic terms that could not be evaluated directly are bounded within a one-parameter family of valid covariances. Each such cross term is taken as a common fraction, from zero to one, of its fully correlated value.
+
+### 15 (replace)
+OLD: On the sixteen reported cells, the reported estimator's bias at the same truth satisfies both criteria under the reported covariance, with a largest $|z|$ of \fvval{f0b-stage0c_gibuu-zmax}, and meets the flagging criterion without $C_{\mathrm{PL,5D}}$ (section~\ref{sec:fd16}).
+NEW: On the sixteen reported cells, the reported estimator is not flagged at the GiBUU-to-GENIE truth under the reported covariance, with a largest $|z|$ of \fvval{f0b-stage0c_gibuu-zmax}. It is flagged without $C_{\mathrm{PL,5D}}$ (section~\ref{sec:fd16}).
+
+### 16 (replace)
+OLD: The median cell moves by \SIrange{\fvval{rec-w-fmed-lo}}{\fvval{rec-w-fmed-hi}}{\percent} of the injected change, and of the supported cells with an injected change of magnitude above \SI{\fvval{rec-thr}}{\percent}, \fvval{rec-w-opp-lo} to \fvval{rec-w-opp-hi} move opposite to it and \fvval{rec-w-over-lo} to \fvval{rec-w-over-hi} overshoot it (\ssecc{S4.4}{supp:recovery}).
+NEW: Of the supported cells with an injected change of magnitude above \SI{\fvval{rec-thr}}{\percent}, \fvval{rec-w-opp-lo} to \fvval{rec-w-opp-hi} move opposite to it and \fvval{rec-w-over-lo} to \fvval{rec-w-over-hi} overshoot it (\ssecc{S4.4}{supp:recovery}).
+
+### 17 (replace)
+OLD: Both tunes satisfy the bias criteria: the pseudo-experiment means give $\chi^2=\fvval{f1-g18-chi2int}$ ($p=\fvval{f1-g18-p}$) and \fvval{f1-ar23-chi2int} ($p=\fvval{f1-ar23-p}$), respectively, with $|z|\leq\fvval{f1-zmax-ceil}$ in every cell of the means and closures.
+NEW: Both tunes pass the bias criteria: the pseudo-experiment means give $\chi^2=\fvval{f1-g18-chi2int}$ ($p=\fvval{f1-g18-p}$) and \fvval{f1-ar23-chi2int} ($p=\fvval{f1-ar23-p}$), respectively, with $|z|\leq\fvval{f1-zmax-ceil}$ in every cell of the means and closures.
+
+### 18 (replace)
+OLD: The tunes share a quasielastic cross-section model, and \fvval{f1-tune-g18} and the GENIE + MEC component of $C_{\mathrm{model}}$ also use Valencia-family MEC models. These tests provide partial evidence on bias at truths held out of the analysis.
+NEW: The held-out-tune tests provide partial evidence on bias at truths held out of the analysis.
+
+### 19 (replace)
+OLD: The bias-half rule asks that a cell's bias be at most half of the truth's departure from the prior, $|b_c|\leq0.5\,|d_c|$ in the notation of section~\ref{sec:prr}, at each graded truth where that departure is at least \SI{1}{\percent}.
+NEW: The bias-half rule asks that a cell's bias be at most half of the truth's departure from the prior, $|b_c|\leq0.5\,|d_c|$, with the bias $b_c$ and the departure $d_c$ both relative to the prior cross section (section~\ref{sec:prr}), at each graded truth where that departure is at least \SI{1}{\percent}.
+
+### 20 (replace)
+OLD: \fvgroup{prr}{At the two flagged truths, the root-mean-square bias of IBU at five iterations over the sixteen cells and its noise-free $\chi^2$ are \fvval{prr-cmp-gibuu} than the five-observable estimator's at the GiBUU hybrid truth and \fvval{prr-cmp-q3} at the $q_3$ tilt (table~\ref{tab:prr16}). Along the prior-to-truth direction, IBU overshoots the truth: its retained fraction $\rho$, defined below, is $\fvval{prr-rho-ibu-gibuu}$ and $\fvval{prr-rho-ibu-q3}$, against $\fvval{prr-rho-e-gibuu}$ and $\fvval{prr-rho-e-q3}$ for the five-observable estimator, and $\fvval{prr-rho-ibu200-gibuu}$ and $\fvval{prr-rho-ibu200-q3}$ at 200 iterations. The five-observable estimator's retained fractions are positive: it retains part of each truth's departure. The retained fraction is a directional summary and does not measure the total bias. } \begin{table}[tb] \centering \caption{Retained fraction $\rho$, root-mean-square relative bias over the sixteen cells and noise-free $\chi^2$ (16 degrees of freedom) at the two flagged truths, for the five-observable estimator (5D) and IBU at five iterations, on noise-free pseudo-data at one simulation split (\stab{S14}{tab:prr-rho}). A negative $\rho$ means that, along the prior-to-truth direction, the result overshoots the truth; the total bias is in the RMS and $\chi^2$ columns.} \label{tab:prr16} \begin{tabular}{lcccccc} \toprule & \multicolumn{2}{c}{$\rho$} & \multicolumn{2}{c}{RMS bias} & \multicolumn{2}{c}{$\chi^2$} \\ \cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7} truth & 5D & IBU & 5D & IBU & 5D & IBU \\ \midrule GiBUU hybrid & $\fvval{prr-rho-e-gibuu}$ & $\fvval{prr-rho-ibu-gibuu}$ & \fvval{prr-rms-e-gibuu} & \fvval{prr-rms-ibu-gibuu} & \fvval{prr-chi2-e-gibuu} & \fvval{prr-chi2-ibu-gibuu} \\ $q_3$ tilt & $\fvval{prr-rho-e-q3}$ & $\fvval{prr-rho-ibu-q3}$ & \fvval{prr-rms-e-q3} & \fvval{prr-rms-ibu-q3} & \fvval{prr-chi2-e-q3} & \fvval{prr-chi2-ibu-q3} \\ \bottomrule \end{tabular} \end{table} A study tests which settings of the five-observable estimator change the fraction of a truth change that remains unrecovered.
+NEW: A study tests which settings of the five-observable estimator change the fraction of a truth change that remains unrecovered.
+
+### 21 (replace)
+OLD: A setting is reported as changing $\rho$ at a flagged truth when some tested level moves $\rho$ from the reported configuration's value by more than a threshold.
+NEW: \fvgroup{prr}{At the two flagged truths, the root-mean-square bias of IBU at five iterations over the sixteen cells and its noise-free $\chi^2$ are \fvval{prr-cmp-gibuu} than the five-observable estimator's at the GiBUU hybrid truth and \fvval{prr-cmp-q3} at the $q_3$ tilt (table~\ref{tab:prr16}). Along the prior-to-truth direction, IBU overshoots the truth: its retained fraction $\rho$ is $\fvval{prr-rho-ibu-gibuu}$ and $\fvval{prr-rho-ibu-q3}$, against $\fvval{prr-rho-e-gibuu}$ and $\fvval{prr-rho-e-q3}$ for the five-observable estimator, and $\fvval{prr-rho-ibu200-gibuu}$ and $\fvval{prr-rho-ibu200-q3}$ at 200 iterations. The five-observable estimator's retained fractions are positive: it retains part of each truth's departure. The retained fraction is a directional summary and does not measure the total bias. } \begin{table}[tb] \centering \caption{Retained fraction $\rho$, root-mean-square relative bias over the sixteen cells and noise-free $\chi^2$ (16 degrees of freedom) at the two flagged truths, for the five-observable estimator (5D) and IBU at five iterations, on noise-free pseudo-data at one simulation split (\stab{S14}{tab:prr-rho}). A negative $\rho$ means that, along the prior-to-truth direction, the result overshoots the truth; the total bias is in the RMS and $\chi^2$ columns.} \label{tab:prr16} \begin{tabular}{lcccccc} \toprule & \multicolumn{2}{c}{$\rho$} & \multicolumn{2}{c}{RMS bias} & \multicolumn{2}{c}{$\chi^2$} \\ \cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7} truth & 5D & IBU & 5D & IBU & 5D & IBU \\ \midrule GiBUU hybrid & $\fvval{prr-rho-e-gibuu}$ & $\fvval{prr-rho-ibu-gibuu}$ & \fvval{prr-rms-e-gibuu} & \fvval{prr-rms-ibu-gibuu} & \fvval{prr-chi2-e-gibuu} & \fvval{prr-chi2-ibu-gibuu} \\ $q_3$ tilt & $\fvval{prr-rho-e-q3}$ & $\fvval{prr-rho-ibu-q3}$ & \fvval{prr-rms-e-q3} & \fvval{prr-rms-ibu-q3} & \fvval{prr-chi2-e-q3} & \fvval{prr-chi2-ibu-q3} \\ \bottomrule \end{tabular} \end{table} A setting is reported as changing $\rho$ at a flagged truth when some tested level moves $\rho$ from the reported configuration's value by more than a threshold.
+
+### 22 (replace)
+OLD: These are conditional tests of covariance adequacy: the systematic parameters are drawn from their bands' discrete or Gaussian laws, the covariance is rebuilt once at each tune and then held fixed, the lateral uncertainties are represented by a surrogate, the nominal Gaussian content is replaced by a content matched to the draws, some terms are included in the covariance without being drawn and others are left out, and the truths are gated, normalized shape deformations from two tunes (\ssec{S8}{supp:tests}).
+NEW: These are conditional tests of covariance adequacy. Besides the matched content above, (i) the systematic parameters are drawn from their bands' discrete or Gaussian laws, (ii) the covariance is rebuilt once at each tune and then held fixed, (iii) a surrogate represents the lateral uncertainties, (iv) some terms are included in the covariance without being drawn and others are left out, and (v) the truths are gated, normalized shape deformations from two tunes (\ssec{S8}{supp:tests}).
+
+### 23 (delete)
+OLD: \fvval{f1-tune-g18} shares its 2p2h model family with one of $C_{\mathrm{model}}$'s generators.
+NEW: 
+
+### 24 (replace)
+OLD: It under-covers at both tunes.
+NEW: The two-dimensional covariance under-covers at both tunes.
+
+### 25 (replace)
+OLD: The two constructions match in each operation checked, and what separates them lies inside the estimator and is unclassified (\ssec{S8.4}{supp:study-cov1}). Excluding them defines a restricted test, which cannot validate their treatment.
+NEW: The pseudo-experiment and simulation-side constructions match in each operation checked, and what separates their blocks for these bands lies inside the estimator and is unclassified (\ssec{S8.4}{supp:study-cov1}). Excluding the two bands defines a restricted test, which cannot validate their treatment.
+
+### 26 (replace)
+OLD: The tunes are held out of the analysis but not independent of it: they share a quasielastic model, and \fvval{f1-tune-g18} shares its 2p2h model family with one of the generators of $C_{\mathrm{model}}$.
+NEW: The tunes are held out of the analysis but not independent of it (section~\ref{sec:strategy}).
+
+### 27 (replace)
+OLD: The test gives no coverage result.}\fvcase{ll5d-campaign}{stop}{It stopped at a check fixed in advance, \fvval{ll5d-stop-what}, before its pseudo-experiments, and gives no coverage result.}} The data result remains an illustration. % absence-ok: pre-written outcome cases of the second coverage test; 'gives no coverage result' states which case prints, not a claim that a result does not exist \paragraph{The first five-observable test.} A first coverage test of the five-observable covariance at the two tunes, specified in advance, gave no coverage result: one of its preliminary checks, which compared pseudo-experiments that move only the detector response at fixed truth with blocks built from the prior and the response together, stopped it before any coverage pseudo-experiment ran (\nsec{sec:fived16-fd} and \ssecc{S8}{supp:tests}).
+NEW: The test gives no coverage result.}\fvcase{ll5d-campaign}{stop}{It stopped at a check fixed in advance, \fvval{ll5d-stop-what}, before its pseudo-experiments, and gives no coverage result.}} % absence-ok: pre-written outcome cases of the second coverage test; 'gives no coverage result' states which case prints, not a claim that a result does not exist \paragraph{The first five-observable test.} A first coverage test of the five-observable covariance at the two tunes, specified in advance, gave no coverage result: one of its preliminary checks, which compared pseudo-experiments that move only the detector response at fixed truth with blocks built from the prior and the response together, stopped it before any coverage pseudo-experiment ran (\nsec{sec:fived16-fd} and \ssecc{S8}{supp:tests}).

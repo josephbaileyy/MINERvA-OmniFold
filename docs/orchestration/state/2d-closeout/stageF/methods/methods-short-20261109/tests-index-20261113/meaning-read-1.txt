@@ -1,0 +1,36 @@
+The restructure does not fully preserve the design clauses. I checked all 140 inventory entries, the old-table content, the rendered text, and the Details destinations.
+
+The following checks passed:
+
+- **C130:** row 9’s reading is identical between old and new source, character for character: 314 characters.
+- **C138:** row 10’s complete LL5D expression is identical: 821 characters, including all seven `\fvcase` arms.
+- Every distinct old-table `\fvval` key survives somewhere in the new Supplement. The `prr` and `vhalf` groups also remain identical. No clause is wholly absent from the inventory; the problems below concern entries whose destinations do not fully supply them.
+- The new “as 10” sentence at `new_supplemental_body.tex:1015` preserves the old references to simulation, variations, statistic and thresholds, while retaining the separate repetitions and plug-in truth. It does not claim that coverage experiments ran.
+- The moved closure, stability, benchmark, prior-retention and bias-half sentences otherwise preserve the old clauses.
+- All Details section numbers resolve to the intended tests, in both the Supplement and paper.
+
+One inherited discrepancy: row 9’s reading is **not** a verbatim sentence from the supplied `paper_body.tex:626`. The old and new Supplement readings nevertheless match exactly; this discrepancy was not introduced by the restructure.
+
+Ranked problems, most serious first:
+
+1. **C117 — the coverage pseudo-experiments’ full-simulation qualification is lost.**  
+   At `new_supplemental_body.tex:955`, the text describes universe composition and unfolding with the nominal simulation, but never states that the pseudo-experiments come from **the full simulation’s universes**. “Nominal” does not establish sample size. The other occurrences of “full simulation” concern different tests. This also leaves incomplete the inherited simulation specification for tests 10 and 9 through “as 8” and “as 10.”
+
+   **Fix:** restore “drawn from the full simulation’s universes” in the shared coverage design, preserving the existing distinction about simulation resampling.
+
+2. **C047, with C045 — the held-out-tune mapping does not preserve the complete half split.**  
+   Line 844 says that the pseudo-experiments use half the simulation; it does not say that unfolding uses the **other half**. The new half-split sentence at line 838 follows the twelve non-held-out truths and cannot securely supply that qualification for the separately introduced held-out tunes. Likewise, C045 points to line 826’s configuration-(e) statement for those twelve truths, rather than a statement about test 3b.
+
+   **Fix:** state at line 844 that the held-out pseudo-data are unfolded with configuration (e), using the other half of the simulation, and point both inventory entries there.
+
+3. **C075 — the cited common-input statement covers only the sixteen-cell comparison.**  
+   Line 714 explicitly concerns that comparison. Old test 5’s Simulation cell covered the comparison family. Line 751 supplies common-input language for the two-dimensional comparisons, but does not expressly retain the old qualification about the same **weight-only systematic universes** on both sides.
+
+   **Fix:** retain that common-input qualification explicitly for the comparison family, then update C075’s destination.
+
+4. **C115, C124 and C131 — the cited locations do not actually state the estimator assignments.**  
+   The table header at line 963 names the two-dimensional and second five-observable **tests**; line 1015 names a test of a five-observable **covariance**. These do not expressly print the old assignments “2D” and “the estimator.” The paper explicitly supplies the second test’s reported-estimator assignment at line 615, but C131 does not point there.
+
+   **Fix:** add the respective estimator names to the Supplement’s design descriptions and repoint these inventory entries.
+
+VERDICT: FAIL

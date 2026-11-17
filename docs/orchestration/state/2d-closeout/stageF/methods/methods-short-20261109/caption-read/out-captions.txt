@@ -1,0 +1,10 @@
+M010 | LOST | "not the reported estimator ... the configuration with which the generator-sized-change study was run" -> "Lower-capacity refinement (100 trees, 8 leaves)" | The statement that panel (a) is not the reported estimator, and that this configuration is the one the study was run with, is not restated.
+M011 | LOST | "The reported estimator's result at this truth is on the sixteen cells, the GiBUU $\Eavail$ shape of table~\ref{tab:fd16}" -> "Sixteen-cell comparison: table~\ref{tab:fd16}" | The identification of the table row (the GiBUU $\Eavail$ shape) as the reported estimator's result at this truth is gone.
+M018 | LOST | "at the twelve graded truths of table~\ref{tab:fd16}, in the same order" -> "at the truths of table~\ref{tab:fd16}" | The count of twelve and the same-order statement are dropped, and neither appears elsewhere.
+M021 | LOST | "Each covariance omits the truth's own generator component as in the table." -> (removed) | This condition on the covariances used is not restated anywhere.
+M024 | LOST | "A truth can also be flagged by its $\chi^2$ $p$ value (table~\ref{tab:fd16}), as the synthetic $q_3$ tilt is under the reported covariance." -> (removed) | The statement that truths can be flagged by $p$ value, with the $q_3$ example, is not restated.
+M026 | LESS | "The table's $C_{\mathrm{total}}$-only reading is not shown." -> "The $C_{\mathrm{total}}$-only reading is given in table~\ref{tab:fd16}." | The statement that the figure does not show this reading is dropped.
+M032 | LOST | "These tests assess only bias." -> (removed) | This limit on the scope of the tests is not restated.
+M035 | LESS | "The quantities are the 109 ... and two totals" -> "Figure~\ref{fig:rounding-shifts} includes the 109 ... and two totals" | "Are" states the full set of 153 quantities, while "includes" is non-exhaustive.
+M036 | LOST | "requirements fixed before the test: at most 0.3 ... for the median and 1.0 for the maximum" -> "median and maximum requirements, 0.3 and 1.0 statistical standard deviations" | The statement that the requirements were fixed before the test (pre-specification) is lost.
+FLAGGED 9 of 55 rows
