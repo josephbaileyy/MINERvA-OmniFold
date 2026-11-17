@@ -1630,6 +1630,9 @@ def currency_values(d, base):
         v[f"prr-chi2-e-{t}"], v[f"prr-chi2-ibu-{t}"] = f"{e['grade']['chi2']:.1f}", f"{i5['grade']['chi2']:.1f}"
         assert i5["rho"] < e["rho"], "IBU at five iterations retains less"
     v["prr-ibu-bar"] = f"{r['readings']['floor']['bars']['IBU']:g}"
+    fl = r["readings"]["floor"]
+    assert all(fl["bars"][f] == fl["bar_floor"] for f in PRR_FACTOR), "one threshold serves the four settings"
+    v["prr-floor"] = f"{fl['bar_floor']:g}"
     v.update(tier1_values(d))
     v.update(prr_levels_values(d))
     v.update(prr_s53_values(d))
