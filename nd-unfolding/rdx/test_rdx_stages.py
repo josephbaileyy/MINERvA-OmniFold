@@ -466,5 +466,97 @@ class PinLookup(unittest.TestCase):
             self.assertFalse({o.replace("${pl}", pl) for o in outs} & c1_outs, pl)
 
 
+def code_lines(text: str) -> list:
+    return [ln for ln in text.splitlines() if ln.strip() and not ln.lstrip().startswith("#")]
+
+
+class Stage3(unittest.TestCase):
+    """The stage-3 trace of 2026-11-17. F1: the arms read MP-1's pins under PATH's python3, 3.6.15 on login27 (the probe
+    at facd34ad), which cannot import fd_ct_period_inputs.py. F2: gs3a/gs3b checked the old deploy, so S3a.ok could not
+    name the pin the arms run at."""
+
+    def test_the_arms_read_every_pin_with_awk_and_no_python_reads_a_pin(self):
+        arms = (HERE / "sbatch_rdx_arms.sh").read_text()
+        code = code_lines(arms)
+        self.assertFalse([ln for ln in code if "fd_ct_period_inputs" in ln])
+        before = arms[:arms.index('source "${D}/setup_salloc_env.sh"')]
+        py = [ln for ln in code_lines(before) if re.search(r"\bpython3?\b", ln)]
+        self.assertEqual(py, ['python3 - "${TL}" "${LIMIT}" <<\'EOF\''], py)  # the stdlib TimeLimit check only
+        heredoc = before[before.index("<<'EOF'\n") + 8:before.index("\nEOF\n")]
+        self.assertNotRegex(heredoc, r'\bf"|:=|^from __future__', "the TimeLimit check must stay 3.6-safe")
+        self.assertEqual(dict(re.findall(r'S_(\w+)=\$\(sum_of ([\w.]+)\)', arms)),
+                         {"rdx_npz": "lat_RDX_ALL.npz", "rdx_bkg": "lat_RDX_ALL_bkg.npz", "sidecar": "truthx_RDX_ALL.npz",
+                          "lat_npz": "lat_zero.npz", "lat_bkg": "lat_zero_bkg.npz"})
+        block = arms[arms.index('SUMS="${H}/rdx-inputs-SHA256SUMS"'):arms.index('P_ratio="${PVL_PREP}')]
+        sums = {"lat_RDX_ALL.npz": "a" * 64, "lat_RDX_ALL_bkg.npz": "b" * 64, "truthx_RDX_ALL.npz": "c" * 64,
+                "lat_zero.npz": "d" * 64, "lat_zero_bkg.npz": "e" * 64}
+        show = 'echo "$S_rdx_npz $S_rdx_bkg $S_sidecar $S_lat_npz $S_lat_bkg"\n'
+        with tempfile.TemporaryDirectory() as d:
+            def run(rows):
+                (Path(d) / "rdx-inputs-SHA256SUMS").write_text("".join(f"{h}  ./{n}\n" for n, h in rows))
+                script = f'say() {{ echo "[rdx-arms] $*"; }}\nH={d}\nOUT={d}/out\n{block}{show}'
+                pr = subprocess.run(["bash", "-c", script], capture_output=True, text=True, timeout=60)
+                return pr.returncode, pr.stdout
+            rc, out = run(sums.items())
+            self.assertEqual((rc, out.split()), (0, list(sums.values())), out)
+            for drop, key in (("lat_zero_bkg.npz", "lat_bkg"), ("lat_zero.npz", "lat_npz"), ("truthx_RDX_ALL.npz", "sidecar")):
+                rc, out = run([(n, h) for n, h in sums.items() if n != drop])
+                self.assertEqual(rc, 2, out)
+                self.assertIn(f"has no sha256 line for {key}", out)
+
+    def test_stage3_gates_and_submits_share_deploy3_cloned_by_gs3a(self):
+        con = (HERE / "rdx_connect.sh").read_text()
+        lines = con.splitlines()
+        dep = next(ln for ln in lines if ln.startswith("DEP=$D;"))
+        i = next(k for k, ln in enumerate(lines) if ln.startswith("if [ \"$STEP\" = s0 ]"))
+        cond = lines[i][len("if "):lines[i].rindex("; then")]
+        j = next(k for k in range(i, len(lines)) if lines[k] == "fi")
+        need = lines[j + 1]
+        self.assertTrue(need.startswith("case \"$STEP\" in "), need)
+        head = next(k for k, ln in enumerate(lines) if ln.startswith("head=$(git -C \"$DEP\""))
+        self.assertEqual(head, j + 2, "the deploy's pin check must follow, unconditionally, for every step")
+        with tempfile.TemporaryDirectory() as d:
+            def run(step, d3_exists):
+                d3 = Path(d) / ("d3" if d3_exists else "absent")
+                (Path(d) / "d3").mkdir(exist_ok=True)
+                script = (f'stop() {{ echo "STOP: $*"; exit 8; }}\nSTEP={step}\nD={d}/d\nD3={d3}\n{dep}\n'
+                          f'if {cond}; then echo CLONE; fi\n{need}\necho "DEP=$DEP"\n')
+                pr = subprocess.run(["bash", "-c", script], capture_output=True, text=True, timeout=60)
+                return pr.returncode, pr.stdout.split("\n")
+            for step in ("gs3a", "gs3b", "s3a", "s3b"):
+                rc, out = run(step, True)
+                self.assertEqual((rc, out[-2]), (0, f"DEP={d}/d3"), step)
+                self.assertNotIn("CLONE", out, step)
+            rc, out = run("gs3a", False)
+            self.assertEqual((rc, out[0]), (0, "CLONE"))
+            for step in ("gs3b", "s3a", "s3b"):
+                rc, out = run(step, False)
+                self.assertEqual(rc, 8, step)
+                self.assertIn("gs3a clones it at the stage-3 pin", out[0], step)
+            for step in ("gs2", "gmerge", "c2", "m", "cm"):
+                rc, out = run(step, False)
+                self.assertEqual((rc, out[-2]), (0, f"DEP={d}/d"), step)
+                self.assertNotIn("CLONE", out, step)
+            rc, out = run("s0", False)
+            self.assertEqual(out[0], "CLONE")
+        gate = step_block(con, "gs2|gmerge|gs3a|gs3b", "s0")
+        self.assertIn('echo "pin=$PIN"', gate)
+
+    def test_s3_checks_its_reads_and_names_the_arms_paths(self):
+        con = (HERE / "rdx_connect.sh").read_text()
+        arms = (HERE / "sbatch_rdx_arms.sh").read_text()
+        s3 = con[con.index("\ns3a|s3b)\n"):con.index("\nesac\n", con.index("\ns3a|s3b)\n"))]
+        m = re.search(r'\n  policy ((?:[^\n\\]|\\\n)+)\n', s3)
+        self.assertIsNotNone(m, "s3a/s3b run no policy check")
+        self.assertLess(m.start(), s3.index("RDX_SMOKE=1 bash"))
+        reads = re.findall(r'"([^"]+)"', m.group(1))
+        prep = re.search(r'(?m)^PVL_PREP="\$\{RDX_PVL_PREP:-([^}]+)\}"', arms).group(1)
+        ratio = re.search(r'(?m)^PVL_RATIO=(\S+)', con).group(1)
+        self.assertEqual(ratio, prep + re.search(r'P_ratio="\$\{PVL_PREP\}([^"]+)"', arms).group(1))
+        arms_reads = {re.sub(r"\$\{(\w+)\}", r"$\1", v).replace("$MP1", "$OUT/stage")
+                      for v in re.findall(r'(?m)^P_\w+="([^"]+)"', arms) if "PVL_PREP" not in v}
+        self.assertEqual(set(reads), arms_reads | {"$PVL_RATIO"})
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -20,7 +20,7 @@ FILES = ("rdx_cap.py", "rdx_merge.py", "rdx_paths.py", "sbatch_rdx_evloop.sh", "
          "rdx_connect.sh", "rdx_connect_launch.sh", "rdx_tasks.tsv", "rdx_common.py", "rdx_dump.py", "test_rdx_stages.py",
          "setup_salloc_env.exports")
 CP, MG, PA, EV, SM, AR, CN, LA, TT = FILES[:9]
-EXPECTED_TESTS = 21
+EXPECTED_TESTS = 24
 MUTATIONS = [
     ("unlisted submissions ignored", CP, '        if kv["id"] not in listed:\n', "        if False:\n",
      "test_spent_held_unlisted_and_the_wanted_ceiling"),
@@ -104,6 +104,21 @@ MUTATIONS = [
     ("c2 align on c1's names", CN, '--out "$OUT/checks/align_${pl}_pl.json"', '--out "$OUT/checks/align_$pl.json"', "test_c2_checks_its_reads_and_never_writes_c1s_records"),
     ("c2 rows on c1's names", CN, '--out "$OUT/checks/truthx_rows_${pl}_pl.json"', '--out "$OUT/checks/truthx_rows_$pl.json"',
      "test_c2_checks_its_reads_and_never_writes_c1s_records"),
+    # the stage-3 trace of 2026-11-17 (F1, F2, s1)
+    ("gs3a/gs3b back on the old deploy", CN, 'case "$STEP" in gs3a|gs3b|s3a|s3b) DEP=$D3 ;; esac',
+     'case "$STEP" in s3a|s3b) DEP=$D3 ;; esac', "test_stage3_gates_and_submits_share_deploy3_cloned_by_gs3a"),
+    ("s3a clones deploy3 again", CN, '{ [ "$STEP" = gs3a ] && [ ! -e "$D3" ]; }', '{ [ "$STEP" = s3a ] && [ ! -e "$D3" ]; }',
+     "test_stage3_gates_and_submits_share_deploy3_cloned_by_gs3a"),
+    ("no STOP without deploy3", CN, 'case "$STEP" in gs3b|s3a|s3b) [ -e "$D3" ] || stop "no $D3 (gs3a clones it at the stage-3 pin)" ;; esac\n',
+     "", "test_stage3_gates_and_submits_share_deploy3_cloned_by_gs3a"),
+    ("s3 without the policy check", CN, '  policy "$OUT/dumps/lat_RDX_ALL.npz" "$OUT/dumps/lat_RDX_ALL_bkg.npz" "$OUT/dumps/truthx_RDX_ALL.npz" \\\n'
+     '    "$OUT/stage/lat_zero.npz" "$OUT/stage/lat_zero_bkg.npz" "$PVL_RATIO"\n', "", "test_s3_checks_its_reads_and_names_the_arms_paths"),
+    ("s3 policy without the ratio", CN, '"$OUT/stage/lat_zero_bkg.npz" "$PVL_RATIO"\n', '"$OUT/stage/lat_zero_bkg.npz"\n', "test_s3_checks_its_reads_and_names_the_arms_paths"),
+    ("arms reads lat_bkg with python again", AR, 'S_lat_bkg=$(sum_of lat_zero_bkg.npz)',
+     'S_lat_bkg=$(python3 -B -c "import sys; sys.path.insert(0, sys.argv[1]); import fd_ct_period_inputs as C; print(C.MP1_ZERO[\'lat_bkg\'])" "${D}/nd-unfolding" 2>/dev/null)',
+     "test_the_arms_read_every_pin_with_awk_and_no_python_reads_a_pin"),
+    ("arms lat_bkg takes lat_zero's sum", AR, 'S_lat_bkg=$(sum_of lat_zero_bkg.npz)', 'S_lat_bkg=$(sum_of lat_zero.npz)', "test_the_arms_read_every_pin_with_awk_and_no_python_reads_a_pin"),
+    ("arms sums not checked", AR, '|| { say "refusing: ${SUMS} has no sha256 line for ${sv#S_}"; exit 2; }', '|| true', "test_the_arms_read_every_pin_with_awk_and_no_python_reads_a_pin"),
 ]
 
 def mirror(root: Path) -> Path:

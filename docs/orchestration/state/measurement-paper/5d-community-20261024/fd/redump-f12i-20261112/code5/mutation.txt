@@ -1,0 +1,63 @@
+# HEAD 29481cdc2c9f72bf73b05944befefa7b7bd85448
+# clean clone, serial, nice 19, OMP/MKL/OPENBLAS/NUMEXPR threads 1, Python 3.12.2, numpy 1.26.4, 2026-11-17T10:16:17Z
+# 1760327b21f2195820149329b9f60b10a57a4c0bb550ab9975727c4b20fe6f34  rdx_connect.sh
+# def31c020870bc66d1161ac09b95e904f14433824b4de4fdead3fcb7fe109aba  rdx_connect_launch.sh
+# f77c89a5dd3f59ce06650c568a18878846d60012605bcf666be957a6e163eafd  sbatch_rdx_arms.sh
+# 274ecd02afcdcb23019e23e014b354f13d3976019e74a2a03d4f0cc4e03c8940  smoke_rdx_stages.sh
+# adad784a48d5ea6784dfea45068d2bc0245be72bbc015fc79c5e3d7f80164cae  test_rdx_stages.py
+# d9fe7c2d1473f7ef306ce8afa53fd635275bda0850faef7f099154ebfce92354  rdx_mutation_stages.py
+# command: python3 -B nd-unfolding/rdx/rdx_mutation.py
+unmutated suite: 38 tests OK, in the mirrored tree
+KILLED    miss rows keep truthx_enu at 0                   by test_the_patch_fills_denom_reco_and_miss_rows_and_refuses_both_gates
+KILLED    truthx_enu not cached                            by test_the_patch_fills_denom_reco_and_miss_rows_and_refuses_both_gates
+KILLED    truthx_enu left to the #12 rebind                by test_the_patch_fills_denom_reco_and_miss_rows_and_refuses_both_gates
+KILLED    proton mass 938.0                                by test_the_patch_fills_denom_reco_and_miss_rows_and_refuses_both_gates
+KILLED    KE is the total energy                           by test_the_patch_fills_denom_reco_and_miss_rows_and_refuses_both_gates
+KILLED    denom fill ungated                               by test_every_added_line_is_gated_or_a_declared_declaration
+KILLED    reco fill in reco mode                           by test_the_patch_fills_denom_reco_and_miss_rows_and_refuses_both_gates
+KILLED    both gates allowed                               by test_the_patch_fills_denom_reco_and_miss_rows_and_refuses_both_gates
+KILLED    miss identity zeroed                             by test_the_patch_fills_denom_reco_and_miss_rows_and_refuses_both_gates
+KILLED    predict not widened                              by test_the_wide_regressor_sees_truthx_aligned_to_the_loops_fit_and_predict_rows
+KILLED    fit widened with the wrong rows                  by test_the_wide_regressor_sees_truthx_aligned_to_the_loops_fit_and_predict_rows
+KILLED    truthx not subset by pass_truth                  by test_the_wide_regressor_sees_truthx_aligned_to_the_loops_fit_and_predict_rows
+KILLED    sidecar row count unchecked                      by test_a_sidecar_with_the_wrong_row_count_refuses
+KILLED    permutation not joint                            by test_the_permutation_is_joint_seeded_and_deterministic
+KILLED    transfer seed RSN's                              by test_the_transfer_probe_uses_rdx_mask_and_the_widened_rows
+KILLED    transfer probe not widened                       by test_the_transfer_probe_uses_rdx_mask_and_the_widened_rows
+KILLED    sidecar npz sha unchecked                        by test_the_sidecar_refusals
+KILLED    sidecar dtype unchecked                          by test_the_sidecar_refusals
+KILLED    permute allowed with std                         by test_the_argument_refusals
+KILLED    truth without closure                            by test_the_argument_refusals
+KILLED    replica keeps bad weights                        by test_the_replica_equals_the_collector_row_for_row
+KILLED    replica skips the extras' finiteness             by test_the_replica_equals_the_collector_row_for_row
+KILLED    replica not POT-scaled                           by test_the_replica_equals_the_collector_row_for_row
+KILLED    replica drops reco-only rows                     by test_the_replica_equals_the_collector_row_for_row
+KILLED    npz check skipped in the build                   by test_the_build_refuses_an_npz_the_replica_does_not_reproduce
+KILLED    npz dtype ignored                                by test_a_replica_that_differs_from_the_npz_refuses
+KILLED    truthx at the first rows, not the kept ones      by test_the_sidecar_joins_back_to_every_playlist_row
+KILLED    truthx cast to float32                           by test_the_sidecar_joins_back_to_every_playlist_row
+KILLED    a run in two playlists allowed                   by test_the_playlist_index_and_its_refusals
+KILLED    an unknown run allowed                           by test_the_playlist_index_and_its_refusals
+KILLED    vectorized walk keeps bad reco weights           by test_the_vectorized_walk_equals_the_loop_bitwise
+KILLED    vectorized walk ignores the border rule          by test_rows_at_the_angle_cut_are_decided_by_the_reference_function
+KILLED    vectorized MCreco without the -9999 sentinel     by test_the_vectorized_walk_equals_the_loop_bitwise
+KILLED    the dump walks with the loop                     by test_the_dump_uses_the_vectorized_walk
+KILLED    join ignores truthx (offset)                     by test_mutant_d6a_truthx_offset_by_one_row_fails_the_join
+KILLED    join ignores truthx (mask)                       by test_mutant_d6b_mask_on_truthx_alone_fails_the_join
+KILLED    mc_id uniqueness unchecked                       by test_a_sidecar_for_another_npz_or_with_duplicate_ids_refuses
+KILLED    w_truth not compared                             by test_a_weight_or_coordinate_mismatch_fails_the_join
+KILLED    join npz sha unchecked                           by test_a_sidecar_for_another_npz_or_with_duplicate_ids_refuses
+KILLED    MC compared uncast                               by test_the_sidecar_joins_back_to_every_playlist_row
+KILLED    partnerless rows allowed                         by test_a_zeroed_miss_row_a_partnerless_row_and_a_bad_enu_fail
+KILLED    matched rows not compared                        by test_a_zeroed_miss_row_a_partnerless_row_and_a_bad_enu_fail
+KILLED    enu positivity unchecked                         by test_a_zeroed_miss_row_a_partnerless_row_and_a_bad_enu_fail
+KILLED    extra branches unchecked                         by test_the_align_refusals
+KILLED    values not compared                              by test_the_align_refusals
+KILLED    missing reference branch allowed                 by test_the_align_refusals
+KILLED    libraries unchecked                              by test_a_changed_pin_or_library_or_a_missing_library_fails
+KILLED    canonical pins unchecked                         by test_a_changed_pin_or_library_or_a_missing_library_fails
+KILLED    a missing library allowed                        by test_a_changed_pin_or_library_or_a_missing_library_fails
+KILLED    duplicate identities allowed                     by test_packing_and_lookup
+KILLED    subrun width unchecked                           by test_packing_and_lookup
+MUTATION CHECK :: PASS (51 mutations)
+# exit 0

@@ -41,8 +41,10 @@ done
 # dumps, MP-1 lateral stand-ins, ratio, and their pins
 mkdir -p "$W/B/out/dumps" "$W/B/out/checks" "$W/B/out/gates" "$W/B/out/stage" "$W/mp1lat" "$W/prep/ratios/L-5D-PV"
 for f in lat_RDX_ALL.npz lat_RDX_ALL_bkg.npz truthx_RDX_ALL.npz; do echo "$f" > "$W/B/out/dumps/$f"; done
-(cd "$W/B/out/dumps" && sha256sum lat_RDX_ALL.npz lat_RDX_ALL_bkg.npz truthx_RDX_ALL.npz | sed 's/  /  .\//') > "$D/nd-unfolding/rdx/rdx-inputs-SHA256SUMS"
 echo lz > "$W/mp1lat/lat_zero.npz"; echo lb > "$W/mp1lat/lat_zero_bkg.npz"; echo tune > "$W/prep/ratios/L-5D-PV/tune_v1.json"
+# stage 3's sums: RDX's three dumps, then MP-1's two lat_zero pins (the stand-in module's MP1_ZERO below)
+{ (cd "$W/B/out/dumps" && sha256sum lat_RDX_ALL.npz lat_RDX_ALL_bkg.npz truthx_RDX_ALL.npz)
+  (cd "$W/mp1lat" && sha256sum lat_zero.npz lat_zero_bkg.npz); } | sed 's/  /  .\//' > "$D/nd-unfolding/rdx/rdx-inputs-SHA256SUMS"
 echo "$(sha256sum "$W/prep/ratios/L-5D-PV/tune_v1.json" | cut -d' ' -f1)  ./ratios/L-5D-PV/tune_v1.json" > "$D/nd-unfolding/pv-ladder/prep-SHA256SUMS"
 printf 'from __future__ import annotations\nMP1_ZERO = {"lat_npz": "%s", "lat_bkg": "%s"}\n' "$(sha256sum "$W/mp1lat/lat_zero.npz" | cut -d' ' -f1)" \
   "$(sha256sum "$W/mp1lat/lat_zero_bkg.npz" | cut -d' ' -f1)" > "$D/nd-unfolding/fd_ct_period_inputs.py"
@@ -87,6 +89,11 @@ echo '{"verdict": "FAIL"}' > "$W/B/out/checks/k1.json"; echo "## arms k1 FAIL"; 
 echo '{"verdict": "PASS"}' > "$W/B/out/checks/k1.json"; mv "$W/B/out/gates/S3b.ok" "$W/s3b.keep"
 echo "## arms gate missing"; ar S3b | tail -1; mv "$W/s3b.keep" "$W/B/out/gates/S3b.ok"
 echo "## arms wrong pin"; env RDX_SMOKE=1 RDX_PVL_PREP="$W/prep" RDX_MP1_LATERAL="$W/mp1lat" bash "$HERE/sbatch_rdx_arms.sh" "$D" 0000000000000000000000000000000000000000 "$W/B" S3a 2>&1 | tail -1
+echo off >> "$W/mp1lat/lat_zero_bkg.npz"; echo "## arms lat_zero_bkg copy off its committed sum"; ar S3a | sed -e "s|$W|<w>|g" | tail -1
+echo lb > "$W/mp1lat/lat_zero_bkg.npz"
+echo "## arms with PATH's python3 unable to import the pin module (as 3.6.15 on login27)"
+mkdir -p "$W/py36"; printf '#!/bin/bash\ncase "$*" in *fd_ct_period_inputs*) echo "py36: SyntaxError" >&2; exit 1 ;; esac\nexec %s "$@"\n' "$(command -v python3)" > "$W/py36/python3"
+chmod +x "$W/py36/python3"; PATH="$W/py36:$PATH" ar S3a | sed -e "s|$W|<w>|g" | grep -v '^STEP' | tail -1
 
 # the connect, as a copy with its constants pointed at the work dir (its deploy is the same tiny repo)
 ln -s "$D" "$W/B/deploy"; rm -f "$W/B/out/gates/merge.ok"
@@ -167,6 +174,7 @@ for a, b in (("B=/pscratch/sd/j/josephrb/rdx-20261112b", f"B={w}/B"), ("CANON=/p
              ("MP1=/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1", f"MP1={w}/mp1"),
              ("PY=/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3", f"PY={w}/pystub"), ("SYSPY=/usr/bin/python3", f"SYSPY={w}/syspy"),
              ("CHKPY=/global/homes/j/josephrb/.conda/envs/omnifold_py310/bin/python", f"CHKPY={w}/chkstub"),
+             ("REPO=https://github.com/josephbaileyy/MINERvA-OmniFold.git", f"REPO={w}/repo"),
              ('case "$(hostname -s)" in login[0-9][0-9])', 'case "${FAKE_HOST:-login27}" in login[0-9][0-9])')):
     assert s.count(a) == 1, a
     s = s.replace(a, b)
@@ -204,6 +212,24 @@ echo "## connect m reads MP-1's pins and submits";  CN_ARGS="m $PIN2 0:40:00" cn
 mv "$W/dumps.keep" "$W/B/out/dumps"; mv "$W/checks.keep" "$W/B/out/checks"
 echo "## connect cm with a checker python that has no uproot"; CN_ARGS="cm $PIN2" cn SMOKE_CHK=nouproot
 echo "## connect cm passes";                       CN_ARGS="cm $PIN2" cn
+# stage 3 through the connect, gate then submit, as on the cluster: the old deploy stays at <pin> while stage 3's pin
+# <pin3> is a later commit; gs3a clones deploy3 at <pin3> (REPO is the tiny repo), and S3a.ok and S3b.ok must name the
+# pin the arms then run at (the gates written by hand above are removed first)
+rm -f "$W/B/deploy" "$W/B/out/gates/S3a.ok" "$W/B/out/gates/S3b.ok"
+git clone -q "$D" "$W/B/deploy" && git -C "$W/B/deploy" -c advice.detachedHead=false checkout -q "$PIN2"
+git -C "$D" -c user.name=s -c user.email=s@invalid commit -q --allow-empty -m "smoke 3: stage 3's pin"; PIN3=$(git -C "$D" rev-parse HEAD)
+ln -s "$D" "$W/repo"
+cn3() { cn "$@" | sed -e "s|$PIN3|<pin3>|g"; }
+echo "## connect s3a with no deploy3";             CN_ARGS="s3a $PIN3" cn3 RDX_PVL_PREP="$W/prep"
+echo "## connect gs3b with no deploy3";            CN_ARGS="gs3b $PIN3" cn3
+echo "## connect gs3a clones deploy3 and writes the gate"; CN_ARGS="gs3a $PIN3" cn3
+echo "  deploy3 HEAD: $(git -C "$W/B/deploy3" rev-parse HEAD | sed "s|$PIN3|<pin3>|"), porcelain $(git -C "$W/B/deploy3" status --porcelain --untracked-files=all | wc -l | tr -d ' ')"
+echo "## connect gs3a refuses a second run";       CN_ARGS="gs3a $PIN3" cn3
+echo "## connect s3b before gs3b";                 CN_ARGS="s3b $PIN3" cn3 RDX_PVL_PREP="$W/prep"
+echo "## connect gs3b writes the gate";            CN_ARGS="gs3b $PIN3" cn3
+echo "## connect s3a at the old deploy's pin";     CN_ARGS="s3a $PIN2" cn3 RDX_PVL_PREP="$W/prep"
+echo "## connect s3a passes and submits";          CN_ARGS="s3a $PIN3" cn3 RDX_PVL_PREP="$W/prep"
+echo "## connect s3b passes and submits";          CN_ARGS="s3b $PIN3" cn3 RDX_PVL_PREP="$W/prep"
 # s0, end to end, in a fresh B: the clone, the patch, provenance (stubbed), the O_NOATIME manifest, the builds (stubbed)
 CS="$W/canon/MINERvA101/MINERvA-101-Cross-Section"; OP="$W/canon/MINERvA101/opt"
 mkdir -p "$CS" "$OP/lib" "$OP/etc/MParamFiles/data/FluxConstraints" "$W/mp1/s0/build"
