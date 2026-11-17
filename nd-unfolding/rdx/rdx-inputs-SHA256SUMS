@@ -1,3 +1,5 @@
 6ca02c3d8b09dfd168b5184c03d433a7bd65749f5f6fc4cefecdbed7b6ce052f  ./lat_RDX_ALL.npz
 0e005fb11ccb9addf00a3b88096ada1084fc6ecab3db57c47cf6abec2b195ce3  ./lat_RDX_ALL_bkg.npz
 641ba34c5ebde6d1881c705b862fab144a6fbb8a58ef3d84e59f1c8ba030a79e  ./truthx_RDX_ALL.npz
+6ca02c3d8b09dfd168b5184c03d433a7bd65749f5f6fc4cefecdbed7b6ce052f  ./lat_zero.npz
+f09727d04521f77ba101a51eb77f6182305baaad8a342dc59b7a3d86cf37ea66  ./lat_zero_bkg.npz

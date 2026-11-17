@@ -251,12 +251,19 @@ class Tables(unittest.TestCase):
         missing = [t for t in sorted(found) if not exists(t)]
         self.assertEqual(missing, [])
         self.assertIn(SUMS, found)
-        # the sums are cm's printed lines byte for byte, in the arms launcher's "<sha256>  ./<name>" form
+        # the sums, in the arms launcher's "<sha256>  ./<name>" form: cm's three printed lines byte for byte, then MP-1's
+        # two lat_zero pins, equal to fd_ct_period_inputs.MP1_ZERO (the director's ruling (a), 2026-11-17)
         session = CM_SESSION.read_text().splitlines()
         self.assertEqual(session[288], "MERGE CHECKS PASS")
-        self.assertEqual((ROOT / SUMS).read_text(), "\n".join(session[285:288]) + "\n")
+        lines = (ROOT / SUMS).read_text().splitlines(keepends=True)
+        self.assertEqual("".join(lines[:3]), "\n".join(session[285:288]) + "\n")
+        tree = ast.parse((ND / "fd_ct_period_inputs.py").read_text())
+        mp1 = next(ast.literal_eval(t.value) for t in tree.body if isinstance(t, ast.Assign)
+                   and isinstance(t.targets[0], ast.Name) and t.targets[0].id == "MP1_ZERO")
+        self.assertEqual(lines[3:], [f"{mp1['lat_npz']}  ./lat_zero.npz\n", f"{mp1['lat_bkg']}  ./lat_zero_bkg.npz\n"])
         rows = [ln.split("  ") for ln in (ROOT / SUMS).read_text().splitlines()]
-        self.assertEqual([n for _, n in rows], ["./lat_RDX_ALL.npz", "./lat_RDX_ALL_bkg.npz", "./truthx_RDX_ALL.npz"])
+        self.assertEqual([n for _, n in rows], ["./lat_RDX_ALL.npz", "./lat_RDX_ALL_bkg.npz", "./truthx_RDX_ALL.npz",
+                                                "./lat_zero.npz", "./lat_zero_bkg.npz"])
         self.assertTrue(all(re.fullmatch(r"[0-9a-f]{64}", h) for h, _ in rows))
 
     def test_c1_stops_on_the_walk_probe_and_s2_requires_its_pass(self):
