@@ -133,3 +133,23 @@ numbering).
 | T9 | :196 (base `8b4758e46`) | — | added after the three conditions: "The conditions were set after the block's reported numbers had been read, and the second and third were not expected to fire." Source comment appended to :199, so no line moves. A new disclosure, in Joseph's batch. | ruling 2 (NEEDED: evidential independence); FD-CT-5B-AUDIT-DECLARATION.md:52–75 (what was read before the stop condition) and :72 ("So clauses N and R (§7) are not expected to fire") |
 
 **Meaning read of the rulings (codex-school gpt-6.1-sol, high, read-only; rows E3, E4, T9, I10, I11 together, records attached):** pass 1 FAIL on E3 only (its first wording listed the seed-shift scale, which sec_5d.tex:344 assigns to the companion covariances); pass 2, E3 revised, OVERALL PASS with no FAILs and no NEEDED item lost. reads/rulings-pass1.txt, reads/rulings-pass2.txt.
+
+## Cutdown, 2026-11-16 (lane/note-cutdown-20261116)
+
+**Under** Joseph's go for the cutdown (DECISION-20261116-joseph-paper-batch.md at main `99aefd3f0`, sixth answer,
+items 29 and 34) and the editor's brief of the same day. **The rule (2026-11-13):** history or detail stays in the
+note only if removing it would change a reader's understanding of the reported object, its reproducibility, its
+evidential independence or its limitations; everything else goes to the ledger or the records document.
+
+**Base:** `sec_fived16.tex` at `8342963c16d74bc10d740e5637d602300557e53a`. Line numbers are the base's; removed text stays at that sha and line.
+
+| id | base line | words cut | disposition | old text | new text | home of the content | why not NEEDED |
+|---|---|---|---|---|---|---|---|
+| K1 | :110 (after its first sentence), :113, :115 | 245 | cut to ledger | The description and results of the two tests of the earlier route to a calibrated model term: Stage 0 (what it asked on the J and H2 cells, its required covered fractions, the fractions reached per generator family and pooled, that its second part passed and that it stopped) and the reconstruction-information test (what it asked, that none of its configurations met the residual requirement, that it is incomplete). In the first sentence, "(the J and H2 cells and estimator R are those of §…gbdt-model-dependence)". | The first sentence stays, ending "(App. I)" in place of the parenthesis: "The coverage of C_model is not validated because an earlier route to a calibrated model term with validated coverage did not pass its first two tests and was not pursued further, after which C_model was adopted unscaled (App. I)." | App. I's row "Earlier route to a calibrated model term with validated coverage" states both tests' outcomes and what had been seen when C_model was adopted. The numbers are in `docs/orchestration/state/measurement-paper/5d-design-20261023/STAGE0-REPORT.md` (checked: the five fractions are there) and `docs/orchestration/state/measurement-scoping/r10/REPORT.md` ("Of the 11 decisive configurations, none is PASS"); 8342963c1:sec_fived16.tex:110–115. | The tests were of a different model term on different cells ("not C_model on the sixteen cells"). What bears on the reported covariance stays: that C_model's coverage is not validated, why, and that it was adopted unscaled after those results were seen. |
+
+**Kept, though the cutdown table proposed shortening them:** §10.2 (the paper prints its χ²); §10.4 and §10.5 (the
+Supplement cites the audit, the per-playlist tests and the prior-spread rule; §10.5's second-coverage-test paragraph
+is approved text); §10.7's eigenmode table, figure and R04 paragraph (the Supplement points to §10.7 for "the full
+set of correlation-sensitivity studies", and the R04 paragraph is the only statement of how strongly the flux block
+correlates the cells); §10.8 (the corrections branch has already made the CH tables secondary, and the Supplement
+cites the C_model scaling table).
