@@ -149,3 +149,13 @@ Eqs. zinflation and zcentering)" becomes "(§…eavailw-construction, Eq. zinfla
 Eq. zinflation says the unified-throw diagonal is centred on the central value, which is what that sentence cites.
 `app_guide.tex`: "the two centerings of the five-axis covariance (§…eavailw-construction)" becomes "the centering of
 the five-axis covariance (§…)", since the body now describes one in words.
+
+### Corrections after the second-model reads of the cutdown (director's ruling, 2026-11-16)
+
+Two second-model reads of this branch at `56c91c6f6` were made for the director; one passed, and one failed two
+pointers. The director ruled both fixes. Line numbers are this branch's at `56c91c6f6`.
+
+| id | site | old | new | reason |
+|---|---|---|---|---|
+| K6 | sec_5d.tex:326, the pointer sentence of row K5 | "The terms of Eq. zassembly, the transfer of this inflation onto a sweep block, the two centerings, the projection to (E_avail,W) and the conditioning are in the records document (Ref. NoteRecords2026, construction and audit record)." | "The transfer of this inflation onto a sweep block, the two centerings, the projection to (E_avail,W) and the conditioning are in the records document (Ref. NoteRecords2026, construction and audit record)." | The note keeps Eq. zassembly, so the pointer must name only what moved. The citation is unchanged, and row L-cut-Z5's probe still holds. The ML term of that equation, moved from §4.7 (history-cuts/sec_systematics.md K2), is in the same records subsection and is reached by the same citation; the sentence no longer names it. |
+| K7 | app_release_records.tex, lead-in of "Moved from the note's §…eavailw-construction" | "The four paragraphs that follow stood in the note until its cutdown of 2026-11-16, after Eqs. zassembly–zinflation, which the note keeps." | "The transfer sentences in this paragraph, and the three paragraphs that follow, stood in the note until its cutdown of 2026-11-16, after Eqs. zassembly–zinflation, which the note keeps." | The transfer sentences continue the lead-in's own paragraph; only three paragraphs follow it. The moved text itself is unchanged. |
