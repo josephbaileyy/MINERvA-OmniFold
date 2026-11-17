@@ -1,0 +1,59 @@
+No new meaning defect requires a fix. The read-9 repairs are faithful when read with their surrounding definitions. The previously reported limits remain; they are distinguished below from incorrect claims.
+
+1. **3.8 — Label definitions repaired; assignments correct.** The [declaration, §5.4](/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/2929ca26-b0ae-42b9-82fa-8300158500d3/scratchpad/navread10/ev/FD-PRR-DECLARATION-sec5.txt:20) specifies each condition:
+
+   | Label | Declaration’s condition | Assessment |
+   |---|---|---|
+   | Finite-iteration regularization | “PR-1 F1 = reduces **and** PR-2b = falls” | Faithful: the revision requires the aggregate **reduces** class, excluding **both**. |
+   | Information limit | “PR-1 F1 and F2 ∈ {no effect, increases} **and** PR-2b ∈ {flat, rises}” | Faithful in context: “no detected change” defines no effect; “does not fall” refers to the immediately preceding fixed-margin test. |
+   | Implementation-specific share | “PR-2a = IBU retains less, **or** PR-1 F2 = reduces” | Faithful: both branches now explicitly require the formal classes. |
+   | Observable-set sensitivity | “PR-1 F4 ∈ {reduces, increases, both}” | Exact condition. |
+   | Training-statistics sensitivity | “PR-1 F3 ∈ {reduces, increases, both}” | Exact condition. |
+   | Unattributed | “none of the above” | Equivalent to “none of the other five holds.” |
+
+   The preceding paragraph defines IBU falling/rising **by at least the fixed margin**, so the revised definitions do not license arbitrary small decreases. The declaration also says, “Several can hold at once,” which is preserved.
+
+   The [readout classes](/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/2929ca26-b0ae-42b9-82fa-8300158500d3/scratchpad/navread10/ev/macro_values.txt:15) give `impl` and `obs` as `holds` at both truths, with `fir`, `info`, `stat`, and `unattr` all `not`. The added assignments match exactly. This resolves 3.8 without broadening eligibility or dropping a label.
+
+2. **3.2 — Configuration (d) and both-clause closure claim are supported.** The [refinement record](/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/2929ca26-b0ae-42b9-82fa-8300158500d3/scratchpad/navread10/ev/OUTCOME-20260925-s5n-stage1-development-fail.md:24) states: “family `N`: the s5c F2 deterministic LightGBM OmniFold,” with refinement “run with the F2 parameters.” Together with `tab:configs`—“negative weights; refinement classifier 100 trees, 8 leaves”—this supports **(d)**. C3 explicitly records “**FAIL**,” with maximum \(|t|=14.4\).
+
+   The reported estimator’s [maximum is 2.7](/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/2929ca26-b0ae-42b9-82fa-8300158500d3/scratchpad/navread10/ev/macro_values.txt:7). This precludes both \(|t|>3.6\) and the second clause’s necessary condition \(|t|>3\). Thus **“meets it at the prior” is true for both clauses**.
+
+   The repair resolves the configuration confusion and preserves the failure, sensitivity interpretation, and lack of validation coverage. The table’s abbreviated criterion remains the acknowledged limit. **Optional director fix:** include its second clause.
+
+3. **3.3 — The stated baseline fits every record and comparison.** The [existing-grade matrix record](/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/2929ca26-b0ae-42b9-82fa-8300158500d3/scratchpad/navread10/ev/t2b_existing.txt:1) gives “each record’s own noise of its mean,” and specifically:
+
+   - `q3 C_total + C_resp 1.62 R15`;
+   - `F1_genie_v3_g18 C_total + C_resp 0.623 R11`.
+
+   The other rows subtract NuWro, GENIE+MEC, or GiBUU where applicable; both GiBUU records already subtract GiBUU. This supports the baseline throughout. The endpoints **1.07** and **2.02** belong to the explicitly described reduced matrices, rather than the baseline; the statistical-only ranges are likewise separately identified.
+
+   The fix resolves the apparent conflict with the paper’s reported covariance. No numerical result or descriptive limitation is dropped or strengthened. **Optional precision:** add “where present” after “the truth’s own component.”
+
+4. **3.12 — Rejection and its limits remain; universality is dropped.** The [retained paragraph](/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/2929ca26-b0ae-42b9-82fa-8300158500d3/scratchpad/navread10/ev/supplemental_body.tex:1237) explicitly says, “The note’s calibrated tests reject hybrid nulls,” and retains “The rejections are not physical exclusions,” the missing below-grid bound, simulation conditions, and no evidence of added discrimination beyond matched coarse projections.
+
+   Cutting “All ten tests are rejected” removes the **explicit universal outcome**. The number of tests remains in the specification. It neither removes rejection altogether nor strengthens it.
+
+   The cold read’s requested scope reduction remains incomplete, as already reported to the director. **Director fix:** reduce to a pointer or acknowledge the tests in the paper’s table.
+
+5. **3.15 — Supported-cell qualifier repaired; both ranges preserved.** The [producer](/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/2929ca26-b0ae-42b9-82fa-8300158500d3/scratchpad/navread10/ev/make_values_excerpt.txt:7) computes the all-cell range over `("W1", "W2", "W3")`; its supported-cell comment says “the withheld shapes’ most affected SUPPORTED cell,” identifying the 16% endpoint as “W2’s EW37, unsupported.” It asserts the supported range is `("9", "31")`.
+
+   The revised row correctly retains **9–31% supported** and **16–31% over all cells**. Its separate sentence now explicitly scopes the \(q_3\) and GiBUU maxima to **all cells**, fixing read 9’s qualifier defect. No result is lost or strengthened.
+
+6. **3.16 — Held-out scope repaired; naming limit remains.** The paper states, “The truths are not held out of the analysis,” while the three withheld shapes “were not used while the estimator was chosen.” The revised Supplement now makes exactly that distinction. The producer also explicitly calls W1–W3 “the withheld shapes.”
+
+   The replacements are faithful, and “153 quantities” removes the misleading “reported.” The unchanged comparator’s “\(q_3\) stress test” remains an identity/naming limit; its own truth changes are explicitly distinguished. **Director fix:** establish the truth’s identity before harmonizing the name. No unsupported equivalence has been introduced.
+
+7. **3.7 — Accurate description of S7; table repair complete.** S7 specifies “the two-dimensional pipeline with LightGBM’s four determinism settings added to every learner it builds, refinement included, and nothing else changed.” That directly supports **“two-observable estimator with deterministic training.”** The revised table now uses the same description in both columns.
+
+   The numerical reading is unchanged: **13.87 versus 14.46**, hence no detected difference under the stated rule. The misleading five-observable identity is removed without changing the experiment or its conclusion.
+
+8. **3.4 — Candidate list supported and point resolved.** The [rounding record](/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/2929ca26-b0ae-42b9-82fa-8300158500d3/scratchpad/navread10/ev/OUTCOME-20261108-rs1-rounding-mechanism.md:38) lists K1–K6 as ties through bins, `max_bin`, float32 versus float64, near-degenerate gains, refinement, and the \(W^2\) clamp. K6’s test is “none possible,” with reading “NOT TESTABLE.”
+
+   The addition supplies the missing destination for the paper’s pointer. It preserves the single-pseudo-experiment scope and separate K1/K5 findings; it does not join them into “ties at the refinement.”
+
+9. **3.13 — Count removed; discrepancy not reconciled.** The cold read records “33 interaction bands” versus “34 reweighting bands.” The revision retains “every one drawn in every pseudo-experiment” but removes the latter count.
+
+   This drops numerical specificity without inventing an explanation or strengthening the sampling claim. Reconciliation remains the acknowledged director limit. **Director fix:** compare the actual band inventories if a count is to be restored.
+
+VERDICT: PASS

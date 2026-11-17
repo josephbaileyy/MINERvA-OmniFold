@@ -1,0 +1,73 @@
+The patch contains correct repairs, but the label definitions remain materially unfaithful. Ranked findings follow; the later entries are mostly successful fixes.
+
+1. **3.8 — Label assignments are correct; definitions are not faithful.**  
+   The [declaration](</private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/2929ca26-b0ae-42b9-82fa-8300158500d3/scratchpad/navread9/ev/FD-PRR-DECLARATION-sec5.txt:26>) requires “PR-1 F1 = reduces **and** PR-2b = falls.” “Some tested iteration count reduces \(\rho\)” is broader: it omits the threshold and permits the aggregate class **both**, which the declaration excludes. The implementation label has the same problem with “some tested capacity reduces,” and “has a lower \(\rho\)” must mean the thresholded **IBU retains less** class. The information-limit definition likewise needs explicit formal classes.
+
+   **Fix:** state the declared conditions directly:
+   - finite-iteration: F1 = reduces and PR-2b = falls;
+   - information limit: F1 and F2 each ∈ {no detected change, increases}, and PR-2b ∈ {flat, rises};
+   - implementation share: PR-2a = IBU retains less, or F2 = reduces.
+
+   The observable-set, statistics and unattributed definitions are faithful when “changes” uses the stated threshold. The [readout classes](</private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/2929ca26-b0ae-42b9-82fa-8300158500d3/scratchpad/navread9/ev/macro_values.txt:15>) say `impl` and `obs` are `holds` at both truths, with the other four `not`: the added assignments match exactly. Thus the fix resolves missing labels and assignments, but retains broader eligibility conditions than the record licenses.
+
+2. **3.12 — The rejection survives, with its limits; the scope objection is only partly resolved.**  
+   The retained [paragraph](</private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/2929ca26-b0ae-42b9-82fa-8300158500d3/scratchpad/navread9/ev/supplemental_body.tex:1237>) explicitly says, “The note’s calibrated tests reject hybrid nulls.” It also retains “The rejections are not physical exclusions,” the missing bound below the fine grid, the simulation conditions, and the absence of additional discrimination beyond matched coarse projections.
+
+   Cutting “All ten tests are rejected” therefore drops the **universal outcome and count**, not rejection itself or its limitations. No claim is strengthened. However, the cold read requested a pointer or inclusion in the paper’s test table; a substantial specification and outcome still remain here.
+
+   **Fix:** reduce this subsection to an explicit pointer to the note’s design/results, retaining the concise interpretation and limitations; alternatively, acknowledge the tests in the paper’s table.
+
+3. **3.16 — The shape terminology improves, but the whole item is not resolved.**  
+   The [producer excerpt](</private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/2929ca26-b0ae-42b9-82fa-8300158500d3/scratchpad/navread9/ev/make_values_excerpt.txt:20>) calls these “the withheld shapes,” and the paper states they “were not used while the estimator was chosen.” The replacements are supported and avoid implying fully held-out analysis validation.
+
+   Nevertheless, the Supplement still says “None of these truths is held out” immediately after listing them, and still calls the comparator’s truth a “\(q_3\) stress test.” The supplied paper also distinguishes selection from the broader analysis, so these statements need explicit scope rather than treating them as intrinsically contradictory.
+
+   **Fix:** write “These truths were not held out of the analysis; the three withheld shapes were not used in choosing the estimator.” Identify the comparator’s \(q_3\) truth explicitly before harmonizing its name—the comparator says it uses its own truth changes. “153 reported quantities” is successfully repaired. The paper’s “supplementary material”/“Supplemental Material” naming remains outside this Supplement-only repair.
+
+4. **3.15 — The ranges are correct, but the new support qualifier needs narrower scope.**  
+   The producer computes the all-cell range over `("W1", "W2", "W3")` and explicitly asserts the supported range is `("9", "31")`. It explains that the all-cell lower endpoint, 16%, is “W2’s EW37, unsupported.”
+
+   Thus 9–31% supported and 16–31% over all cells are faithful descriptions of the same three shapes. Keeping both resolves the apparent discrepancy without dropping the original range.
+
+   However, the row now introduces the entire series as “largest residual in a supported … cell,” followed by the \(q_3\) and GiBUU numbers. The excerpt produces the \(q_3\) number from unrestricted `ew_max_abs_pct`; it does not establish a supported-cell maximum.
+
+   **Fix:** end the supported-shape statement before separately introducing the other truths’ all-cell maxima. Retaining the additional descriptive \(q_3\) result does not itself require an identical headline in the paper.
+
+5. **3.2 — Configuration attribution and both-clause closure claim are supported; the table still abbreviates the criterion.**  
+   The [refinement record](</private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/2929ca26-b0ae-42b9-82fa-8300158500d3/scratchpad/navread9/ev/OUTCOME-20260925-s5n-stage1-development-fail.md:25>) identifies “family `N`: the s5c F2 deterministic LightGBM OmniFold” and says the refinement was “run with the F2 parameters.” Together with `tab:configs` identifying (d) as deterministic negative-weight refinement with 100 trees and 8 leaves, the mapping to **(d)** is supported. C3 records “**FAIL**,” with maximum \(|t|=14.4\).
+
+   The reported estimator’s `s5e-nom-tmax` is **2.7**. Consequently neither \(|t|>3.6\) nor the second clause’s necessary condition \(|t|>3\) can hold. **“Meets it at the prior” is true for both clauses**, without needing a separate bootstrap-bias bound.
+
+   The fix resolves the configuration confusion and preserves the development failure and coverage limitations. **Remaining fix:** add the second clause to table test 2, or explicitly identify its criterion as abbreviated.
+
+6. **3.7 — The replacement accurately describes S7; one table label remains ambiguous.**  
+   S7 specifies “the two-dimensional pipeline with LightGBM’s four determinism settings added to every learner it builds, refinement included, and nothing else changed.” That supports **“two-observable estimator with deterministic training.”** It does not turn the input feature set into five observables.
+
+   The numerical reading is unchanged: `c1-T = 13.87` against `c1-q95 = 14.46`, hence no detected difference under that rule. No scientific content is dropped or strengthened.
+
+   **Minor fix:** table test 5’s statistic column still says “the estimator on the 2D inputs”; replace that with the same precise estimator name used in its revised reading.
+
+7. **3.13 — The conflicting count is removed, not reconciled.**  
+   The cold read quotes “33 interaction bands” versus “34 reweighting bands.” The patch replaces the latter with “interaction-model reweighting bands, every one drawn in every pseudo-experiment.”
+
+   This preserves the sampling claim and introduces no unsupported explanation. It drops numerical specificity and removes the visible contradiction, but does **not** establish why the counts differed.
+
+   **Fix if reconciliation is required:** compare the actual band inventories. The supplied evidence does not identify an extra band, so none should be invented.
+
+8. **3.3 — The baseline is correct, with component omission understood as applicable.**  
+   The [existing-grade record](</private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/2929ca26-b0ae-42b9-82fa-8300158500d3/scratchpad/navread9/ev/t2b_existing.txt:6>) explicitly gives:
+   - `q3 C_total + C_resp 1.62 R15`;
+   - `F1_genie_v3_g18 C_total + C_resp 0.623 R11`.
+
+   Other records omit NuWro, MEC or GiBUU components where applicable; the two GiBUU records already omit GiBUU. This supports the stated baseline for the changes throughout the paragraph. Each record also retains its own noise of the mean.
+
+   The **endpoints** 1.07 and 2.02 belong to their respective reduced matrices, not the baseline; the paragraph distinguishes those operations correctly. This resolves the discrepancy with the paper’s reported covariance and preserves the descriptive limitations.
+
+   **Small wording improvement:** say “less the truth’s own model component, **where present**,” since G18, AR23 and several other truths have no such component removed.
+
+9. **3.4 — Supported and resolved.**  
+   The [rounding record](</private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/2929ca26-b0ae-42b9-82fa-8300158500d3/scratchpad/navread9/ev/OUTCOME-20261108-rs1-rounding-mechanism.md:38>) lists exactly K1–K6: ties through bins, `max_bin`, float32 versus float64, near-degenerate gains, refinement, and the \(W^2\) clamp; K6 is “NOT TESTABLE,” with “none possible” as its test.
+
+   The added list supplies the missing destination for the paper’s pointer. It preserves the single-pseudo-experiment scope, the separate K1/K5 findings and the prohibition on joining them into “ties at the refinement.” Nothing material is dropped or strengthened.
+
+VERDICT: FAIL
