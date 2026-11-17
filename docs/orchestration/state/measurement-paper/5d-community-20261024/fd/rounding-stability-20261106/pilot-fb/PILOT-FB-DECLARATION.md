@@ -1,16 +1,26 @@
-# PILOT-FB DECLARATION, rev 1: fixed bin edges against the rounding instability, on RS1's pseudo-experiment (2026-11-17)
+# PILOT-FB DECLARATION, rev 2: fixed bin edges against the rounding instability, on RS1's pseudo-experiment (2026-11-17)
 
-**For** the re-read by the two independent auditors (Codex and Grok) and the director's go. **Nothing has run, and
-nothing runs before the go.** DESIGN ONLY: the code (§8) is written after this is audited.
+**For** the auditors' re-read and the director's go. **Nothing has run, and nothing runs before the go.** DESIGN ONLY:
+the code (§8) is written after this is audited.
 
-**Written by** session tier3-design, at the director's brief of 2026-11-17. Rev 0 (`260123d1`) was read by both
-auditors, and both read FAIL as written, with fixable design blockers. Rev 1 answers every finding. §11 gives each
-finding's disposition. All repository citations are at `13f742e3` (origin/main `be193461` merged) unless stated.
-LightGBM citations are at tag v4.6.0:
+**Written by** session tier3-design, at the director's brief of 2026-11-17.
+- Rev 0 (`260123d1`) was read by both auditors, Codex and Grok. Both read FAIL as written, with fixable design
+  blockers, and rev 1 (`25b9137c`) answered every finding.
+- Grok's re-read of rev 1 found two blockers left: G3 did not read the boundaries LightGBM uses, and J's equality was
+  not the bound jitter. It also found five lows. Rev 2 answers them.
+- §11 gives each finding's disposition.
+
+All repository citations are at `13f742e3` (origin/main `be193461` merged) unless stated. LightGBM citations are at
+tag v4.6.0:
 - `src/io/bin.cpp`, sha256 `3386767e…`;
 - `include/LightGBM/bin.h`, `3cb03538…`;
 - `src/io/dataset.cpp`, `809a8d9e…`;
 - `src/io/dataset_loader.cpp`, `783d5118…`;
+- `src/io/tree.cpp`, `0d5f5964…`;
+- `include/LightGBM/tree.h`, `40f4ea25…`;
+- `include/LightGBM/dataset.h`, `ae1f848c…`;
+- `src/treelearner/serial_tree_learner.cpp`, `ad9f9a6c…`;
+- `include/LightGBM/utils/common.h`, `bbf86e6c…`;
 - `python-package/lightgbm/basic.py`, `b8ccce47…`.
 
 **Authority.**
@@ -90,7 +100,23 @@ unperturbed inputs, placed so that no perturbation of the protocol's size can mo
    values like any other. §3's rules apply to them unchanged.
 8. **The jitter path has not changed since RS1's bound code:**
    `git diff --stat e306087e 13f742e3 -- nd-unfolding/{s5e_trace,s5p_numerics,s5n_pseudo,s5c_unfold,omnifold_nn_core,estimator_stability_probe,rounding_mechanism_probe,rounding_mechanism_analyze}.py 2d-unfolding/unfold_2d_omnifold_unbinned.py`
-   is empty. So a seed draws the same jitter here as in RS1's A0. J (§5.1) checks this on every jittered array.
+   is empty. So a seed draws the same jitter here as in RS1's A0. J (§5.1) checks this on every jittered unfold.
+9. **How the bound path jitters.** `s5p_numerics.jittered` (`s5p_numerics.py:79-87`) jitters each source array
+   separately, `MCgen`, `MCreco` and `measured` (`COORD_KEYS`, `:54`) and `bkg_reco`, each with its own random stream
+   from the same seed. `s5n_pseudo.build_pseudo` then builds the experiment (`:196-198`), and the roles slice and
+   concatenate (item 1). So a role's matrix is the bound selection of the jittered sources. It is **not**
+   `jitter_coords` of the role's base matrix. A base unfold keeps the float32 sources (`:183-184`).
+10. **The boundaries a fitted model uses.**
+    - Training uses only each row's bin index (RS1 §2 item 4).
+    - At prediction, a numerical split compares the raw value with the node's stored threshold
+      (`tree.h:337-353`, `NumericalDecision`). That threshold is the fitted mapper's own upper bound:
+      `serial_tree_learner.cpp:783` stores `RealThreshold(…)`, which is `BinToValue(bin)` = `bin_upper_bound_[bin]`
+      (`dataset.h:843-847`, `bin.h:138-140`).
+    - The model text prints every threshold at `{:.17g}` (`tree.cpp:351-352`, `ArrayToString<true>`;
+      `common.h:1227`), which round-trips a double exactly. It also prints each split's `decision_type`, whose bits 2–3
+      are the missing type (`tree.h:274-276`).
+    - So **every boundary that can move a training row or a scored row is either a bin index of the training matrix or
+      a threshold in the model text**, and both can be read exactly.
 
 ## 3. The remedy: edges per role and feature
 
@@ -114,8 +140,9 @@ through the bound path. For each role r and feature f:
 5. **Admissible gaps:** between consecutive distinct values u_k < u_{k+1} of U, the gap is admissible iff
    u_k + ½ s(u_k) < u_{k+1} − ½ s(u_{k+1}).
    - Its edge e_k is the float64 midpoint of those two numbers.
-   - The edge must lie strictly between them, have |e_k| > 2×10⁻³⁵, and survive its JSON text exactly
-     (`float(repr(e)) == e`).
+   - The edge must lie strictly between them, and have |e_k| > 2×10⁻³⁵.
+   - It is written to the JSON at 17 significant digits. Whether LightGBM parsed it to the same double is checked end
+     to end by G3 (b): every threshold must equal an intended edge exactly.
    - There is no other rule. A power of two is handled by s(u): its gap below is empty when the values are adjacent.
 6. **Placement:**
    - The fit column's N rows are sorted. B_k is the number of rows of F ≤ u_k.
@@ -178,6 +205,9 @@ unchanged since, §2 item 8). This fixes the details:
   `nanpercentile`;
 - the reading is R ≤ 0.10 < P < 0.70 ≤ C, DEFINITE only when the interval lies inside one band, else INCONCLUSIVE.
   It is INVALID if more than 10 % of functionals are excluded.
+- **A non-finite interval endpoint reads INCONCLUSIVE.** The imported `band` maps NaN to P
+  (`rounding_mechanism_analyze.py:164-166`), so the analysis checks both endpoints for finiteness before taking the
+  imported reading.
 
 The pilot passes `numpy.random.default_rng(20261117)`. Power is RS1's: at 20 paired seeds a true M = 0 reads R DEFINITE
 in every trial (`RS1-DECLARATION.md:230-238`).
@@ -214,29 +244,56 @@ tested policies". S3-place and S3-res are always reported beside it.
 | **G4**, the inputs | in the connect, before the submit; re-verified by the analysis (one gate, two checks) | every reused A0 product, the σ receipt, both inputs and the deploy's pinned files equal their pins | INPUTS CHANGED: nothing is submitted, or nothing is read |
 | **G0**, the policy and edges | in the job's prep step, **before any fit** | §3 rules 1–6 for every role and feature, and the 12 files written and hashed | INFEASIBLE: the job exits before round 1, with each role and feature's admissible-gap count and the first rule that failed. This is a result about this input, not a reading of the remedy |
 | **G1**, reproduction | after round 1 | A0R's `xsec_flat` equals RS1's pinned `rs1_A0_b-_j-.npz` bitwise, compared as arrays, at 32 threads and 8 lanes | NOT REPRODUCED |
-| **J**, the jitter was applied | every E1 jitter unfold; round 1 gates rounds 2–3 | the coordinate arrays each role received equal `s5e_trace.jitter_coords(base32, seed, edges)` bitwise, and differ from the base in at least one entry per role and feature. Every base unfold's arrays equal the float32 upcast | JITTER NOT APPLIED |
-| **G2**, the bins hold | every remedy unfold (E1's base and 20 jitters, E2's and E3's bases), every role and feature | each fit and scored row's intended bin index, under §2 item 4's rule on the role's full intended bound list (zero bounds, the edges, +∞), equals the E-set base's index | PREMISE FAILED |
-| **G3**, the mapper is the intended one | every remedy unfold and role, at iteration 1 (§2 item 2 makes later iterations identical) | see below | PREMISE FAILED |
-| **identity** | every remedy fit | each estimator's recorded parameters name the arm, role, `max_bin` and edge-file sha256 that role should have, for all four roles, the refinement included. `s5c_unfold.unfold`'s own check (`:129-134`) covers only `config_params`' keys and is not this witness | PREMISE FAILED |
+| **J**, the jitter was applied | every E1 jitter unfold; round 1 gates rounds 2–3 | see below | JITTER NOT APPLIED |
+| **G2**, the bins hold | every remedy unfold (E1's base and 20 jitters, E2's and E3's bases), every role and feature | each fit and scored row's intended bin index, under §2 item 4's rule on the role's full intended bound list (zero bounds, the edges, +∞), equals the E-set base's index | PREMISE FAILED (G2) |
+| **G3**, LightGBM uses the intended boundaries | every remedy unfold and role: (a) at iteration 1, (b) and (c) at every fit | see below | PREMISE FAILED (G3) |
+| **identity** | every remedy fit | each estimator's recorded parameters name the arm, role, `max_bin` and edge-file sha256 that role should have, for all four roles, the refinement included. `s5c_unfold.unfold`'s own check (`:129-134`) covers only `config_params`' keys and is not this witness | PREMISE FAILED (identity) |
 
-**G3, in full.**
-- **How the mapper is read.** The wrapper captures each role's fit matrix and the estimator's own Dataset parameters
-  at the fit. It builds a LightGBM Dataset from exactly those, constructs it, and dumps it with
-  `Dataset._dump_text` (`basic.py:3546-3562`, `LGBM_DatasetDumpText`). `Dataset::DumpTextFile`
-  (`dataset.cpp:1188-1238`) prints each feature's forced bounds and every row's bin index per feature.
-- **G3 requires all four of these:**
-  - (a) the dump lists forced bounds for all five features, matching the file at the dump's printed precision. That
-    catches an unopened file (§2 item 5);
-  - (b) all five features are used;
-  - (c) `feature_num_bin(f)` = n_{r,f} + z_{r,f} + 1;
-  - (d) every row's dumped bin index equals its intended index.
-- **Why (c) and (d) suffice.** A greedy bound lies between distinct data values (§2 item 3), so an added bound splits
-  a populated bin and changes some row's index, which (d) sees. A dropped forced bound changes the count, which (c)
-  sees.
-- **Why a rebuilt Dataset reads the fit's mapper.** It is a deterministic function of the same matrix and parameters,
-  with no sampling (§2 item 2).
-- **Scored rows.** At prediction, LightGBM compares raw values with split thresholds that are these bin upper
-  bounds. So the scored rows' invariance is G2's, and G3 ties G2's bounds to LightGBM's.
+**J, in full** (§2 item 9). For each E1 jitter unfold the wrapper captures the source arrays the run's
+`s5p_numerics.jittered` returned, and the matrix each role received at its first fit. J requires all three of these:
+- **(J1)** the run's source arrays equal an independent recomputation of `s5p_numerics.jittered(inputs, bkg, seed)`
+  bitwise;
+- **(J2)** each role's received fit and scored matrices equal that role's selection rebuilt from the recomputed
+  sources, bitwise. The rebuild uses the bound `s5n_pseudo.build_pseudo` with the run's split key, pseudo-seed and
+  truth, then the loop's slicing (§2 item 1);
+- **(J3)** every one of the four source arrays has at least one moved entry that is not on an analysis-grid edge, and no
+  entry on an analysis-grid edge moved.
+
+For each remedy base unfold, the role matrices equal the bound selection of the float32 sources, compared as the
+float64 upcast of the float32 values. The base keeps float32 (§2 item 9), so this is a value comparison, not a byte
+comparison.
+
+**G3, in full** (§2 item 10). It reads the two places where a boundary can act, each exactly.
+- **(a) The training partition, at iteration 1.**
+  - The wrapper captures the role's fit matrix and the estimator's own Dataset parameters at the fit. It builds a
+    LightGBM Dataset from exactly those, constructs it, and dumps it with `Dataset._dump_text` (`basic.py:3546-3562`).
+  - `Dataset::DumpTextFile` (`dataset.cpp:1188-1238`) prints every training row's bin index per feature, as
+    integers. Every one must equal the row's intended index under the full intended bound list.
+  - The mapper is a deterministic function of the matrix and the parameters, with no sampling, and the matrix is the
+    same at every iteration (§2 item 2). So the rebuilt Dataset's partition is the fit's, at every iteration.
+  - The dump's `forced_bins:` section, printed at `%lf`, is **not** used as evidence of a boundary.
+- **(b) Every threshold, at every fit.** From each fitted model's text (`booster_.model_to_string()`), every
+  numerical split's threshold, parsed at its printed `{:.17g}`, must equal exactly, as a double, an element of the
+  role and feature's intended upper-bound list (the zero bounds, the edges, +∞).
+- **(c) No missing-value branch, at every fit.** Every split's `decision_type` must record missing type None.
+
+**Why (a)–(c) are sufficient.**
+- Training sees only bin indices. By (a), they are the intended mapper's for every row.
+- Prediction, on fit rows and on scored rows such as the regressor's reco-failing truth rows, compares the raw value
+  only with the stored thresholds. By (b) every one is an intended boundary, at full precision, and by (c) no
+  missing-value rule redirects a row.
+- A mapper bound that is never a threshold acts on nothing: it can neither move a training row's index, by (a), nor
+  meet a scored row.
+- So each fit trains on the intended partition and predicts with intended boundaries. G2 shows no row crosses an
+  intended boundary under the jitter.
+
+**What (a)–(c) catch:**
+- a dropped forced bound with a greedy refill, which (a) sees: the greedy bound splits a populated bin;
+- an edge moved within a training gap, which (b) sees as soon as it is used as a threshold;
+- a file never opened, which (a) sees;
+- an edge LightGBM parsed to a different double, which (b) sees.
+
+`feature_num_bin(f)` = n + z + 1 is recorded as a cross-check, not relied on.
 
 **Timing.** G1, J, G2 and G3 on round 1 decide whether rounds 2–3 run. J, G2 and G3 are recorded for every later unfold
 too, and the analysis refuses to read if any of them failed anywhere. On any gate failure, S1–S3 are still computed
@@ -244,8 +301,18 @@ where the products allow, and printed labelled NOT READ, so the size of a failur
 
 ### 5.2 The outcome: exactly one, by precedence
 
-First the gates and the time limit, in this order: INPUTS CHANGED, INFEASIBLE, INCOMPLETE (stopped or time-limited),
-NOT REPRODUCED, JITTER NOT APPLIED, PREMISE FAILED, INVALID. The first that applies is the outcome. Otherwise the three
+First the gates and the time limit, in this order:
+1. INPUTS CHANGED;
+2. RUN REFUSED: the fresh root already existed, or the bound runner's exit 5, a changed grid membership
+   (`s5p_numerics.py:188-191`);
+3. INFEASIBLE;
+4. INCOMPLETE (stopped or time-limited);
+5. NOT REPRODUCED;
+6. JITTER NOT APPLIED;
+7. PREMISE FAILED, naming the gate (G2, G3 or identity);
+8. INVALID.
+
+The first that applies is the outcome. Otherwise the three
 readings are formed: S1 ∈ {REMOVED (R), REDUCED (P), NOT REMOVED (C), INCONCLUSIVE}, S2 ∈ {STAB_PASS, STAB_FAIL} and
 S3 ∈ {POLICY-STABLE, POLICY-SENSITIVE}. The first matching row is the outcome. The rows partition all 16 combinations:
 
@@ -255,7 +322,7 @@ S3 ∈ {POLICY-STABLE, POLICY-SENSITIVE}. The first matching row is the outcome.
 | 2 | S2 STAB_FAIL | **NOT AN OPTION AS DECLARED** | "Under fixed edges, the result still moves beyond the stability bars under the protocol's jitters (S2 = …)." S1's reading is stated beside it |
 | 3 | S1 INCONCLUSIVE | **NO OPTION STATEMENT** | the numbers only |
 | 4 | REMOVED, POLICY-STABLE | **OPTION A** | "On this pseudo-experiment, fixing every LightGBM model's bin edges once, from the unperturbed inputs, reduces the rounding spread to at most 10 % of (e)'s (S1 band R). Across the three tested binning policies the result moves by at most S3's maximum in pseudo-data σ (placement alone: S3-place)." |
-| 5 | REMOVED, POLICY-SENSITIVE | **OPTION B** | row 4's first sentence, then: "The result depends on the tested binning policy by S3's median and maximum in pseudo-data σ, beyond those numbers (placement alone: S3-place; resolution: S3-res)." |
+| 5 | REMOVED, POLICY-SENSITIVE | **OPTION B** | row 4's first sentence, then: "The result depends on the tested binning policy: S3's [median, maximum, or both, whichever exceeded its number] is … in pseudo-data σ, beyond 0.3 [or 1.0] (placement alone: S3-place; resolution: S3-res)." |
 | 6 | REDUCED, POLICY-STABLE | **OPTION C** | as row 4, with "reduces the rounding spread to between 10 % and 70 % of (e)'s (S1 band P)" |
 | 7 | REDUCED, POLICY-SENSITIVE | **OPTION D** | as row 5, with row 6's first sentence |
 
@@ -333,20 +400,28 @@ The allowance is +15 % for the gates. G3's dataset dump is unmeasured, which is 
 - **Admissibility:**
   - the jitter at u = −½ and at u → ½, on positive and negative values, at a positive and a negative power of two
     and its float32 neighbors, at signed zeros, and at the float32 value nearest `kZeroThreshold` and its neighbors;
-  - signed spacing in place of |x| is caught (Grok's −8 pair; Codex's −1.5 pair);
-  - an edge that does not survive its JSON text is refused.
+  - signed spacing in place of |x| is caught (Grok's −8 pair; Codex's −1.5 pair).
 - **Placement:** one pool gives one edge set. Ties, collisions, the next-gap walk, and INFEASIBLE when gaps run out.
 - **z per role:** a pool with negatives and a fit column without them gives different z, and the per-role rule uses
   the fit column's.
 - **G3:**
-  - one fewer edge makes LightGBM fill a bin greedily, and (d) catches it;
-  - one extra edge is dropped, and (c) or (d) catches it;
+  - one fewer edge makes LightGBM fill a bin greedily, and (a) catches it;
+  - one extra edge is dropped and refilled, and (a) or (b) catches it;
+  - an edge moved inside a training gap and used as a threshold is caught by (b), and a scored row in that gap would
+    have changed bin;
   - an unopenable file is caught by (a);
+  - an edge whose JSON text parses to a different double is caught by (b);
+  - a NaN in a fit column gives a missing type other than None, and (c) catches it;
   - a correct file passes;
   - an unforced fit (A0R-like) fails G3 but is exempt by arm.
 - **The remedy on a toy:** with forced edges, fits are bitwise identical on fit and scored rows under the jitter.
   Without them they differ.
-- **J:** an unapplied jitter, or the wrong seed, is caught.
+- **J:**
+  - the bound path's correct jitter passes J1–J3, while `jitter_coords` of a role's base matrix does not equal what
+    the role receives (the case Grok found);
+  - an unapplied jitter, the wrong seed, and one source array left unjittered are each caught;
+  - a moved grid-edge entry is caught;
+  - a base compared byte-for-byte as float32 against float64 is not a failure; it is compared as values.
 - **The outcome:** every one of the 16 combinations, each gate outcome, every INVALID branch and every boundary
   equality reaches exactly one row.
 - **A mutation harness:** one planted defect per guard, per rule and per row, each killed by a named test.
@@ -393,3 +468,19 @@ both of rev 0 at `260123d1`. Both read FAIL as written, with fixable blockers.
 | Grok L3, rev 0 §10 item 1: authority | **Fixed:** `DECISION-20261117b-joseph-note-plan.md` item 3 (#1212) |
 | Grok L4: division by zero | **Fixed:** INVALID (§5) |
 | Grok B2 aside: LightGBM matches feature names | **Not so in v4.6.0:** the file is keyed by integer index (`dataset_loader.cpp:1508`). The unopenable-file case it points to is real, and G3 (a) catches it |
+
+### Rev 2: Grok's re-read of rev 1
+
+The report is `~/codex-reports/pilot-fb-audit/rev1/grok/report.md`, of `fe7a6a56`. It reads FIXED: admissibility,
+the outcome partition, per-role edges, the zero band, and every other rev 0 finding. It reads PARTLY FIXED: G3 and
+gate timing. The second reader failed on quota, so Codex reads rev 2.
+
+| finding | disposition |
+|---|---|
+| N1 (blocker): the dump prints the loaded forced bounds at `%lf`, not the fitted mapper; the sufficiency proof fails for a dropped-and-refilled bound and for an edge moved inside a training gap, which a scored row would see | **Fixed.** G3 now reads the two places a boundary can act, each exactly: the training rows' integer bin indices (a), and every split threshold in the model text at `{:.17g}`, which is the mapper's own `bin_upper_bound_` through `RealThreshold` (b), with no missing-value branch (c) (§2 item 10, §5.1). The dump's forced-bounds section is no longer evidence, and the count is only a cross-check. No new LightGBM instrumentation is needed: both are public outputs of v4.6.0 |
+| N2 (blocker): J's equality is not the bound jitter, which works per source array before the build and the role slicing | **Fixed.** J1 recomputes `s5p_numerics.jittered` on the sources. J2 rebuilds each role's selection through `build_pseudo` and the loop's slicing, and compares what the role received. J3 tests movement per source array off the grid edges. Bases compare as float64 values of the float32 sources (§2 item 9, §5.1) |
+| N3: the JSON survival test cannot fail | **Fixed.** The `repr` clause is removed. LightGBM's parse is checked end to end by G3 (b) (§3 rule 5) |
+| N4: a NaN bootstrap interval reads P through the imported `band` | **Fixed.** A non-finite endpoint reads INCONCLUSIVE, checked before the imported reading (§5) |
+| N5: one outcome name for three gates | **Fixed.** PREMISE FAILED names G2, G3 or identity (§5.1, §5.2) |
+| N6: the fresh-root refusal and the runner's exit 5 have no outcome | **Fixed.** RUN REFUSED, second in the precedence (§5.2) |
+| N7: rows 5 and 7 can overstate which S3 number crossed | **Fixed.** The sentence names the median, the maximum or both, whichever crossed (§5.2) |
