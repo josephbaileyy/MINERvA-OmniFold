@@ -1,0 +1,200 @@
+ssh rc=0
+node login27 staged sha256 eae946894be8ce02354e8bd6aaf038d78bd8f574772a359b90eaeb0d1dfd985d
+detached pid 314085, output /dev/shm/rdxc.313661.sh.out
+node login27 2026-11-16T19:58:15Z step s2 pin ad0535c4a62ac0a20711a4a00f2266ddaf926d7c; connect script sha256 eae946894be8ce02354e8bd6aaf038d78bd8f574772a359b90eaeb0d1dfd985d
+== the purge-exposed MP-1 inputs (stat only)
+{
+ "files": [
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s0/evloop/base_cv.root",
+   "bytes": 398375089,
+   "mtime": "2026-10-20T06:15:41Z",
+   "atime": "2026-10-20T13:05:40Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1A_zero.root",
+   "bytes": 398375296,
+   "mtime": "2026-10-20T15:11:30Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1B_zero.root",
+   "bytes": 106517598,
+   "mtime": "2026-10-20T14:41:11Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1C_zero.root",
+   "bytes": 204230889,
+   "mtime": "2026-10-20T14:49:14Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1D_zero.root",
+   "bytes": 596287802,
+   "mtime": "2026-10-20T15:49:28Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1E_zero.root",
+   "bytes": 495761736,
+   "mtime": "2026-10-20T15:38:18Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1F_zero.root",
+   "bytes": 689044069,
+   "mtime": "2026-10-20T15:29:27Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1G_zero.root",
+   "bytes": 581501093,
+   "mtime": "2026-10-20T15:47:38Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1L_zero.root",
+   "bytes": 56587445,
+   "mtime": "2026-10-20T14:38:19Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1M_zero.root",
+   "bytes": 862899975,
+   "mtime": "2026-10-20T15:56:42Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1N_zero.root",
+   "bytes": 499729347,
+   "mtime": "2026-10-20T15:38:35Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1O_zero.root",
+   "bytes": 150945068,
+   "mtime": "2026-10-20T14:45:15Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1P_zero.root",
+   "bytes": 199848958,
+   "mtime": "2026-10-20T15:16:09Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_zero.npz",
+   "bytes": 1548311762,
+   "mtime": "2026-10-20T18:31:31Z",
+   "atime": "2026-10-30T08:53:42Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_zero_bkg.npz",
+   "bytes": 28494557,
+   "mtime": "2026-10-20T18:31:33Z",
+   "atime": "2026-10-30T08:53:42Z"
+  }
+ ],
+ "missing": [],
+ "verdict": "PRESENT"
+}
+squeue --me:
+
+{
+ "protected": [
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/ER/xsec.root",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root",
+  "/pscratch/sd/j/josephrb/cov2d-run-20261104",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root",
+  "/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root"
+ ],
+ "never_read": [
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz",
+  "/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz",
+  "/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root",
+  "/pscratch/sd/j/josephrb/cov2d-inputs-20261104",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware",
+  "/pscratch/sd/j/josephrb/fd-f1-20261027/f1b3/prep",
+  "/pscratch/sd/j/josephrb/fd-1b-inv-20261101/i0/in"
+ ],
+ "reads": [
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/playlist_manifests",
+  "/pscratch/sd/j/josephrb/minerva/minerva_large_files"
+ ],
+ "hits": [],
+ "verdict": "CLEAR"
+}
+[rdx-evloop] 58 AnaTuples checked by size and mtime; 0 differ
+[rdx-evloop] smoke: checks passed for 1B (rdx_s2_1B, 1:00:00)
+{"spent": 0.07040172222222223, "held": 0.0, "unlisted_ids": [], "want": "rdx_s2_1B", "want_ceiling": 0.0391, "total": 0.10950172222222224, "cap": 2.5, "pass": true}
+SUBMIT id=61423404 name=rdx_s2_1B limit=1:00:00 utc=2026-11-16T19:58:16Z
+JOBID|NAME|STATE|TIME_LIMIT|QOS
+61423404|rdx_s2_1B|PENDING|1:00:00|shared
+[rdx-evloop] 123 AnaTuples checked by size and mtime; 0 differ
+[rdx-evloop] smoke: checks passed for 1C (rdx_s2_1C, 1:15:00)
+{"spent": 0.07040172222222223, "held": 0.0391, "unlisted_ids": [], "want": "rdx_s2_1C", "want_ceiling": 0.048875, "total": 0.15837672222222224, "cap": 2.5, "pass": true}
+SUBMIT id=61423406 name=rdx_s2_1C limit=1:15:00 utc=2026-11-16T19:58:22Z
+JOBID|NAME|STATE|TIME_LIMIT|QOS
+61423406|rdx_s2_1C|PENDING|1:15:00|shared
+[rdx-evloop] 344 AnaTuples checked by size and mtime; 0 differ
+[rdx-evloop] smoke: checks passed for 1D (rdx_s2_1D, 3:30:00)
+{"spent": 0.07040172222222223, "held": 0.087975, "unlisted_ids": [], "want": "rdx_s2_1D", "want_ceiling": 0.13685, "total": 0.29522672222222224, "cap": 2.5, "pass": true}
+SUBMIT id=61423408 name=rdx_s2_1D limit=3:30:00 utc=2026-11-16T19:58:27Z
+JOBID|NAME|STATE|TIME_LIMIT|QOS
+61423408|rdx_s2_1D|PENDING|3:30:00|shared
+[rdx-evloop] 270 AnaTuples checked by size and mtime; 0 differ
+[rdx-evloop] smoke: checks passed for 1E (rdx_s2_1E, 2:45:00)
+{"spent": 0.07040172222222223, "held": 0.224825, "unlisted_ids": [], "want": "rdx_s2_1E", "want_ceiling": 0.10752500000000001, "total": 0.4027517222222222, "cap": 2.5, "pass": true}
+SUBMIT id=61423410 name=rdx_s2_1E limit=2:45:00 utc=2026-11-16T19:58:33Z
+JOBID|NAME|STATE|TIME_LIMIT|QOS
+61423410|rdx_s2_1E|PENDING|2:45:00|shared
+[rdx-evloop] 331 AnaTuples checked by size and mtime; 0 differ
+[rdx-evloop] smoke: checks passed for 1F (rdx_s2_1F, 3:45:00)
+{"spent": 0.07040172222222223, "held": 0.33235000000000003, "unlisted_ids": [], "want": "rdx_s2_1F", "want_ceiling": 0.146625, "total": 0.5493767222222223, "cap": 2.5, "pass": true}
+SUBMIT id=61423414 name=rdx_s2_1F limit=3:45:00 utc=2026-11-16T19:58:41Z
+JOBID|NAME|STATE|TIME_LIMIT|QOS
+61423414|rdx_s2_1F|PENDING|3:45:00|shared
+[rdx-evloop] 294 AnaTuples checked by size and mtime; 0 differ
+[rdx-evloop] smoke: checks passed for 1G (rdx_s2_1G, 3:15:00)
+{"spent": 0.07040172222222223, "held": 0.47897500000000004, "unlisted_ids": [], "want": "rdx_s2_1G", "want_ceiling": 0.12707500000000002, "total": 0.6764517222222223, "cap": 2.5, "pass": true}
+SUBMIT id=61423417 name=rdx_s2_1G limit=3:15:00 utc=2026-11-16T19:58:47Z
+JOBID|NAME|STATE|TIME_LIMIT|QOS
+61423417|rdx_s2_1G|PENDING|3:15:00|shared
+[rdx-evloop] 21 AnaTuples checked by size and mtime; 0 differ
+[rdx-evloop] smoke: checks passed for 1L (rdx_s2_1L, 1:00:00)
+{"spent": 0.07040172222222223, "held": 0.6060500000000001, "unlisted_ids": [], "want": "rdx_s2_1L", "want_ceiling": 0.0391, "total": 0.7155517222222223, "cap": 2.5, "pass": true}
+SUBMIT id=61423421 name=rdx_s2_1L limit=1:00:00 utc=2026-11-16T19:58:55Z
+JOBID|NAME|STATE|TIME_LIMIT|QOS
+61423421|rdx_s2_1L|PENDING|1:00:00|shared
+[rdx-evloop] 300 AnaTuples checked by size and mtime; 0 differ
+[rdx-evloop] smoke: checks passed for 1M (rdx_s2_1M, 4:45:00)
+{"spent": 0.07040172222222223, "held": 0.6451500000000001, "unlisted_ids": [], "want": "rdx_s2_1M", "want_ceiling": 0.185725, "total": 0.9012767222222223, "cap": 2.5, "pass": true}
+SUBMIT id=61423451 name=rdx_s2_1M limit=4:45:00 utc=2026-11-16T19:59:01Z
+JOBID|NAME|STATE|TIME_LIMIT|QOS
+61423451|rdx_s2_1M|PENDING|4:45:00|shared
+[rdx-evloop] 169 AnaTuples checked by size and mtime; 0 differ
+[rdx-evloop] smoke: checks passed for 1N (rdx_s2_1N, 2:45:00)
+{"spent": 0.07040172222222223, "held": 0.8308750000000001, "unlisted_ids": [], "want": "rdx_s2_1N", "want_ceiling": 0.10752500000000001, "total": 1.0088017222222223, "cap": 2.5, "pass": true}
+SUBMIT id=61423454 name=rdx_s2_1N limit=2:45:00 utc=2026-11-16T19:59:07Z
+JOBID|NAME|STATE|TIME_LIMIT|QOS
+61423454|rdx_s2_1N|PENDING|2:45:00|shared
+[rdx-evloop] 42 AnaTuples checked by size and mtime; 0 differ
+[rdx-evloop] smoke: checks passed for 1O (rdx_s2_1O, 1:00:00)
+{"spent": 0.07040172222222223, "held": 0.9384000000000001, "unlisted_ids": [], "want": "rdx_s2_1O", "want_ceiling": 0.0391, "total": 1.0479017222222222, "cap": 2.5, "pass": true}
+SUBMIT id=61423456 name=rdx_s2_1O limit=1:00:00 utc=2026-11-16T19:59:13Z
+JOBID|NAME|STATE|TIME_LIMIT|QOS
+61423456|rdx_s2_1O|PENDING|1:00:00|shared
+[rdx-evloop] 61 AnaTuples checked by size and mtime; 0 differ
+[rdx-evloop] smoke: checks passed for 1P (rdx_s2_1P, 1:00:00)
+{"spent": 0.07040172222222223, "held": 0.9775000000000001, "unlisted_ids": [], "want": "rdx_s2_1P", "want_ceiling": 0.0391, "total": 1.0870017222222224, "cap": 2.5, "pass": true}
+SUBMIT id=61423459 name=rdx_s2_1P limit=1:00:00 utc=2026-11-16T19:59:18Z
+JOBID|NAME|STATE|TIME_LIMIT|QOS
+61423459|rdx_s2_1P|PENDING|1:00:00|shared
+== rdx connect s2 rc=0 2026-11-16T19:59:23Z
+script rc=0
+launcher rc=0
