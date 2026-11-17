@@ -136,7 +136,27 @@ Response mismatch & Reconstructed $\Eavail$ of pseudo-data scaled & 5D &
 
 \subsection{Fixed-truth coverage of the 2D statistical band}
 \label{sec:coverage}
-This test asks whether a 2D statistical band covers a \emph{fixed} truth at its nominal rate. The test scored the \emph{completeness-divided band}, the first-built statistical band, quoted when the test ran, whose replicas divide by a bootstrapped completeness. The \emph{undivided band} is the rebuilt band, without the division, since superseded. The quoted statistical block (\S\ref{sec:uq-boot}) is a separate ensemble of 300 replicas at the central value's training seed. The design, criteria and positive control of the test were specified before any toy was generated (Ref.~\cite{NoteRecords2026}, \recentry{coverage-fixed-truth}).
+% COMBINED-PLAN sec. 4 item 9: the result and the criterion first, then the band-identity table; the rebuild history moved verbatim to App. I (move manifest H3-011).
+This test asks whether a 2D statistical band covers a \emph{fixed} truth at its nominal rate. The band it scored undercovers in its tails, and the quoted statistical block has not been tested. Table~\ref{tab:coverage-bands} names the three bands. The design, criteria and positive control of the test were specified before any toy was generated (Ref.~\cite{NoteRecords2026}, \recentry{coverage-fixed-truth}).
+% Search: S1 has not been coverage-tested; coverage statement about Q_R; held-out-MC re-test @ ddf16f10 (the search of this subsection's statement, restated here from its former :156, now App. I, H3-011)
+
+\begin{table}[htbp]
+  \caption[The three 2D statistical bands]{The fixed-truth coverage test scored the completeness-divided band; the quoted statistical block is a separate ensemble and has not been tested.}
+  % Search: S1 has not been coverage-tested; coverage statement about Q_R; held-out-MC re-test @ ddf16f10 (the search of this subsection's statement, restated here from its former :156, now App. I, H3-011)
+  \label{tab:coverage-bands}
+  \centering\small
+  \begin{tabular}{@{}p{0.24\textwidth}p{0.42\textwidth}p{0.26\textwidth}@{}}
+    \toprule
+    Band & Construction & In this test \\
+    \midrule
+    \emph{Completeness-divided band} & The first-built statistical band, quoted when the test ran; its replicas divide by a bootstrapped completeness & Scored; undercovers in its tails \\
+    \addlinespace
+    \emph{Undivided band} & The rebuilt band, without the division; since superseded & Rescored only post hoc (below) \\
+    \addlinespace
+    Quoted statistical block (\S\ref{sec:uq-boot}) & A separate ensemble of 300 replicas at the central value's training seed & Not tested \\
+    \bottomrule
+  \end{tabular}
+\end{table}
 % J3/J4 provisional (DECISION-20261018, packet W3: D2). The quoted statistical block became S1 (sec:uq-boot), which this
 % test did not score (NR).
 % plain-language pass (DECISION-20261018-joseph-plain-language-pass)
@@ -151,9 +171,7 @@ The positive control rescales the band on the same toys. At $\times0.7$ and $\ti
 
 % Cutdown 2026-11-16 (history-cuts/sec_validation.md, row K1): the paragraph on the post hoc per-bin pattern of the completeness-divided band's failure cut; its text stays at 8342963c1:sec_validation.tex:152.
 
-Unlike the band's replicas, the central value has completeness exactly~1. A secondary analysis, added after the pilot, applies the band's division to the toys. Scored against the same band, the divided toys overcover: $C_1=\covTwoDRepCOne$, with its interval above the window. The attribution rule was fixed before the full run, but its clause for the undercoverage outcome was written after the pilot pulls had been seen. Under this rule the primary undercoverage is attributed to the completeness term of the band. The attribution is partial: in the replica form, the $\pPar$ \SIrange{40}{60}{GeV/c} column still undercovers.
-
-The band was then rebuilt without this term. The resulting undivided band was rescored only post hoc (below), and the quoted statistical block has not been tested.
+A secondary analysis, added after the pilot, attributes the undercoverage partly to the band's completeness term. The band was then rebuilt without it. App.~\ref{app:devhistory} gives that analysis, its attribution rule and the rebuild.
 % FACT (2026-10-18): "the rebuilt band is the quoted one" was false of Q (stageC/production/DESIGN.md §3.4, S1).
 % J3/J4 provisional (DECISION-20261018, packet W3: D2); KNOWN_ISSUES 85 re-scoped to S1 (J5).
 % plain-language pass (DECISION-20261018-joseph-plain-language-pass). Printed pointer moved to this comment: the rebuild's
