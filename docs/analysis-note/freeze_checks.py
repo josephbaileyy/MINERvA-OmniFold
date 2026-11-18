@@ -15,7 +15,8 @@ The defaults are main_note.pdf, main_note.aux and the .tsv files in --note-dir (
 1. NUMBERS DIFF. The multiset of numeric tokens in the pdftotext of OLD and NEW must be equal, apart from the rows of
    numbers-allowlist.tsv: token, delta (+n or -n, NEW minus OLD), owner, item, reason.
    - Skipped: the pages of the contents, the list of figures and the list of tables.
-   - Not counted (renumbered references): page footers; numbers after Fig./Figure/Table/Sec./Section/§/App./Eq. and
+   - Not counted (renumbered references, or not values): page footers; digits glued to a letter or an underscore
+     (q3, chi2, cm2, R00, 5D, W1, AR23_20i_00_000); figure text (pdfminer: matplotlib's fonts dropped); numbers after Fig./Figure/Table/Sec./Section/§/App./Eq. and
      their lists and ranges; section-heading numbers; equation tags; citation brackets [n], [n, m] and [n-m].
    - Every unexplained token added or removed is printed with up to three contexts.
 2. LIMITATION RETENTION. Every row of limitations-export.tsv (row_id, file, quote, reanchor_file, reanchor_quote,
@@ -60,6 +61,37 @@ def pdftext_pages(pdf: Path) -> list[str]:
     return pages[:-1] if pages and not pages[-1].strip() else pages
 
 
+# Figure text (matplotlib's embedded fonts) is not prose: a redraw changes tick labels without changing a claim.
+# TeX's own fonts are upper case (CMR10, CMMI10, SFRM1000); matplotlib embeds DejaVu, STIX and the mixed-case BaKoMa
+# Computer Modern (Cmr10, Cmmi10, Cmsy10).
+FIGURE_FONT_RE = re.compile(r"^(DejaVu|STIX|Cm[a-z]+\d+$|Arial|Helvetica|Liberation)")
+
+
+def prose_pages(pdf: Path) -> list[str] | None:
+    """Per-page text with every character set in a figure font removed (pdfminer); None if pdfminer is missing."""
+    try:
+        from pdfminer.high_level import extract_pages
+        from pdfminer.layout import LTChar, LTTextContainer, LTTextLine
+    except ImportError:
+        return None
+    pages = []
+    for layout in extract_pages(str(pdf)):
+        lines = []
+
+        def walk(obj):
+            if isinstance(obj, LTTextLine):
+                s = "".join(ch.get_text() for ch in obj if not isinstance(ch, LTChar)
+                            or not FIGURE_FONT_RE.match(ch.fontname.split("+")[-1]))
+                if s.strip():
+                    lines.append(s.rstrip("\n"))
+                return
+            for child in getattr(obj, "_objs", []):
+                walk(child)
+        walk(layout)
+        pages.append("\n".join(lines))
+    return pages
+
+
 def strip_comments(t: str) -> str:
     return "\n".join(re.sub(r"(?<!\\)%.*", "", l) for l in t.split("\n"))
 
@@ -92,6 +124,7 @@ def detex(s: str) -> str:
 
 # ---------------------------------------------------------------- 1. numbers diff
 
+FIRST_SECTION = "Introduction and motivation"     # section 1's title: the list pages end where it is set
 LIST_HEAD = re.compile(r"^\s*(Contents|List of Figures|List of Tables)\s*$", re.M)
 LEADER = re.compile(r"(\.\s){3,}\.?\s*\d+\s*$")
 NUM = r"[A-Z]?\d+(?:\.\d+)*[a-z]?"
@@ -102,34 +135,63 @@ REF_RE = re.compile(KW + r"\s*~?\s*\(?" + NUMLIST)
 CITE_RE = re.compile(r"\[\d+(?:\s*[,–-]\s*\d+)*\]")
 EQTAG_RE = re.compile(r"\(\s*[A-Z]?\d+(?:\.\d+)?\s*\)\s*$")
 HEAD_RE = re.compile(r"^\s*(?:[A-J]|\d{1,2})(?:\.\d{1,2}){0,3}\s+[A-Z][a-z]")
-TOKEN_RE = re.compile(r"\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?")
+# A number glued to a letter or an underscore is a symbol or a name, not a value: q3, chi2, cm2, R00-R15, C_PL,5D,
+# 3D/4D, W1, EW29, AR23_20i_00_000.
+TOKEN_RE = re.compile(r"(?<![\w.])(?:\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?)(?![\d_]|D\b|\.\d)")
+
+
+HEADING_1 = re.compile(r"^\s*(?:1\s+)?" + re.escape(FIRST_SECTION) + r"\s*$")
+
+
+def front_lists(pages: list[str]) -> tuple[set[int], dict[int, int]]:
+    """The contents, list-of-figures and list-of-tables pages. Returns (pages to skip, {page: first kept line}). The
+    lists run from the "Contents" heading to section 1's heading line (FIRST_SECTION, alone on a line without a leader),
+    which may share its page with the end of the list of tables; on that page only the lines from the heading on count."""
+    start = next((i for i, p in enumerate(pages) if re.search(r"^\s*Contents\s*$", p, re.M)), None)
+    if start is not None:
+        for j in range(start + 1, len(pages)):
+            ls = pages[j].split("\n")
+            k = next((n for n, l in enumerate(ls) if HEADING_1.match(l)), None)
+            if k is not None:
+                return set(range(start, j)), {j: max(0, k - 1)}    # keep the "1" a split heading puts above
+    skip, in_list = set(), False                                   # fallback: list headings and leader pages
+    for i, p in enumerate(pages):
+        ls = [l for l in p.split("\n") if l.strip()]
+        if LIST_HEAD.search(p):
+            skip.add(i); in_list = True; continue
+        if in_list and ls and any(LEADER.search(l) for l in ls):
+            skip.add(i); continue
+        in_list = False
+    return skip, {}
 
 
 def skip_pages(pages: list[str]) -> set[int]:
-    skip, in_list = set(), False
-    for i, p in enumerate(pages):
-        lines = [l for l in p.split("\n") if l.strip()]
-        if LIST_HEAD.search(p):
-            skip.add(i); in_list = True; continue
-        if in_list and lines and any(LEADER.search(l) for l in lines):     # a list continues while its page has leaders
-            skip.add(i); continue
-        in_list = False
-    return skip
+    return front_lists(pages)[0]
+
+
+def trimmed(pages: list[str]) -> list[str]:
+    """pages with the list lines above section 1's heading removed on its page."""
+    _, cut = front_lists(pages)
+    out = list(pages)
+    for j, k in cut.items():
+        out[j] = "\n".join(out[j].split("\n")[k:])
+    return out
 
 
 def page_tokens(page: str, index: int | None = None) -> list[tuple[str, str]]:
     """(token, its line) for the countable numbers of one page (index: 0-based physical page)."""
     lines = page.split("\n")
     nonempty = [i for i, l in enumerate(lines) if l.strip()]
-    # the page number: the last non-empty line if it is a bare number, and any bare-integer line whose value is within
-    # 12 of the physical page (pdftotext can place the footer before a float's text)
+    # the page number: the last non-empty line if it is a bare number, and a bare-integer line equal to the page
+    # (pdftotext can place the footer before a float's text)
     if nonempty and re.fullmatch(r"\s*(\d+|[ivxlc]+)\s*", lines[nonempty[-1]]):
         lines[nonempty[-1]] = ""
     if index is not None:
-        cand = [i for i in nonempty if re.fullmatch(r"\s*\d+\s*", lines[i]) and abs(int(lines[i]) - (index + 1)) <= 12]
+        # this note prints its page number as the physical page (checked: a fused "43" on p. 43); an exact match only,
+        # so a tick label near the page number (a "40" on p. 28) is kept
+        cand = [i for i in nonempty if re.fullmatch(r"\s*\d+\s*", lines[i]) and int(lines[i]) == index + 1]
         if cand:
-            best = min(cand, key=lambda i: abs(int(lines[i]) - (index + 1)))
-            lines[best] = ""
+            lines[cand[-1]] = ""
     # section-heading numbers, line by line
     for i, l in enumerate(lines):
         if HEAD_RE.match(l) and len(l) < 100 and not l.rstrip().endswith("."):
@@ -194,11 +256,17 @@ def read_allowlist(path: Path) -> tuple[collections.Counter, list[str]]:
 
 
 def check_numbers(base_pdf: Path, new_pdf: Path, allowlist: Path):
-    bp, np_ = pdftext_pages(base_pdf), pdftext_pages(new_pdf)
+    bp, np_ = prose_pages(base_pdf), prose_pages(new_pdf)
+    extractor = "pdfminer, figure fonts removed"
+    if bp is None or np_ is None:
+        bp, np_ = pdftext_pages(base_pdf), pdftext_pages(new_pdf)
+        extractor = "pdftotext (pdfminer missing: figure text is counted)"
+    bp, np_ = trimmed(bp), trimmed(np_)
     bc, bctx, bskip = count_tokens(bp, line_set(np_))
     nc, nctx, nskip = count_tokens(np_, line_set(bp))
     allow, bad = read_allowlist(allowlist)
-    lines = [f"pages skipped as contents/lists: base {sorted(x + 1 for x in bskip)}, new {sorted(x + 1 for x in nskip)}",
+    lines = [f"extractor: {extractor}",
+             f"pages skipped as contents/lists: base {sorted(x + 1 for x in bskip)}, new {sorted(x + 1 for x in nskip)}",
              f"tokens counted: base {sum(bc.values())}, new {sum(nc.values())}; allow-list rows net {sum(allow.values()):+d}"]
     lines += bad
     resid = {}
@@ -374,9 +442,9 @@ def check_build_tests(note_dir: Path):
 
 def self_test() -> bool:
     ok = True
-    base = ["Contents\n1 Intro . . . . . . 3\n\f", "Text with 0.535 and 2.27 (Fig. 8; §6.4).\nSee [3, 14].\n4\n",
+    base = ["Contents\n1 Intro . . . . . . 3\n\f", "1 Introduction and motivation\nText with 0.535 and 2.27 (Fig. 8; §6.4).\nSee [3, 14].\n4\n",
             "4.7 Which pieces exist\n300 replicas, Eq. (4.3)\n(12)\n5\n"]
-    new = ["Contents\n1 Intro . . . . . . 3\n", "Text with 0.535 (Figs. 9–10; §§4–6).\nSee [5].\n4\n",
+    new = ["Contents\n1 Intro . . . . . . 3\n", "1 Introduction and motivation\nText with 0.535 (Figs. 9–10; §§4–6).\nSee [5].\n4\n",
            "4.8 Which pieces exist\n300 replicas, Eq. (5.1)\n(13)\n6\n"]
     bc, _, bs = count_tokens(base)
     nc, _, ns = count_tokens(new)
