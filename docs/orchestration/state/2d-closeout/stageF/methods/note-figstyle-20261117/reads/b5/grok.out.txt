@@ -1,0 +1,44 @@
+I'll compare each redrawn figure with its old version and the current caption, and report only mismatches. First I'm locating the figure files and captions.
+
+The captions are in. Next I’ll read the remaining figure pair and pull the printed text off every panel so the comparison is against the images, not the descriptions.
+
+The image descriptions are too coarse for notation and scale changes. I’ll extract the printed text and compare the panels directly.
+
+OCR missed the math. I’ll compare the panels pixel by pixel and read the axis labels from enlarged crops.
+
+## fig:tension (tension_spectrum, left; tension_chi2_map, right)
+
+Caption: "The published-covariance χ² is spread over many eigenmodes. Shown: the eigenmode decomposition of the published-covariance χ²: eigenvalue spectrum with cumulative χ² (left) and the per-bin χ²-contribution map (right)."
+
+### tension_spectrum
+
+1. None. The new left panel is an eigenvalue spectrum (top: "λ/λ_max" against "Mode, by eigenvalue λ (largest first)") with cumulative χ² (bottom: "Cumulative χ² fraction" against "Modes, by χ² contribution", dashed "90% of χ²").
+2. None. Those labels, the "90% of χ²" line, and both curves are still there. The upper x-axis label is the same string, one pixel lower.
+3. No new label, number, or quantity. The curves match the old figure exactly (column-by-column y difference 0).
+
+### tension_chi2_map
+
+1. None. The new right panel is a per-bin map with axes "p_∥ bin" and "p_T bin" and colourbar "χ² contribution" (ticks 20, 10, −10, −20).
+2. None. Same axis names, same colourbar label and tick numbers.
+3. No. After a one-pixel shift the map matches the old one (signed red–blue disagreements are edge pixels only).
+
+## fig:tensionmodes (tension_mode_maps)
+
+Caption: "Three of the six leading χ²-carrying eigenmodes of the published covariance, all smallest-λ directions, concentrate in the highest-p_∥ bins; the other three, moderate-λ modes, lie below them. Shown in bin space, for the LightGBM central value."
+
+1. None. The new figure is six panels (a)–(f) in bin space ("p_∥ bin", "p_T bin"). (a), (b) and (d) sit on the highest p_∥ bins; (c), (e) and (f) sit lower. The caption does not name colours, markers, or panel letters. λ and "LightGBM" are not printed on the figure; they were not printed on the old one either.
+2. None. Panel letters (a)–(f), axis labels, and colourbar numbers are unchanged (for example (a) ±0.50, (b) ±0.75, (d) ±0.5).
+3. No. Panel fields match the old figure (signed-colour correlation 0.94–1.00).
+
+## fig:mec (compare_mec_eavail_central)
+
+Caption: "GENIE regenerated with Valencia 2p2h (orange, stacked on the no-2p2h CV in pale pink; both flux-repaired) closes about half the low-E_avail data−CV gap in central values (52%). No uncertainty drawn: no 3D covariance is quoted (§3d). The remainder occupies the region the MINERvA tune's empirical enhancement is built to absorb."
+
+1. None. In the new figure the "+ Valencia MEC (2p2h)" cap is orange and sits on the "GENIE-CV (no 2p2h)" bars, which are pale pink. "unfolded data" are filled circles with no error bars. At E_avail ≈ 0.3 GeV the central values are CV ≈ 1.55, stacked top ≈ 1.72, data ≈ 1.84 (units of 10^{-38}), which is about half the gap. "flux-repaired" and "52%" are not drawn; nothing drawn contradicts them.
+2. The separate offset "1e-38" is not on the new figure. The same factor is now inside the y-axis label, "(10^{-38} cm²/nucleon/GeV)", so the caption does not have to carry it. Y tick labels "2.0" and "1.0" are now "2" and "1" (same values; "0.5" and "1.5" unchanged). Still present, unchanged: title "MINERvA ME FHC, 1.06 × 10^{21} POT"; legend "GENIE-CV (no 2p2h)", "+ Valencia MEC (2p2h)", "unfolded data"; x-axis "E_avail (GeV)" with ticks 0.0–3.0.
+3. Yes, as labels and colours, not as a different quantity. The 10^{-38} factor moved from the offset "1e-38" into the y-axis unit label. "2.0"/"1.0" are printed "2"/"1". Series colours changed from light blue, red, and black circles to pale pink, orange, and dark-red circles. The axes box is taller (top spine moved from y=29 to y=13; left spine from x=71 to x=91) with the same limits. Bar tops and marker values match the old figure (same bins: about 1.55 / 1.72 / 1.84 at low E_avail, and 0.73, 0.37 for the CV at higher E_avail).
+
+tension_spectrum: OK
+tension_chi2_map: OK
+tension_mode_maps: OK
+compare_mec_eavail_central: OK

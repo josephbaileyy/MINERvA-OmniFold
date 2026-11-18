@@ -1,0 +1,2 @@
+fig:ascencio (sec_3d.tex)
+Bin-identical comparison to Ascencio \emph{et al.}~\cite{MINERvA:2022incl} on the maximal common $(\Eavail,q_{3})$ grid. Our points have no uncertainty or $\chi^{2}$ drawn because no 4D covariance is quoted (\S\ref{sec:3d}); the published points carry the published covariance.

@@ -1,0 +1,110 @@
+### Figure Review: Batch "Figs. 19–22"
+
+---
+
+#### 1. `inputs/fig_3dmodels`: `generators_vs_unfolded_band_central` (`fig:3dmodels`)
+
+* **Caption (`caption.txt`):**
+  > "1D projections of the unfolded 3D central cross section (black) versus truth-level predictions from GENIE 2.12 CV, MINERvA Tune v1, NuWro 21.09, and GiBUU 2019 (GENIE and NuWro: the flux-repaired predictions, \S\ref{sec:3d-models}). Models track the $\pT$ and $\pPar$ shapes but differ on $\Eavail$; the $\Eavail$-marginal data/Tune~v1 ratios are given in \S\ref{sec:4d}. The wide $\Eavail$ catch bin is omitted from the axis. Data have no error bars because no 3D covariance is quoted (\S\ref{sec:3d})."
+
+1. **Does the caption still describe the NEW figure correctly?**
+   * Contradiction: The caption states `"1D projections of the unfolded 3D central cross section (black)"`. In the new figure, the unfolded central cross section data points and legend marker (`unfolded (this work)`) are drawn in dark red (`#C0392B`), not black.
+
+2. **Was any text or caveat that was printed in the OLD figure lost in the NEW figure, and if so is it carried by the caption?**
+   * Standalone axis multiplier offsets: The strings `1e-38` (panel 1, $p_T$), `1e-39` (panel 2, $p_\parallel$), and `1e-38` (panel 3, $E_{\rm avail}$) printed above the y-axes in the old figure were moved directly into the respective y-axis labels as `(10^{-38} cm^2/.../nucleon)` and `(10^{-39} cm^2/.../nucleon)`. They were not carried by the caption.
+   * All other text elements (title `MINERvA ME FHC, 1.06 \times 10^{21} POT`, legend entries `GENIE-CV`, `Tune-v1`, `NuWro`, `GiBUU`, `unfolded (this work)`, and axis titles) are preserved verbatim. No caveats were lost.
+
+3. **Does the NEW figure show anything the old one did not?**
+   * Axis labels now incorporate the powers of ten: `(10^{-38} cm^2/.../nucleon)` and `(10^{-39} cm^2/.../nucleon)`.
+   * The marker for `GENIE-CV` changed from a filled circle (`•`) to a downward-pointing triangle (`▼`).
+   * Color palette changes:
+     * `unfolded (this work)`: black $\to$ dark red (`#C0392B`)
+     * `GENIE-CV`: red $\to$ mauve/pink (`#CC79A7`)
+     * `Tune-v1`: steel blue $\to$ blue (`#2A78D6`)
+     * `NuWro`: green $\to$ teal (`#1BAF7A`)
+     * `GiBUU`: purple $\to$ dark indigo/purple (`#4A3AA7`)
+   * No new labels, changed numerical values, or different physical quantities are shown.
+
+---
+
+#### 2. `inputs/fig_modedecomp`: `mode_decomp_eavail_central` (`fig:modedecomp`)
+
+* **Caption (`caption.txt`):**
+  > "Central-value $d\sigma/d\Eavail$ by interaction mode, overlaid with unfolded data. Data carry no error bars because no 3D covariance is quoted (\S\ref{sec:3d})."
+
+1. **Does the caption still describe the NEW figure correctly?**
+   * None. (The caption does not specify colors, markers, or line styles; its description matches the new figure.)
+
+2. **Was any text or caveat that was printed in the OLD figure lost in the NEW figure, and if so is it carried by the caption?**
+   * Standalone axis multiplier offset: The string `1e-38` printed above the y-axis in the old figure was moved into the y-axis label as `(10^{-38} cm^2/nucleon/GeV)`. It is not carried by the caption.
+   * All other text elements (title `MINERvA ME FHC, 1.06 \times 10^{21} POT`, all six legend entries: `GENIE-CV QE`, `GENIE-CV RES`, `GENIE-CV DIS`, `GENIE-CV COH`, `data - GENIE-CV (2p2h-shaped gap)`, `unfolded data`) are preserved verbatim. No caveats were lost.
+
+3. **Does the NEW figure show anything the old one did not?**
+   * The y-axis label now incorporates the power of ten: `(10^{-38} cm^2/nucleon/GeV)`.
+   * Notation updated from italic subscript $E_{\text{avail}}$ to roman subscript $E_{\rm avail}$ in axis labels.
+   * Interaction mode stacked histograms changed from solid color fills (blue, green, orange, purple) to a grayscale/hatched scheme:
+     * `GENIE-CV QE`: dark gray with diagonal hatching (`///`)
+     * `GENIE-CV RES`: medium gray with reverse diagonal hatching (`\\\`)
+     * `GENIE-CV DIS`: light gray with cross-hatching (`xx`)
+     * `GENIE-CV COH`: light gray with dot stippling (`..`)
+   * The `data - GENIE-CV (2p2h-shaped gap)` component changed from a red-hatched bar with red outline to an unhatched/open red outlined step box.
+   * The `unfolded data` points changed from black circles to dark red circles (`#C0392B`).
+   * No new labels, changed numerical values, or different physical quantities are shown.
+
+---
+
+#### 3. `inputs/fig_mec`: `compare_mec_eavail_central` (`fig:mec`)
+
+* **Caption (`caption.txt`):**
+  > "Central-value $d\sigma/d\Eavail$ by interaction mode, overlaid with unfolded data. Data carry no error bars because no 3D covariance is quoted (\S\ref{sec:3d})."
+
+1. **Does the caption still describe the NEW figure correctly?**
+   * Contradiction: The caption in `caption.txt` states `"Central-value $d\sigma/d\Eavail$ by interaction mode, overlaid with unfolded data"`. The figure does not show cross section by interaction mode; it compares `GENIE-CV (no 2p2h)` and `+ Valencia MEC (2p2h)` overlaid with `unfolded data`. (The text in `caption.txt` is an erroneous duplicate of `fig:modedecomp`'s caption.)
+   * Note on note text: The caption in `sec_3d.tex` (line 190) states: `"GENIE regenerated with Valencia 2p2h (red, stacked on no-2p2h CV; both flux-repaired)..."`. The new figure contradicts `"(red, stacked on no-2p2h CV)"`: Valencia MEC is drawn in orange (`#EB6834`), stacked on light pink (`#F0D4E4`), while unfolded data is drawn in dark red (`#C0392B`).
+
+2. **Was any text or caveat that was printed in the OLD figure lost in the NEW figure, and if so is it carried by the caption?**
+   * Standalone axis multiplier offset: The string `1e-38` printed above the y-axis in the old figure was moved into the y-axis label as `(10^{-38} cm^2/nucleon/GeV)`. It is not carried by the caption.
+   * All other text elements (title `MINERvA ME FHC, 1.06 \times 10^{21} POT`, legend entries `GENIE-CV (no 2p2h)`, `+ Valencia MEC (2p2h)`, `unfolded data`) are preserved verbatim. No caveats were lost.
+
+3. **Does the NEW figure show anything the old one did not?**
+   * The y-axis label incorporates the power of ten: `(10^{-38} cm^2/nucleon/GeV)`.
+   * Notation updated from italic subscript $E_{\text{avail}}$ to roman subscript $E_{\rm avail}$ in axis labels.
+   * Palette changes:
+     * `GENIE-CV (no 2p2h)`: light blue fill with dark blue border $\to$ light pink fill (`#F0D4E4`) with mauve border (`#CC79A7`).
+     * `+ Valencia MEC (2p2h)`: red fill $\to$ orange fill (`#EB6834`).
+     * `unfolded data`: black circles $\to$ dark red circles (`#C0392B`).
+   * No new labels, changed numerical values, or different physical quantities are shown.
+
+---
+
+#### 4. `inputs/fig_ascencio`: `ascencio_fullcov_compare_central` (`fig:ascencio`)
+
+* **Caption (`caption.txt`):**
+  > "Bin-identical comparison to Ascencio \emph{et al.}~\cite{MINERvA:2022incl} on the maximal common $(\Eavail,q_{3})$ grid. Our points have no uncertainty or $\chi^{2}$ drawn because no 4D covariance is quoted (\S\ref{sec:3d}); the published points carry the published covariance."
+
+1. **Does the caption still describe the NEW figure correctly?**
+   * None. (The caption does not specify colors or markers; its statements regarding the lack of uncertainty/$\chi^2$ on our points and the presence of covariance on published points describe the new figure accurately.)
+
+2. **Was any text or caveat that was printed in the OLD figure lost in the NEW figure, and if so is it carried by the caption?**
+   * Legend notation: The verbatim string `this work (4D marginal, p_z < 20)` in the old legend was replaced by `this work (4D marginal, p_\parallel < 20)` (updating coordinate notation $p_z \to p_\parallel$). The caption does not specifically carry the momentum selection text.
+   * Standalone axis multiplier offset: The string `1e-38` above the left panel y-axis was moved into the y-axis label as `(10^{-38} cm^2/GeV^2/nucleon)`. The right panel retains `\times 10^{-38}` at the top of the axis.
+   * All other text elements (title `MINERvA ME FHC, 1.06 \times 10^{21} POT`, legend label `Ascencio et al.`, axis titles) are preserved. No caveats were lost.
+
+3. **Does the NEW figure show anything the old one did not?**
+   * Updated notation in the legend label: `$p_\parallel < 20$` instead of `$p_z < 20$`.
+   * Notation updated from italic subscript $E_{\text{avail}}$ to roman subscript $E_{\rm avail}$ on x-axes and y-axis.
+   * Left panel y-axis label incorporates the power of ten: `(10^{-38} cm^2/GeV^2/nucleon)`.
+   * Right panel top multiplier format changed from `1e-38` to `\times 10^{-38}`.
+   * Series colors were swapped:
+     * `this work (4D marginal, ...)`: black (`#000000`) $\to$ dark red (`#C0392B`).
+     * `Ascencio et al.`: red (`#FF0000`) $\to$ black (`#000000`).
+   * No new labels, changed numerical values, or different physical quantities are shown.
+
+---
+
+### One-line Verdicts
+
+* `fig:3dmodels`: FLAG - caption states unfolded cross section is "(black)", but the redrawn figure displays it in dark red
+* `fig:modedecomp`: OK
+* `fig:mec`: FLAG - caption.txt incorrectly describes the plot as showing cross section "by interaction mode" (duplicate of fig:modedecomp) rather than MEC/2p2h; also sec_3d.tex describes Valencia 2p2h as "(red)", whereas it is drawn in orange
+* `fig:ascencio`: OK
