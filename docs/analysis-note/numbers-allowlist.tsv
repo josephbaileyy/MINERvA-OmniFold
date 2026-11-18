@@ -154,3 +154,4 @@ token	delta	owner	item	reason
 0.785	+1	director-helper-3	TRIAGE-A6	positive control at x1.3: C1 = 0.785 above its window, OUTCOME-20261005-2d-fixed-truth-coverage-fail.md table
 1.5	+1	director-helper-3	TRIAGE-A9	ES restates sec_eavailw:63's W^2 = 0 clamp, 1.5% of simulated events
 0.05	+1	director-helper-3	TRIAGE-A3	ES restates section 11.7: every test has p < 0.05, without a multiplicity correction, in at least one projection
+205	+1	director-helper-3	TRIAGE-A5	sec_results 6.5 names the region of the 0.91 Tune v1 ratio: over the 205 reported bins (2d-unfolding/model_comp_report.txt)
