@@ -22,7 +22,7 @@ removed first, and a caption's optional short title, \caption[short]{long}, is s
 
 WHERE THE STAMP APPLIES. To every figure caption, except a figure whose label caption-rule.tsv lists as "exempt",
 with its reason (for example, a figure that draws no measured quantity). caption-rule.tsv also lists the
-"development" figures, whose caption must begin "Development check:". A label the file names that no figure caption
+"development" figures, whose caption must begin "Development check:"; "development+exempt" is both. A label the file names that no figure caption
 carries fails the check, so the file cannot go stale silently.
 """
 from __future__ import annotations
@@ -197,8 +197,8 @@ def load_rules(root: Path) -> dict[str, tuple[str, str]]:
         if not line.strip() or line.startswith("#"):
             continue
         cols = line.split("\t")
-        if len(cols) < 3 or cols[1] not in ("exempt", "development") or not cols[2].strip():
-            raise SystemExit(f"{RULES}:{n}: want label<TAB>exempt|development<TAB>reason, got {line!r}")
+        if len(cols) < 3 or cols[1] not in ("exempt", "development", "development+exempt") or not cols[2].strip():
+            raise SystemExit(f"{RULES}:{n}: want label<TAB>exempt|development|development+exempt<TAB>reason, got {line!r}")
         rules[cols[0]] = (cols[1], cols[2].strip())
     return rules
 
@@ -216,9 +216,9 @@ def check(root: Path, driver: str = DRIVER, out=sys.stdout) -> tuple[int, int]:
         if it["kind"] == "figure":
             seen.add(it["label"])
             rule = rules.get(it["label"], ("", ""))[0]
-            if rule == "development" and not first.startswith(DEV_PREFIX):
+            if rule.startswith("development") and not first.startswith(DEV_PREFIX):
                 verdict.append(f"FAIL rule 1: a development figure begins \"{DEV_PREFIX}\"")
-            if rule != "exempt":
+            if not rule.endswith("exempt"):
                 second = s[1] if len(s) > 1 else ""
                 if second not in STAMPS:
                     verdict.append("FAIL rule 2: sentence 2 is not a stamp" + (f" (it reads: {second[:70]!r})"
@@ -260,19 +260,21 @@ Left is descriptive.}\label{fig:dev}\end{figure}
 \begin{figure}\caption{Recovery at 5 iterations. Bars: weight statistics only, not the covariance.}\label{fig:devbad}
 \end{figure}
 \begin{figure}\caption{A survey of measurements.}\label{fig:survey}\end{figure}
+\begin{figure}\caption{Development check: the bias falls. Bars: standard error of the mean.}\label{fig:devex}\end{figure}
 \begin{table}\caption{Values of the cells. The units are \si{cm^2}.}\label{tab:vals}\end{table}
 \begin{xltabular}{\textwidth}{X}\caption{A long table.}\label{tab:long}\\ x \end{xltabular}
 """)
         (root / RULES).write_text("fig:dev\tdevelopment\tthe estimator's development tests\n"
                                   "fig:devbad\tdevelopment\tthe estimator's development tests\n"
-                                  "fig:survey\texempt\tdraws no measured quantity\n")
+                                  "fig:survey\texempt\tdraws no measured quantity\n"
+                                  "fig:devex\tdevelopment+exempt\ta closure with standard-error bars\n")
         import io
         buf = io.StringIO()
         fails, warns = check(root, out=buf)
         rep = buf.getvalue()
         cases = [
-            ("five figures and two tables found, the commented one skipped",
-             "5 figure and 2 table captions" in rep and "fig:comment" not in rep),
+            ("six figures and two tables found, the commented one skipped",
+             "6 figure and 2 table captions" in rep and "fig:comment" not in rep),
             ("an abbreviation (Fig.~3, e.g.) does not end sentence 1",
              "1: The ratio is flat within Fig.~3's range." in rep and "1: The shift is small, e.g. below 1\\%." in rep),
             ("the good figure passes", "fig:good" in rep and rep.split("[fig:good]")[1].split("Figure")[0].count("FAIL") == 0),
@@ -282,6 +284,8 @@ Left is descriptive.}\label{fig:dev}\end{figure}
             ("an exempt figure needs no stamp", rep.split("[fig:survey]")[1].split("Table")[0].count("FAIL") == 0),
             ("tables are numbered and printed, without the stamp rule",
              "Table 2  [tab:long]" in rep and rep.split("[tab:vals]")[1].count("FAIL rule 2") == 0),
+            ("a development+exempt figure needs the prefix but no stamp",
+             rep.split("[fig:devex]")[1].split("Table")[0].count("FAIL") == 0),
             ("the totals", fails == 2 and warns == 1),
         ]
         (root / RULES).write_text("fig:gone\texempt\ta figure that left the note\n")
