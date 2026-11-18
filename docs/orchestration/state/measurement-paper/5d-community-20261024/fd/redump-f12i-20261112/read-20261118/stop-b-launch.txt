@@ -1,0 +1,3 @@
+launch 2026-11-18T19:15:17Z node login27 script sha256 89ea886d64a763c9a0fa24b7be3fd69fdbf5886b765678241370b184a21f2f0c
+ssh rc=255
+STOP: the fetch exited 255
