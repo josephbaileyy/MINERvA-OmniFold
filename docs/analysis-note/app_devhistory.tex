@@ -254,6 +254,32 @@ A staged redesign of that first test, at the two tunes and with the covariance r
 % (LL5D_PRINTED_CLASS).
 At both tunes, an event-matching entry check stopped the earlier run because it compared \fvval{ll5d-a1a2-keys} weight keys and reported every row unmatched. The repair, chosen after this stop, keyed both sides at \fvval{ll5d-a1a2-at} before any coverage pseudo-experiment was unfolded or graded, but after other gate readings were visible. It changed no rule, threshold, bound or reporting cell. Under the rule fixed before the result, the rerun is reported as descriptive: the criteria fixed in advance were applied, but a repair was chosen after an entry-check stop.
 
+% Move pair LR-63 (limitation-resolver, the director's ruling P52): the table tab:fived16-gen-stageg of sec_fived16.tex, verbatim
+% with its caption and label; the body keeps its pointer to it. Merges with limitation-resolver's 685a843aa (the label moves).
+\subsubsection{The generator comparison as first made}
+\label{app:devhistory-fived16-stageg}
+
+\begin{table}[htbp]
+\centering\footnotesize
+\caption[The generator comparison as first made]{The table keeps the comparison as first made, before the predictions were moved to the analysis definitions. The comparison of Table~\ref{tab:fived16-gen} as first made, with the predictions in their generator definitions and NuWro and GiBUU on carbon, with no correction to CH: against the reported covariance plus $V_g$ and without the run-period block, as in Table~\ref{tab:fived16-gen}, and in the last column against $C_{\mathrm{total}}+V_g$, without the response and run-period blocks.}
+\label{tab:fived16-gen-stageg}
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+ & \multicolumn{2}{c}{reported covariance} & \multicolumn{2}{c}{without $C_{\mathrm{PL,5D}}$} & $C_{\mathrm{total}}$ \\ \cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(l){6-6}
+prediction & $\chi^2$ & shape-only $\chi^2$ & $\chi^2$ & shape-only $\chi^2$ & $\chi^2$ \\
+\midrule
+\multicolumn{6}{@{}l}{All 16 cells: ndf \fvval{gs-gcv-total-ndf}, shape-only \fvval{gs-gcv-shape_only-ndf}} \\
+\fvval{gs-label-gcv} & \fvval{gs-gcv-total-chi2} & \fvval{gs-gcv-shape_only-chi2} & \fvval{gs-gcv-total-chi2-nopl} & \fvval{gs-gcv-shape_only-chi2-nopl} & \fvval{gs-gcv-nocresp-chi2} \\
+\fvval{gs-label-gmec} & \fvval{gs-gmec-total-chi2} & \fvval{gs-gmec-shape_only-chi2} & \fvval{gs-gmec-total-chi2-nopl} & \fvval{gs-gmec-shape_only-chi2-nopl} & \fvval{gs-gmec-nocresp-chi2} \\
+\fvval{gs-label-nuwro} & \fvval{gs-nuwro-total-chi2} & \fvval{gs-nuwro-shape_only-chi2} & \fvval{gs-nuwro-total-chi2-nopl} & \fvval{gs-nuwro-shape_only-chi2-nopl} & \fvval{gs-nuwro-nocresp-chi2} \\
+\fvval{gs-label-tune} & \fvval{gs-tune-total-chi2} & \fvval{gs-tune-shape_only-chi2} & \fvval{gs-tune-total-chi2-nopl} & \fvval{gs-tune-shape_only-chi2-nopl} & \fvval{gs-tune-nocresp-chi2} \\
+\midrule
+\multicolumn{6}{@{}l}{8-cell subset, $\pPar<\fvval{h2-mid-pz}$~GeV/$c$: ndf \fvval{gs-gibuu-total-ndf}, shape-only \fvval{gs-gibuu-shape_only-ndf}} \\
+\fvval{gs-label-gibuu} & \fvval{gs-gibuu-total-chi2} & \fvval{gs-gibuu-shape_only-chi2} & \fvval{gs-gibuu-total-chi2-nopl} & \fvval{gs-gibuu-shape_only-chi2-nopl} & \fvval{gs-gibuu-nocresp-chi2} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \subsection{The five-dimensional development tests (\S\ref{sec:5d})}
 \label{app:devhistory-5d}
 
