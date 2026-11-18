@@ -13,15 +13,24 @@ From `B=/pscratch/sd/j/josephrb/rdx-20261112b`, under `$B/out`, 32 files:
 - `inventory/<task>.jsonl` for the same 15 tasks.
 - `logs/rdx_s3_a_61478320.out` and `logs/rdx_s3_b_61481240.out`.
 
-## The code (commit 9685b74e)
+## The code (rev 2, commit b467aaff)
 
 | file | sha256 |
 |---|---|
-| `nd-unfolding/rdx/rdx_fetch_remote.py` | `a346771e214c0f96fbaba629d2f69e12988c4609a5b0581ab0e0bbe7939a2223` |
-| `nd-unfolding/rdx/rdx_fetch_launch.sh` | `c28f4ce0e6456f1e1c2f7216eae2bc3bc382cce4df95fa9d0b9de218ae54ee60` |
-| `nd-unfolding/rdx/test_rdx_fetch.py` | `1b7f836c257f96f0027c0d1962b7613786878540859af20903434af82df29d76` |
+| `nd-unfolding/rdx/rdx_fetch_remote.py` | `93ddb2643c7b5a3b9690752f07d01f87d7aa3add7cd369a522cf1b248aff7d5d` |
+| `nd-unfolding/rdx/rdx_fetch_launch.sh` | `1cb993451c8b3048e41fcfa73c34cb616a7c140bec2361d9928db650b47ce753` |
+| `nd-unfolding/rdx/test_rdx_fetch.py` | `4bb4cc4cbe38b9ce0dc228302b3d1f6ce0f7cd9ac152ce98f59eeddb2a635107` |
 
 The launcher pins the remote script's sha256 and refuses (exit 8) if the local copy differs.
+
+Rev 2 fixes the two blockers from Grok's safety read of rev 1 (832f71d3):
+- **B1:** the fence now reads every non-terminal state sacct supports, so a completing or configuring job counts. It
+  is also read a second time, after the last file.
+- **B2:** each file's full stat after its read is compared with its stat before the read, so a rewrite of the same
+  length now exits 8.
+
+Two more fixes came from the same read: unpack now checks the manifest's root, and the inner ssh no longer writes on
+saul.
 
 ## The command (after the go)
 
@@ -38,16 +47,27 @@ the tar's sha256.
 
 - **No job.** Nothing is submitted. The fetch is one ssh call to a login node.
 - **Nothing is written on the cluster.** The script travels over stdin and the tar over stdout. Nothing is staged,
-  not even under `/dev/shm`.
-- **O_NOATIME on every read.** The remote refuses (exit 3) on a platform without it. It records each file's atime
-  before and after its read and exits 8 (a STOP) if any atime or size moved. The tar is complete either way.
-- **The fence is sacct only.** The remote runs `sacct -X -n -P -u josephrb -s PD,R,RQ,S -o JobID,JobName,State` and
-  refuses (exit 9) if sacct fails or any job of the families `cov2d|t2a|ll5d|e96data|rpd_|rsn_|rdx_|pfb_|ibukt-` is
-  pending, running, requeued or suspended. squeue is never called.
+  not even under `/dev/shm`. The inner ssh (saul to loginNN) uses `ControlPath=none`, `StrictHostKeyChecking=yes` and
+  `UpdateHostKeys=no`, so it writes no control socket or known_hosts entry on saul. If saul does not already know the
+  login node's host key, the ssh refuses and nothing is fetched. Choose a login node that an earlier connect used.
+- **O_NOATIME on every read.** The remote refuses (exit 3) on a platform without it. It records each file's stat
+  before and after its read (size, mtime_ns, atime_ns, ino, dev) and keeps both in the manifest. It exits 8 (a STOP)
+  if any field moved or the bytes read differ from the stat's size. That covers a moved atime, a rewrite of the same
+  length and a replacement of the same size. The tar is complete either way.
+- **The fence is sacct only.** The remote runs `sacct -X -n -P -u josephrb -s PD,CF,R,CG,RQ,RS,S -o
+  JobID,JobName,State`. Those are the states pending, configuring, running, completing, requeued, resizing and
+  suspended. It refuses (exit 9) if sacct fails or any job of the families
+  `cov2d|t2a|ll5d|e96data|rpd_|rsn_|rdx_|pfb_|ibukt-` is in any of them. The fence is read again after the last file,
+  and a job seen then also exits 9, after the tar. squeue is never called.
 - **Refusals before output.** Exits 3, 9 and 4 (a missing file) all happen before anything is written to stdout.
-- **The laptop unpack refuses (exit 2)** unless the tar holds exactly the 32 declared files plus `manifest.json`, each
-  as a plain file at a declared path; every sha256 and size matches the manifest; and the manifest records O_NOATIME,
-  no moved atime and a clear fence. On a refusal it writes nothing.
+- **The laptop unpack refuses (exit 2)** unless all of these hold:
+  - the tar holds exactly the 32 declared files plus `manifest.json`, each a plain file at a declared path;
+  - the manifest's root is the declared `$B/out`;
+  - every sha256 and size matches the manifest;
+  - each file's two stats are equal;
+  - the manifest records O_NOATIME and two clear fence reads.
+
+  On a refusal it writes nothing.
 - **cov2d's ack** of the fence notice before the connect, and the end message after it.
 - Any STOP, failure or timeout goes to the director unrepaired. Nothing is re-run.
 
@@ -58,9 +78,17 @@ The read runs on the laptop in a clean clone at M_RDXR `9de8ef0d`, using `rdx_re
 
 ## Receipt
 
-- `tests.txt`: the 10 tests in a clean clone at 9685b74e, exit 0. They run the fetch locally against a scratch root
-  with a stub sacct (the fence in both directions, sacct failure, a missing file), check that the remote script parses
-  as Python 3.6, exercise every unpack refusal, and test the launcher's argument and sha checks. The laptop has no
+- `tests.txt`: the 14 tests in a clean clone at b467aaff, exit 0. They run the fetch locally against a scratch root
+  with a stub sacct. The cases are:
+  - the fence in both directions, including completing, configuring and resizing rows, which the stub prints only
+    when the `-s` list asks for them;
+  - sacct failure, and a job seen only by the second fence read;
+  - a missing file;
+  - a rewrite of the same length and a replacement of the same size during a read, each exiting 8 with both stats
+    recorded.
+
+  They also check that the remote script parses as Python 3.6, exercise every unpack refusal (including a foreign root and
+  moved stats), and test the launcher's argument and sha checks and its inner ssh options. The laptop has no
   O_NOATIME, so the fixture sets atime after mtime to keep relatime from moving it, and the manifest's `o_noatime` is
   set by the test for the unpack cases. The O_NOATIME refusal is tested on the laptop, and its real open is exercised
   only on the login node.
