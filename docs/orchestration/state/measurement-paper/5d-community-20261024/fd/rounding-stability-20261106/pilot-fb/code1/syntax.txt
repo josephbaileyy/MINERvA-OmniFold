@@ -1,0 +1,12 @@
+# HEAD 1d8873ba14cc8a63585e59bcadbc1fce61f2bdd5
+# clean clone, bash GNU bash, version 3.2.57(1)-release (arm64-apple-darwin25), 2026-11-18T08:13:27Z
+# 5add7476ed7f48eddd898e509221ddb44ffe0ab72f782decffdbf187bd4b0015  fb_pilot_edges.py
+# b55ea40d3691521248813b1702d7c3442aa7564e9956d1a8d211a1522371cd09  fb_pilot_gates.py
+# d989a9e5ff62daf1a3af53b8667cdf5476c4d2430a4618261be7b1b90787472d  fb_pilot_probe.py
+# 6c06e3a4a139cfc4048c2a2772614c860ebf37898021d5109992bdf2ccc6d159  fb_pilot_analyze.py
+# 45e86e5075062da7e34eabd9e499aa500d4f221812983a24f21b9066e91b76c9  sbatch_pfb.sh
+# f601c32c928a10ad4c35a8b30aac92e08b2a8cece2e3b065d3abc019c83e6f3b  tests/test_fb_pilot.py
+# 8e2e87ddf21c0aa1163ee737fc768a3009f99dcd14916a7e8b3998ad3caad625  tests/fb_pilot_mutation.py
+# command: bash -n nd-unfolding/sbatch_pfb.sh
+# exit 0
+# clone status: 0 lines
