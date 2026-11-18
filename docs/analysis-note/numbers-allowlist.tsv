@@ -71,17 +71,17 @@ token	delta	owner	item	reason
 1.057	+1	journal-editor	JE-DEF	tab:definitions restates sec_experiment:8 (1.057x10^21 POT)
 1021	+1	journal-editor	JE-DEF	tab:definitions, the same POT, x10^21
 # retired 2026-11-17 at draft f2a4636ee (no change counted under the glued-digit and figure-font rules; the row's reason no longer applies): 135	+1	journal-editor	JE-DEF	tab:definitions restates Table 12 / sec:eavail-definition (E_pi - 135 MeV)
-100	+1	journal-editor	JE-DEF	tab:definitions restates Table 4 configuration (d) (100-tree refinement)
-8	+1	journal-editor	JE-DEF	tab:definitions restates Table 4 configuration (d) (8-leaf)
-400	+2	journal-editor	JE-DEF	tab:definitions restates Table 4 configurations (e) and (f) (400-tree)
-31	+2	journal-editor	JE-DEF	tab:definitions restates Table 4 configurations (e) and (f) (31-leaf)
-42	+1	journal-editor	JE-DEF	tab:definitions restates Fig. 34's caption (42 (E_avail,W) cells)
-109	+1	journal-editor	JE-DEF	tab:definitions, \jtNcells (Fig. 34 caption; sec:joint5d)
-35	+1	journal-editor	JE-DEF	tab:definitions, the 3^5 grid (Fig. 34 caption), extracted as "35"
+# replaced 2026-11-18 by journal-editor's addf9ec0 rows (total per token): 100	+1	journal-editor	JE-DEF	tab:definitions restates Table 4 configuration (d) (100-tree refinement)
+# replaced 2026-11-18 by journal-editor's addf9ec0 rows (total per token): 8	+1	journal-editor	JE-DEF	tab:definitions restates Table 4 configuration (d) (8-leaf)
+# replaced 2026-11-18 by journal-editor's addf9ec0 rows (total per token): 400	+2	journal-editor	JE-DEF	tab:definitions restates Table 4 configurations (e) and (f) (400-tree)
+# replaced 2026-11-18 by journal-editor's addf9ec0 rows (total per token): 31	+2	journal-editor	JE-DEF	tab:definitions restates Table 4 configurations (e) and (f) (31-leaf)
+# replaced 2026-11-18 by journal-editor's addf9ec0 rows (total per token): 42	+1	journal-editor	JE-DEF	tab:definitions restates Fig. 34's caption (42 (E_avail,W) cells)
+# replaced 2026-11-18 by journal-editor's addf9ec0 rows (total per token): 109	+1	journal-editor	JE-DEF	tab:definitions, \jtNcells (Fig. 34 caption; sec:joint5d)
+# replaced 2026-11-18 by journal-editor's addf9ec0 rows (total per token): 35	+1	journal-editor	JE-DEF	tab:definitions, the 3^5 grid (Fig. 34 caption), extracted as "35"
 # retired 2026-11-17 at draft f2a4636ee (no change counted under the glued-digit and figure-font rules; the row's reason no longer applies): 00	+1	journal-editor	JE-DEF	tab:definitions, R00-R15 (Table 15)
 15	+1	journal-editor	JE-DEF	tab:definitions, R00-R15 (Table 15)
-5	+2	journal-editor	JE-DEF	tab:definitions, C_PL,5D twice (the reported-covariance row)
-2	+2	journal-editor	JE-DEF	tab:definitions, cm^2 twice (Units row, app_release:66 convention)
+# replaced 2026-11-18 by journal-editor's addf9ec0 rows (total per token): 5	+2	journal-editor	JE-DEF	tab:definitions, C_PL,5D twice (the reported-covariance row)
+# replaced 2026-11-18 by journal-editor's addf9ec0 rows (total per token): 2	+2	journal-editor	JE-DEF	tab:definitions, cm^2 twice (Units row, app_release:66 convention)
 # retired 2026-11-17 at draft f2a4636ee (no change counted under the glued-digit and figure-font rules; the row's reason no longer applies): 38	+1	journal-editor	JE-T36	Table 38 (ex-36, tab:negweight): nwSigPur/nwSigNeg print as x10^-38 via \num (notation change; macros unchanged)
 # limitation-resolver's rows, second set (numbers-allowlist-lr-rows2.tsv, residue at ad49b4b43)
 9	+1	limitation-resolver	U16(a)	abstract clause "in 9 of the 16 cells" (V-HALF readout e7423390, vhalf-n-notvalid)
@@ -146,7 +146,7 @@ token	delta	owner	item	reason
 3	+2	limitation-resolver	U1	"newly flagged 3, 3 and 6" (prr-lev-K2/C25-nnew; FD-PRR readout 9238f22b)
 4	+1	limitation-resolver	U13	c1-below-pct, "4 % below its 95th-percentile threshold" (REF-C2C1 read-2 0ee21301)
 50	+1	limitation-resolver	U13	c1-nrep, "over 50 paired replicas" (REF-C2C1 read-2 0ee21301)
-95	+2	limitation-resolver	U13	"95th percentile" and "95th-percentile threshold" in the U13 text, beyond the earlier +2 row
+# retired 2026-11-18 at limitation-resolver's correction (rows2 already covers it): 95	+2	limitation-resolver	U13	"95th percentile" and "95th-percentile threshold" in the U13 text, beyond the earlier +2 row
 224	+1	director-helper-3	CX-04	COMBINED-PLAN sec. 4 item 16: section 11.6 keeps the counts beside Table 30 (224 interrupted or prevented) while App. I holds the procedure; intended duplicate
 0.34	+1	director-helper-3	TRIAGE-A1	Fig. 2 caption quotes the E_avail-pT coefficient the figure prints (r_MC = +0.34); interim cold read 1a4fb477
 1.0574	+1	director-helper-3	TRIAGE-A2	sec_experiment:8 prints the recorded dataPOT 1.057394e21 at the precision where "0.34% more" holds
@@ -155,3 +155,34 @@ token	delta	owner	item	reason
 1.5	+1	director-helper-3	TRIAGE-A9	ES restates sec_eavailw:63's W^2 = 0 clamp, 1.5% of simulated events
 0.05	+1	director-helper-3	TRIAGE-A3	ES restates section 11.7: every test has p < 0.05, without a multiplicity correction, in at least one projection
 205	+1	director-helper-3	TRIAGE-A5	sec_results 6.5 names the region of the 0.91 Tune v1 ratio: over the 205 reported bins (2d-unfolding/model_comp_report.txt)
+# limitation-resolver's rows, fourth set (numbers-allowlist-lr-rows4.tsv, residue at addf9ec0)
+12	+1	limitation-resolver	U6 (abstract)	"up to 12 of 39 at one truth" (rec-all-opp-max, rec-g-n; a_recovery.json 75db95a1)
+39	+1	limitation-resolver	U6 (abstract)	the same clause; the other +1 of "39" is the definitions table (p.4, journal-editor)
+9	+2	limitation-resolver	U16(a), U18	"9 of the 16 cells" in the abstract and the bias-half count restated in sec_limitations (vhalf-n-notvalid; V-HALF readout e7423390)
+16	+2	limitation-resolver	U16(a), U18	"of the 16 cells" in the abstract clause and in Table 33's sixteen-cell row
+8	+1	limitation-resolver	Fig. 28 fix	"at W2, 8 and 7 of 20" (s5e/cand/assess_receipt.json 84266e30, cov68 0.40 x 20)
+7	+1	limitation-resolver	Fig. 28 fix	the same sentence (cov68 0.35 x 20)
+30	+1	limitation-resolver	U6	"the injected change is -30 %" (rec-g-ew29-inj; a_recovery.json 75db95a1)
+700000	+1	limitation-resolver	caption pass (cov2d title)	Fig. 28 caveat carried from analyze.py:465's removed title, "100 replicas of the nominal seed 700000"
+# journal-editor's rows at addf9ec0 (totals per token; they replace the earlier rows for the same tokens)
+5	+5	journal-editor	JE-WIM	"5 iterations" in four rows (Table 34's estimator cells) and "5 predictions" (Table 34's joint-test row)
+42	+3	journal-editor	JE-WIM/JE-DEF	"seed 42" (box, Table 34's 2D row); "42 (E_avail,W) cells" (definitions, Fig. 34's caption); "EW: 39 ... (42 with the three unsupported)" (definitions, sec_5d's label table)
+109	+3	journal-editor	JE-WIM/JE-DEF	the box's joint-test domain (\jtNcells); definitions: the Cells row (\jtNcells) and the J row (sec_5d's label table)
+400	+3	journal-editor	JE-DEF	Table 4 (e) and (f); the R row (sec_5d's label table)
+31	+3	journal-editor	JE-DEF	Table 4 (e) and (f); the R row (sec_5d's label table)
+100	+1	journal-editor	JE-DEF	Table 4 (d), the 100-tree refinement
+8	+1	journal-editor	JE-DEF	Table 4 (d), the 8-leaf refinement
+35	+2	journal-editor	JE-WIM/JE-DEF	the "3^5 grid" in the box's joint-test row and in the definitions Cells row (Fig. 34's caption)
+27	+1	journal-editor	JE-DEF	"H2: 27 supported" (sec_5d's label table; app_statmethods_nd B.2)
+205	+1	journal-editor	JE-WIM	"205 of the 224" (\lrval{q-ncells}; sec_method:207)
+224	+1	journal-editor	JE-WIM	"205 of the 224" (sec_method:207)
+6.46	+1	journal-editor	JE-WIM	\uqMedian (Table 34's 2D uncertainty row)
+4.76	+1	journal-editor	JE-WIM	\uqIntegral (Table 34's 2D uncertainty row)
+7.86	+1	journal-editor	JE-WIM	\fvval{sigmed-reported} (ES:8)
+6	+1	journal-editor	JE-WIM	"~6 %", tier 1, \lrval{fps-tier1-pct} (Table 34's extended-fiducial row)
+28	+1	journal-editor	JE-WIM	"~28 %", tier 2, \lrval{fps-tier2-pct} (Table 34's extended-fiducial row)
+1	+1	journal-editor	JE-WIM	"Tier 1" (Table 34's extended-fiducial row)
+2	+1	journal-editor	JE-WIM	"tier 2" (Table 34's extended-fiducial row)
+1.07	+1	journal-editor	JE-B7	app_negweight "Purity bias" now prints sec_5d.tex:52's "0.36-1.07 standard deviations" beside the 8-12
+0	+1	journal-editor	JE-I32	the item-32 sentence, kept verbatim in the ES and in section 12's opening ("0 of 300"); DECISION-20261116-joseph-paper-batch.md item 32 requires the ES to state it
+300	+1	journal-editor	JE-I32	the same, the 300 of "0 of 300"
