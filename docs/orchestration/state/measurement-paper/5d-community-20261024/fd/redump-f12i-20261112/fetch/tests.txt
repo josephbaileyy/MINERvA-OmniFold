@@ -1,8 +1,8 @@
-# HEAD b467aaff4e86c417b9aa6e819e1975b6a5c9bf5d
-# clean clone, Python 3.12.2, 2026-11-18T18:14:26Z
-# 93ddb2643c7b5a3b9690752f07d01f87d7aa3add7cd369a522cf1b248aff7d5d  nd-unfolding/rdx/rdx_fetch_remote.py
-# 1cb993451c8b3048e41fcfa73c34cb616a7c140bec2361d9928db650b47ce753  nd-unfolding/rdx/rdx_fetch_launch.sh
-# 4bb4cc4cbe38b9ce0dc228302b3d1f6ce0f7cd9ac152ce98f59eeddb2a635107  nd-unfolding/rdx/test_rdx_fetch.py
+# HEAD 3817eb0a8c8e2225b20ba0f179e8ce1628f9aabd
+# clean clone, Python 3.12.2, 2026-11-18T18:43:53Z
+# 89ea886d64a763c9a0fa24b7be3fd69fdbf5886b765678241370b184a21f2f0c  nd-unfolding/rdx/rdx_fetch_remote.py
+# 2650c5caf7a7846d99e8ff71def910dbd3c74ed329729113e10228d8768a9570  nd-unfolding/rdx/rdx_fetch_launch.sh
+# 27ff97f1759425f43461671ae2a61664cae253dadf993098a0c021b090d2db69  nd-unfolding/rdx/test_rdx_fetch.py
 # command: python3 -B -m unittest -v nd-unfolding/rdx/test_rdx_fetch.py
 test_a_clear_fence_streams_every_file_with_its_manifest (nd-unfolding.rdx.test_rdx_fetch.Fetch.test_a_clear_fence_streams_every_file_with_its_manifest) ... ok
 test_a_job_seen_after_the_last_read_exits_9_and_unpack_refuses (nd-unfolding.rdx.test_rdx_fetch.Fetch.test_a_job_seen_after_the_last_read_exits_9_and_unpack_refuses) ... ok
@@ -13,8 +13,8 @@ STOP: the stat of ['products/X1.npz'] moved during its read
 ok
 test_no_o_noatime_refuses_outside_a_test (nd-unfolding.rdx.test_rdx_fetch.Fetch.test_no_o_noatime_refuses_outside_a_test) ... ok
 test_the_declared_files (nd-unfolding.rdx.test_rdx_fetch.Fetch.test_the_declared_files) ... ok
-test_the_fence_reads_every_non_terminal_state (nd-unfolding.rdx.test_rdx_fetch.Fetch.test_the_fence_reads_every_non_terminal_state)
-A completing or configuring job of a fenced family can still write (the safety read's B1). The stub prints ... ok
+test_the_fence_classifies_each_state_against_the_terminal_set (nd-unfolding.rdx.test_rdx_fetch.Fetch.test_the_fence_classifies_each_state_against_the_terminal_set)
+The STOP of 2026-11-18 (this sacct rejects -s CF) and the director's ruling (b): no -s list; the State column ... ok
 test_the_fence_refuses_before_any_output (nd-unfolding.rdx.test_rdx_fetch.Fetch.test_the_fence_refuses_before_any_output) ... ok
 test_the_remote_script_is_python_3_6 (nd-unfolding.rdx.test_rdx_fetch.Fetch.test_the_remote_script_is_python_3_6) ... ok
 test_the_launcher_pins_the_script_and_checks_its_arguments (nd-unfolding.rdx.test_rdx_fetch.Launcher.test_the_launcher_pins_the_script_and_checks_its_arguments) ... ok
@@ -24,7 +24,7 @@ test_unpack_on_the_laptop_requires_the_declared_root (nd-unfolding.rdx.test_rdx_
 test_unpack_refuses_every_defect (nd-unfolding.rdx.test_rdx_fetch.Unpack.test_unpack_refuses_every_defect) ... ok
 
 ----------------------------------------------------------------------
-Ran 14 tests in 4.661s
+Ran 14 tests in 4.570s
 
 OK
 # exit 0
