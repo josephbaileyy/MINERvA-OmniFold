@@ -209,3 +209,5 @@ token	delta	owner	item	reason
 10	+3	limitation-resolver	LR-20..47, U13	the section 12 copies (+2) and the U13 paragraph's context
 2	+6	limitation-resolver	U1, U2, U9, quadrant/playlist splits	sec_fived16 source +17 of the 26 source tokens; a proportional share of the rendered +9 (the rest is journal-editor's sec_front and sec_limitations restatements); please recheck against the PDF contexts
 16	+1	limitation-resolver	U18 restatement	one of the sec_limitations "16"; the other is journal-editor's
+# journal-editor, the structural rewrite (2026-11-18)
+0.2	+1	journal-editor	JE-P5	pointer 5 repeats sec_experiment.tex:40's "~0.2 % playlist-to-playlist flux differences" (limitations-export n05)
