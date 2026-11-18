@@ -90,7 +90,7 @@ The exact-split cross-check is configuration~(b) of \S\ref{sec:method-config}. I
 \subsection{Uncertainty of the two-dimensional cross section (\S\ref{sec:systematics})}
 \label{app:devhistory-systematics}
 
-% Move pairs CV-A01..CV-A07 (cov2d; history-cuts/move-manifest-cv-20261118.tsv sends; journal-editor receives): sentences
+% Move pairs CV-A01, CV-A04..CV-A07 (cov2d; history-cuts/move-manifest-cv-20261118.tsv sends; journal-editor receives): sentences
 % of sec_systematics.tex @79a934a41, verbatim, with their source comment lines, except one token: in CV-A06 the
 % self-pointer (App.~\ref{app:devhistory}) becomes (Table~\ref{tab:devhistory}). The opening sentence is new framing.
 \subsubsection{Checks of the 2D covariance's construction, and a superseded approximation}
@@ -118,16 +118,6 @@ Seven universes of the sweep used by the quoted universe block (\S\ref{sec:uq-un
 % (inherited from DRAFT-disclosures D10, corrected in revision 4) was the wrong count.
 % plain-language pass (DECISION-20261018-joseph-plain-language-pass)
 % Note register round n3, batch n3-B (2026-10-27): the sweep's use by the quoted universe block is stated at its home, sec:uq-universes, which the sentence cites (R-N3b); the reproduction status, its consequence for the printed block, is unchanged.
-
-% CV-A02, CV-A03 (sec_systematics.tex:144, its second and third sentences; the first stays in the body):
-The flux-universe index identity behind the $1/\Phi_{u}$ rescale is established by the code chain and by an exact test: 900 events $\times$ 100 universes match to $5.5\times10^{-14}$, and a control shifted by one universe fails at $\ge0.245$ (Ref.~\cite{NoteRecords2026}, \recentry{flux-index}). In all 12 playlists the production flux weights equal those of the constraint file and of the earlier 2D budget, with which \S\ref{sec:uq-2d-scope} compares the quoted construction.
-% J3/J4 provisional (DECISION-20261018, packet W3: D8 and KI-94 in sec:uq-boot; D10 KI-91, laterals here).
-% stageC/production/DESIGN.md §3.4 (three streams), §S5 universe row, §12 (laterals: one active-file unfold each at seed
-% 42); stageC/production/REPORT.md §12. KI-91: stageB/REPORT.md (Stage B §2.1: max residual 5.5e-14; shifted-by-one control
-% minimum residual 0.245); s5.json checks weights_identical_across_playlists, weights_equal_constraint_file,
-% weights_equal_vl175_build_json (all ok; F4 part A).
-% Printed pointer moved to this comment by the plain-language pass: the index identity's (\texttt{KNOWN\_ISSUES.md} 91).
-% plain-language pass, review fix N1 (DECISION-20261018-joseph-plain-language-pass): the route is restored in words (row 91).
 
 % CV-A04..CV-A06 (sec_systematics.tex:247, its second and third sentences; the first stays in the body):
 An earlier construction kept the central-value weight and divided it by the universe's completeness. The covariance adopted on 2026-11-14 is the rebuild without that approximation, and the earlier covariance is kept only as a documented comparison (Table~\ref{tab:devhistory}).
