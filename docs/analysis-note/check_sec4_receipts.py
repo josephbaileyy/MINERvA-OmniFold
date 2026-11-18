@@ -2,7 +2,8 @@
 """Tie the paper's Sec. IV printed values, and the note values moved from it, to their committed receipts (PRD release
 audit ea939701, G11).
 
-Each check finds one printed value in paper_body.tex (or values.tex, or the note's sec_validation.tex or sec_5d.tex), recomputes it
+Each check finds one printed value in paper_body.tex (or values.tex, or the note's sec_validation.tex, sec_5d.tex or
+app_devhistory.tex), recomputes it
 from the committed receipt that backs it, and compares at the printed precision: |computed - printed| <= half a unit in
 the printed last digit ("round"), or printed - one unit <= computed < printed ("below", for "below X%": true, and tight
 to one unit). LaTeX comments are removed first, so a sentence kept only in a comment is not found. A value that cannot
@@ -12,7 +13,9 @@ publication/release/figs/fig_numbers.py instead; this covers the Sec. IV values 
 Register round r18 (DECISION-20261025-joseph-r18-history-to-note.md item 1) moved the history of the two superseded
 2D statistical bands out of the paper. Its bound values are now found where they print, in the note: the two-sigma
 nominal of the earlier band's test in sec_validation.tex (erf(2/sqrt 2), as a fraction); the post hoc rescoring against
-the rebuilt band in sec_validation.tex (the same receipt, rescore_vl169_toys_vl170.json, as fractions); and the earlier
+the rebuilt band, in sec_validation.tex until the deep restructure (DECISION-20261118) moved it verbatim to App. I's
+app:devhistory-band in app_devhistory.tex (move rows CV-VA02..VA04; the same receipt, rescore_vl169_toys_vl170.json, as
+fractions); and the earlier
 band's C2 as \\covTwoDCTwo in values.tex (the macro the note prints; the paper's percent form is no longer printed).
 The targeted round of 2026-11-03 moved the paper's background-closure paragraph (Sec. IV D) to the note, so its four
 bound values (VL149, VL151, VL152) are now found in sec_5d.tex's sec:val-negweight, with the residual of the other
@@ -159,7 +162,7 @@ CHECKS = [
      r"lies entirely below its window \(Gaussian ([0-9.]+)\)", lambda: math.erf(2.0 / math.sqrt(2.0)), "round"),
     ("statistical block median (Q_R, S1)", "paper_body.tex",
      r"with a median statistical uncertainty of \\SI\{([0-9.]+)\}\{\\percent\}", stat_median, "round"),
-    ("rescoring against the rebuilt (VL170) band, 2 and 1 sigma (note sec:coverage)", "sec_validation.tex",
+    ("rescoring against the rebuilt (VL170) band, 2 and 1 sigma (note app:devhistory-band)", "app_devhistory.tex",
      r"removes the tail undercoverage: \$C_2=([0-9.]+)\$ \$\[[0-9.,]+\]\$ and \$C_1=([0-9.]+)\$",
      lambda: (rescore("C2") / 100.0, rescore("C1") / 100.0), "round"),
     # The background-closure values bind in the note since the targeted round (DECISION-20261103-joseph-retire-density-
@@ -218,7 +221,8 @@ def evaluate(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
 
 
 def load() -> dict[str, str]:
-    return {n: (HERE / n).read_text() for n in ("paper_body.tex", "values.tex", "sec_validation.tex", "sec_5d.tex")}
+    return {n: (HERE / n).read_text() for n in ("paper_body.tex", "values.tex", "sec_validation.tex", "sec_5d.tex",
+                                               "app_devhistory.tex")}
 
 
 def gzip_self_test() -> bool:
