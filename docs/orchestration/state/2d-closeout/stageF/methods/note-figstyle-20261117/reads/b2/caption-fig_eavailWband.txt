@@ -1,0 +1,2 @@
+fig:eavailWband (sec_eavailw.tex)
+Projections of the unfolded $(\Eavail,W)$ cross section onto $\Eavail$ (left) and $W$ (right), with the predictions of four generators (GENIE~CV, GENIE$+$MEC, NuWro, GiBUU; GENIE and NuWro flux-corrected, \S\ref{sec:3d-models}).
