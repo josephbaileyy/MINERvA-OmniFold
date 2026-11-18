@@ -33,12 +33,14 @@ import pwd
 from pathlib import Path
 import re
 import shlex
+import shutil
 import subprocess
 import sys
 import time
 from typing import Any
 
 BOUND = "b9732c1ee94ac7b41d1d2572e0b8df7a196c1edd"
+RUN_NAME = "ibukt-20261118-b"
 DECLARATION = "8511925449d3d0b4826da4bd099dfd5b2d079cb92a47381552fe47f6602a3c14"
 BINDING = "df5cdaa88994ac1cafd255b556ef0ae53a42d10860bbf24a9df8c1dfa26aa25c"
 ACTIONS = ("envstage", "prepare", "screen", "score")
@@ -137,8 +139,8 @@ def validate_approval(action: str, pin: str, approval: dict[str, Any]) -> None:
             raise ValueError(
                 "fence acknowledgment is older than 15 minutes or in the future"
             )
-    if re.fullmatch(r"ibukt-[0-9]{8}-[a-z0-9-]+", approval["run_name"]) is None:
-        raise ValueError("invalid fresh campaign name")
+    if approval["run_name"] != RUN_NAME:
+        raise ValueError(f"approval must name campaign {RUN_NAME}")
     if not re.fullmatch(r"[A-Za-z0-9_.@-]+", approval["host"]) or approval[
         "host"
     ].startswith("-"):
@@ -184,7 +186,7 @@ def verify_previous(root: Path, action: str, expected: str, pin: str) -> dict[st
     return dict(record)
 
 
-def sacct(root: Path, label: str) -> str:
+def sacct(root: Path, label: str, *, report: bool = False) -> str:
     """Capture all allocations since declaration; refuse active protected families."""
     text = command(
         [
@@ -199,7 +201,16 @@ def sacct(root: Path, label: str) -> str:
             "--format=JobIDRaw,JobName%100,State%40,ElapsedRaw,NNodes",
         ]
     )
-    (root / f"{label}.sacct.txt").write_text(text)
+    snapshot = root / f"{label}.sacct.txt"
+    with snapshot.open("xb") as stream:
+        stream.write(text.encode("utf-8"))
+    if report:
+        print(
+            json.dumps(
+                {"path": snapshot.name, "sha256": digest(snapshot), "sacct": text}
+            ),
+            flush=True,
+        )
     if not text.strip():
         raise ValueError("empty scheduler fence snapshot")
     for line in text.splitlines():
@@ -263,22 +274,28 @@ def guarded(root: Path, label: str, script: str, args: list[str]) -> list[str]:
 
 def environment(root: Path) -> dict[str, Any]:
     """Measure the explicit ROOT environment; subsequent stages pin this record."""
-    import ROOT
-    import lightgbm
-    import numpy
-    import sklearn
-
     expected = Path.home() / ".conda/envs/root_6_28/bin/python3"
     if Path(sys.executable).resolve() != expected.resolve() or sys.version_info[:2] != (
         3,
         11,
     ):
         raise ValueError("requires the named root_6_28 Python 3.11 interpreter")
+    prefix = os.environ.get("CONDA_PREFIX")
+    if not prefix or Path(prefix).resolve() != expected.parent.parent.resolve():
+        raise ValueError("requires an activated root_6_28 conda environment")
+
+    import ROOT
+    import lightgbm
+    import numpy
+    import sklearn
+
     if not ROOT.gROOT.GetVersion().startswith("6.28/"):
         raise ValueError("requires ROOT 6.28")
     if ROOT.gSystem.Load(str(root / "stage/libRooUnfold.so")) < 0:
         raise ValueError("staged RooUnfold library failed to load")
     return {
+        "conda_prefix": str(Path(prefix).resolve()),
+        "compiler": shutil.which("x86_64-conda-linux-gnu-c++"),
         "python": sys.version,
         "python_sha256": digest(Path(sys.executable)),
         "ROOT": ROOT.gROOT.GetVersion(),
@@ -671,7 +688,7 @@ def remote(action: str, approval: dict[str, Any], source: bytes) -> None:
         CUDA_VISIBLE_DEVICES="",
     )
     write_json(directory / "approval.json", approval)
-    sacct(directory, "before")
+    sacct(directory, "before", report=action == "envstage")
     if action == "envstage":
         pass_receipt(root, action, pin, envstage(root))
         return
@@ -719,13 +736,25 @@ def main() -> None:
         ).encode()
     ).decode()
     bootstrap = (
-        "import base64,json,sys; p=json.loads(base64.b64decode(sys.stdin.buffer.read())); "
-        "s=base64.b64decode(p['source']); ns={'__name__':'ibukt_connect_remote'}; "
-        "exec(compile(s,'<ibukt-connect>','exec'),ns); ns['remote'](p['action'],p['approval'],s)"
+        "import base64,json,sys\n"
+        "p=json.loads(base64.b64decode(sys.stdin.buffer.read()))\n"
+        "if p['approval']['run_name'] != sys.argv[1]: raise SystemExit('campaign mismatch')\n"
+        "s=base64.b64decode(p['source'])\n"
+        "ns={'__name__':'ibukt_connect_remote'}\n"
+        "exec(compile(s,'<ibukt-connect>','exec'),ns)\n"
+        "ns['remote'](p['action'],p['approval'],s)"
     )
-    remote_command = (
-        'exec "$HOME/.conda/envs/root_6_28/bin/python3" -B -c ' + shlex.quote(bootstrap)
+    # Match the Miniforge hook and prefix used by the per-period remote2.sh.
+    shell = (
+        "hook=$(/global/common/software/nersc/pe/conda/24.10.0/Miniforge3-24.7.1-0/bin/conda shell.bash hook) || exit 16\n"
+        'eval "$hook" || exit 16\n'
+        'conda activate "$HOME/.conda/envs/root_6_28" || exit 16\n'
+        'exec "$HOME/.conda/envs/root_6_28/bin/python3" -B -c '
+        + shlex.quote(bootstrap)
+        + " "
+        + shlex.quote(RUN_NAME)
     )
+    remote_command = shlex.join(["bash", "-c", shell])
     subprocess.run(
         ["ssh", "-T", "-o", "BatchMode=yes", approval["host"], remote_command],
         input=packet,
