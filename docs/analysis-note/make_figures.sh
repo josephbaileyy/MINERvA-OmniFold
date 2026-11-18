@@ -398,6 +398,26 @@ install_palette_fig model_comp_ratio_maps.pdf                0c10ff269536b2aa3bd
 install_palette_fig tension_spectrum.pdf                     98d7ce2c9765275be579ef8345fde17f50a8b24b0e2f26846475d6998a163661
 install_palette_fig tension_chi2_map.pdf                     4f18c35be762355f16410bb8798ceae8f303e640e33bda985c90dbfdee23236a
 install_palette_fig tension_mode_maps.pdf                    f4d8a4197aa0318fd9704ab7c0d0011c9a85425e12398966bb552a1b79c80412
+
+echo "== note-newfigs-20261118 (digest-checked copy) =="
+# Two figures from committed records (cov2d, the director's request of 2026-11-18; the readability read's additions,
+# approved by Joseph): the sixteen-cell headline figure and the run-period graphic. Recipe and checks:
+# note-newfigs-20261118/README.md (python3 -I make_fig_fived16_headline.py; python3 -I make_fig_runperiod_steps.py; each
+# pins its records' sha256 and asserts the plotted numbers equal them). Also after the sync loop.
+NNF="$REPO/docs/orchestration/state/2d-closeout/stageF/methods/note-newfigs-20261118"
+install_newfig() {  # install_newfig <basename under $NNF and in $FIGDIR> <sha256>
+  local src="$NNF/$1" dst="$FIGDIR/$1" want="$2"
+  if [[ "$(sha256_of "$src")" != "$want" ]]; then
+    echo "REFUSE install: $src does not have sha256 $want" >&2; exit 1
+  fi
+  cp "$src" "$dst"
+  if [[ "$(sha256_of "$dst")" != "$want" ]]; then
+    echo "REFUSE install: $dst differs from $src after the copy" >&2; exit 1
+  fi
+  echo "  installed $1 ($want)"
+}
+install_newfig fived16_headline.pdf   69833f108f946b9b51c6795b10f1bdce941971ebf683482623735728e3059e6f
+install_newfig runperiod_steps.pdf    1088ae36889bffeea33182c3940bbf1ace4032dab1ff06e91000443618c12606
 install_palette_fig MEFHC_5iter_fig13.pdf                    0c451b833ce7fff455cb526ff172c27b9e8ed8fa9ff8a422d097116d28691aef
 install_palette_fig MEFHC_5iter_xsec_paper_pt_slices.pdf     180b87866305bf9ededbb94a7ba8aa796a49b3a629bdc219910fb077b1bc4233
 install_palette_fig MEFHC_5iter_xsec_paper_pz_slices.pdf     e64b65ffbf6bae236cc7ee7c1f65f434497b0a8dc5ca0214039a7e4dd1aa941e
