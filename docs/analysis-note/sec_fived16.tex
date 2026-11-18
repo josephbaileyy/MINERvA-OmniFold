@@ -10,7 +10,7 @@ The cells are formed from the H2 grid of \S\ref{sec:gbdt-model-dependence}, whic
 
 \begin{table}[htbp]
 \centering\footnotesize
-\caption{The sixteen reported cells: boxes ($\pT$, $\pPar$ and $q_3$ in GeV/$c$; $\Eavail$ and $W$ in GeV), cell-integrated cross section $f$ in units of $\fvval{f-unit}\,\si{cm^2/nucleon}$, and per-cell relative $\sigma$ (\%) under $C_{\mathrm{total}}$, under $C_{\mathrm{resp}}$ alone, under $C_{\mathrm{total}}+C_{\mathrm{resp}}$ (the covariance without the run-period block), under $C_{\mathrm{PL,5D}}$ alone and under the reported $C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}$ (\S\S\ref{sec:fived16-cov} and~\ref{sec:fived16-pl}).}
+\caption[The sixteen reported cells]{The reported uncertainty of each cell is the last column; the others separate its covariance terms. The sixteen reported cells: boxes ($\pT$, $\pPar$ and $q_3$ in GeV/$c$; $\Eavail$ and $W$ in GeV), cell-integrated cross section $f$ in units of $\fvval{f-unit}\,\si{cm^2/nucleon}$, and per-cell relative $\sigma$ (\%) under $C_{\mathrm{total}}$, under $C_{\mathrm{resp}}$ alone, under $C_{\mathrm{total}}+C_{\mathrm{resp}}$ (the covariance without the run-period block), under $C_{\mathrm{PL,5D}}$ alone and under the reported $C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}$ (\S\S\ref{sec:fived16-cov} and~\ref{sec:fived16-pl}).}
 \label{tab:fived16-cells}
 \resizebox{\textwidth}{!}{
 \begin{tabular}{@{}lcccccrrrrrr@{}}
@@ -48,7 +48,7 @@ The sixteen cells form four $(\pT,\pPar)$ quadrants, divided at $\pT=\fvval{h2-m
 
 \begin{table}[htbp]
 \centering
-\caption{Quadrant sums of the sixteen-cell result against the two-dimensional result, without their cross covariance: $S_{16}$ and $S_{\mathrm{2D}}$ with $\sigma$ ($10^{-39}\,\si{cm^2/nucleon}$), $d/S_{\mathrm{2D}}$, $z=d/(\sigma_{16}^2+\sigma_{\mathrm{2D}}^2)^{1/2}$ at $\rho=0$, the reading and $\rho^{*}$. The reported covariance is primary. The column without $C_{\mathrm{PL,5D}}$ is printed only: the two-dimensional covariance retains its run-period block, so the pair is not like-for-like and no outcome is read. A $\rho^{*}>1$ means agreement at every $\rho$.}
+\caption[Quadrant sums without the cross covariance]{Without the cross covariance, three quadrants agree only below a correlation $\rho^{*}$ between the two sums. Quadrant sums of the sixteen-cell result against the two-dimensional result, without their cross covariance: $S_{16}$ and $S_{\mathrm{2D}}$ with $\sigma$ ($10^{-39}\,\si{cm^2/nucleon}$), $d/S_{\mathrm{2D}}$, $z=d/(\sigma_{16}^2+\sigma_{\mathrm{2D}}^2)^{1/2}$ at $\rho=0$, the reading and $\rho^{*}$. The reported covariance is primary. The column without $C_{\mathrm{PL,5D}}$ is printed only: the two-dimensional covariance retains its run-period block, so the pair is not like-for-like and no outcome is read. A $\rho^{*}>1$ means agreement at every $\rho$.}
 \label{tab:fived16-quad-cr}
 \small\resizebox{\textwidth}{!}{
 \begin{tabular}{@{}llccrrlclc@{}}
@@ -74,7 +74,7 @@ The rule, fixed before the comparison was made, is that the results agree if the
 
 \begin{table}[htbp]
 \centering
-\caption{Quadrant differences of the sixteen-cell result from the two-dimensional result, with their cross covariance, at $r=0$ and $r=1$. Top, primary reading: the reported sixteen-cell covariance against the two-dimensional four-block covariance with its generator-shape term; each quadrant's $z=d/\sigma_d$ and the implied correlation between the two sums. Bottom: the joint $\chi^2$ for four degrees of freedom, its $p$, and the largest $|z|$ of either end, in the primary reading, against the four-block covariance alone (so the $C_{\mathrm{model}}$ shifts are not paired), and with the paired run-period terms set to zero.}
+\caption[Quadrant differences with the cross covariance]{With the cross covariance, the sixteen-cell result agrees with the two-dimensional result in every quadrant and jointly, at both ends of the tested family. Quadrant differences of the sixteen-cell result from the two-dimensional result, with their cross covariance, at $r=0$ and $r=1$. Top, primary reading: the reported sixteen-cell covariance against the two-dimensional four-block covariance with its generator-shape term; each quadrant's $z=d/\sigma_d$ and the implied correlation between the two sums. Bottom: the joint $\chi^2$ for four degrees of freedom, its $p$, and the largest $|z|$ of either end, in the primary reading, against the four-block covariance alone (so the $C_{\mathrm{model}}$ shifts are not paired), and with the paired run-period terms set to zero.}
 \label{tab:fived16-quad-x}
 \small
 \begin{tabular}{@{}lcccc@{}}
@@ -117,7 +117,7 @@ For $C_{\mathrm{resp}}$, each of four deposit categories in the simulation, prot
 
 \begin{table}[htbp]
 \centering\footnotesize
-\caption{Per-cell relative $\sigma$ (\%) of the covariance groups. $C_{\mathrm{e}}$ is the sum of the first six groups and the training-seed block (zero in every cell); $C_{\mathrm{total}}=C_{\mathrm{e}}+C_{\mathrm{model}}$. The four deposit categories of $C_{\mathrm{resp}}$ are in the last four columns.}
+\caption[Per-cell uncertainty by covariance group]{The table splits each cell's relative uncertainty into the covariance groups. Per-cell relative $\sigma$ (\%) of the covariance groups. $C_{\mathrm{e}}$ is the sum of the first six groups and the training-seed block (zero in every cell); $C_{\mathrm{total}}=C_{\mathrm{e}}+C_{\mathrm{model}}$. The four deposit categories of $C_{\mathrm{resp}}$ are in the last four columns.}
 \label{tab:fived16-groups}
 \scriptsize\setlength{\tabcolsep}{3pt} \resizebox{\textwidth}{!}{
 \begin{tabular}{@{}lrrrrrrrrrrrr@{}}
@@ -151,7 +151,7 @@ Table~\ref{tab:fived16-corr} gives the correlation matrix of the reported $C_{\m
 
 \begin{table}[htbp]
 \centering\scriptsize\setlength{\tabcolsep}{2.5pt}
-\caption{Correlation matrix of the reported covariance $C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}$ on the sixteen cells (lower triangle; the diagonal is one).}
+\caption[Correlations of the reported covariance]{The table gives the cell-to-cell correlations of the reported covariance. Correlation matrix of the reported covariance $C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}$ on the sixteen cells (lower triangle; the diagonal is one).}
 \label{tab:fived16-corr}
 \begin{tabular}{@{}lrrrrrrrrrrrrrrr@{}}
 \toprule
@@ -202,7 +202,7 @@ The fake-data tests compare the estimator's bias at truths other than the simula
 
 \begin{table}[htbp]
 \centering\footnotesize
-\caption{Fake-data tests on the sixteen cells: $\chi^2$ (16 degrees of freedom), $p$ and the cells with $|z|>\fvval{trig-z}$ of the bias of the mean against the reported $C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}$, against $C_{\mathrm{total}}+C_{\mathrm{resp}}$ (without the run-period block), and against $C_{\mathrm{total}}$ alone, each with the truth's own generator shift removed where the second column says so ($-$). $n$ is the number of pseudo-experiments.}
+\caption[Fake-data tests of the sixteen-cell bias]{Under the reported covariance, the fake-data bias meets the listing criterion at the GiBUU hybrid truth and the $q_3$ tilt; smaller covariances list more truths, with the same bias. Fake-data tests on the sixteen cells: $\chi^2$ (16 degrees of freedom), $p$ and the cells with $|z|>\fvval{trig-z}$ of the bias of the mean against the reported $C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}$, against $C_{\mathrm{total}}+C_{\mathrm{resp}}$ (without the run-period block), and against $C_{\mathrm{total}}$ alone, each with the truth's own generator shift removed where the second column says so ($-$). $n$ is the number of pseudo-experiments.}
 \label{tab:fived16-fd}
 \scriptsize\setlength{\tabcolsep}{3pt} \resizebox{\textwidth}{!}{
 \begin{tabular}{@{}llrrrlrrlrrl@{}}
@@ -245,7 +245,7 @@ One control check failed: the offset check, which compares the offset correction
 
 \begin{table}[htbp]
 \centering\footnotesize
-\caption{Descriptive fake-data numbers only, without test outcomes. In-sample: reported $C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}$, including the truth's generator shift, supplies no evidence (--- where the test already uses the full matrix). Model-only: statistical block plus $C_{\mathrm{model}}$ without that shift, omitting interaction, flux, detector, lateral and normalization blocks, gives a lower bound on $C_{\mathrm{model}}$'s reach. Power alternatives on Tune~v1 (r) and GENIE CV (g): NuWro $(\pT,\pPar,\Eavail)$ shape (P1), NuWro $q_3$ shape at fixed $(\Eavail,W)$ (P2), GENIE + MEC $(\Eavail,W)$ shape (P3).}
+\caption[Descriptive fake-data numbers]{Descriptive fake-data numbers only, without test outcomes. In-sample: reported $C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}$, including the truth's generator shift, supplies no evidence (--- where the test already uses the full matrix). Model-only: statistical block plus $C_{\mathrm{model}}$ without that shift, omitting interaction, flux, detector, lateral and normalization blocks, gives a lower bound on $C_{\mathrm{model}}$'s reach. Power alternatives on Tune~v1 (r) and GENIE CV (g): NuWro $(\pT,\pPar,\Eavail)$ shape (P1), NuWro $q_3$ shape at fixed $(\Eavail,W)$ (P2), GENIE + MEC $(\Eavail,W)$ shape (P3).}
 \label{tab:fived16-fdvar}
 \scriptsize\setlength{\tabcolsep}{3pt}
 \begin{tabular}{@{}lrrr@{\qquad}lrrr@{}}
@@ -294,7 +294,7 @@ A later investigation of that gate at the nominal truth, which concerns the test
 % DECISION-20261109-joseph-coverage-case-wording.md item 2(b). Values: \fvval{ll5d-*}, ported from the paper branch
 % (check_ll5d_port.py); the per-tune classes are hand-typed and asserted against the readout by make_values_fived16.py
 % (LL5D_PRINTED_CLASS).
-\paragraph{The second coverage test.} A second coverage test at the same two tunes, with the reported estimator, flags joint under-coverage at both tunes in both of its variants, without and with the GEANT4 neutron and proton bands, for a covariance without the response and run-period terms. Without the two bands, the test at \fvval{f1-tune-g18} flags under-coverage jointly, with no cell flagged, and at \fvval{f1-tune-ar23} it flags under-coverage jointly and in \fvval{ll5d-ar23-minus2-names}. With the two bands, the flags are the same: jointly, with no cell flagged, at \fvval{f1-tune-g18}, and jointly and in \fvval{ll5d-ar23-all-names} at \fvval{f1-tune-ar23}. Over the four readings, \fvval{ll5d-njoint-min} to \fvval{ll5d-njoint-max} of \fvval{ll5d-ntoys} pseudo-experiments lie in the joint region, against a threshold of \fvval{ll5d-kjoint-all}, and the mean $\chi^2$ per degree of freedom is \fvval{ll5d-chi2ndf-min} to \fvval{ll5d-chi2ndf-max}. Whether the joint failure persists with those terms included remains untested. Under the rule fixed before the result, the test is reported as descriptive: the criteria fixed in advance were applied, but a repair was chosen after an entry-check stop (App.~\ref{app:devhistory}). Its pseudo-experiments draw the statistical, flux, interaction and detector uncertainties, with the lateral and normalization ones as surrogates. The graded covariance includes the model term, which is not drawn, since its role is to cover each tune's departure from the simulation. At each tune the covariance is built by the reported procedure using the tune's pseudo-data at their means, with the statistical block bootstrapped from one Poisson realization and the seed block not rebuilt; this fixed covariance stands in for one rebuilt for each pseudo-experiment, which was not computed. The lateral block is carried to each tune in relative form and is not tested, and the tunes' overlaps with the model term's generators (above) apply. The response and run-period terms are left out of the graded covariance. The test has two correlated variants, without and with the GEANT4 neutron and proton bands; the primary variant omits them from both its pseudo-data and its graded covariance. Removing the two bands' block from the covariance graded with them raises the $\chi^2$ of any fixed set of residuals by at most a factor of \fvval{ll5d-mumax-bound-g18} at \fvval{f1-tune-g18} and \fvval{ll5d-mumax-bound-ar23} at \fvval{f1-tune-ar23}, a bound set by the largest fraction of that covariance, in any direction, that the block carries. The bound applies to the block's place in the covariance only, not to the bands' pseudo-data draws, and what separates the bands' pseudo-experiment and simulation-side blocks remains unclassified. Each tune and each variant is graded separately, per cell and jointly, against thresholds set from the test's null distribution, with a resolution of about \fvval{ll5d-cellres} in coverage per cell and 0.08 jointly. In one variant at one tune, the cell tests raise a false flag with probability at most 0.025, and so does the joint test. These rates are those of a null in which the fixed covariance is exact; the covariance is itself estimated from finite ensembles, which can make $\chi^2$ larger than this null allows, most along its smallest-eigenvalue directions. No correction for this is made. A cell that passes at a tune also passes under the procedure's full covariance there, and the joint reading carries over only if both matrices have 16 degrees of freedom.
+\paragraph{The second coverage test.} A second coverage test at the same two tunes, with the reported estimator, flags joint under-coverage at both tunes in both of its variants, without and with the GEANT4 neutron and proton bands, for a covariance without the response and run-period terms. Without the two bands, the test at \fvval{f1-tune-g18} flags under-coverage jointly, with no cell flagged, and at \fvval{f1-tune-ar23} it flags under-coverage jointly and in \fvval{ll5d-ar23-minus2-names}. With the two bands, the flags are the same: jointly, with no cell flagged, at \fvval{f1-tune-g18}, and jointly and in \fvval{ll5d-ar23-all-names} at \fvval{f1-tune-ar23}. Over the four readings, \fvval{ll5d-njoint-min} to \fvval{ll5d-njoint-max} of \fvval{ll5d-ntoys} pseudo-experiments lie in the joint region, against a threshold of \fvval{ll5d-kjoint-all}, and the mean $\chi^2$ per degree of freedom is \fvval{ll5d-chi2ndf-min} to \fvval{ll5d-chi2ndf-max}. Whether the joint failure persists with those terms included remains untested. Under the rule fixed before the result, the test is reported as descriptive: the criteria fixed in advance were applied, but a repair was chosen after an entry-check stop (App.~\ref{app:devhistory}). Its design, the bound on the GEANT4 bands' block and the scope of its readings are in \S\ref{sec:limitations-fived16}.
 % U11 (currency check of 2fe070fec): the GEANT4 block bound, DECISION-20261116-joseph-paper-batch.md item 3 (A6) wording, from fd/receipts-ll5d/mumax/run/node/mumax.json (422db056; commit e3a47f391), by mumax_values() in make_values_fived16.py.
 % absence-ok: "remains untested" and "was not computed" are scoping statements fixed by the declaration (LL5D-DECLARATION.md :323-324, sec. 13 CANNOT SUPPORT) and the paper's approved section 7 sentence (DECISION-20261116-joseph-paper-batch.md item 2)
 
@@ -316,7 +316,7 @@ At the two flagged truths, the root-mean-square bias of IBU at five iterations o
 
 \begin{table}[htbp]
 \centering\small
-\caption{Retained fraction $\rho$, root-mean-square over the sixteen cells of the bias $b_c$, which is relative to the prior cross section, and noise-free $\chi^2$ (16 degrees of freedom) at the two flagged truths, for configuration~(e) and IBU at five iterations, on noise-free pseudo-data at one simulation split. A negative $\rho$ means that, along the prior-to-truth direction, the result overshoots the truth; the total bias is in the RMS and $\chi^2$ columns.}
+\caption[Retained prior at the two flagged truths]{At both flagged truths, IBU at five iterations overshoots the truth along the prior-to-truth direction, while configuration~(e) retains part of each departure. Retained fraction $\rho$, root-mean-square over the sixteen cells of the bias $b_c$, which is relative to the prior cross section, and noise-free $\chi^2$ (16 degrees of freedom) at the two flagged truths, for configuration~(e) and IBU at five iterations, on noise-free pseudo-data at one simulation split. A negative $\rho$ means that, along the prior-to-truth direction, the result overshoots the truth; the total bias is in the RMS and $\chi^2$ columns.}
 \label{tab:fived16-prr}
 \begin{tabular}{lcccccc}
 \toprule
@@ -336,7 +336,7 @@ No tested level of any setting lowers $\rho$ by as much as the threshold, and no
 
 \subsection{Dependence on the unfolding algorithm}
 \label{sec:fived16-ibu}
-A comparison specified before it ran puts the result beside a binned D'Agostini iterative Bayesian unfolding (IBU) of the same data, with the same simulation, the same background template and the same weight-only systematic universes as configuration~(e), at \lrval{rg1-K} iterations, integrated to the same sixteen cells. It forms $T=\Delta^{\mathsf{T}}C_{\Delta}^{-1}\Delta$ from the difference $\Delta$ of the two results and its covariance $C_{\Delta}$, which holds the statistical, universe and normalization blocks of the difference (not the model, lateral, $C_{\mathrm{resp}}$ or run-period blocks), and compares $T$ with bars calibrated on its own simulated null of exact agreement. The two results differ: $T=\lrval{rg1-T}$, against calibrated bars of \lrval{rg1-bar1} (\lrval{rg1-lev1}) and \lrval{rg1-bar2} (\lrval{rg1-lev2}). The reported cells therefore depend on the unfolding algorithm at the level of $T$. The largest differences, IBU minus configuration~(e) as fractions of configuration~(e), are $\fvval{ibu16-dof-R11}\,\%$ in R11, $\fvval{ibu16-dof-R06}\,\%$ in R06 and $\fvval{ibu16-dof-R05}\,\%$ in R05, or \fvval{ibu16-dsig-R11}, \fvval{ibu16-dsig-R06} and \fvval{ibu16-dsig-R05} times each cell's reported standard deviation; over the sixteen cells the difference reaches \fvval{ibu16-dsig-max} times a cell's reported standard deviation. This dependence is a stated limitation of the result: no uncertainty block is added for it, and the reported cells and covariance are unchanged. A reading of differ means that a difference is detectable at this noise; it does not show that either method is correct.
+A comparison specified before it ran puts the result beside a binned D'Agostini iterative Bayesian unfolding (IBU) of the same data, with the same simulation, the same background template and the same weight-only systematic universes as configuration~(e), at \lrval{rg1-K} iterations, integrated to the same sixteen cells. It forms $T=\Delta^{\top}C_{\Delta}^{-1}\Delta$ from the difference $\Delta$ of the two results and its covariance $C_{\Delta}$, which holds the statistical, universe and normalization blocks of the difference (not the model, lateral, $C_{\mathrm{resp}}$ or run-period blocks), and compares $T$ with bars calibrated on its own simulated null of exact agreement. The two results differ: $T=\lrval{rg1-T}$, against calibrated bars of \lrval{rg1-bar1} (\lrval{rg1-lev1}) and \lrval{rg1-bar2} (\lrval{rg1-lev2}). The reported cells therefore depend on the unfolding algorithm at the level of $T$. The largest differences, IBU minus configuration~(e) as fractions of configuration~(e), are $\fvval{ibu16-dof-R11}\,\%$ in R11, $\fvval{ibu16-dof-R06}\,\%$ in R06 and $\fvval{ibu16-dof-R05}\,\%$ in R05, or \fvval{ibu16-dsig-R11}, \fvval{ibu16-dsig-R06} and \fvval{ibu16-dsig-R05} times each cell's reported standard deviation; over the sixteen cells the difference reaches \fvval{ibu16-dsig-max} times a cell's reported standard deviation. This dependence is a stated limitation of the result: no uncertainty block is added for it, and the reported cells and covariance are unchanged. A reading of differ means that a difference is detectable at this noise; it does not show that either method is correct.
 % U14 (currency check of 2fe070fec): the per-cell differences from fd/receipts-ref-g1/a1-read/readout.json (4db170d3), printed_beside_R1 (fold_K5), over the reported sigma (sig-reported-*), by currency_values() in make_values_fived16.py; the paper's section 4.5 and limitation 4 at 5bbb9d269.
 
 Descriptively, at a NuWro closure the IBU's median absolute residual is \lrval{rg1-r2-nuwro} times that of configuration~(e), and at the simulation's own truth, a trivial closure, the IBU's residual vanishes; neither is a coverage statement for either estimator. The IBU uncertainty is a median \lrval{rg1-r3-med} times that of configuration~(e) over the sixteen cells (\lrval{rg1-r3-lo}--\lrval{rg1-r3-hi}); configuration~(e)'s statistical block includes its estimator's own noise, refit per replica, and the IBU has none.
@@ -355,7 +355,7 @@ All five predictions are in the analysis definitions of $W$ and of the muon angl
 
 \begin{table}[htbp]
 \centering\footnotesize
-\caption{$\chi^2$ against the reported covariance plus $V_g$, $C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}+V_g$, where $V_g$ is the prediction's finite-sample (diagonal) covariance, with the shape-only $\chi^2$ beside it, and the same two without the run-period block, against $C_{\mathrm{total}}+C_{\mathrm{resp}}+V_g$. All five predictions are in the analysis definitions, with NuWro and GiBUU on carbon, as in the methods paper. Their CH-corrected values are in Table~\ref{tab:fived16-gen-target}, with the caveat of \S\ref{sec:joint5d-ch}. The ndf of each block is given in its heading.}
+\caption[Sixteen-cell comparison with generator predictions]{The comparison with the five generator predictions is descriptive; each $\chi^2$ is in the table. $\chi^2$ against the reported covariance plus $V_g$, $C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}+V_g$, where $V_g$ is the prediction's finite-sample (diagonal) covariance, with the shape-only $\chi^2$ beside it, and the same two without the run-period block, against $C_{\mathrm{total}}+C_{\mathrm{resp}}+V_g$. All five predictions are in the analysis definitions, with NuWro and GiBUU on carbon, as in the methods paper. Their CH-corrected values are in Table~\ref{tab:fived16-gen-target}, with the caveat of \S\ref{sec:joint5d-ch}. The ndf of each block is given in its heading.}
 \label{tab:fived16-gen}
 \begin{tabular}{@{}lcccc@{}}
 \toprule
@@ -378,7 +378,7 @@ Table~\ref{tab:fived16-pulls} gives each cell's pull and $(g-f)/f$.
 
 \begin{table}[htbp]
 \centering\footnotesize
-\caption{Per-cell pull $(f-g)/\sigma$ against $C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}+V_g$ and $(g-f)/f$ (\%) for the secondary comparison with NuWro and GiBUU corrected to CH; the other predictions are those of Table~\ref{tab:fived16-gen}, and GiBUU is shown on its eight cells only.}
+\caption[Per-cell pulls of the CH-corrected comparison]{The table locates each prediction's differences from the result cell by cell. Per-cell pull $(f-g)/\sigma$ against $C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}+V_g$ and $(g-f)/f$ (\%) for the secondary comparison with NuWro and GiBUU corrected to CH; the other predictions are those of Table~\ref{tab:fived16-gen}, and GiBUU is shown on its eight cells only.}
 \label{tab:fived16-pulls}
 \scriptsize\setlength{\tabcolsep}{3pt} \resizebox{\textwidth}{!}{
 \begin{tabular}{@{}lrrrrrrrrrr@{}}
@@ -413,7 +413,7 @@ The sensitivity of the reported $\chi^2$ to the correlations is probed by shrink
 
 \begin{table}[htbp]
 \centering\footnotesize
-\caption{$\chi^2$ against $C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}+V_g$ with one group's correlations shrunk by $\alpha$ toward the diagonal ($\alpha$ of the specified grid; the first column is the unshrunk $\chi^2$). NuWro and GiBUU are corrected to CH, the secondary comparison. Degrees of freedom as in Table~\ref{tab:fived16-gen}.}
+\caption[Generator $\chi^2$ under shrunk correlations]{The table shows how each $\chi^2$ depends on the correlations of one covariance group at a time. $\chi^2$ against $C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}+V_g$ with one group's correlations shrunk by $\alpha$ toward the diagonal ($\alpha$ of the specified grid; the first column is the unshrunk $\chi^2$). NuWro and GiBUU are corrected to CH, the secondary comparison. Degrees of freedom as in Table~\ref{tab:fived16-gen}.}
 \label{tab:fived16-sens}
 \begin{tabular}{@{}llrrrrr@{}}
 \toprule
@@ -458,13 +458,13 @@ The $\chi^2$ can be decomposed along the eigenmodes of each prediction's covaria
 \begin{figure}[tbp]
 \centering
 \includegraphics[width=\linewidth]{figures/fd_g_fig_modes.pdf}
-\caption{Three leading $\chi^2$ modes (columns, ranked) for GENIE CV, GENIE + MEC, NuWro (corrected to CH, the secondary comparison) and MINERvA Tune~v1 (rows), using $C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}+V_g$ relative to $f$. Bars: unit loadings on R00--R15, largest loading positive. Panels: $\chi^2$ share, relative $\sigma$, and distance (residual projection/$\sigma$). The residual $(f-g)/f$ makes positive distance mean data above prediction along the signed mode. GiBUU's 8-cell comparison supplies no modes here. Predictions use analysis definitions.}
+\caption[Leading $\chi^2$ modes of the generator comparison]{The leading modes locate where among the sixteen cells each prediction's $\chi^2$ arises. Three leading $\chi^2$ modes (columns, ranked) for GENIE CV, GENIE + MEC, NuWro (corrected to CH, the secondary comparison) and MINERvA Tune~v1 (rows), using $C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}+V_g$ relative to $f$. Bars: unit loadings on R00--R15, largest loading positive. Panels: $\chi^2$ share, relative $\sigma$, and distance (residual projection/$\sigma$). The residual $(f-g)/f$ makes positive distance mean data above prediction along the signed mode. GiBUU's 8-cell comparison supplies no modes here. Predictions use analysis definitions.}
 \label{fig:fived16-modes}
 \end{figure}
 
 \begin{table}[htbp]
 \centering\footnotesize
-\caption{Eigenmode breakdown of the $\chi^2$, with NuWro and GiBUU corrected to CH (the secondary comparison): the fewest modes, in $\chi^2$ order, carrying \fvval{diag-fractions}\,\% of it, and the top mode's share of the $\chi^2$, its relative $\sigma$ and its dominant block.}
+\caption[Eigenmode breakdown of the generator $\chi^2$]{The table counts the modes that carry most of each $\chi^2$ and names the top mode's dominant block. Eigenmode breakdown of the $\chi^2$, with NuWro and GiBUU corrected to CH (the secondary comparison): the fewest modes, in $\chi^2$ order, carrying \fvval{diag-fractions}\,\% of it, and the top mode's share of the $\chi^2$, its relative $\sigma$ and its dominant block.}
 \label{tab:fived16-diag}
 \begin{tabular}{@{}lcccrrl@{}}
 \toprule
@@ -501,7 +501,7 @@ This measures $C_{\mathrm{model}}$'s dependence on the target only: its definiti
 
 \begin{table}[htbp]
 \centering\footnotesize
-\caption{The CH-corrected values, a secondary comparison (\S\ref{sec:joint5d-ch}), and the sensitivities of the CH correction. Rows marked (generator) are in the generators' own definitions; the others in the analysis definitions. GENIE CV's hydrogen is a sensitivity only. The native NuWro rows are a check of the combination, which the comparison uses.}
+\caption[CH-corrected generator comparison and its sensitivities]{The CH correction is a secondary comparison, with its sensitivities beside it. The CH-corrected values, a secondary comparison (\S\ref{sec:joint5d-ch}), and the sensitivities of the CH correction. Rows marked (generator) are in the generators' own definitions; the others in the analysis definitions. GENIE CV's hydrogen is a sensitivity only. The native NuWro rows are a check of the combination, which the comparison uses.}
 \label{tab:fived16-gen-target}
 \begin{tabular}{@{}lcccc@{}}
 \toprule
@@ -529,7 +529,7 @@ CH, GENIE CV's hydrogen (generator) & \fvval{g-gibuu-genieh-total-chi2} & \fvval
 
 \begin{table}[htbp]
 \centering\footnotesize
-\caption{$\chi^2$ for four predictions (Table~\ref{tab:fived16-gen}) with $C_{\mathrm{model}}$ removed ($\times0$), reported ($\times1$), doubled ($\times2$), or NuWro/GiBUU shape ratios changed from carbon to CH, all else fixed. $\Delta_{\mathrm{CH}}$: CH minus reported, from unrounded values. Every $\chi^2$ includes $V_g$; GiBUU uses 8 cells. The CH column is this note's sensitivity, omitted by the methods paper because it uses the free-proton samples of \S\ref{sec:joint5d-ch}. Reported ratios remain carbon.}
+\caption[Generator $\chi^2$ against the size of $C_{\mathrm{model}}$]{The table shows how each $\chi^2$ moves when $C_{\mathrm{model}}$ is removed, doubled or rebuilt from CH ratios. $\chi^2$ for four predictions (Table~\ref{tab:fived16-gen}) with $C_{\mathrm{model}}$ removed ($\times0$), reported ($\times1$), doubled ($\times2$), or NuWro/GiBUU shape ratios changed from carbon to CH, all else fixed. $\Delta_{\mathrm{CH}}$: CH minus reported, from unrounded values. Every $\chi^2$ includes $V_g$; GiBUU uses 8 cells. The CH column is this note's sensitivity, omitted by the methods paper because it uses the free-proton samples of \S\ref{sec:joint5d-ch}. Reported ratios remain carbon.}
 \label{tab:fived16-gen-cmodel}
 \begin{tabular}{@{}llccccc@{}}
 \toprule
@@ -560,7 +560,7 @@ prediction & $\chi^2$ & $\times0$ & $\times1$ (reported) & $\times2$ & CH & $\De
 
 \begin{table}[htbp]
 \centering\footnotesize
-\caption{The comparison of Table~\ref{tab:fived16-gen} as first made, with the predictions in their generator definitions and NuWro and GiBUU on carbon, with no correction to CH: against the reported covariance plus $V_g$ and without the run-period block, as in Table~\ref{tab:fived16-gen}, and in the last column against $C_{\mathrm{total}}+V_g$, without the response and run-period blocks.}
+\caption[The generator comparison as first made]{The table keeps the comparison as first made, before the predictions were moved to the analysis definitions. The comparison of Table~\ref{tab:fived16-gen} as first made, with the predictions in their generator definitions and NuWro and GiBUU on carbon, with no correction to CH: against the reported covariance plus $V_g$ and without the run-period block, as in Table~\ref{tab:fived16-gen}, and in the last column against $C_{\mathrm{total}}+V_g$, without the response and run-period blocks.}
 \label{tab:fived16-gen-stageg}
 \begin{tabular}{@{}lccccc@{}}
 \toprule
