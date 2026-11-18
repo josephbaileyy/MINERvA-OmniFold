@@ -130,3 +130,9 @@ token	delta	owner	item	reason
 # director-helper-3's rows
 1.4	+1	director-helper-3	CX-takeover	fig:eavailWband caption names the interval of sec:eavailw-band (Grok cx1 finding 1), "at 1.4 <= W < 1.8 GeV"
 1.8	+1	director-helper-3	CX-takeover	the same caption interval
+0.4	+2	director-helper-3	CX-cx1	fig:ascencio caption (Codex cx1) restates the bin-identical paragraph's edges q3 in [0.4,0.6) and E_avail < 0.4 GeV (sec_3d.tex)
+0.6	+2	director-helper-3	CX-cx1	the same caption: q3 in [0.4,0.6) and [0.6,1.2) GeV
+1.2	+1	director-helper-3	CX-cx1	the same caption: q3 in [0.6,1.2) GeV
+111	+1	director-helper-3	CX-04	COMBINED-PLAN sec. 4 item 16: section 11.6 keeps the counts beside Table 30 (111 interrupted) while App. I holds the procedure; intended duplicate
+113	+1	director-helper-3	CX-04	the same: 113 never started
+53	+1	director-helper-3	CX-04	the same: 53 power pseudo-experiments
