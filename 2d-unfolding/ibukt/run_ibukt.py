@@ -106,7 +106,38 @@ def truth_controls(
     return checks
 
 
-def nominal_control(path: Path, bank_pin: str) -> dict[str, float]:
+def validate_product(
+    values: dict[str, np.ndarray[Any, Any]],
+    bank: dict[str, np.ndarray[Any, Any]],
+    truth: str,
+) -> None:
+    """Require full grid vectors and the reporting mask frozen in the bank."""
+    selected = values["selected"]
+    if (
+        selected.shape != (205,)
+        or not np.issubdtype(selected.dtype, np.integer)
+        or np.any(selected < 0)
+        or np.any(selected >= 224)
+        or np.unique(selected).size != 205
+        or not np.array_equal(selected, bank["selected"])
+    ):
+        raise ValueError("product reporting mask differs from the 205-cell bank mask")
+    for key in ("truth", "prior", "omnifold", "ibu5", "ibu10"):
+        if values[key].shape != (224,) or not np.all(np.isfinite(values[key])):
+            raise ValueError(f"invalid product vector: {key}")
+    for key, expected in (
+        ("truth", bank[f"truth_{truth}"]),
+        ("prior", bank["truth_nominal"]),
+    ):
+        if not np.array_equal(values[key], expected):
+            raise ValueError(f"product {key} differs from bank")
+
+
+def nominal_control(
+    path: Path,
+    bank_pin: str,
+    bank: dict[str, np.ndarray[Any, Any]] | None = None,
+) -> dict[str, float]:
     """Verify a completed noise-free nominal product before a Poisson fit."""
     record = read_json(path)
     if (
@@ -129,6 +160,8 @@ def nominal_control(path: Path, bank_pin: str) -> dict[str, float]:
     if digest(product) != record["product_sha256"]:
         raise ValueError("noise-free nominal control product changed")
     values = read_npz(product)
+    if bank is not None:
+        validate_product(values, bank, "nominal")
     selected = values["selected"]
     return {
         method: core.nominal_recovery(
@@ -480,8 +513,33 @@ def pair(args: argparse.Namespace, cfg: dict[str, Any]) -> None:
 
 def score(args: argparse.Namespace, cfg: dict[str, Any]) -> None:
     """Read all 35 complete pairs; emit every per-cell reading without selection."""
+    config_pin = digest(core.CONFIG)
+    identity = read_json(args.identity)
+    if identity["status"] != "PASS" or identity["config_sha256"] != config_pin:
+        raise ValueError("identity control not passed for this configuration")
+    bank_pin = digest(args.bank)
+    if bank_pin != identity["bank_sha256"]:
+        raise ValueError("bank differs from identity control")
+    bank = read_npz(args.bank)
+    selected = bank["selected"]
+    if (
+        selected.shape != (205,)
+        or not np.issubdtype(selected.dtype, np.integer)
+        or np.any(selected < 0)
+        or np.any(selected >= 224)
+        or np.unique(selected).size != 205
+    ):
+        raise ValueError("bank reporting mask must contain 205 unique valid cells")
+    for name in cfg["truths"]:
+        truth = bank[f"truth_{name}"]
+        if truth.shape != (224,) or not np.all(np.isfinite(truth)):
+            raise ValueError(f"invalid bank truth vector: {name}")
+        if np.any(truth[selected] <= 0):
+            raise ValueError(f"nonpositive reported bank truth: {name}")
+    control_pin = digest(args.control)
+    control_checks = nominal_control(args.control, bank_pin, bank)
+    control = read_json(args.control)
     readout = {}
-    bank_pins = set()
     for name in cfg["truths"]:
         values = []
         for trial in range(5):
@@ -494,27 +552,25 @@ def score(args: argparse.Namespace, cfg: dict[str, Any]) -> None:
                 record["seed"],
                 record["sampling"],
                 record["config_sha256"],
+                record["bank_sha256"],
+                record["control_sha256"],
             ) != (
                 "PASS",
                 name,
                 trial,
                 cfg["seeds"][trial],
                 "poisson",
-                digest(core.CONFIG),
+                config_pin,
+                bank_pin,
+                control_pin,
             ):
                 raise ValueError("missing or mismatched pair receipt")
             if record["product_sha256"] != digest(directory / "pair.npz"):
                 raise ValueError("pair digest differs")
-            bank_pins.add(record["bank_sha256"])
-            values.append(read_npz(directory / "pair.npz"))
+            product = read_npz(directory / "pair.npz")
+            validate_product(product, bank, name)
+            values.append(product)
         first = values[0]
-        selected = first["selected"]
-        for item in values[1:]:
-            for key in ("truth", "prior", "selected"):
-                if not np.array_equal(item[key], first[key]):
-                    raise ValueError(
-                        "truth or cell identity differs across paired trials"
-                    )
         readout[name] = {
             method: core.recoveries(
                 np.array([v[method][selected] for v in values]),
@@ -528,12 +584,15 @@ def score(args: argparse.Namespace, cfg: dict[str, Any]) -> None:
                 "secondary" if method == "ibu10" else "primary"
             )
         readout[name]["cells"] = selected.tolist()
-    if len(bank_pins) != 1:
-        raise ValueError("mixed simulation banks")
     write_json(
         args.out / "readout.json",
         {
             "schema": "ibukt-recovery/2",
+            "bank_sha256": bank_pin,
+            "config_sha256": config_pin,
+            "control_sha256": control_pin,
+            "control_product_sha256": control["product_sha256"],
+            "control_checks": control_checks,
             "primary_methods": ["omnifold", "ibu5"],
             "secondary_methods": ["ibu10"],
             "truths": readout,
@@ -564,8 +623,11 @@ def main() -> None:
         parser.error("Poisson pair requires --control from the noise-free nominal pair")
     if args.noise_free and args.mode != "pair":
         parser.error("--noise-free is only valid for the nominal control pair")
-    if args.mode == "score" and args.products is None:
-        parser.error("score requires products")
+    if args.mode == "score" and any(
+        getattr(args, key) is None
+        for key in ("products", "bank", "identity", "control")
+    ):
+        parser.error("score requires products, bank, identity and control")
     for path in (args.out, args.stage):
         if not path.resolve().is_relative_to(Path("/pscratch")):
             parser.error("production stage/output must be on pscratch")

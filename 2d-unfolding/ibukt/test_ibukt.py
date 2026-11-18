@@ -321,25 +321,67 @@ def test_pair_shares_exact_refined_target_and_preserves_response(
     np.testing.assert_array_equal(runner.read_npz(bank_path)["wt"], weights)
 
 
-def test_score_requires_complete_consistent_digest_bound_pairs(
-    cfg, tmp_path, portable_io
-):
+@pytest.fixture
+def score_inputs(cfg, tmp_path, portable_io):
+    """Build a complete synthetic ensemble with pinned bank and nominal control."""
     from argparse import Namespace
 
+    bank = {"selected": np.arange(205)}
+    for index, name in enumerate(cfg["truths"]):
+        bank[f"truth_{name}"] = np.linspace(1, 2, 224) * (1 + index / 10)
+    bank_path = tmp_path / "bank.npz"
+    np.savez(bank_path, **bank)
+    bank_pin = runner.digest(bank_path)
+    config_pin = runner.digest(core.CONFIG)
+    identity = tmp_path / "identity.json"
+    runner.write_json(
+        identity,
+        dict(status="PASS", bank_sha256=bank_pin, config_sha256=config_pin),
+    )
     products = tmp_path / "products"
     products.mkdir()
+    control_dir = products / "nominal-control"
+    control_dir.mkdir()
+    nominal = bank["truth_nominal"]
+    np.savez(
+        control_dir / "pair.npz",
+        truth=nominal,
+        prior=nominal,
+        selected=bank["selected"],
+        omnifold=nominal * 1.01,
+        ibu5=nominal,
+        ibu10=nominal,
+    )
+    control = control_dir / "pair.json"
+    runner.write_json(
+        control,
+        dict(
+            status="PASS",
+            truth="nominal",
+            sampling="noise-free",
+            nominal_tolerance=core.RECOVERY_TOLERANCE,
+            bank_sha256=bank_pin,
+            config_sha256=config_pin,
+            product_sha256=runner.digest(control_dir / "pair.npz"),
+        ),
+    )
     for name in cfg["truths"]:
         for trial in range(5):
             directory = products / f"{name}-{trial}"
             directory.mkdir()
+            truth = bank[f"truth_{name}"]
+            of = truth.copy()
+            of[1] *= 1.04
+            ibu = truth.copy()
+            ibu[0] *= 0.96
             np.savez(
                 directory / "pair.npz",
-                truth=np.ones(2),
-                prior=np.ones(2),
-                selected=np.arange(2),
-                omnifold=np.array([1, 1.04]),
-                ibu5=np.array([0.96, 1]),
-                ibu10=np.ones(2),
+                truth=truth,
+                prior=nominal,
+                selected=bank["selected"],
+                omnifold=of,
+                ibu5=ibu,
+                ibu10=truth,
             )
             runner.write_json(
                 directory / "pair.json",
@@ -349,37 +391,177 @@ def test_score_requires_complete_consistent_digest_bound_pairs(
                     truth=name,
                     trial=trial,
                     seed=cfg["seeds"][trial],
-                    config_sha256=runner.digest(core.CONFIG),
-                    bank_sha256="one-bank",
+                    config_sha256=config_pin,
+                    bank_sha256=bank_pin,
+                    control_sha256=runner.digest(control),
                     product_sha256=runner.digest(directory / "pair.npz"),
                 ),
             )
     out = tmp_path / "out"
     out.mkdir()
-    args = Namespace(products=products, out=out)
+    return Namespace(
+        products=products, out=out, bank=bank_path, identity=identity, control=control
+    )
+
+
+def rewrite_product(directory, **changes):
+    """Replace synthetic arrays and update their receipt's byte identity."""
+    import json
+
+    product = directory / "pair.npz"
+    values = runner.read_npz(product)
+    values.update(changes)
+    np.savez(product, **values)
+    receipt = directory / "pair.json"
+    record = runner.read_json(receipt)
+    record["product_sha256"] = runner.digest(product)
+    receipt.write_text(json.dumps(record))
+
+
+def test_score_requires_complete_consistent_digest_bound_pairs(cfg, score_inputs):
+    args = score_inputs
     runner.score(args, cfg)
-    result = runner.read_json(out / "readout.json")
+    result = runner.read_json(args.out / "readout.json")
     assert len(result["truths"]) == 7
     assert result["schema"] == "ibukt-recovery/2"
     assert result["secondary_methods"] == ["ibu10"]
+    assert result["bank_sha256"] == runner.digest(args.bank)
+    assert result["config_sha256"] == runner.digest(core.CONFIG)
+    assert result["control_sha256"] == runner.digest(args.control)
+    assert result["control_product_sha256"] == runner.digest(
+        args.control.parent / "pair.npz"
+    )
+    assert result["control_checks"]["omnifold"] == pytest.approx(0.01)
     assert result["truths"]["nominal"]["ibu10"]["role"] == "secondary"
     assert result["truths"]["nominal"]["ibu5"]["role"] == "primary"
-    assert result["truths"]["nominal"]["omnifold"]["reading"] == [
-        "within tolerance",
-        "outside tolerance",
-    ]
-    assert result["truths"]["nominal"]["ibu5"]["reading"] == [
-        "outside tolerance",
-        "within tolerance",
-    ]
+    for name in cfg["truths"]:
+        assert result["truths"][name]["cells"] == list(range(205))
+        assert result["truths"][name]["omnifold"]["reading"][:2] == [
+            "within tolerance",
+            "outside tolerance",
+        ]
+        assert result["truths"][name]["ibu5"]["reading"][:2] == [
+            "outside tolerance",
+            "within tolerance",
+        ]
     # A receipt cannot relabel a changed product as a completed pair.
-    product = products / "within_minus-4" / "pair.npz"
+    product = args.products / "within_minus-4" / "pair.npz"
     product.write_bytes(product.read_bytes() + b"changed")
     with pytest.raises(ValueError, match="digest differs"):
         runner.score(args, cfg)
     product.unlink()
     with pytest.raises(FileNotFoundError):
         runner.score(args, cfg)
+
+
+@pytest.mark.parametrize("artifact", ["pair.json", "pair.npz"])
+def test_score_refuses_missing_control(cfg, score_inputs, artifact):
+    (score_inputs.control.parent / artifact).unlink()
+    with pytest.raises(FileNotFoundError):
+        runner.score(score_inputs, cfg)
+    assert not (score_inputs.out / "readout.json").exists()
+
+
+@pytest.mark.parametrize("artifact", ["pair.json", "pair.npz"])
+def test_score_refuses_changed_control(cfg, score_inputs, artifact):
+    path = score_inputs.control.parent / artifact
+    path.write_bytes(path.read_bytes() + b" ")
+    with pytest.raises(ValueError):
+        runner.score(score_inputs, cfg)
+    assert not (score_inputs.out / "readout.json").exists()
+
+
+def test_score_refuses_mixed_controls(cfg, score_inputs):
+    import json
+
+    path = score_inputs.products / "within_minus-4" / "pair.json"
+    record = runner.read_json(path)
+    record["control_sha256"] = "another-control"
+    path.write_text(json.dumps(record))
+    with pytest.raises(ValueError, match="mismatched pair receipt"):
+        runner.score(score_inputs, cfg)
+
+
+def test_score_recomputes_control_recovery(cfg, score_inputs):
+    rewrite_product(
+        score_inputs.control.parent,
+        omnifold=runner.read_npz(score_inputs.bank)["truth_nominal"] * 1.03,
+    )
+    with pytest.raises(ValueError, match="noise-free nominal omnifold"):
+        runner.score(score_inputs, cfg)
+
+
+@pytest.mark.parametrize("scope", ["all", "one-truth"])
+def test_score_refuses_shortened_or_cross_truth_masks(cfg, score_inputs, scope):
+    for name in cfg["truths"]:
+        if scope == "one-truth" and name != "within_minus":
+            continue
+        selected = np.arange(204) if scope == "all" else np.arange(1, 206)
+        for trial in range(5):
+            rewrite_product(
+                score_inputs.products / f"{name}-{trial}", selected=selected
+            )
+    with pytest.raises(ValueError, match="reporting mask differs"):
+        runner.score(score_inputs, cfg)
+    assert not (score_inputs.out / "readout.json").exists()
+
+
+@pytest.mark.parametrize("key", ["truth", "prior"])
+def test_score_refuses_uniform_wrong_truth_or_prior(cfg, score_inputs, key):
+    for trial in range(5):
+        directory = score_inputs.products / f"bump-{trial}"
+        rewrite_product(
+            directory, **{key: runner.read_npz(directory / "pair.npz")[key] * 1.01}
+        )
+    with pytest.raises(ValueError, match=f"product {key} differs from bank"):
+        runner.score(score_inputs, cfg)
+
+
+@pytest.mark.parametrize("key", ["truth", "prior", "omnifold", "ibu5", "ibu10"])
+def test_score_refuses_wrong_vector_shapes(cfg, score_inputs, key):
+    rewrite_product(score_inputs.products / "nominal-0", **{key: np.ones(205)})
+    with pytest.raises(ValueError, match=f"invalid product vector: {key}"):
+        runner.score(score_inputs, cfg)
+
+
+def test_score_refuses_changed_bank(cfg, score_inputs):
+    score_inputs.bank.write_bytes(score_inputs.bank.read_bytes() + b"changed")
+    with pytest.raises(ValueError, match="bank differs from identity control"):
+        runner.score(score_inputs, cfg)
+
+
+@pytest.mark.parametrize("key", ["bank_sha256", "config_sha256"])
+def test_score_refuses_control_identity_mismatch(cfg, score_inputs, key):
+    import json
+
+    record = runner.read_json(score_inputs.control)
+    record[key] = "different-identity"
+    score_inputs.control.write_text(json.dumps(record))
+    with pytest.raises(ValueError, match="nominal control identity differs"):
+        runner.score(score_inputs, cfg)
+
+
+@pytest.mark.parametrize(
+    "selected",
+    [
+        np.arange(204),
+        np.arange(205, dtype=float),
+        np.zeros(205, dtype=int),
+        np.arange(-1, 204),
+        np.arange(20, 225),
+    ],
+)
+def test_score_refuses_invalid_bank_mask(cfg, score_inputs, selected):
+    import json
+
+    bank = runner.read_npz(score_inputs.bank)
+    bank["selected"] = selected
+    np.savez(score_inputs.bank, **bank)
+    identity = runner.read_json(score_inputs.identity)
+    identity["bank_sha256"] = runner.digest(score_inputs.bank)
+    score_inputs.identity.write_text(json.dumps(identity))
+    with pytest.raises(ValueError, match="205 unique valid cells"):
+        runner.score(score_inputs, cfg)
 
 
 def test_missing_generator_map_is_not_a_within_bin_truth(cfg):

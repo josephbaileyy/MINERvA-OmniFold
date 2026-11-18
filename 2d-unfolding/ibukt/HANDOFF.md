@@ -8,12 +8,15 @@ MINERvA-OmniFold measures a two-dimensional muon cross section using unbinned Om
 - Branch: `lane/2d-ibukt-declaration-20261117-investigator`.
 - Initial declaration/code: `d6ac2f29bd7f70068ba769d6341c46b729affd1c`.
 - Revision 1 audit repairs: `9b21bb3fec06a1fd6923ace8a2764f019bfde064`.
-- Revision 2 is the commit titled `[ibukt] Use engineering tolerance for nominal recovery`, which includes this handoff. Resolve its actual SHA from the PR and verify the remote head before work; do not assume the branch has stayed unchanged.
+- Revision 2: `6e8a1bc5fbc8fa23f9c6007819b222c72e746e7c`, `[ibukt] Use engineering tolerance for nominal recovery`.
+- Revision 3 is the commit titled `[ibukt] Verify control and bank identities before scoring`. Resolve its SHA from the PR and verify the remote head before work; do not assume the branch has stayed unchanged.
 - Governing declaration: `docs/orchestration/state/2d-closeout/IBUKT-DECLARATION.md`. Read it in full after AGENTS.md, CLAUDE.md, the routed current work and campaign review.
 
 These changes are not confirmed merged. Recover the branch from the repository remote and compare it with the specifications below. If any change is absent, reproduce it from this description only within an authorized repair request. No cluster connection or job was performed by this lane. No execution binding is approved. Manuscript sources are untouched.
 
-The director requested the declaration/code and independent audit. The first audit of d6ac2f29 was PASS WITH FIXES; revision 1 repaired the launch, pricing, truth controls, tests and method labeling. The director then explicitly changed the noise-free nominal recovery gate from 1e-8 to the screen's 2% engineering tolerance before any execution. Revision 2 implements that instruction. Neither an earlier audit nor local tests admit these bytes for execution.
+The director requested the declaration/code and independent audit. The first audit of d6ac2f29 was PASS WITH FIXES; revision 1 repaired the launch, pricing, truth controls, tests and method labeling. The director then explicitly changed the noise-free nominal recovery gate from 1e-8 to the screen's 2% engineering tolerance before any execution. Revision 2 implements that instruction. Its independent audits returned PASS and PASS WITH FIXES. Revision 3 repairs the latter's two scorer findings. Neither an earlier audit nor local tests admit these bytes for execution.
+
+The lane remains the single writer; independent reviewers remain read-only. The next decision is whether the two scorer findings are closed on the exact revision-3 bytes. One focused confirmation read is next, with reassessment of material unresolved issues after that. No cluster connection or run is authorized.
 
 ## What is fixed in the experiment
 
@@ -33,6 +36,8 @@ Before any future connect, obtain the director's approval on the exact script SH
 
 ## Verification and next steps
 
+Revision 3 requires scoring to receive `--bank`, `--identity` and `--control` as well as `--products`. It verifies the bank against the preparation receipt, reopens and verifies the single nominal control and its product, recomputes recovery, and checks each pair's control/bank/configuration identity. All products must match the bank's 205-cell mask, prior and named truth with full finite 224-vectors before indexing. Verified digests and control residuals survive in the readout. Synthetic refusal tests include missing/changed/mixed controls, shortened and cross-truth masks, wrong truth/prior vectors, invalid vector shapes and a changed bank. The revision-3 suite passes all 60 cases locally; Ruff, Black and Linux-targeted strict type checking of the runner pass. Production ROOT fits and protected reads remain unexecuted.
+
 Revision 2's local suite has 37 passing tests. It includes 1% nominal recovery acceptance, both signs outside 2% rejection, unchanged strict integral identity, planted control failures, exact signed signal weights, all seeds/settings, multi-cell conservation, real ratio-map indexing, shared targets and budget refusals. Re-run the focused suite after code changes:
 
 `python -m pytest -q 2d-unfolding/ibukt/test_ibukt.py`
@@ -40,7 +45,7 @@ Revision 2's local suite has 37 passing tests. It includes 1% nominal recovery a
 Use an external local environment with NumPy and pytest; ROOT fits and Linux O_NOATIME paths remain unexecuted. Run the repository hooks for staged changes, and check CI on the actual remote head. The earlier import-path suites passed 17 tests and 27 subtests; neither revision changes import-path insertion.
 
 1. Confirm the PR head, working-tree cleanliness, CI and latest director instructions.
-2. Tell the director the lane has transferred; receive the independent review of revision 2. Address only concrete authorized findings.
+2. Send the revision-3 SHA to the director for the focused confirmation read. Address only concrete authorized findings.
 3. Prepare an execution binding only when instructed. A clean audit is not itself cluster approval.
 4. Preserve the current estimator settings and thresholds until a separately reviewed amendment exists.
 

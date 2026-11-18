@@ -1,6 +1,6 @@
 # IBUKT: paired 2D known-truth recovery screen
 
-**2026-11-17; revision 2 fixing the nominal recovery tolerance before execution. NOT BOUND FOR EXECUTION.**
+**2026-11-17; revision 3 verifying control, bank and reporting identities at scoring. NOT BOUND FOR EXECUTION.**
 
 ## 1. Authority, decision, owner and terminal conditions
 
@@ -9,6 +9,8 @@ Joseph approved "go ahead with the IBU test," relayed in the director's instruct
 This asks whether the recorded 2D estimators recover known truth, cell by cell, when fed the same fake data. A difference on data does not establish that either method is correct. Neither agreement with the publication nor nominal closure is the primary statistic. The result can be: both recover within the stated tolerance; one fails at a specified truth/cell; both fail; or unresolved at the screen's noise. These are useful terminal outcomes, not instructions to tune a method until it passes.
 
 The IBUKT lane owns the code and eventual receipt. The director assigns an independent read-only audit before binding, with at most one focused repair round before reassessing material unresolved issues. The setup follows `CAMPAIGN-REVIEW-20260929.md`'s bounded owner/reviewer and terminal-budget advice. The director relayed the independent audit of `d6ac2f29` as PASS WITH FIXES. Revision 1 implemented its five requested corrections. Before any execution, the director requested replacing the noise-free nominal recovery tolerance with the fixed 2% per-cell engineering tolerance; revision 2 makes that change. No review verdict on revision 2 is claimed. Baseline for this draft: `5ddf896457cfd75ad69e5855d9c1266884eab47a`, fetched origin/main. This declaration supplements the routed work; it changes no existing scientific adoption.
+
+Revision 2's independent audits returned PASS and PASS WITH FIXES. Revision 3 addresses the two readout findings: scoring verifies the nominal control chain and checks all reporting operands against the pinned bank. One focused confirmation read is next; material unresolved findings require reassessment rather than an open-ended repair loop. No execution binding or cluster action is authorized here.
 
 ## 2. Existing work and coordination
 
@@ -99,6 +101,8 @@ The fixed engineering recovery tolerance is **2% of truth per cell**. It is a sc
 For each truth/cell report the ordered pair of method readings. "OmniFold within / IBU outside," its reverse, "both outside," and "both within" mean exactly these combinations. Any unresolved member keeps that comparison unresolved. No truth-wide winner, multiple-testing significance, automatic estimator choice or covariance block is derived. For within-bin truths the coarse departure is zero; do not divide by the injected coarse change. Report all cells even if power is poor. K=10 is labeled secondary in each method readout and in schema `ibukt-recovery/2`; it cannot replace the K=5 reading.
 
 Incomplete ensembles, missing trial IDs, repeated/mismatched truth or cell identities, nonfinite values, changed config/bank/product hashes, or nonpositive reported truth refuse scoring. No partial-ensemble grade. A finding outside tolerance may motivate a separately declared mechanism study; it does not prove that the data's estimator difference has that cause. The all-within outcome supports only these deformations/tolerances and conditional sample.
+
+Scoring requires explicit `--bank`, `--identity` and `--control` operands alongside `--products`. It verifies the bank digest against the preparation identity receipt and checks that receipt's configuration identity. It opens the single noise-free nominal receipt and its hashed product, recomputes the two primary recovery checks, and requires every Poisson receipt to reference that same control, bank and configuration. The bank mask must contain exactly 205 unique integer indices in the 224-cell grid. Every control and pair product must have full finite 224-vectors, the exact bank mask, the nominal bank prior and the bank's named known-truth vector before indexing. The readout retains the verified bank, configuration, control receipt and control product digests, plus the recomputed control residuals. Missing, changed or mismatched operands refuse the readout.
 
 The outcome licenses are fixed as follows:
 
