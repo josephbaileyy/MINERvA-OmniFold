@@ -27,6 +27,11 @@ import numpy as np
 import rdx_read as R
 import build_cmodel5d as B5
 rmap, n = B5.load_definition(R.DEFINITION, R.STAGE1, B5.EXPECT)[:2]
+import pvl_lib as L
+fine_shape = tuple(len(L.FINE[ax]) - 1 for ax in L.AXES5)
+print("fine grid:", fine_shape, int(np.prod(fine_shape)), "cells; the definition maps", rmap.size, "->", n, ";",
+      "main's check", "PASS" if n == 16 and rmap.size == int(np.prod(fine_shape)) else "FAIL")
+print("task table sha256 bound:", R.sha256(R.TASKS) == R.TASKS_SHA256)
 L = lambda p: json.loads(open(p).read())
 phi = R.RR.rounding_floor(L(R.RR.I0), L(R.RR.CMODEL_JSON))
 sig = np.asarray(L(R.RR.F1_READOUT)[R.RR.SIGMA_KEY]["C_total"], float)
@@ -34,7 +39,7 @@ print("definition:", n, "reporting cells, fine map", rmap.shape[0], "entries")
 print("phi_c (%):", [round(100 * v, 4) for v in phi])
 print("phi_c median/min/max (%):", round(100 * float(np.median(phi)), 3), round(100 * float(phi.min()), 3), round(100 * float(phi.max()), 3))
 print("sigma_c:", [round(float(v), 5) for v in sig])
-print("tasks:", list(R.tasks()))
+print("tasks (bound table, 15 unique rows):", list(R.tasks()))
 print("pins:", {k.lstrip("./"): v[:8] for k, v in R.sums(R.SUMS).items()}, "ratio", R.sums(R.PVL_SUMS)[R.RATIO_KEY][:8])
 PY
 echo "# clone status: $(git status --porcelain --untracked-files=all | wc -l | tr -d ' ') lines" >> "$O/committed_path.txt"
