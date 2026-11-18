@@ -30,6 +30,8 @@ The defaults are main_note.pdf, main_note.aux and the .tsv files in --note-dir (
      least once by \ref, \cref, \Cref, \autoref, \pageref or \subref in the closure.
 4. US SPELLING over every file of the posted note's input closure.
 6. BUILD TESTS. test_build_all.py in --note-dir; its failing tests are named.
+7. ACCENTS. No accented letter in the NEW PDF text that the base PDF does not print, and never "ś" (a possessive written
+   \\'s prints so); and no \\'s on a printed source line of the closure.
 5. FONTS. pdffonts, page by page: a sans-serif font may appear only on the pages of the figures allowed one
    (SANS_ALLOWED; the plan: base Figs. 6, 17, 18, 33 = fig:eff, fig:eavail-marg, fig:calibration,
    fig:negweight-ratio). Monospace fonts are listed, not failed.
@@ -132,6 +134,7 @@ NUMLIST = NUM + r"(?:\s*(?:,|–|—|-|and|to|&)\s*" + NUM + r")*"
 KW = (r"(?:Figures?|Figs?\.|Tables?|Tabs?\.|§§?|Sections?|Secs?\.|Appendix|Appendices|Apps?\.|Equations?|Eqs?\.|"
       r"Ref\.|Refs\.|pp?\.)")
 REF_RE = re.compile(KW + r"\s*~?\s*\(?" + NUMLIST)
+REF_FRAG_RE = re.compile(r"(?<=-\u2029)\s*(?:bles?|ures?|tions?|dix|dices)\s*~?\s*" + NUMLIST)
 CITE_RE = re.compile(r"\[\d+(?:\s*[,–-]\s*\d+)*\]")
 EQTAG_RE = re.compile(r"\(\s*[A-Z]?\d+(?:\.\d+)?\s*\)\s*$")
 HEAD_RE = re.compile(r"^\s*(?:[A-J]|\d{1,2})(?:\.\d{1,2}){0,3}\s+[A-Z][a-z]")
@@ -199,6 +202,10 @@ def page_tokens(page: str, index: int | None = None) -> list[tuple[str, str]]:
     # references and citations may wrap across lines: substitute on the joined text, then split back
     SEP = "\u2029"
     s = SEP.join(lines)
+    s = re.sub(r"\(cid:\d+\)", " ", s)                       # pdfminer's placeholder for an unmapped glyph
+    s = re.sub(r"\b\d[a-z]\d[a-z]\b", " ", s)                 # a name such as 2p2h, not a number
+    # a reference keyword hyphenated across a line break: "Ta-" + "ble 32", "Fig-" + "ure 9", "Sec-" + "tion 4"
+    s = REF_FRAG_RE.sub(lambda m: re.sub(r"[^\u2029]", " ", m.group(0)), s)
     s = CITE_RE.sub(lambda m: re.sub(r"[^\u2029]", " ", m.group(0)), s)
     s = REF_RE.sub(lambda m: re.sub(r"[^\u2029]", " ", m.group(0)), s)
     out = []
@@ -438,6 +445,41 @@ def check_build_tests(note_dir: Path):
     return r.returncode == 0, lines
 
 
+# ---------------------------------------------------------------- 7. accents
+
+def accented(ch: str) -> bool:
+    """A Latin letter with a diacritic (it decomposes to a base letter plus a combining mark), e.g. ś, é, ü."""
+    import unicodedata
+    d = unicodedata.decomposition(ch)
+    return bool(d) and not d.startswith("<") and unicodedata.category(ch).startswith("L") and ord(ch) > 127
+
+
+def check_accents(base_pdf: Path, new_pdf: Path, note_dir: Path):
+    """The director, 2026-11-17: possessives written \\'s printed as "ś". No accented letter that the base PDF does not
+    print, and always no ś; and no \\'s on a printed source line."""
+    base_text = "\n".join(pdftext_pages(base_pdf))
+    pages = pdftext_pages(new_pdf)
+    base_chars = {c for c in base_text if accented(c)}
+    lines, bad = [], 0
+    for i, p in enumerate(pages):
+        for l in p.split("\n"):
+            hits = sorted({c for c in l if accented(c) and (c == "ś" or c not in base_chars)})
+            if hits:
+                bad += 1
+                if bad <= 20:
+                    lines.append(f"  p.{i + 1} {''.join(hits)}: {l.strip()[:140]}")
+    src = 0
+    for f in closure(note_dir):
+        for n, l in enumerate(strip_comments((note_dir / f).read_text()).split("\n"), 1):
+            if "\\'s" in l:
+                src += 1
+                lines.append(f"  source {f}:{n}: {l.strip()[:140]}")
+    ok = not bad and not src
+    lines.append(f"ACCENTS :: {'PASS' if ok else 'FAIL'} ({bad} PDF line(s) with a new accented letter or ś; "
+                 f"{src} source line(s) with \\'s)")
+    return ok, lines
+
+
 # ---------------------------------------------------------------- self-test
 
 def self_test() -> bool:
@@ -466,6 +508,8 @@ def self_test() -> bool:
             print("self-test: hard page refs", hard); ok = False
     if not SANS_RE.search("ABCDEF+DejaVuSans") or SANS_RE.search("ABCDEF+DejaVuSerif") or SANS_RE.search("X+DejaVuSansMono"):
         print("self-test: the sans pattern"); ok = False
+    if not accented("ś") or accented("s") or accented("σ"):
+        print("self-test: the accented-letter test"); ok = False
     print("FREEZE-CHECKS SELF-TEST ::", "PASS" if ok else "FAIL")
     return ok
 
@@ -482,7 +526,7 @@ def main() -> int:
     ap.add_argument("--allowlist", type=Path)
     ap.add_argument("--limitations", type=Path)
     ap.add_argument("--spelling")
-    ap.add_argument("--only", default="1,2,3,4,5,6")
+    ap.add_argument("--only", default="1,2,3,4,5,6,7")
     ap.add_argument("--report", type=Path)
     a = ap.parse_args()
     nd = a.note_dir
@@ -496,7 +540,8 @@ def main() -> int:
             (3, "Labels", lambda: check_labels(nd, new_pdf)),
             (4, "US spelling", lambda: check_spelling(nd, a.spelling)),
             (5, "Fonts", lambda: check_fonts(new_pdf, aux)),
-            (6, "Build tests (test_build_all.py)", lambda: check_build_tests(nd))]
+            (6, "Build tests (test_build_all.py)", lambda: check_build_tests(nd)),
+            (7, "Accents and \\'s possessives", lambda: check_accents(a.base_pdf, new_pdf, nd))]
     report, fails = [f"# Freeze checks: {new_pdf} against {a.base_pdf}", ""], []
     for k, name, fn in runs:
         if k not in want:
