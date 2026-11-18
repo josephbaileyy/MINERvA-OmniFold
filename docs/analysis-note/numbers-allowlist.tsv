@@ -193,3 +193,19 @@ token	delta	owner	item	reason
 5	+7	journal-editor	JE-WIM/JE-DEF	"5 iterations" x4 and "5 predictions" in the box (Table 34's cells), and the definitions' restatements (source recount)
 39	+1	journal-editor	JE-DEF	"EW: 39 supported (E_avail,W) cells", the definitions J/H2/EW row (sec_5d's label table; app_statmethods_nd B.2)
 16	+1	journal-editor	JE-WIM	"projected onto 16 coarse cells", the box's sixteen-cell estimator cell (Table 34's 16-cell row)
+# limitation-resolver's rows, fifth set (numbers-allowlist-lr-rows5.tsv, the addf9ec0 dispositions)
+11	-3	limitation-resolver	U2 (correction)	retires the U2 row "11 +3": R11 cell labels are no longer counted (glued-digit rule)
+20	+2	limitation-resolver	Fig. 28 fix	"zero of 20 ... at W2, 8 and 7 of 20" (s5e/cand/assess_receipt.json 84266e30)
+100	+2	limitation-resolver	readability glosses	"100-tree, 8-leaf refinement" glosses of configuration (d), sec_5d (Table 5, sec_method.tex:141-142)
+8	+1	limitation-resolver	readability glosses	the same gloss
+31	+1	limitation-resolver	readability glosses	"400-tree, 31-leaf refinement" gloss of configuration (e), sec_5d (Table 5)
+400	+1	limitation-resolver	LR-38..47 / (e) gloss	the "over the 400" sentence in its section 12 copy, plus the (e) gloss's "400-tree"
+1.5	+1	limitation-resolver	U6	"0.8 <= Eavail < 1.5 GeV" in the recovery classes (a_recovery.json 75db95a1)
+6	+1	limitation-resolver	U1	"newly flagged 3, 3 and 6" (prr-lev-O2-nnew; FD-PRR readout 9238f22b)
+300	+1	limitation-resolver	U13	c2c1-nrep, "300 paired replicas" (REF-C2C1 read-2 0ee21301)
+42	+1	limitation-resolver	item 6 pointer	"The choice of seed~42 is recorded in App. I" (sec_method), the pointer left when LR-18 moved
+1	+5	limitation-resolver	U15, U1/U2	sec_systematics +6 source tokens (the U15 insert, runperiod_values.json f63074b1) and sec_fived16 +3 (FD-PRR and bias-half "1 %" thresholds)
+0	+2	limitation-resolver	U6, U2	sec_5d +1 ("0 when it stays at the prior", U6) and sec_fived16 +1; the third "0" is journal-editor's sec_front
+10	+3	limitation-resolver	LR-20..47, U13	the section 12 copies (+2) and the U13 paragraph's context
+2	+6	limitation-resolver	U1, U2, U9, quadrant/playlist splits	sec_fived16 source +17 of the 26 source tokens; a proportional share of the rendered +9 (the rest is journal-editor's sec_front and sec_limitations restatements); please recheck against the PDF contexts
+16	+1	limitation-resolver	U18 restatement	one of the sec_limitations "16"; the other is journal-editor's
