@@ -232,6 +232,7 @@ def test_pair_shares_exact_refined_target_and_preserves_response(
             status="PASS",
             truth="nominal",
             sampling="noise-free",
+            nominal_tolerance=core.RECOVERY_TOLERANCE,
             config_sha256=runner.digest(core.CONFIG),
             bank_sha256=runner.digest(bank_path),
             product_sha256=runner.digest(control_dir / "pair.npz"),
@@ -552,11 +553,11 @@ def test_noise_free_pair_closes_or_stops_before_pass_receipt(
         np.testing.assert_array_equal(signed, [10, 20, 2, -2])
         return np.abs(signed), None, 0.0
 
-    ibu5 = truth * (1.000001 if bad_method == "ibu5" else 1)
+    ibu5 = truth * (1.03 if bad_method == "ibu5" else 1.01)
     helper = SimpleNamespace(
         omnifold=lambda *a, **kw: (
             None,
-            np.full(2, 1.000001 if bad_method == "omnifold" else 1),
+            np.full(2, 1.03 if bad_method == "omnifold" else 1.01),
         )
     )
     comparison = SimpleNamespace(
@@ -591,14 +592,14 @@ def test_noise_free_pair_closes_or_stops_before_pass_receipt(
         runner.pair(args, cfg)
         record = runner.read_json(out / "pair.json")
         assert record["sampling"] == "noise-free" and record["seed"] is None
-        assert runner.nominal_control(out / "pair.json", runner.digest(bank_path)) == {
-            "omnifold": 0.0,
-            "ibu5": 0.0,
-        }
+        assert record["nominal_tolerance"] == 0.02
+        assert runner.nominal_control(
+            out / "pair.json", runner.digest(bank_path)
+        ) == pytest.approx({"omnifold": 0.01, "ibu5": 0.01})
         # A newly hashed but biased product still cannot unlock Poisson fits.
         np.savez(
             out / "pair.npz",
-            omnifold=truth * 1.000001,
+            omnifold=truth * 1.03,
             ibu5=truth,
             truth=truth,
             selected=selected,
@@ -636,3 +637,26 @@ def test_screen_admission_reserves_score_and_rejects_full_earlier_caps(
     runner.write_json(path, dict(record(0.55), total=5.0))
     with pytest.raises(ValueError, match="accounting"):
         jobs.screen_admission(path)
+
+
+@pytest.mark.parametrize("factor", [0.981, 1.019])
+def test_nominal_control_accepts_nonzero_residuals_inside_two_percent(factor):
+    truth = np.array([1e-38, 2e-40])
+    assert core.nominal_recovery(truth * factor, truth, "plant") == pytest.approx(
+        abs(factor - 1)
+    )
+
+
+@pytest.mark.parametrize("factor", [0.979, 1.021])
+def test_nominal_control_refuses_either_sign_outside_two_percent(factor):
+    truth = np.array([1.0, 1e-20])
+    with pytest.raises(ValueError):
+        core.nominal_recovery(truth * [1, factor], truth, "plant")
+
+
+def test_exact_within_bin_identity_remains_strict():
+    truth = np.array([10.0, 20.0])
+    # A 1% fitted recovery is acceptable; a 1% integral-identity error is not.
+    assert core.nominal_recovery(truth * 1.01, truth, "fit") == pytest.approx(0.01)
+    with pytest.raises(ValueError):
+        runner.require_close(truth * 1.01, truth, "integral identity")

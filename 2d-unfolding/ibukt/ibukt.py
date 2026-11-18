@@ -15,6 +15,7 @@ from numpy.typing import NDArray
 
 Array: TypeAlias = NDArray[np.float64]
 CONFIG = Path(__file__).with_name("config.json")
+RECOVERY_TOLERANCE = 0.02
 
 
 def configuration() -> dict[str, Any]:
@@ -111,6 +112,18 @@ def poisson_target(features: Array, signed: Array, seed: int) -> tuple[Array, Ar
     )
 
 
+def nominal_recovery(estimates: Array, truth: Array, label: str) -> float:
+    """Require noise-free recovery within the engineering tolerance in every cell."""
+    if estimates.shape != truth.shape or truth.size == 0 or np.any(truth <= 0):
+        raise ValueError(f"{label}: invalid truth or cell alignment")
+    if not all(np.all(np.isfinite(x)) for x in (estimates, truth)):
+        raise ValueError(f"{label}: nonfinite nominal recovery operand")
+    error = float(np.max(np.abs(estimates / truth - 1)))
+    if error > RECOVERY_TOLERANCE:
+        raise ValueError(f"{label}: {error} > {RECOVERY_TOLERANCE}")
+    return error
+
+
 def recoveries(estimates: Array, truth: Array, prior: Array) -> dict[str, Any]:
     """Classify each cell using a fixed 2% tolerance and a five-draw noise guard.
 
@@ -131,9 +144,9 @@ def recoveries(estimates: Array, truth: Array, prior: Array) -> dict[str, Any]:
     low = np.maximum(np.abs(mean) - noise, 0)
     high = np.abs(mean) + noise
     reading = np.where(
-        high <= 0.02,
+        high <= RECOVERY_TOLERANCE,
         "within tolerance",
-        np.where(low > 0.02, "outside tolerance", "unresolved"),
+        np.where(low > RECOVERY_TOLERANCE, "outside tolerance", "unresolved"),
     )
     return {
         "residuals": residual.tolist(),

@@ -113,9 +113,17 @@ def nominal_control(path: Path, bank_pin: str) -> dict[str, float]:
         record["status"],
         record["truth"],
         record["sampling"],
+        record["nominal_tolerance"],
         record["config_sha256"],
         record["bank_sha256"],
-    ) != ("PASS", "nominal", "noise-free", digest(core.CONFIG), bank_pin):
+    ) != (
+        "PASS",
+        "nominal",
+        "noise-free",
+        core.RECOVERY_TOLERANCE,
+        digest(core.CONFIG),
+        bank_pin,
+    ):
         raise ValueError("noise-free nominal control identity differs")
     product = path.parent / "pair.npz"
     if digest(product) != record["product_sha256"]:
@@ -123,7 +131,7 @@ def nominal_control(path: Path, bank_pin: str) -> dict[str, float]:
     values = read_npz(product)
     selected = values["selected"]
     return {
-        method: require_close(
+        method: core.nominal_recovery(
             values[method][selected],
             values["truth"][selected],
             f"noise-free nominal {method}",
@@ -444,7 +452,7 @@ def pair(args: argparse.Namespace, cfg: dict[str, Any]) -> None:
             ("omnifold", unfolded),
             ("ibu5", ibu[5] * bank["factor"]),
         ):
-            control_checks[method] = require_close(
+            control_checks[method] = core.nominal_recovery(
                 values[selected],
                 bank["truth_nominal"][selected],
                 f"noise-free nominal {method}",
@@ -454,6 +462,7 @@ def pair(args: argparse.Namespace, cfg: dict[str, Any]) -> None:
         {
             "sampling": "noise-free" if args.noise_free else "poisson",
             "control_checks": control_checks,
+            "nominal_tolerance": core.RECOVERY_TOLERANCE if args.noise_free else None,
             "control_sha256": None if args.noise_free else digest(args.control),
             "truth": args.truth,
             "trial": args.trial,
