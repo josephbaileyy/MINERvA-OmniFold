@@ -107,7 +107,7 @@ Result component & Estimator / construction & Status \& validation checks & Inte
 \addlinespace
 5D central value ($\pT, \pPar, \Eavail, q_{3}, W$) & LightGBM, 5 iterations, purity subtraction (configuration~(a)) & 4D and 5D marginal anchors agree with the lower-dimensional results (\S\ref{sec:4d}, \S\ref{sec:eavailw-axis}); corrected injected-$W$ closure passes in $W$ marginal. Regularization bias observed (\S\ref{sec:val-departure}); purity-subtraction bias observed (\S\ref{sec:val-negweight}). & Exploratory five-observable central value (\S\ref{sec:method-algo}) and qualitative shape comparison only. It supports neither a covariance nor a physical measurement. \\
 \addlinespace
-5D covariance ($C_Z$) & Constructed for configuration~(a) central value with 45 systematic bands and statistical variations & Used in this note; the estimator-seed criterion specified before production has not been computed for it (\S\ref{sec:eavailw-adopted}). & Not supported as an uncertainty product. Section~\ref{sec:5d} uses it only as a descriptive scale, the configuration-(a) total uncertainty, for bias and model-dependence comparisons and for the estimator-seed sensitivity diagnostic (\S\ref{sec:eavailw-adopted}), whose seed-sensitivity measurements use two companion covariances; it also gives the attribution of its per-source decomposition (\S\ref{sec:uq-combine}). No generator significance based on this covariance may be quoted. \\
+5D covariance ($C_Z$) & Constructed for configuration~(a) central value with 45 systematic bands and statistical variations & Used in this note. The estimator-seed criterion specified before production has not been computed for this file itself; measured with two companion covariances, the estimator-seed sensitivity of its construction exceeds the limit set before production (\S\ref{sec:eavailw-adopted}). & Not supported as an uncertainty product. Section~\ref{sec:5d} uses it only as a descriptive scale, the configuration-(a) total uncertainty, for bias and model-dependence comparisons and for the estimator-seed sensitivity diagnostic (\S\ref{sec:eavailw-adopted}), whose seed-sensitivity measurements use two companion covariances; it also gives the attribution of its per-source decomposition (\S\ref{sec:uq-combine}). No generator significance based on this covariance may be quoted. \\
 % 5D-3 (2026-11-16; Joseph's decision via the coordinator, item B3): C_Z is not an uncertainty product; sec. 9's five uses (sec_5d.tex
 % sec:val-departure bias, the withheld-shape model dependence, the validation-design table's criterion, sec_validation.tex's closure
 % table row, and the seed-shift diagnostic) each name the configuration-(a) total uncertainty or covariance.
@@ -125,6 +125,12 @@ Extended-fiducial study & Unbinned unfolding with truth-muon cuts removed, retai
 % Move pair H3-014 (director-helper-3; move-manifest-h3-20261117.tsv sends): the 2D result's validation status, four
 % sentences of sec_systematics.tex's "Status of the 2D result" paragraph at 2fe070fec, verbatim (COMBINED-PLAN sec. 4
 % item 7), with their Search line; sec:uq-2d-scope keeps the construction and points here.
+% Pointer entry 5 (the director's ruling (a), via director-helper-3; limitations-export row n05): sec_experiment.tex:40, kept there.
+\subsection{Data and event loop}
+\label{sec:limitations-experiment}
+
+The flux histogram is POT-weighted across playlists; playlist-to-playlist flux differences are a $\sim\SI{0.2}{\percent}$ effect (\S\ref{sec:evloop}).
+
 \subsection{The two-dimensional cross section}
 \label{sec:limitations-2d}
 
@@ -236,6 +242,9 @@ No block contains the dependence on the learner. The central value and the exact
 % Pointer lines (the director's ruling (a), via director-helper-3): caveats kept in the body beside their numbers, listed here.
 \paragraph{Comparison with the published result.} The public release cannot establish the origin of the difference between the median of our flux band and that of the published flux block; the FHC-only constraint file is the leading, unconfirmed hypothesis (\S\ref{sec:results-uq}). Beyond the estimator dependence, the source of the shape difference from the published result has not been identified (\S\ref{sec:results-tension}).
 % absence-ok: "cannot establish" and "has not been identified" restate sec_results.tex:91 and :138 at their homes, which keep them beside their numbers
+
+% Pointer line 4 (the director's ruling (a), via director-helper-3): sec_execsummary.tex:26 / sec:uq-combine, kept there.
+\paragraph{Cross-source terms.} The standard covariance sums single-source systematic matrices, each with all other sources nominal, and so omits nonlinear cross-source response terms. No two-dimensional comparison of a joint throw with the block sum is reported (\S\ref{sec:uq-combine}).
 
 % Pointer entry (the director's ruling (a), via director-helper-3): a caveat kept in the body beside its numbers, listed here.
 \subsection{Available energy and momentum transfer}
@@ -363,3 +372,8 @@ Every pseudo-experiment resamples the same simulated events, so the null distrib
 % M2-AUDIT.md Q4d, :183-184.
 % Search: recoil-energy-scale band; calorimetric response band; linear surrogate; endpoint symmetry @ ddf16f10
 
+% Pointer entry 6 (the director's ruling (a), via director-helper-3): sec_summary.tex:39, kept there.
+\subsection{Further use of the results}
+\label{sec:limitations-use}
+
+New projections require their own applicability checks; nominal weights alone cannot certify arbitrary downstream inference (App.~\ref{sec:unbinned-inference}).
