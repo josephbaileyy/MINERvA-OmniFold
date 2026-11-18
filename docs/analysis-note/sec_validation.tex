@@ -167,7 +167,8 @@ In reported bin $b$ of toy $t$, $z_{tb}=(U_{tb}-T_b)/(r_b T_b)$, where $r_b$ is 
 
 At the interim analysis ($N_{\text{toy}}=\covTwoDNtoy$, 205 bins) the completeness-divided band undercovers in its tails. Its one-standard-deviation coverage $C_1=\covTwoDCOne$ $[\covTwoDCOneLo,\covTwoDCOneHi]$ is nominal (Gaussian 0.683), but its two-standard-deviation coverage $C_2=\covTwoDCTwo$ $[\covTwoDCTwoLo,\covTwoDCTwoHi]$ lies entirely below its window (Gaussian 0.954). The pull RMS is $\covTwoDPullRMS$, and the mean pull is consistent with zero. By the criteria above this is a failure by undercoverage, and the study stopped at the interim analysis. An independent reimplementation of the scoring reproduces the pooled coverages, their intervals, the controls and the secondary analysis below.
 
-The positive control rescales the band on the same toys. At $\times0.7$ and $\times1.3$, $C_2$ moves to $\covTwoDCTwoLowCtl$ and $\covTwoDCTwoHighCtl$, and the test flags both directions.
+The positive control rescales the band on the same toys. At $\times0.7$, $C_2$ moves to $\covTwoDCTwoLowCtl$, below its window. At $\times1.3$, $C_2$ moves to $\covTwoDCTwoHighCtl$, inside its window, and $C_1$ to $0.785$, above its window. The test flags both directions.
+% Triage A6 (interim cold read, 2026-11-17): the x1.3 flag is C1's overcoverage, OUTCOME-20261005-2d-fixed-truth-coverage-fail.md, positive-control table (x1.3: C1 0.785 [0.776, 0.794], C2 0.955 [0.951, 0.958], FAIL-overcoverage); the C1 window is values.tex covTwoDWinOneLo/Hi (0.632, 0.729).
 
 % Cutdown 2026-11-16 (history-cuts/sec_validation.md, row K1): the paragraph on the post hoc per-bin pattern of the completeness-divided band's failure cut; its text stays at 8342963c1:sec_validation.tex:152.
 
