@@ -233,6 +233,10 @@ No block contains the dependence on the learner. The central value and the exact
 \paragraph{The model-dependence component $C_{\mathrm{model}}$ (\S\ref{sec:uq-2d-scope}).} $C_{\mathrm{model}}$ measures generator-shape model dependence; it is not a calibrated bound on the bias in each cell. A closure test with NuWro-shaped pseudo-data and the configuration-(a) estimator has a bias above \SI{1}{\percent} in 127 cells. In 67 of them the NuWro shift of the quoted result reaches the bias, and in 72 the quadrature sum of the other two generators' shifts reaches it; these counts are descriptive.
 % Source of the 127, 67 and 72 (moved with the text): sec_systematics.tex:234 @79a934a41, the W8 clause.
 
+% Pointer lines (the director's ruling (a), via director-helper-3): caveats kept in the body beside their numbers, listed here.
+\paragraph{Comparison with the published result.} The public release cannot establish the origin of the difference between the median of our flux band and that of the published flux block; the FHC-only constraint file is the leading, unconfirmed hypothesis (\S\ref{sec:results-uq}). Beyond the estimator dependence, the source of the shape difference from the published result has not been identified (\S\ref{sec:results-tension}).
+% absence-ok: "cannot establish" and "has not been identified" restate sec_results.tex:91 and :138 at their homes, which keep them beside their numbers
+
 % Entries for the three long caveat statements (the director's ruling, 2026-11-18): each arrives as a move pair from its
 % body owner (limitation-resolver: sec_fived16, sec_5d; the Codex writer: sec_joint), whose home keeps a one-line result
 % with its scope label and a pointer here. Until each pair lands, its entry is this pointer sentence only.
@@ -286,6 +290,12 @@ The maximum real-data prior shifts over five historical vertices are envelopes (
 
 The studies of \S\ref{sec:gbdt-model-dependence} do not establish a bias--variance tradeoff across estimator settings. Deciding the tradeoff would require sharing pseudo-data and MC splits across a small set of iteration and capacity settings and measuring bias, variance and mean squared error for common functionals. That comparison would not validate intervals, which also requires an explicit treatment of physical nuisances and model dependence. No new ensemble enters these studies.
 % absence-ok: "does not address", "establishes no impossibility", "are not acceptance criteria", "provide no probabilities", "would not validate" and "No new ensemble" are the moved sentences' own scoping statements (LR-48..56, sec_5d.tex @ 2fe070fec), moved verbatim
+
+% Move pairs LR-58 and LR-59 (limitation-resolver, the structural rewrite): sec_5d.tex, verbatim; each lead restates its antecedent.
+The end-to-end pseudo-experiments with backgrounds return the highest-$W$ column of $(\Eavail,W)$ low at nominal truth (\S\ref{sec:val-negweight}). The bias comes from the purity-based subtraction (\S\ref{app:negweight}), enters no quoted covariance, and has no established size on data.
+
+The development assessment of $R$ uses repeated pseudo-experiments (\S\ref{sec:gbdt-model-dependence}). These experiments are not an independent validation: their samples were used during development, and their assessment seeds, although separate, were later also used in the estimator's development.
+% absence-ok: "enters no quoted covariance", "has no established size on data" and "not an independent validation" are the moved sentences' own statements (LR-58, LR-59), moved verbatim
 
 \subsection{The joint generator tests}
 \label{sec:limitations-joint}

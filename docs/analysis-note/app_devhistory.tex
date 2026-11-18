@@ -193,6 +193,15 @@ The excess width lies in the data-statistics component. The per-bin pull RMS fal
 % plain-language pass, review fix N1 and N3 (DECISION-20261018-joseph-plain-language-pass): the route is restored in words (row 85); "fixed before it
 % ran" becomes "recorded before it ran" (the rule was committed before the run, 8eb40e5f).
 
+% Move pair H3-020 (director-helper-3; move-manifest-h3-20261117.tsv sends): sec_results.tex:148 @ 79a934a41, sentences 2-4,
+% verbatim with the source comments :153-154; sec:results-tension keeps sentence 1 and points here.
+\subsection{Two-dimensional muon cross section (\S\ref{sec:results})}
+\label{app:devhistory-results}
+
+This is the exact-split cross-check's part of the eigenmode decomposition of \S\ref{sec:results-tension}. For the exact-split cross-check, $\chi^{2}$ is larger and distributed differently: its components of magnitude $5$--$6$ lie in moderate-$\lambda$ modes on the low-$\pT$ ridge of the cross-section peak. Its 10 smallest-$\lambda$ modes carry \SI{3}{\percent} of the $\chi^{2}$, and the 73 best-measured directions give $\chi^{2}=291$ ($\chi^{2}/205=1.42$, again divided by the number of reported bins; App.~\ref{sec:tension}). Going from 5 to 10 iterations changes the LightGBM (seed~1) value by a negligible $+0.01$.
+% Revision D' 2026-11-06 (referee reads of D, both ACCEPT; Sonnet and the interpreter: print the raw chi2 and the directions kept): docs/orchestration/receipts/2d-lgbm42-20261011/tension_report_exact_control.txt:56 prints "1e-04  1.419  73". Arithmetic: 1.419 x 205 = 290.9; 205 x [1.4185, 1.4195) is in [290.8, 291.0], 291 at three figures.
+% Director-added wording correction 2026-11-06, for Joseph's review before merge (not among the two he approved): the truncated chi2 was printed as chi2/ndf, but its divisor is the 205 reported bins, not the directions kept. 2d-unfolding/diagnose_tension.py @ c3dbe30f4 (main): :110 n = int(mask.sum()), the 205 reported bins; :183 and :193 divide every truncated chi2 by n (the same divisor at 56e30b9c9 :108/:181/:191 and at 735c909da). Receipt docs/orchestration/receipts/2d-lgbm42-20261011/tension_report_exact_control.txt:56 ("1e-04  1.419  73"). No number changed.
+
 \subsection{The sixteen-cell cross section (\S\ref{sec:fived16})}
 \label{app:devhistory-fived16}
 
