@@ -395,10 +395,13 @@ def main(argv=None) -> int:
             with install("prep", None, a.edges_out, a.workdir) as st:
                 st["edges_out"] = a.edges_out
                 try:
-                    esp.main(["--candidate", "control", "stability", "--", *argv[cut + 1:]])
+                    rc = esp.main(["--candidate", "control", "stability", "--", *argv[cut + 1:]])
                 except PrepDone:
                     print(json.dumps({"edges": str(a.edges_out), "index_sha256": sha256_path(a.edges_out / "INDEX.json")}))
                     return 0
+                if rc:  # the runner's own refusal keeps its code: 4 is an input digest (INPUTS CHANGED)
+                    print(f"refusing: the runner exited {rc} before the unfold", file=sys.stderr)
+                    return rc
                 print("refusing: the prep step never reached the unfold", file=sys.stderr)
                 return 5
         with install("run", a.set, a.edges, a.workdir):

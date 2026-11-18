@@ -5,25 +5,37 @@ Declaration: .../rounding-stability-20261106/pilot-fb/PILOT-FB-DECLARATION.md re
 PILOT-FB-BINDING-1 at M_PFB 522ac0b6.
 
     fb_pilot_analyze.py --runs ROOT --stage STAGE --job-status JSON --job ID --deploy D --pin SHA --out JSON
-    fb_pilot_analyze.py round1 --runs ROOT --stage STAGE --deploy D --pin SHA     (the job's round-1 gate)
-    fb_pilot_analyze.py slurm-limit --timelimit HH:MM:SS                           (the job's own --time check)
+    fb_pilot_analyze.py round1 --runs ROOT --stage STAGE --deploy D --pin SHA --job ID   (the job's round-1 gate)
+    fb_pilot_analyze.py slurm-limit --timelimit HH:MM:SS                                (the job's own --time check)
+    fb_pilot_analyze.py smoke-receipt write|check --stage STAGE --pin SHA --local true|false  (the smoke's receipt)
 
 ROOT is the run root the job created (runs/A0R with tag rs1_A0, runs/E1 base and jitters 1-20, runs/E2 and runs/E3
-bases; edges/). STAGE holds the connect's O_NOATIME copies: a0-refs/ (RS1's A0 products) and the sigma receipt.
+bases; edges/). STAGE holds RS1's A0 products (a0-refs/) and the sigma receipt, copied there by the connect; this tree
+does not make those copies. The analysis requires each to be a plain file (not a symlink or a hard link, so no read
+here can reach a protected original) at its pin.
+
+The job status (ROOT/job-status.json, or STAGE/job-<id>.refused.json) must name this job, the pin and the declared
+root; a status recording a refusal before the root was created has no outcome. Every product must record this job in
+its meta (slurm_job); a product of another job means the root was not this job's alone, which is RUN REFUSED.
 
 G4, re-verified here (one gate, two checks; the connect is the first): RS1's A0 copies against RS1's committed
 runs-SHA256SUMS, the sigma receipt copy against its pin, of_inputs_5d.npz and bkg_dump.npz against RS1's declared
 digests (read with O_NOATIME where the platform has it), and the deploy at its pinned commit, clean.
 
-Each remedy product's sidecar must name that product by sha256, its set and seed, the edges INDEX.json the run used
-and the deploy's code; the analysis then trusts its gate records.
+Each remedy product's sidecar must name that product by sha256, its set and seed, the run's edges INDEX.json and the
+deploy's code, and its gate bits must equal the product meta's gates_pass; the analysis then trusts its gate records.
+The run's edges/INDEX.json must exist and every file it lists must hash as it records; a missing or unreadable INDEX,
+sidecar or meta fails the binding, never skips it. An unreadable product counts as missing.
 
 The outcome, first that applies (§5.2): INPUTS CHANGED (G4, or a task's input-digest exit 4); RUN REFUSED (the root
 was not fresh, or a task's grid-membership exit 5); INFEASIBLE (G0); INCOMPLETE (an operational interruption, a
-crashed task, the time limit or the wall-projection stop; and any product missing that no gate failure explains);
+crashed task, the time limit or the wall-projection stop; and any product missing or unreadable that no gate failure
+explains);
 NOT REPRODUCED; JITTER NOT APPLIED; PREMISE FAILED (naming G2, G3 or identity); INVALID. Otherwise the seven rows.
-Every outcome reports what statistics could be computed (base-only statistics need no jitter); under a gate outcome
-they are labelled NOT READ. Non-finite numbers are written as null, with their place listed.
+Every outcome after INPUTS CHANGED reports what statistics could be computed (base-only statistics need no jitter;
+S2 needs no valid S1); under a gate outcome they are labelled NOT READ. INPUTS CHANGED is returned before any product,
+the sigma copy or the functional matrix is read for statistics. Non-finite numbers are written as null, with their
+place listed.
 
 MEASURES: the declared statistics of recorded products. CANNOT AUTHORIZE: any note or paper wording, or a change to
 the reported estimator; the outcome goes to Joseph and Ben as an option.
@@ -38,6 +50,8 @@ import os
 import re
 import subprocess
 import sys
+import time
+import zipfile
 from pathlib import Path
 
 import numpy as np
@@ -55,12 +69,17 @@ SIGMA_NAME = "assess_receipt.json"
 NPZ = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz"
 BKG = "/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz"
 CODE_FILES = ("fb_pilot_probe.py", "fb_pilot_edges.py", "fb_pilot_gates.py")
-SCHEMA = "pilot-fb-analysis/2"
+SCHEMA = "pilot-fb-analysis/3"
 SEEDS = tuple(range(1, 21))
 BOOT_SEED = 20261117
 BARS = (0.3, 1.0)
 SETS = ("E1", "E2", "E3")
 TIME_LIMIT_S = 3000  # --time=0:50:00 (§7): 0.833 node-h on one exclusive node, under the 0.9 cap
+ROOT_DECLARED = "/pscratch/sd/j/josephrb/pfb-20261117"
+STAGE_DECLARED = "/pscratch/sd/j/josephrb/pfb-20261117-stage"
+ROLES = ("clf1", "reg", "clf2", "ref")  # fb_pilot_edges.ROLES
+GATES = ("J", "G2", "G3", "identity")
+UNREADABLE = (OSError, ValueError, KeyError, TypeError, AttributeError, EOFError, zipfile.BadZipFile)
 S1_LABEL = {"R": "REMOVED", "P": "REDUCED", "C": "NOT REMOVED", "INCONCLUSIVE": "INCONCLUSIVE", "INVALID": "INVALID"}
 ROWS = (  # (number, condition, outcome) in precedence order; §5.2
     (1, lambda s1, s2, s3: s1 == "NOT REMOVED", "NOT A REMEDY"),
@@ -79,7 +98,8 @@ LIMITS = ("one pseudo-experiment and 20 jitters; the remedy's removal measured f
 
 def sha256_path(p: Path, noatime: bool = False) -> str:
     """sha256 of a file; with noatime, opened O_NOATIME where the platform has it (Linux), so an atime watch on the
-    file does not move."""
+    file does not move. Used with noatime only for the two raw inputs, whose plain read §7 allows: a non-owner's
+    EPERM falls back to that plain read."""
     flags = os.O_RDONLY | (getattr(os, "O_NOATIME", 0) if noatime else 0)
     try:
         fd = os.open(p, flags)
@@ -90,6 +110,26 @@ def sha256_path(p: Path, noatime: bool = False) -> str:
         for b in iter(lambda: fh.read(1 << 22), b""):
             h.update(b)
     return h.hexdigest()
+
+
+def safe_sha(p: Path, noatime: bool = False) -> str | None:
+    """sha256, or None if the file cannot be read (a G4 or binding failure, never an exception)."""
+    try:
+        return sha256_path(p, noatime)
+    except OSError:
+        return None
+
+
+def stage_copy_problem(p: Path) -> str | None:
+    """A stage copy must be a plain file of its own: a symlink or a hard link could reach a protected original."""
+    p = Path(p)
+    if p.is_symlink():
+        return "a symlink"
+    if not p.is_file():
+        return "absent"
+    if p.stat().st_nlink != 1:
+        return "a hard link"
+    return None
 
 
 def product(path: Path) -> tuple[np.ndarray, dict]:
@@ -171,7 +211,7 @@ def invalid_reasons(Fs: dict, sigma: np.ndarray, s1: dict | None) -> list:
     for k, F in Fs.items():
         if not np.all(np.isfinite(F)):
             bad.append(f"{k}: a non-finite functional")
-    if "E1_jit" in Fs and np.any(Fs["E1_jit"].mean(axis=0) == 0):
+    if s1 is not None and "E1_jit" in Fs and np.any(Fs["E1_jit"].mean(axis=0) == 0):
         bad.append("a zero mean in S1")
     for k in ("E1_base", "E2_base", "E3_base"):
         if k in Fs and np.any(Fs[k] == 0):
@@ -179,6 +219,16 @@ def invalid_reasons(Fs: dict, sigma: np.ndarray, s1: dict | None) -> list:
     if s1 is not None and s1.get("invalid"):
         bad.append("S1's own INVALID: more than 10 % of functionals excluded")
     return bad
+
+
+def s2_reading(st: dict) -> str:
+    """S2's bars include equality (§5)."""
+    return "STAB_PASS" if st["mean_median"] <= BARS[0] and st["mean_max"] <= BARS[1] else "STAB_FAIL"
+
+
+def s3_reading(st: dict) -> str:
+    """S3's bars include equality (§5)."""
+    return "POLICY-STABLE" if st["median"] <= BARS[0] and st["max"] <= BARS[1] else "POLICY-SENSITIVE"
 
 
 def s1_reading(r: dict) -> str:
@@ -216,7 +266,8 @@ def deploy_problem(deploy: Path | None, pin: str | None) -> str | None:
     try:
         head = subprocess.run(["git", "-C", str(deploy), "rev-parse", "HEAD"], capture_output=True, text=True,
                               check=True).stdout.strip()
-        dirty = subprocess.run(["git", "-C", str(deploy), "status", "--porcelain", "--untracked-files=no"],
+        dirty = subprocess.run(["git", "--no-optional-locks", "-C", str(deploy), "status", "--porcelain",
+                                "--untracked-files=no"],
                                capture_output=True, text=True, check=True).stdout.strip()
     except (OSError, subprocess.CalledProcessError) as exc:
         return f"the deploy is not a readable git checkout ({exc})"
@@ -226,7 +277,8 @@ def deploy_problem(deploy: Path | None, pin: str | None) -> str | None:
 
 
 def gate_records(root: Path, have: dict, index_sha: str | None, code: dict | None) -> dict:
-    """J, G2, G3 and identity from every remedy product's sidecar, once the sidecar is bound to that product."""
+    """J, G2, G3 and identity from every remedy product's sidecar, once the sidecar is bound to that product. A missing
+    INDEX (index_sha None) or deploy code (code None) fails every binding: absent evidence never skips a check."""
     out = {"J": [], "G2": [], "G3": [], "identity": [], "binding": []}
     for (s, j), rel in have.items():
         if s == "A0R":
@@ -237,58 +289,117 @@ def gate_records(root: Path, have: dict, index_sha: str | None, code: dict | Non
         if not side.is_file():
             out["binding"].append(f"{tag}: no gate sidecar")
             continue
-        rec = json.loads(side.read_text())
-        _, meta = product(p)
-        blk = meta.get("pilot_fb") or {}
+        try:
+            rec = json.loads(side.read_text())
+            _, meta = product(p)
+            blk = meta.get("pilot_fb") or {}
+            bits = {g: rec["gates"][g]["pass"] for g in GATES}
+        except UNREADABLE as exc:
+            out["binding"].append(f"{tag}: the sidecar or the product's meta is unreadable ({exc!r})")
+            continue
         why = None
-        if rec.get("product") != p.name or rec.get("product_sha256") != sha256_path(p):
+        if rec.get("product") != p.name or rec.get("product_sha256") != safe_sha(p):
             why = "the sidecar does not name this product's sha256"
         elif (rec.get("set"), rec.get("jitter_seed")) != (s, j) or (blk.get("set"), blk.get("jitter_seed")) != (s, j):
             why = f"set/seed: sidecar {rec.get('set')}/{rec.get('jitter_seed')}, meta {blk.get('set')}/{blk.get('jitter_seed')}"
-        elif index_sha is not None and (rec.get("edges_index_sha256") != index_sha or blk.get("edges_index_sha256") != index_sha):
+        elif index_sha is None:
+            why = "the run's edges/INDEX.json is missing or unreadable"
+        elif rec.get("edges_index_sha256") != index_sha or blk.get("edges_index_sha256") != index_sha:
             why = "the sidecar or meta names another edges INDEX.json"
-        elif code is not None and (rec.get("code_sha256") != code or blk.get("code_sha256") != code):
+        elif code is None or rec.get("code_sha256") != code or blk.get("code_sha256") != code:
             why = "the sidecar or meta names code other than the deploy's"
+        elif bits != blk.get("gates_pass"):
+            why = f"the sidecar's gate bits {bits} are not the product meta's gates_pass {blk.get('gates_pass')}"
         if why:
             out["binding"].append(f"{tag}: {why}")
             continue
-        for g in ("J", "G2", "G3", "identity"):
-            if not rec["gates"][g]["pass"]:
+        for g in GATES:
+            if bits[g] is not True:
                 out[g].append(tag)
     return out
 
 
-def gates(root: Path, stage: Path, deploy: Path | None = None, pin: str | None = None, rs1_sums: Path = RS1_SUMS,
-          npz: str = NPZ, bkg: str = BKG, check_inputs: bool = True) -> dict:
-    """G4 (the analysis's check), presence, G1 and the per-product gates, on what exists."""
+def edges_problems(edges: Path) -> tuple[str | None, list]:
+    """(INDEX.json's sha256 or None, problems): the run's INDEX must exist, list the three sets' four roles, and every
+    file it lists must hash as it records."""
+    idx = Path(edges) / "INDEX.json"
+    if not idx.is_file():
+        return None, ["edges: the run's INDEX.json is missing"]
+    sha = safe_sha(idx)
+    bad = []
+    try:
+        index = json.loads(idx.read_text())
+        if set(index["sets"]) != set(SETS) or any(set(c["roles"]) != set(ROLES) for c in index["sets"].values()):
+            bad.append("edges: INDEX.json does not list the three sets' four roles")
+        for s, c in index["sets"].items():
+            for r, v in c["roles"].items():
+                if safe_sha(Path(edges) / v["file"]) != v["sha256"]:
+                    bad.append(f"edges: {v['file']} is not the file INDEX.json records")
+    except UNREADABLE as exc:
+        bad.append(f"edges: INDEX.json is unreadable ({exc!r})")
+    return (None if sha is None else sha), bad
+
+
+def g4_failing(stage: Path, deploy: Path | None, pin: str | None, rs1_sums: Path | None = None, npz: str = NPZ,
+               bkg: str = BKG, check_inputs: bool = True) -> list:
+    """G4, the analysis's check: the A0 copies and the sigma copy (plain files at their pins), the two inputs, and the
+    deploy at its pin, clean. An unreadable file fails its check; nothing here raises on a bad file."""
     import rounding_mechanism_analyze as ra
     import rounding_mechanism_probe as rmp
-    exp = expected()
-    have = {k: v for k, v in exp.items() if (root / v).is_file()}
-    pins = rs1_pins(rs1_sums)
+    pins = rs1_pins(RS1_SUMS if rs1_sums is None else rs1_sums)
     refs = Path(stage) / "a0-refs"
-    want = [name("rs1_A0", None)] + [name("rs1_A0", s) for s in SEEDS]
-    g4 = [f for f in want if not (refs / f).is_file() or sha256_path(refs / f) != pins.get(f)]
+    g4 = []
+    for f in [name("rs1_A0", None)] + [name("rs1_A0", s) for s in SEEDS]:
+        why = stage_copy_problem(refs / f) or (None if safe_sha(refs / f) == pins.get(f) else "not at its pin")
+        if why:
+            g4.append(f"{f} ({why})")
     sig = Path(stage) / SIGMA_NAME
-    if not sig.is_file() or sha256_path(sig) != ra.SIGMA_RECEIPT_SHA256:
+    if stage_copy_problem(sig) or safe_sha(sig) != ra.SIGMA_RECEIPT_SHA256:
         g4.append("the sigma receipt copy")
     if check_inputs:
         for path, want_sha in ((npz, rmp.STABILITY["npz_sha256"]), (bkg, rmp.STABILITY["bkg_sha256"])):
-            if not Path(path).is_file() or sha256_path(Path(path), noatime=True) != want_sha:
+            if not Path(path).is_file() or safe_sha(Path(path), noatime=True) != want_sha:
                 g4.append(f"the input {Path(path).name}")
     dp = deploy_problem(deploy, pin)
     if dp:
         g4.append(dp)
-    idx = Path(root) / "edges" / "INDEX.json"
-    index_sha = sha256_path(idx) if idx.is_file() else None
-    code = code_shas(deploy) if deploy is not None and not dp else None
+    return g4
+
+
+def gates(root: Path, stage: Path, deploy: Path | None = None, pin: str | None = None, job: str | None = None,
+          rs1_sums: Path | None = None, npz: str = NPZ, bkg: str = BKG, check_inputs: bool = True) -> dict:
+    """G4 first; if it fails, nothing else is read. Then presence (an unreadable product is missing), each product's
+    job, the run's edges, G1 and the per-product gates, on what exists."""
+    exp = expected()
+    g4 = g4_failing(stage, deploy, pin, rs1_sums, npz, bkg, check_inputs)
+    if g4:
+        return {"have": {}, "missing": sorted(f"{s}/{j}" for s, j in exp), "unreadable": [], "foreign": [],
+                "G4_failing": g4, "G1": None, "edges": [], "per_product": {k: [] for k in (*GATES, "binding")},
+                "not_read": "G4 failed: no product, sidecar or edges file was read"}
+    have, unreadable, foreign, xs = {}, [], [], {}
+    for k, v in exp.items():
+        if not (Path(root) / v).is_file():
+            continue
+        try:
+            x, meta = product(Path(root) / v)
+        except UNREADABLE as exc:
+            unreadable.append(f"{k[0]}/{k[1]}: {exc!r}")
+            continue
+        have[k] = v
+        if str(meta.get("slurm_job")) != str(job) or meta.get("slurm_job") is None:
+            foreign.append(f"{k[0]}/{k[1]}: job {meta.get('slurm_job')!r}")
+        xs[k] = x
+    index_sha, edges = edges_problems(Path(root) / "edges")
+    code = code_shas(deploy)
+    per = gate_records(Path(root), have, index_sha, code)
+    per["binding"] = edges + per["binding"]
     g1 = None
-    if ("A0R", None) in have and (refs / name("rs1_A0", None)).is_file():
-        x, _ = product(root / have[("A0R", None)])
-        r, _ = product(refs / name("rs1_A0", None))
+    ref0 = Path(stage) / "a0-refs" / name("rs1_A0", None)
+    if ("A0R", None) in have:
+        x, (r, _) = xs[("A0R", None)], product(ref0)
         g1 = bool(x.dtype == r.dtype and x.shape == r.shape and x.tobytes() == r.tobytes())
-    return {"have": have, "missing": sorted(f"{s}/{j}" for s, j in exp if (s, j) not in have), "G4_failing": g4,
-            "G1": g1, "per_product": gate_records(root, have, index_sha, code)}
+    return {"have": have, "missing": sorted(f"{s}/{j}" for s, j in exp if (s, j) not in have), "unreadable": unreadable,
+            "foreign": foreign, "G4_failing": [], "G1": g1, "edges": edges, "per_product": per}
 
 
 def first_gate(status: dict, g: dict) -> tuple[str | None, str]:
@@ -296,6 +407,8 @@ def first_gate(status: dict, g: dict) -> tuple[str | None, str]:
         return "INPUTS CHANGED", status.get("inputs_changed") or f"not at their pins: {g['G4_failing']}"
     if status.get("refused"):
         return "RUN REFUSED", status["refused"]
+    if g.get("foreign"):  # products this job did not write: the root was not this job's alone
+        return "RUN REFUSED", f"products of another job in the root: {g['foreign']}"
     if status.get("prep") == "INFEASIBLE":
         return "INFEASIBLE", status.get("prep_detail", "")
     if status.get("interrupted"):
@@ -312,12 +425,14 @@ def first_gate(status: dict, g: dict) -> tuple[str | None, str]:
         if g["per_product"][k]:
             return f"PREMISE FAILED ({k})", ", ".join(g["per_product"][k])
     if g["missing"] or g["G1"] is None:
-        return "INCOMPLETE", f"products missing with no gate failure: {g['missing']}"
+        return "INCOMPLETE", (f"products missing with no gate failure: {g['missing']}"
+                              + (f"; unreadable: {g['unreadable']}" if g.get("unreadable") else ""))
     return None, ""
 
 
 def statistics(root: Path, have: dict, refs: Path, U: np.ndarray, sigma: np.ndarray, edges: Path | None = None) -> dict:
-    """Every statistic the products allow, each with its own inputs: base-only S3 and shifts need no jitter."""
+    """Every statistic the products allow, each with its own inputs: base-only S3 and each base's shift need no
+    jitter, and S2 needs no valid S1 (S1's own INVALID suppresses S1's reading only)."""
     import rounding_mechanism_analyze as ra
     k153, cells = slice(0, 153), slice(153, 169)
     F = {k: U @ product(root / v)[0].astype(np.float64) for k, v in have.items()}
@@ -329,11 +444,11 @@ def statistics(root: Path, have: dict, refs: Path, U: np.ndarray, sigma: np.ndar
         Fs = {"E1_jit": np.array([F[("E1", s)][k153] for s in SEEDS]), "E1_base": F[("E1", None)][k153]}
         s1 = ra.spread_ratio(Fs["E1_jit"], np.array([A0[s][k153] for s in SEEDS]), np.random.default_rng(BOOT_SEED))
         out["S1"] = dict(s1, reading=s1_reading(s1))
-        out["INVALID"]["S1_S2"] = invalid_reasons(Fs, sigma, s1)
-        if not out["INVALID"]["S1_S2"]:
+        out["INVALID"]["S1"] = invalid_reasons({"E1_jit": Fs["E1_jit"]}, sigma, s1)
+        out["INVALID"]["S2"] = invalid_reasons(Fs, sigma, None)
+        if not out["INVALID"]["S2"]:
             out["S2"] = pair_statistic(Fs["E1_jit"], Fs["E1_base"], sigma)
-            out["S2"]["reading"] = "STAB_PASS" if out["S2"]["mean_median"] <= BARS[0] and out["S2"]["mean_max"] <= BARS[1] \
-                else "STAB_FAIL"
+            out["S2"]["reading"] = s2_reading(out["S2"])
         e1c = np.array([F[("E1", s)][cells] for s in SEEDS])
         out["readouts_cells16_S1"] = ra.spread_ratio(e1c, np.array([A0[s][cells] for s in SEEDS]),
                                                      np.random.default_rng(BOOT_SEED))
@@ -345,30 +460,43 @@ def statistics(root: Path, have: dict, refs: Path, U: np.ndarray, sigma: np.ndar
         out["INVALID"]["S3"] = invalid_reasons(Fb, sigma, None)
         if not out["INVALID"]["S3"]:
             out["S3"] = policy_statistic({s: Fb[f"{s}_base"] for s in SETS}, sigma)
-            out["S3"]["reading"] = "POLICY-STABLE" if out["S3"]["median"] <= BARS[0] and out["S3"]["max"] <= BARS[1] \
-                else "POLICY-SENSITIVE"
-            out["readouts_shift_from_e"] = {
-                s: {"median": float(np.median(np.abs(Fb[f"{s}_base"] / A0[None][k153] - 1) / sigma)),
-                    "max": float(np.max(np.abs(Fb[f"{s}_base"] / A0[None][k153] - 1) / sigma))} for s in SETS}
-            cb = {s: F[(s, None)][cells] for s in SETS}
-            if all(np.all(np.isfinite(v)) and np.all(v != 0) for v in cb.values()):
-                one = np.ones(16)
-                out["readouts_cells16_S3"] = policy_statistic(cb, one)  # relative shifts on the cells, not in sigma
+            out["S3"]["reading"] = s3_reading(out["S3"])
+        cb = {s: F[(s, None)][cells] for s in SETS}
+        if all(np.all(np.isfinite(v)) and np.all(v != 0) for v in cb.values()):
+            # §6 names S3 on R00-R15, but the pseudo-data sigma is defined on the 153 functionals only (the sigma
+            # receipt has 153 entries): this readout is the relative |F_a / F_b - 1| on the cells, not S3 in sigma
+            out["readouts_cells16_relative_policy_shift"] = dict(policy_statistic(cb, np.ones(16)), units=(
+                "relative |F_a/F_b - 1|, not in pseudo-data sigma (none is defined on the 16 cells)"))
+    sig_ok = sigma.ndim == 1 and np.all(np.isfinite(sigma)) and np.all(sigma > 0)
+    a0b = A0[None][k153]
+    out["readouts_shift_from_e"] = {}
+    for s in SETS:  # each base's shift from (e) needs only that base
+        if (s, None) in F and sig_ok and np.all(np.isfinite(F[(s, None)][k153])) and np.all(np.isfinite(a0b)) \
+                and np.all(a0b != 0):
+            d = np.abs(F[(s, None)][k153] / a0b - 1) / sigma
+            out["readouts_shift_from_e"][s] = {"median": float(np.median(d)), "max": float(np.max(d))}
     out["readouts_time"] = {f"{s}/{j}": product(root / v)[1].get("seconds_unfold") for (s, j), v in have.items()}
-    out["readouts_gate_seconds"] = {}
+    out["readouts_gate_seconds_in_unfold"] = {}
+    out["readouts_gate_seconds_scope"] = ("seconds each unfold spent in its own gate captures and checks; excludes this "
+                                          "analysis's aggregate checks, the sidecar binding and the job's round-1 gate")
     for (s, j), v in have.items():
         side = (root / v).with_name((root / v).name[:-4] + ".pfb.json")
-        if side.is_file():
-            out["readouts_gate_seconds"][f"{s}/{j}"] = json.loads(side.read_text()).get("gate_seconds")
-    if edges is not None and (Path(edges) / "INDEX.json").is_file():
-        idx = json.loads((Path(edges) / "INDEX.json").read_text())
-        e1, e2 = idx["sets"]["E1"]["roles"], idx["sets"]["E2"]["roles"]
-        out["readouts_e1_e2_edges"] = {
-            r: [{"identical": int(len(set(a["edges"]) & set(b["edges"]))), "n": len(a["edges"]),
-                 "median_abs_difference": float(np.median(np.abs(np.subtract(a["edges"], b["edges"]))))}
-                for a, b in zip(e1[r]["features"], e2[r]["features"])] for r in e1}
-        out["readouts_edges"] = {s: {r: [{k: q[k] for k in ("z", "n", "admissible")} for q in v["features"]]
-                                     for r, v in cfg["roles"].items()} for s, cfg in idx["sets"].items()}
+        try:
+            out["readouts_gate_seconds_in_unfold"][f"{s}/{j}"] = json.loads(side.read_text()).get("gate_seconds")
+        except UNREADABLE:
+            out["readouts_gate_seconds_in_unfold"][f"{s}/{j}"] = None
+    try:
+        if edges is not None and (Path(edges) / "INDEX.json").is_file():
+            idx = json.loads((Path(edges) / "INDEX.json").read_text())
+            e1, e2 = idx["sets"]["E1"]["roles"], idx["sets"]["E2"]["roles"]
+            out["readouts_e1_e2_edges"] = {
+                r: [{"identical": int(len(set(a["edges"]) & set(b["edges"]))), "n": len(a["edges"]),
+                     "median_abs_difference": float(np.median(np.abs(np.subtract(a["edges"], b["edges"]))))}
+                    for a, b in zip(e1[r]["features"], e2[r]["features"])] for r in e1}
+            out["readouts_edges"] = {s: {r: [{k: q[k] for k in ("z", "n", "admissible")} for q in v["features"]]
+                                         for r, v in cfg["roles"].items()} for s, cfg in idx["sets"].items()}
+    except UNREADABLE as exc:
+        out["readouts_edges_unreadable"] = repr(exc)
     rs1 = json.loads(RS1_READ.read_text())["readouts"]["A0_pair_statistic_10_pairs"]
     out["readouts_rs1_A0_pair_statistic"] = {**rs1, "source": "rs1_read.json readouts.A0_pair_statistic_10_pairs"}
     return out
@@ -396,24 +524,49 @@ def outcome(stats: dict) -> dict:
     raise AssertionError("the seven rows partition the sixteen combinations")
 
 
+def status_problem(status: dict, job: str, pin: str | None, status_path: Path | None, runs: Path, stage: Path,
+                   root_declared: str = ROOT_DECLARED) -> str | None:
+    """The status must be this job's, at this pin, for the declared root, read from where the job writes it."""
+    if str(status.get("job")) != str(job):
+        return f"the job status names job {status.get('job')!r}, not {job!r}"
+    if status.get("pin") != pin:
+        return f"the job status names pin {status.get('pin')!r}, not {pin!r}"
+    if status.get("root") != root_declared:
+        return f"the job status names root {status.get('root')!r}, not the declared {root_declared}"
+    if status_path is not None:
+        where = {Path(runs).resolve() / "job-status.json", Path(stage).resolve() / f"job-{job}.refused.json"}
+        if Path(status_path).resolve() not in where:
+            return f"the job status {status_path} is not {' or '.join(sorted(map(str, where)))}"
+    if status.get("preflight_refused"):
+        return f"no outcome: the job refused before creating the run root ({status['preflight_refused']})"
+    return None
+
+
 def analyze(root: Path, stage: Path, status: dict, job: str, deploy: Path | None = None, pin: str | None = None,
             U: np.ndarray | None = None, check_inputs: bool = True, contract: Path = CONTRACT,
-            h2: Path = H2_DEFINITION) -> dict:
+            h2: Path = H2_DEFINITION, status_path: Path | None = None, root_declared: str = ROOT_DECLARED) -> dict:
     out = {"schema": SCHEMA, "label": "PILOT-FB readings (PILOT-FB-DECLARATION.md rev 3 §5); an option for Joseph and "
                                       "Ben; no note or paper wording", "job": job}
-    if str(status.get("job")) != str(job):
-        raise SystemExit(f"[FAIL] the job status names job {status.get('job')!r}, not {job!r}")
-    g = gates(root, stage, deploy, pin, check_inputs=check_inputs)
+    bad = status_problem(status, job, pin, status_path, root, stage, root_declared)
+    if bad:
+        raise SystemExit(f"[FAIL] {bad}")
+    g = gates(root, stage, deploy, pin, job, check_inputs=check_inputs)
     out["gates"] = {k: v for k, v in g.items() if k != "have"}
     gate, why = first_gate(status, g)
-    sigma = np.asarray(json.loads((Path(stage) / SIGMA_NAME).read_text())["sigma_rel_pct"], float) / 100.0
-    if U is None:
-        import rounding_mechanism_probe as rmp
-        U = rmp.functional_matrix(contract, h2)
-    if U.shape[0] != 169:
-        raise SystemExit(f"{U.shape[0]} rows in the functional matrix, not 153 + 16")
-    stats = {} if gate == "INPUTS CHANGED" else statistics(root, g["have"], Path(stage) / "a0-refs", U, sigma,
-                                                           Path(root) / "edges")
+    stats: dict = {}
+    if gate != "INPUTS CHANGED":  # G4 passed, so the sigma and A0 copies are at their pins
+        try:
+            sigma = np.asarray(json.loads((Path(stage) / SIGMA_NAME).read_text())["sigma_rel_pct"], float) / 100.0
+            if U is None:
+                import rounding_mechanism_probe as rmp
+                U = rmp.functional_matrix(contract, h2)
+            if U.shape[0] != 169:
+                raise ValueError(f"{U.shape[0]} rows in the functional matrix, not 153 + 16")
+            stats = statistics(root, g["have"], Path(stage) / "a0-refs", U, sigma, Path(root) / "edges")
+        except UNREADABLE as exc:
+            stats = {"not_formed": repr(exc)}
+            if gate is None:
+                gate, why = "INVALID", f"a statistic could not be formed ({exc!r})"
     if gate is None:
         bad = [r for v in stats.get("INVALID", {}).values() for r in v]
         if bad or "S2" not in stats or "S3" not in stats:
@@ -442,8 +595,11 @@ def main(argv=None) -> int:
     a = ap.parse_args(argv)
     if a.out.exists():
         raise SystemExit(f"[FAIL] refusing to overwrite {a.out}")
-    status = json.loads(a.job_status.read_text())
-    out = analyze(a.runs, a.stage, status, a.job, a.deploy, a.pin)
+    try:
+        status = json.loads(a.job_status.read_text())
+    except UNREADABLE as exc:
+        raise SystemExit(f"[FAIL] the job status {a.job_status} is unreadable ({exc!r})")
+    out = analyze(a.runs, a.stage, status, a.job, a.deploy, a.pin, status_path=a.job_status)
     a.out.write_text(json.dumps(out, indent=1, ensure_ascii=False, allow_nan=False) + "\n")
     print(json.dumps({"outcome": out["outcome"]}, ensure_ascii=False))
     return 0
@@ -456,14 +612,59 @@ def round1_main(argv) -> int:
     ap.add_argument("--stage", type=Path, required=True)
     ap.add_argument("--deploy", type=Path, required=True)
     ap.add_argument("--pin", required=True)
+    ap.add_argument("--job", required=True)
     a = ap.parse_args(argv)
-    g = gates(a.runs, a.stage, a.deploy, a.pin)
+    g = gates(a.runs, a.stage, a.deploy, a.pin, a.job)
     missing = sorted(f"{s}/{j}" for s, j in ROUND1 if (s, j) not in g["have"])
     fails = {k: v for k, v in g["per_product"].items() if v}
-    ok = not g["G4_failing"] and g["G1"] is True and not fails and not missing
+    ok = not g["G4_failing"] and g["G1"] is True and not fails and not missing and not g["foreign"]
     print(json.dumps({"round1": "PASS" if ok else "STOP", "G4_failing": g["G4_failing"], "G1": g["G1"],
-                      "failing": fails, "missing": missing}))
+                      "failing": fails, "missing": missing, "unreadable": g["unreadable"], "foreign": g["foreign"]}))
     return 0 if ok else 3
+
+
+def smoke_receipt(stage: Path, pin: str, local: bool) -> dict:
+    """What the login-node smoke records, and the job requires: its stage, pin, mode and INDEX.json's sha256."""
+    idx = Path(stage) / "smoke-edges" / "INDEX.json"
+    return {"schema": "pfb-smoke/1", "stage": str(stage), "pin": pin, "local_test": bool(local),
+            "index_sha256": safe_sha(idx) if idx.is_file() else None}
+
+
+def smoke_receipt_problem(rec: dict, stage: Path, pin: str, local: bool) -> str | None:
+    want = smoke_receipt(stage, pin, local)
+    if want["index_sha256"] is None:
+        return "the stage holds no smoke-edges/INDEX.json"
+    diff = [k for k in ("schema", "stage", "pin", "local_test", "index_sha256") if rec.get(k) != want[k]]
+    return f"the smoke receipt differs in {diff}" if diff else None
+
+
+def smoke_main(argv) -> int:
+    """write: the smoke's last step (exit 9 if the INDEX it must hash is absent); check: the job's (exit 3)."""
+    ap = argparse.ArgumentParser(prog="fb_pilot_analyze.py smoke-receipt")
+    ap.add_argument("action", choices=("write", "check"))
+    ap.add_argument("--stage", type=Path, required=True)
+    ap.add_argument("--pin", required=True)
+    ap.add_argument("--local", choices=("true", "false"), required=True)
+    a = ap.parse_args(argv)
+    local = a.local == "true"
+    p = a.stage / "smoke-receipt.json"
+    if a.action == "write":
+        rec = smoke_receipt(a.stage, a.pin, local)
+        if rec["index_sha256"] is None or p.exists() or p.is_symlink():
+            print(f"[pfb-smoke] no receipt: INDEX.json absent or {p} exists", file=sys.stderr)
+            return 9
+        p.write_text(json.dumps(dict(rec, host=os.uname()[1], utc=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())),
+                                indent=1) + "\n")
+        print(json.dumps(rec))
+        return 0
+    try:
+        why = smoke_receipt_problem(json.loads(p.read_text()), a.stage, a.pin, local)
+    except UNREADABLE as exc:
+        why = f"the smoke receipt is unreadable ({exc!r})"
+    if why:
+        print(why, file=sys.stderr)
+        return 3
+    return 0
 
 
 def slurm_main(argv) -> int:
@@ -478,4 +679,6 @@ if __name__ == "__main__":
         sys.exit(round1_main(sys.argv[2:]))
     if sys.argv[1:2] == ["slurm-limit"]:
         sys.exit(slurm_main(sys.argv[2:]))
+    if sys.argv[1:2] == ["smoke-receipt"]:
+        sys.exit(smoke_main(sys.argv[2:]))
     sys.exit(main())

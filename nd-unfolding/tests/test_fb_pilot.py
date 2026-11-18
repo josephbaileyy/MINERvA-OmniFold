@@ -259,8 +259,13 @@ class G3(unittest.TestCase):
         unused = [dict(p, edges=[(lo + e) / 2 if v == e else v for v in p["edges"]]) if f == 4 else p
                   for f, p in enumerate(self.per)]
         m2, a2, bc2 = self.fit(unused, name="unused.json")
+        self.assertTrue(a2["pass"] and bc2["pass"], "a bound moved where no split acts passes G3")
         self.assertTrue(np.array_equal(m0.predict_proba(self.X), m2.predict_proba(self.X)),
                         "a bound moved where no split acts changes no prediction")
+        scored = np.random.default_rng(5).uniform(self.X.min(axis=0), self.X.max(axis=0), (500, self.X.shape[1]))
+        # scored rows the fit never saw: a bound moved where no split acts moves no fit row's bin, so no threshold used
+        self.assertTrue(np.array_equal(m0.predict_proba(scored), m2.predict_proba(scored)))
+        self.assertTrue(np.array_equal(m0.predict_proba(scored), m1.predict_proba(scored)))
 
     def test_the_remedy_is_jitter_invariant_on_fit_and_scored_rows(self):
         rng = np.random.default_rng(11)
@@ -374,8 +379,16 @@ class Outcome(unittest.TestCase):
                 for s3 in ("POLICY-STABLE", "POLICY-SENSITIVE"):
                     matches = [r for r, cond, _ in A.ROWS if cond(s1, s2, s3)]
                     self.assertGreaterEqual(len(matches), 1)
-                    seen[(s1, s2, s3)] = A.outcome(self.stats(s1, s2, s3))["row"]
+                    o = A.outcome(self.stats(s1, s2, s3))
+                    seen[(s1, s2, s3)] = o["row"]
+                    self.assertEqual(o["outcome"], {1: "NOT A REMEDY", 2: "NOT AN OPTION AS DECLARED",
+                                                    3: "NO OPTION STATEMENT", 4: "OPTION A", 5: "OPTION B",
+                                                    6: "OPTION C", 7: "OPTION D"}[o["row"]], (s1, s2, s3))
         self.assertEqual(len(seen), 16)
+        self.assertEqual(seen[("REMOVED", "STAB_PASS", "POLICY-STABLE")], 4)
+        self.assertEqual(seen[("REMOVED", "STAB_PASS", "POLICY-SENSITIVE")], 5)
+        self.assertEqual(seen[("REDUCED", "STAB_PASS", "POLICY-SENSITIVE")], 7)
+        self.assertEqual(seen[("INCONCLUSIVE", "STAB_PASS", "POLICY-SENSITIVE")], 3)
         self.assertEqual(seen[("REDUCED", "STAB_PASS", "POLICY-STABLE")], 6)
         self.assertEqual(seen[("INCONCLUSIVE", "STAB_FAIL", "POLICY-STABLE")], 2)
         self.assertEqual(seen[("NOT REMOVED", "STAB_FAIL", "POLICY-SENSITIVE")], 1)
@@ -386,6 +399,14 @@ class Outcome(unittest.TestCase):
         self.assertIn("maximum 2 beyond 1.0", text)
         self.assertNotIn("median 0.2 beyond", text)
         self.assertIn("at most 10 %", A.statement(4, self.S3))
+        self.assertEqual(A.s2_reading({"mean_median": 0.3, "mean_max": 1.0}), "STAB_PASS", "S2's bars include equality")
+        self.assertEqual(A.s2_reading({"mean_median": 0.3, "mean_max": np.nextafter(1.0, 2)}), "STAB_FAIL")
+        self.assertEqual(A.s2_reading({"mean_median": np.nextafter(0.3, 1), "mean_max": 1.0}), "STAB_FAIL")
+        self.assertEqual(A.s3_reading({"median": 0.3, "max": 1.0}), "POLICY-STABLE", "S3's bars include equality")
+        self.assertEqual(A.s3_reading({"median": 0.3, "max": np.nextafter(1.0, 2)}), "POLICY-SENSITIVE")
+        self.assertEqual(A.s3_reading({"median": np.nextafter(0.3, 1), "max": 1.0}), "POLICY-SENSITIVE")
+        self.assertIn("in pseudo-data σ", A.statement(4, self.S3))
+        self.assertIn("in pseudo-data σ", A.statement(6, self.S3))
         self.assertIn("between 10 % and 70 %", A.statement(6, self.S3))
 
     def test_a_nonfinite_bootstrap_endpoint_is_inconclusive(self):
@@ -414,7 +435,7 @@ class Outcome(unittest.TestCase):
         ok = {"E1_jit": np.ones((20, 153)), "E1_base": np.ones(153), "E2_base": np.ones(153), "E3_base": np.ones(153)}
         self.assertEqual(A.invalid_reasons(ok, s, {"invalid": False}), [])
         self.assertTrue(A.invalid_reasons(dict(ok, E1_base=np.zeros(153)), s, None))
-        self.assertTrue(A.invalid_reasons(dict(ok, E1_jit=np.zeros((20, 153))), s, None))
+        self.assertTrue(A.invalid_reasons(dict(ok, E1_jit=np.zeros((20, 153))), s, {"invalid": False}))
         self.assertTrue(A.invalid_reasons(ok, np.where(np.arange(153) == 3, np.nan, s), None))
         self.assertTrue(A.invalid_reasons(ok, s, {"invalid": True}))
         self.assertTrue(A.invalid_reasons(dict(ok, E2_base=np.full(153, np.inf)), s, None))
@@ -459,7 +480,7 @@ class Rev2(unittest.TestCase):
         self.assertIn("#SBATCH --time=0:50:00\n", text)
         self.assertIn("#SBATCH --job-name=pfb_run\n", text)
         self.assertIn("slurm-limit --timelimit", text)
-        self.assertIn('pfb_*) ;; *) refuse "the job name', text)
+        self.assertIn('pfb_*) ;; *) preflight "the job name', text)
 
     def run_job(self, stage, root, env=None):
         import os
@@ -482,28 +503,6 @@ class Rev2(unittest.TestCase):
 
     def tearDown(self):
         self._t.cleanup()
-
-    def test_the_job_refuses_a_stale_root_a_bad_stage_and_a_foreign_name(self):
-        stage, root = Path(self.tmp) / "stage", Path(self.tmp) / "root"
-        r = self.run_job(stage, root, {"PFB_LOCAL_TEST": "1"})
-        self.assertEqual(r.returncode, 2)
-        self.assertIn("lacks a0-refs", json.loads((stage / "job-77.refused.json").read_text())["refused"])
-        (stage / "a0-refs").mkdir(parents=True)
-        (stage / "assess_receipt.json").write_text("{}")
-        (stage / "smoke-edges").mkdir()
-        (stage / "smoke-edges" / "INDEX.json").write_text("{}")
-        root.mkdir()
-        (stage / "job-77.refused.json").unlink()
-        r = self.run_job(stage, root, {"PFB_LOCAL_TEST": "1"})
-        self.assertEqual(r.returncode, 2)
-        self.assertIn("not fresh", json.loads((stage / "job-77.refused.json").read_text())["refused"])
-        self.assertFalse((root / "job-status.json").exists(), "a refusal writes no run status into the old root")
-        (stage / "job-77.refused.json").unlink()
-        r = self.run_job(stage, Path(self.tmp) / "elsewhere", {"SLURM_JOB_NAME": "pfb_run"})
-        self.assertIn("not the declared", json.loads((stage / "job-77.refused.json").read_text())["refused"])
-        (stage / "job-77.refused.json").unlink()
-        r = self.run_job(stage, Path("/pscratch/sd/j/josephrb/pfb-20261117"), {"SLURM_JOB_NAME": "rdx_s3_a"})
-        self.assertIn("pfb_ family", json.loads((stage / "job-77.refused.json").read_text())["refused"])
 
     def stage_and_root(self):
         import hashlib
@@ -550,8 +549,9 @@ class Rev2(unittest.TestCase):
         code = code or {"fb_pilot_probe.py": "c"}
         p = root / A.expected()[(s, j)]
         p.parent.mkdir(parents=True, exist_ok=True)
-        blk = {"set": s, "jitter_seed": j, "edges_index_sha256": index_sha, "code_sha256": code, **(meta_overrides or {})}
-        np.savez(p, xsec_flat=np.full(169, 2.0), meta=np.array(json.dumps({"pilot_fb": blk})))
+        blk = {"set": s, "jitter_seed": j, "edges_index_sha256": index_sha, "code_sha256": code,
+               "gates_pass": {g: True for g in A.GATES}, **(meta_overrides or {})}
+        np.savez(p, xsec_flat=np.full(169, 2.0), meta=np.array(json.dumps({"pilot_fb": blk, "slurm_job": "77"})))
         gates_ = {g: {"pass": True} for g in ("J", "G2", "G3", "identity")}
         side = {"set": s, "jitter_seed": j, "product": p.name, "product_sha256": hashlib.sha256(p.read_bytes()).hexdigest(),
                 "edges_index_sha256": index_sha, "code_sha256": code, "gates": gates_, **(side_overrides or {})}
@@ -571,6 +571,16 @@ class Rev2(unittest.TestCase):
         self.write_remedy(root, "E2", None)
         self.assertTrue(A.gate_records(root, have, "j" * 64, code)["binding"], "another INDEX.json")
         self.assertTrue(A.gate_records(root, have, "i" * 64, {"fb_pilot_probe.py": "d"})["binding"], "other code")
+        self.assertTrue(A.gate_records(root, have, None, code)["binding"], "a missing INDEX fails, never skips")
+        self.assertTrue(A.gate_records(root, have, "i" * 64, None)["binding"], "missing deploy code fails, never skips")
+        self.write_remedy(root, "E2", None, side_overrides={"gates": {g: {"pass": True} for g in A.GATES}},
+                          meta_overrides={"gates_pass": {"J": True, "G2": False, "G3": True, "identity": True}})
+        b = A.gate_records(root, have, "i" * 64, code)
+        self.assertTrue(b["binding"] and "gates_pass" in b["binding"][0], "the sidecar's pass bits must be the meta's")
+        self.assertEqual(b["G2"], [], "a mismatched sidecar is not trusted for any gate")
+        self.write_remedy(root, "E2", None)
+        p.with_name(p.name[:-4] + ".pfb.json").write_text("{not json")
+        self.assertIn("unreadable", A.gate_records(root, have, "i" * 64, code)["binding"][0])
         p.with_name(p.name[:-4] + ".pfb.json").unlink()
         self.assertTrue(A.gate_records(root, have, "i" * 64, code)["binding"], "no sidecar")
 
@@ -619,6 +629,13 @@ class Rev2(unittest.TestCase):
         stage, root = self.stage_and_root()
         with self.assertRaisesRegex(SystemExit, "names job"):
             A.analyze(root, stage, {"job": "11"}, "12", U=np.eye(169), check_inputs=False)
+        ok = {"job": "12", "pin": "p", "root": A.ROOT_DECLARED}
+        self.assertIsNone(A.status_problem(ok, "12", "p", root / "job-status.json", root, stage))
+        self.assertIsNone(A.status_problem(ok, "12", "p", stage / "job-12.refused.json", root, stage))
+        self.assertIn("pin", A.status_problem(dict(ok, pin="q"), "12", "p", None, root, stage))
+        self.assertIn("root", A.status_problem(dict(ok, root="/elsewhere"), "12", "p", None, root, stage))
+        self.assertIn("is not", A.status_problem(ok, "12", "p", stage / "job-11.refused.json", root, stage))
+        self.assertIn("no outcome", A.status_problem(dict(ok, preflight_refused="x"), "12", "p", None, root, stage))
 
     def test_g0_records_every_role_and_feature(self):
         good = np.column_stack([f32(np.round(np.random.default_rng(k).normal(3, 1, 3000), 3)) for k in range(5)])
@@ -642,6 +659,360 @@ class Rev2(unittest.TestCase):
                            env={**os.environ, "SLURM_JOB_ID": "5"}, capture_output=True, text=True)
         self.assertEqual(r.returncode, 2)
         self.assertIn("outside any Slurm job", r.stderr)
+
+
+
+class Rev3(unittest.TestCase):
+    """The code-2 confirmation audits (Codex FAIL, Grok PASS WITH FIXES), each finding with its fix's test."""
+    JOB = "77"
+
+    def setUp(self):
+        self._t = tempfile.TemporaryDirectory()
+        self.tmp = Path(self._t.name).resolve()
+
+    def tearDown(self):
+        self._t.cleanup()
+
+    def env(self, **kw):
+        import os
+        e = {k: v for k, v in os.environ.items() if not k.startswith(("SLURM_", "PFB_"))}
+        e["PATH"] = f"{Path(sys.executable).parent}:/usr/bin:/bin:/usr/sbin:/sbin"
+        e.update(kw)
+        return e
+
+    def deploy(self):
+        """A clean git deploy with the files the scripts and the analysis read: stub code, a stub setup file, and the
+        real fb_pilot_analyze.py (the smoke receipt); the stub prep imports a module, so bytecode would land here."""
+        import hashlib
+        import subprocess
+        d = self.tmp / "deploy"
+        if d.exists():
+            return d, self.pin, self.setup_sha
+        (d / "nd-unfolding").mkdir(parents=True)
+        for f in A.CODE_FILES:
+            (d / "nd-unfolding" / f).write_text(f"# stub {f}\n")
+        (d / "nd-unfolding" / "rounding_mechanism_probe.py").write_text('STABILITY = {"ratio": "ratio.json"}\n')
+        (d / "nd-unfolding" / "fb_pilot_probe.py").write_text(
+            "import os, sys\nsys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))\n"
+            "import rounding_mechanism_probe\n"
+            "a = sys.argv\nout = a[a.index('--edges-out') + 1]\nos.makedirs(a[a.index('--out') + 1])\n"
+            "os.makedirs(out)\n"
+            "if not os.environ.get('STUB_NO_INDEX'):\n    open(os.path.join(out, 'INDEX.json'), 'w').write('{}\\n')\n")
+        (d / "nd-unfolding" / "fb_pilot_analyze.py").write_bytes((ND / "fb_pilot_analyze.py").read_bytes())
+        (d / "setup_salloc_env.sh").write_text("# stub setup\nexport STUB_SETUP=1\n")
+        subprocess.run(["git", "init", "-q", str(d)], check=True)
+        subprocess.run(["git", "-C", str(d), "add", "-A"], check=True)
+        subprocess.run(["git", "-C", str(d), "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "x"], check=True)
+        self.pin = subprocess.run(["git", "-C", str(d), "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
+        self.setup_sha = hashlib.sha256((d / "setup_salloc_env.sh").read_bytes()).hexdigest()
+        return d, self.pin, self.setup_sha
+
+    def deploy_untouched(self, d):
+        import subprocess
+        st = subprocess.run(["git", "--no-optional-locks", "-C", str(d), "status", "--porcelain", "--untracked-files=all",
+                             "--ignored"],
+                            capture_output=True, text=True).stdout
+        self.assertEqual(st, "", "nothing is written in the deploy (no __pycache__, nothing untracked)")
+        self.assertEqual(list(d.rglob("__pycache__")), [])
+
+    # -- the analysis: a complete run, then one defect at a time --------------------------------------------------
+    def stage(self):
+        import hashlib
+        stage = self.tmp / "stage"
+        (stage / "a0-refs").mkdir(parents=True)
+        sums = []
+        for s_ in (None, *A.SEEDS):
+            q = stage / "a0-refs" / A.name("rs1_A0", s_)
+            np.savez(q, xsec_flat=np.full(169, 2.0 + (s_ or 0) * 1e-3), meta=np.array("{}"))
+            sums.append(f"{hashlib.sha256(q.read_bytes()).hexdigest()}  runs/A0/{q.name}")
+        (self.tmp / "sums").write_text("\n".join(sums) + "\n")
+        (stage / A.SIGMA_NAME).write_bytes((A._REPO / "docs/orchestration/state/s5e/cand/assess_receipt.json").read_bytes())
+        return stage
+
+    def edges(self, root):
+        import hashlib
+        e = root / "edges"
+        e.mkdir(parents=True)
+        idx = {"sets": {}}
+        for s_ in A.SETS:
+            idx["sets"][s_] = {"roles": {}}
+            for r in A.ROLES:
+                f = e / f"{s_}_{r}.json"
+                f.write_text(f"[{s_} {r}]\n")
+                idx["sets"][s_]["roles"][r] = {"file": f.name, "sha256": hashlib.sha256(f.read_bytes()).hexdigest(),
+                                               "features": []}
+        (e / "INDEX.json").write_text(json.dumps(idx))
+        return hashlib.sha256((e / "INDEX.json").read_bytes()).hexdigest()
+
+    def put(self, root, s_, j, x, job=JOB, gates_pass=None, side_gates=None, index_sha=None, code=None):
+        import hashlib
+        q = root / A.expected()[(s_, j)]
+        q.parent.mkdir(parents=True, exist_ok=True)
+        meta = {"slurm_job": job, "seconds_unfold": 1.0}
+        if s_ != "A0R":
+            gp = gates_pass or {g: True for g in A.GATES}
+            meta["pilot_fb"] = {"set": s_, "jitter_seed": j, "edges_index_sha256": index_sha, "code_sha256": code,
+                                "gates_pass": gp}
+        np.savez(q, xsec_flat=x, meta=np.array(json.dumps(meta)))
+        if s_ != "A0R":
+            side = {"set": s_, "jitter_seed": j, "product": q.name, "product_sha256": hashlib.sha256(q.read_bytes()).hexdigest(),
+                    "edges_index_sha256": index_sha, "code_sha256": code, "gate_seconds": 0.1,
+                    "gates": side_gates or {g: {"pass": True} for g in A.GATES}}
+            q.with_name(q.name[:-4] + ".pfb.json").write_text(json.dumps(side))
+        return q
+
+    def run_tree(self, job=JOB):
+        d, pin, _ = self.deploy()
+        stage, root = self.stage(), self.tmp / "root"
+        root.mkdir()
+        isha = self.edges(root)
+        code = A.code_shas(d)
+        self.put(root, "A0R", None, np.full(169, 2.0), job)
+        for s_, j in A.expected():
+            if s_ == "A0R":
+                continue
+            x = np.full(169, 2.0) * (1 + {"E1": 0, "E2": 1e-6, "E3": 2e-6}[s_] + (j or 0) * 1e-7)
+            self.put(root, s_, j, x, job, index_sha=isha, code=code)
+        self.ctx = {"deploy": d, "pin": pin, "stage": stage, "root": root, "index_sha": isha, "code": code}
+        return self.ctx
+
+    def analyze(self, status=None, job=JOB, status_path=None):
+        c = self.ctx
+        st = status if status is not None else {"job": job, "pin": c["pin"], "root": str(c["root"])}
+        import unittest.mock as um
+        with um.patch.object(A, "RS1_SUMS", self.tmp / "sums"):
+            return A.analyze(c["root"], c["stage"], st, job, c["deploy"], c["pin"], U=np.eye(169), check_inputs=False,
+                             status_path=status_path, root_declared=str(c["root"]))
+
+    def test_a_complete_valid_run_reads_one_row(self):
+        self.run_tree()
+        out = self.analyze()
+        self.assertIn("row", out["outcome"], out["outcome"])
+        self.assertEqual(out["gates"]["per_product"]["binding"], [])
+        self.assertEqual(out["gates"]["foreign"], [])
+        self.assertTrue(out["gates"]["G1"])
+        for k in ("S1", "S2", "S3", "readouts_cells16_relative_policy_shift"):
+            self.assertIn(k, out["statistics"])
+
+    def test_a_missing_index_or_an_altered_edge_file_fails_identity(self):
+        """Codex HIGH 1, Grok 2: a missing INDEX disabled the identity check; now absent evidence FAILS."""
+        c = self.run_tree()
+        (c["root"] / "edges" / "INDEX.json").unlink()
+        out = self.analyze()
+        self.assertEqual(out["outcome"]["outcome"], "PREMISE FAILED (identity)")
+        self.assertIn("INDEX.json is missing", out["outcome"]["why"])
+        self._t.cleanup(); self.setUp()
+        c = self.run_tree()
+        (c["root"] / "edges" / "E2_reg.json").write_text("changed\n")
+        out = self.analyze()
+        self.assertEqual(out["outcome"]["outcome"], "PREMISE FAILED (identity)")
+        self.assertIn("E2_reg.json is not the file INDEX.json records", out["outcome"]["why"])
+
+    def test_products_of_another_job_are_run_refused(self):
+        """Codex HIGH 2: the job id is bound to every product's meta, not only to the caller's arguments."""
+        self.run_tree(job="11")
+        out = self.analyze(job="12")
+        self.assertEqual(out["outcome"]["outcome"], "RUN REFUSED")
+        self.assertIn("job '11'", out["outcome"]["why"])
+        out = self.analyze(job="11")
+        self.assertIn("row", out["outcome"])
+        c = self.ctx
+        self.put(c["root"], "E2", None, np.full(169, 2.0), job=None, index_sha=c["index_sha"], code=c["code"])
+        self.assertEqual(self.analyze(job="11")["outcome"]["outcome"], "RUN REFUSED", "a product with no job fails")
+        with self.assertRaisesRegex(SystemExit, "pin"):
+            self.analyze({"job": "11", "pin": "0" * 40, "root": str(c["root"])}, job="11")
+        with self.assertRaisesRegex(SystemExit, "is not"):
+            self.analyze(job="11", status_path=c["stage"] / "elsewhere.json")
+
+    def test_a_malformed_artifact_keeps_the_named_outcome(self):
+        """Codex MEDIUM 5: INPUTS CHANGED is returned before any unsafe read; an unreadable product or sidecar is
+        classified, never raised."""
+        c = self.run_tree()
+        (c["stage"] / A.SIGMA_NAME).write_text("{}")
+        out = self.analyze()
+        self.assertEqual(out["outcome"]["outcome"], "INPUTS CHANGED")
+        self.assertEqual(out["statistics_NOT_READ"], {})
+        (c["stage"] / A.SIGMA_NAME).unlink()
+        self.assertEqual(self.analyze()["outcome"]["outcome"], "INPUTS CHANGED", "a missing sigma copy")
+        self._t.cleanup(); self.setUp()
+        c = self.run_tree()
+        q = c["root"] / A.expected()[("E1", 9)]
+        q.write_bytes(q.read_bytes()[:40])
+        out = self.analyze()
+        self.assertEqual(out["outcome"]["outcome"], "INCOMPLETE")
+        self.assertIn("unreadable", out["outcome"]["why"])
+        self.assertIn("S3", out["statistics_NOT_READ"], "base-only statistics survive")
+        q = c["root"] / A.expected()[("E1", 9)]
+        self.put(c["root"], "E1", 9, np.full(169, 2.0), index_sha=c["index_sha"], code=c["code"])
+        q.with_name(q.name[:-4] + ".pfb.json").write_text("{")
+        self.assertEqual(self.analyze()["outcome"]["outcome"], "PREMISE FAILED (identity)")
+
+    def test_a_stage_copy_must_be_a_plain_file(self):
+        """The LOW item: a symlink or hard link in the stage could reach a protected original."""
+        import os
+        c = self.run_tree()
+        ref = c["stage"] / "a0-refs" / A.name("rs1_A0", 3)
+        real = self.tmp / "original.npz"
+        os.replace(ref, real)
+        ref.symlink_to(real)
+        self.assertEqual(self.analyze()["outcome"]["outcome"], "INPUTS CHANGED")
+        ref.unlink()
+        os.link(real, ref)
+        out = self.analyze()
+        self.assertEqual(out["outcome"]["outcome"], "INPUTS CHANGED")
+        self.assertTrue(any("hard link" in x for x in out["gates"]["G4_failing"]))
+
+    def test_the_prep_step_keeps_the_runners_exit_4(self):
+        """Codex MEDIUM 6, Grok 1: a returned input-digest failure stays 4 (INPUTS CHANGED), not 5."""
+        import unittest.mock as um
+        for rc, want in ((4, 4), (2, 2), (0, 5)):
+            with um.patch.object(P.esp, "main", lambda argv, rc=rc: rc):
+                got = P.main(["prep", "--edges-out", str(self.tmp / f"e{rc}"), "--", "--x"])
+            self.assertEqual(got, want, rc)
+
+    def test_s2_survives_s1s_own_invalid_and_each_base_has_its_shift(self):
+        """Codex 7: S1's own INVALID suppresses S1's reading only; one base suffices for its own shift."""
+        c = self.run_tree()
+        have = {k: v for k, v in A.expected().items()}
+        sigma = np.asarray(json.loads((c["stage"] / A.SIGMA_NAME).read_text())["sigma_rel_pct"], float) / 100
+        import unittest.mock as um
+        ra = __import__("rounding_mechanism_analyze")
+        real = ra.spread_ratio
+        with um.patch.object(ra, "spread_ratio", lambda *a, **k: dict(real(*a, **k), invalid=True)):
+            st = A.statistics(c["root"], have, c["stage"] / "a0-refs", np.eye(169), sigma, None)
+        self.assertTrue(st["INVALID"]["S1"])
+        self.assertEqual(st["INVALID"]["S2"], [])
+        self.assertIn("S2", st)
+        one = {("E2", None): have[("E2", None)]}
+        st = A.statistics(c["root"], one, c["stage"] / "a0-refs", np.eye(169), sigma, None)
+        self.assertEqual(sorted(st["readouts_shift_from_e"]), ["E2"])
+        self.assertNotIn("S3", st)
+
+    def test_g0_counts_survive_a_policy_failure(self):
+        """Codex 7: a zero-band failure still reports z, n and the admissible-gap count; a non-finite value cannot."""
+        F = f32(np.concatenate([np.arange(1.0, 200.0), [1e-35]]))
+        d = E.diagnose(F, F, 63)
+        self.assertIsNotNone(d["first_failing_rule"])
+        self.assertEqual((d["z"], d["n"]), (1, 61))
+        self.assertEqual(d["admissible"], int(E.admissible_gaps(F)[0].size))
+        d = E.diagnose(np.append(F, np.nan), F, 63)
+        self.assertIsNone(d["admissible"])
+
+    # -- the job script ---------------------------------------------------------------------------------------------
+    def run_job(self, stage, root, **env):
+        import subprocess
+        d, pin, _ = self.deploy()
+        return subprocess.run(["bash", str(ND / "sbatch_pfb.sh"), str(d), env.pop("PIN", pin), str(stage), str(root)],
+                              env=self.env(**env), capture_output=True, text=True, cwd=self.tmp)
+
+    def test_the_test_switch_cannot_reach_a_real_job(self):
+        """Codex HIGH 4, Grok 3: inside Slurm any PFB_ variable refuses, even empty; then the one-node, family, root
+        and stage checks run; nothing is written before the stage is validated."""
+        stage, root = self.tmp / "stage", self.tmp / "root"
+        stage.mkdir()
+        slurm = {"SLURM_JOB_ID": "77", "SLURM_JOB_NUM_NODES": "1", "SLURM_JOB_NAME": "pfb_run"}
+        for extra, why in (({"PFB_LOCAL_TEST": "1"}, "PFB_ variables"), ({"PFB_LOCAL_TEST": ""}, "PFB_ variables"),
+                           ({"PFB_LOCAL_TEST": "0"}, "PFB_ variables"), ({"PFB_SETUP_SHA": "x"}, "PFB_ variables"),
+                           ({"SLURM_JOB_NUM_NODES": "2"}, "nodes, not 1"),
+                           ({"SLURM_JOB_NAME": "rdx_s3_a"}, "pfb_ family")):
+            r = self.run_job(A.STAGE_DECLARED, A.ROOT_DECLARED, **{**slurm, **extra})
+            self.assertEqual(r.returncode, 2, extra)
+            self.assertIn(why, r.stderr, extra)
+        r = self.run_job(A.STAGE_DECLARED, root, **slurm)
+        self.assertIn("is not the declared /pscratch/sd/j/josephrb/pfb-20261117", r.stderr)
+        r = self.run_job(stage, A.ROOT_DECLARED, **slurm)
+        self.assertIn("is not the declared /pscratch/sd/j/josephrb/pfb-20261117-stage", r.stderr)
+        self.assertEqual(list(stage.iterdir()), [], "a refusal before the stage is validated writes nothing")
+        r = self.run_job(stage, root)
+        self.assertIn("runs only under sbatch", r.stderr)
+        text = (ND / "sbatch_pfb.sh").read_text()
+        self.assertIn("#SBATCH --output=/pscratch/sd/j/josephrb/pfb-20261117-stage/slurm-%j.out\n", text)
+        self.assertIn("#SBATCH --error=/pscratch/sd/j/josephrb/pfb-20261117-stage/slurm-%j.err\n", text)
+
+    def local_stage(self, receipt=True):
+        d, pin, sha = self.deploy()
+        stage = self.tmp / "stage"
+        (stage / "a0-refs").mkdir(parents=True)
+        (stage / "assess_receipt.json").write_text("{}")
+        (stage / "smoke-edges").mkdir()
+        (stage / "smoke-edges" / "INDEX.json").write_text("{}\n")
+        if receipt:
+            (stage / "smoke-receipt.json").write_text(json.dumps(A.smoke_receipt(stage, pin, True)))
+        return stage, sha
+
+    def test_the_job_preflight_spends_no_root(self):
+        """Grok's lows: every refusal but an existing root is a preflight refusal, recorded in the stage before the root
+        exists; an existing root is RUN REFUSED; the setup file is pinned; relative paths refuse."""
+        stage, sha = self.local_stage()
+        root = self.tmp / "root"
+        root.mkdir()
+        r = self.run_job(stage, root, PFB_LOCAL_TEST="1", PFB_SETUP_SHA=sha)
+        self.assertEqual(r.returncode, 2, r.stderr)
+        rec = json.loads((stage / "job-local.refused.json").read_text())
+        self.assertIn("not fresh", rec["refused"])
+        self.assertEqual((rec["job"], rec["root"]), ("local", str(root)))
+        root.rmdir()
+        r = self.run_job(stage, root, PFB_LOCAL_TEST="1", PFB_SETUP_SHA="0" * 64)
+        self.assertIn("setup_salloc_env.sh is not the pinned one",
+                      json.loads((stage / "job-local.refused.json").read_text())["preflight_refused"])
+        r = self.run_job(stage, root, PFB_LOCAL_TEST="1", PFB_SETUP_SHA=sha, PIN="0" * 40)
+        self.assertIn("deploy HEAD", json.loads((stage / "job-local.refused.json").read_text())["preflight_refused"])
+        (stage / "smoke-receipt.json").write_text(json.dumps(A.smoke_receipt(stage, self.pin, False)))
+        r = self.run_job(stage, root, PFB_LOCAL_TEST="1", PFB_SETUP_SHA=sha)
+        self.assertIn("smoke receipt", json.loads((stage / "job-local.refused.json").read_text())["preflight_refused"])
+        self.assertFalse(root.exists(), "no preflight refusal creates the root")
+        r = self.run_job("stage", root, PFB_LOCAL_TEST="1", PFB_SETUP_SHA=sha)
+        self.assertIn("canonical absolute", r.stderr)
+        r = self.run_job(stage, "/pscratch/sd/j/josephrb/x", PFB_LOCAL_TEST="1", PFB_SETUP_SHA=sha)
+        self.assertIn("never names a cluster path", r.stderr)
+        self.deploy_untouched(self.tmp / "deploy")
+
+    # -- the smoke --------------------------------------------------------------------------------------------------
+    def run_smoke(self, stage, **env):
+        import subprocess
+        d, pin, sha = self.deploy()
+        return subprocess.run(["bash", str(ND / "pfb_smoke_prep.sh"), str(d), env.pop("PIN", pin), str(stage)],
+                              env=self.env(**env), capture_output=True, text=True, cwd=self.tmp / "cwd")
+
+    def test_the_smoke_writes_only_under_its_stage(self):
+        """Codex HIGH 3: a canonical absolute stage, nothing written in the deploy (no bytecode, no git index refresh)
+        or the caller's directory, a pinned setup file, and a failed final hash fails the exit status."""
+        (self.tmp / "cwd").mkdir()
+        import os
+        _, _, sha = self.deploy()
+        later = (self.tmp / "deploy" / "setup_salloc_env.sh").stat().st_mtime_ns + 5 * 10 ** 9
+        os.utime(self.tmp / "deploy" / "setup_salloc_env.sh", ns=(later, later))  # stat-dirty: a plain status rewrites
+        idx = self.tmp / "deploy" / ".git" / "index"
+        before = idx.stat().st_mtime_ns
+        stage = self.tmp / "stage"
+        r = self.run_smoke(stage, PFB_LOCAL_TEST="1", PFB_SETUP_SHA=sha)
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+        got = sorted(str(q.relative_to(stage)) for q in stage.rglob("*"))
+        self.assertEqual(got, ["smoke-edges", "smoke-edges/INDEX.json", "smoke-env.log", "smoke-receipt.json",
+                               "smoke-unused", "smoke.log"])
+        self.assertEqual(json.loads((stage / "smoke-receipt.json").read_text())["local_test"], True)
+        self.assertIsNone(A.smoke_receipt_problem(json.loads((stage / "smoke-receipt.json").read_text()), stage,
+                                                  self.pin, True))
+        self.assertEqual(idx.stat().st_mtime_ns, before, "the deploy's git index is never refreshed")
+        self.deploy_untouched(self.tmp / "deploy")
+        self.assertEqual(list((self.tmp / "cwd").iterdir()), [])
+        r = self.run_smoke(stage, PFB_LOCAL_TEST="1", PFB_SETUP_SHA=sha)
+        self.assertEqual(r.returncode, 2, "a second smoke into the same stage refuses")
+        for bad, why in (("stage2", "absolute"), (f"{self.tmp}/x/../stage3", "canonical"),
+                         (f"{self.tmp}/missing/stage", "parent")):
+            r = self.run_smoke(bad, PFB_LOCAL_TEST="1", PFB_SETUP_SHA=sha)
+            self.assertEqual(r.returncode, 2, bad)
+            self.assertIn(why, r.stderr, bad)
+        self.assertEqual(list((self.tmp / "cwd").iterdir()), [], "a relative stage creates nothing")
+        r = self.run_smoke(self.tmp / "stage4", PFB_LOCAL_TEST="1", PFB_SETUP_SHA="0" * 64)
+        self.assertIn("not the pinned one", r.stderr)
+        r = self.run_smoke(self.tmp / "stage5", PFB_LOCAL_TEST="1", PFB_SETUP_SHA=sha, STUB_NO_INDEX="1")
+        self.assertEqual(r.returncode, 9, "prep exited 0 but left no INDEX: the final hash fails the smoke")
+        self.assertFalse((self.tmp / "stage5" / "smoke-receipt.json").exists())
+        r = self.run_smoke(self.tmp / "stage6", PFB_SETUP_SHA=sha)
+        self.assertIn("is not the declared /pscratch/sd/j/josephrb/pfb-20261117-stage", r.stderr)
+        self.assertFalse((self.tmp / "stage6").exists())
+        self.assertEqual(self.run_smoke(self.tmp / "stage7", PFB_LOCAL_TEST="1", SLURM_JOB_ID="5").returncode, 2)
 
 
 if __name__ == "__main__":

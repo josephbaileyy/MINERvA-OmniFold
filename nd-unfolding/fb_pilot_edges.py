@@ -130,18 +130,20 @@ def forcedbins_json(per_feature: list) -> str:
 
 def diagnose(F: np.ndarray, U: np.ndarray, max_bin: int) -> dict:
     """G0's record for one role and feature, whatever happens: z, n, the admissible-gap count, and the first rule that
-    fails (None if none)."""
+    fails (None if none). z, n and the count are computed whenever the values are finite, even when a policy rule (the
+    zero band) fails; with a non-finite value they are None."""
     first = None
     try:
         check_policy(np.asarray(F, np.float64), U, "")
     except Infeasible as exc:
         first = str(exc).split(": ", 1)[-1]
-    zb = zero_bounds(F) if first is None else []
-    n = int(max_bin) - len(zb) - 1
-    adm = int(admissible_gaps(U)[0].size) if first is None else None
+    finite = bool(np.all(np.isfinite(np.asarray(F, np.float64))) and np.all(np.isfinite(np.asarray(U, np.float64))))
+    zb = zero_bounds(F) if finite else None
+    n = int(max_bin) - len(zb) - 1 if finite else None
+    adm = int(admissible_gaps(U)[0].size) if finite else None
     if first is None and adm < n:
         first = f"{adm} admissible gaps for {n} edges"
-    return {"z": len(zb), "n": n, "admissible": adm, "first_failing_rule": first}
+    return {"z": None if zb is None else len(zb), "n": n, "admissible": adm, "first_failing_rule": first}
 
 
 def build_edges(matrices: dict, out_dir: Path, sets: dict = SETS) -> dict:
