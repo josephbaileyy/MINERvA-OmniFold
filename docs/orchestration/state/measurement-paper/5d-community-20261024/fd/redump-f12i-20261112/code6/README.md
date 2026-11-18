@@ -1,0 +1,178 @@
+# RDX code6: the reader, `rdx_read.py`, rev 6 (receipt)
+
+**By** session tier3-design, at the director's ruling of 2026-11-17 on the readings step. That ruling took the fetch
+route at 0 node-h:
+1. this reader, numpy only, modelled on `rsn/rsn_read.py`, with tests and a mutation harness;
+2. independent audits (Codex and Grok), then addendum J7. J7 binds the reader's sha, the fetch connect's sha, the
+   laptop read in a clean clone at the bound sha, and the route of the outcome record;
+3. the fetch connect, whose sha goes to the director before it runs.
+
+**Rev 1** (`372bd471`, PR #1216) was audited by both readers at `03e43c91`. Codex read FAIL and Grok PASS WITH FIXES.
+They agree that §4's formulas are right and that the gaps are in input validation. **Rev 2** (`47f0bb30`) makes the
+director's seven fixes (below). The reports are `~/codex-reports/rdx-read-audit/{codex,grok}/report.md`. **Rev 3**
+(`33771868`) applies the director's J7 rulings on choices 3 and 5 (below). Codex's confirmation read of rev 2
+(`~/codex-reports/rdx-read-audit/rev2/codex/report.md`, Grok: PASS) found four remaining acceptance paths, and
+**rev 4** (`9b6e7136`) closes them. Codex's confirmation read of rev 4 (`.../rev4/codex/report.md`) found two more
+gaps, and **rev 5** (`d9139914`) closes them. Codex's read of rev 5 found one more, archive member aliases, and
+**rev 6** (`d24897fe`) closes it. All are in the last sections below.
+
+**Nothing has been read.** No product has been fetched. This receipt is of the code only.
+<!-- absence-ok: an operational status of this tranche, not a claim that a result does not exist -->
+
+## The code, at `d24897fe`
+
+| file | sha256 | role |
+|---|---|---|
+| `nd-unfolding/rdx/rdx_read.py` | `cc25f176d2aa01528389a08e7aca5ffa2e2b9950835c76a55028f28a759e1d44` | the reader |
+| `nd-unfolding/rdx/test_rdx_read.py` | `6a5f42a92e3855bf8393e5be5d3e640ce67059a5c359129449aae817c92ac975` | 36 tests |
+| `nd-unfolding/rdx/rdx_read_mutation.py` | `13e5501e29cf726b5ea04ead27a90b683ff6f9797bb6cafdf22ca0e652813470` | 65 mutants |
+
+It imports, unchanged: `rsn/rsn_read.py` (`4dd37197…`) for the W and T classes, the rounding floor and the committed
+record paths, and `pv-ladder/build_cmodel5d.py` (`aaa81575…`) and `pv-ladder/pvl_lib.py` for the definition, the fine
+grid and the cell integrals.
+
+## What it does (RDX-DECLARATION.md §4)
+
+**Refusals, each a `[FAIL]` before anything is written:**
+- **The task table.** `rdx_tasks.tsv` must be at its bound sha256 (`3ec50691…`, `RDX-DECLARATION.md:240`), with §4's
+  fifteen tasks once each and jobs S3a or S3b. A sums manifest that repeats a key refuses.
+- **The products and logs:**
+  - the product directory must hold exactly the fifteen `.npz`;
+  - each job log (`--log-s3a`, `--log-s3b`) must print each of its own tasks' `sha256sum` line exactly once
+    (`sbatch_rdx_arms.sh:129`);
+  - a line naming `/products/` that is not `<sha256>  <path>/products/<task>.npz` is malformed and refuses, while
+    ordinary chatter is ignored;
+  - an undeclared task refuses, and so does a task printed in the other job's log;
+  - each product's sha256 must be the one its job printed.
+- **The arrays, as the producer writes them** (`pvl_unfold.py:198-200`):
+  - `xsec_flat` is float64 of the fine grid's 65,856 cells and finite;
+  - `shape` equals the fine grid (14, 16, 7, 7, 6);
+  - `xtrue_flat` is present on exactly the eight closures, with the same rules;
+  - no other array is present.
+- **The meta, as the producer writes it** (`pvl_unfold.py:189-197`, `rdx_unfold.py:230-240`):
+  - rung, arm, features, closure, the tune_v1 ratio, seed 42, 5 iterations, 32 threads, and the input and background
+    pins;
+  - X0's estimator and refinement parameters, which must be present, and every other product's equal to X0's;
+  - the RDX options;
+  - for an instrumented step, fit and predict counts of 5, a row count, and five positive weight sums on a weighted
+    step; an uninstrumented step records none of these;
+  - the A7 hypothesis pin (`0080495c…`, `rsn_unfold.py:60`) on exactly the A7 GiBUU step;
+  - on exactly the two transfer steps, five records with `rsn_unfold.summarize`'s fields, iterations 0–4 in order, 16
+    cells each finite or None, 10 deciles and 11 edges.
+- **NC-X, bitwise.** "The product" here means the arrays a product carries besides its meta: `xsec_flat` and `shape`.
+  The meta differs between X0 and X0_lat by the declared input pins. Both arrays must match in dtype, shape and bytes,
+  so +0 against −0 refuses, and so does a dtype change. "If NC-X fails, nothing is read."
+- **The closure families.** §4 calls X0c, X1c, X1pc and X1wc "the same closure", and likewise each GiBUU pair and each
+  q3 pair. Their `xtrue_flat` must be bitwise equal within each family.
+- **φ_c, σ_c and the integrals.**
+  - φ_c and σ_c must be 16 finite positive values; a NaN or inf σ could otherwise license.
+  - Every cell integral must be 16 finite values.
+  - A relative difference needs a positive reference.
+  - Every computed value must be finite, and the JSON is written with `allow_nan=False`.
+
+**φ_c and σ_c are read only from their committed records,** through RSN's bound reader:
+- φ_c is `i0.json`'s data jitter over `cmodel_5d.json`'s P5 integrals. `rounding_floor` refuses unless it reproduces
+  the printed 0.133 / 0.055 / 0.252 %.
+- σ_c is `fd_f1_readout.json`'s `relative_sigma_plus_C_resp + C_PL5D` C_total.
+- The reader has no option to substitute either.
+
+**The readings:**
+- **R1p:** δp = X1p/X0 − 1.
+- **R1:** δ1 = X1/X0 − 1, with the excess e_c = |δ1_c| − |δp_c| against 0.5 σ_c; cells are named.
+- **R2:** X1w/X1 − 1.
+- **R3:** the last iteration's t_c for X1t and X0t and their difference, with a bitwise check of whether the probe
+  left the loop untouched.
+- **R4:** the closures against their family's truth. The prior's attributable change is the signed residual
+  [b(X1c) − b(X0c)] − [b(X1pc) − b(X0c)] (J7, choice 3), stored exactly as it is classed. The weight at the prior is
+  always printed in the outcome record, with its class and largest |change|/σ, and stated in words when it crosses
+  R2's threshold (J7, choice 5).
+
+The W and T classes are RSN's. The outcome follows §4, in its own characters:
+- **REFIT NULL W2**, which takes precedence;
+- **LICENSED**, with §4's sentence (E_ν, σ), tested against the declaration's text;
+- **STATED SENSITIVITY**, with the cells named.
+
+## The six reader choices: the auditors' views and the director's J7 rulings
+
+**The director's rulings, which go into J7:**
+- **Choice 3:** the SIGNED residual Δb(X1c) − Δb(X1pc), not the clip. A binding chooses the algebra conservative
+  against licensing.
+- **Choice 5:** a qualifier beside R2, as the "three truths" rule reads, but never silent. Its value and class are
+  printed, and a crossing of R2's threshold is stated in words next to the outcome.
+- **Choices 1, 2, 4 and 6:** accepted as written.
+
+Rev 3 implements these. The auditors' views of rev 1, which led to the rulings, are below.
+
+| # | choice | Codex | Grok |
+|---|---|---|---|
+| 1 | a cell is named when e > 0.5σ strictly | decided by §4 (D:501 licenses equality, D:505 says >) | decided by §4; it is RSN's W2 boundary. A test now hits the exact tie (`test_an_excess_exactly_at_half_sigma_is_licensed`) |
+| 2 | R4 against each closure's truth, b = X/X_true − 1 | decided for normalization; "own truth" means the family's common truth, which must be enforced | decided by §4 and RSN §3.3:277. **Rev 2 enforces the family truth (fix 3)** |
+| 3 | prior: max(0, \|Δb(X1c)\| − \|Δb(X1pc)\|) | **not explicitly decided.** "Beyond" gives no formula. The clip is conservative against a false sensitivity but **not** against licensing. Example: change 0, null 0.02, φ 0.001, σ 0.02 gives W0 clipped, W2 unclipped. Bind it rather than assume it | **the one choice §4 does not settle.** It applies R1's excess formula to the closures. It is the **less conservative** algebra when the null exceeds the signal, or when the two are equal and of opposite sign; a signed residual Δb − Δb_null would flag that case. J7 has to accept it. Rev 2 stores the clipped vector that is classed (fix 2), and a test covers \|change\| < null |
+| 4 | GiBUU and q3 read in full, with no null | **decided** (D:470-473, :495; D:580-581 "unadjusted"). Conservative against subtracting an undeclared null | **decided.** There is no "beyond" at those truths and no null arm in the task table. The conservative direction |
+| 5 | X1wc − X1c qualifies; it is not an outcome change | not unambiguous: it is listed in R4, but D:507 names only R2 and R3 as qualifiers. Including it could flip the outcome to a sensitivity | decided by the outcome rule, which names "all three truths"; the weight is the closure analogue of R2 |
+| 6 | a cell with no masked rows fails T0 and T1 | decided by incorporating RSN; cannot change the outcome | decided by incorporating RSN §3.5:337; conservative for the T label |
+
+**As implemented in rev 3:**
+- Choice 3 is the signed residual. Tests show that a null larger than the change, and a change equal and opposite to
+  the null, are each flagged (`test_r4_prior_is_the_signed_residual_and_a_larger_null_flags`). Rev 2's clip and the
+  magnitude excess are mutants, each killed.
+- Choice 5 is printed always and stated in words when W2, whatever the outcome
+  (`test_the_weight_at_the_prior_is_never_silent`).
+- Choice 4 is unchanged: decided by §4, per both auditors.
+
+## The receipts, in a clean clone at `d24897fe` (`receipts.sh`, sha256 `e3498ff1…`)
+
+| file | result |
+|---|---|
+| `tests.txt` | Python 3.12.2, numpy 1.26.4: 36 tests OK, exit 0 |
+| `tests_py310.txt` | a uv venv matching omnifold_py310's versions (Python 3.10.20, numpy 2.2.6): 36 tests OK, exit 0 |
+| `mutation.txt` | the unmutated suite: 36 tests OK. Mutation check PASS: 65 of 65 killed, each by its named test |
+| `committed_path.txt` | the committed-record path with no products: the task table at its bound sha; the fine grid (14, 16, 7, 7, 6) = 65,856 cells, which the definition maps to 16 cells, so `main`'s check passes; φ_c reproduces 0.133 / 0.055 / 0.252 %; σ_c gives 16 values; the pins load. The clone is clean after it |
+
+**What the tests cover, each guard in both directions.** On synthetic products, with the cell integrals as the
+identity:
+- NaN, inf and length-1 inputs, in σ, φ, `xsec_flat`, the integrals and `cell_bias`;
+- the family truths, both within a family (refuse) and between families (the declared design);
+- NC-X on a one-ulp change, on +0 against −0, and on `shape`'s dtype;
+- duplicate and wrong-job log lines, malformed product lines, extra and missing products, and a modified task table;
+- the transfer schema;
+- absent parameters;
+- the exact half-σ tie;
+- R4 at W1 still licensing, and R2 at W2 and R3 at T2 leaving the label unchanged;
+- refit-null precedence over a simultaneous sensitivity;
+- the signed prior residual, including a larger null and an equal-and-opposite one;
+- the weight at the prior, printed always and stated when it crosses R2's threshold.
+
+`committed_path.txt` covers what the tests cannot: the real definition, floor and σ, loaded through the reader.
+
+## Rev 4: the four remaining acceptance paths (Codex's confirmation read of rev 2)
+
+| finding | fix | test, mutant |
+|---|---|---|
+| X0's parameters were checked only for equality, so `{"n_estimators": -1}` on every product licensed; scalar types were loose (`iters` 5.0, integer flags, `rows` true) | Each of the loop's three estimator records and the refinement's classifier record must carry the producer's fixed values, in their JSON types: `make_estimators`' 100 / 8 / 0.1 / −1 / seed 42 and candidate R's 400 / 31 / seed + 3 (`pvl_analyze.py:35`), with the deterministic extras. Every other key must lie in LightGBM's default domain, and no other key may appear. The key set follows the committed pvl-unfold record `fd/gencmp-e2/receipts/sweep-a1/e2a1_probe.out.json` (same producer, rung and seed), and the tests check that it passes. Every identity scalar compares in value and JSON type (`same`) | `test_the_producers_committed_parameters_pass`, `test_parameters_outside_the_producers_domain_refuse`, `test_scalars_have_the_producers_json_types`; mutants for fixed values, domains, unknown keys and JSON types |
+| transfer records: iteration 4.0, `n_masked` true, `rel_rms` −1 and reversed edges passed | Iterations must be the integers 0–4, `n_masked` an integer (not a bool), `rel_rms` ≥ 0, and the acceptance edges must never decrease and must span a range. `numpy.quantile` in `rsn_unfold.summarize` can repeat an edge on tied acceptances, so a repeat is allowed, not strict increase; a test shows a tied record passes | `test_the_transfer_records_are_the_producers`; four mutants |
+| `shape` `[[14,16,7,7,6]]` passed | `shape` must be one-dimensional, of the fine grid's rank, before its values are compared | `test_product_arrays_must_be_the_fine_grids`; one mutant |
+| manifest aliases `./x` and `x` collapsed through `lstrip` | Each line must be `<sha256>  ./<path>`. The path is normalized once (`posixpath.normpath`) and must already be normal; collisions refuse, and malformed lines and digests refuse. No `lstrip` remains | `test_the_task_table_and_manifests_are_bound_and_unique`; three mutants |
+
+## Rev 5: the last two gaps (Codex's confirmation read of rev 4)
+
+| finding | fix | test, mutant |
+|---|---|---|
+| cross-record transfer counts: X1t's last `n_masked` at 1001, 101 or 1 (with `rows` 1000 and both masks at 100) still licensed | Every record's `n_masked` must be at most `rdx.rows`, and at least the number of cells and deciles it reports. X1t and X0t declare the same mask, [20261112, k] at 20 %, over the same rows (`RDX-DECLARATION.md:464`, `:469`), so they must agree in `rdx.rows` and in each iteration's `n_masked` | `test_the_transfer_counts_are_consistent`; four mutants. The bool-`n_masked` test now reports one cell and no deciles, so only the type guard can fire |
+| repeated fields: an archive with two `xsec_flat.npy` members (NaNs first, valid last), and a meta repeating `"iters"`, both passed, because the last one wins | An archive that repeats a member refuses before any field is selected. The meta is parsed with an `object_pairs_hook` that refuses a repeated key at any depth | `test_a_repeated_archive_member_or_json_key_refuses`; two mutants |
+
+## Rev 6: archive member aliases (Codex's confirmation read of rev 5)
+
+| finding | fix | test, mutant |
+|---|---|---|
+| an archive holding a NaN `xsec_flat.npy` and a valid bare `xsec_flat` passed: the raw names differ, numpy exposes both as the field `xsec_flat`, and the lookup took the valid one, so it licensed | Every member must be the canonical `<field>.npy` of `meta`, `xsec_flat`, `shape` or `xtrue_flat`, as `s5n_pseudo.write_product`'s `savez_compressed` writes them. The reader maps member names to fields itself, refuses any other name (bare names included) and two members mapping to one field, and checks that numpy's field list equals the members' | `test_a_repeated_archive_member_or_json_key_refuses` (the alias case and an unknown member); one mutant |
+
+## CITABLE FOR / NOT CITABLE FOR
+
+- **Citable for:** the reader's code and its shas, its refusals, its interpretations as listed, and these receipts.
+- **Not citable for:**
+  - any RDX reading or outcome: nothing has been fetched or read;
+  - the binding itself, which is J7's.
+
+  The outcome record, once J7 binds the read, goes to main. Any note-facing text goes to a side branch, off
+  `draft/note-round2` until after 2026-11-19.

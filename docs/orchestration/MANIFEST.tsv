@@ -289,6 +289,7 @@ docs/orchestration/DECISION-20261114-joseph-d1-g2r-adopted.md	tracked	LIVE	docum
 docs/orchestration/DECISION-20261116-joseph-paper-batch.md	tracked	LIVE	document		20261116	open		route-only	no
 docs/orchestration/DECISION-20261117-joseph-note-measurement.md	tracked	LIVE	document		20261117	open		route-only	no
 docs/orchestration/DECISION-20261117b-joseph-note-plan.md	tracked	LIVE	document		20261117	open		route-only	no
+docs/orchestration/DECISION-20261118-joseph-deep-restructure.md	tracked	LIVE	document		20261118	open		route-only	no
 docs/orchestration/DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md	tracked	LIVE	document		20260911	open		route-only	no
 docs/orchestration/DECISION-PACKET-20260918-scalar5d-publication-blockers.md	tracked	LIVE	document		20260918	open		route-only	no
 docs/orchestration/DECISION-PACKET-20261029-oi53-clm-row-ownership.md	tracked	ARCHIVAL	document	fe-fps-campaign	20261029	terminal		exact-path-only	yes
@@ -14509,6 +14510,12 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/redump-f12i-
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/redump-f12i-20261112/code5/smoke_at_m_rdxd.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/redump-f12i-20261112/code5/tests.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/redump-f12i-20261112/code5/tests_py310.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/redump-f12i-20261112/code6/README.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/redump-f12i-20261112/code6/committed_path.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/redump-f12i-20261112/code6/mutation.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/redump-f12i-20261112/code6/receipts.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/redump-f12i-20261112/code6/tests.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/redump-f12i-20261112/code6/tests_py310.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/redump-f12i-20261112/launch/README.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/redump-f12i-20261112/launch/smoke.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/redump-f12i-20261112/run-c1-20261115/README.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
