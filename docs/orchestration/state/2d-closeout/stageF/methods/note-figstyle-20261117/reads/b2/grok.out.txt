@@ -1,0 +1,40 @@
+I'll compare each old/new figure pair against its caption and report only mismatches. First I'll locate the four figure directories and read the captions and images.
+
+The captions are in. I'll compare the figures by reading their printed text directly so the review doesn't rest on a visual impression.
+
+## eavailW_band
+
+Caption: "Projections of the unfolded (Eavail, W) cross section onto Eavail (left) and W (right), with the predictions of four generators (GENIE CV, GENIE+MEC, NuWro, GiBUU; GENIE and NuWro flux-corrected…)."
+
+1. None. The new figure is still Eavail on the left and W on the right. The legend still reads "data (unfolded)", "GENIE-CV", "GENIE+MEC", "NuWro", "GiBUU". The caption does not name a colour, marker, or line style.
+2. None. Legend entries, "MINERvA ME FHC, 1.06 × 10²¹ POT", and both axis labels are the same text as in the old figure. The plotted curves sit on the same pixels.
+3. No new label, number, or quantity. Only the series colours changed (data black to red, GENIE-CV red to pink, GENIE+MEC blue to orange, NuWro green to a second green, GiBUU purple to indigo).
+
+## q3_excess_projection
+
+Caption: "4D data/Tune v1 ratio ("data/GENIE" in the figure) projected onto (Eavail, q₃) (left; blank cells are kinematically empty), with q₃ (center) and Eavail (right) marginals. … Uncertainties are not drawn…"
+
+1. The caption's "data/GENIE" in the figure is contradicted. Both marginal y-axes now read "unfolded/ GENIE prior", not "data/GENIE". The rest still matches: left joint plane with blank cells, q₃ center, Eavail right, no uncertainty bars. Heatmap numbers are unchanged, so the ratio-versus-q₃ description is not contradicted by a new value.
+2. Lost, both marginal y-axes, the verbatim label "data/GENIE". The caption still quotes that string, but the new figure does not print it, so the caption does not carry the replacement. "low edge" and "GeV" are still on the figure; they were reordered, not dropped. "MINERvA ME FHC, 1.06 × 10²¹ POT" is still there.
+3. New y-axis text "unfolded/ GENIE prior" on the center and right panels. Marginal x-axis text changed from "q3 [GeV] (low edge)" and "E_avail [GeV] (low edge)" to "q3, low edge (GeV)" and "E_avail, low edge (GeV)". Heatmap axis titles changed from "E_avail [GeV]" and "q3 [GeV]" to "E_avail (GeV)" and "q3 (GeV)". Cell digits are the same (digit pixels identical). The right-hand marginal line was recolored (dark red to a second red) and not moved. The center line is still black.
+
+## eavail_spectrum
+
+Caption: "Unfolded dσ/dEavail, the 1D projection of the 3D result. The wide [3,100] GeV catch bin is excluded from the axis; its value is annotated."
+
+1. None. The axis still stops at 3 GeV, and the catch bin is still annotated. The legend still says "unfolded data". The caption names no colour.
+2. The old offset "1e-38" is not printed as that token. It is not lost: the new y-axis label carries it as 10⁻³⁸, "dσ/dE_avail (10⁻³⁸ cm²/nucleon/GeV)". The caption does not quote it. The old annotation "catch bin [3, 100] GeV: 6.74e-41" is now "catch bin [3, 100] GeV: 6.74 × 10⁻⁴¹" (same value, still in the figure). The caption only says the value "is annotated", which still holds.
+3. The y-axis label now contains the 10⁻³⁸ factor, and the catch-bin annotation uses "6.74 × 10⁻⁴¹" instead of "6.74e-41". The curve is the same pixels, recolored from black to red. No new quantity and no changed number.
+
+## control_plots
+
+Caption: "…Data points overlay POT-scaled simulated signal (blue) stacked on background (orange); data/MC ratios appear below. … The gray MC-statistical band on the ratio is mostly narrower than the points. …"
+
+1. "background (orange)" is contradicted. The stacked background is gray, about (176, 176, 176); it was orange, about (208, 128, 80). "signal (blue)" still holds (the blue was re-shaded, about (64, 112, 176) to (32, 112, 208)). The ratio band is still the same gray and was not recolored. Legend text is still "Data", "MC signal (MnvTune v1)", "MC background", plus "MINERvA ME FHC, 1.06 × 10²¹ POT" and "wide catch bin compressed to 100 at right".
+2. None. Every dark text pixel matches the old figure, including the legend, the catch-bin note, and all axis labels.
+3. No new label or number. The background colour changed from orange to gray, and the signal blue was re-shaded. Data points and ratio panels are the same pixels.
+
+eavailW_band: OK
+q3_excess_projection: FLAG - caption quotes "data/GENIE" in the figure; marginal axes now read "unfolded/ GENIE prior"
+eavail_spectrum: OK
+control_plots: FLAG - caption says background (orange); the new background is gray
