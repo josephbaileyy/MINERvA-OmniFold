@@ -230,7 +230,7 @@ install_re2_fig uq_spread_2d.pdf                       a51bc4ee186a2c3bba942f6de
 install_re2_fig uq_corr_2d.pdf                         fea063cc6eeba9925bef2ac7c096118fdd23a7f443aea8afde4392de214c75b1
 # install_re2_fig MEFHC_5iter_fig13.pdf                  4924917e903b5e4ee6133f5e37b91aa11f301d7ea7242561680ea1ba10a4fb3b
 # install_re2_fig MEFHC_5iter_pull_full.pdf              3d108335117afd57b14f4bf1661ac8e06ffdbfdfb1ceb17903fa00724b40396f
-install_re2_fig MEFHC_5iter_xsec_eff_heatmap.pdf       1008a7e9e0832c1607bfce9bd38ee52b5af86baed4fb868171fdc56ab5df24ab
+# install_re2_fig MEFHC_5iter_xsec_eff_heatmap.pdf       1008a7e9e0832c1607bfce9bd38ee52b5af86baed4fb868171fdc56ab5df24ab   (note palette, 2026-11-18: installed below with its ledger row)
 # install_re2_fig MEFHC_5iter_xsec_paper_pt_slices.pdf   8836d7b56b75131c6affa81a2a752655208c40e01ff53270ebd7acfd306f04a8
 # install_re2_fig MEFHC_5iter_xsec_paper_pz_slices.pdf   6f7a11aff1da1c84c8c7cd211dc8e5714fa15334eafbd83ae0ef4c45f0a84d8f
 # install_re2_fig MEFHC_5iter_xsec_proj_pt.pdf           ea2c1dce31ba543d059dab3c5a844990928a45c03bd3675d3b094ae441626249
@@ -404,6 +404,11 @@ install_palette_fig MEFHC_5iter_xsec_paper_pz_slices.pdf     e64b65ffbf6bae236cc
 install_palette_fig MEFHC_5iter_xsec_proj_pt.pdf             9f6911d470fe7044c9c7801e59a1d55389960d6e246b423727a9115b78234a75
 install_palette_fig MEFHC_5iter_xsec_proj_pz.pdf             56e1e99de5cfe08684a7b8288c04ecb830b14b79ffa8c10500f1815b86ca2a5d
 install_palette_fig MEFHC_5iter_pull_full.pdf                35c31c49a9311920b57d45d716417d468d1de857d316f22e4a7a3f3a5055ec00
+# Fig. 6 (2026-11-18): the efficiency map in the paper's fonts (tier 2, runs/xsec_proj/). Its re2-integration ledger G row
+# is re-pointed to this record (fig-restyle ruling 1: re-point, do not replace), and check_ledger.py requires that row's
+# figure to be installed as "install_restyle_fig <basename> <sha256>" from the row's copy directory, so RSG names it.
+RSG="$REPO/docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261117/figs"
+install_restyle_fig MEFHC_5iter_xsec_eff_heatmap.pdf       049fbf9096da5382d0fc3572849ed29636836d6390f71cd1cdb909f651b1d082
 
 echo
 echo "== paper-only vector crops =="
