@@ -943,6 +943,7 @@ docs/orchestration/runs/standard-p4-verifier/20260922T053047Z-gbdt-cold-start-ve
 docs/orchestration/runs/standard-p4-verifier/20260924T010110Z-known-issues-51-61-62-verdict.json	tracked	MACHINE	run-artifact	standard-p4-verifier	20260924	generated		exact-path-only	yes
 docs/orchestration/shared_push.sh	tracked	MACHINE	shell-tool			generated		exact-path-only	no
 docs/orchestration/slurm_array_status.py	tracked	MACHINE	script			generated		exact-path-only	no
+docs/orchestration/state/2d-closeout/IBUKT-DECLARATION.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/c04-repair/REPORT.md	tracked	MACHINE	state-artifact	2d-closeout		open		exact-path-only	no
 docs/orchestration/state/2d-closeout/c04-repair/SHA256SUMS.nersc	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/c04-repair/chi2/adopted_lognormal.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
