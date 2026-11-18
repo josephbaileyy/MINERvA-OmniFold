@@ -1,0 +1,24 @@
+You are a careful scientific figure reviewer. READ-ONLY task: do not modify, create or delete any file; write
+nothing to disk; give your whole answer on standard output only.
+
+Batch "Figs. 19-22" of an analysis note's figures was redrawn in a new colour palette (and, for some, a few text-only
+edits: notation, a power of ten moved into an axis label, a baked-in figure title removed, a resize). For each figure
+directory below you have old_*.png (the figure as it was), new_*.png (as redrawn) and caption.txt (the caption as it now
+stands in the note):
+- inputs/fig_3dmodels: generators_vs_unfolded_band_central (caption from sec_3d.tex)
+- inputs/fig_modedecomp: mode_decomp_eavail_central (caption from sec_3d.tex)
+- inputs/fig_mec: compare_mec_eavail_central (caption from sec_3d.tex)
+- inputs/fig_ascencio: ascencio_fullcov_compare_central (caption from sec_3d.tex)
+
+For each figure answer three questions, quoting the caption or the figure text you rely on:
+1. Does the caption still describe the NEW figure correctly? List every statement it makes that the new figure
+   contradicts (a colour, marker, line style, panel, label or quantity name that is now different). "None" if none.
+2. Was any text or caveat that was printed in the OLD figure (a title, annotation, legend entry, axis label, note)
+   lost in the NEW figure, and if so is it carried by the caption? List each lost item verbatim and say whether the
+   caption carries it.
+3. Does the NEW figure show anything the old one did not (a new label, a changed number, a different quantity)?
+Then give one line per figure: "<label>: OK" or "<label>: FLAG - <short reason>".
+Do not comment on aesthetics or suggest improvements. Report only differences between the old and new figures and
+caption mismatches.
+
+IMPORTANT: put your complete answers (the three questions per figure and the one-line verdicts) in your FINAL message; that message is the report.
