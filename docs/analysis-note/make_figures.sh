@@ -392,7 +392,7 @@ install_palette_fig gbdt_bias_spread.pdf                     625b9452d4c28299c4a
 install_palette_fig gbdt_coverage.pdf                        511817bdc1e17211141c812f56057ab5f04bbd8ede171978010c1a75a82a87fe
 install_palette_fig gbdt_prior_response.pdf                  aa0b997e73a7babc002b6c4ca4bca23d7c004004f317c9d52e5eb8428c6bfb7e
 install_palette_fig paper_fig_coverage.pdf                   247239f0fec1ca9446195a6a11c2457a66c3041d20d35e4710e678fc05dd088e
-install_palette_fig paper_fig_bkg_residual.pdf               3cac32b105aa9617706bf38d4398fb2ddc9e1d24c5cab65690d726ddfbf72c4d
+# install_palette_fig paper_fig_bkg_residual.pdf               3cac32b105aa9617706bf38d4398fb2ddc9e1d24c5cab65690d726ddfbf72c4d   (2026-11-18: the W-edge label fixed, installed below)
 install_palette_fig model_comp_projections.pdf               2b60883a3fab04edba0fb36a7bd61ca7d59317028c4863486da6a1440af35029
 install_palette_fig model_comp_ratio_maps.pdf                0c10ff269536b2aa3bd7bead06fc17af1c6d8a9d380c24afd5c7d0ce39ff90e0
 install_palette_fig tension_spectrum.pdf                     98d7ce2c9765275be579ef8345fde17f50a8b24b0e2f26846475d6998a163661
@@ -409,6 +409,11 @@ install_palette_fig MEFHC_5iter_pull_full.pdf                35c31c49a9311920b57
 # figure to be installed as "install_restyle_fig <basename> <sha256>" from the row's copy directory, so RSG names it.
 RSG="$REPO/docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261117/figs"
 install_restyle_fig MEFHC_5iter_xsec_eff_heatmap.pdf       049fbf9096da5382d0fc3572849ed29636836d6390f71cd1cdb909f651b1d082
+# Fig. 34 (2026-11-18): its x label ends the W edges at the 100 GeV catch-bin edge, as m3_common.W_EDGES and the note's
+# binning (sec_method.tex:207) do (it printed infinity; text_fixes.tsv; runs/bkg5d/). figs/ is immutable once
+# committed, so the corrected file is in figs-r2/.
+RSG="$REPO/docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261117/figs-r2"
+install_restyle_fig paper_fig_bkg_residual.pdf             193cc23653aaed3c86af3cdd405a2a82ca12eea29810749bc86dd6bf4f7e4e83
 
 echo
 echo "== paper-only vector crops =="

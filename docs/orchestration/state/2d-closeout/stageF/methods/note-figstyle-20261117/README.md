@@ -201,6 +201,18 @@ texts against the cluster's capture of the installed files (family 2, after arm)
   - Fig. 7's slice-mosaic split, Figs. 9–10's slice labels, and Figs. 12/14's mode-rank labels and grey masks: each is
     a producer change.
 
+## Fig. 34's W-edge label (2026-11-18, the interim cold read's triage)
+
+Fig. 34's x label (`m3_common.ew_xlabel()`) ended the W edges at ∞. The producer's own `m3_common.W_EDGES` and the
+note's binning (`sec_method.tex:207`) end them at the 100 GeV catch-bin edge.
+- **The fix:** a text-only edit (`text_fixes.tsv`: "3, $\infty$ GeV" becomes "3, 100 GeV").
+- **The checks** (`runs/bkg5d/CHECKS.txt`): arm 0 is still byte-equal to the installed file, and arm 1 passes
+  compare.py.
+- **The install:** `figs/paper_fig_bkg_residual.pdf` is committed and immutable, so the corrected file is
+  `figs-r2/paper_fig_bkg_residual.pdf` (193cc236, listed in `figs-r2/SHA256SUMS`). make_figures.sh installs it with
+  `install_restyle_fig` from `figs-r2/`, and its earlier pin (3cac32b1) stays as a comment.
+- **Other figures:** no other figure prints ∞; this was checked over every capture's texts.
+
 ## CI: inherited failures
 
 The record-checks steps at this branch's commits pass, apart from the failures below. Each fails identically at the
