@@ -413,3 +413,42 @@ These supersede J4's digests for the connect and the launcher.
 5. **Any STOP**, cap refusal, job failure or TIMEOUT comes to the director unrepaired. Nothing relaunches.
 
 Nothing is submitted, deposited or tagged.
+
+## Binding 1, addendum J7: the reader, and the read route (director, 2026-11-18)
+
+**Binds** the RDX reader as merged in #1216 at **M_RDXR = `9de8ef0d365d7ff0b343a835631032ef5a84340d`**. It is byte-identical to the audited head `ed83c169`. The director re-hashed each file at M_RDXR:
+
+| file | sha256 (prefix) |
+|---|---|
+| `nd-unfolding/rdx/rdx_read.py` | `cc25f176d2aa0152` |
+| `nd-unfolding/rdx/test_rdx_read.py` | `6a5f42a92e3855bf` |
+| `nd-unfolding/rdx/rdx_read_mutation.py` | `13e5501e29cf726b` |
+
+**Why:** RDX-DECLARATION §4 fixes the readings in advance, but no reader existed and no binding covered how they are computed. RDX stage 3 ended COMPLETED 0:0, with both arms' receipts merged (#1208, #1214) at 1.6695 node-h spent.
+
+**What the director checked:** independent reads by Codex and Grok, over six revisions. Reports are kept under `~/codex-reports/rdx-read-audit/`.
+- **Rev 1** (`03e43c91`): Codex FAIL, Grok PASS WITH FIXES. The formulas reproduce §4, but malformed inputs could license: a non-finite σ, unequal truths within a closure family, a non-bitwise NC-X, the stored prior vector, and gaps in the task/log and transfer schemas.
+- **Rev 2** (`8f412dad`): Grok PASS; Codex FAIL on remaining metadata, transfer and shape paths.
+- **Rev 3:** the director's rulings on the reader's open choices, below.
+- **Rev 4** (`9ae12571`): Codex FAIL on cross-record transfer counts and duplicate fields.
+- **Rev 5** (`8a3b9fb4`): Codex FAIL on NPZ member aliases.
+- **Rev 6** (`ed83c169`): **Codex PASS (bind).** The alias blocker is fixed, and no route for malformed input to LICENSED remains. Receipts: tests 36/36 on py3.12 and py3.10, mutation 65/65 killed, and the committed path passes.
+
+**Rulings on the reader's choices that §4 leaves open:**
+1. R1's excess is named only when e > 0.5 σ strictly.
+2. In R4, each closure is read against its own truth, and a change is the difference of two biases.
+3. **The prior's attributable change is the SIGNED residual** [b(X1c) − b(X0c)] − [b(X1pc) − b(X0c)], W-classed and stored exactly as classed. The clipped form is rejected, because it can read W0 where the signed form flags the case. A binding takes the algebra that is conservative against licensing.
+4. At GiBUU and q3, with no declared null, the change is read in full. Both auditors find this decided by §4 and conservative.
+5. **The weight at the prior (X1wc − X1c) is a qualifier beside R2,** per §4's three-truths outcome rule. It is never silent: the readout always prints its class, cells and maximum |change|/σ. When it is W2, the outcome record states that in words beside every outcome.
+6. R3's difference is T-classed, and a cell with no masked rows fails, as in RSN.
+
+**Rulings:**
+1. **The reader is bound as merged at M_RDXR.**
+2. **The read route** is laptop-only, 0 node-h:
+   - a read-only fetch connect copies the 15 products, their inventories and the two job logs to the laptop, reading O_NOATIME;
+   - `rdx_read.py` runs in a clean clone at M_RDXR and writes `rdx_readout.json` and an outcome record.
+3. **The fetch connect** needs a sha-pinned script and the director's go on that sha, the usual fence and holds, sacct only, and no write to CFS.
+4. **The manuscript fence:** the outcome record merges to main as usual. Any note-facing text goes to a side branch and stays off draft/note-round2 until Joseph and Ben agree on the note.
+5. **Any STOP** comes to the director unrepaired.
+
+Nothing is submitted, deposited or tagged.
