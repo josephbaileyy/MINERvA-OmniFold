@@ -5,7 +5,7 @@
 \section{Development history and choices made after results were seen}
 \label{app:devhistory}
 
-This appendix lists configurations and tests that were superseded, stopped or changed during the analysis, and choices made after results had been seen, where they matter for reading a released result. Where the body states it, each row gives what had already been seen when the change or choice was made; a dash means the note does not state it. The chronology behind the rows is kept in the analysis repository's records~\cite{NoteRecords2026} and its commit history.
+This appendix lists configurations and tests that were superseded, stopped or changed during the analysis, and choices made after results had been seen (Table~\ref{tab:devhistory}), where they matter for reading a released result. Where the body states it, each row gives what had already been seen when the change or choice was made; a dash means the note does not state it. The chronology behind the rows is kept in the analysis repository's records~\cite{NoteRecords2026} and its commit history.
 
 {\setlength{\LTcapwidth}{\textwidth}
 \begin{xltabular}{\textwidth}{@{}>{\footnotesize\RaggedRight\arraybackslash\hsize=0.95\hsize}X>{\footnotesize\RaggedRight\arraybackslash\hsize=0.85\hsize}X>{\footnotesize\RaggedRight\arraybackslash\hsize=1.15\hsize}X>{\footnotesize\RaggedRight\arraybackslash\hsize=0.8\hsize}X>{\footnotesize\RaggedRight\arraybackslash\hsize=1.15\hsize}X>{\footnotesize\RaggedRight\arraybackslash\hsize=1.1\hsize}X@{}}
@@ -65,6 +65,18 @@ Universe-misses approximation in the 2D systematic block (\S\ref{sec:uq-2d-scope
 % d1-g2r-adopted.md item 3); the first grade's readouts stay pinned in make_values_landed.py (ar23old, g18old).
 First grade of the held-out-tune coverage test of the 2D covariance (\S\ref{sec:coverage-tunes}) & The test graded against the covariance with the universe-misses approximation & Superseded by the regrade against the adopted covariance: the verdict, the joint counts and their thresholds, and the flagged cells and their in-interval counts are unchanged; \fvval{f1-tune-g18}'s cell~29 threshold changes from \lrval{cov2d-g18-29-kc-first} to \lrval{cov2d-g18-29-kc}, and the mean $\chi^{2}/\mathrm{ndf}$, the false-flag bounds and the flagged cells' other diagnostics also change & Held-out-tune test (\S\ref{sec:coverage-tunes}) & The printed numbers are the regrade's & -- \\
 \end{xltabular}}
+
+% Move pairs LR-18 and LR-19 (limitation-resolver, prose item 6): sec_method.tex:48 and :79 at 2fe070fec, verbatim;
+% sec:method-config keeps the adopted configurations and the measured differences.
+\subsection{Seed choices of the two-dimensional estimators}
+\label{app:devhistory-seeds}
+
+This is the history of two choices of \S\ref{sec:method-config}: the training seed of the LightGBM central value, and the exact-split cross-check, configuration~(b).
+
+Seed~42 was chosen on computing cost: building the statistical band at seed~42 was the cheaper of the two costed ways to give the central value and the statistical band a common seed.
+
+The exact-split cross-check is configuration~(b) of \S\ref{sec:method-config}. Its seed was not fixed, and its run log was not found; two driver revisions regenerate it to $7\times10^{-15}$.
+% absence-ok: "was not fixed" and "was not found" are the source sentence's own statements (sec_method.tex:79 @ 2fe070fec, LR-19), moved verbatim
 
 % Move pair H3-010 (director-helper-3; history-cuts/move-manifest-h3-20261117.tsv sends, move-manifest-je-20261117.tsv
 % receives): sec_systematics.tex's defects of the earlier 2D budget, verbatim with its comment lines; sec:uq-2d-scope keeps a
@@ -128,6 +140,16 @@ A staged redesign of that first test, at the two tunes and with the covariance r
 % (check_ll5d_port.py); the per-tune classes are hand-typed and asserted against the readout by make_values_fived16.py
 % (LL5D_PRINTED_CLASS).
 At both tunes, an event-matching entry check stopped the earlier run because it compared \fvval{ll5d-a1a2-keys} weight keys and reported every row unmatched. The repair, chosen after this stop, keyed both sides at \fvval{ll5d-a1a2-at} before any coverage pseudo-experiment was unfolded or graded, but after other gate readings were visible. It changed no rule, threshold, bound or reporting cell. Under the rule fixed before the result, the rerun is reported as descriptive: the criteria fixed in advance were applied, but a repair was chosen after an entry-check stop.
+
+% Move pair LR-17 (limitation-resolver, prose item 11): sec_5d.tex:78 at 2fe070fec, with framing-map row B4's [W] wording,
+% which drops the two pointers to the shelved paper's and Supplement's recovery figures; sec:val-departure keeps the residual sizes.
+\subsection{Seed sets of the five-dimensional recovery tests}
+\label{app:devhistory-recovery-seeds}
+
+This is the provenance of the pseudo-experiments behind the recovery residuals of \S\ref{sec:val-departure}.
+
+The sixty pseudo-experiments of the development variant, configuration~(d), at the GiBUU-to-GENIE $\Eavail$ shape, and the twenty for each of the three shapes not used in the joint-test estimator's selection, for configuration~(e), use seed sets that were not held out from the estimator's development.
+% absence-ok: "were not held out" is the source sentence's own statement (sec_5d.tex:78 @ 2fe070fec, LR-17)
 
 % Move pair CX-04..CX-21 (the Codex writer lane; history-cuts/move-manifest-cx-20261117.tsv sends, history-cuts/move-manifest-je-20261117.tsv receives): the three paragraphs of sec_joint.tex:237-241 @ 2fe070fec,
 % verbatim, with their source comments (:242-249); sec:joint5d-lost keeps the outcome beside Table tab:joint5d.
