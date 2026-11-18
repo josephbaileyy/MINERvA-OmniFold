@@ -18,9 +18,10 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 ND = HERE.parent
 REPO = ND.parent
-FILES = ("fb_pilot_edges.py", "fb_pilot_gates.py", "fb_pilot_probe.py", "fb_pilot_analyze.py")
-ED, GA, PR, AN = FILES
-EXPECTED_TESTS = 33
+FILES = ("fb_pilot_edges.py", "fb_pilot_gates.py", "fb_pilot_probe.py", "fb_pilot_analyze.py", "sbatch_pfb.sh",
+         "pfb_smoke_prep.sh")
+ED, GA, PR, AN, SB, SM = FILES
+EXPECTED_TESTS = 45
 T = "test_fb_pilot"
 MUTATIONS = [
     # §3: the edges
@@ -49,6 +50,51 @@ MUTATIONS = [
      "test_edges_are_written_at_17_digits_and_round_trip"),
     ("an existing edges dir overwritten", ED, "    out_dir.mkdir(parents=True, exist_ok=False)", "    out_dir.mkdir(parents=True, exist_ok=True)",
      "test_build_edges_writes_twelve_files_and_refuses_an_existing_dir"),
+    # code rev 2: the audits' findings
+    ("placement: right end of a plateau (code 1)", ED, "        k = int(np.argmin(np.abs(B - t)))  # the lowest k among tied distances (numpy.argmin returns the first)\n",
+     "        j = int(np.searchsorted(B, t, side=\"left\"))\n        cands = [c for c in (j - 1, j) if 0 <= c < B.size]\n        k = min(cands, key=lambda c: (abs(B[c] - t), c))\n",
+     "test_placement_takes_the_lowest_gap_on_a_plateau"),
+    ("G0 stops at the first failure", ED, "                    failed.append(what)\n", "                    raise\n",
+     "test_g0_records_every_role_and_feature"),
+    ("the time limit allows an hour", AN, "TIME_LIMIT_S = 3000", "TIME_LIMIT_S = 3600", "test_the_slurm_limit_and_the_scripts_cap"),
+    ("no #SBATCH --time", SB, "#SBATCH --time=0:50:00\n", "", "test_the_slurm_limit_and_the_scripts_cap"),
+    ("any job name accepted", SB, '    case "$SLURM_JOB_NAME" in pfb_*) ;; *) refuse "the job name \'$SLURM_JOB_NAME\' is not in the pfb_ family" ;; esac\n', "",
+     "test_the_job_refuses_a_stale_root_a_bad_stage_and_a_foreign_name"),
+    ("a stale root accepted", SB, '[ ! -e "$OUT" ] || refuse "the root is not fresh: $OUT exists"\n', "",
+     "test_the_job_refuses_a_stale_root_a_bad_stage_and_a_foreign_name"),
+    ("any root accepted", SB, '    [ "$OUT" = "$ROOT_DECLARED" ] || refuse "the root $OUT is not the declared $ROOT_DECLARED"\n', "",
+     "test_the_job_refuses_a_stale_root_a_bad_stage_and_a_foreign_name"),
+    ("exits 4 and 5 not distinguished", SB, '4) bad4="$bad4 $id" ;; 5) bad5="$bad5 $id" ;; ', "",
+     "test_exits_4_and_5_and_operational_failures_keep_their_place"),
+    ("the smoke runs inside a job", SM, '[ -z "$SLURM_JOB_ID" ] || { echo "[pfb-smoke] refusing: this is a login-node step and runs outside any Slurm job" >&2; exit 2; }\n', "",
+     "test_the_smoke_is_a_login_node_step"),
+    ("G4 skips the inputs", AN, "    if check_inputs:\n", "    if False:\n", "test_g4_rechecks_the_inputs_the_deploy_and_the_sigma_copy"),
+    ("G4 skips the deploy", AN, "    if dp:\n        g4.append(dp)\n", "", "test_g4_rechecks_the_inputs_the_deploy_and_the_sigma_copy"),
+    ("G4 skips the sigma copy", AN, '        g4.append("the sigma receipt copy")\n', "        pass\n",
+     "test_g4_rechecks_the_inputs_the_deploy_and_the_sigma_copy"),
+    ("identity from the first fit only", PR, "    for i, r in enumerate(records):\n", "    for i, r in enumerate(records[:1]):\n",
+     "test_identity_is_every_fit_with_the_file_digest"),
+    ("identity ignores the file digest", PR, ' \\\n                or r.get("forcedbins_sha256") != want_sha:', ":",
+     "test_identity_is_every_fit_with_the_file_digest"),
+    ("a sidecar not bound to its product", AN, '        if rec.get("product") != p.name or rec.get("product_sha256") != sha256_path(p):\n', "        if False:\n",
+     "test_a_sidecar_is_bound_to_its_product"),
+    ("a sidecar's set/seed unchecked against the meta", AN, '        elif (rec.get("set"), rec.get("jitter_seed")) != (s, j) or (blk.get("set"), blk.get("jitter_seed")) != (s, j):\n',
+     "        elif False:\n", "test_a_sidecar_is_bound_to_its_product"),
+    ("a sidecar's INDEX unchecked", AN, '        elif index_sha is not None and (rec.get("edges_index_sha256") != index_sha or blk.get("edges_index_sha256") != index_sha):\n',
+     "        elif False:\n", "test_a_sidecar_is_bound_to_its_product"),
+    ("a sidecar's code unchecked", AN, '        elif code is not None and (rec.get("code_sha256") != code or blk.get("code_sha256") != code):\n',
+     "        elif False:\n", "test_a_sidecar_is_bound_to_its_product"),
+    ("exit 4 not INPUTS CHANGED", AN, '    if g["G4_failing"] or status.get("inputs_changed"):\n', '    if g["G4_failing"]:\n',
+     "test_exits_4_and_5_and_operational_failures_keep_their_place"),
+    ("crashed tasks below the gates", AN, '    if status.get("task_failures"):\n        return "INCOMPLETE", f"tasks failed: {status[\'task_failures\']}"\n', "",
+     "test_exits_4_and_5_and_operational_failures_keep_their_place"),
+    ("S1 INVALID looked up as a band", AN, '    if r.get("invalid") or r.get("reading") == "INVALID":\n        return "INVALID"\n', "",
+     "test_s1_invalid_reads_invalid_and_non_finite_values_write_as_null"),
+    ("non-finite kept in the record", AN, "    if isinstance(obj, float) and not math.isfinite(obj):\n", "    if False:\n",
+     "test_s1_invalid_reads_invalid_and_non_finite_values_write_as_null"),
+    ("S3 waits for the jitters", AN, "    if bases_ok:\n", "    if bases_ok and jit_ok:\n", "test_base_only_statistics_survive_a_round1_stop"),
+    ("the status not bound to the job", AN, '    if str(status.get("job")) != str(job):\n', "    if False:\n",
+     "test_the_analysis_is_bound_to_one_job"),
     # §5.1: the gates
     ("G3 (a) reads nothing", GA, '    return {"pass": not any(bad), "mismatched_rows": bad,', '    return {"pass": True, "mismatched_rows": bad,',
      "test_a_middle_edge_removed_changes_the_partition"),
@@ -88,8 +134,8 @@ MUTATIONS = [
     ("INCOMPLETE before the gates", AN, '    if g["G1"] is False:\n        return "NOT REPRODUCED"',
      '    if g["missing"]:\n        return "INCOMPLETE", "x"\n    if g["G1"] is False:\n        return "NOT REPRODUCED"',
      "test_gate_precedence_and_a_deliberate_round1_stop"),
-    ("RUN REFUSED before INPUTS CHANGED", AN, '    if g["G4_failing"]:\n        return "INPUTS CHANGED", f"not at their pins: {g[\'G4_failing\']}"\n    if status.get("refused"):\n        return "RUN REFUSED", status["refused"]',
-     '    if status.get("refused"):\n        return "RUN REFUSED", status["refused"]\n    if g["G4_failing"]:\n        return "INPUTS CHANGED", f"not at their pins: {g[\'G4_failing\']}"',
+    ("RUN REFUSED before INPUTS CHANGED", AN, '    if g["G4_failing"] or status.get("inputs_changed"):\n        return "INPUTS CHANGED", status.get("inputs_changed") or f"not at their pins: {g[\'G4_failing\']}"\n    if status.get("refused"):\n        return "RUN REFUSED", status["refused"]',
+     '    if status.get("refused"):\n        return "RUN REFUSED", status["refused"]\n    if g["G4_failing"] or status.get("inputs_changed"):\n        return "INPUTS CHANGED", status.get("inputs_changed") or f"not at their pins: {g[\'G4_failing\']}"',
      "test_gate_precedence_and_a_deliberate_round1_stop"),
     ("a zero S1 mean allowed", AN, '    if "E1_jit" in Fs and np.any(Fs["E1_jit"].mean(axis=0) == 0):\n', "    if False:\n",
      "test_invalid_branches"),

@@ -393,7 +393,8 @@ class Outcome(unittest.TestCase):
         self.assertEqual(A.s1_reading({"interval_90": [0.0, 0.05], "reading": "R"}), "REMOVED")
 
     def test_gate_precedence_and_a_deliberate_round1_stop(self):
-        base = {"G4_failing": [], "G1": True, "missing": [], "per_product": {"J": [], "G2": [], "G3": [], "identity": []}}
+        base = {"G4_failing": [], "G1": True, "missing": [],
+                "per_product": {"J": [], "G2": [], "G3": [], "identity": [], "binding": []}}
         self.assertIsNone(A.first_gate({}, base)[0])
         g = dict(base, G4_failing=["x"])
         self.assertEqual(A.first_gate({"refused": "r"}, g)[0], "INPUTS CHANGED")
@@ -431,6 +432,216 @@ class Outcome(unittest.TestCase):
         s3 = A.policy_statistic(bases, sigma)
         self.assertAlmostEqual(s3["max"], (1 - 1 / 1.02) / 0.01, places=9)
         self.assertEqual(s3["place"]["max"], 0.0)
+
+
+class Rev2(unittest.TestCase):
+    """The code audits' findings on code 1 (both readers), each with its fix's test."""
+
+    def test_placement_takes_the_lowest_gap_on_a_plateau(self):
+        F = f32(np.concatenate([np.arange(1.0, 4.0), np.arange(10.0, 40.0)]))
+        U = np.concatenate([F, f32([4.0, 5.0, 6.0, 7.0])])  # scored-only values: B is flat across 3..10
+        lower, edges = E.admissible_gaps(U)
+        B = np.searchsorted(np.sort(F), lower, side="right")
+        self.assertTrue(np.sum(B == 3) >= 4, "the fixture has a plateau of B")
+        t_target = 3.0
+        N = F.size
+        out = E.place(F, U, 31, 0.0)
+        i = next(k for k in range(1, out["n"] + 1) if abs(k / (out["n"] + 1) * N - t_target) < 0.5)
+        plateau = edges[B == 3]
+        self.assertEqual(out["edges"][i - 1], float(plateau[0]), "the lowest gap among tied distances (rule 6)")
+
+    def test_the_slurm_limit_and_the_scripts_cap(self):
+        for ok in ("00:50:00", "50:00", "0:49:59"):
+            self.assertTrue(A.slurm_limit_ok(ok), ok)
+        for bad in ("00:50:01", "01:00:00", "1-00:00:00", "UNLIMITED", "", "0:00"):
+            self.assertFalse(A.slurm_limit_ok(bad), bad)
+        text = (ND / "sbatch_pfb.sh").read_text()
+        self.assertIn("#SBATCH --time=0:50:00\n", text)
+        self.assertIn("#SBATCH --job-name=pfb_run\n", text)
+        self.assertIn("slurm-limit --timelimit", text)
+        self.assertIn('pfb_*) ;; *) refuse "the job name', text)
+
+    def run_job(self, stage, root, env=None):
+        import os
+        import subprocess
+        d = Path(self.tmp) / "deploy"
+        if not d.exists():
+            d.mkdir()
+            subprocess.run(["git", "init", "-q", str(d)], check=True)
+            (d / "x").write_text("x")
+            subprocess.run(["git", "-C", str(d), "add", "x"], check=True)
+            subprocess.run(["git", "-C", str(d), "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "x"], check=True)
+        pin = subprocess.run(["git", "-C", str(d), "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
+        e = {**os.environ, "SLURM_JOB_ID": "77", **(env or {})}
+        return subprocess.run(["bash", str(ND / "sbatch_pfb.sh"), str(d), pin, str(stage), str(root)], env=e,
+                              capture_output=True, text=True)
+
+    def setUp(self):
+        self._t = tempfile.TemporaryDirectory()
+        self.tmp = self._t.name
+
+    def tearDown(self):
+        self._t.cleanup()
+
+    def test_the_job_refuses_a_stale_root_a_bad_stage_and_a_foreign_name(self):
+        stage, root = Path(self.tmp) / "stage", Path(self.tmp) / "root"
+        r = self.run_job(stage, root, {"PFB_LOCAL_TEST": "1"})
+        self.assertEqual(r.returncode, 2)
+        self.assertIn("lacks a0-refs", json.loads((stage / "job-77.refused.json").read_text())["refused"])
+        (stage / "a0-refs").mkdir(parents=True)
+        (stage / "assess_receipt.json").write_text("{}")
+        (stage / "smoke-edges").mkdir()
+        (stage / "smoke-edges" / "INDEX.json").write_text("{}")
+        root.mkdir()
+        (stage / "job-77.refused.json").unlink()
+        r = self.run_job(stage, root, {"PFB_LOCAL_TEST": "1"})
+        self.assertEqual(r.returncode, 2)
+        self.assertIn("not fresh", json.loads((stage / "job-77.refused.json").read_text())["refused"])
+        self.assertFalse((root / "job-status.json").exists(), "a refusal writes no run status into the old root")
+        (stage / "job-77.refused.json").unlink()
+        r = self.run_job(stage, Path(self.tmp) / "elsewhere", {"SLURM_JOB_NAME": "pfb_run"})
+        self.assertIn("not the declared", json.loads((stage / "job-77.refused.json").read_text())["refused"])
+        (stage / "job-77.refused.json").unlink()
+        r = self.run_job(stage, Path("/pscratch/sd/j/josephrb/pfb-20261117"), {"SLURM_JOB_NAME": "rdx_s3_a"})
+        self.assertIn("pfb_ family", json.loads((stage / "job-77.refused.json").read_text())["refused"])
+
+    def stage_and_root(self):
+        import hashlib
+        stage, root = Path(self.tmp) / "stage", Path(self.tmp) / "root"
+        (stage / "a0-refs").mkdir(parents=True)
+        sums = []
+        for s in (None, *A.SEEDS):
+            p = stage / "a0-refs" / A.name("rs1_A0", s)
+            np.savez(p, xsec_flat=np.full(169, 2.0 + (s or 0) * 1e-3), meta=np.array("{}"))
+            sums.append(f"{hashlib.sha256(p.read_bytes()).hexdigest()}  runs/A0/{p.name}")
+        (Path(self.tmp) / "sums").write_text("\n".join(sums) + "\n")
+        real = A._REPO / "docs/orchestration/state/s5e/cand/assess_receipt.json"
+        (stage / A.SIGMA_NAME).write_bytes(real.read_bytes())
+        root.mkdir()
+        return stage, root
+
+    def test_g4_rechecks_the_inputs_the_deploy_and_the_sigma_copy(self):
+        stage, root = self.stage_and_root()
+        npz, bkg = Path(self.tmp) / "in.npz", Path(self.tmp) / "bkg.npz"
+        npz.write_bytes(b"x")
+        bkg.write_bytes(b"y")
+        g = A.gates(root, stage, None, None, rs1_sums=Path(self.tmp) / "sums", npz=str(npz), bkg=str(bkg))
+        self.assertIn("the input in.npz", g["G4_failing"])
+        self.assertIn("the input bkg.npz", g["G4_failing"])
+        self.assertTrue(any("no deploy given" in x for x in g["G4_failing"]))
+        g = A.gates(root, stage, Path(self.tmp), "0" * 40, rs1_sums=Path(self.tmp) / "sums", check_inputs=False)
+        self.assertTrue(any("not a readable git checkout" in x or "not " in x for x in g["G4_failing"]))
+        (stage / A.SIGMA_NAME).write_text("{}")
+        g = A.gates(root, stage, None, None, rs1_sums=Path(self.tmp) / "sums", check_inputs=False)
+        self.assertIn("the sigma receipt copy", g["G4_failing"])
+        self.assertFalse([x for x in g["G4_failing"] if x.startswith("rs1_A0")], "the A0 copies are at their pins")
+
+    def test_identity_is_every_fit_with_the_file_digest(self):
+        want = {"max_bin": 255, "forcedbins_filename": "/x/E1_clf1.json"}
+        good = {"max_bin": 255, "forcedbins_filename": "/x/E1_clf1.json", "forcedbins_sha256": "a" * 64}
+        self.assertEqual(P.identity_problems([good, good], want, "a" * 64), [])
+        later = dict(good, max_bin=127, forcedbins_filename="/x/E3_clf1.json")
+        self.assertTrue(P.identity_problems([good, later], want, "a" * 64), "a later fit's change is caught")
+        self.assertTrue(P.identity_problems([good, dict(good, forcedbins_sha256="b" * 64)], want, "a" * 64))
+        self.assertTrue(P.identity_problems([], want, "a" * 64))
+
+    def write_remedy(self, root, s, j, side_overrides=None, meta_overrides=None, index_sha="i" * 64, code=None):
+        import hashlib
+        code = code or {"fb_pilot_probe.py": "c"}
+        p = root / A.expected()[(s, j)]
+        p.parent.mkdir(parents=True, exist_ok=True)
+        blk = {"set": s, "jitter_seed": j, "edges_index_sha256": index_sha, "code_sha256": code, **(meta_overrides or {})}
+        np.savez(p, xsec_flat=np.full(169, 2.0), meta=np.array(json.dumps({"pilot_fb": blk})))
+        gates_ = {g: {"pass": True} for g in ("J", "G2", "G3", "identity")}
+        side = {"set": s, "jitter_seed": j, "product": p.name, "product_sha256": hashlib.sha256(p.read_bytes()).hexdigest(),
+                "edges_index_sha256": index_sha, "code_sha256": code, "gates": gates_, **(side_overrides or {})}
+        p.with_name(p.name[:-4] + ".pfb.json").write_text(json.dumps(side))
+        return p
+
+    def test_a_sidecar_is_bound_to_its_product(self):
+        _, root = self.stage_and_root()
+        p = self.write_remedy(root, "E2", None)
+        have = {("E2", None): A.expected()[("E2", None)]}
+        code = {"fb_pilot_probe.py": "c"}
+        self.assertEqual(A.gate_records(root, have, "i" * 64, code)["binding"], [])
+        self.write_remedy(root, "E2", None, side_overrides={"product_sha256": "0" * 64})
+        self.assertTrue(A.gate_records(root, have, "i" * 64, code)["binding"])
+        self.write_remedy(root, "E2", None, meta_overrides={"set": "E3"})
+        self.assertTrue(A.gate_records(root, have, "i" * 64, code)["binding"])
+        self.write_remedy(root, "E2", None)
+        self.assertTrue(A.gate_records(root, have, "j" * 64, code)["binding"], "another INDEX.json")
+        self.assertTrue(A.gate_records(root, have, "i" * 64, {"fb_pilot_probe.py": "d"})["binding"], "other code")
+        p.with_name(p.name[:-4] + ".pfb.json").unlink()
+        self.assertTrue(A.gate_records(root, have, "i" * 64, code)["binding"], "no sidecar")
+
+    def test_exits_4_and_5_and_operational_failures_keep_their_place(self):
+        base = {"G4_failing": [], "G1": True, "missing": ["E1/7"],
+                "per_product": {"J": [], "G2": [], "G3": ["E1/2"], "identity": [], "binding": []}}
+        self.assertEqual(A.first_gate({"inputs_changed": "exit 4"}, base)[0], "INPUTS CHANGED")
+        self.assertEqual(A.first_gate({"refused": "grid-membership exit 5 in: E1_3"}, base)[0], "RUN REFUSED")
+        self.assertEqual(A.first_gate({"interrupted": "tasks failed: E1_7:1", "task_failures": " E1_7:1"}, base)[0],
+                         "INCOMPLETE", "a crashed task outranks another product's G3 failure")
+        self.assertEqual(A.first_gate({"task_failures": " E1_7:1"}, base)[0], "INCOMPLETE")
+        b2 = dict(base, per_product=dict(base["per_product"], binding=["E1/2: x"]))
+        self.assertEqual(A.first_gate({}, b2)[0], "PREMISE FAILED (identity)")
+        self.assertEqual(A.first_gate({}, dict(b2, G1=False))[0], "NOT REPRODUCED", "G1 precedes a binding failure")
+        text = (ND / "sbatch_pfb.sh").read_text()
+        self.assertIn('4) bad4="$bad4 $id"', text)
+        self.assertIn('5) bad5="$bad5 $id"', text)
+
+    def test_s1_invalid_reads_invalid_and_non_finite_values_write_as_null(self):
+        self.assertEqual(A.s1_reading({"invalid": True, "reading": "INVALID", "interval_90": [0.1, 0.2]}), "INVALID")
+        self.assertEqual(A.s1_reading({"invalid": True, "reading": "R", "interval_90": [0.0, 0.05]}), "INVALID",
+                         "the invalid flag wins over any band")
+        out = A.json_safe({"S1": {"interval_90": [float("nan"), 0.05], "M": float("inf")}, "ok": 1.0})
+        spots = []
+        out = A.json_safe({"S1": {"interval_90": [float("nan"), 0.05], "M": float("inf")}, "ok": 1.0}, "", spots)
+        self.assertEqual(out["S1"]["interval_90"], [None, 0.05])
+        self.assertEqual(sorted(spots), ["/S1/M", "/S1/interval_90[0]"])
+        json.dumps(out, allow_nan=False)
+
+    def test_base_only_statistics_survive_a_round1_stop(self):
+        stage, root = self.stage_and_root()
+        for s in A.SETS:
+            self.write_remedy(root, s, None)
+        p = root / A.expected()[("E3", None)]
+        z = dict(np.load(p))
+        z["xsec_flat"] = np.full(169, 2.02)
+        np.savez(p, **z)
+        have = {(s, None): A.expected()[(s, None)] for s in A.SETS}
+        st = A.statistics(root, have, stage / "a0-refs", np.eye(169), np.full(153, 0.01), None)
+        self.assertIn("S3", st, "S3 needs no jitter")
+        self.assertNotIn("S1", st)
+        self.assertIn("readouts_shift_from_e", st)
+        self.assertAlmostEqual(st["S3"]["max"], (1 - 2.0 / 2.02) / 0.01, places=6)
+
+    def test_the_analysis_is_bound_to_one_job(self):
+        stage, root = self.stage_and_root()
+        with self.assertRaisesRegex(SystemExit, "names job"):
+            A.analyze(root, stage, {"job": "11"}, "12", U=np.eye(169), check_inputs=False)
+
+    def test_g0_records_every_role_and_feature(self):
+        good = np.column_stack([f32(np.round(np.random.default_rng(k).normal(3, 1, 3000), 3)) for k in range(5)])
+        bad = good.copy()
+        bad[:, 2] = f32(np.arange(3000) % 7)  # too few gaps on one feature
+        mats = {r: (good if r != "reg" else bad, None) for r in E.ROLES}
+        with tempfile.TemporaryDirectory() as d:
+            with self.assertRaises(E.Infeasible) as cm:
+                E.build_edges(mats, Path(d) / "edges")
+            rec = json.loads(str(cm.exception))
+            self.assertEqual(len(rec["diagnostics"]), 3 * 4 * 5)
+            self.assertEqual(sorted(rec["failing"]), sorted(f"{s}/reg/feature 2" for s in E.SETS))
+            self.assertIn("admissible gaps", rec["diagnostics"]["E1/reg/feature 2"]["first_failing_rule"])
+            self.assertIsNone(rec["diagnostics"]["E1/clf1/feature 0"]["first_failing_rule"])
+            self.assertFalse((Path(d) / "edges").exists(), "G0 writes nothing when it refuses")
+
+    def test_the_smoke_is_a_login_node_step(self):
+        import os
+        import subprocess
+        r = subprocess.run(["bash", str(ND / "pfb_smoke_prep.sh"), "/x", "0" * 40, self.tmp],
+                           env={**os.environ, "SLURM_JOB_ID": "5"}, capture_output=True, text=True)
+        self.assertEqual(r.returncode, 2)
+        self.assertIn("outside any Slurm job", r.stderr)
 
 
 if __name__ == "__main__":

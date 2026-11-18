@@ -101,9 +101,7 @@ def place(F: np.ndarray, U: np.ndarray, max_bin: int, offset: float, what: str =
     prev = -1
     for i in range(1, n + 1):
         t = (i + offset) / (n + 1) * N
-        j = int(np.searchsorted(B, t, side="left"))
-        cands = [c for c in (j - 1, j) if 0 <= c < B.size]
-        k = min(cands, key=lambda c: (abs(B[c] - t), c))
+        k = int(np.argmin(np.abs(B - t)))  # the lowest k among tied distances (numpy.argmin returns the first)
         if k <= prev:
             k = prev + 1
         if k >= B.size:
@@ -130,23 +128,52 @@ def forcedbins_json(per_feature: list) -> str:
     return "[" + ", ".join(items) + "]\n"
 
 
+def diagnose(F: np.ndarray, U: np.ndarray, max_bin: int) -> dict:
+    """G0's record for one role and feature, whatever happens: z, n, the admissible-gap count, and the first rule that
+    fails (None if none)."""
+    first = None
+    try:
+        check_policy(np.asarray(F, np.float64), U, "")
+    except Infeasible as exc:
+        first = str(exc).split(": ", 1)[-1]
+    zb = zero_bounds(F) if first is None else []
+    n = int(max_bin) - len(zb) - 1
+    adm = int(admissible_gaps(U)[0].size) if first is None else None
+    if first is None and adm < n:
+        first = f"{adm} admissible gaps for {n} edges"
+    return {"z": len(zb), "n": n, "admissible": adm, "first_failing_rule": first}
+
+
 def build_edges(matrices: dict, out_dir: Path, sets: dict = SETS) -> dict:
     """G0 and §3 rule 7. matrices = {role: (fit [rows, 5], scored [rows, 5] or None)}. Writes
-    <out_dir>/<set>_<role>.json and INDEX.json; returns the index. Raises Infeasible, writing nothing more."""
+    <out_dir>/<set>_<role>.json and INDEX.json; returns the index. On any failure raises Infeasible carrying every
+    role and feature's diagnostics (G0's record, §5.1), writing nothing."""
     import hashlib
     out_dir = Path(out_dir)
     if set(matrices) != set(ROLES):
         raise ValueError(f"the roles are {sorted(matrices)}, not {sorted(ROLES)}")
-    plan = {}
+    plan, diag, failed = {}, {}, []
     for s, cfg in sets.items():
         for r in ROLES:
             fit, scored = matrices[r]
             fit = np.asarray(fit, np.float64)
-            U_all = fit if scored is None else np.vstack([fit, np.asarray(scored, np.float64)])
             if fit.ndim != 2 or fit.shape[1] != 5:
                 raise ValueError(f"{r}: the fit matrix is {fit.shape}, not (rows, 5)")
-            plan[(s, r)] = [place(fit[:, f], U_all[:, f], cfg["max_bin"], cfg["offset"], f"{s}/{r}/feature {f}")
-                            for f in range(5)]
+            U_all = fit if scored is None else np.vstack([fit, np.asarray(scored, np.float64)])
+            per = []
+            for f in range(5):
+                what = f"{s}/{r}/feature {f}"
+                try:
+                    per.append(place(fit[:, f], U_all[:, f], cfg["max_bin"], cfg["offset"], what))
+                    diag[what] = {k: per[-1][k] for k in ("z", "n", "admissible")} | {"first_failing_rule": None}
+                except Infeasible as exc:
+                    d = diagnose(fit[:, f], U_all[:, f], cfg["max_bin"])
+                    d["first_failing_rule"] = d["first_failing_rule"] or str(exc).split(": ", 1)[-1]
+                    diag[what] = d
+                    failed.append(what)
+            plan[(s, r)] = per
+    if failed:
+        raise Infeasible(json.dumps({"failing": failed, "diagnostics": diag}))
     out_dir.mkdir(parents=True, exist_ok=False)
     index = {"schema": "pfb-edges/1", "K": K, "sets": {}}
     for (s, r), per in plan.items():
@@ -156,7 +183,7 @@ def build_edges(matrices: dict, out_dir: Path, sets: dict = SETS) -> dict:
         index["sets"].setdefault(s, {"max_bin": sets[s]["max_bin"], "offset": sets[s]["offset"], "roles": {}})
         index["sets"][s]["roles"][r] = {
             "file": p.name, "sha256": hashlib.sha256(text.encode()).hexdigest(),
-            "features": [{k: v for k, v in q.items() if k != "edges"} for q in per]}
+            "features": [dict(q) for q in per]}
     (out_dir / "INDEX.json").write_text(json.dumps(index, indent=1, allow_nan=True) + "\n")
     return index
 

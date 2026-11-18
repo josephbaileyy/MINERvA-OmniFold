@@ -37,6 +37,7 @@ import hashlib
 import json
 import os
 import sys
+import time
 from contextlib import contextmanager
 from pathlib import Path
 
@@ -135,20 +136,22 @@ class Role:
         return self
 
     def fit(self, X, y, sample_weight=None):
-        rec = self.st["roles"].setdefault(self.role, {"g3bc": []})
+        rec = self.st["roles"].setdefault(self.role, {"g3bc": [], "identity": []})
+        t0 = time.time()
+        rec["identity"].append(identity_record(self.base.get_params()))
         if self.fits == 0:
             rec["fit"] = np.array(X, copy=True)
-            rec["params"] = {k: v for k, v in self.base.get_params().items()
-                             if k in ("max_bin", "forcedbins_filename", "num_threads", "random_state", "n_estimators",
-                                      "num_leaves", "bin_construct_sample_cnt", "deterministic", "force_row_wise")}
             rec["g3a"] = G.g3a(X, self.base.get_params(), self.st["intended"][self.role], self.st.get("workdir"))
+        self.st["gate_seconds"] += time.time() - t0
         self.base.fit(X, y, sample_weight=sample_weight)
+        t0 = time.time()
         rec["g3bc"].append(G.g3bc(self.base.booster_.model_to_string(), self.st["intended"][self.role]))
+        self.st["gate_seconds"] += time.time() - t0
         self.fits += 1
         return self
 
     def _scored(self, X):
-        rec = self.st["roles"].setdefault(self.role, {"g3bc": []})
+        rec = self.st["roles"].setdefault(self.role, {"g3bc": [], "identity": []})
         if "scored" not in rec:
             rec["scored"] = np.array(X, copy=True)
 
@@ -161,11 +164,30 @@ class Role:
         return self.base.predict(X)
 
 
+def identity_record(params: dict) -> dict:
+    """What one fit's estimator names: its max_bin, its forced-bins file and that file's sha256 at the fit."""
+    f = params.get("forcedbins_filename")
+    return {"max_bin": params.get("max_bin"), "forcedbins_filename": f,
+            "forcedbins_sha256": sha256_path(Path(f)) if f and Path(f).is_file() else None}
+
+
+def identity_problems(records: list, want: dict, want_sha: str) -> list:
+    """Every fit of a role must name the set's max_bin, the role's file, and that file's INDEX.json sha256."""
+    if not records:
+        return ["no fit recorded"]
+    bad = []
+    for i, r in enumerate(records):
+        if r.get("max_bin") != want["max_bin"] or r.get("forcedbins_filename") != want["forcedbins_filename"] \
+                or r.get("forcedbins_sha256") != want_sha:
+            bad.append(f"fit {i}: {r}")
+    return bad
+
+
 @contextmanager
 def install(mode: str, s: str | None, edges: Path, workdir: Path | None = None):
     """Rebind for one invocation; restore on exit. mode is "prep" or "run"."""
     here = sha256_path(Path(__file__).resolve())
-    st: dict = {"checked": False, "roles": {}, "workdir": workdir}
+    st: dict = {"checked": False, "roles": {}, "workdir": workdir, "gate_seconds": 0.0}
     saved = {"jittered": s5p_numerics.jittered, "unfold_one": s5p_numerics.unfold_one,
              "make_estimators": onc.make_estimators, "refine_params": s5n_pseudo.refine_params,
              "recorded_classifier": s5n_pseudo.recorded_classifier, "write_product": s5n_pseudo.write_product,
@@ -181,6 +203,7 @@ def install(mode: str, s: str | None, edges: Path, workdir: Path | None = None):
         st["intended"] = {r: E.load_intended(Path(edges) / "INDEX.json", s, r) for r in E.ROLES}
         st["index_sha256"] = sha256_path(Path(edges) / "INDEX.json")
         forced = {r: {"forcedbins_filename": str(files[r].resolve()), "max_bin": int(cfg["max_bin"])} for r in E.ROLES}
+        file_sha = {r: cfg["roles"][r]["sha256"] for r in E.ROLES}
 
     def jittered(inputs, bkg, seed):
         st["seed"], st["inputs"], st["bkg"] = seed, inputs, bkg
@@ -194,6 +217,7 @@ def install(mode: str, s: str | None, edges: Path, workdir: Path | None = None):
         a = st["ns"]
         ratio = json.loads(Path(a.eavail_ratio).read_text())
         split_key = s5c_pseudo.split_key_for(a.pseudo_seed)
+        t_gate = time.time()
         if j is None:
             base_exp = exp
         else:
@@ -220,6 +244,7 @@ def install(mode: str, s: str | None, edges: Path, workdir: Path | None = None):
         else:
             st["j"] = {"j1": [], "j3": None}
             st["rebuilt_roles"] = base
+        st["gate_seconds"] += time.time() - t_gate
         return o["unfold_one"](exp, dtype, seed, threads, iters, unfold_fn)
 
     def make_estimators(kind, nvars, seed=None):
@@ -243,12 +268,16 @@ def install(mode: str, s: str | None, edges: Path, workdir: Path | None = None):
                 fit0 = clf.fit
 
                 def fit(X, y, sample_weight=None):
-                    rec = st["roles"].setdefault("ref", {"g3bc": []})
+                    rec = st["roles"].setdefault("ref", {"g3bc": [], "identity": []})
+                    t0 = time.time()
+                    rec["identity"].append(identity_record(clf.get_params()))
                     rec["fit"] = np.array(X, copy=True)
-                    rec["params"] = {k: v for k, v in clf.get_params().items() if k in ("max_bin", "forcedbins_filename")}
                     rec["g3a"] = G.g3a(X, clf.get_params(), st["intended"]["ref"], st.get("workdir"))
+                    st["gate_seconds"] += time.time() - t0
                     r = fit0(X, y, sample_weight=sample_weight)
+                    t0 = time.time()
                     rec["g3bc"].append(G.g3bc(clf.booster_.model_to_string(), st["intended"]["ref"]))
+                    st["gate_seconds"] += time.time() - t0
                     return r
 
                 clf.fit = fit
@@ -284,9 +313,9 @@ def install(mode: str, s: str | None, edges: Path, workdir: Path | None = None):
                   st["intended"])
         ident = {}
         for r in E.ROLES:
-            p = roles.get(r, {}).get("params", {})
-            ok = (p.get("max_bin") == forced[r]["max_bin"] and p.get("forcedbins_filename") == forced[r]["forcedbins_filename"])
-            ident[r] = {"params": p, "pass": bool(ok)}
+            recs = roles.get(r, {}).get("identity", [])
+            bad = identity_problems(recs, forced[r], file_sha[r])
+            ident[r] = {"fits": len(recs), "problems": bad, "pass": not bad}
         g3 = {r: {"g3a": roles[r].get("g3a"), "g3bc": roles[r]["g3bc"],
                   "pass": bool(roles[r].get("g3a", {}).get("pass")) and bool(roles[r]["g3bc"])
                   and all(x["pass"] for x in roles[r]["g3bc"])} for r in roles}
@@ -303,16 +332,16 @@ def install(mode: str, s: str | None, edges: Path, workdir: Path | None = None):
         block = {"schema": SCHEMA, "set": s, "jitter_seed": st.get("seed"), "edges_index_sha256": st["index_sha256"],
                  "code_sha256": {"fb_pilot_probe.py": here, "fb_pilot_edges.py": sha256_path(Path(E.__file__)),
                                  "fb_pilot_gates.py": sha256_path(Path(G.__file__))},
-                 "gates_pass": {k: v["pass"] for k, v in rec.items()}}
-        side = Path(out).with_name(Path(out).name[:-4] + ".pfb.json")
-        tmp = side.with_name(side.name + f".partial-{os.getpid()}")
-        tmp.write_text(json.dumps({**block, "gates": rec}, default=lambda x: x.tolist() if hasattr(x, "tolist") else str(x)))
+                 "gates_pass": {k: v["pass"] for k, v in rec.items()}, "gate_seconds": round(st["gate_seconds"], 3)}
         rc = o["write_product"](out, arrays, {**meta, "pilot_fb": block})
-        if rc == 0:
+        if rc == 0:  # the sidecar names the product it certifies, by sha256, after the product exists
+            side = Path(out).with_name(Path(out).name[:-4] + ".pfb.json")
+            tmp = side.with_name(side.name + f".partial-{os.getpid()}")
+            tmp.write_text(json.dumps({**block, "product": Path(out).name, "product_sha256": sha256_path(Path(out)),
+                                       "gates": rec}, default=lambda x: x.tolist() if hasattr(x, "tolist") else str(x)))
             os.replace(tmp, side)
-        else:
-            tmp.unlink()
         st["roles"].clear()
+        st["gate_seconds"] = 0.0
         return rc
 
     def parse_args(self, args=None, namespace=None):
@@ -375,6 +404,13 @@ def main(argv=None) -> int:
         with install("run", a.set, a.edges, a.workdir):
             return esp.main(["--candidate", "control", "stability", "--", *argv[cut + 1:]])
     except E.Infeasible as exc:
+        if argv[0] == "prep":  # G0's record: every role and feature's diagnostics (§5.1)
+            g0 = a.edges_out.with_name(a.edges_out.name + ".g0.json")
+            try:
+                rec = json.loads(str(exc))
+            except ValueError:
+                rec = {"failing": [str(exc)], "diagnostics": {}}
+            g0.write_text(json.dumps({"outcome": "INFEASIBLE", **rec}, indent=1) + "\n")
         print(f"INFEASIBLE: {exc}", file=sys.stderr)
         return 6
     except Refusal as exc:
