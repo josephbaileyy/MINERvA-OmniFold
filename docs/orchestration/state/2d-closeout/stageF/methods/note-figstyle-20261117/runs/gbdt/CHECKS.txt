@@ -1,0 +1,29 @@
+# gbdt (Figs. 26-29), 2026-11-17T22:06:25Z: bash tools/arms.sh <wt> gbdt figenv/mpl3112 2fe070fec gbdt_recovery - nd-unfolding/gbdt_model_dependence/analyze.py --out @OUT@ --print-style
+== gbdt (gbdt_recovery): arm 0 against the file installed at 2fe070feca48256639797278eff0e1ac6f17abd7
+EQUAL tmp.5gpGf0k4Ul
+raster: RASTER :: EQUAL :: 1 page(s), 0 differing pixel(s)
+== gbdt: arm 1 against arm 0
+captures: gbdt_bias_spread.pdf.json gbdt_bias_spread.svg.json gbdt_coverage.pdf.json gbdt_coverage.svg.json gbdt_prior_response.pdf.json gbdt_prior_response.svg.json gbdt_recovery.pdf.json gbdt_recovery.svg.json 
+  equal  gbdt/gbdt_bias_spread.pdf.json: 18 data artists, colours as the palette maps them, line styles as declared
+  equal  gbdt/gbdt_bias_spread.svg.json: 18 data artists, colours as the palette maps them, line styles as declared
+  equal  gbdt/gbdt_coverage.pdf.json: 8 data artists, colours as the palette maps them, line styles as declared
+  equal  gbdt/gbdt_coverage.svg.json: 8 data artists, colours as the palette maps them, line styles as declared
+  equal  gbdt/gbdt_prior_response.pdf.json: 6 data artists, colours as the palette maps them, line styles as declared
+  equal  gbdt/gbdt_prior_response.svg.json: 6 data artists, colours as the palette maps them, line styles as declared
+  equal  gbdt/gbdt_recovery.pdf.json: 45 data artists, colours as the palette maps them, line styles as declared
+  equal  gbdt/gbdt_recovery.svg.json: 45 data artists, colours as the palette maps them, line styles as declared
+COMPARE :: PASS
+text overlaps gbdt_bias_spread: 0 -> 0
+text overlaps gbdt_coverage: 0 -> 0
+text overlaps gbdt_prior_response: 0 -> 0
+text overlaps gbdt_recovery: 1 -> 0
+ARMS gbdt :: PASS
+== arm 0's other three PDFs against the files installed at 2fe070fec
+EQUAL inst-gbdt_bias_spread.pdf
+EQUAL inst-gbdt_coverage.pdf
+EQUAL inst-gbdt_prior_response.pdf
+== the installed copies (figs/) against this arm 1
+EQUAL gbdt_recovery.pdf
+EQUAL gbdt_bias_spread.pdf
+EQUAL gbdt_coverage.pdf
+EQUAL gbdt_prior_response.pdf

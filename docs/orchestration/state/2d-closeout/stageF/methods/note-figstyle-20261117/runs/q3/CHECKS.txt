@@ -1,0 +1,13 @@
+# q3 (2026-11-17T21:56:37Z): bash tools/arms.sh <wt> q3 figenv/mpl3108 2fe070feca48256639797278eff0e1ac6f17abd7 q3_excess_projection docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/tools/fakeroot5 nd-unfolding/q3_excess_projection.py --from-arrays docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/runs/family5/dumps/q3_arrays.npz --out @OUT@/q3_excess_projection.png --print-style
+== q3 (q3_excess_projection): arm 0 against the file installed at 2fe070feca48256639797278eff0e1ac6f17abd7
+EQUAL-BUT-DATE tmp.8WtaTYJKkt: /CreationDate (D:20261115144016-07'00') vs /CreationDate (D:20261117135640-07'00')
+raster: RASTER :: EQUAL :: 1 page(s), 0 differing pixel(s)
+== q3: arm 1 against arm 0
+captures: q3_excess_projection.pdf.json q3_excess_projection.png.json 
+  equal  q3/q3_excess_projection.pdf.json: 7 data artists, colours as the palette maps them, line styles as declared
+  equal  q3/q3_excess_projection.png.json: 7 data artists, colours as the palette maps them, line styles as declared
+COMPARE :: PASS
+text overlaps q3_excess_projection: 23 -> 29 [['1.11', 'unfolded / GENIE prior'], ['1.20', 'unfolded / GENIE prior'], ['1.17', 'unfolded / GENIE prior'], ['1.13', 'unfolded / GENIE prior'], ['1.16', 'unfolded / GENIE prior'], ['1.16', 'unfolded / GENIE prior'], ['1.23', 'unfolded / GENIE prior'], ['0.0-0.2', '0.2-0.4'], ['0.2-0.4', '0.4-0.6'], ['0.4-0.6', '0.6-0.8'], ['0.6-0.8', '0.8-1.2'], ['0.8-1.2', '1.2-2.0'], ['1.2-2.0', '2.0-100.0'], ['0.0', '0.2'], ['0.2', '0.4'], ['0.4', '0.6'], ['0.6', '0.8'], ['0.8', '1.2'], ['1.2', '2.0'], ['1.00', 'unfolded / GENIE prior'], ['1.05', 'unfolded / GENIE prior'], ['1.10', 'unfolded / GENIE prior'], ['1.15', 'unfolded / GENIE prior'], ['0.0', '0.1'], ['0.1', '0.2'], ['0.2', '0.4'], ['0.4', '0.8'], ['0.8', '1.5'], ['1.5', '3.0']]
+ARMS q3 :: PASS
+== the installed copy (figs/) against this arm 1
+EQUAL-BUT-DATE q3_excess_projection.pdf: /CreationDate (D:20261117134620-07'00') vs /CreationDate (D:20261117135642-07'00')

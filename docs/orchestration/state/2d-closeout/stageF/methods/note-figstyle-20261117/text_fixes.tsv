@@ -1,0 +1,8 @@
+# Figure-specific text edits (figure, old, new; applied in order, each must be found in that figure). Text only: no datum changes. Fig. 23 (q3_excess_projection): the axis titles in the note's notation with units in parentheses; "data/GENIE" names the ratio as its producer's docstring does (nd-unfolding/q3_excess_projection.py:2-8: the unfolded counts over the GENIE prior).
+figure	old	new
+q3_excess_projection	q3 [GeV] (low edge)	$q_3$, low edge (GeV)
+q3_excess_projection	E_avail [GeV] (low edge)	$E_{\rm avail}$, low edge (GeV)
+q3_excess_projection	q3 [GeV]	$q_3$ (GeV)
+q3_excess_projection	E_avail [GeV]	$E_{\rm avail}$ (GeV)
+q3_excess_projection	data/GENIE	unfolded / GENIE prior
+eavail_spectrum	6.74e-41	$6.74\times10^{-41}$

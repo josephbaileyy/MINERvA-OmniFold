@@ -311,10 +311,10 @@ install_printstyle_fig() {  # install_printstyle_fig <basename under $NPS and in
   fi
   echo "  installed $1 ($want)"
 }
-install_printstyle_fig gbdt_recovery.pdf                62bf4a8337115ffa4ca4227bf15d2883c6a74771583f672122ca5b14dcf69e11
-install_printstyle_fig gbdt_bias_spread.pdf             f1786f4862eea1a3439b79ef7af2132969e95f7fb087bddcf9661802cf6310c2
-install_printstyle_fig gbdt_coverage.pdf                422ef3f7c8e53b47d371cbeee68742a869ec372394c81a8324a121c18a10fd54
-install_printstyle_fig gbdt_prior_response.pdf          445374318044846a72b8a71da3a474d3d63820e8f5491ac6d5eb06a42745a2d3
+# install_printstyle_fig gbdt_recovery.pdf                62bf4a8337115ffa4ca4227bf15d2883c6a74771583f672122ca5b14dcf69e11   (note palette, 2026-11-17: installed below)
+# install_printstyle_fig gbdt_bias_spread.pdf             f1786f4862eea1a3439b79ef7af2132969e95f7fb087bddcf9661802cf6310c2   (note palette, 2026-11-17: installed below)
+# install_printstyle_fig gbdt_coverage.pdf                422ef3f7c8e53b47d371cbeee68742a869ec372394c81a8324a121c18a10fd54   (note palette, 2026-11-17: installed below)
+# install_printstyle_fig gbdt_prior_response.pdf          445374318044846a72b8a71da3a474d3d63820e8f5491ac6d5eb06a42745a2d3   (note palette, 2026-11-17: installed below)
 install_printstyle_fig minerva_unfolding_landscape.pdf  bf1f14eae609fdf06f01a248674a175a1df72bd0ed1b4c8f269b860e66b78372
 # Group C, family 1 (2026-11-14): drawn locally with --from-arrays --print-style from the dumps of one cluster pass
 # (note-figstyle-20261113/runs/family1/dumps/; recipe: make_control_plots.py / plot_control_corner.py --from-arrays <dump> --print-style).
@@ -322,42 +322,88 @@ install_printstyle_fig migration_resolution.pdf         7ea7fd45dd7276b193f2ca45
 install_printstyle_fig control_corner.pdf               09f291027d63f4f018e651d66be1e6e53aa95ee3ba8c028905621fd2ff0aa477
 # Family 1b (2026-11-14): Fig. 1 from the extended-display dump of one cluster pass (runs/family1b/dumps/), with
 # --from-arrays <dump> --extended-display --print-style.
-install_printstyle_fig control_plots.pdf                dcea96fa289c03a4c204804c2852242d4236ff96330d28877bbd0ac1e3a94602
+# install_printstyle_fig control_plots.pdf                dcea96fa289c03a4c204804c2852242d4236ff96330d28877bbd0ac1e3a94602   (note palette, 2026-11-17: installed below)
 # Family 2, group R (2026-11-14): the eleven 2D figures of 10-31 in the paper fonts (restyle_2026_10 --print-font,
 # font family and mathtext only), from one login-node pass (note-figstyle-20261113/runs/family2/). Data, colours and
 # styles bit-equal to the restyle (compare.py COMPARE :: PASS); the restyle install lines above are now comments.
-install_printstyle_fig MEFHC_5iter_fig13.pdf                 d9bb9a951ef13b6d6a6146f7de2a7b83ef07c425a9c2572d1069a3ec1056551e
-install_printstyle_fig MEFHC_5iter_xsec_proj_pt.pdf          a770d7477cad9aabe25faf1f0694654a67606a7977028898ca7bed8c1332bacc
-install_printstyle_fig MEFHC_5iter_xsec_proj_pz.pdf          52a0724ee3e9d25d007c116d92969e6641ca2e2a73a32a21db7818b1414654dd
-install_printstyle_fig MEFHC_5iter_pull_full.pdf             a9510fb997ba90577a95b6bead042781bbc882abee0c34baa736516619793add
-install_printstyle_fig MEFHC_5iter_xsec_paper_pt_slices.pdf  c97195af5d71d1401782446bf9ac1260d4f07bf081b344052dafc4c47661713f
-install_printstyle_fig MEFHC_5iter_xsec_paper_pz_slices.pdf  9c18ea23b4525375b76eca054d4db6db4e64c902326607e313b3c41e60ed73a9
-install_printstyle_fig tension_spectrum.pdf                  d358068b707b8b677cbe2c1f0304427621df76d2da03c9f051822cb38371fdd7
-install_printstyle_fig tension_chi2_map.pdf                  dfc675ac425b90c94890e386b2630482e48d55867839100bc242bcbc64381ed5
-install_printstyle_fig tension_mode_maps.pdf                 049647417c6aaaf889a885a573f311b61d2e6819cdf4bbe174894a5e1e376996
-install_printstyle_fig model_comp_projections.pdf            ae7f5a54efd234e80388c9f6990721d022dc5df0278637d190b78b2f4938ec19
-install_printstyle_fig model_comp_ratio_maps.pdf             49f0d76c0eb17dc9e22522a472baa28fd5e436d9b2863bb9be3a6e59135b7307
+# install_printstyle_fig MEFHC_5iter_fig13.pdf                 d9bb9a951ef13b6d6a6146f7de2a7b83ef07c425a9c2572d1069a3ec1056551e   (note palette, 2026-11-17: installed below)
+# install_printstyle_fig MEFHC_5iter_xsec_proj_pt.pdf          a770d7477cad9aabe25faf1f0694654a67606a7977028898ca7bed8c1332bacc   (note palette, 2026-11-17: installed below)
+# install_printstyle_fig MEFHC_5iter_xsec_proj_pz.pdf          52a0724ee3e9d25d007c116d92969e6641ca2e2a73a32a21db7818b1414654dd   (note palette, 2026-11-17: installed below)
+# install_printstyle_fig MEFHC_5iter_pull_full.pdf             a9510fb997ba90577a95b6bead042781bbc882abee0c34baa736516619793add   (note palette, 2026-11-17: installed below)
+# install_printstyle_fig MEFHC_5iter_xsec_paper_pt_slices.pdf  c97195af5d71d1401782446bf9ac1260d4f07bf081b344052dafc4c47661713f   (note palette, 2026-11-17: installed below)
+# install_printstyle_fig MEFHC_5iter_xsec_paper_pz_slices.pdf  9c18ea23b4525375b76eca054d4db6db4e64c902326607e313b3c41e60ed73a9   (note palette, 2026-11-17: installed below)
+# install_printstyle_fig tension_spectrum.pdf                  d358068b707b8b677cbe2c1f0304427621df76d2da03c9f051822cb38371fdd7   (note palette, 2026-11-17: installed below)
+# install_printstyle_fig tension_chi2_map.pdf                  dfc675ac425b90c94890e386b2630482e48d55867839100bc242bcbc64381ed5   (note palette, 2026-11-17: installed below)
+# install_printstyle_fig tension_mode_maps.pdf                 049647417c6aaaf889a885a573f311b61d2e6819cdf4bbe174894a5e1e376996   (note palette, 2026-11-17: installed below)
+# install_printstyle_fig model_comp_projections.pdf            ae7f5a54efd234e80388c9f6990721d022dc5df0278637d190b78b2f4938ec19   (note palette, 2026-11-17: installed below)
+# install_printstyle_fig model_comp_ratio_maps.pdf             49f0d76c0eb17dc9e22522a472baa28fd5e436d9b2863bb9be3a6e59135b7307   (note palette, 2026-11-17: installed below)
 # Families 3-6, group C (2026-11-15): drawn locally with --print-style from the dumps of one cluster pass per family
 # (note-figstyle-20261113/runs/family3..family6/); the four RE-1 central redraws by tools/restyle_family4.py from their
 # pinned figure pickles; eavailW_band is a new matplotlib rendering of the ROOT figure (numerical check, runs/family5/).
 # Each one's drawn data equal its cluster off arm's (the README gives the checks and their one environmental exception).
 install_printstyle_fig uq_spread_2d.pdf                      41347061d6064aaae142895cbfeaf5d5c2449cdd9c72f8a4b6f153cd9fbf5031
 install_printstyle_fig uq_corr_2d.pdf                        f202c729700676096b4274be73ab5d30ffa31d94823c070c3d3491b4784d0b02
-install_printstyle_fig eavail_spectrum.pdf                   906a6473311775703dc4ff92ee52bdd61deb7b1173b7998c41331fbe1723723e
-install_printstyle_fig generators_vs_unfolded_band_central.pdf9ee744b3a36761ae2e854e7ddce23aa35633f636a532fd751c798bebea459884
-install_printstyle_fig mode_decomp_eavail_central.pdf        35498b2d0e92d61ac056bbef1e0d432716546bf627a7fee662f7770631961568
-install_printstyle_fig compare_mec_eavail_central.pdf        a43a2499d84c1c95c096fa0edd4d941ed088c664489cb28304503a50de896005
-install_printstyle_fig ascencio_fullcov_compare_central.pdf  ae1e5e59d641c3457a0db11c826c1a064fd1f1ae96e282657750a6b49aa50a4a
-install_printstyle_fig q3_excess_projection.pdf              1b86a31b2fc2ae2000e451c22253be5d207146a66cf8663f09e0e80ae02fd85b
+# install_printstyle_fig eavail_spectrum.pdf                   906a6473311775703dc4ff92ee52bdd61deb7b1173b7998c41331fbe1723723e   (note palette, 2026-11-17: installed below)
+# install_printstyle_fig generators_vs_unfolded_band_central.pdf9ee744b3a36761ae2e854e7ddce23aa35633f636a532fd751c798bebea459884   (note palette, 2026-11-17: installed below)
+# install_printstyle_fig mode_decomp_eavail_central.pdf        35498b2d0e92d61ac056bbef1e0d432716546bf627a7fee662f7770631961568   (note palette, 2026-11-17: installed below)
+# install_printstyle_fig compare_mec_eavail_central.pdf        a43a2499d84c1c95c096fa0edd4d941ed088c664489cb28304503a50de896005   (note palette, 2026-11-17: installed below)
+# install_printstyle_fig ascencio_fullcov_compare_central.pdf  ae1e5e59d641c3457a0db11c826c1a064fd1f1ae96e282657750a6b49aa50a4a   (note palette, 2026-11-17: installed below)
+# install_printstyle_fig q3_excess_projection.pdf              1b86a31b2fc2ae2000e451c22253be5d207146a66cf8663f09e0e80ae02fd85b   (note palette, 2026-11-17: installed below)
 install_printstyle_fig fps_acceptance_MEFHC.pdf              ab63256c62c14945aa111333fca73edefcca57b2d3a9a98283d7cfe26b1219c8
 install_printstyle_fig fps_pilot_compare_MEFHC.pdf           a910ccca6084b5f652df0840e65a0d95117a154b22f22a87d519d85f26e5181f
 install_printstyle_fig fps_prior_envelope_MEFHC.pdf          55b3aeeb06e3fffcdcbfd7b0d30450378cee91fdc1e885095f677a6e873e68de
-install_printstyle_fig eavailW_band.pdf                      c9e7fcdbefa35e609272ec56616a449c85896cadc6e18b7b2f6366384722144a
+# install_printstyle_fig eavailW_band.pdf                      c9e7fcdbefa35e609272ec56616a449c85896cadc6e18b7b2f6366384722144a   (note palette, 2026-11-17: installed below)
 install_printstyle_fig paper_joint_nulls.pdf                 66888ffc0f3e8e9d41b78e4962063cbc67f2649af6cdef82532c26313d5865bb
 # fig6/7 (family 7; the director's approval of 2026-11-15): plot_uncertainty_fig6_7_style.py --from-projections on RE-2-shapes
 # run 2's fig67_projections.json (main d58d0d18, #1167) --print-style; identity: note-figstyle-20261113/runs/family7/
 install_printstyle_fig MEFHC_fig6_7_uncertainty_pt.pdf      031b12a1c0c52f59baf8c14360d652c87b000232a3294a131c11f71068f8624f
 install_printstyle_fig MEFHC_fig6_7_uncertainty_pz.pdf      b1cfd7ccf1ca2f563f1c684422aefc915c011db041cd09d9deb03dd2164ba9f4
+
+echo "== note palette (2026-11-17; digest-checked copy) =="
+# The note's figure palette (Joseph, 2026-11-17; COMBINED-PLAN.md section 5; note_palette.py and its test): the paper's
+# colours, #CC79A7 for GENIE CV, this work in red in every figure. Each figure is drawn locally by its recipe in
+# note-figstyle-20261117/README.md; its arm 0 reproduces the installed print-style file (bytes apart from the creation
+# date), and its arm 1's data artists equal arm 0's, with each colour as recolour.tsv and palette.tsv map it
+# (fig-restyle-20261031/tools/compare.py --recolour --palette --styles --restyle). The print-style lines above stay
+# as comments. Also after the sync loop.
+NPAL="$REPO/docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261117/figs"
+install_palette_fig() {  # install_palette_fig <basename under $NPAL and in $FIGDIR> <sha256>
+  local src="$NPAL/$1" dst="$FIGDIR/$1" want="$2"
+  if [[ "$(sha256_of "$src")" != "$want" ]]; then
+    echo "REFUSE install: $src does not have sha256 $want" >&2; exit 1
+  fi
+  cp "$src" "$dst"
+  if [[ "$(sha256_of "$dst")" != "$want" ]]; then
+    echo "REFUSE install: $dst differs from $src after the copy" >&2; exit 1
+  fi
+  echo "  installed $1 ($want)"
+}
+# Family 4 (Figs. 19-22): tools/palette_family4.py on the pinned pickles (matplotlib 3.10.8); runs/family4/.
+install_palette_fig generators_vs_unfolded_band_central.pdf  1563f52b347938593bc4033fcaff22fa32cd33eb463f23d8b1ff9533e5252b7d
+install_palette_fig mode_decomp_eavail_central.pdf           270237928effabf36fa59be7de86d6a8c4023bc9187b8a7c8978ee2b6090cf31
+install_palette_fig compare_mec_eavail_central.pdf           2e81a44506e958fda4f063c5b88350a4d3eb6f00d4d02c4906c34bb94e39a2aa
+install_palette_fig ascencio_fullcov_compare_central.pdf     0d65baa9b139a7b45da54e54042b6b18c3a08b2d3c82fd05d64629d86452a1ab
+install_palette_fig eavailW_band.pdf                         ded40ea27702a8654d99d96d53336d037292424c718fa4427fb9ef8764408584
+install_palette_fig q3_excess_projection.pdf                 8a3a5bb5d44156432b249d7165e56cbcfed464b6c7ff69d0bd37ee2e94df3d88
+install_palette_fig eavail_spectrum.pdf                      457fa20edec3de6520de49e99b04f4c989e7cc175289edc4b96d62383807dac1
+install_palette_fig control_plots.pdf                        9bfd50652a470a7f2edf5d6bd7fd30b20983b3f0264dfe44444c4768088af4ab
+install_palette_fig gbdt_recovery.pdf                        215f740a4b25a46519cc7b2bad5240730aa90aec4cb0d4cc7f1d0f3e3f8c191e
+install_palette_fig gbdt_bias_spread.pdf                     625b9452d4c28299c4a6a38eda3e14fa40670ffeccde9fa67ab154cbedff033e
+install_palette_fig gbdt_coverage.pdf                        511817bdc1e17211141c812f56057ab5f04bbd8ede171978010c1a75a82a87fe
+install_palette_fig gbdt_prior_response.pdf                  aa0b997e73a7babc002b6c4ca4bca23d7c004004f317c9d52e5eb8428c6bfb7e
+install_palette_fig paper_fig_coverage.pdf                   247239f0fec1ca9446195a6a11c2457a66c3041d20d35e4710e678fc05dd088e
+install_palette_fig paper_fig_bkg_residual.pdf               3cac32b105aa9617706bf38d4398fb2ddc9e1d24c5cab65690d726ddfbf72c4d
+install_palette_fig model_comp_projections.pdf               2b60883a3fab04edba0fb36a7bd61ca7d59317028c4863486da6a1440af35029
+install_palette_fig model_comp_ratio_maps.pdf                0c10ff269536b2aa3bd7bead06fc17af1c6d8a9d380c24afd5c7d0ce39ff90e0
+install_palette_fig tension_spectrum.pdf                     98d7ce2c9765275be579ef8345fde17f50a8b24b0e2f26846475d6998a163661
+install_palette_fig tension_chi2_map.pdf                     4f18c35be762355f16410bb8798ceae8f303e640e33bda985c90dbfdee23236a
+install_palette_fig tension_mode_maps.pdf                    f4d8a4197aa0318fd9704ab7c0d0011c9a85425e12398966bb552a1b79c80412
+install_palette_fig MEFHC_5iter_fig13.pdf                    0c451b833ce7fff455cb526ff172c27b9e8ed8fa9ff8a422d097116d28691aef
+install_palette_fig MEFHC_5iter_xsec_paper_pt_slices.pdf     180b87866305bf9ededbb94a7ba8aa796a49b3a629bdc219910fb077b1bc4233
+install_palette_fig MEFHC_5iter_xsec_paper_pz_slices.pdf     e64b65ffbf6bae236cc7ee7c1f65f434497b0a8dc5ca0214039a7e4dd1aa941e
+install_palette_fig MEFHC_5iter_xsec_proj_pt.pdf             9f6911d470fe7044c9c7801e59a1d55389960d6e246b423727a9115b78234a75
+install_palette_fig MEFHC_5iter_xsec_proj_pz.pdf             56e1e99de5cfe08684a7b8288c04ecb830b14b79ffa8c10500f1815b86ca2a5d
+install_palette_fig MEFHC_5iter_pull_full.pdf                35c31c49a9311920b57d45d716417d468d1de857d316f22e4a7a3f3a5055ec00
 
 echo
 echo "== paper-only vector crops =="
@@ -390,10 +436,13 @@ assert_pdf_page_size() {
 
 # Absolute panel crops are intentionally coupled to these source canvases.
 # Refuse rather than silently select the wrong panel after upstream regeneration.
-assert_pdf_page_size "$FIGDIR/MEFHC_5iter_pull_full.pdf" "864 x 360"
+# 2026-11-17 (the note palette, tier 2): Fig. 8 is drawn at its 0.70 \textwidth slot, 4.55 x 2.3 in
+# (note-figstyle-20261117/resize.tsv), so its page and the left-panel crop change with it. The crop keeps the map and
+# its colour bar: their right edge is at x = 171.3 pt and the histogram's y label begins at 174.0 pt (pdftotext -bbox).
+assert_pdf_page_size "$FIGDIR/MEFHC_5iter_pull_full.pdf" "327.6 x 165.6"
 assert_pdf_page_size "$FIGDIR/excess_eavail_W.pdf" "1152 x 331.2"
 
-pdfcrop --bbox '0 0 432 360' \
+pdfcrop --bbox '0 0 172.5 165.6' \
   "$FIGDIR/MEFHC_5iter_pull_full.pdf" \
   "$FIGDIR/paper_validation_residual.pdf"
 pdfcrop --margins '4 4 4 4' \
