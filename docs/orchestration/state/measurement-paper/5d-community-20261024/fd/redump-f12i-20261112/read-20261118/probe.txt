@@ -1,0 +1,6 @@
+# probe 1 2026-11-18T19:18:22Z: ssh -o BatchMode=yes -o LogLevel=ERROR saul.nersc.gov hostname
+login34
+# rc=0
+# probe 2 2026-11-18T19:18:33Z: ssh -o BatchMode=yes -o LogLevel=ERROR saul.nersc.gov "ssh -o ControlPath=none -o BatchMode=yes -o LogLevel=ERROR -o ConnectTimeout=10 -o StrictHostKeyChecking=yes -o UpdateHostKeys=no login27 hostname"
+login27
+# rc=0
