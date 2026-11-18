@@ -3,7 +3,8 @@
 % statement (at 5586a0f0f): values.tex header; make_values_fived16.py and make_values_landed.py docstrings and main();
 % build_all.sh items 1-8 and lines 132-162; freeze_checks.py docstring (checks 1-7); limitations_export.py docstring;
 % check_note_records.py docstring (P7); tools/registry/absence_claims.py docstring; .githooks/pre-commit line 349;
-% the column headers of history-cuts/move-manifest-*.tsv; ~/director-tools/meaning_read.sh (outside the repository);
+% the column headers of history-cuts/move-manifest-*.tsv; review-tools/meaning_read.sh (a copy committed beside this appendix; the meaning-reads wording and its
+% exceptions clause follow the ruling of 2026-11-18);
 % the AI-use statement of main_note.tex (its sentence on studies specified in writing, and on delegated decisions).
 \section{How the note's numbers and statements are checked}
 \label{app:verification}
@@ -60,10 +61,11 @@ statement (the terms searched and the commit) nor a stated reason.
 
 \paragraph{Moved text and meaning reads.} The restructuring of November 2026 moved text between sections. Every
 moved sentence has a row in a move manifest, \repopath{history-cuts/move-manifest-*.tsv}, giving
-its source, its destination and the SHA-256 digest of its text. Each change was read independently by two language
-models from different developers (Grok and Gemini), given the diff, the files before and after, and the manifests,
-and asked whether the change added, dropped or weakened any claim. The script that runs these reads, and most of its
-reports, are kept outside the repository.
+its source, its destination and the SHA-256 digest of its text. Changes in the November restructuring were read
+independently by two language models from different developers (Grok and Gemini) before merging, with the exceptions
+recorded in the merge commits. Each model was given the diff, the files before and after, and the manifests, and was
+asked whether the change added, dropped or weakened any claim. The script that runs these reads is
+\texttt{review-tools/meaning\_read.sh}; most of its reports are kept outside the repository.
 
 \paragraph{Studies and decisions.} Each study was specified in writing before its results were read, unless it is
 labeled descriptive. Where a study has them, its specification, authorization, binding of code and inputs by digest,
