@@ -1,4 +1,4 @@
-# RDX code6: the reader, `rdx_read.py`, rev 3 (receipt)
+# RDX code6: the reader, `rdx_read.py`, rev 4 (receipt)
 
 **By** session tier3-design, at the director's ruling of 2026-11-17 on the readings step. That ruling took the fetch
 route at 0 node-h:
@@ -10,18 +10,20 @@ route at 0 node-h:
 **Rev 1** (`372bd471`, PR #1216) was audited by both readers at `03e43c91`. Codex read FAIL and Grok PASS WITH FIXES.
 They agree that §4's formulas are right and that the gaps are in input validation. **Rev 2** (`47f0bb30`) makes the
 director's seven fixes (below). The reports are `~/codex-reports/rdx-read-audit/{codex,grok}/report.md`. **Rev 3**
-(`33771868`) applies the director's J7 rulings on choices 3 and 5 (below).
+(`33771868`) applies the director's J7 rulings on choices 3 and 5 (below). Codex's confirmation read of rev 2
+(`~/codex-reports/rdx-read-audit/rev2/codex/report.md`, Grok: PASS) found four remaining acceptance paths, and
+**rev 4** (`9b6e7136`) closes them (the last section below).
 
 **Nothing has been read.** No product has been fetched. This receipt is of the code only.
 <!-- absence-ok: an operational status of this tranche, not a claim that a result does not exist -->
 
-## The code, at `33771868`
+## The code, at `9b6e7136`
 
 | file | sha256 | role |
 |---|---|---|
-| `nd-unfolding/rdx/rdx_read.py` | `dd960c650a6193bb1074378cf241e54459566a4544d76f01075165b051279ed0` | the reader |
-| `nd-unfolding/rdx/test_rdx_read.py` | `e044c186c2b010c4e224ef45b5ac34f3e93e8b0d5d0a91f89b920820d890b068` | 31 tests |
-| `nd-unfolding/rdx/rdx_read_mutation.py` | `368a6b79ae854c0f75f6858b23fffc4e2d2e1da2cf964cd56dbbeeb4725f384c` | 47 mutants |
+| `nd-unfolding/rdx/rdx_read.py` | `0eac58d2c553a959b309ce9cbfd22537c55eb7eef47e4dfcad86e6292600fb34` | the reader |
+| `nd-unfolding/rdx/test_rdx_read.py` | `8100372788a5071901c27fc695510be219b08b6847a593c57b9ea0d7f9ca8e9e` | 34 tests |
+| `nd-unfolding/rdx/rdx_read_mutation.py` | `26c1eb172ec2122e1f04f3b3c3ae11dda12e2c34006a3008799cbea4c30205ec` | 58 mutants |
 
 It imports, unchanged: `rsn/rsn_read.py` (`4dd37197…`) for the W and T classes, the rounding floor and the committed
 record paths, and `pv-ladder/build_cmodel5d.py` (`aaa81575…`) and `pv-ladder/pvl_lib.py` for the definition, the fine
@@ -116,13 +118,13 @@ Rev 3 implements these. The auditors' views of rev 1, which led to the rulings, 
   (`test_the_weight_at_the_prior_is_never_silent`).
 - Choice 4 is unchanged: decided by §4, per both auditors.
 
-## The receipts, in a clean clone at `33771868` (`receipts.sh`, sha256 `e3498ff1…`)
+## The receipts, in a clean clone at `9b6e7136` (`receipts.sh`, sha256 `e3498ff1…`)
 
 | file | result |
 |---|---|
-| `tests.txt` | Python 3.12.2, numpy 1.26.4: 31 tests OK, exit 0 |
-| `tests_py310.txt` | a uv venv matching omnifold_py310's versions (Python 3.10.20, numpy 2.2.6): 31 tests OK, exit 0 |
-| `mutation.txt` | the unmutated suite: 31 tests OK. Mutation check PASS: 47 of 47 killed, each by its named test |
+| `tests.txt` | Python 3.12.2, numpy 1.26.4: 34 tests OK, exit 0 |
+| `tests_py310.txt` | a uv venv matching omnifold_py310's versions (Python 3.10.20, numpy 2.2.6): 34 tests OK, exit 0 |
+| `mutation.txt` | the unmutated suite: 34 tests OK. Mutation check PASS: 58 of 58 killed, each by its named test |
 | `committed_path.txt` | the committed-record path with no products: the task table at its bound sha; the fine grid (14, 16, 7, 7, 6) = 65,856 cells, which the definition maps to 16 cells, so `main`'s check passes; φ_c reproduces 0.133 / 0.055 / 0.252 %; σ_c gives 16 values; the pins load. The clone is clean after it |
 
 **What the tests cover, each guard in both directions.** On synthetic products, with the cell integrals as the
@@ -140,6 +142,15 @@ identity:
 - the weight at the prior, printed always and stated when it crosses R2's threshold.
 
 `committed_path.txt` covers what the tests cannot: the real definition, floor and σ, loaded through the reader.
+
+## Rev 4: the four remaining acceptance paths (Codex's confirmation read of rev 2)
+
+| finding | fix | test, mutant |
+|---|---|---|
+| X0's parameters were checked only for equality, so `{"n_estimators": -1}` on every product licensed; scalar types were loose (`iters` 5.0, integer flags, `rows` true) | Each of the loop's three estimator records and the refinement's classifier record must carry the producer's fixed values, in their JSON types: `make_estimators`' 100 / 8 / 0.1 / −1 / seed 42 and candidate R's 400 / 31 / seed + 3 (`pvl_analyze.py:35`), with the deterministic extras. Every other key must lie in LightGBM's default domain, and no other key may appear. The key set follows the committed pvl-unfold record `fd/gencmp-e2/receipts/sweep-a1/e2a1_probe.out.json` (same producer, rung and seed), and the tests check that it passes. Every identity scalar compares in value and JSON type (`same`) | `test_the_producers_committed_parameters_pass`, `test_parameters_outside_the_producers_domain_refuse`, `test_scalars_have_the_producers_json_types`; mutants for fixed values, domains, unknown keys and JSON types |
+| transfer records: iteration 4.0, `n_masked` true, `rel_rms` −1 and reversed edges passed | Iterations must be the integers 0–4, `n_masked` an integer (not a bool), `rel_rms` ≥ 0, and the acceptance edges must never decrease and must span a range. `numpy.quantile` in `rsn_unfold.summarize` can repeat an edge on tied acceptances, so a repeat is allowed, not strict increase; a test shows a tied record passes | `test_the_transfer_records_are_the_producers`; four mutants |
+| `shape` `[[14,16,7,7,6]]` passed | `shape` must be one-dimensional, of the fine grid's rank, before its values are compared | `test_product_arrays_must_be_the_fine_grids`; one mutant |
+| manifest aliases `./x` and `x` collapsed through `lstrip` | Each line must be `<sha256>  ./<path>`. The path is normalized once (`posixpath.normpath`) and must already be normal; collisions refuse, and malformed lines and digests refuse. No `lstrip` remains | `test_the_task_table_and_manifests_are_bound_and_unique`; three mutants |
 
 ## CITABLE FOR / NOT CITABLE FOR
 
