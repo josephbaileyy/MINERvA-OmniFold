@@ -1,0 +1,20 @@
+You are a referee for JINST (or Physical Review D) reviewing ONE figure of a methods paper on unbinned unfolding (OmniFold) applied to MINERvA neutrino data. The figure is attached as an image. Its caption and the two paragraphs that cite it are below. Values written as [value] are numbers that the printed paper fills in; do not comment on them.
+
+Review the figure as a figure: can a reader, at print size (full text width of a two-column journal page), see what the caption and text say it shows? Focus on:
+1. Whether the four estimator series (markers) are distinguishable, including in grayscale and for colour-blind readers.
+2. Whether the dashed "injected change" steps can be matched to their series, and whether they are legible where they overlap.
+3. Legend placement and whether it hides data.
+4. The shaded cells, the axis labels, the top bin labels, the two-line title, and tick labels.
+5. Whether anything in the caption is not visible in the figure, or anything visible is not explained in the caption.
+6. Whether the figure supports the two text paragraphs' claims as worded.
+
+Give: (a) an overall verdict (acceptable as is / minor changes / major changes); (b) a numbered list of concrete, specific changes, most important first, each with what to change and why; (c) anything you think is wrong rather than merely hard to read. Be concise. Do not rewrite the paper's prose beyond the caption.
+
+===== CAPTION =====
+Fractional residuals, (unfolded − truth)/truth, per (E_avail, W) cell, at the changed truth, with backgrounds, for the reported estimator: NuWro E_avail, GENIE + MEC (E_avail, W) and NuWro (p_T, p_∥, E_avail) shapes and the GiBUU-to-GENIE E_avail shape, 20 pseudo-experiments each (Sec. [ref]). Dashed lines: each truth's injected change, the fractional change of the cell's true cross section in the full simulation; for the first three shapes it is computed from the half-sample truths of these 60 pseudo-experiments and of 40 at the nominal truth, which give it exactly unless a fine cell populated in the full simulation is empty in all 100 half samples. Each point is measured against its own pseudo-experiment's half-sample truth. Shaded: the three cells that do not meet the support rule, E_avail = 0.1–0.2 GeV with W ≥ 3 GeV and E_avail ≥ 3 GeV with W < 1.4 GeV (W bins 1–2), with truth weights of [value]–[value] events. Standard errors of the mean: at most [value] %; "exp.": pseudo-experiments. W bin 6 is W ≥ 3 GeV. Sixteen-cell results at these truths: table [ref].
+
+===== TEXT PARAGRAPH 1 =====
+The unfolding recovers only part of a change of the E_avail shape as large as the difference between generators. When the true shape is reweighted by the GiBUU-to-GENIE ratio, the (E_avail, W) cells unfolded with the five-observable estimator (20 pseudo-experiments; figure [this figure]) deviate from the truth by several percent in the largest cells and by up to [value] % at high W, in the cell 0.8 ≤ E_avail < 1.5 GeV, W ≥ 3 GeV; a lower-capacity development variant with a 100-tree, 8-leaf refinement, which gives none of the reported results, gives the same [value] % in that cell (Supplement figure). On the sixteen reported cells, the reported estimator's bias at the same truth satisfies both criteria under the reported covariance, with a largest |z| of [value], and meets the flagging criterion without C_PL,5D (section [ref]).
+
+===== TEXT PARAGRAPH 2 =====
+For other fixed generator shapes tested with the reported five-observable estimator, the residual is [value]–[value] % in the most affected (E_avail, W) cell (figure [this figure]; Sec. [ref]). Figure [this figure] shows (E_avail, W) cells only, without the reported covariance. The three withheld shape changes it shows were not used while the estimator was chosen; the GiBUU-to-GENIE change, also shown, is a development truth.
