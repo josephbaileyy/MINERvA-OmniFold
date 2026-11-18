@@ -13,13 +13,13 @@ From `B=/pscratch/sd/j/josephrb/rdx-20261112b`, under `$B/out`, 32 files:
 - `inventory/<task>.jsonl` for the same 15 tasks.
 - `logs/rdx_s3_a_61478320.out` and `logs/rdx_s3_b_61481240.out`.
 
-## The code (rev 2, commit b467aaff)
+## The code (rev 3, commit 3817eb0a)
 
 | file | sha256 |
 |---|---|
-| `nd-unfolding/rdx/rdx_fetch_remote.py` | `93ddb2643c7b5a3b9690752f07d01f87d7aa3add7cd369a522cf1b248aff7d5d` |
-| `nd-unfolding/rdx/rdx_fetch_launch.sh` | `1cb993451c8b3048e41fcfa73c34cb616a7c140bec2361d9928db650b47ce753` |
-| `nd-unfolding/rdx/test_rdx_fetch.py` | `4bb4cc4cbe38b9ce0dc228302b3d1f6ce0f7cd9ac152ce98f59eeddb2a635107` |
+| `nd-unfolding/rdx/rdx_fetch_remote.py` | `89ea886d64a763c9a0fa24b7be3fd69fdbf5886b765678241370b184a21f2f0c` |
+| `nd-unfolding/rdx/rdx_fetch_launch.sh` | `2650c5caf7a7846d99e8ff71def910dbd3c74ed329729113e10228d8768a9570` |
+| `nd-unfolding/rdx/test_rdx_fetch.py` | `27ff97f1759425f43461671ae2a61664cae253dadf993098a0c021b090d2db69` |
 
 The launcher pins the remote script's sha256 and refuses (exit 8) if the local copy differs.
 
@@ -31,6 +31,12 @@ Rev 2 fixes the two blockers from Grok's safety read of rev 1 (832f71d3):
 
 Two more fixes came from the same read: unpack now checks the manifest's root, and the inner ssh no longer writes on
 saul.
+
+**Rev 3 fixes the STOP of 2026-11-18.** The rev 2 go ran at 18:40:48Z from a clean checkout at 3068cd63 on login27. The
+remote refused at its first fence read with exit 9: `sacct: fatal: job state CF is not supported / accounted`. Nothing
+was read, the tar was empty, nothing was unpacked, and cov2d got the end message. The local evidence is
+`/Users/josephbailey/rdx-fetch-20261118/`. Per the director's ruling (b), the fence no longer passes a `-s` list,
+because the codes that list accepts vary by site. It reads the State column instead, as described under the holds.
 
 ## The command (after the go)
 
@@ -54,11 +60,16 @@ the tar's sha256.
   before and after its read (size, mtime_ns, atime_ns, ino, dev) and keeps both in the manifest. It exits 8 (a STOP)
   if any field moved or the bytes read differ from the stat's size. That covers a moved atime, a rewrite of the same
   length and a replacement of the same size. The tar is complete either way.
-- **The fence is sacct only.** The remote runs `sacct -X -n -P -u josephrb -s PD,CF,R,CG,RQ,RS,S -o
-  JobID,JobName,State`. Those are the states pending, configuring, running, completing, requeued, resizing and
-  suspended. It refuses (exit 9) if sacct fails or any job of the families
-  `cov2d|t2a|ll5d|e96data|rpd_|rsn_|rdx_|pfb_|ibukt-` is in any of them. The fence is read again after the last file,
-  and a job seen then also exits 9, after the tar. squeue is never called.
+- **The fence is sacct only.** The remote runs `sacct -X -n -P -u josephrb -S now-14days -o JobID,JobName,State`,
+  with no `-s` list. It refuses (exit 9) in three cases:
+  - sacct exits nonzero;
+  - a row is malformed (not three fields, or no JobID);
+  - a job of the families `cov2d|t2a|ll5d|e96data|rpd_|rsn_|rdx_|pfb_|ibukt-`, matched on its JobName, has a State
+    outside the closed terminal set. That set is COMPLETED, FAILED, CANCELLED, "CANCELLED by <uid>", TIMEOUT,
+    OUT_OF_MEMORY, NODE_FAIL, BOOT_FAIL, DEADLINE, PREEMPTED and REVOKED. Unknown and empty states refuse.
+
+  Empty output from a successful sacct reads as clear. The fence is read again after the last file, and a job seen
+  then also exits 9, after the tar. squeue is never called.
 - **Refusals before output.** Exits 3, 9 and 4 (a missing file) all happen before anything is written to stdout.
 - **The laptop unpack refuses (exit 2)** unless all of these hold:
   - the tar holds exactly the 32 declared files plus `manifest.json`, each a plain file at a declared path;
@@ -78,10 +89,10 @@ The read runs on the laptop in a clean clone at M_RDXR `9de8ef0d`, using `rdx_re
 
 ## Receipt
 
-- `tests.txt`: the 14 tests in a clean clone at b467aaff, exit 0. They run the fetch locally against a scratch root
+- `tests.txt`: the 14 tests in a clean clone at 3817eb0a, exit 0. They run the fetch locally against a scratch root
   with a stub sacct. The cases are:
-  - the fence in both directions, including completing, configuring and resizing rows, which the stub prints only
-    when the `-s` list asks for them;
+  - the fence classifying each state: completing, unknown, empty and malformed rows refuse; "CANCELLED by 123", the
+    terminal states and other families' rows pass; the command has no `-s` and a 14-day window;
   - sacct failure, and a job seen only by the second fence read;
   - a missing file;
   - a rewrite of the same length and a replacement of the same size during a read, each exiting 8 with both stats
