@@ -1,4 +1,4 @@
-# RDX code6: the reader, `rdx_read.py`, rev 4 (receipt)
+# RDX code6: the reader, `rdx_read.py`, rev 5 (receipt)
 
 **By** session tier3-design, at the director's ruling of 2026-11-17 on the readings step. That ruling took the fetch
 route at 0 node-h:
@@ -12,18 +12,19 @@ They agree that §4's formulas are right and that the gaps are in input validati
 director's seven fixes (below). The reports are `~/codex-reports/rdx-read-audit/{codex,grok}/report.md`. **Rev 3**
 (`33771868`) applies the director's J7 rulings on choices 3 and 5 (below). Codex's confirmation read of rev 2
 (`~/codex-reports/rdx-read-audit/rev2/codex/report.md`, Grok: PASS) found four remaining acceptance paths, and
-**rev 4** (`9b6e7136`) closes them (the last section below).
+**rev 4** (`9b6e7136`) closes them. Codex's confirmation read of rev 4 (`.../rev4/codex/report.md`) found two more
+gaps, and **rev 5** (`d9139914`) closes them. Both are in the last sections below.
 
 **Nothing has been read.** No product has been fetched. This receipt is of the code only.
 <!-- absence-ok: an operational status of this tranche, not a claim that a result does not exist -->
 
-## The code, at `9b6e7136`
+## The code, at `d9139914`
 
 | file | sha256 | role |
 |---|---|---|
-| `nd-unfolding/rdx/rdx_read.py` | `0eac58d2c553a959b309ce9cbfd22537c55eb7eef47e4dfcad86e6292600fb34` | the reader |
-| `nd-unfolding/rdx/test_rdx_read.py` | `8100372788a5071901c27fc695510be219b08b6847a593c57b9ea0d7f9ca8e9e` | 34 tests |
-| `nd-unfolding/rdx/rdx_read_mutation.py` | `26c1eb172ec2122e1f04f3b3c3ae11dda12e2c34006a3008799cbea4c30205ec` | 58 mutants |
+| `nd-unfolding/rdx/rdx_read.py` | `b94153987e3e578e64dea7fc678dbb56485ad8d1afb91f18f199c60566c9cb88` | the reader |
+| `nd-unfolding/rdx/test_rdx_read.py` | `5ace928afd578a69cb1e43a76bc8c9a9d32746f7256001f1aa2de2542768d688` | 36 tests |
+| `nd-unfolding/rdx/rdx_read_mutation.py` | `2e74d688b25a8cef1c8d38bf33850d38578934c1ff7f53531186eefcf33e8427` | 64 mutants |
 
 It imports, unchanged: `rsn/rsn_read.py` (`4dd37197…`) for the W and T classes, the rounding floor and the committed
 record paths, and `pv-ladder/build_cmodel5d.py` (`aaa81575…`) and `pv-ladder/pvl_lib.py` for the definition, the fine
@@ -118,13 +119,13 @@ Rev 3 implements these. The auditors' views of rev 1, which led to the rulings, 
   (`test_the_weight_at_the_prior_is_never_silent`).
 - Choice 4 is unchanged: decided by §4, per both auditors.
 
-## The receipts, in a clean clone at `9b6e7136` (`receipts.sh`, sha256 `e3498ff1…`)
+## The receipts, in a clean clone at `d9139914` (`receipts.sh`, sha256 `e3498ff1…`)
 
 | file | result |
 |---|---|
-| `tests.txt` | Python 3.12.2, numpy 1.26.4: 34 tests OK, exit 0 |
-| `tests_py310.txt` | a uv venv matching omnifold_py310's versions (Python 3.10.20, numpy 2.2.6): 34 tests OK, exit 0 |
-| `mutation.txt` | the unmutated suite: 34 tests OK. Mutation check PASS: 58 of 58 killed, each by its named test |
+| `tests.txt` | Python 3.12.2, numpy 1.26.4: 36 tests OK, exit 0 |
+| `tests_py310.txt` | a uv venv matching omnifold_py310's versions (Python 3.10.20, numpy 2.2.6): 36 tests OK, exit 0 |
+| `mutation.txt` | the unmutated suite: 36 tests OK. Mutation check PASS: 64 of 64 killed, each by its named test |
 | `committed_path.txt` | the committed-record path with no products: the task table at its bound sha; the fine grid (14, 16, 7, 7, 6) = 65,856 cells, which the definition maps to 16 cells, so `main`'s check passes; φ_c reproduces 0.133 / 0.055 / 0.252 %; σ_c gives 16 values; the pins load. The clone is clean after it |
 
 **What the tests cover, each guard in both directions.** On synthetic products, with the cell integrals as the
@@ -151,6 +152,13 @@ identity:
 | transfer records: iteration 4.0, `n_masked` true, `rel_rms` −1 and reversed edges passed | Iterations must be the integers 0–4, `n_masked` an integer (not a bool), `rel_rms` ≥ 0, and the acceptance edges must never decrease and must span a range. `numpy.quantile` in `rsn_unfold.summarize` can repeat an edge on tied acceptances, so a repeat is allowed, not strict increase; a test shows a tied record passes | `test_the_transfer_records_are_the_producers`; four mutants |
 | `shape` `[[14,16,7,7,6]]` passed | `shape` must be one-dimensional, of the fine grid's rank, before its values are compared | `test_product_arrays_must_be_the_fine_grids`; one mutant |
 | manifest aliases `./x` and `x` collapsed through `lstrip` | Each line must be `<sha256>  ./<path>`. The path is normalized once (`posixpath.normpath`) and must already be normal; collisions refuse, and malformed lines and digests refuse. No `lstrip` remains | `test_the_task_table_and_manifests_are_bound_and_unique`; three mutants |
+
+## Rev 5: the last two gaps (Codex's confirmation read of rev 4)
+
+| finding | fix | test, mutant |
+|---|---|---|
+| cross-record transfer counts: X1t's last `n_masked` at 1001, 101 or 1 (with `rows` 1000 and both masks at 100) still licensed | Every record's `n_masked` must be at most `rdx.rows`, and at least the number of cells and deciles it reports. X1t and X0t declare the same mask, [20261112, k] at 20 %, over the same rows (`RDX-DECLARATION.md:464`, `:469`), so they must agree in `rdx.rows` and in each iteration's `n_masked` | `test_the_transfer_counts_are_consistent`; four mutants. The bool-`n_masked` test now reports one cell and no deciles, so only the type guard can fire |
+| repeated fields: an archive with two `xsec_flat.npy` members (NaNs first, valid last), and a meta repeating `"iters"`, both passed, because the last one wins | An archive that repeats a member refuses before any field is selected. The meta is parsed with an `object_pairs_hook` that refuses a repeated key at any depth | `test_a_repeated_archive_member_or_json_key_refuses`; two mutants |
 
 ## CITABLE FOR / NOT CITABLE FOR
 

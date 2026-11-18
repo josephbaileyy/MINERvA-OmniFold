@@ -1,8 +1,8 @@
-# HEAD 9b6e7136400bad27409baf85c1bd0a5d65d1220b
-# clean clone, serial, Python 3.12.2, numpy 1.26.4, 2026-11-18T07:32:18Z
-# 0eac58d2c553a959b309ce9cbfd22537c55eb7eef47e4dfcad86e6292600fb34  rdx_read.py
-# 8100372788a5071901c27fc695510be219b08b6847a593c57b9ea0d7f9ca8e9e  test_rdx_read.py
-# 26c1eb172ec2122e1f04f3b3c3ae11dda12e2c34006a3008799cbea4c30205ec  rdx_read_mutation.py
+# HEAD d913991469fe74a092e09938d30af34aadb26967
+# clean clone, serial, Python 3.12.2, numpy 1.26.4, 2026-11-18T07:56:13Z
+# b94153987e3e578e64dea7fc678dbb56485ad8d1afb91f18f199c60566c9cb88  rdx_read.py
+# 5ace928afd578a69cb1e43a76bc8c9a9d32746f7256001f1aa2de2542768d688  test_rdx_read.py
+# 2e74d688b25a8cef1c8d38bf33850d38578934c1ff7f53531186eefcf33e8427  rdx_read_mutation.py
 # 4dd37197f6aa6c7f013b3ffea5558fd8d8fd1bc124047f761269adafce87e484  ../rsn/rsn_read.py
 # aaa81575b211f50e007fa75d318fd8d4f48bfb98ac5ae62b398dbf33db37d4ca  ../pv-ladder/build_cmodel5d.py
 # the committed-record path, no products: B5.load_definition, rsn_read.rounding_floor, the F1 readout's sigma, rdx_tasks.tsv, the pins
