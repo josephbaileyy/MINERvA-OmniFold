@@ -1,0 +1,94 @@
+row_id	file	quote	reanchor_file	reanchor_quote	note
+n01	sec_execsummary.tex	Whether it is ready for publication as a measurement has not been established			register loc sec_execsummary.tex:72 @87cee1c86; literal
+n02	sec_intro.tex	The configuration-(a) five-dimensional central value and its five-axis covariance, and the extended-fiducial value, use the binned purity weight			register loc sec_intro.tex:32 @87cee1c86; literal
+n03	sec_intro.tex	The results hold for one implementation of unbinned OmniFold, applied to one data set, and for the configurations, observables and deformations tested			register loc sec_intro.tex:42 @87cee1c86; literal
+n04	sec_experiment.tex	of selected data events in the two-dimensional grid over the full sample			register loc sec_experiment.tex:28 @87cee1c86; literal
+n05	sec_experiment.tex	across playlists; playlist-to-playlist flux differences are a $\sim\SI{0.2}{\percent}$ effect.			register loc sec_experiment.tex:40 @87cee1c86; fuzzy 0.71
+n06	selection_features.tex	recovery does not validate real-data background subtraction			register loc selection_features.tex:20 @87cee1c86; literal
+n07	sec_method.tex	45 differs from the seed-42 one by at most			register loc sec_method.tex:48 @87cee1c86; literal
+n08	sec_method.tex	LightGBM was chosen for the central value after both comparisons with the publication were known			register loc sec_method.tex:79 @87cee1c86; literal
+n09	sec_method.tex	Results from different configurations are not combined			register loc sec_method.tex:96 @87cee1c86; literal
+n10	sec_method.tex	The negative-weight treatment reduces the purity method's nominal-truth bias in the			register loc sec_method.tex:100 @87cee1c86; literal
+n11	sec_method.tex	The 3D and 4D central values have been regenerated with configuration			register loc sec_method.tex:103 @87cee1c86; literal
+n12	sec_method.tex	Profiling nuisances with observed data would change our inference model, which propagates an external nuisance ensemble through a fixed procedure. Neither a profiled estimator nor			register loc sec_method.tex:219 @87cee1c86; literal
+n13	sec_method.tex	Reduced simulation-prior dependence does not establish detector-model independence, adequate phase-space support, or coverage for this result			register loc sec_method.tex:221 @87cee1c86; literal
+n14	sec_systematics.tex	Their independence is an assumption: distinct random streams and physics sources do not by themselves establish it after unfolding			register loc sec_systematics.tex:4 @87cee1c86; literal
+n15	sec_systematics.tex	pair the covariance is the outer product of the half-difference of the two shifts, excluding any common endpoint displacement from the central value (CV)			register loc sec_systematics.tex:12 @87cee1c86; literal
+n16	sec_systematics.tex	The bootstrap block is smaller than the published statistical block (ratio of square-root traces 0.407; App.			register loc sec_systematics.tex:50 @87cee1c86; literal
+n17	sec_systematics.tex	No coverage test on held-out simulation has been run, and no design for one has been registered in advance			register loc sec_systematics.tex:53 @87cee1c86; literal
+n18	sec_systematics.tex	No block contains the dependence on the learner. The central value and the exact-split cross-check differ by a per-bin median of			register loc sec_systematics.tex:102 @87cee1c86; literal
+n19	sec_systematics.tex	A single-throw superposition probe is insufficient to test nonlinear response			register loc sec_systematics.tex:156 @87cee1c86; literal
+n20	sec_systematics.tex	is an uncertainty assigned for an observed inconsistency between run periods whose cause is unknown. The block does not measure a systematic uncertainty from an			register loc sec_systematics.tex:166 @87cee1c86; literal
+n21	sec_systematics.tex	It has rank two, and with three period groups its own size is poorly determined			register loc sec_systematics.tex:169 @87cee1c86; literal
+n22	sec_systematics.tex	coverage of its intervals has not been validated on independent simulated samples, nor simultaneously over all reported bins and projections			register loc sec_systematics.tex:220 @87cee1c86; literal
+n23	sec_systematics.tex	intervals, bias and covariance have not been independently validated			register loc sec_systematics.tex:220 @87cee1c86; literal
+n24	app_devhistory.tex	approximation in the 2D systematic block			register loc app_devhistory.tex:61 @87cee1c86; literal
+n25	sec_systematics.tex	No separate uncertainty is assigned to the counting of protons on target: the NuMI flux prediction carries a			register loc sec_systematics.tex:251 @87cee1c86; literal
+n26	sec_validation.tex	Membership and completeness conditions; no recovery or coverage claim			register loc sec_validation.tex:14 @87cee1c86; literal
+n27	sec_validation.tex	Coverage pooled over bins is not a simultaneous probability that every bin is covered			register loc sec_validation.tex:23 @87cee1c86; literal
+n28	sec_validation.tex	the first two amplitudes pass, and the deliberately large			register loc sec_validation.tex:31 @87cee1c86; literal
+n29	sec_validation.tex	Marginal residual \SI{1.84}{\percent} of \SI{18.1}{\percent} injected (ratio 0.102); no threshold specified before it			register loc sec_validation.tex:93 @87cee1c86; fuzzy 0.67
+n30	sec_validation.tex	Joint $(\Eavail,W)$ residuals median \SI{9.7}{\percent}, up to \SI{74}{\percent} at highest $W$;			register loc sec_validation.tex:112 @87cee1c86; fuzzy 0.25
+n31	sec_results.tex	represent neither the data's statistical uncertainty nor the reported			register loc sec_results.tex:72 @87cee1c86; literal
+n32	sec_results.tex	The published and unbinned results share the data and the flux, detector and generator systematics, and their cross-covariance is not available			register loc sec_results.tex:30 @87cee1c86; literal
+n33	sec_results.tex	for the published flux block. The public release cannot establish the origin of this difference			register loc sec_results.tex:90 @87cee1c86; literal
+n34	sec_results.tex	of the published covariance. It is a difference in \emph{shape}. Normalization does not explain it ($\chi^{2}_{\mathrm{norm}}=0.04$ against $\chi^{2}_{\mathrm{shape}}=465$).			register loc sec_results.tex:130 @87cee1c86; fuzzy 0.68
+n35	sec_3d.tex	but still has a dimensional cost: classifier training, acceptance and support coverage, sample sparsity and uncertainty quantification become more demanding as observables are added			register loc sec_3d.tex:4 @87cee1c86; literal
+n36	sec_3d.tex	The inventory runs through 2025, with newer measurements in App.			register loc sec_3d.tex:15 @87cee1c86; literal
+n37	sec_3d.tex	Both definitions are inherited from MAT-MINERvA. They were not chosen for this analysis			register loc sec_3d.tex:40 @87cee1c86; literal
+n38	sec_3d.tex	our validation reference in the absence of a directly matched published CC-inclusive 3D reference for this signal and phase space			register loc sec_3d.tex:85 @87cee1c86; literal
+n39	sec_3d.tex	A reweighting closure tests the 3D unfolding of configuration	sec_3d.tex	This reweighting closure tests the 3D unfolding of configuration~(a) only	register loc sec_3d.tex:104 @87cee1c86; literal; re-anchored by director-helper-3 (Codex-files owner), 2026-11-17: cx1 reworded the closure lead
+n40	sec_3d.tex	default event-generator list, which excludes MEC, so the sample has no 2p2h events			register loc sec_3d.tex:125 @87cee1c86; literal
+n41	sec_3d.tex	This conclusion is limited to these dials and their range; other transport models or proton-FSI effects are not excluded			register loc sec_3d.tex:161 @87cee1c86; literal
+n42	sec_3d.tex	whose native 2p2h is not enhanced, also falling below the data in the dip; they do not establish that need			register loc sec_3d.tex:170 @87cee1c86; literal
+n43	sec_3d.tex	Both share MINERvA flux/detector systematics, treated here as independent			register loc sec_3d.tex:209 @87cee1c86; literal
+n44	scalar_kinematics.tex	Thus five recorded coordinates do not establish five independently constrained physical directions			register loc scalar_kinematics.tex:11 @87cee1c86; literal
+n45	sec_eavailw.tex	tradeoff across estimator settings and provides no new total uncertainty for this projection			register loc sec_eavailw.tex:9 @87cee1c86; literal
+n46	sec_eavailw.tex	it changes the coarse-cell predictions by about			register loc sec_eavailw.tex:14 @87cee1c86; literal
+n47	sec_eavailw.tex	are consistent with this redundancy, but that origin has not been shown, and the information added by			register loc sec_eavailw.tex:67 @87cee1c86; literal
+n48	sec_fived16.tex	and of the muon angle, and NuWro and GiBUU, generated on carbon, are compared on carbon, as in the methods paper. Corrected to CH			register loc sec_fived16.tex:323 @87cee1c86; literal
+n49	sec_eavailw.tex	energy limit: it was generated only up to			register loc sec_eavailw.tex:139 @87cee1c86; literal
+n50	sec_execsummary.tex	uses it only as a descriptive scale, the configuration-(a) total uncertainty, for bias and model-dependence comparisons and for the estimator-seed sensitivity diagnostic			register loc sec_execsummary.tex:38 @87cee1c86; literal
+n51	sec_5d.tex	upper bound on coverage at least 0.66 (0.94)			register loc sec_5d.tex:40 @87cee1c86; literal
+n52	sec_5d.tex	This term is unscaled and is not a calibrated bound			register loc sec_5d.tex:78 @87cee1c86; literal
+n53	sec_5d.tex	232 changed classification with the truth resolution or the response weighting and were excluded, leaving 144	sec_5d.tex	232 changed classification with the truth resolution or the response weighting and were excluded	register loc sec_5d.tex:85 @87cee1c86; literal; reworded by the readability split (238a315c2): "... were excluded. That leaves 144 (38 % of the 376)."
+n54	sec_5d.tex	The candidate fails the data-stability test, whose criterion was set before it was run: input perturbations within floating-point rounding move functionals by a median of			register loc sec_5d.tex:100 @87cee1c86; literal
+n55	sec_5d.tex	These experiments are not an independent validation: their samples were used during development, and their assessment seeds, although separate, were later also used in the			register loc sec_5d.tex:125 @87cee1c86; literal
+n56	sec_5d.tex	The model component alone therefore exceeds the total-width target in RD1 and RD3, and in RD2 the target is exceeded once the flat			register loc sec_5d.tex:170 @87cee1c86; literal
+n57	sec_fived16.tex	Statements in those sections about that central value and that covariance do not describe this result, and statements here do not describe them			register loc sec_fived16.tex:5 @87cee1c86; literal
+n58	sec_fived16.tex	No stability criterion is applied in forming the cells			register loc sec_fived16.tex:9 @87cee1c86; literal
+n59	sec_fived16.tex	include unreported boxes at their central value, a share of at most			register loc sec_fived16.tex:96 @87cee1c86; literal
+n60	sec_fived16.tex	does not cover neutron or muon deposits, the effects of particle species, energy dependence and resolution beyond a scale, the null distributions of the joint			register loc sec_fived16.tex:116 @87cee1c86; literal
+n61	sec_fived16.tex	No finite-ensemble correction is applied to any block. The standard correction is derived for a single unweighted sample			register loc sec_fived16.tex:179 @87cee1c86; literal
+n62	sec_fived16.tex	The block was chosen after the period differences had been seen			register loc sec_fived16.tex:193 @87cee1c86; literal
+n63	sec_fived16.tex	These are not held-out truths, and the detector response is not probed			register loc sec_fived16.tex:200 @87cee1c86; literal
+n64	sec_fived16.tex	The fake-data bias therefore exceeds the stated thresholds at the GiBUU hybrid truth and the			register loc sec_fived16.tex:230 @87cee1c86; literal
+n65	sec_fived16.tex	One control check failed: the offset check, which compares the offset corrections of two hybrid truths, gives			register loc sec_fived16.tex:241 @87cee1c86; literal
+n66	sec_fived16.tex	show. MINERvA Tune~v1 is the simulation's prior, not an independent prediction.			register loc sec_fived16.tex:323 @87cee1c86; fuzzy 0.93
+n67	sec_fived16.tex	These are descriptive sensitivities, not alternative results			register loc sec_fived16.tex:381 @87cee1c86; literal
+n68	sec_joint.tex	Whether it represents the physical generator prediction depends on condition			register loc sec_joint.tex:19 @87cee1c86; literal
+n69	sec_joint.tex	seeds are disjoint from those of the calibration, but it reuses the same simulated events and omitted the MINOS-efficiency band			register loc sec_joint.tex:37 @87cee1c86; literal
+n70	sec_joint.tex	reviewers had seen descriptive per-cell residuals of the data before it was fixed			register loc sec_joint.tex:126 @87cee1c86; literal
+n71	sec_joint.tex	The fine-grid convergence check has not shown convergence			register loc sec_joint.tex:149 @87cee1c86; literal
+n72	sec_joint.tex	for NuWro), but it is at most 0.068 null standard deviations			register loc sec_joint.tex:157 @87cee1c86; literal
+n73	sec_joint.tex	the rest were lost to time limits and later recovered for reporting only,			register loc sec_joint.tex:206 @87cee1c86; literal
+n74	sec_joint.tex	This study therefore provides no evidence of additional discrimination from the joint five-observable information			register loc sec_joint.tex:254 @87cee1c86; literal
+n75	sec_joint.tex	nuisance model here includes the reweights but no calorimetric response band			register loc sec_joint.tex:286 @87cee1c86; literal
+n76	sec_fps.tex	This section gives a preliminary scalar central value for an extended fiducial domain	sec_fps.tex	The preliminary extended-fiducial CC-inclusive central value on the tracker fiducial volume	register loc sec_fps.tex:5 @87cee1c86; literal; re-anchored by director-helper-3 (Codex-files owner), 2026-11-17: cx1 split the section lead; the envelope sentence follows
+n77	sec_fps.tex	In regions without acceptance the unfolding extrapolates through the step-1 regressor for missed events			register loc sec_fps.tex:5 @87cee1c86; literal
+n78	sec_summary.tex	Further refinements are a fifth external generator, NEUT, and a finer 44-cell comparison with the Ascencio			register loc sec_summary.tex:20 @87cee1c86; literal
+n79	app_statmethods.tex	The rank of the systematic block is limited at any universe count			register loc app_statmethods.tex:20 @87cee1c86; literal
+n80	app_statmethods.tex	and pull excludes them on both sides			register loc app_statmethods.tex:304 @87cee1c86; literal
+n81	app_statmethods.tex	using only the paper covariance, with no OmniFold addition, for the exact-split cross-check (not recomputed for the LightGBM central value)			register loc app_statmethods.tex:380 @87cee1c86; literal
+n82	app_negweight.tex	This histogram backend is neither the LightGBM estimator of the quoted 2D central value and its ensembles nor the exact-split cross-check			register loc app_negweight.tex:40 @87cee1c86; literal
+n83	app_release.tex	It will be deposited on Zenodo before the methods paper is submitted. Its DOI is	app_release.tex	It will be deposited on Zenodo before the note is submitted.	register loc app_release.tex:44 @87cee1c86; literal; reworded by helper-3 (A19, Joseph's Zenodo timing); the DOI hold kept
+n84	app_release.tex	two-dimensional validation figure and its numbers were instead drawn separately			register loc app_release.tex:9 @87cee1c86; literal
+q03	sec_3d.tex	In three and four observables they use central values without uncertainties: no 3D or 4D covariance is quoted, and no generator			register loc sec_3d.tex:10 @87cee1c86; literal
+q08	sec_fived16.tex	and GiBUU, generated on carbon, are compared on carbon, as in the methods paper			register loc sec_fived16.tex:323 @87cee1c86; literal
+q12	sec_5d.tex	The model component alone therefore exceeds the total-width target in RD1 and RD3, and in RD2 the target is exceeded once the flat			register loc sec_5d.tex:170 @87cee1c86; literal
+q27	sec_5d.tex	At nominal truth they return the			register loc sec_5d.tex:52 @87cee1c86; literal
+q29	app_devhistory.tex	A two-dimensional closure test with backgrounds found the purity bias; rebuilt with configuration			register loc app_devhistory.tex:27 @87cee1c86; literal
+q30	sec_5d.tex	use seed sets that were not held out from the estimator's			register loc sec_5d.tex:78 @87cee1c86; literal
+q31	sec_5d.tex	It does not address what unbinned or biased estimators could recover, the coverage failure			register loc sec_5d.tex:91 @87cee1c86; literal
+q32	sec_5d.tex	51 of the 153 reported cell and projection integrals have			register loc sec_5d.tex:242 @87cee1c86; literal
+q43	sec_5d.tex	whether that bias has the same origin as the regularization bias	sec_limitations.tex	whether that bias has the same origin as the regularization bias	register loc sec_5d.tex:271 @87cee1c86; literal; moved verbatim (LR-47), lands with its receiving commit
