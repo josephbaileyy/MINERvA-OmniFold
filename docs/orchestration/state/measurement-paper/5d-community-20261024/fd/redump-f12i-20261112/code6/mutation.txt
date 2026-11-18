@@ -1,12 +1,12 @@
-# HEAD 47f0bb3005b5f22ddb4ec9a0be6cfeae246a6e46
-# clean clone, serial, Python 3.12.2, numpy 1.26.4, 2026-11-18T02:32:55Z
-# 47cc508df3d59c5db7ab2a9ab1520ed524b84e6d58f7199295657f9d84e94d6c  rdx_read.py
-# 1ed6f037a5666e9d5c7bba72565e495cfa71e05b8c6b1835d1f592f338e96687  test_rdx_read.py
-# b0fdaf752900fe304239f2a74011e8501dfc8c9729a0b6f09477153ecbb413e1  rdx_read_mutation.py
+# HEAD 337718688225b4441165734724122f306b94789e
+# clean clone, serial, Python 3.12.2, numpy 1.26.4, 2026-11-18T02:58:08Z
+# dd960c650a6193bb1074378cf241e54459566a4544d76f01075165b051279ed0  rdx_read.py
+# e044c186c2b010c4e224ef45b5ac34f3e93e8b0d5d0a91f89b920820d890b068  test_rdx_read.py
+# 368a6b79ae854c0f75f6858b23fffc4e2d2e1da2cf964cd56dbbeeb4725f384c  rdx_read_mutation.py
 # 4dd37197f6aa6c7f013b3ffea5558fd8d8fd1bc124047f761269adafce87e484  ../rsn/rsn_read.py
 # aaa81575b211f50e007fa75d318fd8d4f48bfb98ac5ae62b398dbf33db37d4ca  ../pv-ladder/build_cmodel5d.py
 # command: python3 -B nd-unfolding/rdx/rdx_read_mutation.py --jobs 4
-unmutated suite: 30 tests OK, in the mirrored tree
+unmutated suite: 31 tests OK, in the mirrored tree
 KILLED    NC-X not checked                                 by test_nc_x_is_bitwise_on_xsec_flat_and_shape
 KILLED    NC-X by value, not bits                          by test_nc_x_is_bitwise_on_xsec_flat_and_shape
 KILLED    NC-X skips shape                                 by test_nc_x_is_bitwise_on_xsec_flat_and_shape
@@ -42,7 +42,10 @@ KILLED    equality named                                   by test_an_excess_exa
 KILLED    refit null W2 not decisive                       by test_the_refit_null_takes_precedence_over_a_sensitivity
 KILLED    R4 read against X0c's truth                      by test_r4_reads_each_closure_against_its_familys_truth
 KILLED    R4 prior without the null                        by test_r4_at_the_prior_subtracts_the_refit_null
-KILLED    R4 prior unclipped                               by test_r4_prior_stores_the_clipped_excess_it_classes
+KILLED    R4 prior clipped (rev 2's algebra, not J7's)     by test_r4_prior_is_the_signed_residual_and_a_larger_null_flags
+KILLED    R4 prior magnitude excess unclipped              by test_r4_prior_is_the_signed_residual_and_a_larger_null_flags
+KILLED    the weight qualifier silent                      by test_the_weight_at_the_prior_is_never_silent
+KILLED    the weight class not printed                     by test_the_weight_at_the_prior_is_never_silent
 KILLED    only W0 licenses                                 by test_r4_in_w1_still_licenses
 KILLED    R4 q3 left out of the outcome                    by test_r4_q3_and_the_weight_at_the_prior
 KILLED    the weight made an outcome change                by test_r4_q3_and_the_weight_at_the_prior
@@ -51,5 +54,5 @@ KILLED    R3 reads the first iteration                     by test_r3_reads_the_
 KILLED    R3 difference drops a missing cell               by test_r3_reads_the_last_iteration_and_the_difference
 KILLED    loop-untouched always true                       by test_r3_reports_bitwise_whether_the_probe_left_the_loop_untouched
 KILLED    the sentence transliterated                      by test_the_licensed_and_outcome_sentences_are_section_4s_characters
-MUTATION CHECK :: PASS (44 mutations)
+MUTATION CHECK :: PASS (47 mutations)
 # exit 0

@@ -1,8 +1,8 @@
-# HEAD 47f0bb3005b5f22ddb4ec9a0be6cfeae246a6e46
-# clean clone, serial, a uv venv matching omnifold_py310's versions: Python 3.10.20, numpy 2.2.6, 2026-11-18T02:32:55Z
-# 47cc508df3d59c5db7ab2a9ab1520ed524b84e6d58f7199295657f9d84e94d6c  rdx_read.py
-# 1ed6f037a5666e9d5c7bba72565e495cfa71e05b8c6b1835d1f592f338e96687  test_rdx_read.py
-# b0fdaf752900fe304239f2a74011e8501dfc8c9729a0b6f09477153ecbb413e1  rdx_read_mutation.py
+# HEAD 337718688225b4441165734724122f306b94789e
+# clean clone, serial, a uv venv matching omnifold_py310's versions: Python 3.10.20, numpy 2.2.6, 2026-11-18T02:58:07Z
+# dd960c650a6193bb1074378cf241e54459566a4544d76f01075165b051279ed0  rdx_read.py
+# e044c186c2b010c4e224ef45b5ac34f3e93e8b0d5d0a91f89b920820d890b068  test_rdx_read.py
+# 368a6b79ae854c0f75f6858b23fffc4e2d2e1da2cf964cd56dbbeeb4725f384c  rdx_read_mutation.py
 # 4dd37197f6aa6c7f013b3ffea5558fd8d8fd1bc124047f761269adafce87e484  ../rsn/rsn_read.py
 # aaa81575b211f50e007fa75d318fd8d4f48bfb98ac5ae62b398dbf33db37d4ca  ../pv-ladder/build_cmodel5d.py
 # command: python -B -m unittest -v nd-unfolding/rdx/test_rdx_read.py
@@ -30,15 +30,16 @@ test_r3_reads_the_last_iteration_and_the_difference (nd-unfolding.rdx.test_rdx_r
 test_r3_reports_bitwise_whether_the_probe_left_the_loop_untouched (nd-unfolding.rdx.test_rdx_read.Readings) ... ok
 test_r4_at_the_prior_subtracts_the_refit_null (nd-unfolding.rdx.test_rdx_read.Readings) ... ok
 test_r4_in_w1_still_licenses (nd-unfolding.rdx.test_rdx_read.Readings) ... ok
-test_r4_prior_stores_the_clipped_excess_it_classes (nd-unfolding.rdx.test_rdx_read.Readings) ... ok
+test_r4_prior_is_the_signed_residual_and_a_larger_null_flags (nd-unfolding.rdx.test_rdx_read.Readings) ... ok
 test_r4_q3_and_the_weight_at_the_prior (nd-unfolding.rdx.test_rdx_read.Readings) ... ok
 test_r4_reads_each_closure_against_its_familys_truth (nd-unfolding.rdx.test_rdx_read.Readings) ... ok
 test_the_excess_is_beyond_the_null (nd-unfolding.rdx.test_rdx_read.Readings) ... ok
 test_the_refit_null_at_w2_makes_r1_unattributable (nd-unfolding.rdx.test_rdx_read.Readings) ... ok
 test_the_refit_null_takes_precedence_over_a_sensitivity (nd-unfolding.rdx.test_rdx_read.Readings) ... ok
+test_the_weight_at_the_prior_is_never_silent (nd-unfolding.rdx.test_rdx_read.Readings) ... ok
 
 ----------------------------------------------------------------------
-Ran 30 tests in 0.377s
+Ran 31 tests in 0.568s
 
 OK
 # exit 0

@@ -1,4 +1,4 @@
-# RDX code6: the reader, `rdx_read.py`, rev 2 (receipt)
+# RDX code6: the reader, `rdx_read.py`, rev 3 (receipt)
 
 **By** session tier3-design, at the director's ruling of 2026-11-17 on the readings step. That ruling took the fetch
 route at 0 node-h:
@@ -9,18 +9,19 @@ route at 0 node-h:
 
 **Rev 1** (`372bd471`, PR #1216) was audited by both readers at `03e43c91`. Codex read FAIL and Grok PASS WITH FIXES.
 They agree that §4's formulas are right and that the gaps are in input validation. **Rev 2** (`47f0bb30`) makes the
-director's seven fixes (below). The reports are `~/codex-reports/rdx-read-audit/{codex,grok}/report.md`.
+director's seven fixes (below). The reports are `~/codex-reports/rdx-read-audit/{codex,grok}/report.md`. **Rev 3**
+(`33771868`) applies the director's J7 rulings on choices 3 and 5 (below).
 
 **Nothing has been read.** No product has been fetched. This receipt is of the code only.
 <!-- absence-ok: an operational status of this tranche, not a claim that a result does not exist -->
 
-## The code, at `47f0bb30`
+## The code, at `33771868`
 
 | file | sha256 | role |
 |---|---|---|
-| `nd-unfolding/rdx/rdx_read.py` | `47cc508df3d59c5db7ab2a9ab1520ed524b84e6d58f7199295657f9d84e94d6c` | the reader |
-| `nd-unfolding/rdx/test_rdx_read.py` | `1ed6f037a5666e9d5c7bba72565e495cfa71e05b8c6b1835d1f592f338e96687` | 30 tests |
-| `nd-unfolding/rdx/rdx_read_mutation.py` | `b0fdaf752900fe304239f2a74011e8501dfc8c9729a0b6f09477153ecbb413e1` | 44 mutants |
+| `nd-unfolding/rdx/rdx_read.py` | `dd960c650a6193bb1074378cf241e54459566a4544d76f01075165b051279ed0` | the reader |
+| `nd-unfolding/rdx/test_rdx_read.py` | `e044c186c2b010c4e224ef45b5ac34f3e93e8b0d5d0a91f89b920820d890b068` | 31 tests |
+| `nd-unfolding/rdx/rdx_read_mutation.py` | `368a6b79ae854c0f75f6858b23fffc4e2d2e1da2cf964cd56dbbeeb4725f384c` | 47 mutants |
 
 It imports, unchanged: `rsn/rsn_read.py` (`4dd37197…`) for the W and T classes, the rounding floor and the committed
 record paths, and `pv-ladder/build_cmodel5d.py` (`aaa81575…`) and `pv-ladder/pvl_lib.py` for the definition, the fine
@@ -77,18 +78,26 @@ grid and the cell integrals.
 - **R2:** X1w/X1 − 1.
 - **R3:** the last iteration's t_c for X1t and X0t and their difference, with a bitwise check of whether the probe
   left the loop untouched.
-- **R4:** the closures against their family's truth. The prior's attributable change is stored exactly as it is
-  classed, clipped.
+- **R4:** the closures against their family's truth. The prior's attributable change is the signed residual
+  [b(X1c) − b(X0c)] − [b(X1pc) − b(X0c)] (J7, choice 3), stored exactly as it is classed. The weight at the prior is
+  always printed in the outcome record, with its class and largest |change|/σ, and stated in words when it crosses
+  R2's threshold (J7, choice 5).
 
 The W and T classes are RSN's. The outcome follows §4, in its own characters:
 - **REFIT NULL W2**, which takes precedence;
 - **LICENSED**, with §4's sentence (E_ν, σ), tested against the declaration's text;
 - **STATED SENSITIVITY**, with the cells named.
 
-## The six reader choices, with the auditors' views
+## The six reader choices: the auditors' views and the director's J7 rulings
 
-The director's reading is that choices 1, 2, 5 and 6 are consistent with §4. Choices 3 and 4 can flip an outcome, so
-the auditors' views are set out in full here, for J7.
+**The director's rulings, which go into J7:**
+- **Choice 3:** the SIGNED residual Δb(X1c) − Δb(X1pc), not the clip. A binding chooses the algebra conservative
+  against licensing.
+- **Choice 5:** a qualifier beside R2, as the "three truths" rule reads, but never silent. Its value and class are
+  printed, and a crossing of R2's threshold is stated in words next to the outcome.
+- **Choices 1, 2, 4 and 6:** accepted as written.
+
+Rev 3 implements these. The auditors' views of rev 1, which led to the rulings, are below.
 
 | # | choice | Codex | Grok |
 |---|---|---|---|
@@ -99,20 +108,21 @@ the auditors' views are set out in full here, for J7.
 | 5 | X1wc − X1c qualifies; it is not an outcome change | not unambiguous: it is listed in R4, but D:507 names only R2 and R3 as qualifiers. Including it could flip the outcome to a sensitivity | decided by the outcome rule, which names "all three truths"; the weight is the closure analogue of R2 |
 | 6 | a cell with no masked rows fails T0 and T1 | decided by incorporating RSN; cannot change the outcome | decided by incorporating RSN §3.5:337; conservative for the T label |
 
-**For J7,** in short:
-- Choice 4 is decided by §4, per both auditors.
-- Choice 3 is the open one. The reader implements R1's clipped magnitude excess. The alternative is the signed
-  residual Δb(X1c) − Δb(X1pc), W-classed. It would flag a change of equal size and opposite sign to the null, and it is
-  the more conservative toward licensing.
-- Choice 5 is read differently by the two auditors.
+**As implemented in rev 3:**
+- Choice 3 is the signed residual. Tests show that a null larger than the change, and a change equal and opposite to
+  the null, are each flagged (`test_r4_prior_is_the_signed_residual_and_a_larger_null_flags`). Rev 2's clip and the
+  magnitude excess are mutants, each killed.
+- Choice 5 is printed always and stated in words when W2, whatever the outcome
+  (`test_the_weight_at_the_prior_is_never_silent`).
+- Choice 4 is unchanged: decided by §4, per both auditors.
 
-## The receipts, in a clean clone at `47f0bb30` (`receipts.sh`, sha256 `e3498ff1…`)
+## The receipts, in a clean clone at `33771868` (`receipts.sh`, sha256 `e3498ff1…`)
 
 | file | result |
 |---|---|
-| `tests.txt` | Python 3.12.2, numpy 1.26.4: 30 tests OK, exit 0 |
-| `tests_py310.txt` | a uv venv matching omnifold_py310's versions (Python 3.10.20, numpy 2.2.6): 30 tests OK, exit 0 |
-| `mutation.txt` | the unmutated suite: 30 tests OK. Mutation check PASS: 44 of 44 killed, each by its named test |
+| `tests.txt` | Python 3.12.2, numpy 1.26.4: 31 tests OK, exit 0 |
+| `tests_py310.txt` | a uv venv matching omnifold_py310's versions (Python 3.10.20, numpy 2.2.6): 31 tests OK, exit 0 |
+| `mutation.txt` | the unmutated suite: 31 tests OK. Mutation check PASS: 47 of 47 killed, each by its named test |
 | `committed_path.txt` | the committed-record path with no products: the task table at its bound sha; the fine grid (14, 16, 7, 7, 6) = 65,856 cells, which the definition maps to 16 cells, so `main`'s check passes; φ_c reproduces 0.133 / 0.055 / 0.252 %; σ_c gives 16 values; the pins load. The clone is clean after it |
 
 **What the tests cover, each guard in both directions.** On synthetic products, with the cell integrals as the
@@ -126,7 +136,8 @@ identity:
 - the exact half-σ tie;
 - R4 at W1 still licensing, and R2 at W2 and R3 at T2 leaving the label unchanged;
 - refit-null precedence over a simultaneous sensitivity;
-- the clipped prior excess.
+- the signed prior residual, including a larger null and an equal-and-opposite one;
+- the weight at the prior, printed always and stated when it crosses R2's threshold.
 
 `committed_path.txt` covers what the tests cannot: the real definition, floor and σ, loaded through the reader.
 
@@ -135,7 +146,7 @@ identity:
 - **Citable for:** the reader's code and its shas, its refusals, its interpretations as listed, and these receipts.
 - **Not citable for:**
   - any RDX reading or outcome: nothing has been fetched or read;
-  - a ruling on choices 3 and 5, which is J7's.
+  - the binding itself, which is J7's.
 
   The outcome record, once J7 binds the read, goes to main. Any note-facing text goes to a side branch, off
   `draft/note-round2` until after 2026-11-19.
