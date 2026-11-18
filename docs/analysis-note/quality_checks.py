@@ -291,6 +291,21 @@ def read_manifests(paths: list[Path]) -> list[dict]:
             row['words'] = tokenize(sentence) if sentence else []
             text = ' '.join(cols[1:])
             row['intended'] = bool(INTENDED_RE.search(text))
+            row['role'] = cols[1].strip() if len(cols) > 1 else ''
+            fcol = next((k for k, h in enumerate(header) if h.startswith('from')), None) if header else 2
+            fm = re.match(r'\s*([\w.]+\.tex)', cols[fcol]) if fcol is not None and fcol < len(cols) else None
+            row['from_file'] = fm.group(1) if fm else ''
+            # a restatement row (journal-editor's form): from = the restating location, to = the moved text's
+            # location, mode = why the restatement stays
+            row['span'] = None
+            if row['role'] == 'restatement' and len(cols) > 4:
+                m = re.match(r'\s*([\w.]+\.tex):(\d+)(?:-(\d+))?', cols[2])
+                t = re.match(r'\s*([\w.]+\.tex)(?::(\d+)(?:-(\d+))?)?', cols[3])
+                if m and t:
+                    t0 = int(t.group(2)) if t.group(2) else None
+                    row['span'] = (m.group(1), int(m.group(2)), int(m.group(3) or m.group(2)), t.group(1),
+                                   t0, int(t.group(3) or t.group(2)) if t0 else None)
+                    row['reason'] = cols[4].strip()
             row['to'] = next((c for c in cols if re.search(r'sec_limitations|app_devhistory|devhistory|limitations', c)), '')
             row['mode'] = next((c for c in cols if re.match(r'(verbatim|reworded|dedup|move|scope)', c.strip())), '')
             rows.append(row)
@@ -416,7 +431,11 @@ def check_text(src: Source, manifests: list[dict], n: int, min_sentence: int):
                 if h in sha_rows:
                     line_sha_rows[(f, ln)] += sha_rows[h]
 
-    intended_ids = {r['id'] for r in manifests if r['intended']}
+    intended_from: dict[str, set[str]] = defaultdict(set)   # id -> the sending files of its intended-copy rows
+    for r in manifests:
+        if r['intended']:
+            intended_from[r['id']].add(r['from_file'])
+    receiving = ('sec_limitations.tex', 'app_devhistory.tex')
     file_text = {f: re.sub(r'\s+', ' ', '\n'.join(src.lines[f])) for f in src.files}
     file_shas = {f: {hashlib.sha256(x.encode('utf-8')).hexdigest() for raw in src.lines[f] for x in raw_sentences(raw)}
                  for f in src.files}
@@ -458,12 +477,23 @@ def check_text(src: Source, manifests: list[dict], n: int, min_sentence: int):
                             item['class'] = f'{name} restatement, not at a cited home'
                             item['why'] = 'row cites ' + (', '.join(refs) if refs else 'no \\ref')
             if item['class'] == 'remaining':
+                for r in manifests:
+                    if not r.get('span'):
+                        continue
+                    f0, l0, l1, fto, t0, t1 = r['span']
+                    for x, y in ((i, j), (j, i)):
+                        (fx, lx), (fy, ly) = src.pos[x], src.pos[y]
+                        if fx == f0 and l0 <= lx <= l1 and fy == fto and (t0 is None or t0 <= ly <= t1):
+                            item['class'] = 'manifest: recorded restatement'
+                            item['why'] = f"{r['id']} ({r['file']}): {r['reason'][:150]}"
+            if item['class'] == 'remaining':
                 rows = manifest_rows_for(i, L) + manifest_rows_for(j, L)
                 in_receiving = any(f in ('sec_limitations.tex', 'app_devhistory.tex') for f in (fa, fb))
                 if rows and in_receiving:
                     ids = sorted({r['id'] for r in rows})
                     whole = sorted({r['id'] for r in rows if prints_in(r, fa) and prints_in(r, fb)})
-                    if any(r['id'] in intended_ids for r in rows):
+                    body_files = {f for f in (fa, fb) if f not in receiving} or {fa, fb}
+                    if any(intended_from.get(r['id'], set()) & body_files for r in rows):
                         item['class'] = 'manifest: intended copy'
                         item['why'] = ', '.join(ids) + ' (' + '; '.join(sorted({r['mode'] or '' for r in manifests if r['id'] in ids and r['intended']}))[:160] + ')'
                     elif whole:
@@ -1090,6 +1120,7 @@ def main(argv=None):
              f'{sum(1 for P in plist if P["class"] == "remaining" and any("overlaps the moved" in w for w in P["why"]))} |')
     R.append(f'| 1a definition / test-index restatements NOT at a cited home (listed) | {n_nohome} |')
     R.append(f'| 1a set aside: manifest intended copies | {by_class["manifest: intended copy"]} |')
+    R.append(f'| 1a set aside: restatements recorded in a manifest with a reason | {by_class["manifest: recorded restatement"]} |')
     R.append(f'| 1a set aside: definition / test-index restatements at their cited home | {n_home} |')
     R.append(f'| 1b figure pairs with a content signal (data, text or image) | **{len(content_pairs)}** |')
     R.append(f'| 1b … with the data signal (a shared input, and overlapping curves) | **{sum(1 for p in fig_pairs if "data" in p["signals"])}** |')
