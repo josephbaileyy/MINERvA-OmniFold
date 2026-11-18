@@ -13,6 +13,7 @@ import tarfile
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 HERE = Path(__file__).resolve().parent
 REMOTE = HERE / "rdx_fetch_remote.py"
@@ -79,7 +80,9 @@ class Base(unittest.TestCase):
     def unpack(self, tar: Path):
         dest = self.d / f"dest{len(list(self.d.glob('dest*')))}"
         dest.mkdir()
-        return subprocess.run([sys.executable, str(REMOTE), "unpack", str(tar), str(dest)], capture_output=True, text=True), dest
+        env = {**os.environ, "RDX_FETCH_TEST_ROOT": str(self.root)}
+        return subprocess.run([sys.executable, str(REMOTE), "unpack", str(tar), str(dest)], capture_output=True, text=True,
+                              env=env), dest
 
 
 class Fetch(Base):
@@ -92,7 +95,7 @@ class Fetch(Base):
         self.assertEqual(names, list(F.FILES) + ["manifest.json"])
         self.assertEqual(len(F.FILES), 32)
         self.assertEqual(man["atime_moved"], [])
-        self.assertTrue(all(x["atime_unchanged"] for x in man["files"]))
+        self.assertTrue(all(x["moved"] == [] and x["stat_before"] == x["stat_after"] for x in man["files"]))
         self.assertEqual(man["files"][0]["sha256"], hashlib.sha256((self.root / F.FILES[0]).read_bytes()).hexdigest())
 
     def test_the_fence_refuses_before_any_output(self):
@@ -106,6 +109,84 @@ class Fetch(Base):
         self.sacct("", rc=1)
         r = self.fetch()
         self.assertEqual((r.returncode, r.stdout), (9, b""))
+
+    def script_sacct(self, body: str):
+        s = self.bin / "sacct"
+        s.write_text("#!/bin/bash\n" + body)
+        s.chmod(0o755)
+
+    def test_the_fence_reads_every_non_terminal_state(self):
+        """A completing or configuring job of a fenced family can still write (the safety read's B1). The stub prints
+        such a row only when its -s list asks for that state, as sacct does."""
+        for code, state in (("CG", "COMPLETING"), ("CF", "CONFIGURING"), ("RS", "RESIZING")):
+            self.script_sacct('while [ $# -gt 0 ]; do if [ "$1" = -s ]; then L="$2"; fi; shift; done\n'
+                              f'case ",$L," in *,{code},*) printf "71|rdx_s3_a|{state}\\n" ;; esac\n')
+            r = self.fetch()
+            self.assertEqual((r.returncode, r.stdout), (9, b""), state)
+            self.assertIn(state, r.stderr.decode())
+        self.assertEqual(set(F.STATES.split(",")), {"PD", "CF", "R", "CG", "RQ", "RS", "S"})
+
+    def test_a_job_seen_after_the_last_read_exits_9_and_unpack_refuses(self):
+        n = self.d / "calls"
+        self.script_sacct(f'c=$(cat {n} 2>/dev/null || echo 0); echo $((c + 1)) > {n}\n'
+                          '[ "$c" -ge 1 ] && printf "72|pfb_run|RUNNING\\n"\nexit 0\n')
+        r = self.fetch()
+        self.assertEqual(r.returncode, 9, r.stderr)
+        self.assertEqual(n.read_text().strip(), "2", "the fence is read before the first file and after the last")
+        tar = self.d / "after.tar"
+        tar.write_bytes(r.stdout)
+        with tarfile.open(tar) as tf:
+            man = json.loads(tf.extractfile("manifest.json").read())
+        self.assertTrue(man["fence"]["clear"])
+        self.assertFalse(man["fence_after"]["clear"])
+
+    def test_a_rewrite_of_the_same_length_or_a_replacement_during_a_read_exits_8(self):
+        """The safety read's B2: the stat after each read is compared with the stat before it (size, mtime_ns, ino),
+        so a same-length rewrite or a same-size replacement is caught, with both stats in the manifest."""
+        for how in ("rewrite", "replace"):
+            target = self.root / F.FILES[2]
+            old = target.read_bytes()
+            st = target.stat()
+            real_fdopen = os.fdopen
+
+            def fdopen(fd, mode="r", *a, **k):
+                fh = real_fdopen(fd, mode, *a, **k)
+                if os.fstat(fd).st_ino != target.stat().st_ino:
+                    return fh
+                class Tear:
+                    def __enter__(self_):
+                        return self_
+                    def __exit__(self_, *exc):
+                        fh.close()
+                    def read(self_):
+                        data = fh.read()
+                        new = bytes(b ^ 0xFF for b in data)
+                        if how == "rewrite":   # in place: same inode, same length, a later mtime
+                            with open(target, "r+b") as w:
+                                w.write(new)
+                        else:                  # a new inode of the same size, the old mtime restored
+                            tmp = target.with_name("t.tmp")
+                            tmp.write_bytes(new)
+                            os.replace(tmp, target)
+                        os.utime(target, ns=(st.st_atime_ns, st.st_mtime_ns + (10 ** 9 if how == "rewrite" else 0)))
+                        return data
+                return Tear()
+
+            buf = io.BytesIO()
+            env = {"RDX_FETCH_TEST_ROOT": str(self.root), "PATH": f"{self.bin}:{os.environ['PATH']}"}
+            with mock.patch.dict(os.environ, env), mock.patch.object(F, "ROOT", str(self.root)), \
+                    mock.patch.object(F.os, "fdopen", fdopen), mock.patch.object(sys, "stdout", mock.Mock(buffer=buf)):
+                rc = F.fetch()
+            self.assertEqual(rc, 8, how)
+            with tarfile.open(fileobj=io.BytesIO(buf.getvalue()), mode="r:") as tf:
+                man = json.loads(tf.extractfile("manifest.json").read())
+            self.assertEqual(man["atime_moved"], [F.FILES[2]], how)
+            rec = man["files"][2]
+            self.assertEqual(rec["stat_before"]["st_size"], rec["stat_after"]["st_size"], "the length is unchanged")
+            self.assertIn("st_mtime_ns" if how == "rewrite" else "st_ino", rec["moved"], how)
+            self.assertEqual(sorted(rec["stat_before"]), sorted(F.STAT_KEYS))
+            target.write_bytes(old)
+            os.utime(target, ns=(st.st_atime_ns, st.st_mtime_ns))
 
     def test_a_missing_file_refuses_before_any_output(self):
         (self.root / F.LOGS[1]).unlink()
@@ -147,7 +228,11 @@ class Unpack(Base):
                         ({"drop": F.FILES[5]}, "missing members"),
                         ({"manifest_edit": lambda m: m.update(o_noatime=False)}, "no O_NOATIME"),
                         ({"manifest_edit": lambda m: m.update(atime_moved=["x"])}, "moved atime"),
-                        ({"manifest_edit": lambda m: m["fence"].update(clear=False)}, "fence")):
+                        ({"manifest_edit": lambda m: m["fence"].update(clear=False)}, "fence"),
+                        ({"manifest_edit": lambda m: m.update(root="/pscratch/elsewhere")}, "not the declared"),
+                        ({"manifest_edit": lambda m: m["fence_after"].update(clear=False)}, "fence"),
+                        ({"manifest_edit": lambda m: m["files"][4]["stat_after"].update(st_ino=1)}, "stat moved"),
+                        ({"manifest_edit": lambda m: m["files"][4]["stat_after"].update(st_mtime_ns=1)}, "stat moved")):
             r, dest = self.unpack(self.tar_with(**kw))
             self.assertEqual(r.returncode, 2, kw)
             self.assertIn(why, r.stderr, kw)
@@ -158,8 +243,20 @@ class Unpack(Base):
         dest = self.d / "full"
         dest.mkdir()
         (dest / "x").write_text("x")
-        r = subprocess.run([sys.executable, str(REMOTE), "unpack", str(tar), str(dest)], capture_output=True, text=True)
+        r = subprocess.run([sys.executable, str(REMOTE), "unpack", str(tar), str(dest)], capture_output=True, text=True,
+                           env={**os.environ, "RDX_FETCH_TEST_ROOT": str(self.root)})
         self.assertEqual(r.returncode, 2)
+        self.assertIn("not a new empty directory", r.stderr)
+
+    def test_unpack_on_the_laptop_requires_the_declared_root(self):
+        env = {k: v for k, v in os.environ.items() if k != "RDX_FETCH_TEST_ROOT"}
+        dest = self.d / "laptop"
+        dest.mkdir()
+        r = subprocess.run([sys.executable, str(REMOTE), "unpack", str(self.tar_with()), str(dest)], capture_output=True,
+                           text=True, env=env)
+        self.assertEqual(r.returncode, 2)
+        self.assertIn("is not the declared /pscratch/sd/j/josephrb/rdx-20261112b/out", r.stderr)
+        self.assertEqual(list(dest.iterdir()), [])
 
 
 class Launcher(unittest.TestCase):
@@ -180,6 +277,9 @@ class Launcher(unittest.TestCase):
         self.assertNotIn("sbatch", text.split("# Usage")[1])
         self.assertNotIn('"squeue"', REMOTE.read_text(), "no command invokes squeue")
         self.assertIn('cmd = ["sacct",', REMOTE.read_text())
+        hop = text.split("\nHOP=(", 1)[1].split(")", 1)[0]
+        for opt in ("ControlPath=none", "StrictHostKeyChecking=yes", "UpdateHostKeys=no"):
+            self.assertIn(opt, hop, "the inner ssh writes nothing on saul (no known_hosts entry, no control socket)")
 
 
 if __name__ == "__main__":

@@ -9,13 +9,16 @@ the cluster, not even under /dev/shm.
 
 fetch refuses before writing anything to stdout:
   - exit 3 if the platform has no O_NOATIME;
-  - exit 9 if sacct fails, or if any job of the fenced families is pending or running (sacct only, never squeue);
+  - exit 9 if sacct fails, or if any job of the fenced families is in a non-terminal state (STATES: pending,
+    configuring, running, completing, requeued, resizing, suspended; sacct only, never squeue);
   - exit 4 if a file is missing.
-It then streams each file with its manifest: bytes, sha256, mtime, and atime before and after its read. The manifest is
-the last member. It exits 8 if any atime moved (a STOP for the director; the tar is complete either way).
+It then streams each file with its manifest: bytes, sha256, and the file's stat before and after its read (size,
+mtime_ns, atime_ns, ino, dev). The manifest is the last member. It exits 8 if any file's stat moved during its read or
+its length is not the stat's size (an atime, or a rewrite of the same length: a STOP for the director). The fence is
+read again after the last file; a job seen then exits 9. The tar is complete in both cases, and unpack refuses it.
 unpack refuses (exit 2) unless the tar holds exactly the declared 32 files and manifest.json, every member is a plain
-file at a declared relative path, every sha256 matches the manifest, O_NOATIME was used, every atime was unchanged,
-and the fence read was clear. It writes the files under <dir>/ and nothing else.
+file at a declared relative path, the root read is the declared one, every sha256 matches the manifest, O_NOATIME was used, every file's two stats are
+equal, and both fence reads were clear. It writes the files under <dir>/ and nothing else.
 
 MEASURES: nothing; it copies. CANNOT AUTHORIZE: a reading.
 """
@@ -29,11 +32,14 @@ import sys
 import tarfile
 import time
 
-ROOT = os.environ.get("RDX_FETCH_TEST_ROOT") or "/pscratch/sd/j/josephrb/rdx-20261112b/out"
+DECLARED_ROOT = "/pscratch/sd/j/josephrb/rdx-20261112b/out"
+ROOT = os.environ.get("RDX_FETCH_TEST_ROOT") or DECLARED_ROOT
 TASKS = ("X0", "X0_lat", "X1", "X1p", "X1w", "X1t", "X0c", "X1c", "X1pc", "X1wc", "X0t", "X0g", "X1g", "X0q", "X1q")
 LOGS = ("logs/rdx_s3_a_61478320.out", "logs/rdx_s3_b_61481240.out")
 FILES = tuple("products/%s.npz" % t for t in TASKS) + tuple("inventory/%s.jsonl" % t for t in TASKS) + LOGS
 FENCE = re.compile(r"^(cov2d|t2a|ll5d|e96data|rpd_|rsn_|rdx_|pfb_|ibukt-)")
+STATES = "PD,CF,R,CG,RQ,RS,S"  # sacct's non-terminal job states: a completing or configuring job can still write
+STAT_KEYS = ("st_size", "st_mtime_ns", "st_atime_ns", "st_ino", "st_dev")
 USER = "josephrb"
 SCHEMA = "rdx-fetch/1"
 
@@ -43,16 +49,31 @@ def refuse(rc, why):
     sys.exit(rc)
 
 
-def fence():
-    cmd = ["sacct", "-X", "-n", "-P", "-u", USER, "-s", "PD,R,RQ,S", "-o", "JobID,JobName,State"]
-    p = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+def fence_read():
+    """One sacct read: {"command", "rows", "hits", "clear"}; "error" instead of rows if sacct failed."""
+    cmd = ["sacct", "-X", "-n", "-P", "-u", USER, "-s", STATES, "-o", "JobID,JobName,State"]
+    try:
+        p = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+    except OSError as exc:
+        return {"command": " ".join(cmd), "error": "sacct could not run: %s" % exc, "clear": False}
     if p.returncode != 0:
-        refuse(9, "sacct failed (rc %d): %s" % (p.returncode, p.stderr.strip()[:200]))
+        return {"command": " ".join(cmd), "error": "sacct failed (rc %d): %s" % (p.returncode, p.stderr.strip()[:200]),
+                "clear": False}
     rows = [ln for ln in p.stdout.splitlines() if ln.strip()]
     hits = [ln for ln in rows if len(ln.split("|")) > 1 and FENCE.match(ln.split("|")[1])]
-    if hits:
-        refuse(9, "fenced jobs are pending or running: %s" % hits)
-    return {"command": " ".join(cmd), "rows": rows, "clear": True}
+    return {"command": " ".join(cmd), "rows": rows, "hits": hits, "clear": not hits}
+
+
+def fence():
+    f = fence_read()
+    if not f["clear"]:
+        refuse(9, f.get("error") or "fenced jobs are in a non-terminal state: %s" % f["hits"])
+    return f
+
+
+def stat_record(path):
+    st = os.stat(path)
+    return dict((k, getattr(st, k)) for k in STAT_KEYS)
 
 
 def fetch():
@@ -71,30 +92,34 @@ def fetch():
     moved = []
     for rel in FILES:
         p = os.path.join(ROOT, rel)
-        st0 = os.stat(p)
+        st0 = stat_record(p)
         fd = os.open(p, os.O_RDONLY | (noatime or 0))
         with os.fdopen(fd, "rb") as fh:
             data = fh.read()
-        st1 = os.stat(p)
+        st1 = stat_record(p)
         info = tarfile.TarInfo(rel)
-        info.size, info.mtime, info.mode = len(data), int(st0.st_mtime), 0o600
+        info.size, info.mtime, info.mode = len(data), st0["st_mtime_ns"] // 10 ** 9, 0o600
         tf.addfile(info, io.BytesIO(data))
         rec = {"path": rel, "bytes": len(data), "sha256": hashlib.sha256(data).hexdigest(),
-               "mtime_ns": st0.st_mtime_ns, "atime_ns_before": st0.st_atime_ns, "atime_ns_after": st1.st_atime_ns,
-               "size_stat": st0.st_size}
-        rec["atime_unchanged"] = rec["atime_ns_before"] == rec["atime_ns_after"]
-        if not rec["atime_unchanged"] or rec["size_stat"] != rec["bytes"]:
+               "stat_before": st0, "stat_after": st1}
+        rec["moved"] = [k for k in STAT_KEYS if st0[k] != st1[k]] + (["length"] if len(data) != st0["st_size"] else [])
+        if rec["moved"]:
             moved.append(rel)
         man["files"].append(rec)
-    man["atime_moved"] = moved
+    man["atime_moved"] = moved  # every file whose stat moved during its read (the name is the schema's)
+    man["fence_after"] = fence_read()
     blob = (json.dumps(man, indent=1, sort_keys=True) + "\n").encode()
     info = tarfile.TarInfo("manifest.json")
     info.size, info.mtime, info.mode = len(blob), int(time.time()), 0o600
     tf.addfile(info, io.BytesIO(blob))
     tf.close()
     out.flush()
+    if not man["fence_after"]["clear"]:
+        sys.stderr.write("STOP: the fence read after the last file is not clear: %s\n"
+                         % (man["fence_after"].get("error") or man["fence_after"]["hits"]))
+        return 9
     if moved:
-        sys.stderr.write("STOP: the atime or size of %s moved during the read\n" % moved)
+        sys.stderr.write("STOP: the stat of %s moved during its read\n" % moved)
         return 8
     return 0
 
@@ -112,12 +137,19 @@ def unpack(tar_path, dest):
     if set(members) != want:
         refuse(2, "missing members: %s" % sorted(want - set(members)))
     man = json.loads(members["manifest.json"].decode())
-    if man.get("schema") != SCHEMA or not man.get("o_noatime") or man.get("atime_moved") or not man["fence"].get("clear"):
-        refuse(2, "the manifest records no O_NOATIME, a moved atime, or a fence that was not clear")
+    if man.get("schema") != SCHEMA or not man.get("o_noatime") or man.get("atime_moved") or not man["fence"].get("clear") \
+            or not man.get("fence_after", {}).get("clear"):
+        refuse(2, "the manifest records no O_NOATIME, a moved atime or stat, or a fence that was not clear")
+    if man.get("root") != (os.environ.get("RDX_FETCH_TEST_ROOT") or DECLARED_ROOT):
+        refuse(2, "the manifest's root %r is not the declared %s" % (man.get("root"), DECLARED_ROOT))
     recs = {r["path"]: r for r in man["files"]}
     if set(recs) != set(FILES):
         refuse(2, "the manifest does not list exactly the declared files")
     for rel in FILES:
+        r = recs[rel]
+        if r.get("stat_before") != r.get("stat_after") or not r.get("stat_before") \
+                or r["stat_before"].get("st_size") != r["bytes"]:
+            refuse(2, "%s: its stat moved during the read" % rel)
         if hashlib.sha256(members[rel]).hexdigest() != recs[rel]["sha256"] or len(members[rel]) != recs[rel]["bytes"]:
             refuse(2, "%s does not match its manifest sha256" % rel)
     for rel, data in members.items():
