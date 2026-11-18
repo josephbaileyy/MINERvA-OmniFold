@@ -92,6 +92,7 @@ def detex(s: str) -> str:
 
 # ---------------------------------------------------------------- 1. numbers diff
 
+FIRST_SECTION = "Introduction and motivation"     # section 1's title: the list pages end where it is set
 LIST_HEAD = re.compile(r"^\s*(Contents|List of Figures|List of Tables)\s*$", re.M)
 LEADER = re.compile(r"(\.\s){3,}\.?\s*\d+\s*$")
 NUM = r"[A-Z]?\d+(?:\.\d+)*[a-z]?"
@@ -105,16 +106,42 @@ HEAD_RE = re.compile(r"^\s*(?:[A-J]|\d{1,2})(?:\.\d{1,2}){0,3}\s+[A-Z][a-z]")
 TOKEN_RE = re.compile(r"\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?")
 
 
-def skip_pages(pages: list[str]) -> set[int]:
-    skip, in_list = set(), False
+HEADING_1 = re.compile(r"^\s*(?:1\s+)?" + re.escape(FIRST_SECTION) + r"\s*$")
+
+
+def front_lists(pages: list[str]) -> tuple[set[int], dict[int, int]]:
+    """The contents, list-of-figures and list-of-tables pages. Returns (pages to skip, {page: first kept line}). The
+    lists run from the "Contents" heading to section 1's heading line (FIRST_SECTION, alone on a line without a leader),
+    which may share its page with the end of the list of tables; on that page only the lines from the heading on count."""
+    start = next((i for i, p in enumerate(pages) if re.search(r"^\s*Contents\s*$", p, re.M)), None)
+    if start is not None:
+        for j in range(start + 1, len(pages)):
+            ls = pages[j].split("\n")
+            k = next((n for n, l in enumerate(ls) if HEADING_1.match(l)), None)
+            if k is not None:
+                return set(range(start, j)), {j: max(0, k - 1)}    # keep the "1" a split heading puts above
+    skip, in_list = set(), False                                   # fallback: list headings and leader pages
     for i, p in enumerate(pages):
-        lines = [l for l in p.split("\n") if l.strip()]
+        ls = [l for l in p.split("\n") if l.strip()]
         if LIST_HEAD.search(p):
             skip.add(i); in_list = True; continue
-        if in_list and lines and any(LEADER.search(l) for l in lines):     # a list continues while its page has leaders
+        if in_list and ls and any(LEADER.search(l) for l in ls):
             skip.add(i); continue
         in_list = False
-    return skip
+    return skip, {}
+
+
+def skip_pages(pages: list[str]) -> set[int]:
+    return front_lists(pages)[0]
+
+
+def trimmed(pages: list[str]) -> list[str]:
+    """pages with the list lines above section 1's heading removed on its page."""
+    _, cut = front_lists(pages)
+    out = list(pages)
+    for j, k in cut.items():
+        out[j] = "\n".join(out[j].split("\n")[k:])
+    return out
 
 
 def page_tokens(page: str, index: int | None = None) -> list[tuple[str, str]]:
@@ -194,7 +221,7 @@ def read_allowlist(path: Path) -> tuple[collections.Counter, list[str]]:
 
 
 def check_numbers(base_pdf: Path, new_pdf: Path, allowlist: Path):
-    bp, np_ = pdftext_pages(base_pdf), pdftext_pages(new_pdf)
+    bp, np_ = trimmed(pdftext_pages(base_pdf)), trimmed(pdftext_pages(new_pdf))
     bc, bctx, bskip = count_tokens(bp, line_set(np_))
     nc, nctx, nskip = count_tokens(np_, line_set(bp))
     allow, bad = read_allowlist(allowlist)
@@ -374,9 +401,9 @@ def check_build_tests(note_dir: Path):
 
 def self_test() -> bool:
     ok = True
-    base = ["Contents\n1 Intro . . . . . . 3\n\f", "Text with 0.535 and 2.27 (Fig. 8; §6.4).\nSee [3, 14].\n4\n",
+    base = ["Contents\n1 Intro . . . . . . 3\n\f", "1 Introduction and motivation\nText with 0.535 and 2.27 (Fig. 8; §6.4).\nSee [3, 14].\n4\n",
             "4.7 Which pieces exist\n300 replicas, Eq. (4.3)\n(12)\n5\n"]
-    new = ["Contents\n1 Intro . . . . . . 3\n", "Text with 0.535 (Figs. 9–10; §§4–6).\nSee [5].\n4\n",
+    new = ["Contents\n1 Intro . . . . . . 3\n", "1 Introduction and motivation\nText with 0.535 (Figs. 9–10; §§4–6).\nSee [5].\n4\n",
            "4.8 Which pieces exist\n300 replicas, Eq. (5.1)\n(13)\n6\n"]
     bc, _, bs = count_tokens(base)
     nc, _, ns = count_tokens(new)
