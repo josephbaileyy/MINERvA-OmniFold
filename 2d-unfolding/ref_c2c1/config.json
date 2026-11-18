@@ -5,7 +5,7 @@
  "code_sha256": {
   "2d-unfolding/re2/re2_driver.py": "938c53c5a018d20f5b148f6bdc2949e987a60085c5d0b7913ccdd5bb438b5a3b",
   "unbinned_unfolding/python/omnifold.py": "e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a",
-  "2d-unfolding/compare_to_paper_fullcov.py": "1dd5ff52d0c140921a3bcc411bd4108337dbe756c43bffc2c707eb2a8f633314",
+  "2d-unfolding/compare_to_paper_fullcov.py": "7e641754515d64b0361cdfbfe17966d514485ed819ea594298a262ea2c6de6dd",
   "nd-unfolding/s5c_unfold.py": "510d749a2e82fa448de6172753ae2adc9ebd81a89d4f18bf76beb5faa8bb3968"
  },
  "inputs": {

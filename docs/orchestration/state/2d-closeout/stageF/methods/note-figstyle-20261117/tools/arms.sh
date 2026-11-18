@@ -22,17 +22,32 @@ for arm in arm0 arm1; do
   [ -e "$O" ] && find "$O" -type f -delete; [ -e "$C" ] && find "$C" -type f -delete
   mkdir -p "$O" "$FIGRUN/home" "$FIGRUN/mplcfg-$(basename "$VENV")"
   args=(); for a in "$@"; do args+=("${a//@OUT@/$O}"); done
+  [ $arm = arm1 ] && [ -n "${ARM1_EXTRA:-}" ] && args+=($ARM1_EXTRA)   # arm 1 only (e.g. --sd-label)
   wrap=(); [ $arm = arm1 ] && wrap=("$N/tools/palette_run.py")
   (cd "$O" && env -i PATH="$VENV/bin:/usr/bin:/bin" HOME="$FIGRUN/home" MPLCONFIGDIR="$FIGRUN/mplcfg-$(basename "$VENV")" \
-     PYTHONDONTWRITEBYTECODE=1 PYTHONPATH="$PP" python3 "$N/tools/capture_palette.py" "$C" ${wrap[@]+"${wrap[@]}"} "${args[@]}" \
+     PYTHONDONTWRITEBYTECODE=1 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 \
+     PYTHONPATH="$PP" python3 "$N/tools/capture_palette.py" "$C" ${wrap[@]+"${wrap[@]}"} "${args[@]}" \
      > "$O/log.txt" 2>&1) || { echo "FAIL $FAM $arm: rc $? ($(tail -2 "$O/log.txt" | tr '\n' ' '))"; ok=0; }
 done
-INST=${INSTALLED:-$STEM.pdf}   # the installed file name, when the producer writes another (Figs. 30 and 34)
-inst=$(mktemp); git -C "$W" show "$BASE:docs/analysis-note/figures/$INST" > "$inst"
-echo "== $FAM ($STEM): arm 0 against the file installed at $BASE ($INST)"
-"$P" -I "$N/tools/bytes_but_date.py" "$inst" "$FIGRUN/$FAM/arm0/$STEM.pdf" || ok=0
-echo "raster: $("$P" -I "$R/fig-restyle-20261031/tools/raster.py" "$inst" "$FIGRUN/$FAM/arm0/$STEM.pdf")" || ok=0
-rm -f "$inst"
+if [ -n "${CLUSTER_CAP:-}" ]; then   # tier 2: the data identity against the cluster capture of the installed files
+  echo "== $FAM: arm 0 against the cluster capture ($(basename "$CLUSTER_CAP")): colour-free data and texts"
+  for j in "$N/runs/$FAM/arm0/capture/$FAM"/*.png.json; do
+    c="$CLUSTER_CAP/$(basename "$j")"
+    if [ -f "$c" ] && [ -n "${NUMERIC_REF:-}" ]; then   # data from a linear-algebra routine: numeric, and the texts
+      echo "-- $(basename "$j") (numeric against $(basename "$NUMERIC_REF"), rtol ${RTOL:-1e-9})"
+      "$P" -I "$N/tools/compare_numeric.py" "$NUMERIC_REF/$(basename "$j")" "$j" --rtol "${RTOL:-1e-9}" || ok=0
+      "$P" -I "$N/tools/compare_cluster.py" "$c" "$j" --texts-only || ok=0
+    elif [ -f "$c" ]; then echo "-- $(basename "$j")"; "$P" -I "$N/tools/compare_cluster.py" "$c" "$j" || ok=0
+    else echo "-- $(basename "$j"): no cluster capture (not installed)"; fi
+  done
+else
+  INST=${INSTALLED:-$STEM.pdf}   # the installed file name, when the producer writes another (Figs. 30 and 34)
+  inst=$(mktemp); git -C "$W" show "$BASE:docs/analysis-note/figures/$INST" > "$inst"
+  echo "== $FAM ($STEM): arm 0 against the file installed at $BASE ($INST)"
+  "$P" -I "$N/tools/bytes_but_date.py" "$inst" "$FIGRUN/$FAM/arm0/$STEM.pdf" || ok=0
+  echo "raster: $("$P" -I "$R/fig-restyle-20261031/tools/raster.py" "$inst" "$FIGRUN/$FAM/arm0/$STEM.pdf")" || ok=0
+  rm -f "$inst"
+fi
 echo "== $FAM: arm 1 against arm 0"
 c0=$(cd "$N/runs/$FAM/arm0/capture/$FAM" 2>/dev/null && ls *.json 2>/dev/null | sort | tr "\n" " ")
 c1=$(cd "$N/runs/$FAM/arm1/capture/$FAM" 2>/dev/null && ls *.json 2>/dev/null | sort | tr "\n" " ")

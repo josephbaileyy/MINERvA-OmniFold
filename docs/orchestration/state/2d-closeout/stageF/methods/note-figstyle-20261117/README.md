@@ -17,7 +17,8 @@ and the director assigned this pass to cov2d.
 | gbdt | 26–29 | installed |
 | cov5d, bkg5d | 30, 34 | pinned: the palette changes nothing; install lines added |
 | tier 1b | 31 | to do |
-| tier 2 | 8, 7, 9–10, 6, 11–14 | to do (the inputs were fetched on 2026-11-17) |
+| tier 2 | 8, 7, 9–10, 11–14 | installed (inputs fetched read-only on 2026-11-17) |
+| tier 2 | 6 | held: its install line and its re2-integration ledger G row move together |
 
 ## The palette and its rules
 
@@ -148,6 +149,51 @@ Arm 0 reproduces the file installed at `2fe070fec` (EQUAL-BUT-DATE, 0 px), and a
   background methods in Fig. 34.
 - **Install lines:** both gain an `install_palette_fig` line, so their installed bytes are pinned for the first time
   (COMBINED-PLAN.md section 5(b), tier 1b). The plan's panel split and labels for these figures are not made.
+
+## Tier 2: Figs. 7–14 (installed)
+
+**Inputs.** The fetch of 2026-11-17 (`figfetch/fetch-er-anc.sh` 867c0db4, on the director's go) copied E_R's
+`xsec.root` (a5c13fc3) and `cov_ptpl_minerva_inclusive_6GeV.root` (6c6dce72). The copy was read-only, with O_NOATIME
+reads, and the atimes didn't move. Both shas were checked on arrival.
+
+**The run.**
+- **Environment:** a local conda environment, ROOT 6.40.04, Python 3.11.18, matplotlib 3.10.8, numpy 1.26.4. Its ROOT
+  only reads the inputs. BLAS threads are fixed at 1.
+- **The steps:** family 2's six (note-figstyle-20261113, `tools/figc_family2.sh`), each with `--style restyle-2026-10
+  --print-font`.
+- **The remap:** each step goes through `tools/remap_anc.py`, which reads the producers' fixed ANC_DIR from a local
+  directory: the fetched `.root`, and the repository's committed `.txt` files, checked byte for byte. Not one
+  producer byte changes.
+
+**The identity (the director's ruling: no pixel identity across environments).** Arm 0 is judged on the data and the
+texts against the cluster's capture of the installed files (family 2, after arm):
+- `tools/compare_cluster.py` requires equal colour-free hashes and equal drawn texts. It passes for Figs. 7, 8, 9, 10,
+  13 and 14.
+- The tension figures (Figs. 11–12) draw eigenvalues and eigenvectors of the published covariance, which another LAPACK
+  gives only to rounding.
+  - `tools/compare_numeric.py` compares their arrays with fig-restyle run-a2's after capture, whose colour-free hashes
+    equal family 2's item for item. That capture is the one with its arrays committed.
+  - The bound is rtol 1e-5, below one colour level of a 256-level map.
+  - Measured: the spectrum differs by 6.4e-10, the χ² map by 8.9e-8 (in its colour-bar mesh), and the mode maps by
+    2.9e-6. No array is sign-flipped.
+  - Their 230 texts equal the cluster's.
+
+**Arm 1** passes compare.py in every step.
+- **The palette:** restyle_2026_10's this-work `#FF0000` and Tune `#4C72B0` move to `#c0392b` and `#2a78d6`, in Figs.
+  7, 9, 10 and 13 (`recolour.tsv`). Published stays black.
+- **Fig. 8:** drawn with main's `compare_to_paper_fullcov.py` 7e641754 (PR #1207's bytes; ref_c2c1/config.json carries
+  the same pin) and `--sd-label`.
+  - It is redrawn at its printed slot, 0.70 \textwidth = 4.55 × 2.3 in, with its text scaled by 8.5/14.5
+    (`resize.tsv`).
+  - Its histogram's y range is extended by 1.6 (`headroom.tsv`), so the mean / SD / χ² box sits above the bars.
+  - make_figures.sh's page-size assert and the left-panel crop box change in the same commit: 327.6 × 165.6 pt and
+    `0 0 172.5 165.6`. The tracked `paper_validation_residual.pdf`, which no `.tex` includes, is the old crop and is
+    left as it was.
+- **Not made here:**
+  - Fig. 6 (serif): it is installed by `install_re2_fig` and pinned by the ledger's G row, so its install and the row
+    move together, later;
+  - Fig. 7's slice-mosaic split, Figs. 9–10's slice labels, and Figs. 12/14's mode-rank labels and grey masks: each is
+    a producer change.
 
 ## CI: inherited failures
 

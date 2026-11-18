@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Tier 2's arm-0 identity: a local redraw of a Figs. 6-14 producer against the cluster's capture of the installed file.
 
-usage: python3 compare_cluster.py <cluster capture .png.json> <local arm-0 capture .png.json>
+usage: python3 compare_cluster.py <cluster capture .png.json> <local arm-0 capture .png.json> [--texts-only]
 
 Figs. 7-14 were drawn on Perlmutter (note-figstyle-20261113 family 2, the after arm, whose PDFs are the installed ones),
 and that run's capture.py recorded each figure's data artists. A local draw of the same producer on the fetched inputs
@@ -13,6 +13,7 @@ architectures"):
     not; the bars themselves are compared);
   - each figure's drawn texts must be the same strings (capture.py's textsizes.tsv beside the cluster record, and
     capture_palette.py's .texts beside the local one), as multisets.
+With --texts-only the data are not compared here (compare_numeric.py judges them, for the tension figures).
 Prints DATA-IDENTITY :: PASS or FAIL; exit 1 on FAIL.
 """
 import json
@@ -24,9 +25,14 @@ cj, lj = Path(sys.argv[1]), Path(sys.argv[2])
 a = [x for x in json.loads(cj.read_text()) if x["kind"] != "hist-input"]
 b = json.loads(lj.read_text())
 da, db = Counter(x["dhash"] for x in a), Counter(x["dhash"] for x in b)
-ok = da == db and len(a) > 0
-print(f"data: {len(a)} cluster items, {len(b)} local; colour-free hash multisets {'equal' if da == db else 'DIFFER'}")
-if da != db:
+texts_only = "--texts-only" in sys.argv
+ok = (da == db and len(a) > 0) or texts_only
+if texts_only:
+    print("data: not judged here")
+else:
+    same = "equal" if da == db else "DIFFER"
+    print(f"data: {len(a)} cluster items, {len(b)} local; colour-free hash multisets {same}")
+if da != db and not texts_only:
     print("  cluster only:", [(x["kind"], x["label"]) for x in a if (da - db)[x["dhash"]]][:6])
     print("  local only:  ", [(x["kind"], x["label"]) for x in b if (db - da)[x["dhash"]]][:6])
 ts = cj.with_name(cj.name[: -len(".json")] + ".textsizes.tsv")

@@ -52,6 +52,10 @@ HATCHES = {(r[0], r[1], r[2].upper()): (None if r[3] == "-" else r[3]) for r in 
 TEXT_FIXES = {}
 for r in table("text_fixes.tsv"):
     TEXT_FIXES.setdefault(r[0], []).append((r[1], r[2]))
+# headroom.tsv: (figure, axes index) -> factor on the y axis's upper limit (room for an in-panel text box)
+HEADROOM = {(r[0], int(r[1])): float(r[2]) for r in table("headroom.tsv")}
+# resize.tsv: figure -> (width in, height in, text scale)
+RESIZE = {r[0]: (float(r[1]), float(r[2]), float(r[3])) for r in table("resize.tsv")}
 DROP_TITLES = {r[0] for r in table("drop_titles.tsv")}   # figures whose figure title (suptitle) the caption carries
 GLOBAL_FIXES = (("E_{avail}", r"E_{\rm avail}"), ("p_z", r"p_\parallel"))
 for (fig, ident) in [((k[0]), v) for k, v in RECOLOUR.items()]:
@@ -243,6 +247,38 @@ def drop_title(fig, name):
         ax.set_position([b.x0, bottom + (b.y0 - bottom) * k, b.width, b.height * k])
 
 
+def headroom(fig, name):
+    """headroom.tsv: the y axis's upper limit of the named axes multiplied by the factor (the lower limit kept), so an
+    in-panel text box sits above the data. Axis range only: no datum changes."""
+    for (fname, n), k in HEADROOM.items():
+        if fname == name:
+            lo, hi = fig.axes[n].get_ylim()
+            fig.axes[n].set_ylim(lo, lo + (hi - lo) * k)
+
+
+def resize(fig, name):
+    """resize.tsv: the canvas drawn at its printed size (width, height in inches) and every text's size multiplied by
+    the scale, so a size in points prints at that size; then the figure is laid out again (tight_layout). Text and
+    layout only: no datum changes."""
+    if name not in RESIZE:
+        return
+    w, h, k = RESIZE[name]
+    ticks = {}   # each axis's tick-label size, read before anything is scaled (new ticks take the axis's own size)
+    for ax in fig.axes:
+        for which, axis in (("x", ax.xaxis), ("y", ax.yaxis)):
+            major = axis.get_major_ticks()
+            if major:
+                ticks[(id(ax), which)] = major[0].label1.get_fontsize()
+    for t, size in [(t, t.get_fontsize()) for t in fig.findobj(Text)]:
+        t.set_fontsize(size * k)
+    for ax in fig.axes:
+        for which in ("x", "y"):
+            if (id(ax), which) in ticks:
+                ax.tick_params(axis=which, which="both", labelsize=ticks[(id(ax), which)] * k)
+    fig.set_size_inches(w, h)
+    fig.tight_layout()
+
+
 def legend_entries(fig):
     legs = list(fig.legends) + [ax.get_legend() for ax in fig.axes if ax.get_legend() is not None]
     return sorted(t.get_text() for leg in legs for t in leg.get_texts())
@@ -257,5 +293,7 @@ def apply(fig, name, check_fit=True):
     before = legend_entries(fig)
     rebuild_legends(fig)
     power_of_ten(fig, check_fit)
+    headroom(fig, name)
+    resize(fig, name)
     if legend_entries(fig) != before:
         raise SystemExit(f"{name}: legend entries {before} became {legend_entries(fig)}")

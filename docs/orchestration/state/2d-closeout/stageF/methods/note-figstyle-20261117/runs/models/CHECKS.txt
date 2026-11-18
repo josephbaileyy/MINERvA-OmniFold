@@ -1,0 +1,20 @@
+# tier 2 models (2026-11-18T02:28:02Z): ROOT 6.40.04, matplotlib 3.10.8, numpy 1.26.4; inputs xsec.root a5c13fc3 and cov_ptpl_minerva_inclusive_6GeV.root 6c6dce72 (the fetch of 2026-11-17); 
+== models: arm 0 against the cluster capture (models): colour-free data and texts
+-- model_comp_projections.png.json
+data: 6 cluster items, 6 local; colour-free hash multisets equal
+texts: 50 cluster, 50 local; equal
+DATA-IDENTITY :: PASS
+-- model_comp_ratio_maps.png.json
+data: 6 cluster items, 6 local; colour-free hash multisets equal
+texts: 56 cluster, 56 local; equal
+DATA-IDENTITY :: PASS
+== models: arm 1 against arm 0
+captures: model_comp_projections.pdf.json model_comp_projections.png.json model_comp_ratio_maps.pdf.json model_comp_ratio_maps.png.json 
+  equal  models/model_comp_projections.pdf.json: 6 data artists, colours as the palette maps them, line styles as declared
+  equal  models/model_comp_projections.png.json: 6 data artists, colours as the palette maps them, line styles as declared
+  equal  models/model_comp_ratio_maps.pdf.json: 6 data artists, colours as the palette maps them, line styles as declared
+  equal  models/model_comp_ratio_maps.png.json: 6 data artists, colours as the palette maps them, line styles as declared
+COMPARE :: PASS
+text overlaps model_comp_projections: 4 -> 4 [['Published (PRD 104, 092007)', '$d\\sigma/dp_\\parallel$ (cm$^2$/(GeV/$c$)/nucleon)'], ['GENIE 2.12.6 + MINERvA Tune v1', '$d\\sigma/dp_\\parallel$ (cm$^2$/(GeV/$c$)/nucleon)'], ['$\\mathdefault{3}$', 'GENIE 2.12.6 + MINERvA Tune v1'], ['$\\mathdefault{4}$', 'Published (PRD 104, 092007)']]
+text overlaps model_comp_ratio_maps: 0 -> 0
+ARMS models :: PASS
