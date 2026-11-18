@@ -50,7 +50,7 @@ two-dimensional result and of the sixteen cells waits on the reporting protocol.
 \toprule
 Product & Estimator & Domain & Covariance & Status & Where \\
 \midrule
-2D cross section $d^{2}\sigma/(d\pT\,d\pPar)$ & LightGBM, 5 iterations, seed 42, refined negative-weight subtraction (configuration~(f)) & \lrval{q-ncells} of the 224 $(\pT,\pPar)$ bins & $Q_R$; median per bin \SI{\uqMedian}{\percent}, integral \SI{\uqIntegral}{\percent} & Decision open (protocol). Its interval coverage remains unvalidated. & \S\ref{sec:results}, \S\ref{sec:results-uq}; \S\ref{sec:limitations-2d} \\
+2D cross section $d^{2}\sigma/(d\pT\,d\pPar)$ & LightGBM, 5 iterations, seed 42, refined negative-weight subtraction (configuration~(f); exact-split cross-check) & \lrval{q-ncells} of the 224 $(\pT,\pPar)$ bins & $Q_R$; median per bin \SI{\uqMedian}{\percent}, integral \SI{\uqIntegral}{\percent} & Decision open (protocol). Its interval coverage remains unvalidated. & \S\ref{sec:results}, \S\ref{sec:results-uq}; \S\ref{sec:limitations-2d} \\
 \addlinespace
 Sixteen-cell five-observable result & Deterministic LightGBM, 5 iterations, refined negative-weight subtraction (configuration~(e)), projected onto 16 coarse cells & R00--R15: the sixteen reported cells & $C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}$; median per-cell uncertainty of \fvval{sigmed-reported}\% & Decision open (protocol). The coverage of the result's intervals has not been validated. & \S\ref{sec:fived16}; \S\ref{sec:limitations-fived16} \\
 \addlinespace
@@ -68,7 +68,7 @@ Extended-fiducial study ($\sigma_{\mathrm{ext}}$) & Unbinned unfolding with trut
 % Sources of each cell (file:line at 557809de; quotes verbatim unless marked [shortened: ...]):
 % Row 2D
 %   estimator  sec_limitations.tex:102 "LightGBM, 5 iterations, seed 42, refined negative-weight subtraction (configuration~(f); exact-split
-%              cross-check)" [shortened: the parenthetical "exact-split cross-check" dropped]
+%              cross-check)" (restored in full after Grok's read je6: the qualifier is kept)
 %   domain     \lrval{q-ncells} (values_landed.tex, lr@q-ncells = 205); sec_method.tex:207 "205 of 224 are reported"
 %   covariance sec_limitations.tex:104 "median per bin \SI{\uqMedian}{\percent}, integral \SI{\uqIntegral}{\percent}"; Q_R as
 %              sec_front.tex:55
