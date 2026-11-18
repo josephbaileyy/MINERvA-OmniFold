@@ -19,7 +19,7 @@ ND = HERE.parent
 REPO = ND.parent
 FILES = ("rdx_read.py", "test_rdx_read.py")
 RD = FILES[0]
-EXPECTED_TESTS = 31
+EXPECTED_TESTS = 34
 MUTATIONS = [
     # NC-X and the families
     ("NC-X not checked", RD, '    if not (same_bits(x0[1], xl[1]) and same_bits(x0[3], xl[3])):\n', "    if False:\n",
@@ -49,7 +49,7 @@ MUTATIONS = [
      "test_the_task_table_and_manifests_are_bound_and_unique"),
     ("duplicate task rows allowed", RD, "        if task in out:\n            fail(f\"{path}: the task {task} appears twice\")\n",
      "        if False:\n            pass\n", "test_the_task_table_and_manifests_are_bound_and_unique"),
-    ("duplicate manifest keys allowed", RD, "        if name in out:\n", "        if False:\n",
+    ("duplicate manifest keys allowed", RD, "        if key in out:\n            fail(f\"{path}: the path", "        if False:\n            fail(f\"{path}: the path",
      "test_the_task_table_and_manifests_are_bound_and_unique"),
     # arrays and identity
     ("identity not enforced", RD, '        bad = identity_problems(prod[task][0], s, pins, None if task == "X0" else ref)\n        if bad:\n',
@@ -64,18 +64,43 @@ MUTATIONS = [
      '"bkg_dump_sha256": pins["lat_RDX_ALL_bkg.npz"]', "test_a_product_that_is_not_its_declared_task_refuses"),
     ("estimator parameters not compared", RD, '        if params != ref.get("estimator_params"):\n', "        if False:\n",
      "test_parameters_must_be_present_and_x0s"),
-    ("absent estimator parameters allowed", RD, "    if not params or not isinstance(params, (dict, list)):\n", "    if False:\n",
+    ("absent estimator parameters allowed", RD, "    if not isinstance(params, list) or len(params) != 3:\n", "    if False:\n",
      "test_parameters_must_be_present_and_x0s"),
-    ("predict count unchecked", RD, ' or r.get("predict_calls") != ITERS:', ":",
+    ("predict count unchecked", RD, ' and same(r.get("predict_calls"), ITERS)):', "):",
      "test_a_product_that_is_not_its_declared_task_refuses"),
     ("A7 pin unchecked", RD, '        if r.get("a7_hypothesis_sha256") != A7_HYPOTHESIS_SHA256:\n', "        if False:\n",
      "test_a_product_that_is_not_its_declared_task_refuses"),
-    ("transfer iterations unchecked", RD, "    if [r.get(\"iteration\") if isinstance(r, dict) else None for r in recs] != list(range(ITERS)):\n",
+    ("transfer iterations unchecked", RD, "    if not same([r.get(\"iteration\") if isinstance(r, dict) else None for r in recs], list(range(ITERS))):\n",
      "    if False:\n", "test_the_transfer_records_are_the_producers"),
     ("transfer cell_bias schema unchecked", RD, "        if not isinstance(cb, list) or len(cb) != 16 or not all(v is None or finite(v) for v in cb):\n",
      "        if False:\n", "test_the_transfer_records_are_the_producers"),
     ("transfer records on a plain arm allowed", RD, '    elif "transfer_records" in r:\n', "    elif False:\n",
      "test_the_transfer_records_are_the_producers"),
+    # rev 4: the producer's types, domains and manifests
+    ("fixed parameters not compared", RD, '    bad = [f"{what}.{k} {params.get(k)!r} != {v!r}" for k, v in fixed.items() if not same(params.get(k), v)]\n',
+     "    bad = []\n", "test_parameters_outside_the_producers_domain_refuse"),
+    ("parameter domains unchecked", RD, "        if k not in params or not ok(params[k]):\n", "        if False:\n",
+     "test_parameters_outside_the_producers_domain_refuse"),
+    ("unknown parameter keys allowed", RD, "    if unknown:\n", "    if False:\n",
+     "test_parameters_outside_the_producers_domain_refuse"),
+    ("JSON types ignored (5.0 == 5, True == 1)", RD, "    return type(v) is type(want) and v == want\n", "    return v == want\n",
+     "test_scalars_have_the_producers_json_types"),
+    ("float transfer iterations allowed", RD,
+     '    if not same([r.get("iteration") if isinstance(r, dict) else None for r in recs], list(range(ITERS))):\n',
+     '    if [r.get("iteration") if isinstance(r, dict) else None for r in recs] != list(range(ITERS)):\n',
+     "test_the_transfer_records_are_the_producers"),
+    ("a bool n_masked allowed", RD, 'isint(r["n_masked"]) and r["n_masked"] > 0', 'isinstance(r["n_masked"], int) and r["n_masked"] > 0',
+     "test_the_transfer_records_are_the_producers"),
+    ("a negative rel_rms allowed", RD, '\n                and r["rel_rms"] >= 0):\n', '):\n',
+     "test_the_transfer_records_are_the_producers"),
+    ("acceptance edge order unchecked", RD, "        elif any(b < a for a, b in zip(edges, edges[1:])) or not edges[-1] > edges[0]:\n",
+     "        elif False:\n", "test_the_transfer_records_are_the_producers"),
+    ("shape rank unchecked", RD, " or shp.shape != (len(fine_shape),) or", " or",
+     "test_product_arrays_must_be_the_fine_grids"),
+    ("manifest paths not normalized", RD, '        if key != rel_path or key.startswith(("../", "/")) or key == "..":\n', "        if False:\n",
+     "test_the_task_table_and_manifests_are_bound_and_unique"),
+    ("malformed manifest lines allowed", RD, "        if not m:\n            fail(f\"{path}: a malformed manifest line",
+     "        if False:\n            fail(f\"{path}: a malformed manifest line", "test_the_task_table_and_manifests_are_bound_and_unique"),
     # phi, sigma, integrals, references
     ("sigma finiteness unchecked", RD, "        if v.shape != (16,) or not np.all(np.isfinite(v)) or np.any(v <= 0):\n",
      "        if v.shape != (16,) or np.any(v <= 0):\n", "test_phi_and_sigma_are_committed_finite_and_positive"),

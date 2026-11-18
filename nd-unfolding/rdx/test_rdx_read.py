@@ -16,13 +16,16 @@ sys.path.insert(0, str(HERE))
 import rdx_read as R  # noqa: E402
 
 SPEC = R.tasks()
-PINS = {k.lstrip("./"): v for k, v in R.sums(R.SUMS).items()}
+PINS = dict(R.sums(R.SUMS))
 PINS["ratio"] = R.sums(R.PVL_SUMS)[R.RATIO_KEY]
 PHI = np.full(16, 0.001)
 SIGMA = np.full(16, 0.02)
 IDENT = lambda x: np.asarray(x, float)  # noqa: E731
 BASE = np.linspace(1.0, 2.5, 16)
 FINE = (16,)
+PRODUCER = json.loads((HERE.parents[1] / "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e2/receipts/sweep-a1/e2a1_probe.out.json").read_text())["metas"]["tune_v1"]
+EST_PARAMS = PRODUCER["estimator_params"]          # the committed pvl-unfold record: the same producer, rung and seed
+REFINE_PARAMS = PRODUCER["refinement"]["classifier_params"]
 DECL = HERE.parents[1] / "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/redump-f12i-20261112/RDX-DECLARATION.md"
 
 
@@ -51,8 +54,8 @@ def meta_for(task: str) -> dict:
             "ratio_sha256": PINS["ratio"], "estimator_seed": 42, "iters": 5, "threads": 32,
             "input_npz_sha256": PINS["lat_zero.npz" if lat else "lat_RDX_ALL.npz"],
             "bkg_dump_sha256": PINS["lat_zero_bkg.npz" if lat else "lat_RDX_ALL_bkg.npz"],
-            "estimator_params": {"n_estimators": 100},
-            "refinement": {"ran": not s["closure"], "classifier_params": {"a": 1}}, "rdx": rdx}
+            "estimator_params": json.loads(json.dumps(EST_PARAMS)),
+            "refinement": {"ran": not s["closure"], "classifier_params": json.loads(json.dumps(REFINE_PARAMS))}, "rdx": rdx}
 
 
 def truth_for(task):
@@ -189,6 +192,17 @@ class Guards(unittest.TestCase):
             s.write_text(f"{'a' * 64}  ./x.npz\n{'b' * 64}  ./x.npz\n")
             with self.assertRaisesRegex(SystemExit, "appears twice"):
                 R.sums(s)
+            for text, why in ((f"{'a' * 64}  ./x.npz\n{'b' * 64}  ./sub/../x.npz\n", "not a normal relative path"),
+                              (f"{'a' * 64}  ./x.npz\n{'b' * 64}  x.npz\n", "malformed manifest line"),
+                              (f"{'A' * 64}  ./x.npz\n", "malformed manifest line"),
+                              (f"{'a' * 63}  ./x.npz\n", "malformed manifest line"),
+                              (f"{'a' * 64}  ./../x.npz\n", "not a normal relative path"),
+                              (f"{'a' * 64}  ./x.npz extra\n", "malformed manifest line")):
+                s.write_text(text)
+                with self.assertRaisesRegex(SystemExit, why, msg=text):
+                    R.sums(s)
+            self.assertIn("lat_RDX_ALL.npz", R.sums(R.SUMS))
+            self.assertIn(R.RATIO_KEY, R.sums(R.PVL_SUMS))
         self.assertEqual(R.sha256(R.TASKS), R.TASKS_SHA256)
 
     def test_a_product_that_is_not_its_declared_task_refuses(self):
@@ -212,21 +226,60 @@ class Guards(unittest.TestCase):
 
     def test_parameters_must_be_present_and_x0s(self):
         prod = clean_prod()
-        prod["X1"][0]["estimator_params"] = {"n_estimators": 99}
+        prod["X1"][0]["estimator_params"][0]["min_child_samples"] = 21
         self.assertIn("estimator_params differ from X0's",
                       R.identity_problems(prod["X1"][0], SPEC["X1"], PINS, prod["X0"][0]))
         self.assertFalse(R.identity_problems(prod["X1p"][0], SPEC["X1p"], PINS, prod["X0"][0]))
-        for t in SPEC:
-            prod[t][0]["estimator_params"] = None
-        self.assertIn("estimator_params are absent", R.identity_problems(prod["X0"][0], SPEC["X0"], PINS, None))
-        prod = clean_prod()
-        prod["X0"][0]["refinement"]["classifier_params"] = None
-        self.assertIn("the refinement's classifier_params are absent",
+        prod["X0"][0]["estimator_params"] = None
+        self.assertIn("estimator_params are not the loop's three estimators' records",
                       R.identity_problems(prod["X0"][0], SPEC["X0"], PINS, None))
         prod = clean_prod()
-        prod["X1"][0]["refinement"]["classifier_params"] = {"a": 2}
+        prod["X0"][0]["refinement"]["classifier_params"] = None
+        self.assertIn("refinement.classifier_params is not a parameter record",
+                      R.identity_problems(prod["X0"][0], SPEC["X0"], PINS, None))
+        prod = clean_prod()
+        prod["X1"][0]["refinement"]["classifier_params"]["min_child_samples"] = 21
         self.assertIn("refinement parameters differ from X0's",
                       R.identity_problems(prod["X1"][0], SPEC["X1"], PINS, prod["X0"][0]))
+
+    def test_the_producers_committed_parameters_pass(self):
+        for name, p in zip(("clf1", "clf2", "reg"), EST_PARAMS):
+            self.assertEqual(R.params_problems(p, R.EST_FIXED, R.EST_ONLY, name), [])
+        self.assertEqual(R.params_problems(REFINE_PARAMS, R.REFINE_FIXED, {}, "refine"), [])
+
+    def test_parameters_outside_the_producers_domain_refuse(self):
+        def est(k, v, which="est"):
+            p = json.loads(json.dumps(EST_PARAMS[0] if which == "est" else REFINE_PARAMS))
+            if v is KeyError:
+                p.pop(k)
+            else:
+                p[k] = v
+            return R.params_problems(p, R.EST_FIXED if which == "est" else R.REFINE_FIXED,
+                                     R.EST_ONLY if which == "est" else {}, "p")
+        for k, v in (("n_estimators", -1), ("n_estimators", 100.0), ("n_estimators", True), ("learning_rate", "0.1"),
+                     ("deterministic", 1), ("num_threads", 8), ("random_state", 43), ("subsample", 1.5),
+                     ("min_child_samples", -3), ("max_depth", 0), ("boosting_type", "dart"), ("reg_alpha", -0.1),
+                     ("objective", "binary"), ("min_split_gain", KeyError), ("surprise", 1)):
+            self.assertTrue(est(k, v), f"{k}={v!r} must refuse")
+        self.assertTrue(est("n_estimators", -1, "refine"))
+        self.assertTrue(est("random_state", 42, "refine"), "the refinement's seed is the estimator seed + 3")
+        prod = clean_prod()
+        for t in SPEC:
+            for p in prod[t][0]["estimator_params"]:
+                p["n_estimators"] = -1
+        self.assertTrue(R.identity_problems(prod["X0"][0], SPEC["X0"], PINS, None),
+                        "an invalid configuration shared by all fifteen still refuses")
+
+    def test_scalars_have_the_producers_json_types(self):
+        for task, key, value in (("X1", ("iters",), 5.0), ("X1c", ("closure",), 1), ("X1", ("estimator_seed",), 42.0),
+                                 ("X1t", ("rdx", "transfer"), 1), ("X1", ("rdx", "rows"), True),
+                                 ("X1", ("rdx", "fit_calls"), 5.0), ("X1p", ("rdx", "truthx_permute"), 20261113.0),
+                                 ("X1w", ("rdx", "weight_sums"), [10] * 5)):
+            prod = clean_prod()
+            m = prod[task][0]
+            (m["rdx"] if key[0] == "rdx" else m)[key[-1]] = value
+            self.assertTrue(R.identity_problems(m, SPEC[task], PINS, None if task == "X0" else prod["X0"][0]),
+                            f"{task} {key}={value!r} must refuse")
 
     def test_the_transfer_records_are_the_producers(self):
         def problems(recs, task="X1t"):
@@ -237,8 +290,8 @@ class Guards(unittest.TestCase):
         good = [record(k) for k in range(5)]
         self.assertEqual(problems(good), [])
         self.assertIn("a transfer step must carry one transfer record per iteration", problems(good[:4]))
-        self.assertIn("the transfer records' iterations are not 0..4 in order", problems([record(0)] * 5))
-        self.assertIn("the transfer records' iterations are not 0..4 in order", problems(good[::-1]))
+        self.assertIn("the transfer records' iterations are not the integers 0..4 in order", problems([record(0)] * 5))
+        self.assertIn("the transfer records' iterations are not the integers 0..4 in order", problems(good[::-1]))
         bad = [record(k) for k in range(5)]
         bad[4]["cell_bias"] = [0.0]
         self.assertTrue(any("cell_bias" in p for p in problems(bad)))
@@ -248,6 +301,18 @@ class Guards(unittest.TestCase):
         self.assertEqual(problems(bad), [])
         bad[4].pop("rel_rms")
         self.assertIn("a transfer record does not have summarize's fields", problems(bad))
+        floats = [record(k) for k in range(5)]
+        floats[4]["iteration"] = 4.0
+        self.assertIn("the transfer records' iterations are not the integers 0..4 in order", problems(floats))
+        for field, value, why in (("n_masked", True, "n_masked"), ("rel_rms", -1.0, "rel_rms"),
+                                  ("acceptance_edges", [1.0 - i / 10 for i in range(11)], "not increasing"),
+                                  ("acceptance_edges", [0.5] * 11, "not increasing")):
+            recs = [record(k) for k in range(5)]
+            recs[2][field] = value
+            self.assertTrue(any(why in p for p in problems(recs)), f"{field}={value!r}")
+        tied = [record(k) for k in range(5)]
+        tied[2]["acceptance_edges"] = [0.0, 0.1, 0.1, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+        self.assertEqual(problems(tied), [], "numpy.quantile can repeat an edge on tied acceptances")
         prod = clean_prod()
         prod["X1"][0]["rdx"]["transfer_records"] = good
         self.assertIn("a step without the transfer diagnostic carries transfer records",
@@ -259,6 +324,7 @@ class Guards(unittest.TestCase):
                             (lambda p: p.__setitem__("X1", (p["X1"][0], BASE.astype(np.float32), None, p["X1"][3])),
                              "xsec_flat is"),
                             (lambda p: p.__setitem__("X1", (p["X1"][0], BASE, None, np.array([4, 4]))), "shape"),
+                            (lambda p: p.__setitem__("X1", (p["X1"][0], BASE, None, np.array([FINE]))), "shape"),
                             (lambda p: p.__setitem__("X1", (p["X1"][0], BASE, BASE.copy(), p["X1"][3])), "exactly by the closures"),
                             (lambda p: p.__setitem__("X1c", (p["X1c"][0], BASE, None, p["X1c"][3])), "exactly by the closures")):
             prod = clean_prod()

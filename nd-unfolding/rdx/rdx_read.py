@@ -37,6 +37,7 @@ import argparse
 import hashlib
 import json
 import math
+import posixpath
 import re
 import sys
 from pathlib import Path
@@ -61,7 +62,33 @@ SUMS = _HERE / "rdx-inputs-SHA256SUMS"
 PVL_SUMS = _PVL / "prep-SHA256SUMS"
 DEFINITION = _PVL / "readouts" / "h2_definition.json"
 STAGE1 = _ROOT / "docs/orchestration/state/s5p/stage1/stage1_inspect.json"
-RATIO_KEY = "./ratios/L-5D-PV/tune_v1.json"
+RATIO_KEY = "ratios/L-5D-PV/tune_v1.json"
+SUM_LINE = re.compile(r"^([0-9a-f]{64})  \./([A-Za-z0-9_.\-/]+)$")
+# The producer's estimator parameters: s5c_unfold.unfold records get_params() of the loop's three estimators
+# (omnifold_nn_core.make_estimators: n_estimators 100, num_leaves 8, learning_rate 0.1, verbose -1, random_state = the
+# seed) with s5c_unfold.config_params("deterministic", 32); the refinement's classifier is candidate R
+# (pvl_analyze.py:35: n_estimators 400, num_leaves 31, random_state = seed + 3) with the same deterministic extras. The
+# key set and the defaults' domains are those of the committed pvl-unfold record
+# fd/gencmp-e2/receipts/sweep-a1/e2a1_probe.out.json (metas.tune_v1), the same producer at the same rung and seed.
+DETERMINISTIC = {"bin_construct_sample_cnt": 2**31 - 1, "deterministic": True, "force_row_wise": True, "num_threads": 32}
+EST_FIXED = {"n_estimators": 100, "num_leaves": 8, "learning_rate": 0.1, "verbose": -1, "random_state": 42, **DETERMINISTIC}
+REFINE_FIXED = {"n_estimators": 400, "num_leaves": 31, "learning_rate": 0.1, "verbose": -1, "random_state": 45, **DETERMINISTIC}
+LGBM_DOMAINS = {  # the remaining get_params keys: LightGBM's defaults' types and ranges
+    "boosting_type": lambda v: v == "gbdt",
+    "colsample_bytree": lambda v: isfloat(v) and 0.0 < v <= 1.0,
+    "max_depth": lambda v: isint(v) and (v == -1 or v >= 1),
+    "min_child_samples": lambda v: isint(v) and v >= 0,
+    "min_child_weight": lambda v: isfloat(v) and v >= 0.0,
+    "min_split_gain": lambda v: isfloat(v) and v >= 0.0,
+    "n_jobs": lambda v: v is None or isint(v),
+    "reg_alpha": lambda v: isfloat(v) and v >= 0.0,
+    "reg_lambda": lambda v: isfloat(v) and v >= 0.0,
+    "subsample": lambda v: isfloat(v) and 0.0 < v <= 1.0,
+    "subsample_for_bin": lambda v: isint(v) and v >= 1,
+    "subsample_freq": lambda v: isint(v) and v >= 0,
+}
+EST_ONLY = {"class_weight": lambda v: v is None, "importance_type": lambda v: v in ("split", "gain"),
+            "objective": lambda v: v is None}
 AXES5 = ["pt", "pz", "eavail", "q3", "W"]
 SEED, ITERS, THREADS = 42, 5, 32
 N_DECILES = 10  # rsn_unfold.py:65
@@ -119,14 +146,22 @@ def sha256(path: Path) -> str:
 
 
 def sums(path: Path) -> dict:
+    """{relative path: sha256} from `<sha256>  ./<path>` lines. Each path is normalized once (posixpath.normpath of the
+    text after './'), must already be in normal form, and may appear once; a malformed line or digest refuses."""
     out = {}
     for ln in Path(path).read_text().splitlines():
         if not ln.strip():
             continue
-        sha, name = ln.split()
-        if name in out:
-            fail(f"{path}: the key {name} appears twice")
-        out[name] = sha
+        m = SUM_LINE.match(ln)
+        if not m:
+            fail(f"{path}: a malformed manifest line: {ln[:100]!r}")
+        sha, rel_path = m.groups()
+        key = posixpath.normpath(rel_path)
+        if key != rel_path or key.startswith(("../", "/")) or key == "..":
+            fail(f"{path}: {rel_path!r} is not a normal relative path")
+        if key in out:
+            fail(f"{path}: the path {key} appears twice")
+        out[key] = sha
     return out
 
 
@@ -193,19 +228,49 @@ def finite(v) -> bool:
     return isinstance(v, (int, float)) and not isinstance(v, bool) and math.isfinite(v)
 
 
+def isint(v) -> bool:
+    return type(v) is int
+
+
+def isfloat(v) -> bool:
+    return type(v) is float and math.isfinite(v)
+
+
+def same(v, want) -> bool:
+    """Equal in value AND in JSON type: 5.0 is not 5, True is not 1."""
+    if isinstance(want, list):
+        return isinstance(v, list) and len(v) == len(want) and all(same(a, b) for a, b in zip(v, want))
+    return type(v) is type(want) and v == want
+
+
+def params_problems(params, fixed: dict, extra: dict, what: str) -> list:
+    if not isinstance(params, dict):
+        return [f"{what} is not a parameter record"]
+    bad = [f"{what}.{k} {params.get(k)!r} != {v!r}" for k, v in fixed.items() if not same(params.get(k), v)]
+    domains = {**LGBM_DOMAINS, **extra}
+    for k, ok in domains.items():
+        if k not in params or not ok(params[k]):
+            bad.append(f"{what}.{k} {params.get(k)!r} is outside the producer's domain")
+    unknown = set(params) - set(fixed) - set(domains)
+    if unknown:
+        bad.append(f"{what} has keys the producer does not write: {sorted(unknown)}")
+    return bad
+
+
 def transfer_problems(recs) -> list:
     """rsn_unfold.summarize's records, one per iteration, iterations 0..4 in order (rdx_unfold: k = len(fits))."""
     if not isinstance(recs, list) or len(recs) != ITERS:
         return ["a transfer step must carry one transfer record per iteration"]
     bad = []
-    if [r.get("iteration") if isinstance(r, dict) else None for r in recs] != list(range(ITERS)):
-        bad.append("the transfer records' iterations are not 0..4 in order")
+    if not same([r.get("iteration") if isinstance(r, dict) else None for r in recs], list(range(ITERS))):
+        bad.append("the transfer records' iterations are not the integers 0..4 in order")
     for r in recs:
         if not isinstance(r, dict) or set(r) != TRANSFER_KEYS:
             bad.append("a transfer record does not have summarize's fields")
             continue
         cb, dec, edges = r["cell_bias"], r["acceptance_decile_rel_bias"], r["acceptance_edges"]
-        if not (isinstance(r["n_masked"], int) and r["n_masked"] > 0 and finite(r["rel_bias"]) and finite(r["rel_rms"])):
+        if not (isint(r["n_masked"]) and r["n_masked"] > 0 and finite(r["rel_bias"]) and finite(r["rel_rms"])
+                and r["rel_rms"] >= 0):
             bad.append(f"iteration {r['iteration']}: n_masked, rel_bias or rel_rms is not valid")
         if not isinstance(cb, list) or len(cb) != 16 or not all(v is None or finite(v) for v in cb):
             bad.append(f"iteration {r['iteration']}: cell_bias is not 16 finite values or None")
@@ -213,6 +278,10 @@ def transfer_problems(recs) -> list:
             bad.append(f"iteration {r['iteration']}: acceptance_decile_rel_bias is not {N_DECILES} values")
         if not isinstance(edges, list) or len(edges) != N_DECILES + 1 or not all(finite(v) for v in edges):
             bad.append(f"iteration {r['iteration']}: acceptance_edges is not {N_DECILES + 1} values")
+        elif any(b < a for a, b in zip(edges, edges[1:])) or not edges[-1] > edges[0]:
+            # numpy.quantile (rsn_unfold.summarize) can repeat an edge on tied acceptances, so a repeat is allowed;
+            # a decrease, or a degenerate range, is not
+            bad.append(f"iteration {r['iteration']}: acceptance_edges are not increasing")
     return bad
 
 
@@ -225,11 +294,14 @@ def identity_problems(meta: dict, spec: dict, pins: dict, ref: dict | None) -> l
              "input_npz_sha256": pins["lat_zero.npz" if lat else "lat_RDX_ALL.npz"],
              "bkg_dump_sha256": pins["lat_zero_bkg.npz" if lat else "lat_RDX_ALL_bkg.npz"]}
     for k, v in ident.items():
-        if meta.get(k) != v:
+        if not same(meta.get(k), v):
             bad.append(f"{k} {meta.get(k)!r} != {v!r}")
     params = meta.get("estimator_params")
-    if not params or not isinstance(params, (dict, list)):
-        bad.append("estimator_params are absent")
+    if not isinstance(params, list) or len(params) != 3:
+        bad.append("estimator_params are not the loop's three estimators' records")
+    else:
+        for name, p in zip(("clf1", "clf2", "reg"), params):
+            bad += params_problems(p, EST_FIXED, EST_ONLY, f"estimator_params[{name}]")
     refine = meta.get("refinement") or {}
     if spec["closure"]:
         if refine.get("ran") is not False:
@@ -237,8 +309,7 @@ def identity_problems(meta: dict, spec: dict, pins: dict, ref: dict | None) -> l
     else:
         if refine.get("ran") is not True:
             bad.append("the refinement must have run")
-        if not refine.get("classifier_params") or not isinstance(refine.get("classifier_params"), dict):
-            bad.append("the refinement's classifier_params are absent")
+        bad += params_problems(refine.get("classifier_params"), REFINE_FIXED, {}, "refinement.classifier_params")
     if ref is not None:
         if params != ref.get("estimator_params"):
             bad.append("estimator_params differ from X0's")
@@ -252,17 +323,17 @@ def identity_problems(meta: dict, spec: dict, pins: dict, ref: dict | None) -> l
             "transfer": spec["transfer"], "truthx_permute": spec["permute"],
             "truthx_sidecar_sha256": pins["truthx_RDX_ALL.npz"] if wide else None}
     for k, v in want.items():
-        if r.get(k) != v:
+        if not same(r.get(k), v):
             bad.append(f"rdx.{k} {r.get(k)!r} != {v!r}")
     instrumented = wide or spec["weight"] != "none" or spec["transfer"]
     if instrumented:
-        if r.get("fit_calls") != ITERS or r.get("predict_calls") != ITERS:
+        if not (same(r.get("fit_calls"), ITERS) and same(r.get("predict_calls"), ITERS)):
             bad.append(f"rdx.fit_calls {r.get('fit_calls')!r} or predict_calls {r.get('predict_calls')!r} != {ITERS}")
-        if not (isinstance(r.get("rows"), int) and r["rows"] > 0):
+        if not (isint(r.get("rows")) and r["rows"] > 0):
             bad.append("rdx.rows is not a positive count")
         ws = r.get("weight_sums")
         if spec["weight"] != "none":
-            if not isinstance(ws, list) or len(ws) != ITERS or not all(finite(v) and v > 0 for v in ws):
+            if not isinstance(ws, list) or len(ws) != ITERS or not all(isfloat(v) and v > 0 for v in ws):
                 bad.append("a weighted step must record five positive weight sums")
         elif ws is not None:
             bad.append("an unweighted step must record no weight sums")
@@ -293,7 +364,7 @@ def array_problems(x, xt, shp, closure: bool, n_fine: int, fine_shape: tuple) ->
             bad.append(f"{name} has non-finite values")
     if (xt is not None) != closure:
         bad.append("a truth reference is carried exactly by the closures")
-    if shp.dtype.kind not in "iu" or tuple(int(v) for v in shp.ravel()) != tuple(fine_shape):
+    if shp.dtype.kind not in "iu" or shp.shape != (len(fine_shape),) or tuple(int(v) for v in shp) != tuple(fine_shape):
         bad.append(f"shape {shp.tolist()} is not the fine grid {list(fine_shape)}")
     return bad
 
@@ -447,7 +518,7 @@ def main(argv=None) -> int:
     import build_cmodel5d as B5  # numpy only; imported here so the tests need no definition files
     import pvl_lib as L
     spec = tasks()
-    pins = {k.lstrip("./"): v for k, v in sums(SUMS).items()}
+    pins = dict(sums(SUMS))
     pins["ratio"] = sums(PVL_SUMS)[RATIO_KEY]
     fine_shape = tuple(len(L.FINE[ax]) - 1 for ax in L.AXES5)
     rmap, n = B5.load_definition(a.definition, a.stage1, B5.EXPECT)[:2]
