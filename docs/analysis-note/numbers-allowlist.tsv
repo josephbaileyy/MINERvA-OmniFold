@@ -223,3 +223,8 @@ token	delta	owner	item	reason
 52	+1	cov2d	C_model boundary cells (D)	intended duplicate: a choice made after the measurement must stay visible in the body (DECISION-20261118 rule D) - sec:uq-2d-scope "Identified after the measurement, these 52 cells hold 59.4 % of the trace" - and App. I's Table 40 row records it (journal-editor, ca8dc72d1)
 59.4	+1	cov2d	C_model boundary cells (D)	as the 52 row: the same sentence in sec:uq-2d-scope and its App. I Table 40 row
 0.1	+1	cov2d	C_model boundary cells (D)	as the 52 row: the ratio-step threshold "a step of more than 0.1", sec:uq-2d-scope and the App. I Table 40 row
+# journal-editor's H3-028 row (Table 40, the 135 MeV constant), confirmed 2026-11-18: intended duplicates of sec_3d.tex:42
+135	+1	journal-editor	H3-028 row	the App. I row for the 135 MeV constant repeats sec_3d.tex:42 (DECISION-20261101 item 1); the body keeps its numbers
+139.57	+1	journal-editor	H3-028 row	the same row: "rather than the charged-pion mass of about 139.57 MeV"
+0.19	+1	journal-editor	H3-028 row	the same row: the measured shift, at most 0.19 sigma in any cell (\fvval{eav-cellmax})
+0.42	+1	journal-editor	H3-028 row	the same row: the coherent shift, 0.42 sigma (\fvval{eav-coherent})
