@@ -1,8 +1,8 @@
-# HEAD d913991469fe74a092e09938d30af34aadb26967
-# clean clone, serial, Python 3.12.2, numpy 1.26.4, 2026-11-18T07:55:40Z
-# b94153987e3e578e64dea7fc678dbb56485ad8d1afb91f18f199c60566c9cb88  rdx_read.py
-# 5ace928afd578a69cb1e43a76bc8c9a9d32746f7256001f1aa2de2542768d688  test_rdx_read.py
-# 2e74d688b25a8cef1c8d38bf33850d38578934c1ff7f53531186eefcf33e8427  rdx_read_mutation.py
+# HEAD d24897fea64dc4608172b57735bccd7b3d361aa6
+# clean clone, serial, Python 3.12.2, numpy 1.26.4, 2026-11-18T08:19:23Z
+# cc25f176d2aa01528389a08e7aca5ffa2e2b9950835c76a55028f28a759e1d44  rdx_read.py
+# 6a5f42a92e3855bf8393e5be5d3e640ce67059a5c359129449aae817c92ac975  test_rdx_read.py
+# 13e5501e29cf726b5ea04ead27a90b683ff6f9797bb6cafdf22ca0e652813470  rdx_read_mutation.py
 # 4dd37197f6aa6c7f013b3ffea5558fd8d8fd1bc124047f761269adafce87e484  ../rsn/rsn_read.py
 # aaa81575b211f50e007fa75d318fd8d4f48bfb98ac5ae62b398dbf33db37d4ca  ../pv-ladder/build_cmodel5d.py
 # command: python3 -B nd-unfolding/rdx/rdx_read_mutation.py --jobs 4
@@ -44,6 +44,7 @@ KILLED    shape rank unchecked                             by test_product_array
 KILLED    manifest paths not normalized                    by test_the_task_table_and_manifests_are_bound_and_unique
 KILLED    malformed manifest lines allowed                 by test_the_task_table_and_manifests_are_bound_and_unique
 KILLED    repeated archive members allowed                 by test_a_repeated_archive_member_or_json_key_refuses
+KILLED    bare-name member aliases allowed                 by test_a_repeated_archive_member_or_json_key_refuses
 KILLED    repeated JSON keys allowed                       by test_a_repeated_archive_member_or_json_key_refuses
 KILLED    n_masked above rows allowed                      by test_the_transfer_counts_are_consistent
 KILLED    n_masked too small to populate allowed           by test_the_transfer_counts_are_consistent
@@ -71,5 +72,5 @@ KILLED    R3 reads the first iteration                     by test_r3_reads_the_
 KILLED    R3 difference drops a missing cell               by test_r3_reads_the_last_iteration_and_the_difference
 KILLED    loop-untouched always true                       by test_r3_reports_bitwise_whether_the_probe_left_the_loop_untouched
 KILLED    the sentence transliterated                      by test_the_licensed_and_outcome_sentences_are_section_4s_characters
-MUTATION CHECK :: PASS (64 mutations)
+MUTATION CHECK :: PASS (65 mutations)
 # exit 0
