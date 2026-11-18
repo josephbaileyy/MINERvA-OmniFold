@@ -1,4 +1,4 @@
-# PILOT-FB DECLARATION, rev 2: fixed bin edges against the rounding instability, on RS1's pseudo-experiment (2026-11-17)
+# PILOT-FB DECLARATION, rev 3: fixed bin edges against the rounding instability, on RS1's pseudo-experiment (2026-11-17)
 
 **For** the auditors' re-read and the director's go. **Nothing has run, and nothing runs before the go.** DESIGN ONLY:
 the code (§8) is written after this is audited.
@@ -7,7 +7,9 @@ the code (§8) is written after this is audited.
 - Rev 0 (`260123d1`) was read by both auditors, Codex and Grok. Both read FAIL as written, with fixable design
   blockers, and rev 1 (`25b9137c`) answered every finding.
 - Grok's re-read of rev 1 found two blockers left: G3 did not read the boundaries LightGBM uses, and J's equality was
-  not the bound jitter. It also found five lows. Rev 2 answers them.
+  not the bound jitter. It also found five lows. Rev 2 (`3be11fc1`) answered them.
+- Both auditors read rev 2 as PASS WITH FIXES and found four fixes: the exact zero-bound constant, J2's rebuild
+  inputs, INCOMPLETE against a gate stop, and the G3 test fixtures. Rev 3 makes exactly those four.
 - §11 gives each finding's disposition.
 
 All repository citations are at `13f742e3` (origin/main `be193461` merged) unless stated. LightGBM citations are at
@@ -21,6 +23,7 @@ tag v4.6.0:
 - `include/LightGBM/dataset.h`, `ae1f848c…`;
 - `src/treelearner/serial_tree_learner.cpp`, `ad9f9a6c…`;
 - `include/LightGBM/utils/common.h`, `bbf86e6c…`;
+- `include/LightGBM/meta.h`, `0c06aabe…`;
 - `python-package/lightgbm/basic.py`, `b8ccce47…`.
 
 **Authority.**
@@ -80,8 +83,9 @@ unperturbed inputs, placed so that no perturbation of the protocol's size can mo
    iteration.**
 3. **Forced bins do not fix the bins by themselves** (`FindBinWithPredefinedBin`, `bin.cpp:157-235`):
    - it first places `−kZeroThreshold` if any value is ≤ −`kZeroThreshold`, and `+kZeroThreshold` if any value is
-     > `kZeroThreshold` (`:183-197`; `kZeroThreshold` = 1e-35). It then appends +∞. Call the number of zero bounds
-     placed z;
+     > `kZeroThreshold` (`:183-197`). `kZeroThreshold` is `const double kZeroThreshold = 1e-35f` (`meta.h:56`), so the
+     stored zero bounds are ±K, with K = float64(float32(1e-35)) = 1.0000000180025095e-35 (Python's repr). That is not the decimal
+     1e-35. It then appends +∞. Call the number of zero bounds placed z;
    - it inserts the forced bounds in file order, skips any with |b| ≤ 1e-35, and stops after `max_bin` − z − 1 of them;
      the rest are silently dropped (`:199-211`);
    - it **fills every remaining bin greedily from the data** (`:213-232`). Those greedy bounds lie between distinct
@@ -130,8 +134,11 @@ through the bound path. For each role r and feature f:
    `zero_as_missing` at their defaults.
 2. **The zero band:** no value v of U has 5×10⁻³⁶ < |v| < 2×10⁻³⁵. A jitter of at most ½ spacing then cannot carry a
    value across ±`kZeroThreshold`, so z is the same for the base and every jitter.
-3. **The edge count:** z_{r,f} = [any F ≤ −1e-35] + [any F > 1e-35], from the fit column, as LightGBM computes it. Then
-   n_{r,f} = `max_bin` − z_{r,f} − 1.
+3. **The edge count:** z_{r,f} = [any F ≤ −K] + [any F > K], with K as in §2 item 3, from the fit column, as LightGBM
+   computes it. Then n_{r,f} = `max_bin` − z_{r,f} − 1. By rule 2 no value lies in the band where K and the decimal
+   1e-35 would disagree.
+- **The intended upper-bound list** of role r, feature f is, sorted: −K if z counts a non-positive side, +K if it
+  counts a positive side, the n_{r,f} edges, and +∞. G2 and G3 use exactly this list.
 4. **Each value's envelope:** for each distinct value u of U, s(u) = float64(numpy.spacing(float32(|u|))), and the
    envelope is [u − ½ s(u), u + ½ s(u)].
    - The envelope is closed, so it is conservative for the half-open u.
@@ -254,8 +261,14 @@ tested policies". S3-place and S3-res are always reported beside it.
 - **(J1)** the run's source arrays equal an independent recomputation of `s5p_numerics.jittered(inputs, bkg, seed)`
   bitwise;
 - **(J2)** each role's received fit and scored matrices equal that role's selection rebuilt from the recomputed
-  sources, bitwise. The rebuild uses the bound `s5n_pseudo.build_pseudo` with the run's split key, pseudo-seed and
-  truth, then the loop's slicing (§2 item 1);
+  sources, bitwise. The rebuild:
+  - calls the bound `s5n_pseudo.build_pseudo(ji, jb, truth, amplitude, split_key, seed, ratio)` exactly as
+    `s5p_numerics.py:198` does, with the run's own bound inputs: truth `eavail_shape`, amplitude 1, the eavail ratio
+    `state/s5n/eavail-ratio-gibuu-over-genie.json`, the run's split key and pseudo-seed 990000 (RS1 §4,
+    `s5n_pseudo.py:94-98`, `:132-138`);
+  - forms the loop's `measured` and ref's fit matrix with `s5n_pseudo.signed_sample` of that experiment
+    (`s5n_pseudo.py:222-227`), cast as the run casts it. These are not slices of the source array named `measured`;
+  - then applies the loop's slicing (§2 item 1) for clf1, reg and clf2;
 - **(J3)** every one of the four source arrays has at least one moved entry that is not on an analysis-grid edge, and no
   entry on an analysis-grid edge moved.
 
@@ -274,7 +287,8 @@ comparison.
   - The dump's `forced_bins:` section, printed at `%lf`, is **not** used as evidence of a boundary.
 - **(b) Every threshold, at every fit.** From each fitted model's text (`booster_.model_to_string()`), every
   numerical split's threshold, parsed at its printed `{:.17g}`, must equal exactly, as a double, an element of the
-  role and feature's intended upper-bound list (the zero bounds, the edges, +∞).
+  role and feature's intended upper-bound list (§3: ±K, the edges, +∞). A split that isolates the exact zeros stores
+  +K, which is in the list.
 - **(c) No missing-value branch, at every fit.** Every split's `decision_type` must record missing type None.
 
 **Why (a)–(c) are sufficient.**
@@ -287,11 +301,17 @@ comparison.
 - So each fit trains on the intended partition and predicts with intended boundaries. G2 shows no row crosses an
   intended boundary under the jitter.
 
-**What (a)–(c) catch:**
-- a dropped forced bound with a greedy refill, which (a) sees: the greedy bound splits a populated bin;
-- an edge moved within a training gap, which (b) sees as soon as it is used as a threshold;
-- a file never opened, which (a) sees;
-- an edge LightGBM parsed to a different double, which (b) sees.
+**What (a)–(c) catch: every change that can act on a row, and nothing more.**
+- **Harmful changes, which must fail:**
+  - a greedy bound that changes a populated training partition, caught by (a);
+  - any threshold that is not an intended boundary, caught by (b). That includes a moved edge, an edge parsed to a
+    different double, and a greedy bound used as a split;
+  - a missing-value branch on a split, caught by (c);
+  - a file never opened, caught by (a), because the unforced mapper's partition differs on these columns.
+- **Harmless changes, which may pass:** a mapper bound that is never a threshold and does not change a populated
+  training partition acts on no row. Examples are an extra edge LightGBM drops after its budget is filled, and a bound
+  moved inside a gap that no split uses. G3 is not a certificate of the mapper's construction, only of every boundary
+  that acts.
 
 `feature_num_bin(f)` = n + z + 1 is recorded as a cross-check, not relied on.
 
@@ -306,7 +326,10 @@ First the gates and the time limit, in this order:
 2. RUN REFUSED: the fresh root already existed, or the bound runner's exit 5, a changed grid membership
    (`s5p_numerics.py:188-191`);
 3. INFEASIBLE;
-4. INCOMPLETE (stopped or time-limited);
+4. INCOMPLETE: an operational interruption (node failure, preemption, a crash outside the gates), the time limit, or
+   §7's round-1 wall-projection stop. It does **not** include the job's deliberate stop after a round-1 gate failure.
+   A gate failure is named by its own outcome below, with its evidence kept, and the absent later products are the
+   expected result of that stop;
 5. NOT REPRODUCED;
 6. JITTER NOT APPLIED;
 7. PREMISE FAILED, naming the gate (G2, G3 or identity);
@@ -405,14 +428,18 @@ The allowance is +15 % for the gates. G3's dataset dump is unmeasured, which is 
 - **z per role:** a pool with negatives and a fit column without them gives different z, and the per-role rule uses
   the fit column's.
 - **G3:**
-  - one fewer edge makes LightGBM fill a bin greedily, and (a) catches it;
-  - one extra edge is dropped and refilled, and (a) or (b) catches it;
-  - an edge moved inside a training gap and used as a threshold is caught by (b), and a scored row in that gap would
-    have changed bin;
-  - an unopenable file is caught by (a);
-  - an edge whose JSON text parses to a different double is caught by (b);
-  - a NaN in a fit column gives a missing type other than None, and (c) catches it;
-  - a correct file passes;
+  - **harmful, each with a fixture that activates it, so each must fail:**
+    - one edge removed where the greedy refill changes a populated training partition (the fixture is chosen so it
+      does), caught by (a);
+    - an edge moved inside a training gap, in a fixture whose trees split there, caught by (b). A scored row in that
+      gap is shown to change bin;
+    - an edge written so that LightGBM parses a different double, used as a split, caught by (b);
+    - a NaN in a fit column of a feature the fixture's trees split on, caught by (c);
+    - an unopenable file on columns where the unforced mapper's partition differs, caught by (a);
+  - **harmless, which may pass:** one extra edge appended after the budget is full (LightGBM drops it), and a bound
+    moved inside a gap no split uses. Each passes, and the test asserts that its predictions on fit and scored rows are
+    unchanged;
+  - a correct file passes, and a split on the exact zeros stores +K and passes;
   - an unforced fit (A0R-like) fails G3 but is exempt by arm.
 - **The remedy on a toy:** with forced edges, fits are bitwise identical on fit and scored rows under the jitter.
   Without them they differ.
@@ -423,8 +450,12 @@ The allowance is +15 % for the gates. G3's dataset dump is unmeasured, which is 
   - a moved grid-edge entry is caught;
   - a base compared byte-for-byte as float32 against float64 is not a failure; it is compared as values.
 - **The outcome:** every one of the 16 combinations, each gate outcome, every INVALID branch and every boundary
-  equality reaches exactly one row.
-- **A mutation harness:** one planted defect per guard, per rule and per row, each killed by a named test.
+  equality reaches exactly one row. A round-1 gate failure with the later products intentionally absent reads as that
+  gate's outcome, not INCOMPLETE, with the gate's evidence in the record.
+- **J2's rebuild:** with the run's amplitude, ratio and `signed_sample`, it equals what each role received. With
+  amplitude 0, with no ratio, or with a slice of the source `measured` in place of `signed_sample`, it does not.
+- **A mutation harness:** one planted defect per guard, per rule and per row, each killed by a named test. The
+  harmless changes above are tests that must pass, not mutants.
 
 ## 9. Limits and disclosures
 
@@ -484,3 +515,16 @@ gate timing. The second reader failed on quota, so Codex reads rev 2.
 | N5: one outcome name for three gates | **Fixed.** PREMISE FAILED names G2, G3 or identity (§5.1, §5.2) |
 | N6: the fresh-root refusal and the runner's exit 5 have no outcome | **Fixed.** RUN REFUSED, second in the precedence (§5.2) |
 | N7: rows 5 and 7 can overstate which S3 number crossed | **Fixed.** The sentence names the median, the maximum or both, whichever crossed (§5.2) |
+
+### Rev 3: both auditors' reads of rev 2
+
+The reports are `~/codex-reports/pilot-fb-audit/rev2/{grok,codex}/report.md`, of `3877d0e9`. Both read PASS WITH
+FIXES. Both agree rev 1's blockers are fixed at the design level, and that G3's (a)–(c) sufficiency argument holds.
+
+| finding | disposition |
+|---|---|
+| Grok, high: G3 (b)'s zero bounds are LightGBM's `1e-35f` promoted to double, not the decimal 1e-35; a correct split isolating exact zeros would fail | **Fixed.** K = float64(float32(1e-35)) is named in §2 item 3 (`meta.h:56`), used in §3 rule 3, and in the intended upper-bound list that G2 and G3 (b) use. A test splits on the exact zeros and passes |
+| Grok, medium: J2's rebuild omits amplitude, the ratio and `signed_sample` | **Fixed.** J2 calls `build_pseudo` exactly as `s5p_numerics.py:198` does, with the run's truth, amplitude 1, the eavail ratio, split key and pseudo-seed, and forms the loop's `measured` and ref's matrix with `signed_sample`. A test shows the rebuild fails with amplitude 0, with no ratio, or with a source slice |
+| Both, medium/low: INCOMPLETE's "stopped" could swallow a deliberate gate stop | **Fixed.** INCOMPLETE is an operational interruption, the time limit, or the wall-projection stop only. A round-1 gate failure is named by its gate, its evidence kept, and the absent later products are its expected result. A test covers that case (§5.2, §8) |
+| Codex, low: G3's mutation fixtures and blanket detection language | **Fixed.** Harmful changes, which must fail, each have a fixture that activates them, including a NaN on a feature the trees split on. Harmless changes (a dropped surplus edge, an unused moved bound) may pass, and are tested to leave predictions unchanged. The language now says G3 certifies every boundary that acts, not the mapper's construction (§5.1, §8) |
+
