@@ -406,16 +406,24 @@ class Readings(unittest.TestCase):
         self.assertEqual(out["R4"]["prior"]["class"], "W0")
         self.assertEqual(out["outcome"]["outcome"], "LICENSED")
 
-    def test_r4_prior_stores_the_clipped_excess_it_classes(self):
+    def test_r4_prior_is_the_signed_residual_and_a_larger_null_flags(self):
         prod = clean_prod()
         m, x, xt, shp = prod["X1pc"]
         prod["X1pc"] = (m, bump(x, [2], 0.02), xt, shp)
         out = R.read(prod, IDENT, PHI, SIGMA)
-        self.assertEqual(out["R4"]["prior"]["attributable"][2], 0.0, "|change| < |null| clips to 0")
-        self.assertEqual(out["R4"]["prior"]["class"], "W0")
+        self.assertAlmostEqual(out["R4"]["prior"]["attributable"][2], -0.02, places=12,
+                               msg="a null larger than the change leaves a signed residual")
+        self.assertEqual((out["R4"]["prior"]["class"], out["R4"]["prior"]["cells"]), ("W2", ["R02"]))
+        self.assertEqual(out["outcome"]["outcome"], "STATED SENSITIVITY", "conservative against licensing (J7)")
+        self.assertEqual(out["outcome"]["cells"]["R4_prior"], ["R02"])
         self.assertEqual(R.RR.wr_class(out["R4"]["prior"]["attributable"], PHI, SIGMA)[0], out["R4"]["prior"]["class"],
                          "re-classing the stored vector gives the stored class")
-        self.assertAlmostEqual(out["R4"]["prior"]["null"][2], 0.02, places=12)
+        prod = clean_prod()
+        for t, by in (("X1c", 0.012), ("X1pc", -0.012)):
+            m, x, xt, shp = prod[t]
+            prod[t] = (m, bump(x, [6], by), xt, shp)
+        out = R.read(prod, IDENT, PHI, SIGMA)
+        self.assertEqual(out["R4"]["prior"]["class"], "W2", "a change equal and opposite to the null is flagged")
 
     def test_r4_q3_and_the_weight_at_the_prior(self):
         prod = clean_prod()
@@ -428,6 +436,29 @@ class Readings(unittest.TestCase):
         out = R.read(prod, IDENT, PHI, SIGMA)
         self.assertEqual(out["R4"]["weight_at_prior"]["class"], "W2")
         self.assertEqual(out["outcome"]["outcome"], "LICENSED", "the weight qualifies; it is not an outcome change")
+
+    def test_the_weight_at_the_prior_is_never_silent(self):
+        prod = clean_prod()
+        m, x, xt, shp = prod["X1wc"]
+        prod["X1wc"] = (m, bump(x, [1], 0.02), xt, shp)
+        o = R.read(prod, IDENT, PHI, SIGMA)["outcome"]
+        self.assertEqual(o["outcome"], "LICENSED")
+        self.assertEqual(o["weight_at_prior"]["class"], "W2")
+        self.assertAlmostEqual(o["weight_at_prior"]["max_abs_change_over_sigma"], 1.0, places=9)
+        self.assertEqual(o["qualifier"], R.WEIGHT_CROSSES.format(cells="R01"))
+        self.assertIn("more than half the reported σ in R01", o["qualifier"])
+        prod = clean_prod()
+        m, x, xt, shp = prod["X1wc"]
+        prod["X1wc"] = (m, bump(x, [1], 0.004), xt, shp)
+        o = R.read(prod, IDENT, PHI, SIGMA)["outcome"]
+        self.assertEqual(o["weight_at_prior"]["class"], "W1")
+        self.assertNotIn("qualifier", o, "below R2's threshold it is printed, not stated")
+        setx(prod, "X1p", bump(BASE, [3], 0.02))
+        m, x, xt, shp = prod["X1wc"]
+        prod["X1wc"] = (m, bump(xt, [1], 0.02), xt, shp)
+        o = R.read(prod, IDENT, PHI, SIGMA)["outcome"]
+        self.assertEqual((o["outcome"], o["weight_at_prior"]["class"]), ("REFIT NULL W2", "W2"))
+        self.assertIn("qualifier", o, "it is stated whatever the outcome")
 
     def test_r2_classes_x1w_against_x1_and_only_qualifies(self):
         prod = clean_prod()

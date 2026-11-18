@@ -19,7 +19,7 @@ ND = HERE.parent
 REPO = ND.parent
 FILES = ("rdx_read.py", "test_rdx_read.py")
 RD = FILES[0]
-EXPECTED_TESTS = 30
+EXPECTED_TESTS = 31
 MUTATIONS = [
     # NC-X and the families
     ("NC-X not checked", RD, '    if not (same_bits(x0[1], xl[1]) and same_bits(x0[3], xl[3])):\n', "    if False:\n",
@@ -96,10 +96,16 @@ MUTATIONS = [
      "test_the_refit_null_takes_precedence_over_a_sensitivity"),
     ("R4 read against X0c's truth", RD, "        return rel(X[t], cells(prod[t][2]))\n",
      '        return rel(X[t], cells(prod["X0c"][2]))\n', "test_r4_reads_each_closure_against_its_familys_truth"),
-    ("R4 prior without the null", RD, "    a_prior = np.maximum(np.abs(D1) - np.abs(Dp), 0.0)\n",
-     "    a_prior = np.abs(D1)\n", "test_r4_at_the_prior_subtracts_the_refit_null"),
-    ("R4 prior unclipped", RD, "    a_prior = np.maximum(np.abs(D1) - np.abs(Dp), 0.0)\n",
-     "    a_prior = np.abs(D1) - np.abs(Dp)\n", "test_r4_prior_stores_the_clipped_excess_it_classes"),
+    ("R4 prior without the null", RD, "    a_prior = D1 - Dp\n", "    a_prior = D1\n",
+     "test_r4_at_the_prior_subtracts_the_refit_null"),
+    ("R4 prior clipped (rev 2's algebra, not J7's)", RD, "    a_prior = D1 - Dp\n",
+     "    a_prior = np.maximum(np.abs(D1) - np.abs(Dp), 0.0)\n", "test_r4_prior_is_the_signed_residual_and_a_larger_null_flags"),
+    ("R4 prior magnitude excess unclipped", RD, "    a_prior = D1 - Dp\n", "    a_prior = np.abs(D1) - np.abs(Dp)\n",
+     "test_r4_prior_is_the_signed_residual_and_a_larger_null_flags"),
+    ("the weight qualifier silent", RD, '    if w["class"] == "W2":\n', "    if False:\n",
+     "test_the_weight_at_the_prior_is_never_silent"),
+    ("the weight class not printed", RD, '    outcome["weight_at_prior"] = {"class": w["class"], "cells": w["cells"],\n',
+     '    outcome["weight_at_prior_"] = {"class": w["class"], "cells": w["cells"],\n', "test_the_weight_at_the_prior_is_never_silent"),
     ("only W0 licenses", RD, 'all(v in ("W0", "W1") for v in attributable.values())', 'all(v == "W0" for v in attributable.values())',
      "test_r4_in_w1_still_licenses"),
     ("R4 q3 left out of the outcome", RD, 'for t in ("prior", "gibuu", "q3")}', 'for t in ("prior", "gibuu")}',

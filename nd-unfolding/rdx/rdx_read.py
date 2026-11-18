@@ -77,6 +77,9 @@ SENTENCE = ("in MP-1's chain, adding E_ν, the true vertex and the leading-proto
 SILENT = "It is silent on any quantity not added."
 REFIT_W2 = ("the refit alone moves the result in the named cells. R1 is not attributable, and that is reported with no "
             "claim about the three quantities.")
+WEIGHT_CROSSES = ("Qualifier (R4, the weight at the prior, X1wc - X1c): the weighted widened regressor moves the prior "
+                  "closure by more than half the reported σ in {cells}, beyond R2's threshold; like R2, it qualifies "
+                  "this reading and licenses no further claim.")
 SENSITIVITY = ("a stated sensitivity, with the cells named. Whether the unfolding changes is a separate decision for "
                "Joseph.")
 # Where §4 leaves the reader a choice, the choice made here; each is put to the audit and to J7.
@@ -86,12 +89,14 @@ INTERPRETATIONS = [
     "e_c > 0.5 sigma_c' does not)",
     "2. R4 reads each closure against its family's common truth: b = X / X_true - 1 on the 16 cells (RSN rev 3 §3.3), "
     "and a change is the difference of two such biases; the reader refuses a family whose truths differ",
-    "3. R4 at the prior: the attributable change is max(0, |b(X1c) - b(X0c)| - |b(X1pc) - b(X0c)|) per cell, R1's "
-    "excess applied to the closures, W-classed; the clipped vector is the one stored and classed",
+    "3. R4 at the prior (J7 ruling): the attributable change is the SIGNED residual [b(X1c) - b(X0c)] - [b(X1pc) - "
+    "b(X0c)] per cell, W-classed; it is the algebra conservative against licensing, so a null larger than the change, "
+    "or equal and opposite, is flagged; the stored vector is the one classed",
     "4. R4 at the A7 GiBUU hybrid and the q3 tilt: no refit null was declared there, so the change b(X1) - b(X0) is read "
     "in full as the attributable change",
-    "5. R4's X1wc - X1c (the weight at the prior) is reported and W-classed beside R2, as a qualifier; it is not one of "
-    "the outcome's 'attributable changes at all three truths'",
+    "5. R4's X1wc - X1c (the weight at the prior) is a qualifier beside R2, not one of the outcome's 'attributable "
+    "changes at all three truths' (J7 ruling); it is never silent: the outcome record always carries its class and "
+    "largest |change|/sigma, and states in words when it crosses R2's threshold (some cell beyond 0.5 sigma)",
     "6. R3's difference is t_c(X1t) - t_c(X0t) at the last iteration, T-classed as each transfer is; a cell with no "
     "masked rows in either is None and fails T0 and T1, as in RSN",
 ]
@@ -307,10 +312,6 @@ def rel(a, b) -> np.ndarray:
         return a / b - 1.0
 
 
-def excess_class(e, phi, sigma) -> tuple[str, list]:
-    return RR.wr_class(e, phi, sigma)
-
-
 def all_finite(obj) -> bool:
     if isinstance(obj, float):
         return math.isfinite(obj)
@@ -368,14 +369,13 @@ def read(prod: dict, integ, phi, sigma) -> dict:
                             "X0t_equals_X0_bitwise": same_bits(prod["X0t"][1], prod["X0"][1])}
     b = {t: bias(t) for fam in FAMILIES.values() for t in fam}
     D1, Dp = b["X1c"] - b["X0c"], b["X1pc"] - b["X0c"]
-    a_prior = np.maximum(np.abs(D1) - np.abs(Dp), 0.0)
+    a_prior = D1 - Dp
     r4 = {"prior": {"change": D1.tolist(), "null": Dp.tolist(), "attributable": a_prior.tolist()},
           "gibuu": {"change": (b["X1g"] - b["X0g"]).tolist()},
           "q3": {"change": (b["X1q"] - b["X0q"]).tolist()},
           "weight_at_prior": {"change": (b["X1wc"] - b["X1c"]).tolist()}}
-    r4["prior"]["class"], r4["prior"]["cells"] = excess_class(a_prior, phi, sigma)
-    for t in ("gibuu", "q3", "weight_at_prior"):
-        r4[t]["class"], r4[t]["cells"] = RR.wr_class(r4[t]["change"], phi, sigma)
+    for t in ("prior", "gibuu", "q3", "weight_at_prior"):
+        r4[t]["class"], r4[t]["cells"] = RR.wr_class(r4[t]["attributable" if t == "prior" else "change"], phi, sigma)
     r4["bias"] = {t: v.tolist() for t, v in b.items()}
     attributable = {t: r4[t]["class"] for t in ("prior", "gibuu", "q3")}
     if c1p == "W2":
@@ -385,8 +385,13 @@ def read(prod: dict, integ, phi, sigma) -> dict:
     else:
         named = {"R1_excess": e_cells, **{f"R4_{t}": r4[t]["cells"] for t, v in attributable.items() if v == "W2"}}
         outcome = {"outcome": "STATED SENSITIVITY", "statement": SENSITIVITY, "cells": named}
+    w = r4["weight_at_prior"]
+    outcome["weight_at_prior"] = {"class": w["class"], "cells": w["cells"],
+                                  "max_abs_change_over_sigma": float(np.max(np.abs(w["change"]) / sigma))}
+    if w["class"] == "W2":
+        outcome["qualifier"] = WEIGHT_CROSSES.format(cells=", ".join(w["cells"]))
     out = {
-        "schema": "rdx-readout/2",
+        "schema": "rdx-readout/3",
         "label": "in MP-1's chain, and only for E_ν, the true vertex and the leading-proton KE (RDX-DECLARATION.md §4); "
                  "their reading is a difference within MP-1's chain, not against the paper's chain",
         "nc_x": "PASS: X0's xsec_flat and shape are bitwise X0_lat's",
@@ -464,7 +469,8 @@ def main(argv=None) -> int:
     print(f"[rdx] NC-X PASS; R1p {out['R1p']['class']}; R1 {out['R1']['class']} (excess cells "
           f"{out['R1']['cells_excess_beyond_half_sigma']}); R2 {out['R2']['class']}; R3 X1t {out['R3']['X1t']['class']}, "
           f"X0t {out['R3']['X0t']['class']}; R4 prior {out['R4']['prior']['class']}, gibuu {out['R4']['gibuu']['class']}, "
-          f"q3 {out['R4']['q3']['class']}; OUTCOME {o['outcome']}")
+          f"q3 {out['R4']['q3']['class']}, weight {out['R4']['weight_at_prior']['class']}; OUTCOME {o['outcome']}"
+          + (f"; {o['qualifier']}" if "qualifier" in o else ""))
     return 0
 
 
