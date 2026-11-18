@@ -9,8 +9,9 @@ the cluster, not even under /dev/shm.
 
 fetch refuses before writing anything to stdout:
   - exit 3 if the platform has no O_NOATIME;
-  - exit 9 if sacct fails, or if any job of the fenced families is in a non-terminal state (STATES: pending,
-    configuring, running, completing, requeued, resizing, suspended; sacct only, never squeue);
+  - exit 9 if sacct fails or prints a malformed row, or if any job of the fenced families (its JobName against FENCE)
+    over the last 14 days has a State outside the closed TERMINAL set (completing, running, pending, unknown or empty
+    states all refuse; sacct only, never squeue; no -s list, whose accepted codes vary by site);
   - exit 4 if a file is missing.
 It then streams each file with its manifest: bytes, sha256, and the file's stat before and after its read (size,
 mtime_ns, atime_ns, ino, dev). The manifest is the last member. It exits 8 if any file's stat moved during its read or
@@ -38,7 +39,10 @@ TASKS = ("X0", "X0_lat", "X1", "X1p", "X1w", "X1t", "X0c", "X1c", "X1pc", "X1wc"
 LOGS = ("logs/rdx_s3_a_61478320.out", "logs/rdx_s3_b_61481240.out")
 FILES = tuple("products/%s.npz" % t for t in TASKS) + tuple("inventory/%s.jsonl" % t for t in TASKS) + LOGS
 FENCE = re.compile(r"^(cov2d|t2a|ll5d|e96data|rpd_|rsn_|rdx_|pfb_|ibukt-)")
-STATES = "PD,CF,R,CG,RQ,RS,S"  # sacct's non-terminal job states: a completing or configuring job can still write
+WINDOW = "now-14days"  # the longest wall is 48 h; a job that can still write has run or waited within this window
+TERMINAL = frozenset(("COMPLETED", "FAILED", "CANCELLED", "TIMEOUT", "OUT_OF_MEMORY", "NODE_FAIL", "BOOT_FAIL",
+                      "DEADLINE", "PREEMPTED", "REVOKED"))
+CANCELLED_BY = re.compile(r"CANCELLED by \d+")
 STAT_KEYS = ("st_size", "st_mtime_ns", "st_atime_ns", "st_ino", "st_dev")
 USER = "josephrb"
 SCHEMA = "rdx-fetch/1"
@@ -49,9 +53,15 @@ def refuse(rc, why):
     sys.exit(rc)
 
 
+def terminal(state):
+    """A state in which a job can no longer write: the closed TERMINAL set, or "CANCELLED by <uid>"."""
+    return state in TERMINAL or bool(CANCELLED_BY.fullmatch(state))
+
+
 def fence_read():
-    """One sacct read: {"command", "rows", "hits", "clear"}; "error" instead of rows if sacct failed."""
-    cmd = ["sacct", "-X", "-n", "-P", "-u", USER, "-s", STATES, "-o", "JobID,JobName,State"]
+    """One sacct read: {"command", "rows", "hits", "clear"}; "error" if sacct failed or a row is malformed. A hit is a
+    fenced-family row whose State is not terminal (an unknown or empty State is not terminal)."""
+    cmd = ["sacct", "-X", "-n", "-P", "-u", USER, "-S", WINDOW, "-o", "JobID,JobName,State"]
     try:
         p = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
     except OSError as exc:
@@ -60,7 +70,10 @@ def fence_read():
         return {"command": " ".join(cmd), "error": "sacct failed (rc %d): %s" % (p.returncode, p.stderr.strip()[:200]),
                 "clear": False}
     rows = [ln for ln in p.stdout.splitlines() if ln.strip()]
-    hits = [ln for ln in rows if len(ln.split("|")) > 1 and FENCE.match(ln.split("|")[1])]
+    bad = [ln for ln in rows if len(ln.split("|")) != 3 or not ln.split("|")[0].strip()]
+    if bad:
+        return {"command": " ".join(cmd), "rows": rows, "error": "malformed sacct rows: %s" % bad[:5], "clear": False}
+    hits = [ln for ln in rows if FENCE.match(ln.split("|")[1]) and not terminal(ln.split("|")[2].strip())]
     return {"command": " ".join(cmd), "rows": rows, "hits": hits, "clear": not hits}
 
 

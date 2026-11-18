@@ -42,7 +42,7 @@ class Base(unittest.TestCase):
 
     def sacct(self, rows: str, rc: int = 0):
         s = self.bin / "sacct"
-        s.write_text(f"#!/bin/bash\nprintf '%s' {json.dumps(rows)}\nexit {rc}\n")
+        s.write_text(f"#!/bin/bash\nprintf '%b' {json.dumps(rows)}\nexit {rc}\n")
         s.chmod(0o755)
 
     def fetch(self):
@@ -115,16 +115,25 @@ class Fetch(Base):
         s.write_text("#!/bin/bash\n" + body)
         s.chmod(0o755)
 
-    def test_the_fence_reads_every_non_terminal_state(self):
-        """A completing or configuring job of a fenced family can still write (the safety read's B1). The stub prints
-        such a row only when its -s list asks for that state, as sacct does."""
-        for code, state in (("CG", "COMPLETING"), ("CF", "CONFIGURING"), ("RS", "RESIZING")):
-            self.script_sacct('while [ $# -gt 0 ]; do if [ "$1" = -s ]; then L="$2"; fi; shift; done\n'
-                              f'case ",$L," in *,{code},*) printf "71|rdx_s3_a|{state}\\n" ;; esac\n')
+    def test_the_fence_classifies_each_state_against_the_terminal_set(self):
+        """The STOP of 2026-11-18 (this sacct rejects -s CF) and the director's ruling (b): no -s list; the State column
+        of a 14-day read is classified here, and only the closed terminal set passes for a fenced family."""
+        args = self.d / "args"
+        for rows, rc in (("71|rdx_s3_a|COMPLETING\n", 9), ("72|pfb_run|WEIRD_STATE\n", 9), ("73|rdx_s3_b|\n", 9),
+                         ("74|rdx_s3_a|CANCELLED by 123\n", 0), ("75|cov2d_x|COMPLETED\n", 0),
+                         ("76|ll5d_a|TIMEOUT\n77|rsn_b|OUT_OF_MEMORY\n78|ibukt-c|NODE_FAIL\n", 0),
+                         ("79|other|COMPLETING\n", 0), ("80|xrdx_s3|RUNNING\n", 0),
+                         ("81|rdx_s3_a|CANCELLED by\n", 9), ("82|rdx_s3_a|CANCELLED by 12 extra\n", 9),
+                         ("83|bad row\n", 9), ("84|a|b|c\n", 9), ("|rdx_s3_a|COMPLETED\n", 9), ("", 0)):
+            self.script_sacct(f'printf "%s\\n" "$*" > {args}\nprintf %b {json.dumps(rows)}\n')
             r = self.fetch()
-            self.assertEqual((r.returncode, r.stdout), (9, b""), state)
-            self.assertIn(state, r.stderr.decode())
-        self.assertEqual(set(F.STATES.split(",")), {"PD", "CF", "R", "CG", "RQ", "RS", "S"})
+            self.assertEqual(r.returncode, rc, (rows, r.stderr))
+            if rc:
+                self.assertEqual(r.stdout, b"", rows)
+        self.assertEqual(args.read_text().split(), ["-X", "-n", "-P", "-u", "josephrb", "-S", "now-14days", "-o",
+                                                    "JobID,JobName,State"], "no -s list; a 14-day window")
+        self.assertFalse(F.terminal("PENDING") or F.terminal("RUNNING") or F.terminal("") or F.terminal("REQUEUED"))
+        self.assertTrue(all(F.terminal(x) for x in F.TERMINAL))
 
     def test_a_job_seen_after_the_last_read_exits_9_and_unpack_refuses(self):
         n = self.d / "calls"
