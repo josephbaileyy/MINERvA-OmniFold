@@ -132,11 +132,13 @@ def test_a_gzip_receipt_reads_by_suffix(tmp_path, monkeypatch):
 
 @needs_receipts
 def test_the_q_bindings_read_the_committed_budget():
-    # Q_R (RE-2 part C, partc-r2/outA/budget_Q.json, bbe13622...): Q.median_pct 6.41367, stat.median_pct 0.676376,
-    # Q.integral_sigma_pct 4.75917 (Q, before: 6.4479, 0.6843, 4.7550)
-    assert chk.BUDGET_Q.endswith("partc-r2/outA/budget_Q.json.gz")
-    assert abs(chk.total_median() - 6.4137) < 1e-4 and abs(chk.stat_median() - 0.6764) < 1e-4
-    assert abs(chk.total_integral() - 4.7592) < 1e-4
+    # Q_R (G2R, RE-2-shapes run 2, C_new adopted by DECISION-20261114-joseph-d1-g2r-adopted.md; check_sec4_receipts.BUDGET_Q
+    # repointed by 748605637): g2r/re2shapes/run2/g2r/outA/budget_Q.json.gz (gunzip sha256 7ed733c6..., as its SHA256SUMS
+    # lists): Q.median_pct 6.46302, stat.median_pct 0.676376, Q.integral_sigma_pct 4.75912.
+    # Before: RE-2 part C, partc-r2/outA/budget_Q.json (bbe13622...): 6.41367, 0.676376, 4.75917; Q: 6.4479, 0.6843, 4.7550.
+    assert chk.BUDGET_Q.endswith("g2r/re2shapes/run2/g2r/outA/budget_Q.json.gz")
+    assert abs(chk.total_median() - 6.4630) < 1e-4 and abs(chk.stat_median() - 0.6764) < 1e-4
+    assert abs(chk.total_integral() - 4.7591) < 1e-4
 
 
 @needs_receipts
