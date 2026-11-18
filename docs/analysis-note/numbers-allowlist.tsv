@@ -232,3 +232,7 @@ token	delta	owner	item	reason
 42	+1	journal-editor	JE-KEY	the configuration key (Table 4, tab:config-key) repeats Table 6 / sec:method-config: seed 42 in two dimensions
 100	+1	journal-editor	JE-KEY	the configuration key repeats configuration (d)'s 100-tree refinement / the nominal capacity (one counted print)
 8	+1	journal-editor	JE-KEY	the configuration key repeats the 8-leaf nominal capacity (one counted print)
+# limitation-resolver's rows, seventh set (numbers-allowlist-lr-rows7.tsv, the 7a0501599 dispositions)
+1	+14	limitation-resolver	run-period figure and text (b8de1f4aa..27b15e545)	the leading digit of playlist names (1G--1M, 1A--1F, 1N--1P, 1G, 1L, 1M, 1A, ...) in the run-period figure caption and the class paragraph of sec:fived16-pl; labels, not numbers
+8	+2	limitation-resolver	run-period figure caption (b8de1f4aa, c46f3493e)	"step across 8 GeV/c (dashed vertical line)" in (a) and "step across 8 GeV/c" in (b); the step boundary of fd_rpd.json and runperiod_values.json
+8	+1	limitation-resolver	U15	"lies above 1A--1F in every p_par bin below 8 GeV/c" in the U15 sentence of sec_systematics (runperiod_values.json f63074b1)
