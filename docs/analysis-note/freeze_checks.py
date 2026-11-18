@@ -148,15 +148,16 @@ def page_tokens(page: str, index: int | None = None) -> list[tuple[str, str]]:
     """(token, its line) for the countable numbers of one page (index: 0-based physical page)."""
     lines = page.split("\n")
     nonempty = [i for i, l in enumerate(lines) if l.strip()]
-    # the page number: the last non-empty line if it is a bare number, and any bare-integer line whose value is within
-    # 12 of the physical page (pdftotext can place the footer before a float's text)
+    # the page number: the last non-empty line if it is a bare number, and a bare-integer line equal to the page
+    # (pdftotext can place the footer before a float's text)
     if nonempty and re.fullmatch(r"\s*(\d+|[ivxlc]+)\s*", lines[nonempty[-1]]):
         lines[nonempty[-1]] = ""
     if index is not None:
-        cand = [i for i in nonempty if re.fullmatch(r"\s*\d+\s*", lines[i]) and abs(int(lines[i]) - (index + 1)) <= 12]
+        # this note prints its page number as the physical page (checked: a fused "43" on p. 43); an exact match only,
+        # so a tick label near the page number (a "40" on p. 28) is kept
+        cand = [i for i in nonempty if re.fullmatch(r"\s*\d+\s*", lines[i]) and int(lines[i]) == index + 1]
         if cand:
-            best = min(cand, key=lambda i: abs(int(lines[i]) - (index + 1)))
-            lines[best] = ""
+            lines[cand[-1]] = ""
     # section-heading numbers, line by line
     for i, l in enumerate(lines):
         if HEAD_RE.match(l) and len(l) < 100 and not l.rstrip().endswith("."):
