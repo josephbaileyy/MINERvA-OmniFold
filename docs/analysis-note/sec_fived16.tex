@@ -496,7 +496,7 @@ For the scale of $C_{\mathrm{model}}$ itself, whose size is not calibrated, the 
 
 With the CH shape ratios, the reported per-cell $\sigma$ falls in \fvval{e2-sig-with-nfall} of the 16 cells and rises in \fvval{e2-sig-with-upcell}, by \fvval{e2-sig-with-up}\,\%. It falls most in \fvval{e2-sig-with-cell}, where $\sigma/f$ goes from \fvval{e2-sig-with-carbon} to \fvval{e2-sig-with-ch} ($-\fvval{e2-sig-with-fall}$\,\%; $-\fvval{e2-sig-nopl-fall}$\,\% without $C_{\mathrm{PL,5D}}$). $C_{\mathrm{model}}$'s own $\sigma/f$ changes most in \fvval{e2-cm-cell}, from \fvval{e2-cm-carbon} to \fvval{e2-cm-ch}, and most in relative terms in \fvval{e2-cm-relcell}, where it is small: from \fvval{e2-cm-relcarbon} to \fvval{e2-cm-relch} ($+\fvval{e2-cm-rel}$\,\%).
 
-This measures $C_{\mathrm{model}}$'s dependence on the target only: its definitions stay the generators' own, its coverage is still not validated, and GiBUU's CH shape ratio carries the hydrogen label of \S\ref{sec:joint5d-ch}. The changes are those of these data; their statistical uncertainty, from the data entering the unfolds that build $C_{\mathrm{model}}$, is not measured. Table~\ref{tab:fived16-gen-stageg} gives the comparison in the generators' own definitions with NuWro and GiBUU on carbon.
+This measures $C_{\mathrm{model}}$'s dependence on the target only: its definitions stay the generators' own, its coverage is still not validated, and GiBUU's CH shape ratio carries the hydrogen label of \S\ref{sec:joint5d-ch}. The changes are those of these data; their statistical uncertainty, from the data entering the unfolds that build $C_{\mathrm{model}}$, is not measured. Table~\ref{tab:fived16-gen-stageg}, in App.~\ref{app:devhistory}, gives the comparison as first made, in the generators' own definitions with NuWro and GiBUU on carbon.
 % absence-ok: scoping statement about what E2 measures (FD-GENCMP-AMENDMENT-E-ADDENDUM-E2-REPORT.md sec. 4: no addendum declared input resampling, so the data's statistical uncertainty on the vertex unfolds is outside E2), not a claim that a result does not exist
 
 \begin{table}[htbp]
@@ -554,27 +554,6 @@ prediction & $\chi^2$ & $\times0$ & $\times1$ (reported) & $\times2$ & CH & $\De
  & shape-only & \fvval{e2-nopl-nuwro-shape_only-x0} & \fvval{e2-nopl-nuwro-shape_only-x1} & \fvval{e2-nopl-nuwro-shape_only-x2} & \fvval{e2-nopl-nuwro-shape_only-ch} & $\fvval{e2-nopl-nuwro-shape_only-dch}$ \\
 \fvval{label-gibuu} & total & \fvval{e2-nopl-gibuu-total-x0} & \fvval{e2-nopl-gibuu-total-x1} & \fvval{e2-nopl-gibuu-total-x2} & \fvval{e2-nopl-gibuu-total-ch} & $\fvval{e2-nopl-gibuu-total-dch}$ \\
  & shape-only & \fvval{e2-nopl-gibuu-shape_only-x0} & \fvval{e2-nopl-gibuu-shape_only-x1} & \fvval{e2-nopl-gibuu-shape_only-x2} & \fvval{e2-nopl-gibuu-shape_only-ch} & $\fvval{e2-nopl-gibuu-shape_only-dch}$ \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\begin{table}[htbp]
-\centering\footnotesize
-\caption[The generator comparison as first made]{The table keeps the comparison as first made, before the predictions were moved to the analysis definitions. The comparison of Table~\ref{tab:fived16-gen} as first made, with the predictions in their generator definitions and NuWro and GiBUU on carbon, with no correction to CH: against the reported covariance plus $V_g$ and without the run-period block, as in Table~\ref{tab:fived16-gen}, and in the last column against $C_{\mathrm{total}}+V_g$, without the response and run-period blocks.}
-\label{tab:fived16-gen-stageg}
-\begin{tabular}{@{}lccccc@{}}
-\toprule
- & \multicolumn{2}{c}{reported covariance} & \multicolumn{2}{c}{without $C_{\mathrm{PL,5D}}$} & $C_{\mathrm{total}}$ \\ \cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(l){6-6}
-prediction & $\chi^2$ & shape-only $\chi^2$ & $\chi^2$ & shape-only $\chi^2$ & $\chi^2$ \\
-\midrule
-\multicolumn{6}{@{}l}{All 16 cells: ndf \fvval{gs-gcv-total-ndf}, shape-only \fvval{gs-gcv-shape_only-ndf}} \\
-\fvval{gs-label-gcv} & \fvval{gs-gcv-total-chi2} & \fvval{gs-gcv-shape_only-chi2} & \fvval{gs-gcv-total-chi2-nopl} & \fvval{gs-gcv-shape_only-chi2-nopl} & \fvval{gs-gcv-nocresp-chi2} \\
-\fvval{gs-label-gmec} & \fvval{gs-gmec-total-chi2} & \fvval{gs-gmec-shape_only-chi2} & \fvval{gs-gmec-total-chi2-nopl} & \fvval{gs-gmec-shape_only-chi2-nopl} & \fvval{gs-gmec-nocresp-chi2} \\
-\fvval{gs-label-nuwro} & \fvval{gs-nuwro-total-chi2} & \fvval{gs-nuwro-shape_only-chi2} & \fvval{gs-nuwro-total-chi2-nopl} & \fvval{gs-nuwro-shape_only-chi2-nopl} & \fvval{gs-nuwro-nocresp-chi2} \\
-\fvval{gs-label-tune} & \fvval{gs-tune-total-chi2} & \fvval{gs-tune-shape_only-chi2} & \fvval{gs-tune-total-chi2-nopl} & \fvval{gs-tune-shape_only-chi2-nopl} & \fvval{gs-tune-nocresp-chi2} \\
-\midrule
-\multicolumn{6}{@{}l}{8-cell subset, $\pPar<\fvval{h2-mid-pz}$~GeV/$c$: ndf \fvval{gs-gibuu-total-ndf}, shape-only \fvval{gs-gibuu-shape_only-ndf}} \\
-\fvval{gs-label-gibuu} & \fvval{gs-gibuu-total-chi2} & \fvval{gs-gibuu-shape_only-chi2} & \fvval{gs-gibuu-total-chi2-nopl} & \fvval{gs-gibuu-shape_only-chi2-nopl} & \fvval{gs-gibuu-nocresp-chi2} \\
 \bottomrule
 \end{tabular}
 \end{table}
