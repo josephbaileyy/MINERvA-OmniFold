@@ -30,6 +30,73 @@ Discussion and conclusions & \S\ref{sec:summary} \\
 \end{tabular}
 \end{table}
 
+Table~\ref{tab:what-is-measured} lists each product of the note, with its estimator, domain, covariance and status.
+
+% The "what is measured" box (COMBINED-PLAN.md section 3(d)); rows by cov2d, landed by journal-editor as sent, with one addition: each
+% Where cell also names its section 12 entry (sec:limitations-*), where one exists. Rows by cov2d, 2026-11-18, for journal-editor to land in
+% sec_front.tex between the reader's guide and the definitions table. Every cell is the note's own wording or an existing
+% macro, so the box adds nothing; each cell's source (file:line at lane/note-figs-20261117 557809de, which includes
+% draft/note-round2-20261108 ad49b4b43) is listed in the comment block after the table.
+% Status reads "Decision open: which quantities are quoted, and with what uncertainty" for the 2D result and the sixteen
+% cells, followed by the note's own status words. Authority: DECISION-20261117-joseph-note-measurement.md item 6 ("Open:
+% which quantities are quoted, and with what uncertainty. ... Until Joseph and Ben agree, a note sentence whose measurement
+% wording depends on that choice keeps its current qualifiers"); plain wording by the director's ruling of 2026-11-18. The
+% other rows carry the note's status words alone.
+\begin{table}[H]
+\centering
+\caption[What is measured]{What is measured, and with what status. Each row points to its section; for the
+two-dimensional result and the sixteen cells, which quantities are quoted, and with what uncertainty, is not yet decided.}
+\label{tab:what-is-measured}
+\footnotesize
+\begin{tabularx}{\textwidth}{@{}>{\RaggedRight\arraybackslash}p{2.2cm}>{\RaggedRight\arraybackslash}X>{\RaggedRight\arraybackslash}p{2.4cm}>{\RaggedRight\arraybackslash}X>{\RaggedRight\arraybackslash}X>{\RaggedRight\arraybackslash}p{1.4cm}@{}}
+\toprule
+Product & Estimator & Domain & Covariance & Status & Where \\
+\midrule
+2D cross section $d^{2}\sigma/(d\pT\,d\pPar)$ & LightGBM, 5 iterations, seed 42, refined negative-weight subtraction (configuration~(f); exact-split cross-check) & \lrval{q-ncells} of the 224 $(\pT,\pPar)$ bins & $Q_R$; median per bin \SI{\uqMedian}{\percent}, integral \SI{\uqIntegral}{\percent} & Decision open: which quantities are quoted, and with what uncertainty. Its interval coverage remains unvalidated. & \S\ref{sec:results}, \S\ref{sec:results-uq}; \S\ref{sec:limitations-2d} \\
+\addlinespace
+Sixteen-cell five-observable result & Deterministic LightGBM, 5 iterations, refined negative-weight subtraction (configuration~(e)), projected onto 16 coarse cells & R00--R15: the sixteen reported cells & $C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}$; median per-cell uncertainty of \fvval{sigmed-reported}\% & Decision open: which quantities are quoted, and with what uncertainty. The coverage of the result's intervals has not been validated. & \S\ref{sec:fived16}; \S\ref{sec:limitations-fived16} \\
+\addlinespace
+3D and 4D central values ($\Eavail$, $q_{3}$) & Deterministic LightGBM, 5 iterations, refined negative-weight subtraction (configuration~(e)) & The $\Eavail$ and $q_{3}$ edges of \S\ref{sec:method-binning} & No 3D or 4D covariance is constructed or quoted & Recovery of the joint distribution remains unestablished by these checks. & \S\ref{sec:3d}, \S\ref{sec:4d} \\
+\addlinespace
+5D central value and $C_Z$ & LightGBM, 5 iterations, purity subtraction (configuration~(a)) & The five observables $\pT$, $\pPar$, $\Eavail$, $q_{3}$, $W$ & $C_Z$: not supported as an uncertainty product & It supports neither a covariance nor a physical measurement. & \S\ref{sec:5d}, \S\ref{sec:eavailw-adopted}; \S\ref{sec:limitations-5d} \\
+\addlinespace
+Joint 5D generator tests & Calibrated tests of hybrid null hypotheses across 5 predictions in total rate and shape with deterministic LightGBM & The \jtNcells{} coarse joint cells of the $3^{5}$ grid & Adds no cross-section uncertainty & These are not physical exclusions of generators. & \S\ref{sec:joint5d}; \S\ref{sec:limitations-joint} \\
+\addlinespace
+Extended-fiducial study ($\sigma_{\mathrm{ext}}$) & Unbinned unfolding with truth-muon cuts removed, retaining fiducial volume and MINOS selection & Tier~1 (supported, $\approx$\SI{\lrval{fps-tier1-pct}}{\percent}) and tier~2 (extrapolated from prior, $\approx$\SI{\lrval{fps-tier2-pct}}{\percent}) & No uncertainty magnitude is assigned beyond the three-prior envelope & Preliminary exploratory study of acceptance recovery, with no finalized cross section. & App.~\ref{sec:fps} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+% absence-ok: each absence statement in the box ("has not been validated", "remains unvalidated", "unestablished", "No 3D or 4D covariance", "not supported") restates its home verbatim; the source lines follow
+% Sources of each cell (file:line at 557809de; quotes verbatim unless marked [shortened: ...]):
+% Row 2D
+%   estimator  sec_limitations.tex:102 "LightGBM, 5 iterations, seed 42, refined negative-weight subtraction (configuration~(f); exact-split
+%              cross-check)" (restored in full after Grok's read je6: the qualifier is kept)
+%   domain     \lrval{q-ncells} (values_landed.tex, lr@q-ncells = 205); sec_method.tex:207 "205 of 224 are reported"
+%   covariance sec_limitations.tex:104 "median per bin \SI{\uqMedian}{\percent}, integral \SI{\uqIntegral}{\percent}"; Q_R as
+%              sec_front.tex:55
+%   status     sec_limitations.tex:104 "Its interval coverage remains unvalidated."
+% Row sixteen cells
+%   estimator  sec_limitations.tex:115 [shortened: "with reported covariance (\S\ref{sec:fived16})" dropped]
+%   domain     sec_front.tex:61 "R00--R15: the sixteen reported cells"
+%   covariance sec_front.tex:56; sec_execsummary.tex:9 "median per-cell uncertainty of \fvval{sigmed-reported}\%" (fv@sigmed-reported
+%              = 7.86)
+%   status     sec_fived16.tex:286 "The coverage of the result's intervals has not been validated."
+% Row 3D/4D
+%   estimator  sec_limitations.tex:106; domain: sec_method.tex:205-207 (sec:method-binning); covariance and status:
+%              sec_limitations.tex:106 "No 3D or 4D covariance is constructed or quoted" and "Recovery of the joint distribution
+%              remains unestablished by these checks."
+% Row 5D central value and C_Z
+%   estimator  sec_limitations.tex:108; covariance sec_limitations.tex:110 "Not supported as an uncertainty product."
+%   status     sec_limitations.tex:108 "It supports neither a covariance nor a physical measurement."
+% Row joint tests
+%   estimator  sec_limitations.tex:119; domain sec_front.tex:61 "the \jtNcells{} coarse joint cells of the $3^{5}$ grid"
+%              (\jtNcells = 109); covariance sec_limitations.tex:119 "Adds no cross-section uncertainty"; status
+%              sec_limitations.tex:119 "these are not physical exclusions of generators" [shortened: the sentence's first clause dropped]
+% Row extended-fiducial study (App. J = sec_fps.tex, sec:fps)
+%   estimator and domain sec_limitations.tex:121; covariance sec_fps.tex:5 "No uncertainty magnitude is assigned beyond the
+%   three-prior envelope" [shortened: its "because ..." clause dropped]; status sec_limitations.tex:121.
+%   The scalar sigma_ext (\fpsSigma) is named, not printed: the box points to App. J for its value.
+
 \section*{Definitions and conventions}
 \addcontentsline{toc}{section}{Definitions and conventions}
 \label{sec:front-definitions}
