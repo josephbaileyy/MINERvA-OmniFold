@@ -19,7 +19,7 @@ ND = HERE.parent
 REPO = ND.parent
 FILES = ("rdx_read.py", "test_rdx_read.py")
 RD = FILES[0]
-EXPECTED_TESTS = 34
+EXPECTED_TESTS = 36
 MUTATIONS = [
     # NC-X and the families
     ("NC-X not checked", RD, '    if not (same_bits(x0[1], xl[1]) and same_bits(x0[3], xl[3])):\n', "    if False:\n",
@@ -101,6 +101,19 @@ MUTATIONS = [
      "test_the_task_table_and_manifests_are_bound_and_unique"),
     ("malformed manifest lines allowed", RD, "        if not m:\n            fail(f\"{path}: a malformed manifest line",
      "        if False:\n            fail(f\"{path}: a malformed manifest line", "test_the_task_table_and_manifests_are_bound_and_unique"),
+    # rev 5: repeated fields and the transfer counts
+    ("repeated archive members allowed", RD, "    if len(names) != len(set(names)):\n", "    if False:\n",
+     "test_a_repeated_archive_member_or_json_key_refuses"),
+    ("repeated JSON keys allowed", RD, 'json.loads(str(z["meta"]), object_pairs_hook=no_duplicate_keys)', 'json.loads(str(z["meta"]))',
+     "test_a_repeated_archive_member_or_json_key_refuses"),
+    ("n_masked above rows allowed", RD, '                if rec["n_masked"] > r["rows"]:\n', "                if False:\n",
+     "test_the_transfer_counts_are_consistent"),
+    ("n_masked too small to populate allowed", RD, '                if rec["n_masked"] < need:\n', "                if False:\n",
+     "test_the_transfer_counts_are_consistent"),
+    ("n_masked across the shared mask unchecked", RD, '        if a.get("n_masked") != b.get("n_masked"):\n', "        if False:\n",
+     "test_the_transfer_counts_are_consistent"),
+    ("rows across the shared mask unchecked", RD, '    if r1.get("rows") != r0.get("rows"):\n', "    if False:\n",
+     "test_the_transfer_counts_are_consistent"),
     # phi, sigma, integrals, references
     ("sigma finiteness unchecked", RD, "        if v.shape != (16,) or not np.all(np.isfinite(v)) or np.any(v <= 0):\n",
      "        if v.shape != (16,) or np.any(v <= 0):\n", "test_phi_and_sigma_are_committed_finite_and_positive"),

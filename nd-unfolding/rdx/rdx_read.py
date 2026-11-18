@@ -40,6 +40,7 @@ import math
 import posixpath
 import re
 import sys
+import zipfile
 from pathlib import Path
 
 import numpy as np
@@ -210,8 +211,23 @@ def log_shas(logs: dict, spec: dict) -> dict:
     return seen
 
 
+def no_duplicate_keys(pairs):
+    """json object_pairs_hook: a repeated key refuses (otherwise the last value would silently win)."""
+    out = {}
+    for k, v in pairs:
+        if k in out:
+            fail(f"a JSON object repeats the key {k!r}")
+        out[k] = v
+    return out
+
+
 def load(path: Path) -> tuple:
-    """(meta, xsec_flat, xtrue_flat or None, shape), the arrays as stored, unconverted."""
+    """(meta, xsec_flat, xtrue_flat or None, shape), the arrays as stored, unconverted. A repeated archive member
+    refuses before any field is selected (numpy would read the last one)."""
+    with zipfile.ZipFile(path) as zf:
+        names = zf.namelist()
+    if len(names) != len(set(names)):
+        fail(f"{Path(path).name}: the archive repeats a member ({sorted({n for n in names if names.count(n) > 1})})")
     z = np.load(path, allow_pickle=False)
     for k in ("meta", "xsec_flat", "shape"):
         if k not in z.files:
@@ -219,7 +235,7 @@ def load(path: Path) -> tuple:
     extra = set(z.files) - {"meta", "xsec_flat", "shape", "xtrue_flat"}
     if extra:
         fail(f"{path.name}: unexpected arrays {sorted(extra)}")
-    meta = json.loads(str(z["meta"]))
+    meta = json.loads(str(z["meta"]), object_pairs_hook=no_duplicate_keys)
     return meta, np.asarray(z["xsec_flat"]), (np.asarray(z["xtrue_flat"]) if "xtrue_flat" in z.files else None), \
         np.asarray(z["shape"])
 
@@ -342,7 +358,17 @@ def identity_problems(meta: dict, spec: dict, pins: dict, ref: dict | None) -> l
             if r.get(k) is not None:
                 bad.append(f"an uninstrumented step must not record rdx.{k}")
     if spec["transfer"]:
-        bad += transfer_problems(r.get("transfer_records"))
+        tp = transfer_problems(r.get("transfer_records"))
+        bad += tp
+        if not tp and isint(r.get("rows")):
+            for rec in r["transfer_records"]:
+                need = max(sum(v is not None for v in rec["cell_bias"]),
+                           sum(v is not None for v in rec["acceptance_decile_rel_bias"]))
+                if rec["n_masked"] > r["rows"]:
+                    bad.append(f"iteration {rec['iteration']}: n_masked {rec['n_masked']} exceeds rdx.rows {r['rows']}")
+                if rec["n_masked"] < need:
+                    bad.append(f"iteration {rec['iteration']}: n_masked {rec['n_masked']} cannot populate {need} "
+                               "reported cells or deciles")
     elif "transfer_records" in r:
         bad.append("a step without the transfer diagnostic carries transfer records")
     if spec["truth"] == "a7_gibuu":
@@ -501,7 +527,23 @@ def checked_products(products: Path, logs: dict, spec: dict, pins: dict, n_fine:
         bad = identity_problems(prod[task][0], s, pins, None if task == "X0" else ref)
         if bad:
             fail(f"{task}: {'; '.join(bad)}")
+    bad = transfer_cross_problems(prod["X1t"][0]["rdx"], prod["X0t"][0]["rdx"])
+    if bad:
+        fail(f"X1t/X0t: {'; '.join(bad)}")
     return prod, got
+
+
+def transfer_cross_problems(r1: dict, r0: dict) -> list:
+    """X1t and X0t declare the same mask, [20261112, k] at 20 % (RDX-DECLARATION.md:464, :469), over the same
+    reco-passing truth rows: their row counts, and each iteration's masked count, must agree."""
+    bad = []
+    if r1.get("rows") != r0.get("rows"):
+        bad.append(f"rdx.rows {r1.get('rows')!r} != {r0.get('rows')!r}")
+    for a, b in zip(r1.get("transfer_records") or [], r0.get("transfer_records") or []):
+        if a.get("n_masked") != b.get("n_masked"):
+            bad.append(f"iteration {a.get('iteration')}: n_masked {a.get('n_masked')!r} != {b.get('n_masked')!r} "
+                       "under the same mask")
+    return bad
 
 
 def main(argv=None) -> int:

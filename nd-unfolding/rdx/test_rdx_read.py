@@ -310,6 +310,10 @@ class Guards(unittest.TestCase):
             recs = [record(k) for k in range(5)]
             recs[2][field] = value
             self.assertTrue(any(why in p for p in problems(recs)), f"{field}={value!r}")
+        lone = [record(k) for k in range(5)]
+        lone[2].update(n_masked=True, cell_bias=[0.0] + [None] * 15, acceptance_decile_rel_bias=[None] * 10)
+        self.assertIn("iteration 2: n_masked, rel_bias or rel_rms is not valid", problems(lone),
+                      "a bool n_masked refuses even where one masked row would populate what is reported")
         tied = [record(k) for k in range(5)]
         tied[2]["acceptance_edges"] = [0.0, 0.1, 0.1, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
         self.assertEqual(problems(tied), [], "numpy.quantile can repeat an edge on tied acceptances")
@@ -317,6 +321,51 @@ class Guards(unittest.TestCase):
         prod["X1"][0]["rdx"]["transfer_records"] = good
         self.assertIn("a step without the transfer diagnostic carries transfer records",
                       R.identity_problems(prod["X1"][0], SPEC["X1"], PINS, prod["X0"][0]))
+
+    def test_a_repeated_archive_member_or_json_key_refuses(self):
+        import zipfile
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "X1.npz"
+            meta = meta_for("X1")
+            np.savez(p, meta=np.array(json.dumps(meta)), xsec_flat=BASE, shape=np.array(FINE))
+            self.assertEqual(len(R.load(p)), 4)
+            q = Path(d) / "extra.npy"
+            np.save(q, np.full(16, np.nan))
+            with zipfile.ZipFile(p, "a") as zf, self.assertWarns(UserWarning):
+                zf.write(q, "xsec_flat.npy")
+            with self.assertRaisesRegex(SystemExit, "repeats a member"):
+                R.load(p)
+            text = json.dumps(meta)
+            dup = text[:-1] + ', "iters": -1}'
+            np.savez(p, meta=np.array(dup), xsec_flat=BASE, shape=np.array(FINE))
+            with self.assertRaisesRegex(SystemExit, "repeats the key 'iters'"):
+                R.load(p)
+            nested = text.replace('"rdx": {', '"rdx": {"truth": "q3", ', 1)
+            np.savez(p, meta=np.array(nested), xsec_flat=BASE, shape=np.array(FINE))
+            with self.assertRaisesRegex(SystemExit, "repeats the key 'truth'"):
+                R.load(p)
+
+    def test_the_transfer_counts_are_consistent(self):
+        prod = clean_prod()
+        m1 = prod["X1t"][0]
+        self.assertEqual(R.identity_problems(m1, SPEC["X1t"], PINS, prod["X0"][0]), [])
+        self.assertEqual(R.transfer_cross_problems(m1["rdx"], prod["X0t"][0]["rdx"]), [])
+        m1["rdx"]["transfer_records"][-1]["n_masked"] = 1001
+        self.assertTrue(any("exceeds rdx.rows" in p for p in R.identity_problems(m1, SPEC["X1t"], PINS, prod["X0"][0])))
+        m1["rdx"]["transfer_records"][-1]["n_masked"] = 1
+        self.assertTrue(any("cannot populate" in p for p in R.identity_problems(m1, SPEC["X1t"], PINS, prod["X0"][0])))
+        m1["rdx"]["transfer_records"][-1]["n_masked"] = 101
+        self.assertEqual(R.identity_problems(m1, SPEC["X1t"], PINS, prod["X0"][0]), [])
+        self.assertTrue(any("under the same mask" in p for p in R.transfer_cross_problems(m1["rdx"], prod["X0t"][0]["rdx"])))
+        m1["rdx"]["transfer_records"][-1]["n_masked"] = 100
+        m1["rdx"]["rows"] = 999
+        self.assertTrue(any("rdx.rows" in p for p in R.transfer_cross_problems(m1["rdx"], prod["X0t"][0]["rdx"])))
+        prod = clean_prod()
+        prod["X1t"][0]["rdx"]["transfer_records"][2]["n_masked"] = 101
+        with tempfile.TemporaryDirectory() as d:
+            logs = write_all(Path(d), prod)
+            with self.assertRaisesRegex(SystemExit, "X1t/X0t: .*under the same mask"):
+                check(Path(d), logs)
 
     def test_product_arrays_must_be_the_fine_grids(self):
         for mutate, why in ((lambda p: setx(p, "X1", BASE[:15]), "xsec_flat is"),
