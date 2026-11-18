@@ -2,7 +2,7 @@
 \label{sec:eavailw}
 
 % Methods-paper sync fix round: aligned with paper_body.tex sec:central (descriptive central values; no mechanism). Register round n1 (R-N1): both are stated once, for this section too, at the sec:3d lead.
-For the central values, Valencia 2p2h closes about half of the low-recoil gap (\S\ref{sec:3d-2p2h}) but leaves a separate excess over the MINERvA Tune~v1 prior at high $\Eavail$. There the predicted 2p2h contribution is zero, and the two tested pion final-state-interaction variations change the prediction by less than one percent, too little to explain the excess.
+For the central values, Valencia 2p2h closes about half of the low-recoil gap (\S\ref{sec:3d-2p2h}) but leaves a separate excess over the MINERvA Tune~v1 prior at high $\Eavail$. There the predicted 2p2h contribution is zero, and the two tested pion final-state-interaction variations change the prediction by less than one percent, too little to explain the excess. See also \S\ref{sec:limitations}.
 
 GiBUU is low throughout the $\Eavail$ tail. Its $W$-integrated five-dimensional data/generator ratio is $1.59$ at $\Eavail\in[0.8,1.5)$ and $1.37$ at $[1.5,3.0)$, in configuration~(a), the LightGBM unfolding with purity-based subtraction (\S\ref{sec:method-config}); its sample stops at $E_\nu\approx\SI{20}{GeV}$ (\S\ref{sec:eavailw-band}). GENIE CV instead matches data at $[0.8,1.5)$ and is low at $[1.5,3.0)$, where its three-dimensional data/CV ratio is $1.10$ (\S\ref{sec:3d-2p2h}) in configuration~(e), the deterministic learner with refined negative-weight subtraction.
 
@@ -153,7 +153,7 @@ Valencia 2p2h raises the GENIE$+$MEC integrated prediction while leaving the cor
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.99\textwidth]{eavailW_band}
-  \caption[Generator projections, central values only]{Central values only: both GENIE predictions lie above data in the $W$ transition region (\S\ref{sec:eavailw-band}). No uncertainty is drawn; no covariance-based compatibility metric is quoted (\S\ref{sec:eavailw-band}). Shown are projections of the unfolded $(\Eavail,W)$ cross section onto $\Eavail$ (left) and $W$ (right), with the predictions of four generators (GENIE~CV, GENIE$+$MEC, NuWro, GiBUU; GENIE and NuWro flux-corrected, \S\ref{sec:3d-models}).}
+  \caption[Generator projections, central values only]{Central values only: both GENIE predictions lie above data at $1.4\le W<\SI{1.8}{GeV}$ (\S\ref{sec:eavailw-band}). No uncertainty is drawn. No compatibility metric based on the configuration-(a) five-axis covariance is quoted (\S\ref{sec:eavailw-band}). Shown are projections of the unfolded $(\Eavail,W)$ cross section onto $\Eavail$ (left) and $W$ (right), with the predictions of four generators (GENIE~CV, GENIE$+$MEC, NuWro, GiBUU; GENIE and NuWro flux-corrected, \S\ref{sec:3d-models}).}
   \label{fig:eavailWband}
 \end{figure}
 
