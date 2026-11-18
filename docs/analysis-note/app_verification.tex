@@ -1,0 +1,75 @@
+% The verification appendix (the director's brief, 2026-11-18, approved by Joseph): what checks the note's numbers
+% and statements, by repository path, and what the checks do not show. Owned by journal-editor. Sources of each
+% statement (at 5586a0f0f): values.tex header; make_values_fived16.py and make_values_landed.py docstrings and main();
+% build_all.sh items 1-8 and lines 132-162; freeze_checks.py docstring (checks 1-7); limitations_export.py docstring;
+% check_note_records.py docstring (P7); tools/registry/absence_claims.py docstring; .githooks/pre-commit line 349;
+% the column headers of history-cuts/move-manifest-*.tsv; review-tools/meaning_read.sh (a copy committed beside this appendix; the meaning-reads wording and its
+% exceptions clause follow the ruling of 2026-11-18);
+% the AI-use statement of main_note.tex (its sentence on studies specified in writing, and on delegated decisions).
+\section{How the note's numbers and statements are checked}
+\label{app:verification}
+
+This appendix lists the checks applied to the text of this note and the records each check compares it with. Each
+tool is named by its path in the analysis repository; a bare file name is in
+\repopath{docs/analysis-note/}, the directory of the note's sources. A check that fails exits with an error and names what failed.
+
+\paragraph{Limits of these checks.} The checks show that the text is consistent with the committed records and with
+earlier versions of the note in the respects listed below, and in no others. They do not show that the records, or the analyses that produced them, are correct.
+The readings by language models described below are aids to the authors, and a reading that reports nothing is not a
+proof that nothing changed.
+
+\paragraph{Printed numbers.} A number that recurs across the note is defined once, as a macro, and the text prints the
+macro. \repopath{values.tex} holds the recurring headline numbers, each with a comment naming the
+record or receipt it was taken from; a number printed at a single site is typed at that site. The numbers of the
+sixteen-cell result (\S\ref{sec:fived16}) and of the results that landed from November 2026 are generated:
+\texttt{make\_values\_fived16.py} and \texttt{make\_values\_landed.py} read
+committed readouts, each pinned by its SHA-256 digest, or a stated line of an outcome record, and write
+\texttt{values\_fived16.tex} and \texttt{values\_landed.tex}. With \texttt{-{}-check}, each fails unless the committed
+file equals a fresh generation, and the note build, \texttt{build\_all.sh}, runs both checks. In a
+copy of the note without the readouts, the generators report that they skipped the comparison.
+
+\paragraph{The build.} \texttt{build\_all.sh} forces every PDF to be rebuilt and fails if a PDF was not written by the
+run, if a reference or citation is unresolved after one further pass, or if a label is defined more than once.
+
+\paragraph{The freeze checks.} \texttt{freeze\_checks.py} compares a new build of the note with the
+previous version before the note is sent:
+\begin{itemize}
+  \item \emph{Numbers.} The numeric tokens of the two PDFs' text must agree as a multiset, apart from the rows of
+  \repopath{numbers-allowlist.tsv}, each of which names a token, its change in count, who made the change, and the reason.
+  Section, figure, table and page numbers and the text inside figures are not counted.
+  \item \emph{Limitations.} Every row of \repopath{limitations-export.tsv} must have its quote, or
+  its re-anchored quote, in the note. The rows are the note's entries in the project's limitations register;
+  \texttt{limitations\_export.py} re-anchors a row only to a verbatim move recorded in a move
+  manifest (below), and with \texttt{-{}-check} it fails if any row needs a person to judge a reworded sentence.
+  \item \emph{Labels.} No unresolved reference may print, no page number may be hard-coded in the text, and every
+  figure and table must be referenced.
+  \item \emph{Spelling and fonts.} Every source file of the note must use US spelling. A sans-serif font may appear
+  only on the pages of the figures the script lists, and the new version may print no accented letter that the
+  previous version does not.
+\end{itemize}
+
+\paragraph{Pinned sentences.} \texttt{check\_note\_records.py} with \texttt{probe} checks the
+ledger \repopath{records-move-ledger.md}, written when the record appendices moved to the separate
+records document. Each ledger row carries a probe that names a file and a sentence: the sentence must still print in
+that file of the posted note, must no longer print there, or must print in the records document. Editing a pinned
+sentence fails the probe until its row is re-anchored.
+
+% absence-ok: this paragraph describes the absence-claims check itself; it claims no result is absent.
+\paragraph{Absence claims.} \texttt{tools/registry/absence\_claims.py}, run on every commit, fails if an added
+sentence of the note states that a result does not exist and its paragraph carries neither the search behind the
+statement (the terms searched and the commit) nor a stated reason.
+
+\paragraph{Moved text and meaning reads.} The restructuring of November 2026 moved text between sections. Every
+moved sentence has a row in a move manifest, \repopath{history-cuts/move-manifest-*.tsv}, giving
+its source, its destination and the SHA-256 digest of its text. Changes in the November restructuring were read
+independently by two language models from different developers (Grok and Gemini) before merging, with the exceptions
+recorded in the merge commits. Each model was given the diff, the files before and after, and the manifests, and was
+asked whether the change added, dropped or weakened any claim. The script that runs these reads is
+\texttt{review-tools/meaning\_read.sh}; most of its reports are kept outside the repository.
+
+\paragraph{Studies and decisions.} Each study was specified in writing before its results were read, unless it is
+labeled descriptive. Where a study has them, its specification, authorization, binding of code and inputs by digest,
+independent audit and outcome are recorded in \repopath{docs/orchestration/} (records named \texttt{DECLARATION-}, \texttt{AUTHORIZATION-},
+\texttt{BINDING-}, \texttt{AUDIT-} and \texttt{OUTCOME-}). The first author's decisions are recorded in
+\repopath{docs/orchestration/DECISION-*.md}. Most of these records quote the first author's words verbatim; a decision
+the first author delegated is recorded as delegated.
