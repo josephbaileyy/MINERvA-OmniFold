@@ -358,9 +358,17 @@ def edges_problems(edges: Path) -> tuple[str | None, list]:
     sha = safe_sha(idx)
     bad = []
     try:
+        import fb_pilot_edges as E
         index = json.loads(idx.read_text())
         if index.get("schema") != "pfb-edges/1":
             bad.append(f"edges: INDEX.json's schema is {index.get('schema')!r}, not 'pfb-edges/1'")
+        if index.get("K") != E.K:
+            bad.append(f"edges: INDEX.json's K is {index.get('K')!r}, not {E.K!r}")
+        for s, c in index["sets"].items():
+            want_p = E.SETS.get(s, {})
+            for f in ("max_bin", "offset"):
+                if c.get(f) != want_p.get(f):
+                    bad.append(f"edges: {s}'s {f} is {c.get(f)!r}, not the declared {want_p.get(f)!r}")
         if set(index["sets"]) != set(SETS) or any(set(c["roles"]) != set(ROLES) for c in index["sets"].values()):
             bad.append("edges: INDEX.json does not list the three sets' four roles")
         for s, c in index["sets"].items():
@@ -584,6 +592,8 @@ def outcome(stats: dict) -> dict:
 def status_problem(status: dict, job: str, pin: str | None, status_path: Path | None, runs: Path, stage: Path,
                    root_declared: str = ROOT_DECLARED) -> str | None:
     """The status must be this job's, at this pin, for the declared root, read from where the job writes it."""
+    if not isinstance(status, dict):
+        return f"the job status is a JSON {type(status).__name__}, not an object"
     if str(status.get("job")) != str(job):
         return f"the job status names job {status.get('job')!r}, not {job!r}"
     if status.get("pin") != pin:
@@ -717,19 +727,29 @@ def setup_closure(trace: Path, exclude: tuple = ()) -> dict:
     return out
 
 
-def smoke_receipt(stage: Path, pin: str, local: bool, closure: dict | None = None) -> dict:
-    """What the login-node smoke records, and the job requires: its stage, pin, mode, INDEX.json's sha256 and the
-    sourced setup's file closure."""
+def post_setup_env(environ=None) -> list:
+    """The names the sourced setup leaves exported, without the per-run ones (Slurm's, PFB_, the shell's own)."""
+    env = os.environ if environ is None else environ
+    return sorted(k for k in env if not (k.startswith(("SLURM_", "PFB_")) or k in ("PWD", "OLDPWD", "SHLVL", "_")))
+
+
+def smoke_receipt(stage: Path, pin: str, local: bool, closure: dict | None = None, env_names: list | None = None) -> dict:
+    """What the login-node smoke records, and the job requires: its stage, pin, mode, INDEX.json's sha256, the
+    sourced setup's file closure, and the names the setup leaves exported."""
     idx = Path(stage) / "smoke-edges" / "INDEX.json"
-    return {"schema": "pfb-smoke/2", "stage": str(stage), "pin": pin, "local_test": bool(local),
-            "index_sha256": safe_sha(idx) if idx.is_file() else None, "setup_closure": closure or {}}
+    return {"schema": "pfb-smoke/3", "stage": str(stage), "pin": pin, "local_test": bool(local),
+            "index_sha256": safe_sha(idx) if idx.is_file() else None, "setup_closure": closure or {},
+            "post_setup_env": post_setup_env() if env_names is None else env_names}
 
 
-def smoke_receipt_problem(rec: dict, stage: Path, pin: str, local: bool, closure: dict | None = None) -> str | None:
-    want = smoke_receipt(stage, pin, local, closure)
+def smoke_receipt_problem(rec: dict, stage: Path, pin: str, local: bool, closure: dict | None = None,
+                          env_names: list | None = None) -> str | None:
+    if not isinstance(rec, dict):
+        return "the smoke receipt is not a JSON object"
+    want = smoke_receipt(stage, pin, local, closure, env_names)
     if want["index_sha256"] is None:
         return "the stage holds no smoke-edges/INDEX.json"
-    diff = [k for k in ("schema", "stage", "pin", "local_test", "index_sha256", "setup_closure")
+    diff = [k for k in ("schema", "stage", "pin", "local_test", "index_sha256", "setup_closure", "post_setup_env")
             if rec.get(k) != want[k]]
     return f"the smoke receipt differs in {diff}" if diff else None
 

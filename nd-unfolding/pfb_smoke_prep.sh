@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env -S -u BASH_ENV -u ENV /bin/bash --noprofile --norc
 # PILOT-FB's login-node prep-only smoke (the code audits' request, the director's ruling of 2026-11-18): the prep step
 # alone, on a login node, before any job. 0 node-h: no sbatch, no srun, no fit (prep stops before the first fit).
 # Usage: pfb_smoke_prep.sh <deploy> <pin> <stage>, with <stage> the declared /pscratch/sd/j/josephrb/pfb-20261117-stage.
@@ -13,10 +13,17 @@
 # Exit codes: 0 edges and receipt written; 6 INFEASIBLE; 4 an input digest; 2 a refusal (before the stage is created,
 # nothing is written; after, only under the new stage); 9 the receipt could not be written; other: the prep step's own.
 # Local tests set PFB_LOCAL_TEST (any absolute stage outside /pscratch and /global; PFB_SETUP_SHA for a stub setup).
-# --- the environment: identical in sbatch_pfb.sh and pfb_smoke_prep.sh (code 4, the director's ruling) ---
-# The script re-executes itself under `env -i` with only the variables it names, so no inherited BASH_ENV, PYTHON*,
-# GIT_*, XDG_* or tool path reaches it or its children; a local test (PFB_LOCAL_TEST, outside Slurm only) keeps its
-# own HOME, PATH and PFB_ variables. After the re-exec, any variable outside the list refuses.
+# --- the environment: identical in sbatch_pfb.sh and pfb_smoke_prep.sh (code 4-5, the director's rulings) ---
+# The reviewed launch starts the first shell clean: the smoke as
+#   env -i HOME=/global/homes/j/josephrb PATH=/usr/bin:/bin /bin/bash --noprofile --norc <deploy>/nd-unfolding/pfb_smoke_prep.sh ...
+# and the job through `env -i HOME=/global/homes/j/josephrb PATH=/usr/bin:/bin sbatch <deploy>/nd-unfolding/sbatch_pfb.sh ...`
+# (no SBATCH_EXPORT can reach sbatch), whose first shell is this file's shebang: env -S -u BASH_ENV -u ENV, so no
+# BASH_ENV runs before this line. The script then re-executes itself under `env -i` with only the variables it names.
+# Whatever the marker says, the names AND the values are checked: HOME, PATH, USER, LOGNAME, SCRATCH, LC_ALL and
+# PYTHONDONTWRITEBYTECODE must be the declared ones (a local test, PFB_LOCAL_TEST outside Slurm only, keeps its own
+# HOME and PATH). After the setup, a denied variable (BASH_ENV, ENV, PYTHONHOME, PYTHONSTARTUP, PYTHONPYCACHEPREFIX,
+# PYTHONUSERBASE, PYTHONINSPECT, GIT_DIR, GIT_WORK_TREE, GIT_INDEX_FILE) refuses, and the smoke records the set of
+# names the setup leaves, which the job must reproduce.
 if [ "${PFBCLEAN:-}" != 1 ]; then
     if [ -n "${SLURM_JOB_ID:-}" ] && [ -n "$(compgen -v PFB_)" ]; then
         echo "[pfb] refusing: PFB_ variables are set inside a Slurm job: $(compgen -v PFB_ | tr '\n' ' ')" >&2; exit 2
@@ -27,27 +34,40 @@ if [ "${PFBCLEAN:-}" != 1 ]; then
         for v in $(compgen -e PFB_); do keep+=("$v=${!v}"); done
     else
         keep+=(HOME=/global/homes/j/josephrb USER=josephrb LOGNAME=josephrb PATH=/usr/bin:/bin SCRATCH=/pscratch/sd/j/josephrb)
-        for v in SLURM_JOB_ID SLURM_JOB_NAME SLURM_JOB_NUM_NODES; do [ -n "${!v:-}" ] && keep+=("$v=${!v}"); done
+        for v in SLURM_JOB_ID SLURM_JOB_NAME SLURM_JOB_NUM_NODES SLURM_EXPORT_ENV; do
+            [ -n "${!v:-}" ] && keep+=("$v=${!v}")
+        done
     fi
     exec /usr/bin/env -i "${keep[@]}" /bin/bash --noprofile --norc "$0" "$@"
 fi
+envwant() {  # <name> <value>: the variable must be set, to exactly that value
+    [ "${!1-__unset__}" = "$2" ] || { echo "[pfb] refusing: $1 is '${!1-<unset>}', not the declared '$2'" >&2; exit 2; }
+}
+envwant PFBCLEAN 1; envwant LC_ALL C; envwant PYTHONDONTWRITEBYTECODE 1
+if [ -z "${PFB_LOCAL_TEST+x}" ] || [ -n "${SLURM_JOB_ID:-}" ]; then
+    envwant HOME /global/homes/j/josephrb; envwant PATH /usr/bin:/bin; envwant USER josephrb
+    envwant LOGNAME josephrb; envwant SCRATCH /pscratch/sd/j/josephrb
+fi
 for v in $(compgen -e); do
     case "$v" in
-        PFBCLEAN|LC_ALL|PYTHONDONTWRITEBYTECODE|HOME|USER|LOGNAME|PATH|SCRATCH|SLURM_JOB_ID|SLURM_JOB_NAME|SLURM_JOB_NUM_NODES) ;;
-        PWD|OLDPWD|SHLVL|_|PFB_*) ;;
+        PFBCLEAN|LC_ALL|PYTHONDONTWRITEBYTECODE|HOME|USER|LOGNAME|PATH|SCRATCH) ;;
+        SLURM_JOB_ID|SLURM_JOB_NAME|SLURM_JOB_NUM_NODES|SLURM_EXPORT_ENV|PWD|OLDPWD|SHLVL|_|PFB_*) ;;
         *) echo "[pfb] refusing: the environment holds $v, which the declared environment does not" >&2; exit 2 ;;
     esac
 done
 newfile() {  # <path>: create it O_CREAT|O_EXCL|O_NOFOLLOW; fails on anything already there, a link included
     python3 -c 'import os, sys; os.close(os.open(sys.argv[1], os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o644))' "$1" 2>/dev/null
 }
-traced_setup() {  # <log>: source the pinned setup with its xtrace (PS4 names each sourced file) into <log>
-    local PS4='+@${BASH_SOURCE[0]}@ '
+traced_setup() {  # <log>: source the pinned setup with its xtrace (PS4 names each sourced file) into <log>; 97 if it
+    local PS4='+@${BASH_SOURCE[0]}@ '                # exported a denied variable
     set -x
     source "$D/setup_salloc_env.sh" >> "$1" 2>&1
     local rc=$?
     { set +x; } 2>/dev/null
-    export PYTHONDONTWRITEBYTECODE=1; unset BASH_ENV ENV
+    export PYTHONDONTWRITEBYTECODE=1
+    for v in BASH_ENV ENV PYTHONHOME PYTHONSTARTUP PYTHONPYCACHEPREFIX PYTHONUSERBASE PYTHONINSPECT GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE; do
+        [ -z "${!v+x}" ] || { echo "[pfb] the setup exported $v, which is denied" >> "$1"; echo "[pfb] the setup exported $v, which is denied" >&2; return 97; }
+    done
     return "$rc"
 }
 # --- end of the environment block ---
@@ -83,7 +103,7 @@ newfile "$STAGE/smoke-env.log" && newfile "$STAGE/smoke.log" || no "cannot creat
 GUARD="$D|$PIN|$STAGE|$LOCAL"
 traced_setup "$STAGE/smoke-env.log"
 src=$?
-[ "$src" -eq 0 ] || no "setup_salloc_env.sh returned $src"
+[ "$src" -eq 0 ] || no "setup_salloc_env.sh returned $src (97: it exported a denied variable)"
 [ "$GUARD" = "$D|$PIN|$STAGE|$LOCAL" ] || no "setup_salloc_env.sh changed the smoke's own variables"
 NPZ=/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz
 BKG=/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz

@@ -707,7 +707,10 @@ class Rev3(unittest.TestCase):
         self.nested = self.tmp / "ext" / "nested_setup.sh"  # outside the deploy, as the real setup's nested files are
         self.nested.parent.mkdir()
         self.nested.write_text("export STUB_NESTED=1\n")
+        self.deny_flag, self.extra_flag = self.tmp / "ext" / "deny", self.tmp / "ext" / "extra"
         (d / "setup_salloc_env.sh").write_text(f"# stub setup\nexport STUB_SETUP=1\nsource {self.nested}\n"
+                                               f"[ -f {self.deny_flag} ] && export PYTHONSTARTUP=/nowhere\n"
+                                               f"[ -f {self.extra_flag} ] && export STUB_EXTRA=1\n"
                                                "env | sed 's/^/ENV-DUMP /'\n")
         subprocess.run(["git", "init", "-q", str(d)], check=True)
         subprocess.run(["git", "-C", str(d), "add", "-A"], check=True)
@@ -742,9 +745,9 @@ class Rev3(unittest.TestCase):
         import hashlib
         e = root / "edges"
         e.mkdir(parents=True)
-        idx = {"schema": "pfb-edges/1", "sets": {}}
+        idx = {"schema": "pfb-edges/1", "K": E.K, "sets": {}}
         for s_ in A.SETS:
-            idx["sets"][s_] = {"roles": {}}
+            idx["sets"][s_] = {"max_bin": E.SETS[s_]["max_bin"], "offset": E.SETS[s_]["offset"], "roles": {}}
             for r in A.ROLES:
                 f = e / f"{s_}_{r}.json"
                 f.write_text(f"[{s_} {r}]\n")
@@ -922,6 +925,7 @@ class Rev3(unittest.TestCase):
         stage.mkdir()
         slurm = {"SLURM_JOB_ID": "77", "SLURM_JOB_NUM_NODES": "1", "SLURM_JOB_NAME": "pfb_run"}
         for extra, why in (({"PFB_LOCAL_TEST": "1"}, "PFB_ variables"), ({"PFB_LOCAL_TEST": ""}, "PFB_ variables"),
+                           ({"SLURM_EXPORT_ENV": "ALL"}, "--export=ALL, not NONE"),
                            ({"PFB_LOCAL_TEST": "0"}, "PFB_ variables"), ({"PFB_SETUP_SHA": "x"}, "PFB_ variables"),
                            ({"SLURM_JOB_NUM_NODES": "2"}, "nodes, not 1"),
                            ({"SLURM_JOB_NAME": "rdx_s3_a"}, "pfb_ family")):
@@ -982,6 +986,9 @@ class Rev3(unittest.TestCase):
         self.nested.write_text("export STUB_NESTED=2\n")  # the setup's sourced closure moved since the smoke
         self.assertIn("setup closure", refused())
         self.nested.write_text("export STUB_NESTED=1\n")
+        self.extra_flag.write_text("")  # the setup now leaves a name the smoke's setup did not
+        self.assertIn("smoke receipt", refused())
+        self.extra_flag.unlink()
         rec = json.loads((stage / "smoke-receipt.json").read_text())
         (stage / "smoke-receipt.json").unlink()
         (stage / "smoke-receipt.json").write_text(json.dumps(dict(rec, local_test=False)))
@@ -1098,7 +1105,8 @@ class Rev3(unittest.TestCase):
         self.assertEqual((self.tmp / "bash_env_ran").read_text().count("sourced"), 1,
                          "BASH_ENV runs only in the outer bash the test starts, never after the re-exec")
         self.assertFalse((self.tmp / "pyc").exists())
-        r = self.run_smoke(self.tmp / "stage2", PFB_LOCAL_TEST="1", PFB_SETUP_SHA=sha, PFBCLEAN="1", FOO_INHERITED="x")
+        r = self.run_smoke(self.tmp / "stage2", PFB_LOCAL_TEST="1", PFB_SETUP_SHA=sha, PFBCLEAN="1", FOO_INHERITED="x",
+                           LC_ALL="C", PYTHONDONTWRITEBYTECODE="1")
         self.assertEqual(r.returncode, 2)
         self.assertIn("[pfb] refusing: the environment holds ", r.stderr)
         for f in ("sbatch_pfb.sh", "pfb_smoke_prep.sh"):
@@ -1243,8 +1251,111 @@ class Rev4(Rev3):
 
 
 
-for _n in [n for n in vars(Rev3) if n.startswith("test_")]:
-    setattr(Rev4, _n, None)  # not collected twice: unittest collects only callable test_ attributes
+class Rev5(Rev3):
+    """The code-4 confirmation audits and the director's code-5 rulings: values as well as names, a clean first shell,
+    a post-setup check, a typed status, and INDEX's policy fields."""
+
+    def raw_smoke(self, stage, env, argv0=None):
+        import subprocess
+        d, pin, _ = self.deploy()
+        cmd = [argv0] if argv0 else ["/bin/bash", str(ND / "pfb_smoke_prep.sh")]
+        return subprocess.run(cmd + [str(d), pin, str(stage)], env=env, capture_output=True, text=True,
+                              cwd=self.tmp / "cwd")
+
+    def test_the_environment_values_are_checked_whatever_the_marker(self):
+        """Codex: a forged PFBCLEAN with a foreign PATH, HOME or bytecode setting was accepted; now every value is."""
+        (self.tmp / "cwd").mkdir()
+        _, _, sha = self.deploy()
+        base = {"PFBCLEAN": "1", "LC_ALL": "C", "PYTHONDONTWRITEBYTECODE": "1", "HOME": "/global/homes/j/josephrb",
+                "USER": "josephrb", "LOGNAME": "josephrb", "SCRATCH": "/pscratch/sd/j/josephrb"}
+        r = self.raw_smoke(A.STAGE_DECLARED, {**base, "PATH": "/nondeclared/bin"})
+        self.assertEqual(r.returncode, 2)
+        self.assertIn("PATH is '/nondeclared/bin', not the declared '/usr/bin:/bin'", r.stderr)
+        r = self.raw_smoke(A.STAGE_DECLARED, {**base, "PATH": "/usr/bin:/bin", "HOME": "/nondeclared/home"})
+        self.assertIn("HOME is '/nondeclared/home'", r.stderr)
+        loc = {"PFBCLEAN": "1", "LC_ALL": "C", "PFB_LOCAL_TEST": "1", "PFB_SETUP_SHA": sha, "HOME": str(self.tmp),
+               "PATH": f"{Path(sys.executable).parent}:/usr/bin:/bin"}
+        r = self.raw_smoke(self.tmp / "s1", {**loc, "PYTHONDONTWRITEBYTECODE": "0"})
+        self.assertIn("PYTHONDONTWRITEBYTECODE is '0', not the declared '1'", r.stderr)
+        r = self.raw_smoke(self.tmp / "s2", loc)
+        self.assertIn("PYTHONDONTWRITEBYTECODE is '<unset>'", r.stderr)
+        self.assertFalse((self.tmp / "s1").exists() or (self.tmp / "s2").exists())
+
+    def test_the_setup_may_not_export_a_denied_variable(self):
+        """The director's ruling: the environment is checked again after the setup."""
+        (self.tmp / "cwd").mkdir()
+        _, _, sha = self.deploy()
+        self.deny_flag.write_text("")
+        r = self.run_smoke(self.tmp / "stage", PFB_LOCAL_TEST="1", PFB_SETUP_SHA=sha)
+        self.assertEqual(r.returncode, 2, r.stderr)
+        self.assertIn("the setup exported PYTHONSTARTUP, which is denied", r.stderr)
+        self.assertIn("returned 97", r.stderr)
+        self.assertFalse((self.tmp / "stage" / "smoke-receipt.json").exists())
+
+    def test_the_first_shell_starts_clean(self):
+        """The director's ruling (Codex, Grok): BASH_ENV never runs in the first shell. Both scripts' shebang is
+        `env -S -u BASH_ENV -u ENV /bin/bash --noprofile --norc`, and the reviewed smoke launch is env -i."""
+        import os
+        import shutil
+        import subprocess
+        (self.tmp / "cwd").mkdir()
+        d, pin, sha = self.deploy()
+        hook = self.tmp / "hook.sh"
+        ran = self.tmp / "bash_env_ran"
+        hook.write_text(f"echo ran >> {ran}\n")
+        exe = self.tmp / "pfb_smoke_prep.sh"
+        shutil.copy(ND / "pfb_smoke_prep.sh", exe)
+        exe.chmod(0o755)
+        r = self.raw_smoke(self.tmp / "stage", self.env(PFB_LOCAL_TEST="1", PFB_SETUP_SHA=sha, BASH_ENV=str(hook),
+                                                        ENV=str(hook)), argv0=str(exe))
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+        self.assertFalse(ran.exists(), "BASH_ENV ran before the script's first line")
+        job = self.tmp / "sbatch_pfb.sh"
+        shutil.copy(ND / "sbatch_pfb.sh", job)
+        job.chmod(0o755)
+        r = subprocess.run([str(job), str(d), pin, str(self.tmp / "nostage"), str(self.tmp / "root")],
+                           env=self.env(PFB_LOCAL_TEST="1", BASH_ENV=str(hook)), capture_output=True, text=True)
+        self.assertEqual(r.returncode, 2)
+        self.assertFalse(ran.exists(), "BASH_ENV ran in the job's first shell")
+        for f in ("sbatch_pfb.sh", "pfb_smoke_prep.sh"):
+            self.assertTrue((ND / f).read_text().startswith(
+                "#!/usr/bin/env -S -u BASH_ENV -u ENV /bin/bash --noprofile --norc\n"), f)
+        launch = ("env -i HOME=/global/homes/j/josephrb PATH=/usr/bin:/bin /bin/bash --noprofile --norc "
+                  "<deploy>/nd-unfolding/pfb_smoke_prep.sh")
+        self.assertIn(launch, (ND / "pfb_smoke_prep.sh").read_text())
+        r = subprocess.run(["/usr/bin/env", "-i", f"HOME={self.tmp}",
+                            f"PATH={Path(sys.executable).parent}:/usr/bin:/bin:/usr/sbin:/sbin",
+                            "PFB_LOCAL_TEST=1", f"PFB_SETUP_SHA={sha}", "/bin/bash", "--noprofile", "--norc",
+                            str(ND / "pfb_smoke_prep.sh"), str(d), pin, str(self.tmp / "stage2")],
+                           capture_output=True, text=True, cwd=self.tmp / "cwd")
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+        self.assertTrue(os.path.isfile(self.tmp / "stage2" / "smoke-receipt.json"))
+
+    def test_a_status_of_the_wrong_type_is_classified(self):
+        """Codex 4: a status that is valid JSON of another type refuses with its reason, never an AttributeError."""
+        c = self.run_tree()
+        self.assertIn("not an object", A.status_problem([], self.JOB, c["pin"], None, c["root"], c["stage"]))
+        with self.assertRaisesRegex(SystemExit, "the job status is a JSON list, not an object"):
+            self.analyze([])
+
+    def test_the_index_policy_fields(self):
+        """Codex 4: INDEX's K, and each set's max_bin and offset, must be the declared ones."""
+        c = self.run_tree()
+        e = c["root"] / "edges"
+        self.assertEqual(A.edges_problems(e)[1], [])
+        idx = json.loads((e / "INDEX.json").read_text())
+        for edit, why in ((lambda i: i.update(K=1e-35), "K is"), (lambda i: i.pop("K"), "K is None"),
+                          (lambda i: i["sets"]["E3"].update(max_bin=255), "E3's max_bin is 255"),
+                          (lambda i: i["sets"]["E2"].update(offset=0.0), "E2's offset is 0.0")):
+            j = json.loads(json.dumps(idx))
+            edit(j)
+            (e / "INDEX.json").write_text(json.dumps(j))
+            self.assertTrue(any(why in b for b in A.edges_problems(e)[1]), (why, A.edges_problems(e)[1]))
+
+
+for _cls in (Rev4, Rev5):
+    for _n in [n for n in vars(Rev3) if n.startswith("test_")]:
+        setattr(_cls, _n, None)  # not collected twice: unittest collects only callable test_ attributes
 
 
 if __name__ == "__main__":

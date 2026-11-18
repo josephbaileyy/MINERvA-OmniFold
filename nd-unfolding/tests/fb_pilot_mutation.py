@@ -21,7 +21,7 @@ REPO = ND.parent
 FILES = ("fb_pilot_edges.py", "fb_pilot_gates.py", "fb_pilot_probe.py", "fb_pilot_analyze.py", "sbatch_pfb.sh",
          "pfb_smoke_prep.sh")
 ED, GA, PR, AN, SB, SM = FILES
-EXPECTED_TESTS = 63
+EXPECTED_TESTS = 73
 T = "test_fb_pilot"
 MUTATIONS = [
     # §3: the edges
@@ -159,7 +159,7 @@ MUTATIONS = [
      "test_the_job_preflight_spends_no_root"),
     ("the smoke receipt unchecked", SB, '    || preflight "the smoke receipt is not', '    || true "the smoke receipt is not',
      "test_the_job_preflight_spends_no_root"),
-    ("the smoke writes bytecode", SM, "    export PYTHONDONTWRITEBYTECODE=1; unset BASH_ENV ENV\n", "    unset PYTHONDONTWRITEBYTECODE BASH_ENV ENV\n",
+    ("the smoke writes bytecode", SM, "    export PYTHONDONTWRITEBYTECODE=1\n    for v in BASH_ENV ENV", "    unset PYTHONDONTWRITEBYTECODE\n    for v in BASH_ENV ENV",
      "test_the_smoke_writes_only_under_its_stage"),
     ("the smoke refreshes the deploy's git index", SM, "git --no-optional-locks -C", "git -C", "test_the_smoke_writes_only_under_its_stage"),
     ("the smoke's final hash not fatal", SM, '--trace "$STAGE/smoke-env.log" --exclude "$0" || exit 9', '--trace "$STAGE/smoke-env.log" --exclude "$0"',
@@ -187,8 +187,8 @@ MUTATIONS = [
     ("the stage inventory unchecked", SB, '    || preflight "the stage holds something other', '    || true "the stage holds something other',
      "test_the_job_preflight_spends_no_root"),
     ("untracked deploy .py accepted", SB, '[ "$extra_py" -eq 0 ] || preflight', "true || preflight", "test_the_job_preflight_spends_no_root"),
-    ("the setup closure not compared", AN, '    diff = [k for k in ("schema", "stage", "pin", "local_test", "index_sha256", "setup_closure")',
-     '    diff = [k for k in ("schema", "stage", "pin", "local_test", "index_sha256")', "test_the_job_preflight_spends_no_root"),
+    ("the setup closure not compared", AN, '"local_test", "index_sha256", "setup_closure", "post_setup_env")',
+     '"local_test", "index_sha256", "post_setup_env")', "test_the_job_preflight_spends_no_root"),
     ("the closure misses lines without PS4's space", AN, 'TRACE_LINE = re.compile(r"^\\++@([^@]*)@")', 'TRACE_LINE = re.compile(r"^\\++@([^@]*)@ ")',
      "test_the_smoke_writes_only_under_its_stage"),
     ("a symlinked stage directory accepted", AN, "    if os.path.realpath(p) != lexical:\n", "    if False:\n",
@@ -213,6 +213,30 @@ MUTATIONS = [
      "test_the_analysis_writes_only_a_new_file_under_the_stage_or_root"),
     ("the stage inventory accepts links", AN, '        if os.path.islink(p):\n            bad.append(f"{e}: a symlink")\n', "        if False:\n            pass\n",
      "test_the_stage_inventory"),
+    # code rev 5: values, the first shell, the post-setup check, a typed status, INDEX's policy fields
+    ("PATH's value unchecked", SM, "    envwant HOME /global/homes/j/josephrb; envwant PATH /usr/bin:/bin; envwant USER josephrb\n",
+     "    envwant HOME /global/homes/j/josephrb; envwant USER josephrb\n", "test_the_environment_values_are_checked_whatever_the_marker"),
+    ("HOME's value unchecked", SM, "    envwant HOME /global/homes/j/josephrb; envwant PATH /usr/bin:/bin; envwant USER josephrb\n",
+     "    envwant PATH /usr/bin:/bin; envwant USER josephrb\n", "test_the_environment_values_are_checked_whatever_the_marker"),
+    ("the bytecode setting unchecked", SM, "envwant PFBCLEAN 1; envwant LC_ALL C; envwant PYTHONDONTWRITEBYTECODE 1\n",
+     "envwant PFBCLEAN 1; envwant LC_ALL C\n", "test_the_environment_values_are_checked_whatever_the_marker"),
+    ("a denied variable after the setup accepted", SM, '        [ -z "${!v+x}" ] || {', "        true || {",
+     "test_the_setup_may_not_export_a_denied_variable"),
+    ("the post-setup names not compared", AN,
+     '    diff = [k for k in ("schema", "stage", "pin", "local_test", "index_sha256", "setup_closure", "post_setup_env")',
+     '    diff = [k for k in ("schema", "stage", "pin", "local_test", "index_sha256", "setup_closure")',
+     "test_the_job_preflight_spends_no_root"),
+    ("the smoke's first shell runs BASH_ENV", SM, "#!/usr/bin/env -S -u BASH_ENV -u ENV /bin/bash --noprofile --norc\n", "#!/bin/bash\n",
+     "test_the_first_shell_starts_clean"),
+    ("the job's first shell runs BASH_ENV", SB, "#!/usr/bin/env -S -u BASH_ENV -u ENV /bin/bash --noprofile --norc\n", "#!/bin/bash\n",
+     "test_the_first_shell_starts_clean"),
+    ("an overridden --export accepted", SB, '    [ -z "${SLURM_EXPORT_ENV:-}" ] || [ "$SLURM_EXPORT_ENV" = NONE ] \\\n',
+     "    true \\\n", "test_the_test_switch_cannot_reach_a_real_job"),
+    ("a status of the wrong type raises", AN, "    if not isinstance(status, dict):\n        return f\"the job status is a JSON",
+     "    if False:\n        return f\"the job status is a JSON", "test_a_status_of_the_wrong_type_is_classified"),
+    ("INDEX's K unchecked", AN, '        if index.get("K") != E.K:\n', "        if False:\n", "test_the_index_policy_fields"),
+    ("INDEX's max_bin and offset unchecked", AN, "                if c.get(f) != want_p.get(f):\n", "                if False:\n",
+     "test_the_index_policy_fields"),
     # §5.1: the gates
     ("G3 (a) reads nothing", GA, '    return {"pass": not any(bad), "mismatched_rows": bad,', '    return {"pass": True, "mismatched_rows": bad,',
      "test_a_middle_edge_removed_changes_the_partition"),
