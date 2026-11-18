@@ -50,7 +50,7 @@ Five-dimensional $W$ closure (\S\ref{sec:closure-map}) & A residual-ratio thresh
 Fixed-truth coverage of the earlier 2D statistical bands (\S\ref{sec:coverage}) & Coverage windows specified before any toy was generated & failed & The first-built band undercovers in its tails. The quoted 2D statistical block has had no coverage test (\S\ref{sec:uq-boot}). \\
 % Search: held-out simulation; held-out-MC re-test; S1 has not been coverage-tested; coverage statement about Q_R (the search of its home, sec_systematics.tex sec:uq-boot) @ ddf16f10
 \addlinespace
-Held-out-tune coverage of the 2D covariance (\S\ref{sec:coverage-tunes}) & Specified before it ran; the threshold rule fixed before any pseudo-experiment was read & failed & Under-covers jointly at both held-out tunes; the flagged cells are attributed to bias (Table~\ref{tab:coverage-tunes}). It is not a coverage rate of the reported intervals (\S\ref{sec:uq-2d-scope}). \\
+Held-out-tune coverage of the 2D covariance (\S\ref{sec:coverage-tunes}) & Specified before it ran; the threshold rule fixed before any pseudo-experiment was read & failed & Under-covers jointly at both held-out tunes; the flagged cells are attributed to bias (Table~\ref{tab:coverage-tunes}). It is not a coverage rate of the reported intervals (\S\ref{sec:limitations-2d}). \\
 \addlinespace
 End-to-end coverage of a five-dimensional estimator variant (\S\ref{sec:coverage-5d}) & A futility criterion, set before the test was run & failed & No frequentist coverage is claimed for any five-dimensional interval. Its $q_3$ truth did not implement the intended reweighting, and the verdict does not depend on it. \\
 \addlinespace
@@ -131,6 +131,108 @@ Extended-fiducial study & Unbinned unfolding with truth-muon cuts removed, retai
 The result's intervals, bias and covariance have not been independently validated. In particular, the coverage of its intervals has not been validated on independent simulated samples, nor simultaneously over all reported bins and projections. At two held-out GENIE~v3 tunes, a test of the procedure's 2D covariance remade at each tune's truth, with thresholds fixed before it ran, reads under-covers, with a joint in-region count of \lrval{cov2d-ar23-joint} of \lrval{cov2d-ntoys} at both (\S\ref{sec:coverage-tunes}); it concerns the procedure's covariance at those tunes, not the reported intervals at the data. Such validation would need an independent simulation sample of production size, a validated generator of pseudo-data with continuously varied nuisance parameters, and samples from independent event generators beyond the truth-level ones already examined; none is available.
 % Search: independent validation; held-out re-test; KI-85; S1 coverage; simultaneous coverage; fixed-truth test VL169; independent production-size MC bank; continuous nuisance generator; independent-generator reco sample; Stage D inputs (S1 not coverage-tested, re-test deferred, KNOWN_ISSUES.md:75; VL169 is a same-simulation test of an earlier band, sec_validation.tex:135-160; all three inputs UNAVAILABLE or unvalidated, state/2d-closeout/stageD-inputs/REPORT.md:59, :66-68; 0 disjoint production-size sets, DESIGN-20261008-2d-independent-statistical-validation.md:46) @ 0d919b1a
 
+% Move pairs CV-B01..CV-B34 (cov2d; history-cuts/move-manifest-cv-20261118.tsv sends; journal-editor receives): the 2D
+% limitations that sec_systematics.tex @79a934a41 stated and this section did not, verbatim with their source comment
+% lines, except: CV-B03 adds the pointer (\S\ref{sec:uq-boot}); CV-B05 drops its lead clause "Its validation status is
+% stated in \S\ref{sec:limitations}:" (a self-pointer here) and capitalizes "We"; in the third list item "(below)" becomes
+% (\S\ref{sec:uq-2d-scope}). The paragraph headings are new, except "Seed-related terms reported, not added.".
+% Move pairs CV-VB01..CV-VB29 (cov2d; history-cuts/move-manifest-cv-20261118.tsv sends; journal-editor receives): the
+% validation limitations of sec_validation.tex @79a934a41, verbatim with their comment lines. The paragraph headings are
+% new. Proposed order: the closure paragraph and the requirements paragraph after the existing first paragraph; the
+% fixed-truth paragraph next to chunk 1's CV-B02/CV-B03 (CV-B03's "also" then has its antecedent); the held-out-tune
+% paragraph last. CV-VB (P21 sentence 3) replaces chunk 1's CV-B01, now a dedup row.
+% CV-VB01..CV-VB04 (sec_validation.tex:39; sentences 1-2 also stay in the body as the scope label):
+\paragraph{The closure tests (\S\ref{sec:validation}).} These closure tests recover injected features and are not a formal statistical validation of the estimator. No non-closure uncertainty is assigned from them. Assigning one would require a suite of injection shapes and amplitudes specified before the tests are run. Calibration to a single Gaussian bump would leave that requirement unmet.
+
+% CV-VB05..CV-VB11 (sec_validation.tex:48 with its comments :49-56; its last two sentences restate in other words the
+% last sentence of this subsection's first paragraph, so journal-editor may merge the two):
+\paragraph{Requirements for validated total uncertainties.} The follow-up assessment~\cite{TwoDFollowup2026} distinguishes a proposed split-sample width check from repeated-sampling coverage. With the MC sample, binning maps and background subtraction held fixed, such a check could establish only the precision conditional on them, at its tested exposure. Nonlinear unfolding does not guarantee a simple scaling from half to full exposure. Nor can the check supply the variation across independent MC populations. With the current inputs, validated total uncertainties for all 205 bins, the integral and the projections therefore cannot be obtained. They would require independent populations or a validated generative law, a continuous nuisance generator for tests of total intervals, and an untouched generator-truth domain for bias checks (\S\ref{sec:uq-2d-scope}). This is a limit of the available inputs, not a general impossibility result for 2D unfolding.
+% Accuracy fix (unscored; director ruling 2026-10-26): the 2D result now uses refined negative-weight subtraction
+% (sec:method-algo), so the condition names the background subtraction, not the purity correction.
+% J3/J4 provisional (DECISION-20261018, packet C3; review m1): "and the construction repairs in sec:uq-2d-construction"
+% removed; that section recorded that the quoted construction carries those fixes. Since note register round n1
+% (batch n1-B), the fixes are stated in sec:uq-2d-scope, paragraph "Changes from the earlier 2D budget".
+% Note register round n2, batch n2-B (2026-10-26; R-N2a): the first sentence after the condition is split at its
+% scaling clause; no claim changes.
+% Search: split-sample width check; independent MC populations; validated generative law @ 1a015eef
+
+% CV-VB12..CV-VB17 (sec_validation.tex:204 with its comment :205; sentence 1 also stays in the body as the scope label):
+\paragraph{The fixed-truth coverage test (\S\ref{sec:coverage}).} The test concerns the statistical band alone and changes no central value or quoted uncertainty. It tests the LightGBM statistical estimator at the band's training seed (seed~1), while the quoted central value uses seed~42. Systematic, total and five-dimensional coverage are outside this test's scope. Its simulation-side scatter reuses the resampling that built the band. Only the data-side fluctuation is tested by an independent mechanism. Because $T$ equals the prior, the test cannot detect regularization bias toward the prior.
+% J3/J4 provisional (DECISION-20261018, packet W3: D2): true of the test; the quoted statistical block is at seed 42.
+% CV-B02, CV-B03 (sec_systematics.tex:54, sentences 3, 4; CV-B01, sentence 6, is a dedup of CV-VB (P21 sentence 3)):
+No coverage test on held-out simulation has been run, and no design for one has been registered in advance. Because the fixed-truth test's truth equals the prior, it also cannot decide whether the smaller statistical block (\S\ref{sec:uq-boot}) reflects an efficiency gain, regularization bias or undercoverage.
+% Search: held-out simulation; held-out-MC re-test; S1 has not been coverage-tested; coverage statement about Q_R (the search of its home, sec_systematics.tex sec:uq-boot) @ ddf16f10
+
+% CV-VB18..CV-VB29 (sec_validation.tex:234 with its comments :235-238, and :240, sentences 1-3, with a copy of its
+% comments :241-250; sentence 4 stays in the body):
+\paragraph{The held-out-tune coverage test (\S\ref{sec:coverage-tunes}).} The test resolves a per-cell deficit in content of about \lrval{cov2d-res-cell}, and about \lrval{cov2d-res-joint} jointly; smaller deficits can pass. It is one-sided: over-coverage is reported, not failed. The pseudo-experiments depart from the null's law in known ways: the flux and pair-band draws are not centered, clipping truncates the shifts by setting a negative composite weight to zero, separately on the reconstructed side and on the truth side, and three terms are in the remade covariance and are not drawn in the pseudo-experiments (the training-seed block, \S\ref{sec:uq-ml}, $C_{\mathrm{model}}$ and the simulation-statistics part of the statistical term). Their effect on the flag rate was not measured. The false-flag rates are those of a null in which the remade covariance is exact. That covariance is itself estimated from finite ensembles, and the estimation can make $\chi^{2}$ and each cell's standardized difference larger than this null allows, most along the covariance's smallest-eigenvalue directions, whose estimates are least precise. No correction for this is made, and the verdict stands as graded under this null. \fvval{f1-tune-g18} shares its 2p2h model family with one of the model term's generators. The run-period block was not drawn.
+% V-3 (2026-11-16): the paper's approved F2 qualification (DECISION-20261116-joseph-paper-batch.md item 9; paper_body.tex at
+% draft/methods-short-20261109 037431430, sec. 6.2's "Their false-flag rates are those of a null ..."), applied to this test.
+% absence-ok: "No correction for this is made" scopes the procedure, as the paper's approved sentence does
+% absence-ok: scoping statement: effect of omitted covariance terms on flag rate was not measured in OUTCOME-20261108
+The result concerns the procedure's covariance at those two tunes, not the reported intervals at the data, where the quoted covariance is made. It is not a coverage rate, says nothing about truths unlike these two or about $C_{\mathrm{PL}}$ or $C_{\mathrm{model}}$, and gives no cause for the joint under-coverage or for any flag. A held-out tune moves the truth, not the sample, so this is not the re-test on held-out simulation of \S\ref{sec:coverage}.
+% Note round 1 (2026-11-08, draft for a PRD-referee read and Joseph): OUTCOME-20261108-cov2d-both-tunes-under-cover.md
+% @ b551b05f, CITABLE FOR :99-106 (the sentence "At each of two held-out GENIE v3 tunes ... reads UNDER-COVERS", the joint
+% count, the flagged cells with pull means and widths, the per-tune chi2/ndf, the false-flag rate), the limits of sec. 4
+% :85-95 and the facts sec. 12 requires the text to state (:123-125); NOT CITABLE FOR :110-119 respected (no coverage at
+% the data's point, no rate, no cause, nothing on C_PL_R or C_model, "A held-out tune moves the truth, not the sample",
+% adds to VL162, no "both COVER"). Every number is \lrval (make_values_landed.py: score_AR23.json fe5263e9,
+% score_G18.json 84976694; cell ranges and resolution from the record's lines 52-53 and 91).
+% Not drafted here, for a later round (record :127-129, DECISION-20261103-joseph-coverage-clip-rule.md:74-77): the clipping
+% rule with C2's and the toys' residuals, outlier cell 216, the weakened cells, the +-1 sigma endpoint draws, the shared
+% universes, the cross terms, the single realization, the fixed simulation.
+
+% CV-B04..CV-B09 (sec_systematics.tex:222, sentences 2-4, and the list :225-231 with its comments and :232):
+\paragraph{What the covariance does not include.} The covariance gives no calibrated significance for comparisons with generator predictions. We make no claim about coverage, and goodness-of-fit values computed with this covariance are indicative only. The following are not included in the covariance:
+\begin{itemize}[nosep]
+% (item removed in the D1 follow-on, 2026-11-16: the universe-misses approximation no longer enters the reported covariance; history-cuts/sec_systematics.md S7)
+% Search: G2; miss-row weighting; miss-weight-override; universe completeness off/on; G2 repair; stageB/diagnostics P5, stageC/pilot P2-G2, stageC/production, stageF/**; git log --all since 2026-10-15 (only P5 MaRES_0 and P2-G2 Flux:23 at seeds 42/43, both NOT RESOLVED ABOVE TRAINER NOISE: DECISION-20261015-joseph-g2-carry.md:21,27-36; no repair :47) @ 0d919b1a
+  \item the dependence on the machine-learning estimator (\S\ref{sec:uq-ml});
+  \item the dependence on the regularization, and departures of the detector response from its parametrized family, which we assume absent; we assign no uncertainty for either;
+  \item the dependence on the generator shape of the prior, which is reported beside the covariance as $C_{\mathrm{model}}$ (\S\ref{sec:uq-2d-scope}).
+\end{itemize}
+% J3/J4 provisional (DECISION-20261018, packet W1 register (c): the preparation packet's first two sentences (PR #145), then the director's list of what lies outside every block; the note carries D1's full content, including the reason and "no coverage claim" from D1's must-carry list and the director's draft). Sources: DECISION-20261014-joseph-2d-endpoint-and-open-items.md §2 (construction complete; full scientific closeout NOT ACHIEVED; the three missing inputs; no coverage claim); DECISION-20261017-joseph-2d-adopt-s5-plus-playlist.md §2 (G2 unmeasured; the learner dependence, median 0.98 %; C09 unfolding-model and regularization dependence, C10 response departures: Stage D, unpriced, Stage B REPORT §3 R8). Learner maximum: receipts/2d-lgbm42-20261011/lgbm_central_metrics.out (12.18 %). Review M3: Stage B REPORT §3 (l.313-314) lists C09 (needs independent-generator 2D truths) and C10 ("none outside the parametrized family | stated assumption") separately; only C09 needs independent-generator samples. Review m8 applied. plain-language pass (DECISION-20261018-joseph-plain-language-pass): W1's "Full scientific closeout is not achieved" is carried by "Full validation of the result has not been achieved"; "population or simultaneous interval coverage" by the two coverage cases; "no calibrated covariance-based generator significance" by the next sentence; "not included in any uncertainty block" by "not included in the covariance"; "neither is priced" by "we assign no uncertainty". plain-language pass, review fix m1 (DECISION-20261018-joseph-plain-language-pass): the first two carriers above are superseded. "Full scientific closeout is not achieved" is now carried by "The result's intervals, bias and covariance have not been independently validated", the endpoint ruling's definition (DECISION-20261014 l.49-56: "independent validation that supports the interval, bias and covariance claims"); the coverage cases are "on independent simulated samples" and "simultaneously over all reported bins and projections" (PLAN-20261011 §1: 205 cells, their integral and 30 projections, 236 functionals).
+
+% CV-B10..CV-B14 (sec_systematics.tex:103, with its comments :104-107):
+No block contains the dependence on the learner. The central value and the exact-split cross-check differ by a per-bin median of \SI{1.03}{\percent} (maximum \SI{17.6}{\percent}; \S\ref{sec:method-config}). They differ in background treatment as well as in learner. One reseeded exact-split run differs from the unseeded one by a per-bin median of \SI{0.18}{\percent} (maximum \SI{1.6}{\percent}). The spread of the exact-split estimator over seeds is unmeasured (\S\ref{sec:method-config}).
+% Review m6, m9. J3/J4 provisional (DECISION-20261018, packet W6: D3 with median and maximum; W9: D11 in
+% sec:uq-2d-scope). stageC/production/REPORT.md §3 (C08 4 dof, Gaussian relative SE of variance 71 %; sigma_c08/sigma_ML
+% median 0.304; X02 median diag(C_int)/diag(C_stat) 0.0758; interaction/B over c08 diagonal 0.685) and DESIGN.md §8, §12
+% (rulings R5, R7). Learner: receipts/2d-lgbm42-20261011/lgbm_central_metrics.out (0.983 %, 12.18 %).
+% absence-ok: "No block contains the dependence on the learner" is the source paragraph's own statement (sec_systematics.tex:103 @79a934a41, CV-B10), moved verbatim
+
+% CV-B15..CV-B20 (sec_systematics.tex:275 with its comments :276-282):
+\paragraph{Seed-related terms reported, not added.} The variance of the bootstrap\,$\times$\,seed interaction is a per-bin median 0.072 of the statistical block's variance. For the universe\,$\times$\,retraining term, in the six tested universes (of 187) with a non-null shift, the standard deviation of each universe's shift over training seeds, with four degrees of freedom, is a median 1.08--1.36 times the $\sigma$ of the earlier ten-seed block, which is about 3.7 times that of the training-seed block used here. In those universes the universe block, built at one training seed, therefore carries single-seed training noise of about the earlier seed block's size; it is part of the block as built and is not separated from the physical variation. In two of them the noise is comparable to or larger than the shift: in \texttt{2p2h:0} the shift is \SI{0.097}{\percent} against a seed standard deviation of \SI{0.192}{\percent}, and in \texttt{MaCCQE:0} \SI{0.239}{\percent} against \SI{0.210}{\percent} (per-bin medians). We infer that in expectation such noise adds variance to a band rather than removing it, and, from the medians, that these two bands are largely training noise. The universe\,$\times$\,retraining values and the band-centering numbers cannot be recomputed from the saved covariance products; they were therefore not recomputed independently, and their verification is limited to the checksums of their inputs.
+% J3/J4 provisional (DECISION-20261018, packet W3: D11; W9: the two universes, note only). stageC/production/REPORT.md §3
+% (X02 median diag(C_int)/diag(C_stat) 0.0758; X03 table: 2p2h:0 0.114 % / 0.235 %, MaCCQE:0 0.266 % / 0.220 %, seed SD
+% over sigma_ML 1.24-1.33 in the six non-null universes, 4 dof each) and §14 (X03 and centring not recomputable from the
+% NPZ); stageC/production/DESIGN.md §8, §12 (rulings R5, R7: reported, not added); DECISION-20261017 §2.
+% Review m9: the inference labels follow DRAFT-disclosures D11; F4-VERIFICATION.md compares only the input digests.
+% plain-language pass (DECISION-20261018-joseph-plain-language-pass)
+% Note register round n3, batch n3-B (2026-10-27): the two inferences share one lead ("We infer"), and the recomputation sentence leads with its reason (R-N3c); the inference labels and every fact are kept.
+
+% CV-B21..CV-B30 (sec_systematics.tex:253 with its comments :254-264):
+\paragraph{Inputs carried without confirmation, and playlist pooling.} One systematic category provided in the input products, \texttt{NormDISCC}, is identically zero; we carry it as zero, which we have not been able to confirm is intended. This statement and the proton-on-target statement that follows apply only to the quoted two-dimensional universe block of \S\ref{sec:uq-universes}. The 45-band partition of $C_Z$ (\S\ref{sec:eavailw-construction}), the sixteen-cell covariance (\S\ref{sec:fived16-cov}) and the nuisance draws of the joint tests (\S\ref{sec:joint5d-conditions}) are defined separately. No separate uncertainty is assigned to the counting of protons on target: the NuMI flux prediction carries a \SI{2}{\percent} counting term by convention, so a separate band would risk counting it twice. Two links in that argument, that the flux universes carry the term and that the neutrino--electron constraint absorbs it, remain unverified inferences. The twelve playlists are combined with one global exposure ratio rather than per-period ratios, and the resulting bias is not corrected. At reconstruction level the pooled result is high, by \SI{0.18}{\percent} in total and by at most \SI{0.32}{\percent} in a marginal bin. After unfolding, the pooled result is \SI{0.076}{\percent} above the exposure-weighted combination of the period results on the integral, the same sign as at reconstruction level. It differs from that combination by at most \SI{0.39}{\percent} in a marginal bin (the highest $\pPar$ bin) and by at most \SI{0.33}{\percent} in $\pT$. In single cells the combination differs from the pooled result by \SIrange{-1.83}{3.78}{\percent}, each with $|z|$ at most 0.31.
+% J3/J4 provisional (DECISION-20261018, packet W3: D6). docs/publication/DECISION-20261012-joseph-2d-closeout-recipe.md G3;
+% DECISION-20261014 item 3 (keep the decision).
+% J3/J4 provisional (DECISION-20261018, packet W3: D7). state/2d-closeout/stageB/diagnostics/REPORT.md §6.2 (C07',
+% c07prime/DETERMINATION.md; Aliaga et al., arXiv:1607.00704 §IV).
+% J3/J4 provisional (DECISION-20261018, packet W3: D9). KNOWN_ISSUES.md J36 (reco level: +0.18 % total, at most +0.32 % in a
+% marginal bin; playlist-spread-20261014/REPORT.md §1.2); state/2d-closeout/period-unfold-20261014/REPORT.md (J36
+% paragraph) and outputs/analysis.json comparisons.J36. The after-unfolding values print the refined estimator's, regenerated
+% by RE-2 part C (stageF/methods/re2/run/partc_r2/partc-r2/values_table.tsv rows pool-integral -0.0764, pool-pz-max
+% 0.3948, pool-pt-max 0.3332, pool-cell-min -1.834, pool-cell-max 3.780, pool-cell-zmax 0.308; the "highest p_par bin"
+% wording is re2-integration ledger row X1). analysis.json's comparisons.J36 values (-0.0841, -0.5725, +-0.171, -1.793 to
+% +3.133, 0.278) are the purity-subtracted estimator's, before RE-2 (n2 review of batch n2-B; comment corrected).
+
+% CV-B31 (sec_systematics.tex:189, sentence 1; the rest stays in the body):
+\paragraph{The run-period block $C_{\mathrm{PL}}$ (\S\ref{sec:uq-combine}).} The block's interpretation is limited by the small number of period groups, by possible shrinkage from the regularization, and by the statistical and training noise it retains.
+
+% CV-B32..CV-B34 (sec_systematics.tex:239, sentences 1-3; sentence 1 also stays in the body as the scope label;
+% sentences 4-5, the post-measurement identification of the 52 cells, stay in the body):
+\paragraph{The model-dependence component $C_{\mathrm{model}}$ (\S\ref{sec:uq-2d-scope}).} $C_{\mathrm{model}}$ measures generator-shape model dependence; it is not a calibrated bound on the bias in each cell. A closure test with NuWro-shaped pseudo-data and the configuration-(a) estimator has a bias above \SI{1}{\percent} in 127 cells. In 67 of them the NuWro shift of the quoted result reaches the bias, and in 72 the quadrature sum of the other two generators' shifts reaches it; these counts are descriptive.
+% Source of the 127, 67 and 72 (moved with the text): sec_systematics.tex:234 @79a934a41, the W8 clause.
+
 % Entries for the three long caveat statements (the director's ruling, 2026-11-18): each arrives as a move pair from its
 % body owner (limitation-resolver: sec_fived16, sec_5d; the Codex writer: sec_joint), whose home keeps a one-line result
 % with its scope label and a pointer here. Until each pair lands, its entry is this pointer sentence only.
@@ -175,6 +277,15 @@ A rerun of five of the same pseudo-experiments, without background and with the 
 % per arm, EW band W >= 3: R_a +2.29 (SE 0.72), R_c +3.40 (0.65), R_b +2.84 (0.46); verdict UNDETERMINED by its rule.
 
 The configuration-(e) estimator fails the data-stability test (\S\ref{sec:val-departure}). The data bootstrap, which refits the full chain per replica, already includes this rounding-level variability: each replica carries the same spread (median \SI{0.23}{\percent} per joint cell), about \SI{37}{\percent} of the bootstrap variance and below a tenth of any total uncertainty. Central values are therefore reproducible only to within this spread.
+
+% Move pairs LR-48..LR-50, LR-53 and LR-54..LR-56 (limitation-resolver, the structural rewrite): sec_5d.tex's scope
+% sentences, verbatim and contiguous; each lead restates the result that stays in the body and supplies the antecedent.
+The conclusion of the comparison with exact binned unfolding (\S\ref{sec:val-departure}) is that the residual is consistent with the regularization of the inverse problem at this binning and prior, and that the tree approximation is not supported as its main cause. This conclusion holds for a binned, signal-only and noise-free comparison at the simulation's detector response, on the development truths, and for these 144 residuals only. It does not address what unbinned or biased estimators could recover, the coverage failure of \S\ref{sec:coverage-5d} or the validity of any interval, and it establishes no impossibility. The precision thresholds that the diagnostic proposes are not acceptance criteria for any result in this note.
+
+The maximum real-data prior shifts over five historical vertices are envelopes (\S\ref{sec:gbdt-model-dependence}). These envelopes are sensitivities: they provide no probabilities, covariance components or guaranteed bias bounds, and the truth of the data has not been shown to lie within their span.
+
+The studies of \S\ref{sec:gbdt-model-dependence} do not establish a bias--variance tradeoff across estimator settings. Deciding the tradeoff would require sharing pseudo-data and MC splits across a small set of iteration and capacity settings and measuring bias, variance and mean squared error for common functionals. That comparison would not validate intervals, which also requires an explicit treatment of physical nuisances and model dependence. No new ensemble enters these studies.
+% absence-ok: "does not address", "establishes no impossibility", "are not acceptance criteria", "provide no probabilities", "would not validate" and "No new ensemble" are the moved sentences' own scoping statements (LR-48..56, sec_5d.tex @ 2fe070fec), moved verbatim
 
 \subsection{The joint generator tests}
 \label{sec:limitations-joint}
