@@ -28,6 +28,7 @@ The defaults are main_note.pdf, main_note.aux and the .tsv files in --note-dir (
    - Every float label (fig:, tab:, or any \label inside a figure, table, longtable or xltabular) is referenced at
      least once by \ref, \cref, \Cref, \autoref, \pageref or \subref in the closure.
 4. US SPELLING over every file of the posted note's input closure.
+6. BUILD TESTS. test_build_all.py in --note-dir; its failing tests are named.
 5. FONTS. pdffonts, page by page: a sans-serif font may appear only on the pages of the figures allowed one
    (SANS_ALLOWED; the plan: base Figs. 6, 17, 18, 33 = fig:eff, fig:eavail-marg, fig:calibration,
    fig:negweight-ratio). Monospace fonts are listed, not failed.
@@ -139,12 +140,14 @@ def page_tokens(page: str, index: int | None = None) -> list[tuple[str, str]]:
     s = CITE_RE.sub(lambda m: re.sub(r"[^\u2029]", " ", m.group(0)), s)
     s = REF_RE.sub(lambda m: re.sub(r"[^\u2029]", " ", m.group(0)), s)
     out = []
-    for orig, l in zip(page.split("\n") + [""] * 0, s.split(SEP)):
+    for orig, l in zip(page.split("\n"), s.split(SEP)):
         if not l.strip():
             continue
         l = EQTAG_RE.sub(" ", l)
+        if index is not None:                                 # a page number fused to the start of a text line
+            l = re.sub(r"^\s*%d\s+(?=[a-z])" % (index + 1), " ", l)
         for m in TOKEN_RE.finditer(l):
-            out.append((m.group(0).replace(",", ""), orig.strip()))
+            out.append((m.group(0).replace(",", ""), orig.strip(), norm_ws(l)))
     return out
 
 
@@ -155,10 +158,10 @@ def count_tokens(pages: list[str], other_lines: set[str] | None = None):
     for i, p in enumerate(pages):
         if i in skip:
             continue
-        for tok, line in page_tokens(p, i):
+        for tok, line, proc in page_tokens(p, i):
             c[tok] += 1
             item = f"p.{i + 1}: {line[:150]}"
-            if other_lines is not None and norm_ws(line) not in other_lines:
+            if other_lines is not None and proc not in other_lines:
                 if len(ctx[tok]) < 3:
                     ctx[tok].append(item)
             elif len(fallback[tok]) < 3:
@@ -170,8 +173,9 @@ def count_tokens(pages: list[str], other_lines: set[str] | None = None):
 
 
 def line_set(pages: list[str]) -> set[str]:
+    """The processed lines (references and citations blanked), so a line changed only by renumbering is unchanged."""
     skip = skip_pages(pages)
-    return {norm_ws(l) for i, p in enumerate(pages) if i not in skip for l in p.split("\n") if l.strip()}
+    return {proc for i, p in enumerate(pages) if i not in skip for _t, _l, proc in page_tokens(p, i)}
 
 
 def read_allowlist(path: Path) -> tuple[collections.Counter, list[str]]:
@@ -352,6 +356,20 @@ def check_fonts(new_pdf: Path, aux: Path):
                  f"the allowed figures' pages {sorted(allowed)})")
     return (not bad and not missing), lines
 
+# ---------------------------------------------------------------- 6. build tests
+
+def check_build_tests(note_dir: Path):
+    """test_build_all.py in the note directory (the director, 2026-11-17: the freeze run includes it)."""
+    r = subprocess.run([sys.executable, "test_build_all.py"], cwd=note_dir, capture_output=True, text=True)
+    out = r.stdout + r.stderr
+    failed = re.findall(r"^(?:FAIL|ERROR): (\S+) \(([^)]+)\)", out, re.M)
+    lines = [f"  {kind}: {cls} {name}" for kind in ("FAIL",) for name, cls in failed]
+    tail = [l for l in out.splitlines() if l.startswith(("Ran ", "OK", "FAILED"))]
+    lines += [f"  {l}" for l in tail]
+    lines.append(f"BUILD-TESTS :: {'PASS' if r.returncode == 0 else 'FAIL'} ({len(failed)} failing test(s))")
+    return r.returncode == 0, lines
+
+
 # ---------------------------------------------------------------- self-test
 
 def self_test() -> bool:
@@ -396,7 +414,7 @@ def main() -> int:
     ap.add_argument("--allowlist", type=Path)
     ap.add_argument("--limitations", type=Path)
     ap.add_argument("--spelling")
-    ap.add_argument("--only", default="1,2,3,4,5")
+    ap.add_argument("--only", default="1,2,3,4,5,6")
     ap.add_argument("--report", type=Path)
     a = ap.parse_args()
     nd = a.note_dir
@@ -409,7 +427,8 @@ def main() -> int:
             (2, "Limitation retention", lambda: check_limitations(lim, nd, new_pdf)),
             (3, "Labels", lambda: check_labels(nd, new_pdf)),
             (4, "US spelling", lambda: check_spelling(nd, a.spelling)),
-            (5, "Fonts", lambda: check_fonts(new_pdf, aux))]
+            (5, "Fonts", lambda: check_fonts(new_pdf, aux)),
+            (6, "Build tests (test_build_all.py)", lambda: check_build_tests(nd))]
     report, fails = [f"# Freeze checks: {new_pdf} against {a.base_pdf}", ""], []
     for k, name, fn in runs:
         if k not in want:
