@@ -176,6 +176,15 @@ A rerun of five of the same pseudo-experiments, without background and with the 
 
 The configuration-(e) estimator fails the data-stability test (\S\ref{sec:val-departure}). The data bootstrap, which refits the full chain per replica, already includes this rounding-level variability: each replica carries the same spread (median \SI{0.23}{\percent} per joint cell), about \SI{37}{\percent} of the bootstrap variance and below a tenth of any total uncertainty. Central values are therefore reproducible only to within this spread.
 
+% Move pairs LR-48..LR-50, LR-53 and LR-54..LR-56 (limitation-resolver, the structural rewrite): sec_5d.tex's scope
+% sentences, verbatim and contiguous; each lead restates the result that stays in the body and supplies the antecedent.
+The conclusion of the comparison with exact binned unfolding (\S\ref{sec:val-departure}) is that the residual is consistent with the regularization of the inverse problem at this binning and prior, and that the tree approximation is not supported as its main cause. This conclusion holds for a binned, signal-only and noise-free comparison at the simulation's detector response, on the development truths, and for these 144 residuals only. It does not address what unbinned or biased estimators could recover, the coverage failure of \S\ref{sec:coverage-5d} or the validity of any interval, and it establishes no impossibility. The precision thresholds that the diagnostic proposes are not acceptance criteria for any result in this note.
+
+The maximum real-data prior shifts over five historical vertices are envelopes (\S\ref{sec:gbdt-model-dependence}). These envelopes are sensitivities: they provide no probabilities, covariance components or guaranteed bias bounds, and the truth of the data has not been shown to lie within their span.
+
+The studies of \S\ref{sec:gbdt-model-dependence} do not establish a bias--variance tradeoff across estimator settings. Deciding the tradeoff would require sharing pseudo-data and MC splits across a small set of iteration and capacity settings and measuring bias, variance and mean squared error for common functionals. That comparison would not validate intervals, which also requires an explicit treatment of physical nuisances and model dependence. No new ensemble enters these studies.
+% absence-ok: "does not address", "establishes no impossibility", "are not acceptance criteria", "provide no probabilities", "would not validate" and "No new ensemble" are the moved sentences' own scoping statements (LR-48..56, sec_5d.tex @ 2fe070fec), moved verbatim
+
 \subsection{The joint generator tests}
 \label{sec:limitations-joint}
 

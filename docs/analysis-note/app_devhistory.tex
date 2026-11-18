@@ -168,6 +168,13 @@ This is the provenance of the pseudo-experiments behind the recovery residuals o
 The sixty pseudo-experiments of the development variant, configuration~(d), at the GiBUU-to-GENIE $\Eavail$ shape, and the twenty for each of the three shapes not used in the joint-test estimator's selection, for configuration~(e), use seed sets that were not held out from the estimator's development.
 % absence-ok: "were not held out" is the source sentence's own statement (sec_5d.tex:78 @ 2fe070fec, LR-17)
 
+% Move pair LR-51..LR-52 (limitation-resolver, the structural rewrite): sec_5d.tex:211 at the draft, verbatim; the body keeps
+% the development assessment's widths and EW41.
+\subsubsection{Averaged bootstrap widths of the development assessment}
+\label{app:devhistory-5d-widths}
+
+The statistical intervals of the development assessment of $R$ take their width from 100 bootstrap replicas of one nominal development experiment (\S\ref{sec:gbdt-model-dependence}). A 160-experiment check with the width averaged over six bootstrap estimates changes the pull scales but does not validate the real-data procedure, which uses the data's own width. Finite replica noise explains much of the apparent variation among the six estimates.
+
 \subsection{The joint generator tests (\S\ref{sec:joint5d})}
 \label{app:devhistory-joint}
 
