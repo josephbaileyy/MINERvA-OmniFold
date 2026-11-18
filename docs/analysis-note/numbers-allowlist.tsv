@@ -186,3 +186,5 @@ token	delta	owner	item	reason
 1.07	+1	journal-editor	JE-B7	app_negweight "Purity bias" now prints sec_5d.tex:52's "0.36-1.07 standard deviations" beside the 8-12
 0	+1	journal-editor	JE-I32	the item-32 sentence, kept verbatim in the ES and in section 12's opening ("0 of 300"); DECISION-20261116-joseph-paper-batch.md item 32 requires the ES to state it
 300	+1	journal-editor	JE-I32	the same, the 300 of "0 of 300"
+0	+1	director-helper-3	TRIAGE-A9	ES restates sec_eavailw:63's clamp "at W^2 = 0" (the 0)
+2	+1	director-helper-3	TRIAGE-A9	the same clamp: pdfminer extracts the superscript of W^2 as a separate "2"
