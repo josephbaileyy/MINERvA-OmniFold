@@ -107,7 +107,7 @@ Result component & Estimator / construction & Status \& validation checks & Inte
 \addlinespace
 5D central value ($\pT, \pPar, \Eavail, q_{3}, W$) & LightGBM, 5 iterations, purity subtraction (configuration~(a)) & 4D and 5D marginal anchors agree with the lower-dimensional results (\S\ref{sec:4d}, \S\ref{sec:eavailw-axis}); corrected injected-$W$ closure passes in $W$ marginal. Regularization bias observed (\S\ref{sec:val-departure}); purity-subtraction bias observed (\S\ref{sec:val-negweight}). & Exploratory five-observable central value (\S\ref{sec:method-algo}) and qualitative shape comparison only. It supports neither a covariance nor a physical measurement. \\
 \addlinespace
-5D covariance ($C_Z$) & Constructed for configuration~(a) central value with 45 systematic bands and statistical variations & Used in this note; the estimator-seed criterion specified before production has not been computed for it (\S\ref{sec:eavailw-adopted}). & Not supported as an uncertainty product. Section~\ref{sec:5d} uses it only as a descriptive scale, the configuration-(a) total uncertainty, for bias and model-dependence comparisons and for the estimator-seed sensitivity diagnostic (\S\ref{sec:eavailw-adopted}), whose seed-sensitivity measurements use two companion covariances; it also gives the attribution of its per-source decomposition (\S\ref{sec:uq-combine}). No generator significance based on this covariance may be quoted. \\
+5D covariance ($C_Z$) & Constructed for configuration~(a) central value with 45 systematic bands and statistical variations & Used in this note. The estimator-seed criterion specified before production has not been computed for this file itself; measured with two companion covariances, the estimator-seed sensitivity of its construction exceeds the limit set before production (\S\ref{sec:eavailw-adopted}). & Not supported as an uncertainty product. Section~\ref{sec:5d} uses it only as a descriptive scale, the configuration-(a) total uncertainty, for bias and model-dependence comparisons and for the estimator-seed sensitivity diagnostic (\S\ref{sec:eavailw-adopted}), whose seed-sensitivity measurements use two companion covariances; it also gives the attribution of its per-source decomposition (\S\ref{sec:uq-combine}). No generator significance based on this covariance may be quoted. \\
 % 5D-3 (2026-11-16; Joseph's decision via the coordinator, item B3): C_Z is not an uncertainty product; sec. 9's five uses (sec_5d.tex
 % sec:val-departure bias, the withheld-shape model dependence, the validation-design table's criterion, sec_validation.tex's closure
 % table row, and the seed-shift diagnostic) each name the configuration-(a) total uncertainty or covariance.
@@ -125,6 +125,12 @@ Extended-fiducial study & Unbinned unfolding with truth-muon cuts removed, retai
 % Move pair H3-014 (director-helper-3; move-manifest-h3-20261117.tsv sends): the 2D result's validation status, four
 % sentences of sec_systematics.tex's "Status of the 2D result" paragraph at 2fe070fec, verbatim (COMBINED-PLAN sec. 4
 % item 7), with their Search line; sec:uq-2d-scope keeps the construction and points here.
+% Pointer entry 5 (the director's ruling (a), via director-helper-3; limitations-export row n05): sec_experiment.tex:40, kept there.
+\subsection{Data and event loop}
+\label{sec:limitations-experiment}
+
+The flux histogram is POT-weighted across playlists; playlist-to-playlist flux differences are a $\sim\SI{0.2}{\percent}$ effect (\S\ref{sec:evloop}).
+
 \subsection{The two-dimensional cross section}
 \label{sec:limitations-2d}
 
@@ -234,8 +240,18 @@ No block contains the dependence on the learner. The central value and the exact
 % Source of the 127, 67 and 72 (moved with the text): sec_systematics.tex:234 @79a934a41, the W8 clause.
 
 % Pointer lines (the director's ruling (a), via director-helper-3): caveats kept in the body beside their numbers, listed here.
-\paragraph{Comparison with the published result.} The public release cannot establish the origin of the difference between the median of our flux band and that of the published flux block; the FHC-only constraint file is the leading, unconfirmed hypothesis (\S\ref{sec:results-uq}). Beyond the estimator dependence, the source of the shape difference from the published result has not been identified (\S\ref{sec:results-tension}).
-% absence-ok: "cannot establish" and "has not been identified" restate sec_results.tex:91 and :138 at their homes, which keep them beside their numbers
+\paragraph{Comparison with the published result.} The public release cannot establish the origin of the difference between the median of our flux band and that of the published flux block; the FHC-only constraint file is the leading, unconfirmed hypothesis (\S\ref{sec:results-uq}). Beyond the estimator dependence, the source of the shape difference from the published result has not been identified (\S\ref{sec:results-tension}). For binned IBU against the OmniFold result, the origin of the paired-test difference has not been identified, and whether the documented input differences relative to the publication affect the two methods differently was not tested (\S\ref{sec:results-benchmarks}).
+% absence-ok: "cannot establish", "has not been identified" and "was not tested" restate sec_results.tex at their homes (sec:results-uq, sec:results-tension, sec:results-benchmarks), which keep them beside their numbers
+
+% Pointer line 4 (the director's ruling (a), via director-helper-3): sec_execsummary.tex:26 / sec:uq-combine, kept there.
+\paragraph{Cross-source terms.} The standard covariance sums single-source systematic matrices, each with all other sources nominal, and so omits nonlinear cross-source response terms. No two-dimensional comparison of a joint throw with the block sum is reported (\S\ref{sec:uq-combine}).
+
+% Pointer entry (the director's ruling (a), via director-helper-3): a caveat kept in the body beside its numbers, listed here.
+\subsection{Available energy and momentum transfer}
+\label{sec:limitations-3d}
+
+In the comparison with Ascencio \emph{et al.} (\S\ref{sec:4d}), the two analyses define true $\Eavail$ differently, and the aggregate shift over the three lowest bins has not been computed. The definition difference therefore remains an alternative explanation that is not excluded, and at the \SI{10}{\percent} scale of the residual the comparison neither refutes nor validates the result.
+% absence-ok: "has not been computed" and "not excluded" restate sec_3d.tex:211, which keeps them beside its numbers
 
 % Entries for the three long caveat statements (the director's ruling, 2026-11-18): each arrives as a move pair from its
 % body owner (limitation-resolver: sec_fived16, sec_5d; the Codex writer: sec_joint), whose home keeps a one-line result
@@ -251,6 +267,12 @@ This is the design and scope of the second coverage test of the sixteen-cell cov
 Its pseudo-experiments draw the statistical, flux, interaction and detector uncertainties, with the lateral and normalization ones as surrogates. The graded covariance includes the model term, which is not drawn, since its role is to cover each tune's departure from the simulation. At each tune the covariance is built by the reported procedure using the tune's pseudo-data at their means, with the statistical block bootstrapped from one Poisson realization and the seed block not rebuilt; this fixed covariance stands in for one rebuilt for each pseudo-experiment, which was not computed. The lateral block is carried to each tune in relative form and is not tested, and the tunes' overlaps with the model term's generators (\S\ref{sec:fived16-fd}) apply. The response and run-period terms are left out of the graded covariance. The test has two correlated variants, without and with the GEANT4 neutron and proton bands; the primary variant omits them from both its pseudo-data and its graded covariance. Removing the two bands' block from the covariance graded with them raises the $\chi^2$ of any fixed set of residuals by at most a factor of \fvval{ll5d-mumax-bound-g18} at \fvval{f1-tune-g18} and \fvval{ll5d-mumax-bound-ar23} at \fvval{f1-tune-ar23}, a bound set by the largest fraction of that covariance, in any direction, that the block carries. The bound applies to the block's place in the covariance only, not to the bands' pseudo-data draws, and what separates the bands' pseudo-experiment and simulation-side blocks remains unclassified. Each tune and each variant is graded separately, per cell and jointly, against thresholds set from the test's null distribution, with a resolution of about \fvval{ll5d-cellres} in coverage per cell and 0.08 jointly. In one variant at one tune, the cell tests raise a false flag with probability at most 0.025, and so does the joint test. These rates are those of a null in which the fixed covariance is exact; the covariance is itself estimated from finite ensembles, which can make $\chi^2$ larger than this null allows, most along its smallest-eigenvalue directions. No correction for this is made. A cell that passes at a tune also passes under the procedure's full covariance there, and the joint reading carries over only if both matrices have 16 degrees of freedom.
 % U11 (currency check of 2fe070fec): the GEANT4 block bound, DECISION-20261116-joseph-paper-batch.md item 3 (A6) wording, from fd/receipts-ll5d/mumax/run/node/mumax.json (422db056; commit e3a47f391), by mumax_values() in make_values_fived16.py.
 % absence-ok: "which was not computed", "is not tested" and "No correction for this is made" are scoping statements of the source paragraph, moved verbatim (LR-22, LR-23, LR-31); the declaration fixes them (LL5D-DECLARATION.md :323-324, the home's waiver)
+
+% Move pairs LR-60..LR-62 (limitation-resolver, the structural rewrite): sec_fived16.tex, verbatim; each lead restates its antecedent.
+The model term $C_{\mathrm{model}}$ of \S\ref{sec:fived16-cov} measures generator-shape model dependence. It is not a calibrated bound. Its coverage at truths held out of its construction has not been validated.
+% absence-ok: "is not a calibrated bound" and "has not been validated" are the moved sentences' own statements (LR-60, LR-61; sec_fived16.tex sec:fived16-cov), moved verbatim
+
+The run-period block of the sixteen cells is $C_{\mathrm{PL,5D}}$ (\S\ref{sec:fived16-pl}). In cells \fvval{pl-noise-cells} the block is dominated by the replica noise it contains.
 
 \subsection{The five-dimensional development tests}
 \label{sec:limitations-5d}
@@ -350,3 +372,8 @@ Every pseudo-experiment resamples the same simulated events, so the null distrib
 % M2-AUDIT.md Q4d, :183-184.
 % Search: recoil-energy-scale band; calorimetric response band; linear surrogate; endpoint symmetry @ ddf16f10
 
+% Pointer entry 6 (the director's ruling (a), via director-helper-3): sec_summary.tex:39, kept there.
+\subsection{Further use of the results}
+\label{sec:limitations-use}
+
+New projections require their own applicability checks; nominal weights alone cannot certify arbitrary downstream inference (App.~\ref{sec:unbinned-inference}).
