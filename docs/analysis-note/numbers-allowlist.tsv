@@ -238,3 +238,5 @@ token	delta	owner	item	reason
 8	+1	limitation-resolver	U15	"lies above 1A--1F in every p_par bin below 8 GeV/c" in the U15 sentence of sec_systematics (runperiod_values.json f63074b1)
 2026	+2	journal-editor	JE-VER	App. K (app_verification.tex): "the results that landed from November 2026"; "The restructuring of November 2026"
 256	+2	journal-editor	JE-VER	App. K (app_verification.tex): "SHA-256 digest" twice (generated values; move manifests)
+5	-4	journal-editor	JE-BOX	box Estimator cells: "5 iterations" (2D, sixteen cells, 3D/4D, 5D) replaced by the configuration letter + Table~\ref{tab:config-key}, whose caption states five iterations
+42	-1	journal-editor	JE-BOX	box 2D Estimator cell: "seed 42" replaced by configuration (f) + the key, whose row (a) states seed 42
