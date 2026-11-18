@@ -1,0 +1,2 @@
+fig:mec (sec_3d.tex)
+GENIE regenerated with Valencia 2p2h (orange, stacked on the no-2p2h CV in pale pink; both flux-repaired) closes about half the low-$\Eavail$ data$-$CV gap in central values (\SI{52}{\percent}). No uncertainty drawn: no 3D covariance is quoted (\S\ref{sec:3d}). The remainder occupies the region the MINERvA tune's empirical enhancement is built to absorb.

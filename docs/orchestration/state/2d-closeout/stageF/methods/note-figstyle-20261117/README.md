@@ -213,6 +213,13 @@ note's binning (`sec_method.tex:207`) end them at the 100 GeV catch-bin edge.
   `install_restyle_fig` from `figs-r2/`, and its earlier pin (3cac32b1) stays as a comment.
 - **Other figures:** no other figure prints ∞; this was checked over every capture's texts.
 
+## External caption reads
+
+`reads/README.md`: Grok and Gemini read each redrawn batch (old and new PNG, and the caption). Every FLAG is either
+fixed in the draft by the caption owners, intended (Fig. 8's SD and headroom), an extraction error of mine that was
+rerun clean (b5), or Fig. 28's earlier caption issue, which was routed to limitation-resolver. No reader found a lost
+datum or a changed number.
+
 ## CI: inherited failures
 
 The record-checks steps at this branch's commits pass, apart from the failures below. Each fails identically at the

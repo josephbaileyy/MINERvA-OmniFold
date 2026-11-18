@@ -1,0 +1,2 @@
+fig:pull (sec_results.tex)
+Differences from the published measurement, standardized by its per-bin uncertainty, are centered and well inside the published uncertainties; this diagonal-only scale is distinct from the full-covariance $\chi^{2}$ of the eigenmode analysis. It is descriptive, not a pull between independent results. Shown: the per-bin standardized difference $(\mathrm{this}-\mathrm{published})/\sigma_{\mathrm{published}}$ on the $14\times16$ grid, and its distribution.

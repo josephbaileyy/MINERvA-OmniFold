@@ -1,0 +1,2 @@
+fig:model (sec_results.tex)
+GENIE 2.12.6 $+$ MINERvA Tune~v1 (blue line) lies below the data in the peak. Uncertainties are not drawn. Shown: projections of this result (red circles) and the published data (black squares).

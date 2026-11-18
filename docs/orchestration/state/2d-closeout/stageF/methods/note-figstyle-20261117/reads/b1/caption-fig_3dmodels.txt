@@ -1,0 +1,2 @@
+fig:3dmodels (sec_3d.tex)
+1D projections of the unfolded 3D central cross section (black) versus truth-level predictions from GENIE 2.12 CV, MINERvA Tune v1, NuWro 21.09, and GiBUU 2019 (GENIE and NuWro: the flux-repaired predictions, \S\ref{sec:3d-models}). Models track the $\pT$ and $\pPar$ shapes but differ on $\Eavail$; the $\Eavail$-marginal data/Tune~v1 ratios are given in \S\ref{sec:4d}. The wide $\Eavail$ catch bin is omitted from the axis. Data have no error bars because no 3D covariance is quoted (\S\ref{sec:3d}).
