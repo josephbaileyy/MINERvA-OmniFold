@@ -20,7 +20,7 @@ token	delta	owner	item	reason
 0.179	+2	limitation-resolver	U1	FD-PRR text and Table tab:fived16-prr (sec_fived16)
 # retired 2026-11-17 at draft f2a4636ee (no change counted under the glued-digit and figure-font rules; the row's reason no longer applies): 05	+2	limitation-resolver	U2	bias-half rule counts and cells (sec_fived16)
 2.8	+2	limitation-resolver	U14	algorithm-dependence size (sec_fived16)
-20	+2	limitation-resolver	U11	GEANT4 bound sentence; the tune names print once more (sec_fived16)
+# retired 2026-11-18 (the token is a tune-name or R00-R15 digit, no longer counted): 20	+2	limitation-resolver	U11	GEANT4 bound sentence; the tune names print once more (sec_fived16)
 0.0049	+1	limitation-resolver	U9	RSN SM (sec_fived16)
 0.011	+1	limitation-resolver	U1	FD-PRR text and Table tab:fived16-prr (sec_fived16)
 0.03	+1	limitation-resolver	U1	FD-PRR text and Table tab:fived16-prr (sec_fived16)
@@ -79,7 +79,7 @@ token	delta	owner	item	reason
 # replaced 2026-11-18 by journal-editor's addf9ec0 rows (total per token): 109	+1	journal-editor	JE-DEF	tab:definitions, \jtNcells (Fig. 34 caption; sec:joint5d)
 # replaced 2026-11-18 by journal-editor's addf9ec0 rows (total per token): 35	+1	journal-editor	JE-DEF	tab:definitions, the 3^5 grid (Fig. 34 caption), extracted as "35"
 # retired 2026-11-17 at draft f2a4636ee (no change counted under the glued-digit and figure-font rules; the row's reason no longer applies): 00	+1	journal-editor	JE-DEF	tab:definitions, R00-R15 (Table 15)
-15	+1	journal-editor	JE-DEF	tab:definitions, R00-R15 (Table 15)
+# retired 2026-11-18 (the token is a tune-name or R00-R15 digit, no longer counted): 15	+1	journal-editor	JE-DEF	tab:definitions, R00-R15 (Table 15)
 # replaced 2026-11-18 by journal-editor's addf9ec0 rows (total per token): 5	+2	journal-editor	JE-DEF	tab:definitions, C_PL,5D twice (the reported-covariance row)
 # replaced 2026-11-18 by journal-editor's addf9ec0 rows (total per token): 2	+2	journal-editor	JE-DEF	tab:definitions, cm^2 twice (Units row, app_release:66 convention)
 # retired 2026-11-17 at draft f2a4636ee (no change counted under the glued-digit and figure-font rules; the row's reason no longer applies): 38	+1	journal-editor	JE-T36	Table 38 (ex-36, tab:negweight): nwSigPur/nwSigNeg print as x10^-38 via \num (notation change; macros unchanged)
@@ -89,10 +89,10 @@ token	delta	owner	item	reason
 1	+1	limitation-resolver	U10/CX-01..03	one more "1" (step-1) in the WR/TR sentence and the CX move, beyond the +7 row; the CX tokens net to zero when the Codex removal merges
 32	+1	limitation-resolver	U8	T2A decomposition in sec_validation (t2a_g2r_AR23/G18.json, t2a_values)
 # retired 2026-11-17 at draft f2a4636ee (no change counted under the glued-digit and figure-font rules; the row's reason no longer applies): 02	+2	limitation-resolver	U8	T2A decomposition in sec_validation (t2a_g2r_AR23/G18.json, t2a_values); the 02/11/000/18/20/23 tokens are the tune names printed once more
-11	+2	limitation-resolver	U8	T2A decomposition in sec_validation (t2a_g2r_AR23/G18.json, t2a_values); the 02/11/000/18/20/23 tokens are the tune names printed once more
+# retired 2026-11-18 (the token is a tune-name or R00-R15 digit, no longer counted): 11	+2	limitation-resolver	U8	T2A decomposition in sec_validation (t2a_g2r_AR23/G18.json, t2a_values); the 02/11/000/18/20/23 tokens are the tune names printed once more
 # retired 2026-11-17 at draft f2a4636ee (no change counted under the glued-digit and figure-font rules; the row's reason no longer applies): 000	+1	limitation-resolver	U8	T2A decomposition in sec_validation (t2a_g2r_AR23/G18.json, t2a_values); the 02/11/000/18/20/23 tokens are the tune names printed once more
 # retired 2026-11-17 at draft f2a4636ee (no change counted under the glued-digit and figure-font rules; the row's reason no longer applies): 18	+1	limitation-resolver	U8	T2A decomposition in sec_validation (t2a_g2r_AR23/G18.json, t2a_values); the 02/11/000/18/20/23 tokens are the tune names printed once more
-20	+1	limitation-resolver	U8	T2A decomposition in sec_validation (t2a_g2r_AR23/G18.json, t2a_values); the 02/11/000/18/20/23 tokens are the tune names printed once more
+# retired 2026-11-18 (the token is a tune-name or R00-R15 digit, no longer counted): 20	+1	limitation-resolver	U8	T2A decomposition in sec_validation (t2a_g2r_AR23/G18.json, t2a_values); the 02/11/000/18/20/23 tokens are the tune names printed once more
 # retired 2026-11-17 at draft f2a4636ee (no change counted under the glued-digit and figure-font rules; the row's reason no longer applies): 23	+1	limitation-resolver	U8	T2A decomposition in sec_validation (t2a_g2r_AR23/G18.json, t2a_values); the 02/11/000/18/20/23 tokens are the tune names printed once more
 1.2	+1	limitation-resolver	U8	T2A decomposition in sec_validation (t2a_g2r_AR23/G18.json, t2a_values)
 13.5	+1	limitation-resolver	U8	T2A decomposition in sec_validation (t2a_g2r_AR23/G18.json, t2a_values)
