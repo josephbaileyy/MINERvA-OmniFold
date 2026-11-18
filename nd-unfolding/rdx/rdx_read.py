@@ -96,6 +96,7 @@ N_DECILES = 10  # rsn_unfold.py:65
 A7_HYPOTHESIS_SHA256 = "0080495c911143be29bbd780063a85b2890cd30d10c1e5b29f1f5cdb71013a77"  # rsn_unfold.py:60
 TRANSFER_KEYS = {"iteration", "n_masked", "rel_bias", "rel_rms", "cell_bias", "acceptance_edges",
                  "acceptance_decile_rel_bias"}  # rsn_unfold.summarize
+ARRAY_FIELDS = ("meta", "xsec_flat", "shape", "xtrue_flat")  # pvl_unfold.py:198-200, through s5n_pseudo.write_product
 FAMILIES = {"prior": ("X0c", "X1c", "X1pc", "X1wc"), "gibuu": ("X0g", "X1g"), "q3": ("X0q", "X1q")}
 SHA_LINE = re.compile(r"^([0-9a-f]{64})  \S*/products/([A-Za-z0-9_-]+)\.npz$")
 CELLS = [f"R{c:02d}" for c in range(16)]
@@ -228,13 +229,19 @@ def load(path: Path) -> tuple:
         names = zf.namelist()
     if len(names) != len(set(names)):
         fail(f"{Path(path).name}: the archive repeats a member ({sorted({n for n in names if names.count(n) > 1})})")
-    z = np.load(path, allow_pickle=False)
+    fields: dict = {}
+    for n in names:  # numpy.savez writes "<field>.npy"; numpy also exposes a bare "<field>", so two names can alias
+        if not n.endswith(".npy") or n[:-4] not in ARRAY_FIELDS:
+            fail(f"{Path(path).name}: the member {n!r} is not one of {sorted(f + '.npy' for f in ARRAY_FIELDS)}")
+        if n[:-4] in fields:
+            fail(f"{Path(path).name}: two members map to the field {n[:-4]!r}")
+        fields[n[:-4]] = n
     for k in ("meta", "xsec_flat", "shape"):
-        if k not in z.files:
+        if k not in fields:
             fail(f"{path.name}: no {k}")
-    extra = set(z.files) - {"meta", "xsec_flat", "shape", "xtrue_flat"}
-    if extra:
-        fail(f"{path.name}: unexpected arrays {sorted(extra)}")
+    z = np.load(path, allow_pickle=False)
+    if sorted(z.files) != sorted(fields):
+        fail(f"{path.name}: numpy reads the fields {sorted(z.files)}, not the members' {sorted(fields)}")
     meta = json.loads(str(z["meta"]), object_pairs_hook=no_duplicate_keys)
     return meta, np.asarray(z["xsec_flat"]), (np.asarray(z["xtrue_flat"]) if "xtrue_flat" in z.files else None), \
         np.asarray(z["shape"])

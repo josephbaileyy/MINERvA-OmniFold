@@ -104,6 +104,9 @@ MUTATIONS = [
     # rev 5: repeated fields and the transfer counts
     ("repeated archive members allowed", RD, "    if len(names) != len(set(names)):\n", "    if False:\n",
      "test_a_repeated_archive_member_or_json_key_refuses"),
+    ("bare-name member aliases allowed", RD, '        if not n.endswith(".npy") or n[:-4] not in ARRAY_FIELDS:\n',
+     '        if n.removesuffix(".npy") not in ARRAY_FIELDS:\n            continue\n        if False:\n',
+     "test_a_repeated_archive_member_or_json_key_refuses"),
     ("repeated JSON keys allowed", RD, 'json.loads(str(z["meta"]), object_pairs_hook=no_duplicate_keys)', 'json.loads(str(z["meta"]))',
      "test_a_repeated_archive_member_or_json_key_refuses"),
     ("n_masked above rows allowed", RD, '                if rec["n_masked"] > r["rows"]:\n', "                if False:\n",

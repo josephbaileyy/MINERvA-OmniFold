@@ -340,6 +340,15 @@ class Guards(unittest.TestCase):
             np.savez(p, meta=np.array(dup), xsec_flat=BASE, shape=np.array(FINE))
             with self.assertRaisesRegex(SystemExit, "repeats the key 'iters'"):
                 R.load(p)
+            np.savez(p, meta=np.array(text), xsec_flat=np.full(16, np.nan), shape=np.array(FINE))
+            with zipfile.ZipFile(p, "a") as zf:  # a bare-name alias numpy would also expose as xsec_flat
+                with zf.open("xsec_flat", "w") as fh:
+                    np.lib.format.write_array(fh, BASE)
+            with self.assertRaisesRegex(SystemExit, "member 'xsec_flat' is not one of"):
+                R.load(p)
+            np.savez(p, meta=np.array(text), xsec_flat=BASE, shape=np.array(FINE), extra=BASE)
+            with self.assertRaisesRegex(SystemExit, "member 'extra.npy' is not one of"):
+                R.load(p)
             nested = text.replace('"rdx": {', '"rdx": {"truth": "q3", ', 1)
             np.savez(p, meta=np.array(nested), xsec_flat=BASE, shape=np.array(FINE))
             with self.assertRaisesRegex(SystemExit, "repeats the key 'truth'"):
