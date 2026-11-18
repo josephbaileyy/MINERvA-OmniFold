@@ -21,19 +21,31 @@ tex = {p: p.read_text() for p in note.glob("*.tex")}
 
 
 def caption_at(src, pos):
-    """The \\caption{...} of the figure environment around pos."""
+    """The \\caption{...} nearest before pos inside its figure environment (a figure holding subfigures has one caption
+    per subfigure), skipping a \\caption[...] optional argument (brackets and braces balanced)."""
     start = src.rfind("\\begin{figure", 0, pos)
-    end = src.find("\\end{figure", pos)
-    env = src[start:end]
-    i = env.find("\\caption")
+    i = src.rfind("\\caption", start, pos)
+    if i < 0:
+        i = src.find("\\caption", pos, src.find("\\end{figure", pos))
     if i < 0:
         return None
-    j = env.index("{", i)
+    k = i + len("\\caption")
+    while src[k] in " \t\n":
+        k += 1
+    if src[k] == "[":
+        depth = 0
+        while True:
+            c = src[k]
+            depth += {"[": 1, "{": 1, "]": -1, "}": -1}.get(c, 0)
+            k += 1
+            if depth == 0:
+                break
+    j = src.index("{", k)
     depth, k = 0, j
-    while k < len(env):
-        depth += {"{": 1, "}": -1}.get(env[k], 0)
+    while k < len(src):
+        depth += {"{": 1, "}": -1}.get(src[k], 0)
         if depth == 0:
-            return env[j + 1:k]
+            return src[j + 1:k]
         k += 1
     return None
 

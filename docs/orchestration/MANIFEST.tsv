@@ -4431,6 +4431,8 @@ docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/tools
 docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/tools/root_th1_readback.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261117/README.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261117/drop_titles.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261117/figs-r2/SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261117/figs-r2/paper_fig_bkg_residual.pdf	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261117/figs/MEFHC_5iter_fig13.pdf	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261117/figs/MEFHC_5iter_pull_full.pdf	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261117/figs/MEFHC_5iter_xsec_eff_heatmap.pdf	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes

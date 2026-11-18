@@ -38,7 +38,7 @@
   ],
   [
    7.5,
-   "$(E_{\\rm avail},W)$ cell: $W$ bin 1\u20136 within each $E_{\\rm avail}$ bin (GeV, top); $W$ edges 0, 1.1, 1.4, 1.8, 2.2, 3, $\\infty$ GeV"
+   "$(E_{\\rm avail},W)$ cell: $W$ bin 1\u20136 within each $E_{\\rm avail}$ bin (GeV, top); $W$ edges 0, 1.1, 1.4, 1.8, 2.2, 3, 100 GeV"
   ],
   [
    5.5,

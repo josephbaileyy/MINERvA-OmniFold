@@ -1,6 +1,6 @@
-# bkg5d (2026-11-17T22:11:21Z): INSTALLED=paper_fig_bkg_residual.pdf bash tools/arms.sh <wt> bkg5d miniconda3 (matplotlib 3.10.1, numpy 1.26.4) 2fe070feca48256639797278eff0e1ac6f17abd7 m3_fig1_background - docs/analysis-note/figures/methods_m3/fig_m3_background.py --repo <wt> --outdir @OUT@. Arm 1 makes no edit (no palette identity is drawn: blue and red are the 68%/95% intervals, or the two background methods); the figure gains an install line (COMBINED-PLAN.md section 5(b), tier 1b) pinning the installed bytes, which arm 0 reproduces exactly.
+# bkg5d (2026-11-18T07:32:57Z): INSTALLED=paper_fig_bkg_residual.pdf bash tools/arms.sh <wt> bkg5d miniconda3 (matplotlib 3.10.1, numpy 1.26.4) 2fe070feca48256639797278eff0e1ac6f17abd7 m3_fig1_background - docs/analysis-note/figures/methods_m3/fig_m3_background.py --repo <wt> --outdir @OUT@. Arm 1 makes no edit (no palette identity is drawn: blue and red are the 68%/95% intervals, or the two background methods); the figure gains an install line (COMBINED-PLAN.md section 5(b), tier 1b) pinning the installed bytes, which arm 0 reproduces exactly.
 == bkg5d (m3_fig1_background): arm 0 against the file installed at 2fe070feca48256639797278eff0e1ac6f17abd7 (paper_fig_bkg_residual.pdf)
-EQUAL tmp.DkMdbaQZgH
+EQUAL tmp.Tp9Ko3iSE6
 raster: RASTER :: EQUAL :: 1 page(s), 0 differing pixel(s)
 == bkg5d: arm 1 against arm 0
 captures: m3_fig1_background.pdf.json m3_fig1_background.png.json 
