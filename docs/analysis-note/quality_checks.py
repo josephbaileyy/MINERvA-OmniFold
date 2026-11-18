@@ -440,12 +440,15 @@ def check_text(src: Source, manifests: list[dict], n: int, min_sentence: int):
     file_shas = {f: {hashlib.sha256(x.encode('utf-8')).hexdigest() for raw in src.lines[f] for x in raw_sentences(raw)}
                  for f in src.files}
 
-    def prints_in(row, f) -> bool:
-        """The row's whole sentence is in file f (verbatim, or by its sha256)."""
+    file_sha_count = {f: Counter(hashlib.sha256(x.encode('utf-8')).hexdigest() for raw in src.lines[f]
+                                 for x in raw_sentences(raw)) for f in src.files}
+
+    def prints_in(row, f, need: int = 1) -> bool:
+        """The row's whole sentence is in file f at least `need` times (verbatim, or by its sha256)."""
         sent = re.sub(r'\s+', ' ', row['sentence']).strip()
-        if len(sent) >= 30 and not sent.endswith(('…', '...')) and sent in file_text.get(f, ''):
+        if len(sent) >= 30 and not sent.endswith(('…', '...')) and file_text.get(f, '').count(sent) >= need:
             return True
-        return any(h in file_shas.get(f, ()) for h in row['shas'])
+        return any(file_sha_count.get(f, Counter())[h] >= need for h in row['shas'])
 
     def manifest_rows_for(k, L):
         rows = []
@@ -491,7 +494,10 @@ def check_text(src: Source, manifests: list[dict], n: int, min_sentence: int):
                 in_receiving = any(f in ('sec_limitations.tex', 'app_devhistory.tex') for f in (fa, fb))
                 if rows and in_receiving:
                     ids = sorted({r['id'] for r in rows})
-                    whole = sorted({r['id'] for r in rows if prints_in(r, fa) and prints_in(r, fb)})
+                    if fa == fb:   # both locations in one file: the sentence must print there twice
+                        whole = sorted({r['id'] for r in rows if prints_in(r, fa, 2)})
+                    else:
+                        whole = sorted({r['id'] for r in rows if prints_in(r, fa) and prints_in(r, fb)})
                     body_files = {f for f in (fa, fb) if f not in receiving} or {fa, fb}
                     if any(intended_from.get(r['id'], set()) & body_files for r in rows):
                         item['class'] = 'manifest: intended copy'
