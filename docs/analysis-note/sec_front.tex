@@ -1,0 +1,65 @@
+% Front matter of the note's measurement rewrite (COMBINED-PLAN sec. 3(d)): the reader's guide, the what-is-measured box
+% (it follows when cov2d's protocol rows arrive) and the definitions table. Owner: journal-editor. Nothing here is a new
+% result: each entry restates a definition the note gives elsewhere and points to it. The reader's guide absorbs the
+% executive summary's former Table 2 (tab:paper-note-map; move JE-03, history-cuts/move-manifest-je-20261117.tsv), with
+% framing-map row A17's [W] wording: its caption, its first header and one row no longer name the methods paper.
+\section*{Reader's guide}
+\addcontentsline{toc}{section}{Reader's guide}
+\label{sec:front-guide}
+
+The limitations are collected in \S\ref{sec:limitations}, with the result component each one qualifies (Table~\ref{tab:result-status}). A reader checking the results can start there, then read the sixteen cells (\S\ref{sec:fived16}) and the two-dimensional result (\S\ref{sec:results}). The release package and the code are described in Apps.~\ref{app:release} and~\ref{app:codebase}. Choices made after results had been seen are listed in App.~\ref{app:devhistory}. Table~\ref{tab:paper-note-map} maps each topic to its sections.
+
+Specific questions are answered in these tables: the sixteen cells and their per-cell uncertainties, Table~\ref{tab:fived16-cells}; the uncertainty groups and the correlations of their covariance, Tables~\ref{tab:fived16-groups} and~\ref{tab:fived16-corr}; the fake-data tests, Table~\ref{tab:fived16-fd}; the comparisons with generator predictions, Table~\ref{tab:fived16-gen}; and the decisions of the generator tests, Table~\ref{tab:joint5d}.
+
+\begin{table}[H]
+\centering\small
+\caption{Where each topic is treated in this note.}
+\label{tab:paper-note-map}
+\begin{tabular}{@{}p{0.32\textwidth}p{0.64\textwidth}@{}}
+\toprule
+Topic & Note sections \\
+\midrule
+Introduction & \S\ref{sec:intro} \\
+Data and observables & \S\ref{sec:experiment}, \S\ref{sec:method-binning} \\
+Unfolding method and test design & \S\ref{sec:method}, \S\ref{sec:systematics}, \S\ref{sec:fived16-cov}; App.~\ref{app:statmethods}, App.~\ref{app:statmethods-nd}, App.~\ref{app:negweight} \\
+Comparison with the published two-dimensional measurement & \S\ref{sec:results}, \S\ref{sec:fived16-quadrants} \\
+Recovery of controlled truth changes & \S\ref{sec:closure-map}, \S\ref{sec:val-departure}, \S\ref{sec:fived16-fd}, \S\ref{sec:fived16-ibu} \\
+Reproducibility, stability and uncertainty calibration & \S\ref{sec:fived16-cov}, \S\ref{sec:gbdt-model-dependence}, \S\ref{sec:coverage}, \S\ref{sec:coverage-tunes}, \S\ref{sec:coverage-5d}, \S\ref{sec:fived16-fd} \\
+Discussion and conclusions & \S\ref{sec:summary} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section*{Definitions and conventions}
+\addcontentsline{toc}{section}{Definitions and conventions}
+\label{sec:front-definitions}
+
+Table~\ref{tab:definitions} collects the symbols and conventions used throughout, each with the place that defines it.
+
+\begin{table}[H]
+\centering\small
+\caption{Definitions and conventions, each with the section or table that defines it.}
+\label{tab:definitions}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.2\textwidth}>{\raggedright\arraybackslash}p{0.76\textwidth}@{}}
+\toprule
+Term & Definition \\
+\midrule
+$\pT$, $\pPar$ & Muon momentum transverse and parallel to the beam axis, in GeV/$c$ (Table~\ref{tab:observables-impl}). \\
+$\Eavail$ & Available energy: proton kinetic energy, charged-pion energy less \SI{135}{MeV}, and $\pi^{0}$ and $\gamma$ energy, in GeV (\S\ref{sec:eavail-definition}). \\
+$q_{3}$ & Three-momentum transfer, in GeV/$c$ (Table~\ref{tab:observables-impl}). \\
+$W$ & Hadronic invariant mass, in GeV. Truth $W$ uses the struck-nucleon mass, reconstructed $W$ the average nucleon mass. The external generator predictions use the neutron mass for every event (\S\ref{sec:eavailw-axis}). \\
+Data & The twelve ME FHC playlists, $1.057\times10^{21}$ protons on target (\S\ref{sec:experiment}). \\
+\addlinespace
+Configurations & Table~\ref{tab:estimators-matrix}. (a) LightGBM, purity-based background subtraction. (b) Exact-split cross-check, purity-based. (c) Deterministic LightGBM, purity-based. (d) As (c), negative weights with a 100-tree, 8-leaf refinement classifier. (e) As (c), negative weights with a 400-tree, 31-leaf refinement classifier: the three- and four-observable central values, the sixteen cells, the precision study and the generator tests. (f) As (a), negative weights with a 400-tree, 31-leaf refinement classifier: the two-dimensional central value and covariance. \\
+\addlinespace
+$Q_R$ & Covariance of the two-dimensional cross section: the sum of the training-seed, statistical, systematic-universe and run-period blocks (\S\ref{sec:systematics}, Table~\ref{tab:uq}). \\
+$C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}$ & The reported covariance of the sixteen cells, with $C_{\mathrm{total}}=C_{\mathrm{e}}+C_{\mathrm{model}}$; $C_{\mathrm{resp}}$ is the deposit-category response block and $C_{\mathrm{PL,5D}}$ the run-period block (\S\ref{sec:fived16-cov}, \S\ref{sec:fived16-pl}). \\
+$V_g$ & A generator prediction's finite-sample (diagonal) covariance (Table~\ref{tab:fived16-gen}). \\
+$C_Z$ & Five-axis covariance of the configuration-(a) central value. It is not an uncertainty product and not the sixteen-cell covariance; \S\ref{sec:5d} uses it only as a descriptive scale (\S\ref{sec:eavailw-adopted}). \\
+$C_k$ & Coverage within $\pm k$ standard deviations (\S\ref{sec:limitations}). \\
+\addlinespace
+Cells & R00--R15: the sixteen reported cells (Table~\ref{tab:fived16-cells}). The 42 $(\Eavail,W)$ cells and the \jtNcells{} coarse joint cells of the $3^{5}$ grid (Fig.~\ref{fig:bkg-residual-note}; \S\ref{sec:joint5d}). \\
+Units & Densities in \si{cm^2/nucleon} divided by the product of the kept axes' units; cell-integrated cross sections in \si{cm^2/nucleon} (App.~\ref{app:release}, Table~\ref{tab:fived16-cells}). \\
+\bottomrule
+\end{tabular}
+\end{table}

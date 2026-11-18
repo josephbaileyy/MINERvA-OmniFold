@@ -1,0 +1,10 @@
+PASS clean (rc 0): D2 PASS: controls held, mu_max recorded for g18 and ar23, no atime moved
+PASS clean: code shas OK; the real watch list (2 + 2x4 products + 2 null records = 12) stat-ed; the deploy's plainly-read definition and cmodel are not in it; none moved
+PASS null-bad (rc 2): STOP null-g18.json is not the committed record
+PASS moved (rc 2): STOP an input's atime moved (1)
+PASS moved: the real stat comparison counted the bumped input
+PASS mumax-rc (rc 2): STOP mumax rc=2 (see $TMP//td2.my1ePK/mumax-rc/p/cov2d-mumax-20261
+PASS job-queued (rc 2): STOP a job of josephrb is queued or running (the fence refuses every job)
+PASS squeue-fails (rc 2): STOP squeue failed (rc 1): the fence is not clear
+PASS w-exists (rc 2): STOP $TMP//td2.my1ePK/w-exists/p/cov2d-mumax-20261116 exists
+D2 CONNECT TEST PASS

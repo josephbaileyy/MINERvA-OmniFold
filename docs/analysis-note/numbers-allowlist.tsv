@@ -1,0 +1,10 @@
+# Allow-list for freeze_checks.py check 1 (the numbers diff): numeric tokens a reviewed change adds or removes,
+# NEW build minus the 2fe070fec build. One row per token and reason; deltas of one token add up.
+# Owners: limitation-resolver (U-items), journal-editor (sec_front, sec_limitations duplicates), Codex, director-helper-3.
+# token is as pdftotext prints it, with no thousands separator (1,200 -> 1200); delta is +n or -n.
+token	delta	owner	item	reason
+1.1	+1	director-helper-3	A2	version line (DECISION-20261117b item 5)
+19	+1	director-helper-3	A2	date line: 19 November 2026
+1.0	-1	director-helper-3	A2	old version line: Version 1.0 (review)
+11	-1	director-helper-3	A2	old date line: 11 November 2026
+2.27	-1	director-helper-3	H3-015	section 6.4's title drops \chiPaper (it prints in the subsection's text)

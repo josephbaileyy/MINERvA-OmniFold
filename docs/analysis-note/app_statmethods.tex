@@ -41,6 +41,8 @@ Table~\ref{tab:variance-sources} summarizes the four variance sources, their MAT
 \begin{table}[!htbp]
 \centering\footnotesize
 \setlength{\tabcolsep}{3pt}
+\caption{Variance-source procedures for the 2D result ($205$ reported bins).}
+\label{tab:variance-sources}
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.12\textwidth}
                 >{\raggedright\arraybackslash}p{0.17\textwidth}
                 >{\raggedright\arraybackslash}p{0.39\textwidth}
@@ -79,8 +81,6 @@ Block sum & Total uncertainty covariance &
 % J3/J4 provisional (DECISION-20261018, packet W3: D5, D8, D11; the "What it estimates" wording unchanged).
 \bottomrule
 \end{tabular}
-\caption{Variance-source procedures for the 2D result ($205$ reported bins).}
-\label{tab:variance-sources}
 \end{table}
 
 \subsubsection{Training-seed variation}
@@ -171,6 +171,8 @@ Equation~\eqref{eq:systblocksum} omits a larger correction. The band sum is line
 
 \begin{table}[!htbp]
 \centering
+\caption[Top contributing bands of the quoted universe block]{Top contributing bands of the quoted universe block (the quoted universe sweep, with the lateral bands from re-unfolds of re-selected universes and Rvp1pi dropped): per-bin median relative $\sigma_{i}/X^{\CV}_{i}$ over the $205$ reported bins. Flux carries MAT's $\nu$--$e$ and inverse-muon-decay constraint weights, and Muon\_Energy\_MINOS is divided by its own flux.}
+\label{tab:band-medians}
 \begin{tabular}{@{}lc@{}}
 \toprule
 Band & Per-bin median rel.\ $\sigma$ \\
@@ -183,11 +185,9 @@ MaRES & $0.507\%$ \\ % G2R: RE-2-shapes run 2 (C_new), g2r-integration/ledger.ts
 MvRES & $0.404\%$ \\ % G2R: RE-2-shapes run 2 (C_new), g2r-integration/ledger.tsv g2r-band-mvres; a source comment citing RE-2 part C for this value gives the earlier value
 MaCCQE & $0.328\%$ \\ % G2R: RE-2-shapes run 2 (C_new), g2r-integration/ledger.tsv g2r-band-maccqe; a source comment citing RE-2 part C for this value gives the earlier value
 \midrule
-\shortstack[l]{Systematic total\\(43 bands $+$ norm)} & \shortstack[l]{$\boxed{5.926\%}$ (median)\\$\sqrt{\Tr\mathbf{C}}=2.686\times10^{-39}$} \\ % G2R: RE-2-shapes run 2 (C_new), g2r-integration/ledger.tsv g2r-band-univ-median, g2r-band-univ-trace; a source comment citing RE-2 part C for this value gives the earlier value
+\shortstack[l]{Systematic total\\(43 bands $+$ norm)} & \shortstack[l]{$\boxed{5.926\%}$ (median)\\$\sqrt{\Tr\mathbf{C}}=2.686\times10^{-39}$\\($\si{cm^2}$/nucleon per $(\mathrm{GeV}/c)^{2}$)} \\ % G2R: RE-2-shapes run 2 (C_new), g2r-integration/ledger.tsv g2r-band-univ-median, g2r-band-univ-trace; a source comment citing RE-2 part C for this value gives the earlier value
 \bottomrule
 \end{tabular}
-\caption{Top contributing bands of the quoted universe block (the quoted universe sweep, with the lateral bands from re-unfolds of re-selected universes and Rvp1pi dropped): per-bin median relative $\sigma_{i}/X^{\CV}_{i}$ over the $205$ reported bins. Flux carries MAT's $\nu$--$e$ and inverse-muon-decay constraint weights, and Muon\_Energy\_MINOS is divided by its own flux.}
-\label{tab:band-medians}
 \end{table}
 % Table tab:band-medians (Q, 2026-10-18): rebuild/outputs/outA/budget_Q.json.gz bands.<band>.median_pct and universe.{median_pct, sqrt_trace}. J3/J4 provisional (DECISION-20261018, packet W3: D10).
 Grouped by category as in Fig.~\ref{fig:uqbands}, which follows Figs.~6--7 of Ref.~\cite{MINERvA:2021owq}, the medians are: Muon reconstruction $3.437\%$, Models $1.428\%$, Flux $3.723\%$, Hadronic response $0.752\%$, Statistical $0.676\%$, Normalization $1.400\%$, Training seed $0.048\%$, Run period $2.087\%$. (MINOS$+$MINERvA) and the MINOS-efficiency band dominate; these are the bands that the Ruterbories paper identifies as flux-correlated (\S\ref{sec:rank}). % G2R: RE-2-shapes run 2 (C_new), g2r-integration/ledger.tsv g2r-grp-models, g2r-grp-flux, g2r-grp-hadronic; a source comment citing RE-2 part C for this value gives the earlier value
@@ -263,9 +263,11 @@ The comparison adds OmniFold covariances to the paper's \texttt{TotalCovariance}
 
 \begin{table}[!htbp]
 \centering
+\caption[Component traces and median spreads of the 2D uncertainty]{Component traces and per-bin median relative spreads of the 2D uncertainty envelope (205 reported bins): the higher-precision form of Table~\ref{tab:uq}.}
+\label{tab:combine}
 \begin{tabular}{@{}lcc@{}}
 \toprule
-Component & $\sqrt{\Tr\mathbf{C}}$ & Per-bin median rel.\ $\sigma$ \\
+Component & $\sqrt{\Tr\mathbf{C}}$ ($\si{cm^2}$/nucleon per $(\mathrm{GeV}/c)^{2}$) & Per-bin median rel.\ $\sigma$ \\
 \midrule
 ML noise (LightGBM training-seed settings, $n=5$) & $1.351\times10^{-41}$ & $0.048\%$ \\
 Statistical (Poisson bootstrap, $N=300$) & $1.886\times10^{-40}$ & $0.676\%$ \\
@@ -278,8 +280,6 @@ Run period (three periods) & $8.314\times10^{-40}$ & $2.087\%$ \\
 Paper \texttt{TotalCov} (reference) & $2.676\times10^{-39}$ & $\uqPaper\%$ \\
 \bottomrule
 \end{tabular}
-\caption{Component traces and per-bin median relative spreads of the 2D uncertainty envelope (205 reported bins): the full-precision form of Table~\ref{tab:uq}.}
-\label{tab:combine}
 \end{table}
 The combined $\sqrt{\Tr\mathbf{C}}$ is the quadrature sum of the component square-root traces. The per-bin median $6.463\%$ is not the quadrature sum of the component medians. Both combined entries are evaluated on the summed covariance. The relative entries divide by the quoted central value, the LightGBM seed-42 central value of the universe sweep. Dividing the combined covariance by the exact-split cross-check instead gives a combined median of \SI{6.468}{\percent}. The universe, statistical and training-seed blocks are LightGBM ensembles, the first two at the central value's training seed and the third over five settings that include it (\S\ref{sec:method-config}). The universe and statistical blocks together give $5.976\%$, again evaluated on their sum rather than combined from the printed medians. % G2R: RE-2-shapes run 2 (C_new), g2r-integration/ledger.tsv g2r-comb-q-median-prose, g2r-comb-q-vs-ec, g2r-comb-univ-plus-stat; a source comment citing RE-2 part C for this value gives the earlier value
 % rebuild/outputs/outA/budget_Q.json.gz Q.median_pct (6.4479), Q_vs_EC.median_pct (6.4104),
