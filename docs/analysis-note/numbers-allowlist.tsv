@@ -209,3 +209,22 @@ token	delta	owner	item	reason
 10	+3	limitation-resolver	LR-20..47, U13	the section 12 copies (+2) and the U13 paragraph's context
 2	+6	limitation-resolver	U1, U2, U9, quadrant/playlist splits	sec_fived16 source +17 of the 26 source tokens; a proportional share of the rendered +9 (the rest is journal-editor's sec_front and sec_limitations restatements); please recheck against the PDF contexts
 16	+1	limitation-resolver	U18 restatement	one of the sec_limitations "16"; the other is journal-editor's
+# journal-editor, the structural rewrite (2026-11-18)
+0.2	+1	journal-editor	JE-P5	pointer 5 repeats sec_experiment.tex:40's "~0.2 % playlist-to-playlist flux differences" (limitations-export n05)
+# limitation-resolver's rows, sixth set (numbers-allowlist-lr-rows6.tsv, the a2855070d dispositions; 1.03/17.6 are cov2d's: the new copy is sec_limitations', CV-A/B, checked)
+0	+1	limitation-resolver	U6	"0 to 10 cells move opposite to it" in the recovery-class sentence (sec_5d; rec-w-opp-lo, a_recovery.json 75db95a1); new text, no duplicate
+3	+1	limitation-resolver	U6	the example cell "0.8 <= E_avail < 1.5 GeV, W >= 3 GeV" (sec_5d; rec-g-ew29, a_recovery.json 75db95a1); new text, no duplicate
+100	+1	limitation-resolver	LR-51/52 (intended duplicate)	sec_5d keeps "take their width from 100 bootstrap replicas of one nominal development experiment" (the EW41 result needs it); journal-editor's App. I lead for LR-51/52 restates it as the antecedent of the moved averaged-width check
+10	+1	journal-editor	JE-P3D	sec:limitations-3d's Ascencio pointer repeats sec_3d.tex:211's "at the 10 % scale of the residual" (97cbea1bf)
+# cov2d's rows (numbers-allowlist-cv-rows.tsv, the a2855070d dispositions; 1.03/17.6, 205 and 100 dropped from the body instead, 64cfb8d09)
+0.10	+1	cov2d	CV-VB18 held-out-tune resolution	intended duplicate: the body label of sec:coverage-tunes keeps the test's resolution ("a per-cell deficit in content of about 0.10-0.13, and about 0.08 jointly", \lrval{cov2d-res-cell}, \lrval{cov2d-res-joint}), which qualifies the per-cell flags printed beside it; the full limits paragraph prints it in sec:limitations-2d (CV-VB18)
+0.13	+1	cov2d	CV-VB18 held-out-tune resolution	as the 0.10 row: the same range, body label of sec:coverage-tunes and sec:limitations-2d
+0.08	+1	cov2d	CV-VB18 held-out-tune resolution	as the 0.10 row: the joint resolution, body label of sec:coverage-tunes and sec:limitations-2d
+52	+1	cov2d	C_model boundary cells (D)	intended duplicate: a choice made after the measurement must stay visible in the body (DECISION-20261118 rule D) - sec:uq-2d-scope "Identified after the measurement, these 52 cells hold 59.4 % of the trace" - and App. I's Table 40 row records it (journal-editor, ca8dc72d1)
+59.4	+1	cov2d	C_model boundary cells (D)	as the 52 row: the same sentence in sec:uq-2d-scope and its App. I Table 40 row
+0.1	+1	cov2d	C_model boundary cells (D)	as the 52 row: the ratio-step threshold "a step of more than 0.1", sec:uq-2d-scope and the App. I Table 40 row
+# journal-editor's H3-028 row (Table 40, the 135 MeV constant), confirmed 2026-11-18: intended duplicates of sec_3d.tex:42
+135	+1	journal-editor	H3-028 row	the App. I row for the 135 MeV constant repeats sec_3d.tex:42 (DECISION-20261101 item 1); the body keeps its numbers
+139.57	+1	journal-editor	H3-028 row	the same row: "rather than the charged-pion mass of about 139.57 MeV"
+0.19	+1	journal-editor	H3-028 row	the same row: the measured shift, at most 0.19 sigma in any cell (\fvval{eav-cellmax})
+0.42	+1	journal-editor	H3-028 row	the same row: the coherent shift, 0.42 sigma (\fvval{eav-coherent})

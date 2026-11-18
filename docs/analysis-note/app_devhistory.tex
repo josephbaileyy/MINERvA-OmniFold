@@ -29,9 +29,9 @@ Purity-subtracted 2D central value and covariance, configuration~(a) (\S\ref{sec
 Five-dimensional central value and five-axis covariance, configuration~(a), retained (\S\ref{sec:eavailw}) & The five-observable central value and its covariance & Retained, not rebuilt: produced before the purity bias was found and the refinement was developed & Five-observable central value and covariance (\S\ref{sec:eavailw-adopted}) & That result, within the limits of Table~\ref{tab:result-status}; the sixteen-cell result uses configuration~(e) (\S\ref{sec:fived16}) & Produced before the purity bias was found \\
 \addlinespace
 % sec_systematics.tex (history-cuts/sec_systematics.md, rows D4-D5).
-Earlier 2D budget~\cite{TwoDFollowup2026} (\S\ref{sec:uq-2d-scope}) & The 2D covariance before the quoted budget & Construction defects (\S\ref{sec:uq-2d-scope}; App.~\ref{app:devhistory-2dbudget}), each corrected in the quoted budget & 2D covariance (\S\ref{sec:systematics}) & Printed uncorrected, as a comparison only: in \S\ref{sec:uq-2d-scope}, for the flux weights (\S\ref{sec:uq-2d-construction}) and for the run-period step (\S\ref{sec:uq-combine}) & -- \\
+Earlier 2D budget~\cite{TwoDFollowup2026} (\S\ref{sec:uq-2d-scope}) & The 2D covariance before the quoted budget & Construction defects (\S\ref{sec:uq-2d-scope}; App.~\ref{app:devhistory-2dbudget}), each corrected in the quoted budget & 2D covariance (\S\ref{sec:systematics}) & Printed uncorrected, as a comparison only: in \S\ref{sec:uq-2d-scope}, for the flux weights (\S\ref{sec:uq-universes}) and for the run-period step (\S\ref{sec:uq-combine}) & -- \\
 \addlinespace
-Earlier ten-seed training-seed block (\S\ref{sec:uq-ml}) & An earlier training-seed block & Its spread was dominated by the bootstrap\,$\times$\,seed interaction, which the fixed-seed statistical block now contains & Training-seed block (\S\ref{sec:uq-ml}) & Its $\sigma$ remains the yardstick of the retraining test (\S\ref{sec:uq-2d-scope}) & -- \\
+Earlier ten-seed training-seed block (\S\ref{sec:uq-ml}) & An earlier training-seed block & Its spread was dominated by the bootstrap\,$\times$\,seed interaction, which the fixed-seed statistical block now contains & Training-seed block (\S\ref{sec:uq-ml}) & Its $\sigma$ remains the yardstick of the retraining test (\S\ref{sec:limitations-2d}) & -- \\
 \addlinespace
 % sec_validation.tex (history-cuts/sec_validation.md, rows D6-D7).
 % D6's "has not been tested" restates sec_validation.tex:154; its search, as there:
@@ -64,6 +64,11 @@ Universe-misses approximation in the 2D systematic block (\S\ref{sec:uq-2d-scope
 % "after the measurement" per the comment at :234 (pv2d/REPORT.md sec. 5, "the step rule, threshold 0.1, post hoc"; cmodel_R.json tail_caveat_post_hoc).
 Cells of $C_{\mathrm{model}}$ beside a reweighting-ratio step (\S\ref{sec:uq-2d-scope}) & Where a pooled cell, a noise-gated cell, or an unreported cell meets another cell, the construction can draw a step of more than 0.1 in a generator's reweighting ratio & Identified after the measurement: these 52 cells hold \SI{59.4}{\percent} of the trace of $C_{\mathrm{model}}$ and carry most of its large shifts; they enter with their measured shifts & Model-dependence component $C_{\mathrm{model}}$, reported beside the 2D covariance (\S\ref{sec:uq-2d-scope}) & $C_{\mathrm{model}}$ is not a calibrated bound on the bias in each cell (\S\ref{sec:limitations-2d}) & The measurement: the data unfolded again with the central value's estimator under each reweighting \\
 \addlinespace
+% H3-028 (director-helper-3; structural rewrite 2026-11-18): the 135 MeV charged-pion constant, in the words of sec_3d.tex:42
+% (sec:eavail-definition); kept, with no code, product or number change and no rerun, after the switch's first-order size
+% on the sixteen-cell result was measured (DECISION-20261101-joseph-eavail-keep-135.md item 1, "UD-002 stands"; PR #622 sec. 7).
+Charged-pion constant in truth $\Eavail$ (\S\ref{sec:eavail-definition}) & The charged-pion term subtracts the inherited constant \SI{135}{MeV} rather than the charged-pion mass of about \SI{139.57}{MeV} & Kept: the production keeps that constant; no code, product or number changed, and nothing was rerun & The $\Eavail$-dependent results & On the sixteen-cell result, replacing the constant by the charged-pion mass moves the cross section by at most \fvval{eav-cellmax}$\sigma$ in any cell and by \fvval{eav-coherent}$\sigma$ as one coherent shift (\S\ref{sec:eavail-definition}) & The switch's measured first-order size on the sixteen-cell result \\
+\addlinespace
 % V-1 / App-I-1 (2026-11-16): the held-out-tune test's first grade, superseded by its regrade against the adopted 2D
 % covariance (COV2D-G2R-DECLARATION.md sec. 4-5: "The note records the first grade as superseded"; DECISION-20261114-joseph-
 % d1-g2r-adopted.md item 3); the first grade's readouts stay pinned in make_values_landed.py (ar23old, g18old).
@@ -90,7 +95,7 @@ The exact-split cross-check is configuration~(b) of \S\ref{sec:method-config}. I
 \subsection{Uncertainty of the two-dimensional cross section (\S\ref{sec:systematics})}
 \label{app:devhistory-systematics}
 
-% Move pairs CV-A01..CV-A07 (cov2d; history-cuts/move-manifest-cv-20261118.tsv sends; journal-editor receives): sentences
+% Move pairs CV-A01, CV-A04..CV-A07 (cov2d; history-cuts/move-manifest-cv-20261118.tsv sends; journal-editor receives): sentences
 % of sec_systematics.tex @79a934a41, verbatim, with their source comment lines, except one token: in CV-A06 the
 % self-pointer (App.~\ref{app:devhistory}) becomes (Table~\ref{tab:devhistory}). The opening sentence is new framing.
 \subsubsection{Checks of the 2D covariance's construction, and a superseded approximation}
@@ -118,16 +123,6 @@ Seven universes of the sweep used by the quoted universe block (\S\ref{sec:uq-un
 % (inherited from DRAFT-disclosures D10, corrected in revision 4) was the wrong count.
 % plain-language pass (DECISION-20261018-joseph-plain-language-pass)
 % Note register round n3, batch n3-B (2026-10-27): the sweep's use by the quoted universe block is stated at its home, sec:uq-universes, which the sentence cites (R-N3b); the reproduction status, its consequence for the printed block, is unchanged.
-
-% CV-A02, CV-A03 (sec_systematics.tex:144, its second and third sentences; the first stays in the body):
-The flux-universe index identity behind the $1/\Phi_{u}$ rescale is established by the code chain and by an exact test: 900 events $\times$ 100 universes match to $5.5\times10^{-14}$, and a control shifted by one universe fails at $\ge0.245$ (Ref.~\cite{NoteRecords2026}, \recentry{flux-index}). In all 12 playlists the production flux weights equal those of the constraint file and of the earlier 2D budget, with which \S\ref{sec:uq-2d-scope} compares the quoted construction.
-% J3/J4 provisional (DECISION-20261018, packet W3: D8 and KI-94 in sec:uq-boot; D10 KI-91, laterals here).
-% stageC/production/DESIGN.md §3.4 (three streams), §S5 universe row, §12 (laterals: one active-file unfold each at seed
-% 42); stageC/production/REPORT.md §12. KI-91: stageB/REPORT.md (Stage B §2.1: max residual 5.5e-14; shifted-by-one control
-% minimum residual 0.245); s5.json checks weights_identical_across_playlists, weights_equal_constraint_file,
-% weights_equal_vl175_build_json (all ok; F4 part A).
-% Printed pointer moved to this comment by the plain-language pass: the index identity's (\texttt{KNOWN\_ISSUES.md} 91).
-% plain-language pass, review fix N1 (DECISION-20261018-joseph-plain-language-pass): the route is restored in words (row 91).
 
 % CV-A04..CV-A06 (sec_systematics.tex:247, its second and third sentences; the first stays in the body):
 An earlier construction kept the central-value weight and divided it by the universe's completeness. The covariance adopted on 2026-11-14 is the rebuild without that approximation, and the earlier covariance is kept only as a documented comparison (Table~\ref{tab:devhistory}).
@@ -203,6 +198,22 @@ The excess width lies in the data-statistics component. The per-bin pull RMS fal
 % plain-language pass, review fix N1 and N3 (DECISION-20261018-joseph-plain-language-pass): the route is restored in words (row 85); "fixed before it
 % ran" becomes "recorded before it ran" (the rule was committed before the run, 8eb40e5f).
 
+% Move pair H3-020 (director-helper-3; move-manifest-h3-20261117.tsv sends): sec_results.tex:148 @ 79a934a41, sentences 2-4,
+% verbatim with the source comments :153-154; sec:results-tension keeps sentence 1 and points here.
+\subsection{Two-dimensional muon cross section (\S\ref{sec:results})}
+\label{app:devhistory-results}
+
+This is the exact-split cross-check's part of the eigenmode decomposition of \S\ref{sec:results-tension}. For the exact-split cross-check, $\chi^{2}$ is larger and distributed differently: its components of magnitude $5$--$6$ lie in moderate-$\lambda$ modes on the low-$\pT$ ridge of the cross-section peak. Its 10 smallest-$\lambda$ modes carry \SI{3}{\percent} of the $\chi^{2}$, and the 73 best-measured directions give $\chi^{2}=291$ ($\chi^{2}/205=1.42$, again divided by the number of reported bins; App.~\ref{sec:tension}). Going from 5 to 10 iterations changes the LightGBM (seed~1) value by a negligible $+0.01$.
+% Revision D' 2026-11-06 (referee reads of D, both ACCEPT; Sonnet and the interpreter: print the raw chi2 and the directions kept): docs/orchestration/receipts/2d-lgbm42-20261011/tension_report_exact_control.txt:56 prints "1e-04  1.419  73". Arithmetic: 1.419 x 205 = 290.9; 205 x [1.4185, 1.4195) is in [290.8, 291.0], 291 at three figures.
+% Director-added wording correction 2026-11-06, for Joseph's review before merge (not among the two he approved): the truncated chi2 was printed as chi2/ndf, but its divisor is the 205 reported bins, not the directions kept. 2d-unfolding/diagnose_tension.py @ c3dbe30f4 (main): :110 n = int(mask.sum()), the 205 reported bins; :183 and :193 divide every truncated chi2 by n (the same divisor at 56e30b9c9 :108/:181/:191 and at 735c909da). Receipt docs/orchestration/receipts/2d-lgbm42-20261011/tension_report_exact_control.txt:56 ("1e-04  1.419  73"). No number changed.
+
+% Move pair H3-027 (director-helper-3; lane/note-cx-takeover-20261117 sends): sec_3d.tex:135 sentence 1 @ 7e261e5f7, verbatim;
+% the body keeps "... were generated from a defective flux, described in App.~\ref{app:devhistory}" with the records pointer.
+\subsection{Available energy and momentum transfer (\S\ref{sec:3d})}
+\label{app:devhistory-3d}
+
+This is the account of the generation flux's defects behind the flux repair of \S\ref{sec:3d-models}. The GENIE (CV and $+$Valencia~2p2h) and NuWro samples were generated from a flux that had no PPFX weights, was capped at \SI{50}{GeV}, and stored flux \emph{densities} in variable-width bins that were sampled and normalized as \emph{contents}, which under-weighted every wide high-energy bin and suppressed the high-$\pPar$ predictions and the integrated rates (Ref.~\cite{NoteRecords2026}, \recentry{flux-repair}).
+
 \subsection{The sixteen-cell cross section (\S\ref{sec:fived16})}
 \label{app:devhistory-fived16}
 
@@ -242,6 +253,32 @@ A staged redesign of that first test, at the two tunes and with the covariance r
 % (check_ll5d_port.py); the per-tune classes are hand-typed and asserted against the readout by make_values_fived16.py
 % (LL5D_PRINTED_CLASS).
 At both tunes, an event-matching entry check stopped the earlier run because it compared \fvval{ll5d-a1a2-keys} weight keys and reported every row unmatched. The repair, chosen after this stop, keyed both sides at \fvval{ll5d-a1a2-at} before any coverage pseudo-experiment was unfolded or graded, but after other gate readings were visible. It changed no rule, threshold, bound or reporting cell. Under the rule fixed before the result, the rerun is reported as descriptive: the criteria fixed in advance were applied, but a repair was chosen after an entry-check stop.
+
+% Move pair LR-63 (limitation-resolver, the director's ruling P52): the table tab:fived16-gen-stageg of sec_fived16.tex, verbatim
+% with its caption and label; the body keeps its pointer to it. Merges with limitation-resolver's 685a843aa (the label moves).
+\subsubsection{The generator comparison as first made}
+\label{app:devhistory-fived16-stageg}
+
+\begin{table}[htbp]
+\centering\footnotesize
+\caption[The generator comparison as first made]{The table keeps the comparison as first made, before the predictions were moved to the analysis definitions. The comparison of Table~\ref{tab:fived16-gen} as first made, with the predictions in their generator definitions and NuWro and GiBUU on carbon, with no correction to CH: against the reported covariance plus $V_g$ and without the run-period block, as in Table~\ref{tab:fived16-gen}, and in the last column against $C_{\mathrm{total}}+V_g$, without the response and run-period blocks.}
+\label{tab:fived16-gen-stageg}
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+ & \multicolumn{2}{c}{reported covariance} & \multicolumn{2}{c}{without $C_{\mathrm{PL,5D}}$} & $C_{\mathrm{total}}$ \\ \cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(l){6-6}
+prediction & $\chi^2$ & shape-only $\chi^2$ & $\chi^2$ & shape-only $\chi^2$ & $\chi^2$ \\
+\midrule
+\multicolumn{6}{@{}l}{All 16 cells: ndf \fvval{gs-gcv-total-ndf}, shape-only \fvval{gs-gcv-shape_only-ndf}} \\
+\fvval{gs-label-gcv} & \fvval{gs-gcv-total-chi2} & \fvval{gs-gcv-shape_only-chi2} & \fvval{gs-gcv-total-chi2-nopl} & \fvval{gs-gcv-shape_only-chi2-nopl} & \fvval{gs-gcv-nocresp-chi2} \\
+\fvval{gs-label-gmec} & \fvval{gs-gmec-total-chi2} & \fvval{gs-gmec-shape_only-chi2} & \fvval{gs-gmec-total-chi2-nopl} & \fvval{gs-gmec-shape_only-chi2-nopl} & \fvval{gs-gmec-nocresp-chi2} \\
+\fvval{gs-label-nuwro} & \fvval{gs-nuwro-total-chi2} & \fvval{gs-nuwro-shape_only-chi2} & \fvval{gs-nuwro-total-chi2-nopl} & \fvval{gs-nuwro-shape_only-chi2-nopl} & \fvval{gs-nuwro-nocresp-chi2} \\
+\fvval{gs-label-tune} & \fvval{gs-tune-total-chi2} & \fvval{gs-tune-shape_only-chi2} & \fvval{gs-tune-total-chi2-nopl} & \fvval{gs-tune-shape_only-chi2-nopl} & \fvval{gs-tune-nocresp-chi2} \\
+\midrule
+\multicolumn{6}{@{}l}{8-cell subset, $\pPar<\fvval{h2-mid-pz}$~GeV/$c$: ndf \fvval{gs-gibuu-total-ndf}, shape-only \fvval{gs-gibuu-shape_only-ndf}} \\
+\fvval{gs-label-gibuu} & \fvval{gs-gibuu-total-chi2} & \fvval{gs-gibuu-shape_only-chi2} & \fvval{gs-gibuu-total-chi2-nopl} & \fvval{gs-gibuu-shape_only-chi2-nopl} & \fvval{gs-gibuu-nocresp-chi2} \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \subsection{The five-dimensional development tests (\S\ref{sec:5d})}
 \label{app:devhistory-5d}
