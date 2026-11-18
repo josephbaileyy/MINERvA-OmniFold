@@ -60,6 +60,10 @@ Matched coarse-projection comparison (\S\ref{sec:joint5d-projections}) & Whether
 % D1 follow-on (2026-11-16; history-cuts/app_devhistory.md, D16): the universe-misses approximation, removed by the adopted rebuild.
 Universe-misses approximation in the 2D systematic block (\S\ref{sec:uq-2d-scope}) & The earlier construction of the systematic-universe unfolds: an event that fails reconstruction kept the central-value weight, divided by the universe's completeness & Replaced: the rebuilt covariance gives each such event its universe's own truth weight, and the earlier covariance is kept only as a documented comparison & 2D covariance (\S\ref{sec:systematics}) & The reported covariance does not use it & The rebuild's outcome table was fixed before any of its numbers was read; the adoption followed the readout, under that table's row for a valid rebuild \\
 \addlinespace
+% cov2d D item (structural rewrite, 2026-11-18; cv-package README): C_model's boundary cells, in the words of sec_systematics.tex:235, :239 @79a934a41;
+% "after the measurement" per the comment at :234 (pv2d/REPORT.md sec. 5, "the step rule, threshold 0.1, post hoc"; cmodel_R.json tail_caveat_post_hoc).
+Cells of $C_{\mathrm{model}}$ beside a reweighting-ratio step (\S\ref{sec:uq-2d-scope}) & Where a pooled cell, a noise-gated cell, or an unreported cell meets another cell, the construction can draw a step of more than 0.1 in a generator's reweighting ratio & Identified after the measurement: these 52 cells hold \SI{59.4}{\percent} of the trace of $C_{\mathrm{model}}$ and carry most of its large shifts; they enter with their measured shifts & Model-dependence component $C_{\mathrm{model}}$, reported beside the 2D covariance (\S\ref{sec:uq-2d-scope}) & $C_{\mathrm{model}}$ is not a calibrated bound on the bias in each cell (\S\ref{sec:limitations-2d}) & The measurement: the data unfolded again with the central value's estimator under each reweighting \\
+\addlinespace
 % V-1 / App-I-1 (2026-11-16): the held-out-tune test's first grade, superseded by its regrade against the adopted 2D
 % covariance (COV2D-G2R-DECLARATION.md sec. 4-5: "The note records the first grade as superseded"; DECISION-20261114-joseph-
 % d1-g2r-adopted.md item 3); the first grade's readouts stay pinned in make_values_landed.py (ar23old, g18old).
@@ -85,6 +89,62 @@ The exact-split cross-check is configuration~(b) of \S\ref{sec:method-config}. I
 
 \subsection{Uncertainty of the two-dimensional cross section (\S\ref{sec:systematics})}
 \label{app:devhistory-systematics}
+
+% Move pairs CV-A01..CV-A07 (cov2d; history-cuts/move-manifest-cv-20261118.tsv sends; journal-editor receives): sentences
+% of sec_systematics.tex @79a934a41, verbatim, with their source comment lines, except one token: in CV-A06 the
+% self-pointer (App.~\ref{app:devhistory}) becomes (Table~\ref{tab:devhistory}). The opening sentence is new framing.
+\subsubsection{Checks of the 2D covariance's construction, and a superseded approximation}
+\label{app:devhistory-2dchecks}
+
+This is the record of the checks of the 2D covariance's construction, and of the approximation the reported covariance replaced, which \S\ref{sec:systematics} cites.
+
+% CV-A01 (sec_systematics.tex:122):
+Seven universes of the sweep used by the quoted universe block (\S\ref{sec:uq-universes}) are reproduced to $\le1.4\times10^{-11}$ by the committed driver; the others are accepted by inference, because the same code produced them (Ref.~\cite{NoteRecords2026}, \recentry{july-sweep}).
+% Note register round n1, batch n1-B (2026-10-25; director ruling on the earlier-budget defects): the defects of the
+% earlier 2D budget (the May sweep's truth-input mismatch, the Rvn1pi/Rvp1pi double count, the unpropagated
+% background-template statistics) moved to one paragraph, "Changes from the earlier 2D budget", in sec:uq-2d-scope.
+% This subsection keeps the checks of the quoted construction. The July sweep's provenance sentences are unchanged in
+% content; the first names the July sweep's products, because the May-sweep sentences that preceded it moved.
+% Search: July sweep; driver checksum; driver version committed; 7/7 PASS; S4(ii) @ ddf16f10
+% Note register round n2, batch n2-B (2026-10-26; R-N2b, provenance case (C)): the sweep's provenance prints in the
+% records entry july-sweep (app_provenance.tex), which the sentence cites; the note keeps its consequence for the
+% printed universe block (n2 ledger, rows SY-C1 to SY-C3). The n1 comment above describes the text before n2.
+% Printed identifier removed by the plain-language pass: the earlier 2D budget is VL175.
+% J3/J4 provisional (DECISION-20261018, packet W3: D10 KI-93). stageC/production/DESIGN.md §S5 universe row (the July
+% sweep); stageC/pilot/REPORT.md l.70-80, K1: five comparisons over four universes (NormDISCC:0, MaRES:0, Flux:23,
+% Muon_Energy_MINOS:0 on the derived and the default path), max rel <= 1.38e-11; stageC/production/REPORT.md l.65,
+% S4(ii): seven July seed-42 universes (2p2h:0, Flux:23, MaCCQE:0, MaRES:0, MinosEfficiency:0, Muon_Energy_MINOS:0,
+% NormDISCC:0), 7/7 PASS, worst 1.38e-11, which include the four pilot universes. Review M2: "Five of its universes"
+% (inherited from DRAFT-disclosures D10, corrected in revision 4) was the wrong count.
+% plain-language pass (DECISION-20261018-joseph-plain-language-pass)
+% Note register round n3, batch n3-B (2026-10-27): the sweep's use by the quoted universe block is stated at its home, sec:uq-universes, which the sentence cites (R-N3b); the reproduction status, its consequence for the printed block, is unchanged.
+
+% CV-A02, CV-A03 (sec_systematics.tex:144, its second and third sentences; the first stays in the body):
+The flux-universe index identity behind the $1/\Phi_{u}$ rescale is established by the code chain and by an exact test: 900 events $\times$ 100 universes match to $5.5\times10^{-14}$, and a control shifted by one universe fails at $\ge0.245$ (Ref.~\cite{NoteRecords2026}, \recentry{flux-index}). In all 12 playlists the production flux weights equal those of the constraint file and of the earlier 2D budget, with which \S\ref{sec:uq-2d-scope} compares the quoted construction.
+% J3/J4 provisional (DECISION-20261018, packet W3: D8 and KI-94 in sec:uq-boot; D10 KI-91, laterals here).
+% stageC/production/DESIGN.md §3.4 (three streams), §S5 universe row, §12 (laterals: one active-file unfold each at seed
+% 42); stageC/production/REPORT.md §12. KI-91: stageB/REPORT.md (Stage B §2.1: max residual 5.5e-14; shifted-by-one control
+% minimum residual 0.245); s5.json checks weights_identical_across_playlists, weights_equal_constraint_file,
+% weights_equal_vl175_build_json (all ok; F4 part A).
+% Printed pointer moved to this comment by the plain-language pass: the index identity's (\texttt{KNOWN\_ISSUES.md} 91).
+% plain-language pass, review fix N1 (DECISION-20261018-joseph-plain-language-pass): the route is restored in words (row 91).
+
+% CV-A04..CV-A06 (sec_systematics.tex:247, its second and third sentences; the first stays in the body):
+An earlier construction kept the central-value weight and divided it by the universe's completeness. The covariance adopted on 2026-11-14 is the rebuild without that approximation, and the earlier covariance is kept only as a documented comparison (Table~\ref{tab:devhistory}).
+% D1 follow-on (the director's go of 2026-11-16): DECISION-20261114-joseph-d1-g2r-adopted.md items 2-3; COV2D-G2R-DECLARATION.md sec. 10, VALID row (\"removed. The covariance text states that the systematic-universe unfoldings weight each missed event at its universe's truth weight\"). The earlier approximation's two-universe tests are in the ledger: history-cuts/sec_systematics.md S7.
+% J3/J4 provisional (DECISION-20261018, packet W3: D4). DECISION-20261015-joseph-g2-carry.md §1-§2 (MaRES_0, Stage B
+% diagnostics P5; Flux:23, Stage C pilot K2 (P2-G2); NOT RESOLVED ABOVE TRAINER NOISE at both seeds; K2 bounds only a median
+% r3 above 2 sigma_ML). stageC/production/REPORT.md §3 (median sigma_c08/sigma_ML 0.304; X03 Flux:23 1.29, MaRES:0 1.28).
+% plain-language pass (DECISION-20261018-joseph-plain-language-pass)
+
+% CV-A07 (sec_systematics.tex:266, its first sentence; the second, a pointer to limitations stated with each block,
+% is superseded by the body's pointer to sec:limitations-2d):
+Both programs that use the covariance for the reported results, the $\chi^{2}$ comparison (\S\ref{sec:chisq}) and the program that draws Fig.~\ref{fig:uqbands}, check that its stored set of cells equals the published set, and the check passes in every run of both on the quoted covariance.
+% J3/J4 provisional (DECISION-20261018, packet W8: the KI-90 sentence; W3: D10). state/2d-closeout/stageF/rebuild/REPORT.md
+% §2 (every Q run shows the identity check passing on hReportedCells: the three chi2 forms and fig. 6/7; KI-90's
+% "verify they ran"). Not a remedy of KI-90's producers or of any other consumer (rebuild REPORT §2).
+% Review m7: the pass is shown on the consumers' Q runs (three chi2 forms, fig. 6/7), not on the budget runs.
+% plain-language pass (DECISION-20261018-joseph-plain-language-pass)
 
 % Move pair H3-010 (director-helper-3; history-cuts/move-manifest-h3-20261117.tsv sends, move-manifest-je-20261117.tsv
 % receives): sec_systematics.tex's defects of the earlier 2D budget, verbatim with its comment lines; sec:uq-2d-scope keeps a
@@ -114,6 +174,34 @@ Unlike the band's replicas, the central value has completeness exactly~1. A seco
 
 The band was then rebuilt without this term. The resulting undivided band was rescored only post hoc (\S\ref{sec:coverage}), and the quoted statistical block has not been tested.
 % Search: S1 has not been coverage-tested; coverage statement about Q_R; held-out-MC re-test @ ddf16f10
+
+% Move pairs CV-VA01..CV-VA14 (cov2d; history-cuts/move-manifest-cv-20261118.tsv sends; journal-editor receives): sentences
+% of sec_validation.tex @79a934a41, verbatim, with their source comment lines, except one token: in CV-VA01 "below"
+% becomes "above" (the secondary analysis precedes it here). Proposed place: the end of app:devhistory-band.
+% CV-VA01 (sec_validation.tex:168, its last sentence):
+An independent reimplementation of the scoring reproduces the pooled coverages, their intervals, the controls and the secondary analysis above.
+
+% CV-VA02..CV-VA04 (sec_validation.tex:184; the body keeps a one-sentence summary and sentence 3, the post hoc disclosure):
+\textbf{Post hoc rescoring against the undivided band.} Scoring the same 100 toys against the undivided band removes the tail undercoverage: $C_2=0.977$ $[0.974,0.980]$ and $C_1=0.781$ $[0.771,0.790]$, both above their nominal windows. The undivided band is wider than the toy scatter (pull RMS 0.84, mean pull consistent with zero). The rescoring is post hoc and partly circular, because the band's MC part reuses the toys' resampling mechanism.
+
+% CV-VA05.. (sec_validation.tex:186 with the comments :187-202):
+The excess width lies in the data-statistics component. The per-bin pull RMS falls as that component's share of the band's variance rises, which corresponds to a data-statistics part about $1.6\times$ wider in $\sigma$ than the toys produce. Background purity does not explain it. Its cause remains unresolved. A post hoc diagnostic bootstraps a single toy. Its decision rule was recorded before it ran. Its result is consistent with the closure toys scattering too little, rather than with the data bootstrap scattering too much. The toys would scatter too little because their pseudo-data are built on the training MC events. The diagnostic is neither an independent-population coverage test nor a calibration on real data. A re-test on held-out simulation would separate the two explanations. It has not been run.
+% Note register round n1, batch n1-B (2026-10-25; R-N1): the split-sample sentence that ended this paragraph restated
+% the paragraph "What the remaining validation needs" (sec:validation), which states the split-sample limit and the
+% new inputs and points to sec:uq-2d-scope; it is not repeated here.
+% Search: held-out simulation; held-out-MC re-test; bootstrap-on-one-toy diagnostic outcome @ ddf16f10
+% NR: the rescoring is of the superseded VL170 band, named as such; not recomputed for Q.
+% J3/J4 provisional (DECISION-20261018, packet C3: "as well as the construction repairs of sec:uq-2d-construction"
+% replaced by the new inputs and the D1 list of sec:uq-2d-scope; C7: the rescoring kept, labelled historical; W3: D2; J5).
+% Source: state/ki84-rebuild-20261006/rescore_vl169_toys_vl170.json (vl170: C1 0.7806 [0.7709, 0.7902],
+% C2 0.9769 [0.9737, 0.9800], pull_rms 0.843, pull_mean -0.027 [-0.058, 0.004]; label "POST HOC, DESCRIPTIVE";
+% commit 5aab2d6d); KNOWN_ISSUES.md 85 (the 1.6x, the f-share regression, purity median 0.975);
+% DECISION-RULE-20261006-ki85-bootstrap-diagnostic.md (outcome (b)); diagnostic 8eb40e5f. Moved here from the
+% article on 2026-10-11, when its 2D-coverage subsection was shortened.
+% plain-language pass (DECISION-20261018-joseph-plain-language-pass). Printed pointer moved to this comment: the deferred
+% re-test's (\texttt{KNOWN\_ISSUES.md} 85).
+% plain-language pass, review fix N1 and N3 (DECISION-20261018-joseph-plain-language-pass): the route is restored in words (row 85); "fixed before it
+% ran" becomes "recorded before it ran" (the rule was committed before the run, 8eb40e5f).
 
 \subsection{The sixteen-cell cross section (\S\ref{sec:fived16})}
 \label{app:devhistory-fived16}
