@@ -122,10 +122,14 @@ $W$ & Hadronic invariant mass, in GeV. Truth $W$ uses the struck-nucleon mass, r
 Data & The twelve ME FHC playlists, $1.057\times10^{21}$ protons on target (\S\ref{sec:experiment}). \\
 Abbreviations & IBU: D'Agostini iterative Bayesian unfolding (\S\ref{sec:intro}). ME, FHC: the medium-energy, neutrino-mode (forward horn current) exposure (\S\ref{sec:experiment}). POT: protons on target (App.~\ref{app:codebase}). GBDT: gradient-boosted decision tree (\S\ref{sec:intro}). PPFX: the hadron-production weights of the flux prediction (\S\ref{sec:experiment}). MAT: the MINERvA Analysis Toolkit (\S\ref{sec:experiment}). \\
 \addlinespace
-Configurations & Table~\ref{tab:estimators-matrix}. (a) LightGBM, purity-based background subtraction. (b) Exact-split cross-check, purity-based. (c) Deterministic LightGBM, purity-based. (d) As (c), negative weights with a 100-tree, 8-leaf refinement classifier. (e) As (c), negative weights with a 400-tree, 31-leaf refinement classifier: the three- and four-observable central values, the sixteen cells, the precision study and the generator tests. (f) As (a), negative weights with a 400-tree, 31-leaf refinement classifier: the two-dimensional central value and covariance. \\
+Configurations & (a)--(f): Table~\ref{tab:config-key}, from Table~\ref{tab:estimators-matrix} and \S\ref{sec:method-config}. \\
 \addlinespace
 $Q_R$ & Covariance of the two-dimensional cross section: the sum of the training-seed, statistical, systematic-universe and run-period blocks (\S\ref{sec:systematics}, Table~\ref{tab:uq}). \\
-$C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}$ & The reported covariance of the sixteen cells, with $C_{\mathrm{total}}=C_{\mathrm{e}}+C_{\mathrm{model}}$; $C_{\mathrm{resp}}$ is the deposit-category response block and $C_{\mathrm{PL,5D}}$ the run-period block (\S\ref{sec:fived16-cov}, \S\ref{sec:fived16-pl}). \\
+$C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}$ & The reported covariance of the sixteen cells, with $C_{\mathrm{total}}=C_{\mathrm{e}}+C_{\mathrm{model}}$ (\S\ref{sec:fived16-cov}). \\
+$C_{\mathrm{e}}$ & Sums the statistical bootstrap of configuration~(e), the PPFX flux universes, the interaction-model and detector bands, the lateral bands, the normalization and the training-seed block (\S\ref{sec:fived16-cov}). \\
+$C_{\mathrm{model}}$ & The unscaled outer-product sum of the data result's shifts when the prior is reweighted in turn by the ratio of GENIE + MEC, NuWro or GiBUU to GENIE CV, in cross-section units. It measures generator-shape model dependence and is not a calibrated bound (\S\ref{sec:fived16-cov}). \\
+$C_{\mathrm{resp}}$ & The sum, over four deposit categories (protons, mesons, electromagnetic and other deposits), of the outer product of the half-difference of the two unfolded shifts when that category's reconstructed energy is scaled by its one-standard-deviation factor (\S\ref{sec:fived16-cov}). \\
+$C_{\mathrm{PL}}$, $C_{\mathrm{PL,5D}}$ & The run-period blocks of the two-dimensional result and of the sixteen cells, built from the double ratios of the run-period groups' unfolded results with no reference period (\S\ref{sec:uq-combine}, \S\ref{sec:fived16-pl}). \\
 $V_g$ & A generator prediction's finite-sample (diagonal) covariance (Table~\ref{tab:fived16-gen}). \\
 $C_Z$ & Five-axis covariance of the configuration-(a) central value. It is not an uncertainty product and not the sixteen-cell covariance; \S\ref{sec:5d} uses it only as a descriptive scale (\S\ref{sec:eavailw-adopted}). \\
 $C_k$ & Coverage within $\pm k$ standard deviations (\S\ref{sec:limitations}). \\
@@ -136,6 +140,24 @@ D1, W1--W3 & Fixed historical truth deformations, built before the generator flu
 $R$ & The raised-refinement-capacity estimator of \S\ref{sec:val-departure}: baseline OmniFold classifiers with a 400-tree, 31-leaf background-refinement classifier (\S\ref{sec:gbdt-model-dependence}). \\
 RD1--RD3 & Reporting definitions of the five-dimensional precision study at J, H2 and EW resolution (\S\ref{sec:gbdt-model-dependence}). \\
 Units & Densities in \si{cm^2/nucleon} divided by the product of the kept axes' units; cell-integrated cross sections in \si{cm^2/nucleon} (App.~\ref{app:release}, Table~\ref{tab:fived16-cells}). \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering\footnotesize
+\caption[Estimator configurations: key]{Estimator configurations: a key to the letters used throughout, restating Table~\ref{tab:estimators-matrix} and \S\ref{sec:method-config}. All use five OmniFold iterations and gradient-boosted trees of nominal capacity (100 trees, 8 leaves) in both OmniFold steps; results from different configurations are not combined.}
+\label{tab:config-key}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.05\textwidth}>{\raggedright\arraybackslash}p{0.17\textwidth}>{\raggedright\arraybackslash}p{0.19\textwidth}>{\raggedright\arraybackslash}p{0.33\textwidth}>{\raggedright\arraybackslash}p{0.18\textwidth}@{}}
+\toprule
+ & Learner & Background treatment & Where used & Status \\
+\midrule
+(a) & LightGBM; seed 42 in two dimensions & purity-based subtraction & five-observable central value and its five-axis covariance (\S\ref{sec:eavailw}); 3D and 4D injected-bump closures (\S\ref{sec:3d}); purity-subtracted 2D comparisons (\S\ref{sec:results-tension}) & produced before the purity bias was found and the refinement was developed \\
+(b) & scikit-learn exact splits; seed not fixed & purity-based subtraction & the 2D exact-split cross-check; studies labeled \emph{exact-split} & cross-check \\
+(c) & LightGBM, deterministic & purity-based subtraction & background bias (\S\ref{sec:val-negweight}); coverage test (\S\ref{sec:coverage-5d}) & studies \\
+(d) & as (c) & negative weights; refinement classifier 100 trees, 8 leaves & background bias; generator-sized $\Eavail$ change (\S\ref{sec:val-negweight}) & studies \\
+(e) & as (c) & negative weights; refinement classifier 400 trees, 31 leaves & 3D and 4D central values (\S\ref{sec:3d}); sixteen cells (\S\ref{sec:fived16}); precision study (\S\ref{sec:gbdt-model-dependence}); generator tests (\S\ref{sec:joint5d}) & the joint-test estimator \\
+(f) & as (a); refinement seeded at the estimator seed plus three & negative weights; refinement classifier 400 trees, 31 leaves & 2D central value and its uncertainty ensembles (\S\ref{sec:results}) & the quoted 2D central value \\
 \bottomrule
 \end{tabular}
 \end{table}
