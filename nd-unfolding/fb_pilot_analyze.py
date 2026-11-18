@@ -7,7 +7,8 @@ PILOT-FB-BINDING-1 at M_PFB 522ac0b6.
     fb_pilot_analyze.py --runs ROOT --stage STAGE --job-status JSON --job ID --deploy D --pin SHA --out JSON
     fb_pilot_analyze.py round1 --runs ROOT --stage STAGE --deploy D --pin SHA --job ID   (the job's round-1 gate)
     fb_pilot_analyze.py slurm-limit --timelimit HH:MM:SS                                (the job's own --time check)
-    fb_pilot_analyze.py smoke-receipt write|check --stage STAGE --pin SHA --local true|false  (the smoke's receipt)
+    fb_pilot_analyze.py smoke-receipt write|check --stage STAGE --pin SHA --local true|false --trace LOG [--exclude F]
+    fb_pilot_analyze.py stage-check --stage STAGE                                       (the job's stage inventory)
 
 ROOT is the run root the job created (runs/A0R with tag rs1_A0, runs/E1 base and jitters 1-20, runs/E2 and runs/E3
 bases; edges/). STAGE holds RS1's A0 products (a0-refs/) and the sigma receipt, copied there by the connect; this tree
@@ -77,6 +78,10 @@ SETS = ("E1", "E2", "E3")
 TIME_LIMIT_S = 3000  # --time=0:50:00 (§7): 0.833 node-h on one exclusive node, under the 0.9 cap
 ROOT_DECLARED = "/pscratch/sd/j/josephrb/pfb-20261117"
 STAGE_DECLARED = "/pscratch/sd/j/josephrb/pfb-20261117-stage"
+RS1_A0_ORIGINALS = Path("/pscratch/sd/j/josephrb/rs1-a1-20261107/runs/A0")  # RS1's protected A0 products (RS1-BINDING-2)
+SIGMA_REL = "docs/orchestration/state/s5e/cand/assess_receipt.json"  # the protected sigma receipt, in a checkout
+CONDA = "/global/common/software/nersc/pe/conda/24.10.0/Miniforge3-24.7.1-0/bin/conda"  # setup_salloc_env.sh runs it
+SHA_HEX = re.compile(r"[0-9a-f]{64}")
 ROLES = ("clf1", "reg", "clf2", "ref")  # fb_pilot_edges.ROLES
 GATES = ("J", "G2", "G3", "identity")
 UNREADABLE = (OSError, ValueError, KeyError, TypeError, AttributeError, EOFError, zipfile.BadZipFile)
@@ -120,21 +125,44 @@ def safe_sha(p: Path, noatime: bool = False) -> str | None:
         return None
 
 
-def stage_copy_problem(p: Path) -> str | None:
-    """A stage copy must be a plain file of its own: a symlink or a hard link could reach a protected original."""
+def stage_copy_problem(p: Path, stage: Path, originals: tuple = ()) -> str | None:
+    """A stage copy must be a plain file of its own, physically inside the stage: no symlink in any component below
+    the stage, the leaf included (a symlinked directory would reach the originals), no hard link, and not the inode of
+    any protected original that exists here."""
     p = Path(p)
-    if p.is_symlink():
-        return "a symlink"
+    lexical = os.path.join(os.path.realpath(stage), os.path.relpath(os.path.abspath(p), os.path.abspath(stage)))
+    if os.path.realpath(p) != lexical:
+        return "a path component is a symlink"
     if not p.is_file():
         return "absent"
-    if p.stat().st_nlink != 1:
+    st = p.stat()
+    if st.st_nlink != 1:
         return "a hard link"
+    for o in originals:
+        try:
+            so = os.stat(o)
+        except OSError:
+            continue
+        if (so.st_dev, so.st_ino) == (st.st_dev, st.st_ino):
+            return f"the protected original itself ({o})"
     return None
 
 
 def product(path: Path) -> tuple[np.ndarray, dict]:
+    """(xsec_flat, meta); a meta that is not a JSON object raises ValueError, so it is classified as unreadable."""
     z = np.load(path, allow_pickle=False)
-    return np.asarray(z["xsec_flat"]), json.loads(str(z["meta"]))
+    x, meta = np.asarray(z["xsec_flat"]), json.loads(str(z["meta"]))
+    if not isinstance(meta, dict):
+        raise ValueError(f"the meta is a JSON {type(meta).__name__}, not an object")
+    return x, meta
+
+
+def write_new(path: Path, text: str) -> None:
+    """Create a file that must not exist, opened O_CREAT | O_EXCL | O_NOFOLLOW: no existing file, hard link or symlink
+    at the path is ever written through."""
+    fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o644)
+    with os.fdopen(fd, "w") as fh:
+        fh.write(text)
 
 
 def name(tag: str, j) -> str:
@@ -292,7 +320,9 @@ def gate_records(root: Path, have: dict, index_sha: str | None, code: dict | Non
         try:
             rec = json.loads(side.read_text())
             _, meta = product(p)
-            blk = meta.get("pilot_fb") or {}
+            blk = meta.get("pilot_fb")
+            if not isinstance(rec, dict) or not isinstance(blk, dict) or not isinstance(rec.get("gates"), dict):
+                raise ValueError("the sidecar, the meta's pilot_fb block or the sidecar's gates is not a JSON object")
             bits = {g: rec["gates"][g]["pass"] for g in GATES}
         except UNREADABLE as exc:
             out["binding"].append(f"{tag}: the sidecar or the product's meta is unreadable ({exc!r})")
@@ -329,19 +359,33 @@ def edges_problems(edges: Path) -> tuple[str | None, list]:
     bad = []
     try:
         index = json.loads(idx.read_text())
+        if index.get("schema") != "pfb-edges/1":
+            bad.append(f"edges: INDEX.json's schema is {index.get('schema')!r}, not 'pfb-edges/1'")
         if set(index["sets"]) != set(SETS) or any(set(c["roles"]) != set(ROLES) for c in index["sets"].values()):
             bad.append("edges: INDEX.json does not list the three sets' four roles")
         for s, c in index["sets"].items():
             for r, v in c["roles"].items():
-                if safe_sha(Path(edges) / v["file"]) != v["sha256"]:
-                    bad.append(f"edges: {v['file']} is not the file INDEX.json records")
+                want, rec_sha = f"{s}_{r}.json", v.get("sha256")
+                if v.get("file") != want:
+                    bad.append(f"edges: {s}/{r} names the file {v.get('file')!r}, not {want}")
+                    continue
+                if not (isinstance(rec_sha, str) and SHA_HEX.fullmatch(rec_sha)):
+                    bad.append(f"edges: {want}'s recorded sha256 {rec_sha!r} is not a sha256")
+                    continue
+                got = safe_sha(Path(edges) / want)
+                if got is None or got != rec_sha:
+                    bad.append(f"edges: {want} is not the file INDEX.json records")
+                feats = v.get("features")
+                if not (isinstance(feats, list) and len(feats) == 5
+                        and all(isinstance(q, dict) and isinstance(q.get("edges"), list) for q in feats)):
+                    bad.append(f"edges: {s}/{r} does not record five features' edges")
     except UNREADABLE as exc:
         bad.append(f"edges: INDEX.json is unreadable ({exc!r})")
     return (None if sha is None else sha), bad
 
 
 def g4_failing(stage: Path, deploy: Path | None, pin: str | None, rs1_sums: Path | None = None, npz: str = NPZ,
-               bkg: str = BKG, check_inputs: bool = True) -> list:
+               bkg: str = BKG, check_inputs: bool = True, a0_originals: Path | None = None) -> list:
     """G4, the analysis's check: the A0 copies and the sigma copy (plain files at their pins), the two inputs, and the
     deploy at its pin, clean. An unreadable file fails its check; nothing here raises on a bad file."""
     import rounding_mechanism_analyze as ra
@@ -349,13 +393,17 @@ def g4_failing(stage: Path, deploy: Path | None, pin: str | None, rs1_sums: Path
     pins = rs1_pins(RS1_SUMS if rs1_sums is None else rs1_sums)
     refs = Path(stage) / "a0-refs"
     g4 = []
+    a0o = RS1_A0_ORIGINALS if a0_originals is None else Path(a0_originals)
     for f in [name("rs1_A0", None)] + [name("rs1_A0", s) for s in SEEDS]:
-        why = stage_copy_problem(refs / f) or (None if safe_sha(refs / f) == pins.get(f) else "not at its pin")
+        why = stage_copy_problem(refs / f, stage, (a0o / f,)) \
+            or (None if safe_sha(refs / f) == pins.get(f) else "not at its pin")
         if why:
             g4.append(f"{f} ({why})")
     sig = Path(stage) / SIGMA_NAME
-    if stage_copy_problem(sig) or safe_sha(sig) != ra.SIGMA_RECEIPT_SHA256:
-        g4.append("the sigma receipt copy")
+    sig_originals = tuple(Path(d) / SIGMA_REL for d in (deploy, _REPO) if d is not None)
+    why = stage_copy_problem(sig, stage, sig_originals)
+    if why or safe_sha(sig) != ra.SIGMA_RECEIPT_SHA256:
+        g4.append("the sigma receipt copy" + (f" ({why})" if why else ""))
     if check_inputs:
         for path, want_sha in ((npz, rmp.STABILITY["npz_sha256"]), (bkg, rmp.STABILITY["bkg_sha256"])):
             if not Path(path).is_file() or safe_sha(Path(path), noatime=True) != want_sha:
@@ -367,11 +415,12 @@ def g4_failing(stage: Path, deploy: Path | None, pin: str | None, rs1_sums: Path
 
 
 def gates(root: Path, stage: Path, deploy: Path | None = None, pin: str | None = None, job: str | None = None,
-          rs1_sums: Path | None = None, npz: str = NPZ, bkg: str = BKG, check_inputs: bool = True) -> dict:
+          rs1_sums: Path | None = None, npz: str = NPZ, bkg: str = BKG, check_inputs: bool = True,
+          a0_originals: Path | None = None) -> dict:
     """G4 first; if it fails, nothing else is read. Then presence (an unreadable product is missing), each product's
     job, the run's edges, G1 and the per-product gates, on what exists."""
     exp = expected()
-    g4 = g4_failing(stage, deploy, pin, rs1_sums, npz, bkg, check_inputs)
+    g4 = g4_failing(stage, deploy, pin, rs1_sums, npz, bkg, check_inputs, a0_originals)
     if g4:
         return {"have": {}, "missing": sorted(f"{s}/{j}" for s, j in exp), "unreadable": [], "foreign": [],
                 "G4_failing": g4, "G1": None, "edges": [], "per_product": {k: [] for k in (*GATES, "binding")},
@@ -395,7 +444,7 @@ def gates(root: Path, stage: Path, deploy: Path | None = None, pin: str | None =
     per["binding"] = edges + per["binding"]
     g1 = None
     ref0 = Path(stage) / "a0-refs" / name("rs1_A0", None)
-    if ("A0R", None) in have:
+    if ("A0R", None) in have:  # G4 passed: ref0 is a plain stage copy at its pin
         x, (r, _) = xs[("A0R", None)], product(ref0)
         g1 = bool(x.dtype == r.dtype and x.shape == r.shape and x.tobytes() == r.tobytes())
     return {"have": have, "missing": sorted(f"{s}/{j}" for s, j in exp if (s, j) not in have), "unreadable": unreadable,
@@ -475,7 +524,12 @@ def statistics(root: Path, have: dict, refs: Path, U: np.ndarray, sigma: np.ndar
                 and np.all(a0b != 0):
             d = np.abs(F[(s, None)][k153] / a0b - 1) / sigma
             out["readouts_shift_from_e"][s] = {"median": float(np.median(d)), "max": float(np.max(d))}
-    out["readouts_time"] = {f"{s}/{j}": product(root / v)[1].get("seconds_unfold") for (s, j), v in have.items()}
+    out["readouts_time"] = {}
+    for (s, j), v in have.items():
+        try:
+            out["readouts_time"][f"{s}/{j}"] = product(root / v)[1].get("seconds_unfold")
+        except UNREADABLE:
+            out["readouts_time"][f"{s}/{j}"] = None
     out["readouts_gate_seconds_in_unfold"] = {}
     out["readouts_gate_seconds_scope"] = ("seconds each unfold spent in its own gate captures and checks; excludes this "
                                           "analysis's aggregate checks, the sidecar binding and the job's round-1 gate")
@@ -497,8 +551,11 @@ def statistics(root: Path, have: dict, refs: Path, U: np.ndarray, sigma: np.ndar
                                          for r, v in cfg["roles"].items()} for s, cfg in idx["sets"].items()}
     except UNREADABLE as exc:
         out["readouts_edges_unreadable"] = repr(exc)
-    rs1 = json.loads(RS1_READ.read_text())["readouts"]["A0_pair_statistic_10_pairs"]
-    out["readouts_rs1_A0_pair_statistic"] = {**rs1, "source": "rs1_read.json readouts.A0_pair_statistic_10_pairs"}
+    try:  # a display-only readout: its failure never removes the statistics computed above
+        rs1 = json.loads(Path(RS1_READ).read_text())["readouts"]["A0_pair_statistic_10_pairs"]
+        out["readouts_rs1_A0_pair_statistic"] = {**rs1, "source": "rs1_read.json readouts.A0_pair_statistic_10_pairs"}
+    except UNREADABLE as exc:
+        out["readouts_rs1_A0_pair_statistic_unreadable"] = repr(exc)
     return out
 
 
@@ -533,6 +590,8 @@ def status_problem(status: dict, job: str, pin: str | None, status_path: Path | 
         return f"the job status names pin {status.get('pin')!r}, not {pin!r}"
     if status.get("root") != root_declared:
         return f"the job status names root {status.get('root')!r}, not the declared {root_declared}"
+    if os.path.realpath(runs) != root_declared:
+        return f"the root read, {os.path.realpath(runs)}, is not the status's and declared root {root_declared}"
     if status_path is not None:
         where = {Path(runs).resolve() / "job-status.json", Path(stage).resolve() / f"job-{job}.refused.json"}
         if Path(status_path).resolve() not in where:
@@ -593,16 +652,30 @@ def main(argv=None) -> int:
     ap.add_argument("--pin", required=True)
     ap.add_argument("--out", type=Path, required=True)
     a = ap.parse_args(argv)
-    if a.out.exists():
-        raise SystemExit(f"[FAIL] refusing to overwrite {a.out}")
+    why = out_problem(a.out, a.stage, a.runs)
+    if why:
+        raise SystemExit(f"[FAIL] {why}")
     try:
         status = json.loads(a.job_status.read_text())
     except UNREADABLE as exc:
         raise SystemExit(f"[FAIL] the job status {a.job_status} is unreadable ({exc!r})")
     out = analyze(a.runs, a.stage, status, a.job, a.deploy, a.pin, status_path=a.job_status)
-    a.out.write_text(json.dumps(out, indent=1, ensure_ascii=False, allow_nan=False) + "\n")
+    write_new(a.out, json.dumps(out, indent=1, ensure_ascii=False, allow_nan=False) + "\n")
     print(json.dumps({"outcome": out["outcome"]}, ensure_ascii=False))
     return 0
+
+
+def out_problem(out: Path, stage: Path, runs: Path) -> str | None:
+    """The analysis writes only a new file directly or deeper under the stage or the run root, physically."""
+    out = Path(out)
+    if os.path.lexists(out):
+        return f"refusing to overwrite {out}"
+    parent = os.path.realpath(os.path.dirname(os.path.abspath(out)))
+    for base in (stage, runs):
+        b = os.path.realpath(base)
+        if parent == b or parent.startswith(b + os.sep):
+            return None
+    return f"--out {out} is not under the stage {stage} or the run root {runs}"
 
 
 def round1_main(argv) -> int:
@@ -623,48 +696,141 @@ def round1_main(argv) -> int:
     return 0 if ok else 3
 
 
-def smoke_receipt(stage: Path, pin: str, local: bool) -> dict:
-    """What the login-node smoke records, and the job requires: its stage, pin, mode and INDEX.json's sha256."""
+TRACE_LINE = re.compile(r"^\++@([^@]*)@")  # bash 3.2 can drop the space PS4 ends with
+
+
+def setup_closure(trace: Path, exclude: tuple = ()) -> dict:
+    """{path: sha256} of every file the sourced setup ran from, read from its xtrace (PS4 '+@${BASH_SOURCE[0]}@ '),
+    and the conda executable it runs (CONDA) where it exists; the calling script itself is excluded."""
+    paths = set()
+    for ln in Path(trace).read_text(errors="replace").splitlines():
+        m = TRACE_LINE.match(ln)
+        if m and m.group(1):
+            paths.add(m.group(1))
+    ex = {os.path.realpath(e) for e in exclude}
+    out = {}
+    for q in sorted(paths) + ([CONDA] if os.path.isfile(CONDA) else []):
+        r = os.path.realpath(q)
+        if r in ex or not os.path.isfile(r):
+            continue
+        out[r] = safe_sha(Path(r))
+    return out
+
+
+def smoke_receipt(stage: Path, pin: str, local: bool, closure: dict | None = None) -> dict:
+    """What the login-node smoke records, and the job requires: its stage, pin, mode, INDEX.json's sha256 and the
+    sourced setup's file closure."""
     idx = Path(stage) / "smoke-edges" / "INDEX.json"
-    return {"schema": "pfb-smoke/1", "stage": str(stage), "pin": pin, "local_test": bool(local),
-            "index_sha256": safe_sha(idx) if idx.is_file() else None}
+    return {"schema": "pfb-smoke/2", "stage": str(stage), "pin": pin, "local_test": bool(local),
+            "index_sha256": safe_sha(idx) if idx.is_file() else None, "setup_closure": closure or {}}
 
 
-def smoke_receipt_problem(rec: dict, stage: Path, pin: str, local: bool) -> str | None:
-    want = smoke_receipt(stage, pin, local)
+def smoke_receipt_problem(rec: dict, stage: Path, pin: str, local: bool, closure: dict | None = None) -> str | None:
+    want = smoke_receipt(stage, pin, local, closure)
     if want["index_sha256"] is None:
         return "the stage holds no smoke-edges/INDEX.json"
-    diff = [k for k in ("schema", "stage", "pin", "local_test", "index_sha256") if rec.get(k) != want[k]]
+    diff = [k for k in ("schema", "stage", "pin", "local_test", "index_sha256", "setup_closure")
+            if rec.get(k) != want[k]]
     return f"the smoke receipt differs in {diff}" if diff else None
 
 
+STAGE_FILES = re.compile(r"(slurm-\d+\.(out|err)|job-(\d+|local)\.(refused\.json|env\.log))")
+SMOKE_TOP = ("smoke-receipt.json", "smoke-env.log", "smoke.log", SIGMA_NAME)
+EDGE_FILES = {f"{s}_{r}.json" for s in SETS for r in ROLES} | {"INDEX.json"}
+
+
+def stage_problems(stage: Path) -> list:
+    """The job's inventory of the stage the smoke created: only the expected entries, every file a plain file of its
+    own (no symlink, no hard link), every directory a real one: a0-refs/ (the 21 A0 copies), smoke-edges/ (INDEX and
+    the twelve edge files), smoke-unused/ (empty), the smoke's files and the sigma copy, and Slurm's and the jobs'
+    own logs and refusal records."""
+    stage = Path(stage)
+    want_dirs = {"a0-refs": {name("rs1_A0", None)} | {name("rs1_A0", s) for s in SEEDS}, "smoke-edges": EDGE_FILES,
+                 "smoke-unused": set()}
+    bad = []
+
+    def plain(p: Path) -> str | None:
+        st = os.lstat(p)
+        if not os.path.isfile(p) or os.path.islink(p):
+            return "not a plain file"
+        return "a hard link" if st.st_nlink != 1 else None
+
+    for e in sorted(os.listdir(stage)):
+        p = stage / e
+        if os.path.islink(p):
+            bad.append(f"{e}: a symlink")
+        elif e in want_dirs:
+            if not os.path.isdir(p):
+                bad.append(f"{e}: not a directory")
+                continue
+            got = set(os.listdir(p))
+            if got != want_dirs[e]:
+                bad.append(f"{e}/: extra {sorted(got - want_dirs[e])}, missing {sorted(want_dirs[e] - got)}")
+            for f in sorted(got & want_dirs[e]):
+                why = os.path.islink(p / f) and "a symlink" or plain(p / f)
+                if why:
+                    bad.append(f"{e}/{f}: {why}")
+        elif e in SMOKE_TOP or STAGE_FILES.fullmatch(e):
+            why = plain(p)
+            if why:
+                bad.append(f"{e}: {why}")
+        else:
+            bad.append(f"{e}: not an expected stage entry")
+    for e in SMOKE_TOP + tuple(want_dirs):
+        if not os.path.lexists(stage / e):
+            bad.append(f"{e}: missing")
+    return bad
+
+
 def smoke_main(argv) -> int:
-    """write: the smoke's last step (exit 9 if the INDEX it must hash is absent); check: the job's (exit 3)."""
+    """write: the smoke's last step (exit 9 if the INDEX it must hash is absent or the receipt exists); check: the
+    job's (exit 3). Both take the setup closure from their own xtrace (--trace, the env log) minus the calling script."""
     ap = argparse.ArgumentParser(prog="fb_pilot_analyze.py smoke-receipt")
     ap.add_argument("action", choices=("write", "check"))
     ap.add_argument("--stage", type=Path, required=True)
     ap.add_argument("--pin", required=True)
     ap.add_argument("--local", choices=("true", "false"), required=True)
+    ap.add_argument("--trace", type=Path, required=True)
+    ap.add_argument("--exclude", default="")
     a = ap.parse_args(argv)
     local = a.local == "true"
     p = a.stage / "smoke-receipt.json"
+    try:
+        closure = setup_closure(a.trace, (a.exclude,) if a.exclude else ())
+    except UNREADABLE as exc:
+        print(f"the setup trace {a.trace} is unreadable ({exc!r})", file=sys.stderr)
+        return 9 if a.action == "write" else 3
     if a.action == "write":
-        rec = smoke_receipt(a.stage, a.pin, local)
-        if rec["index_sha256"] is None or p.exists() or p.is_symlink():
-            print(f"[pfb-smoke] no receipt: INDEX.json absent or {p} exists", file=sys.stderr)
+        rec = smoke_receipt(a.stage, a.pin, local, closure)
+        if rec["index_sha256"] is None:
+            print("[pfb-smoke] no receipt: INDEX.json absent", file=sys.stderr)
             return 9
-        p.write_text(json.dumps(dict(rec, host=os.uname()[1], utc=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())),
-                                indent=1) + "\n")
-        print(json.dumps(rec))
+        try:
+            write_new(p, json.dumps(dict(rec, host=os.uname()[1], utc=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())),
+                                    indent=1) + "\n")
+        except OSError as exc:
+            print(f"[pfb-smoke] no receipt: {exc}", file=sys.stderr)
+            return 9
+        print(json.dumps({k: v for k, v in rec.items() if k != "setup_closure"} | {"setup_closure_files": len(closure)}))
         return 0
     try:
-        why = smoke_receipt_problem(json.loads(p.read_text()), a.stage, a.pin, local)
+        why = smoke_receipt_problem(json.loads(p.read_text()), a.stage, a.pin, local, closure)
     except UNREADABLE as exc:
         why = f"the smoke receipt is unreadable ({exc!r})"
     if why:
         print(why, file=sys.stderr)
         return 3
     return 0
+
+
+def stage_main(argv) -> int:
+    ap = argparse.ArgumentParser(prog="fb_pilot_analyze.py stage-check")
+    ap.add_argument("--stage", type=Path, required=True)
+    a = ap.parse_args(argv)
+    bad = stage_problems(a.stage)
+    for b in bad:
+        print(b, file=sys.stderr)
+    return 3 if bad else 0
 
 
 def slurm_main(argv) -> int:
@@ -681,4 +847,6 @@ if __name__ == "__main__":
         sys.exit(slurm_main(sys.argv[2:]))
     if sys.argv[1:2] == ["smoke-receipt"]:
         sys.exit(smoke_main(sys.argv[2:]))
+    if sys.argv[1:2] == ["stage-check"]:
+        sys.exit(stage_main(sys.argv[2:]))
     sys.exit(main())

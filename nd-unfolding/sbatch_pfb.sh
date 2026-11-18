@@ -7,7 +7,7 @@
 #SBATCH --no-requeue
 #SBATCH --time=0:50:00
 #SBATCH --job-name=pfb_run
-#SBATCH --export=ALL,HOME=/global/homes/j/josephrb
+#SBATCH --export=NONE
 #SBATCH --output=/pscratch/sd/j/josephrb/pfb-20261117-stage/slurm-%j.out
 #SBATCH --error=/pscratch/sd/j/josephrb/pfb-20261117-stage/slurm-%j.err
 # PILOT-FB's one job (PILOT-FB-DECLARATION.md rev 3 §4, §5.1, §7; PILOT-FB-BINDING-1 rulings 2-3).
@@ -26,6 +26,11 @@
 # (this pin, this mode, its INDEX); LightGBM 4.6.0. A preflight refusal is <stage>/job-<id>.refused.json with
 # "preflight_refused" (no outcome: nothing ran); an existing root is "refused" (RUN REFUSED, §5.2). A refusal before the
 # stage is validated writes nothing but stderr. Python never writes bytecode (PYTHONDONTWRITEBYTECODE=1).
+# Code 4: --export=NONE, and the script re-executes itself under env -i with a named variable list (the environment
+# block below); every file it creates in the stage is created new (O_CREAT|O_EXCL|O_NOFOLLOW), so nothing pre-placed is
+# written through; the stage must hold only what the smoke created and the copies (stage-check), and the setup's
+# sourced-file closure (from its xtrace) must equal the smoke's; untracked .py files in the deploy's nd-unfolding/
+# refuse. Slurm itself opens slurm-%j.out/.err before the script runs; stage-check refuses them if they are links.
 # Local tests run outside Slurm with PFB_LOCAL_TEST set; they may name other absolute paths, never under /pscratch or
 # /global, and may give PFB_SETUP_SHA for their stub setup file.
 # The order after preflight: the prep step (G0, before any fit) writes <root>/edges and must reproduce the smoke's
@@ -36,18 +41,56 @@
 # classified the same way.
 # job-status.json starts as "the job did not finish", so a time-limit kill reads INCOMPLETE; a deliberate stop after a
 # round-1 gate failure is recorded as that, not as an interruption (§5.2). Every status names the job, pin and root.
+# --- the environment: identical in sbatch_pfb.sh and pfb_smoke_prep.sh (code 4, the director's ruling) ---
+# The script re-executes itself under `env -i` with only the variables it names, so no inherited BASH_ENV, PYTHON*,
+# GIT_*, XDG_* or tool path reaches it or its children; a local test (PFB_LOCAL_TEST, outside Slurm only) keeps its
+# own HOME, PATH and PFB_ variables. After the re-exec, any variable outside the list refuses.
+if [ "${PFBCLEAN:-}" != 1 ]; then
+    if [ -n "${SLURM_JOB_ID:-}" ] && [ -n "$(compgen -v PFB_)" ]; then
+        echo "[pfb] refusing: PFB_ variables are set inside a Slurm job: $(compgen -v PFB_ | tr '\n' ' ')" >&2; exit 2
+    fi
+    keep=(PFBCLEAN=1 LC_ALL=C PYTHONDONTWRITEBYTECODE=1)
+    if [ -n "${PFB_LOCAL_TEST+x}" ] && [ -z "${SLURM_JOB_ID:-}" ]; then
+        keep+=("HOME=${HOME:-/}" "PATH=${PATH:-/usr/bin:/bin}")
+        for v in $(compgen -e PFB_); do keep+=("$v=${!v}"); done
+    else
+        keep+=(HOME=/global/homes/j/josephrb USER=josephrb LOGNAME=josephrb PATH=/usr/bin:/bin SCRATCH=/pscratch/sd/j/josephrb)
+        for v in SLURM_JOB_ID SLURM_JOB_NAME SLURM_JOB_NUM_NODES; do [ -n "${!v:-}" ] && keep+=("$v=${!v}"); done
+    fi
+    exec /usr/bin/env -i "${keep[@]}" /bin/bash --noprofile --norc "$0" "$@"
+fi
+for v in $(compgen -e); do
+    case "$v" in
+        PFBCLEAN|LC_ALL|PYTHONDONTWRITEBYTECODE|HOME|USER|LOGNAME|PATH|SCRATCH|SLURM_JOB_ID|SLURM_JOB_NAME|SLURM_JOB_NUM_NODES) ;;
+        PWD|OLDPWD|SHLVL|_|PFB_*) ;;
+        *) echo "[pfb] refusing: the environment holds $v, which the declared environment does not" >&2; exit 2 ;;
+    esac
+done
+newfile() {  # <path>: create it O_CREAT|O_EXCL|O_NOFOLLOW; fails on anything already there, a link included
+    python3 -c 'import os, sys; os.close(os.open(sys.argv[1], os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o644))' "$1" 2>/dev/null
+}
+traced_setup() {  # <log>: source the pinned setup with its xtrace (PS4 names each sourced file) into <log>
+    local PS4='+@${BASH_SOURCE[0]}@ '
+    set -x
+    source "$D/setup_salloc_env.sh" >> "$1" 2>&1
+    local rc=$?
+    { set +x; } 2>/dev/null
+    export PYTHONDONTWRITEBYTECODE=1; unset BASH_ENV ENV
+    return "$rc"
+}
+# --- end of the environment block ---
 set -o pipefail   # NOT set -u
-export PYTHONDONTWRITEBYTECODE=1
 D="${1:?deploy}"; PIN="${2:?pin}"; STAGE="${3:?stage}"; OUT="${4:?root}"
 ROOT_DECLARED=/pscratch/sd/j/josephrb/pfb-20261117
 STAGE_DECLARED=/pscratch/sd/j/josephrb/pfb-20261117-stage
 SETUP_SHA=ea3c6998d33f45c831b80da5e5228032a19fc392018ede54a7f52f2f283d1d48
 JOB="${SLURM_JOB_ID:-local}"
 STAGE_OK=""; LOCAL=false
-record() {  # <key> <why>: the stage's refusal record, only once the stage is validated
+record() {  # <key> <why>: the stage's refusal record, created new, only once the stage is validated
     echo "[pfb] $1: $2" >&2
-    [ -n "$STAGE_OK" ] && printf '{"%s": "%s", "job": "%s", "pin": "%s", "root": "%s"}\n' "$1" "$2" "$JOB" "$PIN" "$OUT" \
-        > "$STAGE/job-$JOB.refused.json"
+    [ -n "$STAGE_OK" ] && newfile "$STAGE/job-$JOB.refused.json" \
+        && printf '{"%s": "%s", "job": "%s", "pin": "%s", "root": "%s"}\n' "$1" "$2" "$JOB" "$PIN" "$OUT" \
+            >> "$STAGE/job-$JOB.refused.json"
 }
 preflight() { record preflight_refused "$1"; exit 2; }
 canonical() {  # <path>: absolute, no . or .. or // components
@@ -77,14 +120,15 @@ STAGE_OK=1
 head_sha=$(git -C "$D" rev-parse HEAD 2>/dev/null)
 dirty=$(git --no-optional-locks -C "$D" status --porcelain --untracked-files=no 2>/dev/null | wc -l)
 [ "$head_sha" = "$PIN" ] && [ "$dirty" -eq 0 ] || preflight "deploy HEAD=$head_sha (pinned $PIN), $dirty modified tracked files"
+extra_py=$(git --no-optional-locks -C "$D" ls-files --others -- 'nd-unfolding/*.py' 2>/dev/null | wc -l)
+[ "$extra_py" -eq 0 ] || preflight "the deploy's nd-unfolding/ holds $extra_py untracked .py files (they would shadow imports)"
 setup_sha=$(sha256sum "$D/setup_salloc_env.sh" 2>/dev/null | cut -d' ' -f1)
 [ "$setup_sha" = "$SETUP_SHA" ] || preflight "setup_salloc_env.sh is not the pinned one (sha256 $setup_sha)"
 ENVLOG="$STAGE/job-$JOB.env.log"
+newfile "$ENVLOG" || preflight "cannot create $ENVLOG new (something is already there)"
 GUARD="$D|$PIN|$STAGE|$OUT|$JOB|$LOCAL"
-unset PYTHONPATH PYTHONHOME PYTHONSTARTUP PYTHONUSERBASE
-source "$D/setup_salloc_env.sh" > "$ENVLOG" 2>&1
+traced_setup "$ENVLOG"
 src=$?
-export PYTHONDONTWRITEBYTECODE=1
 [ "$src" -eq 0 ] || preflight "setup_salloc_env.sh returned $src"
 [ "$GUARD" = "$D|$PIN|$STAGE|$OUT|$JOB|$LOCAL" ] || preflight "setup_salloc_env.sh changed the job's own variables"
 if [ "$LOCAL" = false ]; then
@@ -92,16 +136,17 @@ if [ "$LOCAL" = false ]; then
     python3 "$D/nd-unfolding/fb_pilot_analyze.py" slurm-limit --timelimit "$TL" \
         || preflight "Slurm's TimeLimit '$TL' exceeds --time=0:50:00 (the 0.9 node-h cap)"
 fi
-[ -d "$STAGE/a0-refs" ] && [ -f "$STAGE/assess_receipt.json" ] && [ -f "$STAGE/smoke-edges/INDEX.json" ] \
-    || preflight "the stage lacks a0-refs/, assess_receipt.json or smoke-edges/INDEX.json"
-python3 "$D/nd-unfolding/fb_pilot_analyze.py" smoke-receipt check --stage "$STAGE" --pin "$PIN" --local "$LOCAL" 2>> "$ENVLOG" \
-    || preflight "the smoke receipt is not this pin's, this mode's and this INDEX's (see the env log)"
+python3 "$D/nd-unfolding/fb_pilot_analyze.py" stage-check --stage "$STAGE" 2>> "$ENVLOG" \
+    || preflight "the stage holds something other than the smoke's files, the copies and the jobs' logs (see the env log)"
+python3 "$D/nd-unfolding/fb_pilot_analyze.py" smoke-receipt check --stage "$STAGE" --pin "$PIN" --local "$LOCAL" \
+    --trace "$ENVLOG" --exclude "$0" 2>> "$ENVLOG" \
+    || preflight "the smoke receipt is not this pin's, this mode's, this INDEX's and this setup closure's (see the env log)"
 [ ! -e "$OUT" ] && [ ! -L "$OUT" ] || { record refused "the root is not fresh: $OUT exists"; exit 2; }
-python3 -c "import lightgbm, numpy, sys; print('lightgbm', lightgbm.__version__, 'numpy', numpy.__version__, 'python', sys.version.split()[0]); assert lightgbm.__version__ == '4.6.0'" >> "$ENVLOG" 2>&1 \
+( cd "$D/nd-unfolding" && python3 -c "import lightgbm, numpy, sys; print('lightgbm', lightgbm.__version__, lightgbm.__file__, 'numpy', numpy.__version__, 'python', sys.version.split()[0]); assert lightgbm.__version__ == '4.6.0'" ) >> "$ENVLOG" 2>&1 \
     || preflight "the environment's LightGBM is not 4.6.0"
 mkdir "$OUT" || preflight "cannot create $OUT"
 ST="$OUT/job-status.json"
-status() { python3 -c 'import json, sys; d = json.loads(sys.argv[2]); d.update(job=sys.argv[3], pin=sys.argv[4], root=sys.argv[5]); json.dump(d, open(sys.argv[1], "w"), indent=1)' "$ST" "$1" "$JOB" "$PIN" "$OUT"; }
+status() { python3 -c 'import json, os, sys; d = json.loads(sys.argv[2]); d.update(job=sys.argv[3], pin=sys.argv[4], root=sys.argv[5]); t = sys.argv[1] + ".partial-%d" % os.getpid(); fd = os.open(t, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o644); os.write(fd, json.dumps(d, indent=1).encode()); os.close(fd); os.replace(t, sys.argv[1])' "$ST" "$1" "$JOB" "$PIN" "$OUT"; }
 L="$OUT/logs"; mkdir -p "$L/tasks"
 status "{\"interrupted\": \"the job did not finish (time limit or interruption)\"}"
 NPZ=/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz

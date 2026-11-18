@@ -629,13 +629,16 @@ class Rev2(unittest.TestCase):
         stage, root = self.stage_and_root()
         with self.assertRaisesRegex(SystemExit, "names job"):
             A.analyze(root, stage, {"job": "11"}, "12", U=np.eye(169), check_inputs=False)
-        ok = {"job": "12", "pin": "p", "root": A.ROOT_DECLARED}
-        self.assertIsNone(A.status_problem(ok, "12", "p", root / "job-status.json", root, stage))
-        self.assertIsNone(A.status_problem(ok, "12", "p", stage / "job-12.refused.json", root, stage))
-        self.assertIn("pin", A.status_problem(dict(ok, pin="q"), "12", "p", None, root, stage))
-        self.assertIn("root", A.status_problem(dict(ok, root="/elsewhere"), "12", "p", None, root, stage))
-        self.assertIn("is not", A.status_problem(ok, "12", "p", stage / "job-11.refused.json", root, stage))
-        self.assertIn("no outcome", A.status_problem(dict(ok, preflight_refused="x"), "12", "p", None, root, stage))
+        rd = str(root.resolve())
+        ok = {"job": "12", "pin": "p", "root": rd}
+        sp = lambda st, path=None: A.status_problem(st, "12", "p", path, root, stage, root_declared=rd)  # noqa: E731
+        self.assertIsNone(sp(ok, root / "job-status.json"))
+        self.assertIsNone(sp(ok, stage / "job-12.refused.json"))
+        self.assertIn("pin", sp(dict(ok, pin="q")))
+        self.assertIn("root", sp(dict(ok, root="/elsewhere")))
+        self.assertIn("is not", sp(ok, stage / "job-11.refused.json"))
+        self.assertIn("no outcome", sp(dict(ok, preflight_refused="x")))
+        self.assertIn("names root", A.status_problem(ok, "12", "p", None, root, stage), "the declared root by default")
 
     def test_g0_records_every_role_and_feature(self):
         good = np.column_stack([f32(np.round(np.random.default_rng(k).normal(3, 1, 3000), 3)) for k in range(5)])
@@ -697,9 +700,15 @@ class Rev3(unittest.TestCase):
             "import rounding_mechanism_probe\n"
             "a = sys.argv\nout = a[a.index('--edges-out') + 1]\nos.makedirs(a[a.index('--out') + 1])\n"
             "os.makedirs(out)\n"
-            "if not os.environ.get('STUB_NO_INDEX'):\n    open(os.path.join(out, 'INDEX.json'), 'w').write('{}\\n')\n")
+            "for s in ('E1', 'E2', 'E3'):\n    for r in ('clf1', 'reg', 'clf2', 'ref'):\n"
+            "        open(os.path.join(out, s + '_' + r + '.json'), 'w').write('[]\\n')\n"
+            "if not os.environ.get('PFB_STUB_NO_INDEX'):\n    open(os.path.join(out, 'INDEX.json'), 'w').write('{}\\n')\n")
         (d / "nd-unfolding" / "fb_pilot_analyze.py").write_bytes((ND / "fb_pilot_analyze.py").read_bytes())
-        (d / "setup_salloc_env.sh").write_text("# stub setup\nexport STUB_SETUP=1\n")
+        self.nested = self.tmp / "ext" / "nested_setup.sh"  # outside the deploy, as the real setup's nested files are
+        self.nested.parent.mkdir()
+        self.nested.write_text("export STUB_NESTED=1\n")
+        (d / "setup_salloc_env.sh").write_text(f"# stub setup\nexport STUB_SETUP=1\nsource {self.nested}\n"
+                                               "env | sed 's/^/ENV-DUMP /'\n")
         subprocess.run(["git", "init", "-q", str(d)], check=True)
         subprocess.run(["git", "-C", str(d), "add", "-A"], check=True)
         subprocess.run(["git", "-C", str(d), "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "x"], check=True)
@@ -733,14 +742,15 @@ class Rev3(unittest.TestCase):
         import hashlib
         e = root / "edges"
         e.mkdir(parents=True)
-        idx = {"sets": {}}
+        idx = {"schema": "pfb-edges/1", "sets": {}}
         for s_ in A.SETS:
             idx["sets"][s_] = {"roles": {}}
             for r in A.ROLES:
                 f = e / f"{s_}_{r}.json"
                 f.write_text(f"[{s_} {r}]\n")
-                idx["sets"][s_]["roles"][r] = {"file": f.name, "sha256": hashlib.sha256(f.read_bytes()).hexdigest(),
-                                               "features": []}
+                idx["sets"][s_]["roles"][r] = {
+                    "file": f.name, "sha256": hashlib.sha256(f.read_bytes()).hexdigest(),
+                    "features": [{"edges": [1.0, 2.0], "z": 0, "n": 2, "admissible": 5} for _ in range(5)]}
         (e / "INDEX.json").write_text(json.dumps(idx))
         return hashlib.sha256((e / "INDEX.json").read_bytes()).hexdigest()
 
@@ -929,43 +939,89 @@ class Rev3(unittest.TestCase):
         self.assertIn("#SBATCH --output=/pscratch/sd/j/josephrb/pfb-20261117-stage/slurm-%j.out\n", text)
         self.assertIn("#SBATCH --error=/pscratch/sd/j/josephrb/pfb-20261117-stage/slurm-%j.err\n", text)
 
-    def local_stage(self, receipt=True):
-        d, pin, sha = self.deploy()
+    def clean_job_files(self, stage):
+        for q in stage.glob("job-local.*"):
+            q.unlink()
+
+    def staged(self):
+        """The stage as the job finds it: the smoke created it (local mode), then the connect copied a0-refs/ and the
+        sigma receipt in."""
+        (self.tmp / "cwd").mkdir(exist_ok=True)
+        _, _, sha = self.deploy()
         stage = self.tmp / "stage"
-        (stage / "a0-refs").mkdir(parents=True)
-        (stage / "assess_receipt.json").write_text("{}")
-        (stage / "smoke-edges").mkdir()
-        (stage / "smoke-edges" / "INDEX.json").write_text("{}\n")
-        if receipt:
-            (stage / "smoke-receipt.json").write_text(json.dumps(A.smoke_receipt(stage, pin, True)))
+        r = self.run_smoke(stage, PFB_LOCAL_TEST="1", PFB_SETUP_SHA=sha)
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+        (stage / "a0-refs").mkdir()
+        for s_ in (None, *A.SEEDS):
+            (stage / "a0-refs" / A.name("rs1_A0", s_)).write_bytes(b"a0")
+        (stage / A.SIGMA_NAME).write_text("{}")
         return stage, sha
 
     def test_the_job_preflight_spends_no_root(self):
-        """Grok's lows: every refusal but an existing root is a preflight refusal, recorded in the stage before the root
-        exists; an existing root is RUN REFUSED; the setup file is pinned; relative paths refuse."""
-        stage, sha = self.local_stage()
+        """Every refusal but an existing root is a preflight refusal, recorded in the stage before the root exists; an
+        existing root is RUN REFUSED; the setup file and its sourced closure are pinned; relative paths refuse."""
+        stage, sha = self.staged()
         root = self.tmp / "root"
         root.mkdir()
-        r = self.run_job(stage, root, PFB_LOCAL_TEST="1", PFB_SETUP_SHA=sha)
+        loc = {"PFB_LOCAL_TEST": "1", "PFB_SETUP_SHA": sha}
+        r = self.run_job(stage, root, **loc)
         self.assertEqual(r.returncode, 2, r.stderr)
         rec = json.loads((stage / "job-local.refused.json").read_text())
-        self.assertIn("not fresh", rec["refused"])
+        self.assertIn("not fresh", rec["refused"], rec)
         self.assertEqual((rec["job"], rec["root"]), ("local", str(root)))
         root.rmdir()
-        r = self.run_job(stage, root, PFB_LOCAL_TEST="1", PFB_SETUP_SHA="0" * 64)
-        self.assertIn("setup_salloc_env.sh is not the pinned one",
-                      json.loads((stage / "job-local.refused.json").read_text())["preflight_refused"])
-        r = self.run_job(stage, root, PFB_LOCAL_TEST="1", PFB_SETUP_SHA=sha, PIN="0" * 40)
-        self.assertIn("deploy HEAD", json.loads((stage / "job-local.refused.json").read_text())["preflight_refused"])
-        (stage / "smoke-receipt.json").write_text(json.dumps(A.smoke_receipt(stage, self.pin, False)))
-        r = self.run_job(stage, root, PFB_LOCAL_TEST="1", PFB_SETUP_SHA=sha)
-        self.assertIn("smoke receipt", json.loads((stage / "job-local.refused.json").read_text())["preflight_refused"])
+
+        def refused(**env):
+            self.clean_job_files(stage)
+            r = self.run_job(stage, root, **{**loc, **env})
+            self.assertEqual(r.returncode, 2, r.stderr)
+            return json.loads((stage / "job-local.refused.json").read_text())["preflight_refused"]
+
+        self.assertIn("setup_salloc_env.sh is not the pinned one", refused(PFB_SETUP_SHA="0" * 64))
+        self.assertIn("deploy HEAD", refused(PIN="0" * 40))
+        self.nested.write_text("export STUB_NESTED=2\n")  # the setup's sourced closure moved since the smoke
+        self.assertIn("setup closure", refused())
+        self.nested.write_text("export STUB_NESTED=1\n")
+        rec = json.loads((stage / "smoke-receipt.json").read_text())
+        (stage / "smoke-receipt.json").unlink()
+        (stage / "smoke-receipt.json").write_text(json.dumps(dict(rec, local_test=False)))
+        self.assertIn("smoke receipt", refused())
+        (stage / "smoke-receipt.json").unlink()
+        (stage / "smoke-receipt.json").write_text(json.dumps(rec))
+        (stage / "extra").symlink_to(self.tmp / "deploy")
+        self.assertIn("the stage holds something other", refused())
+        (stage / "extra").unlink()
+        (self.tmp / "deploy" / "nd-unfolding" / "lightgbm.py").write_text("__version__ = '4.6.0'\n")
+        self.assertIn("untracked .py", refused())
+        (self.tmp / "deploy" / "nd-unfolding" / "lightgbm.py").unlink()
         self.assertFalse(root.exists(), "no preflight refusal creates the root")
-        r = self.run_job("stage", root, PFB_LOCAL_TEST="1", PFB_SETUP_SHA=sha)
+        self.clean_job_files(stage)
+        r = self.run_job("stage", root, **loc)
         self.assertIn("canonical absolute", r.stderr)
-        r = self.run_job(stage, "/pscratch/sd/j/josephrb/x", PFB_LOCAL_TEST="1", PFB_SETUP_SHA=sha)
+        r = self.run_job(stage, "/pscratch/sd/j/josephrb/x", **loc)
         self.assertIn("never names a cluster path", r.stderr)
         self.deploy_untouched(self.tmp / "deploy")
+
+    def test_the_job_writes_through_no_pre_placed_link(self):
+        """Code 4: every file the job creates in the stage is created new (O_CREAT|O_EXCL|O_NOFOLLOW); a pre-placed
+        symlink at the env log or the refusal record refuses, and its target is never written."""
+        stage, sha = self.staged()
+        loc = {"PFB_LOCAL_TEST": "1", "PFB_SETUP_SHA": sha}
+        victim = self.tmp / "victim.txt"
+        victim.write_text("untouched\n")
+        (stage / "job-local.env.log").symlink_to(victim)
+        r = self.run_job(stage, self.tmp / "root", **loc)
+        self.assertEqual(r.returncode, 2)
+        self.assertIn("cannot create", r.stderr)
+        self.assertEqual(victim.read_text(), "untouched\n")
+        (stage / "job-local.env.log").unlink()
+        (stage / "job-local.refused.json").unlink()
+        (stage / "job-local.refused.json").symlink_to(victim)
+        r = self.run_job(stage, self.tmp / "root", PIN="0" * 40, **loc)
+        self.assertEqual(r.returncode, 2)
+        self.assertIn("deploy HEAD", r.stderr)
+        self.assertEqual(victim.read_text(), "untouched\n", "the refusal record is never written through a link")
+        self.assertFalse((self.tmp / "root").exists())
 
     # -- the smoke --------------------------------------------------------------------------------------------------
     def run_smoke(self, stage, **env):
@@ -975,10 +1031,11 @@ class Rev3(unittest.TestCase):
                               env=self.env(**env), capture_output=True, text=True, cwd=self.tmp / "cwd")
 
     def test_the_smoke_writes_only_under_its_stage(self):
-        """Codex HIGH 3: a canonical absolute stage, nothing written in the deploy (no bytecode, no git index refresh)
-        or the caller's directory, a pinned setup file, and a failed final hash fails the exit status."""
-        (self.tmp / "cwd").mkdir()
+        """Codex HIGH 3 (code 2) and code 4: the smoke creates a fresh stage, writes nothing in the deploy (no bytecode,
+        no git index refresh) or the caller's directory, pins the setup file and records its sourced closure, and a
+        failed final hash fails the exit status."""
         import os
+        (self.tmp / "cwd").mkdir()
         _, _, sha = self.deploy()
         later = (self.tmp / "deploy" / "setup_salloc_env.sh").stat().st_mtime_ns + 5 * 10 ** 9
         os.utime(self.tmp / "deploy" / "setup_salloc_env.sh", ns=(later, later))  # stat-dirty: a plain status rewrites
@@ -988,16 +1045,22 @@ class Rev3(unittest.TestCase):
         r = self.run_smoke(stage, PFB_LOCAL_TEST="1", PFB_SETUP_SHA=sha)
         self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
         got = sorted(str(q.relative_to(stage)) for q in stage.rglob("*"))
-        self.assertEqual(got, ["smoke-edges", "smoke-edges/INDEX.json", "smoke-env.log", "smoke-receipt.json",
-                               "smoke-unused", "smoke.log"])
-        self.assertEqual(json.loads((stage / "smoke-receipt.json").read_text())["local_test"], True)
-        self.assertIsNone(A.smoke_receipt_problem(json.loads((stage / "smoke-receipt.json").read_text()), stage,
-                                                  self.pin, True))
+        self.assertEqual(got, sorted(["smoke-edges", "smoke-env.log", "smoke-receipt.json", "smoke-unused", "smoke.log",
+                                      *(f"smoke-edges/{f}" for f in A.EDGE_FILES)]))
+        rec = json.loads((stage / "smoke-receipt.json").read_text())
+        self.assertEqual(rec["local_test"], True)
+        self.assertEqual(sorted(rec["setup_closure"]), sorted(os.path.realpath(q) for q in
+                                                               (self.tmp / "deploy" / "setup_salloc_env.sh", self.nested)))
         self.assertEqual(idx.stat().st_mtime_ns, before, "the deploy's git index is never refreshed")
         self.deploy_untouched(self.tmp / "deploy")
         self.assertEqual(list((self.tmp / "cwd").iterdir()), [])
+        tr = self.tmp / "trace.txt"  # bash 3.2 can drop the space PS4 ends with; the closure reads both forms
+        tr.write_text(f"++@{self.nested}@export X=1\n+++@{self.tmp / 'deploy' / 'setup_salloc_env.sh'}@ y\n")
+        self.assertEqual(sorted(A.setup_closure(tr)), sorted(os.path.realpath(q) for q in
+                                                             (self.nested, self.tmp / "deploy" / "setup_salloc_env.sh")))
         r = self.run_smoke(stage, PFB_LOCAL_TEST="1", PFB_SETUP_SHA=sha)
         self.assertEqual(r.returncode, 2, "a second smoke into the same stage refuses")
+        self.assertIn("exists: the smoke creates it", r.stderr)
         for bad, why in (("stage2", "absolute"), (f"{self.tmp}/x/../stage3", "canonical"),
                          (f"{self.tmp}/missing/stage", "parent")):
             r = self.run_smoke(bad, PFB_LOCAL_TEST="1", PFB_SETUP_SHA=sha)
@@ -1006,13 +1069,182 @@ class Rev3(unittest.TestCase):
         self.assertEqual(list((self.tmp / "cwd").iterdir()), [], "a relative stage creates nothing")
         r = self.run_smoke(self.tmp / "stage4", PFB_LOCAL_TEST="1", PFB_SETUP_SHA="0" * 64)
         self.assertIn("not the pinned one", r.stderr)
-        r = self.run_smoke(self.tmp / "stage5", PFB_LOCAL_TEST="1", PFB_SETUP_SHA=sha, STUB_NO_INDEX="1")
+        self.assertFalse((self.tmp / "stage4").exists(), "a refusal before the stage is created writes nothing")
+        r = self.run_smoke(self.tmp / "stage5", PFB_LOCAL_TEST="1", PFB_SETUP_SHA=sha, PFB_STUB_NO_INDEX="1")
         self.assertEqual(r.returncode, 9, "prep exited 0 but left no INDEX: the final hash fails the smoke")
         self.assertFalse((self.tmp / "stage5" / "smoke-receipt.json").exists())
         r = self.run_smoke(self.tmp / "stage6", PFB_SETUP_SHA=sha)
         self.assertIn("is not the declared /pscratch/sd/j/josephrb/pfb-20261117-stage", r.stderr)
         self.assertFalse((self.tmp / "stage6").exists())
         self.assertEqual(self.run_smoke(self.tmp / "stage7", PFB_LOCAL_TEST="1", SLURM_JOB_ID="5").returncode, 2)
+
+    def test_the_environment_is_the_declared_one(self):
+        """Code 4 (--export=NONE reversal; Codex's inherited BASH_ENV): the scripts re-execute under env -i with a named
+        list, so an inherited variable never reaches the setup or its children; a pre-set marker with extra variables
+        refuses."""
+        (self.tmp / "cwd").mkdir()
+        _, _, sha = self.deploy()
+        hook = self.tmp / "hook.sh"
+        hook.write_text(f"echo sourced >> {self.tmp / 'bash_env_ran'}\n")
+        r = self.run_smoke(self.tmp / "stage", PFB_LOCAL_TEST="1", PFB_SETUP_SHA=sha, FOO_INHERITED="x",
+                           BASH_ENV=str(hook), GIT_DIR="/nowhere", PYTHONPYCACHEPREFIX=str(self.tmp / "pyc"))
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+        dump = [ln[9:] for ln in (self.tmp / "stage" / "smoke-env.log").read_text().splitlines()
+                if ln.startswith("ENV-DUMP ")]
+        names = {ln.split("=", 1)[0] for ln in dump}
+        self.assertTrue({"STUB_SETUP", "STUB_NESTED", "PFBCLEAN"} <= names, names)
+        for v in ("FOO_INHERITED", "BASH_ENV", "GIT_DIR", "PYTHONPYCACHEPREFIX"):
+            self.assertNotIn(v, names, "an inherited variable reached the setup")
+        self.assertEqual((self.tmp / "bash_env_ran").read_text().count("sourced"), 1,
+                         "BASH_ENV runs only in the outer bash the test starts, never after the re-exec")
+        self.assertFalse((self.tmp / "pyc").exists())
+        r = self.run_smoke(self.tmp / "stage2", PFB_LOCAL_TEST="1", PFB_SETUP_SHA=sha, PFBCLEAN="1", FOO_INHERITED="x")
+        self.assertEqual(r.returncode, 2)
+        self.assertIn("[pfb] refusing: the environment holds ", r.stderr)
+        for f in ("sbatch_pfb.sh", "pfb_smoke_prep.sh"):
+            text = (ND / f).read_text()
+            block = text[text.index("# --- the environment:"):text.index("# --- end of the environment block ---")]
+            self.assertIn('exec /usr/bin/env -i "${keep[@]}" /bin/bash --noprofile --norc "$0" "$@"', block)
+            if f == "sbatch_pfb.sh":
+                self.assertIn("#SBATCH --export=NONE\n", text)
+                self.assertNotIn("--export=ALL", text)
+        blocks = [(ND / f).read_text() for f in ("sbatch_pfb.sh", "pfb_smoke_prep.sh")]
+        cut = [t[t.index("# --- the environment:"):t.index("# --- end of the environment block ---")] for t in blocks]
+        self.assertEqual(cut[0], cut[1], "the job and the smoke share one environment block")
+
+
+class Rev4(Rev3):
+    """The code-3 confirmation audits (Codex FAIL, Grok PASS WITH FIXES) and the director's code-4 rulings. It reuses
+    Rev3's fixtures; Rev3's own tests run once, in Rev3 (they are removed from this class below)."""
+
+    def test_a_symlinked_a0_directory_or_the_original_inode_fails_g4(self):
+        """Codex 2, Grok 1: every path component is checked physically, and a copy that is the protected original's
+        inode fails."""
+        import os
+        c = self.run_tree()
+        refs = c["stage"] / "a0-refs"
+        moved = self.tmp / "rs1-originals"
+        os.replace(refs, moved)
+        refs.symlink_to(moved)
+        out = self.analyze()
+        self.assertEqual(out["outcome"]["outcome"], "INPUTS CHANGED")
+        self.assertTrue(any("a path component is a symlink" in x for x in out["gates"]["G4_failing"]), out["gates"])
+        refs.unlink()
+        os.replace(moved, refs)
+        g4 = A.g4_failing(c["stage"], c["deploy"], c["pin"], rs1_sums=self.tmp / "sums", check_inputs=False,
+                          a0_originals=refs)
+        self.assertEqual(len([x for x in g4 if "the protected original itself" in x]), 21, g4)
+        self.assertEqual(A.g4_failing(c["stage"], c["deploy"], c["pin"], rs1_sums=self.tmp / "sums", check_inputs=False,
+                                      a0_originals=self.tmp / "nowhere"), [])
+
+    def test_the_root_read_is_the_statuss_root(self):
+        """Codex 3: a copied tree read under another path fails, even when its status names the declared root."""
+        import shutil
+        c = self.run_tree()
+        other = self.tmp / "copy-of-root"
+        shutil.copytree(c["root"], other)
+        st = {"job": self.JOB, "pin": c["pin"], "root": str(c["root"])}
+        with self.assertRaisesRegex(SystemExit, "the root read"):
+            A.analyze(other, c["stage"], st, self.JOB, c["deploy"], c["pin"], U=np.eye(169), check_inputs=False,
+                      root_declared=str(c["root"]))
+
+    def test_null_hashes_missing_files_and_a_bad_index_fail(self):
+        """Codex 4: a recorded sha256 that is not a sha256 (null) with its file missing, an INDEX without its schema,
+        and a file name outside the declared pattern all fail."""
+        c = self.run_tree()
+        e = c["root"] / "edges"
+        idx = json.loads((e / "INDEX.json").read_text())
+        for s_ in A.SETS:
+            for r in A.ROLES:
+                idx["sets"][s_]["roles"][r]["sha256"] = None
+                (e / f"{s_}_{r}.json").unlink()
+        (e / "INDEX.json").write_text(json.dumps(idx))
+        sha, bad = A.edges_problems(e)
+        self.assertEqual(len(bad), 12, bad)
+        self.assertTrue(all("is not a sha256" in b for b in bad))
+        idx2 = dict(idx)
+        idx2.pop("schema")
+        (e / "INDEX.json").write_text(json.dumps(idx2))
+        self.assertTrue(any("schema" in b for b in A.edges_problems(e)[1]))
+        idx["sets"]["E1"]["roles"]["reg"]["file"] = "../../elsewhere.json"
+        (e / "INDEX.json").write_text(json.dumps(idx))
+        self.assertTrue(any("names the file '../../elsewhere.json'" in b for b in A.edges_problems(e)[1]))
+
+    def test_wrong_typed_meta_keeps_the_named_outcome(self):
+        """Codex 5: a readable product whose meta is valid JSON of the wrong type is classified, and a missing
+        display-only RS1 readout never removes the statistics."""
+        c = self.run_tree()
+        q = c["root"] / A.expected()[("E1", 7)]
+        np.savez(q, xsec_flat=np.full(169, 2.0), meta=np.array("[]"))
+        out = self.analyze()
+        self.assertEqual(out["outcome"]["outcome"], "INCOMPLETE")
+        self.assertIn("not an object", out["outcome"]["why"])
+        self._t.cleanup(); self.setUp()
+        c = self.run_tree()
+        q = c["root"] / A.expected()[("E2", None)]
+        z = dict(np.load(q))
+        m = json.loads(str(z["meta"]))
+        m["pilot_fb"] = ["not", "an", "object"]
+        np.savez(q, xsec_flat=z["xsec_flat"], meta=np.array(json.dumps(m)))
+        import hashlib
+        side = q.with_name(q.name[:-4] + ".pfb.json")  # the sidecar names the new product, so only the type is wrong
+        sd = json.loads(side.read_text())
+        sd["product_sha256"] = hashlib.sha256(q.read_bytes()).hexdigest()
+        side.write_text(json.dumps(sd))
+        out = self.analyze()
+        self.assertEqual(out["outcome"]["outcome"], "PREMISE FAILED (identity)")
+        self.assertIn("not a JSON object", out["outcome"]["why"])
+        self._t.cleanup(); self.setUp()
+        self.run_tree()
+        import unittest.mock as um
+        with um.patch.object(A, "RS1_READ", self.tmp / "absent.json"):
+            out = self.analyze()
+        self.assertIn("row", out["outcome"])
+        self.assertIn("readouts_rs1_A0_pair_statistic_unreadable", out["statistics"])
+        self.assertIn("S3", out["statistics"])
+
+    def test_the_analysis_writes_only_a_new_file_under_the_stage_or_root(self):
+        """The director's ruling: the analyzer's --out is constrained in code, and created new."""
+        import os
+        stage, root = self.tmp / "stage", self.tmp / "root"
+        stage.mkdir()
+        root.mkdir()
+        self.assertIsNone(A.out_problem(stage / "analysis.json", stage, root))
+        self.assertIsNone(A.out_problem(root / "logs" / "a.json", stage, root))
+        self.assertIn("is not under", A.out_problem(self.tmp / "elsewhere.json", stage, root))
+        (stage / "link").symlink_to(self.tmp)
+        self.assertIn("is not under", A.out_problem(stage / "link" / "x.json", stage, root))
+        (stage / "dangling.json").symlink_to(self.tmp / "nothing-there.json")
+        self.assertIn("refusing to overwrite", A.out_problem(stage / "dangling.json", stage, root))
+        victim = self.tmp / "v.json"
+        victim.write_text("v")
+        os.link(victim, stage / "hard.json")
+        self.assertIn("refusing to overwrite", A.out_problem(stage / "hard.json", stage, root))
+        with self.assertRaises(FileExistsError):
+            A.write_new(stage / "dangling.json", "x")
+        self.assertFalse((self.tmp / "nothing-there.json").exists())
+
+    def test_the_stage_inventory(self):
+        """The job's stage-check: only the smoke's files, the copies and the jobs' own logs; no link anywhere."""
+        import os
+        stage, _ = self.staged()
+        self.assertEqual(A.stage_problems(stage), [])
+        (stage / "slurm-61500000.out").write_text("log")
+        (stage / "job-61500000.refused.json").write_text("{}")
+        self.assertEqual(A.stage_problems(stage), [])
+        (stage / "a0-refs" / "extra.npz").write_text("x")
+        self.assertTrue(any("extra ['extra.npz']" in b for b in A.stage_problems(stage)))
+        (stage / "a0-refs" / "extra.npz").unlink()
+        os.link(stage / A.SIGMA_NAME, self.tmp / "outside")
+        self.assertTrue(any("a hard link" in b for b in A.stage_problems(stage)))
+        (self.tmp / "outside").unlink()
+        (stage / "slurm-61500001.err").symlink_to(self.tmp / "victim")
+        self.assertTrue(any("slurm-61500001.err: a symlink" in b for b in A.stage_problems(stage)))
+
+
+
+for _n in [n for n in vars(Rev3) if n.startswith("test_")]:
+    setattr(Rev4, _n, None)  # not collected twice: unittest collects only callable test_ attributes
 
 
 if __name__ == "__main__":

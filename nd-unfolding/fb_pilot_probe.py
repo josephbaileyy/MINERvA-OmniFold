@@ -75,6 +75,14 @@ def sha256_path(path: Path) -> str:
     return rmp.sha256_path(Path(path))
 
 
+def write_new(path: Path, text: str) -> None:
+    """Create a file that must not exist (O_CREAT | O_EXCL | O_NOFOLLOW): nothing existing at the path, a symlink or
+    a hard link included, is written through."""
+    fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o644)
+    with os.fdopen(fd, "w") as fh:
+        fh.write(text)
+
+
 def role_matrices(exp: dict, dtype) -> dict:
     """{role: (fit, scored or None)} as the bound path hands them to LightGBM (§2 item 1):
     the refinement fits and scores signed_sample(exp)'s rows (s5n_pseudo.py:222-227, unfold_2d...:446-447); the loop
@@ -337,7 +345,7 @@ def install(mode: str, s: str | None, edges: Path, workdir: Path | None = None):
         if rc == 0:  # the sidecar names the product it certifies, by sha256, after the product exists
             side = Path(out).with_name(Path(out).name[:-4] + ".pfb.json")
             tmp = side.with_name(side.name + f".partial-{os.getpid()}")
-            tmp.write_text(json.dumps({**block, "product": Path(out).name, "product_sha256": sha256_path(Path(out)),
+            write_new(tmp, json.dumps({**block, "product": Path(out).name, "product_sha256": sha256_path(Path(out)),
                                        "gates": rec}, default=lambda x: x.tolist() if hasattr(x, "tolist") else str(x)))
             os.replace(tmp, side)
         st["roles"].clear()
@@ -413,7 +421,7 @@ def main(argv=None) -> int:
                 rec = json.loads(str(exc))
             except ValueError:
                 rec = {"failing": [str(exc)], "diagnostics": {}}
-            g0.write_text(json.dumps({"outcome": "INFEASIBLE", **rec}, indent=1) + "\n")
+            write_new(g0, json.dumps({"outcome": "INFEASIBLE", **rec}, indent=1) + "\n")
         print(f"INFEASIBLE: {exc}", file=sys.stderr)
         return 6
     except Refusal as exc:
