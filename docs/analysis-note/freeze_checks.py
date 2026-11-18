@@ -15,7 +15,8 @@ The defaults are main_note.pdf, main_note.aux and the .tsv files in --note-dir (
 1. NUMBERS DIFF. The multiset of numeric tokens in the pdftotext of OLD and NEW must be equal, apart from the rows of
    numbers-allowlist.tsv: token, delta (+n or -n, NEW minus OLD), owner, item, reason.
    - Skipped: the pages of the contents, the list of figures and the list of tables.
-   - Not counted (renumbered references): page footers; numbers after Fig./Figure/Table/Sec./Section/§/App./Eq. and
+   - Not counted (renumbered references, or not values): page footers; digits glued to a letter or an underscore
+     (q3, chi2, cm2, R00, 5D, W1, AR23_20i_00_000); figure text (pdfminer: matplotlib's fonts dropped); numbers after Fig./Figure/Table/Sec./Section/§/App./Eq. and
      their lists and ranges; section-heading numbers; equation tags; citation brackets [n], [n, m] and [n-m].
    - Every unexplained token added or removed is printed with up to three contexts.
 2. LIMITATION RETENTION. Every row of limitations-export.tsv (row_id, file, quote, reanchor_file, reanchor_quote,
@@ -58,6 +59,37 @@ def pdftext_pages(pdf: Path) -> list[str]:
     out = subprocess.run(["pdftotext", str(pdf), "-"], capture_output=True, text=True, check=True).stdout
     pages = out.split("\f")
     return pages[:-1] if pages and not pages[-1].strip() else pages
+
+
+# Figure text (matplotlib's embedded fonts) is not prose: a redraw changes tick labels without changing a claim.
+# TeX's own fonts are upper case (CMR10, CMMI10, SFRM1000); matplotlib embeds DejaVu, STIX and the mixed-case BaKoMa
+# Computer Modern (Cmr10, Cmmi10, Cmsy10).
+FIGURE_FONT_RE = re.compile(r"^(DejaVu|STIX|Cm[a-z]+\d+$|Arial|Helvetica|Liberation)")
+
+
+def prose_pages(pdf: Path) -> list[str] | None:
+    """Per-page text with every character set in a figure font removed (pdfminer); None if pdfminer is missing."""
+    try:
+        from pdfminer.high_level import extract_pages
+        from pdfminer.layout import LTChar, LTTextContainer, LTTextLine
+    except ImportError:
+        return None
+    pages = []
+    for layout in extract_pages(str(pdf)):
+        lines = []
+
+        def walk(obj):
+            if isinstance(obj, LTTextLine):
+                s = "".join(ch.get_text() for ch in obj if not isinstance(ch, LTChar)
+                            or not FIGURE_FONT_RE.match(ch.fontname.split("+")[-1]))
+                if s.strip():
+                    lines.append(s.rstrip("\n"))
+                return
+            for child in getattr(obj, "_objs", []):
+                walk(child)
+        walk(layout)
+        pages.append("\n".join(lines))
+    return pages
 
 
 def strip_comments(t: str) -> str:
@@ -103,7 +135,9 @@ REF_RE = re.compile(KW + r"\s*~?\s*\(?" + NUMLIST)
 CITE_RE = re.compile(r"\[\d+(?:\s*[,–-]\s*\d+)*\]")
 EQTAG_RE = re.compile(r"\(\s*[A-Z]?\d+(?:\.\d+)?\s*\)\s*$")
 HEAD_RE = re.compile(r"^\s*(?:[A-J]|\d{1,2})(?:\.\d{1,2}){0,3}\s+[A-Z][a-z]")
-TOKEN_RE = re.compile(r"\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?")
+# A number glued to a letter or an underscore is a symbol or a name, not a value: q3, chi2, cm2, R00-R15, C_PL,5D,
+# 3D/4D, W1, EW29, AR23_20i_00_000.
+TOKEN_RE = re.compile(r"(?<![\w.])(?:\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?)(?![\d_]|D\b|\.\d)")
 
 
 HEADING_1 = re.compile(r"^\s*(?:1\s+)?" + re.escape(FIRST_SECTION) + r"\s*$")
@@ -222,11 +256,17 @@ def read_allowlist(path: Path) -> tuple[collections.Counter, list[str]]:
 
 
 def check_numbers(base_pdf: Path, new_pdf: Path, allowlist: Path):
-    bp, np_ = trimmed(pdftext_pages(base_pdf)), trimmed(pdftext_pages(new_pdf))
+    bp, np_ = prose_pages(base_pdf), prose_pages(new_pdf)
+    extractor = "pdfminer, figure fonts removed"
+    if bp is None or np_ is None:
+        bp, np_ = pdftext_pages(base_pdf), pdftext_pages(new_pdf)
+        extractor = "pdftotext (pdfminer missing: figure text is counted)"
+    bp, np_ = trimmed(bp), trimmed(np_)
     bc, bctx, bskip = count_tokens(bp, line_set(np_))
     nc, nctx, nskip = count_tokens(np_, line_set(bp))
     allow, bad = read_allowlist(allowlist)
-    lines = [f"pages skipped as contents/lists: base {sorted(x + 1 for x in bskip)}, new {sorted(x + 1 for x in nskip)}",
+    lines = [f"extractor: {extractor}",
+             f"pages skipped as contents/lists: base {sorted(x + 1 for x in bskip)}, new {sorted(x + 1 for x in nskip)}",
              f"tokens counted: base {sum(bc.values())}, new {sum(nc.values())}; allow-list rows net {sum(allow.values()):+d}"]
     lines += bad
     resid = {}
