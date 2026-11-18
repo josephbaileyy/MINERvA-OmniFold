@@ -18,7 +18,7 @@ and the director assigned this pass to cov2d.
 | cov5d, bkg5d | 30, 34 | pinned: the palette changes nothing; install lines added |
 | tier 1b | 31 | to do |
 | tier 2 | 8, 7, 9–10, 11–14 | installed (inputs fetched read-only on 2026-11-17) |
-| tier 2 | 6 | held: its install line and its re2-integration ledger G row move together |
+| tier 2 | 6 | installed, with its re2-integration ledger G row re-pointed (2026-11-18) |
 
 ## The palette and its rules
 
@@ -189,9 +189,15 @@ texts against the cluster's capture of the installed files (family 2, after arm)
   - make_figures.sh's page-size assert and the left-panel crop box change in the same commit: 327.6 × 165.6 pt and
     `0 0 172.5 165.6`. The tracked `paper_validation_residual.pdf`, which no `.tex` includes, is the old crop and is
     left as it was.
+- **Fig. 6 (installed 2026-11-18, with its ledger row):** the efficiency map from the same xsec_proj step in the
+  paper's fonts. Its data and texts equal the cluster capture, and its page is 485.1 × 383.5 pt (it was 485.0).
+  - Its install_re2_fig line (1008a7e9) becomes a comment. make_figures.sh installs the new file (049fbf90) with
+    `install_restyle_fig`, from this record's `figs/` (`RSG`).
+  - The ledger's last G row, `FIG-MEFHC_5iter_xsec_eff_heatmap`, is re-pointed to `figs/` and `figs/SHA256SUMS`, which
+    lists every installed copy (fig-restyle ruling 1: re-point, do not replace). check_ledger.py requires exactly that
+    install form for a re-pointed row.
+  - `check_ledger.py --figures` passes (G 1 row and Fig. 1, 0 failures), and so does its `--self-test`.
 - **Not made here:**
-  - Fig. 6 (serif): it is installed by `install_re2_fig` and pinned by the ledger's G row, so its install and the row
-    move together, later;
   - Fig. 7's slice-mosaic split, Figs. 9–10's slice labels, and Figs. 12/14's mode-rank labels and grey masks: each is
     a producer change.
 
