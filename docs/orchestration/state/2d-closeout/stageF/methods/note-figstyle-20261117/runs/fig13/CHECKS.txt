@@ -1,0 +1,13 @@
+# tier 2 fig13 (2026-11-18T02:28:30Z): ROOT 6.40.04, matplotlib 3.10.8, numpy 1.26.4; inputs xsec.root a5c13fc3 and cov_ptpl_minerva_inclusive_6GeV.root 6c6dce72 (the fetch of 2026-11-17); 
+== fig13: arm 0 against the cluster capture (fig13): colour-free data and texts
+-- MEFHC_5iter_fig13.png.json
+data: 450 cluster items, 450 local; colour-free hash multisets equal
+texts: 127 cluster, 127 local; equal
+DATA-IDENTITY :: PASS
+== fig13: arm 1 against arm 0
+captures: MEFHC_5iter_fig13.pdf.json MEFHC_5iter_fig13.png.json 
+  equal  fig13/MEFHC_5iter_fig13.pdf.json: 450 data artists, colours as the palette maps them, line styles as declared
+  equal  fig13/MEFHC_5iter_fig13.png.json: 450 data artists, colours as the palette maps them, line styles as declared
+COMPARE :: PASS
+text overlaps MEFHC_5iter_fig13: 31 -> 31 [['$0.00 < p_T < 0.07$', '$\\times\\,14.4$'], ['40', '1'], ['$1.50 < p_T < 2.50$', '$\\times\\,25.3$'], ['$2.50 < p_T < 4.50$', '$\\times\\,722$'], ['40', '0'], ['0.0', 'Muon longitudinal momentum $p_\\parallel$ (GeV/$c$)'], ['0.5', 'Muon longitudinal momentum $p_\\parallel$ (GeV/$c$)'], ['1.0', '0.0'], ['GENIE 2.12.6 + MINERvA Tune v1', 'Published (PRD 104, 092007)'], ['GENIE 2.12.6 + MINERvA Tune v1', '$2.00 < p_\\parallel < 2.50$'], ['GENIE 2.12.6 + MINERvA Tune v1', '$2.50 < p_\\parallel < 3.00$'], ['Published (PRD 104, 092007)', 'This work (OmniFold)'], ['Published (PRD 104, 092007)', '$2.00 < p_\\parallel < 2.50$'], ['Published (PRD 104, 092007)', '$2.50 < p_\\parallel < 3.00$'], ['This work (OmniFold)', '$2.00 < p_\\parallel < 2.50$'], ['This work (OmniFold)', '$\\times\\,0.2$'], ['This work (OmniFold)', '$2.50 < p_\\parallel < 3.00$'], ['$1.50 < p_\\parallel < 2.00$', '$\\times\\,0.3$'], ['$2.00 < p_\\parallel < 2.50$', '$\\times\\,0.2$'], ['$2.50 < p_\\parallel < 3.00$', '$\\times\\,0.2$'], ['$3.00 < p_\\parallel < 3.50$', '$\\times\\,0.2$'], ['$3.50 < p_\\parallel < 4.00$', '$\\times\\,0.2$'], ['$4.00 < p_\\parallel < 4.50$', '$\\times\\,0.3$'], ['$4.50 < p_\\parallel < 5.00$', '$\\times\\,0.3$'], ['$5.00 < p_\\parallel < 6.00$', '$\\times\\,0.3$'], ['$6.00 < p_\\parallel < 7.00$', '$\\times\\,0.5$'], ['$9.00 < p_\\parallel < 10.00$', '$\\times\\,3.8$'], ['$10.00 < p_\\parallel < 15.00$', '$\\times\\,9.4$'], ['$15.00 < p_\\parallel < 20.00$', '$\\times\\,22.6$'], ['$20.00 < p_\\parallel < 40.00$', '$\\times\\,80$'], ['$40.00 < p_\\parallel < 60.00$', '$\\times\\,485$']]
+ARMS fig13 :: PASS

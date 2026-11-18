@@ -1,0 +1,16 @@
+# ctrl (2026-11-17T21:56:53Z): bash tools/arms.sh <wt> ctrl figenv/mpl3108 2fe070feca48256639797278eff0e1ac6f17abd7 control_plots docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/tools/fakeroot nd-unfolding/make_control_plots.py --from-arrays docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/runs/family1b/dumps/control_plots_ext_arrays.npz --extended-display --outdir @OUT@ --print-style
+== ctrl (control_plots): arm 0 against the file installed at 2fe070feca48256639797278eff0e1ac6f17abd7
+EQUAL-BUT-DATE tmp.g0co5sInAA: /CreationDate (D:20261114030341-07'00') vs /CreationDate (D:20261117135656-07'00')
+raster: RASTER :: EQUAL :: 1 page(s), 0 differing pixel(s)
+== ctrl: arm 1 against arm 0
+captures: control_plots.pdf.json control_plots.png.json migration_resolution.pdf.json migration_resolution.png.json 
+  equal  ctrl/control_plots.pdf.json: 50 data artists, colours as the palette maps them, line styles as declared
+  equal  ctrl/control_plots.png.json: 50 data artists, colours as the palette maps them, line styles as declared
+  equal  ctrl/migration_resolution.pdf.json: 59 data artists, colours as the palette maps them, line styles as declared
+  equal  ctrl/migration_resolution.png.json: 59 data artists, colours as the palette maps them, line styles as declared
+COMPARE :: PASS
+text overlaps control_plots: 3 -> 3 [['MINERvA ME FHC, $1.06\\times10^{21}$ POT', '0.2'], ['wide catch bin compressed to 100 at right', '0.0'], ['0.2', 'MC background']]
+text overlaps migration_resolution: 0 -> 0
+ARMS ctrl :: PASS
+== the installed copy (figs/) against this arm 1
+EQUAL-BUT-DATE control_plots.pdf: /CreationDate (D:20261117135122-07'00') vs /CreationDate (D:20261117135702-07'00')

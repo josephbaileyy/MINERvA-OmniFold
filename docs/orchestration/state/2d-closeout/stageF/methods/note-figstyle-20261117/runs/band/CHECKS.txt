@@ -1,0 +1,13 @@
+# band (2026-11-17T21:56:27Z): bash tools/arms.sh <wt> band figenv/mpl3108 2fe070feca48256639797278eff0e1ac6f17abd7 eavailW_band docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/tools/fakeroot5 3d-unfolding/genie/overlay_eavailW_band.py --data x --from-arrays docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/runs/family5/dumps/band_arrays.npz --print-style --png @OUT@/eavailW_band.png
+== band (eavailW_band): arm 0 against the file installed at 2fe070feca48256639797278eff0e1ac6f17abd7
+EQUAL-BUT-DATE tmp.6z7pRssvym: /CreationDate (D:20261115144054-07'00') vs /CreationDate (D:20261117135632-07'00')
+raster: RASTER :: EQUAL :: 1 page(s), 0 differing pixel(s)
+== band: arm 1 against arm 0
+captures: eavailW_band.pdf.json eavailW_band.png.json 
+  equal  band/eavailW_band.pdf.json: 26 data artists, colours as the palette maps them, line styles as declared
+  equal  band/eavailW_band.png.json: 26 data artists, colours as the palette maps them, line styles as declared
+COMPARE :: PASS
+text overlaps eavailW_band: 0 -> 0
+ARMS band :: PASS
+== the installed copy (figs/) against this arm 1
+EQUAL-BUT-DATE eavailW_band.pdf: /CreationDate (D:20261117134313-07'00') vs /CreationDate (D:20261117135635-07'00')
