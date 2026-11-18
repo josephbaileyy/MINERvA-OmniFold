@@ -15183,6 +15183,8 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rounding-sta
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rounding-stability-20261106/ensemble/receipts/stage2-dry-a1/post/sacct-61004211.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rounding-stability-20261106/ensemble/receipts/stage2-dry-a1/post/squeue-before.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rounding-stability-20261106/ensemble/receipts/stage2-dry-a1/post/task-ids.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rounding-stability-20261106/pilot-fb/PILOT-FB-BINDING-1.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rounding-stability-20261106/pilot-fb/PILOT-FB-DECLARATION.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rounding-stability-20261106/power/rs1_power_sim.out.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rounding-stability-20261106/power/rs1_power_sim.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rounding-stability-20261106/receipts/a1-connect1-stop/README.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
