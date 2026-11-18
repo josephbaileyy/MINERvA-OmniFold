@@ -1,0 +1,107 @@
+[
+ {
+  "i": 0,
+  "kind": "patch",
+  "axes": 0,
+  "label": "unfolded data",
+  "hash": "4e9de799e24605d2b4c2a1e795c33bc04d0d89aaa7719216cde36de1cddae1e7",
+  "dhash": "fcf8b4192835e56a267d303446fc302a303183a81969990dec25efebce64236c",
+  "xhash": "fcf8b4192835e56a267d303446fc302a303183a81969990dec25efebce64236c",
+  "colours": {
+   "face": [
+    "#C0392B00"
+   ],
+   "edge": [
+    "#C0392BFF"
+   ]
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 1,
+  "kind": "LineCollection",
+  "axes": 0,
+  "label": "_nolegend_",
+  "hash": "05d68d4bcaf5e67990e3015cf49ea01c639a5ba2ac2fbc0160d74953a5772688",
+  "dhash": "169fcddec36cc51fd09a29937359e40e889ebe3dc599a1bcf6f0f8186acdfdff",
+  "xhash": "169fcddec36cc51fd09a29937359e40e889ebe3dc599a1bcf6f0f8186acdfdff",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#C0392BFF"
+   ],
+   "cmap": "viridis"
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 2,
+  "kind": "line",
+  "axes": 0,
+  "label": "_nolegend_",
+  "hash": "5e62830b254a54d58c65529f3b02af8d88202a32d1eac4be999bb73ea7a03ee3",
+  "dhash": "454cd1ed5f4deeedc4722766a512c8cb48b6f0e44f2c5a5c7f8197ea8276f200",
+  "xhash": "ab14886da402ffab93a100413334c276b08aee4546a0de82853606f38cf552b5",
+  "colours": {
+   "color": [
+    "#C0392BFF"
+   ],
+   "mfc": [
+    "#C0392BFF"
+   ],
+   "mec": [
+    "#C0392BFF"
+   ]
+  },
+  "style": {
+   "linestyle": "None",
+   "marker": "_",
+   "drawstyle": "default"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 3,
+  "kind": "line",
+  "axes": 0,
+  "label": "_nolegend_",
+  "hash": "5e62830b254a54d58c65529f3b02af8d88202a32d1eac4be999bb73ea7a03ee3",
+  "dhash": "454cd1ed5f4deeedc4722766a512c8cb48b6f0e44f2c5a5c7f8197ea8276f200",
+  "xhash": "ab14886da402ffab93a100413334c276b08aee4546a0de82853606f38cf552b5",
+  "colours": {
+   "color": [
+    "#C0392BFF"
+   ],
+   "mfc": [
+    "#C0392BFF"
+   ],
+   "mec": [
+    "#C0392BFF"
+   ]
+  },
+  "style": {
+   "linestyle": "None",
+   "marker": "_",
+   "drawstyle": "default"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ }
+]

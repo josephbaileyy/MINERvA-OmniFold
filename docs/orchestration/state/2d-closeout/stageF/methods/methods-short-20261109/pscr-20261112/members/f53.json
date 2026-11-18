@@ -1,0 +1,20 @@
+{
+ "n_pass_reco": 20404292,
+ "n_rows": 32849103,
+ "sum_w_reco_pass_reco": 3533843.462254312,
+ "frac_reco_in_window_unweighted": 0.9999790240210246,
+ "frac_gen_in_grid_unweighted": 0.9999139886843416,
+ "frac_reco_in_window_weighted": 0.9999795102986868,
+ "frac_gen_in_grid_weighted": 0.9998898487075788,
+ "sum_w_reco_outside_window": 72.40739702732566,
+ "sum_w_reco_gen_outside_grid": 389.25742457357325,
+ "n_reco_outside_window": 428,
+ "n_gen_outside_grid": 1755,
+ "n_zero_weight_outside_window": 0,
+ "control_r4": {
+  "frac_reco_in_window": 0.9999790240210246,
+  "frac_gen_in_grid": 0.9999139886843416
+ },
+ "stat_unchanged_np_load": true,
+ "control_r4_match": true
+}

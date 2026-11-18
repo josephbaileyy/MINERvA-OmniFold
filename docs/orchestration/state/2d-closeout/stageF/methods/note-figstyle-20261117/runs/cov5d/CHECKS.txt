@@ -1,0 +1,11 @@
+# cov5d (2026-11-17T22:11:14Z): INSTALLED=paper_fig_coverage.pdf bash tools/arms.sh <wt> cov5d miniconda3 (matplotlib 3.10.1, numpy 1.26.4) 2fe070feca48256639797278eff0e1ac6f17abd7 m3_fig3_coverage - docs/analysis-note/figures/methods_m3/fig_m3_coverage.py --repo <wt> --outdir @OUT@. Arm 1 makes no edit (no palette identity is drawn: blue and red are the 68%/95% intervals, or the two background methods); the figure gains an install line (COMBINED-PLAN.md section 5(b), tier 1b) pinning the installed bytes, which arm 0 reproduces exactly.
+== cov5d (m3_fig3_coverage): arm 0 against the file installed at 2fe070feca48256639797278eff0e1ac6f17abd7 (paper_fig_coverage.pdf)
+EQUAL tmp.oO5QVyC5aT
+raster: RASTER :: EQUAL :: 1 page(s), 0 differing pixel(s)
+== cov5d: arm 1 against arm 0
+captures: m3_fig3_coverage.pdf.json m3_fig3_coverage.png.json 
+  equal  cov5d/m3_fig3_coverage.pdf.json: 12 data artists, colours as the palette maps them, line styles as declared
+  equal  cov5d/m3_fig3_coverage.png.json: 12 data artists, colours as the palette maps them, line styles as declared
+COMPARE :: PASS
+text overlaps m3_fig3_coverage: 4 -> 4 [['$(E_{\\rm avail},W)$ cells 0–41 and their sum', '68% interval, upper bound $\\geq$ 0.66'], ['109 coarse joint cells, by index in the $3^5$ grid', '95% interval, upper bound $\\geq$ 0.94'], ['68% interval, upper bound $\\geq$ 0.66', '95% interval, upper bound $\\geq$ 0.94'], ['68% interval, upper bound < 0.66', '95% interval, upper bound < 0.94']]
+ARMS cov5d :: PASS

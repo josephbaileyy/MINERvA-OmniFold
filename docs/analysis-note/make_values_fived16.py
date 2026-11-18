@@ -124,6 +124,8 @@ READOUTS = {
     "rsn": (f"{RSN}/rsn_readout.json", "6291f48d"),
     "rsnregrade": (f"{RSN}/regrade.json", "cb5f5d17"),
     "e96d": (f"{FD}/fd/e96-data-20261110/receipts/a1-run-20261112/cluster/analysis/ANALYSIS.json.txt", "b42208ef"),
+    # U6: the figure referee read's check A (on main by #1213, e13d98d55)
+    "recov": ("docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-figure-deformation-20261112/check-a/a_recovery.json", "75db95a1"),
 }
 # the committed readouts without the run-period block, for the "-nopl" keys
 NOPL_READOUTS = dict(READOUTS, **{
@@ -1558,6 +1560,47 @@ def t2b_values(d):
     return v
 
 
+def recov_values(d):
+    """The figure referee read's check A (secondary-results/referee-figure-deformation-20261112): per truth, over the
+    supported (E_avail, W) cells with |injected| > 2 %, the recovered fraction f = [(1+r)(1+i) - (1+r_nom)]/i and the
+    counts of cells moving opposite to the change (f < 0), partially (0 <= f <= 1) and overshooting (f > 1), with the
+    cells lying within three standard errors of a class boundary. Descriptive."""
+    r = d["recov"]
+    assert r["schema"] == "figure-referee-check-a/1"
+    S = r["shapes"]
+    v = {"rec-thr": "2"}
+    for k, tag in (("GiBUU", "g"), ("W1", "w1"), ("W2", "w2"), ("W3", "w3")):
+        s = S[k]
+        assert s["n_opposite"] + s["n_partial"] + s["n_overshoot"] == s["n_cells"]
+        v[f"rec-{tag}-n"], v[f"rec-{tag}-opp"] = str(s["n_cells"]), str(s["n_opposite"])
+        v[f"rec-{tag}-part"], v[f"rec-{tag}-over"] = str(s["n_partial"]), str(s["n_overshoot"])
+        v[f"rec-{tag}-fmed"], v[f"rec-{tag}-near"] = f"{100 * s['f_median']:.0f}", str(s["n_within_3sigma_of_a_class_boundary"])
+    # the text names EW29 (E_avail 0.8-1.5 GeV, W >= 3 GeV) as opposite at GiBUU and at W1 and W3
+    assert all("EW29" in S[k]["opposite_cells"] for k in ("GiBUU", "W1", "W3")) and S["W2"]["n_opposite"] == 0
+    w = [S[k] for k in ("W1", "W2", "W3")]
+    v["rec-w-fmed-lo"], v["rec-w-fmed-hi"] = f"{100 * min(s['f_median'] for s in w):.0f}", f"{100 * max(s['f_median'] for s in w):.0f}"
+    v["rec-w-opp-lo"], v["rec-w-opp-hi"] = str(min(s["n_opposite"] for s in w)), str(max(s["n_opposite"] for s in w))
+    v["rec-near-total"] = str(sum(s["n_within_3sigma_of_a_class_boundary"] for s in S.values()))
+    assert (v["rec-g-fmed"], v["rec-g-opp"], v["rec-g-n"], v["rec-w-fmed-lo"], v["rec-w-fmed-hi"], v["rec-w-opp-hi"]) == ("63", "12", "39", "56", "88", "10")
+    sfm = max(s["sigma_f_max"] for s in S.values())
+    v["rec-sigf-max"] = f"{math.ceil(100 * sfm - 1e-9) / 100:.2f}"      # an upper bound, rounded up
+    assert sfm < 0.05 and float(v["rec-sigf-max"]) >= sfm
+    v["rec-all-opp-max"] = str(max(s["n_opposite"] for s in S.values()))
+    assert max(S, key=lambda k: S[k]["n_opposite"]) == "GiBUU"   # the limitation prints "up to rec-all-opp-max of rec-g-n"
+    for k, tag in (("GiBUU", "g"), ("W1", "w1"), ("W2", "w2"), ("W3", "w3")):
+        v[f"rec-{tag}-near0"], v[f"rec-{tag}-near1"] = str(S[k]["n_within_3sigma_of_f0"]), str(S[k]["n_within_3sigma_of_f1"])
+        assert S[k]["n_within_3sigma_of_f0"] + S[k]["n_within_3sigma_of_f1"] == S[k]["n_within_3sigma_of_a_class_boundary"]
+    v["rec-w-over-lo"], v["rec-w-over-hi"] = str(min(s["n_overshoot"] for s in w)), str(max(s["n_overshoot"] for s in w))
+    # the withheld shapes' most affected SUPPORTED cell (the meaning read: s5e-shapes-ewmax-lo's 16 % is W2's EW37, unsupported)
+    sup = [100 * s["max_abs_residual_supported"] for s in w]
+    v["rec-w-supmax-lo"], v["rec-w-supmax-hi"] = f"{min(sup):.0f}", f"{max(sup):.0f}"
+    assert (v["rec-w-supmax-lo"], v["rec-w-supmax-hi"]) == ("9", "31")
+    e = S["GiBUU"]["EW29"]
+    v["rec-g-ew29-inj"], v["rec-g-ew29-unf"] = f"{100 * e['injected']:.0f}", f"{100 * e['unfolded_vs_nominal']:.0f}"
+    assert (v["rec-g-ew29-inj"], v["rec-g-ew29-unf"]) == ("-30", "21") and e["f"] < 0
+    return v
+
+
 def currency_values(d, base):
     """The note's currency UPDATEs (currency check of 2fe070fec; the combined plan section 6): the keys the paper prints
     for the same records, computed by the paper's own producers (ported above from make_values_fived16.py at
@@ -1669,6 +1712,7 @@ def currency_values(d, base):
         x = [rp["panels"]["PC"][lvl][i] for i in lo]
         assert min(x) > 1, "every 1N-1P bin below 8 GeV/c lies above 1A-1F"
         v[f"rp-pc-lev-{tag}-lo"], v[f"rp-pc-lev-{tag}-hi"] = f"{100 * (min(x) - 1):.1f}", f"{100 * (max(x) - 1):.1f}"
+    v.update(recov_values(d))                                   # U6
     clash = sorted(k for k in v if k in base and base[k] != v[k])
     assert not clash, f"a currency key would change an existing value: {clash[:8]}"
     return {k: x for k, x in v.items() if k not in base}

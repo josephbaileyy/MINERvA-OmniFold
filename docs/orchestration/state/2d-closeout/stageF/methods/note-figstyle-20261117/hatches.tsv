@@ -1,0 +1,7 @@
+# Patches whose hatch this pass sets (figure, "face" or "edge", the patch's colour before the recolour, hatch; "-" for none). Fig. 20: the four GENIE-CV mode bars take note_palette.MODES's hatches (the bars' producer colours, redraw_central_only_p3.py:210-211), and the data - GENIE-CV gap bar (red edge, :217-218) loses its hatch, becoming a this-work outline (COMBINED-PLAN.md section 5(a)).
+figure	part	before_rgb	hatch
+mode_decomp_eavail_central	face	#1F77B4	///
+mode_decomp_eavail_central	face	#2CA02C	\\\
+mode_decomp_eavail_central	face	#FF7F0E	xx
+mode_decomp_eavail_central	face	#9467BD	..
+mode_decomp_eavail_central	edge	#FF0000	-

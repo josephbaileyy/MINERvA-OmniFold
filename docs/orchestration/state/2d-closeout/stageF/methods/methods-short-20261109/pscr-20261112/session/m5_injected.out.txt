@@ -1,0 +1,67 @@
+{
+ "input_path": "docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/pscr-20261112/members/w_truth_z.npz",
+ "input_bytes_digest_sha256": "2ab40d1eba2bafdd9980d30b48707d48a1479020abb2d5b6d884352bfe7ceb1d",
+ "contract_sha256": "d54fd7c9641901736e58430e666db1ee782a54d9c95bf4439541872567c39c93",
+ "s5c_coverage_sha256": "e47f0d8f5677f53fe80f8d9d44b461788e0677992574877922b462d0e25ce37c",
+ "rtol": 1e-12,
+ "support_cells_union_100": 10694,
+ "sets": {
+  "nominal": {
+   "n_seeds": 40,
+   "max_rel_dev_nonzero": 8.829618973094912e-16,
+   "cells_zero_in_some_seed": 1161,
+   "support_cells_empty_in_every_seed": 0,
+   "support_cells_empty_EW": []
+  },
+  "W1": {
+   "n_seeds": 20,
+   "max_rel_dev_nonzero": 3.733154267979085e-14,
+   "cells_zero_in_some_seed": 1031,
+   "support_cells_empty_in_every_seed": 0,
+   "support_cells_empty_EW": []
+  },
+  "W2": {
+   "n_seeds": 20,
+   "max_rel_dev_nonzero": 3.129082813281301e-14,
+   "cells_zero_in_some_seed": 1037,
+   "support_cells_empty_in_every_seed": 0,
+   "support_cells_empty_EW": []
+  },
+  "W3": {
+   "n_seeds": 20,
+   "max_rel_dev_nonzero": 3.457966150212487e-14,
+   "cells_zero_in_some_seed": 1026,
+   "support_cells_empty_in_every_seed": 0,
+   "support_cells_empty_EW": []
+  }
+ },
+ "max_abs_injected_pct": {
+  "W1": [
+   21.391,
+   "EW6"
+  ],
+  "W2": [
+   14.844,
+   "EW37"
+  ],
+  "W3": [
+   27.508,
+   "EW7"
+  ]
+ },
+ "control_W1": {
+  "ratio_path": "docs/orchestration/state/s5n/eavail-ratio-nuwro-over-genie.json",
+  "ratio_bytes_digest_sha256": "2a208df97fcd63937587d67098feb542c5e7e6759693bcc0609f0eb5fa0ff767",
+  "constant_mean": 0.9788771067946818,
+  "constant_rel_spread": 8.166097380166616e-15,
+  "pass": true
+ },
+ "control_W2": {
+  "ratio_path": "docs/orchestration/state/s5e/w2-genie-mec-over-cv-eavailW.json",
+  "ratio_bytes_digest_sha256": "80e16f95702266d0e61b7529c8b5d36a5e4b140cfcde04640606b408c2b1e19b",
+  "constant_mean": 1.0022487228483568,
+  "constant_rel_spread": 7.7541242959029e-15,
+  "pass": true
+ }
+}
+M5-INJECTED OK
