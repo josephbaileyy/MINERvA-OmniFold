@@ -137,12 +137,44 @@ The result's intervals, bias and covariance have not been independently validate
 \subsection{The sixteen-cell cross section}
 \label{sec:limitations-fived16}
 
-The coverage and bias limitations of the sixteen cells are stated in \S\ref{sec:fived16-fd}.
+% Move pairs LR-20..LR-32 (limitation-resolver): the second coverage test's design and scope, sec_fived16.tex's second-test
+% paragraph (sec:fived16-fd), verbatim and contiguous, except one token: "(above)" becomes (\S\ref{sec:fived16-fd}), where the
+% tunes' overlaps are stated. The home keeps the readings, the counts, "remains untested" and the descriptive sentence.
+This is the design and scope of the second coverage test of the sixteen-cell covariance at the two held-out tunes, whose readings \S\ref{sec:fived16-fd} gives.
+
+Its pseudo-experiments draw the statistical, flux, interaction and detector uncertainties, with the lateral and normalization ones as surrogates. The graded covariance includes the model term, which is not drawn, since its role is to cover each tune's departure from the simulation. At each tune the covariance is built by the reported procedure using the tune's pseudo-data at their means, with the statistical block bootstrapped from one Poisson realization and the seed block not rebuilt; this fixed covariance stands in for one rebuilt for each pseudo-experiment, which was not computed. The lateral block is carried to each tune in relative form and is not tested, and the tunes' overlaps with the model term's generators (\S\ref{sec:fived16-fd}) apply. The response and run-period terms are left out of the graded covariance. The test has two correlated variants, without and with the GEANT4 neutron and proton bands; the primary variant omits them from both its pseudo-data and its graded covariance. Removing the two bands' block from the covariance graded with them raises the $\chi^2$ of any fixed set of residuals by at most a factor of \fvval{ll5d-mumax-bound-g18} at \fvval{f1-tune-g18} and \fvval{ll5d-mumax-bound-ar23} at \fvval{f1-tune-ar23}, a bound set by the largest fraction of that covariance, in any direction, that the block carries. The bound applies to the block's place in the covariance only, not to the bands' pseudo-data draws, and what separates the bands' pseudo-experiment and simulation-side blocks remains unclassified. Each tune and each variant is graded separately, per cell and jointly, against thresholds set from the test's null distribution, with a resolution of about \fvval{ll5d-cellres} in coverage per cell and 0.08 jointly. In one variant at one tune, the cell tests raise a false flag with probability at most 0.025, and so does the joint test. These rates are those of a null in which the fixed covariance is exact; the covariance is itself estimated from finite ensembles, which can make $\chi^2$ larger than this null allows, most along its smallest-eigenvalue directions. No correction for this is made. A cell that passes at a tune also passes under the procedure's full covariance there, and the joint reading carries over only if both matrices have 16 degrees of freedom.
+% U11 (currency check of 2fe070fec): the GEANT4 block bound, DECISION-20261116-joseph-paper-batch.md item 3 (A6) wording, from fd/receipts-ll5d/mumax/run/node/mumax.json (422db056; commit e3a47f391), by mumax_values() in make_values_fived16.py.
+% absence-ok: "which was not computed", "is not tested" and "No correction for this is made" are scoping statements of the source paragraph, moved verbatim (LR-22, LR-23, LR-31); the declaration fixes them (LL5D-DECLARATION.md :323-324, the home's waiver)
 
 \subsection{The five-dimensional development tests}
 \label{sec:limitations-5d}
 
-The coverage and stability limitations of the five-dimensional estimator are stated in \S\ref{sec:coverage-5d} and \S\ref{sec:val-departure}.
+% Move pairs LR-33..LR-47 (limitation-resolver): the coverage test's defective q3 truth (sec_5d.tex sec:coverage-5d), its
+% miscoverage diagnosis (the source block as given, with its comments), and the data-stability consequence (sec:val-departure),
+% verbatim and contiguous. Each lead sentence restates its home's result and supplies the antecedent.
+The end-to-end coverage test of \S\ref{sec:coverage-5d} used three truths, and it failed its futility criterion. Of those three, the change of the $q_3$ dependence at fixed $(\Eavail,W)$ did not implement the intended reweighting. Its experiments were generated, and they are not an interpretable test of that deformation. The futility verdict does not depend on them.
+
+\paragraph{Why the intervals miscover under the rate reduction.} The diagnosis below uses the stored outputs and the code.  The rate change itself is recovered: in the one locally stored pseudo-experiment the total changes by \SI{-9.58}{\percent} against \SI{-9.56}{\percent} injected, and over the 400 the total covers at 0.74 (68\%), so the miscoverage is not a normalization failure.  Nor are the intervals too narrow: they use one nominal bootstrap $\sigma$ at every truth, which for 10\% fewer events is slightly too wide apart from the background not being redrawn (inferred spread about $1.15\sigma$ at $W\ge\SI{3}{GeV}$), and setting the spread equal to the half-width leaves the failing quantities' coverage at 0.06--0.22.  The purity subtraction does not apply a nominal signal fraction to the reduced data: it removes the absolute nominal background expectation, which is unchanged, and in the stored pseudo-experiment the subtracted total agrees with the pseudo-signal to 60 of 3.2 million events.
+
+The miscoverage is a residual bias that the nominal-truth bias correction does not remove.  The rate change adds a positive bias that grows with $W$, about \SI{0.2}{\percent} for $1.4\le W<\SI{2.2}{GeV}$, \SI{0.4}{\percent} for $2.2\le W<\SI{3}{GeV}$, and 0.7--\SI{1.1}{\percent} for $W\ge\SI{3}{GeV}$, which is 1.3--2.6 standard deviations against intervals of 0.16--0.43\%, whatever the sign of the nominal bias $\beta$; removing that bias restores coverage to 0.62--0.82 at 68\% and 0.92--0.99 at 95\%.
+
+These per-quantity biases and spreads are inferred, not measured: the stored output records only hit counts, so each quantity's mean shift and spread come from a Gaussian fit to its 68\% and 95\% coverage, checked against one recorded value (EW17: $+1.04\%$ fitted against $+1.05\%$).  The source of the $W$-graded term is not established: its size and ordering roughly match, under an approximate assignment of background fractions to $W$ bins, the rise of the background fraction by $0.111\,f_{\mathrm{bkg}}$, but the term may also arise from the estimator alone.
+
+A rerun of five of the same pseudo-experiments, without background and with the background scaled by 0.9 so that the background-to-signal ratio is restored, did not decide between the two: restoring the ratio raised the residual for $W\ge\SI{3}{GeV}$ rather than removing it, and without background the residual persists. Agreement in the marginal normalizations thus coexists with a substantial residual bias under the tested deformation, and whether that bias has the same origin as the regularization bias of \S\ref{sec:val-departure} is not established.
+% Caveat cut list MV13 (DECISION-20261102-joseph-caveat-cut-list.md): the paper's Sec. IV F and its conclusion sentence ("The miscoverage ... is also attributed to a residual bias, but whether that bias has the same origin is not established") moved here; every other fact of IV F was already printed in this section
+% Methods-paper rewrite draft 7: docs/orchestration/state/2d-closeout/stageF/methods/M2-RATEFAIL-DIAGNOSIS.md (0 node-h, local receipts and code):
+% :8 (total -9.58% recovered against -9.56% injected); :9, :65-69 (spread set equal to the half-width: coverage 0.06-0.22;
+% bias removed: 0.62-0.82 at 68%, 0.92-0.99 at 95%); :10, :80-85 (the subtraction removes the nominal absolute
+% background expectation, unchanged; the excess is -60 of 3.197M events); :11, :71-76, :100 (W-graded positive residual:
+% about +0.2%, +0.4%, +0.7-1.1% for W 1.4-2.2, 2.2-3, >= 3 GeV, 1.3-2.6 sigma against intervals of 0.16-0.43%; added
+% whatever the sign of beta); :13, :24 (means and spreads inferred from a Gaussian fit to each 68%/95% coverage pair,
+% cross-checked on EW17, +1.04% against +1.05% recorded); :50 (intervals use one nominal bootstrap sigma, slightly too
+% wide at 0.9 of the events); :52-63 (failures by W band); :12, :87, :102 (source not established); :15, :104-109
+% (confirming test, not run, about 0.1-0.2 node-h).
+% 2026-10-22: the test was run (state/ki98-wbias-test/REPORT.md, PR #229; declared and bound before the run), five seeds
+% per arm, EW band W >= 3: R_a +2.29 (SE 0.72), R_c +3.40 (0.65), R_b +2.84 (0.46); verdict UNDETERMINED by its rule.
+
+The configuration-(e) estimator fails the data-stability test (\S\ref{sec:val-departure}). The data bootstrap, which refits the full chain per replica, already includes this rounding-level variability: each replica carries the same spread (median \SI{0.23}{\percent} per joint cell), about \SI{37}{\percent} of the bootstrap variance and below a tenth of any total uncertainty. Central values are therefore reproducible only to within this spread.
 
 \subsection{The joint generator tests}
 \label{sec:limitations-joint}
