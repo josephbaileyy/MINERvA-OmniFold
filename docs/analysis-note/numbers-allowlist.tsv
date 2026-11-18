@@ -228,3 +228,7 @@ token	delta	owner	item	reason
 139.57	+1	journal-editor	H3-028 row	the same row: "rather than the charged-pion mass of about 139.57 MeV"
 0.19	+1	journal-editor	H3-028 row	the same row: the measured shift, at most 0.19 sigma in any cell (\fvval{eav-cellmax})
 0.42	+1	journal-editor	H3-028 row	the same row: the coherent shift, 0.42 sigma (\fvval{eav-coherent})
+# journal-editor's configuration key (tab:config-key, c51fb727c), recounted by director-helper-3 with freeze_checks' tokenizer (plain draft 81c858ef6 vs the simulated merge): 400 and 31 print glued (400-tree, 31-leaf) and are not counted
+42	+1	journal-editor	JE-KEY	the configuration key (Table 4, tab:config-key) repeats Table 6 / sec:method-config: seed 42 in two dimensions
+100	+1	journal-editor	JE-KEY	the configuration key repeats configuration (d)'s 100-tree refinement / the nominal capacity (one counted print)
+8	+1	journal-editor	JE-KEY	the configuration key repeats the 8-leaf nominal capacity (one counted print)
