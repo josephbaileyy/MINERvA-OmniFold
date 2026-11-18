@@ -1,6 +1,6 @@
 # IBUKT: paired 2D known-truth recovery screen
 
-**2026-11-17; declaration and code for independent audit. NOT BOUND FOR EXECUTION.**
+**2026-11-17; revision 1 responding to the audit of d6ac2f29. NOT BOUND FOR EXECUTION.**
 
 ## 1. Authority, decision, owner and terminal conditions
 
@@ -8,7 +8,7 @@ Joseph approved "go ahead with the IBU test," relayed in the director's instruct
 
 This asks whether the recorded 2D estimators recover known truth, cell by cell, when fed the same fake data. A difference on data does not establish that either method is correct. Neither agreement with the publication nor nominal closure is the primary statistic. The result can be: both recover within the stated tolerance; one fails at a specified truth/cell; both fail; or unresolved at the screen's noise. These are useful terminal outcomes, not instructions to tune a method until it passes.
 
-The IBUKT lane owns the code and eventual receipt. The director assigns an independent read-only audit before binding, with at most one focused repair round before reassessing material unresolved issues. The setup follows `CAMPAIGN-REVIEW-20260929.md`'s bounded owner/reviewer and terminal-budget advice. No reviewer verdict is claimed here. Baseline for this draft: `5ddf896457cfd75ad69e5855d9c1266884eab47a`, fetched origin/main. This declaration supplements the routed work; it changes no existing scientific adoption.
+The IBUKT lane owns the code and eventual receipt. The director assigns an independent read-only audit before binding, with at most one focused repair round before reassessing material unresolved issues. The setup follows `CAMPAIGN-REVIEW-20260929.md`'s bounded owner/reviewer and terminal-budget advice. The director relayed the independent audit of `d6ac2f29` as PASS WITH FIXES. Revision 1 implements its five requested corrections; no review verdict on these revised bytes is claimed. Baseline for this draft: `5ddf896457cfd75ad69e5855d9c1266884eab47a`, fetched origin/main. This declaration supplements the routed work; it changes no existing scientific adoption.
 
 ## 2. Existing work and coordination
 
@@ -44,7 +44,9 @@ All source locations must be resolved and frozen by the approved connect's sourc
 
 **C-ID, before any fake-data fit:** reproduce E_R and C2 K=5 and K=10 on the recorded real-data inputs to relative 1e-8 in each reported cell. This is identity at nominal configuration, not a claim that real data are nominal truth. Compare RooUnfold and NumPy IBU to 1e-9. Reuse the exact common flux, target, POT, areas and completeness from the driver's extraction. Derive a count-to-cross-section vector by sending unit counts through that extraction. Save its use for each IBU and OmniFold result. Full mask/order and finite checks must pass.
 
-**C-FULL:** the bank retains the full denominator loaded by E_R. On the 205 cells require completeness equal to one within 1e-8, and independently require each of the seven deformed input-truth histograms to match the corresponding full-denominator truth histogram within 1e-8. STOP on failure; do not use an acceptance-extrapolated target as if it were known full truth. The known truth is full-denominator counts times the normalization without the completeness correction. This control is especially necessary for within-cell changes.
+**C-FULL:** the bank retains the full denominator loaded by E_R. On the 205 cells require completeness equal to one within 1e-8, and independently require each of the seven deformed input-truth histograms to match the corresponding full-denominator truth histogram within 1e-8. STOP on failure; do not use an acceptance-extrapolated target as if it were known full truth. The known truth is full-denominator counts times the normalization without the completeness correction. This control is especially necessary for within-cell changes. Independently compare both within-bin full-truth histograms with nominal at relative 1e-8 on the 205 cells. For each of the six changed truths require the expected reconstructed signal histogram to move: `max(abs(reco_changed-reco_nominal))/max(abs(reco_nominal)) > 1e-8` over the 224 reco cells. Save each shift in the identity receipt. This is a numerical nonvacuity gate, not a power threshold; it establishes neither a changed column efficiency specifically nor sub-bin recovery.
+
+**C-NOM, before any Poisson draw:** run one noise-free nominal pair through the same `pair` function, using the positive weighted nominal signal and background plus the fixed negative template, without Poisson expansion. Keep refinement and both estimators unchanged. Require OmniFold K=5 and IBU K=5 to agree with known truth to relative **1e-8** on all 205 cells, using the C-ID denominator. A failure leaves no PASS receipt and stops before the timed pair or remaining ensemble. Each Poisson pair verifies the control's bank/config/product identity and recomputes these residual checks. This audit-requested identity tolerance is stricter than the 2% recovery reading; finite refinement/classifier residuals may fail it. Failure does not establish a programming bug. Do not relax the tolerance, bypass refinement, or substitute an oracle after seeing the result; return to the director for a separately reviewed disposition.
 
 The relative identity denominator is max(abs(reference cell), 1e-12 times the largest absolute reference cell); all nonfinite operands refuse. Zero-valued unreported cells are not made into recovery denominators.
 
@@ -94,26 +96,50 @@ The fixed engineering recovery tolerance is **2% of truth per cell**. It is a sc
 - **outside tolerance:** max(abs(b)-h,0) > 0.02;
 - **unresolved:** otherwise.
 
-For each truth/cell report the ordered pair of method readings. "OmniFold within / IBU outside," its reverse, "both outside," and "both within" mean exactly these combinations. Any unresolved member keeps that comparison unresolved. No truth-wide winner, multiple-testing significance, automatic estimator choice or covariance block is derived. For within-bin truths the coarse departure is zero; do not divide by the injected coarse change. Report all cells even if power is poor. K=10 is labeled secondary and cannot replace the K=5 reading.
+For each truth/cell report the ordered pair of method readings. "OmniFold within / IBU outside," its reverse, "both outside," and "both within" mean exactly these combinations. Any unresolved member keeps that comparison unresolved. No truth-wide winner, multiple-testing significance, automatic estimator choice or covariance block is derived. For within-bin truths the coarse departure is zero; do not divide by the injected coarse change. Report all cells even if power is poor. K=10 is labeled secondary in each method readout and in schema `ibukt-recovery/2`; it cannot replace the K=5 reading.
 
 Incomplete ensembles, missing trial IDs, repeated/mismatched truth or cell identities, nonfinite values, changed config/bank/product hashes, or nonpositive reported truth refuse scoring. No partial-ensemble grade. A finding outside tolerance may motivate a separately declared mechanism study; it does not prove that the data's estimator difference has that cause. The all-within outcome supports only these deformations/tolerances and conditional sample.
 
+The outcome licenses are fixed as follows:
+
+| outcome | licenses | does NOT license |
+|---|---|---|
+| C-NOM or another control fails | Stop with a named control failure and preserved diagnostics | Grading the changed truths, naming a bug from the residual alone, or silently loosening a gate |
+| Runtime preflight fails | Stop before the remaining 34; report insufficient measured time under this cap | A partial-ensemble recovery result, an automatic retry, fewer truths or more compute |
+| OmniFold within / IBU outside, or the reverse, at a specified truth/cell | A differential coarse-cell recovery result at K=5 on this bank | A globally better estimator, causal attribution of the measured data difference, or publication adoption |
+| IBU outside / OmniFold within for a within-bin tilt | Consistency with binned within-cell model dependence along this fractional-pT deformation | Proof of that mechanism on data, sub-bin shape recovery, or a test of within-bin p_parallel dependence |
+| Both outside | Both methods miss the specified truth/cell beyond the declared guard | Separating shared refinement bias from two unfolding biases |
+| Both within, including all cells/truths | Coarse integral recovery under the tested deformations, tolerance, bank and fixed learner seeds | Universal closure, coverage, detector-model validation, or seeing/recovering the within-bin shape; returning the prior can pass a conserved coarse integral |
+| Any unresolved comparison | The screen's noise does not resolve this tolerance comparison | Choosing a winner, interpreting unresolved as within, or selecting a more favorable K |
+
+**This screen cannot separate missed-event regression from classifier capacity.** Both remain inside the one frozen OmniFold configuration. No listed outcome identifies either mechanism or rules it out; the weighted/oracle and capacity interventions require their own declaration and budget.
+
 ## 7. Cost, hard cap, gates and time limits
 
-Hard cap **5.90 CPU node-hours**, including all attempts, controls, staging, preparation, reading and failures. No GPU or premium queue. The estimates use `../measurement-paper/5d-community-20261024/COV2D-SCOPING.md` section 3: 0.0489-0.0843 CPU node-h per statistical/central unfold. Thirty-five primary OmniFold fits give 1.71-2.95 node-h; pairing shares the expensive refinement. IBU matrix arithmetic and bank I/O remain overhead. The Phase-1 conservative envelope 3.42-5.90 is retained; no reduction is asserted as a measured runtime. The identity run and bank preparation consume the same cap.
+Hard cap **5.90 CPU node-hours**, including all attempts, controls, staging, preparation, reading and failures. No GPU or premium queue. Revision 0 incorrectly used packed per-unfold charges as lane wall times. The pricing source is now [RE2-PARTB-REPORT](stageF/methods/re2/RE2-PARTB-REPORT.md), section 1: J1 ran three central unfolds within a 910-second exclusive-node job; its charge was 0.2528 node-h. The [lane inventory](stageF/methods/re2/run/partb_runs.tsv) has an 866-second lane estimate. These give a planning scale of about 15 minutes per pair, not five minutes. IBU, bank loading, and this fake-data refinement have not been timed on these bytes.
 
-Four single-node envelopes (whole-node charge is conservative even for single 64-CPU steps):
+At the actual two-worker packing, 35 Poisson pairs use 18 lane waves (18*910/3600 = 4.55 node-h at J1's full job wall). The first pair is serial and retained as `nominal-0`; the remaining 34 use 17 two-worker waves. The new noise-free control adds one serial lane wall, for 19*910/3600 = **4.8028 node-h** before other stages and additional launcher overhead. This is an estimate, not a measured completion guarantee. The real-data identity preparation remains separately charged. This revision keeps all seven truths/35 pairs and the 5.90 cap; any inability to fit is a terminal budget stop, not permission to shrink or expand the study.
 
 | envelope | maximum --time | reserved node-h | prerequisite |
 |---|---|---:|---|
 | ibukt-envstage | 00:18:00 | 0.30 | audit, binding, exact connect go and fence acknowledgments |
 | ibukt-prepare | 00:30:00 | 0.50 | committed environment/staging PASS |
-| ibukt-screen | 05:00:00 | 5.00 | committed C-ID/C-FULL PASS and bank digest |
+| ibukt-screen | **05:15:00** | **5.25** | committed C-ID/C-FULL/nonvacuity PASS, bank digest, admission with scoring reserved |
 | ibukt-score | 00:06:00 | 0.10 | all 35 pairs complete and hashed |
 
-These sum to 5.90, not an extra allowance above it. Screen packs at most two 64-CPU processes on one CPU node; the submitted time limit is 05:00:00, with each task enforcing affinity 64. The prepared `screen.sbatch` submits nothing itself. Its tasks run through `nd-unfolding/mnv_guarded_run.py` with the deployment root and a separate import inventory for each pair. The binding must use that same guard for preparation, staging and scoring, with no alternate-checkout allow-list. Slurm stdout/stderr destinations must be bound under the fresh scratch run directory. Environment setup/interpreter and fresh quota/headroom checks are fixed in the later audited connect. Any forecast above the remaining cap, timeout, unexpected numerical failure, lost product, absent pin, fence conflict or inability to validate the environment stops and returns to the director. No automatic resubmission, silent smaller ensemble or changed tolerance.
+The individual maximum envelopes sum to 6.15 and **cannot all be spent** under the 5.90 cap. This is conditional admission based on completed spend, not a 6.15 grant. `jobs.py gate --request screen` reserves **5.25 + 0.10** hours, including future scoring, so all earlier spend/reservations must be **<=0.55 node-h**. Only 5.25 is recorded as the submitted screen job's reservation; the extra 0.10 is retained as the unsubmitted scoring allowance. If envstage and prepare consume their full 0.80, refuse screen admission. The prior-spend receipt, config digest and arithmetic are checked in the allocation before the first fit. The binding must verify a fresh sacct snapshot and the persistent ledger for every admission.
 
-`jobs.py gate` takes a freshly captured `sacct -n -P --format=JobIDRaw,JobName,State,ElapsedRaw,NNodes` record and the persistent submission-reservation ledger. It charges terminal attempts including failures by elapsed whole-node time; active jobs reserve their full time limit (or greater observed spend); submitted jobs absent from sacct still reserve their limit. Unknown/duplicate campaign allocation IDs or invalid rows refuse. Before each submit the prospective envelope plus spend/reservations must be <=5.90. Record the returned job ID and reservation immediately, before another admission. The connect must also verify submitted TimeLimit/CPU settings and keep the reservation ledger across attempts. Never use squeue.
+The allocation is one exclusive CPU node, no requeue, with a 05:15:00 hard limit. Each pair is `srun -n1 -c 64 --exact --mem=121920M --mem-bind=local`, with no step-level `--exclusive` or `--nodes=1`. The memory request is the RE2 launcher's 64*1905 MiB convention. At most two steps run concurrently; every pair still asserts exactly 64 CPUs in its affinity. All controls, gate time and failures consume allocation time.
+
+**Measured runtime gate, before the remaining 34:** after C-NOM passes, time the complete `nominal-0` srun (startup, imports, I/O, refinement and both methods), rounded up to a second. Let w be that lane wall and e be elapsed launcher wall including C-NOM. Require:
+
+`18*w <= min(5.25*3600 - e, (5.90 - prior_spend_node_h - 0.10)*3600 - e) - 60`.
+
+Thus 18 measured lane walls must fit both the allocation and the remaining campaign cap, with scoring and a further minute of overhead reserved. Save the operands and decision. The 18-wave projection includes one spare wave beyond the 17 actually remaining; it does not promise that contention or changed truths cannot run slower. If the inequality fails, stop with only the control and timed pair retained, and do not score. The hard Slurm limit and admission bound enforce the cap even if the projection is optimistic. No launch uses the old 05:00:00 limit.
+
+`jobs.py gate` takes freshly captured `sacct -n -P --format=JobIDRaw,JobName,State,ElapsedRaw,NNodes` output and the persistent submission-reservation ledger. It charges terminal attempts including failures by elapsed whole-node time; active jobs reserve their full limit (or greater observed spend); submitted jobs absent from sacct still reserve their limit. Unknown/duplicate campaign IDs or invalid rows refuse. Record each job ID and reservation immediately. The connect must verify submitted TimeLimit/CPU/memory settings; never use squeue. No automatic retry, smaller ensemble, altered tolerance or cap increase follows a stop.
+
+The prepared script submits nothing itself. Fits and admission/forecast checks run through `nd-unfolding/mnv_guarded_run.py` with separate import inventories. The binding must use the same guard for preparation, staging and scoring, with no alternate-checkout allow-list. Slurm stdout/stderr destinations, interpreter/environment, quota/headroom checks and SHA-pinned admission receipt belong in that later reviewed binding; all writes stay in the fresh scratch run directory.
 
 ## 8. Separately gated missed-event diagnosis
 
@@ -143,4 +169,4 @@ A local macOS environment cannot execute the ROOT/O_NOATIME production path; syn
 - `config.json`: estimator argv, truths, seeds, grid, external input digests and imported source pins.
 - `test_ibukt.py`: synthetic tests including deliberately wrong truth weighting, scale/axis errors, within-bin efficiency sensitivity, incomplete ensembles, Poisson/template separation and failed/active/missing scheduler attempts.
 
-Local validation is recorded in the PR; no fit, run outcome, independent audit or scientific adoption is claimed by this declaration.
+Local validation is recorded in the PR; no fit, run outcome, audit acceptance of revision 1 or scientific adoption is claimed by this declaration.

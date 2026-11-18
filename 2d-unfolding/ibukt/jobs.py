@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import os
 from pathlib import Path
 import sys
@@ -12,7 +13,7 @@ from typing import Any
 import ibukt as core
 import run_ibukt as runner
 
-LIMITS = {"envstage": 0.3, "prepare": 0.5, "screen": 5.0, "score": 0.1}
+LIMITS = {"envstage": 0.3, "prepare": 0.5, "screen": 5.25, "score": 0.1}
 
 
 def stage(sources: dict[str, Any], output: Path) -> None:
@@ -49,6 +50,27 @@ def stage(sources: dict[str, Any], output: Path) -> None:
     runner.write_json(output / "stage.json", receipts)
 
 
+def screen_admission(path: Path) -> dict[str, Any]:
+    """Validate the prior-spend receipt with screen and scoring time reserved."""
+    record = runner.read_json(path)
+    requested = LIMITS["screen"] + LIMITS["score"]
+    if (record["request_stage"], record["requested"], record["config_sha256"]) != (
+        "screen",
+        requested,
+        runner.digest(core.CONFIG),
+    ):
+        raise ValueError("invalid screen admission identity")
+    spent, total = record["spent_or_reserved"], record["total"]
+    if (
+        not all(math.isfinite(x) for x in (spent, total))
+        or spent < 0
+        or total > 5.90
+        or abs(total - spent - requested) > 1e-12
+    ):
+        raise ValueError("invalid screen admission accounting")
+    return dict(record)
+
+
 def main() -> None:
     """Stage files or price a requested envelope from freshly captured sacct output."""
     parser = argparse.ArgumentParser(description=__doc__)
@@ -60,19 +82,38 @@ def main() -> None:
     gate.add_argument("--sacct", type=Path, required=True)
     gate.add_argument("--reservations", type=Path, required=True)
     gate.add_argument("--request", choices=LIMITS, required=True)
+    admission_parser = subs.add_parser("screen-admission")
+    admission_parser.add_argument("--admission", type=Path, required=True)
+    forecast = subs.add_parser("forecast")
+    forecast.add_argument("--admission", type=Path, required=True)
+    forecast.add_argument("--measured-seconds", type=float, required=True)
+    forecast.add_argument("--elapsed-seconds", type=float, required=True)
     args = parser.parse_args()
     if args.mode == "stage":
         stage(runner.read_json(args.sources), args.out)
-    else:
+    elif args.mode == "screen-admission":
+        print(json.dumps(screen_admission(args.admission)))
+    elif args.mode == "forecast":
+        admission = screen_admission(args.admission)
         print(
             json.dumps(
-                core.budget(
-                    args.sacct.read_text(),
-                    json.loads(args.reservations.read_text()),
-                    LIMITS[args.request],
+                core.forecast(
+                    args.measured_seconds,
+                    args.elapsed_seconds,
+                    admission["spent_or_reserved"],
                 )
             )
         )
+    else:
+        result: dict[str, Any] = core.budget(
+            args.sacct.read_text(),
+            json.loads(args.reservations.read_text()),
+            LIMITS[args.request] + (LIMITS["score"] if args.request == "screen" else 0),
+        )
+        result.update(
+            request_stage=args.request, config_sha256=runner.digest(core.CONFIG)
+        )
+        print(json.dumps(result))
 
 
 if __name__ == "__main__":

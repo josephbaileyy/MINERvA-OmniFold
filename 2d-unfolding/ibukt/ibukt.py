@@ -191,3 +191,38 @@ def budget(
         "requested": requested_hours,
         "total": total,
     }
+
+
+def forecast(
+    measured_seconds: float, elapsed_seconds: float, prior_hours: float
+) -> dict[str, float]:
+    """Refuse 34 more pairs unless 18 measured lane walls fit both time bounds.
+
+    Scoring retains 0.10 node-hour. A further minute is reserved for launcher
+    overhead. Allocation time is bounded independently of the campaign cap.
+    """
+    if not all(
+        np.isfinite(x) for x in (measured_seconds, elapsed_seconds, prior_hours)
+    ):
+        raise ValueError("nonfinite preflight time")
+    if measured_seconds <= 0 or elapsed_seconds < measured_seconds or prior_hours < 0:
+        raise ValueError("invalid preflight time")
+    remaining = (
+        min(
+            5.25 * 3600 - elapsed_seconds,
+            (5.90 - prior_hours - 0.10) * 3600 - elapsed_seconds,
+        )
+        - 60
+    )
+    projected = 18 * measured_seconds
+    if projected > remaining:
+        raise ValueError(
+            f"STOP: 18 lane walls ({projected:.1f}s) exceed remaining {remaining:.1f}s"
+        )
+    return {
+        "measured_seconds": measured_seconds,
+        "elapsed_seconds": elapsed_seconds,
+        "prior_hours": prior_hours,
+        "projected_seconds": projected,
+        "remaining_seconds": remaining,
+    }

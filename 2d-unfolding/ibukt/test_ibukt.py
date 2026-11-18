@@ -217,9 +217,44 @@ def test_pair_shares_exact_refined_target_and_preserves_response(
             config_sha256=runner.digest(core.CONFIG),
         ),
     )
+    control_dir = tmp_path / "control"
+    control_dir.mkdir()
+    np.savez(
+        control_dir / "pair.npz",
+        omnifold=nominal,
+        ibu5=nominal,
+        truth=nominal,
+        selected=bank["selected"],
+    )
+    runner.write_json(
+        control_dir / "pair.json",
+        dict(
+            status="PASS",
+            truth="nominal",
+            sampling="noise-free",
+            config_sha256=runner.digest(core.CONFIG),
+            bank_sha256=runner.digest(bank_path),
+            product_sha256=runner.digest(control_dir / "pair.npz"),
+        ),
+    )
     observed = {}
+    original_poisson = core.poisson_target
+
+    def poisson(features, signed, seed):
+        # r(first row)=1 + 0.5*(0.125 - 0.6875); second signal row is missed.
+        np.testing.assert_allclose(signed, [10 * 0.71875, 2, -2])
+        assert seed == 771001
+        observed["poisson_checked"] = True
+        return original_poisson(features, signed, seed)
+
+    monkeypatch.setattr(core, "poisson_target", poisson)
 
     def refine(features, signed, **kwargs):
+        assert kwargs == {
+            "estimator": "lgbm",
+            "device": "cpu",
+            "params": {"random_state": 45, "n_estimators": 400, "num_leaves": 31},
+        }
         observed["features"] = features
         observed["refined"] = np.abs(signed) * 0.75
         return observed["refined"], None, 0.0
@@ -236,12 +271,20 @@ def test_pair_shares_exact_refined_target_and_preserves_response(
         assert kwargs["measured_weights"] is observed["refined"]
         assert iterations == 5
         assert kwargs["classifier1_params"] == {"random_state": 42}
+        assert kwargs["classifier2_params"] == {"random_state": 43}
+        assert kwargs["regressor_params"] == {"random_state": 44}
+        assert kwargs["parameter_format"] == "dict"
+        assert kwargs["estimator"] == "lgbm" and kwargs["device"] == "cpu"
+        assert np.all(pm)
         np.testing.assert_array_equal(kwargs["MCgen_weights"], weights)
-        return None, np.ones(2)
+        return None, np.array([1.1, 0.9])
 
-    comparison = SimpleNamespace(
-        binned_problem=binned, roounfold_bayes=lambda *args: {5: nominal, 10: nominal}
-    )
+    def ibu(matrix, truth, target, iterations, library):
+        assert iterations == [5, 10]
+        assert library == str(tmp_path / "libRooUnfold.so")
+        return {5: nominal, 10: nominal}
+
+    comparison = SimpleNamespace(binned_problem=binned, roounfold_bayes=ibu)
     monkeypatch.setattr(
         runner,
         "dependencies",
@@ -262,12 +305,18 @@ def test_pair_shares_exact_refined_target_and_preserves_response(
             trial=0,
             out=out,
             stage=tmp_path,
+            noise_free=False,
+            control=control_dir / "pair.json",
         ),
         cfg,
     )
     data = runner.read_npz(out / "pair.npz")
     np.testing.assert_array_equal(data["truth"], nominal)
-    np.testing.assert_array_equal(data["omnifold"], nominal)
+    assert observed["poisson_checked"]
+    np.testing.assert_allclose(
+        data["omnifold"],
+        core.histogram(gen[:, 0], gen[:, 1], weights * [1.1, 0.9], cfg),
+    )
     np.testing.assert_array_equal(runner.read_npz(bank_path)["wt"], weights)
 
 
@@ -295,6 +344,7 @@ def test_score_requires_complete_consistent_digest_bound_pairs(
                 directory / "pair.json",
                 dict(
                     status="PASS",
+                    sampling="poisson",
                     truth=name,
                     trial=trial,
                     seed=cfg["seeds"][trial],
@@ -309,6 +359,10 @@ def test_score_requires_complete_consistent_digest_bound_pairs(
     runner.score(args, cfg)
     result = runner.read_json(out / "readout.json")
     assert len(result["truths"]) == 7
+    assert result["schema"] == "ibukt-recovery/2"
+    assert result["secondary_methods"] == ["ibu10"]
+    assert result["truths"]["nominal"]["ibu10"]["role"] == "secondary"
+    assert result["truths"]["nominal"]["ibu5"]["role"] == "primary"
     assert result["truths"]["nominal"]["omnifold"]["reading"] == [
         "within tolerance",
         "outside tolerance",
@@ -352,6 +406,7 @@ def test_launcher_refuses_non_scratch_paths_before_writing(tmp_path):
         IBUKT_PRODUCTS=str(product),
         IBUKT_PYTHON=sys.executable,
         IBUKT_DEPLOY_SHA="unused",
+        IBUKT_ADMISSION=str(tmp_path / "admission.json"),
     )
     result = subprocess.run(
         ["bash", str(runner.REPO / "2d-unfolding/ibukt/screen.sbatch")],
@@ -362,3 +417,222 @@ def test_launcher_refuses_non_scratch_paths_before_writing(tmp_path):
     assert result.returncode != 0
     assert "must resolve under /pscratch" in result.stderr
     assert not product.exists()
+
+
+def test_within_integrals_hold_across_distinct_cells(cfg):
+    pt = np.array([0.08, 0.14, 0.26, 0.32, 0.26, 0.32])
+    pz = np.array([4.2, 4.2, 4.2, 4.2, 8.5, 8.5])
+    weights = np.array([1.0, 9.0, 3.0, 7.0, 8.0, 2.0])
+    means = core.moments(pt, pz, weights, cfg)
+    nominal = core.histogram(pt, pz, weights, cfg)
+    assert np.count_nonzero(nominal) == 3
+    for name in ("within_plus", "within_minus"):
+        factors = core.truth_factor(name, pt, pz, means, cfg, {})
+        np.testing.assert_allclose(
+            core.histogram(pt, pz, weights * factors, cfg), nominal, rtol=1e-12
+        )
+
+
+def test_pinned_ratio_map_index_and_overflow(cfg, portable_io):
+    maps = runner.ratios(cfg)
+    values = core.truth_factor(
+        "nuwro",
+        np.array([0.08, 0.32, 4.5]),
+        np.array([4.2, 8.5, 4.2]),
+        np.zeros(224),
+        cfg,
+        maps,
+    )
+    np.testing.assert_array_equal(
+        values, [maps["nuwro"][1, 5], maps["nuwro"][3, 10], 1]
+    )
+
+
+def test_prepare_truth_controls_reject_vacuous_or_nonconserving_stresses():
+    truths = dict(
+        nominal=np.array([10.0, 20.0]),
+        within_plus=np.array([10.0, 20.0]),
+        within_minus=np.array([10.0, 20.0]),
+    )
+    reco = dict(
+        nominal=np.array([5.0, 12.0]),
+        within_plus=np.array([6.0, 11.0]),
+        within_minus=np.array([4.0, 13.0]),
+    )
+    assert (
+        runner.truth_controls(truths, reco, np.arange(2))[
+            "reco_relative_shift_within_plus"
+        ]
+        > 0
+    )
+    with pytest.raises(ValueError, match="vacuous"):
+        runner.truth_controls(
+            truths, dict(reco, within_plus=reco["nominal"]), np.arange(2)
+        )
+    with pytest.raises(ValueError, match="within-bin integral"):
+        runner.truth_controls(
+            dict(truths, within_plus=truths["nominal"] * 1.001), reco, np.arange(2)
+        )
+
+
+def test_preflight_prices_real_lane_wall_and_retains_scoring():
+    got = core.forecast(910, 1820, 0.4)
+    assert got["projected_seconds"] == 18 * 910
+    assert got["remaining_seconds"] == 5.25 * 3600 - 1820 - 60
+    with pytest.raises(ValueError, match="STOP"):
+        core.forecast(1000, 2000, 0.4)
+    with pytest.raises(ValueError, match="STOP"):
+        core.forecast(910, 1820, 1.0)
+    for wall, elapsed, prior in (
+        (0, 100, 0),
+        (100, 50, 0),
+        (100, 200, -1),
+        (np.nan, 200, 0),
+    ):
+        with pytest.raises(ValueError):
+            core.forecast(wall, elapsed, prior)
+
+
+def test_screen_allocation_and_steps_use_declared_packing():
+    script = (runner.REPO / "2d-unfolding/ibukt/screen.sbatch").read_text()
+    assert "#SBATCH --exclusive\n" in script
+    assert "#SBATCH --time=05:15:00" in script
+    assert "srun -n1 -c 64 --exact --mem=121920M --mem-bind=local" in script
+    step = script.split("srun ", 1)[1].split("\n", 1)[0]
+    assert "--exclusive" not in step and "--nodes" not in step
+    assert (
+        script.index("run_pair nominal-control")
+        < script.index("run_pair nominal-0")
+        < script.index("jobs.py forecast")
+        < script.index("for truth in")
+    )
+
+
+@pytest.mark.parametrize("bad_method", [None, "omnifold", "ibu5"])
+def test_noise_free_pair_closes_or_stops_before_pass_receipt(
+    cfg, tmp_path, monkeypatch, portable_io, bad_method
+):
+    from argparse import Namespace
+    from types import SimpleNamespace
+
+    gen = np.array([[0.1, 4.2], [0.3, 8.5]])
+    wt = np.array([10.0, 20.0])
+    truth = core.histogram(gen[:, 0], gen[:, 1], wt, cfg)
+    selected = np.flatnonzero(truth)
+    bank_path = tmp_path / "bank.npz"
+    np.savez(
+        bank_path,
+        gen=gen,
+        reco=gen,
+        pt=np.ones(2, bool),
+        pr=np.ones(2, bool),
+        wt=wt,
+        wr=wt,
+        bkg=gen[:1],
+        bw=np.array([2.0]),
+        means=np.zeros(224),
+        factor=np.ones(224),
+        selected=selected,
+        truth_nominal=truth,
+    )
+    identity = tmp_path / "identity.json"
+    runner.write_json(
+        identity,
+        dict(
+            status="PASS",
+            config_sha256=runner.digest(core.CONFIG),
+            bank_sha256=runner.digest(bank_path),
+        ),
+    )
+
+    def forbid_poisson(*args):
+        pytest.fail("noise-free control must not draw Poisson counts")
+
+    def refine(features, signed, **kwargs):
+        np.testing.assert_array_equal(signed, [10, 20, 2, -2])
+        return np.abs(signed), None, 0.0
+
+    ibu5 = truth * (1.000001 if bad_method == "ibu5" else 1)
+    helper = SimpleNamespace(
+        omnifold=lambda *a, **kw: (
+            None,
+            np.full(2, 1.000001 if bad_method == "omnifold" else 1),
+        )
+    )
+    comparison = SimpleNamespace(
+        binned_problem=lambda *a: (truth, np.eye(224), truth, None),
+        roounfold_bayes=lambda *a: {5: ibu5, 10: truth},
+    )
+    monkeypatch.setattr(
+        runner,
+        "dependencies",
+        lambda: (comparison, SimpleNamespace(refine_stay_positive=refine), helper),
+    )
+    monkeypatch.setattr(runner, "ratios", lambda cfg: {})
+    monkeypatch.setattr(core, "poisson_target", forbid_poisson)
+    out = tmp_path / "control"
+    out.mkdir()
+    args = Namespace(
+        identity=identity,
+        bank=bank_path,
+        out=out,
+        stage=tmp_path,
+        truth="nominal",
+        trial=0,
+        noise_free=True,
+        control=None,
+    )
+    if bad_method:
+        with pytest.raises(ValueError, match=f"noise-free nominal {bad_method}"):
+            runner.pair(args, cfg)
+        assert not (out / "pair.json").exists()
+        assert (out / "pair.npz").exists()
+    else:
+        runner.pair(args, cfg)
+        record = runner.read_json(out / "pair.json")
+        assert record["sampling"] == "noise-free" and record["seed"] is None
+        assert runner.nominal_control(out / "pair.json", runner.digest(bank_path)) == {
+            "omnifold": 0.0,
+            "ibu5": 0.0,
+        }
+        # A newly hashed but biased product still cannot unlock Poisson fits.
+        np.savez(
+            out / "pair.npz",
+            omnifold=truth * 1.000001,
+            ibu5=truth,
+            truth=truth,
+            selected=selected,
+        )
+        record["product_sha256"] = runner.digest(out / "pair.npz")
+        (out / "pair.json").unlink()
+        runner.write_json(out / "pair.json", record)
+        with pytest.raises(ValueError, match="noise-free nominal omnifold"):
+            runner.nominal_control(out / "pair.json", runner.digest(bank_path))
+
+
+def test_screen_admission_reserves_score_and_rejects_full_earlier_caps(
+    tmp_path, portable_io
+):
+    import jobs
+
+    def record(spent):
+        values = core.budget(
+            "", {}, jobs.LIMITS["screen"] + jobs.LIMITS["score"] + spent
+        )
+        return dict(
+            values,
+            requested=jobs.LIMITS["screen"] + jobs.LIMITS["score"],
+            spent_or_reserved=spent,
+            request_stage="screen",
+            config_sha256=runner.digest(core.CONFIG),
+        )
+
+    path = tmp_path / "admission.json"
+    runner.write_json(path, record(0.55))
+    assert jobs.screen_admission(path)["total"] == pytest.approx(5.90)
+    with pytest.raises(ValueError, match="cap exceeded"):
+        record(0.8)
+    path.unlink()
+    runner.write_json(path, dict(record(0.55), total=5.0))
+    with pytest.raises(ValueError, match="accounting"):
+        jobs.screen_admission(path)

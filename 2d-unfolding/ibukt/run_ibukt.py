@@ -77,6 +77,61 @@ def require_close(
     return error
 
 
+def truth_controls(
+    truths: dict[str, np.ndarray[Any, Any]],
+    expected_reco: dict[str, np.ndarray[Any, Any]],
+    selected: np.ndarray[Any, Any],
+) -> dict[str, float]:
+    """Require conserved within-bin integrals and nonvacuous detector stresses."""
+    checks = {}
+    for name in ("within_plus", "within_minus"):
+        checks[f"within_integral_{name}"] = require_close(
+            truths[name][selected],
+            truths["nominal"][selected],
+            f"within-bin integral {name}",
+        )
+    nominal = expected_reco["nominal"]
+    scale = float(np.max(np.abs(nominal)))
+    if not np.all(np.isfinite(nominal)) or scale <= 0:
+        raise ValueError("invalid nominal expected reco signal")
+    for name, changed in expected_reco.items():
+        if name == "nominal":
+            continue
+        if changed.shape != nominal.shape or not np.all(np.isfinite(changed)):
+            raise ValueError(f"invalid expected reco signal: {name}")
+        shift = float(np.max(np.abs(changed - nominal)) / scale)
+        if shift <= 1e-8:
+            raise ValueError(f"vacuous expected reco signal deformation: {name}")
+        checks[f"reco_relative_shift_{name}"] = shift
+    return checks
+
+
+def nominal_control(path: Path, bank_pin: str) -> dict[str, float]:
+    """Verify a completed noise-free nominal product before a Poisson fit."""
+    record = read_json(path)
+    if (
+        record["status"],
+        record["truth"],
+        record["sampling"],
+        record["config_sha256"],
+        record["bank_sha256"],
+    ) != ("PASS", "nominal", "noise-free", digest(core.CONFIG), bank_pin):
+        raise ValueError("noise-free nominal control identity differs")
+    product = path.parent / "pair.npz"
+    if digest(product) != record["product_sha256"]:
+        raise ValueError("noise-free nominal control product changed")
+    values = read_npz(product)
+    selected = values["selected"]
+    return {
+        method: require_close(
+            values[method][selected],
+            values["truth"][selected],
+            f"noise-free nominal {method}",
+        )
+        for method in ("omnifold", "ibu5")
+    }
+
+
 def ratios(cfg: dict[str, Any]) -> dict[str, np.ndarray[Any, Any]]:
     """Read the pinned generator-shape stresses and require the exact grid."""
     result = {}
@@ -253,6 +308,9 @@ def prepare(args: argparse.Namespace, cfg: dict[str, Any]) -> None:
     gen, wt, pt = captured["gen"], captured["wt"], captured["pt"]
     rdefs = ratios(cfg)
     truths = {}
+    full_truths = {}
+    expected_reco = {}
+    keep = captured["pr"] & pt
     for name in cfg["truths"]:
         fd = core.truth_factor(
             name, den["truth_pt"], den["truth_pz"], means, cfg, rdefs
@@ -266,6 +324,14 @@ def prepare(args: argparse.Namespace, cfg: dict[str, Any]) -> None:
             subset[selected], full[selected], f"full truth {name}"
         )
         truths[name] = full * factor * completeness
+        full_truths[name] = full
+        expected_reco[name] = core.histogram(
+            captured["reco"][keep, 0],
+            captured["reco"][keep, 1],
+            captured["wr"][keep] * fs[keep],
+            cfg,
+        )
+    checks.update(truth_controls(full_truths, expected_reco, selected))
     background = captured["background"]
     bank = {key: captured[key] for key in ("gen", "reco", "pr", "pt", "wt", "wr")}
     bank.update(
@@ -289,12 +355,17 @@ def prepare(args: argparse.Namespace, cfg: dict[str, Any]) -> None:
 
 
 def pair(args: argparse.Namespace, cfg: dict[str, Any]) -> None:
-    """Unfold one Poisson pseudo-dataset with both frozen K=5 estimators."""
+    """Run the nominal control or one Poisson dataset with both K=5 estimators."""
     identity = read_json(args.identity)
     if identity["status"] != "PASS" or identity["config_sha256"] != digest(core.CONFIG):
         raise ValueError("identity control not passed for this configuration")
     if digest(args.bank) != identity["bank_sha256"]:
         raise ValueError("bank differs from identity control")
+    if args.noise_free:
+        if args.truth != "nominal" or args.trial != 0:
+            raise ValueError("noise-free control must be nominal trial zero")
+    else:
+        nominal_control(args.control, identity["bank_sha256"])
     bank = read_npz(args.bank)
     comparison, driver, helper = dependencies()
     gen, reco, pt, pr = (bank[key] for key in ("gen", "reco", "pt", "pr"))
@@ -305,7 +376,10 @@ def pair(args: argparse.Namespace, cfg: dict[str, Any]) -> None:
     # The response is untouched; only the positive fake-data signal is reweighted.
     feat = np.concatenate((reco[keep], bank["bkg"], bank["bkg"]))
     signed = np.concatenate((bank["wr"][keep] * factors[keep], bank["bw"], -bank["bw"]))
-    measured, signed = core.poisson_target(feat, signed, cfg["seeds"][args.trial])
+    if args.noise_free:
+        measured = feat
+    else:
+        measured, signed = core.poisson_target(feat, signed, cfg["seeds"][args.trial])
     refined, _, clipped = driver.refine_stay_positive(
         measured,
         signed,
@@ -363,12 +437,27 @@ def pair(args: argparse.Namespace, cfg: dict[str, Any]) -> None:
         prior=bank["truth_nominal"],
         selected=bank["selected"],
     )
+    control_checks = {}
+    if args.noise_free:
+        selected = bank["selected"]
+        for method, values in (
+            ("omnifold", unfolded),
+            ("ibu5", ibu[5] * bank["factor"]),
+        ):
+            control_checks[method] = require_close(
+                values[selected],
+                bank["truth_nominal"][selected],
+                f"noise-free nominal {method}",
+            )
     write_json(
         args.out / "pair.json",
         {
+            "sampling": "noise-free" if args.noise_free else "poisson",
+            "control_checks": control_checks,
+            "control_sha256": None if args.noise_free else digest(args.control),
             "truth": args.truth,
             "trial": args.trial,
-            "seed": cfg["seeds"][args.trial],
+            "seed": None if args.noise_free else cfg["seeds"][args.trial],
             "bank_sha256": identity["bank_sha256"],
             "config_sha256": digest(core.CONFIG),
             "product_sha256": digest(args.out / "pair.npz"),
@@ -394,8 +483,16 @@ def score(args: argparse.Namespace, cfg: dict[str, Any]) -> None:
                 record["truth"],
                 record["trial"],
                 record["seed"],
+                record["sampling"],
                 record["config_sha256"],
-            ) != ("PASS", name, trial, cfg["seeds"][trial], digest(core.CONFIG)):
+            ) != (
+                "PASS",
+                name,
+                trial,
+                cfg["seeds"][trial],
+                "poisson",
+                digest(core.CONFIG),
+            ):
                 raise ValueError("missing or mismatched pair receipt")
             if record["product_sha256"] != digest(directory / "pair.npz"):
                 raise ValueError("pair digest differs")
@@ -417,15 +514,21 @@ def score(args: argparse.Namespace, cfg: dict[str, Any]) -> None:
             )
             for method in ("omnifold", "ibu5", "ibu10")
         }
+        for method in ("omnifold", "ibu5", "ibu10"):
+            readout[name][method]["role"] = (
+                "secondary" if method == "ibu10" else "primary"
+            )
         readout[name]["cells"] = selected.tolist()
     if len(bank_pins) != 1:
         raise ValueError("mixed simulation banks")
     write_json(
         args.out / "readout.json",
         {
-            "schema": "ibukt-recovery/1",
+            "schema": "ibukt-recovery/2",
+            "primary_methods": ["omnifold", "ibu5"],
+            "secondary_methods": ["ibu10"],
             "truths": readout,
-            "licence": "conditional finite-simulation per-cell recovery; five draws, no coverage or method adoption",
+            "license": "conditional finite-simulation per-cell recovery; five draws, no coverage or method adoption",
         },
     )
 
@@ -441,11 +544,17 @@ def main() -> None:
     parser.add_argument("--truth", choices=core.configuration()["truths"])
     parser.add_argument("--trial", type=int, choices=range(5))
     parser.add_argument("--products", type=Path)
+    parser.add_argument("--noise-free", action="store_true")
+    parser.add_argument("--control", type=Path)
     args = parser.parse_args()
     if args.mode == "pair" and any(
         getattr(args, k) is None for k in ("bank", "identity", "truth", "trial")
     ):
         parser.error("pair requires bank, identity, truth and trial")
+    if args.mode == "pair" and not args.noise_free and args.control is None:
+        parser.error("Poisson pair requires --control from the noise-free nominal pair")
+    if args.noise_free and args.mode != "pair":
+        parser.error("--noise-free is only valid for the nominal control pair")
     if args.mode == "score" and args.products is None:
         parser.error("score requires products")
     for path in (args.out, args.stage):
