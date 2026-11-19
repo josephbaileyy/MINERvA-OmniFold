@@ -313,3 +313,17 @@ token	delta	owner	item	reason
 300	-1	journal-editor	dup T10/T12/T13	tab:combine row label "N=300"; tab:uq N column
 5	-1	journal-editor	dup T10/T12/T13	tab:combine row label "n=5"; tab:uq N column
 2	-1	journal-editor	dup T10/T12/T13	tab:combine header unit "(GeV/c)^2"; tab:uq header carries it (your +1 row 253)
+3.66	-1	director-helper-3	SK-REFLOW	skeleton (DECISION-20261119c): the parts reflow p. 32, so "the exact-split cross-check (3.66)" ends a line, where freeze_checks' EQTAG_RE reads it as an equation tag; pdftotext counts 3.66 nine times before and after
+150	-1	director-helper-3	SK-REFLOW	same: "a nested half (150)" now ends a line on p. 34 (EQTAG_RE); pdftotext counts "(150)" once before and after
+3.3	-1	director-helper-3	SK-RENUM	skeleton: the heading "3.3 MINERvA driver and pipeline conventions" is renumbered (3.3 to 2.3.3)
+8.1	-1	director-helper-3	SK-RENUM	skeleton: heading "8.1 W as a fifth axis" renumbered
+8.2	-1	director-helper-3	SK-RENUM	skeleton: heading number 8.2 renumbered
+1.1	+1	director-helper-3	SK-RENUM	skeleton: a new subsection number printed on its own line (Part 1's first subsection)
+2.1	+1	director-helper-3	SK-RENUM	skeleton: a new subsection number printed on its own line (Part 2's first subsection)
+1	-2	director-helper-3	SK-RENUM	skeleton: footnote marks renumbered (the footnotes' order follows the parts: "1The pipeline uses one global POT ratio" becomes footnote 2, "2 A dial that moves the spectrum" footnote 1), and a bare "1" heading line gone
+2	+1	director-helper-3	SK-RENUM	same footnote renumbering
+5	-1	director-helper-3	SK-RENUM	skeleton: equation numbers follow the new order, App. A's closure equations now coming first ("the algebra of Eqs. ...-(5)" prints "...-(7)"), and the pointer "App. A.5" now prints as a section sign, which the extractor drops
+7	+1	director-helper-3	SK-RENUM	same equation renumbering
+8	-1	director-helper-3	SK-RENUM	skeleton: reflow of the run-period figure caption (p. 70): its two "8 GeV/c" now fall on lines whose extracted tokens count one "8" (checked with page_tokens); the caption is unchanged
+9	-1	director-helper-3	SK-RENUM	skeleton: the bare heading number "9" (the old sixteen-cell section) is renumbered
+10	+1	director-helper-3	SK-RENUM	skeleton: reflow splits "G18_10a_02_11b's" (\fvval{f1-tune-g18}) so that "10a" starts a line, as journal-editor's dup P31 row records
