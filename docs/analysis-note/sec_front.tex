@@ -152,13 +152,13 @@ Units & Densities in \si{cm^2/nucleon} divided by the product of the kept axes' 
 
 \begin{table}[H]
 \centering\footnotesize
-\caption[Estimator configurations: key]{Estimator configurations: a key to the letters used throughout, restating Table~\ref{tab:estimators-matrix} and \S\ref{sec:method-config}. All use five OmniFold iterations and gradient-boosted trees of nominal capacity (100 trees, 8 leaves) in both OmniFold steps; results from different configurations are not combined.}
+\caption[Estimator configurations: key]{Estimator configurations: a key to the letters used throughout, restating Table~\ref{tab:estimators-matrix} and \S\ref{sec:method-config}.}
 \label{tab:config-key}
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.05\textwidth}>{\raggedright\arraybackslash}p{0.17\textwidth}>{\raggedright\arraybackslash}p{0.19\textwidth}>{\raggedright\arraybackslash}p{0.33\textwidth}>{\raggedright\arraybackslash}p{0.18\textwidth}@{}}
 \toprule
  & Learner & Background treatment & Where used & Status \\
 \midrule
-(a) & LightGBM; seed 42 in two dimensions & purity-based subtraction & five-observable central value and its five-axis covariance (\S\ref{sec:eavailw}); 3D and 4D injected-bump closures (\S\ref{sec:3d}); purity-subtracted 2D comparisons (\S\ref{sec:results-tension}) & produced before the purity bias was found and the refinement was developed \\
+(a) & LightGBM; seed 42 in two dimensions & purity-based subtraction & five-observable central value and its five-axis covariance (\S\ref{sec:eavailw}); 3D and 4D injected-bump closures (\S\ref{sec:3d}); purity-subtracted 2D comparisons (\S\ref{sec:results-tension}) & \S\ref{sec:method-config} \\
 (b) & scikit-learn exact splits; seed not fixed & purity-based subtraction & the 2D exact-split cross-check; studies labeled \emph{exact-split} & cross-check \\
 (c) & LightGBM, deterministic & purity-based subtraction & background bias (\S\ref{sec:val-negweight}); coverage test (\S\ref{sec:coverage-5d}) & studies \\
 (d) & as (c) & negative weights; refinement classifier 100 trees, 8 leaves & background bias; generator-sized $\Eavail$ change (\S\ref{sec:val-negweight}) & studies \\

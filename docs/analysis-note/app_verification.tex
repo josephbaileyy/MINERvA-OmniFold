@@ -5,7 +5,8 @@
 % check_note_records.py docstring (P7); tools/registry/absence_claims.py docstring; .githooks/pre-commit line 349;
 % the column headers of history-cuts/move-manifest-*.tsv; review-tools/meaning_read.sh (a copy committed beside this appendix; the meaning-reads wording and its
 % exceptions clause follow the ruling of 2026-11-18);
-% the AI-use statement of main_note.tex (its sentence on studies specified in writing, and on delegated decisions).
+% the AI-use statement of main_note.tex (on delegated decisions). Its sentence on studies specified in writing prints there only:
+% App. K's copy was cut under the duplicate ruling of 2026-11-19 (dup-routing P07).
 \section{How the note's numbers and statements are checked}
 \label{app:verification}
 
@@ -67,8 +68,7 @@ recorded in the merge commits. Each model was given the diff, the files before a
 asked whether the change added, dropped or weakened any claim. The script that runs these reads is
 \texttt{review-tools/meaning\_read.sh}; most of its reports are kept outside the repository.
 
-\paragraph{Studies and decisions.} Each study was specified in writing before its results were read, unless it is
-labeled descriptive. Where a study has them, its specification, authorization, binding of code and inputs by digest,
+\paragraph{Studies and decisions.} Where a study has them, its specification, authorization, binding of code and inputs by digest,
 independent audit and outcome are recorded in \repopath{docs/orchestration/} (records named \texttt{DECLARATION-}, \texttt{AUTHORIZATION-},
 \texttt{BINDING-}, \texttt{AUDIT-} and \texttt{OUTCOME-}). The first author's decisions are recorded in
 \repopath{docs/orchestration/DECISION-*.md}. Most of these records quote the first author's words verbatim; a decision
