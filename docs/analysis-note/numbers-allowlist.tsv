@@ -293,3 +293,23 @@ token	delta	owner	item	reason
 12	-1	limitation-resolver	dup routing 1acece939 P46	sec_fived16 CH formula cut to its pointer; prints at sec_joint (sec:joint5d-ch)
 13	-2	limitation-resolver	dup routing 1acece939 P46	same formula (12/13, 1/13); prints at sec_joint
 1	-1	limitation-resolver	dup routing 1acece939 P46	same formula (1/13); prints at sec_joint
+1.351	-1	journal-editor	dup T10/T12/T13	tab:combine removed; prints in tab:uq (H3-042)
+1.886	-1	journal-editor	dup T10/T12/T13	same
+2.676	-1	journal-editor	dup T10/T12/T13	same
+2.686	-1	journal-editor	dup T10/T12/T13	same
+2.818	-1	journal-editor	dup T10/T12/T13	same
+8.314	-1	journal-editor	dup T10/T12/T13	same
+10	-6	journal-editor	dup T10/T12/T13	tab:combine's six ×10^n trace exponents; tab:uq prints the same six
+39	-3	journal-editor	dup T10/T12/T13	exponents of 2.686, 2.818, 2.676 e-39; in tab:uq
+40	-2	journal-editor	dup T10/T12/T13	exponents of 1.886, 8.314 e-40; in tab:uq
+41	-1	journal-editor	dup T10/T12/T13	exponent of 1.351e-41; in tab:uq
+0.048	-2	journal-editor	dup T10/T12	tab:combine row and the tab:variance-sources cell (now "Table~\ref{tab:uq}"); in tab:uq
+0.676	-2	journal-editor	dup T10/T12	same
+2.087	-2	journal-editor	dup T10/T12	same
+5.926	-2	journal-editor	dup T10/T12	tab:combine row and the variance-sources universe cell (now "Tables uq and band-medians"); in tab:uq
+6.463	-2	journal-editor	dup T10/T12	tab:combine row and the variance-sources block-sum cell; in tab:uq
+6.85	-1	journal-editor	dup T10/T12/T13	\uqPaper in tab:combine's paper row; in tab:uq
+205	-1	journal-editor	dup T10/T12/T13	tab:combine caption "(205 reported bins)"; tab:uq caption has 205
+300	-1	journal-editor	dup T10/T12/T13	tab:combine row label "N=300"; tab:uq N column
+5	-1	journal-editor	dup T10/T12/T13	tab:combine row label "n=5"; tab:uq N column
+2	-1	journal-editor	dup T10/T12/T13	tab:combine header unit "(GeV/c)^2"; tab:uq header carries it (your +1 row 253)
