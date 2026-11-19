@@ -10,11 +10,12 @@ The shapes are those expected for CC-inclusive scattering at $\langle E_\nu\rang
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.62\textwidth]{MEFHC_5iter_fig13}\\
+  % Chunk B of the figure pass (2026-11-19; DECISION-20261119b, no duplicates): Fig. model_comp_projections is folded in (its published points and its published Tune v1 prediction, dashed); the slice mosaic moved to Figs. fig:ptslices and fig:pzslices. fig:model labels this figure until its citations point here (note-figpass-20261119/README.md).
   \includegraphics[width=0.49\textwidth]{MEFHC_5iter_xsec_proj_pt}
   \includegraphics[width=0.49\textwidth]{MEFHC_5iter_xsec_proj_pz}
-  \caption[The unfolded 2D cross section and its projections]{The unfolded 2D cross section and its projections have the shapes expected for few-GeV CC-inclusive scattering. Bars: weight statistics only, not the covariance. Unfolded-point bars show reweighted-MC weight statistics: square root of summed squared event weights, combined in quadrature with the propagated completeness-ratio bin error (ratio one by construction). These represent neither the data's statistical uncertainty nor the reported covariance. Top: the 2D cross section, in the format of Fig.~13 of Ref.~\cite{MINERvA:2021owq}; bottom: the $\pT$ and $\pPar$ projections. Published-data bars (top) show square roots of the statistical-covariance diagonal. Horizontal bars span bins.}
+  \caption[Projections of the unfolded cross section, with the published data and Tune~v1]{The projections of the unfolded 2D cross section have the shapes expected for few-GeV CC-inclusive scattering, and MINERvA Tune~v1 lies below the data in the peak. Shown: the $\pT$ (left) and $\pPar$ (right) projections of this result (red circles), of the published data (black squares) and of GENIE 2.12.6 $+$ MINERvA Tune~v1 twice, as our simulation's truth, the prior (solid histogram), and as the published prediction from the ancillary files (dashed). Lower panels: this result over the prior. Bars on this result: weight statistics only, not the covariance; the square root of summed squared event weights, combined in quadrature with the propagated completeness-ratio bin error (ratio one by construction). These represent neither the data's statistical uncertainty nor the reported covariance. The published data and the published prediction are drawn without uncertainties. Horizontal bars span bins. The 2D cross section is shown slice by slice in Figs.~\ref{fig:ptslices} and~\ref{fig:pzslices}.}
   \label{fig:xsec}
+  \label{fig:model}
 \end{figure}
 % H3-018 (the structural rewrite, 2026-11-18): the paragraph that stood at the head of this section (sec_results.tex:6 @ 79a934a41)
 % is deleted as a duplicate: its error-bar statements are this caption's and those of Figs. fig:ptslices and fig:pzslices,
@@ -109,8 +110,8 @@ Per-bin differences standardized by the published uncertainty (Fig.~\ref{fig:pul
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.99\textwidth]{MEFHC_5iter_xsec_paper_pt_slices}
-  \caption[Unfolded cross section and the prior, in $\pT$ slices]{The unfolded cross section compared with the prior, GENIE 2.12.6 $+$ MINERvA Tune~v1 simulated truth; no published measurement is used. Bars: weight statistics only, not the covariance (Fig.~\ref{fig:xsec}); they alone enter the descriptive panel $\chi^{2}$, and they represent neither the data's statistical uncertainty nor the reported covariance. Shown: the unfolded cross section (points) and the simulated truth (histogram), sliced in $\pT$ versus $\pPar$. The analysis-MC truth denominator uses the unfolded result's flux, nucleon-count and efficiency normalization. Only the panel format follows Fig.~13 of Ref.~\cite{MINERvA:2021owq}. Published-data comparisons are in Figs.~\ref{fig:pull} and~\ref{fig:model} and Table~\ref{tab:compare}.}
+  \includegraphics[width=\textwidth]{MEFHC_5iter_xsec_paper_pt_slices}
+  \caption[Unfolded cross section, the prior and the published data, in $\pT$ slices]{The unfolded cross section compared with the prior, GENIE 2.12.6 $+$ MINERvA Tune~v1 simulated truth, and with the published data. The panel $\chi^{2}/n$ compares the result with the prior; the published points are shown for comparison and enter no statistic. Bars on the result: weight statistics only, not the covariance (Fig.~\ref{fig:xsec}); they alone enter the descriptive panel $\chi^{2}$, and they represent neither the data's statistical uncertainty nor the reported covariance. Published-data bars show square roots of the statistical-covariance diagonal. Shown: the unfolded cross section (red points), the published data (black squares) and the simulated truth (histogram), sliced in $\pT$ versus $\pPar$. The analysis-MC truth denominator uses the unfolded result's flux, nucleon-count and efficiency normalization. Only the panel format follows Fig.~13 of Ref.~\cite{MINERvA:2021owq}. Published-data comparisons are in Figs.~\ref{fig:xsec} and~\ref{fig:pull} and Table~\ref{tab:compare}.}
   %
   % (\texttt{2d-unfolding/plot\_2d\_paper\_comparison.py} builds it from
   % \texttt{hOFTruthDenom2D}; listed in App.~\ref{app:codebase})
@@ -119,8 +120,8 @@ Per-bin differences standardized by the published uncertainty (Fig.~\ref{fig:pul
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.99\textwidth]{MEFHC_5iter_xsec_paper_pz_slices}
-  \caption[Unfolded cross section and the prior, in $\pPar$ slices]{The unfolded cross section versus simulated truth (Fig.~\ref{fig:ptslices}), sliced in $\pPar$ versus $\pT$, with no published measurement. Bars: weight statistics only, not the covariance, the same error bars as there.}
+  \includegraphics[width=\textwidth]{MEFHC_5iter_xsec_paper_pz_slices}
+  \caption[Unfolded cross section, the prior and the published data, in $\pPar$ slices]{The unfolded cross section versus simulated truth and the published data (Fig.~\ref{fig:ptslices}), sliced in $\pPar$ versus $\pT$. The panel $\chi^{2}/n$ compares the result with the prior; the published points enter no statistic. Bars: on the result, weight statistics only, not the covariance, and on the published points the statistical-covariance diagonal, as there.}
   \label{fig:pzslices}
 \end{figure}
 
@@ -180,12 +181,7 @@ The two-dimensional estimator with deterministic training, the five-observable e
 GENIE 2.12.6~\cite{Andreopoulos:2009rq} with MINERvA Tune v1 under-predicts the published total cross section over the 205 reported bins by $\sim\SI{9}{\percent}$ ($\sigma_{\mathrm{tune}}/\sigma_{\mathrm{data}}=0.91$), and the deficit is concentrated in the low-$\pT$ peak. Figure~\ref{fig:xsec} compares the prediction from the published ancillary files (dashed) with both the published data and this result. Under this covariance the quadratic distance to that prediction is $\chi^{2}/\mathrm{ndf}=33.0$ for the published data and $31.3$ for this result ($26.5$ for the exact-split cross-check). These are descriptive distances. This covariance gives no calibrated significance for a generator comparison (\S\ref{sec:uq-2d-scope}). Our result tracks the data far more closely than the model does (Fig.~\ref{fig:modelmaps}). The published analysis~\cite{MINERvA:2021owq} also compares with NuWro~\cite{Golan:2012wx}, GiBUU~\cite{Buss:2011mx} and NEUT~\cite{Hayato:2009zz}. OmniFold's per-event reweighted truth ensemble can be compared with any such prediction in \emph{any} projection of the classifier features without re-unfolding. An observable outside that space requires a new unfolding, as in the 3D extension (\S\ref{sec:3d}), which adds $\Eavail$ as a classifier feature.
 % Triage A5 (interim cold read, 2026-11-17): 0.91 is 2d-unfolding/model_comp_report.txt ("reported bins: 205"; "model MINERvA_Tune_v1: sigma_tot/data = 0.9124", data = the published result). It is a different region from sec_3d's totals "over the full measurement phase space" (Tune v1 2.71e-38 against 3.07e-38, the 4D 1.13), and it agrees with VALIDATION_LEDGER VL159 (3D, catch bin dropped: Tune v1 -9.5%).
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.85\textwidth]{model_comp_projections}
-  \caption[Projections of this result, the published data and Tune v1]{GENIE 2.12.6 $+$ MINERvA Tune~v1 (blue line) lies below the data in the peak. Uncertainties are not drawn. Shown: projections of this result (red circles) and the published data (black squares).}
-  \label{fig:model}
-\end{figure}
+% Fig. model_comp_projections (fig:model) is folded into Fig. fig:xsec (the figure pass, chunk B, 2026-11-19).
 
 \begin{figure}[H]
   \centering

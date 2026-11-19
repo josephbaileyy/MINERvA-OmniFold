@@ -1,0 +1,117 @@
+{
+ "size_in": [
+  6.5,
+  3.575
+ ],
+ "texts": [
+  [
+   9.3,
+   "$E_{\\rm avail}$ (GeV)"
+  ],
+  [
+   8.3,
+   "0.0"
+  ],
+  [
+   8.3,
+   "0.5"
+  ],
+  [
+   8.3,
+   "1.0"
+  ],
+  [
+   8.3,
+   "1.5"
+  ],
+  [
+   8.3,
+   "2.0"
+  ],
+  [
+   8.3,
+   "2.5"
+  ],
+  [
+   8.3,
+   "3.0"
+  ],
+  [
+   9.3,
+   "$d\\sigma/dE_{\\rm avail}$ ($10^{-38}$ cm$^2$/nucleon/GeV)"
+  ],
+  [
+   8.3,
+   "0"
+  ],
+  [
+   8.3,
+   "0.5"
+  ],
+  [
+   8.3,
+   "1"
+  ],
+  [
+   8.3,
+   "1.5"
+  ],
+  [
+   8.3,
+   "2"
+  ],
+  [
+   8.3,
+   "2.5"
+  ],
+  [
+   8.5,
+   "MINERvA ME FHC, $1.06\\times10^{21}$ POT"
+  ],
+  [
+   8.5,
+   "GENIE-CV QE"
+  ],
+  [
+   8.5,
+   "GENIE-CV RES"
+  ],
+  [
+   8.5,
+   "GENIE-CV DIS"
+  ],
+  [
+   8.5,
+   "GENIE-CV COH"
+  ],
+  [
+   8.5,
+   "+ Valencia MEC (2p2h)"
+  ],
+  [
+   8.5,
+   "data $-$ GENIE-CV (2p2h-shaped gap)"
+  ],
+  [
+   8.5,
+   "unfolded data"
+  ]
+ ],
+ "text_overlaps": [
+  [
+   "+ Valencia MEC (2p2h)",
+   "data $-$ GENIE-CV (2p2h-shaped gap)",
+   20.1
+  ],
+  [
+   "+ Valencia MEC (2p2h)",
+   "unfolded data",
+   127.4
+  ],
+  [
+   "data $-$ GENIE-CV (2p2h-shaped gap)",
+   "unfolded data",
+   156.3
+  ]
+ ]
+}
