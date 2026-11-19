@@ -870,6 +870,14 @@ def test_noise_free_pair_closes_or_stops_before_pass_receipt(
             runner.pair(args, cfg)
         assert not (out / "pair.json").exists()
         assert (out / "pair.npz").exists()
+        stop = runner.read_json(out / "stop.json")
+        assert stop["reason"] == "C-NOM"
+        assert stop["control_checks"] == pytest.approx(
+            {
+                method: 0.03 if method == bad_method else 0.01
+                for method in ("omnifold", "ibu5")
+            }
+        )
     else:
         runner.pair(args, cfg)
         record = runner.read_json(out / "pair.json")
@@ -1006,7 +1014,7 @@ def test_final_inadmissible_draw_stops_before_unfolding(cfg, tmp_path, monkeypat
     ]
 
 
-def test_nominal_signed_background_cancels_exactly(cfg):
+def test_nominal_signed_background_cancels_exactly(cfg, monkeypatch):
     reco = np.array([[0.12, 4.2], [0.13, 4.2]])
     bank = {
         "gen": reco,
@@ -1018,9 +1026,18 @@ def test_nominal_signed_background_cancels_exactly(cfg):
         "bw": np.array([1000.1]),
         "means": np.zeros(224),
     }
+    histogram = core.histogram
+    operands = []
+
+    def record_histogram(pt, pz, weights, cfg):
+        operands.append(weights.tolist())
+        return histogram(pt, pz, weights, cfg)
+
+    monkeypatch.setattr(core, "histogram", record_histogram)
     _, _, target = runner.draw_target(bank, cfg, {}, "nominal", None)
     assert np.count_nonzero(target) == 1
     assert target.sum() == 0.5
+    assert operands == [[0.125, 0.375], [1000.1], [-1000.1]]
     assert core.signed_target_violations(target, target) == []
 
 
