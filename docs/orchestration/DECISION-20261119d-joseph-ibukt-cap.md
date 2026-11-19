@@ -25,7 +25,7 @@
 
 ## Not decided here
 
-- The design change (binned IBU on the signed target), which waits on Joseph's answer.
+- The design change (binned IBU on the signed target). Joseph's answer is recorded in [`DECISION-20261119e-joseph-ibukt-signed-ibu.md`](DECISION-20261119e-joseph-ibukt-signed-ibu.md).
 - Any tolerance change.
 - Any IBUKT result, and any note wording.
 
@@ -33,7 +33,7 @@
 
 - **Citable for:** the IBUKT cap of 6.5 CPU node-h across all runs.
 - **Not citable for:**
-  - the design change or any tolerance change;
+  - any tolerance change (the design change is DECISION-20261119e's);
   - a director go on any stage's script sha;
   - any IBUKT result;
   - any note or paper wording.
