@@ -35,7 +35,7 @@ for src in map(Path, sys.argv[2:]):
         raise SystemExit(f"REFUSE: {rec} exists with other bytes (figs/ is immutable once committed)")
     lines = s.splitlines(True)
     cur = [ln for ln in lines if not ln.startswith("#") and len(ln.split()) >= 3 and ln.split()[0].startswith("install_")
-           and ln.split()[0].endswith("_fig") and ln.split()[1] == base]
+           and ln.split()[0].endswith("fig") and ln.split()[1] == base]
     if len(cur) > 1:
         raise SystemExit(f"REFUSE: {base} has {len(cur)} active install lines")
     if cur and cur[0].split()[:3] == ["install_layout_fig", base, h]:

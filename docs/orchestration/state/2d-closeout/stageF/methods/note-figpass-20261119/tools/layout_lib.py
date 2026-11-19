@@ -8,8 +8,9 @@ layout edit this record's tables declare for the figure named by its saved file'
    canvas is set to the printed size. A size in points then prints at that size when the PDF is included at its
    natural width (the class widths in widths.tsv).
 2. ticks.tsv (figure, axes index, axis x|y, rotation, ha): a tick-label rotation and alignment.
-3. boxes.tsv (figure, axes index, x0, y0, width, height; inches from the canvas's lower left): each named axes is
-   placed in that box. A figure with no boxes row is laid out again with tight_layout().
+3. boxes.tsv (figure, axes index, x0, y0, width, height; inches from the canvas's lower left; optionally a title pad
+   in points): each named axes is placed in that box, and its titles are drawn that far above it. A figure with no
+   boxes row is laid out again with tight_layout().
 Nothing else changes: no datum, colour, style or string. The arms check this: the capture's item hashes (data, colours
 and styles) and the multiset of drawn strings must equal the palette arm's (tools/arms_layout.sh).
 """
@@ -35,7 +36,8 @@ for r in table("ticks.tsv"):
     TICKS.setdefault(r[0], []).append((int(r[1]), r[2], float(r[3]), r[4]))
 BOXES = {}
 for r in table("boxes.tsv"):
-    BOXES.setdefault(r[0], []).append((int(r[1]), float(r[2]), float(r[3]), float(r[4]), float(r[5])))
+    BOXES.setdefault(r[0], []).append((int(r[1]), float(r[2]), float(r[3]), float(r[4]), float(r[5]),
+                                       float(r[6]) if len(r) > 6 and r[6].strip() else None))
 for name in set(TICKS) | set(BOXES):
     if name not in LAYOUT:
         raise SystemExit(f"ticks.tsv / boxes.tsv name {name}, which layout.tsv does not")
@@ -86,11 +88,13 @@ def apply(fig, name):
             t.set_ha(ha)
     fig.set_size_inches(w, h)
     if name in BOXES:
-        names = {n for n, *_ in BOXES[name]}
+        names = {b[0] for b in BOXES[name]}
         if len(names) != len(BOXES[name]) or max(names) >= len(fig.axes):
             raise SystemExit(f"boxes.tsv: {name}: axes {sorted(names)} against {len(fig.axes)} axes")
-        for n, x0, y0, bw, bh in BOXES[name]:
+        for n, x0, y0, bw, bh, pad in BOXES[name]:
             fig.axes[n].set_position([x0 / w, y0 / h, bw / w, bh / h])
+            if pad is not None:   # the axes' title offset (points), as set_title(pad=) sets it; the title texts stay
+                fig.axes[n]._set_title_offset_trans(pad)
     else:
         fig.tight_layout()
     return True

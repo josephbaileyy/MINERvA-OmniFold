@@ -391,7 +391,7 @@ install_palette_fig gbdt_recovery.pdf                        215f740a4b25a46519c
 install_palette_fig gbdt_bias_spread.pdf                     625b9452d4c28299c4a6a38eda3e14fa40670ffeccde9fa67ab154cbedff033e
 install_palette_fig gbdt_coverage.pdf                        511817bdc1e17211141c812f56057ab5f04bbd8ede171978010c1a75a82a87fe
 install_palette_fig gbdt_prior_response.pdf                  aa0b997e73a7babc002b6c4ca4bca23d7c004004f317c9d52e5eb8428c6bfb7e
-install_palette_fig paper_fig_coverage.pdf                   247239f0fec1ca9446195a6a11c2457a66c3041d20d35e4710e678fc05dd088e
+# install_palette_fig paper_fig_coverage.pdf                   247239f0fec1ca9446195a6a11c2457a66c3041d20d35e4710e678fc05dd088e   (figure pass, 2026-11-19: installed below)
 # install_palette_fig paper_fig_bkg_residual.pdf               3cac32b105aa9617706bf38d4398fb2ddc9e1d24c5cab65690d726ddfbf72c4d   (2026-11-18: the W-edge label fixed, installed below)
 install_palette_fig model_comp_projections.pdf               2b60883a3fab04edba0fb36a7bd61ca7d59317028c4863486da6a1440af35029
 install_palette_fig model_comp_ratio_maps.pdf                0c10ff269536b2aa3bd7bead06fc17af1c6d8a9d380c24afd5c7d0ce39ff90e0
@@ -416,8 +416,8 @@ install_newfig() {  # install_newfig <basename under $NNF and in $FIGDIR> <sha25
   fi
   echo "  installed $1 ($want)"
 }
-install_newfig fived16_headline.pdf   69833f108f946b9b51c6795b10f1bdce941971ebf683482623735728e3059e6f
-install_newfig runperiod_steps.pdf    1088ae36889bffeea33182c3940bbf1ace4032dab1ff06e91000443618c12606
+# install_newfig fived16_headline.pdf   69833f108f946b9b51c6795b10f1bdce941971ebf683482623735728e3059e6f   (figure pass, 2026-11-19: installed below)
+# install_newfig runperiod_steps.pdf    1088ae36889bffeea33182c3940bbf1ace4032dab1ff06e91000443618c12606   (figure pass, 2026-11-19: installed below)
 install_palette_fig MEFHC_5iter_fig13.pdf                    0c451b833ce7fff455cb526ff172c27b9e8ed8fa9ff8a422d097116d28691aef
 install_palette_fig MEFHC_5iter_xsec_paper_pt_slices.pdf     180b87866305bf9ededbb94a7ba8aa796a49b3a629bdc219910fb077b1bc4233
 install_palette_fig MEFHC_5iter_xsec_paper_pz_slices.pdf     e64b65ffbf6bae236cc7ee7c1f65f434497b0a8dc5ca0214039a7e4dd1aa941e
@@ -433,7 +433,7 @@ install_restyle_fig MEFHC_5iter_xsec_eff_heatmap.pdf       049fbf9096da5382d0fc3
 # binning (sec_method.tex:207) do (it printed infinity; text_fixes.tsv; runs/bkg5d/). figs/ is immutable once
 # committed, so the corrected file is in figs-r2/.
 RSG="$REPO/docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261117/figs-r2"
-install_restyle_fig paper_fig_bkg_residual.pdf             193cc23653aaed3c86af3cdd405a2a82ca12eea29810749bc86dd6bf4f7e4e83
+# install_restyle_fig paper_fig_bkg_residual.pdf             193cc23653aaed3c86af3cdd405a2a82ca12eea29810749bc86dd6bf4f7e4e83   (figure pass, 2026-11-19: installed below)
 
 echo "== note-figpass-20261119 (digest-checked copy) =="
 # The figure pass (cov2d, the director's request of 2026-11-19): figures drawn at their printed size and laid out again,
@@ -452,6 +452,10 @@ install_layout_fig() {  # install_layout_fig <basename under $NFP and in $FIGDIR
   echo "  installed $1 ($want)"
 }
 install_layout_fig q3_excess_projection.pdf                 32084e6044ae80181b5f627d499012b16197b67f762d02a8a7c6ac9ee1ca47ef
+install_layout_fig paper_fig_coverage.pdf                   e1c3a18072270c99d89de22f2d56f08ae2992d44ed03bba9f325b3b27d2e6b59
+install_layout_fig paper_fig_bkg_residual.pdf               1c6732728aecb53930d26be5f93480d821fd451c3cf868cf054c4c4b993decc1
+install_layout_fig fived16_headline.pdf                     97766f5c52470b8bdc1f46b982fdbdae97d7c67aef9fde4faf9f27e680ee0f3e
+install_layout_fig runperiod_steps.pdf                      4496bcf824d56393e50991b1b6f70068df15ffd73eb5f7add26f738c7e1d95fb
 
 echo
 echo "== paper-only vector crops =="

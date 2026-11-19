@@ -3,7 +3,8 @@
 #   bash arms_layout.sh <worktree> <family> <venv> <base commit> <stem> <extra PYTHONPATH or -> <producer> [args,
 #                       with @OUT@ for the arm's output directory]
 # Arm 0 runs the producer under the palette pass's palette_run.py (the edits that drew the installed file); arm 1
-# under this record's layout_run.py (the same edits, then layout_lib's). Both under capture_palette.py, env -i, an
+# under this record's layout_run.py (the same edits, then layout_lib's). With ARM0=plain (a figure the palette pass
+# left as its producer drew it), arm 0 is the plain producer and arm 1 skips the palette edits (LAYOUT_PALETTE=0). Both under capture_palette.py, env -i, an
 # empty HOME, the venv given, BLAS threads 1. Then:
 #   arm 0's <stem>.pdf against the file installed at the base: bytes_but_date.py and raster.py (or, with
 #   INSTALLED_FROM=<path in the base>, against that file);
@@ -25,9 +26,11 @@ for arm in arm0 arm1; do
   mkdir -p "$O" "$FIGRUN/home" "$FIGRUN/mplcfg-$(basename "$VENV")"
   args=(); for a in "$@"; do args+=("${a//@OUT@/$O}"); done
   if [ $arm = arm0 ]; then wrap="$PT/palette_run.py"; else wrap="$N/tools/layout_run.py"; fi
+  wrapargs=("$wrap"); lp=1
+  if [ "${ARM0:-palette}" = plain ]; then lp=0; [ $arm = arm0 ] && wrapargs=(); fi   # a figure the palette pass left as drawn
   (cd "$O" && env -i PATH="$VENV/bin:/usr/bin:/bin" HOME="$FIGRUN/home" MPLCONFIGDIR="$FIGRUN/mplcfg-$(basename "$VENV")" \
-     PYTHONDONTWRITEBYTECODE=1 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 \
-     PYTHONPATH="$PP" python3 "$PT/capture_palette.py" "$C" "$wrap" "${args[@]}" \
+     LAYOUT_PALETTE=$lp PYTHONDONTWRITEBYTECODE=1 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 \
+     PYTHONPATH="$PP" python3 "$PT/capture_palette.py" "$C" ${wrapargs[@]+"${wrapargs[@]}"} "${args[@]}" \
      > "$O/log.txt" 2>&1) || { echo "FAIL $FAM $arm: rc $? ($(tail -2 "$O/log.txt" | tr '\n' ' '))"; ok=0; }
 done
 inst=$(mktemp)
