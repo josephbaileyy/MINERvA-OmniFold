@@ -9,6 +9,7 @@ PILOT-FB-BINDING-1 at M_PFB 522ac0b6.
     fb_pilot_analyze.py slurm-limit --timelimit HH:MM:SS                                (the job's own --time check)
     fb_pilot_analyze.py smoke-receipt write|check --stage STAGE --pin SHA --local true|false --trace LOG [--exclude F]
     fb_pilot_analyze.py stage-check --stage STAGE                                       (the job's stage inventory)
+    fb_pilot_analyze.py lgbm-check --prefix ENV_PREFIX                     (the job's LightGBM version and location)
 
 ROOT is the run root the job created (runs/A0R with tag rs1_A0, runs/E1 base and jitters 1-20, runs/E2 and runs/E3
 bases; edges/). STAGE holds RS1's A0 products (a0-refs/) and the sigma receipt, copied there by the connect; this tree
@@ -288,15 +289,29 @@ def code_shas(deploy: Path) -> dict:
     return {f: sha256_path(Path(deploy) / "nd-unfolding" / f) for f in CODE_FILES}
 
 
+GIT = ("git", "-c", "core.fsmonitor=false")
+
+
+def git_env() -> dict:
+    """git reads no system or global config (code 6, F3): its own and HOME's configuration cannot run hooks here."""
+    return {**os.environ, "GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": "/dev/null"}
+
+
+def module_problem(module_file: str, prefix: str) -> str | None:
+    """The module must resolve under the declared environment prefix (code 6, F3): a user-site or stray copy fails."""
+    f, pre = os.path.realpath(module_file), os.path.realpath(prefix)
+    return None if f.startswith(pre + os.sep) else f"{f} is not under the declared prefix {pre}"
+
+
 def deploy_problem(deploy: Path | None, pin: str | None) -> str | None:
     if deploy is None:
         return "no deploy given"
     try:
-        head = subprocess.run(["git", "-C", str(deploy), "rev-parse", "HEAD"], capture_output=True, text=True,
-                              check=True).stdout.strip()
-        dirty = subprocess.run(["git", "--no-optional-locks", "-C", str(deploy), "status", "--porcelain",
+        head = subprocess.run([*GIT, "-C", str(deploy), "rev-parse", "HEAD"], capture_output=True, text=True,
+                              check=True, env=git_env()).stdout.strip()
+        dirty = subprocess.run([*GIT, "--no-optional-locks", "-C", str(deploy), "status", "--porcelain",
                                 "--untracked-files=no"],
-                               capture_output=True, text=True, check=True).stdout.strip()
+                               capture_output=True, text=True, check=True, env=git_env()).stdout.strip()
     except (OSError, subprocess.CalledProcessError) as exc:
         return f"the deploy is not a readable git checkout ({exc})"
     if head != pin or dirty:
@@ -362,12 +377,12 @@ def edges_problems(edges: Path) -> tuple[str | None, list]:
         index = json.loads(idx.read_text())
         if index.get("schema") != "pfb-edges/1":
             bad.append(f"edges: INDEX.json's schema is {index.get('schema')!r}, not 'pfb-edges/1'")
-        if index.get("K") != E.K:
+        if type(index.get("K")) is not float or index.get("K") != E.K:  # exact types: a JSON false is not 0.0
             bad.append(f"edges: INDEX.json's K is {index.get('K')!r}, not {E.K!r}")
         for s, c in index["sets"].items():
             want_p = E.SETS.get(s, {})
             for f in ("max_bin", "offset"):
-                if c.get(f) != want_p.get(f):
+                if type(c.get(f)) is not type(want_p.get(f)) or c.get(f) != want_p.get(f):
                     bad.append(f"edges: {s}'s {f} is {c.get(f)!r}, not the declared {want_p.get(f)!r}")
         if set(index["sets"]) != set(SETS) or any(set(c["roles"]) != set(ROLES) for c in index["sets"].values()):
             bad.append("edges: INDEX.json does not list the three sets' four roles")
@@ -737,9 +752,11 @@ def smoke_receipt(stage: Path, pin: str, local: bool, closure: dict | None = Non
     """What the login-node smoke records, and the job requires: its stage, pin, mode, INDEX.json's sha256, the
     sourced setup's file closure, and the names the setup leaves exported."""
     idx = Path(stage) / "smoke-edges" / "INDEX.json"
-    return {"schema": "pfb-smoke/3", "stage": str(stage), "pin": pin, "local_test": bool(local),
+    senv = Path(stage) / "smoke-setup-env.txt"
+    return {"schema": "pfb-smoke/4", "stage": str(stage), "pin": pin, "local_test": bool(local),
             "index_sha256": safe_sha(idx) if idx.is_file() else None, "setup_closure": closure or {},
-            "post_setup_env": post_setup_env() if env_names is None else env_names}
+            "post_setup_env": post_setup_env() if env_names is None else env_names,
+            "setup_env_sha256": safe_sha(senv) if senv.is_file() else None}
 
 
 def smoke_receipt_problem(rec: dict, stage: Path, pin: str, local: bool, closure: dict | None = None,
@@ -749,13 +766,14 @@ def smoke_receipt_problem(rec: dict, stage: Path, pin: str, local: bool, closure
     want = smoke_receipt(stage, pin, local, closure, env_names)
     if want["index_sha256"] is None:
         return "the stage holds no smoke-edges/INDEX.json"
-    diff = [k for k in ("schema", "stage", "pin", "local_test", "index_sha256", "setup_closure", "post_setup_env")
-            if rec.get(k) != want[k]]
+    diff = [k for k in ("schema", "stage", "pin", "local_test", "index_sha256", "setup_closure", "post_setup_env",
+                        "setup_env_sha256") if rec.get(k) != want[k]]
     return f"the smoke receipt differs in {diff}" if diff else None
 
 
 STAGE_FILES = re.compile(r"(slurm-\d+\.(out|err)|job-(\d+|local)\.(refused\.json|env\.log))")
-SMOKE_TOP = ("smoke-receipt.json", "smoke-env.log", "smoke.log", SIGMA_NAME)
+SMOKE_TOP = ("smoke-receipt.json", "smoke-env.log", "smoke.log", "smoke-setup-env.txt", SIGMA_NAME)
+SMOKE_OPTIONAL = ("smoke-sbatch.txt",)  # a production smoke writes it; a local test without sbatch does not
 EDGE_FILES = {f"{s}_{r}.json" for s in SETS for r in ROLES} | {"INDEX.json"}
 
 
@@ -790,7 +808,7 @@ def stage_problems(stage: Path) -> list:
                 why = os.path.islink(p / f) and "a symlink" or plain(p / f)
                 if why:
                     bad.append(f"{e}/{f}: {why}")
-        elif e in SMOKE_TOP or STAGE_FILES.fullmatch(e):
+        elif e in SMOKE_TOP or e in SMOKE_OPTIONAL or STAGE_FILES.fullmatch(e):
             why = plain(p)
             if why:
                 bad.append(f"{e}: {why}")
@@ -843,6 +861,23 @@ def smoke_main(argv) -> int:
     return 0
 
 
+def lgbm_main(argv) -> int:
+    """The job's environment check, run as the tasks run (nd-unfolding first on sys.path): LightGBM 4.6.0, imported
+    from under the declared environment prefix; numpy and the interpreter recorded."""
+    ap = argparse.ArgumentParser(prog="fb_pilot_analyze.py lgbm-check")
+    ap.add_argument("--prefix", required=True)
+    a = ap.parse_args(argv)
+    import lightgbm
+    rec = {"lightgbm": lightgbm.__version__, "lightgbm_file": os.path.realpath(lightgbm.__file__),
+           "numpy": np.__version__, "numpy_file": os.path.realpath(np.__file__), "python": sys.version.split()[0],
+           "executable": sys.executable, "prefix": a.prefix, "user_site_disabled": bool(sys.flags.no_user_site)}
+    why = None if lightgbm.__version__ == "4.6.0" else f"LightGBM is {lightgbm.__version__}, not 4.6.0"
+    why = why or module_problem(lightgbm.__file__, a.prefix)
+    rec["problem"] = why
+    print(json.dumps(rec))
+    return 3 if why else 0
+
+
 def stage_main(argv) -> int:
     ap = argparse.ArgumentParser(prog="fb_pilot_analyze.py stage-check")
     ap.add_argument("--stage", type=Path, required=True)
@@ -869,4 +904,6 @@ if __name__ == "__main__":
         sys.exit(smoke_main(sys.argv[2:]))
     if sys.argv[1:2] == ["stage-check"]:
         sys.exit(stage_main(sys.argv[2:]))
+    if sys.argv[1:2] == ["lgbm-check"]:
+        sys.exit(lgbm_main(sys.argv[2:]))
     sys.exit(main())

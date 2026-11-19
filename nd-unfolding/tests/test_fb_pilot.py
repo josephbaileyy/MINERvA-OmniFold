@@ -668,6 +668,7 @@ class Rev2(unittest.TestCase):
 class Rev3(unittest.TestCase):
     """The code-2 confirmation audits (Codex FAIL, Grok PASS WITH FIXES), each finding with its fix's test."""
     JOB = "77"
+    DECLARED_PY_GIT = {"PYTHONNOUSERSITE": "1", "GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": "/dev/null"}
 
     def setUp(self):
         self._t = tempfile.TemporaryDirectory()
@@ -708,9 +709,11 @@ class Rev3(unittest.TestCase):
         self.nested.parent.mkdir()
         self.nested.write_text("export STUB_NESTED=1\n")
         self.deny_flag, self.extra_flag = self.tmp / "ext" / "deny", self.tmp / "ext" / "extra"
+        self.path_flag = self.tmp / "ext" / "path"
         (d / "setup_salloc_env.sh").write_text(f"# stub setup\nexport STUB_SETUP=1\nsource {self.nested}\n"
                                                f"[ -f {self.deny_flag} ] && export PYTHONSTARTUP=/nowhere\n"
                                                f"[ -f {self.extra_flag} ] && export STUB_EXTRA=1\n"
+                                               f"[ -f {self.path_flag} ] && export PATH=/stub/extra:$PATH\n"
                                                "env | sed 's/^/ENV-DUMP /'\n")
         subprocess.run(["git", "init", "-q", str(d)], check=True)
         subprocess.run(["git", "-C", str(d), "add", "-A"], check=True)
@@ -923,9 +926,10 @@ class Rev3(unittest.TestCase):
         and stage checks run; nothing is written before the stage is validated."""
         stage, root = self.tmp / "stage", self.tmp / "root"
         stage.mkdir()
-        slurm = {"SLURM_JOB_ID": "77", "SLURM_JOB_NUM_NODES": "1", "SLURM_JOB_NAME": "pfb_run"}
+        slurm = {"SLURM_JOB_ID": "77", "SLURM_JOB_NUM_NODES": "1", "SLURM_JOB_NAME": "pfb_run", "SLURM_EXPORT_ENV": "NIL"}
         for extra, why in (({"PFB_LOCAL_TEST": "1"}, "PFB_ variables"), ({"PFB_LOCAL_TEST": ""}, "PFB_ variables"),
-                           ({"SLURM_EXPORT_ENV": "ALL"}, "--export=ALL, not NONE"),
+                           ({"SLURM_EXPORT_ENV": "ALL"}, "export mode is 'ALL', not the approved NIL"),
+                           ({"SLURM_EXPORT_ENV": "NONE"}, "export mode is 'NONE', not the approved NIL"),
                            ({"PFB_LOCAL_TEST": "0"}, "PFB_ variables"), ({"PFB_SETUP_SHA": "x"}, "PFB_ variables"),
                            ({"SLURM_JOB_NUM_NODES": "2"}, "nodes, not 1"),
                            ({"SLURM_JOB_NAME": "rdx_s3_a"}, "pfb_ family")):
@@ -1053,6 +1057,7 @@ class Rev3(unittest.TestCase):
         self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
         got = sorted(str(q.relative_to(stage)) for q in stage.rglob("*"))
         self.assertEqual(got, sorted(["smoke-edges", "smoke-env.log", "smoke-receipt.json", "smoke-unused", "smoke.log",
+                                      "smoke-setup-env.txt",
                                       *(f"smoke-edges/{f}" for f in A.EDGE_FILES)]))
         rec = json.loads((stage / "smoke-receipt.json").read_text())
         self.assertEqual(rec["local_test"], True)
@@ -1106,7 +1111,7 @@ class Rev3(unittest.TestCase):
                          "BASH_ENV runs only in the outer bash the test starts, never after the re-exec")
         self.assertFalse((self.tmp / "pyc").exists())
         r = self.run_smoke(self.tmp / "stage2", PFB_LOCAL_TEST="1", PFB_SETUP_SHA=sha, PFBCLEAN="1", FOO_INHERITED="x",
-                           LC_ALL="C", PYTHONDONTWRITEBYTECODE="1")
+                           LC_ALL="C", PYTHONDONTWRITEBYTECODE="1", **self.DECLARED_PY_GIT)
         self.assertEqual(r.returncode, 2)
         self.assertIn("[pfb] refusing: the environment holds ", r.stderr)
         for f in ("sbatch_pfb.sh", "pfb_smoke_prep.sh"):
@@ -1114,7 +1119,7 @@ class Rev3(unittest.TestCase):
             block = text[text.index("# --- the environment:"):text.index("# --- end of the environment block ---")]
             self.assertIn('exec /usr/bin/env -i "${keep[@]}" /bin/bash --noprofile --norc "$0" "$@"', block)
             if f == "sbatch_pfb.sh":
-                self.assertIn("#SBATCH --export=NONE\n", text)
+                self.assertIn("#SBATCH --export=NIL\n", text)
                 self.assertNotIn("--export=ALL", text)
         blocks = [(ND / f).read_text() for f in ("sbatch_pfb.sh", "pfb_smoke_prep.sh")]
         cut = [t[t.index("# --- the environment:"):t.index("# --- end of the environment block ---")] for t in blocks]
@@ -1267,14 +1272,14 @@ class Rev5(Rev3):
         (self.tmp / "cwd").mkdir()
         _, _, sha = self.deploy()
         base = {"PFBCLEAN": "1", "LC_ALL": "C", "PYTHONDONTWRITEBYTECODE": "1", "HOME": "/global/homes/j/josephrb",
-                "USER": "josephrb", "LOGNAME": "josephrb", "SCRATCH": "/pscratch/sd/j/josephrb"}
+                "USER": "josephrb", "LOGNAME": "josephrb", "SCRATCH": "/pscratch/sd/j/josephrb", **self.DECLARED_PY_GIT}
         r = self.raw_smoke(A.STAGE_DECLARED, {**base, "PATH": "/nondeclared/bin"})
         self.assertEqual(r.returncode, 2)
         self.assertIn("PATH is '/nondeclared/bin', not the declared '/usr/bin:/bin'", r.stderr)
         r = self.raw_smoke(A.STAGE_DECLARED, {**base, "PATH": "/usr/bin:/bin", "HOME": "/nondeclared/home"})
         self.assertIn("HOME is '/nondeclared/home'", r.stderr)
         loc = {"PFBCLEAN": "1", "LC_ALL": "C", "PFB_LOCAL_TEST": "1", "PFB_SETUP_SHA": sha, "HOME": str(self.tmp),
-               "PATH": f"{Path(sys.executable).parent}:/usr/bin:/bin"}
+               "PATH": f"{Path(sys.executable).parent}:/usr/bin:/bin", **self.DECLARED_PY_GIT}
         r = self.raw_smoke(self.tmp / "s1", {**loc, "PYTHONDONTWRITEBYTECODE": "0"})
         self.assertIn("PYTHONDONTWRITEBYTECODE is '0', not the declared '1'", r.stderr)
         r = self.raw_smoke(self.tmp / "s2", loc)
@@ -1320,8 +1325,8 @@ class Rev5(Rev3):
         for f in ("sbatch_pfb.sh", "pfb_smoke_prep.sh"):
             self.assertTrue((ND / f).read_text().startswith(
                 "#!/usr/bin/env -S -u BASH_ENV -u ENV /bin/bash --noprofile --norc\n"), f)
-        launch = ("env -i HOME=/global/homes/j/josephrb PATH=/usr/bin:/bin /bin/bash --noprofile --norc "
-                  "<deploy>/nd-unfolding/pfb_smoke_prep.sh")
+        launch = ('[ -z "${SLURM_JOB_ID-}" ] && /usr/bin/env -i HOME=/global/homes/j/josephrb PATH=/usr/bin:/bin '
+                  "/bin/bash --noprofile --norc <deploy>/nd-unfolding/pfb_smoke_prep.sh")
         self.assertIn(launch, (ND / "pfb_smoke_prep.sh").read_text())
         r = subprocess.run(["/usr/bin/env", "-i", f"HOME={self.tmp}",
                             f"PATH={Path(sys.executable).parent}:/usr/bin:/bin:/usr/sbin:/sbin",
@@ -1353,9 +1358,179 @@ class Rev5(Rev3):
             self.assertTrue(any(why in b for b in A.edges_problems(e)[1]), (why, A.edges_problems(e)[1]))
 
 
-for _cls in (Rev4, Rev5):
+class Rev6(Rev3):
+    """The code-5 confirmation read and the director's code-6 rulings F1-F6."""
+
+    def sbatch_stub(self, version: str, help_text: str) -> Path:
+        b = self.tmp / "sbin"
+        b.mkdir(exist_ok=True)
+        (b / "sbatch").write_text(f"#!/bin/sh\ncase \"$1\" in --version) echo '{version}' ;; *) echo '{help_text}' ;; esac\n")
+        (b / "sbatch").chmod(0o755)
+        return b
+
+    def test_the_job_requires_export_nil(self):
+        """F1: --export=NIL (no --get-user-env login environment); the job accepts only that mode."""
+        text = (ND / "sbatch_pfb.sh").read_text()
+        self.assertIn("#SBATCH --export=NIL\n", text)
+        self.assertNotIn("--export=NONE\n", text)
+        slurm = {"SLURM_JOB_ID": "77", "SLURM_JOB_NUM_NODES": "1", "SLURM_JOB_NAME": "pfb_run"}
+        r = self.run_job(A.STAGE_DECLARED, A.ROOT_DECLARED, **slurm)
+        self.assertIn("export mode is '<unset>', not the approved NIL", r.stderr)
+        r = self.run_job(A.STAGE_DECLARED, A.ROOT_DECLARED, SLURM_EXPORT_ENV="NIL", **slurm)
+        self.assertNotIn("export mode", r.stderr)
+
+    def test_the_smoke_confirms_nil_without_submitting(self):
+        """F1: the smoke records sbatch --version and --help and accepts NIL if the help names it or the version is at
+        least 23.02.3; otherwise it stops with exit 8."""
+        (self.tmp / "cwd").mkdir()
+        _, _, sha = self.deploy()
+        path = lambda b: f"{b}:{Path(sys.executable).parent}:/usr/bin:/bin:/usr/sbin:/sbin"  # noqa: E731
+        r = self.run_smoke(self.tmp / "s1", PFB_LOCAL_TEST="1", PFB_SETUP_SHA=sha,
+                           PATH=path(self.sbatch_stub("slurm 24.05.4", "--export=names")))
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+        rec = (self.tmp / "s1" / "smoke-sbatch.txt").read_text()
+        self.assertIn("slurm 24.05.4", rec)
+        self.assertIn("NIL accepted: sbatch --version 24.05.4 is at least 23.02.3", rec)
+        r = self.run_smoke(self.tmp / "s2", PFB_LOCAL_TEST="1", PFB_SETUP_SHA=sha,
+                           PATH=path(self.sbatch_stub("slurm 23.02.2", "--export=names")))
+        self.assertEqual(r.returncode, 8, r.stderr)
+        self.assertIn("STOP: this sbatch shows no --export=NIL support", r.stderr)
+        self.assertFalse((self.tmp / "s2" / "smoke-receipt.json").exists())
+        r = self.run_smoke(self.tmp / "s3", PFB_LOCAL_TEST="1", PFB_SETUP_SHA=sha,
+                           PATH=path(self.sbatch_stub("slurm 23.02.2", "--export=names|ALL|NIL|NONE")))
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertIn("NIL accepted: sbatch --help names NIL", (self.tmp / "s3" / "smoke-sbatch.txt").read_text())
+        (self.tmp / "s3" / "a0-refs").mkdir()
+        for s_ in (None, *A.SEEDS):
+            (self.tmp / "s3" / "a0-refs" / A.name("rs1_A0", s_)).write_bytes(b"a0")
+        (self.tmp / "s3" / A.SIGMA_NAME).write_text("{}")
+        self.assertEqual(A.stage_problems(self.tmp / "s3"), [], "the stage inventory admits the sbatch record")
+
+    def test_the_documented_smoke_launch_refuses_inside_an_allocation(self):
+        """F2: the reviewed launch line itself, not a direct bash call: inside an allocation it refuses before the
+        environment is cleared, so the script never runs."""
+        import subprocess
+        d, pin, _ = self.deploy()
+        line = next(ln[1:].strip() for ln in (ND / "pfb_smoke_prep.sh").read_text().splitlines()
+                    if "pfb_smoke_prep.sh <deploy> <pin>" in ln and ln.startswith("#   "))
+        cmd = line.replace("<deploy>/nd-unfolding/pfb_smoke_prep.sh", str(ND / "pfb_smoke_prep.sh")) \
+            .replace("<deploy>", str(d)).replace("<pin>", pin)
+        r = subprocess.run(["/bin/bash", "-c", cmd], env={"SLURM_JOB_ID": "5", "PATH": "/usr/bin:/bin"},
+                           capture_output=True, text=True)
+        self.assertNotEqual(r.returncode, 0)
+        self.assertNotIn("[pfb", r.stderr, "the smoke never started inside an allocation")
+        r = subprocess.run(["/bin/bash", "-c", cmd], env={"PATH": "/usr/bin:/bin"}, capture_output=True, text=True)
+        self.assertIn("[pfb-smoke] refusing", r.stderr, "outside an allocation the documented line runs the smoke")
+
+    def test_user_site_and_git_config_are_off(self):
+        """F3: PYTHONNOUSERSITE=1 and git's system/global config off are declared values, checked; G4's git runs with
+        fsmonitor off; LightGBM must resolve under the declared prefix."""
+        import unittest.mock as um
+        (self.tmp / "cwd").mkdir()
+        _, _, sha = self.deploy()
+        r = self.run_smoke(self.tmp / "stage", PFB_LOCAL_TEST="1", PFB_SETUP_SHA=sha)
+        self.assertEqual(r.returncode, 0, r.stderr)
+        dump = (self.tmp / "stage" / "smoke-env.log").read_text()
+        for want in ("ENV-DUMP PYTHONNOUSERSITE=1", "ENV-DUMP GIT_CONFIG_NOSYSTEM=1", "ENV-DUMP GIT_CONFIG_GLOBAL=/dev/null"):
+            self.assertIn(want, dump)
+        loc = {"PFBCLEAN": "1", "LC_ALL": "C", "PYTHONDONTWRITEBYTECODE": "1", "PFB_LOCAL_TEST": "1", "HOME": str(self.tmp),
+               "PATH": f"{Path(sys.executable).parent}:/usr/bin:/bin", **self.DECLARED_PY_GIT}
+        for k, bad in (("PYTHONNOUSERSITE", "0"), ("GIT_CONFIG_GLOBAL", str(self.tmp / ".gitconfig"))):
+            import subprocess
+            r = subprocess.run(["/bin/bash", str(ND / "pfb_smoke_prep.sh"), "/x", "0" * 40, str(self.tmp / "s9")],
+                               env={**loc, k: bad}, capture_output=True, text=True)
+            self.assertIn(f"{k} is '{bad}'", r.stderr)
+        seen = []
+        real = A.subprocess.run
+
+        def spy(cmd, **kw):
+            seen.append((list(cmd), kw.get("env", {})))
+            return real(cmd, **kw)
+
+        d, pin, _ = self.deploy()
+        with um.patch.object(A.subprocess, "run", spy):
+            self.assertIsNone(A.deploy_problem(d, pin))
+        self.assertTrue(seen and all(c[:3] == ["git", "-c", "core.fsmonitor=false"] for c, _ in seen), seen)
+        self.assertTrue(all(e.get("GIT_CONFIG_NOSYSTEM") == "1" and e.get("GIT_CONFIG_GLOBAL") == "/dev/null"
+                            for _, e in seen))
+        pre = self.tmp / "envs" / "root_6_28"
+        (pre / "lib").mkdir(parents=True)
+        self.assertIsNone(A.module_problem(str(pre / "lib" / "lightgbm" / "__init__.py"), str(pre)))
+        self.assertIn("not under", A.module_problem(str(self.tmp / ".local" / "lightgbm" / "__init__.py"), str(pre)))
+        self.assertIn("not under", A.module_problem(str(self.tmp / "envs" / "root_6_28x" / "lgb.py"), str(pre)))
+        text = (ND / "sbatch_pfb.sh").read_text()
+        self.assertIn('python3 fb_pilot_analyze.py lgbm-check --prefix "$LGBM_PREFIX"', text)
+
+    def test_the_setup_values_are_reproduced_before_any_setup_tool(self):
+        """F4: the values the setup leaves (PATH, PYTHONPATH, LD_*, CONDA_*, git config) are the smoke's, compared before
+        the live limit, the stage check or the receipt check run anything the setup selected."""
+        stage, sha = self.staged()
+        self.assertIn("PATH=", (stage / "smoke-setup-env.txt").read_text())
+        self.assertIn("PYTHONNOUSERSITE=1", (stage / "smoke-setup-env.txt").read_text())
+        self.path_flag.write_text("")
+        (stage / "extra").symlink_to(self.tmp / "deploy")  # a stage-check failure too: the value check must come first
+        r = self.run_job(stage, self.tmp / "root", PFB_LOCAL_TEST="1", PFB_SETUP_SHA=sha)
+        self.assertEqual(r.returncode, 2, r.stderr)
+        rec = json.loads((stage / "job-local.refused.json").read_text())["preflight_refused"]
+        self.assertIn("environment values", rec)
+        self.assertFalse((self.tmp / "root").exists())
+
+    def test_boolean_policy_fields_fail(self):
+        """F5: a JSON false for an offset of 0.0, or true for K, is not the declared number."""
+        c = self.run_tree()
+        e = c["root"] / "edges"
+        idx = json.loads((e / "INDEX.json").read_text())
+        for edit, why in ((lambda i: i["sets"]["E1"].update(offset=False), "E1's offset is False"),
+                          (lambda i: i["sets"]["E3"].update(max_bin=127.0), "E3's max_bin is 127.0"),
+                          (lambda i: i.update(K=True), "K is True")):
+            j = json.loads(json.dumps(idx))
+            edit(j)
+            (e / "INDEX.json").write_text(json.dumps(j))
+            self.assertTrue(any(why in b for b in A.edges_problems(e)[1]), (why, A.edges_problems(e)[1]))
+
+    def test_j2_rebuilds_the_jitter_from_the_jittered_sources(self):
+        """F6: in a run, J2's rebuilt selection is build_pseudo on the jittered inputs and background, with the run's
+        own truth, amplitude, split key, pseudo-seed and ratio (fb_pilot_probe.py, the jitter rebuild)."""
+        import unittest.mock as um
+        rng = np.random.default_rng(3)
+        good = np.column_stack([f32(np.round(rng.normal(3, 1, 3000), 3)) for _ in range(5)])
+        edges = self.tmp / "edges"
+        E.build_edges({r: (good, None) for r in E.ROLES}, edges)
+        exp = J().exp(np.random.default_rng(5))
+        base = {k: f32(np.round(np.random.default_rng(7).normal(2, 1, (50, 5)), 2)) for k in P.SOURCES}
+        inputs = {**base, "edges": [np.array([-50.0, 50.0])] * 5}
+        bkg = {"bkg_reco": f32(np.round(np.random.default_rng(8).normal(2, 1, (20, 5)), 2))}
+        ji = {k: v + 1e-3 for k, v in base.items()}
+        jb = {"bkg_reco": bkg["bkg_reco"] + 1e-3}
+        calls = []
+
+        def fake_build(i, b, truth, amplitude, split_key, seed, ratio):
+            calls.append((i, b, truth, amplitude, split_key, seed, ratio))
+            return (exp,)
+
+        ns = type("NS", (), {"truth": "eavail_shape", "amplitude": 1.0, "pseudo_seed": 990000,
+                             "eavail_ratio": str(ND.parent / P.rmp.STABILITY["ratio"])})()
+        with um.patch.object(P.s5p_numerics, "jittered", lambda i, b, j: (ji, jb)), \
+                um.patch.object(P.s5p_numerics, "unfold_one", lambda *a, **k: "unfolded"), \
+                um.patch.object(P.s5n_pseudo, "build_pseudo", fake_build):
+            with P.install("run", "E1", edges) as st:
+                st.update(ns=ns, seed=3, inputs=inputs, bkg=bkg, sources=(ji, jb))
+                self.assertEqual(P.s5p_numerics.unfold_one({}, np.float64, 42, 32, 5), "unfolded")
+        self.assertEqual(len(calls), 2, "the base rebuild, then the jitter rebuild")
+        i, b, truth, amplitude, split_key, seed, ratio = calls[1]
+        self.assertIs(i, ji, "the jitter rebuild reads the jittered inputs")
+        self.assertIs(b, jb, "and the jittered background")
+        self.assertEqual((truth, amplitude, seed), ("eavail_shape", 1.0, 990000))
+        self.assertEqual(split_key, P.s5c_pseudo.split_key_for(990000))
+        self.assertIsInstance(ratio, dict)
+        self.assertIs(calls[0][0], inputs, "the base rebuild reads the unjittered inputs")
+        self.assertEqual(st["j"]["j1"], [], "the sources the run used are the jittered ones it recorded")
+
+
+for _cls in (Rev4, Rev5, Rev6):
     for _n in [n for n in vars(Rev3) if n.startswith("test_")]:
         setattr(_cls, _n, None)  # not collected twice: unittest collects only callable test_ attributes
+del _cls, _n  # a module-level alias of a TestCase class would be collected again (code 5's count)
 
 
 if __name__ == "__main__":
