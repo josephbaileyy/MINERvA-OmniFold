@@ -735,7 +735,7 @@ class ResultLineNamesItsObjectTest(unittest.TestCase):
     BODIES = {"main_records": r"struck $\dead{1.234}$ here and $\dead{1.014}$, $\dead{1.65}$, $\dead{0.377}$ and $\dead{6.86}$",
               "pet_note": r"struck $\dead{5.678}$ here and $\dead{0.912}$",
               "main_note": "clean posted note", "main_paper": "clean paper", "main_primer": "clean primer"}
-    EXEMPT_SOURCES = {"sec_validation.tex": "the injected bump (mean weight 1.014)\n",
+    EXEMPT_SOURCES = {"sec_q3_bias.tex": "the injected bump (mean weight 1.014)\n",
                       "values.tex": "\\newcommand{\\covTwoDCTwo}{0.912}\n",
                       # 2026-11-17: the 0.377 entry (f70e1d59f, the note's currency batch A) needs its source too
                       "values_fived16.tex": "\\@namedef{fv@g-tune-pull-R15}{1.65}\n\\@namedef{fv@prr-rho-ibu200-q3}{-0.377}\n",
@@ -1040,10 +1040,10 @@ class ExemptionGuardTest(unittest.TestCase):
         self.assertIn("CONTEXT_EXEMPT[('main_note', '0.912')] holds", out)
 
     def test_a_context_that_no_longer_prints_FAILS(self):
-        (self.note / "sec_validation.tex").write_text("the injected bump, reworded\n")
+        (self.note / "sec_q3_bias.tex").write_text("the injected bump, reworded\n")
         code, line, out = self._run()
         self.assertEqual(code, 1, out)
-        self.assertIn("CONTEXT_EXEMPT[('main_note', '1.014')] is STALE: sec_validation.tex no longer contains", out)
+        self.assertIn("CONTEXT_EXEMPT[('main_note', '1.014')] is STALE: sec_q3_bias.tex no longer contains", out)
 
     def test_a_missing_source_file_FAILS(self):
         (self.note / "values.tex").unlink()
