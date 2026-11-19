@@ -94,17 +94,10 @@ Marginalizing over $\Eavail$ should reproduce the 2D result of \S\ref{sec:result
 
 \begin{figure}[H]
   \centering
-  % Layout (cov2d figure pass, 2026-11-19): the producer's 864 x 360 pt canvas, split into its two panels, each at the full text width (scale about 1.1; it was 0.38); the distribution panel follows in a continuation float. The superscripts stay below 7 pt pending a producer re-render (note-figpass-20261119/README.md).
-  \includegraphics[width=\textwidth,trim=5 11 434 0,clip]{eavail_marginal_vs_paper_pull_full}
+  % The figure pass, chunk D (2026-11-19): redrawn at its printed size from the fetched config-(a) product (0dd94830), its two panels stacked, every text at least 10 pt, "pull" read as "standardized difference" as the caption names it (note-figpass-20261119/README.md).
+  \includegraphics[width=\textwidth]{eavail_marginal_vs_paper_pull_full}
   \caption[Descriptive marginal comparison, configuration~(a)]{Development check: configuration~(a) gives descriptive standardized differences, not formal independent-result pulls. Shared data and unavailable cross-covariance impose this restriction. The per-bin differences of the $\Eavail$-marginal are scaled by published uncertainties and shown on the $14\times16$ grid and in distribution. Configuration~(a) uses purity-based subtraction (\S\ref{sec:method-config}).}
   \label{fig:eavail-marg}
-\end{figure}
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=\textwidth,trim=430 11 6 0,clip]{eavail_marginal_vs_paper_pull_full}
-
-  Figure~\ref{fig:eavail-marg}: continued, the per-bin differences in distribution.
 \end{figure}
 
 \subsection{Closure for one injected available-energy deformation}
@@ -124,7 +117,7 @@ Our gradient-boosted decision trees differ from the neural-network classifiers u
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{nn_vs_gbdt_full}
-  \caption[Classifier-family development check, configuration~(a)]{Development check: the configuration-(a) result agrees between the two tested classifier families in the populated bulk. No uncertainty drawn (as in Fig.~\ref{fig:eavail}). The five-iteration OmniFold cross-check uses identical weighted 3D inputs and extraction, changing only the classifier family. Top: absolutely normalized GBDT (configuration~(a)) and Keras-MLP projections; bottom: binwise ratio. The MLP/GBDT total-cross-section ratio is $1.0078$; median absolute projection differences are \SI{1.20}{\percent} in $\pT$, \SI{1.36}{\percent} in $\pPar$, and \SI{0.66}{\percent} in $\Eavail$. Larger excursions occur only in sparsely populated outermost $\pT$ and $\pPar$ bins.}
+  \caption[Classifier-family development check, configuration~(a)]{Development check: the configuration-(a) result agrees between the two tested classifier families in the populated bulk. No uncertainty drawn (as in Fig.~\ref{fig:eavail}). The five-iteration OmniFold cross-check uses identical weighted 3D inputs and extraction, changing only the classifier family. Top: absolutely normalized GBDT (configuration~(a)) and Keras-MLP projections, whose panel tags pt, pz and eavail denote $\pT$, $\pPar$ and $\Eavail$; bottom: binwise ratio. The MLP/GBDT total-cross-section ratio is $1.0078$; median absolute projection differences are \SI{1.20}{\percent} in $\pT$, \SI{1.36}{\percent} in $\pPar$, and \SI{0.66}{\percent} in $\Eavail$. Larger excursions occur only in sparsely populated outermost $\pT$ and $\pPar$ bins.}
   \label{fig:calibration}
 \end{figure}
 
@@ -190,11 +183,10 @@ Ascencio \emph{et al.}~\cite{MINERvA:2022incl} report the same deficit in MINERv
 
 \begin{figure}[H]
   \centering
-  % Chunk B of the figure pass (2026-11-19; DECISION-20261119b): Figs. mode_decomp and compare_mec in one panel, each series drawn once (compare_mec's CV bars are the mode stack's total, its data line the same); fig:mec labels it too.
+  % Chunk B of the figure pass (2026-11-19; DECISION-20261119b): Figs. mode_decomp and compare_mec in one panel, each series drawn once (compare_mec's CV bars are the mode stack's total, its data line the same).
   \includegraphics[width=\textwidth]{mode_decomp_mec_eavail_central}
-  \caption[GENIE interaction modes and Valencia 2p2h, central values only]{The GENIE central-value $d\sigma/d\Eavail$ contains no 2p2h component, and GENIE regenerated with Valencia 2p2h closes about half the low-$\Eavail$ data$-$CV gap in central values (\SI{52}{\percent}). No uncertainty drawn (as in Fig.~\ref{fig:eavail}). Shown: the central-value spectrum by interaction mode (stacked greys, summing to the no-2p2h CV), the Valencia 2p2h addition stacked on it (orange; both flux-repaired), the data$-$CV gap (outline) and the unfolded data. The remainder of the gap occupies the region the MINERvA tune's empirical enhancement is built to absorb.}
+  \caption[GENIE interaction modes and Valencia 2p2h, central values only]{The GENIE central-value $d\sigma/d\Eavail$ contains no 2p2h component, and GENIE regenerated with Valencia 2p2h closes about half the low-$\Eavail$ data$-$CV gap in central values (\SI{52}{\percent}). No uncertainty drawn (as in Fig.~\ref{fig:eavail}). Shown: the central-value spectrum by interaction mode (stacked grays, summing to the no-2p2h CV), the Valencia 2p2h addition stacked on it (orange; both flux-repaired), the data$-$CV gap (outline) and the unfolded data. The remainder of the gap occupies the region the MINERvA tune's empirical enhancement is built to absorb.}
   \label{fig:modedecomp}
-  \label{fig:mec}
 \end{figure}
 
 \subsection{Fourth axis: three-momentum transfer $q_{3}$}

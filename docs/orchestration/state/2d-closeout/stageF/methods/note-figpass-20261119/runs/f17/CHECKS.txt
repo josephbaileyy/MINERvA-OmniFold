@@ -1,0 +1,14 @@
+# f17 (Fig. 17 redrawn at printed size, chunk D), 2026-11-19T05:35:37Z: ARM0=plain INSTALLED_STRINGS=1 bash tools/arms_layout.sh <wt> f17 figenv/rootmpl3108 c3b4e8842 eavail_marginal_vs_paper_pull_full - note-figstyle-20261117/tools/remap_anc.py <anc> 2d-unfolding/compare_to_paper_fullcov.py --ours <figfetch/f3d-a>/xsec_3d_MEFHC_5iter_lgbm.root --out-prefix @OUT@/eavail_marginal_vs_paper; input sha256 0dd94830821576a3b060fae2d4a20564610c535ed06046cd1eb05cd11885dd59 (the read-only fetch of 2026-11-19, figfetch/fetch-3d-a.sh a067e07d)
+== f17 (eavail_marginal_vs_paper_pull_full): arm 0's drawn strings against the text of the file installed at c3b4e8842 (pdftotext)
+installed words and decimals: 15 (decimals ['0.16', '0.83', '1.06', '4.98']); missing from arm 0's drawn strings: []
+== f17: arm 1 against arm 0
+captures: eavail_marginal_vs_paper_pull_full.pdf.json eavail_marginal_vs_paper_pull_full.png.json 
+  equal  f17/eavail_marginal_vs_paper_pull_full.pdf.json: 34 data artists
+  equal  f17/eavail_marginal_vs_paper_pull_full.png.json: 34 data artists
+COMPARE :: PASS
+strings eavail_marginal_vs_paper_pull_full: equal (49 drawn strings)
+  arm 0: canvas 12.000 x 5.000 in; font size min 8.00, median 10.00 pt; text overlaps 0
+  arm 1: canvas 6.500 x 7.500 in; font size min 10.00, median 10.00 pt; text overlaps 0
+ARMS-LAYOUT f17 :: PASS
+== the producer's printed values (arm 0 log):  PAPER (stat+syst) chi2 = 1021.11 ndf = 205 chi2/ndf = 4.981; pull mean / rms : 0.159 / 0.828;
+== installed figs/eavail_marginal_vs_paper_pull_full.pdf = this run's arm 1: yes

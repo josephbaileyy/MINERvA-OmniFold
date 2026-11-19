@@ -1,0 +1,5 @@
+# Labels added to a family-4 figure before the palette edits (figure, axes index, kind: ylabel | above, text).
+figure	axes	kind	text
+ascencio_fullcov_compare_central	1	ylabel	$d^2\sigma/(dE_{\rm avail}\,dq_3)$ (cm$^2$/GeV$^2$/nucleon)
+ascencio_fullcov_compare_central	0	above	$q_3\in[0.4,0.6)$ GeV
+ascencio_fullcov_compare_central	1	above	$q_3\in[0.6,1.2)$ GeV

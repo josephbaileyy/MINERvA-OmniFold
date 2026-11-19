@@ -287,10 +287,10 @@ install_re1_fig() {  # install_re1_fig <basename under $RE1F and in $FIGDIR> <sh
   echo "  installed $1 ($want)"
 }
 install_re1_fig eavail_spectrum.pdf                     d2ae66c4149c8f33a7cc5e3635cc86e4e839e20045c3752c8bf87ff4e3aadf49
-install_re1_fig generators_vs_unfolded_band_central.pdf 48210da26e8e84bd8cae0d83df1de85a5996c005d78f2a959225efd24e44e3b1
+# install_re1_fig generators_vs_unfolded_band_central.pdf 48210da26e8e84bd8cae0d83df1de85a5996c005d78f2a959225efd24e44e3b1   (figure pass, 2026-11-19: installed below)
 install_re1_fig mode_decomp_eavail_central.pdf          009a26be4dc3b1a8ec7bfc51ee1e038c74b6a62e6490e027ece08b63f4febc12
 install_re1_fig compare_mec_eavail_central.pdf          09e2b824cfa10671f3bbab33764778424493011081e40ea507073e3307fd63f4
-install_re1_fig ascencio_fullcov_compare_central.pdf    9bd4316e8bd94ecd6b0681ef955579fbf0e867847a6f43274fda64349584d2a5
+# install_re1_fig ascencio_fullcov_compare_central.pdf    9bd4316e8bd94ecd6b0681ef955579fbf0e867847a6f43274fda64349584d2a5   (figure pass, 2026-11-19: installed below)
 
 echo
 echo "== note print style (2026-11-13; digest-checked copy) =="
@@ -315,7 +315,7 @@ install_printstyle_fig() {  # install_printstyle_fig <basename under $NPS and in
 # install_printstyle_fig gbdt_bias_spread.pdf             f1786f4862eea1a3439b79ef7af2132969e95f7fb087bddcf9661802cf6310c2   (note palette, 2026-11-17: installed below)
 # install_printstyle_fig gbdt_coverage.pdf                422ef3f7c8e53b47d371cbeee68742a869ec372394c81a8324a121c18a10fd54   (note palette, 2026-11-17: installed below)
 # install_printstyle_fig gbdt_prior_response.pdf          445374318044846a72b8a71da3a474d3d63820e8f5491ac6d5eb06a42745a2d3   (note palette, 2026-11-17: installed below)
-install_printstyle_fig minerva_unfolding_landscape.pdf  bf1f14eae609fdf06f01a248674a175a1df72bd0ed1b4c8f269b860e66b78372
+# install_printstyle_fig minerva_unfolding_landscape.pdf  bf1f14eae609fdf06f01a248674a175a1df72bd0ed1b4c8f269b860e66b78372   (figure pass, 2026-11-19: installed below)
 # Group C, family 1 (2026-11-14): drawn locally with --from-arrays --print-style from the dumps of one cluster pass
 # (note-figstyle-20261113/runs/family1/dumps/; recipe: make_control_plots.py / plot_control_corner.py --from-arrays <dump> --print-style).
 install_printstyle_fig migration_resolution.pdf         7ea7fd45dd7276b193f2ca4554a8247c6ee528a2e59acace4666e9486af8cc9b
@@ -379,10 +379,10 @@ install_palette_fig() {  # install_palette_fig <basename under $NPAL and in $FIG
   echo "  installed $1 ($want)"
 }
 # Family 4 (Figs. 19-22): tools/palette_family4.py on the pinned pickles (matplotlib 3.10.8); runs/family4/.
-install_palette_fig generators_vs_unfolded_band_central.pdf  1563f52b347938593bc4033fcaff22fa32cd33eb463f23d8b1ff9533e5252b7d
+# install_palette_fig generators_vs_unfolded_band_central.pdf  1563f52b347938593bc4033fcaff22fa32cd33eb463f23d8b1ff9533e5252b7d   (figure pass, 2026-11-19: installed below)
 install_palette_fig mode_decomp_eavail_central.pdf           270237928effabf36fa59be7de86d6a8c4023bc9187b8a7c8978ee2b6090cf31
 install_palette_fig compare_mec_eavail_central.pdf           2e81a44506e958fda4f063c5b88350a4d3eb6f00d4d02c4906c34bb94e39a2aa
-install_palette_fig ascencio_fullcov_compare_central.pdf     0d65baa9b139a7b45da54e54042b6b18c3a08b2d3c82fd05d64629d86452a1ab
+# install_palette_fig ascencio_fullcov_compare_central.pdf     0d65baa9b139a7b45da54e54042b6b18c3a08b2d3c82fd05d64629d86452a1ab   (figure pass, 2026-11-19: installed below)
 install_palette_fig eavailW_band.pdf                         ded40ea27702a8654d99d96d53336d037292424c718fa4427fb9ef8764408584
 # install_palette_fig q3_excess_projection.pdf                 8a3a5bb5d44156432b249d7165e56cbcfed464b6c7ff69d0bd37ee2e94df3d88   (figure pass, 2026-11-19: installed below)
 install_palette_fig eavail_spectrum.pdf                      457fa20edec3de6520de49e99b04f4c989e7cc175289edc4b96d62383807dac1
@@ -390,7 +390,7 @@ install_palette_fig control_plots.pdf                        9bfd50652a470a7f2ed
 install_palette_fig gbdt_recovery.pdf                        215f740a4b25a46519cc7b2bad5240730aa90aec4cb0d4cc7f1d0f3e3f8c191e
 install_palette_fig gbdt_bias_spread.pdf                     625b9452d4c28299c4a6a38eda3e14fa40670ffeccde9fa67ab154cbedff033e
 install_palette_fig gbdt_coverage.pdf                        511817bdc1e17211141c812f56057ab5f04bbd8ede171978010c1a75a82a87fe
-install_palette_fig gbdt_prior_response.pdf                  aa0b997e73a7babc002b6c4ca4bca23d7c004004f317c9d52e5eb8428c6bfb7e
+# install_palette_fig gbdt_prior_response.pdf                  aa0b997e73a7babc002b6c4ca4bca23d7c004004f317c9d52e5eb8428c6bfb7e   (figure pass, 2026-11-19: installed below)
 # install_palette_fig paper_fig_coverage.pdf                   247239f0fec1ca9446195a6a11c2457a66c3041d20d35e4710e678fc05dd088e   (figure pass, 2026-11-19: installed below)
 # install_palette_fig paper_fig_bkg_residual.pdf               3cac32b105aa9617706bf38d4398fb2ddc9e1d24c5cab65690d726ddfbf72c4d   (2026-11-18: the W-edge label fixed, installed below)
 install_palette_fig model_comp_projections.pdf               2b60883a3fab04edba0fb36a7bd61ca7d59317028c4863486da6a1440af35029
@@ -461,6 +461,11 @@ install_layout_fig MEFHC_5iter_xsec_proj_pt.pdf             f401ad1c3de18a34305f
 install_layout_fig MEFHC_5iter_xsec_proj_pz.pdf             506e13cdc6eabe08a564323605bb1ed7b07fbd0327d2d1602cacc784b046b8ff
 install_layout_fig MEFHC_5iter_xsec_paper_pt_slices.pdf     b4cec2839a2b5f44d9a17bfa1093cfbe3bb6ac5afde179bf99962375284d31ca
 install_layout_fig MEFHC_5iter_xsec_paper_pz_slices.pdf     693ea449dbfc3514b2af9ae10039793476c1764e560c5b5ee9e59774f65ce072
+install_layout_fig generators_vs_unfolded_band_central.pdf  719a53b2ed01ceb90955f0e2da74db6c087b2aabfc7d76bcae848e1a28238a8e
+install_layout_fig ascencio_fullcov_compare_central.pdf     b84137b9ce240accd0e533b5f535a35d9b12ef1d7a5268bed7e37204e6187804
+install_layout_fig minerva_unfolding_landscape.pdf          936ed2515cace3398a12c709511033a527aed86ee314ee61325081d68871a486
+install_layout_fig eavail_marginal_vs_paper_pull_full.pdf   2560812e76ed9e6fc2df5c1fd86f10146a09a2f6a510c9976d091d6c4ae150aa
+install_layout_fig gbdt_prior_response.pdf                  add7161d72612f6916103524fa6e3c761dac75f65161dbb75d4bad452c10b5d3
 
 echo
 echo "== paper-only vector crops =="
