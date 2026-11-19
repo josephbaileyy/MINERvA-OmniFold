@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "action": "score",
+  "script_sha256": "d8f875fe8b549ac128405921b711196ba8f418d1da48506aca095a597512f0d3",
+  "bound_commit": "0bb36240a320bbbdb7fad685fbabd4acca491223",
+  "run_root": "/pscratch/sd/j/josephrb/ibukt-20261119-d",
+  "artifacts": {
+    "score/out/readout.json": "dfae50f595ac37b5179722a6a9d264f758cce91c163ca6cc1ab3b03462da8da6"
+  }
+}
