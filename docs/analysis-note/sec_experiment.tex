@@ -37,7 +37,7 @@ Unbinned unfolding needs per-event records rather than histograms. A dedicated e
   \item A reconstructed signal event is filled only if its $(\mathrm{run},\mathrm{subrun},\mathrm{event})$ key is in the truth denominator. Truth events without a reconstructed partner enter as native OmniFold ``miss'' entries.
   \item The simulated signal sample is complete by construction at ME~FHC (completeness $c=1.000000$; \S\ref{sec:method-xsec}).
 \end{itemize}
-The loop reads one playlist-wide flux and calibration from the first event, so it is run separately for each playlist, and the twelve per-playlist outputs are combined. The corresponding baseline histogram event loop supplies the flux histogram, POT-weighted across playlists; playlist-to-playlist flux differences are a $\sim\SI{0.2}{\percent}$ effect.
+The loop reads one playlist-wide flux and calibration from the first event, so it is run separately for each playlist, and the twelve per-playlist outputs are combined. The corresponding baseline histogram event loop supplies the flux histogram, POT-weighted across playlists; the size of the playlist-to-playlist flux differences is stated in \S\ref{sec:limitations-experiment}.
 % (\texttt{TTree::SetMaxTreeSize}-aware)
 
 
