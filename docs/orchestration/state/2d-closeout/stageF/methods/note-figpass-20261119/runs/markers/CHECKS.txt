@@ -1,0 +1,23 @@
+# markers (Figs. 6 and 7, Joseph's read of e5c56bcc2 via the director, item 1; the director chose variant B), 2026-11-19T19:25:48Z: capture_palette.py <capture> note-figstyle-20261117/tools/remap_anc.py <anc> <tool> <xsec.root> <anc> <out>; figenv/rootmpl3108 (ROOT 6.40.04, matplotlib 3.10.8, numpy 1.26.4), BLAS threads 1; inputs xsec.root a5c13fc3 and cov_ptpl_minerva_inclusive_6GeV.root 6c6dce72 (the read-only fetch of 2026-11-17); base draft 67b203d59
+== arm 0: tools/compose_tier2.py, unchanged
+[compose_tier2] wrote 4 figures; mosaic panels matched 30 of 30
+EQUAL-BUT-DATE MEFHC_5iter_xsec_paper_pt_slices.pdf: /CreationDate (date) vs /CreationDate (date)
+EQUAL-BUT-DATE MEFHC_5iter_xsec_paper_pz_slices.pdf: /CreationDate (date) vs /CreationDate (date)
+== arm 1: tools/compose_slices_markers.py --pt-ncols 3 --logx --font-floor 7 --pz-top-hundredths 30 --pub-size-percent 100 --pub-edge-hundredths 40
+[compose_slices_markers] restyled 2 slice figures, ncols {'MEFHC_5iter_xsec_paper_pt_slices': 3, 'MEFHC_5iter_xsec_paper_pz_slices': 4}, log p_parallel True
+EQUAL-BUT-DATE MEFHC_5iter_xsec_proj_pt.pdf: /CreationDate (date) vs /CreationDate (date)
+EQUAL-BUT-DATE MEFHC_5iter_xsec_proj_pz.pdf: /CreationDate (date) vs /CreationDate (date)
+== check_slices_markers.py (arm 0 capture against arm 1 capture)
+MEFHC_5iter_xsec_paper_pt_slices: 210 items (arm 0 210), same order True; xhash equal 210; full hash differs 14 (one per panel: 14), differing colour fields ['mfc'], style changes 0: ok
+MEFHC_5iter_xsec_paper_pz_slices: 240 items (arm 0 240), same order True; xhash equal 240; full hash differs 16 (one per panel: 16), differing colour fields ['mfc'], style changes 0: ok
+MEFHC_5iter_xsec_proj_pt: 18 items, every full hash equal: ok
+MEFHC_5iter_xsec_proj_pz: 18 items, every full hash equal: ok
+CHECK-SLICES-MARKERS :: PASS
+== installed copies (figs-r2/) = arm 1's outputs:
+  MEFHC_5iter_xsec_paper_pt_slices.pdf: yes
+  MEFHC_5iter_xsec_paper_pz_slices.pdf: yes
+== note PDF, quality_checks legibility (base 67b203d59 -> this head):
+  qc0: 6 ⚑ | fig:ptslices | min pt 3.9 | min word-like 5.6 | median 5.6 | chars < 7 pt 1127/1150 | overlaps 14 | aspect 0.87 
+  qc0: 7 ⚑ | fig:pzslices | min pt 3.9 | min word-like 5.6 | median 5.6 | chars < 7 pt 1214/1237 | overlaps 16 | aspect 0.87 
+  qc1: 6 ⚑ | fig:ptslices | min pt 5.0 | min word-like 7.1 | median 7.1 | chars < 7 pt 68/1213 | overlaps 14 | aspect 1.32 
+  qc1: 7 ⚑ | fig:pzslices | min pt 5.0 | min word-like 7.1 | median 7.1 | chars < 7 pt 62/1237 | overlaps 16 | aspect 0.92 
