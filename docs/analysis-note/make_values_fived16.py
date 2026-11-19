@@ -1177,6 +1177,13 @@ def all_values(d=None, d_nopl=None):
     assert not stray, f"values outside the matrix-dependent families differ without the block: {stray[:8]}"
     # every matrix-dependent key, moved or not, so a table printing both arms never lacks a key
     v.update({f"{k}-nopl": w[k] for k in w if MATRIX_KEYS.match(k)})
+    # tab:fived16-sens prints no alpha = 0 column: its caption sends the reader to the unshrunk chi2 of tab:fived16-gen
+    # and tab:fived16-gen-target (duplicate routing at 1acece939, Joseph 2026-11-19), so each group's alpha = 0 value
+    # must stay the total chi2 those tables print, under both arms
+    for k in sorted(k for k in v if re.fullmatch(r"sens-[a-z_]+-[a-z]+-a0(-nopl)?", k)):
+        m = re.fullmatch(r"sens-[a-z_]+-([a-z]+)-a0(-nopl)?", k)
+        ref = f"g-{m.group(1)}-total-chi2{m.group(2) or ''}"
+        assert v[k] == v[ref], f"{k} = {v[k]} is not {ref} = {v[ref]}, which tab:fived16-sens' caption points to"
     for part in ("total", "shape_only"):              # ndf is printed once per block of Table IV and Table 16
         ndf16 = {v[f"g-{k}-{part}-ndf"] for k in PRED.values() if k != "gibuu"}
         assert len(ndf16) == 1, f"the 16-cell predictions' {part} ndf differ: {ndf16}"
