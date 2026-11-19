@@ -137,6 +137,7 @@ class Source:
         self.labels: dict[str, tuple[str, int]] = {}
         self.label_unit: dict[str, int] = {}
         self.envs: list[dict] = []       # table and figure environments: {kind, file, start, end, labels}
+        self.header_lines: set[tuple[str, int]] = set()   # table header rows, left out of the word stream
         self._build()
 
     # A unit is the finest (sub)section a word is in.
@@ -150,6 +151,7 @@ class Source:
             if f != self.files[0]:
                 cur_unit = self._new_unit(f, 0, 9, f'(start of {f})')
             env_stack: list[dict] = []
+            in_header = False   # between \\toprule and \\midrule: a table's column headers, not content
             for ln, raw in enumerate(raw_lines, start=1):
                 line = strip_comment(raw)
                 if f == self.files[0]:
@@ -184,6 +186,13 @@ class Source:
                     self.label_unit[lm.group(1)] = cur_unit
                     if env_stack:
                         env_stack[0]['labels'].append(lm.group(1))
+                if '\\toprule' in line:
+                    in_header = True
+                if in_header:
+                    if '\\midrule' in line or '\\bottomrule' in line:
+                        in_header = False
+                    self.header_lines.add((f, ln))
+                    continue
                 for w in tokenize(line):
                     self.words.append(w)
                     self.pos.append((f, ln))
@@ -244,13 +253,18 @@ def tokenize(line: str) -> list[str]:
     s = re.sub(r'\\(?:cite[a-z]*|recentry)(\[[^\]]*\])?\{[^}]*\}', ' CITE ', s)
     s = re.sub(r'\[[0-9.]+(?:pt|em|ex|cm|mm|in)\]', ' ', s)
     s = re.sub(r'\\\\', ' ', s)
+    s = re.sub(r'\\multicolumn\{\d+\}\{[^{}]*(\{[^{}]*\}[^{}]*)*\}', ' ', s)
     out = []
-    for m in re.finditer(r'\\([a-zA-Z]+)|([A-Za-z0-9]+(?:\.[0-9]+)?)', s):
-        if m.group(1):
-            if m.group(1) not in DROP_MACROS:
-                out.append(m.group(1).lower())
+    # a value macro is one word with its key, so two cells that print different values never match
+    for m in re.finditer(r'\\(fvval|lrval)\{([^}]*)\}|\\([a-zA-Z]+)|([A-Za-z0-9]+(?:\.[0-9]+)?)', s):
+        value, key, macro, word = m.groups()
+        if value:
+            out.append(f'{value}:{key.lower()}')
+        elif macro:
+            if macro not in DROP_MACROS:
+                out.append(macro.lower())
         else:
-            out.append(m.group(2).lower())
+            out.append(word.lower())
     return out
 
 
@@ -365,6 +379,8 @@ def exact_sentence_dups(src: Source, min_words: int, covered: set[int]):
                     started = True
                 else:
                     continue
+            if (f, ln) in src.header_lines:
+                continue
             pieces = re.split(r'(?<=[a-z0-9}$)])\.\s+(?=[A-Z\\$])|(?<=[.?!])\s*$', line)
             for pi, piece in enumerate(pieces):
                 toks = tokenize(piece)
@@ -397,6 +413,21 @@ def row_refs(src: Source, k: int, length: int) -> list[str]:
     for ln in lines:
         refs += [r for m in REF_RE.finditer(strip_comment(src.lines[f][ln - 1])) for r in m.group(1).split(',')]
     return refs
+
+
+# Names of objects the note refers to in full, several times by design: a run that is one of these names plus a
+# few connecting words repeats a name, not a statement (routing of 2026-11-19, pairs P50, P53, P61).
+NAMES = ('the five-axis covariance of the configuration-(a) central value',)
+NAME_SLACK = 6
+
+
+def name_in_run(words: list[str]) -> str:
+    for name in NAMES:
+        nw = tokenize(name)
+        for q in range(len(words) - len(nw) + 1):
+            if words[q:q + len(nw)] == nw and len(words) - len(nw) < NAME_SLACK:
+                return name
+    return ''
 
 
 def check_text(src: Source, manifests: list[dict], n: int, min_sentence: int):
@@ -480,6 +511,12 @@ def check_text(src: Source, manifests: list[dict], n: int, min_sentence: int):
                             item['class'] = f'{name} restatement, not at a cited home'
                             item['why'] = 'row cites ' + (', '.join(refs) if refs else 'no \\ref')
             if item['class'] == 'remaining':
+                name = name_in_run(W[i:i + L])
+                if name:
+                    item['class'] = 'a name of an object'
+                    item['why'] = f'"{name}"; the run is that name and fewer than {NAME_SLACK} other words'
+            # a recorded restatement also settles a definitions-table or test-index row that is not at a cited home
+            if item['class'] == 'remaining' or 'not at a cited home' in item['class']:
                 for r in manifests:
                     if not r.get('span'):
                         continue
@@ -863,6 +900,8 @@ def expand(s: str, macros: dict[str, str], depth: int = 6) -> str:
     return s
 
 
+# a generator's version is a label, not a value: "NuWro~21.09", "GENIE 2.12.10", "Tune~v1"
+VERSION_RE = re.compile(r'(?i)\b(NuWro|GENIE|GiBUU|NEUT|GEANT\s?4|Tune)[\s~]*v?\d+(?:\.\d+)+')
 NUM_RE = re.compile(r'(?<![A-Za-z0-9.])(\d+(?:\.\d+)?)(?![0-9])')
 
 
@@ -894,7 +933,34 @@ def table_numbers(src: Source, env: dict, macros: dict[str, str]) -> Counter:
     s = re.sub(r'\[[0-9.\-]+(?:pt|em|ex|cm|mm|in)\]|\{[0-9.\-]+(?:pt|em|ex|cm|mm|in)\}', ' ', s)
     s = re.sub(r'\\(?:[cC]?ref|label|cite[a-z]*|recentry|setlength|LTcapwidth)(\[[^\]]*\])?\{[^}]*\}', ' ', s)
     s = expand(s, macros)
+    s = VERSION_RE.sub(' ', s)
     return Counter(n for n in NUM_RE.findall(s) if distinctive(n))
+
+
+def table_restatement(manifests: list[dict], ea: dict, eb: dict) -> str:
+    """The id of a manifest restatement row whose two locations lie in the two tables (either way round), or ''."""
+    def inside(f, l0, l1, env, col):
+        """The location is in the table: by its lines, or, when a column gives no line, by the table's label in it."""
+        if env['file'] != f:
+            return False
+        if l0 is not None:
+            return env['start'] <= l1 and l0 <= env['end']
+        return any(re.search(r'\b' + re.escape(lab) + r'\b', col) for lab in env['labels'])
+    for r in manifests:
+        if not r.get('span'):
+            continue
+        f0, l0, l1, fto, t0, t1 = r['span']
+        for x, y in ((ea, eb), (eb, ea)):
+            if inside(f0, l0, l1, x, r['cols'][2]) and inside(fto, t0, t1, y, r['cols'][3]):
+                return f"{r['id']} ({r['file']})"
+    return ''
+
+
+def chance_shared(A: set[str], B: set[str]) -> float:
+    """Expected number of values two tables share by coincidence: values of k significant digits taken as uniform
+    over the 9*10^(k-1) of one decade (an overestimate when the tables' values lie in different decades)."""
+    na, nb = Counter(sig_digits(x) for x in A), Counter(sig_digits(x) for x in B)
+    return sum(na[k] * nb[k] / (9 * 10 ** (k - 1)) for k in na if k >= 1)
 
 
 # --------------------------------------------------------------------------------------------- report
@@ -1059,7 +1125,7 @@ def main(argv=None):
             continue
         lab = tabs[0]
         num = labels.get(lab, ('?', '?'))[0]
-        tables.append({'label': lab, 'num': num, 'where': f"{env['file']}:{env['start']}",
+        tables.append({'label': lab, 'num': num, 'where': f"{env['file']}:{env['start']}", 'env': env,
                        'numbers': table_numbers(src, env, macros)})
     tab_pairs = []
     for i in range(len(tables)):
@@ -1068,10 +1134,15 @@ def main(argv=None):
             shared = A & B
             strong = {x for x in shared if sig_digits(x) >= 3}
             overlap = len(shared) / min(len(A), len(B)) if shared else 0.0
-            if len(strong) >= 3 or (len(shared) >= 3 and overlap >= 0.5):
+            # listed only when the shared values clearly exceed what two tables of that size share by chance
+            e_strong = chance_shared({x for x in A if sig_digits(x) >= 3}, {x for x in B if sig_digits(x) >= 3})
+            e_all = chance_shared(A, B)
+            beyond = lambda n_obs, e: n_obs >= 3 and n_obs > e + 3 * e ** 0.5 + 1
+            if beyond(len(strong), e_strong) or (overlap >= 0.5 and beyond(len(shared), e_all)):
+                kept = table_restatement(manifests, tables[i]['env'], tables[j]['env'])
                 tab_pairs.append({'a': i, 'b': j, 'shared': sorted(shared, key=float), 'strong': sorted(strong, key=float),
-                                  'overlap': overlap})
-    tab_pairs.sort(key=lambda p: (-len(p['strong']), -p['overlap']))
+                                  'overlap': overlap, 'chance': e_strong, 'kept': kept})
+    tab_pairs.sort(key=lambda p: (bool(p['kept']), -len(p['strong']), -p['overlap']))
 
     # ================================================================ write
     # 1a: one row per duplicated passage; a passage repeated in k places is one row with k locations
@@ -1128,11 +1199,14 @@ def main(argv=None):
     R.append(f'| 1a set aside: manifest intended copies | {by_class["manifest: intended copy"]} |')
     R.append(f'| 1a set aside: restatements recorded in a manifest with a reason | {by_class["manifest: recorded restatement"]} |')
     R.append(f'| 1a set aside: definition / test-index restatements at their cited home | {n_home} |')
+    R.append(f'| 1a set aside: the name of an object ({len(NAMES)} listed name(s)) | {by_class["a name of an object"]} |')
     R.append(f'| 1b figure pairs with a content signal (data, text or image) | **{len(content_pairs)}** |')
     R.append(f'| 1b … with the data signal (a shared input, and overlapping curves) | **{sum(1 for p in fig_pairs if "data" in p["signals"])}** |')
     R.append(f'| 1b figure pairs sharing a producer input or script | {sum(1 for p in fig_pairs if "producer" in p["signals"])} |')
     R.append(f'| 1b figure pairs with overlapping curves but no shared input (listed, not counted) | {sum(1 for p in fig_pairs if "curves" in p["signals"])} |')
-    R.append(f'| 1c table pairs sharing three or more strong numbers (or half the smaller table) | **{len(tab_pairs)}** |')
+    n_kept = sum(1 for p in tab_pairs if p['kept'])
+    R.append(f'| 1c table pairs sharing values beyond chance, remaining | **{len(tab_pairs) - n_kept}** |')
+    R.append(f'| 1c … set aside: restatements recorded in a manifest with a reason | {n_kept} |')
     R.append(f'| 2 figures found in the PDF / numbered figures in the aux | {len(figs)} / {len(fig_labels)} |')
     R.append(f'| 2 figures with any text under {args.min_font:g} pt | **{len(under)}** |')
     R.append(f'| 2 figures whose 10th-percentile text size is under {args.min_font:g} pt | **{sum(1 for r in leg if r["p10_pt"] is not None and r["p10_pt"] < args.min_font)}** |')
@@ -1147,12 +1221,15 @@ def main(argv=None):
     R.append('## 1a. Text duplication')
     R.append('')
     R.append(f'Method: the source in input order as one word stream (comments, column specs, lengths and labels dropped; '
-             f'`\\ref` → REF, `\\cite` → CITE; macro names kept as words, so `\\lrval{{x}}` reads "lrval x"). A duplicate '
+             f'`\\ref` → REF, `\\cite` → CITE; macro names kept as words; a value macro is one word with its key, so '
+             f'`\\lrval{{x}}` reads "lrval:x" and two cells with different values never match; a table\'s header rows, '
+             f'from `\\toprule` to `\\midrule`, and `\\multicolumn` specs are dropped). A duplicate '
              f'is a maximal run of shared {args.ngram}-word sequences, or an identical sentence of {args.min_sentence}+ '
              'words, whose occurrences lie in different (sub)sections. One row per passage; a passage in k places has k '
              'locations. Set aside: a move-manifest row whose mode or note says the body keeps a copy, with one copy in '
              'sec_limitations.tex or app_devhistory.tex; and a row of the definitions table or the test index whose other '
-             'occurrence lies in a (sub)section the row cites with `\\ref`.')
+             'occurrence lies in a (sub)section the row cites with `\\ref`; a run that is a listed object name with fewer '
+             f'than {NAME_SLACK} other words ({"; ".join(NAMES)}); and a pair a manifest restatement row records, with its reason.')
     R.append('')
     R.append('**Pairs by class:** ' + '; '.join(f'{k}: {v}' for k, v in sorted(by_class.items())))
     R.append('')
@@ -1223,22 +1300,24 @@ def main(argv=None):
     R.append('')
     R.append('Distinctive numbers: a decimal with two or more significant digits, or an integer of 100 or more that is not '
              'a year; value macros from values*.tex expanded (`\\fvval`, `\\lrval` and plain macros); captions, column '
-             'specs and lengths dropped.')
+             'specs and lengths dropped, and a generator\'s version (NuWro 21.09, GENIE 2.12.10) is a label, not a value.')
     R.append('')
-    R.append('A pair is listed when it shares three or more strong numbers (three or more significant digits, which '
-             'rarely coincide), or three or more distinctive numbers that make up half the smaller table\'s. Two-digit '
-             'decimals (0.16, 0.23) coincide by chance between tables of coefficients, so they are counted but not '
-             'listed as strong.')
+    R.append('A pair is listed when its shared strong numbers (three or more significant digits), or its shared '
+             'numbers when they make up half the smaller table\'s, number three or more and exceed chance: more than '
+             'E + 3√E + 1, where E is the count two tables of that size share by coincidence (values of k significant '
+             'digits taken as uniform over one decade\'s 9·10^(k−1), an overestimate). Two tables of 100 per-cell '
+             'uncertainties each share about 11 three-digit values by chance. A pair is set aside when a manifest '
+             'restatement row has its two locations in the two tables.')
     R.append('')
-    R.append('| Tables | labels | where | strong shared | all shared | overlap (of the smaller) | strong shared numbers |')
-    R.append('|---|---|---|---|---|---|---|')
+    R.append('| Tables | labels | where | strong shared | by chance | all shared | overlap (of the smaller) | strong shared numbers | set aside |')
+    R.append('|---|---|---|---|---|---|---|---|---|')
     for p in tab_pairs:
         A, B = tables[p['a']], tables[p['b']]
         nums_ = ', '.join(p['strong'][:14]) + (' …' if len(p['strong']) > 14 else '')
         if not p['strong']:
             nums_ = '(all shared) ' + ', '.join(p['shared'][:14])
         R.append(f"| {A['num']}, {B['num']} | {A['label']}; {B['label']} | `{A['where']}`; `{B['where']}` | "
-                 f"{len(p['strong'])} | {len(p['shared'])} | {p['overlap']:.2f} | {nums_} |")
+                 f"{len(p['strong'])} | {p['chance']:.1f} | {len(p['shared'])} | {p['overlap']:.2f} | {nums_} | {p['kept']} |")
     R.append('')
     R.append(f"Tables read: {len(tables)}; with no distinctive number: {sum(1 for t in tables if not t['numbers'])}.")
     R.append('')
@@ -1290,9 +1369,10 @@ def main(argv=None):
         J.update({
             'text': [{'class': it['class'], 'why': it['why'], 'len': it['len'], 'a': span_where(src, it['a'], it['len']),
                       'b': span_where(src, it['b'], it['len']), 'excerpt': excerpt(src, it['a'], it['len'], 60)} for it in items],
-            'figure_pairs': fig_pairs, 'tables': [{k: (dict(v) if isinstance(v, Counter) else v) for k, v in t.items()} for t in tables],
+            'figure_pairs': fig_pairs,
+            'tables': [{k: (dict(v) if isinstance(v, Counter) else v) for k, v in t.items() if k != 'env'} for t in tables],
             'table_pairs': [{'a': tables[p['a']]['label'], 'b': tables[p['b']]['label'], 'shared': p['shared'],
-                             'overlap': p['overlap']} for p in tab_pairs],
+                             'overlap': p['overlap'], 'chance': p['chance'], 'kept': p['kept']} for p in tab_pairs],
             'legibility': leg, 'textwidth_pt': tw,
         })
         args.json.write_text(json.dumps(J, indent=1, default=str), encoding='utf-8')

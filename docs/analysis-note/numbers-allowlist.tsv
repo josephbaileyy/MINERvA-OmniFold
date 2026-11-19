@@ -285,3 +285,11 @@ token	delta	owner	item	reason
 311.19	-1	journal-editor	dup T05/T08	same
 329.72	-1	journal-editor	dup T05/T08	same
 10	-1	journal-editor	dup P31	extraction: App. I row 75 reflowed and "G18_10a_02_11b's" (\fvval{f1-tune-g18}) splits differently; the tune name still prints in that row (source unchanged there)
+107.18	-5	limitation-resolver	dup routing 1acece939 T09/T11/T17/T18	tab:fived16-sens alpha=0 column merged to a caption pointer; the unshrunk chi2 prints in tab:fived16-gen
+229.09	-5	limitation-resolver	dup routing 1acece939 T09/T11/T17/T18	same column; prints in tab:fived16-gen
+262.06	-5	limitation-resolver	dup routing 1acece939 T09/T11/T17/T18	same column; prints in tab:fived16-gen
+127.69	-5	limitation-resolver	dup routing 1acece939 T09/T11/T17/T18	same column; NuWro CH, prints in tab:fived16-gen-target
+47.78	-5	limitation-resolver	dup routing 1acece939 T09/T11/T17/T18	same column; GiBUU CH, prints in tab:fived16-gen-target
+12	-1	limitation-resolver	dup routing 1acece939 P46	sec_fived16 CH formula cut to its pointer; prints at sec_joint (sec:joint5d-ch)
+13	-2	limitation-resolver	dup routing 1acece939 P46	same formula (12/13, 1/13); prints at sec_joint
+1	-1	limitation-resolver	dup routing 1acece939 P46	same formula (1/13); prints at sec_joint
