@@ -1,0 +1,41 @@
+% Compression rewrite (DECISION-20261119c; REWRITE-RULES-20261119.md rule 5): text the limitation-resolver lane
+% moved verbatim out of the posted note, with one move-manifest row per sentence (ids and manifest named in
+% each row's file). References into the note resolve through main_note.aux (xr).
+\section{Five-observable progression detail moved from the note}
+This section holds the procedure and supporting detail that the compressed note no longer prints, as the note printed it.
+
+\subsection{Unfolding and binning of the 3D result (from Part 4, sec:3d-method)}
+% From sec_3d.tex:54 @2dc962c0a; procedure a reader does not need to interpret a result
+\paragraph{Unfolding and binning.} Both definitions are evaluated for all twelve ME~FHC playlists, and, for configuration~(a), the 2D unfolding code is run with three classifier inputs, $(\pT,\pPar,\Eavail)$. Table~\ref{tab:3d-configs} lists the configuration (\S\ref{sec:method-config}) of each result. The cross section is extracted with the 3D bin volume $\Delta\pT\,\Delta\pPar\,\Delta\Eavail$, and the flux $\Phi$ is still applied per $\pT$ bin, with the same value for every $\pPar$ and $\Eavail$ bin. The $\Eavail$ binning $[0,0.1,0.2,0.4,0.8,1.5,3.0,100]\,\si{GeV}$ ends in a wide final bin, the catch bin, so that the $\Eavail$ marginal contains the full CC-inclusive recoil tail. For configuration~(a), the overall completeness of the unfolding input (\S\ref{sec:method-xsec}) is $c=1.0000$, as in 2D.
+
+\subsection{How the generator predictions are made (from Part 4, sec:3d-models)}
+% From sec_3d.tex:105 @2dc962c0a; procedure
+Quantitative 3D comparisons, or comparisons in arbitrary projections, require generating truth-level events and histogramming them as $d^{3}\sigma$ in the same fiducial phase space with the same truth $\Eavail$ definition. Because the unfolded result is at truth level, the comparisons need no detector simulation.
+
+\subsection{Flux repair of the generator samples (from Part 4, sec:3d-models)}
+% From sec_3d.tex:115 @2dc962c0a; procedure
+The repair reweights each event exactly to the analysis PPFX central-value flux on 0--\SI{100}{GeV}, with correctly sampled 50--\SI{100}{GeV} supplements.
+
+\subsection{Pion-FSI dial practice (from Part 4, sec:3d-2p2h, a footnote)}
+% From sec_3d.tex:145 @2dc962c0a; side remark
+ \footnote{\texttt{FrInel\_pi} is disabled in the standard MAT-MINERvA set of systematics. This is MINERvA's current practice (private communication from the collaboration, 2026), and the reason is a degeneracy (of overlapping pion-FSI dials, one must be dropped), not a defect of that dial.}
+
+\subsection{Related quasielastic-like FSI evidence (from Part 4, sec:3d-2p2h)}
+% From sec_3d.tex:145 @2dc962c0a; literature context
+ Recent MINERvA quasielastic-like measurements point toward overestimated proton and charged-pion FSI in their model comparisons~\cite{MINERvA:2026qeleme}. Their different signal definition prevents directly identifying that effect with our inclusive discrepancy.
+
+\subsection{Unweighted interaction modes of the GENIE sample (from Part 4, sec:3d-2p2h)}
+% From sec_3d.tex:152 @2dc962c0a; detail
+Before the flux reweight of \S\ref{sec:3d-models}, the sample's unweighted modes are QE \SI{11}{\percent}, RES \SI{22}{\percent}, DIS \SI{66}{\percent} and COH \SI{0.9}{\percent}.
+
+\subsection{Mode decomposition method (from Part 4, sec:3d-2p2h)}
+% From sec_3d.tex:152 @2dc962c0a; procedure
+ The mode decomposition multiplies each bin of the central-value $d\sigma/d\Eavail$ by the fraction of its events in each mode.
+
+\subsection{Normalization of the Valencia-2p2h sample (from Part 4, sec:3d-2p2h)}
+% From sec_3d.tex:154 @2dc962c0a; procedure
+The Nieves--Simo--Vacas MEC channel~\cite{Nieves:2011pp,Gran:2013kda} is present in the splines but absent from the total-CC cross-section graph written by GENIE's \texttt{gspl2root}, so we normalize by the non-MEC CC count: QE$+$RES$+$DIS$+$COH is fixed to the known total, and MEC is added through $1/(1-f_{\mathrm{MEC}})$ with $f_{\mathrm{MEC}}=\SI{2.87}{\percent}$. $f_{\mathrm{MEC}}$ is the unweighted fraction of charged-current events in that regenerated sample, counted before the flux reweight. The shift of the integrated deficit in this paragraph is the flux-repaired $\Eavail$ rate without the catch bin. That rate is not the event fraction, and $1/(1-f_{\mathrm{MEC}})$ is not that shift.
+
+\subsection{Truth and reconstructed q3 in the event loop (from Part 4, sec:4d)}
+% From sec_3d.tex:173 @2dc962c0a; procedure
+Truth $q_{3}$ comes from the generator (\texttt{CVUniverse::Getq3True()}); reconstructed $q_{3}$ uses the muon $Q^{2}$ and the calorimetric recoil (\texttt{CVUniverse::RecoQ3()}). Both are evaluated for all twelve playlists, as for $\Eavail$. Lateral systematic shifts change $q_{3}$ but leave $\Eavail$ unchanged, so a shifted $q_{3}$ is stored for each lateral universe instead of reusing the central value.
