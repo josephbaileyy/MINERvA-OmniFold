@@ -384,7 +384,7 @@ install_palette_fig mode_decomp_eavail_central.pdf           270237928effabf36fa
 install_palette_fig compare_mec_eavail_central.pdf           2e81a44506e958fda4f063c5b88350a4d3eb6f00d4d02c4906c34bb94e39a2aa
 install_palette_fig ascencio_fullcov_compare_central.pdf     0d65baa9b139a7b45da54e54042b6b18c3a08b2d3c82fd05d64629d86452a1ab
 install_palette_fig eavailW_band.pdf                         ded40ea27702a8654d99d96d53336d037292424c718fa4427fb9ef8764408584
-install_palette_fig q3_excess_projection.pdf                 8a3a5bb5d44156432b249d7165e56cbcfed464b6c7ff69d0bd37ee2e94df3d88
+# install_palette_fig q3_excess_projection.pdf                 8a3a5bb5d44156432b249d7165e56cbcfed464b6c7ff69d0bd37ee2e94df3d88   (figure pass, 2026-11-19: installed below)
 install_palette_fig eavail_spectrum.pdf                      457fa20edec3de6520de49e99b04f4c989e7cc175289edc4b96d62383807dac1
 install_palette_fig control_plots.pdf                        9bfd50652a470a7f2edf5d6bd7fd30b20983b3f0264dfe44444c4768088af4ab
 install_palette_fig gbdt_recovery.pdf                        215f740a4b25a46519cc7b2bad5240730aa90aec4cb0d4cc7f1d0f3e3f8c191e
@@ -434,6 +434,24 @@ install_restyle_fig MEFHC_5iter_xsec_eff_heatmap.pdf       049fbf9096da5382d0fc3
 # committed, so the corrected file is in figs-r2/.
 RSG="$REPO/docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261117/figs-r2"
 install_restyle_fig paper_fig_bkg_residual.pdf             193cc23653aaed3c86af3cdd405a2a82ca12eea29810749bc86dd6bf4f7e4e83
+
+echo "== note-figpass-20261119 (digest-checked copy) =="
+# The figure pass (cov2d, the director's request of 2026-11-19): figures drawn at their printed size and laid out again,
+# presentation only. Recipe and checks: note-figpass-20261119/README.md (tools/arms_layout.sh; arm 0 reproduces the
+# installed file, arm 1's data, colours, styles and drawn strings equal arm 0's). Also after the sync loop.
+NFP="$REPO/docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/figs"
+install_layout_fig() {  # install_layout_fig <basename under $NFP and in $FIGDIR> <sha256>
+  local src="$NFP/$1" dst="$FIGDIR/$1" want="$2"
+  if [[ "$(sha256_of "$src")" != "$want" ]]; then
+    echo "REFUSE install: $src does not have sha256 $want" >&2; exit 1
+  fi
+  cp "$src" "$dst"
+  if [[ "$(sha256_of "$dst")" != "$want" ]]; then
+    echo "REFUSE install: $dst differs from $src after the copy" >&2; exit 1
+  fi
+  echo "  installed $1 ($want)"
+}
+install_layout_fig q3_excess_projection.pdf                 32084e6044ae80181b5f627d499012b16197b67f762d02a8a7c6ac9ee1ca47ef
 
 echo
 echo "== paper-only vector crops =="

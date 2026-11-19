@@ -34,7 +34,8 @@ The defaults are main_note.pdf, main_note.aux and the .tsv files in --note-dir (
    \\'s prints so); and no \\'s on a printed source line of the closure.
 5. FONTS. pdffonts, page by page: a sans-serif font may appear only on the pages of the figures allowed one
    (SANS_ALLOWED; the plan: base Figs. 6, 17, 18, 33 = fig:eff, fig:eavail-marg, fig:calibration,
-   fig:negweight-ratio). Monospace fonts are listed, not failed.
+   fig:negweight-ratio; and the page after fig:eavail-marg's, its continuation, SANS_CONTINUED). Monospace fonts are
+   listed, not failed.
 """
 from __future__ import annotations
 
@@ -51,6 +52,9 @@ HERE = Path(__file__).resolve().parent
 SPELLING_REV = "6f1e59ca4"
 SPELLING_PATH = "docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/check_spelling_us.py"
 SANS_ALLOWED = ("fig:eff", "fig:eavail-marg", "fig:calibration", "fig:negweight-ratio")
+# Figures printed over two pages, the second a continuation float with no caption of its own (the figure pass of
+# 2026-11-19: fig:eavail-marg's distribution panel follows its grid panel): the page after the label's is allowed too.
+SANS_CONTINUED = ("fig:eavail-marg",)
 SANS_RE = re.compile(r"(Sans(?!Mono)|Helvetica|Arial|CMSS|SFSS|LMSans|cmss|Gothic|Verdana)", re.I)
 MONO_RE = re.compile(r"(Mono|Courier|CMTT|SFTT|LMMono)", re.I)
 EXCLUDED_INPUTS = re.compile(r"^(preamble|values[a-z_]*)\.tex$")     # definitions only, no printed prose
@@ -407,6 +411,7 @@ def page_fonts(pdf: Path, p: int) -> list[str]:
 def check_fonts(new_pdf: Path, aux: Path):
     labs = aux_pages(aux)
     allowed = {labs[l] for l in SANS_ALLOWED if l in labs}
+    allowed |= {labs[l] + 1 for l in SANS_CONTINUED if l in labs}
     missing = [l for l in SANS_ALLOWED if l not in labs]
     npages = int(re.search(r"Pages:\s+(\d+)", subprocess.run(["pdfinfo", str(new_pdf)], capture_output=True,
                                                                  text=True, check=True).stdout).group(1))

@@ -1,0 +1,72 @@
+#!/bin/bash
+# The two arms of one locally drawn note figure for the layout pass, and their checks (README.md, "The method").
+#   bash arms_layout.sh <worktree> <family> <venv> <base commit> <stem> <extra PYTHONPATH or -> <producer> [args,
+#                       with @OUT@ for the arm's output directory]
+# Arm 0 runs the producer under the palette pass's palette_run.py (the edits that drew the installed file); arm 1
+# under this record's layout_run.py (the same edits, then layout_lib's). Both under capture_palette.py, env -i, an
+# empty HOME, the venv given, BLAS threads 1. Then:
+#   arm 0's <stem>.pdf against the file installed at the base: bytes_but_date.py and raster.py (or, with
+#   INSTALLED_FROM=<path in the base>, against that file);
+#   arm 1 against arm 0: fig-restyle-20261031/tools/compare.py with no restyle tables, so every item's full hash
+#   (data, colours, line styles) must be equal; and the multiset of drawn strings must be equal;
+#   per arm: the canvas size, the smallest and median text size, and capture_any.py's text overlaps.
+# Arm outputs go to $FIGRUN/fp-<family>/{arm0,arm1}; captures to runs/<family>/{arm0,arm1}/capture/<family>/.
+# Exit 0 only if every check passes.
+set -u
+W=$1; FAM=$2; VENV=$3; BASE=$4; STEM=$5; XP=$6; shift 6
+R=$W/docs/orchestration/state/2d-closeout/stageF/methods; N=$R/note-figpass-20261119; PT=$R/note-figstyle-20261117/tools
+FIGRUN=${FIGRUN:-/Users/josephbailey/cov2d-work/figrun}
+P=/Users/josephbailey/miniconda3/bin/python3
+PP=""; [ "$XP" != - ] && PP=$XP
+ok=1
+for arm in arm0 arm1; do
+  O=$FIGRUN/fp-$FAM/$arm; C=$N/runs/$FAM/$arm/capture/$FAM
+  [ -e "$O" ] && find "$O" -type f -delete; [ -e "$C" ] && find "$C" -type f -delete
+  mkdir -p "$O" "$FIGRUN/home" "$FIGRUN/mplcfg-$(basename "$VENV")"
+  args=(); for a in "$@"; do args+=("${a//@OUT@/$O}"); done
+  if [ $arm = arm0 ]; then wrap="$PT/palette_run.py"; else wrap="$N/tools/layout_run.py"; fi
+  (cd "$O" && env -i PATH="$VENV/bin:/usr/bin:/bin" HOME="$FIGRUN/home" MPLCONFIGDIR="$FIGRUN/mplcfg-$(basename "$VENV")" \
+     PYTHONDONTWRITEBYTECODE=1 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 \
+     PYTHONPATH="$PP" python3 "$PT/capture_palette.py" "$C" "$wrap" "${args[@]}" \
+     > "$O/log.txt" 2>&1) || { echo "FAIL $FAM $arm: rc $? ($(tail -2 "$O/log.txt" | tr '\n' ' '))"; ok=0; }
+done
+inst=$(mktemp)
+if [ -n "${INSTALLED_FROM:-}" ]; then git -C "$W" show "$BASE:$INSTALLED_FROM" > "$inst"; src=$INSTALLED_FROM
+else git -C "$W" show "$BASE:docs/analysis-note/figures/$STEM.pdf" > "$inst"; src=docs/analysis-note/figures/$STEM.pdf; fi
+echo "== $FAM ($STEM): arm 0 against $src at $BASE"
+"$P" -I "$PT/bytes_but_date.py" "$inst" "$FIGRUN/fp-$FAM/arm0/$STEM.pdf" || ok=0
+echo "raster: $("$P" -I "$R/fig-restyle-20261031/tools/raster.py" "$inst" "$FIGRUN/fp-$FAM/arm0/$STEM.pdf")" || ok=0
+rm -f "$inst"
+echo "== $FAM: arm 1 against arm 0"
+c0=$(cd "$N/runs/$FAM/arm0/capture/$FAM" 2>/dev/null && ls *.json 2>/dev/null | sort | tr "\n" " ")
+c1=$(cd "$N/runs/$FAM/arm1/capture/$FAM" 2>/dev/null && ls *.json 2>/dev/null | sort | tr "\n" " ")
+[ -n "$c0" ] && [ "$c0" = "$c1" ] && echo "captures: $c0" \
+  || { echo "FAIL captures: arm 0 [$c0], arm 1 [$c1] (none, or not the same files)"; ok=0; }
+"$P" -I "$R/fig-restyle-20261031/tools/compare.py" "$N/runs/$FAM/arm0" "$N/runs/$FAM/arm1" || ok=0
+"$P" - "$N/runs/$FAM" "$FAM" <<'PY' || ok=0
+import json, statistics, sys
+from collections import Counter
+from pathlib import Path
+d, fam = Path(sys.argv[1]), sys.argv[2]
+bad = 0
+for p in sorted((d / "arm0" / "capture" / fam).glob("*.pdf.texts")):
+    q = d / "arm1" / "capture" / fam / p.name
+    if not q.exists():
+        print(f"FAIL {p.name}: no arm 1 capture"); bad = 1; continue
+    a, b = json.loads(p.read_text()), json.loads(q.read_text())
+    sa, sb = Counter(t for _, t in a["texts"]), Counter(t for _, t in b["texts"])
+    stem = p.name[:-len(".pdf.texts")]
+    if sa != sb:
+        print(f"FAIL strings {stem}: arm 0 only {sorted((sa - sb).elements())}, arm 1 only {sorted((sb - sa).elements())}")
+        bad = 1
+    else:
+        print(f"strings {stem}: equal ({sum(sa.values())} drawn strings)")
+    for arm, x in (("arm 0", a), ("arm 1", b)):
+        s = [z for z, _ in x["texts"]]
+        print(f"  {arm}: canvas {x['size_in'][0]:.3f} x {x['size_in'][1]:.3f} in; font size min {min(s):.2f}, "
+              f"median {statistics.median(s):.2f} pt; text overlaps {len(x['text_overlaps'])}"
+              + ("" if arm == "arm 0" or not x["text_overlaps"] else f" {[o[:2] for o in x['text_overlaps']]}"))
+sys.exit(bad)
+PY
+echo "ARMS-LAYOUT $FAM :: $([ $ok = 1 ] && echo PASS || echo FAIL)"
+[ $ok = 1 ]
