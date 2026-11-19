@@ -63,6 +63,9 @@ class Base(unittest.TestCase):
             os.utime(p, ns=(mt + 10 ** 12, mt))
         (self.d / "pins.json").write_text(json.dumps(pins))
         self.pins = pins
+        (self.stage / "smoke-edges").mkdir()
+        (self.stage / "smoke-edges" / "INDEX.json").write_text('{"schema": "pfb-edges/1"}\n')
+        self.index_sha = hashlib.sha256((self.stage / "smoke-edges" / "INDEX.json").read_bytes()).hexdigest()
         self.receipt()
         (self.d / "bin").mkdir()
         self.sacct("")
@@ -74,7 +77,7 @@ class Base(unittest.TestCase):
         p = self.stage / "smoke-receipt.json"
         if p.is_symlink() or p.exists():
             p.unlink()
-        rec = {"stage": str(self.stage), "pin": self.pin, "local_test": False, "index_sha256": "a" * 64, **over}
+        rec = {"stage": str(self.stage), "pin": self.pin, "local_test": False, "index_sha256": self.index_sha, **over}
         p.write_text(json.dumps(rec))
 
     def sacct(self, rows: str, rc: int = 0, second: str = None):
@@ -100,7 +103,7 @@ class Base(unittest.TestCase):
         return rc, out.getvalue()
 
     def assert_nothing_written(self, stage=None):
-        self.assertEqual(sorted(p.name for p in (stage or self.stage).iterdir()), ["smoke-receipt.json"])
+        self.assertEqual(sorted(p.name for p in (stage or self.stage).iterdir()), ["smoke-edges", "smoke-receipt.json"])
 
 
 class Copy(Base):
@@ -134,13 +137,14 @@ class Copy(Base):
         self.assertIsNone(A.stage_copy_problem(self.stage / C.SIGMA_NAME, self.stage, (self.deploy / C.SIGMA_REL,)))
         self.assertTrue(all(f["moved"] == [] and f["problems"] == [] and f["copy_fd_path"] == f["copy"]
                             for f in man["files"]))
-        self.assertEqual(sorted(p.name for p in self.stage.iterdir()), ["a0-refs", C.SIGMA_NAME, "smoke-receipt.json"])
+        self.assertEqual(sorted(p.name for p in self.stage.iterdir()),
+                         ["a0-refs", C.SIGMA_NAME, "smoke-edges", "smoke-receipt.json"])
 
     def test_the_stage_must_hold_the_smoke_receipt_and_no_copies(self):
         (self.stage / "smoke-receipt.json").unlink()
         rc, _ = self.copy_inprocess()
         self.assertEqual(rc, 2)
-        self.assertEqual(list(self.stage.iterdir()), [])
+        self.assertEqual([p.name for p in self.stage.iterdir()], ["smoke-edges"])
         self.receipt()
         (self.stage / "a0-refs").mkdir()
         self.assertEqual(self.copy_inprocess()[0], 2)
@@ -236,7 +240,7 @@ class K2Descriptors(Base):
         os.replace(self.stage, real)
         self.stage.symlink_to(real)
         self.assertEqual(self.copy_inprocess()[0], 2)
-        self.assertEqual(sorted(p.name for p in real.iterdir()), ["smoke-receipt.json"])
+        self.assertEqual(sorted(p.name for p in real.iterdir()), ["smoke-edges", "smoke-receipt.json"])
 
     def test_a_stage_under_a_symlinked_parent_is_not_the_literal_path(self):
         os.replace(self.stage, self.d / "elsewhere")
@@ -245,10 +249,12 @@ class K2Descriptors(Base):
         (self.d / "link").symlink_to(self.d / "elsewhere-parent")
         cfg = self.cfg()._replace(stage=str(self.d / "link" / "stage"))
         p = self.d / "elsewhere-parent" / "stage" / "smoke-receipt.json"
-        p.write_text(json.dumps({"stage": cfg.stage, "pin": self.pin, "local_test": False, "index_sha256": "a" * 64}))
+        p.unlink()
+        p.write_text(json.dumps({"stage": cfg.stage, "pin": self.pin, "local_test": False, "index_sha256": self.index_sha}))
         rc = C.copy(cfg, str(self.deploy), out=io.StringIO())
         self.assertEqual(rc, 2)
-        self.assertEqual(sorted(x.name for x in (self.d / "elsewhere-parent" / "stage").iterdir()), ["smoke-receipt.json"])
+        self.assertEqual(sorted(x.name for x in (self.d / "elsewhere-parent" / "stage").iterdir()),
+                         ["smoke-edges", "smoke-receipt.json"])
 
 
 class K3NoTestHooks(Base):
@@ -412,7 +418,7 @@ class K8SmokeBinding(Base):
         self.assertEqual(self.copy_inprocess()[0], 2)
         (self.stage / "smoke-receipt.json").unlink()
         (self.d / "r.json").write_text(json.dumps({"stage": str(self.stage), "pin": self.pin, "local_test": False,
-                                                   "index_sha256": "a" * 64}))
+                                                   "index_sha256": self.index_sha}))
         (self.stage / "smoke-receipt.json").symlink_to(self.d / "r.json")
         self.assertEqual(self.copy_inprocess()[0], 2, "a symlinked receipt")
         (self.stage / "smoke-receipt.json").unlink()
@@ -421,6 +427,117 @@ class K8SmokeBinding(Base):
         (self.stage / "smoke-receipt.json").unlink()
         self.receipt()
         self.assertEqual(self.copy_inprocess()[0], 0)
+
+
+class Rev3(Base):
+    """The copy-connect rev 2 read and the director's mechanical patch M1-M6."""
+
+    def test_m1_a_closed_stdin_exits_10(self):
+        boot = launcher_value("BOOT")
+        r = subprocess.run(["/usr/bin/python3", "-I", "-S", "-c", "import sys;exec(bytes.fromhex(sys.argv[1]))", boot,
+                            launcher_value("SHA"), str(self.deploy)], preexec_fn=lambda: os.close(0),
+                           capture_output=True, text=True, env={"PATH": "/usr/bin:/bin"})
+        self.assertEqual(r.returncode, 10, r.stderr)
+        self.assertIn("stdin cannot be examined", r.stderr)
+        self.assert_nothing_written()
+
+    def test_m2_sacct_gets_the_literal_home(self):
+        seen = []
+        real = C.subprocess.run
+
+        def spy(cmd, **kw):
+            seen.append(kw.get("env"))
+            return real(cmd, **kw)
+        with mock.patch.dict(os.environ, {"HOME": "/tmp/alternate-home"}), mock.patch.object(C.subprocess, "run", spy):
+            C.fence_read(str(self.d / "bin" / "sacct"))
+        self.assertEqual(seen[0]["HOME"], "/global/homes/j/josephrb")
+        self.assertNotIn("/tmp/alternate-home", json.dumps(seen))
+
+    def test_m3_the_verifier_is_strict(self):
+        man = K6StrictVerify.production_manifest(self)
+        self.assertEqual(C.verify_problems(man), [])
+
+        def combined(m):  # the report's: bytes and copy_mode deleted, nlink true, a post-fence --help
+            f = m["files"][4]
+            del f["bytes"], f["copy_mode"]
+            f["copy_nlink"] = True
+            f["source_fstat_after"]["st_nlink"] = f["source_fstat_before"]["st_nlink"] = True
+            m["fence_after"]["command"] = "/usr/bin/sacct --help"
+        for why, edit in (("the report's combined mutation", combined),
+                          ("a missing name", lambda m: m["files"][2].pop("name")),
+                          ("a stat ino not its source_inode",
+                           lambda m: [m["files"][2][k].update(st_ino=m["files"][2][k]["st_ino"] + 1)
+                                      for k in ("source_fstat_before", "source_fstat_after")]),
+                          ("nlink 2", lambda m: m["files"][2].update(copy_nlink=2)),
+                          ("a copy_mode not a regular file", lambda m: m["files"][2].update(copy_mode=0o040755))):
+            m = json.loads(json.dumps(man))
+            edit(m)
+            self.assertTrue(C.verify_problems(m), why)
+        bad = self.d / "bad.json"
+        bad.write_text(json.dumps({"files": [{"name": 1}], "schema": C.SCHEMA}))
+        r = subprocess.run([sys.executable, "-I", str(REMOTE), "verify", str(bad)], capture_output=True, text=True,
+                           env={"PATH": "/usr/bin:/bin"})
+        self.assertEqual(r.returncode, 2)
+        self.assertNotIn("Traceback", r.stderr)
+        (self.d / "notjson.json").write_text("{")
+        r = subprocess.run([sys.executable, "-I", str(REMOTE), "verify", str(self.d / "notjson.json")],
+                           capture_output=True, text=True, env={"PATH": "/usr/bin:/bin"})
+        self.assertEqual(r.returncode, 2)
+        self.assertNotIn("Traceback", r.stderr)
+
+    def test_m4_an_io_error_before_the_first_write_writes_nothing(self):
+        real = C._read_all
+        calls = []
+
+        def eio_first(fd):
+            calls.append(1)
+            if len(calls) == 1:  # the receipt is the first file read
+                raise OSError(errno.EIO, "Input/output error")
+            return real(fd)
+        with mock.patch.object(C, "_read_all", eio_first):
+            rc, out = self.copy_inprocess()
+        self.assertEqual(rc, 2)
+        self.assertEqual(out, "")
+        self.assert_nothing_written()
+        real_lstat = os.lstat
+        target = str(self.a0 / sorted(C.A0_PINS)[7])
+        seen = []
+
+        def late_eio(path, *a, **k):
+            if str(path) == target:
+                seen.append(1)
+                if len(seen) == 2:  # the lstat after the read
+                    raise OSError(errno.EIO, "Input/output error")
+            return real_lstat(path, *a, **k)
+        with mock.patch.object(C.os, "lstat", late_eio):
+            rc, _ = self.copy_inprocess()
+        self.assertEqual(rc, 5, "a late lstat EIO is an I/O error, not movement")
+        self.assert_nothing_written()
+
+    def test_m5_the_index_must_be_the_receipts(self):
+        (self.stage / "smoke-edges" / "INDEX.json").unlink()
+        self.assertEqual(self.copy_inprocess()[0], 2, "a missing INDEX")
+        (self.stage / "smoke-edges" / "INDEX.json").write_text("other\n")
+        self.assertEqual(self.copy_inprocess()[0], 2, "a wrong digest")
+        (self.stage / "smoke-edges" / "INDEX.json").unlink()
+        (self.stage / "smoke-edges" / "INDEX.json").symlink_to(self.d / "pins.json")
+        self.assertEqual(self.copy_inprocess()[0], 2, "a symlinked INDEX")
+        self.assert_nothing_written()
+
+    def test_m6_a_fifo_receipt_refuses_without_blocking(self):
+        (self.stage / "smoke-receipt.json").unlink()
+        os.mkfifo(self.stage / "smoke-receipt.json")
+        r = subprocess.run([sys.executable, str(ENTRY), str(self.d), str(self.deploy)], capture_output=True, text=True,
+                           timeout=5, env={**os.environ, "PYTHONDONTWRITEBYTECODE": "1"})
+        self.assertEqual(r.returncode, 2, r.stderr)
+        self.assertIn("is not a plain file of its own", r.stderr)
+        (self.stage / "smoke-receipt.json").unlink()
+        self.receipt()
+        (self.stage / "smoke-edges" / "INDEX.json").unlink()
+        os.mkfifo(self.stage / "smoke-edges" / "INDEX.json")
+        r = subprocess.run([sys.executable, str(ENTRY), str(self.d), str(self.deploy)], capture_output=True, text=True,
+                           timeout=5, env={**os.environ, "PYTHONDONTWRITEBYTECODE": "1"})
+        self.assertEqual(r.returncode, 2, r.stderr)
 
 
 class Launcher(unittest.TestCase):
