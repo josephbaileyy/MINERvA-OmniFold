@@ -90,8 +90,9 @@ for v in $(compgen -e); do
 done
 pgit() { git -c core.fsmonitor=false "$@"; }  # with GIT_CONFIG_NOSYSTEM=1 and GIT_CONFIG_GLOBAL=/dev/null above
 newfile() {  # <path>: create it O_CREAT|O_EXCL|O_NOFOLLOW; fails on anything already there, a link included. The system
-    # interpreter by absolute path, isolated (-I -S): a refusal after the setup never runs a setup-selected python3
-    /usr/bin/python3 -I -S -c 'import os, sys; os.close(os.open(sys.argv[1], os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o644))' "$1" 2>/dev/null
+    # interpreter by absolute path, isolated and writing no bytecode (-I -S -B): a refusal after the setup never runs a
+    # setup-selected python3
+    /usr/bin/python3 -I -S -B -c 'import os, sys; os.close(os.open(sys.argv[1], os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o644))' "$1" 2>/dev/null
 }
 traced_setup() {  # <log>: source the pinned setup with its xtrace (PS4 names each sourced file) into <log>; 97 if it
     local PS4='+@${BASH_SOURCE[0]}@ '                # exported a denied variable
@@ -106,10 +107,11 @@ traced_setup() {  # <log>: source the pinned setup with its xtrace (PS4 names ea
     return "$rc"
 }
 setup_env_text() {  # the values the setup leaves, one record per name: the name, its status (exported, set, unset) and
-    local v st                                     # the value quoted by printf %q; bash builtins only
+    local v st d                                   # the value quoted by printf %q; bash builtins only
     for v in PATH PYTHONPATH LD_LIBRARY_PATH LD_PRELOAD CONDA_PREFIX CONDARC PYTHONNOUSERSITE $(compgen -v GIT_CONFIG_); do
         if [ -z "${!v+x}" ]; then printf '%s unset\n' "$v"; continue; fi
-        case "$(declare -p "$v" 2>/dev/null)" in "declare -x"*) st=exported ;; *) st=set ;; esac
+        d=$(declare -p "$v" 2>/dev/null); d=${d#declare -}; d=${d%% *}  # the attribute field: -x, -rx, -xr all export
+        case "$d" in *x*) st=exported ;; *) st=set ;; esac
         printf '%s %s %q\n' "$v" "$st" "${!v}"
     done
 }

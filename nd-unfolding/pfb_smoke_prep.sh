@@ -1,7 +1,7 @@
 #!/usr/bin/env -S -u BASH_ENV -u ENV /bin/bash --noprofile --norc
 # PILOT-FB's login-node prep-only smoke (the code audits' request, the director's ruling of 2026-11-18): the prep step
-# alone, on a login node, before any job. 0 node-h: no submission (it only reads `sbatch --version` and `--help`), no
-# srun, no fit (prep stops before the first fit).
+# alone, on a login node, before any job. 0 node-h: no submission (it only reads `sbatch --version`), no srun,
+# no fit (prep stops before the first fit).
 # Usage: pfb_smoke_prep.sh <deploy> <pin> <stage>, with <stage> the declared /pscratch/sd/j/josephrb/pfb-20261117-stage.
 # The smoke CREATES the stage, which must not exist (code 4: fresh and empty, so nothing is pre-placed in it; the connect
 # copies a0-refs/ and the sigma receipt in afterwards). Its parent must exist at that physical path. Everything it
@@ -9,7 +9,7 @@
 #   smoke-edges/ (the twelve forced-bins files and INDEX.json) or, on INFEASIBLE, smoke-edges.g0.json (G0's record);
 #   smoke-receipt.json (stage, pin, mode, INDEX.json's sha256 and the setup's sourced-file closure), which the job
 #   requires; smoke-env.log (the setup's output and xtrace), smoke-setup-env.txt (the values the setup leaves, which
-#   the job must reproduce), smoke-sbatch.txt (sbatch's version and help, and the NIL evidence), smoke.log, and the
+#   the job must reproduce), smoke-sbatch.txt (sbatch's version line and the NIL evidence), smoke.log, and the
 #   runner's empty smoke-unused/.
 # It runs in the job's own environment (the environment block below), so a missing tool or a broken import shows here
 # at 0 node-h. Python never writes bytecode, and the deploy's git index is read, never refreshed.
@@ -66,8 +66,9 @@ for v in $(compgen -e); do
 done
 pgit() { git -c core.fsmonitor=false "$@"; }  # with GIT_CONFIG_NOSYSTEM=1 and GIT_CONFIG_GLOBAL=/dev/null above
 newfile() {  # <path>: create it O_CREAT|O_EXCL|O_NOFOLLOW; fails on anything already there, a link included. The system
-    # interpreter by absolute path, isolated (-I -S): a refusal after the setup never runs a setup-selected python3
-    /usr/bin/python3 -I -S -c 'import os, sys; os.close(os.open(sys.argv[1], os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o644))' "$1" 2>/dev/null
+    # interpreter by absolute path, isolated and writing no bytecode (-I -S -B): a refusal after the setup never runs a
+    # setup-selected python3
+    /usr/bin/python3 -I -S -B -c 'import os, sys; os.close(os.open(sys.argv[1], os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o644))' "$1" 2>/dev/null
 }
 traced_setup() {  # <log>: source the pinned setup with its xtrace (PS4 names each sourced file) into <log>; 97 if it
     local PS4='+@${BASH_SOURCE[0]}@ '                # exported a denied variable
@@ -82,10 +83,11 @@ traced_setup() {  # <log>: source the pinned setup with its xtrace (PS4 names ea
     return "$rc"
 }
 setup_env_text() {  # the values the setup leaves, one record per name: the name, its status (exported, set, unset) and
-    local v st                                     # the value quoted by printf %q; bash builtins only
+    local v st d                                   # the value quoted by printf %q; bash builtins only
     for v in PATH PYTHONPATH LD_LIBRARY_PATH LD_PRELOAD CONDA_PREFIX CONDARC PYTHONNOUSERSITE $(compgen -v GIT_CONFIG_); do
         if [ -z "${!v+x}" ]; then printf '%s unset\n' "$v"; continue; fi
-        case "$(declare -p "$v" 2>/dev/null)" in "declare -x"*) st=exported ;; *) st=set ;; esac
+        d=$(declare -p "$v" 2>/dev/null); d=${d#declare -}; d=${d%% *}  # the attribute field: -x, -rx, -xr all export
+        case "$d" in *x*) st=exported ;; *) st=set ;; esac
         printf '%s %s %q\n' "$v" "$st" "${!v}"
     done
 }
@@ -120,28 +122,22 @@ mkdir "$STAGE" || no "cannot create $STAGE"
 [ "$(cd "$STAGE" && pwd -P)" = "$STAGE" ] || no "the stage $STAGE resolves elsewhere"
 newfile "$STAGE/smoke-env.log" && newfile "$STAGE/smoke.log" && newfile "$STAGE/smoke-setup-env.txt" \
     || no "cannot create the smoke's logs new"
-# --export=NIL (code 6 F1, code 7 G1): accepted only on positive evidence, never by submitting: (a) `sbatch --version`
-# exits 0 and its version parses to at least 23.02.3, the release that added NIL (SchedMD CHANGELOG/slurm-23.02.md:
-# "sbatch - Added new --export=NIL option"); or (b) `sbatch --help` exits 0 and NIL is on the --export option's own line.
-# A nonzero exit, an unparsable version, or NIL anywhere else is exit 8, a STOP for the director. A production smoke
-# requires sbatch; a local test runs this only when a stub sbatch is on its PATH. Bash builtins only.
+# --export=NIL (code 6 F1, code 7.1 P1): accepted ONLY when `sbatch --version` exits 0 and its first line matches
+# ^slurm[ -]X.Y.Z$ with X.Y.Z at least 23.02.3, the release that added NIL (SchedMD CHANGELOG/slurm-23.02.md: "sbatch -
+# Added new --export=NIL option"). Anything else is exit 8, a STOP for the director. No help text is read and nothing
+# is submitted; the director reads the recorded version line before the job go. A production smoke requires sbatch;
+# a local test runs this only when a stub sbatch is on its PATH. Bash builtins only.
 if [ "$LOCAL" = false ] || command -v sbatch > /dev/null; then
     newfile "$STAGE/smoke-sbatch.txt" || no "cannot create the sbatch record new"
     sv=$(sbatch --version 2>&1); svrc=$?
-    sh_=$(sbatch --help 2>&1); shrc=$?
-    printf -- '--- sbatch --version (exit %s)\n%s\n--- sbatch --help (exit %s)\n%s\n' "$svrc" "$sv" "$shrc" "$sh_" >> "$STAGE/smoke-sbatch.txt"
+    printf -- '--- sbatch --version (exit %s)\n%s\n' "$svrc" "$sv" >> "$STAGE/smoke-sbatch.txt"
     nil=""
-    re='^slurm[[:space:]-]*([0-9]+)\.([0-9]+)\.([0-9]+)'
+    re='^slurm[ -]([0-9]+)\.([0-9]+)\.([0-9]+)$'
     if [ "$svrc" -eq 0 ] && [[ "${sv%%$'\n'*}" =~ $re ]]; then
         ma=${BASH_REMATCH[1]}; mi=${BASH_REMATCH[2]}; pa=${BASH_REMATCH[3]}
         if [ "$ma" -gt 23 ] || { [ "$ma" -eq 23 ] && { [ "$mi" -gt 2 ] || { [ "$mi" -eq 2 ] && [ "$pa" -ge 3 ]; }; }; }; then
             nil="sbatch --version $ma.$mi.$pa is at least 23.02.3"
         fi
-    fi
-    if [ -z "$nil" ] && [ "$shrc" -eq 0 ]; then
-        while IFS= read -r ln; do
-            case "$ln" in *--export*) case "$ln" in *NIL*) nil="sbatch --help's --export line names NIL" ;; esac ;; esac
-        done <<< "$sh_"
     fi
     if [ -z "$nil" ]; then
         echo "[pfb-smoke] STOP: no positive evidence that this sbatch supports --export=NIL (see $STAGE/smoke-sbatch.txt)" >&2; exit 8

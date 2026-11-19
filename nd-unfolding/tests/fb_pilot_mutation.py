@@ -21,7 +21,7 @@ REPO = ND.parent
 FILES = ("fb_pilot_edges.py", "fb_pilot_gates.py", "fb_pilot_probe.py", "fb_pilot_analyze.py", "sbatch_pfb.sh",
          "pfb_smoke_prep.sh")
 ED, GA, PR, AN, SB, SM = FILES
-EXPECTED_TESTS = 81
+EXPECTED_TESTS = 83
 T = "test_fb_pilot"
 MUTATIONS = [
     # §3: the edges
@@ -268,25 +268,28 @@ MUTATIONS = [
      "            rebuilt_exp = s5n_pseudo.build_pseudo(ji, jb, a.truth, 0.0, split_key, a.pseudo_seed, ratio)[0]",
      "test_j2_rebuilds_the_jitter_from_the_jittered_sources"),
     # code rev 7: G1-G3
-    ("NIL read anywhere in the help", SM, '            case "$ln" in *--export*) case "$ln" in *NIL*)', '            case "$ln" in *) case "$ln" in *NIL*)',
-     "test_nil_needs_positive_evidence"),
     ("a failing version probe trusted", SM, '    if [ "$svrc" -eq 0 ] && [[ "${sv%%$\'\\n\'*}" =~ $re ]]; then', '    if [[ "${sv%%$\'\\n\'*}" =~ $re ]]; then',
-     "test_nil_needs_positive_evidence"),
-    ("a failing help probe trusted", SM, '    if [ -z "$nil" ] && [ "$shrc" -eq 0 ]; then', '    if [ -z "$nil" ]; then',
      "test_nil_needs_positive_evidence"),
     ("the snapshot in raw lines (code 6)", SB, "        printf '%s %s %q\\n' \"$v\" \"$st\" \"${!v}\"", "        printf '%s=%s\\n' \"$v\" \"${!v}\"",
      "test_the_snapshot_is_unambiguous"),
-    ("the snapshot ignores export status", SB, '        case "$(declare -p "$v" 2>/dev/null)" in "declare -x"*) st=exported ;; *) st=set ;; esac',
-     "        st=exported", "test_the_snapshot_is_unambiguous"),
+    ("the snapshot ignores export status", SB, '        case "$d" in *x*) st=exported ;; *) st=set ;; esac', "        st=exported",
+     "test_the_snapshot_is_unambiguous"),
     ("a null setup digest checked", AN, '    for digest in (rec.get("setup_env_sha256"), want["setup_env_sha256"]):  # required in the receipt and on disk',
      "    for digest in ():", "test_a_null_setup_digest_refuses"),
     ("a null setup digest written", AN, '        if not (isinstance(rec["setup_env_sha256"], str) and SHA_HEX.fullmatch(rec["setup_env_sha256"])):',
      "        if False:", "test_a_null_setup_digest_refuses"),
-    ("the refusal runs the setup's python3", SB, "    /usr/bin/python3 -I -S -c 'import os, sys;", "    python3 -c 'import os, sys;",
+    ("the refusal runs the setup's python3", SB, "    /usr/bin/python3 -I -S -B -c 'import os, sys;", "    python3 -c 'import os, sys;",
      "test_a_mismatch_refusal_never_runs_the_setups_python"),
     ("the declared values restored after the denied check (code 6)", SB,
      "    export PYTHONDONTWRITEBYTECODE=1 PYTHONNOUSERSITE=1 GIT_CONFIG_NOSYSTEM=1 GIT_CONFIG_GLOBAL=/dev/null  # before the\n", "",
      "test_the_declared_values_are_restored_before_the_denied_check"),
+    # code 7.1: P1-P3
+    ("the version regex unanchored", SM, "    re='^slurm[ -]([0-9]+)\\.([0-9]+)\\.([0-9]+)$'", "    re='^slurm[ -]([0-9]+)\\.([0-9]+)\\.([0-9]+)'",
+     "test_nil_needs_positive_evidence"),
+    ("export status from a leading x only (code 7)", SB, '        case "$d" in *x*) st=exported ;; *) st=set ;; esac',
+     '        case "$d" in x*) st=exported ;; *) st=set ;; esac', "test_readonly_plus_export_is_an_export"),
+    ("newfile writes bytecode under -I", SB, "    /usr/bin/python3 -I -S -B -c 'import os, sys;", "    /usr/bin/python3 -I -S -c 'import os, sys;",
+     "test_newfile_writes_no_bytecode"),
     # §5.1: the gates
     ("G3 (a) reads nothing", GA, '    return {"pass": not any(bad), "mismatched_rows": bad,', '    return {"pass": True, "mismatched_rows": bad,',
      "test_a_middle_edge_removed_changes_the_partition"),
