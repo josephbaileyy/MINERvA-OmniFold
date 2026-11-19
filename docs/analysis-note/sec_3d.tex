@@ -94,9 +94,17 @@ Marginalizing over $\Eavail$ should reproduce the 2D result of \S\ref{sec:result
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\textwidth]{eavail_marginal_vs_paper_pull_full}
+  % Layout (cov2d figure pass, 2026-11-19): the producer's 864 x 360 pt canvas, split into its two panels, each at scale 1.0 (it was 0.38); the distribution panel follows in a continuation float. The superscripts stay below 7 pt pending a producer re-render (note-figpass-20261119/README.md).
+  \includegraphics[scale=1.0,trim=5 11 434 0,clip]{eavail_marginal_vs_paper_pull_full}
   \caption[Descriptive marginal comparison, configuration~(a)]{Development check: configuration~(a) gives descriptive standardized differences, not formal independent-result pulls. Shared data and unavailable cross-covariance impose this restriction. The per-bin differences of the $\Eavail$-marginal are scaled by published uncertainties and shown on the $14\times16$ grid and in distribution. Configuration~(a) uses purity-based subtraction (\S\ref{sec:method-config}).}
   \label{fig:eavail-marg}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=1.0,trim=430 11 6 0,clip]{eavail_marginal_vs_paper_pull_full}
+
+  Figure~\ref{fig:eavail-marg}: continued, the per-bin differences in distribution.
 \end{figure}
 
 \subsection{Closure for one injected available-energy deformation}
@@ -200,9 +208,9 @@ Ascencio \emph{et al.}~\cite{MINERvA:2022incl} report the same deficit in MINERv
 \label{sec:4d}
 The fourth axis adds one feature (\S\ref{sec:3d}), three-momentum transfer $q_{3}=|\vec{q}\,|$, chosen because its $(\Eavail,q_{3})$ plane separates quasielastic, 2p2h and resonance processes and permits bin-compatible comparison to MINERvA's dedicated low-recoil $d^{2}\sigma/dq_{3}\,d\Eavail$ measurement (Ascencio \emph{et al.}~\cite{MINERvA:2022incl}). Truth $q_{3}$ comes from the generator (\texttt{CVUniverse::Getq3True()}); reconstructed $q_{3}$ uses the muon $Q^{2}$ and the calorimetric recoil (\texttt{CVUniverse::RecoQ3()}). Both are evaluated for all twelve playlists, as for $\Eavail$. Lateral systematic shifts change $q_{3}$ but leave $\Eavail$ unchanged, so a shifted $q_{3}$ is stored for each lateral universe instead of reusing the central value. The classifier inputs are $(\pT,\pPar,\Eavail,q_{3})$, with deliberately coarse $q_{3}$ binning $[0,0.2,0.4,0.6,0.8,1.2,2.0,100]\,\si{GeV}$ (seven bins including a final catch bin), giving $14\times16\times7\times7=10\,976$ four-dimensional bins (4830 populated).
 
-\paragraph{Marginalization check (4D$\to$3D).} In configuration~(a), the $q_{3}$ marginalization reproduces the 3D $\Eavail$ spectrum and low-recoil excess (Fig.~\ref{fig:q3excess}, right). The $\Eavail$-marginal data/Tune~v1 ratio is $1.21$ in the lowest bin, dips to $1.01$ across the quasielastic--$\Delta$ region, and rises to $1.16$--$1.23$ in the high-$\Eavail$ DIS tail (integrated data/Tune~v1 $=1.13$). These ratios are to Tune~v1, whereas \S\ref{sec:3d-2p2h} uses untuned GENIE. Recovering the 3D result as a by-product of the higher-dimensional unfolding is the 4D$\to$3D analog of the 3D$\to$2D marginalization check (\S\ref{sec:3d-anchor}).
+\paragraph{Marginalization check (4D$\to$3D).} In configuration~(a), the $q_{3}$ marginalization reproduces the 3D $\Eavail$ spectrum and low-recoil excess (Fig.~\ref{fig:q3excess}, lower right). The $\Eavail$-marginal data/Tune~v1 ratio is $1.21$ in the lowest bin, dips to $1.01$ across the quasielastic--$\Delta$ region, and rises to $1.16$--$1.23$ in the high-$\Eavail$ DIS tail (integrated data/Tune~v1 $=1.13$). These ratios are to Tune~v1, whereas \S\ref{sec:3d-2p2h} uses untuned GENIE. Recovering the 3D result as a by-product of the higher-dimensional unfolding is the 4D$\to$3D analog of the 3D$\to$2D marginalization check (\S\ref{sec:3d-anchor}).
 
-\paragraph{The $(\Eavail,q_{3})$ plane.} The $(\Eavail,q_{3})$ plane (Fig.~\ref{fig:q3excess}, left) shows structure that the $q_{3}$ marginal, integrated over $\Eavail$, does not resolve; the marginal's data/Tune~v1 ratio is $1.03$--$1.19$ (center). At fixed $\Eavail$ in the quasielastic--$\Delta$ dip, data/Tune~v1 \emph{rises} with $q_{3}$. Tune~v1 over-predicts low-$q_{3}$, moderate-$\Eavail$ cells (ratio down to $0.66$). The muon-only or fixed-$q_{3}$ projections considered here do not resolve this correlation. It bears on the bin-compatible comparison with Ascencio \emph{et al.} The map's comparator is the MINERvA Tune~v1 prior, distinct from the untuned GENIE sample of \S\ref{sec:3d-2p2h}.
+\paragraph{The $(\Eavail,q_{3})$ plane.} The $(\Eavail,q_{3})$ plane (Fig.~\ref{fig:q3excess}, top) shows structure that the $q_{3}$ marginal, integrated over $\Eavail$, does not resolve; the marginal's data/Tune~v1 ratio is $1.03$--$1.19$ (lower left). At fixed $\Eavail$ in the quasielastic--$\Delta$ dip, data/Tune~v1 \emph{rises} with $q_{3}$. Tune~v1 over-predicts low-$q_{3}$, moderate-$\Eavail$ cells (ratio down to $0.66$). The muon-only or fixed-$q_{3}$ projections considered here do not resolve this correlation. It bears on the bin-compatible comparison with Ascencio \emph{et al.} The map's comparator is the MINERvA Tune~v1 prior, distinct from the untuned GENIE sample of \S\ref{sec:3d-2p2h}.
 % Register round n1 (R-N1): "no per-cell significances without a corrected 4D covariance" is covered by the sec:3d
 % lead (no 4D covariance, no significance) and the paragraph below.
 % comparator weights: \texttt{w\_truth}; script \texttt{nd-unfolding/q3\_excess\_projection.py}
@@ -223,8 +231,8 @@ The fourth axis adds one feature (\S\ref{sec:3d}), three-momentum transfer $q_{3
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.99\textwidth]{q3_excess_projection}
-  \caption[Available-energy and momentum-transfer ratios, configuration~(a)]{In configuration~(a), the $\Eavail$ marginal reproduces the 3D low-recoil excess, while the joint data/Tune~v1 ratio rises with $q_{3}$ across the quasielastic--$\Delta$ dip. No uncertainty drawn: no 4D covariance is quoted (\S\ref{sec:3d}). The 4D data/Tune~v1 ratio (labeled ``unfolded / GENIE prior'' in the figure) is projected onto $(\Eavail,q_{3})$ (left; blank cells are kinematically empty), with $q_{3}$ (center) and $\Eavail$ (right) marginals. Configuration~(a) uses purity-based subtraction (\S\ref{sec:method-config}).}
+  \includegraphics[width=\textwidth]{q3_excess_projection}
+  \caption[Available-energy and momentum-transfer ratios, configuration~(a)]{In configuration~(a), the $\Eavail$ marginal reproduces the 3D low-recoil excess, while the joint data/Tune~v1 ratio rises with $q_{3}$ across the quasielastic--$\Delta$ dip. No uncertainty drawn: no 4D covariance is quoted (\S\ref{sec:3d}). The 4D data/Tune~v1 ratio (labeled ``unfolded / GENIE prior'' in the figure) is projected onto $(\Eavail,q_{3})$ (top; blank cells are kinematically empty), with $q_{3}$ (lower left) and $\Eavail$ (lower right) marginals. Configuration~(a) uses purity-based subtraction (\S\ref{sec:method-config}).}
   % Comparator: the MINERvA Tune~v1 prior (\texttt{w\_truth}).
   \label{fig:q3excess}
 \end{figure}

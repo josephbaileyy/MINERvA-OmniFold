@@ -1,0 +1,5 @@
+# Tick-label rotation and alignment (figure, axes index, axis, rotation deg, ha).
+figure	axes	axis	rotation	ha
+q3_excess_projection	0	x	0	center
+q3_excess_projection	1	x	0	center
+q3_excess_projection	2	x	0	center
