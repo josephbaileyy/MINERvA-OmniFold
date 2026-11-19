@@ -36,10 +36,11 @@ Independent design reads, over four rounds, all read-only. Reports are kept unde
 
 Nothing is submitted, deposited or tagged.
 
-## Binding 1, addendum C1: the code (director, 2026-11-18) — DRAFT by tier3-design for the director
+## Binding 1, addendum C1: the code (director, 2026-11-18)
 
-**Binds** the PILOT-FB code at commit **`8da6738a`** (PR #1219, receipt head `a0fffaf9`). The commit that merges
-#1219 to main is to be recorded here as M_PFBC. The director checked each file at `8da6738a`:
+**Binds** the PILOT-FB code as merged in PR #1219 at **M_PFBC = `378f0bed2a088948e498a3436152d40fee91e591`**. Each of
+the eight files below is byte-identical to the audited code commit `8da6738a` (receipt head `a0fffaf9`); the director
+checked them at M_PFBC:
 
 | file | sha256 |
 |---|---|
@@ -133,11 +134,13 @@ on `/usr/bin:/bin`, the connect names its absolute path inside the same `env -i`
 
 ### Rulings
 
-1. **The code is bound as merged at M_PFBC**, with the receipts above.
+1. **The code is bound as merged at M_PFBC = `378f0bed2a088948e498a3436152d40fee91e591`**, with the receipts above.
 2. **The cap is unchanged at 0.9 CPU node-h.** `--time=0:50:00` on one exclusive node is 0.833 node-h. The round-1
    wall projection (3 × round 1 ≤ 2,900 s) stops a run that would not fit.
 3. **The order, each step on its own go:**
-   1. cov2d's ack of a fence notice for the new `pfb_` family;
+   1. fence notices for the new `pfb_` job family to every lane holding a cluster fence: cov2d and the IBUKT
+      session, plus any lane fenced at that time. Each must ack with a UTC time under 15 minutes old before every
+      connect. The overlap check uses each running job's recorded input set, never a directory walk;
    2. after Ben's read, **the smoke** (0 node-h, login node), by the reviewed launch. It creates the stage, writes
       `smoke-edges/`, `smoke-receipt.json`, `smoke-setup-env.txt` and `smoke-sbatch.txt`, and exits 8 if it finds no
       NIL support;
