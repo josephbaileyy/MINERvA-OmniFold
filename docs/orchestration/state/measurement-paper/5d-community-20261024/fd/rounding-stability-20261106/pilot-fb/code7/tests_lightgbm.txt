@@ -1,0 +1,142 @@
+# HEAD 8da6738a780fbe4cfd3aaa13f3207c631ef53ad0
+# clean clone, Python 3.10.20, numpy 2.2.6, lightgbm 4.6.0, scikit-learn 1.7.2, 2026-11-19T02:02:21Z
+# 439e92262c85a86b4aca6b7e368972d2cc0a12bca3c55eb02e5ec019b927965a  fb_pilot_edges.py
+# b55ea40d3691521248813b1702d7c3442aa7564e9956d1a8d211a1522371cd09  fb_pilot_gates.py
+# 478316c13b2d902cebbb56e68c3e2762ecc49f57063a545ff87c0fdf9678e464  fb_pilot_probe.py
+# 4e1f92b8c3ea056a6f28b66548a1c1dfe75b4893c63d1f40efbaf98230db4b2d  fb_pilot_analyze.py
+# 5407e3f90ca3755a464346e7e6fd0f200025164dc10b1f97822720e2e25ad168  sbatch_pfb.sh
+# 307109fee38eab867bc4dd0dd33f0e02198f2b838069d9ff38ff6791bdfd833f  pfb_smoke_prep.sh
+# a2acdd75b886bfcfe86b6868a82ac1fb0220548527d5c1d1493e05001fa8add6  tests/test_fb_pilot.py
+# 3f09d061b5a7476e8793fb2b936f40b5693e7237ea88e99d544f9e6a53942add  tests/fb_pilot_mutation.py
+# command: python -B -W ignore -m unittest -v nd-unfolding/tests/test_fb_pilot.py
+test_a_power_of_two_needs_no_extra_rule (nd-unfolding.tests.test_fb_pilot.Admissibility) ... ok
+test_intended_index_is_lightgbms_value_to_bin (nd-unfolding.tests.test_fb_pilot.Admissibility) ... ok
+test_no_edge_sits_in_the_zero_band (nd-unfolding.tests.test_fb_pilot.Admissibility) ... ok
+test_no_jitter_crosses_an_admissible_edge (nd-unfolding.tests.test_fb_pilot.Admissibility) ... ok
+test_signed_spacing_counterexamples_are_refused (nd-unfolding.tests.test_fb_pilot.Admissibility) ... ok
+test_the_zero_band_and_finiteness_refuse (nd-unfolding.tests.test_fb_pilot.Admissibility) ... ok
+test_a_correct_file_passes_and_a_zero_split_stores_k (nd-unfolding.tests.test_fb_pilot.G3) ... ok
+test_a_middle_edge_removed_changes_the_partition (nd-unfolding.tests.test_fb_pilot.G3) ... ok
+test_a_misparsed_edge_used_as_a_split_fails_b (nd-unfolding.tests.test_fb_pilot.G3) ... ok
+test_a_nan_in_a_split_feature_fails_c (nd-unfolding.tests.test_fb_pilot.G3) ... ok
+test_an_edge_moved_in_a_used_gap_fails_b (nd-unfolding.tests.test_fb_pilot.G3) ... ok
+test_an_unforced_fit_fails_g3 (nd-unfolding.tests.test_fb_pilot.G3) ... ok
+test_an_unopenable_file_fails_a (nd-unfolding.tests.test_fb_pilot.G3) ... ok
+test_harmless_changes_may_pass_and_leave_predictions_unchanged (nd-unfolding.tests.test_fb_pilot.G3) ... ok
+test_the_remedy_is_jitter_invariant_on_fit_and_scored_rows (nd-unfolding.tests.test_fb_pilot.G3) ... ok
+test_a_source_slice_is_not_the_signed_sample (nd-unfolding.tests.test_fb_pilot.J) ... ok
+test_j2_rebuilds_with_the_runs_own_build_inputs (nd-unfolding.tests.test_fb_pilot.J) ... ok
+test_role_matrices_follow_the_bound_selection (nd-unfolding.tests.test_fb_pilot.J) ... ok
+test_the_bound_jitter_is_not_jitter_coords_of_a_role_matrix (nd-unfolding.tests.test_fb_pilot.J) ... ok
+test_unapplied_wrong_seed_and_edge_moves_are_caught (nd-unfolding.tests.test_fb_pilot.J) ... ok
+test_a_nonfinite_bootstrap_endpoint_is_inconclusive (nd-unfolding.tests.test_fb_pilot.Outcome) ... ok
+test_every_combination_reaches_exactly_one_row (nd-unfolding.tests.test_fb_pilot.Outcome) ... ok
+test_gate_precedence_and_a_deliberate_round1_stop (nd-unfolding.tests.test_fb_pilot.Outcome) ... ok
+test_invalid_branches (nd-unfolding.tests.test_fb_pilot.Outcome) ... ok
+test_s2_and_s3_follow_their_definitions (nd-unfolding.tests.test_fb_pilot.Outcome) ... ok
+test_the_bars_include_equality_and_rows_5_7_name_what_crossed (nd-unfolding.tests.test_fb_pilot.Outcome) ... ok
+test_build_edges_writes_twelve_files_and_refuses_an_existing_dir (nd-unfolding.tests.test_fb_pilot.Placement) ... ok
+test_edges_are_written_at_17_digits_and_round_trip (nd-unfolding.tests.test_fb_pilot.Placement) ... ok
+test_k_is_lightgbms_float32_constant (nd-unfolding.tests.test_fb_pilot.Placement) ... ok
+test_one_pool_gives_one_edge_set (nd-unfolding.tests.test_fb_pilot.Placement) ... ok
+test_ties_collide_and_walk_up (nd-unfolding.tests.test_fb_pilot.Placement) ... ok
+test_too_few_gaps_is_infeasible (nd-unfolding.tests.test_fb_pilot.Placement) ... ok
+test_z_comes_from_the_fit_column (nd-unfolding.tests.test_fb_pilot.Placement) ... ok
+test_a_sidecar_is_bound_to_its_product (nd-unfolding.tests.test_fb_pilot.Rev2) ... ok
+test_base_only_statistics_survive_a_round1_stop (nd-unfolding.tests.test_fb_pilot.Rev2) ... ok
+test_exits_4_and_5_and_operational_failures_keep_their_place (nd-unfolding.tests.test_fb_pilot.Rev2) ... ok
+test_g0_records_every_role_and_feature (nd-unfolding.tests.test_fb_pilot.Rev2) ... ok
+test_g4_rechecks_the_inputs_the_deploy_and_the_sigma_copy (nd-unfolding.tests.test_fb_pilot.Rev2) ... ok
+test_identity_is_every_fit_with_the_file_digest (nd-unfolding.tests.test_fb_pilot.Rev2) ... ok
+test_placement_takes_the_lowest_gap_on_a_plateau (nd-unfolding.tests.test_fb_pilot.Rev2) ... ok
+test_s1_invalid_reads_invalid_and_non_finite_values_write_as_null (nd-unfolding.tests.test_fb_pilot.Rev2) ... ok
+test_the_analysis_is_bound_to_one_job (nd-unfolding.tests.test_fb_pilot.Rev2) ... ok
+test_the_slurm_limit_and_the_scripts_cap (nd-unfolding.tests.test_fb_pilot.Rev2) ... ok
+test_the_smoke_is_a_login_node_step (nd-unfolding.tests.test_fb_pilot.Rev2) ... ok
+test_a_complete_valid_run_reads_one_row (nd-unfolding.tests.test_fb_pilot.Rev3) ... ok
+test_a_malformed_artifact_keeps_the_named_outcome (nd-unfolding.tests.test_fb_pilot.Rev3)
+Codex MEDIUM 5: INPUTS CHANGED is returned before any unsafe read; an unreadable product or sidecar is ... ok
+test_a_missing_index_or_an_altered_edge_file_fails_identity (nd-unfolding.tests.test_fb_pilot.Rev3)
+Codex HIGH 1, Grok 2: a missing INDEX disabled the identity check; now absent evidence FAILS. ... ok
+test_a_stage_copy_must_be_a_plain_file (nd-unfolding.tests.test_fb_pilot.Rev3)
+The LOW item: a symlink or hard link in the stage could reach a protected original. ... ok
+test_g0_counts_survive_a_policy_failure (nd-unfolding.tests.test_fb_pilot.Rev3)
+Codex 7: a zero-band failure still reports z, n and the admissible-gap count; a non-finite value cannot. ... ok
+test_products_of_another_job_are_run_refused (nd-unfolding.tests.test_fb_pilot.Rev3)
+Codex HIGH 2: the job id is bound to every product's meta, not only to the caller's arguments. ... ok
+test_s2_survives_s1s_own_invalid_and_each_base_has_its_shift (nd-unfolding.tests.test_fb_pilot.Rev3)
+Codex 7: S1's own INVALID suppresses S1's reading only; one base suffices for its own shift. ... ok
+test_the_environment_is_the_declared_one (nd-unfolding.tests.test_fb_pilot.Rev3)
+Code 4 (--export=NONE reversal; Codex's inherited BASH_ENV): the scripts re-execute under env -i with a named ... ok
+test_the_job_preflight_spends_no_root (nd-unfolding.tests.test_fb_pilot.Rev3)
+Every refusal but an existing root is a preflight refusal, recorded in the stage before the root exists; an ... ok
+test_the_job_writes_through_no_pre_placed_link (nd-unfolding.tests.test_fb_pilot.Rev3)
+Code 4: every file the job creates in the stage is created new (O_CREAT|O_EXCL|O_NOFOLLOW); a pre-placed ... ok
+test_the_prep_step_keeps_the_runners_exit_4 (nd-unfolding.tests.test_fb_pilot.Rev3)
+Codex MEDIUM 6, Grok 1: a returned input-digest failure stays 4 (INPUTS CHANGED), not 5. ... refusing: the runner exited 4 before the unfold
+refusing: the runner exited 2 before the unfold
+refusing: the prep step never reached the unfold
+ok
+test_the_smoke_writes_only_under_its_stage (nd-unfolding.tests.test_fb_pilot.Rev3)
+Codex HIGH 3 (code 2) and code 4: the smoke creates a fresh stage, writes nothing in the deploy (no bytecode, ... ok
+test_the_test_switch_cannot_reach_a_real_job (nd-unfolding.tests.test_fb_pilot.Rev3)
+Codex HIGH 4, Grok 3: inside Slurm any PFB_ variable refuses, even empty; then the one-node, family, root ... ok
+test_a_symlinked_a0_directory_or_the_original_inode_fails_g4 (nd-unfolding.tests.test_fb_pilot.Rev4)
+Codex 2, Grok 1: every path component is checked physically, and a copy that is the protected original's ... ok
+test_null_hashes_missing_files_and_a_bad_index_fail (nd-unfolding.tests.test_fb_pilot.Rev4)
+Codex 4: a recorded sha256 that is not a sha256 (null) with its file missing, an INDEX without its schema, ... ok
+test_the_analysis_writes_only_a_new_file_under_the_stage_or_root (nd-unfolding.tests.test_fb_pilot.Rev4)
+The director's ruling: the analyzer's --out is constrained in code, and created new. ... ok
+test_the_root_read_is_the_statuss_root (nd-unfolding.tests.test_fb_pilot.Rev4)
+Codex 3: a copied tree read under another path fails, even when its status names the declared root. ... ok
+test_the_stage_inventory (nd-unfolding.tests.test_fb_pilot.Rev4)
+The job's stage-check: only the smoke's files, the copies and the jobs' own logs; no link anywhere. ... ok
+test_wrong_typed_meta_keeps_the_named_outcome (nd-unfolding.tests.test_fb_pilot.Rev4)
+Codex 5: a readable product whose meta is valid JSON of the wrong type is classified, and a missing ... ok
+test_a_status_of_the_wrong_type_is_classified (nd-unfolding.tests.test_fb_pilot.Rev5)
+Codex 4: a status that is valid JSON of another type refuses with its reason, never an AttributeError. ... ok
+test_the_environment_values_are_checked_whatever_the_marker (nd-unfolding.tests.test_fb_pilot.Rev5)
+Codex: a forged PFBCLEAN with a foreign PATH, HOME or bytecode setting was accepted; now every value is. ... ok
+test_the_first_shell_starts_clean (nd-unfolding.tests.test_fb_pilot.Rev5)
+The director's ruling (Codex, Grok): BASH_ENV never runs in the first shell. Both scripts' shebang is ... ok
+test_the_index_policy_fields (nd-unfolding.tests.test_fb_pilot.Rev5)
+Codex 4: INDEX's K, and each set's max_bin and offset, must be the declared ones. ... ok
+test_the_setup_may_not_export_a_denied_variable (nd-unfolding.tests.test_fb_pilot.Rev5)
+The director's ruling: the environment is checked again after the setup. ... ok
+test_boolean_policy_fields_fail (nd-unfolding.tests.test_fb_pilot.Rev6)
+F5: a JSON false for an offset of 0.0, or true for K, is not the declared number. ... ok
+test_j2_rebuilds_the_jitter_from_the_jittered_sources (nd-unfolding.tests.test_fb_pilot.Rev6)
+F6: in a run, J2's rebuilt selection is build_pseudo on the jittered inputs and background, with the run's ... ok
+test_the_documented_smoke_launch_refuses_inside_an_allocation (nd-unfolding.tests.test_fb_pilot.Rev6)
+F2: the reviewed launch line itself, not a direct bash call: inside an allocation it refuses before the ... ok
+test_the_job_requires_export_nil (nd-unfolding.tests.test_fb_pilot.Rev6)
+F1: --export=NIL (no --get-user-env login environment); the job accepts only that mode. ... ok
+test_the_setup_values_are_reproduced_before_any_setup_tool (nd-unfolding.tests.test_fb_pilot.Rev6)
+F4: the values the setup leaves (PATH, PYTHONPATH, LD_*, CONDA_*, git config) are the smoke's, compared before ... ok
+test_the_smoke_confirms_nil_without_submitting (nd-unfolding.tests.test_fb_pilot.Rev6)
+F1: the smoke records sbatch --version and --help and accepts NIL if the help names it or the version is at ... ok
+test_user_site_and_git_config_are_off (nd-unfolding.tests.test_fb_pilot.Rev6)
+F3: PYTHONNOUSERSITE=1 and git's system/global config off are declared values, checked; G4's git runs with ... ok
+test_a_mismatch_refusal_never_runs_the_setups_python (nd-unfolding.tests.test_fb_pilot.Rev7)
+G2 (c): the setup now puts a python3 first on PATH; the values differ from the smoke's, and the refusal is ... ok
+test_a_null_setup_digest_refuses (nd-unfolding.tests.test_fb_pilot.Rev7)
+G2 (b): the setup environment's digest is a required sha256 in the receipt writer and the checker. ... [pfb-smoke] no receipt: smoke-setup-env.txt is absent or unreadable
+ok
+test_newfile_writes_no_bytecode (nd-unfolding.tests.test_fb_pilot.Rev7)
+Code 7.1 P3: -I ignores PYTHONDONTWRITEBYTECODE, so newfile's interpreter carries -B itself. ... ok
+test_nil_needs_positive_evidence (nd-unfolding.tests.test_fb_pilot.Rev7)
+G1 and code 7.1 P1: NIL only from `sbatch --version` exiting 0 with a first line matching ^slurm[ -]X.Y.Z$ at ... ok
+test_readonly_plus_export_is_an_export (nd-unfolding.tests.test_fb_pilot.Rev7)
+Code 7.1 P2: export status comes from the x flag anywhere in declare -p's attribute field (-x, -rx, -xr); a ... ok
+test_the_declared_values_are_restored_before_the_denied_check (nd-unfolding.tests.test_fb_pilot.Rev7)
+G3 (code 6's regression): a setup that clears the bytecode setting and exports a denied variable is refused ... ok
+test_the_newline_shift_refuses_at_the_job (nd-unfolding.tests.test_fb_pilot.Rev7)
+G2 (a), end to end: the smoke ran with one split, the job sees the other; the job refuses. ... ok
+test_the_snapshot_is_unambiguous (nd-unfolding.tests.test_fb_pilot.Rev7)
+G2 (a): one record per name, with its export status and its value under printf %q, so a newline cannot move ... ok
+
+----------------------------------------------------------------------
+Ran 83 tests in 23.393s
+
+OK
+# exit 0
