@@ -1,0 +1,16 @@
+% Compression rewrite (DECISION-20261119c; REWRITE-RULES-20261119.md rule 5; the director's Part 1 rulings, 2026-11-19): text the
+% director-helper-3 lane moved verbatim out of the posted note, one move-manifest row per passage (H3-048..H3-050 in
+% history-cuts/move-manifest-h3-20261117.tsv). References into the note resolve through main_note.aux (xr). Only passages
+% without a citation moved: the note keeps every prior-work citation in its introduction (the director's ruling).
+\section{Introduction detail moved from the note}
+This section holds supporting detail that the compressed introduction no longer prints, as the note printed it.
+
+\subsection{Practices of the cross-experiment guide applied here (from Part 1, prior OmniFold applications)}
+% From sec_intro.tex (draft e5c56bcc2 lineage), after "Ref. Canelli:2025guide collects these and other applications and distills cross-experiment practice."
+Three of the practices it audits are applied here: the ensemble-mean cross-check of the central value and the bootstrap statistical covariance (\S\ref{sec:uq-boot}), and the joint-perturbation (unified-throw) check, used in the five-axis covariance (\S\ref{sec:uq-combine}).
+
+\subsection{Findings of the first neutrino OmniFold study (from Part 1, Huang et al.)}
+% From sec_intro.tex (draft e5c56bcc2 lineage), the sentences after the study's description
+Two of its findings bear on neutrino applications. The first is its iteration count, which we do not adopt (\S\ref{sec:method-config}). The second is an ensemble of reweighting trials with different train/test splits that controls the ML stochastic component. We include that component explicitly, as the training-seed variation band (\S\ref{sec:systematics}).
+
+The present work differs from that study in three ways. It unfolds \emph{real} MINERvA data to an absolutely normalized cross section, with a 2D uncertainty budget whose covariance components are all built with the central value's own learner (\S\ref{sec:method-config}). Its gradient-boosted decision-tree (GBDT) learners suit a low-dimensional tabular feature set. It compares the result directly with a published binned measurement of the same data (\S\ref{sec:results}).

@@ -46,12 +46,12 @@ The largest band is the flux, as in the publication (Fig.~\ref{fig:uqbands}), an
 % by the review (e/recompute/rc_pairing.json.txt blocksum_median_rel_pct_den_exact_central); KNOWN_ISSUES 88.
 
 \begin{table}[H]
-  \caption[The 2D uncertainty budget]{Our combined median relative uncertainty (\SI{6.463}{\percent}) is below the published total (\SI{\uqPaper}{\percent}). Shown: the 2D uncertainty budget over 205 reported bins. Each component has a $205\times205$ covariance matrix $C$; $\sqrt{\mathrm{Tr}\,C}$ gives its absolute per-bin uncertainties in quadrature. The systematic row combines 43 of the 44 bands of the systematic-universe sweep (187 universes) with the normalization; the ML row combines five training-seed settings, and the run-period row three run periods.} % G2R: RE-2-shapes run 2 (C_new), g2r-integration/ledger.tsv g2r-tabuq-caption-q-median; a source comment citing RE-2 part C for this value gives the earlier value
+  \caption[The 2D uncertainty budget]{Our combined median relative uncertainty (\SI{6.463}{\percent}) is below the published total (\SI{\uqPaper}{\percent}). Shown: the 2D uncertainty budget over 205 reported bins. Each component has a $205\times205$ covariance matrix $C$; $\sqrt{\mathrm{Tr}\,C}$, in $\si{cm^2}$/nucleon per $(\mathrm{GeV}/c)^{2}$, gives its absolute per-bin uncertainties in quadrature. The systematic row combines 43 of the 44 bands of the systematic-universe sweep (187 universes) with the normalization; the ML row combines five training-seed settings, and the run-period row three run periods.} % G2R: RE-2-shapes run 2 (C_new), g2r-integration/ledger.tsv g2r-tabuq-caption-q-median; a source comment citing RE-2 part C for this value gives the earlier value
   \label{tab:uq}
   \centering
-  \begin{tabular}{@{}lccc@{}}
+  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.42\textwidth}ccc@{}}
     \toprule
-    Component & $N$ & $\sqrt{\mathrm{Tr}\,C}$ ($\si{cm^2}$/nucleon per $(\mathrm{GeV}/c)^{2}$) & per-bin median rel.\ $\sigma$ \\
+    Component & $N$ & $\sqrt{\mathrm{Tr}\,C}$ & per-bin median rel.\ $\sigma$ \\
     \midrule
     ML noise (LightGBM training-seed settings) & 5 & \num{1.351e-41} & \SI{0.048}{\percent} \\
     Statistical (Poisson bootstrap) & 300 & \num{1.886e-40} & \SI{0.676}{\percent} \\

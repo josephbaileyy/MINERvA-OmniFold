@@ -452,3 +452,157 @@ token	delta	owner	item	reason
 2605	-1	director-helper-3	BIB-REFLOW	bibliography reflow: limitation-resolver's P2-3 removes one entry and ATLAS:2026fullps adds one, so the arXiv numbers' line breaks return to where they were; this row offsets the two lanes' reflow rows, each made without the other's entry
 2605.24224	+1	director-helper-3	BIB-REFLOW	bibliography reflow: limitation-resolver's P2-3 removes one entry and ATLAS:2026fullps adds one, so the arXiv numbers' line breaks return to where they were; this row offsets the two lanes' reflow rows, each made without the other's entry
 4497	+1	director-helper-3	BIB-REFLOW	bibliography reflow: limitation-resolver's P2-3 removes one entry and ATLAS:2026fullps adds one, so the arXiv numbers' line breaks return to where they were; this row offsets the two lanes' reflow rows, each made without the other's entry
+0.9	-2	journal-editor	K8	moved verbatim to app_history.tex (records), App. E class-H detail (JE-10)
+1.1	-2	journal-editor	K8	moved verbatim to app_history.tex (records), App. E class-H detail (JE-10)
+16	-2	journal-editor	K8	moved verbatim to app_history.tex (records), App. E class-H detail (JE-10)
+0.088	-1	journal-editor	K8	moved verbatim to app_history.tex (records), App. E class-H detail (JE-10)
+0.36	-1	journal-editor	K8	moved verbatim to app_history.tex (records), App. E class-H detail (JE-10)
+0.42	-1	journal-editor	K8	moved verbatim to app_history.tex (records), App. E class-H detail (JE-10)
+0.49	-1	journal-editor	K8	moved verbatim to app_history.tex (records), App. E class-H detail (JE-10)
+0.57	-1	journal-editor	K8	moved verbatim to app_history.tex (records), App. E class-H detail (JE-10)
+0.70	-1	journal-editor	K8	moved verbatim to app_history.tex (records), App. E class-H detail (JE-10)
+1	-1	journal-editor	K8	moved verbatim to app_history.tex (records), App. E class-H detail (JE-10)
+1.65	-1	journal-editor	K8	moved verbatim to app_history.tex (records), App. E class-H detail (JE-10)
+11	-1	journal-editor	K8	moved verbatim to app_history.tex (records), App. E class-H detail (JE-10)
+2.30	-1	journal-editor	K8	moved verbatim to app_history.tex (records), App. E class-H detail (JE-10)
+2.72	-1	journal-editor	K8	moved verbatim to app_history.tex (records), App. E class-H detail (JE-10)
+205	-1	journal-editor	K8	moved verbatim to app_history.tex (records), App. E class-H detail (JE-10)
+38	-1	journal-editor	K8	moved verbatim to app_history.tex (records), App. E class-H detail (JE-10)
+42	-1	journal-editor	K8	moved verbatim to app_history.tex (records), App. E class-H detail (JE-10)
+6.50	-1	journal-editor	K8	moved verbatim to app_history.tex (records), App. E class-H detail (JE-10)
+6.51	-1	journal-editor	K8	moved verbatim to app_history.tex (records), App. E class-H detail (JE-10)
+60	-1	journal-editor	K8	moved verbatim to app_history.tex (records), App. E class-H detail (JE-10)
+62	-1	journal-editor	K8	moved verbatim to app_history.tex (records), App. E class-H detail (JE-10)
+892	-1	journal-editor	K8	moved verbatim to app_history.tex (records), App. E class-H detail (JE-10)
+900	-1	journal-editor	K8	moved verbatim to app_history.tex (records), App. E class-H detail (JE-10)
+1	-1	journal-editor	K9	K9: the exact-split eigenmode detail moved verbatim to the records (JE-10.028-034), journal-editor's split of allow-je-k9g1.tsv; G1's part nets to zero against limitation-resolver's genmodel receive, both on the draft
+10	-2	journal-editor	K9	K9: the exact-split eigenmode detail moved verbatim to the records (JE-10.028-034), journal-editor's split of allow-je-k9g1.tsv; G1's part nets to zero against limitation-resolver's genmodel receive, both on the draft
+5	-2	journal-editor	K9	K9: the exact-split eigenmode detail moved verbatim to the records (JE-10.028-034), journal-editor's split of allow-je-k9g1.tsv; G1's part nets to zero against limitation-resolver's genmodel receive, both on the draft
+0.01	-1	journal-editor	K9	K9: the exact-split eigenmode detail moved verbatim to the records (JE-10.028-034), journal-editor's split of allow-je-k9g1.tsv; G1's part nets to zero against limitation-resolver's genmodel receive, both on the draft
+1.42	-1	journal-editor	K9	K9: the exact-split eigenmode detail moved verbatim to the records (JE-10.028-034), journal-editor's split of allow-je-k9g1.tsv; G1's part nets to zero against limitation-resolver's genmodel receive, both on the draft
+205	-1	journal-editor	K9	K9: the exact-split eigenmode detail moved verbatim to the records (JE-10.028-034), journal-editor's split of allow-je-k9g1.tsv; G1's part nets to zero against limitation-resolver's genmodel receive, both on the draft
+291	-1	journal-editor	K9	K9: the exact-split eigenmode detail moved verbatim to the records (JE-10.028-034), journal-editor's split of allow-je-k9g1.tsv; G1's part nets to zero against limitation-resolver's genmodel receive, both on the draft
+3	-1	journal-editor	K9	K9: the exact-split eigenmode detail moved verbatim to the records (JE-10.028-034), journal-editor's split of allow-je-k9g1.tsv; G1's part nets to zero against limitation-resolver's genmodel receive, both on the draft
+6	-1	journal-editor	K9	K9: the exact-split eigenmode detail moved verbatim to the records (JE-10.028-034), journal-editor's split of allow-je-k9g1.tsv; G1's part nets to zero against limitation-resolver's genmodel receive, both on the draft
+73	-1	journal-editor	K9	K9: the exact-split eigenmode detail moved verbatim to the records (JE-10.028-034), journal-editor's split of allow-je-k9g1.tsv; G1's part nets to zero against limitation-resolver's genmodel receive, both on the draft
+1	-4	limitation-resolver	compression chunk P4-1	moved verbatim to records_compression_lr_p4.tex (LR-Q rows): sec_3d binning paragraph, FrInel_pi footnote, mode fractions, Valencia normalization, q3 event-loop procedure
+2	-2	limitation-resolver	compression chunk P4-1	moved verbatim to records_compression_lr_p4.tex (LR-Q rows): sec_3d binning paragraph, FrInel_pi footnote, mode fractions, Valencia normalization, q3 event-loop procedure
+0	-1	limitation-resolver	compression chunk P4-1	moved verbatim to records_compression_lr_p4.tex (LR-Q rows): sec_3d binning paragraph, FrInel_pi footnote, mode fractions, Valencia normalization, q3 event-loop procedure
+0.1	-1	limitation-resolver	compression chunk P4-1	moved verbatim to records_compression_lr_p4.tex (LR-Q rows): sec_3d binning paragraph, FrInel_pi footnote, mode fractions, Valencia normalization, q3 event-loop procedure
+0.2	-1	limitation-resolver	compression chunk P4-1	moved verbatim to records_compression_lr_p4.tex (LR-Q rows): sec_3d binning paragraph, FrInel_pi footnote, mode fractions, Valencia normalization, q3 event-loop procedure
+0.4	-1	limitation-resolver	compression chunk P4-1	moved verbatim to records_compression_lr_p4.tex (LR-Q rows): sec_3d binning paragraph, FrInel_pi footnote, mode fractions, Valencia normalization, q3 event-loop procedure
+0.8	-1	limitation-resolver	compression chunk P4-1	moved verbatim to records_compression_lr_p4.tex (LR-Q rows): sec_3d binning paragraph, FrInel_pi footnote, mode fractions, Valencia normalization, q3 event-loop procedure
+0.9	-1	limitation-resolver	compression chunk P4-1	moved verbatim to records_compression_lr_p4.tex (LR-Q rows): sec_3d binning paragraph, FrInel_pi footnote, mode fractions, Valencia normalization, q3 event-loop procedure
+1.0000	-1	limitation-resolver	compression chunk P4-1	moved verbatim to records_compression_lr_p4.tex (LR-Q rows): sec_3d binning paragraph, FrInel_pi footnote, mode fractions, Valencia normalization, q3 event-loop procedure
+1.5	-1	limitation-resolver	compression chunk P4-1	moved verbatim to records_compression_lr_p4.tex (LR-Q rows): sec_3d binning paragraph, FrInel_pi footnote, mode fractions, Valencia normalization, q3 event-loop procedure
+100	-1	limitation-resolver	compression chunk P4-1	moved verbatim to records_compression_lr_p4.tex (LR-Q rows): sec_3d binning paragraph, FrInel_pi footnote, mode fractions, Valencia normalization, q3 event-loop procedure
+11	-1	limitation-resolver	compression chunk P4-1	moved verbatim to records_compression_lr_p4.tex (LR-Q rows): sec_3d binning paragraph, FrInel_pi footnote, mode fractions, Valencia normalization, q3 event-loop procedure
+2.87	-1	limitation-resolver	compression chunk P4-1	moved verbatim to records_compression_lr_p4.tex (LR-Q rows): sec_3d binning paragraph, FrInel_pi footnote, mode fractions, Valencia normalization, q3 event-loop procedure
+2026	-1	limitation-resolver	compression chunk P4-1	moved verbatim to records_compression_lr_p4.tex (LR-Q rows): sec_3d binning paragraph, FrInel_pi footnote, mode fractions, Valencia normalization, q3 event-loop procedure
+22	-1	limitation-resolver	compression chunk P4-1	moved verbatim to records_compression_lr_p4.tex (LR-Q rows): sec_3d binning paragraph, FrInel_pi footnote, mode fractions, Valencia normalization, q3 event-loop procedure
+3.0	-1	limitation-resolver	compression chunk P4-1	moved verbatim to records_compression_lr_p4.tex (LR-Q rows): sec_3d binning paragraph, FrInel_pi footnote, mode fractions, Valencia normalization, q3 event-loop procedure
+66	-1	limitation-resolver	compression chunk P4-1	moved verbatim to records_compression_lr_p4.tex (LR-Q rows): sec_3d binning paragraph, FrInel_pi footnote, mode fractions, Valencia normalization, q3 event-loop procedure
+0.102	-1	cov2d	P5-1	moved to records: "In the metric of \S\ref{sec:validation} ($\Eavail$ projection) the residual is 1.84% against 18.1% injected (ratio 0.102)." (CV-P5-1.05, records_compression_cv.tex); tab:closure-map's row still prints "Marginal residual 1.84% of 18.1% injected (ratio 0.102)"
+1.84	-1	cov2d	P5-1	same sentence (CV-P5-1.05); tab:closure-map prints it
+18.1	-1	cov2d	P5-1	same sentence (CV-P5-1.05); tab:closure-map prints it
+1	-1	cov2d	P5-1	moved to records: "Total normalization matches to better than 1%." (CV-P5-1.04)
+3.7	-1	cov2d	P5-1	moved to records: "The closure's marginal scatter is far below the 3.7% data-versus-2D scatter." (CV-P5-1.06; with its caveat CV-P5-1.07/.08)
+30	-1	cov2d	P5-1	moved to records: "Both residuals are at least 30x below the threshold: OmniFold recovers the injected truth shape." (CV-P5-1.01); tab:closure-map states both residuals and the threshold
+4	-9	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); still prints in the note (35 times); in main_records.pdf: yes
+10	-6	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); still prints in the note (150 times); in main_records.pdf: yes
+5	-4	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); still prints in the note (60 times); in main_records.pdf: yes
+0.005	-3	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); still prints in the note (2 times); in main_records.pdf: yes
+0	-2	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); still prints in the note (182 times); in main_records.pdf: yes
+0.01	-2	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); still prints in the note (12 times); in main_records.pdf: yes
+0.02	-2	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); still prints in the note (4 times); in main_records.pdf: yes
+0.923	-2	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+0.963	-2	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); still prints in the note (1 times); in main_records.pdf: yes
+1	-2	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); still prints in the note (394 times); in main_records.pdf: yes
+1.8	-2	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); still prints in the note (21 times); in main_records.pdf: yes
+49	-2	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); still prints in the note (1 times); in main_records.pdf: yes
+72	-2	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); still prints in the note (4 times); in main_records.pdf: yes
+95	-2	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); still prints in the note (23 times); in main_records.pdf: yes
+0.00	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); still prints in the note (5 times); in main_records.pdf: yes
+0.05	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); still prints in the note (24 times); in main_records.pdf: yes
+0.109	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+0.112	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+0.17	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); still prints in the note (4 times); in main_records.pdf: yes
+0.231	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+0.30	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); still prints in the note (11 times); in main_records.pdf: yes
+0.37	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); still prints in the note (6 times); in main_records.pdf: yes
+0.67	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); still prints in the note (3 times); in main_records.pdf: yes
+0.72	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); still prints in the note (1 times); in main_records.pdf: yes
+0.739	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+0.74	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); still prints in the note (3 times); in main_records.pdf: yes
+0.80	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); still prints in the note (1 times); in main_records.pdf: yes
+0.98	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); still prints in the note (5 times); in main_records.pdf: yes
+1.0	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); still prints in the note (4 times); in main_records.pdf: yes
+1.036	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+1.039	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+1.33	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); still prints in the note (2 times); in main_records.pdf: yes
+1.9	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+1040	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+1086	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+109	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); still prints in the note (21 times); in main_records.pdf: yes
+11	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); still prints in the note (7 times); in main_records.pdf: yes
+1104	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+1595	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+1647	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+1652	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+172	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); still prints in the note (1 times); in main_records.pdf: yes
+1721	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+1751	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); still prints in the note (4 times); in main_records.pdf: yes
+1791	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+1796	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+1813	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+1975	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+199	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); still prints in the note (1 times); in main_records.pdf: yes
+2.24	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+200	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); still prints in the note (13 times); in main_records.pdf: yes
+2019	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); still prints in the note (28 times); in main_records.pdf: yes
+21.09	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); still prints in the note (22 times); in main_records.pdf: yes
+2540	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+2665	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+2852	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+2856	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+2867	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+3	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); still prints in the note (58 times); in main_records.pdf: yes
+3.18	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+3.58	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); still prints in the note (3 times); in main_records.pdf: yes
+3.8	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); still prints in the note (2 times); in main_records.pdf: yes
+31	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); still prints in the note (17 times); in main_records.pdf: yes
+3129	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+3901	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+4.67	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+4.77	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+4013	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+406	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+4154	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+45	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); still prints in the note (7 times); in main_records.pdf: yes
+450	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+5.08	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); still prints in the note (2 times); in main_records.pdf: yes
+5.1688	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+5.1703	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+5.2547	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+5.2563	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+528	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+582	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+6.2	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); still prints in the note (1 times); in main_records.pdf: yes
+600	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+631	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+6324	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+647	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+7.86	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); still prints in the note (4 times); in main_records.pdf: yes
+7110	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+7361	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+7380	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+7427	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+839	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+869	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+893	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+9540	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+9660	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+9690	-1	journal-editor	G2 (74f70348d)	moved verbatim to app_compression_records.tex (records; JE-12: the later reporting-only studies' detail); prints only in the records document now; in main_records.pdf: yes
+0	-1	director-helper-3	H3-052	dedup: Part 1's "clamp at $W^{2}=0$" sentence is cut; sec_observables.tex:38 prints "the clamp at $W^{2}=0$"
+2	-1	director-helper-3	H3-052	same ($W^{2}$)
+1.5	-1	director-helper-3	H3-052	same (\SI{1.5}{\percent} of simulated events), which sec_observables.tex:38 prints
