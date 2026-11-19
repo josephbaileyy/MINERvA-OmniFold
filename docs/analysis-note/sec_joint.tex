@@ -77,9 +77,10 @@ The joint-test estimator (\S\ref{sec:joint5d-calibration}) was chosen before the
 % Search: rejection rate; processed like the data; independent simulation sample @ ddf16f10
 
 % Methods-paper shortening pass (2026-10-21, DECISION-20261020-joseph-refined-estimator-shorten-delta.md item 2): the article's post hoc paragraph (its Sec. VIII C).
-Three studies followed the decisions: the scan of the shift multiplier (\S\ref{sec:joint5d-kappa}), the rerun of the lost pseudo-experiments (\S\ref{sec:joint5d-lost}), and the matched coarse-projection comparison (\S\ref{sec:joint5d-projections}). They are for reporting only, outside the decision rule. The projection comparison was specified after the five-dimensional outcomes were known.
+Three studies followed the decisions: the scan of the shift multiplier (\S\ref{sec:joint5d-kappa}), the rerun of the lost pseudo-experiments (\S\ref{sec:joint5d-lost}), and the matched coarse-projection comparison (\S\ref{sec:joint5d-projections}). They are for reporting only, outside the decision rule. Each was specified before it ran. The projection comparison was specified after the five-dimensional outcomes were known.
 
 % Move pair H3-023 (director-helper-3, the structural rewrite, 2026-11-18): the subsection "Six conditions attached to the ten rejections" (sec_joint.tex:136-180 @ 9ed7db71b), with its label sec:joint5d-conditions, comments and Search lines, moved verbatim to section 12 (sec:limitations-joint); sec:joint5d-results opens with its first sentence as the scope label.
+% [History: in the compression (G2a, 2026-11-19) the subsection came back here from sec_limitations.tex, verbatim; see the subsection "Six conditions attached to the ten rejections" below and move-manifest-je JE-11.]
 
 \subsubsection{Decisions on the ten hypotheses}
 \label{sec:joint5d-results}
@@ -119,6 +120,16 @@ Each decision holds under six conditions of the specified model (\S\ref{sec:join
   % (figures/plot_joint_null_distributions_physlabels.py, sha256 bb1d7389...; Slurm job 60029158).
   \label{fig:joint5d-nulls}
 \end{figure}
+
+\paragraph{Sensitivity to the sub-fine-grid residual.}
+\label{sec:joint5d-kappa}
+
+The multiplier $\kappa$ scales the last measured refinement change $\delta_{\mathrm{fine}}$: $\kappa=1$ means one such change, not one standard deviation or a confidence level. A scan of $\kappa$ along the direction $\delta_{\mathrm{fine}}$ of the claim variants~\cite{JointTestKappa2026} (for reporting only) found, in the calibration ensembles used for the decisions, all ten decisions to remain determinate rejections at every sampled multiplier up to 5.25. The scan probes one prescribed direction. It establishes neither convergence nor a bound on the actual below-grid residual (condition~(i), \S\ref{sec:joint5d-conditions}). Where determinate rejection is first lost, and by which tests, is given in the records document.
+
+\paragraph{Power.}
+\label{sec:joint5d-power}
+
+Because every test rejects, power serves here only as context: the test specification uses power only to interpret a failure to reject. The powers measured at the Tune~v1 and GENIE~2.12.10 nulls are given in the records document.
 
 \subsubsection{Six conditions attached to the ten rejections}
 \label{sec:joint5d-conditions}
@@ -168,16 +179,6 @@ Every pseudo-experiment resamples the same simulated events, so the null distrib
 
 % Pointer entry 6 (the director's ruling (a), via director-helper-3): sec_summary.tex:39, kept there.
 % Moved verbatim from sec_limitations.tex (§12) in the compression (G2a; move-manifest-je JE-11); the heading is a \subsubsection here.
-
-\paragraph{Sensitivity to the sub-fine-grid residual.}
-\label{sec:joint5d-kappa}
-
-The multiplier $\kappa$ scales the last measured refinement change $\delta_{\mathrm{fine}}$: $\kappa=1$ means one such change, not one standard deviation or a confidence level. A scan of $\kappa$ along the direction $\delta_{\mathrm{fine}}$ of the claim variants~\cite{JointTestKappa2026} (for reporting only) found, in the calibration ensembles used for the decisions, all ten decisions to remain determinate rejections at every sampled multiplier up to 5.25. The scan probes one prescribed direction. It establishes neither convergence nor a bound on the actual below-grid residual (condition~(i), \S\ref{sec:joint5d-conditions}). Where determinate rejection is first lost, and by which tests, is given in the records document.
-
-\paragraph{Power.}
-\label{sec:joint5d-power}
-
-Because every test rejects, power serves here only as context: the test specification uses power only to interpret a failure to reject. The powers measured at the Tune~v1 and GENIE~2.12.10 nulls are given in the records document.
 
 \subsubsection{Lost pseudo-experiments and their recovery}
 \label{sec:joint5d-lost}
@@ -243,7 +244,9 @@ NuWro~21.09 and GiBUU~2019 were generated on carbon, while the data and the othe
 
 With the metric used for the decisions, NuWro's total statistic falls by 3.83 null standard deviations. At its original Holm position (threshold 0.005) the total test would then lie 1.11 null standard deviations below its boundary, and so be undetermined. It remains rejected only because its larger $p$ value moves it to the last Holm position (threshold 0.05). In the $\kappa=\jtMoneKappaRobust$ family, which is for reporting only, it is not rejected ($p=0.075$). NuWro's shape test stays rejected. Both GiBUU tests stay rejected at their original Holm positions, including at $\kappa=\jtMoneKappaRobust$. With each CH prediction's own variance in the metric, no decision changes for either generator.
 
-The correction carries three generation caveats. For GiBUU, the sampling-closure check failed on the hydrogen sample. A bias check of that check's premise was added post hoc, with its criterion specified before the check was computed, and it passed at $\le0.1\,\sigma_{c}$. GiBUU's deep-inelastic events on hydrogen, 46\% of its hydrogen sample, do not conserve energy. The cause has not been identified, and the non-conservation may also affect GiBUU's carbon prediction, which cannot be checked in this way. NuWro's 50--\SI{100}{GeV} hydrogen supplement is flagged rather than assumed negligible. The construction's details, the margins and the numbers of the generation checks are given in the records document.
+\paragraph{Generation checks.} For GiBUU, the sampling-closure check failed on the hydrogen sample. A bias check of that check's premise was added post hoc. Its criterion, a change of at most $0.1\,\sigma_{c}$ in every cell, was specified before the check was computed. The check met the criterion: it moved the CH prediction by at most $5.1\times10^{-4}\,\sigma_{c}$. Here $\sigma_{c}$ is the standard deviation of the cell's result over NuWro's null distribution used for the decisions ($B=1751$). The GiBUU re-evaluation is reported under the label ``B3 (sampling closure) failed on hydrogen; a post-hoc bias check of its premise passed at $\le0.1\,\sigma_{c}$''.
+
+The correction carries two further generation caveats. GiBUU's deep-inelastic events on hydrogen, 46\% of its hydrogen sample, do not conserve energy. The cause has not been identified, and the non-conservation may also affect GiBUU's carbon prediction, which cannot be checked in this way. NuWro's 50--\SI{100}{GeV} hydrogen supplement is flagged rather than assumed negligible. The construction's details, the margins and the numbers of the generation checks are given in the records document.
 
 \subsubsection{What the tests establish}
 \label{sec:joint5d-reading}
