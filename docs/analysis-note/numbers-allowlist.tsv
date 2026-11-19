@@ -327,3 +327,21 @@ token	delta	owner	item	reason
 8	-1	director-helper-3	SK-RENUM	skeleton: reflow of the run-period figure caption (p. 70): its two "8 GeV/c" now fall on lines whose extracted tokens count one "8" (checked with page_tokens); the caption is unchanged
 9	-1	director-helper-3	SK-RENUM	skeleton: the bare heading number "9" (the old sixteen-cell section) is renumbered
 10	+1	director-helper-3	SK-RENUM	skeleton: reflow splits "G18_10a_02_11b's" (\fvval{f1-tune-g18}) so that "10a" starts a line, as journal-editor's dup P31 row records
+0	-1	director-helper-3	P1-COMPRESS	Part 1 and abstract (DECISION-20261119c): the abstract's "0 of 300 pseudo-experiments" (\lrval{cov2d-ar23-joint}) is cut; it prints at sec:coverage-tunes (sec_validation.tex) and sec_limitations.tex
+300	-1	director-helper-3	P1-COMPRESS	same (\lrval{cov2d-ntoys})
+0.01	-1	director-helper-3	P1-COMPRESS	the abstract's fake-data criterion p < \fvval{trig-p} is cut; it prints at sec:fived16-fd (sec_q3_fived16.tex)
+2	-1	director-helper-3	P1-COMPRESS	same, |z| > \fvval{trig-z}; prints at sec:fived16-fd
+0.05	-1	director-helper-3	P1-COMPRESS	the executive summary is cut: "every test has p < 0.05 ... in at least one of the two matched coarse projections" prints at sec:joint5d-projections (sec_joint.tex)
+0.141	-1	director-helper-3	P1-COMPRESS	executive summary cut: the 3D marginal's 0.141 % agreement prints at sec:3d-anchor (sec_3d.tex)
+1.1	-1	director-helper-3	P1-COMPRESS	the heading "1.1 Introduction and motivation" is folded into Part 1's heading (sec:intro kept)
+107	-1	director-helper-3	P1-COMPRESS	executive summary cut: "chi2 between 107 and 229 for 16 degrees of freedom" (rounded \fvval{g-ext-chi2int-*}); the exact values and ndf print in tab:fived16-gen (sec_fived16_gen.tex)
+229	-1	director-helper-3	P1-COMPRESS	same
+16	-2	director-helper-3	P1-COMPRESS	same ("16 degrees of freedom"), and the abstract's "9 of the 16 cells" (bias-half screen), which prints at sec:fived16-fd
+8	-1	director-helper-3	P1-COMPRESS	executive summary cut: "GiBUU, compared only on the 8 cells"; tab:fived16-gen's "8-cell subset" prints it
+45	-1	director-helper-3	P1-COMPRESS	executive summary cut: GiBUU's rounded chi2 = 45 (\fvval{g-gibuu-carbon-total-chi2int}); the exact value prints in tab:fived16-gen
+12	-1	director-helper-3	P1-COMPRESS	abstract cut: "up to 12 of 39" opposite-moving cells (\fvval{rec-g-opp}, \fvval{rec-g-n}); prints at sec:val-negweight (sec_5d.tex)
+39	-1	director-helper-3	P1-COMPRESS	same
+1200	-1	director-helper-3	P1-COMPRESS	abstract: "a five-dimensional test of 1,200 pseudo-experiments" shortened; 1,200 prints at sec:coverage-5d (sec_5d.tex)
+9	-1	director-helper-3	P1-COMPRESS	abstract cut: "9 of the 16 cells" (\fvval{vhalf-n-notvalid}); prints at sec:fived16-fd (sec_q3_fived16.tex)
+2.6	-1	director-helper-3	P1-COMPRESS	abstract: "by up to \lrval{stab-max} statistical standard deviations" shortened; "at most 2.6 statistical standard deviations" prints at sec:val-departure (sec_5d.tex:103)
+7.86	-2	director-helper-3	P1-COMPRESS	the abstract's and the executive summary's median per-cell uncertainty (\fvval{sigmed-reported}) are cut; it prints at sec:fived16-cov (sec_fived16.tex) and in tab:what-is-measured
