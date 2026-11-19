@@ -2,11 +2,11 @@
 \addcontentsline{toc}{subsection}{Terminology}
 \label{sec:front-definitions}
 
-Table~\ref{tab:definitions} collects the symbols and conventions used throughout, each with the place that defines it.
+Table~\ref{tab:definitions} collects the symbols and conventions used throughout, each with the place that defines it, and the names the note uses for the four components of the analysis chain, with the code identifiers it cites.
 
 \begin{table}[H]
 \centering\small
-\caption{Definitions and conventions, each with the section or table that defines it.}
+\caption{Definitions and conventions, each with the section or table that defines it, and the components of the analysis chain with their code identifiers.}
 \label{tab:definitions}
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.2\textwidth}>{\raggedright\arraybackslash}p{0.76\textwidth}@{}}
 \toprule
@@ -17,7 +17,7 @@ $\Eavail$ & Available energy: proton kinetic energy, charged-pion energy less \S
 $q_{3}$ & Three-momentum transfer, in GeV/$c$ (Table~\ref{tab:observables-impl}). \\
 $W$ & Hadronic invariant mass, in GeV. Truth $W$ uses the struck-nucleon mass, reconstructed $W$ the average nucleon mass. The external generator predictions use the neutron mass for every event (\S\ref{sec:eavailw-axis}). \\
 Data & The twelve ME FHC playlists, $1.057\times10^{21}$ protons on target (\S\ref{sec:experiment}). \\
-Abbreviations & IBU: D'Agostini iterative Bayesian unfolding (\S\ref{sec:intro}). ME, FHC: the medium-energy, neutrino-mode (forward horn current) exposure (\S\ref{sec:experiment}). POT: protons on target (App.~\ref{app:codebase}). GBDT: gradient-boosted decision tree (\S\ref{sec:intro}). PPFX: the hadron-production weights of the flux prediction (\S\ref{sec:experiment}). MAT: the MINERvA Analysis Toolkit (\S\ref{sec:experiment}). \\
+Abbreviations & IBU: D'Agostini iterative Bayesian unfolding (\S\ref{sec:intro}). ME, FHC: the medium-energy, neutrino-mode (forward horn current) exposure (\S\ref{sec:experiment}). POT: protons on target (the event-loop outputs, below). GBDT: gradient-boosted decision tree (\S\ref{sec:intro}). PPFX: the hadron-production weights of the flux prediction (\S\ref{sec:experiment}). MAT: the MINERvA Analysis Toolkit (\S\ref{sec:experiment}). \\
 \addlinespace
 Configurations & (a)--(f): Table~\ref{tab:config-key}, from Table~\ref{tab:estimators-matrix} and \S\ref{sec:method-config}. \\
 \addlinespace
@@ -37,6 +37,15 @@ D1, W1--W3 & Fixed historical truth deformations, built before the generator flu
 $R$ & The raised-refinement-capacity estimator of \S\ref{sec:val-departure}: baseline OmniFold classifiers with a 400-tree, 31-leaf background-refinement classifier (\S\ref{sec:gbdt-model-dependence}). \\
 RD1--RD3 & Reporting definitions of the five-dimensional precision study at J, H2 and EW resolution (\S\ref{sec:gbdt-model-dependence}). \\
 Units & Densities in \si{cm^2/nucleon} divided by the product of the kept axes' units; cell-integrated cross sections in \si{cm^2/nucleon} (App.~\ref{app:release}, Table~\ref{tab:fived16-cells}). \\
+\addlinespace
+Event loop (C++) & \texttt{runEventLoopOmniFold}, built on the MINERvA Analysis Toolkit (MAT) and the MINERvA-101 framework. It reads production AnaTuples, applies selection and systematic-universe machinery, and writes per-event ROOT trees. Code (\S\ref{sec:evloop}): \repopath{MINERvA101/MINERvA-101-Cross-Section/runEventLoopOmniFold.cpp}; its four trees are \texttt{mc\_truth\_denom} (efficiency denominator), \texttt{mc\_signal\_reco}, \texttt{mc\_background} and \texttt{data}; the flux histogram is \texttt{pTmu\_reweightedflux\_integrated}. \\
+Event-loop outputs & Called \emph{omnifiles} in the code: per-event records for data, for simulated signal with paired true and reconstructed quantities, for simulated background, and for the truth-level efficiency denominator, together with the exposure in protons on target (POT). The \texttt{\_universes\_full} variants add per-universe weight and shifted-kinematics branches. \\
+Driver (Python) & Per-analysis orchestration, by a two-dimensional driver and its $N$-dimensional generalization. The driver builds training arrays from the event-loop outputs, subtracts the background by the method an option selects, the purity weight by default (\S\ref{sec:method-algo}), or negative-weight injection with or without the Stay-Positive refinement (App.~\ref{app:negweight}), runs the engine, and extracts the cross section. Cross-section extraction (\S\ref{sec:method-xsec}): \texttt{extract\_cross\_section\_2d} in the 2D driver, \texttt{2d-unfolding/unfold\_2d\_omnifold\_unbinned.py}, and its N-dimensional generalization \texttt{nd-unfolding/xsec\_nd.py}. \\
+        % Accuracy fix (unscored; director ruling 2026-10-26): the option is --bkg-mode {purity, negweight,
+        % negweight-refined}, default purity (2d-unfolding/unfold_2d_omnifold_unbinned.py:1362-1377 and :1825-1870 @ ddf16f10; nd-unfolding/unfold_nd_omnifold_unbinned.py:619-630 and :900-1030 @ ddf16f10);
+        % the 2D result uses the refined negative-weight mode (sec:negweight-footing).
+Engine (Python) & \texttt{unbinned\_unfolding/python/omnifold.py}: the OmniFold iteration, implemented independently of the learner backend: LightGBM for the central value and the uncertainty ensembles, scikit-learn's exact-split gradient boosting (\texttt{exact}) for the cross-check, its histogram gradient boosting (\texttt{hist}) as an alternate, and a multilayer perceptron (MLP) for a further cross-check. \\
+Figure code & For the figures of \S\ref{sec:results}, \texttt{2d-unfolding/plot\_2d\_paper\_comparison.py} builds the simulated-truth curve of Fig.~\ref{fig:ptslices} from \texttt{hOFTruthDenom2D}; \texttt{2d-unfolding/compare\_to\_models.py} draws Fig.~\ref{fig:modelmaps}. \\
 \bottomrule
 \end{tabular}
 \end{table}
