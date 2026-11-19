@@ -1,32 +1,39 @@
 #!/usr/bin/env python3
-"""PILOT-FB's copy connect (PILOT-FB-BINDING-1 addendum C1, ruling 3 step 3): RS1's 21 A0 products and the sigma
-receipt, read O_NOATIME and copied into the stage the login-node smoke created, as plain files of their own. Python
-3.6-compatible: on a login node it runs under /usr/bin/python3, fed through ssh's stdin, with the deploy as its only
-argument. It writes nothing but the stage's a0-refs/ (21 files) and assess_receipt.json, and nothing on CFS; it runs no
-job and calls no sbatch.
+"""PILOT-FB's copy connect (PILOT-FB-BINDING-1 addendum C1, ruling 3 step 3; revision 2, the copy-connect read's
+K1-K8): RS1's 21 A0 products and the sigma receipt, read O_NOATIME and copied into the stage the login-node smoke
+created, as plain files of their own. Python 3.6-compatible. On a login node it is executed by the launcher's fixed
+bootstrap, which reads these bytes from ssh's stdin, refuses (exit 10) unless their sha256 is the pin on its command
+line, and executes exactly those bytes with the deploy as the one argument. It writes nothing but the stage's a0-refs/
+(21 files) and assess_receipt.json, through descriptors anchored at the stage; nothing on CFS; no job and no sbatch.
 
-    copy (on loginNN):     /usr/bin/python3 - <deploy> < pfb_copy_remote.py > copy-manifest.json
-    verify (on the laptop): python3 pfb_copy_remote.py verify <copy-manifest.json>
+    copy (on loginNN, via the bootstrap):  pfb_copy_remote.py <deploy>              (the manifest on stdout)
+    verify (on the laptop, the same bytes): pfb_copy_remote.py verify <copy-manifest.json>
 
-copy refuses, before it writes anything:
-  - exit 3 if the platform has no O_NOATIME;
-  - exit 9 if sacct fails, prints a malformed row, or shows a job of a fenced family in a non-terminal state (a
-    14-day read, each State classified; sacct only, never squeue);
-  - exit 2 if the stage is not the declared one (an existing real directory at its own physical path), lacks the
-    smoke's receipt (smoke-receipt.json, a plain file of its own), or already holds a0-refs/ or assess_receipt.json;
-    or if the deploy is not an absolute /pscratch path;
-  - exit 5 if a source is missing, a symlink, or not a regular file (sources are opened O_NOFOLLOW);
-  - exit 4 if a source's sha256 is not its pin (RS1's runs-SHA256SUMS, and rounding_mechanism_analyze's sigma pin);
-  - exit 8 if any source's stat (size, mtime_ns, atime_ns, ino, dev) moved during its read.
-Then it creates a0-refs/ and each copy O_CREAT | O_EXCL | O_NOFOLLOW, and checks each copy: a plain file with one link,
-an inode that is not its source's, physically at its own path inside the stage, and its sha256 at the pin (exit 6
-otherwise, a STOP: the copies stay for the director). The fence is read again at the end (exit 9 if not clear). The
-manifest on stdout records every source and copy, both stats, both inodes and both fence reads.
-verify (exit 2 on any defect) checks the manifest: the declared stage, exactly the 22 names at their pins, O_NOATIME,
-no moved stat, copies with new inodes and one link, and both fence reads clear.
+The production entry refuses (exit 2) if any PFB_COPY_* variable is set: tests use their own entry module
+(tests/pfb_copy_testentry.py), which builds a Config of its own. copy refuses before it writes anything:
+  - exit 3 if the platform has no O_NOATIME, or an O_NOATIME open is refused (EPERM);
+  - exit 9 if sacct (/usr/bin/sacct, a fixed environment) is absent or fails, or any row lacks a field, or a job of a
+    fenced family is in a non-terminal state (a 14-day read, each State classified);
+  - exit 2 if the deploy is not an absolute /pscratch path or not a git checkout; if the stage, opened
+    O_DIRECTORY|O_NOFOLLOW, is not physically the literal declared path; if its smoke-receipt.json is not a plain file
+    of its own, not JSON, or does not name this stage, this deploy's pin, a production smoke and an INDEX sha256; or
+    if the stage already holds a0-refs/ or assess_receipt.json;
+  - exit 5 if a source is missing, a symlink, or not a regular file (opened O_NOFOLLOW);
+  - exit 4 if a source's sha256 is not its pin;
+  - exit 8 if a source's open descriptor's fstat (size, mtime_ns, ctime_ns, atime_ns, mode, nlink, ino, dev) moved
+    during its read, or a path lstat before or after does not identify that descriptor;
+  - exit 6 on any other I/O error while reading.
+Then mkdir a0-refs and every O_CREAT|O_EXCL|O_NOFOLLOW create are made through the stage's descriptor (dir_fd), and
+each copy is checked through its own descriptor: a plain file with one link, an inode that is not its source's,
+physically at its literal declared path, and its sha256 read back at the pin. Any write-side I/O error or failed check
+is exit 6, a STOP: a partial-state manifest names what was created, and it stays in place. The fence is read again at
+the end (exit 9 if not clear). verify (exit 2 on any defect) requires a typed record for each of the 22 copies and
+both fence reads with their rows.
 
 MEASURES: nothing; it copies. CANNOT AUTHORIZE: the job, which needs the director's own go.
 """
+import collections
+import errno
 import hashlib
 import json
 import os
@@ -36,11 +43,11 @@ import subprocess
 import sys
 import time
 
-TEST = os.environ.get("PFB_COPY_TEST_ROOT")  # tests only: substitute roots and pins; the laptop verify refuses them
 STAGE_DECLARED = "/pscratch/sd/j/josephrb/pfb-20261117-stage"
 A0_DIR_DECLARED = "/pscratch/sd/j/josephrb/rs1-a1-20261107/runs/A0"
-STAGE = os.path.join(TEST, "stage") if TEST else STAGE_DECLARED
-A0_DIR = os.path.join(TEST, "rs1", "runs", "A0") if TEST else A0_DIR_DECLARED
+DEPLOY_PREFIX = "/pscratch/sd/j/josephrb/"
+SACCT_DECLARED = "/usr/bin/sacct"
+GIT = "/usr/bin/git"
 SIGMA_REL = "docs/orchestration/state/s5e/cand/assess_receipt.json"
 SIGMA_NAME = "assess_receipt.json"
 SIGMA_SHA256 = "84266e309d1aae0d2db1db315750b8164413a7d0125fcaa4a6c9b25834261a2c"  # rounding_mechanism_analyze.py:44
@@ -71,196 +78,380 @@ FENCE = re.compile(r"^(cov2d|t2a|ll5d|e96data|rpd_|rsn_|rdx_|pfb_|ibukt-)")
 TERMINAL = frozenset(("COMPLETED", "FAILED", "CANCELLED", "TIMEOUT", "OUT_OF_MEMORY", "NODE_FAIL", "BOOT_FAIL",
                       "DEADLINE", "PREEMPTED", "REVOKED"))
 CANCELLED_BY = re.compile(r"CANCELLED by \d+")
-STAT_KEYS = ("st_size", "st_mtime_ns", "st_atime_ns", "st_ino", "st_dev")
+SHA_HEX = re.compile(r"[0-9a-f]{64}")
+FD_KEYS = ("st_size", "st_mtime_ns", "st_ctime_ns", "st_atime_ns", "st_mode", "st_nlink", "st_ino", "st_dev")
 USER = "josephrb"
-SCHEMA = "pfb-copy/1"
+SCHEMA = "pfb-copy/2"
+
+Config = collections.namedtuple("Config", "stage a0_dir pins sacct deploy_prefix require_noatime")
 
 
-def refuse(rc, why):
-    sys.stderr.write("refusing: %s\n" % why)
-    sys.exit(rc)
+def production_config():
+    pins = dict(A0_PINS)
+    pins[SIGMA_NAME] = SIGMA_SHA256
+    return Config(STAGE_DECLARED, A0_DIR_DECLARED, pins, SACCT_DECLARED, DEPLOY_PREFIX, True)
 
 
-def pins():
-    """{name: sha256} of the 22 copies (21 A0 products and the sigma receipt); a test substitutes its own."""
-    if TEST:
-        with open(os.path.join(TEST, "pins.json")) as fh:
-            return json.load(fh)
-    out = dict(A0_PINS)
-    out[SIGMA_NAME] = SIGMA_SHA256
-    return out
+class Stop(Exception):
+    def __init__(self, rc, why):
+        Exception.__init__(self, why)
+        self.rc, self.why = rc, why
+
+
+def fd_path(fd):
+    """The physical path of an open descriptor: /proc/self/fd on Linux; F_GETPATH where there is no /proc."""
+    try:
+        return os.readlink("/proc/self/fd/%d" % fd)
+    except OSError:
+        import fcntl
+        return fcntl.fcntl(fd, 50, b"\0" * 1024).split(b"\0", 1)[0].decode()
 
 
 def terminal(state):
     return state in TERMINAL or bool(CANCELLED_BY.fullmatch(state))
 
 
-def fence_read():
-    cmd = ["sacct", "-X", "-n", "-P", "-u", USER, "-S", "now-14days", "-o", "JobID,JobName,State"]
+def fence_read(sacct):
+    cmd = [sacct, "-X", "-n", "-P", "-u", USER, "-S", "now-14days", "-o", "JobID,JobName,State"]
+    rec = {"command": " ".join(cmd), "rows": [], "hits": []}
+    if not os.path.isfile(sacct):
+        return dict(rec, error="sacct is not at %s" % sacct, clear=False)
     try:
-        p = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+        p = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True,
+                           env={"PATH": "/usr/bin:/bin", "LC_ALL": "C", "HOME": os.environ.get("HOME", "/"),
+                                "USER": USER})
     except OSError as exc:
-        return {"command": " ".join(cmd), "error": "sacct could not run: %s" % exc, "clear": False}
-    if p.returncode != 0:
-        return {"command": " ".join(cmd), "error": "sacct failed (rc %d): %s" % (p.returncode, p.stderr.strip()[:200]),
-                "clear": False}
+        return dict(rec, error="sacct could not run: %s" % exc, clear=False)
     rows = [ln for ln in p.stdout.splitlines() if ln.strip()]
-    bad = [ln for ln in rows if len(ln.split("|")) != 3 or not ln.split("|")[0].strip()]
+    rec["rows"] = rows
+    if p.returncode != 0:
+        return dict(rec, error="sacct failed (rc %d): %s" % (p.returncode, p.stderr.strip()[:200]), clear=False)
+    bad = [ln for ln in rows if len(ln.split("|")) != 3 or any(not f.strip() for f in ln.split("|"))]
     if bad:
-        return {"command": " ".join(cmd), "rows": rows, "error": "malformed sacct rows: %s" % bad[:5], "clear": False}
-    hits = [ln for ln in rows if FENCE.match(ln.split("|")[1]) and not terminal(ln.split("|")[2].strip())]
-    return {"command": " ".join(cmd), "rows": rows, "hits": hits, "clear": not hits}
+        return dict(rec, error="sacct rows with a missing or blank field: %s" % bad[:5], clear=False)
+    rec["hits"] = [ln for ln in rows if FENCE.match(ln.split("|")[1]) and not terminal(ln.split("|")[2].strip())]
+    return dict(rec, clear=not rec["hits"])
 
 
-def stat_record(st):
-    return dict((k, getattr(st, k)) for k in STAT_KEYS)
+def fstat_record(st):
+    return dict((k, getattr(st, k)) for k in FD_KEYS)
 
 
-def sha256_bytes(b):
-    return hashlib.sha256(b).hexdigest()
+def _read_all(fd):
+    chunks = []
+    while True:
+        b = os.read(fd, 1 << 22)
+        if not b:
+            return b"".join(chunks)
+        chunks.append(b)
 
 
-def stage_problem(stage):
-    """The stage the smoke created: an existing real directory at its own physical path, holding the smoke's receipt
-    as a plain file of its own, and no copies yet."""
-    if os.path.islink(stage) or not os.path.isdir(stage):
-        return "the stage %s is not an existing directory" % stage
-    if os.path.realpath(stage) != stage:
-        return "the stage %s resolves to %s" % (stage, os.path.realpath(stage))
-    receipt = os.path.join(stage, "smoke-receipt.json")
+def _write_all(fd, data):
+    view = memoryview(data)
+    while view:
+        view = view[os.write(fd, view):]
+
+
+def deploy_pin(deploy):
+    env = {"PATH": "/usr/bin:/bin", "LC_ALL": "C", "GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": "/dev/null",
+           "HOME": os.environ.get("HOME", "/")}
     try:
-        st = os.lstat(receipt)
-    except OSError:
-        return "the stage lacks the smoke's receipt (smoke-receipt.json): the smoke has not run"
-    if not stat.S_ISREG(st.st_mode) or st.st_nlink != 1:
-        return "the smoke's receipt is not a plain file of its own"
-    for x in ("a0-refs", SIGMA_NAME):
-        if os.path.lexists(os.path.join(stage, x)):
-            return "the stage already holds %s" % x
-    return None
+        p = subprocess.run([GIT, "-c", "core.fsmonitor=false", "-C", deploy, "rev-parse", "HEAD"], env=env,
+                           stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+    except OSError as exc:
+        raise Stop(2, "git could not run: %s" % exc)
+    if p.returncode != 0 or not re.fullmatch(r"[0-9a-f]{40}", p.stdout.strip()):
+        raise Stop(2, "the deploy %s is not a git checkout (%s)" % (deploy, p.stderr.strip()[:200]))
+    return p.stdout.strip()
 
 
-def read_source(path, noatime):
-    """(bytes, stat before, stat after, fstat) of one source, opened O_RDONLY | O_NOFOLLOW (| O_NOATIME)."""
-    st0 = os.lstat(path)
-    if not stat.S_ISREG(st0.st_mode):
-        refuse(5, "the source %s is not a regular file (a symlink is refused)" % path)
-    fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | (noatime or 0))
-    with os.fdopen(fd, "rb") as fh:
-        fst = os.fstat(fh.fileno())
-        data = fh.read()
-    st1 = os.lstat(path)
-    return data, stat_record(st0), stat_record(st1), fst
+def open_stage(cfg):
+    """The stage's descriptor, opened O_DIRECTORY|O_NOFOLLOW, physically at the literal declared path."""
+    try:
+        sfd = os.open(cfg.stage, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+    except OSError as exc:
+        raise Stop(2, "the stage %s cannot be opened as a real directory (%s)" % (cfg.stage, exc))
+    if not stat.S_ISDIR(os.fstat(sfd).st_mode) or fd_path(sfd) != cfg.stage:
+        raise Stop(2, "the stage descriptor is at %s, not the literal %s" % (fd_path(sfd), cfg.stage))
+    return sfd
 
 
-def copy(deploy):
-    noatime = getattr(os, "O_NOATIME", None)
-    if noatime is None and not TEST:
-        refuse(3, "this platform has no O_NOATIME")
-    if not (os.path.isabs(deploy) and (TEST or deploy.startswith("/pscratch/"))):
-        refuse(2, "the deploy %r is not an absolute /pscratch path" % deploy)
-    f = fence_read()
-    if not f["clear"]:
-        refuse(9, f.get("error") or "fenced jobs are in a non-terminal state: %s" % f["hits"])
-    why = stage_problem(STAGE)
-    if why:
-        refuse(2, why)
-    want = pins()
-    sources = [(n, os.path.join(A0_DIR, n), os.path.join("a0-refs", n)) for n in sorted(want) if n != SIGMA_NAME]
-    sources.append((SIGMA_NAME, os.path.join(deploy, SIGMA_REL), SIGMA_NAME))
-    got = []
-    for name, src, rel in sources:  # every source read and checked before anything is written
-        if not os.path.lexists(src):
-            refuse(5, "no source %s" % src)
-        data, st0, st1, fst = read_source(src, noatime)
-        rec = {"name": name, "source": src, "copy": os.path.join(STAGE, rel), "bytes": len(data),
-               "sha256": sha256_bytes(data), "source_stat_before": st0, "source_stat_after": st1,
-               "source_inode": [fst.st_dev, fst.st_ino]}
-        rec["moved"] = [k for k in STAT_KEYS if st0[k] != st1[k]] + (["length"] if len(data) != st0["st_size"] else [])
-        if rec["sha256"] != want[name]:
-            refuse(4, "%s is not at its pin (%s, not %s)" % (src, rec["sha256"], want[name]))
-        got.append((rec, data))
-    moved = [r["name"] for r, _ in got if r["moved"]]
-    if moved:
-        refuse(8, "the stat of %s moved during its read" % moved)
-    os.mkdir(os.path.join(STAGE, "a0-refs"), 0o755)
-    bad = []
-    for rec, data in got:
-        dst = rec["copy"]
-        fd = os.open(dst, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o644)
-        with os.fdopen(fd, "wb") as fh:
-            fh.write(data)
-            fh.flush()
-            os.fsync(fh.fileno())
-        st = os.lstat(dst)
-        rec["copy_inode"] = [st.st_dev, st.st_ino]
-        rec["copy_nlink"] = st.st_nlink
-        with open(dst, "rb") as fh:
-            rec["copy_sha256"] = sha256_bytes(fh.read())
-        lexical = os.path.join(os.path.realpath(STAGE), os.path.relpath(dst, STAGE))
-        problems = []
+def smoke_binding(cfg, sfd, pin):
+    """smoke-receipt.json, read through the stage's descriptor: a plain file of its own, naming this stage, this
+    deploy's pin, a production smoke and an INDEX sha256."""
+    try:
+        fd = os.open("smoke-receipt.json", os.O_RDONLY | os.O_NOFOLLOW, dir_fd=sfd)
+    except OSError as exc:
+        raise Stop(2, "the stage lacks the smoke's receipt (smoke-receipt.json): %s" % exc)
+    try:
+        st = os.fstat(fd)
         if not stat.S_ISREG(st.st_mode) or st.st_nlink != 1:
-            problems.append("not a plain file of its own")
-        if rec["copy_inode"] == rec["source_inode"]:
-            problems.append("the source's inode")
-        if os.path.realpath(dst) != lexical:
-            problems.append("not physically at its own path in the stage")
-        if rec["copy_sha256"] != want[rec["name"]]:
-            problems.append("not at its pin after the copy")
-        rec["problems"] = problems
-        if problems:
-            bad.append(rec["name"])
-    man = {"schema": SCHEMA, "host": os.uname()[1], "utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-           "stage": STAGE, "a0_dir": A0_DIR, "deploy": deploy, "o_noatime": noatime is not None, "fence": f,
-           "files": [r for r, _ in got], "fence_after": fence_read()}
-    sys.stdout.write(json.dumps(man, indent=1, sort_keys=True) + "\n")
-    sys.stdout.flush()
-    if bad:
-        sys.stderr.write("STOP: the copies of %s failed their check (left in place for the director)\n" % bad)
+            raise Stop(2, "the smoke's receipt is not a plain file of its own")
+        try:
+            rec = json.loads(_read_all(fd).decode())
+        except ValueError as exc:
+            raise Stop(2, "the smoke's receipt is not JSON (%s)" % exc)
+    finally:
+        os.close(fd)
+    if not isinstance(rec, dict):
+        raise Stop(2, "the smoke's receipt is not a JSON object")
+    why = []
+    if rec.get("stage") != cfg.stage:
+        why.append("its stage %r is not %s" % (rec.get("stage"), cfg.stage))
+    if rec.get("pin") != pin:
+        why.append("its pin %r is not the deploy's %s" % (rec.get("pin"), pin))
+    if rec.get("local_test") is not False:
+        why.append("it is not a production smoke's")
+    if not (isinstance(rec.get("index_sha256"), str) and SHA_HEX.fullmatch(rec["index_sha256"])):
+        why.append("it records no INDEX sha256")
+    if why:
+        raise Stop(2, "the smoke's receipt does not bind this copy: " + "; ".join(why))
+    return {"stage": rec["stage"], "pin": rec["pin"], "index_sha256": rec["index_sha256"],
+            "setup_env_sha256": rec.get("setup_env_sha256")}
+
+
+def read_source(src, noatime):
+    """(bytes, record) of one source: path lstat, descriptor fstat before and after the read, path lstat after."""
+    try:
+        p0 = os.lstat(src)
+    except FileNotFoundError:
+        raise Stop(5, "no source %s" % src)
+    except OSError as exc:
+        raise Stop(6, "lstat of %s failed: %s" % (src, exc))
+    if not stat.S_ISREG(p0.st_mode):
+        raise Stop(5, "the source %s is not a regular file (a symlink is refused)" % src)
+    try:
+        fd = os.open(src, os.O_RDONLY | os.O_NOFOLLOW | noatime)
+    except PermissionError as exc:
+        if noatime:
+            raise Stop(3, "an O_NOATIME open of %s was refused (%s)" % (src, exc))
+        raise Stop(6, "open of %s failed: %s" % (src, exc))
+    except OSError as exc:
+        raise Stop(5 if exc.errno == errno.ELOOP else 6, "open of %s failed: %s" % (src, exc))
+    try:
+        f0 = fstat_record(os.fstat(fd))
+        data = _read_all(fd)
+        f1 = fstat_record(os.fstat(fd))
+    except OSError as exc:
+        raise Stop(6, "read of %s failed: %s" % (src, exc))
+    finally:
+        os.close(fd)
+    try:
+        p1 = os.lstat(src)
+    except OSError as exc:
+        raise Stop(8, "the source %s vanished during its read (%s)" % (src, exc))
+    moved = [k for k in FD_KEYS if f0[k] != f1[k]]
+    if len(data) != f0["st_size"]:
+        moved.append("length")
+    for tag, p in (("path before", p0), ("path after", p1)):
+        if (p.st_ino, p.st_dev) != (f0["st_ino"], f0["st_dev"]):
+            moved.append(tag + " is another file")
+    rec = {"source": src, "bytes": len(data), "sha256": hashlib.sha256(data).hexdigest(), "source_fstat_before": f0,
+           "source_fstat_after": f1, "source_inode": [f0["st_dev"], f0["st_ino"]],
+           "source_path_inodes": [[p0.st_dev, p0.st_ino], [p1.st_dev, p1.st_ino]], "moved": moved}
+    return data, rec
+
+
+def manifest(cfg, deploy, pin, noatime, f, recs, created, binding, stop=None):
+    m = {"schema": SCHEMA, "host": os.uname()[1], "utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+         "stage": cfg.stage, "a0_dir": cfg.a0_dir, "deploy": deploy, "deploy_pin": pin, "smoke": binding,
+         "o_noatime": bool(noatime), "fence": f, "files": recs, "created": created}
+    if stop:
+        m["stop"] = stop
+    return m
+
+
+def copy(cfg, deploy, out=None):
+    """The copy; returns the exit status. The manifest goes to out (stdout) after any write."""
+    out = out or sys.stdout
+    noatime = getattr(os, "O_NOATIME", 0)
+    created = []
+    try:
+        if cfg.require_noatime and not noatime:
+            raise Stop(3, "this platform has no O_NOATIME")
+        if not (os.path.isabs(deploy) and deploy.startswith(cfg.deploy_prefix) and ".." not in deploy.split("/")):
+            raise Stop(2, "the deploy %r is not an absolute path under %s" % (deploy, cfg.deploy_prefix))
+        f = fence_read(cfg.sacct)
+        if not f["clear"]:
+            raise Stop(9, f.get("error") or "fenced jobs are in a non-terminal state: %s" % f["hits"])
+        pin = deploy_pin(deploy)
+        sfd = open_stage(cfg)
+        binding = smoke_binding(cfg, sfd, pin)
+        for x in ("a0-refs", SIGMA_NAME):
+            try:
+                os.stat(x, dir_fd=sfd, follow_symlinks=False)
+                raise Stop(2, "the stage already holds %s" % x)
+            except FileNotFoundError:
+                pass
+        sources = [(n, os.path.join(cfg.a0_dir, n), "a0-refs/" + n) for n in sorted(cfg.pins) if n != SIGMA_NAME]
+        sources.append((SIGMA_NAME, os.path.join(deploy, SIGMA_REL), SIGMA_NAME))
+        got = []
+        for name, src, rel in sources:  # every source read and checked before anything is written
+            data, rec = read_source(src, noatime)
+            rec.update(name=name, copy=cfg.stage + "/" + rel, pin=cfg.pins[name])
+            if rec["sha256"] != cfg.pins[name]:
+                raise Stop(4, "%s is not at its pin (%s, not %s)" % (src, rec["sha256"], cfg.pins[name]))
+            got.append((rec, data, rel))
+        moved = ["%s: %s" % (r["name"], r["moved"]) for r, _, _ in got if r["moved"]]
+        if moved:
+            raise Stop(8, "a source moved during its read: %s" % moved)
+    except Stop as s:
+        sys.stderr.write("refusing: %s\n" % s.why)
+        return s.rc
+    recs = [r for r, _, _ in got]
+    bad = []
+    try:
+        os.mkdir("a0-refs", 0o755, dir_fd=sfd)
+        created.append(cfg.stage + "/a0-refs/")
+        afd = os.open("a0-refs", os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW, dir_fd=sfd)
+        if fd_path(afd) != cfg.stage + "/a0-refs":
+            raise Stop(6, "a0-refs is at %s, not %s/a0-refs" % (fd_path(afd), cfg.stage))
+        for rec, data, rel in got:
+            parent = afd if rel.startswith("a0-refs/") else sfd
+            fd = os.open(os.path.basename(rel), os.O_RDWR | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o644, dir_fd=parent)
+            created.append(rec["copy"])
+            try:
+                _write_all(fd, data)
+                os.fsync(fd)
+                st = os.fstat(fd)
+                os.lseek(fd, 0, os.SEEK_SET)
+                back = _read_all(fd)
+                where = fd_path(fd)
+            finally:
+                os.close(fd)
+            rec.update(copy_inode=[st.st_dev, st.st_ino], copy_nlink=st.st_nlink, copy_mode=st.st_mode,
+                       copy_sha256=hashlib.sha256(back).hexdigest(), copy_fd_path=where)
+            problems = []
+            if not stat.S_ISREG(st.st_mode) or st.st_nlink != 1:
+                problems.append("not a plain file of its own")
+            if rec["copy_inode"] == rec["source_inode"]:
+                problems.append("the source's inode")
+            if where != rec["copy"]:
+                problems.append("its descriptor is at %s, not the literal %s" % (where, rec["copy"]))
+            if rec["copy_sha256"] != cfg.pins[rec["name"]]:
+                problems.append("not at its pin when read back")
+            rec["problems"] = problems
+            if problems:
+                bad.append(rec["name"])
+    except (OSError, Stop) as exc:
+        why = exc.why if isinstance(exc, Stop) else "%s (errno %s)" % (exc, exc.errno)
+        m = manifest(cfg, deploy, pin, noatime, f, recs, created, binding, stop="I/O: " + why)
+        out.write(json.dumps(m, indent=1, sort_keys=True) + "\n")
+        out.flush()
+        sys.stderr.write("STOP: a write-side failure (%s); the %d created paths stay in place\n" % (why, len(created)))
         return 6
-    if not man["fence_after"]["clear"]:
+    m = manifest(cfg, deploy, pin, noatime, f, recs, created, binding)
+    m["fence_after"] = fence_read(cfg.sacct)
+    out.write(json.dumps(m, indent=1, sort_keys=True) + "\n")
+    out.flush()
+    if bad:
+        sys.stderr.write("STOP: the copies of %s failed their check (left in place)\n" % bad)
+        return 6
+    if not m["fence_after"]["clear"]:
         sys.stderr.write("STOP: the fence read after the copies is not clear\n")
         return 9
     return 0
 
 
-def verify(path):
-    with open(path) as fh:
-        man = json.load(fh)
-    want = dict(A0_PINS)
-    want[SIGMA_NAME] = SIGMA_SHA256
-    problems = []
+def _int_record(r, keys):
+    return isinstance(r, dict) and all(isinstance(r.get(k), int) and not isinstance(r.get(k), bool) for k in keys)
+
+
+def _fence_ok(f):
+    if not (isinstance(f, dict) and f.get("clear") is True and f.get("hits") == [] and isinstance(f.get("rows"), list)
+            and isinstance(f.get("command"), str) and f["command"].startswith(SACCT_DECLARED + " ")):
+        return False
+    return all(isinstance(r, str) and len(r.split("|")) == 3 and all(x.strip() for x in r.split("|")) and
+               not (FENCE.match(r.split("|")[1]) and not terminal(r.split("|")[2].strip())) for r in f["rows"])
+
+
+def verify_problems(man):
+    """Every defect of a production manifest (an empty list if none)."""
+    cfg = production_config()
+    p = []
+    if not isinstance(man, dict):
+        return ["the manifest is not a JSON object"]
     if man.get("schema") != SCHEMA:
-        problems.append("schema %r" % man.get("schema"))
+        p.append("schema %r" % man.get("schema"))
     if man.get("stage") != STAGE_DECLARED or man.get("a0_dir") != A0_DIR_DECLARED:
-        problems.append("the stage or the A0 source directory is not the declared one")
-    if not man.get("o_noatime"):
-        problems.append("no O_NOATIME")
-    if not man.get("fence", {}).get("clear") or not man.get("fence_after", {}).get("clear"):
-        problems.append("a fence read was not clear")
-    files = {r.get("name"): r for r in man.get("files", [])}
-    if set(files) != set(want) or len(man.get("files", [])) != len(want):
-        problems.append("the copies are not exactly the 22 declared names")
-    for name, r in sorted(files.items()):
-        if name not in want:
+        p.append("the stage or the A0 source directory is not the declared one")
+    deploy = man.get("deploy")
+    if not (isinstance(deploy, str) and deploy.startswith(DEPLOY_PREFIX) and ".." not in deploy.split("/")):
+        p.append("the deploy %r is not under %s" % (deploy, DEPLOY_PREFIX))
+        deploy = None
+    pin = man.get("deploy_pin")
+    smoke = man.get("smoke")
+    if not (isinstance(pin, str) and re.fullmatch(r"[0-9a-f]{40}", pin)) or not isinstance(smoke, dict) \
+            or smoke.get("pin") != pin or smoke.get("stage") != STAGE_DECLARED \
+            or not (isinstance(smoke.get("index_sha256"), str) and SHA_HEX.fullmatch(smoke["index_sha256"])):
+        p.append("the smoke binding (stage, deploy pin, INDEX sha256) is missing or does not match")
+    if man.get("o_noatime") is not True:
+        p.append("no O_NOATIME")
+    if man.get("stop"):
+        p.append("the copy stopped: %s" % man["stop"])
+    for key in ("fence", "fence_after"):
+        if not _fence_ok(man.get(key)):
+            p.append("the %s read is missing, not clear, or has a row that is not clear" % key)
+    files = man.get("files")
+    if not isinstance(files, list) or len(files) != len(cfg.pins) \
+            or sorted(r.get("name") for r in files if isinstance(r, dict)) != sorted(cfg.pins):
+        p.append("the copies are not exactly the 22 declared names")
+        files = [r for r in files if isinstance(r, dict)] if isinstance(files, list) else []
+    for r in files:
+        name = r.get("name")
+        if name not in cfg.pins:
             continue
-        if r.get("sha256") != want[name] or r.get("copy_sha256") != want[name]:
-            problems.append("%s: not at its pin" % name)
-        if r.get("moved") or r.get("source_stat_before") != r.get("source_stat_after"):
-            problems.append("%s: its source's stat moved" % name)
-        if r.get("copy_inode") == r.get("source_inode") or r.get("copy_nlink") != 1 or r.get("problems"):
-            problems.append("%s: the copy is not a plain file of its own with a new inode" % name)
-    for p in problems:
-        sys.stderr.write("refusing: %s\n" % p)
+        want_src = os.path.join(A0_DIR_DECLARED, name) if name != SIGMA_NAME else (
+            os.path.join(deploy, SIGMA_REL) if deploy else None)
+        want_copy = STAGE_DECLARED + ("/a0-refs/" + name if name != SIGMA_NAME else "/" + SIGMA_NAME)
+        why = []
+        if r.get("source") != want_src or r.get("copy") != want_copy or r.get("copy_fd_path") != want_copy:
+            why.append("its source or copy path is not the declared one")
+        if r.get("pin") != cfg.pins[name] or r.get("sha256") != cfg.pins[name] or r.get("copy_sha256") != cfg.pins[name]:
+            why.append("not at its pin")
+        if not (_int_record(r.get("source_fstat_before"), FD_KEYS) and r.get("source_fstat_before") == r.get("source_fstat_after")):
+            why.append("its source descriptor's stat records are missing or moved")
+        si, ci = r.get("source_inode"), r.get("copy_inode")
+        if not (isinstance(si, list) and isinstance(ci, list) and len(si) == len(ci) == 2
+                and all(isinstance(x, int) for x in si + ci) and si != ci):
+            why.append("the source and copy inodes are missing or not distinct")
+        spi = r.get("source_path_inodes")
+        if not (isinstance(spi, list) and spi == [si, si]):
+            why.append("the source's path did not identify its descriptor")
+        if r.get("copy_nlink") != 1 or r.get("moved") != [] or r.get("problems") != []:
+            why.append("not a plain copy of its own, or its source moved")
+        if why:
+            p.append("%s: %s" % (name, "; ".join(why)))
+    return p
+
+
+def verify(path):
+    try:
+        with open(path) as fh:
+            man = json.load(fh)
+    except (OSError, ValueError) as exc:
+        sys.stderr.write("refusing: the manifest is unreadable (%s)\n" % exc)
+        return 2
+    problems = verify_problems(man)
+    for x in problems:
+        sys.stderr.write("refusing: %s\n" % x)
     if not problems:
-        print(json.dumps({"verified": len(files), "host": man.get("host"), "utc": man.get("utc")}))
+        print(json.dumps({"verified": len(man["files"]), "host": man.get("host"), "utc": man.get("utc")}))
     return 2 if problems else 0
 
 
+def main(argv):
+    switches = sorted(k for k in os.environ if k.startswith("PFB_COPY_"))
+    if switches:
+        sys.stderr.write("refusing: test switches are set in a production run: %s\n" % switches)
+        return 2
+    if argv[:1] == ["verify"] and len(argv) == 2:
+        return verify(argv[1])
+    if len(argv) != 1:
+        sys.stderr.write("usage: pfb_copy_remote.py <deploy>  |  pfb_copy_remote.py verify <manifest>\n")
+        return 2
+    return copy(production_config(), argv[0])
+
+
 if __name__ == "__main__":
-    if sys.argv[1:2] == ["verify"] and len(sys.argv) == 3:
-        sys.exit(verify(sys.argv[2]))
-    args = [a for a in sys.argv[1:] if a != "-"]
-    if len(args) != 1:
-        refuse(2, "usage: python3 - <deploy> < pfb_copy_remote.py  |  pfb_copy_remote.py verify <manifest>")
-    sys.exit(copy(args[0]))
+    sys.exit(main([a for a in sys.argv[1:] if a != "-"]))
