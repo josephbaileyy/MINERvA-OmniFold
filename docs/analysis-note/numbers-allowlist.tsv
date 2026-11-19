@@ -345,3 +345,18 @@ token	delta	owner	item	reason
 9	-1	director-helper-3	P1-COMPRESS	abstract cut: "9 of the 16 cells" (\fvval{vhalf-n-notvalid}); prints at sec:fived16-fd (sec_q3_fived16.tex)
 2.6	-1	director-helper-3	P1-COMPRESS	abstract: "by up to \lrval{stab-max} statistical standard deviations" shortened; "at most 2.6 statistical standard deviations" prints at sec:val-departure (sec_5d.tex:103)
 7.86	-2	director-helper-3	P1-COMPRESS	the abstract's and the executive summary's median per-cell uncertainty (\fvval{sigmed-reported}) are cut; it prints at sec:fived16-cov (sec_fived16.tex) and in tab:what-is-measured
+2	-2	limitation-resolver	compression chunk P2-1, LR-C01/LR-C12	truth-W residual (±2 MeV) and the control-shape paragraph (~2 GeV), moved to records_compression_lr.tex
+6	-2	limitation-resolver	compression chunk P2-1, LR-C12	control-shape paragraph (4–6 GeV/c, ⟨Eν⟩ ≈ 6 GeV), moved to records
+0.086	-1	limitation-resolver	compression chunk P2-1, LR-C02	truth-W no-real-solution fraction, moved to records
+0.25	-1	limitation-resolver	compression chunk P2-1, LR-C02	truth-W coarse-bin change fraction, moved to records
+0.5	-1	limitation-resolver	compression chunk P2-1, LR-C12	control-shape paragraph, moved to records
+0.7	-1	limitation-resolver	compression chunk P2-1, LR-C12	control-shape paragraph, moved to records
+1	-1	limitation-resolver	compression chunk P2-1, LR-C02	truth-W residual (about 1 mrad), moved to records
+1.000000	-1	limitation-resolver	compression chunk P2-1, LR-C03	event-loop completeness c, moved to records
+1232	-1	limitation-resolver	compression chunk P2-1, LR-C12	control-shape paragraph (Delta(1232)), moved to records
+4	-1	limitation-resolver	compression chunk P2-1, LR-C12	control-shape paragraph (4–6 GeV/c), moved to records
+49	-1	limitation-resolver	compression chunk P2-1, LR-C02	truth-W residual range, moved to records
+58.87	-1	limitation-resolver	compression chunk P2-1, LR-C01	beam-axis tilt, moved to records
+67	-1	limitation-resolver	compression chunk P2-1, LR-C02	truth-W residual range, moved to records
+68	-1	limitation-resolver	compression chunk P2-1, LR-C02	truth-W residual (68% of events), moved to records
+99.9	-1	limitation-resolver	compression chunk P2-1, LR-C02	truth-W residual (99.9% of events), moved to records
