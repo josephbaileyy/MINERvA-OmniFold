@@ -62,9 +62,9 @@ Table~\ref{tab:3d-configs} lists the configuration (\S\ref{sec:method-config}) o
     \toprule
     Result & Estimator \\
     \midrule
-    3D and 4D central values, unless stated otherwise & \estMultiD{} \\
-    2D result compared in \S\ref{sec:3d-anchor} & \estTwoD{}, seed~42 \\
-    Figs.~\ref{fig:eavail-marg} and~\ref{fig:q3excess} and numbers read from them; 3D closure; classifier-family cross-check & \estPurity{} \\
+    3D and 4D central values, unless stated otherwise & \estMultiD{}: deterministic LightGBM \\
+    2D result compared in \S\ref{sec:3d-anchor} & \estTwoD{}: LightGBM, seed~42 \\
+    Figs.~\ref{fig:eavail-marg} and~\ref{fig:q3excess} and numbers read from them; 3D closure; classifier-family cross-check & \estPurity{}: LightGBM \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -110,12 +110,12 @@ Table~\ref{tab:3d-generators} lists the four predictions; NEUT~\cite{Hayato:2009
   \caption[Generator predictions]{Four generator predictions are compared with the unfolded result, all in the analysis phase space. The GENIE central value has no 2p2h events.}
   \label{tab:3d-generators}
   \centering\small
-  \begin{tabular}{@{}p{0.20\textwidth}p{0.08\textwidth}p{0.47\textwidth}p{0.17\textwidth}@{}}
+  \begin{tabular}{@{}p{0.20\textwidth}p{0.12\textwidth}p{0.43\textwidth}p{0.17\textwidth}@{}}
     \toprule
     Prediction & Target & How it is produced & Flux \\
     \midrule
     GENIE 2.12.10 central value~\cite{Andreopoulos:2009rq} & CH & \texttt{gevgen} with the DefaultPlusValenciaMEC cross-section splines but the default event-generator list, which excludes MEC, so the sample has no 2p2h events (\S\ref{sec:3d-2p2h}); no MINERvA reweights & MINERvA ME~FHC flux, reweighted to the analysis flux (below) \\
-    MINERvA Tune~v1 & CH & the analysis tune (base GENIE $+$ RPA, low-recoil 2p2h and non-resonant-pion reweights), taken from the truth of the analysis simulation, which reproduces the normalization of the published ancillary curve to \SI{0.01}{\percent} & the analysis flux \\
+    MINERvA Tune~v1 & as the analysis simulation & the analysis tune (base GENIE $+$ RPA, low-recoil 2p2h and non-resonant-pion reweights), taken from the truth of the analysis simulation, which reproduces the normalization of the published ancillary curve to \SI{0.01}{\percent} & the analysis flux \\
     NuWro 21.09~\cite{Golan:2012wx} & C & an independent generator & the same flux, after the reweighting below \\
     GiBUU 2019~\cite{Buss:2011mx} & C & a transport-theory generator, built and run natively, without a container & the same flux convention (below) \\
     \bottomrule
