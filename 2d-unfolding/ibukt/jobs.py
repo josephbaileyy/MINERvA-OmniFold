@@ -64,7 +64,7 @@ def screen_admission(path: Path) -> dict[str, Any]:
     if (
         not all(math.isfinite(x) for x in (spent, total))
         or spent < 0
-        or total > 5.90
+        or total > core.CAMPAIGN_CAP_HOURS
         or abs(total - spent - requested) > 1e-12
     ):
         raise ValueError("invalid screen admission accounting")

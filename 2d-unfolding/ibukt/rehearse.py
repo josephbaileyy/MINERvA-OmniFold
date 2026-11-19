@@ -239,7 +239,7 @@ def prepare_references(stage: Path, cfg: dict[str, Any]) -> None:
 
 
 def pair_inputs(
-    work: Path, cfg: dict[str, Any], *, ensemble: bool
+    work: Path, stage: Path, cfg: dict[str, Any], *, ensemble: bool
 ) -> argparse.Namespace:
     """Create independent, fully receipted smoke-test operands."""
     import numpy as np
@@ -269,11 +269,32 @@ def pair_inputs(
         factor=np.ones(224),
         selected=selected,
     )
+    comparison, _, _ = runner.dependencies()
+    prior, response, _, _ = comparison.binned_problem(
+        gen,
+        gen,
+        gen[:0],
+        passed,
+        np.ones(len(gen), bool),
+        weights,
+        weights,
+        weights[:0],
+        cfg["pt_edges"],
+        cfg["pz_edges"],
+    )
+    bank_arrays.update(ibu_prior=prior, ibu_response=response)
     bank_arrays.update({f"truth_{name}": truth for name, truth in truths.items()})
     np.savez(bank, **bank_arrays)
     pins = {"bank_sha256": digest(bank), "config_sha256": digest(core.CONFIG)}
     identity = work / "identity.json"
     runner.write_json(identity, {"status": "PASS", **pins})
+    checked = work / "admissibility"
+    checked.mkdir()
+    runner.admissibility(
+        argparse.Namespace(stage=stage, out=checked, identity=identity, bank=bank), cfg
+    )
+    admission = checked / "admissibility.json"
+    targets = runner.read_json(admission)["targets"]
     products = work / "products"
     control_dir = products / "nominal-control"
     control_dir.mkdir(parents=True)
@@ -295,6 +316,9 @@ def pair_inputs(
             {
                 "status": "PASS",
                 "truth": name,
+                "target_treatments": cfg["target_treatments"],
+                "admissibility_sha256": digest(admission),
+                "signed_target_sha256": targets[directory.name],
                 "product_sha256": digest(output),
                 **pins,
                 **receipt,
@@ -324,7 +348,11 @@ def pair_inputs(
                     },
                 )
     return argparse.Namespace(
-        bank=bank, identity=identity, control=control, products=products
+        bank=bank,
+        identity=identity,
+        control=control,
+        products=products,
+        admissibility=admission,
     )
 
 
@@ -447,7 +475,7 @@ def run_probe(probe: str, workspace: Path) -> None:
         (SCRATCH_ROOT, Path("/global/cfs")), (REPO, workspace), (workspace,)
     ):
         if probe == "score":
-            args = pair_inputs(workspace, cfg, ensemble=True)
+            args = pair_inputs(workspace, stage, cfg, ensemble=True)
             args.out = workspace / "out"
             args.out.mkdir()
             runner.score(args, cfg)
@@ -471,7 +499,7 @@ def run_probe(probe: str, workspace: Path) -> None:
                         pin["sha256"] = digest(stage / pin["filename"])
                     runner.prepare(argparse.Namespace(stage=stage, out=out), cfg)
                 return
-            args = pair_inputs(workspace, cfg, ensemble=False)
+            args = pair_inputs(workspace, stage, cfg, ensemble=False)
             args.stage = stage
             args.out = out
             args.noise_free = probe == "pair-nominal"

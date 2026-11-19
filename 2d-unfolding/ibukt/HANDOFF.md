@@ -52,3 +52,27 @@ Use an external local environment with NumPy and pytest; ROOT fits and Linux O_N
 Do not revive the 1e-8 fitted-recovery gate, the five-hour launch, step-level exclusive packing, or the packed-share runtime estimate. Weighted missed-event regression and oracle interventions stay deferred: tier3-design coordinated the RSN/T3 definitions (W uses w_push*w_truth; the miss oracle predicts r/w_push), but those arms have no implementation/execution authority here. Capacity and iteration interventions also remain outside the current screen.
 
 Use explicit git staging paths; never stash, rebase or force-push. Work in an isolated task worktree with one active writer, never the shared checkout. Do not edit the paper or note. The repository's front door and generated views are routing surfaces, not scientific evidence or compute authorization.
+
+## Signed-target follow-up, 2026-11-19
+
+Decision PR #1232 merged at `f0d298611df010a31c5bed7f110af96c29a323e8`.
+A2 compares signed-target binned IBU with refined-target OmniFold on matched
+known-truth draws. The signed-data study measures the fixed-K sensitivity of
+real-data IBU to changing only its target. The two reviewed declarations control
+the analyses. An inadmissible target or failed control ends the applicable
+attempt and yields a STOP receipt. A partial screen cannot be scored.
+
+The IBUKT personal lane owns implementation and operation. The director reviews
+the exact bytes and coordinates one independent read before approving execution.
+Reassess after that read if a material concern remains. The zero-allocation
+rehearsal and signed-data study have separate reviews, as do the fresh IBUKT
+envstage, prepare, screen and score. Every connect requires a fresh fence. The
+IBUKT cap is 6.50 CPU node-hours including prior charges. Neither study changes
+publication claims or wording.
+
+The signed-data study requires the exact REF-C2C1 driver and helper in a separate
+reference checkout at `77d76cfc2d621f8faa010b75006811868494652a`. Its production
+entry point is `signed_data.py --stage STAGE --out FRESH_OUTPUT --reference REFERENCE`
+through the import guard with the implementation checkout as `--expect-root`
+and that specific reference checkout as `--allow`. The binding must pin the
+launcher, staged inputs and login-node resource envelope before execution.

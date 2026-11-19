@@ -96,6 +96,9 @@ def test_run_verifies_receipts_and_writes_only_to_fresh_scratch(tmp_path, monkey
     config = campaign / "deploy/2d-unfolding/ibukt/config.json"
     config.parent.mkdir(parents=True)
     config.write_bytes(ibukt.CONFIG.read_bytes())
+    monkeypatch.setattr(
+        diagnose, "CONFIG_SHA", hashlib.sha256(config.read_bytes()).hexdigest()
+    )
     bank_sha = hashlib.sha256(bank.read_bytes()).hexdigest()
     identity = campaign / diagnose.IDENTITY_PATH
     identity.write_text(

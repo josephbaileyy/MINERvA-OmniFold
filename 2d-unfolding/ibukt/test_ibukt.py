@@ -150,7 +150,7 @@ def test_budget_counts_failures_active_and_scheduler_lag():
     got = core.budget(rows, {"1": 0.3, "2": 5.0, "3": 0.1}, 0.5)
     assert got["total"] == pytest.approx(5.65)
     with pytest.raises(ValueError):
-        core.budget(rows, {"1": 0.3, "2": 5.0, "3": 0.1}, 0.8)
+        core.budget(rows, {"1": 0.3, "2": 5.0, "3": 0.1}, 1.4)
 
 
 @pytest.mark.parametrize(
@@ -218,7 +218,50 @@ def portable_io(monkeypatch):
     monkeypatch.setattr(runner, "read_npz", read_npz)
 
 
-def test_pair_shares_exact_refined_target_and_preserves_response(
+def synthetic_admissibility(path, bank, cfg, **targets):
+    from types import SimpleNamespace
+
+    expected = {
+        key: core.target_digest(np.zeros(224)) for _, _, key in runner.target_keys(cfg)
+    }
+    expected.update({key: core.target_digest(value) for key, value in targets.items()})
+    runner.write_json(
+        path,
+        {
+            "status": "PASS",
+            "bank_sha256": runner.digest(bank),
+            "config_sha256": runner.digest(core.CONFIG),
+            "target_treatments": cfg["target_treatments"],
+            "targets": expected,
+            "signed_identity": {
+                "checks": dict.fromkeys(
+                    (
+                        "row_sum",
+                        "roo_K5",
+                        "roo_K10",
+                        "numpy_K5",
+                        "numpy_K10",
+                        "agreement_K5",
+                        "agreement_K10",
+                    ),
+                    0.0,
+                ),
+                "truth_indices": [],
+                "reco_indices": [],
+            },
+        },
+    )
+    return SimpleNamespace(
+        path=path,
+        fields=lambda key: {
+            "admissibility_sha256": runner.digest(path),
+            "target_treatments": cfg["target_treatments"],
+            "signed_target_sha256": expected[key],
+        },
+    )
+
+
+def test_pair_uses_signed_target_and_preserves_refinement_for_omnifold(
     cfg, tmp_path, monkeypatch, portable_io
 ):
     from argparse import Namespace
@@ -233,6 +276,8 @@ def test_pair_shares_exact_refined_target_and_preserves_response(
         pt=np.ones(2, bool),
         pr=np.array([True, False]),
         wt=weights,
+        ibu_prior=nominal,
+        ibu_response=np.eye(224),
         wr=np.array([10.0, 0.0]),
         bkg=gen[:1],
         bw=np.array([2.0]),
@@ -262,9 +307,17 @@ def test_pair_shares_exact_refined_target_and_preserves_response(
         truth=nominal,
         selected=bank["selected"],
     )
+    from unittest.mock import patch
+
+    with patch.object(runner, "ratios", return_value={}):
+        _, _, target = runner.draw_target(bank, cfg, {}, "within_plus", 0)
+    admission = synthetic_admissibility(
+        tmp_path / "admissibility.json", bank_path, cfg, **{"within_plus-0": target}
+    )
     runner.write_json(
         control_dir / "pair.json",
         dict(
+            **admission.fields("nominal-control"),
             status="PASS",
             truth="nominal",
             sampling="noise-free",
@@ -296,13 +349,6 @@ def test_pair_shares_exact_refined_target_and_preserves_response(
         observed["refined"] = np.abs(signed) * 0.75
         return observed["refined"], None, 0.0
 
-    def binned(gen_in, reco, measured, pr, pt, wt, wr, refined, *edges):
-        assert measured is observed["features"]
-        assert refined is observed["refined"]
-        np.testing.assert_array_equal(wt, weights)
-        np.testing.assert_array_equal(gen_in, gen)
-        return nominal, np.eye(224), nominal, None
-
     def omnifold(gen_in, reco, measured, pr, pt, pm, iterations, **kwargs):
         assert measured is observed["features"]
         assert kwargs["measured_weights"] is observed["refined"]
@@ -316,12 +362,15 @@ def test_pair_shares_exact_refined_target_and_preserves_response(
         np.testing.assert_array_equal(kwargs["MCgen_weights"], weights)
         return None, np.array([1.1, 0.9])
 
-    def ibu(matrix, truth, target, iterations, library):
+    def ibu(matrix, truth, binned_target, iterations, library):
+        np.testing.assert_array_equal(binned_target, target)
+        np.testing.assert_array_equal(matrix, np.eye(224))
+        np.testing.assert_array_equal(truth, nominal)
         assert iterations == [5, 10]
         assert library == str(tmp_path / "libRooUnfold.so")
         return {5: nominal, 10: nominal}
 
-    comparison = SimpleNamespace(binned_problem=binned, roounfold_bayes=ibu)
+    comparison = SimpleNamespace(roounfold_bayes=ibu)
     monkeypatch.setattr(
         runner,
         "dependencies",
@@ -336,6 +385,7 @@ def test_pair_shares_exact_refined_target_and_preserves_response(
     out.mkdir()
     runner.pair(
         Namespace(
+            admissibility=admission.path,
             identity=identity,
             bank=bank_path,
             truth="within_plus",
@@ -376,6 +426,7 @@ def score_inputs(cfg, tmp_path, portable_io):
     )
     products = tmp_path / "products"
     products.mkdir()
+    admission = synthetic_admissibility(tmp_path / "admissibility.json", bank_path, cfg)
     control_dir = products / "nominal-control"
     control_dir.mkdir()
     nominal = bank["truth_nominal"]
@@ -392,6 +443,7 @@ def score_inputs(cfg, tmp_path, portable_io):
     runner.write_json(
         control,
         dict(
+            **admission.fields("nominal-control"),
             status="PASS",
             truth="nominal",
             sampling="noise-free",
@@ -422,6 +474,7 @@ def score_inputs(cfg, tmp_path, portable_io):
             runner.write_json(
                 directory / "pair.json",
                 dict(
+                    **admission.fields(f"{name}-{trial}"),
                     status="PASS",
                     sampling="poisson",
                     truth=name,
@@ -436,7 +489,12 @@ def score_inputs(cfg, tmp_path, portable_io):
     out = tmp_path / "out"
     out.mkdir()
     return Namespace(
-        products=products, out=out, bank=bank_path, identity=identity, control=control
+        products=products,
+        out=out,
+        bank=bank_path,
+        identity=identity,
+        control=control,
+        admissibility=admission.path,
     )
 
 
@@ -459,7 +517,7 @@ def test_score_requires_complete_consistent_digest_bound_pairs(cfg, score_inputs
     runner.score(args, cfg)
     result = runner.read_json(args.out / "readout.json")
     assert len(result["truths"]) == 7
-    assert result["schema"] == "ibukt-recovery/2"
+    assert result["schema"] == "ibukt-recovery/3"
     assert result["secondary_methods"] == ["ibu10"]
     assert result["bank_sha256"] == runner.digest(args.bank)
     assert result["config_sha256"] == runner.digest(core.CONFIG)
@@ -701,7 +759,7 @@ def test_preflight_prices_real_lane_wall_and_retains_scoring():
     with pytest.raises(ValueError, match="STOP"):
         core.forecast(1000, 2000, 0.4)
     with pytest.raises(ValueError, match="STOP"):
-        core.forecast(910, 1820, 1.0)
+        core.forecast(910, 1820, 1.5)
     for wall, elapsed, prior in (
         (0, 100, 0),
         (100, 50, 0),
@@ -746,6 +804,8 @@ def test_noise_free_pair_closes_or_stops_before_pass_receipt(
         pt=np.ones(2, bool),
         pr=np.ones(2, bool),
         wt=wt,
+        ibu_prior=truth,
+        ibu_response=np.diag(truth),
         wr=wt,
         bkg=gen[:1],
         bw=np.array([2.0]),
@@ -791,7 +851,11 @@ def test_noise_free_pair_closes_or_stops_before_pass_receipt(
     monkeypatch.setattr(core, "poisson_target", forbid_poisson)
     out = tmp_path / "control"
     out.mkdir()
+    admission = synthetic_admissibility(
+        tmp_path / "admissibility.json", bank_path, cfg, **{"nominal-control": truth}
+    )
     args = Namespace(
+        admissibility=admission.path,
         identity=identity,
         bank=bank_path,
         out=out,
@@ -847,12 +911,12 @@ def test_screen_admission_reserves_score_and_rejects_full_earlier_caps(
         )
 
     path = tmp_path / "admission.json"
-    runner.write_json(path, record(0.55))
-    assert jobs.screen_admission(path)["total"] == pytest.approx(5.90)
+    runner.write_json(path, record(1.15))
+    assert jobs.screen_admission(path)["total"] == pytest.approx(6.50)
     with pytest.raises(ValueError, match="cap exceeded"):
-        record(0.8)
+        record(1.2)
     path.unlink()
-    runner.write_json(path, dict(record(0.55), total=5.0))
+    runner.write_json(path, dict(record(1.15), total=5.0))
     with pytest.raises(ValueError, match="accounting"):
         jobs.screen_admission(path)
 
@@ -878,3 +942,82 @@ def test_exact_within_bin_identity_remains_strict():
     assert core.nominal_recovery(truth * 1.01, truth, "fit") == pytest.approx(0.01)
     with pytest.raises(ValueError):
         runner.require_close(truth * 1.01, truth, "integral identity")
+
+
+def test_signed_target_refuses_negative_unsupported_and_nonfinite_bins():
+    target = np.zeros(224)
+    response = np.zeros(224)
+    response[:3] = 2
+    target[0] = -0.125
+    target[1] = 1
+    target[3] = 2
+    target[4] = np.nan
+
+    assert core.signed_target_violations(target, response) == [
+        {"index": 0, "signed_count": -0.125, "response_row_sum": 2.0},
+        {"index": 3, "signed_count": 2.0, "response_row_sum": 0.0},
+        {"index": 4, "signed_count": "nan", "response_row_sum": 0.0},
+    ]
+
+
+def test_signed_target_digest_binds_counts_and_bin_order():
+    target = np.arange(224, dtype=np.float64)
+    assert core.target_digest(target) == core.target_digest(target.astype(">f8"))
+    assert core.target_digest(target) != core.target_digest(target[::-1])
+
+
+def test_final_inadmissible_draw_stops_before_unfolding(cfg, tmp_path, monkeypatch):
+    from argparse import Namespace
+
+    diagonal = np.ones(224)
+    generated = []
+
+    def draw(bank, cfg, maps, name, trial):
+        generated.append((name, trial))
+        target = diagonal.copy()
+        if (name, trial) == ("within_minus", 4):
+            target[-1] = -0.125
+        return None, None, target
+
+    monkeypatch.setattr(runner, "draw_target", draw)
+    monkeypatch.setattr(runner, "ratios", lambda _: {})
+    monkeypatch.setattr(
+        runner,
+        "checked_bank",
+        lambda _: (
+            "bank-pin",
+            {
+                "ibu_prior": diagonal,
+                "ibu_response": np.eye(224),
+                "selected": np.arange(205),
+            },
+        ),
+    )
+    monkeypatch.setattr(runner, "digest", lambda _: "config-pin")
+    monkeypatch.setattr(runner, "dependencies", lambda: pytest.fail("early unfold"))
+    with pytest.raises(ValueError, match="within_minus-4"):
+        runner.admissibility(Namespace(out=tmp_path), cfg)
+    assert len(generated) == 36
+    assert not (tmp_path / "admissibility.json").exists()
+    stop = __import__("json").loads((tmp_path / "stop.json").read_text())
+    assert stop["bins"] == [
+        {"index": 223, "signed_count": -0.125, "response_row_sum": 1.0}
+    ]
+
+
+def test_nominal_signed_background_cancels_exactly(cfg):
+    reco = np.array([[0.12, 4.2], [0.13, 4.2]])
+    bank = {
+        "gen": reco,
+        "reco": reco,
+        "pt": np.array([True, True]),
+        "pr": np.array([True, True]),
+        "wr": np.array([0.125, 0.375]),
+        "bkg": reco[:1],
+        "bw": np.array([1000.1]),
+        "means": np.zeros(224),
+    }
+    _, _, target = runner.draw_target(bank, cfg, {}, "nominal", None)
+    assert np.count_nonzero(target) == 1
+    assert target.sum() == 0.5
+    assert core.signed_target_violations(target, target) == []

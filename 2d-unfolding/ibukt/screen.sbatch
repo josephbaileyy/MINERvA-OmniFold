@@ -34,6 +34,15 @@ mkdir "$IBUKT_PRODUCTS"
   --label ibukt-admission -- 2d-unfolding/ibukt/jobs.py screen-admission \
   --admission "$IBUKT_ADMISSION" >"$IBUKT_PRODUCTS/admission.json"
 
+srun -n1 -c 64 --exact --mem=121920M --mem-bind=local \
+  "$IBUKT_PYTHON" -B nd-unfolding/mnv_guarded_run.py \
+  --expect-root "$IBUKT_DEPLOY" \
+  --inventory "$IBUKT_PRODUCTS/admissibility.imports.jsonl" \
+  --label ibukt-admissibility -- 2d-unfolding/ibukt/run_ibukt.py admissibility \
+  --stage "$IBUKT_STAGE" --out "$IBUKT_PRODUCTS/admissibility" \
+  --bank "$IBUKT_PREPARE/bank.npz" --identity "$IBUKT_PREPARE/identity.json" \
+  >"$IBUKT_PRODUCTS/admissibility.log" 2>&1 < /dev/null
+
 run_pair() {
   local label="$1" truth="$2" trial="$3"
   shift 3
@@ -44,6 +53,7 @@ run_pair() {
     --label "ibukt-$label" -- 2d-unfolding/ibukt/run_ibukt.py pair \
     --stage "$IBUKT_STAGE" --out "$IBUKT_PRODUCTS/$label" \
     --bank "$IBUKT_PREPARE/bank.npz" --identity "$IBUKT_PREPARE/identity.json" \
+    --admissibility "$IBUKT_PRODUCTS/admissibility/admissibility.json" \
     --truth "$truth" --trial "$trial" "$@" \
     >"$IBUKT_PRODUCTS/$label.log" 2>&1 < /dev/null
 }

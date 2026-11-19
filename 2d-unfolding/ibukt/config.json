@@ -1,5 +1,9 @@
 {
-  "schema": "ibukt-config/1",
+  "schema": "ibukt-config/2",
+  "target_treatments": {
+    "omnifold": "stay-positive-refined",
+    "ibu": "signed-data-minus-background"
+  },
   "truths": [
     "nominal",
     "genie_mec",
