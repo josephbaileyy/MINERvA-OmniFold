@@ -479,7 +479,8 @@ def check_text(src: Source, manifests: list[dict], n: int, min_sentence: int):
     for r in manifests:
         if r['intended']:
             intended_from[r['id']].add(r['from_file'])
-    receiving = ('sec_limitations.tex', 'app_devhistory.tex')
+    # sec_q1_limitations.tex holds section 12's 2D block, landed verbatim in Part 3 (JE-07) until Part 3 is condensed
+    receiving = ('sec_limitations.tex', 'app_devhistory.tex', 'sec_q1_limitations.tex')
     file_text = {f: re.sub(r'\s+', ' ', '\n'.join(src.lines[f])) for f in src.files}
     file_shas = {f: {hashlib.sha256(x.encode('utf-8')).hexdigest() for raw in src.lines[f] for x in raw_sentences(raw)}
                  for f in src.files}
@@ -541,7 +542,7 @@ def check_text(src: Source, manifests: list[dict], n: int, min_sentence: int):
                             item['why'] = f"{r['id']} ({r['file']}): {r['reason'][:150]}"
             if item['class'] == 'remaining':
                 rows = manifest_rows_for(i, L) + manifest_rows_for(j, L)
-                in_receiving = any(f in ('sec_limitations.tex', 'app_devhistory.tex') for f in (fa, fb))
+                in_receiving = any(f in receiving for f in (fa, fb))
                 if rows and in_receiving:
                     ids = sorted({r['id'] for r in rows})
                     if fa == fb:   # both locations in one file: the sentence must print there twice
