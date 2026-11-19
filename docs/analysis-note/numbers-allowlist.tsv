@@ -357,3 +357,6 @@ token	delta	owner	item	reason
 67	-1	limitation-resolver	compression chunk P2-1, LR-C02	truth-W residual range, moved to records
 68	-1	limitation-resolver	compression chunk P2-1, LR-C02	truth-W residual (68% of events), moved to records
 99.9	-1	limitation-resolver	compression chunk P2-1, LR-C02	truth-W residual (99.9% of events), moved to records
+13	+1	director-helper-3	P1-ATLAS	the new reference ATLAS:2026fullps (arXiv:2611.24270, Joseph's approval via the director, 2026-11-19): its title's sqrt(s) = 13 TeV
+2026	+1	director-helper-3	P1-ATLAS	same reference: its year
+2611.24270	+1	director-helper-3	P1-ATLAS	same reference: its arXiv identifier
