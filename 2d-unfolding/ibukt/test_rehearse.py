@@ -1,5 +1,6 @@
 """Local checks for rehearsal workspace confinement and evidence handling."""
 
+import ast
 import json
 import os
 import sys
@@ -12,6 +13,50 @@ import pytest
 
 import rehearse
 import run_ibukt
+
+
+def test_production_paths_do_not_import_numpy_testing():
+    # NumPy 1.26's testing import can launch lscpu under the production guard.
+    repo = run_ibukt.REPO
+    sources = (
+        "2d-unfolding/ibukt/connect.py",
+        "2d-unfolding/ibukt/ibukt.py",
+        "2d-unfolding/ibukt/jobs.py",
+        "2d-unfolding/ibukt/run_ibukt.py",
+        "2d-unfolding/ref_c2c1/ref_c2c1.py",
+        "2d-unfolding/re2/re2_driver.py",
+        "unbinned_unfolding/python/omnifold.py",
+        "nd-unfolding/mnv_guarded_run.py",
+    )
+    violations = []
+    for source in sources:
+        nodes = list(ast.walk(ast.parse((repo / source).read_text(), filename=source)))
+        numpy_names = {"numpy"}
+        for node in nodes:
+            if isinstance(node, ast.Import):
+                for name in node.names:
+                    if name.name == "numpy" and name.asname:
+                        numpy_names.add(name.asname)
+                    if name.name.split(".")[:2] == ["numpy", "testing"]:
+                        violations.append(f"{source}:{node.lineno}")
+            elif isinstance(node, ast.ImportFrom) and node.level == 0:
+                module = node.module or ""
+                if module.split(".")[:2] == ["numpy", "testing"] or (
+                    module == "numpy"
+                    and any(name.name == "testing" for name in node.names)
+                ):
+                    violations.append(f"{source}:{node.lineno}")
+        for node in nodes:
+            if (
+                isinstance(node, ast.Attribute)
+                and node.attr == "testing"
+                and isinstance(node.value, ast.Name)
+                and node.value.id in numpy_names
+            ):
+                violations.append(f"{source}:{node.lineno}")
+    assert not violations, "numpy.testing in guarded production paths: " + ", ".join(
+        violations
+    )
 
 
 @pytest.mark.parametrize("location", ["cfs", "outside", "symlink"])
