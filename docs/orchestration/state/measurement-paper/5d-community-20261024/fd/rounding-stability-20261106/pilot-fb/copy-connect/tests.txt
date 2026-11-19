@@ -1,0 +1,23 @@
+# HEAD 8e2e3a1ed7a8304ea9a313d24362455127edc4fd
+# clean clone, Python 3.12.2, 2026-11-19T02:43:01Z
+# 2f5e8c79ba4d2154f0807f8b7e63933ae2427705b403fd4b783fdc13f1413570  nd-unfolding/pfb_copy_remote.py
+# 06702d4b725a1ca993d2a39273cabbacfa82f4b5b8096ec7ae4c777a3867cb9c  nd-unfolding/pfb_copy_launch.sh
+# a158a77e64c1d7b7e567a452dd37d776cad5e30ba096ddc0ffbb45503372de7b  nd-unfolding/tests/test_pfb_copy.py
+# command: python3 -B -m unittest -v nd-unfolding/tests/test_pfb_copy.py
+test_a_clear_copy_makes_plain_new_files_inside_the_stage (nd-unfolding.tests.test_pfb_copy.Copy.test_a_clear_copy_makes_plain_new_files_inside_the_stage) ... ok
+test_a_moved_source_refuses_before_any_write (nd-unfolding.tests.test_pfb_copy.Copy.test_a_moved_source_refuses_before_any_write) ... refusing: the stat of ['rs1_A0_b-_j13.npz'] moved during its read
+ok
+test_a_source_off_its_pin_or_a_link_refuses_before_any_write (nd-unfolding.tests.test_pfb_copy.Copy.test_a_source_off_its_pin_or_a_link_refuses_before_any_write) ... ok
+test_the_fence_refuses_before_any_write (nd-unfolding.tests.test_pfb_copy.Copy.test_the_fence_refuses_before_any_write) ... ok
+test_the_pins_are_rs1s_and_the_sigma_receipts (nd-unfolding.tests.test_pfb_copy.Copy.test_the_pins_are_rs1s_and_the_sigma_receipts) ... ok
+test_the_remote_script_is_python_3_6_and_runs_no_job (nd-unfolding.tests.test_pfb_copy.Copy.test_the_remote_script_is_python_3_6_and_runs_no_job) ... ok
+test_the_stage_must_be_the_smokes_and_hold_no_copies (nd-unfolding.tests.test_pfb_copy.Copy.test_the_stage_must_be_the_smokes_and_hold_no_copies) ... ok
+test_the_launcher_pins_the_script_and_checks_its_arguments (nd-unfolding.tests.test_pfb_copy.Launcher.test_the_launcher_pins_the_script_and_checks_its_arguments) ... ok
+test_verify_accepts_a_good_manifest_and_refuses_each_defect (nd-unfolding.tests.test_pfb_copy.Verify.test_verify_accepts_a_good_manifest_and_refuses_each_defect) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 2.341s
+
+OK
+# exit 0
+# clone status: 0 lines
