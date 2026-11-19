@@ -1,4 +1,4 @@
-\section{Validation of the two-dimensional result}
+\subsection{Validation of the two-dimensional result}
 \label{sec:validation}
 
 In a simulated experiment, \emph{truth} is the known target distribution, the \emph{prior} is the starting simulated truth distribution, and the \emph{response} describes reconstruction and selection conditional on truth. A closure test compares the unfolded estimate with its known target under a specified deformation. Bias is the mean estimate minus that target over repeated experiments. A single closure residual also contains sampling fluctuations. Coverage is the fraction of repeated intervals containing the specified truth, and tests the estimator and interval procedure together. Table~\ref{tab:validation-questions} separates these questions before the results. Repeating a numerical calculation checks neither the coverage and width of the intervals nor the adequacy of the physical model.
@@ -53,7 +53,7 @@ With the current inputs, validated total uncertainties for the reported bins, th
 % Deep restructure (DECISION-20261118; history-cuts/move-manifest-cv-20261118.tsv): the paragraph "Requirements for validated total uncertainties"
 % moved to sec:limitations-2d (CV-VB05..CV-VB11); this scope label keeps its conclusion, and its comments below moved with it.
 
-\subsection{Closure tests across dimensions}
+\subsubsection{Closure tests across dimensions}
 \label{sec:closure-map}
 
 Only the MINERvA simulation supplies a detector response, the conditional distribution of reconstructed events given truth. Other generators (GiBUU, NuWro, GENIE variants) supply truth only. Every closure test here therefore keeps the simulated MINERvA response and changes the truth distribution, by reweighting the simulated events, or changes the analysis chain around it. Reweighting to another generator's shape is a valid known-truth test of the unfolding. It does not test the detector model. An ordinary closure, whose pseudo-data are the simulation itself, is an identity check that a constant estimator would also pass. Table~\ref{tab:closure-map} lists, for each test, what it changes relative to the unfolding's simulation and what its result can detect.
@@ -132,7 +132,7 @@ Response mismatch & Reconstructed $\Eavail$ of pseudo-data scaled & 5D &
 \end{itemize}
 % Sources: 2D rows sec_validation.tex "Closure" and "Injected-feature recovery"; 3D sec_3d.tex sec:3d-closure; 4D git show 798f0c89 (job 53925395, ratios 1.007/0.989/1.005/1.000..., mean factor 1.0142); 5D W bump (corrected, 2026-10-12) job 59719296 at b11ff40d, PREREG-20261012-5d-injected-w-closure.md, docs/orchestration/state/wclosure-5d-20261012/closure_5d_w_bottom_line.json (VL176): mean factor 1.0529, W-marginal feature bin [1.1,1.4] injected 0.2310 residual 0.0416 ratio 0.1799, W ratios 1.031/0.958/1.027/0.998/1.000/1.000, 5D median 1.0070 std 0.0371 max|dev| 0.1515, joint (Eavail,W) median 1.0093 max|dev| 0.094, peak column 0.906-0.978. Superseded June run: git show aecd0d22 (job 54062313: median 1.0000, std 0.0062, max|dev| 0.227, mean factor 1.0000) with driver defaults A=0.3, c=0.3, s=0.15 at fdefe5f8 nd-unfolding/unfold_nd_omnifold_unbinned.py (launcher sbatch_hadd_unfold_5d.sh:43-48 sets no centre); 0.3*exp(-((0.938-0.3)/0.15)^2) = 4.2e-9. Background, generator and q3 rows: sec_5d.tex sec:val-negweight, sec:val-departure, VL149, VL151, VL154.
 
-\subsection{Fixed-truth coverage of the 2D statistical band}
+\subsubsection{Fixed-truth coverage of the 2D statistical band}
 \label{sec:coverage}
 % COMBINED-PLAN sec. 4 item 9: the result and the criterion first, then the band-identity table; the rebuild history moved verbatim to App. I (move manifest H3-011).
 This test asks whether a 2D statistical band covers a \emph{fixed} truth at its nominal rate. The band it scored undercovers in its tails, and the quoted statistical block has not been tested. Table~\ref{tab:coverage-bands} names the three bands. The design, criteria and positive control of the test were specified before any toy was generated (Ref.~\cite{NoteRecords2026}, \recentry{coverage-fixed-truth}).
@@ -193,7 +193,7 @@ Scoring the same toys against the undivided band removes the tail undercoverage 
 % Deep restructure (DECISION-20261118; history-cuts/move-manifest-cv-20261118.tsv): the scope paragraph and its comment moved to
 % sec:limitations-2d (CV-VB12..CV-VB17).
 
-\subsection{Held-out-tune coverage of the 2D covariance}
+\subsubsection{Held-out-tune coverage of the 2D covariance}
 \label{sec:coverage-tunes}
 A second coverage test, specified before it ran, asks whether the analysis procedure's 2D covariance covers truths held out of its construction. A pseudo-experiment is inside a cell when the difference between its unfolded result and the held-out truth lies within that cell's standard deviation under the remade covariance, and inside the joint region when its $\chi^{2}$ on that covariance, with the degrees of freedom printed below, is at most the $\chi^{2}$ quantile at the one-standard-deviation Gaussian content. The null-based threshold rule was fixed before any pseudo-experiment was read. This containment is why the test is called a coverage test. Section~\ref{sec:limitations-2d} says why the result is not a coverage rate of the reported intervals. At each of two held-out GENIE~v3 tunes, \fvval{f1-tune-ar23} and \fvval{f1-tune-g18}, with \lrval{cov2d-ntoys} pseudo-experiments each and the analysis procedure's 2D covariance remade at each tune's truth (model term included, run-period term excluded), the test reads \emph{under-covers}. The joint in-region count is \lrval{cov2d-ar23-joint} of \lrval{cov2d-ntoys} at both tunes, against thresholds of \lrval{cov2d-ar23-kjoint} (\fvval{f1-tune-ar23}) and \lrval{cov2d-g18-kjoint} (\fvval{f1-tune-g18}). Per cell, \lrval{cov2d-ar23-nflagged} cells are flagged at \fvval{f1-tune-ar23} and \lrval{cov2d-g18-nflagged} at \fvval{f1-tune-g18}, each attributed to bias (Table~\ref{tab:coverage-tunes}). The mean $\chi^{2}/\mathrm{ndf}$ of the pseudo-experiments is $\lrval{cov2d-ar23-chi2ndf}\pm\lrval{cov2d-ar23-chi2ndf-se}$ ($\mathrm{ndf}=\lrval{cov2d-ar23-ndf}$) at \fvval{f1-tune-ar23} and $\lrval{cov2d-g18-chi2ndf}\pm\lrval{cov2d-g18-chi2ndf-se}$ ($\mathrm{ndf}=\lrval{cov2d-g18-ndf}$) at \fvval{f1-tune-g18}. The test's false-flag rate under its null's law is at most \lrval{cov2d-ar23-size} and \lrval{cov2d-g18-size} per tune. In a descriptive study made after the test's result, truncating the joint test to its \lrval{t2a-r1} or \lrval{t2a-r2} largest-eigenvalue directions still finds none of the \lrval{cov2d-ntoys} pseudo-experiments in its region at either tune, so truncation to the better-determined directions does not remove the joint under-coverage. In the same study, the mean $\chi^{2}$ splits into a part from the pseudo-experiments' mean error $\bar e$, $\bar e^{\top}C^{+}\bar e$, and a part from their spread $S$, $\mathrm{tr}(C^{+}S)$, with $C$ the remade covariance. At \fvval{f1-tune-ar23} and \fvval{f1-tune-g18}, the mean-error part is \fvval{t2a-bias-share-ar23}\,\% and \fvval{t2a-bias-share-g18}\,\% of the mean $\chi^{2}$, or \fvval{t2a-bias-ndf-ar23} and \fvval{t2a-bias-ndf-g18} per degree of freedom; the spread part is \fvval{t2a-spread-ndf-ar23} and \fvval{t2a-spread-ndf-g18} per degree of freedom, where 1 would mean that the covariance describes the spread. In the covariance's eigenbasis, the \fvval{t2a-ntop} directions with the largest eigenvalues carry \fvval{t2a-top-ar23}\,\% and \fvval{t2a-top-g18}\,\% of the mean-error part, and the directions beyond the \fvval{t2a-r1} largest carry \fvval{t2a-beyond1-ar23}\,\% and \fvval{t2a-beyond1-g18}\,\%. The decomposition locates the $\chi^{2}$ and leaves its cause open. These numbers are the test's regrade against the adopted 2D covariance (\S\ref{sec:uq-2d-scope}); the regrade leaves the verdict, the joint counts and their thresholds, and the flagged cells and their in-interval counts as the first grade had them (App.~\ref{app:devhistory}).
 % U8 (currency check of 2fe070fec): T2A on the adopted covariance, fd/receipts-cov2d/g2r/t2a/run/t2a_g2r_AR23.json (74fab014) and t2a_g2r_G18.json (b1310d44), by t2a_values() in make_values_fived16.py; READING-T2-20261110.md (commit aaeb56f56); wording as the paper's section 6.2 at 5bbb9d269.
@@ -238,7 +238,7 @@ Tune & Cell & $\pT$, $\pPar$ (GeV/$c$) & In-interval count (threshold) & Pull me
 % rule with C2's and the toys' residuals, outlier cell 216, the weakened cells, the +-1 sigma endpoint draws, the shared
 % universes, the cross terms, the single realization, the fixed simulation.
 
-\subsection{Other validation diagnostics}
+\subsubsection{Other validation diagnostics}
 \label{sec:val-other}
 
 \paragraph{Unbinned diagnostic (C2ST).} In the classifier two-sample test (C2ST), a classifier is trained to separate the data from the (reweighted) simulation in the full unbinned feature space, and its held-out area under the ROC curve (AUC) or accuracy is compared with the chance value $0.5$. The AUC drops from $\approx0.535$ before unfolding to $\approx0.501$ after. On this training sample, that drop is a discrimination diagnostic. It does not show that the mismatch was removed, and it is not evidence of generalization or of calibrated agreement. This binning-free check is descriptive, and no calibrated $p$-value is quoted. As run, the C2ST trains and evaluates on the same sample without cross-fitting. A valid null would require re-running the full cross-fitted OmniFold pipeline per pseudoexperiment. Calibrated unbinned goodness-of-fit remains open~\cite{Canelli:2025guide}.
@@ -253,7 +253,7 @@ The same-ensemble pull diagnostic of an earlier ensemble of 200 2D closure unfol
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.62\textwidth]{MEFHC_5iter_xsec_eff_heatmap}
+  \includegraphics[width=0.7\textwidth]{MEFHC_5iter_xsec_eff_heatmap}
   \caption[Selection efficiency]{The selection efficiency reproduces the published one. It is diagnostic only: OmniFold's miss treatment natively corrects acceptance (\S\ref{sec:method-algo}). Shown on the $(\pT,\pPar)$ truth grid.}
   \label{fig:eff}
 \end{figure}

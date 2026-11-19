@@ -6,7 +6,10 @@ usage: python3 layout_run.py <script> [args...]
 As note-figstyle-20261117/tools/palette_run.py (the producer runs as __main__, not one byte of it changes), but at a
 figure's first save, before anything is written, palette_lib.apply(fig, stem) and then layout_lib.apply(fig, stem)
 are made, once per figure. Arm 0 of this record is palette_run.py itself, which reproduces the installed file.
+With LAYOUT_PALETTE=0 (a figure the palette pass did not edit, whose installed file is the plain producer's), the
+palette edits are skipped and arm 0 is the plain producer (arms_layout.sh with ARM0=plain).
 """
+import os
 import runpy
 import sys
 from pathlib import Path
@@ -30,9 +33,9 @@ def savefig(self, fname, *a, **k):
     if not getattr(self, "_note_layout_done", False) and (isinstance(fname, (str, bytes))
                                                            or hasattr(fname, "__fspath__")):
         name = Path(str(fname)).name.split(".")[0]
-        palette_lib.apply(self, name)
-        if not layout_lib.apply(self, name):
-            raise SystemExit(f"layout_run: {name} has no layout.tsv row")
+        if os.environ.get("LAYOUT_PALETTE", "1") != "0":   # 0: a figure the palette pass left as drawn
+            palette_lib.apply(self, name)
+        layout_lib.apply(self, name)   # a figure with no layout.tsv row is saved as arm 0 draws it
         self._note_layout_done = True
     return _inner(self, fname, *a, **k)
 

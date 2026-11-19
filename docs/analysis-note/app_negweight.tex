@@ -91,7 +91,7 @@ With identical unfolding settings, the histogram backend and a common classifier
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=0.62\textwidth]{negweight_ratio_2d}
+  \includegraphics[width=0.7\textwidth]{negweight_ratio_2d}
   \caption[Negative-weight/purity cross-section ratio in 2D]{Only the low-$p_T$, high-background edge bin departs by more than a few percent in the negative-weight/binned-purity cross-section ratio. The map shows that ratio in populated bins of the 2D ME~FHC measurement, with common estimator and seed. The median is $\nwMedianBin$ (near-white). The color scale saturates; the largest single-bin deviation is in Table~\ref{tab:negweight}. Background is largest in the edge bin, and the $\max(0,\cdot)$/structural floor of \S\ref{sec:negweight-estimator} governs the result there.}
   \label{fig:negweight-ratio}
 \end{figure}
@@ -159,44 +159,3 @@ On the data, the refined treatment moves the 2D result by at most $0.497\,\sigma
 \paragraph{Scope.} The measured agreement concerns the 2D systematic and statistical covariances of \S\ref{sec:negweight-uq} at the stated configurations. It is not a theorem that the two background treatments give the same covariance, because the underlying estimands are not pointwise identical, and covariance equivalence for the continuous estimator or in five dimensions is not established. The five-dimensional evidence is limited to the following two-universe spot check.
 
 \paragraph{Limits of the five-dimensional evidence.} There is no full five-dimensional $187$-universe comparison of the two background treatments at the publication configuration ($5$ iterations, LightGBM). The spot check uses one iteration and the histogram backend on the stored five-dimensional universe file: under both treatments \texttt{2p2h:0} gives $3.014\times10^{-38}$ with per-bin median $1.0005$, and \texttt{MaCCQE:0} differs by \SI{-0.03}{\percent} with median $0.9990$. Together with the displacement argument and the full-statistics 2D result, this supports quoting the standard chain with purity subtraction, with its background treatment stated. It does not show that the background treatment is irrelevant in five dimensions, which would require the full comparison. Raw negative weights destabilize the exact-split backend (\S\ref{sec:negweight-estimator}), but the standard chain uses LightGBM, so neither treatment is exposed to that instability here.
-
-\subsection{Five-dimensional pseudo-experiments with both background treatments}
-
-The five-dimensional validation (\S\S\ref{sec:val-fiveaxis}--\ref{sec:val-departure}) reports end-to-end tests of both background treatments. They cover the purity bias in the highest-$W$ column at nominal truth, its reduction with refined negative-weight subtraction, the data difference, and the estimator with higher refinement capacity. That estimator is configuration (e), which gives the 3D and 4D central values and the sixteen-cell result (\S\ref{sec:fived16}) but not the configuration-(a) 5D central value; the quoted 2D central value uses the same refinement capacity, in configuration (f).
-
-The closure of the five-dimensional pseudo-experiments with backgrounds, under purity-based and refined negative-weight subtraction (\S\ref{sec:val-negweight}), is shown cell by cell in Fig.~\ref{fig:bkg-residual-note}.
-
-% Targeted round (DECISION-20261103-joseph-retire-density-gate.md item 3b): the methods paper's Fig. 2 and its caption, verbatim, moved here when the paper's background-closure paragraph (Sec. IV D) moved to the note. pointed to from sec:val-negweight. The same figure file the paper printed (figures/paper_fig_bkg_residual.pdf, unchanged).
-\begin{figure}[tbp]
-\centering
-\includegraphics[width=\linewidth]{paper_fig_bkg_residual}
-\caption[Closure residual with backgrounds: purity and negative-weight subtraction]{Development check: purity-based subtraction leaves a bias in the highest-$W$ column at nominal truth, and refined negative-weight subtraction reduces it there, but residuals in some joint cells fail the nominal closure criterion (\S\ref{sec:val-negweight}). Bars: standard error of the mean. The plotted quantity is the nominal-truth fractional closure residual, (unfolded$-$truth)/truth, with backgrounds and deterministic LightGBM. Circles: purity subtraction (9 pseudo-experiments). Squares: unbinned negative-weight subtraction, 100-tree/8-leaf refinement (60). The pseudo-experiments are unpaired. (a)~42 $(\Eavail,W)$ cells grouped by $\Eavail$ bin. (b)~\jtNcells{} coarse joint cells indexed in the $3^{5}$ grid, followed by the integrated total.}
-\label{fig:bkg-residual-note}
-\end{figure}
-
-\paragraph{Purity bias.} Purity bias is 8--12 statistical standard deviations. Relative to these cells' total uncertainty in the configuration-(a) covariance, it is 0.36--1.07 standard deviations (\S\ref{sec:val-negweight}). Signal-only experiments close. Subtraction is exact per reconstructed bin, but the widest bin ($W\ge\SI{3}{GeV}$, background \SI{13}{\percent} of signal) contains background shape resolved by the unbinned classifier and missed by bin-uniform purity. The within-bin shape term of \S\ref{sec:negweight-estimator} is therefore measurable, and it is direct evidence for revisiting the background treatment of the configuration-(a) five-dimensional central value (\S\ref{sec:negweight-footing}). The difference between five-dimensional purity and refined negative-weight subtraction on data is the least computationally expensive estimate of its size on data.
-% Source: docs/orchestration/OUTCOME-20260925-s5c-purity-background-bias-at-high-W.md; KNOWN_ISSUES 75.
-% Heading date (2026-09-25) and the numbers repeated in sec_validation.tex removed (lane 3 App. B #7):
-% highest-$W$ column \SIrange{3.5}{4.1}{\percent} low, highest-$\Eavail$, highest-$W$ cell \SI{1.7}{\percent} high.
-
-\paragraph{Refined negative-weight subtraction.} Refinement used the unfold's deterministic GBDT configuration, independent injection and subtraction halves of background simulation, and bootstrap replicas that individually resampled every pseudo-event and refit refinement. It preserves the signed total to $3\times10^{-6}$ and clips \SIrange{0.01}{0.05}{\percent} of events. Corner bias falls from \SI{1.66}{\percent} to \SI{0.24}{\percent}, but residuals in some joint cells fail the nominal closure criterion. The criterion has two parts, each applied to all 153 reported quantities. No quantity may have a mean residual beyond 3.6 standard errors of the mean ($|t|>3.6$), a fixed threshold at about the two-sided 5\% level for a normal reference, Bonferroni-corrected over the 153. Nor may any quantity have a mean residual beyond half its bootstrap standard deviation with $|t|>3$. The data difference's sign pattern matches simulated purity bias at an order of magnitude smaller size; the difference is method sensitivity, not a measured bias. With either treatment, the estimator does not follow generator-sized $\Eavail$ shape changes. This refinement study ran no coverage test. Reducing one bias does not itself qualify an uncertainty, so this result does not close the revisit of the background treatment of the configuration-(a) five-dimensional central value (\S\ref{sec:negweight-footing}).
-% Note register round n1, batch n1-F: the criterion stated (state/s5n/contract.json, stage_1_development, controls C3
-% and C6; OUTCOME-20260925-s5n-stage1-development-fail.md sec. 2, C3 FAIL; nd-unfolding/s5n_analyze_dev.py:112-149);
-% "predeclared" dropped, since the result is a failure.
-% Search: s5n coverage; coverage test; coverage verdict; no validation seed was run (OUTCOME-20260925-s5n-stage1-development-fail.md:13) @ ddf16f1087d7
-% Source: docs/orchestration/OUTCOME-20260925-s5n-stage1-development-fail.md; VL151, VL152.
-% Heading date (2026-09-25) and numbers repeated in sec_validation.tex removed (lane 3 App. B #7):
-% highest-$W$ bias falls from \SIrange{-3.5}{-4.1}{\percent} to \SIrange{0.11}{0.24}{\percent};
-% residual of up to about \SI{1}{\percent}; on the data the two footings
-% differ by a median of \SI{0.36}{\percent} and at most \SI{1.4}{\percent}.
-
-\paragraph{Refinement capacity.} Stay-Positive classifier underfitting causes the residual nominal bias of the refined subtraction. At the unfold's GBDT setting (100 trees, 8 leaves), the positive-weight probability is underfit, leaving up to \SI{4}{\percent} reco-level subtraction error per $(\Eavail,W)$ reco cell. With 400 trees and 31 leaves, error falls to \SI{1.7}{\percent}, paired truth-level bias falls by more than \SI{80}{\percent} in every affected cell, and nominal background-inclusive closure passes on 20 development and 40 fresh pseudo-experiments. Splitting background simulation into independent injection and subtraction halves is not the cause.
-% Source: docs/orchestration/DIAGNOSIS-20260926-s5e-oi192-estimator.md §5;
-% docs/orchestration/OUTCOME-20260926-s5e-oi192-diagnosis-and-candidate.md; VL153, VL154.
-% Heading date (2026-09-26) removed. Moved to the pointer above: "The higher-capacity refinement
-% is not adopted: the estimator it feeds failed a stability test on the data (\S\ref{sec:validation})."
-
-\paragraph{Background treatment and choice of covariance.} The choice of background treatment is independent of the choice of covariance, and this appendix selects no five-dimensional covariance for use. The lateral-band component from re-selected event loops is built, with five bands and ten endpoint unfolds whose distinct checksums are listed in the record of the five-axis covariance of the configuration-(a) central value. The status of that five-axis covariance and the scope of its use are stated in \S\ref{sec:eavailw-adopted}. The choice of background treatment settles one of the conditions for using a component; every other condition still applies.
-% Plain status of the use of the five-axis covariance as printed at sec:eavailw-adopted (sec_5d.tex): it does not meet
-% its specification's acceptance criteria, and its use covers only this file and its projection.
-% Note consolidation (DECISION-20261027 item 1, cost-list R05): the status and the use's scope are no longer restated here; the sentence points to their single home, sec:eavailw-adopted, where the four measurements also print. "Neither fact" now refers to that status and that scope.

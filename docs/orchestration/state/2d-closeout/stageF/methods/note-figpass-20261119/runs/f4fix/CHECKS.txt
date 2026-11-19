@@ -1,0 +1,21 @@
+# f4fix (Figs. 19 and 22's labels, chunk C), 2026-11-19T05:10:32Z: bash tools/arms_family4.sh <wt> c3b4e8842 generators_vs_unfolded_band_central ascencio_fullcov_compare_central (figenv/mpl3108)
+== generators_vs_unfolded_band_central: arm 0 against the file installed at c3b4e8842
+EQUAL-BUT-DATE tmp.eyHOoRHV7S: /CreationDate (D:20261117133343-07'00') vs /CreationDate (D:20261118211033-07'00')
+raster: RASTER :: EQUAL :: 1 page(s), 0 differing pixel(s)
+== ascencio_fullcov_compare_central: arm 0 against the file installed at c3b4e8842
+EQUAL-BUT-DATE tmp.ss5df9sXTU: /CreationDate (D:20261117133344-07'00') vs /CreationDate (D:20261118211034-07'00')
+raster: RASTER :: EQUAL :: 1 page(s), 0 differing pixel(s)
+== arm 1 against arm 0
+  equal  f4fix/ascencio_fullcov_compare_central.pdf.json: 10 data artists
+  equal  f4fix/ascencio_fullcov_compare_central.png.json: 10 data artists
+  equal  f4fix/generators_vs_unfolded_band_central.pdf.json: 27 data artists
+  equal  f4fix/generators_vs_unfolded_band_central.png.json: 27 data artists
+COMPARE :: PASS
+strings generators_vs_unfolded_band_central: equal after the declared edits (49 drawn strings)
+  overlaps arm 0 0, arm 1 2
+  accepted: the offset '$\\times\\mathdefault{10^{−38}}\\mathdefault{}$' moved into the added label '$d^2\\sigma/(dE_{\\rm avail}\\,dq_3)$ ($10^{-38}$ cm$^2$/GeV$^2$/nucleon)'
+strings ascencio_fullcov_compare_central: equal after the declared edits (37 drawn strings)
+  overlaps arm 0 1, arm 1 2
+ARMS-FAMILY4 :: PASS
+== installed figs/generators_vs_unfolded_band_central.pdf = this run's arm 1: yes
+== installed figs/ascencio_fullcov_compare_central.pdf = this run's arm 1: yes

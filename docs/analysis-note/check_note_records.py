@@ -156,6 +156,16 @@ CITE = "NoteRecords2026"
 LEDGER = "records-move-ledger.md"
 # origin/main immediately before the records-citation thinning (DECISION-20261022-joseph-note-records-refs-and-stop.md).
 THIN_BASE = "563715b839217e0e4e55993f42e1b223fa2432fb"
+# The compression skeleton (DECISION-20261119c) moved whole subsections verbatim into new files. For the thinning count
+# (P8, citations per file against THIN_BASE) a citation in a new file counts toward the file it was moved from; every
+# new file has exactly one source (skeleton_compression.py; move-manifest rows SK-01..SK-15).
+SKELETON_FILE_MOVES = {
+    "sec_fived16_gen.tex": "sec_fived16.tex", "sec_q3_fived16.tex": "sec_fived16.tex", "sec_q3_3d.tex": "sec_3d.tex",
+    "sec_observables.tex": "sec_eavailw.tex", "sec_q3_closure.tex": "app_statmethods.tex",
+    "sec_tension.tex": "app_statmethods.tex", "app_cov1b_gate.tex": "app_statmethods_nd.tex",
+    "sec_q3_negweight.tex": "app_negweight.tex", "app_terminology.tex": "sec_front.tex",
+    "sec_validity_table.tex": "sec_front.tex",
+}
 
 
 def printed(text: str) -> str:
@@ -573,7 +583,9 @@ def probe_fails(inv: dict, new: Path, ledger: Path, thin: Counter | None = None,
     # P8 the thinning: base citations = printed + listed drops, exactly
     info["thin"] = thin is not None
     if thin is not None:
-        now = citation_keys(ntext)
+        now = Counter()
+        for (f, key), n in citation_keys(ntext).items():
+            now[(SKELETON_FILE_MOVES.get(f, f), key)] += n
         info["thin_base"], info["thin_now"] = sum(thin.values()), sum(now.values())
         for k in sorted(set(thin) | set(drops)):
             f, key = k
@@ -1228,7 +1240,7 @@ PLANTS = [
     # n3 (2026-10-27): the sec_systematics ten-seed citation these two plants used left the note (L-thin-C62, director
     # ruling (e)); they now use citations that still print, in both the base and the delivered App. A and App. B.
     ("listed drop of a heading the records lack", "P7 ledger row L98: D:app_statmethods.tex::superseded values: "
-     "retired materials", "app_statmethods.tex",
+     "retired materials", "sec_q3_closure.tex",   # the closure tests moved there in the skeleton (SK-09)
      r"was in force when the tests were graded (Ref.~\cite{NoteRecords2026}, superseded values: retired material)",
      "was in force when the tests were graded",
      "| L98 | planted | DROP | R4 | `D:app_statmethods.tex::superseded values: retired materials` | planted |"),

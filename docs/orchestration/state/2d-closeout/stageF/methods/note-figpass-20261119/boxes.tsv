@@ -1,6 +1,13 @@
-# Axes boxes in inches from the canvas lower left (figure, axes index, x0, y0, width, height).
-figure	axes	x0_in	y0_in	width_in	height_in
+# Axes boxes in inches from the canvas lower left (figure, axes index, x0, y0, width, height; optional title pad, pt).
+figure	axes	x0_in	y0_in	width_in	height_in	title_pad_pt
 q3_excess_projection	0	1.25	2.6	4.3	2.1
 q3_excess_projection	3	5.72	2.6	0.15	2.1
 q3_excess_projection	1	0.85	0.42	2.25	1.6
 q3_excess_projection	2	4.3	0.42	2.15	1.6
+m3_fig3_coverage	0	0.47	0.42	5.95	1.72
+m3_fig1_background	0	0.6	2.42	5.8	1.6
+m3_fig1_background	1	0.6	0.45	5.8	1.28
+minerva_unfolding_landscape	-1	0	0	0	0
+eavail_marginal_vs_paper_pull_full	0	0.85	3.9	4.55	2.95
+eavail_marginal_vs_paper_pull_full	2	5.55	3.9	0.18	2.95
+eavail_marginal_vs_paper_pull_full	1	0.85	0.62	5.45	2.7
