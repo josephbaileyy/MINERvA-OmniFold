@@ -341,7 +341,7 @@ token	delta	owner	item	reason
 39	-1	director-helper-3	P1-COMPRESS	same
 1200	-1	director-helper-3	P1-COMPRESS	abstract: "a five-dimensional test of 1,200 pseudo-experiments" shortened; 1,200 prints at sec:coverage-5d (sec_5d.tex)
 9	-1	director-helper-3	P1-COMPRESS	abstract cut: "9 of the 16 cells" (\fvval{vhalf-n-notvalid}); prints at sec:fived16-fd (sec_q3_fived16.tex)
-7.86	-2	director-helper-3	P1-COMPRESS	the abstract's and the executive summary's median per-cell uncertainty (\fvval{sigmed-reported}) are cut; it prints at sec:fived16-cov (sec_fived16.tex) and in tab:what-is-measured
+7.86	-1	director-helper-3	P1-COMPRESS	the executive summary's median per-cell uncertainty (\fvval{sigmed-reported}) is cut (the abstract's [P] sentence keeps it); it prints at sec:fived16-cov (sec_fived16.tex) and in tab:what-is-measured
 2	-2	limitation-resolver	compression chunk P2-1, LR-C01/LR-C12	truth-W residual (±2 MeV) and the control-shape paragraph (~2 GeV), moved to records_compression_lr.tex
 6	-2	limitation-resolver	compression chunk P2-1, LR-C12	control-shape paragraph (4–6 GeV/c, ⟨Eν⟩ ≈ 6 GeV), moved to records
 0.086	-1	limitation-resolver	compression chunk P2-1, LR-C02	truth-W no-real-solution fraction, moved to records
@@ -360,3 +360,36 @@ token	delta	owner	item	reason
 13	+1	director-helper-3	P1-ATLAS	the new reference ATLAS:2026fullps (arXiv:2611.24270, Joseph's approval via the director, 2026-11-19): its title's sqrt(s) = 13 TeV
 2026	+1	director-helper-3	P1-ATLAS	same reference: its year
 2611.24270	+1	director-helper-3	P1-ATLAS	same reference: its arXiv identifier
+10	-12	journal-editor	K3 (38eaa2928)	app_release.tex: moved verbatim to app_release_records.tex (release schema, RC7 contents and tolerances, worked example steps 1-4; JE-08); prints in the records document
+6	-5	journal-editor	K3 (38eaa2928)	app_release.tex: moved verbatim to app_release_records.tex (release schema, RC7 contents and tolerances, worked example steps 1-4; JE-08); prints in the records document
+7	-5	journal-editor	K3 (38eaa2928)	app_release.tex: moved verbatim to app_release_records.tex (release schema, RC7 contents and tolerances, worked example steps 1-4; JE-08); prints in the records document
+694	-4	journal-editor	K3 (38eaa2928)	app_release.tex: moved verbatim to app_release_records.tex (release schema, RC7 contents and tolerances, worked example steps 1-4; JE-08); prints in the records document
+1	-3	journal-editor	K3 (38eaa2928)	app_release.tex: moved verbatim to app_release_records.tex (release schema, RC7 contents and tolerances, worked example steps 1-4; JE-08); prints in the records document
+3	-3	journal-editor	K3 (38eaa2928)	app_release.tex: moved verbatim to app_release_records.tex (release schema, RC7 contents and tolerances, worked example steps 1-4; JE-08); prints in the records document
+12	-2	journal-editor	K3 (38eaa2928)	app_release.tex: moved verbatim to app_release_records.tex (release schema, RC7 contents and tolerances, worked example steps 1-4; JE-08); prints in the records document
+16	-2	journal-editor	K3 (38eaa2928)	app_release.tex: moved verbatim to app_release_records.tex (release schema, RC7 contents and tolerances, worked example steps 1-4; JE-08); prints in the records document
+2	-2	journal-editor	K3 (38eaa2928)	app_release.tex: moved verbatim to app_release_records.tex (release schema, RC7 contents and tolerances, worked example steps 1-4; JE-08); prints in the records document
+36	-2	journal-editor	K3 (38eaa2928)	app_release.tex: moved verbatim to app_release_records.tex (release schema, RC7 contents and tolerances, worked example steps 1-4; JE-08); prints in the records document
+4	-2	journal-editor	K3 (38eaa2928)	app_release.tex: moved verbatim to app_release_records.tex (release schema, RC7 contents and tolerances, worked example steps 1-4; JE-08); prints in the records document
+42	-2	journal-editor	K3 (38eaa2928)	app_release.tex: moved verbatim to app_release_records.tex (release schema, RC7 contents and tolerances, worked example steps 1-4; JE-08); prints in the records document
+5	-2	journal-editor	K3 (38eaa2928)	app_release.tex: moved verbatim to app_release_records.tex (release schema, RC7 contents and tolerances, worked example steps 1-4; JE-08); prints in the records document
+0	-1	journal-editor	K3 (38eaa2928)	app_release.tex: moved verbatim to app_release_records.tex (release schema, RC7 contents and tolerances, worked example steps 1-4; JE-08); prints in the records document
+09	-1	journal-editor	K3 (38eaa2928)	app_release.tex: moved verbatim to app_release_records.tex (release schema, RC7 contents and tolerances, worked example steps 1-4; JE-08); prints in the records document
+1.0	-1	journal-editor	K3 (38eaa2928)	app_release.tex: moved verbatim to app_release_records.tex (release schema, RC7 contents and tolerances, worked example steps 1-4; JE-08); prints in the records document
+1.7	-1	journal-editor	K3 (38eaa2928)	app_release.tex: moved verbatim to app_release_records.tex (release schema, RC7 contents and tolerances, worked example steps 1-4; JE-08); prints in the records document
+100	-1	journal-editor	K3 (38eaa2928)	app_release.tex: moved verbatim to app_release_records.tex (release schema, RC7 contents and tolerances, worked example steps 1-4; JE-08); prints in the records document
+14	-1	journal-editor	K3 (38eaa2928)	app_release.tex: moved verbatim to app_release_records.tex (release schema, RC7 contents and tolerances, worked example steps 1-4; JE-08); prints in the records document
+15	-1	journal-editor	K3 (38eaa2928)	app_release.tex: moved verbatim to app_release_records.tex (release schema, RC7 contents and tolerances, worked example steps 1-4; JE-08); prints in the records document
+2026	-1	journal-editor	K3 (38eaa2928)	app_release.tex: moved verbatim to app_release_records.tex (release schema, RC7 contents and tolerances, worked example steps 1-4; JE-08); prints in the records document
+26	-1	journal-editor	K3 (38eaa2928)	app_release.tex: moved verbatim to app_release_records.tex (release schema, RC7 contents and tolerances, worked example steps 1-4; JE-08); prints in the records document
+27	-1	journal-editor	K3 (38eaa2928)	app_release.tex: moved verbatim to app_release_records.tex (release schema, RC7 contents and tolerances, worked example steps 1-4; JE-08); prints in the records document
+38	-1	journal-editor	K3 (38eaa2928)	app_release.tex: moved verbatim to app_release_records.tex (release schema, RC7 contents and tolerances, worked example steps 1-4; JE-08); prints in the records document
+39	-1	journal-editor	K3 (38eaa2928)	app_release.tex: moved verbatim to app_release_records.tex (release schema, RC7 contents and tolerances, worked example steps 1-4; JE-08); prints in the records document
+4.4552	-1	journal-editor	K3 (38eaa2928)	app_release.tex: moved verbatim to app_release_records.tex (release schema, RC7 contents and tolerances, worked example steps 1-4; JE-08); prints in the records document
+41	-1	journal-editor	K3 (38eaa2928)	app_release.tex: moved verbatim to app_release_records.tex (release schema, RC7 contents and tolerances, worked example steps 1-4; JE-08); prints in the records document
+5.6742	-1	journal-editor	K3 (38eaa2928)	app_release.tex: moved verbatim to app_release_records.tex (release schema, RC7 contents and tolerances, worked example steps 1-4; JE-08); prints in the records document
+50	-1	journal-editor	K3 (38eaa2928)	app_release.tex: moved verbatim to app_release_records.tex (release schema, RC7 contents and tolerances, worked example steps 1-4; JE-08); prints in the records document
+65	-1	journal-editor	K3 (38eaa2928)	app_release.tex: moved verbatim to app_release_records.tex (release schema, RC7 contents and tolerances, worked example steps 1-4; JE-08); prints in the records document
+8	-1	journal-editor	K3 (38eaa2928)	app_release.tex: moved verbatim to app_release_records.tex (release schema, RC7 contents and tolerances, worked example steps 1-4; JE-08); prints in the records document
+856	-1	journal-editor	K3 (38eaa2928)	app_release.tex: moved verbatim to app_release_records.tex (release schema, RC7 contents and tolerances, worked example steps 1-4; JE-08); prints in the records document
+9	-1	journal-editor	K3 (38eaa2928)	app_release.tex: moved verbatim to app_release_records.tex (release schema, RC7 contents and tolerances, worked example steps 1-4; JE-08); prints in the records document
