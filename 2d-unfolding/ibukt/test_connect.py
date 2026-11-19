@@ -34,7 +34,7 @@ def test_envstage_activation_and_campaign(
             {
                 **identity,
                 "host": "example.invalid",
-                "run_name": "ibukt-20261119-c",
+                "run_name": connect.RUN_NAME,
                 "director_go": go,
                 "joseph_go": go,
                 "fences": {"cov2d": fence, "tier3-design": fence},
@@ -64,7 +64,7 @@ def test_envstage_activation_and_campaign(
         compile(bootstrap, "<remote-bootstrap>", "exec")
         packet = json.loads(base64.b64decode(input))
         assert packet["action"] == "envstage"
-        assert packet["approval"]["run_name"] == name == "ibukt-20261119-c"
+        assert packet["approval"]["run_name"] == name == connect.RUN_NAME
         assert hashlib.sha256(base64.b64decode(packet["source"])).hexdigest() == pin
 
     monkeypatch.setattr(connect.subprocess, "run", capture)
@@ -74,7 +74,7 @@ def test_envstage_activation_and_campaign(
     record = json.loads(approval.read_text())
     record["run_name"] = "ibukt-20261118-b"
     approval.write_text(json.dumps(record))
-    with pytest.raises(ValueError, match="must name campaign ibukt-20261119-c"):
+    with pytest.raises(ValueError, match=f"must name campaign {connect.RUN_NAME}"):
         connect.main()
     assert len(calls) == 1
 
@@ -121,14 +121,13 @@ def test_rerun_budget_carries_exact_spend(
         ),
     )
     rows = "62222222|ibukt-prepare|COMPLETED|660|1\n"
+    carried = "\n".join(row for row, _ in connect.CARRIED_ALLOCATIONS.values())
     for prior in ("", "61556304|ibukt-prepare|FAILED|639|1\n"):
-        with pytest.raises(ValueError, match="previous prepare allocation"):
+        with pytest.raises(ValueError, match="carried allocation"):
             connect.accounting(tmp_path, "screen", prior + rows)
-    receipt = connect.accounting(
-        tmp_path, "screen", connect.PRIOR_PREPARE_SACCT + "\n" + rows
-    )
+    receipt = connect.accounting(tmp_path, "screen", carried + "\n" + rows)
     assert json.loads(receipt.read_text())["spent_or_reserved"] == pytest.approx(
-        (638 + 660) / 3600
+        (638 + 832 + 466 + 660) / 3600
     )
 
 
@@ -140,7 +139,8 @@ def test_envstage_checks_carried_charge_before_staging(tmp_path, monkeypatch, ma
     monkeypatch.chdir(tmp_path)
     monkeypatch.setattr(connect, "validate_approval", lambda *args: None)
     monkeypatch.setattr(connect, "scratch_path", lambda path: path)
-    rows = connect.PRIOR_PREPARE_SACCT if matching else "123|unrelated|COMPLETED|10|1"
+    carried = "\n".join(row for row, _ in connect.CARRIED_ALLOCATIONS.values())
+    rows = carried if matching else "123|unrelated|COMPLETED|10|1"
     monkeypatch.setattr(connect, "sacct", lambda *args, **kwargs: rows)
     staged = []
     monkeypatch.setattr(connect, "envstage", lambda root: staged.append(root) or [])
@@ -150,6 +150,6 @@ def test_envstage_checks_carried_charge_before_staging(tmp_path, monkeypatch, ma
         connect.remote("envstage", approval, b"test script")
         assert staged == [tmp_path / connect.RUN_NAME]
     else:
-        with pytest.raises(ValueError, match="previous prepare allocation"):
+        with pytest.raises(ValueError, match="carried allocation"):
             connect.remote("envstage", approval, b"test script")
         assert not staged
