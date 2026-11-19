@@ -294,6 +294,7 @@ docs/orchestration/DECISION-20261118b-joseph-ibukt-job-advance.md	tracked	LIVE	d
 docs/orchestration/DECISION-20261119-joseph-ibukt-rerun.md	tracked	LIVE	document		20261119	open		route-only	no
 docs/orchestration/DECISION-20261119b-joseph-no-duplicates.md	tracked	LIVE	document		20261119	open		route-only	no
 docs/orchestration/DECISION-20261119c-joseph-note-compression-outline.md	tracked	LIVE	document		20261119	open		route-only	no
+docs/orchestration/DECISION-20261119d-joseph-ibukt-cap.md	tracked	LIVE	document		20261119	open		route-only	no
 docs/orchestration/DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md	tracked	LIVE	document		20260911	open		route-only	no
 docs/orchestration/DECISION-PACKET-20260918-scalar5d-publication-blockers.md	tracked	LIVE	document		20260918	open		route-only	no
 docs/orchestration/DECISION-PACKET-20261029-oi53-clm-row-ownership.md	tracked	ARCHIVAL	document	fe-fps-campaign	20261029	terminal		exact-path-only	yes
