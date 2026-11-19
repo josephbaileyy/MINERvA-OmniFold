@@ -37,15 +37,15 @@ Test & Criterion & Outcome & What it limits \\
 \bottomrule
 \endlastfoot
 \multicolumn{4}{@{}l}{\emph{Two-dimensional closures and coverage}}\\*
-Ordinary closure (any dimension): pseudo-data are the simulated reco & descriptive: none & Bookkeeping only & Cannot detect estimator bias. \\
+Ordinary closure (any dimension): pseudo-data are the simulated reco (\S\ref{sec:closure-map}) & descriptive: none & Bookkeeping only & Cannot detect estimator bias. \\
 \addlinespace
 Truth reweight: Gaussian in $\pT$, tilt in $\pPar$, applied to truth and reco weights (\S\ref{sec:validation}) & descriptive: threshold \SI{1.5}{\percent} & Residuals \SI{0.046}{\percent} and \SI{0.013}{\percent}; pass & The 2D injected closures passed, except one arm (below); passes depend on the deformation and the amplitude. \\
 \addlinespace
-Injected feature: Gaussian truth feature of \SI{17.2}{\percent} & descriptive: the recovery test of the unbinned-unfolding guide & Residual \SI{1.69}{\percent} (ratio 0.098); pass & \\
+Injected feature: Gaussian truth feature of \SI{17.2}{\percent} (\S\ref{sec:validation}) & descriptive: the recovery test of the unbinned-unfolding guide & Residual \SI{1.69}{\percent} (ratio 0.098); pass & \\
 \addlinespace
-Alternative universe: pseudo-data from a MaCCQE or flux universe & descriptive: threshold \SI{2.0}{\percent} & \SI{0.068}{\percent}, \SI{0.376}{\percent}; pass & \\
+Alternative universe: pseudo-data from a MaCCQE or flux universe (App.~\ref{sec:closure-alt}) & descriptive: threshold \SI{2.0}{\percent} & \SI{0.068}{\percent}, \SI{0.376}{\percent}; pass & \\
 \addlinespace
-Hidden variable: bias in $\Delta\pT$, a resolution variable outside the features & descriptive: threshold \SI{3}{\percent} & Leakage linear in amplitude; $A=0.30$ exceeds its threshold & The deliberately large hidden-variable arm exceeds its threshold. \\
+Hidden variable: bias in $\Delta\pT$, a resolution variable outside the features (App.~\ref{sec:closure-hv}) & descriptive: threshold \SI{3}{\percent} & Leakage linear in amplitude; $A=0.30$ exceeds its threshold & The deliberately large hidden-variable arm exceeds its threshold. \\
 \addlinespace
 Fixed-truth coverage of the earlier 2D statistical bands (\S\ref{sec:coverage}) & pre-specified: coverage windows & failed & The first-built band undercovers in its tails. The quoted 2D statistical block has had no coverage test (\S\ref{sec:uq-boot}). \\
 % Search: held-out simulation; held-out-MC re-test; S1 has not been coverage-tested; coverage statement about Q_R (the search of its home, sec_systematics.tex sec:uq-boot) @ ddf16f10
@@ -65,7 +65,7 @@ Generator-sized truth change (5D): truth reweighted by the GiBUU/GENIE ratio in 
 \addlinespace
 Withheld generator shapes (5D): NuWro/GENIE and GENIE MEC/CV ratios & descriptive: none & Median \SIrange{2}{6}{\percent}, at most \SIrange{16}{31}{\percent} per joint cell & Within the configuration-(a) total uncertainty in 20 of 42 $(\Eavail,W)$ cells (\S\ref{sec:val-departure}). \\
 \addlinespace
-Hidden $q_3$ (5D): $q_3$ at fixed $(\Eavail,W)$ truth, amplitude 0.3 & descriptive: none & $(\Eavail,W)$ cells shift by up to \SI{37}{\percent} & \\
+Hidden $q_3$ (5D): $q_3$ at fixed $(\Eavail,W)$ truth, amplitude 0.3 (\S\ref{sec:val-negweight}) & descriptive: none & $(\Eavail,W)$ cells shift by up to \SI{37}{\percent} & \\
 \addlinespace
 Response mismatch (5D): reconstructed $\Eavail$ of pseudo-data scaled & descriptive: none & not run: protocol implemented & Shifted-response closures on the sixteen cells run (App.~\ref{app:response-mismatch}). \\
 \midrule
@@ -84,7 +84,7 @@ Quadrant sums of the sixteen cells against the 2D result (\S\ref{sec:fived16-qua
 \addlinespace
 Sixteen cells against a binned IBU unfolding (\S\ref{sec:fived16-ibu}) & pre-specified: its criterion, with bars calibrated on its own null & failed: the two results differ & The reported cells depend on the unfolding algorithm. \\
 \addlinespace
-Joint five-dimensional generator tests (\S\ref{sec:joint5d}, Table~\ref{tab:joint5d}) & pre-specified: the protocol & all rejected & All ten simple hypotheses are rejected under six stated conditions (\S\ref{sec:joint5d-conditions}). The rejections are not physical exclusions. \\
+Joint five-dimensional generator tests (\S\ref{sec:joint5d}, Table~\ref{tab:joint5d}) & pre-specified:$\dagger$ the protocol & all rejected & All ten simple hypotheses are rejected under six stated conditions (\S\ref{sec:joint5d-conditions}). The rejections are not physical exclusions. \\
 \addlinespace
 Matched coarse projections (\S\ref{sec:joint5d-projections}) & pre-specified:$\dagger$ a criterion for additional discrimination, specified after the five-dimensional outcomes were known & failed: no test meets its criterion & The study provides no evidence of additional discrimination. \\
 \midrule
