@@ -1,0 +1,29 @@
+% Compression rewrite (DECISION-20261119c; REWRITE-RULES-20261119.md rule 5): text the limitation-resolver lane
+% moved verbatim out of the posted note, with one move-manifest row per sentence (LR-C ids in
+% history-cuts/move-manifest-lr-20261117.tsv). References into the note resolve through main_note.aux (xr).
+\section{Method and statistics detail moved from the note}
+This section holds the procedure and supporting detail that the compressed note no longer prints, as the note printed it.
+
+\subsection{Truth-level W residual (from Part 2, the five observables)}
+% From sec_observables.tex:40 (draft f6a4fc372 lineage); detail a reader does not need to interpret a result
+At truth level, $q_{3}$ is computed from the true neutrino and muon four-vectors, but $\theta_{\mu}$, and with it $\pT$ and $\pPar$, is measured from a fixed beam axis tilted by \SI{58.87}{mrad} from the detector axis rather than from the true neutrino direction.  Truth $W$ is therefore fixed by $(\pT,\pPar,q_{3})$ only up to that event-by-event angle, of about \SI{1}{mrad}, and the choice of $M$: the residual is within \SI{\pm2}{MeV} for 68\% of events and within $-49$ to $+67$~MeV for 99.9\%; \SI{0.25}{\percent} of events (weighted) change their coarse $W$ bin, and \SI{0.086}{\percent} (weighted) have no real solution. % D1 (crossdoc audit 2026-11-15): weighted, probe_omni.json:10 q3sq_minus_pt2_negative_wfrac 0.0008646 (the 0.15% was the unweighted 49754/32846302, :9 and :8); the Supplement prints m4w-noreal-pct, 0.086
+% Methods rewrite (M4, the truth-W residual): M4-W-RECORD.md :6 (theta_true from a fixed beam axis tilted -58.87 mrad
+% about x, MAT TruthFunctions.h:21-27, PlotUtilsPhysicalConstants.h:44), :7 and :74-81 (W_true - W_pred with M_bar: 68%
+% within about +-2 MeV, 99.9% within -49/+67 MeV), :85-90 (0.25% of events, weighted, change coarse W bin; 0.15% have
+% no real solution), :63 (the tilt is the only other cause), :55-59 (median 1.03 mrad between the true neutrino and that
+% axis); q3 from the true four-vectors, README-gen5d-build.md:50-58. REVIEW-1 finding 18: M4-W-RECORD.md:7, :72.
+
+\subsection{Per-event analysis trees (from Part 2, sec:evloop)}
+% From sec_experiment.tex:34 (draft f6a4fc372 lineage); procedure a reader does not need to interpret a result
+Unbinned unfolding needs per-event records rather than histograms. A dedicated event loop (App.~\ref{app:codebase}), built on MAT's systematic-universe tools, writes four per-event samples for each playlist: all true signal events (the efficiency denominator), reconstructed truth-matched simulated events, simulated background, and data. Entries carry truth and reconstructed observables ($\pT$, $\pPar$, and in extended runs $\Eavail$, $q_{3}$, $W$) and the MINERvA Tune~v1 central-value weight. The systematic-universe samples also carry every universe's weight and the shifted observables of each lateral band, a variation that shifts reconstructed kinematics rather than reweighting events (a vertical band; \S\ref{sec:systematics}). Two conditions make the truth sample the complete reference for the simulated signal:
+% (\texttt{\_universes\_full})
+\begin{itemize}
+  \item A reconstructed signal event is filled only if its $(\mathrm{run},\mathrm{subrun},\mathrm{event})$ key is in the truth denominator. Truth events without a reconstructed partner enter as native OmniFold ``miss'' entries.
+  \item The simulated signal sample is complete by construction at ME~FHC (completeness $c=1.000000$; \S\ref{sec:method-xsec}).
+\end{itemize}
+The loop reads one playlist-wide flux and calibration from the first event, so it is run separately for each playlist, and the twelve per-playlist outputs are combined. The corresponding baseline histogram event loop supplies the flux histogram, POT-weighted across playlists; the size of the playlist-to-playlist flux differences is stated in \S\ref{sec:limitations-experiment}.
+% (\texttt{TTree::SetMaxTreeSize}-aware)
+
+\subsection{Shapes of the reconstructed control distributions (from Part 2, sec:controlplots)}
+% From sec_experiment.tex:49 (draft f6a4fc372 lineage); description of the control figures beyond their captions
+The beam and acceptance set the shapes. The $\pPar$ peak at $4$--$6$~GeV/$c$ reflects the ${\langle E_\nu\rangle}\approx\SI{6}{GeV}$ NuMI medium-energy peak; spectrometer matching removes the lowest-$\pPar$ muons. The $\pT$ spectrum peaks near $0.7$~GeV/$c$ and falls by over an order of magnitude across the measured range. Low-recoil (quasi-elastic and $2p2h$) events dominate the sample. Available energy $\Eavail$ concentrates below ${\sim}\SI{0.5}{GeV}$, with a long inelastic tail in the wide upper bins; $q_{3}$ tracks this population's momentum transfer. Reconstructed $W$ rises through the smeared quasi-elastic and $\Delta(1232)$ region before the deep-inelastic continuum takes over above ${\sim}\SI{2}{GeV}$. Absolute background is at the few-percent level under the muon projections and concentrates at high recoil (highest $\Eavail$, $q_{3}$ and $W$ bins).
