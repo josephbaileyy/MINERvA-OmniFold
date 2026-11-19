@@ -51,14 +51,14 @@ The largest band is the flux, as in the publication (Fig.~\ref{fig:uqbands}), an
   \centering
   \begin{tabular}{@{}lccc@{}}
     \toprule
-    Component & $N$ & $\sqrt{\mathrm{Tr}\,C}$ & per-bin median rel.\ $\sigma$ \\
+    Component & $N$ & $\sqrt{\mathrm{Tr}\,C}$ ($\si{cm^2}$/nucleon per $(\mathrm{GeV}/c)^{2}$) & per-bin median rel.\ $\sigma$ \\
     \midrule
-    ML noise (LightGBM training-seed settings) & 5 & \num{1.35e-41} & \SI{0.048}{\percent} \\
-    Statistical (Poisson bootstrap) & 300 & \num{1.89e-40} & \SI{0.676}{\percent} \\
-    Systematic (universe sweep $+$ \SI{1.4}{\percent} normalization) & 43 bands${+}1$ & \num{2.69e-39} & \SI{5.926}{\percent} \\ % G2R: RE-2-shapes run 2 (C_new), g2r-integration/ledger.tsv g2r-tabuq-univ-median; a source comment citing RE-2 part C for this value gives the earlier value
-    Run period & 3 & \num{8.31e-40} & \SI{2.087}{\percent} \\
-    \textbf{Combined (block sum)} & --- & \num{2.82e-39} & \SI{6.463}{\percent} \\ % G2R: RE-2-shapes run 2 (C_new), g2r-integration/ledger.tsv g2r-tabuq-q-median; a source comment citing RE-2 part C for this value gives the earlier value
-    Published total covariance (reference) & --- & \num{2.68e-39} & \SI{\uqPaper}{\percent} \\
+    ML noise (LightGBM training-seed settings) & 5 & \num{1.351e-41} & \SI{0.048}{\percent} \\
+    Statistical (Poisson bootstrap) & 300 & \num{1.886e-40} & \SI{0.676}{\percent} \\
+    Systematic (universe sweep $+$ \SI{1.4}{\percent} normalization) & 43 bands${+}1$ & \num{2.686e-39} & \SI{5.926}{\percent} \\ % G2R: RE-2-shapes run 2 (C_new), g2r-integration/ledger.tsv g2r-tabuq-univ-median; a source comment citing RE-2 part C for this value gives the earlier value
+    Run period & 3 & \num{8.314e-40} & \SI{2.087}{\percent} \\
+    \textbf{Combined (block sum)} & --- & \num{2.818e-39} & \SI{6.463}{\percent} \\ % G2R: RE-2-shapes run 2 (C_new), g2r-integration/ledger.tsv g2r-tabuq-q-median; a source comment citing RE-2 part C for this value gives the earlier value
+    Published total covariance (reference) & --- & \num{2.676e-39} & \SI{\uqPaper}{\percent} \\
     % Q rows: rebuild/outputs/outA/budget_Q.json.gz {c08,stat,universe,C_PL,Q}.{sqrt_trace,median_pct};
     % paper: paper_ratios.paper_sqrt_trace_TotalCovariance_205 (2.676e-39). Row labels:
     % J3/J4 provisional (DECISION-20261018, packet W3: D0, D5; W10: block names as in the text).
@@ -163,7 +163,7 @@ With the purity-based subtraction, the choice of GBDT estimator spreads the dist
 % unchanged (sec_results.tex:140-152 @ 79a934a41); sec:results-tension keeps the decomposition and the estimator band.
 \subsection{Benchmarks of the two-dimensional central value}
 \label{sec:results-benchmarks}
-A binned IBU of this analysis's inputs at ten iterations, the setting of the published measurement~\cite{MINERvA:2021owq}, differs from the two-dimensional result beyond paired replica noise: $T=\fvval{c2c1-T}$, against a null 95th percentile of \fvval{c2c1-q95} and maximum of \fvval{c2c1-max} over \fvval{c2c1-nrep} paired replicas. Applied to this analysis's inputs, ten-iteration binned IBU and the two-dimensional OmniFold result give descriptive $\chi^{2}/\mathrm{ndf}$ values of \fvval{c2c1-dibu} and \fvval{c2c1-der}, respectively, relative to the published result under its covariance. IBU gives \fvval{c2c1-dibu-mid-lo}--\fvval{c2c1-dibu-mid-hi} for two to fifteen iterations, \fvval{c2c1-dibu-k20} at twenty and \fvval{c2c1-dibu-k1} at one. These comparisons use the ill-conditioned published covariance and lack the cross-covariance required for a statistical comparison of results that share data. A value near one does not by itself indicate reproduction. The origin of the paired-test difference has not been identified. Whether the documented input differences relative to the publication affect the two methods differently was not tested.
+A binned IBU of this analysis's inputs at ten iterations, the setting of the published measurement~\cite{MINERvA:2021owq}, differs from the two-dimensional result beyond paired replica noise: $T=\fvval{c2c1-T}$, against a null 95th percentile of \fvval{c2c1-q95} and maximum of \fvval{c2c1-max} over \fvval{c2c1-nrep} paired replicas. Applied to this analysis's inputs, ten-iteration binned IBU and the two-dimensional OmniFold result give descriptive $\chi^{2}/\mathrm{ndf}$ values of \fvval{c2c1-dibu} and \fvval{c2c1-der}, respectively, relative to the published result under its covariance. IBU gives \fvval{c2c1-dibu-mid-lo}--\fvval{c2c1-dibu-mid-hi} for two to fifteen iterations, \fvval{c2c1-dibu-k20} at twenty and \fvval{c2c1-dibu-k1} at one. These comparisons use the ill-conditioned published covariance and lack the cross-covariance required for a statistical comparison of results that share data. A value near one does not by itself indicate reproduction. What the benchmarks leave open is stated in \S\ref{sec:limitations-2d}.
 % absence-ok: the input caveat Joseph approved (consult-ibu-ab/out.txt; RESPONSE.md section J) scopes what the c2c1 comparison tested (REF-C2C1-DECLARATION.md §1.5); not a claim that a result does not exist (as the paper's waiver at 5bbb9d269 paper_body.tex:338)
 % U13 (currency check of 2fe070fec): REF-C2C1 read 2, fd/receipts-ref-c2c1/step2/read-2/readout.json (0ee21301; OUTCOME-20261106-ref-c2c1-read.md, commit bd11d5425), printed by DECISION-20261111-joseph-ibu-distance-and-zenodo.md item 1 and DECISION-20261108-joseph-note-framing-and-estimator-dependence.md item 3; keys from currency_values() in make_values_fived16.py; wording as the paper's section 4.2 at 5bbb9d269. \fvval{c2c1-der} equals \chiPaper (2.27, asserted).
 
