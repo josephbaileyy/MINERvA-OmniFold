@@ -39,8 +39,8 @@ import sys
 import time
 from typing import Any
 
-BOUND = "b9732c1ee94ac7b41d1d2572e0b8df7a196c1edd"
-RUN_NAME = "ibukt-20261118-b"
+BOUND = "d93ab9ad8be8d68fe4337d4b2edf7d730a39344e"
+RUN_NAME = "ibukt-20261119-c"
 DECLARATION = "8511925449d3d0b4826da4bd099dfd5b2d079cb92a47381552fe47f6602a3c14"
 BINDING = "df5cdaa88994ac1cafd255b556ef0ae53a42d10860bbf24a9df8c1dfa26aa25c"
 ACTIONS = ("envstage", "prepare", "screen", "score")
@@ -50,6 +50,8 @@ LIMITS = {
     "screen": ("05:15:00", 5.25),
     "score": ("00:06:00", 0.1),
 }
+PRIOR_PREPARE_JOB = "61556304"
+PRIOR_PREPARE_SACCT = "61556304|ibukt-prepare|FAILED|638|1"
 TERMINAL = {
     "COMPLETED",
     "FAILED",
@@ -64,7 +66,7 @@ TERMINAL = {
 FAMILIES = ("cov2d", "t2a", "ll5d", "e96data", "rpd_", "rsn_", "rdx_", "pfb_", "ibukt-")
 PINS = {
     "ibukt.py": "f98fc9930e4bbdcb60328553d9e0b9ce267be14542f84b3ecafa0f5ff642a7c0",
-    "run_ibukt.py": "a7d3dc39713d17939a23db3fd607aa6da982d169af66bf1395998f969cc00937",
+    "run_ibukt.py": "ff1b0c35ccc0ff2c71c9001e049e5efdba555f9dba11fd3def858e14c333a00f",
     "jobs.py": "85a11ceafb4308d94ca40134d7af8dac99a28b395011520e23986beca425edb7",
     "screen.sbatch": "469881a2846666dfebd8b62cd41c0982e5d5b8d1cb553c3537a49c80f583396d",
     "config.json": "35f344676d83b93ecdf458d8683263f869d7f66522b58950ea3db3faebaf4206",
@@ -399,7 +401,14 @@ def pass_receipt(root: Path, action: str, pin: str, artifacts: list[Path]) -> No
 
 def accounting(root: Path, action: str, rows: str) -> Path:
     """Reconcile every immutable submission, including failures and missing jobs."""
-    reservations = {}
+    prior = [
+        line for line in rows.splitlines() if line.startswith(f"{PRIOR_PREPARE_JOB}|")
+    ]
+    if prior != [PRIOR_PREPARE_SACCT]:
+        raise ValueError(
+            "previous prepare allocation is missing or differs from its recorded terminal charge"
+        )
+    reservations = {PRIOR_PREPARE_JOB: LIMITS["prepare"][1]}
     for stage in ("prepare", "screen", "score"):
         directory = root / stage
         if (directory / "submit-intent.json").exists():

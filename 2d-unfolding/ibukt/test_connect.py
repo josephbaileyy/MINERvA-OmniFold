@@ -33,7 +33,7 @@ def test_envstage_activation_and_campaign(
             {
                 **identity,
                 "host": "example.invalid",
-                "run_name": "ibukt-20261118-b",
+                "run_name": "ibukt-20261119-c",
                 "director_go": go,
                 "joseph_go": go,
                 "fences": {"cov2d": fence, "tier3-design": fence},
@@ -63,7 +63,7 @@ def test_envstage_activation_and_campaign(
         compile(bootstrap, "<remote-bootstrap>", "exec")
         packet = json.loads(base64.b64decode(input))
         assert packet["action"] == "envstage"
-        assert packet["approval"]["run_name"] == name == "ibukt-20261118-b"
+        assert packet["approval"]["run_name"] == name == "ibukt-20261119-c"
         assert hashlib.sha256(base64.b64decode(packet["source"])).hexdigest() == pin
 
     monkeypatch.setattr(connect.subprocess, "run", capture)
@@ -71,9 +71,9 @@ def test_envstage_activation_and_campaign(
     assert len(calls) == 1
 
     record = json.loads(approval.read_text())
-    record["run_name"] = "ibukt-20261118-a"
+    record["run_name"] = "ibukt-20261118-b"
     approval.write_text(json.dumps(record))
-    with pytest.raises(ValueError, match="must name campaign ibukt-20261118-b"):
+    with pytest.raises(ValueError, match="must name campaign ibukt-20261119-c"):
         connect.main()
     assert len(calls) == 1
 
@@ -93,3 +93,39 @@ def test_sacct_snapshot_reports_exact_digest(
     saved = (tmp_path / result["path"]).read_bytes()
     assert saved == result["sacct"].encode() == rows.encode()
     assert result["sha256"] == hashlib.sha256(saved).hexdigest()
+
+
+def test_rerun_budget_carries_exact_spend(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Count the stopped run's actual charge before reserving a new job."""
+    from ibukt import budget
+
+    screen = tmp_path / "screen"
+    screen.mkdir()
+    prepare = tmp_path / "prepare"
+    prepare.mkdir()
+    (prepare / "submit-intent.json").touch()
+    (prepare / "submission.json").write_text(json.dumps({"job_id": "62222222"}))
+    monkeypatch.setattr(connect, "read_json", lambda path: json.loads(path.read_text()))
+    monkeypatch.setattr(
+        connect,
+        "command",
+        lambda _argv, **_kw: json.dumps(
+            budget(
+                (screen / "accounting.sacct.txt").read_text(),
+                json.loads((screen / "reservations.json").read_text()),
+                5.35,
+            )
+        ),
+    )
+    rows = "62222222|ibukt-prepare|COMPLETED|660|1\n"
+    for prior in ("", "61556304|ibukt-prepare|FAILED|639|1\n"):
+        with pytest.raises(ValueError, match="previous prepare allocation"):
+            connect.accounting(tmp_path, "screen", prior + rows)
+    receipt = connect.accounting(
+        tmp_path, "screen", connect.PRIOR_PREPARE_SACCT + "\n" + rows
+    )
+    assert json.loads(receipt.read_text())["spent_or_reserved"] == pytest.approx(
+        (638 + 660) / 3600
+    )
