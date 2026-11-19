@@ -57,6 +57,68 @@ The uncertainty target matters: separate bin or projection coverage does not imp
 
 Recent work constructs confidence intervals for selected functionals in constrained inverse problems~\cite{Stanley:2025functionals} and joint confidence regions for multiple functionals~\cite{Batlle:2025simultaneous}, which could provide independent benchmarks for specified integrals or contrasts. Their guarantees depend on the forward model, noise law, and parameter constraints and do not transfer automatically to a learned response with finite simulation and detector nuisances. A rank-deficient forward operator is also distinct from a rank-deficient sample covariance. Neither truncating the latter nor validating a few projections certifies the full distribution. Such a benchmark would supplement the scalar five-dimensional uncertainty construction that a measurement would require. It would not replace that construction.
 
+% Received from journal-editor (sec_joint.tex:53-108 @377ec92f5; the director's ruling (5), 2026-11-19: the joint tests'
+% generative model goes to App. A since it defines the null being tested), verbatim, rows JE-09.001..053 of codex-reports
+% appA/move-manifest-je-joint-genmodel.tsv; receive rows in history-cuts/move-manifest-lr-appa-20261119.tsv.
+\subsubsection{Generative model of the joint-test pseudo-experiments}
+\label{app:joint5d-genmodel}
+\paragraph{Generative model of one pseudo-experiment.} Each calibration pseudo-experiment splits the simulation at random into two halves (Table~\ref{tab:joint5d-genmodel}) and refits the background refinement. Its truth equals $G$ on every fine cell that the source half populates. Cells it leaves empty lower a coarse cell by at most \SI{0.2}{\percent}, or about \SI{4}{\percent} of the null standard deviation (the per-experiment spread is below \SI{1.5}{\percent} of it). On the signal, each interaction-model band is renormalized within each fine truth cell, so it moves only the composition within the cell, and with it the efficiency and the migrations. The flux universe is drawn uniformly from the \jtFluxUniverses{} universes. In each calibration pseudo-experiment, the flux universe and the band universes are drawn independently, and their weight ratios multiply. Each interaction-model band is drawn independently and uniformly from its own universes, either endpoint of a $\pm1\sigma$ pair or one of three where a band has three, and the weight ratios multiply. Negative weights in two of those bands are clipped per universe (\S\ref{sec:joint5d-conditions}). Each weight-based detector band is at its $-1\sigma$ or $+1\sigma$ endpoint with equal probability. The muon-energy, muon-resolution, and beam-angle lateral bands enter as $\sum_{b}z_{b}\Delta_{b}$. Each $z_{b}$ is an independent standard normal. For each band, $\Delta_{b}$ is half the difference of the unfolded cell values from that band's two real-data endpoint unfolds. The coefficient of the \SI{1.4}{\percent} normalization is an independent standard normal.
+
+The data's rounding noise, and the prediction's finite-sample error, are added as a normal draw in each cell. The prediction's variance in that draw is its own per-cell sum of squared weights. That diagonal model is an assumption of the metric. Disjoint cells do not by themselves make a prediction's Monte Carlo errors independent. The background source and its template are Poisson draws from disjoint halves of the background sample. The detector weight bands include the GEANT4 hadron-interaction reweights.
+
+Because the $\Delta_{b}$ come from the observed data, the null distributions are conditional on these data-derived inputs, which would differ in a repeated experiment. That conditioning has not been validated.
+% Search: data-derived inputs; conditioning on data-derived; conditional on these data-derived @ 1a015eef
+
+\providecommand{\pcell}[2]{\parbox[t]{#1}{\raggedright\strut#2\strut}}
+\begin{table}[htbp]
+  \caption[Generative model of the calibration]{Nuisance draws act on the pseudo-data source only in the calibration model. Left: the flow of one test, repeated over $B$ pseudo-experiments. Right: what each element of a pseudo-experiment does, and the corresponding element of the data analysis.}
+  \label{tab:joint5d-genmodel}
+  \centering\small
+  \begin{minipage}[t]{0.40\textwidth}
+    \vspace{0pt}
+    \setlength{\unitlength}{1pt}
+    \begin{picture}(170,207)(0,0)
+      \put(10,191){\framebox(158,16){\parbox{154pt}{\centering\scriptsize $H_{0}(G)$: $\sigma=G$ on every fine cell}}}
+      \put(52,191){\vector(0,-1){7}}
+      \put(10,146){\framebox(92,38){\parbox{88pt}{\centering\scriptsize source half reweighted to $G$; nuisance draws; Poisson pseudo-data and background}}}
+      \put(112,146){\framebox(56,38){\parbox{52pt}{\centering\scriptsize data}}}
+      \put(56,146){\vector(0,-1){7}}
+      \put(140,146){\vector(0,-1){7}}
+      \put(10,109){\framebox(92,30){\parbox{88pt}{\centering\scriptsize unfold with the other half (joint-test estimator)}}}
+      \put(112,109){\framebox(56,30){\parbox{52pt}{\centering\scriptsize unfold with the full simulation}}}
+      \put(56,109){\vector(0,-1){7}}
+      \put(140,109){\vector(0,-1){7}}
+      \put(10,64){\framebox(92,38){\parbox{88pt}{\centering\scriptsize add lateral, normalization, rounding, prediction terms: $T_{\mathrm{null}}$}}}
+      \put(112,64){\framebox(56,38){\parbox{52pt}{\centering\scriptsize $T_{\mathrm{obs}}$}}}
+      \put(56,64){\vector(0,-1){7}}
+      \put(140,64){\vector(0,-1){7}}
+      \put(10,33){\framebox(158,24){\parbox{154pt}{\centering\scriptsize $k$ of $B$ with $T_{\mathrm{null}}\ge T_{\mathrm{obs}}$; largest $p$ over the shifted nulls}}}
+      \put(89,33){\vector(0,-1){7}}
+      \put(10,0){\framebox(158,26){\parbox{154pt}{\centering\scriptsize Holm steps with the 95\% Clopper--Pearson interval; batches of \jtBatch{}, $B\le\jtBcap$}}}
+      \put(10,45){\line(-1,0){8}}
+      \put(2,45){\line(0,1){120}}
+      \put(2,165){\vector(1,0){8}}
+    \end{picture}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.57\textwidth}
+    \vspace{0pt}\scriptsize\setlength{\tabcolsep}{3pt}
+    \begin{tabular}{@{}lll@{}}
+      \toprule
+      \pcell{0.22\textwidth}{Element} & \pcell{0.46\textwidth}{Pseudo-experiment} & \pcell{0.27\textwidth}{Data analysis} \\
+      \midrule
+      \pcell{0.22\textwidth}{Truth} & \pcell{0.46\textwidth}{source half reweighted per fine cell to $G$} & \pcell{0.27\textwidth}{unknown} \\
+      \pcell{0.22\textwidth}{Unfolding simulation} & \pcell{0.46\textwidth}{other half at Tune~v1 weights (the prior)} & \pcell{0.27\textwidth}{full simulation at Tune~v1 weights} \\
+      \pcell{0.22\textwidth}{Background} & \pcell{0.46\textwidth}{Poisson source and template from disjoint halves; Tune~v1 with its bands} & \pcell{0.27\textwidth}{full background template} \\
+      \pcell{0.22\textwidth}{Flux} & \pcell{0.46\textwidth}{one of \jtFluxUniverses{} universes on the source (changes the rate, not $\sigma$)} & \pcell{0.27\textwidth}{central flux} \\
+      \pcell{0.22\textwidth}{Interaction model} & \pcell{0.46\textwidth}{\jtModelBands{} bands, one universe each; signal renormalized per fine truth cell; two bands clipped} & \pcell{0.27\textwidth}{Tune~v1} \\
+      \pcell{0.22\textwidth}{Detector} & \pcell{0.46\textwidth}{four weight bands at $\pm1\sigma$; lateral bands by linear surrogate} & \pcell{0.27\textwidth}{nominal} \\
+      \pcell{0.22\textwidth}{Added terms} & \pcell{0.46\textwidth}{\SI{1.4}{\percent} normalization; rounding noise; prediction residual} & \pcell{0.27\textwidth}{none} \\
+      \pcell{0.22\textwidth}{Statistic} & \pcell{0.46\textwidth}{$T_{\mathrm{tot}}$, $T_{\mathrm{sh}}$ with fixed $\Sigma$} & \pcell{0.27\textwidth}{the same} \\
+      \bottomrule
+    \end{tabular}
+  \end{minipage}
+\end{table}
+
 % Methods rewrite draft 4 (X5 G9): the self-contained familywise-error derivation. Sources: docs/orchestration/state/2d-closeout/stageF/methods/M2-FWER-RECORD.md:39-74 (bound, certified table, assumptions A1/A2, the rule, replacement text); M2-AUDIT.md:76-117 (Q2: model, crossing-event inclusion, first-true-null Holm reduction without independence, claim variants, ordering); m2-calc/certify_crossing.py:1-4 (U95, monotonicity of g_c in p, left Riemann sum plus tail, exact dynamic program), certify_out.json per_threshold (ratio_upper 0.8902 at c = 0.05, grid 6000, h = 6c); the outside check m2-calc/gpt-6.1-sol-check.md (M2-FWER-RECORD.md:23-29: uniform p is the worst case). Methods-paper shortening pass (2026-10-21, DECISION-20261020-joseph-refined-estimator-shorten-delta.md item 2): the article's Appendix A, moved verbatim (labels adapted).
 \subsubsection{Familywise error of the sequential joint-test decisions}
 \label{sec:joint5d-fwer}
