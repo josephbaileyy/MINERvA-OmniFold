@@ -1,0 +1,7 @@
+# Declared wording fixes (figure, old, new; \n is a line break); each must be found in the drawn figure.
+figure	old	new
+gbdt_prior_response	|bias|	|noise-free residual|
+gbdt_prior_response	| ≥ |noise-free residual|	| ≥\n|noise-free residual|
+generators_vs_unfolded_band_central	$d\sigma/dp_T$\n($10^{-38}$ cm$^2$/.../nucleon)	$d\sigma/dp_T$\n($10^{-38}$ cm$^2$/(GeV/c)/nucleon)
+generators_vs_unfolded_band_central	$d\sigma/dp_\parallel$\n($10^{-39}$ cm$^2$/.../nucleon)	$d\sigma/dp_\parallel$\n($10^{-39}$ cm$^2$/(GeV/c)/nucleon)
+generators_vs_unfolded_band_central	$d\sigma/dE_{\rm avail}$\n($10^{-38}$ cm$^2$/.../nucleon)	$d\sigma/dE_{\rm avail}$\n($10^{-38}$ cm$^2$/GeV/nucleon)

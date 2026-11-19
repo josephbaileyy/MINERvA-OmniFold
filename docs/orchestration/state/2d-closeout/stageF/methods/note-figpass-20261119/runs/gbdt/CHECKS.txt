@@ -1,0 +1,29 @@
+# gbdt (Fig. 32's title wording, chunk C), 2026-11-19T05:10:15Z: bash tools/arms_layout.sh <wt> gbdt figenv/mpl3112 c3b4e8842 gbdt_prior_response - nd-unfolding/gbdt_model_dependence/analyze.py --out @OUT@ --print-style
+== gbdt (gbdt_prior_response): arm 0 against docs/analysis-note/figures/gbdt_prior_response.pdf at c3b4e8842
+EQUAL tmp.gbCZwYzwUk
+raster: RASTER :: EQUAL :: 1 page(s), 0 differing pixel(s)
+== gbdt: arm 1 against arm 0
+captures: gbdt_bias_spread.pdf.json gbdt_bias_spread.svg.json gbdt_coverage.pdf.json gbdt_coverage.svg.json gbdt_prior_response.pdf.json gbdt_prior_response.svg.json gbdt_recovery.pdf.json gbdt_recovery.svg.json 
+  equal  gbdt/gbdt_bias_spread.pdf.json: 18 data artists
+  equal  gbdt/gbdt_bias_spread.svg.json: 18 data artists
+  equal  gbdt/gbdt_coverage.pdf.json: 8 data artists
+  equal  gbdt/gbdt_coverage.svg.json: 8 data artists
+  equal  gbdt/gbdt_prior_response.pdf.json: 6 data artists
+  equal  gbdt/gbdt_prior_response.svg.json: 6 data artists
+  equal  gbdt/gbdt_recovery.pdf.json: 45 data artists
+  equal  gbdt/gbdt_recovery.svg.json: 45 data artists
+COMPARE :: PASS
+strings gbdt_bias_spread: equal (37 drawn strings)
+  arm 0: canvas 6.500 x 3.300 in; font size min 8.30, median 8.30 pt; text overlaps 0
+  arm 1: canvas 6.500 x 3.300 in; font size min 8.30, median 8.30 pt; text overlaps 0
+strings gbdt_coverage: equal (42 drawn strings)
+  arm 0: canvas 6.500 x 5.400 in; font size min 8.30, median 8.30 pt; text overlaps 0
+  arm 1: canvas 6.500 x 5.400 in; font size min 8.30, median 8.30 pt; text overlaps 0
+strings gbdt_prior_response: equal (42 drawn strings)
+  arm 0: canvas 6.500 x 3.000 in; font size min 8.30, median 8.30 pt; text overlaps 0
+  arm 1: canvas 6.500 x 3.000 in; font size min 8.30, median 8.30 pt; text overlaps 0
+strings gbdt_recovery: equal (86 drawn strings)
+  arm 0: canvas 6.500 x 5.600 in; font size min 8.30, median 8.30 pt; text overlaps 0
+  arm 1: canvas 6.500 x 5.600 in; font size min 8.30, median 8.30 pt; text overlaps 0
+ARMS-LAYOUT gbdt :: PASS
+== installed figs/gbdt_prior_response.pdf = this run's arm 1: yes

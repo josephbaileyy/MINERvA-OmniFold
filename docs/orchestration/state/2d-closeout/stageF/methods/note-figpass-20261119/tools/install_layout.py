@@ -6,8 +6,8 @@ usage: python3 install_layout.py <repo root> <arm-1 PDF> [<arm-1 PDF> ...]
 For each PDF (its file name is the installed basename):
   1. copies it to note-figpass-20261119/figs/ and docs/analysis-note/figures/ (refusing if the record's copy exists
      with other bytes: figs/ files are immutable once committed);
-  2. in docs/analysis-note/make_figures.sh, comments out the figure's current active install line (any install_*
-     function with that basename), if it has one, and adds "install_layout_fig <basename> <sha256>" after the last
+  2. in docs/analysis-note/make_figures.sh, comments out the figure's active install lines (any install_*
+     function with that basename; an older line can still be active above the one that overrides it), and adds "install_layout_fig <basename> <sha256>" after the last
      install_layout_fig line (the "note-figpass-20261119" block, which must exist).
 Prints each basename and digest.
 """
@@ -36,13 +36,13 @@ for src in map(Path, sys.argv[2:]):
     lines = s.splitlines(True)
     cur = [ln for ln in lines if not ln.startswith("#") and len(ln.split()) >= 3 and ln.split()[0].startswith("install_")
            and ln.split()[0].endswith("fig") and ln.split()[1] == base]
-    if len(cur) > 1:
-        raise SystemExit(f"REFUSE: {base} has {len(cur)} active install lines")
-    if cur and cur[0].split()[:3] == ["install_layout_fig", base, h]:
+    if cur and cur[-1].split()[:3] == ["install_layout_fig", base, h]:
         print(f"already installed {base} {h}")
         continue
-    if cur:
-        s = s.replace(cur[0], "# " + cur[0].rstrip("\n") + "   (figure pass, 2026-11-19: installed below)\n", 1)
+    for ln in cur:   # every active line (an older one may still be active above a later one that overrides it)
+        s = s.replace(ln, "# " + ln.rstrip("\n") + "   (figure pass, 2026-11-19: installed below)\n", 1)
+    if len(cur) > 1:
+        print(f"note: {base} had {len(cur)} active install lines; all are now comments")
     lines = s.splitlines(True)
     anchor = [i for i, ln in enumerate(lines) if ln.startswith("install_layout_fig ") or ln.startswith("install_layout_fig() {")]
     last = max(anchor)

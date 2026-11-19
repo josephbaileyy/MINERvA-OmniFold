@@ -9,7 +9,8 @@
 #   arm 0's <stem>.pdf against the file installed at the base: bytes_but_date.py and raster.py (or, with
 #   INSTALLED_FROM=<path in the base>, against that file);
 #   arm 1 against arm 0: fig-restyle-20261031/tools/compare.py with no restyle tables, so every item's full hash
-#   (data, colours, line styles) must be equal; and the multiset of drawn strings must be equal;
+#   (data, colours, line styles) must be equal; and the multiset of drawn strings must be equal, after texts.tsv's
+#   declared wording fixes are made on arm 0's;
 #   per arm: the canvas size, the smallest and median text size, and capture_any.py's text overlaps.
 # Arm outputs go to $FIGRUN/fp-<family>/{arm0,arm1}; captures to runs/<family>/{arm0,arm1}/capture/<family>/.
 # Exit 0 only if every check passes.
@@ -46,19 +47,32 @@ c1=$(cd "$N/runs/$FAM/arm1/capture/$FAM" 2>/dev/null && ls *.json 2>/dev/null | 
 [ -n "$c0" ] && [ "$c0" = "$c1" ] && echo "captures: $c0" \
   || { echo "FAIL captures: arm 0 [$c0], arm 1 [$c1] (none, or not the same files)"; ok=0; }
 "$P" -I "$R/fig-restyle-20261031/tools/compare.py" "$N/runs/$FAM/arm0" "$N/runs/$FAM/arm1" || ok=0
-"$P" - "$N/runs/$FAM" "$FAM" <<'PY' || ok=0
+"$P" - "$N/runs/$FAM" "$FAM" "$N/texts.tsv" <<'PY' || ok=0
 import json, statistics, sys
 from collections import Counter
 from pathlib import Path
 d, fam = Path(sys.argv[1]), sys.argv[2]
+fixes = {}   # texts.tsv: the declared wording fixes arm 1 makes; arm 0's strings are compared after them
+tp = Path(sys.argv[3])
+if tp.exists():
+    for ln in tp.read_text().splitlines()[2:]:
+        if ln.strip() and not ln.startswith("#"):
+            f, old, new = ln.split("\t")[:3]
+            fixes.setdefault(f, []).append((old.replace("\\n", "\n"), new.replace("\\n", "\n")))
 bad = 0
 for p in sorted((d / "arm0" / "capture" / fam).glob("*.pdf.texts")):
     q = d / "arm1" / "capture" / fam / p.name
     if not q.exists():
         print(f"FAIL {p.name}: no arm 1 capture"); bad = 1; continue
     a, b = json.loads(p.read_text()), json.loads(q.read_text())
-    sa, sb = Counter(t for _, t in a["texts"]), Counter(t for _, t in b["texts"])
     stem = p.name[:-len(".pdf.texts")]
+    def fixed(t):
+        for old, new in fixes.get(stem, []):
+            t = t.replace(old, new)
+        return t
+    def ws(t):   # the capture's strings: line breaks may be stored as spaces, so whitespace is compared normalized
+        return " ".join(t.split())
+    sa, sb = Counter(ws(fixed(t)) for _, t in a["texts"]), Counter(ws(t) for _, t in b["texts"])
     if sa != sb:
         print(f"FAIL strings {stem}: arm 0 only {sorted((sa - sb).elements())}, arm 1 only {sorted((sb - sa).elements())}")
         bad = 1

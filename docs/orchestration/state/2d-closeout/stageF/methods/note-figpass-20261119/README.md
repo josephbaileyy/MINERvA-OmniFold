@@ -14,6 +14,7 @@
 | A1 | 17 (fig:eavail-marg), 23 (fig:q3excess) | Fig. 23 drawn again at its printed size; Fig. 17 split into its two panels at full width (LaTeX only) |
 | A2 | width classes; text under 7 pt | three width classes in LaTeX; Figs. 33, 36 drawn again at printed size; Figs. 26, 27 with larger fonts |
 | B | the duplicates (Figs. 7, 9, 10, 13; 20, 21), by Joseph's ruling of 2026-11-19 (DECISION-20261119b) | each series drawn once: Fig. 13 folded into Fig. 7, the mosaic's points into Figs. 9 and 10, Figs. 20 and 21 one figure |
+| C | the Gemini graders' caption-match items (director, 2026-11-19) | Figs. 12, 18 captions; Figs. 19, 22 labels; Fig. 32 titles; Fig. 9 scaling clause; Fig. 15 label off the star |
 
 ## The method (two arms per redrawn figure)
 
@@ -259,4 +260,50 @@ The alias labels keep every reference resolving until the owners apply these. Th
   tune" → "that prediction".
 - **P3, sec_results:** "Figures 9–10 compare … with simulated truth" gains "with the published points for comparison".
 - **P4:** sec_3d's and app_history's \ref{fig:mec} → \ref{fig:modedecomp}.
+
+## Chunk C: the graders' caption-match items
+
+The Gemini figure graders ran at 1acece939 (`~/codex-reports/note-measurement/quality/1acece939/fig-*/issues.jsonl`).
+Each item was checked against the PDF or the producer before any fix. Figure numbers below are those of 1acece939.
+
+| item | verdict | fix |
+|---|---|---|
+| Fig. 12 (fig:tensionmodes) | real: the caption names two groups of three modes, not which panels | Panels follow diagnose_tension.py's χ²-contribution order. The tier-2 run's tension_report.txt gives lam_rank 23, 9, 118, 2, 79, 121 for (a)–(f). So the smallest-λ modes are (a), (b), (d) (λ/λmax 3.5e-9, 4.3e-10, 6.6e-11) and the moderate ones (c), (e), (f) (5.6e-5, 4.5e-6, 6.0e-5). The caption names them and the order. |
+| Fig. 18 (fig:calibration) | real: the in-frame tags read "(a) pt", "(b) pz", "(c) eavail" (pdftotext) | no producer (ISSUES.md:1292). The caption says the tags denote p_T, p∥ and E_avail. |
+| Fig. 19 (fig:3dmodels) | real: the producer prints a placeholder, `ylab + " (cm$^2$/.../nucleon)"` (re1/redraw_central_only_p3.py:147) | The units come from overlay_generators_band.AXES: cm²/(GeV/c)/nucleon for p_T and p∥, cm²/GeV/nucleon for E_avail. The producer strings are fixed (p3, p4), and the note figure's labels are fixed by `texts.tsv` on the pinned pickle (below). |
+| Fig. 22 (fig:ascencio) | partly: the caption already maps the q3 intervals; the right panel has no y label (real) | The right panel takes the left's y label, and each panel prints its q3 interval above it (`labels.tsv`). The intervals follow compare_ascencio_fullcov.Q3_SUPER's populated columns, as the caption states. In p4's draw code, every panel now gets the label and the interval. |
+| Fig. 32 (fig:gbdt-prior) | real: the panel titles say "\|bias\|" where the caption names the quantity the noise-free residual | The titles read "\|noise-free residual\|", the caption's own phrase (`texts.tsv`). Each title takes a third line so the panels do not collide. |
+| Fig. 9 (fig:ptslices) | real (F4): "scaled" is not explained | One clause, from plot_2d_paper_comparison.py:91–96: each panel is divided by the largest value of the result and the prior in it, and the printed power of ten is 10^(−floor(log10 of that value)). |
+| Fig. 15 (fig:landscape) | real (F2): the star overlaps its label | The label is moved 0.35 years left (`moves.tsv`). Every axes stays where the producer put it (boxes row −1). |
+| Fig. 17 (fig:eavail-marg) | real: "pull" against "not formal … pulls" | In the Fig. 17 re-render chunk (the input was fetched on 2026-11-19). |
+| Fig. 24 (fig:eavailWexcess) | check needed: the caption explains percentage shares the grader did not find | Routed to director-helper-3, owner of the §8 file. |
+
+### How the figures were redrawn
+
+No pinned input changed. The family-4 pickles are only read, each through `restyle_family4.load()`, which checks its
+sha256 (the director's ruling).
+- **Fig. 32 (`runs/gbdt/CHECKS.txt`):** `tools/arms_layout.sh` on `analyze.py --print-style` (matplotlib 3.11.2).
+  - Arm 0 is EQUAL and 0 px against the installed file.
+  - COMPARE PASS over all four gbdt figures.
+  - The strings are equal after `texts.tsv`'s declared fixes. Text overlaps stay at 0.
+- **Figs. 19 and 22 (`runs/f4fix/CHECKS.txt`):** `tools/arms_family4.sh`. Arm 0 is the palette pass's
+  `palette_family4.py`, EQUAL-BUT-DATE and 0 px against both installed files. Arm 1 is `tools/fix_family4.py`.
+  - **Labels:** `labels.tsv` is applied before the palette edits, so the added y label takes the power of ten as the
+    left one does. That moves the right panel's "×10⁻³⁸" offset into its label and reprints its ticks as 1.2 … 1.5,
+    the left panel's format. The check accepts exactly that move, and compares tick labels by value.
+  - **Then:** the palette edits, `texts.tsv`'s fixes, and `restyle_family4.restyle()`, unchanged.
+  - **Result:** every data item's full hash is equal (COMPARE PASS, 27 and 10 data artists), and the strings are
+    equal after the declared edits.
+- **Fig. 15 (`runs/land/CHECKS.txt`):** `ARM0=plain`.
+  - Arm 0 is EQUAL and 0 px against the installed file.
+  - COMPARE PASS (31 data artists). The strings are equal.
+  - Its one capture overlap ("Pion production" against ν_e) is in arm 0 too.
+
+### Producers fixed for any rerun
+
+- `nd-unfolding/re1/redraw_central_only_p3.py` and `_p4.py`: the units per axis.
+- `_p4.py`'s ascencio panels: the label and the q3 interval on every panel.
+<!-- absence-ok: a scoping statement about this chunk's recipe (the figures come from the pinned pickles), not a claim that a result does not exist -->
+- These scripts are not run here. The note figures come from the pinned pickles, which hold the drawn text, so the
+  in-memory fixes above are what print.
 

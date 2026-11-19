@@ -3,6 +3,8 @@
 apply(fig, name) makes, after the palette pass's own edits (note-figstyle-20261117/tools/palette_lib.apply), every
 layout edit this record's tables declare for the figure named by its saved file's stem, in order:
 0. every axis keeps the ticks and tick labels it drew (freeze_ticks);
+0b. texts.tsv (figure, old, new): each replacement in any drawn text of the figure (titles, labels, texts, legend
+   entries, tick labels); each must be found at least once, or the run stops. A wording fix, declared row by row;
 1. layout.tsv (figure, width in, height in, text scale, text floor pt): every text's size is multiplied by the scale
    and then raised to the floor if it is below it (tick labels through their axis, so new ticks keep the size); the
    canvas is set to the printed size. A size in points then prints at that size when the PDF is included at its
@@ -10,7 +12,9 @@ layout edit this record's tables declare for the figure named by its saved file'
 2. ticks.tsv (figure, axes index, axis x|y, rotation, ha): a tick-label rotation and alignment.
 3. boxes.tsv (figure, axes index, x0, y0, width, height; inches from the canvas's lower left; optionally a title pad
    in points): each named axes is placed in that box, and its titles are drawn that far above it. A figure with no
-   boxes row is laid out again with tight_layout().
+   boxes row is laid out again with tight_layout(). A row with axes index -1 keeps every axes where the producer put it.
+4. moves.tsv (figure, text prefix, dx, dy; data units): each drawn text (an annotation's text included) that starts
+   with the prefix is moved by (dx, dy); each prefix must match exactly one text. Position only.
 Nothing else changes: no datum, colour, style or string. The arms check this: the capture's item hashes (data, colours
 and styles) and the multiset of drawn strings must equal the palette arm's (tools/arms_layout.sh).
 """
@@ -31,6 +35,12 @@ def table(name):
 
 
 LAYOUT = {r[0]: (float(r[1]), float(r[2]), float(r[3]), float(r[4])) for r in table("layout.tsv")}
+TEXTS = {}
+for r in table("texts.tsv"):
+    TEXTS.setdefault(r[0], []).append((r[1].replace("\\n", "\n"), r[2].replace("\\n", "\n")))
+MOVES = {}
+for r in table("moves.tsv"):
+    MOVES.setdefault(r[0], []).append((r[1], float(r[2]), float(r[3])))
 TICKS = {}
 for r in table("ticks.tsv"):
     TICKS.setdefault(r[0], []).append((int(r[1]), r[2], float(r[3]), r[4]))
@@ -74,11 +84,29 @@ def freeze_ticks(fig):
             axis.set_major_formatter(FixedFormatter(labels))
 
 
+def fix_texts(fig, name):
+    """texts.tsv's replacements for this figure, in every drawn text; each must be found."""
+    rows = TEXTS.get(name, [])
+    used = set()
+    for t in fig.findobj(Text):
+        s = t.get_text()
+        for i, (old, new) in enumerate(rows):
+            if old in s:
+                s = s.replace(old, new)
+                used.add(i)
+        if s != t.get_text():
+            t.set_text(s)
+    missing = [rows[i] for i in range(len(rows)) if i not in used]
+    if missing:
+        raise SystemExit(f"texts.tsv: {name}: not found in the figure: {missing}")
+
+
 def apply(fig, name):
     if name not in LAYOUT:
         return False
     w, h, scale, floor = LAYOUT[name]
     freeze_ticks(fig)
+    fix_texts(fig, name)
     sizes(fig, scale, floor)
     for n, which, rot, ha in TICKS.get(name, []):
         ax = fig.axes[n]
@@ -87,7 +115,9 @@ def apply(fig, name):
             t.set_rotation(rot)
             t.set_ha(ha)
     fig.set_size_inches(w, h)
-    if name in BOXES:
+    if name in BOXES and any(b[0] == -1 for b in BOXES[name]):
+        pass   # keep the producer's axes positions
+    elif name in BOXES:
         names = {b[0] for b in BOXES[name]}
         if len(names) != len(BOXES[name]) or max(names) >= len(fig.axes):
             raise SystemExit(f"boxes.tsv: {name}: axes {sorted(names)} against {len(fig.axes)} axes")
@@ -97,4 +127,10 @@ def apply(fig, name):
                 fig.axes[n]._set_title_offset_trans(pad)
     else:
         fig.tight_layout()
+    for prefix, dx, dy in MOVES.get(name, []):
+        hit = [t for t in fig.findobj(Text) if t.get_text().startswith(prefix)]
+        if len(hit) != 1:
+            raise SystemExit(f"moves.tsv: {name}: {len(hit)} texts start with {prefix!r}")
+        x, y = hit[0].get_position()
+        hit[0].set_position((x + dx, y + dy))
     return True
