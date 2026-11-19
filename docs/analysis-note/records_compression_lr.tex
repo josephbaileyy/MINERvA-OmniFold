@@ -27,3 +27,40 @@ The loop reads one playlist-wide flux and calibration from the first event, so i
 \subsection{Shapes of the reconstructed control distributions (from Part 2, sec:controlplots)}
 % From sec_experiment.tex:49 (draft f6a4fc372 lineage); description of the control figures beyond their captions
 The beam and acceptance set the shapes. The $\pPar$ peak at $4$--$6$~GeV/$c$ reflects the ${\langle E_\nu\rangle}\approx\SI{6}{GeV}$ NuMI medium-energy peak; spectrometer matching removes the lowest-$\pPar$ muons. The $\pT$ spectrum peaks near $0.7$~GeV/$c$ and falls by over an order of magnitude across the measured range. Low-recoil (quasi-elastic and $2p2h$) events dominate the sample. Available energy $\Eavail$ concentrates below ${\sim}\SI{0.5}{GeV}$, with a long inelastic tail in the wide upper bins; $q_{3}$ tracks this population's momentum transfer. Reconstructed $W$ rises through the smeared quasi-elastic and $\Delta(1232)$ region before the deep-inelastic continuum takes over above ${\sim}\SI{2}{GeV}$. Absolute background is at the few-percent level under the muon projections and concentrates at high recoil (highest $\Eavail$, $q_{3}$ and $W$ bins).
+
+\subsection{Iteration count and the Huang et al.\ recommendation (from Part 2, sec:method-config)}
+% From sec_method.tex (dfc41cdf5) (draft f6a4fc372 lineage); rationale a reader does not need to interpret a result
+Huang \emph{et al.}~\cite{Huang:2025omnifold} select 45 iterations for OmniFold-family methods (20 for their binned benchmark) using a binned $\chi^{2}$ against known mock-data truth, a criterion they note is infeasible on real data. We do not adopt that recommendation. Their mock data injects a large prior--data \emph{shape} discrepancy through an RPA-modified quasielastic model, requiring many iterations. The simulation prior differs from the measured distributions in shape as well as normalization: the data exceed it by about 12\%, and the data/MC ratio rises with $\pT$ from 0.88 to about 1.2 (\S\ref{sec:controlplots}). Cross-experiment production also typically uses ${\sim}5$ iterations~\cite{Canelli:2025guide}.
+
+\subsection{MINERvA driver and pipeline conventions (from Part 2, sec:method-driver)}
+% From sec_method.tex (dfc41cdf5) (draft f6a4fc372 lineage); procedure a reader does not need to interpret a result
+The higher-dimensional MINERvA driver (App.~\ref{app:codebase}) extends the 2D driver using an axis list and the same 2D helpers. The first two axes are always $(\pT,\pPar)$, carrying the fiducial phase-space cut and the per-$\pT$ flux. Higher-dimensional runs extend the muon observables $(\pT,\pPar)$ with $\Eavail$, $q_{3}$, $W$ in the phase space of \S\ref{sec:selection}. Every production, universe-sweep, and closure run follows these conventions:
+\begin{itemize}[itemsep=2pt]
+  \item \textbf{Reco-space masking.} The measured events entering step-1 training are exactly those passing the reconstructed-level selection; nothing outside the reconstructed phase space reaches the classifier.
+  \item \textbf{Step-1 training within the phase space.} Step 1 targets the background-subtracted data of \S\ref{sec:method-algo}, purity-weighted or with background simulation injected at negative weight (refined to non-negative weights in the refined configurations). Genuine backgrounds \emph{and} out-of-phase-space signal are removed from the data side. The simulated reconstructed sample contains no out-of-phase-space signal by construction, so neither side of the step-1 training contains events whose truth lies outside the measurement phase space.
+        % Accuracy fix (unscored; director ruling 2026-10-26): the list covers every production run, and the 2D result
+        % and the 3D and 4D central values use refined negative-weight subtraction (sec:method-algo). Mechanism:
+        % 2d-unfolding/unfold_2d_omnifold_unbinned.py:1362-1377 and :1825-1870 @ ddf16f10; nd-unfolding/unfold_nd_omnifold_unbinned.py:619-630 and :900-1030 @ ddf16f10.
+        % In the negative-weight modes the signal fakes are injected with the background (2d-unfolding/unfold_2d_omnifold_unbinned.py:1846-1858 @ ddf16f10).
+  \item At histogramming, each simulated truth event carries its final OmniFold push-weight times its central-value simulation weight, including MINERvA Tune~v1 reweighting. No efficiency-histogram division is applied: the step-1 regression for unreconstructed truth events already gives an efficiency-corrected truth spectrum, and dividing again would double-correct.
+        % Development history: a failure mode that occurred once in
+        % development and was caught by the marginal self-validation gate
+        % (\S\ref{sec:validation}).
+  \item \textbf{Closure mirrors production.} In closure tests the pseudo-data are simulated events passing both the reconstructed and truth selections, weighted identically to the production data path, so closure exercises the same code path as the data unfolding.
+\end{itemize}
+
+\subsection{Structure of the truth-to-reco migrations (from Part 2, sec:method-binning)}
+% From sec_method.tex (dfc41cdf5) (draft f6a4fc372 lineage); description of the migration figure beyond its caption
+The structure differs qualitatively between the muon and hadron sides. The spectrometer muon measurement makes the $\pT$ and $\pPar$ maps nearly tridiagonal, with migrations rarely exceeding one bin. Reconstruction stability dips to ${\sim}0.45$--$0.5$ for $\pT$ and ${\sim}0.35$ for $\pPar$ where bins are finest, recovering in wide edge bins. The calorimetric axes have coarser bins but relatively broader, visibly asymmetric migrations. $\Eavail$ preferentially migrates \emph{downward} because energy carried by neutrons and other unresponsive particles is not collected. Reconstruction stability falls from $0.61$ in the lowest bins to $0.43$ in the highest. $q_{3}$, reconstructed from the muon $Q^{2}$ and the calorimetric recoil, inherits a milder version of the same pattern. $W$ compounds $\Eavail$ and muon smearing and has the broadest migrations; two-bin shifts are common in the resonance region. The lowest-$W$ (quasi-elastic) bin has the highest stability at $0.71$.
+
+\subsection{No underflow or overflow in the reported product (from Part 2, sec:method-binning)}
+% From sec_method.tex @1ad08b466; argument a reader does not need to interpret a result
+Neither underflow nor overflow appears in the reported product, by construction rather than by truncation: the unbinned unfolding has no response-matrix under- or overflow, and the reporting bins are applied once, to events that all lie inside the grids. Truth-level muon edges coincide with the measurement phase space (\S\ref{sec:selection}); no signal is defined beyond them. Hadronic axes span $[0,100]\,\si{GeV}$, with catch-bin edges far beyond the kinematic reach at $\langle E_\nu\rangle\sim\SI{6}{GeV}$, so the truth grids are exhaustive. A selected reco event outside the grid is treated as unaccepted and excluded from the measured sample by \S\ref{sec:method-driver}'s masking convention. Its in-phase-space truth content is recovered, as for any unreconstructed event, by the treatment of truth events without a reconstructed partner.
+
+\subsection{Profile OmniFold~\cite{Zhu:2025profile} and related developments (from Part 2)}
+% From sec_method.tex @1ad08b466; literature context
+Its distinct algorithmic construction complements earlier unbinned profiled unfolding~\cite{Chan:2023tbf}.
+
+\subsection{Gradient-boosted trees in unbinned unfolding (from Part 2, sec:method-config)}
+% From sec_method.tex @1ad08b466; literature context
+Ref.~\cite{Milton:2025tools} demonstrates their effectiveness for unbinned unfolding with few high-level features, complementing deep models for low-level event representations.
