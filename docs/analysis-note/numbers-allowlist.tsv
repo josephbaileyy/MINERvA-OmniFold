@@ -329,8 +329,6 @@ token	delta	owner	item	reason
 10	+1	director-helper-3	SK-RENUM	skeleton: reflow splits "G18_10a_02_11b's" (\fvval{f1-tune-g18}) so that "10a" starts a line, as journal-editor's dup P31 row records
 0	-1	director-helper-3	P1-COMPRESS	Part 1 and abstract (DECISION-20261119c): the abstract's "0 of 300 pseudo-experiments" (\lrval{cov2d-ar23-joint}) is cut; it prints at sec:coverage-tunes (sec_validation.tex) and sec_limitations.tex
 300	-1	director-helper-3	P1-COMPRESS	same (\lrval{cov2d-ntoys})
-0.01	-1	director-helper-3	P1-COMPRESS	the abstract's fake-data criterion p < \fvval{trig-p} is cut; it prints at sec:fived16-fd (sec_q3_fived16.tex)
-2	-1	director-helper-3	P1-COMPRESS	same, |z| > \fvval{trig-z}; prints at sec:fived16-fd
 0.05	-1	director-helper-3	P1-COMPRESS	the executive summary is cut: "every test has p < 0.05 ... in at least one of the two matched coarse projections" prints at sec:joint5d-projections (sec_joint.tex)
 0.141	-1	director-helper-3	P1-COMPRESS	executive summary cut: the 3D marginal's 0.141 % agreement prints at sec:3d-anchor (sec_3d.tex)
 1.1	-1	director-helper-3	P1-COMPRESS	the heading "1.1 Introduction and motivation" is folded into Part 1's heading (sec:intro kept)
