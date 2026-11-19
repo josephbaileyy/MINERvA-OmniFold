@@ -15,6 +15,12 @@ import run_ibukt as runner
 
 LIMITS = {"envstage": 0.3, "prepare": 0.5, "screen": 5.25, "score": 0.1}
 
+CAP_AUTHORITY = {
+    "node_hours": core.CAMPAIGN_CAP_HOURS,
+    "decision_merge": core.CAP_DECISION_MERGE,
+    "decision_sha256": core.CAP_DECISION_SHA256,
+}
+
 
 def stage(sources: dict[str, Any], output: Path) -> None:
     """Copy each declared source once through O_NOATIME and verify the copy.
@@ -60,6 +66,8 @@ def screen_admission(path: Path) -> dict[str, Any]:
         runner.digest(core.CONFIG),
     ):
         raise ValueError("invalid screen admission identity")
+    if record.get("cap") != CAP_AUTHORITY:
+        raise ValueError("invalid screen admission cap authority")
     spent, total = record["spent_or_reserved"], record["total"]
     if (
         not all(math.isfinite(x) for x in (spent, total))
@@ -111,7 +119,9 @@ def main() -> None:
             LIMITS[args.request] + (LIMITS["score"] if args.request == "screen" else 0),
         )
         result.update(
-            request_stage=args.request, config_sha256=runner.digest(core.CONFIG)
+            request_stage=args.request,
+            config_sha256=runner.digest(core.CONFIG),
+            cap=CAP_AUTHORITY,
         )
         print(json.dumps(result))
 

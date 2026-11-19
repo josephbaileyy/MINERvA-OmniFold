@@ -17,8 +17,9 @@ from numpy.typing import NDArray
 Array: TypeAlias = NDArray[np.float64]
 CONFIG = Path(__file__).with_name("config.json")
 RECOVERY_TOLERANCE = 0.02
-# DECISION-20261119d, merged at f0d298611df010a31c5bed7f110af96c29a323e8.
 CAMPAIGN_CAP_HOURS = 6.50
+CAP_DECISION_MERGE = "f0d298611df010a31c5bed7f110af96c29a323e8"
+CAP_DECISION_SHA256 = "ef5f9862d65a75bdbdea8084eaae022da815cc6f680b147f61effd7788e65a93"
 
 
 def configuration() -> dict[str, Any]:
@@ -147,13 +148,18 @@ def target_digest(target: Array) -> str:
     return hashlib.sha256(target.astype("<f8", copy=False).tobytes()).hexdigest()
 
 
-def nominal_recovery(estimates: Array, truth: Array, label: str) -> float:
-    """Require noise-free recovery within the engineering tolerance in every cell."""
+def nominal_residual(estimates: Array, truth: Array, label: str) -> float:
+    """Return the largest absolute relative residual on aligned positive truth."""
     if estimates.shape != truth.shape or truth.size == 0 or np.any(truth <= 0):
         raise ValueError(f"{label}: invalid truth or cell alignment")
     if not all(np.all(np.isfinite(x)) for x in (estimates, truth)):
         raise ValueError(f"{label}: nonfinite nominal recovery operand")
-    error = float(np.max(np.abs(estimates / truth - 1)))
+    return float(np.max(np.abs(estimates / truth - 1)))
+
+
+def nominal_recovery(estimates: Array, truth: Array, label: str) -> float:
+    """Require noise-free recovery within the engineering tolerance in every cell."""
+    error = nominal_residual(estimates, truth, label)
     if error > RECOVERY_TOLERANCE:
         raise ValueError(f"{label}: {error} > {RECOVERY_TOLERANCE}")
     return error

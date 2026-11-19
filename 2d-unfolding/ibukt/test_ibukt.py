@@ -907,6 +907,7 @@ def test_screen_admission_reserves_score_and_rejects_full_earlier_caps(
             requested=jobs.LIMITS["screen"] + jobs.LIMITS["score"],
             spent_or_reserved=spent,
             request_stage="screen",
+            cap=jobs.CAP_AUTHORITY,
             config_sha256=runner.digest(core.CONFIG),
         )
 
@@ -1021,3 +1022,82 @@ def test_nominal_signed_background_cancels_exactly(cfg):
     assert np.count_nonzero(target) == 1
     assert target.sum() == 0.5
     assert core.signed_target_violations(target, target) == []
+
+
+@pytest.mark.parametrize("admissible", [True, False])
+def test_admission_uses_production_draws(cfg, tmp_path, monkeypatch, admissible):
+    from argparse import Namespace
+    from types import SimpleNamespace
+
+    reco = np.array([[0.12, 4.2]])
+    weight = 80.0 if admissible else 0.001
+    nominal = core.histogram(reco[:, 0], reco[:, 1], np.array([weight]), cfg)
+    cells = np.flatnonzero(nominal)
+    bank = {
+        "gen": reco,
+        "reco": reco,
+        "pt": np.array([True]),
+        "pr": np.array([True]),
+        "wr": np.array([weight]),
+        "bkg": reco,
+        "bw": np.array([0.125]),
+        "means": np.zeros(224),
+        "ibu_prior": nominal,
+        "ibu_response": np.diag(nominal),
+        "selected": cells,
+    }
+    maps = {name: np.ones(224) for name in ("genie_mec", "nuwro")}
+    monkeypatch.setattr(runner, "checked_bank", lambda _: ("bank", bank))
+    monkeypatch.setattr(runner, "digest", lambda _: "config")
+    monkeypatch.setattr(runner, "ratios", lambda _: maps)
+
+    def unfold(matrix, prior, target, ks, *args):
+        assert admissible
+        np.testing.assert_array_equal(target, matrix.sum(axis=1))
+        return {k: prior.copy() for k in ks}
+
+    if admissible:
+        monkeypatch.setattr(
+            runner,
+            "dependencies",
+            lambda: (
+                SimpleNamespace(roounfold_bayes=unfold, dagostini=unfold),
+                None,
+                None,
+            ),
+        )
+        runner.admissibility(Namespace(out=tmp_path, stage=tmp_path), cfg)
+        receipt = __import__("json").loads(
+            (tmp_path / "admissibility.json").read_text()
+        )
+        assert len(receipt["targets"]) == 36
+        for name, trial, key in runner.target_keys(cfg):
+            _, _, target = runner.draw_target(bank, cfg, maps, name, trial)
+            assert receipt["targets"][key] == core.target_digest(target)
+    else:
+        monkeypatch.setattr(runner, "dependencies", lambda: pytest.fail("early unfold"))
+        with pytest.raises(ValueError, match="nominal-0"):
+            runner.admissibility(Namespace(out=tmp_path), cfg)
+        receipt = __import__("json").loads((tmp_path / "stop.json").read_text())
+        assert receipt["bins"][0]["signed_count"] == -0.125
+
+
+@pytest.mark.parametrize("defect", ["prior_design", "mixed_treatments"])
+def test_score_refuses_prior_design_or_mixed_treatments(cfg, score_inputs, defect):
+    import json
+
+    path = score_inputs.products / "nominal-0/pair.json"
+    receipt = json.loads(path.read_text())
+    if defect == "prior_design":
+        for field in (
+            "admissibility_sha256",
+            "signed_target_sha256",
+            "target_treatments",
+        ):
+            del receipt[field]
+    else:
+        receipt["target_treatments"]["ibu"] = "stay-positive-refined"
+    path.write_text(json.dumps(receipt))
+    with pytest.raises(ValueError, match="mismatched pair"):
+        runner.score(score_inputs, cfg)
+    assert not (score_inputs.out / "readout.json").exists()

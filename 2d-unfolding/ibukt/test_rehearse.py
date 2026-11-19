@@ -223,3 +223,15 @@ def test_topology_uses_module_versions_without_distribution_metadata(
     assert record["physical_core_branch"] is True
     assert record["lscpu_attempted"] is False
     assert record["effective_n_jobs"] == dict(Classifier=32, Regressor=32)
+
+
+def test_rehearsal_pins_match_the_checkout():
+    from hashlib import file_digest
+
+    for name, pin in (
+        ("run_ibukt.py", rehearse.RUNNER_SHA),
+        ("ibukt.py", rehearse.CORE_SHA),
+        ("config.json", rehearse.CONFIG_SHA),
+    ):
+        with rehearse.SCRIPT.with_name(name).open("rb") as stream:
+            assert file_digest(stream, "sha256").hexdigest() == pin

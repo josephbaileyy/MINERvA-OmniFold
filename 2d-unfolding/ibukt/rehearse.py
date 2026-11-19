@@ -29,9 +29,9 @@ SCRIPT = Path(__file__).resolve()
 REPO = SCRIPT.parents[2]
 GUARD = REPO / "nd-unfolding/mnv_guarded_run.py"
 GUARD_SHA = "30162f57771c9d5a1206eae623a7eb3fc80ac3f0bb150c82fb561be7254b510b"
-RUNNER_SHA = "ff1b0c35ccc0ff2c71c9001e049e5efdba555f9dba11fd3def858e14c333a00f"
-CONFIG_SHA = "35f344676d83b93ecdf458d8683263f869d7f66522b58950ea3db3faebaf4206"
-CORE_SHA = "f98fc9930e4bbdcb60328553d9e0b9ce267be14542f84b3ecafa0f5ff642a7c0"
+RUNNER_SHA = "f2b4c017e1a2e84c2cb30b43a8824b95c3f7e022f5fca23b0ceac2a750c33683"
+CONFIG_SHA = "60d6c4d747596137423a869ac315c484ef65ad69f3ec209d6fd73d6e573c716c"
+CORE_SHA = "ef8590cf6d6d025b6db1fb8fdd100f76114390ac78eded62274b2c077c290789"
 REF_CONFIG_SHA = "dc9b242f9b7eef7dc808c6ef4fb94c4ec8baa6027dc3ee78c549f6d4f0f72a23"
 SCRATCH_ROOT = Path("/pscratch")
 WORKSPACE_PREFIX = "ibukt-rehearsal-"
@@ -668,6 +668,7 @@ def launch(expected_sha: str, deadline: float) -> int:
                 "prepare",
                 "pair-nominal",
                 "pair-poisson",
+                "score",
             ):
                 role, source = (
                     ("paper", ref["publication"]["path"])

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import importlib
+import importlib.util
 import os
 from pathlib import Path
 import sys
@@ -52,15 +53,29 @@ def _signed_histogram(path: Path) -> tuple[core.Array, list[dict[str, int | floa
     return signed[1:-1, 1:-1].reshape(-1), flow
 
 
-def _publication(
-    path: Path, cp: Any
-) -> tuple[core.Array, core.Array, NDArray[np.intp]]:
+def _publication(path: Path) -> tuple[core.Array, core.Array, NDArray[np.intp]]:
     import ROOT
 
+    def matrix(obj: Any) -> core.Array:
+        return np.asarray(
+            [[obj(i, j) for j in range(obj.GetNcols())] for i in range(obj.GetNrows())],
+            dtype=np.float64,
+        )
+
     with ROOT.TFile.Open(str(path), "READ") as source:
-        published = cp.flatten_th2d(source.Get("pt_pl_cross_section"))
-        covariance = cp.tmatrix_to_numpy(source.Get("TotalCovariance"))
-        stat = cp.tmatrix_to_numpy(source.Get("StatOnlyCovariance"))
+        histogram = source.Get("pt_pl_cross_section")
+        nx, ny = histogram.GetNbinsX(), histogram.GetNbinsY()
+        if (nx, ny) not in ((14, 16), (16, 14)):
+            raise ValueError("invalid published grid")
+        values = np.asarray(
+            [
+                [histogram.GetBinContent(i + 1, j + 1) for j in range(ny)]
+                for i in range(nx)
+            ]
+        )
+        published = (values if nx == 14 else values.T).reshape(-1)
+        covariance = matrix(source.Get("TotalCovariance"))
+        stat = matrix(source.Get("StatOnlyCovariance"))
     if any(
         x.shape != (224, 224) or not np.all(np.isfinite(x)) for x in (covariance, stat)
     ):
@@ -72,7 +87,6 @@ def _publication(
 
 
 def _readings(
-    cp: Any,
     covariance: core.Array,
     published: core.Array,
     er: core.Array,
@@ -80,9 +94,14 @@ def _readings(
     refined: dict[int, core.Array],
     signed: dict[int, core.Array],
 ) -> dict[str, Any]:
+    # Match the publication reader's positive-diagonal mask and NumPy pinv.
+    inverse = np.linalg.pinv(covariance[np.ix_(selected, selected)])
+    ndf = len(selected)
+
     def distance(delta: core.Array) -> dict[str, int | float]:
-        chi2, ndf, _ = cp.chi2_with_cov(delta, covariance, "", report=False)
-        if ndf != len(selected) or not np.isfinite(chi2):
+        reported = delta[selected]
+        chi2 = float(reported @ inverse @ reported)
+        if not np.isfinite(chi2):
             raise ValueError("invalid publication distance")
         return {"chi2": chi2, "ndf": ndf, "chi2_ndf": chi2 / ndf}
 
@@ -127,29 +146,30 @@ def run(stage: Path, out: Path, reference: Path, cfg: dict[str, Any]) -> None:
     for pin in pins.values():
         if runner.digest(stage / pin["filename"]) != pin["sha256"]:
             raise ValueError(f"staged input changed: {pin['filename']}")
-    comparison = importlib.import_module("ref_c2c1")
     helper_path = "unbinned_unfolding/python/omnifold.py"
     driver_path = reference / "2d-unfolding/re2/re2_driver.py"
-    assert comparison.__file__ is not None
-    for path, expected in (
-        (driver_path, REFERENCE_DRIVER),
-        (reference / helper_path, cfg["code_sha256"][helper_path]),
-        (
-            Path(comparison.__file__),
-            cfg["code_sha256"]["2d-unfolding/ref_c2c1/ref_c2c1.py"],
-        ),
+    comparison_file = runner.REPO / "2d-unfolding/ref_c2c1/ref_c2c1.py"
+    spec = importlib.util.find_spec("ref_c2c1")
+    if (
+        spec is None
+        or spec.origin is None
+        or Path(spec.origin).resolve() != comparison_file
     ):
-        if runner.digest(path) != expected:
-            raise ValueError(f"REF-C2C1 implementation changed: {path.name}")
+        raise ValueError("REF-C2C1 resolves outside the implementation checkout")
+    if (
+        runner.digest(comparison_file)
+        != cfg["code_sha256"]["2d-unfolding/ref_c2c1/ref_c2c1.py"]
+    ):
+        raise ValueError("REF-C2C1 implementation changed")
+    comparison = importlib.import_module("ref_c2c1")
+    if runner.digest(reference / helper_path) != cfg["code_sha256"][helper_path]:
+        raise ValueError("historical OmniFold helper changed")
     with mock.patch.multiple(
         comparison, RE2=driver_path, HELPER=(reference / helper_path).parent
     ):
+        if runner.digest(driver_path) != REFERENCE_DRIVER:
+            raise ValueError("historical REF-C2C1 driver changed")
         driver, helper = comparison.load_driver()
-    cp = importlib.import_module("compare_to_paper_fullcov")
-    expected_cp = cfg["code_sha256"]["2d-unfolding/compare_to_paper_fullcov.py"]
-    assert cp.__file__ is not None
-    if runner.digest(Path(cp.__file__)) != expected_cp:
-        raise ValueError("publication comparison implementation changed")
     if driver.PT_EDGES != cfg["pt_edges"] or driver.PZ_EDGES != cfg["pz_edges"]:
         raise ValueError("REF-C2C1 grid changed")
     with comparison.read_guards(
@@ -157,7 +177,7 @@ def run(stage: Path, out: Path, reference: Path, cfg: dict[str, Any]) -> None:
         (stage, out, reference, runner.REPO),
         (out,),
     ):
-        _measure(stage, out, cfg, comparison, driver, helper, cp)
+        _measure(stage, out, cfg, comparison, driver, helper)
 
 
 def _measure(
@@ -167,10 +187,9 @@ def _measure(
     comparison: Any,
     driver: Any,
     helper: Any,
-    cp: Any,
 ) -> None:
     target, flow = _signed_histogram(stage / "er.root")
-    published, cov, selected = _publication(stage / "paper.root", cp)
+    published, cov, selected = _publication(stage / "paper.root")
     archived = runner.read_npz(stage / "c2.npz")
     library = str(stage / "libRooUnfold.so")
     checks = {}
@@ -191,7 +210,10 @@ def _measure(
     ) -> tuple[core.Array, None, float]:
         return weights, None, 0.0
 
-    with mock.patch.object(driver, "refine_stay_positive", pass_signed):
+    with (
+        mock.patch.object(driver, "refine_stay_positive", pass_signed),
+        mock.patch.object(comparison, "recording_lightgbm", return_value=[]),
+    ):
         capture = comparison.run_driver(
             driver,
             helper,
@@ -245,7 +267,7 @@ def _measure(
             1e-9,
         )
     er = runner.root_vector(stage / "er.root", "hXSec2D", comparison)
-    readings = _readings(cp, cov, published, er, selected, refined, signed)
+    readings = _readings(cov, published, er, selected, refined, signed)
     output = out / "signed_data.npz"
     np.savez(
         output,
@@ -269,7 +291,7 @@ def _measure(
             "input_sha256": {
                 role: pin["sha256"] for role, pin in cfg["inputs"].items()
             },
-            "reference_commit": REFERENCE_COMMIT,
+            "declared_reference_commit": REFERENCE_COMMIT,
             "driver_sha256": REFERENCE_DRIVER,
             "script_sha256": runner.digest(Path(__file__)),
             "config_sha256": runner.digest(core.CONFIG),

@@ -442,11 +442,26 @@ def draw_target(
     feat = np.concatenate((reco[keep], bank["bkg"], bank["bkg"]))
     signed = np.concatenate((bank["wr"][keep] * factors[keep], bank["bw"], -bank["bw"]))
     if trial is None:
-        # The two identical background templates cancel exactly before summation.
-        target = core.histogram(
-            reco[keep, 0], reco[keep, 1], bank["wr"][keep] * factors[keep], cfg
+        # Combine the signed background histograms before adding signal to avoid
+        # losing precision through a large intermediate background.
+        signal_end = int(np.count_nonzero(keep))
+        background_end = signal_end + len(bank["bw"])
+        signal = core.histogram(
+            feat[:signal_end, 0], feat[:signal_end, 1], signed[:signal_end], cfg
         )
-        return feat, signed, target
+        positive = core.histogram(
+            feat[signal_end:background_end, 0],
+            feat[signal_end:background_end, 1],
+            signed[signal_end:background_end],
+            cfg,
+        )
+        negative = core.histogram(
+            feat[background_end:, 0],
+            feat[background_end:, 1],
+            signed[background_end:],
+            cfg,
+        )
+        return feat, signed, signal + (positive + negative)
     measured, signed = core.poisson_target(feat, signed, cfg["seeds"][trial])
     return measured, signed, core.histogram(measured[:, 0], measured[:, 1], signed, cfg)
 
@@ -466,6 +481,29 @@ def target_keys(cfg: dict[str, Any]) -> list[tuple[str, int | None, str]]:
 def admissibility(args: argparse.Namespace, cfg: dict[str, Any]) -> None:
     """Check all signed targets before attempting either estimator on a pair."""
     bank_pin, bank = checked_bank(args)
+    try:
+        _check_admissibility(args, cfg, bank_pin, bank)
+    except (RuntimeError, ValueError) as exc:
+        stop = args.out / "stop.json"
+        if not stop.exists():
+            write_json(
+                stop,
+                {
+                    "status": "STOP",
+                    "reason": str(exc),
+                    "bank_sha256": bank_pin,
+                    "config_sha256": digest(core.CONFIG),
+                },
+            )
+        raise
+
+
+def _check_admissibility(
+    args: argparse.Namespace,
+    cfg: dict[str, Any],
+    bank_pin: str,
+    bank: dict[str, core.Array],
+) -> None:
     prior, matrix = bank["ibu_prior"], bank["ibu_response"]
     rows = matrix.sum(axis=1)
     selected = bank["selected"]
@@ -668,18 +706,38 @@ def pair(args: argparse.Namespace, cfg: dict[str, Any]) -> None:
         prior=bank["truth_nominal"],
         selected=bank["selected"],
     )
-    control_checks = {}
+    control_checks: dict[str, float | None] = {}
     if args.noise_free:
+        failures = []
         selected = bank["selected"]
         for method, values in (
             ("omnifold", unfolded),
             ("ibu5", ibu[5] * bank["factor"]),
         ):
-            control_checks[method] = core.nominal_recovery(
-                values[selected],
-                bank["truth_nominal"][selected],
-                f"noise-free nominal {method}",
+            label = f"noise-free nominal {method}"
+            try:
+                residual = core.nominal_residual(
+                    values[selected], bank["truth_nominal"][selected], label
+                )
+                control_checks[method] = residual
+                if residual > core.RECOVERY_TOLERANCE:
+                    failures.append(f"{label}: {residual} > {core.RECOVERY_TOLERANCE}")
+            except ValueError as exc:
+                control_checks[method] = None
+                failures.append(str(exc))
+        if failures:
+            write_json(
+                args.out / "stop.json",
+                {
+                    "status": "STOP",
+                    "reason": "C-NOM",
+                    "failures": failures,
+                    "control_checks": control_checks,
+                    "target_treatments": cfg["target_treatments"],
+                    "product_sha256": digest(args.out / "pair.npz"),
+                },
             )
+            raise ValueError("; ".join(failures))
     write_json(
         args.out / "pair.json",
         {

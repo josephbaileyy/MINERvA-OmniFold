@@ -1,4 +1,4 @@
-# Signed-target binned IBU on the recorded 2D data (draft for review)
+# Signed-target binned IBU on the recorded 2D data
 
 ## Question and scope
 

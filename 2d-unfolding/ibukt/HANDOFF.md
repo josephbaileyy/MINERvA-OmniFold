@@ -71,8 +71,8 @@ IBUKT cap is 6.50 CPU node-hours including prior charges. Neither study changes
 publication claims or wording.
 
 The signed-data study requires the exact REF-C2C1 driver and helper in a separate
-reference checkout at `77d76cfc2d621f8faa010b75006811868494652a`. Its production
-entry point is `signed_data.py --stage STAGE --out FRESH_OUTPUT --reference REFERENCE`
-through the import guard with the implementation checkout as `--expect-root`
-and that specific reference checkout as `--allow`. The binding must pin the
-launcher, staged inputs and login-node resource envelope before execution.
+reference checkout at `77d76cfc2d621f8faa010b75006811868494652a`. Run the study through `launch_signed_data.py --sha256 APPROVED_SHA --stage STAGE
+--out FRESH_OUTPUT --reference REFERENCE`. It checks the historical checkout,
+launches the import guard with the implementation checkout as `--expect-root` and
+the historical checkout as `--allow`, and records the login-node resource use.
+The execution binding and per-stage approvals govern production use.

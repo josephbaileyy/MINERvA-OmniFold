@@ -1,6 +1,6 @@
-# IBUKT declaration amendment A2 (draft for review)
+# IBUKT declaration amendment A2
 
-This amendment proposes a fresh paired known-truth screen after run `ibukt-20261119-c` stopped at C-NOM. It changes the IBU target treatment and proposes cap arithmetic for the new run. The reviewed declaration, cap decision, launch binding and stage approvals are separate prerequisites. [Original declaration](IBUKT-DECLARATION.md)
+This amendment proposes a fresh paired known-truth screen after run `ibukt-20261119-c` stopped at C-NOM. It changes the IBU target treatment and records cap arithmetic for the new run. The reviewed declaration, cap decision, launch binding and stage approvals are separate prerequisites. [Original declaration](IBUKT-DECLARATION.md)
 
 ## Objective and interpretation
 
@@ -28,9 +28,9 @@ After all targets pass, use the checked signed histogram for IBU. Refine the sam
 
 Use a new configuration identity and include the two target treatments in the signed identity, nominal control, pair and score receipts. Preserve the bank/config/product pins, control chain, per-method K, and existing per-cell readout. Scoring must reject a prior-design control or pair, inconsistent target treatment, and a missing signed-target identity. File names alone do not establish treatment identity.
 
-## Proposed §7 and A1 cost arithmetic
+## Amendments to §7 and A1 cost arithmetic
 
-The proposed cap is **6.50 CPU node-hours across all IBUKT attempts**. The amended admission and forecast may use it after the governing decision is merged and cited by exact commit and digest. Carry forward all three observed allocations.
+The cap is **6.50 CPU node-hours across all IBUKT attempts** under DECISION-20261119d, merged at `f0d298611df010a31c5bed7f110af96c29a323e8` with decision SHA-256 `ef5f9862d65a75bdbdea8084eaae022da815cc6f680b147f61effd7788e65a93`. Carry forward all three observed allocations.
 
 | Slurm job | Terminal state | Actual seconds on one CPU node |
 |---|---|---:|
@@ -38,6 +38,6 @@ The proposed cap is **6.50 CPU node-hours across all IBUKT attempts**. The amend
 | `61559122` | COMPLETED | 832 |
 | `61567091` | FAILED | 466 |
 
-The ledger carries `1,936 / 3,600 = 0.5377778` node-hours. A fresh zero-node-hour envstage, 0.50 node-hour prepare, 5.25 node-hour screen and 0.10 node-hour score project **6.3877778 node-hours**, leaving **0.1122222 node-hours (404 seconds)** before the proposed cap. Recheck exact terminal rows and all new actual or reserved charges in fresh `sacct`. Screen admission reserves 5.35 node-hours and limits prior spend to 1.15. Keep the 05:15:00 screen limit and the one-pair forecast, substituting the authorized campaign cap into the existing formula.
+The ledger carries `1,936 / 3,600 = 0.5377778` node-hours. A fresh zero-node-hour envstage, 0.50 node-hour prepare, 5.25 node-hour screen and 0.10 node-hour score project **6.3877778 node-hours**, leaving **0.1122222 node-hours (404 seconds)** before the cap. Recheck exact terminal rows and all new actual or reserved charges in fresh `sacct`. Screen admission reserves 5.35 node-hours and limits prior spend to 1.15. Keep the 05:15:00 screen limit and the one-pair forecast, substituting the authorized campaign cap into the existing formula.
 
 Rehearse with synthetic inputs and zero allocated node-hours under the bound guard before fresh staging. Use a new run name and new receipts. The execution binding will pin all changed bytes, record the rehearsal, and require separate exact-SHA stage approvals and fresh fence acknowledgments.
