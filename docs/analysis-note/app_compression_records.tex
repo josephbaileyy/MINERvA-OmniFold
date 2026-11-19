@@ -156,8 +156,4 @@ For $D(b)>B(b)$, objective~\eqref{eq:negweight-Lb} is strictly convex on $(0,1)$
 
 \paragraph{Binned limit: the divergence for D(b)<B(b) (from App. B).} The reduction fails where $D(b)<B(b)$. With $W_1<0$, $L_b(p)=|W_1|\,\ln p-W_0\,\ln(1-p)$ tends to $-\infty$ as $p\to0^+$ and is unbounded below, with no minimizer.
 
-\subsubsection{Closed-form toy}
-\label{sec:negweight-toy}
-
-A one-dimensional toy uses signal simulation $\mathcal{N}(0,1)$, equally normalized data signal $\mathcal{N}(0.3,1.1)$, and background $\mathcal{N}(2,0.7)$ contributing \SI{16.7}{\percent} of pseudo-data. The known target $(D-B)/S=\phi(x;0.3,1.1)/\phi(x;0,1)$ is smooth and positive. A signed-weight gradient-boosted classifier recovers it with median \SI{\nwToyNeg}{\percent} relative error, matching binned purity's \SI{\nwToyPur}{\percent} and reproducing it bin-for-bin on the same problem. Omitting subtraction leaves \SI{\nwToyBias}{\percent} residual-background bias. Results are stable across classifier seeds ($\pm\SI{\nwToySeed}{\percent}$), with no numerical instability from negative weights. Moving background into the sparse signal tail and deliberately over-subtracting makes the learned reweight floor cleanly at zero where $B>D$, as anticipated.
 
