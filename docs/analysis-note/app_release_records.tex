@@ -101,3 +101,50 @@ so CV centering retains the mean shift as variance and mean centering removes it
 \paragraph{The projection to $(\Eavail,W)$.} The quoted 42-cell covariance is $C_{EW}=M\,C_{Z}\,M^{\top}$, with $M$ of shape $\zprojCells\times\latBins$ over kept axes $(\Eavail,W)$. Each entry of $M$ is the product of the dropped axes' bin widths, giving a differential density in \si{cm^2/GeV^2/nucleon}. That factor is not an acceptance weight. The unfolding's efficiency correction is the step-1 regression for unreconstructed events, and a further efficiency division would double-correct (\S\ref{sec:method-driver}). No separate acceptance weight at the destination binning was specified, and none is applied to Fig.~\ref{fig:eavailWexcess}. Integrating a destination cell requires its own $\Delta\Eavail\,\Delta W$. Rows follow the $7\times6$ $(\Eavail,W)$ grid in measured C order. No source cell is dropped, and the result is exactly symmetric. Support and pinned masks and row-index arrays accompany the covariance and are byte-identical in the two variants. The covariance is paired with the central values of Fig.~\ref{fig:eavailWexcess} by checksum: the central-value array of the projected source and that of the figure are byte-identical, with numerical agreement only as a cross-check.
 
 \paragraph{Conditioning, and why no rank is quoted.} Measured extremes $\lambda_{\min}=+4.359104\times10^{-92}$ and $\lambda_{\max}=1.488215\times10^{-77}$ give $\lambda_{\min}/\lambda_{\max}=2.9\times10^{-15}$ and condition number $\approx3.4\times10^{14}$, at double precision's edge. No eigenvalue is negative, but the smallest lie at the floating-point noise floor of a $\latBins$-term weighted sum. Their sign carries no information: $n_{\mathrm{negative}}=0$ describes this computation and does not show that the source's negative directions were cured. Algebraic rank is a property of the matrix. The numerical rank depends on the cutoff. The 42 eigenvalues decay smoothly across about fifteen orders of magnitude with no plateau. Retained counts are 26 at relative cutoff $10^{-6}$, 36 at the code default $10^{-12}$, 41 at \texttt{numpy.linalg.matrix\_rank}'s default $n\epsilon=9.3\times10^{-15}$, and 42 without a cutoff. No rank is therefore quoted for this covariance; in particular, 36 is the count at one cutoff, not a number of degrees of freedom. An inverse requires a specified regularization, and none is applied implicitly.
+
+% Moved verbatim from the note's app_release.tex in the compression (DECISION-20261119c-joseph-note-compression-outline.md
+% item 3; move-manifest-je JE-08.x): the release schema, RC7's contents list and the verifier's tolerances, and steps 1-4 of the
+% worked projection example. The note keeps the verifier sentence, the 20-jitter sentence and the example's usage caveats.
+\subsection{Release schema}
+\label{app:release-schema}
+
+The broader result package must contain every item below; RC7 does not contain all of them. A $\checkmark$ marks identities or values already fixed (bin edges: \S\ref{app:release-edges}; checksums: Ref.~\cite{NoteRecords2026}, identities already fixed); the rest are packaging. A fixed identity specifies which object is meant, not whether the object is scientifically qualified.
+
+\begin{enumerate}[itemsep=2pt]
+  \item \textbf{Reporting bin edges and units, per axis} $\checkmark$: $\pT$, $\pPar$ and $q_{3}$ in \si{GeV/c}, $\Eavail$ and $W$ in \si{GeV}, with each wide terminal catch bin identified.
+  \item \textbf{The flattened-cell ordering} $\checkmark$: the dense $14\times16\times7\times7\times6$ grid in C order, with the reported subset supplied as an explicit index array, never inferred from a positivity cut.
+  \item \textbf{Central values}: the five-axis array and every projection quoted, each with its own checksum, on the density scale in \si{cm^2/nucleon} divided by the product of its kept axes' units.
+  \item \textbf{Covariances} $\checkmark$: the five-axis covariance of the configuration-(a) central value and its $(\Eavail,W)$ projection, with the algebra of Eqs.~\eqref{eq:zassembly}--\eqref{eq:zinflation}, the specified centering variant, and the band partition.
+  \item \textbf{Masks} $\checkmark$: the support mask, the pinned mask (bins where the inflation denominator vanished and $g$ was specified as $1$), and the unreported-cell mask.
+  \item \textbf{Projection matrices} $\checkmark$: $M$ itself, with its content checksum, its shape, and the explicit statement that its entries are the dropped axes' bin-width products, which is needed to specify the destination units.
+  \item \textbf{Generator predictions}: the four truth-level $(\Eavail,W)$ predictions (GENIE-CV, GENIE$+$Valencia~2p2h, NuWro, GiBUU) and the MINERvA~Tune~v1 ancillary model, as arrays on the release binning rather than figure curves, each with generator version, configuration, target and flux. GENIE and NuWro require the flux-repaired predictions of 2026-09-27 (per-event reweight to the analysis PPFX flux plus the 50--\SI{100}{GeV} supplements); GiBUU requires its reweight to the same flux convention (\S\ref{sec:3d-models}).
+        % KNOWN_ISSUES.md rows 82--83
+  \item \textbf{Provenance}: for each object, the producing code revision, the job, and the checksum of the bytes read back from the closed file. Of these, only the following are fixed: the assembling revision and job of $C_{Z}$, the job of $C_{EW}$, and the read-back checksum of the row index. No producing revision or job is recorded for the other objects, and the assembled package carries none.
+  \item \textbf{One minimal worked example}: \S\ref{app:release-example}.
+  \item \textbf{Limiting measurements}: the four measurements of \S\ref{sec:eavailw-adopted} that limit what the five-axis covariance of the configuration-(a) central value supports, stored with it in the released package, not only in this note.
+\end{enumerate}
+
+\subsection{RC7 contents and verifier tolerances}
+
+The package holds:
+\begin{itemize}[nosep,leftmargin=2em]
+  \item the sufficient inputs of the joint tests, for the evaluation behind the decisions and for the evaluation with the recovered pseudo-experiments added;
+  \item the arrays behind the figures of the earlier article version;
+  \item the noise-free differences behind the $L_2$ ratios;
+  \item an inventory of the analyzed AnaTuples;
+  \item the replay and figure code, and the expected outputs.
+\end{itemize}
+In the two replays of the joint tests, floating-point values must agree to a relative $10^{-12}$, and integers and decisions must agree exactly. Each number that the earlier article version quoted from its Figs.~1--3 must agree with its printed value to within half a unit of its last printed digit, and the $L_2$ ratios must reproduce their printed range. For the three figures themselves, the check is that their files are produced.
+
+\subsection{One minimal projection example}
+\label{app:release-example}
+
+The released package is to support the following computation, which checks the package's ordering, mask and weights from end to end.
+
+\begin{enumerate}[itemsep=2pt]
+  \item The five-axis central values $\mathbf{x}$ have \num{65856} entries, and the reported-cell index array has \latBins\ entries.
+  \item $M$ has shape $\zprojCells\times\latBins$, and $C_{Z}$ has shape $\latBins\times\latBins$. The five-axis covariance of the configuration-(a) central value is the file \texttt{z-cv.npz}, with \texttt{sha256} \zcvDigest\ldots\ and $\sqrt{\Tr C}=\SI{5.6742e-38}{}$, so a loaded $C_{Z}$ can be checked against both.
+  \item The projection $\mathbf{y}=M\mathbf{x}_{\text{reported}}$, reshaped to $7\times6$ \textbf{in C order}, must reproduce the $(\Eavail,W)$ central-value map of Fig.~\ref{fig:eavailWexcess}. The F-order control establishes the ordering: C order agrees with the figure to a relative $1.7\times10^{-16}$; F order disagrees at relative $1.0$.
+  \item The projected covariance $C_{EW}=M\,C_{Z}\,M^{\top}$ is checked by $\sqrt{\Tr C_{EW}}=\SI{4.4552e-39}{}$ and exact symmetry ($\max|C-C^{\top}|=0$). Its numerical rank depends on the cutoff, because the spectrum decays smoothly with no plateau: the retained count is 26 at $10^{-6}$, 36 at the projector's hardcoded $10^{-12}$, 41 at \texttt{numpy.linalg.matrix\_rank}'s default, and 42 with no cutoff. The rank is therefore not an integrity check: with NumPy's default cutoff, an intact matrix fails a test for 36. The check is instead that $|\lambda_{\min}|/\lambda_{\max}$ is of order $10^{-15}$, the edge of double precision; the matrix is ill-conditioned, without a definite rank. Do not check the sign of $\lambda_{\min}$, which sits at the noise floor and carries no information; a second host reproduces $\lambda_{\min}$ to only five significant digits.
+\end{enumerate}
+
