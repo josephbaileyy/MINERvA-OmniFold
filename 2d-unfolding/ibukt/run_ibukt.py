@@ -218,6 +218,28 @@ def root_vector(path: Path, name: str, comparison: Any) -> np.ndarray[Any, Any]:
         source.Close()
 
 
+def _reporting_cells(path: Path) -> np.ndarray[Any, Any]:
+    import ROOT
+
+    source = ROOT.TFile.Open(str(path), "READ")
+    if not source or source.IsZombie():
+        raise ValueError("cannot open paper ROOT file")
+    try:
+        covariance = source.Get("StatOnlyCovariance")
+        if not covariance or (covariance.GetNrows(), covariance.GetNcols()) != (
+            224,
+            224,
+        ):
+            raise ValueError("paper statistical covariance must be 224 by 224")
+        diagonal = np.fromiter((covariance(i, i) for i in range(224)), dtype=float)
+        selected = np.flatnonzero(diagonal > 0)
+        if selected.size != 205:
+            raise ValueError("reporting mask must contain exactly 205 cells")
+        return selected
+    finally:
+        source.Close()
+
+
 def prepare(args: argparse.Namespace, cfg: dict[str, Any]) -> None:
     """Capture the unchanged real-data pipeline and verify both recorded centrals.
 
@@ -320,15 +342,7 @@ def prepare(args: argparse.Namespace, cfg: dict[str, Any]) -> None:
     er = root_vector(args.out / "identity.root", "hXSec2D", comparison)
     er_ref = root_vector(args.stage / "er.root", "hXSec2D", comparison)
     c2 = read_npz(args.stage / "c2.npz")
-    import compare_to_paper_fullcov as paper
-
-    published = ROOT.TFile.Open(str(args.stage / "paper.root"), "READ")
-    selected = np.flatnonzero(
-        np.diag(paper.tmatrix_to_numpy(published.Get("StatOnlyCovariance"))) > 0
-    )
-    published.Close()
-    if selected.size != 205:
-        raise ValueError("reporting mask must contain exactly 205 cells")
+    selected = _reporting_cells(args.stage / "paper.root")
     checks = {"E_R": require_close(er[selected], er_ref[selected], "E_R")}
     for k in (5, 10):
         idx = list(c2["ks"]).index(k)

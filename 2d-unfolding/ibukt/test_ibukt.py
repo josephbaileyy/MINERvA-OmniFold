@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import importlib.util
 import sys
+from types import SimpleNamespace
+from unittest.mock import Mock
 
 import numpy as np
 import pytest
@@ -22,6 +24,40 @@ def test_root_edges_and_axis_order(cfg):
         np.array([0, 0.07, 4.5, 1.0, np.nan]), np.array([1.5, 2.0, 3.0, 60.0, 4.0]), cfg
     )
     assert got.tolist() == [0, 17, -1, -1, -1]
+
+
+@pytest.mark.parametrize("reported_count", [204, 205])
+def test_prepare_mask_matches_legacy_covariance_conversion(
+    tmp_path, monkeypatch, reported_count
+):
+    # The IBUKT declaration defines 205 positive-diagonal cells from paper.root.
+    unreported = np.arange(1, 200, 11)
+    expected = np.delete(np.arange(224), unreported)[:reported_count]
+    diagonal = np.full(224, -1.0)
+    diagonal[unreported] = 0.0
+    diagonal[expected] = 2.0
+    dense = np.full((224, 224), 9.0)
+    np.fill_diagonal(dense, diagonal)
+    legacy = np.flatnonzero(np.diag(dense) > 0)
+    np.testing.assert_array_equal(legacy, expected)
+    covariance = Mock(side_effect=lambda row, col: dense[row, col])
+    covariance.GetNrows.return_value = 224
+    covariance.GetNcols.return_value = 224
+    source = Mock()
+    source.IsZombie.return_value = False
+    source.Get.return_value = covariance
+    root = SimpleNamespace(TFile=SimpleNamespace(Open=Mock(return_value=source)))
+    monkeypatch.setitem(sys.modules, "ROOT", root)
+    monkeypatch.setitem(sys.modules, "compare_to_paper_fullcov", None)
+
+    path = tmp_path / "paper.root"
+    if reported_count == 205:
+        np.testing.assert_array_equal(runner._reporting_cells(path), legacy)
+    else:
+        with pytest.raises(ValueError, match="exactly 205 cells"):
+            runner._reporting_cells(path)
+    source.Get.assert_called_once_with("StatOnlyCovariance")
+    source.Close.assert_called_once_with()
 
 
 def test_opposite_within_bin_truths_preserve_counts_but_change_efficiency(cfg):
