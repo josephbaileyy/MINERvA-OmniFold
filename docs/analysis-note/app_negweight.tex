@@ -187,3 +187,12 @@ The five-dimensional pseudo-experiments with both background treatments, and the
 % Plain status of the use of the five-axis covariance as printed at sec:eavailw-adopted (sec_5d.tex): it does not meet
 % its specification's acceptance criteria, and its use covers only this file and its projection.
 % Note consolidation (DECISION-20261027 item 1, cost-list R05): the status and the use's scope are no longer restated here; the sentence points to their single home, sec:eavailw-adopted, where the four measurements also print. "Neither fact" now refers to that status and that scope.
+
+\subsection{Background treatment in other unbinned analyses}
+\label{sec:negweight-practice}
+H1 cut backgrounds to a negligible level. LHCb corrected per track before unfolding. ATLAS first left its less-than-\SI{0.25}{\percent} background in place and assigned it as an uncertainty, while identifying negatively-weighted simulated events as the natural in-method subtraction~\cite{ATLAS:2024jets,Andreassen:2021zzk}.
+% Joseph's approval via the director, 2026-11-19: arXiv:2611.24270 (submitted 2026-11-18), sec. 3.1 and App. D: a classifier
+% reweighting toward data minus negatively weighted ttbar simulation (Nachman and Thaler, arXiv:2007.11586), weights clipped at 1,
+% in five summary observables; the sentence says no more than that.
+Ref.~\cite{Canelli:2025guide} recommends this in-method subtraction for nontrivial backgrounds. ATLAS's later measurement subtracts its background with a neural-network reweighting of negatively weighted background simulation~\cite{ATLAS:2026fullps}. Recent methodological work explicitly treats backgrounds, fakes, acceptance, and inefficiency in OmniFold-HI~\cite{Falcao:2025backgrounds} and generative unfolding~\cite{Butter:2025genfold}. These constructions address related problems. Their subtraction prescriptions can differ.
+% Received verbatim from director-helper-3 (Part 1's background-practice paragraph; move-manifest-h3-bgpractice.tsv H3-BG.01..05; the director's Part 1 ruling (a), 2026-11-19).
