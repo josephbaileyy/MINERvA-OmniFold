@@ -82,10 +82,8 @@ First grade of the held-out-tune coverage test of the 2D covariance (\S\ref{sec:
 
 % Move pairs LR-18 and LR-19 (limitation-resolver, prose item 6): sec_method.tex:48 and :79 at 2fe070fec, verbatim;
 % sec:method-config keeps the adopted configurations and the measured differences.
-\subsubsection{Seed choices of the two-dimensional estimators}
+\subsubsection{Seed choices of the two-dimensional estimators (\S\ref{sec:method-config})}
 \label{app:devhistory-seeds}
-
-This is the history of two choices of \S\ref{sec:method-config}: the training seed of the LightGBM central value, and the exact-split cross-check, configuration~(b).
 
 Seed~42 was chosen on computing cost: building the statistical band at seed~42 was the cheaper of the two costed ways to give the central value and the statistical band a common seed.
 
@@ -98,10 +96,8 @@ The exact-split cross-check is configuration~(b) of \S\ref{sec:method-config}. I
 % Move pairs CV-A01, CV-A04..CV-A07 (cov2d; history-cuts/move-manifest-cv-20261118.tsv sends; journal-editor receives): sentences
 % of sec_systematics.tex @79a934a41, verbatim, with their source comment lines, except one token: in CV-A06 the
 % self-pointer (App.~\ref{app:devhistory}) becomes (Table~\ref{tab:devhistory}). The opening sentence is new framing.
-\subsubsection{Checks of the 2D covariance's construction, and a superseded approximation}
+\subsubsection{Checks of the 2D covariance's construction, and a superseded approximation (\S\ref{sec:systematics})}
 \label{app:devhistory-2dchecks}
-
-This is the record of the checks of the 2D covariance's construction, and of the approximation the reported covariance replaced, which \S\ref{sec:systematics} cites.
 
 % CV-A01 (sec_systematics.tex:122):
 Seven universes of the sweep used by the quoted universe block (\S\ref{sec:uq-universes}) are reproduced to $\le1.4\times10^{-11}$ by the committed driver; the others are accepted by inference, because the same code produced them (Ref.~\cite{NoteRecords2026}, \recentry{july-sweep}).
@@ -144,10 +140,8 @@ Both programs that use the covariance for the reported results, the $\chi^{2}$ c
 % Move pair H3-010 (director-helper-3; history-cuts/move-manifest-h3-20261117.tsv sends, move-manifest-je-20261117.tsv
 % receives): sec_systematics.tex's defects of the earlier 2D budget, verbatim with its comment lines; sec:uq-2d-scope keeps a
 % summary that names the three defects and points here.
-\subsubsection{Defects of the earlier two-dimensional budget}
+\subsubsection{Defects of the earlier two-dimensional budget (\S\ref{sec:uq-2d-scope})}
 \label{app:devhistory-2dbudget}
-
-This is the account of the earlier 2D budget's construction defects, which \S\ref{sec:uq-2d-scope} names.
 
 The comparison with the earlier budget, with each defect's diagnostics, is kept in the records document.
 
@@ -156,10 +150,8 @@ The comparison with the earlier budget, with each defect's diagnostics, is kept 
 
 % Move pair H3-011 (director-helper-3): sec_validation.tex's secondary analysis, attribution rule and the band's rebuild,
 % verbatim except one token: "(below)", which pointed to sec:coverage's post hoc rescoring, becomes (\S\ref{sec:coverage}).
-\subsubsection{The completeness-divided two-dimensional statistical band}
+\subsubsection{The completeness-divided two-dimensional statistical band (\S\ref{sec:coverage})}
 \label{app:devhistory-band}
-
-This is the account of the first-built statistical band's secondary analysis and rebuild, whose outcome \S\ref{sec:coverage} states.
 
 Unlike the band's replicas, the central value has completeness exactly~1. A secondary analysis, added after the pilot, applies the band's division to the toys. Scored against the same band, the divided toys overcover: $C_1=\covTwoDRepCOne$, with its interval above the window. The attribution rule was fixed before the full run, but its clause for the undercoverage outcome was written after the pilot pulls had been seen. Under this rule the primary undercoverage is attributed to the completeness term of the band. The attribution is partial: in the replica form, the $\pPar$ \SIrange{40}{60}{GeV/c} column still undercovers.
 
@@ -196,15 +188,6 @@ The excess width lies in the data-statistics component. The per-bin pull RMS fal
 
 % Move pair H3-020 (director-helper-3; move-manifest-h3-20261117.tsv sends): sec_results.tex:148 @ 79a934a41, sentences 2-4,
 % verbatim with the source comments :153-154; sec:results-tension keeps sentence 1 and points here.
-\subsection{Two-dimensional muon cross section (\S\ref{sec:results})}
-\label{app:devhistory-results}
-
-This is the exact-split cross-check's part of the eigenmode decomposition of \S\ref{sec:results-tension}. For the exact-split cross-check, $\chi^{2}$ is larger and distributed differently: its components of magnitude $5$--$6$ lie in moderate-$\lambda$ modes on the low-$\pT$ ridge of the cross-section peak. Its 10 smallest-$\lambda$ modes carry \SI{3}{\percent} of the $\chi^{2}$, and the 73 best-measured directions give $\chi^{2}=291$ ($\chi^{2}/205=1.42$, again divided by the number of reported bins; App.~\ref{sec:tension}). Going from 5 to 10 iterations changes the LightGBM (seed~1) value by a negligible $+0.01$.
-% Revision D' 2026-11-06 (referee reads of D, both ACCEPT; Sonnet and the interpreter: print the raw chi2 and the directions kept): docs/orchestration/receipts/2d-lgbm42-20261011/tension_report_exact_control.txt:56 prints "1e-04  1.419  73". Arithmetic: 1.419 x 205 = 290.9; 205 x [1.4185, 1.4195) is in [290.8, 291.0], 291 at three figures.
-% Director-added wording correction 2026-11-06, for Joseph's review before merge (not among the two he approved): the truncated chi2 was printed as chi2/ndf, but its divisor is the 205 reported bins, not the directions kept. 2d-unfolding/diagnose_tension.py @ c3dbe30f4 (main): :110 n = int(mask.sum()), the 205 reported bins; :183 and :193 divide every truncated chi2 by n (the same divisor at 56e30b9c9 :108/:181/:191 and at 735c909da). Receipt docs/orchestration/receipts/2d-lgbm42-20261011/tension_report_exact_control.txt:56 ("1e-04  1.419  73"). No number changed.
-
-% Move pair H3-027 (director-helper-3; lane/note-cx-takeover-20261117 sends): sec_3d.tex:135 sentence 1 @ 7e261e5f7, verbatim;
-% the body keeps "... were generated from a defective flux, described in App.~\ref{app:devhistory}" with the records pointer.
 \subsection{Available energy and momentum transfer (\S\ref{sec:3d})}
 \label{app:devhistory-3d}
 
@@ -216,18 +199,14 @@ This is the account of the generation flux's defects behind the flux repair of \
 % Move pairs LR-01..LR-16 (limitation-resolver; history-cuts/move-manifest-lr-20261117.tsv sends, move-manifest-je-20261117.tsv
 % receives): sentences of sec_fived16.tex:193, :276, :283 and :295 at 2fe070fec, verbatim and in their source order, with the
 % source comments of :276 and :283; the body keeps each outcome and points here.
-\subsubsection{The sixteen-cell run-period block: its conditions}
+\subsubsection{The sixteen-cell run-period block: its conditions (\S\ref{sec:fived16-pl})}
 \label{app:devhistory-fived16pl}
-
-This is the account of the conditions under which the sixteen-cell run-period block $C_{\mathrm{PL,5D}}$ of \S\ref{sec:fived16-pl} would not be added.
 
 Three conditions under which it would not be added were fixed before any of the measurements that decide them was computed. The first is one existing component, within two standard deviations of its own size, explaining at least half of both period-group patterns. The second is a replica spread of the block's median per-cell width above half that width. The third is, in the median replica, less than half of the replica-built block's variance lying in the observed block's plane. The conditions were set after the block's reported numbers had been read, and the second and third were not expected to fire. None occurred. That result establishes neither the block's size nor the absence of overlap: descriptively, one detector-response pair, a pion-interaction band with the meson response shift, reproduces one period's offset pattern within noise and part of the other two.
 % absence-ok: "were not" and "establishes neither ... nor the absence of overlap" are the source paragraph's own statements (sec_fived16.tex:193 @ 2fe070fec, LR-02 and LR-04), moved verbatim
 
-\subsubsection{The coverage tests of the sixteen-cell covariance: stops and repair}
+\subsubsection{The coverage tests of the sixteen-cell covariance: stops and repair (\S\ref{sec:fived16-fd})}
 \label{app:devhistory-fived16cov}
-
-This is the account of the coverage tests of the sixteen-cell covariance at the two held-out tunes of \S\ref{sec:fived16-fd}: the first test, its staged redesign, and the second test's entry-check stop and repair. \S\ref{sec:fived16-fd} states their outcomes.
 
 The design and the stop of the first test and of its staged redesign are kept in the records document.
 
@@ -275,10 +254,8 @@ prediction & $\chi^2$ & shape-only $\chi^2$ & $\chi^2$ & shape-only $\chi^2$ & $
 
 % Move pair LR-17 (limitation-resolver, prose item 11): sec_5d.tex:78 at 2fe070fec, with framing-map row B4's [W] wording,
 % which drops the two pointers to the shelved paper's and Supplement's recovery figures; sec:val-departure keeps the residual sizes.
-\subsubsection{Seed sets of the five-dimensional recovery tests}
+\subsubsection{Seed sets of the five-dimensional recovery tests (\S\ref{sec:val-departure})}
 \label{app:devhistory-recovery-seeds}
-
-This is the provenance of the pseudo-experiments behind the recovery residuals of \S\ref{sec:val-departure}.
 
 The sixty pseudo-experiments of the development variant, configuration~(d), at the GiBUU-to-GENIE $\Eavail$ shape, and the twenty for each of the three shapes not used in the joint-test estimator's selection, for configuration~(e), use seed sets that were not held out from the estimator's development.
 % absence-ok: "were not held out" is the source sentence's own statement (sec_5d.tex:78 @ 2fe070fec, LR-17)
@@ -295,10 +272,8 @@ The statistical intervals of the development assessment of $R$ take their width 
 
 % Move pair CX-04..CX-21 (the Codex writer lane; history-cuts/move-manifest-cx-20261117.tsv sends, history-cuts/move-manifest-je-20261117.tsv receives): the three paragraphs of sec_joint.tex:237-241 @ 2fe070fec,
 % verbatim, with their source comments (:242-249); sec:joint5d-lost keeps the outcome beside Table tab:joint5d.
-\subsubsection{Lost pseudo-experiments of the generator tests}
+\subsubsection{Lost pseudo-experiments of the generator tests (\S\ref{sec:joint5d-lost})}
 \label{app:devhistory-lost}
-
-This is the account of the generator tests' lost pseudo-experiments and their recovery, whose outcome \S\ref{sec:joint5d-lost} states.
 
 Computing time limits interrupted or prevented \jtLostCal{} of the submitted calibration pseudo-experiments (\jtLostInterrupted{} interrupted, \jtLostNever{} never started) and \jtLostPow{} power pseudo-experiments. The decisions in Table~\ref{tab:joint5d} were evaluated on the completed draws. A sensitivity analysis computed before the lost outcomes were known showed that every decision could change under a realizable assignment of them. Had every interrupted draw exceeded the observed statistic, no test would have been rejected ($p$ \jtWorstIntLo--\jtWorstIntHi). Among completed draws, runtime is not associated with the statistic ($|\rho|\le\jtRuntimeRho$), which supports but does not certify the decisions.
 
