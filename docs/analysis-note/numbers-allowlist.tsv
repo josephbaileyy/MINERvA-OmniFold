@@ -343,7 +343,6 @@ token	delta	owner	item	reason
 39	-1	director-helper-3	P1-COMPRESS	same
 1200	-1	director-helper-3	P1-COMPRESS	abstract: "a five-dimensional test of 1,200 pseudo-experiments" shortened; 1,200 prints at sec:coverage-5d (sec_5d.tex)
 9	-1	director-helper-3	P1-COMPRESS	abstract cut: "9 of the 16 cells" (\fvval{vhalf-n-notvalid}); prints at sec:fived16-fd (sec_q3_fived16.tex)
-2.6	-1	director-helper-3	P1-COMPRESS	abstract: "by up to \lrval{stab-max} statistical standard deviations" shortened; "at most 2.6 statistical standard deviations" prints at sec:val-departure (sec_5d.tex:103)
 7.86	-2	director-helper-3	P1-COMPRESS	the abstract's and the executive summary's median per-cell uncertainty (\fvval{sigmed-reported}) are cut; it prints at sec:fived16-cov (sec_fived16.tex) and in tab:what-is-measured
 2	-2	limitation-resolver	compression chunk P2-1, LR-C01/LR-C12	truth-W residual (±2 MeV) and the control-shape paragraph (~2 GeV), moved to records_compression_lr.tex
 6	-2	limitation-resolver	compression chunk P2-1, LR-C12	control-shape paragraph (4–6 GeV/c, ⟨Eν⟩ ≈ 6 GeV), moved to records
