@@ -269,8 +269,8 @@ UNIT_REQUIRED = {"0.564": "%", "1.008": "%", "0.563": "%", "2.26": "%", "3.65": 
 # context, and cannot be told apart by a unit. Added 2026-10-21 with main_note's move to outward-facing
 # (DECISION-20261021-joseph-da-and-note-records.md item 2), each verified at the source:
 #     1.014 -> app_history.tex strikes the bare 2D combined log-normal chi2/ndf `1.014`; the posted note's closure
-#              table prints the live injected-q3-bump mean weight "(mean weight 1.014)" (sec_q3_bias.tex since Part 5
-#              chunk P5-1 moved the closure map there from sec_validation.tex).
+#              table prints the live injected-q3-bump mean weight "(mean weight 1.014)" (part5_validation.tex since
+#              Part 5 chunk P5-2 merged the closure map, moved there from sec_validation.tex in P5-1, into the test table).
 #     0.912 -> app_history_pet.tex strikes \petRatio, the legacy PET/GBDT total ratio 0.912; the posted note prints
 #              the live fixed-truth coverage fraction "C2 = 0.912" (\covTwoDCTwo, values.tex) four times. The paper
 #              avoids the same collision by printing 91.2 % (values.tex, \covTwoDCTwoPctOne).
@@ -296,7 +296,7 @@ UNIT_REQUIRED = {"0.564": "%", "1.008": "%", "0.563": "%", "2.26": "%", "3.65": 
 #              0.377 preceded by a minus sign and not followed by a digit, a point or a percent sign is removed, and
 #              only in main_note.
 CONTEXT_EXEMPT = {
-    ("main_note", "1.014"): (r"mean\s+weight\s+1\.014(?!\d|\.\d)", "sec_q3_bias.tex", "(mean weight 1.014)"),
+    ("main_note", "1.014"): (r"mean\s+weight\s+1\.014(?!\d|\.\d)", "part5_validation.tex", "(mean weight 1.014)"),
     ("main_note", "0.912"): (r"C\s*2\s*=\s*0\.912(?!\d|\.\d)", "values.tex", r"\newcommand{\covTwoDCTwo}{0.912}"),
     ("main_note", "1.65"): (r"(?<![\d.])1\.65(?![\d.])(?!\s*\u00d7)", "values_fived16.tex", r"\@namedef{fv@g-tune-pull-R15}{1.65}"),
     ("main_note", "0.377"): (r"[\u2212-]\s*0\.377(?![\d.%])", "values_fived16.tex", r"\@namedef{fv@prr-rho-ibu200-q3}{-0.377}"),
