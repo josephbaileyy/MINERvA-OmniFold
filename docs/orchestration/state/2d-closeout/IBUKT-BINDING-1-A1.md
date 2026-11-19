@@ -8,9 +8,9 @@ The proposed fresh run is `ibukt-20261119-c`. The authorization for fixes, guard
 |---|---|---|
 | `2d-unfolding/ibukt/run_ibukt.py` | `d93ab9ad8be8d68fe4337d4b2edf7d730a39344e` | `ff1b0c35ccc0ff2c71c9001e049e5efdba555f9dba11fd3def858e14c333a00f` |
 | `2d-unfolding/ibukt/connect.py`, successor to launcher commit `a27385f4b` | `e2fd6291eaf704c5ec8a5bf6ba5ff3079d5b9831` | `d2c1843c4124a4257a2769fe55994347ce7729fce079f9ade05f5b9bc5110935` |
-| `2d-unfolding/ibukt/rehearse.py` | `e2fd6291eaf704c5ec8a5bf6ba5ff3079d5b9831` | `edd136fad8be6ec7d5dce465cbcaee47971f135ca839453c539409eb2bee24e5` |
+| `2d-unfolding/ibukt/rehearse.py` | Same tree as this addendum | `76003e86374ca02a70634967b7e856f8d56edbd5422711d875785b81a2b2d799` |
 
-The prepare fix reads the pinned paper covariance diagonal directly with PyROOT. The mask remains the 205 positive diagonal entries on the 224-cell pT-major grid. The guarded rehearsal independently compares every index in the pinned publication file against the legacy dense covariance conversion.
+The prepare fix reads the pinned paper covariance diagonal directly with PyROOT. The mask remains the 205 positive diagonal entries on the 224-cell pT-major grid. The guarded rehearsal compares every ordered index against the legacy dense covariance conversion with `numpy.array_equal`. NumPy 1.26 can invoke `lscpu` when its testing module is imported. Parity on the pinned publication file is pending a successful rehearsal.
 
 The rehearsal runs each probe from its own private scratch directory with its own inputs, logs, and guard inventory. Its no-fit topology probe has 64 CPUs of affinity and reports how LightGBM resolves its default thread count, including whether loky attempted to launch `lscpu`. The fit probes use eight threads and synthetic inputs. The launcher limits total rehearsal wall time to ten minutes and stops a timed-out probe's process group. The rehearsal uses zero allocated node-hours.
 

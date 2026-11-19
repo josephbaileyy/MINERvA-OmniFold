@@ -12,7 +12,6 @@ import argparse
 from array import array
 from contextlib import suppress
 from hashlib import file_digest, sha256
-from importlib.metadata import version
 import json
 import os
 from pathlib import Path
@@ -92,7 +91,9 @@ def paper_mask(path: Path) -> None:
                 dense[row, col] = matrix(row, col)
     legacy = np.flatnonzero(np.diag(dense) > 0)
     direct = runner._reporting_cells(path)
-    np.testing.assert_array_equal(direct, legacy)
+    # NumPy 1.26's testing module probes the CPU by launching lscpu at import.
+    if not np.array_equal(direct, legacy):
+        raise ValueError("paper reporting indices differ from the legacy mask")
     print(json.dumps({"paper_sha256": digest(path), "selected": direct.tolist()}))
 
 
@@ -388,11 +389,13 @@ def topology() -> None:
     run = subprocess.run
     evidence: dict[str, Any] = {
         "versions": {
-            "lightgbm": version("lightgbm"),
+            "lightgbm": lightgbm.__version__,
             "joblib": joblib.__version__,
             "loky": loky.__version__,
         },
         "affinity": affinity,
+        "os_cpu_count": os.cpu_count(),
+        "loky_max_cpu_count": os.environ.get("LOKY_MAX_CPU_COUNT"),
         "physical_core_branch": False,
         "lscpu_attempted": False,
         "effective_n_jobs": {},
@@ -403,10 +406,10 @@ def topology() -> None:
         return physical()
 
     def record_process(argv: Any, *args: Any, **kwargs: Any) -> Any:
+        executable = argv[0] if isinstance(argv, (tuple, list)) and argv else argv
         if (
-            isinstance(argv, (tuple, list))
-            and argv
-            and Path(os.fsdecode(argv[0])).name == "lscpu"
+            isinstance(executable, (str, bytes, os.PathLike))
+            and Path(os.fsdecode(executable)).name == "lscpu"
         ):
             evidence["lscpu_attempted"] = True
         return run(argv, *args, **kwargs)

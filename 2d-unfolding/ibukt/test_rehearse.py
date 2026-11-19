@@ -4,10 +4,14 @@ import json
 import os
 import sys
 import time
+from types import SimpleNamespace
+from unittest.mock import MagicMock, Mock
 
+import numpy as np
 import pytest
 
 import rehearse
+import run_ibukt
 
 
 @pytest.mark.parametrize("location", ["cfs", "outside", "symlink"])
@@ -108,3 +112,69 @@ def test_probe_timeout_kills_descendants(tmp_path):
     assert "spawned" in (tmp_path / "probe.log").read_text()
     time.sleep(0.75)
     assert not (tmp_path / "late").exists()
+
+
+@pytest.mark.parametrize("matching", [True, False])
+def test_paper_mask_compares_exact_indices_without_numpy_testing(
+    tmp_path, monkeypatch, capsys, matching
+):
+    expected = np.arange(19, 224)
+    matrix = Mock(side_effect=lambda row, col: float(row == col and row >= 19))
+    matrix.GetNrows.return_value = matrix.GetNcols.return_value = 224
+    source = MagicMock()
+    source.Get.return_value = matrix
+    source.IsZombie.return_value = False
+    source.__enter__.return_value = source
+    root = SimpleNamespace(TFile=SimpleNamespace(Open=Mock(return_value=source)))
+    monkeypatch.setitem(sys.modules, "ROOT", root)
+    monkeypatch.setitem(np.__dict__, "testing", None)
+    monkeypatch.setattr(rehearse, "digest", lambda _: "pinned-paper")
+    if matching:
+        rehearse.paper_mask(tmp_path / "paper.root")
+        assert json.loads(capsys.readouterr().out)["selected"] == expected.tolist()
+    else:
+        monkeypatch.setattr(run_ibukt, "_reporting_cells", lambda _: expected[::-1])
+        with pytest.raises(ValueError, match="differ from the legacy mask"):
+            rehearse.paper_mask(tmp_path / "paper.root")
+
+
+def test_topology_uses_module_versions_without_distribution_metadata(
+    monkeypatch, capsys
+):
+    context = SimpleNamespace(_count_physical_cores=lambda: 32)
+    loky = SimpleNamespace(__version__="loky-test")
+    joblib = SimpleNamespace(__version__="joblib-test")
+
+    class Estimator:
+        n_jobs = None
+
+        def _process_n_jobs(self, _configured):
+            return context._count_physical_cores()
+
+    class Classifier(Estimator):
+        pass
+
+    class Regressor(Estimator):
+        pass
+
+    lightgbm = SimpleNamespace(
+        __version__="lightgbm-test", LGBMClassifier=Classifier, LGBMRegressor=Regressor
+    )
+    for name, module in {
+        "lightgbm": lightgbm,
+        "joblib": joblib,
+        "joblib.externals": SimpleNamespace(loky=loky),
+        "joblib.externals.loky.backend": SimpleNamespace(context=context),
+    }.items():
+        monkeypatch.setitem(sys.modules, name, module)
+    monkeypatch.setattr(
+        os, "sched_getaffinity", lambda _: set(range(64)), raising=False
+    )
+    rehearse.topology()
+    record = json.loads(capsys.readouterr().out)
+    assert record["versions"] == dict(
+        lightgbm="lightgbm-test", joblib="joblib-test", loky="loky-test"
+    )
+    assert record["physical_core_branch"] is True
+    assert record["lscpu_attempted"] is False
+    assert record["effective_n_jobs"] == dict(Classifier=32, Regressor=32)
