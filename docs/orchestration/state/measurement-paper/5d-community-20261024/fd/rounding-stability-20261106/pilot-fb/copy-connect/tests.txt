@@ -1,22 +1,61 @@
-# HEAD 8e2e3a1ed7a8304ea9a313d24362455127edc4fd
-# clean clone, Python 3.12.2, 2026-11-19T02:43:01Z
-# 2f5e8c79ba4d2154f0807f8b7e63933ae2427705b403fd4b783fdc13f1413570  nd-unfolding/pfb_copy_remote.py
-# 06702d4b725a1ca993d2a39273cabbacfa82f4b5b8096ec7ae4c777a3867cb9c  nd-unfolding/pfb_copy_launch.sh
-# a158a77e64c1d7b7e567a452dd37d776cad5e30ba096ddc0ffbb45503372de7b  nd-unfolding/tests/test_pfb_copy.py
+# HEAD 941a30f25b5337297511346ee9ec18676c271bee
+# clean clone, Python 3.12.2, 2026-11-19T03:08:04Z; imports fb_pilot_analyze, rounding_mechanism_analyze and rounding_mechanism_probe
+# d2d7043e799794b4f6f0b49a7a6dcba2f0f45a1a293194d1ecec607cce7b8d31  nd-unfolding/pfb_copy_remote.py
+# f8522a44410a35bc8864651c32f765918cde853e16854086aedc92e98f978903  nd-unfolding/pfb_copy_launch.sh
+# f2ea9f3e499aa46205ea4954a317309cc40d6911211c0df5d2edad13628e4635  nd-unfolding/tests/test_pfb_copy.py
+# e31bf0737aee438b001139430c1a049068d51efd92424320cbf33875bc762e3e  nd-unfolding/tests/pfb_copy_testentry.py
 # command: python3 -B -m unittest -v nd-unfolding/tests/test_pfb_copy.py
 test_a_clear_copy_makes_plain_new_files_inside_the_stage (nd-unfolding.tests.test_pfb_copy.Copy.test_a_clear_copy_makes_plain_new_files_inside_the_stage) ... ok
-test_a_moved_source_refuses_before_any_write (nd-unfolding.tests.test_pfb_copy.Copy.test_a_moved_source_refuses_before_any_write) ... refusing: the stat of ['rs1_A0_b-_j13.npz'] moved during its read
+test_a_source_off_its_pin_or_a_link_refuses_before_any_write (nd-unfolding.tests.test_pfb_copy.Copy.test_a_source_off_its_pin_or_a_link_refuses_before_any_write) ... refusing: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpw9momo44/rs1/runs/A0/rs1_A0_b-_j11.npz is not at its pin (d67e2e944994496c8d8ec76eed0cf9f09679448d584b532bebf941852a37f5ed, not 257f919c2629ea31355e6e010d2327d287e9e0915c21c6da0270d60043dd2773)
+refusing: the source /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpw9momo44/rs1/runs/A0/rs1_A0_b-_j11.npz is not a regular file (a symlink is refused)
+refusing: no source /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpw9momo44/rs1/runs/A0/rs1_A0_b-_j11.npz
 ok
-test_a_source_off_its_pin_or_a_link_refuses_before_any_write (nd-unfolding.tests.test_pfb_copy.Copy.test_a_source_off_its_pin_or_a_link_refuses_before_any_write) ... ok
-test_the_fence_refuses_before_any_write (nd-unfolding.tests.test_pfb_copy.Copy.test_the_fence_refuses_before_any_write) ... ok
-test_the_pins_are_rs1s_and_the_sigma_receipts (nd-unfolding.tests.test_pfb_copy.Copy.test_the_pins_are_rs1s_and_the_sigma_receipts) ... ok
+test_the_pins_and_declared_paths (nd-unfolding.tests.test_pfb_copy.Copy.test_the_pins_and_declared_paths) ... ok
 test_the_remote_script_is_python_3_6_and_runs_no_job (nd-unfolding.tests.test_pfb_copy.Copy.test_the_remote_script_is_python_3_6_and_runs_no_job) ... ok
-test_the_stage_must_be_the_smokes_and_hold_no_copies (nd-unfolding.tests.test_pfb_copy.Copy.test_the_stage_must_be_the_smokes_and_hold_no_copies) ... ok
-test_the_launcher_pins_the_script_and_checks_its_arguments (nd-unfolding.tests.test_pfb_copy.Launcher.test_the_launcher_pins_the_script_and_checks_its_arguments) ... ok
-test_verify_accepts_a_good_manifest_and_refuses_each_defect (nd-unfolding.tests.test_pfb_copy.Verify.test_verify_accepts_a_good_manifest_and_refuses_each_defect) ... ok
+test_the_stage_must_hold_the_smoke_receipt_and_no_copies (nd-unfolding.tests.test_pfb_copy.Copy.test_the_stage_must_hold_the_smoke_receipt_and_no_copies) ... refusing: the stage lacks the smoke's receipt (smoke-receipt.json): [Errno 2] No such file or directory: 'smoke-receipt.json'
+refusing: the stage already holds a0-refs
+refusing: the stage already holds assess_receipt.json
+refusing: the deploy 'relative/deploy' is not an absolute path under /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpy6mu_uvg/
+refusing: the deploy /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpy6mu_uvg/nogit is not a git checkout (fatal: cannot change to '/private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpy6mu_uvg/nogit': No such file or directory)
+ok
+test_tampered_bytes_exit_10_and_write_nothing (nd-unfolding.tests.test_pfb_copy.K1Snapshot.test_tampered_bytes_exit_10_and_write_nothing) ... ok
+test_the_launcher_captures_once_and_sends_the_capture (nd-unfolding.tests.test_pfb_copy.K1Snapshot.test_the_launcher_captures_once_and_sends_the_capture) ... ok
+test_a_stage_under_a_symlinked_parent_is_not_the_literal_path (nd-unfolding.tests.test_pfb_copy.K2Descriptors.test_a_stage_under_a_symlinked_parent_is_not_the_literal_path) ... refusing: the stage descriptor is at /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmprn3xt3_w/elsewhere-parent/stage, not the literal /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmprn3xt3_w/link/stage
+ok
+test_a_symlink_swapped_in_for_the_stage_refuses_with_no_write (nd-unfolding.tests.test_pfb_copy.K2Descriptors.test_a_symlink_swapped_in_for_the_stage_refuses_with_no_write) ... refusing: the stage /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpo29o5a6_/stage cannot be opened as a real directory ([Errno 20] Not a directory: '/private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpo29o5a6_/stage')
+ok
+test_the_production_entry_refuses_any_test_switch (nd-unfolding.tests.test_pfb_copy.K3NoTestHooks.test_the_production_entry_refuses_any_test_switch) ... ok
+test_a_chmod_during_the_read_refuses (nd-unfolding.tests.test_pfb_copy.K4StatIntegrity.test_a_chmod_during_the_read_refuses) ... refusing: a source moved during its read: ["rs1_A0_b-_j13.npz: ['st_ctime_ns', 'st_mode']"]
+ok
+test_a_path_swap_during_the_read_refuses (nd-unfolding.tests.test_pfb_copy.K4StatIntegrity.test_a_path_swap_during_the_read_refuses) ... refusing: a source moved during its read: ["rs1_A0_b-_j13.npz: ['st_ctime_ns', 'st_nlink', 'path after is another file']"]
+ok
+test_a_fence_that_becomes_active_after_the_copy_is_a_stop (nd-unfolding.tests.test_pfb_copy.K5Fence.test_a_fence_that_becomes_active_after_the_copy_is_a_stop) ... STOP: the fence read after the copies is not clear
+ok
+test_blank_fields_a_failed_sacct_and_an_absent_sacct_refuse (nd-unfolding.tests.test_pfb_copy.K5Fence.test_blank_fields_a_failed_sacct_and_an_absent_sacct_refuse) ... refusing: sacct rows with a missing or blank field: ['61||RUNNING']
+refusing: sacct rows with a missing or blank field: ['61|pfb_run|']
+refusing: sacct rows with a missing or blank field: ['|pfb_run|RUNNING']
+refusing: sacct failed (rc 1): 
+refusing: fenced jobs are in a non-terminal state: ['62|cov2d_a|COMPLETING']
+refusing: sacct is not at /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp23rmrjck/bin/sacct
+ok
+test_verify_requires_every_typed_field (nd-unfolding.tests.test_pfb_copy.K6StrictVerify.test_verify_requires_every_typed_field) ... ok
+test_an_o_noatime_permission_error_is_exit_3 (nd-unfolding.tests.test_pfb_copy.K7IOErrors.test_an_o_noatime_permission_error_is_exit_3) ... refusing: an O_NOATIME open of /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmph72_bbee/rs1/runs/A0/rs1_A0_b-_j-.npz was refused ([Errno 1] Operation not permitted)
+ok
+test_enospc_on_the_last_copy_is_an_explicit_stop_with_a_partial_manifest (nd-unfolding.tests.test_pfb_copy.K7IOErrors.test_enospc_on_the_last_copy_is_an_explicit_stop_with_a_partial_manifest) ... STOP: a write-side failure ([Errno 28] No space left on device (errno 28)); the 23 created paths stay in place
+ok
+test_the_smoke_receipt_binds_stage_pin_and_index (nd-unfolding.tests.test_pfb_copy.K8SmokeBinding.test_the_smoke_receipt_binds_stage_pin_and_index) ... refusing: the smoke's receipt does not bind this copy: its stage '/pscratch/other' is not /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp1k59jd9a/stage
+refusing: the smoke's receipt does not bind this copy: its pin '0000000000000000000000000000000000000000' is not the deploy's ce928380ddf517b450cf3e65807779bd4abcb727
+refusing: the smoke's receipt does not bind this copy: it is not a production smoke's
+refusing: the smoke's receipt does not bind this copy: it records no INDEX sha256
+refusing: the smoke's receipt does not bind this copy: it records no INDEX sha256
+refusing: the smoke's receipt is not JSON (Expecting value: line 1 column 1 (char 0))
+refusing: the stage lacks the smoke's receipt (smoke-receipt.json): [Errno 62] Too many levels of symbolic links: 'smoke-receipt.json'
+refusing: the smoke's receipt is not a plain file of its own
+ok
+test_the_launcher_checks_its_arguments_and_hop (nd-unfolding.tests.test_pfb_copy.Launcher.test_the_launcher_checks_its_arguments_and_hop) ... ok
 
 ----------------------------------------------------------------------
-Ran 9 tests in 2.341s
+Ran 19 tests in 6.815s
 
 OK
 # exit 0
