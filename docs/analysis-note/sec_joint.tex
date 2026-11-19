@@ -50,62 +50,8 @@ The null distribution of each statistic is obtained from pseudo-experiments that
 The data are unfolded once, with the full simulation. The Monte Carlo $p$ value of a test is $(k+1)/(B+1)$, where $k$ of $B$ null pseudo-experiments reach the observed statistic. This $p$ value is never zero. The $p$ value on which each decision rests, the \emph{claim} $p$ value, is the largest over the specified \emph{claim variants}, which shift the null. The variants move it by an upper bound on the simulation-size difference between the pseudo-experiments and the data unfold (condition~(iv), \S\ref{sec:joint5d-conditions}), and by $\pm\jtMoneKappa\,\delta_{\mathrm{fine}}$ (condition~(i)). The external nulls are strongly non-central, with non-centralities $\lambda$ of \jtLambdaMin{}--\jtLambdaMax{} in these units. They are non-central because the calibration reproduces the estimator's pull toward its prior (\S\ref{sec:val-departure}). Each observed statistic is compared with that displaced distribution (Fig.~\ref{fig:joint5d-nulls}).
 
 % Methods-paper shortening pass (2026-10-21, DECISION-20261020-joseph-refined-estimator-shorten-delta.md item 2): the article's generative model (its former Sec. VIII B and Table VIII), moved verbatim with its sources. Code (at 19b46af9, byte-identical to the frozen 4f5a613f, M2-ARCHIVE-CHECKS.md:26): M2-AUDIT.md:10-33 (Q1). Split per seed, s5c_pseudo.py:278-281, s5p_nullexp.py:318-321; pseudo-data Poisson on half B, s5n_pseudo.py:133-134; half A at CV weights with the Tune v1 prior, :146-151; flux one PPFX universe of 100, s5p_nullexp.py:206-209; 34 bands at one universe each, :79-87, :130, signal renormalized per fine truth cell, :158-174, :215; clipping of LowQ2_1 and HighQ2_1, :103-115, :149-154; four detector bands at +-1 sigma with probability 1/2, :216-220; additive terms s5p_joint.py:115-121, :158-159. Truth equals G on populated fine cells: M2-ARCHIVE-CHECKS.md:6, :64-69. REVIEW-1 finding 3: the deficit is about 4% of the null SD (m2-archive/m2_archive_results.json check1.xtrue_mean_minus_G_in_null_SD max_abs 0.035 Tune v1, 0.026 GENIE CV; M2-ARCHIVE-CHECKS.md:60, 0.039 NuWro); the 1.4% is the spread ratio. M2-AUDIT.md:17-23 (one RNG keyed by the seed, each band at one universe, product of weight ratios); s5p_nullexp.py:127-132, :206-215. X5 G8: the conditioning on data-derived inputs (M2-AUDIT.md:182-184, Q4d; s5p_joint.py:108, :118).
-\paragraph{Generative model of one pseudo-experiment.} Each calibration pseudo-experiment splits the simulation at random into two halves (Table~\ref{tab:joint5d-genmodel}) and refits the background refinement. Its truth equals $G$ on every fine cell that the source half populates. Cells it leaves empty lower a coarse cell by at most \SI{0.2}{\percent}, or about \SI{4}{\percent} of the null standard deviation (the per-experiment spread is below \SI{1.5}{\percent} of it). On the signal, each interaction-model band is renormalized within each fine truth cell, so it moves only the composition within the cell, and with it the efficiency and the migrations. The flux universe is drawn uniformly from the \jtFluxUniverses{} universes. In each calibration pseudo-experiment, the flux universe and the band universes are drawn independently, and their weight ratios multiply. Each interaction-model band is drawn independently and uniformly from its own universes, either endpoint of a $\pm1\sigma$ pair or one of three where a band has three, and the weight ratios multiply. Negative weights in two of those bands are clipped per universe (\S\ref{sec:joint5d-conditions}). Each weight-based detector band is at its $-1\sigma$ or $+1\sigma$ endpoint with equal probability. The muon-energy, muon-resolution, and beam-angle lateral bands enter as $\sum_{b}z_{b}\Delta_{b}$. Each $z_{b}$ is an independent standard normal. For each band, $\Delta_{b}$ is half the difference of the unfolded cell values from that band's two real-data endpoint unfolds. The coefficient of the \SI{1.4}{\percent} normalization is an independent standard normal.
-
-The data's rounding noise, and the prediction's finite-sample error, are added as a normal draw in each cell. The prediction's variance in that draw is its own per-cell sum of squared weights. That diagonal model is an assumption of the metric. Disjoint cells do not by themselves make a prediction's Monte Carlo errors independent. The background source and its template are Poisson draws from disjoint halves of the background sample. The detector weight bands include the GEANT4 hadron-interaction reweights.
-
-Because the $\Delta_{b}$ come from the observed data, the null distributions are conditional on these data-derived inputs, which would differ in a repeated experiment. That conditioning has not been validated.
-% Search: data-derived inputs; conditioning on data-derived; conditional on these data-derived @ 1a015eef
-
-\providecommand{\pcell}[2]{\parbox[t]{#1}{\raggedright\strut#2\strut}}
-\begin{table}[htbp]
-  \caption[Generative model of the calibration]{Nuisance draws act on the pseudo-data source only in the calibration model. Left: the flow of one test, repeated over $B$ pseudo-experiments. Right: what each element of a pseudo-experiment does, and the corresponding element of the data analysis.}
-  \label{tab:joint5d-genmodel}
-  \centering\small
-  \begin{minipage}[t]{0.40\textwidth}
-    \vspace{0pt}
-    \setlength{\unitlength}{1pt}
-    \begin{picture}(170,207)(0,0)
-      \put(10,191){\framebox(158,16){\parbox{154pt}{\centering\scriptsize $H_{0}(G)$: $\sigma=G$ on every fine cell}}}
-      \put(52,191){\vector(0,-1){7}}
-      \put(10,146){\framebox(92,38){\parbox{88pt}{\centering\scriptsize source half reweighted to $G$; nuisance draws; Poisson pseudo-data and background}}}
-      \put(112,146){\framebox(56,38){\parbox{52pt}{\centering\scriptsize data}}}
-      \put(56,146){\vector(0,-1){7}}
-      \put(140,146){\vector(0,-1){7}}
-      \put(10,109){\framebox(92,30){\parbox{88pt}{\centering\scriptsize unfold with the other half (joint-test estimator)}}}
-      \put(112,109){\framebox(56,30){\parbox{52pt}{\centering\scriptsize unfold with the full simulation}}}
-      \put(56,109){\vector(0,-1){7}}
-      \put(140,109){\vector(0,-1){7}}
-      \put(10,64){\framebox(92,38){\parbox{88pt}{\centering\scriptsize add lateral, normalization, rounding, prediction terms: $T_{\mathrm{null}}$}}}
-      \put(112,64){\framebox(56,38){\parbox{52pt}{\centering\scriptsize $T_{\mathrm{obs}}$}}}
-      \put(56,64){\vector(0,-1){7}}
-      \put(140,64){\vector(0,-1){7}}
-      \put(10,33){\framebox(158,24){\parbox{154pt}{\centering\scriptsize $k$ of $B$ with $T_{\mathrm{null}}\ge T_{\mathrm{obs}}$; largest $p$ over the shifted nulls}}}
-      \put(89,33){\vector(0,-1){7}}
-      \put(10,0){\framebox(158,26){\parbox{154pt}{\centering\scriptsize Holm steps with the 95\% Clopper--Pearson interval; batches of \jtBatch{}, $B\le\jtBcap$}}}
-      \put(10,45){\line(-1,0){8}}
-      \put(2,45){\line(0,1){120}}
-      \put(2,165){\vector(1,0){8}}
-    \end{picture}
-  \end{minipage}\hfill
-  \begin{minipage}[t]{0.57\textwidth}
-    \vspace{0pt}\scriptsize\setlength{\tabcolsep}{3pt}
-    \begin{tabular}{@{}lll@{}}
-      \toprule
-      \pcell{0.22\textwidth}{Element} & \pcell{0.46\textwidth}{Pseudo-experiment} & \pcell{0.27\textwidth}{Data analysis} \\
-      \midrule
-      \pcell{0.22\textwidth}{Truth} & \pcell{0.46\textwidth}{source half reweighted per fine cell to $G$} & \pcell{0.27\textwidth}{unknown} \\
-      \pcell{0.22\textwidth}{Unfolding simulation} & \pcell{0.46\textwidth}{other half at Tune~v1 weights (the prior)} & \pcell{0.27\textwidth}{full simulation at Tune~v1 weights} \\
-      \pcell{0.22\textwidth}{Background} & \pcell{0.46\textwidth}{Poisson source and template from disjoint halves; Tune~v1 with its bands} & \pcell{0.27\textwidth}{full background template} \\
-      \pcell{0.22\textwidth}{Flux} & \pcell{0.46\textwidth}{one of \jtFluxUniverses{} universes on the source (changes the rate, not $\sigma$)} & \pcell{0.27\textwidth}{central flux} \\
-      \pcell{0.22\textwidth}{Interaction model} & \pcell{0.46\textwidth}{\jtModelBands{} bands, one universe each; signal renormalized per fine truth cell; two bands clipped} & \pcell{0.27\textwidth}{Tune~v1} \\
-      \pcell{0.22\textwidth}{Detector} & \pcell{0.46\textwidth}{four weight bands at $\pm1\sigma$; lateral bands by linear surrogate} & \pcell{0.27\textwidth}{nominal} \\
-      \pcell{0.22\textwidth}{Added terms} & \pcell{0.46\textwidth}{\SI{1.4}{\percent} normalization; rounding noise; prediction residual} & \pcell{0.27\textwidth}{none} \\
-      \pcell{0.22\textwidth}{Statistic} & \pcell{0.46\textwidth}{$T_{\mathrm{tot}}$, $T_{\mathrm{sh}}$ with fixed $\Sigma$} & \pcell{0.27\textwidth}{the same} \\
-      \bottomrule
-    \end{tabular}
-  \end{minipage}
-\end{table}
+App.~\ref{app:joint5d-genmodel} gives the generative model of one pseudo-experiment (Table~\ref{tab:joint5d-genmodel}).
+% Moved to App. A (app_statmethods_nd.tex) by limitation-resolver's landing 94b79c424: move-manifest-je-joint-genmodel.tsv JE-09.001..053 (2026-11-19).
 
 \subsubsection{Multiplicity, stopping rule and design}
 \label{sec:joint5d-frozen}

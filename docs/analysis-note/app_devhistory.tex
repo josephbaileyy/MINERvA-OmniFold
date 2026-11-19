@@ -82,10 +82,8 @@ First grade of the held-out-tune coverage test of the 2D covariance (\S\ref{sec:
 
 % Move pairs LR-18 and LR-19 (limitation-resolver, prose item 6): sec_method.tex:48 and :79 at 2fe070fec, verbatim;
 % sec:method-config keeps the adopted configurations and the measured differences.
-\subsubsection{Seed choices of the two-dimensional estimators}
+\subsubsection{Seed choices of the two-dimensional estimators (\S\ref{sec:method-config})}
 \label{app:devhistory-seeds}
-
-This is the history of two choices of \S\ref{sec:method-config}: the training seed of the LightGBM central value, and the exact-split cross-check, configuration~(b).
 
 Seed~42 was chosen on computing cost: building the statistical band at seed~42 was the cheaper of the two costed ways to give the central value and the statistical band a common seed.
 
@@ -97,11 +95,9 @@ The exact-split cross-check is configuration~(b) of \S\ref{sec:method-config}. I
 
 % Move pairs CV-A01, CV-A04..CV-A07 (cov2d; history-cuts/move-manifest-cv-20261118.tsv sends; journal-editor receives): sentences
 % of sec_systematics.tex @79a934a41, verbatim, with their source comment lines, except one token: in CV-A06 the
-% self-pointer (App.~\ref{app:devhistory}) becomes (Table~\ref{tab:devhistory}). The opening sentence is new framing.
-\subsubsection{Checks of the 2D covariance's construction, and a superseded approximation}
+% self-pointer (App.~\ref{app:devhistory}) becomes (Table~\ref{tab:devhistory}). The opening sentence, new framing, was removed in the compression (K9); its pointer is in the heading.
+\subsubsection{Checks of the 2D covariance's construction, and a superseded approximation (\S\ref{sec:systematics})}
 \label{app:devhistory-2dchecks}
-
-This is the record of the checks of the 2D covariance's construction, and of the approximation the reported covariance replaced, which \S\ref{sec:systematics} cites.
 
 % CV-A01 (sec_systematics.tex:122):
 Seven universes of the sweep used by the quoted universe block (\S\ref{sec:uq-universes}) are reproduced to $\le1.4\times10^{-11}$ by the committed driver; the others are accepted by inference, because the same code produced them (Ref.~\cite{NoteRecords2026}, \recentry{july-sweep}).
@@ -144,26 +140,18 @@ Both programs that use the covariance for the reported results, the $\chi^{2}$ c
 % Move pair H3-010 (director-helper-3; history-cuts/move-manifest-h3-20261117.tsv sends, move-manifest-je-20261117.tsv
 % receives): sec_systematics.tex's defects of the earlier 2D budget, verbatim with its comment lines; sec:uq-2d-scope keeps a
 % summary that names the three defects and points here.
-\subsubsection{Defects of the earlier two-dimensional budget}
+\subsubsection{Defects of the earlier two-dimensional budget (\S\ref{sec:uq-2d-scope})}
 \label{app:devhistory-2dbudget}
 
-This is the account of the earlier 2D budget's construction defects, which \S\ref{sec:uq-2d-scope} names.
-
-\paragraph{Comparison with the earlier 2D budget.} The saved products and code of the earlier 2D budget~\cite{TwoDFollowup2026} show the following defects in its construction; the quoted budget corrects each. First, its systematic sweep has a simulated truth input that differs from that of its seed-42 reference, while its saved reconstructed inputs agree. A common displacement cancels to first order in the MAT mean-centered covariance: the mismatch does not invalidate the entire covariance and supplies no correction to subtract, and because the earlier input and code revision are not available, it cannot be attributed more specifically. The sweep used by the quoted universe block does not have this mismatch.
-% (one paragraph since the history restructure's style pass, 2026-11-15: history-cuts/sec_systematics.md S6)
-Second, the bands Rvn1pi and Rvp1pi encode the same shift under the configured nonresonant-pion tune, and the earlier budget counted it twice; the quoted universe block drops Rvp1pi and counts it once (\S\ref{sec:uq-universes}). The band is small, \SI{0.088}{\percent}, but the double count is a defect in the construction of the covariance; no conclusion about the published analysis's implementation follows.
-%
-Third, the earlier budget did not propagate background-template statistics, whose error exceeds one tenth of the data's Poisson error in 60 of 205 saved reconstructed bins (a reconstructed-space diagnostic, not a measured unfolded uncertainty); the quoted statistical block draws the background simulation as its own bootstrap stream (\S\ref{sec:uq-boot}). The values printed for the earlier budget were not changed by these findings.
+The comparison with the earlier budget, with each defect's diagnostics, is kept in the records document.
 
 \subsection{Validation of the two-dimensional result (\S\ref{sec:validation})}
 \label{app:devhistory-validation}
 
 % Move pair H3-011 (director-helper-3): sec_validation.tex's secondary analysis, attribution rule and the band's rebuild,
 % verbatim except one token: "(below)", which pointed to sec:coverage's post hoc rescoring, becomes (\S\ref{sec:coverage}).
-\subsubsection{The completeness-divided two-dimensional statistical band}
+\subsubsection{The completeness-divided two-dimensional statistical band (\S\ref{sec:coverage})}
 \label{app:devhistory-band}
-
-This is the account of the first-built statistical band's secondary analysis and rebuild, whose outcome \S\ref{sec:coverage} states.
 
 Unlike the band's replicas, the central value has completeness exactly~1. A secondary analysis, added after the pilot, applies the band's division to the toys. Scored against the same band, the divided toys overcover: $C_1=\covTwoDRepCOne$, with its interval above the window. The attribution rule was fixed before the full run, but its clause for the undercoverage outcome was written after the pilot pulls had been seen. Under this rule the primary undercoverage is attributed to the completeness term of the band. The attribution is partial: in the replica form, the $\pPar$ \SIrange{40}{60}{GeV/c} column still undercovers.
 
@@ -198,15 +186,6 @@ The excess width lies in the data-statistics component. The per-bin pull RMS fal
 % plain-language pass, review fix N1 and N3 (DECISION-20261018-joseph-plain-language-pass): the route is restored in words (row 85); "fixed before it
 % ran" becomes "recorded before it ran" (the rule was committed before the run, 8eb40e5f).
 
-% Move pair H3-020 (director-helper-3; move-manifest-h3-20261117.tsv sends): sec_results.tex:148 @ 79a934a41, sentences 2-4,
-% verbatim with the source comments :153-154; sec:results-tension keeps sentence 1 and points here.
-\subsection{Two-dimensional muon cross section (\S\ref{sec:results})}
-\label{app:devhistory-results}
-
-This is the exact-split cross-check's part of the eigenmode decomposition of \S\ref{sec:results-tension}. For the exact-split cross-check, $\chi^{2}$ is larger and distributed differently: its components of magnitude $5$--$6$ lie in moderate-$\lambda$ modes on the low-$\pT$ ridge of the cross-section peak. Its 10 smallest-$\lambda$ modes carry \SI{3}{\percent} of the $\chi^{2}$, and the 73 best-measured directions give $\chi^{2}=291$ ($\chi^{2}/205=1.42$, again divided by the number of reported bins; App.~\ref{sec:tension}). Going from 5 to 10 iterations changes the LightGBM (seed~1) value by a negligible $+0.01$.
-% Revision D' 2026-11-06 (referee reads of D, both ACCEPT; Sonnet and the interpreter: print the raw chi2 and the directions kept): docs/orchestration/receipts/2d-lgbm42-20261011/tension_report_exact_control.txt:56 prints "1e-04  1.419  73". Arithmetic: 1.419 x 205 = 290.9; 205 x [1.4185, 1.4195) is in [290.8, 291.0], 291 at three figures.
-% Director-added wording correction 2026-11-06, for Joseph's review before merge (not among the two he approved): the truncated chi2 was printed as chi2/ndf, but its divisor is the 205 reported bins, not the directions kept. 2d-unfolding/diagnose_tension.py @ c3dbe30f4 (main): :110 n = int(mask.sum()), the 205 reported bins; :183 and :193 divide every truncated chi2 by n (the same divisor at 56e30b9c9 :108/:181/:191 and at 735c909da). Receipt docs/orchestration/receipts/2d-lgbm42-20261011/tension_report_exact_control.txt:56 ("1e-04  1.419  73"). No number changed.
-
 % Move pair H3-027 (director-helper-3; lane/note-cx-takeover-20261117 sends): sec_3d.tex:135 sentence 1 @ 7e261e5f7, verbatim;
 % the body keeps "... were generated from a defective flux, described in App.~\ref{app:devhistory}" with the records pointer.
 \subsection{Available energy and momentum transfer (\S\ref{sec:3d})}
@@ -220,26 +199,16 @@ This is the account of the generation flux's defects behind the flux repair of \
 % Move pairs LR-01..LR-16 (limitation-resolver; history-cuts/move-manifest-lr-20261117.tsv sends, move-manifest-je-20261117.tsv
 % receives): sentences of sec_fived16.tex:193, :276, :283 and :295 at 2fe070fec, verbatim and in their source order, with the
 % source comments of :276 and :283; the body keeps each outcome and points here.
-\subsubsection{The sixteen-cell run-period block: its conditions}
+\subsubsection{The sixteen-cell run-period block: its conditions (\S\ref{sec:fived16-pl})}
 \label{app:devhistory-fived16pl}
-
-This is the account of the conditions under which the sixteen-cell run-period block $C_{\mathrm{PL,5D}}$ of \S\ref{sec:fived16-pl} would not be added.
 
 Three conditions under which it would not be added were fixed before any of the measurements that decide them was computed. The first is one existing component, within two standard deviations of its own size, explaining at least half of both period-group patterns. The second is a replica spread of the block's median per-cell width above half that width. The third is, in the median replica, less than half of the replica-built block's variance lying in the observed block's plane. The conditions were set after the block's reported numbers had been read, and the second and third were not expected to fire. None occurred. That result establishes neither the block's size nor the absence of overlap: descriptively, one detector-response pair, a pion-interaction band with the meson response shift, reproduces one period's offset pattern within noise and part of the other two.
 % absence-ok: "were not" and "establishes neither ... nor the absence of overlap" are the source paragraph's own statements (sec_fived16.tex:193 @ 2fe070fec, LR-02 and LR-04), moved verbatim
 
-\subsubsection{The coverage tests of the sixteen-cell covariance: stops and repair}
+\subsubsection{The coverage tests of the sixteen-cell covariance: stops and repair (\S\ref{sec:fived16-fd})}
 \label{app:devhistory-fived16cov}
 
-This is the account of the coverage tests of the sixteen-cell covariance at the two held-out tunes of \S\ref{sec:fived16-fd}: the first test, its staged redesign, and the second test's entry-check stop and repair. \S\ref{sec:fived16-fd} states their outcomes.
-
-A first coverage test at these two tunes was specified before any pseudo-experiment was generated. It tested the covariance without the run-period block, with pseudo-experiments that also draw the flux, interaction and detector uncertainties (the lateral and normalization ones as surrogates, and $C_{\mathrm{model}}$ and $C_{\mathrm{resp}}$ not at all). It was stopped before any coverage pseudo-experiment ran. App.~\ref{sec:cov1b-gate} gives the result at one of its gates and the investigation of that gate. Replacing the pseudo-experiments' values by the covariance's for any \fvval{cov1b-kmax-word} or fewer of the \fvval{cov1b-nbands} drawn bands does not bring every cell inside that gate's window.
-% F16-2 (2026-11-16): the tests numbered as the paper and Supplement number them (paper_body.tex "The first five-observable
-% test"; supplemental_body.tex S8: "A first coverage test ... A staged redesign then stopped at its first stage"): this gate-
-% stopped test is the first, the staged run below is its redesign, and LL5D is the second; App. I's two rows say the same.
-
-A staged redesign of that first test, at the two tunes and with the covariance rebuilt by the same procedure at each tune, also ended without a coverage result. Each of its pseudo-experiments is drawn from a simulated world built from randomly drawn systematic universes; in each cell, that world's denominator is the first drawn universe's denominator plus each later universe's departure from the central-value denominator. A rule fixed before the first stage ran stops that stage if any draw gives a non-positive denominator in a cell that is positive at the central value. \lrval{stop-flagged} of the \lrval{stop-draws} draws did so, with at most \lrval{stop-maxcells} such cells in a draw, and the first stage stopped. The record does not establish why those cells are non-positive.
-% absence-ok: "The record does not establish why those cells are non-positive" is the source paragraph's own statement (sec_fived16.tex:283 @ 2fe070fec, LR-12), moved verbatim
+\S\ref{sec:fived16-fd} states their outcomes. The design and the stop of the first test and of its staged redesign are kept in the records document.
 
 % LL5D paragraph (2026-11-16; the coordinator's go, step 2): DECISION-20261116-joseph-paper-batch.md items 14, 21 and
 % 24, mirroring the paper's approved sentences at draft/methods-short-20261109 037431430 (the Table 4 caption's definition
@@ -252,7 +221,7 @@ A staged redesign of that first test, at the two tunes and with the covariance r
 % DECISION-20261109-joseph-coverage-case-wording.md item 2(b). Values: \fvval{ll5d-*}, ported from the paper branch
 % (check_ll5d_port.py); the per-tune classes are hand-typed and asserted against the readout by make_values_fived16.py
 % (LL5D_PRINTED_CLASS).
-At both tunes, an event-matching entry check stopped the earlier run because it compared \fvval{ll5d-a1a2-keys} weight keys and reported every row unmatched. The repair, chosen after this stop, keyed both sides at \fvval{ll5d-a1a2-at} before any coverage pseudo-experiment was unfolded or graded, but after other gate readings were visible. It changed no rule, threshold, bound or reporting cell. Under the rule fixed before the result, the rerun is reported as descriptive: the criteria fixed in advance were applied, but a repair was chosen after an entry-check stop.
+In the second coverage test, at both held-out tunes, an event-matching entry check stopped the earlier run because it compared \fvval{ll5d-a1a2-keys} weight keys and reported every row unmatched. The repair, chosen after this stop, keyed both sides at \fvval{ll5d-a1a2-at} before any coverage pseudo-experiment was unfolded or graded, but after other gate readings were visible. It changed no rule, threshold, bound or reporting cell. Under the rule fixed before the result, the rerun is reported as descriptive: the criteria fixed in advance were applied, but a repair was chosen after an entry-check stop.
 
 % Move pair LR-63 (limitation-resolver, the director's ruling P52): the table tab:fived16-gen-stageg of sec_fived16.tex, verbatim
 % with its caption and label; the body keeps its pointer to it. Merges with limitation-resolver's 685a843aa (the label moves).
@@ -285,10 +254,8 @@ prediction & $\chi^2$ & shape-only $\chi^2$ & $\chi^2$ & shape-only $\chi^2$ & $
 
 % Move pair LR-17 (limitation-resolver, prose item 11): sec_5d.tex:78 at 2fe070fec, with framing-map row B4's [W] wording,
 % which drops the two pointers to the shelved paper's and Supplement's recovery figures; sec:val-departure keeps the residual sizes.
-\subsubsection{Seed sets of the five-dimensional recovery tests}
+\subsubsection{Seed sets of the five-dimensional recovery tests (\S\ref{sec:val-departure})}
 \label{app:devhistory-recovery-seeds}
-
-This is the provenance of the pseudo-experiments behind the recovery residuals of \S\ref{sec:val-departure}.
 
 The sixty pseudo-experiments of the development variant, configuration~(d), at the GiBUU-to-GENIE $\Eavail$ shape, and the twenty for each of the three shapes not used in the joint-test estimator's selection, for configuration~(e), use seed sets that were not held out from the estimator's development.
 % absence-ok: "were not held out" is the source sentence's own statement (sec_5d.tex:78 @ 2fe070fec, LR-17)
@@ -305,16 +272,14 @@ The statistical intervals of the development assessment of $R$ take their width 
 
 % Move pair CX-04..CX-21 (the Codex writer lane; history-cuts/move-manifest-cx-20261117.tsv sends, history-cuts/move-manifest-je-20261117.tsv receives): the three paragraphs of sec_joint.tex:237-241 @ 2fe070fec,
 % verbatim, with their source comments (:242-249); sec:joint5d-lost keeps the outcome beside Table tab:joint5d.
-\subsubsection{Lost pseudo-experiments of the generator tests}
+\subsubsection{Lost pseudo-experiments of the generator tests (\S\ref{sec:joint5d-lost})}
 \label{app:devhistory-lost}
-
-This is the account of the generator tests' lost pseudo-experiments and their recovery, whose outcome \S\ref{sec:joint5d-lost} states.
 
 Computing time limits interrupted or prevented \jtLostCal{} of the submitted calibration pseudo-experiments (\jtLostInterrupted{} interrupted, \jtLostNever{} never started) and \jtLostPow{} power pseudo-experiments. The decisions in Table~\ref{tab:joint5d} were evaluated on the completed draws. A sensitivity analysis computed before the lost outcomes were known showed that every decision could change under a realizable assignment of them. Had every interrupted draw exceeded the observed statistic, no test would have been rejected ($p$ \jtWorstIntLo--\jtWorstIntHi). Among completed draws, runtime is not associated with the statistic ($|\rho|\le\jtRuntimeRho$), which supports but does not certify the decisions.
 
 The lost seeds were rerun under a procedure that was fixed, and reviewed independently, before the rerun~\cite{JointTestRecovery2026}. A determinism check fixed before the rerun (16 of 16 completed seeds rerun bitwise identically) shows that each recovered draw is the lost draw, so every submitted draw has been observed. No recovered draw reaches the observed statistic in any test, claim variant or robustness variant, so no assignment of the lost draws changes any decision. The closest margin is 4.6 units of $T$ below the observed value of 868.6 (GENIE~2.12.10 + MEC shape, $\pm\jtMoneKappaRobust\,\delta_{\mathrm{fine}}$ variant). The next is 49.8 (GENIE~2.12.10 shape, same variant). With complete batches the stopping rule, fixed before any production pseudo-experiment, would have stopped the Tune~v1, GENIE~2.12.10, GENIE~2.12.10 + MEC and GiBUU nulls one batch earlier ($B=1200$), with the same decisions.
 
-The recovered draws were evaluated in two ways: with the variant shifts of the primary evaluation held fixed (the \emph{fixed-shift} evaluation), and with the shifts recomputed on all draws (the \emph{recomputed-shift} evaluation). The recovery's checks are narrower in scope than the main recomputation. Only the fixed-shift evaluation was cross-checked independently. The recomputed-shift evaluation was reproduced only by a standalone rerun of the same code, a consistency check rather than an independent recomputation. The earlier stops rest on the calibration run's own re-application of the sequential rule and have no independent check. The decisions of Table~\ref{tab:joint5d} remain those of the evaluation before recovery, at the $B$ at which its rule stopped. The observed outcomes of the lost draws supersede the finding of the sensitivity analysis described above.
+How the recovered draws were evaluated, and which evaluations were checked independently, is kept in the records document. The decisions of Table~\ref{tab:joint5d} remain those of the evaluation before recovery, at the $B$ at which its rule stopped. The observed outcomes of the lost draws supersede the finding of the sensitivity analysis described above.
 % Search: earlier-stop; earlier stop; independent check of the earlier stops; standalone rerun @ 1a015eef
 % r22 Step 2 (B10): the cross-check's count (856 of 856 quantities) is in app_provenance.tex, joint-5d.
 % Deposit pass: the disposition label Joseph selected (DECISION-20261005-s5p-recompute-extension-and-lost-seed-
