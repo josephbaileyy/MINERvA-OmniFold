@@ -1,4 +1,4 @@
-\section{Available energy and momentum transfer: central values}
+\subsection{Available energy and momentum transfer: central values}
 \label{sec:3d}
 
 The unfolded $d\sigma/d\Eavail$ falls monotonically from the low-recoil peak to the catch bin (\S\ref{sec:3d-spectrum}). We extend the unfolding to $d^{3}\sigma/(d\pT\,d\pPar\,d\Eavail)$ with available energy as a third axis.
@@ -16,7 +16,7 @@ The comparisons with generator predictions in this section and in Sec.~\ref{sec:
   \label{fig:landscape}
 \end{figure}
 
-\subsection{Operational definition and provenance}
+\subsubsection{Operational definition and provenance}
 \label{sec:3d-method}
 \label{sec:eavail-definition}
 Truth available energy is defined by its implementation, for which ``low-recoil convention'' is shorthand. In MeV, the truth function (\texttt{CVUniverse::GetEAvailableTrue()}) computes
@@ -69,7 +69,7 @@ The charged-pion term subtracts the inherited constant \SI{135}{MeV} rather than
 \end{table}
 % RE-1 integration (DECISION-20261023 item 3; DECISION-20261020 item 1): P3/P4 are configuration (e), stageF/methods/re1/RE1-REPORT-2.md sec. 4; fig:eavail-marg and fig:q3excess are not regenerated (same section). Source: 3d-unfolding/3D_OMNIFOLD_STATUS.md:55, :61 (headline table "MEFHC 5-iter lgbm", configuration (a)).
 
-\subsection{The available-energy spectrum}
+\subsubsection{The available-energy spectrum}
 \label{sec:3d-spectrum}
 The unfolded $d\sigma/d\Eavail$, the 1D projection of the 3D result (Fig.~\ref{fig:eavail}), falls monotonically from \SI{2.18e-38}{cm^2/GeV/nucleon} at the low-recoil peak to \SI{6.7e-41}{} in the catch bin, the expected CC-inclusive shape with most of the rate at $\Eavail\lesssim\SI{0.8}{GeV}$.
 
@@ -80,7 +80,7 @@ The unfolded $d\sigma/d\Eavail$, the 1D projection of the 3D result (Fig.~\ref{f
   \label{fig:eavail}
 \end{figure}
 
-\subsection{Validation against the 2D result}
+\subsubsection{Validation against the 2D result}
 \label{sec:3d-anchor}
 Marginalizing over $\Eavail$ should reproduce the 2D result of \S\ref{sec:results}, our validation reference in the absence of a directly matched published CC-inclusive 3D reference for this signal and phase space. The 3D marginal (configuration~(e)) and the 2D result ((f)) share the refined negative-weight subtraction but differ in learner (Table~\ref{tab:3d-configs}). The \emph{normalization} agrees closely: the marginal's area-weighted total over the 205 reported cells agrees with the 2D result's to \SI{0.141}{\percent}, and the median per-bin ratio is $1.0010$. The \emph{shape} agrees less closely. The per-bin ratio of the marginal to the 2D result scatters by $\sim\SI{3.7}{\percent}$ (standard deviation over the 205 cells). With the published covariance, the indicative distance of the marginal from the published result is $\chi^{2}/\mathrm{ndf}=4.52$, above the 2D values: $\chiPaper$ for the quoted LightGBM central value and $\chiPaperExact$ for the exact-split cross-check. Figure~\ref{fig:eavail-marg} (configuration~(a)) gives $4.98$. Because the two results share data and their cross-covariance is unavailable, this number is not a calibrated goodness-of-fit statistic.
 % RE-1 integration, review fixes 2-3 (director, 2026-10-23): the total and the median ratio are against E_U on its 205
@@ -100,28 +100,7 @@ Marginalizing over $\Eavail$ should reproduce the 2D result of \S\ref{sec:result
   \label{fig:eavail-marg}
 \end{figure}
 
-\subsection{Closure for one injected available-energy deformation}
-\label{sec:3d-closure}
-The unfolding recovers a known $+\SI{30}{\percent}$ Gaussian bump injected into pseudo-data in \emph{truth} $\Eavail$ (center \SI{0.3}{GeV}, width \SI{0.15}{GeV}). The recovered step-2 mean weight is $1.048$ against the injected $1.0485$. Residuals against reweighted truth on the $\Eavail$-marginal have median $0.9999$ and standard deviation \textbf{\num{0.0006}} (\SI{0.06}{\percent}). The per-3D-bin residual standard deviation is \SI{3.2}{\percent} from MC statistics in sparse high-recoil corners.
-
-Total normalization matches to better than \SI{1}{\percent}. In the metric of \S\ref{sec:validation} ($\Eavail$ projection) the residual is \SI{1.84}{\percent} against \SI{18.1}{\percent} injected (ratio $0.102$). No acceptance threshold set before the test is documented. The test has no pass or fail verdict.
-% Search: 3D closure threshold; E_avail bump threshold; threshold set in advance for the 3D closure (3d-unfolding/3D_OMNIFOLD_STATUS.md has no threshold; sec_validation.tex tab:closure-map prints "no predeclared threshold" for the 3D bump) @ 1a015eef
-
-This reweighting closure tests the 3D unfolding of configuration~(a) only and does not extend to (e). It covers one shape, this Gaussian, injected into the pseudo-data and unfolded \emph{with the same detector response that the unfolding uses}. For this injection the estimator neither removes the injected feature nor creates a spurious one. The closure's marginal scatter is far below the $\SI{3.7}{\percent}$ data-versus-2D scatter. The data comparison sets configuration (e) against configuration (f), a cross-configuration comparison. That comparison's scatter is therefore not interpreted as data--simulation structure resolved by the available-energy axis, and the ratio of the two scatters is not quoted. The test does \emph{not} exclude estimator bias for other deformations (\S\ref{sec:closure-map}). The hidden-variable closure exceeds its threshold at the largest amplitude (\S\ref{sec:validation}, App.~\ref{app:response-mismatch}).
-
-\subsection{Classifier-family cross-check (GBDT vs.\ NN)}
-\label{sec:3d-classifier}
-Our gradient-boosted decision trees differ from the neural-network classifiers used in published OmniFold analyses~\cite{Andreassen:2019cjw,Canelli:2025guide}. This cross-check uses the configuration-(a) GBDT unfold, with purity-based subtraction. The weight $w=p/(1-p)$ holds only if the GBDT output is a calibrated posterior. The step-1 reco classifier (data vs.\ MC reco) has a near-diagonal reliability curve, Brier \(\approx0.25\) at AUC \(\approx0.537\). Data and reco MC are nearly indistinguishable. The reweight is a modest correction. A full OmniFold cross-check with a Keras multilayer perceptron (MLP), the same weighted 3D inputs and the same five-iteration loop gives a total ratio of $1.0078$ to the GBDT result and median projection differences of \SIrange{0.7}{1.4}{\percent} (Fig.~\ref{fig:calibration}). In the populated bulk the configuration-(a) result therefore agrees between the two tested classifier families.
-% Source: make_figures.sh (nn_vs_gbdt_full from res_lgbm_3d.npz, the configuration-(a) 3D GBDT run).
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=\textwidth]{nn_vs_gbdt_full}
-  \caption[Classifier-family development check, configuration~(a)]{Development check: the configuration-(a) result agrees between the two tested classifier families in the populated bulk. No uncertainty drawn (as in Fig.~\ref{fig:eavail}). The five-iteration OmniFold cross-check uses identical weighted 3D inputs and extraction, changing only the classifier family. Top: absolutely normalized GBDT (configuration~(a)) and Keras-MLP projections, whose panel tags pt, pz and eavail denote $\pT$, $\pPar$ and $\Eavail$; bottom: binwise ratio. The MLP/GBDT total-cross-section ratio is $1.0078$; median absolute projection differences are \SI{1.20}{\percent} in $\pT$, \SI{1.36}{\percent} in $\pPar$, and \SI{0.66}{\percent} in $\Eavail$. Larger excursions occur only in sparsely populated outermost $\pT$ and $\pPar$ bins.}
-  \label{fig:calibration}
-\end{figure}
-
-\subsection{Generator comparison in 3D}
+\subsubsection{Generator comparison in 3D}
 \label{sec:3d-models}
 The published ancillary files provide only binned 2D model histograms. Quantitative 3D comparisons, or comparisons in arbitrary projections, require generating truth-level events and histogramming them as $d^{3}\sigma$ in the same fiducial phase space with the same truth $\Eavail$ definition. Because the unfolded result is at truth level, the comparisons need no detector simulation. The GENIE, NuWro and GiBUU samples were generated and processed for this analysis, and MINERvA Tune~v1 was extracted from the analysis simulation's truth with its full tune weight. No spectra were digitized or externally supplied.
 \begin{itemize}
@@ -159,7 +138,7 @@ For the integrated $\Eavail$ rate without the catch bin, GENIE CV, Tune~v1, NuWr
 % Search: 3D covariance (note sources: sec_3d.tex, sec_method.tex:267, sec_systematics.tex:15, sec_execsummary.tex:148 and sec_summary.tex:107, each saying none is quoted; app_history.tex's are superseded and outside the note) @ 1a015eef
 
 % Methods-paper sync fix round: aligned with paper_body.tex sec:central (descriptive central values; no mechanism). Register round n1 (R-N1): both are stated once, at the sec:3d lead; the reasons stay below.
-\subsection{The low-available-energy excess and the known low-recoil deficit}
+\subsubsection{The low-available-energy excess and the known low-recoil deficit}
 \label{sec:3d-2p2h}
 We compare the low-$\Eavail$ excess with candidate model changes, both by reweighting and by generating the relevant physics. MINERvA first isolated the rate enhancement between quasielastic and $\Delta$ peaks, with multi-nucleon final states, in a low-three-momentum-transfer subsample~\cite{MINERvA:2016lowrecoil}. The empirical tune was built to absorb it; our central values in muon kinematics and $\Eavail$ show the predictions falling short in the same region.
 
@@ -189,7 +168,7 @@ Ascencio \emph{et al.}~\cite{MINERvA:2022incl} report the same deficit in MINERv
   \label{fig:modedecomp}
 \end{figure}
 
-\subsection{Fourth axis: three-momentum transfer $q_{3}$}
+\subsubsection{Fourth axis: three-momentum transfer $q_{3}$}
 \label{sec:4d}
 The fourth axis adds one feature (\S\ref{sec:3d}), three-momentum transfer $q_{3}=|\vec{q}\,|$, chosen because its $(\Eavail,q_{3})$ plane separates quasielastic, 2p2h and resonance processes and permits bin-compatible comparison to MINERvA's dedicated low-recoil $d^{2}\sigma/dq_{3}\,d\Eavail$ measurement (Ascencio \emph{et al.}~\cite{MINERvA:2022incl}). Truth $q_{3}$ comes from the generator (\texttt{CVUniverse::Getq3True()}); reconstructed $q_{3}$ uses the muon $Q^{2}$ and the calorimetric recoil (\texttt{CVUniverse::RecoQ3()}). Both are evaluated for all twelve playlists, as for $\Eavail$. Lateral systematic shifts change $q_{3}$ but leave $\Eavail$ unchanged, so a shifted $q_{3}$ is stored for each lateral universe instead of reusing the central value. The classifier inputs are $(\pT,\pPar,\Eavail,q_{3})$, with deliberately coarse $q_{3}$ binning $[0,0.2,0.4,0.6,0.8,1.2,2.0,100]\,\si{GeV}$ (seven bins including a final catch bin), giving $14\times16\times7\times7=10\,976$ four-dimensional bins (4830 populated).
 

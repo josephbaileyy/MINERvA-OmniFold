@@ -1,0 +1,21 @@
+\subsection{Closure for one injected available-energy deformation}
+\label{sec:3d-closure}
+The unfolding recovers a known $+\SI{30}{\percent}$ Gaussian bump injected into pseudo-data in \emph{truth} $\Eavail$ (center \SI{0.3}{GeV}, width \SI{0.15}{GeV}). The recovered step-2 mean weight is $1.048$ against the injected $1.0485$. Residuals against reweighted truth on the $\Eavail$-marginal have median $0.9999$ and standard deviation \textbf{\num{0.0006}} (\SI{0.06}{\percent}). The per-3D-bin residual standard deviation is \SI{3.2}{\percent} from MC statistics in sparse high-recoil corners.
+
+Total normalization matches to better than \SI{1}{\percent}. In the metric of \S\ref{sec:validation} ($\Eavail$ projection) the residual is \SI{1.84}{\percent} against \SI{18.1}{\percent} injected (ratio $0.102$). No acceptance threshold set before the test is documented. The test has no pass or fail verdict.
+% Search: 3D closure threshold; E_avail bump threshold; threshold set in advance for the 3D closure (3d-unfolding/3D_OMNIFOLD_STATUS.md has no threshold; sec_validation.tex tab:closure-map prints "no predeclared threshold" for the 3D bump) @ 1a015eef
+
+This reweighting closure tests the 3D unfolding of configuration~(a) only and does not extend to (e). It covers one shape, this Gaussian, injected into the pseudo-data and unfolded \emph{with the same detector response that the unfolding uses}. For this injection the estimator neither removes the injected feature nor creates a spurious one. The closure's marginal scatter is far below the $\SI{3.7}{\percent}$ data-versus-2D scatter. The data comparison sets configuration (e) against configuration (f), a cross-configuration comparison. That comparison's scatter is therefore not interpreted as data--simulation structure resolved by the available-energy axis, and the ratio of the two scatters is not quoted. The test does \emph{not} exclude estimator bias for other deformations (\S\ref{sec:closure-map}). The hidden-variable closure exceeds its threshold at the largest amplitude (\S\ref{sec:validation}, App.~\ref{app:response-mismatch}).
+
+\subsection{Classifier-family cross-check (GBDT vs.\ NN)}
+\label{sec:3d-classifier}
+Our gradient-boosted decision trees differ from the neural-network classifiers used in published OmniFold analyses~\cite{Andreassen:2019cjw,Canelli:2025guide}. This cross-check uses the configuration-(a) GBDT unfold, with purity-based subtraction. The weight $w=p/(1-p)$ holds only if the GBDT output is a calibrated posterior. The step-1 reco classifier (data vs.\ MC reco) has a near-diagonal reliability curve, Brier \(\approx0.25\) at AUC \(\approx0.537\). Data and reco MC are nearly indistinguishable. The reweight is a modest correction. A full OmniFold cross-check with a Keras multilayer perceptron (MLP), the same weighted 3D inputs and the same five-iteration loop gives a total ratio of $1.0078$ to the GBDT result and median projection differences of \SIrange{0.7}{1.4}{\percent} (Fig.~\ref{fig:calibration}). In the populated bulk the configuration-(a) result therefore agrees between the two tested classifier families.
+% Source: make_figures.sh (nn_vs_gbdt_full from res_lgbm_3d.npz, the configuration-(a) 3D GBDT run).
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{nn_vs_gbdt_full}
+  \caption[Classifier-family development check, configuration~(a)]{Development check: the configuration-(a) result agrees between the two tested classifier families in the populated bulk. No uncertainty drawn (as in Fig.~\ref{fig:eavail}). The five-iteration OmniFold cross-check uses identical weighted 3D inputs and extraction, changing only the classifier family. Top: absolutely normalized GBDT (configuration~(a)) and Keras-MLP projections, whose panel tags pt, pz and eavail denote $\pT$, $\pPar$ and $\Eavail$; bottom: binwise ratio. The MLP/GBDT total-cross-section ratio is $1.0078$; median absolute projection differences are \SI{1.20}{\percent} in $\pT$, \SI{1.36}{\percent} in $\pPar$, and \SI{0.66}{\percent} in $\Eavail$. Larger excursions occur only in sparsely populated outermost $\pT$ and $\pPar$ bins.}
+  \label{fig:calibration}
+\end{figure}
+

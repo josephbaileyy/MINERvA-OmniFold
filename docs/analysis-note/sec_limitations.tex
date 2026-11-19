@@ -4,7 +4,7 @@
 % sec_execsummary.tex @ 2fe070fec (moves JE-01 and JE-02, history-cuts/move-manifest-je-20261117.tsv); their labels
 % moved with them, so every pointer to them still resolves. The test index and one entry per limitation follow in
 % later chunks. The executive summary keeps the 2D under-coverage and no-validated-coverage sentence (item 32).
-\section{Limitations}
+\subsection{Limitations}
 \label{sec:limitations}
 
 \label{sec:execsummary-limitations}The body states each limitation with the result it qualifies; the principal ones are these. $C_k$ denotes coverage within $\pm k$ standard deviations. The quoted 2D statistical block has had no coverage test; the fixed-truth coverage studies scored two earlier statistical bands, of which the first-built undercovers in its tails ($C_2=\covTwoDCTwo$, vs.\ $0.954$; \S\ref{sec:uq-boot}, \S\ref{sec:coverage}). No result's intervals have validated coverage (two dimensions: \S\ref{sec:limitations-2d}, where the procedure's covariance under-covers jointly at both held-out tunes, with \lrval{cov2d-ar23-joint} of \lrval{cov2d-ntoys} pseudo-experiments in the joint region at each, \S\ref{sec:coverage-tunes}; five dimensions: \S\ref{sec:coverage-5d}; the sixteen cells: \S\ref{sec:fived16-fd}, where a second, descriptive test flags joint under-coverage at both held-out tunes for a covariance without the response and run-period terms). The others are stated with their results: the generator comparisons (\S\S\ref{sec:3d}--\ref{sec:eavailw}); the absence of a 3D or 4D covariance (\S\ref{sec:3d}); the five-dimensional estimator's regularization bias (\S\ref{sec:val-departure}) and the purity-subtraction bias of configurations (a) and (c) (\S\ref{sec:val-negweight}); five-dimensional intervals and their coverage (\S\ref{sec:gbdt-model-dependence}, \S\ref{sec:coverage-5d}); the five-axis covariance of the configuration-(a) central value (\S\ref{sec:eavailw-adopted}); the calibration and nuisance model of the generator tests (\S\ref{sec:joint5d-frozen}, \S\ref{sec:joint5d-response}); tier~2 of the extended-fiducial study (App.~\ref{sec:fps}); the fake-data limitation of the sixteen-cell result (\S\ref{sec:fived16-fd}); the dependence of the sixteen cells on the unfolding algorithm (\S\ref{sec:fived16-ibu}); the prior retained at the flagged truths (\S\ref{sec:fived16-prr}); the bias-half screen (\S\ref{sec:fived16-fd}); the ensemble-averaged variant, not adopted (\S\ref{sec:val-departure}); the run-period inconsistency present before unfolding (\S\ref{sec:uq-combine}, \S\ref{sec:fived16-pl}); and point-cloud work (App.~\ref{sec:pet}).
@@ -126,12 +126,12 @@ Extended-fiducial study & Unbinned unfolding with truth-muon cuts removed, retai
 % sentences of sec_systematics.tex's "Status of the 2D result" paragraph at 2fe070fec, verbatim (COMBINED-PLAN sec. 4
 % item 7), with their Search line; sec:uq-2d-scope keeps the construction and points here.
 % Pointer entry 5 (the director's ruling (a), via director-helper-3; limitations-export row n05): sec_experiment.tex:40, kept there.
-\subsection{Data and event loop}
+\subsubsection{Data and event loop}
 \label{sec:limitations-experiment}
 
 The flux histogram is POT-weighted across playlists; playlist-to-playlist flux differences are a $\sim\SI{0.2}{\percent}$ effect (\S\ref{sec:evloop}).
 
-\subsection{The two-dimensional cross section}
+\subsubsection{The two-dimensional cross section}
 \label{sec:limitations-2d}
 
 The result's intervals, bias and covariance have not been independently validated. In particular, the coverage of its intervals has not been validated on independent simulated samples, nor simultaneously over all reported bins and projections. At two held-out GENIE~v3 tunes, a test of the procedure's 2D covariance remade at each tune's truth, with thresholds fixed before it ran, reads under-covers, with a joint in-region count of \lrval{cov2d-ar23-joint} of \lrval{cov2d-ntoys} at both (\S\ref{sec:coverage-tunes}); it concerns the procedure's covariance at those tunes, not the reported intervals at the data. Such validation would need an independent simulation sample of production size, a validated generator of pseudo-data with continuously varied nuisance parameters, and samples from independent event generators beyond the truth-level ones already examined; none is available.
@@ -247,7 +247,7 @@ No block contains the dependence on the learner. The central value and the exact
 \paragraph{Cross-source terms.} The standard covariance sums single-source systematic matrices, each with all other sources nominal, and so omits nonlinear cross-source response terms. No two-dimensional comparison of a joint throw with the block sum is reported (\S\ref{sec:uq-combine}).
 
 % Pointer entry (the director's ruling (a), via director-helper-3): a caveat kept in the body beside its numbers, listed here.
-\subsection{Available energy and momentum transfer}
+\subsubsection{Available energy and momentum transfer}
 \label{sec:limitations-3d}
 
 In the comparison with Ascencio \emph{et al.} (\S\ref{sec:4d}), the two analyses define true $\Eavail$ differently, and the aggregate shift over the three lowest bins has not been computed. The definition difference therefore remains an alternative explanation that is not excluded, and at the \SI{10}{\percent} scale of the residual the comparison neither refutes nor validates the result.
@@ -256,7 +256,7 @@ In the comparison with Ascencio \emph{et al.} (\S\ref{sec:4d}), the two analyses
 % Entries for the three long caveat statements (the director's ruling, 2026-11-18): each arrives as a move pair from its
 % body owner (limitation-resolver: sec_fived16, sec_5d; the Codex writer: sec_joint), whose home keeps a one-line result
 % with its scope label and a pointer here. Until each pair lands, its entry is this pointer sentence only.
-\subsection{The sixteen-cell cross section}
+\subsubsection{The sixteen-cell cross section}
 \label{sec:limitations-fived16}
 
 % Move pairs LR-20..LR-32 (limitation-resolver): the second coverage test's design and scope, sec_fived16.tex's second-test
@@ -274,7 +274,7 @@ The model term $C_{\mathrm{model}}$ of \S\ref{sec:fived16-cov} measures generato
 
 The run-period block of the sixteen cells is $C_{\mathrm{PL,5D}}$ (\S\ref{sec:fived16-pl}). In cells \fvval{pl-noise-cells} the block is dominated by the replica noise it contains.
 
-\subsection{The five-dimensional development tests}
+\subsubsection{The five-dimensional development tests}
 \label{sec:limitations-5d}
 
 % Move pairs LR-33..LR-47 (limitation-resolver): the coverage test's defective q3 truth (sec_5d.tex sec:coverage-5d), its
@@ -319,14 +319,14 @@ The end-to-end pseudo-experiments with backgrounds return the highest-$W$ column
 The development assessment of $R$ uses repeated pseudo-experiments (\S\ref{sec:gbdt-model-dependence}). These experiments are not an independent validation: their samples were used during development, and their assessment seeds, although separate, were later also used in the estimator's development.
 % absence-ok: "enters no quoted covariance", "has no established size on data" and "not an independent validation" are the moved sentences' own statements (LR-58, LR-59), moved verbatim
 
-\subsection{The joint generator tests}
+\subsubsection{The joint generator tests}
 \label{sec:limitations-joint}
 
 % Move pair H3-023 (director-helper-3; move-manifest-h3cx-20261118.tsv sends): the whole subsection "Six conditions attached to
 % the ten rejections" of sec_joint.tex:136-180 @ 9ed7db71b, verbatim with its label, comments and Search lines; the heading is
 % demoted to a subsubsection. Every \S\ref to sec:joint5d-conditions now lands here. Until the sender's removal merges, this
 % branch defines the label twice; the two merge together.
-\subsubsection{Six conditions attached to the ten rejections}
+\paragraph{Six conditions attached to the ten rejections}
 \label{sec:joint5d-conditions}
 
 Each decision holds under six conditions of the specified model. They are restated here in the terms of this note, numbered (i)--(vi) as in the test specification, and fall into three kinds.
@@ -373,7 +373,7 @@ Every pseudo-experiment resamples the same simulated events, so the null distrib
 % Search: recoil-energy-scale band; calorimetric response band; linear surrogate; endpoint symmetry @ ddf16f10
 
 % Pointer entry 6 (the director's ruling (a), via director-helper-3): sec_summary.tex:39, kept there.
-\subsection{Further use of the results}
+\subsubsection{Further use of the results}
 \label{sec:limitations-use}
 
 New projections require their own applicability checks; nominal weights alone cannot certify arbitrary downstream inference (App.~\ref{sec:unbinned-inference}).

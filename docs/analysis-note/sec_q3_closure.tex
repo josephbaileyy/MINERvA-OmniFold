@@ -1,0 +1,34 @@
+\subsection{Closure tests: detecting bias}
+\label{sec:closure}
+
+The variance methods of \S\ref{sec:variance} quantify the scatter of the unfolded result. Closure tests measure its bias, a consistent offset from a known injected truth, which the variance methods cannot show. Each of three tests injects a known MC deformation, unfolds, and compares the median per-bin $|\text{residual}|$ of the recovered answer with a threshold. The thresholds lie comfortably above the $0.166\%$ ML floor of the earlier ten-seed scan, which was in force when the tests were graded (Ref.~\cite{NoteRecords2026}, superseded values: retired material). All use playlist-1A LightGBM 5-iteration unfolds. Thresholds and results are in \S\ref{sec:validation}; procedures and otherwise unreported values follow.
+% PHASE2 Q6: the floor in force at grading; the quoted training-seed block is C08 (0.057 %).
+
+\subsubsection{Truth-reweight closure}
+\label{sec:closure-tr}
+For known $f(\pT,\pPar)$, both reco and truth MC event weights are multiplied by $f$. Reweighted pseudo-data are unfolded with the unchanged CV response and compared with the reweighted truth marginal. Two shapes are tested: \texttt{gauss\_pt}, $f = 1 + A\exp\!\big[-((\pT - p_{T}^{0})/\sigma)^{2}\big]$ with $A=0.2$, $p_{T}^{0}=0.4$ GeV/c, $\sigma=0.1$ GeV/c; and \texttt{tilt\_pz}, $f = 1 + \alpha(\pPar - \pPar^{\text{ref}})$ with $\alpha=0.1$, $\pPar^{\text{ref}}=5$ GeV/c. Both residuals are at least $30\times$ below the threshold: OmniFold recovers the injected truth shape.
+
+\subsubsection{Hidden-variable closure}
+\label{sec:closure-hv}
+OmniFold sees reco and truth $(\pT,\pPar)$ but excludes resolution variable $\dpT \equiv \pT^{\text{reco}}-\pT^{\text{truth}}$. A bias confined to this hidden axis tests leakage into the measured marginal. Pseudo-data receive
+\begin{equation}
+w^{\text{reco}}
+\;\to\;
+w^{\text{reco}}\cdot
+\Big(1 + A\exp\!\big[-((\dpT - c)/\sigma_{\dpT})^{2}\big]\Big),
+\end{equation}
+with $c=+0.1$ GeV/c, $\sigma_{\dpT}=0.05$ GeV/c, and amplitude scanned over $A\in\{0.05,0.10,0.30\}$. Truth weights are \emph{unchanged}, so the reference is the unaltered CV truth marginal. For median per-bin signed residual $\bar r(A)$, a linear fit gives $\bar r(A) \approx \kappa_{\text{leak}} A$, with $\kappa_{\text{leak}} = \partial \bar r/\partial A$, the fraction of hidden $\dpT$ bias entering the visible answer. The $3.0\%$ acceptance bound is looser than the truth-reweight bound because the weak $\dpT$--$\pT$ correlation prevents complete removal of the leakage.
+
+On the $205$ reported bins the per-amplitude median residuals, $0.57\% / 1.14\% / 3.43\%$ for $A = 0.05/0.10/0.30$, are linear in $A$, as expected for small perturbations, with fitted slope $\kappa_{\text{leak}} = \boxed{0.113}$: about $11\%$ of a hidden $\dpT$ bias leaks into the measured $(\pT,\pPar)$ marginal. Against the $3.0\%$ acceptance bound, two of the three arms pass and the largest does not: $A=0.30$ gives $3.43\%$, which \emph{exceeds} $3.0\%$ (\S\ref{sec:validation}). The scan establishes the linearity and the coefficient: the acceptance bound is satisfied for hidden-$\dpT$ deformations up to roughly $A\simeq0.26$ and is violated above it. No non-closure uncertainty is assigned from this scan either way (\S\ref{sec:validation}). A $\dpT$-shaped mismodeling at the $30\%$ level would leak more than the analysis specified as tolerable; this is an open sensitivity, not a passing test.
+
+\subsubsection{Alternative-model closure}
+\label{sec:closure-alt}
+The OmniFold response is trained on the CV weights and the pseudo-data are built from an alternative-universe reweighting: \texttt{MaCCQE:0} ($+1\sigma$), which probes an interaction-model shape change, or \texttt{Flux:50} (PPFX index $50$), which probes flux reweighting --- two distinct kinds of model dependence. The reference is the in-acceptance-extrapolated alternative truth,
+\begin{equation}
+\tilde X^{\text{ref}}_{i}
+\;=\;
+X^{\CV,\text{truth}}_{i}\cdot
+\frac{X^{\text{alt},\text{in-acc}}_{i}}{X^{\CV,\text{in-acc}}_{i}},
+\end{equation}
+scaling the CV truth marginal by the alternative-to-CV in-acceptance count ratio to isolate model-shape response from acceptance/efficiency effects. In-acceptance biases are $-1.68\%$ for \texttt{MaCCQE:0}, removed by extrapolation, and $-7.32\%$ for \texttt{Flux:50}. Both residuals are below the $2.0\%$ bound by at least a factor of $5$. Those residuals are the recovery relative to the constructed reference above. They do not establish robustness to model variations in general.
+
