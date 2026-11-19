@@ -419,10 +419,10 @@ install_newfig() {  # install_newfig <basename under $NNF and in $FIGDIR> <sha25
 # install_newfig fived16_headline.pdf   69833f108f946b9b51c6795b10f1bdce941971ebf683482623735728e3059e6f   (figure pass, 2026-11-19: installed below)
 # install_newfig runperiod_steps.pdf    1088ae36889bffeea33182c3940bbf1ace4032dab1ff06e91000443618c12606   (figure pass, 2026-11-19: installed below)
 install_palette_fig MEFHC_5iter_fig13.pdf                    0c451b833ce7fff455cb526ff172c27b9e8ed8fa9ff8a422d097116d28691aef
-install_palette_fig MEFHC_5iter_xsec_paper_pt_slices.pdf     180b87866305bf9ededbb94a7ba8aa796a49b3a629bdc219910fb077b1bc4233
-install_palette_fig MEFHC_5iter_xsec_paper_pz_slices.pdf     e64b65ffbf6bae236cc7ee7c1f65f434497b0a8dc5ca0214039a7e4dd1aa941e
-install_palette_fig MEFHC_5iter_xsec_proj_pt.pdf             9f6911d470fe7044c9c7801e59a1d55389960d6e246b423727a9115b78234a75
-install_palette_fig MEFHC_5iter_xsec_proj_pz.pdf             56e1e99de5cfe08684a7b8288c04ecb830b14b79ffa8c10500f1815b86ca2a5d
+# install_palette_fig MEFHC_5iter_xsec_paper_pt_slices.pdf     180b87866305bf9ededbb94a7ba8aa796a49b3a629bdc219910fb077b1bc4233   (figure pass, 2026-11-19: installed below)
+# install_palette_fig MEFHC_5iter_xsec_paper_pz_slices.pdf     e64b65ffbf6bae236cc7ee7c1f65f434497b0a8dc5ca0214039a7e4dd1aa941e   (figure pass, 2026-11-19: installed below)
+# install_palette_fig MEFHC_5iter_xsec_proj_pt.pdf             9f6911d470fe7044c9c7801e59a1d55389960d6e246b423727a9115b78234a75   (figure pass, 2026-11-19: installed below)
+# install_palette_fig MEFHC_5iter_xsec_proj_pz.pdf             56e1e99de5cfe08684a7b8288c04ecb830b14b79ffa8c10500f1815b86ca2a5d   (figure pass, 2026-11-19: installed below)
 install_palette_fig MEFHC_5iter_pull_full.pdf                35c31c49a9311920b57d45d716417d468d1de857d316f22e4a7a3f3a5055ec00
 # Fig. 6 (2026-11-18): the efficiency map in the paper's fonts (tier 2, runs/xsec_proj/). Its re2-integration ledger G row
 # is re-pointed to this record (fig-restyle ruling 1: re-point, do not replace), and check_ledger.py requires that row's
@@ -456,6 +456,11 @@ install_layout_fig paper_fig_coverage.pdf                   e1c3a18072270c99d89d
 install_layout_fig paper_fig_bkg_residual.pdf               1c6732728aecb53930d26be5f93480d821fd451c3cf868cf054c4c4b993decc1
 install_layout_fig fived16_headline.pdf                     97766f5c52470b8bdc1f46b982fdbdae97d7c67aef9fde4faf9f27e680ee0f3e
 install_layout_fig runperiod_steps.pdf                      4496bcf824d56393e50991b1b6f70068df15ffd73eb5f7add26f738c7e1d95fb
+install_layout_fig mode_decomp_mec_eavail_central.pdf       0b30b46b0456039d499e4bd399f9160d49ea1da42fa8d171c901099bfadadb7f
+install_layout_fig MEFHC_5iter_xsec_proj_pt.pdf             f401ad1c3de18a34305f59d03fc3d4fb1a00360d9f68f8212c7b5fc564744b2c
+install_layout_fig MEFHC_5iter_xsec_proj_pz.pdf             506e13cdc6eabe08a564323605bb1ed7b07fbd0327d2d1602cacc784b046b8ff
+install_layout_fig MEFHC_5iter_xsec_paper_pt_slices.pdf     b4cec2839a2b5f44d9a17bfa1093cfbe3bb6ac5afde179bf99962375284d31ca
+install_layout_fig MEFHC_5iter_xsec_paper_pz_slices.pdf     693ea449dbfc3514b2af9ae10039793476c1764e560c5b5ee9e59774f65ce072
 
 echo
 echo "== paper-only vector crops =="

@@ -13,7 +13,7 @@
 |---|---|---|
 | A1 | 17 (fig:eavail-marg), 23 (fig:q3excess) | Fig. 23 drawn again at its printed size; Fig. 17 split into its two panels at full width (LaTeX only) |
 | A2 | width classes; text under 7 pt | three width classes in LaTeX; Figs. 33, 36 drawn again at printed size; Figs. 26, 27 with larger fonts |
-| B | the duplicates (Figs. 7, 9, 10, 13; 20, 21), by Joseph's ruling of 2026-11-19 | to do |
+| B | the duplicates (Figs. 7, 9, 10, 13; 20, 21), by Joseph's ruling of 2026-11-19 (DECISION-20261119b) | each series drawn once: Fig. 13 folded into Fig. 7, the mosaic's points into Figs. 9 and 10, Figs. 20 and 21 one figure |
 
 ## The method (two arms per redrawn figure)
 
@@ -167,4 +167,96 @@ Base: the A1 build at ed1dcb2f9.
   - distinct printed widths: 13 → 5;
   - figures with overlapping strings: 3, all unchanged here (Figs. 9 and 10 are chunk B; Fig. 27's one is the t̄ bar over its t);
   - figures with any text under 7 pt: 32, all from sub- and superscripts, with Fig. 18 and the chunk B and tier-2 figures as above.
+
+## Chunk B: each data series drawn once
+
+**The rule** (DECISION-20261119b, Joseph's words: "I just don't want there to be duplicates") comes with the
+director's rulings (1) option (a), (2) option (i) and (3).
+- **The method:** each figure is composed from the unchanged producers or pinned pickles in one process.
+- **The checks:** every item of the installed figure must be present with an equal hash, and each added series must
+  equal its source.
+
+### Figs. 20 and 21 → one figure (fig:modedecomp; fig:mec labels it too)
+
+- **The duplication** (palette pass's committed captures): Fig. 21's data line is Fig. 20's item for item (same
+  hash). Its GENIE CV bars reach the top of Fig. 20's mode stack: the data − CV outline starts exactly there (relative
+  difference 0).
+- **The new series:** Fig. 21's only new series is the Valencia MEC addition.
+- **The recipe:** `tools/compose_family4.py <note-figstyle-20261113/runs/family4/pickles> <out>`, under matplotlib 3.10.8.
+  - It loads both pinned pickles through `restyle_family4.load()`, which checks the sha256, and changes no pickle byte.
+  - It makes the palette pass's edits, then adds Fig. 21's six MEC rectangles to Fig. 20's axes, each a new
+    Rectangle with the same geometry and style. The legend gains "+ Valencia MEC (2p2h)" after the modes.
+  - Layout: `restyle_family4.restyle()`, unchanged, at full width (aspect 0.55, legend in 3 columns below).
+- **Check** (`runs/f2021/CHECKS.txt`, `tools/check_compose.py`): CHECK-COMPOSE PASS. The 37 items are Fig. 20's 31
+  plus Fig. 21's 6 MEC items, by full hash, and nothing else. Fig. 21's CV bars and data line are left out.
+- **Caption:** the two captions merged. Every statement is kept: no 2p2h in the CV; Valencia 2p2h closes about half
+  the low-E_avail gap (52 %); no 3D covariance; flux-repaired; the remainder in the enhancement region. The data − CV
+  outline and the data points are now named (two grader F4 items).
+
+### Figs. 7, 9, 10, 13 (fig:xsec, fig:ptslices, fig:pzslices; fig:model labels Fig. 7 too)
+
+**The series**, from the producers and the committed captures:
+- Fig. 7's projections and Figs. 9/10 draw the result and our simulation's truth (`hOFTruthDenom2D`, the prior).
+- Fig. 13 draws the result, the published data, and MINERvA's published Tune v1 prediction from the ancillary file
+  (`model_ptpl_minerva_inclusive_6GeV_MINERvA_Tune_v1.txt`). That prediction is a different curve from the prior,
+  under the same legend name: first p_T bin 1.362e-39 against 1.264e-39.
+- Fig. 7's slice mosaic (`plot_2d_threeway_fig13.py`) draws the result, the published data with statistical-diagonal
+  bars, and the prior, per slice.
+
+**Recipe:** `tools/compose_tier2.py` under `note-figstyle-20261117/tools/remap_anc.py`, in the tier-2 ROOT
+environment, with the inputs of the 2026-11-17 fetch (as the palette pass's tier 2).
+- The four producers run unchanged in one process with the palette pass's restyle arguments. Their figures are held
+  after the palette edits, not written.
+- **(1) Fig. 13 into Fig. 7's projections.**
+  - Fig. 13's This work equals the projection's (relative 3.4e-16 and 0), so the two share coordinates.
+  - Fig. 13's published line is added as drawn. Its Tune v1 line is added dashed, as "Tune v1: published prediction".
+  - The prior's entry becomes "Tune v1: our simulation (the prior)", and the ratio label "This work / prior".
+- **(2) The mosaic into Figs. 9 and 10.**
+  - Each of the 30 mosaic panels is matched to the slice panel whose This work points are proportional to its own: a
+    constant ratio to 2.2e-16, which also pairs the bins.
+  - The mosaic's prior, divided by that ratio, equals the slice panel's prior to 2.2e-16. So the mosaic draws the
+    prior, not the ancillary curve, and nothing of it is lost.
+  - Its published points and their statistical-diagonal bars, scaled by the panel's ratio, are added to Figs. 9 and 10.
+    They include the unreported cells, as the mosaic drew them.
+  - Each figure legend gains "Published (PRD 104, 092007)", and its prior entry names its source as in Fig. 7.
+- **Checks** (`runs/tier2/CHECKS.txt`, `tools/check_tier2.py`, `runs/tier2/compose_tier2.json`): CHECK-TIER2 PASS.
+  - **Projections:** 18 items = the installed 16 + Fig. 13's published line (equal full hash) + its Tune v1 line
+    (equal xhash, restyled dashed).
+  - **Slices:** every installed item is present with an equal hash. The 98 and 112 added items are all black (the
+    published points), in every panel.
+- **Not drawn now:** the mosaic (`MEFHC_5iter_fig13.pdf` stays installed, because the primer prints it) and Fig. 13
+  (`model_comp_projections.pdf` stays installed and is included by nothing). Fig. 14 (`model_comp_ratio_maps`,
+  ratios to the ancillary curve) is unchanged.
+- **Captions:**
+  - **Fig. 7:** it now names its two panels, every series and source, and the ratio panel. It keeps the bar
+    statements, says the published data and prediction carry no uncertainties (Fig. 13's "Uncertainties are not
+    drawn"), and points to Figs. 9 and 10 for the 2D cross section.
+  - **Figs. 9 and 10:** "no published measurement is used" became "the panel χ²/n compares the result with the prior;
+    the published points are shown for comparison and enter no statistic", as the director worded it. The
+    statistical-diagonal bar statement moved from Fig. 7's old caption.
+  - **Fig. 13's caption** is gone. Its claim (Tune v1 below the data in the peak) is Fig. 7's.
+
+### Measured (base: the A2 head at 1f88c3d28)
+
+- **Build:** rc 0, with 0 undefined references and no multiply defined label.
+- **freeze_checks** (1, 3, 5, 7, empty allow-list) passes: 5511 = 5511 tokens.
+- **quality_checks:**
+  - 1b data-signal figure pairs go from 4 to 3. The pair Figs. 20/21 is gone.
+  - The three left:
+    - Figs. 9/10: the same result in its two slicings, both kept by the director's ruling;
+    - Fig. 7 against Figs. 9 and 10: a projection's shape against single slices, one axes of four matched. It is not
+      a redraw.
+  - Content-signal pairs go from 11 to 7. Figures go from 36 to 34. Distinct printed widths go from 5 to 3, the three
+    classes.
+- **Grok:** one read on the caption and pointer hunks (`~/codex-reports/note-measurement/reads/figpass-B/grok/`).
+
+### Pointers in files this lane does not own (routed, with the exact replacement)
+
+The alias labels keep every reference resolving until the owners apply these. Then the aliases go.
+- **P1, sec_results 6.1:** "Figure~\ref{fig:xsec} shows the unfolded … and its 1D projections." → the 1D projections,
+  and Figs.~\ref{fig:ptslices}--\ref{fig:pzslices} slice by slice.
+- **P2, sec_results 6.6:** \ref{fig:model} → \ref{fig:xsec}, "(dashed)" after "published ancillary files", and "the
+  tune" → "that prediction".
+- **P3, sec_results:** "Figures 9–10 compare … with simulated truth" gains "with the published points for comparison".
+- **P4:** sec_3d's and app_history's \ref{fig:mec} → \ref{fig:modedecomp}.
 
