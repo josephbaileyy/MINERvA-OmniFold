@@ -31,23 +31,12 @@ The background template used for this result is \SI{2.91}{\percent} of selected 
 
 \subsubsection{Per-event analysis trees}
 \label{sec:evloop}
-Unbinned unfolding needs per-event records rather than histograms. A dedicated event loop (App.~\ref{app:codebase}), built on MAT's systematic-universe tools, writes four per-event samples for each playlist: all true signal events (the efficiency denominator), reconstructed truth-matched simulated events, simulated background, and data. Entries carry truth and reconstructed observables ($\pT$, $\pPar$, and in extended runs $\Eavail$, $q_{3}$, $W$) and the MINERvA Tune~v1 central-value weight. The systematic-universe samples also carry every universe's weight and the shifted observables of each lateral band, a variation that shifts reconstructed kinematics rather than reweighting events (a vertical band; \S\ref{sec:systematics}). Two conditions make the truth sample the complete reference for the simulated signal:
-% (\texttt{\_universes\_full})
-\begin{itemize}
-  \item A reconstructed signal event is filled only if its $(\mathrm{run},\mathrm{subrun},\mathrm{event})$ key is in the truth denominator. Truth events without a reconstructed partner enter as native OmniFold ``miss'' entries.
-  \item The simulated signal sample is complete by construction at ME~FHC (completeness $c=1.000000$; \S\ref{sec:method-xsec}).
-\end{itemize}
-The loop reads one playlist-wide flux and calibration from the first event, so it is run separately for each playlist, and the twelve per-playlist outputs are combined. The corresponding baseline histogram event loop supplies the flux histogram, POT-weighted across playlists; the size of the playlist-to-playlist flux differences is stated in \S\ref{sec:limitations-experiment}.
-% (\texttt{TTree::SetMaxTreeSize}-aware)
-
+A dedicated event loop (App.~\ref{app:codebase}) writes per-event records for each playlist: all true signal events (the efficiency denominator), reconstructed truth-matched simulated events, simulated background, and data. Its conventions are in the records document (Ref.~\cite{NoteRecords2026}).
 
 
 \subsubsection{Reco-level control distributions}
 \label{sec:controlplots}
 Selected data exceed the POT-scaled MINERvA Tune~v1 prediction (signal $+$ background) by $\sim\SI{12}{\percent}$ in overall normalization. Figure~\ref{fig:control} compares all five reconstructed observables, and Fig.~\ref{fig:control-corner} their pairwise correlations. The data/MC ratio rises with $\pT$, from $0.88$ in the lowest bin to $\sim1.2$ above \SI{1}{GeV/c}. Excess and trend together reflect the truth-level normalization deficit of \S\ref{sec:results-model} and \S\ref{sec:3d-models}.
-
-The beam and acceptance set the shapes. The $\pPar$ peak at $4$--$6$~GeV/$c$ reflects the ${\langle E_\nu\rangle}\approx\SI{6}{GeV}$ NuMI medium-energy peak; spectrometer matching removes the lowest-$\pPar$ muons. The $\pT$ spectrum peaks near $0.7$~GeV/$c$ and falls by over an order of magnitude across the measured range. Low-recoil (quasi-elastic and $2p2h$) events dominate the sample. Available energy $\Eavail$ concentrates below ${\sim}\SI{0.5}{GeV}$, with a long inelastic tail in the wide upper bins; $q_{3}$ tracks this population's momentum transfer. Reconstructed $W$ rises through the smeared quasi-elastic and $\Delta(1232)$ region before the deep-inelastic continuum takes over above ${\sim}\SI{2}{GeV}$. Absolute background is at the few-percent level under the muon projections and concentrates at high recoil (highest $\Eavail$, $q_{3}$ and $W$ bins). Beyond the $\pT$ trend noted above, the ratio panels also show a mild enhancement in the lowest $\Eavail$ bins, reflecting the low-recoil excess examined at truth level in \S\ref{sec:3d-2p2h}.
-
 
 
 \begin{figure}[H]
