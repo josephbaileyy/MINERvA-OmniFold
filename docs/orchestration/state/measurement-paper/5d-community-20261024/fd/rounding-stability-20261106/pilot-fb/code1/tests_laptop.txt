@@ -1,0 +1,49 @@
+# HEAD 1d8873ba14cc8a63585e59bcadbc1fce61f2bdd5
+# clean clone, Python 3.12.2, numpy 1.26.4, no lightgbm, 2026-11-18T08:13:26Z
+# 5add7476ed7f48eddd898e509221ddb44ffe0ab72f782decffdbf187bd4b0015  fb_pilot_edges.py
+# b55ea40d3691521248813b1702d7c3442aa7564e9956d1a8d211a1522371cd09  fb_pilot_gates.py
+# d989a9e5ff62daf1a3af53b8667cdf5476c4d2430a4618261be7b1b90787472d  fb_pilot_probe.py
+# 6c06e3a4a139cfc4048c2a2772614c860ebf37898021d5109992bdf2ccc6d159  fb_pilot_analyze.py
+# 45e86e5075062da7e34eabd9e499aa500d4f221812983a24f21b9066e91b76c9  sbatch_pfb.sh
+# f601c32c928a10ad4c35a8b30aac92e08b2a8cece2e3b065d3abc019c83e6f3b  tests/test_fb_pilot.py
+# 8e2e87ddf21c0aa1163ee737fc768a3009f99dcd14916a7e8b3998ad3caad625  tests/fb_pilot_mutation.py
+# command: python3 -B -W ignore -m unittest -v nd-unfolding/tests/test_fb_pilot.py
+test_a_power_of_two_needs_no_extra_rule (nd-unfolding.tests.test_fb_pilot.Admissibility.test_a_power_of_two_needs_no_extra_rule) ... ok
+test_intended_index_is_lightgbms_value_to_bin (nd-unfolding.tests.test_fb_pilot.Admissibility.test_intended_index_is_lightgbms_value_to_bin) ... ok
+test_no_edge_sits_in_the_zero_band (nd-unfolding.tests.test_fb_pilot.Admissibility.test_no_edge_sits_in_the_zero_band) ... ok
+test_no_jitter_crosses_an_admissible_edge (nd-unfolding.tests.test_fb_pilot.Admissibility.test_no_jitter_crosses_an_admissible_edge) ... ok
+test_signed_spacing_counterexamples_are_refused (nd-unfolding.tests.test_fb_pilot.Admissibility.test_signed_spacing_counterexamples_are_refused) ... ok
+test_the_zero_band_and_finiteness_refuse (nd-unfolding.tests.test_fb_pilot.Admissibility.test_the_zero_band_and_finiteness_refuse) ... ok
+test_a_correct_file_passes_and_a_zero_split_stores_k (nd-unfolding.tests.test_fb_pilot.G3.test_a_correct_file_passes_and_a_zero_split_stores_k) ... skipped 'LightGBM 4.6.0 is not installed'
+test_a_middle_edge_removed_changes_the_partition (nd-unfolding.tests.test_fb_pilot.G3.test_a_middle_edge_removed_changes_the_partition) ... skipped 'LightGBM 4.6.0 is not installed'
+test_a_misparsed_edge_used_as_a_split_fails_b (nd-unfolding.tests.test_fb_pilot.G3.test_a_misparsed_edge_used_as_a_split_fails_b) ... skipped 'LightGBM 4.6.0 is not installed'
+test_a_nan_in_a_split_feature_fails_c (nd-unfolding.tests.test_fb_pilot.G3.test_a_nan_in_a_split_feature_fails_c) ... skipped 'LightGBM 4.6.0 is not installed'
+test_an_edge_moved_in_a_used_gap_fails_b (nd-unfolding.tests.test_fb_pilot.G3.test_an_edge_moved_in_a_used_gap_fails_b) ... skipped 'LightGBM 4.6.0 is not installed'
+test_an_unforced_fit_fails_g3 (nd-unfolding.tests.test_fb_pilot.G3.test_an_unforced_fit_fails_g3) ... skipped 'LightGBM 4.6.0 is not installed'
+test_an_unopenable_file_fails_a (nd-unfolding.tests.test_fb_pilot.G3.test_an_unopenable_file_fails_a) ... skipped 'LightGBM 4.6.0 is not installed'
+test_harmless_changes_may_pass_and_leave_predictions_unchanged (nd-unfolding.tests.test_fb_pilot.G3.test_harmless_changes_may_pass_and_leave_predictions_unchanged) ... skipped 'LightGBM 4.6.0 is not installed'
+test_the_remedy_is_jitter_invariant_on_fit_and_scored_rows (nd-unfolding.tests.test_fb_pilot.G3.test_the_remedy_is_jitter_invariant_on_fit_and_scored_rows) ... skipped 'LightGBM 4.6.0 is not installed'
+test_a_source_slice_is_not_the_signed_sample (nd-unfolding.tests.test_fb_pilot.J.test_a_source_slice_is_not_the_signed_sample) ... ok
+test_j2_rebuilds_with_the_runs_own_build_inputs (nd-unfolding.tests.test_fb_pilot.J.test_j2_rebuilds_with_the_runs_own_build_inputs) ... ok
+test_role_matrices_follow_the_bound_selection (nd-unfolding.tests.test_fb_pilot.J.test_role_matrices_follow_the_bound_selection) ... ok
+test_the_bound_jitter_is_not_jitter_coords_of_a_role_matrix (nd-unfolding.tests.test_fb_pilot.J.test_the_bound_jitter_is_not_jitter_coords_of_a_role_matrix) ... ok
+test_unapplied_wrong_seed_and_edge_moves_are_caught (nd-unfolding.tests.test_fb_pilot.J.test_unapplied_wrong_seed_and_edge_moves_are_caught) ... ok
+test_a_nonfinite_bootstrap_endpoint_is_inconclusive (nd-unfolding.tests.test_fb_pilot.Outcome.test_a_nonfinite_bootstrap_endpoint_is_inconclusive) ... ok
+test_every_combination_reaches_exactly_one_row (nd-unfolding.tests.test_fb_pilot.Outcome.test_every_combination_reaches_exactly_one_row) ... ok
+test_gate_precedence_and_a_deliberate_round1_stop (nd-unfolding.tests.test_fb_pilot.Outcome.test_gate_precedence_and_a_deliberate_round1_stop) ... ok
+test_invalid_branches (nd-unfolding.tests.test_fb_pilot.Outcome.test_invalid_branches) ... ok
+test_s2_and_s3_follow_their_definitions (nd-unfolding.tests.test_fb_pilot.Outcome.test_s2_and_s3_follow_their_definitions) ... ok
+test_the_bars_include_equality_and_rows_5_7_name_what_crossed (nd-unfolding.tests.test_fb_pilot.Outcome.test_the_bars_include_equality_and_rows_5_7_name_what_crossed) ... ok
+test_build_edges_writes_twelve_files_and_refuses_an_existing_dir (nd-unfolding.tests.test_fb_pilot.Placement.test_build_edges_writes_twelve_files_and_refuses_an_existing_dir) ... ok
+test_edges_are_written_at_17_digits_and_round_trip (nd-unfolding.tests.test_fb_pilot.Placement.test_edges_are_written_at_17_digits_and_round_trip) ... ok
+test_k_is_lightgbms_float32_constant (nd-unfolding.tests.test_fb_pilot.Placement.test_k_is_lightgbms_float32_constant) ... ok
+test_one_pool_gives_one_edge_set (nd-unfolding.tests.test_fb_pilot.Placement.test_one_pool_gives_one_edge_set) ... ok
+test_ties_collide_and_walk_up (nd-unfolding.tests.test_fb_pilot.Placement.test_ties_collide_and_walk_up) ... ok
+test_too_few_gaps_is_infeasible (nd-unfolding.tests.test_fb_pilot.Placement.test_too_few_gaps_is_infeasible) ... ok
+test_z_comes_from_the_fit_column (nd-unfolding.tests.test_fb_pilot.Placement.test_z_comes_from_the_fit_column) ... ok
+
+----------------------------------------------------------------------
+Ran 33 tests in 0.160s
+
+OK (skipped=9)
+# exit 0

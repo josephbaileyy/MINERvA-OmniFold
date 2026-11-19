@@ -1,0 +1,8 @@
+launch 2026-11-18T18:40:48Z node login27 script sha256 93ddb2643c7b5a3b9690752f07d01f87d7aa3add7cd369a522cf1b248aff7d5d
+ssh rc=9
+STOP: the fetch exited 9
+this system you indicate your awareness of and consent to these terms and
+conditions of use. LOG OFF IMMEDIATELY if you do not agree to the conditions
+stated in this warning.
+Login connection to host x3115c0s15b0n0:
+refusing: sacct failed (rc 1): sacct: fatal: job state CF is not supported / accounted

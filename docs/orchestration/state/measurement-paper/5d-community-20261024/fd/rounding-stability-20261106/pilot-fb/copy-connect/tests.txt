@@ -1,0 +1,73 @@
+# HEAD 9d607e2f3ab8af03844c25e144b4102b1b9783cf
+# clean clone, Python 3.12.2, 2026-11-19T03:26:27Z; imports fb_pilot_analyze, rounding_mechanism_analyze and rounding_mechanism_probe
+# 6e38baa49a13c41a9370fe3db048e26fe0a5e382c78aca898e95d1ebb2c6faba  nd-unfolding/pfb_copy_remote.py
+# 72563b2114742a3dff82c46201012172c24bee4c559f5fdc389deff652dffa90  nd-unfolding/pfb_copy_launch.sh
+# ca28f61756db58d87aed9dd843eeee6a4def19f5b6e34fdf8e942f826d54f623  nd-unfolding/tests/test_pfb_copy.py
+# e31bf0737aee438b001139430c1a049068d51efd92424320cbf33875bc762e3e  nd-unfolding/tests/pfb_copy_testentry.py
+# command: python3 -B -m unittest -v nd-unfolding/tests/test_pfb_copy.py
+test_a_clear_copy_makes_plain_new_files_inside_the_stage (nd-unfolding.tests.test_pfb_copy.Copy.test_a_clear_copy_makes_plain_new_files_inside_the_stage) ... ok
+test_a_source_off_its_pin_or_a_link_refuses_before_any_write (nd-unfolding.tests.test_pfb_copy.Copy.test_a_source_off_its_pin_or_a_link_refuses_before_any_write) ... refusing: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp9lt42ae7/rs1/runs/A0/rs1_A0_b-_j11.npz is not at its pin (d67e2e944994496c8d8ec76eed0cf9f09679448d584b532bebf941852a37f5ed, not 257f919c2629ea31355e6e010d2327d287e9e0915c21c6da0270d60043dd2773)
+refusing: the source /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp9lt42ae7/rs1/runs/A0/rs1_A0_b-_j11.npz is not a regular file (a symlink is refused)
+refusing: no source /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp9lt42ae7/rs1/runs/A0/rs1_A0_b-_j11.npz
+ok
+test_the_pins_and_declared_paths (nd-unfolding.tests.test_pfb_copy.Copy.test_the_pins_and_declared_paths) ... ok
+test_the_remote_script_is_python_3_6_and_runs_no_job (nd-unfolding.tests.test_pfb_copy.Copy.test_the_remote_script_is_python_3_6_and_runs_no_job) ... ok
+test_the_stage_must_hold_the_smoke_receipt_and_no_copies (nd-unfolding.tests.test_pfb_copy.Copy.test_the_stage_must_hold_the_smoke_receipt_and_no_copies) ... refusing: the stage lacks smoke-receipt.json
+refusing: the stage already holds a0-refs
+refusing: the stage already holds assess_receipt.json
+refusing: the deploy 'relative/deploy' is not an absolute path under /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpnituaxfe/
+refusing: the deploy /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpnituaxfe/nogit is not a git checkout (fatal: cannot change to '/private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpnituaxfe/nogit': No such file or directory)
+ok
+test_tampered_bytes_exit_10_and_write_nothing (nd-unfolding.tests.test_pfb_copy.K1Snapshot.test_tampered_bytes_exit_10_and_write_nothing) ... ok
+test_the_launcher_captures_once_and_sends_the_capture (nd-unfolding.tests.test_pfb_copy.K1Snapshot.test_the_launcher_captures_once_and_sends_the_capture) ... ok
+test_a_stage_under_a_symlinked_parent_is_not_the_literal_path (nd-unfolding.tests.test_pfb_copy.K2Descriptors.test_a_stage_under_a_symlinked_parent_is_not_the_literal_path) ... refusing: the stage descriptor is at /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpc3iyu0oy/elsewhere-parent/stage, not the literal /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpc3iyu0oy/link/stage
+ok
+test_a_symlink_swapped_in_for_the_stage_refuses_with_no_write (nd-unfolding.tests.test_pfb_copy.K2Descriptors.test_a_symlink_swapped_in_for_the_stage_refuses_with_no_write) ... refusing: the stage /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpml2n_qeu/stage cannot be opened as a real directory ([Errno 20] Not a directory: '/private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpml2n_qeu/stage')
+ok
+test_the_production_entry_refuses_any_test_switch (nd-unfolding.tests.test_pfb_copy.K3NoTestHooks.test_the_production_entry_refuses_any_test_switch) ... ok
+test_a_chmod_during_the_read_refuses (nd-unfolding.tests.test_pfb_copy.K4StatIntegrity.test_a_chmod_during_the_read_refuses) ... refusing: a source moved during its read: ["rs1_A0_b-_j13.npz: ['st_ctime_ns', 'st_mode']"]
+ok
+test_a_path_swap_during_the_read_refuses (nd-unfolding.tests.test_pfb_copy.K4StatIntegrity.test_a_path_swap_during_the_read_refuses) ... refusing: a source moved during its read: ["rs1_A0_b-_j13.npz: ['st_ctime_ns', 'st_nlink', 'path after is another file']"]
+ok
+test_a_fence_that_becomes_active_after_the_copy_is_a_stop (nd-unfolding.tests.test_pfb_copy.K5Fence.test_a_fence_that_becomes_active_after_the_copy_is_a_stop) ... STOP: the fence read after the copies is not clear
+ok
+test_blank_fields_a_failed_sacct_and_an_absent_sacct_refuse (nd-unfolding.tests.test_pfb_copy.K5Fence.test_blank_fields_a_failed_sacct_and_an_absent_sacct_refuse) ... refusing: sacct rows with a missing or blank field: ['61||RUNNING']
+refusing: sacct rows with a missing or blank field: ['61|pfb_run|']
+refusing: sacct rows with a missing or blank field: ['|pfb_run|RUNNING']
+refusing: sacct failed (rc 1): 
+refusing: fenced jobs are in a non-terminal state: ['62|cov2d_a|COMPLETING']
+refusing: sacct is not at /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmphj7d73iq/bin/sacct
+ok
+test_verify_requires_every_typed_field (nd-unfolding.tests.test_pfb_copy.K6StrictVerify.test_verify_requires_every_typed_field) ... ok
+test_an_o_noatime_permission_error_is_exit_3 (nd-unfolding.tests.test_pfb_copy.K7IOErrors.test_an_o_noatime_permission_error_is_exit_3) ... refusing: an O_NOATIME open of /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp8bx0r0mn/rs1/runs/A0/rs1_A0_b-_j-.npz was refused ([Errno 1] Operation not permitted)
+ok
+test_enospc_on_the_last_copy_is_an_explicit_stop_with_a_partial_manifest (nd-unfolding.tests.test_pfb_copy.K7IOErrors.test_enospc_on_the_last_copy_is_an_explicit_stop_with_a_partial_manifest) ... STOP: a write-side failure ([Errno 28] No space left on device (errno 28)); the 23 created paths stay in place
+ok
+test_the_smoke_receipt_binds_stage_pin_and_index (nd-unfolding.tests.test_pfb_copy.K8SmokeBinding.test_the_smoke_receipt_binds_stage_pin_and_index) ... refusing: the smoke's receipt does not bind this copy: its stage '/pscratch/other' is not /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpyi8qij_5/stage
+refusing: the smoke's receipt does not bind this copy: its pin '0000000000000000000000000000000000000000' is not the deploy's 8996798305bd0ef152a144b40e883136bedc6c78
+refusing: the smoke's receipt does not bind this copy: it is not a production smoke's
+refusing: the smoke's receipt does not bind this copy: it records no INDEX sha256
+refusing: the smoke's receipt does not bind this copy: it records no INDEX sha256
+refusing: the smoke's receipt is not JSON (Expecting value: line 1 column 1 (char 0))
+refusing: smoke-receipt.json is not a plain file of its own
+refusing: smoke-receipt.json is not a plain file of its own
+ok
+test_the_launcher_checks_its_arguments_and_hop (nd-unfolding.tests.test_pfb_copy.Launcher.test_the_launcher_checks_its_arguments_and_hop) ... ok
+test_m1_a_closed_stdin_exits_10 (nd-unfolding.tests.test_pfb_copy.Rev3.test_m1_a_closed_stdin_exits_10) ... ok
+test_m2_sacct_gets_the_literal_home (nd-unfolding.tests.test_pfb_copy.Rev3.test_m2_sacct_gets_the_literal_home) ... ok
+test_m3_the_verifier_is_strict (nd-unfolding.tests.test_pfb_copy.Rev3.test_m3_the_verifier_is_strict) ... ok
+test_m4_an_io_error_before_the_first_write_writes_nothing (nd-unfolding.tests.test_pfb_copy.Rev3.test_m4_an_io_error_before_the_first_write_writes_nothing) ... refusing: read of smoke-receipt.json failed: [Errno 5] Input/output error
+refusing: the lstat of /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpwrsm6c6e/rs1/runs/A0/rs1_A0_b-_j15.npz after its read failed: [Errno 5] Input/output error
+ok
+test_m5_the_index_must_be_the_receipts (nd-unfolding.tests.test_pfb_copy.Rev3.test_m5_the_index_must_be_the_receipts) ... refusing: the stage lacks INDEX.json
+refusing: smoke-edges/INDEX.json is not the INDEX the smoke's receipt names
+refusing: INDEX.json is not a plain file of its own
+ok
+test_m6_a_fifo_receipt_refuses_without_blocking (nd-unfolding.tests.test_pfb_copy.Rev3.test_m6_a_fifo_receipt_refuses_without_blocking) ... ok
+
+----------------------------------------------------------------------
+Ran 25 tests in 8.791s
+
+OK
+# exit 0
+# clone status: 0 lines
