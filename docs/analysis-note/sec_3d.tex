@@ -11,7 +11,7 @@ The comparisons with generator predictions in this section and in Sec.~\ref{sec:
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.97\textwidth]{minerva_unfolding_landscape}
+  \includegraphics[width=\textwidth]{minerva_unfolding_landscape}
   \caption[Survey of MINERvA differential measurements]{This work unfolds five recorded CC-inclusive high-level observables without binning. Earlier results use binned unfolding, including a triple-differential quasielastic-like measurement. The survey shows MINERvA differential measurements by number of simultaneously unfolded kinematic variables, by year, colored by channel (a double-differential $d^{2}\sigma/dx\,dy$ counts as two). Sources: the MINERvA data-release page and cited publications. The inventory runs through 2025, with newer measurements in App.~\ref{app:landscape}. Classification uses headline differential results, excluding flux, reconstruction, generator-tuning and total-only entries.}
   \label{fig:landscape}
 \end{figure}
@@ -75,7 +75,7 @@ The unfolded $d\sigma/d\Eavail$, the 1D projection of the 3D result (Fig.~\ref{f
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.66\textwidth]{eavail_spectrum}
+  \includegraphics[width=0.7\textwidth]{eavail_spectrum}
   \caption[Available-energy spectrum, central values only]{The available-energy spectrum falls monotonically from the low-recoil peak to the catch bin. No uncertainty drawn: no 3D covariance is quoted (\S\ref{sec:3d}). Shown is the unfolded $d\sigma/d\Eavail$, the 1D projection of the 3D result. The wide $[3,100]\,\si{GeV}$ catch bin is excluded from the axis; its value is annotated.}
   \label{fig:eavail}
 \end{figure}
@@ -94,15 +94,15 @@ Marginalizing over $\Eavail$ should reproduce the 2D result of \S\ref{sec:result
 
 \begin{figure}[H]
   \centering
-  % Layout (cov2d figure pass, 2026-11-19): the producer's 864 x 360 pt canvas, split into its two panels, each at scale 1.0 (it was 0.38); the distribution panel follows in a continuation float. The superscripts stay below 7 pt pending a producer re-render (note-figpass-20261119/README.md).
-  \includegraphics[scale=1.0,trim=5 11 434 0,clip]{eavail_marginal_vs_paper_pull_full}
+  % Layout (cov2d figure pass, 2026-11-19): the producer's 864 x 360 pt canvas, split into its two panels, each at the full text width (scale about 1.1; it was 0.38); the distribution panel follows in a continuation float. The superscripts stay below 7 pt pending a producer re-render (note-figpass-20261119/README.md).
+  \includegraphics[width=\textwidth,trim=5 11 434 0,clip]{eavail_marginal_vs_paper_pull_full}
   \caption[Descriptive marginal comparison, configuration~(a)]{Development check: configuration~(a) gives descriptive standardized differences, not formal independent-result pulls. Shared data and unavailable cross-covariance impose this restriction. The per-bin differences of the $\Eavail$-marginal are scaled by published uncertainties and shown on the $14\times16$ grid and in distribution. Configuration~(a) uses purity-based subtraction (\S\ref{sec:method-config}).}
   \label{fig:eavail-marg}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[scale=1.0,trim=430 11 6 0,clip]{eavail_marginal_vs_paper_pull_full}
+  \includegraphics[width=\textwidth,trim=430 11 6 0,clip]{eavail_marginal_vs_paper_pull_full}
 
   Figure~\ref{fig:eavail-marg}: continued, the per-bin differences in distribution.
 \end{figure}
@@ -123,7 +123,7 @@ Our gradient-boosted decision trees differ from the neural-network classifiers u
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.95\textwidth]{nn_vs_gbdt_full}
+  \includegraphics[width=\textwidth]{nn_vs_gbdt_full}
   \caption[Classifier-family development check, configuration~(a)]{Development check: the configuration-(a) result agrees between the two tested classifier families in the populated bulk. No uncertainty drawn (as in Fig.~\ref{fig:eavail}). The five-iteration OmniFold cross-check uses identical weighted 3D inputs and extraction, changing only the classifier family. Top: absolutely normalized GBDT (configuration~(a)) and Keras-MLP projections; bottom: binwise ratio. The MLP/GBDT total-cross-section ratio is $1.0078$; median absolute projection differences are \SI{1.20}{\percent} in $\pT$, \SI{1.36}{\percent} in $\pPar$, and \SI{0.66}{\percent} in $\Eavail$. Larger excursions occur only in sparsely populated outermost $\pT$ and $\pPar$ bins.}
   \label{fig:calibration}
 \end{figure}
@@ -153,7 +153,7 @@ Figure~\ref{fig:3dmodels} shows the comparison. Totals over the full measurement
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.99\textwidth]{generators_vs_unfolded_band_central}
+  \includegraphics[width=\textwidth]{generators_vs_unfolded_band_central}
   \caption[Generator comparison, central values only]{Models track the $\pT$ and $\pPar$ shapes but differ on $\Eavail$ in central values only. No uncertainty drawn (as in Fig.~\ref{fig:eavail}). Shown are 1D projections of the unfolded 3D central cross section (red filled circles) versus truth-level predictions from GENIE 2.12 CV (pink down-triangles), MINERvA Tune v1, NuWro 21.09, and GiBUU 2019 (GENIE and NuWro: the flux-repaired predictions, \S\ref{sec:3d-models}). The $\Eavail$-marginal data/Tune~v1 ratios are given in \S\ref{sec:4d}. The wide $\Eavail$ catch bin is omitted from the axis.}
   \label{fig:3dmodels}
 \end{figure}
@@ -224,7 +224,7 @@ The fourth axis adds one feature (\S\ref{sec:3d}), three-momentum transfer $q_{3
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.85\textwidth]{ascencio_fullcov_compare_central}
+  \includegraphics[width=\textwidth]{ascencio_fullcov_compare_central}
   \caption[Common-grid central-value comparison with Ascencio et al.]{Our central result lies above Ascencio \emph{et al.}~\cite{MINERvA:2022incl} in the two common low-recoil cells. Our points have no uncertainty or $\chi^{2}$ drawn because no 4D covariance is quoted (\S\ref{sec:3d}); the published points carry the published covariance. The bin-identical comparison uses the maximal common $(\Eavail,q_{3})$ grid: $q_{3}\in[0.4,0.6)$ (left) and $[0.6,1.2)\,\si{GeV}$ (right), both at $\Eavail<\SI{0.4}{GeV}$.}
   \label{fig:ascencio}
 \end{figure}

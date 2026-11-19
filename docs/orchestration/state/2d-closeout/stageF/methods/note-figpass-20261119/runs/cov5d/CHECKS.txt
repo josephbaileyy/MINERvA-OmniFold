@@ -1,0 +1,15 @@
+# cov5d (2026-11-19T04:33:38Z): ARM0=plain INSTALLED_FROM=docs/analysis-note/figures/paper_fig_coverage.pdf bash tools/arms_layout.sh <wt> cov5d miniconda3 (matplotlib 3.10.1, numpy 1.26.4) c3b4e8842 m3_fig3_coverage - docs/analysis-note/figures/methods_m3/fig_m3_coverage.py --repo <wt> --outdir @OUT@
+== cov5d (m3_fig3_coverage): arm 0 against docs/analysis-note/figures/paper_fig_coverage.pdf at c3b4e8842
+EQUAL tmp.1ewu6RTUix
+raster: RASTER :: EQUAL :: 1 page(s), 0 differing pixel(s)
+== cov5d: arm 1 against arm 0
+captures: m3_fig3_coverage.pdf.json m3_fig3_coverage.png.json 
+  equal  cov5d/m3_fig3_coverage.pdf.json: 12 data artists
+  equal  cov5d/m3_fig3_coverage.png.json: 12 data artists
+COMPARE :: PASS
+strings m3_fig3_coverage: equal (29 drawn strings)
+  arm 0: canvas 7.000 x 2.800 in; font size min 5.80, median 6.40 pt; text overlaps 4
+  arm 1: canvas 6.500 x 2.800 in; font size min 7.00, median 7.00 pt; text overlaps 2 [['68% interval, upper bound $\\geq$ 0.66', '95% interval, upper bound $\\geq$ 0.94'], ['68% interval, upper bound < 0.66', '95% interval, upper bound < 0.94']]
+ARMS-LAYOUT cov5d :: PASS
+== the installed copy (figs/paper_fig_coverage.pdf) against this arm 1
+EQUAL paper_fig_coverage.pdf
