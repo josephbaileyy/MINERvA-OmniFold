@@ -4,6 +4,7 @@ import base64
 from datetime import datetime, timezone
 import hashlib
 import json
+import os
 from pathlib import Path
 import shlex
 import subprocess
@@ -129,3 +130,26 @@ def test_rerun_budget_carries_exact_spend(
     assert json.loads(receipt.read_text())["spent_or_reserved"] == pytest.approx(
         (638 + 660) / 3600
     )
+
+
+@pytest.mark.parametrize("matching", [True, False])
+def test_envstage_checks_carried_charge_before_staging(tmp_path, monkeypatch, matching):
+    monkeypatch.setattr(os, "environ", os.environ.copy())
+    monkeypatch.setattr(os, "umask", lambda mode: mode)
+    monkeypatch.setenv("SCRATCH", str(tmp_path))
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(connect, "validate_approval", lambda *args: None)
+    monkeypatch.setattr(connect, "scratch_path", lambda path: path)
+    rows = connect.PRIOR_PREPARE_SACCT if matching else "123|unrelated|COMPLETED|10|1"
+    monkeypatch.setattr(connect, "sacct", lambda *args, **kwargs: rows)
+    staged = []
+    monkeypatch.setattr(connect, "envstage", lambda root: staged.append(root) or [])
+    monkeypatch.setattr(connect, "pass_receipt", lambda *args: None)
+    approval = {"run_name": connect.RUN_NAME}
+    if matching:
+        connect.remote("envstage", approval, b"test script")
+        assert staged == [tmp_path / connect.RUN_NAME]
+    else:
+        with pytest.raises(ValueError, match="previous prepare allocation"):
+            connect.remote("envstage", approval, b"test script")
+        assert not staged

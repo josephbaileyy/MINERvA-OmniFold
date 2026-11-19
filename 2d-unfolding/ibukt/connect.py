@@ -399,8 +399,8 @@ def pass_receipt(root: Path, action: str, pin: str, artifacts: list[Path]) -> No
     print(json.dumps({"receipt": str(path), "sha256": digest(path)}), flush=True)
 
 
-def accounting(root: Path, action: str, rows: str) -> Path:
-    """Reconcile every immutable submission, including failures and missing jobs."""
+def verify_carried_charge(rows: str) -> None:
+    """Require one exact terminal sacct row for the previous prepare job."""
     prior = [
         line for line in rows.splitlines() if line.startswith(f"{PRIOR_PREPARE_JOB}|")
     ]
@@ -408,6 +408,11 @@ def accounting(root: Path, action: str, rows: str) -> Path:
         raise ValueError(
             "previous prepare allocation is missing or differs from its recorded terminal charge"
         )
+
+
+def accounting(root: Path, action: str, rows: str) -> Path:
+    """Reconcile every immutable submission, including failures and missing jobs."""
+    verify_carried_charge(rows)
     reservations = {PRIOR_PREPARE_JOB: LIMITS["prepare"][1]}
     for stage in ("prepare", "screen", "score"):
         directory = root / stage
@@ -697,8 +702,9 @@ def remote(action: str, approval: dict[str, Any], source: bytes) -> None:
         CUDA_VISIBLE_DEVICES="",
     )
     write_json(directory / "approval.json", approval)
-    sacct(directory, "before", report=action == "envstage")
+    before = sacct(directory, "before", report=action == "envstage")
     if action == "envstage":
+        verify_carried_charge(before)
         pass_receipt(root, action, pin, envstage(root))
         return
     cfg = verify_deploy(root)
