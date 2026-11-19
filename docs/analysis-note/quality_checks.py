@@ -515,7 +515,8 @@ def check_text(src: Source, manifests: list[dict], n: int, min_sentence: int):
                 if name:
                     item['class'] = 'a name of an object'
                     item['why'] = f'"{name}"; the run is that name and fewer than {NAME_SLACK} other words'
-            if item['class'] == 'remaining':
+            # a recorded restatement also settles a definitions-table or test-index row that is not at a cited home
+            if item['class'] == 'remaining' or 'not at a cited home' in item['class']:
                 for r in manifests:
                     if not r.get('span'):
                         continue
