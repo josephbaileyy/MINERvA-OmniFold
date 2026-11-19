@@ -1,0 +1,30 @@
+{
+ "ms_scale": 0.6,
+ "hidden_axes": {
+  "MEFHC_5iter_xsec_paper_pt_slices": [
+   [
+    0.56,
+    0.075
+   ],
+   [
+    0.803,
+    0.075
+   ]
+  ],
+  "MEFHC_5iter_xsec_paper_pz_slices": []
+ },
+ "MEFHC_5iter_xsec_paper_pt_slices": {
+  "panels": 14,
+  "series_restyled": 28,
+  "ncols": 3,
+  "logx": true,
+  "font_floor": 7.0
+ },
+ "MEFHC_5iter_xsec_paper_pz_slices": {
+  "panels": 16,
+  "series_restyled": 32,
+  "ncols": 4,
+  "logx": false,
+  "font_floor": 7.0
+ }
+}
