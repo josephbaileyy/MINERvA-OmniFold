@@ -4100,6 +4100,7 @@ docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/figs/M
 docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/figs/MEFHC_5iter_xsec_proj_pt.pdf	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/figs/MEFHC_5iter_xsec_proj_pz.pdf	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/figs/ascencio_fullcov_compare_central.pdf	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/figs/eavail_marginal_vs_paper_pull_full.pdf	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/figs/fived16_headline.pdf	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/figs/gbdt_prior_response.pdf	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/figs/generators_vs_unfolded_band_central.pdf	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
@@ -4138,6 +4139,19 @@ docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/runs/c
 docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/runs/cov5d/arm1/capture/cov5d/m3_fig3_coverage.png.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/runs/cov5d/arm1/capture/cov5d/m3_fig3_coverage.png.npz	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/runs/cov5d/arm1/capture/cov5d/m3_fig3_coverage.png.texts	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/runs/f17/CHECKS.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/runs/f17/arm0/capture/f17/eavail_marginal_vs_paper_pull_full.pdf.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/runs/f17/arm0/capture/f17/eavail_marginal_vs_paper_pull_full.pdf.npz	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/runs/f17/arm0/capture/f17/eavail_marginal_vs_paper_pull_full.pdf.texts	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/runs/f17/arm0/capture/f17/eavail_marginal_vs_paper_pull_full.png.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/runs/f17/arm0/capture/f17/eavail_marginal_vs_paper_pull_full.png.npz	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/runs/f17/arm0/capture/f17/eavail_marginal_vs_paper_pull_full.png.texts	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/runs/f17/arm1/capture/f17/eavail_marginal_vs_paper_pull_full.pdf.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/runs/f17/arm1/capture/f17/eavail_marginal_vs_paper_pull_full.pdf.npz	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/runs/f17/arm1/capture/f17/eavail_marginal_vs_paper_pull_full.pdf.texts	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/runs/f17/arm1/capture/f17/eavail_marginal_vs_paper_pull_full.png.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/runs/f17/arm1/capture/f17/eavail_marginal_vs_paper_pull_full.png.npz	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/runs/f17/arm1/capture/f17/eavail_marginal_vs_paper_pull_full.png.texts	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/runs/f2021/CHECKS.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/runs/f2021/capture/f2021/mode_decomp_mec_eavail_central.pdf.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/runs/f2021/capture/f2021/mode_decomp_mec_eavail_central.pdf.npz	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
