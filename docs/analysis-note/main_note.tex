@@ -92,7 +92,6 @@ No reported interval has validated coverage. The procedure's two-observable cova
 \end{abstract}
 
 \input{sec_front}
-\input{sec_execsummary}
 \clearpage
 
 % Sections and subsections only; the Appendix A subsubsections are not listed.
@@ -102,20 +101,12 @@ No reported interval has validated coverage. The procedure's two-observable cova
 \listoffigures
 \listoftables
 
-\input{sec_intro}
-\input{sec_experiment}
-\input{sec_method}
-\input{sec_systematics}
-\input{sec_validation}
-\input{sec_results}
-\input{sec_3d}
-\input{sec_eavailw}
-% DECISION-20261117b item 3 (COMBINED-PLAN sec. 2): the sixteen-cell section ahead of the five-dimensional development tests. Fallback: revert this one move.
-\input{sec_fived16}
-\input{sec_5d}
-\input{sec_joint}
-\input{sec_limitations}
-\input{sec_summary}
+\input{part1_intro}
+\input{part2_method}
+\input{part3_reproduction}
+\input{part4_fivedim}
+\input{part5_validation}
+\input{part6_validity}
 
 \section*{Acknowledgments}
 \fundingpending
@@ -159,19 +150,15 @@ or edited by a generative-AI image tool. AI tools are not authors. The authors t
 \input{app_statmethods}
 \input{app_statmethods_nd}
 \input{app_negweight}
-\input{app_response_mismatch}
-\input{app_landscape}
-\input{app_pet_pointer}
+\input{appC_further}
 % The record appendices (provenance; superseded values and withdrawn results) and the record parts of the release
 % and codebase appendices left this posted build on 2026-10-21 (DECISION-20261021-joseph-da-and-note-records.md item 2)
 % for the internal records document main_records.tex, which build_all.sh builds and the gates check; the note cites it
 % as NoteRecords2026. check_note_records.py proves the move lost nothing.
-\input{app_release}
-\input{app_codebase}
+\input{appD_release}
 % The development-history appendix (history restructure, 2026-11-13), after the others so that no earlier appendix letter moves.
-\input{app_devhistory}
+\input{appE_history}
 % DECISION-20261117b item 3 (COMBINED-PLAN sec. 2): the extended-fiducial study, moved from the body, is the last appendix (App. J); A-I keep their letters.
-\input{sec_fps}
 % The verification appendix (journal-editor, 2026-11-18; approved by Joseph via the director): last, so that no appendix letter moves.
 \input{app_verification}
 

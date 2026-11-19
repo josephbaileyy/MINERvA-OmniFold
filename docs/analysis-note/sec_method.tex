@@ -1,7 +1,7 @@
-\section{The unbinned OmniFold procedure}
+\subsection{The unbinned OmniFold procedure}
 \label{sec:method}
 
-\subsection{Algorithm}
+\subsubsection{Algorithm}
 \label{sec:method-algo}
 
 OmniFold~\cite{Andreassen:2019cjw,Andreassen:2021zzk} unfolds by iterated reweighting with machine-learned likelihood ratios, operating on per-event observables rather than on a fixed histogram binning. Each iteration has two steps:
@@ -42,7 +42,7 @@ Other experiments' treatments are summarized in \S\ref{sec:intro}. A fully unbin
 % ("Prior OmniFold applications"); the n=5 rationale moved to "Hyperparameter
 % choice" below.
 
-\subsection{Estimators and configuration}
+\subsubsection{Estimators and configuration}
 \label{sec:method-config}
 
 Gradient-boosted decision trees (GBDTs) replace the original OmniFold neural networks for the unfolding of scalar observables. With at most five high-level features per event, tree ensembles typically match or outperform neural networks~\cite{Grinsztajn:2022tabular} and train deterministically and far faster on CPU. Ref.~\cite{Milton:2025tools} demonstrates their effectiveness for unbinned unfolding with few high-level features, complementing deep models for low-level event representations. We use GBDTs for all unfolding results in this note (point-cloud representations: App.~\ref{sec:pet}). Calibration tests and MLP cross-checks test the implementation in \S\ref{sec:3d-classifier}.
@@ -151,6 +151,24 @@ Configuration (c) is the deterministic variant with purity-based subtraction, an
   \end{tabular}
 \end{table}
 
+\begin{table}[H]
+\centering\footnotesize
+\caption[Estimator configurations: key]{Estimator configurations: a key to the letters used throughout, restating Table~\ref{tab:estimators-matrix} and \S\ref{sec:method-config}.}
+\label{tab:config-key}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.05\textwidth}>{\raggedright\arraybackslash}p{0.17\textwidth}>{\raggedright\arraybackslash}p{0.19\textwidth}>{\raggedright\arraybackslash}p{0.33\textwidth}>{\raggedright\arraybackslash}p{0.18\textwidth}@{}}
+\toprule
+ & Learner & Background treatment & Where used & Status \\
+\midrule
+(a) & LightGBM; seed 42 in two dimensions & purity-based subtraction & five-observable central value and its five-axis covariance (\S\ref{sec:eavailw}); 3D and 4D injected-bump closures (\S\ref{sec:3d}); purity-subtracted 2D comparisons (\S\ref{sec:results-tension}) & \S\ref{sec:method-config} \\
+(b) & scikit-learn exact splits; seed not fixed & purity-based subtraction & the 2D exact-split cross-check; studies labeled \emph{exact-split} & cross-check \\
+(c) & LightGBM, deterministic & purity-based subtraction & background bias (\S\ref{sec:val-negweight}); coverage test (\S\ref{sec:coverage-5d}) & studies \\
+(d) & as (c) & negative weights; refinement classifier 100 trees, 8 leaves & background bias; generator-sized $\Eavail$ change (\S\ref{sec:val-negweight}) & studies \\
+(e) & as (c) & negative weights; refinement classifier 400 trees, 31 leaves & 3D and 4D central values (\S\ref{sec:3d}); sixteen cells (\S\ref{sec:fived16}); precision study (\S\ref{sec:gbdt-model-dependence}); generator tests (\S\ref{sec:joint5d}) & the joint-test estimator \\
+(f) & as (a); refinement seeded at the estimator seed plus three & negative weights; refinement classifier 400 trees, 31 leaves & 2D central value and its uncertainty ensembles (\S\ref{sec:results}) & the quoted 2D central value \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \paragraph{Hyperparameter choice.} No hyperparameter search for the two OmniFold classifiers or the missed-event regressor was performed on data. The joint-test estimator keeps five iterations under the rule in \S\ref{sec:gbdt-model-dependence}. Its refinement classifier, 400 trees and 31 leaves, was selected before the joint-test design was fixed (\S\ref{sec:joint5d}).
 
 The fixed settings are the scikit-learn \texttt{GradientBoosting} defaults: 100 trees, learning rate $0.1$, and depth-3 capacity. The LightGBM learner of the central value and its ensembles uses matched capacity ($\texttt{num\_leaves}=8=2^{3}$), giving these learners the same deliberately modest capacity, one of OmniFold's regularizers (\S\ref{sec:method-algo}).
@@ -166,7 +184,7 @@ Production uses $n=5$ iterations. Huang \emph{et al.}~\cite{Huang:2025omnifold} 
 % draft/methods-short-20261109 037431430, S4's iteration paragraph; the ratio's rise from 0.88 to 1.2 is a shape change); the duplicate
 % of this sentence at the end of sec_experiment.tex's control-plot paragraph is removed (that paragraph states both numbers already).
 
-\subsection{MINERvA driver and pipeline conventions}
+\subsubsection{MINERvA driver and pipeline conventions}
 \label{sec:method-driver}
 
 
@@ -188,7 +206,7 @@ The higher-dimensional MINERvA driver (App.~\ref{app:codebase}) extends the 2D d
 
 % "What the pipeline refuses to do" (test-suite discipline) moved to app_codebase.tex.
 
-\subsection{Cross-section extraction}
+\subsubsection{Cross-section extraction}
 \label{sec:method-xsec}
 The differential cross section follows from unfolded truth-level counts:
 \begin{equation*}
@@ -201,7 +219,7 @@ where $U$ is the unfolded yield and $c$ the per-bin \emph{completeness}, the fra
 % Methods-paper shortening pass (2026-10-21, DECISION-20261020-joseph-refined-estimator-shorten-delta.md item 2): the article's flux constant, moved with its source: docs/orchestration/state/s5p/gen5d/README-gen5d-fluxfix.md:43-49, :74 (Phi = 6.243343e-4 m^-2/POT over 0-100 GeV after the nu-e constraint); N = 3.2352943296224835e30: 2d-unfolding/unfold_2d_omnifold_unbinned.py:41-44; formula nd-unfolding/xsec_nd.py:14, 54-83.
 For the higher-dimensional extractions the same integral is $\SI{6.243e-8}{cm^{-2}}$ per proton on target, from 0 to \SI{100}{GeV} after the neutrino--electron-scattering constraint, and $N$ is the fiducial nucleon count in the formula above. That $\si{cm^{-2}}$ value is the integral after the conversion above, and it is not substituted for $\Phi$.
 
-\subsection{Binning}
+\subsubsection{Binning}
 \label{sec:method-binning}
 % The reported binning follows \texttt{minerva\_paper\_anc/bin\_mapping.txt} (cited below).
 The 2D grid has 14 $\pT$ $\times$ 16 $\pPar$ bins; 205 of 224 are reported. The 19 unreported diagonal cells have $\pT^{\mathrm{hi}}/\pPar^{\mathrm{lo}}>\tan20^{\circ}$. The extension axes use $\Eavail$: $[0,0.1,0.2,0.4,0.8,1.5,3.0,100]\,\si{GeV}$; $q_{3}$: $[0,0.2,0.4,0.6,0.8,1.2,2.0,100]\,\si{GeV}$; $W$: $[0,1.1,1.4,1.8,2.2,3.0,100]\,\si{GeV}$. Each ends in a wide catch bin to capture the full CC-inclusive tails in marginals; truncating the top edge would break the marginalization checks of \S\ref{sec:3d-anchor}. Binning after unfolding allows these choices to be revisited without re-running the unfolding. App.~\ref{app:release} (\S\ref{app:release-edges}) gives all five axes' edges. \S\ref{sec:205bins} defines the 205 reported cells; the authoritative mapping is the bin-mapping file of the published data release~\cite{MINERvA:2021owq}.
@@ -219,7 +237,7 @@ The structure differs qualitatively between the muon and hadron sides. The spect
   \label{fig:migration}
 \end{figure}
 
-\subsection{Related developments and estimator scope}
+\subsubsection{Related developments and estimator scope}
 Profile OmniFold~\cite{Zhu:2025profile} extends classifier-based EM to forward-model nuisance parameters. Its distinct algorithmic construction complements earlier unbinned profiled unfolding~\cite{Chan:2023tbf}. Profiling nuisances with observed data would change our inference model, which propagates an external nuisance ensemble through a fixed procedure. Neither a profiled estimator nor its uncertainty is used here.
 
 SPINUP learns a forward mapping~\cite{Butter:2025spinup}; AUSSIE replaces OmniFold's second step with a different loss and avoids the outer iteration~\cite{Ore:2026aussie}. Both offer possible future cross-checks with different algorithmic assumptions. Reduced simulation-prior dependence does not establish detector-model independence, adequate phase-space support, or coverage for this result. Comparisons would require matched signal, selection, normalization, and uncertainty definitions.

@@ -1,8 +1,8 @@
 % COMBINED-PLAN sec. 3(a): the only section called "Results" holds only the 2D result.
-\section{Two-dimensional muon cross section}
+\subsection{Two-dimensional muon cross section}
 \label{sec:results}
 
-\subsection{Double-differential cross section}
+\subsubsection{Double-differential cross section}
 \label{sec:results-xsec}
 Figure~\ref{fig:xsec} shows the 1D projections of the unfolded $d^{2}\sigma/(d\pT\,d\pPar)$; Figs.~\ref{fig:ptslices}--\ref{fig:pzslices} show it slice by slice. The total cross section is \SI{\sigTwoD}{cm^2/nucleon} (published: \SI{\sigTwoDpaper}{cm^2/nucleon}).
 
@@ -23,7 +23,7 @@ The shapes are those expected for CC-inclusive scattering at $\langle E_\nu\rang
 % (sqrt of StatOnlyCovariance diagonal); plot_2d_cross_section.py plot_1d_projection (hXSec_pt / hXSec_pz GetBinError).
 % J3/J4 provisional (DECISION-20261018, packet J3: no claim change; the sentence states what the producers draw).
 
-\subsection{Uncertainty budget}
+\subsubsection{Uncertainty budget}
 \label{sec:results-uq}
 Table~\ref{tab:uq} gives the budget over the 205 reported bins, constructed as described in \S\ref{sec:systematics}. Our own combined budget, without the published covariance, differs from the published total in both directions: its per-bin median, \SI{\uqMedian}{\percent}, is smaller than the published \SI{\uqPaper}{\percent}, and its value on the integrated cross section, \SI{\uqIntegral}{\percent}, is larger than the published \SI{\uqPaperIntegral}{\percent} (the width-weighted total $\sigma$ of App.~\ref{sec:chisq}). The comparison leaves out the generator-shape component $C_{\mathrm{model}}$ (\S\ref{sec:uq-2d-scope}), because the published uncertainty has no such component either. With $C_{\mathrm{model}}$, the per-bin median is \SI{\qrCmodelMedian}{\percent}. The systematic-universe block accounts for a median 0.87 of the per-bin variance and 0.83 of the integral's variance, and the run-period block (\S\ref{sec:uq-combine}) raises the per-bin median from \SI{\uqSFiveMedian}{\percent} to \SI{\uqMedian}{\percent}.
 
@@ -66,7 +66,7 @@ The largest band is the flux, as in the publication (Fig.~\ref{fig:uqbands}), an
   \end{tabular}
 \end{table}
 
-\subsection{Comparison to the published measurement}
+\subsubsection{Comparison to the published measurement}
 \label{sec:results-compare}
 The published and unbinned results share the data and the flux, detector and generator systematics, and their cross-covariance is not available. Every $\chi^{2}$ and standardized difference here is therefore descriptive, not a calibrated goodness-of-fit test.
 
@@ -125,7 +125,7 @@ Per-bin differences standardized by the published uncertainty (Fig.~\ref{fig:pul
 \end{figure}
 
 % COMBINED-PLAN sec. 3(a): the title's number was the one skimmers misread against Fig. fig:pull; it prints in the subsection's first paragraph.
-\subsection{Where the tension with the published covariance lies}
+\subsubsection{Where the tension with the published covariance lies}
 \label{sec:results-tension}
 With the published uncertainties as a descriptive scale, the central values have a pull standard deviation of $\pullRMS$ (a diagonal-only $\chi^{2}/\mathrm{ndf}$ would be $0.29$), whereas $\chi^{2}$ per bin with the full published covariance is $\chiPaper$. The eightfold increase lies entirely in the off-diagonal structure of the published covariance. It is a difference in \emph{shape}. Normalization does not explain it ($\chi^{2}_{\mathrm{norm}}=0.04$ against $\chi^{2}_{\mathrm{shape}}=465$). The eigenmode decomposition (Fig.~\ref{fig:tension}) spreads it over many modes: the largest has a paper-covariance-standardized component of magnitude $4.7$, and the next nine $3.4$--$3.8$. The 10 smallest-$\lambda$ modes carry \SI{9.6}{\percent} of the total $\chi^{2}$. Of the five largest contributors, two lie in the smallest-$\lambda$ tenth of the spectrum. Restricted to the 73 best-measured directions, $\chi^{2}=136$ ($\chi^{2}/205=0.66$; the divisor is the number of reported bins, not the number of directions kept). Of the six leading modes, the three in the highest-$\pPar$ bins are all poorly determined directions ($\lambda/\lambda_{\max}\lesssim4\times10^{-9}$). The other three are moderate-$\lambda$ modes ($\lambda/\lambda_{\max}$ between $4\times10^{-6}$ and $6\times10^{-5}$) and lie below the highest $\pPar$ bins (Fig.~\ref{fig:tensionmodes}). No single $\pT$ or $\pPar$ band carries more than \SI{15.2}{\percent} of the total. % D2 (crossdoc audit 2026-11-15): per-period-benchmark-20261106/receipts/read/readout.json:61 abs_z 4.746664876937429 (the 4.8 rounded the rounded 4.75, :62); the Supplement prints pp-mode-max, 4.7
 % Revision D' 2026-11-06 (referee reads of D, both ACCEPT; Sonnet and the interpreter: print the raw chi2 and the directions kept): docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/receipts/figs/tension_report.txt:56 prints "1e-04  0.662  73" (chi2/205, modes kept) and no raw truncated chi2. Arithmetic: 0.662 x 205 = 135.7; 0.662 rounds a value in [0.6615, 0.6625), so chi2 is in [135.6, 135.8], 136 at three figures.
@@ -161,7 +161,7 @@ With the purity-based subtraction, the choice of GBDT estimator spreads the dist
 
 % H3-021 (2026-11-18): the paired and pre-specified benchmarks of the 2D central value, moved out of sec:results-tension
 % unchanged (sec_results.tex:140-152 @ 79a934a41); sec:results-tension keeps the decomposition and the estimator band.
-\subsection{Benchmarks of the two-dimensional central value}
+\subsubsection{Benchmarks of the two-dimensional central value}
 \label{sec:results-benchmarks}
 A binned IBU of this analysis's inputs at ten iterations, the setting of the published measurement~\cite{MINERvA:2021owq}, differs from the two-dimensional result beyond paired replica noise: $T=\fvval{c2c1-T}$, against a null 95th percentile of \fvval{c2c1-q95} and maximum of \fvval{c2c1-max} over \fvval{c2c1-nrep} paired replicas. Applied to this analysis's inputs, ten-iteration binned IBU and the two-dimensional OmniFold result give descriptive $\chi^{2}/\mathrm{ndf}$ values of \fvval{c2c1-dibu} and \fvval{c2c1-der}, respectively, relative to the published result under its covariance. IBU gives \fvval{c2c1-dibu-mid-lo}--\fvval{c2c1-dibu-mid-hi} for two to fifteen iterations, \fvval{c2c1-dibu-k20} at twenty and \fvval{c2c1-dibu-k1} at one. These comparisons use the ill-conditioned published covariance and lack the cross-covariance required for a statistical comparison of results that share data. A value near one does not by itself indicate reproduction. What the benchmarks leave open is stated in \S\ref{sec:limitations-2d}.
 % absence-ok: the input caveat Joseph approved (consult-ibu-ab/out.txt; RESPONSE.md section J) scopes what the c2c1 comparison tested (REF-C2C1-DECLARATION.md §1.5); not a claim that a result does not exist (as the paper's waiver at 5bbb9d269 paper_body.tex:338)
@@ -175,7 +175,7 @@ A benchmark specified before it ran unfolds three groups of run periods separate
 
 The two-dimensional estimator with deterministic training, the five-observable estimator's training mode, agrees with the two-dimensional central value within its paired noise, narrowly: $T=\fvval{c1-T}$ over \fvval{c1-nrep} paired replicas, \SI{\fvval{c1-below-pct}}{\percent} below its 95th-percentile threshold of \fvval{c1-q95}.
 
-\subsection{Comparison to GENIE MINERvA Tune v1}
+\subsubsection{Comparison to GENIE MINERvA Tune v1}
 \label{sec:results-model}
 GENIE 2.12.6~\cite{Andreopoulos:2009rq} with MINERvA Tune v1 under-predicts the published total cross section over the 205 reported bins by $\sim\SI{9}{\percent}$ ($\sigma_{\mathrm{tune}}/\sigma_{\mathrm{data}}=0.91$), and the deficit is concentrated in the low-$\pT$ peak. Figure~\ref{fig:xsec} compares the prediction from the published ancillary files (dashed) with both the published data and this result. Under this covariance the quadratic distance to that prediction is $\chi^{2}/\mathrm{ndf}=33.0$ for the published data and $31.3$ for this result ($26.5$ for the exact-split cross-check). These are descriptive distances. This covariance gives no calibrated significance for a generator comparison (\S\ref{sec:uq-2d-scope}). Our result tracks the data far more closely than the model does (Fig.~\ref{fig:modelmaps}). The published analysis~\cite{MINERvA:2021owq} also compares with NuWro~\cite{Golan:2012wx}, GiBUU~\cite{Buss:2011mx} and NEUT~\cite{Hayato:2009zz}. OmniFold's per-event reweighted truth ensemble can be compared with any such prediction in \emph{any} projection of the classifier features without re-unfolding. An observable outside that space requires a new unfolding, as in the 3D extension (\S\ref{sec:3d}), which adds $\Eavail$ as a classifier feature.
 % Triage A5 (interim cold read, 2026-11-17): 0.91 is 2d-unfolding/model_comp_report.txt ("reported bins: 205"; "model MINERvA_Tune_v1: sigma_tot/data = 0.9124", data = the published result). It is a different region from sec_3d's totals "over the full measurement phase space" (Tune v1 2.71e-38 against 3.07e-38, the 4D 1.13), and it agrees with VALIDATION_LEDGER VL159 (3D, catch bin dropped: Tune v1 -9.5%).

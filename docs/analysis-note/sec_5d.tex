@@ -1,10 +1,10 @@
 % 5D-4 (2026-11-16): "tests", not "validates": the section reports failed recovery, data-stability and coverage tests.
-\section{Five-dimensional estimator: tests and uncertainty}
+\subsection{Five-dimensional estimator: tests and uncertainty}
 \label{sec:5d}
 
 This section tests the five-dimensional estimator behind the central values of \S\S\ref{sec:3d}--\ref{sec:eavailw}. It covers what each test isolates (\S\ref{sec:val-fiveaxis}), background subtraction and generator-sized truth changes (\S\ref{sec:val-negweight}), why the estimator does not follow such changes (\S\ref{sec:val-departure}), model dependence and the reporting definitions it rules out (\S\ref{sec:gbdt-model-dependence}), the coverage test (\S\ref{sec:coverage-5d}) and the status of the five-axis covariance of the configuration-(a) central value (\S\ref{sec:eavailw-construction}; configurations in Table~\ref{tab:config-key}). The sixteen-cell result of configuration (e) is given in \S\ref{sec:fived16}, and the calibrated generator tests built on a variant of this estimator in \S\ref{sec:joint5d}. The unbinned negative-weight background method itself is derived in App.~\ref{app:negweight}.
 
-\subsection{Which source of error is being tested}
+\subsubsection{Which source of error is being tested}
 \label{sec:val-fiveaxis}
 Prior reweighting changes the frequencies of existing simulated truth events while retaining their detector-response simulation. A response mismatch instead changes how a given truth is reconstructed. Finite classifier capacity and iteration count approximate the inverse and can leave residuals in either case. Coverage asks whether the resulting intervals contain their specified target at the stated rate (\S\ref{sec:coverage-5d}). These mechanisms are separate: an incorrect generator prediction alone does not diagnose an interval failure. Each test below isolates one intervention.
 % Register round n1 (R-N1): the two findings summarized here print at their homes: the refined subtraction's nominal
@@ -44,7 +44,7 @@ Table~\ref{tab:validation-design-5d} lists the validation studies of the article
   \end{tabular}
 \end{table}
 
-\subsection{Background subtraction and generator-sized truth changes}
+\subsubsection{Background subtraction and generator-sized truth changes}
 \label{sec:val-negweight}
 
 \paragraph{Background subtraction.}
@@ -71,7 +71,7 @@ The unfolding does not follow a GiBUU-to-GENIE $\Eavail$ shape reweighting of th
 For configuration~(e), the estimator of the sixteen-cell result (refined negative-weight subtraction with a 400-tree, 31-leaf refinement; Table~\ref{tab:estimators-matrix}), recovery of the GiBUU-to-GENIE change and of the three withheld generator shapes of \S\ref{sec:gbdt-model-dependence} is graded per supported $(\Eavail,W)$ cell by the recovered fraction, which is 1 when the cell follows its truth change in full, 0 when it stays at the prior and negative when it moves opposite to the change. Its residual is the mean over 20 pseudo-experiments with backgrounds at each of these truths, each against its own half-sample truth. At the GiBUU-to-GENIE change, the median cell moves by \SI{\fvval{rec-g-fmed}}{\percent} of the injected change. Of the \fvval{rec-g-n} supported cells with an injected change of magnitude above \SI{\fvval{rec-thr}}{\percent}, \fvval{rec-g-opp} move opposite to it and \fvval{rec-g-over} overshoot it. In the cell $0.8\le\Eavail<\SI{1.5}{GeV}$, $W\ge\SI{3}{GeV}$, the injected change is $\fvval{rec-g-ew29-inj}\,\%$, but the unfolded value lies \SI{\fvval{rec-g-ew29-unf}}{\percent} above the nominal truth. Under the three withheld shapes, the median cell moves by \SIrange{\fvval{rec-w-fmed-lo}}{\fvval{rec-w-fmed-hi}}{\percent} of the injected change, and \fvval{rec-w-opp-lo} to \fvval{rec-w-opp-hi} cells move opposite to it and \fvval{rec-w-over-lo} to \fvval{rec-w-over-hi} overshoot it. Individual cells therefore range from moving opposite to the change to overshooting it.
 % U6 (currency check of 2fe070fec): the figure referee read\'s check A, docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-figure-deformation-20261112/check-a/a_recovery.json (75db95a1; on main by #1213, e13d98d55), by recov_values() in make_values_fived16.py: f = [(1+r)(1+i) - (1+r_nom)]/i per supported (E_avail, W) cell with |injected| > 2 %; wording as the paper\'s section 5.1 at 5bbb9d269.
 
-\subsection{Why the estimator does not follow a generator-sized change}
+\subsubsection{Why the estimator does not follow a generator-sized change}
 \label{sec:val-departure}
 % An instrumented rerun recorded every OmniFold iteration of these experiments. It reproduced the development results bitwise and repeated them through the unmodified driver, which shows the same response to the $\Eavail$ departure (highest-$W$ cell
 % \SI{73.8}{\percent} against \SI{73.5}{\percent}).
@@ -123,7 +123,7 @@ For historical shapes held out while this candidate was assessed (NuWro; GENIE w
 % docs/orchestration/OUTCOME-20260926-s5e-oi192-diagnosis-and-candidate.md (VL154); KNOWN_ISSUES 75, 77, 79, 80;
 % independently reproduced (state/s5e/diag/review-round-1.md, state/s5e/cand/review-round-2.md).
 
-\subsection{Model dependence, variability and reporting resolution}
+\subsubsection{Model dependence, variability and reporting resolution}
 \label{sec:gbdt-model-dependence}
 
 The scalar five-dimensional estimator studied here uses production LightGBM.
@@ -241,7 +241,7 @@ What deciding the tradeoff would require is stated in \S\ref{sec:limitations-5d}
 % Evidence: nd-unfolding/gbdt_model_dependence/{inputs,results,README.md}; VL163.
 % Historical grades: s5e A_FAIL; s5p amendment 4 NOT ADMITTED; amendment 6 LOW corrections.
 
-\subsection{Five-dimensional coverage test}
+\subsubsection{Five-dimensional coverage test}
 \label{sec:coverage-5d}
 
 An end-to-end independent-truth test assessed statistical intervals of a deterministic five-dimensional estimator variant with nominal-truth bias correction (1,200 pseudo-experiments over three truths). The end-to-end test failed its futility criterion, set before the test was run, at the nominal truth and under a 10\% reduction of the signal rate with a weak $\Eavail$ slope (below). No frequentist coverage is therefore claimed for any five-dimensional interval. The defect of one of its three truths, and why the verdict does not depend on it, are in \S\ref{sec:limitations-5d}. The sixteen-cell result's coverage tests are in \S\ref{sec:fived16-fd}. Figure~\ref{fig:coverage-5d-paper} shows the coverage of each reported integral under the rate reduction.
@@ -277,7 +277,7 @@ Why the intervals miscover under the rate reduction is diagnosed in \S\ref{sec:l
 
 % Register round 2 (2026-10-21): this paragraph's content (376/232/144/121 counts, the uninformative muon projection, the scope, the provenance pointer) merged into the paragraph "Comparison with exact binned unfolding" of sec:val-departure, which now states the diagnostic in full. Note register batch b3 (2026-10-21): the remaining pointer paragraph ("A scoped response-information diagnostic", which only referred to that paragraph) removed.
 
-\subsection{The five-axis covariance of the configuration-(a) central value and its $(\Eavail,W)$ projection}
+\subsubsection{The five-axis covariance of the configuration-(a) central value and its $(\Eavail,W)$ projection}
 \label{sec:eavailw-construction}
 
 \paragraph{Status.}

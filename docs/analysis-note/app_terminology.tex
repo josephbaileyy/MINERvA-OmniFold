@@ -1,0 +1,44 @@
+\subsection*{Definitions and conventions}
+\addcontentsline{toc}{subsection}{Definitions and conventions}
+\label{sec:front-definitions}
+
+Table~\ref{tab:definitions} collects the symbols and conventions used throughout, each with the place that defines it.
+
+\begin{table}[H]
+\centering\small
+\caption{Definitions and conventions, each with the section or table that defines it.}
+\label{tab:definitions}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.2\textwidth}>{\raggedright\arraybackslash}p{0.76\textwidth}@{}}
+\toprule
+Term & Definition \\
+\midrule
+$\pT$, $\pPar$ & Muon momentum transverse and parallel to the beam axis, in GeV/$c$ (Table~\ref{tab:observables-impl}). \\
+$\Eavail$ & Available energy: proton kinetic energy, charged-pion energy less \SI{135}{MeV}, and $\pi^{0}$ and $\gamma$ energy, in GeV (\S\ref{sec:eavail-definition}). \\
+$q_{3}$ & Three-momentum transfer, in GeV/$c$ (Table~\ref{tab:observables-impl}). \\
+$W$ & Hadronic invariant mass, in GeV. Truth $W$ uses the struck-nucleon mass, reconstructed $W$ the average nucleon mass. The external generator predictions use the neutron mass for every event (\S\ref{sec:eavailw-axis}). \\
+Data & The twelve ME FHC playlists, $1.057\times10^{21}$ protons on target (\S\ref{sec:experiment}). \\
+Abbreviations & IBU: D'Agostini iterative Bayesian unfolding (\S\ref{sec:intro}). ME, FHC: the medium-energy, neutrino-mode (forward horn current) exposure (\S\ref{sec:experiment}). POT: protons on target (App.~\ref{app:codebase}). GBDT: gradient-boosted decision tree (\S\ref{sec:intro}). PPFX: the hadron-production weights of the flux prediction (\S\ref{sec:experiment}). MAT: the MINERvA Analysis Toolkit (\S\ref{sec:experiment}). \\
+\addlinespace
+Configurations & (a)--(f): Table~\ref{tab:config-key}, from Table~\ref{tab:estimators-matrix} and \S\ref{sec:method-config}. \\
+\addlinespace
+$Q_R$ & Covariance of the two-dimensional cross section: the sum of the training-seed, statistical, systematic-universe and run-period blocks (\S\ref{sec:systematics}, Table~\ref{tab:uq}). \\
+$C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}$ & The reported covariance of the sixteen cells, with $C_{\mathrm{total}}=C_{\mathrm{e}}+C_{\mathrm{model}}$ (\S\ref{sec:fived16-cov}). \\
+$C_{\mathrm{e}}$ & Sums the statistical bootstrap of configuration~(e), the PPFX flux universes, the interaction-model and detector bands, the lateral bands, the normalization and the training-seed block (\S\ref{sec:fived16-cov}). \\
+$C_{\mathrm{model}}$ & The unscaled outer-product sum of the data result's shifts when the prior is reweighted in turn by the ratio of GENIE + MEC, NuWro or GiBUU to GENIE CV, in cross-section units. It measures generator-shape model dependence and is not a calibrated bound (\S\ref{sec:fived16-cov}). \\
+$C_{\mathrm{resp}}$ & The sum, over four deposit categories (protons, mesons, electromagnetic and other deposits), of the outer product of the half-difference of the two unfolded shifts when that category's reconstructed energy is scaled by its one-standard-deviation factor (\S\ref{sec:fived16-cov}). \\
+$C_{\mathrm{PL}}$, $C_{\mathrm{PL,5D}}$ & The run-period blocks of the two-dimensional result and of the sixteen cells, built from the double ratios of the run-period groups' unfolded results with no reference period (\S\ref{sec:uq-combine}, \S\ref{sec:fived16-pl}). \\
+$V_g$ & A generator prediction's finite-sample (diagonal) covariance (Table~\ref{tab:fived16-gen}). \\
+$C_Z$ & Five-axis covariance of the configuration-(a) central value. It is not an uncertainty product and not the sixteen-cell covariance; \S\ref{sec:5d} uses it only as a descriptive scale (\S\ref{sec:eavailw-adopted}). \\
+$C_k$ & Coverage within $\pm k$ standard deviations (\S\ref{sec:limitations}). \\
+\addlinespace
+Cells & R00--R15: the sixteen reported cells, formed from the H2 grid by purity merges; each cell's box is in Table~\ref{tab:fived16-cells} (\S\ref{sec:fived16}). The 42 $(\Eavail,W)$ cells and the \jtNcells{} coarse joint cells of the $3^{5}$ grid (Fig.~\ref{fig:bkg-residual-note}; \S\ref{sec:joint5d}). \\
+J, H2, EW & Reporting grids of the five-dimensional studies. J: 109 supported joint cells subdividing all five axes. H2: 27 supported coarser joint cells, also subdividing all five axes, not nested within J. EW: 39 supported $(\Eavail,W)$ cells (42 with the three unsupported). Boundaries and the support rule: App.~\ref{sec:gbdt-diagnostic-definitions}; labels: \S\ref{sec:gbdt-model-dependence}. \\
+D1, W1--W3 & Fixed historical truth deformations, built before the generator flux was repaired: D1 a GiBUU/GENIE $\Eavail$ ratio, W1 a NuWro/GENIE $\Eavail$ ratio, W2 a GENIE MEC/CV $(\Eavail,W)$ ratio, W3 a NuWro/GENIE $(\pT,\pPar,\Eavail)$ ratio (\S\ref{sec:gbdt-model-dependence}). \\
+$R$ & The raised-refinement-capacity estimator of \S\ref{sec:val-departure}: baseline OmniFold classifiers with a 400-tree, 31-leaf background-refinement classifier (\S\ref{sec:gbdt-model-dependence}). \\
+RD1--RD3 & Reporting definitions of the five-dimensional precision study at J, H2 and EW resolution (\S\ref{sec:gbdt-model-dependence}). \\
+Units & Densities in \si{cm^2/nucleon} divided by the product of the kept axes' units; cell-integrated cross sections in \si{cm^2/nucleon} (App.~\ref{app:release}, Table~\ref{tab:fived16-cells}). \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+

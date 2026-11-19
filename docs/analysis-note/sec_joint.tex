@@ -1,4 +1,4 @@
-\section{Calibrated joint tests of generator predictions}
+\subsection{Calibrated joint tests of generator predictions}
 \label{sec:joint5d}
 
 % Campaign: s5p (terminal 2026-10-06).
@@ -13,7 +13,7 @@ This section tests five generator predictions jointly in the five observables $(
 % Register round r19 (variant B, N1; DECISION-20261028-joseph-r19-variant-b-and-moves.md item 3): moved from the methods paper, in its reviewed wording (paper Sec. I's definition of test calibration and the lead paragraph of its former joint-test section), so that these facts print in the note when the paper's joint-test section leaves it (r19/move-pass.md, P1-P3, P6, P7).
 Two properties must be distinguished.  The coverage of unfolded intervals is the rate at which they contain the true cross section.  The calibration of a test is the rate at which it rejects a true hypothesis.  Calibration can be obtained without validated intervals by simulating the whole analysis chain at the hypothesis, so that the estimator's bias enters the simulated null distribution.  A calibration obtained in this way is valid to the extent that the simulated chain reproduces the analysis of the data.  Unfolded results can be compared with any prediction at truth level without simulating each generator through the detector. For hypothesis tests the advantage is smaller.  A test at reconstruction level would avoid the regularization bias, but it would still need the same response model.  Each external prediction would have to be folded through the analysis simulation's response, which is the hybrid construction of \S\ref{sec:joint5d-design}, with the same composition below the fine grid.  The tests of this section instead calibrate the unfolded statistic in simulation, so that the bias enters the null distribution rather than the decision.  We have not compared their power with that of a reconstruction-level test.
 
-\subsection{Hypotheses, grid and statistics}
+\subsubsection{Hypotheses, grid and statistics}
 \label{sec:joint5d-design}
 
 For each of five predictions $G$ (the MINERvA Tune~v1, GENIE~2.12.10 without and with MEC, NuWro~21.09 and GiBUU~2019; \S\ref{sec:eavailw-band}), the null $H_{0}(G)$ is that the true cross section equals $G$ on every cell of a fine five-dimensional grid. Below that grid, the null truth has the MINERvA Tune~v1 simulation's event composition, varied in each pseudo-experiment by the drawn interaction-model universes. Every fine-cell integral is held fixed in that variation. The background is the Tune~v1 simulation's, with its uncertainty bands. This \emph{hybrid null} is the hypothesis the calibration simulates. For the Tune~v1, which is the analysis simulation itself, no external prediction is combined with the Tune~v1 composition. Three requirements are distinct. The hybrid null is defined exactly on the finite grid, and no convergence is needed to define it. Whether it represents the physical generator prediction depends on condition~(i) (\S\ref{sec:joint5d-conditions}). Whether the calibration reproduces the analysis of the data is calibration fidelity (conditions~(ii)--(iv)). Each prediction is tested in total (rate and shape together) and in shape alone: \jtNtests{} tests. The fine grid is the analysis binning of \S\ref{sec:method-binning}, $14\times16\times7\times7\times6$ bins in $(\pT,\pPar,\Eavail,q_{3},W)$; the test cells below are its integrals.
@@ -37,7 +37,7 @@ Two statistics are formed from the unfolded cell values $F$ and the prediction $
 The prediction variance is diagonal because each simulated event of a prediction falls in one cell. The pilot's seeds are disjoint from those of the calibration, but it reuses the same simulated events and omitted the MINOS-efficiency band. The diagonal of $V$ matches the calibration's null variances (median ratio 1.00). The shrinkage, of intensity 0.015, floors about 80 of the 109 nearly degenerate correlation directions. At the Tune~v1 null the statistic therefore has a whitened trace of about 47 rather than 109. Since $V$ was fixed before the calibration, this affects power only (\S\ref{sec:joint5d-power}). The power at other shrinkage intensities has not been measured.
 % Search: other shrinkage intensit; different lambda; shrinkage scan (M2-ARCHIVE-CHECKS.md:98-125 scans the trace only) @ 1a015eef
 
-\subsection{Calibration within the implemented simulation model}
+\subsubsection{Calibration within the implemented simulation model}
 \label{sec:joint5d-calibration}
 
 The null distribution of each statistic is obtained from pseudo-experiments that run the full analysis chain at the null truth, using the joint-test estimator (\S\ref{sec:val-departure}). That estimator is deterministic LightGBM OmniFold with five iterations and the negative-weight background treatment, whose refinement classifier has 400 trees and 31 leaves. Each pseudo-experiment
@@ -107,7 +107,7 @@ Because the $\Delta_{b}$ come from the observed data, the null distributions are
   \end{minipage}
 \end{table}
 
-\subsection{Multiplicity, stopping rule and design}
+\subsubsection{Multiplicity, stopping rule and design}
 \label{sec:joint5d-frozen}
 
 The ten tests are carried out with the Holm procedure~\cite{Holm:1979} at familywise level $\alpha=\jtAlpha$. A determinacy requirement also applies: a step rejects only when the 95\% Clopper--Pearson interval~\cite{Clopper:1934} of $k/B$ lies entirely below its Holm threshold. Calibration proceeded in batches of \jtBatch{} pseudo-experiments per null, to at most \jtBcap{}, under a sequential rule that stopped a null once both of its decisions were determined. A null stopped when a 99.5\% Clopper--Pearson interval of $k/B$ lay entirely on one side of each of its thresholds and met a fixed precision requirement. The decision rule uses the upper end of the two-sided 95\% interval, a one-sided 97.5\% upper bound.
@@ -135,7 +135,7 @@ Three studies followed the decisions: the scan of the shift multiplier (\S\ref{s
 
 % Move pair H3-023 (director-helper-3, the structural rewrite, 2026-11-18): the subsection "Six conditions attached to the ten rejections" (sec_joint.tex:136-180 @ 9ed7db71b), with its label sec:joint5d-conditions, comments and Search lines, moved verbatim to section 12 (sec:limitations-joint); sec:joint5d-results opens with its first sentence as the scope label.
 
-\subsection{Decisions on the ten hypotheses}
+\subsubsection{Decisions on the ten hypotheses}
 \label{sec:joint5d-results}
 
 Each decision holds under six conditions of the specified model (\S\ref{sec:joint5d-conditions}). Table~\ref{tab:joint5d} lists the ten decisions. Every test is rejected at familywise $\alpha=\jtAlpha$; nine have $k=0$, and NuWro's shape test has $k=1$. Each rejection also survives the robustness variants at $\pm\jtMoneKappaRobust\,\delta_{\mathrm{fine}}$, the upper end of the extrapolation in condition~(i). Figure~\ref{fig:joint5d-nulls} shows each null's calibrated distribution with the observed statistic. The Tune~v1 null is centered at small values, whereas the external nulls are displaced far upward by the estimator's pull toward its prior.
@@ -187,7 +187,7 @@ Because every test rejects, power serves here only as context: the test specific
 % X7 (sol minor), moved from the article: docs/orchestration/state/s5p/stage7/joint/joint-evaluate.json
 % power.<P>.shape["0.005"].claim_rule_determined.interval (n 193, 195, 195; 199, 193, 172).
 
-\subsection{Lost pseudo-experiments and their recovery}
+\subsubsection{Lost pseudo-experiments and their recovery}
 \label{sec:joint5d-lost}
 
 Computing time limits interrupted or prevented \jtLostCal{} of the submitted calibration pseudo-experiments (\jtLostInterrupted{} interrupted, \jtLostNever{} never started) and \jtLostPow{} power pseudo-experiments. Every submitted draw has been observed, and no recovered draw reaches the observed statistic in any test, claim variant or robustness variant. The decisions in Table~\ref{tab:joint5d} remain those of the evaluation before recovery, at the $B$ at which its rule stopped (App.~\ref{app:devhistory-lost}).
@@ -200,7 +200,7 @@ Computing time limits interrupted or prevented \jtLostCal{} of the submitted cal
 % stops, power over the complete sets); RECORD-20261005 sec. 5 (pre-recovery sensitivity, |rho| <= 0.06);
 % DECISION-20261005-s5p-recompute-extension-and-lost-seed-recovery.md sec. 5 (Joseph's disposition).
 
-\subsection{Matched coarse projections}
+\subsubsection{Matched coarse projections}
 \label{sec:joint5d-projections}
 
 The same calibrated tests are restricted to matched $3\times3$ coarse projections of the same cells, onto $(\pT,\pPar)$ and onto $(\Eavail,W)$. The comparison uses the same calibration ensembles, with the recovered draws included, and the same variants and claim rule. Its $p$ values were reproduced independently~\cite{JointTestProjections2026}. The projected tests do not enter the Holm family and change no decision of Table~\ref{tab:joint5d}. The comparison and its criterion were specified after the five-dimensional outcomes were known but before the comparison was run.
@@ -234,7 +234,7 @@ Under the criterion, a test would count as evidence of additional joint discrimi
   \end{tabular}
 \end{table}
 
-\subsection{Hadronic-response condition and recoil-energy sensitivity}
+\subsubsection{Hadronic-response condition and recoil-energy sensitivity}
 \label{sec:joint5d-response}
 
 MINERvA's recoil-energy analyses assign a hadronic-energy response uncertainty derived from test-beam calorimetry~\cite{MINERvA:2015testbeam}, separate from the GEANT hadron-interaction reweights~\cite{MINERvA:2021owq,MINERvA:2022incl}. In the low-recoil measurement the resulting hadronic-energy uncertainty rises to \SI{10}{\percent} at its highest three-momentum transfers, $0.9<q_{3}<\SI{1.2}{GeV}$~\cite{MINERvA:2022incl}. The specified nuisance model here includes the reweights but no calorimetric response band. Such a band would act on all five nulls together, through the shared detector simulation and unfolding. A response mismodeling could move each observed statistic in either direction, and a band drawn in the calibration would also broaden and could shift each null distribution. The net effect on each $p$ value is unmeasured. The published comparison in muon kinematics alone, whose observables do not use the reconstructed recoil energy, also disfavors the same generator families~\cite{MINERvA:2021owq}. It provides context for a disagreement involving muon observables, but the hypotheses tested here use a different estimator and calibration. The GENIE~2.12.10 projection result of \S\ref{sec:joint5d-projections} shows that the information rejecting that prediction involves the hadronic axes, on which a response band would act.
@@ -269,7 +269,7 @@ The study measures the sensitivity of the observed statistics and decisions to o
 % in (a); the need to vary them in a response-uncertainty construction, in the first paragraph.
 % Search: regenerated with the; response-uncertainty; calorimetric response band; net effect on each p value @ ddf16f10
 
-\subsection{Hydrocarbon target correction for NuWro and GiBUU}
+\subsubsection{Hydrocarbon target correction for NuWro and GiBUU}
 \label{sec:joint5d-ch}
 
 % Methods-paper rewrite draft 5 (DECISION-20261020-joseph-nuwro-ch-claim.md, provisional "for now"). Sources: B = docs/orchestration/state/measurement-paper/phase1/mp3b/REPORT.md (NuWro on CH); C = docs/orchestration/state/measurement-paper/phase1/mp3c/REPORT.md (GiBUU on CH); M = docs/orchestration/state/measurement-paper/phase1/a7margins/RECEIPT.md (frozen margins).
@@ -311,7 +311,7 @@ In NuWro's hydrogen generation, four chunks aborted and were rerun on alternate 
 % ADDENDUM-9 :29-31 ("Carbon cannot be checked this way"; "possibly on the frozen GiBUU product").
 % Search: do not conserve energy; energy non-conservation; production_ID 34 (cause not identified) @ ddf16f10
 
-\subsection{What the tests establish}
+\subsubsection{What the tests establish}
 \label{sec:joint5d-reading}
 
 The comparisons recover the generator disagreements already established by the published two-dimensional measurement on the same data~\cite{MINERvA:2021owq}. What they add is calibration within the implemented simulation model, which puts the estimator's bias toward its prior and the specified nuisances into each null distribution. The rejections are global assessments of the five specified predictions under the specified model. Assigning a discrepancy to a kinematic region or nuclear mechanism would require separate tests. The rejections apply to the generator versions listed in \S\ref{sec:eavailw-band}, and they retain all six conditions of \S\ref{sec:joint5d-conditions}. Extending the inference would require a response band drawn through the calibration and a demonstrated bound on the residual below the fine grid.

@@ -1,4 +1,4 @@
-\section{Result package and reproduction limits}
+\subsection{Result package and reproduction limits}
 \label{app:release}
 
 This appendix describes RC7, the existing local replay package, and specifies the broader event-level and covariance release, with the identities that are fixed and what each part does and does not reproduce. Rebuilding this note's PDFs assembles documents; it does not reproduce scientific results.
@@ -44,7 +44,7 @@ The package's verifier (\texttt{publication/release/verify\_rc.py} in the reposi
 % DECISION-20261117b item 5 (A19): "before the note is submitted", the DOI hold kept.
 \paragraph{Planned Zenodo reproduction package (provisional).} The planned package will contain archived result products, code to regenerate tables and figures from those products, and selected diagnostics. It will be deposited on Zenodo before the note is submitted. Its DOI is \textbf{[Zenodo DOI pending deposit]}. It will not support a complete event-level rerun of the analysis. This description is provisional until the package's contents are finalized.
 
-\subsection{Scope of reproduction and required inputs}
+\subsubsection{Scope of reproduction and required inputs}
 \label{app:release-scope}
 
 The public ancillary files of Ref.~\cite{MINERvA:2021owq} supply the published inputs for the comparisons to its central values and covariance, the standardized differences, the tension anatomy, and the MINERvA~Tune~v1 model comparison, but not for this analysis's unfolded 2D uncertainty construction.
@@ -56,7 +56,7 @@ All 2,374 inventoried input files (2,307 AnaTuples and 67 flux, reweight and par
 
 Event-loop outputs are preserved on the analysis's NERSC storage. The planned Zenodo reproduction package described above is the route for public access to archived result products and selected diagnostics.
 
-\subsection{Release schema}
+\subsubsection{Release schema}
 \label{app:release-schema}
 
 The broader result package must contain every item below; RC7 does not contain all of them. A $\checkmark$ marks identities or values already fixed (bin edges: \S\ref{app:release-edges}; checksums: Ref.~\cite{NoteRecords2026}, identities already fixed); the rest are packaging. A fixed identity specifies which object is meant, not whether the object is scientifically qualified.
@@ -75,7 +75,7 @@ The broader result package must contain every item below; RC7 does not contain a
   \item \textbf{Limiting measurements}: the four measurements of \S\ref{sec:eavailw-adopted} that limit what the five-axis covariance of the configuration-(a) central value supports, stored with it in the released package, not only in this note.
 \end{enumerate}
 
-\subsection{Bin edges}
+\subsubsection{Bin edges}
 \label{app:release-edges}
 
 \noindent The bin edges are the one thing a reader cannot recover from a checksum:
@@ -88,7 +88,7 @@ The broader result package must contain every item below; RC7 does not contain a
 \end{itemize}
 The last bin on $\Eavail$, $q_{3}$ and $W$ is a catch bin to 100 in the axis unit (\si{GeV}, or \si{GeV/c} for $q_{3}$), and the $\pT\times\pPar$ grid carries the 19 unreported high-$\pT$, low-$\pPar$ acceptance cells of \S\ref{sec:method-binning}.
 
-\subsection{One minimal projection example}
+\subsubsection{One minimal projection example}
 \label{app:release-example}
 
 The released package is to support the following computation, which checks the package's ordering, mask and weights from end to end.
