@@ -1,7 +1,9 @@
 # PILOT-FB copy connect (PILOT-FB-BINDING-1 addendum C1, ruling 3 step 3) (receipt)
 
-**Status: written and tested, not run.** Revision 2 makes the eight fixes K1–K8 the copy-connect read asked for
-(`~/codex-reports/pilot-fb-audit/copy-connect/codex/report.md`; revision 1 was `8e2e3a1e`). It runs only after the
+**Status: written and tested, not run.** Revision 2 made the eight fixes K1–K8 the copy-connect read asked for
+(`~/codex-reports/pilot-fb-audit/copy-connect/codex/report.md`; revision 1 was `8e2e3a1e`). Revision 3 is the
+director's mechanical patch M1–M6 after the rev 2 read (`~/codex-reports/pilot-fb-audit/copy-connect-r2/codex/report.md`),
+with residuals c1–c4 accepted. It runs only after the
 smoke, on its own audit and the director's go for these exact shas, and after every fenced lane has acked (C1 ruling 3
 step 1). Nothing has been copied.
 <!-- absence-ok: an operational status of this connect, not a claim that a result does not exist -->
@@ -17,13 +19,13 @@ Into the stage the login-node smoke created, `/pscratch/sd/j/josephrb/pfb-202611
 
 Nothing else is written.
 
-## The code (revision 2, commit 941a30f2)
+## The code (revision 3, commit 9d607e2f)
 
 | file | sha256 |
 |---|---|
-| `nd-unfolding/pfb_copy_remote.py` | `d2d7043e799794b4f6f0b49a7a6dcba2f0f45a1a293194d1ecec607cce7b8d31` |
-| `nd-unfolding/pfb_copy_launch.sh` | `f8522a44410a35bc8864651c32f765918cde853e16854086aedc92e98f978903` |
-| `nd-unfolding/tests/test_pfb_copy.py` | `f2ea9f3e499aa46205ea4954a317309cc40d6911211c0df5d2edad13628e4635` |
+| `nd-unfolding/pfb_copy_remote.py` | `6e38baa49a13c41a9370fe3db048e26fe0a5e382c78aca898e95d1ebb2c6faba` |
+| `nd-unfolding/pfb_copy_launch.sh` | `72563b2114742a3dff82c46201012172c24bee4c559f5fdc389deff652dffa90` |
+| `nd-unfolding/tests/test_pfb_copy.py` | `ca28f61756db58d87aed9dd843eeee6a4def19f5b6e34fdf8e942f826d54f623` |
 | `nd-unfolding/tests/pfb_copy_testentry.py` | `e31bf0737aee438b001139430c1a049068d51efd92424320cbf33875bc762e3e` (test-only entry; never deployed) |
 
 ## The command (after the go)
@@ -48,6 +50,27 @@ git HEAD must be the pin in the smoke's receipt.
 | **K7** explicit STOP on I/O errors | a read-side error is exit 6, or exit 3 for an O_NOATIME EPERM, before any write. A write-side error after the first write is exit 6, with a partial-state manifest naming every created path, which stays in place. A stopped manifest never verifies | `K7IOErrors` (ENOSPC injected on the last copy; an O_NOATIME EPERM) |
 | **K8** bind to the smoke | `smoke-receipt.json` is read through the stage's descriptor: a plain file with one link, valid JSON. Its stage must be the literal declared stage, its pin the deploy's git HEAD, and its `local_test` false, and it must record an INDEX sha256. Otherwise exit 2 | `K8SmokeBinding` |
 
+## Revision 3: the mechanical patch M1–M6
+
+| item | change | test |
+|---|---|---|
+| **M1** (K1) | the bootstrap exits 10, with its message, if `os.fstat(0)` raises (an EBADF from a closed fd 0). The launcher's BOOT hex and SHA change with it | `Rev3.test_m1_a_closed_stdin_exits_10` |
+| **M2** (K5) | sacct's environment carries `HOME=/global/homes/j/josephrb` literally, never the inherited value | `Rev3.test_m2_sacct_gets_the_literal_home` |
+| **M3** (K6) | verify requires every key in every record (`REQUIRED`). Every count, stat and inode field must have `type(x) is int`, so a bool is rejected. `copy_nlink` must be exactly 1 and `copy_mode` a regular file. The source stat record's (dev, ino) must be `source_inode`, and `bytes` must be the source's size. Each fence's command must be the exact argv the remote builds (`fence_argv`). Any exception in verify is exit 2, never a traceback | `Rev3.test_m3_the_verifier_is_strict` (the report's combined mutation, a missing name, a stat ino not its `source_inode`, nlink 2, a non-regular mode, and malformed and non-JSON manifests) |
+| **M4** (K7) | every read before the first write is wrapped. The receipt, the INDEX and git HEAD exit 2 on an OSError; a source exits 5. A late lstat EIO is 5, while a source that vanished stays 8. Nothing is written | `Rev3.test_m4_an_io_error_before_the_first_write_writes_nothing` (an EIO injected on the receipt read; a late lstat EIO) |
+| **M5** (K8) | `smoke-edges/INDEX.json` is opened through the stage's descriptor, as a plain file with one link, O_NOFOLLOW. Its sha256 must equal the receipt's `index_sha256`, or exit 2 | `Rev3.test_m5_the_index_must_be_the_receipts` (a missing INDEX, a wrong digest, a symlinked INDEX) |
+| **M6** (the FIFO regression) | the receipt and the INDEX are `fstatat`'ed without following links and must be regular files of their own before the open. The open is `O_NONBLOCK`, and its fstat must be the same file | `Rev3.test_m6_a_fifo_receipt_refuses_without_blocking` (a FIFO receipt and a FIFO INDEX each refuse, under a 5 s timeout) |
+
+## Accepted residuals (the director's ruling on rev 2)
+
+- **(c1)** The saul relay and the loginNN shell are trusted transport.
+- **(c2)** `/usr/bin/sacct`, `/usr/bin/git`, `/proc/self/fd` and the real O_NOATIME are proven only at the connect, where
+  each fails closed.
+- **(c3)** If the stage or `a0-refs` is renamed after it is opened, writes land in the renamed directory, inside our
+  scratch. This is detected, and it STOPs with exit 6 without touching an original. Detection only.
+- **(c4)** Bash capture drops NUL bytes. But the bytes hashed, sent and executed are the same capture, and it matches
+  the pin.
+
 ## The holds (unchanged)
 
 - No job, and no sbatch, srun or salloc.
@@ -57,7 +80,7 @@ git HEAD must be the pin in the smoke's receipt.
 
 ## Receipt
 
-- `tests.txt`: the 19 tests in a clean clone at 941a30f2, exit 0. They import `fb_pilot_analyze` and
+- `tests.txt`: the 25 tests in a clean clone at 9d607e2f, exit 0. They import `fb_pilot_analyze` and
   `rounding_mechanism_analyze`, which import `rounding_mechanism_probe` (the pins and the analysis's own copy check).
 - **Not covered here:**
   - `/usr/bin/sacct` and `/usr/bin/git` on loginNN. If either is missing, the copy fails closed (9 or 2), a STOP for
