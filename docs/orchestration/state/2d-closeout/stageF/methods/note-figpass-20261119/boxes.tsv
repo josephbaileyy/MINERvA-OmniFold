@@ -1,0 +1,6 @@
+# Axes boxes in inches from the canvas lower left (figure, axes index, x0, y0, width, height).
+figure	axes	x0_in	y0_in	width_in	height_in
+q3_excess_projection	0	1.25	2.6	4.3	2.1
+q3_excess_projection	3	5.72	2.6	0.15	2.1
+q3_excess_projection	1	0.85	0.42	2.25	1.6
+q3_excess_projection	2	4.3	0.42	2.15	1.6

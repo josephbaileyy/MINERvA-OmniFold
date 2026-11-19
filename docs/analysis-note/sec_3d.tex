@@ -94,9 +94,17 @@ Marginalizing over $\Eavail$ should reproduce the 2D result of \S\ref{sec:result
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\textwidth]{eavail_marginal_vs_paper_pull_full}
+  % Layout (cov2d figure pass, 2026-11-19): the producer's 864 x 360 pt canvas, split into its two panels, each at scale 1.0 (it was 0.38); the distribution panel follows in a continuation float. The superscripts stay below 7 pt pending a producer re-render (note-figpass-20261119/README.md).
+  \includegraphics[scale=1.0,trim=5 11 434 0,clip]{eavail_marginal_vs_paper_pull_full}
   \caption[Descriptive marginal comparison, configuration~(a)]{Development check: configuration~(a) gives descriptive standardized differences, not formal independent-result pulls. Shared data and unavailable cross-covariance impose this restriction. The per-bin differences of the $\Eavail$-marginal are scaled by published uncertainties and shown on the $14\times16$ grid and in distribution. Configuration~(a) uses purity-based subtraction (\S\ref{sec:method-config}).}
   \label{fig:eavail-marg}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=1.0,trim=430 11 6 0,clip]{eavail_marginal_vs_paper_pull_full}
+
+  Figure~\ref{fig:eavail-marg}: continued, the per-bin differences in distribution.
 \end{figure}
 
 \subsection{Closure for one injected available-energy deformation}
@@ -223,8 +231,8 @@ The fourth axis adds one feature (\S\ref{sec:3d}), three-momentum transfer $q_{3
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.99\textwidth]{q3_excess_projection}
-  \caption[Available-energy and momentum-transfer ratios, configuration~(a)]{In configuration~(a), the $\Eavail$ marginal reproduces the 3D low-recoil excess, while the joint data/Tune~v1 ratio rises with $q_{3}$ across the quasielastic--$\Delta$ dip. No uncertainty drawn: no 4D covariance is quoted (\S\ref{sec:3d}). The 4D data/Tune~v1 ratio (labeled ``unfolded / GENIE prior'' in the figure) is projected onto $(\Eavail,q_{3})$ (left; blank cells are kinematically empty), with $q_{3}$ (center) and $\Eavail$ (right) marginals. Configuration~(a) uses purity-based subtraction (\S\ref{sec:method-config}).}
+  \includegraphics[width=\textwidth]{q3_excess_projection}
+  \caption[Available-energy and momentum-transfer ratios, configuration~(a)]{In configuration~(a), the $\Eavail$ marginal reproduces the 3D low-recoil excess, while the joint data/Tune~v1 ratio rises with $q_{3}$ across the quasielastic--$\Delta$ dip. No uncertainty drawn: no 4D covariance is quoted (\S\ref{sec:3d}). The 4D data/Tune~v1 ratio (labeled ``unfolded / GENIE prior'' in the figure) is projected onto $(\Eavail,q_{3})$ (top; blank cells are kinematically empty), with $q_{3}$ (lower left) and $\Eavail$ (lower right) marginals. Configuration~(a) uses purity-based subtraction (\S\ref{sec:method-config}).}
   % Comparator: the MINERvA Tune~v1 prior (\texttt{w\_truth}).
   \label{fig:q3excess}
 \end{figure}

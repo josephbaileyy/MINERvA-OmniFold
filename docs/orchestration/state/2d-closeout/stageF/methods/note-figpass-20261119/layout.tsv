@@ -1,0 +1,3 @@
+# Figures drawn at their printed size: the canvas (inches) is the width class the note includes it at (widths.tsv), every text size times the scale and then at least the floor (pt).
+figure	width_in	height_in	text_scale	text_floor_pt
+q3_excess_projection	6.5	5.0	1.0	7.0
