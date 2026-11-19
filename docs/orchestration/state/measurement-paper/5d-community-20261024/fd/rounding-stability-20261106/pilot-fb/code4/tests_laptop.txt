@@ -1,0 +1,101 @@
+# HEAD f25825353fd1b4961f13299c796ea4ce688a0b87
+# clean clone, Python 3.12.2, numpy 1.26.4, no lightgbm, 2026-11-18T22:45:06Z
+# 439e92262c85a86b4aca6b7e368972d2cc0a12bca3c55eb02e5ec019b927965a  fb_pilot_edges.py
+# b55ea40d3691521248813b1702d7c3442aa7564e9956d1a8d211a1522371cd09  fb_pilot_gates.py
+# 478316c13b2d902cebbb56e68c3e2762ecc49f57063a545ff87c0fdf9678e464  fb_pilot_probe.py
+# 630fde0489f2559bc6293d4971315011aa19574bb9d292e0ab5a987337879c06  fb_pilot_analyze.py
+# 3a2697397cfa5d6e1af52950009f99cfa9ef3bedd6a54c765ab6513da8bd57f9  sbatch_pfb.sh
+# 84fde405b8c7e2ccd3507536e1b08db59cc6d3236d696ea6e5918b3428baf4d5  pfb_smoke_prep.sh
+# 594bd0ccdf1be12d6c6fca27ecb65a24837e3112796a3826460e8e7abb24b7fa  tests/test_fb_pilot.py
+# efe45dceb1eaf75d33ba669c63fa0ccec1cad7ae1fb84cd10076223d23277130  tests/fb_pilot_mutation.py
+# command: python3 -B -W ignore -m unittest -v nd-unfolding/tests/test_fb_pilot.py
+test_a_power_of_two_needs_no_extra_rule (nd-unfolding.tests.test_fb_pilot.Admissibility.test_a_power_of_two_needs_no_extra_rule) ... ok
+test_intended_index_is_lightgbms_value_to_bin (nd-unfolding.tests.test_fb_pilot.Admissibility.test_intended_index_is_lightgbms_value_to_bin) ... ok
+test_no_edge_sits_in_the_zero_band (nd-unfolding.tests.test_fb_pilot.Admissibility.test_no_edge_sits_in_the_zero_band) ... ok
+test_no_jitter_crosses_an_admissible_edge (nd-unfolding.tests.test_fb_pilot.Admissibility.test_no_jitter_crosses_an_admissible_edge) ... ok
+test_signed_spacing_counterexamples_are_refused (nd-unfolding.tests.test_fb_pilot.Admissibility.test_signed_spacing_counterexamples_are_refused) ... ok
+test_the_zero_band_and_finiteness_refuse (nd-unfolding.tests.test_fb_pilot.Admissibility.test_the_zero_band_and_finiteness_refuse) ... ok
+test_a_correct_file_passes_and_a_zero_split_stores_k (nd-unfolding.tests.test_fb_pilot.G3.test_a_correct_file_passes_and_a_zero_split_stores_k) ... skipped 'LightGBM 4.6.0 is not installed'
+test_a_middle_edge_removed_changes_the_partition (nd-unfolding.tests.test_fb_pilot.G3.test_a_middle_edge_removed_changes_the_partition) ... skipped 'LightGBM 4.6.0 is not installed'
+test_a_misparsed_edge_used_as_a_split_fails_b (nd-unfolding.tests.test_fb_pilot.G3.test_a_misparsed_edge_used_as_a_split_fails_b) ... skipped 'LightGBM 4.6.0 is not installed'
+test_a_nan_in_a_split_feature_fails_c (nd-unfolding.tests.test_fb_pilot.G3.test_a_nan_in_a_split_feature_fails_c) ... skipped 'LightGBM 4.6.0 is not installed'
+test_an_edge_moved_in_a_used_gap_fails_b (nd-unfolding.tests.test_fb_pilot.G3.test_an_edge_moved_in_a_used_gap_fails_b) ... skipped 'LightGBM 4.6.0 is not installed'
+test_an_unforced_fit_fails_g3 (nd-unfolding.tests.test_fb_pilot.G3.test_an_unforced_fit_fails_g3) ... skipped 'LightGBM 4.6.0 is not installed'
+test_an_unopenable_file_fails_a (nd-unfolding.tests.test_fb_pilot.G3.test_an_unopenable_file_fails_a) ... skipped 'LightGBM 4.6.0 is not installed'
+test_harmless_changes_may_pass_and_leave_predictions_unchanged (nd-unfolding.tests.test_fb_pilot.G3.test_harmless_changes_may_pass_and_leave_predictions_unchanged) ... skipped 'LightGBM 4.6.0 is not installed'
+test_the_remedy_is_jitter_invariant_on_fit_and_scored_rows (nd-unfolding.tests.test_fb_pilot.G3.test_the_remedy_is_jitter_invariant_on_fit_and_scored_rows) ... skipped 'LightGBM 4.6.0 is not installed'
+test_a_source_slice_is_not_the_signed_sample (nd-unfolding.tests.test_fb_pilot.J.test_a_source_slice_is_not_the_signed_sample) ... ok
+test_j2_rebuilds_with_the_runs_own_build_inputs (nd-unfolding.tests.test_fb_pilot.J.test_j2_rebuilds_with_the_runs_own_build_inputs) ... ok
+test_role_matrices_follow_the_bound_selection (nd-unfolding.tests.test_fb_pilot.J.test_role_matrices_follow_the_bound_selection) ... ok
+test_the_bound_jitter_is_not_jitter_coords_of_a_role_matrix (nd-unfolding.tests.test_fb_pilot.J.test_the_bound_jitter_is_not_jitter_coords_of_a_role_matrix) ... ok
+test_unapplied_wrong_seed_and_edge_moves_are_caught (nd-unfolding.tests.test_fb_pilot.J.test_unapplied_wrong_seed_and_edge_moves_are_caught) ... ok
+test_a_nonfinite_bootstrap_endpoint_is_inconclusive (nd-unfolding.tests.test_fb_pilot.Outcome.test_a_nonfinite_bootstrap_endpoint_is_inconclusive) ... ok
+test_every_combination_reaches_exactly_one_row (nd-unfolding.tests.test_fb_pilot.Outcome.test_every_combination_reaches_exactly_one_row) ... ok
+test_gate_precedence_and_a_deliberate_round1_stop (nd-unfolding.tests.test_fb_pilot.Outcome.test_gate_precedence_and_a_deliberate_round1_stop) ... ok
+test_invalid_branches (nd-unfolding.tests.test_fb_pilot.Outcome.test_invalid_branches) ... ok
+test_s2_and_s3_follow_their_definitions (nd-unfolding.tests.test_fb_pilot.Outcome.test_s2_and_s3_follow_their_definitions) ... ok
+test_the_bars_include_equality_and_rows_5_7_name_what_crossed (nd-unfolding.tests.test_fb_pilot.Outcome.test_the_bars_include_equality_and_rows_5_7_name_what_crossed) ... ok
+test_build_edges_writes_twelve_files_and_refuses_an_existing_dir (nd-unfolding.tests.test_fb_pilot.Placement.test_build_edges_writes_twelve_files_and_refuses_an_existing_dir) ... ok
+test_edges_are_written_at_17_digits_and_round_trip (nd-unfolding.tests.test_fb_pilot.Placement.test_edges_are_written_at_17_digits_and_round_trip) ... ok
+test_k_is_lightgbms_float32_constant (nd-unfolding.tests.test_fb_pilot.Placement.test_k_is_lightgbms_float32_constant) ... ok
+test_one_pool_gives_one_edge_set (nd-unfolding.tests.test_fb_pilot.Placement.test_one_pool_gives_one_edge_set) ... ok
+test_ties_collide_and_walk_up (nd-unfolding.tests.test_fb_pilot.Placement.test_ties_collide_and_walk_up) ... ok
+test_too_few_gaps_is_infeasible (nd-unfolding.tests.test_fb_pilot.Placement.test_too_few_gaps_is_infeasible) ... ok
+test_z_comes_from_the_fit_column (nd-unfolding.tests.test_fb_pilot.Placement.test_z_comes_from_the_fit_column) ... ok
+test_a_sidecar_is_bound_to_its_product (nd-unfolding.tests.test_fb_pilot.Rev2.test_a_sidecar_is_bound_to_its_product) ... ok
+test_base_only_statistics_survive_a_round1_stop (nd-unfolding.tests.test_fb_pilot.Rev2.test_base_only_statistics_survive_a_round1_stop) ... ok
+test_exits_4_and_5_and_operational_failures_keep_their_place (nd-unfolding.tests.test_fb_pilot.Rev2.test_exits_4_and_5_and_operational_failures_keep_their_place) ... ok
+test_g0_records_every_role_and_feature (nd-unfolding.tests.test_fb_pilot.Rev2.test_g0_records_every_role_and_feature) ... ok
+test_g4_rechecks_the_inputs_the_deploy_and_the_sigma_copy (nd-unfolding.tests.test_fb_pilot.Rev2.test_g4_rechecks_the_inputs_the_deploy_and_the_sigma_copy) ... ok
+test_identity_is_every_fit_with_the_file_digest (nd-unfolding.tests.test_fb_pilot.Rev2.test_identity_is_every_fit_with_the_file_digest) ... ok
+test_placement_takes_the_lowest_gap_on_a_plateau (nd-unfolding.tests.test_fb_pilot.Rev2.test_placement_takes_the_lowest_gap_on_a_plateau) ... ok
+test_s1_invalid_reads_invalid_and_non_finite_values_write_as_null (nd-unfolding.tests.test_fb_pilot.Rev2.test_s1_invalid_reads_invalid_and_non_finite_values_write_as_null) ... ok
+test_the_analysis_is_bound_to_one_job (nd-unfolding.tests.test_fb_pilot.Rev2.test_the_analysis_is_bound_to_one_job) ... ok
+test_the_slurm_limit_and_the_scripts_cap (nd-unfolding.tests.test_fb_pilot.Rev2.test_the_slurm_limit_and_the_scripts_cap) ... ok
+test_the_smoke_is_a_login_node_step (nd-unfolding.tests.test_fb_pilot.Rev2.test_the_smoke_is_a_login_node_step) ... ok
+test_a_complete_valid_run_reads_one_row (nd-unfolding.tests.test_fb_pilot.Rev3.test_a_complete_valid_run_reads_one_row) ... ok
+test_a_malformed_artifact_keeps_the_named_outcome (nd-unfolding.tests.test_fb_pilot.Rev3.test_a_malformed_artifact_keeps_the_named_outcome)
+Codex MEDIUM 5: INPUTS CHANGED is returned before any unsafe read; an unreadable product or sidecar is ... ok
+test_a_missing_index_or_an_altered_edge_file_fails_identity (nd-unfolding.tests.test_fb_pilot.Rev3.test_a_missing_index_or_an_altered_edge_file_fails_identity)
+Codex HIGH 1, Grok 2: a missing INDEX disabled the identity check; now absent evidence FAILS. ... ok
+test_a_stage_copy_must_be_a_plain_file (nd-unfolding.tests.test_fb_pilot.Rev3.test_a_stage_copy_must_be_a_plain_file)
+The LOW item: a symlink or hard link in the stage could reach a protected original. ... ok
+test_g0_counts_survive_a_policy_failure (nd-unfolding.tests.test_fb_pilot.Rev3.test_g0_counts_survive_a_policy_failure)
+Codex 7: a zero-band failure still reports z, n and the admissible-gap count; a non-finite value cannot. ... ok
+test_products_of_another_job_are_run_refused (nd-unfolding.tests.test_fb_pilot.Rev3.test_products_of_another_job_are_run_refused)
+Codex HIGH 2: the job id is bound to every product's meta, not only to the caller's arguments. ... ok
+test_s2_survives_s1s_own_invalid_and_each_base_has_its_shift (nd-unfolding.tests.test_fb_pilot.Rev3.test_s2_survives_s1s_own_invalid_and_each_base_has_its_shift)
+Codex 7: S1's own INVALID suppresses S1's reading only; one base suffices for its own shift. ... ok
+test_the_environment_is_the_declared_one (nd-unfolding.tests.test_fb_pilot.Rev3.test_the_environment_is_the_declared_one)
+Code 4 (--export=NONE reversal; Codex's inherited BASH_ENV): the scripts re-execute under env -i with a named ... ok
+test_the_job_preflight_spends_no_root (nd-unfolding.tests.test_fb_pilot.Rev3.test_the_job_preflight_spends_no_root)
+Every refusal but an existing root is a preflight refusal, recorded in the stage before the root exists; an ... ok
+test_the_job_writes_through_no_pre_placed_link (nd-unfolding.tests.test_fb_pilot.Rev3.test_the_job_writes_through_no_pre_placed_link)
+Code 4: every file the job creates in the stage is created new (O_CREAT|O_EXCL|O_NOFOLLOW); a pre-placed ... ok
+test_the_prep_step_keeps_the_runners_exit_4 (nd-unfolding.tests.test_fb_pilot.Rev3.test_the_prep_step_keeps_the_runners_exit_4)
+Codex MEDIUM 6, Grok 1: a returned input-digest failure stays 4 (INPUTS CHANGED), not 5. ... refusing: the runner exited 4 before the unfold
+refusing: the runner exited 2 before the unfold
+refusing: the prep step never reached the unfold
+ok
+test_the_smoke_writes_only_under_its_stage (nd-unfolding.tests.test_fb_pilot.Rev3.test_the_smoke_writes_only_under_its_stage)
+Codex HIGH 3 (code 2) and code 4: the smoke creates a fresh stage, writes nothing in the deploy (no bytecode, ... ok
+test_the_test_switch_cannot_reach_a_real_job (nd-unfolding.tests.test_fb_pilot.Rev3.test_the_test_switch_cannot_reach_a_real_job)
+Codex HIGH 4, Grok 3: inside Slurm any PFB_ variable refuses, even empty; then the one-node, family, root ... ok
+test_a_symlinked_a0_directory_or_the_original_inode_fails_g4 (nd-unfolding.tests.test_fb_pilot.Rev4.test_a_symlinked_a0_directory_or_the_original_inode_fails_g4)
+Codex 2, Grok 1: every path component is checked physically, and a copy that is the protected original's ... ok
+test_null_hashes_missing_files_and_a_bad_index_fail (nd-unfolding.tests.test_fb_pilot.Rev4.test_null_hashes_missing_files_and_a_bad_index_fail)
+Codex 4: a recorded sha256 that is not a sha256 (null) with its file missing, an INDEX without its schema, ... ok
+test_the_analysis_writes_only_a_new_file_under_the_stage_or_root (nd-unfolding.tests.test_fb_pilot.Rev4.test_the_analysis_writes_only_a_new_file_under_the_stage_or_root)
+The director's ruling: the analyzer's --out is constrained in code, and created new. ... ok
+test_the_root_read_is_the_statuss_root (nd-unfolding.tests.test_fb_pilot.Rev4.test_the_root_read_is_the_statuss_root)
+Codex 3: a copied tree read under another path fails, even when its status names the declared root. ... ok
+test_the_stage_inventory (nd-unfolding.tests.test_fb_pilot.Rev4.test_the_stage_inventory)
+The job's stage-check: only the smoke's files, the copies and the jobs' own logs; no link anywhere. ... ok
+test_wrong_typed_meta_keeps_the_named_outcome (nd-unfolding.tests.test_fb_pilot.Rev4.test_wrong_typed_meta_keeps_the_named_outcome)
+Codex 5: a readable product whose meta is valid JSON of the wrong type is classified, and a missing ... ok
+
+----------------------------------------------------------------------
+Ran 63 tests in 12.059s
+
+OK (skipped=9)
+# exit 0

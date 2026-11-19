@@ -1,0 +1,13 @@
+# HEAD 18c24d3503bac768152f0f479b12f6bec5743074
+# clean clone, bash GNU bash, version 3.2.57(1)-release (arm64-apple-darwin25), 2026-11-18T17:32:14Z
+# 4e3b811a830c52ca0045f41f9357c14f39ab554e7faa4f863dd7300d1a02e727  fb_pilot_edges.py
+# b55ea40d3691521248813b1702d7c3442aa7564e9956d1a8d211a1522371cd09  fb_pilot_gates.py
+# 64a4c763e587efc7910ac4f18fb50e98f9fcd53cf1b997fcb6de8f899cd0e646  fb_pilot_probe.py
+# 0f0693d87102327e4e64878fb15c5af8274b120563a6afb76cffe1a2b2958919  fb_pilot_analyze.py
+# c96363a07edfc33483d756b32a51f1c78f87b81fdd67cdd5c7b179e3bf6b5cee  sbatch_pfb.sh
+# 6d8d906db044072c456fc07138066d7341b2cddcc94c056322a352cef7641478  pfb_smoke_prep.sh
+# 8213d6c21adb8862f1e5a491cc7e2796e6b70ebb5e653b7a10e4e91f38d861fb  tests/test_fb_pilot.py
+# 71fb27ccbfd68f0ce74873676d2e08939145821f3c5fba210f00c16459f95760  tests/fb_pilot_mutation.py
+# command: bash -n nd-unfolding/sbatch_pfb.sh && bash -n nd-unfolding/pfb_smoke_prep.sh
+# exit 0
+# clone status: 0 lines
