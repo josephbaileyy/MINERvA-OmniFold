@@ -1,13 +1,13 @@
-# HEAD 87ab91bac316746a3d167c8b41bdec5a824298d0
-# clean clone, bash GNU bash, version 3.2.57(1)-release (arm64-apple-darwin25), 2026-11-19T01:30:25Z
+# HEAD 8da6738a780fbe4cfd3aaa13f3207c631ef53ad0
+# clean clone, bash GNU bash, version 3.2.57(1)-release (arm64-apple-darwin25), 2026-11-19T02:17:02Z
 # 439e92262c85a86b4aca6b7e368972d2cc0a12bca3c55eb02e5ec019b927965a  fb_pilot_edges.py
 # b55ea40d3691521248813b1702d7c3442aa7564e9956d1a8d211a1522371cd09  fb_pilot_gates.py
 # 478316c13b2d902cebbb56e68c3e2762ecc49f57063a545ff87c0fdf9678e464  fb_pilot_probe.py
 # 4e1f92b8c3ea056a6f28b66548a1c1dfe75b4893c63d1f40efbaf98230db4b2d  fb_pilot_analyze.py
-# 63b96b64e310463e3eeb658e85e10c236859d5cda2e1ded0edad6100009cb6eb  sbatch_pfb.sh
-# 4cc6771736b0268d6b61f15d822849459d819723d5f507fc421599de47d4cac4  pfb_smoke_prep.sh
-# 0944bfa9f1c7fb235788a1a9024dc7b56dd59e9f9bc46de6a79035b9e5d04833  tests/test_fb_pilot.py
-# 625decfd692ed0330fba643203c241b841c671f53c943a6f7075565d596fc9a1  tests/fb_pilot_mutation.py
+# 5407e3f90ca3755a464346e7e6fd0f200025164dc10b1f97822720e2e25ad168  sbatch_pfb.sh
+# 307109fee38eab867bc4dd0dd33f0e02198f2b838069d9ff38ff6791bdfd833f  pfb_smoke_prep.sh
+# a2acdd75b886bfcfe86b6868a82ac1fb0220548527d5c1d1493e05001fa8add6  tests/test_fb_pilot.py
+# 3f09d061b5a7476e8793fb2b936f40b5693e7237ea88e99d544f9e6a53942add  tests/fb_pilot_mutation.py
 # command: bash -n nd-unfolding/sbatch_pfb.sh && bash -n nd-unfolding/pfb_smoke_prep.sh
 # exit 0
 # clone status: 0 lines

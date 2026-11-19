@@ -3,7 +3,7 @@
 # LightGBM 4.6.0 (the declared local tests, §8), the tests under the laptop python (LightGBM tests skipped there), and
 # the job script's syntax.
 S=/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad
-C=$S/pfb-rcpt7/clone; O=$S/pfb-rcpt7/out; HEADSHA=${1:?head}; V=$S/pfb-venv/bin/python
+C=$S/pfb-rcpt71/clone; O=$S/pfb-rcpt71/out; HEADSHA=${1:?head}; V=$S/pfb-venv/bin/python
 mkdir -p "$O"
 git clone -q --no-hardlinks /Users/josephbailey/tier3-wt "$C" || exit 2
 git -C "$C" -c advice.detachedHead=false checkout -q "$HEADSHA" || exit 2

@@ -1,13 +1,13 @@
-# HEAD 87ab91bac316746a3d167c8b41bdec5a824298d0
-# clean clone, Python 3.10.20, numpy 2.2.6, lightgbm 4.6.0, scikit-learn 1.7.2, 2026-11-19T01:16:39Z
+# HEAD 8da6738a780fbe4cfd3aaa13f3207c631ef53ad0
+# clean clone, Python 3.10.20, numpy 2.2.6, lightgbm 4.6.0, scikit-learn 1.7.2, 2026-11-19T02:02:21Z
 # 439e92262c85a86b4aca6b7e368972d2cc0a12bca3c55eb02e5ec019b927965a  fb_pilot_edges.py
 # b55ea40d3691521248813b1702d7c3442aa7564e9956d1a8d211a1522371cd09  fb_pilot_gates.py
 # 478316c13b2d902cebbb56e68c3e2762ecc49f57063a545ff87c0fdf9678e464  fb_pilot_probe.py
 # 4e1f92b8c3ea056a6f28b66548a1c1dfe75b4893c63d1f40efbaf98230db4b2d  fb_pilot_analyze.py
-# 63b96b64e310463e3eeb658e85e10c236859d5cda2e1ded0edad6100009cb6eb  sbatch_pfb.sh
-# 4cc6771736b0268d6b61f15d822849459d819723d5f507fc421599de47d4cac4  pfb_smoke_prep.sh
-# 0944bfa9f1c7fb235788a1a9024dc7b56dd59e9f9bc46de6a79035b9e5d04833  tests/test_fb_pilot.py
-# 625decfd692ed0330fba643203c241b841c671f53c943a6f7075565d596fc9a1  tests/fb_pilot_mutation.py
+# 5407e3f90ca3755a464346e7e6fd0f200025164dc10b1f97822720e2e25ad168  sbatch_pfb.sh
+# 307109fee38eab867bc4dd0dd33f0e02198f2b838069d9ff38ff6791bdfd833f  pfb_smoke_prep.sh
+# a2acdd75b886bfcfe86b6868a82ac1fb0220548527d5c1d1493e05001fa8add6  tests/test_fb_pilot.py
+# 3f09d061b5a7476e8793fb2b936f40b5693e7237ea88e99d544f9e6a53942add  tests/fb_pilot_mutation.py
 # command: python -B -W ignore -m unittest -v nd-unfolding/tests/test_fb_pilot.py
 test_a_power_of_two_needs_no_extra_rule (nd-unfolding.tests.test_fb_pilot.Admissibility) ... ok
 test_intended_index_is_lightgbms_value_to_bin (nd-unfolding.tests.test_fb_pilot.Admissibility) ... ok
@@ -122,8 +122,12 @@ G2 (c): the setup now puts a python3 first on PATH; the values differ from the s
 test_a_null_setup_digest_refuses (nd-unfolding.tests.test_fb_pilot.Rev7)
 G2 (b): the setup environment's digest is a required sha256 in the receipt writer and the checker. ... [pfb-smoke] no receipt: smoke-setup-env.txt is absent or unreadable
 ok
+test_newfile_writes_no_bytecode (nd-unfolding.tests.test_fb_pilot.Rev7)
+Code 7.1 P3: -I ignores PYTHONDONTWRITEBYTECODE, so newfile's interpreter carries -B itself. ... ok
 test_nil_needs_positive_evidence (nd-unfolding.tests.test_fb_pilot.Rev7)
-G1: NIL only from a version probe that exits 0 and parses to at least 23.02.3, or from a help probe that exits ... ok
+G1 and code 7.1 P1: NIL only from `sbatch --version` exiting 0 with a first line matching ^slurm[ -]X.Y.Z$ at ... ok
+test_readonly_plus_export_is_an_export (nd-unfolding.tests.test_fb_pilot.Rev7)
+Code 7.1 P2: export status comes from the x flag anywhere in declare -p's attribute field (-x, -rx, -xr); a ... ok
 test_the_declared_values_are_restored_before_the_denied_check (nd-unfolding.tests.test_fb_pilot.Rev7)
 G3 (code 6's regression): a setup that clears the bytecode setting and exports a denied variable is refused ... ok
 test_the_newline_shift_refuses_at_the_job (nd-unfolding.tests.test_fb_pilot.Rev7)
@@ -132,7 +136,7 @@ test_the_snapshot_is_unambiguous (nd-unfolding.tests.test_fb_pilot.Rev7)
 G2 (a): one record per name, with its export status and its value under printf %q, so a newline cannot move ... ok
 
 ----------------------------------------------------------------------
-Ran 81 tests in 22.158s
+Ran 83 tests in 23.393s
 
 OK
 # exit 0
