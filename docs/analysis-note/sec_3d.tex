@@ -40,7 +40,7 @@ implemented in the reconstruction function (\texttt{CVUniverse::NewEavail()}), w
 
 Both definitions are inherited from MAT-MINERvA. They were not chosen for this analysis. The comparisons below record differences between conventions. They do not establish the origin of the inherited definition. There is no unique published $E_{\rm avail}$ definition. Rodrigues \emph{et al.}~\cite{MINERvA:2016lowrecoil} give a closed list of five species: proton and charged-pion kinetic energy plus $\pi^0$, electron and photon total energy. Equation~\eqref{eq:eavail-implemented} includes four of those five species and excludes secondary $e^\pm$. The later definition of Ascencio \emph{et al.}~\cite{MINERvA:2022incl} is open: it includes all other final-state particles except neutrons, subtracting a nucleon mass for strange baryons, and so includes species omitted here. The charged-pion term is kinetic energy in Rodrigues and in Henry/Su \emph{et al.} Eq.~4~\cite{MINERvA:2023avz}, and charged-pion total energy in the \texttt{minerva-ml} implementation (App.~\ref{sec:pet}). We therefore do not claim that our definition matches ``the published definition.''
 
-The charged-pion term subtracts the inherited constant \SI{135}{MeV} rather than the charged-pion mass of about \SI{139.57}{MeV}, and the production keeps that constant (App.~\ref{app:devhistory}). Relative to the charged-pion mass, it moves \fvval{eavbin-share}\,\% of the simulated signal weight into another of the seven true-$\Eavail$ bins of the fine grid and changes no such bin by more than \fvval{eavbin-max}\,\%. This effect has not been assessed against the projection of the five-dimensional covariance of the configuration-(a) central value (Table~\ref{tab:config-key}). On the sixteen-cell result of Sec.~\ref{sec:fived16}, from configuration~(e), to first order in the unfolding and without retraining, replacing the constant by the charged-pion mass moves the cross section by at most \fvval{eav-cellmax}$\sigma$ in any cell and by \fvval{eav-coherent}$\sigma$ as one coherent shift, the norm of the shift under the reported covariance (\fvval{eav-cellmax-nopl}$\sigma$ and \fvval{eav-coherent-nopl}$\sigma$ without the run-period block).
+The charged-pion term subtracts the inherited constant \SI{135}{MeV} rather than the charged-pion mass of about \SI{139.57}{MeV}, and the production keeps that constant (App.~\ref{app:devhistory}). Relative to the charged-pion mass, it moves \fvval{eavbin-share}\,\% of the simulated signal weight into another of the seven true-$\Eavail$ bins of the fine grid and changes no such bin by more than \fvval{eavbin-max}\,\%. This effect has not been assessed against the projection of the five-dimensional covariance of the \resFiveAxis{} of the \estPurity{} (Table~\ref{tab:estimators-matrix}). On the \resSixteen{} of Sec.~\ref{sec:fived16}, from the \estMultiD{}, to first order in the unfolding and without retraining, replacing the constant by the charged-pion mass moves the cross section by at most \fvval{eav-cellmax}$\sigma$ in any cell and by \fvval{eav-coherent}$\sigma$ as one coherent shift, the norm of the shift under the reported covariance (\fvval{eav-cellmax-nopl}$\sigma$ and \fvval{eav-coherent-nopl}$\sigma$ without the run-period block).
 % 620 round (DECISION-20261101-joseph-eavail-keep-135.md): ASSESSMENT-20261031-eavail-charged-pion-mass-switch-pricing.md sec. 7.2-7.3 and step0/step0_metric.txt first_order_unfolded (values_fived16.tex eav-*); the configuration-(a) clause is unchanged, and "so its materiality is not established" gives way to the measured size on the reported result.
 % Search: 135 MeV; 139.57; mass_pion; pion mass; OI-30; UD-002 (stands: DECISION-20261101-joseph-eavail-keep-135.md item 1); materiality; covariance projection (done for the sixteen-cell result: ASSESSMENT-20261031-eavail-charged-pion-mass-switch-pricing.md sec. 7.3, full-covariance norm 0.43 prior level / 0.42 first order; EAVAIL_DEFINITION.md sec. 3 as corrected by #637) @ c93a73bce
 % Effect of the constant: the same ASSESSMENT sec. 7.2, step0/step0.json truth_denom (weight_share_changing_fine_eavail_bin;
@@ -55,16 +55,16 @@ The charged-pion term subtracts the inherited constant \SI{135}{MeV} rather than
 Table~\ref{tab:3d-configs} lists the configuration (\S\ref{sec:method-config}) of each result.
 
 \begin{table}[htbp]
-  \caption[Configurations of the central results]{The 3D and 4D central values use configuration~(e), with the listed configuration-(a) exceptions. Each result's configuration is defined in Table~\ref{tab:estimators-matrix}. (e) and (f) use refined negative-weight subtraction with a 400-tree, 31-leaf refinement; (a) uses purity-based subtraction.}
+  \caption[Configurations of the central results]{The 3D and 4D central values use the \estMultiD{}, with the listed \estPurity{} exceptions. Each estimator is defined in Table~\ref{tab:estimators-matrix}. The \estMultiD{} and the \estTwoD{} use refined negative-weight subtraction with a 400-tree, 31-leaf refinement; the \estPurity{} uses purity-based subtraction.}
   \label{tab:3d-configs}
   \centering\small
   \begin{tabular}{@{}p{0.55\textwidth}p{0.38\textwidth}@{}}
     \toprule
-    Result & Configuration \\
+    Result & Estimator \\
     \midrule
-    3D and 4D central values, unless stated otherwise & (e), deterministic LightGBM (the learner of (c)) \\
-    2D result compared in \S\ref{sec:3d-anchor} & (f), LightGBM at seed~42 (the learner of (a)) \\
-    Figs.~\ref{fig:eavail-marg} and~\ref{fig:q3excess} and numbers read from them; 3D closure; classifier-family cross-check & (a), LightGBM \\
+    3D and 4D central values, unless stated otherwise & \estMultiD{} \\
+    2D result compared in \S\ref{sec:3d-anchor} & \estTwoD{}, seed~42 \\
+    Figs.~\ref{fig:eavail-marg} and~\ref{fig:q3excess} and numbers read from them; 3D closure; classifier-family cross-check & \estPurity{} \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -83,7 +83,7 @@ The unfolded $d\sigma/d\Eavail$, the 1D projection of the 3D result (Fig.~\ref{f
 
 \subsubsection{Validation against the 2D result}
 \label{sec:3d-anchor}
-Marginalizing over $\Eavail$ should reproduce the 2D result of \S\ref{sec:results}, our validation reference in the absence of a directly matched published CC-inclusive 3D reference for this signal and phase space. The 3D marginal (configuration~(e)) and the 2D result ((f)) share the refined negative-weight subtraction but differ in learner (Table~\ref{tab:3d-configs}). The \emph{normalization} agrees closely: the marginal's area-weighted total over the 205 reported cells agrees with the 2D result's to \SI{0.141}{\percent}, and the median per-bin ratio is $1.0010$. The \emph{shape} agrees less closely. The per-bin ratio of the marginal to the 2D result scatters by $\sim\SI{3.7}{\percent}$ (standard deviation over the 205 cells). With the published covariance, the indicative distance of the marginal from the published result is $\chi^{2}/\mathrm{ndf}=4.52$, above the 2D values: $\chiPaper$ for the quoted LightGBM central value and $\chiPaperExact$ for the exact-split cross-check. Figure~\ref{fig:eavail-marg} (configuration~(a)) gives $4.98$. Because the two results share data and their cross-covariance is unavailable, this number is not a calibrated goodness-of-fit statistic.
+Marginalizing over $\Eavail$ should reproduce the 2D result of \S\ref{sec:results}, our validation reference in the absence of a directly matched published CC-inclusive 3D reference for this signal and phase space. The 3D marginal (\estMultiD{}) and the 2D result (\estTwoD{}) share the refined negative-weight subtraction but differ in LightGBM training configuration and in the number of observables (Table~\ref{tab:3d-configs}). The \emph{normalization} agrees closely: the marginal's area-weighted total over the 205 reported cells agrees with the 2D result's to \SI{0.141}{\percent}, and the median per-bin ratio is $1.0010$. The \emph{shape} agrees less closely. The per-bin ratio of the marginal to the 2D result scatters by $\sim\SI{3.7}{\percent}$ (standard deviation over the 205 cells). With the published covariance, the indicative distance of the marginal from the published result is $\chi^{2}/\mathrm{ndf}=4.52$, above the 2D values: $\chiPaper$ for the quoted LightGBM central value and $\chiPaperExact$ for the exact-split cross-check. Figure~\ref{fig:eavail-marg} (\estPurity{}) gives $4.98$. Because the two results share data and their cross-covariance is unavailable, this number is not a calibrated goodness-of-fit statistic.
 % RE-1 integration, review fixes 2-3 (director, 2026-10-23): the total and the median ratio are against E_U on its 205
 % cells, area-weighted (stageF/methods/re1/run2/f/numbers.json, p3.vs_E_U: total_change_percent 0.0014, median_ratio
 % 0.99998); the scatter is the SD of hXSec2D / E_U on those cells (RE1-REPORT-2.md sec. 4); the D2 movement is
@@ -97,21 +97,30 @@ Marginalizing over $\Eavail$ should reproduce the 2D result of \S\ref{sec:result
   \centering
   % The figure pass, chunk D (2026-11-19): redrawn at its printed size from the fetched config-(a) product (0dd94830), its two panels stacked, every text at least 10 pt, "pull" read as "standardized difference" as the caption names it (note-figpass-20261119/README.md).
   \includegraphics[width=\textwidth]{eavail_marginal_vs_paper_pull_full}
-  \caption[Descriptive marginal comparison, configuration~(a)]{Development check: configuration~(a) gives descriptive standardized differences, not formal independent-result pulls. Shared data and unavailable cross-covariance impose this restriction. The per-bin differences of the $\Eavail$-marginal are scaled by published uncertainties and shown on the $14\times16$ grid and in distribution. Configuration~(a) uses purity-based subtraction (\S\ref{sec:method-config}).}
+  \caption[Descriptive marginal comparison, purity baseline]{Development check: the \estPurity{} gives descriptive standardized differences, not formal independent-result pulls. Shared data and unavailable cross-covariance impose this restriction. The per-bin differences of the $\Eavail$-marginal are scaled by published uncertainties and shown on the $14\times16$ grid and in distribution. The \estPurity{} is defined in \S\ref{sec:method-config}.}
   \label{fig:eavail-marg}
 \end{figure}
 
 \subsubsection{Generator comparison in 3D}
 \label{sec:3d-models}
 The published ancillary files provide only binned 2D model histograms. The GENIE, NuWro and GiBUU samples were generated and processed for this analysis, and MINERvA Tune~v1 was extracted from the analysis simulation's truth with its full tune weight. No spectra were digitized or externally supplied.
-\begin{itemize}
-  \item \textbf{GENIE 2.12.10 central value}, generated with \texttt{gevgen} on a CH target with the MINERvA ME~FHC flux, using the DefaultPlusValenciaMEC cross-section splines~\cite{Andreopoulos:2009rq} but gevgen's default event-generator list, which excludes MEC, so the sample has no 2p2h events (\S\ref{sec:3d-2p2h}). It carries no MINERvA reweights, and its events are reweighted to the analysis flux as described below.
-  \item \textbf{MINERvA Tune v1}, the analysis tune (base GENIE $+$ RPA, low-recoil 2p2h, and non-resonant-pion reweights), taken directly from the truth of the analysis simulation, which reproduces the normalization of the published ancillary curve to \SI{0.01}{\percent}.
-        % (the \texttt{w\_truth} weights)
-  \item \textbf{NuWro 21.09}~\cite{Golan:2012wx}, an independent generator on C with the same flux (after reweighting below) and phase space.
-  \item \textbf{GiBUU 2019}~\cite{Buss:2011mx}, a transport-theory generator on C, built and run natively, without a container, with the same flux and phase space.
-\end{itemize}
-NEUT~\cite{Hayato:2009zz} is not included.
+Table~\ref{tab:3d-generators} lists the four predictions; NEUT~\cite{Hayato:2009zz} is not included.
+
+\begin{table}[htbp]
+  \caption[Generator predictions]{Four generator predictions are compared with the unfolded result, all in the analysis phase space. The GENIE central value has no 2p2h events.}
+  \label{tab:3d-generators}
+  \centering\small
+  \begin{tabular}{@{}p{0.20\textwidth}p{0.08\textwidth}p{0.47\textwidth}p{0.17\textwidth}@{}}
+    \toprule
+    Prediction & Target & How it is produced & Flux \\
+    \midrule
+    GENIE 2.12.10 central value~\cite{Andreopoulos:2009rq} & CH & \texttt{gevgen} with the DefaultPlusValenciaMEC cross-section splines but the default event-generator list, which excludes MEC, so the sample has no 2p2h events (\S\ref{sec:3d-2p2h}); no MINERvA reweights & MINERvA ME~FHC flux, reweighted to the analysis flux (below) \\
+    MINERvA Tune~v1 & CH & the analysis tune (base GENIE $+$ RPA, low-recoil 2p2h and non-resonant-pion reweights), taken from the truth of the analysis simulation, which reproduces the normalization of the published ancillary curve to \SI{0.01}{\percent} & the analysis flux \\
+    NuWro 21.09~\cite{Golan:2012wx} & C & an independent generator & the same flux, after the reweighting below \\
+    GiBUU 2019~\cite{Buss:2011mx} & C & a transport-theory generator, built and run natively, without a container & the same flux convention (below) \\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
 \paragraph{Flux repair and normalization.} The GENIE (CV and $+$Valencia~2p2h) and NuWro samples were generated from a defective flux, described in App.~\ref{app:devhistory} (Ref.~\cite{NoteRecords2026}, \recentry{flux-repair}). The repair reweights each event exactly to the analysis PPFX central-value flux on 0--\SI{100}{GeV}, with correctly sampled 50--\SI{100}{GeV} supplements. The repaired GENIE and NuWro predictions are used in \S\S\ref{sec:3d}--\ref{sec:eavailw}, except in three studies, flagged where they appear, that keep the unrepaired samples: the FSI-dial studies, the departure ratio of \S\ref{sec:val-negweight} and the NuWro-shaped prior of App.~\ref{sec:fps}. GiBUU reads its own flux and receives an energy-dependent per-event reweight to the same convention, which changes its integrated cross section by a factor $0.9966$. Its sample stops at $E_\nu\approx\SI{20}{GeV}$, so it is empty above $\pPar\approx\SI{20}{GeV/c}$. The analysis simulation, MINERvA Tune~v1, is not affected. Each prediction is normalized by its own flux-averaged total CC cross section per nucleon.
 % (2026-09-27)
@@ -173,7 +182,7 @@ Ascencio \emph{et al.}~\cite{MINERvA:2022incl} report the same deficit in MINERv
 \label{sec:4d}
 The fourth axis adds one feature (\S\ref{sec:3d}), three-momentum transfer $q_{3}=|\vec{q}\,|$, chosen because its $(\Eavail,q_{3})$ plane separates quasielastic, 2p2h and resonance processes and permits bin-compatible comparison to MINERvA's dedicated low-recoil $d^{2}\sigma/dq_{3}\,d\Eavail$ measurement (Ascencio \emph{et al.}~\cite{MINERvA:2022incl}). The classifier inputs are $(\pT,\pPar,\Eavail,q_{3})$, with deliberately coarse $q_{3}$ binning $[0,0.2,0.4,0.6,0.8,1.2,2.0,100]\,\si{GeV}$ (seven bins including a final catch bin), giving $14\times16\times7\times7=10\,976$ four-dimensional bins (4830 populated).
 
-\paragraph{Marginalization check (4D$\to$3D).} In configuration~(a), the $q_{3}$ marginalization reproduces the 3D $\Eavail$ spectrum and low-recoil excess (Fig.~\ref{fig:q3excess}, lower right). The $\Eavail$-marginal data/Tune~v1 ratio is $1.21$ in the lowest bin, dips to $1.01$ across the quasielastic--$\Delta$ region, and rises to $1.16$--$1.23$ in the high-$\Eavail$ DIS tail (integrated data/Tune~v1 $=1.13$). These ratios are to Tune~v1, whereas \S\ref{sec:3d-2p2h} uses untuned GENIE. Recovering the 3D result as a by-product of the higher-dimensional unfolding is the 4D$\to$3D analog of the 3D$\to$2D marginalization check (\S\ref{sec:3d-anchor}).
+\paragraph{Marginalization check (4D$\to$3D).} With the \estPurity{}, the $q_{3}$ marginalization reproduces the 3D $\Eavail$ spectrum and low-recoil excess (Fig.~\ref{fig:q3excess}, lower right). The $\Eavail$-marginal data/Tune~v1 ratio is $1.21$ in the lowest bin, dips to $1.01$ across the quasielastic--$\Delta$ region, and rises to $1.16$--$1.23$ in the high-$\Eavail$ DIS tail (integrated data/Tune~v1 $=1.13$). These ratios are to Tune~v1, whereas \S\ref{sec:3d-2p2h} uses untuned GENIE. Recovering the 3D result as a by-product of the higher-dimensional unfolding is the 4D$\to$3D analog of the 3D$\to$2D marginalization check (\S\ref{sec:3d-anchor}).
 
 \paragraph{The $(\Eavail,q_{3})$ plane.} The $(\Eavail,q_{3})$ plane (Fig.~\ref{fig:q3excess}, top) shows structure that the $q_{3}$ marginal, integrated over $\Eavail$, does not resolve; the marginal's data/Tune~v1 ratio is $1.03$--$1.19$ (lower left). At fixed $\Eavail$ in the quasielastic--$\Delta$ dip, data/Tune~v1 \emph{rises} with $q_{3}$. Tune~v1 over-predicts low-$q_{3}$, moderate-$\Eavail$ cells (ratio down to $0.66$). The muon-only or fixed-$q_{3}$ projections considered here do not resolve this correlation. It bears on the bin-compatible comparison with Ascencio \emph{et al.} The map's comparator is the MINERvA Tune~v1 prior, distinct from the untuned GENIE sample of \S\ref{sec:3d-2p2h}.
 % Register round n1 (R-N1): "no per-cell significances without a corrected 4D covariance" is covered by the sec:3d
@@ -197,7 +206,7 @@ The fourth axis adds one feature (\S\ref{sec:3d}), three-momentum transfer $q_{3
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{q3_excess_projection}
-  \caption[Available-energy and momentum-transfer ratios, configuration~(a)]{In configuration~(a), the $\Eavail$ marginal reproduces the 3D low-recoil excess, while the joint data/Tune~v1 ratio rises with $q_{3}$ across the quasielastic--$\Delta$ dip. No uncertainty drawn: no 4D covariance is quoted (\S\ref{sec:3d}). The 4D data/Tune~v1 ratio (labeled ``unfolded / GENIE prior'' in the figure) is projected onto $(\Eavail,q_{3})$ (top; blank cells are kinematically empty), with $q_{3}$ (lower left) and $\Eavail$ (lower right) marginals. Configuration~(a) uses purity-based subtraction (\S\ref{sec:method-config}).}
+  \caption[Available-energy and momentum-transfer ratios, purity baseline]{With the \estPurity{}, the $\Eavail$ marginal reproduces the 3D low-recoil excess, while the joint data/Tune~v1 ratio rises with $q_{3}$ across the quasielastic--$\Delta$ dip. No uncertainty drawn: no 4D covariance is quoted (\S\ref{sec:3d}). The 4D data/Tune~v1 ratio (labeled ``unfolded / GENIE prior'' in the figure) is projected onto $(\Eavail,q_{3})$ (top; blank cells are kinematically empty), with $q_{3}$ (lower left) and $\Eavail$ (lower right) marginals. The \estPurity{} is defined in \S\ref{sec:method-config}.}
   % Comparator: the MINERvA Tune~v1 prior (\texttt{w\_truth}).
   \label{fig:q3excess}
 \end{figure}
