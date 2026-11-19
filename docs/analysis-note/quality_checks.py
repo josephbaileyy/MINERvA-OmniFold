@@ -415,6 +415,19 @@ def row_refs(src: Source, k: int, length: int) -> list[str]:
     return refs
 
 
+def _skeleton_file_moves() -> dict[str, str]:
+    """The compression skeleton's new file -> source file map, kept once, in check_note_records.py (DECISION-20261119c)."""
+    try:
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        from check_note_records import SKELETON_FILE_MOVES as moves
+        return dict(moves)
+    except Exception:
+        return {}
+
+
+SKELETON_FILE_MOVES = _skeleton_file_moves()
+
+
 # Names of objects the note refers to in full, several times by design: a run that is one of these names plus a
 # few connecting words repeats a name, not a statement (routing of 2026-11-19, pairs P50, P53, P61).
 NAMES = ('the five-axis covariance of the configuration-(a) central value',)
@@ -536,6 +549,8 @@ def check_text(src: Source, manifests: list[dict], n: int, min_sentence: int):
                     else:
                         whole = sorted({r['id'] for r in rows if prints_in(r, fa) and prints_in(r, fb)})
                     body_files = {f for f in (fa, fb) if f not in receiving} or {fa, fb}
+                    # a row names its sending file as it was; the compression skeleton moved blocks to new files
+                    body_files |= {SKELETON_FILE_MOVES[f] for f in body_files if f in SKELETON_FILE_MOVES}
                     if any(intended_from.get(r['id'], set()) & body_files for r in rows):
                         item['class'] = 'manifest: intended copy'
                         item['why'] = ', '.join(ids) + ' (' + '; '.join(sorted({r['mode'] or '' for r in manifests if r['id'] in ids and r['intended']}))[:160] + ')'
