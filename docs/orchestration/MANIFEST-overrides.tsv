@@ -443,6 +443,8 @@ docs/orchestration/OUTCOME-20261109-band-diagnosis.md	LIVE	open	""
 docs/orchestration/OUTCOME-20261109-ens1-stab-pass-bias-worse.md	LIVE	open	""
 docs/orchestration/OUTCOME-20261109-fd-prr-104-plain-reads.md	LIVE	open	""
 docs/orchestration/OUTCOME-20261118-rdx-widened-regressor.md	LIVE	open	""
+docs/orchestration/OUTCOME-20261119-ibu-signed-data.md	LIVE	terminal	""
+docs/orchestration/OUTCOME-20261119-ibukt-a2.md	LIVE	terminal	""
 docs/orchestration/P5-P6-20260822-entrypoint-set-and-blind-spots.md	LIVE	open	
 docs/orchestration/PACKET-20260823-round10-oi136-runtime-violation-repair.md	LIVE	open	
 docs/orchestration/PACKET-20260823-round5-f2a-f17a-repair.md	LIVE	open	
@@ -714,9 +716,17 @@ docs/orchestration/receipts/xr-x1-chi2-20261012/README.md	ARCHIVAL	terminal	""
 docs/orchestration/runbooks/RUNBOOK-20260908-pm-root-inspection-staging.md	ARCHIVAL	terminal	
 docs/orchestration/runbooks/RUNBOOK-20260909b-pm-root-inspection-staging.md	ARCHIVAL	terminal	
 docs/orchestration/runbooks/RUNBOOK-20260909c-pm-root-inspection-staging.md	ARCHIVAL	terminal	
+docs/orchestration/state/2d-closeout/IBU-SIGNED-DATA-DECLARATION.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/IBUKT-BINDING-1.md	LIVE	open	""
+docs/orchestration/state/2d-closeout/IBUKT-BINDING-2.md	LIVE	open	""
+docs/orchestration/state/2d-closeout/IBUKT-DECLARATION-A2.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/IBUKT-DECLARATION.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/c04-repair/REPORT.md	MACHINE	open	""
+docs/orchestration/state/2d-closeout/ibukt-a2/PASS.json	MACHINE	generated	""
+docs/orchestration/state/2d-closeout/ibukt-a2/cell-readings.tsv	MACHINE	generated	""
+docs/orchestration/state/2d-closeout/ibukt-a2/readout.json	MACHINE	generated	""
+docs/orchestration/state/2d-closeout/ibukt-a2/sacct-steps.txt	MACHINE	generated	""
+docs/orchestration/state/2d-closeout/ibukt-a2/screen-forecast.json	MACHINE	generated	""
 docs/orchestration/state/2d-closeout/per-period-benchmark-20261106/BINDING-1.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/per-period-benchmark-20261106/DECLARATION.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/period-unfold-20261014/REPORT.md	LIVE	open	""

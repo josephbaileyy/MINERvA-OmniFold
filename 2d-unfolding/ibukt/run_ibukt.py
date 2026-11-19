@@ -53,7 +53,9 @@ def dependencies() -> tuple[Any, Any, Any]:
     """Load the production driver and C2 machinery from this checkout."""
     sys.path.insert(0, str(REPO / "2d-unfolding"))
     sys.path.insert(0, str(REPO / "2d-unfolding/ref_c2c1"))
-    import ref_c2c1 as comparison
+    from importlib import import_module
+
+    comparison = import_module("ref_c2c1")
 
     driver, helper = comparison.load_driver()
     return comparison, driver, helper
@@ -218,6 +220,28 @@ def root_vector(path: Path, name: str, comparison: Any) -> np.ndarray[Any, Any]:
         source.Close()
 
 
+def _reporting_cells(path: Path) -> np.ndarray[Any, Any]:
+    import ROOT
+
+    source = ROOT.TFile.Open(str(path), "READ")
+    if not source or source.IsZombie():
+        raise ValueError("cannot open paper ROOT file")
+    try:
+        covariance = source.Get("StatOnlyCovariance")
+        if not covariance or (covariance.GetNrows(), covariance.GetNcols()) != (
+            224,
+            224,
+        ):
+            raise ValueError("paper statistical covariance must be 224 by 224")
+        diagonal = np.fromiter((covariance(i, i) for i in range(224)), dtype=float)
+        selected = np.flatnonzero(diagonal > 0)
+        if selected.size != 205:
+            raise ValueError("reporting mask must contain exactly 205 cells")
+        return selected
+    finally:
+        source.Close()
+
+
 def prepare(args: argparse.Namespace, cfg: dict[str, Any]) -> None:
     """Capture the unchanged real-data pipeline and verify both recorded centrals.
 
@@ -269,6 +293,7 @@ def prepare(args: argparse.Namespace, cfg: dict[str, Any]) -> None:
             driver.PZ_EDGES,
         )
         truth, matrix, target, _ = problem
+        captured.update(ibu_prior=truth, ibu_response=matrix)
         captured["ibu"] = comparison.roounfold_bayes(
             matrix, truth, target, [5, 10], str(args.stage / "libRooUnfold.so")
         )
@@ -320,15 +345,7 @@ def prepare(args: argparse.Namespace, cfg: dict[str, Any]) -> None:
     er = root_vector(args.out / "identity.root", "hXSec2D", comparison)
     er_ref = root_vector(args.stage / "er.root", "hXSec2D", comparison)
     c2 = read_npz(args.stage / "c2.npz")
-    import compare_to_paper_fullcov as paper
-
-    published = ROOT.TFile.Open(str(args.stage / "paper.root"), "READ")
-    selected = np.flatnonzero(
-        np.diag(paper.tmatrix_to_numpy(published.Get("StatOnlyCovariance"))) > 0
-    )
-    published.Close()
-    if selected.size != 205:
-        raise ValueError("reporting mask must contain exactly 205 cells")
+    selected = _reporting_cells(args.stage / "paper.root")
     checks = {"E_R": require_close(er[selected], er_ref[selected], "E_R")}
     for k in (5, 10):
         idx = list(c2["ks"]).index(k)
@@ -379,6 +396,8 @@ def prepare(args: argparse.Namespace, cfg: dict[str, Any]) -> None:
         bkg=np.column_stack(background[:2]),
         bw=background[2],
         means=means,
+        ibu_prior=captured["ibu_prior"],
+        ibu_response=captured["ibu_response"],
         factor=factor,
         selected=selected,
         **{f"truth_{key}": value for key, value in truths.items()},
@@ -395,32 +414,249 @@ def prepare(args: argparse.Namespace, cfg: dict[str, Any]) -> None:
     )
 
 
-def pair(args: argparse.Namespace, cfg: dict[str, Any]) -> None:
-    """Run the nominal control or one Poisson dataset with both K=5 estimators."""
+def checked_bank(
+    args: argparse.Namespace,
+) -> tuple[str, dict[str, np.ndarray[Any, Any]]]:
+    """Load the bank only after verifying the prepare receipt and byte identity."""
     identity = read_json(args.identity)
     if identity["status"] != "PASS" or identity["config_sha256"] != digest(core.CONFIG):
         raise ValueError("identity control not passed for this configuration")
-    if digest(args.bank) != identity["bank_sha256"]:
+    bank_pin = digest(args.bank)
+    if bank_pin != identity["bank_sha256"]:
         raise ValueError("bank differs from identity control")
-    if args.noise_free:
-        if args.truth != "nominal" or args.trial != 0:
-            raise ValueError("noise-free control must be nominal trial zero")
-    else:
-        nominal_control(args.control, identity["bank_sha256"])
-    bank = read_npz(args.bank)
-    comparison, driver, helper = dependencies()
+    return bank_pin, read_npz(args.bank)
+
+
+def draw_target(
+    bank: dict[str, np.ndarray[Any, Any]],
+    cfg: dict[str, Any],
+    maps: dict[str, np.ndarray[Any, Any]],
+    truth: str,
+    trial: int | None,
+) -> tuple[core.Array, core.Array, core.Array]:
+    """Produce the shared measured rows and their signed binned IBU target."""
     gen, reco, pt, pr = (bank[key] for key in ("gen", "reco", "pt", "pr"))
-    factors = core.truth_factor(
-        args.truth, gen[:, 0], gen[:, 1], bank["means"], cfg, ratios(cfg)
-    )
+    factors = core.truth_factor(truth, gen[:, 0], gen[:, 1], bank["means"], cfg, maps)
     keep = pt & pr
     # The response is untouched; only the positive fake-data signal is reweighted.
     feat = np.concatenate((reco[keep], bank["bkg"], bank["bkg"]))
     signed = np.concatenate((bank["wr"][keep] * factors[keep], bank["bw"], -bank["bw"]))
+    if trial is None:
+        # Combine the signed background histograms before adding signal to avoid
+        # losing precision through a large intermediate background.
+        signal_end = int(np.count_nonzero(keep))
+        background_end = signal_end + len(bank["bw"])
+        signal = core.histogram(
+            feat[:signal_end, 0], feat[:signal_end, 1], signed[:signal_end], cfg
+        )
+        positive = core.histogram(
+            feat[signal_end:background_end, 0],
+            feat[signal_end:background_end, 1],
+            signed[signal_end:background_end],
+            cfg,
+        )
+        negative = core.histogram(
+            feat[background_end:, 0],
+            feat[background_end:, 1],
+            signed[background_end:],
+            cfg,
+        )
+        return feat, signed, signal + (positive + negative)
+    measured, signed = core.poisson_target(feat, signed, cfg["seeds"][trial])
+    return measured, signed, core.histogram(measured[:, 0], measured[:, 1], signed, cfg)
+
+
+def target_keys(cfg: dict[str, Any]) -> list[tuple[str, int | None, str]]:
+    """Return the frozen nominal control and complete Poisson ensemble."""
+    return [
+        ("nominal", None, "nominal-control"),
+        *(
+            (name, trial, f"{name}-{trial}")
+            for name in cfg["truths"]
+            for trial in range(len(cfg["seeds"]))
+        ),
+    ]
+
+
+def admissibility(args: argparse.Namespace, cfg: dict[str, Any]) -> None:
+    """Check all signed targets before attempting either estimator on a pair."""
+    bank_pin, bank = checked_bank(args)
+    try:
+        _check_admissibility(args, cfg, bank_pin, bank)
+    except (RuntimeError, ValueError) as exc:
+        stop = args.out / "stop.json"
+        if not stop.exists():
+            write_json(
+                stop,
+                {
+                    "status": "STOP",
+                    "reason": str(exc),
+                    "bank_sha256": bank_pin,
+                    "config_sha256": digest(core.CONFIG),
+                },
+            )
+        raise
+
+
+def _check_admissibility(
+    args: argparse.Namespace,
+    cfg: dict[str, Any],
+    bank_pin: str,
+    bank: dict[str, core.Array],
+) -> None:
+    prior, matrix = bank["ibu_prior"], bank["ibu_response"]
+    rows = matrix.sum(axis=1)
+    selected = bank["selected"]
+    supported_truth = (prior > 0) & (matrix.sum(axis=0) > 0)
+    if not np.all(supported_truth[selected]):
+        raise ValueError("nonpositive prior or efficiency in a reported truth cell")
+    maps = ratios(cfg)
+    targets = {}
+    nominal = None
+    for name, trial, key in target_keys(cfg):
+        try:
+            _, _, target = draw_target(bank, cfg, maps, name, trial)
+        except ValueError as exc:
+            write_json(
+                args.out / "stop.json",
+                {
+                    "status": "STOP",
+                    "reason": str(exc),
+                    "truth": name,
+                    "trial": trial,
+                    "bank_sha256": bank_pin,
+                    "config_sha256": digest(core.CONFIG),
+                },
+            )
+            raise
+        failed = core.signed_target_violations(target, rows)
+        if failed:
+            write_json(
+                args.out / "stop.json",
+                {
+                    "status": "STOP",
+                    "reason": "inadmissible signed target",
+                    "truth": name,
+                    "trial": trial,
+                    "bins": failed,
+                    "bank_sha256": bank_pin,
+                    "config_sha256": digest(core.CONFIG),
+                },
+            )
+            raise ValueError(f"inadmissible signed target: {key}")
+        targets[key] = core.target_digest(target)
+        if trial is None:
+            nominal = target
+    assert nominal is not None
+    support = rows > 0
+    checks = {
+        "row_sum": require_close(
+            nominal[support], rows[support], "signed nominal row sum", 1e-9
+        )
+    }
+    comparison, _, _ = dependencies()
+    ks = [5, 10]
+    roo = comparison.roounfold_bayes(
+        matrix, prior, nominal, ks, str(args.stage / "libRooUnfold.so")
+    )
+    numpy_ibu = comparison.dagostini(matrix, prior, nominal, ks)
+    for k in ks:
+        checks[f"roo_K{k}"] = require_close(
+            roo[k][supported_truth],
+            prior[supported_truth],
+            "signed RooUnfold prior",
+            1e-9,
+        )
+        checks[f"numpy_K{k}"] = require_close(
+            numpy_ibu[k][supported_truth],
+            prior[supported_truth],
+            "signed NumPy prior",
+            1e-9,
+        )
+        checks[f"agreement_K{k}"] = require_close(
+            roo[k][supported_truth],
+            numpy_ibu[k][supported_truth],
+            "signed RooUnfold/NumPy",
+            1e-9,
+        )
+    write_json(
+        args.out / "admissibility.json",
+        {
+            "status": "PASS",
+            "bank_sha256": bank_pin,
+            "config_sha256": digest(core.CONFIG),
+            "target_treatments": cfg["target_treatments"],
+            "targets": targets,
+            "signed_identity": {
+                "checks": checks,
+                "truth_indices": np.flatnonzero(supported_truth).tolist(),
+                "reco_indices": np.flatnonzero(support).tolist(),
+            },
+        },
+    )
+
+
+def checked_admissibility(
+    path: Path, cfg: dict[str, Any], bank_pin: str
+) -> dict[str, Any]:
+    """Refuse a receipt without the signed identity and all 36 target digests."""
+    receipt = cast(dict[str, Any], read_json(path))
+    targets = receipt["targets"]
+    if (
+        receipt["status"] != "PASS"
+        or receipt["bank_sha256"] != bank_pin
+        or receipt["config_sha256"] != digest(core.CONFIG)
+        or receipt["target_treatments"] != cfg["target_treatments"]
+        or set(targets) != {key for _, _, key in target_keys(cfg)}
+        or set(receipt["signed_identity"]["checks"])
+        != {
+            "row_sum",
+            "roo_K5",
+            "roo_K10",
+            "numpy_K5",
+            "numpy_K10",
+            "agreement_K5",
+            "agreement_K10",
+        }
+        or not all(
+            0 <= error <= 1e-9
+            for error in receipt["signed_identity"]["checks"].values()
+        )
+    ):
+        raise ValueError("missing or mismatched signed-target admissibility receipt")
+    return receipt
+
+
+def pair(args: argparse.Namespace, cfg: dict[str, Any]) -> None:
+    """Run the nominal control or one admitted Poisson dataset."""
+    bank_pin, bank = checked_bank(args)
+    admission = checked_admissibility(args.admissibility, cfg, bank_pin)
+    admission_pin = digest(args.admissibility)
     if args.noise_free:
-        measured = feat
+        if args.truth != "nominal" or args.trial != 0:
+            raise ValueError("noise-free control must be nominal trial zero")
+        trial = None
+        key = "nominal-control"
     else:
-        measured, signed = core.poisson_target(feat, signed, cfg["seeds"][args.trial])
+        control = read_json(args.control)
+        if (
+            control.get("admissibility_sha256") != admission_pin
+            or control.get("target_treatments") != cfg["target_treatments"]
+            or control.get("signed_target_sha256")
+            != admission["targets"]["nominal-control"]
+        ):
+            raise ValueError(
+                "nominal control does not match signed-target admissibility"
+            )
+        nominal_control(args.control, bank_pin)
+        trial = args.trial
+        key = f"{args.truth}-{trial}"
+    measured, signed, target = draw_target(bank, cfg, ratios(cfg), args.truth, trial)
+    target_pin = core.target_digest(target)
+    if target_pin != admission["targets"][key]:
+        raise ValueError(f"signed target differs from admissibility: {key}")
+    comparison, driver, helper = dependencies()
+    gen, reco, pt, pr = (bank[k] for k in ("gen", "reco", "pt", "pr"))
     refined, _, clipped = driver.refine_stay_positive(
         measured,
         signed,
@@ -430,20 +666,12 @@ def pair(args: argparse.Namespace, cfg: dict[str, Any]) -> None:
     )
     if refined.sum() <= 0:
         raise ValueError("empty refined target")
-    truth, matrix, target, _ = comparison.binned_problem(
-        gen,
-        reco,
-        measured,
-        pr,
-        pt,
-        bank["wt"],
-        bank["wr"],
-        refined,
-        cfg["pt_edges"],
-        cfg["pz_edges"],
-    )
     ibu = comparison.roounfold_bayes(
-        matrix, truth, target, [5, 10], str(args.stage / "libRooUnfold.so")
+        bank["ibu_response"],
+        bank["ibu_prior"],
+        target,
+        [5, 10],
+        str(args.stage / "libRooUnfold.so"),
     )
     _, push = helper.omnifold(
         gen,
@@ -478,18 +706,38 @@ def pair(args: argparse.Namespace, cfg: dict[str, Any]) -> None:
         prior=bank["truth_nominal"],
         selected=bank["selected"],
     )
-    control_checks = {}
+    control_checks: dict[str, float | None] = {}
     if args.noise_free:
+        failures = []
         selected = bank["selected"]
         for method, values in (
             ("omnifold", unfolded),
             ("ibu5", ibu[5] * bank["factor"]),
         ):
-            control_checks[method] = core.nominal_recovery(
-                values[selected],
-                bank["truth_nominal"][selected],
-                f"noise-free nominal {method}",
+            label = f"noise-free nominal {method}"
+            try:
+                residual = core.nominal_residual(
+                    values[selected], bank["truth_nominal"][selected], label
+                )
+                control_checks[method] = residual
+                if residual > core.RECOVERY_TOLERANCE:
+                    failures.append(f"{label}: {residual} > {core.RECOVERY_TOLERANCE}")
+            except ValueError as exc:
+                control_checks[method] = None
+                failures.append(str(exc))
+        if failures:
+            write_json(
+                args.out / "stop.json",
+                {
+                    "status": "STOP",
+                    "reason": "C-NOM",
+                    "failures": failures,
+                    "control_checks": control_checks,
+                    "target_treatments": cfg["target_treatments"],
+                    "product_sha256": digest(args.out / "pair.npz"),
+                },
             )
+            raise ValueError("; ".join(failures))
     write_json(
         args.out / "pair.json",
         {
@@ -500,7 +748,10 @@ def pair(args: argparse.Namespace, cfg: dict[str, Any]) -> None:
             "truth": args.truth,
             "trial": args.trial,
             "seed": None if args.noise_free else cfg["seeds"][args.trial],
-            "bank_sha256": identity["bank_sha256"],
+            "bank_sha256": bank_pin,
+            "admissibility_sha256": admission_pin,
+            "target_treatments": cfg["target_treatments"],
+            "signed_target_sha256": target_pin,
             "config_sha256": digest(core.CONFIG),
             "product_sha256": digest(args.out / "pair.npz"),
             "signed_sum": float(signed.sum()),
@@ -514,13 +765,7 @@ def pair(args: argparse.Namespace, cfg: dict[str, Any]) -> None:
 def score(args: argparse.Namespace, cfg: dict[str, Any]) -> None:
     """Read all 35 complete pairs; emit every per-cell reading without selection."""
     config_pin = digest(core.CONFIG)
-    identity = read_json(args.identity)
-    if identity["status"] != "PASS" or identity["config_sha256"] != config_pin:
-        raise ValueError("identity control not passed for this configuration")
-    bank_pin = digest(args.bank)
-    if bank_pin != identity["bank_sha256"]:
-        raise ValueError("bank differs from identity control")
-    bank = read_npz(args.bank)
+    bank_pin, bank = checked_bank(args)
     selected = bank["selected"]
     if (
         selected.shape != (205,)
@@ -536,9 +781,18 @@ def score(args: argparse.Namespace, cfg: dict[str, Any]) -> None:
             raise ValueError(f"invalid bank truth vector: {name}")
         if np.any(truth[selected] <= 0):
             raise ValueError(f"nonpositive reported bank truth: {name}")
+    admission = checked_admissibility(args.admissibility, cfg, bank_pin)
+    admission_pin = digest(args.admissibility)
     control_pin = digest(args.control)
     control_checks = nominal_control(args.control, bank_pin, bank)
     control = read_json(args.control)
+    if (
+        control.get("admissibility_sha256") != admission_pin
+        or control.get("target_treatments") != cfg["target_treatments"]
+        or control.get("signed_target_sha256")
+        != admission["targets"]["nominal-control"]
+    ):
+        raise ValueError("nominal control does not match signed-target admissibility")
     readout = {}
     for name in cfg["truths"]:
         values = []
@@ -554,6 +808,9 @@ def score(args: argparse.Namespace, cfg: dict[str, Any]) -> None:
                 record["config_sha256"],
                 record["bank_sha256"],
                 record["control_sha256"],
+                record.get("admissibility_sha256"),
+                record.get("target_treatments"),
+                record.get("signed_target_sha256"),
             ) != (
                 "PASS",
                 name,
@@ -563,6 +820,9 @@ def score(args: argparse.Namespace, cfg: dict[str, Any]) -> None:
                 config_pin,
                 bank_pin,
                 control_pin,
+                admission_pin,
+                cfg["target_treatments"],
+                admission["targets"][f"{name}-{trial}"],
             ):
                 raise ValueError("missing or mismatched pair receipt")
             if record["product_sha256"] != digest(directory / "pair.npz"):
@@ -587,7 +847,10 @@ def score(args: argparse.Namespace, cfg: dict[str, Any]) -> None:
     write_json(
         args.out / "readout.json",
         {
-            "schema": "ibukt-recovery/2",
+            "schema": "ibukt-recovery/3",
+            "admissibility_sha256": admission_pin,
+            "signed_identity": admission["signed_identity"],
+            "target_treatments": cfg["target_treatments"],
             "bank_sha256": bank_pin,
             "config_sha256": config_pin,
             "control_sha256": control_pin,
@@ -604,7 +867,7 @@ def score(args: argparse.Namespace, cfg: dict[str, Any]) -> None:
 def main() -> None:
     """Execute a single declared stage inside an exclusive scratch output root."""
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("mode", choices=("prepare", "pair", "score"))
+    parser.add_argument("mode", choices=("prepare", "admissibility", "pair", "score"))
     parser.add_argument("--stage", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--bank", type=Path)
@@ -614,7 +877,12 @@ def main() -> None:
     parser.add_argument("--products", type=Path)
     parser.add_argument("--noise-free", action="store_true")
     parser.add_argument("--control", type=Path)
+    parser.add_argument("--admissibility", type=Path)
     args = parser.parse_args()
+    if args.mode in ("pair", "score") and args.admissibility is None:
+        parser.error("pair and score require --admissibility")
+    if args.mode == "admissibility" and (args.bank is None or args.identity is None):
+        parser.error("admissibility requires bank and identity")
     if args.mode == "pair" and any(
         getattr(args, k) is None for k in ("bank", "identity", "truth", "trial")
     ):
@@ -651,7 +919,12 @@ def main() -> None:
         (REPO, args.stage, args.out),
         (args.out,),
     ):
-        {"prepare": prepare, "pair": pair, "score": score}[args.mode](args, cfg)
+        {
+            "prepare": prepare,
+            "admissibility": admissibility,
+            "pair": pair,
+            "score": score,
+        }[args.mode](args, cfg)
 
 
 if __name__ == "__main__":

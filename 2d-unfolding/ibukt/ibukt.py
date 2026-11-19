@@ -6,6 +6,7 @@ its committed configuration, which is checked against the production driver.
 
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 from typing import Any, TypeAlias, cast
@@ -16,6 +17,9 @@ from numpy.typing import NDArray
 Array: TypeAlias = NDArray[np.float64]
 CONFIG = Path(__file__).with_name("config.json")
 RECOVERY_TOLERANCE = 0.02
+CAMPAIGN_CAP_HOURS = 6.50
+CAP_DECISION_MERGE = "f0d298611df010a31c5bed7f110af96c29a323e8"
+CAP_DECISION_SHA256 = "ef5f9862d65a75bdbdea8084eaae022da815cc6f680b147f61effd7788e65a93"
 
 
 def configuration() -> dict[str, Any]:
@@ -96,7 +100,7 @@ def poisson_target(features: Array, signed: Array, seed: int) -> tuple[Array, Ar
     """Expand independent Poisson positive counts, retaining the fixed negative template.
 
     Positive signal and background entries are sampled in their input order.
-    Both estimators subsequently use the very same refined target.
+    The expanded rows supply both target treatments.
     """
     if len(features) != len(signed) or not np.all(np.isfinite(signed)):
         raise ValueError("invalid signed target")
@@ -112,13 +116,50 @@ def poisson_target(features: Array, signed: Array, seed: int) -> tuple[Array, Ar
     )
 
 
-def nominal_recovery(estimates: Array, truth: Array, label: str) -> float:
-    """Require noise-free recovery within the engineering tolerance in every cell."""
+def signed_target_violations(
+    target: Array, response_rows: Array
+) -> list[dict[str, int | float | str]]:
+    """Report inadmissible reco bins without changing the target."""
+    if target.shape != (224,) or response_rows.shape != target.shape:
+        raise ValueError("signed target and response require 224 reco bins")
+    if not np.all(np.isfinite(response_rows)) or np.any(response_rows < 0):
+        raise ValueError("invalid response row sums")
+    failed = np.flatnonzero(
+        ~np.isfinite(target) | (target < 0) | ((target != 0) & (response_rows == 0))
+    )
+    return [
+        {
+            "index": int(index),
+            "signed_count": (
+                float(target[index])
+                if np.isfinite(target[index])
+                else str(target[index])
+            ),
+            "response_row_sum": float(response_rows[index]),
+        }
+        for index in failed
+    ]
+
+
+def target_digest(target: Array) -> str:
+    """Hash the ordered full-grid target as little-endian float64 counts."""
+    if target.shape != (224,) or not np.all(np.isfinite(target)):
+        raise ValueError("cannot hash an invalid signed target")
+    return hashlib.sha256(target.astype("<f8", copy=False).tobytes()).hexdigest()
+
+
+def nominal_residual(estimates: Array, truth: Array, label: str) -> float:
+    """Return the largest absolute relative residual on aligned positive truth."""
     if estimates.shape != truth.shape or truth.size == 0 or np.any(truth <= 0):
         raise ValueError(f"{label}: invalid truth or cell alignment")
     if not all(np.all(np.isfinite(x)) for x in (estimates, truth)):
         raise ValueError(f"{label}: nonfinite nominal recovery operand")
-    error = float(np.max(np.abs(estimates / truth - 1)))
+    return float(np.max(np.abs(estimates / truth - 1)))
+
+
+def nominal_recovery(estimates: Array, truth: Array, label: str) -> float:
+    """Require noise-free recovery within the engineering tolerance in every cell."""
+    error = nominal_residual(estimates, truth, label)
     if error > RECOVERY_TOLERANCE:
         raise ValueError(f"{label}: {error} > {RECOVERY_TOLERANCE}")
     return error
@@ -197,8 +238,10 @@ def budget(
         }
         charges[job] = actual if terminal else max(actual, reservations[job])
     total = sum(charges.values()) + requested_hours
-    if total > 5.90:
-        raise ValueError(f"cap exceeded: {total:.6f} > 5.90 node-hours")
+    if total > CAMPAIGN_CAP_HOURS:
+        raise ValueError(
+            f"cap exceeded: {total:.6f} > {CAMPAIGN_CAP_HOURS:.2f} node-hours"
+        )
     return {
         "spent_or_reserved": sum(charges.values()),
         "requested": requested_hours,
@@ -223,7 +266,7 @@ def forecast(
     remaining = (
         min(
             5.25 * 3600 - elapsed_seconds,
-            (5.90 - prior_hours - 0.10) * 3600 - elapsed_seconds,
+            (CAMPAIGN_CAP_HOURS - prior_hours - 0.10) * 3600 - elapsed_seconds,
         )
         - 60
     )
