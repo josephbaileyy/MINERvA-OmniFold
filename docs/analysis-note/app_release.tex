@@ -1,7 +1,7 @@
 \subsection{Result package and reproduction limits}
 \label{app:release}
 
-This appendix describes RC7, the existing local replay package, and specifies the broader event-level and covariance release, with the identities that are fixed and what each part does and does not reproduce. Rebuilding this note's PDFs assembles documents; it does not reproduce scientific results.
+This appendix describes RC7, the existing local replay package, and what it and the planned release do and do not reproduce. The schema of the broader event-level and covariance release is kept in the records document, with the checksums of the identities that are fixed (Ref.~\cite{NoteRecords2026}, identities already fixed). Rebuilding this note's PDFs assembles documents; it does not reproduce scientific results.
 
 % DECISION-20261021-joseph-da-and-note-records item 2, director ruling Q2 and review F6: the deposit snapshot hold; only the subject changed, and the clause from "refer to" on is byte-identical to app_provenance.tex lines 9-10
 The code paths and file names in this appendix and in App.~\ref{app:codebase} refer to the snapshot of the code repository, \repolink, identified at deposit: \depositsnapshot.
@@ -26,15 +26,7 @@ The code paths and file names in this appendix and in App.~\ref{app:codebase} re
 % Register pass (bhi): the same two facts as before, with the reason (the package predates the change of the 2D
 % central value to LightGBM) stated once as a fact about the package.
 
-\paragraph{Contents and use.} The package holds:
-\begin{itemize}[nosep,leftmargin=2em]
-  \item the sufficient inputs of the joint tests, for the evaluation behind the decisions and for the evaluation with the recovered pseudo-experiments added;
-  \item the arrays behind the figures of the earlier article version;
-  \item the noise-free differences behind the $L_2$ ratios;
-  \item an inventory of the analyzed AnaTuples;
-  \item the replay and figure code, and the expected outputs.
-\end{itemize}
-The package's verifier (\texttt{publication/release/verify\_rc.py} in the repository) runs from the top directory of the unpacked package, in a fresh Python environment with the package's pinned requirements (numpy, scipy and matplotlib). It performs every replay and figure check and prints \texttt{VERIFY: PASS} if all agree. In the two replays of the joint tests, floating-point values must agree to a relative $10^{-12}$, and integers and decisions must agree exactly. Each number that the earlier article version quoted from its Figs.~1--3 must agree with its printed value to within half a unit of its last printed digit, and the $L_2$ ratios must reproduce their printed range. For the three figures themselves, the check is that their files are produced. The package also carries the 20 rounding jitters of the data, from which the stability of the observed $p$ values (\S\ref{sec:joint5d-conditions}) can be recomputed; no packaged script recomputes it.
+\paragraph{Contents and use.} The package's verifier (\texttt{publication/release/verify\_rc.py} in the repository) runs from the top directory of the unpacked package, in a fresh Python environment with the package's pinned requirements (numpy, scipy and matplotlib). It performs every replay and figure check and prints \texttt{VERIFY: PASS} if all agree. The package's contents and the tolerances of the verifier's checks are listed in the records document. The package also carries the 20 rounding jitters of the data, from which the stability of the observed $p$ values (\S\ref{sec:joint5d-conditions}) can be recomputed; no packaged script recomputes it.
 % Register pass (bhi): RC7-README.md:75-79 (fresh environment, requirements, verify_rc.py, VERIFY: PASS), :109
 % (replay tolerance; replay_inference.py:158), :63-64 (figure numbers to half a unit of the last printed digit),
 % :111-117 and :142 (the 20 jitters; observed_jitter_p not recomputed), :138-150 (contents); verify_rc.py:88 (Figs.
@@ -56,25 +48,6 @@ All 2,374 inventoried input files (2,307 AnaTuples and 67 flux, reweight and par
 
 Event-loop outputs are preserved on the analysis's NERSC storage. The planned Zenodo reproduction package described above is the route for public access to archived result products and selected diagnostics.
 
-\subsubsection{Release schema}
-\label{app:release-schema}
-
-The broader result package must contain every item below; RC7 does not contain all of them. A $\checkmark$ marks identities or values already fixed (bin edges: \S\ref{app:release-edges}; checksums: Ref.~\cite{NoteRecords2026}, identities already fixed); the rest are packaging. A fixed identity specifies which object is meant, not whether the object is scientifically qualified.
-
-\begin{enumerate}[itemsep=2pt]
-  \item \textbf{Reporting bin edges and units, per axis} $\checkmark$: $\pT$, $\pPar$ and $q_{3}$ in \si{GeV/c}, $\Eavail$ and $W$ in \si{GeV}, with each wide terminal catch bin identified.
-  \item \textbf{The flattened-cell ordering} $\checkmark$: the dense $14\times16\times7\times7\times6$ grid in C order, with the reported subset supplied as an explicit index array, never inferred from a positivity cut.
-  \item \textbf{Central values}: the five-axis array and every projection quoted, each with its own checksum, on the density scale in \si{cm^2/nucleon} divided by the product of its kept axes' units.
-  \item \textbf{Covariances} $\checkmark$: the five-axis covariance of the configuration-(a) central value and its $(\Eavail,W)$ projection, with the algebra of Eqs.~\eqref{eq:zassembly}--\eqref{eq:zinflation}, the specified centering variant, and the band partition.
-  \item \textbf{Masks} $\checkmark$: the support mask, the pinned mask (bins where the inflation denominator vanished and $g$ was specified as $1$), and the unreported-cell mask.
-  \item \textbf{Projection matrices} $\checkmark$: $M$ itself, with its content checksum, its shape, and the explicit statement that its entries are the dropped axes' bin-width products, which is needed to specify the destination units.
-  \item \textbf{Generator predictions}: the four truth-level $(\Eavail,W)$ predictions (GENIE-CV, GENIE$+$Valencia~2p2h, NuWro, GiBUU) and the MINERvA~Tune~v1 ancillary model, as arrays on the release binning rather than figure curves, each with generator version, configuration, target and flux. GENIE and NuWro require the flux-repaired predictions of 2026-09-27 (per-event reweight to the analysis PPFX flux plus the 50--\SI{100}{GeV} supplements); GiBUU requires its reweight to the same flux convention (\S\ref{sec:3d-models}).
-        % KNOWN_ISSUES.md rows 82--83
-  \item \textbf{Provenance}: for each object, the producing code revision, the job, and the checksum of the bytes read back from the closed file. Of these, only the following are fixed: the assembling revision and job of $C_{Z}$, the job of $C_{EW}$, and the read-back checksum of the row index. No producing revision or job is recorded for the other objects, and the assembled package carries none.
-  \item \textbf{One minimal worked example}: \S\ref{app:release-example}.
-  \item \textbf{Limiting measurements}: the four measurements of \S\ref{sec:eavailw-adopted} that limit what the five-axis covariance of the configuration-(a) central value supports, stored with it in the released package, not only in this note.
-\end{enumerate}
-
 \subsubsection{Bin edges}
 \label{app:release-edges}
 
@@ -88,18 +61,6 @@ The broader result package must contain every item below; RC7 does not contain a
 \end{itemize}
 The last bin on $\Eavail$, $q_{3}$ and $W$ is a catch bin to 100 in the axis unit (\si{GeV}, or \si{GeV/c} for $q_{3}$), and the $\pT\times\pPar$ grid carries the 19 unreported high-$\pT$, low-$\pPar$ acceptance cells of \S\ref{sec:method-binning}.
 
-\subsubsection{One minimal projection example}
-\label{app:release-example}
-
-The released package is to support the following computation, which checks the package's ordering, mask and weights from end to end.
-
-\begin{enumerate}[itemsep=2pt]
-  \item The five-axis central values $\mathbf{x}$ have \num{65856} entries, and the reported-cell index array has \latBins\ entries.
-  \item $M$ has shape $\zprojCells\times\latBins$, and $C_{Z}$ has shape $\latBins\times\latBins$. The five-axis covariance of the configuration-(a) central value is the file \texttt{z-cv.npz}, with \texttt{sha256} \zcvDigest\ldots\ and $\sqrt{\Tr C}=\SI{5.6742e-38}{}$, so a loaded $C_{Z}$ can be checked against both.
-  \item The projection $\mathbf{y}=M\mathbf{x}_{\text{reported}}$, reshaped to $7\times6$ \textbf{in C order}, must reproduce the $(\Eavail,W)$ central-value map of Fig.~\ref{fig:eavailWexcess}. The F-order control establishes the ordering: C order agrees with the figure to a relative $1.7\times10^{-16}$; F order disagrees at relative $1.0$.
-  \item The projected covariance $C_{EW}=M\,C_{Z}\,M^{\top}$ is checked by $\sqrt{\Tr C_{EW}}=\SI{4.4552e-39}{}$ and exact symmetry ($\max|C-C^{\top}|=0$). Its numerical rank depends on the cutoff, because the spectrum decays smoothly with no plateau: the retained count is 26 at $10^{-6}$, 36 at the projector's hardcoded $10^{-12}$, 41 at \texttt{numpy.linalg.matrix\_rank}'s default, and 42 with no cutoff. The rank is therefore not an integrity check: with NumPy's default cutoff, an intact matrix fails a test for 36. The check is instead that $|\lambda_{\min}|/\lambda_{\max}$ is of order $10^{-15}$, the edge of double precision; the matrix is ill-conditioned, without a definite rank. Do not check the sign of $\lambda_{\min}$, which sits at the noise floor and carries no information; a second host reproduces $\lambda_{\min}$ to only five significant digits.
-  \item The per-cell relative uncertainty is $\sqrt{(C_{EW})_{rr}}/y_{r}$. Because $M$ carries the dropped axes' widths, $\mathbf{y}$ and $C_{EW}$ are on the \emph{density} scale. Converting cell $r$ to an integrated cross section requires multiplying by that cell's own $\Delta\Eavail\,\Delta W$, and the catch bins make that factor large.
-  \item $C_{EW}$ should \emph{not} be inverted without a specified regularization: its spectrum runs continuously down to the double-precision noise floor, so an inverse is set by the regularizer rather than by the data. The estimator-seed sensitivity, which exceeds its limit (the first measurement of \S\ref{sec:eavailw-adopted}), is why no significance is computed from it.
-\end{enumerate}
+\paragraph{Using the projected covariance.} The covariance of the $(\Eavail,W)$ projection is $C_{EW}=M\,C_{Z}\,M^{\top}$, with $M$ the projection matrix and $C_{Z}$ the five-axis covariance of the configuration-(a) central value; a worked example that checks the package's ordering, mask and weights end to end is in the records document. The per-cell relative uncertainty is $\sqrt{(C_{EW})_{rr}}/y_{r}$. Because $M$ carries the dropped axes' widths, $\mathbf{y}$ and $C_{EW}$ are on the \emph{density} scale. Converting cell $r$ to an integrated cross section requires multiplying by that cell's own $\Delta\Eavail\,\Delta W$, and the catch bins make that factor large. $C_{EW}$ should \emph{not} be inverted without a specified regularization: its spectrum runs continuously down to the double-precision noise floor, so an inverse is set by the regularizer rather than by the data. The estimator-seed sensitivity, which exceeds its limit (the first measurement of \S\ref{sec:eavailw-adopted}), is why no significance is computed from it.
 
 \paragraph{Unspecified acceptance field.} The record of the projection carries \texttt{acceptance\_question: UNDECLARED}. The field is stored metadata of the product, written when the projection was built. At that time it had not been decided whether an acceptance correction is needed at the destination binning. The note applies none: \S\ref{sec:eavailw-adopted} states that no separate acceptance weight at the destination binning was specified and that none is applied to Fig.~\ref{fig:eavailWexcess}. Whether one is needed remains the open question the field records. The package must carry the field with its stored value until that is decided, so that no default in the data format answers that question.
