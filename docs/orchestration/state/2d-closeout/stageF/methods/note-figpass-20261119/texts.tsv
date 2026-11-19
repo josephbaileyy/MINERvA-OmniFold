@@ -1,7 +1,13 @@
 # Declared wording fixes (figure, old, new; \n is a line break); each must be found in the drawn figure.
 figure	old	new
 gbdt_prior_response	|bias|	|noise-free residual|
-gbdt_prior_response	| ≥ |noise-free residual|	| ≥\n|noise-free residual|
+gbdt_prior_response	|noise-free residual|: 71%	|noise-free residual|\nin 71% of cells
+gbdt_prior_response	|noise-free residual|: 52%	|noise-free residual|\nin 52% of cells
+gbdt_prior_response	|noise-free residual|: 54%	|noise-free residual|\nin 54% of cells
+gbdt_prior_response	|shift| ≥ |noise-free residual|	|shift| ≥\n|noise-free residual|
 generators_vs_unfolded_band_central	$d\sigma/dp_T$\n($10^{-38}$ cm$^2$/.../nucleon)	$d\sigma/dp_T$\n($10^{-38}$ cm$^2$/(GeV/c)/nucleon)
 generators_vs_unfolded_band_central	$d\sigma/dp_\parallel$\n($10^{-39}$ cm$^2$/.../nucleon)	$d\sigma/dp_\parallel$\n($10^{-39}$ cm$^2$/(GeV/c)/nucleon)
 generators_vs_unfolded_band_central	$d\sigma/dE_{\rm avail}$\n($10^{-38}$ cm$^2$/.../nucleon)	$d\sigma/dE_{\rm avail}$\n($10^{-38}$ cm$^2$/GeV/nucleon)
+eavail_marginal_vs_paper_pull_full	pull	standardized difference
+eavail_marginal_vs_paper_pull_full	p_|| bin	$p_\parallel$ bin
+eavail_marginal_vs_paper_pull_full	p_T bin	$p_T$ bin

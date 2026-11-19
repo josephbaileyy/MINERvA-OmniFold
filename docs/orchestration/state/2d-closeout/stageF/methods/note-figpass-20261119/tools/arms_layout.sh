@@ -7,7 +7,8 @@
 # left as its producer drew it), arm 0 is the plain producer and arm 1 skips the palette edits (LAYOUT_PALETTE=0). Both under capture_palette.py, env -i, an
 # empty HOME, the venv given, BLAS threads 1. Then:
 #   arm 0's <stem>.pdf against the file installed at the base: bytes_but_date.py and raster.py (or, with
-#   INSTALLED_FROM=<path in the base>, against that file);
+#   INSTALLED_FROM=<path in the base>, against that file; or, with INSTALLED_STRINGS=1, arm 0's drawn strings against the
+#   installed PDF's text, for a figure its producer no longer draws byte for byte);
 #   arm 1 against arm 0: fig-restyle-20261031/tools/compare.py with no restyle tables, so every item's full hash
 #   (data, colours, line styles) must be equal; and the multiset of drawn strings must be equal, after texts.tsv's
 #   declared wording fixes are made on arm 0's;
@@ -34,6 +35,26 @@ for arm in arm0 arm1; do
      PYTHONPATH="$PP" python3 "$PT/capture_palette.py" "$C" ${wrapargs[@]+"${wrapargs[@]}"} "${args[@]}" \
      > "$O/log.txt" 2>&1) || { echo "FAIL $FAM $arm: rc $? ($(tail -2 "$O/log.txt" | tr '\n' ' '))"; ok=0; }
 done
+if [ -n "${INSTALLED_STRINGS:-}" ]; then   # the producer no longer draws the installed file byte for byte (RE-1 K3 for
+  # Fig. 17: same values and text, other geometry): arm 0's drawn strings must be the installed PDF's text instead
+  inst=$(mktemp); git -C "$W" show "$BASE:docs/analysis-note/figures/$STEM.pdf" > "$inst"
+  echo "== $FAM ($STEM): arm 0's drawn strings against the text of the file installed at $BASE (pdftotext)"
+  pdftotext -raw "$inst" - > "$inst.txt"
+  "$P" - "$inst.txt" "$N/runs/$FAM/arm0/capture/$FAM/$STEM.pdf.texts" <<'PY' || ok=0
+import json, re, sys
+inst = open(sys.argv[1], encoding="utf-8", errors="replace").read()
+# the installed file's words (two letters or more) and decimal values (the annotation's numbers); integers are tick
+# labels, which pdftotext joins with superscripts and strips of minus signs, so they are not compared
+tok = lambda t: set(re.findall(r"[A-Za-z]{2,}|\d+\.\d+", t))
+want = tok(inst)
+got = set().union(*(tok(t) for _, t in json.load(open(sys.argv[2]))["texts"]))
+miss = sorted(want - got)
+print(f"installed words and decimals: {len(want)} (decimals {sorted(w for w in want if '.' in w)}); "
+      f"missing from arm 0's drawn strings: {miss}")
+sys.exit(0 if not miss else 1)
+PY
+  rm -f "$inst" "$inst.txt"
+else
 inst=$(mktemp)
 if [ -n "${INSTALLED_FROM:-}" ]; then git -C "$W" show "$BASE:$INSTALLED_FROM" > "$inst"; src=$INSTALLED_FROM
 else git -C "$W" show "$BASE:docs/analysis-note/figures/$STEM.pdf" > "$inst"; src=docs/analysis-note/figures/$STEM.pdf; fi
@@ -41,6 +62,7 @@ echo "== $FAM ($STEM): arm 0 against $src at $BASE"
 "$P" -I "$PT/bytes_but_date.py" "$inst" "$FIGRUN/fp-$FAM/arm0/$STEM.pdf" || ok=0
 echo "raster: $("$P" -I "$R/fig-restyle-20261031/tools/raster.py" "$inst" "$FIGRUN/fp-$FAM/arm0/$STEM.pdf")" || ok=0
 rm -f "$inst"
+fi
 echo "== $FAM: arm 1 against arm 0"
 c0=$(cd "$N/runs/$FAM/arm0/capture/$FAM" 2>/dev/null && ls *.json 2>/dev/null | sort | tr "\n" " ")
 c1=$(cd "$N/runs/$FAM/arm1/capture/$FAM" 2>/dev/null && ls *.json 2>/dev/null | sort | tr "\n" " ")

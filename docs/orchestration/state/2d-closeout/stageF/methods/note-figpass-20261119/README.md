@@ -11,10 +11,11 @@
 
 | chunk | figures | state |
 |---|---|---|
-| A1 | 17 (fig:eavail-marg), 23 (fig:q3excess) | Fig. 23 drawn again at its printed size; Fig. 17 split into its two panels at full width (LaTeX only) |
+| A1 | 17 (fig:eavail-marg), 23 (fig:q3excess) | Fig. 23 drawn again at its printed size; Fig. 17 split into its two panels at full width (LaTeX only; superseded by D) |
 | A2 | width classes; text under 7 pt | three width classes in LaTeX; Figs. 33, 36 drawn again at printed size; Figs. 26, 27 with larger fonts |
 | B | the duplicates (Figs. 7, 9, 10, 13; 20, 21), by Joseph's ruling of 2026-11-19 (DECISION-20261119b) | each series drawn once: Fig. 13 folded into Fig. 7, the mosaic's points into Figs. 9 and 10, Figs. 20 and 21 one figure |
 | C | the Gemini graders' caption-match items (director, 2026-11-19) | Figs. 12, 18 captions; Figs. 19, 22 labels; Fig. 32 titles; Fig. 9 scaling clause; Fig. 15 label off the star |
+| D | Fig. 17 (fig:eavail-marg) redrawn from the fetched input | one stacked figure at printed size, every text at least 10 pt; "pull" read as "standardized difference" |
 
 ## The method (two arms per redrawn figure)
 
@@ -306,4 +307,38 @@ sha256 (the director's ruling).
 <!-- absence-ok: a scoping statement about this chunk's recipe (the figures come from the pinned pickles), not a claim that a result does not exist -->
 - These scripts are not run here. The note figures come from the pinned pickles, which hold the drawn text, so the
   in-memory fixes above are what print.
+
+## Chunk D: Fig. 17 redrawn from its input
+
+- **The input** is config (a)'s 3D product `3d-unfolding/xsec_3d_MEFHC_5iter_lgbm.root`, copied read-only to the
+  laptop on 2026-11-19.
+  - The script was `~/cov2d-work/figfetch/fetch-3d-a.sh` (sha256 a067e07d…), run on the director's go, inside its window,
+    under a clear fence.
+  - Its sha256 is `0dd94830821576a3b060fae2d4a20564610c535ed06046cd1eb05cd11885dd59` on the node and on the laptop, the
+    pin in re1/RE1-AMENDMENT-DECLARATION.md:151 and re1/run2/launch/re1_f_env.sh:2. The atime was unchanged.
+  - RE-1 K3 read this file when it found the installed figure's values identical, with only the geometry differing.
+- **Recipe:** `2d-unfolding/compare_to_paper_fullcov.py --ours <that file> --out-prefix <dir>/eavail_marginal_vs_paper`,
+  unchanged, under `note-figstyle-20261117/tools/remap_anc.py`, in the tier-2 ROOT environment. These are RE-1 K3's
+  arguments (re1/run2/launch/re1_f1.sbatch:23).
+- **Arm 0** is the producer's default drawing. It no longer reproduces the installed 2026-07-03 PDF byte for byte
+  (K3), so `INSTALLED_STRINGS=1` checks instead that every word and decimal value of the installed PDF's text appears in
+  arm 0's drawn strings.
+  - All do, including the annotation's 0.16, 0.83, 4.98 and the tag's 1.06.
+  - The producer prints χ²/ndf = 4.981 and pull mean / rms 0.159 / 0.828, as in the installed figure and the note's text.
+- **Arm 1** adds `layout_lib`'s edits:
+  - a 6.5 × 7.5 in canvas, printed at \textwidth;
+  - the grid panel and its colour bar above, the distribution below (`boxes.tsv`);
+  - every text at least 10 pt (`layout.tsv`), so the superscripts print at about 7 pt;
+  - `texts.tsv`: "pull" → "standardized difference", the caption's own term (the grader's F4 item), and "p_|| bin",
+    "p_T bin" → $p_\parallel$ bin, $p_T$ bin.
+- **Checks** (`runs/f17/CHECKS.txt`): COMPARE PASS (34 data artists, full hash). The strings are equal after the
+  declared fixes. Text overlaps are 0.
+- **In the note:** one float again, at \textwidth. The A1 continuation float is gone, and freeze_checks' SANS_CONTINUED
+  (A1) is reverted: freeze_checks.py is byte-identical to director-helper-3's 201fb0037 version.
+- **Measured (quality_checks):** smallest text 7.0 pt (the superscripts), word-like 10.0 pt, no text under 7 pt, no
+  overlap.
+- **Counts by chunk:** figures with any text under 7 pt go 30 (after B) → 29 (after C) → 28 (after D).
+- **Fig. 22's one count:** figures with overlapping strings go 3 → 4 with C. The added one is Fig. 22, whose own
+  label "$q_3\in[0.4,0.6)$ GeV" pdftotext splits at the ∈ glyph (extracted as "£"). It is one text, not two
+  touching ones, and the page shows no overlap.
 

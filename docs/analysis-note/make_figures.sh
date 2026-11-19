@@ -461,10 +461,11 @@ install_layout_fig MEFHC_5iter_xsec_proj_pt.pdf             f401ad1c3de18a34305f
 install_layout_fig MEFHC_5iter_xsec_proj_pz.pdf             506e13cdc6eabe08a564323605bb1ed7b07fbd0327d2d1602cacc784b046b8ff
 install_layout_fig MEFHC_5iter_xsec_paper_pt_slices.pdf     b4cec2839a2b5f44d9a17bfa1093cfbe3bb6ac5afde179bf99962375284d31ca
 install_layout_fig MEFHC_5iter_xsec_paper_pz_slices.pdf     693ea449dbfc3514b2af9ae10039793476c1764e560c5b5ee9e59774f65ce072
-install_layout_fig gbdt_prior_response.pdf                  76bbd05577dad4428a5f80caba21f6042869614a705e93d6eac96068abc6b143
 install_layout_fig generators_vs_unfolded_band_central.pdf  719a53b2ed01ceb90955f0e2da74db6c087b2aabfc7d76bcae848e1a28238a8e
 install_layout_fig ascencio_fullcov_compare_central.pdf     b84137b9ce240accd0e533b5f535a35d9b12ef1d7a5268bed7e37204e6187804
 install_layout_fig minerva_unfolding_landscape.pdf          936ed2515cace3398a12c709511033a527aed86ee314ee61325081d68871a486
+install_layout_fig eavail_marginal_vs_paper_pull_full.pdf   2560812e76ed9e6fc2df5c1fd86f10146a09a2f6a510c9976d091d6c4ae150aa
+install_layout_fig gbdt_prior_response.pdf                  add7161d72612f6916103524fa6e3c761dac75f65161dbb75d4bad452c10b5d3
 
 echo
 echo "== paper-only vector crops =="

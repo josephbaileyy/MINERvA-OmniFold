@@ -1,6 +1,6 @@
-# gbdt (Fig. 32's title wording, chunk C), 2026-11-19T05:10:15Z: bash tools/arms_layout.sh <wt> gbdt figenv/mpl3112 c3b4e8842 gbdt_prior_response - nd-unfolding/gbdt_model_dependence/analyze.py --out @OUT@ --print-style
+# gbdt (Fig. 32's title wording, chunk C; the misread Grok found fixed: the fraction on its own line), 2026-11-19T05:45:55Z: bash tools/arms_layout.sh <wt> gbdt figenv/mpl3112 c3b4e8842 gbdt_prior_response - nd-unfolding/gbdt_model_dependence/analyze.py --out @OUT@ --print-style
 == gbdt (gbdt_prior_response): arm 0 against docs/analysis-note/figures/gbdt_prior_response.pdf at c3b4e8842
-EQUAL tmp.gbCZwYzwUk
+EQUAL tmp.XSD9iQYWnr
 raster: RASTER :: EQUAL :: 1 page(s), 0 differing pixel(s)
 == gbdt: arm 1 against arm 0
 captures: gbdt_bias_spread.pdf.json gbdt_bias_spread.svg.json gbdt_coverage.pdf.json gbdt_coverage.svg.json gbdt_prior_response.pdf.json gbdt_prior_response.svg.json gbdt_recovery.pdf.json gbdt_recovery.svg.json 

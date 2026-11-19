@@ -13,7 +13,7 @@ layout edit this record's tables declare for the figure named by its saved file'
 3. boxes.tsv (figure, axes index, x0, y0, width, height; inches from the canvas's lower left; optionally a title pad
    in points): each named axes is placed in that box, and its titles are drawn that far above it. A figure with no
    boxes row is laid out again with tight_layout(). A row with axes index -1 keeps every axes where the producer put it.
-4. moves.tsv (figure, text prefix, dx, dy; data units): each drawn text (an annotation's text included) that starts
+4. moves.tsv (figure, text prefix, dx, dy; in the text's own coordinates, data or axes fraction): each drawn text (an annotation's text included) that starts
    with the prefix is moved by (dx, dy); each prefix must match exactly one text. Position only.
 Nothing else changes: no datum, colour, style or string. The arms check this: the capture's item hashes (data, colours
 and styles) and the multiset of drawn strings must equal the palette arm's (tools/arms_layout.sh).
