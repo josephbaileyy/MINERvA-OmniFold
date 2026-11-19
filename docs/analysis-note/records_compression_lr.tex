@@ -52,3 +52,15 @@ The higher-dimensional MINERvA driver (App.~\ref{app:codebase}) extends the 2D d
 \subsection{Structure of the truth-to-reco migrations (from Part 2, sec:method-binning)}
 % From sec_method.tex (dfc41cdf5) (draft f6a4fc372 lineage); description of the migration figure beyond its caption
 The structure differs qualitatively between the muon and hadron sides. The spectrometer muon measurement makes the $\pT$ and $\pPar$ maps nearly tridiagonal, with migrations rarely exceeding one bin. Reconstruction stability dips to ${\sim}0.45$--$0.5$ for $\pT$ and ${\sim}0.35$ for $\pPar$ where bins are finest, recovering in wide edge bins. The calorimetric axes have coarser bins but relatively broader, visibly asymmetric migrations. $\Eavail$ preferentially migrates \emph{downward} because energy carried by neutrons and other unresponsive particles is not collected. Reconstruction stability falls from $0.61$ in the lowest bins to $0.43$ in the highest. $q_{3}$, reconstructed from the muon $Q^{2}$ and the calorimetric recoil, inherits a milder version of the same pattern. $W$ compounds $\Eavail$ and muon smearing and has the broadest migrations; two-bin shifts are common in the resonance region. The lowest-$W$ (quasi-elastic) bin has the highest stability at $0.71$.
+
+\subsection{No underflow or overflow in the reported product (from Part 2, sec:method-binning)}
+% From sec_method.tex @1ad08b466; argument a reader does not need to interpret a result
+Neither underflow nor overflow appears in the reported product, by construction rather than by truncation: the unbinned unfolding has no response-matrix under- or overflow, and the reporting bins are applied once, to events that all lie inside the grids. Truth-level muon edges coincide with the measurement phase space (\S\ref{sec:selection}); no signal is defined beyond them. Hadronic axes span $[0,100]\,\si{GeV}$, with catch-bin edges far beyond the kinematic reach at $\langle E_\nu\rangle\sim\SI{6}{GeV}$, so the truth grids are exhaustive. A selected reco event outside the grid is treated as unaccepted and excluded from the measured sample by \S\ref{sec:method-driver}'s masking convention. Its in-phase-space truth content is recovered, as for any unreconstructed event, by the treatment of truth events without a reconstructed partner.
+
+\subsection{Related developments (from Part 2)}
+% From sec_method.tex @1ad08b466; literature context
+Its distinct algorithmic construction complements earlier unbinned profiled unfolding~\cite{Chan:2023tbf}.
+
+\subsection{Gradient-boosted trees in unbinned unfolding (from Part 2, sec:method-config)}
+% From sec_method.tex @1ad08b466; literature context
+Ref.~\cite{Milton:2025tools} demonstrates their effectiveness for unbinned unfolding with few high-level features, complementing deep models for low-level event representations.
