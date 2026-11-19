@@ -1240,7 +1240,8 @@ PLANTS = [
     # n3 (2026-10-27): the sec_systematics ten-seed citation these two plants used left the note (L-thin-C62, director
     # ruling (e)); they now use citations that still print, in both the base and the delivered App. A and App. B.
     ("listed drop of a heading the records lack", "P7 ledger row L98: D:app_statmethods.tex::superseded values: "
-     "retired materials", "sec_q3_closure.tex",   # the closure tests moved there in the skeleton (SK-09)
+     "retired materials", "app_statmethods.tex",   # skeleton SK-09 put the closure tests in sec_q3_closure.tex; Part 5 P5-1 moved
+     # their procedures, with this citation, to App. A (CV-C03), and sec_q3_closure.tex no longer exists
      r"was in force when the tests were graded (Ref.~\cite{NoteRecords2026}, superseded values: retired material)",
      "was in force when the tests were graded",
      "| L98 | planted | DROP | R4 | `D:app_statmethods.tex::superseded values: retired materials` | planted |"),
