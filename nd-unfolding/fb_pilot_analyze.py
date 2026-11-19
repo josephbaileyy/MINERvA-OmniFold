@@ -766,6 +766,9 @@ def smoke_receipt_problem(rec: dict, stage: Path, pin: str, local: bool, closure
     want = smoke_receipt(stage, pin, local, closure, env_names)
     if want["index_sha256"] is None:
         return "the stage holds no smoke-edges/INDEX.json"
+    for digest in (rec.get("setup_env_sha256"), want["setup_env_sha256"]):  # required in the receipt and on disk
+        if not (isinstance(digest, str) and SHA_HEX.fullmatch(digest)):
+            return f"the setup environment's digest {digest!r} is not a sha256 (smoke-setup-env.txt is required)"
     diff = [k for k in ("schema", "stage", "pin", "local_test", "index_sha256", "setup_closure", "post_setup_env",
                         "setup_env_sha256") if rec.get(k) != want[k]]
     return f"the smoke receipt differs in {diff}" if diff else None
@@ -842,6 +845,9 @@ def smoke_main(argv) -> int:
         rec = smoke_receipt(a.stage, a.pin, local, closure)
         if rec["index_sha256"] is None:
             print("[pfb-smoke] no receipt: INDEX.json absent", file=sys.stderr)
+            return 9
+        if not (isinstance(rec["setup_env_sha256"], str) and SHA_HEX.fullmatch(rec["setup_env_sha256"])):
+            print("[pfb-smoke] no receipt: smoke-setup-env.txt is absent or unreadable", file=sys.stderr)
             return 9
         try:
             write_new(p, json.dumps(dict(rec, host=os.uname()[1], utc=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())),

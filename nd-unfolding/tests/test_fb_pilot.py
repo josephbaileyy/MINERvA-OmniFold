@@ -710,10 +710,14 @@ class Rev3(unittest.TestCase):
         self.nested.write_text("export STUB_NESTED=1\n")
         self.deny_flag, self.extra_flag = self.tmp / "ext" / "deny", self.tmp / "ext" / "extra"
         self.path_flag = self.tmp / "ext" / "path"
+        self.nl_a, self.nl_b, self.py_flag = self.tmp / "ext" / "nl_a", self.tmp / "ext" / "nl_b", self.tmp / "ext" / "py"
         (d / "setup_salloc_env.sh").write_text(f"# stub setup\nexport STUB_SETUP=1\nsource {self.nested}\n"
                                                f"[ -f {self.deny_flag} ] && export PYTHONSTARTUP=/nowhere\n"
                                                f"[ -f {self.extra_flag} ] && export STUB_EXTRA=1\n"
                                                f"[ -f {self.path_flag} ] && export PATH=/stub/extra:$PATH\n"
+                                               f"[ -f {self.nl_a} ] && export CONDA_PREFIX=\"$(printf 'p\\nCONDARC=q')\" CONDARC=r\n"
+                                               f"[ -f {self.nl_b} ] && export CONDA_PREFIX=p CONDARC=\"$(printf 'q\\nCONDARC=r')\"\n"
+                                               f"[ -f {self.py_flag} ] && export PATH={self.tmp / 'pystub'}:$PATH\n"
                                                "env | sed 's/^/ENV-DUMP /'\n")
         subprocess.run(["git", "init", "-q", str(d)], check=True)
         subprocess.run(["git", "-C", str(d), "add", "-A"], check=True)
@@ -1361,10 +1365,15 @@ class Rev5(Rev3):
 class Rev6(Rev3):
     """The code-5 confirmation read and the director's code-6 rulings F1-F6."""
 
-    def sbatch_stub(self, version: str, help_text: str) -> Path:
+    def sbatch_stub(self, version: str, help_text: str, vrc: int = 0, hrc: int = 0) -> Path:
+        """A stub sbatch that answers --version and --help only; any other invocation (a submission) fails loudly and
+        leaves a marker."""
         b = self.tmp / "sbin"
         b.mkdir(exist_ok=True)
-        (b / "sbatch").write_text(f"#!/bin/sh\ncase \"$1\" in --version) echo '{version}' ;; *) echo '{help_text}' ;; esac\n")
+        (b / "sbatch").write_text(
+            f"#!/bin/sh\ncase \"$1\" in\n  --version) printf '%s\\n' '{version}'; exit {vrc} ;;\n"
+            f"  --help) printf '%s\\n' '{help_text}'; exit {hrc} ;;\n"
+            f"  *) echo \"stub sbatch: unexpected invocation $*\" >&2; echo \"$*\" >> {self.tmp / 'sbatch_submitted'}; exit 99 ;;\nesac\n")
         (b / "sbatch").chmod(0o755)
         return b
 
@@ -1391,15 +1400,16 @@ class Rev6(Rev3):
         rec = (self.tmp / "s1" / "smoke-sbatch.txt").read_text()
         self.assertIn("slurm 24.05.4", rec)
         self.assertIn("NIL accepted: sbatch --version 24.05.4 is at least 23.02.3", rec)
+        self.assertFalse((self.tmp / "sbatch_submitted").exists(), "the smoke never submits")
         r = self.run_smoke(self.tmp / "s2", PFB_LOCAL_TEST="1", PFB_SETUP_SHA=sha,
                            PATH=path(self.sbatch_stub("slurm 23.02.2", "--export=names")))
         self.assertEqual(r.returncode, 8, r.stderr)
-        self.assertIn("STOP: this sbatch shows no --export=NIL support", r.stderr)
+        self.assertIn("STOP: no positive evidence that this sbatch supports --export=NIL", r.stderr)
         self.assertFalse((self.tmp / "s2" / "smoke-receipt.json").exists())
         r = self.run_smoke(self.tmp / "s3", PFB_LOCAL_TEST="1", PFB_SETUP_SHA=sha,
                            PATH=path(self.sbatch_stub("slurm 23.02.2", "--export=names|ALL|NIL|NONE")))
         self.assertEqual(r.returncode, 0, r.stderr)
-        self.assertIn("NIL accepted: sbatch --help names NIL", (self.tmp / "s3" / "smoke-sbatch.txt").read_text())
+        self.assertIn("NIL accepted: sbatch --help's --export line names NIL", (self.tmp / "s3" / "smoke-sbatch.txt").read_text())
         (self.tmp / "s3" / "a0-refs").mkdir()
         for s_ in (None, *A.SEEDS):
             (self.tmp / "s3" / "a0-refs" / A.name("rs1_A0", s_)).write_bytes(b"a0")
@@ -1465,8 +1475,8 @@ class Rev6(Rev3):
         """F4: the values the setup leaves (PATH, PYTHONPATH, LD_*, CONDA_*, git config) are the smoke's, compared before
         the live limit, the stage check or the receipt check run anything the setup selected."""
         stage, sha = self.staged()
-        self.assertIn("PATH=", (stage / "smoke-setup-env.txt").read_text())
-        self.assertIn("PYTHONNOUSERSITE=1", (stage / "smoke-setup-env.txt").read_text())
+        self.assertIn("PATH exported ", (stage / "smoke-setup-env.txt").read_text())
+        self.assertIn("PYTHONNOUSERSITE exported 1", (stage / "smoke-setup-env.txt").read_text())
         self.path_flag.write_text("")
         (stage / "extra").symlink_to(self.tmp / "deploy")  # a stage-check failure too: the value check must come first
         r = self.run_job(stage, self.tmp / "root", PFB_LOCAL_TEST="1", PFB_SETUP_SHA=sha)
@@ -1527,9 +1537,118 @@ class Rev6(Rev3):
         self.assertEqual(st["j"]["j1"], [], "the sources the run used are the jittered ones it recorded")
 
 
-for _cls in (Rev4, Rev5, Rev6):
+def shell_function(name: str, script: str = "sbatch_pfb.sh") -> str:
+    """One function's source from the shared environment block, as the script defines it."""
+    text = (ND / script).read_text()
+    i = text.index(f"\n{name}() {{") + 1
+    return text[i:text.index("\n}\n", i) + 3]
+
+
+class Rev7(Rev6):
+    """The code-6 scoped read and the director's code-7 items G1-G3."""
+
+    def test_nil_needs_positive_evidence(self):
+        """G1: NIL only from a version probe that exits 0 and parses to at least 23.02.3, or from a help probe that exits
+        0 with NIL on the --export line itself; anything else stops (exit 8), and nothing is ever submitted."""
+        (self.tmp / "cwd").mkdir()
+        _, _, sha = self.deploy()
+        path = lambda b: f"{b}:{Path(sys.executable).parent}:/usr/bin:/bin:/usr/sbin:/sbin"  # noqa: E731
+        cases = (("slurm 24.05.4", "error: NIL is unsupported", 1, 1, "a failing version probe"),
+                 ("error: --export=NIL unknown", "error: NIL", 1, 2, "both probes fail, each naming NIL"),
+                 ("slurm-wlm unknown", "--export=names", 0, 0, "a version line that will not parse"),
+                 ("slurm 22.05.9", "--export=names\nsee NIL in the manual", 0, 0, "NIL outside the --export line"),
+                 ("slurm 22.05.9", "--export=names|NIL", 0, 3, "a help probe that exits nonzero"))
+        for k, (ver, hlp, vrc, hrc, why) in enumerate(cases):
+            st = self.tmp / f"n{k}"
+            r = self.run_smoke(st, PFB_LOCAL_TEST="1", PFB_SETUP_SHA=sha, PATH=path(self.sbatch_stub(ver, hlp, vrc, hrc)))
+            self.assertEqual(r.returncode, 8, (why, r.stderr))
+            self.assertFalse((st / "smoke-receipt.json").exists(), why)
+        r = self.run_smoke(self.tmp / "ok", PFB_LOCAL_TEST="1", PFB_SETUP_SHA=sha,
+                           PATH=path(self.sbatch_stub("slurm 22.05.9", "  --export=names|ALL|NIL|NONE  environment")))
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertFalse((self.tmp / "sbatch_submitted").exists(), "no probe ever submits")
+
+    def test_the_snapshot_is_unambiguous(self):
+        """G2 (a): one record per name, with its export status and its value under printf %q, so a newline cannot move
+        a fragment from one variable to the next and reproduce another snapshot."""
+        import subprocess
+        fn = shell_function("setup_env_text")
+
+        def snap(assign):
+            r = subprocess.run(["/bin/bash", "--noprofile", "--norc", "-c", f"{fn}\n{assign}\nsetup_env_text"],
+                               env={"PATH": "/usr/bin:/bin"}, capture_output=True, text=True)
+            return r.stdout
+        a = snap("export CONDA_PREFIX=\"$(printf 'p\\nCONDARC=q')\" CONDARC=r")
+        b = snap("export CONDA_PREFIX=p CONDARC=\"$(printf 'q\\nCONDARC=r')\"")
+        self.assertNotEqual(a, b, "the newline-shift probe")
+        self.assertEqual(len(a.splitlines()), len(b.splitlines()), "one record per name")
+        self.assertIn("CONDARC unset", snap("export CONDA_PREFIX=p"))
+        self.assertIn("CONDARC set r", snap("CONDARC=r"), "set but not exported")
+        self.assertIn("CONDARC exported r", snap("export CONDARC=r"))
+        self.assertIn("GIT_CONFIG_COUNT exported 1", snap("export GIT_CONFIG_COUNT=1"))
+
+    def test_the_newline_shift_refuses_at_the_job(self):
+        """G2 (a), end to end: the smoke ran with one split, the job sees the other; the job refuses."""
+        self.deploy()
+        self.nl_a.write_text("")
+        stage, sha = self.staged()
+        self.nl_a.unlink()
+        self.nl_b.write_text("")
+        r = self.run_job(stage, self.tmp / "root", PFB_LOCAL_TEST="1", PFB_SETUP_SHA=sha)
+        self.assertEqual(r.returncode, 2, r.stderr)
+        self.assertIn("environment values", json.loads((stage / "job-local.refused.json").read_text())["preflight_refused"])
+
+    def test_a_null_setup_digest_refuses(self):
+        """G2 (b): the setup environment's digest is a required sha256 in the receipt writer and the checker."""
+        stage, sha = self.staged()
+        rec = json.loads((stage / "smoke-receipt.json").read_text())
+        self.assertRegex(rec["setup_env_sha256"], "^[0-9a-f]{64}$")
+        why = A.smoke_receipt_problem(dict(rec, setup_env_sha256=None), stage, self.pin, True, rec["setup_closure"],
+                                      rec["post_setup_env"])
+        self.assertIn("is not a sha256", why)
+        (stage / "smoke-setup-env.txt").unlink()
+        why = A.smoke_receipt_problem(dict(rec, setup_env_sha256=None), stage, self.pin, True, rec["setup_closure"],
+                                      rec["post_setup_env"])
+        self.assertIn("is not a sha256", why, "a missing file and a null digest do not match each other")
+        (stage / "smoke-receipt.json").unlink()
+        tr = stage / "smoke-env.log"
+        rc = A.smoke_main(["write", "--stage", str(stage), "--pin", self.pin, "--local", "true", "--trace", str(tr)])
+        self.assertEqual(rc, 9, "the writer refuses without the setup environment file")
+        self.assertFalse((stage / "smoke-receipt.json").exists())
+
+    def test_a_mismatch_refusal_never_runs_the_setups_python(self):
+        """G2 (c): the setup now puts a python3 first on PATH; the values differ from the smoke's, and the refusal is
+        written without ever running that python3."""
+        stage, sha = self.staged()
+        stub = self.tmp / "pystub"
+        stub.mkdir()
+        (stub / "python3").write_text(f"#!/bin/sh\necho ran >> {self.tmp / 'stub_python_ran'}\nexit 3\n")
+        (stub / "python3").chmod(0o755)
+        self.py_flag.write_text("")
+        r = self.run_job(stage, self.tmp / "root", PFB_LOCAL_TEST="1", PFB_SETUP_SHA=sha)
+        self.assertEqual(r.returncode, 2, r.stderr)
+        self.assertIn("environment values", json.loads((stage / "job-local.refused.json").read_text())["preflight_refused"])
+        self.assertFalse((self.tmp / "stub_python_ran").exists(), "the setup-selected python3 never ran")
+
+    def test_the_declared_values_are_restored_before_the_denied_check(self):
+        """G3 (code 6's regression): a setup that clears the bytecode setting and exports a denied variable is refused
+        with the declared values already restored."""
+        import subprocess
+        d = self.tmp / "g3"
+        d.mkdir()
+        (d / "setup_salloc_env.sh").write_text("unset PYTHONDONTWRITEBYTECODE PYTHONNOUSERSITE\nexport PYTHONSTARTUP=/nowhere\n")
+        body = (f"{shell_function('traced_setup')}\nD={d}\nexport PYTHONDONTWRITEBYTECODE=1 PYTHONNOUSERSITE=1\n"
+                f"traced_setup {d / 'log'}\necho \"rc=$? b=${{PYTHONDONTWRITEBYTECODE-unset}} u=${{PYTHONNOUSERSITE-unset}}\"\n")
+        r = subprocess.run(["/bin/bash", "--noprofile", "--norc", "-c", body], env={"PATH": "/usr/bin:/bin"},
+                           capture_output=True, text=True)
+        self.assertIn("rc=97 b=1 u=1", r.stdout, r.stdout + r.stderr)
+
+
+for _cls in (Rev4, Rev5, Rev6, Rev7):
     for _n in [n for n in vars(Rev3) if n.startswith("test_")]:
         setattr(_cls, _n, None)  # not collected twice: unittest collects only callable test_ attributes
+for _n in [n for n in vars(Rev6) if n.startswith("test_")]:
+    setattr(Rev7, _n, None)
 del _cls, _n  # a module-level alias of a TestCase class would be collected again (code 5's count)
 
 

@@ -41,7 +41,7 @@
 # classified the same way.
 # job-status.json starts as "the job did not finish", so a time-limit kill reads INCOMPLETE; a deliberate stop after a
 # round-1 gate failure is recorded as that, not as an interruption (§5.2). Every status names the job, pin and root.
-# --- the environment: identical in sbatch_pfb.sh and pfb_smoke_prep.sh (code 4-6, the director's rulings) ---
+# --- the environment: identical in sbatch_pfb.sh and pfb_smoke_prep.sh (code 4-7, the director's rulings) ---
 # The reviewed launches are the only approved entry. The smoke, on a login node (the guard refuses inside an
 # allocation before the environment is cleared):
 #   [ -z "${SLURM_JOB_ID-}" ] && /usr/bin/env -i HOME=/global/homes/j/josephrb PATH=/usr/bin:/bin /bin/bash --noprofile --norc <deploy>/nd-unfolding/pfb_smoke_prep.sh <deploy> <pin> /pscratch/sd/j/josephrb/pfb-20261117-stage
@@ -89,8 +89,9 @@ for v in $(compgen -e); do
     esac
 done
 pgit() { git -c core.fsmonitor=false "$@"; }  # with GIT_CONFIG_NOSYSTEM=1 and GIT_CONFIG_GLOBAL=/dev/null above
-newfile() {  # <path>: create it O_CREAT|O_EXCL|O_NOFOLLOW; fails on anything already there, a link included
-    python3 -c 'import os, sys; os.close(os.open(sys.argv[1], os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o644))' "$1" 2>/dev/null
+newfile() {  # <path>: create it O_CREAT|O_EXCL|O_NOFOLLOW; fails on anything already there, a link included. The system
+    # interpreter by absolute path, isolated (-I -S): a refusal after the setup never runs a setup-selected python3
+    /usr/bin/python3 -I -S -c 'import os, sys; os.close(os.open(sys.argv[1], os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o644))' "$1" 2>/dev/null
 }
 traced_setup() {  # <log>: source the pinned setup with its xtrace (PS4 names each sourced file) into <log>; 97 if it
     local PS4='+@${BASH_SOURCE[0]}@ '                # exported a denied variable
@@ -98,16 +99,18 @@ traced_setup() {  # <log>: source the pinned setup with its xtrace (PS4 names ea
     source "$D/setup_salloc_env.sh" >> "$1" 2>&1
     local rc=$?
     { set +x; } 2>/dev/null
-    for v in BASH_ENV ENV PYTHONHOME PYTHONSTARTUP PYTHONPYCACHEPREFIX PYTHONUSERBASE PYTHONINSPECT GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE; do
+    export PYTHONDONTWRITEBYTECODE=1 PYTHONNOUSERSITE=1 GIT_CONFIG_NOSYSTEM=1 GIT_CONFIG_GLOBAL=/dev/null  # before the
+    for v in BASH_ENV ENV PYTHONHOME PYTHONSTARTUP PYTHONPYCACHEPREFIX PYTHONUSERBASE PYTHONINSPECT GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE; do  # check
         [ -z "${!v+x}" ] || { echo "[pfb] the setup exported $v, which is denied" >> "$1"; echo "[pfb] the setup exported $v, which is denied" >&2; return 97; }
     done
-    export PYTHONDONTWRITEBYTECODE=1 PYTHONNOUSERSITE=1 GIT_CONFIG_NOSYSTEM=1 GIT_CONFIG_GLOBAL=/dev/null
     return "$rc"
 }
-setup_env_text() {  # the values the setup leaves, one line each (bash builtins only, so nothing setup-selected runs)
-    local v
-    for v in PATH PYTHONPATH LD_LIBRARY_PATH LD_PRELOAD CONDA_PREFIX CONDARC PYTHONNOUSERSITE $(compgen -e GIT_CONFIG_); do
-        if [ -n "${!v+x}" ]; then printf '%s=%s\n' "$v" "${!v}"; else printf '%s unset\n' "$v"; fi
+setup_env_text() {  # the values the setup leaves, one record per name: the name, its status (exported, set, unset) and
+    local v st                                     # the value quoted by printf %q; bash builtins only
+    for v in PATH PYTHONPATH LD_LIBRARY_PATH LD_PRELOAD CONDA_PREFIX CONDARC PYTHONNOUSERSITE $(compgen -v GIT_CONFIG_); do
+        if [ -z "${!v+x}" ]; then printf '%s unset\n' "$v"; continue; fi
+        case "$(declare -p "$v" 2>/dev/null)" in "declare -x"*) st=exported ;; *) st=set ;; esac
+        printf '%s %s %q\n' "$v" "$st" "${!v}"
     done
 }
 # --- end of the environment block ---

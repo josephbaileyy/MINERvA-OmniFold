@@ -21,7 +21,7 @@ REPO = ND.parent
 FILES = ("fb_pilot_edges.py", "fb_pilot_gates.py", "fb_pilot_probe.py", "fb_pilot_analyze.py", "sbatch_pfb.sh",
          "pfb_smoke_prep.sh")
 ED, GA, PR, AN, SB, SM = FILES
-EXPECTED_TESTS = 75
+EXPECTED_TESTS = 81
 T = "test_fb_pilot"
 MUTATIONS = [
     # §3: the edges
@@ -159,7 +159,7 @@ MUTATIONS = [
      "test_the_job_preflight_spends_no_root"),
     ("the smoke receipt unchecked", SB, '    || preflight "the smoke receipt is not', '    || true "the smoke receipt is not',
      "test_the_job_preflight_spends_no_root"),
-    ("the smoke writes bytecode", SM, "    export PYTHONDONTWRITEBYTECODE=1 PYTHONNOUSERSITE=1 GIT_CONFIG_NOSYSTEM=1 GIT_CONFIG_GLOBAL=/dev/null\n",
+    ("the smoke writes bytecode", SM, "    export PYTHONDONTWRITEBYTECODE=1 PYTHONNOUSERSITE=1 GIT_CONFIG_NOSYSTEM=1 GIT_CONFIG_GLOBAL=/dev/null  # before the\n",
      "    unset PYTHONDONTWRITEBYTECODE; export PYTHONNOUSERSITE=1 GIT_CONFIG_NOSYSTEM=1 GIT_CONFIG_GLOBAL=/dev/null\n",
      "test_the_smoke_writes_only_under_its_stage"),
     ("the smoke refreshes the deploy's git index", SM, "git --no-optional-locks -C", "git -C", "test_the_smoke_writes_only_under_its_stage"),
@@ -239,7 +239,7 @@ MUTATIONS = [
     ("the job exports NONE (get-user-env)", SB, "#SBATCH --export=NIL\n", "#SBATCH --export=NONE\n", "test_the_job_requires_export_nil"),
     ("the job accepts any export mode", SB, '    [ "${SLURM_EXPORT_ENV-}" = NIL ] \\\n', "    true \\\n", "test_the_job_requires_export_nil"),
     ("the smoke goes on without NIL", SM,
-     '        echo "[pfb-smoke] STOP: this sbatch shows no --export=NIL support (see $STAGE/smoke-sbatch.txt)" >&2; exit 8\n',
+     '        echo "[pfb-smoke] STOP: no positive evidence that this sbatch supports --export=NIL (see $STAGE/smoke-sbatch.txt)" >&2; exit 8\n',
      "        :\n", "test_the_smoke_confirms_nil_without_submitting"),
     ("NIL read from any version", SM, '[ "$ma" -eq 23 ] && { [ "$mi" -gt 2 ] || { [ "$mi" -eq 2 ] && [ "$pa" -ge 3 ]; }; }',
      '[ "$ma" -eq 23 ]', "test_the_smoke_confirms_nil_without_submitting"),
@@ -267,6 +267,26 @@ MUTATIONS = [
      "            rebuilt_exp = s5n_pseudo.build_pseudo(ji, jb, a.truth, a.amplitude, split_key, a.pseudo_seed, ratio)[0]",
      "            rebuilt_exp = s5n_pseudo.build_pseudo(ji, jb, a.truth, 0.0, split_key, a.pseudo_seed, ratio)[0]",
      "test_j2_rebuilds_the_jitter_from_the_jittered_sources"),
+    # code rev 7: G1-G3
+    ("NIL read anywhere in the help", SM, '            case "$ln" in *--export*) case "$ln" in *NIL*)', '            case "$ln" in *) case "$ln" in *NIL*)',
+     "test_nil_needs_positive_evidence"),
+    ("a failing version probe trusted", SM, '    if [ "$svrc" -eq 0 ] && [[ "${sv%%$\'\\n\'*}" =~ $re ]]; then', '    if [[ "${sv%%$\'\\n\'*}" =~ $re ]]; then',
+     "test_nil_needs_positive_evidence"),
+    ("a failing help probe trusted", SM, '    if [ -z "$nil" ] && [ "$shrc" -eq 0 ]; then', '    if [ -z "$nil" ]; then',
+     "test_nil_needs_positive_evidence"),
+    ("the snapshot in raw lines (code 6)", SB, "        printf '%s %s %q\\n' \"$v\" \"$st\" \"${!v}\"", "        printf '%s=%s\\n' \"$v\" \"${!v}\"",
+     "test_the_snapshot_is_unambiguous"),
+    ("the snapshot ignores export status", SB, '        case "$(declare -p "$v" 2>/dev/null)" in "declare -x"*) st=exported ;; *) st=set ;; esac',
+     "        st=exported", "test_the_snapshot_is_unambiguous"),
+    ("a null setup digest checked", AN, '    for digest in (rec.get("setup_env_sha256"), want["setup_env_sha256"]):  # required in the receipt and on disk',
+     "    for digest in ():", "test_a_null_setup_digest_refuses"),
+    ("a null setup digest written", AN, '        if not (isinstance(rec["setup_env_sha256"], str) and SHA_HEX.fullmatch(rec["setup_env_sha256"])):',
+     "        if False:", "test_a_null_setup_digest_refuses"),
+    ("the refusal runs the setup's python3", SB, "    /usr/bin/python3 -I -S -c 'import os, sys;", "    python3 -c 'import os, sys;",
+     "test_a_mismatch_refusal_never_runs_the_setups_python"),
+    ("the declared values restored after the denied check (code 6)", SB,
+     "    export PYTHONDONTWRITEBYTECODE=1 PYTHONNOUSERSITE=1 GIT_CONFIG_NOSYSTEM=1 GIT_CONFIG_GLOBAL=/dev/null  # before the\n", "",
+     "test_the_declared_values_are_restored_before_the_denied_check"),
     # §5.1: the gates
     ("G3 (a) reads nothing", GA, '    return {"pass": not any(bad), "mismatched_rows": bad,', '    return {"pass": True, "mismatched_rows": bad,',
      "test_a_middle_edge_removed_changes_the_partition"),
