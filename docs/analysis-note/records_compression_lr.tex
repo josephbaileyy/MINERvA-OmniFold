@@ -64,3 +64,100 @@ Its distinct algorithmic construction complements earlier unbinned profiled unfo
 \subsection{Gradient-boosted trees in unbinned unfolding (from Part 2, sec:method-config)}
 % From sec_method.tex @1ad08b466; literature context
 Ref.~\cite{Milton:2025tools} demonstrates their effectiveness for unbinned unfolding with few high-level features, complementing deep models for low-level event representations.
+
+\subsection{MINERvA's published-covariance description (from App. A, sec:minerva)}
+% From app_statmethods.tex:235 @143f4fc97; context a reader does not need to interpret a result
+% Framing added in the records (not moved text).
+\noindent\emph{(``Below'' points to the note's MAT paragraph of \S\ref{sec:minerva}, which states the CV-centered pair formula.)}
+\paragraph{Ruterbories 2021, Section V.} The paper evaluates three uncertainty categories (flux, detector response and the neutrino-interaction model) by ``re-extracting the cross section using modified simulations'', i.e.\ the universe method, and gives no covariance formula. It reports a flux uncertainty below $4\%$ across most of phase space as a result of the $\nu$-$e$-scattering constraint (Valencia, arXiv:1906.00111); a $1.4\%$ target-nucleon normalization; an in-situ test-beam hadron response with per-particle GEANT inelastic variations; and a $1\%$ muon energy scale constrained by the low-recoil fit of Bashyal (JINST 16 P08068). It states that \emph{``the fit causes the flux and muon energy scale uncertainties to be correlated and that correlation is propagated to the final result''}; this is the only correlation between bands that the paper specifies. The only covariance in its equations is $V$ in the model-test $\chi^{2}$ (Eq.~1, ``the measurement covariance matrix''), with $205$ degrees of freedom (Table I); the paper also gives a log-normal $\chi^{2}$ variant, motivated by the highly correlated flux normalization (Peelle's Pertinent Puzzle). The paper itself gives no per-band covariance construction, no $\pm1\sigma$ pair formula and no band-independence or block-sum statement. MAT's code supplies the per-band construction and the independent band sum, but no separate pair formula (below). Nor does it state the rank, condition number and regularization of $V$, or any bootstrap or coverage validation (it uses D'Agostini iterative unfolding).
+
+\subsection{Upstream references of the band amplitudes (from App. A, sec:minerva)}
+% From app_statmethods.tex:243 @143f4fc97; reference list
+\paragraph{Upstream references that set each band's $\pm1\sigma$ amplitude.}
+\begin{itemize}[nosep]
+  \item Flux / PPFX (100 universes), Aliaga, PRD 94 092005 (2016), arXiv:1607.00704;
+  \item $\nu$-$e$ flux constraint ($<4\%$), Valencia, PRD 100 092001 (2019), arXiv:1906.00111;
+  \item muon-E scale $\leftrightarrow$ flux fit, Bashyal, JINST 16 (2021) P08068;
+  \item test-beam / GEANT hadron response, Aliaga, NIM A 789 28 (2015), arXiv:1501.06431;
+  \item GENIE reweighting parameters, Andreopoulos, NIM A 614 87 (2010), and the GENIE manual arXiv:1510.05494;
+  \item $1.4\%$ normalization (detector mass), Aliaga, NIM A 743 130 (2014), arXiv:1305.5199.
+\end{itemize}
+
+\subsection{Log-normal chi2 definitions compared on an earlier covariance (from App. A, sec:chisq)}
+% From app_statmethods.tex:335 @143f4fc97; history of an earlier covariance
+% Framing added in the records (not moved text); the J3/J4 comment that the moved "comment below" names stays in app_statmethods.tex.
+\noindent\emph{(``The definition above'' is the note's log-normal definition in \S\ref{sec:chisq}.)}
+ An independent recomputation compared five definitions on an earlier covariance, before the refined estimator was adopted. Only the definition above reproduced the value then quoted. The other four gave $1.197$ (our covariance scaled by our own values), $0.958$ (both scaled by ours), $0.963$ (scaled by the geometric mean) and $1.015$ ($\ln(1+\mathbf{C}/(x_{i}x_{j}))$ in place of the ratio). The quoted $\chiCombined$ and $\chiCombinedLog$ have no independent recomputation: they are the production run's own outputs. Its checks confirm that the covariance's reported cells are the paper's and that the plotted projections equal the budget's, and neither recomputes these values. Adding the OmniFold error budget lowers the summed-covariance distance from $\chiPaper$ to $\chiCombined$ per bin. % G2R no-recompute sentence (the director, 2026-11-15): RE-2-shapes run 2 has no independent chi2 recompute (cov2d, 2026-11-15); its check_rebuild (g2r/logs/check_rebuild.log, 5/5) checks the chi2 files' cell identity (chi2_Q_std.txt: 'cell identity OK: ... hReportedCells equals the paper StatOnly set') and fig6/7 against budget_Q. The five-definition recompute is the Stage F rebuild's, on its Q (comment below).
+
+\subsection{Edge-bin sensitivity table (from App. A, sec:chisq)}
+% From app_statmethods.tex:369 @143f4fc97; table of a robustness check of the exact-split cross-check
+% (\texttt{compare\_to\_paper\_fullcov.py})
+\begin{center}
+\begin{tabular}{@{}rrrrr@{}}
+\toprule
+$\pPar \ge$ (GeV/c) & $N_{\text{bins}}$ & $\chi^{2}$ & $\chi^{2}/\mathrm{ndf}$ & median ratio \\
+\midrule
+1.5 & 205 & 750.49 & 3.661 & 1.0064 \\
+2.0 & 196 & 685.36 & 3.497 & 1.0059 \\
+2.5 & 186 & 545.87 & 2.935 & 1.0059 \\
+3.0 & 175 & 474.84 & 2.713 & 1.0059 \\
+3.5 & 163 & 452.95 & 2.779 & 1.0073 \\
+4.0 & 151 & 428.72 & 2.839 & 1.0068 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Regularization scans on an earlier covariance (from App. A, sec:rank)}
+% From app_statmethods.tex:465 @143f4fc97; table of an earlier covariance and the exact-split cross-check
+% NR: no committed producer of this scan (rebuild REPORT §6); kept as a labelled historical diagnostic.
+% J3/J4 provisional (DECISION-20261018, packet C7: kept, labelled historical).
+\begin{center}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}lll@{}}
+\toprule
+Method & Setting & Result \\
+\midrule
+Eigenvalue truncation & $\lambda/\lambda_{\max} > \{10^{-3},10^{-4},10^{-5}\}$ &
+  rank $\{19,49,82\}$; $\chi^{2}/205 = \{0.13,1.12,3.08\}$ \\
+Ridge $\mathbf{C}+\varepsilon\lambda_{\max}\mathbf{I}$ & $\varepsilon=\{10^{-3},10^{-4},10^{-5}\}$ &
+  $\chi^{2}/205 = \{0.35,1.38,4.30\}$ \\
+Diagonal-target shrinkage & $\lambda=0.05$ &
+  rank $178\to204$, cond $1.3\times10^{11}$, $\chi^{2}/205 = 3.29$ \\
+\bottomrule
+\end{tabular}}
+\end{center}
+
+\subsection{Multinomial to independent Poisson bootstrap limit (from App. A, app:poisson)}
+% From app_statmethods.tex:126 @143f4fc97; derivation
+Drawing $N$ events with replacement from an $N$-event sample gives counts $(n_{1},\dots,n_{N}) \sim \mathrm{Multinomial}(N,\mathbf{p})$ with uniform $p_{i}=1/N$ and $\sum_{i}n_{i}=N$. Each marginal $n_{i}\sim\mathrm{Binomial}(N,1/N)$ has mean $1$, variance $(N-1)/N \to 1$, and converges to $\mathrm{Poisson}(1)$ as $N$ grows (many trials, small success probability, fixed expected count). The $\sum n_{i}=N$ constraint induces $\mathcal{O}(1/N)$ correlations that vanish at large $N$. The multinomial is an independent Poisson process conditioned on $N$ counts. Removing that constraint gives independent Poisson(1) variables (Poissonization). One Poisson(1) factor is drawn per event. For $N \gtrsim 10^{6}$, our regime, the relative total-count error is $\mathcal{O}(1/\sqrt{N})$, far smaller than the per-bin Poisson variance.
+
+\subsection{Sources of the 2D comparison numbers (from App. A, sec:assemble)}
+% From app_statmethods.tex:536 @143f4fc97; an index of numbers stated in their own sections
+\subsubsection*{Sources of the 2D comparison numbers}
+
+\begin{center}
+\begin{tabularx}{\textwidth}{@{}>{\RaggedRight\arraybackslash}p{0.27\textwidth}l>{\RaggedRight\arraybackslash}X@{}}
+\toprule
+Number & Section & Procedure \\
+\midrule
+$\chi^{2}/\mathrm{ndf} = \chiCombined$ & \S\ref{sec:chisq} &
+  Eq.~\eqref{eq:chi2} with $\mathbf{C}^{\paper}+\mathbf{C}^{\syst}+\mathbf{C}^{\stat}+\mathbf{C}^{\ML}+\mathbf{C}^{\mathrm{PL}}$ \\
+$\mathbf{C}^{\syst}$ & \S\ref{sec:universes} &
+  Universe sweep ($187$ universes; $43$ bands in the band sum), MAT-conformant Eq.~\eqref{eq:matcov} $+$ norm \\
+$\mathbf{C}^{\stat}$ & \S\ref{sec:bootstrap} &
+  Poisson bootstrap, $300$ replicas, seed $42$, three streams, Eq.~\eqref{eq:bootcov} \\
+$\mathbf{C}^{\ML}$ & \S\ref{sec:seedscan} & LightGBM training-seed settings, $5\times20$ replicas \\
+$\mathbf{C}^{\mathrm{PL}}$ & \S\ref{sec:uq-combine} & Run-period block, three run periods \\
+$\mathbf{C}^{\paper}$ & \S\ref{sec:minerva} & Paper's published \texttt{TotalCovariance} \\
+Pull standard deviation $= 0.389$ & \S\ref{sec:pull} & % G2R: RE-2-shapes run 2 (C_new), g2r-integration/ledger.tsv g2r-audit-pull-rms-b; a source comment citing RE-2 part C for this value gives the earlier value
+  Per-bin standardized residual on combined $\mathbf{C}$ \\
+Combined median rel.\ $= 6.463\%$ & \S\ref{sec:combine} & % G2R: RE-2-shapes run 2 (C_new), g2r-integration/ledger.tsv g2r-audit-q-median; a source comment citing RE-2 part C for this value gives the earlier value
+  $\sqrt{\diag\mathbf{C}^{\tot}}/\mathbf{X}^{\CV}$, $\mathbf{X}^{\CV}$ the LightGBM seed-42 central value \\
+Fixed-truth $C_2=\covTwoDCTwo$ (nominal $0.954$) & \S\ref{sec:coverage} &
+  Earlier statistical band vs.\ fixed truth, $N_{\text{toy}}=\covTwoDNtoy$: fails \\
+% J3/J4 provisional (DECISION-20261018, packet W3: D2): the two coverage rows score earlier bands, not Q's statistical block (not recomputed, NR).
+Same-ensemble $|r|\leq1$: $68.71\%$ & \S\ref{sec:pull-diagnostic} &
+  Pull diagnostic, $N_{\text{toy}}=200$ \\
+\bottomrule
+\end{tabularx}
+\end{center}
