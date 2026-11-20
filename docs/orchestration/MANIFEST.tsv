@@ -4193,6 +4193,7 @@ docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/runs/f
 docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/runs/f4fix/arm1/capture/f4fix/generators_vs_unfolded_band_central.png.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/runs/f4fix/arm1/capture/f4fix/generators_vs_unfolded_band_central.png.npz	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/runs/f4fix/arm1/capture/f4fix/generators_vs_unfolded_band_central.png.texts	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/runs/fig67-takeaway/fig67_takeaway.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/runs/gbdt/CHECKS.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/runs/gbdt/arm0/capture/gbdt/gbdt_bias_spread.pdf.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/runs/gbdt/arm0/capture/gbdt/gbdt_bias_spread.pdf.npz	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
@@ -4265,8 +4266,10 @@ docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/runs/m
 docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/runs/markers/capture/arm0/MEFHC_5iter_xsec_proj_pz.pdf.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/runs/markers/capture/arm0/MEFHC_5iter_xsec_proj_pz.pdf.texts	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/runs/markers/capture/arm1/MEFHC_5iter_xsec_paper_pt_slices.pdf.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/runs/markers/capture/arm1/MEFHC_5iter_xsec_paper_pt_slices.pdf.npz	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/runs/markers/capture/arm1/MEFHC_5iter_xsec_paper_pt_slices.pdf.texts	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/runs/markers/capture/arm1/MEFHC_5iter_xsec_paper_pz_slices.pdf.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/runs/markers/capture/arm1/MEFHC_5iter_xsec_paper_pz_slices.pdf.npz	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/runs/markers/capture/arm1/MEFHC_5iter_xsec_paper_pz_slices.pdf.texts	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/runs/markers/capture/arm1/MEFHC_5iter_xsec_proj_pt.pdf.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/runs/markers/capture/arm1/MEFHC_5iter_xsec_proj_pt.pdf.texts	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
@@ -4317,6 +4320,7 @@ docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/ticks.
 docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/tools/arms_family4.sh	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/tools/arms_layout.sh	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/tools/check_compose.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/tools/check_fig67_takeaway.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/tools/check_slices_markers.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/tools/check_tier2.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/tools/compose_family4.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
