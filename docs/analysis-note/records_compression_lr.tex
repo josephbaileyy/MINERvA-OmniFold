@@ -630,7 +630,7 @@ The reported-bin count $n_{\text{reported}}$ does not set it.
 
 \subsection{From App. A, appstatmethodsnd.tex: the paragraph beginning ``For an N-D covariance, mathrmndf is''}
 % From app_statmethods_nd.tex:12 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``Where an N-D $\chi^{2}$ is quoted, it must state five things. They are (i) the inverse actually used, including the pseudo-inverse cutoff \texttt{rcond} (singular values below this fraction of the largest are discarded) or the truncation rank, (ii) the retained rank, as $\mathrm{ndf}$, and (iii) the rank-truncation scan of that covariance.''\par
+In the paragraph as the note printed it, this text followed: ``Where an N-D $\chi^{2}$ is quoted, it must state five things. They are (i) the inverse actually used, including the pseudo-inverse cutoff \texttt{rcond} (singular values below this fraction of the largest are discarded) or the truncation rank, (ii) the retained rank, as $\mathrm{ndf}$, and (iii) the rank-truncation scan of that covariance.''\par
 That scan is expected to lack the smoothness that supports the 2D choice in \S\ref{sec:chisq}.
 
 \subsection{From App. A, appstatmethodsnd.tex: the paragraph beginning ``Item (v) records the ensemble size''}
@@ -734,3 +734,12 @@ The argument uses neither independence between tests nor the order of the Holm s
 % From app_statmethods_nd.tex:142 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
 In the note, this text follows: ``The largest ratio $R(c)/c$, at $j=1$, lies in $[0.8892,0.8902]$.''\par
 It decreases to $[0.5138,0.5148]$ at $j=10$.
+
+\subsection{From Part 2, secmethod.tex: the paragraph beginning ``paragraphTraining details. Each classifier is trained''}
+% From sec_method.tex:17 @fdd67e926; training detail (DECISION-20261120a records route; the director 2026-11-20)
+The two classes keep their physical weights, with no class balancing and no renormalization between iterations. The learned ratio $p/(1-p)$ therefore carries the normalization, with $p$ restricted to $[10^{-6},1-10^{-6}]$.
+
+\subsection{From Part 2, secmethod.tex: the paragraph beginning ``paragraphTraining details. Each classifier is trained''}
+% From sec_method.tex:17 @fdd67e926; training detail (DECISION-20261120a records route; the director 2026-11-20)
+In the note, this text follows: ``In the refined configurations, a classifier separating positive from negative weights, trained with $|w|$, gives each event the weight $|w|\max(0,2g-1)$.''\par
+For the \estMultiD{}, the per-event Kish effective sample size and weight tails have been computed on the sixteen reported cells~\cite{UnfoldedWeightsESS2026}. They describe the unfolded simulated-event weights and are not an uncertainty, coverage or validity statement.
