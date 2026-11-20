@@ -137,3 +137,23 @@ In NuWro's hydrogen generation, four chunks aborted and were rerun on alternate 
 % 45 MeV, median p_T imbalance 31 MeV; non-DIS hydrogen events balance exactly; cause not identified.
 % ADDENDUM-9 :29-31 ("Carbon cannot be checked this way"; "possibly on the frozen GiBUU product").
 % Search: do not conserve energy; energy non-conservation; production_ID 34 (cause not identified) @ ddf16f10
+
+% Moved verbatim from the note's App. B (app_negweight.tex) in the compression (B1; move-manifest-je JE-13).
+\subsection{Background-subtraction detail moved from the note}
+
+\paragraph{Binned limit: the per-bin derivation (from App. B, sec:negweight-binned).} A step-1 classifier restricted to functions piecewise-constant on reconstructed analysis bins $\{b\}$ gives the population-level binned limit of the OmniFold/Richardson--Lucy correspondence in Refs.~\cite{Andreassen:2019cjw,Andreassen:2021zzk}. Its output is a single $p$ per bin. With common support and unnormalized class weights, step~1 weighted cross-entropy separates into per-bin objectives
+\begin{equation}
+  \label{eq:negweight-Lb}
+  L_b(p) = -W_1\,\ln p - W_0\,\ln(1-p),
+\end{equation}
+where $W_0=S(b)>0$ is the integral of simulated class-0 density $S$ in bin $b$, and $W_1$ is the signed class-1 weight. Injecting background simulation at negative weight while keeping data at $+1$ gives $W_1=D(b)-B(b)$. Here $D(b)$ and $B(b)$ are the bin masses of $D$ and $B$, equivalently $N_{\mathrm{data}}(b)$ and $N_{\mathrm{bkg}}(b)$ in \S\ref{sec:negweight-estimator}.
+
+For $D(b)>B(b)$, objective~\eqref{eq:negweight-Lb} is strictly convex on $(0,1)$ with unique interior minimizer $p=W_1/(W_0+W_1)$, giving
+\begin{equation}
+  % \label{eq:negweight-rb} is defined in the note (App. B keeps the equation); this copy drops the line.
+  r(b) = \frac{p}{1-p} = \frac{W_1}{W_0} = \frac{D(b)-B(b)}{S(b)}.
+\end{equation}
+
+\paragraph{Binned limit: the divergence for D(b)<B(b) (from App. B).} The reduction fails where $D(b)<B(b)$. With $W_1<0$, $L_b(p)=|W_1|\,\ln p-W_0\,\ln(1-p)$ tends to $-\infty$ as $p\to0^+$ and is unbounded below, with no minimizer.
+
+
