@@ -380,3 +380,23 @@ Splitting background simulation into independent injection and subtraction halve
 
 The lateral-band component from re-selected event loops is built, with five bands and ten endpoint unfolds whose distinct checksums are listed in the record of the five-axis covariance of the \resFiveAxis{}.
 
+% Moved verbatim from app_devhistory.tex @ cb76b90d8 in the compression under DECISION-20261120a (qualifier and procedure detail
+% may move to the records with a pointer); move-manifest-je JE-17.
+\subsection{Development history (App.~E): detail moved from the note}
+
+\subsubsection{The completeness-divided two-dimensional statistical band}
+
+The undivided band is wider than the toy scatter (pull RMS 0.84, mean pull consistent with zero).
+
+The per-bin pull RMS falls as that component's share of the band's variance rises, which corresponds to a data-statistics part about $1.6\times$ wider in $\sigma$ than the toys produce. Its decision rule was recorded before it ran. The toys would scatter too little because their pseudo-data are built on the training MC events. The diagnostic is neither an independent-population coverage test nor a calibration on real data.
+
+\subsubsection{The sixteen-cell run-period block}
+
+The first is one existing component, within two standard deviations of its own size, explaining at least half of both period-group patterns. The second is a replica spread of the block's median per-cell width above half that width. The third is, in the median replica, less than half of the replica-built block's variance lying in the observed block's plane.
+
+\subsubsection{Lost pseudo-experiments of the generator tests}
+
+Had every interrupted draw exceeded the observed statistic, no test would have been rejected ($p$ \jtWorstIntLo--\jtWorstIntHi). Among completed draws, runtime is not associated with the statistic ($|\rho|\le\jtRuntimeRho$), which supports but does not certify the decisions.
+
+A determinism check fixed before the rerun (16 of 16 completed seeds rerun bitwise identically) shows that each recovered draw is the lost draw, so every submitted draw has been observed. The closest margin is 4.6 units of $T$ below the observed value of 868.6 (GENIE~2.12.10 + MEC shape, $\pm\jtMoneKappaRobust\,\delta_{\mathrm{fine}}$ variant). The next is 49.8 (GENIE~2.12.10 shape, same variant). With complete batches the stopping rule, fixed before any production pseudo-experiment, would have stopped the Tune~v1, GENIE~2.12.10, GENIE~2.12.10 + MEC and GiBUU nulls one batch earlier ($B=1200$), with the same decisions.
+
