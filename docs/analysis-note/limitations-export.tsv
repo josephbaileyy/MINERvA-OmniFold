@@ -67,7 +67,7 @@ n65	sec_fived16.tex	One control check failed: the offset check, which compares t
 n66	sec_fived16.tex	show. MINERvA Tune~v1 is the simulation's prior, not an independent prediction.			register loc sec_fived16.tex:323 @87cee1c86; fuzzy 0.93
 n67	sec_fived16.tex	These are descriptive sensitivities, not alternative results			register loc sec_fived16.tex:381 @87cee1c86; literal
 n68	sec_joint.tex	Whether it represents the physical generator prediction depends on condition			register loc sec_joint.tex:19 @87cee1c86; literal
-n69	sec_joint.tex	seeds are disjoint from those of the calibration, but it reuses the same simulated events and omitted the MINOS-efficiency band			register loc sec_joint.tex:37 @87cee1c86; literal
+n69	sec_joint.tex	seeds are disjoint from those of the calibration, but it reuses the same simulated events and omitted the MINOS-efficiency band	app_compression_records.tex	seeds are disjoint from those of the calibration, but it reuses the same simulated events and omitted the MINOS-efficiency band	register loc sec_joint.tex:37 @87cee1c86; literal; records 2026-11-20: moved with its sentence to the records under DECISION-20261120a (JE-15.099) [pointer: The construction of $V$ from its pilot, and the rule that sets the coarse edges, are in the records document.]
 n70	sec_joint.tex	reviewers had seen descriptive per-cell residuals of the data before it was fixed			register loc sec_joint.tex:126 @87cee1c86; literal
 n71	sec_joint.tex	The fine-grid convergence check has not shown convergence			register loc sec_joint.tex:149 @87cee1c86; literal
 n72	sec_joint.tex	for NuWro), but it is at most 0.068 null standard deviations			register loc sec_joint.tex:157 @87cee1c86; literal

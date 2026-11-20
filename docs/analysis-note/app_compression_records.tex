@@ -247,7 +247,7 @@ Each inner edge is the fine-grid edge nearest a tertile of the weighted simulate
 
 The metric defines how hypotheses are compared, and so it affects power.
 
-The prediction variance is diagonal because each simulated event of a prediction falls in one cell. The diagonal of $V$ matches the calibration's null variances (median ratio 1.00). The shrinkage, of intensity 0.015, floors about 80 of the 109 nearly degenerate correlation directions. At the Tune~v1 null the statistic therefore has a whitened trace of about 47 rather than 109. Since $V$ was fixed before the calibration, this affects power only (\S\ref{sec:joint5d-power}). The power at other shrinkage intensities has not been measured.
+The prediction variance is diagonal because each simulated event of a prediction falls in one cell. The pilot's seeds are disjoint from those of the calibration, but it reuses the same simulated events and omitted the MINOS-efficiency band. The diagonal of $V$ matches the calibration's null variances (median ratio 1.00). The shrinkage, of intensity 0.015, floors about 80 of the 109 nearly degenerate correlation directions. At the Tune~v1 null the statistic therefore has a whitened trace of about 47 rather than 109. Since $V$ was fixed before the calibration, this affects power only (\S\ref{sec:joint5d-power}). The power at other shrinkage intensities has not been measured.
 % Search: other shrinkage intensit; different lambda; shrinkage scan (M2-ARCHIVE-CHECKS.md:98-125 scans the trace only) @ 1a015eef
 
 \subsubsection{Calibration within the implemented simulation model}
