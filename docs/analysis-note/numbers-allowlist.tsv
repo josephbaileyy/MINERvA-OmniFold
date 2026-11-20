@@ -863,3 +863,12 @@ token	delta	owner	item	reason
 5	-8	director-helper-3	P6-1	P6-1: tab:validity replaces tab:what-is-measured and tab:result-status (H3-P6-01/02); values the two old tables both printed now print once (uqMedian 6.46, uqIntegral 4.76, 205 cells, the tier fractions 6 and 28 with their tier numbers 1 and 2); the estimator construction (5 iterations, seed 42) prints in tab:estimators-matrix, which the estimator macros name; C2 0.912 prints at sec:coverage; '16 coarse cells', '5 predictions' and 'all 10 simple hypotheses' now print as words
 6	-1	director-helper-3	P6-1	P6-1: tab:validity replaces tab:what-is-measured and tab:result-status (H3-P6-01/02); values the two old tables both printed now print once (uqMedian 6.46, uqIntegral 4.76, 205 cells, the tier fractions 6 and 28 with their tier numbers 1 and 2); the estimator construction (5 iterations, seed 42) prints in tab:estimators-matrix, which the estimator macros name; C2 0.912 prints at sec:coverage; '16 coarse cells', '5 predictions' and 'all 10 simple hypotheses' now print as words
 6.46	-1	director-helper-3	P6-1	P6-1: tab:validity replaces tab:what-is-measured and tab:result-status (H3-P6-01/02); values the two old tables both printed now print once (uqMedian 6.46, uqIntegral 4.76, 205 cells, the tier fractions 6 and 28 with their tier numbers 1 and 2); the estimator construction (5 iterations, seed 42) prints in tab:estimators-matrix, which the estimator macros name; C2 0.912 prints at sec:coverage; '16 coarse cells', '5 predictions' and 'all 10 simple hypotheses' now print as words
+05	+1	journal-editor	App. F reader paragraph	05:38, Grok's last read before the Claude-only period (f5b40f3b1's commit time; the director's facts)
+38	+1	journal-editor	App. F reader paragraph	05:38, as above
+19	+1	journal-editor	App. F reader paragraph	19 November 2026, the day of the period
+2026	+1	journal-editor	App. F reader paragraph	19 November 2026, as above
+17	+1	journal-editor	App. F reader paragraph	the 17 Grok rereads of retro-grok-20261119.tsv (sha256 81e19623...; 18 rows, the codex2 reader test excluded)
+20	+1	journal-editor	App. F reader paragraph	20:55, the reader rule's start (Joseph 20:44 via the director)
+55	+1	journal-editor	App. F reader paragraph	20:55, as above
+20261119	+1	journal-editor	App. F reader paragraph	the file name review-tools/retro-grok-20261119.tsv
+2019	+1	director	App. F merge (535d341f4)	page reflow: "ending in 2019" moved from p.5 to p.6; plain word count of 2019 equal in base and head (25); not a value
