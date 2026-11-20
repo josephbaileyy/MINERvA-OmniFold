@@ -4,7 +4,7 @@
 % Methods-paper sync fix round: aligned with paper_body.tex sec:central (descriptive central values; no mechanism). Register round n1 (R-N1): both are stated once, for this section too, at the sec:3d lead.
 See the records for the high-$\Eavail$ model checks (Ref.~\cite{NoteRecords2026}).
 
-GiBUU is low throughout the $\Eavail$ tail. Its $W$-integrated five-dimensional data/generator ratio is $1.59$ at $\Eavail\in[0.8,1.5)$ and $1.37$ at $[1.5,3.0)$, with the \estPurity{}, the LightGBM unfolding with purity-based subtraction (\S\ref{sec:method-config}, Table~\ref{tab:config-key}); its sample stops at $E_\nu\approx\SI{20}{GeV}$ (\S\ref{sec:eavailw-band}). See the records for the estimator-specific high-$\Eavail$ comparisons (Ref.~\cite{NoteRecords2026}).
+GiBUU is low throughout the $\Eavail$ tail. Its $W$-integrated five-dimensional data/generator ratio is $1.59$ at $\Eavail\in[0.8,1.5)$ and $1.37$ at $[1.5,3.0)$, with the \estPurity{}, the LightGBM unfolding with purity-based subtraction (\S\ref{sec:method-config}, Table~\ref{tab:config-key}); its sample stops at $E_\nu\approx\SI{20}{GeV}$ (\S\ref{sec:eavailw-generators}). See the records for the estimator-specific high-$\Eavail$ comparisons (Ref.~\cite{NoteRecords2026}).
 
 Adding the hadronic invariant mass $W$ as the fifth OmniFold axis maps where in $W$ the high-$\Eavail$ excess lies. See the records for validation and uncertainty of this projection (Ref.~\cite{NoteRecords2026}).
 
@@ -30,7 +30,7 @@ The five-dimensional unfolding of the \estPurity{} in $(\pT,\pPar,\Eavail,q_{3},
 Table~\ref{tab:generators-impl} lists the generator predictions compared in this note and tested in \S\ref{sec:joint5d}. See the records for the prediction binning convention (Ref.~\cite{NoteRecords2026}).
 
 \begin{table}[htbp]
-  \caption[Generator predictions and domains]{The generator predictions differ in target and neutrino-energy coverage. All are per nucleon of the stated target and use the same fine-grid-to-cell map (\S\ref{sec:eavailw-generators}).}
+  \caption[Generator predictions and domains]{The generator predictions differ in target and neutrino-energy coverage. All are per nucleon of the stated target and use the same fine-grid-to-cell map (described in the records document).}
   \label{tab:generators-impl}
   \centering\small
   \begin{tabular}{@{}llll@{}}
@@ -95,7 +95,7 @@ At $1.4\le W<\SI{1.8}{GeV}$, instead, both GENIE predictions lie \SIrange{\genie
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{eavailW_band}
-  \caption[Generator projections, central values only]{Central values only: both GENIE predictions lie above data at $1.4\le W<\SI{1.8}{GeV}$ (\S\ref{sec:eavailw-band}). No uncertainty is drawn. No compatibility metric based on the five-axis covariance of the \resFiveAxis{} is quoted (\S\ref{sec:eavailw-band}). Shown are projections of the unfolded $(\Eavail,W)$ cross section onto $\Eavail$ (left) and $W$ (right), with the predictions of four generators (GENIE~CV, GENIE$+$MEC, NuWro, GiBUU; GENIE and NuWro flux-corrected, \S\ref{sec:3d-models}).}
+  \caption[Generator projections, central values only]{Central values only: both GENIE predictions lie above data at $1.4\le W<\SI{1.8}{GeV}$ (\S\ref{sec:eavailw-band}). No uncertainty is drawn. No compatibility metric based on the five-axis covariance of the \resFiveAxis{} is quoted (Table~\ref{tab:validity}). Shown are projections of the unfolded $(\Eavail,W)$ cross section onto $\Eavail$ (left) and $W$ (right), with the predictions of four generators (GENIE~CV, GENIE$+$MEC, NuWro, GiBUU; GENIE and NuWro flux-corrected, \S\ref{sec:3d-models}).}
   \label{fig:eavailWband}
 \end{figure}
 

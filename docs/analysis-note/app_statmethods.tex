@@ -2,7 +2,7 @@
 \label{app:statmethods}
 \label{app:methods}
 
-The N-D declarations, scalar-5D reductions, extended-fiducial fractions and unfolded-event inference are in App.~\ref{app:statmethods-nd}; the 2D fixed-truth coverage test is in \S\ref{sec:coverage} and the same-ensemble pull diagnostic in \S\ref{sec:pull-diagnostic}. See Ref.~\cite{NoteRecords2026} for the 2D methods overview.
+The N-D declarations, scalar-5D reductions and unfolded-event inference are in App.~\ref{app:statmethods-nd}; the 2D fixed-truth coverage test is in \S\ref{sec:coverage} and the same-ensemble pull diagnostic in \S\ref{sec:pull-diagnostic}. See Ref.~\cite{NoteRecords2026} for the 2D methods overview.
 % J3/J4 provisional (DECISION-20261018, packet W3: D5 in sec:uq-combine): the run-period block is not among the estimators discussed in this sentence.
 
 \subsection{Numerical conventions: inverting a covariance (Cholesky, ridge jitter, pseudo-inverse)}
@@ -130,7 +130,7 @@ The independent-Poisson bootstrap is the large-$N$ limit of drawing $N$ events w
 The universe sweep used by the quoted budget has 187 universes across 44 bands, dominated by the $100$-universe PPFX flux band (hadron-production sampling). Almost all other bands are $\pm1\sigma$ pairs ($N_{u}=2$). See Ref.~\cite{NoteRecords2026} for band selection.
 % stageC/production/DESIGN.md §S5 universe row (S3 laterals; Rvp1pi dropped); J3/J4 provisional (DECISION-20261018, packet W3: D10).
 
-MINERvA's MAT framework (\texttt{PlotUtils/\allowbreak MnvVertErrorBand::\allowbreak CalcCovMx}, \S\ref{sec:minerva}) uses the mean-centered, biased sample covariance of the $205$-vectors $\mathbf{X}^{(B,u)}$, referenced to the universe mean with normalization $1/N_{u}$,
+MINERvA's MAT framework (\texttt{PlotUtils/\allowbreak MnvVertErrorBand::\allowbreak CalcCovMx}; described in the records document) uses the mean-centered, biased sample covariance of the $205$-vectors $\mathbf{X}^{(B,u)}$, referenced to the universe mean with normalization $1/N_{u}$,
 \begin{equation}
 \boxed{\;
 \mathbf{C}^{B}
@@ -339,7 +339,7 @@ and the published IBU-era and OmniFold results share MINERvA data and flux, dete
 
 \emph{(ii) Near-one realizations are not evidence of correct uncertainties.} One realization near $1$, such as the quoted $\chiCombined$, is not evidence of correct uncertainties. See Ref.~\cite{NoteRecords2026} for the calibrated reference spread.
 
-\emph{(iii) It does not address coverage} (\S\ref{sec:uq-2d-scope}, \S\ref{sec:coverage}). See Ref.~\cite{NoteRecords2026} for comparison qualifiers.
+\emph{(iii) It does not address coverage} (\S\ref{sec:uq-2d-scope}, \S\ref{sec:coverage}). See Ref.~\cite{NoteRecords2026} for the comparison's shared learner and seed, its descriptive reading and the definition-dependence of the log-normal distance.
 % J3/J4 provisional (DECISION-20261018, packet W3: D2, D10 KI-88). The tested band is VL162 (sec:coverage); Q's statistical block S1 is untested (KI 85, J5).
 % 0.987 against 0.964 (chi2_Q_lognormal.txt, chi2_Q_std.txt); alternatives 0.958-1.197, rebuild REPORT §5.
 % Director 2026-10-18: the "paper's Table I" attribution removed here as at the worked example (phase-2 review m8).
@@ -437,13 +437,13 @@ counting eigenvalues of $(\mathbf{C}+\mathbf{C}\T)/2$ above $10^{-12}\lambda_{\m
 The inverse of $\mathbf{C}^{\ours}$ remains regularizer-dependent, so pulls and the scan lead the reporting. $\chi^{2}_{\ours}$ uses the truncated-spectral pseudo-inverse (retaining $\lambda>10^{-10}\lambda_{\max}$), the convention of the earlier 3D generator scan over all $1431$ reported bins.
 
 \paragraph{Regularization scans (earlier covariance; all cutoff-dependent).} For the exact-split cross-check and an earlier $\mathbf{C}^{\ours}$ over the $205$ reported bins, neither recomputed for the quoted central value and covariance, no regularizer gives a stable single number (table in the records document, Ref.~\cite{NoteRecords2026}).
-See the records for further detail (Ref.~\cite{NoteRecords2026}).
+See the records for how the earlier 2D quadratic distance depends on the regularizer and the cutoff (Ref.~\cite{NoteRecords2026}).
 
-\paragraph{Bootstrap/paper-stat double-count.} The combined distance (\S\ref{sec:chisq}) adds $\mathbf{C}^{\boot}$ to \texttt{TotalCov}, double-counting the paper's included statistical block. Subtracting that block uses $\texttt{TotalCov}-\texttt{StatOnlyCov}$ as baseline before our additions, changing $\chi^{2}/\mathrm{ndf}$ $\chiCombined\to \chiCombinedSubStat$. The double-counted $\chiCombined$ is kept as the combined distance, a well-defined measure of what OmniFold's uncertainty estimate adds on top of the published $V$; the subtraction result is a secondary diagnostic. See Ref.~\cite{NoteRecords2026} for subtraction diagnostics.
+\paragraph{Bootstrap/paper-stat double-count.} The combined distance (\S\ref{sec:chisq}) adds $\mathbf{C}^{\boot}$ to \texttt{TotalCov}, double-counting the paper's included statistical block. Subtracting that block uses $\texttt{TotalCov}-\texttt{StatOnlyCov}$ as baseline before our additions, changing $\chi^{2}/\mathrm{ndf}$ $\chiCombined\to \chiCombinedSubStat$. The double-counted $\chiCombined$ is kept as the combined distance, a well-defined measure of what OmniFold's uncertainty estimate adds on top of the published $V$; the subtraction result is a secondary diagnostic. See Ref.~\cite{NoteRecords2026} for the bootstrap scale when the published statistical block is subtracted.
 % (option \texttt{-{}-subtract-stat})
 % rebuild/outputs/outA/budget_Q.json.gz stat.sqrt_trace, paper_ratios; \chiCombinedSubStat from chi2_Q_substat.txt.
 
-\paragraph{Remaining refinements.} The known band-independence exception, the Bashyal flux\,$\leftrightarrow$\,Muon\_Energy\_MINOS joint block, has been rederived ($\rho=\rhoFluxMuon$). It preserves systematic rank because its directions already lie in the universe covariance's span (\S\ref{sec:uq-universes}). The quoted 2D covariance therefore remains the block sum, with the cross term as a diagnostic. See Ref.~\cite{NoteRecords2026} for inversion history.
+\paragraph{Remaining refinements.} The known band-independence exception, the Bashyal flux\,$\leftrightarrow$\,Muon\_Energy\_MINOS joint block, has been rederived ($\rho=\rhoFluxMuon$). It preserves systematic rank because its directions already lie in the universe covariance's span. The quoted 2D covariance therefore remains the block sum, with the cross term as a diagnostic. See Ref.~\cite{NoteRecords2026} for inversion history.
 % J3/J4 provisional (DECISION-20261018, packet W3: D0, D5): the block sum now includes the run-period block.
 % Rederived block: \texttt{uq/flux\_muonE\_cross.root}.
 % (2026-08-02, verbal)
@@ -456,7 +456,7 @@ See the records for further detail (Ref.~\cite{NoteRecords2026}).
 \subsection{Closure tests: detecting bias}
 \label{sec:closure}
 
-Each of three tests injects a known MC deformation, unfolds, and compares the median per-bin $|\text{residual}|$ of the recovered answer with a threshold. The thresholds lie comfortably above the $0.166\%$ ML floor of the earlier ten-seed scan, which was in force when the tests were graded (Ref.~\cite{NoteRecords2026}, superseded values: retired material). All use playlist-1A LightGBM 5-iteration unfolds. Thresholds and results are in \S\ref{sec:closure-map}; procedures and otherwise unreported values follow.
+Each of three tests injects a known MC deformation, unfolds, and compares the median per-bin $|\text{residual}|$ of the recovered answer with a threshold. The thresholds lie comfortably above the $0.166\%$ ML floor of the earlier ten-seed scan, which was in force when the tests were graded (Ref.~\cite{NoteRecords2026}, superseded values: retired material). All use playlist-1A LightGBM 5-iteration unfolds. Thresholds and results are in Table~\ref{tab:test-index} (\S\ref{sec:closure-map}); procedures and otherwise unreported values follow.
 % PHASE2 Q6: the floor in force at grading; the quoted training-seed block is C08 (0.057 %).
 
 \subsubsection{Truth-reweight closure}
@@ -496,7 +496,7 @@ Across $205$ reported bins, combined OmniFold $+$ paper uncertainties give $\chi
 
 \begin{enumerate}[nosep]
   \item Pulls and $\chi^{2}$ approximate bins as Gaussian: weighted sums of $\mathcal{O}(10^{4})$ MC events justify the central-limit approximation.
-\item \textbf{Independence of error sources.} Eq.~\eqref{eq:blocksum} requires no cross-correlations between ML, statistical, systematic and run-period blocks. See Ref.~\cite{NoteRecords2026} for shared-seed effects. The run-period block is built from separate unfolds of the same data, and its noise share is not subtracted (\S\ref{sec:uq-combine}).
+\item \textbf{Independence of error sources.} Eq.~\eqref{eq:blocksum} requires no cross-correlations between ML, statistical, systematic and run-period blocks. See Ref.~\cite{NoteRecords2026} for shared-seed effects. The run-period block is built from separate unfolds of the same data, and its noise share is not subtracted (the records document's two-dimensional limitations).
         % Review m7: playlist-term/DESIGN.md §3 (noise share not subtracted). No stat x C_PL cross-term is
         % measured or bounded. J3/J4 provisional (DECISION-20261018, packet W3: D5).
         % J3/J4 provisional (DECISION-20261018, packet W3: D11). stageC/production/DESIGN.md §S5 c08 row; X02/X03 reported, not added (DECISION-20261017 §2).
