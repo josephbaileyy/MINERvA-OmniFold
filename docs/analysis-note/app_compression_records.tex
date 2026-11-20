@@ -292,7 +292,7 @@ Negative-weight injection is the continuous version of the purity weight recomme
 
 A bin-constant rescaling reproduces $D(x)-B(x)$ inside bin $b$ only when $B/D$ is constant there. Otherwise, $D(x)\,(1-B_{b}/D_{b})$ and $D(x)-B(x)$ share a bin integral but differ within the bin. The injected background and data occupy the same reconstructed fiducial window, giving identical support.
 
-On the exact-split backend in this comparison, the clipped refinement removes the instability that raw signed weights cause there.
+On the exact-split backend in the backend comparison of App.~\ref{app:negweight} (\S\ref{sec:negweight-estimator}), the clipped refinement removes the instability that raw signed weights cause there.
 
 A finite regularized classifier's behavior depends on the estimator. Stay-Positive remains well behaved but can retain negative refined weights where the target density is genuinely negative. The zero clip used here is therefore an additional analysis prescription chosen to match the physical purity floor. Ref.~\cite{Nachman:2025staypositive} documents the same reweighting-loss divergence for negative targets; signed binary cross-entropy has an analogous pathology for sWeights~\cite{GlazierTyson:2024}.
 
@@ -344,7 +344,7 @@ The five-dimensional pseudo-experiments with both background treatments, and the
 % docs/orchestration/OUTCOME-20260926-s5e-oi192-diagnosis-and-candidate.md; VL153, VL154.
 % Heading date (2026-09-26) removed. Moved to the pointer above: "The higher-capacity refinement
 % is not adopted: the estimator it feeds failed a stability test on the data (\S\ref{sec:validation})."
-\paragraph{Background treatment and choice of covariance.} The choice of background treatment is independent of the choice of covariance, and this appendix selects no five-dimensional covariance for use. The lateral-band component from re-selected event loops is built, with five bands and ten endpoint unfolds whose distinct checksums are listed in the record of the five-axis covariance of the \resFiveAxis{}. The status of that five-axis covariance and the scope of its use are stated in \S\ref{sec:eavailw-adopted}. The choice of background treatment settles one of the conditions for using a component; every other condition still applies.
+\paragraph{Background treatment and choice of covariance.} The choice of background treatment is independent of the choice of covariance, and App.~\ref{app:negweight} selects no five-dimensional covariance for use. The lateral-band component from re-selected event loops is built, with five bands and ten endpoint unfolds whose distinct checksums are listed in the record of the five-axis covariance of the \resFiveAxis{}. The status of that five-axis covariance and the scope of its use are stated in \S\ref{sec:eavailw-adopted}. The choice of background treatment settles one of the conditions for using a component; every other condition still applies.
 % Plain status of the use of the five-axis covariance as printed at sec:eavailw-adopted (sec_5d.tex): it does not meet
 % its specification's acceptance criteria, and its use covers only this file and its projection.
 % Note consolidation (DECISION-20261027 item 1, cost-list R05): the status and the use's scope are no longer restated here; the sentence points to their single home, sec:eavailw-adopted, where the four measurements also print. "Neither fact" now refers to that status and that scope.
