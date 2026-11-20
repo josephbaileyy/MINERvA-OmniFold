@@ -161,3 +161,19 @@ Same-ensemble $|r|\leq1$: $68.71\%$ & \S\ref{sec:pull-diagnostic} &
 \bottomrule
 \end{tabularx}
 \end{center}
+
+\subsection{Familywise error: the crossing event and the worst case (from App. A, sec:joint5d-fwer)}
+% From app_statmethods_nd.tex:134 @e57f0a0a8; derivation steps
+\emph{Crossing event.}  The rule rejects at threshold $c$ only if $U(k_{B},B)<c$ at the number $B\le\jtBcap$ at which sampling stopped.  Whatever rule chose that stopping point, including stops decided with results visible, irregular looks, lost draws, and the budget extensions, the rejection lies in the event $E_{c}=\bigcup_{B\le\jtBcap}\{U(k_{B},B)<c\}$ that the bound crosses below $c$ at some $B$.  Hence $P(\text{reject at }c)\le R(c)\equiv E_{p}[g_{c}(p)]$, with $g_{c}(p)=P(E_{c}\mid p)$.
+
+\emph{Uniform $p$ is the worst case.}  Coupling the Bernoulli draws in $p$ shows that $g_{c}(p)$ does not increase with $p$.  For any super-uniform $p$ its expectation is therefore at most its value for uniform $p$, $R(c)\le\int_{0}^{1}g_{c}(u)\,du$.
+
+\subsection{Familywise error: certified evaluation of R(c) (from App. A, sec:joint5d-fwer)}
+% From app_statmethods_nd.tex:145 @e57f0a0a8; derivation steps
+\emph{Certified constant.}  For each $c=\alpha/j$, $j=1,\dots,10$, let $k^{*}(B)$ be the largest $k$ with $U(k,B)<c$.  For fixed $p$, a dynamic program propagates the distribution of $k_{B}$ from $B=1$ to \jtBcap{}, moving the probability of every state with $k_{B}\le k^{*}(B)$ into an absorbing ``crossed'' state at each $B$, and pooling the counts above $\max_{B}k^{*}(B)$, which can never cross because counts never decrease. The absorbed probability is $g_{c}(p)$ exactly.
+
+This is evaluated on a grid of 6000 points in $[0,6c]$.  Because $g_{c}$ is nonincreasing, a left Riemann sum over-estimates its integral on each grid interval, and with the tail term $(1-6c)\,g_{c}(6c)$ it is a rigorous upper bound on $\int_{0}^{1}g_{c}$, so the integration error is included in the bound.
+
+\subsection{Same-ensemble pull diagnostic: the toy ensemble (from App. A, sec:pull-diagnostic)}
+% From app_statmethods.tex:514 @e57f0a0a8; procedure
+ Each toy has its own bootstrap seed $k$ and per-event Poisson(1) draws, as in production, with seeds chosen not to collide with the production replicas. Toy seeds are independent. Bins within a toy are correlated. The MC bootstrap multiplies the truth weight. It fluctuates both the unfolded result and the stored truth. The stored truth varies in all 205 reported bins, and its all-toy mean $\bar X^{\text{truth}}$ is therefore not an independent fixed truth for a split-sample coverage claim. It only centers a same-ensemble diagnostic.

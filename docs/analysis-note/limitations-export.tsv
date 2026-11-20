@@ -87,7 +87,7 @@ q03	sec_3d.tex	In three and four observables they use central values without unc
 q08	sec_fived16.tex	and GiBUU, generated on carbon, are compared on carbon, as in the methods paper			register loc sec_fived16.tex:323 @87cee1c86; literal
 q12	sec_5d.tex	The model component alone therefore exceeds the total-width target in RD1 and RD3, and in RD2 the target is exceeded once the flat			register loc sec_5d.tex:170 @87cee1c86; literal
 q27	sec_5d.tex	At nominal truth they return the			register loc sec_5d.tex:52 @87cee1c86; literal
-q29	app_devhistory.tex	A two-dimensional closure test with backgrounds found the purity bias; rebuilt with configuration			register loc app_devhistory.tex:27 @87cee1c86; literal
+q29	app_devhistory.tex	A two-dimensional closure test with backgrounds found the purity bias; rebuilt with configuration	app_devhistory.tex	A two-dimensional closure test with backgrounds found the purity bias; rebuilt with the \estTwoD{}	register loc app_devhistory.tex:27 @87cee1c86; literal; re-anchored 2026-11-19: the estimator letters replaced by names (the director's ruling), configuration (f) = \estTwoD
 q30	sec_5d.tex	use seed sets that were not held out from the estimator's			register loc sec_5d.tex:78 @87cee1c86; literal
 q31	sec_5d.tex	It does not address what unbinned or biased estimators could recover, the coverage failure			register loc sec_5d.tex:91 @87cee1c86; literal
 q32	sec_5d.tex	51 of the 153 reported cell and projection integrals have			register loc sec_5d.tex:242 @87cee1c86; literal
