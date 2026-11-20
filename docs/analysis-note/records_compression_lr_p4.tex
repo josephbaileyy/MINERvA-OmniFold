@@ -228,12 +228,12 @@ The 50--\SI{100}{GeV} supplement is MEC-free too.
 
 \subsection{From Part 4, sec3d.tex: the paragraph beginning ``The base GENIE central value uses''}
 % From sec_3d.tex:155 @0d1f8208a; qualifier detail or procedure (DECISION-20261120a)
-In the note, this text follows: ``None of the generated sample's $1.48\times10^{6}$ CC events is a MEC event.''\par
+In the paragraph as the note printed it, this text followed: ``None of the generated sample's $1.48\times10^{6}$ CC events is a MEC event.''\par
 2p2h must therefore be \emph{added}.
 
 \subsection{From Part 4, sec3d.tex: the paragraph beginning ``The base GENIE central value uses''}
 % From sec_3d.tex:155 @0d1f8208a; qualifier detail or procedure (DECISION-20261120a)
-In the note, this text follows: ``The 50--\SI{100}{GeV} supplement is MEC-free too. 2p2h must therefore be \emph{added}.''\par
+In the paragraph as the note printed it, this text followed: ``The 50--\SI{100}{GeV} supplement is MEC-free too. 2p2h must therefore be \emph{added}.''\par
 Reweighting cannot supply it.
 
 \subsection{From Part 4, sec3d.tex: the paragraph beginning ``The generator's 2p2h event category is''}
@@ -836,6 +836,7 @@ The cross-talk deposit is varied by the same two-endpoint construction. That ter
 % From sec_fived16.tex:203 @7686f6ae7; qualifier detail or procedure (DECISION-20261120a)
 In the note, this text follows: ``Every $\chi^2$ of this section inverts the full covariance of the cells compared, $16\times16$ or $8\times8$ for GiBUU's cells, by Cholesky decomposition and without truncation, so the inverted dimension $p$ equals the number of cells and is fixed in advance; the shape-only $\chi^2$ inverts the same matrix with $100\,f f^{T}$ added and has one degree of freedom fewer.''\par
 The blocks inverted are of unlike kinds. Two are sample covariances of an ensemble: the statistical block, from \fvval{s1-stat-replicas} bootstrap replicas with the unbiased $1/(N-1)$ normalization, and the flux block, from \fvval{fb-universes} PPFX universes with constraint weights, normalized by the sum of the weights (the weighted analogue of $1/N$; effective number of universes \fvval{s1-flux-neff}). The 2p2h band has three universes. The other bands and the lateral shifts are two-point shifts, the normalization is one outer product, $C_{\mathrm{model}}$ sums three chosen generator shifts, $C_{\mathrm{resp}}$ four $\pm1\sigma$ shifts, and $C_{\mathrm{PL,5D}}$ is built from three exposure-weighted periods; the training-seed block is zero. Each comparison with a prediction adds $V_g$, its diagonal sum of squared event weights, and each fake-data comparison the variance of the mean over its pseudo-experiments. No finite-ensemble correction is applied to any block. The standard correction is derived for a single unweighted sample covariance, which none of these sums is; the flux bootstrap below measures the scatter of the $\chi^2$ from estimating the flux block, and is not a correction.
+In the note, ``below'' pointed to the generator comparison (\S\ref{sec:fived16-gen}); in this document the flux bootstrap is the rebuild of the flux block from bootstrap replicates given earlier, under the paragraph beginning ``The sensitivity of the reported chi2''.\par
 
 \subsection{From Part 4, secfived16.tex: the paragraph beginning ``Built from the observed differences, the''}
 % From sec_fived16.tex:231 @7686f6ae7; qualifier detail or procedure (DECISION-20261120a)
