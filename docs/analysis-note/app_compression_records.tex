@@ -330,3 +330,53 @@ With each CH prediction's own variance in the metric, no decision changes for ei
 
 The correction carries two further generation caveats.
 
+% Moved verbatim from app_negweight.tex @ a1e6ec190 in the compression under DECISION-20261120a (qualifier and procedure detail
+% may move to the records with a pointer); move-manifest-je JE-16.
+\subsection{Background subtraction (App.~B): detail moved from the note}
+
+\subsubsection{Estimator and binned limit}
+
+It is the continuous version of the purity weight recommended for nontrivial backgrounds in Ref.~\cite{Canelli:2025guide}, and the natural treatment for the larger backgrounds of the extended-fiducial analysis.
+
+A bin-constant rescaling reproduces $D(x)-B(x)$ inside bin $b$ only when $B/D$ is constant there. Otherwise, $D(x)\,(1-B_{b}/D_{b})$ and $D(x)-B(x)$ share a bin integral but differ within the bin. The injected background and data occupy the same reconstructed fiducial window, giving identical support.
+
+On the exact-split backend in this comparison, the clipped refinement removes that pathology.
+
+A finite regularized classifier's behavior depends on the estimator. Stay-Positive remains well behaved but can retain negative refined weights where the target density is genuinely negative. The zero clip used here is therefore an additional analysis prescription chosen to match the physical purity floor. Ref.~\cite{Nachman:2025staypositive} documents the same reweighting-loss divergence for negative targets; signed binary cross-entropy has an analogous pathology for sWeights~\cite{GlazierTyson:2024}.
+
+The binned $D-B$ update, negative-weight classification of the measured side, and binned OmniFold/Richardson--Lucy correspondence already appear together in Ref.~\cite{Andreassen:2021zzk}. Equation~\eqref{eq:negweight-rb} states their immediate binwise corollary and its precise validity domain for this analysis. It is a consistency check, not a separate method.
+
+\subsubsection{Closed-form toy}
+
+A one-dimensional toy uses signal simulation $\mathcal{N}(0,1)$, equally normalized data signal $\mathcal{N}(0.3,1.1)$, and background $\mathcal{N}(2,0.7)$ contributing \SI{16.7}{\percent} of pseudo-data. The known target $(D-B)/S=\phi(x;0.3,1.1)/\phi(x;0,1)$ is smooth and positive. A signed-weight gradient-boosted classifier recovers it with median \SI{\nwToyNeg}{\percent} relative error, matching binned purity's \SI{\nwToyPur}{\percent} and reproducing it bin-for-bin on the same problem. Omitting subtraction leaves \SI{\nwToyBias}{\percent} residual-background bias. Results are stable across classifier seeds ($\pm\SI{\nwToySeed}{\percent}$), with no numerical instability from negative weights. Moving background into the sparse signal tail and deliberately over-subtracting makes the learned reweight floor cleanly at zero where $B>D$, as anticipated.
+
+\subsubsection{Comparison on the 2D result and propagation}
+
+The 187-universe systematic ensemble varied genuine background consistently within each universe instead of freezing it at nominal; a statistical bootstrap used matched seeds. Agreement is at the level predicted by the $(D-B)/S$ identity. Residuals of \SI{\nwSystResid}{\percent} and \SI{\nwStatResid}{\percent} are consistent with ``to within \SI{2}{\percent}'' in \S\ref{sec:method}. Those residuals measure a close aggregate size for the tested constructions. They do not establish that the difference is sampling noise, and they do not establish the absence of a method bias. Negative-weight injection reproduces the central cross section \emph{per bin} (\S\ref{sec:negweight-2d}) and the covariance \emph{in aggregate}.
+
+\subsubsection{Which background treatment each production chain uses}
+
+Current production writes the background treatment into the record of every endpoint unfold as it is produced, so the background treatment of each new component can be read from the component itself; this changes how the treatment is recorded, not the treatment itself.
+
+First, a covariance that mixes background treatments is inferior to one that uses either treatment consistently: a lateral-band block built with negative-weight subtraction would be inconsistent with central and vertical-band unfolds built with purity subtraction. Second, switching would have required rerunning every unfold above and would have invalidated the flux-corrected covariance then just chosen for use; this consequence, rather than the computing cost, decided the choice.
+
+These cells are the whole lowest-$\pPar$ row ($1.5$--\SI{2.0}{GeV/c}) and five cells along the high-$\pT$, low-$\pPar$ boundary. In them, the purity estimate's mean residual against the truth is $+0.78$ to $+5.89\,\sigma_{\mathrm{stat}}$, above $1\,\sigma_{\mathrm{total}}$ in one cell ($1.22$); the refined estimate's mean residual is within $\pm0.44\,\sigma_{\mathrm{stat}}$ in every cell.
+
+The integrated difference between the treatments is \SI{-0.198}{\percent}. In the median cell, the pseudo-experiments' own spread is $0.46\,\sigma_{\mathrm{stat}}$ (purity) and $0.58\,\sigma_{\mathrm{stat}}$ (refined).
+
+Its central value, \SI{\fpsSigma}{cm^2/nucleon}, is recorded with its passed published-region check against the control.
+
+\subsubsection{Displacement argument and scope}
+
+The constructions share bin masses in the binned limit (\S\ref{sec:negweight-binned}) but differ by within-bin shape terms (\S\ref{sec:negweight-estimator}).
+
+Raw negative weights destabilize the exact-split backend (\S\ref{sec:negweight-estimator}), but the standard chain uses LightGBM, so neither treatment is exposed to that instability here.
+
+\subsubsection{Refined subtraction in five dimensions}
+
+It preserves the signed total to $3\times10^{-6}$ and clips \SIrange{0.01}{0.05}{\percent} of events. The criterion has two parts, each applied to all 153 reported quantities. No quantity may have a mean residual beyond 3.6 standard errors of the mean ($|t|>3.6$), a fixed threshold at about the two-sided 5\% level for a normal reference, Bonferroni-corrected over the 153. Nor may any quantity have a mean residual beyond half its bootstrap standard deviation with $|t|>3$. The data difference's sign pattern matches simulated purity bias at an order of magnitude smaller size; the difference is method sensitivity, not a measured bias.
+
+Splitting background simulation into independent injection and subtraction halves is not the cause.
+
+The lateral-band component from re-selected event loops is built, with five bands and ten endpoint unfolds whose distinct checksums are listed in the record of the five-axis covariance of the \resFiveAxis{}.
+
