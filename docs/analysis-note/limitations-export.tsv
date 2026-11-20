@@ -28,7 +28,7 @@ n26	sec_validation.tex	Membership and completeness conditions; no recovery or co
 n27	sec_validation.tex	Coverage pooled over bins is not a simultaneous probability that every bin is covered			register loc sec_validation.tex:23 @87cee1c86; literal
 n28	sec_validation.tex	the first two amplitudes pass, and the deliberately large			register loc sec_validation.tex:31 @87cee1c86; literal
 n29	sec_validation.tex	Marginal residual \SI{1.84}{\percent} of \SI{18.1}{\percent} injected (ratio 0.102); no threshold specified before it			register loc sec_validation.tex:93 @87cee1c86; fuzzy 0.67
-n30	sec_validation.tex	Joint $(\Eavail,W)$ residuals median \SI{9.7}{\percent}, up to \SI{74}{\percent} at highest $W$;			register loc sec_validation.tex:112 @87cee1c86; fuzzy 0.25
+n30	sec_validation.tex	Joint $(\Eavail,W)$ residuals median \SI{9.7}{\percent}, up to \SI{74}{\percent} at highest $W$;	part5_validation.tex	Joint $(\Eavail,W)$ residuals median \SI{9.7}{\percent}, up to \SI{74}{\percent} at highest $W$	register loc sec_validation.tex:112 @87cee1c86; fuzzy 0.25; re-anchored to Part 5's test table (cov2d P5-3, 2026-11-19): the director removed the row's stray closing semicolon
 n31	sec_results.tex	represent neither the data's statistical uncertainty nor the reported			register loc sec_results.tex:72 @87cee1c86; literal
 n32	sec_results.tex	The published and unbinned results share the data and the flux, detector and generator systematics, and their cross-covariance is not available			register loc sec_results.tex:30 @87cee1c86; literal
 n33	sec_results.tex	for the published flux block. The public release cannot establish the origin of this difference			register loc sec_results.tex:90 @87cee1c86; literal
