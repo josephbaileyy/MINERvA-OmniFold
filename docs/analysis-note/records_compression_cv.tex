@@ -32,7 +32,7 @@ The hidden-variable closure exceeds its threshold at the largest amplitude (\S\r
 % history-cuts/move-manifest-cv-part5-20261119.tsv).
 
 % From sec_5d.tex:88 (draft 6ed12eed4)
-The binned unfolding unfolds the same simulated events, with their exact efficiency and the response binned in the 10,499 occupied five-dimensional reconstructed cells, starting from the nominal prior.
+The binned unfolding unfolds the same simulated events [as the boosted-tree comparison of the note's \S\ref{sec:val-departure}], with their exact efficiency and the response binned in the 10,499 occupied five-dimensional reconstructed cells, starting from the nominal prior.
 
 % From sec_5d.tex:90 (draft 6ed12eed4)
 Of the 144 eligible residuals, pooled over the deformations, 15 are dominated by the tree approximation. Only 2 of these 15 lie in identified quantities, a share of 0.014 of the 144. An identified quantity has a relative Cram\'er--Rao width at or below \SI{2.5}{\percent} at the analysis exposure. A width between that bound and the \SI{10}{\percent} bound is neither. Of the 144, 121 lie in quantities that the binned response constrains weakly at the analysis exposure. Their Cram\'er--Rao widths exceed \SI{10}{\percent} at both truth resolutions tested (median \SI{31}{\percent} at the coarser resolution, that of the J cells themselves). Here the regularization trades a large variance for the bias.
@@ -47,7 +47,7 @@ The scalar five-dimensional estimator studied here uses production LightGBM.
 The noise-free study unfolds the full simulation's reweighted reconstructed events without background. Baseline classifiers and the missed-event regressor use 100 trees and 8 leaves; the capacity probe uses 400 trees and 31 leaves.
 
 % From sec_5d.tex:139 (draft 6ed12eed4)
-Saved fine-grid outputs are integrated into the supported J, H2 and EW cells of the table below. Unsupported cells remain in the full-domain rate. The interval assessment keeps all 42 EW cells, including the three that the support rule excludes (definitions and normalization checks in App.~\ref{sec:gbdt-diagnostic-definitions}).
+Saved fine-grid outputs are integrated into the supported J, H2 and EW cells of the table below [the label table of the note's \S\ref{sec:gbdt-model-dependence}]. Unsupported cells remain in the full-domain rate. The interval assessment keeps all 42 EW cells, including the three that the support rule excludes (definitions and normalization checks in App.~\ref{sec:gbdt-diagnostic-definitions}).
 
 % From sec_5d.tex:159 (draft 6ed12eed4)
 \paragraph{Recovery changes, but not uniformly.}
@@ -59,7 +59,7 @@ Figure~\ref{fig:gbdt-recovery} shows the traces over the recorded iteration rang
 The capacity probe changes recovery. Its recorded traces reach 10 iterations (Fig.~\ref{fig:gbdt-recovery}); five iterations is the most the computing budget allowed at that capacity, and that is the comparison used here. At that point the larger classifiers lower the largest residual proxy over the development truths (lower row of Fig.~\ref{fig:gbdt-recovery}) by 3\% on J and 8\% on H2, short of the improvement of at least 20\% required before the larger capacity would be used.
 
 % From sec_5d.tex:165 (draft 6ed12eed4)
-Because the measure is a maximum over the truth changes, the slow gains for D1 and W1 do not lower the measure: on H2, over the noise-free traces of Fig.~\ref{fig:gbdt-recovery}, it is 0.314 at five iterations and at least 0.384 at 10, 15 or 20.
+Because the measure [the largest residual proxy over the development truth changes, the note's \S\ref{sec:gbdt-model-dependence}] is a maximum over the truth changes, the slow gains for D1 and W1 do not lower the measure: on H2, over the noise-free traces of Fig.~\ref{fig:gbdt-recovery}, it is 0.314 at five iterations and at least 0.384 at 10, 15 or 20.
 
 % From sec_5d.tex:189-196 (draft 6ed12eed4)
 \begin{figure}[tbp]
@@ -98,4 +98,4 @@ $q_3$ tilt & $\fvval{prr-rho-e-q3}$ & $\fvval{prr-rho-ibu-q3}$ & \fvval{prr-rms-
 \end{table}
 
 % From sec_q3_fived16.tex:138 (draft 6ed12eed4)
-Reducing the iteration count from \fvval{prr-s53-b0-iters} to \fvval{prr-s53-k2-iters} increased $\rho$ beyond the threshold at the $q_3$ tilt. These settings also newly flagged \fvval{prr-lev-K2-nnew}, \fvval{prr-lev-C25-nnew} and \fvval{prr-lev-O2-nnew} of the other \fvval{prr-lev-nother-word} graded truths, respectively, in the noise-free study. For \fvval{prr-pr1-noeffect}, no change as large as the threshold is detected. Every higher iteration count and capacity tested lowers $\rho$ at both truths, by at most \fvval{prr-more-dmax}, less than the threshold.
+Reducing the iteration count from \fvval{prr-s53-b0-iters} to \fvval{prr-s53-k2-iters} increased $\rho$ beyond the threshold at the $q_3$ tilt. These settings [the reduced iteration count above, and the reduced capacity and $(\pT,\pPar)$-only learners of the note's \S\ref{sec:fived16-prr}] also newly flagged \fvval{prr-lev-K2-nnew}, \fvval{prr-lev-C25-nnew} and \fvval{prr-lev-O2-nnew} of the other \fvval{prr-lev-nother-word} graded truths, respectively, in the noise-free study. For \fvval{prr-pr1-noeffect}, no change as large as the threshold is detected. Every higher iteration count and capacity tested lowers $\rho$ at both truths, by at most \fvval{prr-more-dmax}, less than the threshold.
