@@ -292,10 +292,42 @@ def check_numbers(base_pdf: Path, new_pdf: Path, allowlist: Path):
 
 # ---------------------------------------------------------------- 2. limitation retention
 
+# Check 9 (2026-11-20, the director; limitation-resolver's check_estimator_letters.py): no legacy configuration letter
+# ("configuration (e)", "as (c)", a bare-letter table cell) prints in the posted note outside tab:estimators-matrix's
+# legacy-alias column. Pinned at 0 once every lane reached 0 (draft c51446465); a rise above the pin FAILs. The
+# checker's own self-test (each planted form fires, the alias cell does not) runs first, so a broken pattern cannot pass.
+# Check 8 is reserved for the manifest-retention check.
+LETTERS_PIN = 0
+
+
+def check_letters(note_dir: Path):
+    import contextlib
+    import importlib.util
+    import io
+    spec = importlib.util.spec_from_file_location("check_estimator_letters", note_dir / "check_estimator_letters.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    buf = io.StringIO()
+    with contextlib.redirect_stdout(buf):
+        st = mod.self_test()
+    lines = [buf.getvalue().strip()]
+    hits = mod.scan(mod.closure(note_dir))
+    lines += ["  " + h for h in hits]
+    ok = st == 0 and len(hits) <= LETTERS_PIN
+    lines.append(f"ESTIMATOR-LETTERS :: {'PASS' if ok else 'FAIL'} ({len(hits)} legacy-letter reference(s), pin {LETTERS_PIN}"
+                 + ("" if st == 0 else "; the checker's self-test FAILED") + ")")
+    return ok, lines
+
+
 def check_limitations(export: Path, note_dir: Path, new_pdf: Path):
     if not export.exists():
         return False, [f"LIMITATIONS :: FAIL (export {export} missing; limitation-resolver writes it)"]
     files = closure(note_dir)
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("limitations_export", note_dir / "limitations_export.py")
+    LE = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(LE)
+    rec_files = LE.closure(note_dir, "main_records")
     src_raw = {f: (note_dir / f).read_text() for f in files}
     src_all = norm_ws("\n".join(src_raw.values()))
     pdf_all = norm_ws("\n".join(pdftext_pages(new_pdf)))
@@ -314,6 +346,13 @@ def check_limitations(export: Path, note_dir: Path, new_pdf: Path):
             continue
         if found(rquote):
             continue
+        # DECISION-20261120a item 5: a row located in the records with a printed note pointer (limitations_export.py's
+        # "records" status, same rule): reanchor_file in main_records' closure holds reanchor_quote verbatim, and the
+        # note's "[pointer: ...]" text prints in the posted note
+        if rfile in rec_files and rfile not in files and rquote.strip() and rquote in rec_files[rfile]:
+            ptr = LE.POINTER.search(f[5])
+            if ptr and found(ptr.group(1)):
+                continue
         fails += 1
         lines.append(f"  MISSING {rid} ({_file}): {quote[:150]!r}" + (f"; re-anchor {rfile}: {rquote[:100]!r} also missing" if rquote else ""))
     lines.append(f"LIMITATIONS :: {'PASS' if not fails and n else 'FAIL'} ({n} row(s), {fails} missing)")
@@ -526,7 +565,7 @@ def main() -> int:
     ap.add_argument("--allowlist", type=Path)
     ap.add_argument("--limitations", type=Path)
     ap.add_argument("--spelling")
-    ap.add_argument("--only", default="1,2,3,4,5,6,7")
+    ap.add_argument("--only", default="1,2,3,4,5,6,7,9")
     ap.add_argument("--report", type=Path)
     a = ap.parse_args()
     nd = a.note_dir
@@ -541,7 +580,8 @@ def main() -> int:
             (4, "US spelling", lambda: check_spelling(nd, a.spelling)),
             (5, "Fonts", lambda: check_fonts(new_pdf, aux)),
             (6, "Build tests (test_build_all.py)", lambda: check_build_tests(nd)),
-            (7, "Accents and \\'s possessives", lambda: check_accents(a.base_pdf, new_pdf, nd))]
+            (7, "Accents and \\'s possessives", lambda: check_accents(a.base_pdf, new_pdf, nd)),
+            (9, "Estimator letters", lambda: check_letters(nd))]
     report, fails = [f"# Freeze checks: {new_pdf} against {a.base_pdf}", ""], []
     for k, name, fn in runs:
         if k not in want:

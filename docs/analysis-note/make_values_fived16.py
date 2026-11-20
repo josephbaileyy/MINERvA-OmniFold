@@ -2020,7 +2020,7 @@ def self_test():
              lambda t: t.replace(r"the GiBUU $\Eavail$ shape also meets", r"the NuWro $\Eavail$ shape also meets", 1)),
             ("drops the truth listed only without the block", "sec_q3_fived16.tex",
              "The fake-data bias therefore exceeds the stated thresholds",
-             lambda t: t.replace(r"and also at the GiBUU $\Eavail$ shape without $C_{\mathrm{PL,5D}}$; the bias", "; the bias", 1)),
+             lambda t: t.replace(r"and also at the GiBUU $\Eavail$ shape without $C_{\mathrm{PL,5D}}$. The bias", ". The bias", 1)),
             ("drops a GiBUU truth of its family", "sec_fived16_gen.tex", "so the GiBUU comparison carries that limitation",
              lambda t: t.replace(r"thresholds at the GiBUU hybrid truth under the reported covariance, and also",
                                  r"thresholds under the reported covariance, and also", 1)),
