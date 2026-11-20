@@ -12,7 +12,7 @@
 
 Three messages, quoted as relayed, typos included; each sha256 is of the text plus a final newline.
 
-1. 2026-11-19, answering the director's two questions:
+1. 2026-11-20, answering the director's two questions:
 
    > it can be as many sentences as needed. and the training details paragraph can be split. again, my general philosphy is to release are definative locks
 
