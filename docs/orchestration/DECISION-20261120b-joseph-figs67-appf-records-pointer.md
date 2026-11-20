@@ -4,7 +4,7 @@
 
 ## What led to it
 
-The director put three items to Joseph (1–3). A referee report then addressed the note-placed items (4).
+The director put three items to Joseph (1–3). A referee report addressed the note-placed items (4).
 
 1. **Figs. 6/7.** cov2d checked a takeaway for these figures: in every panel, the unfolded result lies closer to the published data than to the prior. Joseph was asked whether the figures may carry it.
 2. **App. F.** journal-editor's App. F, as merged on the draft, went to Joseph for approval.
@@ -39,7 +39,7 @@ The director put three items to Joseph (1–3). A referee report then addressed 
 3. **A records pointer is enough for the note-placed items.**
    - This covers the items that DECISION-20261018 (W3; the J3–J6 packet's "D0–D12 into the note") and DECISION-20261114-joseph-d1-g2r-adopted place in the note.
    - Under DECISION-20261120a, their text may move to the records document with a pointer in the note.
-   - This is subject to item 4: D11 keeps neither a sentence nor a pointer in the note.
+   - This is subject to all of item 4: D5, D10, D12 and the missed-event treatment each keep one sentence in the note, which a pointer cannot replace, and D11 keeps neither a sentence nor a pointer.
 4. **Revisiting those decisions is open.**
    - Joseph is willing to revisit them, including removing the items, if a referee or reviewer recommends it.
    - **Outcome:** D11 is removed from the note on the referee's recommendation, with no note sentence and no pointer. D11's text stays in the records document. D5, D10, D12 and the missed-event treatment stay in the note, one sentence each.
@@ -51,14 +51,14 @@ The director put three items to Joseph (1–3). A referee report then addressed 
 - Any value.
 - Any paper wording.
 - The report's recommendation about the required records list.
-- The removal from the note of any item other than D5, D10, D11, D12 and the missed-event treatment.
+- Any further removal from the note.
 
 ## CITABLE FOR / NOT CITABLE FOR
 
 - **Citable for:**
   - the Figs. 6/7 descriptive takeaway as stated above;
   - App. F as merged;
-  - moving the note-placed items' text to the records with a pointer, except D11 (item 4);
+  - moving the note-placed items' text to the records with a pointer, subject to item 4;
   - removing D11 from the note, and keeping D5, D10, D12 and the missed-event treatment as one sentence each.
 - **Not citable for:**
   - a D11 sentence or pointer in the note;
