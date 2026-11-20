@@ -7,7 +7,7 @@ This section holds each result's limitations as the note stated them before Part
 \subsection{Principal limitations (from \S\ref{sec:limitations})}
 The body states each limitation with the result it qualifies; the principal ones are these. $C_k$ denotes coverage within $\pm k$ standard deviations.
 The quoted 2D statistical block has had no coverage test. The fixed-truth coverage studies scored two earlier statistical bands, of which the first-built undercovers in its tails ($C_2=\covTwoDCTwo$, vs.\ $0.954$; \S\ref{sec:uq-boot}, \S\ref{sec:coverage}).
-No result's intervals have validated coverage. In two dimensions, the procedure's covariance under-covers jointly at both held-out tunes, with \lrval{cov2d-ar23-joint} of \lrval{cov2d-ntoys} pseudo-experiments in the joint region at each (\S\ref{sec:coverage-tunes}, \S\ref{sec:limitations-2d}). The five-dimensional coverage test is in \S\ref{sec:coverage-5d}, and the sixteen cells' second, descriptive coverage test in \S\ref{sec:fived16-fd} and Table~\ref{tab:test-index}.
+No result's intervals have validated coverage. In two dimensions, the procedure's covariance under-covers jointly at both held-out tunes, with \lrval{cov2d-ar23-joint} of \lrval{cov2d-ntoys} pseudo-experiments in the joint region at each (\S\ref{sec:coverage-tunes}, \S\ref{rlim:2d}). The five-dimensional coverage test is in \S\ref{sec:coverage-5d}, and the sixteen cells' second, descriptive coverage test in \S\ref{sec:fived16-fd} and Table~\ref{tab:test-index}.
 The other principal limitations are stated with their results:
 \begin{itemize}
 \item The generator comparisons (\S\S\ref{sec:3d}--\ref{sec:eavailw}).
@@ -44,16 +44,16 @@ The tests that limit a reported result are indexed in Table~\ref{tab:test-index}
 % item 7), with their Search line; sec:uq-2d-scope keeps the construction and points here.
 % Pointer entry 5 (the director's ruling (a), via director-helper-3; limitations-export row n05): sec_experiment.tex:40, kept there.
 
-\subsection{Data and event loop (from \S\ref{sec:limitations-experiment})}
+\subsection{Data and event loop (from \S\ref{sec:limitations})}\label{rlim:experiment}
 The flux histogram is POT-weighted across playlists; playlist-to-playlist flux differences are a $\sim\SI{0.2}{\percent}$ effect (\S\ref{sec:evloop}).
 
 % Part 6 (the director's ruling (A), 2026-11-19): the 2D block returns here as the file sec_q1_limitations.tex, moved whole
 % and byte-identical from Part 3 (H3-P6-04); journal-editor's JE-07 rows stay as the record of its first landing.
 
-\subsection{The two-dimensional cross section (from \S\ref{sec:limitations-2d})}
+\subsection{The two-dimensional cross section (from \S\ref{sec:limitations})}\label{rlim:2d}
 \input{sec_q1_limitations}
 
-\subsection{Available energy and momentum transfer (from \S\ref{sec:limitations-3d})}
+\subsection{Available energy and momentum transfer (from \S\ref{sec:limitations})}\label{rlim:3d}
 In the comparison with Ascencio \emph{et al.} (\S\ref{sec:4d}), the two analyses define true $\Eavail$ differently, and the aggregate shift over the three lowest bins has not been computed. The definition difference therefore remains an alternative explanation that is not excluded, and at the \SI{10}{\percent} scale of the residual the comparison neither refutes nor validates the result.
 % absence-ok: "has not been computed" and "not excluded" restate sec_3d.tex:211, which keeps them beside its numbers
 
@@ -61,7 +61,7 @@ In the comparison with Ascencio \emph{et al.} (\S\ref{sec:4d}), the two analyses
 % body owner (limitation-resolver: sec_fived16, sec_5d; the Codex writer: sec_joint), whose home keeps a one-line result
 % with its scope label and a pointer here. Until each pair lands, its entry is this pointer sentence only.
 
-\subsection{The sixteen-cell cross section (from \S\ref{sec:limitations-fived16})}
+\subsection{The sixteen-cell cross section (from \S\ref{sec:limitations})}\label{rlim:fived16}
 % Move pairs LR-20..LR-32 (limitation-resolver): the second coverage test's design and scope, sec_fived16.tex's second-test
 % paragraph (sec:fived16-fd), verbatim and contiguous, except one token: "(above)" becomes (\S\ref{sec:fived16-fd}), where the
 % tunes' overlaps are stated. The home keeps the readings, the counts, "remains untested" and the descriptive sentence.
@@ -77,7 +77,7 @@ The model term $C_{\mathrm{model}}$ of \S\ref{sec:fived16-cov} measures generato
 
 The run-period block of the sixteen cells is $C_{\mathrm{PL,5D}}$ (\S\ref{sec:fived16-pl}). In cells \fvval{pl-noise-cells} the block is dominated by the replica noise it contains.
 
-\subsection{The five-dimensional development tests (from \S\ref{sec:limitations-5d})}
+\subsection{The five-dimensional development tests (from \S\ref{sec:limitations})}\label{rlim:5d}
 % Move pairs LR-33..LR-47 (limitation-resolver): the coverage test's defective q3 truth (sec_5d.tex sec:coverage-5d), its
 % miscoverage diagnosis (the source block as given, with its comments), and the data-stability consequence (sec:val-departure),
 % verbatim and contiguous. Each lead sentence restates its home's result and supplies the antecedent.
