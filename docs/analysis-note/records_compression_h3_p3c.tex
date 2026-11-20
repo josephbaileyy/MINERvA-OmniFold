@@ -16,7 +16,7 @@ Each universe is re-unfolded with LightGBM at seed~42 and compared with the quot
 
 \paragraph{Flux $1/\Phi$ normalization.}
 % From sec_systematics.tex, paragraph 4
-\emph{Before, in \S\ref{fig:uqbands}, the note's ``The unweighted 100-universe flux covariance has participation-ratio effective rank $\approx1$.''}
+\emph{Before, in \S\ref{sec:uq-universes}, the note's ``The unweighted 100-universe flux covariance has participation-ratio effective rank $\approx1$.''}
 Varying $\Phi$ per flux universe in the dominant $\sigma\propto1/\Phi$ term gives a Flux band of \SI{\fluxBand}{\percent} with the constraint weights, and a combined budget, from our covariance alone, of \SI{\uqMedian}{\percent}. Target-nucleon normalization contributes a fully-correlated rank-1 band of \SI{1.4}{\percent}.
 
 % From sec_systematics.tex, paragraph 5
@@ -41,7 +41,7 @@ The 1N--1P group shows a smaller step, $+\fvval{rp-pc-reco}\,\%$ reconstructed a
 The block is built from separate seed-42 unfolds of three run periods, the playlist groups 1A--1F, 1G--1M and 1N--1P, each unfolded through its own simulated detector response. The block uses each period's unfolded result over that period's own simulated truth. Each period is compared with the exposure-weighted mean of the three. This avoids choosing a reference period. The spread, applied to the central value, gives the block. It is added after the other blocks. Its per-bin median fractional standard deviation is \SI{2.09}{\percent} (84th percentile \SI{3.34}{\percent}, maximum \SI{6.48}{\percent}). The fractional standard deviation is \SIrange{1.17}{3.36}{\percent} on the $\pPar$ projections and \SI{1.97}{\percent} on the integrated cross section. Table~\ref{tab:pl-added} gives its effect on the total. Taking 1A--1F as the reference would give a smaller block (per-bin median \SI{1.38}{\percent}, integral \SI{1.09}{\percent}).
 
 % From sec_systematics.tex, paragraph 14
-\emph{After, in \S\ref{tab:pl-added}, the note's ``Because the block is built from the observed differences among the periods, it contains them by construction (App.~\ref{app:devhistory}).'' ``That containment gives no information about coverage or whether the size is right; the block's other limits are stated in \S\ref{sec:limitations-2d}.''}
+\emph{After, in \S\ref{sec:uq-combine}, the note's ``Because the block is built from the observed differences among the periods, it contains them by construction (App.~\ref{app:devhistory}).'' ``That containment gives no information about coverage or whether the size is right; the block's other limits are stated in \S\ref{sec:limitations-2d}.''}
 For the same reason, the double-ratio $\chi^{2}$ against any total that contains the block is bounded whatever the data. It does not test the block. The raw 1G--1M $\pPar$ $\chi^{2}$ is 33.8 against the other blocks alone and 2.60 with the block added. These values indicate sensitivity only. % G2R: RE-2-shapes run 2 (C_new), g2r-integration/ledger.tsv g2r-cpl-raw-vs-s5, g2r-cpl-raw-vs-q; a source comment citing RE-2 part C for this value gives the earlier value
 
 \paragraph{Generator-shape model dependence.}
@@ -108,26 +108,26 @@ In a simulated experiment, \emph{truth} is the known target distribution, the \e
 
 \paragraph{Closure.}
 % From sec_validation.tex, paragraph 2
-\emph{After, in \S\ref{tab:validation-questions}, the note's ``Three families of closure tests use the simulation of playlist ME1A (\S\ref{sec:experiment}), unfolded with LightGBM and five iterations.'' ``Table~\ref{tab:test-index} gives each test's threshold and result.'' ``In the hidden-variable test (a bias in $\Delta\pT=\pT^{\mathrm{reco}}-\pT^{\mathrm{truth}}$, a resolution variable outside the feature set), the leakage is linear in amplitude, $A=0.05/0.10/0.30\to0.57/1.14/3.43\,\%$ (threshold \SI{3.0}{\percent}): the first two amplitudes pass, and the deliberately large $A=0.30$ arm exceeds the threshold.''}
+\emph{After, in \S\ref{sec:validation}, the note's ``Three families of closure tests use the simulation of playlist ME1A (\S\ref{sec:experiment}), unfolded with LightGBM and five iterations.'' ``Table~\ref{tab:test-index} gives each test's threshold and result.'' ``In the hidden-variable test (a bias in $\Delta\pT=\pT^{\mathrm{reco}}-\pT^{\mathrm{truth}}$, a resolution variable outside the feature set), the leakage is linear in amplitude, $A=0.05/0.10/0.30\to0.57/1.14/3.43\,\%$ (threshold \SI{3.0}{\percent}): the first two amplitudes pass, and the deliberately large $A=0.30$ arm exceeds the threshold.''}
 The alternative-model test trains on the central-value simulation and takes its pseudo-data from an alternative systematic universe.
 
 \paragraph{Injected-feature recovery.}
 % From sec_validation.tex, paragraph 3
-\emph{After, in \S\ref{tab:validation-questions}, the note's ``The 2D truth-reweighting closure with a Gaussian bump passes the recovery test of the unbinned-unfolding guide~\cite{Canelli:2025guide} (Table~\ref{tab:test-index}).''}
+\emph{After, in \S\ref{sec:validation}, the note's ``The 2D truth-reweighting closure with a Gaussian bump passes the recovery test of the unbinned-unfolding guide~\cite{Canelli:2025guide} (Table~\ref{tab:test-index}).''}
 The test requires the residual left after recovering a deviation from the prior to be far smaller than the deviation itself.
 
 % From sec_validation.tex, paragraph 4
 A data-versus-prior $\chi^2$ with a diagonal covariance of statistical variances only is larger at truth level than at reco level. This is expected at high resolution: detector smearing lowers the reco-level value, and the diagonal covariance omits the unfolding covariance. The comparisons that use a full covariance are the $\chi^2$ against the published result (\S\ref{sec:results-tension}) and the generator comparisons.
 
 % From sec_validation.tex, paragraph 6
-\emph{After, in \S\ref{tab:validation-questions}, the note's ``None of these tests changes the simulated detector.'' ``The hidden-variable closure does change the effective response: it reweights reconstructed events by a function of $\Delta\pT$ and leaves the truth weights unchanged (\S\ref{sec:closure-hv}).''}
+\emph{After, in \S\ref{sec:validation}, the note's ``None of these tests changes the simulated detector.'' ``The hidden-variable closure does change the effective response: it reweights reconstructed events by a function of $\Delta\pT$ and leaves the truth weights unchanged (\S\ref{sec:closure-hv}).''}
 Appendix~\ref{app:response-mismatch} defines a separate test, a closure that rescales only the reconstructed $\Eavail$ of the pseudo-data, together with a more complete leading-nucleon follow-up. No result of that reconstruction-only test is reported here; the same appendix reports noise-free closures with a shifted recoil response on the sixteen cells, which have been run. The five-dimensional estimator, including its background subtraction, is evaluated under the technical closure checks of \S\ref{sec:val-fiveaxis}. Its coverage is unvalidated.
 
 % From sec_validation.tex, paragraph 10
 Each toy draws pseudo-data event by event as Poisson counts with means equal to the simulated reconstructed weights. It resamples the simulation with the per-event Poisson(1) bootstrap of the statistical band and unfolds with that band's estimator, LightGBM with five iterations at a fixed training seed, the learner of the quoted central value at a different seed (\S\ref{sec:method-config}). The reference $T$ is the unfluctuated simulated truth, identical in every toy. The no-fluctuation configuration reproduces both the production closure output and $T$ exactly.
 
 % From sec_validation.tex, paragraph 11
-\emph{Before, in \S\ref{tab:coverage-bands}, the note's ``The band counts as nominal if its ratio to the true scatter lies in $[0.9,1.1]$, which gives the windows $C_1\in[\covTwoDWinOneLo,\covTwoDWinOneHi]$ and $C_2\in[\covTwoDWinTwoLo,\covTwoDWinTwoHi]$.''}
+\emph{Before, in \S\ref{sec:coverage}, the note's ``The band counts as nominal if its ratio to the true scatter lies in $[0.9,1.1]$, which gives the windows $C_1\in[\covTwoDWinOneLo,\covTwoDWinOneHi]$ and $C_2\in[\covTwoDWinTwoLo,\covTwoDWinTwoHi]$.''}
 In reported bin $b$ of toy $t$, $z_{tb}=(U_{tb}-T_b)/(r_b T_b)$, where $r_b$ is the production band's relative spread. Coverage $C_k$ is the fraction of all (toy, bin) pairs with $|z|\le k$, with intervals from resampling whole toys. A failure at the interim analysis of 100 toys, with 99.5\% intervals, stops the study.
 
 % From sec_validation.tex, paragraph 13
