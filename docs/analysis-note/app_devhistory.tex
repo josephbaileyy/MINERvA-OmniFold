@@ -22,11 +22,11 @@ Configuration or test & Purpose & Outcome or reason superseded & Result affected
 \bottomrule
 \endlastfoot
 % sec_method.tex sec:method-config (history-cuts/sec_method.md, rows D1-D3).
-Exact-split configuration~(b) (\S\ref{sec:method-config}) & An earlier quoted 2D central value; now a cross-check & Replaced by LightGBM, so that the central value and its covariance share an estimator; it has no matched covariance & 2D central value (\S\ref{sec:results}) & Studies labeled \emph{exact-split} use it and have not been repeated for the quoted estimator & Both comparisons with the publication, when LightGBM was chosen \\
+\EstExact{} (\S\ref{sec:method-config}) & An earlier quoted 2D central value; now a cross-check & Replaced by LightGBM, so that the central value and its covariance share an estimator; it has no matched covariance & 2D central value (\S\ref{sec:results}) & Studies labeled \emph{exact-split} use it and have not been repeated for the quoted estimator & Both comparisons with the publication, when LightGBM was chosen \\
 \addlinespace
-Purity-subtracted 2D central value and covariance, configuration~(a) (\S\ref{sec:method-config}) & The 2D central value and covariance before configuration~(f) & A two-dimensional closure test with backgrounds found the purity bias; rebuilt with configuration~(f) (App.~\ref{sec:negweight-footing}) & 2D central value and covariance (\S\ref{sec:results}) & The purity-subtracted 2D comparisons (\S\ref{sec:results-tension}) use configuration~(a) & \S\ref{sec:method-config} \\
+Purity-subtracted 2D central value and covariance, with the \estPurity{} (\S\ref{sec:method-config}) & The 2D central value and covariance before the \estTwoD{} & A two-dimensional closure test with backgrounds found the purity bias; rebuilt with the \estTwoD{} (App.~\ref{sec:negweight-footing}) & 2D central value and covariance (\S\ref{sec:results}) & The purity-subtracted 2D comparisons (\S\ref{sec:results-tension}) use the \estPurity{} & \S\ref{sec:method-config} \\
 \addlinespace
-Five-dimensional central value and five-axis covariance, configuration~(a), retained (\S\ref{sec:eavailw}) & The five-observable central value and its covariance & Retained, not rebuilt (\S\ref{sec:method-config}) & Five-observable central value and covariance (\S\ref{sec:eavailw-adopted}) & That result, within the limits of Table~\ref{tab:result-status}; the sixteen-cell result uses configuration~(e) (\S\ref{sec:fived16}) & \S\ref{sec:method-config} \\
+Five-dimensional central value and five-axis covariance, with the \estPurity{}, retained (\S\ref{sec:eavailw}) & The five-observable central value and its covariance & Retained, not rebuilt (\S\ref{sec:method-config}) & Five-observable central value and covariance (\S\ref{sec:eavailw-adopted}) & That result, within the limits of Table~\ref{tab:result-status}; the sixteen-cell result uses the \estMultiD{} (\S\ref{sec:fived16}) & \S\ref{sec:method-config} \\
 \addlinespace
 % sec_systematics.tex (history-cuts/sec_systematics.md, rows D4-D5).
 Earlier 2D budget~\cite{TwoDFollowup2026} (\S\ref{sec:uq-2d-scope}) & The 2D covariance before the quoted budget & Construction defects (\S\ref{sec:uq-2d-scope}; App.~\ref{app:devhistory-2dbudget}), each corrected in the quoted budget & 2D covariance (\S\ref{sec:systematics}) & Printed uncorrected, as a comparison only: in \S\ref{sec:uq-2d-scope}, for the flux weights (\S\ref{sec:uq-universes}) and for the run-period step (\S\ref{sec:uq-combine}) & -- \\
@@ -87,7 +87,7 @@ First grade of the held-out-tune coverage test of the 2D covariance (\S\ref{sec:
 
 Seed~42 was chosen on computing cost: building the statistical band at seed~42 was the cheaper of the two costed ways to give the central value and the statistical band a common seed.
 
-The exact-split cross-check is configuration~(b) of \S\ref{sec:method-config}. Its seed was not fixed, and its run log was not found; two driver revisions regenerate it to $7\times10^{-15}$.
+The exact-split cross-check is defined in \S\ref{sec:method-config}. Its seed was not fixed, and its run log was not found; two driver revisions regenerate it to $7\times10^{-15}$.
 % absence-ok: "was not fixed" and "was not found" are the source sentence's own statements (sec_method.tex:79 @ 2fe070fec, LR-19), moved verbatim
 
 \subsection{Uncertainty of the two-dimensional cross section (\S\ref{sec:systematics})}
@@ -257,7 +257,7 @@ prediction & $\chi^2$ & shape-only $\chi^2$ & $\chi^2$ & shape-only $\chi^2$ & $
 \subsubsection{Seed sets of the five-dimensional recovery tests (\S\ref{sec:val-departure})}
 \label{app:devhistory-recovery-seeds}
 
-The sixty pseudo-experiments of the development variant, configuration~(d), at the GiBUU-to-GENIE $\Eavail$ shape, and the twenty for each of the three shapes not used in the joint-test estimator's selection, for configuration~(e), use seed sets that were not held out from the estimator's development.
+The sixty pseudo-experiments of the development variant, the \estLowCap{}, at the GiBUU-to-GENIE $\Eavail$ shape, and the twenty for each of the three shapes not used in the joint-test estimator's selection, for the \estMultiD{}, use seed sets that were not held out from the estimator's development.
 % absence-ok: "were not held out" is the source sentence's own statement (sec_5d.tex:78 @ 2fe070fec, LR-17)
 
 % Move pair LR-51..LR-52 (limitation-resolver, the structural rewrite): sec_5d.tex:211 at the draft, verbatim; the body keeps
