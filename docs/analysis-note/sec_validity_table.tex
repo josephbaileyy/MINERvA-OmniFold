@@ -37,6 +37,31 @@ Joint 5D generator tests: the \estMultiD{} (\S\ref{sec:joint5d}) & Calibrated te
 Extended-fiducial study ($\sigma_{\mathrm{ext}}$; App.~\ref{sec:fps}) & Unbinned unfolding with truth-muon cuts removed, retaining fiducial volume and MINOS selection: tier~1 (supported, $\approx$\SI{\lrval{fps-tier1-pct}}{\percent}) and tier~2 (extrapolated from prior, $\approx$\SI{\lrval{fps-tier2-pct}}{\percent}) & Preliminary exploratory study of acceptance recovery, with no finalized cross section & No uncertainty magnitude is assigned beyond the three-prior envelope (App.~\ref{sec:fps}). \\
 \end{xltabular}
 \endgroup
+
+\paragraph{Considerations for using these results.}\label{sec:usage}\label{sec:limitations-use}
+These rules apply to any use of the results.
+Use the two-dimensional cross section with its full covariance $Q_R$, and add $C_{\mathrm{model}}$ to include the generator-shape dependence (\S\ref{sec:uq-2d-scope}).
+The comparison with the published result shares the data and systematic uncertainties, and its $\chi^{2}$ values are therefore descriptive (\S\ref{sec:results-compare}).
+The 2D covariance gives no calibrated significance for comparisons with generator predictions (\S\ref{sec:limitations-2d}).
+Use the sixteen cells as an illustration, not for fitting or for constraining models (\S\ref{sec:fived16}).
+Quote no generator significance from the 3D and 4D central values, which have no covariance, or from $C_Z$ (\S\ref{sec:3d}, \S\ref{sec:eavailw-adopted}).
+Do not read the generator tests as physical exclusions of generators (\S\ref{sec:joint5d}).
+New projections require their own applicability checks; nominal weights alone cannot certify arbitrary downstream inference (App.~\ref{sec:unbinned-inference}).
+% Usage rules, in order (1)-(7) (the director's Part 6 design; modelled on the ATLAS usage section, arXiv:2611.24270 sec. 3.6), each mapped to
+% the statement it applies, which stays worded in full at its home:
+%   (1) sec_systematics.tex sec:uq-2d-scope, "For the sum of the combined covariance and C_model, the total for users who
+%       include this dependence"; tab:validity row 1.
+%   (2) sec_results.tex sec:results-compare, register row n32 ("share the data and the flux, detector and generator
+%       systematics, and their cross-covariance is not available. Every chi^2 ... is therefore descriptive").
+%   (3) sec_q1_limitations.tex sec:limitations-2d, "The covariance gives no calibrated significance for comparisons with
+%       generator predictions".
+%   (4) sec_intro.tex and sec_fived16.tex, the [P] use clause ("as illustrative output, not for fitting or for constraining
+%       models"); tab:validity row 2.
+%   (5) tab:validity rows 3 and 4 (sec_3d.tex "No 3D or 4D covariance is constructed or quoted, so neither covariance-based
+%       comparisons nor generator significances are supported"; register row n50's C_Z cell, "No generator significance
+%       based on this covariance may be quoted").
+%   (6) tab:validity row 5, sec:joint5d ("these are not physical exclusions of generators").
+%   (7) sec_limitations.tex sec:limitations-use, moved here verbatim (H3-P6-03; the label moves with it).
 % absence-ok: each absence statement in the table ("not yet decided" (the caption), "no independent validation", "remains unresolved",
 % "remains unvalidated", "has had no coverage test", "has not been validated", "No 3D or 4D covariance", "unestablished",
 % "not supported", "was not measured", "not physical exclusions", "no finalized cross section", "No uncertainty magnitude",
