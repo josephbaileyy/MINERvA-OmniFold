@@ -11,9 +11,9 @@
    2. keep App. F;
    3. remove it, but add a sentence on the period when the readers were Claude models only.
 4. **Joseph's follow-up.** Joseph's second message below questions the Figs. 6/7 takeaway's descriptive label and the acknowledgement's "Sonnet 5 or 5.5", approves adding GPT-6.2 Sol, and asks for a current PDF.
-5. **The Sonnet version.** The acknowledgement says "Sonnet 5 or 5.5" because DECISION-20261114 records that the version was not logged and that Joseph gave it as 5 or 5.5. Joseph asked whether timing could settle it (his third message below). The director checked the logs, and the recorder recounted them on 2026-11-20:
+5. **The Sonnet version.** The acknowledgement says "Sonnet 5 or 5.5" because DECISION-20261114 records that the version was not logged and that Joseph gave it as 5 or 5.5. Joseph asked whether timing could settle it (his third message below). The director reported the transcript results, and the recorder recounted the replies on 2026-11-20:
    - The Claude Code transcripts under `~/.claude-school/projects` and `~/.claude-personal/projects` hold 2,291 Sonnet replies (1,969 and 322), dated 2026-10-22 to 2026-11-17. Every one is model `claude-sonnet-5-5`. No `claude-sonnet-5` ID appears.
-   - The repository's Sonnet consults are commits 2a9e2aae8 and f2cbc54cb, both dated 2026-11-01. Sonnet 5.5 was already in use by then.
+   - The repository's Sonnet consults postdate the start of Sonnet 5.5 use. The two cited commits, 2a9e2aae8 and f2cbc54cb, are both dated 2026-11-01.
 
 ## Joseph's words, verbatim
 
