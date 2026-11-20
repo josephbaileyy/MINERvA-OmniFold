@@ -5,6 +5,9 @@
 % xr-hyper must precede hyperref, which preamble.tex loads.
 \usepackage{xr-hyper}
 \input{preamble}
+% The compression's moved App. A tables use tabularx and \RaggedRight, as the note does (main_note.tex).
+\usepackage{tabularx}
+\usepackage{ragged2e}
 \NOTEtrue
 \input{values}
 \input{values_inference}
