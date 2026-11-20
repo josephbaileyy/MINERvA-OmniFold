@@ -872,3 +872,4 @@ token	delta	owner	item	reason
 55	+1	journal-editor	App. F reader paragraph	20:55, as above
 20261119	+1	journal-editor	App. F reader paragraph	the file name review-tools/retro-grok-20261119.tsv
 2019	+1	director	App. F merge (535d341f4)	page reflow: "ending in 2019" moved from p.5 to p.6; plain word count of 2019 equal in base and head (25); not a value
+2019	-1	director-helper-3	P6-1	reflow only: "ending in 2019" (sec_intro.tex, p.6) moves between pages after tab:validity shortens Part 6, so the extractor's page-trimmed count drops by one (the plain word count is 24 in both base and head); pairs with the director's App. F +1 reflow row
