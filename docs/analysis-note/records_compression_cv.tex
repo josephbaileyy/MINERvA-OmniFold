@@ -150,3 +150,75 @@ The two tunes use the same quasielastic cross-section model, GENIE's \texttt{Nie
 
 % From sec_q3_fived16.tex:128 (draft 190331a95)
 Descriptively, at a NuWro closure the IBU's median absolute residual is \lrval{rg1-r2-nuwro} times that of configuration~(e), and at the simulation's own truth, a trivial closure, the IBU's residual vanishes; neither is a coverage statement for either estimator.
+
+\subsection{Five-dimensional estimator tests in full (from Part 5, P5-Q1)}
+% DECISION-20261120a and the director's approved P5-Q plan (2026-11-20): the sentences of the note's sec_5d.tex that
+% the condensed note no longer prints, moved verbatim and in order (rows CV-P5-Q1.* in
+% history-cuts/move-manifest-cv-part5-20261119.tsv). The note's pointer: "the records document gives each study in full".
+
+\paragraph{From the note's \S\ref{sec:val-fiveaxis}.}
+% From sec_5d.tex:5 (draft de1543818)
+It covers what each test isolates (\S\ref{sec:val-fiveaxis}), background subtraction and generator-sized truth changes (\S\ref{sec:val-negweight}), why the estimator does not follow such changes (\S\ref{sec:val-departure}), model dependence and the reporting definitions it rules out (\S\ref{sec:gbdt-model-dependence}), the coverage test (\S\ref{sec:coverage-5d}) and the status of the five-axis covariance of the \resFiveAxis{} (\S\ref{sec:eavailw-construction}; configurations in Table~\ref{tab:config-key}). The sixteen-cell result of the \estMultiD{} is given in \S\ref{sec:fived16}, and the calibrated generator tests built on a variant of this estimator in \S\ref{sec:joint5d}. The unbinned negative-weight background method itself is derived in App.~\ref{app:negweight}.
+% From sec_5d.tex:9 (draft de1543818)
+Prior reweighting changes the frequencies of existing simulated truth events while retaining their detector-response simulation. A response mismatch instead changes how a given truth is reconstructed. Finite classifier capacity and iteration count approximate the inverse and can leave residuals in either case. Coverage asks whether the resulting intervals contain their specified target at the stated rate (\S\ref{sec:coverage-5d}). These mechanisms are separate: an incorrect generator prediction alone does not diagnose an interval failure. Each test below isolates one intervention.
+
+\paragraph{From the note's \S\ref{sec:val-negweight}.}
+% From sec_5d.tex:24 (draft de1543818)
+Without background, the same experiments recover the truth to \SI{0.22}{\percent}.
+% From sec_5d.tex:34 (draft de1543818)
+The \SI{74}{\percent} residual is in the cell $0.8\le\Eavail<\SI{1.5}{GeV}$, $W\ge\SI{3}{GeV}$, whose share of the cross section the deformation study did not record.
+% From sec_5d.tex:43 (draft de1543818)
+Its residual is the mean over 20 pseudo-experiments with backgrounds at each of these truths, each against its own half-sample truth. Of the \fvval{rec-g-n} supported cells with an injected change of magnitude above \SI{\fvval{rec-thr}}{\percent}, \fvval{rec-g-opp} move opposite to it and \fvval{rec-g-over} overshoot it. In the cell $0.8\le\Eavail<\SI{1.5}{GeV}$, $W\ge\SI{3}{GeV}$, the injected change is $\fvval{rec-g-ew29-inj}\,\%$, but the unfolded value lies \SI{\fvval{rec-g-ew29-unf}}{\percent} above the nominal truth.
+
+\paragraph{From the note's \S\ref{sec:val-departure}.}
+% From sec_5d.tex:51 (draft de1543818)
+With noise-free pseudo-data the unfolding recovers more than \SI{99}{\percent} of the change that the departure produces in the reconstructed distribution, whereas the median $(\Eavail,W)$ truth residual ranges from \SI{5}{\percent} to \SI{11}{\percent}, with \SI{74}{\percent} in the worst cell. The unrecovered reconstructed-level difference is small relative to the departure but statistically significant at the analysis exposure.
+% From sec_5d.tex:53 (draft de1543818)
+A larger classifier improves the reconstructed-level fit without reducing the $\Eavail$ truth residual, and removing the regression for events that fail reconstruction does not reduce that residual either.
+% From sec_5d.tex:60 (draft de1543818)
+The comparison uses noise-free signal-only pseudo-data, the 109 supported fine joint cells (J cells) and the fixed historical truth deformations D1, W1, W3 and the $q_3$ stress, pooled with W2 (all defined in \S\ref{sec:gbdt-model-dependence}). The boosted-tree comparator for W2 includes background. The outcome is unchanged without it. A residual is eligible when its diagnosis is stable under the truth resolution. Of the 376 J-cell and deformation combinations with residuals above \SI{2}{\percent}, 232 changed classification with the truth resolution or the response weighting and were excluded. That leaves 144 (\SI{38}{\percent} of the 376). At five iterations the J-cell medians of the absolute residual agree: \SI{9.5}{\percent}, \SI{5.4}{\percent}, \SI{5.6}{\percent} and \SI{4.3}{\percent} for the boosted trees, against \SI{8.3}{\percent}, \SI{5.4}{\percent}, \SI{4.9}{\percent} and \SI{5.3}{\percent} for the exact binned unfolding, for D1, W1, W3 and the $q_3$ stress.
+% From sec_5d.tex:71 (draft de1543818)
+The instability also explains the difference of at most \SI{1.2}{\percent} on data between the driver and the development pipeline.
+% From sec_5d.tex:73 (draft de1543818)
+A study of the mechanism on one pseudo-experiment, specified before it ran, found that the perturbation reaches the estimator by breaking ties among equal float32 values, which changes LightGBM's histogram bins. A perturbation that keeps the ties removes the spread. Perturbing only the refinement stage's input carries the full spread, so the refinement is a sufficient entry. Perturbing only the OmniFold loop also carries the full spread on the 153 quantities and is inconclusive on the sixteen cells, so neither stage alone is established as the mechanism. The stage tests and the tie test were separate, and no test linked their findings; whether the ties act at the refinement stage was not tested. Neither finding is a statement about the data's spread, and equal float32 values are what float32 storage of these kinematics produces, not a defect of the inputs.
+% U5 (currency check of 2fe070fec): OUTCOME-20261108-rs1-rounding-mechanism.md (commit 9f0bf8ea6), K5 and S-omni (rs1_read.json 9938e168; rs1-ratio-somni-153 = 0.947 reads C, rs1-ratio-somni-16 = 0.857 inconclusive), with the clauses DECISION-20261112-joseph-consult-d1-d7.md D3 keeps; wording as the paper's section 6.1 at 5bbb9d269. [carried from sec_5d.tex:74]
+% absence-ok: scopes RS1's tests as its record states them (OUTCOME-20261108-rs1-rounding-mechanism.md: S-omni INCONCLUSIVE on the 16 cells, "Neither stage is 'the' mechanism"; the ties' action within refinement untested), the clauses DECISION-20261112-joseph-consult-d1-d7.md D3 keeps [carried from sec_5d.tex:75]
+% From sec_5d.tex:78 (draft de1543818)
+There, on noise-free fake data, its root-mean-square closure bias is \fvval{ens1-g-rms-r} against \fvval{ens1-g-rmsc-r} for the \estMultiD{}, about \fvval{ens1-g-rms-dpct}\,\% larger. The excess is \fvval{ens1-g-drms} against a noise floor of \fvval{ens1-g-floor}, or \fvval{ens1-g-ratio} times the floor. In noise-free fake-data closures at the other \fvval{ens1-nnoworse} of the \fvval{ens1-ntruths} distinct truths, it is no worse than the \estMultiD{}. On the sixteen cells of the data (\S\ref{sec:fived16}), the ensemble average differs from the reported result by at most \SI{\fvval{e96d-maxpct}}{\percent}, and by at most \fvval{e96d-maxsig} of a cell's standard deviation from $C_{\mathrm{e}}$ (\S\ref{sec:fived16-cov}). Its fits perturb a float64 copy of the inputs at the rounding level. On the unperturbed copy, the \estMultiD{} gives the reported result to double precision.
+
+\paragraph{From the note's \S\ref{sec:gbdt-model-dependence}.}
+% From sec_5d.tex:99 (draft de1543818)
+With seed 42, its 40 nominal experiments and 20 at each of five departures include Poisson pseudo-data, changing MC splits and background refinement.
+% From sec_5d.tex:121 (draft de1543818)
+The $q_3$ stress changes the conditional distribution at fixed $(\Eavail,W)$ with amplitude 0.3.
+% From sec_5d.tex:136 (draft de1543818)
+So does the recovery target, recovery of at least 75\% of a generator-sized departure, which requires a residual proxy of at most 0.25, against 0.31--0.63 measured. The records document gives the traces (Ref.~\cite{NoteRecords2026}). The selection procedure then takes RD3 as the fallback, and RD3 fails the total-width target.
+% From sec_5d.tex:149 (draft de1543818)
+At historical W3 truth, EW29 has mean residual \SI{23.67}{\percent} and repeat SD \SI{0.56}{\percent}; EW7 has \SI{-6.81}{\percent} and \SI{0.30}{\percent}. Coarser cells can have smaller residuals and spread, but they estimate different integrals, so their smaller residuals and spread are not an improvement in precision on an unchanged quantity.
+% From sec_5d.tex:155 (draft de1543818)
+[Caption of the note's Fig.~\ref{fig:gbdt-bias-spread}, continued:] Each supported J or H2 cell gives the mean and SD of $(\hat f-f_{\rm true})/f_{\rm true}$ in the same background-inclusive ensemble: 40 nominal experiments, 20 each for W2 and W3. Bars give pointwise 95\% Student-$t$ intervals for means and normal-model intervals for SDs, conditional on saved simulation. They supply neither simultaneous bounds nor total uncertainties. Truth panels and reporting cells form no frontier across estimator settings.
+% From sec_5d.tex:168 (draft de1543818)
+[Caption of the note's Fig.~\ref{fig:gbdt-coverage}, continued:] Below: EW7 ($\Eavail\in[0.1,0.2)$, $W\in[1.1,1.4)$ GeV) and EW41 (both above 3 GeV), pointwise 95\% Clopper--Pearson bounds. Dotted: nominal Gaussian 68.27\%. Neither total uncertainty nor a newly validated interval is shown. The bootstrap $\sigma$ is from 100 replicas of the nominal seed 700000; the assessment samples are reused, and no per-experiment or total-coverage claim is made.
+% From sec_5d.tex:174 (draft de1543818)
+The stability failure and the study's scope are in \S\ref{sec:val-departure}, interval coverage in \S\ref{sec:coverage-5d}.
+% From sec_5d.tex:184 (draft de1543818)
+[Caption of the note's Fig.~\ref{fig:gbdt-prior}, continued:] Historical W3 at five iterations. Horizontal gives minus the noise-free relative truth residual; vertical gives the relative shift in real-data $R$ when its MC prior changes to W3, normalized to CV-prior results. Points are supported cells, not independent repeated experiments. The diagonal marks equality.
+
+\paragraph{From the note's \S\ref{sec:coverage-5d}.}
+% From sec_5d.tex:215 (draft de1543818)
+[Caption of the note's Fig.~\ref{fig:coverage-5d-paper}, continued:] Circles/squares: 68\%/95\% intervals. Bars: one-sided Clopper--Pearson lower/upper bounds at level $0.05/459$ (Bonferroni: 153 integrals, three truths). Solid/dashed: nominal coverage/thresholds 0.66 and 0.94. Filled: upper bound below threshold. Nominal truth (undrawn): none below 0.66, two below 0.94. Order: 42 $(\Eavail,W)$ cells and sum, \jtNcells{} joint cells (indices in $3^5$), total.
+
+\paragraph{From the note's \S\ref{sec:eavailw-construction}.}
+% From sec_5d.tex:271 (draft de1543818)
+A 160-throw ensemble determines a standard deviation only to a relative precision of about $1/\sqrt{2(N-1)}\approx\SI{5.6}{\percent}$ for independent Gaussian throws, so a smaller seed-induced drift could not be resolved against the width it would change.
+% From sec_5d.tex:274 (draft de1543818)
+Within the limits stated below, the sensitivity is not the statistic's own resampling noise, which would fall with $N$. The same-seed resampling floor falls steeply from $\floorNforty\,\%$ at $N=40$ to $\floorNeighty\,\%$ at $N=80$, with two-point exponent $\floorExponent$; no floor measurement exists at $N=160$. Three limits rule out a statement about infinite ensembles. First, the $40$- and $80$-throw points are nested subsets of the same 160 throws, not independent ensembles. The flatness therefore holds within one ensemble, over a factor of four in $N$; the behavior at larger $N$ is unmeasured. Second, the scatter of these subset means, $\pm\seedEffectScatter\,\%$, is at a single seed pair (offsets $\{0,1200\}$); the width of the distribution over seed pairs is unmeasured. Third, the statistic is a maximum over the specified offset set, so additional pairs can only raise it.
+% Search: floor at N=160; larger ensemble; seed-pair width; seed pairs (values.tex:446 "the FLOOR was measured at N=40 and N=80 ONLY"; nd-unfolding/CORRECTED_UQ_PRODUCTION_STATUS.md:17-22, the 40- and 80-throw points nested in one 160-throw ensemble at one seed pair; CORRECTION-20260921-seed-effect-larger-ensemble-corollary-withdrawn.md:71-74, the N=160 floor of EVIDENCE-20260920 is an extrapolation; release-package-20260922/README.md:35-39, larger N and the seed-pair width unmeasured) @ 624acea1 [carried from sec_5d.tex:275]
+% From sec_5d.tex:276 (draft de1543818)
+Allowing them to vary could move the total in either direction, and neither is measured, because $s_{\mathrm{proj}}$ maximizes relative changes over functionals rather than summing nonnegative component contributions.
+% From sec_5d.tex:277 (draft de1543818)
+Across the comparison's 43 projection functionals (\zprojCells\ destinations plus the all-ones total rate), shifts reach $\cvMoveProjMax\,\%$, versus relative uncertainties of order ten percent. Individual five-axis bins reach $\cvMoveBinOverSigmaMax\,\%$ of their uncertainty; summing bins suppresses this movement in projections.
+
+\paragraph{From the note's Table~\ref{tab:test-index}.}
+% From part5_validation.tex (draft de1543818)
+[Injected $W$ bump (5D), Outcome cell, after ``pass, by a narrow margin'':] Neighboring $W$ bins \SI{3.1}{\percent} and \SI{2.7}{\percent} high; per-5D-bin spread \SI{3.7}{\percent}
