@@ -12,7 +12,13 @@ move manifest (history-cuts/move-manifest-*.tsv); a verbatim move whose destinat
 the re-anchor. Anything else is marked REVIEW, with the best-matching window of the closure as a candidate re-anchor
 for a person to check: the tool never accepts a reworded sentence on its own.
 
---write rewrites the TSV with the re-anchors it found; --check exits 1 if any row is REVIEW (the freeze gate).
+A row may also be located in the RECORDS (DECISION-20261120a item 5: a qualifier's full statement may move verbatim to the
+records document with a pointer in the note): its reanchor_file is a file of main_records.tex's input closure that holds
+reanchor_quote verbatim, and its note carries "[pointer: <text>]" whose text prints in the posted note's closure. Both must
+hold; a records text without its printed pointer, or a pointer without the records text, is REVIEW.
+
+--write rewrites the TSV with the re-anchors it found; --check exits 1 if any row is REVIEW (the freeze gate);
+--self-test runs planted rows through the locator (each status, and each records failure) and exits 1 on any surprise.
 Written by the limitation-resolver lane, 2026-11-18, for the note's structural rewrite and freeze_checks.py.
 """
 import argparse
@@ -25,9 +31,9 @@ HERE = Path(__file__).resolve().parent
 HEADER = ["row_id", "file", "quote", "reanchor_file", "reanchor_quote", "note"]
 
 
-def closure(note_dir: Path) -> dict[str, str]:
-    """main_note.tex and every file it inputs, recursively, as {file name: text}."""
-    seen, stack, out = set(), ["main_note"], {}
+def closure(note_dir: Path, driver: str = "main_note") -> dict[str, str]:
+    """main_note.tex (or another driver) and every file it inputs, recursively, as {file name: text}."""
+    seen, stack, out = set(), [driver], {}
     while stack:
         name = stack.pop()
         path = note_dir / f"{name}.tex"
@@ -67,9 +73,14 @@ def best_window(quote: str, files: dict[str, str]) -> tuple[float, str, str]:
     return best
 
 
-def locate(rows: list[list[str]], files: dict[str, str], moves) -> tuple[list[list[str]], dict[str, int]]:
+POINTER = re.compile(r"\[pointer: (.+?)\]")
+
+
+def locate(rows: list[list[str]], files: dict[str, str], moves,
+           records: dict[str, str] | None = None) -> tuple[list[list[str]], dict[str, int]]:
     text = "\n".join(files.values())
-    counts = {"present": 0, "reanchor": 0, "moved": 0, "review": 0}
+    records = records or {}
+    counts = {"present": 0, "reanchor": 0, "moved": 0, "records": 0, "review": 0}
     out = []
     for row in rows:
         rid, fname, quote, rfile, rquote, note = (row + [""] * 6)[:6]
@@ -89,6 +100,18 @@ def locate(rows: list[list[str]], files: dict[str, str], moves) -> tuple[list[li
             counts["moved"] += 1
             out.append([rid, fname, quote, dest, quote, f"{note} || moved verbatim ({hits[0][0]})"])
             continue
+        if rfile in records and not rfile in files:
+            ptr = POINTER.search(note)
+            in_rec = bool(rquote) and rquote in records[rfile]
+            if in_rec and ptr and ptr.group(1) in text:
+                counts["records"] += 1
+                out.append([rid, fname, quote, rfile, rquote, note])
+                continue
+            why = ("records text found, but the note pointer " + (repr(ptr.group(1)[:60]) + " does not print" if ptr else "is not given ([pointer: ...])")
+                   if in_rec else f"{rfile} does not hold the re-anchor quote")
+            counts["review"] += 1
+            out.append([rid, fname, quote, rfile, rquote, f"{note} || REVIEW: records location: {why}"])
+            continue
         ratio, bfile, bwin = best_window(quote, files)
         counts["review"] += 1
         extra = f"; manifest {hits[0][0]} -> {hits[0][1]}, destination text not present yet" if hits else ""
@@ -102,11 +125,15 @@ def main(argv=None) -> int:
     ap.add_argument("--tsv", type=Path, default=HERE / "limitations-export.tsv")
     ap.add_argument("--write", action="store_true")
     ap.add_argument("--check", action="store_true")
+    ap.add_argument("--self-test", action="store_true")
     a = ap.parse_args(argv)
+    if a.self_test:
+        return self_test()
     lines = a.tsv.read_text(encoding="utf-8").rstrip("\n").split("\n")
     if lines[0].split("\t") != HEADER:
         sys.exit(f"LIMITATIONS-EXPORT :: FAIL ({a.tsv.name} header is not {HEADER})")
-    rows, counts = locate([l.split("\t") for l in lines[1:]], closure(a.note_dir), manifest_moves(a.note_dir))
+    rows, counts = locate([l.split("\t") for l in lines[1:]], closure(a.note_dir), manifest_moves(a.note_dir),
+                          closure(a.note_dir, "main_records"))
     summary = ", ".join(f"{k} {v}" for k, v in counts.items())
     if a.write:
         a.tsv.write_text("\n".join(["\t".join(HEADER)] + ["\t".join(r) for r in rows]) + "\n", encoding="utf-8")
@@ -118,6 +145,31 @@ def main(argv=None) -> int:
         return 1 if a.check else 0
     print(f"LIMITATIONS-EXPORT :: PASS ({len(rows)} rows located: {summary})")
     return 0
+
+
+def self_test() -> int:
+    """Planted rows through locate(): every status, and each way a records location can fail."""
+    note = {"sec_a.tex": "The note keeps the headline limit. The full statement is in the records document."}
+    rec = {"records_x.tex": "Its full qualifier sentence, moved verbatim."}
+    Q = "Its full qualifier sentence, moved verbatim"
+    P = "[pointer: The full statement is in the records document]"
+    cases = [
+        ("present in the note", ["r1", "sec_a.tex", "keeps the headline limit", "", "", ""], "present"),
+        ("records, with its printed pointer", ["r2", "sec_a.tex", Q, "records_x.tex", Q, P], "records"),
+        ("records, pointer not printed", ["r3", "sec_a.tex", Q, "records_x.tex", Q, "[pointer: a sentence that does not print]"], "review"),
+        ("records, no pointer given", ["r4", "sec_a.tex", Q, "records_x.tex", Q, ""], "review"),
+        ("records file lacks the quote", ["r5", "sec_a.tex", Q, "records_x.tex", "a sentence that is not there", P], "review"),
+        ("re-anchor file outside both closures", ["r6", "sec_a.tex", Q, "nowhere.tex", Q, P], "review"),
+    ]
+    bad = 0
+    for name, row, want in cases:
+        _, counts = locate([row], note, [], rec)
+        got = next(k for k, v in counts.items() if v)
+        ok = got == want
+        bad += not ok
+        print(f"  {'ok  ' if ok else 'FAIL'} {name}: {got} (want {want})")
+    print(f"LIMITATIONS-EXPORT SELF-TEST :: {'PASS' if not bad else 'FAIL'} ({len(cases) - bad} of {len(cases)} cases as expected)")
+    return 1 if bad else 0
 
 
 if __name__ == "__main__":
