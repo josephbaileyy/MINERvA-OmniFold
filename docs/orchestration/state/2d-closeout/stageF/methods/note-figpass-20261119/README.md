@@ -16,6 +16,7 @@
 | B | the duplicates (Figs. 7, 9, 10, 13; 20, 21), by Joseph's ruling of 2026-11-19 (DECISION-20261119b) | each series drawn once: Fig. 13 folded into Fig. 7, the mosaic's points into Figs. 9 and 10, Figs. 20 and 21 one figure |
 | C | the Gemini graders' caption-match items (director, 2026-11-19) | Figs. 12, 18 captions; Figs. 19, 22 labels; Fig. 32 titles; Fig. 9 scaling clause; Fig. 15 label off the star |
 | D | Fig. 17 (fig:eavail-marg) redrawn from the fetched input | one stacked figure at printed size, every text at least 10 pt; "pull" read as "standardized difference" |
+| E | Figs. 6 and 7 (fig:ptslices, fig:pzslices): markers that hid each other (Joseph's read of e5c56bcc2, via the director) | 60% result markers, open published markers, bars above markers, text at least 7 pt; Fig. 6 in 3 columns with a log p∥ axis (the director chose variant B) |
 
 ## The method (two arms per redrawn figure)
 
@@ -341,4 +342,49 @@ sha256 (the director's ruling).
 - **Fig. 22's one count:** figures with overlapping strings go 3 → 4 with C. The added one is Fig. 22, whose own
   label "$q_3\in[0.4,0.6)$ GeV" pdftotext splits at the ∈ glyph (extracted as "£"). It is one text, not two
   touching ones, and the page shows no overlap.
+
+## Chunk E: the slice figures' markers (Figs. 6 and 7)
+
+**Requested by** the director on 2026-11-19, from Joseph's read of draft e5c56bcc2: in Figs. 6 and 7 the published
+squares and our circles were so large that they hid each other and the error bars. Requested: markers at about 60%,
+open published markers (or an offset), error bars above the markers, and 3 columns if still cramped. The director
+then chose variant B of two (`~/codex-reports/note-measurement/figpass/E/`): A as requested, B as A plus a log p∥
+axis on Fig. 6, "a legitimate presentation choice: it changes no data, and that range is where the bins crowd".
+- **Base:** origin/draft/note-round2-20261108 at `67b203d59`.
+- **Recipe:** arm 0 is `tools/compose_tier2.py` (chunk B), unchanged. Arm 1 is `tools/compose_slices_markers.py
+  --pt-ncols 3 --logx --font-floor 7 --pz-top-hundredths 30 --pub-size-percent 100 --pub-edge-hundredths 40`, which runs compose_tier2's main() unchanged and wraps
+  only its final save. Before each slice figure is saved:
+  - the result's markers at 0.6 of their size; the published markers open (face colour none) at their drawn size,
+    with a 0.40 pt edge. At 0.6 of their size (the first render) the open squares printed solid: the caption read
+    (`reads/figpass-E/claude-sub/report.md`) found "open black squares" not supported by the image. An open marker
+    hides nothing behind it, so it keeps its size;
+  - every error bar and cap above every marker (zorder);
+  - ticks kept as drawn inside the view (off-view ticks dropped, limits restored);
+  - Fig. 6 only: three columns (same width, taller canvas, the y label on the new first column and the x label on
+    each column's lowest panel), and a log p∥ axis with ticks 2, 5, 10, 20 and 50, labelled "p∥ (GeV/c), log scale".
+    Fig. 7's x axis is p_T from 0, where a log axis does not apply; it keeps four columns and gains 0.30 in of
+    headroom, so that its top legend clears the first row's titles (in the installed figure it sat on them);
+  - every text raised to at least 7 pt at the printed size (the canvas prints at \textwidth, scale 1.01);
+  - the figure legend drawn again from the restyled handles, with the same entries and order.
+  No x or y value changes (no offset). Same environment and inputs as chunk B.
+- **Checks** (`runs/markers/CHECKS.txt`; the capture indexes in `runs/markers/capture/`):
+  - arm 0 reproduces both installed slice figures (EQUAL-BUT-DATE against `figs/`), and arm 1's projections equal
+    the installed Fig. 4 (EQUAL-BUT-DATE);
+  - `tools/check_slices_markers.py` :: PASS. Every item keeps its order, kind, label and xhash (210 in Fig. 6, 240 in
+    Fig. 7). The full hash differs only for the published marker line of each panel (14 and 16), and only in the
+    marker face colour; no style field changes. The projections are equal item for item.
+  - capture_any's text-overlap count is not used here: it counts the tick labels of the producer's two hidden
+    (unused) axes in Fig. 6, which lie under the legend, and reads legend text positions cached by the other-DPI
+    save. The note-level count below is the gate.
+- **Measured in the note PDF** (quality_checks, base 67b203d59 → this head):
+  - Fig. 6: word-like text 5.6 → 7.1 pt; characters under 7 pt 1127 → 68 of about 1200; aspect 0.87 → 1.32;
+  - Fig. 7: word-like text 5.6 → 7.1 pt; characters under 7 pt 1214 → 62; aspect 0.87 → 0.92;
+  - the characters still under 7 pt are the superscripts (the power of ten, 5.0 pt), as in chunk A1;
+  - overlapping strings: 14 and 16, unchanged (one per panel, in the panel's ×10ⁿ and χ² annotation);
+  - freeze_checks (1, 2, 3, 4, 5, 7, empty allow-list) passes.
+- **Install:** `figs/` is immutable once committed, so the two new files are in `figs-r2/`.
+  `tools/install_layout.py --figs-dir figs-r2` adds one line `NFP=".../note-figpass-20261119/figs-r2"` before their
+  install lines in make_figures.sh, and refuses any later install into `figs/` (it would read the wrong directory).
+- **Caption:** Fig. 6's markers are "open black squares", and "($\pPar$ on a log scale)" follows its slicing
+  clause. Fig. 7's caption points to Fig. 6 for the markers and is unchanged. One caption read.
 

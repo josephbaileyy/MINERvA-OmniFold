@@ -459,13 +459,16 @@ install_layout_fig runperiod_steps.pdf                      4496bcf824d56393e509
 install_layout_fig mode_decomp_mec_eavail_central.pdf       0b30b46b0456039d499e4bd399f9160d49ea1da42fa8d171c901099bfadadb7f
 install_layout_fig MEFHC_5iter_xsec_proj_pt.pdf             f401ad1c3de18a34305f59d03fc3d4fb1a00360d9f68f8212c7b5fc564744b2c
 install_layout_fig MEFHC_5iter_xsec_proj_pz.pdf             506e13cdc6eabe08a564323605bb1ed7b07fbd0327d2d1602cacc784b046b8ff
-install_layout_fig MEFHC_5iter_xsec_paper_pt_slices.pdf     b4cec2839a2b5f44d9a17bfa1093cfbe3bb6ac5afde179bf99962375284d31ca
-install_layout_fig MEFHC_5iter_xsec_paper_pz_slices.pdf     693ea449dbfc3514b2af9ae10039793476c1764e560c5b5ee9e59774f65ce072
+# install_layout_fig MEFHC_5iter_xsec_paper_pt_slices.pdf     b4cec2839a2b5f44d9a17bfa1093cfbe3bb6ac5afde179bf99962375284d31ca   (figure pass, 2026-11-19: installed below)
+# install_layout_fig MEFHC_5iter_xsec_paper_pz_slices.pdf     693ea449dbfc3514b2af9ae10039793476c1764e560c5b5ee9e59774f65ce072   (figure pass, 2026-11-19: installed below)
 install_layout_fig generators_vs_unfolded_band_central.pdf  719a53b2ed01ceb90955f0e2da74db6c087b2aabfc7d76bcae848e1a28238a8e
 install_layout_fig ascencio_fullcov_compare_central.pdf     b84137b9ce240accd0e533b5f535a35d9b12ef1d7a5268bed7e37204e6187804
 install_layout_fig minerva_unfolding_landscape.pdf          936ed2515cace3398a12c709511033a527aed86ee314ee61325081d68871a486
 install_layout_fig eavail_marginal_vs_paper_pull_full.pdf   2560812e76ed9e6fc2df5c1fd86f10146a09a2f6a510c9976d091d6c4ae150aa
 install_layout_fig gbdt_prior_response.pdf                  add7161d72612f6916103524fa6e3c761dac75f65161dbb75d4bad452c10b5d3
+NFP="$REPO/docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/figs-r2"
+install_layout_fig MEFHC_5iter_xsec_paper_pt_slices.pdf     a71c3853afa683ad4f12945eda39e6c2f1118c27b7f21ffaf57c452b2e13faca
+install_layout_fig MEFHC_5iter_xsec_paper_pz_slices.pdf     0a50c6eeb7ca63250bd2627d4b5ff047b655602130cfbd5806e76fcea23f5725
 
 echo
 echo "== paper-only vector crops =="
