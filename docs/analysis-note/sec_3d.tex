@@ -55,8 +55,8 @@ Table~\ref{tab:3d-configs} lists the configuration (\S\ref{sec:method-config}) o
     \toprule
     Result & Estimator \\
     \midrule
-    3D and 4D central values, unless stated otherwise & \estMultiD{}: deterministic LightGBM \\
-    2D result compared in \S\ref{sec:3d-anchor} & \estTwoD{}: LightGBM, seed~42 \\
+    3D and 4D central values, unless stated otherwise & \estMultiD{}: deterministic LightGBM, the learner of the \estDetPurity{} \\
+    2D result compared in \S\ref{sec:3d-anchor} & \estTwoD{}: LightGBM at seed~42, the learner of the \estPurity{} \\
     Figs.~\ref{fig:eavail-marg} and~\ref{fig:q3excess} and numbers read from them; 3D closure; classifier-family cross-check & \estPurity{}: LightGBM \\
     \bottomrule
   \end{tabular}
