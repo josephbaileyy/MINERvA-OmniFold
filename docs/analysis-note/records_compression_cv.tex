@@ -216,3 +216,28 @@ A 160-throw ensemble determines a standard deviation only to a relative precisio
 \paragraph{From the note's Table~\ref{tab:test-index}.}
 % From part5_validation.tex (draft de1543818)
 [Injected $W$ bump (5D), Outcome cell, after ``pass, by a narrow margin'':] Neighboring $W$ bins \SI{3.1}{\percent} and \SI{2.7}{\percent} high; per-5D-bin spread \SI{3.7}{\percent}
+
+\subsection{Fake-data, closure and classifier detail (from Part 5, P5-Q2)}
+% DECISION-20261120a and the director's approved P5-Q plan (2026-11-20): sentences of the note's sec_q3_fived16.tex,
+% sec_q3_bias.tex and sec_q3_3d.tex that the condensed note no longer prints, moved verbatim and in order (rows
+% CV-P5-Q2.* in history-cuts/move-manifest-cv-part5-20261119.tsv). Bracketed words are context, not the note's.
+
+\paragraph{From the note's \S\ref{sec:3d-closure}.}
+% From sec_q3_bias.tex:21 (draft 16e2dfe7b)
+[For the note's injected $\Eavail$ bump, unfolded with the \estPurity{}:] The recovered step-2 mean weight is $1.048$ against the injected $1.0485$. Residuals against reweighted truth on the $\Eavail$-marginal have median $0.9999$ and standard deviation \textbf{\num{0.0006}} (\SI{0.06}{\percent}).
+
+\paragraph{From the note's \S\ref{sec:fived16-fd}.}
+% From sec_q3_fived16.tex:33 (draft 16e2dfe7b)
+[The listings of the note's fake-data tests use the reported construction of $C_{\mathrm{model}}$.] If $C_{\mathrm{model}}$ is built with GiBUU's ratio on the generators' common phase space, the listed truths are the same; this construction cannot change the grades of the two GiBUU truths, because their grading covariances omit GiBUU's component. If it is built from smoothed ratios, the NuWro hybrid truth is also listed, by its $p$ alone ($p=\fvval{rsn-sm-nuwro-p}$, no cell beyond $\fvval{trig-z}\sigma$). Under both constructions, the held-out tunes still meet both bias criteria.
+% From sec_q3_fived16.tex:44 (draft 16e2dfe7b)
+[Of the note's fake-data truths:] The truths form three groups, evaluated separately, not pooled: the 8 truths from the $C_{\mathrm{model}}$ generators; the other truths, the GENIE CV hybrid and the $q_3$ tilt; and the prior truths, the simulation prior and the Tune~v1 hybrid. Under the reported covariance, the $C_{\mathrm{model}}$-generator truths have \fvval{f0b-grp-vertex-family-zcells} of \fvval{f0b-grp-vertex-family-cells} cells with $|z|>\fvval{trig-z}$ (Gaussian reference \fvval{f0b-grp-vertex-family-refcells}) and \fvval{f0b-grp-vertex-family-ptruths} of \fvval{f0b-grp-vertex-family-truths} truths with $p<\fvval{trig-p}$ (reference \fvval{f0b-grp-vertex-family-reftruths}); the other truths \fvval{f0b-grp-non-vertex-zcells} of \fvval{f0b-grp-non-vertex-cells} and \fvval{f0b-grp-non-vertex-ptruths} of \fvval{f0b-grp-non-vertex-truths}; and the prior truths \fvval{f0b-grp-prior-zcells} of \fvval{f0b-grp-prior-cells} and \fvval{f0b-grp-prior-ptruths} of \fvval{f0b-grp-prior-truths}. The Gaussian references are context only, because the bias is deterministic.
+
+\paragraph{From the note's \S\ref{sec:fived16-ibu}.}
+% From sec_q3_fived16.tex:100 (draft 16e2dfe7b)
+[Between the note's sixteen cells and the binned IBU unfolding of the same data:] The largest differences, IBU minus the \estMultiD{} as fractions of the \estMultiD{}, are $\fvval{ibu16-dof-R11}\,\%$ in R11, $\fvval{ibu16-dof-R06}\,\%$ in R06 and $\fvval{ibu16-dof-R05}\,\%$ in R05, or \fvval{ibu16-dsig-R11}, \fvval{ibu16-dsig-R06} and \fvval{ibu16-dsig-R05} times each cell's reported standard deviation; over the sixteen cells the difference reaches \fvval{ibu16-dsig-max} times a cell's reported standard deviation.
+% From sec_q3_fived16.tex:103 (draft 16e2dfe7b)
+[In the same comparison:] The IBU uncertainty is a median \lrval{rg1-r3-med} times that of the \estMultiD{} over the sixteen cells (\lrval{rg1-r3-lo}--\lrval{rg1-r3-hi}); the \estMultiD{}'s statistical block includes its estimator's own noise, refit per replica, and the IBU has none.
+
+\paragraph{From the note's \S\ref{sec:3d-classifier}.}
+% From sec_q3_3d.tex:9 (draft 16e2dfe7b)
+[Caption of the note's Fig.~\ref{fig:calibration}, continued:] The five-iteration OmniFold cross-check uses identical weighted 3D inputs and extraction, changing only the classifier family. The MLP/GBDT total-cross-section ratio is $1.0078$; median absolute projection differences are \SI{1.20}{\percent} in $\pT$, \SI{1.36}{\percent} in $\pPar$, and \SI{0.66}{\percent} in $\Eavail$.
