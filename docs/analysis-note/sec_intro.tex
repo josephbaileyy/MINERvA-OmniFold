@@ -56,7 +56,7 @@ The present work instead unfolds \emph{real} MINERvA data to an absolutely norma
 % ("a descriptive comparison, not a blind validation") @ b551b05f.
 
 \paragraph{Why unbinned.}
-First, OmniFold learns event weights in the full observable space and histograms only the final result. Reported bins can be chosen or refined after unfolding without rerunning it. Background subtraction is unbinned too in the 2D result and its covariance, in the 3D and 4D central values and in the sixteen-cell five-dimensional result (\S\ref{sec:fived16}). These use refined negative-weight subtraction (\S\ref{sec:method-algo}). The configuration-(a) five-dimensional central value (Table~\ref{tab:config-key}) and its five-axis covariance, and the extended-fiducial value, use the binned purity weight, a per-reco-bin $(D-B)/D$ weight fixed \emph{before} training.
+First, OmniFold learns event weights in the full observable space and histograms only the final result. Reported bins can be chosen or refined after unfolding without rerunning it. Background subtraction is unbinned too in the 2D result and its covariance, in the 3D and 4D central values and in the sixteen-cell five-dimensional result (\S\ref{sec:fived16}). These use refined negative-weight subtraction (\S\ref{sec:method-algo}). The \resFiveAxis{} (Table~\ref{tab:config-key}) and its five-axis covariance, and the extended-fiducial value, use the binned purity weight, a per-reco-bin $(D-B)/D$ weight fixed \emph{before} training.
 % Accuracy fix (unscored; director ruling 2026-10-26): scope of the purity weight as in sec_method.tex
 % sec:method-algo and app_negweight.tex "Scope of the numbers"; the earlier text made purity the general exception.
 
