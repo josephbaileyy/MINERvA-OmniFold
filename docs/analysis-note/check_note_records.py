@@ -45,7 +45,10 @@ Inventory (base):                                    Probes (new):
                                                          X:<file>::<text> no longer prints there,
                                                          R:<file>::<text> prints in the records closure's <file>,
                                                          D:<file>::<key> names a dropped citation whose target
-                                                         still exists in the records (see THE THINNING)
+                                                         still exists in the records (see THE THINNING),
+                                                         M:<from>><to>::<key> names a citation that moved with
+                                                         its passage from one note file to another; <to> must
+                                                         print it (2026-11-19, the Part 3 group: H3-UQ.01)
                                                      P8 (THE THINNING) every NoteRecords2026 citation of the
                                                          posted note at THIN_BASE is still printed, or is a DROP
                                                          the ledger lists, and the ledger lists no drop of a
@@ -531,11 +534,15 @@ def probe_fails(inv: dict, new: Path, ledger: Path, thin: Counter | None = None,
     # The ledger's listed drops (D: probes), keyed as citation_keys keys them; validated under P7.
     rows = ledger_rows(ledger)
     drops: Counter = Counter()
+    moves: list[tuple[str, str, str, str]] = []      # (row, from file, to file, key): a citation moved between files
     for rid, probes in rows:
         for pr in probes:
             m = re.match(r"D:([\w.]+)::(.+)$", pr, re.S)
             if m:
                 drops[(m.group(1), drop_key(m.group(2)))] += 1
+            m = re.match(r"M:([\w.]+)>([\w.]+)::(.+)$", pr, re.S)
+            if m:
+                moves.append((rid, m.group(1), m.group(2), drop_key(m.group(3))))
     info["drops"] = sum(drops.values())
     # P6 pointers
     tags = set(inv["tags"])
@@ -564,11 +571,13 @@ def probe_fails(inv: dict, new: Path, ledger: Path, thin: Counter | None = None,
         if not probes:
             fails.append(f"P7 ledger row {rid} carries no probe")
         for pr in probes:
-            m = re.match(r"([NXRD]):([\w.]+)::(.+)$", pr, re.S)
+            m = re.match(r"([NXRD]):([\w.]+)::(.+)$", pr, re.S) or re.match(r"(M):([\w.]+>[\w.]+)::(.+)$", pr, re.S)
             if not m:
                 fails.append(f"P7 ledger row {rid}: malformed probe {pr[:80]!r}")
                 continue
             kind, fname, text = m.groups()
+            if kind == "M":
+                continue                                  # validated with the thinning, below
             if kind == "D":
                 fails += [f"P7 ledger row {rid}: {x}" for x in
                           drop_target_fails(fname, text, ntext, rec_tags, rec_heads, head_tags, head_heads)]
@@ -586,6 +595,17 @@ def probe_fails(inv: dict, new: Path, ledger: Path, thin: Counter | None = None,
         now = Counter()
         for (f, key), n in citation_keys(ntext).items():
             now[(SKELETON_FILE_MOVES.get(f, f), key)] += n
+        # a citation that moved with its passage (M: probe) counts at its new file: the base count moves with it
+        thin = Counter(thin)
+        for rid, src, dst, key in moves:
+            if dst not in ntext:
+                fails.append(f"P7 ledger row {rid}: M:{src}>{dst}: {dst} is not in the note closure")
+            elif thin[(src, key)] < 1:
+                fails.append(f"P8 ledger row {rid}: M:{src}>{dst} moves {key}, but {src} had no such citation at "
+                             f"THIN_BASE {THIN_BASE[:8]}")
+            else:
+                thin[(src, key)] -= 1
+                thin[(dst, key)] += 1
         info["thin_base"], info["thin_now"] = sum(thin.values()), sum(now.values())
         for k in sorted(set(thin) | set(drops)):
             f, key = k
@@ -1222,12 +1242,19 @@ PLANTS = [
      r" (Ref.~\cite{NoteRecords2026}, \recentry{flux-index})", ""),
     ("listed tag drop (silent)", None, "sec_systematics.tex",
      r" (Ref.~\cite{NoteRecords2026}, \recentry{flux-index})", "",
-     "| L98 | planted | DROP | R1 | `D:sec_systematics.tex::\\texttt{flux-index}` | planted |", ["L-thin-C64"]),
-    ("unlisted heading drop", "P8 app_statmethods.tex: 1 citation(s) of head:superseded values at",
-     "app_statmethods.tex", " (Ref.~\\cite{NoteRecords2026}, superseded values).", "."),
+     "| L98 | planted | DROP | R1 | `D:sec_systematics.tex::\\texttt{flux-index}` | planted |",
+     # 2026-11-19: since sec:uq-higherdim's background-CV citation moved to sec_fived16 (L-thin-C66, M:), flux-index is
+     # sec_systematics' last records citation, so a real drop of it also retires the file's N: probe row
+     ["L-thin-C64", "L-sec_systematics"]),
+    # Re-anchored 2026-11-19 (the director's ruling): the earlier anchor, a bare "superseded values" citation, left
+    # app_statmethods.tex in E2 (c2c027f9a), so both plants were UNAPPLIED; they now plant on the closure-thresholds
+    # citation that L-thin-C27 keeps (THIN_BASE had three of them; two are listed drops).
+    ("unlisted heading drop", "P8 app_statmethods.tex: 3 citation(s) of head:superseded values: retired material at",
+     "app_statmethods.tex", " (Ref.~\\cite{NoteRecords2026}, superseded values: retired material).", "."),
     ("listed heading drop (silent)", None, "app_statmethods.tex",
-     " (Ref.~\\cite{NoteRecords2026}, superseded values).", ".",
-     "| L98 | planted | DROP | R4 | `D:app_statmethods.tex::superseded values` | planted |", ["L-thin-C22"]),
+     " (Ref.~\\cite{NoteRecords2026}, superseded values: retired material).", ".",
+     "| L98 | planted | DROP | R4 | `D:app_statmethods.tex::superseded values: retired material` | planted |",
+     ["L-thin-C27", "L14"]),          # L14's N: probe pins the same heading words in this file
     ("unlisted whole-document drop", "P6 app_guide.tex: carried a whole-appendix pointer", "app_guide.tex",
      "document, Ref.~\\cite{NoteRecords2026};", "document;"),
     ("listed drop of a tag the records lack", "P7 ledger row L98: D:sec_validation.tex::\\texttt{coverage-fixed-truths}",
@@ -1265,6 +1292,13 @@ PLANTS = [
      "the quoted universe block counts it once\n\\texttt{flux-index} &"),
     ("listed drop still printed", "P8 sec_systematics.tex: the ledger lists 1 drop(s) of tag:flux-index", LEDGER, None,
      "\n| L98 | planted | DROP | R1 | `D:sec_systematics.tex::\\texttt{flux-index}` | planted |\n"),
+    # M: (2026-11-19, the Part 3 group): a citation that moved with its passage between note files
+    ("unlisted citation move", "P8 sec_systematics.tex: 1 citation(s) of head:superseded values", LEDGER,
+     " && M:sec_systematics.tex>sec_fived16.tex::superseded values", ""),
+    ("listed move, target lost the citation", "P8 sec_fived16.tex: 1 citation(s) of head:superseded values",
+     "sec_fived16.tex", "choice (Ref.~\\cite{NoteRecords2026}, superseded values).", "choice."),
+    ("listed move from a file without it", "P8 ledger row L-thin-C66: M:part3_reproduction.tex>sec_fived16.tex moves",
+     LEDGER, "M:sec_systematics.tex>sec_fived16.tex::", "M:part3_reproduction.tex>sec_fived16.tex::"),
     # R-EDIT (director ruling 2026-10-26), all on one record paragraph of app_history.tex. A callable ledger row is
     # built from the inventory, so its digests are those of the real base paragraph.
     ("unrecorded pointer edit", "P5 RECORD paragraph not verbatim", "app_history.tex", _R_ANCHOR, _R_POINTER),

@@ -26,3 +26,76 @@ That comparison's scatter is therefore not interpreted as data--simulation struc
 % From sec_q3_3d.tex:8 (draft lineage of 5d7210adc)
 The hidden-variable closure exceeds its threshold at the largest amplitude (\S\ref{sec:validation}, App.~\ref{app:response-mismatch}).
 
+\subsection{Five-dimensional estimator development detail (from Part 5, P5-3)}
+% The director's ruling of 2026-11-19 (P5-3 item 3): development history on the baseline and probe classifiers and
+% the procedure detail behind Part 5's findings, moved verbatim (rows CV-P5-3.* in
+% history-cuts/move-manifest-cv-part5-20261119.tsv).
+
+% From sec_5d.tex:88 (draft 6ed12eed4)
+The binned unfolding unfolds the same simulated events [as the boosted-tree comparison of the note's \S\ref{sec:val-departure}], with their exact efficiency and the response binned in the 10,499 occupied five-dimensional reconstructed cells, starting from the nominal prior.
+
+% From sec_5d.tex:90 (draft 6ed12eed4)
+Of the 144 eligible residuals, pooled over the deformations, 15 are dominated by the tree approximation. Only 2 of these 15 lie in identified quantities, a share of 0.014 of the 144. An identified quantity has a relative Cram\'er--Rao width at or below \SI{2.5}{\percent} at the analysis exposure. A width between that bound and the \SI{10}{\percent} bound is neither. Of the 144, 121 lie in quantities that the binned response constrains weakly at the analysis exposure. Their Cram\'er--Rao widths exceed \SI{10}{\percent} at both truth resolutions tested (median \SI{31}{\percent} at the coarser resolution, that of the J cells themselves). Here the regularization trades a large variance for the bias.
+
+% From sec_5d.tex:92 (draft 6ed12eed4)
+Longer noise-free exact iteration removes much of the residual for D1 (J median \SI{3.3}{\percent} after 200 iterations and \SI{0.8}{\percent} after $10^{5}$) and part of it for W1 (\SI{3.3}{\percent} and \SI{2.8}{\percent}). It does not do so for W3 and the $q_3$ stress (\SI{4.4}{\percent} and \SI{6.6}{\percent} after 200 iterations, \SI{8.9}{\percent} and \SI{6.7}{\percent} after $10^{5}$), whose within-cell binning bias grows with the iteration number. The long runs do not converge (only 9--34 of the 109 J quantities converge for each traced deformation). These values are last iterates. The coarser muon projection retained only three cases and is uninformative.
+
+% From sec_5d.tex:129 (draft 6ed12eed4)
+The scalar five-dimensional estimator studied here uses production LightGBM.
+
+% From sec_5d.tex:133 (draft 6ed12eed4)
+The noise-free study unfolds the full simulation's reweighted reconstructed events without background. Baseline classifiers and the missed-event regressor use 100 trees and 8 leaves; the capacity probe uses 400 trees and 31 leaves.
+
+% From sec_5d.tex:139 (draft 6ed12eed4)
+Saved fine-grid outputs are integrated into the supported J, H2 and EW cells of the table below [the label table of the note's \S\ref{sec:gbdt-model-dependence}]. Unsupported cells remain in the full-domain rate. The interval assessment keeps all 42 EW cells, including the three that the support rule excludes (definitions and normalization checks in App.~\ref{sec:gbdt-diagnostic-definitions}).
+
+% From sec_5d.tex:159 (draft 6ed12eed4)
+\paragraph{Recovery changes, but not uniformly.}
+
+% From sec_5d.tex:161 (draft 6ed12eed4)
+Figure~\ref{fig:gbdt-recovery} shows the traces over the recorded iteration ranges (later checkpoint entries are excluded, App.~\ref{sec:gbdt-diagnostic-definitions}); none is extrapolated. D1 and W1 improve slowly. W3's J-cell median absolute residual rises from \SI{5.57}{\percent} at iteration 5 to \SI{6.57}{\percent} at 200, and its maximum from \SI{32.9}{\percent} to \SI{44.8}{\percent}. The corresponding H2 medians are \SI{3.42}{\percent} and \SI{3.68}{\percent}. The persistence of the W3 residual is established over this finite scan only, not for unlimited iterations or for every possible classifier. The $q_3$ stress shows how much the functional matters: its EW median residual rises from \SI{4.99}{\percent} at iteration 5 to \SI{6.42}{\percent} at 30 even while some joint-cell summaries improve.
+
+% From sec_5d.tex:163 (draft 6ed12eed4)
+The capacity probe changes recovery. Its recorded traces reach 10 iterations (Fig.~\ref{fig:gbdt-recovery}); five iterations is the most the computing budget allowed at that capacity, and that is the comparison used here. At that point the larger classifiers lower the largest residual proxy over the development truths (lower row of Fig.~\ref{fig:gbdt-recovery}) by 3\% on J and 8\% on H2, short of the improvement of at least 20\% required before the larger capacity would be used.
+
+% From sec_5d.tex:165 (draft 6ed12eed4)
+Because the measure [the largest residual proxy over the development truth changes, the note's \S\ref{sec:gbdt-model-dependence}] is a maximum over the truth changes, the slow gains for D1 and W1 do not lower the measure: on H2, over the noise-free traces of Fig.~\ref{fig:gbdt-recovery}, it is 0.314 at five iterations and at least 0.384 at 10, 15 or 20.
+
+% From sec_5d.tex:189-196 (draft 6ed12eed4)
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{figures/gbdt_recovery.pdf}
+
+\caption[Noise-free five-dimensional recovery against iterations]{In noise-free development traces, more iterations reduce the D1 and W1 residuals only slowly, and the W3 residual persists over the scan. Historical truth ratios, fixed simulated detector response. Solid/dashed OmniFold curves: 100 trees/8 leaves and 400/31. Iteration maxima: D1/W1 40, $q_3$ 30, W3 200, capacity probes 10. Some baseline traces end at their last saved checkpoint. Top: median $|\hat f/f_{\rm true}-1|$ over supported cells. Bottom: residual proxy $\operatorname{median}(|\hat f/f_{\rm true}-1|/|f_{\rm true}/f_0-1|)$ for departures above 1\%, dotted bound 0.25. Different denominators prevent reading one minus this proxy as an exact recovered fraction. The $q_3$ stress has no eligible EW departure. These traces measure no repeat variance.}
+
+\label{fig:gbdt-recovery}
+\end{figure}
+
+% From sec_5d.tex:211 (draft 6ed12eed4)
+At nominal truth, EW41 contains the truth in 15 of 40 68\% intervals (37.5\%, pointwise exact 95\% interval [22.7\%, 54.2\%]), so a pooled pass cannot qualify this cell. A check with the width averaged over several bootstrap estimates is in App.~\ref{app:devhistory}.
+
+% From sec_5d.tex:225 (draft 6ed12eed4)
+Twenty edge-safe data jitters (uniform input perturbations within half a single-precision unit in the last place that keep the fine-grid membership fixed) give a J-cell median SD of \SI{0.228}{\percent}, against a bootstrap SD of \SI{0.368}{\percent}.
+
+% From sec_q3_fived16.tex:118 (draft 6ed12eed4)
+At the two flagged truths, the root-mean-square bias of IBU at five iterations over the sixteen cells and its noise-free $\chi^2$ are \fvval{prr-cmp-gibuu} than configuration~(e)'s at the GiBUU hybrid truth and \fvval{prr-cmp-q3} at the $q_3$ tilt (Table~\ref{tab:fived16-prr}).
+
+% From sec_q3_fived16.tex:120-134 (draft 6ed12eed4)
+\begin{table}[htbp]
+\centering\small
+\caption[Retained prior at the two flagged truths]{At both flagged truths, IBU at five iterations overshoots the truth along the prior-to-truth direction, while configuration~(e) retains part of each departure. Retained fraction $\rho$, root-mean-square over the sixteen cells of the bias $b_c$, which is relative to the prior cross section, and noise-free $\chi^2$ (16 degrees of freedom) at the two flagged truths, for configuration~(e) and IBU at five iterations, on noise-free pseudo-data at one simulation split. A negative $\rho$ means that, along the prior-to-truth direction, the result overshoots the truth; the total bias is in the RMS and $\chi^2$ columns.}
+\label{tab:fived16-prr}
+\begin{tabular}{lcccccc}
+\toprule
+ & \multicolumn{2}{c}{$\rho$} & \multicolumn{2}{c}{RMS bias} & \multicolumn{2}{c}{$\chi^2$} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}
+truth & (e) & IBU & (e) & IBU & (e) & IBU \\
+\midrule
+GiBUU hybrid & $\fvval{prr-rho-e-gibuu}$ & $\fvval{prr-rho-ibu-gibuu}$ & \fvval{prr-rms-e-gibuu} & \fvval{prr-rms-ibu-gibuu} & \fvval{prr-chi2-e-gibuu} & \fvval{prr-chi2-ibu-gibuu} \\
+$q_3$ tilt & $\fvval{prr-rho-e-q3}$ & $\fvval{prr-rho-ibu-q3}$ & \fvval{prr-rms-e-q3} & \fvval{prr-rms-ibu-q3} & \fvval{prr-chi2-e-q3} & \fvval{prr-chi2-ibu-q3} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% From sec_q3_fived16.tex:138 (draft 6ed12eed4)
+Reducing the iteration count from \fvval{prr-s53-b0-iters} to \fvval{prr-s53-k2-iters} increased $\rho$ beyond the threshold at the $q_3$ tilt. These settings [the reduced iteration count above, and the reduced capacity and $(\pT,\pPar)$-only learners of the note's \S\ref{sec:fived16-prr}] also newly flagged \fvval{prr-lev-K2-nnew}, \fvval{prr-lev-C25-nnew} and \fvval{prr-lev-O2-nnew} of the other \fvval{prr-lev-nother-word} graded truths, respectively, in the noise-free study. For \fvval{prr-pr1-noeffect}, no change as large as the threshold is detected. Every higher iteration count and capacity tested lowers $\rho$ at both truths, by at most \fvval{prr-more-dmax}, less than the threshold.
