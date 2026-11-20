@@ -296,6 +296,11 @@ def check_limitations(export: Path, note_dir: Path, new_pdf: Path):
     if not export.exists():
         return False, [f"LIMITATIONS :: FAIL (export {export} missing; limitation-resolver writes it)"]
     files = closure(note_dir)
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("limitations_export", note_dir / "limitations_export.py")
+    LE = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(LE)
+    rec_files = LE.closure(note_dir, "main_records")
     src_raw = {f: (note_dir / f).read_text() for f in files}
     src_all = norm_ws("\n".join(src_raw.values()))
     pdf_all = norm_ws("\n".join(pdftext_pages(new_pdf)))
@@ -314,6 +319,13 @@ def check_limitations(export: Path, note_dir: Path, new_pdf: Path):
             continue
         if found(rquote):
             continue
+        # DECISION-20261120a item 5: a row located in the records with a printed note pointer (limitations_export.py's
+        # "records" status, same rule): reanchor_file in main_records' closure holds reanchor_quote verbatim, and the
+        # note's "[pointer: ...]" text prints in the posted note
+        if rfile in rec_files and rfile not in files and rquote.strip() and rquote in rec_files[rfile]:
+            ptr = LE.POINTER.search(f[5])
+            if ptr and found(ptr.group(1)):
+                continue
         fails += 1
         lines.append(f"  MISSING {rid} ({_file}): {quote[:150]!r}" + (f"; re-anchor {rfile}: {rquote[:100]!r} also missing" if rquote else ""))
     lines.append(f"LIMITATIONS :: {'PASS' if not fails and n else 'FAIL'} ({n} row(s), {fails} missing)")
