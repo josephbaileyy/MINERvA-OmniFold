@@ -2,16 +2,16 @@
 \label{sec:eavailw}
 
 % Methods-paper sync fix round: aligned with paper_body.tex sec:central (descriptive central values; no mechanism). Register round n1 (R-N1): both are stated once, for this section too, at the sec:3d lead.
-For the central values, Valencia 2p2h closes about half of the low-recoil gap (\S\ref{sec:3d-2p2h}) but leaves a separate excess over the MINERvA Tune~v1 prior at high $\Eavail$. There the predicted 2p2h contribution is zero, and the two tested pion final-state-interaction variations change the prediction by less than one percent, too little to explain the excess. See also \S\ref{sec:limitations}.
+See the records for the high-$\Eavail$ model checks (Ref.~\cite{NoteRecords2026}).
 
-GiBUU is low throughout the $\Eavail$ tail. Its $W$-integrated five-dimensional data/generator ratio is $1.59$ at $\Eavail\in[0.8,1.5)$ and $1.37$ at $[1.5,3.0)$, with the \estPurity{}, the LightGBM unfolding with purity-based subtraction (\S\ref{sec:method-config}, Table~\ref{tab:config-key}); its sample stops at $E_\nu\approx\SI{20}{GeV}$ (\S\ref{sec:eavailw-band}). GENIE CV instead matches data at $[0.8,1.5)$ and is low at $[1.5,3.0)$, where its three-dimensional data/CV ratio is $1.10$ (\S\ref{sec:3d-2p2h}) with the \estMultiD{}, the deterministic learner with refined negative-weight subtraction.
+GiBUU is low throughout the $\Eavail$ tail. Its $W$-integrated five-dimensional data/generator ratio is $1.59$ at $\Eavail\in[0.8,1.5)$ and $1.37$ at $[1.5,3.0)$, with the \estPurity{}, the LightGBM unfolding with purity-based subtraction (\S\ref{sec:method-config}, Table~\ref{tab:config-key}); its sample stops at $E_\nu\approx\SI{20}{GeV}$ (\S\ref{sec:eavailw-band}). See the records for the estimator-specific high-$\Eavail$ comparisons (Ref.~\cite{NoteRecords2026}).
 
-Adding the hadronic invariant mass $W$ as the fifth OmniFold axis maps where in $W$ the high-$\Eavail$ excess lies. The validation of \S\ref{sec:val-fiveaxis} includes a model-dependence study; it does not establish a bias--variance tradeoff across estimator settings and provides no new total uncertainty for this projection.
+Adding the hadronic invariant mass $W$ as the fifth OmniFold axis maps where in $W$ the high-$\Eavail$ excess lies. See the records for validation and uncertainty of this projection (Ref.~\cite{NoteRecords2026}).
 
 \subsubsection{$W$ as a fifth axis}
 \label{sec:eavailw-axis}
 
-Truth $W$ is the experimenter's invariant mass $W=\sqrt{M^{2}+2M(E_\nu-E_\mu)-Q^{2}}$, with struck-nucleon mass $M$. Reconstructed $W$ combines the calorimetric energy transfer $q_{0}$ of the reconstructed-$q_{3}$ estimator and the muon-kinematic $Q^{2}$ with the average nucleon mass. The external generator predictions instead compute truth $W$ with the neutron mass for every event and place events with $W^{2}\le0$ in the lowest $W$ bin, whereas the analysis uses the struck-nucleon mass and excludes such events from its five-observable truth sample. In the GENIE and NuWro samples this moves 0.14--0.15\% of the events into another $W$ bin. In GENIE CV and NuWro (without their 50--\SI{100}{GeV} samples) it changes the coarse-cell predictions by about \SI{0.1}{\percent} at the median and at most \SI{2.2}{\percent}. In any cell, that is at most about one Monte Carlo standard error of the prediction. The change was not evaluated at cell level for GENIE$+$MEC and cannot be evaluated for GiBUU.
+Truth $W$ is the experimenter's invariant mass $W=\sqrt{M^{2}+2M(E_\nu-E_\mu)-Q^{2}}$, with struck-nucleon mass $M$. See the records for the generator-definition sensitivity (Ref.~\cite{NoteRecords2026}).
 % Methods-paper rewrite draft 5 (readability pass): moved from the article with its sources.
 % docs/orchestration/state/s5p/gen5d/README-gen5d-build.md:60-77 (fixed M_n, W = 0 when W^2 <= 0; 1,438/938,141 GENIE CV,
 % 1,449/960,128 GENIE MEC, 1,757/1,261,997 NuWro change W bin); docs/orchestration/state/2d-closeout/stageF/methods/
@@ -19,7 +19,7 @@ Truth $W$ is the experimenter's invariant mass $W=\sqrt{M^{2}+2M(E_\nu-E_\mu)-Q^
 % error max 0.88 / 1.13; GENIE+MEC not measured at cell level; the 50-100 GeV supplements excluded; GiBUU not evaluable).
 % Search: GENIE+MEC cell level; J-cell shifts (M4-W-RECORD.md:9, "GENIE+MEC was not measured at cell level", and :129-139, GENIE CV and NuWro only; README-gen5d-build.md:60-77 gives GENIE MEC W-bin event counts, not cell shifts) @ 1a015eef
 
-Like $q_{3}$ (\S\ref{sec:4d}), and unlike $\Eavail$, $W$ changes under the lateral systematic shifts, so a shifted $W$ is stored for each lateral universe. The event-loop output files also store truth hadronic diagnostics: the proton and pion multiplicities and the polar angle of the summed momentum of all final-state particles other than muons and neutrinos. The $W$ edges $[0,1.1,1.4,1.8,2.2,3.0,100]\,\si{GeV}$ bracket the quasielastic peak, the $\Delta$, the transition region and the DIS tail.
+See the records for lateral shifts and stored hadronic diagnostics (Ref.~\cite{NoteRecords2026}).
 
 The five-dimensional unfolding of the \estPurity{} in $(\pT,\pPar,\Eavail,q_{3},W)$ agrees under marginalization with the lower-dimensional results: integrating over $W$ reproduces the \estPurity{}'s 4D normalization to \SI{\eavailMargin}{\percent} (5D/4D total $=1.0011$) with median differences per axis of \SIrange{0.3}{1.5}{\percent}, and $d\sigma/dW$ is finite and non-negative in all six bins.
 
@@ -27,7 +27,7 @@ The five-dimensional unfolding of the \estPurity{} in $(\pT,\pPar,\Eavail,q_{3},
 \label{sec:eavailw-generators}
 
 % Methods-paper shortening pass (2026-10-21): the article's generator table and target paragraph, moved verbatim. Sources: DEFINITIONS sec. 6; README-gen5d-fluxfix.md:36-41 (GENIE [0, 50] GeV, NuWro [0.5, 50] GeV), :138-148 (GiBUU Enu_upper_cut = 20, 5.2% of sigma_CC above 20 GeV); KNOWN_ISSUES.md rows 82, 83, 97; the 72-cell GiBUU domain: contract-amendment-7-production-admission.json:9.
-Table~\ref{tab:generators-impl} lists the generator predictions compared in this note and tested in \S\ref{sec:joint5d}.  All are per nucleon of the stated target and are binned with the same fine-grid-to-cell map.
+Table~\ref{tab:generators-impl} lists the generator predictions compared in this note and tested in \S\ref{sec:joint5d}. See the records for the prediction binning convention (Ref.~\cite{NoteRecords2026}).
 
 \begin{table}[htbp]
   \caption[Generator predictions and domains]{The generator predictions differ in target and neutrino-energy coverage. All are per nucleon of the stated target and use the same fine-grid-to-cell map (\S\ref{sec:eavailw-generators}).}
@@ -47,17 +47,17 @@ Table~\ref{tab:generators-impl} lists the generator predictions compared in this
 \end{table}
 
 % Methods rewrite (M4, BINDING-PHASE1-20261019 sec. 5): the target consequence, quantified for GENIE. Source: docs/orchestration/state/inelastic-high-region-20261011/results/r5_genie_events.json:240 (W0, W < 1.1 GeV: Conly_over_CH_per_nucleon 1.0829), :283 (W1, 1.1 <= W < 1.4 GeV: 0.9779), :271 and :314 (rel_to_total 1.0560, 0.9537); W bins are the fine W bins (code/r5_genie_events.py:126-127); KNOWN_ISSUES.md row 97.
-Hydrogen has no quasielastic, 2p2h, or coherent $\nu_{\mu}$ charged-current channel, so normalizing per nucleon does not remove the difference between the targets.  In GENIE's own CH sample, the carbon-only cross section per nucleon exceeds that of CH by \SI{8.3}{\percent} for $W<\SI{1.1}{GeV}$ and is \SI{2.2}{\percent} below it for $1.1\le W<\SI{1.4}{GeV}$ (\SI{+5.6}{\percent} and \SI{-4.6}{\percent} with the overall normalization removed).  The NuWro and GiBUU comparisons contain a target difference of this kind, which the tests of \S\ref{sec:joint5d}, as run, do not correct. Section~\ref{sec:joint5d-ch} re-evaluates them with the correction.
+See the records for the carbon-to-CH comparison and its cross-check (Ref.~\cite{NoteRecords2026}).
 
 \subsubsection{Projection onto the $(\Eavail,W)$ plane}
 \label{sec:eavailw-map}
 
-Figure~\ref{fig:eavailWexcess} shows the unfolded five-dimensional result projected onto $(\Eavail,W)$, with the MINERvA Tune~v1 prediction subtracted. That prediction is the OmniFold prior, the simulation's truth weighted by its full tune weight; the untuned GENIE~CV of \S\ref{sec:eavailw-band} is a separate prediction.
+Figure~\ref{fig:eavailWexcess} shows the unfolded five-dimensional result projected onto $(\Eavail,W)$, with the MINERvA Tune~v1 prediction subtracted. See the records for the prior used in the projection (Ref.~\cite{NoteRecords2026}).
 % full tune weight: \texttt{w\_truth}
 
 % Register round n1 (R-N1): "descriptive central-value statements" and "does not locate an interaction mechanism" are stated once at the sec:3d lead; the nominal-response condition and the bias location qualify this map and stay.
 % Search: response-mismatch; response mismatch; mismatch closure (app_response_mismatch.tex title: "protocol implemented; not yet run"; no outcome record of a run); seed sensitivity of the excess shares; share and seed @ ddf16f10
-Estimator-seed shifts of central values are a small fraction of the projected uncertainties (\S\ref{sec:eavailw-adopted}). The response-mismatch closure of Appendix~\ref{app:response-mismatch} is designed to test whether an incorrect hadronic response can move strength into or out of the low-$W$ component. Its reconstruction-only test has not yet produced a result; closures with a shifted recoil response have been run on the sixteen cells (App.~\ref{app:response-mismatch}).
+See the records for the scope and status of response-mismatch closure (Ref.~\cite{NoteRecords2026}).
 % App-D-1 / W-3 (2026-11-16): scoped to the reconstruction-only test; the shifted-response closures are app_response_mismatch.tex
 % "Closures from the shifted response samples" (\fvval{ct3b-*}, fd/readout/fd_ct_mismatch.json 14399419).
 
@@ -74,11 +74,11 @@ Estimator-seed shifts of central values are a small fraction of the projected un
 \subsubsection{Comparison with four external generators}
 \label{sec:eavailw-band}
 
-All four external generators fall below the data in the high-$\Eavail$, high-$W$ corner. Figure~\ref{fig:eavailWband} compares the $(\Eavail,W)$ predictions of GENIE~CV, GENIE$+$Valencia~2p2h/MEC, NuWro and GiBUU. As in \S\ref{sec:3d-models}, each is normalized by its flux-averaged total CC cross section per nucleon, and those of GENIE and NuWro are flux-corrected. The 3D and $(\Eavail,W)$ comparisons use the same five-dimensional histogram of each generator. GENIE~CV totals \SI{2.76e-38}{cm^2/nucleon} in the measurement phase space in both; GENIE$+$MEC uses the normalization convention of the 3D comparison.
+All four external generators fall below the data in the high-$\Eavail$, high-$W$ corner. Figure~\ref{fig:eavailWband} compares the $(\Eavail,W)$ predictions of GENIE~CV, GENIE$+$Valencia~2p2h/MEC, NuWro and GiBUU. See the records for prediction construction (Ref.~\cite{NoteRecords2026}).
 
-In the corner ($\Eavail\ge\SI{0.8}{GeV}$, $W\ge\SI{1.8}{GeV}$), data/generator $=1.14$, $1.14$, $1.16$ and $1.61$, respectively. For GENIE and NuWro the corner ratios exceed their integrated ratios ($1.11$, $1.07$ and $1.15$) by \SIrange{1}{7}{\percent}, compared with \SI{16}{\percent} for GiBUU, whose integrated ratio is $1.39$ ($\sigma=\SI{2.22e-38}{cm^2/nucleon}$, against \SI{3.07e-38}{} for the data).
+In the corner ($\Eavail\ge\SI{0.8}{GeV}$, $W\ge\SI{1.8}{GeV}$), data/generator $=1.14$, $1.14$, $1.16$ and $1.61$, respectively. See the records for the comparison with integrated rates (Ref.~\cite{NoteRecords2026}).
 
-GiBUU's larger contrast comes from its sample's energy limit: it was generated only up to $E_\nu\approx\SI{20}{GeV}$ (\S\ref{sec:3d-models}). In GENIE and NuWro, neutrinos above this energy carry \SIrange{14.3}{14.8}{\percent} of the corner cross section and \SIrange{6.8}{7.4}{\percent} overall. Removing them raises these generators' corner-to-integrated contrast to \SIrange{9}{16}{\percent}, bracketing GiBUU's. If GiBUU is instead supplied with the shares that GENIE and NuWro carry above this energy, data/GiBUU becomes about $1.37$ in the corner and $1.29$ integrated. With the GENIE and NuWro fluxes corrected and GiBUU supplied with the shares above this energy, each generator's central-value corner ratio lies close to its integrated ratio. GiBUU is lower than the others everywhere.
+See the records for the generator energy-range sensitivity (Ref.~\cite{NoteRecords2026}).
 % rebuilt on 2026-09-27; KNOWN_ISSUES.md row 83; ledger rows VL156--VL158 supersede VL35--VL38 (App. H, pre-repair values)
 % KNOWN_ISSUES.md row 81
 % The superseded provenance comment block (SUPERSEDED 2026-09-27 ... RESOLVED 2026-08-12)
@@ -87,7 +87,7 @@ GiBUU's larger contrast comes from its sample's energy limit: it was generated o
 % KNOWN_ISSUES.md row 82
 % Source: VALIDATION_LEDGER VL161 (docs/orchestration/state/note-capgap-20261003/); KNOWN_ISSUES 82.
 
-Valencia 2p2h raises the GENIE$+$MEC integrated prediction while leaving the corner essentially unchanged ($1.142\to1.139$), since it populates low $W$. At $W\in[2.2,3.0)\,\si{GeV}$, data/generator $=1.12$, $1.11$, $1.13$ and $1.34$, again close to the integrated ratios. At $1.4\le W<\SI{1.8}{GeV}$, instead, both GENIE predictions lie \SIrange{\genieWmidLo}{\genieWmidHi}{\percent} above the data. These are central-value ratios. No compatibility metric based on the five-axis covariance of the \resFiveAxis{} is quoted, because the estimator-seed sensitivity of its construction, measured with two companion covariances, exceeds the limit set before production (\S\ref{sec:eavailw-adopted}); \S\ref{sec:fived16-gen} gives a sixteen-cell $\chi^{2}$ comparison.
+At $1.4\le W<\SI{1.8}{GeV}$, instead, both GENIE predictions lie \SIrange{\genieWmidLo}{\genieWmidHi}{\percent} above the data. These are central-value ratios. See the records for covariance limits, published context and region selection (Ref.~\cite{NoteRecords2026}).
 % Methods-paper rewrite, fix round 1 (REVIEW-1 P1): moved from the article's generator-context paragraph (its figure left the article).
 % Source: publication/release/figs/fig_numbers.py:61-62, :106-107 (pred_over_data_Wmid_pct_GENIE-CV / _GENIE+MEC,
 % computed from the released figure arrays) and values.tex:212-214 (9.4% CV, 11.8% +MEC; \genieWmidLo, \genieWmidHi).
@@ -99,6 +99,6 @@ Valencia 2p2h raises the GENIE$+$MEC integrated prediction while leaving the cor
   \label{fig:eavailWband}
 \end{figure}
 
-MINERvA shallow-inelastic neutrino and antineutrino measurements also report shape and normalization disagreements with generators \cite{MINERvA:2026sis}. They motivate tests across the resonance--DIS transition, but their selections and reported observables differ from this inclusive projection, so they provide physics context, not an independent confirmation of these central-value ratios. A later significance for a region chosen from the central-value map must account for that selection.
+
 % Register round n1 (R-N1): "with no reported covariance-based consistency metric" is stated at sec:4d ("No pulls or
 % full-covariance chi^2 are reported") and, for four observables, at the sec:3d lead.
