@@ -1,0 +1,121 @@
+% Part 6 chunk 3 (the director's compression at depth, 2026-11-20; DECISION-20261120a item 5), director-helper-3: each
+% result's limitations, moved verbatim from sec_limitations.tex @ 940561ea6 lineage (H3-P6-10..15). References into
+% the note resolve through main_note.aux (xr); the moved text's labels stay in the note's pointer subsections.
+\section{Limitations moved from the note (Part 6)}
+This section holds each result's limitations as the note stated them before Part 6 was compressed. The note keeps one pointer sentence per result, and each result's headline limits in its row of Table~\ref{tab:validity}.
+
+\subsection{Principal limitations (from \S\ref{sec:limitations})}
+The body states each limitation with the result it qualifies; the principal ones are these. $C_k$ denotes coverage within $\pm k$ standard deviations.
+The quoted 2D statistical block has had no coverage test. The fixed-truth coverage studies scored two earlier statistical bands, of which the first-built undercovers in its tails ($C_2=\covTwoDCTwo$, vs.\ $0.954$; \S\ref{sec:uq-boot}, \S\ref{sec:coverage}).
+No result's intervals have validated coverage. In two dimensions, the procedure's covariance under-covers jointly at both held-out tunes, with \lrval{cov2d-ar23-joint} of \lrval{cov2d-ntoys} pseudo-experiments in the joint region at each (\S\ref{sec:coverage-tunes}, \S\ref{sec:limitations-2d}). The five-dimensional coverage test is in \S\ref{sec:coverage-5d}, and the sixteen cells' second, descriptive coverage test in \S\ref{sec:fived16-fd} and Table~\ref{tab:test-index}.
+The other principal limitations are stated with their results:
+\begin{itemize}
+\item The generator comparisons (\S\S\ref{sec:3d}--\ref{sec:eavailw}).
+\item The absence of a 3D or 4D covariance (\S\ref{sec:3d}).
+\item The five-dimensional estimator's regularization bias (\S\ref{sec:val-departure}) and the purity-subtraction bias of the \estPurity{} and the \estDetPurity{} (\S\ref{sec:val-negweight}).
+\item Five-dimensional intervals and their coverage (\S\ref{sec:gbdt-model-dependence}, \S\ref{sec:coverage-5d}).
+\item The five-axis covariance of the \resFiveAxis{} (\S\ref{sec:eavailw-adopted}).
+\item The calibration and nuisance model of the generator tests (\S\ref{sec:joint5d-frozen}, \S\ref{sec:joint5d-response}).
+\item Tier~2 of the extended-fiducial study (App.~\ref{sec:fps}).
+\item The fake-data limitation of the sixteen-cell result (\S\ref{sec:fived16-fd}).
+\item The dependence of the sixteen cells on the unfolding algorithm (\S\ref{sec:fived16-ibu}).
+\item The prior retained at the flagged truths (\S\ref{sec:fived16-prr}).
+\item The bias-half screen (\S\ref{sec:fived16-fd}).
+\item The ensemble-averaged variant, not adopted (\S\ref{sec:val-departure}).
+\item The run-period inconsistency present before unfolding (\S\ref{sec:uq-combine}, \S\ref{sec:fived16-pl}).
+\item Point-cloud work (App.~\ref{sec:pet}).
+\end{itemize}
+% Register round n1 (S1; caveat-study R-N1; the model is paper_body.tex sec:limitations): the former "What is not claimed" list. Each fact of each former item prints at its home in the body; ledger-nA.md rows A* map each one. Sources of the former items: 2D coverage, OUTCOME-20261005-2d-fixed-truth-coverage-fail.md (VL169) and KNOWN_ISSUES 85 (the quoted block is S1, stageC/production/DESIGN.md sec. 3.4); 5D coverage, OUTCOME-20260925-s5c-tier-s-futility-fail.md (VL150), KNOWN_ISSUES 98, M2-RATEFAIL-DIAGNOSIS.md (CITABLE FOR the decomposition with its inferred status, NOT CITABLE FOR the source of the W-graded term); regularization bias, OUTCOME-20260925-s5n-stage1-development-fail.md (VL151-VL152), KNOWN_ISSUES 75, 77; estimator stability, KNOWN_ISSUES 80, RECORD-20260927-s5p-stage2-exit.md sec. 2 (VL155), OUTCOME-20260926-s5e-oi192-diagnosis-and-candidate.md, DIAGNOSIS-20260926-s5e-oi192-estimator.md (VL153-VL154); five-dimensional measurement, RECORD-20260927-s5p-stage2-exit.md sec. 4; background treatment, Table tab:estimators-matrix and app_negweight.tex sec:negweight-footing. Each absence claim below is restated from its home: "has had no coverage test" (sec_systematics.tex sec:uq-boot); "no 3D or 4D covariance is quoted" (sec_3d.tex lead); "enter no quoted uncertainty" (sec_5d.tex sec:val-departure); "enters no quoted covariance" (sec_5d.tex sec:val-negweight); "no five-dimensional measurement with total uncertainties was constructed" (sec:gbdt-model-dependence); "No frequentist coverage is therefore claimed" (sec:coverage-5d); "no calorimetric response band" (sec:joint5d-response).
+% Search: held-out simulation; held-out-MC re-test; S1 has not been coverage-tested; coverage statement about Q_R (the search of its home, sec_systematics.tex sec:uq-boot) @ ddf16f10 Review fix (outline: the \covTwoDCTwo uses are not touched; check_dead_containment.py counts four prints). The sentence that prints it, the second of this paragraph, is unchanged in n2. Note consolidation (DECISION-20261027 item 1, cost-list R01; director's ruling: a summary points to the body home, never to another summary): the other limitations are no longer restated here; each is named once with a pointer to its body home. The 2D coverage sentence is kept unchanged (a \covTwoDCTwo use, out of scope). Of the absence claims listed above, "has had no coverage test" still prints in this paragraph, and the 3D and 4D one prints as "the absence of a 3D or 4D covariance" (stage-2 review fix: a bare topic there read as if 3D and 4D uncertainties existed).
+% - Note round 1 (2026-11-08, draft): COV2D sentence, OUTCOME-20261108-cov2d-both-tunes-under-cover.md @ b551b05f :99-104 (CITABLE FOR) and :110, :115 (NOT CITABLE FOR); the frozen KI-85 sentence before it is unchanged.
+% U16 (currency check of 2fe070fec): the findings of U1 (FD-PRR readout 9238f22b), U2 (V-HALF readout e7423390), U3 (ENS1, OUTCOME-20261109-ens1-stab-pass-bias-worse.md) and U15 (runperiod_values.json f63074b1), as the paper's abstract and introduction carry them (DECISION-20261116-joseph-paper-batch.md item 39).
+
+The tests that limit a reported result are indexed in Table~\ref{tab:test-index}, with the criterion each was graded against.
+% Moved to Part 5 (part5_validation.tex) by cov2d's landing bd79294b2: move-manifest-je-test-index.tsv JE-06.01..61, received as CV-R06.01..61 (2026-11-19).
+
+
+% Part 6 (the director's Part 6 design, 2026-11-19; director-helper-3, journal-editor's ack): tab:result-status and its
+% lead sentence are replaced by tab:validity (sec_validity_table.tex), which carries this label as a second label; each
+% cell's home is listed in move-manifest-h3 rows H3-P6-*. The table's Search line moved with the statement it searches
+% (tab:validity, the 2D row: the statistical block has had no coverage test).
+
+% Move pair H3-014 (director-helper-3; move-manifest-h3-20261117.tsv sends): the 2D result's validation status, four
+% sentences of sec_systematics.tex's "Status of the 2D result" paragraph at 2fe070fec, verbatim (COMBINED-PLAN sec. 4
+% item 7), with their Search line; sec:uq-2d-scope keeps the construction and points here.
+% Pointer entry 5 (the director's ruling (a), via director-helper-3; limitations-export row n05): sec_experiment.tex:40, kept there.
+
+\subsection{Data and event loop (from \S\ref{sec:limitations-experiment})}
+The flux histogram is POT-weighted across playlists; playlist-to-playlist flux differences are a $\sim\SI{0.2}{\percent}$ effect (\S\ref{sec:evloop}).
+
+% Part 6 (the director's ruling (A), 2026-11-19): the 2D block returns here as the file sec_q1_limitations.tex, moved whole
+% and byte-identical from Part 3 (H3-P6-04); journal-editor's JE-07 rows stay as the record of its first landing.
+
+\subsection{The two-dimensional cross section (from \S\ref{sec:limitations-2d})}
+\input{sec_q1_limitations}
+
+\subsection{Available energy and momentum transfer (from \S\ref{sec:limitations-3d})}
+In the comparison with Ascencio \emph{et al.} (\S\ref{sec:4d}), the two analyses define true $\Eavail$ differently, and the aggregate shift over the three lowest bins has not been computed. The definition difference therefore remains an alternative explanation that is not excluded, and at the \SI{10}{\percent} scale of the residual the comparison neither refutes nor validates the result.
+% absence-ok: "has not been computed" and "not excluded" restate sec_3d.tex:211, which keeps them beside its numbers
+
+% Entries for the three long caveat statements (the director's ruling, 2026-11-18): each arrives as a move pair from its
+% body owner (limitation-resolver: sec_fived16, sec_5d; the Codex writer: sec_joint), whose home keeps a one-line result
+% with its scope label and a pointer here. Until each pair lands, its entry is this pointer sentence only.
+
+\subsection{The sixteen-cell cross section (from \S\ref{sec:limitations-fived16})}
+% Move pairs LR-20..LR-32 (limitation-resolver): the second coverage test's design and scope, sec_fived16.tex's second-test
+% paragraph (sec:fived16-fd), verbatim and contiguous, except one token: "(above)" becomes (\S\ref{sec:fived16-fd}), where the
+% tunes' overlaps are stated. The home keeps the readings, the counts, "remains untested" and the descriptive sentence.
+This is the design and scope of the second coverage test of the sixteen-cell covariance at the two held-out tunes, whose readings \S\ref{sec:fived16-fd} gives.
+
+Its pseudo-experiments draw the statistical, flux, interaction and detector uncertainties, with the lateral and normalization ones as surrogates. The graded covariance includes the model term, which is not drawn, since its role is to cover each tune's departure from the simulation. At each tune the covariance is built by the reported procedure using the tune's pseudo-data at their means, with the statistical block bootstrapped from one Poisson realization and the seed block not rebuilt; this fixed covariance stands in for one rebuilt for each pseudo-experiment, which was not computed. The lateral block is carried to each tune in relative form and is not tested, and the tunes' overlaps with the model term's generators (\S\ref{sec:fived16-fd}) apply. The response and run-period terms are left out of the graded covariance. The test has two correlated variants, without and with the GEANT4 neutron and proton bands; the primary variant omits them from both its pseudo-data and its graded covariance. Removing the two bands' block from the covariance graded with them raises the $\chi^2$ of any fixed set of residuals by at most a factor of \fvval{ll5d-mumax-bound-g18} at \fvval{f1-tune-g18} and \fvval{ll5d-mumax-bound-ar23} at \fvval{f1-tune-ar23}. That bound is set by the largest fraction of that covariance, in any direction, that the block carries. The bound applies to the block's place in the covariance only, not to the bands' pseudo-data draws, and what separates the bands' pseudo-experiment and simulation-side blocks remains unclassified. Each tune and each variant is graded separately, per cell and jointly, against thresholds set from the test's null distribution, with a resolution of about \fvval{ll5d-cellres} in coverage per cell and 0.08 jointly. In one variant at one tune, the cell tests raise a false flag with probability at most 0.025, and so does the joint test. These rates are those of a null in which the fixed covariance is exact; the covariance is itself estimated from finite ensembles, which can make $\chi^2$ larger than this null allows, most along its smallest-eigenvalue directions. No correction for this is made. A cell that passes at a tune also passes under the procedure's full covariance there, and the joint reading carries over only if both matrices have 16 degrees of freedom.
+% U11 (currency check of 2fe070fec): the GEANT4 block bound, DECISION-20261116-joseph-paper-batch.md item 3 (A6) wording, from fd/receipts-ll5d/mumax/run/node/mumax.json (422db056; commit e3a47f391), by mumax_values() in make_values_fived16.py.
+% absence-ok: "which was not computed", "is not tested" and "No correction for this is made" are scoping statements of the source paragraph, moved verbatim (LR-22, LR-23, LR-31); the declaration fixes them (LL5D-DECLARATION.md :323-324, the home's waiver)
+
+% Move pairs LR-60..LR-62 (limitation-resolver, the structural rewrite): sec_fived16.tex, verbatim; each lead restates its antecedent.
+The model term $C_{\mathrm{model}}$ of \S\ref{sec:fived16-cov} measures generator-shape model dependence. It is not a calibrated bound. Its coverage at truths held out of its construction has not been validated.
+% absence-ok: "is not a calibrated bound" and "has not been validated" are the moved sentences' own statements (LR-60, LR-61; sec_fived16.tex sec:fived16-cov), moved verbatim
+
+The run-period block of the sixteen cells is $C_{\mathrm{PL,5D}}$ (\S\ref{sec:fived16-pl}). In cells \fvval{pl-noise-cells} the block is dominated by the replica noise it contains.
+
+\subsection{The five-dimensional development tests (from \S\ref{sec:limitations-5d})}
+% Move pairs LR-33..LR-47 (limitation-resolver): the coverage test's defective q3 truth (sec_5d.tex sec:coverage-5d), its
+% miscoverage diagnosis (the source block as given, with its comments), and the data-stability consequence (sec:val-departure),
+% verbatim and contiguous. Each lead sentence restates its home's result and supplies the antecedent.
+The end-to-end coverage test of \S\ref{sec:coverage-5d} used three truths, and it failed its futility criterion. Of those three, the change of the $q_3$ dependence at fixed $(\Eavail,W)$ did not implement the intended reweighting. Its experiments were generated, and they are not an interpretable test of that deformation. The futility verdict does not depend on them.
+
+\paragraph{Why the intervals miscover under the rate reduction.} The diagnosis below uses the stored outputs and the code.  The rate change itself is recovered: in the one locally stored pseudo-experiment the total changes by \SI{-9.58}{\percent} against \SI{-9.56}{\percent} injected, and over the 400 the total covers at 0.74 (68\%), so the miscoverage is not a normalization failure.  Nor are the intervals too narrow. They use one nominal bootstrap $\sigma$ at every truth, which for 10\% fewer events is slightly too wide apart from the background not being redrawn (inferred spread about $1.15\sigma$ at $W\ge\SI{3}{GeV}$). Setting the spread equal to the half-width leaves the failing quantities' coverage at 0.06--0.22.  The purity subtraction does not apply a nominal signal fraction to the reduced data: it removes the absolute nominal background expectation, which is unchanged, and in the stored pseudo-experiment the subtracted total agrees with the pseudo-signal to 60 of 3.2 million events.
+
+The miscoverage is a residual bias that the nominal-truth bias correction does not remove.  The rate change adds a positive bias that grows with $W$: about \SI{0.2}{\percent} for $1.4\le W<\SI{2.2}{GeV}$, \SI{0.4}{\percent} for $2.2\le W<\SI{3}{GeV}$, and 0.7--\SI{1.1}{\percent} for $W\ge\SI{3}{GeV}$. Against intervals of 0.16--0.43\%, this is 1.3--2.6 standard deviations, whatever the sign of the nominal bias $\beta$. Removing that bias restores coverage to 0.62--0.82 at 68\% and 0.92--0.99 at 95\%.
+
+These per-quantity biases and spreads are inferred, not measured. The stored output records only hit counts, and each quantity's mean shift and spread come from a Gaussian fit to its 68\% and 95\% coverage, checked against one recorded value (EW17: $+1.04\%$ fitted against $+1.05\%$).  The source of the $W$-graded term is not established. Under an approximate assignment of background fractions to $W$ bins, its size and ordering roughly match the rise of the background fraction by $0.111\,f_{\mathrm{bkg}}$. The term may also arise from the estimator alone.
+
+A rerun of five of the same pseudo-experiments did not decide between the two. It was run without background, and with the background scaled by 0.9 so that the background-to-signal ratio is restored. Restoring the ratio raised the residual for $W\ge\SI{3}{GeV}$ rather than removing it, and without background the residual persists. Agreement in the marginal normalizations thus coexists with a substantial residual bias under the tested deformation, and whether that bias has the same origin as the regularization bias of \S\ref{sec:val-departure} is not established.
+% Caveat cut list MV13 (DECISION-20261102-joseph-caveat-cut-list.md): the paper's Sec. IV F and its conclusion sentence ("The miscoverage ... is also attributed to a residual bias, but whether that bias has the same origin is not established") moved here; every other fact of IV F was already printed in this section
+% Methods-paper rewrite draft 7: docs/orchestration/state/2d-closeout/stageF/methods/M2-RATEFAIL-DIAGNOSIS.md (0 node-h, local receipts and code):
+% :8 (total -9.58% recovered against -9.56% injected); :9, :65-69 (spread set equal to the half-width: coverage 0.06-0.22;
+% bias removed: 0.62-0.82 at 68%, 0.92-0.99 at 95%); :10, :80-85 (the subtraction removes the nominal absolute
+% background expectation, unchanged; the excess is -60 of 3.197M events); :11, :71-76, :100 (W-graded positive residual:
+% about +0.2%, +0.4%, +0.7-1.1% for W 1.4-2.2, 2.2-3, >= 3 GeV, 1.3-2.6 sigma against intervals of 0.16-0.43%; added
+% whatever the sign of beta); :13, :24 (means and spreads inferred from a Gaussian fit to each 68%/95% coverage pair,
+% cross-checked on EW17, +1.04% against +1.05% recorded); :50 (intervals use one nominal bootstrap sigma, slightly too
+% wide at 0.9 of the events); :52-63 (failures by W band); :12, :87, :102 (source not established); :15, :104-109
+% (confirming test, not run, about 0.1-0.2 node-h).
+% 2026-10-22: the test was run (state/ki98-wbias-test/REPORT.md, PR #229; declared and bound before the run), five seeds
+% per arm, EW band W >= 3: R_a +2.29 (SE 0.72), R_c +3.40 (0.65), R_b +2.84 (0.46); verdict UNDETERMINED by its rule.
+
+The \estMultiD{} fails the data-stability test (\S\ref{sec:val-departure}). The data bootstrap, which refits the full chain per replica, already includes this rounding-level variability: each replica carries the same spread (median \SI{0.23}{\percent} per joint cell), about \SI{37}{\percent} of the bootstrap variance and below a tenth of any total uncertainty. Central values are therefore reproducible only to within this spread.
+
+% Move pairs LR-48..LR-50, LR-53 and LR-54..LR-56 (limitation-resolver, the structural rewrite): sec_5d.tex's scope
+% sentences, verbatim and contiguous; each lead restates the result that stays in the body and supplies the antecedent.
+The conclusion of the comparison with exact binned unfolding (\S\ref{sec:val-departure}) is that the residual is consistent with the regularization of the inverse problem at this binning and prior, and that the tree approximation is not supported as its main cause. This conclusion holds for a binned, signal-only and noise-free comparison at the simulation's detector response, on the development truths, and for these 144 residuals only. It does not address what unbinned or biased estimators could recover, the coverage failure of \S\ref{sec:coverage-5d} or the validity of any interval, and it establishes no impossibility. The precision thresholds that the diagnostic proposes are not acceptance criteria for any result in this note.
+
+The maximum real-data prior shifts over five historical vertices are envelopes (\S\ref{sec:gbdt-model-dependence}). These envelopes are sensitivities: they provide no probabilities, covariance components or guaranteed bias bounds, and the truth of the data has not been shown to lie within their span.
+
+The studies of \S\ref{sec:gbdt-model-dependence} do not establish a bias--variance tradeoff across estimator settings. Deciding the tradeoff would require sharing pseudo-data and MC splits across a small set of iteration and capacity settings and measuring bias, variance and mean squared error for common functionals. That comparison would not validate intervals, which also requires an explicit treatment of physical nuisances and model dependence. No new ensemble enters these studies.
+% absence-ok: "does not address", "establishes no impossibility", "are not acceptance criteria", "provide no probabilities", "would not validate" and "No new ensemble" are the moved sentences' own scoping statements (LR-48..56, sec_5d.tex @ 2fe070fec), moved verbatim
+
+% Move pairs LR-58 and LR-59 (limitation-resolver, the structural rewrite): sec_5d.tex, verbatim; each lead restates its antecedent.
+The end-to-end pseudo-experiments with backgrounds return the highest-$W$ column of $(\Eavail,W)$ low at nominal truth (\S\ref{sec:val-negweight}). The bias comes from the purity-based subtraction (\S\ref{app:negweight}), enters no quoted covariance, and has no established size on data.
+
+The development assessment of $R$ uses repeated pseudo-experiments (\S\ref{sec:gbdt-model-dependence}). These experiments are not an independent validation: their samples were used during development, and their assessment seeds, although separate, were later also used in the estimator's development.
+% absence-ok: "enters no quoted covariance", "has no established size on data" and "not an independent validation" are the moved sentences' own statements (LR-58, LR-59), moved verbatim
