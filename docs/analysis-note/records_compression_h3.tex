@@ -67,7 +67,7 @@ In all 12 playlists the production flux weights equal those of the constraint fi
 
 \paragraph{Bootstrap construction detail (from \S\ref{sec:uq-boot}).}
 % after "... the separable background-only term is contained in the statistical block."
-The reconstructed-level and truth-level weights of a simulated event share one draw, which preserves within-event migration correlations. Fixing the GBDT seed per replica separates bootstrap and training-seed variances. With 300 replicas the Gaussian formula $1/\sqrt{2(N-1)}$ gives a relative standard error of about \SI{4.1}{\percent} on each per-bin $\sigma$, and the per-bin $\sigma$ from a nested half (150) of the replicas is a median 1.000 times that from all 300.
+With 300 replicas the Gaussian formula $1/\sqrt{2(N-1)}$ gives a relative standard error of about \SI{4.1}{\percent} on each per-bin $\sigma$, and the per-bin $\sigma$ from a nested half (150) of the replicas is a median 1.000 times that from all 300.
 
 \paragraph{Training-seed block detail (from \S\ref{sec:uq-ml}).}
 % after "A spread of single unfolds on fixed data is a different statistic."
@@ -75,6 +75,3 @@ Each setting is a triplet $(s,s{+}1,s{+}2)$ of seeds for the step-1 classifier, 
 % after "With four degrees of freedom, its variance has a Gaussian relative standard error of about 71 %."
 Its per-bin $\sigma$ is a median 0.27 of that of the earlier ten-seed block. The reason is that the bootstrap\,$\times$\,seed interaction, which dominated the earlier scan, is already inside the fixed-seed statistical block. The training-seed block carries it only at its $1/20$ share, a median 0.763 of its diagonal.
 
-\paragraph{The gate of the generator-shape reweighting (from \S\ref{sec:uq-2d-scope}).}
-% after "A relative-error gate, fixed before the reweighted unfolds were run, decides each cell's ratio."
-A cell whose own ratio passes the gate keeps it. Otherwise the cell takes the ratio pooled over a coarser cell, fixed before the measurement, when that pooled error passes the same gate. When neither passes, the cell leaves the prior unchanged. A row outside the grid, an unreported cell, and GiBUU where that sample is not defined also leave the prior unchanged.
