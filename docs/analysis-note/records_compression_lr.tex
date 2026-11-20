@@ -180,41 +180,34 @@ This is evaluated on a grid of 6000 points in $[0,6c]$.  Because $g_{c}$ is noni
 
 \subsection{From Part 2, secobservables.tex: the paragraph beginning ``Tablereftab:observables-impl gives the implemented truth and''}
 % From sec_observables.tex:6 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``$E_{\mu}$, $p_{\mu}$, and $\theta_{\mu}$ are the muon energy, momentum, and angle.''\par
 $q_{0}$ is the calorimetric estimate of the energy transfer.
 
 \subsection{From Part 2, secobservables.tex: the paragraph beginning ``The five reconstructed inputs therefore share''}
 % From sec_observables.tex:41 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``The five reconstructed inputs therefore share information and do not, by themselves, provide five independent constraints: the result is five simultaneous observables, not five independent measurements.''\par
 The five classifier inputs, the lower-dimensional support they populate, and the five reported observables are distinct. Only reconstructed $W$ is fixed by the other inputs; reconstructed $\Eavail$ comes from a separate calorimetric estimator and is not a function of them. The nearly degenerate correlation directions of the joint-test metric (\S\ref{sec:joint5d-design}) are consistent with this redundancy, but that origin has not been shown, and the information added by $W$ has not been measured.
 % carried with the text from sec_observables.tex:42 @d55f7aad6
 % absence-ok: "has not been shown" and "has not been measured" are the base's own limitations of the five inputs, reworded in r22 Step 2
 
 \subsection{From Part 2, secobservables.tex: the paragraph beginning ``The analysis excludes events with negative''}
 % From sec_observables.tex:44 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``The generators measure $\pT$ and $\pPar$ about their own neutrino axis; their $\pT$ differs from the analysis truth $\pT$ by \SI{\pm4}{MeV} for 68\% of events.''\par
 Over the 109 joint-test cells, this convention changes the analysis simulation's cell contents by factors between 0.9965 and 1.0035 (median 1.000008), at the level of its Monte Carlo precision, and shifts GENIE's central prediction by between $-0.47$ and $+0.53$ of each cell's null standard deviation.
 % carried with the text from sec_observables.tex:45 @d55f7aad6
 % Search: information added by W; W redundancy; near-degenerate directions; origin; joint-test metric; pT axis; neutrino axis; beam axis; MP-5; R_c (none for W's information or the origin: M2-ARCHIVE-CHECKS.md:7, r12/ledger.md:103-104 restate it; the pT-axis effect is printed from MP-5, state/measurement-paper/phase1/mp5/REPORT.md:66, :68, :100, job 60017887, with its transfer to the other generators UNRELIABLE, :87-90; Joseph, DECISION-20261027-joseph-absence-audit-items-3-4.md item 1) @ 7a6ae651
 
 \subsection{From Part 2, secexperiment.tex: the paragraph beginning ``MINERvAciteMINERvA:2013zvz was a fine-grained scintillator-tracker neutrino''}
 % From sec_experiment.tex:5 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``MINERvA~\cite{MINERvA:2013zvz} was a fine-grained scintillator-tracker neutrino experiment on Fermilab's NuMI beamline.''\par
 Its central tracker comprises hexagonal planes of triangular polystyrene scintillator strips in three stereo orientations, surrounded by electromagnetic and hadronic calorimetry. The magnetized MINOS near detector, \SI{2}{m} downstream, serves as the muon spectrometer, measuring momentum and charge for MINOS-matched tracks.
 
 \subsection{From Part 2, secexperiment.tex: the paragraph beginning ``The reference simulation uses GENIE 2.12.6citeAndreopoulos:2009rq''}
 % From sec_experiment.tex:10 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``The reference simulation uses GENIE 2.12.6~\cite{Andreopoulos:2009rq} and MINERvA Tune v1, applied as per-event weights by the reweighting tools of the MINERvA Analysis Toolkit (MAT).''\par
 These are the flux-and-central-value (flux-and-CV) weight, the GENIE model-parameter (``dial'') weights, the low-recoil 2p2h enhancement fit, and the non-resonant-pion reduction.
 
 \subsection{From Part 2, secexperiment.tex: the paragraph beginning ``Genuine backgrounds are selected events whose''}
 % From sec_experiment.tex:26 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``Out-of-phase-space signal, reconstructed inside the phase space with its true muon outside it, is routed into the background template with them.''\par
 Both are POT-scaled and subtracted from the reconstructed-data target before unfolding (\S\ref{sec:method}). Their sum, $N_{\mathrm{bkg}}(b)$ in each reconstructed bin, enters the purity weight $w_{\mathrm{pur}}(b)$ of \S\ref{sec:method-algo}.
 
 \subsection{From Part 2, secexperiment.tex: the paragraph beginning ``The background template used for this''}
 % From sec_experiment.tex:28 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``The background template used for this result is \SI{2.91}{\percent} of selected data events in the two-dimensional grid over the full sample (\SIrange{2.72}{3.23}{\percent} per playlist, \SI{2.74}{\percent} on playlist 1A).''\par
 On playlist 1A only, about \SI{10}{\percent} (weighted) of the template is out-of-phase-space signal. These are $\nu_{\mu}$ charged-current events with a true vertex inside the fiducial volume. The rest is genuine background, mostly $\nu_{\mu}$ charged-current events with a true vertex outside it.
 
 \subsection{From Part 2, secexperiment.tex: the paragraph beginning ``Selected data exceed the POT-scaled MINERvA''}
@@ -223,12 +216,10 @@ Selected data exceed the POT-scaled MINERvA Tune~v1 prediction (signal $+$ backg
 
 \subsection{From Part 2, secexperiment.tex: the paragraph beginning ``Selected data exceed the POT-scaled MINERvA''}
 % From sec_experiment.tex:39 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``The data/MC ratio rises with $\pT$, from $0.88$ in the lowest bin to $\sim1.2$ above \SI{1}{GeV/c}.''\par
 Excess and trend together reflect the truth-level normalization deficit of \S\ref{sec:results-model} and \S\ref{sec:3d-models}. Beyond the $\pT$ trend noted above, the ratio panels also show a mild enhancement in the lowest $\Eavail$ bins, reflecting the low-recoil excess examined at truth level in \S\ref{sec:3d-2p2h}.
 
 \subsection{From Part 2, secmethod.tex: the paragraph beginning ``item textbfStep 1 (detector space). A''}
 % From sec_method.tex:9 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``The weight is \emph{pulled back} directly to its truth record.''\par
 Truth events without a reconstructed partner (``misses'') receive step-1 weights from a regressor trained on the reconstructed subsample, $w(\mathrm{truth\ features})$. This native OmniFold acceptance treatment requires no separate efficiency correction.
 
 \subsection{From Part 2, secmethod.tex: the paragraph beginning ``Unbinned OmniFold adds an observable by''}
@@ -245,17 +236,14 @@ For other experiments' subtraction methods, see \S\ref{sec:intro}.
 
 \subsection{From Part 2, secmethod.tex: the paragraph beginning ``For other experiments' subtraction methods, see''}
 % From sec_method.tex:32 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``A fully unbinned alternative adds negative-weight background simulation on the measured side.''\par
 Its bin-integrated target is $(D_{b}-B_{b})/S_{b}$ (data, background and signal).
 
 \subsection{From Part 2, secmethod.tex: the paragraph beginning ``For other experiments' subtraction methods, see''}
 % From sec_method.tex:32 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``The alternative reproduces the binned correction to \SI{\nwPctTot}{\percent} on the total two-dimensional (2D) cross section and its systematic and statistical covariances to within \SI{2}{\percent} (subtraction comparison, App.~\ref{app:negweight}).''\par
 It removes residual binning dependence and suits the extended-fiducial analysis with larger backgrounds. The quoted 2D result and covariance, 3D and 4D central values, sixteen-cell result and covariance, and studies and tests of the \estLowCap{} and \estMultiD{} use the refined variant. All other quoted cross sections and uncertainties, including the \resFiveAxis{} of the \estPurity{} and the extended-fiducial value, use binned subtraction. The matrix, Table~\ref{tab:estimators-matrix} (configurations, \S\ref{sec:method-config}), links results to configurations.
 
 \subsection{From Part 2, secmethod.tex: the paragraph beginning ``The quoted 2D cross section and''}
 % From sec_method.tex:48 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``The quoted 2D cross section and covariance use the \estTwoD{}.''\par
 The 3D and 4D central values, the \resSixteen{} and the generator tests use the \estMultiD{}. Both subtract background with negative weights and a 400-tree refinement classifier. They differ in training histogram construction in the LightGBM learner and in deterministic settings. An earlier \estPurity{} is retained for the \resFiveAxis{} and for specified figures and closures. Three other configurations serve only as diagnostic controls in the studies listed in Table~\ref{tab:estimators-matrix}, the matrix of estimator uses and implementations.
 
 \subsection{From Part 2, secmethod.tex: the paragraph beginning ``Gradient-boosted decision trees (GBDTs) replace OmniFold's''}
@@ -268,19 +256,16 @@ The unfolding code supports interchangeable learners (component terminology and 
 
 \subsection{From Part 2, secmethod.tex: the paragraph beginning ``The unfolding code supports interchangeable learners''}
 % From sec_method.tex:52 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``The step-1 classifier, the step-2 classifier and the regressor for unreconstructed truth events share one setting: $100$ trees, $8$ leaves and learning rate $0.1$.''\par
 The universe sweep supplies the central value at seed~42. Thus the systematic covariance shares its estimator and seed (systematic universes, \S\ref{sec:uq-universes}). The quoted statistical covariance also uses seed~42, with three independent bootstrap streams (data, signal and background simulation, \S\ref{sec:uq-boot}). The training-seed covariance uses five seed settings that include seed~42 (\S\ref{sec:uq-ml}).
 
 \subsection{From Part 2, secmethod.tex: the paragraph beginning ``A central unfolding at seed45 differs''}
 % From sec_method.tex:54 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``A central unfolding at seed~45 differs from the seed-42 one by at most \SI{1.4}{\percent} in a cell.''\par
 The quoted central value has a recorded configuration and repeats numerically. It agrees with the refined 2D data unfolding (background study, App.~\ref{sec:negweight-footing}).
 % carried with the text from sec_method.tex:55 @d55f7aad6
 % Source: docs/publication/DECISION-20261011-joseph-2d-central-lightgbm-seed42.md; receipts
 
 \subsection{From Part 2, secmethod.tex: the paragraph beginning ``A central unfolding at seed45 differs''}
 % From sec_method.tex:54 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``The purity-subtracted seed-42 central value has no recorded run configuration, although an independent rerun and a regeneration whose run configuration is recorded both reproduce it (Ref.~\cite{NoteRecords2026}, \recentry{2d-central-value}).''\par
 Against the ten purity-subtracted LightGBM central values at seeds 1--10 it is mildly over-dispersed (root-mean-square standardized difference 1.28, maximum 4.25). The choice of seed~42 is recorded in App.~\ref{app:devhistory}.
 % carried with the text from sec_method.tex:55 @d55f7aad6
 % Source: docs/publication/DECISION-20261011-joseph-2d-central-lightgbm-seed42.md; receipts
@@ -294,7 +279,6 @@ Its seed and run log appear in the development history (App.~\ref{app:devhistory
 
 \subsection{From Part 2, secmethod.tex: the paragraph beginning ``paragraphThe exact-split cross-check. The exact-split configuration''}
 % From sec_method.tex:85 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``The cross-check has no matched covariance.''\par
 No exact-split bootstrap, universe sweep or seed scan exists.
 % carried with the text from sec_method.tex:86 @d55f7aad6
 % Search: exact-split seed scan; spread over seeds; matched covariance; exact-split bootstrap; P09b @ ddf16f10
@@ -315,12 +299,10 @@ Each result names its estimator.
 
 \subsection{From Part 2, secmethod.tex: the paragraph beginning ``paragraphThe estimator configurations. The six estimator''}
 % From sec_method.tex:102 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``Results from different configurations are not combined.''\par
 The \estTwoD{} adds refined negative-weight subtraction to the nominal LightGBM configuration above. It uses the \estMultiD{} refinement classifier at the estimator seed plus three. Its quoted seed-42 central value repeats numerically (above). The \estPurity{} is the same learner with purity-based background subtraction (algorithm, \S\ref{sec:method-algo}). The \estMultiD{}, the estimator of the generator tests, is a deterministic LightGBM variant with the unbinned negative-weight background treatment (background method, App.~\ref{app:negweight}). Its refinement classifier has 400 trees and 31 leaves.
 
 \subsection{From Part 2, secmethod.tex: the paragraph beginning ``paragraphThe estimator configurations. The six estimator''}
 % From sec_method.tex:102 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``The negative-weight treatment reduces the purity method's nominal-truth bias in the highest-$W$ (hadronic invariant mass) column by about an order of magnitude (from 3.5--\SI{4.1}{\percent} with purity subtraction to 0.11--\SI{0.24}{\percent} with negative weights).''\par
 This reaches the no-background closure level. The larger refinement classifier removes most of the remaining background-related bias (background and departure tests, \S\S\ref{sec:val-negweight}--\ref{sec:val-departure}). The \estMultiD{} was selected before the joint-test design was fixed (\S\ref{sec:joint5d}). The \estExact{} is described above.
 
 \subsection{From Part 2, secmethod.tex: the paragraph beginning ``paragraphHyperparameter choice. Neither OmniFold classifier nor''}
@@ -341,7 +323,6 @@ The Keras cross-check (\S\ref{sec:3d-classifier}) uses the same multilayer perce
 
 \subsection{From Part 2, secmethod.tex: the paragraph beginning ``The following diagnostics report performance. They''}
 % From sec_method.tex:152 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``The following diagnostics report performance. They do not validate the quoted estimator or its intervals. They include closure tests (\S\ref{sec:validation}) and classifier calibration (\S\ref{sec:3d-classifier}).''\par
 The exact-split cross-check measures insensitivity to doubling the iterations (below). Method-dependence studies report backend agreement (\S\ref{sec:results-tension}). The training-seed variation band measures residual machine-learning (ML) stochasticity (\S\ref{sec:systematics}).
 
 \subsection{From Part 2, secmethod.tex: the paragraph beginning ``Production uses n=5 iterations. Between five''}
@@ -350,47 +331,38 @@ Production uses $n=5$ iterations.
 
 \subsection{From Part 2, secmethod.tex: the paragraph beginning ``Production uses n=5 iterations. Between five''}
 % From sec_method.tex:154 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``Between five and ten iterations, the exact-split total cross section agrees to within \SI{0.026}{\percent} (validation, \S\ref{sec:validation}). That measures movement of this diagnostic for that cross-check. It does not establish convergence of every functional.''\par
 Separately, the unfolded result reproduces the integrated cross section of an independently published binned measurement of the same data (results, \S\ref{sec:results}). That comparison is not an iteration test.
 
 \subsection{From Part 2, secmethod.tex: the paragraph beginning ``Every production, universe-sweep and closure run''}
 % From sec_method.tex:164 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``Every production, universe-sweep and closure run follows the same pipeline conventions (records document, Ref.~\cite{NoteRecords2026}).''\par
 Only events passing reconstructed-level selection reach the step-1 classifier.
 
 \subsection{From Part 2, secmethod.tex: the paragraph beginning ``Every production, universe-sweep and closure run''}
 % From sec_method.tex:164 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``Both sides of step-1 training exclude events with truth outside the measurement phase space.''\par
 Closure pseudo-data follow the production data path.
 
 \subsection{From Part 2, secmethod.tex: the paragraph beginning ``In n dimensions, the differential cross''}
 % From sec_method.tex:176 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``Thus the defined truth sample enters and $c\equiv1$ per bin.''\par
 Negative truth $W^{2}$ is excluded by the five-observable sample definition (\S\ref{sec:eavailw-definitions}). This differs from losing a reconstructed event from the input. The factor remains a monitored self-check. Dropping unmatched truth events would give $c<1$.
 
 \subsection{From Part 2, secmethod.tex: the paragraph beginning ``In n dimensions, the differential cross''}
 % From sec_method.tex:176 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``$\Phi$ is the flux integral by transverse muon momentum $\pT$. It is tabulated per square meter and broadcast over other axes.''\par
 The formula uses that value.
 
 \subsection{From Part 2, secmethod.tex: the paragraph beginning ``In n dimensions, the differential cross''}
 % From sec_method.tex:176 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``The factor $10^{4}$ converts flux tabulated per square meter to the reported $\si{cm^2}$ ($\SI{1}{m^2}=10^{4}\,\si{cm^2}$), giving units of $\si{cm^2}$ per axis unit per nucleon.''\par
 The implementation (code, App.~\ref{app:codebase}) is self-tested to reproduce stored lower-dimensional reference extractions to $<10^{-12}$. Since $\sigma\propto1/\Phi$, $\Phi$ varies per flux universe when building the systematic covariance. This variation dominates the Flux band (systematics, \S\ref{sec:systematics}).
 
 \subsection{From Part 2, secmethod.tex: the paragraph beginning ``For higher-dimensional extractions the same integral''}
 % From sec_method.tex:179 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``For higher-dimensional extractions the same integral is $\SI{6.243e-8}{cm^{-2}}$ per proton on target, from 0 to \SI{100}{GeV} after the neutrino--electron-scattering constraint.''\par
 $N$ is the formula's fiducial nucleon count. The $\si{cm^{-2}}$ value is the converted integral. It is not substituted for $\Phi$.
 
 \subsection{From Part 2, secmethod.tex: the paragraph beginning ``The 2D grid has 14 pT''}
 % From sec_method.tex:184 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``The 19 unreported diagonal cells have $\pT^{\mathrm{hi}}/\pPar^{\mathrm{lo}}>\tan20^{\circ}$.''\par
 The extension axes use $\Eavail$: $[0,0.1,0.2,0.4,0.8,1.5,3.0,100]\,\si{GeV}$; $q_{3}$ (three-momentum transfer): $[0,0.2,0.4,0.6,0.8,1.2,2.0,100]\,\si{GeV}$; $W$: $[0,1.1,1.4,1.8,2.2,3.0,100]\,\si{GeV}$.
 
 \subsection{From Part 2, secmethod.tex: the paragraph beginning ``The 2D grid has 14 pT''}
 % From sec_method.tex:184 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``Wide final bins capture full charged-current (CC) inclusive tails in marginals.''\par
 Truncating the top edge would break the marginalization checks in \S\ref{sec:3d-anchor}. Post-unfolding binning lets us revisit these choices without rerunning unfolding.
 
 \subsection{From Part 2, secmethod.tex: the paragraph beginning ``Truthtoreco migration on the analysis binning''}
@@ -407,7 +379,6 @@ SPINUP learns a forward mapping~\cite{Butter:2025spinup}. AUSSIE replaces OmniFo
 
 \subsection{From Part 2, secmethod.tex: the paragraph beginning ``SPINUP learns a forward mappingciteButter:2025spinup. AUSSIE''}
 % From sec_method.tex:201 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``Reduced simulation-prior dependence does not establish detector-model independence, adequate phase-space support, or coverage for this result.''\par
 Comparisons would require matched signal, selection, normalization, and uncertainty definitions.
 
 \subsection{From App. A, appstatmethods.tex: the paragraph beginning ``This appendix gives the statistical methods''}
@@ -420,43 +391,35 @@ A sample covariance from $N\le n$ replicas in $n$ bins has rank at most $N-1$.
 
 \subsection{From App. A, appstatmethods.tex: the paragraph beginning ``A sample covariance from Nle n''}
 % From app_statmethods.tex:20 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``The 300-replica bootstrap ($N=300 > 205$) has more replicas than bins, which permits full rank and does not establish it.''\par
 The rank of the systematic block is limited at any universe count (\S\ref{sec:rank}).
 
 \subsection{From App. A, appstatmethods.tex: the paragraph beginning ``A coherent bootstrap carries each data''}
 % From app_statmethods.tex:103 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``A coherent bootstrap carries each data factor through step-1 classifier training and final cross-section construction.''\par
 Each MC factor is shared by the reco-tree and truth-tree copies, preserving migration consistency. The three sub-RNGs (data, signal MC, background MC; Table~\ref{tab:variance-sources}) make the sources uncorrelated by construction, and pinning the GBDT seed isolates the bootstrap from the ML noise of \S\ref{sec:seedscan}. A Poisson(1) factor can be zero. Dropping those events from each replica mimics a resample with replacement. Poisson(1) is the large-$N$ limit of the multinomial counts (\S\ref{app:poisson}).
 
 \subsection{From App. A, appstatmethods.tex: the paragraph beginning ``For these replicas (205 bins, MEFHC''}
 % From app_statmethods.tex:117 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``For these replicas (205 bins, ME~FHC LightGBM, seed~42) the relative standard deviation of the total cross section is $\boxed{0.061\%}$, the per-bin median relative spread $\boxed{0.676\%}$, and the per-bin $p_{84}$ $1.602\%$.''\par
 With $300$ replicas the per-bin $\sigma$ has a relative standard error of about $4.1\%$ by the Gaussian formula $1/\sqrt{2(N-1)}$. $N=300$ is chosen for full rank.
 
 \subsection{From App. A, appstatmethods.tex: the paragraph beginning ``The universe sweep used by the''}
 % From app_statmethods.tex:130 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``The universe sweep used by the quoted budget has 187 universes across 44 bands, dominated by the $100$-universe PPFX flux band (hadron-production sampling).''\par
 The quoted band sum drops one band (Rvp1pi) and holds $43$ bands plus the normalization.
 
 \subsection{From App. A, appstatmethods.tex: the paragraph beginning ``The universe sweep used by the''}
 % From app_statmethods.tex:130 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``Almost all other bands are $\pm1\sigma$ pairs ($N_{u}=2$).''\par
 They include the MINOS and lateral MINERvA muon energy scales, the MINOS muon-match efficiency, the GENIE parameters \texttt{MaRES}, \texttt{MvRES} and \texttt{MaCCQE}, and the lateral GEANT FSI responses for neutrons, pions and protons. Where selection migration matters, the five kinematic bands (the two beam-angle components, the muon resolution and the two muon energy scales) require re-selected event loops, run with one universe active at a time (weight-only bands: \S\ref{sec:uq-higherdim}). The quoted universe block takes these five bands from re-unfolds of re-selected universes.
 
 \subsection{From App. A, appstatmethods.tex: the paragraph beginning ``MINERvA's MAT framework (textttPlotUtils/allowbreak MnvVertErrorBand::allowbreak CalcCovMx,''}
 % From app_statmethods.tex:146 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``uniformly for all $N_{u}\ge 2$, with no special $\pm1\sigma$ pair formula.''\par
 At $N_{u}=2$ it reduces to rank-1 $\tfrac14(\mathbf{X}_{+}-\mathbf{X}_{-})(\mathbf{X}_{+}-\mathbf{X}_{-})\T$. Mean-centering removes a common offset from the central value. The half-difference remains and need not be small. For a one-sided or asymmetric pair, CV-centering adds that offset as a second direction (\S\ref{app:pair}).
 
 \subsection{From App. A, appstatmethods.tex: the paragraph beginning ``Equationeqrefeq:systblocksum omits a larger correction. The''}
 % From app_statmethods.tex:159 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``A unified throw measures it through $N$ re-unfolds, simultaneously perturbing every reweightable band and the flux multisim per event ($w_{\CV}\prod_B\rho_B^{g_B}$, $g_B\sim\mathcal N(0,1)$), then re-extracting the cross section.''\par
 The corrected construction follows. Its use in the five-axis covariance of the \resFiveAxis{} is in \S\ref{sec:eavailw-adopted} (Eq.~\eqref{eq:zinflation}).
 In the note, the corrected construction that follows is the unified throw, described in the next paragraph of App.~\ref{app:statmethods}.\par
 
 \subsection{From App. A, appstatmethods.tex: the paragraph beginning ``Grouped by category as in Fig.reffig:uqbands,''}
 % From app_statmethods.tex:199 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``Grouped by category as in Fig.~\ref{fig:uqbands}, which follows Figs.~6--7 of Ref.~\cite{MINERvA:2021owq}, the medians are: Muon reconstruction $3.437\%$, Models $1.428\%$, Flux $3.723\%$, Hadronic response $0.752\%$, Statistical $0.676\%$, Normalization $1.400\%$, Training seed $0.048\%$, Run period $2.087\%$.''\par
 (MINOS$+$MINERvA) and the MINOS-efficiency band dominate; the first is the band that the Ruterbories paper identifies as flux-correlated (\S\ref{sec:rank}).
 
 \subsection{From App. A, appstatmethods.tex: the paragraph beginning ``For two universes u=0,1 at pm''}
@@ -473,7 +436,6 @@ MAT's C++ framework defines the covariance construction that the published paper
 
 \subsection{From App. A, appstatmethods.tex: the paragraph beginning ``textttMnvH1D::GetTotalErrorMatrix sums bands and the statistical''}
 % From app_statmethods.tex:240 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``\texttt{MnvH1D::GetTotalErrorMatrix} sums bands and the statistical matrix element-wise, assuming band independence.''\par
 Cross-band correlations exist only if encoded in a combined band, such as the Bashyal joint fit handled outside this loop. MAT applies no ridge, shrinkage, SVD truncation or rank-deficiency handling to the published total covariance. The statistical block makes $V$ full-rank. Its systematic-only rank is $120$, below the $138$ of our universe block (eigenvalues above $10^{-12}\lambda_{\max}$; \S\ref{sec:rank}).
 
 \subsection{From App. A, appstatmethods.tex: the paragraph beginning ``The bootstrap varies events through distinct''}
@@ -482,12 +444,10 @@ The bootstrap varies events through distinct data, signal-MC and background-MC s
 
 \subsection{From App. A, appstatmethods.tex: the paragraph beginning ``The combined sqrtTrmathbfC of Tablereftab:uq is''}
 % From app_statmethods.tex:262 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``The relative entries divide by the quoted central value, the LightGBM seed-42 central value of the universe sweep.''\par
 Dividing the combined covariance by the exact-split cross-check instead gives a combined median of \SI{6.468}{\percent}. The universe, statistical and training-seed blocks are LightGBM ensembles, the first two at the central value's training seed and the third over five settings that include it (\S\ref{sec:method-config}). The universe and statistical blocks together give $5.976\%$, again evaluated on their sum rather than combined from the printed medians.
 
 \subsection{From App. A, appstatmethods.tex: the paragraph beginning ``The paper reports mathrmd2sigma/(mathrmdpT,mathrmdpPar) on 14''}
 % From app_statmethods.tex:282 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``Of these, $205$ have $x^{\paper}>0$ in \texttt{data\_result\_ptpl\_2D\_minerva\_inclusive\_6GeV.txt}.''\par
 The paper suppresses the remaining $19$ through an efficiency cut. Every $\chi^{2}$ and pull excludes them on both sides.
 
 \subsection{From App. A, appstatmethods.tex: the paragraph beginning ``A secondary strict-interior mask, used only''}
@@ -506,7 +466,6 @@ The choice rests on the $205$-bin 2D truncation scan rather than being assumed: 
 
 \subsection{From App. A, appstatmethods.tex: the paragraph beginning ``emph(i) Missing cross-covariance prevents calibration. For''}
 % From app_statmethods.tex:338 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``and the published IBU-era and OmniFold results share MINERvA data and flux, detector and GENIE systematics.''\par
 Without $C_{xy}$, the summed $C_{x}+C_{y}$ double-counts shared systematics and omits their correlation. Its net error has unknown size and sign.
 
 \subsection{From App. A, appstatmethods.tex: the paragraph beginning ``emph(ii) Near-one realizations are not evidence''}
@@ -515,7 +474,6 @@ Under calibrated assumptions, $\chi^{2}/\mathrm{ndf}$ has expectation $1$ and sp
 
 \subsection{From App. A, appstatmethods.tex: the paragraph beginning ``emph(iii) It does not address coverage''}
 % From app_statmethods.tex:342 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``\emph{(iii) It does not address coverage} (\S\ref{sec:uq-2d-scope}, \S\ref{sec:coverage}).''\par
 The covariance and the central value share the LightGBM estimator and, in the universe and statistical blocks, its training seed (\S\ref{sec:method-config}). Agreement claims use per-bin standardized differences and ratios (\S\ref{sec:pull}); this scalar is only a distance and ratio to the paper. The log-normal value $\chiCombinedLog$ depends on the definition given with the worked example.
 
 \subsection{From App. A, appstatmethods.tex: the paragraph beginning ``The quoted chiCombined inverts the emphsum''}
@@ -528,7 +486,6 @@ Trace share alone cannot justify this protection: trace weights eigenvalues by $
 
 \subsection{From App. A, appstatmethods.tex: the paragraph beginning ``The paper covariance alone gives mean''}
 % From app_statmethods.tex:382 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``The mean is a small difference between two estimates of the same data. It is not a finding of no bias.''\par
 The standard deviation is slightly larger before our uncertainties are added.
 
 \subsection{From App. A, appstatmethods.tex: the paragraph beginning ``This tests whether the emphshape of''}
@@ -537,14 +494,12 @@ This tests whether the \emph{shape} of the $(\pT,\pPar)$ cross section matches t
 
 \subsection{From App. A, appstatmethods.tex: the paragraph beginning ``A data-to-model chi2/mathrmndf with this analysis's''}
 % From app_statmethods.tex:409 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``Every rank and condition number of our blocks quoted below uses this definition.''\par
 Band count, not universe count, limits the rank: Eq.~\eqref{eq:matcov} gives each $\pm1\sigma$ pair rank $1$ and the $100$-universe PPFX band rank $\le 99$. PPFX is effectively rank-$1$ (\S\ref{sec:uq-universes}). The $43$ bands cannot span $205$ bins. The deficit does not come from missing bands.
 % carried with the text from app_statmethods.tex:410 @d55f7aad6
 % Source of rank and cond: budget_Q ranks (review NOTE 1). The ours-only script prints its own cond for the
 
 \subsection{From App. A, appstatmethods.tex: the paragraph beginning ``A data-to-model chi2/mathrmndf with this analysis's''}
 % From app_statmethods.tex:409 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``The paper's systematic-only covariance ($\texttt{TotalCov}-\texttt{StatOnlyCov}$) has rank $120$, below our $138$.''\par
 We use the same \texttt{GetStandardSystematics} and propagate at least as many independent systematic directions.
 % carried with the text from app_statmethods.tex:410 @d55f7aad6
 % Source of rank and cond: budget_Q ranks (review NOTE 1). The ours-only script prints its own cond for the
@@ -555,12 +510,10 @@ The bootstrap block is smaller in \emph{global scale}: its square-root trace is 
 
 \subsection{From App. A, appstatmethods.tex: the paragraph beginning ``Even at full rank (205) a''}
 % From app_statmethods.tex:421 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``The direct inverse of $\mathbf{C}^{\syst}+\mathbf{C}^{\boot}$ gives $\chi^{2}/\mathrm{ndf}=22.38$ ($21.96$ for all four blocks) for the LightGBM central value, against the paper covariance's $\chiPaper$ with its larger stat floor, so a usable $\chi^{2}_{\ours}$ depends on the \emph{statistical} block, not on more systematic bands.''\par
 The gap is \emph{not} a missing MC-statistical term: our bootstrap already draws independent Poisson($1$) multipliers on data, signal MC and background MC per replica (\S\ref{sec:bootstrap}; Practical Guide 2507.09582 \S5.1). Three candidates remain. The first is a real difference in statistical efficiency between the unbinned reweighting and the published binned D'Agostini unfold. The second is a difference in what the paper's \texttt{StatOnlyCov} encompasses. The third is a regularization effect in our own estimator that suppresses dispersion without improving information. The split-bootstrap diagnostic used on the earlier rebuilt bootstrap has not been repeated for the quoted statistical block.
 
 \subsection{From App. A, appstatmethods.tex: the paragraph beginning ``The data/MC split bootstrap was run''}
 % From app_statmethods.tex:431 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``For the quoted statistical block, $\sqrt{\Tr\mathbf{C}^{\boot}}/\sqrt{\Tr\,\texttt{StatOnly}}=0.407$ and the per-bin median ratio of the two $\sigma$ is $0.425$.''\par
 The fixed-truth test (\S\ref{sec:coverage}, \S\ref{sec:uq-boot}) does not decide between the explanations above.
 
 \subsection{From App. A, appstatmethods.tex: the paragraph beginning ``For the exact-split cross-check and an''}
@@ -569,12 +522,10 @@ Each method spans roughly two decades of $\chi^{2}/205$ across a two-decade scan
 
 \subsection{From App. A, appstatmethods.tex: the paragraph beginning ``The combined distance (Srefsec:chisq) adds mathbfCboot''}
 % From app_statmethods.tex:442 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``Subtracting that block uses $\texttt{TotalCov}-\texttt{StatOnlyCov}$ as baseline before our additions, changing $\chi^{2}/\mathrm{ndf}$ $\chiCombined\to \chiCombinedSubStat$.''\par
 It over-corrects: our $\sqrt{\Tr\mathbf{C}^{\boot}}=1.886\times10^{-40}$ is $0.407$ of the paper's $\sqrt{\Tr\,\texttt{StatOnlyCov}}=4.639\times10^{-40}$, leaving no comparable replacement.
 
 \subsection{From App. A, appstatmethods.tex: the paragraph beginning ``The known band-independence exception, the Bashyal''}
 % From app_statmethods.tex:446 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``The quoted 2D covariance therefore remains the block sum, with the cross term as a diagnostic.''\par
 A fitted $(\Phi_{\text{norm}},\Phi_{\text{shape}},\text{MuonE}_{\text{scale}})$ posterior from MAT-MINERvA could supply a paper-independent $\rho$. The collaboration uses the same truncated-spectral pseudo-inverse as $\chi^{2}_{\ours}$ (private communication), so the convention is reported to be collaboration practice rather than one introduced by this analysis. No published reference for it has been identified.
 
 \subsection{From App. A, appstatmethods.tex: the paragraph beginning ``The combined chi2/mathrmndf=chiCombined is the descriptive''}
@@ -587,27 +538,22 @@ The variance methods of \S\ref{sec:variance} quantify the scatter of the unfolde
 
 \subsection{From App. A, appstatmethods.tex: the paragraph beginning ``OmniFold sees reco and truth (pT,pPar)''}
 % From app_statmethods.tex:475 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``For median per-bin signed residual $\bar r(A)$, a linear fit gives $\bar r(A) \approx \kappa_{\text{leak}} A$, with $\kappa_{\text{leak}} = \partial \bar r/\partial A$, the fraction of hidden $\dpT$ bias entering the visible answer.''\par
 The $3.0\%$ acceptance bound is looser than the truth-reweight bound because the weak $\dpT$--$\pT$ correlation prevents complete removal of the leakage.
 
 \subsection{From App. A, appstatmethods.tex: the paragraph beginning ``Across 205 reported bins, combined OmniFold''}
 % From app_statmethods.tex:491 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``Across $205$ reported bins, combined OmniFold $+$ paper uncertainties give $\chi^{2}/\mathrm{ndf} = \chiCombined$ and pull mean/standard deviation $0.034/0.389$. This distance is descriptive, without calibrated goodness-of-fit (\S\ref{sec:chisq}).''\par
 Same-ensemble toy pulls are approximately Gaussian; the $0.048\%$ training-seed block is more than an order of magnitude below the systematic block.
 
 \subsection{From App. A, appstatmethods.tex: the paragraph beginning ``Eq.eqrefeq:blocksum requires no cross-correlations between ML,''}
 % From app_statmethods.tex:499 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``\textbf{Independence of error sources.} Eq.~\eqref{eq:blocksum} requires no cross-correlations between ML, statistical, systematic and run-period blocks.''\par
 The bootstrap pins the GBDT seed, and universes pin the seed too. A common seed correlates the training noise and does not cancel it (\S\ref{sec:uq-2d-scope}); the training-seed block averages the same $20$ bootstrap replicas at each seed setting and includes the bootstrap\,$\times$\,seed interaction at its $1/20$ share. Among the first three, cross-terms are higher-order.
 
 \subsection{From App. A, appstatmethods.tex: the paragraph beginning ``In reported bin i with bar''}
 % From app_statmethods.tex:520 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``The fraction with $|r|\le1$ is \SI{\pullFrac}{\percent} (Gaussian reference $68.27\%$; $\Delta = +0.44\%$; median $68.50\%$), and $\langle|r|\rangle=\pullMeanAbs$ against $\sqrt{2/\pi}=\pullGauss$ (within $0.5\%$).''\par
 The signed residual mean is $+0.006 \pm 0.082\,\sigma$, consistent with zero. The within-bin fraction is above \SI{65}{\percent} in \SI{97.6}{\percent} of bins (only $5$ of $205$ fall below). These show that the standardized toy residuals are approximately normal.
 
 \subsection{From App. A, appstatmethods.tex: the paragraph beginning ``Because sigmai is estimated from the''}
 % From app_statmethods.tex:522 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``Because $\sigma_i$ is estimated from the same toys that are evaluated, these figures diagnose standardized pulls and Gaussianity only and are not a coverage test of the bootstrap band.''\par
 No coverage number is quoted from this ensemble, and the 2D coverage statements are the fixed-truth test of \S\ref{sec:coverage} and the held-out-tune test of \S\ref{sec:coverage-tunes}.
 % carried with the text from app_statmethods.tex:523 @d55f7aad6
 % Search: coverage-toys; coverage_summary; same-ensemble pull @ ddf16f10
@@ -620,17 +566,14 @@ This appendix gives the conventions for covariances and comparisons beyond the 2
 
 \subsection{From App. A, appstatmethodsnd.tex: the paragraph beginning ``The 2D justification in Srefsec:chisq does''}
 % From app_statmethods_nd.tex:10 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``An earlier 5D covariance from the standard production chain has $10\,694$ reported bins, effective positive rank $\mathbf{263}$ and infinite numerical condition number. It is distinct from $C_Z$, the five-axis covariance of the \resFiveAxis{} (Table~\ref{tab:config-key}), and was built before $C_Z$ was chosen for use. Its $4825$-bin 5D$\to$4D projection retains rank $263$ exactly.''\par
 The covariance is a sum of about 45 rank-one outer products, one for each two-endpoint MAT systematic band, and of the statistical and machine-learning (ML) sample blocks. This construction cannot span $10\,694$ directions and is rank deficient. Quoting $\chi^{2}/n_{\text{reported}}$ would understate tension by roughly $40\times$ in 5D or $18\times$ in 4D.
 
 \subsection{From App. A, appstatmethodsnd.tex: the paragraph beginning ``For an N-D covariance, mathrmndf is''}
 % From app_statmethods_nd.tex:12 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``For an N-D covariance, $\mathrm{ndf}$ is the retained rank.''\par
 The reported-bin count $n_{\text{reported}}$ does not set it.
 
 \subsection{From App. A, appstatmethodsnd.tex: the paragraph beginning ``For an N-D covariance, mathrmndf is''}
 % From app_statmethods_nd.tex:12 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``Where an N-D $\chi^{2}$ is quoted, it must state five things. They are (i) the inverse actually used, including the pseudo-inverse cutoff \texttt{rcond} (singular values below this fraction of the largest are discarded) or the truncation rank, (ii) the retained rank, as $\mathrm{ndf}$, and (iii) the rank-truncation scan of that covariance.''\par
 That scan is expected to lack the smoothness that supports the 2D choice in \S\ref{sec:chisq}.
 
 \subsection{From App. A, appstatmethodsnd.tex: the paragraph beginning ``Item (v) records the ensemble size''}
@@ -639,17 +582,14 @@ Item (v) records the ensemble size of each block. Without it, an uncorrected fin
 
 \subsection{From App. A, appstatmethodsnd.tex: the paragraph beginning ``Item (v) records the ensemble size''}
 % From app_statmethods_nd.tex:16 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``For this analysis's production convention, universe-mean centered with biased $1/N$ normalization, it is $(N-p-2)/N$.''\par
 For fixed residuals an uncorrected bias inflates $\chi^{2}$ and overstates tension. Confidence regions from the same over-tight covariance become over-optimistic.
 
 \subsection{From App. A, appstatmethodsnd.tex: the paragraph beginning ``No generic correction is prescribed. A''}
 % From app_statmethods_nd.tex:19 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``No generic correction is prescribed.''\par
 A sum of deterministic rank-one band terms and statistical and ML sample blocks, such as the earlier 5D covariance from the standard production chain, has no single debiasing factor.
 
 \subsection{From App. A, appstatmethodsnd.tex: the paragraph beginning ``No generic correction is prescribed. A''}
 % From app_statmethods_nd.tex:19 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``The standard factor also assumes independent Gaussian realizations and a data-independent truncation dimension, neither established for a data-dependent cut.''\par
 The appropriate treatment depends on the covariance and inverse actually used, and is to be determined from the quantities recorded under item (v).
 
 \subsection{From App. A, appstatmethodsnd.tex: the paragraph beginning ``The synthesis in Srefsec:gbdt-model-dependence reuses saved''}
@@ -658,47 +598,38 @@ The synthesis in \S\ref{sec:gbdt-model-dependence} reuses saved outputs. It invo
 
 \subsection{From App. A, appstatmethodsnd.tex: the paragraph beginning ``The synthesis in Srefsec:gbdt-model-dependence reuses saved''}
 % From app_statmethods_nd.tex:25 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``The saved trace functionals on the EW cells are differential in $(\Eavail,W)$ and are multiplied by the cell areas. Those on the J and H2 cells are already integrals.''\par
 Direct tensor-slice integration checks the index-map sums and full-domain rate. Reporting boundaries coincide with fine edges.
 
 \subsection{From App. A, appstatmethodsnd.tex: the paragraph beginning ``For experiment i and cell f,''}
 % From app_statmethods_nd.tex:33 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``SD intervals use $s_f\sqrt{(n-1)/\chi^2_{0.975,n-1}}$ and $s_f\sqrt{(n-1)/\chi^2_{0.025,n-1}}$.''\par
 These normal-model approximations condition on finite simulation and make no simultaneous claim across cells. A deterministic noise-free trace from one simulation receives no error band. Its cell-to-cell variation is not sampling uncertainty.
 
 \subsection{From App. A, appstatmethodsnd.tex: the paragraph beginning ``The development assessment includes an interval''}
 % From app_statmethods_nd.tex:35 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``The table gives integer hits, both empirical fractions, exact pointwise 95\% binomial intervals and fixed half-width relative to mean truth.''\par
 It conditions on estimated bootstrap widths without propagating finite-replica uncertainty.
 
 \subsection{From App. A, appstatmethodsnd.tex: the paragraph beginning ``The development assessment includes an interval''}
 % From app_statmethods_nd.tex:35 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``Coverage fractions are not pooled across cells to certify them.''\par
 The examples shown are a populated low-energy cell (EW7) and the corner cell EW41, already known to fail. They are not freshly selected validation targets.
 
 \subsection{From App. A, appstatmethodsnd.tex: the paragraph beginning ``The rounding study keeps the fine-grid''}
 % From app_statmethods_nd.tex:43 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``The estimated numerical share is $s_{\rm pair}^2/s_{\rm boot}^2$.''\par
 The paired-model $\sqrt2$ factor introduces no physical noise source.
 
 \subsection{From App. A, appstatmethodsnd.tex: the paragraph beginning ``For prior vertex v, data sensitivity''}
 % From app_statmethods_nd.tex:47 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``For prior vertex $v$, data sensitivity is $d_{vf}=\hat f_{{\rm data},v}/\hat f_{{\rm data},0}-1$, with envelope $h_f=\max_v|d_{vf}|$.''\par
 Its denominator differs from the simulated residual's.
 
 \subsection{From App. A, appstatmethodsnd.tex: the paragraph beginning ``For prior vertex v, data sensitivity''}
 % From app_statmethods_nd.tex:47 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``Neither $h_f$ nor an outer product of closure residuals is given a probability model.''\par
 The reductions keep the per-cell values, the identity of each input and the exclusions, and distinguish complete outputs from checkpoints that carry no metadata. From a checkpoint, only the iterations that reproduce the originally recorded values are used. Later entries are excluded. The analyst cross-checked the reductions numerically.
 
 \subsection{From App. A, appstatmethodsnd.tex: the paragraph beginning ``Unfolding correlates weighted events. Treating them''}
 % From app_statmethods_nd.tex:58 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``Treating them as independent in a downstream likelihood can underestimate parameter uncertainties~\cite{Desai:2025correlated}.''\par
 Nominal weights do not specify uncertainty. Coherent unfolding replicas could propagate it through the fit. Resampling unfolded rows independently is not equivalent to resampling inputs and repeating the learned estimator. Classifier and permutation goodness-of-fit tests also require null calibration for their fitting and data reuse. These are requirements on such inference, with no new validation result here.
 
 \subsection{From App. A, appstatmethodsnd.tex: the paragraph beginning ``The uncertainty target matters: separate bin''}
 % From app_statmethods_nd.tex:60 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``A fixed linear projection $y=P x$ propagates covariance as $C_y=P C_x P^{\top}$, with integrated bin widths in $P$ for densities.''\par
 The identity neither calibrates that covariance nor accounts for regions chosen after inspecting data.
 
 \subsection{From App. A, appstatmethodsnd.tex: the paragraph beginning ``Recent work constructs confidence intervals for''}
@@ -707,30 +638,33 @@ Recent work constructs confidence intervals for selected functionals in constrai
 
 \subsection{From App. A, appstatmethodsnd.tex: the paragraph beginning ``Each calibration pseudo-experiment splits the simulation''}
 % From app_statmethods_nd.tex:69 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``\paragraph{Generative model of one pseudo-experiment.} Each calibration pseudo-experiment splits the simulation at random into two halves (Table~\ref{tab:joint5d-genmodel}) and refits the background refinement. Its truth equals $G$ on every fine cell that the source half populates.''\par
 Cells it leaves empty lower a coarse cell by at most \SI{0.2}{\percent}, or about \SI{4}{\percent} of the null standard deviation (the per-experiment spread is below \SI{1.5}{\percent} of it).
 
 \subsection{From App. A, appstatmethodsnd.tex: the paragraph beginning ``The data's rounding noise, and the''}
 % From app_statmethods_nd.tex:71 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``The prediction's variance in that draw is its own per-cell sum of squared weights. That diagonal model is an assumption of the metric.''\par
 Disjoint cells do not by themselves make a prediction's Monte Carlo errors independent. The background source and its template are Poisson draws from disjoint halves of the background sample. The detector weight bands include the GEANT4 hadron-interaction reweights.
 
 \subsection{From App. A, appstatmethodsnd.tex: the paragraph beginning ``emphProbability model. Fix one test, and''}
 % From app_statmethods_nd.tex:132 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``Assumption A2 is that, given the data, these are independent Bernoulli draws with a common probability $p$, the calibrated tail probability of the observed statistic.''\par
 This requires the lost pseudo-experiments to be lost independently of their outcomes.
 
 \subsection{From App. A, appstatmethodsnd.tex: the paragraph beginning ``emphProbability model. Fix one test, and''}
 % From app_statmethods_nd.tex:132 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``Assumption A1 is that, for a true null, $p$ is super-uniform over repetitions of the experiment, $P(p\le u)\le u$, with the nuisance parameters drawn from their priors.''\par
 The size statement is therefore averaged over the nuisance priors.
 
 \subsection{From App. A, appstatmethodsnd.tex: the paragraph beginning ``emphHolm reduction without independence. Let m0''}
 % From app_statmethods_nd.tex:140 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``A familywise error therefore requires some true null to cross below $\alpha/m_{0}$, and by the union bound $\mathrm{FWER}\le m_{0}\,R(\alpha/m_{0})\le\max_{j\le m}j\,R(\alpha/j)$.''\par
 The argument uses neither independence between tests nor the order of the Holm steps, so the shared ensemble of a null's total and shape tests, their unequal stopping counts, and the ranking by $(k+1)/(B+1)$ with its ties do not affect it.
 
 \subsection{From App. A, appstatmethodsnd.tex: the paragraph beginning ``The largest ratio R(c)/c, at j=1,''}
 % From app_statmethods_nd.tex:142 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``The largest ratio $R(c)/c$, at $j=1$, lies in $[0.8892,0.8902]$.''\par
 It decreases to $[0.5138,0.5148]$ at $j=10$.
+
+\subsection{From Part 2, secmethod.tex: the paragraph beginning ``paragraphTraining details. Each classifier is trained''}
+% From sec_method.tex:17 @fdd67e926; training detail (DECISION-20261120a records route; the director 2026-11-20)
+The two classes keep their physical weights, with no class balancing and no renormalization between iterations. The learned ratio $p/(1-p)$ therefore carries the normalization, with $p$ restricted to $[10^{-6},1-10^{-6}]$.
+
+\subsection{From Part 2, secmethod.tex: the paragraph beginning ``paragraphTraining details. Each classifier is trained''}
+% From sec_method.tex:17 @fdd67e926; training detail (DECISION-20261120a records route; the director 2026-11-20)
+In the note, this text follows: ``In the refined configurations, a classifier separating positive from negative weights, trained with $|w|$, gives each event the weight $|w|\max(0,2g-1)$.''\par
+For the \estMultiD{}, the per-event Kish effective sample size and weight tails have been computed on the sixteen reported cells~\cite{UnfoldedWeightsESS2026}. They describe the unfolded simulated-event weights and are not an uncertainty, coverage or validity statement.
