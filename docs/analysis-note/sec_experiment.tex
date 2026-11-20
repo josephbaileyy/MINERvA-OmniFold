@@ -2,12 +2,12 @@
 \label{sec:experiment}
 
 \subsubsection{Detector and beam}
-MINERvA~\cite{MINERvA:2013zvz} was a fine-grained scintillator-tracker neutrino experiment on Fermilab's NuMI beamline. Its central tracker comprises hexagonal planes of triangular polystyrene scintillator strips in three stereo orientations, surrounded by electromagnetic and hadronic calorimetry. The magnetized MINOS near detector, \SI{2}{m} downstream, serves as the muon spectrometer, measuring momentum and charge for MINOS-matched tracks. We use the \emph{medium-energy} (ME) neutrino-mode (FHC) exposure with $\langle E_\nu\rangle\sim\SI{6}{GeV}$. The flux is the \emph{a posteriori} constrained NuMI ME prediction of Ref.~\cite{MINERvA:2016iqn}, combining PPFX hadron-production weights and the neutrino--electron-scattering constraint, identical to the published measurement's flux~\cite{MINERvA:2021owq}.
+MINERvA~\cite{MINERvA:2013zvz} was a fine-grained scintillator-tracker neutrino experiment on Fermilab's NuMI beamline. We use the \emph{medium-energy} (ME) neutrino-mode (FHC) exposure with $\langle E_\nu\rangle\sim\SI{6}{GeV}$. The flux is the \emph{a posteriori} constrained NuMI ME prediction of Ref.~\cite{MINERvA:2016iqn}, combining PPFX hadron-production weights and the neutrino--electron-scattering constraint, identical to the published measurement's flux~\cite{MINERvA:2021owq}. See the records for the detector and spectrometer (Ref.~\cite{NoteRecords2026}).
 
 \subsubsection{Data and simulation samples}
 The twelve ME FHC playlists (ME1A--ME1G, ME1L--ME1P) contain $1.0574\times10^{21}$ protons on target, summed over the analyzed files; Ref.~\cite{MINERvA:2021owq} quotes $10.61\times10^{20}$, \SI{0.34}{\percent} more. The selection below leaves $4\,119\,797$ reconstructed data events. % A1 (the director, 2026-11-16, from a referee read): stageA/REPORT.md:129-133 (dataPOT 1.057394261158926e21, the sum of the 12 playlists' POTUsed; the paper's 10.61e20 is 0.34 % above, a known difference of production); docs/publication/corrections-20261008/RECORD-20261008-release-audit-corrections.md row D02.
 
-The reference simulation uses GENIE 2.12.6~\cite{Andreopoulos:2009rq} and MINERvA Tune v1, applied as per-event weights by the reweighting tools of the MINERvA Analysis Toolkit (MAT). These are the flux-and-central-value (flux-and-CV) weight, the GENIE model-parameter (``dial'') weights, the low-recoil 2p2h enhancement fit, and the non-resonant-pion reduction. The full \textsc{Geant4}-based~\cite{GEANT4:2002zbu} MINERvA detector simulation underlies the simulated pre-selected analysis ntuples (AnaTuples). The simulated sample contains $32\,849\,103$ true signal events, POT-normalized event-by-event to the data exposure and processed with identical reconstruction and selection.
+The reference simulation uses GENIE 2.12.6~\cite{Andreopoulos:2009rq} and MINERvA Tune v1, applied as per-event weights by the reweighting tools of the MINERvA Analysis Toolkit (MAT). The full \textsc{Geant4}-based~\cite{GEANT4:2002zbu} MINERvA detector simulation underlies the simulated pre-selected analysis ntuples (AnaTuples). The simulated sample contains $32\,849\,103$ true signal events, POT-normalized event-by-event to the data exposure and processed with identical reconstruction and selection. See the records for the simulation weights (Ref.~\cite{NoteRecords2026}).
 
 \subsubsection{Signal definition and event selection}
 \label{sec:selection}
@@ -23,9 +23,9 @@ Reconstructed events require a vertex in the same fiducial volume and apothem, a
 % (the current MINERvA-101 tutorial enforces the same \texttt{isMinosMatchTrack} match; we
 % additionally require a passing MINOS fit)
 
-Genuine backgrounds are selected events whose true interaction fails the signal definition: charged-current events of other flavors or wrong sign, neutral-current interactions, and out-of-fiducial-vertex events. Out-of-phase-space signal, reconstructed inside the phase space with its true muon outside it, is routed into the background template with them. Both are POT-scaled and subtracted from the reconstructed-data target before unfolding (\S\ref{sec:method}). Their sum, $N_{\mathrm{bkg}}(b)$ in each reconstructed bin, enters the purity weight $w_{\mathrm{pur}}(b)$ of \S\ref{sec:method-algo}.
+Genuine backgrounds are selected events whose true interaction fails the signal definition: charged-current events of other flavors or wrong sign, neutral-current interactions, and out-of-fiducial-vertex events. Out-of-phase-space signal, reconstructed inside the phase space with its true muon outside it, is routed into the background template with them. See the records for background-template normalization (Ref.~\cite{NoteRecords2026}).
 
-The background template used for this result is \SI{2.91}{\percent} of selected data events in the two-dimensional grid over the full sample (\SIrange{2.72}{3.23}{\percent} per playlist, \SI{2.74}{\percent} on playlist 1A). On playlist 1A only, about \SI{10}{\percent} (weighted) of the template is out-of-phase-space signal. These are $\nu_{\mu}$ charged-current events with a true vertex inside the fiducial volume. The rest is genuine background, mostly $\nu_{\mu}$ charged-current events with a true vertex outside it.
+The background template used for this result is \SI{2.91}{\percent} of selected data events in the two-dimensional grid over the full sample (\SIrange{2.72}{3.23}{\percent} per playlist, \SI{2.74}{\percent} on playlist 1A). See the records for playlist 1A background composition (Ref.~\cite{NoteRecords2026}).
 
 \input{selection_features}
 
@@ -36,7 +36,7 @@ A dedicated event loop (App.~\ref{app:codebase}) writes per-event records for ea
 
 \subsubsection{Reco-level control distributions}
 \label{sec:controlplots}
-Selected data exceed the POT-scaled MINERvA Tune~v1 prediction (signal $+$ background) by $\sim\SI{12}{\percent}$ in overall normalization. Figure~\ref{fig:control} compares all five reconstructed observables, and Fig.~\ref{fig:control-corner} their pairwise correlations. The data/MC ratio rises with $\pT$, from $0.88$ in the lowest bin to $\sim1.2$ above \SI{1}{GeV/c}. Excess and trend together reflect the truth-level normalization deficit of \S\ref{sec:results-model} and \S\ref{sec:3d-models}. Beyond the $\pT$ trend noted above, the ratio panels also show a mild enhancement in the lowest $\Eavail$ bins, reflecting the low-recoil excess examined at truth level in \S\ref{sec:3d-2p2h}.
+Figure~\ref{fig:control} compares all five reconstructed observables, and Fig.~\ref{fig:control-corner} their pairwise correlations. The data/MC ratio rises with $\pT$, from $0.88$ in the lowest bin to $\sim1.2$ above \SI{1}{GeV/c}. See the records for the reco-to-truth comparisons (Ref.~\cite{NoteRecords2026}).
 
 
 \begin{figure}[H]
