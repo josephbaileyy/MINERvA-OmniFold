@@ -48,7 +48,7 @@ Ranked by per-bin median fractional standard deviation, the largest bands of the
 
 \subsubsection{Statistical uncertainty: Poisson bootstrap}
 \label{sec:uq-boot}
-The statistical block jointly bootstraps data and simulation with 300 per-event Poisson(1) weight replicas, each fully re-unfolded with the LightGBM estimator at the central value's training seed (seed~42), and is their sample covariance about the replica mean (Fig.~\ref{fig:bootstrap}). The replica mean differs from the central value by a per-bin median of 4.37 standard errors of the mean ($\sigma/\sqrt{300}$), or 0.25 of the statistical standard deviation. Because the block is the covariance about the replica mean, it does not include this offset. The bootstrap block is smaller than the published statistical block (ratio of square-root traces 0.407; App.~\ref{sec:rank}). The records document gives the bootstrap's stream and draw detail.
+The statistical block jointly bootstraps data and simulation with 300 per-event Poisson(1) weight replicas, each fully re-unfolded with the LightGBM estimator at the central value's training seed (seed~42), and is their sample covariance about the replica mean (Fig.~\ref{fig:bootstrap}). Because the block is the covariance about the replica mean, it does not include that mean's offset from the central value, a per-bin median of 0.25 of the statistical standard deviation (4.37 standard errors of the mean, $\sigma/\sqrt{300}$), and the offset leaves the bias relative to the true cross section undetermined. The bootstrap block is smaller than the published statistical block (ratio of square-root traces 0.407; App.~\ref{sec:rank}). The records document gives the bootstrap's stream and draw detail.
 % absence-ok: "not assessed" is the block's own construction scope, unchanged by RE-2; the sentence edited here is W4
 
 The fixed-truth coverage studies of \S\ref{sec:coverage} scored two earlier statistical bands. The statistical block quoted here has had no coverage test (\S\ref{sec:limitations-2d}).
@@ -128,8 +128,8 @@ No block contains the dependence on the learner (\S\ref{sec:method-config}, \S\r
 % Deep restructure (DECISION-20261118; history-cuts/move-manifest-cv-20261118.tsv): the July-sweep reproduction sentence and its comments moved to
 % app:devhistory-2dchecks (CV-A01).
 
-For two bands whose universes barely change the unfolding inputs, EtaNCEL and NormNCRES, the responses are consistent with instability of the GBDT training contributing at the scale of the training-seed variation (\S\ref{sec:uq-ml}). The records document gives what these responses do not establish.
-
+% D11 (the EtaNCEL/NormNCRES training-noise diagnostic) is removed from the note on the referee's recommendation
+% (DECISION-20261120b item 4); its text is in the records document (records_compression_h3_p3c.tex).
 Each lateral band of the quoted universe block uses a single unfold at the central training seed, so it includes that seed's training noise. The checks of the block's construction are in App.~\ref{app:devhistory-2dchecks}.
 % Deep restructure (DECISION-20261118; history-cuts/move-manifest-cv-20261118.tsv): sentences 2-3 moved within this file to the end of the
 % flux paragraph (CV-M01, CV-M02); records-move-ledger.md L-thin-C64 pins the flux-index citation to this file.
@@ -178,7 +178,7 @@ The block has rank two, and with three period groups its own size is poorly dete
   \end{tabular}
 \end{table}
 
-Because the block is built from the observed differences among the periods, it contains them by construction (App.~\ref{app:devhistory}). That containment gives no information about coverage or whether the size is right; the block's other limits are stated in \S\ref{sec:limitations-2d}.
+The block scales the spread of the three periods' unfolded data-to-simulated-truth ratios about their exposure-weighted mean to the central value, so it contains the observed differences by construction (App.~\ref{app:devhistory}), and that containment establishes neither coverage nor whether its size is right; the block's other limits are stated in \S\ref{sec:limitations-2d}.
 % Note register batch b5 (2026-10-22): the paragraph is split into observation, construction and limits; D5's
 % Required clause ("The block uses each period's unfolded result" to "whether its size is right") keeps its sentences,
 % with the construction sentences ahead of the limits. The three periods are named as in playlist-term/DESIGN.md §3
@@ -226,13 +226,13 @@ $C_{\mathrm{model}}$ measures generator-shape model dependence; it is not a cali
 % Deep restructure (DECISION-20261118; history-cuts/move-manifest-cv-20261118.tsv): sentences 2-3 moved to sec:limitations-2d with a copy of
 % sentence 1 (CV-B32..CV-B34); the post-measurement identification (D) stays here.
 
-\paragraph{Conventions.} Each systematic band's covariance is computed about the mean of its universes (constraint-weighted for the flux), with $1/N$ normalization, not about the central value. Across bands, the per-bin median offset of a band's center from the central value is \SIrange{0.12}{0.57}{\percent} of the central value, or 0.09--2.85 times the band's $\sigma$.
+\paragraph{Conventions.} Following the MAT treatment of universes, each systematic band's covariance is computed about the mean of its universes (constraint-weighted for the flux), with $1/N$ normalization, so it does not include that mean's offset from the central value. The records document gives the offsets.
 % J3/J4 provisional (DECISION-20261018, packet W3: D12). DECISION-20261014 §2 (the MAT law as a declared convention, Q5);
 % stageC/production/DESIGN.md §8; stageC/production/REPORT.md §3 "Centring (R9)" (0.12-0.50 % of E_U, 0.08-2.26 sigma_band;
 % null bands EtaNCEL, NormDISCC at <= 4.2e-8 %); normalization 1.4 %, rank 1 (ruling R6; budget_Q bands).
 % plain-language pass (DECISION-20261018-joseph-plain-language-pass)
 
-\paragraph{Missed events in the universe unfolds.} In the systematic-universe unfolds, each event that fails reconstruction carries that universe's own truth weight.
+\paragraph{Missed events in the universe unfolds.} In the systematic-universe unfolds of the adopted covariance, each simulated signal event that fails reconstruction carries that universe's own truth weight.
 % Deep restructure (DECISION-20261118; history-cuts/move-manifest-cv-20261118.tsv): sentences 2-3 moved to app:devhistory-2dchecks (CV-A04..CV-A06).
 
 % Deep restructure (DECISION-20261118; history-cuts/move-manifest-cv-20261118.tsv): the limitation paragraphs on the inputs carried without
