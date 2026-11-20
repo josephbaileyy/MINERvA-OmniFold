@@ -1,0 +1,19 @@
+lane	chunk	range	grok_verdict	report	follow_up
+director-helper-3	19g sentence	48357821b..0978e4d4a	FAIL (1): the 19g-authorized ADDED only; no defect	reads/retro-19g-0978e4d4a/grok/report.md	none
+journal-editor	LM	795e79c05..283577172	PASS	reads/retro-lm-283577172	none
+journal-editor	B1	df465e417..795e79c05	FAIL (1): WEAKENED, real ("the infimum lies at p->0+" condensed to "the optimum lies at the boundary")	reads/retro-b1-795e79c05	2ca5c101d (restored byte for byte; Grok PASS reads/b1fix-2ca5c101d; merged draft fa8aa752b)
+director	19g sentence (codex2 reader test)	48357821b..0978e4d4a	FAIL (5): five ADDED hunks, all the one 19g-authorized sentence and its values; no defect	reads/retro-19g-cx-0978e4d4a/codex2/report.md	none
+director-helper-3	Part 1 trim + abstract	74f70348d..f0be0475e	FAIL (4): 1 locator drift (real, fixed); 2 and 4 WEAKENED timing qualifier dropped from abstract/Part 1 stability phrase (authorized: Joseph asked whether set-before facts are needed in the abstract; pre-specification stated once in Part 1 and in tab:test-index); 3 ADDED pre-specification sentence (authorized)	reads/retro-p1-*	locators fixed in 9be5fc3e2
+director-helper-3	Part 1 dagger	6287def6b	FAIL (1): ADDED clause, true once P5-2 prints the dagger note; no defect	reads/retro-dagger-6287def6b/grok/disposition.md	none
+director-helper-3	Part 3 chunk 1	f315a0fd7..48357821b	PASS	reads/retro-p3c1-*	none
+journal-editor	G2	9e01438b9 (synthetic, tree 6374315bf)..033aded7e	PASS	reads/retro-g2-033aded7e	none
+journal-editor	K4-K6	64a5ab96b (synthetic, tree 8e723a730)..377ec92f5	FAIL (3): input artifacts only (manifest truncation restored by 8928d66ae; K4 destination merged with K4 at e5c56bcc2, outside the synthetic base); verified on draft 54f257475	reads/retro-k4k6-*	none
+journal-editor	K8/K9/G1	f4f0d1117 (synthetic, tree 8e6f9ab0a)..8e0efca36	FAIL (1): POINTER, real, records-side antecedent	reads/retro-k8k9g1-*	f97fde3dc (Grok PASS reads/k9fix-f97fde3dc; merged draft)
+cov2d	P5-1	e5c56bcc2..1d816b41e	PASS	reads/p5-1-retro-grok-*	none
+cov2d	P5-2	f315a0fd7..b8b4baf4b	FAIL (4): ADDED timing markers; each matches its home (ruling (a); sec_5d:81; sec_joint:199; sec_joint + app_devhistory), checked by the director at ruling time	reads/p5-2-retro-grok-b8b4baf4b/grok	none
+limitation-resolver	names	d770b3d70..278caefe1	PASS	reads/lr-g-*	none
+limitation-resolver	names follow-ups	d30ec5df2..9334e1436	PASS	reads/lr-g-*	none
+limitation-resolver	P4-2/P4-3	47c318849..f6d31aa36	FAIL (2): 1 DROPPED real (tab:3d-configs lost "(the learner of (c))"/"(the learner of (a))"; missed by the subagent and the director); 1 ADDED authorized (director-specified section 4.1.3 wording)	reads/lr-g-*	038452580
+limitation-resolver	Part 2 P2-2/P2-3	dfc41cdf5..c591509fb	FAIL (1): generated alias-site count in records_results_index; not prose, no defect	reads/lr-g-*	none
+limitation-resolver	P4-1	1318633d0..85c063c21	FAIL (2): POINTER x2 real, records-side antecedents	reads/lr-g-*	038452580
+limitation-resolver	P4-4 + receive	6ed12eed4..c9ce44deb	FAIL (2): POINTER real records-side ("that rise", LR-Q22); WEAKENED real records-side (moved rows lacked column heads/group labels)	reads/lr-g-*	1bc4fbcfa + 038452580
