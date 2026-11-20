@@ -17,10 +17,12 @@
 % second read of restated results. No tool recomputes the manifests' digests in build_all.sh or freeze_checks.py
 % (grep of both at 178d35b47). The Claude-only period and the retro reads (the director's facts of 2026-11-19 evening):
 % review-tools/retro-grok-20261119.tsv, a byte copy of codex-reports/note-measurement/retro-grok-20261119.tsv
-% (sha256 81e1962343008acfacdd0140d241d63d02d620546beb25385e182c11f1580672): 17 Grok rereads (the fourth data row, the
+% (sha256 64672c0d4d04c4a4d7e2634ba2c89106b9bdb3a9d1d84f1851c8c17379f5f369): 17 Grok rereads (the fourth data row, the
 % director's codex2 reader test of the 19g sentence, is not one), 6 PASS, 8 real defects (note text: B1, P4-2/P4-3;
-% records: K9, P4-1 x2, P4-4 x2; metadata: Part 1 locators), each fixed (the table records a Grok read of
-% the fix for B1 and K9 only, so the printed text says "fixed" and no more). Grok's last read
+% records: K9, P4-1 x2, P4-4 x2; metadata: Part 1 locators), each fixed. The table (the director's update of 2026-11-19
+% evening) records a Grok read of each printed-text fix: B1, K9, and reads/lr-g-retrofix-038452580 for P4-2/P4-3, P4-1 and
+% P4-4 (FAIL 2, both restorations of base text, ruled no defect by the director; P4-4's framing fix also
+% reads/lr-g-frame-1bc4fbcfa, PASS). The Part 1 locators are check metadata, verified by quality_checks 1a. Grok's last read
 % before the period: f5b40f3b1, 05:38. "Out of credits": Grok, codex-school, codex-school2 and agy's non-Gemini models;
 % Gemini was optional and never counted alone. Rule from about 20:55 (Joseph 20:44, via the director): two-reader =
 % Grok + codex-school2 (gpt-6.2-sol) with a targeted director read; one-reader = Grok.
@@ -97,7 +99,8 @@ conversation that produced the change and, for a restated result, also the Claud
 which had not written the change but had followed the work. Some re-readings of a corrected change were not independent
 of the earlier readings. Grok then reread each of the 17 chunks merged in that period over its merged range (for three chunks, from a base
 that already held the draft merged partway through). It found eight defects, two in the note's text, five in the
-records document and one in a check's metadata, each of which was fixed; its other findings were additions or removals
+records document and one in a check's metadata. Each was fixed: Grok read the fix of each of the seven in printed text,
+and the check-metadata fix was verified by its check. Its other findings were additions or removals
 that a decision or ruling authorized, artifacts of the read inputs or generated metadata
 (\texttt{review-tools/retro-grok-20261119.tsv}). From about 20:55 that day, a reworded
 sentence was read by Grok, and a restated result by Grok and an OpenAI model. Each reader was given the diff, the files
