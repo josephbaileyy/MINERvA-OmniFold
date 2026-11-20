@@ -1162,3 +1162,5 @@ token	delta	owner	item	reason
 5	+1	journal-editor	App. F (read fixes)	"item 5" of DECISION-20261120a, cited in the limitations row
 20	+1	journal-editor	App. F (read fixes 2)	"on 20 November 2026": the date of the J3 paragraph copies (manifest: commit cbbfc740d, 2026-11-20)
 2026	+1	journal-editor	App. F (read fixes 2)	"on 20 November 2026", as above
+2009	-1	director-helper-3	P3C	P3C: the NEUT bibliography entry (Hayato, Acta Phys. Polon. B 40 (2009) 2477) left the note's bibliography with its last citing sentence (sec:results-model, moved verbatim to the records, H3-P3C); it prints in main_records.pdf
+40	-1	director-helper-3	P3C	P3C: the NEUT bibliography entry (Hayato, Acta Phys. Polon. B 40 (2009) 2477) left the note's bibliography with its last citing sentence (sec:results-model, moved verbatim to the records, H3-P3C); it prints in main_records.pdf
