@@ -19,11 +19,11 @@ $W$ & Hadronic invariant mass, in GeV. Truth $W$ uses the struck-nucleon mass, r
 Data & The twelve ME FHC playlists, $1.057\times10^{21}$ protons on target (\S\ref{sec:experiment}). \\
 Abbreviations & IBU: D'Agostini iterative Bayesian unfolding (\S\ref{sec:intro}). ME, FHC: the medium-energy, neutrino-mode (forward horn current) exposure (\S\ref{sec:experiment}). POT: protons on target (the event-loop outputs, below). GBDT: gradient-boosted decision tree (\S\ref{sec:intro}). PPFX: the hadron-production weights of the flux prediction (\S\ref{sec:experiment}). MAT: the MINERvA Analysis Toolkit (\S\ref{sec:experiment}). \\
 \addlinespace
-Configurations & (a)--(f): Table~\ref{tab:config-key}, from Table~\ref{tab:estimators-matrix} and \S\ref{sec:method-config}. \\
+Estimators & The \estTwoD, the \estMultiD, the \estPurity, the \estDetPurity, the \estLowCap{} and the \estExact: Table~\ref{tab:estimators-matrix}, whose last column gives each one's legacy alias, and \S\ref{sec:method-config}. \\
 \addlinespace
 $Q_R$ & Covariance of the two-dimensional cross section: the sum of the training-seed, statistical, systematic-universe and run-period blocks (\S\ref{sec:systematics}, Table~\ref{tab:uq}). \\
 $C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}$ & The reported covariance of the sixteen cells, with $C_{\mathrm{total}}=C_{\mathrm{e}}+C_{\mathrm{model}}$ (\S\ref{sec:fived16-cov}). \\
-$C_{\mathrm{e}}$ & Sums the statistical bootstrap of configuration~(e), the PPFX flux universes, the interaction-model and detector bands, the lateral bands, the normalization and the training-seed block (\S\ref{sec:fived16-cov}). \\
+$C_{\mathrm{e}}$ & Sums the statistical bootstrap of the \estMultiD{}, the PPFX flux universes, the interaction-model and detector bands, the lateral bands, the normalization and the training-seed block (\S\ref{sec:fived16-cov}). \\
 $C_{\mathrm{model}}$ & The unscaled outer-product sum of the data result's shifts when the prior is reweighted in turn by the ratio of GENIE + MEC, NuWro or GiBUU to GENIE CV, in cross-section units. It measures generator-shape model dependence and is not a calibrated bound (\S\ref{sec:fived16-cov}). \\
 $C_{\mathrm{resp}}$ & The sum, over four deposit categories (protons, mesons, electromagnetic and other deposits), of the outer product of the half-difference of the two unfolded shifts when that category's reconstructed energy is scaled by its one-standard-deviation factor (\S\ref{sec:fived16-cov}). \\
 $C_{\mathrm{PL}}$, $C_{\mathrm{PL,5D}}$ & The run-period blocks of the two-dimensional result and of the sixteen cells, built from the double ratios of the run-period groups' unfolded results with no reference period (\S\ref{sec:uq-combine}, \S\ref{sec:fived16-pl}). \\

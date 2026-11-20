@@ -733,12 +733,14 @@ class ResultLineNamesItsObjectTest(unittest.TestCase):
     # Each strike-carrying body also strikes the literal of one production CONTEXT_EXEMPT entry, and the directory
     # carries each entry's source text, because the checker refuses a stale exemption (review F8).
     BODIES = {"main_records": r"struck $\dead{1.234}$ here and $\dead{1.014}$, $\dead{1.65}$, $\dead{0.377}$ and $\dead{6.86}$",
-              "pet_note": r"struck $\dead{5.678}$ here and $\dead{0.912}$",
+              "pet_note": r"struck $\dead{5.678}$ here and $\dead{0.912}$ and $\dead{3.066}$",
               "main_note": "clean posted note", "main_paper": "clean paper", "main_primer": "clean primer"}
     EXEMPT_SOURCES = {"part5_validation.tex": "the injected bump (mean weight 1.014)\n",
                       "values.tex": "\\newcommand{\\covTwoDCTwo}{0.912}\n",
                       # 2026-11-17: the 0.377 entry (f70e1d59f, the note's currency batch A) needs its source too
-                      "values_fived16.tex": "\\@namedef{fv@g-tune-pull-R15}{1.65}\n\\@namedef{fv@prr-rho-ibu200-q3}{-0.377}\n",
+                      # 2026-11-19: the 3.066 entry (DECISION-20261119g) reads its source here too
+                      "values_fived16.tex": "\\@namedef{fv@g-tune-pull-R15}{1.65}\n\\@namedef{fv@prr-rho-ibu200-q3}{-0.377}\n"
+                                            "\\@namedef{fv@ibusd-k10-sig}{3.066}\n",
                       "../orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/figures/fd_g_fig_modes.json":
                           '{"sigma": 0.06855283880067227}\n'}
     BODY_FILES = {"main_records": "app_history", "pet_note": "app_history_pet", "main_note": "body_main_note",
@@ -1204,14 +1206,21 @@ class ContextExemptLiteralTest(unittest.TestCase):
                      "the bump had mean weight 1.014.",
                      "Fixed-truth C2 = 0.912.",
                      "the fraction within 2 sigma, C2 = 0.912, vs. 0.954",
-                     "Fixed-truth C2 = 0.912 (nominal 0.954)"):
+                     "Fixed-truth C2 = 0.912 (nominal 0.954)",
+                     "changed it from 1.623 to 1.621 at five iterations and from 3.120 to 3.066 at ten iterations.",
+                     "from 1.623 to 1.621 at five\niterations and from 3.120 to\n3.066 at ten iterations"):
             with self.subTest(text=text):
                 searched = self.mod.exempt_text("main_note", text)
-                self.assertFalse(any(self.mod.outward_hit(v, searched) for v in ("1.014", "0.912")), searched)
+                self.assertFalse(any(self.mod.outward_hit(v, searched) for v in ("1.014", "0.912", "3.066")), searched)
 
     def test_the_literal_elsewhere_in_that_build_is_still_a_hit(self):
+        # 3.066 (DECISION-20261119g): the 19g sentence is removed, the struck GBDT total 3.066 x 10^-38 is not
+        ctx = "from 1.623 to 1.621 at five iterations and from 3.120 to 3.066 at ten iterations"
         for value, text in (("1.014", "(mean weight 1.014); the struck chi2/ndf 1.014 would leak"),
-                            ("0.912", "C2 = 0.912, and a PET/GBDT ratio of 0.912")):
+                            ("0.912", "C2 = 0.912, and a PET/GBDT ratio of 0.912"),
+                            ("3.066", ctx + "; the GBDT total 3.066 \u00d7 10\u221238 cm2/nucleon would leak"),
+                            ("3.066", "the GBDT total was 3.066 \u00d7 10\u221238"),
+                            ("3.066", "from 3.120 to 3.066 at ten iterations")):
             with self.subTest(value=value):
                 self.assertTrue(self.mod.outward_hit(value, self.mod.exempt_text("main_note", text)))
 
@@ -1220,6 +1229,8 @@ class ContextExemptLiteralTest(unittest.TestCase):
             with self.subTest(build=build):
                 self.assertTrue(self.mod.outward_hit("1.014", self.mod.exempt_text(build, "(mean weight 1.014)")))
                 self.assertTrue(self.mod.outward_hit("0.912", self.mod.exempt_text(build, "C2 = 0.912")))
+                self.assertTrue(self.mod.outward_hit("3.066", self.mod.exempt_text(
+                    build, "from 1.623 to 1.621 at five iterations and from 3.120 to 3.066 at ten iterations")))
 
     def test_each_source_text_still_prints_and_each_literal_is_still_struck(self):
         macros = self.mod.macro_table(HERE)

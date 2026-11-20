@@ -126,6 +126,9 @@ READOUTS = {
     "e96d": (f"{FD}/fd/e96-data-20261110/receipts/a1-run-20261112/cluster/analysis/ANALYSIS.json.txt", "b42208ef"),
     # U6: the figure referee read's check A (on main by #1213, e13d98d55)
     "recov": ("docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-figure-deformation-20261112/check-a/a_recovery.json", "75db95a1"),
+    # DECISION-20261119g: the signed-target IBU study's terminal readout (OUTCOME-20261119-ibu-signed-data.md rows 19-20;
+    # committed byte-identical by the receipt PR #1235, sha256 a4ec72c1369d763469af1105839c944bee5487d8a69ecd6947d92fac6912317c)
+    "ibusd": ("docs/orchestration/state/2d-closeout/ibukt-signed-data-a2-20261119/readout.json", "a4ec72c1"),
 }
 # the committed readouts without the run-period block, for the "-nopl" keys
 NOPL_READOUTS = dict(READOUTS, **{
@@ -1720,6 +1723,18 @@ def currency_values(d, base):
         assert min(x) > 1, "every 1N-1P bin below 8 GeV/c lies above 1A-1F"
         v[f"rp-pc-lev-{tag}-lo"], v[f"rp-pc-lev-{tag}-hi"] = f"{100 * (min(x) - 1):.1f}", f"{100 * (max(x) - 1):.1f}"
     v.update(recov_values(d))                                   # U6
+    # DECISION-20261119g: the descriptive chi2/ndf between the recorded OmniFold E_R and binned IBU on the published
+    # covariance, IBU on the refined and on the signed target, at K=5 and K=10 (OUTCOME-20261119-ibu-signed-data.md
+    # rows 19-20, whose six-decimal values are asserted here); printed at three decimals, as the referee's sentence
+    s = d["ibusd"]
+    assert s["child_status"] == 0
+    outcome = {(5, "refined"): 1.623219, (5, "signed"): 1.620874, (10, "refined"): 3.120436, (10, "signed"): 3.065877}
+    for (k, arm), x in outcome.items():
+        r = s["distances"][str(k)][f"er_vs_{arm}"]
+        assert r["ndf"] == 205 and abs(r["chi2_ndf"] - x) < 1e-6, (k, arm, r["chi2_ndf"])
+        assert abs(r["chi2"] / r["ndf"] - r["chi2_ndf"]) < 1e-12
+        v[f"ibusd-k{k}-{'ref' if arm == 'refined' else 'sig'}"] = f"{r['chi2_ndf']:.3f}"
+    assert [v[f"ibusd-k{k}-{a}"] for k in (5, 10) for a in ("ref", "sig")] == ["1.623", "1.621", "3.120", "3.066"]
     clash = sorted(k for k in v if k in base and base[k] != v[k])
     assert not clash, f"a currency key would change an existing value: {clash[:8]}"
     return {k: x for k, x in v.items() if k not in base}
