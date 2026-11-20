@@ -50,3 +50,28 @@ The analysis-MC truth denominator uses the unfolded result's flux, nucleon-count
 % H3-P3-09: sec_tension.tex (the former App. sec:tension), moved whole and byte-identical from the note's Part 3 (part3_reproduction.tex @ draft 47c318849).
 % Its numbers are for the exact-split cross-check, the earlier central value; the note keeps the quoted value's decomposition (sec:results-tension).
 \input{sec_tension}
+
+% Part 3 chunk 2 (the director's Part 3 rulings, 2026-11-19, (a): construction detail to the records under rule 5),
+% director-helper-3: moved verbatim from sec_systematics.tex @ lane e09c53477 (draft ae7a78594); rows H3-P3-10..H3-P3-16.
+\subsection{Construction detail of the 2D covariance blocks (from Part 3, the uncertainty of the 2D cross section)}
+\paragraph{PPFX flux universes (from \S\ref{sec:uq-universes}).}
+The 100 PPFX hadron-production flux universes use the same mean-centered $1/N$ formula.
+
+\paragraph{Flux normalization detail (from \S\ref{sec:uq-universes}, ``Flux $1/\Phi$ normalization'').}
+% after "Target-nucleon normalization contributes a fully-correlated rank-1 band of 1.4 %."
+The two MINOS muon-energy-scale universes carry the correlated-flux weight, so each is divided by its own flux. That band's integral $\sigma$ is \SI{0.30}{\percent}.
+% after the sentence on the joint flux and muon-energy-scale block of Bashyal et al.
+The cross term is rank-2; two independent estimators give $\rho=0.87$--$0.90$. Adding this block leaves the systematic rank unchanged because its directions already lie in the universe-covariance span (App.~\ref{sec:rank}).
+% the paragraph's last sentence
+In all 12 playlists the production flux weights equal those of the constraint file and of the earlier 2D budget, with which \S\ref{sec:uq-2d-scope} compares the quoted construction.
+
+\paragraph{Bootstrap construction detail (from \S\ref{sec:uq-boot}).}
+% after "... the separable background-only term is contained in the statistical block."
+With 300 replicas the Gaussian formula $1/\sqrt{2(N-1)}$ gives a relative standard error of about \SI{4.1}{\percent} on each per-bin $\sigma$, and the per-bin $\sigma$ from a nested half (150) of the replicas is a median 1.000 times that from all 300.
+
+\paragraph{Training-seed block detail (from \S\ref{sec:uq-ml}).}
+% after "A spread of single unfolds on fixed data is a different statistic."
+Each setting is a triplet $(s,s{+}1,s{+}2)$ of seeds for the step-1 classifier, step-2 classifier and miss regressor, with $s\in\{42,45,48,51,54\}$; the block has rank~4 (\S\ref{sec:seedscan}).
+% after "With four degrees of freedom, its variance has a Gaussian relative standard error of about 71 %."
+Its per-bin $\sigma$ is a median 0.27 of that of the earlier ten-seed block. The reason is that the bootstrap\,$\times$\,seed interaction, which dominated the earlier scan, is already inside the fixed-seed statistical block. The training-seed block carries it only at its $1/20$ share, a median 0.763 of its diagonal.
+
