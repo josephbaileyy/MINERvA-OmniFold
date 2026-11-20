@@ -35,3 +35,34 @@ The Nieves--Simo--Vacas MEC channel~\cite{Nieves:2011pp,Gran:2013kda} is present
 \subsection{Truth and reconstructed q3 in the event loop (from Part 4, sec:4d)}
 % From sec_3d.tex:173 @2dc962c0a; procedure
 Truth $q_{3}$ comes from the generator (\texttt{CVUniverse::Getq3True()}); reconstructed $q_{3}$ uses the muon $Q^{2}$ and the calorimetric recoil (\texttt{CVUniverse::RecoQ3()}). Both are evaluated for all twelve playlists, as for $\Eavail$. Lateral systematic shifts change $q_{3}$ but leave $\Eavail$ unchanged, so a shifted $q_{3}$ is stored for each lateral universe instead of reusing the central value.
+
+\subsection{GENIE-hydrogen sensitivity of the CH comparison (from Part 4, sec:fived16-gen-target)}
+% From sec_fived16_gen.tex:140 @6ed12eed4; a sensitivity, not the comparison
+ With the reported $C_{\mathrm{model}}$, that rise also depends on the hydrogen sample: with GENIE CV's hydrogen in place of GiBUU's own, in the generators' own definitions, GiBUU's total is \fvval{g-gibuu-genieh-total-chi2}, below its carbon value of \fvval{g-gibuu-gen-carbon-total-chi2}. GENIE's hydrogen sample is thin, so that spread is largely its own Monte Carlo noise, and the GENIE-hydrogen rows are sensitivities, never the comparison.
+
+\subsection{Native CH generation of NuWro (from Part 4, sec:fived16-gen-target)}
+% From sec_fived16_gen.tex:142 @6ed12eed4; a check of the combination the comparison uses
+A native CH generation of NuWro, with only the target changed in the production card, was compared cell by cell with the combination under a rule fixed before the comparison was made: $\sum z^2<\fvval{gnat-rule-sumz2}$ over the sixteen cells and no $|z|>\fvval{gnat-rule-zmax}$, with $z$ from the two samples' Monte Carlo variances. It agrees in the generators' definitions ($\sum z^2=\fvval{gnat-gen-sumz2}$, largest $|z|=\fvval{gnat-gen-zmax}$) and in the analysis definitions (\fvval{gnat-ana-sumz2} and \fvval{gnat-ana-zmax}). Its $\chi^2$ is \fvval{g-nuwro-native-gen-total-chi2} against the combination's \fvval{g-nuwro-gen-ch-total-chi2}; the comparison uses the combination. A diagnostic that was not a test specified before it ran: in one chunk of the generation's probe, NuWro's total cross section per nucleon is \fvval{gnat-probe-pct}\,\% above $(12\sigma_{\mathrm{C}}+\sigma_{\mathrm{H}})/13$ computed from one chunk each of the production carbon sample and the free-proton sample, mostly in deep-inelastic events.
+
+\subsection{Per-cell $\sigma$ with CH shape ratios in $C_{\mathrm{model}}$ (from Part 4, sec:fived16-gen-target)}
+% From sec_fived16_gen.tex:148 @6ed12eed4; a sensitivity of the covariance
+With the CH shape ratios, the reported per-cell $\sigma$ falls in \fvval{e2-sig-with-nfall} of the 16 cells and rises in \fvval{e2-sig-with-upcell}, by \fvval{e2-sig-with-up}\,\%. It falls most in \fvval{e2-sig-with-cell}, where $\sigma/f$ goes from \fvval{e2-sig-with-carbon} to \fvval{e2-sig-with-ch} ($-\fvval{e2-sig-with-fall}$\,\%; $-\fvval{e2-sig-nopl-fall}$\,\% without $C_{\mathrm{PL,5D}}$). $C_{\mathrm{model}}$'s own $\sigma/f$ changes most in \fvval{e2-cm-cell}, from \fvval{e2-cm-carbon} to \fvval{e2-cm-ch}, and most in relative terms in \fvval{e2-cm-relcell}, where it is small: from \fvval{e2-cm-relcarbon} to \fvval{e2-cm-relch} ($+\fvval{e2-cm-rel}$\,\%).
+
+\subsection{Caption sentences of tab:fived16-gen-target for the moved rows}
+% From sec_fived16_gen.tex:155 @6ed12eed4; they describe rows moved to the records document
+ GENIE CV's hydrogen is a sensitivity only. The native NuWro rows are a check of the combination, which the comparison uses.
+
+\subsection{Rows moved from tab:fived16-gen-target (hydrogen sensitivity and native NuWro)}
+% From sec_fived16_gen.tex:167 @6ed12eed4; rows of the moved sensitivities (the four rows, in table order; columns as in the note: $\chi^2$ and shape-only $\chi^2$ under the reported covariance, then without $C_{\mathrm{PL,5D}}$)
+\begin{center}\footnotesize
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+\multicolumn{5}{@{}l}{NuWro} \\
+CH, GENIE CV's hydrogen (generator) & \fvval{g-nuwro-genieh-total-chi2} & \fvval{g-nuwro-genieh-shape_only-chi2} & \fvval{g-nuwro-genieh-total-chi2-nopl} & \fvval{g-nuwro-genieh-shape_only-chi2-nopl} \\
+native CH (generator) & \fvval{g-nuwro-native-gen-total-chi2} & \fvval{g-nuwro-native-gen-shape_only-chi2} & \fvval{g-nuwro-native-gen-total-chi2-nopl} & \fvval{g-nuwro-native-gen-shape_only-chi2-nopl} \\
+native CH & \fvval{g-nuwro-native-ana-total-chi2} & \fvval{g-nuwro-native-ana-shape_only-chi2} & \fvval{g-nuwro-native-ana-total-chi2-nopl} & \fvval{g-nuwro-native-ana-shape_only-chi2-nopl} \\
+\multicolumn{5}{@{}l}{GiBUU} \\
+CH, GENIE CV's hydrogen (generator) & \fvval{g-gibuu-genieh-total-chi2} & \fvval{g-gibuu-genieh-shape_only-chi2} & \fvval{g-gibuu-genieh-total-chi2-nopl} & \fvval{g-gibuu-genieh-shape_only-chi2-nopl} \\
+\bottomrule
+\end{tabular}
+\end{center}
