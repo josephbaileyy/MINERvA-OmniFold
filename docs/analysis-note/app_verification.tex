@@ -68,7 +68,7 @@ A generated number & The generators' \texttt{-{}-check}, run by \texttt{build\_a
 \addlinespace
 Any printed number & \texttt{freeze\_checks.py}, numbers & The numeric tokens of the two PDFs' text differ as a multiset, apart from the rows of \repopath{numbers-allowlist.tsv}, each of which names a token, its change in count, who made the change, and the reason. Section, figure, table and page numbers and the text inside figures are not counted. \\
 \addlinespace
-A stated limitation & \texttt{freeze\_checks.py}, limitations; \texttt{limitations\_export.py -{}-check} & A row of \repopath{limitations-export.tsv}, the note's entries in the project's limitations register, has neither its quote nor its re-anchored quote in the note, and is not held in the records document with a pointer that prints in the note. A row is re-anchored only to a verbatim move recorded in a move manifest, and \texttt{-{}-check} fails if any row needs a person to judge a reworded sentence. \\
+A stated limitation & \texttt{freeze\_checks.py}, limitations; \texttt{limitations\_export.py -{}-check} & A row of \repopath{limitations-export.tsv}, the note's entries in the project's limitations register, has neither its quote nor its re-anchored quote in the note. Since 20 November 2026 a row also passes if its quote is held verbatim in the records document and a pointer to it prints in the note (DECISION-20261120a, item 5). A row is re-anchored only to a verbatim move recorded in a move manifest, and \texttt{-{}-check} fails if any row needs a person to judge a reworded sentence. \\
 \addlinespace
 A reference, citation or label & \texttt{build\_all.sh}, which forces every PDF to be rebuilt; \texttt{freeze\_checks.py}, labels & A PDF was not written by the run; a reference or citation is unresolved after one further pass; a label is defined more than once; an unresolved reference prints; a page number is hard-coded in the text; or a figure or table is never referenced. \\
 \addlinespace
@@ -90,7 +90,7 @@ A result restated in new words & Readings by language models (below) & A reader 
 \paragraph{Moved text and readings by language models.} Text was moved in three rounds in November 2026: a
 restructuring of the sections, the removal of duplicated text, and a compression. Every moved sentence has a row in a
 move manifest, giving its source, its destination and the SHA-256 digest of its text. Where the compression shortened a
-paragraph by copying it whole to the records document, the manifest has a row for the copied paragraph and one for each
+paragraph by copying it whole to the records document (from 20 November, under the same decision), the manifest has a row for the copied paragraph and one for each
 sentence cut from the note. Text that the compression removed from the note, and that the note does not print
 elsewhere, prints verbatim in the records document.
 
@@ -115,7 +115,7 @@ artifacts of the read inputs, or generated metadata (\texttt{review-tools/retro-
 
 \paragraph{The rules from the evening of 19 November.} From about 20:55 that day, a reworded sentence was read by
 Grok, and a restated result by Grok and an OpenAI model. On 20 November the first author suspended the note's editorial
-rules for this release (\repopath{docs/orchestration/DECISION-20261120a-joseph-release-locks.md}). The floor rule, the
+rules for this release (\repopath{docs/orchestration/DECISION-20261120a-joseph-release-locks.md}). As that decision records, the floor rule, the
 word budgets, the verbatim and sentence-count locks, and reader verdicts as merge gates became guidance until a
 satisfactory paper exists. A qualifier's full statement may move verbatim to the records document, with a pointer in
 the note. A reader's suggestion is applied by default, and the change is reread until both readers pass. The error
