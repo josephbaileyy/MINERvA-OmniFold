@@ -400,3 +400,35 @@ Had every interrupted draw exceeded the observed statistic, no test would have b
 
 A determinism check fixed before the rerun (16 of 16 completed seeds rerun bitwise identically) shows that each recovered draw is the lost draw, so every submitted draw has been observed. The closest margin is 4.6 units of $T$ below the observed value of 868.6 (GENIE~2.12.10 + MEC shape, $\pm\jtMoneKappaRobust\,\delta_{\mathrm{fine}}$ variant). The next is 49.8 (GENIE~2.12.10 shape, same variant). With complete batches the stopping rule, fixed before any production pseudo-experiment, would have stopped the Tune~v1, GENIE~2.12.10, GENIE~2.12.10 + MEC and GiBUU nulls one batch earlier ($B=1200$), with the same decisions.
 
+% Moved verbatim from app_release.tex @ 84da419c8 in the compression under DECISION-20261120a (qualifier and procedure detail
+% may move to the records with a pointer); move-manifest-je JE-18.
+\subsection{Release package (App.~D): detail moved from the note}
+
+\subsubsection{Result package and reproduction limits}
+
+From packaged arrays it also regenerates figures of the earlier article version for which it was assembled: the $(\Eavail,W)$ excess map (Fig.~\ref{fig:eavailWexcess} of this note), the null distributions of the joint tests (Fig.~\ref{fig:joint5d-nulls}), and one-dimensional generator projections, which neither this note nor the current article prints.
+
+The package also carries the 20 rounding jitters of the data, from which the stability of the observed $p$ values (\S\ref{sec:joint5d-conditions}) can be recomputed; no packaged script recomputes it.
+
+\subsubsection{Scope of reproduction and required inputs}
+
+Nor does it reproduce the 2D uncertainty and coverage figures, the low-recoil comparisons, the recoil-response sensitivity, or the proxy convergence rate of joint-test condition~(i). The multiplier scan of the joint tests is recomputable from RC7's sufficient inputs with the scan code of Ref.~\cite{JointTestKappa2026}, but it is not part of RC7's own verification.
+
+As of that record (2026-10-10), verified copies of all 1,885 data, flux and parameter files are held on NERSC project storage; the record identifies the 489 simulation AnaTuples by checksum but holds no preservation copy of them.
+
+% Moved verbatim from app_response_mismatch.tex @ 84da419c8 in the compression under DECISION-20261120a (qualifier and procedure detail
+% may move to the records with a pointer); move-manifest-je JE-19.
+\subsection{Detector-response mismatch (App.~C): detail moved from the note}
+
+\subsubsection{Reconstruction-only test}
+
+The nominal reconstructed simulation, all truth coordinates, event weights, and event membership stay fixed. A documented hadronic-response variation or an explicit quantitative assumption should justify that amplitude; the overall factor in the reconstructed-$\Eavail$ definition, Eq.~\eqref{eq:eavail-reco-implemented}, is not by itself a sufficient basis.
+
+Outputs include the full five-dimensional unfolded/reference residual, one-dimensional $\Eavail$ and $W$ projections, and an $(\Eavail,W)$ ratio map. The implementation runs only as a pseudo-data closure and only on the five observables, and cannot be combined with truth-reweight injection or bootstrapping. It labels every output as a diagnostic that must not be quoted.
+
+\subsubsection{Follow-up and interpretation}
+
+The current per-event outputs hold only scalar observables, not that low-level record, so the follow-up requires dedicated diagnostic output from the event processing.
+
+A small observed bias would support stability of the $(\Eavail,W)$ interpretation only within the tested response envelope. A large bias would require a decision on the response model or an uncertainty component, and would not be absorbed silently into a non-closure error.
+
