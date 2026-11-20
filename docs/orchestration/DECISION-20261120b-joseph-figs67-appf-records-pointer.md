@@ -4,7 +4,7 @@
 
 ## What led to it
 
-The director put three items to Joseph.
+The director put three items to Joseph (1–3), then asked a referee about the note-placed items (4).
 
 1. **Figs. 6/7.** cov2d checked a takeaway for these figures: in every panel, the unfolded result lies closer to the published data than to the prior. Joseph was asked whether the figures may carry it.
 2. **App. F.** journal-editor's App. F, as merged on the draft, went to Joseph for approval.
@@ -13,6 +13,14 @@ The director put three items to Joseph.
    - DECISION-20261114-joseph-d1-g2r-adopted: the missed-event treatment, which "the covariance text states".
 
    [DECISION-20261120a](DECISION-20261120a-joseph-release-locks.md) lets a qualifier move to the records with a pointer. It did not supersede those placements, so the director kept one stating sentence per item in the note and asked Joseph whether a records pointer is enough.
+4. **The referee review.** After Joseph's answer, the director asked a codex-school2 referee whether each of the five items the note still carried should stay:
+   - D5, the run-period block's containment of the period differences;
+   - D10, the bootstrap replica-mean offset;
+   - D11, the EtaNCEL/NormNCRES diagnostic;
+   - D12, the MAT universe-mean convention;
+   - the missed-event treatment.
+
+   The report is `~/codex-reports/referee-ditems-20261120/report.md`, not in the repository (sha256 `204c8ac39d3e2f7d873711349b822068650f909a147179c2acbcbe3163326297`). It recommends keeping D5, D10, D12 and the missed-event treatment, one sentence each, and removing D11: "The two small-band checks support no change to the matrix or its use."
 
 ## Joseph's words, verbatim
 
@@ -33,23 +41,24 @@ The director put three items to Joseph.
    - Under DECISION-20261120a, their text may move to the records document with a pointer in the note.
 4. **Revisiting those decisions is open.**
    - Joseph is willing to revisit them, including removing the items, if a referee or reviewer recommends it.
-   - Removal is not decided here. It needs that review and Joseph's go.
+   - **Outcome:** D11 is removed from the note on the referee's recommendation. D5, D10, D12 and the missed-event treatment stay in the note, one sentence each. D11's text stays in the records document.
 
 ## Not decided here
 
 - Any claim beyond the Figs. 6/7 takeaway.
 - Any value.
 - Any paper wording.
-- The removal of any item.
+- The removal of any item other than D11 from the note.
 
 ## CITABLE FOR / NOT CITABLE FOR
 
 - **Citable for:**
   - the Figs. 6/7 descriptive takeaway as stated above;
   - App. F as merged;
-  - moving the note-placed items' text to the records with a pointer.
+  - moving the note-placed items' text to the records with a pointer;
+  - removing D11 from the note, and keeping D5, D10, D12 and the missed-event treatment as one sentence each.
 - **Not citable for:**
-  - removing any item;
+  - removing any other item, or removing D11's text from the records;
   - any other claim or value;
   - any paper wording.
 
