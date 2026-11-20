@@ -25,7 +25,10 @@
 % reads/lr-g-frame-1bc4fbcfa, PASS). The Part 1 locators are check metadata, verified by quality_checks 1a. Grok's last read
 % before the period: f5b40f3b1, 05:38. "Out of credits": Grok, codex-school, codex-school2 and agy's non-Gemini models;
 % Gemini was optional and never counted alone. Rule from about 20:55 (Joseph 20:44, via the director): two-reader =
-% Grok + codex-school2 (gpt-6.2-sol) with a targeted director read; one-reader = Grok.
+% Grok + codex-school2 (gpt-6.2-sol) with a targeted director read; one-reader = Grok. The suspension of the editorial rules:
+% DECISION-20261120a items 4-7 (wording locks released; suggestions accommodated, rerun until both pass; qualifiers to the
+% records with a pointer; floor rule, budgets, locks and reader verdicts as merge gates are guidance; error checks kept).
+% The limitations row: limitations_export.py's 'records' status (helper-3, on the draft at de1543818).
 \section{How the note's numbers and statements are checked}
 \label{app:verification}
 
@@ -65,7 +68,7 @@ A generated number & The generators' \texttt{-{}-check}, run by \texttt{build\_a
 \addlinespace
 Any printed number & \texttt{freeze\_checks.py}, numbers & The numeric tokens of the two PDFs' text differ as a multiset, apart from the rows of \repopath{numbers-allowlist.tsv}, each of which names a token, its change in count, who made the change, and the reason. Section, figure, table and page numbers and the text inside figures are not counted. \\
 \addlinespace
-A stated limitation & \texttt{freeze\_checks.py}, limitations; \texttt{limitations\_export.py -{}-check} & A row of \repopath{limitations-export.tsv}, the note's entries in the project's limitations register, has neither its quote nor its re-anchored quote in the note. A row is re-anchored only to a verbatim move recorded in a move manifest, and \texttt{-{}-check} fails if any row needs a person to judge a reworded sentence. \\
+A stated limitation & \texttt{freeze\_checks.py}, limitations; \texttt{limitations\_export.py -{}-check} & A row of \repopath{limitations-export.tsv}, the note's entries in the project's limitations register, has neither its quote nor its re-anchored quote in the note, and is not held in the records document with a pointer that prints in the note. A row is re-anchored only to a verbatim move recorded in a move manifest, and \texttt{-{}-check} fails if any row needs a person to judge a reworded sentence. \\
 \addlinespace
 A reference, citation or label & \texttt{build\_all.sh}, which forces every PDF to be rebuilt; \texttt{freeze\_checks.py}, labels & A PDF was not written by the run; a reference or citation is unresolved after one further pass; a label is defined more than once; an unresolved reference prints; a page number is hard-coded in the text; or a figure or table is never referenced. \\
 \addlinespace
@@ -86,27 +89,40 @@ A result restated in new words & Readings by language models (below) & A reader 
 
 \paragraph{Moved text and readings by language models.} Text was moved in three rounds in November 2026: a
 restructuring of the sections, the removal of duplicated text, and a compression. Every moved sentence has a row in a
-move manifest giving its source, its destination and the SHA-256 digest of its text; text that the compression removed
-from the note, and that the note does not print elsewhere, was moved verbatim to the records document. Changes in the
-restructuring were read independently by two language models from different developers (Grok and Gemini) before
-merging, with the exceptions recorded in the merge commits. In the removal of duplicates, a cut had no reading by a
-model and a reworded sentence had one, by Grok. In the compression, a cut or a verbatim move had no reading by a model,
-a reworded sentence had one reading, and a result restated in new words, as in the abstract, had two. The
-compression's first readings were by Grok, with Gemini or an OpenAI model on some changes. From Grok's last reading, at
-05:38 on 19 November 2026, until that evening, Grok and the OpenAI models were out of credits, and the readings counted were
-by Claude models, of the same model family as the models that wrote the changes: a model with no access to the
-conversation that produced the change and, for a restated result, also the Claude session that coordinated the merges,
-which had not written the change but had followed the work. Some re-readings of a corrected change were not independent
-of the earlier readings. Grok then reread each of the 17 chunks merged in that period over its merged range (for three chunks, from a base
-that already held the draft merged partway through). It found eight defects, two in the note's text, five in the
-records document and one in a check's metadata. Each was fixed: Grok read the fix of each of the seven in printed text,
-and the check-metadata fix was verified by its check. Its other findings were additions or removals
-that a decision or ruling authorized, artifacts of the read inputs or generated metadata
-(\texttt{review-tools/retro-grok-20261119.tsv}). From about 20:55 that day, a reworded
-sentence was read by Grok, and a restated result by Grok and an OpenAI model. Each reader was given the diff, the files
-before and after, and the manifests, and was asked whether the change added, dropped or weakened any claim. The script
-that runs these reads is \texttt{review-tools/meaning\_read.sh}, and the readings by Claude models used its prompt; most
-of the reports are kept outside the repository.
+move manifest, giving its source, its destination and the SHA-256 digest of its text. Where the compression shortened a
+paragraph by copying it whole to the records document, the manifest has a row for the copied paragraph and one for each
+sentence cut from the note. Text that the compression removed from the note, and that the note does not print
+elsewhere, prints verbatim in the records document.
+
+\paragraph{Readings in each round.} Changes in the restructuring were read independently by two language models from
+different developers (Grok and Gemini) before merging, with the exceptions recorded in the merge commits. In the removal
+of duplicates, a cut had no reading by a model. A reworded sentence had one reading, by Grok. In the compression, a cut
+or a verbatim move had no reading by a model. A reworded sentence had one reading, and a result restated in new words,
+as in the abstract, had two. The compression's first readings were by Grok, with Gemini or an OpenAI model on some
+changes.
+
+\paragraph{A period with readers of one model family.} Grok's last reading before this period was at 05:38 on
+19 November 2026. From then until that evening, Grok and the OpenAI models were out of credits. In that period the
+readings counted were by Claude models, the same model family as the models that wrote the changes. One reader was a
+Claude model with no access to the conversation that produced the change. For a restated result, the second reader was
+the Claude session that coordinated the merges, which had not written the change but had followed the work. Some
+re-readings of a corrected change were not independent of the earlier readings. Grok later reread each of the 17
+chunks merged in that period over its merged range. For three chunks, it read from a base that already held the draft
+merged partway through. It found eight defects: two in the note's text, five in the records document and one in a
+check's metadata. Each was fixed. Grok read the fix of each of the seven in printed text, and the check-metadata fix
+was verified by its check. Its other findings were additions or removals that a decision or ruling authorized,
+artifacts of the read inputs, or generated metadata (\texttt{review-tools/retro-grok-20261119.tsv}).
+
+\paragraph{The rules from the evening of 19 November.} From about 20:55 that day, a reworded sentence was read by
+Grok, and a restated result by Grok and an OpenAI model. On 20 November the first author suspended the note's editorial
+rules for this release (\repopath{docs/orchestration/DECISION-20261120a-joseph-release-locks.md}). The floor rule, the
+word budgets, the verbatim and sentence-count locks, and reader verdicts as merge gates became guidance until a
+satisfactory paper exists. A qualifier's full statement may move verbatim to the records document, with a pointer in
+the note. A reader's suggestion is applied by default, and the change is reread until both readers pass. The error
+checks of Table~\ref{tab:verification-checks} were kept. Each reader was given the diff, the files before and after,
+and the manifests, and was asked whether the change added, dropped or weakened any claim. The script that runs these
+reads is \texttt{review-tools/meaning\_read.sh}, and the readings by Claude models used its prompt; most of the reports
+are kept outside the repository.
 
 \paragraph{Studies and decisions.} Where a study has them, its specification, authorization, binding of code and inputs by digest,
 independent audit and outcome are recorded in \repopath{docs/orchestration/} (records named \texttt{DECLARATION-}, \texttt{AUTHORIZATION-},
