@@ -999,6 +999,8 @@ docs/orchestration/state/2d-closeout/ibukt-a2/cell-readings.tsv	tracked	MACHINE	
 docs/orchestration/state/2d-closeout/ibukt-a2/readout.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/ibukt-a2/sacct-steps.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/ibukt-a2/screen-forecast.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/ibukt-signed-data-a2-20261119/README.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
+docs/orchestration/state/2d-closeout/ibukt-signed-data-a2-20261119/readout.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/per-period-benchmark-20261106/BINDING-1.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/per-period-benchmark-20261106/DECLARATION.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/per-period-benchmark-20261106/INPUTS.sha256	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
