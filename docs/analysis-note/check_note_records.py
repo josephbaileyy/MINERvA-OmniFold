@@ -1246,11 +1246,15 @@ PLANTS = [
      # 2026-11-19: since sec:uq-higherdim's background-CV citation moved to sec_fived16 (L-thin-C66, M:), flux-index is
      # sec_systematics' last records citation, so a real drop of it also retires the file's N: probe row
      ["L-thin-C64", "L-sec_systematics"]),
-    ("unlisted heading drop", "P8 app_statmethods.tex: 1 citation(s) of head:superseded values at",
-     "app_statmethods.tex", " (Ref.~\\cite{NoteRecords2026}, superseded values).", "."),
+    # Re-anchored 2026-11-19 (the director's ruling): the earlier anchor, a bare "superseded values" citation, left
+    # app_statmethods.tex in E2 (c2c027f9a), so both plants were UNAPPLIED; they now plant on the closure-thresholds
+    # citation that L-thin-C27 keeps (THIN_BASE had three of them; two are listed drops).
+    ("unlisted heading drop", "P8 app_statmethods.tex: 3 citation(s) of head:superseded values: retired material at",
+     "app_statmethods.tex", " (Ref.~\\cite{NoteRecords2026}, superseded values: retired material).", "."),
     ("listed heading drop (silent)", None, "app_statmethods.tex",
-     " (Ref.~\\cite{NoteRecords2026}, superseded values).", ".",
-     "| L98 | planted | DROP | R4 | `D:app_statmethods.tex::superseded values` | planted |", ["L-thin-C22"]),
+     " (Ref.~\\cite{NoteRecords2026}, superseded values: retired material).", ".",
+     "| L98 | planted | DROP | R4 | `D:app_statmethods.tex::superseded values: retired material` | planted |",
+     ["L-thin-C27", "L14"]),          # L14's N: probe pins the same heading words in this file
     ("unlisted whole-document drop", "P6 app_guide.tex: carried a whole-appendix pointer", "app_guide.tex",
      "document, Ref.~\\cite{NoteRecords2026};", "document;"),
     ("listed drop of a tag the records lack", "P7 ledger row L98: D:sec_validation.tex::\\texttt{coverage-fixed-truths}",
