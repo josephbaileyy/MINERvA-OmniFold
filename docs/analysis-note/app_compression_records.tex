@@ -230,3 +230,103 @@ The survey behind Fig.~\ref{fig:landscape} lists MINERvA differential cross-sect
   \label{fig:landscape}
 \end{figure}
 
+% Moved verbatim from the note's calibrated generator tests (sec_joint.tex @ b57c897b7) in the compression under
+% DECISION-20261120a (qualifier and procedure detail may move to the records with a pointer); move-manifest-je JE-15.
+% absence-ok: the sentences below were checked where they printed in sec_joint.tex (their Search lines stay there); they are moved verbatim.
+\subsection{Calibrated joint generator tests: detail moved from the note}
+
+\subsubsection{The section's opening}
+
+Unfolded results can be compared with any prediction at truth level without simulating each generator through the detector. For hypothesis tests the advantage is smaller. A test at reconstruction level would avoid the regularization bias, but it would still need the same response model. Each external prediction would have to be folded through the analysis simulation's response, which is the hybrid construction of \S\ref{sec:joint5d-design}, with the same composition below the fine grid. The tests of this section instead calibrate the unfolded statistic in simulation, so that the bias enters the null distribution rather than the decision. We have not compared their power with that of a reconstruction-level test.
+
+\subsubsection{Hypotheses, grid and statistics}
+
+For the Tune~v1, which is the analysis simulation itself, no external prediction is combined with the Tune~v1 composition. Three requirements are distinct. The hybrid null is defined exactly on the finite grid, and no convergence is needed to define it.
+
+Each inner edge is the fine-grid edge nearest a tertile of the weighted simulated truth distribution of the signal sample in that coordinate, so the cells keep physical bin widths. That distribution is taken from the development simulation. The grid specifies a finite hybrid hypothesis and a reporting statistic. It does not turn OmniFold's event-level training into binned unfolding.
+
+The metric defines how hypotheses are compared, and so it affects power.
+
+The prediction variance is diagonal because each simulated event of a prediction falls in one cell. The diagonal of $V$ matches the calibration's null variances (median ratio 1.00). The shrinkage, of intensity 0.015, floors about 80 of the 109 nearly degenerate correlation directions. At the Tune~v1 null the statistic therefore has a whitened trace of about 47 rather than 109. Since $V$ was fixed before the calibration, this affects power only (\S\ref{sec:joint5d-power}). The power at other shrinkage intensities has not been measured.
+% Search: other shrinkage intensit; different lambda; shrinkage scan (M2-ARCHIVE-CHECKS.md:98-125 scans the trace only) @ 1a015eef
+
+\subsubsection{Calibration within the implemented simulation model}
+
+Each pseudo-experiment
+\begin{itemize}[itemsep=1pt, topsep=2pt]
+  \item draws Poisson pseudo-data from one half of the simulation together with an independent background source, refits the background-refinement classifier, and unfolds with the estimator trained on the other half;
+  \item draws one of \jtFluxUniverses{} flux universes and every one of the \jtModelBands{} interaction-model bands at one of its universes;
+  \item draws the weight-based detector bands (MINOS muon-matching efficiency and the GEANT4 neutron, pion and proton interaction reweights) and the five muon and beam-angle lateral bands through a linear surrogate;
+  \item draws a \SI{1.4}{\percent} normalization, the data's rounding noise (taken from 20 real-data re-unfolds with rounding-level input changes), and the prediction's finite-sample residual.
+\end{itemize}
+
+The external nulls are strongly non-central, with non-centralities $\lambda$ of \jtLambdaMin{}--\jtLambdaMax{} in these units. They are non-central because the calibration reproduces the estimator's pull toward its prior (\S\ref{sec:val-departure}). Each observed statistic is compared with that displaced distribution (Fig.~\ref{fig:joint5d-nulls}).
+
+\subsubsection{Multiplicity, stopping rule and design}
+
+A null stopped when a 99.5\% Clopper--Pearson interval of $k/B$ lay entirely on one side of each of its thresholds and met a fixed precision requirement. The decision rule uses the upper end of the two-sided 95\% interval, a one-sided 97.5\% upper bound.
+
+That rate is the probability of falsely rejecting at least one true hypothesis among them.
+
+\subsubsection{Six conditions attached to the ten rejections}
+
+There it has the Tune~v1 composition of the hypothesis definition (\S\ref{sec:joint5d-design}), varied by the drawn interaction-model universes, with every fine-cell integral held fixed at that of $G$, including the finite-sample fluctuations of $G$'s simulation.
+
+The design assumes that each twofold refinement of the grid multiplies the refinement change, measured in a proxy of the test metric, by a factor of \jtMoneWnormMin--\jtMoneWnormMax{}. This factor comes from the review of the design, and its derivation is not given. If the change kept shrinking geometrically at that rate, the residual would be about one to three times the last refinement change, $\delta_{\mathrm{fine}}$. Here $\delta_{\mathrm{fine}}$ is the change of the noise-free unfolded result when the null truth is refined from the twofold-merged grid to the fine grid. That estimate sets the claim variants at $\pm\jtMoneKappa\,\delta_{\mathrm{fine}}$, the central extrapolated estimate, and the robustness variants, for reporting only, at $\pm\jtMoneKappaRobust\,\delta_{\mathrm{fine}}$. The extrapolation assumes geometric convergence. The measured $L_{2}$ ratios also allow slower rates and larger residuals.
+
+Measured with $V$ fixed before any observed statistic, the claim variants move the external nulls by \jtMoneClaimSdMin--\jtMoneClaimSdMax{} null standard deviations and the robustness variants by \jtMoneRobSdMin--\jtMoneRobSdMax{}.
+
+Two known departures are bounded. That bound was measured with $V$ fixed before any observed statistic, and it supersedes the specification's estimate of about 0.05.
+
+A separate check reran the first 200 calibration pseudo-experiments of the NuWro, GENIE~2.12.10, and GENIE~2.12.10 + MEC nulls with a quarter of the simulation. Between half and quarter simulation, it resolved no change of the null distributions' location, width, or tails: the medians agree within 0.074 null standard deviations, and the widths lie within 0.975--1.010 of the half-simulation values. The only change it resolved is a mean paired shift of 0.006--0.034 null standard deviations. Under an assumed extrapolation from half to full simulation that is conservative by design, all three shape decisions remain rejected. With the margins of the other tests stated below, all ten remain rejected. The check concerns the simulation size only and is not a test of the data process.
+
+The other eight tests lie 2.7 to 203 null standard deviations from that value, and 2.0 to 203 with the robustness variants. The data unfold's rounding-level nondeterminism, measured over the 20 re-unfolds, leaves every observed $p$ value unchanged except NuWro's shape test (2/1752 to 3/1752).
+
+Negative weights in two of them, LowQ2\_1 and HighQ2\_1, are clipped per universe. Measured on the pilot, the effect of clipping them rather than keeping them is at most 0.35\% of a band's shift in whitened norm. No prediction contains events with $E_{\nu}>\SI{100}{GeV}$; only the data's flux integral stops there, and the omission is negligible. The use of the Tune~v1 composition below the fine grid in (i) is also a modeling choice of this kind.
+
+\subsubsection{Matched coarse projections}
+
+The comparison uses the same calibration ensembles, with the recovered draws included, and the same variants and claim rule. Its $p$ values were reproduced independently~\cite{JointTestProjections2026}.
+
+Every test has $p<0.05$, without a multiplicity correction, in at least one of the two projections. Table~\ref{tab:joint5d-projections} gives every projected claim $p$ value.
+
+% Deposit pass: W1-RECORD-20261006.md sec. 1 (identical under both D2 readings; independently reproduced, sec. 4, 40 of 40). Values copied as recorded.
+\begin{table}[htbp]
+  \caption[Matched-projection test probabilities]{Every test has $p<0.05$ in at least one matched projection. The joint tests are restricted to matched $3\times3$ coarse projections of the same cells (for GiBUU, 6 and 8 cells of its domain), with all submitted calibration draws, the same variants and the same claim rule. The GENIE~2.12.10 values in the $(\pT,\pPar)$ column are a post hoc observation.}
+  \label{tab:joint5d-projections}
+  \centering\small
+  \begin{tabular}{@{}llll@{}}
+    \toprule
+    $G$ & test & $(\pT,\pPar)$: claim $p$ ($k/B$) & $(\Eavail,W)$: claim $p$ ($k/B$) \\
+    \midrule
+    MINERvA Tune~v1     & total & 0.00071 (0/1400) & 0.00071 (0/1400) \\
+    MINERvA Tune~v1     & shape & 0.00071 (0/1400) & 0.00071 (0/1400) \\
+    GENIE~2.12.10       & total & 0.483 (676/1400) & 0.00071 (0/1400) \\
+    GENIE~2.12.10       & shape & 0.629 (880/1400) & 0.00071 (0/1400) \\
+    GENIE~2.12.10 + MEC & total & 0.0014 (1/1400)  & 0.00071 (0/1400) \\
+    GENIE~2.12.10 + MEC & shape & 0.0014 (1/1400)  & 0.0021 (2/1400) \\
+    NuWro~21.09         & total & 0.00056 (0/1800) & 0.00056 (0/1800) \\
+    NuWro~21.09         & shape & 0.00056 (0/1800) & 0.0033 (5/1800) \\
+    GiBUU~2019          & total & 0.00071 (0/1400) & 0.00071 (0/1400) \\
+    GiBUU~2019          & shape & 0.00071 (0/1400) & 0.00071 (0/1400) \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsubsection{Hadronic-response condition and recoil-energy sensitivity}
+
+In the low-recoil measurement the resulting hadronic-energy uncertainty rises to \SI{10}{\percent} at its highest three-momentum transfers, $0.9<q_{3}<\SI{1.2}{GeV}$~\cite{MINERvA:2022incl}. Such a band would act on all five nulls together, through the shared detector simulation and unfolding.
+
+This scale is the level of data--simulation agreement reported for test-beam protons, pions and electrons of 0.35--\SI{2.0}{GeV/c}~\cite{MINERvA:2015testbeam}. Neutrons and higher-momentum hadrons, which matter at high $W$, lie outside that sample. Nine tests keep $k=0$. NuWro's shape test, the closest to its null, changes from $k=1$ to $k=3$ of 1751 at $+4\%$ ($p=0.0023$, against a Holm threshold of 0.05). The study also leaves untested particle-species, energy-dependent or resolution effects, a response difference applied before calibration, and larger variations.
+% absence-ok: moved verbatim from sec_joint.tex (JE-15); "leaves untested" scopes what the exploratory response study varied (the waiver it carried at sec_joint.tex)
+
+\subsubsection{Hydrocarbon target correction for NuWro and GiBUU}
+
+On the reported cells both corrections move the prediction toward the data.
+
+With each CH prediction's own variance in the metric, no decision changes for either generator.
+
+\paragraph{Generation checks.} For GiBUU, the sampling-closure check failed on the hydrogen sample. A bias check of that check's premise was added post hoc. Its criterion, a change of at most $0.1\,\sigma_{c}$ in every cell, was specified before the check was computed. The check met the criterion: it moved the CH prediction by at most $5.1\times10^{-4}\,\sigma_{c}$. Here $\sigma_{c}$ is the standard deviation of the cell's result over NuWro's null distribution used for the decisions ($B=1751$). The GiBUU re-evaluation is reported under the label ``B3 (sampling closure) failed on hydrogen; a post-hoc bias check of its premise passed at $\le0.1\,\sigma_{c}$''.
+
+The correction carries two further generation caveats.
+
