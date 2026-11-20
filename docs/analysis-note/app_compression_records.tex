@@ -156,4 +156,77 @@ For $D(b)>B(b)$, objective~\eqref{eq:negweight-Lb} is strictly convex on $(0,1)$
 
 \paragraph{Binned limit: the divergence for D(b)<B(b) (from App. B).} The reduction fails where $D(b)<B(b)$. With $W_1<0$, $L_b(p)=|W_1|\,\ln p-W_0\,\ln(1-p)$ tends to $-\infty$ as $p\to0^+$ and is unbounded below, with no minimizer.
 
+% Moved verbatim from the note in the compression (LM; move-manifest-je JE-14): the dimensionality survey (app_landscape.tex, App. E's
+% parked appendix) and its figure (sec_3d.tex, fig:landscape), together, so every \ref between them resolves here. limitation-resolver's OK for
+% the sec_3d.tex edits, 2026-11-19.
+\subsection{The MINERvA measurement-dimensionality survey}
+\label{app:landscape}
+
+The survey behind Fig.~\ref{fig:landscape} lists MINERvA differential cross-section measurements through the listed 2025 entries, with references and dimensionality: the number of kinematic variables unfolded simultaneously in each analysis's main differential result. The survey is nonexhaustive through 2026; recent additions follow.
+
+{\small
+\begin{longtable}{@{}clcl@{}}
+  \caption{MINERvA differential cross-section survey used for the landscape figure, with the dimensionality
+  (Dim.) defined in the text. Channels: CC-inclusive (incl.),
+  CCQE/QE-like incl.\ transverse kinematic imbalance (QE), pion production CC
+  and coherent ($\pi$), deep-inelastic / kaon (DIS), electron-neutrino
+  ($\nu_e$), nuclear-target ratio (ratio).}
+  \label{tab:landscape}\\
+  \toprule
+  Year & Channel; observables & Dim. & Ref. \\
+  \midrule
+  \endfirsthead
+  \toprule
+  Year & Channel; observables & Dim. & Ref. \\
+  \midrule
+  \endhead
+  \midrule \multicolumn{4}{r}{\emph{continued\ldots}}\\ \endfoot
+  \bottomrule
+  \endlastfoot
+  2013 & QE; $\nu_\mu$ CCQE $\pT,\pPar$            & 2 & \cite{MINERvA:2013qe} \\
+  2013 & QE; $\bar\nu_\mu$ CCQE $\pT,\pPar$        & 2 & \cite{MINERvA:2013qebar} \\
+  2014 & ratio; CC on C/Fe/Pb to CH               & 1 & \cite{MINERvA:2014ratio} \\
+  2014 & $\pi$; coherent $\pi^\pm$ (total \& diff.) & 1 & \cite{MINERvA:2014coh} \\
+  2015 & $\pi$; CC $1\pi^+$ ($T_\pi$, $\theta_\pi$) & 1 & \cite{MINERvA:2015ydy} \\
+  2015 & QE; $\mu$+p final states                 & 1 & \cite{MINERvA:2015mup} \\
+  2015 & $\pi$; $\bar\nu_\mu$ single $\pi^0$       & 1 & \cite{MINERvA:2015pi0} \\
+  2016 & $\nu_e$; CCQE-like on CH                  & 2 & \cite{MINERvA:2016nueqe} \\
+  2016 & $\pi$; $\nu_\mu/\bar\nu_\mu$ pion prod.   & 2 & \cite{MINERvA:2016pion} \\
+  2016 & DIS; partonic nuclear effects            & 2 & \cite{MINERvA:2016dis} \\
+  2016 & DIS; CC $K^+$ production                  & 1 & \cite{MINERvA:2016kaon} \\
+  2017 & $\pi$; CC single $\pi^0$                  & 2 & \cite{MINERvA:2017pi0} \\
+  2017 & QE; nuclear-dependence (multi-target)     & 1 & \cite{MINERvA:2017Adep} \\
+  2018 & QE; $\bar\nu_\mu$ QE-like $\pT,\pPar$     & 2 & \cite{MINERvA:2018hba} \\
+  2018 & QE; $\mu$-p mesonless TKI                 & 2 & \cite{MINERvA:2018tcb} \\
+  2018 & $\pi$; coherent $\pi^\pm$ on C            & 2 & \cite{MINERvA:2018coh} \\
+  2019 & QE; quasielastic-like $\nu_\mu$           & 2 & \cite{MINERvA:2019qe} \\
+  2019 & $\pi$; $\bar\nu_\mu$ single $\pi^-$       & 2 & \cite{MINERvA:2019pim} \\
+  2020 & incl.; CC-incl $\langle E_\nu\rangle\!\sim\!3.5$ GeV $\pT,\pPar$ & 2 & \cite{MINERvA:2020jwd} \\
+  2020 & QE; nuclear binding \& TKI               & 2 & \cite{MINERvA:2020cgh} \\
+  2020 & QE; high-statistics QE-like              & 2 & \cite{MINERvA:2020qehs} \\
+  2020 & $\pi$; CC $\pi^0$ nuclear effects        & 1 & \cite{MINERvA:2020pi0} \\
+  2021 & incl.; CC-incl $\langle E_\nu\rangle\!\sim\!6$ GeV $\pT,\pPar$ \textbf{(target)} & 2 & \cite{MINERvA:2021owq} \\
+  2022 & QE; QE-like $\pT,\pPar,\Sigma T_p$ (triple-diff.) & 3 & \cite{MINERvA:2022qelike3d} \\
+  2022 & incl.; CC-incl low-$q_{3}$ ($\Eavail$, $q_{3}$) & 2 & \cite{MINERvA:2022incl} \\
+  2023 & $\pi$; CC $1\pi^+$ (multi-target)        & 2 & \cite{MINERvA:2023ccpi} \\
+  2023 & $\pi$; coherent $\pi^+$ (multi-target)   & 1 & \cite{MINERvA:2023coh} \\
+  2023 & QE; $\bar\nu_\mu$ multi-neutron low-$\Eavail$ & 1 & \cite{MINERvA:2023lowEavail} \\
+  2024 & $\nu_e$; low-$Q^2$ ($\Eavail$, $\pT$)    & 2 & \cite{MINERvA:2023avz} \\
+  2025 & QE; $A$-dependence TKI (multi-target)    & 2 & \cite{MINERvA:2025tki} \\
+  \midrule
+  2026 & \textbf{this work}; unbinned $\pT,\pPar$            & 2 & --- \\
+  2026 & \textbf{this work}; unbinned $\pT,\pPar,\Eavail$    & \textbf{3} & --- \\
+  2026 & \textbf{this work}; unbinned $\pT,\pPar,\Eavail,q_{3}$ & \textbf{4} & --- \\
+  2026 & \textbf{this work}; unbinned $\pT,\pPar,\Eavail,q_{3},W$ (illustrative output) & \textbf{5} & --- \\
+\end{longtable}
+}
+
+\paragraph{Additional recent measurements.} The low-/medium-energy comparison of quasielastic-like cross sections unfolds three variables simultaneously, $\pT$, $\pPar$, and available recoil energy \cite{MINERvA:2026qeleme}; it has the dimensionality of our three-dimensional result, with a different signal from our inclusive one. The shallow-inelastic measurement reports one-dimensional neutrino and antineutrino cross sections \cite{MINERvA:2026sis}. Other measurements report single-differential charged-pion production down to zero pion kinetic energy \cite{MINERvA:2026pion} and inclusive antineutrino cross sections versus $\pT$ on several targets~\cite{MINERvA:2026antinu}. These channel-specific additions are not plotted in Fig.~\ref{fig:landscape}.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{minerva_unfolding_landscape}
+  \caption[Survey of MINERvA differential measurements]{This work unfolds five recorded CC-inclusive high-level observables without binning. Earlier results use binned unfolding, including a triple-differential quasielastic-like measurement. The survey shows MINERvA differential measurements by number of simultaneously unfolded kinematic variables, by year, colored by channel (a double-differential $d^{2}\sigma/dx\,dy$ counts as two). Sources: the MINERvA data-release page and cited publications. The inventory runs through 2025, with newer measurements in App.~\ref{app:landscape}. Classification uses headline differential results, excluding flux, reconstruction, generator-tuning and total-only entries.}
+  \label{fig:landscape}
+\end{figure}
 
