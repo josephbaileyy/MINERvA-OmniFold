@@ -65,7 +65,7 @@ behind its statements, the fixed identities and the construction and audit recor
 test-suite discipline of the production code, and the note's audit trail of superseded values and withdrawn results.
 It is built from the same sources as the note, at the same commit, and is not posted with it. Sections R1--R4 are the
 note's former appendix text, moved without edits; since then Section R1 has had one pointer retargeted and six
-entries added, each recorded in the records-move ledger or the round record that made it. Section R5, the estimator registry and the index of every committed
+entries added, each recorded in the records-move ledger or the round record that made it. Section~\ref{sec:rix}, the estimator registry and the index of every committed
 result receipt, is not moved text: it is generated from the repository by \texttt{tools/registry/results\_index.py}
 and is regenerated, never edited. Section, table, figure and equation numbers that begin with R are
 this document's own; every other number, such as a section, appendix, table, figure or equation number with no R,
@@ -110,6 +110,9 @@ This is the record part of the note's appendix on the codebase layout and termin
 
 \input{app_history}
 \input{app_compression_records}
+% The note's verification appendix (App. F until 2026-11-20), removed from the posted note by DECISION-20261120c and kept here verbatim
+% (move-manifest-je JE-23); its labels app:verification and tab:verification-checks now resolve here.
+\input{app_verification}
 
 % Compression rewrite (2026-11-19): the limitation-resolver lane's verbatim moves out of the note (LR-C rows).
 \input{records_compression_lr}
