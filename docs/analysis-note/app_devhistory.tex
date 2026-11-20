@@ -29,7 +29,7 @@ Purity-subtracted 2D central value and covariance, with the \estPurity{} (\S\ref
 Five-dimensional central value and five-axis covariance, with the \estPurity{}, retained (\S\ref{sec:eavailw}) & The five-observable central value and its covariance & Retained, not rebuilt (\S\ref{sec:method-config}) & Five-observable central value and covariance (\S\ref{sec:eavailw-adopted}) & That result, within the limits of Table~\ref{tab:result-status}; the sixteen-cell result uses the \estMultiD{} (\S\ref{sec:fived16}) & \S\ref{sec:method-config} \\
 \addlinespace
 % sec_systematics.tex (history-cuts/sec_systematics.md, rows D4-D5).
-Earlier 2D budget~\cite{TwoDFollowup2026} (\S\ref{sec:uq-2d-scope}) & The 2D covariance before the quoted budget & Construction defects (\S\ref{sec:uq-2d-scope}; App.~\ref{app:devhistory-2dbudget}), each corrected in the quoted budget & 2D covariance (\S\ref{sec:systematics}) & Printed uncorrected, as a comparison only: in \S\ref{sec:uq-2d-scope}, for the flux weights (\S\ref{sec:uq-universes}) and for the run-period step (\S\ref{sec:uq-combine}) & -- \\
+Earlier 2D budget~\cite{TwoDFollowup2026} (\S\ref{sec:uq-2d-scope}) & The 2D covariance before the quoted budget & Construction defects (the records document's comparison with the earlier two-dimensional budget), each corrected in the quoted budget & 2D covariance (\S\ref{sec:systematics}) & Printed uncorrected, as a comparison only, in the records document, for the flux weights and for the run-period step & -- \\
 \addlinespace
 Earlier ten-seed training-seed block (\S\ref{sec:uq-ml}) & An earlier training-seed block & Its spread was dominated by the bootstrap\,$\times$\,seed interaction, which the fixed-seed statistical block now contains & Training-seed block (\S\ref{sec:uq-ml}) & Its $\sigma$ remains the yardstick of the retraining test (the records document's two-dimensional limitations) & -- \\
 \addlinespace
@@ -58,7 +58,7 @@ Joint-test design (\S\ref{sec:joint5d-frozen}) & The hypotheses, statistics, var
 Matched coarse-projection comparison (\S\ref{sec:joint5d-projections}) & Whether the joint five-observable information adds discrimination over matched $3\times3$ projections & Table~\ref{tab:test-index} & Generator tests (\S\ref{sec:joint5d-results}) & Report-only: outside the Holm family, it changes no decision of Table~\ref{tab:joint5d} & The five-dimensional outcomes, when the comparison and its criterion were specified; the comparison had not yet been run \\
 \addlinespace
 % D1 follow-on (2026-11-16; history-cuts/app_devhistory.md, D16): the universe-misses approximation, removed by the adopted rebuild.
-Universe-misses approximation in the 2D systematic block (\S\ref{sec:uq-2d-scope}) & The earlier construction of the systematic-universe unfolds: an event that fails reconstruction kept the central-value weight, divided by the universe's completeness & Replaced: the rebuilt covariance gives each such event its universe's own truth weight, and the earlier covariance is kept only as a documented comparison & 2D covariance (\S\ref{sec:systematics}) & The reported covariance does not use it & The rebuild's outcome table was fixed before any of its numbers was read; the adoption followed the readout, under that table's row for a valid rebuild \\
+Universe-misses approximation in the 2D systematic block (App.~\ref{app:devhistory-2dchecks}) & The earlier construction of the systematic-universe unfolds: an event that fails reconstruction kept the central-value weight, divided by the universe's completeness & Replaced: the rebuilt covariance gives each such event its universe's own truth weight, and the earlier covariance is kept only as a documented comparison & 2D covariance (\S\ref{sec:systematics}) & The reported covariance does not use it & The rebuild's outcome table was fixed before any of its numbers was read; the adoption followed the readout, under that table's row for a valid rebuild \\
 \addlinespace
 % cov2d D item (structural rewrite, 2026-11-18; cv-package README): C_model's boundary cells, in the words of sec_systematics.tex:235, :239 @79a934a41;
 % "after the measurement" per the comment at :234 (pv2d/REPORT.md sec. 5, "the step rule, threshold 0.1, post hoc"; cmodel_R.json tail_caveat_post_hoc).
@@ -137,13 +137,6 @@ Both programs that use the covariance for the reported results, the $\chi^{2}$ c
 % Review m7: the pass is shown on the consumers' Q runs (three chi2 forms, fig. 6/7), not on the budget runs.
 % plain-language pass (DECISION-20261018-joseph-plain-language-pass)
 
-% Move pair H3-010 (director-helper-3; history-cuts/move-manifest-h3-20261117.tsv sends, move-manifest-je-20261117.tsv
-% receives): sec_systematics.tex's defects of the earlier 2D budget, verbatim with its comment lines; sec:uq-2d-scope keeps a
-% summary that names the three defects and points here.
-\subsubsection{Defects of the earlier two-dimensional budget (\S\ref{sec:uq-2d-scope})}
-\label{app:devhistory-2dbudget}
-
-The comparison with the earlier budget, with each defect's diagnostics, is kept in the records document.
 
 \subsection{Validation of the two-dimensional result (\S\ref{sec:validation})}
 \label{app:devhistory-validation}
@@ -202,7 +195,7 @@ This is the account of the generation flux's defects behind the flux repair of \
 \subsubsection{The sixteen-cell run-period block: its conditions (\S\ref{sec:fived16-pl})}
 \label{app:devhistory-fived16pl}
 
-Three conditions under which the run-period block would not be added were fixed before any of the measurements that decide them was computed. The three conditions are stated in the records document. The conditions were set after the block's reported numbers had been read, and the second and third were not expected to fire. None occurred. That result establishes neither the block's size nor the absence of overlap: descriptively, one detector-response pair, a pion-interaction band with the meson response shift, reproduces one period's offset pattern within noise and part of the other two.
+Three conditions under which the run-period block would not be added were fixed before any of the measurements that decide them was computed. The three conditions under which the run-period block would not have been added are stated in the records document. The conditions were set after the block's reported numbers had been read, and the second and third were not expected to fire. None occurred. That result establishes neither the block's size nor the absence of overlap: descriptively, one detector-response pair, a pion-interaction band with the meson response shift, reproduces one period's offset pattern within noise and part of the other two.
 % absence-ok: "were not" and "establishes neither ... nor the absence of overlap" are the source paragraph's own statements (sec_fived16.tex:193 @ 2fe070fec, LR-02 and LR-04), moved verbatim
 
 \subsubsection{The coverage tests of the sixteen-cell covariance: stops and repair (\S\ref{sec:fived16-fd})}

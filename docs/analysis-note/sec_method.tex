@@ -27,7 +27,7 @@ See the records for dimensional scaling (Ref.~\cite{NoteRecords2026}).
   \max\!\bigl(0,\; N_{\mathrm{data}}(b) - N_{\mathrm{bkg}}(b)\bigr)
   \big/ N_{\mathrm{data}}(b),
 \end{equation*}
-the predicted signal purity from data and background counts, floored at zero in rare bins where predicted background exceeds data. The step-1 classifier retains full unbinned kinematics. By design, binning enters only through this multiplicative correction before final histogramming. Its effect is ${\sim}\SI{3}{\percent}$ overall. It peaks where backgrounds concentrate (selection, \S\ref{sec:selection}).
+the predicted signal purity from data and background counts, floored at zero in rare bins where predicted background exceeds data. The step-1 classifier retains full unbinned kinematics. By design, binning enters only through this multiplicative correction before final histogramming. Its effect is ${\sim}\SI{3}{\percent}$ overall. It peaks where backgrounds concentrate (App.~\ref{sec:negweight-2d}).
 
 A fully unbinned alternative adds negative-weight background simulation on the measured side. The treatments do not share the continuous density $(D(x)-B(x))/S(x)$. See the records for subtraction by configuration (Ref.~\cite{NoteRecords2026}). The alternative reproduces the binned correction to \SI{\nwPctTot}{\percent} on the total two-dimensional (2D) cross section and its systematic and statistical covariances to within \SI{2}{\percent} (subtraction comparison, App.~\ref{app:negweight}).
 % Stale-text fix (2026-10-25, director ruling): since 2026-10-24 the 2D result is configuration (f), refined
@@ -149,7 +149,7 @@ See the records for histogram construction (Ref.~\cite{NoteRecords2026}).
 
 See the records for the Keras cross-check (Ref.~\cite{NoteRecords2026}).
 
-The following diagnostics report performance. They do not validate the quoted estimator or its intervals. They include closure tests (\S\ref{sec:validation}) and classifier calibration (\S\ref{sec:3d-classifier}). See the records for the remaining diagnostics (Ref.~\cite{NoteRecords2026}).
+The following diagnostics report performance. They do not validate the quoted estimator or its intervals. They include closure tests (\S\ref{sec:validation}) and classifier calibration (\S\ref{sec:3d-classifier}). See the records for the iteration-count, learner-backend and training-seed checks (Ref.~\cite{NoteRecords2026}).
 
 Between five and ten iterations, the exact-split total cross section agrees to within \SI{0.026}{\percent} (validation, \S\ref{sec:validation}). That measures movement of this diagnostic for that cross-check. It does not establish convergence of every functional. See the records for the published integrated comparison (Ref.~\cite{NoteRecords2026}).
 % E-1 / ME-1 (2026-11-16): "in shape as well as normalization", as the Supplement now reads (supplemental_body.tex at
@@ -181,7 +181,7 @@ For higher-dimensional extractions the same integral is $\SI{6.243e-8}{cm^{-2}}$
 \subsubsection{Binning}
 \label{sec:method-binning}
 % The reported binning follows \texttt{minerva\_paper\_anc/bin\_mapping.txt} (cited below).
-The 2D grid has 14 $\pT$ $\times$ 16 $\pPar$ (longitudinal muon momentum) bins. Of 224, 205 are reported. The 19 unreported diagonal cells have $\pT^{\mathrm{hi}}/\pPar^{\mathrm{lo}}>\tan20^{\circ}$. Wide final bins capture full charged-current (CC) inclusive tails in marginals. The release appendix, App.~\ref{app:release} (\S\ref{app:release-edges}) gives all five axes' edges. \S\ref{sec:205bins} defines the 205 reported cells, and the authoritative mapping is the bin-mapping file of the published data release~\cite{MINERvA:2021owq}. See the records for further detail (Ref.~\cite{NoteRecords2026}).
+The 2D grid has 14 $\pT$ $\times$ 16 $\pPar$ (longitudinal muon momentum) bins. Of 224, 205 are reported. The 19 unreported diagonal cells have $\pT^{\mathrm{hi}}/\pPar^{\mathrm{lo}}>\tan20^{\circ}$. Wide final bins capture full charged-current (CC) inclusive tails in marginals. The release appendix, App.~\ref{app:release} (\S\ref{app:release-edges}) gives all five axes' edges. \S\ref{sec:205bins} defines the 205 reported cells, and the authoritative mapping is the bin-mapping file of the published data release~\cite{MINERvA:2021owq}. See the records for the extension-axis edges and the checks on the catch bins and on underflow and overflow (Ref.~\cite{NoteRecords2026}).
 
 
 See the records for the migration study in Fig.~\ref{fig:migration} (Ref.~\cite{NoteRecords2026}).
