@@ -8,9 +8,9 @@ a-central-lgbm	code-name	lgbm	\\texttt\{lgbm\}	no	opt-in	docs/analysis-note/app_
 b-exact-split	paper-label	configuration (b)	[Cc]onfiguration[~ ]\(b\)	yes	default	docs/analysis-note/sec_method.tex	139	(b) exact-split cross-check	9e3fc6855fc3eb7e
 b-exact-split	note-table	(b) exact-split cross-check	\(b\) exact-split	yes	default	docs/analysis-note/sec_method.tex	139	(b) exact-split cross-check	9e3fc6855fc3eb7e
 b-exact-split	code-flag	--estimator exact	--estimator[ =]exact|default=\"exact\"	no	opt-in	2d-unfolding/unfold_2d_omnifold_unbinned.py	1478	default="exact"	c6b19014cafa7233
-b-exact-split	description	exact-split	exact-split (configuration|cross-check|central)	yes	default	docs/analysis-note/sec_method.tex	85	The exact-split configuration (\texttt{exact}) uses scikit-learn	918c7206cdc624d4
+b-exact-split	description	exact-split	exact-split (configuration|cross-check|central)	yes	default	docs/analysis-note/sec_method.tex	85	The exact-split configuration (\texttt{exact}) uses scikit-learn	62cabc53a970b4dd
 hist-backend	code-flag	--estimator hist	--estimator[ =]hist|\\texttt\{hist\}	yes	default	2d-unfolding/unfold_2d_omnifold_unbinned.py	1477	choices=["exact", "hist", "xgb", "lgbm"]	0b962d3f83e97e2b
-hist-backend	description	HistGradientBoosting	HistGradientBoosting	yes	default	docs/analysis-note/sec_method.tex	85	\texttt{HistGradientBoosting}	918c7206cdc624d4
+hist-backend	description	HistGradientBoosting	HistGradientBoosting	yes	default	docs/analysis-note/sec_method.tex	85	\texttt{HistGradientBoosting}	62cabc53a970b4dd
 F1-production	family-name	F1	\bF1\b(?=[^\n]{0,80}(family|production|estimator))|family[\" :]+F1\b	yes	default	docs/orchestration/state/s5c/contract.json	36	"family": "F1"	d93a4615b03c5427
 F1-production	code-flag	--config production (s5c_unfold.py)	--config[ =]production|config == \"production\"	yes	default	nd-unfolding/s5c_unfold.py	50	CONFIGS = ("production", "full_binning", "deterministic")	10382cd306c2d039
 F1-production	description	production estimator (s5c D1)	production estimator	yes	default	docs/orchestration/OUTCOME-20260925-s5c-purity-background-bias-at-high-W.md	27	D1 split, production estimator	d7cbffa70b709635
@@ -22,8 +22,8 @@ c-F2-deterministic	capacity	n_estimators 100, num_leaves 8 (OmniFold estimators)
 c-F2-deterministic	iterations	5 iterations	\"iterations\": 5	no	opt-in	docs/orchestration/state/s5c/contract.json	56	"iterations": 5	f2d36eca3f929682
 c-F2-deterministic	code-flag	--config deterministic (s5c_unfold.py)	--config[ =]deterministic|config 'deterministic'|config == \"deterministic\"	no	opt-in	nd-unfolding/s5c_unfold.py	58	if config == "deterministic":	6d6d24db67942cb4
 c-F2-deterministic	crosswalk	(c) = candidate F2	configurations \(c\)-\(d\)	yes	default	docs/analysis-note/sec_method.tex	101	configurations (c)-(d): OUTCOME-20260925-s5c-purity-background-bias-at-high-W.md:23-31 (candidate F2)	c4ec0c742f004e71
-d-N-B0	paper-label	configuration (d)	[Cc]onfiguration[~ ]\(d\)	yes	default	docs/analysis-note/sec_method.tex	138	(d) deterministic variant with refinement	df080909252ca583
-d-N-B0	note-table	(d) deterministic variant with refinement	\(d\) deterministic variant with refinement	yes	default	docs/analysis-note/sec_method.tex	138	(d) deterministic variant with refinement	df080909252ca583
+d-N-B0	paper-label	configuration (d)	[Cc]onfiguration[~ ]\(d\)	yes	default	docs/analysis-note/sec_method.tex	138	(d) deterministic variant with refinement	5605274d4f3f3174
+d-N-B0	note-table	(d) deterministic variant with refinement	\(d\) deterministic variant with refinement	yes	default	docs/analysis-note/sec_method.tex	138	(d) deterministic variant with refinement	5605274d4f3f3174
 d-N-B0	family-name	family N	family [`\"]?N\b	yes	default	docs/orchestration/state/s5n/contract.json	20	"name": "N"	4a19b7e79123a011
 d-N-B0	contract-name	B0	\b(candidate|baseline|estimator|reference) [`"]?B0\b|"B0"|\bB0 (on|classifiers|reference)\b	yes	default	docs/orchestration/state/s5e/contract.json	21	"name": "B0"	e378071300ad84fb
 d-N-B0	contract-name	B0 (bare token)	\bB0\b	yes	opt-in	docs/orchestration/state/s5e/contract.json	21	"name": "B0"	e378071300ad84fb
@@ -31,7 +31,7 @@ d-N-B0	crosswalk	B0 = s5n family N	exactly the s5n family N	yes	default	docs/orc
 d-N-B0	crosswalk	(d) = family N	family N, refinement with the F2 parameters	yes	default	docs/analysis-note/sec_method.tex	101	(family N, refinement with the F2 parameters)	c4ec0c742f004e71
 d-N-B0	code-candidate	--candidate B0	--candidate B0|\"B0\": \{\}	yes	default	nd-unfolding/s5e_candidate.py	33	"B0": {}	5fb6446f6670ab43
 d-N-B0	background-mode	--bkg-mode negweight-refined (shared with e-R-joint-test)	negweight-refined	no	opt-in	nd-unfolding/unfold_nd_omnifold_unbinned.py	620	choices=["purity", "negweight", "negweight-refined"]	092c1cb60a731257
-d-N-B0	capacity	refinement 100 trees, 8 leaves	refinement (classifier )?100 trees, 8 leaves	yes	default	docs/analysis-note/sec_method.tex	138	100 trees, 8 leaves &	df080909252ca583
+d-N-B0	capacity	refinement 100 trees, 8 leaves	refinement (classifier )?100 trees, 8 leaves	yes	default	docs/analysis-note/sec_method.tex	138	100 trees, 8 leaves &	5605274d4f3f3174
 e-R-joint-test	paper-label	configuration (e)	[Cc]onfiguration[~ ]\(e\)	yes	default	docs/analysis-note/sec_method.tex	108	configuration (e)	dde70f4c652b6dfc
 e-R-joint-test	paper-table	(e) joint-test estimator	\(e\) joint-test estimator	yes	default	docs/analysis-note/sec_method.tex	131	(e) joint-test estimator	7cbebc78b0709b09
 e-R-joint-test	note-table	(e) joint-test estimator	\(e\) joint-test estimator	yes	default	docs/analysis-note/sec_method.tex	131	(e) joint-test estimator	7cbebc78b0709b09
