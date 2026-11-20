@@ -269,8 +269,8 @@ UNIT_REQUIRED = {"0.564": "%", "1.008": "%", "0.563": "%", "2.26": "%", "3.65": 
 # context, and cannot be told apart by a unit. Added 2026-10-21 with main_note's move to outward-facing
 # (DECISION-20261021-joseph-da-and-note-records.md item 2), each verified at the source:
 #     1.014 -> app_history.tex strikes the bare 2D combined log-normal chi2/ndf `1.014`; the posted note's closure
-#              table prints the live injected-q3-bump mean weight "(mean weight 1.014)" (sec_q3_bias.tex since Part 5
-#              chunk P5-1 moved the closure map there from sec_validation.tex).
+#              table prints the live injected-q3-bump mean weight "(mean weight 1.014)" (part5_validation.tex since
+#              Part 5 chunk P5-2 merged the closure map, moved there from sec_validation.tex in P5-1, into the test table).
 #     0.912 -> app_history_pet.tex strikes \petRatio, the legacy PET/GBDT total ratio 0.912; the posted note prints
 #              the live fixed-truth coverage fraction "C2 = 0.912" (\covTwoDCTwo, values.tex) four times. The paper
 #              avoids the same collision by printing 91.2 % (values.tex, \covTwoDCTwoPctOne).
@@ -295,17 +295,28 @@ UNIT_REQUIRED = {"0.564": "%", "1.008": "%", "0.563": "%", "2.26": "%", "3.65": 
 #              9238f22b); struck as `0.377\%` (the superseded per-bin median of MaCCQE, app_history.tex:56). Only a
 #              0.377 preceded by a minus sign and not followed by a digit, a point or a percent sign is removed, and
 #              only in main_note.
+# Added 2026-11-19 (DECISION-20261119g, the director's ruling; director-helper-3), verified at the source:
+#     3.066 -> the live descriptive chi2/ndf between the recorded OmniFold E_R and IBU on the signed target at ten
+#              iterations, printed in sec_results.tex sec:results-benchmarks as "from 3.120 to 3.066 at ten
+#              iterations" (values_fived16.tex ibusd-k10-sig, the signed-data readout a4ec72c1; OUTCOME-20261119-
+#              ibu-signed-data.md row 20); struck as \SI{3.066e-38}{} (app_history_pet.tex:28, the retracted GBDT
+#              absolute total), which prints with its "x 10^-38". A digit coincidence: only the 19g sentence's
+#              context "from 1.623 to 1.621 at five iterations and from 3.120 to 3.066" is removed, and only in
+#              main_note; a 3.066 anywhere else, the struck total included, is still a hit.
 CONTEXT_EXEMPT = {
-    ("main_note", "1.014"): (r"mean\s+weight\s+1\.014(?!\d|\.\d)", "sec_q3_bias.tex", "(mean weight 1.014)"),
+    ("main_note", "1.014"): (r"mean\s+weight\s+1\.014(?!\d|\.\d)", "part5_validation.tex", "(mean weight 1.014)"),
     ("main_note", "0.912"): (r"C\s*2\s*=\s*0\.912(?!\d|\.\d)", "values.tex", r"\newcommand{\covTwoDCTwo}{0.912}"),
     ("main_note", "1.65"): (r"(?<![\d.])1\.65(?![\d.])(?!\s*\u00d7)", "values_fived16.tex", r"\@namedef{fv@g-tune-pull-R15}{1.65}"),
     ("main_note", "0.377"): (r"[\u2212-]\s*0\.377(?![\d.%])", "values_fived16.tex", r"\@namedef{fv@prr-rho-ibu200-q3}{-0.377}"),
     ("main_note", "6.86"): (r"=\s*6\.86%,\s*distance",
                             "../orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/figures/fd_g_fig_modes.json",
                             '"sigma": 0.06855283880067227'),
+    ("main_note", "3.066"): (r"from\s+1\.623\s+to\s+1\.621\s+at\s+five\s+iterations\s+and\s+from\s+3\.120\s+to\s+3\.066(?![\d.])",
+                             "values_fived16.tex", r"\@namedef{fv@ibusd-k10-sig}{3.066}"),
 }
 # How an exempt context renders when its source is not the printed text (a figure's sidecar), for the tests.
-CONTEXT_RENDERED = {("main_note", "6.86"): "\u03c3 = 6.86%, distance +4.99\u03c3"}
+CONTEXT_RENDERED = {("main_note", "6.86"): "\u03c3 = 6.86%, distance +4.99\u03c3",
+                    ("main_note", "3.066"): "from 1.623 to 1.621 at five iterations and from 3.120 to 3.066 at ten iterations"}
 
 
 def exempt_text(driver: str, text: str) -> str:

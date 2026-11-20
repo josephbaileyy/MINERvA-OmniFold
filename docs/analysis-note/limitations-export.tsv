@@ -9,7 +9,7 @@ n07	sec_method.tex	45 differs from the seed-42 one by at most			register loc sec
 n08	sec_method.tex	LightGBM was chosen for the central value after both comparisons with the publication were known			register loc sec_method.tex:79 @87cee1c86; literal
 n09	sec_method.tex	Results from different configurations are not combined			register loc sec_method.tex:96 @87cee1c86; literal
 n10	sec_method.tex	The negative-weight treatment reduces the purity method's nominal-truth bias in the			register loc sec_method.tex:100 @87cee1c86; literal
-n11	sec_method.tex	The 3D and 4D central values have been regenerated with configuration			register loc sec_method.tex:103 @87cee1c86; literal
+n11	sec_method.tex	The 3D and 4D central values have been regenerated with configuration	sec_method.tex	The 3D and 4D central values have been regenerated with the \estMultiD{}	register loc sec_method.tex:103 @87cee1c86; literal; re-anchored 2026-11-19: the estimator letters replaced by names (the director's ruling), configuration (e) = \estMultiD
 n12	sec_method.tex	Profiling nuisances with observed data would change our inference model, which propagates an external nuisance ensemble through a fixed procedure. Neither a profiled estimator nor			register loc sec_method.tex:219 @87cee1c86; literal
 n13	sec_method.tex	Reduced simulation-prior dependence does not establish detector-model independence, adequate phase-space support, or coverage for this result			register loc sec_method.tex:221 @87cee1c86; literal
 n14	sec_systematics.tex	Their independence is an assumption: distinct random streams and physics sources do not by themselves establish it after unfolding			register loc sec_systematics.tex:4 @87cee1c86; literal

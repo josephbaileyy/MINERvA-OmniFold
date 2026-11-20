@@ -289,6 +289,7 @@ docs/orchestration/DECISION-20261114-joseph-d1-g2r-adopted.md	tracked	LIVE	docum
 docs/orchestration/DECISION-20261119b-joseph-no-duplicates.md	tracked	LIVE	document		20261119	open		route-only	no
 docs/orchestration/DECISION-20261119c-joseph-note-compression-outline.md	tracked	LIVE	document		20261119	open		route-only	no
 docs/orchestration/DECISION-20261119f-joseph-relax-P-verbatim.md	tracked	LIVE	document		20261119	open		route-only	no
+docs/orchestration/DECISION-20261119g-joseph-ibu-signed-data-in-note.md	tracked	LIVE	document		20261119	open		route-only	no
 docs/orchestration/DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md	tracked	LIVE	document		20260911	open		route-only	no
 docs/orchestration/DECISION-PACKET-20260918-scalar5d-publication-blockers.md	tracked	LIVE	document		20260918	open		route-only	no
 docs/orchestration/DECISION-PACKET-20261029-oi53-clm-row-ownership.md	tracked	ARCHIVAL	document	fe-fps-campaign	20261029	terminal		exact-path-only	yes
@@ -976,6 +977,8 @@ docs/orchestration/state/2d-closeout/c04-repair/review/VERIFICATION.md	tracked	M
 docs/orchestration/state/2d-closeout/c04-repair/scripts/build_repair.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/c04-repair/scripts/make_sigma_json.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/c04-repair/scripts/run_repair.sh	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/ibukt-signed-data-a2-20261119/README.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
+docs/orchestration/state/2d-closeout/ibukt-signed-data-a2-20261119/readout.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/per-period-benchmark-20261106/BINDING-1.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/per-period-benchmark-20261106/DECLARATION.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/per-period-benchmark-20261106/INPUTS.sha256	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
