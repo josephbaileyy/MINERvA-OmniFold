@@ -189,19 +189,9 @@ install_receipt_fig() {  # install_receipt_fig <source under $RB> <figure basena
 # Fig. 1 is no longer installed from the rebuild (82665808..., drawn from E_U and Q): RE-2 integration installs the
 # refined redraw below.
 
-echo
-echo "== Fig. 1 from COV2D-G2R's RE-2-shapes route A (E_R and C_new; digest-checked copy) =="
-# Source: #1168's redraw on the adopted 2D covariance (D1: COV2D-G2R's C_new), drawn by re2c_fig1.py 2aadeac8... on
-# route A's outputs (fd/receipts-cov2d/g2r/re2shapes/fig1/route-a/RUN-fig1.txt). Before D1: RE-2 part C amendment 3's
-# redraw, re2-integration/fig1/fig1_validation.pdf 71a2ea48....
-RE2F="$REPO/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/g2r/re2shapes/fig1/route-a"
-src="$RE2F/fig1_validation.pdf"; want=1ead58a2223ecf88f3de505d7cbcca76ab306af49814ea7c9d50ec0f2c373e0c
-if [[ "$(sha256_of "$src")" != "$want" ]]; then echo "REFUSE install: $src does not have sha256 $want" >&2; exit 1; fi
-cp "$src" "$FIGDIR/paper_fig1_validation.pdf"
-if [[ "$(sha256_of "$FIGDIR/paper_fig1_validation.pdf")" != "$want" ]]; then
-  echo "REFUSE install: $FIGDIR/paper_fig1_validation.pdf differs from $src after the copy" >&2; exit 1
-fi
-echo "  installed paper_fig1_validation.pdf ($want)"
+# The short paper's Fig. 1 (figures/paper_fig1_validation.pdf, #1168's route-A redraw fig1_validation.pdf 1ead58a2...)
+# was installed here until the short paper was retired on 2026-11-21 (docs/POST_PUBLICATION_REORG_PLAN.md, family
+# "short paper"); no remaining build includes it.
 
 echo
 echo "== 2D figures from RE-2 part C (E_R and Q_R; digest-checked copy) =="

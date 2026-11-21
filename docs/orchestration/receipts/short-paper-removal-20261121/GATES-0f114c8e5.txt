@@ -1,0 +1,18 @@
+# 0f114c8e5524ad1423626989513a45a642d040e4 2026-11-21T16:16:59Z; status:        0 dirty
+precommit                    rc=0  pre-commit: 21 checks passed
+manifest_check               rc=1  MANIFEST-CHECK :: OUT OF DATE exit=1 :: head=0f114c8e5524ad1423626989513a45a642d040e4 tree=clean scope=.
+hash_bindings                rc=0  ALL BINDINGS INTACT
+control_plane_lint           rc=0  CONTROL-PLANE PASS: 9 selected; 0 overflow; 2 backlog; 148 source records; 25 playbook rules; 6 state cells changed since declaration; 346059 prose / 
+live_doc_indexed             rc=0  tracked docs under docs/orchestration/ with NO overrides row: 0
+check_registry               rc=0  REGISTRY :: 11 estimators, 72 aliases, every citation checked; 121 printed labels in 48 files of the 3 builds, each naming exactly one estimator throu
+results_index                rc=0  RESULTS-INDEX :: 2131 tracked JSON in the roots: 167 included (25136 rows (24819 distinct, R5), 694 attributed; 138 receipts hold a distinct row), 196
+sec4                         rc=0  SEC4-RECEIPTS :: PASS (17/17)
+sec4_selftest                rc=0  SELF-TEST :: PASS (21 perturbations rejected)
+fived16_check                rc=0  VALUES-FIVED16 :: PASS (3929 values, readouts pinned, 1 figures equal their sources, 4 listed-truth sentences agree)
+fived16_selftest             rc=0  VALUES-FIVED16 SELF-TEST :: PASS
+containment_selftest         rc=0  SELF-TEST :: PASS
+pytest_note_registry         rc=1  2 failed, 129 passed in 335.12s (0:05:35)
+pytest_nd_fd                 rc=1  2 failed, 169 passed in 1654.42s (0:27:34)
+pytest_orchestration         rc=3  1 error in 11.03s
+build_all                    rc=1  RECORDS-MOVE :: FAIL (27 labels, 29 tags, 97 struck bodies, 30 paths, 84 record and 20 reader paragraphs, 44 App. G pointers; thinning: 76 citation ke
+# done 2026-11-21T16:52:26Z; status after:        0 tracked files modified

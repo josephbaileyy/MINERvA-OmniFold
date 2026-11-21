@@ -34,7 +34,9 @@ def test_self_test_rejects_every_perturbation():
 
 
 @pytest.mark.parametrize("name,old,new,label", [
-    ("paper_body.tex", r"\SI{0.676}{\percent}", r"\SI{0.686}{\percent}", "statistical block median (Q_R, S1)"),
+    # Since the short paper's retirement (2026-11-21) the paper's values bind in the note's Table tab:uq and in the primer
+    ("sec3_twod.tex", r"Statistical bootstrap & 0.676 &", r"Statistical bootstrap & 0.686 &",
+     "statistical block median (Q_R, S1)"),
     # The rebuilt-band 2-sigma rescore (97.7%) binds in the note since r18 moved it there: $C_2=0.977$; since the deep
     # restructure (DECISION-20261118, CV-VA02) it prints in App. I's app:devhistory-band.
     ("app_devhistory.tex", r"$C_2=0.977$", r"$C_2=0.967$",
@@ -42,7 +44,7 @@ def test_self_test_rejects_every_perturbation():
     # The background-closure values bind in the note since the targeted round moved the paper's paragraph there
     ("sec_5d.tex", r"column to \SIrange{0.11}{0.24}{\percent}", r"column to \SIrange{0.11}{0.26}{\percent}",
      "negative-weight residual, highest-W cells (VL151)"),
-    ("paper_body.tex", r"\SIrange{16}{31}{\percent}", r"\SIrange{16}{33}{\percent}",
+    ("primer_body.tex", r"\SIrange{16}{31}{\percent}", r"\SIrange{16}{33}{\percent}",
      "other fixed shapes, most affected cell (VL154)"),
     ("sec_5d.tex", r"cell to at most \SI{0.39}{\percent}", r"cell to at most \SI{0.49}{\percent}",  # true but loose
      "negative-weight residual, other (E_avail, W) cells (VL151)"),

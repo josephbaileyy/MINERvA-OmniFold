@@ -2424,6 +2424,18 @@ new evidence tag". The files are at `evidence/simplification-2026-10-07-fc97eaf9
 - Recover a file with `git show evidence/simplification-2026-10-07-fc97eaf9:<path>`. Fetch the tags first, as described
   above.
 
+### Family short paper: `main_paper.tex` off the rewrite branch since 2026-11-21
+
+The short paper left `docs/analysis-note/`: `main_paper.tex`, `paper_body.tex` and the figures
+`paper_fig1_validation.pdf`, `fd_g_fig_ratio.pdf` and `paper_fig_deformation.pdf`. Joseph authorized it on 2026-11-21: "yes
+I also authorize the short paper removal". The files are at `evidence/short-paper-retired-a54f255e`, the pre-removal head
+of `rewrite/journal-voice-20261121`.
+- Gate record: [`../POST_PUBLICATION_REORG_PLAN.md`](../POST_PUBLICATION_REORG_PLAN.md), *Family short paper, 2026-11-21*.
+- Discovery stub: `docs/analysis-note/README.md`, *Retired: the short paper*.
+- The paper's development branch, `origin/draft/methods-short-20261109`, is kept.
+- Recover a file with `git show evidence/short-paper-retired-a54f255e:docs/analysis-note/<path>`. Fetch the tags first,
+  as described above.
+
 ## Regenerate
 
 ```bash
