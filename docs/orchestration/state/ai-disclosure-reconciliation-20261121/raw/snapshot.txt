@@ -1,0 +1,16 @@
+claude-opus-5-5              files=  600 linked_to_analysis_commits=  13 2026-10-11..2026-11-14 {'laptop': 600}
+gpt-6.1-sol                  files=  514 linked_to_analysis_commits=   0 2026-09-30..2026-11-14 {'laptop': 514}
+gpt-5.6-sol                  files=  319 linked_to_analysis_commits=   1 2026-07-10..2026-09-14 {'laptop': 263, 'nersc-legacy': 56}
+<synthetic>                  files=  136 linked_to_analysis_commits=   0 2026-05-30..2026-11-14 {'laptop': 110, 'nersc-mirror': 13, 'delta-mirror': 2, 'nersc-legacy': 10, 'laptop-legacy-school': 1}
+gpt-6-astra                  files=  119 linked_to_analysis_commits=   0 2026-09-02..2026-11-04 {'laptop': 117, 'nersc-legacy': 2}
+claude-sonnet-5-5            files=  100 linked_to_analysis_commits=   0 2026-10-22..2026-11-13 {'laptop': 100}
+claude-opus-5                files=   67 linked_to_analysis_commits=   0 2026-07-15..2026-08-28 {'nersc-legacy': 67}
+codex-auto-review            files=   50 linked_to_analysis_commits=   0 2026-08-19..2026-11-14 {'laptop': 48, 'nersc-legacy': 2}
+claude-opus-4-8              files=   38 linked_to_analysis_commits=   0 2026-05-30..2026-08-26 {'laptop': 2, 'nersc-mirror': 20, 'delta-mirror': 3, 'nersc-legacy': 13}
+gpt-5.5                      files=   35 linked_to_analysis_commits=   0 2026-04-25..2026-08-09 {'laptop': 35}
+gpt-5.4                      files=   16 linked_to_analysis_commits=   0 2026-03-21..2026-07-12 {'laptop': 1, 'nersc-mirror': 7, 'nersc-legacy': 8}
+gpt-5.6-terra                files=   10 linked_to_analysis_commits=   0 2026-07-11..2026-08-25 {'laptop': 6, 'nersc-legacy': 4}
+claude-haiku-4-5-20251001    files=    9 linked_to_analysis_commits=   0 2026-06-03..2026-06-20 {'laptop': 5, 'nersc-mirror': 4}
+gpt-5.3-codex                files=    6 linked_to_analysis_commits=   0 2026-02-27..2026-03-04 {'nersc-mirror': 3, 'nersc-legacy': 3}
+claude-fable-5               files=    2 linked_to_analysis_commits=   0 2026-06-09..2026-06-19 {'laptop': 1, 'nersc-mirror': 1}
+gpt-5.6-luna                 files=    1 linked_to_analysis_commits=   0 2026-08-20..2026-08-20 {'laptop': 1}
