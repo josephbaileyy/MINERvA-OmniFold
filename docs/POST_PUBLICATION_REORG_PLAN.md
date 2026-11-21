@@ -704,4 +704,5 @@ against `c0096d456b` here), so a removal there needs its own tag on `main`'s par
    - `git show evidence/short-paper-retired-a54f255e:<old-path>`;
    - this section;
    - `docs/analysis-note/README.md`, *Retired: the short paper*;
+   - `docs/orchestration/CATALOG.md` § Frozen pre-compaction evidence, *Family short paper*;
    - the paper's development branch `origin/draft/methods-short-20261109` (`5bbb9d269` when this was written), which is kept.
