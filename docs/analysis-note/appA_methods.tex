@@ -105,7 +105,7 @@ normalization is added as the fully correlated term
 where $X_0$ is the central vector. The
 per-band aggregation follows that of the published measurement, with the
 same population normalization for both the two-universe bands and the
-flux multisim~\cite{MINERvA:2021owq,NoteRecords2026}.
+flux multisim~\cite{MINERvA:2021owq}.
 An elementwise comparison with the toolkit for identical universe vectors
 checks the aggregation convention separately from the propagation of
 the weights through the unfolding.
@@ -185,8 +185,7 @@ count is 198 at $10^{-10}\lambda_{\max}$. The direct inverse of $Q_R$ gives a
 quadratic distance of 21.96 per reported bin against the published central
 value, compared with \chiPaper{} using the published covariance. The latter has a
 nearly diagonal, full-rank statistical block that provides variance in all
-directions. Even at full rank, a defensible single OmniFold-only distance is out
-of reach, for a statistical-precision reason. For numerical comparisons based on $Q_R$ alone, the truncated
+directions. For numerical comparisons based on $Q_R$ alone, the truncated
 inverse uses the positive modes above $10^{-10}\lambda_{\max}$. In that
 convention the distance is the sum of squared residual amplitudes along
 the retained eigenvectors divided by their eigenvalues. Discarding
@@ -242,7 +241,6 @@ and $\Delta_i/\sqrt{C_{ii}}$, using either
 the published covariance alone or its sum with $Q_R$. These are descriptive
 distances because the cross-covariance from the shared data and systematics
 is unavailable [Eq.~\eqref{eq:muon-difference-covariance}].
-A single realization near unity is not evidence of correct uncertainties.
 Removing the published statistical block from the sum changes the quadratic
 distance per bin from \chiCombined{} to \chiCombinedSubStat{} and still leaves the cross-covariance
 unknown. For the logarithmic distance we take the log of the binwise ratio
@@ -382,8 +380,6 @@ $C_{\mathrm{total}}$ at the two tunes, with and without the neutron and proton
 transport bands, and applies the joint count threshold to each variant. Its
 scope and descriptive status are given in
 Sec.~\ref{sec:higher-dimensional-calibration}.
-The records document~\cite{NoteRecords2026} gives the excluded edge bins, the
-edge-bin and exact-split shape comparisons, and the joint-test power study.
 
 \subsection{Multidimensional statistical methods}
 \label{app:multidimensional-statistics}
@@ -491,8 +487,8 @@ interaction-model bands. The test statistics use a coarser grid with edges
 \end{align*}
 Of the $3^5$ cells, \jtNcells{} satisfy the support rule in
 Appendix~\ref{app:multidimensional-statistics}. GiBUU uses the \jtNcellsGiBUU{} supported
-cells with $p_\parallel<6~\mathrm{GeV}/c$. The fine-grid binning is given in
-Ref.~\cite{NoteRecords2026}.
+cells with $p_\parallel<6~\mathrm{GeV}/c$. The fine grid is that of
+Table~\ref{tab:reproducibility-bin-edges}.
 
 For unfolded integrals $F$ and predicted integrals $\mu_G$, the total
 statistic is $T_{\mathrm{tot}}=(F-\mu_G)^{\mathsf T}\Sigma^{-1}(F-\mu_G)$.
@@ -533,9 +529,7 @@ Five lateral bands enter through additive shifts $z_b d_b$, with independent
 standard normal $z_b$ and $d_b$ equal to half the difference between each
 band's two observed-data endpoint unfolds. This linear surrogate uses
 inputs estimated on the observed data. Calibration is conditional on those
-inputs and on the common simulated event pool. That conditioning has not been
-% Search: data-derived inputs; conditioning on data-derived; conditional on these data-derived @ 1a015eef
-validated. An independent Gaussian
+inputs and on the common simulated event pool. An independent Gaussian
 coefficient propagates the $1.4\%$ normalization. Rounding and generator
 finite-sample fluctuations are added as Gaussian residuals in each cell.
 The variance for the latter is the sum of squared generator weights in that
@@ -585,7 +579,7 @@ $\max_{1\leq j\leq\jtNtests} j R(\jtAlpha/j)\leq0.8902\times\jtAlpha$, without r
 independence between tests. The maximum over shifts includes the unshifted
 variant and can only raise its upper endpoint at common $B$. The bound is
 conditional on the stated assumptions, including outcome-independent loss
-of calibration draws when using only completed draws, which has not been shown.
+of calibration draws when using only completed draws.
 
 \paragraph{Sensitivity and interrupted draws.}
 Sixteen paired unfoldings estimate $D$. Its median absolute size relative
@@ -667,7 +661,7 @@ the original targets, so it is descriptive for the hydrocarbon predictions.
   \multicolumn{4}{@{}l}{\textit{Two-dimensional benchmark and checks across dimensions}} \\
   \addlinespace[1.5pt]
   Ordinary closure & Simulated reconstruction unfolded to its own truth &
-  Descriptive bookkeeping check & Recovers the input in an identity test. Cannot detect estimator bias. \\
+  Descriptive bookkeeping check & Recovers the input in an identity test. \\
   \addlinespace[1.5pt]
   Event matching and iteration stability & Truth and reconstructed event records and exact-split 2D cross-check &
   Event-list completeness and five-versus-ten-iteration comparison & Truth-only entries are retained. The exact-split total changes by at most $0.026\%$ between five and ten iterations. \\

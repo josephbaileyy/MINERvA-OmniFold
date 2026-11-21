@@ -1,0 +1,49 @@
+% Check stage of the journal-voice rewrite (2026-11-21; CHECK-STAGE.md item 2; DECISION-20261120a item 5), director-helper-3:
+% register rows whose limitation the rewritten Secs. 1, 3 and 6 no longer state. Each sentence below is moved verbatim
+% from the note as it stood at e89694209 (draft/note-round2-20261108); the source file and line are given with each.
+% Under DECISION-20261121b a records-status register row needs only its verbatim text here; the note carries no
+% pointer to this section (Joseph, 2026-11-21: note-to-records pointers dropped).
+\section{Limitations moved from the note in the journal-voice rewrite}
+
+\subsection{Two-dimensional limitations (from Sec.~3 of the rewritten note)}
+From the 2D systematic block's unified-throw test (app\_statmethods.tex:162):
+A single-throw superposition probe is insufficient to test nonlinear response.
+
+From the run-period block (sec\_systematics.tex:159):
+The run-period block $C_{\mathrm{PL}}$ is an uncertainty assigned for an observed inconsistency between run periods whose cause is unknown. The block does not measure a systematic uncertainty from an identified source.
+
+From the run-period block (sec\_systematics.tex:163):
+The block has rank two, and with three period groups its own size is poorly determined.
+
+From the comparison of the flux band with the publication (sec\_results.tex:30), where "this difference" is that between the per-bin median of this analysis's flux band, \SI{\fluxBand}{\percent}, and that of the published flux block, \SI{4.01}{\percent}:
+The public release cannot establish the origin of this difference, for which the FHC-only constraint file remains the leading, unconfirmed hypothesis of this analysis.
+
+From the test inventory's row for the injected $\Eavail$ bump in three dimensions (part5\_validation.tex:56, the result cell):
+Marginal residual \SI{1.84}{\percent} of \SI{18.1}{\percent} injected (ratio 0.102); no threshold specified before it ran.
+
+From the table of validation questions for the 2D result (sec\_validation.tex:16, the row for miss completeness):
+
+\begin{tabular}{@{}p{0.2\textwidth}p{0.25\textwidth}p{0.22\textwidth}p{0.25\textwidth}@{}}
+Miss completeness & Full truth-event inventory; production truth--reco event matching & Same event keys; truth-only entries retained & Membership and completeness conditions; no recovery or coverage claim \\
+\end{tabular}
+
+From the caption of the same table (sec\_validation.tex:7):
+Coverage pooled over bins is not a simultaneous probability that every bin is covered.
+
+\subsection{Scope and outlook (from Secs.~1 and 6 of the rewritten note)}
+From the introduction's account of the estimators (sec\_intro.tex:59):
+The \resFiveAxis{} (Table~\ref{tab:config-key}) and its five-axis covariance, and the extended-fiducial value, use the binned purity weight, a per-reco-bin $(D-B)/D$ weight fixed \emph{before} training.
+
+From the validity table's row for the exploratory five-axis unfolding (sec\_validity\_table.tex:33):
+$C_Z$: the earlier note's section on the five-dimensional validation uses it only as a descriptive scale, the \estPurity{}'s total uncertainty, for bias and model-dependence comparisons and for the estimator-seed sensitivity diagnostic (the earlier note's section on the five-axis covariance construction), whose seed-sensitivity measurements use two companion covariances; it also gives the attribution of its per-source decomposition (the earlier note's section on combining the uncertainty blocks).
+
+% n01 and n03 (the two introduction sentences below) are retired from the limitations register by
+% DECISION-20261121a (Joseph, 2026-11-21); their text stays here.
+From the introduction (sec\_intro.tex:11), where "it" is the unbinned result in the muon's transverse and longitudinal momenta:
+Whether it is ready for publication as a measurement has not been established.
+
+From the introduction's scope paragraph (sec\_intro.tex:68):
+The results hold for one implementation of unbinned OmniFold, applied to one data set, and for the configurations, observables and deformations tested.
+
+From the outlook (sec\_summary.tex:20):
+Further refinements are a fifth external generator, NEUT, and a finer 44-cell comparison with the Ascencio \emph{et al.} measurement (the maximal-common-grid comparison is in \S\ref{sec:4d}).

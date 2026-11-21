@@ -30,7 +30,8 @@ Table~\ref{tab:validity} gives the scope of each result.
     \lrval{q-ncells} bin values and $Q_R$, with prior-shape dependence reported separately. &
     Quantitative benchmark of the integral with propagated uncertainties and
     descriptive comparisons of shape. &
-    Shared inputs limit the published-result comparison. The statistical block
+    Shared inputs limit the published-result comparison, and the covariance gives
+    no calibrated significance for generator comparisons. The statistical block
     lacks a coverage test, and the evaluated covariance under-covers jointly at
     both held-out tunes (Sec.~\ref{sec:part-2d}). \\
     \addlinespace
@@ -39,12 +40,17 @@ Table~\ref{tab:validity} gives the scope of each result.
     Normalization and projection checks. &
     Joint recovery remains unestablished, and the central values alone support
     no significance for generator comparisons
-    (Sec.~\ref{sec:higher-dimensional-extension}). \\
+    (Secs.~\ref{sec:higher-dimensional-extension}
+    and~\ref{sec:higher-dimensional-closure}). \\
     \addlinespace
     Exploratory five-axis unfolding &
     Purity-based central values and $C_Z$. &
     Qualitative shape comparisons and use of $C_Z$ as a scale for diagnostics. &
-    The covariance fails the training-seed tolerance. Inference from these
+    The covariance failed its acceptance requirements. The training-seed
+    check exceeded its tolerance in two companion builds and was not
+    computed for $C_Z$.
+% Search: s_proj (limitation-resolver's search, carried from sec4_higherdim.tex Sec. 4.5 at ae84584de); estimator-seed magnitude criterion; L2 (computed only for 361090f9/7e4636a3, DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md:36-38; OUTCOME-20260922-L2-sproj-measured-and-the-pair-is-not-code-comparable.md:3-5) @ 0d919b1a
+    Inference from these
     central values would require a validated estimator and covariance
     (Secs.~\ref{sec:higher-dimensional-closure}
     and~\ref{sec:higher-dimensional-calibration}). \\
@@ -62,10 +68,11 @@ Table~\ref{tab:validity} gives the scope of each result.
     Decisions on ten hybrid rate-and-shape or shape-only hypotheses. &
     Tests of the specified predictions within the calibrated simulation model. &
     The tests depend on six conditions. Physical exclusions of generators
-    are outside the scope of the hybrid tests. The false-rejection rate for
+    are outside the scope of the hybrid tests
+    (Sec.~\ref{sec:sixteen-cell-generator-comparison}). The false-rejection rate for
     null data processed as in the experiment remains unmeasured. The NuWro
     rate-and-shape decision is sensitive to the hydrocarbon target correction
-    (Sec.~\ref{sec:sixteen-cell-generator-comparison} and Appendix~\ref{app:joint-generator-tests}). \\
+    (Appendix~\ref{app:joint-generator-tests}). \\
 \end{xltabular}
 \endgroup
 
@@ -125,9 +132,8 @@ The main open steps are an end-to-end coverage test of the full reported
 covariance, including its response and run-period terms; identifying the
 origins of the run-period step and of the 2D shape difference with MINERvA;
 and validating the transfer of weights to events missed by the selection.
-Related exploratory studies, of an extended fiducial region, point-cloud
-event representations, and a proposed detector-response closure, are
-documented in the analysis records~\cite{NoteRecords2026}.
+Related exploratory studies concerned an extended fiducial region, point-cloud
+event representations, and a proposed detector-response closure.
 This study shows that unbinned unfolding can reproduce the normalization of
 a published neutrino cross-section measurement. A five-observable
 measurement requires demonstrating recovery and uncertainty coverage for
@@ -136,8 +142,8 @@ the joint distribution at the reported resolution.
 % PASS2:
 % The source prints the integral agreement as "about one percent".
 % The equivalent literal 1\% is retained, along with the source's literal
-% dimension labels, test counts, and q_3 subscript. "Three related studies"
-% counts the items in the outlook paragraph and has no matching source macro.
+% dimension labels, test counts, and q_3 subscript. (Check stage, 2026-11-21: the outlook no longer
+% prints a study count, so the earlier "Three related studies" item is dropped.)
 % The original summary/outlook label (sec:summary) is attached to Outlook.
 % The original usage labels are attached to the applicability paragraph in
 % the limitations subsection. The original top-level section wrapper was
