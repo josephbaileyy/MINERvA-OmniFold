@@ -234,8 +234,7 @@ remain up to $1.0\%$ high, up to 14 standard errors, and fail the nominal
 closure criterion (Fig.~\ref{fig:bkg-residual-note}). The sixteen-cell
 estimator passes the nominal closure criterion in 40 fresh pseudo-experiments,
 with a largest deviation of 2.7 standard errors, and has a pooled statistical
-pull width of 1.02. The pooled
-test does not establish coverage for every integral. The
+pull width of 1.02. The
 comparison is descriptive because no common acceptance criterion was
 set in advance for the three configurations.
 
@@ -261,8 +260,7 @@ $W\geq3~\mathrm{GeV}$, the background yield is about $13\%$ of signal.
 Purity subtraction corrects the reconstructed bin integral, while the
 unbinned learner resolves background variation within the bin
 (Appendix~\ref{app:negative-weight-background}). On data, switching the subtraction method shifts the
-tested integrals by a median of $0.36\%$ and at most $1.4\%$. These shifts
-measure sensitivity to the method, not bias.
+tested integrals by a median of $0.36\%$ and at most $1.4\%$.
 
 \label{sec:val-departure}
 The low-capacity refinement fails the prespecified recovery criterion
@@ -282,8 +280,8 @@ fractions range from $\fvval{rec-w-fmed-lo}\%$ to $\fvval{rec-w-fmed-hi}\%$, wit
 or moving opposite to the injected change (Appendices~\ref{app:bias-prior-stability}, \ref{app:reproducibility-definitions}, and \ref{app:choices-after-results}).
 In noise-free pseudo-data, raising the iteration count from five to
 thirty reduces the $E_{\mathrm{avail}}$ residual by $26\%$ while increasing
-the $q_3$ residual. These residuals, a regularization bias of the estimator,
-enter no uncertainty quoted for the \resFiveAxis{}.
+the $q_3$ residual, and the quoted uncertainties of the \resFiveAxis{} do not
+include these residuals.
 
 \subsection{Prior dependence and algorithmic robustness}
 \label{sec:higher-dimensional-prior}
@@ -337,7 +335,8 @@ the comparison also includes the effect of the chosen response grid.
 
 \label{sec:fived16-ibu}
 On data, binned IBU and the sixteen-cell estimator differ beyond the
-prespecified agreement thresholds. Both use \lrval{rg1-K} iterations, the same
+prespecified agreement thresholds, and the reported uncertainties do not
+include this difference. Both use \lrval{rg1-K} iterations, the same
 data, simulation, background template, and weight-only systematic
 universes, and their outputs are integrated over the same sixteen regions.
 For the difference $\Delta$ we obtain
@@ -345,8 +344,7 @@ $\Delta^{\mathsf T}C_\Delta^{-1}\Delta=\lrval{rg1-T}$, compared with calibrated
 \fpeval{100*\lrval{rg1-lev1}}th and \fpeval{100*\lrval{rg1-lev2}}th null percentiles of \lrval{rg1-bar1} and \lrval{rg1-bar2}. The covariance
 $C_\Delta$ propagates statistical, weight-only systematic, and
 normalization variations through both estimates, but not the model, lateral,
-response, or run-period terms. No uncertainty term is
-added for this dependence.
+response, or run-period terms.
 
 \label{sec:3d-classifier}
 The two classifier families give similar projections for the 3D
@@ -440,10 +438,6 @@ that carry $\pinnedBandsSqrtTr\%$ of $\sqrt{\operatorname{Tr}C_Z}$ (Appendix~\re
 Separately, data from different run periods are inconsistent before unfolding,
 and the run-period term was constructed after the differences were
 observed (Sec.~\ref{sec:sixteen-cell-projections}).
-
-The records document~\cite{NoteRecords2026} states these results' further
-qualifications in full, including the inherited definitions, the generator and
-published comparisons, and the construction of the sixteen cells and their covariance.
 
 Table~\ref{tab:higher-dimensional-validation} summarizes the validation
 results of this section, with the estimator each test applies to.
