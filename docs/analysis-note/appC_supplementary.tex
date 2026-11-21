@@ -128,10 +128,19 @@ $0.8\leq E_{\mathrm{avail}}<1.5~\mathrm{GeV}$ and 1.37 at $1.5\leq E_{\mathrm{av
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{generators_vs_unfolded_band_central}
-  \caption{The generator predictions follow the muon-momentum shapes of the refined 3D
-  central values more closely than the available-energy shape. The panels show
-  single-variable projections against GENIE, MINERvA Tune~v1, NuWro, and
-  GiBUU. The 3D result has no reported covariance.}
+  \caption{All four generator predictions lie below the refined 3D central values over
+  most of each projection, GiBUU by the most. The upper panels show single-variable
+  projections of the refined 3D central values against GENIE, MINERvA Tune~v1, NuWro,
+  and GiBUU, and the lower panels each prediction divided by the central value, on a
+  common scale. The $p_T$ panel omits the 2.5--4.5~GeV/$c$ bin, which holds 0.8\% of
+  the $p_T$ integral, and $p_\parallel$ is drawn on a logarithmic axis. GiBUU's
+  prediction is zero above $p_\parallel=20$~GeV/$c$, since its sample ends at
+  $E_\nu=\fvval{cmodel-gibuu-enu}$~GeV. The 3D result has no reported covariance.}
+  % Joseph's ruling 2026-11-21 (via the director): the comparative shape claim is dropped; first sentence his.
+  % Checked against note-fig18-20261121/runs/fig18/compose_fig18.json (the plotted arrays): ratio < 1 in
+  % GENIE-CV 12/13, 16/16, 4/6 bins (p_T, p_par, E_avail); Tune-v1 11/13, 16/16, 5/6; NuWro 9/13, 16/16, 6/6;
+  % GiBUU 13/13, 16/16, 5/6. Drawn-range integral ratio lowest for GiBUU in each panel (0.727, 0.721, 0.777).
+  % 0.8%: README.md (0.82% of the p_T integral); GiBUU p_par bins 20-40 and 40-60 are 0.
   \label{fig:3dmodels}
 \end{figure}
 
