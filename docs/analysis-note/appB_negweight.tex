@@ -1,0 +1,193 @@
+\section{Negative-weight background subtraction}
+\label{app:negative-weight-background}
+\label{app:negweight}
+
+\subsection{Estimator}
+\label{sec:negweight-estimator}
+
+Negative-weight subtraction supplies the reconstructed signal target for the first
+OmniFold step without imposing a subtraction grid. Using the notation of
+Sec.~\ref{sec:omnifold-implementation}, we give data unit weight and append
+simulated background with the negative of its exposure-scaled weights. The
+measured class then has signed density
+\begin{equation}
+  \rho_1^{\mathrm{neg}}(x)=D(x)-B(x)
+  \label{eq:negweight-continuous}
+\end{equation}
+and the simulated class has the current selected-signal density $S(x)$.
+For $S(x)>0$ and $D(x)>B(x)$, the population classifier odds with unnormalized
+class weights are $[D(x)-B(x)]/S(x)$. In a bin with positive net yield, purity
+weighting instead scales the data shape by the bin-averaged signal fraction.
+\begin{equation}
+  \rho_1^{\mathrm{pur}}(x)=D(x)\,w_{\mathrm{pur}}(b)
+  =D(x)\,\max\!\left(0,1-\frac{B_b}{D_b}\right)
+  \label{eq:negweight-purity}
+\end{equation}
+The signed target differs from the purity-weighted target by
+$D(x)B_b/D_b-B(x)$, with zero net change in the bin.
+
+The refinement gives the first-step classifier a nonnegative target. The
+sign classifier is trained on the absolute-weight sample, with density
+$D+B$. Its population score is
+$g=D/(D+B)$ wherever $D+B>0$. The factor $\max(0,2g-1)$ then gives
+the target $[D-B]_+$, where $[z]_+\equiv\max(0,z)$~\cite{Nachman:2025staypositive}.
+For a finite learner, the clipping acts on the fitted score. With
+histogram-based boosting in scikit-learn, the direct signed fit and the
+clipped refinement gave a median cross-section bin ratio of $\nwMedianBin$. With
+exact-split trees, the direct fit produced large excursions at low $p_T$
+that the refinement removed.
+
+\subsection{Binned limit}
+\label{sec:negweight-binned}
+
+The signed and purity-weighted targets give identical updates where the
+classifier is constant within bins and the net bin yields are nonnegative.
+For an occupied reconstructed bin $b$ on common support, with simulated
+signal yield $S_b>0$, the signed binary cross-entropy contribution is
+\begin{equation}
+  \mathcal L_b(p_b)=-(D_b-B_b)\log p_b-S_b\log(1-p_b).
+  \label{eq:background-binned-loss}
+\end{equation}
+For $D_b>B_b$, minimizing this loss gives
+\begingroup
+\refstepcounter{equation}
+\label{eq:background-binned-ratio}
+\label{eq:negweight-rb}
+\begin{equation*}
+  r_b=\frac{p_b}{1-p_b}=\frac{D_b-B_b}{S_b}.
+  \tag{\theequation}
+\end{equation*}
+\endgroup
+Purity weighting supplies the same class-1 mass by
+Eq.~\eqref{eq:purity-weight}. At $D_b=B_b$, the limiting optimum has $p_b=0$
+and $r_b=0$. The correspondence between binned OmniFold and iterative
+Bayesian unfolding makes Eq.~\eqref{eq:background-binned-ratio} the usual
+subtract-then-unfold update~\cite{Andreassen:2019cjw,Andreassen:2021zzk,DAgostini:1994fjx}.
+
+For $D_b<B_b$, the signed loss tends to $-\infty$ as $p_b\to0^+$, so setting the
+yield to zero is an added prescription. If the sign classifier is itself
+restricted to the bins, the refinement gives the same mass $[D_b-B_b]_+$ as
+purity weighting. An unbinned refinement clips before integration, so its
+population bin mass can exceed $[D_b-B_b]_+$ if the net density has both signs
+within the bin.
+
+\subsection{Comparison with purity subtraction}
+\label{sec:negweight-2d}
+\label{sec:negweight-uq}
+\label{sec:negweight-footing}
+
+The two treatments give similar integrated cross sections in two dimensions.
+Using the scikit-learn histogram-based learner and a common training seed,
+purity and negative-weight subtraction give totals of
+\num[exponent-mode=fixed,fixed-exponent=-38,drop-exponent=true]{\nwSigPur} and
+\num[exponent-mode=fixed,fixed-exponent=-38,drop-exponent=true]{\nwSigNeg},
+respectively, in units of $10^{-38}\,\mathrm{cm}^2$ per nucleon, a change of
+\SI{\nwPctTot}{\percent}. The negative-weight to purity ratio across populated
+cross-section bins has a median of $\nwMedianBin$ and a root-mean-square
+deviation from unity of \SI{\nwRmsBin}{\percent}. The largest shift is
+\SI{\nwWorstBin}{\percent} in a low-$p_T$ edge bin with a large background
+contribution (Table~\ref{tab:negweight} and Fig.~\ref{fig:negweight-ratio}).
+
+\begin{table}[!hbp]
+  \centering
+  \caption{Purity versus negative-weight background subtraction in 2D}
+  \label{tab:negweight}
+  \begin{tabular}{lcc}
+    \hline\hline
+    & binned purity & negative-weight \\
+    \hline
+    total $\sigma$ (cm$^2$/nucleon) & $\num{\nwSigPur}$ & $\num{\nwSigNeg}$ \\
+    total ratio (neg/pur)           & \multicolumn{2}{c}{$\nwRatioTot$ (\SI{\nwPctTot}{\percent})} \\
+    median per-bin ratio            & \multicolumn{2}{c}{$\nwMedianBin$} \\
+    per-bin RMS deviation           & \multicolumn{2}{c}{\SI{\nwRmsBin}{\percent}} \\
+    largest single-bin deviation    & \multicolumn{2}{c}{\SI{\nwWorstBin}{\percent} (low $p_T$, high background)} \\
+    \hline\hline
+  \end{tabular}
+\end{table}
+
+\begin{figure}[!hbp]
+  \centering
+  \includegraphics[width=0.7\textwidth]{negweight_ratio_2d}
+  \caption{Ratio of the negative-weight to the binned-purity cross section in
+  the populated bins of the 2D measurement, with a common estimator and seed.
+  The median ratio is $\nwMedianBin$. Only the low-$p_T$, high-background edge bin
+  departs by more than a few percent. The color scale saturates.}
+  \label{fig:negweight-ratio}
+\end{figure}
+
+The refined estimator gives a smaller nominal-truth closure residual in the
+bins most sensitive to subtraction. In the 20 paired background-inclusive
+pseudo-experiments of Sec.~\ref{sec:muon-cross-section-validation}, the largest
+difference between the two mean estimates is $5.45\sigma_{\mathrm{stat}}$ in
+the bin $0.70\le p_T<0.85\,\mathrm{GeV}/c$,
+$1.5\le p_\parallel<2.0\,\mathrm{GeV}/c$. Here $\sigma_{\mathrm{stat}}$ is
+from the purity-based statistical covariance and serves as a common reference
+scale for the descriptive comparison.
+
+On data, switching from purity to the refined estimator shifts the integral
+by $-0.139\%$. The median absolute bin shift is $0.44\%$ and the maximum is
+$10.1\%$. The shifts exceed $\sigma_{\mathrm{stat}}$ in 43 of 205 bins and
+are below half the purity-based total standard deviation in every bin.
+Table~\ref{tab:estimators} gives the subtraction treatment for each
+reported result.
+
+Both systematic and statistical variations enter before the background
+correction. A systematic change to the simulated background enters through
+its varied weights or reconstructed selection, as applicable. In the
+statistical bootstrap, independent Poisson multiplicities for data, signal
+simulation, and background simulation enter each refit. Each unfolding uses
+the background correction formed from its own inputs, including a new sign
+fit when using the refined estimator. Appendix~\ref{app:covariance-construction}
+gives the ensemble definitions.
+
+In a matched, full-statistics LightGBM check in two dimensions, the ratios
+of $\sqrt{\operatorname{tr} C}$ for negative-weight to purity subtraction are
+$\nwSystRatio$ for the 187-universe systematic ensemble and $\nwStatRatio$ for
+the statistical ensemble with matched training seeds. The trace ratios
+quantify agreement only in the aggregate diagonal variance.
+
+A common shift from changing the subtraction cancels in a mean-centered
+covariance. If the change shifts the cross-section vector of member $u$ by
+$\delta_u$, the centered vector shifts by $\delta_u-\bar\delta$, where
+$\bar\delta$ is the mean shift within the systematic band or the bootstrap
+ensemble.
+
+The five-dimensional systematic check covers two individual variations at
+one unfolding iteration with the scikit-learn histogram-based learner. For the
+two-particle--two-hole variation, both treatments give an integrated cross
+section of $3.014\times10^{-38}\,\mathrm{cm}^2$ per nucleon at the reported
+precision. For the quasielastic axial-mass variation, the integral shifts by
+$-0.03\%$. The respective median bin ratios are 1.0005 and 0.9990. The
+five-dimensional background-inclusive closure tests probe bias separately
+(Sec.~\ref{sec:higher-dimensional-closure}).
+
+\subsection{Background treatment in other unbinned analyses}
+\label{sec:negweight-practice}
+
+Unbinned measurements have handled backgrounds through event selection,
+event weights, and systematic variations. H1 suppressed backgrounds to a
+negligible level with its selection, and LHCb applied track-by-track
+corrections before the unbinned detector unfolding~\cite{H1:2021wkz,LHCb:2022rky}.
+In its 24-observable $Z+$jets measurement, ATLAS assigned an uncertainty for
+the residual background, which was below
+$0.25\%$. The analysis and subsequent guidance describe adding negatively
+weighted simulated events to the measured class for larger
+backgrounds~\cite{ATLAS:2024jets,Canelli:2025guide}.
+In the full charged-particle phase-space measurement, ATLAS used negatively
+weighted background simulation to train a neural network whose outputs
+reweight data before unfolding~\cite{ATLAS:2026fullps}.
+OmniFold-HI models large backgrounds in the unfolding, while generative
+approaches can subtract backgrounds before correcting for acceptance and
+inefficiency~\cite{Falcao:2025backgrounds,Butter:2025genfold}.
+
+% PASS2:
+% No macros in the source for the 20 pseudo-experiments, 5.45-sigma shift,
+% bin edges (0.70, 0.85, 1.5, 2.0), data shifts (-0.139%, 0.44%, 10.1%),
+% 43 of 205 bins, 187 universes, five-dimensional checks (3.014 x 10^-38,
+% -0.03%, 1.0005, 0.9990), or 0.25% ATLAS background. These are source literals.
+% "Half" paraphrases the source's literal 0.497. The ATLAS count 24 is
+% spelled out in the original introduction and bibliography, with no macro.
+% The two totals print the macro mantissas in the prose's common 10^-38 units.
+% All local labels and reference targets are accounted for. The former
+% propagation and production subsections share the merged comparison number.
+% The restored table uses the source's short caption as its visible caption.

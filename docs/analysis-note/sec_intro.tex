@@ -1,76 +1,87 @@
+\section{Introduction}
+\label{sec:part-intro}
 \label{sec:intro}
-% Compression (DECISION-20261119c; COMPRESSION-OUTLINE.md, Part 1), director-helper-3: the part opens with the three
-% questions and their short answers; the executive summary (sec_execsummary.tex) is absorbed here and in Part 6, and the
-% reader's guide is cut. The answers restate results stated in the body, each at the home named by its pointer.
-This note asks three questions of MINERvA's public medium-energy neutrino data, unfolded without binning by OmniFold.
-Each test's criterion was specified in writing before its result was read, unless the test is labeled descriptive or App.~\ref{app:devhistory} lists it as changed after results were seen.
-The test table (Table~\ref{tab:test-index}) marks which tests are descriptive and which choices were made after results were seen.
 
-\paragraph{Does unbinned OmniFold reproduce MINERvA's published two-dimensional muon cross section?}
-In the muon's transverse and longitudinal momenta, the unbinned result reproduces the published integrated cross section within about one percent, with a correlated shape difference whose source has not been identified (\S\ref{sec:part-q1}).
-Whether it is ready for publication as a measurement has not been established.
-Two analysis choices were made after the comparison with the publication was known (\S\ref{sec:method-config}, App.~\ref{app:devhistory}).
-The comparison is therefore descriptive and supplies no blind validation.
-It is not an independent test of the method.
+\subsection{Motivation and previous measurements}
 
-\paragraph{What does extending the unfolding to five observables give, and where does it stop being reliable?}
-Adding the available hadronic energy, the momentum transfer and the hadronic invariant mass gives central values in three, four and five dimensions.
-Integrated over the added observables, their normalizations agree with the lower-dimensional results.
-The three-dimensional check compares two estimator configurations (\S\ref{sec:3d-anchor}, Table~\ref{tab:3d-configs}).
-A cross section on sixteen five-observable cells is given only as an illustration (\S\ref{sec:part-q2}).
-It stops being reliable in three places (\S\ref{sec:part-q3}).
-Fake-data tests find residual bias beyond their criteria at two truths.
-Rounding-level changes of the inputs move the result beyond a stability criterion, which was pre-specified (Table~\ref{tab:test-index}).
-Data from different run periods are mutually inconsistent before unfolding, for a reason not identified.
-The calibrated tests of generator predictions built on it are stated with their conditions in \S\ref{sec:joint5d}.
+Accelerator-based neutrino oscillation experiments infer oscillation parameters from the
+energy dependence of event rates. Both the probability that a neutrino interacts and the
+relation between its energy and the observed final state depend on neutrino--nucleus
+scattering. At energies of a few GeV, quasielastic scattering, resonance production, and
+deep-inelastic scattering populate overlapping regions of observed phase space. Nuclear
+effects further modify the particles available for energy reconstruction. Uncertainties
+in these processes affect the interpretation of data from T2K, NOvA, Hyper-Kamiokande,
+and DUNE~\cite{T2K:2023osc,NOvA:2021nfi,HyperK:2018design,DUNE:2020jqi}. Differential
+cross sections constrain the interaction models used to predict these rates and
+reconstruct neutrino energies.
 
-\paragraph{What do the validation tests show about the method's bias, stability and uncertainty?}
-No reported interval has validated coverage.
-The procedure's two-observable covariance under-covers jointly at both held-out tunes.
-A five-dimensional coverage test failed its futility criterion, and neither coverage test of the sixteen cells gives a validated result (\S\ref{sec:part-q3}).
-Section~\ref{sec:part-validity} gives, for each result, what is reported, what is validated and its main limit.
-% Search: coverage of the sixteen-cell intervals; validated intervals of the sixteen-cell result; held-out-tune coverage (homes: sec:fived16-fd, sec:coverage-tunes, sec:coverage-5d)
-% absence-ok: the opening answers restate the body's limitation statements at sec:results-compare ("has not been identified"), sec:method-config (the two post hoc choices), sec:coverage-tunes, sec:coverage-5d and sec:fived16-fd; "Whether it is ready ... has not been established" is limitations-register row n01, moved here verbatim from the executive summary.
+MINERvA measured neutrino--nucleus scattering on several targets in the low- and
+medium-energy configurations of Fermilab's NuMI
+beam~\cite{MINERvA:2013zvz,MINERvA:2016iqn}. Using the medium-energy neutrino exposure,
+with a mean neutrino energy of about $6\,\mathrm{GeV}$, Ruterbories \emph{et al.}
+reported the inclusive charged-current (CC) $\nu_\mu$ cross section on hydrocarbon,
+differential in the muon momentum transverse ($p_T$) and longitudinal ($p_\parallel$) to
+the beam~\cite{MINERvA:2021owq}. That measurement used D'Agostini iterative Bayesian
+unfolding (IBU) with a binned detector-response matrix~\cite{DAgostini:1994fjx}.
 
-\paragraph{The data and the published measurement.}
-MINERvA (Main Injector Experiment for $\nu$-A) is a dedicated neutrino--nucleus scattering experiment in Fermilab's NuMI beamline, immediately upstream of the MINOS near detector~\cite{MINERvA:2013zvz}. During roughly a decade of operation ending in 2019, it recorded high-statistics samples in low-energy and medium-energy (ME) beam configurations~\cite{MINERvA:2016iqn}. It measures neutrino--nucleus cross sections on a range of nuclear targets in the few-GeV region most relevant to accelerator-based oscillation experiments. In that region, these cross sections and their nuclear effects are a leading systematic uncertainty for T2K~\cite{T2K:2023osc}, NOvA~\cite{NOvA:2021nfi}, Hyper-Kamiokande~\cite{HyperK:2018design}, and DUNE~\cite{DUNE:2020jqi}. This analysis uses the public ME FHC CC-inclusive data product (\S\ref{sec:experiment}).
+Binned implementations of IBU, singular-value decomposition, and TUnfold require a
+response defined on a grid whose size grows with the number of
+observables~\cite{Adye:2011gm,Hocker:1995kb,Schmitt:2012kp}. Machine-learning approaches
+to unbinned unfolding use individual events~\cite{Arratia:2021otl,Huetsch:2024quz,Canelli:2025guide},
+either by reweighting a reference simulation or by generating unfolded
+samples~\cite{Datta:2018mwd,Bellagente:2019uyp,Bellagente:2020piv,Backes:2022vmn}.
+OmniFold iteratively reweights simulated events using likelihood ratios estimated by
+classifiers~\cite{Andreassen:2019cjw,Andreassen:2021zzk,Chan:2023tbf}. Additional
+observables enter as classifier inputs, and the resulting event weights can be used to
+form different projections or reporting bins without repeating the unfolding.
 
-The MINERvA ME FHC charged-current (CC) inclusive double-differential cross section in muon transverse and longitudinal momentum, $d^{2}\sigma/(d\pT\,d\pPar)$, was published by Ruterbories \emph{et al.} \cite{MINERvA:2021owq} using D'Agostini iterative Bayesian unfolding (IBU)~\cite{DAgostini:1994fjx} with a binned response matrix. We reproduce it with \emph{unbinned} OmniFold~\cite{Andreassen:2019cjw, Andreassen:2021zzk}.
+H1 published the first applications to collider data, unfolding eight-dimensional
+lepton--jet correlations and later jet substructure at high $Q^2$ in deep-inelastic
+scattering~\cite{H1:2021wkz,H1:2023fzk}. LHCb measured identified-hadron distributions
+in $Z$-tagged jets~\cite{LHCb:2022rky}, and ATLAS unfolded 24 $Z$+jets observables
+simultaneously and subsequently reported a measurement of the full charged-particle
+phase space~\cite{ATLAS:2024jets,ATLAS:2026fullps}. Recent work has also addressed
+background treatment in reweighting and generative
+approaches~\cite{Falcao:2025backgrounds,Butter:2025genfold}.
 
-Applied to the data, the five-observable estimator gives a cross section on the sixteen cells of \S\ref{sec:fived16} in $\pT$, $\pPar$, $\Eavail$, $q_{3}$ and $W$, as illustrative output, not for fitting or for constraining models.
-% [P] held verbatim: the product-level use clause, moved verbatim from the executive summary (framing-map A13; DECISION-20261117-joseph-note-measurement.md item 6).
+Huang \emph{et al.} gave the first neutrino cross-section application of OmniFold,
+comparing an unfolding of muon kinematics in simulated T2K near-detector data with
+traditional binned methods~\cite{Huang:2025omnifold}.
 
-\paragraph{Unbinned unfolding and its applications.}
-Machine-learning methods unfold without binning (overviews in Refs.~\cite{Arratia:2021otl,Huetsch:2024quz} and cross-experiment guidance in Ref.~\cite{Canelli:2025guide}). They either reweight a starting simulation iteratively or generate new samples directly with a neural network~\cite{Datta:2018mwd,Bellagente:2019uyp,Bellagente:2020piv, Backes:2022vmn}. OmniFold~\cite{Andreassen:2019cjw,Andreassen:2021zzk,Chan:2023tbf} is the most widely adopted reweighting method. Both lift the binned-response limitations of widely-used classical methods~\cite{Adye:2011gm} such as IBU, the SVD method~\cite{Hocker:1995kb}, and TUnfold~\cite{Schmitt:2012kp}.
+\subsection{Objectives and scope}
 
-H1 published the first real-data applications in deep-inelastic scattering. The first unfolded lepton--jet correlations simultaneously in eight dimensions~\cite{H1:2021wkz}, and jet substructure at high $Q^{2}$ followed~\cite{H1:2023fzk}. LHCb unfolded identified-hadron distributions in $Z$-tagged jets~\cite{LHCb:2022rky}, and ATLAS performed a simultaneous unbinned measurement of twenty-four $Z+$jets observables~\cite{ATLAS:2024jets}. Ref.~\cite{Canelli:2025guide} collects these and other applications and distills cross-experiment practice. ATLAS later reported an unbinned measurement of the full charged-particle phase space~\cite{ATLAS:2026fullps}.
+Here we apply OmniFold to MINERvA's public data.
+The first objective is to benchmark OmniFold against MINERvA's published
+double-differential cross section $d^2\sigma/(dp_T\,dp_\parallel)$ in the same signal
+phase space. The benchmark compares the integrated normalization and the differential
+shape. The two estimates share data and sources of systematic uncertainty, and their
+cross-covariance is unavailable. Two analysis choices were made after the comparison
+with the publication was known. The comparison is therefore descriptive and is not a
+blind validation. The second objective
+is to test the extension to five observables by adding, in sequence, the available
+hadronic energy $E_{\mathrm{avail}}$, the magnitude of the three-momentum transfer
+$q_3$, and the hadronic invariant mass $W$. The extension tests whether an estimator can
+recover correlations among the observables and support uncertainties on the resulting
+joint distribution.
 
-% The background-practice paragraph moved verbatim to App. B (H3-BG, the director's Part 1 ruling, 2026-11-19).
-How these analyses treat backgrounds is summarized in App.~\ref{sec:negweight-practice}. It includes recent work on backgrounds in OmniFold-HI~\cite{Falcao:2025backgrounds} and generative unfolding~\cite{Butter:2025genfold}.
+The two-dimensional OmniFold result reproduces the published integrated cross section
+within about $1\%$, with a correlated shape difference of unidentified origin. Its
+covariance procedure under-covers at both held-out simulation tunes. The
+three- and four-dimensional central values give integrals consistent with the
+lower-dimensional results and are reported without covariances. Residual bias,
+numerical instability, and unvalidated interval coverage limit the five-dimensional
+outputs to illustrative use.
 
-Closest to this analysis is the study of Huang \emph{et al.}~\cite{Huang:2025omnifold}, the first application of OmniFold to a neutrino cross section. It is a mock-data unfolding of muon kinematics on the public T2K near-detector simulated dataset, benchmarked against traditional binned approaches.
+Section~\ref{sec:part-method} describes the data, observables, and unfolding procedure,
+and Sec.~\ref{sec:part-2d} presents the two-dimensional benchmark.
+Section~\ref{sec:part-higher-dimensional} examines the higher-dimensional estimators and
+their validation, and Sec.~\ref{sec:part-illustrative-multidimensional} presents the
+illustrative multidimensional results and generator comparisons. The validity table in
+Sec.~\ref{sec:result-validity} (Table~\ref{tab:validity}) summarizes the supported uses
+and principal limitations of each result.
 
-The present work instead unfolds \emph{real} MINERvA data to an absolutely normalized cross section. It compares the result directly with a published binned measurement of the same data (\S\ref{sec:results}).
-% Note round 1 (2026-11-08): the note's own disclosure (sec:method-config) and DECISION-20261105-joseph-765-abstract-and-2d-disclosure.md:61-63
-% ("not an independent test of the method") and DECISION-20261105-joseph-ar23-stop-external-and-765-phrases.md:86-87
-% ("a descriptive comparison, not a blind validation") @ b551b05f.
-
-\paragraph{Why unbinned.}
-First, OmniFold learns event weights in the full observable space and histograms only the final result. Reported bins can be chosen or refined after unfolding without rerunning it. The \resFiveAxis{} (Table~\ref{tab:config-key}) and its five-axis covariance, and the extended-fiducial value, use the binned purity weight, a per-reco-bin $(D-B)/D$ weight fixed \emph{before} training.
-% Accuracy fix (unscored; director ruling 2026-10-26): scope of the purity weight as in sec_method.tex
-% sec:method-algo and app_negweight.tex "Scope of the numbers"; the earlier text made purity the general exception.
-
-Second, additional observables enter as input features, without multiplying response-matrix bins.
-
-Third, OmniFold regularizes through model capacity and through an iteration count, which it shares with IBU.
-
-\paragraph{Scope and organization.}
-The results hold for one implementation of unbinned OmniFold, applied to one data set, and for the configurations, observables and deformations tested. The generator tests of \S\ref{sec:joint5d} evaluate hybrid null hypotheses and add no reportable uncertainty. Full-event unfolding with point-cloud transformer (PET) representations is diagnostic method development, documented in a companion note (App.~\ref{sec:pet}). No result in this note depends on it.
-% Register round n1 (R-N5): the note's scope, stated once. The PET sentence gathers the former Analysis-strategy sentence and
-% the executive summary's PET items ("under development and documented separately"; "no result in this note depends on it").
-
-Section~\ref{sec:part-method} gives the data, the simulation and the method, Sections~\ref{sec:part-q1}--\ref{sec:part-q3} answer the three questions, and Section~\ref{sec:part-validity} tabulates each result with its validity. The records document gives the introduction's further detail on MINERvA's running, the unbinned method and the appendices.
-% Homes of the absence claims above: coverage test of the quoted 2D block (sec_systematics.tex sec:uq-boot: "has had no coverage test"; sec_validation.tex
-% sec:coverage: "the quoted block has not been tested"); validated coverage above 2D (sec:coverage-5d: "No frequentist
-% coverage is therefore claimed"; sec_3d.tex lead: no 3D or 4D covariance).
-% Search: held-out simulation; held-out-MC re-test; S1 has not been coverage-tested; coverage statement about Q_R (the search of its home, sec_systematics.tex sec:uq-boot) @ ddf16f10
+% PASS2:
+% Retained literal values: 6 GeV is printed as \SI{6}{GeV} in the source's
+% data section. The source introduction spells out twenty-four and one percent.
+% Unresolved numbers, labels, or references: none.
+% The source introduction has no figure or table environments to restore.

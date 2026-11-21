@@ -7,6 +7,9 @@
 \newcommand{\notesec}[1]{the analysis note, \S``#1''}
 \newcommand{\petsec}[1]{the companion PET note, \S``#1''}
 
+% Caption-to-table gap (Joseph, 11-21): captions sit above tables, so leave space before the top rule.
+\usepackage{caption}
+\captionsetup[table]{skip=6pt}
 \usepackage[margin=1in]{geometry}
 \usepackage[T1]{fontenc}      % proper hyphenation + line breaking
 \usepackage{amsmath,amssymb}

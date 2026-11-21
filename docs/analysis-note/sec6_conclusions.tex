@@ -1,0 +1,146 @@
+\section{Discussion and conclusions}
+\label{sec:discussion-and-conclusions}
+
+\subsection{What the measurements and tests establish}
+\label{sec:result-validity}
+
+Table~\ref{tab:validity} gives the scope of each result.
+
+\begingroup
+\setlength{\LTcapwidth}{\textwidth}
+\begin{xltabular}{\textwidth}{@{}>{\footnotesize\RaggedRight\arraybackslash\hsize=0.80\hsize}X
+                                 >{\footnotesize\RaggedRight\arraybackslash\hsize=1.00\hsize}X
+                                 >{\footnotesize\RaggedRight\arraybackslash\hsize=0.95\hsize}X
+                                 >{\footnotesize\RaggedRight\arraybackslash\hsize=1.25\hsize}X@{}}
+  \caption{Reported results, supported uses, and principal validation limits.
+  Table~\ref{tab:higher-dimensional-validation} identifies the estimators
+  and criteria used in the higher-dimensional validation tests.}
+  \label{tab:validity}\label{tab:result-status}\\
+    \toprule
+    Result & Reported quantities & Supported use & Principal limit \\
+    \midrule
+    \endfirsthead
+    \toprule
+    Result & Reported quantities & Supported use & Principal limit \\
+    \midrule
+    \endhead
+    \bottomrule
+    \endlastfoot
+    2D muon cross section &
+    \lrval{q-ncells} bin values and $Q_R$, with prior-shape dependence reported separately. &
+    Quantitative benchmark of the integral with propagated uncertainties and
+    descriptive comparisons of shape. &
+    Shared inputs limit the published-result comparison. The statistical block
+    lacks a coverage test, and the evaluated covariance under-covers jointly at
+    both held-out tunes (Sec.~\ref{sec:part-2d}). \\
+    \addlinespace
+    3D and 4D unfoldings &
+    Central values only, with $E_{\mathrm{avail}}$ and then $q_3$ added. &
+    Normalization and projection checks. &
+    Joint recovery remains unestablished, and the central values alone support
+    no significance for generator comparisons
+    (Sec.~\ref{sec:higher-dimensional-extension}). \\
+    \addlinespace
+    Exploratory five-axis unfolding &
+    Purity-based central values and $C_Z$. &
+    Qualitative shape comparisons and use of $C_Z$ as a scale for diagnostics. &
+    The covariance fails the training-seed tolerance. Inference from these
+    central values would require a validated estimator and covariance
+    (Secs.~\ref{sec:higher-dimensional-closure}
+    and~\ref{sec:higher-dimensional-calibration}). \\
+    \addlinespace
+    Sixteen-cell unfolding &
+    Coarse five-observable integrals and $C_{\mathrm{rep}}$. &
+    Illustration and descriptive generator comparisons only. &
+    The estimator fails fake-data bias and rounding-stability criteria. Model
+    tuning or constraints would require resolving these failures and validating
+    coverage with the reported covariance
+    (Secs.~\ref{sec:higher-dimensional-prior}
+    and~\ref{sec:higher-dimensional-calibration}). \\
+    \addlinespace
+    Joint generator tests &
+    Decisions on ten hybrid rate-and-shape or shape-only hypotheses. &
+    Tests of the specified predictions within the calibrated simulation model. &
+    The tests depend on six conditions. Physical exclusions of generators
+    are outside the scope of the hybrid tests. The false-rejection rate for
+    null data processed as in the experiment remains unmeasured. The NuWro
+    rate-and-shape decision is sensitive to the hydrocarbon target correction
+    (Sec.~\ref{sec:sixteen-cell-generator-comparison} and Appendix~\ref{app:joint-generator-tests}). \\
+\end{xltabular}
+\endgroup
+
+The two-dimensional benchmark reproduces the published MINERvA integral to
+about $1\%$, with a correlated shape difference. The five-observable
+central values preserve the normalization and agree with the
+lower-dimensional results in the tested projections. At nominal truth,
+refined background subtraction removes most of the purity bias in the
+affected muon bins and, in a separate test, at high $W$. Recovery of the
+joint five-observable distribution remains unestablished.
+
+\subsection{Limitations and implications for multidimensional unfolding}
+\label{sec:multidimensional-limitations}
+\label{sec:limitations}
+\label{sec:execsummary-limitations}
+
+Agreement in the total rate and in marginal projections does not establish a
+reliable joint unfolded distribution. A shift of cross section between
+hadronic cells within a muon quadrant cancels in the quadrant sum. The
+five-axis $W$ injection illustrates the same problem in simulation: the
+$W$ marginal meets its recovery criterion even as the joint
+$(E_{\mathrm{avail}},W)$ cells in the peak interval fall below their targets.
+Joint validation must probe changes in correlations at the resolution of
+the reported result.
+
+The recovery of those correlations depends on how much information the
+measured inputs carry about truth. Reconstructed $W$ is fixed by the other
+inputs, so separating events in true $W$ relies on the simulated mapping from
+reconstructed variables to truth. The missed-event correction adds a
+dependence on the simulated acceptance. It transfers weights learned on
+selected events to missed events at the same truth inputs and relies on
+extrapolation in regions with very low acceptance
+(Sec.~\ref{sec:omnifold-implementation}).
+
+The sixteen-cell result is sensitive to regularization and to the starting
+distribution. It retains part of the prior at both the GiBUU-like truth and
+the synthetic $q_3$ tilt, and its cell integrals differ from those of binned
+iterative Bayesian unfolding on the same inputs. Coarsening the grid leaves
+appreciable prior dependence. Rounding-level changes also move the central
+values beyond the prespecified tolerance.
+
+\phantomsection
+\label{sec:usage}\label{sec:limitations-use}
+The covariances propagate the specified variations, and coverage of the full
+reported covariances remains unvalidated. The scale of the run-period term
+and its ability to account for bias from pooling periods require independent
+checks. Linear projections of reported bins inherit the limitations of the
+input covariance. For inference on new observables, treating the unfolded
+events as independent in a likelihood can understate uncertainty because
+the fit correlates their weights.
+
+\subsection{Outlook}
+\label{sec:unfolding-outlook}
+\label{sec:summary}
+
+The main open steps are an end-to-end coverage test of the full reported
+covariance, including its response and run-period terms; identifying the
+origins of the run-period step and of the 2D shape difference with MINERvA;
+and validating the transfer of weights to events missed by the selection.
+Related exploratory studies, of an extended fiducial region, point-cloud
+event representations, and a proposed detector-response closure, are
+documented in the analysis records~\cite{NoteRecords2026}.
+This study shows that unbinned unfolding can reproduce the normalization of
+a published neutrino cross-section measurement. A five-observable
+measurement requires demonstrating recovery and uncertainty coverage for
+the joint distribution at the reported resolution.
+
+% PASS2:
+% The source prints the integral agreement as "about one percent".
+% The equivalent literal 1\% is retained, along with the source's literal
+% dimension labels, test counts, and q_3 subscript. "Three related studies"
+% counts the items in the outlook paragraph and has no matching source macro.
+% The original summary/outlook label (sec:summary) is attached to Outlook.
+% The original usage labels are attached to the applicability paragraph in
+% the limitations subsection. The original top-level section wrapper was
+% not included, so any label on that wrapper could not be verified.
+% The restored xltabular compiled in a one-column article test. An optional
+% REVTeX preprint test stopped inside xltabular at \@acoll.
