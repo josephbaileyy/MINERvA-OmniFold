@@ -814,3 +814,14 @@ They have not been repeated for the quoted estimator.
 \subsubsection{From App. A, the exact-split shape distance}
 % From app_statmethods.tex:398 @e89694209; check-stage claims read
 For the exact-split cross-check, which as above is not recomputed for the LightGBM central value, with the paper's \texttt{TotalCovariance} (Jacobian-propagated) the shape $\chi^{2}/\mathrm{ndf}$ on $205$ bins is $\boxed{3.596}$: essentially the absolute-normalization $3.661$ \emph{minus} the contribution of overall scale. The total-cross-section ratio $\sigma_{\tot}^{\ours}/\sigma_{\tot}^{\paper} = 1.0111$ is a $1\%$ scale difference. The remaining residual comes from $\sim 1\%$ shape disagreement (median bin ratio $1.0064$; $94\%$ of bins within $10\%$ of the paper).
+
+\subsection{Qualifications from the second check-stage claims read (2026-11-21)}
+% Moved verbatim from the previous note (draft e89694209); LR-K ids in history-cuts/move-manifest-lr-check-20261121.tsv.
+
+\subsubsection{From App. A, the paired rounding diagnostic}
+% From app_statmethods_nd.tex:51 @e89694209; check-stage claims read, second round
+This finite-sample diagnostic supports the construction without proving coverage or independence from every physical uncertainty.
+
+\subsubsection{From App. A, the fixed-truth coverage rescoring}
+% From sec_validation.tex:102 @e89694209; check-stage claims read, second round
+The rescoring is post hoc and partly circular, because the band's MC part reuses the toys' resampling mechanism.

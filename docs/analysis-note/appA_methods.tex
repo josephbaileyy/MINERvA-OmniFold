@@ -185,8 +185,8 @@ count is 198 at $10^{-10}\lambda_{\max}$. The direct inverse of $Q_R$ gives a
 quadratic distance of 21.96 per reported bin against the published central
 value, compared with \chiPaper{} using the published covariance. The latter has a
 nearly diagonal, full-rank statistical block that provides variance in all
-directions. Even at full rank, no single OmniFold-only distance is stable under
-the choice of regularizer. For numerical comparisons based on $Q_R$ alone, the truncated
+directions. Even at full rank, a defensible single OmniFold-only distance is out
+of reach, for a statistical-precision reason. For numerical comparisons based on $Q_R$ alone, the truncated
 inverse uses the positive modes above $10^{-10}\lambda_{\max}$. In that
 convention the distance is the sum of squared residual amplitudes along
 the retained eigenvectors divided by their eigenvalues. Discarding
@@ -322,6 +322,7 @@ uses Poisson pseudo-data and scores the fractions within one and two band
 standard deviations of the fixed, unfluctuated truth. A band-to-scatter ratio
 between 0.9 and 1.1 under a Gaussian reference sets the prespecified windows
 $[\covTwoDWinOneLo,\covTwoDWinOneHi]$ and $[\covTwoDWinTwoLo,\covTwoDWinTwoHi]$. The score pools toy--bin containments.
+Coverage pooled over bins is not a simultaneous probability that every bin is covered.
 In \covTwoDNtoy{} pseudo-experiments the one-standard-deviation score is \covTwoDCOne{} and
 the two-standard-deviation score is \covTwoDCTwo{}. The latter falls below its
 acceptance window.
@@ -594,7 +595,8 @@ descriptive scan replacing the coefficient \jtMoneKappa{} on $\delta_{\mathrm{fi
 with $\kappa$, all ten decisions remain determinate rejections at the
 sampled values through $\kappa=5.25$. The scan quantifies sensitivity along
 the measured refinement direction, with the residual below the fine grid
-unbounded by this check. The matched projection check repeats the
+unbounded by this check. The fine-grid convergence check has not shown
+convergence. The matched projection check repeats the
 calibration on the two $3\times 3$ projections, onto the muon momenta and
 onto $(E_{\mathrm{avail}},W)$, both with the original
 shifts projected and with shifts re-estimated on each projection. Its
@@ -732,7 +734,7 @@ the original targets, so it is descriptive for the hydrocarbon predictions.
   Shifted recoil response & Sixteen-cell estimator at nominal truth with signal only &
   Descriptive, with no prespecified threshold & Largest change is $\fvval{ct3b-species-max}\sigma$ for deposit variations and $\fvval{ct3b-w2b-max}\sigma$ for the whole-recoil scale. \\
   \addlinespace[1.5pt]
-  Reporting-resolution precision & Sixteen-cell estimator on two joint grids and the $(E_{\mathrm{avail}},W)$ plane &
+  Reporting-resolution precision & Sixteen-cell estimator and its admissible settings on two joint grids and the $(E_{\mathrm{avail}},W)$ plane &
   Prespecified width, model-sensitivity, and recovery targets & All three grids miss the targets. \\
   \addlinespace[1.5pt]
   \hypertarget{validation-sixteen-bias}{}Fake-data bias &
@@ -763,7 +765,7 @@ the original targets, so it is descriptive for the hydrocarbon predictions.
   \hypertarget{validation-sixteen-coverage}{}Second sixteen-cell coverage test & $C_{\mathrm{total}}$ at both held-out tunes &
   Joint minimum of \fvval{ll5d-kjoint-all} in \fvval{ll5d-ntoys} draws. Descriptive because part of the procedure was fixed after an early stop. & Joint undercoverage in both band variants at both tunes. \\
   \addlinespace[1.5pt]
-  \hypertarget{validation-sixteen-rounding}{}Rounding-level stability & Sixteen-cell estimator on data, with purity and ensemble-average controls &
+  \hypertarget{validation-sixteen-rounding}{}Rounding-level stability & Sixteen-cell estimator on data, with low-capacity refinement and ensemble-average controls &
   Prespecified median and maximum shift tolerances of $\fvval{ens1-bar-median}\sigma$ and $\fvval{ens1-bar-max}\sigma$ & Fails on data. Averaging passes on tested pseudo-data but worsens GiBUU-like closure. \\
   \addlinespace[1.5pt]
   Rounding variability in the bootstrap & Pairs with the same Poisson draws, with and without input rounding perturbations &

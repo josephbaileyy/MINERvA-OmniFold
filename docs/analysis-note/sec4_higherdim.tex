@@ -215,7 +215,7 @@ interval are $2.2\%$ to $9.4\%$ below their targets, and some injected
 strength appears in adjacent mass bins. The
 \hyperlink{validation-nd-bumps}{marginal bump} and
 \hyperlink{validation-nd-w-bump}{$W$ bump} rows of
-Table~\ref{tab:validation-inventory} give the scoring criteria.
+Table~\ref{tab:validation-inventory} give each test's criterion or descriptive status.
 Appendix~\ref{app:comparison-closure-coverage} gives the injected shapes.
 
 These closure tests reweight simulated truth events and their reconstructed
@@ -232,8 +232,9 @@ refinement reduces the absolute residuals to $0.11\%$--$0.24\%$ in that column
 and to at most $0.39\%$ elsewhere in the plane, although some joint cells
 remain up to $1.0\%$ high, up to 14 standard errors, and fail the nominal
 closure criterion (Fig.~\ref{fig:bkg-residual-note}). The sixteen-cell
-estimator gives a largest deviation of 2.7 standard errors in 40
-pseudo-experiments and a pooled statistical pull width of 1.02. The pooled
+estimator passes the nominal closure criterion in 40 fresh pseudo-experiments,
+with a largest deviation of 2.7 standard errors, and has a pooled statistical
+pull width of 1.02. The pooled
 test does not establish coverage for every integral. The
 comparison is descriptive because no common acceptance criterion was
 set in advance for the three configurations.
@@ -276,7 +277,7 @@ persist in signal-only repeats.
 
 The sixteen-cell estimator recovers a median of $\fvval{rec-g-fmed}\%$ of the injected
 GiBUU-like change across supported cells of the $(E_{\mathrm{avail}},W)$
-plane with injected changes above $2\%$. For three other generator-derived shapes, the median recovered
+plane with injected changes larger than $2\%$ in magnitude. For three other generator-derived shapes, the median recovered
 fractions range from $\fvval{rec-w-fmed-lo}\%$ to $\fvval{rec-w-fmed-hi}\%$, with individual cells overshooting
 or moving opposite to the injected change (Appendices~\ref{app:bias-prior-stability}, \ref{app:reproducibility-definitions}, and \ref{app:choices-after-results}).
 In noise-free pseudo-data, raising the iteration count from five to
@@ -343,7 +344,8 @@ For the difference $\Delta$ we obtain
 $\Delta^{\mathsf T}C_\Delta^{-1}\Delta=\lrval{rg1-T}$, compared with calibrated
 \fpeval{100*\lrval{rg1-lev1}}th and \fpeval{100*\lrval{rg1-lev2}}th null percentiles of \lrval{rg1-bar1} and \lrval{rg1-bar2}. The covariance
 $C_\Delta$ propagates statistical, weight-only systematic, and
-normalization variations through both estimates. No uncertainty term is
+normalization variations through both estimates, but not the model, lateral,
+response, or run-period terms. No uncertainty term is
 added for this dependence.
 
 \label{sec:3d-classifier}
@@ -419,7 +421,7 @@ integrals, the $E_{\mathrm{avail}}$--$W$ integrals and their sum, and the
 total rate. The \hyperlink{validation-sixteen-rounding}{rounding-level stability row}
 gives the tolerances. The test perturbs each stored input by up to half a
 single-precision unit in the last place and holds fine-grid bin membership
-fixed. The purity baseline gives a median of 0.8 and a maximum of 2.5
+fixed. The \estLowCap{} gives a median of 0.8 and a maximum of 2.5
 (Appendix~\ref{app:bias-prior-stability}). An
 ensemble-averaged variant passes the stability test on pseudo-data, with
 shifts of \fvval{ens1-median} at the median and \fvval{ens1-max} at most, but worsens closure for the
@@ -481,7 +483,7 @@ results of this section, with the estimator each test applies to.
     Large joint residuals persist with signal only. \\
     \addlinespace[2pt]
     Reporting-resolution precision (prespecified) &
-    Sixteen-cell estimator on three diagnostic grids &
+    Sixteen-cell estimator and its admissible settings on three diagnostic grids &
     Prior sensitivity exceeds the $5\%$ target on all three. &
     Coarsening leaves appreciable model dependence. \\
     \addlinespace[2pt]
