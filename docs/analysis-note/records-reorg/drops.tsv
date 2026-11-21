@@ -1,0 +1,15 @@
+kind	key	reason
+line	\noindent This document holds the records that the analysis note cites: the provenance of the repository records	The old opening paragraph (O1): it describes Sections R1--R4 as the October move; replaced by records-reorg/opening.tex
+line	behind its statements, the fixed identities and the construction and audit record of the five-axis covariance, the	The old opening paragraph (O1): it describes Sections R1--R4 as the October move; replaced by records-reorg/opening.tex
+line	test-suite discipline of the production code, and the note's audit trail of superseded values and withdrawn results.	The old opening paragraph (O1): it describes Sections R1--R4 as the October move; replaced by records-reorg/opening.tex
+line	It is built from the same sources as the note, at the same commit, and is not posted with it. Sections R1--R4 are the	The old opening paragraph (O1): it describes Sections R1--R4 as the October move; replaced by records-reorg/opening.tex
+line	note's former appendix text, moved without edits; since then Section R1 has had one pointer retargeted and six	The old opening paragraph (O1): it describes Sections R1--R4 as the October move; replaced by records-reorg/opening.tex
+line	entries added, each recorded in the records-move ledger or the round record that made it. Section~\ref{sec:rix}, the estimator registry and the index of every committed	The old opening paragraph (O1): it describes Sections R1--R4 as the October move; replaced by records-reorg/opening.tex
+line	result receipt, is not moved text: it is generated from the repository by \texttt{tools/registry/results\_index.py}	The old opening paragraph (O1): it describes Sections R1--R4 as the October move; replaced by records-reorg/opening.tex
+line	and is regenerated, never edited. Section, table, figure and equation numbers that begin with R are	The old opening paragraph (O1): it describes Sections R1--R4 as the October move; replaced by records-reorg/opening.tex
+line	this document's own; every other number, such as a section, appendix, table, figure or equation number with no R,	The old opening paragraph (O1): it describes Sections R1--R4 as the October move; replaced by records-reorg/opening.tex
+line	is the analysis note's, in the note built from the same commit.	The old opening paragraph (O1): it describes Sections R1--R4 as the October move; replaced by records-reorg/opening.tex
+line	These are the record parts of the note's appendix on the result package and reproduction limits	Framing sentence of the October move's result-package or codebase stub; Section R10 now holds both files
+line	(App.~\ref{app:release}).	Framing sentence of the October move's result-package or codebase stub; Section R10 now holds both files
+line	This is the record part of the note's appendix on the codebase layout and terminology	Framing sentence of the October move's result-package or codebase stub; Section R10 now holds both files
+line	(App.~\ref{app:codebase}).	Framing sentence of the October move's result-package or codebase stub; Section R10 now holds both files
