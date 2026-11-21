@@ -1,0 +1,3 @@
+key	anchor	reason
+9b5ed5977f	The block has rank two, and with three period groups	Joseph, 2026-11-21 (flag a): the register row n21 prints in R6.2 (helper-3's move); this R3 copy, a lead-in, is not printed
+dda88c87d1	The public release cannot establish the origin of this difference	Joseph, 2026-11-21 (flag a): the register row n33 prints in R6.2 (helper-3's move); this R3 copy, a lead-in, is not printed

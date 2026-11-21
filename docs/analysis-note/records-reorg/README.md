@@ -61,8 +61,11 @@ probe failure set identical to the base's, pin, entry numbers (`--check`, `--che
 builds with 0 errors, 0 undefined, 0 multiply defined, no `??` (main_records 168 -> 145 -> 144 pp; 195 at the base,
 whose results index is no longer in the comparison because it is generated).
 
-Known, not acted on: the register sentences of n21 and n33 print twice in the records (R3, from the Part 3 move, and
-R6, from helper-3's `h3_rw`); the extended-fiducial study prints two headings (R4.8 wrapper, R4.9 its own).
+Joseph's rulings on the three flags (2026-11-21, via the rewrite helper and the director), branch
+`records/flags-20261121`: (a) n21 and n33 print once, in R6.2; their R3 copies, lead-ins kept printed only because
+they held the re-anchors, are demoted (`demote-leadin.tsv`); (b) the extended-fiducial study has one heading, R4.8
+(`toc.tsv`; `sec_fps.tex`'s own `\subsection` is a comment, its `\label{sec:fps}` kept); (c) n01 and n03 keep their
+text in R6.2, each followed by "Retired (Joseph, 2026-11-21, DECISION-20261121a)." (`inserts.tsv`).
 
 ## The invariance gate
 
@@ -85,6 +88,7 @@ titles are new text by design.
 | `demote.tsv` | blocks printed as comments (the seven lane preambles) |
 | `drops.tsv`, `cuts.tsv`, `carries.tsv` | the duplicate resolution, listed for Joseph in DROPPED.md |
 | `adds.tsv`, `opening.tex` | the new opening paragraph of `main_records.tex` |
+| `demote-leadin.tsv`, `inserts.tsv` | Joseph's rulings on the reorganized records (see Landed) |
 | `keep-leadin.tsv` | the five register rows whose re-anchor lies inside a lead-in (documentation; the test is the text itself) |
 | `keep-leadin-context.tsv` | Option B' (Joseph, 2026-11-21): the 42 lead-ins whose following sentence opens with an anaphor ("These are...", "It moves...") stay printed. `assemble` warns about any further such lead-in at a new base |
 
