@@ -118,6 +118,13 @@ READOUTS = {
     "t2ag18": (f"{FD}/fd/receipts-cov2d/g2r/t2a/run/t2a_g2r_G18.json", "b1310d44"),
     "cov2dar23": (f"{FD}/fd/receipts-cov2d/g2r/readout/AR23/score_g2r_AR23.json", "fb6d1f7f"),
     "cov2dg18": (f"{FD}/fd/receipts-cov2d/g2r/readout/G18/score_g2r_G18.json", "27374aab"),
+    # REGRADE (#1239, merged on main as 454028961; REGRADE-DECLARATION.md rev 2.1 and amendment 1, bound): the 2D and
+    # sixteen-cell coverage pseudo-experiments regraded against the full reported covariance. The 2D AR23 record
+    # (752c3f60) and the 2D G18 rerun under amendment 1 (cafa2a41; the first record's G18 entry is a STOP); the
+    # sixteen-cell record (a923a02e). Byte-identical copies of main's files, at main's paths.
+    "rg2d": (f"{FD}/fd/regrade-crep-20261121/run2d/regrade_2d.json", "98fa09b4"),
+    "rg2dg18": (f"{FD}/fd/regrade-crep-20261121/run2d-g18/regrade_2d_g18.json", "5c5d66bf"),
+    "rg16": (f"{FD}/fd/regrade-crep-20261121/run16/capture/regrade16.json", "df590558"),
     "rs1r0": (f"{FD}/fd/rounding-stability-20261106/receipts/full-a1/read/rs1_r0.json", "724f0c3a"),
     "rs1read": (f"{FD}/fd/rounding-stability-20261106/receipts/full-a1/read/rs1_read.json", "9938e168"),
     "runper": ("docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/lrows-g/g4-runperiod/runperiod_values.json", "f63074b1"),
@@ -220,9 +227,8 @@ LISTED_CLAIMS = [
     ("sec_q3_fived16.tex", "The fake-data bias therefore exceeds the stated thresholds", {"kind": "both"}),
     ("sec_fived16_gen.tex", "so the GiBUU comparison carries that limitation", {"kind": "both", "family": "gibuu"}),
     ("main_paper.tex", "at a GiBUU-like truth and at a synthetic momentum-transfer tilt find", {"kind": "count", "gibuu": 1, "also": ["q3"]}),
-    # main_note.tex: the abstract sentence re-declared when the note was reframed and its fake-data sentence resynced to the
-    # paper's (note round 1, N1 + N6; DECISION-20261108-joseph-note-framing-and-estimator-dependence.md, #947)
-    ("main_note.tex", "Fake-data studies at a GiBUU-like truth and at a synthetic momentum-transfer tilt find", {"kind": "count", "gibuu": 1, "also": ["q3"]}),
+    # main_note.tex's abstract no longer names the listed truths (the journal-voice rewrite, 2026-11-21), so its entry
+    # (note round 1, N1 + N6; #947) is retired; the paper's abstract above still carries the claim.
 ]
 
 
@@ -1420,6 +1426,41 @@ def mumax_values(d):
     return v
 
 
+def regrade_values(d):
+    """REGRADE: the coverage pseudo-experiments' mean chi2/ndf against C_T (the original grade) and the declaration's
+    R-chi2 reading M_full against C' (the tune-carried full reported covariance), the only reading wording may rest on
+    (REGRADE-DECLARATION.md sec. 4). 2D: one value per tune. Sixteen cells: the range over LL5D's four readings; the
+    original grade is LL5D's (ll5d-chi2ndf-*), which each evaluation's A0 reproduced."""
+    v = {}
+    for t, key in (("AR23", "rg2d"), ("G18", "rg2dg18")):
+        x = d[key]
+        assert x["schema"] == "regrade-crep/2d/1"
+        e = x["evaluations"][t]
+        r = e["R_chi2"]
+        assert e["status"] == "done" and e["C_MAP"] == "pass" and r["reading"] == "under-describes on average"
+        assert abs(r["M_full"] - (r["M_prime"] + r["tau"])) < 1e-9 * r["M_full"]
+        v[f"rg-2d-{t.lower()}-full"] = f"{r['M_full']:.1f}"
+    assert d["rg2d"]["evaluations"]["G18"]["status"] == "STOP", "G18 is read from the amendment-1 rerun only"
+    x = d["rg16"]
+    assert x["schema"] == "regrade-crep/16/1"
+    ev, full, orig = x["evaluations"], [], []
+    for t in ("g18", "ar23"):
+        lr = d["ll5d" + t]["evaluations"]
+        for r in ("minus2", "all"):
+            e = ev[f"{t}/{r}"]
+            q = e["R_chi2"]
+            assert e["status"] == "done" and e["A0"]["b"] and e["A0"]["c_reading"] == "equal"
+            assert all(e["A0"]["a"].values()) and all(e["A0"]["c"].values())
+            assert q["reading"] == "under-describes on average" and q["ndf"] == 16 and q["n"] == 300
+            assert abs(q["M_full"] - (q["M_prime"] + q["tau"])) < 1e-9 * q["M_full"]
+            full.append(q["M_full"])
+            orig.append(lr[f"{t}/{r}"]["grade"]["chi2_mean_over_ndf"])
+    v["rg-16-orig-min"], v["rg-16-orig-max"] = f"{min(orig):.1f}", f"{max(orig):.1f}"
+    v["rg-16-full-min"], v["rg-16-full-max"] = f"{min(full):.1f}", f"{max(full):.1f}"
+    assert max(full) < min(orig), "the regrade lowers every reading's mean"
+    return v
+
+
 def t2a_values(d):
     """Tier 2 (a): where the two-dimensional coverage test's chi2 sits, at each tune (descriptive; its label: no new
     verdict, no cause, no coverage statement at the data's point). split.*: mean chi2 = ebar' C+ ebar + tr(C+ S). by_rank:
@@ -1693,6 +1734,7 @@ def currency_values(d, base):
     v.update(vhalf_band_values(d))
     v.update(t2a_values(d))
     v.update(mumax_values(d))
+    v.update(regrade_values(d))
     v.update(t2b_values(d))
     v.update(e96d_values(d))
     v.update(rsn_values(d, base["cmodel-trace-gibuu"]))
