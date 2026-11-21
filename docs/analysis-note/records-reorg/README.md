@@ -6,8 +6,8 @@ This is the handoff for the reorganization of the records document (`main_record
 
 ## What it does
 
-The records files that hold text moved out of the note (`app_compression_records.tex` and the six
-`records_compression_*.tex`) were organized by the lane that moved them, mostly one heading per moved sentence.
+The records files that hold text moved out of the note (`app_compression_records.tex` and the seven
+`records_compression_*.tex`, including helper-3's `h3_rw`) were organized by the lane that moved them, mostly one heading per moved sentence.
 `records_reorg.py` cuts them into blocks (one per heading, each with its `%` comment lines), routes every block to a
 table of contents that follows the note, and writes one file per section:
 
@@ -36,7 +36,13 @@ python3 records_reorg.py inventory --out /tmp/inv.tsv            # every block, 
 python3 records_reorg.py assemble --phase D --rev BASE --out-dir .  # writes R1-R10, main_records.tex, the move manifest
 git rm app_compression_records.tex records_compression_*.tex
 python3 records_reorg.py check --phase D --base BASE             # the invariance gate (must PASS)
-python3 records_reorg.py rekey --write                           # limitations-export.tsv reanchor_file, ledger R: probes
+python3 records_reorg.py rekey --write --base BASE               # limitations-export.tsv reanchor_file, ledger R: probes,
+                                                                 # registry source columns (all bookkeeping; the checks
+                                                                 # that need them are file-keyed or cite file:line)
+(cd ../.. && git add -A docs/analysis-note docs/orchestration/registry \
+  && python3 tools/registry/check_registry.py --repoint \
+  && git add -A docs/orchestration/registry && python3 tools/registry/results_index.py --write \
+  && git add -A docs/analysis-note docs/orchestration/registry)   # repoint and the generator read the INDEX: stage first
 python3 check_note_records.py entry-numbers .                     # provenance entries become R11.n
 python3 records_reorg.py dropped --phase D --base BASE --out <path>/DROPPED.md
 ```
@@ -47,10 +53,22 @@ Then build `main_note` and `main_records` (`latexmk -g -pdf`), and run `limitati
 note structure, to be rewired at the end of the check stage); done for this branch means its failure set is
 identical to the base's.
 
+## Landed
+
+Base `ab0596ac3` (rewrite/journal-voice-20261121), merged at `fc13d84cc`; phase B `a9f23dfaa`, C `b3882a810`,
+D `26cb6d4f2`. Each phase commit passed: `check` against the base, `limitations_export.py --check` (90 rows), the
+probe failure set identical to the base's, pin, entry numbers (`--check`, `--check-aux`), and main_note / main_records
+builds with 0 errors, 0 undefined, 0 multiply defined, no `??` (main_records 168 -> 145 -> 144 pp; 195 at the base,
+whose results index is no longer in the comparison because it is generated).
+
+Known, not acted on: the register sentences of n21 and n33 print twice in the records (R3, from the Part 3 move, and
+R6, from helper-3's `h3_rw`); the extended-fiducial study prints two headings (R4.8 wrapper, R4.9 its own).
+
 ## The invariance gate
 
 `check --base` compares the printed lines (comments, heading commands, `\label` and `\input` removed; whitespace
-collapsed) of the whole records closure at the base with the working tree. Every base line must still print, or be
+collapsed) of the whole records closure at the base with the working tree, leaving out the generated files
+(`records_entry_numbers.tex`, `records_results_index.tex`, `records_estimators.tex`, `records_earlier_labels.tex`). Every base line must still print, or be
 declared (drop, demote, lead-in, cut) and then appear as a comment. Every new printed line must be declared
 (`adds.tsv`, `carries.tsv`). Every base comment line must survive. Every register re-anchor that printed must still
 print. A re-wrapped line fails, because it is one lost line and one new line. Headings are not compared: run-in
