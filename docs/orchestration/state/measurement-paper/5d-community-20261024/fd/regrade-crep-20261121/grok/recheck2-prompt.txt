@@ -1,0 +1,5 @@
+You are a read-only statistical reviewer. Do NOT modify any file except your single report. Never write anywhere outside the current directory. Write your report ONLY to ./REPORT.md.
+
+RECHECK 2. inputs/REPORT-REV1.md is your recheck of rev 1 of the regrade declaration; it ended NO-GO on one NEW MAJOR (the fail sentence named the stored toys' errors at M_full) and left MINOR 2 PARTIAL (C-PSD vs NumPy's check_valid='warn'). inputs/REGRADE-DECLARATION.md is now rev 2 (changes marked "rev 2"). Earlier reviews: inputs/REPORT-REV0.md. Code unchanged in inputs/.
+
+For the NEW MAJOR and MINOR 2: CLOSED, PARTIAL or OPEN, with file:line evidence. Then confirm none of the items you marked CLOSED in REPORT-REV1.md were reopened by the rev 2 edits, and list any NEW blocking or major issue. Be concise. End with a single line: VERDICT: GO (no blocking or major open) or VERDICT: NO-GO.

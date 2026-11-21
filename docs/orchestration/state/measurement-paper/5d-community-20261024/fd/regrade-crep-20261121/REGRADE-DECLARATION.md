@@ -1,4 +1,4 @@
-# REGRADE declaration: the held-out-tune coverage toys graded against the full reported covariances (2026-11-21, rev 2 after Grok's read and recheck; nothing computed)
+# REGRADE declaration: the held-out-tune coverage toys graded against the full reported covariances (2026-11-21, rev 2.1 after Grok's read and two rechecks; bound by REGRADE-BINDING-NOTE.md)
 <!-- absence-ok: the declaration's own status line (unrun) -->
 
 **By** tier3-design, under Joseph's go of 2026-11-21 on items a + c of the methods scoping, as the director relayed it
@@ -170,7 +170,7 @@ The per-toy sixteen-cell vectors are committed nowhere, so one capture runs on a
 | C-PIN | every input in §1 and §5 equals its sha256 |
 | C-MAP, C-MAP16 | §3 |
 | C-F16 (rev 1, Grok m3) | `cpl_block["f"]` equals the capture's s1["f"] to 1e-12 relative, and `cpl_block["C_PL5D"] == diag(f) P_rel diag(f)` to 1e-12 of max |
-| C-PSD | for each nonzero C_add(T): symmetric to 1e-12 relative and min eigenvalue ≥ −1e-12 · λ_max (`cpl_block.npz` keys `C_resp`, `C_PL5D`, `P_rel`, `f`). Every rebuilt null runs with RuntimeWarning raised as an error (`warnings.simplefilter("error")`), so NumPy's `multivariate_normal(method="eigh")` PSD warning (`check_valid='warn'`, absolute tolerance 1e-8) is a STOP. λ_max of the Gaussian is printed. All covariances here are in cross-section units of order 1e-78, so NumPy's absolute floor is never the looser one. Skipped when C_add ≡ 0 (rev 1, Grok m2; rev 2, Grok recheck m2) |
+| C-PSD | for each nonzero C_add(T): symmetric to 1e-12 relative and min eigenvalue ≥ −1e-12 · λ_max (`cpl_block.npz` keys `C_resp`, `C_PL5D`, `P_rel`, `f`). Every rebuilt null runs with RuntimeWarning raised as an error (`warnings.simplefilter("error", RuntimeWarning)`), so NumPy's `multivariate_normal(method="eigh")` PSD warning (`check_valid='warn'`, absolute tolerance 1e-8) is a STOP. λ_max of the Gaussian is printed. The covariances here are of order 1e-78 in cross-section units, so C-PSD's relative floor (−1e-12 · λ_max) is the tighter check and binds first; NumPy's absolute floor is the looser one (rev 2.1, Grok recheck 2's note). Skipped when C_add ≡ 0 (rev 1, Grok m2; rev 2, Grok recheck m2) |
 | **A0** (rev 1, Grok M2) | with C_add = 0, in the same driver: (a) ndf, joint_count and the per-cell in-interval counts equal the committed grade's; (b) chi2_mean_over_ndf within 1e-9 relative. These depend only on E and C_T. (c) k_joint and the flags (2D `flagged_cells`; 16 cells `cell_flag` in R00–R15 order) depend on the re-simulated null. A mismatch in (c) alone is recorded as "null redraw differs", not a STOP. Committed grades: 2D `score_<T>.json`; 16 cells `readout-<t>.json` |
 | C-NULL | `check_matched` passes at 1e-12 for every rebuilt null |
 
