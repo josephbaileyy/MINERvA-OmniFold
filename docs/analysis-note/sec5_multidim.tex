@@ -26,7 +26,9 @@ high-$p_T$, high-$p_\parallel$ quadrant (R14).
 \begin{figure}[!hbp]
   \centering
   \includegraphics[width=\linewidth]{figures/fived16_headline.pdf}
-  \caption{Cell-integrated cross sections for the \resSixteen{}, grouped by muon quadrant.
+  \caption{The sixteen cell integrals of the \resSixteen{} range from $\fvval{f-R07}$
+  (R07) to $\fvval{f-R14}$ (R14) in units of $\fvval{f-unit}\,\mathrm{cm}^2$ per
+  nucleon. The points are grouped by muon quadrant.
   The bars show standard deviations $\sqrt{(C_{\mathrm{rep}})_{ii}}$
   on a logarithmic cross-section axis. The ranges below the axis
   describe the hadronic coordinates, with \emph{any} denoting the
@@ -75,11 +77,12 @@ The reported covariance in Eq.~\eqref{eq:sixteen-cell-covariance}
 gives a median per-cell uncertainty of $\fvval{sigmed-reported}\%$. Flux and prior-shape
 variations give the largest median contributions. Lateral variations
 and the spread across run periods also contribute appreciably. The
-prior-shape term $C_{\mathrm{model}}$ exceeds $\fpeval{floor(min(\fvval{sig-C_model-R02},\fvval{sig-C_model-R03},\fvval{sig-C_model-R11}))}\%$ in R02, R03, and R11.
+prior-shape term $C_{\mathrm{model}}$ gives fractional standard deviations above $\fpeval{floor(min(\fvval{sig-C_model-R02},\fvval{sig-C_model-R03},\fvval{sig-C_model-R11}))}\%$ in R02, R03, and R11.
 The response term $C_{\mathrm{resp}}$ increases the standard deviation
 relative to $C_{\mathrm{total}}$ by up to $\fpeval{round(100*(\fvval{sigratio-max}-1),0)}\%$ in one cell.
 Appendix~\ref{app:higher-dimensional-projections} gives the cell-by-cell decomposition and the correlation
 matrix.
+See the records for the mixed covariance blocks and finite-ensemble treatment (Ref.~\cite{NoteRecords2026}).
 
 \subsection{Projection consistency and run-period differences}
 \label{sec:sixteen-cell-projections}
@@ -94,8 +97,10 @@ quadrant order of Table~\ref{tab:five-dimensional-regions}. The largest
 fractional difference is in the high-$p_T$, low-$p_\parallel$ quadrant.
 The sum over all four quadrants is $\fpeval{round(100*(1-(\fvval{cr-QA-s16}+\fvval{cr-QB-s16}+\fvval{cr-QC-s16}+\fvval{cr-QD-s16})/(\fvval{cr-QA-s2}+\fvval{cr-QB-s2}+\fvval{cr-QC-s2}+\fvval{cr-QD-s2})),2)}\%$ below the 2D integral.
 
-All four differences pass the prespecified agreement rule. The joint
-$\chi^2$ is at most \fpeval{round(\fvval{x-prim-chi2-r1},2)} for four degrees of freedom throughout the
+All four differences pass the prespecified agreement rule. Without the constructed
+cross-covariance, QA agrees at every assumed correlation and the others agree below
+correlations of \fvval{cr-QC-rhostar} (QC) to \fvval{cr-QB-rhostar} (QB). The joint
+$\chi^2$ is at most \fvval{x-prim-chi2-r1} for four degrees of freedom throughout the
 tested one-parameter family of cross-covariances (Appendix~\ref{app:higher-dimensional-projections}).
 
 The sixteen-cell quadrant sums are $\fvval{g3d-pct-lo}\%$ to $\fvval{g3d-pct-hi}\%$ below the corresponding
@@ -116,22 +121,26 @@ the middle-to-earliest double ratio of unfolded to simulated cross
 sections has a step of $(\fvval{rpd-s0}\pm\fvval{rpd-s0-sigma})\%$, where the uncertainty is the
 bootstrap scatter. The three groups' unfolded data-to-simulation ratios
 also differ on the sixteen cells by more than the variation among
-bootstrap replicas. The cause of the inconsistency is unidentified.
+bootstrap replicas. The cause of the inconsistency is unidentified, and these data cannot
+establish which period, if any, is right.
 
 \begin{figure}[!hbp]
   \centering
   \includegraphics[width=\linewidth]{figures/runperiod_steps.pdf}
-  \caption{Run-period differences across $p_\parallel=8~\mathrm{GeV}/c$.
+  \caption{The run periods differ by a step across $p_\parallel=8~\mathrm{GeV}/c$ that
+  is already present before any unfolding.
   (a) Reconstructed ratios of background-subtracted data to the
-  exposure-scaled signal simulation, divided by the corresponding ratio
-  for the earliest group (1A--1F). Error bars show data statistical
-  uncertainties. (b) Steps from the five-observable unfolding of each run
-  period relative to the earliest group, with that period omitted from
-  the reference when it belongs to the group. Error bars show bootstrap
-  standard deviations. Open circles mark steps consistent with zero
-  within two standard deviations. Filled diamonds mark steps that exceed
-  half the middle group's step (dashed line) by two standard deviations
-  of the difference. Squares mark the remaining steps.}
+  exposure-scaled signal simulation in each $p_\parallel$ bin summed over
+  $p_T$, divided by the corresponding ratio for the earliest group (1A--1F).
+  Error bars show data statistical uncertainties. (b) Steps from the
+  five-observable unfolding of each playlist relative to the earliest group,
+  with that playlist omitted from the reference when it belongs to the group.
+  Error bars show bootstrap standard deviations. Open circles mark steps
+  consistent with zero within two standard deviations. Filled diamonds mark
+  steps that exceed half the middle group's step, recombined from its three
+  playlists (dashed line), by two standard deviations of the difference rather
+  than of the bar shown. Squares mark the remaining steps. The classes do not
+  locate the step or identify its cause.}
   \label{fig:runperiod-steps}
 \end{figure}
 
@@ -165,9 +174,11 @@ nucleon of hydrocarbon (CH).
   % Series targets and the GiBUU cell count verified against
   % inputs2/fived16_genresidual_values.json.
   \includegraphics[width=\linewidth]{figures/fived16_genresidual.pdf}
-  \caption{Fractional differences $(g_i-f_i)/f_i$ between the predictions
-  $g_i$ and the unfolded integrals $f_i$ of the \resSixteen{}, on hydrocarbon for GENIE and
-  Tune v1 and on carbon for NuWro and GiBUU (GiBUU on its eight cells). The gray bars
+  \caption{All three hydrocarbon predictions lie below the unfolded integrals in every
+  high-$p_T$ cell. The points show the fractional differences $(g_i-f_i)/f_i$
+  between the predictions $g_i$ and the unfolded integrals $f_i$ of the
+  \resSixteen{}, on hydrocarbon for GENIE and Tune v1 and on carbon for NuWro
+  and GiBUU (GiBUU on its eight cells). The gray bars
   show $\pm\sqrt{(C_{\mathrm{rep}})_{ii}}/f_i$ about zero using only the
   diagonal of $C_{\mathrm{rep}}$, with correlations and the prediction
   covariance $V_g$ entering the distances in
@@ -242,8 +253,7 @@ show no evidence of discrimination beyond those projections.
 The joint tests address \jtNtests{} hypotheses, one for rate and shape and one
 for shape alone for each prediction and target in
 Table~\ref{tab:sixteen-cell-model-distances}. The hybrid null fixes the
-truth integrals on a fine five-dimensional grid to the prediction,
-up to a common normalization in the shape comparison. The interaction-model
+truth integrals on a fine five-dimensional grid to the prediction. The interaction-model
 bands vary the Tune v1 event composition within each fine cell while
 preserving its integral. The test statistic is a quadratic distance
 evaluated on \jtNcells{} supported cells of a separate coarse grid, or \jtNcellsGiBUU{} cells
@@ -259,6 +269,8 @@ under its hybrid null with the specified nuisance variations
 (Appendix~\ref{app:joint-generator-tests}). All ten hypotheses are rejected at a familywise level
 of $\jtAlpha$, subject to six conditions. The rejections concern these hybrid
 hypotheses and do not by themselves exclude a generator's nuclear model.
+The tests add no reportable uncertainty, and they neither use nor validate the
+covariance of the exploratory five-axis result.
 
 \phantomsection
 \label{sec:joint5d-conditions}
@@ -266,7 +278,7 @@ hypotheses and do not by themselves exclude a generator's nuclear model.
   \item \emph{Subcell composition.} Replacing the below-grid Tune v1 composition with the generator's must shift the result by at most twice the last measured refinement change along that direction.
   \item \emph{Detector response.} The specified detector variations must be adequate despite the absence of a dedicated calorimetric recoil-energy-scale variation.
   \item \emph{Interaction model.} The \jtModelBands{} bands must describe within-cell composition and its effects on efficiency and migration.
-  \item \emph{Calibration.} Tail probabilities from half-sample pseudo-experiments must apply to the full-sample data unfolding, conditional on the available simulation, with independent exceedances.
+  \item \emph{Calibration.} Tail probabilities from half-sample pseudo-experiments must apply to the full-sample data unfolding, conditional on the available simulation, with independent exceedances. No rejection rate has been measured for null pseudo-data processed like the data, and the lost pseudo-experiments have not been shown to be lost independently of their outcomes.
   \item \emph{Neutrino-energy range.} The samples must describe migrations into the test domain, including for GiBUU with $E_\nu<\fvval{cmodel-gibuu-enu}~\mathrm{GeV}$.
   \item \emph{Finite generator samples.} Independent Gaussian residuals must adequately describe finite-sample errors in the predictions.
 \end{enumerate}
@@ -276,7 +288,7 @@ hypotheses and do not by themselves exclude a generator's nuclear model.
 The projection comparison repeats the calibration on $3\times3$ projections
 of the same joint cells onto $(p_T,p_\parallel)$ and $(E_{\mathrm{avail}},W)$.
 Its criterion was set
-after the joint outcomes were known, so the comparison is descriptive
+after the joint outcomes were known but before the comparison was run, so the comparison is descriptive
 (Appendix~\ref{app:choices-after-results}). For every rejected hypothesis, at least one of
 the two projections also gives a single-test $p<0.05$, whether the joint null shifts
 are held fixed or recomputed after projection.
