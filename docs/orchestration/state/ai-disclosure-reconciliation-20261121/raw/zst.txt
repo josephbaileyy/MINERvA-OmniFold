@@ -1,0 +1,13 @@
+codex-auto-review    an=n sess=   1 2026-06-19..2026-06-19 cwd=['<non-analysis>'] ex=<non-analysis>
+codex-auto-review    an=Y sess=   2 2026-08-19..2026-08-19 cwd=['/Users/josephbailey/local-research/MINERvA-OmniFold'] ex=08/19/rollout-2026-08-19T14-24-13-01a01b44-4308-7212-9d04-429da9b1ad0e.jsonl.zst
+gpt-5.3-codex        an=n sess=  10 2026-02-21..2026-03-14 cwd=['<non-analysis>'] ex=<non-analysis>
+gpt-5.3-codex-spark  an=n sess=   1 2026-03-12..2026-03-12 cwd=['<non-analysis>'] ex=<non-analysis>
+gpt-5.4              an=n sess=   7 2026-03-19..2026-04-25 cwd=['<non-analysis>'] ex=<non-analysis>
+gpt-5.5              an=n sess= 149 2026-04-25..2026-08-14 cwd=['<non-analysis>'] ex=<non-analysis>
+gpt-5.6-luna         an=Y sess=   1 2026-08-20..2026-08-20 cwd=['/Users/josephbailey/local-research/MINERvA-OmniFold'] ex=08/19/rollout-2026-08-19T21-28-35-01a01cc8-c5cc-7ce1-943e-cb29c5f33f5f.jsonl.zst
+gpt-5.6-sol          an=n sess=   5 2026-08-31..2026-09-03 cwd=['<non-analysis>'] ex=<non-analysis>
+gpt-5.6-sol          an=Y sess=  39 2026-08-18..2026-08-31 cwd=['/Users/josephbailey/local-research/MINERvA-OmniFold'] ex=sions/rollout-2026-08-24T01-14-23-01a03267-e122-7a63-a695-4ee5f1d649cc.jsonl.zst
+gpt-5.6-terra        an=Y sess=   4 2026-08-19..2026-08-19 cwd=['/Users/josephbailey/local-research/MINERvA-OmniFold'] ex=sions/rollout-2026-08-19T14-23-57-01a01b44-0555-73d2-9b59-82594b5ab9cf.jsonl.zst
+gpt-6-astra          an=n sess=  34 2026-09-11..2026-11-10 cwd=['<non-analysis>'] ex=<non-analysis>
+gpt-6-luna           an=n sess=   5 2026-11-03..2026-11-08 cwd=['<non-analysis>'] ex=<non-analysis>
+gpt-6.1-sol          an=n sess=  70 2026-09-30..2026-11-11 cwd=['<non-analysis>'] ex=<non-analysis>
