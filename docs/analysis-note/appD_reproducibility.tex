@@ -6,7 +6,7 @@
 \label{app:release}
 
 The replay package~\cite{ReleaseCandidate2026} in the Zenodo
-deposit~\cite{ZenodoDeposit2026} contains approximately \SI{16}{MB} of
+deposit~\cite{ZenodoDeposit2026} contains approximately \SI{20}{MB} of
 derived inputs, a README, SHA-256 checksums, and a verifier. It recomputes
 the joint generator tests reported in this article (statistics, exceedance
 counts, $p$ values, decisions, and robustness and power summaries), with and
@@ -15,9 +15,13 @@ coarse-projection comparison and the fine-grid refinement ratios. It
 regenerates the $(E_{\mathrm{avail}},W)$ excess map
 (Fig.~\ref{fig:eavailWexcess}) exactly and checks the quoted
 $(E_{\mathrm{avail}},W)$ generator ratios against the arrays plotted in
-Fig.~\ref{fig:eavailWband}. Its two-dimensional checks use the \estExact{}
-rather than the \estTwoD{}, whose central values and covariance the deposit
-holds separately.
+Fig.~\ref{fig:eavailWband}. It also recomputes the two-dimensional benchmark
+numbers of Sec.~\ref{sec:part-2d} for the \estTwoD{}, from the deposited central
+values and covariance and the published values and covariance.
+% 2026-11-21 (Joseph's GO for option A, via the rewrite helper and the director): the replay is RC9 (sha256 48c8223d...),
+% whose code/twod_numbers.py checks 18 printed 2D values against values.tex with the producers' definitions
+% (compare_to_paper_fullcov.py: pinv chi2/ndf over the 205 reported bins; the pull spread is numpy's std, which settles
+% the 0.539-vs-0.535 question in the printed value's favor). Its data/ is 20.15 MB (RC8: 17.45 MB, printed as 16).
 % 2026-11-21 (Joseph via the rewrite helper and the director; option B of zenodo-draft/REPLAY-SCOPE-20261121.md). Measured
 % on RC8 (f62bd82f...) against 3a3a438d5: the 17 printed values_inference macros equal RC8's; RC8's Fig. 2 output equals
 % figures/paper_fig2_joint.pdf (sha256 57f3cc60...); RC8's fig_arrays (E_avail, W) data and generator arrays equal
