@@ -88,8 +88,10 @@ Figfix's committed tool is not changed; its record stays as it ran.
 
 **Checked and clean.** Every other included figure:
 - the captured ones have no visible stepped line;
-- the uncaptured producers draw no steps, or draw them on edges: make_figs.py `stairs(…, edges)`, and
-  plot_joint_null_distributions_physlabels.py `hist(bins=…, histtype="stepfilled")`;
+- the uncaptured producers draw no steps, or draw them on edges: make_figs.py `stairs(…, edges)`;
+  plot_joint_null_distributions_physlabels.py `hist(bins=…, histtype="stepfilled")`; and
+  methods_m3/fig_m3_deformation.py (paper_fig_deformation), with `stairs` on edges index ± 0.5 and points at the
+  indices;
 - nn_vs_gbdt_full draws points joined by lines at the centres, not steps.
 
 **The three open PET figures.**
