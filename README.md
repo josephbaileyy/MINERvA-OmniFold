@@ -230,7 +230,7 @@ MINERvA-OmniFold/
 │   └── ND_OMNIFOLD_STATUS.md, PET_UQ_REMEDIATION_STATUS.md, CORRECTED_UQ_PRODUCTION_STATUS.md, FPS_PILOT.md
 │
 ├── docs/                                  # deliverables + governance
-│   ├── analysis-note/                     #   LaTeX sources for all three builds (see Deliverables)
+│   ├── analysis-note/                     #   LaTeX sources for every build (see Deliverables)
 │   ├── CURRENT_WORK.md, CURRENT_WORK_BACKLOG.md
 │   ├── OPEN_ITEMS.md                      #   the OI-* rows; the archive holds closed months
 │   ├── ESTIMATOR_REGISTRY.md, EAVAIL_DEFINITION.md, HIGHER_DIM_OMNIFOLD_DESIGN.md
@@ -407,7 +407,7 @@ cd docs/analysis-note && bash build_all.sh     # needs pdflatex + biber + python
 
 `build_all.sh` forces the rebuild, proves each PDF was written by that run, and
 then runs `check_dead_containment.py`, which enforces that retracted (struck)
-values reach the **note** build only and never the primer or paper. Every skip
+values reach only the records document and the PET note, never the posted note or the primer. Every skip
 in that stage is fatal by design: a containment pass over a stale PDF is worse
 than no check. `test_build_all.py` is its test suite. Built PDFs are gitignored;
 the tracked figure set lives in `docs/analysis-note/figures/`.
