@@ -1,0 +1,12 @@
+# Fig. 3 (fig:pull) inset relabeled (2026-11-21T05:29:08Z): bash tools/run_fig23.sh <wt> HEAD
+# compose_fig3_inset.py sha256 b90bb9d1a4bdd9ffeb8577b04e0c021ab410f3c57a6ac2c13f6fedc13765b925; arm 0 recipe note-figstyle-20261117 pull_full arm 1 (palette_run.py sha256 922b0f0846d0494b8b2e97a7bec0099fcec1b9c8edecadca6178f1472bfb91e2)
+== arm 0 against the installed file at HEAD
+EQUAL-BUT-DATE MEFHC_5iter_pull_full.pdf: /CreationDate (D:20261117183144-07'00') vs /CreationDate (D:20261120212911-07'00')
+== arm 1 against arm 0 (captures): every data item equal; texts differ only in the inset and the histogram's y tick labels
+  ok MEFHC_5iter_pull_full.pdf: 35 data items equal True; inset relabeled with the value kept True; other strings that differ (tick labels only: True): arm 0 [], arm 1 []; canvas [4.55, 2.3] -> [4.55, 2.3]; overlaps 0 -> 0
+  ok MEFHC_5iter_pull_full.png: 35 data items equal True; inset relabeled with the value kept True; other strings that differ (tick labels only: True): arm 0 [], arm 1 []; canvas [4.55, 2.3] -> [4.55, 2.3]; overlaps 6 -> 6
+FIG3-CAPTURES :: PASS
+== the inset record (runs/fig3/compose_fig3_inset.json): value 2.27 ; histogram y range [0.0, 55.44] -> [0.0, 59.91] ; tallest bar 33.0
+page size: Page size: 327.6 x 165.6 pts (make_figures.sh asserts 327.6 x 165.6)
+installed MEFHC_5iter_pull_full.pdf sha256 53c54efe8916b02160831e11ba3bef467f0a59f16300029a17787e2541107267 (arm 1: 53c54efe8916b02160831e11ba3bef467f0a59f16300029a17787e2541107267)
+RUN-FIG3 :: PASS

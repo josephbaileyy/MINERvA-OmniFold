@@ -38,7 +38,9 @@ than $1\%$.
 \begin{figure}[tbp]
   \centering
   \includegraphics[width=\textwidth]{figures/mode_decomp_mec_eavail_central.pdf}
-  \caption{The 3D available-energy projection compared with GENIE 2.12.10.
+  \caption{Adding the Valencia 2p2h contribution to GENIE 2.12.10 closes $52\%$ of the
+  integrated gap between the 3D available-energy projection and the central
+  prediction below $E_{\mathrm{avail}}=0.4~\mathrm{GeV}$.
   The stacked gray histograms show quasielastic, resonant, coherent, and
   deep-inelastic contributions to the central prediction. The orange
   histogram adds the Valencia 2p2h contribution. The outline marks the
@@ -62,8 +64,9 @@ toward larger $q_3$ in the same available-energy range
 \begin{figure}[tbp]
   \centering
   \includegraphics[width=\textwidth]{figures/q3_excess_projection.pdf}
-  \caption{Ratio of the 4D purity-baseline unfolding to the MINERvA Tune v1
-  prior. The upper panel shows the joint $E_{\mathrm{avail}}$--$q_3$
+  \caption{At intermediate $E_{\mathrm{avail}}$, the ratio of the 4D purity-baseline
+  unfolding to the MINERvA Tune v1 prior falls to 0.66 at low $q_3$ and rises
+  toward larger $q_3$. The upper panel shows the joint $E_{\mathrm{avail}}$--$q_3$
   projection, with kinematically empty cells left blank. The lower panels
   show the $q_3$ and $E_{\mathrm{avail}}$ marginals.}
   \label{fig:q3excess}
@@ -109,13 +112,13 @@ $1.8\leq W<2.2~\mathrm{GeV}$.
     \noexpand\includegraphics[trim=0 0 0 \the\dimexpr\ht0/2\relax,clip,width=0.46\noexpand\linewidth]{figures/paper_fig2_joint.pdf}%
   }%
   \showJointPanels
-  \caption{Projection of the \resFiveAxis{} onto
-  $(E_{\mathrm{avail}},W)$ relative to the MINERvA Tune v1 prior. The left
-  panel gives the ratio and the right panel the difference of the
-  cell-integrated cross sections in units of $10^{-40}\,\mathrm{cm}^2$ per
-  nucleon. The cells are drawn with equal size and labeled by their physical
-  bin edges. The last interval on each axis spans $[3,100]~\mathrm{GeV}$.
-  The comparison uses central values only.}
+  \caption{The low-recoil excess of the \resFiveAxis{} over the MINERvA Tune v1 prior is
+  concentrated at $W<1.1~\mathrm{GeV}$. The upper panel gives the ratio and the
+  lower panel the difference of the cell-integrated cross sections in units of
+  $10^{-40}\,\mathrm{cm}^2$ per nucleon, projected onto
+  $(E_{\mathrm{avail}},W)$. The cells are drawn with equal size and labeled by
+  their physical bin edges. The last interval on each axis spans
+  $[3,100]~\mathrm{GeV}$. The comparison uses central values only.}
   \label{fig:available-energy-hadronic-mass}
   \label{fig:eavailWexcess}
 \end{figure}
@@ -236,13 +239,17 @@ set in advance for the three configurations.
 \begin{figure}[tbp]
   \centering
   \includegraphics[width=\linewidth]{figures/paper_fig_bkg_residual.pdf}
-  \caption{Mean fractional closure residual at nominal truth with simulated
-  backgrounds. Circles show the deterministic purity control (9
-  pseudo-experiments) and squares the low-capacity negative-weight refinement
-  (60 pseudo-experiments). The two ensembles are unpaired. Error bars give
-  standard errors of the mean. Panel (a) shows the 42
-  $(E_{\mathrm{avail}},W)$ cells, grouped by $E_{\mathrm{avail}}$ bin.
-  Panel (b) shows the \jtNcells{} supported joint cells and the integrated total.}
+  \caption{At nominal truth, the low-capacity negative-weight refinement reduces the
+  closure residuals in the $(E_{\mathrm{avail}},W)$ plane, where the deterministic
+  purity control is $3.5\%$ to $4.1\%$ low in most of the highest-$W$ column, but
+  leaves residuals of about $1\%$ in some joint cells. The points show the mean
+  fractional closure residual with simulated backgrounds. Circles show the
+  deterministic purity control (9 pseudo-experiments) and squares the
+  low-capacity negative-weight refinement (60 pseudo-experiments). The two
+  ensembles are unpaired. Error bars give standard errors of the mean. Panel
+  (a) shows the 42 $(E_{\mathrm{avail}},W)$ cells, grouped by
+  $E_{\mathrm{avail}}$ bin. Panel (b) shows the \jtNcells{} supported joint
+  cells and the integrated total.}
   \label{fig:bkg-residual-note}
 \end{figure}
 
@@ -389,12 +396,13 @@ gives the thresholds, which are applied with multiplicity accounted for.
 \begin{figure}[tbp]
   \centering
   \includegraphics[width=\linewidth]{figures/paper_fig_coverage.pdf}
-  \caption{Empirical coverage of statistical intervals for the
-  deterministic purity control in 400 pseudo-experiments at the reduced
-  signal rate. The 153 quantities include the 42
-  $(E_{\mathrm{avail}},W)$ cells and their sum, \jtNcells{} supported joint cells,
-  and the integrated total. Filled symbols mark upper confidence bounds
-  below 0.66 for the $68\%$ intervals or 0.94 for the $95\%$ intervals.}
+  \caption{At the reduced signal rate, the deterministic purity control fails the
+  coverage test for 51 of the 153 quantities with the $68\%$ intervals and for 42
+  with the $95\%$ intervals. The points show the empirical coverage of
+  statistical intervals in 400 pseudo-experiments. The 153 quantities include
+  the 42 $(E_{\mathrm{avail}},W)$ cells and their sum, \jtNcells{} supported
+  joint cells, and the integrated total. Filled symbols mark upper confidence
+  bounds below 0.66 for the $68\%$ intervals or 0.94 for the $95\%$ intervals.}
   \label{fig:coverage-5d-paper}
 \end{figure}
 
