@@ -1,0 +1,142 @@
+# Review of REGRADE amendment 1 (A0(b) tolerance)
+
+Read-only review of `inputs/REGRADE-AMENDMENT-1.md` against `inputs/REGRADE-DECLARATION.md`, `inputs/regrade_crep.py` (diff `inputs/regrade_crep.diff.txt`), `inputs/test_regrade_crep.py`, `inputs/regrade_mutation.py`, `inputs/t2a_split.py:53-81`, `inputs/T2-BINDING-1.md` addendum 1, and `inputs/fd_1b_null.py:92-97`. Numeric checks below were executed in this review (float64). The commits named in the amendment (752c3f60, a923a02e, and the rest) are not in this bundle, so those b_rel figures are taken as the amendment's premises.
+
+The G18 rule in the code is the rule the amendment writes, and it is a safe precision of COV2D A5. The amendment should not be accepted as written: its reason for leaving T2A's full-spectrum κ₂ is false for AR23, and the mutant that drops the non-null mask survives the suite.
+
+## BLOCKING
+
+None in the tolerance formula or in the G18 control outcome. The adopted check does not become an always-pass, and the diff does not touch the reading rule, the R-χ² statistic, or the grade criterion.
+
+## MAJOR
+
+### M1. "A5's raw λ_min would make AR23's tolerance vacuous" is false on the cited spectrum
+
+`inputs/REGRADE-AMENDMENT-1.md:32-34` says that for 2D AR23 (rank 204) A5's raw λ_min is at or near zero, which would make the tolerance vacuous, and that the subspace κ₂ is what keeps tol at most about 2.2e-3.
+
+`inputs/T2-BINDING-1.md:58` records C_T's λ_min/λ_max as 9.99e-13 (AR23) and 1.05e-12 (G18). Both are positive. T2A's A5 implementation (`inputs/t2a_split.py:75-78`) is
+
+```text
+kappa = lam[-1] / lam[0]  if lam[0] > 0 else inf
+tol   = max(1e-9, 10 * kappa * eps)
+```
+
+With eps = 2.220446049250313e-16:
+
+- AR23: κ₂ = 1/9.99e-13 = 1.001001001e12, tol = 2.222668717968281e-3.
+- G18: κ₂ = 1/1.05e-12 = 9.523809524e11, tol = 2.114710523095536e-3.
+
+`inputs/T2-BINDING-1.md:62` already states that this rule is about 2.1e-3 at these tunes. The inf branch in `t2a_split.py:77` fires only when λ_min ≤ 0. AR23's measured ratio is about 4500 eps above zero, so the raw rule is the same 2.2e-3 ceiling the amendment treats as the finite cap. The same sentence therefore calls 2.2e-3 vacuous when it comes from raw λ_min and acceptable when it comes from the subspace bound.
+
+The subspace mask is still a sound precision of the χ² (see OK-CHECKS). It is equal to A5 on G18, and stricter than T2A whenever a positive eigenvalue falls at or below `RANK_REL`. Calling it "not a departure" (`inputs/REGRADE-AMENDMENT-1.md:35-36`) overstates the identity with the formula the director named, which is T2A's full-spectrum rule (`inputs/REGRADE-AMENDMENT-1.md:20-22`, `inputs/t2a_split.py:72-78`). The direction of the difference is the strict one: subspace tol is never larger than T2A's tol when T2A's tol is finite.
+
+### M2. The "κ₂ on the full spectrum" mutant survives, so the kill claim is false
+
+`inputs/REGRADE-AMENDMENT-1.md:60-61` says 33 of 33 mutants were killed, including κ₂ on the full spectrum. That mutant is `inputs/regrade_mutation.py:26`:
+
+```text
+kappa = lam.max() / lam[keep].min()   →   kappa = lam.max() / lam.min()
+```
+
+The test meant to kill it is `inputs/test_regrade_crep.py:229-234`. Its fixture is `spd(8, default_rng(5), rank=6)` (`inputs/test_regrade_crep.py:23-25`, `:230`). Executed eigenvalues of that matrix:
+
+- λ_min = −1.44820542e-16 (two numerical nulls, one of them negative)
+- six kept eigenvalues, smallest kept / λ_max = 3.38099e-3
+- subspace κ₂ = 295.771, tol = 1e-9 (the floor binds: 10·κ·eps ≈ 6.6e-13)
+- unguarded full-spectrum ratio λ_max/λ_min = −1.77329144e16
+- mutant tol = max(1e-9, 10·(negative)·eps) = 1e-9
+
+`test_amendment1_rank_deficient_is_finite` asserts `isfinite(kappa2) and kappa2 < 1e12 + 1` and `tol < 1e-2`. The mutant's negative κ₂ satisfies both. The G18 and floor tests use positive-definite matrices, where `lam.min()` equals `lam[keep].min()`, so the mutant matches the real function there.
+
+Re-ran under the mutant: `test_amendment1_tolerance_g18_case`, `test_amendment1_floor`, `test_amendment1_rank_deficient_is_finite`, and `test_chi2_tolerance` all passed. The mask is not locked.
+
+The other four mutants named in the amendment do fail this file, checked the same way:
+
+- max → min (`regrade_mutation.py:24`): G18 tol collapses to 1e-9 (`test_regrade_crep.py:217`) and the floor case collapses to 2.22e-15 (`:227`).
+- 10·κ₂·ε term dropped (`:25`): G18 tol assertion fails.
+- A0(b) forced true (`:27`): `1.1 * tol` does not raise `Stop` (`test_regrade_crep.py:221-223`), and neither does the 2e-9 case (`:208-210`).
+- tunes loop ignores `--tunes` (`:23`): `test_g18_only_evaluates_g18` gets `['AR23', 'G18']` (`test_regrade_crep.py:361`).
+
+The rank-deficient fixture also never lifts the tolerance. Its subspace κ₂ is 296, so the interesting rank-deficient case (a kept eigenvalue just above 1e-12, κ₂ near 1e12, tol near 2.2e-3, while raw λ_min ≤ 0 would make T2A's tol infinite) is not what the test measures.
+
+## MINOR
+
+### m1. The declaration table still states the flat 1e-9
+
+`inputs/REGRADE-DECLARATION.md:174` still says chi2_mean_over_ndf within 1e-9 relative. The amendment supersedes that sentence (`inputs/REGRADE-AMENDMENT-1.md:26-31`) and the code follows the amendment, but a reader of section 6 alone still has the pre-STOP rule. T2-BINDING-1 put addendum 1 in the same document (`inputs/T2-BINDING-1.md:52`). This amendment leaves the two texts in conflict.
+
+### m2. Record wiring and the 16-cell call site are untested
+
+`b_tol` is returned by `a0_compare` (`inputs/regrade_crep.py:188`). `b_rule` is attached only at the two call sites (`inputs/regrade_crep.py:272` and `:349`). No test reads `b_rule` or checks that `run16` passes `a0_chi2_tol(C_T)`. The 16-cell change is the same three lines as 2D and is correct by inspection; a revert of only `run16` would survive the suite.
+
+`rel == tol` is a pass (`inputs/regrade_crep.py:188`, `<=`, matching "within"). The new test stops at `1.1 * tol` and does not sit on the boundary.
+
+### m3. Non-positive C raises rather than recording a STOP
+
+If λ_max ≤ 0, `lam > RANK_REL * lam.max()` keeps nothing and `lam[keep].min()` raises `ValueError` (`inputs/regrade_crep.py:175-176`). `run2d` / `run16` catch `Stop` only (`:283-284`, `:359-360`), so this aborts the process. Study covariances have λ_max > 0, for which the largest eigenvalue is always kept and κ₂ is finite. Worth knowing; not a path A0 will see.
+
+### m4. Suite totals in the amendment were not re-executed here
+
+`inputs/test_regrade_crep.py` contains 43 test methods. The amendment's "50 OK" (`inputs/REGRADE-AMENDMENT-1.md:54`) and the mutation harness (`inputs/regrade_mutation.py:50-55`) also name `test_ll5d_regrade_capture.py`, which is not in this bundle, and `regrade_crep.py` imports `fd_1b_mc` / `fd_1b_null` imports `fd_1b_inv`, also absent. The nine amendment-facing tests were run here with those imports stubbed: all passed on the unmodified code.
+
+## OK-CHECKS
+
+### 1. Post-STOP honesty, and the scope of the change
+
+The amendment says it was adopted after the STOP in the title and the first paragraph (`inputs/REGRADE-AMENDMENT-1.md:1-5`), gives the run (`:9-14`: driver 058bca19, commit 752c3f60, exit 1, G18 A0(b) at 1.73e-8 relative against the flat 1e-9, every other A0 field equal), and quotes the director's call (`:20-22`). The formula is the pre-existing A5 expression, not a number fitted to 1.73e-8.
+
+The diff (`inputs/regrade_crep.diff.txt`) changes only:
+
+- `A0_CHI2_REL` → `A0_CHI2_FLOOR` and the new `a0_chi2_tol` (`regrade_crep.py:72`, `:170-179`)
+- `a0_compare(..., tol)` recording `b_tol` (`:182-193`)
+- both call sites storing `b_rule` (`:270-272`, `:347-349`)
+- `run2d(..., tunes)` and `--tunes` (`:247-255`, `:383`, `:392`)
+
+`read_rule` (`:110-112`), `r_chi2` (`:115-154`), and `chol_tol` (`:196-200`) are untouched. A0(a) is still exact equality on ndf, joint_count, and counts (`:186`, `:190-191`). A0(c) is still "null redraw differs" and still not a STOP (`:189-192`). `--tunes` is an interface flag, disclosed at `inputs/REGRADE-AMENDMENT-1.md:39-40`, default both (`regrade_crep.py:247`, `:383`). It does not change a reading rule, a statistic, or a criterion.
+
+### 2. Subspace κ₂ versus A5
+
+A5 in this code is the full spectrum: `chol_tol` at `inputs/regrade_crep.py:196-200` and T2A at `inputs/t2a_split.py:72-78`, `kappa = λ_max/λ_min` if λ_min > 0, else inf.
+
+The χ² subspace is `inputs/fd_1b_null.py:52` and `:94-97`: keep λ > `RANK_REL` · λ_max with `RANK_REL = 1e-12`. `a0_chi2_tol` uses that predicate (`inputs/regrade_crep.py:175-176`) and sets κ₂ = λ_max / min(kept). When λ_max > 0 the largest eigenvalue is kept, so this is the 2-norm condition number of C on the subspace the χ² inverts.
+
+- Equal to A5 when every eigenvalue is kept, i.e. λ_min > `RANK_REL`·λ_max. G18's measured ratio 1.05e-12 (`inputs/T2-BINDING-1.md:58`) meets that. On the test diagonal `diag(1/9.5e11, 0.5, 1)` the small entry is 1.0526e-12, all three are kept, and `a0_chi2_tol` matched `chol_tol` exactly (κ₂ = 9.499999999999999e11, tol = 2.109423746787797e-3).
+- A positive-definite matrix with 0 < λ_min ≤ 1e-12·λ_max is full rank as a matrix and rank-deficient as a χ². Subspace κ₂ is then smaller than T2A's κ₂. Example executed: `diag(1e-15, 1e-4, 1)` gives subspace tol 1e-9 and T2A tol 2.220.
+- Rank-deficient with λ_max > 0: κ₂ is finite and at most the cap. Because the cut is strict, κ₂ < 1/1e-12 = 1e12 and tol < 10·1e12·eps = 2.220446049250313e-3, which is the amendment's "at most about 2.2e-3" (`inputs/REGRADE-AMENDMENT-1.md:33-34`).
+- λ_min ≤ 0: T2A's tol is inf (`rel <= inf` passes for every finite relative difference). The subspace rule stays finite. That is the case in which raw A5 is vacuous, and it is not AR23's measured spectrum.
+
+No executed case makes subspace A0(b) looser than T2A's A5. It is looser than the old flat 1e-9 exactly when κ₂ > 1e-9 / (10·eps) ≈ 4.504e5, which is the intended lift. At G18's binding κ₂ the tol is 2.115e-3, about 1.22e5 times the 1.73e-8 STOP and about 1.63e3 times T2-BINDING's largest measured G18 perturbation (1.3e-6, `inputs/T2-BINDING-1.md:57`). That width is the A5 width the director named (`inputs/T2-BINDING-1.md:62`), not an extra loosening from the subspace mask. A relative miss above about 0.211% still stops.
+
+C is the matrix A0 grades. 2D passes `C0` from `null_2d(B, 0)`, which is `B["C_T"]` (`inputs/regrade_crep.py:239-244`, `:266`, `:270`). The 16-cell path passes the capture `C_T` (`:344-348`). Both have C_add = 0.
+
+### 3. Code matches the amendment; the standing-record reasoning holds
+
+`a0_chi2_tol` (`inputs/regrade_crep.py:170-179`) is tol = max(1e-9, 10·κ₂·eps) with float64 eps (`:177-179`), κ₂ over eigenvalues above `fn.RANK_REL` of the largest. `a0_compare` (`:187-188`) uses |χ²_mean/ndf_now / χ²_mean/ndf_committed − 1| ≤ tol, the same relative difference the amendment uses for the 1.73e-8 figure. The record gets `b_rel`, `b_tol`, and `b_rule` (the dict with `rule`, `kappa2`, and `tol`) at both `:188` and `:272` / `:349`.
+
+`--tunes` is `nargs="+"`, choices `AR23` and `G18`, default both (`:383`), passed as a tuple (`:392`). `run2d` rejects an empty or unknown list before `sha256` (`:248-250`). Default `run2d(q205)` still runs both (`:247`).
+
+Standing records, conditional on the amendment's b_rel premises (artifacts not in this bundle):
+
+- 2D AR23 at 3.4e-10 (`inputs/REGRADE-AMENDMENT-1.md:44-45`). A pass under `rel ≤ 1e-9` remains a pass under every larger tol. Recomputing it cannot flip A0(b). Leaving 752c3f60 in place is the right call. The old JSON simply lacks `b_tol` / `b_rule`.
+- Sixteen cells at a923a02e (`:46-48`). The same implication covers all four evaluations in `EVALS_16` (`inputs/regrade_crep.py:43`). A looser A0(b) cannot turn those passes into stops, and nothing else in the diff changes R-χ² or the reading.
+- G18 at 1.73e-8 failed the flat 1e-9, so that STOP record cannot stand. 1.73e-8 is below the G18 tol (~2.11e-3), so a rerun with `--tunes G18` (`inputs/REGRADE-AMENDMENT-1.md:49`) is the right remedy and does not rewrite AR23.
+
+### 4. What the tests do cover
+
+Executed, all passing on the unmodified module:
+
+- G18 case passes: `inputs/test_regrade_crep.py:212-220`. κ₂ within 1 of 9.5e11, tol within 1e-9 of 10·9.5e11·eps, and a 1.73e-8 relative difference sets `b` true.
+- Above tol stops: `:221-223`, difference `1.1 * tol` raises `Stop`.
+- Floor: `:225-227`, `eye(4)` has κ₂ = 1 and tol = 1e-9. 10·eps = 2.22e-15, so the floor is what binds.
+- Rank-deficient finite, on the correct code only: `:229-234`. The correct κ₂ was 295.77, finite and below 1e12. This does not kill the full-spectrum mutant (M2).
+- Tunes: `:344-348` raises `SystemExit` for `("XX",)` and `()` before any read of `/nonexistent`. `:350-362` with `--tunes` equivalent `("G18",)` records only G18. `pinned` is inside the tune loop (`regrade_crep.py:258`), so AR23 is not entered.
+
+A0(a) still stops on ndf, joint_count, and counts (`:197-202`). A0(c) still does not stop (`:236-241`).
+
+### 5. Bottom line
+
+The control change is an honest post-STOP widening of a numerical-identity tolerance to A5's formula, with κ₂ taken on the χ² subspace. On G18 that κ₂ is A5's κ₂. The subspace form does not make A0(b) weaker than T2A's rule and does not make it infinite. The code, both call sites, and `--tunes` match the text. AR23 and the sixteen-cell record are correctly left standing if their reported b_rel values are ≤ 1e-9.
+
+The amendment text is wrong that raw A5 is vacuous at AR23's measured λ_min (M1), and the suite does not kill a full-spectrum κ₂ (M2). Those two claims are load-bearing in the write-up. Correct them before treating the amendment as accepted. The G18 formula itself does not need a different expression.
+
+VERDICT: NO-GO

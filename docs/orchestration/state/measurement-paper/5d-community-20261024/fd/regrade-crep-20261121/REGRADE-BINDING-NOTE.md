@@ -30,3 +30,21 @@ only reading wording may rest on.
    O_NOATIME. Any guard refusal is terminal for the item.
 
 **CANNOT AUTHORIZE:** anything the declaration cannot. Each result is read once from its committed record.
+
+## Addendum 1: amendment 1 bound (2026-11-21)
+
+**Binds** [`REGRADE-AMENDMENT-1.md`](REGRADE-AMENDMENT-1.md) rev 1 (sha256 `c8db882f7fc505ac843c3834e47d4a4c9661bbc2622f6592c86e7deebaf0c96a`). Section 6's A0 row in the
+declaration, now sha256 `20697e6b60b82488608d3b97d2b2fef3137c845b36817c1f4006c0c1c7da2d2d`, marks the old clause superseded. Driver `regrade_crep.py`: `479e03cc51d7be8f0c275c98305b2ab731b135093afacb74f98417529c84d9ad`.
+
+- **Authority:** the director's call of 2026-11-21, under Joseph's standing go: "amend A0(b) in both the 2D and the
+  16-cell paths to COV2D A5's rule … Have Grok read the amendment, then commit a binding-note addendum". Later, from
+  the director: "Amendment 1 as you describe it is approved, including κ₂ over the χ²'s non-null subspace".
+- **Adopted after the STOP:** cov2d's 2D G18 A0(b), 1.73e-8 against the flat 1e-9 (752c3f60, `run2d/regrade_2d.json`).
+- **Grok's reads:**
+  - read of rev 0: NO-GO (M1, a false claim about A5 at AR23; M2, the full-spectrum κ₂ mutant survived), in
+    `grok/amend1-read-REPORT-rev0.txt`;
+  - recheck of rev 1: everything closed, **VERDICT: GO**, in `grok/amend1-recheck-REPORT-rev1.txt`.
+- **Tests and mutation:** 54 OK; 35 of 35 mutants killed (`receipts/`).
+- **What stands:** the 2D AR23 record (752c3f60) and the sixteen-cell record (a923a02e), whose A0(b) passed at the
+  flat 1e-9.
+- **What reruns:** 2D G18, locally by cov2d, with `--tunes G18`, at this driver after cov2d's look at the diff.
