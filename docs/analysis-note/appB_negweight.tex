@@ -40,8 +40,12 @@ that the refinement removed.
 \subsection{Binned limit}
 \label{sec:negweight-binned}
 
-The signed and purity-weighted targets give identical updates where the
-classifier is constant within bins and the net bin yields are nonnegative.
+At the population optimum, the signed and purity-weighted targets give
+identical updates where the classifier is constant within bins and the net
+bin yields are nonnegative. Finite, regularized classifiers approximate this
+identity.
+% Check stage (codex2 read, finding 1): the scope of app_negweight.tex:51 @ e89694209, "agree bin by bin at the population
+% optimum" and "Finite, regularized classifiers approximate this identity".
 For an occupied reconstructed bin $b$ on common support, with simulated
 signal yield $S_b>0$, the signed binary cross-entropy contribution is
 \begin{equation}
@@ -77,7 +81,9 @@ within the bin.
 \label{sec:negweight-footing}
 
 The two treatments give similar integrated cross sections in two dimensions.
-Using the scikit-learn histogram-based learner and a common training seed,
+Using the scikit-learn histogram-based learner, rather than the LightGBM
+estimator of the 2D central value, and a common training seed,
+% n82 (check stage; Joseph's decision, 2026-11-21, via the director): the backend fact as a clause, not a new sentence.
 purity and negative-weight subtraction give totals of
 \num[exponent-mode=fixed,fixed-exponent=-38,drop-exponent=true]{\nwSigPur} and
 \num[exponent-mode=fixed,fixed-exponent=-38,drop-exponent=true]{\nwSigNeg},
@@ -116,14 +122,17 @@ contribution (Table~\ref{tab:negweight} and Fig.~\ref{fig:negweight-ratio}).
   \label{fig:negweight-ratio}
 \end{figure}
 
-The refined estimator gives a smaller nominal-truth closure residual in the
-bins most sensitive to subtraction. In the 20 paired background-inclusive
-pseudo-experiments of Sec.~\ref{sec:muon-cross-section-validation}, the largest
-difference between the two mean estimates is $5.45\sigma_{\mathrm{stat}}$ in
-the bin $0.70\le p_T<0.85\,\mathrm{GeV}/c$,
+In the 20 paired background-inclusive pseudo-experiments of
+Sec.~\ref{sec:muon-cross-section-validation}, the mean difference between the
+two treatments exceeds $1\sigma_{\mathrm{stat}}$ in 14 of the 205 bins and is
+largest, $5.45\sigma_{\mathrm{stat}}$, in the bin $0.70\le p_T<0.85\,\mathrm{GeV}/c$,
 $1.5\le p_\parallel<2.0\,\mathrm{GeV}/c$. Here $\sigma_{\mathrm{stat}}$ is
 from the purity-based statistical covariance and serves as a common reference
-scale for the descriptive comparison.
+scale for the descriptive comparison. The test is a closure with 20
+pseudo-experiments, not a coverage test.
+% Check stage (Grok 2, codex2 2): the paired test compares the two treatments' means (app_negweight.tex:128 @ e89694209:
+% "exceeds 1 sigma_stat in 14 of the 205 cells, at most 5.45 sigma_stat ... a closure with 20 pseudo-experiments, not a
+% coverage test"); it does not show which lies closer to truth, so the "smaller residual" sentence is removed.
 
 On data, switching from purity to the refined estimator shifts the integral
 by $-0.139\%$. The median absolute bin shift is $0.44\%$ and the maximum is
@@ -169,17 +178,20 @@ Unbinned measurements have handled backgrounds through event selection,
 event weights, and systematic variations. H1 suppressed backgrounds to a
 negligible level with its selection, and LHCb applied track-by-track
 corrections before the unbinned detector unfolding~\cite{H1:2021wkz,LHCb:2022rky}.
-In its 24-observable $Z+$jets measurement, ATLAS assigned an uncertainty for
-the residual background, which was below
-$0.25\%$. The analysis and subsequent guidance describe adding negatively
-weighted simulated events to the measured class for larger
-backgrounds~\cite{ATLAS:2024jets,Canelli:2025guide}.
+In its 24-observable $Z+$jets measurement, ATLAS left its residual background,
+below $0.25\%$, in place and assigned it as an uncertainty, while identifying
+negatively weighted simulated events as the natural in-method
+subtraction~\cite{ATLAS:2024jets}; subsequent guidance recommends that
+subtraction for nontrivial backgrounds~\cite{Canelli:2025guide}.
+% Check stage (Grok 5): app_negweight.tex:158,162 @ e89694209; "24-observable" is the reference's own title
+% (technote.bib, ATLAS:2024jets: "twenty-four Z+jets kinematic observables").
 In the full charged-particle phase-space measurement, ATLAS used negatively
 weighted background simulation to train a neural network whose outputs
 reweight data before unfolding~\cite{ATLAS:2026fullps}.
-OmniFold-HI models large backgrounds in the unfolding, while generative
-approaches can subtract backgrounds before correcting for acceptance and
-inefficiency~\cite{Falcao:2025backgrounds,Butter:2025genfold}.
+Recent work treats backgrounds, fakes, acceptance, and inefficiency in
+OmniFold-HI~\cite{Falcao:2025backgrounds} and in generative
+unfolding~\cite{Butter:2025genfold}; these constructions address related
+problems, and their subtraction prescriptions can differ.
 
 % PASS2:
 % No macros in the source for the 20 pseudo-experiments, 5.45-sigma shift,
