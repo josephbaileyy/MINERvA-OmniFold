@@ -248,9 +248,12 @@ At the two held-out simulation tunes, the rebuilt 2D covariance gave joint
 regions that contained the true cross section in \lrval{cov2d-ar23-joint} of
 \lrval{cov2d-ntoys} pseudo-experiments at the first tune and
 \lrval{cov2d-g18-joint} of \lrval{cov2d-ntoys} at the second. Each rebuild
-included the prior-shape term and omitted the run-period block. The intervals
-on data use $Q_R$ as defined in Eq.~\eqref{eq:muon-covariance-block-sum}, and
-their coverage remains unvalidated. The
+included the prior-shape term and omitted the run-period block. Regrading the
+same pseudo-experiments with the run-period block added leaves the mean
+$\chi^2/\mathrm{ndf}$ at \fvval{rg-2d-ar23-full} at the first tune and
+\fvval{rg-2d-g18-full} at the second, far above the value of about 1 expected
+if the covariance described their deviations from the truth. The intervals
+on data use $Q_R$ as defined in Eq.~\eqref{eq:muon-covariance-block-sum}. The
 \hyperlink{validation-2d-joint-coverage}{held-out-tune coverage row} of
 Table~\ref{tab:validation-inventory} gives the thresholds, and
 Appendix~\ref{app:comparison-closure-coverage} gives the per-bin and joint

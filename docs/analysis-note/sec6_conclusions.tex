@@ -58,9 +58,10 @@ Table~\ref{tab:validity} gives the scope of each result.
     Sixteen-cell unfolding &
     Coarse five-observable integrals and $C_{\mathrm{rep}}$. &
     Illustration and descriptive generator comparisons only. &
-    The estimator fails fake-data bias and rounding-stability criteria. Model
-    tuning or constraints would require resolving these failures and validating
-    coverage with the reported covariance
+    The estimator fails fake-data bias and rounding-stability criteria, and the
+    reported covariance is too small for the deviations of held-out-tune
+    pseudo-experiments. Model tuning or constraints would require resolving
+    these failures
     (Secs.~\ref{sec:higher-dimensional-prior}
     and~\ref{sec:higher-dimensional-calibration}). \\
     \addlinespace
@@ -116,8 +117,10 @@ values beyond the prespecified tolerance.
 
 \phantomsection
 \label{sec:usage}\label{sec:limitations-use}
-The covariances propagate the specified variations, and coverage of the full
-reported covariances remains unvalidated. The scale of the run-period term
+The covariances propagate the specified variations but are too small for the
+deviations of held-out-tune pseudo-experiments from the truth
+(Secs.~\ref{sec:coverage-tunes} and~\ref{sec:higher-dimensional-calibration}).
+The scale of the run-period term
 and its ability to account for bias from pooling periods require independent
 checks. Linear projections of reported bins inherit the limitations of the
 input covariance. For inference on new observables, treating the unfolded
@@ -132,8 +135,6 @@ The main open steps are an end-to-end coverage test of the full reported
 covariance, including its response and run-period terms; identifying the
 origins of the run-period step and of the 2D shape difference with MINERvA;
 and validating the transfer of weights to events missed by the selection.
-Related exploratory studies concerned an extended fiducial region, point-cloud
-event representations, and a proposed detector-response closure.
 This study shows that unbinned unfolding can reproduce the normalization of
 a published neutrino cross-section measurement. A five-observable
 measurement requires demonstrating recovery and uncertainty coverage for
