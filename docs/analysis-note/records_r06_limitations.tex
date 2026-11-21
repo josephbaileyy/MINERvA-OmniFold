@@ -6,11 +6,10 @@
 % the note resolve through main_note.aux (xr). The note's per-result pointer subsections were dropped in the pointer pass
 % (journal-editor, 2026-11-20, JE-24); this section's subsections carry their own labels (rlim:...).
 % [records reorg] former heading: \section{Limitations moved from the note (Part 6)}
-\paragraph{Limitations moved from the note (Part 6).}
-This section holds each result's limitations as the note stated them before Part 6 was compressed. The note keeps each result's headline limits in its row of Table~\ref{tab:validity}; its \S\ref{sec:limitations} points to this section, and the body pointers that once led to its per-result limitation subsections now name the result's subsection here.
+% [records reorg, not printed] This section holds each result's limitations as the note stated them before Part 6 was compressed. The note keeps each result's headline limits in its row of Table~\ref{tab:validity}; its \S\ref{sec:limitations} points to this section, and the body pointers that once led to its per-result limitation subsections now name the result's subsection here.
 
+\paragraph{Principal limitations.}
 % [records reorg] former heading: \subsection{Principal limitations (from \S\ref{sec:limitations})}
-\paragraph{Principal limitations (from \S\ref{sec:limitations}).}
 The body states each limitation with the result it qualifies; the principal ones are these. $C_k$ denotes coverage within $\pm k$ standard deviations.
 The quoted 2D statistical block has had no coverage test. The fixed-truth coverage studies scored two earlier statistical bands, of which the first-built undercovers in its tails ($C_2=\covTwoDCTwo$, vs.\ $0.954$; \S\ref{sec:uq-boot}, \S\ref{sec:coverage}).
 No result's intervals have validated coverage. In two dimensions, the procedure's covariance under-covers jointly at both held-out tunes, with \lrval{cov2d-ar23-joint} of \lrval{cov2d-ntoys} pseudo-experiments in the joint region at each (\S\ref{sec:coverage-tunes}, \S\ref{rlim:2d}). The five-dimensional coverage test is in \S\ref{sec:coverage-5d}, and the sixteen cells' second, descriptive coverage test in \S\ref{sec:fived16-fd} and Table~\ref{tab:test-index}.
@@ -46,36 +45,40 @@ The tests that limit a reported result are indexed in Table~\ref{tab:test-index}
 % item 7), with their Search line; sec:uq-2d-scope keeps the construction and points here.
 % Pointer entry 5 (the director's ruling (a), via director-helper-3; limitations-export row n05): sec_experiment.tex:40, kept there.
 
+\paragraph{Limitations.}
 % Check stage of the journal-voice rewrite (2026-11-21; CHECK-STAGE.md item 2; DECISION-20261120a item 5), director-helper-3:
 % register rows whose limitation the rewritten Secs. 1, 3 and 6 no longer state. Each sentence below is moved verbatim
 % from the note as it stood at e89694209 (draft/note-round2-20261108); the source file and line are given with each.
 % Under DECISION-20261121b a records-status register row needs only its verbatim text here; the note carries no
 % pointer to this section (Joseph, 2026-11-21: note-to-records pointers dropped).
 % [records reorg] former heading: \section{Limitations moved from the note in the journal-voice rewrite}
-\paragraph{Limitations moved from the note in the journal-voice rewrite.}
 
 \subsection{Limitations by result}\label{recsec:limitations-results}
 
+\paragraph{Data and event loop.}
 % [records reorg] former heading: \subsection{Data and event loop (from \S\ref{sec:limitations})}
-\paragraph{Data and event loop (from \S\ref{sec:limitations}).}\label{rlim:experiment}
+\label{rlim:experiment}
 The flux histogram is POT-weighted across playlists; playlist-to-playlist flux differences are a $\sim\SI{0.2}{\percent}$ effect (\S\ref{sec:evloop}).
 % Part 6 (the director's ruling (A), 2026-11-19): the 2D block returns here as the file sec_q1_limitations.tex, moved whole
 % and byte-identical from Part 3 (H3-P6-04); journal-editor's JE-07 rows stay as the record of its first landing.
 
+\paragraph{The two-dimensional cross section.}
 % [records reorg] former heading: \subsection{The two-dimensional cross section (from \S\ref{sec:limitations})}
-\paragraph{The two-dimensional cross section (from \S\ref{sec:limitations}).}\label{rlim:2d}
+\label{rlim:2d}
 \input{sec_q1_limitations}
 
+\paragraph{Available energy and momentum transfer.}
 % [records reorg] former heading: \subsection{Available energy and momentum transfer (from \S\ref{sec:limitations})}
-\paragraph{Available energy and momentum transfer (from \S\ref{sec:limitations}).}\label{rlim:3d}
+\label{rlim:3d}
 In the comparison with Ascencio \emph{et al.} (\S\ref{sec:4d}), the two analyses define true $\Eavail$ differently, and the aggregate shift over the three lowest bins has not been computed. The definition difference therefore remains an alternative explanation that is not excluded, and at the \SI{10}{\percent} scale of the residual the comparison neither refutes nor validates the result.
 % absence-ok: "has not been computed" and "not excluded" restate sec_3d.tex:211, which keeps them beside its numbers
 % Entries for the three long caveat statements (the director's ruling, 2026-11-18): each arrives as a move pair from its
 % body owner (limitation-resolver: sec_fived16, sec_5d; the Codex writer: sec_joint), whose home keeps a one-line result
 % with its scope label and a pointer here. Until each pair lands, its entry is this pointer sentence only.
 
+\paragraph{The sixteen-cell cross section.}
 % [records reorg] former heading: \subsection{The sixteen-cell cross section (from \S\ref{sec:limitations})}
-\paragraph{The sixteen-cell cross section (from \S\ref{sec:limitations}).}\label{rlim:fived16}
+\label{rlim:fived16}
 % Move pairs LR-20..LR-32 (limitation-resolver): the second coverage test's design and scope, sec_fived16.tex's second-test
 % paragraph (sec:fived16-fd), verbatim and contiguous, except one token: "(above)" becomes (\S\ref{sec:fived16-fd}), where the
 % tunes' overlaps are stated. The home keeps the readings, the counts, "remains untested" and the descriptive sentence.
@@ -88,15 +91,17 @@ The model term $C_{\mathrm{model}}$ of \S\ref{sec:fived16-cov} measures generato
 % absence-ok: "is not a calibrated bound" and "has not been validated" are the moved sentences' own statements (LR-60, LR-61; sec_fived16.tex sec:fived16-cov), moved verbatim
 The run-period block of the sixteen cells is $C_{\mathrm{PL,5D}}$ (\S\ref{sec:fived16-pl}). In cells \fvval{pl-noise-cells} the block is dominated by the replica noise it contains.
 
+\paragraph{The five-dimensional development tests.}
 % [records reorg] former heading: \subsection{The five-dimensional development tests (from \S\ref{sec:limitations})}
-\paragraph{The five-dimensional development tests (from \S\ref{sec:limitations}).}\label{rlim:5d}
+\label{rlim:5d}
 % Move pairs LR-33..LR-47 (limitation-resolver): the coverage test's defective q3 truth (sec_5d.tex sec:coverage-5d), its
 % miscoverage diagnosis (the source block as given, with its comments), and the data-stability consequence (sec:val-departure),
 % verbatim and contiguous. Each lead sentence restates its home's result and supplies the antecedent.
 The end-to-end coverage test of \S\ref{sec:coverage-5d} used three truths, and it failed its futility criterion. Of those three, the change of the $q_3$ dependence at fixed $(\Eavail,W)$ did not implement the intended reweighting. Its experiments were generated, and they are not an interpretable test of that deformation. The futility verdict does not depend on them.
 
+\paragraph{Why the intervals miscover under the rate reduction.}
 % [records reorg] former heading: \paragraph{Why the intervals miscover under the rate reduction.}
-\paragraph{Why the intervals miscover under the rate reduction.} The diagnosis below uses the stored outputs and the code.  The rate change itself is recovered: in the one locally stored pseudo-experiment the total changes by \SI{-9.58}{\percent} against \SI{-9.56}{\percent} injected, and over the 400 the total covers at 0.74 (68\%), so the miscoverage is not a normalization failure.  Nor are the intervals too narrow. They use one nominal bootstrap $\sigma$ at every truth, which for 10\% fewer events is slightly too wide apart from the background not being redrawn (inferred spread about $1.15\sigma$ at $W\ge\SI{3}{GeV}$). Setting the spread equal to the half-width leaves the failing quantities' coverage at 0.06--0.22.  The purity subtraction does not apply a nominal signal fraction to the reduced data: it removes the absolute nominal background expectation, which is unchanged, and in the stored pseudo-experiment the subtracted total agrees with the pseudo-signal to 60 of 3.2 million events.
+ The diagnosis below uses the stored outputs and the code.  The rate change itself is recovered: in the one locally stored pseudo-experiment the total changes by \SI{-9.58}{\percent} against \SI{-9.56}{\percent} injected, and over the 400 the total covers at 0.74 (68\%), so the miscoverage is not a normalization failure.  Nor are the intervals too narrow. They use one nominal bootstrap $\sigma$ at every truth, which for 10\% fewer events is slightly too wide apart from the background not being redrawn (inferred spread about $1.15\sigma$ at $W\ge\SI{3}{GeV}$). Setting the spread equal to the half-width leaves the failing quantities' coverage at 0.06--0.22.  The purity subtraction does not apply a nominal signal fraction to the reduced data: it removes the absolute nominal background expectation, which is unchanged, and in the stored pseudo-experiment the subtracted total agrees with the pseudo-signal to 60 of 3.2 million events.
 The miscoverage is a residual bias that the nominal-truth bias correction does not remove.  The rate change adds a positive bias that grows with $W$: about \SI{0.2}{\percent} for $1.4\le W<\SI{2.2}{GeV}$, \SI{0.4}{\percent} for $2.2\le W<\SI{3}{GeV}$, and 0.7--\SI{1.1}{\percent} for $W\ge\SI{3}{GeV}$. Against intervals of 0.16--0.43\%, this is 1.3--2.6 standard deviations, whatever the sign of the nominal bias $\beta$. Removing that bias restores coverage to 0.62--0.82 at 68\% and 0.92--0.99 at 95\%.
 These per-quantity biases and spreads are inferred, not measured. The stored output records only hit counts, and each quantity's mean shift and spread come from a Gaussian fit to its 68\% and 95\% coverage, checked against one recorded value (EW17: $+1.04\%$ fitted against $+1.05\%$).  The source of the $W$-graded term is not established. Under an approximate assignment of background fractions to $W$ bins, its size and ordering roughly match the rise of the background fraction by $0.111\,f_{\mathrm{bkg}}$. The term may also arise from the estimator alone.
 A rerun of five of the same pseudo-experiments did not decide between the two. It was run without background, and with the background scaled by 0.9 so that the background-to-signal ratio is restored. Restoring the ratio raised the residual for $W\ge\SI{3}{GeV}$ rather than removing it, and without background the residual persists. Agreement in the marginal normalizations thus coexists with a substantial residual bias under the tested deformation, and whether that bias has the same origin as the regularization bias of \S\ref{sec:val-departure} is not established.
@@ -126,8 +131,8 @@ The development assessment of $R$ uses repeated pseudo-experiments (\S\ref{sec:g
 % Check stage of the journal-voice rewrite (2026-11-21), director-helper-3: the register rows the rewritten Secs. 1, 3 and 6 no longer state.
 % [records reorg] \input{records_compression_h3_rw}: its blocks are placed by the routing rules
 
+\paragraph{Two-dimensional limitations.}
 % [records reorg] former heading: \subsection{Two-dimensional limitations (from Sec.~3 of the rewritten note)}
-\paragraph{Two-dimensional limitations (from Sec.~3 of the rewritten note).}
 From the 2D systematic block's unified-throw test (app\_statmethods.tex:162):
 A single-throw superposition probe is insufficient to test nonlinear response.
 From the run-period block (sec\_systematics.tex:159):
@@ -145,8 +150,8 @@ Miss completeness & Full truth-event inventory; production truth--reco event mat
 From the caption of the same table (sec\_validation.tex:7):
 Coverage pooled over bins is not a simultaneous probability that every bin is covered.
 
+\paragraph{Scope and outlook.}
 % [records reorg] former heading: \subsection{Scope and outlook (from Secs.~1 and 6 of the rewritten note)}
-\paragraph{Scope and outlook (from Secs.~1 and 6 of the rewritten note).}
 From the introduction's account of the estimators (sec\_intro.tex:59):
 The \resFiveAxis{} (Table~\ref{tab:config-key}) and its five-axis covariance, and the extended-fiducial value, use the binned purity weight, a per-reco-bin $(D-B)/D$ weight fixed \emph{before} training.
 From the validity table's row for the exploratory five-axis unfolding (sec\_validity\_table.tex:33):
