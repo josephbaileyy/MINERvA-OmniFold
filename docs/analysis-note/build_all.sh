@@ -282,7 +282,7 @@ python3 check_sec4_receipts.py
 echo
 echo "=== no input marked pending prints (\\fvpending) ==="
 # A \fvpending{...} placeholder marks a readout or figure that has not landed (the covariance export, the two 5D
-# figures). It prints "[PENDING: ...]"; a built note or paper that still prints one is refused here, so it never ships.
+# figures). It prints "[PENDING: ...]"; a built note that still prints one is refused here, so it never ships.
 pending_txt=$(mktemp)
 for t in main_note; do
   # extract to a file first: under pipefail a failed pdftotext piped into grep would read as "no placeholder"

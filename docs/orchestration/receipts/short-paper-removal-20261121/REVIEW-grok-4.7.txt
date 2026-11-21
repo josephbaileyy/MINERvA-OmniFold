@@ -1,0 +1,85 @@
+I'll review this commit read-only against the removal plan and the before/after files, then print the report to standard output.
+
+The mentions list is large. I'll separate live readers, builds, tests, and hash pins from comments and historical records, then compare the rebound checks.
+
+The live readers are the ones that can still open a removed path. I'll compare those against the rebound checks and the decision record.
+
+The review is still open on a few pins and the registry line digest. I will check those against the inputs, then print the report.
+
+VERDICT: APPROVE WITH CHANGES
+
+The rebound checks, tests, and registry citation in the after snapshot hold up. The decision record states gate results this package does not contain, and its development-branch tip disagrees with the removal list. A handful of live rows still name the deleted files and were not shown to be non-runtime.
+
+1. SHOULD-FIX. `docs/POST_PUBLICATION_REORG_PLAN.md:687` and `2d-unfolding/re2/partc/re2c_values_spec.tsv:202` (also `:203`–`:210`, `:248`, `:250`, `:251`), `re2c_values_unmatched.tsv:19`, `docs/orchestration/oi130_quoted_value_inventory.py:43`. The record says every remaining mention is prose or a frozen record and that none resolves a path at run time. These rows are not comments, and their consumers are not in this package, so they are not shown to open a removed path and they are not cleared.
+
+The record:
+
+> Everything else that names the paper is prose or a frozen record, and none of it resolves a path at run time.
+
+The spec rows name the deleted files as the published location of a checked value. From `mentions-after-outside-frozen.txt`:
+
+> `pap-findings-integral	N/paper_body.tex:93	1	agreement	…	'within about 1%' (1.12 %); a single-character printed string, weak substring test`
+> `mainpap-integral	N/main_paper.tex:76	1	agreement	…	abstract 'integral within about 1\%'; single-character printed string, weak substring test`
+> `pap-s1-median	N/paper_body.tex:445	0.684	budget_Q	stat.median_pct	v	.3f	S5_prose`
+> `N/paper_body.tex:414	4.01	published-side (published flux median); no listed source; not E_U/Q`
+
+And the inventory script:
+
+> `"paper": "main_paper.tex"`
+
+They are outside the §2 change table. The plan’s prose bucket is comments, README files, KNOWN_ISSUES, presentation JSON, and committed state TSVs. Show that no runner opens these paths, or retarget the rows, and amend the sentence at line 687.
+
+No line in the after snapshot opens, builds, hash-pins, or installs one of the five paths. The Fig. 1 install and the `6214ed78` pin are gone (`make_figures.sh:192`–`194`, `make_values_fived16.py:186`–`188`). `nd-unfolding` reads of `fd_g_fig_ratio.json` are a different product. `receipts/2d-c04-adopt-20261012/RUN.txt:17` is a frozen run log; the record names that receipt and leaves it.
+
+2. SHOULD-FIX. `docs/POST_PUBLICATION_REORG_PLAN.md:708` against `inputs/SHORT-PAPER-REMOVAL-LIST-20261121.md:10` and `:93`. The discovery route names two different tips for the same branch.
+
+The record:
+
+> the paper's development branch `origin/draft/methods-short-20261109` (`5bbb9d269` when this was written), which is kept.
+
+The removal list:
+
+> Its last development is on `origin/draft/methods-short-20261109`, at 5c7589bb5 (2026-11-16).
+
+and §6 repeats `origin/draft/methods-short-20261109` (5c7589bb5). The branch name is in the README (`docs/analysis-note/README.md:12`–`16`) and in `CATALOG.md:2435`. The tip identifier is not one identifier. The note’s own comment at `sec_q3_fived16.tex:34` cites `5bbb9d269` as the paper’s section 5.2, which does not establish it as the branch tip.
+
+3. SHOULD-FIX. `docs/POST_PUBLICATION_REORG_PLAN.md:693`–`700`, and the parent identification at `:650`–`651`. The recovery facts §4 and §5 require are stated as done and are not in the diff, the commit stat, or the removal list. The tag commit the record names is not the rewrite head this diff is taken against.
+
+The record:
+
+> The tag **`evidence/short-paper-retired-a54f255e`** was pushed before the removal commit. It is tag object `21a9b0cf60f0a6d1…`, on commit `a54f255e92cb2232fe038b497870de23b40f0e58`. Each of the five paths is blob-identical at the tag and at the parent, and restores by `git show` to the same sha256. … From a `git archive` of the tag, `main_note` and then `main_paper` … build with rc 0, 0 errors, 0 multiply defined and 13 pages.
+
+`family-commit-stat.txt:1`–`3` says the branch head `0f114c8e5` is against rewrite head `d4b3a32a8`, which it merged (`568b79be2`), after the removal commit `9fe7bae0a`. The file parent in this package is `d4b3a32a8`. Nothing here shows the five blobs at `a54f255e9` equal the five blobs at `d4b3a32a8`. The figure prefixes in the record do match the pins that were removed: `make_figures.sh` (parent) line 198 is `want=1ead58a2223ecf88f3de505d7cbcca76ab306af49814ea7c9d50ec0f2c373e0c`, and `make_values_fived16.py` (parent) line 187 pins `fd_g_fig_ratio.pdf` as `6214ed78`. Those prefixes show what the tooling pinned. They do not show that a restore was run.
+
+The same gap covers `:646` (`8da728fd66` against `c0096d456b` on main) and `:677` (`--check` failed at `a54f255e9`; commits `4b784728d` and `78aa1a5e2`). The parent checker is consistent with the note’s count sentence already being gone (`make_values_fived16.py` parent lines 230–231). The failure and those two SHAs are not otherwise evidenced. The 17/17 and 21-perturbation counts are a reading of the checker, not a log: 16 `CHECKS`, every mode `"round"`, 20 capture groups, plus one verbal plant (`check_sec4_receipts.py:159`–`194` and `:272`–`:297`).
+
+4. NIT. `primer_body.tex:239` against `paper_body.tex:149`. The withheld-shape check is the same receipt and the same tolerance. The new sentence drops qualifiers the old check’s sentence carried.
+
+Paper:
+
+> For other fixed generator shapes tested with the joint-test estimator, it is \SIrange{16}{31}{\percent} in the most affected $(\Eavail,W)$ cell and lies within the quoted total uncertainty in about half of those cells. Those uncertainties come from an earlier purity-subtracted five-observable covariance that fails its specified acceptance criteria
+
+Primer:
+
+> For test patterns from other generators the effect is \SIrange{16}{31}{\percent} in the worst cell and smaller than the quoted uncertainty in about half of the $(\Eavail,W)$ cells.
+
+`shapes_range` and `half_of_cells` are unchanged, the band is still 0.40–0.60, and the phrase plant still replaces `in about half of the` (`check_sec4_receipts.py:190`–`194`, `:292`). The words “total”, “joint-test estimator”, and the failing-covariance clause are no longer what the check requires.
+
+5. NIT. `build_all.sh:285`, root `README.md:64`, `AGENTS.md:136`. The pending loop itself is `for t in main_note` (`build_all.sh:287`). The comment above it still says “a built note or paper”. The root README and `AGENTS.md` still route the article to `docs/analysis-note/main_paper.tex`. The plan left prose routers in place. The note README and the CATALOG row are the discovery route, and they name the tag.
+
+Check 2, the rebinds. Nothing further is wrong. All five receipt checks moved, none dropped, same function, mode still `"round"`:
+
+| Check | Old printed sentence | New sentence | Tolerance |
+|---|---|---|---|
+| Statistical median | `paper_body.tex:128`, `\SI{0.676}{\percent}` | `sec3_twod.tex:158`, `Statistical bootstrap & 0.676 &`; caption at `:143`–`:145` says the column is the median of the binwise fractional standard deviations | same three decimals |
+| High-W regularization | `paper_body.tex:149`, `\SI{74}{\percent}` at high $W$ | `sec4_higherdim.tex:270`, `reaches $74\%$ in the highest-$W$ column` | same integer |
+| 68% coverage | `paper_body.tex:152`, `as low as 0.06` | `sec4_higherdim.tex:397`–`:398`, `is 0.060` | stricter (half a unit in the third decimal, against half a unit in the second) |
+| Shape range and half of the cells | `paper_body.tex:149`, `\SIrange{16}{31}` and the half-of-cells phrase | `primer_body.tex:239` | same integers, same 0.40–0.60 band |
+
+The test string `Statistical bootstrap & 0.676 &` (`test_check_sec4_receipts.py:38`) matches `sec3_twod.tex:158`. The `ctotal` sentence and its “omits a truth F0 lists” plant, and the paper-abstract `count` check, are dropped. Both drops are stated at `make_values_fived16.py:220`–`225` and in the record at `:672`–`:674`, and §2 authorizes dropping the paper sentence checks. `sec_q3_fived16.tex:33` still states the keys, without-block, and both claims, and the four moved plants match that sentence (`make_values_fived16.py:2056`–`2068`). The keys-count assertion went from 2 to 1 (`:2081`), matching the one remaining keys sentence. No prose sentence in the after snapshot enumerates the $C_{\mathrm{total}}$-alone set (GiBUU hybrid, GiBUU $E_{\mathrm{avail}}$ shape, $q_3$ tilt, and the NuWro $(\pT,\pPar,\Eavail)$ shape). The table row at `sec_q3_fived16.tex:23` still prints W3’s macros. The rest of the repository was not searched for another sentence of that kind. The new registry digest was recomputed: sha256 of `records_r07_statistics.tex:467` with no newline begins `dd51cdc382e8b520`, which is the digest on `ALIASES.tsv:38`, `ALIASES.tsv:47`, and `ATTRIBUTION.tsv:17`. Both quotes sit on that line. The capacity pattern now also matches `has` (`ALIASES.tsv:47`); the new sentence uses `has`.
+
+Check 3. Nothing is wrong. `test_build_all.py:41` is the four targets, `:802` expects four `(fresh)`, and `:827` expects three after unlinking `main_primer.fdb_latexmk`. The stale case edits `body_main_primer.tex` and expects `main_primer.pdf is STALE` (`:804`–`:809`). The strike case writes `5.678` into `main_primer.pdf` and expects failure (`:902`–`:907`). The m10 search string (`:593`) is `targets=(main_note main_primer pet_note main_records)`, which is `build_all.sh:112`. The file no longer contains `main_paper`. `test_check_sec4_receipts.py:36`–`:65` still requires the unperturbed sources to pass, exactly one `old`, and exactly one failing check. The registry conflict case still expects failure, on a one-line fixture whose digest is computed in the test (`check_registry.py:199`–`:210`). `results_index.py:967`–`:979` still expects rc 0 when `main_note.tex` inputs `sec_method`, and rc 1 when the NO-RESULTS-INDEXED listing is emptied. `POSTED` (`results_index.py:550`) and `POSTED_DRIVERS` (`check_registry.py:112`) no longer list `main_paper.tex`. `BUILDS` (`check_dead_containment.py:84`–`:85`) no longer lists it.
+
+Check 4, the statements that are supported. The five paths in the record are the five paths the commit stat deletes. The README paragraph (`docs/analysis-note/README.md:12`–`16`) has the form §6 asks for: the tag, `main_paper.tex`, the other family paths, and `origin/draft/methods-short-20261109`. `CATALOG.md:2427`–`2437` names the same files, Joseph’s sentence “yes I also authorize the short paper removal”, the tag, the README stub, and that branch. The record’s own steps stop at 6. It does not claim the lint, the unchanged note PDF, this review, or the before/after counts (removal-list steps 7–10).
+
+Check 5. Nothing further makes the removal unsafe in the files this package holds. `values_inference.tex:2` still says it is read only by `main_paper.tex`; that is a stale comment, and the removal list keeps the file because the note shares it.
