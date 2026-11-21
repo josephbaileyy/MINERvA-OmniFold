@@ -1,0 +1,11 @@
+# Fig. 3 round 3 (2026-11-21T06:19:24Z): compose_fig3_r3.py sha256 c19395108f2d530246c00f00c11d95675ae10077e643318defb2a043aa17fd08
+# arm 0: note-figround-20261121/tools/compose_fig3_round.py on the palette chain (the installed recipe); arm 1: compose_fig3_r3.py on the same chain
+== arm 0 against the installed file at HEAD
+EQUAL-BUT-DATE MEFHC_5iter_pull_full.pdf: /CreationDate (D:20261120220006-07'00') vs /CreationDate (D:20261120221927-07'00')
+== arm 1 against arm 0: every data item equal (full hashes); strings equal apart from the histogram's x tick labels; overlaps
+  ok MEFHC_5iter_pull_full.pdf: 35 data items equal True; words changed []; tick labels changed 0; overlaps 0 -> 0
+  ok MEFHC_5iter_pull_full.png: 35 data items equal True; words changed []; tick labels changed 0; overlaps 6 -> 0
+FIG3-R3-CAPTURES :: PASS
+page size: Page size: 292.877 x 129.978 pts (cropped to content; was 327.6 x 165.6); printed sizes and scale: [7.9, 8.5] pt at scale 1.5897
+installed MEFHC_5iter_pull_full.pdf sha256 9335a3e3037320c6bb5a0e3d0ad61ac7709c693633ba9c5a1265e61c38c2501e
+RUN-FIG3-ROUND :: PASS

@@ -326,7 +326,10 @@ mismatched flux (Appendix~\ref{app:choices-after-results}), so the ratio serves 
 the scale of generator differences. For the three other injected shapes
 in Sec.~\ref{sec:higher-dimensional-closure}, the
 unfolded shift has the opposite sign in up to \fvval{rec-w-opp-hi} of the supported
-$(E_{\mathrm{avail}},W)$ cells with an injected change above 2\% and overshoots in \fvval{rec-w-over-lo} to \fvval{rec-w-over-hi} cells.
+$(E_{\mathrm{avail}},W)$ cells with an injected change above \fvval{rec-thr}\% and overshoots in \fvval{rec-w-over-lo} to \fvval{rec-w-over-hi} cells.
+% Check stage (codex2 confirming read, finding 3; no change of meaning): the producer, make_values_fived16.py recov_values(),
+% grades every shape (GiBUU, W1, W2, W3) over the supported (E_avail, W) cells with |injected| > rec-thr = 2%; rec-w-opp-hi and
+% rec-w-over-* come from W1-W3 under that rule. The threshold is the producer's macro, not a typed number.
 In the sixteen-cell bias test, against the covariance without GiBUU's own
 prior-shape contribution, the GiBUU hybrid gives $|z|=\lrval{vr-R02-z-gibuu}$ and
 \lrval{vr-R06-z-gibuu} in R02 and R06. For the separate GiBUU available-energy
