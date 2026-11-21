@@ -1,0 +1,47 @@
+fixture built at /pscratch/sd/j/josephrb/t3p-20261121
+== variant stale_sums; npz 36
+== script rc=9; self copy left: ls: cannot access '/dev/shm/t3pr.1.sh': No such file or directory
+== the connect log
+node b0fac01af0a8 nproc=4 loadavg 1.27 0.85 0.39
+2026-11-21T17:54:49Z
+window_end_epoch 1795284589 (now 1795283689); fence prefixes cov2d,ll5d_,ibukt,rpd_,prr_,e96,ens1_
+connect script sha256 fb7788751ae2028e9b0a11e46577efcf9f10d030894b6dc0d0a9baa7026c5227
+== fence (sacct)
+fence clear
+== the three jobs (sacct)
+61726250|t3p_dry|COMPLETED|0:0|2026-11-21T06:12:44|2026-11-21T09:40:31|12467|1
+61728686|t3p_q3|COMPLETED|0:0|2026-11-21T06:12:44|2026-11-21T09:40:31|12467|1
+61731751|t3p_floor|COMPLETED|0:0|2026-11-21T06:12:44|2026-11-21T09:40:31|12467|1
+log-dry/DONE: {"mode": "dry", "tasks": 6, "ended": 6, "rc": 0}
+log-q3/DONE: {"mode": "q3", "tasks": 6, "ended": 6, "rc": 0}
+log-floor/DONE: {"mode": "floor", "tasks": 24, "ended": 24, "rc": 0}
+HEAD 8bb4e3b0e1028d960e39de0c202569a08a1218a0; porcelain --ignored lines before: 0
+t3p_arms.py: OK
+t3p_probe.py: OK
+t3p_read.py: OK
+sbatch_t3p.sh: OK
+test_t3p.py: OK
+t3p_mutation.py: OK
+declaration sha256 f96ed6f29a155e978bf449fdcb9810670202e0a3d74fb2f96afe48098b63cae1
+addendum V1 sha256 3998708a91dde4b01c3dcb1e87a7b7a45796de13da53880a0eb79a410ecc7986
+log-floor/SHA256SUMS: 36 products
+log-dry/SHA256SUMS: OK (36 lines)
+log-q3/SHA256SUMS: OK (36 lines)
+runs/B0/A7_gibuu/t3p_B0_A7_gibuu_s991000.npz: FAILED
+sha256sum: WARNING: 1 computed checksum did NOT match
+STOP: the products are not log-floor/SHA256SUMS's
+t3p read rc=9
+2026-11-21T17:55:03Z
+== done: 9
+== OUT top level
+deploy-read
+fence.txt
+log-dry
+log-floor
+log-q3
+logs
+manifest.json
+queues
+runs
+stage
+stage.json
