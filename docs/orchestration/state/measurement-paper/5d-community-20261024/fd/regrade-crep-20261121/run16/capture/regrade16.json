@@ -1,0 +1,704 @@
+{
+ "schema": "regrade-crep/16/1",
+ "capture_manifest": {
+  "schema": "regrade-crep/capture/1",
+  "M_L": "4231b14de5ea693e92cb31b1358a816b5c2f6625",
+  "host": "login25",
+  "start_utc": "2026-11-21T11:05:53Z",
+  "deploy": {
+   "head": "4231b14de5ea693e92cb31b1358a816b5c2f6625",
+   "bound_ok": [
+    "nd-unfolding/fd_1b_inv.py",
+    "nd-unfolding/fd_1b_mc.py",
+    "nd-unfolding/fd_1b_null.py",
+    "nd-unfolding/fd_1b_score.py",
+    "nd-unfolding/fd_1b_toys.py",
+    "nd-unfolding/ll5d.py",
+    "nd-unfolding/ll5d_b.py",
+    "nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "nd-unfolding/s1_assemble.py"
+   ]
+  },
+  "pins": {
+   "s1_assembly": "db000707780d4d6da65389be9adedfd9a3ba6552a255f6ce81ccbdd0b8eb72a4",
+   "constraint": "e38ad7d28354d071577113a18c8c569f88b6239f7fb193d20285273f172fc0c2",
+   "list": "980bb95e20eac386a220bb7d0dbb16a5a3477248688f9a72bc07671a7ad5842d",
+   "products_checked": 1654
+  },
+  "outputs": {
+   "capture_g18_minus2.npz": "2fae21c50ea983395216f1781f64ead974ebc4dee5b0957bca5f6079a9cd1f8b",
+   "capture_g18_all.npz": "29a9f1d5842924008574bc55d425d12c6f71a0cd901d516f505cb1154c11bfb8",
+   "capture_ar23_minus2.npz": "7212996c87cd3526764f7d38779e8d36b4daa0fa5099f50a34d9800ede18a9c2",
+   "capture_ar23_all.npz": "97b3d915f40a27026c9cc71bec5fc01fdaf0b9e067016257266dfcfbc5cea313"
+  },
+  "watched": 1656,
+  "atime_moved": [],
+  "changed": [],
+  "end_utc": "2026-11-21T11:06:25Z",
+  "code_sha256": "fed8c9717cc786722181f7809dcfab62ae21a49b43d35de6adf64283f28ffe95"
+ },
+ "evaluations": {
+  "g18/minus2": {
+   "C_F16": {
+    "identity_rel": 1.458424100017361e-16,
+    "f_rel": 0.0
+   },
+   "A0": {
+    "a": {
+     "ndf": true,
+     "joint_count": true,
+     "counts": true
+    },
+    "b_rel": 4.75175454539567e-14,
+    "b": true,
+    "c": {
+     "k_joint": true,
+     "flags": true
+    },
+    "c_reading": "equal"
+   },
+   "C_PSD": {
+    "name": "C_resp+C_PL5D(g18/minus2)",
+    "asym_rel": 1.0998850677411047e-16,
+    "lam_min_rel": -7.357786602007569e-17,
+    "lam_max": 5.037059648179595e-80
+   },
+   "R_chi2": {
+    "ndf": 16,
+    "n": 300,
+    "M_prime": 1.6415321080504626,
+    "SE": 0.0406014413187785,
+    "mean_error_part": 0.7493179804414047,
+    "spread_part": 0.8922141276090578,
+    "tau": 0.17660591768561607,
+    "M_full": 1.8181380257360786,
+    "reading": "under-describes on average",
+    "toys_own_mean_line": {
+     "M_prime_minus_1_over_SE": 15.80072251656122,
+     "toys_mean_exceeds_1_by_3SE": true,
+     "what": "descriptive; the stored toys' own mean chi2/ndf' against C'"
+    },
+    "cut": {
+     "ndf_C_T": 16,
+     "ndf_C_prime": 16,
+     "C_T_kept_modes_outside_C_prime_kept_span": 0,
+     "max_residual_of_C_T_kept_modes": 1.3961186125577229e-15,
+     "smallest_kept_rel": 3.729489440199433e-05,
+     "largest_dropped_rel": null
+    },
+    "assumptions": [
+     "the model for the added blocks (r independent of e, E r = 0, Cov r = C_add) is untested",
+     "the run-period blocks have no generative law (SCOPING.md item a3)",
+     "the fractional carry of section 2",
+     "M_full is a conditional expectation of the full test given the stored toys, not a draw and not a coverage fraction",
+     "C' is the tune-carried analogue of the reported covariance, not the published matrix"
+    ]
+   },
+   "descriptive_regrade": {
+    "joint_count": 75,
+    "k_joint": 193,
+    "joint_flag": true,
+    "ndf": 16,
+    "cell_flag": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "counts": [
+     206,
+     222,
+     286,
+     259,
+     232,
+     257,
+     249,
+     208,
+     217,
+     249,
+     227,
+     199,
+     206,
+     212,
+     226,
+     235
+    ],
+    "k_cell": [
+     175,
+     176,
+     179,
+     179,
+     180,
+     179,
+     179,
+     178,
+     179,
+     179,
+     179,
+     179,
+     177,
+     179,
+     179,
+     179
+    ],
+    "chi2_mean_over_ndf": 1.6415321080504626,
+    "verdict": "descriptive-UNDER-COVERS",
+    "note": "a reading, not a proof"
+   },
+   "sensitivity_absolute_carry": {
+    "R_chi2": {
+     "ndf": 16,
+     "n": 300,
+     "M_prime": 1.625768301951141,
+     "SE": 0.03979576088301157,
+     "mean_error_part": 0.7427825959748504,
+     "spread_part": 0.8829857059762907,
+     "tau": 0.1857675010591617,
+     "M_full": 1.8115358030103028,
+     "reading": "under-describes on average",
+     "toys_own_mean_line": {
+      "M_prime_minus_1_over_SE": 15.724496480686101,
+      "toys_mean_exceeds_1_by_3SE": true,
+      "what": "descriptive; the stored toys' own mean chi2/ndf' against C'"
+     },
+     "cut": {
+      "ndf_C_T": 16,
+      "ndf_C_prime": 16,
+      "C_T_kept_modes_outside_C_prime_kept_span": 0,
+      "max_residual_of_C_T_kept_modes": 1.0901698509051681e-15,
+      "smallest_kept_rel": 3.966956727792643e-05,
+      "largest_dropped_rel": null
+     },
+     "assumptions": [
+      "the model for the added blocks (r independent of e, E r = 0, Cov r = C_add) is untested",
+      "the run-period blocks have no generative law (SCOPING.md item a3)",
+      "the fractional carry of section 2",
+      "M_full is a conditional expectation of the full test given the stored toys, not a draw and not a coverage fraction",
+      "C' is the tune-carried analogue of the reported covariance, not the published matrix"
+     ]
+    },
+    "read_by": "nothing"
+   },
+   "status": "done"
+  },
+  "g18/all": {
+   "C_F16": {
+    "identity_rel": 1.458424100017361e-16,
+    "f_rel": 0.0
+   },
+   "A0": {
+    "a": {
+     "ndf": true,
+     "joint_count": true,
+     "counts": true
+    },
+    "b_rel": 1.8807178037150152e-13,
+    "b": true,
+    "c": {
+     "k_joint": true,
+     "flags": true
+    },
+    "c_reading": "equal"
+   },
+   "C_PSD": {
+    "name": "C_resp+C_PL5D(g18/all)",
+    "asym_rel": 1.0998850677411047e-16,
+    "lam_min_rel": -7.357786602007569e-17,
+    "lam_max": 5.037059648179595e-80
+   },
+   "R_chi2": {
+    "ndf": 16,
+    "n": 300,
+    "M_prime": 1.6476735648891179,
+    "SE": 0.04214709037467669,
+    "mean_error_part": 0.7522184139675002,
+    "spread_part": 0.8954551509216176,
+    "tau": 0.1763616606928247,
+    "M_full": 1.8240352255819425,
+    "reading": "under-describes on average",
+    "toys_own_mean_line": {
+     "M_prime_minus_1_over_SE": 15.366981661876729,
+     "toys_mean_exceeds_1_by_3SE": true,
+     "what": "descriptive; the stored toys' own mean chi2/ndf' against C'"
+    },
+    "cut": {
+     "ndf_C_T": 16,
+     "ndf_C_prime": 16,
+     "C_T_kept_modes_outside_C_prime_kept_span": 0,
+     "max_residual_of_C_T_kept_modes": 1.7391779477150626e-15,
+     "smallest_kept_rel": 3.739784736307764e-05,
+     "largest_dropped_rel": null
+    },
+    "assumptions": [
+     "the model for the added blocks (r independent of e, E r = 0, Cov r = C_add) is untested",
+     "the run-period blocks have no generative law (SCOPING.md item a3)",
+     "the fractional carry of section 2",
+     "M_full is a conditional expectation of the full test given the stored toys, not a draw and not a coverage fraction",
+     "C' is the tune-carried analogue of the reported covariance, not the published matrix"
+    ]
+   },
+   "descriptive_regrade": {
+    "joint_count": 76,
+    "k_joint": 193,
+    "joint_flag": true,
+    "ndf": 16,
+    "cell_flag": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "counts": [
+     205,
+     221,
+     285,
+     262,
+     233,
+     258,
+     253,
+     212,
+     219,
+     251,
+     229,
+     198,
+     206,
+     213,
+     226,
+     234
+    ],
+    "k_cell": [
+     175,
+     176,
+     179,
+     179,
+     180,
+     179,
+     179,
+     178,
+     179,
+     179,
+     179,
+     179,
+     177,
+     179,
+     179,
+     179
+    ],
+    "chi2_mean_over_ndf": 1.6476735648891179,
+    "verdict": "descriptive-UNDER-COVERS",
+    "note": "a reading, not a proof"
+   },
+   "sensitivity_absolute_carry": {
+    "R_chi2": {
+     "ndf": 16,
+     "n": 300,
+     "M_prime": 1.6300853735058762,
+     "SE": 0.04119122566591722,
+     "mean_error_part": 0.7453334359342654,
+     "spread_part": 0.8847519375716109,
+     "tau": 0.18553540469181362,
+     "M_full": 1.8156207781976899,
+     "reading": "under-describes on average",
+     "toys_own_mean_line": {
+      "M_prime_minus_1_over_SE": 15.296592012488393,
+      "toys_mean_exceeds_1_by_3SE": true,
+      "what": "descriptive; the stored toys' own mean chi2/ndf' against C'"
+     },
+     "cut": {
+      "ndf_C_T": 16,
+      "ndf_C_prime": 16,
+      "C_T_kept_modes_outside_C_prime_kept_span": 0,
+      "max_residual_of_C_T_kept_modes": 1.8811930376797944e-15,
+      "smallest_kept_rel": 3.983756455375265e-05,
+      "largest_dropped_rel": null
+     },
+     "assumptions": [
+      "the model for the added blocks (r independent of e, E r = 0, Cov r = C_add) is untested",
+      "the run-period blocks have no generative law (SCOPING.md item a3)",
+      "the fractional carry of section 2",
+      "M_full is a conditional expectation of the full test given the stored toys, not a draw and not a coverage fraction",
+      "C' is the tune-carried analogue of the reported covariance, not the published matrix"
+     ]
+    },
+    "read_by": "nothing"
+   },
+   "status": "done"
+  },
+  "ar23/minus2": {
+   "C_F16": {
+    "identity_rel": 1.458424100017361e-16,
+    "f_rel": 0.0
+   },
+   "A0": {
+    "a": {
+     "ndf": true,
+     "joint_count": true,
+     "counts": true
+    },
+    "b_rel": 1.2512213487525514e-13,
+    "b": true,
+    "c": {
+     "k_joint": true,
+     "flags": true
+    },
+    "c_reading": "equal"
+   },
+   "C_PSD": {
+    "name": "C_resp+C_PL5D(ar23/minus2)",
+    "asym_rel": 1.127132600216983e-16,
+    "lam_min_rel": -7.13115202389069e-17,
+    "lam_max": 4.9703795302016114e-80
+   },
+   "R_chi2": {
+    "ndf": 16,
+    "n": 300,
+    "M_prime": 2.372713660471191,
+    "SE": 0.059014112419335976,
+    "mean_error_part": 1.5082243243901206,
+    "spread_part": 0.8644893360810706,
+    "tau": 0.1713189358464834,
+    "M_full": 2.5440325963176744,
+    "reading": "under-describes on average",
+    "toys_own_mean_line": {
+     "M_prime_minus_1_over_SE": 23.260769402361145,
+     "toys_mean_exceeds_1_by_3SE": true,
+     "what": "descriptive; the stored toys' own mean chi2/ndf' against C'"
+    },
+    "cut": {
+     "ndf_C_T": 16,
+     "ndf_C_prime": 16,
+     "C_T_kept_modes_outside_C_prime_kept_span": 0,
+     "max_residual_of_C_T_kept_modes": 2.1789763458680843e-15,
+     "smallest_kept_rel": 3.3634393147687125e-05,
+     "largest_dropped_rel": null
+    },
+    "assumptions": [
+     "the model for the added blocks (r independent of e, E r = 0, Cov r = C_add) is untested",
+     "the run-period blocks have no generative law (SCOPING.md item a3)",
+     "the fractional carry of section 2",
+     "M_full is a conditional expectation of the full test given the stored toys, not a draw and not a coverage fraction",
+     "C' is the tune-carried analogue of the reported covariance, not the published matrix"
+    ]
+   },
+   "descriptive_regrade": {
+    "joint_count": 20,
+    "k_joint": 193,
+    "joint_flag": true,
+    "ndf": 16,
+    "cell_flag": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "counts": [
+     208,
+     223,
+     287,
+     239,
+     231,
+     262,
+     262,
+     180,
+     238,
+     258,
+     238,
+     252,
+     219,
+     236,
+     226,
+     253
+    ],
+    "k_cell": [
+     175,
+     176,
+     179,
+     179,
+     180,
+     179,
+     179,
+     178,
+     179,
+     179,
+     179,
+     179,
+     177,
+     179,
+     179,
+     179
+    ],
+    "chi2_mean_over_ndf": 2.372713660471191,
+    "verdict": "descriptive-UNDER-COVERS",
+    "note": "a reading, not a proof"
+   },
+   "sensitivity_absolute_carry": {
+    "R_chi2": {
+     "ndf": 16,
+     "n": 300,
+     "M_prime": 2.2670379034707375,
+     "SE": 0.056114927351133506,
+     "mean_error_part": 1.4080508498711255,
+     "spread_part": 0.858987053599612,
+     "tau": 0.17948456045105926,
+     "M_full": 2.446522463921797,
+     "reading": "under-describes on average",
+     "toys_own_mean_line": {
+      "M_prime_minus_1_over_SE": 22.57933785679478,
+      "toys_mean_exceeds_1_by_3SE": true,
+      "what": "descriptive; the stored toys' own mean chi2/ndf' against C'"
+     },
+     "cut": {
+      "ndf_C_T": 16,
+      "ndf_C_prime": 16,
+      "C_T_kept_modes_outside_C_prime_kept_span": 0,
+      "max_residual_of_C_T_kept_modes": 1.4844353401182966e-15,
+      "smallest_kept_rel": 3.3909412109185105e-05,
+      "largest_dropped_rel": null
+     },
+     "assumptions": [
+      "the model for the added blocks (r independent of e, E r = 0, Cov r = C_add) is untested",
+      "the run-period blocks have no generative law (SCOPING.md item a3)",
+      "the fractional carry of section 2",
+      "M_full is a conditional expectation of the full test given the stored toys, not a draw and not a coverage fraction",
+      "C' is the tune-carried analogue of the reported covariance, not the published matrix"
+     ]
+    },
+    "read_by": "nothing"
+   },
+   "status": "done"
+  },
+  "ar23/all": {
+   "C_F16": {
+    "identity_rel": 1.458424100017361e-16,
+    "f_rel": 0.0
+   },
+   "A0": {
+    "a": {
+     "ndf": true,
+     "joint_count": true,
+     "counts": true
+    },
+    "b_rel": 1.34781075189494e-13,
+    "b": true,
+    "c": {
+     "k_joint": true,
+     "flags": true
+    },
+    "c_reading": "equal"
+   },
+   "C_PSD": {
+    "name": "C_resp+C_PL5D(ar23/all)",
+    "asym_rel": 1.127132600216983e-16,
+    "lam_min_rel": -7.13115202389069e-17,
+    "lam_max": 4.9703795302016114e-80
+   },
+   "R_chi2": {
+    "ndf": 16,
+    "n": 300,
+    "M_prime": 2.371840721315764,
+    "SE": 0.059789771405477005,
+    "mean_error_part": 1.5076777833127004,
+    "spread_part": 0.8641629380030638,
+    "tau": 0.17093749258365024,
+    "M_full": 2.5427782138994144,
+    "reading": "under-describes on average",
+    "toys_own_mean_line": {
+     "M_prime_minus_1_over_SE": 22.944404855009992,
+     "toys_mean_exceeds_1_by_3SE": true,
+     "what": "descriptive; the stored toys' own mean chi2/ndf' against C'"
+    },
+    "cut": {
+     "ndf_C_T": 16,
+     "ndf_C_prime": 16,
+     "C_T_kept_modes_outside_C_prime_kept_span": 0,
+     "max_residual_of_C_T_kept_modes": 1.608792128672606e-15,
+     "smallest_kept_rel": 3.4703782979810114e-05,
+     "largest_dropped_rel": null
+    },
+    "assumptions": [
+     "the model for the added blocks (r independent of e, E r = 0, Cov r = C_add) is untested",
+     "the run-period blocks have no generative law (SCOPING.md item a3)",
+     "the fractional carry of section 2",
+     "M_full is a conditional expectation of the full test given the stored toys, not a draw and not a coverage fraction",
+     "C' is the tune-carried analogue of the reported covariance, not the published matrix"
+    ]
+   },
+   "descriptive_regrade": {
+    "joint_count": 27,
+    "k_joint": 193,
+    "joint_flag": true,
+    "ndf": 16,
+    "cell_flag": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "counts": [
+     209,
+     223,
+     287,
+     239,
+     233,
+     263,
+     263,
+     181,
+     237,
+     257,
+     236,
+     251,
+     219,
+     235,
+     226,
+     255
+    ],
+    "k_cell": [
+     175,
+     176,
+     179,
+     179,
+     180,
+     179,
+     179,
+     178,
+     179,
+     179,
+     179,
+     179,
+     177,
+     179,
+     179,
+     179
+    ],
+    "chi2_mean_over_ndf": 2.371840721315764,
+    "verdict": "descriptive-UNDER-COVERS",
+    "note": "a reading, not a proof"
+   },
+   "sensitivity_absolute_carry": {
+    "R_chi2": {
+     "ndf": 16,
+     "n": 300,
+     "M_prime": 2.265607989442651,
+     "SE": 0.056957979311849684,
+     "mean_error_part": 1.4068936080011947,
+     "spread_part": 0.8587143814414564,
+     "tau": 0.17909059383621584,
+     "M_full": 2.444698583278867,
+     "reading": "under-describes on average",
+     "toys_own_mean_line": {
+      "M_prime_minus_1_over_SE": 22.22002965578083,
+      "toys_mean_exceeds_1_by_3SE": true,
+      "what": "descriptive; the stored toys' own mean chi2/ndf' against C'"
+     },
+     "cut": {
+      "ndf_C_T": 16,
+      "ndf_C_prime": 16,
+      "C_T_kept_modes_outside_C_prime_kept_span": 0,
+      "max_residual_of_C_T_kept_modes": 1.7412345218206122e-15,
+      "smallest_kept_rel": 3.5010096524871855e-05,
+      "largest_dropped_rel": null
+     },
+     "assumptions": [
+      "the model for the added blocks (r independent of e, E r = 0, Cov r = C_add) is untested",
+      "the run-period blocks have no generative law (SCOPING.md item a3)",
+      "the fractional carry of section 2",
+      "M_full is a conditional expectation of the full test given the stored toys, not a draw and not a coverage fraction",
+      "C' is the tune-carried analogue of the reported covariance, not the published matrix"
+     ]
+    },
+    "read_by": "nothing"
+   },
+   "status": "done"
+  }
+ },
+ "C_MAP16": {
+  "cells_json": [
+   "R00",
+   "R01",
+   "R02",
+   "R03",
+   "R04",
+   "R05",
+   "R06",
+   "R07",
+   "R08",
+   "R09",
+   "R10",
+   "R11",
+   "R12",
+   "R13",
+   "R14",
+   "R15"
+  ],
+  "cells_csv": [
+   "R00",
+   "R01",
+   "R02",
+   "R03",
+   "R04",
+   "R05",
+   "R06",
+   "R07",
+   "R08",
+   "R09",
+   "R10",
+   "R11",
+   "R12",
+   "R13",
+   "R14",
+   "R15"
+  ],
+  "f_csv_rel": 0.0,
+  "npz_named": true
+ },
+ "code_sha256": "5073bb7ad1898a512f51605906d844230ced7e48135fe5fb08a52cc8e14e2bd9"
+}

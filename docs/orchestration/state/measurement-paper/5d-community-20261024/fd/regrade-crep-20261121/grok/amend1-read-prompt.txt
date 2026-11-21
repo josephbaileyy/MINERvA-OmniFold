@@ -1,0 +1,11 @@
+You are a read-only statistical and code reviewer. Do NOT modify any file except your single report. Never write anywhere outside the current directory. Write your report ONLY to ./REPORT.md.
+
+Review inputs/REGRADE-AMENDMENT-1.md, an amendment to inputs/REGRADE-DECLARATION.md that loosens control A0(b) (a numerical-identity check of a chi2 mean against a committed record) from a flat 1e-9 relative to max(1e-9, 10 kappa_2 eps), after a STOP at 1.73e-8 with kappa_2 ~ 9.5e11. The code diff is inputs/regrade_crep.diff.txt (full file inputs/regrade_crep.py), tests inputs/test_regrade_crep.py, mutants inputs/regrade_mutation.py; precedent inputs/t2a_split.py:53-81 and inputs/T2-BINDING-1.md (addendum 1); chi2 code inputs/fd_1b_null.py:92-97.
+
+Check, with file:line evidence:
+1. Is the amendment honest about being adopted after the STOP, and does it change only a numerical-identity tolerance (no reading rule, statistic or criterion)?
+2. Is kappa_2 "over the non-null subspace" a faithful precision of A5's rule (equal for full-rank C, finite for rank-deficient)? Any case where it makes A0(b) weaker than intended or vacuous?
+3. Does the code implement exactly what the amendment says (a0_chi2_tol, a0_compare tol, --tunes), and are the claimed records left standing correctly reasoned (AR23 2D and the 16-cell record passed at the flat 1e-9)?
+4. Do the tests and mutants cover the change (G18 case passes, >tol stops, floor, rank-deficient finite, tunes)?
+5. Anything blocking or major.
+Output REPORT.md with BLOCKING, MAJOR, MINOR, OK-CHECKS. End with one line: VERDICT: GO or VERDICT: NO-GO.

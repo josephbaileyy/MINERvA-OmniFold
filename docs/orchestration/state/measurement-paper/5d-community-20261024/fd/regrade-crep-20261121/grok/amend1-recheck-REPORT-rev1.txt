@@ -1,0 +1,53 @@
+# Recheck of REGRADE amendment 1, rev 1
+
+Rev 1 closes M1, M2, m1, m2, and m3. No new blocking or major issue. Numeric checks below were executed in float64. The full-spectrum κ₂ mutant was re-run against the amendment tests with `fd_1b_mc` and `fd_1b_inv` stubbed. The commits named in the amendment are not in this bundle, so the quoted b_rel figures stay premises.
+
+## M1. CLOSED
+
+Rev 0 rejected the claim that A5's raw λ_min makes the AR23 tolerance vacuous. Rev 1 states the measured fact.
+
+`inputs/REGRADE-AMENDMENT-1.md:35-37`: at 2D AR23, λ_min/λ_max = 9.99e-13 is positive, so A5's raw rule is finite (tol ≈ 2.22e-3); that eigenvalue falls under the 1e-12 cut, and the subspace tolerance is the stricter of the two. `inputs/T2-BINDING-1.md:58` records 9.99e-13 (AR23) and 1.05e-12 (G18). `inputs/t2a_split.py:77-78` is κ₂ = λ_max/λ_min when λ_min > 0, otherwise infinity. `inputs/REGRADE-DECLARATION.md:64` gives AR23 ndf 204 on 205 cells, so the cut drops one mode, and that mode is this λ_min.
+
+Executed with ε = 2.220446049250313e-16. Both comparisons hold in float64:
+
+- AR23: 9.99e-13 < 1e-12. κ₂ = 1.001001001001001e12. tol = 2.2226687179682813e-3.
+- G18: 1.05e-12 > 1e-12, so every eigenvalue is above the cut and the subspace κ₂ equals the full-spectrum κ₂. tol = 2.114710523095536e-3 (`REGRADE-AMENDMENT-1.md:33-34`, ≈ 2.11e-3).
+
+Because exactly one mode is dropped, the subspace κ₂ is λ_max over the next eigenvalue, which is strictly above the cut, so that tolerance is strictly below the raw 2.2226687179682813e-3.
+
+`REGRADE-AMENDMENT-1.md:38-40` calls this a stricter variant of the director's rule and points at `t2a_split.py:72-78`, where κ₂ is the full spectrum. The code matches: `inputs/regrade_crep.py:176-183` keeps eigenvalues above `fd_1b_null.RANK_REL` (`inputs/fd_1b_null.py:52`, `:95`) and returns max(1e-9, 10 κ₂ ε). On 14 matrices (the two measured ratios, an eigenvalue exactly at the cut, a negative eigenvalue, and random semidefinite and indefinite draws) `a0_chi2_tol` was at most `chol_tol` (`regrade_crep.py:200-204`). They are equal when every eigenvalue is kept. An eigenvalue exactly equal to the cut is excluded (`regrade_crep.py:179`, strict `>`), and on `diag(1e-12, 1)` the subspace tolerance is the 1e-9 floor while A5's is 2.220446049250313e-3.
+
+## M2. CLOSED
+
+The mutant is `inputs/regrade_mutation.py:28`: `lam.max() / lam[keep].min()` replaced by `lam.max() / lam.min()`.
+
+Clean code: the twelve `A0` and `Tunes` tests passed. Under the mutant, two tests failed:
+
+- `inputs/test_regrade_crep.py:229-237`, planted spectrum diag(−1e-16, 1e-11, 1) after the same QR as the test. Clean κ₂ = 1.000006014e11, tol = 2.22045940e-4. Mutant κ₂ = −5.652754065e15, tol = 1e-9. Fails at line 236.
+- `inputs/test_regrade_crep.py:239-245`, diag(9.99e-13, 1e-9, 1). Clean κ₂ = 9.999999999999999e8, tol = 2.220446049e-6, below A5's 2.222668718e-3. Mutant tol equals that A5 value. Fails at line 244.
+
+`test_amendment1_rank_deficient_is_finite` (`test_regrade_crep.py:251-256`) passes under this mutant: a negative κ₂ is finite, and the floor tolerance is 1e-9. The amendment's kill claim is the two tests above (`REGRADE-AMENDMENT-1.md:71-72`), which is what this run shows.
+
+## m1. CLOSED
+
+`inputs/REGRADE-DECLARATION.md:174` keeps the words "within 1e-9 relative" and, in the same cell, marks that clause superseded: within max(1e-9, 10 κ₂ ε), κ₂ on the χ²'s non-null subspace, adopted after the 2D G18 STOP. That is the rule in `REGRADE-AMENDMENT-1.md:26-31` and `regrade_crep.py:182-183`. A reader of section 6 has the amended rule in the A0 row.
+
+## m2. CLOSED
+
+`inputs/test_regrade_crep.py:390-414` drives `run16`, requires `a0_chi2_tol` on the capture `C_T`, passes that tol into `a0_compare`, and reads `b_rule` on `g18/minus2`. The revert is `inputs/regrade_mutation.py:24`, which passes `A0_CHI2_FLOOR` at `regrade_crep.py:351-352`.
+
+The pinned readout is not in this bundle, so an unstubbed run raises `FileNotFoundError` on `readout-g18.json`. With `np.load` and that readout's `read_text` stubbed, the clean test passed, and the floor mutant failed at `test_regrade_crep.py:412` (`1e-09 != 0.123`).
+
+`regrade_crep.py:192` is `rel <= tol`. The suite passes a difference below the tolerance and stops at `1.1 * tol` (`test_regrade_crep.py:221-223`).
+
+## m3. CLOSED
+
+`inputs/regrade_crep.py:177-178` raises `Stop` when λ_max ≤ 0. `run2d` and `run16` catch `Stop` (`regrade_crep.py:287-288`, `:363-364`). `test_regrade_crep.py:247-249` expects `Stop` on `−eye(2)` and passes on the clean code. The guard mutant `regrade_mutation.py:25` (`if False`) raises `ValueError` from `lam[keep].min()` on an empty keep-set, so that test errors and the mutant is killed.
+
+## New blocking or major issues
+
+None.
+
+The twelve `A0` and `Tunes` tests in this file passed on the clean module. The amendment's "54 OK" and "35 of 35" were not re-executed here: `test_ll5d_regrade_capture.py` is not in the bundle. This file has 47 test methods. The mutant list has 35 entries (`regrade_mutation.py:9-45`), 29 of them in `regrade_crep.py`, and each of those old strings occurs once.
+
+VERDICT: GO

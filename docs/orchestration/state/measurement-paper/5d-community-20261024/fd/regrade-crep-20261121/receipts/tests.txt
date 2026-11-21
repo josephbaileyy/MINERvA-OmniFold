@@ -1,0 +1,77 @@
+# command: python3 -B -m unittest -v test_regrade_crep.py test_ll5d_regrade_capture.py
+# python: Python 3.12.2 numpy 1.26.4  host: Darwin arm64  OMP_NUM_THREADS=1
+# 479e03cc51d7be8f0c275c98305b2ab731b135093afacb74f98417529c84d9ad  regrade_crep.py
+# fed8c9717cc786722181f7809dcfab62ae21a49b43d35de6adf64283f28ffe95  ll5d_regrade_capture.py
+# 7a5084dfa995c07efca85e080b56126e42fb3d451ed1d86fa59c96a44843135c  test_regrade_crep.py
+# 1c5012c699da99c41e18baf3cdc01ecae5e2ee95ac48eccae676d2735e322ec1  test_ll5d_regrade_capture.py
+# 2f0e21450ee4604e2238d2dc1b771dd9699810de55b04c9fe915eae1871b7908  regrade_mutation.py
+# start: 2026-11-21T11:52:09Z
+test_amendment1_ar23_like_stricter_than_a5 (test_regrade_crep.A0.test_amendment1_ar23_like_stricter_than_a5) ... ok
+test_amendment1_floor (test_regrade_crep.A0.test_amendment1_floor) ... ok
+test_amendment1_kept_set_not_full_spectrum (test_regrade_crep.A0.test_amendment1_kept_set_not_full_spectrum) ... ok
+test_amendment1_nonpositive_is_stop (test_regrade_crep.A0.test_amendment1_nonpositive_is_stop) ... ok
+test_amendment1_rank_deficient_is_finite (test_regrade_crep.A0.test_amendment1_rank_deficient_is_finite) ... ok
+test_amendment1_tolerance_g18_case (test_regrade_crep.A0.test_amendment1_tolerance_g18_case) ... ok
+test_c_mismatch_is_not_a_stop (test_regrade_crep.A0.test_c_mismatch_is_not_a_stop) ... ok
+test_chi2_tolerance (test_regrade_crep.A0.test_chi2_tolerance) ... ok
+test_each_exact_part_stops (test_regrade_crep.A0.test_each_exact_part_stops) ... ok
+test_pass_equal (test_regrade_crep.A0.test_pass_equal) ... ok
+test_run16_passes_amended_tol (test_regrade_crep.A0CallSites.test_run16_passes_amended_tol) ... ok
+test_cmap16_passes_on_committed_metadata (test_regrade_crep.CMap16AndCut.test_cmap16_passes_on_committed_metadata) ... ok
+test_cmap16_stops_on_changed_csv (test_regrade_crep.CMap16AndCut.test_cmap16_stops_on_changed_csv) ... ok
+test_cmap16_stops_on_reordered_f (test_regrade_crep.CMap16AndCut.test_cmap16_stops_on_reordered_f) ... ok
+test_kept_set_count (test_regrade_crep.CMap16AndCut.test_kept_set_count) ... ok
+test_run16_records_stop_when_cmap16_fails (test_regrade_crep.CMap16AndCut.test_run16_records_stop_when_cmap16_fails) ... ok
+test_frac_identity_at_equal_x (test_regrade_crep.Carry.test_frac_identity_at_equal_x) ... ok
+test_frac_is_diag_product (test_regrade_crep.Carry.test_frac_is_diag_product) ... ok
+test_rel_is_diag_product (test_regrade_crep.Carry.test_rel_is_diag_product) ... ok
+test_rel_reproduces_cpl_block_identity_shape (test_regrade_crep.Carry.test_rel_reproduces_cpl_block_identity_shape) ... ok
+test_descriptive_prefix (test_regrade_crep.Controls.test_descriptive_prefix) ... ok
+test_null_seeds_are_ll5d_s (test_regrade_crep.Controls.test_null_seeds_are_ll5d_s) ... ok
+test_pins_are_full_digests (test_regrade_crep.Controls.test_pins_are_full_digests) ... ok
+test_psd_asym_stops (test_regrade_crep.Controls.test_psd_asym_stops) ... ok
+test_psd_negative_stops (test_regrade_crep.Controls.test_psd_negative_stops) ... ok
+test_psd_tiny_negative_passes (test_regrade_crep.Controls.test_psd_tiny_negative_passes) ... ok
+test_psd_zero_skipped (test_regrade_crep.Controls.test_psd_zero_skipped) ... ok
+test_real_numpy_nonpsd_warning_is_stop (test_regrade_crep.Controls.test_real_numpy_nonpsd_warning_is_stop) ... ok
+test_strict_passes_value (test_regrade_crep.Controls.test_strict_passes_value) ... ok
+test_strict_turns_refusal_into_stop (test_regrade_crep.Controls.test_strict_turns_refusal_into_stop) ... ok
+test_strict_turns_warning_into_stop (test_regrade_crep.Controls.test_strict_turns_warning_into_stop) ... ok
+test_removes_C_T_minus_and_adds_C_run_once (test_regrade_crep.Null2D.test_removes_C_T_minus_and_adds_C_run_once) ... ok
+test_M_full_is_M_plus_tau (test_regrade_crep.RChi2.test_M_full_is_M_plus_tau) ... ok
+test_chi2_and_M_use_chi2_nonnull (test_regrade_crep.RChi2.test_chi2_and_M_use_chi2_nonnull) ... ok
+test_cut_matches_chi2_nonnull_on_rank_deficient (test_regrade_crep.RChi2.test_cut_matches_chi2_nonnull_on_rank_deficient) ... ok
+test_split_divisor_n (test_regrade_crep.RChi2.test_split_divisor_n) ... ok
+test_tau_is_trace_A_Cadd (test_regrade_crep.RChi2.test_tau_is_trace_A_Cadd) ... ok
+test_zero_add_gives_tau_zero (test_regrade_crep.RChi2.test_zero_add_gives_tau_zero) ... ok
+test_fires_above (test_regrade_crep.Reading.test_fires_above) ... ok
+test_low_M_prime_is_never_over (test_regrade_crep.Reading.test_low_M_prime_is_never_over) ... ok
+test_not_shown_below (test_regrade_crep.Reading.test_not_shown_below) ... ok
+test_reads_M_full_not_M_prime (test_regrade_crep.Reading.test_reads_M_full_not_M_prime) ... ok
+test_rule_strict_at_exact_boundary (test_regrade_crep.Reading.test_rule_strict_at_exact_boundary) ... ok
+test_strict_at_boundary (test_regrade_crep.Reading.test_strict_at_boundary) ... ok
+test_uses_SE_scale (test_regrade_crep.Reading.test_uses_SE_scale) ... ok
+test_bad_tunes_refused_before_any_read (test_regrade_crep.Tunes.test_bad_tunes_refused_before_any_read) ... ok
+test_g18_only_evaluates_g18 (test_regrade_crep.Tunes.test_g18_only_evaluates_g18) ... ok
+test_missing_toy_row_stops (test_ll5d_regrade_capture.Capture.test_missing_toy_row_stops) ... STOP: Stop: the list's toys are not the declared 12
+ok
+test_moved_atime_stops (test_ll5d_regrade_capture.Capture.test_moved_atime_stops) ... STOP: Stop: atime moved 1, changed 0: ['/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp6z5mo3q5/constraint.txt']
+ok
+test_out_exists_refuses (test_ll5d_regrade_capture.Capture.test_out_exists_refuses) ... refusing: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpalpj9qa5/out exists
+ok
+test_product_pin_mismatch_stops (test_ll5d_regrade_capture.Capture.test_product_pin_mismatch_stops) ... STOP: Stop: C-PIN: 1 products differ from their pins, e.g. ['/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpg2pasc44/U/ll5d_g18_toy_all_11.npz']
+ok
+test_success_and_round_trip (test_ll5d_regrade_capture.Capture.test_success_and_round_trip) ... ok
+test_wrong_pins_stop (test_ll5d_regrade_capture.Capture.test_wrong_pins_stop) ... STOP: Stop: C-PIN: s1_assembly.npz
+STOP: Stop: C-PIN: the flux constraint
+STOP: Stop: the list /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpqjo5bs7n/list.tsv is not 0000000000000000000000000000000000000000000000000000000000000000
+ok
+test_wrong_shape_stops (test_ll5d_regrade_capture.Capture.test_wrong_shape_stops) ... STOP: Stop: g18/minus2: E is (299, 16) or not finite
+ok
+
+----------------------------------------------------------------------
+Ran 54 tests in 0.202s
+
+OK
+{"outputs": {"capture_g18_minus2.npz": "c752845e9505ef2b2e776868fc75d9bb4f5c205580f9c9371f180bc9f5fddb85", "capture_g18_all.npz": "c752845e9505ef2b2e776868fc75d9bb4f5c205580f9c9371f180bc9f5fddb85", "capture_ar23_minus2.npz": "c752845e9505ef2b2e776868fc75d9bb4f5c205580f9c9371f180bc9f5fddb85", "capture_ar23_all.npz": "c752845e9505ef2b2e776868fc75d9bb4f5c205580f9c9371f180bc9f5fddb85"}, "atime_moved": []}
+# exit: 0  end: 2026-11-21T11:52:10Z

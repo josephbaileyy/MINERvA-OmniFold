@@ -1,0 +1,14 @@
+45,47c45,47
+< OUT=/pscratch/sd/j/josephrb/hpss-ll5d-u-20261116
+< H=/home/j/josephrb/mnv-ll5d-unfolds-r2-20261116
+< W=/dev/shm/josephrb-hpss-ll5d-u
+---
+> OUT=/pscratch/sd/j/josephrb/hpss-flux1-20261121
+> H=/home/j/josephrb/mnv-rpd-reco-flux1-20261121
+> W=/dev/shm/josephrb-hpss-flux1
+49,50c49,50
+< GROUPS_IN_ORDER="null_roles toys extras sidecars"
+< N_ROWS=1759
+---
+> GROUPS_IN_ORDER="flux1"
+> N_ROWS=13

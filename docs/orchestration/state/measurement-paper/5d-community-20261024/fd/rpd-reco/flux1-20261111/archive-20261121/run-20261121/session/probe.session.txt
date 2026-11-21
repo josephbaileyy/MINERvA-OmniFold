@@ -1,0 +1,26 @@
+host login25 2026-11-21T10:36:42Z slurm_job=''
+/usr/bin/hsi
+/usr/bin/htar
+/global/common/software/nersc/bin/hpssquota
+/usr/bin/timeout
+/usr/bin/setsid
+/usr/bin/sha256sum
+/usr/bin/python3
+tmpfs           353G  4.8G  348G   2% /dev/shm
+|                                pscratch |   17.88TiB |    20.00TiB |          89.4% |      5.63M |      10.00M |          56.3% |
+| josephrb usage on HPSS charged to m3246 |  460.72GiB |   512.00GiB |          90.0% |          - |           - |              - |
++-----------------------------------------+------------+-------------+----------------+------------+-------------+----------------+
+/home/j:
+josephrb/  
+home rc=0
+    /home/j/josephrb/mnv-rpd-reco-flux1-20261121
+target rc=64
+ls: cannot access '/pscratch/sd/j/josephrb/hpss-flux1-20261121': No such file or directory
+O_NOATIME True
+61726250 t3p_dry PENDING
+squeue rc=0
+list rows 13
+stat pass 1
+     13 ok
+stat pass 2
+     13 ok
