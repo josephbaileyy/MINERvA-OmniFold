@@ -55,7 +55,7 @@ The structure differs qualitatively between the muon and hadron sides. The spect
 
 \subsection{No underflow or overflow in the reported product (from Part 2, sec:method-binning)}
 % From sec_method.tex @1ad08b466; argument a reader does not need to interpret a result
-Neither underflow nor overflow appears in the reported product, by construction rather than by truncation: the unbinned unfolding has no response-matrix under- or overflow, and the reporting bins are applied once, to events that all lie inside the grids. Truth-level muon edges coincide with the measurement phase space (\S\ref{sec:selection}); no signal is defined beyond them. Hadronic axes span $[0,100]\,\si{GeV}$, with catch-bin edges far beyond the kinematic reach at $\langle E_\nu\rangle\sim\SI{6}{GeV}$, so the truth grids are exhaustive. A selected reco event outside the grid is treated as unaccepted and excluded from the measured sample by \S\ref{sec:method-driver}'s masking convention. Its in-phase-space truth content is recovered, as for any unreconstructed event, by the treatment of truth events without a reconstructed partner.
+Neither underflow nor overflow appears in the reported product, by construction rather than by truncation: the unbinned unfolding has no response-matrix under- or overflow, and the reporting bins are applied once, to events that all lie inside the grids. Truth-level muon edges coincide with the measurement phase space (\S\ref{sec:selection}); no signal is defined beyond them. Hadronic axes span $[0,100]\,\si{GeV}$, with catch-bin edges far beyond the kinematic reach at $\langle E_\nu\rangle\sim\SI{6}{GeV}$, so the truth grids are exhaustive. A selected reco event outside the grid is treated as unaccepted and excluded from the measured sample by the masking convention of the earlier note's section on the MINERvA driver conventions. Its in-phase-space truth content is recovered, as for any unreconstructed event, by the treatment of truth events without a reconstructed partner.
 
 \subsection{Profile OmniFold~\cite{Zhu:2025profile} and related developments (from Part 2)}
 % From sec_method.tex @1ad08b466; literature context
@@ -260,7 +260,7 @@ The 3D and 4D central values, the \resSixteen{} and the generator tests use the 
 
 \subsection{From Part 2, secmethod.tex: the paragraph beginning ``Gradient-boosted decision trees (GBDTs) replace OmniFold's''}
 % From sec_method.tex:50 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-Gradient-boosted decision trees (GBDTs) replace OmniFold's original neural networks when unfolding scalar observables. With at most five high-level features per event, tree ensembles typically match or outperform neural networks~\cite{Grinsztajn:2022tabular} and train deterministically and far faster on a central processing unit (CPU). All unfolding results here use GBDTs (point-cloud representations, App.~\ref{sec:pet}). Calibration tests and multilayer perceptron (MLP) cross-checks test the implementation (classifier checks, \S\ref{sec:3d-classifier}).
+Gradient-boosted decision trees (GBDTs) replace OmniFold's original neural networks when unfolding scalar observables. With at most five high-level features per event, tree ensembles typically match or outperform neural networks~\cite{Grinsztajn:2022tabular} and train deterministically and far faster on a central processing unit (CPU). All unfolding results here use GBDTs (point-cloud representations, the earlier note's appendix pointing to the companion PET note). Calibration tests and multilayer perceptron (MLP) cross-checks test the implementation (classifier checks, \S\ref{sec:3d-classifier}).
 
 \subsection{From Part 2, secmethod.tex: the paragraph beginning ``The unfolding code supports interchangeable learners''}
 % From sec_method.tex:52 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
@@ -395,7 +395,7 @@ Truncating the top edge would break the marginalization checks in \S\ref{sec:3d-
 
 \subsection{From Part 2, secmethod.tex: the paragraph beginning ``Truthtoreco migration on the analysis binning''}
 % From sec_method.tex:187 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-Truth$\to$reco migration on the analysis binning (Fig.~\ref{fig:migration}) shows the smearing OmniFold must undo. OmniFold uses no response matrix. Median reconstruction stability (same-bin fraction, Fig.~\ref{fig:migration}) is $\sim0.6$ on each axis. Such migrations would badly bias a bin-by-bin correction. Unfolding is required.
+Truth$\to$reco migration on the analysis binning (the earlier note's migration figure) shows the smearing OmniFold must undo. OmniFold uses no response matrix. Median reconstruction stability (same-bin fraction, the earlier note's migration figure) is $\sim0.6$ on each axis. Such migrations would badly bias a bin-by-bin correction. Unfolding is required.
 
 \subsection{From Part 2, secmethod.tex: the paragraph beginning ``Profile OmniFoldciteZhu:2025profile extends classifier-based expectation maximization''}
 % From sec_method.tex:199 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
@@ -426,7 +426,7 @@ The rank of the systematic block is limited at any universe count (\S\ref{sec:ra
 \subsection{From App. A, appstatmethods.tex: the paragraph beginning ``A coherent bootstrap carries each data''}
 % From app_statmethods.tex:103 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
 In the note, this text follows: ``A coherent bootstrap carries each data factor through step-1 classifier training and final cross-section construction.''\par
-Each MC factor is shared by the reco-tree and truth-tree copies, preserving migration consistency. The three sub-RNGs (data, signal MC, background MC; Table~\ref{tab:variance-sources}) make the sources uncorrelated by construction, and pinning the GBDT seed isolates the bootstrap from the ML noise of \S\ref{sec:seedscan}. A Poisson(1) factor can be zero. Dropping those events from each replica mimics a resample with replacement. Poisson(1) is the large-$N$ limit of the multinomial counts (\S\ref{app:poisson}).
+Each MC factor is shared by the reco-tree and truth-tree copies, preserving migration consistency. The three sub-RNGs (data, signal MC, background MC; the earlier note's table of variance-source procedures) make the sources uncorrelated by construction, and pinning the GBDT seed isolates the bootstrap from the ML noise of \S\ref{sec:seedscan}. A Poisson(1) factor can be zero. Dropping those events from each replica mimics a resample with replacement. Poisson(1) is the large-$N$ limit of the multinomial counts (\S\ref{app:poisson}).
 
 \subsection{From App. A, appstatmethods.tex: the paragraph beginning ``For these replicas (205 bins, MEFHC''}
 % From app_statmethods.tex:117 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
@@ -456,7 +456,7 @@ In the note, the corrected construction that follows is the unified throw, descr
 
 \subsection{From App. A, appstatmethods.tex: the paragraph beginning ``Grouped by category as in Fig.reffig:uqbands,''}
 % From app_statmethods.tex:199 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``Grouped by category as in Fig.~\ref{fig:uqbands}, which follows Figs.~6--7 of Ref.~\cite{MINERvA:2021owq}, the medians are: Muon reconstruction $3.437\%$, Models $1.428\%$, Flux $3.723\%$, Hadronic response $0.752\%$, Statistical $0.676\%$, Normalization $1.400\%$, Training seed $0.048\%$, Run period $2.087\%$.''\par
+In the note, this text follows: ``Grouped by category as in the earlier note's figure of the uncertainty bands, which follows Figs.~6--7 of Ref.~\cite{MINERvA:2021owq}, the medians are: Muon reconstruction $3.437\%$, Models $1.428\%$, Flux $3.723\%$, Hadronic response $0.752\%$, Statistical $0.676\%$, Normalization $1.400\%$, Training seed $0.048\%$, Run period $2.087\%$.''\par
 (MINOS$+$MINERvA) and the MINOS-efficiency band dominate; the first is the band that the Ruterbories paper identifies as flux-correlated (\S\ref{sec:rank}).
 
 \subsection{From App. A, appstatmethods.tex: the paragraph beginning ``For two universes u=0,1 at pm''}
@@ -498,7 +498,7 @@ A secondary strict-interior mask, used only as a sensitivity check, keeps cells 
 
 \subsection{From App. A, appstatmethods.tex: the paragraph beginning ``With boldsymbolDeltaequivmathbfxours-mathbfxpaper on the 205-bin set''}
 % From app_statmethods.tex:305 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-The comparison applies the pseudo-inverse of \S\ref{sec:invert} to the $205\times205$ block and computes the quadratic form. Options add OmniFold covariances via Eq.~\eqref{eq:blocksum} or subtract the paper's stat block to avoid counting it alongside the bootstrap (\S\ref{sec:rank}).
+The comparison applies the pseudo-inverse of \S\ref{sec:invert} to the $205\times205$ block and computes the quadratic form. Options add OmniFold covariances via the earlier note's block-sum equation or subtract the paper's stat block to avoid counting it alongside the bootstrap (\S\ref{sec:rank}).
 
 \subsection{From App. A, appstatmethods.tex: the paragraph beginning ``Setting mathrmndf=ntextreported requires nearly that many''}
 % From app_statmethods.tex:309 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
@@ -597,7 +597,7 @@ Same-ensemble toy pulls are approximately Gaussian; the $0.048\%$ training-seed 
 
 \subsection{From App. A, appstatmethods.tex: the paragraph beginning ``Eq.eqrefeq:blocksum requires no cross-correlations between ML,''}
 % From app_statmethods.tex:499 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``\textbf{Independence of error sources.} Eq.~\eqref{eq:blocksum} requires no cross-correlations between ML, statistical, systematic and run-period blocks.''\par
+In the note, this text follows: ``\textbf{Independence of error sources.} The earlier note's block-sum equation requires no cross-correlations between ML, statistical, systematic and run-period blocks.''\par
 The bootstrap pins the GBDT seed, and universes pin the seed too. A common seed correlates the training noise and does not cancel it (\S\ref{sec:uq-2d-scope}); the training-seed block averages the same $20$ bootstrap replicas at each seed setting and includes the bootstrap\,$\times$\,seed interaction at its $1/20$ share. Among the first three, cross-terms are higher-order.
 
 \subsection{From App. A, appstatmethods.tex: the paragraph beginning ``In reported bin i with bar''}
@@ -707,7 +707,7 @@ Recent work constructs confidence intervals for selected functionals in constrai
 
 \subsection{From App. A, appstatmethodsnd.tex: the paragraph beginning ``Each calibration pseudo-experiment splits the simulation''}
 % From app_statmethods_nd.tex:69 @d55f7aad6; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``\paragraph{Generative model of one pseudo-experiment.} Each calibration pseudo-experiment splits the simulation at random into two halves (Table~\ref{tab:joint5d-genmodel}) and refits the background refinement. Its truth equals $G$ on every fine cell that the source half populates.''\par
+In the note, this text follows: ``\paragraph{Generative model of one pseudo-experiment.} Each calibration pseudo-experiment splits the simulation at random into two halves (the earlier note's table of the joint tests' generative model) and refits the background refinement. Its truth equals $G$ on every fine cell that the source half populates.''\par
 Cells it leaves empty lower a coarse cell by at most \SI{0.2}{\percent}, or about \SI{4}{\percent} of the null standard deviation (the per-experiment spread is below \SI{1.5}{\percent} of it).
 
 \subsection{From App. A, appstatmethodsnd.tex: the paragraph beginning ``The data's rounding noise, and the''}

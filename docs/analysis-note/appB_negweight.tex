@@ -77,7 +77,9 @@ within the bin.
 \label{sec:negweight-footing}
 
 The two treatments give similar integrated cross sections in two dimensions.
-Using the scikit-learn histogram-based learner and a common training seed,
+Using the scikit-learn histogram-based learner, rather than the LightGBM
+estimator of the 2D central value, and a common training seed,
+% n82 (check stage; Joseph's decision, 2026-11-21, via the director): the backend fact as a clause, not a new sentence.
 purity and negative-weight subtraction give totals of
 \num[exponent-mode=fixed,fixed-exponent=-38,drop-exponent=true]{\nwSigPur} and
 \num[exponent-mode=fixed,fixed-exponent=-38,drop-exponent=true]{\nwSigNeg},

@@ -103,11 +103,20 @@ each of the five axes.
 The predictions differ most visibly in available energy in the 3D
 projections (Fig.~\ref{fig:3dmodels}). The plotted GENIE and NuWro
 predictions in both comparisons use the flux correction described in
-Appendix~\ref{app:choices-after-results}. In the \resFiveAxis{}, all four predictions in Fig.~\ref{fig:eavailWband} fall below the central value
+Appendix~\ref{app:choices-after-results}.
+Integrated over $E_{\mathrm{avail}}$ without its catch bin, the predictions lie 7.2\% (GENIE CV), 9.5\% (Tune v1), 12.8\% (NuWro) and 22.2\% (GiBUU) below the 3D central value.
+% C1 (check stage; Joseph's decision, 2026-11-21, via the director): no values macro carries these. Source: the repaired
+% 3D log docs/orchestration/state/s5p/stage7/generator-context/gen3d_band_s5p_repaired-log.txt:27-32, "integrated sigma
+% (eavail axis, catch bin dropped)": -7.2%, -9.5%, -12.8%, -22.2% vs data; VALIDATION_LEDGER.md VL159. It replaces the
+% earlier note's sec_3d.tex:127 sentence, whose totals were the (E_avail, W) ones (VL157) and whose Tune v1 total had no source. In the \resFiveAxis{}, all four predictions in Fig.~\ref{fig:eavailWband} fall below the central value
 in the corner $E_{\mathrm{avail}}\geq0.8~\mathrm{GeV}$ and
 $W\geq1.8~\mathrm{GeV}$. The data-to-prediction ratios there are \genRatioCornerLo{} for
 both GENIE configurations, \genRatioCornerHi{} for NuWro, and \gibuuCorner{} for GiBUU, whose sample
 ends at $E_\nu=\fvval{cmodel-gibuu-enu}~\mathrm{GeV}$.
+GiBUU is low throughout the $E_{\mathrm{avail}}$ tail: its $W$-integrated data-to-prediction ratio is 1.59 at
+$0.8\leq E_{\mathrm{avail}}<1.5~\mathrm{GeV}$ and 1.37 at $1.5\leq E_{\mathrm{avail}}<3.0~\mathrm{GeV}$.
+% C2 (check stage, director's ruling 2026-11-21): restored from sec_eavailw.tex:7 @ e89694209 (1.59, 1.37); recomputed
+% 1.588 and 1.369 from note-figfix-20261120/runs/eavailw/eavailW_band_values.json @ c4204502d (E_avail panel, data/GiBUU).
 
 \begin{figure}[H]
   \centering
@@ -391,7 +400,7 @@ cases at the simulated detector response~\cite{NoteRecords2026}.
 
 The detector-level tree classifier shows a nearly diagonal reliability
 curve, with a Brier score of approximately 0.25 and an area under the
-receiver operating characteristic curve of 0.537. Replacing the trees
+receiver operating characteristic curve of approximately 0.537. Replacing the trees
 with a multilayer perceptron in the 3D purity unfolding gives median
 absolute projection differences of $1.20\%$ in $p_T$, $1.36\%$ in
 $p_\parallel$, and $0.66\%$ in $E_{\mathrm{avail}}$

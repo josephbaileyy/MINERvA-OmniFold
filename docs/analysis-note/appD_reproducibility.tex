@@ -5,8 +5,8 @@
 \label{app:result-package}
 \label{app:release}
 
-The replay package in the Zenodo deposit
-(\href{https://doi.org/10.5281/zenodo.24409981}{doi:10.5281/zenodo.24409981})~\cite{ReleaseCandidate2026} contains approximately \SI{16}{MB} of
+The replay package~\cite{ReleaseCandidate2026} in the Zenodo
+deposit~\cite{ZenodoDeposit2026} contains approximately \SI{16}{MB} of
 derived inputs, a README, SHA-256 checksums, and a verifier. It reproduces
 the observed joint generator statistics, exceedance counts, $p$ values,
 decisions, robustness and power summaries, and the numerical checks for
@@ -200,7 +200,12 @@ available when each choice was made and the status of the associated test.
   coverage failure, remove the completeness division and rescore the same
   pseudo-experiments.
   & Earlier 2D statistical bands & Prespecified primary coverage test of
-  the divided band. Descriptive attribution and rescoring. \\
+  the divided band. Descriptive attribution. The rescoring is post hoc and
+  partly circular, because the band's simulation-statistical part reuses the
+  pseudo-experiments' resampling mechanism. \\
+  % D1 (check stage, director's ruling 2026-11-21): the qualifier restored from sec_validation.tex:102 and
+  % app_devhistory.tex:161 @ e89694209 ("post hoc and partly circular, because the band's MC part reuses the toys'
+  % resampling mechanism"), in the note's terms.
   \addlinespace[2pt]
   Adopt universe-specific missed-event weights after reading the systematic
   rebuild, under a rule fixed before readout. Rescore held-out-tune coverage.

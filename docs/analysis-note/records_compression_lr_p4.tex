@@ -8,7 +8,7 @@ This section holds the procedure and supporting detail that the compressed note 
 % From sec_3d.tex:54 @2dc962c0a; procedure a reader does not need to interpret a result
 % Framing added in the records (not moved text).
 \noindent\emph{(``Both definitions'' are the truth and reconstructed available energy of \S\ref{sec:eavail-definition}.)}
-\paragraph{Unfolding and binning.} Both definitions are evaluated for all twelve ME~FHC playlists, and, for configuration~(a), the 2D unfolding code is run with three classifier inputs, $(\pT,\pPar,\Eavail)$. Table~\ref{tab:3d-configs} lists the configuration (\S\ref{sec:method-config}) of each result. The cross section is extracted with the 3D bin volume $\Delta\pT\,\Delta\pPar\,\Delta\Eavail$, and the flux $\Phi$ is still applied per $\pT$ bin, with the same value for every $\pPar$ and $\Eavail$ bin. The $\Eavail$ binning $[0,0.1,0.2,0.4,0.8,1.5,3.0,100]\,\si{GeV}$ ends in a wide final bin, the catch bin, so that the $\Eavail$ marginal contains the full CC-inclusive recoil tail. For configuration~(a), the overall completeness of the unfolding input (\S\ref{sec:method-xsec}) is $c=1.0000$, as in 2D.
+\paragraph{Unfolding and binning.} Both definitions are evaluated for all twelve ME~FHC playlists, and, for configuration~(a), the 2D unfolding code is run with three classifier inputs, $(\pT,\pPar,\Eavail)$. The earlier note's table of the 3D and 4D configurations lists the configuration (\S\ref{sec:method-config}) of each result. The cross section is extracted with the 3D bin volume $\Delta\pT\,\Delta\pPar\,\Delta\Eavail$, and the flux $\Phi$ is still applied per $\pT$ bin, with the same value for every $\pPar$ and $\Eavail$ bin. The $\Eavail$ binning $[0,0.1,0.2,0.4,0.8,1.5,3.0,100]\,\si{GeV}$ ends in a wide final bin, the catch bin, so that the $\Eavail$ marginal contains the full CC-inclusive recoil tail. For configuration~(a), the overall completeness of the unfolding input (\S\ref{sec:method-xsec}) is $c=1.0000$, as in 2D.
 
 \subsection{How the generator predictions are made (from Part 4, sec:3d-models)}
 % From sec_3d.tex:105 @2dc962c0a; procedure
@@ -127,7 +127,7 @@ The 3D marginal (\estMultiD{}) and the 2D result (\estTwoD{}) share refined nega
 
 \subsection{From Part 4, sec3d.tex: the paragraph beginning ``Marginalizing over Eavail should reproduce the''}
 % From sec_3d.tex:79 @0d1f8208a; qualifier detail or procedure (DECISION-20261120a)
-Their LightGBM training configurations and numbers of observables differ (configurations, Table~\ref{tab:3d-configs}).
+Their LightGBM training configurations and numbers of observables differ (configurations, the earlier note's table of the 3D and 4D configurations).
 
 \subsection{From Part 4, sec3d.tex: the paragraph beginning ``Marginalizing over Eavail should reproduce the''}
 % From sec_3d.tex:79 @0d1f8208a; qualifier detail or procedure (DECISION-20261120a)
@@ -161,7 +161,7 @@ No spectra were digitized or externally supplied.
 
 \subsection{From Part 4, sec3d.tex: the paragraph beginning ``Published ancillary files provide only binned''}
 % From sec_3d.tex:100 @0d1f8208a; qualifier detail or procedure (DECISION-20261120a)
-In the note, this text follows: ``Table~\ref{tab:3d-generators} lists the four predictions.''\par
+In the note, this text follows: ``The earlier note's table of the four 3D predictions lists the four predictions.''\par
 These exclude NEUT~\cite{Hayato:2009zz}.
 
 \subsection{From Part 4, sec3d.tex: the paragraph beginning ``The GENIE (central value (CV) and''}
@@ -327,11 +327,11 @@ The event-loop output files also store truth hadronic diagnostics: the proton an
 \subsection{From Part 4, seceavailw.tex: the paragraph beginning ``Estimator-seed shifts of central values are''}
 % From sec_eavailw.tex:60 @0d1f8208a; qualifier detail or procedure (DECISION-20261120a)
 In the paragraph as the note printed it, this text followed: ``Estimator-seed shifts of central values are a small fraction of the projected uncertainties (\S\ref{sec:eavailw-adopted}).''\par
-The response-mismatch closure of Appendix~\ref{app:response-mismatch} is designed to test whether an incorrect hadronic response can move strength into or out of the low-$W$ component.
+The response-mismatch closure of the earlier note's appendix on the detector-response-mismatch closure is designed to test whether an incorrect hadronic response can move strength into or out of the low-$W$ component.
 
 \subsection{From Part 4, seceavailw.tex: the paragraph beginning ``Estimator-seed shifts of central values are''}
 % From sec_eavailw.tex:60 @0d1f8208a; qualifier detail or procedure (DECISION-20261120a)
-Its reconstruction-only test has not yet produced a result; closures with a shifted recoil response have been run on the sixteen cells (App.~\ref{app:response-mismatch}).
+Its reconstruction-only test has not yet produced a result; closures with a shifted recoil response have been run on the sixteen cells (the earlier note's appendix on the detector-response-mismatch closure).
 
 \subsection{From Part 4, seceavailw.tex: the paragraph beginning ``All four external generators fall below''}
 % From sec_eavailw.tex:77 @0d1f8208a; qualifier detail or procedure (DECISION-20261120a)
@@ -452,7 +452,7 @@ The 4D and extended-fiducial results have no covariance from this procedure, and
 
 \subsection{From Part 4, secfived16.tex: the paragraph beginning ``The reported covariance is Cmathrmtotal+Cmathrmresp+CmathrmPL,5D, with''}
 % From sec_fived16.tex:125 @0d1f8208a; qualifier detail or procedure (DECISION-20261120a)
-In the note, this text follows: ``The reported covariance is $C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}$, with $C_{\mathrm{total}}=C_{\mathrm{e}}+C_{\mathrm{model}}$ (each block is defined in Table~\ref{tab:definitions}); the run-period block $C_{\mathrm{PL,5D}}$ is described in \S\ref{sec:fived16-pl}.''\par
+In the note, this text follows: ``The reported covariance is $C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}$, with $C_{\mathrm{total}}=C_{\mathrm{e}}+C_{\mathrm{model}}$ (each block is defined in the earlier note's table of definitions); the run-period block $C_{\mathrm{PL,5D}}$ is described in \S\ref{sec:fived16-pl}.''\par
 $C_{\mathrm{e}}$ sums the statistical bootstrap of the \estMultiD{}, 50 replicas, each of which refits the whole unfolding with its own rounding-level perturbation of the inputs; the PPFX flux universes, weighted by the neutrino--electron and inverse-muon-decay constraint; the interaction-model and detector bands, which reweight simulated events; the lateral bands, which shift reconstructed kinematics (\S\ref{sec:systematics}); the normalization; and the training-seed block.
 
 \subsection{From Part 4, secfived16.tex: the paragraph beginning ``The reported covariance is Cmathrmtotal+Cmathrmresp+CmathrmPL,5D, with''}
@@ -503,7 +503,7 @@ The coverage of $C_{\mathrm{model}}$ is not validated because an earlier route t
 \subsection{From Part 4, secfived16.tex: the paragraph beginning ``On the sixteen cells, the unfolded''}
 % From sec_fived16.tex:208 @0d1f8208a; qualifier detail or procedure (DECISION-20261120a)
 In the note, this text follows: ``The cause is not known, and these data cannot establish which period, if any, is right.''\par
-As for the two-dimensional result (\S\ref{sec:uq-combine}, Table~\ref{tab:pl-added}), the block $C_{\mathrm{PL,5D}}$ is built from these double ratios with no reference period.
+As for the two-dimensional result (\S\ref{sec:uq-combine}, the earlier note's table of the run-period block's effect), the block $C_{\mathrm{PL,5D}}$ is built from these double ratios with no reference period.
 
 \subsection{From Part 4, secfived16.tex: the paragraph beginning ``On the sixteen cells, the unfolded''}
 % From sec_fived16.tex:208 @0d1f8208a; qualifier detail or procedure (DECISION-20261120a)
@@ -606,7 +606,7 @@ The block's median per-cell relative $\sigma$ is \fvval{sigmed-C_PL5D}\,\%, at m
 
 \subsection{From Part 4, secfived16.tex: the paragraph beginning ``Added to Cmathrmtotal+Cmathrmresp, the block raises''}
 % From sec_fived16.tex:233 @0d1f8208a; qualifier detail or procedure (DECISION-20261120a)
-In the paragraph as the note printed it, this text followed: ``With the block, each prediction's total $\chi^2$ is lower by \fvval{pl-chi2fall-total-lo}--\fvval{pl-chi2fall-total-hi}\,\% of its value without it, and each shape-only $\chi^2$ by \fvval{pl-chi2fall-shape_only-lo}--\fvval{pl-chi2fall-shape_only-hi}\,\%, for the five predictions with NuWro and GiBUU corrected to CH (Tables~\ref{tab:fived16-gen} and~\ref{tab:fived16-gen-target}).''\par
+In the paragraph as the note printed it, this text followed: ``With the block, each prediction's total $\chi^2$ is lower by \fvval{pl-chi2fall-total-lo}--\fvval{pl-chi2fall-total-hi}\,\% of its value without it, and each shape-only $\chi^2$ by \fvval{pl-chi2fall-shape_only-lo}--\fvval{pl-chi2fall-shape_only-hi}\,\%, for the five predictions with NuWro and GiBUU corrected to CH (Table~\ref{tab:fived16-gen} and the earlier note's table of the CH-corrected comparison).''\par
 We infer from these falls that the predictions' residuals have components along the directions the rank-\fvval{pl-rank} block adds; the comparison does not test this interpretation.
 
 \subsection{From Part 4, secfived16.tex: the paragraph beginning ``Added to Cmathrmtotal+Cmathrmresp, the block raises''}
@@ -648,7 +648,7 @@ The same change to the detector or lateral correlations lowers it by at most \fv
 \subsection{From Part 4, secfived16gen.tex: the paragraph beginning ``The sensitivity of the reported chi2''}
 % From sec_fived16_gen.tex:63 @0d1f8208a; qualifier detail or procedure (DECISION-20261120a)
 In the paragraph as the note printed it, this text followed: ``With the correlations of the interaction, flux, detector and lateral groups removed, every 16-cell prediction keeps $\chi^2\geq\fvval{sens-joint-chi2-min}$ for 16 degrees of freedom.''\par
-Table~\ref{tab:fived16-sens} gives each group's sensitivity, GiBUU's eight-cell values included.
+The earlier note's correlation-sensitivity table gives each group's sensitivity, GiBUU's eight-cell values included.
 
 \subsection{From Part 4, secfived16gen.tex: the paragraph beginning ``The sensitivity of the reported chi2''}
 % From sec_fived16_gen.tex:63 @0d1f8208a; qualifier detail or procedure (DECISION-20261120a)
@@ -668,7 +668,7 @@ These bands measure the estimation scatter of the reported $\chi^2$ given these 
 
 \subsection{From Part 4, secfived16gen.tex: the paragraph beginning ``The chi2 can be decomposed along''}
 % From sec_fived16_gen.tex:107 @0d1f8208a; qualifier detail or procedure (DECISION-20261120a)
-In the note, this text follows: ``The $\chi^2$ can be decomposed along the eigenmodes of each prediction's covariance $C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}+V_g$ (Table~\ref{tab:fived16-diag}).''\par
+In the note, this text follows: ``The $\chi^2$ can be decomposed along the eigenmodes of each prediction's covariance $C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}+V_g$ (the earlier note's eigenmode table).''\par
 The decomposition is a breakdown, not an alternative result; each mode is an eigenvector of that covariance, and its dominant block is the group with the largest share of the mode's variance.
 
 \subsection{From Part 4, secfived16gen.tex: the paragraph beginning ``The chi2 can be decomposed along''}
@@ -707,7 +707,7 @@ MINERvA Tune~v1 is already in the analysis definitions and is unchanged.
 
 \subsection{From Part 4, secfived16gen.tex: the paragraph beginning ``Tablereftab:fived16-gen-target gives the CH values. Corrected''}
 % From sec_fived16_gen.tex:140 @0d1f8208a; qualifier detail or procedure (DECISION-20261120a)
-In the note, this text follows: ``Table~\ref{tab:fived16-gen-target} gives the CH values.''\par
+In the note, this text follows: ``The earlier note's table of the CH-corrected comparison gives the CH values.''\par
 Corrected to CH, in the analysis definitions, NuWro gives \fvval{g-nuwro-total-chi2} (shape-only \fvval{g-nuwro-shape_only-chi2}) and GiBUU \fvval{g-gibuu-total-chi2} (\fvval{g-gibuu-shape_only-chi2}), against \fvval{g-nuwro-carbon-total-chi2} and \fvval{g-gibuu-carbon-total-chi2} on carbon (Table~\ref{tab:fived16-gen}).
 
 \subsection{From Part 4, secfived16gen.tex: the paragraph beginning ``Tablereftab:fived16-gen-target gives the CH values. Corrected''}
@@ -730,8 +730,8 @@ Deep-inelastic events, \fvval{g-gibuu-hlab-dis}\,\% of its hydrogen sample, do n
 
 \subsection{From Part 4, secfived16gen.tex: the paragraph beginning ``The Cmathrmmodel components of the reported''}
 % From sec_fived16_gen.tex:143 @0d1f8208a; qualifier detail or procedure (DECISION-20261120a)
-In the note, this text follows: ``Table~\ref{tab:fived16-gen-cmodel} measures the effect of that target.''\par
-There, NuWro's and GiBUU's shape ratios in $C_{\mathrm{model}}$ are taken from their CH combinations in the generators' own definitions (the ``CH (generator)'' rows of Table~\ref{tab:fived16-gen-target}), with everything else fixed; the reported covariance keeps them on carbon.
+In the note, this text follows: ``The earlier note's table of the generator distances' dependence on $C_{\mathrm{model}}$ measures the effect of that target.''\par
+There, NuWro's and GiBUU's shape ratios in $C_{\mathrm{model}}$ are taken from their CH combinations in the generators' own definitions (the ``CH (generator)'' rows of the earlier note's table of the CH-corrected comparison), with everything else fixed; the reported covariance keeps them on carbon.
 
 \subsection{From Part 4, secfived16gen.tex: the paragraph beginning ``The Cmathrmmodel components of the reported''}
 % From sec_fived16_gen.tex:143 @0d1f8208a; qualifier detail or procedure (DECISION-20261120a)
@@ -763,7 +763,7 @@ The changes are those of these data; their statistical uncertainty, from the dat
 
 \subsection{From Part 4, secfived16gen.tex: the paragraph beginning ``The CH-ratio rebuild measures Cmathrmmodel's dependence''}
 % From sec_fived16_gen.tex:148 @0d1f8208a; qualifier detail or procedure (DECISION-20261120a)
-Table~\ref{tab:fived16-gen-stageg}, in App.~\ref{app:devhistory}, gives the comparison as first made, in the generators' own definitions with NuWro and GiBUU on carbon.
+The earlier note's table of the generator comparison as first made, in App.~\ref{app:devhistory}, gives the comparison as first made, in the generators' own definitions with NuWro and GiBUU on carbon.
 
 \subsection{From Part 4, sec3d.tex: the paragraph beginning ``Both definitions are inherited from MAT-MINERvA.''}
 % From sec_3d.tex:34 @7686f6ae7; qualifier detail or procedure (DECISION-20261120a)
@@ -772,7 +772,7 @@ Both definitions are inherited from MAT-MINERvA. They were not chosen for this a
 \subsection{From Part 4, sec3d.tex: the paragraph beginning ``Both definitions are inherited from MAT-MINERvA.''}
 % From sec_3d.tex:34 @7686f6ae7; qualifier detail or procedure (DECISION-20261120a)
 In the note, this text follows: ``There is no unique published $E_{\rm avail}$ definition.''\par
-Rodrigues \emph{et al.}~\cite{MINERvA:2016lowrecoil} give a closed list of five species, using proton and charged-pion kinetic energy plus $\pi^0$, electron and photon total energy. The implemented truth definition (Eq.~\eqref{eq:eavail-implemented}) includes four of those five species and excludes secondary $e^\pm$. The later definition of Ascencio \emph{et al.}~\cite{MINERvA:2022incl} is open. It includes all other final-state particles except neutrons and subtracts a nucleon mass for strange baryons. This includes species omitted here. Rodrigues and Henry/Su \emph{et al.} Eq.~4~\cite{MINERvA:2023avz} use charged-pion kinetic energy. The \texttt{minerva-ml} machine-learning implementation uses charged-pion total energy (implementation details, App.~\ref{sec:pet}).
+Rodrigues \emph{et al.}~\cite{MINERvA:2016lowrecoil} give a closed list of five species, using proton and charged-pion kinetic energy plus $\pi^0$, electron and photon total energy. The implemented truth definition (Eq.~\eqref{eq:eavail-implemented}) includes four of those five species and excludes secondary $e^\pm$. The later definition of Ascencio \emph{et al.}~\cite{MINERvA:2022incl} is open. It includes all other final-state particles except neutrons and subtracts a nucleon mass for strange baryons. This includes species omitted here. Rodrigues and Henry/Su \emph{et al.} Eq.~4~\cite{MINERvA:2023avz} use charged-pion kinetic energy. The \texttt{minerva-ml} machine-learning implementation uses charged-pion total energy (implementation details, the earlier note's appendix pointing to the companion PET note).
 
 \subsection{From Part 4, sec3d.tex: the paragraph beginning ``We regenerated the GENIE central value''}
 % From sec_3d.tex:157 @7686f6ae7; qualifier detail or procedure (DECISION-20261120a)
@@ -792,7 +792,7 @@ We merge both measurements onto the maximal common grid using edges present in \
 
 \subsection{From Part 4, sec3d.tex: the paragraph beginning ``Supplemental data from Ref.citeMINERvA:2022incl (44-cell d2sigma/(dEavail,dq3)''}
 % From sec_3d.tex:188 @7686f6ae7; qualifier detail or procedure (DECISION-20261120a)
-In the note, this text follows: ``No pulls or full-covariance $\chi^{2}$ are reported (comparison scope, \S\ref{sec:3d}; common-grid comparison, Fig.~\ref{fig:ascencio}).''\par
+In the note, this text follows: ``No pulls or full-covariance $\chi^{2}$ are reported (comparison scope, \S\ref{sec:3d}; common-grid comparison, the earlier note's comparison figure with Ascencio et al.).''\par
 Both share MINERvA flux/detector systematics, treated here as independent. The muon momentum cuts ($p_\mu$ and $\pPar$) differ by $\lesssim\SI{6}{\percent}$ kinematic smearing at the \SI{20}{GeV} boundary. The analyses use different true $\Eavail$ definitions (truth convention, \S\ref{sec:eavail-definition}). In our simulation, Ascencio's broader definition moves \SI{11.0}{\percent} of the population out of our lowest true-$\Eavail$ bin ($\Eavail<\SI{0.1}{GeV}$). That shift has the residual's sign and location. The two common cells span our three lowest bins ($\Eavail<\SI{0.4}{GeV}$). The aggregate shift over those bins has not been computed. The comparison's scope and limits are stated in \S\ref{rlim:3d}. A comparison on all 44 cells has not been made. Binning the existing result onto Ascencio's edges requires no new unfolding (binning method, \S\ref{sec:method-binning}). A systematic sweep on that binning has not been done.
 % carried with the text from sec_3d.tex:189 @7686f6ae7
 % Search: aggregate; bins 1+2+3; three lowest bins (docs/EAVAIL_DEFINITION.md:161-162, "whose aggregate is measured nowhere"; docs/OPEN_ITEMS.md row OI-59 still OPEN) @ 1a015eef
@@ -894,7 +894,7 @@ All four closely track the $\pT$ and $\pPar$ projections but differ in $\Eavail$
 
 \subsection{From Part 4, sec3d.tex: the paragraph beginning ``Without the catch bin, integrated Eavail''}
 % From sec_3d.tex:136 @c1f74f696; qualifier detail or procedure (DECISION-20261120a, second pass)
-Without the catch bin, integrated $\Eavail$ rates for GENIE CV, Tune~v1, NuWro and GiBUU lie respectively $\SI{7.2}{\percent}$, $\SI{9.5}{\percent}$, $\SI{12.8}{\percent}$ and $\SI{22.3}{\percent}$ below data in central values. The exact projection of the five-dimensional covariance (construction, \S\ref{sec:eavailw-construction}) would supply a 3D covariance; it has been computed but is not quoted (\S\ref{sec:3d}) or used for any result in this note.
+Without the catch bin, integrated $\Eavail$ rates for GENIE CV, Tune~v1, NuWro and GiBUU lie respectively $\SI{7.2}{\percent}$, $\SI{9.5}{\percent}$, $\SI{12.8}{\percent}$ and $\SI{22.3}{\percent}$ below data in central values. The exact projection of the five-dimensional covariance (construction, the earlier note's section on the five-axis covariance) would supply a 3D covariance; it has been computed but is not quoted (\S\ref{sec:3d}) or used for any result in this note.
 % carried with the text from sec_3d.tex:137 @c1f74f696
 % Search: 3D covariance (note sources: sec_3d.tex, sec_method.tex:267, sec_systematics.tex:15, sec_execsummary.tex:148 and sec_summary.tex:107, each saying none is quoted; app_history.tex's are superseded and outside the note) @ 1a015eef
 
@@ -964,7 +964,7 @@ The $W$ edges $[0,1.1,1.4,1.8,2.2,3.0,100]\,\si{GeV}$ bracket the quasielastic p
 
 \subsection{From Part 4, seceavailw.tex: the paragraph beginning ``Tablereftab:generators-impl lists the generator predictions compared''}
 % From sec_eavailw.tex:30 @c1f74f696; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``Table~\ref{tab:generators-impl} lists the generator predictions compared in this note and tested in \S\ref{sec:joint5d}.''\par
+In the note, this text follows: ``The earlier note's table of generator implementations lists the generator predictions compared in this note and tested in \S\ref{sec:joint5d}.''\par
 All are per nucleon of the stated target and are binned with the same fine-grid-to-cell map.
 
 \subsection{From Part 4, seceavailw.tex: the paragraph beginning ``Hydrogen has no quasielastic, 2p2h, or''}
@@ -1071,7 +1071,7 @@ The statistic $F$ of a division of the playlists into groups is the share of the
 \subsection{From Part 4, secfived16.tex: the paragraph beginning ``Added to Cmathrmtotal+Cmathrmresp, the block raises''}
 % From sec_fived16.tex:233 @c1f74f696; qualifier detail or procedure (DECISION-20261120a, second pass)
 In the note, this text follows: ``Added to $C_{\mathrm{total}}+C_{\mathrm{resp}}$, the block raises the median per-cell relative $\sigma$ from \fvval{sigmed-C_total_resp}\,\% to \fvval{sigmed-reported}\,\%, by about \fvval{pl-medrise}\,\%.''\par
-With the block, each prediction's total $\chi^2$ is lower by \fvval{pl-chi2fall-total-lo}--\fvval{pl-chi2fall-total-hi}\,\% of its value without it, and each shape-only $\chi^2$ by \fvval{pl-chi2fall-shape_only-lo}--\fvval{pl-chi2fall-shape_only-hi}\,\%, for the five predictions with NuWro and GiBUU corrected to CH (Tables~\ref{tab:fived16-gen} and~\ref{tab:fived16-gen-target}).
+With the block, each prediction's total $\chi^2$ is lower by \fvval{pl-chi2fall-total-lo}--\fvval{pl-chi2fall-total-hi}\,\% of its value without it, and each shape-only $\chi^2$ by \fvval{pl-chi2fall-shape_only-lo}--\fvval{pl-chi2fall-shape_only-hi}\,\%, for the five predictions with NuWro and GiBUU corrected to CH (Table~\ref{tab:fived16-gen} and the earlier note's table of the CH-corrected comparison).
 
 \subsection{From Part 4, secfived16gen.tex: the paragraph beginning ``The sensitivity of the reported chi2''}
 % From sec_fived16_gen.tex:63 @c1f74f696; qualifier detail or procedure (DECISION-20261120a, second pass)
@@ -1093,7 +1093,7 @@ GiBUU's CH comparison carries the label of \S\ref{sec:joint5d-ch}.
 
 \subsection{From Part 4, secfived16gen.tex: the paragraph beginning ``The Cmathrmmodel components of the reported''}
 % From sec_fived16_gen.tex:143 @c1f74f696; qualifier detail or procedure (DECISION-20261120a, second pass)
-In the note, this text follows: ``Table~\ref{tab:fived16-gen-cmodel} measures the effect of that target.''\par
+In the note, this text follows: ``The earlier note's table of the generator distances' dependence on $C_{\mathrm{model}}$ measures the effect of that target.''\par
 Over both matrices and both kinds, the largest change is $-\fvval{e2-dmax}$, in GENIE + MEC's shape-only $\chi^2$ without $C_{\mathrm{PL,5D}}$.
 
 \subsection{From Part 4, secfived16gen.tex: the paragraph beginning ``Every chi2 falls as Cmathrmmodel grows.''}
