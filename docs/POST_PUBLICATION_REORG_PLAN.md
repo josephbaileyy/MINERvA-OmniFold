@@ -733,6 +733,10 @@ part C amendment 3's redraw), so `main` has its own tag.
    - Both verdicts: **BLOCK**, on one point: the RE-2 spec reader. They found that the record misstated the tests'
      failure after the removal. Step 2 now states the change of cause; the pinned spec, code and test are not changed,
      and that choice is the director's.
+   - **Resolved by the director (2026-11-21):** the BLOCK is accepted as recorded. The two tests already fail at
+     `45402896`, where 238 of the 250 spec rows are stale. A change in the cause of an existing failure does not weaken
+     a gate, and a skip edit to the pinned test would. The stale RE-2 spec goes on the follow-up list; it is not fixed
+     here.
    - Neither found a weakened gate or a wrong test. Both confirmed the rebound checks read the same receipt
      quantities at the same or a stricter tolerance.
    - Their other findings were applied in this record's commit:
