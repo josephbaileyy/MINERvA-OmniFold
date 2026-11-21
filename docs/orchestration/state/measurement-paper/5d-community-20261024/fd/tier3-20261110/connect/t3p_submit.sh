@@ -84,6 +84,15 @@ ae9667bc71819f092a7f61ae6d58ed4e7659ea4b0fea08de299c10462d738001  t3p_mutation.p
 SUMS
 }
 T3DIR="$D/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/tier3-20261110"
+# rev 2 (2026-11-21, after dry connect 1's rc 8): python3 without -B (this connect's limit call at rev 1, and the bound
+# job's own calls) writes ignored __pycache__/ directories into the deploy; those are tolerated, nothing else is
+clean_check() {
+  local n bad
+  n=$(git -C "$D" status --porcelain --untracked-files=all | wc -l)
+  bad=$(git -C "$D" status --porcelain --ignored --untracked-files=all | grep '^!! ' | grep -vc '__pycache__/')
+  echo "porcelain lines (tracked+untracked) $n; ignored entries other than __pycache__/ $bad"
+  [ "$n" -eq 0 ] && [ "$bad" -eq 0 ]
+}
 
 if [ "$MODE" = dry ]; then
   # ---- the deploy: a fresh clone at M, clean, the bound bytes
@@ -91,8 +100,7 @@ if [ "$MODE" = dry ]; then
   git -C "$D" -c advice.detachedHead=false checkout -q "$M" || { echo "STOP: checkout"; finish 3; }
 fi
 [ "$(git -C "$D" rev-parse HEAD)" = "$M" ] || { echo "STOP: HEAD is not M"; finish 9; }
-n=$(git -C "$D" status --porcelain --ignored | wc -l); echo "HEAD $M; porcelain --ignored lines before: $n"
-[ "$n" -eq 0 ] || { echo "STOP: the deploy is not clean"; finish 9; }
+echo "HEAD $M"; clean_check || { echo "STOP: the deploy is not clean"; finish 9; }
 bound_check || { echo "STOP: the T3 files are not the bound ones"; finish 9; }
 decl=$(sha256sum "$T3DIR/T3-PIPELINE-TESTS-DECLARATION.md" | cut -d' ' -f1); echo "declaration sha256 $decl"
 [ "$decl" = "$DECL_SHA" ] || { echo "STOP: the declaration is not the bound one"; finish 9; }
@@ -105,8 +113,7 @@ if [ "$MODE" = dry ]; then
   tail -3 "$OUT/logs/tests.log"
   [ "$trc" -eq 0 ] && grep -q '^Ran 69 tests' "$OUT/logs/tests.log" && tail -1 "$OUT/logs/tests.log" | grep -q '^OK' \
     || { echo "STOP: test_t3p.py did not run 69 OK (rc $trc)"; finish 5; }
-  n=$(git -C "$D" status --porcelain --ignored | wc -l)
-  [ "$n" -eq 0 ] || { echo "STOP: the tests left files in the deploy ($n lines)"; git -C "$D" status --porcelain --ignored | head; finish 5; }
+  clean_check || { echo "STOP: the tests left files in the deploy"; git -C "$D" status --porcelain --ignored | head; finish 5; }
 
   # ---- the manifest, from the bound code, then the pins check of every source
   PYENV nd-unfolding/tier3/t3p_probe.py manifest --out "$OUT/manifest.json" || { echo "STOP: manifest"; finish 5; }
@@ -155,7 +162,7 @@ fi
 lim=$( source "$D/setup_salloc_env.sh" > "$OUT/logs/connect-source-$MODE.log" 2>&1; rc=$?
        [ "$rc" -eq 0 ] || { echo "SOURCE_RC=$rc" >&2; exit 97; }
        [ "$(command -v python3)" = "$HOME/.conda/envs/root_6_28/bin/python3" ] || { echo "NOT_ROOT628" >&2; exit 98; }
-       python3 "$D/nd-unfolding/tier3/t3p_probe.py" limit "$MODE" ) 2> "$OUT/logs/sourced-python-$MODE.err"
+       python3 -B "$D/nd-unfolding/tier3/t3p_probe.py" limit "$MODE" ) 2> "$OUT/logs/sourced-python-$MODE.err"
 lrc=$?
 cat "$OUT/logs/sourced-python-$MODE.err"
 case "$MODE" in dry) want=2:15:00;; q3) want=2:00:00;; floor) want=5:45:00;; esac
@@ -184,6 +191,5 @@ if [ "$tl" != "$TLIMIT" ]; then
 fi
 sleep 5
 sacct -j "$job" -X -n -P -o JobID,JobName,State,Timelimit,NNodes,QOS,Account
-n=$(git -C "$D" status --porcelain --ignored | wc -l); echo "porcelain --ignored lines after: $n"
-[ "$n" -eq 0 ] || { echo "the deploy changed after the submission (the job is queued; reported, not cancelled)"; finish 8; }
+clean_check || { echo "the deploy changed after the submission (the job is queued; reported, not cancelled)"; finish 8; }
 finish 0

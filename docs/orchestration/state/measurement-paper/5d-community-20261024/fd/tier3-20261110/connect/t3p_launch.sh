@@ -12,7 +12,7 @@ case "$MODE" in dry|q3|floor) ;; *) echo "STOP: mode '$MODE'"; exit 9;; esac
 [[ "$WEND" =~ ^[0-9]{10}$ ]] || { echo "STOP: window end '$WEND'"; exit 9; }
 [ "$(date +%s)" -le "$WEND" ] || { echo "STOP: the window has ended"; exit 9; }
 [[ "$FENCE" =~ ^[A-Za-z0-9_.-]+(,[A-Za-z0-9_.-]+)*$ ]] || { echo "STOP: fence '$FENCE'"; exit 9; }
-S="$HERE/t3p_submit.sh"; SHA=745074a9480c3dcbcaa08f1c449534455e194cc3436cc6465906f1f68c4910be
+S="$HERE/t3p_submit.sh"; SHA=50e86da36a5b398107b1b4fd61d9cf2fa1d68dbd0852b9a7e45218c8fbe302b5
 [ "$(shasum -a 256 "$S" | cut -d' ' -f1)" = "$SHA" ] || { echo "STOP: the local connect script is not the approved one"; exit 8; }
 SSH=(-o ControlPath=none -o BatchMode=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=8)
 HOP=(-o BatchMode=yes -o ConnectTimeout=10 -o ServerAliveInterval=15 -o ServerAliveCountMax=8 -o StrictHostKeyChecking=yes -o UpdateHostKeys=no)
