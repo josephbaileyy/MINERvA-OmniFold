@@ -1,0 +1,24 @@
+# stamp strip (2026-11-21T06:00:07Z): strip_stamp.py sha256 58321e9e63f125de3bae82e375e125831a30a5cd963c1e33ca9e76170b4e2f12, figenv/pdfedit (pikepdf 9.4.2); inputs: the installed files at HEAD
+q3_excess_projection.pdf: removed 1 text objects (MINERvA ME FHC, 1:06 £ 10 21 POT); 2541 pixels changed, all inside the box
+  installed q3_excess_projection.pdf sha256 2c836ace97c0c36d811f698d9aa6652ff8f8b38867abb6ec6d149841029f8222
+nn_vs_gbdt_full.pdf: removed 1 text objects (MINERvA ME FHC, 1.06 × 10 21 POT); 2720 pixels changed, all inside the box
+  installed nn_vs_gbdt_full.pdf sha256 491bcd64d66d70352c1632e04cbd253ee06feab2c90e975a55f6968636db39f0
+mode_decomp_mec_eavail_central.pdf: removed 1 text objects (MINERvA ME FHC, 1:06 £ 10 21 POT); 2922 pixels changed, all inside the box
+  installed mode_decomp_mec_eavail_central.pdf sha256 b56f4d90b1047b8aa8842bf47534d457848208d97c201f3fd3e60ca2f32d2f0c
+MEFHC_5iter_xsec_paper_pt_slices.pdf: removed 1 text objects (MINERvA ME FHC, 1 . 06 × 10 21 POT); 2724 pixels changed, all inside the box
+  installed MEFHC_5iter_xsec_paper_pt_slices.pdf sha256 58e4d16ad6bc68f7bd17bae8d315b99ece6d66b821715d403120e0d6548357a2
+MEFHC_5iter_xsec_paper_pz_slices.pdf: removed 1 text objects (MINERvA ME FHC, 1 . 06 × 10 21 POT); 2724 pixels changed, all inside the box
+  installed MEFHC_5iter_xsec_paper_pz_slices.pdf sha256 4216003cfe47d376b97a3a32575e5fa00342e7528bfb1d2e8e647e9ea9f620b0
+generators_vs_unfolded_band_central.pdf: removed 1 text objects (MINERvA ME FHC, 1:06 £ 10 21 POT); 2873 pixels changed, all inside the box
+  installed generators_vs_unfolded_band_central.pdf sha256 7ea16ffd1e5da2c7c7ab6690746425b976885f0889a438d8ed0b5148dfd39744
+eavailW_band.pdf: removed 1 text objects (MINERvA ME FHC, 1:06 £ 10 21 POT); 2862 pixels changed, all inside the box
+  installed eavailW_band.pdf sha256 9e71e493612596634584adf57993d0bd2649373c25028141882a740359655d52
+eavail_marginal_vs_paper_pull_full.pdf: removed 1 text objects (MINERvA ME FHC, 1.06 × 10 21 POT); 4036 pixels changed, all inside the box
+  installed eavail_marginal_vs_paper_pull_full.pdf sha256 7f272d2639db72b2cecec5ada11d4bf4e0da470703f2729189bed86c880f0cb9
+control_plots.pdf: removed 1 text objects (MINERvA ME FHC, 1:06 £ 10 21 POT); 2630 pixels changed, all inside the box
+  installed control_plots.pdf sha256 8910181e147c32515159f477e7e6864870c5c1f46aa64638c55d2bcd447f098c
+control_corner.pdf: removed 1 text objects (MINERvA ME FHC, 1:06 £ 10 21 POT); 2540 pixels changed, all inside the box
+  installed control_corner.pdf sha256 f077a7a9cb052cdc02df0195d6c62c821471ab52490c36673939508b8d88d89d
+== no figure the note includes still prints the stamp
+  included figures still stamped: 0
+RUN-STAMP :: PASS
