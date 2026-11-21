@@ -1,0 +1,87 @@
+# T3 read connect rev 1 recheck
+
+Rev 1 of `inputs/t3p_read_connect.sh` (sha256 `9c4b604c552350317f577252c1244bfd80a3ea5e1fb7f9202cf4bb45f722b73c`) closes both points from the rev 0 FIX. `bash -n` passes on the connect and on `inputs/t3p_read_launch.sh`. The launcher pin is that same digest.
+
+## 1. Sums gate — CLOSED
+
+The expected counts are 6, 12, and 36.
+
+`inputs/sbatch_t3p.sh:128` writes each job's `SHA256SUMS` as `find runs -type f -name '*.npz' | xargs sha256sum`, so the file lists every `.npz` under `runs/` at that moment, one GNU `sha256sum` line per file. The write sits after the task queue and before `pair` (`:134`, which writes `pair.json`) and `DONE` (`:137`). The connect accepts a job only when `log-<job>/DONE` is non-empty and `STOP` and `FAILED` are absent (`t3p_read_connect.sh:68`), so the sums it checks are from jobs that finished the queue.
+
+`inputs/t3p_submit.sh:147-149` requires the queues to be dry 6, q3 6, floor 24. Dry ran first, then q3, then floor, and each job leaves its products in `runs/`. The cumulative tree is therefore 6, then 12, then 36 files, and the three sums files have that many lines. The stand-in, built at M_V1, shows the same split: `DONE` records tasks 6, 6, and 24, `wc -l` prints 6, 12, and 36, and `find` prints 36 npz (`inputs/standin-ok.log.txt:2-6` and `:19-21`). Paths are `runs/<arm>/<truth>/t3p_<arm>_<truth>_s<seed>.npz` (the stale-sums failure names `runs/B0/A7_gibuu/t3p_B0_A7_gibuu_s991000.npz`). Those lines match the gate regex.
+
+The gate is `t3p_read_connect.sh:109-116`:
+
+- `nl=$(grep -c '' "$SUMS")` is the line count, including a last line with no newline.
+- `ng=$(grep -cE '^[0-9a-f]{64}  runs/[^[:space:]]+\.npz$')` counts only a 64-digit lowercase hash, two spaces, and a `runs/…npz` path.
+- Both must equal the per-job want (`dry:6 q3:12 floor:36`).
+- Then `( cd "$OUT" && sha256sum --strict --quiet -c "log-$j/SHA256SUMS" )` must succeed.
+- `runs/` must contain exactly 36 `.npz` files (`:118-120`).
+
+There is no `set -e` (`:31`, `:33` is only `pipefail`). `grep -c` exits 1 when the count is 0; the assignment still stores 0 and the numeric test runs. An empty file cannot pass.
+
+A malformed, empty, or truncated sums file fails this gate:
+
+- Empty: `nl=0`, `ng=0`. `inputs/standin-empty_sums.log.txt:31-32` stops with `STOP: log-dry/SHA256SUMS is not 6 well-formed lines` before `sha256sum -c`.
+- One byte deleted from a hash: the line is no longer 64 hex digits, so `ng` drops. `inputs/standin-deleted_byte.log.txt:33-34` is `12 lines, 11 well-formed` and the same STOP. The same regex on a 63-hex line under the local BSD `grep` gave `nl=1 ng=0`.
+- A comment, a blank line, or any other non-matching line makes `nl > ng`. A local mixed file (one good line plus a comment) was `nl=2 ng=1`.
+- A truncation that cuts a line in half leaves a last line the regex rejects (`nl=1 ng=0` on a 40-byte prefix). Dropping whole lines makes `nl` smaller than the want. The job's file has exactly the wanted number of lines, so either kind of truncation misses `nl == ng == want`.
+- A well-formed line whose hash is wrong still has `nl == ng == want`, and `sha256sum --strict -c` rejects it. `inputs/standin-stale_sums.log.txt:35-38` is 36/36 well-formed, then `FAILED` and `STOP: the products are not log-floor/SHA256SUMS's`, before the read.
+
+The only truncation that keeps `nl == ng == want` is removing the final newline and nothing else. `grep` still counts that last line (local: 3 lines with no final newline, `grep -c` 3, `wc -l` 2). `sha256sum -c` reads it with `getline` and checks the same hashes. No checksum is missing or altered.
+
+`sha256sum -c` checks the listed files. It does not care that the paths are unique. A file of N copies of one valid line would meet the count and `-c` while leaving other products unchecked. That file is well formed. Empty, short, mixed, and truncated inputs do not produce it, and the job's `sha256sum` writes one line per file present. The rev 0 hole (an empty or unparsable file passing `-c`) is closed by the count plus the regex, with `--strict` behind them.
+
+## 2. Pipe status — CLOSED
+
+`set -o pipefail` is at `t3p_read_connect.sh:33`. The script never sets `-e`, so a pipeline status stops the script only where the script checks it (`||`, a condition). Every `|` in the file:
+
+| Lines | Pipeline | Status checked? | On a success path |
+|---|---|---|---|
+| 53 | `printf \| awk` in the fence | The text is checked at 61 | Both sides exit 0. A non-terminal `t3p_` row is what returns 1 (`standin-bail_running.log.txt:7`). |
+| 69 | `sacct \| head -1` | No. `:70` compares the captured state with `COMPLETED` | One job's `sacct -X` line fits the pipe, so both sides exit 0. |
+| 80 | `sha256sum \| cut` | No (logged) | `cut` reads the one line. |
+| 84 | `sacct \| head -1` | No (logged) | The stand-in printed the full row and continued (`standin-ok.log.txt:16-18`). |
+| 91, 147 | `git status --porcelain --ignored \| wc -l` | Yes | `git status` exits 0 on a clean tree; `wc` reads it all. Porcelain 0 and the script continued (`standin-ok.log.txt:22` and `:53`). Exit 128 hits the `||` (`standin-git_fail.log.txt:22-23`). |
+| 103, 105 | `sha256sum \| cut` | The digest is compared at 104 and 106 | Both sides exit 0 when the file hashes. A failed hash is empty and the comparison stops. |
+| 118 | `find \| wc -l` | Yes | `find` exits 0 on a readable `runs/`. The log shows 36 and continues (`standin-ok.log.txt:37`). |
+| 145 | `dd \| sha256sum \| cut` | No (inside `echo`) | All three read the whole stream. The incomplete log printed both readout hashes (`:47-48`). |
+| 157-158 | `find -print0 \| sort -z` | Yes | `sort -z` reads every record. Roots present: 23 and 25 files copied. `fence.txt` absent: `find` exits 1 and the `||` stops at rc 4 (`standin-missing_record.log.txt:56-57`). |
+| 164 | `dd \| sha256sum \| cut` | Yes | Same full-stream copy. The ok run copied 23 files (`standin-ok.log.txt:56`). |
+| 165 | `sha256sum \| cut` | Yes | One line, `cut` reads it. |
+| 172, 174 | `du \| cut`, `sha256sum \| cut` | No (inside `echo`) | The ok log printed the byte count and the tar hash (`:56-57`). |
+
+`grep -c` at `:112` is not a pipeline. On an empty file it exits 1 and prints 0. With no `-e`, the script continues, prints `0 lines, 0 well-formed`, and stops on the numeric test (`standin-empty_sums.log.txt:31-32`). A real sums file has matches, so `grep` exits 0. A local assignment of `grep -c ''` on an empty file returned status 1, stored 0, and the next command ran.
+
+`head` closing a pipe can make the writer exit 141. A local `yes COMPLETED | head -1` under `pipefail` returned 141 and still captured `COMPLETED`; the following command ran, and `[ "$st" = COMPLETED ]` passed. Lines 69 and 84 do not check that status, so a 141 does not BAIL. The state test BAILs only when the captured string is not `COMPLETED`. The seven variants that got past the pre-log job check all did so with `pipefail` on.
+
+No checked pipeline has a left side that exits nonzero on a legitimate success. `git status` exits 0 when the tree is clean. `wc` and `sort` read their whole input. `dd`, `sha256sum`, and `cut` in the copy loop do the same. `find` exits nonzero when a root is missing or unreadable, and that stop is the check added in rev 1.
+
+## 3. New issues — none blocking
+
+Rev 1's writes stay inside `/pscratch/sd/j/josephrb/t3p-20261121`: the deploy, the read, `fetch-read`, the tar, the transient `fetch-read.list` and `fetch-read.sums` (`:72`, `:157`, `:167`), and the log and done file. `finish` and `bail` remove the `/dev/shm` copy of the script. Nothing writes `/global/cfs` (the string is the guard comment at `:23`). `squeue` appears only in the comment at `:4`. The fence and the job states are `sacct`.
+
+Record reads that the script marks as noatime still use `dd iflag=noatime`: `DONE` at `:85`, the readout hash at `:145`, the copy at `:163`, and the re-read at `:164`. The launcher fetch is `dd iflag=noatime` (`t3p_read_launch.sh:31`). The product check remains a plain `sha256sum -c` of the `.npz` files (`:115`), the same shape as rev 0.
+
+The reader still sends its stdout to `/dev/null` and the log prints the verdict (`:135-137`). The incomplete log's reader line is `{"verdict": "INCOMPLETE"}` (`standin-incomplete.log.txt:39`). The crash path's stderr traceback names `priors()` and the sizes 16 and 65856 (`standin-ok.log.txt:39-50`); the readout text is not in that log, and `read/` was never created.
+
+The launcher pin matches the connect file on disk. `t3p_read_launch.sh:15-16` exits 8 on a local mismatch. The remote command at `:19` deletes the `/dev/shm` copy and exits 8 on a mismatch. A failed `shasum` leaves an empty digest, which fails the comparison. The session must contain `^script rc=` (`:24`). A `^BAIL ` line skips the fetch (`:25`). The tar hash must be present and equal (`:37-40`). `RECORDS.SHA256SUMS` must check (`:42-45`). On this Mac, `shasum -a 256 -c` on an empty sums file exits 1. The connect also refuses zero records (`:169`) before it writes that file.
+
+The launcher's own sha256 is `9d6bf0f11e7513fff136cdf74fd9660adce0140ac2c9da1e3b114f1823c46fba`, matching the README.
+
+## 4. Stand-in logs — CLOSED
+
+Each variant matches the README table. The connect hash printed in every post-log run is the rev 1 pin.
+
+| Variant | Log evidence |
+|---|---|
+| ok | Sums 6/6, 12/12, 36/36 and `OK` (`standin-ok.log.txt:31-37`). Traceback in `priors()` at `t3p_read.py:197`, size 16 vs 65856 (`:45-50`). `read rc=1`, porcelain after 0 (`:51-53`), 23 files tarred (`:56`), done file 1 (`:58-60`). |
+| incomplete | `{"verdict": "INCOMPLETE"}`, `t3p_read rc 3` (`standin-incomplete.log.txt:39-40`). `readout.json` and `readout.txt` are in the listing (`:45-46`). 25 files tarred (`:52`). Done 3 (`:56`). |
+| bail_running | `BAIL fence (sacct) not clear`, script rc 9 (`standin-bail_running.log.txt:7-8`). No connect log, no done file (`:9-11`). Top level has no `deploy-read`, `read`, or `fetch-read` (`:12-22`). |
+| stale_sums | 36/36 well-formed, then `STOP: the products are not log-floor/SHA256SUMS's` (`standin-stale_sums.log.txt:35-38`). No `threads:` line, so this is before the read. Done 9 (`:41`). |
+| empty_sums | `0 lines, 0 well-formed product lines (want 6)` then `STOP: log-dry/SHA256SUMS is not 6 well-formed lines` (`standin-empty_sums.log.txt:31-32`). Done 9 (`:35`). |
+| deleted_byte | `12 lines, 11 well-formed product lines (want 12)` then the well-formed-line STOP (`standin-deleted_byte.log.txt:33-34`). Done 9 (`:37`). |
+| git_fail | `fatal: stand-in git status failure` and `STOP: git status failed (before)` are inside the connect log (`standin-git_fail.log.txt:8-23`). No `BAIL` line. Script rc 9, done 9 (`:7`, `:26`). |
+| missing_record | Sums and the read ran, including the `priors()` traceback (`standin-missing_record.log.txt:31-51`). Then `find: 'fence.txt': No such file or directory` and `STOP: the records list failed (find)` (`:56-57`). Script rc 4, done 4 (`:7`, `:60`). Top level has `fetch-read.list` and no `fetch-read.tar` (`:61-73`). |
+
+VERDICT: GO
