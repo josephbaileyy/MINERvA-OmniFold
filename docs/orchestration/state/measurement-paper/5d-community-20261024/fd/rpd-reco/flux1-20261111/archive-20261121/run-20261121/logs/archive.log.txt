@@ -1,0 +1,32 @@
+node login25 loadavg 23.93 22.76 21.28 start=2026-11-21T10:36:59Z slurm_job=''
+script sha256 d38dba5ba26129389864121b3c4b48ec8fbfb4178866e70dfb9b3eddf3818a03
+list sha256 c69a9d38ef3a78e4c959ce46a4880b56f30f047d60d163fd821d924ccccc95b4 rows 13
+tools: /usr/bin/hsi /usr/bin/htar /global/common/software/nersc/bin/hpssquota /usr/bin/timeout /usr/bin/sha256sum 
+home check hsi rc=0
+target check hsi rc=64 (HPSS_ENOENT)
+hpssquota before rc=0
+| josephrb usage on HPSS charged to m3246 |  460.72GiB |   512.00GiB |          90.0% |          - |           - |              - |
+preflight: used 494694333153 quota 549755813888 free 55061480735 files 13 source bytes 591702082 archive estimate 608505344 need (x1.2) 730206413
+PREFLIGHT OK
+hsi mkdir rc=0
+== group flux1 start 2026-11-21T10:36:59Z
+STAGE OK flux1: 13 files, 591702082 bytes, every sha256 equal to its pin
+manifest flux1 sha256 e8fff1c3318efa4eda0b74fb700fa91bf6eadcbe8f1b2194b2aa5a8e4f6e94dc lines 13
+htar flux1 rc=0
+HTAR: Verify complete. 0 total errors, 15 total objects (15 Files,0 Dirs,0 Hard Links,0 symlinks) wallclock/user/sys: 3.525 3.484 0.268 seconds
+HTAR: HTAR SUCCESSFUL
+hashcreate flux1 rc=0
+hashverify flux1 rc=0: /home/j/josephrb/mnv-rpd-reco-flux1-20261121/flux1.tar: (md5) OK 
+retrieve flux1 rc=0
+RETRIEVE OK flux1: 13 members re-read from HPSS, every sha256 equal to its manifest line and pin
+== group flux1 PASS 2026-11-21T10:37:13Z
+hsi ls rc=0
+
+/home/j/josephrb/mnv-rpd-reco-flux1-20261121:
+-rw-r-----    1 josephrb  josephrb   591716864 Nov 21 02:37 flux1.tar
+-rw-r-----    1 josephrb  josephrb        8488 Nov 21 02:37 flux1.tar.idx
+hpssquota after rc=0
+| josephrb usage on HPSS charged to m3246 |  460.72GiB |   512.00GiB |          90.0% |          - |           - |              - |
+ARCHIVE PASS: all 1 groups (flux1) archived, hash-verified and every member re-read from HPSS
+removal of /dev/shm/josephrb-hpss-flux1 rc=0 ; present after: no
+hpss archive rc=0 2026-11-21T10:37:14Z
