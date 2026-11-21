@@ -9,7 +9,10 @@ directions of the published covariance. For a retained eigenpair
 $(\lambda_k,u_k)$, the contribution to the distance in
 Sec.~\ref{sec:muon-cross-section-comparison} is
 $(u_k^{\mathsf T}\Delta)^2/\lambda_k$. The ten smallest-eigenvalue modes
-carry $9.6\%$ of the distance. Among the six largest contributors, three
+carry $9.6\%$ of the distance.%
+% Check stage (Grok 1, codex2 4): sourced, records_compression_h3.tex:42-43 @ e89694209 (the earlier note's full paragraph):
+% "The 10 smallest-lambda modes carry 9.6%"; "lambda/lambda_max <~ 4e-9"; the other three's relative eigenvalues.
+ Among the six largest contributors, three
 are concentrated in the highest-$p_\parallel$ bins and have
 $\lambda_k/\lambda_{\max}\lesssim4\times10^{-9}$, while the other three lie
 at lower $p_\parallel$ and have relative eigenvalues between
@@ -48,7 +51,9 @@ the cross sections in the original muon bins.
   \caption{In all 14 $p_T$ slices, the OmniFold points move toward the published values
   relative to the Tune~v1 prior. The panels show rescaled double-differential
   cross sections versus $p_\parallel$. OmniFold bars show event-weight
-  statistics only, and the panel $\chi^2/n$ compares OmniFold with the prior.}
+  statistics only; they alone enter the panel $\chi^2/n$, which compares
+  OmniFold with the prior, and are neither the data's statistical uncertainty
+  nor the reported covariance.}
   \label{fig:ptslices}
 \end{figure}
 
@@ -104,11 +109,21 @@ each of the five axes.
 The predictions differ most visibly in available energy in the 3D
 projections (Fig.~\ref{fig:3dmodels}). The plotted GENIE and NuWro
 predictions in both comparisons use the flux correction described in
-Appendix~\ref{app:choices-after-results}. In the \resFiveAxis{}, all four predictions in Fig.~\ref{fig:eavailWband} fall below the central value
+Appendix~\ref{app:choices-after-results}.
+Integrated over $E_{\mathrm{avail}}$ without its catch bin, the predictions lie 7.2\% (GENIE CV), 9.5\% (Tune v1), 12.8\% (NuWro) and 22.2\% (GiBUU) below the 3D central value.
+% C1 (check stage; Joseph's decision, 2026-11-21, via the director): no values macro carries these. Source: the repaired
+% 3D log docs/orchestration/state/s5p/stage7/generator-context/gen3d_band_s5p_repaired-log.txt:27-32, "integrated sigma
+% (eavail axis, catch bin dropped)": -7.2%, -9.5%, -12.8%, -22.2% vs data; VALIDATION_LEDGER.md VL159. It replaces the
+% earlier note's sec_3d.tex:127 sentence, whose totals were the (E_avail, W) ones (VL157) and whose Tune v1 total had no source.
+In the \resFiveAxis{}, all four predictions in Fig.~\ref{fig:eavailWband} fall below the central value
 in the corner $E_{\mathrm{avail}}\geq0.8~\mathrm{GeV}$ and
 $W\geq1.8~\mathrm{GeV}$. The data-to-prediction ratios there are \genRatioCornerLo{} for
 both GENIE configurations, \genRatioCornerHi{} for NuWro, and \gibuuCorner{} for GiBUU, whose sample
 ends at $E_\nu=\fvval{cmodel-gibuu-enu}~\mathrm{GeV}$.
+GiBUU is low throughout the $E_{\mathrm{avail}}$ tail: its $W$-integrated data-to-prediction ratio is 1.59 at
+$0.8\leq E_{\mathrm{avail}}<1.5~\mathrm{GeV}$ and 1.37 at $1.5\leq E_{\mathrm{avail}}<3.0~\mathrm{GeV}$.
+% C2 (check stage, director's ruling 2026-11-21): restored from sec_eavailw.tex:7 @ e89694209 (1.59, 1.37); recomputed
+% 1.588 and 1.369 from note-figfix-20261120/runs/eavailw/eavailW_band_values.json @ c4204502d (E_avail panel, data/GiBUU).
 
 \begin{figure}[H]
   \centering
@@ -259,6 +274,8 @@ the same quadrant are \fvval{x-QC-rho0}--\fvval{x-QA-rho0} at $r=0$ and \fvval{x
 The joint $\chi^2$ is \fvval{x-prim-chi2-r0} at $r=0$ and \fvval{x-prim-chi2-r1} at $r=1$ (four degrees of
 freedom). The largest $|z|$ is \fvval{x-prim-zmax}. The prespecified rule
 ($p\geq0.05$ and $|z|\leq2.50$) is met throughout this family.
+% Check stage (Grok 3): sourced, records_compression_lr_p4.tex:413 @ e89694209: "The rule, fixed before the comparison was made,
+% is that the results agree if the joint chi2 of the four differences has p >= 0.05 and every |z| <= 2.50".
 
 The sixteen-cell generator distances are sensitive to the off-diagonal
 flux covariance. Reducing the flux correlations by $\fvval{sens-alpha-pct}\%$ at fixed
@@ -268,7 +285,8 @@ run-period term for NuWro on carbon raises
 the distance from \fvval{g-nuwro-carbon-total-chi2} to \fvval{g-nuwro-carbon-total-chi2-nopl}. The secondary CH comparison
 weights the carbon and free-proton cross sections per nucleon by $12/13$
 and $\fvval{g-ch-hweight}$, respectively. The rate-and-shape distances are then \fvval{g-nuwro-total-chi2}
-for NuWro (16 cells) and \fvval{g-gibuu-total-chi2} for GiBUU (8 cells). The free-proton
+for NuWro (16 cells) and \fvval{g-gibuu-total-chi2} for GiBUU (8 cells), with the prior-shape
+components of the covariance still built from NuWro and GiBUU on carbon. The free-proton
 samples have unresolved validation issues. Figure~\ref{fig:fived16-modes}
 shows the leading contributions to the descriptive distances.
 
@@ -307,12 +325,13 @@ sample entering the GiBUU-to-GENIE available-energy ratio used a
 mismatched flux (Appendix~\ref{app:choices-after-results}), so the ratio serves as a stress test at
 the scale of generator differences. For the three other injected shapes
 in Sec.~\ref{sec:higher-dimensional-closure}, the
-unfolded shift has the opposite sign in up to \fvval{rec-w-opp-hi} supported
-$(E_{\mathrm{avail}},W)$ cells and overshoots in \fvval{rec-w-over-lo} to \fvval{rec-w-over-hi} cells.
-In the sixteen-cell bias test, the GiBUU hybrid gives $|z|=\lrval{vr-R02-z-gibuu}$ and
+unfolded shift has the opposite sign in up to \fvval{rec-w-opp-hi} of the supported
+$(E_{\mathrm{avail}},W)$ cells with an injected change above 2\% and overshoots in \fvval{rec-w-over-lo} to \fvval{rec-w-over-hi} cells.
+In the sixteen-cell bias test, against the covariance without GiBUU's own
+prior-shape contribution, the GiBUU hybrid gives $|z|=\lrval{vr-R02-z-gibuu}$ and
 \lrval{vr-R06-z-gibuu} in R02 and R06. For the separate GiBUU available-energy
 deformation, the standardized R06 residual rises from $|z|=\fvval{f0b-stage0c_gibuu-zmax}$ to \fvval{f0b-stage0c_gibuu-zmax-nopl}
-when the run-period term is removed from the reference covariance.
+when the run-period term is also removed from that covariance.
 Figure~\ref{fig:gbdt-bias-spread} compares the size of the bias with
 the repeat spread at a fixed iteration count.
 
@@ -371,6 +390,8 @@ perturbed counterparts, the paired-to-base spread ratio has median
 is 0.37. The bootstrap variance is at least as large as the paired
 rounding estimate in every supported cell, satisfying the containment
 rule of Appendix~\ref{app:multidimensional-statistics}.
+% Check stage (Grok 4, codex2 10): sourced, app_statmethods_nd.tex:51 @ e89694209: the rule, defined before the study, needs a
+% median ratio in [0.7, 1.4] and s_boot^2 >= s_pair^2 in at least 95% of supported cells; "All supported cells meet the inequality."
 
 \subsection{Alternative algorithms and classifier controls}
 \label{app:algorithm-classifier-controls}
@@ -379,7 +400,7 @@ The largest differences between \lrval{rg1-K}-iteration binned IBU and the
 sixteen-cell result on data are $\fvval{ibu16-dof-R11}\%$ in R11, $\fvval{ibu16-dof-R06}\%$ in R06,
 and $\fvval{ibu16-dof-R05}\%$ in R05, expressed relative to the OmniFold integrals.
 The R06 difference is \fvval{ibu16-dsig-R06} times its reported standard deviation.
-The paired test in Sec.~\ref{sec:higher-dimensional-prior}
+The paired test in Sec.~\ref{sec:fived16-ibu}
 establishes sensitivity to the unfolding procedure, including the
 response grid used by IBU.
 
@@ -394,11 +415,13 @@ cases at the simulated detector response~\cite{NoteRecords2026}.
 
 The detector-level tree classifier shows a nearly diagonal reliability
 curve, with a Brier score of approximately 0.25 and an area under the
-receiver operating characteristic curve of 0.537. Replacing the trees
+receiver operating characteristic curve of approximately 0.537. Replacing the trees
 with a multilayer perceptron in the 3D purity unfolding gives median
 absolute projection differences of $1.20\%$ in $p_T$, $1.36\%$ in
 $p_\parallel$, and $0.66\%$ in $E_{\mathrm{avail}}$
 (Fig.~\ref{fig:calibration}).
+% Check stage (codex2 12): sourced, records_compression_cv.tex:243 @ e89694209, the earlier note's fig:calibration caption:
+% "median absolute projection differences are 1.20% in pT, 1.36% in pPar, and 0.66% in Eavail".
 
 \begin{figure}[H]
   \centering

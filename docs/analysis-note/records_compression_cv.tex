@@ -24,7 +24,7 @@ The data comparison sets configuration (e) against configuration (f), a cross-co
 That comparison's scatter is therefore not interpreted as data--simulation structure resolved by the available-energy axis, and the ratio of the two scatters is not quoted.
 
 % From sec_q3_3d.tex:8 (draft lineage of 5d7210adc)
-The hidden-variable closure exceeds its threshold at the largest amplitude (\S\ref{sec:validation}, App.~\ref{app:response-mismatch}).
+The hidden-variable closure exceeds its threshold at the largest amplitude (\S\ref{sec:validation}, the earlier note's appendix on the detector-response-mismatch closure).
 
 \subsection{Five-dimensional estimator development detail (from Part 5, P5-3)}
 % The director's ruling of 2026-11-19 (P5-3 item 3): development history on the baseline and probe classifiers and
@@ -158,11 +158,11 @@ Descriptively, at a NuWro closure the IBU's median absolute residual is \lrval{r
 
 \paragraph{From the note's \S\ref{sec:5d}.}
 % From sec_5d.tex:5 (draft de1543818)
-[The note's \S\ref{sec:5d}:] It covers what each test isolates (\S\ref{sec:val-fiveaxis}), background subtraction and generator-sized truth changes (\S\ref{sec:val-negweight}), why the estimator does not follow such changes (\S\ref{sec:val-departure}), model dependence and the reporting definitions it rules out (\S\ref{sec:gbdt-model-dependence}), the coverage test (\S\ref{sec:coverage-5d}) and the status of the five-axis covariance of the \resFiveAxis{} (\S\ref{sec:eavailw-construction}; configurations in Table~\ref{tab:config-key}). The sixteen-cell result of the \estMultiD{} is given in \S\ref{sec:fived16}, and the calibrated generator tests built on a variant of this estimator in \S\ref{sec:joint5d}. The unbinned negative-weight background method itself is derived in App.~\ref{app:negweight}.
+[The note's \S\ref{sec:5d}:] It covers what each test isolates (\S\ref{sec:val-fiveaxis}), background subtraction and generator-sized truth changes (\S\ref{sec:val-negweight}), why the estimator does not follow such changes (\S\ref{sec:val-departure}), model dependence and the reporting definitions it rules out (\S\ref{sec:gbdt-model-dependence}), the coverage test (\S\ref{sec:coverage-5d}) and the status of the five-axis covariance of the \resFiveAxis{} (the earlier note's section on the five-axis covariance; configurations in Table~\ref{tab:config-key}). The sixteen-cell result of the \estMultiD{} is given in \S\ref{sec:fived16}, and the calibrated generator tests built on a variant of this estimator in \S\ref{sec:joint5d}. The unbinned negative-weight background method itself is derived in App.~\ref{app:negweight}.
 
 \paragraph{From the note's \S\ref{sec:val-fiveaxis}.}
 % From sec_5d.tex:9 (draft de1543818)
-Prior reweighting changes the frequencies of existing simulated truth events while retaining their detector-response simulation. A response mismatch instead changes how a given truth is reconstructed. Finite classifier capacity and iteration count approximate the inverse and can leave residuals in either case. Coverage asks whether the resulting intervals contain their specified target at the stated rate (\S\ref{sec:coverage-5d}). These mechanisms are separate: an incorrect generator prediction alone does not diagnose an interval failure. Each test below [in the note, \S\S\ref{sec:val-negweight}--\ref{sec:eavailw-construction}] isolates one intervention.
+Prior reweighting changes the frequencies of existing simulated truth events while retaining their detector-response simulation. A response mismatch instead changes how a given truth is reconstructed. Finite classifier capacity and iteration count approximate the inverse and can leave residuals in either case. Coverage asks whether the resulting intervals contain their specified target at the stated rate (\S\ref{sec:coverage-5d}). These mechanisms are separate: an incorrect generator prediction alone does not diagnose an interval failure. Each test below [in the note, \S\S\ref{sec:val-negweight}--the earlier note's section on the five-axis covariance] isolates one intervention.
 
 \paragraph{From the note's \S\ref{sec:val-negweight}.}
 % From sec_5d.tex:24 (draft de1543818)
@@ -194,7 +194,7 @@ At historical W3 truth, EW29 has mean residual \SI{23.67}{\percent} and repeat S
 % From sec_5d.tex:155 (draft de1543818)
 [Caption of the note's Fig.~\ref{fig:gbdt-bias-spread}, continued:] Each supported J or H2 cell gives the mean and SD of $(\hat f-f_{\rm true})/f_{\rm true}$ in the same background-inclusive ensemble: 40 nominal experiments, 20 each for W2 and W3. Bars give pointwise 95\% Student-$t$ intervals for means and normal-model intervals for SDs, conditional on saved simulation. They supply neither simultaneous bounds nor total uncertainties. Truth panels and reporting cells form no frontier across estimator settings.
 % From sec_5d.tex:168 (draft de1543818)
-[Caption of the note's Fig.~\ref{fig:gbdt-coverage}, continued:] Below: EW7 ($\Eavail\in[0.1,0.2)$, $W\in[1.1,1.4)$ GeV) and EW41 (both above 3 GeV), pointwise 95\% Clopper--Pearson bounds. Dotted: nominal Gaussian 68.27\%. Neither total uncertainty nor a newly validated interval is shown. The bootstrap $\sigma$ is from 100 replicas of the nominal seed 700000; the assessment samples are reused, and no per-experiment or total-coverage claim is made.
+[Caption of the note's the earlier note's GBDT coverage figure, continued:] Below: EW7 ($\Eavail\in[0.1,0.2)$, $W\in[1.1,1.4)$ GeV) and EW41 (both above 3 GeV), pointwise 95\% Clopper--Pearson bounds. Dotted: nominal Gaussian 68.27\%. Neither total uncertainty nor a newly validated interval is shown. The bootstrap $\sigma$ is from 100 replicas of the nominal seed 700000; the assessment samples are reused, and no per-experiment or total-coverage claim is made.
 % From sec_5d.tex:184 (draft de1543818)
 [Caption of the note's Fig.~\ref{fig:gbdt-prior}, continued:] Historical W3 at five iterations. Horizontal gives minus the noise-free relative truth residual; vertical gives the relative shift in real-data $R$ when its MC prior changes to W3, normalized to CV-prior results. Points are supported cells, not independent repeated experiments. The diagonal marks equality.
 
@@ -202,7 +202,7 @@ At historical W3 truth, EW29 has mean residual \SI{23.67}{\percent} and repeat S
 % From sec_5d.tex:215 (draft de1543818)
 [Caption of the note's Fig.~\ref{fig:coverage-5d-paper}, continued:] Circles/squares: 68\%/95\% intervals. Bars: one-sided Clopper--Pearson lower/upper bounds at level $0.05/459$ (Bonferroni: 153 integrals, three truths). Solid/dashed: nominal coverage/thresholds 0.66 and 0.94. Filled: upper bound below threshold. Nominal truth (undrawn): none below 0.66, two below 0.94. Order: 42 $(\Eavail,W)$ cells and sum, \jtNcells{} joint cells (indices in $3^5$), total.
 
-\paragraph{From the note's \S\ref{sec:eavailw-construction}.}
+\paragraph{From the note's the earlier note's section on the five-axis covariance.}
 % From sec_5d.tex:271 (draft de1543818)
 A 160-throw ensemble determines a standard deviation only to a relative precision of about $1/\sqrt{2(N-1)}\approx\SI{5.6}{\percent}$ for independent Gaussian throws, so a smaller seed-induced drift could not be resolved against the width it would change.
 % From sec_5d.tex:274 (draft de1543818)
@@ -250,7 +250,7 @@ A 160-throw ensemble determines a standard deviation only to a relative precisio
 [Caption of the note's Fig.~\ref{fig:fived16-modes}, continued:] Predictions use analysis definitions.
 
 % From sec_fived16_gen.tex:177 (draft d55f7aad6)
-[Caption of the note's Table~\ref{tab:fived16-gen-cmodel}, continued:] The CH column is this note's sensitivity, omitted by the methods paper because it uses the free-proton samples of \S\ref{sec:joint5d-ch}.
+[Caption of the note's the earlier note's table of the generator distances' dependence on $C_{\mathrm{model}}$, continued:] The CH column is this note's sensitivity, omitted by the methods paper because it uses the free-proton samples of \S\ref{sec:joint5d-ch}.
 
 % From sec_3d.tex:93 (draft d55f7aad6)
 [Caption of the note's Fig.~\ref{fig:eavail-marg}, continued:] See the \estPurity{} definition in the method configurations (\S\ref{sec:method-config}).
@@ -278,19 +278,19 @@ A 160-throw ensemble determines a standard deviation only to a relative precisio
 [Caption of the note's Fig.~\ref{fig:control-corner}, continued:] Apart from $\Eavail$ with $\pT$ ($r\approx0.34$), $\Eavail$ and $W$ are nearly uncorrelated with the muon variables.
 
 % From sec_joint.tex:85 (draft d55f7aad6)
-[Caption of the note's Table~\ref{tab:joint5d}, continued:] [the six conditions under which every joint test is rejected] The conditions concern (i) the null truth below the fine grid, (ii) the detector model, (iii) the interaction-model prior, (iv) the simulation size, (v) the neutrino-energy range and (vi) the predictions' own finite simulated samples (\S\ref{sec:joint5d-conditions}).
+[Caption of the note's the earlier note's table of the joint generator tests, continued:] [the six conditions under which every joint test is rejected] The conditions concern (i) the null truth below the fine grid, (ii) the detector model, (iii) the interaction-model prior, (iv) the simulation size, (v) the neutrino-energy range and (vi) the predictions' own finite simulated samples (\S\ref{sec:joint5d-conditions}).
 
 % From sec_joint.tex:111 (draft d55f7aad6)
-[Caption of the note's Fig.~\ref{fig:joint5d-nulls}, continued:] Sufficient inputs: App.~\ref{app:release}.
+[Caption of the note's the earlier note's figure of the joint tests' null distributions, continued:] Sufficient inputs: App.~\ref{app:release}.
 
 % From sec_results.tex:111 (draft d55f7aad6)
 [Caption of the note's Fig.~\ref{fig:ptslices}, continued:] Only the panel format follows Fig.~13 of Ref.~\cite{MINERvA:2021owq}.
 
 % From sec_results.tex:111 (draft d55f7aad6)
-[Caption of the note's Fig.~\ref{fig:ptslices}, continued:] Published-data comparisons are in Figs.~\ref{fig:xsec} and~\ref{fig:pull} and Table~\ref{tab:compare}.
+[Caption of the note's Fig.~\ref{fig:ptslices}, continued:] Published-data comparisons are in Figs.~\ref{fig:xsec} and~\ref{fig:pull} and the earlier note's comparison table.
 
 % From sec_results.tex:193 (draft d55f7aad6)
-[Caption of the note's Fig.~\ref{fig:modelmaps}, continued:] [our result's and the published data's ratio maps to MINERvA Tune~v1] The maps are close because both results depart from the tune in the same places by similar amounts.
+[Caption of the note's the earlier note's figure of the model-ratio maps, continued:] [our result's and the published data's ratio maps to MINERvA Tune~v1] The maps are close because both results depart from the tune in the same places by similar amounts.
 
 % From selection_features.tex:6 (draft d55f7aad6)
-[Caption of the note's Table~\ref{tab:selection-features}, continued:] Extended fiducial domain: App.~\ref{sec:fps}.
+[Caption of the note's the earlier note's table of selection and classifier features, continued:] Extended fiducial domain: App.~\ref{sec:fps}.
