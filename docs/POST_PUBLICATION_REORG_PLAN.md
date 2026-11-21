@@ -625,3 +625,74 @@ records.
   its report.
 - A prospective guard would be the same refusal as `uq/final_rollup_full.sh`'s. It is listed in that
   report's backlog.
+
+## Family short paper, 2026-11-21 (main)
+
+**Decision (Joseph, 2026-11-21, verbatim):** "yes I also authorize the short paper removal". Typed to the director
+session and relayed from it; received by 2026-11-21T15:39:05Z. It answers the authorization text of the removal list
+(journal-editor's `SHORT-PAPER-REMOVAL-LIST-20261121.md` §5, kept outside the repository), which covers "`main` and
+the note's working branches" on these conditions:
+- the evidence tag is pushed first;
+- the recovery test passes;
+- all builds and the note's gates pass from a clean checkout after the removal;
+- a read-only independent review of the family's diff is done;
+- the branch `origin/draft/methods-short-20261109` is kept.
+
+The rewrite branch's removal, with its full gate record, is recorded on that branch, in this file's section *Family
+short paper, 2026-11-21*, under the tag `evidence/short-paper-retired-a54f255e`. This section records the same family
+on `main`. `main`'s `figures/paper_fig1_validation.pdf` is a different blob (`8da728fd66`, sha256 `71a2ea48…`, RE-2
+part C amendment 3's redraw), so `main` has its own tag.
+
+1. **Enumeration.** The same five paths: `docs/analysis-note/main_paper.tex`, `paper_body.tex`, and
+   `figures/paper_fig1_validation.pdf`, `fd_g_fig_ratio.pdf` and `paper_fig_deformation.pdf`. These are the files that
+   the `\input` and `\includegraphics` closure of `main_paper.tex` reaches and that no other driver reaches, measured
+   at `45402896`.
+2. **Dependency scan** at `45402896`. The runtime readers are the rewrite branch's, at `main`'s own lines; each is
+   changed in the removal commit:
+   - `build_all.sh` and `test_build_all.py`: the targets and fixtures. The stale-product and strike cases now use the
+     primer.
+   - `check_dead_containment.py`: `BUILDS`.
+   - `check_sec4_receipts.py` and its test. The five paper checks now bind the same receipt values where `main`'s note
+     and primer print them:
+     - the statistical block median in `sec_results.tex`'s uncertainty table;
+     - the high-$W$ regularization bias in `sec_validation.tex`'s validation table;
+     - the earlier estimator's lowest 68% coverage in `sec_5d.tex`'s sec:coverage-5d;
+     - the withheld-shape range and "about half of the cells" in `primer_body.tex`.
+
+     SEC4-RECEIPTS stays at 17/17, and its self-test rejects 21 perturbations.
+   - `make_figures.sh`: the Fig. 1 install.
+   - `make_values_fived16.py`:
+     - the `fd_g_fig_ratio.pdf` pin;
+     - the paper's five listed-truth sentences;
+     - five plants: four now plant in `sec_fived16.tex` and `main_note.tex`, and the "ctotal" plant is dropped with
+       the paper's only sentence of that kind.
+
+     `--check` passes with 5 sentences, and `--self-test` passes.
+   - `tools/registry/check_registry.py` and `results_index.py`: the drivers and fixtures.
+   - `ALIASES.tsv` (two rows) and `ATTRIBUTION.tsv` (one row): re-cited from `paper_body.tex:56` to `sec_joint.tex:43`,
+     the same line text as the rewrite branch's `records_r07_statistics.tex:467` (digest `dd51cdc382e8b520`). The
+     capacity pattern also matches "has".
+   
+   Two mentions are not prose:
+   - `2d-unfolding/re2/partc/re2c_values.py` resolves the `N/` rows of the sha256-pinned RE-2 part C spec, so the spec
+     is not retargeted. On `main` its two spec-resolution tests in `test_re2c.py` already fail before the removal (the
+     schema run returns rc 3), and the same two fail after it.
+   - `oi130_quoted_value_inventory.py` names `main_paper.tex`; no gate runs it.
+   
+   `nd-unfolding/gbdt_model_dependence/build_evidence.json` holds digests of an earlier `main_paper.tex` and
+   `paper_body.tex` as a frozen build record, which nothing reads by path. Everything else is prose or a frozen record.
+3. **Internal references.** `main_paper.tex` inputs `paper_body.tex`, and `paper_body.tex` includes the three figures.
+4. **Evidence tag and recovery.** The tag **`evidence/short-paper-retired-45402896`** (tag object `d047d5b37663…`, on
+   commit `45402896173d7c6f42f211840712b931c9809aed`) was pushed before the removal commit.
+   - Each of the five paths is blob-identical at the tag and at the parent, and restores to the same sha256: Fig. 1
+     `71a2ea48…`, `fd_g_fig_ratio.pdf` `6214ed78…`.
+   - From a `git archive` of the tag, `main_note` and then `main_paper` build with rc 0, 0 errors, 0 undefined
+     references, 0 multiply defined labels and 13 pages.
+5. **Surviving references resolve.** The note's `README.md` names this tag, the old paths and the development branch.
+   The root `README.md` and `AGENTS.md` no longer route to `main_paper.tex`. The remaining mentions are historical.
+6. **Discovery route.**
+   - `git show evidence/short-paper-retired-45402896:<old-path>`;
+   - this section;
+   - `docs/analysis-note/README.md`, *Retired: the short paper*;
+   - `docs/orchestration/CATALOG.md` § Frozen pre-compaction evidence, *Family short paper*;
+   - the kept branch `origin/draft/methods-short-20261109`.

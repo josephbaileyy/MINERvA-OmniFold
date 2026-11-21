@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Build the four audience-tiered PDFs from the shared source: the analysis note, the primer, the
-# paper and (since 2026-10-12) the companion PET note; and, since 2026-10-21, the internal records
-# document, which is never posted (item 7 below).
+# Build the audience-tiered PDFs from the shared source: the analysis note, the primer and (since 2026-10-12) the
+# companion PET note; and, since 2026-10-21, the internal records document, which is never posted (item 7 below).
+# The short paper (main_paper) was retired on 2026-11-21 and is no longer a target; see docs/analysis-note/README.md.
 # Run on a NERSC LOGIN node (pdflatex/biber are not on the compute nodes):
 #     module load texlive/2024
 #     bash build_all.sh
@@ -106,10 +106,10 @@ fi
 
 module load texlive/2024 2>/dev/null || true
 
-# pet_note is the companion PET note split from main_note on 2026-10-12; it follows the three original
+# pet_note is the companion PET note split from main_note on 2026-10-12; it follows the original
 # targets so their order, and every failure message that names one, is unchanged. main_records (item 7)
-# is last for the same reason, and because it reads main_note.aux.
-targets=(main_note main_primer main_paper pet_note main_records)
+# is last for the same reason, and because it reads main_note.aux. main_paper was retired on 2026-11-21.
+targets=(main_note main_primer pet_note main_records)
 
 # The sources every target genuinely depends on. Deliberately NOT "every .tex in this
 # directory": a note-only body edited after the paper's build would then fail the paper,
@@ -272,9 +272,9 @@ python3 check_sec4_receipts.py
 echo
 echo "=== no input marked pending prints (\\fvpending) ==="
 # A \fvpending{...} placeholder marks a readout or figure that has not landed (the covariance export, the two 5D
-# figures). It prints "[PENDING: ...]"; a built note or paper that still prints one is refused here, so it never ships.
+# figures). It prints "[PENDING: ...]"; a built note that still prints one is refused here, so it never ships.
 pending_txt=$(mktemp)
-for t in main_note main_paper; do
+for t in main_note; do
   # extract to a file first: under pipefail a failed pdftotext piped into grep would read as "no placeholder"
   if ! pdftotext "$t.pdf" "$pending_txt" || ! test -s "$pending_txt"; then
     echo "  FAIL could not extract the text of $t.pdf, so the pending check cannot run"
@@ -291,7 +291,7 @@ for t in main_note main_paper; do
   fi
 done
 rm -f "$pending_txt"
-echo "  ok   no pending placeholder in main_note.pdf or main_paper.pdf"
+echo "  ok   no pending placeholder in main_note.pdf"
 
 echo
 echo "=== page counts ==="

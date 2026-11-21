@@ -547,7 +547,7 @@ def render_registry_tex(index: reglib.Index) -> str:
     return "\n".join(out)
 
 
-POSTED = ("main_note.tex", "main_paper.tex", "main_primer.tex", "pet_note.tex")
+POSTED = ("main_note.tex", "main_primer.tex", "pet_note.tex")  # main_paper.tex retired 2026-11-21
 NO_RESULTS_BEGIN = "% NO-RESULTS-INDEXED BEGIN"
 NO_RESULTS_END = "% NO-RESULTS-INDEXED END"
 
@@ -961,9 +961,10 @@ def self_test() -> int:
         quiet(write, t)
         g("add", "-A")
         # Never silently zero: with a posted driver that prints labels (a)-(e), removing the NO-RESULTS-INDEXED
-        # listing from the committed rendering must fail. The note's method section prints all six labels; the paper
-        # body has printed none of (a)-(d) since DECISION-20261027-joseph-move-nonfinal-configurations-to-note.
-        (t / "docs/analysis-note/main_paper.tex").write_text("\\input{sec_method}\n")
+        # listing from the committed rendering must fail. The method section sec_method.tex prints all six labels; the
+        # throwaway repository holds no posted driver until this one is added (main_paper.tex until its retirement on
+        # 2026-11-21).
+        (t / "docs/analysis-note/main_note.tex").write_text("\\input{sec_method}\n")
         g("add", "-A")
         quiet(write, t)
         g("add", "-A")
