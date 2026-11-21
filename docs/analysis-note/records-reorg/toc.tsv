@@ -14,6 +14,7 @@ R2.6	subsection	Binning, migrations and the reported product	rec:method-binning	
 R2.7	subsection	Related developments: Profile OmniFold, SPINUP and gradient-boosted trees	rec:method-related	records_r02_method.tex	
 R3	section	The two-dimensional muon cross section	rec:twod	records_r03_twod.tex	
 R3.1	subsection	The unfolded cross section and the comparison with MINERvA	rec:twod-result	records_r03_twod.tex	
+R3.1b	subsection	-		records_r03_twod.tex	
 R3.2	subsection	Construction of the two-dimensional covariance	rec:twod-covariance	records_r03_twod.tex	
 R3.3	subsection	Closure, injected-feature and unbinned diagnostics	rec:twod-validation	records_r03_twod.tex	
 R4	section	Higher-dimensional unfolding and validation	rec:higherdim	records_r04_higherdim.tex	
