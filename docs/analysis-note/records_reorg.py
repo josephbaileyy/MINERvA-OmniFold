@@ -249,6 +249,11 @@ class Config:
         self.adds = [r for r in read_tsv(d / "adds.tsv", 2) if on(r, 2, "B")]
         self.cuts = [r for r in read_tsv(d / "cuts.tsv", 3)] if phase == "D" else []
         self.carries = [r for r in read_tsv(d / "carries.tsv", 5)] if phase == "D" else []
+        # Joseph's rulings on the reorganized records (2026-11-21): a lead-in printed only because it holds a
+        # register re-anchor that also prints elsewhere is demoted (demote-leadin.tsv: key, anchor, reason), and a
+        # marker line is printed after a sentence (inserts.tsv: key, anchor, text, reason).
+        self.demote_leadin = [r for r in read_tsv(d / "demote-leadin.tsv", 3)] if phase == "D" else []
+        self.inserts = [r for r in read_tsv(d / "inserts.tsv", 4)] if phase == "D" else []
         self.keep_leadin = {r[0] for r in read_tsv(d / "keep-leadin.tsv", 1)}
         # Option B' (Joseph, 2026-11-21): a lead-in stays printed when the sentence after it would dangle.
         self.keep_context = {(r[0], r[1]) for r in read_tsv(d / "keep-leadin-context.tsv", 2)}
@@ -470,7 +475,9 @@ def render_block(blk: Block, cfg: Config, keep_head: bool = False) -> list[str]:
         if hide and line.strip():
             out.append(hide + line)
             continue
-        if cfg.merging and LEADIN.match(line) and not leadin_holds_row(line, blk, cfg) and not keeps_context(blk, k, cfg):
+        forced = any(r[0] == blk.key and r[1] in line for r in cfg.demote_leadin)
+        if cfg.merging and LEADIN.match(line) and (forced or (not leadin_holds_row(line, blk, cfg)
+                                                              and not keeps_context(blk, k, cfg))):
             out.append(LEADIN_PREFIX + line.strip())
             continue
         for _, text, reason in [c[:3] for c in cuts]:
@@ -479,6 +486,10 @@ def render_block(blk: Block, cfg: Config, keep_head: bool = False) -> list[str]:
                 line = re.sub(r"  +", " ", line.replace(text, "")).rstrip()
         if line.strip():
             out.append(line)
+        for _, anchor, text, reason in [c[:4] for c in cfg.inserts if c[0] == blk.key]:
+            if anchor in line:
+                out.append(f"% [records reorg] {reason}")
+                out.append(text)
         for _, anchor, text, src, reason in [c[:5] for c in carries]:
             if anchor in line:
                 out.append(f"% [records reorg] carried verbatim from the duplicate {src}: {reason}")
@@ -675,6 +686,14 @@ def check(base: Tree, new: Tree, cfg: Config) -> list[str]:
         if src not in cfg.dropped_keys() and not any(c[0] == src and c[1] == text for c in cfg.cuts):
             fails.append(f"carries.tsv: {key}: its source {src} still prints the sentence (drop or cut it there)")
         allowed[re.sub(r"\s+", " ", text).strip()] += 1
+    for key, anchor, text, reason in [r[:4] for r in cfg.inserts]:
+        if key not in blocks or not any(anchor in l for l in blocks[key].lines):
+            fails.append(f"inserts.tsv: {key}: the anchor is not in the block at the base: {anchor[:60]!r}")
+        allowed[re.sub(r"\s+", " ", text).strip()] += 1
+    for key, anchor, reason in [r[:3] for r in cfg.demote_leadin]:
+        hits = [l for l in (blocks[key].lines if key in blocks else []) if anchor in l and LEADIN.match(l)]
+        if len(hits) != 1:
+            fails.append(f"demote-leadin.tsv: {key}: {len(hits)} lead-ins hold the anchor {anchor[:60]!r}")
     lost = old_p - new_p
     n_leadin = 0
     for line, n in lost.items():

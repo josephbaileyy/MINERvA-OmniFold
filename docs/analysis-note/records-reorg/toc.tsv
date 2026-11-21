@@ -25,7 +25,7 @@ R4.4	subsection	Closure tests and background-subtraction bias	recsec:higherdim-c
 R4.5	subsection	Prior dependence and algorithmic robustness	recsec:higherdim-prior	records_r04_higherdim.tex	
 R4.6	subsection	Uncertainty calibration and the scope of the five-axis covariance	recsec:higherdim-calibration	records_r04_higherdim.tex	
 R4.7	subsection	Figure and table detail	recsec:higherdim-captions	records_r04_higherdim.tex	
-R4.8	subsection	-		records_r04_higherdim.tex	
+R4.8	subsection	The extended fiducial phase-space study (preliminary; no reported covariance)	recsec:higherdim-fps	records_r04_higherdim.tex	
 R5	section	The sixteen-cell cross section	recsec:sixteen	records_r05_sixteen.tex	
 R5.1	subsection	Cells, covariance blocks and the uncertainty budget	recsec:sixteen-budget	records_r05_sixteen.tex	
 R5.2	subsection	Coverage tests of the sixteen-cell covariance	recsec:sixteen-coverage	records_r05_sixteen.tex	
