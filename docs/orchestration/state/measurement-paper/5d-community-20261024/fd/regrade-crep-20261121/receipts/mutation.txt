@@ -1,5 +1,5 @@
 # command: python3 -B regrade_mutation.py
-# start: 2026-11-21T10:47:30Z
+# start: 2026-11-21T11:01:57Z
 m00 KILLED regrade_crep.py: 'M_full = M + tau'
 m01 KILLED regrade_crep.py: 'under = read_rule(M_full, se)'
 m02 KILLED regrade_crep.py: 'return (M_full - 1.0) > READING_SE * se'
@@ -18,11 +18,15 @@ m14 KILLED regrade_crep.py: 'out["c_reading"] = "equal" if all(out["c"].values()
 m15 KILLED regrade_crep.py: 'if asym > SYM_TOL or lam[0] < -PSD_TOL * lam[-1]:'
 m16 KILLED regrade_crep.py: 'warnings.simplefilter("error", RuntimeWarning)'
 m17 KILLED regrade_crep.py: 'out["verdict"] = "descriptive-" + g["verdict"]'
-m18 KILLED ll5d_regrade_capture.py: 'bad = [r[2] for r in rows if inv.sha256_noatime(Path(r[2])) != r[1]]'
-m19 KILLED ll5d_regrade_capture.py: 'if inv.sha256_noatime(s1_path) != S1_SHA:'
-m20 KILLED ll5d_regrade_capture.py: 'if have != want:'
-m21 KILLED ll5d_regrade_capture.py: 'if moved or changed:'
-m22 KILLED ll5d_regrade_capture.py: 'if E.shape != (N_TOYS, N_CELLS) or not np.all(np.isfinite(E)):'
-m23 KILLED ll5d_regrade_capture.py: 'for p in a.out.glob("capture_*.npz"):\n            p.unlink()'
-killed 24 of 24
-# exit: 0  end: 2026-11-21T10:47:40Z
+m18 KILLED regrade_crep.py: 'ok = (js["cells"] == want and names_csv == want and len(f_csv) == 16'
+m19 KILLED regrade_crep.py: 'and float(np.max(np.abs(f_csv / f - 1.0))) <= 1e-12 and PINS["cpl_bloc'
+m20 KILLED regrade_crep.py: 'dropped = int(np.sum(resid > 1e-6))'
+m21 KILLED regrade_crep.py: 'out["evaluations"] = {e: {"status": "STOP", "stop": str(ex)} for e in '
+m22 KILLED ll5d_regrade_capture.py: 'bad = [r[2] for r in rows if inv.sha256_noatime(Path(r[2])) != r[1]]'
+m23 KILLED ll5d_regrade_capture.py: 'if inv.sha256_noatime(s1_path) != S1_SHA:'
+m24 KILLED ll5d_regrade_capture.py: 'if have != want:'
+m25 KILLED ll5d_regrade_capture.py: 'if moved or changed:'
+m26 KILLED ll5d_regrade_capture.py: 'if E.shape != (N_TOYS, N_CELLS) or not np.all(np.isfinite(E)):'
+m27 KILLED ll5d_regrade_capture.py: 'for p in a.out.glob("capture_*.npz"):\n            p.unlink()'
+killed 28 of 28
+# exit: 0  end: 2026-11-21T11:02:11Z

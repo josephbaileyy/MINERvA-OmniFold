@@ -271,5 +271,50 @@ class Controls(unittest.TestCase):
         self.assertEqual(rc.NULL_SEED_16, ll5d.NULL_SEED)
 
 
+class CMap16AndCut(unittest.TestCase):
+    def test_cmap16_passes_on_committed_metadata(self):
+        with np.load(rc.PINS["cpl_block"][0], allow_pickle=False) as z:
+            f = np.asarray(z["f"], np.float64)
+        rec = rc.cmap16(f)
+        self.assertEqual(rec["cells_csv"], [f"R{i:02d}" for i in range(16)])
+        self.assertTrue(rec["npz_named"])
+
+    def test_cmap16_stops_on_reordered_f(self):
+        with np.load(rc.PINS["cpl_block"][0], allow_pickle=False) as z:
+            f = np.asarray(z["f"], np.float64)
+        with self.assertRaises(rc.Stop):
+            rc.cmap16(f[::-1].copy())
+
+    def test_cmap16_stops_on_changed_csv(self):
+        import shutil, tempfile
+        with tempfile.TemporaryDirectory() as td:
+            p = Path(td) / "cells.csv"
+            shutil.copy(rc.PINS["cpl_cells_csv"][0], p)
+            p.write_text(p.read_text().replace("R01,", "R99,", 1))
+            with mock.patch.dict(rc.PINS, {"cpl_cells_csv": (p, rc.sha256(p))}):
+                with np.load(rc.PINS["cpl_block"][0], allow_pickle=False) as z:
+                    with self.assertRaises(rc.Stop):
+                        rc.cmap16(np.asarray(z["f"], np.float64))
+
+    def test_run16_records_stop_when_cmap16_fails(self):
+        with mock.patch.object(rc, "cmap16", side_effect=rc.Stop("C-MAP16: test")):
+            out = rc.run16(Path("/nonexistent"))
+        self.assertEqual({v["status"] for v in out["evaluations"].values()}, {"STOP"})
+        self.assertEqual(len(out["evaluations"]), 4)
+
+    def test_kept_set_count(self):
+        rng = np.random.default_rng(7)
+        C_T = spd(6, rng)
+        E = rng.standard_normal((20, 6))
+        r = rc.r_chi2(E, C_T, np.zeros_like(C_T))
+        self.assertEqual(r["cut"]["C_T_kept_modes_outside_C_prime_kept_span"], 0)
+        # a huge added block lifts lambda_max so far that C_T's smallest modes fall under the 1e-12 cut
+        lam, V = np.linalg.eigh(C_T)
+        C_T2 = V @ np.diag([1e-3, 1, 1, 1, 1, 1]) @ V.T
+        u = V[:, -1]
+        r2 = rc.r_chi2(E, C_T2, 1e12 * np.outer(u, u))
+        self.assertGreaterEqual(r2["cut"]["C_T_kept_modes_outside_C_prime_kept_span"], 1)
+
+
 if __name__ == "__main__":
     unittest.main()

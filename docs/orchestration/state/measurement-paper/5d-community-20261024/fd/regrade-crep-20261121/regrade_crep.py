@@ -11,8 +11,9 @@ R-chi2 reads "under-describes on average" iff M_full - 1 > 3 SE, else "not shown
 R-grade (descriptive) rebuilds the null with C_add in the Gaussian and in C_T, then fd_1b_mc.grade at A5's tolerance;
 its verdict string is written with the prefix "descriptive-" beside "a reading, not a proof".
 
-  python3 regrade_crep.py run2d --q205 <cov2d_Q_205.npz> --out <dir>
-  python3 regrade_crep.py run16 --capture-dir <dir of capture_<t>_<reading>.npz> --out <dir>
+  python3 regrade_crep.py run2d --q205 <cov2d_Q_205.npz> --out <record.json>
+  python3 regrade_crep.py run16 --capture-dir <dir of capture_<t>_<reading>.npz> --out <record.json>
+(--out is one JSON file, refused if it exists.)
 
 MEASURES: the declaration's R-chi2 and R-grade per evaluation, with A0 and the controls. CANNOT AUTHORIZE: any change
 to a reported covariance, any note or paper wording, a cause, or a p-value.
@@ -56,6 +57,10 @@ PINS = {   # section 1, sha256 of the committed bytes
                   "849766942b3ecd9e6e72fd5db9d1a59815796b3f917875f8d0122b0c639088ec"),
     "cpl_block": (FD / "with-cpl/block/cpl_block.npz",
                   "d9aa32fdb64357760348c9ccbc32fbea81d517f0f0786eedf17ab4946eaca59f"),
+    "cpl_block_json": (FD / "with-cpl/block/cpl_block.json",
+                       "4023746e3a819e8cc8348c457d7dc1ee55df66eaa5f5f68082824b9df27cabd6"),
+    "cpl_cells_csv": (FD / "with-cpl/data-product/fd_data_product_cpl_cells.csv",
+                      "b3a7d0cac19ab3ca17ecb603b5c4814fb8e072117cdd01c47383eb8f1d8cd6cd"),
     "readout_g18": (FD / "receipts-ll5d/readout/node/readout-g18.json",
                     "7bd6d3901fa9d5b017f7c5c2335ef70a4a41be58510d31cbcae3734556d0b12d"),
     "readout_ar23": (FD / "receipts-ll5d/readout/node/readout-ar23.json",
@@ -121,8 +126,13 @@ def r_chi2(E: np.ndarray, C_T: np.ndarray, C_add: np.ndarray) -> dict:
     M_full = M + tau
     lam = np.linalg.eigvalsh(Cp)
     keep = lam > fn.RANK_REL * lam.max()
-    lam_T = np.linalg.eigvalsh(np.asarray(C_T, np.float64))
-    ndf_T = int(np.sum(lam_T > fn.RANK_REL * lam_T.max()))
+    lam_T, V_T = np.linalg.eigh(np.asarray(C_T, np.float64))
+    keep_T = lam_T > fn.RANK_REL * lam_T.max()
+    ndf_T = int(keep_T.sum())
+    _, V_p = np.linalg.eigh(Cp)
+    Vk = V_p[:, keep]
+    resid = np.linalg.norm(V_T[:, keep_T] - Vk @ (Vk.T @ V_T[:, keep_T]), axis=0)   # C_T kept modes outside C''s kept span
+    dropped = int(np.sum(resid > 1e-6))
     under = read_rule(M_full, se)
     return {
         "ndf": ndf, "n": n, "M_prime": M, "SE": se, "mean_error_part": mean_err, "spread_part": M - mean_err,
@@ -131,7 +141,8 @@ def r_chi2(E: np.ndarray, C_T: np.ndarray, C_add: np.ndarray) -> dict:
         "toys_own_mean_line": {"M_prime_minus_1_over_SE": (M - 1.0) / se,
                                "toys_mean_exceeds_1_by_3SE": bool((M - 1.0) > READING_SE * se),
                                "what": "descriptive; the stored toys' own mean chi2/ndf' against C'"},
-        "cut": {"ndf_C_T": ndf_T, "ndf_C_prime": ndf,
+        "cut": {"ndf_C_T": ndf_T, "ndf_C_prime": ndf, "C_T_kept_modes_outside_C_prime_kept_span": dropped,
+                "max_residual_of_C_T_kept_modes": float(resid.max()) if resid.size else 0.0,
                 "smallest_kept_rel": float(lam[keep].min() / lam.max()),
                 "largest_dropped_rel": float(lam[~keep].max() / lam.max()) if np.any(~keep) else None},
         "assumptions": ["the model for the added blocks (r independent of e, E r = 0, Cov r = C_add) is untested",
@@ -268,11 +279,38 @@ def load_capture(path: Path) -> dict:
     return d
 
 
+def cmap16(f: np.ndarray) -> dict:
+    """C-MAP16 (section 3): cpl_block.json's cells, the data product's cells csv and R00-R15 are one order, the csv's
+    f column equals cpl_block's f, and cpl_block.json names the pinned npz. A failure stops every sixteen-cell
+    evaluation (raised before any)."""
+    import csv
+    want = [f"R{i:02d}" for i in range(16)]
+    js = json.loads(pinned("cpl_block_json").read_text())
+    with open(pinned("cpl_cells_csv"), newline="") as fh:
+        rows = list(csv.DictReader(fh))
+    names_csv = [r["cell"] for r in rows]
+    f_csv = np.array([float(r["f"]) for r in rows])
+    npz_named = json.dumps(js.get("npz"))
+    ok = (js["cells"] == want and names_csv == want and len(f_csv) == 16
+          and float(np.max(np.abs(f_csv / f - 1.0))) <= 1e-12 and PINS["cpl_block"][1] in npz_named)
+    rec = {"cells_json": js["cells"], "cells_csv": names_csv, "f_csv_rel": float(np.max(np.abs(f_csv / f - 1.0))),
+           "npz_named": PINS["cpl_block"][1] in npz_named}
+    if not ok:
+        raise Stop(f"C-MAP16: {rec}")
+    return rec
+
+
 def run16(capdir: Path, manifest: dict | None = None) -> dict:
     with np.load(pinned("cpl_block"), allow_pickle=False) as z:
         f, P_rel = np.asarray(z["f"], np.float64), np.asarray(z["P_rel"], np.float64)
         C_resp, C_PL5D = np.asarray(z["C_resp"], np.float64), np.asarray(z["C_PL5D"], np.float64)
     out = {"schema": "regrade-crep/16/1", "capture_manifest": manifest, "evaluations": {}}
+    try:
+        out["C_MAP16"] = cmap16(f)
+    except Stop as ex:
+        out["C_MAP16"] = {"stop": str(ex)}
+        out["evaluations"] = {e: {"status": "STOP", "stop": str(ex)} for e in EVALS_16}
+        return out
     ident = float(np.max(np.abs(carry_rel(P_rel, f) - C_PL5D)) / np.max(np.abs(C_PL5D)))
     for e in EVALS_16:
         truth, reading = e.split("/")

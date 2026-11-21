@@ -67,8 +67,11 @@ echo "== capture start $(date -u +%FT%TZ)"
 # the environment LL5D's readout job used: the deploy's setup_salloc_env.sh at its bound digest, then root_6_28's python3
 [ "$(sha256sum "$D/setup_salloc_env.sh" | cut -d' ' -f1)" = "ea3c6998d33f45c831b80da5e5228032a19fc392018ede54a7f52f2f283d1d48" ] \
   || { echo "STOP: setup_salloc_env.sh is not the bound one"; finish 9; }
+SAVED="$D|$U|$OUT|$STAGED|$CONSTRAINT"
 ( source "$D/setup_salloc_env.sh" > "$OUT/logs/env.log" 2>&1; src=$?
   [ "$src" -eq 0 ] || { echo "STOP: setup_salloc_env.sh rc=$src"; exit 97; }
+  # cov2d's F4 (RDX s0 lost $BUILD to an environment script on 11-12): the paths must survive the source
+  [ "$D|$U|$OUT|$STAGED|$CONSTRAINT" = "$SAVED" ] || { echo "STOP: the environment changed a path variable: $D|$U|$OUT|$STAGED|$CONSTRAINT"; exit 99; }
   [ "$(command -v python3)" = "$HOME/.conda/envs/root_6_28/bin/python3" ] || { echo "STOP: python3 is not root_6_28's"; exit 98; }
   echo "python3 $(command -v python3) $(python3 -V 2>&1)"
   cd "$OUT" && nice -n 19 env -u PYTHONPATH PYTHONDONTWRITEBYTECODE=1 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 \
