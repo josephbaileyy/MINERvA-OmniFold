@@ -131,13 +131,13 @@ $(E_{\mathrm{avail}},W)$ density projection, the matrix $P$ sums over the
 three dropped axes with their bin widths. The covariance of the projected
 densities $y=Px$ is $C_{EW}=PC_ZP^{\mathsf T}$, with relative standard
 deviation $\sqrt{(C_{EW})_{rr}}/y_r$ in cell $r$. The deposit archives
-$C_{EW}$ and $P$, not $C_Z$. Its spectrum extends to the
+$C_{EW}$ and $P$, not $C_Z$. The spectrum of $C_{EW}$ extends to the
 double-precision noise floor, making inversion sensitive to regularization.
 To obtain cell integrals, each density is multiplied by its own
 $\Delta E_{\mathrm{avail}}\Delta W$, including the full width of each tail
 bin. The projection applies the
 fine-grid mask and uses no additional acceptance factor at the destination
-binning. The deposit's README gives the array ordering and a worked projection
+binning; whether one is needed has not been decided. The deposit's README gives the array ordering and a worked projection
 check.
 
 \clearpage
@@ -197,7 +197,8 @@ available when each choice was made and the status of the associated test.
   background-inclusive closure comparison. \\
   \addlinespace[2pt]
   Add an attribution analysis after reading pilot pulls. After the interim
-  coverage failure, remove the completeness division and rescore the same
+  test found two-standard-deviation undercoverage with nominal
+  one-standard-deviation coverage, remove the completeness division and rescore the same
   pseudo-experiments.
   & Earlier 2D statistical bands & Prespecified primary coverage test of
   the divided band. Descriptive attribution. The rescoring is post hoc and
