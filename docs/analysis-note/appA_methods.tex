@@ -49,7 +49,8 @@ Centering on $\overline X$ leaves its displacement from the central value out
 of the covariance. That displacement measures a bootstrap offset, with the
 true cross section unknown.
 
-The training-seed block uses the same 20 bootstrap replicas at each of five
+The training-seed block uses the first 20 of the statistical block's bootstrap
+replicas at each of five
 settings of the random seeds for the two classifiers and the missed-event
 regressor. We average the unfolded vectors over the 20 replicas at each
 setting and take the sample covariance of the five averages, using
@@ -71,7 +72,8 @@ the unfolded yields by the integrated flux with the same universe index.
 The MINOS muon-energy-scale variations
 likewise use their own flux normalizations, which carry the correlated flux
 response. Adding a separate flux--MINOS cross term would count that effect
-twice.
+twice. Each lateral band of the quoted universe block uses a single unfold at
+the central training seed, so it includes that seed's training noise.
 
 With $X^{(b,u)}$ the result in universe $u$ of band $b$ and $a_{bu}$ its
 normalized weight, the MINERvA Analysis Toolkit convention gives
@@ -183,7 +185,8 @@ count is 198 at $10^{-10}\lambda_{\max}$. The direct inverse of $Q_R$ gives a
 quadratic distance of 21.96 per reported bin against the published central
 value, compared with \chiPaper{} using the published covariance. The latter has a
 nearly diagonal, full-rank statistical block that provides variance in all
-directions. For numerical comparisons based on $Q_R$ alone, the truncated
+directions. Even at full rank, no single OmniFold-only distance is stable under
+the choice of regularizer. For numerical comparisons based on $Q_R$ alone, the truncated
 inverse uses the positive modes above $10^{-10}\lambda_{\max}$. In that
 convention the distance is the sum of squared residual amplitudes along
 the retained eigenvectors divided by their eigenvalues. Discarding
@@ -239,6 +242,7 @@ and $\Delta_i/\sqrt{C_{ii}}$, using either
 the published covariance alone or its sum with $Q_R$. These are descriptive
 distances because the cross-covariance from the shared data and systematics
 is unavailable [Eq.~\eqref{eq:muon-difference-covariance}].
+A single realization near unity is not evidence of correct uncertainties.
 Removing the published statistical block from the sum changes the quadratic
 distance per bin from \chiCombined{} to \chiCombinedSubStat{} and still leaves the cross-covariance
 unknown. For the logarithmic distance we take the log of the binwise ratio
@@ -377,6 +381,8 @@ $C_{\mathrm{total}}$ at the two tunes, with and without the neutron and proton
 transport bands, and applies the joint count threshold to each variant. Its
 scope and descriptive status are given in
 Sec.~\ref{sec:higher-dimensional-calibration}.
+The records document~\cite{NoteRecords2026} gives the excluded edge bins, the
+edge-bin and exact-split shape comparisons, and the joint-test power study.
 
 \subsection{Multidimensional statistical methods}
 \label{app:multidimensional-statistics}
@@ -409,7 +415,7 @@ corrects each estimate by dividing by $1+\beta$, where $\beta$ is its
 relative nominal-truth bias, and combines the statistical standard deviation
 in quadrature with the corrected estimate times the standard error of
 $\beta$. It grades 153 integrals using separate Bonferroni adjustments over
-the integrals and three tested truths for each nominal coverage level. An
+the integrals and three generated truths for each nominal coverage level. An
 integral fails if its upper confidence bound is below 0.66 for the $68\%$
 interval or below 0.94 for the $95\%$ interval. The rate-reduced truth
 multiplies the signal by
@@ -517,13 +523,18 @@ refitting the negative-weight refinement. The test variant uses five
 OmniFold iterations, selected by a rule based on the largest residual
 across the simulated truth deformations on the two joint reporting grids.
 The observed data use the full
-nominal simulation and background template.
+nominal simulation and background template. No rejection rate has been
+measured for null pseudo-data processed like the data, which would require an
+independent simulation sample.
+% Search: rejection rate; processed like the data; independent simulation sample @ ddf16f10
 
 Five lateral bands enter through additive shifts $z_b d_b$, with independent
 standard normal $z_b$ and $d_b$ equal to half the difference between each
 band's two observed-data endpoint unfolds. This linear surrogate uses
 inputs estimated on the observed data. Calibration is conditional on those
-inputs and on the common simulated event pool. An independent Gaussian
+inputs and on the common simulated event pool. That conditioning has not been
+% Search: data-derived inputs; conditioning on data-derived; conditional on these data-derived @ 1a015eef
+validated. An independent Gaussian
 coefficient propagates the $1.4\%$ normalization. Rounding and generator
 finite-sample fluctuations are added as Gaussian residuals in each cell.
 The variance for the latter is the sum of squared generator weights in that
@@ -573,7 +584,7 @@ $\max_{1\leq j\leq\jtNtests} j R(\jtAlpha/j)\leq0.8902\times\jtAlpha$, without r
 independence between tests. The maximum over shifts includes the unshifted
 variant and can only raise its upper endpoint at common $B$. The bound is
 conditional on the stated assumptions, including outcome-independent loss
-of calibration draws when using only completed draws.
+of calibration draws when using only completed draws, which has not been shown.
 
 \paragraph{Sensitivity and interrupted draws.}
 Sixteen paired unfoldings estimate $D$. Its median absolute size relative
@@ -654,10 +665,10 @@ the original targets, so it is descriptive for the hydrocarbon predictions.
   \multicolumn{4}{@{}l}{\textit{Two-dimensional benchmark and checks across dimensions}} \\
   \addlinespace[1.5pt]
   Ordinary closure & Simulated reconstruction unfolded to its own truth &
-  Descriptive bookkeeping check & Recovers the input in an identity test. \\
+  Descriptive bookkeeping check & Recovers the input in an identity test. Cannot detect estimator bias. \\
   \addlinespace[1.5pt]
   Event matching and iteration stability & Truth and reconstructed event records and exact-split 2D cross-check &
-  Event-list completeness and five-versus-ten-iteration comparison & Truth-only entries are retained. The data result moves little with iteration. \\
+  Event-list completeness and five-versus-ten-iteration comparison & Truth-only entries are retained. The exact-split total changes by at most $0.026\%$ between five and ten iterations. \\
   \addlinespace[1.5pt]
   Published 2D result & \estTwoD{}, purity baseline, and exact-split cross-check on 205 bins &
   Descriptive, owing to shared data and systematics & Integral agrees to about $1\%$. A correlated shape difference remains. \\
@@ -747,7 +758,7 @@ the original targets, so it is descriptive for the hydrocarbon predictions.
   Fails at nominal and reduced signal rates. \\
   \addlinespace[1.5pt]
   First sixteen-cell coverage test and staged test & Covariance at two held-out tunes &
-  Prespecified entry checks & Both stopped without a coverage verdict. \\
+  Prespecified entry checks & The first stopped at an entry gate before any coverage pseudo-experiment ran; the staged redesign stopped at its first stage. \\
   \addlinespace[1.5pt]
   \hypertarget{validation-sixteen-coverage}{}Second sixteen-cell coverage test & $C_{\mathrm{total}}$ at both held-out tunes &
   Joint minimum of \fvval{ll5d-kjoint-all} in \fvval{ll5d-ntoys} draws. Descriptive because part of the procedure was fixed after an early stop. & Joint undercoverage in both band variants at both tunes. \\
@@ -764,11 +775,11 @@ the original targets, so it is descriptive for the hydrocarbon predictions.
   Muon-quadrant sums & Sixteen-cell and 2D results, with a descriptive comparison to 3D central values &
   Prespecified covariance and correlation-scan rule for 2D & Coarse muon projections agree over the full scan. \\
   \addlinespace[1.5pt]
-  Joint generator tests & Calibrated five-observable estimator on \jtNcells{} cells (\jtNcellsGiBUU{} for GiBUU) &
+  Joint generator tests & Variant of the \estMultiD{} on \jtNcells{} cells (\jtNcellsGiBUU{} for GiBUU) &
   Prespecified protocol with data-informed elements and familywise level \jtAlpha{} & All ten hybrid nulls rejected under the stated conditions. \\
   \addlinespace[1.5pt]
   Matched coarse projections & Same joint-test inputs projected onto the two $3\times3$ planes &
-  Descriptive because the criterion was fixed after the joint results & No joint test meets the criterion for additional discrimination. \\
+  Criterion fixed after the joint results and before the projections ran & No joint test meets the criterion for additional discrimination. \\
   \addlinespace[1.5pt]
   Joint-test sensitivity checks & Shift scan, recovered draws, and CH target correction &
   Descriptive evaluations outside the joint decision rule & Zero recovered exceedances. NuWro total is sensitive to the target and shift size. \\
