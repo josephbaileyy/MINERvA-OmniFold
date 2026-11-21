@@ -105,7 +105,8 @@ names one full commit sha. `pin` requires, in the canonical repository:
   Q1 the entry names a full 40-hex commit sha (never a branch such as tree/main);
   Q2 that commit exists in this clone and is an ancestor of HEAD, so it cannot be rebased away from under the note;
   Q3 the records' app_provenance.tex and app_history.tex exist at that commit, and every App. G tag the posted note
-     cites with NoteRecords2026 is a tag of app_provenance.tex there;
+     cites with NoteRecords2026 is a tag of app_provenance.tex there (a note that cites NoteRecords2026 nowhere passes:
+     DECISION-20261121b retired the requirement that it cite the records);
   Q4 every heading the posted note names after the citation (", superseded values: retired material", ", identities
      already fixed", ...) is, part by part, words of a section, subsection or paragraph heading of the records files
      at that commit (app_provenance, app_history, app_release_records, app_codebase_records, main_records).
@@ -1034,9 +1035,8 @@ def pin_check(note: Path) -> tuple[str, list[str]]:
             if not any(part in h for h in heads):
                 fails.append(f"Q4 {fname} names {part!r} after NoteRecords2026, which is no heading's words in the "
                              f"records at {ref[:12]}")
-    if not claims:
-        fails.append("Q3 the posted note cites NoteRecords2026 nowhere: there is nothing to pin, or the citation "
-                     "form changed and this check no longer sees it")
+    # DECISION-20261121b (Joseph dropped the note-to-records pointers): a note that cites NoteRecords2026 nowhere is
+    # allowed; the pin then checks only the bib entry (Q1, Q2) and the records files at the pin (Q3 file existence).
     summary = (f"{len(claims)} citations, {n_tags} tag ({n_numbered} by number) and {n_parts} heading references, "
                f"pinned to {ref}, "
                f"{len(tags)} tags, {len(pin_numbers)} numbered entries and {len(heads)} headings at the pin")
@@ -1114,7 +1114,7 @@ def pin_self_test() -> int:
              good_body + "Also (Ref.~\\cite{NoteRecords2026}, \\texttt{tag-c}).\n")
         case("heading the records do not have", "Q4 sec_a.tex names 'retired material'", a,
              good_body + "Also (Ref.~\\cite{NoteRecords2026}, superseded values: retired material).\n")
-        case("no citation at all", "Q3 the posted note cites", a, "No citation.\n")
+        case("no citation at all passes (DECISION-20261121b)", "PASS", a, "No citation.\n")
         # N2-1: tag-b is entry R1.1 at the pin a. A consistent numbers file passes; an entry inserted before it after
         # the pin, with the numbers file regenerated from the working tree, makes the posted number differ.
         (note / "records_entry_numbers.tex").write_text(render_entry_numbers({"tag-b": "R1.1"}))
@@ -1150,7 +1150,7 @@ def pin_self_test() -> int:
     for f in failures:
         print("  FAIL " + f)
     print(f"RECORDS-PIN SELF-TEST :: {'PASS' if not failures else 'FAIL'} ({fired} of 11 cases as expected: a good pin "
-          "passes; a branch, a non-ancestor, an unknown sha, a missing tag, a missing heading and no citation fail; "
+          "passes; a branch, a non-ancestor, an unknown sha, a missing tag and a missing heading fail; a note with no citation passes; "
           "a number cited as at the pin passes and an entry renumbered after the pin fails; "
           "the standalone and no-git layouts skip)")
     return 1 if failures else 0

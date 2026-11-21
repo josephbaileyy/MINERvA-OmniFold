@@ -12,10 +12,10 @@ move manifest (history-cuts/move-manifest-*.tsv); a verbatim move whose destinat
 the re-anchor. Anything else is marked REVIEW, with the best-matching window of the closure as a candidate re-anchor
 for a person to check: the tool never accepts a reworded sentence on its own.
 
-A row may also be located in the RECORDS (DECISION-20261120a item 5: a qualifier's full statement may move verbatim to the
-records document with a pointer in the note): its reanchor_file is a file of main_records.tex's input closure that holds
-reanchor_quote verbatim, and its note carries "[pointer: <text>]" whose text prints in the posted note's closure. Both must
-hold; a records text without its printed pointer, or a pointer without the records text, is REVIEW.
+A row may also be located in the RECORDS: its re-anchor (or its original quote) appears verbatim in a file of
+main_records.tex's input closure that the posted note does not also input. No printed note pointer is required and the
+file named in reanchor_file is informational only, so records blocks may move between records files
+(DECISION-20261121b: Joseph dropped the note-to-records pointers; this replaces DECISION-20261120a item 5's pointer rule).
 
 --write rewrites the TSV with the re-anchors it found; --check exits 1 if any row is REVIEW (the freeze gate);
 --self-test runs planted rows through the locator (each status, and each records failure) and exits 1 on any surprise.
@@ -80,6 +80,7 @@ def locate(rows: list[list[str]], files: dict[str, str], moves,
            records: dict[str, str] | None = None) -> tuple[list[list[str]], dict[str, int]]:
     text = "\n".join(files.values())
     records = records or {}
+    rec_only = {k: v for k, v in records.items() if k not in files}
     counts = {"present": 0, "reanchor": 0, "moved": 0, "records": 0, "review": 0}
     out = []
     for row in rows:
@@ -100,17 +101,10 @@ def locate(rows: list[list[str]], files: dict[str, str], moves,
             counts["moved"] += 1
             out.append([rid, fname, quote, dest, quote, f"{note} || moved verbatim ({hits[0][0]})"])
             continue
-        if rfile in records and not rfile in files:
-            ptr = POINTER.search(note)
-            in_rec = bool(rquote) and rquote in records[rfile]
-            if in_rec and ptr and ptr.group(1) in text:
-                counts["records"] += 1
-                out.append([rid, fname, quote, rfile, rquote, note])
-                continue
-            why = ("records text found, but the note pointer " + (repr(ptr.group(1)[:60]) + " does not print" if ptr else "is not given ([pointer: ...])")
-                   if in_rec else f"{rfile} does not hold the re-anchor quote")
-            counts["review"] += 1
-            out.append([rid, fname, quote, rfile, rquote, f"{note} || REVIEW: records location: {why}"])
+        hit = next(((k, name) for k in (rquote, quote) if k for name, body in rec_only.items() if k in body), None)
+        if hit:
+            counts["records"] += 1
+            out.append([rid, fname, quote, hit[1], hit[0], note])
             continue
         ratio, bfile, bwin = best_window(quote, files)
         counts["review"] += 1
@@ -148,18 +142,17 @@ def main(argv=None) -> int:
 
 
 def self_test() -> int:
-    """Planted rows through locate(): every status, and each way a records location can fail."""
-    note = {"sec_a.tex": "The note keeps the headline limit. The full statement is in the records document."}
-    rec = {"records_x.tex": "Its full qualifier sentence, moved verbatim."}
+    """Planted rows through locate(): every status, and the records rule (verbatim anywhere in the records closure)."""
+    note = {"sec_a.tex": "The note keeps the headline limit.", "values.tex": "A shared value file."}
+    rec = {"records_x.tex": "Its full qualifier sentence, moved verbatim.", "values.tex": "A shared value file."}
     Q = "Its full qualifier sentence, moved verbatim"
-    P = "[pointer: The full statement is in the records document]"
     cases = [
         ("present in the note", ["r1", "sec_a.tex", "keeps the headline limit", "", "", ""], "present"),
-        ("records, with its printed pointer", ["r2", "sec_a.tex", Q, "records_x.tex", Q, P], "records"),
-        ("records, pointer not printed", ["r3", "sec_a.tex", Q, "records_x.tex", Q, "[pointer: a sentence that does not print]"], "review"),
-        ("records, no pointer given", ["r4", "sec_a.tex", Q, "records_x.tex", Q, ""], "review"),
-        ("records file lacks the quote", ["r5", "sec_a.tex", Q, "records_x.tex", "a sentence that is not there", P], "review"),
-        ("re-anchor file outside both closures", ["r6", "sec_a.tex", Q, "nowhere.tex", Q, P], "review"),
+        ("records, verbatim, no pointer", ["r2", "sec_a.tex", "old wording", "records_x.tex", Q, ""], "records"),
+        ("records, block moved to another records file", ["r3", "sec_a.tex", "old wording", "records_y.tex", Q, ""], "records"),
+        ("records, original quote itself in the records", ["r4", "sec_a.tex", Q, "", "", ""], "records"),
+        ("text in neither closure", ["r5", "sec_a.tex", "a sentence that is not there", "records_x.tex", "nor is this", ""], "review"),
+        ("text only in a file the note also inputs", ["r6", "sec_a.tex", "A shared value file", "", "", ""], "present"),
     ]
     bad = 0
     for name, row, want in cases:
