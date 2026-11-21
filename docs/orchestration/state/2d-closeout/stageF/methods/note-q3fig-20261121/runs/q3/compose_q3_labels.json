@@ -1,0 +1,465 @@
+{
+ "cells": [
+  {
+   "row": 0,
+   "col": 0,
+   "label": "1.13",
+   "value": 1.13097482306017,
+   "cell_rgb": [
+    0.899193,
+    0.514418,
+    0.40792
+   ],
+   "luminance": 0.339864,
+   "label_colour": "black"
+  },
+  {
+   "row": 0,
+   "col": 1,
+   "label": "1.23",
+   "value": 1.230786569232468,
+   "cell_rgb": [
+    0.588466,
+    0.059054,
+    0.151096
+   ],
+   "luminance": 0.069763,
+   "label_colour": "white"
+  },
+  {
+   "row": 0,
+   "col": 2,
+   "label": "1.24",
+   "value": 1.2374624081289178,
+   "cell_rgb": [
+    0.553864,
+    0.047982,
+    0.145559
+   ],
+   "luminance": 0.060864,
+   "label_colour": "white"
+  },
+  {
+   "row": 0,
+   "col": 3,
+   "label": "1.26",
+   "value": 1.264399817711312,
+   "cell_rgb": [
+    0.403922,
+    0.0,
+    0.121569
+   ],
+   "luminance": 0.029825,
+   "label_colour": "white"
+  },
+  {
+   "row": 0,
+   "col": 4,
+   "label": "1.25",
+   "value": 1.2452596657777733,
+   "cell_rgb": [
+    0.507728,
+    0.033218,
+    0.138178
+   ],
+   "luminance": 0.050107,
+   "label_colour": "white"
+  },
+  {
+   "row": 0,
+   "col": 5,
+   "label": "1.17",
+   "value": 1.174732820028798,
+   "cell_rgb": [
+    0.794925,
+    0.287889,
+    0.260131
+   ],
+   "luminance": 0.178719,
+   "label_colour": "white"
+  },
+  {
+   "row": 0,
+   "col": 6,
+   "label": "1.11",
+   "value": 1.107180282413255,
+   "cell_rgb": [
+    0.954556,
+    0.641753,
+    0.505729
+   ],
+   "luminance": 0.471367,
+   "label_colour": "black"
+  },
+  {
+   "row": 1,
+   "col": 0,
+   "label": "1.01",
+   "value": 1.0100283812478834,
+   "cell_rgb": [
+    0.97278,
+    0.94925,
+    0.935409
+   ],
+   "luminance": 0.897107,
+   "label_colour": "black"
+  },
+  {
+   "row": 1,
+   "col": 1,
+   "label": "1.07",
+   "value": 1.0657499898757774,
+   "cell_rgb": [
+    0.983852,
+    0.808997,
+    0.716724
+   ],
+   "luminance": 0.681809,
+   "label_colour": "black"
+  },
+  {
+   "row": 1,
+   "col": 2,
+   "label": "1.14",
+   "value": 1.135013035971277,
+   "cell_rgb": [
+    0.889965,
+    0.493195,
+    0.391619
+   ],
+   "luminance": 0.321004,
+   "label_colour": "black"
+  },
+  {
+   "row": 1,
+   "col": 3,
+   "label": "1.22",
+   "value": 1.2210215361365566,
+   "cell_rgb": [
+    0.646136,
+    0.077509,
+    0.160323
+   ],
+   "luminance": 0.086254,
+   "label_colour": "white"
+  },
+  {
+   "row": 1,
+   "col": 4,
+   "label": "1.22",
+   "value": 1.2217009576027915,
+   "cell_rgb": [
+    0.634602,
+    0.073818,
+    0.158478
+   ],
+   "luminance": 0.082787,
+   "label_colour": "white"
+  },
+  {
+   "row": 1,
+   "col": 5,
+   "label": "1.22",
+   "value": 1.2212858191948648,
+   "cell_rgb": [
+    0.634602,
+    0.073818,
+    0.158478
+   ],
+   "luminance": 0.082787,
+   "label_colour": "white"
+  },
+  {
+   "row": 1,
+   "col": 6,
+   "label": "1.20",
+   "value": 1.1997539967136848,
+   "cell_rgb": [
+    0.728489,
+    0.155017,
+    0.197386
+   ],
+   "luminance": 0.121289,
+   "label_colour": "white"
+  },
+  {
+   "row": 2,
+   "col": 0,
+   "label": "0.86",
+   "value": 0.8613832695941034,
+   "cell_rgb": [
+    0.554325,
+    0.761015,
+    0.86436
+   ],
+   "luminance": 0.494926,
+   "label_colour": "black"
+  },
+  {
+   "row": 2,
+   "col": 1,
+   "label": "0.86",
+   "value": 0.8630520730533056,
+   "cell_rgb": [
+    0.566474,
+    0.768704,
+    0.868512
+   ],
+   "luminance": 0.507043,
+   "label_colour": "black"
+  },
+  {
+   "row": 2,
+   "col": 2,
+   "label": "0.93",
+   "value": 0.9297601394374547,
+   "cell_rgb": [
+    0.809919,
+    0.893118,
+    0.938408
+   ],
+   "luminance": 0.747938,
+   "label_colour": "black"
+  },
+  {
+   "row": 2,
+   "col": 3,
+   "label": "1.08",
+   "value": 1.080100043824519,
+   "cell_rgb": [
+    0.974164,
+    0.750865,
+    0.642445
+   ],
+   "luminance": 0.60173,
+   "label_colour": "black"
+  },
+  {
+   "row": 2,
+   "col": 4,
+   "label": "1.16",
+   "value": 1.159585664346319,
+   "cell_rgb": [
+    0.833679,
+    0.365398,
+    0.296732
+   ],
+   "luminance": 0.224615,
+   "label_colour": "black"
+  },
+  {
+   "row": 2,
+   "col": 5,
+   "label": "1.18",
+   "value": 1.1809294785659616,
+   "cell_rgb": [
+    0.778316,
+    0.254671,
+    0.244444
+   ],
+   "luminance": 0.161951,
+   "label_colour": "white"
+  },
+  {
+   "row": 2,
+   "col": 6,
+   "label": "1.17",
+   "value": 1.1696148200323708,
+   "cell_rgb": [
+    0.805998,
+    0.310035,
+    0.270588
+   ],
+   "luminance": 0.190847,
+   "label_colour": "black"
+  },
+  {
+   "row": 3,
+   "col": 1,
+   "label": "0.66",
+   "value": 0.661782725517495,
+   "cell_rgb": [
+    0.019608,
+    0.188235,
+    0.380392
+   ],
+   "luminance": 0.030092,
+   "label_colour": "white"
+  },
+  {
+   "row": 3,
+   "col": 2,
+   "label": "0.71",
+   "value": 0.7133317248851615,
+   "cell_rgb": [
+    0.101423,
+    0.346021,
+    0.599539
+   ],
+   "luminance": 0.09532,
+   "label_colour": "white"
+  },
+  {
+   "row": 3,
+   "col": 3,
+   "label": "0.81",
+   "value": 0.8076773197366638,
+   "cell_rgb": [
+    0.311342,
+    0.607228,
+    0.781315
+   ],
+   "luminance": 0.292041,
+   "label_colour": "black"
+  },
+  {
+   "row": 3,
+   "col": 4,
+   "label": "0.98",
+   "value": 0.9756968708236748,
+   "cell_rgb": [
+    0.91311,
+    0.94233,
+    0.958401
+   ],
+   "luminance": 0.863462,
+   "label_colour": "black"
+  },
+  {
+   "row": 3,
+   "col": 5,
+   "label": "1.12",
+   "value": 1.1181594495252938,
+   "cell_rgb": [
+    0.926874,
+    0.578085,
+    0.456824
+   ],
+   "luminance": 0.401615,
+   "label_colour": "black"
+  },
+  {
+   "row": 3,
+   "col": 6,
+   "label": "1.13",
+   "value": 1.129308113122006,
+   "cell_rgb": [
+    0.903806,
+    0.525029,
+    0.416071
+   ],
+   "luminance": 0.349613,
+   "label_colour": "black"
+  },
+  {
+   "row": 4,
+   "col": 3,
+   "label": "0.66",
+   "value": 0.6630740843067267,
+   "cell_rgb": [
+    0.019608,
+    0.188235,
+    0.380392
+   ],
+   "luminance": 0.030092,
+   "label_colour": "white"
+  },
+  {
+   "row": 4,
+   "col": 4,
+   "label": "0.84",
+   "value": 0.8373978446539534,
+   "cell_rgb": [
+    0.444983,
+    0.691811,
+    0.82699
+   ],
+   "luminance": 0.394516,
+   "label_colour": "black"
+  },
+  {
+   "row": 4,
+   "col": 5,
+   "label": "1.12",
+   "value": 1.1220177792800992,
+   "cell_rgb": [
+    0.917647,
+    0.556863,
+    0.440523
+   ],
+   "luminance": 0.380157,
+   "label_colour": "black"
+  },
+  {
+   "row": 4,
+   "col": 6,
+   "label": "1.16",
+   "value": 1.1624082295524842,
+   "cell_rgb": [
+    0.828143,
+    0.354325,
+    0.291503
+   ],
+   "luminance": 0.217459,
+   "label_colour": "black"
+  },
+  {
+   "row": 5,
+   "col": 5,
+   "label": "1.21",
+   "value": 1.2078126727191407,
+   "cell_rgb": [
+    0.706344,
+    0.110727,
+    0.176471
+   ],
+   "luminance": 0.107486,
+   "label_colour": "white"
+  },
+  {
+   "row": 5,
+   "col": 6,
+   "label": "1.16",
+   "value": 1.1613770401884596,
+   "cell_rgb": [
+    0.828143,
+    0.354325,
+    0.291503
+   ],
+   "luminance": 0.217459,
+   "label_colour": "black"
+  },
+  {
+   "row": 6,
+   "col": 6,
+   "label": "1.23",
+   "value": 1.2331173855635855,
+   "cell_rgb": [
+    0.576932,
+    0.055363,
+    0.14925
+   ],
+   "luminance": 0.066715,
+   "label_colour": "white"
+  }
+ ],
+ "n_labels": 34,
+ "n_white": 15,
+ "n_black": 19,
+ "string_changes": [
+  [
+   "unfolded / GENIE prior",
+   "unfolded / Tune v1 prior",
+   2
+  ]
+ ],
+ "image_sha256": "914555c75364ba931a2520b1bb66fe1b165db3a45aa1913667941f4720667fd6",
+ "cmap": "RdBu_r",
+ "clim_vmin_vmax_vcenter": [
+  0.661782725517495,
+  1.264399817711312,
+  1.0
+ ],
+ "n_texts": 87,
+ "rule": "label white if contrast(white) > contrast(black) against the cell's WCAG relative luminance L, i.e. 1.05/(L+0.05) > (L+0.05)/0.05"
+}
