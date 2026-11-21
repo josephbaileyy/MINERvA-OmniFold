@@ -60,7 +60,8 @@ SPLIT_FILES = ("app_compression_records.tex", "records_compression_lr.tex", "rec
 HEAD = re.compile(r"^\s*\\(part|section|subsection|subsubsection|paragraph)(\*?)\{")
 LEVEL = {"part": -1, "section": 0, "subsection": 1, "subsubsection": 2, "paragraph": 3}
 COMMENT = re.compile(r"(?<!\\)%.*")
-LEADIN = re.compile(r"^\s*In the paragraph as the note printed it, this text followed: ``.*''\\par\s*$")
+LEADIN = re.compile(r"^\s*(?:In the paragraph as the note printed it, this text followed: ``.*''\\par"
+                    r"|\\emph\{(?:After|Before),? in .*the note's ``.*''\})\s*$")
 SRC = re.compile(r"^\s*%.*?\b[Ff]rom\s+(?:the note's\s+)?([A-Za-z0-9_]+)\.tex\b(?::(\d+))?")
 INPUT = re.compile(r"\\(?:input|include)\{([^}]+)\}")
 STRUCT = re.compile(r"^\\(?:input|include)\{[^}]*\}$")
@@ -223,20 +224,43 @@ def read_tsv(path: Path, ncols: int) -> list[list[str]]:
     return rows[1:] if rows and rows[0][0] in ("dest", "key", "kind", "text", "row_id") else rows
 
 
+PHASES = "BCD"
+
+
 class Config:
-    def __init__(self, note_dir: Path):
+    """The data of records-reorg/, filtered to a phase: B moves blocks with their headings as run-in heads; C also
+    merges blocks into paragraphs, demotes lead-ins (Option B) and the demote.tsv blocks; D also applies the
+    duplicate resolution (drops, cuts, carries). Rows of drops/demote/adds carry the phase that introduces them."""
+
+    def __init__(self, note_dir: Path, phase: str = "D"):
         d = note_dir / DATA
+        self.phase = phase
+        on = lambda row, col, default: PHASES.index((row[col] if len(row) > col and row[col] else default)) <= PHASES.index(phase)
         self.toc = read_tsv(d / "toc.tsv", 5)
         self.rules = [(r[0], r[1], re.compile(r[2])) for r in read_tsv(d / "rules.tsv", 3)]
-        self.groups = {r[0]: r for r in read_tsv(d / "groups.tsv", 4)}
-        self.drops = read_tsv(d / "drops.tsv", 3)
-        self.demote = {r[0]: r[1] for r in read_tsv(d / "demote.tsv", 2)}
-        self.adds = read_tsv(d / "adds.tsv", 2)
+        self.titles = {r[0]: r for r in read_tsv(d / "titles.tsv", 2)} if self.merging else {}
+        self.joins = {r[0]: r[1] for r in read_tsv(d / "joins.tsv", 2)} if self.merging else {}
+        self.drops = [r for r in read_tsv(d / "drops.tsv", 3) if on(r, 3, "B")]
+        self.demote = {r[0]: r[1] for r in read_tsv(d / "demote.tsv", 2) if on(r, 2, "C")}
+        self.adds = [r for r in read_tsv(d / "adds.tsv", 2) if on(r, 2, "B")]
+        self.cuts = [r for r in read_tsv(d / "cuts.tsv", 3)] if phase == "D" else []
+        self.carries = [r for r in read_tsv(d / "carries.tsv", 5)] if phase == "D" else []
         self.keep_leadin = {r[0] for r in read_tsv(d / "keep-leadin.tsv", 1)}
+        self.splits: dict[str, list[str]] = collections.defaultdict(list)
+        if self.merging:
+            for r in read_tsv(d / "splits.tsv", 2):
+                self.splits[r[0]].append(r[1])
         dests = {r[0] for r in self.toc}
         for dest, _, _ in self.rules:
             if dest not in dests and dest != "DROP":
                 raise SystemExit(f"records_reorg: rules.tsv routes to {dest!r}, which toc.tsv does not define")
+
+    @property
+    def merging(self) -> bool:
+        return self.phase in "CD"
+
+    def dropped_keys(self) -> dict[str, str]:
+        return {r[1]: r[2] for r in self.drops if r[0] == "block"}
 
 
 def register_rows(tree: Tree) -> list[tuple[str, str]]:
@@ -250,17 +274,46 @@ def register_rows(tree: Tree) -> list[tuple[str, str]]:
     return out
 
 
-def all_blocks(tree: Tree) -> list[Block]:
+def apply_splits(blk: Block, anchors: list[str]) -> list[Block]:
+    """splits.tsv: cut one block into paragraphs that can be placed apart. Each anchor is a substring of the first
+    printed line of a new part; the comment lines directly above that line go with it. Part n has key <key>#n."""
+    parts, cur = [], 0
+    starts = []
+    for anchor in anchors:
+        hits = [i for i, l in enumerate(blk.lines) if anchor in l and not l.lstrip().startswith("%")]
+        if len(hits) != 1:
+            raise SystemExit(f"records_reorg: splits.tsv: anchor occurs {len(hits)} times in {blk.key}: {anchor[:60]!r}")
+        i = hits[0]
+        while i > 0 and blk.lines[i - 1].lstrip().startswith("%"):
+            i -= 1
+        starts.append(i)
+    if starts != sorted(starts) or (starts and blk.head is not None and starts[0] <= blk.head):
+        raise SystemExit(f"records_reorg: splits.tsv: anchors of {blk.key} are out of order or before its heading")
+    bounds = [0] + starts + [len(blk.lines)]
+    for n, (a, b) in enumerate(zip(bounds, bounds[1:])):
+        if n == 0:
+            part = Block(blk.file, blk.start, blk.lines[a:b], blk.head, blk.level, blk.title, blk.key, blk.src,
+                         blk.src_line)
+        else:
+            part = Block(blk.file, blk.start + a, blk.lines[a:b], None, max(blk.level + 1, 3), "", f"{blk.key}#{n}",
+                         blk.src, blk.src_line)
+        parts.append(part)
+    return parts
+
+
+def all_blocks(tree: Tree, cfg: "Config | None" = None) -> list[Block]:
     regs = register_rows(tree)
+    splits = cfg.splits if cfg else {}
     blocks = []
     for name in SPLIT_FILES:
         text = tree.read(name)
         if text is None:
             continue
-        for blk in split_blocks(name, text):
-            body = "\n".join(blk.lines)
-            blk.regrows = [rid for rid, q in regs if q in body]
-            blocks.append(blk)
+        for whole in split_blocks(name, text):
+            for blk in (apply_splits(whole, splits[whole.key]) if whole.key in splits else [whole]):
+                body = "\n".join(blk.lines)
+                blk.regrows = [rid for rid, q in regs if q in body]
+                blocks.append(blk)
     return blocks
 
 
@@ -295,7 +348,7 @@ def routes(blocks: list[Block], cfg: Config) -> dict[str, str]:
 def cmd_inventory(tree: Tree, cfg: Config, out: Path | None) -> int:
     rows = ["key\tfile\tstart\tend\tlevel\tsrc\tsrc_line\twords\tleadin\tregrows\tdest\ttitle\tfirst_text"]
     unrouted = 0
-    blocks = all_blocks(tree)
+    blocks = all_blocks(tree, cfg)
     dests = routes(blocks, cfg)
     for blk in blocks:
         dest = dests[blk.key]
@@ -315,15 +368,63 @@ def cmd_inventory(tree: Tree, cfg: Config, out: Path | None) -> int:
     return 1 if unrouted else 0
 
 
-def render_block(blk: Block, cfg: Config, in_group: bool, demoted: bool, keep_head: bool = False) -> list[str]:
-    """The block's lines in its new place: its heading becomes a run-in \\paragraph (or goes, inside a group), its
-    labels and comments stay, a lead-in is demoted unless it holds a register row, a demoted block prints nothing."""
+PARA_KEY = re.compile(r"the paragraph beginning ``(.*?)(?:''|$)")
+DROP_PREFIX = "% [records reorg, duplicate not printed] "
+CUT_PREFIX = "% [records reorg, repeated sentence not printed] "
+
+
+def auto_title(blk: Block) -> str:
+    """A run-in title from a heading that already names its topic; "" when the heading only says where the text came
+    from (the one-sentence moves), which titles.tsv must then name."""
+    t = re.sub(r"\s+", " ", blk.title).strip()
+    if not t or PARA_KEY.search(t) or re.match(r"^From (the note's|Part \d|App\.)", t):
+        return ""
+    t = re.sub(r"\s*\((?:from|caption pass)[^()]*(?:\([^()]*\)[^()]*)*\)\s*$", "", t)
+    t = re.sub(r",? (?:formerly in the note|moved from the note.*)$", "", t)
+    return t.rstrip(" .") + "."
+
+
+def group_blocks(members: list[Block], cfg: Config) -> list[list[Block]]:
+    """Phase C: the blocks of one destination as paragraphs. Blocks moved from the same note paragraph (the same
+    "paragraph beginning" key and source file) form one paragraph, at the place of the first; joins.tsv puts a block
+    into the paragraph of another; every other block is a paragraph of its own."""
+    groups: dict[str, list[Block]] = {}
+    order: list[str] = []
+    for blk in members:
+        m = PARA_KEY.search(re.sub(r"\s+", " ", blk.title))
+        gid = cfg.joins.get(blk.key) or (f"P|{blk.src}|{m.group(1)[:40]}" if m else f"S|{blk.key}")
+        if gid not in groups:
+            groups[gid] = []
+            order.append(gid)
+        groups[gid].append(blk)
+    if any(cfg.joins.get(b.key) not in (None,) and cfg.joins[b.key] not in groups for b in members):
+        raise SystemExit("records_reorg: joins.tsv names a group that is not in the same destination")
+    out = [groups[g] for g in order]
+    first = lambda g: g[0].key
+    explicit = {first(g): float(cfg.titles[first(g)][2]) for g in out
+                if first(g) in cfg.titles and len(cfg.titles[first(g)]) > 2 and cfg.titles[first(g)][2]}
+    return sorted(out, key=lambda g: (explicit.get(first(g), g[0].order)))
+
+
+def group_title(group: list[Block], cfg: Config) -> str:
+    row = cfg.titles.get(group[0].key)
+    if row is not None:
+        return row[1]
+    return next((t for t in (auto_title(b) for b in group) if t), "")
+
+
+def render_block(blk: Block, cfg: Config, keep_head: bool = False) -> list[str]:
+    """The block's lines in its new place. Phase B: its heading becomes a run-in \\paragraph. Phase C/D: its heading
+    goes (the group prints one run-in title); a lead-in is demoted unless it holds a register re-anchor; a demote.tsv
+    block becomes comments. Phase D: a dropped duplicate becomes comments, a cut sentence leaves its line for a comment,
+    a carried sentence follows its anchor line. Comments and labels always stay."""
+    dropped = blk.key in cfg.dropped_keys()
+    hide = DROP_PREFIX if dropped else DEMOTE_PREFIX if blk.key in cfg.demote else ""
+    cuts = [r for r in cfg.cuts if r[0] == blk.key]
+    carries = [r for r in cfg.carries if r[0] == blk.key]
     out = []
     for k, line in enumerate(blk.lines):
         if line.lstrip().startswith("%"):
-            out.append(line)
-            continue
-        if k == blk.head and keep_head:
             out.append(line)
             continue
         if k == blk.head:
@@ -331,22 +432,35 @@ def render_block(blk: Block, cfg: Config, in_group: bool, demoted: bool, keep_he
             rest = line[e:]
             labels = "".join(re.findall(r"\\label\{[^}]*\}", rest))
             rest = re.sub(r"\\label\{[^}]*\}", "", rest)
-            if blk.level == 3:                      # already a run-in head: the head stays unless the block is grouped
-                head = "" if in_group else line[s:e]
+            if keep_head:
+                head = line[s:e]
+            elif cfg.merging:
+                head = ""
+            elif blk.level == 3:
+                head = line[s:e]
             else:
                 t = title.strip()
-                head = "" if in_group else "\\paragraph{" + t + ("" if t.endswith((".", "?", ":")) else ".") + "}"
+                head = "\\paragraph{" + t + ("" if t.endswith((".", "?", ":")) else ".") + "}"
             out.append(f"% [records reorg] former heading: {line[s:e].strip()}")
-            new = (head + labels + rest).rstrip()
-            if new.strip():
-                out.append((DEMOTE_PREFIX + new) if demoted else new)
+            line = (head + labels + rest).rstrip()
+            if not line.strip():
+                continue
+        if hide and line.strip():
+            out.append(hide + line)
             continue
-        if demoted and line.strip():
-            out.append(DEMOTE_PREFIX + line)
-        elif LEADIN.match(line) and not (set(blk.regrows) & cfg.keep_leadin and leadin_holds_row(line, blk, cfg)):
+        if cfg.merging and LEADIN.match(line) and not leadin_holds_row(line, blk, cfg):
             out.append(LEADIN_PREFIX + line.strip())
-        else:
+            continue
+        for _, text, reason in [c[:3] for c in cuts]:
+            if text in line:
+                out.append(CUT_PREFIX + text)
+                line = re.sub(r"  +", " ", line.replace(text, "")).rstrip()
+        if line.strip():
             out.append(line)
+        for _, anchor, text, src, reason in [c[:5] for c in carries]:
+            if anchor in line:
+                out.append(f"% [records reorg] carried verbatim from the duplicate {src}: {reason}")
+                out.append(text)
     while out and not out[-1].strip():
         out.pop()
     while out and not out[0].strip():
@@ -358,15 +472,16 @@ _REG_CACHE: dict[str, str] = {}
 
 
 def leadin_holds_row(line: str, blk: Block, cfg: Config) -> bool:
-    return any(_REG_CACHE.get(r, "\0") in line for r in blk.regrows if r in cfg.keep_leadin)
+    """A lead-in stays printed if it holds the re-anchor of any register row (keep-leadin.tsv documents the five
+    known at 1b04a91da; the test is the text itself, so a row added later is protected too)."""
+    return any(q in line for q in _REG_CACHE.values())
 
 
 def assemble(tree: Tree, cfg: Config) -> tuple[dict[str, str], str, list[str]]:
     """{file: text} for the new section files, the driver region, and the move-manifest rows."""
     for rid, q in register_rows(tree):
         _REG_CACHE[rid] = q
-    drop_keys = {r[1] for r in cfg.drops if r[0] == "block"}
-    blocks = all_blocks(tree)
+    blocks = all_blocks(tree, cfg)
     dests = routes(blocks, cfg)
     by_dest: dict[str, list[Block]] = collections.defaultdict(list)
     for n, blk in enumerate(blocks):
@@ -374,8 +489,10 @@ def assemble(tree: Tree, cfg: Config) -> tuple[dict[str, str], str, list[str]]:
         if not dest:
             raise SystemExit(f"records_reorg: block {blk.key} ({blk.file}:{blk.start}) is unrouted")
         blk.order = n
-        if dest != "DROP" and blk.key not in drop_keys:
-            by_dest[dest].append(blk)
+        by_dest[dest].append(blk)
+    for key in [r[0] for r in cfg.cuts] + [r[0] for r in cfg.carries] + list(cfg.dropped_keys()) + list(cfg.demote):
+        if key not in {b.key for b in blocks}:
+            raise SystemExit(f"records_reorg: the data names block {key}, which is not a block of this tree")
     files: dict[str, list[str]] = collections.defaultdict(list)
     driver = [MARK_BEGIN, "% Generated by records_reorg.py assemble from records-reorg/toc.tsv; edit the data, not this region."]
     manifest = []
@@ -394,24 +511,25 @@ def assemble(tree: Tree, cfg: Config) -> tuple[dict[str, str], str, list[str]]:
         if title != "-":
             out.append("\\subsection{" + title + "}\\label{" + label + "}")
         out += [f"\\input{{{f}}}" for f in inputs]
-        members = sorted(by_dest.get(dest, []), key=lambda b: (int(cfg.groups[b.key][3]) if b.key in cfg.groups
-                                                               and cfg.groups[b.key][3] else 10**6 + b.order))
-        prev_group = None
-        for n_member, blk in enumerate(members):
-            g = cfg.groups.get(blk.key)
-            group = g[1] if g else None
-            if group is None or group != prev_group:
+        members = by_dest.get(dest, [])
+        groups = group_blocks(members, cfg) if cfg.merging else [[b] for b in members]
+        for n_group, group in enumerate(groups):
+            head = group_title(group, cfg) if cfg.merging else ""
+            if head == "-":                         # titles.tsv "-": the group continues the previous paragraph
+                head = ""
+            else:
                 out.append("")
-                if g and g[2]:
-                    out.append("\\paragraph{" + g[2] + "}")
-            out += render_block(blk, cfg, group is not None, blk.key in cfg.demote,
-                                keep_head=(title == "-" and n_member == 0))
-            prev_group = group
-            manifest.append(f"RR-{blk.key}\t{blk.file}:{blk.start} @{tree.rev or 'worktree'}\t{fname}, {title}\t"
-                            f"verbatim move, records reorganization (records/reorg-20261121)\t\t{blk.title[:120]}")
+            if cfg.merging and not (title == "-" and n_group == 0):
+                printing = [b for b in group if b.key not in cfg.dropped_keys() and b.key not in cfg.demote]
+                if printing and head:
+                    out.append("\\paragraph{" + head + "}")
+            for n_member, blk in enumerate(group):
+                out += render_block(blk, cfg, keep_head=(title == "-" and n_group == 0 and n_member == 0))
+                manifest.append(f"RR-{blk.key}\t{blk.file}:{blk.start} @{tree.rev or 'worktree'}\t{fname}, {title}\t"
+                                f"verbatim move, records reorganization (records/reorg-20261121)\t\t{blk.title[:120]}")
     driver.append(MARK_END)
-    texts = {f: "% Generated by records_reorg.py assemble (records-reorg/toc.tsv, rules.tsv, groups.tsv); "
-                "edit the data and re-run, not this file.\n" + "\n".join(v).lstrip("\n") + "\n" for f, v in files.items()}
+    texts = {f: "% Generated by records_reorg.py assemble (records-reorg/); edit the data and re-run, not this file.\n"
+                + "\n".join(v).lstrip("\n") + "\n" for f, v in files.items()}
     return texts, "\n".join(driver), manifest
 
 
@@ -468,86 +586,138 @@ def check(base: Tree, new: Tree, cfg: Config) -> list[str]:
     new_p = collections.Counter(l for t in new_c.values() for l in printed_lines(t))
     old_k = collections.Counter(l for t in old_c.values() for l in comment_lines(t))
     new_k = collections.Counter(l for t in new_c.values() for l in comment_lines(t))
+
     def as_printed(comment: str) -> str:
         body = re.sub(r"^%\s*(\[[^]]*\]\s*)?", "", comment)
         return re.sub(r"\s+", " ", strip_headings(body)).strip()
     new_comment_text = "\n".join(as_printed(l) for l in new_k.elements())
-    # Declared removals: dropped blocks (lines and comments), demoted blocks and lead-ins (lines; must reappear as comments).
-    blocks = {b.key: b for b in all_blocks(base)}
-    dropped_p, dropped_k, demoted_p = collections.Counter(), collections.Counter(), collections.Counter()
+    blocks = {b.key: b for b in all_blocks(base, cfg)}
+    hidden = collections.Counter()         # base lines declared not printed: they must be in the new comments
+    gone = collections.Counter()           # base lines declared removed outright (the driver's old opening)
     for kind, key, reason in [r[:3] for r in cfg.drops]:
         if kind == "block":
             if key not in blocks:
                 fails.append(f"drops.tsv names block {key}, which is not a block at the base")
                 continue
-            body = "\n".join(blocks[key].lines)
-            dropped_p.update(printed_lines(body))
-            dropped_k.update(comment_lines(body))
-        elif kind == "comment":
-            dropped_k[key.strip()] += 1
+            hidden.update(printed_lines("\n".join(blocks[key].lines)))
         elif kind == "line":
-            dropped_p[re.sub(r"\s+", " ", key).strip()] += 1
+            gone[re.sub(r"\s+", " ", key).strip()] += 1
     for key in cfg.demote:
         if key not in blocks:
             fails.append(f"demote.tsv names block {key}, which is not a block at the base")
             continue
-        demoted_p.update(printed_lines("\n".join(blocks[key].lines)))
+        hidden.update(printed_lines("\n".join(blocks[key].lines)))
+    # Cuts: each block's base lines are replaced by the lines without the cut sentences, applied in order; every cut
+    # sentence must occur in exactly one line of its block and be a comment now.
+    by_block: dict[str, list[str]] = collections.defaultdict(list)
+    for key, text, reason in [r[:3] for r in cfg.cuts]:
+        by_block[key].append(text)
+    for key, texts in by_block.items():
+        blk = blocks.get(key)
+        if not blk:
+            fails.append(f"cuts.tsv names block {key}, which is not a block at the base")
+            continue
+        before = printed_lines("\n".join(blk.lines))
+        after = list(before)
+        for text in texts:
+            t = re.sub(r"\s+", " ", text).strip()
+            hits = [i for i, l in enumerate(after) if t in l]
+            if len(hits) != 1:
+                fails.append(f"cuts.tsv: {key}: the sentence occurs in {len(hits)} printed lines of the block: {t[:80]!r}")
+                continue
+            after[hits[0]] = re.sub(r"\s+", " ", after[hits[0]].replace(t, "")).strip()
+            if t not in new_comment_text:
+                fails.append(f"cuts.tsv: {key}: the cut sentence is not kept as a comment: {t[:80]!r}")
+        old_p.subtract(before)
+        old_p.update(l for l in after if l)
+    old_p = +old_p
+    allowed = collections.Counter(re.sub(r"\s+", " ", r[0]).strip() for r in cfg.adds)
+    for key, anchor, text, src, reason in [r[:5] for r in cfg.carries]:
+        sblk = blocks.get(src)
+        if not sblk or text not in "\n".join(sblk.lines):
+            fails.append(f"carries.tsv: {key}: the carried sentence is not verbatim in its source block {src}")
+        if src not in cfg.dropped_keys() and not any(c[0] == src and c[1] == text for c in cfg.cuts):
+            fails.append(f"carries.tsv: {key}: its source {src} still prints the sentence (drop or cut it there)")
+        allowed[re.sub(r"\s+", " ", text).strip()] += 1
     lost = old_p - new_p
+    n_leadin = 0
     for line, n in lost.items():
-        n -= min(n, dropped_p[line])
+        n -= min(n, gone[line])
         if n <= 0:
             continue
-        is_leadin = LEADIN.match(line) is not None
-        declared = demoted_p[line] + (n if is_leadin else 0)
-        if declared and line in new_comment_text:
+        is_leadin = cfg.merging and LEADIN.match(line) is not None
+        n_leadin += n if is_leadin else 0
+        if (hidden[line] or is_leadin) and line in new_comment_text:
             continue
         fails.append(f"LOST printed line ({n}x): {line[:160]!r}")
     added = new_p - old_p
-    allowed = collections.Counter(re.sub(r"\s+", " ", r[0]).strip() for r in cfg.adds)
     for line, n in added.items():
         if n > allowed[line]:
-            fails.append(f"NEW printed line not in adds.tsv ({n - allowed[line]}x): {line[:160]!r}")
+            fails.append(f"NEW printed line not declared ({n - allowed[line]}x): {line[:160]!r}")
     for line, n in (old_k - new_k).items():
-        if n > dropped_k[line]:
-            fails.append(f"LOST comment line ({n - dropped_k[line]}x): {line[:160]!r}")
+        fails.append(f"LOST comment line ({n}x): {line[:160]!r}")
+
     def uncommented(c: dict[str, str]) -> str:
         return "\n".join("\n".join(l for l in t.split("\n") if not l.lstrip().startswith("%")) for t in c.values())
     new_text, old_text = uncommented(new_c), uncommented(old_c)
     for rid, q in register_rows(new):
         if q in old_text and q not in new_text:
             fails.append(f"register row {rid}: its re-anchor printed in the records at the base and does not print now")
-    print(f"RECORDS-REORG check :: base {sum(old_p.values())} printed / {sum(old_k.values())} comment lines; new "
-          f"{sum(new_p.values())} / {sum(new_k.values())}; dropped {sum(dropped_p.values())}, demoted "
-          f"{sum(demoted_p.values())}, lead-ins demoted {sum(n for l, n in lost.items() if LEADIN.match(l))}, "
+    print(f"RECORDS-REORG check (phase {cfg.phase}) :: base {sum(old_p.values())} printed / {sum(old_k.values())} "
+          f"comment lines; new {sum(new_p.values())} / {sum(new_k.values())}; not printed: {sum(hidden.values())} "
+          f"dropped or demoted, {n_leadin} lead-ins, {len(cfg.cuts)} cut sentences; removed {sum(gone.values())}; "
           f"added {sum(added.values())}", file=sys.stderr)
     return fails
 
 
 def cmd_dropped(base: Tree, cfg: Config, out: Path | None) -> int:
-    blocks = {b.key: b for b in all_blocks(base)}
-    lines = ["# Dropped and demoted copies (records reorganization)", "",
-             f"Base `{base.rev}`. Every entry is recoverable from the base with `git show {base.rev}:docs/analysis-note/<file>`.",
-             "Joseph and the rewrite helper accept or reject each row. Generated by `records_reorg.py dropped` from "
-             "`records-reorg/drops.tsv` and `demote.tsv`.", "",
-             "## Dropped from the printed records", "", "| # | Block | Base file:lines | Heading | Reason |",
-             "|---:|---|---|---|---|"]
-    n = 0
-    for kind, key, reason in [r[:3] for r in cfg.drops]:
-        if kind != "block":
-            continue
-        n += 1
+    """DROPPED.md: every printed text the reorganization stops printing, for Joseph to accept or reject row by row."""
+    blocks = {b.key: b for b in all_blocks(base, cfg)}
+
+    def where(key: str) -> str:
         b = blocks.get(key)
-        where = f"{b.file}:{b.start}-{b.end}" if b else "NOT FOUND"
-        lines.append(f"| {n} | `{key}` | {where} | {re.sub(r'[|]', '/', b.title if b else '')[:80]} | {reason} |")
-    lines += ["", "## Demoted to source comments (still in the .tex, not printed)", "",
-              "| # | Block | Base file:lines | Heading | Reason |", "|---:|---|---|---|---|"]
-    for m, (key, reason) in enumerate(cfg.demote.items(), 1):
-        b = blocks.get(key)
-        where = f"{b.file}:{b.start}-{b.end}" if b else "NOT FOUND"
-        lines.append(f"| {m} | `{key}` | {where} | {re.sub(r'[|]', '/', b.title if b else '')[:80]} | {reason} |")
-    lines += ["", "Lead-ins (Option B) are not listed one by one: every line matching "
-              "\"In the paragraph as the note printed it, this text followed: ``...''\\par\" is demoted, except those "
-              "holding a register re-anchor (records-reorg/keep-leadin.tsv)."]
+        return f"`{b.file}:{b.start}-{b.end}`" if b else "NOT FOUND"
+
+    def cell(t: str) -> str:
+        return re.sub(r"\s+", " ", t).replace("|", "/")
+    lines = ["# Not printed after the records reorganization", "",
+             f"Base `{base.rev}`. Nothing below is deleted from the sources: every item stays in the reorganized "
+             "`.tex` as a `%` comment beside the text it belonged to, and the base holds it as printed "
+             f"(`git show {base.rev}:docs/analysis-note/<file>`). Joseph and the rewrite helper accept or reject each "
+             "row; a rejected row is restored by deleting it from the named `records-reorg/` data file and re-running "
+             "`records_reorg.py assemble`.", "",
+             "Generated by `records_reorg.py dropped` from `records-reorg/drops.tsv`, `cuts.tsv`, `carries.tsv` and "
+             "`demote.tsv`.", ""]
+    rows = [r for r in cfg.drops if r[0] == "block"]
+    lines += ["## 1. Duplicate copies not printed (`drops.tsv`)", "", "| # | Block | Base location | Heading | Reason |",
+              "|---:|---|---|---|---|"]
+    lines += [f"| {n} | `{k}` | {where(k)} | {cell(blocks[k].title if k in blocks else '')[:70]} | {cell(r)} |"
+              for n, (_, k, r) in enumerate([x[:3] for x in rows], 1)]
+    lines += ["", "## 2. Repeated sentences not printed (`cuts.tsv`)", "",
+              "Each sentence prints, word for word or with the same content, in the paragraph named in the reason, "
+              "which now precedes it.", "", "| # | Block | Base location | Sentence | Reason |", "|---:|---|---|---|---|"]
+    lines += [f"| {n} | `{k}` | {where(k)} | {cell(t)[:160]} | {cell(r)} |"
+              for n, (k, t, r) in enumerate([x[:3] for x in cfg.cuts], 1)]
+    lines += ["", "## 3. Sentences carried from a dropped copy (`carries.tsv`)", "",
+              "| # | Into block | Sentence | From | Reason |", "|---:|---|---|---|---|"]
+    lines += [f"| {n} | `{k}` | {cell(t)} | `{src}` | {cell(r)} |"
+              for n, (k, a, t, src, r) in enumerate([x[:5] for x in cfg.carries], 1)]
+    lines += ["", "## 4. Paragraphs demoted to source comments (`demote.tsv`)", "",
+              "| # | Block | Base location | Text | Reason |", "|---:|---|---|---|---|"]
+    lines += [f"| {n} | `{k}` | {where(k)} | "
+              f"{cell(' '.join(printed_lines(chr(10).join(blocks[k].lines))) if k in blocks else '')[:160]} | {cell(r)} |"
+              for n, (k, r) in enumerate(cfg.demote.items(), 1)]
+    drv = [r for r in cfg.drops if r[0] == "line"]
+    lines += ["", "## 5. Driver text replaced (`drops.tsv`, kind `line`)", "",
+              f"{len(drv)} printed lines of `main_records.tex`: the old opening paragraph (it described Sections R1--R4 "
+              "as the October move) and the two stub sentences that introduced the result-package and codebase "
+              "records. The new opening is `records-reorg/opening.tex`.", "",
+              "## 6. Lead-ins (Option B)", "",
+              "Every lead-in that quotes the note's text around a moved sentence is demoted to a comment: the line "
+              "\"In the paragraph as the note printed it, this text followed: ``...''\\par\" and the italic "
+              "\"\\emph{After|Before, in \\S..., the note's ``...''}\". A lead-in that holds a register re-anchor stays "
+              "printed (`keep-leadin.tsv` lists the five at the base: n07, n09, n13, n38, n46). The count is in "
+              "`records_reorg.py check`'s summary line."]
     text = "\n".join(lines) + "\n"
     (out.write_text(text) if out else sys.stdout.write(text))
     return 0
@@ -697,11 +867,12 @@ def main(argv=None) -> int:
     ap.add_argument("--out", type=Path)
     ap.add_argument("--out-dir", type=Path)
     ap.add_argument("--write", action="store_true")
+    ap.add_argument("--phase", choices=list(PHASES), default="D")
     ap.add_argument("--self-test", action="store_true")
     a = ap.parse_args(argv)
     if a.self_test:
         return self_test()
-    cfg = Config(a.note_dir)
+    cfg = Config(a.note_dir, a.phase)
     if a.cmd == "inventory":
         return cmd_inventory(Tree(a.note_dir, a.rev), cfg, a.out)
     if a.cmd == "assemble":

@@ -40,7 +40,8 @@ R4.6	title	coverage-5d|eavailw-construction|five-axis covariance's acceptance|sc
 R4.4	src	^sec_q3_closure$
 R5.2	title	stopped coverage tests|Investigation of the gate|The rule, fixed before|The coverage of Cmathrmmodel|cell flags of the second sixteen-cell|The first comparison bounds|The second comparison evaluates
 R5.1	title	sixteen-cell run-period block
-R5.3	title	Hydrocarbon target correction|Correlation sensitivity of the sixteen-cell
+R7.5	title	Hydrocarbon target correction
+R5.3	title	Correlation sensitivity of the sixteen-cell
 R5.1	src	^sec_fived16$
 R5.3	src	^sec_fived16_gen$
 R6.1	title	^Principal limitations

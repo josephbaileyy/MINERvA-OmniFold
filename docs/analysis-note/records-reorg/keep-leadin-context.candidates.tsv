@@ -1,0 +1,43 @@
+key	first_words_after_the_lead_in
+03fcc86d93	Its central tracker comprises hexagonal planes of triangular polystyrene scintil
+fa43562e59	These are the flux-and-central-value (flux-and-CV) weight, the GENIE model-param
+7436b75cf3	Both are POT-scaled and subtracted from the reconstructed-data target before unf
+a26497b9c5	Its bin-integrated target is $(D_{b}-B_{b})/S_{b}$ (data, background and signal)
+e126fe09ea	It removes residual binning dependence and suits the extended-fiducial analysis 
+6b80bbaf41	This reaches the no-background closure level. The larger refinement classifier r
+8ac3cfd3d0	Each MC factor is shared by the reco-tree and truth-tree copies, preserving migr
+ee74ed8cf6	They include the MINOS and lateral MINERvA muon energy scales, the MINOS muon-ma
+22319bf195	It over-corrects: our $\sqrt{\Tr\mathbf{C}^{\boot}}=1.886\times10^{-40}$ is $0.4
+f7e3e74c5f	That scan is expected to lack the smoothness that supports the 2D choice in \S\r
+c95c22b36a	These normal-model approximations condition on finite simulation and make no sim
+96df2fc870	It conditions on estimated bootstrap widths without propagating finite-replica u
+f4eb41d992	Its denominator differs from the simulated residual's.
+525288d187	This requires the lost pseudo-experiments to be lost independently of their outc
+192c2a20dd	It decreases to $[0.5138,0.5148]$ at $j=10$.
+a951825ecb	They have not been repeated for the quoted estimator.
+244b1282b4	They identify no nuclear or interaction mechanism (low-recoil deficit, \S\ref{se
+d2b2e2ad46	It uses no retraining.
+e37a3bc9c7	This number is therefore uncalibrated as a goodness-of-fit statistic.
+87c0556ed5	These exclude NEUT~\cite{Hayato:2009zz}.
+110b40f307	It is therefore empty above $\pPar\approx\SI{20}{GeV/c}$.
+25d917832c	Both are ratios within the unrepaired GENIE sample (flux repair, \S\ref{sec:3d-m
+c0e49e427b	These ratios use Tune~v1.
+855c7de4e2	Each generator's shift is the relative change of the data result.
+7e4751d131	Its status as an uncertainty is stated in \S\ref{rlim:fived16}.
+8d2bad7334	Each gives the $\chi^2$ against the reported covariance plus $V_g$, $C_{\mathrm{
+081d2e2b7c	The same change to the detector or lateral correlations lowers it by at most \fv
+6718e7ca7e	There, NuWro's and GiBUU's shape ratios in $C_{\mathrm{model}}$ are taken from t
+c288f6076b	Both share MINERvA flux/detector systematics, treated here as independent. The m
+8b8b899c0b	Its sample stops at neutrino energy $E_\nu\approx\SI{20}{GeV}$. The analysis sim
+49195f8ba2	Its integral over the reported $\Eavail$ range is closer to data than Tune~v1 ($
+d41f1783f7	That prediction is the OmniFold prior, the simulation's truth weighted by its fu
+b528d4672d	These are not held-out truths, and the detector response is not probed.
+dcdb525f75	Both are GENIE tunes, so they are partial evidence and not independent tests.
+13f32e97a3	This conclusion is limited to these dials and their range; other transport model
+2e9b43b49b	It ran in neutrino-dominated (forward horn current, FHC) and antineutrino-domina
+e970f2a767	Each universe is re-unfolded with LightGBM at seed~42 and compared with the quot
+9b5ed5977f	Each replica draws its weights in three independent streams, for data, signal si
+cdb86137f2	Each generator enters as one fully correlated component, unscaled, so $C_{\mathr
+62be4e4bc7	This follows the MAT treatment of universes (\S\ref{sec:uq-universes}), which we
+dda88c87d1	It is farther by \lrval{pp-kbar-delta} per direction, a fraction \lrval{pp-kbar-
+aa705298e3	This containment is why the test is called a coverage test. The test's false-fla
