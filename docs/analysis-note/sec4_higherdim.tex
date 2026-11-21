@@ -16,7 +16,7 @@ gives the \resSixteen{}. The \resFiveAxis{} uses the \estPurity{}.
 \label{sec:3d-spectrum}
 The 3D available-energy spectrum peaks at low recoil. It falls monotonically
 from $2.18\times10^{-38}\,\mathrm{cm}^2/(\mathrm{GeV}\,\text{nucleon})$ in the
-lowest bin to $6.74\times10^{-41}\,\mathrm{cm}^2/(\mathrm{GeV}\,\text{nucleon})$
+lowest bin to $6.7\times10^{-41}\,\mathrm{cm}^2/(\mathrm{GeV}\,\text{nucleon})$
 in the wide $[3,100]~\mathrm{GeV}$ bin, with most of the cross section below
 about $0.8~\mathrm{GeV}$.
 \label{sec:3d-anchor}Summing over $E_{\mathrm{avail}}$ gives an integral
@@ -215,7 +215,7 @@ interval are $2.2\%$ to $9.4\%$ below their targets, and some injected
 strength appears in adjacent mass bins. The
 \hyperlink{validation-nd-bumps}{marginal bump} and
 \hyperlink{validation-nd-w-bump}{$W$ bump} rows of
-Table~\ref{tab:validation-inventory} give the scoring criteria.
+Table~\ref{tab:validation-inventory} give each test's criterion or descriptive status.
 Appendix~\ref{app:comparison-closure-coverage} gives the injected shapes.
 
 These closure tests reweight simulated truth events and their reconstructed
@@ -229,10 +229,13 @@ With the deterministic purity control, the highest-$W$ column of the
 $E_{\mathrm{avail}}$--$W$ plane is $3.5\%$ to $4.1\%$ low, except for the
 highest-energy corner, which is $1.7\%$ high. The low-capacity negative-weight
 refinement reduces the absolute residuals to $0.11\%$--$0.24\%$ in that column
-and to at most $0.39\%$ elsewhere in the plane, with residuals of about
-$1\%$ in some joint cells (Fig.~\ref{fig:bkg-residual-note}). The sixteen-cell
-estimator gives a largest deviation of 2.7 standard errors in 40
-pseudo-experiments and a pooled statistical pull width of 1.02. The
+and to at most $0.39\%$ elsewhere in the plane, although some joint cells
+remain up to $1.0\%$ high, up to 14 standard errors, and fail the nominal
+closure criterion (Fig.~\ref{fig:bkg-residual-note}). The sixteen-cell
+estimator passes the nominal closure criterion in 40 fresh pseudo-experiments,
+with a largest deviation of 2.7 standard errors, and has a pooled statistical
+pull width of 1.02. The pooled
+test does not establish coverage for every integral. The
 comparison is descriptive because no common acceptance criterion was
 set in advance for the three configurations.
 
@@ -258,7 +261,8 @@ $W\geq3~\mathrm{GeV}$, the background yield is about $13\%$ of signal.
 Purity subtraction corrects the reconstructed bin integral, while the
 unbinned learner resolves background variation within the bin
 (Appendix~\ref{app:negative-weight-background}). On data, switching the subtraction method shifts the
-tested integrals by a median of $0.36\%$ and at most $1.4\%$.
+tested integrals by a median of $0.36\%$ and at most $1.4\%$. These shifts
+measure sensitivity to the method, not bias.
 
 \label{sec:val-departure}
 The low-capacity refinement fails the prespecified recovery criterion
@@ -273,12 +277,13 @@ persist in signal-only repeats.
 
 The sixteen-cell estimator recovers a median of $\fvval{rec-g-fmed}\%$ of the injected
 GiBUU-like change across supported cells of the $(E_{\mathrm{avail}},W)$
-plane. For three other generator-derived shapes, the median recovered
+plane with injected changes larger than $2\%$ in magnitude. For three other generator-derived shapes, the median recovered
 fractions range from $\fvval{rec-w-fmed-lo}\%$ to $\fvval{rec-w-fmed-hi}\%$, with individual cells overshooting
 or moving opposite to the injected change (Appendices~\ref{app:bias-prior-stability}, \ref{app:reproducibility-definitions}, and \ref{app:choices-after-results}).
 In noise-free pseudo-data, raising the iteration count from five to
 thirty reduces the $E_{\mathrm{avail}}$ residual by $26\%$ while increasing
-the $q_3$ residual.
+the $q_3$ residual. These residuals, a regularization bias of the estimator,
+enter no uncertainty quoted for the \resFiveAxis{}.
 
 \subsection{Prior dependence and algorithmic robustness}
 \label{sec:higher-dimensional-prior}
@@ -339,7 +344,9 @@ For the difference $\Delta$ we obtain
 $\Delta^{\mathsf T}C_\Delta^{-1}\Delta=\lrval{rg1-T}$, compared with calibrated
 \fpeval{100*\lrval{rg1-lev1}}th and \fpeval{100*\lrval{rg1-lev2}}th null percentiles of \lrval{rg1-bar1} and \lrval{rg1-bar2}. The covariance
 $C_\Delta$ propagates statistical, weight-only systematic, and
-normalization variations through both estimates.
+normalization variations through both estimates, but not the model, lateral,
+response, or run-period terms. No uncertainty term is
+added for this dependence.
 
 \label{sec:3d-classifier}
 The two classifier families give similar projections for the 3D
@@ -388,7 +395,7 @@ in signal rate with a weak $E_{\mathrm{avail}}$ slope. At the reduced rate,
 integrals fail for the $68\%$ intervals, and 42 fail for the $95\%$
 intervals (Fig.~\ref{fig:coverage-5d-paper}). The lowest empirical
 coverage for the $68\%$ intervals is 0.060. At nominal truth, two
-integrals fail for the $95\%$ intervals. The test uses statistical
+integrals fail for the $95\%$ intervals, with lowest coverage 0.850. The test uses statistical
 intervals corrected for nominal-truth bias. The
 \hyperlink{validation-purity-coverage}{end-to-end statistical coverage row}
 gives the thresholds, which are applied with multiplicity accounted for.
@@ -414,7 +421,7 @@ integrals, the $E_{\mathrm{avail}}$--$W$ integrals and their sum, and the
 total rate. The \hyperlink{validation-sixteen-rounding}{rounding-level stability row}
 gives the tolerances. The test perturbs each stored input by up to half a
 single-precision unit in the last place and holds fine-grid bin membership
-fixed. The purity baseline gives a median of 0.8 and a maximum of 2.5
+fixed. The \estLowCap{} gives a median of 0.8 and a maximum of 2.5
 (Appendix~\ref{app:bias-prior-stability}). An
 ensemble-averaged variant passes the stability test on pseudo-data, with
 shifts of \fvval{ens1-median} at the median and \fvval{ens1-max} at most, but worsens closure for the
@@ -423,14 +430,20 @@ GiBUU $E_{\mathrm{avail}}$ shape and was therefore not adopted.
 \label{sec:eavailw-adopted}
 The exploratory five-axis purity covariance $C_Z$ serves only as a
 descriptive scale because it failed its acceptance requirements. In
-separate builds used to assess training-seed sensitivity, the largest
+two companion builds used to assess training-seed sensitivity, the largest
 change in a projected standard deviation was $\sprojMeasured\%$, above the
-$\sprojBound\%$ tolerance. The check held the seed fixed for five systematic bands
-that account for $26.0\%$ of the trace of $C_Z$ (Appendix~\ref{app:multidimensional-statistics}).
+$\sprojBound\%$ tolerance; this outcome does not transfer to $C_Z$, for which
+the criterion was not computed. The check held the seed fixed for five systematic bands
+% Search: s_proj; M(ii); cause 3; C3; estimator-seed magnitude criterion; z-cv 3d7465f6; GRADE-20260920; VL146; L2 (computed only for 361090f9/7e4636a3, DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md:36-38; z-cv precursor undeclared so branch 3 unreachable, EVIDENCE-20260919-cause3-member-eligibility-census.md:17-19; later s_proj on other products only, VALIDATION_LEDGER.md:219, OUTCOME-20260922-L2-sproj-measured-and-the-pair-is-not-code-comparable.md:3-5) @ 0d919b1a
+that carry $\pinnedBandsSqrtTr\%$ of $\sqrt{\operatorname{Tr}C_Z}$ (Appendix~\ref{app:multidimensional-statistics}).
 
 Separately, data from different run periods are inconsistent before unfolding,
 and the run-period term was constructed after the differences were
 observed (Sec.~\ref{sec:sixteen-cell-projections}).
+
+The records document~\cite{NoteRecords2026} states these results' further
+qualifications in full, including the inherited definitions, the generator and
+published comparisons, and the construction of the sixteen cells and their covariance.
 
 Table~\ref{tab:higher-dimensional-validation} summarizes the validation
 results of this section, with the estimator each test applies to.
@@ -470,7 +483,7 @@ results of this section, with the estimator each test applies to.
     Large joint residuals persist with signal only. \\
     \addlinespace[2pt]
     Reporting-resolution precision (prespecified) &
-    Sixteen-cell estimator on three diagnostic grids &
+    Sixteen-cell estimator and its admissible settings on three diagnostic grids &
     Prior sensitivity exceeds the $5\%$ target on all three. &
     Coarsening leaves appreciable model dependence. \\
     \addlinespace[2pt]

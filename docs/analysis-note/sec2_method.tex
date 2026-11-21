@@ -51,8 +51,8 @@ muon must satisfy
   \label{eq:muon-fiducial}
 \end{equation}
 The reconstructed selection requires a vertex in the same fiducial volume and a muon
-at $\theta_\mu<20^\circ$ matched to a successfully fitted MINOS track. A charge
-selection identifies neutrino candidates, and events overlapping detector dead time
+at $\theta_\mu<20^\circ$ matched to a successfully fitted MINOS track. Antineutrino
+candidates and events overlapping detector dead time
 are rejected. These requirements apply at every unfolding dimension. The background
 template includes selected neutral-current events, other-flavor or wrong-sign CC
 interactions, interactions outside the fiducial volume, and CC $\nu_\mu$ events that
@@ -285,10 +285,12 @@ bin-integrated cross section per nucleon as
 \end{equation}
 Here $N_{\mathrm{nuc}}$ is the fiducial nucleon count and $N_{\mathrm{POT}}$ is the
 analyzed exposure.
-The cross-section density is $\sigma_i$ divided by the product of its bin widths. The 2D extraction uses the integrated flux tabulated by $p_T$ bin
-and broadcast over $p_\parallel$. The higher-dimensional extraction uses the
-constrained flux integrated over $0<E_\nu<\SI{100}{GeV}$,
-\SI{6.243e-8}{cm^{-2}} per POT. The sum $U_i$ includes
+The cross-section density is $\sigma_i$ divided by the product of its bin widths. Every extraction uses the integrated flux tabulated by $p_T$ bin
+and broadcast over the other axes. Integrated over $0<E_\nu<\SI{100}{GeV}$
+after the constraint, it is
+\SI{6.243e-8}{cm^{-2}} per POT in every $p_T$ bin. The sum $U_i$ includes
+% Check stage (2026-11-21): nd-unfolding/xsec_nd.py (flux per p_T bin, broadcast over every other axis) and
+% docs/orchestration/state/s5p/gen5d/README-gen5d-fluxfix.md:74 (Phi_t = 6.243343e-4 m^-2/POT = hFluxCV, every p_T bin equal).
 reweighted signal events missed by the selection,
 so the truth-sample completeness factor in the extraction is unity in every bin.
 
@@ -296,7 +298,7 @@ so the truth-sample completeness factor in the extraction is unity in every bin.
 \label{sec:method-binning}
 The 2D result follows the published $14\times16$ muon grid and its mapping of 205
 reported bins~\cite{MINERvA:2021owq}. The remaining 19 cells lie in the high-$p_T$,
-low-$p_\parallel$ corner beyond the angular acceptance. The higher-dimensional fine
+low-$p_\parallel$ corner, with $p_T^{\mathrm{hi}}/p_\parallel^{\mathrm{lo}}>\tan20^\circ$. The higher-dimensional fine
 grids add seven $E_{\mathrm{avail}}$ bins, seven $q_3$ bins, and six $W$ bins, each
 with a wide final bin extending to 100 in its respective axis units. Appendix~\ref{app:reproducibility}
 gives the bin edges. A marginal cross section sums the bin integrals over the eliminated
@@ -309,6 +311,8 @@ uses coarser regions of the joint phase space, defined in Sec.~\ref{sec:five-dim
 expressed as integrated cross sections in $\mathrm{cm}^2$ per nucleon and is
 reported with its covariance for illustration. The calibrated generator tests in
 Sec.~\ref{sec:sixteen-cell-generator-comparison} apply a variant of the multidimensional estimator on a separate joint grid.
+The records document~\cite{NoteRecords2026} gives further qualifications of the
+selection, the training settings, and the estimator configurations.
 
 % PASS2:
 % Numbers: the supplied source prints the quantitative values as literals, including
