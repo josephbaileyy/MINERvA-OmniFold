@@ -1,4 +1,4 @@
-# REGRADE declaration: the held-out-tune coverage toys graded against the full reported covariances (2026-11-21, rev 1 after Grok's read; nothing computed)
+# REGRADE declaration: the held-out-tune coverage toys graded against the full reported covariances (2026-11-21, rev 2 after Grok's read and recheck; nothing computed)
 <!-- absence-ok: the declaration's own status line (unrun) -->
 
 **By** tier3-design, under Joseph's go of 2026-11-21 on items a + c of the methods scoping, as the director relayed it
@@ -91,8 +91,11 @@ needs one O_NOATIME login read (§5). Price: 0 node-h.
   - The identity holds on the cut subspace, because A is fixed once C′ is.
 - **The reading is one-sided (rev 1, Grok BLOCKING).**
   - **"under-describes on average"** if M_full − 1 > 3 · SE(M′). The trace is fixed given C′ and C_add, so
-    SE(M_full) = SE(M′). The statement is: the toys' errors are larger on average than the tune-carried full covariance
-    C′ describes, at M_full, with the split printed.
+    SE(M_full) = SE(M′). The licensed sentence (rev 2, Grok recheck MAJOR) is about the full test, not the stored
+    toys: "under the stated model, a full test whose natures also varied along the added blocks would have a
+    conditional expected mean χ²/ndf′ against C′ of M_full, which exceeds 1 by more than 3 SE". It is always printed
+    with M′ (the stored toys' own mean χ²/ndf′, to which the split adds) and τ. It never says the stored toys' mean
+    exceeds 1 unless M′ − 1 > 3 SE(M′), which is printed as its own descriptive line.
   - **"not shown"** otherwise.
   - No branch reads "over-describes". Under the model, E[M′] = 1 − τ when C′ is right, so a low M′ is the model's own
     prediction and licenses nothing.
@@ -167,7 +170,7 @@ The per-toy sixteen-cell vectors are committed nowhere, so one capture runs on a
 | C-PIN | every input in §1 and §5 equals its sha256 |
 | C-MAP, C-MAP16 | §3 |
 | C-F16 (rev 1, Grok m3) | `cpl_block["f"]` equals the capture's s1["f"] to 1e-12 relative, and `cpl_block["C_PL5D"] == diag(f) P_rel diag(f)` to 1e-12 of max |
-| C-PSD | for each nonzero C_add(T): symmetric to 1e-12 relative and min eigenvalue ≥ −1e-12 · λ_max; and the rebuilt null's `multivariate_normal(method="eigh")` (absolute tolerance 1e-8) must not raise. Skipped when C_add ≡ 0 (rev 1, Grok m2) |
+| C-PSD | for each nonzero C_add(T): symmetric to 1e-12 relative and min eigenvalue ≥ −1e-12 · λ_max (`cpl_block.npz` keys `C_resp`, `C_PL5D`, `P_rel`, `f`). Every rebuilt null runs with RuntimeWarning raised as an error (`warnings.simplefilter("error")`), so NumPy's `multivariate_normal(method="eigh")` PSD warning (`check_valid='warn'`, absolute tolerance 1e-8) is a STOP. λ_max of the Gaussian is printed. All covariances here are in cross-section units of order 1e-78, so NumPy's absolute floor is never the looser one. Skipped when C_add ≡ 0 (rev 1, Grok m2; rev 2, Grok recheck m2) |
 | **A0** (rev 1, Grok M2) | with C_add = 0, in the same driver: (a) ndf, joint_count and the per-cell in-interval counts equal the committed grade's; (b) chi2_mean_over_ndf within 1e-9 relative. These depend only on E and C_T. (c) k_joint and the flags (2D `flagged_cells`; 16 cells `cell_flag` in R00–R15 order) depend on the re-simulated null. A mismatch in (c) alone is recorded as "null redraw differs", not a STOP. Committed grades: 2D `score_<T>.json`; 16 cells `readout-<t>.json` |
 | C-NULL | `check_matched` passes at 1e-12 for every rebuilt null |
 
