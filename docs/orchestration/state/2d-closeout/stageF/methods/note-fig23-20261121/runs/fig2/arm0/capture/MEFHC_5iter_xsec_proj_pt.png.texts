@@ -1,0 +1,207 @@
+{
+ "size_in": [
+  3.185,
+  2.9
+ ],
+ "texts": [
+  [
+   6.5,
+   "$d\\sigma/dp_T$ (cm$^2$/(GeV/$c$)/nucleon)"
+  ],
+  [
+   5.5,
+   "$\\times\\mathdefault{10^{\u221238}}\\mathdefault{}$"
+  ],
+  [
+   5.5,
+   "$\\mathdefault{0.0}$"
+  ],
+  [
+   5.5,
+   "$\\mathdefault{0.5}$"
+  ],
+  [
+   5.5,
+   "$\\mathdefault{1.0}$"
+  ],
+  [
+   5.5,
+   "$\\mathdefault{1.5}$"
+  ],
+  [
+   5.5,
+   "$\\mathdefault{2.0}$"
+  ],
+  [
+   5.5,
+   "$\\mathdefault{2.5}$"
+  ],
+  [
+   5.5,
+   "$\\mathdefault{3.0}$"
+  ],
+  [
+   5.5,
+   "$\\mathdefault{3.5}$"
+  ],
+  [
+   5.5,
+   "$\\mathdefault{4.0}$"
+  ],
+  [
+   5.5,
+   "This work (OmniFold)"
+  ],
+  [
+   5.5,
+   "Published (PRD 104, 092007)"
+  ],
+  [
+   5.5,
+   "Tune v1: our simulation (the prior)"
+  ],
+  [
+   5.5,
+   "Tune v1: published prediction"
+  ],
+  [
+   6.5,
+   "$p_T$ (GeV/$c$)"
+  ],
+  [
+   5.5,
+   "0.0"
+  ],
+  [
+   5.5,
+   "0.5"
+  ],
+  [
+   5.5,
+   "1.0"
+  ],
+  [
+   5.5,
+   "1.5"
+  ],
+  [
+   5.5,
+   "2.0"
+  ],
+  [
+   5.5,
+   "2.5"
+  ],
+  [
+   5.5,
+   "3.0"
+  ],
+  [
+   5.5,
+   "3.5"
+  ],
+  [
+   5.5,
+   "4.0"
+  ],
+  [
+   5.5,
+   "4.5"
+  ],
+  [
+   6.5,
+   "This work / prior"
+  ],
+  [
+   5.5,
+   "0.50"
+  ],
+  [
+   5.5,
+   "0.75"
+  ],
+  [
+   5.5,
+   "1.00"
+  ],
+  [
+   5.5,
+   "1.25"
+  ],
+  [
+   5.5,
+   "1.50"
+  ],
+  [
+   8.0,
+   "MINERvA ME FHC, $1.06\\times10^{21}$ POT"
+  ]
+ ],
+ "text_overlaps": [
+  [
+   "$d\\sigma/dp_T$ (cm$^2$/(GeV/$c$)/nucleon)",
+   "$\\mathdefault{0.5}$",
+   115.9
+  ],
+  [
+   "$d\\sigma/dp_T$ (cm$^2$/(GeV/$c$)/nucleon)",
+   "$\\mathdefault{1.0}$",
+   130.0
+  ],
+  [
+   "$d\\sigma/dp_T$ (cm$^2$/(GeV/$c$)/nucleon)",
+   "$\\mathdefault{1.5}$",
+   128.7
+  ],
+  [
+   "$d\\sigma/dp_T$ (cm$^2$/(GeV/$c$)/nucleon)",
+   "$\\mathdefault{2.0}$",
+   117.0
+  ],
+  [
+   "$d\\sigma/dp_T$ (cm$^2$/(GeV/$c$)/nucleon)",
+   "$\\mathdefault{2.5}$",
+   115.9
+  ],
+  [
+   "$d\\sigma/dp_T$ (cm$^2$/(GeV/$c$)/nucleon)",
+   "$\\mathdefault{3.0}$",
+   117.0
+  ],
+  [
+   "$d\\sigma/dp_T$ (cm$^2$/(GeV/$c$)/nucleon)",
+   "$\\mathdefault{3.5}$",
+   50.8
+  ],
+  [
+   "$\\mathdefault{0.0}$",
+   "This work / prior",
+   37.7
+  ],
+  [
+   "$p_T$ (GeV/$c$)",
+   "2.0",
+   97.0
+  ],
+  [
+   "$p_T$ (GeV/$c$)",
+   "2.5",
+   97.0
+  ],
+  [
+   "This work / prior",
+   "0.75",
+   60.2
+  ],
+  [
+   "This work / prior",
+   "1.00",
+   60.2
+  ],
+  [
+   "This work / prior",
+   "1.25",
+   60.2
+  ]
+ ]
+}
