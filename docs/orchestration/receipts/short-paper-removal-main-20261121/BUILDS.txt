@@ -1,0 +1,18 @@
+# build_all's four targets built directly with latexmk, from clean checkouts (build_all itself passes at both heads; see GATES-*.txt)
+## 45402896 (parent)
+main_note rc=0 errors=0 undefined=0 multidef=0 pages=137 text_sha256=f56c4ebeafe923c0f2af7b1d64c31c3cc8164872c0c5fc6e2de09b07f7b8ec2c
+main_primer rc=0 errors=0 undefined=0 multidef=0 pages=15 text_sha256=b64855fcff3d524ea9c11f3ba45423a5a5ae4934e2520e252da9bd04976d08c7
+pet_note rc=0 errors=0 undefined=0 multidef=0 pages=26 text_sha256=68c409940ec47978f9d1ff2730fea8279b0b8aefecd78db68ea493cef8d6c03a
+main_records rc=0 errors=0 undefined=0 multidef=0 pages=60 text_sha256=b15ab1cd90bee0ed81ca8d7828223879da516e60a192723dd3b48bc74b6281ef
+status after:        0 tracked modified
+## f07cdb80b (removal)
+main_note rc=0 errors=0 undefined=0 multidef=0 pages=137 text_sha256=f56c4ebeafe923c0f2af7b1d64c31c3cc8164872c0c5fc6e2de09b07f7b8ec2c
+main_primer rc=0 errors=0 undefined=0 multidef=0 pages=15 text_sha256=b64855fcff3d524ea9c11f3ba45423a5a5ae4934e2520e252da9bd04976d08c7
+pet_note rc=0 errors=0 undefined=0 multidef=0 pages=26 text_sha256=68c409940ec47978f9d1ff2730fea8279b0b8aefecd78db68ea493cef8d6c03a
+main_records rc=0 errors=0 undefined=0 multidef=0 pages=60 text_sha256=f2987ec624107d2cabe9e3a9c1fa65ee4832e2884e99e9bf787ffcb45abb7105
+status after:        0 tracked modified
+## main_records text difference (word multiset): the two estimator-registry citation cells
+< docs/analysis-note/paper_body.tex:56
+< docs/analysis-note/paper_body.tex:56
+> docs/analysis-note/sec_joint.tex:43
+> docs/analysis-note/sec_joint.tex:43

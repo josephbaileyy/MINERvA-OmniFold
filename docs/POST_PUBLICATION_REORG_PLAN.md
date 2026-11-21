@@ -674,11 +674,21 @@ part C amendment 3's redraw), so `main` has its own tag.
      capacity pattern also matches "has".
    
    Two mentions are not prose:
-   - `2d-unfolding/re2/partc/re2c_values.py` resolves the `N/` rows of the sha256-pinned RE-2 part C spec, so the spec
-     is not retargeted. On `main` its two spec-resolution tests in `test_re2c.py` already fail before the removal (the
-     schema run returns rc 3), and the same two fail after it.
+   - `2d-unfolding/re2/partc/re2c_values.py` (line 151) opens the file named by each `N/` row of
+     `re2c_values_spec.tsv`. Twelve rows name `paper_body.tex` or `main_paper.tex`.
+     - The spec is pinned by sha256 (`51319f67…`) in the completed RE-2 part C run's preflight record
+       `…/re2/run/partc_a3/a3_30.sha256`. `re2c_values.py` and `test_re2c.py` are pinned in the RE-2 binding
+       amendments (`RE2-BINDING-C-AMENDMENT-2.md`, `-3.md`). None of the three is changed.
+     - The two spec-resolution tests in `test_re2c.py` already fail at the parent, on an AssertionError: the schema
+       run returns rc 3, because 238 of the spec's 250 rows no longer match what the sources print (the twelve paper
+       rows among them; the spec predates later value updates). After the removal the same two tests fail earlier, on
+       a FileNotFoundError for `paper_body.tex` at the first retired row (spec line 202), before any return code.
+     - pytest reports the same two failures at both heads, but the cause changes. No gate runs this test file.
+     - A test-only dependent edit (skip rows whose source is a retired family path) would change a pinned file, so it
+       is left to the director.
    - `oi130_quoted_value_inventory.py` names `main_paper.tex`; no gate runs it.
    
+   `records_estimators.tex` is regenerated: its two citation cells for `e-R-joint-test` now name `sec_joint.tex:43`.
    `nd-unfolding/gbdt_model_dependence/build_evidence.json` holds digests of an earlier `main_paper.tex` and
    `paper_body.tex` as a frozen build record, which nothing reads by path. Everything else is prose or a frozen record.
 3. **Internal references.** `main_paper.tex` inputs `paper_body.tex`, and `paper_body.tex` includes the three figures.
@@ -696,3 +706,46 @@ part C amendment 3's redraw), so `main` has its own tag.
    - `docs/analysis-note/README.md`, *Retired: the short paper*;
    - `docs/orchestration/CATALOG.md` § Frozen pre-compaction evidence, *Family short paper*;
    - the kept branch `origin/draft/methods-short-20261109`.
+
+   The recovery log is `orchestration/receipts/short-paper-removal-main-20261121/``RECOVERY.txt`.
+7. **Checks, from clean checkouts** of `45402896` and `f07cdb80b`. Logs: `orchestration/receipts/short-paper-removal-main-20261121/` (`GATES-*.txt`, `TESTS.txt`).
+   - The same at both heads, PASS or rc 0:
+     - pre-commit (21 checks);
+     - `generate_manifest.py --check`, `verify_hash_bindings.py`, `control_plane_lint.py` and
+       `live_doc_indexed.py --check --unrowed`;
+     - `check_registry.py` and `results_index.py --check`;
+     - SEC4-RECEIPTS 17/17 and its self-test (21 perturbations);
+     - `make_values_fived16.py --check` and `--self-test`;
+     - the containment self-test;
+     - `build_all.sh`, rc 0 at both heads.
+   - `test_build_all.py`, `test_check_sec4_receipts.py` and `tools/registry`: 130 of 130 pass at both heads.
+   - The same failure sets before and after:
+     - the `nd-unfolding` hash-binding and `fd_g` figure tests: 2 of 171;
+     - `test_re2c.py`: 2 of 25, with the change of cause in step 2;
+     - `docs/orchestration`: pytest's collection fails with INTERNALERROR.
+8. **Products unchanged.** Built directly with latexmk at both heads (`BUILDS.txt`):
+   - `main_note` (137 pages), `main_primer` (15) and `pet_note` (26) build with 0 errors, 0 undefined and 0 multiply
+     defined references at both heads, and their `pdftotext` digests are identical.
+   - `main_records` (60 pages, 0/0/0) differs only in the two estimator-registry citation cells, `paper_body.tex:56`
+     to `sec_joint.tex:43`.
+9. **Independent review**, read-only, of the family diff `45402896..f07cdb80b`: Grok 4.7 and Gemini 3.8 Flash
+   (`REVIEW-*.txt`).
+   - Both verdicts: **BLOCK**, on one point: the RE-2 spec reader. They found that the record misstated the tests'
+     failure after the removal. Step 2 now states the change of cause; the pinned spec, code and test are not changed,
+     and that choice is the director's.
+   - Neither found a weakened gate or a wrong test. Both confirmed the rebound checks read the same receipt
+     quantities at the same or a stricter tolerance.
+   - Their other findings were applied in this record's commit:
+     - steps 7–10, and the logs in the repository;
+     - the root `README.md` tree comment ("all three builds") and its containment sentence (strikes reach only the
+       records document and the PET note);
+     - the `records_estimators.tex` regeneration in step 2.
+10. **Counts** (`COUNTS.txt`):
+
+| | tracked files | Markdown files | Markdown lines |
+|---|---:|---:|---:|
+| before, `45402896` | 27,017 | 2,282 | 433,226 |
+| after, removal `f07cdb80b` | 27,012 | 2,282 | 433,313 |
+
+The removal is −5 files: two `.tex` files and three PDFs, none of them Markdown. The record's own commit adds the 8
+files of `orchestration/receipts/short-paper-removal-main-20261121/`.
