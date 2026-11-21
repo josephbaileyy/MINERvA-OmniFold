@@ -1,14 +1,19 @@
 # Publication deliverables and completion plan
 
-This directory builds four audience-specific documents, and one internal records document, from shared sources:
+This directory builds three audience-specific documents, and one internal records document, from shared sources:
 
 | Deliverable | Driver | Purpose |
 |---|---|---|
 | Analysis note | `main_note.tex` | Complete technical and validation record of the scalar (GBDT) analysis |
 | PET note | `pet_note.tex` | Companion note: point-cloud (PET) method development, split from the analysis note on 2026-10-12 |
 | Primer | `main_primer.tex` | Short internal orientation |
-| External paper | `main_paper.tex` | PRL-style scientific argument |
 | Records document (internal, never posted) | `main_records.tex` | The analysis note's records since 2026-10-21: provenance of the records it cites, fixed identities and audit record, test-suite discipline, superseded values and withdrawn results. The note cites it as `NoteRecords2026` (`technote.bib`), by tag or heading |
+
+**Retired: the short paper.** `main_paper.tex` (the short paper), retired 2026-11-21:
+`git show evidence/short-paper-retired-a54f255e:docs/analysis-note/main_paper.tex` (likewise `paper_body.tex` and the
+figures `paper_fig1_validation.pdf`, `fd_g_fig_ratio.pdf`, `paper_fig_deformation.pdf` under `figures/`); development
+branch `origin/draft/methods-short-20261109`. The removal record is in `docs/POST_PUBLICATION_REORG_PLAN.md`, *Family
+short paper*. Mentions of the paper elsewhere in this directory are historical.
 
 Build and containment checks run together:
 
@@ -16,8 +21,8 @@ Build and containment checks run together:
 bash build_all.sh
 ```
 
-`build_all.sh` must produce all five PDFs and prove that struck values reach only the records
-document and the PET note: not the posted analysis note, the primer or the paper. The records
+`build_all.sh` must produce all four PDFs and prove that struck values reach only the records
+document and the PET note: not the posted analysis note or the primer. The records
 document is built last, because its references into the note resolve through `main_note.aux`. The PDFs are generated outputs; the tracked sources and figures in this
 directory are the publication inputs.
 
@@ -115,12 +120,10 @@ not imply otherwise.
 
 | Need | Read or edit |
 |---|---|
-| Paper title, authors, abstract, bibliography wiring | `main_paper.tex` |
-| Paper scientific narrative and figure placement | `paper_body.tex` |
 | Full note driver and section ordering | `main_note.tex` |
 | PET note driver and section ordering | `pet_note.tex` |
 | Primer driver and narrative | `main_primer.tex`, `primer_body.tex` |
-| Shared measured-value macros | `values.tex` (all four builds); `values_inference.tex` (joint-test numbers, note and paper) |
+| Shared measured-value macros | `values.tex` (all builds); `values_inference.tex` (joint-test numbers) |
 | Where each topic lives (the note's own map, "Where to find it") | `sec_intro.tex` |
 | 2D validation, including fixed-truth coverage | `sec_validation.tex`, `app_response_mismatch.tex` |
 | Scalar higher-dimensional central values | `sec_3d.tex` (`E_avail`, `q3`), `sec_eavailw.tex` (`W`, the `(E_avail,W)` plane) |

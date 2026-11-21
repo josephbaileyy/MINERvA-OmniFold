@@ -38,7 +38,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 SCRIPT = HERE / "build_all.sh"
 # main_records (2026-10-21) is the internal records document; it is last because it reads main_note.aux.
-TARGETS = ("main_note", "main_primer", "main_paper", "pet_note", "main_records")
+TARGETS = ("main_note", "main_primer", "pet_note", "main_records")
 SHARED = ("preamble.tex", "values.tex", "technote.bib")
 
 # A fake latexmk. Its behaviour comes from BUILD_TEST_MODE so one shim covers every scenario.
@@ -522,7 +522,7 @@ class TestMultiplyDefinedLabels(BuildAllHarness):
 
     def test_the_clean_targets_before_it_still_report_ok(self):
         proc = self.run_build("multiply-defined")
-        for t in ("main_note", "main_primer", "main_paper", "pet_note"):
+        for t in ("main_note", "main_primer", "pet_note"):
             self.assertIn("OK   %s.pdf written by this run; no unresolved references and no multiply-defined" % t,
                           proc.stdout)
 
@@ -590,8 +590,8 @@ MUTANTS = [
     ("m7-no-extra-invocation", "max_invocations=2", "max_invocations=1"),
     ("m8-accept-a-missing-log", 'if [ ! -f "${t}.log" ]; then', "if false; then"),
     ("m9-drop-the-multiply-defined-check", 'if grep -Eq "$multidef_re" "${t}.log"; then', "if false; then"),
-    ("m10-build-the-records-before-the-note", "targets=(main_note main_primer main_paper pet_note main_records)",
-     "targets=(main_records main_note main_primer main_paper pet_note)"),
+    ("m10-build-the-records-before-the-note", "targets=(main_note main_primer pet_note main_records)",
+     "targets=(main_records main_note main_primer pet_note)"),
     ("m11-drop-the-records-pin", "python3 check_note_records.py pin\n", "true\n"),
     ("m12-drop-the-records-pin-self-test", "python3 check_note_records.py --self-test-pin", "true"),
 ]
@@ -729,12 +729,12 @@ class ResultLineNamesItsObjectTest(unittest.TestCase):
     """
 
     # Since 2026-10-21 the struck values live in the records document, whose app_history.tex the checker requires;
-    # the posted note (main_note) is an outward build with a clean body, like the paper and the primer.
+    # the posted note (main_note) is an outward build with a clean body, like the primer.
     # Each strike-carrying body also strikes the literal of one production CONTEXT_EXEMPT entry, and the directory
     # carries each entry's source text, because the checker refuses a stale exemption (review F8).
     BODIES = {"main_records": r"struck $\dead{1.234}$ here and $\dead{1.014}$, $\dead{1.65}$, $\dead{0.377}$ and $\dead{6.86}$",
               "pet_note": r"struck $\dead{5.678}$ here and $\dead{0.912}$ and $\dead{3.066}$",
-              "main_note": "clean posted note", "main_paper": "clean paper", "main_primer": "clean primer"}
+              "main_note": "clean posted note", "main_primer": "clean primer"}
     EXEMPT_SOURCES = {"part5_validation.tex": "the injected bump (mean weight 1.014)\n",
                       "values.tex": "\\newcommand{\\covTwoDCTwo}{0.912}\n",
                       # 2026-11-17: the 0.377 entry (f70e1d59f, the note's currency batch A) needs its source too
@@ -744,7 +744,7 @@ class ResultLineNamesItsObjectTest(unittest.TestCase):
                       "../orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/figures/fd_g_fig_modes.json":
                           '{"sigma": 0.06855283880067227}\n'}
     BODY_FILES = {"main_records": "app_history", "pet_note": "app_history_pet", "main_note": "body_main_note",
-                  "main_paper": "body_main_paper", "main_primer": "body_main_primer"}
+                  "main_primer": "body_main_primer"}
     # What each fake PDF "renders": each strike-carrying build shows its own struck literal (its positive control).
     PDF_TEXT = {"main_records": "1.234 rendered\n", "pet_note": "5.678 rendered\n"}
 
@@ -799,20 +799,20 @@ class ResultLineNamesItsObjectTest(unittest.TestCase):
         self.assertIn("mode=strict", line)
         digest = hashlib.sha256((self.note / "main_note.pdf").read_bytes()).hexdigest()
         self.assertIn(f"main_note.pdf@sha256:{digest}(fresh)", line)
-        self.assertEqual(line.count("(fresh)"), 5, line)
+        self.assertEqual(line.count("(fresh)"), 4, line)
 
     def test_a_stale_product_fails_strict_mode(self):
-        (self.note / "body_main_paper.tex").write_text("clean paper, edited after the build\n")
+        (self.note / "body_main_primer.tex").write_text("clean primer, edited after the build\n")
         code, line, out = self._run()
         self.assertEqual(code, 1, out)
         self.assertTrue(line.startswith("RESULT :: FAIL :: "), line)
-        self.assertIn("main_paper.pdf is STALE", out)
-        self.assertIn("body_main_paper.tex", out)
-        self.assertIn("main_paper.pdf@sha256:", line)
+        self.assertIn("main_primer.pdf is STALE", out)
+        self.assertIn("body_main_primer.tex", out)
+        self.assertIn("main_primer.pdf@sha256:", line)
         self.assertIn("(stale)", line)
 
     def test_source_only_reports_the_stale_product_without_failing(self):
-        (self.note / "body_main_paper.tex").write_text("clean paper, edited after the build\n")
+        (self.note / "body_main_primer.tex").write_text("clean primer, edited after the build\n")
         code, line, out = self._run("--source-only")
         self.assertEqual(code, 0, out)
         self.assertIn("mode=source-only", line)
@@ -824,7 +824,7 @@ class ResultLineNamesItsObjectTest(unittest.TestCase):
         self.assertEqual(code, 0, out)
         self.assertIn("main_primer.pdf freshness UNKNOWN", out)
         self.assertIn("(unknown)", line)
-        self.assertEqual(line.count("(fresh)"), 4, line)
+        self.assertEqual(line.count("(fresh)"), 3, line)
 
     def test_absent_pdfs_are_named_absent(self):
         for driver in self.BODIES:
@@ -899,12 +899,12 @@ class StruckOnlyInHistoryTest(unittest.TestCase):
         self.assertIn("appear in pet_note.pdf", out)
         self.assertIn("records.pdf carries 1/5 struck literals (positive control OK)", out)  # 1.234, 1.014, 1.65, 0.377, 6.86
 
-    def test_a_pet_note_strike_in_the_paper_FAILS(self):
+    def test_a_pet_note_strike_in_the_primer_FAILS(self):
         """The outward builds are checked against the PET note's struck literals too."""
-        (self.note / "main_paper.pdf").write_text("the paper prints 5.678\n")
+        (self.note / "main_primer.pdf").write_text("the primer prints 5.678\n")
         code, line, out = self._run("--source-only")
         self.assertEqual(code, 1, out)
-        self.assertIn("main_paper.pdf contains struck literal(s) ['5.678']", out)
+        self.assertIn("main_primer.pdf contains struck literal(s) ['5.678']", out)
 
 
 class PostedNoteIsOutwardTest(unittest.TestCase):
@@ -1225,7 +1225,7 @@ class ContextExemptLiteralTest(unittest.TestCase):
                 self.assertTrue(self.mod.outward_hit(value, self.mod.exempt_text("main_note", text)))
 
     def test_the_context_in_another_build_is_still_a_hit(self):
-        for build in ("main_paper", "main_primer", "main_records", "pet_note"):
+        for build in ("main_primer", "main_records", "pet_note"):
             with self.subTest(build=build):
                 self.assertTrue(self.mod.outward_hit("1.014", self.mod.exempt_text(build, "(mean weight 1.014)")))
                 self.assertTrue(self.mod.outward_hit("0.912", self.mod.exempt_text(build, "C2 = 0.912")))

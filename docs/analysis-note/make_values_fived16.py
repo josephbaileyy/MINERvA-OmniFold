@@ -173,12 +173,12 @@ def paper_prec(k, x):
     base = re.sub(r"-p(?=(-nopl)?$)", "-pr", k)
     i = base.rfind("-pr")
     return {base: pr, base[:i] + "-prel" + base[i + 3:]: pr if pr.startswith("<") else "=" + pr}
-# the figures the note and the paper print, copied into figures/: each must equal its committed source (with the block)
+# the figures the note prints, copied into figures/: each must equal its committed source (with the block)
 # and the digest its sidecar records (FD-G-FIGURES-REPORT.md section 1; FD-CT-5B-ADDITION-REPORT.md section 3)
 # Both are E-1's with-arm figures as addendum E-A2 redrew them, from the same readouts, without the hydrogen flags on
-# the legend (FD-GENCMP-AMENDMENT-E-ADDENDUM-EA2-REPORT.md, #712; the caveat cut list's move MV07F)
-FIGURES = {"fd_g_fig_ratio.pdf": ("fd/gencmp-e/rerun1/chain/chdefs/with/figures-a2", "6214ed78"),
-           "fd_g_fig_modes.pdf": ("fd/gencmp-e/rerun1/chain/chdefs/with/figures-a2", "0d6fe57c")}
+# the legend (FD-GENCMP-AMENDMENT-E-ADDENDUM-EA2-REPORT.md, #712; the caveat cut list's move MV07F). fd_g_fig_ratio.pdf
+# (6214ed78), which only the short paper printed, left with it on 2026-11-21 (POST_PUBLICATION_REORG_PLAN.md, "short paper").
+FIGURES = {"fd_g_fig_modes.pdf": ("fd/gencmp-e/rerun1/chain/chdefs/with/figures-a2", "0d6fe57c")}
 # the readouts that are text receipts, not JSON
 TEXT_READOUTS = {"gprobe", "e2sens", "s1code", "ll5ddecl"}
 CELLS = [f"R{i:02d}" for i in range(16)]
@@ -210,19 +210,17 @@ TRUTH_LABEL = {"nominal": ("the simulation prior", "simulation prior"),
 #   "count": exactly `gibuu` GiBUU truths are listed with the block, and every truth in `also`.
 #   "ctotal": the truths it types equal F0's listed set, under C_total alone (Table I's right-hand columns).
 # The anchor is the sentence's distinguishing clause; a missing anchor fails, so a moved sentence must be re-declared.
+# The short paper's five sentences (four in paper_body.tex, its abstract's in main_paper.tex) left with it on 2026-11-21
+# (POST_PUBLICATION_REORG_PLAN.md, "short paper"); its "ctotal" sentence was the only one of that kind, and the note
+# prints no sentence of it. The note's abstract sentence of the "count" kind ("Fake-data studies at a GiBUU-like truth
+# and at a synthetic momentum-transfer tilt find ...", re-declared in note round 1, #947) was removed by the journal-voice
+# rewrite (4b784728d, 2026-11-21), and its entry went with the paper's; the sentences of sec_q3_fived16.tex state the
+# same listed truths under the "keys" and "without" rules.
 LISTED_CLAIMS = [
-    ("paper_body.tex", "the flagged truths ($p<", {"kind": "keys"}),
-    ("paper_body.tex", "also meets the flagging criterion", {"kind": "without"}),
-    ("paper_body.tex", "Thus the fake-data bias exceeds the stated thresholds", {"kind": "both"}),
-    ("paper_body.tex", r"Under $C_{\mathrm{total}}$ alone, the right-hand columns", {"kind": "ctotal"}),
     ("sec_q3_fived16.tex", "truths meet the listing criterion ($p<", {"kind": "keys"}),
     ("sec_q3_fived16.tex", "truths meet it: the GiBUU", {"kind": "without"}),
     ("sec_q3_fived16.tex", "The fake-data bias therefore exceeds the stated thresholds", {"kind": "both"}),
     ("sec_fived16_gen.tex", "so the GiBUU comparison carries that limitation", {"kind": "both", "family": "gibuu"}),
-    ("main_paper.tex", "at a GiBUU-like truth and at a synthetic momentum-transfer tilt find", {"kind": "count", "gibuu": 1, "also": ["q3"]}),
-    # main_note.tex: the abstract sentence re-declared when the note was reframed and its fake-data sentence resynced to the
-    # paper's (note round 1, N1 + N6; DECISION-20261108-joseph-note-framing-and-estimator-dependence.md, #947)
-    ("main_note.tex", "Fake-data studies at a GiBUU-like truth and at a synthetic momentum-transfer tilt find", {"kind": "count", "gibuu": 1, "also": ["q3"]}),
 ]
 
 
@@ -2012,23 +2010,20 @@ def self_test():
     else:
         print(f"  FAIL the arms' readouts exchanged failed {sorted(swapped)}, not {sorted(want)}"); ok = False
     for what, name, anchor, edit in (
-            ("keys a truth the readout does not list", "paper_body.tex", "the flagged truths ($p<",
-             lambda t: t.replace(r"by $p$ alone ($p\fvval{f0b-q3-prel}$)", r"by $p$ alone ($p\fvval{f0b-q3-prel}$, $\fvval{f0b-W3-pr}$)", 1)),
-            ("drops a listed truth's keys", "paper_body.tex", "the flagged truths ($p<",
-             lambda t: t.replace(r"($p\fvval{f0b-A7_gibuu-prel}$; cells \fvval{f0b-A7_gibuu-cells})", "", 1)),
-            ("names the wrong truth as listed only without the block", "paper_body.tex", "also meets the flagging criterion",
-             lambda t: t.replace(r"the GiBUU $\Eavail$ shape also meets", r"the NuWro $\Eavail$ shape also meets", 1)),
+            ("keys a truth the readout does not list", "sec_q3_fived16.tex", "truths meet the listing criterion ($p<",
+             lambda t: t.replace(r"by $p$ alone ($p=\fvval{f0b-q3-p}$)", r"by $p$ alone ($p=\fvval{f0b-q3-p}$, $\fvval{f0b-W3-pr}$)", 1)),
+            ("drops a listed truth's keys", "sec_q3_fived16.tex", "truths meet the listing criterion ($p<",
+             lambda t: t.replace(r", by $p$ and by its cells \fvval{f0b-A7_gibuu-cells}", "", 1)),
+            ("names the wrong truth as listed only without the block", "sec_q3_fived16.tex", "truths meet it: the GiBUU",
+             lambda t: t.replace(r"the GiBUU $\Eavail$ shape is also listed", r"the NuWro $\Eavail$ shape is also listed", 1)),
             ("drops the truth listed only without the block", "sec_q3_fived16.tex",
              "The fake-data bias therefore exceeds the stated thresholds",
              lambda t: t.replace(r"and also at the GiBUU $\Eavail$ shape without $C_{\mathrm{PL,5D}}$. The bias", ". The bias", 1)),
             ("drops a GiBUU truth of its family", "sec_fived16_gen.tex", "so the GiBUU comparison carries that limitation",
              lambda t: t.replace(r"thresholds at the GiBUU hybrid truth under the reported covariance, and also",
                                  r"thresholds under the reported covariance, and also", 1)),
-            ("omits a truth F0 lists", "paper_body.tex", r"Under $C_{\mathrm{total}}$ alone, the right-hand columns",
-             lambda t: t.replace(r"the synthetic $q_3$ tilt and the NuWro $(\pT,\pPar,\Eavail)$ shape, the last by $p$ alone",
-                                 r"and the synthetic $q_3$ tilt, the last by $p$ alone", 1)),
-            ("loses its anchor", "main_paper.tex", "at a GiBUU-like truth and at a synthetic momentum-transfer tilt find",
-             lambda t: t.replace("at a GiBUU-like truth and at a synthetic", "at GiBUU-like truths and at a synthetic", 1))):
+            ("loses its anchor", "sec_q3_fived16.tex", "The fake-data bias therefore exceeds the stated thresholds",
+             lambda t: t.replace("The fake-data bias therefore exceeds", "The fake-data bias thus exceeds", 1))):
         planted = dict(texts, **{name: edit(texts[name])})
         if planted[name] == texts[name]:
             print(f"  FAIL the plant that {what} did not apply"); ok = False
@@ -2038,12 +2033,12 @@ def self_test():
             print(f"  ok   a {name} sentence that {what} fails")
         else:
             print(f"  FAIL a {name} sentence that {what} passed"); ok = False
-    d = load()                                               # a readout listing one more truth fails the "keys" sentences
+    d = load()                                               # a readout listing one more truth fails the "keys" sentence
     d["f0b"]["triggers"]["listed"].append({"truth": "W3", "cells": [], "p_lt_0.01": True})
-    if len([b for b in check_listed_claims(d["f0b"], texts, dn["f0b"]) if "(keys)" in b]) == 2:
-        print("  ok   a readout that lists one more truth fails both enumerating sentences")
+    if len([b for b in check_listed_claims(d["f0b"], texts, dn["f0b"]) if "(keys)" in b]) == 1:
+        print("  ok   a readout that lists one more truth fails the enumerating sentence")
     else:
-        print("  FAIL a readout that lists one more truth did not fail both enumerating sentences"); ok = False
+        print("  FAIL a readout that lists one more truth did not fail the enumerating sentence"); ok = False
     v = all_values()
     if (v["f0b-listed-names"], v["f0b-listed-names-nopl"]) != (r"the synthetic $q_3$ tilt and the GiBUU hybrid truth",
                                                                 r"the synthetic $q_3$ tilt, the GiBUU $\Eavail$ shape and the GiBUU hybrid truth"):

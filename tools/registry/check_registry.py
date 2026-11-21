@@ -13,13 +13,15 @@
     line text that occurs more than once; re-read and re-cite with `--cite FILE:LINE`.
     (ATTRIBUTION and STATUS rows are checked the same way by results_index.py.)
 (2) COMPLETENESS, scoped to an explicit label pattern list (LABEL_PATTERNS). Over the printed text (comments
-    removed) of the \\input closures of main_paper.tex, main_note.tex, main_primer.tex and main_records.tex, every
+    removed) of the \\input closures of main_note.tex, main_primer.tex and main_records.tex, every
     estimator label matched by LABEL_PATTERNS must name (reglib.resolve, the rule whatis.py uses, counting only
     aliases marked identifying=yes) exactly one registered estimator. Unresolved or ambiguous: failure, with file:line. Labels outside the pattern list
     are NOT checked -- this is the scope, stated, not a claim that every name is covered.
 (3) The records document main_records.tex \\inputs both generated renderings, records_estimators and
-    records_results_index, and no posted driver (main_note, main_paper, main_primer, pet_note) reaches either
+    records_results_index, and no posted driver (main_note, main_primer, pet_note) reaches either
     through its \\input closure (RECORDS-RULES.md rule 6).
+main_paper.tex, the short paper, was a driver of (2) and (3) until its retirement on 2026-11-21
+(docs/POST_PUBLICATION_REORG_PLAN.md, family "short paper").
 """
 from __future__ import annotations
 
@@ -34,7 +36,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import reglib  # noqa: E402
 
 NOTE_DIR = "docs/analysis-note"
-DRIVERS = ("main_paper.tex", "main_note.tex", "main_primer.tex", "main_records.tex")
+DRIVERS = ("main_note.tex", "main_primer.tex", "main_records.tex")
 COMMENT = re.compile(r"(?<!\\)%[^\n]*")
 # (name, regex over printed text, how a match becomes the label(s) resolved)
 LABEL_PATTERNS = (
@@ -107,7 +109,7 @@ RECORDS_DRIVER = f"{NOTE_DIR}/main_records.tex"
 RECORDS_INPUTS = ("records_estimators", "records_results_index")
 
 
-POSTED_DRIVERS = ("main_note.tex", "main_paper.tex", "main_primer.tex", "pet_note.tex")
+POSTED_DRIVERS = ("main_note.tex", "main_primer.tex", "pet_note.tex")
 
 
 def records_include_index(index: reglib.Index, note_dir: str = NOTE_DIR) -> list[str]:
@@ -171,7 +173,7 @@ def self_test() -> int:
 
         def stage(driver_text: str, body_text: str) -> reglib.Index:
             for d in DRIVERS:
-                (note / d).write_text(driver_text if d == "main_paper.tex" else "")
+                (note / d).write_text(driver_text if d == "main_note.tex" else "")
             (note / "body.tex").write_text(body_text)
             subprocess.run(["git", "-C", str(t), "add", "-A"], check=True, env=reglib.clean_env(), cwd=str(t))
             return reglib.Index(t)
@@ -197,12 +199,14 @@ def self_test() -> int:
         # A registry conflict: "configuration (e)" also registered (with a valid citation) under d-N-B0.
         al = t / reglib.ALIASES
         clean_aliases = al.read_text()
-        # The cited line is the last element of paper_body.tex split on newlines (line 290 when this fixture was
-        # written; computed, so that a shorter or longer paper keeps the same fixture).
-        pb_lines = (t / "docs/analysis-note/paper_body.tex").read_text().split("\n")
+        # The planted row cites a one-line fixture that holds its quote, so the citation is valid and the case fires
+        # on the conflict itself. (Until 2026-11-21 it cited the last element of paper_body.tex split on newlines, an
+        # empty string without the quote, so the case fired on a malformed citation; paper_body.tex is retired.)
+        cited = "configuration~(e) is cited here"
+        (note / "conflict_fixture.tex").write_text(cited + "\n")
         al.write_text(clean_aliases + "d-N-B0\tpaper-label\tconfiguration (e)\tzzz-no-match\tyes\tdefault\t"
-                      f"docs/analysis-note/paper_body.tex\t{len(pb_lines)}\tconfiguration~(e)\t"
-                      f"{reglib.line_digest(pb_lines[-1])}\n")
+                      f"docs/analysis-note/conflict_fixture.tex\t1\tconfiguration~(e)\t"
+                      f"{reglib.line_digest(cited)}\n")
         case("planted conflict: 'configuration (e)' registered under two estimators", good[1], True)
         al.write_text(clean_aliases)
         # The (f) alias removed: a printed "configuration (f)" is then an unregistered label inside the a-f pattern.
