@@ -1,0 +1,23 @@
+	Command being timed: "python3 nd-unfolding/tier3/t3p_probe.py run --arm SO --truth A7_gibuu --stage /pscratch/sd/j/josephrb/t3p-20261121/stage.json -- --npz /pscratch/sd/j/josephrb/t3p-20261121/stage/of_inputs_5d.npz --bkg /pscratch/sd/j/josephrb/t3p-20261121/stage/bkg_dump.npz --expect-npz-sha256 07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f --expect-bkg-sha256 2addac8f26055c5ed69862e7afe29e12ac51dbe23a8d6eeed79d71bec9d82955 --config R --iters 50 --threads 32 --bank /pscratch/sd/j/josephrb/t3p-20261121/stage/bank --detector-dir /pscratch/sd/j/josephrb/t3p-20261121/stage/no-detector-band-is-drawn --hypothesis docs/orchestration/state/s5p/ratios/nullsF/null-gibuu_cv-F.json --pseudo-seeds 994001:994001 --no-nuisance --expectation --mc-fraction half --tag t3p_SO_A7_gibuu --out /pscratch/sd/j/josephrb/t3p-20261121/runs/SO/A7_gibuu"
+	User time (seconds): 68059.75
+	System time (seconds): 232.02
+	Percent of CPU this job got: 1638%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:09:27
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 13439168
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 187
+	Minor (reclaiming a frame) page faults: 9827791
+	Voluntary context switches: 1626864
+	Involuntary context switches: 125084
+	Swaps: 0
+	File system inputs: 8200
+	File system outputs: 2016
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

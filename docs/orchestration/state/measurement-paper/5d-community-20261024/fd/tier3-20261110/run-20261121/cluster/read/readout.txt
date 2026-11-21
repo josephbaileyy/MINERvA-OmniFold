@@ -1,0 +1,17 @@
+verdict COMPLETE; floor s {'MU': 0.002297784523548636, 'MW': 0.0016941245712340297, 'MO': 0.0024686360305854723, 'SO': 0.002338864012532099, 'OP': 0.002831130777481394}, bars {'MU': 0.05, 'MW': 0.05, 'MO': 0.05, 'SO': 0.05, 'OP': 0.05}, delta_t 0.0211
+A7_gibuu: TR-1 {'MU': 'no effect', 'MW': 'no effect', 'MO': 'lowers the limit', 'SO': 'no effect'}; TR-2 step 2 carries the truth (rho_OP 0.025656969395351593)
+A7_gibuu: MU no effect: Delta 0.00012176146872830418, bar 0.05, bar/rho_B0(50) 0.5302447059500074, rho_B0(50) - rho_OP(2) 0.06863911586290294
+A7_gibuu: MW no effect: Delta -0.0018030518083504005, bar 0.05, bar/rho_B0(50) 0.5302447059500074, rho_B0(50) - rho_OP(2) 0.06863911586290294
+A7_gibuu: MO lowers the limit: Delta -0.06854598096327423, bar 0.05, bar/rho_B0(50) 0.5302447059500074, rho_B0(50) - rho_OP(2) 0.06863911586290294
+A7_gibuu: SO no effect: Delta -2.219689765409205e-05, bar 0.05, bar/rho_B0(50) 0.5302447059500074, rho_B0(50) - rho_OP(2) 0.06863911586290294
+A7_gibuu: trajectory {'B0': 'plateau', 'MU': 'plateau', 'MW': 'plateau', 'MO': 'reaches 0', 'SO': 'plateau'}
+A7_gibuu: location {'B0': 'reco matched, truth not', 'MU': 'reco matched, truth not', 'MW': 'reco matched, truth not', 'MO': 'closed', 'SO': 'reco matched, truth not', 'OP': 'closed'}
+A7_gibuu: labels ['consistent with a limit set at the misses', 'consistent with weakly constrained directions']
+q3: TR-1 {'MU': 'no effect', 'MW': 'no effect', 'MO': 'no effect', 'SO': 'no effect'}; TR-2 step 2 does not carry the truth (rho_OP 0.10197873182661644)
+q3: MU no effect: Delta 0.010969229267370484, bar 0.05, bar/rho_B0(50) 0.3071062517880243, rho_B0(50) - rho_OP(2) 0.060831369592327586
+q3: MW no effect: Delta 0.004007068089759203, bar 0.05, bar/rho_B0(50) 0.3071062517880243, rho_B0(50) - rho_OP(2) 0.060831369592327586
+q3: MO no effect: Delta 9.455265589650153e-05, bar 0.05, bar/rho_B0(50) 0.3071062517880243, rho_B0(50) - rho_OP(2) 0.060831369592327586
+q3: SO no effect: Delta 0.0022410180948012615, bar 0.05, bar/rho_B0(50) 0.3071062517880243, rho_B0(50) - rho_OP(2) 0.060831369592327586
+q3: trajectory {'B0': 'plateau', 'MU': 'plateau', 'MW': 'plateau', 'MO': 'plateau', 'SO': 'plateau'}
+q3: location {'B0': 'reco matched, truth not', 'MU': 'reco matched, truth not', 'MW': 'reco matched, truth not', 'MO': 'the pull-back or step 2 loses it', 'SO': 'reco matched, truth not', 'OP': 'reco matched, truth not'}
+q3: labels ["consistent with a limit set by step 2's representation", 'consistent with weakly constrained directions']

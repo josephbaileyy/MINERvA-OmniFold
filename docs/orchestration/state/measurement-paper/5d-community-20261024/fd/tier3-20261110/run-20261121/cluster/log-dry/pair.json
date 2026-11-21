@@ -1,0 +1,58 @@
+{
+ "job": "dry",
+ "C-PAIR": {
+  "A7_gibuu/s991000/k5": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  },
+  "A7_gibuu/s991000/k10": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  },
+  "A7_gibuu/s991000/k20": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  },
+  "A7_gibuu/s991000/k50": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  }
+ },
+ "C-X": {
+  "t3p_B0_A7_gibuu_s991000": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  },
+  "t3p_MU_A7_gibuu_s991000": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  },
+  "t3p_MW_A7_gibuu_s991000": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  },
+  "t3p_MO_A7_gibuu_s991000": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  },
+  "t3p_SO_A7_gibuu_s991000": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  },
+  "t3p_OP_A7_gibuu_s991000": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  }
+ },
+ "pass": true
+}
