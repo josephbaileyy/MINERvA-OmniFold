@@ -1,0 +1,42 @@
+included stems: 52 | installed pdfs: 79
+MEFHC_5iter_fig13: 2 captures, latest note-figstyle-20261117; step lines 0
+MEFHC_5iter_pull_full: 2 captures, latest note-figstyle-20261117; step lines 0
+MEFHC_5iter_xsec_eff_heatmap: 2 captures, latest note-figstyle-20261117; step lines 0
+MEFHC_5iter_xsec_paper_pt_slices: 5 captures, latest note-figpass-20261119; step lines 0
+MEFHC_5iter_xsec_paper_pz_slices: 5 captures, latest note-figpass-20261119; step lines 0
+MEFHC_5iter_xsec_proj_pt: 5 captures, latest note-figpass-20261119; step lines 1
+     ax0 steps-mid n=14 x[:4]=[0.035, 0.11, 0.2, 0.29] x[-2:]=[2.0, 3.5] lab='Tune v1: published prediction'
+MEFHC_5iter_xsec_proj_pz: 5 captures, latest note-figpass-20261119; step lines 1
+     ax0 steps-mid n=16 x[:4]=[1.75, 2.25, 2.75, 3.25] x[-2:]=[30.0, 50.0] lab='Tune v1: published prediction'
+MEFHC_5iter_xsec_pt_slices: 2 captures, latest note-figstyle-20261117; step lines 0
+MEFHC_5iter_xsec_pz_slices: 2 captures, latest note-figstyle-20261117; step lines 0
+ascencio_fullcov_compare_central: 4 captures, latest note-figpass-20261119; step lines 0
+compare_mec_eavail_central: 2 captures, latest note-figstyle-20261117; step lines 0
+control_plots: 2 captures, latest note-figstyle-20261117; step lines 0
+eavailW_band: 2 captures, latest note-figstyle-20261117; step lines 0
+eavail_marginal_vs_paper_pull_full: 2 captures, latest note-figpass-20261119; step lines 0
+eavail_spectrum: 2 captures, latest note-figstyle-20261117; step lines 0
+gbdt_bias_spread: 4 captures, latest note-figpass-20261119; step lines 0
+gbdt_coverage: 4 captures, latest note-figpass-20261119; step lines 0
+gbdt_prior_response: 4 captures, latest note-figpass-20261119; step lines 0
+gbdt_recovery: 4 captures, latest note-figpass-20261119; step lines 0
+generators_vs_unfolded_band_central: 4 captures, latest note-figpass-20261119; step lines 0
+m3_fig1_background: 4 captures, latest note-figpass-20261119; step lines 0
+m3_fig3_coverage: 4 captures, latest note-figpass-20261119; step lines 0
+migration_resolution: 2 captures, latest note-figstyle-20261117; step lines 0
+minerva_unfolding_landscape: 2 captures, latest note-figpass-20261119; step lines 0
+mode_decomp_eavail_central: 2 captures, latest note-figstyle-20261117; step lines 0
+mode_decomp_mec_eavail_central: 1 captures, latest note-figpass-20261119; step lines 0
+model_comp_projections: 2 captures, latest note-figstyle-20261117; step lines 2
+     ax0 steps-mid n=14 x[:4]=[0.035, 0.11, 0.2, 0.29] x[-2:]=[2.0, 3.5] lab='GENIE 2.12.6 + MINERvA Tune v1'
+     ax1 steps-mid n=16 x[:4]=[1.75, 2.25, 2.75, 3.25] x[-2:]=[30.0, 50.0] lab='GENIE 2.12.6 + MINERvA Tune v1'
+model_comp_ratio_maps: 2 captures, latest note-figstyle-20261117; step lines 0
+q3_excess_projection: 6 captures, latest note-q3fig-20261121; step lines 2
+     ax1 steps-mid n=7 x[:4]=[0.0, 1.0, 2.0, 3.0] x[-2:]=[5.0, 6.0] lab='_child0'
+     ax2 steps-mid n=7 x[:4]=[0.0, 1.0, 2.0, 3.0] x[-2:]=[5.0, 6.0] lab='_child0'
+tension_chi2_map: 2 captures, latest note-figstyle-20261117; step lines 0
+tension_mode_maps: 2 captures, latest note-figstyle-20261117; step lines 0
+tension_spectrum: 2 captures, latest note-figstyle-20261117; step lines 0
+uq_corr_2d: 2 captures, latest note-figstyle-20261117; step lines 0
+uq_spread_2d: 2 captures, latest note-figstyle-20261117; step lines 0
+NO CAPTURE: []
