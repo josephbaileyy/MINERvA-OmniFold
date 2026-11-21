@@ -1,0 +1,13 @@
+You are a read-only statistical and code reviewer. Do NOT modify any file except your single report. Never write anywhere outside the current directory. Write your report ONLY to ./REPORT.md.
+
+Task: review inputs/REGRADE-DECLARATION.md, a short declaration to regrade existing held-out-tune coverage toys (COV2D: 2D, 205 cells; LL5D: 16 cells) against the tune's covariance PLUS blocks the original tests omitted (2D: run-period block C_run; 16 cells: response C_resp and run-period C_PL,5D). Context is in inputs/SCOPING.md (item a, c), inputs/READING-T2-20261110.md, inputs/COV2D-DECLARATION.md, and the code files in inputs/ (cov2d_null.py, cov2d_blocks.py, cov2d_score.py, cov2d.py, fd_1b_null.py, fd_1b_mc_grade_excerpt.txt, ll5d_b.py).
+
+Check, citing file:line for every point:
+1. Is the primary statistic R-chi2 correct? In particular: is M' (mean chi2/ndf of the existing errors E under C' = C_T + C_add) truly a lower bound, under the stated model (r ~ N(0, C_add) independent of e), on the mean chi2/ndf a full test would have? Check the pseudo-inverse / non-null-subspace subtlety (chi2 computed on C''s non-null subspace with eigenvalue cut 1e-12): does E[chi2(e+r)] = E[chi2(e)] + tr(C'^+ C_add) hold there? Is the 3-SE reading sound, and is the SE well defined given the 300 toys?
+2. Is the fractional carry of C_PL / C_resp to tune T (section 2) consistent with how the code carries C08 (cov2d_blocks.py) and with how the blocks are built? Any reason the absolute carry should be primary instead?
+3. The 2D null rebuild: is substituting C08 + C_run(T) for C08 and C_T + C_run(T) for C_T in cov2d_null.null_at_T valid (check_matched, gauss component)? Same for the 16-cell null with gauss + C_add.
+4. The A0 control: will the stated driver with C_add = 0 reproduce the committed grades exactly, given what E_<T>.npz holds (errors after surrogates) and the null seeds? Anything that would make A0 fail spuriously (e.g. weakened labels, chol_tol, outlier cell, ndf 204)?
+5. The 16-cell capture read list (section 5): does it cover every input ll5d_b.setup/remade/toy_errors open, and nothing they do not need? Anything missing (e.g. a file setup() reads)?
+6. Anything overclaiming, any missing control, or any wording that implies a cause or a p-value.
+
+Output: REPORT.md with sections BLOCKING, MAJOR, MINOR, OK-CHECKS, each item with file:line evidence. Be concise and concrete.

@@ -1,0 +1,38 @@
+{
+ "schema": "regrade-crep/capture/1",
+ "M_L": "4231b14de5ea693e92cb31b1358a816b5c2f6625",
+ "host": "login25",
+ "start_utc": "2026-11-21T11:05:53Z",
+ "deploy": {
+  "head": "4231b14de5ea693e92cb31b1358a816b5c2f6625",
+  "bound_ok": [
+   "nd-unfolding/fd_1b_inv.py",
+   "nd-unfolding/fd_1b_mc.py",
+   "nd-unfolding/fd_1b_null.py",
+   "nd-unfolding/fd_1b_score.py",
+   "nd-unfolding/fd_1b_toys.py",
+   "nd-unfolding/ll5d.py",
+   "nd-unfolding/ll5d_b.py",
+   "nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+   "nd-unfolding/pv-ladder/readouts/h2_definition.json",
+   "nd-unfolding/s1_assemble.py"
+  ]
+ },
+ "pins": {
+  "s1_assembly": "db000707780d4d6da65389be9adedfd9a3ba6552a255f6ce81ccbdd0b8eb72a4",
+  "constraint": "e38ad7d28354d071577113a18c8c569f88b6239f7fb193d20285273f172fc0c2",
+  "list": "980bb95e20eac386a220bb7d0dbb16a5a3477248688f9a72bc07671a7ad5842d",
+  "products_checked": 1654
+ },
+ "outputs": {
+  "capture_g18_minus2.npz": "2fae21c50ea983395216f1781f64ead974ebc4dee5b0957bca5f6079a9cd1f8b",
+  "capture_g18_all.npz": "29a9f1d5842924008574bc55d425d12c6f71a0cd901d516f505cb1154c11bfb8",
+  "capture_ar23_minus2.npz": "7212996c87cd3526764f7d38779e8d36b4daa0fa5099f50a34d9800ede18a9c2",
+  "capture_ar23_all.npz": "97b3d915f40a27026c9cc71bec5fc01fdaf0b9e067016257266dfcfbc5cea313"
+ },
+ "watched": 1656,
+ "atime_moved": [],
+ "changed": [],
+ "end_utc": "2026-11-21T11:06:25Z",
+ "code_sha256": "fed8c9717cc786722181f7809dcfab62ae21a49b43d35de6adf64283f28ffe95"
+}

@@ -674,8 +674,8 @@ against `c0096d456b` here), so a removal there needs its own tag on `main`'s par
        the paper's only "ctotal" sentence is dropped with it. The note prints no sentence of that kind.
 
      The note's abstract sentence of the same check had already been removed by the journal-voice rewrite
-     (`4b784728d`), so `--check` failed at `a54f255e9` independently of this family; that entry is removed with a
-     record.
+     (`4b784728d`), so `--check` failed at `a54f255e9` independently of this family. The entry was removed here and,
+     independently, on the rewrite branch at `78aa1a5e2`; the merge keeps one removal.
    - `tools/registry/check_registry.py`: `DRIVERS`, `POSTED_DRIVERS` and two self-test fixtures. The conflict fixture
      had cited an empty line of `paper_body.tex`, so that case fired on a malformed citation. It now cites a
      one-line fixture and fires on the conflict itself.

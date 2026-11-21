@@ -374,9 +374,12 @@ v3 tunes with $C_{\mathrm{total}}$. Across the tested variants,
 \fvval{ll5d-njoint-min} to \fvval{ll5d-njoint-max} of \fvval{ll5d-ntoys}
 pseudo-experiments lie inside the joint region. This is a descriptive study
 because part of the procedure was fixed after an early stop
-(Appendix~\ref{app:choices-after-results}). The tested covariance excludes
-the response and run-period terms. Coverage of the full reported
-covariance $C_{\mathrm{rep}}$ remains untested. The
+(Appendix~\ref{app:choices-after-results}). Regrading the same
+pseudo-experiments against $C_{\mathrm{rep}}$, which adds response and
+run-period terms that the pseudo-experiments do not vary, lowers the mean
+$\chi^2/\mathrm{ndf}$ from \fvval{rg-16-orig-min}--\fvval{rg-16-orig-max} to
+\fvval{rg-16-full-min}--\fvval{rg-16-full-max}, so even $C_{\mathrm{rep}}$ is
+too small for their deviations from the truth. The
 \hyperlink{validation-sixteen-coverage}{sixteen-cell coverage row} of
 Table~\ref{tab:validation-inventory} gives the minimum count.
 
@@ -504,7 +507,7 @@ results of this section, with the estimator each test applies to.
     Held-out-tune coverage (descriptive) &
     Sixteen-cell estimator with $C_{\mathrm{total}}$ &
     Joint undercoverage at both tunes. &
-    The full reported covariance remains untested. \\
+    Also too small with the full reported covariance. \\
     \addlinespace[2pt]
     Rounding-level stability (prespecified) &
     Sixteen-cell estimator &

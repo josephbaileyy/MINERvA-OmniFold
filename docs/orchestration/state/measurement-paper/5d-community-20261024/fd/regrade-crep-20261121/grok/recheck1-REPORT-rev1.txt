@@ -1,0 +1,39 @@
+# Regrade declaration recheck (rev 1)
+
+Read-only check of `inputs/REGRADE-DECLARATION.md` (rev 1) against `inputs/REPORT-REV0.md` and the unchanged code in `inputs/`. Nothing in the study was run.
+
+## BLOCKING
+
+1. **CLOSED.** The rule is now on `M_full = M′ + τ`, with `τ = tr(A C_add)/ndf′` (`REGRADE-DECLARATION.md:85-86`). "under-describes" only if `M_full − 1 > 3 · SE(M′)`, and "not shown" otherwise (`:91-95`). No over-describe branch (`:96-97`). `SE(M_full) = SE(M′)` because the trace is fixed (`:92-93`). That is the upper-tail comparison on `M′ + tr(A C_add)/ndf′` the earlier review asked for. The gloss attached to that rule is a new major below.
+
+## MAJOR
+
+1. **CLOSED.** One factorisation, `A = V_k Λ_k^{-1} V_kᵀ` with `k = {i : λ_i(C′) > 1e-12 λ_max}`, tied to `fd_1b_null.chi2_nonnull` (`REGRADE-DECLARATION.md:75-77`; the cut is `fd_1b_null.py:95`). The driver is required to call that function for χ², the trace and the split, with no `pinv` and no other cutoff (`:78`). `chi2_nonnull` returns only per-row χ² and `ndf` (`fd_1b_null.py:92-97`) and is imported unchanged (`REGRADE-DECLARATION.md:174`). The trace and the split are still that same quadratic form: `ēᵀAē` is `chi2_nonnull` on the mean row, `tr(A S)` is the mean of `chi2_nonnull` on the centered rows, and `tr(A C_add)` is the sum of `chi2_nonnull` on a factor of `C_add`.
+
+2. **CLOSED.** A0 is three parts (`REGRADE-DECLARATION.md:169`). (a) `ndf`, `joint_count` and the in-interval counts are exact STOPs; they depend only on `E` and `C_T`. `joint_count` uses `chi2_cut = chi2_ppf(P0, ndf)` (`fd_1b_null.py:114-115`; grade excerpt `:680`), not the Monte Carlo contents. Counts are `|E| ≤ √diag(C)` (grade excerpt `:665-666`). (b) `chi2_mean_over_ndf` within `1e-9` relative, loosened from `1e-12`. (c) `k_joint` and the flags are not a STOP: a mismatch alone is "null redraw differs". The 2D key is `flagged_cells` on `score_<T>.json` (added by `cov2d_score.score`, `cov2d_score.py:88`). The sixteen-cell key is `cell_flag` in R00–R15 order on `readout-<t>.json` (grade excerpt `:688`; stored as `grade`, `ll5d_b.py:634`). Grade runs at A5's `max(1e-9, 10 κ₂(C′) ε)` (`REGRADE-DECLARATION.md:116`), which is `ll5d_b.cholesky_tol` (`ll5d_b.py:526-532`). AR23's `ndf` 204 skips Cholesky because `ndf != C.shape[0]` (grade excerpt `:668`).
+
+3. **CLOSED.** The fail text names the tune-carried `C′`, says it is not the published matrix, cites `COV2D-DECLARATION.md:226-227`, and requires any use to name `C′` and the tune (`REGRADE-DECLARATION.md:93-94`, `:98-103`).
+
+4. **CLOSED.** The 2D null is `null_at_T` on a copy with `C_T_minus` removed, then `C08 ← C08 + C_run(T)` and `C_T ← C_T + C_run(T)` (`REGRADE-DECLARATION.md:112-114`). Removal skips the MEC branch (`cov2d_null.py:61-65`), so `C_run` is no longer subtracted once in `minus_abs` and added back through `C08`. The primary path puts `C_run` in the Gaussian through `C08` and in `C_T` once (`cov2d_null.py:55-56`). With `C_add = 0` the removal does not change that primary null, so A0's comparison is unchanged.
+
+## MINOR
+
+1. **CLOSED.** `S = (1/n) Σ_t (e_t − ē)(e_t − ē)ᵀ`, divisor `n`, so the two parts sum to `M′` (`REGRADE-DECLARATION.md:83-84`). The divisor is in the unit tests (`:181`).
+
+2. **PARTIAL.** The `C_add ≡ 0` division is fixed: C-PSD is skipped when `C_add` is identically 0 (`REGRADE-DECLARATION.md:168`), so A0 is not stopped by a zero denominator. The new clause does not close the tolerance gap. `simulate` calls `multivariate_normal(..., method="eigh")` with no `tol` and no `check_valid` (`fd_1b_null.py:103`). The default `check_valid` is `'warn'`, not `'raise'` (NumPy 2.4.4: a negative eigenvalue warns and the draw uses the absolute value). "Must not raise" passes for a matrix the eigenvalue line accepts. That line still allows `λ_min ≥ −1e-12 λ_max` (`:168`). Whenever `λ_max(C_add) > 10^4`, that floor is below NumPy's absolute `−1e-8`, and the rebuilt null samples the flipped sign. `check_matched` still passes (`fd_1b_null.py:83-89`).
+
+3. **CLOSED.** `C_resp` is carried by the central-value ratio, the same pattern as C08 and the laterals (`REGRADE-DECLARATION.md:54`; `ll5d_b.py:443-450`). C-F16 checks `cpl_block["f"]` against the capture's `s1["f"]` and `C_PL,5D = diag(f) P_rel diag(f)` (`:167`). The control key is written `C_PL5D`; every other line says `C_PL,5D` (`:12`, `:47`, `:52`). The npz is not in this bundle, so the key string was not checked. A missing key is a STOP (`:161`).
+
+4. **CLOSED.** The record prints the kept-set difference against `C_T`, and the smallest kept and largest dropped eigenvalues of `C′` relative to `λ_max` (`REGRADE-DECLARATION.md:122-124`).
+
+5. **CLOSED.** The capture opens no `C_resp` or `C_PL,5D` source. The driver reads those blocks from the committed `cpl_block.npz` (`REGRADE-DECLARATION.md:190-192`). §5's read list is unchanged (`:138-139`).
+
+6. **CLOSED.** An extra file on the toy glob is a STOP (`REGRADE-DECLARATION.md:152-153`), matching `ll5d_b.py:597-603`.
+
+7. **CLOSED.** Verdict strings sit under `descriptive_regrade`, with the prefix `descriptive-` and the line "a reading, not a proof" (`REGRADE-DECLARATION.md:117-119`).
+
+## New
+
+**MAJOR.** The sentence the reading licenses still names the wrong errors. R-χ² is the only reading wording may rest on (`REGRADE-DECLARATION.md:80`). Its fail sentence is "the toys' errors are larger on average than the tune-carried full covariance `C′` describes, at `M_full`" (`:93-94`). `M_full` is the conditional expected mean of `χ²(e+r)/ndf′` given the stored toys (`:87-90`), not the toys' mean. The toys' mean is `M′`. Under the model the declaration states, a right `C′` has `E[M′] = 1 − τ` (`:96`), so `M′` sits below 1 by about `τ` while `M_full` sits at 1. Example: `M′ = 0.80`, `τ = 0.40`, `SE(M′) = 0.05` gives `M_full − 1 = 0.20 > 0.15`, so the rule fires, while the stored toys' mean `χ²/ndf′` is `0.80 < 1`. The sentence is then false. The split printed with it (`:83-84`) adds to `M′`, not to `M_full`. The exact statement at `:87-90` does not have this error. The fail sentence should say that the full test's conditional expected mean exceeds 1.
+
+VERDICT: NO-GO

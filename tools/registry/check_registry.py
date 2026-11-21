@@ -144,7 +144,7 @@ def run(repo: Path) -> int:
     ests = reglib.read_tsv(index, reglib.ESTIMATORS)
     als = reglib.read_tsv(index, reglib.ALIASES)
     print(f"REGISTRY :: {len(ests)} estimators, {len(als)} aliases, every citation checked; {n} printed labels in "
-          f"{nfiles} files of the four builds, each naming exactly one estimator through identifying aliases; "
+          f"{nfiles} files of the {len(DRIVERS)} builds, each naming exactly one estimator through identifying aliases; "
           f"records document holds the index and no posted build does"
           + (f" -- {len(fails)} failure(s)" if fails else ""))
     return 1 if fails else 0
