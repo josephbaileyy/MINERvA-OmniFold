@@ -1,0 +1,46 @@
+{
+ "MEFHC_5iter_xsec_proj_pt": {
+  "published_prediction_before": {
+   "color": [
+    0.16470588235294117,
+    0.47058823529411764,
+    0.8392156862745098,
+    1.0
+   ],
+   "ls": "--",
+   "lw": 0.9,
+   "z": 2
+  },
+  "published_prediction_after": {
+   "color": "black",
+   "ls": "--",
+   "lw": 0.9,
+   "z": 2
+  }
+ },
+ "MEFHC_5iter_xsec_proj_pz": {
+  "published_prediction_before": {
+   "color": [
+    0.16470588235294117,
+    0.47058823529411764,
+    0.8392156862745098,
+    1.0
+   ],
+   "ls": "--",
+   "lw": 0.9,
+   "z": 2
+  },
+  "published_prediction_after": {
+   "color": "black",
+   "ls": "--",
+   "lw": 0.9,
+   "z": 2
+  },
+  "legend": [
+   "This work (OmniFold)",
+   "Published (PRD 104, 092007)",
+   "Tune v1 prior (this work)",
+   "Tune v1 published prediction"
+  ]
+ }
+}
