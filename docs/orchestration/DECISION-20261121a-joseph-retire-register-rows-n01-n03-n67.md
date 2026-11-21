@@ -12,8 +12,8 @@
    - n01: "Whether it is ready for publication as a measurement has not been established." Earlier the executive summary's sentence, then the introduction's (sec_intro.tex:11 at e89694209).
    - n03: "The results hold for one implementation of unbinned OmniFold, applied to one data set, and for the configurations, observables and deformations tested." (sec_intro.tex:68 at e89694209)
 
-   director-helper-3's check report (`check-h3-REPORT.md`, same directory, "Flags for the director" 1 and 2) put both rows to the director. It recommended retiring n01 and restoring n03 in Sec. 6.2. The director wrote: "I've sent P2, P7, P10, P4–P9 and the n01/n03 calls to the rewrite helper for Joseph".
-3. **n67.** n67 is journal-editor's row: "These are descriptive sensitivities, not alternative results." The director forwarded the rewrite helper's relay of Joseph's decision on it.
+   director-helper-3's check report (`check-h3-REPORT.md`, same directory, "Flags for the director" 1 and 2) put both rows to the director. It recommended retiring n01 and restoring n03 in Sec. 6.2. The director wrote: "I've sent P2, P7, P10, P4–P9 and the n01/n03 calls to the rewrite helper for Joseph, recommending P2 and P10 as factual fixes and n03 as one sentence."
+3. **n67.** n67 is journal-editor's row: "These are descriptive sensitivities, not alternative results". The director forwarded the rewrite helper's relay of Joseph's decision on it.
 
 ## The relay, verbatim
 
@@ -42,7 +42,9 @@ These are the rewrite helper's relays of Joseph's decision, as the director forw
    - director-helper-3's check branch deletes the n01 and n03 rows from `limitations-export.tsv`, citing this record.
    - journal-editor deletes the n67 row on its own branch, citing this record.
    - With the three rows deleted, the gate `limitations_export.py --check` ends at 90 of 90.
-5. **The register artifact.** The claude.ai register artifact's rows n01 and n03 are marked retired, citing this record.
+5. **The register artifact.**
+   - The director asked director-helper-3 to mark the claude.ai register artifact's rows n01 and n03 retired, citing this record, if it had access, and otherwise to tell the director.
+   - director-helper-3 has access and marked both on 2026-11-21. The page has no "retired" status, so each row has status "closed", and its change and route fields name the retirement and this record.
 
 ## Not decided here
 
