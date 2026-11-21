@@ -56,7 +56,7 @@ HERE = Path(__file__).resolve().parent
 DATA = "records-reorg"
 SPLIT_FILES = ("app_compression_records.tex", "records_compression_lr.tex", "records_compression_lr_p4.tex",
                "records_compression_h3.tex", "records_compression_h3_p6.tex", "records_compression_h3_p3c.tex",
-               "records_compression_cv.tex")
+               "records_compression_cv.tex", "records_compression_h3_rw.tex")
 HEAD = re.compile(r"^\s*\\(part|section|subsection|subsubsection|paragraph)(\*?)\{")
 LEVEL = {"part": -1, "section": 0, "subsection": 1, "subsubsection": 2, "paragraph": 3}
 COMMENT = re.compile(r"(?<!\\)%.*")
@@ -180,10 +180,14 @@ def split_blocks(name: str, text: str) -> list[Block]:
     heads = [i for i, l in enumerate(lines) if HEAD.match(l)]
     cuts = []
     for h in heads:
-        # A run of comment lines directly above a heading (after the last blank line) belongs to the heading's block.
+        # A run of comment lines directly above a heading belongs to the heading's block when a blank line (or the
+        # file start) separates it from the text above. A run that follows text with no blank line belongs to that
+        # text's paragraph (a "% Search:" line supporting it, for instance), so it stays with the block above.
         c = h
         while c > 0 and lines[c - 1].lstrip().startswith("%"):
             c -= 1
+        if c > 0 and lines[c - 1].strip():
+            c = h
         cuts.append(c)
     bounds = ([0] if not cuts or cuts[0] > 0 else []) + cuts + [len(lines)]
     blocks = []
@@ -442,6 +446,9 @@ def render_block(blk: Block, cfg: Config, keep_head: bool = False) -> list[str]:
         if line.lstrip().startswith("%"):
             out.append(line)
             continue
+        if SPLIT_INPUT.match(line):                 # a moved file inputs another: its blocks are placed on their own
+            out.append(f"% [records reorg] {line.strip()}: its blocks are placed by the routing rules")
+            continue
         if k == blk.head:
             s, e, title = heading_span(line)
             rest = line[e:]
@@ -557,6 +564,7 @@ def assemble(tree: Tree, cfg: Config) -> tuple[dict[str, str], str, list[str]]:
 
 OLD_INPUTS = ("app_compression_records", "records_compression_lr", "records_compression_lr_p4", "records_compression_h3",
               "records_compression_h3_p6", "records_compression_h3_p3c", "records_compression_cv")
+SPLIT_INPUT = re.compile(r"^\s*\\input\{(" + "|".join(re.escape(f[:-4]) for f in SPLIT_FILES) + r")\}\s*$")
 PROVENANCE_GROUP = "\\begingroup\n\\setlist[description]{format=\\recentrylabel}\n\\input{app_provenance}"
 
 
@@ -601,9 +609,15 @@ def cmd_assemble(tree: Tree, cfg: Config, out_dir: Path) -> int:
     return 0
 
 
+GENERATED = ("records_entry_numbers.tex", "records_results_index.tex", "records_estimators.tex", "records_earlier_labels.tex")
+
+
 def check(base: Tree, new: Tree, cfg: Config) -> list[str]:
+    """The invariance gate (module docstring). Generated files (GENERATED) are left out: they are regenerated, never
+    edited, and records_entry_numbers.tex changes by design when the provenance section's number does."""
     fails = []
-    old_c, new_c = base.closure(), new.closure()
+    old_c = {f: t for f, t in base.closure().items() if f not in GENERATED}
+    new_c = {f: t for f, t in new.closure().items() if f not in GENERATED}
     old_p = collections.Counter(l for t in old_c.values() for l in printed_lines(t))
     new_p = collections.Counter(l for t in new_c.values() for l in printed_lines(t))
     old_k = collections.Counter(l for t in old_c.values() for l in comment_lines(t))
@@ -746,7 +760,7 @@ def cmd_dropped(base: Tree, cfg: Config, out: Path | None) -> int:
     return 0
 
 
-def cmd_rekey(tree: Tree, write: bool) -> int:
+def cmd_rekey(tree: Tree, write: bool, base: Tree | None = None, cfg: "Config | None" = None) -> int:
     """Bookkeeping after the move, for the two records locators that name a file: point reanchor_file of each
     records-located limitations row, and each R:<file>::<text> probe of records-move-ledger.md, at the records file
     that now holds the text. A text found in no file or in several is left alone and reported, for the checks to fail."""
@@ -761,6 +775,12 @@ def cmd_rekey(tree: Tree, write: bool) -> int:
         if c[3] not in gone:
             continue
         hits = [f for f, t in rec.items() if c[4] and c[4] in t]
+        if len(hits) > 1 and base and cfg:          # the text prints twice: follow the block it was in at the base
+            dest_file = {r[0]: r[4] for r in cfg.toc}
+            blocks = all_blocks(base, cfg)
+            dests = routes(blocks, cfg)
+            own = [dest_file.get(dests[b.key]) for b in blocks if b.file == c[3] and c[4] in "\n".join(b.lines)]
+            hits = [f for f in hits if f in own] or hits
         if len(hits) == 1:
             c[3] = hits[0]
             c[5] += " || re-keyed to the reorganized records file (records/reorg-20261121)"
@@ -784,9 +804,37 @@ def cmd_rekey(tree: Tree, write: bool) -> int:
         n_probe += 1
         return f"R:{hits[0]}::{text}"
     ltext = re.sub(r"R:([A-Za-z0-9_]+\.tex)::(.+?)(?=\s*(?:&&|`))", fix, ltext)
+    # The estimator registry cites a source file, line and quote (tools/registry/check_registry.py); a row citing a
+    # moved file is pointed at the file that now holds the quote (line hints: check_registry.py --repoint).
+    reg_dir = tree.dir.parent / "orchestration" / "registry"
+    reg_new: dict[Path, str] = {}
+    n_reg = 0
+    for reg in sorted(reg_dir.glob("*.tsv")) if reg_dir.exists() else []:
+        rlines = reg.read_text(encoding="utf-8").rstrip("\n").split("\n")
+        head = rlines[0].split("\t")
+        pairs = [(head.index(sc), head.index(qc)) for sc, qc in (("source", "quote"), ("defining_source", "defining_quote"))
+                 if sc in head and qc in head]
+        changed_reg = False
+        for i, line in enumerate(rlines[1:], 1):
+            cells = line.split("\t")
+            for si, qi in pairs:
+                if si < len(cells) and cells[si].startswith("docs/analysis-note/") and cells[si][19:] in gone:
+                    hits = [f for f, t in rec.items() if cells[qi] and cells[qi] in t]
+                    if len(hits) == 1:
+                        cells[si] = "docs/analysis-note/" + hits[0]
+                        rlines[i] = "\t".join(cells)
+                        n_reg += 1
+                        changed_reg = True
+                    else:
+                        unresolved.append(f"registry {reg.name} row {i}: {len(hits)} records files hold the quote")
+        if changed_reg:
+            reg_new[reg] = "\n".join(rlines) + "\n"
+    print(f"RECORDS-REORG rekey :: {n_reg} registry citations {'re-pointed' if write else 'would be re-pointed'}")
     if write:
         path.write_text("\n".join(lines) + "\n", encoding="utf-8")
         ledger.write_text(ltext, encoding="utf-8")
+        for reg, text in reg_new.items():
+            reg.write_text(text, encoding="utf-8")
     for u in unresolved:
         print("  UNRESOLVED " + u)
     print(f"RECORDS-REORG rekey :: {changed} limitations rows and {n_probe} ledger probes "
@@ -911,7 +959,7 @@ def main(argv=None) -> int:
     if a.cmd == "dropped":
         return cmd_dropped(Tree(a.note_dir, a.base), cfg, a.out)
     if a.cmd == "rekey":
-        return cmd_rekey(Tree(a.note_dir), a.write)
+        return cmd_rekey(Tree(a.note_dir), a.write, Tree(a.note_dir, a.base) if a.base else None, cfg)
     ap.print_help()
     return 2
 

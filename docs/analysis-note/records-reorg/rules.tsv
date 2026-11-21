@@ -46,6 +46,7 @@ R5.3	title	Correlation sensitivity of the sixteen-cell
 R5.1	src	^sec_fived16$
 R5.3	src	^sec_fived16_gen$
 R6.1	title	^Principal limitations
+R6.2	file	^records_compression_h3_rw\.tex$
 R6.2	file	^records_compression_h3_p6\.tex$
 R7.1	title	MINERvA's published-covariance|Ruterbories|Upstream references|Multinomial to independent Poisson
 R7.2	title	Regularization scans
