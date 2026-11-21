@@ -22,10 +22,11 @@ the cross sections in the original muon bins.
   \centering
   \includegraphics[width=0.49\textwidth]{tension_spectrum}\hfill
   \includegraphics[width=0.49\textwidth]{tension_chi2_map}
-  \caption{Published-covariance spectrum, cumulative $\chi^2$ ranked by mode
-  contribution, and signed bin contributions $\Delta_i(V_{\mathrm{pub}}^+\Delta)_i$.
-  Many modes contribute, and the bin contributions can have either sign because
-  the covariance is correlated. The shared-data comparison is descriptive.}
+  \caption{Many modes contribute to the descriptive $\chi^2$, and the bin contributions
+  can have either sign because the covariance is correlated. The panels show
+  the published-covariance spectrum, the cumulative $\chi^2$ ranked by mode
+  contribution, and the signed bin contributions
+  $\Delta_i(V_{\mathrm{pub}}^+\Delta)_i$. The shared-data comparison is descriptive.}
   \label{fig:tension}
 \end{figure}
 
@@ -33,19 +34,20 @@ the cross sections in the original muon bins.
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{tension_mode_maps}
-  \caption{The six published-covariance eigenvectors with the largest
-  contributions to the descriptive $\chi^2$, in decreasing order.
-  Panels (a), (b), and (d) concentrate at the highest $p_\parallel$.
-  The colors show eigenvector components, whose overall signs are arbitrary.}
+  \caption{Three of the six published-covariance eigenvectors with the largest
+  contributions to the descriptive $\chi^2$, in panels (a), (b), and (d),
+  concentrate at the highest $p_\parallel$. The panels are in decreasing order
+  of contribution. The colors show eigenvector components, whose overall signs
+  are arbitrary.}
   \label{fig:tensionmodes}
 \end{figure}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{MEFHC_5iter_xsec_paper_pt_slices}
-  \caption{Rescaled double-differential cross sections versus $p_\parallel$ in slices
-  of $p_T$. The OmniFold points move toward the published values relative to
-  the Tune~v1 prior in all 14 slices. OmniFold bars show event-weight
+  \caption{In all 14 $p_T$ slices, the OmniFold points move toward the published values
+  relative to the Tune~v1 prior. The panels show rescaled double-differential
+  cross sections versus $p_\parallel$. OmniFold bars show event-weight
   statistics only, and the panel $\chi^2/n$ compares OmniFold with the prior.}
   \label{fig:ptslices}
 \end{figure}
@@ -53,10 +55,9 @@ the cross sections in the original muon bins.
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{MEFHC_5iter_xsec_paper_pz_slices}
-  \caption{Rescaled double-differential cross sections versus $p_T$ in slices of
-  $p_\parallel$. The unfolding draws the central values toward the published
-  points in all 16 slices. Bars and panel distances follow
-  Fig.~\ref{fig:ptslices}.}
+  \caption{In all 16 $p_\parallel$ slices, the unfolding draws the central values toward
+  the published points. The panels show rescaled double-differential cross
+  sections versus $p_T$. Bars and panel distances follow Fig.~\ref{fig:ptslices}.}
   \label{fig:pzslices}
 \end{figure}
 
@@ -93,10 +94,10 @@ each of the five axes.
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{control_corner}
-  \caption{Reconstructed pair densities for exposure-scaled simulated signal
-  plus background below the diagonal, and data and simulation marginals
-  on the diagonal. The Pearson coefficients in data and simulation
-  agree closely over the displayed range, which omits the wide catch bins.}
+  \caption{The Pearson coefficients in data and simulation agree closely over the
+  displayed range, which omits the wide catch bins. Below the diagonal are the
+  reconstructed pair densities for exposure-scaled simulated signal plus
+  background, and on the diagonal the data and simulation marginals.}
   \label{fig:control-corner}
 \end{figure}
 
@@ -121,20 +122,21 @@ $0.8\leq E_{\mathrm{avail}}<1.5~\mathrm{GeV}$ and 1.37 at $1.5\leq E_{\mathrm{av
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{generators_vs_unfolded_band_central}
-  \caption{Single-variable projections of the refined 3D central values
-  against GENIE, MINERvA Tune~v1, NuWro, and GiBUU. The predictions
-  follow the muon-momentum shapes more closely than the available-energy
-  shape. The 3D result has no reported covariance.}
+  \caption{The generator predictions follow the muon-momentum shapes of the refined 3D
+  central values more closely than the available-energy shape. The panels show
+  single-variable projections against GENIE, MINERvA Tune~v1, NuWro, and
+  GiBUU. The 3D result has no reported covariance.}
   \label{fig:3dmodels}
 \end{figure}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{eavailW_band}
-  \caption{The $E_{\mathrm{avail}}$ and $W$ marginals of the \resFiveAxis{}
-  and four generator predictions. Both GENIE
-  predictions are $\genieWmidLo{}\%$--$\genieWmidHi{}\%$ above the unfolded central value at
-  $1.4\leq W<1.8~\mathrm{GeV}$. The comparison uses central values only.}
+  \caption{Both GENIE predictions are $\genieWmidLo{}\%$--$\genieWmidHi{}\%$ above the
+  unfolded central value at $1.4\leq W<1.8~\mathrm{GeV}$. The panels show the
+  $E_{\mathrm{avail}}$ (left) and $W$ (right) marginals of the \resFiveAxis{}
+  and four generator predictions, and below them each prediction divided by the
+  unfolded central value. The comparison uses central values only.}
   \label{fig:eavailWband}
 \end{figure}
 
@@ -279,13 +281,13 @@ for NuWro (16 cells) and \fvval{g-gibuu-total-chi2} for GiBUU (8 cells). The fre
 samples have unresolved validation issues. Figure~\ref{fig:fived16-modes}
 shows the leading contributions to the descriptive distances.
 
-\begin{figure}[H]
+\begin{figure}[tbp]
   \centering
-  \includegraphics[width=\linewidth]{figures/fd_g_fig_modes.pdf}
-  \caption{Cell loadings for the three largest $\chi^2$ contributions
-  for each full-grid prediction, using the covariance of fractional
-  residuals from $C_{\mathrm{rep}}+V_g$. Several modes contribute for
-  each prediction. The distances are descriptive, and the NuWro row uses
+  \includegraphics[width=0.85\linewidth]{figures/fd_g_fig_modes.pdf}
+  \caption{Several modes contribute to the descriptive distance of each full-grid
+  prediction. The panels show the cell loadings for the three largest $\chi^2$
+  contributions, using the covariance of fractional residuals from
+  $C_{\mathrm{rep}}+V_g$. The distances are descriptive, and the NuWro row uses
   the secondary CH comparison.}
   \label{fig:fived16-modes}
 \end{figure}
@@ -298,14 +300,14 @@ leaves a shape difference with the published 2D result. The distance
 per bin in the published covariance is 4.98 for the 3D purity marginal
 (Fig.~\ref{fig:eavail-marg}) and 4.52 for the refined 3D marginal.
 
-\begin{figure}[H]
+\begin{figure}[tbp]
   \centering
   \includegraphics[width=\textwidth]{eavail_marginal_vs_paper_pull_full}
-  \caption{Muon-plane differences between the 3D purity marginal and the
-  published 2D result, in units of the published binwise uncertainties.
-  The map and distribution show differences of both signs, with the
-  largest positive differences near the high-$p_\parallel$ edge.
-  The comparison is descriptive because the results share data.}
+  \caption{The 3D purity marginal differs from the published 2D result with both signs,
+  with the largest positive differences near the high-$p_\parallel$ edge. The
+  map and distribution show the muon-plane differences in units of the
+  published binwise uncertainties. The comparison is descriptive because the
+  results share data.}
   \label{fig:eavail-marg}
 \end{figure}
 
@@ -323,16 +325,16 @@ when the run-period term is removed from the reference covariance.
 Figure~\ref{fig:gbdt-bias-spread} compares the size of the bias with
 the repeat spread at a fixed iteration count.
 
-\begin{figure}[H]
+\begin{figure}[tbp]
   \centering
   \includegraphics[width=\linewidth]{figures/gbdt_bias_spread.pdf}
-  \caption{Repeat standard deviation versus mean signed fractional
-  residual for the refined estimator at five iterations, at nominal
-  truth and with GENIE+MEC $(E_{\mathrm{avail}},W)$ and NuWro
-  $(p_T,p_\parallel,E_{\mathrm{avail}})$ shape reweightings, respectively.
-  Colors distinguish the fine joint, coarse joint, and
-  $(E_{\mathrm{avail}},W)$ grids. Bias can exceed repeat spread.
-  The ensembles reuse samples from the estimator studies.}
+  \caption{Bias can exceed the repeat spread for the refined estimator at five
+  iterations. The panels show the repeat standard deviation versus the mean
+  signed fractional residual at nominal truth and under the GENIE+MEC
+  $(E_{\mathrm{avail}},W)$ (W2) and NuWro $(p_T,p_\parallel,E_{\mathrm{avail}})$
+  (W3) shape reweightings. Colors distinguish the fine joint (109 cells) and
+  coarse joint (27 cells) grids. The ensembles reuse samples from the
+  estimator studies.}
   \label{fig:gbdt-bias-spread}
 \end{figure}
 
@@ -353,11 +355,12 @@ linearly to the model envelope.
 \begin{figure}[H]
   \centering
   \includegraphics[width=\linewidth]{figures/gbdt_prior_response.pdf}
-  \caption{Data shifts under the NuWro $(p_T,p_\parallel,E_{\mathrm{avail}})$
-  prior reweighting versus minus the noise-free closure residual at that
-  truth. The panels show the fine joint, coarse joint, and
-  $(E_{\mathrm{avail}},W)$ grids. The shifts track the residuals, but
-  their magnitudes fall below those of the residuals in many cells.}
+  \caption{The data shifts under the NuWro $(p_T,p_\parallel,E_{\mathrm{avail}})$ prior
+  reweighting (W3) track minus the noise-free closure residual at that truth,
+  but the correlation does not bound the bias in any cell. The panels show the
+  fine joint, coarse joint, and $(E_{\mathrm{avail}},W)$ grids, each with the
+  correlation and the fraction of cells in which the shift is at least as large
+  as the residual.}
   \label{fig:gbdt-prior}
 \end{figure}
 
@@ -409,11 +412,10 @@ $p_\parallel$, and $0.66\%$ in $E_{\mathrm{avail}}$
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{nn_vs_gbdt_full}
-  \caption{Absolute 3D purity-baseline projections and ratios for
-  the multilayer perceptron and gradient-boosted trees at five
-  iterations. The largest excursions occur at the sparsely populated
-  edges of the muon spectra. The comparison is descriptive because
-  no agreement criterion was set in advance.}
+  \caption{The largest differences between the multilayer perceptron and the
+  gradient-boosted trees occur at the sparsely populated edges of the muon
+  spectra. The panels show absolute 3D purity-baseline projections and their
+  ratios at five iterations. The comparison is descriptive.}
   \label{fig:calibration}
 \end{figure}
 
