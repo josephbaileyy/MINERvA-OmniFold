@@ -15,7 +15,7 @@ The run-period block $C_{\mathrm{PL}}$ is an uncertainty assigned for an observe
 From the run-period block (sec\_systematics.tex:163):
 The block has rank two, and with three period groups its own size is poorly determined.
 
-From the comparison of the flux band with the publication (sec\_results.tex:30):
+From the comparison of the flux band with the publication (sec\_results.tex:30), where "this difference" is that between the per-bin median of this analysis's flux band, \SI{\fluxBand}{\percent}, and that of the published flux block, \SI{4.01}{\percent}:
 The public release cannot establish the origin of this difference, for which the FHC-only constraint file remains the leading, unconfirmed hypothesis of this analysis.
 
 From the test inventory's row for the injected $\Eavail$ bump in three dimensions (part5\_validation.tex:56, the result cell):
@@ -31,9 +31,15 @@ From the caption of the same table (sec\_validation.tex:7):
 Coverage pooled over bins is not a simultaneous probability that every bin is covered.
 
 \subsection{Scope and outlook (from Secs.~1 and 6 of the rewritten note)}
+From the introduction's account of the estimators (sec\_intro.tex:59):
+The \resFiveAxis{} (Table~\ref{tab:config-key}) and its five-axis covariance, and the extended-fiducial value, use the binned purity weight, a per-reco-bin $(D-B)/D$ weight fixed \emph{before} training.
+
+From the validity table's row for the exploratory five-axis unfolding (sec\_validity\_table.tex:33):
+$C_Z$: Section~\ref{sec:5d} uses it only as a descriptive scale, the \estPurity{}'s total uncertainty, for bias and model-dependence comparisons and for the estimator-seed sensitivity diagnostic (\S\ref{sec:eavailw-construction}), whose seed-sensitivity measurements use two companion covariances; it also gives the attribution of its per-source decomposition (\S\ref{sec:uq-combine}).
+
 % n01 and n03 (the two introduction sentences below) are retired from the limitations register by
 % DECISION-20261121a (Joseph, 2026-11-21); their text stays here.
-From the introduction (sec\_intro.tex:11):
+From the introduction (sec\_intro.tex:11), where "it" is the unbinned result in the muon's transverse and longitudinal momenta:
 Whether it is ready for publication as a measurement has not been established.
 
 From the introduction's scope paragraph (sec\_intro.tex:68):
