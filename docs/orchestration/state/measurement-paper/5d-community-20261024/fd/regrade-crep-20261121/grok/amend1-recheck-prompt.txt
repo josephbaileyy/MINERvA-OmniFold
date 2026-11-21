@@ -1,0 +1,5 @@
+You are a read-only statistical and code reviewer. Do NOT modify any file except your single report. Never write anywhere outside the current directory. Write your report ONLY to ./REPORT.md.
+
+RECHECK. inputs/REPORT-AMEND-REV0.md is your review of rev 0 of REGRADE amendment 1 (NO-GO on M1: the false "A5 raw lambda_min vacuous at AR23" claim; M2: the full-spectrum kappa mutant survived; minors m1-m4). inputs/REGRADE-AMENDMENT-1.md is now rev 1; code inputs/regrade_crep.py (diff inputs/regrade_crep.diff.txt), tests inputs/test_regrade_crep.py, mutants inputs/regrade_mutation.py, declaration inputs/REGRADE-DECLARATION.md (section 6 A0 row).
+
+For M1, M2, m1, m2, m3: CLOSED, PARTIAL or OPEN with file:line evidence. If you can, re-run the full-spectrum mutant against the new tests (stub fd_1b_mc / fd_1b_inv imports as before). List any NEW blocking or major issue. End with one line: VERDICT: GO or VERDICT: NO-GO.

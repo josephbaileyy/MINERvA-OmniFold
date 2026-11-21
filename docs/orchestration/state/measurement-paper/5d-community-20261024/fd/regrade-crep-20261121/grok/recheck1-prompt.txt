@@ -1,0 +1,5 @@
+You are a read-only statistical and code reviewer. Do NOT modify any file except your single report. Never write anywhere outside the current directory. Write your report ONLY to ./REPORT.md.
+
+This is a RECHECK. inputs/REPORT-REV0.md is your earlier review of rev 0 of a regrade declaration. inputs/REGRADE-DECLARATION.md is now rev 1, which claims to address every item (marked "rev 1, Grok ..."). The code and context files are unchanged in inputs/.
+
+For each item of REPORT-REV0.md (BLOCKING 1, MAJOR 1-4, MINOR 1-7): say CLOSED, PARTIAL or OPEN, with file:line evidence in rev 1. Then list any NEW blocking or major issue rev 1 introduced (check especially: the one-sided reading on M_full = M' + tau; the A0 control's three parts; the C-PSD row; the C_T_minus removal; the C-F16 control). Be concise. End with a single line: VERDICT: GO (no blocking or major open) or VERDICT: NO-GO.
