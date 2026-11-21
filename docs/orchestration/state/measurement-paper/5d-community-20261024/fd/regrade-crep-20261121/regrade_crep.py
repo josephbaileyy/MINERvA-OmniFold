@@ -11,8 +11,9 @@ R-chi2 reads "under-describes on average" iff M_full - 1 > 3 SE, else "not shown
 R-grade (descriptive) rebuilds the null with C_add in the Gaussian and in C_T, then fd_1b_mc.grade at A5's tolerance;
 its verdict string is written with the prefix "descriptive-" beside "a reading, not a proof".
 
-  python3 regrade_crep.py run2d --q205 <cov2d_Q_205.npz> --out <dir>
-  python3 regrade_crep.py run16 --capture-dir <dir of capture_<t>_<reading>.npz> --out <dir>
+  python3 regrade_crep.py run2d --q205 <cov2d_Q_205.npz> --out <record.json> [--tunes AR23 G18]
+  python3 regrade_crep.py run16 --capture-dir <dir of capture_<t>_<reading>.npz> --out <record.json>
+(--out is one JSON file, refused if it exists.)
 
 MEASURES: the declaration's R-chi2 and R-grade per evaluation, with A0 and the controls. CANNOT AUTHORIZE: any change
 to a reported covariance, any note or paper wording, a cause, or a p-value.
@@ -56,6 +57,10 @@ PINS = {   # section 1, sha256 of the committed bytes
                   "849766942b3ecd9e6e72fd5db9d1a59815796b3f917875f8d0122b0c639088ec"),
     "cpl_block": (FD / "with-cpl/block/cpl_block.npz",
                   "d9aa32fdb64357760348c9ccbc32fbea81d517f0f0786eedf17ab4946eaca59f"),
+    "cpl_block_json": (FD / "with-cpl/block/cpl_block.json",
+                       "4023746e3a819e8cc8348c457d7dc1ee55df66eaa5f5f68082824b9df27cabd6"),
+    "cpl_cells_csv": (FD / "with-cpl/data-product/fd_data_product_cpl_cells.csv",
+                      "b3a7d0cac19ab3ca17ecb603b5c4814fb8e072117cdd01c47383eb8f1d8cd6cd"),
     "readout_g18": (FD / "receipts-ll5d/readout/node/readout-g18.json",
                     "7bd6d3901fa9d5b017f7c5c2335ef70a4a41be58510d31cbcae3734556d0b12d"),
     "readout_ar23": (FD / "receipts-ll5d/readout/node/readout-ar23.json",
@@ -64,7 +69,7 @@ PINS = {   # section 1, sha256 of the committed bytes
 Q205_SHA = "7153b194b95c27f80db5997bdde35fe2475f2b1c40c9ff456edd409850cf47d2"
 SYM_TOL = 1e-12
 PSD_TOL = 1e-12
-A0_CHI2_REL = 1e-9
+A0_CHI2_FLOOR = 1e-9      # amendment 1: A0(b) at COV2D A5's max(1e-9, 10 kappa_2 eps), as T2-BINDING-1 addendum 1
 READING_SE = 3.0
 
 
@@ -121,8 +126,13 @@ def r_chi2(E: np.ndarray, C_T: np.ndarray, C_add: np.ndarray) -> dict:
     M_full = M + tau
     lam = np.linalg.eigvalsh(Cp)
     keep = lam > fn.RANK_REL * lam.max()
-    lam_T = np.linalg.eigvalsh(np.asarray(C_T, np.float64))
-    ndf_T = int(np.sum(lam_T > fn.RANK_REL * lam_T.max()))
+    lam_T, V_T = np.linalg.eigh(np.asarray(C_T, np.float64))
+    keep_T = lam_T > fn.RANK_REL * lam_T.max()
+    ndf_T = int(keep_T.sum())
+    _, V_p = np.linalg.eigh(Cp)
+    Vk = V_p[:, keep]
+    resid = np.linalg.norm(V_T[:, keep_T] - Vk @ (Vk.T @ V_T[:, keep_T]), axis=0)   # C_T kept modes outside C''s kept span
+    dropped = int(np.sum(resid > 1e-6))
     under = read_rule(M_full, se)
     return {
         "ndf": ndf, "n": n, "M_prime": M, "SE": se, "mean_error_part": mean_err, "spread_part": M - mean_err,
@@ -131,7 +141,8 @@ def r_chi2(E: np.ndarray, C_T: np.ndarray, C_add: np.ndarray) -> dict:
         "toys_own_mean_line": {"M_prime_minus_1_over_SE": (M - 1.0) / se,
                                "toys_mean_exceeds_1_by_3SE": bool((M - 1.0) > READING_SE * se),
                                "what": "descriptive; the stored toys' own mean chi2/ndf' against C'"},
-        "cut": {"ndf_C_T": ndf_T, "ndf_C_prime": ndf,
+        "cut": {"ndf_C_T": ndf_T, "ndf_C_prime": ndf, "C_T_kept_modes_outside_C_prime_kept_span": dropped,
+                "max_residual_of_C_T_kept_modes": float(resid.max()) if resid.size else 0.0,
                 "smallest_kept_rel": float(lam[keep].min() / lam.max()),
                 "largest_dropped_rel": float(lam[~keep].max() / lam.max()) if np.any(~keep) else None},
         "assumptions": ["the model for the added blocks (r independent of e, E r = 0, Cov r = C_add) is untested",
@@ -156,12 +167,29 @@ def check_psd(C: np.ndarray, name: str) -> dict:
     return rec
 
 
-def a0_compare(g: dict, committed: dict, flags_key: str, flags_now) -> dict:
-    """A0 (section 6): (a) ndf, joint_count, counts exact; (b) chi2_mean_over_ndf within 1e-9 relative;
-    (c) k_joint and the flags, which depend on the re-simulated null: a mismatch alone is 'null redraw differs'."""
+def a0_chi2_tol(C: np.ndarray) -> dict:
+    """Amendment 1: A0(b)'s tolerance, max(1e-9, 10 kappa_2 eps), COV2D A5's rule as T2-BINDING-1 addendum 1 adopted
+    it; kappa_2 = lambda_max / lambda_min over C's non-null subspace (eigenvalues above fd_1b_null.RANK_REL of the
+    largest, the chi2's own subspace). It equals A5's full-spectrum kappa_2 when every eigenvalue is kept (G18), and
+    is smaller (a stricter tolerance) when a positive eigenvalue falls under the cut (AR23's smallest, 9.99e-13 of the
+    largest); it is never looser than T2A's rule and stays finite when lambda_min <= 0, where A5's raw rule is infinite."""
+    lam = np.linalg.eigvalsh(np.asarray(C, np.float64))
+    if not lam.max() > 0:
+        raise Stop(f"A0(b): C has no positive eigenvalue (lambda_max {lam.max():.3e})")
+    keep = lam > fn.RANK_REL * lam.max()
+    kappa = float(lam.max() / lam[keep].min())
+    eps = float(np.finfo(np.float64).eps)
+    return {"rule": "max(1e-9, 10 kappa_2 eps), kappa_2 on the non-null subspace", "kappa2": kappa,
+            "tol": max(A0_CHI2_FLOOR, 10 * kappa * eps)}
+
+
+def a0_compare(g: dict, committed: dict, flags_key: str, flags_now, tol: float) -> dict:
+    """A0 (section 6, amendment 1): (a) ndf, joint_count, counts exact; (b) chi2_mean_over_ndf within ``tol``
+    relative (a0_chi2_tol); (c) k_joint and the flags, which depend on the re-simulated null: a mismatch alone is
+    'null redraw differs'."""
     a = {k: (g[k], committed[k], g[k] == committed[k]) for k in ("ndf", "joint_count", "counts")}
     rel = abs(g["chi2_mean_over_ndf"] / committed["chi2_mean_over_ndf"] - 1.0)
-    out = {"a": {k: v[2] for k, v in a.items()}, "b_rel": rel, "b": bool(rel <= A0_CHI2_REL),
+    out = {"a": {k: v[2] for k, v in a.items()}, "b_rel": rel, "b_tol": tol, "b": bool(rel <= tol),
            "c": {"k_joint": g["k_joint"] == committed["k_joint"], "flags": flags_now == committed[flags_key]}}
     if not all(out["a"].values()) or not out["b"]:
         raise Stop(f"A0: {out}; values {[(k, v[0], v[1]) for k, v in a.items() if not v[2]]}")
@@ -220,13 +248,15 @@ def null_2d(B: dict, C_run: np.ndarray) -> dict:
     return res["null"], b["C_T"]
 
 
-def run2d(q205: Path) -> dict:
+def run2d(q205: Path, tunes=TUNES_2D) -> dict:
+    if not tunes or any(T not in TUNES_2D for T in tunes):
+        raise SystemExit(f"tunes must be a non-empty subset of {TUNES_2D}")
     if sha256(q205) != Q205_SHA:
         raise Stop(f"C-PIN: {q205} is not {Q205_SHA}")
     with np.load(q205, allow_pickle=False) as z:
         C_PL, cells_q, x_q = np.asarray(z["C_PL"], np.float64), np.asarray(z["cells"]), np.asarray(z["x"], np.float64)
-    out = {"schema": "regrade-crep/2d/1", "q205_sha256": Q205_SHA, "evaluations": {}}
-    for T in TUNES_2D:
+    out = {"schema": "regrade-crep/2d/1", "q205_sha256": Q205_SHA, "tunes": list(tunes), "evaluations": {}}
+    for T in tunes:
         rec = {}
         try:
             with np.load(pinned(f"E_{T}"), allow_pickle=False) as z:
@@ -241,7 +271,9 @@ def run2d(q205: Path) -> dict:
             g0 = _grade(E, C0, null0)
             flat = [int(c) for c in np.flatnonzero(B["rep"])]
             flags0 = [flat[i] for i, f in enumerate(g0["cell_flag"]) if f]
-            rec["A0"] = a0_compare(g0, committed, "flagged_cells", flags0)
+            t0 = a0_chi2_tol(C0)
+            rec["A0"] = a0_compare(g0, committed, "flagged_cells", flags0, t0["tol"])
+            rec["A0"]["b_rule"] = t0
             C_run = carry_frac(C_PL, B["x_T"], B["x_R"])
             rec["C_PSD"] = check_psd(C_run, f"C_run({T})")
             rec["R_chi2"] = r_chi2(E, B["C_T"], C_run)
@@ -268,11 +300,38 @@ def load_capture(path: Path) -> dict:
     return d
 
 
+def cmap16(f: np.ndarray) -> dict:
+    """C-MAP16 (section 3): cpl_block.json's cells, the data product's cells csv and R00-R15 are one order, the csv's
+    f column equals cpl_block's f, and cpl_block.json names the pinned npz. A failure stops every sixteen-cell
+    evaluation (raised before any)."""
+    import csv
+    want = [f"R{i:02d}" for i in range(16)]
+    js = json.loads(pinned("cpl_block_json").read_text())
+    with open(pinned("cpl_cells_csv"), newline="") as fh:
+        rows = list(csv.DictReader(fh))
+    names_csv = [r["cell"] for r in rows]
+    f_csv = np.array([float(r["f"]) for r in rows])
+    npz_named = json.dumps(js.get("npz"))
+    ok = (js["cells"] == want and names_csv == want and len(f_csv) == 16
+          and float(np.max(np.abs(f_csv / f - 1.0))) <= 1e-12 and PINS["cpl_block"][1] in npz_named)
+    rec = {"cells_json": js["cells"], "cells_csv": names_csv, "f_csv_rel": float(np.max(np.abs(f_csv / f - 1.0))),
+           "npz_named": PINS["cpl_block"][1] in npz_named}
+    if not ok:
+        raise Stop(f"C-MAP16: {rec}")
+    return rec
+
+
 def run16(capdir: Path, manifest: dict | None = None) -> dict:
     with np.load(pinned("cpl_block"), allow_pickle=False) as z:
         f, P_rel = np.asarray(z["f"], np.float64), np.asarray(z["P_rel"], np.float64)
         C_resp, C_PL5D = np.asarray(z["C_resp"], np.float64), np.asarray(z["C_PL5D"], np.float64)
     out = {"schema": "regrade-crep/16/1", "capture_manifest": manifest, "evaluations": {}}
+    try:
+        out["C_MAP16"] = cmap16(f)
+    except Stop as ex:
+        out["C_MAP16"] = {"stop": str(ex)}
+        out["evaluations"] = {e: {"status": "STOP", "stop": str(ex)} for e in EVALS_16}
+        return out
     ident = float(np.max(np.abs(carry_rel(P_rel, f) - C_PL5D)) / np.max(np.abs(C_PL5D)))
     for e in EVALS_16:
         truth, reading = e.split("/")
@@ -289,7 +348,9 @@ def run16(capdir: Path, manifest: dict | None = None) -> dict:
             E, C_T, gauss, laws = cap["E"], cap["C_T"], cap["gauss"], cap["laws"]
             null0 = _strict(fn.null_contents, laws, gauss, C_T, seed=NULL_SEED_16[e])
             g0 = _grade(E, C_T, null0)
-            rec["A0"] = a0_compare(g0, committed, "cell_flag", g0["cell_flag"])
+            t0 = a0_chi2_tol(C_T)
+            rec["A0"] = a0_compare(g0, committed, "cell_flag", g0["cell_flag"], t0["tol"])
+            rec["A0"]["b_rule"] = t0
             X_T = cap["X_T"]
             C_add = carry_frac(C_resp, X_T, f) + carry_rel(P_rel, X_T)
             rec["C_PSD"] = check_psd(C_add, f"C_resp+C_PL5D({e})")
@@ -323,6 +384,7 @@ def main(argv=None) -> int:
     p2 = sub.add_parser("run2d")
     p2.add_argument("--q205", type=Path, required=True)
     p2.add_argument("--out", type=Path, required=True)
+    p2.add_argument("--tunes", nargs="+", choices=TUNES_2D, default=list(TUNES_2D))
     p16 = sub.add_parser("run16")
     p16.add_argument("--capture-dir", type=Path, required=True)
     p16.add_argument("--out", type=Path, required=True)
@@ -331,7 +393,7 @@ def main(argv=None) -> int:
         print(f"refusing: {a.out} exists", file=sys.stderr)
         return 2
     if a.cmd == "run2d":
-        rec = run2d(a.q205)
+        rec = run2d(a.q205, tuple(a.tunes))
     else:
         man = a.capture_dir / "capture-manifest.json"
         rec = run16(a.capture_dir, json.loads(man.read_text()) if man.exists() else None)

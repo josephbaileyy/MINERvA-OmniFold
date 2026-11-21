@@ -191,7 +191,7 @@ class A0(unittest.TestCase):
 
     def test_pass_equal(self):
         g, c = self.base()
-        r = rc.a0_compare(g, c, "flagged_cells", [7])
+        r = rc.a0_compare(g, c, "flagged_cells", [7], 1e-9)
         self.assertEqual(r["c_reading"], "equal")
 
     def test_each_exact_part_stops(self):
@@ -199,22 +199,68 @@ class A0(unittest.TestCase):
             g, c = self.base()
             g[k] = v
             with self.assertRaises(rc.Stop, msg=k):
-                rc.a0_compare(g, c, "flagged_cells", [7])
+                rc.a0_compare(g, c, "flagged_cells", [7], 1e-9)
 
     def test_chi2_tolerance(self):
         g, c = self.base()
         g["chi2_mean_over_ndf"] = 4.0 * (1 + 0.5e-9)
-        rc.a0_compare(g, c, "flagged_cells", [7])
+        rc.a0_compare(g, c, "flagged_cells", [7], 1e-9)
         g["chi2_mean_over_ndf"] = 4.0 * (1 + 2e-9)
         with self.assertRaises(rc.Stop):
-            rc.a0_compare(g, c, "flagged_cells", [7])
+            rc.a0_compare(g, c, "flagged_cells", [7], 1e-9)
+
+    def test_amendment1_tolerance_g18_case(self):
+        # G18: kappa_2 ~ 9.5e11 gives 10 kappa eps ~ 2.1e-3, so cov2d's 1.73e-8 laptop-vs-cluster difference passes
+        lam = np.array([1.0 / 9.5e11, 0.5, 1.0])
+        t = rc.a0_chi2_tol(np.diag(lam))
+        self.assertAlmostEqual(t["kappa2"], 9.5e11, delta=1.0)
+        self.assertAlmostEqual(t["tol"], 10 * 9.5e11 * np.finfo(float).eps, delta=1e-9)
+        g, c = self.base()
+        g["chi2_mean_over_ndf"] = 4.0 * (1 + 1.73e-8)
+        self.assertTrue(rc.a0_compare(g, c, "flagged_cells", [7], t["tol"])["b"])
+        g["chi2_mean_over_ndf"] = 4.0 * (1 + 1.1 * t["tol"])
+        with self.assertRaises(rc.Stop):
+            rc.a0_compare(g, c, "flagged_cells", [7], t["tol"])
+
+    def test_amendment1_floor(self):
+        t = rc.a0_chi2_tol(np.eye(4))          # kappa 1: 10 eps < 1e-9, so the floor binds
+        self.assertEqual(t["tol"], 1e-9)
+
+    def test_amendment1_kept_set_not_full_spectrum(self):
+        # a numerical null below zero beside a kept eigenvalue at 1e-11: the subspace kappa is 1e11 (tol ~2.2e-4); the
+        # full-spectrum ratio would be negative (tol at the floor), A5's raw rule infinite
+        rng = np.random.default_rng(9)
+        Q, _ = np.linalg.qr(rng.standard_normal((3, 3)))
+        C = Q @ np.diag([-1e-16, 1e-11, 1.0]) @ Q.T
+        t = rc.a0_chi2_tol(C)
+        self.assertAlmostEqual(t["kappa2"] / 1e11, 1.0, places=4)
+        self.assertAlmostEqual(t["tol"] / (10 * 1e11 * np.finfo(float).eps), 1.0, places=4)
+
+    def test_amendment1_ar23_like_stricter_than_a5(self):
+        # AR23's smallest eigenvalue at 9.99e-13 of the largest is under the cut: the subspace tol is stricter than A5's
+        lam = np.array([9.99e-13, 1e-9, 1.0])
+        t = rc.a0_chi2_tol(np.diag(lam))
+        a5 = max(1e-9, 10 * (lam[-1] / lam[0]) * np.finfo(float).eps)
+        self.assertLess(t["tol"], a5)
+        self.assertAlmostEqual(t["kappa2"], 1e9, delta=1.0)
+
+    def test_amendment1_nonpositive_is_stop(self):
+        with self.assertRaises(rc.Stop):
+            rc.a0_chi2_tol(-np.eye(2))
+
+    def test_amendment1_rank_deficient_is_finite(self):
+        rng = np.random.default_rng(5)
+        C = spd(8, rng, rank=6)
+        t = rc.a0_chi2_tol(C)
+        self.assertTrue(np.isfinite(t["kappa2"]) and t["kappa2"] < 1e12 + 1)
+        self.assertLess(t["tol"], 1e-2)
 
     def test_c_mismatch_is_not_a_stop(self):
         g, c = self.base()
         g["k_joint"] = 6
-        self.assertEqual(rc.a0_compare(g, c, "flagged_cells", [7])["c_reading"], "null redraw differs")
+        self.assertEqual(rc.a0_compare(g, c, "flagged_cells", [7], 1e-9)["c_reading"], "null redraw differs")
         g, c = self.base()
-        self.assertEqual(rc.a0_compare(g, c, "flagged_cells", [8])["c_reading"], "null redraw differs")
+        self.assertEqual(rc.a0_compare(g, c, "flagged_cells", [8], 1e-9)["c_reading"], "null redraw differs")
 
 
 class Controls(unittest.TestCase):
@@ -269,6 +315,103 @@ class Controls(unittest.TestCase):
     def test_null_seeds_are_ll5d_s(self):
         import ll5d
         self.assertEqual(rc.NULL_SEED_16, ll5d.NULL_SEED)
+
+
+class CMap16AndCut(unittest.TestCase):
+    def test_cmap16_passes_on_committed_metadata(self):
+        with np.load(rc.PINS["cpl_block"][0], allow_pickle=False) as z:
+            f = np.asarray(z["f"], np.float64)
+        rec = rc.cmap16(f)
+        self.assertEqual(rec["cells_csv"], [f"R{i:02d}" for i in range(16)])
+        self.assertTrue(rec["npz_named"])
+
+    def test_cmap16_stops_on_reordered_f(self):
+        with np.load(rc.PINS["cpl_block"][0], allow_pickle=False) as z:
+            f = np.asarray(z["f"], np.float64)
+        with self.assertRaises(rc.Stop):
+            rc.cmap16(f[::-1].copy())
+
+    def test_cmap16_stops_on_changed_csv(self):
+        import shutil, tempfile
+        with tempfile.TemporaryDirectory() as td:
+            p = Path(td) / "cells.csv"
+            shutil.copy(rc.PINS["cpl_cells_csv"][0], p)
+            p.write_text(p.read_text().replace("R01,", "R99,", 1))
+            with mock.patch.dict(rc.PINS, {"cpl_cells_csv": (p, rc.sha256(p))}):
+                with np.load(rc.PINS["cpl_block"][0], allow_pickle=False) as z:
+                    with self.assertRaises(rc.Stop):
+                        rc.cmap16(np.asarray(z["f"], np.float64))
+
+    def test_run16_records_stop_when_cmap16_fails(self):
+        with mock.patch.object(rc, "cmap16", side_effect=rc.Stop("C-MAP16: test")):
+            out = rc.run16(Path("/nonexistent"))
+        self.assertEqual({v["status"] for v in out["evaluations"].values()}, {"STOP"})
+        self.assertEqual(len(out["evaluations"]), 4)
+
+    def test_kept_set_count(self):
+        rng = np.random.default_rng(7)
+        C_T = spd(6, rng)
+        E = rng.standard_normal((20, 6))
+        r = rc.r_chi2(E, C_T, np.zeros_like(C_T))
+        self.assertEqual(r["cut"]["C_T_kept_modes_outside_C_prime_kept_span"], 0)
+        # a huge added block lifts lambda_max so far that C_T's smallest modes fall under the 1e-12 cut
+        lam, V = np.linalg.eigh(C_T)
+        C_T2 = V @ np.diag([1e-3, 1, 1, 1, 1, 1]) @ V.T
+        u = V[:, -1]
+        r2 = rc.r_chi2(E, C_T2, 1e12 * np.outer(u, u))
+        self.assertGreaterEqual(r2["cut"]["C_T_kept_modes_outside_C_prime_kept_span"], 1)
+
+
+class Tunes(unittest.TestCase):
+    def test_bad_tunes_refused_before_any_read(self):
+        with self.assertRaises(SystemExit):
+            rc.run2d(Path("/nonexistent"), ("XX",))
+        with self.assertRaises(SystemExit):
+            rc.run2d(Path("/nonexistent"), ())
+
+    def test_g18_only_evaluates_g18(self):
+        fake = {"C_PL": np.eye(2), "cells": np.arange(2), "x": np.ones(2)}
+
+        class Z(dict):
+            files = list(fake)
+            def __enter__(self): return self
+            def __exit__(self, *a): return False
+        with mock.patch.object(rc, "sha256", return_value=rc.Q205_SHA), \
+                mock.patch.object(rc.np, "load", return_value=Z(fake)), \
+                mock.patch.object(rc, "pinned", side_effect=rc.Stop("stub")):
+            out = rc.run2d(Path("/q"), ("G18",))
+        self.assertEqual(list(out["evaluations"]), ["G18"])
+        self.assertEqual(out["tunes"], ["G18"])
+
+
+class A0CallSites(unittest.TestCase):
+    """Both call sites pass a0_chi2_tol(C) of the graded matrix and record b_rule (Grok m2)."""
+
+    def test_run16_passes_amended_tol(self):
+        seen = {}
+
+        def a0c(g, committed, key, flags, tol):
+            seen["tol"] = tol
+            return {"a": {}, "b": True, "c_reading": "equal"}
+        with np.load(rc.PINS["cpl_block"][0], allow_pickle=False) as z:
+            f = np.asarray(z["f"], np.float64)          # C-F16 ties the capture's f to cpl_block's
+        cap = {"E": np.zeros((300, 16)), "C_T": 3.0 * np.eye(16), "gauss": 3.0 * np.eye(16), "laws": [],
+               "X_T": f.copy(), "f": f}
+        sentinel = {"rule": "x", "kappa2": 1.0, "tol": 0.123}
+        with mock.patch.object(rc, "cmap16", return_value={}), \
+                mock.patch.object(rc, "load_capture", return_value=cap), \
+                mock.patch.object(rc, "pinned", side_effect=lambda k: rc.PINS[k][0]), \
+                mock.patch.object(rc, "_strict", return_value={}), \
+                mock.patch.object(rc, "_grade", return_value={"cell_flag": [False] * 16}), \
+                mock.patch.object(rc, "a0_chi2_tol", return_value=sentinel) as tolf, \
+                mock.patch.object(rc, "a0_compare", side_effect=a0c), \
+                mock.patch.object(rc, "descriptive", return_value={}), \
+                mock.patch.object(rc, "r_chi2", return_value={}), \
+                mock.patch.object(rc, "check_psd", return_value={}):
+            out = rc.run16(Path("/cap"))
+        self.assertEqual(seen["tol"], 0.123)
+        np.testing.assert_array_equal(tolf.call_args_list[0][0][0], cap["C_T"])
+        self.assertEqual(out["evaluations"]["g18/minus2"]["A0"]["b_rule"], sentinel)
 
 
 if __name__ == "__main__":
