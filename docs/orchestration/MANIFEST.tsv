@@ -813,6 +813,14 @@ docs/orchestration/receipts/RECEIPT-20260825-terminal-watch-f17b-durability.json
 docs/orchestration/receipts/RECEIPT-2d-agreement-windows-20260821.json	tracked	MACHINE	machine-data		20260821	generated		exact-path-only	no
 docs/orchestration/receipts/RECEIPT-negweight-toy-20260821.json	tracked	MACHINE	machine-data		20260821	generated		exact-path-only	no
 docs/orchestration/receipts/RECEIPT-open-items-archive-repin-20260821.json	tracked	MACHINE	machine-data	20260806-campaign	20260821	generated		exact-path-only	no
+docs/orchestration/receipts/short-paper-removal-main-20261121/BUILDS.txt	tracked	ARCHIVAL	artifact			terminal		exact-path-only	yes
+docs/orchestration/receipts/short-paper-removal-main-20261121/COUNTS.txt	tracked	ARCHIVAL	artifact			terminal		exact-path-only	yes
+docs/orchestration/receipts/short-paper-removal-main-20261121/GATES-45402896.txt	tracked	ARCHIVAL	artifact			terminal		exact-path-only	yes
+docs/orchestration/receipts/short-paper-removal-main-20261121/GATES-f07cdb80b.txt	tracked	ARCHIVAL	artifact			terminal		exact-path-only	yes
+docs/orchestration/receipts/short-paper-removal-main-20261121/RECOVERY.txt	tracked	ARCHIVAL	artifact			terminal		exact-path-only	yes
+docs/orchestration/receipts/short-paper-removal-main-20261121/REVIEW-gemini-3.8-flash.txt	tracked	ARCHIVAL	artifact			terminal		exact-path-only	yes
+docs/orchestration/receipts/short-paper-removal-main-20261121/REVIEW-grok-4.7.txt	tracked	ARCHIVAL	artifact			terminal		exact-path-only	yes
+docs/orchestration/receipts/short-paper-removal-main-20261121/TESTS.txt	tracked	ARCHIVAL	artifact			terminal		exact-path-only	yes
 docs/orchestration/receipts/xr-x1-chi2-20261012/README.md	tracked	ARCHIVAL	document			terminal		exact-path-only	yes
 docs/orchestration/receipts/xr-x1-chi2-20261012/SHA256SUMS	tracked	ARCHIVAL	artifact			terminal		exact-path-only	yes
 docs/orchestration/receipts/xr-x1-chi2-20261012/chi2_x0_paperonly_control.txt	tracked	ARCHIVAL	artifact			terminal		exact-path-only	yes

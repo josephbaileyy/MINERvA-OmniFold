@@ -1,0 +1,19 @@
+# f07cdb80b31db7f267626bf6412878dc07f51e3a 2026-11-21T17:17:27Z; status:        0 dirty
+precommit                    rc=0  pre-commit: 21 checks passed
+manifest_check               rc=0  MANIFEST-CHECK :: OK exit=0 :: head=f07cdb80b31db7f267626bf6412878dc07f51e3a tree=clean scope=.
+hash_bindings                rc=0  ALL BINDINGS INTACT
+control_plane_lint           rc=0  CONTROL-PLANE PASS: 8 selected; 0 overflow; 2 backlog; 148 source records; 25 playbook rules; 6 state cells changed since declaration; 349309 prose / 
+live_doc_indexed             rc=0  tracked docs under docs/orchestration/ with NO overrides row: 0
+check_registry               rc=0  REGISTRY :: 11 estimators, 66 aliases, every citation checked; 80 printed labels in 40 files of the 3 builds, each naming exactly one estimator throug
+results_index                rc=0  RESULTS-INDEX :: 1761 tracked JSON in the roots: 167 included (25075 rows (24758 distinct, R5), 694 attributed; 138 receipts hold a distinct row), 159
+sec4                         rc=0  SEC4-RECEIPTS :: PASS (17/17)
+sec4_selftest                rc=0  SELF-TEST :: PASS (21 perturbations rejected)
+fived16_check                rc=0  VALUES-FIVED16 :: PASS (3617 values, readouts pinned, 1 figures equal their sources, 5 listed-truth sentences agree)
+fived16_selftest             rc=0  VALUES-FIVED16 SELF-TEST :: PASS
+containment_selftest         rc=0  SELF-TEST :: PASS
+pytest_note_registry         rc=0  130 passed in 348.52s (0:05:48)
+pytest_nd_fd                 rc=1  2 failed, 169 passed in 1780.12s (0:29:40)
+pytest_orchestration         rc=3  1 error in 13.17s
+build_all                    rc=0    main_records.pdf 60 pp
+# done 2026-11-21T17:56:38Z; status after:        0 tracked files modified
+re2c rc=1 2 failed, 23 passed in 0.40s

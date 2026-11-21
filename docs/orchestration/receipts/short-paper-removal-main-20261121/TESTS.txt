@@ -1,0 +1,9 @@
+# failing tests, parent 45402896 against removal f07cdb80b (junit from clean checkouts; [F] failure, [E] error)
+docs/analysis-note/test_build_all.py, test_check_sec4_receipts.py, tools/registry: SAME failure set; 130 tests; failing: []
+nd-unfolding/tests: test_hash_bindings, test_fd_g_figures, test_fd_cpl_addition, test_fd_gencmp_ea2: SAME failure set; 171 tests; failing: ['nd-unfolding.tests.test_hash_bindings::test_every_longform_finding_is_indexed[F]', 'nd-unfolding.tests.test_hash_bindings::test_the_narrowing_costs_only_the_reviewed_bindings[F]']
+docs/orchestration (pytest collection INTERNALERROR at both heads): SAME failure set; 2 tests; failing: ['::docs.orchestration.state.2d-closeout.stageB.diagnostics.p5.test_noop[E]', 'pytest::internal[E]']
+2d-unfolding/re2/partc/test_re2c.py: SAME failure set; 25 tests; failing: ['test_re2c.ValuesSpecRefinedSchema::test_every_row_resolves_against_the_real_refined_schema[F]', 'test_re2c.ValuesSpecRefinedSchema::test_mutation_restoring_the_s2_row_fails[F]']
+test_re2c causes: at 45402896 AssertionError (3, []) != (0, []) and (3, []) != (3, ['s2-bkg-share']); at f07cdb80b FileNotFoundError on docs/analysis-note/paper_body.tex (spec row 202, the first retired row), raised by re2c_values.py:151 before the schema run returns.
+# re2c_values.py on the committed spec at 45402896 (the parent), as test_re2c.unresolved() runs it: summary line and unexpected-row count
+{"rows": 250, "unexpected": 238, "control_pass": 3, "new_products": 8, "changes": 3, "refined": true, "declared_fails": 1}
+unexpected rows: 238; of them naming paper_body.tex or main_paper.tex: 12
