@@ -1,11 +1,15 @@
 fixture built at /pscratch/sd/j/josephrb/t3p-20261121
+   6 log-dry/SHA256SUMS
+  36 log-floor/SHA256SUMS
+  12 log-q3/SHA256SUMS
+  54 total
 == variant ok; npz 36
 == script rc=1; self copy left: ls: cannot access '/dev/shm/t3pr.1.sh': No such file or directory
 == the connect log
-node 953fe5e8dfdf nproc=4 loadavg 0.98 0.48 0.19
-2026-11-21T17:51:58Z
-window_end_epoch 1795284418 (now 1795283518); fence prefixes cov2d,ll5d_,ibukt,rpd_,prr_,e96,ens1_
-connect script sha256 fb7788751ae2028e9b0a11e46577efcf9f10d030894b6dc0d0a9baa7026c5227
+node cb48b06d37e7 nproc=4 loadavg 0.97 0.29 0.17
+2026-11-21T18:20:37Z
+window_end_epoch 1795286137 (now 1795285237); fence prefixes cov2d,ll5d_,ibukt,rpd_,prr_,e96,ens1_
+connect script sha256 9c4b604c552350317f577252c1244bfd80a3ea5e1fb7f9202cf4bb45f722b73c
 == fence (sacct)
 fence clear
 == the three jobs (sacct)
@@ -24,10 +28,12 @@ test_t3p.py: OK
 t3p_mutation.py: OK
 declaration sha256 f96ed6f29a155e978bf449fdcb9810670202e0a3d74fb2f96afe48098b63cae1
 addendum V1 sha256 3998708a91dde4b01c3dcb1e87a7b7a45796de13da53880a0eb79a410ecc7986
-log-floor/SHA256SUMS: 36 products
-log-dry/SHA256SUMS: OK (36 lines)
-log-q3/SHA256SUMS: OK (36 lines)
-log-floor/SHA256SUMS: OK (36 lines)
+log-dry/SHA256SUMS: 6 lines, 6 well-formed product lines (want 6)
+log-dry/SHA256SUMS: OK
+log-q3/SHA256SUMS: 12 lines, 12 well-formed product lines (want 12)
+log-q3/SHA256SUMS: OK
+log-floor/SHA256SUMS: 36 lines, 36 well-formed product lines (want 36)
+log-floor/SHA256SUMS: OK
 npz files under runs/: 36
 threads: OMP=1 OPENBLAS=1 MKL=1 NUMEXPR=1 VECLIB=1; nice 19; ionice idle; python 3.11.18
 Traceback (most recent call last):
@@ -46,11 +52,11 @@ read rc=1
 ls: cannot access '/pscratch/sd/j/josephrb/t3p-20261121/read': No such file or directory
 porcelain --ignored lines after: 0
 == records
-2026-11-21T17:52:44Z
-records copied: 23 files, 82071 bytes
-fetch-read.tar sha256 51aea0aee61a7b6139e5b04051ac3177d4c2b96765a49417d8bbeb6c046008a1 bytes 92160
+2026-11-21T18:21:06Z
+records copied: 23 files, 77525 bytes
+fetch-read.tar sha256 2278233e037f55f08e87a26bed3b88001cb7a92bf676b366a1900c2560d8fe83 bytes 81920
 t3p read rc=1
-2026-11-21T17:52:44Z
+2026-11-21T18:21:06Z
 == done: 1
 == OUT top level
 deploy-read

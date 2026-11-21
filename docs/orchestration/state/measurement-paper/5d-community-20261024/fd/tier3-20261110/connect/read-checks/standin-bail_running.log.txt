@@ -1,4 +1,8 @@
 fixture built at /pscratch/sd/j/josephrb/t3p-20261121
+   6 log-dry/SHA256SUMS
+  36 log-floor/SHA256SUMS
+  12 log-q3/SHA256SUMS
+  54 total
 == variant bail_running; npz 36
 BAIL fence (sacct) not clear
 == script rc=9; self copy left: ls: cannot access '/dev/shm/t3pr.1.sh': No such file or directory

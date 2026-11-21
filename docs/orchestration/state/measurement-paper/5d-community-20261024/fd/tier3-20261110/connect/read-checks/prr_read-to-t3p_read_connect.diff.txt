@@ -1,6 +1,6 @@
 --- /Users/josephbailey/tier3-plan-wt/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/read/cluster/prr_read.sh	2026-11-21 00:05:05
-+++ /Users/josephbailey/tier3-plan-wt/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/tier3-20261110/connect/t3p_read_connect.sh	2026-11-21 09:46:17
-@@ -1,102 +1,158 @@
++++ t3p_read_connect.sh	2026-11-21 10:19:32
+@@ -1,102 +1,175 @@
  #!/bin/bash
 -# FD-PRR: the PRR read (FD-PRR BINDING 1 addendum A4 ruling 1: the read runs from M_A4; addendum A2 section 6: from a
 -# fresh clone), on a Perlmutter login node, after the director's go, once prr_ibu attempt 3 (61057142) has completed.
@@ -28,11 +28,15 @@
 +#   the fence: no job of this user whose name starts with a fenced prefix or t3p_ is in a non-terminal state, by sacct;
 +#   sacct shows t3p_dry 61726250, t3p_q3 61728686 and t3p_floor 61731751 COMPLETED;
 +#   log-dry, log-q3 and log-floor each hold DONE and no STOP or FAILED; $OUT/read, $OUT/deploy-read, $OUT/fetch-read,
-+#     $OUT/fetch-read.tar, $OUT/fetch-read.sums and this connect's log and done are absent;
++#     $OUT/fetch-read.tar, $OUT/fetch-read.sums, $OUT/fetch-read.list and this connect's log and done are absent;
 +#   a fresh clone at M_V1 into $OUT/deploy-read, clean (porcelain --ignored 0), the six bound T3 files, the declaration
 +#     and addendum V1 at their bound sha256;
-+#   the 36 products against log-floor/SHA256SUMS (the floor job hashed every product under runs/ at its end), and
-+#     log-dry's and log-q3's SHA256SUMS still hold.
++#   each job's SHA256SUMS (the job hashed every product under runs/ at its end: dry 6, q3 12, floor 36) has exactly that
++#     many lines, every one a well-formed `<64 hex>  runs/....npz` line, and holds under `sha256sum --strict -c`; and
++#     runs/ holds exactly 36 products.
++# rev 1 (after Grok's read for the director, 2026-11-21): pipefail, and the status of every git status, find and list
++#   step checked, so a failed command stops instead of reading as empty; the sums gate above in place of a count of
++#   floor's .npz lines and a plain `sha256sum -c` (which exits 0 on an empty or malformed file).
 +# Then the read: M_V1's t3p_read.main(["--run", $OUT, "--repo", $D, "--out", $OUT/read]), unchanged, under root_6_28's
 +# python with -I -B, nice 19, ionice idle, every thread cap at 1 and PYTHONHASHSEED=0, inside REF-G1's read guard
 +# (ref_g1.read_guards(ref_g1.PROTECTED, ($D, $OUT), root=False)): a plain Python read under /pscratch or /global/cfs
@@ -41,9 +45,11 @@
 +# Then the records: every regular file under logs/, log-dry/, log-q3/, log-floor/, read/ and queues/, and manifest.json,
 +# stage.json and fence.txt (no .npz; this connect's own log, still open, is fetched beside the tar), copied through dd iflag=noatime into $OUT/fetch-read/, each copy's sha256 equal to
 +# its source's, then one tar of that copy at $OUT/fetch-read.tar, whose sha256 this log prints for the fetch.
-+# This connect writes only $OUT/deploy-read, $OUT/read, $OUT/fetch-read, $OUT/fetch-read.tar and its own log and done.
++# This connect writes only $OUT/deploy-read, $OUT/read, $OUT/fetch-read, $OUT/fetch-read.tar, the transient
++# $OUT/fetch-read.list and .sums (removed or moved into fetch-read/), and its own log and done.
 +# No set -u. Any stop is final.
 +SELF=$1; WEND=$2; FENCE=$3
++set -o pipefail
  TAG=read
 -M=cb13a6443a457bd3887d1c421723dfcdb1909ec8
 -OUT=/pscratch/sd/j/josephrb/fd-prr-20261108
@@ -99,7 +105,7 @@
 -case "$(sacct -j "$JOB" -X -n -P -o State | head -1)" in COMPLETED) ;; *) bail ;; esac
 -q=$(squeue --me -h -o '%j') || bail                 # fails closed
 -[ -z "$(printf '%s\n' "$q" | grep -E '^prr_')" ] || bail
-+for p in "$RO" "$D" "$FR" "$FR.tar" "$FR.sums" "$OUT/logs/connect-$TAG.log" "$OUT/logs/connect-$TAG.done"; do
++for p in "$RO" "$D" "$FR" "$FR.tar" "$FR.sums" "$FR.list" "$OUT/logs/connect-$TAG.log" "$OUT/logs/connect-$TAG.done"; do
 +  [ ! -e "$p" ] || bail "$p exists"
 +done
  LOG=$OUT/logs/connect-$TAG.log
@@ -125,8 +131,10 @@
  git clone -q https://github.com/josephbaileyy/MINERvA-OmniFold.git "$D" > "$OUT/logs/clone-$TAG.log" 2>&1 || { echo "STOP: clone"; finish 3; }
  git -C "$D" -c advice.detachedHead=false checkout -q "$M" || { echo "STOP: checkout"; finish 3; }
 -[ "$(git -C "$D" rev-parse HEAD)" = "$M" ] || { echo "STOP: HEAD is not M_A4"; finish 9; }
+-n=$(git -C "$D" status --porcelain --ignored | wc -l); echo "HEAD $M; porcelain --ignored lines before: $n"
 +[ "$(git -C "$D" rev-parse HEAD)" = "$M" ] || { echo "STOP: HEAD is not M_V1"; finish 9; }
- n=$(git -C "$D" status --porcelain --ignored | wc -l); echo "HEAD $M; porcelain --ignored lines before: $n"
++n=$(git -C "$D" status --porcelain --ignored | wc -l) || { echo "STOP: git status failed (before)"; finish 9; }
++echo "HEAD $M; porcelain --ignored lines before: $n"
  [ "$n" -eq 0 ] || { echo "STOP: the deploy is not clean"; finish 9; }
 -( cd "$D/nd-unfolding/prior_retention" && sha256sum -c ) <<SUMS || { echo "STOP: the FD-PRR files are not the bound ones"; finish 9; }
 -f87ee90c58d2b8904fe881931edc61966a6adda8be7eb503da6644797a3d1232  prr_probe.py
@@ -155,18 +163,22 @@
 +[ "$v1" = "$V1_SHA" ] || { echo "STOP: addendum V1 is not the bound one"; finish 9; }
 +
 +# ---- the products at the jobs' own records
-+np=$(grep -c '\.npz$' "$OUT/log-floor/SHA256SUMS"); echo "log-floor/SHA256SUMS: $np products"
-+[ "$np" -eq 36 ] || { echo "STOP: log-floor/SHA256SUMS does not list 36 products"; finish 9; }
-+for j in dry q3 floor; do
-+  ( cd "$OUT" && sha256sum --quiet -c "log-$j/SHA256SUMS" ) || { echo "STOP: the products are not log-$j/SHA256SUMS's"; finish 9; }
-+  echo "log-$j/SHA256SUMS: OK ($(grep -c '\.npz$' "$OUT/log-$j/SHA256SUMS") lines)"
++for js in dry:6 q3:12 floor:36; do
++  j=${js%%:*}; want=${js##*:}; SUMS="$OUT/log-$j/SHA256SUMS"
++  [ -f "$SUMS" ] || { echo "STOP: no log-$j/SHA256SUMS"; finish 9; }
++  nl=$(grep -c '' "$SUMS"); ng=$(grep -cE '^[0-9a-f]{64}  runs/[^[:space:]]+\.npz$' "$SUMS")
++  echo "log-$j/SHA256SUMS: $nl lines, $ng well-formed product lines (want $want)"
++  [ "$nl" -eq "$want" ] && [ "$ng" -eq "$want" ] || { echo "STOP: log-$j/SHA256SUMS is not $want well-formed lines"; finish 9; }
++  ( cd "$OUT" && sha256sum --strict --quiet -c "log-$j/SHA256SUMS" ) || { echo "STOP: the products are not log-$j/SHA256SUMS's"; finish 9; }
++  echo "log-$j/SHA256SUMS: OK"
  done
 -bmain=$(git -C "$D" show origin/main:docs/orchestration/state/measurement-paper/5d-community-20261024/FD-PRR-BINDING-1.md | sha256sum | cut -d' ' -f1)
 -echo "FD-PRR-BINDING-1.md at origin/main $(git -C "$D" rev-parse origin/main) sha256 $bmain"
 -[ "$bmain" = "$BIND_SHA" ] || { echo "STOP: BINDING 1 on main is not the one this connect was made against: to the director"; finish 9; }
 -# the route-2 products at the job's own record
 -( cd "$OUT" && sha256sum -c log-ibu/SHA256SUMS ) || { echo "STOP: route 2's products are not log-ibu/SHA256SUMS's"; finish 9; }
-+na=$(find "$OUT/runs" -type f -name '*.npz' | wc -l); echo "npz files under runs/: $na"
++na=$(find "$OUT/runs" -type f -name '*.npz' | wc -l) || { echo "STOP: find under runs/ failed"; finish 9; }
++echo "npz files under runs/: $na"
 +[ "$na" -eq 36 ] || { echo "STOP: runs/ does not hold exactly 36 products"; finish 9; }
  
 -# ---- the read: M_A4's prr_read.main, unchanged, inside REF-G1's read guard
@@ -201,24 +213,31 @@
 +for f in readout.json readout.txt; do
    [ -e "$RO/$f" ] && echo "$f sha256 $(dd if="$RO/$f" iflag=noatime status=none | sha256sum | cut -d' ' -f1) bytes $(stat -c %s "$RO/$f")"
  done
- n=$(git -C "$D" status --porcelain --ignored | wc -l); echo "porcelain --ignored lines after: $n"
+-n=$(git -C "$D" status --porcelain --ignored | wc -l); echo "porcelain --ignored lines after: $n"
++n=$(git -C "$D" status --porcelain --ignored | wc -l) || { echo "STOP: git status failed (after)"; finish 9; }
++echo "porcelain --ignored lines after: $n"
  [ "$n" -eq 0 ] || { echo "STOP: the deploy changed"; finish 9; }
 +
 +# ---- the records for the fetch: dd iflag=noatime copies, each checked, then one tar
 +echo "== records"
 +date -u +%FT%TZ
 +mkdir "$FR" || { echo "STOP: mkdir $FR"; finish 9; }
++# the list first, its status checked (every root but read/ must exist; read/ is absent only if the reader crashed)
++roots=(logs log-dry log-q3 log-floor queues manifest.json stage.json fence.txt); [ -d "$RO" ] && roots+=(read)
++( cd "$OUT" && find "${roots[@]}" -type f ! -name '*.npz' ! -name "connect-$TAG.log" -print0 | sort -z ) > "$FR.list" \
++  || { echo "STOP: the records list failed (find)"; finish 4; }
 +fail=0; nf=0
-+while IFS= read -r -d '' src; do
-+  rel=${src#"$OUT"/}
-+  mkdir -p "$FR/$(dirname "$rel")"
++while IFS= read -r -d '' rel; do
++  src="$OUT/$rel"
++  mkdir -p "$FR/$(dirname "$rel")" || { echo "mkdir failed: $rel"; fail=1; continue; }
 +  dd if="$src" of="$FR/$rel" iflag=noatime status=none || { echo "copy failed: $rel"; fail=1; continue; }
-+  a=$(dd if="$src" iflag=noatime status=none | sha256sum | cut -d' ' -f1); b=$(sha256sum "$FR/$rel" | cut -d' ' -f1)
++  a=$(dd if="$src" iflag=noatime status=none | sha256sum | cut -d' ' -f1) || { echo "re-read failed: $rel"; fail=1; continue; }
++  b=$(sha256sum "$FR/$rel" | cut -d' ' -f1) || { echo "hash failed: $rel"; fail=1; continue; }
 +  [ "$a" = "$b" ] || { echo "copy differs: $rel"; fail=1; }
 +  echo "$b  $rel" >> "$FR.sums"; nf=$((nf + 1))
-+done < <(cd "$OUT" && find logs log-dry log-q3 log-floor read queues manifest.json stage.json fence.txt \
-+           -type f ! -name '*.npz' ! -name "connect-$TAG.log" -print0 2>/dev/null | sort -z | sed -z "s|^|$OUT/|")
-+[ "$fail" -eq 0 ] || { echo "STOP: a record copy failed or differs"; finish 4; }
++done < "$FR.list"
++[ "$fail" -eq 0 ] && [ "$nf" -gt 0 ] || { echo "STOP: a record copy failed or differs, or no records ($nf)"; finish 4; }
++rm -f -- "$FR.list"
 +mv "$FR.sums" "$FR/RECORDS.SHA256SUMS" || finish 4
 +echo "records copied: $nf files, $(du -sb "$FR" | cut -f1) bytes"
 +tar -C "$OUT" -cf "$FR.tar" "fetch-$TAG" || { echo "STOP: tar"; finish 4; }

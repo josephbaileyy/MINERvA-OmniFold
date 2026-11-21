@@ -1,7 +1,7 @@
 #!/bin/bash
 # Stand-in run of t3p_read_connect.sh inside a Debian container. Stubs: sacct (states from $ST_*), and git's clone URL
 # only (rewritten to a --shared clone of the read-only host object store); everything else is the real tool.
-# Variant: $1 = ok | incomplete | bail_running | stale_sums
+# Variant: $1 = ok | incomplete | bail_running | stale_sums | empty_sums | deleted_byte | git_fail | missing_record
 V=${1:?variant}
 M=8bb4e3b0e1028d960e39de0c202569a08a1218a0
 OUT=/pscratch/sd/j/josephrb/t3p-20261121
@@ -10,6 +10,7 @@ mkdir -p /stub /root/.conda/envs/root_6_28/bin
 ln -sf /usr/local/bin/python3 /root/.conda/envs/root_6_28/bin/python3
 cat > /stub/git <<'EOF'
 #!/bin/bash
+if [ -e /tmp/git_status_fail ] && [[ " $* " == *" status "* ]]; then echo "fatal: stand-in git status failure" >&2; exit 128; fi
 if [ "$1" = clone ]; then dest=${@: -1}; exec /usr/bin/git clone -q --shared /hostgit "$dest"; fi
 exec /usr/bin/git "$@"
 EOF
@@ -36,15 +37,27 @@ for p in ("nd-unfolding/tier3", "nd-unfolding/prior_retention", "nd-unfolding"):
 import test_t3p as TT
 t = TT.EndToEnd("test_planted_classes"); t.setUp()
 t.run = Path(sys.argv[1]); t.build(t.plant)
+import t3p_probe as T
+with open("/tmp/jobs.tsv", "w") as f:
+    for arm, tr, sd in T.all_tasks():
+        f.write(f"{T.job_of(arm, tr, sd)}\t{T.product_path(t.run / 'runs', arm, tr, sd).relative_to(t.run)}\n")
 print("fixture built at", t.run)
 EOF
 ) || exit 51
 mkdir -p $OUT/logs && cd $OUT || exit 52
 for f in connect-dry.log connect-q3.log connect-floor.log t3p_dry_61726250.out t3p_q3_61728686.out t3p_floor_61731751.out; do echo "stand-in $f" > logs/$f; done
 echo '[]' > manifest.json; printf 'cov2d\nll5d_\n' > fence.txt
-for j in dry q3 floor; do find runs -type f -name '*.npz' -print0 | sort -z | xargs -0 sha256sum > log-$j/SHA256SUMS; done
+# each job hashed every product under runs/ at its end: dry 6, q3 12 (dry's and its own), floor 36
+awk -F'\t' '$1=="dry"{print $2}' /tmp/jobs.tsv | sort | xargs sha256sum > log-dry/SHA256SUMS
+awk -F'\t' '$1=="dry"||$1=="q3"{print $2}' /tmp/jobs.tsv | sort | xargs sha256sum > log-q3/SHA256SUMS
+awk -F'\t' '{print $2}' /tmp/jobs.tsv | sort | xargs sha256sum > log-floor/SHA256SUMS
+wc -l log-*/SHA256SUMS
 [ "$V" = incomplete ] && echo '{"pass": false}' > log-q3/pair.json
 [ "$V" = stale_sums ] && sed -i '1s/^./0/' log-floor/SHA256SUMS
+[ "$V" = empty_sums ] && : > log-dry/SHA256SUMS
+[ "$V" = deleted_byte ] && sed -i '2s/^.//' log-q3/SHA256SUMS
+[ "$V" = git_fail ] && touch /tmp/git_status_fail
+[ "$V" = missing_record ] && rm fence.txt
 echo "== variant $V; npz $(find runs -name '*.npz' | wc -l)"
 cp /connect/t3p_read_connect.sh /dev/shm/t3pr.1.sh
 WEND=$(( $(date +%s) + 900 ))

@@ -12,7 +12,7 @@ case "$NODE" in login[0-9][0-9]) ;; *) echo "STOP: '$NODE' is not a login node n
 [[ "$WEND" =~ ^[0-9]{10}$ ]] || { echo "STOP: window end '$WEND'"; exit 9; }
 [ "$(date +%s)" -le "$WEND" ] || { echo "STOP: the window has ended"; exit 9; }
 [[ "$FENCE" =~ ^[A-Za-z0-9_.-]+(,[A-Za-z0-9_.-]+)*$ ]] || { echo "STOP: fence '$FENCE'"; exit 9; }
-S="$HERE/t3p_read_connect.sh"; SHA=fb7788751ae2028e9b0a11e46577efcf9f10d030894b6dc0d0a9baa7026c5227
+S="$HERE/t3p_read_connect.sh"; SHA=9c4b604c552350317f577252c1244bfd80a3ea5e1fb7f9202cf4bb45f722b73c
 [ "$(shasum -a 256 "$S" | cut -d' ' -f1)" = "$SHA" ] || { echo "STOP: the local connect script is not the approved one"; exit 8; }
 SSH=(-o ControlPath=none -o BatchMode=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=8)
 HOP=(-o BatchMode=yes -o ConnectTimeout=10 -o ServerAliveInterval=15 -o ServerAliveCountMax=8 -o StrictHostKeyChecking=yes -o UpdateHostKeys=no)

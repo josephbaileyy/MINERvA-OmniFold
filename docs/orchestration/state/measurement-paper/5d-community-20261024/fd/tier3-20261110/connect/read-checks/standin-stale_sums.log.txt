@@ -1,11 +1,15 @@
 fixture built at /pscratch/sd/j/josephrb/t3p-20261121
+   6 log-dry/SHA256SUMS
+  36 log-floor/SHA256SUMS
+  12 log-q3/SHA256SUMS
+  54 total
 == variant stale_sums; npz 36
 == script rc=9; self copy left: ls: cannot access '/dev/shm/t3pr.1.sh': No such file or directory
 == the connect log
-node b0fac01af0a8 nproc=4 loadavg 1.27 0.85 0.39
-2026-11-21T17:54:49Z
-window_end_epoch 1795284589 (now 1795283689); fence prefixes cov2d,ll5d_,ibukt,rpd_,prr_,e96,ens1_
-connect script sha256 fb7788751ae2028e9b0a11e46577efcf9f10d030894b6dc0d0a9baa7026c5227
+node 21a03893e5d6 nproc=4 loadavg 1.03 0.47 0.24
+2026-11-21T18:21:54Z
+window_end_epoch 1795286214 (now 1795285314); fence prefixes cov2d,ll5d_,ibukt,rpd_,prr_,e96,ens1_
+connect script sha256 9c4b604c552350317f577252c1244bfd80a3ea5e1fb7f9202cf4bb45f722b73c
 == fence (sacct)
 fence clear
 == the three jobs (sacct)
@@ -24,14 +28,16 @@ test_t3p.py: OK
 t3p_mutation.py: OK
 declaration sha256 f96ed6f29a155e978bf449fdcb9810670202e0a3d74fb2f96afe48098b63cae1
 addendum V1 sha256 3998708a91dde4b01c3dcb1e87a7b7a45796de13da53880a0eb79a410ecc7986
-log-floor/SHA256SUMS: 36 products
-log-dry/SHA256SUMS: OK (36 lines)
-log-q3/SHA256SUMS: OK (36 lines)
+log-dry/SHA256SUMS: 6 lines, 6 well-formed product lines (want 6)
+log-dry/SHA256SUMS: OK
+log-q3/SHA256SUMS: 12 lines, 12 well-formed product lines (want 12)
+log-q3/SHA256SUMS: OK
+log-floor/SHA256SUMS: 36 lines, 36 well-formed product lines (want 36)
 runs/B0/A7_gibuu/t3p_B0_A7_gibuu_s991000.npz: FAILED
 sha256sum: WARNING: 1 computed checksum did NOT match
 STOP: the products are not log-floor/SHA256SUMS's
 t3p read rc=9
-2026-11-21T17:55:03Z
+2026-11-21T18:22:03Z
 == done: 9
 == OUT top level
 deploy-read
