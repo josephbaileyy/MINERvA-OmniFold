@@ -187,18 +187,9 @@ install_receipt_fig() {  # install_receipt_fig <source under $RB> <figure basena
 # Fig. 1 is no longer installed from the rebuild (82665808..., drawn from E_U and Q): RE-2 integration installs the
 # refined redraw below.
 
-echo
-echo "== Fig. 1 from RE-2 part C amendment 3 (E_R and Q_R; digest-checked copy) =="
-# Source: the committed copy of the amendment-3 redraw (RE2-PARTC-A3-REPORT.md sec. 3; run/partc_a3/RUN-fig1.txt,
-# out/fig1_validation.pdf 71a2ea48...), drawn by re2c_fig1.py 2aadeac8... with make_figs.py 4e18c266....
-RE2F="$REPO/docs/orchestration/state/2d-closeout/stageF/methods/re2-integration/fig1"
-src="$RE2F/fig1_validation.pdf"; want=71a2ea488ab758a466d40b7d5a7a061ebd95b1cdb90a79427c3da968238b6427
-if [[ "$(sha256_of "$src")" != "$want" ]]; then echo "REFUSE install: $src does not have sha256 $want" >&2; exit 1; fi
-cp "$src" "$FIGDIR/paper_fig1_validation.pdf"
-if [[ "$(sha256_of "$FIGDIR/paper_fig1_validation.pdf")" != "$want" ]]; then
-  echo "REFUSE install: $FIGDIR/paper_fig1_validation.pdf differs from $src after the copy" >&2; exit 1
-fi
-echo "  installed paper_fig1_validation.pdf ($want)"
+# The short paper's Fig. 1 (figures/paper_fig1_validation.pdf, RE-2 part C amendment 3's redraw fig1_validation.pdf
+# 71a2ea48...) was installed here until the short paper was retired on 2026-11-21 (docs/POST_PUBLICATION_REORG_PLAN.md,
+# family "short paper"); no remaining build includes it.
 
 echo
 echo "== 2D figures from RE-2 part C (E_R and Q_R; digest-checked copy) =="

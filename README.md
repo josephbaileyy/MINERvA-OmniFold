@@ -61,7 +61,7 @@ summaries of `AGENTS.md`; re-read the routed artifact before relying on one.
 | **Scalar 4D/5D** `+ q3, W` | `nd-unfolding/` (launcher router: `nd-unfolding/MANIFEST.md`) | `ND_OMNIFOLD_STATUS.md` | Extends the scalar feature set through `q3` and `W`. Central values and closures are complete. One scalar-5D covariance is adopted **under exception**, and measurements travel with it that are not caveats. The other covariance candidates are quarantined. Read the `AGENTS.md` row and the ledger, not a summary. |
 | **Joint-5D generator inference** (s5p, `OI-193`) | `nd-unfolding/s5p_*.py`; generator predictions `3d-unfolding/genie/gen5d_*.py` | `docs/orchestration/DELIVERY-20261006-s5p-campaign-terminal.md` | Tests five generator predictions against the 5D data, as hypothesis tests rather than as a measured cross section. The campaign is terminal. `reproduction/s5p/` replays it; `nd-unfolding/s5p_recompute.py` is the independent check. |
 | **Full-event: PET / FPS** | `nd-unfolding/pet/` (start at its `README.md`), `nd-unfolding/uq_fps/` | `PET_UQ_REMEDIATION_STATUS.md` (the legacy DAG), `nd-unfolding/pet/README.md` (where each campaign ends) | Point-cloud (PET) and full-phase-space studies of low-level event representations. **Diagnostic and method-development work, not a publication uncertainty product** (ruled 2026-08-20). No full-event total covariance is adopted. |
-| **Article and release** | `docs/analysis-note/main_paper.tex`, `publication/`, `docs/publication/` | `docs/publication/submission/PACKAGE-MANIFEST-20261006.md` | The PRD-class article, its release candidates, the replay and figure code, and the W1/W2 checks. Submission, deposit and tagging are Joseph's acts. |
+| **Article and release** | `docs/analysis-note/main_note.tex`, `publication/`, `docs/publication/` | `docs/publication/submission/PACKAGE-MANIFEST-20261006.md` | The PRD-class article, its release candidates, the replay and figure code, and the W1/W2 checks. Submission, deposit and tagging are Joseph's acts. |
 
 The 1D binned $p_T^\mu$ study is a closed equivalence/debug cross-check, not a
 publication result. Its workspace was retired from `main` on 2026-08-20 and is
@@ -230,7 +230,7 @@ MINERvA-OmniFold/
 │   └── ND_OMNIFOLD_STATUS.md, PET_UQ_REMEDIATION_STATUS.md, CORRECTED_UQ_PRODUCTION_STATUS.md, FPS_PILOT.md
 │
 ├── docs/                                  # deliverables + governance
-│   ├── analysis-note/                     #   LaTeX sources for all three builds (see Deliverables)
+│   ├── analysis-note/                     #   LaTeX sources for every build (see Deliverables)
 │   ├── CURRENT_WORK.md, CURRENT_WORK_BACKLOG.md
 │   ├── OPEN_ITEMS.md                      #   the OI-* rows; the archive holds closed months
 │   ├── ESTIMATOR_REGISTRY.md, EAVAIL_DEFINITION.md, HIGHER_DIM_OMNIFOLD_DESIGN.md
@@ -389,14 +389,14 @@ To rebuild the analysis environment from a fresh clone:
 
 ## Deliverables
 
-Three audience-tiered PDFs are built from one shared LaTeX source set in
+Audience-tiered PDFs are built from one shared LaTeX source set in
 `docs/analysis-note/`:
 
 | Target | Driver | Audience |
 |---|---|---|
 | Internal analysis note | `main_note.tex` | full detail, including retracted values shown struck |
 | Primer | `main_primer.tex` | short orientation |
-| External paper | `main_paper.tex` | a distillation, not an extract |
+| Short paper, retired 2026-11-21 | `main_paper.tex`, at `evidence/short-paper-retired-45402896` | no longer built; see `docs/analysis-note/README.md` |
 
 Build instructions are in [`docs/analysis-note/README.md`](docs/analysis-note/README.md). The article's
 state and remaining author actions are in `docs/publication/submission/PACKAGE-MANIFEST-20261006.md`.
@@ -407,7 +407,7 @@ cd docs/analysis-note && bash build_all.sh     # needs pdflatex + biber + python
 
 `build_all.sh` forces the rebuild, proves each PDF was written by that run, and
 then runs `check_dead_containment.py`, which enforces that retracted (struck)
-values reach the **note** build only and never the primer or paper. Every skip
+values reach only the records document and the PET note, never the posted note or the primer. Every skip
 in that stage is fatal by design: a containment pass over a stale PDF is worse
 than no check. `test_build_all.py` is its test suite. Built PDFs are gitignored;
 the tracked figure set lives in `docs/analysis-note/figures/`.

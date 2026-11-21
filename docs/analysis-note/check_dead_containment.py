@@ -80,7 +80,8 @@ import subprocess
 import sys
 from pathlib import Path
 
-BUILDS = {"main_note": "note", "pet_note": "pet-note", "main_paper": "paper",
+#: main_paper ("paper") was retired on 2026-11-21 (docs/POST_PUBLICATION_REORG_PLAN.md, family "short paper").
+BUILDS = {"main_note": "note", "pet_note": "pet-note",
           "main_primer": "primer", "main_records": "records"}
 #: The note-audience builds, each with the ONE file in it that may carry \dead{}. pet_note joined on
 #: 2026-10-12, when the PET studies left main_note for a companion note and their struck values moved
