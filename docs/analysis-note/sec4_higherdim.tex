@@ -281,7 +281,9 @@ The sixteen-cell estimator exceeds the prespecified bias criteria at
 \fvval{f0b-nlisted} of the \fvval{f0b-all-truths} simulated truths. The test
 compares the mean unfolded vector with the known truth using $C_{\mathrm{rep}}$,
 with the corresponding $C_{\mathrm{model}}$ contribution removed for each
-truth derived from one of its generators. The
+truth derived from one of its generators. A truth is flagged if
+$p<\fvval{trig-p}$ or any cell has an absolute standardized residual
+$|z|>\fvval{trig-z}$. The
 \hyperlink{validation-sixteen-bias}{fake-data bias row} of
 Table~\ref{tab:validation-inventory} gives the scoring thresholds.
 
@@ -398,7 +400,8 @@ gives the thresholds, which are applied with multiplicity accounted for.
 
 The sixteen-cell estimator fails the prespecified rounding-stability
 test on data, with shifts of 0.8 at the median and up to \lrval{stab-max}
-statistical standard deviations. The shifts are measured over the joint-cell
+statistical standard deviations, against tolerances of \fvval{ens1-bar-median}
+and \fvval{ens1-bar-max}. The shifts are measured over the joint-cell
 integrals, the $E_{\mathrm{avail}}$--$W$ integrals and their sum, and the
 total rate. The \hyperlink{validation-sixteen-rounding}{rounding-level stability row}
 gives the tolerances. The test perturbs each stored input by up to half a
