@@ -1,0 +1,36 @@
+{
+ "removed_texts": [
+  "mean=0.06\nSD = 0.54\n$\\chi^2$/ndf paper = 2.27",
+  "MINERvA ME FHC, $1.06\\times10^{21}$ POT"
+ ],
+ "font_scale": 0.7,
+ "font_sizes_after": [
+  5.54,
+  5.95
+ ],
+ "printed_scale": 1.4285714285714288,
+ "clim_before": [
+  -5.0,
+  5.0
+ ],
+ "clim_after": [
+  -3.0,
+  3.0
+ ],
+ "map_min": -2.572255336801277,
+ "map_max": 1.9103709363667978,
+ "bar_edges": [
+  "white",
+  0.4
+ ],
+ "n_bars": 31,
+ "hist_ylim_before": [
+  0.0,
+  55.44
+ ],
+ "hist_ylim": [
+  0.0,
+  37.949999999999996
+ ],
+ "tallest_bar": 33.0
+}
