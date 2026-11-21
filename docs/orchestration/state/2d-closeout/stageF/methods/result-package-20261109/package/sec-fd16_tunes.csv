@@ -1,0 +1,5 @@
+tune,record,matrix,chi2,ndf,p,cells_abs_z_gt_2,max_abs_z,max_abs_z_cell,n_pseudo_experiments
+genie_v3_G18_10a_02_11b,ensemble,C_total + C_resp + C_PL5D,9.263149136145817,16,0.9021820023074084,,0.6137569511679947,R11,20
+genie_v3_G18_10a_02_11b,noise-free closure,C_total + C_resp + C_PL5D,9.141803511290767,16,0.9074590414828805,,0.5992147384250862,R11,1
+genie_v3_AR23_20i_00_000,ensemble,C_total + C_resp + C_PL5D,14.058838796004459,16,0.5943303535863425,,0.6073517985160982,R07,20
+genie_v3_AR23_20i_00_000,noise-free closure,C_total + C_resp + C_PL5D,13.433661147390143,16,0.6408247884303174,,0.5664636714742401,R07,1

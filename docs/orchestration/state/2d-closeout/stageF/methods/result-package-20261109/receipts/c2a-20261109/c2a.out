@@ -1,0 +1,14 @@
+node login27 2026-11-09T08:13:10Z
+connect script sha256 f883554c71eb83d20e9831eee948cfcbf9c1308d096ac41ea14905ce74c2191b
+== 1. stat before 2026-11-09T08:13:10Z
+regular file|882727051059074779|1|2022426|1792858709|1792862994|1792858709|/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partc-r2/outA/cov2d_Q_205.npz
+== 2. read (O_NOATIME) 2026-11-09T08:13:10Z
+read 2022426 bytes; sha256 7153b194b95c27f80db5997bdde35fe2475f2b1c40c9ff456edd409850cf47d2 (bound 7153b194b95c27f80db5997bdde35fe2475f2b1c40c9ff456edd409850cf47d2)
+== BEGIN cov2d_Q_205.npz base64
+[the base64 block (35482 lines) is omitted here: it decodes to 2022426 bytes with sha256 7153b194b95c27f80db5997bdde35fe2475f2b1c40c9ff456edd409850cf47d2; the full stdout c2a.out has sha256 c065de342b494bb4fb4f70bf71f4815aa1fa2a4f7613fd44d63730e8be1ce21d and 2732929 bytes]
+== END cov2d_Q_205.npz base64
+read rc=0 2026-11-09T08:13:10Z
+== 3. stat after 2026-11-09T08:13:10Z
+regular file|882727051059074779|1|2022426|1792858709|1792862994|1792858709|/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partc-r2/outA/cov2d_Q_205.npz
+stat: byte-identical before and after
+== c2a rc=0 2026-11-09T08:13:10Z

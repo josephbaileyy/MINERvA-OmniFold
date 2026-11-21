@@ -1,0 +1,1 @@
+Not yet available: a per-cell validity rule: the bias at most half of the truth's departure from the prior; to be added in a later version.
