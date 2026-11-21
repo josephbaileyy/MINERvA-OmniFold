@@ -1,0 +1,20 @@
+# q3 (2026-11-21T02:47:23Z): bash tools/run_q3.sh <wt> d9fba038e
+# compose_q3_labels.py sha256 7170a66d820e628a1dd5388d13ca843b3a9c93fef9313d829c20793a7904e2af
+== arm 0 against docs/analysis-note/figures/q3_excess_projection.pdf at d9fba038e
+EQUAL-BUT-DATE tmp.Xwx9XOSkhi: /CreationDate (D:20261118200034-07'00') vs /CreationDate (D:20261120184725-07'00')
+raster: RASTER :: EQUAL :: 1 page(s), 0 differing pixel(s)
+== arm 1 against arm 0: data artists (fig-restyle compare.py, full hashes: data, colours, styles)
+  equal  q3/q3_excess_projection.pdf.json: 7 data artists
+  equal  q3/q3_excess_projection.png.json: 7 data artists
+COMPARE :: PASS
+== arm 1 against arm 0: drawn strings and sizes
+  equal q3_excess_projection.pdf: 87 strings (arm 0's with 2 x 'unfolded / GENIE prior' -> 'unfolded / Tune v1 prior'); canvas [6.5, 5.0]; min font 7.0 pt; overlaps arm 0 0, arm 1 0
+  equal q3_excess_projection.png: 87 strings (arm 0's with 2 x 'unfolded / GENIE prior' -> 'unfolded / Tune v1 prior'); canvas [6.5, 5.0]; min font 7.0 pt; overlaps arm 0 8, arm 1 8
+== the label colours (runs/q3/compose_q3_labels.json)
+  34 labels, one per finite cell: 15 white, 19 black; cmap RdBu_r, (vmin, vmax, vcenter) = (0.661783, 1.2644, 1.0) (unchanged)
+  white: ['0.66', '0.66', '0.71', '1.17', '1.18', '1.20', '1.21', '1.22', '1.22', '1.22', '1.23', '1.23', '1.24', '1.25', '1.26']
+  black values span 0.81..1.17
+  luminance: white labels on L <= 0.1787, black on L >= 0.1908 (the contrast crossover is L = 0.1791)
+  LABELS :: PASS
+== installed docs/analysis-note/figures/q3_excess_projection.pdf: sha256 57130b9500d42b234b10cb8b7bf1273c2d43967798209cd7e85e602d25cf8aec (arm 1: 57130b9500d42b234b10cb8b7bf1273c2d43967798209cd7e85e602d25cf8aec)
+RUN-Q3 :: PASS
