@@ -280,10 +280,16 @@ injected-feature score divides the residual by the size of the injection,
 following Ref.~\cite{Canelli:2025guide}.
 The higher-dimensional bump tests use the same truth-to-reconstruction
 weight transfer. Their recovery score is read on the one-dimensional
-projection of the deformed observable. For the $W$ injection the ratio
-of the residual feature to the injected feature is graded in the peak
-bin. Examining the individual $(E_{\mathrm{avail}},W)$ cells there
-reveals distortions that dilute in the $W$ projection.
+projection of the deformed observable. The available-energy test applies
+a $30\%$ Gaussian enhancement centered at $0.3~\mathrm{GeV}$ with width
+$0.15~\mathrm{GeV}$. The injected change on the marginal is $18.1\%$, and
+the residual across 3D bins has a standard deviation of $3.2\%$. The $q_3$
+test also uses Gaussian reweighting. The $W$ test applies a $30\%$ Gaussian
+enhancement centered at $1.23~\mathrm{GeV}$ with width $0.15~\mathrm{GeV}$.
+The ratio of the residual feature to the injected feature is graded in
+the peak bin, $1.1\leq W<1.4~\mathrm{GeV}$, where the residual is $4.2\%$
+for a $23.1\%$ injection. Examining the individual $(E_{\mathrm{avail}},W)$
+cells there reveals distortions that dilute in the $W$ projection.
 
 In the hidden-variable check, reconstructed pseudo-data are multiplied by
 $1+A\exp[-((\Delta p_T-0.10)/0.05)^2]$, with $\Delta p_T$ in $\mathrm{GeV}/c$
@@ -300,9 +306,10 @@ The sixteen-cell bias test scores the difference between the mean unfolded
 vector and the known truth. The scale is the reported covariance of an
 individual result, with the corresponding generator's outer product
 removed when the truth was derived from that generator. The prespecified
-criterion flags a truth for a quadratic distance with a $\chi^2_{16}$
-reference probability below 0.01 or an absolute standardized mean
-residual above two in any cell. Separate Poisson ensembles at held-out
+criterion flags a truth for a quadratic distance with a
+$\chi^2_{\fvval{f0b-A7_genie_cv-n}}$ reference probability below
+\fvval{trig-p} or an absolute standardized mean residual above
+\fvval{trig-z} in any cell. Separate Poisson ensembles at held-out
 tunes probe the same bias criterion without drawing detector and
 interaction-model variations.
 
@@ -321,8 +328,9 @@ residual on the ensemble mean truth. The resulting fraction of standardized
 residuals within one standard deviation describes the ensemble's pull
 distribution. It is compared with the Gaussian probability of 0.6827.
 
-The two held-out GENIE v3 tunes test coverage of the covariance procedure
-under different simulated truths. At each tune we rebuild the covariance
+The two held-out GENIE v3 tunes, \fvval{f1-tune-ar23} and \fvval{f1-tune-g18},
+test coverage of the covariance procedure under different simulated
+truths. At each tune we rebuild the covariance
 with its prior-shape term and without the run-period term, and generate \lrval{cov2d-ntoys}
 pseudo-experiments drawing the specified variations. A bin is covered if its
 absolute residual is at most $\sqrt{C_{ii}}$. Joint containment uses
@@ -332,9 +340,39 @@ absolute residual is at most $\sqrt{C_{ii}}$. Joint containment uses
   \label{eq:app-joint-coverage}
 \end{equation}
 where $\Phi$ is the standard normal cumulative distribution and $\nu$ is the
-retained rank. A null simulation sets the minimum acceptable counts before
-the pseudo-experiment outcomes are read. We assess the per-bin and joint
-counts separately. The analogous sixteen-cell study evaluates
+retained rank. This quantile has the probability content of a Gaussian
+one-standard-deviation interval. A null simulation sets the minimum acceptable
+counts before the pseudo-experiment outcomes are read. We assess the per-bin
+and joint counts separately.
+
+The mean $\chi^2$ per degree of freedom is
+$\lrval{cov2d-ar23-chi2ndf}\pm\lrval{cov2d-ar23-chi2ndf-se}$ for
+\lrval{cov2d-ar23-ndf} degrees of freedom at the first tune and
+$\lrval{cov2d-g18-chi2ndf}\pm\lrval{cov2d-g18-chi2ndf-se}$ for
+\lrval{cov2d-g18-ndf} at the second. A descriptive check retaining only the
+\lrval{t2a-r1} or \lrval{t2a-r2} largest-variance directions also finds
+zero joint containments at each tune.
+
+\begingroup
+% Format the source's combined ranges as inequalities and percentage points.
+\def\MuonCoverageCell#1--#2, #3--#4\relax{%
+  $#1<p_T<#2\,\mathrm{GeV}/c$ and $#3<p_\parallel<#4\,\mathrm{GeV}/c$}
+\def\MuonCoveragePoints#1--#2\relax{\fpeval{100*(#1)}--\fpeval{100*(#2)}}
+The per-bin test flags \lrval{cov2d-ar23-nflagged} bins at the first tune
+and \lrval{cov2d-g18-nflagged} at the second, with the deficits attributed
+to bias in those bins. The bin with
+\expanded{\noexpand\MuonCoverageCell\lrval{cov2d-cell29-range}\noexpand\relax}
+is flagged at both tunes, with \lrval{cov2d-ar23-29-count} and
+\lrval{cov2d-g18-29-count} containments, respectively, against a threshold of
+\lrval{cov2d-ar23-29-kc}. The per-bin test resolves deficits in coverage of about
+\expanded{\noexpand\MuonCoveragePoints\lrval{cov2d-res-cell}\noexpand\relax}
+percentage points. The joint test scores the full residual vector and
+resolves a deficit of about \fpeval{100*\lrval{cov2d-res-joint}} percentage
+points.
+\par
+\endgroup
+
+The analogous sixteen-cell study evaluates
 $C_{\mathrm{total}}$ at the two tunes, with and without the neutron and proton
 transport bands, and applies the joint count threshold to each variant. Its
 scope and descriptive status are given in
@@ -630,7 +668,7 @@ the original targets, so it is descriptive for the hydrocarbon predictions.
   Run-period contribution to the published comparison & Separate unfolds of the three groups &
   Prespecified comparison in published-covariance eigenmodes & The step fails to explain the discrepancy in the best-determined directions at the test sensitivity. \\
   \addlinespace[1.5pt]
-  Gaussian $p_T$ and tilted $p_\parallel$ truth & 2D purity baseline, signal only &
+  \hypertarget{validation-2d-closure}{}Gaussian $p_T$ and tilted $p_\parallel$ truth & 2D purity baseline, signal only &
   Descriptive $1.5\%$ residual threshold & Residuals $0.046\%$ and $0.013\%$. \\
   \addlinespace[1.5pt]
   Injected $17.2\%$ Gaussian feature & 2D purity baseline, signal only &
@@ -639,7 +677,7 @@ the original targets, so it is descriptive for the hydrocarbon predictions.
   Alternative axial-mass and flux universes & Signal-only 2D purity baseline with accepted truth extrapolated to the reporting domain &
   Descriptive $2\%$ residual threshold & Residuals $0.068\%$ and $0.376\%$ against the constructed references. \\
   \addlinespace[1.5pt]
-  Hidden $\Delta p_T$ deformation & 2D purity baseline, fixed truth &
+  \hypertarget{validation-2d-response}{}Hidden $\Delta p_T$ deformation & 2D purity baseline, fixed truth &
   Descriptive $3\%$ residual threshold & Leakage scales with amplitude. The largest arm gives $3.43\%$. \\
   \addlinespace[1.5pt]
   Background-inclusive closure & 2D purity and refined subtraction on 20 paired nominal-truth draws &
@@ -651,18 +689,21 @@ the original targets, so it is descriptive for the hydrocarbon predictions.
   Fixed-truth statistical coverage & Earlier 2D band with a completeness correction &
   Prespecified one- and two-standard-deviation windows & Coverage is \covTwoDCOne{} and \covTwoDCTwo{}, respectively. The two-standard-deviation band fails. \\
   \addlinespace[1.5pt]
-  Held-out-tune coverage & Rebuilt 2D covariance at two GENIE v3 tunes, including prior-shape term and omitting run-period term &
-  Prespecified containment counts & Joint undercoverage at both tunes. Bias drives the flagged bins. \\
+  \hypertarget{validation-2d-joint-coverage}{}Held-out-tune coverage &
+  Rebuilt 2D covariance at two GENIE v3 tunes, including prior-shape term and omitting run-period term &
+  Prespecified joint minima of \lrval{cov2d-ar23-kjoint} and
+  \lrval{cov2d-g18-kjoint} of \lrval{cov2d-ntoys} at the two tunes &
+  Joint undercoverage at both tunes. Bias drives the flagged bins. \\
   \addlinespace[1.5pt]
   Classifier two-sample diagnostic & Reconstructed data and reweighted simulation &
   Descriptive because training and evaluation share the sample & Area under the ROC curve falls from about 0.535 to 0.501. \\
   \midrule
   \multicolumn{4}{@{}l}{\textit{Higher-dimensional recovery and estimator dependence}} \\
   \addlinespace[1.5pt]
-  $E_{\mathrm{avail}}$ and $q_3$ bumps & 3D and 4D purity baseline, signal only &
+  \hypertarget{validation-nd-bumps}{}$E_{\mathrm{avail}}$ and $q_3$ bumps & 3D and 4D purity baseline, signal only &
   Descriptive, with no prespecified thresholds & Marginal residuals $1.84\%$ and at most $1.1\%$. \\
   \addlinespace[1.5pt]
-  $W$ bump at the $\Delta$ peak & 5D purity baseline, signal only &
+  \hypertarget{validation-nd-w-bump}{}$W$ bump at the $\Delta$ peak & 5D purity baseline, signal only &
   Prespecified marginal residual-to-injection limit of 0.20 & Ratio 0.180 passes. Joint peak-column cells are up to $9.4\%$ low. \\
   \addlinespace[1.5pt]
   Background-inclusive closure & 5D deterministic purity control, low-capacity refinement, and sixteen-cell estimator at nominal truth &
@@ -683,8 +724,10 @@ the original targets, so it is descriptive for the hydrocarbon predictions.
   Reporting-resolution precision & Sixteen-cell estimator on two joint grids and the $(E_{\mathrm{avail}},W)$ plane &
   Prespecified width, model-sensitivity, and recovery targets & All three grids miss the targets. \\
   \addlinespace[1.5pt]
-  Fake-data bias & Sixteen-cell estimator at \fvval{f0b-all-truths} truths, with separate held-out-tune controls &
-  Prespecified $p<0.01$ or any $|z|>2$ for flagging & GiBUU hybrid and $q_3$ tilt flagged with $C_{\mathrm{rep}}$. Both held-out controls stay within the criteria. \\
+  \hypertarget{validation-sixteen-bias}{}Fake-data bias &
+  Sixteen-cell estimator at \fvval{f0b-all-truths} truths, with separate held-out-tune controls &
+  Prespecified $p<\fvval{trig-p}$ or any $|z|>\fvval{trig-z}$ for flagging &
+  GiBUU hybrid and $q_3$ tilt flagged with $C_{\mathrm{rep}}$. Both held-out controls stay within the criteria. \\
   \addlinespace[1.5pt]
   Prior retention and algorithm settings & Sixteen-cell estimator at the flagged truths and a binned IBU control &
   Prespecified change of \fvval{prr-floor} in retained fraction & Both flags persist across the refined settings. Binned IBU clears the tilt flag. \\
@@ -697,16 +740,19 @@ the original targets, so it is descriptive for the hydrocarbon predictions.
   \midrule
   \multicolumn{4}{@{}l}{\textit{Higher-dimensional coverage, stability, and generator tests}} \\
   \addlinespace[1.5pt]
-  End-to-end statistical coverage & Deterministic 5D purity control on 153 integrals &
-  Prespecified upper-bound futility rule & Fails at nominal and reduced signal rates. \\
+  \hypertarget{validation-purity-coverage}{}End-to-end statistical coverage &
+  Deterministic 5D purity control on 153 integrals &
+  Prespecified minimum upper confidence bounds of 0.66 and 0.94 for
+  $68\%$ and $95\%$ intervals, respectively &
+  Fails at nominal and reduced signal rates. \\
   \addlinespace[1.5pt]
   First sixteen-cell coverage test and staged test & Covariance at two held-out tunes &
   Prespecified entry checks & Both stopped without a coverage verdict. \\
   \addlinespace[1.5pt]
-  Second sixteen-cell coverage test & $C_{\mathrm{total}}$ at both held-out tunes &
+  \hypertarget{validation-sixteen-coverage}{}Second sixteen-cell coverage test & $C_{\mathrm{total}}$ at both held-out tunes &
   Joint minimum of \fvval{ll5d-kjoint-all} in \fvval{ll5d-ntoys} draws. Descriptive because part of the procedure was fixed after an early stop. & Joint undercoverage in both band variants at both tunes. \\
   \addlinespace[1.5pt]
-  Rounding-level stability & Sixteen-cell estimator on data, with purity and ensemble-average controls &
+  \hypertarget{validation-sixteen-rounding}{}Rounding-level stability & Sixteen-cell estimator on data, with purity and ensemble-average controls &
   Prespecified median and maximum shift tolerances of $\fvval{ens1-bar-median}\sigma$ and $\fvval{ens1-bar-max}\sigma$ & Fails on data. Averaging passes on tested pseudo-data but worsens GiBUU-like closure. \\
   \addlinespace[1.5pt]
   Rounding variability in the bootstrap & Pairs with the same Poisson draws, with and without input rounding perturbations &

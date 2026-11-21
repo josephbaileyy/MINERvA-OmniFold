@@ -27,8 +27,8 @@ above unity toward higher $p_T$.
   \centering
   \includegraphics[width=0.49\textwidth]{MEFHC_5iter_xsec_proj_pt}
   \includegraphics[width=0.49\textwidth]{MEFHC_5iter_xsec_proj_pz}
-  \caption{Muon transverse (left) and longitudinal (right) momentum projections
-  of the unfolded cross section, compared with the published MINERvA
+  \caption{The upper panels compare the unfolded muon transverse (left)
+  and longitudinal (right) momentum spectra with the published MINERvA
   result~\cite{MINERvA:2021owq}. The solid and dashed histograms show GENIE
   2.12.6 with MINERvA Tune v1 for the unfolding prior and the published
   prediction, respectively. The lower panels give the ratio of the OmniFold
@@ -71,8 +71,8 @@ sensitive to differences that are small on the scale of the individual bins.
   reported bin, divided by the published standard deviation for that bin. The
   left panel shows the differences on the muon momentum grid, and the right
   panel shows their distribution. The map and histogram use the diagonal
-  uncertainties. The value of $\chi^2$ per bin in the inset uses the full
-  published covariance.}
+  uncertainties. The inset gives the descriptive quadratic distance per
+  reported bin using the full published covariance.}
   \label{fig:muon-standardized-differences}
   \label{fig:pull}
 \end{figure}
@@ -242,37 +242,48 @@ validated coverage.
 \label{sec:muon-cross-section-validation}
 \label{sec:validation}
 
-We use closure tests to measure how well the unfolding recovers specified
-changes to a simulated truth. Coverage tests instead measure how often
-intervals or joint regions from repeated pseudo-experiments contain the target
-truth. The designs and scoring rules are given in Appendix~\ref{app:comparison-closure-coverage}.
+\phantomsection\label{sec:coverage-tunes}
+At the two held-out simulation tunes, the rebuilt 2D covariance gave joint
+regions that contained the true cross section in \lrval{cov2d-ar23-joint} of
+\lrval{cov2d-ntoys} pseudo-experiments at the first tune and
+\lrval{cov2d-g18-joint} of \lrval{cov2d-ntoys} at the second. Each rebuild
+included the prior-shape term and omitted the run-period block. The intervals
+on data use $Q_R$ as defined in Eq.~\eqref{eq:muon-covariance-block-sum}, and
+their coverage remains unvalidated. The
+\hyperlink{validation-2d-joint-coverage}{held-out-tune coverage row} of
+Table~\ref{tab:validation-inventory} gives the thresholds, and
+Appendix~\ref{app:comparison-closure-coverage} gives the per-bin and joint
+diagnostics.
 
-The injected-feature tests use five-iteration OmniFold with the purity-based
-estimator of Table~\ref{tab:estimators} and simulation from one run period.
-Reweighting both truth and reconstructed events by a Gaussian in true $p_T$
-or by a tilt in true $p_\parallel$ gives median absolute fractional residuals
-of $0.046\%$ and $0.013\%$, respectively, within the descriptive $1.5\%$
-criterion. Scored with the feature-recovery test of
+\phantomsection\label{sec:coverage}
+The quoted statistical block has had no coverage test. A test of an earlier
+variant of the band is described in App.~\ref{app:choices-after-results}.
+
+The signal-only closure tests recover the injected $p_T$ and $p_\parallel$
+features to median absolute fractional residuals of $0.046\%$ and
+$0.013\%$, respectively. These tests use five-iteration OmniFold with the
+purity baseline in Table~\ref{tab:estimators} and simulation from one run period.
+The \hyperlink{validation-2d-closure}{closure rows} of the inventory give the
+descriptive thresholds. Scored with the feature-recovery test of
 Ref.~\cite{Canelli:2025guide}, a $17.2\%$ Gaussian truth feature leaves a
 $1.69\%$ residual, a ratio of 0.098 that meets the guide's criterion. Reweighting the pseudo-data by a
 quasielastic axial-mass variation or a flux variation gives residuals of
-$0.068\%$ and $0.376\%$, respectively, within the $2\%$ criterion when
-compared with the corresponding reference extrapolated from the accepted
-signal. These references probe shape changes conditional on the simulated
-acceptance.
+$0.068\%$ and $0.376\%$, respectively, against references extrapolated from the
+accepted signal. These references probe shape changes conditional on the
+simulated acceptance.
 
-To test sensitivity to a change in the effective response, we reweight
-reconstructed events as a function of the resolution variable
-$\Delta p_T=p_T^{\mathrm{reco}}-p_T^{\mathrm{true}}$ at fixed truth. The two
-momenta are classifier inputs at their respective levels, and their eventwise
-difference is outside the feature set. For reweighting amplitudes
-of 0.05, 0.10, and 0.30, the median signed fractional residuals on the
-reported grid are $0.57\%$, $1.14\%$, and $3.43\%$, respectively. The two
-smaller amplitudes satisfy the $3\%$ criterion, and the largest exceeds it.
-The residual grows approximately linearly over this scan. All of the closure
-tests use the same detector simulation, and the conclusions apply to the
-specific injected shapes and amplitudes. We assign no additional uncertainty
-from these closure residuals.
+A separate check of the effective response finds an approximately linear
+rise in the median signed fractional residual, from $0.57\%$ to $1.14\%$
+and $3.43\%$ across the tested amplitudes. The largest amplitude exceeds
+the descriptive threshold in the
+\hyperlink{validation-2d-response}{hidden-resolution row} of the inventory.
+The check reweights reconstructed events as a function of the resolution
+variable $\Delta p_T=p_T^{\mathrm{reco}}-p_T^{\mathrm{true}}$ at fixed truth.
+The two momenta are classifier inputs at their respective levels, and their
+eventwise difference is outside the feature set. All of the closure tests
+use the same detector simulation, and the conclusions apply to the specific
+injected shapes and amplitudes. We assign no additional uncertainty from
+these closure residuals.
 
 The background treatment is tested separately with 20 pseudo-experiments at
 nominal truth, each unfolded with both treatments. The two results differ in
@@ -282,52 +293,8 @@ much as 5.9 statistical standard deviations, while the refined estimate is
 within 0.44, using the purity-based statistical block as a common scale
 (Appendix~\ref{app:negative-weight-background}).
 
-\phantomsection\label{sec:coverage}
-The quoted statistical block has had no coverage test. A test of an earlier
-variant of the band is described in App.~\ref{app:choices-after-results}.
-
-\phantomsection\label{sec:coverage-tunes}
-The evaluated two-dimensional covariance under-covers jointly at both held-out
-tunes. We tested \lrval{cov2d-ntoys} pseudo-experiments at each of two GENIE v3 tunes,
-\fvval{f1-tune-ar23} and \fvval{f1-tune-g18}, with covariance rebuilt at the
-corresponding truth, including the generator-shape term and excluding the
-run-period block. The pseudo-experiments draw the variations prescribed by
-the procedure at each tune. The joint region uses the $\chi^2$ quantile for the
-probability content of a Gaussian one-standard-deviation interval. At both
-tunes, \ifnum\lrval{cov2d-ar23-joint}=0 zero\else\lrval{cov2d-ar23-joint}\fi{}
-of \lrval{cov2d-ntoys} pseudo-experiments lie in that region, below the
-prespecified minimum counts of \lrval{cov2d-ar23-kjoint} and \lrval{cov2d-g18-kjoint},
-respectively. The mean $\chi^2$ per degree of freedom is
-$\lrval{cov2d-ar23-chi2ndf}\pm\lrval{cov2d-ar23-chi2ndf-se}$ for
-\lrval{cov2d-ar23-ndf} degrees of freedom at the first tune and
-$\lrval{cov2d-g18-chi2ndf}\pm\lrval{cov2d-g18-chi2ndf-se}$ for
-\lrval{cov2d-g18-ndf} at the second. A descriptive
-check retaining only the \lrval{t2a-r1} or \lrval{t2a-r2} largest-variance directions also finds
-zero joint containments at each tune.
-
-\begingroup
-% Format the source's combined ranges as inequalities and percentage points.
-\def\MuonCoverageCell#1--#2, #3--#4\relax{%
-  $#1<p_T<#2\,\mathrm{GeV}/c$ and $#3<p_\parallel<#4\,\mathrm{GeV}/c$}
-\def\MuonCoveragePoints#1--#2\relax{\fpeval{100*(#1)}--\fpeval{100*(#2)}}
-The per-bin test scores containment within one standard deviation. It flags
-\lrval{cov2d-ar23-nflagged} bins at the first tune and \lrval{cov2d-g18-nflagged} at the second, with the
-deficits attributed to bias in those bins. The bin with
-\expanded{\noexpand\MuonCoverageCell\lrval{cov2d-cell29-range}\noexpand\relax}
-is flagged at both tunes, with \lrval{cov2d-ar23-29-count} and \lrval{cov2d-g18-29-count}
-containments, respectively, against a threshold of \lrval{cov2d-ar23-29-kc}. The per-bin test
-resolves deficits in coverage of about
-\expanded{\noexpand\MuonCoveragePoints\lrval{cov2d-res-cell}\noexpand\relax}
-percentage points. The joint test scores the full residual vector and resolves a deficit of about
-\fpeval{100*\lrval{cov2d-res-joint}}
-percentage points. These results apply to the covariance evaluated at the
-two simulated truths. The intervals on data use $Q_R$ as defined in
-Eq.~\eqref{eq:muon-covariance-block-sum}, and their coverage remains unvalidated.
-\par
-\endgroup
-
 The benchmark establishes that unbinned OmniFold reproduces the published
-integral to about $1\%$ and recovers specified features in simulation. A
+integral to about $\fpeval{round(100*(\ratioTot-1),0)}\%$ and recovers specified features in simulation. A
 correlated shape difference remains, and the joint shape and interval coverage
 lack independent validation.
 

@@ -19,12 +19,14 @@ The replay package's README gives its file inventory, the figures it
 regenerates, and the verification tolerances.
 
 \phantomsection\label{app:release-scope}
-The deposit also archives the sixteen refined cell integrals with
-$C_{\mathrm{rep}}$ and its components, with $C_{\mathrm{model}}$ listed
-separately, the generator predictions compared in this article on the sixteen
-cells and on the $(E_{\mathrm{avail}},W)$ grid, and the exploratory five-axis
-central values, support masks and projection matrix $P$, with the projected
-covariance $C_{EW}$. Apart from the replay package, it contains no code that
+The deposit also archives the \lrval{q-ncells}-cell 2D refined central values
+with $Q_R$ and its systematic, statistical, training-seed and run-period blocks,
+and the 2D prior-shape term $C_{\mathrm{model}}$, which $Q_R$ excludes; the
+sixteen refined cell integrals with $C_{\mathrm{rep}}$ and its components, with
+$C_{\mathrm{model}}$ listed separately; the generator predictions compared in
+this article on the sixteen cells and on the $(E_{\mathrm{avail}},W)$ grid; and
+the exploratory five-axis central values, support masks and projection matrix
+$P$, with the projected covariance $C_{EW}$. Apart from the replay package, it contains no code that
 regenerates this article's tables or figures.
 The deposit starts from derived inputs. Rebuilding the closure, bias, or
 covariance-validation results, or extracting statistics from the archived

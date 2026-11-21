@@ -221,46 +221,55 @@ unfoldings add $E_{\mathrm{avail}}$, $q_3$, and $W$ in sequence at both reconstr
 and truth level. Table~\ref{tab:estimators} identifies the estimator for each result
 and for the diagnostic studies that use a different configuration.
 
-\begin{table}[tbp]
-  \centering
-  \caption{Estimator assignments. The last column gives the treatment of the simulated
-  background in the first OmniFold step.}
+\begin{table}[!t]
+  \centering\small
+  \caption{Estimators, reporting grids, and diagnostics. Background treatment
+  refers to the first OmniFold step.}
   \label{tab:estimators}
   \label{tab:estimators-matrix}
   \label{tab:config-key}
-  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.26\textwidth}
-                      >{\raggedright\arraybackslash}p{0.46\textwidth}
-                      >{\raggedright\arraybackslash}p{0.22\textwidth}@{}}
+  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.25\textwidth}
+                      >{\raggedright\arraybackslash}p{0.31\textwidth}
+                      >{\raggedright\arraybackslash}p{0.38\textwidth}@{}}
     \toprule
-    Estimator & Result or diagnostic & Background \\
+    Result or diagnostic & Estimator and background treatment & Grid and covariance or test statistic \\
     \midrule
-    \multicolumn{3}{@{}l}{\emph{Reported estimators}} \\
-    \EstTwoD{} &
-      2D muon cross section and its covariance $Q_R$. &
-      Refined neg. weights \\
-    \EstMultiD{} &
-      3D and 4D central values, illustrative \resSixteen{} and covariance,
-      and, through a variant, the joint generator tests. &
-      Refined neg. weights \\
-    \midrule
-    \multicolumn{3}{@{}l}{\emph{Exploratory purity baseline}} \\
-    \EstPurity{} &
-      Exploratory five-axis result and its covariance $C_Z$, including the
-      $E_{\mathrm{avail}}$--$W$ projection. Also used for the injected-feature closures
-      and the classifier-family cross-check. &
-      Purity \\
+    2D muon cross section &
+      \EstTwoD{} (refined negative weights) &
+      Published muon grid (\lrval{q-ncells} bins) with covariance $Q_R$. \\
+    \addlinespace
+    3D and 4D central values &
+      \EstMultiD{} (refined negative weights) &
+      Central values on fine muon and hadronic grids. \\
+    \addlinespace
+    Exploratory five-axis result &
+      \EstPurity{} (binned purity weights) &
+      Fine five-axis grid with diagnostic covariance $C_Z$, also projected
+      onto the $E_{\mathrm{avail}}$--$W$ plane. \\
+    \addlinespace
+    Sixteen-cell result (illustrative) &
+      \EstMultiD{} (refined negative weights) &
+      Merged reporting regions with covariance $C_{\mathrm{rep}}$. \\
+    \addlinespace
+    Joint generator tests &
+      Variant of the \estMultiD{} (refined negative weights) &
+      Separate coarse grid with \jtNcells{} supported cells
+      (\jtNcellsGiBUU{} for GiBUU). Calibrated quadratic distances use
+      a shrinkage-based metric. \\
     \midrule
     \multicolumn{3}{@{}l}{\emph{Diagnostic controls}} \\
-    \EstDetPurity{} &
-      Background-subtraction bias and 5D coverage. &
-      Purity \\
-    \EstLowCap{} &
-      Background-subtraction bias and recovery of a generator-sized change in
-      available energy. &
-      Refined neg. weights \\
-    \EstExact{} &
-      2D unfolding cross-check with exact-split trees. &
-      Purity \\
+    Injected-feature closures and classifier-family cross-check &
+      \EstPurity{} (binned purity weights) & \\
+    \addlinespace
+    Background-subtraction bias and 5D coverage &
+      \EstDetPurity{} (binned purity weights) & \\
+    \addlinespace
+    Background-subtraction bias and generator-sized available-energy change &
+      \EstLowCap{} (refined negative weights) & \\
+    \addlinespace
+    2D unfolding cross-check &
+      \EstExact{} (binned purity weights) &
+      Published muon grid. \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -294,7 +303,7 @@ axes and divides by the retained bin widths when reported as a density. The wide
 bins contribute their full integrals to projections and totals.
 
 The 3D and 4D results are reported as central values only. The covariance of the
-exploratory five-axis purity result serves as a scale for diagnostics. The \resSixteen{}
+\resFiveAxis{} serves as a scale for diagnostics. The \resSixteen{}
 uses coarser regions of the joint phase space, defined in Sec.~\ref{sec:five-dimensional-reporting}. It is
 expressed as integrated cross sections in $\mathrm{cm}^2$ per nucleon and is
 reported with its covariance for illustration. The calibrated generator tests in
