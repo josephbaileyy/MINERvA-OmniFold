@@ -1,0 +1,31 @@
+node login38 nproc=244 loadavg 63.57 56.89 52.22
+2026-11-21T11:54:44Z
+window_end_epoch 1795262959 (now 1795262084); fence prefixes cov2d,ll5d_,ibukt,rpd_,prr_,e96,ens1_
+connect script sha256 50e86da36a5b398107b1b4fd61d9cf2fa1d68dbd0852b9a7e45218c8fbe302b5
+== fence (sacct)
+fence clear
+== iris
+m3246               2606.5            10000.0     19144.2      20000.0
+balance_node_h=855.8 half=427.9 cap_total=10.0
+HEAD 8bb4e3b0e1028d960e39de0c202569a08a1218a0
+porcelain lines (tracked+untracked) 0; ignored entries other than __pycache__/ 0
+t3p_arms.py: OK
+t3p_probe.py: OK
+t3p_read.py: OK
+sbatch_t3p.sh: OK
+test_t3p.py: OK
+t3p_mutation.py: OK
+declaration sha256 f96ed6f29a155e978bf449fdcb9810670202e0a3d74fb2f96afe48098b63cae1
+addendum V1 sha256 3998708a91dde4b01c3dcb1e87a7b7a45796de13da53880a0eb79a410ecc7986
+{"mode": "dry", "tasks": 6, "ended": 6, "rc": 0, "job": "61726250"}
+t3p_probe.py limit q3 -> '2:00:00' (rc 0), declared 2:00:00
+== fence again (sacct)
+2026-11-21T11:54:55Z
+sbatch rc=0
+Submitted batch job 61728686
+t3p_q3 job 61728686
+scontrol TimeLimit=02:00:00 (declared 02:00:00)
+61728686|t3p_q3|PENDING|02:00:00|1|regular_1|m3246
+porcelain lines (tracked+untracked) 0; ignored entries other than __pycache__/ 0
+t3p q3 submit rc=0
+2026-11-21T11:55:06Z

@@ -1,0 +1,74 @@
+fixture built at /pscratch/sd/j/josephrb/t3p-20261121
+   6 log-dry/SHA256SUMS
+  36 log-floor/SHA256SUMS
+  12 log-q3/SHA256SUMS
+  54 total
+== variant ok; npz 36
+== script rc=1; self copy left: ls: cannot access '/dev/shm/t3pr.1.sh': No such file or directory
+== the connect log
+node cb48b06d37e7 nproc=4 loadavg 0.97 0.29 0.17
+2026-11-21T18:20:37Z
+window_end_epoch 1795286137 (now 1795285237); fence prefixes cov2d,ll5d_,ibukt,rpd_,prr_,e96,ens1_
+connect script sha256 9c4b604c552350317f577252c1244bfd80a3ea5e1fb7f9202cf4bb45f722b73c
+== fence (sacct)
+fence clear
+== the three jobs (sacct)
+61726250|t3p_dry|COMPLETED|0:0|2026-11-21T06:12:44|2026-11-21T09:40:31|12467|1
+61728686|t3p_q3|COMPLETED|0:0|2026-11-21T06:12:44|2026-11-21T09:40:31|12467|1
+61731751|t3p_floor|COMPLETED|0:0|2026-11-21T06:12:44|2026-11-21T09:40:31|12467|1
+log-dry/DONE: {"mode": "dry", "tasks": 6, "ended": 6, "rc": 0}
+log-q3/DONE: {"mode": "q3", "tasks": 6, "ended": 6, "rc": 0}
+log-floor/DONE: {"mode": "floor", "tasks": 24, "ended": 24, "rc": 0}
+HEAD 8bb4e3b0e1028d960e39de0c202569a08a1218a0; porcelain --ignored lines before: 0
+t3p_arms.py: OK
+t3p_probe.py: OK
+t3p_read.py: OK
+sbatch_t3p.sh: OK
+test_t3p.py: OK
+t3p_mutation.py: OK
+declaration sha256 f96ed6f29a155e978bf449fdcb9810670202e0a3d74fb2f96afe48098b63cae1
+addendum V1 sha256 3998708a91dde4b01c3dcb1e87a7b7a45796de13da53880a0eb79a410ecc7986
+log-dry/SHA256SUMS: 6 lines, 6 well-formed product lines (want 6)
+log-dry/SHA256SUMS: OK
+log-q3/SHA256SUMS: 12 lines, 12 well-formed product lines (want 12)
+log-q3/SHA256SUMS: OK
+log-floor/SHA256SUMS: 36 lines, 36 well-formed product lines (want 36)
+log-floor/SHA256SUMS: OK
+npz files under runs/: 36
+threads: OMP=1 OPENBLAS=1 MKL=1 NUMEXPR=1 VECLIB=1; nice 19; ionice idle; python 3.11.18
+Traceback (most recent call last):
+  File "<string>", line 11, in <module>
+  File "/pscratch/sd/j/josephrb/t3p-20261121/deploy-read/nd-unfolding/tier3/t3p_read.py", line 430, in main
+    out, rc = read(a.run, a.repo)
+              ^^^^^^^^^^^^^^^^^^^
+  File "/pscratch/sd/j/josephrb/t3p-20261121/deploy-read/nd-unfolding/tier3/t3p_read.py", line 383, in read
+    Pr = priors(stage_rec, M16)
+         ^^^^^^^^^^^^^^^^^^^^^^
+  File "/pscratch/sd/j/josephrb/t3p-20261121/deploy-read/nd-unfolding/tier3/t3p_read.py", line 197, in priors
+    out[s] = M16 @ T._load(path, "xtrue_flat").astype(float)
+             ~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ValueError: matmul: Input operand 1 has a mismatch in its core dimension 0, with gufunc signature (n?,k),(k,m?)->(n?,m?) (size 16 is different from 65856)
+read rc=1
+ls: cannot access '/pscratch/sd/j/josephrb/t3p-20261121/read': No such file or directory
+porcelain --ignored lines after: 0
+== records
+2026-11-21T18:21:06Z
+records copied: 23 files, 77525 bytes
+fetch-read.tar sha256 2278233e037f55f08e87a26bed3b88001cb7a92bf676b366a1900c2560d8fe83 bytes 81920
+t3p read rc=1
+2026-11-21T18:21:06Z
+== done: 1
+== OUT top level
+deploy-read
+fence.txt
+fetch-read
+fetch-read.tar
+log-dry
+log-floor
+log-q3
+logs
+manifest.json
+queues
+runs
+stage
+stage.json

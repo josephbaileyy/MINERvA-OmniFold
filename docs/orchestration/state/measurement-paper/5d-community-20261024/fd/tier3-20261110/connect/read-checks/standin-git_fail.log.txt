@@ -1,0 +1,38 @@
+fixture built at /pscratch/sd/j/josephrb/t3p-20261121
+   6 log-dry/SHA256SUMS
+  36 log-floor/SHA256SUMS
+  12 log-q3/SHA256SUMS
+  54 total
+== variant git_fail; npz 36
+== script rc=9; self copy left: ls: cannot access '/dev/shm/t3pr.1.sh': No such file or directory
+== the connect log
+node ee98fd179e22 nproc=4 loadavg 1.14 0.61 0.31
+2026-11-21T18:22:55Z
+window_end_epoch 1795286275 (now 1795285375); fence prefixes cov2d,ll5d_,ibukt,rpd_,prr_,e96,ens1_
+connect script sha256 9c4b604c552350317f577252c1244bfd80a3ea5e1fb7f9202cf4bb45f722b73c
+== fence (sacct)
+fence clear
+== the three jobs (sacct)
+61726250|t3p_dry|COMPLETED|0:0|2026-11-21T06:12:44|2026-11-21T09:40:31|12467|1
+61728686|t3p_q3|COMPLETED|0:0|2026-11-21T06:12:44|2026-11-21T09:40:31|12467|1
+61731751|t3p_floor|COMPLETED|0:0|2026-11-21T06:12:44|2026-11-21T09:40:31|12467|1
+log-dry/DONE: {"mode": "dry", "tasks": 6, "ended": 6, "rc": 0}
+log-q3/DONE: {"mode": "q3", "tasks": 6, "ended": 6, "rc": 0}
+log-floor/DONE: {"mode": "floor", "tasks": 24, "ended": 24, "rc": 0}
+fatal: stand-in git status failure
+STOP: git status failed (before)
+t3p read rc=9
+2026-11-21T18:23:01Z
+== done: 9
+== OUT top level
+deploy-read
+fence.txt
+log-dry
+log-floor
+log-q3
+logs
+manifest.json
+queues
+runs
+stage
+stage.json

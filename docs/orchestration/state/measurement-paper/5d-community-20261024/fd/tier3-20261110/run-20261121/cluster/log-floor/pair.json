@@ -1,0 +1,168 @@
+{
+ "job": "floor",
+ "C-PAIR": {
+  "A7_gibuu/s994001/k5": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  },
+  "A7_gibuu/s994001/k20": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  },
+  "A7_gibuu/s994002/k5": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  },
+  "A7_gibuu/s994002/k20": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  },
+  "A7_gibuu/s994003/k5": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  },
+  "A7_gibuu/s994003/k20": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  },
+  "A7_gibuu/s994004/k5": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  },
+  "A7_gibuu/s994004/k20": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  }
+ },
+ "C-X": {
+  "t3p_B0_A7_gibuu_s994001": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  },
+  "t3p_MU_A7_gibuu_s994001": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  },
+  "t3p_MW_A7_gibuu_s994001": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  },
+  "t3p_MO_A7_gibuu_s994001": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  },
+  "t3p_SO_A7_gibuu_s994001": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  },
+  "t3p_OP_A7_gibuu_s994001": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  },
+  "t3p_B0_A7_gibuu_s994002": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  },
+  "t3p_MU_A7_gibuu_s994002": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  },
+  "t3p_MW_A7_gibuu_s994002": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  },
+  "t3p_MO_A7_gibuu_s994002": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  },
+  "t3p_SO_A7_gibuu_s994002": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  },
+  "t3p_OP_A7_gibuu_s994002": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  },
+  "t3p_B0_A7_gibuu_s994003": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  },
+  "t3p_MU_A7_gibuu_s994003": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  },
+  "t3p_MW_A7_gibuu_s994003": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  },
+  "t3p_MO_A7_gibuu_s994003": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  },
+  "t3p_SO_A7_gibuu_s994003": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  },
+  "t3p_OP_A7_gibuu_s994003": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  },
+  "t3p_B0_A7_gibuu_s994004": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  },
+  "t3p_MU_A7_gibuu_s994004": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  },
+  "t3p_MW_A7_gibuu_s994004": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  },
+  "t3p_MO_A7_gibuu_s994004": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  },
+  "t3p_SO_A7_gibuu_s994004": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  },
+  "t3p_OP_A7_gibuu_s994004": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  }
+ },
+ "pass": true
+}

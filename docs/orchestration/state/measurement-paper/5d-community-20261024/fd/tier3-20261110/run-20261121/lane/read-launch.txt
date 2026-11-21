@@ -1,0 +1,10 @@
+ssh rc=0
+node login38 staged sha256 9c4b604c552350317f577252c1244bfd80a3ea5e1fb7f9202cf4bb45f722b73c
+detached pid 2221044, output /dev/shm/t3pr.2220612.sh.out
+script rc=0
+fetch fetch-read.tar rc=0 bytes 2314240
+fetch logs/connect-read.log rc=0 bytes 2272
+fetch logs/connect-read.done rc=0 bytes 2
+fetch-read.tar sha256 2bdeb9f6ac9d0bce56109ba79059b2d529bcf584f881fb9ebc8426301446c130 (the log's: 2bdeb9f6ac9d0bce56109ba79059b2d529bcf584f881fb9ebc8426301446c130)
+RECORDS.SHA256SUMS check rc=0 (224 files)
+connect done file: 0

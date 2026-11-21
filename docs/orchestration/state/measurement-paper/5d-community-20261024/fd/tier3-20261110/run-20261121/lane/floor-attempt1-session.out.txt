@@ -1,0 +1,4 @@
+node login38 staged sha256 50e86da36a5b398107b1b4fd61d9cf2fa1d68dbd0852b9a7e45218c8fbe302b5
+detached pid 1855749, output /dev/shm/t3pc.1854939.sh.out
+BAIL fence (sacct) not clear
+script rc=9
