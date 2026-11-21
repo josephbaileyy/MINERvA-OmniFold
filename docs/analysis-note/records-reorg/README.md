@@ -23,7 +23,7 @@ table of contents that follows the note, and writes one file per section:
 | Phase | `--phase` | What changes |
 |---|---|---|
 | B | `B` | Mechanical move. Each block keeps its old heading, as a run-in `\paragraph`. |
-| C | `C` | Blocks from the same note paragraph become one paragraph under a run-in title (`titles.tsv`). Lead-ins are demoted to comments (Option B, Joseph 2026-11-21) unless they hold a register re-anchor. The lane preambles in `demote.tsv` are demoted. |
+| C | `C` | Blocks from the same note paragraph become one paragraph under a run-in title (`titles.tsv`). Lead-ins are demoted to comments (Option B, Joseph 2026-11-21), both forms, unless they hold a register re-anchor or the next sentence would dangle (Option B', `keep-leadin-context.tsv`). The lane preambles in `demote.tsv` are demoted. |
 | D | `D` | Duplicate resolution (Joseph 2026-11-21): `drops.tsv` (copies not printed), `cuts.tsv` (repeated sentences not printed), `carries.tsv` (a sentence only the dropped copy had, carried verbatim). |
 
 Nothing is deleted from the sources: whatever stops printing stays as a `%` comment beside its text.
@@ -68,7 +68,7 @@ titles are new text by design.
 | `drops.tsv`, `cuts.tsv`, `carries.tsv` | the duplicate resolution, listed for Joseph in DROPPED.md |
 | `adds.tsv`, `opening.tex` | the new opening paragraph of `main_records.tex` |
 | `keep-leadin.tsv` | the five register rows whose re-anchor lies inside a lead-in (documentation; the test is the text itself) |
-| `keep-leadin-context.candidates.tsv` | NOT ACTIVE. The 42 lead-ins whose following sentence opens with an anaphor ("These are...", "It moves..."); offered as Option B' for Joseph's decision |
+| `keep-leadin-context.tsv` | Option B' (Joseph, 2026-11-21): the 42 lead-ins whose following sentence opens with an anaphor ("These are...", "It moves...") stay printed. `assemble` warns about any further such lead-in at a new base |
 
 Block keys are content hashes (file, heading line, first printed line), so the data survives a change of base unless
 the named block itself changes; `assemble` stops on any key it cannot find.
