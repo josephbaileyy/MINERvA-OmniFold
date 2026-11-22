@@ -319,7 +319,7 @@ install_printstyle_fig() {  # install_printstyle_fig <basename under $NPS and in
 # Group C, family 1 (2026-11-14): drawn locally with --from-arrays --print-style from the dumps of one cluster pass
 # (note-figstyle-20261113/runs/family1/dumps/; recipe: make_control_plots.py / plot_control_corner.py --from-arrays <dump> --print-style).
 install_printstyle_fig migration_resolution.pdf         7ea7fd45dd7276b193f2ca4554a8247c6ee528a2e59acace4666e9486af8cc9b
-install_printstyle_fig control_corner.pdf               09f291027d63f4f018e651d66be1e6e53aa95ee3ba8c028905621fd2ff0aa477
+# install_printstyle_fig control_corner.pdf               09f291027d63f4f018e651d66be1e6e53aa95ee3ba8c028905621fd2ff0aa477   (superseded by the figure rounds of 2026-11-20/21; installed below by install_current_fig)
 # Family 1b (2026-11-14): Fig. 1 from the extended-display dump of one cluster pass (runs/family1b/dumps/), with
 # --from-arrays <dump> --extended-display --print-style.
 # install_printstyle_fig control_plots.pdf                dcea96fa289c03a4c204804c2852242d4236ff96330d28877bbd0ac1e3a94602   (note palette, 2026-11-17: installed below)
@@ -383,10 +383,10 @@ install_palette_fig() {  # install_palette_fig <basename under $NPAL and in $FIG
 install_palette_fig mode_decomp_eavail_central.pdf           270237928effabf36fa59be7de86d6a8c4023bc9187b8a7c8978ee2b6090cf31
 install_palette_fig compare_mec_eavail_central.pdf           2e81a44506e958fda4f063c5b88350a4d3eb6f00d4d02c4906c34bb94e39a2aa
 # install_palette_fig ascencio_fullcov_compare_central.pdf     0d65baa9b139a7b45da54e54042b6b18c3a08b2d3c82fd05d64629d86452a1ab   (figure pass, 2026-11-19: installed below)
-install_palette_fig eavailW_band.pdf                         ded40ea27702a8654d99d96d53336d037292424c718fa4427fb9ef8764408584
+# install_palette_fig eavailW_band.pdf                         ded40ea27702a8654d99d96d53336d037292424c718fa4427fb9ef8764408584   (superseded by the figure rounds of 2026-11-20/21; installed below by install_current_fig)
 # install_palette_fig q3_excess_projection.pdf                 8a3a5bb5d44156432b249d7165e56cbcfed464b6c7ff69d0bd37ee2e94df3d88   (figure pass, 2026-11-19: installed below)
 install_palette_fig eavail_spectrum.pdf                      457fa20edec3de6520de49e99b04f4c989e7cc175289edc4b96d62383807dac1
-install_palette_fig control_plots.pdf                        9bfd50652a470a7f2edf5d6bd7fd30b20983b3f0264dfe44444c4768088af4ab
+# install_palette_fig control_plots.pdf                        9bfd50652a470a7f2edf5d6bd7fd30b20983b3f0264dfe44444c4768088af4ab   (superseded by the figure rounds of 2026-11-20/21; installed below by install_current_fig)
 install_palette_fig gbdt_recovery.pdf                        215f740a4b25a46519cc7b2bad5240730aa90aec4cb0d4cc7f1d0f3e3f8c191e
 install_palette_fig gbdt_bias_spread.pdf                     625b9452d4c28299c4a6a38eda3e14fa40670ffeccde9fa67ab154cbedff033e
 install_palette_fig gbdt_coverage.pdf                        511817bdc1e17211141c812f56057ab5f04bbd8ede171978010c1a75a82a87fe
@@ -423,7 +423,7 @@ install_palette_fig MEFHC_5iter_fig13.pdf                    0c451b833ce7fff455c
 # install_palette_fig MEFHC_5iter_xsec_paper_pz_slices.pdf     e64b65ffbf6bae236cc7ee7c1f65f434497b0a8dc5ca0214039a7e4dd1aa941e   (figure pass, 2026-11-19: installed below)
 # install_palette_fig MEFHC_5iter_xsec_proj_pt.pdf             9f6911d470fe7044c9c7801e59a1d55389960d6e246b423727a9115b78234a75   (figure pass, 2026-11-19: installed below)
 # install_palette_fig MEFHC_5iter_xsec_proj_pz.pdf             56e1e99de5cfe08684a7b8288c04ecb830b14b79ffa8c10500f1815b86ca2a5d   (figure pass, 2026-11-19: installed below)
-install_palette_fig MEFHC_5iter_pull_full.pdf                35c31c49a9311920b57d45d716417d468d1de857d316f22e4a7a3f3a5055ec00
+# install_palette_fig MEFHC_5iter_pull_full.pdf                35c31c49a9311920b57d45d716417d468d1de857d316f22e4a7a3f3a5055ec00   (superseded by the figure rounds of 2026-11-20/21; installed below by install_current_fig)
 # Fig. 6 (2026-11-18): the efficiency map in the paper's fonts (tier 2, runs/xsec_proj/). Its re2-integration ledger G row
 # is re-pointed to this record (fig-restyle ruling 1: re-point, do not replace), and check_ledger.py requires that row's
 # figure to be installed as "install_restyle_fig <basename> <sha256>" from the row's copy directory, so RSG names it.
@@ -451,24 +451,55 @@ install_layout_fig() {  # install_layout_fig <basename under $NFP and in $FIGDIR
   fi
   echo "  installed $1 ($want)"
 }
-install_layout_fig q3_excess_projection.pdf                 32084e6044ae80181b5f627d499012b16197b67f762d02a8a7c6ac9ee1ca47ef
+# install_layout_fig q3_excess_projection.pdf                 32084e6044ae80181b5f627d499012b16197b67f762d02a8a7c6ac9ee1ca47ef   (superseded by the figure rounds of 2026-11-20/21; installed below by install_current_fig)
 install_layout_fig paper_fig_coverage.pdf                   e1c3a18072270c99d89de22f2d56f08ae2992d44ed03bba9f325b3b27d2e6b59
 install_layout_fig paper_fig_bkg_residual.pdf               1c6732728aecb53930d26be5f93480d821fd451c3cf868cf054c4c4b993decc1
 install_layout_fig fived16_headline.pdf                     97766f5c52470b8bdc1f46b982fdbdae97d7c67aef9fde4faf9f27e680ee0f3e
 install_layout_fig runperiod_steps.pdf                      4496bcf824d56393e50991b1b6f70068df15ffd73eb5f7add26f738c7e1d95fb
-install_layout_fig mode_decomp_mec_eavail_central.pdf       0b30b46b0456039d499e4bd399f9160d49ea1da42fa8d171c901099bfadadb7f
-install_layout_fig MEFHC_5iter_xsec_proj_pt.pdf             f401ad1c3de18a34305f59d03fc3d4fb1a00360d9f68f8212c7b5fc564744b2c
-install_layout_fig MEFHC_5iter_xsec_proj_pz.pdf             506e13cdc6eabe08a564323605bb1ed7b07fbd0327d2d1602cacc784b046b8ff
+# install_layout_fig mode_decomp_mec_eavail_central.pdf       0b30b46b0456039d499e4bd399f9160d49ea1da42fa8d171c901099bfadadb7f   (superseded by the figure rounds of 2026-11-20/21; installed below by install_current_fig)
+# install_layout_fig MEFHC_5iter_xsec_proj_pt.pdf             f401ad1c3de18a34305f59d03fc3d4fb1a00360d9f68f8212c7b5fc564744b2c   (superseded by the figure rounds of 2026-11-20/21; installed below by install_current_fig)
+# install_layout_fig MEFHC_5iter_xsec_proj_pz.pdf             506e13cdc6eabe08a564323605bb1ed7b07fbd0327d2d1602cacc784b046b8ff   (superseded by the figure rounds of 2026-11-20/21; installed below by install_current_fig)
 # install_layout_fig MEFHC_5iter_xsec_paper_pt_slices.pdf     b4cec2839a2b5f44d9a17bfa1093cfbe3bb6ac5afde179bf99962375284d31ca   (figure pass, 2026-11-19: installed below)
 # install_layout_fig MEFHC_5iter_xsec_paper_pz_slices.pdf     693ea449dbfc3514b2af9ae10039793476c1764e560c5b5ee9e59774f65ce072   (figure pass, 2026-11-19: installed below)
-install_layout_fig generators_vs_unfolded_band_central.pdf  719a53b2ed01ceb90955f0e2da74db6c087b2aabfc7d76bcae848e1a28238a8e
+# install_layout_fig generators_vs_unfolded_band_central.pdf  719a53b2ed01ceb90955f0e2da74db6c087b2aabfc7d76bcae848e1a28238a8e   (superseded by the figure rounds of 2026-11-20/21; installed below by install_current_fig)
 install_layout_fig ascencio_fullcov_compare_central.pdf     b84137b9ce240accd0e533b5f535a35d9b12ef1d7a5268bed7e37204e6187804
 install_layout_fig minerva_unfolding_landscape.pdf          936ed2515cace3398a12c709511033a527aed86ee314ee61325081d68871a486
-install_layout_fig eavail_marginal_vs_paper_pull_full.pdf   2560812e76ed9e6fc2df5c1fd86f10146a09a2f6a510c9976d091d6c4ae150aa
+# install_layout_fig eavail_marginal_vs_paper_pull_full.pdf   2560812e76ed9e6fc2df5c1fd86f10146a09a2f6a510c9976d091d6c4ae150aa   (superseded by the figure rounds of 2026-11-20/21; installed below by install_current_fig)
 install_layout_fig gbdt_prior_response.pdf                  add7161d72612f6916103524fa6e3c761dac75f65161dbb75d4bad452c10b5d3
 NFP="$REPO/docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/figs-r2"
-install_layout_fig MEFHC_5iter_xsec_paper_pt_slices.pdf     a71c3853afa683ad4f12945eda39e6c2f1118c27b7f21ffaf57c452b2e13faca
-install_layout_fig MEFHC_5iter_xsec_paper_pz_slices.pdf     0a50c6eeb7ca63250bd2627d4b5ff047b655602130cfbd5806e76fcea23f5725
+# install_layout_fig MEFHC_5iter_xsec_paper_pt_slices.pdf     a71c3853afa683ad4f12945eda39e6c2f1118c27b7f21ffaf57c452b2e13faca   (superseded by the figure rounds of 2026-11-20/21; installed below by install_current_fig)
+# install_layout_fig MEFHC_5iter_xsec_paper_pz_slices.pdf     0a50c6eeb7ca63250bd2627d4b5ff047b655602130cfbd5806e76fcea23f5725   (superseded by the figure rounds of 2026-11-20/21; installed below by install_current_fig)
+
+# 2026-11-22 (rewrite into main, the build_all rewiring): the figure rounds of 2026-11-20/21 (note-figround-20261121,
+# note-figround3-20261121, note-fig18-20261121) installed their outputs straight into $FIGDIR, each recorded as
+# "installed <name> sha256 <sha>" in the round's runs/*/CHECKS.txt, without updating this script. Byte-identical copies
+# of those 12 files, with the record of each, are in note-figpins-20261122 (README.md, figs/SHA256SUMS). They are
+# installed here, after every earlier install line, so a rerun reproduces the figures the note prints; each superseded
+# earlier line above is a comment that points here.
+NFR="$REPO/docs/orchestration/state/2d-closeout/stageF/methods/note-figpins-20261122/figs"
+install_current_fig() {  # install_current_fig <basename under $NFR and in $FIGDIR> <sha256>
+  local src="$NFR/$1" dst="$FIGDIR/$1" want="$2"
+  if [[ "$(sha256_of "$src")" != "$want" ]]; then
+    echo "REFUSE install: $src does not have sha256 $want" >&2; exit 1
+  fi
+  cp "$src" "$dst"
+  if [[ "$(sha256_of "$dst")" != "$want" ]]; then
+    echo "REFUSE install: $dst differs from $src after the copy" >&2; exit 1
+  fi
+  echo "  installed $1 ($want)"
+}
+install_current_fig MEFHC_5iter_pull_full.pdf                9335a3e3037320c6bb5a0e3d0ad61ac7709c693633ba9c5a1265e61c38c2501e
+install_current_fig MEFHC_5iter_xsec_proj_pt.pdf             d27075c220081054caf51fb6130fe3a671e9dc0dacfb1a97469b3d07829f63af
+install_current_fig MEFHC_5iter_xsec_proj_pz.pdf             caa9286bfec8e7f2b6d6dd06fda6d5fc9f0b8f1c7c95d4bacc290048726b4745
+install_current_fig generators_vs_unfolded_band_central.pdf  d030980eeba9ce29dfa40c03baf426e41b9fb489cdb559651202cce94788e62c
+install_current_fig MEFHC_5iter_xsec_paper_pt_slices.pdf     58e4d16ad6bc68f7bd17bae8d315b99ece6d66b821715d403120e0d6548357a2
+install_current_fig MEFHC_5iter_xsec_paper_pz_slices.pdf     4216003cfe47d376b97a3a32575e5fa00342e7528bfb1d2e8e647e9ea9f620b0
+install_current_fig control_corner.pdf                       f077a7a9cb052cdc02df0195d6c62c821471ab52490c36673939508b8d88d89d
+install_current_fig control_plots.pdf                        8910181e147c32515159f477e7e6864870c5c1f46aa64638c55d2bcd447f098c
+install_current_fig eavailW_band.pdf                         9e71e493612596634584adf57993d0bd2649373c25028141882a740359655d52
+install_current_fig eavail_marginal_vs_paper_pull_full.pdf   7f272d2639db72b2cecec5ada11d4bf4e0da470703f2729189bed86c880f0cb9
+install_current_fig mode_decomp_mec_eavail_central.pdf       b56f4d90b1047b8aa8842bf47534d457848208d97c201f3fd3e60ca2f32d2f0c
+install_current_fig q3_excess_projection.pdf                 2c836ace97c0c36d811f698d9aa6652ff8f8b38867abb6ec6d149841029f8222
 
 echo
 echo "== paper-only vector crops =="
@@ -504,15 +535,20 @@ assert_pdf_page_size() {
 # 2026-11-17 (the note palette, tier 2): Fig. 8 is drawn at its 0.70 \textwidth slot, 4.55 x 2.3 in
 # (note-figstyle-20261117/resize.tsv), so its page and the left-panel crop change with it. The crop keeps the map and
 # its colour bar: their right edge is at x = 171.3 pt and the histogram's y label begins at 174.0 pt (pdftotext -bbox).
-assert_pdf_page_size "$FIGDIR/MEFHC_5iter_pull_full.pdf" "327.6 x 165.6"
+# 2026-11-22 (rewrite into main): the crops paper_validation_residual.pdf and paper_eavailW_generators.pdf are no
+# longer regenerated. No build includes either (the short paper that did was retired on 2026-11-21), and figure round 3
+# saved MEFHC_5iter_pull_full.pdf cropped to its content (292.9 x 130.0 pt), so the left-panel bbox and its page-size
+# guard below no longer describe it. Their committed files are unchanged (note-figpins-20261122/README.md). The
+# primer's paper_joint_localization.pdf is still cropped, with its guard.
+# assert_pdf_page_size "$FIGDIR/MEFHC_5iter_pull_full.pdf" "327.6 x 165.6"
 assert_pdf_page_size "$FIGDIR/excess_eavail_W.pdf" "1152 x 331.2"
 
-pdfcrop --bbox '0 0 172.5 165.6' \
-  "$FIGDIR/MEFHC_5iter_pull_full.pdf" \
-  "$FIGDIR/paper_validation_residual.pdf"
-pdfcrop --margins '4 4 4 4' \
-  "$FIGDIR/eavailW_band.pdf" \
-  "$FIGDIR/paper_eavailW_generators.pdf"
+# pdfcrop --bbox '0 0 172.5 165.6' \
+#   "$FIGDIR/MEFHC_5iter_pull_full.pdf" \
+#   "$FIGDIR/paper_validation_residual.pdf"
+# pdfcrop --margins '4 4 4 4' \
+#   "$FIGDIR/eavailW_band.pdf" \
+#   "$FIGDIR/paper_eavailW_generators.pdf"
 pdfcrop --bbox '400 0 1152 331.2' \
   "$FIGDIR/excess_eavail_W.pdf" \
   "$FIGDIR/paper_joint_localization.pdf"
