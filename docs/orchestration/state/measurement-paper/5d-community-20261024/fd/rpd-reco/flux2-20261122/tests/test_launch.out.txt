@@ -1,0 +1,11 @@
+ok   connect script exits 3: launcher exits 3 (rc 3)
+ok   connect script exits 0: launcher exits 0 (rc 0)
+ok   fetch unfinished (exit 10): launcher exits 10 (rc 10)
+ok   cert ends in 10 minutes: STOP before ssh (rc 9)
+ok   cert end time unreadable: STOP (rc 9)
+ok   fence mode (cov2d_fence.sh rev 1 calls squeue): refused (rc 9)
+ok   connect script not the pinned one: STOP 8 (rc 8)
+LAUNCH-TESTS :: PASS
+KILLED   echo-last (2 cases)
+KILLED   cert-check-dropped (3 cases)
+LAUNCH-MUTANTS :: 2/2 killed
