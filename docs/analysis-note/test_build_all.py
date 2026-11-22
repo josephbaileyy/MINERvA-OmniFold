@@ -735,8 +735,11 @@ class ResultLineNamesItsObjectTest(unittest.TestCase):
     BODIES = {"main_records": r"struck $\dead{1.234}$ here and $\dead{1.014}$, $\dead{1.65}$, $\dead{0.377}$ and $\dead{6.86}$",
               "pet_note": r"struck $\dead{5.678}$ here and $\dead{0.912}$ and $\dead{3.066}$",
               "main_note": "clean posted note", "main_primer": "clean primer"}
-    EXEMPT_SOURCES = {"part5_validation.tex": "the injected bump (mean weight 1.014)\n",
-                      "values.tex": "\\newcommand{\\covTwoDCTwo}{0.912}\n",
+    # 2026-11-22: the 1.014 entry is retired (its context no longer prints); 0.912 is keyed to the macro's definition
+    # and to the two appA_methods.tex sentences that print it
+    EXEMPT_SOURCES = {"values.tex": "\\newcommand{\\covTwoDCTwo}{0.912}\n",
+                      "appA_methods.tex": "the two-standard-deviation score is \\covTwoDCTwo{}. The latter\n"
+                                          "& Coverage is \\covTwoDCOne{} and \\covTwoDCTwo{}, respectively. \\\\\n",
                       # 2026-11-17: the 0.377 entry (f70e1d59f, the note's currency batch A) needs its source too
                       # 2026-11-19: the 3.066 entry (DECISION-20261119g) reads its source here too
                       "values_fived16.tex": "\\@namedef{fv@g-tune-pull-R15}{1.65}\n\\@namedef{fv@prr-rho-ibu200-q3}{-0.377}\n"
@@ -960,12 +963,15 @@ class PostedNoteIsOutwardTest(unittest.TestCase):
         self.assertEqual(mod.STRUCK_ALLOWED, {"main_records": "app_history.tex", "pet_note": "app_history_pet.tex"})
         self.assertEqual(mod.BUILDS["main_records"], "records")
         self.assertEqual(mod.BUILDS["main_note"], "note")
-        note = (HERE / "main_note.tex").read_text()
-        self.assertNotIn("\\input{app_history}", note)
-        self.assertNotIn("\\input{app_provenance}", note)
-        records = (HERE / "main_records.tex").read_text()
+        # 2026-11-22 (rewrite into main): the records reorganization inputs app_release_records and
+        # app_codebase_records from records_r10_reproducibility.tex, not from main_records.tex itself, so the test
+        # follows each driver's \input closure: the records build reaches all four record appendices, and the posted
+        # note reaches none of them (before, only app_history and app_provenance were checked, in main_note.tex alone)
+        records = {p.name for p in mod.resolve_closure(HERE / "main_records.tex")}
+        note = {p.name for p in mod.resolve_closure(HERE / "main_note.tex")}
         for name in ("app_provenance", "app_release_records", "app_codebase_records", "app_history"):
-            self.assertIn("\\input{%s}" % name, records)
+            self.assertIn(name + ".tex", records)
+            self.assertNotIn(name + ".tex", note)
 
 
 class UnitRequiredLiteralTest(unittest.TestCase):
@@ -1038,14 +1044,33 @@ class ExemptionGuardTest(unittest.TestCase):
     def test_live_exemptions_hold_and_say_so(self):
         code, line, out = self._run()
         self.assertEqual(code, 0, out)
-        self.assertIn("CONTEXT_EXEMPT[('main_note', '1.014')] holds", out)
-        self.assertIn("CONTEXT_EXEMPT[('main_note', '0.912')] holds", out)
+        self.assertIn("CONTEXT_EXEMPT[('main_note', '0.377')] holds", out)
+        self.assertIn("CONTEXT_EXEMPT[('main_note', '0.912')] holds: appA_methods.tex prints", out)
+        self.assertNotIn("CONTEXT_EXEMPT[('main_note', '1.014')]", out)   # retired 2026-11-22
 
     def test_a_context_that_no_longer_prints_FAILS(self):
-        (self.note / "part5_validation.tex").write_text("the injected bump, reworded\n")
+        (self.note / "appA_methods.tex").write_text("the two-standard-deviation score, reworded\n")
         code, line, out = self._run()
         self.assertEqual(code, 1, out)
-        self.assertIn("CONTEXT_EXEMPT[('main_note', '1.014')] is STALE: part5_validation.tex no longer contains", out)
+        self.assertIn("CONTEXT_EXEMPT[('main_note', '0.912')] is STALE: appA_methods.tex no longer contains", out)
+
+    def test_the_exempt_context_beyond_the_macro_uses_FAILS(self):
+        """2026-11-22: the 0.912 exemption is capped by its source. The posted note's closure prints \\covTwoDCTwo
+        nowhere here, so a struck 0.912 typed into a sentence of the exempt wording is shown and not exempt."""
+        (self.note / "main_note.pdf").write_text("the two-standard-deviation score is 0.912.\n")
+        code, line, out = self._run("--source-only")
+        self.assertEqual(code, 1, out)
+        self.assertIn("main_note.pdf shows the exempt context of 0.912 1 time(s), but its closure prints "
+                      "\\covTwoDCTwo only 0 time(s)", out)
+
+    def test_the_exempt_context_printed_by_the_macro_passes(self):
+        """The control: one source sentence prints \\covTwoDCTwo and the PDF shows the context once."""
+        (self.note / "body_main_note.tex").write_text("the two-standard-deviation score is \\covTwoDCTwo{}.\n")
+        (self.note / "main_note.pdf").write_text("the two-standard-deviation score is 0.912.\n")
+        code, line, out = self._run("--source-only")
+        self.assertNotIn("shows the exempt context of 0.912", out)
+        self.assertNotIn("contains struck literal(s) ['0.912']", out)
+        self.assertIn("main_note.pdf shows the context 1 time(s), its closure prints \\covTwoDCTwo 1 time(s)", out)
 
     def test_a_missing_source_file_FAILS(self):
         (self.note / "values.tex").unlink()
@@ -1054,10 +1079,10 @@ class ExemptionGuardTest(unittest.TestCase):
         self.assertIn("CONTEXT_EXEMPT[('main_note', '0.912')] is STALE: values.tex no longer contains", out)
 
     def test_a_literal_that_is_no_longer_struck_FAILS(self):
-        (self.note / "app_history.tex").write_text(r"struck $\dead{1.234}$ here" + "\n")
+        (self.note / "app_history.tex").write_text(r"struck $\dead{1.234}$ here and $\dead{0.377}$, $\dead{6.86}$" + "\n")
         code, line, out = self._run("--source-only")
         self.assertEqual(code, 1, out)
-        self.assertIn("CONTEXT_EXEMPT[('main_note', '1.014')] is STALE: 1.014 is no longer struck", out)
+        self.assertIn("CONTEXT_EXEMPT[('main_note', '1.65')] is STALE: 1.65 is no longer struck", out)
 
 
     SIDECAR = "../orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/figures/fd_g_fig_modes.json"
@@ -1071,7 +1096,7 @@ class ExemptionGuardTest(unittest.TestCase):
         self.assertEqual(code, 0, out)
         self.assertIn("CONTEXT_EXEMPT[('main_note', '6.86')] SKIP: its source", out)
         self.assertNotIn("is STALE", out)
-        self.assertIn("CONTEXT_EXEMPT[('main_note', '1.014')] holds", out)
+        self.assertIn("CONTEXT_EXEMPT[('main_note', '0.912')] holds", out)
 
     def test_an_outside_source_missing_in_the_canonical_layout_FAILS(self):
         """In <repo>/docs/analysis-note the sidecar is required: missing, the exemption is STALE."""
@@ -1201,23 +1226,25 @@ class ContextExemptLiteralTest(unittest.TestCase):
     setUp = UnitRequiredLiteralTest.setUp
 
     def test_the_declared_context_is_not_a_hit_in_its_build(self):
-        for text in ("Same Gaussian form in truth q3 (mean weight 1.014) 4D",
-                     "Same Gaussian form in truth q3 (mean\nweight 1.014) 4D",
-                     "the bump had mean weight 1.014.",
-                     "Fixed-truth C2 = 0.912.",
-                     "the fraction within 2 sigma, C2 = 0.912, vs. 0.954",
-                     "Fixed-truth C2 = 0.912 (nominal 0.954)",
+        for text in ("the one-standard-deviation score is 0.679 and the two-standard-deviation score is 0.912. The",
+                     "the two-standard-\ndeviation score is 0.912.",
+                     "Coverage is 0.679 and\n0.912, respectively. The",
                      "changed it from 1.623 to 1.621 at five iterations and from 3.120 to 3.066 at ten iterations.",
                      "from 1.623 to 1.621 at five\niterations and from 3.120 to\n3.066 at ten iterations"):
             with self.subTest(text=text):
                 searched = self.mod.exempt_text("main_note", text)
-                self.assertFalse(any(self.mod.outward_hit(v, searched) for v in ("1.014", "0.912", "3.066")), searched)
+                self.assertFalse(any(self.mod.outward_hit(v, searched) for v in ("0.912", "3.066")), searched)
 
     def test_the_literal_elsewhere_in_that_build_is_still_a_hit(self):
         # 3.066 (DECISION-20261119g): the 19g sentence is removed, the struck GBDT total 3.066 x 10^-38 is not
         ctx = "from 1.623 to 1.621 at five iterations and from 3.120 to 3.066 at ten iterations"
         for value, text in (("1.014", "(mean weight 1.014); the struck chi2/ndf 1.014 would leak"),
                             ("0.912", "C2 = 0.912, and a PET/GBDT ratio of 0.912"),
+                            # 2026-11-22: a new bare 0.912 elsewhere in the note, and the pre-rewrite "C2 = 0.912" form
+                            ("0.912", "the PET/GBDT total ratio is 0.912"),
+                            ("0.912", "Fixed-truth C2 = 0.912."),
+                            # the retired 1.014 exemption: its old context is a hit in the posted note again
+                            ("1.014", "Same Gaussian form in truth q3 (mean weight 1.014) 4D"),
                             ("3.066", ctx + "; the GBDT total 3.066 \u00d7 10\u221238 cm2/nucleon would leak"),
                             ("3.066", "the GBDT total was 3.066 \u00d7 10\u221238"),
                             ("3.066", "from 3.120 to 3.066 at ten iterations")):
@@ -1238,10 +1265,13 @@ class ContextExemptLiteralTest(unittest.TestCase):
         for name in ("app_history.tex", "app_history_pet.tex"):
             for body in self.mod.dead_bodies(HERE / name):
                 struck |= self.mod.literals_from(body, macros)[0]
-        for (build, value), (pattern, source, printed) in self.mod.CONTEXT_EXEMPT.items():
+        for (build, value), (pattern, sources, texts) in self.mod.CONTEXT_EXEMPT.items():
             with self.subTest(value=value):
                 self.assertEqual(build, "main_note")
-                self.assertIn(printed, (HERE / source).read_text(encoding="utf-8"))
+                pairs = list(zip(sources, texts)) if isinstance(sources, tuple) else [(sources, texts)]
+                for source, text in pairs:
+                    self.assertIn(text, (HERE / source).read_text(encoding="utf-8"))
+                printed = pairs[0][1]
                 self.assertIn(value, struck)
                 rendered = self.mod.CONTEXT_RENDERED.get((build, value),
                                                          printed.replace("\\newcommand{\\covTwoDCTwo}{0.912}", "C2 = 0.912"))
