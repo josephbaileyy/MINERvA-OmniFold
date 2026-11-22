@@ -1,0 +1,37 @@
+I'll read the declaration in full and check its mathematics, cuts, and controls against the cited sources.
+
+The declaration is in. Next I’ll check the cited Fisher, width, and projection code against the formulas it locks in.
+
+VERDICT: FIX
+
+1. BLOCKER, §5.1. `Z_well = max_k |w_k·β|/s_k < 1` puts each eigen-combination inside its own width. The "below" sentence, and the information-limit sentence that requires it, say every well-constrained combination is inside one width. Any unit vector in the span of those `w_k` still has Cramér–Rao width ≤ 0.10, and the worst ratio on that span is `sqrt(χ²_well)`, which §3.6 prints and does not read. Two axes at 0.9 widths give `χ²_well = 1.62` and an equal mixture at `0.9√2 ≈ 1.27` widths. Fix: license "below" only for `χ²_well < 1`, and license "resolvable" for `χ²_well ≥ 4`. Keep `Z_well` as a printed per-axis maximum.
+
+2. BLOCKER, §3.3. `widths_from_eig` sets a functional to infinity when its own null fraction exceeds `1e-6`, and it inverts only eigenvalues above `1e-12` of the maximum. `U∞` keeps a left singular vector only when its singular value exceeds `1e-6‖G‖₂`. A direction whose gradient lies almost entirely in `N`, with `‖G_Nᵀw‖` under that global cut, stays in `Q`. There `F⁺` returns only the range piece, so `s_k ≈ 0`, the 10% cut calls it well-constrained, and the max that defines `Z_well` is set by it. Fix: take the numerical range as eigenvalues `> 1e-12·λ_max` and pass that same cut into the pseudoinverse (`np.linalg.pinv` defaults to `1e-15`). Put `w` in `U∞` when `‖G_Nᵀw‖/‖Gᵀw‖ > 1e-6`.
+
+3. BLOCKER, §2 and §6. `b1_projection.band_of` maps `x > 1.5` to overshoot, `|x| ≤ 0.2` to minor, and `0.5` to candidate. Importing it unchanged labels `S_poor` and `Z_well` with those bands, so the synthetic edge test against §5.1 cannot pass. Fix: import `guard` and the two-driver call only. Write one `band_of` per statistic.
+
+4. BLOCKER, §3.2 and §6 C-DID. `did.widths` calls `fisher(R, t_bin, b)` with `b` the out-of-grid signal histogram (`histograms`, key `"b"`: reco in-grid, truth outside). REPORT §5 says "signal-only" for the absence of physics-background variance; AM-2 and AM-15 keep that `b`. §3.2 sets signal-only to `b = 0` and equates that with D-ID. C-DID at `1e-6` relative then compares a different Fisher to `tables.npz`. Fix: C-DID uses `problem(role="same")` at T1 nominal, including that out-of-grid `b`. Leave `b = 0` as a printed variant with no control depending on it.
+
+5. FIX, §3.1 and §3.5. `G = diag(1/f0) L diag(t0)` is the Jacobian of `φ = (Lt)/(Lt0)`. `δφ = b_c` holds when the 16-vector `P` equals `Lt0` and `X` equals `Lt`. `r_id` builds its map from `(U != 0)` and divides by the prior count; `route2` stores the reported truth as `gw.functionals(x_true)`. Fix: build `L` from the functional rows that produce FD-PRR's `P` and `X`. STOP unless `Lt0` equals that `P` to `1e-12` relative. Drop cells with `f0 = 0` from `φ`, as `r_id` leaves `|value| = 0` as NaN. The same check at 2D against A2's prior.
+
+6. FIX, §3.6 and §5.1. The reading rules leave more than one label at several primary outcomes.
+- The tables close both sides of 0.8, 0.2, 2 and 0.5; the edge sentence gives those points to the middle band. Publish one set of inequalities.
+- `Z_noise` sits inside the resolvable region and outside the `[f−h, f+h]` test. License noisy "resolvable" only when `Z−h > Z_noise` and `Z−h ≥ 2`. An interval that meets both sides of `Z_noise` is "unresolved across".
+- `n_well = 0` leaves `Z_well` with no maximum. `r_poor` divides by `‖P_poor β_B0‖` with no floor; `r_well` has one at 0.005. Give each a sentinel ("no well-constrained combination", "no poorly constrained component to remove") and write the combined sentence for that case. A vacuous "below" is unavailable.
+- The norm floor replaces the combined sentence for a small `‖β‖`, including a resolved resolvable `Z_well`. Let that `Z_well` keep "points at a resolvable component".
+- F0b's `h` is half the 2.5–97.5% range, then applied symmetrically; for this skewed max, use those two percentiles as the interval. A2's guard is the five-trial `t` interval and its `Z_noise` is 2,000 Gaussians. Use one perturbation for both.
+- §3.6 sets `h_β = 0` for a noise-free vector and also calls the five-split FD-PRR and T3 vectors noise-free, while their split scatter "enters through the guard". Define `h_β` for those means as the split-guard formula on `‖β_s‖`.
+
+7. FIX, §5.2. "Removes mainly the poorly constrained part" is licensed when `r_well` is "removes part", which reaches one half. License it only when `r_poor` is "removes most" and `r_well` is "no change" or the well sentinel.
+
+8. FIX, §1. The comparison table says the 5D response is the R-ID capture. §3.1 builds the reading response from the full MC at weight ×1. The capture is the input to C-RID only.
+
+9. FIX, §3.4, §5.3 and §6.
+- Rebuild `F` from the summed response and the summed background. `C-MARG`'s `Σμ` check holds for any cover of the reco cells; pin the dropped axes to the named edge vectors (`W`, then `q3`).
+- `cv.npz` is a full-exposure template, and §5.3 also builds `b` from each MC half at ×2. Use that same template for full, A and B.
+- C-T3 names no `k`. Compare `b_c` at `k = 5` with FD-PRR's table, and state the q3 iteration.
+- `binned_problem` returns `(T, M, y)` and no background. Set 2D `R = M/T` columnwise and define `b` from a named capture array. Extend C-2D to that `b`.
+- N-PREC flags `Z_well` on a relative 1% gap, so a small value in "below" fails on driver noise. Add an absolute floor on the driver difference.
+- Half-sample matching is by best partner and can be many-to-one. Require a one-to-one match, and require `dim U∞` equal on full, A and B before `m` is read.
+
+10. NOTE, §3.3 and §2. For an estimable functional, `F = diag(t0) did.fisher(R, t0, b) diag(t0)` and `C_φ = G F⁺ Gᵀ` reproduce `sigma_rel²` from `widths_from_eig` at the same eigenvalue cut. `θ = t/t0` and `G = ∂φ/∂θ` match that coordinate. `S_poor` is a squared-norm share; at 0.8 the norm share is `√0.8`, so the "four fifths" sentence remains true if "size" is read as the norm. The isotropic share is printed and unused, so poor-dominated can sit below chance when the poor subspace is most of the dimension. §2's code pins are 8-hex prefixes; C-OPS needs the full sha256 written in the declaration. §8's "about 30 min and 8 GB" is a soft gate.
