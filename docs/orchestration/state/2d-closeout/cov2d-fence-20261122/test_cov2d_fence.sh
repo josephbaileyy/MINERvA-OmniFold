@@ -90,12 +90,43 @@ for want in '-X' '-n' '-P' '-u stubuser' '-E now' '-o JobID,JobName,State'; do
   case " $args " in *" $want "*) echo "ok   argv has $want";; *) echo "FAIL argv lacks $want"; fail=1;; esac
 done
 case " $args " in *" -s "*|*"--state"*) echo "FAIL argv uses -s/--state"; fail=1;; *) echo "ok   argv has no -s/--state";; esac
-# The /dev/shm-copy convention: $1 is deleted at exit, on both CLEAR (exit 0) and REFUSED (exit 3).
+# Self-copy deletion: $1 is deleted only if it is under /dev/shm/ AND is the running script ([ "$1" -ef "$0" ]).
+# macOS has no /dev/shm, so these cases run a copy of the fence whose single "/dev/shm/*)" pattern is rewritten to
+# "$T/shm/*)"; the fence file itself keeps the literal /dev/shm/.
+[ "$(/usr/bin/grep -c '/dev/shm/\*)' "$F")" = 1 ] || { echo "FAIL fence lacks exactly one /dev/shm/*) pattern"; fail=1; }
+mkdir "$T/shm" "$T/notshm"
+shm_copy() { sed "s#/dev/shm/\*)#$T/shm/*)#" "$F" > "$1"; }
 for pair in '0|' '3|1|cov2d|RUNNING\n'; do
   want=${pair%%|*}; o=${pair#*|}
-  c=$T/selfcopy; cp "$F" "$c"; SACCT_OUT="$o" bash "$c" "$c" >/dev/null 2>&1; rc=$?
-  if [ -e "$c" ] || [ "$rc" != "$want" ]; then echo "FAIL self copy (want exit $want, got $rc, kept=$([ -e "$c" ] && echo y || echo n))"; fail=1
-  else echo "ok   self copy deleted (exit $rc)"; fi
+  # (a) the real self-copy under shm, run as itself: deleted, exit unchanged
+  c=$T/shm/fence_copy.sh; shm_copy "$c"
+  out=$(SACCT_OUT="$o" bash "$c" "$c" 2>&1); rc=$?
+  if [ -e "$c" ] || [ "$rc" != "$want" ] || ! verdict_ok "$rc" "$out"; then echo "FAIL self copy under shm (want exit $want, got $rc, kept=$([ -e "$c" ] && echo y || echo n))"; fail=1
+  else echo "ok   self copy under shm deleted (exit $rc)"; fi
+  # (b) some other file under shm passed as $1: kept and named, exit unchanged
+  c=$T/shm/fence_copy.sh; shm_copy "$c"; v=$T/shm/other_file; echo keep > "$v"
+  out=$(SACCT_OUT="$o" bash "$c" "$v" 2>&1); rc=$?
+  if [ ! -e "$v" ] || [ "$rc" != "$want" ] || ! printf '%s\n' "$out" | /usr/bin/grep -qx "self-copy not removed: $v"; then echo "FAIL other shm file (want kept + exit $want, got $rc, kept=$([ -e "$v" ] && echo y || echo n))"; fail=1
+  else echo "ok   other shm file kept (exit $rc)"; fi
+  rm -f "$c" "$v"
+  # (c) the running script itself but NOT under shm: kept and named, exit unchanged
+  c=$T/notshm/fence_copy.sh; shm_copy "$c"
+  out=$(SACCT_OUT="$o" bash "$c" "$c" 2>&1); rc=$?
+  if [ ! -e "$c" ] || [ "$rc" != "$want" ] || ! printf '%s\n' "$out" | /usr/bin/grep -qx "self-copy not removed: $c"; then echo "FAIL self outside shm (want kept + exit $want, got $rc)"; fail=1
+  else echo "ok   self outside shm kept (exit $rc)"; fi
+  rm -f "$c"
+  # (e) the running script outside shm, reached by a /dev/shm/.. path (passes prefix and -ef): kept and named
+  c=$T/notshm/fence_copy.sh; shm_copy "$c"; dd=$T/shm/../notshm/fence_copy.sh
+  out=$(SACCT_OUT="$o" bash "$c" "$dd" 2>&1); rc=$?
+  if [ ! -e "$c" ] || [ "$rc" != "$want" ] || ! printf '%s\n' "$out" | /usr/bin/grep -qxF "self-copy not removed: $dd"; then echo "FAIL dotdot path (want kept + exit $want, got $rc)"; fail=1
+  else echo "ok   dotdot path to self kept (exit $rc)"; fi
+  rm -f "$c"
+  # (d) the committed fence, unmodified, with an arbitrary file as $1: kept and named, exit unchanged
+  v=$T/victim_record.txt; echo record > "$v"
+  out=$(SACCT_OUT="$o" bash "$F" "$v" 2>&1); rc=$?
+  if [ ! -e "$v" ] || [ "$rc" != "$want" ] || ! printf '%s\n' "$out" | /usr/bin/grep -qx "self-copy not removed: $v"; then echo "FAIL arbitrary file (want kept + exit $want, got $rc)"; fail=1
+  else echo "ok   arbitrary file kept (exit $rc)"; fi
+  rm -f "$v"
 done
 if [ -s "$T_SQ" ]; then echo "FAIL squeue was called"; fail=1; else echo "ok   squeue never called"; fi
 [ "$fail" = 0 ] && echo "ALL PASS" || echo "SOME FAILED"

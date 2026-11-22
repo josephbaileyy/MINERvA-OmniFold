@@ -10,9 +10,20 @@
 # A connect that relies on this fence also takes a fresh ack from the cov2d session, which covers that gap.
 # State is classified here against a closed terminal set (first word of State, so "CANCELLED by N" counts);
 # any other state, including ones this file does not name, refuses. sacct -s is not used (Perlmutter rejects CF).
-# Writes nothing. May be launched from a /dev/shm copy of itself whose path is $1; it deletes that copy at exit.
+# Writes nothing. May be launched from a /dev/shm copy of itself whose path is $1. At exit it deletes $1 only if $1
+# is under /dev/shm/, has no .. component, and is the running script itself ([ "$1" -ef "$0" ]); any other $1 is
+# kept and named. (Without the .. rule, /dev/shm/../<repo>/cov2d_fence.sh run from the repo would delete the repo file.)
 SELF=$1
-fin() { [ -n "$SELF" ] && rm -f -- "$SELF"; exit "$1"; }
+fin() {
+  if [ -n "$SELF" ]; then
+    case $SELF in
+      */../*|*/..) echo "self-copy not removed: $SELF" ;;
+      /dev/shm/*) if [ "$SELF" -ef "$0" ]; then rm -f -- "$SELF"; else echo "self-copy not removed: $SELF"; fi ;;
+      *) echo "self-copy not removed: $SELF" ;;
+    esac
+  fi
+  exit "$1"
+}
 echo "fence host=$(hostname) utc=$(date -u +%FT%TZ)"
 # sacct reads -S in the cluster's local time; 60 days is far past the required 48 h either way.
 start=$(date -d '60 days ago' +%FT%T) || { echo "FENCE REFUSED: start time failed"; fin 3; }

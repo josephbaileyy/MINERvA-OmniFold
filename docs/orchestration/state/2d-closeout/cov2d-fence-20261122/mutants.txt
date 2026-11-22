@@ -20,6 +20,12 @@ KILLED 1 day
 KILLED no -E
 KILLED no -u
 KILLED no self delete
+KILLED drop -ef check
+KILLED drop /dev/shm prefix check
+KILLED drop .. rule
+KILLED rev1 cleanup: delete any $1
+KILLED not-removed message dropped
+KILLED cleanup changes exit code
 KILLED squeue added
 KILLED refuse prints CLEAR
-24/24 killed
+30/30 killed
