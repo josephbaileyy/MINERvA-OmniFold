@@ -1,0 +1,51 @@
+prr_B0_q3_s991000	True	True	184471	1794267345000000000	1794267345000000000	/pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/q3/prr_B0_q3_s991000.npz
+prr_K10_q3_s991000	True	True	184511	1794267345000000000	1794267345000000000	/pscratch/sd/j/josephrb/fd-prr-20261108/runs/K10/q3/prr_K10_q3_s991000.npz
+prr_K20_q3_s991000	True	True	184537	1794267345000000000	1794267345000000000	/pscratch/sd/j/josephrb/fd-prr-20261108/runs/K20/q3/prr_K20_q3_s991000.npz
+prr_K50_q3_s991000	True	True	184529	1794267345000000000	1794267345000000000	/pscratch/sd/j/josephrb/fd-prr-20261108/runs/K50/q3/prr_K50_q3_s991000.npz
+prr_B0_A7_gibuu_s994001	True	True	184316	1794267346000000000	1794267346000000000	/pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/A7_gibuu/prr_B0_A7_gibuu_s994001.npz
+prr_K20_A7_gibuu_s994001	True	True	184318	1794267346000000000	1794267346000000000	/pscratch/sd/j/josephrb/fd-prr-20261108/runs/K20/A7_gibuu/prr_K20_A7_gibuu_s994001.npz
+prr_B0_A7_gibuu_s994002	True	True	184476	1794267346000000000	1794267346000000000	/pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/A7_gibuu/prr_B0_A7_gibuu_s994002.npz
+prr_K20_A7_gibuu_s994002	True	True	184455	1794267346000000000	1794267346000000000	/pscratch/sd/j/josephrb/fd-prr-20261108/runs/K20/A7_gibuu/prr_K20_A7_gibuu_s994002.npz
+prr_B0_A7_gibuu_s994003	True	True	184414	1794267346000000000	1794267346000000000	/pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/A7_gibuu/prr_B0_A7_gibuu_s994003.npz
+prr_K20_A7_gibuu_s994003	True	True	184423	1794267346000000000	1794267346000000000	/pscratch/sd/j/josephrb/fd-prr-20261108/runs/K20/A7_gibuu/prr_K20_A7_gibuu_s994003.npz
+prr_B0_A7_gibuu_s994004	True	True	184335	1794267346000000000	1794267346000000000	/pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/A7_gibuu/prr_B0_A7_gibuu_s994004.npz
+prr_K20_A7_gibuu_s994004	True	True	184363	1794267346000000000	1794267346000000000	/pscratch/sd/j/josephrb/fd-prr-20261108/runs/K20/A7_gibuu/prr_K20_A7_gibuu_s994004.npz
+prr_B0_nominal_s991000	True	True	184263	1794267345000000000	1794267345000000000	/pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/nominal/prr_B0_nominal_s991000.npz
+prr_B0_nominal_s994001	True	True	184261	1794267346000000000	1794267346000000000	/pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/nominal/prr_B0_nominal_s994001.npz
+prr_B0_nominal_s994002	True	True	184398	1794267346000000000	1794267346000000000	/pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/nominal/prr_B0_nominal_s994002.npz
+prr_B0_nominal_s994003	True	True	184380	1794267346000000000	1794267346000000000	/pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/nominal/prr_B0_nominal_s994003.npz
+prr_B0_nominal_s994004	True	True	184279	1794267346000000000	1794267346000000000	/pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/nominal/prr_B0_nominal_s994004.npz
+python 3.11.14 lightgbm 4.6.0 scipy 1.16.3 numpy 1.26.4
+{"tasks": {"dry": 6, "q3": 6, "floor": 24}, "out": "/pscratch/sd/j/josephrb/t3p-20261121/queues"}
+queue dry: 6 tasks
+queue q3: 6 tasks
+queue floor: 24 tasks
+1c62f40a29bb7d9995457c339da6213fe13f027d57d1536d9532e14a7ff8f1f0  /pscratch/sd/j/josephrb/t3p-20261121/queues/dry.tsv
+cc1a7dc8526b13f2c96415ff179e29f5f4ee74f691e30677f8031696dc567093  /pscratch/sd/j/josephrb/t3p-20261121/queues/floor.tsv
+4315d735a6eae499aeb8f6f97f4b39e29d4b52129d7e9fbd555ef9f19cc03ea7  /pscratch/sd/j/josephrb/t3p-20261121/queues/q3.tsv
+fence.txt:
+cov2d
+ll5d_
+ibukt
+rpd_
+prr_
+e96
+ens1_
+t3p_probe.py limit dry -> '2:15:00' (rc 0), declared 2:15:00
+== fence again (sacct)
+2026-11-21T10:29:14Z
+sbatch rc=0
+Submitted batch job 61726250
+t3p_dry job 61726250
+scontrol TimeLimit=02:15:00 (declared 02:15:00)
+61726250|t3p_dry|PENDING|02:15:00|1|regular_1|m3246
+porcelain --ignored lines after: 3
+the deploy changed after the submission (the job is queued; reported, not cancelled)
+t3p dry submit rc=8
+2026-11-21T10:29:23Z
+====
+!! nd-unfolding/__pycache__/
+!! nd-unfolding/prior_retention/__pycache__/
+!! nd-unfolding/tier3/__pycache__/
+====
+61726250|t3p_dry|PENDING|Unknown|00:00:00|1|02:15:00
