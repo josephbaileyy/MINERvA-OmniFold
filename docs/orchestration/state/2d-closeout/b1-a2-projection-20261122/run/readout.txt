@@ -1,0 +1,98 @@
+b1: A2 mean residual pattern on Delta = E_R - published, V_pub modes
+
+controls: C-OPS PASS, C-CELLS PASS, C-PUB PASS, C-SUM PASS, C-K PASS, C-A2 PASS, C-M PASS, C-LIN PASS
+N-PREC unresolved M modes: []
+
+R1 (K73): g +/- h [evr g]  label
+  nominal       primary   +0.0004 +/- 0.0150 [+0.0004]  minor
+  genie_mec     primary   +0.1611 +/- 0.0446 [+0.1611]  unresolved across minor, partial
+  nuwro         primary   +0.1062 +/- 0.0640 [+0.1062]  minor
+  bump          secondary -0.0008 +/- 0.0382 [-0.0008]  minor
+  tilt          secondary -0.0182 +/- 0.0545 [-0.0182]  minor
+  within_plus   secondary +0.0392 +/- 0.0382 [+0.0392]  minor
+  within_minus  secondary -0.0137 +/- 0.0147 [-0.0137]  minor
+  combined (primary): unresolved at genie_mec
+
+R2 (Kbar): g +/- h [evr g]  label
+  nominal       primary   +0.0049 +/- 0.0226 [+0.0049]  minor
+  genie_mec     primary   +0.1453 +/- 0.0137 [+0.1453]  minor
+  nuwro         primary   +0.2967 +/- 0.0203 [+0.2967]  partial
+  bump          secondary -0.0590 +/- 0.0255 [-0.0590]  minor
+  tilt          secondary +0.0042 +/- 0.0278 [+0.0042]  minor
+  within_plus   secondary +0.1765 +/- 0.0267 [+0.1765]  unresolved across minor, partial
+  within_minus  secondary -0.1802 +/- 0.0352 [-0.1802]  unresolved across opposite, minor
+  combined (primary): truth-dependent
+
+R3 (M modes): rho +/- h  label
+  nominal       primary   23:+0.019+/-0.072 minor  9:+0.037+/-0.092 minor  118:-0.007+/-0.125 minor  2:-0.011+/-0.041 minor  79:-0.001+/-0.010 minor  121:+0.041+/-0.102 minor
+  genie_mec     primary   23:-0.066+/-0.081 minor  9:+0.106+/-0.083 minor  118:+0.411+/-0.115 unresolved across partial, candidate  2:+0.151+/-0.093 unresolved across minor, partial  79:+0.562+/-0.065 unresolved across partial, candidate  121:+0.299+/-0.151 unresolved across minor, partial
+  nuwro         primary   23:-0.329+/-0.039 opposite  9:+0.284+/-0.064 partial  118:+0.018+/-0.079 minor  2:-0.158+/-0.047 unresolved across opposite, minor  79:+0.129+/-0.060 minor  121:+0.681+/-0.149 candidate
+  bump          secondary 23:+0.206+/-0.055 unresolved across minor, partial  9:+0.015+/-0.119 minor  118:+0.160+/-0.081 unresolved across minor, partial  2:+0.085+/-0.045 minor  79:-0.055+/-0.056 minor  121:+0.058+/-0.057 minor
+  tilt          secondary 23:+0.009+/-0.068 minor  9:+0.074+/-0.073 minor  118:+0.008+/-0.073 minor  2:+0.104+/-0.033 minor  79:+0.013+/-0.025 minor  121:-0.023+/-0.059 minor
+  within_plus   secondary 23:+0.270+/-0.114 unresolved across minor, partial  9:+0.452+/-0.137 unresolved across partial, candidate  118:-0.140+/-0.053 minor  2:+0.013+/-0.058 minor  79:+0.209+/-0.026 unresolved across minor, partial  121:-0.046+/-0.132 minor
+  within_minus  secondary 23:-0.297+/-0.197 unresolved across opposite, minor  9:-0.418+/-0.155 opposite  118:+0.082+/-0.060 minor  2:+0.006+/-0.073 minor  79:-0.200+/-0.031 unresolved across opposite, minor  121:+0.079+/-0.057 minor
+
+printed, read by nothing (numpy driver): per method/truth/set g, h, cos, q_raw, q_debiased, remainder
+  nominal       omnifold K73   g +0.0004 h 0.0150 cos +0.0044 q 0.007174 q~ -0.000154 rem 1.006 | e*p g +0.0006
+  nominal       omnifold Kbar  g +0.0049 h 0.0226 cos +0.1011 q 0.002346 q~ -0.001068 rem 0.9926 | e*p g +0.0062
+  nominal       omnifold K205  g +0.0036 h 0.0121 cos +0.0584 q 0.003753 q~ -0.0008013 rem 0.9966 | e*p g +0.0046
+  nominal       ibu5     K73   g -0.0006 h 0.0815 cos -0.0029 q 0.04846 q~ -0.0001806 rem 1.05 | e*p g +0.0007
+  nominal       ibu5     Kbar  g +0.0262 h 0.0615 cos +0.1690 q 0.02397 q~ -0.009115 rem 0.9716 | e*p g +0.0297
+  nominal       ibu5     K205  g +0.0184 h 0.0401 cos +0.1040 q 0.03111 q~ -0.00651 rem 0.9944 | e*p g +0.0212
+  nominal       ibu10    K73   g +0.0036 h 0.1054 cos +0.0115 q 0.09953 q~ 0.007844 rem 1.092 | e*p g +0.0054
+  nominal       ibu10    Kbar  g +0.0330 h 0.0794 cos +0.1418 q 0.05405 q~ -0.02089 rem 0.9881 | e*p g +0.0379
+  nominal       ibu10    K205  g +0.0244 h 0.0449 cos +0.0941 q 0.06731 q~ -0.01251 rem 1.018 | e*p g +0.0284
+  genie_mec     omnifold K73   g +0.1611 h 0.0446 cos +0.1711 q 0.8863 q~ 0.8786 rem 1.564 | e*p g +0.1606
+  genie_mec     omnifold Kbar  g +0.1453 h 0.0137 cos +0.1430 q 1.032 q~ 1.027 rem 1.741 | e*p g +0.1417
+  genie_mec     omnifold K205  g +0.1499 h 0.0196 cos +0.1507 q 0.9893 q~ 0.984 rem 1.69 | e*p g +0.1472
+  genie_mec     ibu5     K73   g +0.0447 h 0.0550 cos +0.0706 q 0.4017 q~ 0.3533 rem 1.312 | e*p g +0.0438
+  genie_mec     ibu5     Kbar  g +0.1170 h 0.0622 cos +0.1273 q 0.8441 q~ 0.8134 rem 1.61 | e*p g +0.1159
+  genie_mec     ibu5     K205  g +0.0959 h 0.0528 cos +0.1134 q 0.7151 q~ 0.6792 rem 1.523 | e*p g +0.0949
+  genie_mec     ibu10    K73   g +0.0199 h 0.0607 cos +0.0359 q 0.3053 q~ 0.2093 rem 1.266 | e*p g +0.0186
+  genie_mec     ibu10    Kbar  g +0.1206 h 0.0996 cos +0.1337 q 0.8144 q~ 0.7419 rem 1.573 | e*p g +0.1200
+  genie_mec     ibu10    K205  g +0.0913 h 0.0797 cos +0.1118 q 0.666 q~ 0.5866 rem 1.483 | e*p g +0.0905
+  nuwro         omnifold K73   g +0.1062 h 0.0640 cos +0.1125 q 0.8925 q~ 0.8838 rem 1.68 | e*p g +0.1099
+  nuwro         omnifold Kbar  g +0.2967 h 0.0203 cos +0.1699 q 3.048 q~ 3.042 rem 3.455 | e*p g +0.2965
+  nuwro         omnifold K205  g +0.2412 h 0.0291 cos +0.1550 q 2.42 q~ 2.413 rem 2.938 | e*p g +0.2421
+  nuwro         ibu5     K73   g +0.0129 h 0.1197 cos +0.0222 q 0.3401 q~ 0.292 rem 1.314 | e*p g +0.0137
+  nuwro         ibu5     Kbar  g +0.1888 h 0.0716 cos +0.1167 q 2.618 q~ 2.591 rem 3.24 | e*p g +0.1898
+  nuwro         ibu5     K205  g +0.1375 h 0.0694 cos +0.0984 q 1.954 q~ 1.921 rem 2.679 | e*p g +0.1385
+  nuwro         ibu10    K73   g -0.0151 h 0.1519 cos -0.0310 q 0.2382 q~ 0.1472 rem 1.268 | e*p g -0.0149
+  nuwro         ibu10    Kbar  g +0.2054 h 0.1024 cos +0.1316 q 2.435 q~ 2.37 rem 3.025 | e*p g +0.2068
+  nuwro         ibu10    K205  g +0.1411 h 0.0949 cos +0.1053 q 1.795 q~ 1.722 rem 2.513 | e*p g +0.1422
+  bump          omnifold K73   g -0.0008 h 0.0382 cos -0.0034 q 0.05864 q~ 0.05387 rem 1.06 | e*p g -0.0011
+  bump          omnifold Kbar  g -0.0590 h 0.0255 cos -0.1709 q 0.119 q~ 0.1156 rem 1.237 | e*p g -0.0599
+  bump          omnifold K205  g -0.0420 h 0.0259 cos -0.1319 q 0.1014 q~ 0.09762 rem 1.185 | e*p g -0.0428
+  bump          ibu5     K73   g +0.0157 h 0.0844 cos +0.0483 q 0.1054 q~ 0.06137 rem 1.074 | e*p g +0.0146
+  bump          ibu5     Kbar  g -0.0275 h 0.0205 cos -0.0592 q 0.2155 q~ 0.1837 rem 1.27 | e*p g -0.0269
+  bump          ibu5     K205  g -0.0149 h 0.0294 cos -0.0348 q 0.1834 q~ 0.148 rem 1.213 | e*p g -0.0148
+  bump          ibu10    K73   g +0.0132 h 0.0939 cos +0.0339 q 0.1529 q~ 0.06568 rem 1.126 | e*p g +0.0124
+  bump          ibu10    Kbar  g -0.0090 h 0.0419 cos -0.0200 q 0.2019 q~ 0.1284 rem 1.22 | e*p g -0.0070
+  bump          ibu10    K205  g -0.0025 h 0.0337 cos -0.0058 q 0.1876 q~ 0.1101 rem 1.193 | e*p g -0.0013
+  tilt          omnifold K73   g -0.0182 h 0.0545 cos -0.2461 q 0.005448 q~ -0.0001769 rem 1.042 | e*p g -0.0178
+  tilt          omnifold Kbar  g +0.0042 h 0.0278 cos +0.0574 q 0.005287 q~ 0.002826 rem 0.9969 | e*p g +0.0076
+  tilt          omnifold K205  g -0.0023 h 0.0218 cos -0.0320 q 0.005334 q~ 0.001951 rem 1.01 | e*p g +0.0002
+  tilt          ibu5     K73   g -0.0403 h 0.1292 cos -0.2047 q 0.03872 q~ -0.009175 rem 1.119 | e*p g -0.0388
+  tilt          ibu5     Kbar  g -0.0080 h 0.0494 cos -0.0418 q 0.03621 q~ 0.00761 rem 1.052 | e*p g -0.0030
+  tilt          ibu5     K205  g -0.0174 h 0.0544 cos -0.0904 q 0.03694 q~ 0.002717 rem 1.072 | e*p g -0.0134
+  tilt          ibu10    K73   g -0.0455 h 0.1539 cos -0.1670 q 0.07428 q~ -0.01332 rem 1.165 | e*p g -0.0436
+  tilt          ibu10    Kbar  g -0.0093 h 0.0726 cos -0.0356 q 0.06811 q~ 0.002249 rem 1.087 | e*p g -0.0032
+  tilt          ibu10    K205  g -0.0199 h 0.0742 cos -0.0751 q 0.06991 q~ -0.002291 rem 1.11 | e*p g -0.0150
+  within_plus   omnifold K73   g +0.0392 h 0.0382 cos +0.0681 q 0.3314 q~ 0.3251 rem 1.253 | e*p g +0.0467
+  within_plus   omnifold Kbar  g +0.1765 h 0.0267 cos +0.3377 q 0.273 q~ 0.2697 rem 0.9201 | e*p g +0.1804
+  within_plus   omnifold K205  g +0.1365 h 0.0253 cos +0.2534 q 0.2901 q~ 0.2858 rem 1.017 | e*p g +0.1414
+  within_plus   ibu5     K73   g -0.0818 h 0.0873 cos -0.1178 q 0.4814 q~ 0.4294 rem 1.645 | e*p g -0.0751
+  within_plus   ibu5     Kbar  g +0.1466 h 0.0673 cos +0.2654 q 0.305 q~ 0.2759 rem 1.012 | e*p g +0.1470
+  within_plus   ibu5     K205  g +0.0800 h 0.0691 cos +0.1340 q 0.3564 q~ 0.3206 rem 1.196 | e*p g +0.0823
+  within_plus   ibu10    K73   g -0.0929 h 0.0970 cos -0.1159 q 0.6428 q~ 0.5466 rem 1.829 | e*p g -0.0869
+  within_plus   ibu10    Kbar  g +0.1510 h 0.1074 cos +0.2326 q 0.4214 q~ 0.3539 rem 1.119 | e*p g +0.1472
+  within_plus   ibu10    K205  g +0.0799 h 0.1003 cos +0.1146 q 0.4859 q~ 0.4101 rem 1.326 | e*p g +0.0789
+  within_minus  omnifold K73   g -0.0137 h 0.0147 cos -0.0259 q 0.2783 q~ 0.2709 rem 1.306 | e*p g -0.0210
+  within_minus  omnifold Kbar  g -0.1802 h 0.0352 cos -0.3395 q 0.2816 q~ 0.277 rem 1.642 | e*p g -0.1823
+  within_minus  omnifold K205  g -0.1316 h 0.0228 cos -0.2485 q 0.2806 q~ 0.2752 rem 1.544 | e*p g -0.1352
+  within_minus  ibu5     K73   g +0.1276 h 0.0963 cos +0.1930 q 0.4373 q~ 0.3894 rem 1.182 | e*p g +0.1209
+  within_minus  ibu5     Kbar  g -0.1794 h 0.0679 cos -0.3009 q 0.3556 q~ 0.3232 rem 1.714 | e*p g -0.1846
+  within_minus  ibu5     K205  g -0.0899 h 0.0653 cos -0.1460 q 0.3794 q~ 0.3425 rem 1.559 | e*p g -0.0955
+  within_minus  ibu10    K73   g +0.1334 h 0.1170 cos +0.1719 q 0.6024 q~ 0.5127 rem 1.336 | e*p g +0.1274
+  within_minus  ibu10    Kbar  g -0.2021 h 0.0889 cos -0.2919 q 0.4797 q~ 0.4073 rem 1.884 | e*p g -0.2054
+  within_minus  ibu10    K205  g -0.1043 h 0.0839 cos -0.1453 q 0.5155 q~ 0.4381 rem 1.724 | e*p g -0.1084
