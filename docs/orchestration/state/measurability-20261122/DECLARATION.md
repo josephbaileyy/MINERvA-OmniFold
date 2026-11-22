@@ -1,9 +1,15 @@
-# MSR DECLARATION: which combinations of the reported cells do the detector-level inputs constrain, and where do the known biases sit? (rev 0, 2026-11-22)
+# MSR DECLARATION: which combinations of the reported cells do the detector-level inputs constrain, and where do the known biases sit? (rev 1, 2026-11-22)
 
 **By** tier3-design, for the director. **Authority:** Joseph via the director, 2026-11-22 ("yes can we do the measurability study"),
 from an outside review of the note (Fix 2). **Base:** origin/main `7d5a98361`. **Compute:** the projections are local, at 0 node-h.
 The two responses (2D and 5D) are built on the cluster in one login-node step (§8) under a separate go, with the fence and fresh
 acks. Nothing is computed before this declaration, its read and the director's GO.
+
+**Rev 1 (2026-11-22, the director's four items on rev 0 `889d9302`, before any computation):**
+1. a floor on ‖β‖ below which S_poor is not read (§3.6);
+2. a noise-max bar on Z_well for the noisy vectors (§3.6, §5.1);
+3. k = 50 printed for T3's arms, with a rule against pairing it with M2's k = 5 sentence (§4, §5.2);
+4. the C-DID construction check as a scripted, sha-compared test in connect P (§1, §6, §8).
 <!-- absence-ok: a statement of this study's own order of work, not a claim that a result does not exist -->
 
 **Rulings folded in (the director, 2026-11-22):**
@@ -63,10 +69,17 @@ acks. Nothing is computed before this declaration, its read and the director's G
 | s5e diagnosis (DIAGNOSIS-20260926 :145) | A capacity probe gave a better reco fit with no better truth, read as "part of the residual is weakly constrained" | Qualitative precursor only |
 Search: identifiability ladder; singular value; response SVD; identifiab; weakly constrained; poorly constrained; Fisher; R-ID; Cramér–Rao (CATALOG, OUTCOME-*, DECISION-*, state/**/*.md, docs/analysis-note on main and on rewrite/journal-voice-20261121) @ 7d5a98361
 
-**Does the new builder reproduce D-ID?** Yes, as the STOP control C-DID (§6), at T1 with D-ID's own settings (full MC,
-same sample, signal only, nominal weights). This holds if the build-script review (§8) confirms that IBU-1's J world and
-D-ID's T1 use the same reco cells and J cells. If they differ by construction, the declaration is amended at rev 1, before
-any build, to name the difference, and C-DID becomes a printed comparison. The amendment goes to the director.
+**Does the new builder reproduce D-ID?** It is tested as C-DID (§6), at T1 with D-ID's own settings (full MC, same
+sample, signal only, nominal weights). Whether C-DID gates is decided by a scripted test, not a judgment.
+- **The test, C-DID-CONS, in connect P** (`msr_probe.py did-cons`):
+  - it builds IBU-1's J world and D-ID's T1 grid, each through its own unchanged code, from the same events;
+  - it writes four sorted lists: the J-cell truth definitions (fine-cell membership per J cell) and the occupied reco
+    cells (flat indices), from each path;
+  - it prints the sha256 of each list and their equality.
+- **If both pairs are equal,** C-DID is a STOP control. **If either differs,** C-DID is a printed comparison, and the
+  differing list is named.
+- Rev 2 records which branch holds, from the probe's log, before connect B runs. The director sees that before giving the
+  connect B go.
 
 ## 2. Operands
 
@@ -168,8 +181,24 @@ For a bias vector β (= δφ) with P_poor and P_well the orthogonal projectors o
 combinations (U∞ is part of P_poor):
 - **S_poor = ‖P_poor β‖² / ‖β‖²**, the share of the bias's size in poorly constrained combinations (Euclidean, relative
   units). The isotropic reference dim(P_poor)/n_cells is printed beside it.
+- **The floor on ‖β‖ (rev 1).** S_poor is undefined in the limit ‖β‖ → 0 and ill-conditioned near it. Its reading takes
+  one of three forms:
+  - **"no bias to locate":** ‖β‖₂ + h_β < 0.01, where h_β is the guard on ‖β‖₂ (§3.6 guard; 0 for a noise-free
+    vector). No S_poor label is read.
+  - **"unresolved at the floor":** the interval [‖β‖₂ − h_β, ‖β‖₂ + h_β] contains 0.01. No S_poor label is read.
+  - **read normally:** ‖β‖₂ − h_β > 0.01.
+- **Basis of the floor:** 0.01 is a 1 % relative norm over the reported cells, the scale of the 0.005 floor on r_well
+  (§3.6) doubled. It is fixed here.
 - **Z_well = max over well-constrained k of |w_k·β| / s_k**, the largest bias component in a well-constrained
   combination in units of its CR width at the data exposure. The χ² Σ_well (w_k·β)²/s_k², with dof n_well, is printed.
+- **Z_well's multiplicity (rev 1).** Z_well is a maximum over n_well combinations, so a noisy vector has a positive
+  expected Z_well even at zero bias.
+  - **For a noisy vector** (F0b; A2), the same perturbations as its guard are applied to a **zero** vector, giving
+    Z_noise = the 97.5 % point of Z_well under noise alone, printed beside each Z_well.
+    - For F0b: 2,000 Gaussian draws with per-cell SD `noise_sigma`.
+    - For A2: 2,000 Gaussian draws with per-cell SD equal to the sample SD of the five trials over √5, seed 20261122.
+  - **FD-PRR and T3 vectors** are noise-free constructions at fixed splits (their split-to-split spread enters through
+    the guard). They keep the plain rule, with no Z_noise.
 - **For an arm A against B0** (T3, at the same truth and split):
   - r_poor = 1 − ‖P_poor β_A‖ / ‖P_poor β_B0‖;
   - r_well = 1 − ‖P_well β_A‖ / ‖P_well β_B0‖.
@@ -189,7 +218,8 @@ combinations (U∞ is part of P_poor):
 | set | vectors | role |
 |---|---|---|
 | **5D-B0** | FD-PRR `table["B0/A7_gibuu/s<split>"].b` at the five splits (equal to T3's B0 by T3's C-PAIR, rechecked by C-T3) | **primary** |
-| **5D-ARMS** | T3 MO and OP at A7 GiBUU, five splits, k = 5 (configuration (e)'s iteration count); the k at T3's maximum printed | **primary** (R-C) |
+| **5D-ARMS** | T3 MO and OP at A7 GiBUU, five splits, k = 5 (configuration (e)'s iteration count) | **primary** (M2) |
+| 5D-ARMS at k = 50 | T3 B0, MO and OP at A7 GiBUU, five splits, and at q3, at k = 50, the k at which the note prints T3's values | **printed secondary**, under §5.2's pairing rule |
 | **5D-F0b** | F0b's graded truths with n_experiments ≥ 16: nominal, W1, W2, W3, q3, stage0c_gibuu, A7_mnvtune, A7_genie_cv, A7_genie_mec, A7_nuwro, A7_gibuu | **primary** |
 | 5D secondary | FD-PRR B0 and T3 B0/MO/OP at q3 (one split); F0b closure_nuwro (N = 0); F0b P-sets (ungraded) | printed, marked secondary |
 | **2D-A2** | A2 OmniFold mean at nominal, genie_mec, nuwro (5 trials) | **primary** |
@@ -209,7 +239,7 @@ No vector, truth, split, k or set not listed here is computed for reading.
 | | **well-dominated** | ≤ 0.2 | "…at least four fifths of the bias's size lies in combinations the binned inputs constrain to 10 % or better." |
 | Z_well | **below** | < 1 | "In every well-constrained combination, the bias is below one binned Cramér–Rao width at the data exposure." |
 | | **intermediate** | 1 to 2 | "In at least one well-constrained combination, the bias is between one and two binned CR widths." |
-| | **resolvable** | ≥ 2 | "In at least one well-constrained combination, the bias is at least two binned CR widths: a component the binned data could resolve carries it." |
+| | **resolvable** | ≥ 2, and for a noisy vector also > Z_noise (§3.6) | "In at least one well-constrained combination, the bias is at least two binned CR widths: a component the binned data could resolve carries it." For a noisy vector that is ≥ 2 but ≤ Z_noise, the label is **"intermediate (within the noise maximum)"**. |
 | r_poor, r_well | **removes most** | ≥ 0.5 | "Arm A removes at least half of B0's bias in the poorly (well-) constrained combinations." |
 | | **removes part** | 0.2 to 0.5 | "…between a fifth and a half…" |
 | | **no change** | −0.2 to 0.2 | "…changes it by at most a fifth, either way." |
@@ -220,7 +250,8 @@ No vector, truth, split, k or set not listed here is computed for reading.
   b1's sentence form. A statistic that N-PREC (§6) or the MC control (§5.3) marks reads "numerically unresolved" or
   "MC-unresolved", with no reading.
 
-**Combined statement per truth** (both statistics resolved):
+**Combined statement per truth** (both statistics resolved). A vector below the floor reads **"no bias to locate"**
+(or "unresolved at the floor") as its combined statement, whatever Z_well reads. Z_well is still printed.
 - **consistent with an information limit:** S_poor poor-dominated **and** Z_well below. "At truth t, the bias lies in
   combinations the binned inputs constrain poorly, and is below the binned resolution in every well-constrained one.
   This is consistent with an information limit of the binned inputs; it does not show that no estimator could remove it."
@@ -242,6 +273,11 @@ No vector, truth, split, k or set not listed here is computed for reading.
     "removes most" and r_well is "no change" or "removes part" (or there is no well-constrained component). The mirror
     sentence applies for the well-constrained part. Every other resolved combination is reported label by label.
   - OP is the bound on what step 2 can reach (T3 §3.3). It is read by the same bands and stated as that bound.
+  - **The pairing rule (rev 1).** M2 reads k = 5, the reported estimator's iteration count. The note prints T3's values at
+    k = 50. An M2 sentence at k = 5 must never be paired or juxtaposed with the note's k = 50 values, or with this
+    study's k = 50 printout, as if they described the same unfold.
+    - Every k = 50 line in the readout carries "k = 50, secondary; not M2".
+    - Every M2 sentence names "k = 5".
 - **M3 (5D, feature sets):** n_well and dim U∞ for the 3D, 4D and 5D reco feature sets, counting only MC-resolved
   combinations (§5.3). The licensed sentence: "With the ⟨D⟩ reco feature set, n combinations of the 16 reported cells
   are constrained to 10 % or better at the data exposure, and m are unconstrained." The difference between sets is
@@ -286,7 +322,8 @@ No band, cut, set, truth, k or exposure is changed after any statistic is comput
 |---|---|---|---|
 | C-OPS | every operand and pinned code file at its sha256 (§2) | exact | STOP |
 | C-RID | under R-ID's own settings (half A at ×2, the fold unfold's prior and known term, `did.fisher`, `widths_from_eig`), the 5D capture reproduces FD-PRR's committed R-ID: `sigma_rel[16]` and `null_fraction[16]`, with ∞ matching ∞; `n_null_modes` and `n_cells_grid` exactly | finite sigma_rel relative ≤ 1e-6; null_fraction absolute ≤ 1e-6; the counts exact | STOP |
-| C-DID | the J world at T1 under D-ID's settings (full MC, same sample, signal only) reproduces `tables.npz` `T1/nominal/widths_nom/{sigma_rel,null_fraction}` on the 183 functionals | as C-RID | STOP, subject to §1's construction check |
+| C-DID-CONS | connect P: IBU-1's J-world and D-ID's T1 J-cell definitions and occupied reco cells, as four sorted lists compared by sha256 (§1) | exact | decides whether C-DID gates; recorded in rev 2 before connect B |
+| C-DID | the J world at T1 under D-ID's settings (full MC, same sample, signal only) reproduces `tables.npz` `T1/nominal/widths_nom/{sigma_rel,null_fraction}` on the 183 functionals | as C-RID | STOP if C-DID-CONS is equal; otherwise printed |
 | C-T3 | B0 at A7 GiBUU (five splits) and q3 recomputed from T3's products by `t3p_read`'s b_c equals FD-PRR's committed `table` b; the T3 readout's verdict is COMPLETE | 1e-12 absolute; exact | STOP |
 | C-F0B | `truths[].bias` equal in the two F0b readouts | exact | STOP |
 | C-D | for each F0b truth used, FD-PRR's table holds an entry of the same name at split 991000 with a 16-vector d | exact | STOP |
@@ -304,6 +341,8 @@ No band, cut, set, truth, k or exposure is changed after any statistic is comput
 - the C-RID path on a fixture reproduces `prr_ibu.r_id`'s output exactly;
 - the 3D/4D summation on a toy product grid equals direct binning;
 - every band edge against §5.1;
+- the ‖β‖ floor's three branches, and Z_noise on a zero vector (a fixture with a planted n_well, where Z_noise rises with
+  n_well);
 - the guard, the MC-resolution rule and the combined statements on hand-built cases;
 - a line tracer runs every new line before the read.
 
@@ -327,7 +366,7 @@ No band, cut, set, truth, k or exposure is changed after any statistic is comput
 
 ## 8. The cluster step (scripts follow, each sha to the director before it runs)
 
-- **Connect P, the probe** (0 node-h, login node).
+- **Connect P, the probe** (0 node-h, login node). It also runs C-DID-CONS (§1, §6).
   - The fence: cov2d rev 2 at `3fbc9cbd`, plus an overlap check of this study's declared input set (§2) against the
     cov2d and rpd protected paths and limitation-resolver's flux2 input set, on fresh acks.
   - stat and sha256, with O_NOATIME, of every §2 input and of the 3D/4D inputs (for the inventory).
