@@ -62,8 +62,12 @@ and the excess grows toward the small modes.
 | descriptive regrade | 0/300 (k′ 190) | 0/300 (k′ 192) |
 
   The run-period block changes essentially nothing. The absolute-carry sensitivity case gives M_full 16.351 at AR23.
-- **The 16-cell half also ran** (run16/, read once): R-χ² "under-describes on average" at all four. M_full is 1.82
-  (g18) and 2.54 (ar23). Descriptive joint counts are 75, 76, 20 and 27 against k′ 193. This is 5D context only.
+- **The 16-cell half also ran** (run16/capture/regrade16.json, read once): R-χ² "under-describes on average" at all
+  four. M_full is 1.818 and 1.824 (g18 minus2 and all) and 2.544 and 2.543 (ar23). Descriptive joint counts are 75, 76,
+  20 and 27 against k′ 193. This is 5D context only.
+- **The G18 cut moved the kept subspace.** run2d-g18's cut block records `C_T_kept_modes_outside_C_prime_kept_span` = 142
+  and `max_residual_of_C_T_kept_modes` = 0.99999, although τ is only 0.0098. A small trace can coexist with a moved
+  eigenbasis, so COVFIX requires the cut diagnostic on every candidate.
 <!-- absence-ok: scoping statement about studies not yet run or not run as scoped, each routed to its record -->
 - **c2 did not run as scoped.** The projection of T2A's mean error onto C_run's two directions was never computed.
   The regrade's τ, the trace contribution, is the related quantity and is 0.0098 per ndf.
@@ -76,7 +80,7 @@ and the excess grows toward the small modes.
 | 1. nominal truth, data Poisson only | **No**, not against the current Q_R | IBUKT A2 nominal: 5 draws, residuals only; noise-free nominal max residual 1.708 % (OUTCOME-20261119-ibukt-a2.md) | no covariance comparison | a ≥ 300-toy ensemble against C_stat's data stream, in eigenmodes |
 | 2. nominal truth, data + MC fluctuations | **Only on a superseded band**, per-bin | 10-05: FAIL on VL162; VL170 untested (KI 84/85) | stat band only | an eigenmode test against the current C_stat with non-circular MC streams |
 | 3. coherent nuisances | **Not at nominal truth.** At the tunes, yes (inside cell 5) | COV2D draws all 38 systematic bands per toy, on reco and truth | — | a nominal-truth nuisance ensemble against C_syst |
-| 4. alternative truth, fixed response | **Bias only, no covariance** | IBUKT A2: 7 truths (nominal, genie_mec, nuwro, bump, tilt, within±) × 5 Poisson draws, nominal response; b1 projected its mean residual on Δ in V_pub's modes. C_model's shifts (PV2D maps) are this cell by construction. | b at 7 truths, at 5-draw noise | b bᵀ against C in Q_R's modes; enough draws to separate b from noise |
+| 4. alternative truth, fixed response | **Bias only, no covariance** | IBUKT A2: 7 truths (nominal, genie_mec, nuwro, bump, tilt, within±) × 5 Poisson draws, nominal response. b1 (`state/2d-closeout/b1-a2-projection-20261122/REPORT.md`, merged in #1242) projected its mean residual on Δ in V_pub's modes. C_model's three vertices are this cell by construction. | b at 7 truths, at 5-draw noise | b bᵀ against C in Q_R's modes; enough draws to separate b from noise |
 | 5. alternative truth, perturbed response | **Yes** | COV2D/G2R at G18 and AR23 (300 toys each; data Poisson + 38 bands); T2A; REGRADE | the split above | the toys never drew sim-statistics (MC) fluctuation, estimator seed (C08), C_PL/C_run or C_model |
 
 Never drawn anywhere: the simulation-statistics fluctuation of the response, the estimator seed, and the run-period
@@ -86,8 +90,14 @@ blocks. The last has no generative law (SCOPING a3) and can only enter as covari
 
 - **G18 and AR23 are seen.** COV2D, T2A, G2R, REGRADE and the 5D LL5D/F0b chain all read them, so they can build or
   calibrate a construction but cannot validate it.
-- **C_model's generators are building blocks of Q_R:** GENIE 2.12 + MEC, NuWro, GiBUU, and the PV2D ratio maps
-  genie_mec, nuwro, gibuu, tune_v1 and their _sq variants.
+- **C_model's generators are building blocks of Q_R:** GENIE 2.12 + MEC, NuWro and GiBUU, the three PV2D vertices
+  (`2d-unfolding/pv2d/report_tables.py:31`, VERTICES = genie_mec, nuwro, gibuu).
+- The other files in `pv2d/ratios/` are not new truths. `tune_v1` is the r = 1 nominal control (`pv2d_analyze.py:11`),
+  and `*_sq` are the ρ² principal-component fallbacks of the same vertices (`make_ratios.py:136-140`).
+- **The spent tunes' models** (FD-F1-REPORT.md §1.3):
+  - both use `NievesQELCCPXSec` for CCQE;
+  - G18_10a_02_11b's 2p2h is `NievesSimoVacasMECPXSec` (Valencia);
+  - AR23_20i_00_000's 2p2h is `SuSAv2MECPXSec`.
 - **A2's synthetic truths are seen:** bump, tilt, within±.
 - **No other generator sample or tune is committed.** But F1 generated both GENIE v3 tunes itself for a total of
   1.3275 node-h, with event generation plus the bridged ratio (FD-F1-REPORT.md:143). New, never-read tunes can
