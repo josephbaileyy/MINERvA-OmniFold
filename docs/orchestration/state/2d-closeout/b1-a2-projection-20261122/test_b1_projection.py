@@ -29,14 +29,19 @@ class Bands(unittest.TestCase):
         self.assertEqual(b.band_of(0.2000001), "partial")
         self.assertEqual(b.band_of(-0.2), "minor")
         self.assertEqual(b.band_of(-0.2000001), "opposite")
-        self.assertEqual(b.band_of(7.0), "candidate")
+        self.assertEqual(b.band_of(1.5), "candidate")
+        self.assertEqual(b.band_of(1.5000001), "overshoot")
+        self.assertEqual(b.band_of(7.0), "overshoot")
 
     def test_label_interval(self):
         self.assertEqual(b.label(0.8, 0.3), "candidate")
         self.assertEqual(b.label(0.0, 0.2), "minor")
-        self.assertEqual(b.label(0.49, 0.02), "unresolved between partial and candidate")
-        self.assertEqual(b.label(-0.3, 0.2), "unresolved between opposite and minor")
-        self.assertEqual(b.label(0.0, 1.0), "unresolved between opposite and minor and partial and candidate")
+        self.assertEqual(b.label(0.49, 0.02), "unresolved across partial, candidate")
+        self.assertEqual(b.label(-0.3, 0.2), "unresolved across opposite, minor")
+        self.assertEqual(b.label(0.0, 1.0), "unresolved across opposite, minor, partial, candidate")
+        self.assertEqual(b.label(0.5, 2.0), "unresolved across opposite, minor, partial, candidate, overshoot")
+        self.assertEqual(b.label(1.6, 0.05), "overshoot")
+        self.assertEqual(b.label(1.45, 0.1), "unresolved across candidate, overshoot")
         self.assertEqual(b.label(float("nan"), 0.1), "unresolved (non-finite)")
 
     def test_guard_zero_for_constant(self):
@@ -48,11 +53,16 @@ class Bands(unittest.TestCase):
         self.assertAlmostEqual(b.guard(fs), want, places=15)
 
     def test_combined(self):
-        self.assertEqual(b.combined(["candidate"] * 3), "candidate at every tested truth")
-        self.assertEqual(b.combined(["minor"] * 3), "weakened at every tested truth")
-        self.assertEqual(b.combined(["opposite"] * 3), "opposite at every tested truth")
-        self.assertEqual(b.combined(["minor", "minor", "partial"]), "truth-dependent")
-        self.assertEqual(b.combined(["minor", "minor", "unresolved between minor and partial"]), "truth-dependent")
+        c = lambda labs: b.combined(dict(zip(("nominal", "genie_mec", "nuwro"), labs)))
+        self.assertEqual(c(["candidate"] * 3), "candidate at every tested truth")
+        self.assertEqual(c(["partial"] * 3), "partial at every tested truth")
+        self.assertEqual(c(["minor"] * 3), "weakened at every tested truth")
+        self.assertEqual(c(["opposite"] * 3), "opposite at every tested truth")
+        self.assertEqual(c(["overshoot"] * 3), "overshoot at every tested truth")
+        self.assertEqual(c(["minor", "minor", "partial"]), "truth-dependent")
+        self.assertEqual(c(["minor", "minor", "unresolved across minor, partial"]), "unresolved at nuwro")
+        self.assertEqual(c(["numerically unresolved", "minor", "unresolved across minor, partial"]),
+                         "unresolved at nominal, nuwro")
 
 
 class Projection(unittest.TestCase):

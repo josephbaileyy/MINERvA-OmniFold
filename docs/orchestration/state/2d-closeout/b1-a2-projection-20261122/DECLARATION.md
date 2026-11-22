@@ -5,6 +5,13 @@ director with the scope in `~/codex-reports/note-measurement/methods-scoping-202
 (sha256 `64948c485de3df693c370f15c08cc07d9e2bb4d39a0ab27935b8edca718cb46c`), item b1. **Base:** origin/main `9ff419415`.
 **Compute:** 0 node-h, local, no cluster connect.
 
+**Revision 2 (2026-11-22, the director's rulings on an agy read of rev 1 `c75612a7`, before any projection):** §3 adds the
+overshoot band (> 1.5) for g and ρ, the "partial at every tested truth" and "unresolved at t" combined outcomes, per-band
+sentences for each mode in place of "reproduces mode i", "unresolved across" wording for any number of bands, and the R2
+disclosure; §4 adds absolute floors to C-LIN and to N-PREC on z_β. Nothing computed from β; rev 1's controls-only record
+(`run/controls.json`) is unchanged by these rules.
+<!-- absence-ok: a statement about this study's own order of work (rules before projection), not a claim that a result does not exist -->
+
 **What this can say:** whether the E_R estimator's measured known-truth residual pattern, at the size A2 measured it, lies
 along the 2D difference from the published result in V_pub's modes. **What it cannot say:**
 - a cause of the shape difference. The note's "origin undetermined" stands unless Joseph decides otherwise;
@@ -71,31 +78,55 @@ p_T-major order A2 uses. The run is pinned to one BLAS thread.
 E_R-configuration workflow). **Secondary truths**, labelled by the same bands and marked secondary: bump, tilt, within_plus,
 within_minus.
 
-**Bands** for g_K and for each ρ_i:
+**Bands** for g_K and for each ρ_i (rev 2 adds overshoot):
 
-| band | range | sentence it licenses (t = the truth, K = the mode set) |
+| band | range | sentence it licenses for g_K (t = the truth, K = the mode set) |
 |---|---|---|
-| **candidate** | ≥ 0.5 | "At truth t, the E_R estimator's A2 mean residual pattern supplies at least half of Δ's component along Δ in K. Estimator bias of this pattern is a candidate contributor to the difference in these directions. It is not shown to be the cause." |
+| **overshoot** | > 1.5 | "At truth t, the E_R estimator's A2 mean residual pattern points along Δ in K but supplies more than one and a half times Δ's component along Δ. Removing it would overshoot, leaving at least half of that component with the opposite sign. The direction is shared; at the size A2 measured, the pattern does not account for the difference in these directions." |
+| **candidate** | 0.5 to 1.5 | "At truth t, the E_R estimator's A2 mean residual pattern supplies between half and one and a half times Δ's component along Δ in K. Estimator bias of this pattern is a candidate contributor to the difference in these directions. It is not shown to be the cause." |
 | **partial** | 0.2 to 0.5 | "…supplies between a fifth and a half of Δ's component in K: a partial contributor at most." |
 | **minor** | −0.2 to 0.2 | "…supplies at most a fifth of Δ's component in K, either way. This weakens this bias pattern as a main contributor in these directions." |
 | **opposite** | < −0.2 | "…points away from Δ in K. Removing it would increase the distance." |
 
+**Edges.** A band edge belongs to the band nearer zero, except 0.5, which belongs to candidate. So 1.5 is candidate, 0.2 and
+−0.2 are minor.
+
 **A label is read only if the whole interval [f − h, f + h] lies inside one band.** Otherwise the reading is **"unresolved
-between ⟨band⟩ and ⟨band⟩"**, naming the bands the interval touches. A band edge belongs to the band nearer zero, except 0.5,
-which belongs to candidate.
+across ⟨the bands the interval touches, in order⟩"** (two, three, four or all five bands), with the sentence "At truth t, the
+five draws do not resolve the share in K among ⟨those bands⟩." A reading N-PREC marks is **"numerically unresolved"**, with the
+sentence "At truth t, the share in K depends on the LAPACK driver; no reading."
 
 **Readings:**
 - **R1 (primary):** g_K₇₃ at each primary truth.
 - **R2:** g_K̄ at each primary truth. K̄ is where V_pub is poorly determined. R2 is read by the same bands, and its sentence says
-  "in the 132 poorly determined directions of the published covariance".
-- **R3:** ρ_i for each i ∈ M at each primary truth: "reproduces mode i" only in the candidate band.
+  "in the 132 poorly determined directions of the published covariance". **Disclosure:** K̄ holds eigenvalues down to about
+  1e-11 of λ_max, where a small residual difference between draws is strongly amplified, so R2 may well read unresolved for
+  that reason. That is a valid outcome, not a failure.
+- **R3:** ρ_i for each i ∈ M at each primary truth, labelled by the same bands. Its licensed sentences describe the share in that
+  single mode only; none says the mode is "reproduced":
+
+  | band | sentence for mode i |
+  |---|---|
+  | overshoot | "In mode i, the pattern has the same sign as Δ and more than one and a half times its component." |
+  | candidate | "In mode i, the pattern supplies between half and one and a half times Δ's component." |
+  | partial | "In mode i, the pattern supplies between a fifth and a half of Δ's component." |
+  | minor | "In mode i, the pattern supplies at most a fifth of Δ's component, either way." |
+  | opposite | "In mode i, the pattern points against Δ's component." |
+  | unresolved across … | "In mode i, the five draws do not resolve the share among ⟨those bands⟩." |
+  | numerically unresolved | "Mode i's components depend on the LAPACK driver; no reading." |
+
 - **Secondary truths:** R1–R3 labelled in the same way and marked secondary. They do not enter the combined statement.
 
-**Combined statement, per mode set (R1 and R2 separately):**
-- all three primary truths candidate → "candidate at every tested truth";
-- all three minor → "weakened at every tested truth";
-- all three opposite → "opposite at every tested truth";
-- anything else → "truth-dependent". Each truth's label is then reported, and no summary sentence is drawn.
+**Combined statement, per mode set (R1 and R2 separately), over the three primary truths:**
+- **If any primary truth is unresolved** (either kind): **"unresolved at ⟨those truths⟩"**. The resolved truths' labels are
+  reported beside it, and no summary sentence is drawn across truths. This is not read as truth-dependent.
+- **Otherwise, all three resolved:**
+  - all overshoot → "overshoot at every tested truth";
+  - all candidate → "candidate at every tested truth";
+  - all partial → "partial at every tested truth";
+  - all minor → "weakened at every tested truth";
+  - all opposite → "opposite at every tested truth";
+  - resolved labels that differ → "truth-dependent". Each truth's label is then reported, and no summary sentence is drawn.
 
 No band, set, truth, scaling or mode is changed after the projection. A mode-set or truth not listed here is not computed for
 reading.
@@ -112,12 +143,13 @@ reading.
 | C-K | the count of λ/λ_max > 1e-4 is 73, and S₇₃(Δ)/205 is within 0.0005 of 0.662 | exact; print precision | per-period C-K |
 | C-M | at eigh ranks {2, 9, 23, 79, 118, 121}, λ/λ_max and \|z_Δ\| reproduce `tension_report.txt:18-23` | 4 significant figures; ±0.005 | per-period C-M. It identifies M; a rotated or reordered mode fails here, not silently. A failure confined to modes that N-PREC marks numerically unresolved is recorded, and those modes are not read. Any other failure stops |
 | C-A2 | the mean and noise guard recomputed from the five OmniFold residuals equal `readout.json`'s `mean` and `noise_guard` at every truth and cell | absolute ≤ 1e-15 | the operand is the committed readout |
-| C-LIN | g_K(β) equals the mean of g_K(β_s), and the same for ρ_i | relative ≤ 1e-10 | code check of the linearity the guard rests on |
+| C-LIN | g_K(β) equals the mean of g_K(β_s), and the same for ρ_i | \|a − b\| ≤ 1e-12 + 1e-10·\|a\| (rev 2 adds the absolute floor, so g ≈ 0 does not fail a relative test alone) | code check of the linearity the guard rests on |
 
 **N-PREC, the numerical-precision rule** (T2-BINDING-1 Addendum 1 ruling 3, applied here before any projection). Every
 quantity is computed with two LAPACK drivers: numpy `eigh` and scipy `eigh(driver="evr")`, signs fixed by z_Δ,i > 0 in both.
-- A mode i ∈ M whose z_Δ,i or z_β,i (at any primary truth) differs by more than 1 % between the drivers is **numerically
-  unresolved**. Its ρ_i is printed, and no R3 label is read.
+- A mode i ∈ M whose z_Δ,i differs by more than 1 % between the drivers, or whose z_β,i (at any primary truth) differs by
+  more than both 1 % of z_β,i and 1e-6·|z_Δ,i| (rev 2's absolute floor, so a near-zero z_β in a true minor mode is not
+  flagged), is **numerically unresolved**. Its ρ_i is printed, and no R3 label is read.
 - A g_K that differs by more than 0.01 (absolute) between the drivers, or whose band label differs between them, reads
   **"numerically unresolved"** for that truth and set.
 - The per-mode driver differences are printed for all 205 modes.

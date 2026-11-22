@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """b1: IBUKT A2's mean residual pattern projected onto Delta = E_R - published in V_pub's modes.
 
-Implements DECLARATION.md in this directory (committed at c75612a7 before any projection). Local, 0 node-h.
+Implements DECLARATION.md rev 2 in this directory (rev 1 c75612a7; both before any projection). Local, 0 node-h.
 
   OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 \
   <rootmpl3108 python> b1_projection.py --er <xsec.root> --pub <cov_ptpl_minerva_inclusive_6GeV.root> \
@@ -50,11 +50,18 @@ READ_METHOD = "omnifold"
 PRINT_METHODS = ("ibu5", "ibu10")
 PREC_MODE_REL = 0.01                 # N-PREC: per-mode component, relative
 PREC_G_ABS = 0.01                    # N-PREC: g_K between drivers, absolute
-BANDS = ("opposite", "minor", "partial", "candidate")
+PREC_ZB_FLOOR = 1e-6                 # N-PREC rev 2: |dz_beta| floor, times |z_delta|
+LIN_RTOL, LIN_ATOL = 1e-10, 1e-12    # C-LIN rev 2
+BANDS = ("opposite", "minor", "partial", "candidate", "overshoot")
+OVERSHOOT_EDGE = 1.5
 SENT = {
-    "candidate": "At truth {t}, the E_R estimator's A2 mean residual pattern supplies at least half of Delta's component "
-                 "along Delta in {K}. Estimator bias of this pattern is a candidate contributor to the difference in "
-                 "these directions. It is not shown to be the cause.",
+    "overshoot": "At truth {t}, the E_R estimator's A2 mean residual pattern points along Delta in {K} but supplies more "
+                 "than one and a half times Delta's component along Delta. Removing it would overshoot, leaving at least "
+                 "half of that component with the opposite sign. The direction is shared; at the size A2 measured, the "
+                 "pattern does not account for the difference in these directions.",
+    "candidate": "At truth {t}, the E_R estimator's A2 mean residual pattern supplies between half and one and a half "
+                 "times Delta's component along Delta in {K}. Estimator bias of this pattern is a candidate contributor to "
+                 "the difference in these directions. It is not shown to be the cause.",
     "partial": "At truth {t}, the E_R estimator's A2 mean residual pattern supplies between a fifth and a half of "
                "Delta's component in {K}: a partial contributor at most.",
     "minor": "At truth {t}, the E_R estimator's A2 mean residual pattern supplies at most a fifth of Delta's component "
@@ -62,13 +69,26 @@ SENT = {
     "opposite": "At truth {t}, the E_R estimator's A2 mean residual pattern points away from Delta in {K}. Removing it "
                 "would increase the distance.",
 }
+SENT_UNRES = "At truth {t}, the five draws do not resolve the share in {K} among {bands}."
+SENT_NUM = "At truth {t}, the share in {K} depends on the LAPACK driver; no reading."
+MODE_SENT = {
+    "overshoot": "In mode {i}, the pattern has the same sign as Delta and more than one and a half times its component.",
+    "candidate": "In mode {i}, the pattern supplies between half and one and a half times Delta's component.",
+    "partial": "In mode {i}, the pattern supplies between a fifth and a half of Delta's component.",
+    "minor": "In mode {i}, the pattern supplies at most a fifth of Delta's component, either way.",
+    "opposite": "In mode {i}, the pattern points against Delta's component.",
+}
+MODE_UNRES = "In mode {i}, the five draws do not resolve the share among {bands}."
+MODE_NUM = "Mode {i}'s components depend on the LAPACK driver; no reading."
 KNAME = {"K73": "the 73 best-determined directions of the published covariance",
          "Kbar": "the 132 poorly determined directions of the published covariance"}
 
 
 # ------------------------------------------------------------------ pure functions (tested)
 def band_of(x):
-    """Section 3: an edge belongs to the band nearer zero, except 0.5, which belongs to candidate."""
+    """Section 3: an edge belongs to the band nearer zero, except 0.5, which belongs to candidate (1.5 is candidate)."""
+    if x > OVERSHOOT_EDGE:
+        return "overshoot"
     if x < -0.2:
         return "opposite"
     if x <= 0.2:
@@ -79,14 +99,22 @@ def band_of(x):
 
 
 def label(f, h):
-    """Read a band only if [f-h, f+h] lies inside one band; else 'unresolved between A and B'."""
+    """Read a band only if [f-h, f+h] lies inside one band; else 'unresolved across <bands touched, in order>'."""
     if not (math.isfinite(f) and math.isfinite(h)):
         return "unresolved (non-finite)"
     lo, hi = band_of(f - h), band_of(f + h)
     if lo == hi:
         return lo
     touched = BANDS[BANDS.index(lo):BANDS.index(hi) + 1]
-    return "unresolved between " + " and ".join(touched)
+    return "unresolved across " + ", ".join(touched)
+
+
+def touched_bands(lab):
+    return lab[len("unresolved across "):] if lab.startswith("unresolved across ") else ""
+
+
+def is_unresolved(lab):
+    return lab.startswith("unresolved") or lab == "numerically unresolved"
 
 
 def guard(fs):
@@ -156,14 +184,15 @@ def project(lam, U, d, betas):
     return out, zd, zb
 
 
-def combined(labels):
-    vals = set(labels)
-    if vals == {"candidate"}:
-        return "candidate at every tested truth"
-    if vals == {"minor"}:
-        return "weakened at every tested truth"
-    if vals == {"opposite"}:
-        return "opposite at every tested truth"
+def combined(by_truth):
+    """Section 3 rev 2. by_truth: {truth: label} over the primary truths, in order."""
+    unres = [t for t, lab in by_truth.items() if is_unresolved(lab)]
+    if unres:
+        return "unresolved at " + ", ".join(unres)
+    vals = set(by_truth.values())
+    if len(vals) == 1:
+        v = vals.pop()
+        return ("weakened" if v == "minor" else v) + " at every tested truth"
     return "truth-dependent"
 
 
@@ -317,21 +346,23 @@ def main(argv=None):
         for r in M_RANKS:
             a1 = res["numpy"][t][READ_METHOD]["beta_E_R"]["modes"][str(r)]["z_beta"]
             a2 = res["evr"][t][READ_METHOD]["beta_E_R"]["modes"][str(r)]["z_beta"]
-            if abs(a1 - a2) > PREC_MODE_REL * abs(a1):
+            zdr = abs(res["numpy"][t][READ_METHOD]["beta_E_R"]["modes"][str(r)]["z_delta"])
+            if abs(a1 - a2) > PREC_MODE_REL * abs(a1) and abs(a1 - a2) > PREC_ZB_FLOOR * zdr:
                 unres_beta.add(r)
     unresolved_modes = sorted(unres_delta | unres_beta)
     controls.append(c_modes(lam, U, d, set(unresolved_modes)))
 
     # C-LIN
-    lin = 0.0
+    lin_ok, lin_worst = True, 0.0
     for t in rd["truths"]:
         for m in ("omnifold", "ibu5", "ibu10"):
             pr = res["numpy"][t][m]["beta_E_R"]
-            for s in pr["sets"].values():
-                lin = max(lin, abs(s["g"] - s["g_mean_of_trials"]) / max(abs(s["g"]), 1e-300))
-            for s in pr["modes"].values():
-                lin = max(lin, abs(s["rho"] - s["rho_mean_of_trials"]) / max(abs(s["rho"]), 1e-300))
-    controls.append(ctl("C-LIN", lin <= 1e-10, worst_rel=lin, bar=1e-10))
+            pairs = [(s["g"], s["g_mean_of_trials"]) for s in pr["sets"].values()]
+            pairs += [(s["rho"], s["rho_mean_of_trials"]) for s in pr["modes"].values()]
+            for a_, b_ in pairs:
+                lin_ok &= abs(a_ - b_) <= LIN_ATOL + LIN_RTOL * abs(a_)
+                lin_worst = max(lin_worst, abs(a_ - b_) / (LIN_ATOL + LIN_RTOL * abs(a_)))
+    controls.append(ctl("C-LIN", lin_ok, worst_ratio_to_bar=lin_worst, rtol=LIN_RTOL, atol=LIN_ATOL))
 
     if not all(c["ok"] for c in controls):
         return stop(out, controls)
@@ -348,7 +379,12 @@ def main(argv=None):
                 lab = "numerically unresolved"
             else:
                 lab = l1
-            sent = SENT[lab].format(t=t, K=KNAME[K]) if lab in SENT else None
+            if lab in SENT:
+                sent = SENT[lab].format(t=t, K=KNAME[K])
+            elif lab == "numerically unresolved":
+                sent = SENT_NUM.format(t=t, K=KNAME[K])
+            else:
+                sent = SENT_UNRES.format(t=t, K=KNAME[K], bands=touched_bands(lab))
             readings[rid][t] = {"role": role, "g": s1["g"], "h": s1["h"], "g_evr": s2["g"], "h_evr": s2["h"],
                                 "label": lab, "sentence": sent}
         readings["R3"][t] = {"role": role}
@@ -358,11 +394,16 @@ def main(argv=None):
                 lab = "numerically unresolved"
             else:
                 lab = label(s1["rho"], s1["h"])
-            readings["R3"][t][str(r)] = {"rho": s1["rho"], "h": s1["h"], "label": lab,
-                                         "reproduces_mode": lab == "candidate"}
-    comb = {rid: combined([readings[rid][t]["label"] for t in PRIMARY]) for rid in ("R1", "R2")}
+            if lab in MODE_SENT:
+                sent = MODE_SENT[lab].format(i=r)
+            elif lab == "numerically unresolved":
+                sent = MODE_NUM.format(i=r)
+            else:
+                sent = MODE_UNRES.format(i=r, bands=touched_bands(lab))
+            readings["R3"][t][str(r)] = {"rho": s1["rho"], "h": s1["h"], "label": lab, "sentence": sent}
+    comb = {rid: combined({t: readings[rid][t]["label"] for t in PRIMARY}) for rid in ("R1", "R2")}
 
-    rec = {"schema": "b1-a2-projection/1", "declaration": "DECLARATION.md @ c75612a7",
+    rec = {"schema": "b1-a2-projection/1", "declaration": "DECLARATION.md rev 2 (rev 1 c75612a7)",
            "controls": controls, "all_ok": True, "kappa2": kappa,
            "n_prec": {"mode_rel_delta_driver_diff": mode_rel_delta.tolist(),
                       "unresolved_modes_in_M": unresolved_modes},
