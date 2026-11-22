@@ -63,6 +63,8 @@ REPRODUCTION_RTOL = 1e-12
 NBINS = len(R.PZ_EDGES)  # ten [lo, hi) bins and the combined under/overflow bin, as R.bin_indices
 STEP_REGIONS = ((0, 6), (6, 8))  # p_par [1.5, 8) = bins 0..5 and [8, 15) = bins 6..7; the rest is region 2
 ALPHAS = np.arange(-LATTICE_HALF, LATTICE_HALF + 1) / 10000.0
+READINGS = ("SEEN", "NOT-SEEN-AT-3σ")  # R.step_reading's two values; any other R-d1.0 reading is refused
+PUBLISHED_SCALE = "1 % (iii/README.md, quote 3b), printed beside sigma_band"
 OUTCOMES = (
     "NO-STEP",
     "AT-SCAN-EDGE",
@@ -223,11 +225,25 @@ class GroupFit:
     def chi2(self, replica: int, j: int) -> float:
         return profiled_chi2(self.d(replica, j), self.sigma, self.used)[0]
 
-    def fit(self, nominal_chi2_at: Callable[[float], float] | None = None) -> Json:
+    def fit(
+        self,
+        nominal_chi2_at: Callable[[float], float] | None = None,
+        check: Callable[[], None] | None = None,
+    ) -> Json:
+        """The nominal scan and the 200 replica refits; check (the wall clock) runs before each of the 201 scans.
+
+        nominal_chi2_at evaluates chi2 at alpha-hat off the lattice; without it the fine-grid minimum stands in.
+        """
         from scipy.stats import chi2 as chi2_distribution
 
+        tick = check if check is not None else (lambda: None)
+        tick()
         result = scan(lambda j: self.chi2(0, j))
-        refits = np.array([scan(lambda j, r=r: self.chi2(r, j))["alpha_hat"] for r in range(1, R.BOOTSTRAPS + 1)])
+        alpha_hats = []
+        for r in range(1, R.BOOTSTRAPS + 1):
+            tick()
+            alpha_hats.append(scan(lambda j, r=r: self.chi2(r, j))["alpha_hat"])
+        refits = np.array(alpha_hats)
         sigma_alpha = float(np.std(refits, ddof=1))
         require(np.isfinite(sigma_alpha) and sigma_alpha > 0, "ALPHA_VARIANCE", "undefined sigma_alpha")
         chi2_hat = nominal_chi2_at(result["alpha_hat"]) if nominal_chi2_at is not None else result["fine_min_chi2"]
@@ -249,8 +265,15 @@ class GroupFit:
         }
 
 
+def deciding_band(band: Json) -> float:
+    """sigma_band for outcomes 4-6: Muon_Energy_MINOS overall. The MINOS strata and MINERvA are descriptions only."""
+    require(band.get("schema") == "rpl-bandsize/1", "BAND", "unexpected band record")
+    return float(band["sigma_band"]["Muon_Energy_MINOS"]["overall"])
+
+
 def classify(d1_pb_reading: str, fit: Json | None, sigma_band: float) -> str:
     """The declared outcome table, in order; exactly one applies."""
+    require(d1_pb_reading in READINGS, "D1_READING", f"unexpected R-d1.0 PB reading {d1_pb_reading!r}")
     if d1_pb_reading != "SEEN":
         return "NO-STEP"
     assert fit is not None
@@ -321,6 +344,8 @@ def stream(
     pseudo_n_pa = np.zeros((replicas, NBINS))
     pseudo_p = {group: np.zeros((replicas, NBINS)) for group in ("PA", "PB")}
     plant_lattice = {alpha: np.zeros((replicas, lattice.size)) for alpha in PLANTS}
+    plant_pz: list[FloatArray] = []  # PB's pseudo-data rows, unscaled, with their nominal weights (x 2): chi2 off the lattice
+    plant_weights: list[FloatArray] = []
     rows: Json = {"signal": {}, "background": {}, "data": {}}
     for sample in R.Inputs.samples(reader, data=True):  # type: ignore[arg-type]
         check()
@@ -336,6 +361,9 @@ def stream(
             pseudo = plant_split.random(count) < 0.5
             bins = R.bin_indices(pz, R.PZ_EDGES)
             planted = {alpha: lattice.index(pz * (1.0 + alpha)) for alpha in PLANTS} if group == "PB" else {}
+            if group == "PB":
+                plant_pz.append(pz[pseudo])
+                plant_weights.append(2.0 * sample.weights[pseudo])
         for start in range(0, count, R.CHUNK_ROWS):
             stop = min(start + R.CHUNK_ROWS, count)
             for replica in range(replicas):
@@ -366,6 +394,7 @@ def stream(
         "pseudo_n_pa": pseudo_n_pa,
         "pseudo_p": pseudo_p,
         "plant_lattice": plant_lattice,
+        "plant_rows": (np.concatenate(plant_pz), np.concatenate(plant_weights)),
         "rows": rows,
     }
 
@@ -411,17 +440,22 @@ def reproduction_control(alpha0_n: FloatArray, product: Json, d1_record: Json) -
     }
 
 
-def plant_control(streamed: Json, lattice: Lattice) -> Json:
-    """M2: recover each planted scale within 3.5 sigma_alpha on RPL's own pseudo-data construction."""
+def plant_control(streamed: Json, lattice: Lattice, check: Callable[[], None] | None = None) -> Json:
+    """M2: recover each planted scale within 3.5 sigma_alpha (the declared rule, nothing more) on RPL's own pseudo-data.
+
+    chi2 at alpha-hat is evaluated off the lattice on PB's pseudo-data rows, as for the primary fit.
+    """
+    pz_rows, weight_rows = streamed["plant_rows"]
+    p_pb, n_pa, p_pa = streamed["pseudo_p"]["PB"], streamed["pseudo_n_pa"], streamed["pseudo_p"]["PA"]
     results = {}
     for alpha in PLANTS:
-        fit = GroupFit(
-            lattice,
-            cumulative(streamed["plant_lattice"][alpha]),
-            streamed["pseudo_p"]["PB"],
-            streamed["pseudo_n_pa"],
-            streamed["pseudo_p"]["PA"],
-        ).fit()
+        group = GroupFit(lattice, cumulative(streamed["plant_lattice"][alpha]), p_pb, n_pa, p_pa)
+
+        def chi2_at(alpha_hat: float, alpha: float = alpha, group: GroupFit = group) -> float:
+            n = direct_bins(pz_rows * (1.0 + alpha), weight_rows, alpha_hat)
+            return profiled_chi2(ratio(n, p_pb[0], n_pa[0], p_pa[0]), group.sigma, group.used)[0]
+
+        fit = group.fit(chi2_at, check)
         pull = abs(fit["alpha_hat"] - alpha) / fit["sigma_alpha"]
         results[f"{alpha:+.3f}"] = {
             "alpha_true": alpha,
@@ -429,8 +463,10 @@ def plant_control(streamed: Json, lattice: Lattice) -> Json:
             "sigma_alpha": fit["sigma_alpha"],
             "pull": pull,
             "at_scan_edge": at_scan_edge(fit),
+            "chi2_alpha_hat": fit["chi2_alpha_hat"],
+            "fine_min_chi2": fit["fine_min_chi2"],
             "p_alpha_hat": fit["p_alpha_hat"],
-            "pass": bool(pull <= PLANT_TOLERANCE and not at_scan_edge(fit)),
+            "pass": bool(pull <= PLANT_TOLERANCE),
         }
     require(all(r["pass"] for r in results.values()), "PLANT_RECOVERY", f"a planted scale was not recovered: {results}")
     return results
@@ -441,7 +477,11 @@ def plant_control(streamed: Json, lattice: Lattice) -> Json:
 
 def self_digest(path: Path) -> str:
     """The sha256 of a file read once under O_NOATIME; its identity is then checked through the record chain."""
-    descriptor = os.open(path, os.O_RDONLY | R.noatime_flag())
+    flag = R.noatime_flag()
+    try:
+        descriptor = os.open(path, os.O_RDONLY | flag)
+    except OSError as error:
+        raise Refused("NOATIME_OPEN", f"{path}: {error}") from error
     with os.fdopen(descriptor, "rb") as stream:
         return hashlib.sha256(stream.read()).hexdigest()
 
@@ -492,6 +532,7 @@ def load_chain(rpd_run: Path, d1_sha: str, d2_sha: str, roots: list[Path], stage
 def run(arguments: argparse.Namespace, argv: Sequence[str]) -> Json:
     started = time.monotonic()
     out: Path = arguments.out
+    R.require_output_root(out)
     require(not out.exists() or not any(out.iterdir()), "OUTPUT_EXISTS", "output directory is not empty")
     out.mkdir(parents=True, exist_ok=True)
     staged = out / "staged"
@@ -514,8 +555,7 @@ def run(arguments: argparse.Namespace, argv: Sequence[str]) -> Json:
     environment = R.runtime_environment()
     require(p0["result"]["environment"] == environment, "ENVIRONMENT", "numerical environment differs from P0's record")
     band = json.loads(band_copy.read_text())
-    require(band.get("schema") == "rpl-bandsize/1", "BAND", "unexpected band record")
-    sigma_band = float(band["sigma_band"]["Muon_Energy_MINOS"]["overall"])
+    sigma_band = deciding_band(band)
 
     lattice = Lattice()
     reader = Reader(config, staged, roots)
@@ -524,7 +564,7 @@ def run(arguments: argparse.Namespace, argv: Sequence[str]) -> Json:
     alpha0 = np.stack([lattice.bins(data_cumulative[x], 0) for x in range(12)], axis=1)
     controls = {"reproduction": reproduction_control(alpha0, product, d1)}
     check()
-    controls["planted_scale"] = plant_control(streamed, lattice)
+    controls["planted_scale"] = plant_control(streamed, lattice, check)
     check()
 
     n_unscaled, p = alpha0, product["pz"]["P"][:, 0]  # (replica, playlist, bin)
@@ -543,13 +583,15 @@ def run(arguments: argparse.Namespace, argv: Sequence[str]) -> Json:
             n_unscaled[:, reference].sum(axis=1),
             p[:, reference].sum(axis=1),
         )
-        return group.fit(chi2_at)
+        names = {"fitted": [R.PLAYLISTS[x] for x in fitted], "reference": [R.PLAYLISTS[x] for x in reference]}
+        return {**group.fit(chi2_at, check), **names}
 
     reading_pb = d1["result"]["R-d1.0"]["PB"]["reading"]
     primary = fit_of(members("PB"), pa) if reading_pb == "SEEN" else None
     outcome = classify(reading_pb, primary, sigma_band)
     descriptive: Json | None = None
     if outcome != "NO-STEP":  # NO-STEP: no fit is read
+        # The declaration fixes no reading for a descriptive fit that cannot be formed, so its refusal is a STOP.
         descriptive = {"PC": fit_of(members("PC"), pa)}
         for x, playlist in enumerate(R.PLAYLISTS):
             check()
@@ -567,7 +609,7 @@ def run(arguments: argparse.Namespace, argv: Sequence[str]) -> Json:
             "Muon_Energy_MINERvA_descriptive": band["sigma_band"]["Muon_Energy_MINERvA"],
             "band_nature": "common to all playlists; a magnitude comparison only, not coverage",
         },
-        "published_muon_energy_scale": "1 % (iii/README.md, quote 3b), printed beside sigma_band",
+        "published_muon_energy_scale": PUBLISHED_SCALE,
         "descriptive_alpha_hat": descriptive,
         "controls": controls,
         "d1_PB": d1["result"]["R-d1.0"]["PB"],
@@ -606,18 +648,29 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--wall-seconds", type=int, required=True)
     arguments = parser.parse_args(argv)
     command = list(argv) if argv is not None else sys.argv[1:]
+    out: Path = arguments.out
+    try:  # a STOP record goes only into an output directory that is off CFS and new or empty at the start
+        R.require_output_root(out)
+        stop_writable = not out.exists() or (out.is_dir() and not any(out.iterdir()))
+    except (Refused, OSError):  # CFS, or a directory that cannot be inspected: the STOP is printed only
+        stop_writable = False
     try:
         for key in R.THREAD_KEYS:
             require(os.environ.get(key) == "1", "THREADS", f"{key} must be 1")
         require(os.getpriority(os.PRIO_PROCESS, 0) == 19, "NICE", "nice level must be 19")
         record = run(arguments, command)
-    except Refused as error:
-        arguments.out.mkdir(parents=True, exist_ok=True)
-        R.write_json(
-            arguments.out / "rpl-scale-fit.STOP.json",
-            {"schema": SCHEMA, "status": "STOP", "guard": error.guard, "message": str(error), "readings": None},
-        )
-        print(f"RPL-SCALE-FIT :: STOP {error.guard}: {error}")
+    except (Refused, OSError) as error:
+        guard = error.guard if isinstance(error, Refused) else "OS_ERROR"
+        if stop_writable:
+            try:
+                out.mkdir(parents=True, exist_ok=True)
+                R.write_json(
+                    out / "rpl-scale-fit.STOP.json",
+                    {"schema": SCHEMA, "status": "STOP", "guard": guard, "message": str(error), "readings": None},
+                )
+            except OSError as write_error:  # a read-only or full filesystem: the STOP still exits 4, printed
+                print(f"RPL-SCALE-FIT :: STOP record not written: {write_error}")
+        print(f"RPL-SCALE-FIT :: STOP {guard}: {error}")
         return 4
     print(f"RPL-SCALE-FIT :: DONE (outcome {record['outcome']})")
     return 0

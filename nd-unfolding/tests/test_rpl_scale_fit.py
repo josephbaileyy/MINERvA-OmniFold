@@ -158,6 +158,32 @@ def test_outcome_table_in_order(reading: str, fit: dict[str, Any], expected: str
     assert F.classify(reading, fit, 0.0085) == expected
 
 
+@pytest.mark.parametrize("reading", ["NOT-SEEN", "", "seen", "PARTIAL"])
+def test_an_unexpected_d1_reading_is_refused_not_read_as_no_step(reading: str) -> None:
+    with pytest.raises(R.Refused, match="D1_READING"):
+        F.classify(reading, None, 0.0085)
+
+
+def test_declared_constants() -> None:
+    # RPL-DECLARATION.md check (i): the scan, the outcome bars and the planted-scale control's construction
+    assert (F.LATTICE_HALF, F.COARSE_STRIDE, F.FINE_HALF) == (1000, 50, 50)
+    assert (F.P_FIT_MIN, F.BAND_SIGMAS) == (0.01, 2.0)
+    assert F.PLANTS == (0.01, 0.03) and F.PLANT_TOLERANCE == 3.5
+    assert F.PLANT_SPLIT_WORDS == (20261110, 17, 1)
+    assert F.REPRODUCTION_RTOL == 1e-12
+    assert F.READINGS == ("SEEN", "NOT-SEEN-AT-3σ")
+    assert F.PUBLISHED_SCALE == "1 % (iii/README.md, quote 3b), printed beside sigma_band"
+
+
+def test_the_deciding_band_is_minos_overall_not_a_stratum() -> None:
+    band = json.loads(json.dumps(BAND))
+    assert F.deciding_band(band) == 0.0085
+    band["sigma_band"]["Muon_Energy_MINOS"]["overall"] = 0.5
+    assert F.deciding_band(band) == 0.5
+    with pytest.raises(R.Refused, match="BAND"):
+        F.deciding_band({**band, "schema": "other"})
+
+
 def test_outcome_band_boundaries_are_inclusive_as_declared() -> None:
     # |a| + 2s <= band is WITHIN; |a| - 2s > band (strict) is BEYOND; equality goes to UNRESOLVED
     # dyadic values, so the sums are exact: 1/32 + 2/64 = 1/16 and 3/32 - 2/64 = 1/16
@@ -210,9 +236,173 @@ def test_a_bin_is_used_only_when_both_predictions_reach_the_minimum() -> None:
     n_ref = 100.0 + rng.uniform(0.0, 1.0, (201, 11))
     p_group[:, 2] = R.MIN_PREDICTION - 1.0  # the fitted group alone falls short
     p_ref[:, 5] = R.MIN_PREDICTION - 1.0  # the reference alone falls short
+    p_group[:, 4] = p_ref[:, 4] = R.MIN_PREDICTION  # exactly at the minimum: used (P >= 25)
     group = F.GroupFit(lattice, F.cumulative(data), p_group, n_ref, p_ref)
     assert np.flatnonzero(group.used).tolist() == [0, 1, 3, 4, 6, 7, 8, 9, 10]
     assert group.ndf == 9 - 2
+
+
+def _synthetic(rows: int, seed: int, scale: float, reference_shape: float = 5.0) -> tuple[Any, ...]:
+    """A fitted group whose data are its MC scaled by (1 + scale), and a reference of another shape."""
+    lattice = F.Lattice()
+    rng = np.random.default_rng(seed)
+    group_mc = 1.0 + rng.exponential(5.0, rows)
+    group_data = (1.0 + rng.exponential(5.0, rows)) * (1.0 + scale)
+    reference_mc = 1.0 + rng.exponential(reference_shape, rows)
+    reference_data = 1.0 + rng.exponential(reference_shape, rows)
+    draws = np.vstack([np.ones(rows), rng.poisson(1, (R.BOOTSTRAPS, rows))])
+
+    def binned(pz: np.ndarray) -> np.ndarray:
+        return np.stack([np.bincount(R.bin_indices(pz, R.PZ_EDGES), weights=w, minlength=11) for w in draws])
+
+    data = np.stack([np.bincount(lattice.index(group_data), weights=w, minlength=lattice.size) for w in draws])
+    return lattice, F.cumulative(data), binned(group_mc), binned(reference_data), binned(reference_mc)
+
+
+def test_the_fit_uses_both_predictions_when_their_shapes_differ() -> None:
+    # PB's and PA's spectra differ in shape: the double ratio needs P_group and P_ref, or the fit is biased
+    lattice, c, p_group, n_ref, p_ref = _synthetic(60000, 9, 0.04, reference_shape=2.0)
+    fit = F.GroupFit(lattice, c, p_group, n_ref, p_ref).fit()
+    assert abs(fit["alpha_hat"] - 0.04) <= 3.5 * fit["sigma_alpha"]
+    assert fit["p_alpha_hat"] > 0.01
+
+
+def test_sigma_b_is_the_replica_sd_of_the_ratio_at_alpha_zero() -> None:
+    lattice, c, p_group, n_ref, p_ref = _synthetic(20000, 12, 0.0)
+    group = F.GroupFit(lattice, c, p_group, n_ref, p_ref)
+    d = (lattice.bins(c, 0) / p_group) / (n_ref / p_ref)
+    expected = np.std(d[1:], axis=0, ddof=1)  # replicas 1..200 only, sample SD
+    assert np.array_equal(group.sigma[group.used], expected[group.used])
+    assert not np.allclose(group.sigma[group.used], np.std(d, axis=0, ddof=1)[group.used], rtol=1e-6, atol=0)
+
+
+def test_chi2_at_alpha_hat_comes_from_the_off_lattice_evaluation_and_the_wall_is_checked_per_scan() -> None:
+    from scipy.stats import chi2 as chi2_distribution
+
+    lattice, c, p_group, n_ref, p_ref = _synthetic(20000, 13, 0.02)
+    calls: list[float] = []
+    ticks: list[int] = []
+
+    def nominal(alpha: float) -> float:
+        calls.append(alpha)
+        return 7.25
+
+    fit = F.GroupFit(lattice, c, p_group, n_ref, p_ref).fit(nominal, lambda: ticks.append(1))
+    assert calls == [fit["alpha_hat"]]
+    assert fit["chi2_alpha_hat"] == 7.25
+    assert fit["p_alpha_hat"] == float(chi2_distribution.sf(7.25, fit["ndf"]))
+    assert len(ticks) == R.BOOTSTRAPS + 1  # before the nominal scan and before each replica refit
+
+    def expired() -> None:
+        if len(ticks) > 40:
+            raise R.Refused("WALL_CLOCK", "wall budget exhausted")
+        ticks.append(1)
+
+    ticks.clear()
+    with pytest.raises(R.Refused, match="WALL_CLOCK"):
+        F.GroupFit(lattice, c, p_group, n_ref, p_ref).fit(None, expired)
+
+
+def test_plant_control_applies_the_declared_rule_and_chi2_off_the_lattice(monkeypatch: pytest.MonkeyPatch) -> None:
+    rng = np.random.default_rng(21)
+    pz_rows = 1.0 + rng.exponential(5.0, 3000)
+    weight_rows = 2.0 * rng.uniform(0.5, 1.5, 3000)
+    p_pb = 100.0 + rng.uniform(0, 1, (201, 11))
+    n_pa = 100.0 + rng.uniform(0, 1, (201, 11))
+    p_pa = 100.0 + rng.uniform(0, 1, (201, 11))
+    streamed = {
+        "plant_rows": (pz_rows, weight_rows),
+        "pseudo_p": {"PB": p_pb, "PA": p_pa},
+        "pseudo_n_pa": n_pa,
+        "plant_lattice": {alpha: np.ones((201, 4)) for alpha in F.PLANTS},
+    }
+    captured: dict[float, Any] = {}
+
+    class Fake:  # an edge-pinned recovery whose pull is within 3.5: the declared rule passes it
+        def __init__(self, *_args: Any) -> None:
+            self.sigma = np.full(11, 0.05)
+            self.used = np.ones(11, dtype=bool)
+
+        def fit(self, nominal: Any, check: Any) -> dict[str, Any]:
+            captured[len(captured)] = nominal
+            return {"alpha_hat": 0.10, "coarse_min_alpha": 0.10, "sigma_alpha": 0.03, "chi2_alpha_hat": nominal(0.10),
+                    "fine_min_chi2": 1.0, "p_alpha_hat": 0.5}
+
+    monkeypatch.setattr(F, "GroupFit", Fake)
+    results = F.plant_control(streamed, F.Lattice(), None)
+    assert all(r["at_scan_edge"] and r["pass"] for r in results.values())
+    for (alpha, nominal) in zip(F.PLANTS, captured.values()):
+        n = F.direct_bins(pz_rows * (1.0 + alpha), weight_rows, 0.0123)
+        d = (n / p_pb[0]) / (n_pa[0] / p_pa[0])
+        assert nominal(0.0123) == F.profiled_chi2(d, np.full(11, 0.05), np.ones(11, dtype=bool))[0]
+    assert results["+0.030"]["pull"] == pytest.approx((0.10 - 0.03) / 0.03)
+
+
+def test_self_digest_turns_an_open_error_into_a_refusal(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    target = tmp_path / "record.json"
+    target.write_text("{}")
+    monkeypatch.setattr(os, "O_NOATIME", os.O_NONBLOCK, raising=False)
+
+    def denied(*_args: Any, **_kwargs: Any) -> int:
+        raise PermissionError(1, "Operation not permitted")
+
+    monkeypatch.setattr(F.os, "open", denied)
+    with pytest.raises(R.Refused, match="NOATIME_OPEN"):
+        F.self_digest(target)
+
+
+def test_an_os_error_is_a_stop_record_and_cfs_output_writes_nothing(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    for key in R.THREAD_KEYS:
+        monkeypatch.setenv(key, "1")
+    monkeypatch.setattr(os, "getpriority", lambda *_args: 19)
+
+    def failing(*_args: Any) -> Any:
+        raise PermissionError(1, "Operation not permitted")
+
+    monkeypatch.setattr(F, "run", failing)
+    arguments = ["--config", "c", "--config-sha256", "0" * 64, "--rpd-run", "r", "--d1-sha256", "0" * 64,
+                 "--d2-sha256", "0" * 64, "--band", "b", "--band-sha256", "0" * 64, "--wall-seconds", "1"]
+    out = tmp_path / "os-error"
+    assert F.main(arguments + ["--out", str(out)]) == 4
+    assert _stop(out)["guard"] == "OS_ERROR" and _stop(out)["readings"] is None
+    cfs = Path("/global/cfs/cdirs/m3246/rpl-test-never-created")
+    assert F.main(arguments + ["--out", str(cfs)]) == 4
+    assert not cfs.exists()
+    capsys.readouterr()
+
+    def full(*_args: Any) -> None:
+        raise OSError(28, "No space left on device")
+
+    sealed = tmp_path / "sealed"
+    sealed.mkdir()
+    real_iterdir = Path.iterdir
+
+    def unreadable(self: Path) -> Any:
+        if self == sealed:
+            raise PermissionError(13, "Permission denied")
+        return real_iterdir(self)
+
+    monkeypatch.setattr(Path, "iterdir", unreadable)  # the directory cannot be inspected: STOP printed, rc 4
+    assert F.main(arguments + ["--out", str(sealed)]) == 4
+    assert "STOP OS_ERROR" in capsys.readouterr().out
+    assert not (sealed / "rpl-scale-fit.STOP.json").exists()
+    monkeypatch.setattr(Path, "iterdir", real_iterdir)
+
+    monkeypatch.setattr(R, "write_json", full)  # the STOP record cannot be written: still a STOP, rc 4, no exception
+    assert F.main(arguments + ["--out", str(tmp_path / "full-disk")]) == 4
+    printed = capsys.readouterr().out
+    assert "STOP record not written" in printed and "STOP OS_ERROR" in printed
+
+
+def test_run_refuses_cfs_output_before_creating_anything(tmp_path: Path) -> None:
+    import argparse
+
+    cfs = Path("/global/cfs/cdirs/m3246/rpl-test-never-created")
+    with pytest.raises(R.Refused, match="OUTPUT_LOCATION"):
+        F.run(argparse.Namespace(out=cfs), [])
+    assert not cfs.exists()
 
 
 def test_sigma_alpha_is_the_spread_of_every_replica_refit(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -368,6 +558,92 @@ def test_seen_chain_recovers_the_planted_data_scale(seen: T.Fixture, tmp_path: P
     assert {row["key"] for row in record["keys_read"]} <= R.MC_KEYS | R.BKG_KEYS | {"measured"}
 
 
+def _c0_prediction(fixture: T.Fixture) -> np.ndarray:
+    product = json.loads((fixture.run / "c0.json").read_text())["result"]["product"]
+    with np.load(fixture.run / product["path"]) as archive:
+        return np.asarray(archive["pz__P"], dtype=float)  # (replica, variant, playlist, bin)
+
+
+def test_seen_chain_inputs_and_leave_one_out_references(
+    seen: T.Fixture, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    prediction = _c0_prediction(seen)
+    assert not np.array_equal(prediction[:, 0], prediction[:, 1])  # the variant matters in this fixture
+    p = prediction[:, 0]
+    pb, pa = F.members("PB"), F.members("PA")
+    constructed: list[dict[str, np.ndarray]] = []
+    real = F.GroupFit
+
+    class Spy(real):  # type: ignore[misc, valid-type]
+        def __init__(self, lattice: Any, c: Any, p_group: Any, n_ref: Any, p_ref: Any) -> None:
+            constructed.append({"p_group": p_group, "p_ref": p_ref})
+            super().__init__(lattice, c, p_group, n_ref, p_ref)
+
+    monkeypatch.setattr(F, "GroupFit", Spy)
+    out = tmp_path / "rpl"
+    assert F.main(_arguments(seen, out)) == 0
+    record = _record(out)
+    assert record["status"] == "PASS" and record["outcome"] == "SCALE-BEYOND-BAND"
+    # the primary fit uses c0's variant-0 prediction for PB, against PA
+    assert any(np.array_equal(c["p_group"], p[:, pb].sum(axis=1)) and np.array_equal(c["p_ref"], p[:, pa].sum(axis=1))
+               for c in constructed)
+    descriptive = record["descriptive_alpha_hat"]
+    pa_names = [R.PLAYLISTS[x] for x in pa]
+    for name in R.PLAYLISTS:  # leave-one-out: a PA member is fitted against the other five
+        assert descriptive[name]["fitted"] == [name]
+        assert descriptive[name]["reference"] == [x for x in pa_names if x != name]
+    assert descriptive["PC"]["reference"] == pa_names
+    assert record["primary_PB"]["fitted"] == [R.PLAYLISTS[x] for x in pb]
+    assert record["published_muon_energy_scale"] == "1 % (iii/README.md, quote 3b), printed beside sigma_band"
+    for plant in record["controls"]["planted_scale"].values():
+        assert set(plant) >= {"chi2_alpha_hat", "fine_min_chi2", "at_scan_edge", "pull", "pass"}
+
+
+@pytest.mark.parametrize("guard", ["FIT_NDF", "WALL_CLOCK"])
+def test_a_refusal_in_a_descriptive_fit_is_a_stop(
+    guard: str, seen: T.Fixture, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # RPL-DECLARATION.md fixes no reading for a descriptive fit that cannot be formed (:112, :130), so it is a STOP
+    p = _c0_prediction(seen)[:, 0]
+    lone = R.PLAYLISTS.index("1L")
+    real = F.GroupFit
+
+    class Expiring(real):  # type: ignore[misc, valid-type]
+        def __init__(self, lattice: Any, c: Any, p_group: Any, n_ref: Any, p_ref: Any) -> None:
+            if np.array_equal(p_group, p[:, [lone]].sum(axis=1)):
+                raise R.Refused(guard, "refused in 1L's descriptive fit")
+            super().__init__(lattice, c, p_group, n_ref, p_ref)
+
+    monkeypatch.setattr(F, "GroupFit", Expiring)
+    out = tmp_path / "rpl"
+    assert F.main(_arguments(seen, out)) == 4
+    assert _stop(out)["guard"] == guard and not (out / "rpl-scale-fit.json").exists()
+
+
+def test_the_pseudo_data_halves_are_doubled_to_c0s_prediction(
+    quiet: T.Fixture, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    captured: list[dict[str, Any]] = []
+    real = F.stream
+
+    def spy(*args: Any, **kwargs: Any) -> Any:
+        captured.append(real(*args, **kwargs))
+        return captured[-1]
+
+    monkeypatch.setattr(F, "stream", spy)
+    assert F.main(_arguments(quiet, tmp_path / "rpl")) == 0
+    streamed = captured[0]
+    p = _c0_prediction(quiet)[0, 0]  # nominal replica, variant 0: (playlist, bin)
+    pa, pb = F.members("PA"), F.members("PB")
+    # each simulated row lands in exactly one half and each half is weighted x 2, so the halves sum to 2 P
+    assert np.allclose(streamed["pseudo_p"]["PA"][0] + streamed["pseudo_n_pa"][0], 2 * p[pa].sum(axis=0), rtol=1e-12, atol=0)
+    pz_rows, weight_rows = streamed["plant_rows"]
+    pb_pseudo = F.direct_bins(pz_rows, weight_rows, 0.0)
+    assert np.allclose(streamed["pseudo_p"]["PB"][0] + pb_pseudo, 2 * p[pb].sum(axis=0), rtol=1e-12, atol=0)
+    for alpha in F.PLANTS:  # the lattice plant and the off-lattice rows carry the same pseudo-data weight
+        assert streamed["plant_lattice"][alpha][0].sum() == pytest.approx(weight_rows.sum(), rel=1e-12)
+
+
 def test_quiet_chain_is_no_step_with_no_fit_read(quiet: T.Fixture, tmp_path: Path) -> None:
     d1 = json.loads((quiet.run / "d1.json").read_text())["result"]["R-d1.0"]["PB"]
     assert d1["reading"] != "SEEN"
@@ -469,15 +745,20 @@ def test_environment_must_equal_p0s(quiet: T.Fixture, tmp_path: Path, monkeypatc
     assert _stop(out)["guard"] == "ENVIRONMENT"
 
 
-def test_threads_nice_wall_and_output_guards(quiet: T.Fixture, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_threads_nice_wall_and_output_guards(
+    quiet: T.Fixture, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
     out = tmp_path / "wall"
     assert F.main(_arguments(quiet, out, **{"--wall-seconds": "0"})) == 4
     assert _stop(out)["guard"] == "WALL_CLOCK"
-    out = tmp_path / "full"
-    out.mkdir()
-    (out / "x").write_text("x")
-    assert F.main(_arguments(quiet, out)) == 4
-    assert _stop(out)["guard"] == "OUTPUT_EXISTS"
+    for name, present in (("full", "x"), ("stopped", "rpl-scale-fit.STOP.json")):
+        out = tmp_path / name
+        out.mkdir()
+        (out / present).write_text("left by an earlier run")
+        assert F.main(_arguments(quiet, out)) == 4  # no FileExistsError, and no new file in someone's directory
+        assert sorted(p.name for p in out.iterdir()) == [present]
+        assert (out / present).read_text() == "left by an earlier run"
+        assert "STOP OUTPUT_EXISTS" in capsys.readouterr().out
     monkeypatch.setenv("OMP_NUM_THREADS", "2")
     out = tmp_path / "threads"
     assert F.main(_arguments(quiet, out)) == 4
