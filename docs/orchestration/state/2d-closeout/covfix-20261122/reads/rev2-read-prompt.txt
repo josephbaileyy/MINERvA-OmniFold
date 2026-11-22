@@ -1,0 +1,25 @@
+Read-only review. Never write anywhere except the single report file /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/grok-covfix2/report.md.
+
+inputs/COVFIX-DECLARATION.md is DRAFT rev 2 of a pre-registration to fix a 2D cross-section covariance that
+under-covers at two held-out generator tunes. Rev 1 got NO-GO from two readers; their reports are
+inputs/grok-rev1-REPORT.md and inputs/agy-rev1-REPORT.md. Rev 2's header lists the changes, by finding. The other
+inputs are the cited records (same as for rev 1, plus PV2D code excerpts, the b1 report and declaration, and REGRADE
+amendment 1). The outside review's Fix 1: separate bias from fluctuation (E[ee^T] = C_fluct + b b^T), test the matrix
+of cases (nominal truth data-Poisson only; data + MC fluctuations; coherent nuisances; alternative truth fixed response;
+alternative truth perturbed response) along V's eigenmodes; acceptable outcomes (A) construction error found and fixed,
+(B) coverage for a stated model class with truth-model bias quantified separately, (C) uncertainties only for coarser or
+selected combinations; it rejects scaling the covariance until the two tunes pass.
+
+Answer with line numbers from COVFIX-DECLARATION.md:
+1. For every BLOCKING and MAJOR finding in both rev-1 reports: CLOSED, PARTLY CLOSED, or OPEN in rev 2, with the line
+   that closes it or the reason it is still open.
+2. New defects introduced by rev 2: fidelity against the inputs, logic, statistics (check every number in section 6.4,
+   the k >= 10 floor arithmetic, the pooled band factor and its 3-SE guard, the PSD projection, the split identity),
+   prices (every n x 0.19 product and total), and enforceability of the custody and spent-once rules.
+3. Is the pooled per-band fluctuation factor in section 5.2 acceptable under the review's "no scaling until the two
+   tunes pass", given that it is measured on fluctuation ensembles at nominal and at three non-spent truths and never
+   reads G18 or AR23? Answer directly, with the reason.
+4. Is removing C_model from the fluctuation part and replacing it with C_b (built from the three C_model vertices plus
+   G18 and AR23) sound, or does it double-count or drop anything?
+5. Anything that should block binding, and anything merely minor.
+Give each finding a severity (BLOCKING, MAJOR, MINOR) and a concrete fix. First line of the report: GO or NO-GO.
