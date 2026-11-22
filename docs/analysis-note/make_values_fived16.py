@@ -136,6 +136,11 @@ READOUTS = {
     # DECISION-20261119g: the signed-target IBU study's terminal readout (OUTCOME-20261119-ibu-signed-data.md rows 19-20;
     # committed byte-identical by the receipt PR #1235, sha256 a4ec72c1369d763469af1105839c944bee5487d8a69ecd6947d92fac6912317c)
     "ibusd": ("docs/orchestration/state/2d-closeout/ibukt-signed-data-a2-20261119/readout.json", "a4ec72c1"),
+    # Tier 3, the noise-free pipeline tests at the two flagged truths (T3-PIPELINE-TESTS-DECLARATION.md rev 4; #1241,
+    # merged on main as b4336c477; verdict COMPLETE): the one read's readout, sha256
+    # b0362c387ec3d8fd48616abe5dcf589407fd007b62214d6297b47418d1a9ecce. A byte-identical copy of main's file, at main's
+    # path, because the rewrite branch does not contain #1241; t3_values() below
+    "t3": (f"{FD}/fd/tier3-20261110/run-20261121/cluster/read/readout.json", "b0362c38"),
 }
 # the committed readouts without the run-period block, for the "-nopl" keys
 NOPL_READOUTS = dict(READOUTS, **{
@@ -1460,6 +1465,51 @@ def regrade_values(d):
     return v
 
 
+def t3_values(d):
+    """Tier 3's paragraph in Sec. 4 (Joseph's wording, approved 2026-11-22). Each value is read at split 991000 from
+    table["<arm>/<truth>/s991000"]["per_k"], at k = 50 (OP, the control that gives every event its true weight: at its
+    last iteration, k = 2, as the declaration's sec. 5.4 classes it). The wording's "consistent with" clauses are the
+    readout's sec. 5.5 labels, asserted here; the declaration's NOT-CITABLE list (no cause, no estimator change, no
+    held-out claim, no data quantity) is the readout's labels.not."""
+    r, v = d["t3"], {}
+    assert r["schema"] == "t3-readout/1" and r["verdict"] == "COMPLETE"
+    assert all(c["pass"] for c in r["controls"].values())
+    g = r["readings"]
+    arms = ("MU", "MW", "MO", "SO")
+    t = {(a, T): r["table"][f"{a}/{T}/s991000"]["per_k"] for a in ("B0",) + arms + ("OP",) for T in PRR_TRUTHS.values()}
+    kmax = {x[-1]["k"] for (a, _), x in t.items() if a != "OP"}
+    assert kmax == {50} and {x[-1]["k"] for (a, _), x in t.items() if a == "OP"} == {2}
+    assert all([e["k"] for e in x] == list(range(1, len(x) + 1)) for x in t.values())
+    v["t3-kmax"] = str(kmax.pop())
+    rho = {k: x[-1]["rho"] for k, x in t.items()}
+    # one threshold, equal to FD-PRR's (\fvval{prr-floor}), for every arm
+    assert set(g["floor"]["bars"].values()) == {d["prr"]["readings"]["floor"]["bar_floor"]}
+    floor = d["prr"]["readings"]["floor"]["bar_floor"]
+    for T in PRR_TRUTHS.values():
+        assert g["trajectory"][T]["B0"] == "plateau", "rho levels off"
+        assert g["location"][T]["B0"] == "reco matched, truth not"
+        assert "consistent with weakly constrained directions" in g["labels"][T]
+        assert abs(rho[("B0", T)] - g["resolution"][T]["MU"]["rho_B0_50"]) < 1e-15
+        assert abs(rho[("OP", T)] - g["rho_OP"][T]) < 1e-15
+    A, Q = PRR_TRUTHS["gibuu"], PRR_TRUTHS["q3"]
+    # the GiBUU hybrid: MO lowers the limit, to about OP's value; MU, MW and SO change rho by less than the bound
+    assert g["TR-1"][A] == {"MU": "no effect", "MW": "no effect", "MO": "lowers the limit", "SO": "no effect"}
+    assert "consistent with a limit set at the misses" in g["labels"][A]
+    v["t3-rho-b0-gibuu"], v["t3-rho-mo-gibuu"] = f"{rho[('B0', A)]:.3f}", f"{rho[('MO', A)]:.3f}"
+    assert rho[("MO", A)] < rho[("B0", A)] and f"{rho[('OP', A)]:.3f}" == v["t3-rho-mo-gibuu"], "about OP's value"
+    w = max(abs(rho[(a, A)] - rho[("B0", A)]) for a in ("MU", "MW", "SO"))
+    v["t3-dmax-gibuu"] = f"{math.ceil(1000 * w) / 1000:.3f}"
+    assert w < float(v["t3-dmax-gibuu"]) < floor
+    # the q3 tilt: no replacement lowers rho by the threshold; OP still leaves rho after its second iteration
+    assert g["TR-1"][Q] == {a: "no effect" for a in arms} and g["TR-2"][Q] == "step 2 does not carry the truth"
+    assert "consistent with a limit set by step 2's representation" in g["labels"][Q]
+    assert all(rho[("B0", Q)] - rho[(a, Q)] < floor for a in arms)
+    v["t3-rho-b0-q3"], v["t3-rho-op-q3"] = f"{rho[('B0', Q)]:.2f}", f"{rho[('OP', Q)]:.2f}"
+    assert (v["t3-kmax"], v["t3-rho-b0-gibuu"], v["t3-rho-mo-gibuu"], v["t3-dmax-gibuu"]) == ("50", "0.094", "0.026", "0.002")
+    assert (v["t3-rho-b0-q3"], v["t3-rho-op-q3"]) == ("0.16", "0.10")
+    return v
+
+
 def t2a_values(d):
     """Tier 2 (a): where the two-dimensional coverage test's chi2 sits, at each tune (descriptive; its label: no new
     verdict, no cause, no coverage statement at the data's point). split.*: mean chi2 = ebar' C+ ebar + tr(C+ S). by_rank:
@@ -1734,6 +1784,7 @@ def currency_values(d, base):
     v.update(t2a_values(d))
     v.update(mumax_values(d))
     v.update(regrade_values(d))
+    v.update(t3_values(d))
     v.update(t2b_values(d))
     v.update(e96d_values(d))
     v.update(rsn_values(d, base["cmodel-trace-gibuu"]))
