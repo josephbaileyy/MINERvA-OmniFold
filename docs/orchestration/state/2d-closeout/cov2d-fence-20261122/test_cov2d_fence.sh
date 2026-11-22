@@ -1,0 +1,102 @@
+#!/bin/bash
+# Stub test for cov2d_fence.sh rev 2: sacct, date, id, hostname and squeue are shims on PATH; squeue must never run.
+# Every case checks the exit code AND the verdict line (exit 0 <=> last line "FENCE CLEAR"; exit 3 <=> "FENCE REFUSED"
+# printed and no "FENCE CLEAR"). Usage: bash test_cov2d_fence.sh   (exit 0 iff every check passes)
+here=$(cd "$(dirname "$0")" && pwd); F=$here/cov2d_fence.sh
+T=$(mktemp -d); trap 'rm -rf "$T"' EXIT
+mkdir "$T/bin"
+cat > "$T/bin/sacct" <<'S'
+#!/bin/bash
+printf '%s\n' "$*" >> "$T_LOG"
+[ -n "$SACCT_ERR" ] && printf '%b' "$SACCT_ERR" >&2
+printf '%b' "$SACCT_OUT"
+exit "${SACCT_RC:-0}"
+S
+cat > "$T/bin/squeue" <<'S'
+#!/bin/bash
+echo squeue >> "$T_SQ"; exit 0
+S
+cat > "$T/bin/date" <<'S'
+#!/bin/bash
+if [ "$1" = -d ]; then
+  [ -n "$DATE_RC" ] && { /bin/date -v-60d +%Y-%m-%dT%H:%M:%S; exit "$DATE_RC"; }  # valid value, failing status
+  [ -n "$DATE_BAD" ] && { echo "$DATE_BAD"; exit 0; }
+  n=$(printf '%s\n' "$2" | sed -n 's/^\([0-9][0-9]*\) days ago$/\1/p'); [ -n "$n" ] || { echo "date stub: unparsed -d '$2'" >&2; exit 1; }
+  python3 -c 'import datetime as d,sys; print((d.datetime.now()-d.timedelta(days=int(sys.argv[1]))).strftime("%Y-%m-%dT%H:%M:%S"))' "$n"
+else /bin/date "$@"; fi
+S
+cat > "$T/bin/id" <<'S'
+#!/bin/bash
+[ -n "$ID_RC" ] && { echo stubuser; exit "$ID_RC"; }  # valid value, failing status
+[ -n "$ID_EMPTY" ] && exit 0
+echo stubuser
+S
+printf '#!/bin/bash\necho stubhost\n' > "$T/bin/hostname"
+chmod +x "$T/bin/"*
+export PATH="$T/bin:$PATH" T_LOG="$T/sacct.log" T_SQ="$T/squeue.log"
+fail=0
+verdict_ok() { # rc output -> 0 iff the printed verdict agrees with rc
+  last=$(printf '%s\n' "$2" | tail -n 1)
+  case $1 in
+    0) [ "$last" = "FENCE CLEAR" ] && ! printf '%s\n' "$2" | /usr/bin/grep -q 'FENCE REFUSED' ;;
+    3) printf '%s\n' "$2" | /usr/bin/grep -q '^FENCE REFUSED' && ! printf '%s\n' "$2" | /usr/bin/grep -q 'FENCE CLEAR' ;;
+    *) return 1 ;;
+  esac
+}
+# case_ name expected_exit ; inputs come from env vars set on the call line
+case_() {
+  : > "$T_LOG"
+  out=$(bash "$F" 2>&1); rc=$?
+  if [ "$rc" = "$2" ] && verdict_ok "$rc" "$out"; then echo "ok   $1 (exit $rc)"
+  else echo "FAIL $1: exit $rc, want $2 (or verdict line disagrees)"; printf '%s\n' "$out"; fail=1; fi
+}
+SACCT_OUT=''                                                       case_ empty                0
+SACCT_OUT='1|cov2d_a|COMPLETED\n2|t2a_b|FAILED\n3|cov2d_c|TIMEOUT\n' case_ completed            0
+SACCT_OUT='1|cov2d_a|CANCELLED by 12345\n'                          case_ cancelled_by         0
+SACCT_OUT='1|cov2d_a|CANCELLED\n'                                   case_ cancelled_bare       0
+SACCT_OUT='1|cov2d|BOOT_FAIL\n2|cov2d|DEADLINE\n3|cov2d|NODE_FAIL\n4|cov2d|OUT_OF_MEMORY\n5|cov2d|PREEMPTED\n' case_ every_terminal 0
+SACCT_OUT='1|t3p_floor|RUNNING\n2|xcov2d|PENDING\n'                 case_ other_lane_running   0
+SACCT_OUT='1|cov2d_a|COMPLETED\n\n2|cov2d_b|COMPLETED\n'            case_ blank_mid_ended      0
+SACCT_OUT='123_4|cov2d_a|COMPLETED\n124+0|t2a_b|COMPLETED\n'        case_ array_het_ids_ended  0
+SACCT_OUT='1|cov2d_a|RUNNING\n'                                     case_ running              3
+SACCT_OUT='1|t2a_x|PENDING\n'                                       case_ pending_t2a          3
+SACCT_OUT='1|cov2d_a|COMPLETING\n'                                  case_ completing           3
+SACCT_OUT='1|cov2d_a|REQUEUED\n'                                    case_ requeued             3
+SACCT_OUT='1|cov2d_a|SUSPENDED\n'                                   case_ suspended            3
+SACCT_OUT='1|cov2d_a|CANCELLED+\n'                                  case_ cancelled_truncated  3
+SACCT_OUT='1|cov2d_a|NEWSTATE\n'                                    case_ unknown_state        3
+SACCT_OUT='1|cov2d_a|\n'                                            case_ empty_state          3
+SACCT_OUT='1|cov2d_a|COMPLETED\n2|cov2d_b|RUNNING\n'                case_ completed_then_run   3
+SACCT_OUT='1|cov2d_a|COMPLETED\n\n2|cov2d_b|RUNNING\n'              case_ blank_mid_running    3
+SACCT_OUT='123_[1-5%2]|cov2d_a|PENDING\n'                           case_ array_pending        3
+SACCT_OUT='1|cov2d_a\n'                                             case_ malformed_2_fields   3
+SACCT_OUT='1|t3|x|COMPLETED\n'                                      case_ malformed_pipe_name  3
+SACCT_OUT='x|t3|COMPLETED\n'                                        case_ nonnumeric_jobid     3
+SACCT_RC=1                                                          case_ sacct_fails          3
+SACCT_ERR='sacct: error: Problem talking to the database\n'         case_ stderr_rc0_empty     3
+SACCT_ERR='sacct: error: Problem talking to the database\n' SACCT_OUT='1|cov2d_a|COMPLETED\n' case_ stderr_rc0_ended 3
+SACCT_ERR='sacct: error: x|y|z\n'                                   case_ stderr_three_fields  3
+DATE_BAD=garbage                                                    case_ date_malformed       3
+DATE_RC=1                                                           case_ date_fails           3
+ID_RC=1                                                             case_ id_fails             3
+ID_EMPTY=1                                                          case_ id_empty             3
+# sacct's argv: explicit -S at least 48 h back; -X -n -P -u <user> -E now -o JobID,JobName,State; never -s/--state.
+: > "$T_LOG"; SACCT_OUT='' bash "$F" >/dev/null 2>&1
+args=$(cat "$T_LOG")
+st=$(printf '%s\n' "$args" | sed -n 's/.*-S \([^ ]*\).*/\1/p')
+age=$(python3 -c "import datetime as d,sys; print(int((d.datetime.now()-d.datetime.fromisoformat(sys.argv[1])).total_seconds()))" "$st" 2>/dev/null)
+if [ -n "$age" ] && [ "$age" -ge 172800 ]; then echo "ok   start $st is ${age}s back (>= 172800)"; else echo "FAIL start '$st' age '$age'"; fail=1; fi
+for want in '-X' '-n' '-P' '-u stubuser' '-E now' '-o JobID,JobName,State'; do
+  case " $args " in *" $want "*) echo "ok   argv has $want";; *) echo "FAIL argv lacks $want"; fail=1;; esac
+done
+case " $args " in *" -s "*|*"--state"*) echo "FAIL argv uses -s/--state"; fail=1;; *) echo "ok   argv has no -s/--state";; esac
+# The /dev/shm-copy convention: $1 is deleted at exit, on both CLEAR (exit 0) and REFUSED (exit 3).
+for pair in '0|' '3|1|cov2d|RUNNING\n'; do
+  want=${pair%%|*}; o=${pair#*|}
+  c=$T/selfcopy; cp "$F" "$c"; SACCT_OUT="$o" bash "$c" "$c" >/dev/null 2>&1; rc=$?
+  if [ -e "$c" ] || [ "$rc" != "$want" ]; then echo "FAIL self copy (want exit $want, got $rc, kept=$([ -e "$c" ] && echo y || echo n))"; fail=1
+  else echo "ok   self copy deleted (exit $rc)"; fi
+done
+if [ -s "$T_SQ" ]; then echo "FAIL squeue was called"; fail=1; else echo "ok   squeue never called"; fi
+[ "$fail" = 0 ] && echo "ALL PASS" || echo "SOME FAILED"
+exit "$fail"
