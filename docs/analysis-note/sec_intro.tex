@@ -50,10 +50,10 @@ traditional binned methods~\cite{Huang:2025omnifold}.
 
 \subsection{Objectives and scope}
 
-Here we apply OmniFold to MINERvA's public data.
-The first objective is to benchmark OmniFold against MINERvA's published
+Here we apply OmniFold to MINERvA's public data with two objectives.
+The first is to benchmark OmniFold against MINERvA's published
 double-differential cross section $d^2\sigma/(dp_T\,dp_\parallel)$ in the same signal
-phase space. The benchmark compares the integrated normalization and the differential
+phase space, comparing the integrated normalization and the differential
 shape. The two estimates share data and sources of systematic uncertainty, and their
 cross-covariance is unavailable. Two analysis choices were made after the comparison
 with the publication was known. The comparison is therefore descriptive and is not a
@@ -64,22 +64,29 @@ $q_3$, and the hadronic invariant mass $W$. The extension tests whether an estim
 recover correlations among the observables and support uncertainties on the resulting
 joint distribution.
 
-The two-dimensional OmniFold result reproduces the published integrated cross section
-within about $1\%$, with a correlated shape difference of unidentified origin. Its
-covariance procedure under-covers at both held-out simulation tunes. The
-three- and four-dimensional central values give integrals consistent with the
-lower-dimensional results and are reported without covariances. Residual bias,
+OmniFold measures the two-dimensional cross section and reproduces the published
+integrated cross section within about $1\%$, with a correlated shape difference of
+unidentified origin. Its covariance procedure under-covers at both held-out
+simulation tunes. Adding $E_{\mathrm{avail}}$, $q_3$, and $W$ preserves the
+normalization and the tested projections: the three- and four-dimensional central
+values give integrals consistent with the lower-dimensional results and are reported
+without covariances. Recovering the joint distribution and calibrating its
+uncertainties at the reported resolution are not yet achieved. Residual bias,
 numerical instability, and interval under-coverage at held-out simulation tunes
-limit the five-dimensional
-outputs to illustrative use.
+limit the five-dimensional outputs to illustrative use. Calibrated tests of
+generator predictions find no disagreement beyond what matched coarse projections
+already show. The following sections identify where each of these limits arises.
 
-Section~\ref{sec:part-method} describes the data, observables, and unfolding procedure,
-and Sec.~\ref{sec:part-2d} presents the two-dimensional benchmark.
-Section~\ref{sec:part-higher-dimensional} examines the higher-dimensional estimators and
-their validation, and Sec.~\ref{sec:part-illustrative-multidimensional} presents the
-illustrative multidimensional results and generator comparisons. The validity table in
-Sec.~\ref{sec:result-validity} (Table~\ref{tab:validity}) summarizes the supported uses
-and principal limitations of each result.
+Section~\ref{sec:part-method} describes the data, observables, and unfolding
+procedure. Section~\ref{sec:part-2d} asks whether OmniFold reproduces the published
+measurement. Section~\ref{sec:part-higher-dimensional} asks what adding observables
+gives and whether the added joint information can be recovered with calibrated
+uncertainties. Section~\ref{sec:part-illustrative-multidimensional} shows what a
+five-observable result looks like in practice, what it can be used for, and what
+the generator comparisons add. Section~\ref{sec:discussion-and-conclusions} states
+what is established and what it implies for future multidimensional measurements;
+its validity table (Sec.~\ref{sec:result-validity}, Table~\ref{tab:validity})
+summarizes the supported uses and principal limitations of each result.
 
 % PASS2:
 % Retained literal values: 6 GeV is printed as \SI{6}{GeV} in the source's

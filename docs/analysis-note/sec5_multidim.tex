@@ -1,23 +1,29 @@
 \section{Illustrative multidimensional results}
 \label{sec:part-illustrative-multidimensional}
 
-We present the \resSixteen{} as an illustration. The estimator
-exceeds the prespecified bias criteria at \fvval{f0b-nlisted} simulated truths, fails the
-rounding-stability test, and differs from binned IBU on the same inputs.
-The reported intervals lack validated coverage
-(Sec.~\ref{sec:part-higher-dimensional}).
+The \resSixteen{} is the worked example of the limits found in
+Sec.~\ref{sec:part-higher-dimensional}. It gives coarse five-observable cell
+integrals whose sums over the hadronic coordinates pass the agreement rule
+against the 2D result (Sec.~\ref{sec:sixteen-cell-projections}). The result cannot be
+read at face value: the estimator exceeds the bias criteria at \fvval{f0b-nlisted} simulated
+truths, fails the rounding-stability test, and differs from binned IBU on the same
+inputs, and the reported intervals lack validated coverage
+(Sec.~\ref{sec:part-higher-dimensional}). We therefore present it as an
+illustration. The comparison with generator predictions adds one finding:
+calibrated joint tests find no discrepancy that a matched coarse projection does
+not already show (Sec.~\ref{sec:sixteen-cell-generator-comparison}).
 
 \subsection{Sixteen-cell cross section and uncertainty budget}
 \label{sec:sixteen-cell-results}
 \label{sec:fived16}
 \label{sec:fived16-result}
 
-Table~\ref{tab:sixteen-cell-cross-sections} and Fig.~\ref{fig:fived16-headline}
-give the flux-averaged cross section per nucleon integrated over each region in
-$(p_T,p_\parallel,E_{\mathrm{avail}},q_3,W)$. The sixteen integrals span
+The sixteen cell integrals span
 $\fvval{f-R07}$ to $\fvval{f-R14}$ in units of $\fvval{f-unit}\,\mathrm{cm}^2$ per nucleon and
 sum to $\fpeval{round((\fvval{cr-QA-s16}+\fvval{cr-QB-s16}+\fvval{cr-QC-s16}+\fvval{cr-QD-s16})/10,3)}\times10^{-38}\,\mathrm{cm}^2$ per nucleon over the
-reported regions. In each of the two low-$p_T$ quadrants, the largest
+reported regions. Table~\ref{tab:sixteen-cell-cross-sections} and
+Fig.~\ref{fig:fived16-headline} give the flux-averaged cross section per nucleon
+integrated over each region in $(p_T,p_\parallel,E_{\mathrm{avail}},q_3,W)$. In each of the two low-$p_T$ quadrants, the largest
 contributions come from the cell with low $E_{\mathrm{avail}}$ and low
 $q_3$ and the cell with high $q_3$ and high $W$. The largest single
 contribution comes from the high-$q_3$, high-$W$ cell in the
@@ -88,7 +94,8 @@ matrix.
 \label{sec:fived16-quadrants}
 
 Summing the sixteen-cell result over the hadronic coordinates gives four
-coarse muon integrals within $\fpeval{round(abs(\fvval{cr-QC-dpct}),1)}\%$ of the 2D OmniFold result.
+coarse muon integrals within $\fpeval{round(abs(\fvval{cr-QC-dpct}),1)}\%$ of the 2D OmniFold result, but the run
+periods it pools are inconsistent before any unfolding.
 At the boundaries $p_T=\fvval{h2-mid-pt}~\mathrm{GeV}/c$ and
 $p_\parallel=\fvval{h2-mid-pz}~\mathrm{GeV}/c$, the fractional differences from the
 2D result are $+\fpeval{round(\fvval{cr-QA-dpct},2)}\%$, $\fpeval{round(\fvval{cr-QB-dpct},2)}\%$, $\fpeval{round(\fvval{cr-QC-dpct},2)}\%$, and $+\fpeval{round(\fvval{cr-QD-dpct},2)}\%$ in the
@@ -246,8 +253,9 @@ run-period term raises the rate-and-shape distance for NuWro from
 \phantomsection
 \label{sec:joint5d}
 
-Calibrated joint tests reject all ten hypotheses, but each discrepancy is
-also visible in a matched coarse projection, so the five-observable tests
+Calibrated joint tests reject all ten hypotheses at a familywise level of
+$\jtAlpha$, but each discrepancy is also visible in a matched coarse projection,
+so the five-observable tests
 show no evidence of discrimination beyond those projections.
 The joint tests address \jtNtests{} hypotheses, one for rate and shape and one
 for shape alone for each prediction and target in
@@ -265,24 +273,14 @@ normalized cell fractions.
 \label{sec:joint5d-reading}
 Pseudo-experiments calibrate each statistic by repeating the unfolding
 under its hybrid null with the specified nuisance variations
-(Appendix~\ref{app:joint-generator-tests}). All ten hypotheses are rejected at a familywise level
-of $\jtAlpha$, subject to six conditions. The rejections concern these hybrid
+(Appendix~\ref{app:joint-generator-tests}). The rejections concern these hybrid
 hypotheses and do not by themselves exclude a generator's nuclear model.
 The tests add no reportable uncertainty, and they neither use nor validate the
-covariance of the exploratory five-axis result.
-
-\phantomsection
-\label{sec:joint5d-conditions}
-\begin{enumerate}
-  \item \emph{Subcell composition.} Replacing the below-grid Tune v1 composition with the generator's must shift the result by at most twice the last measured refinement change along that direction.
-  \item \emph{Detector response.} The specified detector variations must be adequate despite the absence of a dedicated calorimetric recoil-energy-scale variation.
-  \item \emph{Interaction model.} The \jtModelBands{} bands must describe within-cell composition and its effects on efficiency and migration.
-  \item \emph{Calibration.} Tail probabilities from half-sample pseudo-experiments must apply to the full-sample data unfolding, conditional on the available simulation, with independent exceedances. No rejection rate has been measured for null pseudo-data processed like the data, and the lost pseudo-experiments have not been shown to be lost independently of their outcomes.
-  \item \emph{Neutrino-energy range.} The samples must describe migrations into the test domain, including for GiBUU with $E_\nu<\fvval{cmodel-gibuu-enu}~\mathrm{GeV}$.
-  \item \emph{Finite generator samples.} Independent Gaussian residuals must adequately describe finite-sample errors in the predictions.
-\end{enumerate}
-
-\phantomsection
+covariance of the exploratory five-axis result. The decisions hold under six
+conditions, listed in Appendix~\ref{sec:joint5d-conditions}. They include the
+calibration, for which no rejection rate has been measured for null pseudo-data
+processed like the data, and the detector response, whose specified variations
+include no dedicated calorimetric recoil-energy-scale variation.
 
 The projection comparison repeats the calibration on $3\times3$ projections
 of the same joint cells onto $(p_T,p_\parallel)$ and $(E_{\mathrm{avail}},W)$.

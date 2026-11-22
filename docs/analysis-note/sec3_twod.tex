@@ -2,6 +2,14 @@
 \label{sec:part-2d}
 \label{sec:results}
 
+Unbinned OmniFold reproduces the published MINERvA integral to about
+$\fpeval{round(100*(\ratioTot-1),0)}\%$. A correlated shape difference of
+undetermined origin remains (Sec.~\ref{sec:muon-cross-section-comparison}), and
+the covariance procedure under-covers at both held-out simulation tunes
+(Sec.~\ref{sec:muon-cross-section-validation}). The unfolding recovers specified
+features in simulation, but the joint shape and the interval coverage lack
+independent validation.
+
 \subsection{Unfolded cross section and comparison with MINERvA}
 \label{sec:muon-cross-section-comparison}
 \label{sec:results-xsec}
@@ -122,7 +130,10 @@ comparison a benchmark of the central values with shared inputs.
 \label{sec:systematics}
 \label{sec:uq-combine}
 
-The reported $205\times205$ covariance $Q_R$ describes the differential cross
+The OmniFold covariance gives a smaller median bin uncertainty than the
+published covariance, $\uqMedian\%$ compared with $\uqPaper\%$, but a larger
+fractional uncertainty on the integral, $\uqIntegral\%$ compared with
+$\uqPaperIntegral\%$. The reported $205\times205$ covariance $Q_R$ describes the differential cross
 section obtained with the same estimator as the central value. It is the sum
 of the systematic, statistical, training-seed, and run-period contributions,
 \begin{equation}
@@ -244,7 +255,9 @@ validated coverage.
 \label{sec:validation}
 
 \phantomsection\label{sec:coverage-tunes}
-At the two held-out simulation tunes, the rebuilt 2D covariance gave joint
+The signal-only closure tests recover the injected truth features, but the
+covariance procedure under-covers at both held-out simulation tunes.
+The rebuilt 2D covariance gave joint
 regions that contained the true cross section in \lrval{cov2d-ar23-joint} of
 \lrval{cov2d-ntoys} pseudo-experiments at the first tune and
 \lrval{cov2d-g18-joint} of \lrval{cov2d-ntoys} at the second. Each rebuild
@@ -296,11 +309,6 @@ bins. In those bins, the purity-based estimate deviates from the truth by as
 much as 5.9 statistical standard deviations, while the refined estimate is
 within 0.44, using the purity-based statistical block as a common scale
 (Appendix~\ref{app:negative-weight-background}).
-
-The benchmark establishes that unbinned OmniFold reproduces the published
-integral to about $\fpeval{round(100*(\ratioTot-1),0)}\%$ and recovers specified features in simulation. A
-correlated shape difference remains, and the joint shape and interval coverage
-lack independent validation.
 
 % PASS2:
 % Source literals retained in 3.1: GENIE 2.12.6, Tune v1, 205 bins,

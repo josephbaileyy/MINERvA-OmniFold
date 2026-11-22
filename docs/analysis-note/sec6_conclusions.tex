@@ -4,7 +4,15 @@
 \subsection{What the measurements and tests establish}
 \label{sec:result-validity}
 
-Table~\ref{tab:validity} gives the scope of each result.
+The two-dimensional benchmark reproduces the published MINERvA integral to
+about $1\%$, with a correlated shape difference. The five-observable
+central values preserve the normalization and agree with the
+lower-dimensional results in the tested projections. At nominal truth,
+refined background subtraction removes most of the purity bias in the
+affected muon bins and, in a separate test, at high $W$. Calibrated joint
+tests of the generator predictions find no discrepancy that a matched coarse
+projection does not also show. Table~\ref{tab:validity} gives the scope of
+each result.
 
 \begingroup
 \setlength{\LTcapwidth}{\textwidth}
@@ -68,7 +76,7 @@ Table~\ref{tab:validity} gives the scope of each result.
     Joint generator tests &
     Decisions on ten hybrid rate-and-shape or shape-only hypotheses. &
     Tests of the specified predictions within the calibrated simulation model. &
-    The tests depend on six conditions. Physical exclusions of generators
+    The tests depend on six conditions (Appendix~\ref{sec:joint5d-conditions}). Physical exclusions of generators
     are outside the scope of the hybrid tests
     (Sec.~\ref{sec:sixteen-cell-generator-comparison}). The false-rejection rate for
     null data processed as in the experiment remains unmeasured. The NuWro
@@ -77,29 +85,20 @@ Table~\ref{tab:validity} gives the scope of each result.
 \end{xltabular}
 \endgroup
 
-The two-dimensional benchmark reproduces the published MINERvA integral to
-about $1\%$, with a correlated shape difference. The five-observable
-central values preserve the normalization and agree with the
-lower-dimensional results in the tested projections. At nominal truth,
-refined background subtraction removes most of the purity bias in the
-affected muon bins and, in a separate test, at high $W$. Recovery of the
-joint five-observable distribution remains unestablished.
-
-\subsection{Limitations and implications for multidimensional unfolding}
+\subsection{Limitations and their mechanisms}
 \label{sec:multidimensional-limitations}
 \label{sec:limitations}
 \label{sec:execsummary-limitations}
 
+Recovery of the joint five-observable distribution remains unestablished.
 Agreement in the total rate and in marginal projections does not establish a
 reliable joint unfolded distribution. A shift of cross section between
 hadronic cells within a muon quadrant cancels in the quadrant sum. The
 five-axis $W$ injection illustrates the same problem in simulation: the
 $W$ marginal meets its recovery criterion even as the joint
 $(E_{\mathrm{avail}},W)$ cells in the peak interval fall below their targets.
-Joint validation must probe changes in correlations at the resolution of
-the reported result.
 
-The recovery of those correlations depends on how much information the
+The recovery of correlations among the observables depends on how much information the
 measured inputs carry about truth. Reconstructed $W$ is fixed by the other
 inputs, so separating events in true $W$ relies on the simulated mapping from
 reconstructed variables to truth. The missed-event correction adds a
@@ -113,7 +112,7 @@ distribution. It retains part of the prior at both the GiBUU-like truth and
 the synthetic $q_3$ tilt, and its cell integrals differ from those of binned
 iterative Bayesian unfolding on the same inputs. Coarsening the grid leaves
 appreciable prior dependence. Rounding-level changes also move the central
-values beyond the prespecified tolerance.
+values beyond the tolerance of the stability test.
 
 \phantomsection
 \label{sec:usage}\label{sec:limitations-use}
@@ -127,18 +126,19 @@ input covariance. For inference on new observables, treating the unfolded
 events as independent in a likelihood can understate uncertainty because
 the fit correlates their weights.
 
-\subsection{Outlook}
+\subsection{Implications for multidimensional measurements}
 \label{sec:unfolding-outlook}
 \label{sec:summary}
 
+This study shows that unbinned unfolding can reproduce the normalization of
+a published neutrino cross-section measurement. A five-observable
+measurement requires demonstrating recovery and uncertainty coverage for
+the joint distribution at the reported resolution. Joint validation must probe
+changes in correlations at the resolution of the reported result.
 The main open steps are an end-to-end coverage test of the full reported
 covariance, including its response and run-period terms; identifying the
 origins of the run-period step and of the 2D shape difference with MINERvA;
 and validating the transfer of weights to events missed by the selection.
-This study shows that unbinned unfolding can reproduce the normalization of
-a published neutrino cross-section measurement. A five-observable
-measurement requires demonstrating recovery and uncertainty coverage for
-the joint distribution at the reported resolution.
 
 % PASS2:
 % The source prints the integral agreement as "about one percent".
