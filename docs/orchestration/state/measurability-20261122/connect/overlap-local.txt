@@ -1,0 +1,2 @@
+OVERLAP ours 11 (reads 9, writes 2); theirs 107 (cov2d config 36, cov2d disclosed 12, rpd write roots 2, rpd staged originals 57)
+OVERLAP: CLEAR (pairs checked 1177, hits 0)
