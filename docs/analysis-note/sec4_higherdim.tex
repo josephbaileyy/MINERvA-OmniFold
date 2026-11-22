@@ -326,6 +326,12 @@ retention at both truths. Dropping $W$ alone or dropping both $W$ and
 $q_3$ changes $\rho$ by less than \fvval{prr-s53-w-dmax}. None of the tested changes in
 iterations, capacity, training statistics, or inputs reduces retention
 by \fvval{prr-floor} or removes either bias flag.
+% Tier 3 (Joseph's final wording, accepted through the rewrite helper on 2026-11-22; the director relayed it): every number
+% is a \fvval key from make_values_fived16.py t3_values(), read from the Tier 3 readout (#1241, main b4336c477;
+% fd/tier3-20261110/run-20261121/cluster/read/readout.json, sha256 b0362c38) at split 991000, k = 50 (OP at k = 2).
+% Each "consistent with" clause is a sec. 5.5 composite label of T3-PIPELINE-TESTS-DECLARATION.md rev 4, asserted by
+% t3_values(); the readout's NOT-CITABLE list excludes any cause, estimator change, held-out claim or data quantity.
+A second prespecified study replaced one part of the procedure at a time on the same noise-free samples, with the iterations continued to \fvval{t3-kmax}, where $\rho$ levels off. At the GiBUU hybrid, where the baseline $\rho$ is \fvval{t3-rho-b0-gibuu}, giving the events that fail the selection their true weights, an oracle input that no data analysis has, lowers $\rho$ to \fvval{t3-rho-mo-gibuu}, about the value reached when every event receives its true weight before the second step. Letting the missed events keep their previous weights instead of the regressor's prediction, weighting the regressor, or removing the background with its refinement each change $\rho$ by less than \fvval{t3-dmax-gibuu}, against a threshold of \fvval{prr-floor}. The retention there is consistent with a limit set by the weights of the missed events. At the $q_3$ tilt, where the baseline $\rho$ is \fvval{t3-rho-b0-q3}, no replacement lowers $\rho$ by \fvval{prr-floor}, and true weights for every event still leave $\rho=\fvval{t3-rho-op-q3}$ after the second, truth-level step, consistent with a limit set by that step's representation. At both truths the result matches the pseudo-data at reconstruction level but not at truth level, consistent with directions the reconstructed inputs constrain weakly.
 
 Five-iteration binned IBU overshoots along the prior-to-truth direction,
 with $\rho=\fvval{prr-rho-ibu-gibuu}$ and $\fvval{prr-rho-ibu-q3}$ for the two truths. It clears the flag
