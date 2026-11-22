@@ -1,0 +1,35 @@
+== script rc=9; self copy left: ls: cannot access '/dev/shm/msrp.1.sh': No such file or directory; shm dir: ls: cannot access '/dev/shm/msr-connect': No such file or directory
+== the connect log
+  node 37a8eaa55497 nproc=4 loadavg 0.88 0.37 0.13
+  2026-11-22T23:35:05Z
+  window_end_epoch 1795391405 (now 1795390505); fence prefixes cov2d,ll5d_,ibukt,prr_,e96,ens1_,t3p_
+  connect script sha256 b622141fde5894917be2dd198af8a9ec688612149e7c09360a7c9a89ea09480d
+  == cov2d fence rev 2 (3fbc9cbd6c08d4c86c71aeeccf28b0b3d8a77393121ef23787c1d421b682171e)
+  fence host=37a8eaa55497 utc=2026-11-22T23:35:05Z
+  sacct -X -n -P -u root -S 2026-09-23T23:35:05 -E now -o JobID,JobName,State 2>&1
+  sacct matching rows: 2
+  FENCE CLEAR
+  == fence (sacct)
+  fence clear
+  == rpd_ rows (printed; limitation-resolver's flux2 may coexist with these login reads)
+  61800000|rpd_flux2|RUNNING
+  HEAD 0789e2aad16171b69ae962af427f5963c2fe1fe6; porcelain --ignored lines before: 0
+  msr_build.py: OK
+  msr_overlap.py: OK
+  threads 2; nice 19; ionice idle; python 3.11.18
+  == overlap (msr_overlap.py)
+  OVERLAP ours 11 (reads 9, writes 2); theirs 107 (cov2d config 36, cov2d disclosed 12, rpd write roots 2, rpd staged originals 57)
+  OVERLAP: CLEAR (pairs checked 1177, hits 0)
+  == inventory: stat (incl. atime) and O_NOATIME sha256
+  {"path": "/pscratch/sd/j/josephrb/t3p-20261121/stage/of_inputs_5d.npz", "size": 26, "mtime": 1795390505.3278146, "atime": 1795390505.3278146, "inode": 1111997, "sha256": "e260202e982614976d770658b8f83754cc6fcede6fe60d5c1e2e9d3f0b69fe30"}
+  {"path": "/pscratch/sd/j/josephrb/t3p-20261121/stage/bkg_dump.npz", "size": 22, "mtime": 1795390505.3278146, "atime": 1795390505.3278146, "inode": 1111998, "sha256": "b2c958c26f12a54e615a75f0d42bf1d223231761d750ca550fbc95fc07447d53"}
+  {"path": "/pscratch/sd/j/josephrb/t3p-20261121/stage.json", "size": 20, "mtime": 1795390505.3278146, "atime": 1795390505.3278146, "inode": 1111999, "sha256": "891b19d7eb857c59620e12543c519a0dc24175c063c747f29fb6861d2ca07cd5"}
+  {"path": "/pscratch/sd/j/josephrb/t3p-20261121/log-floor/SHA256SUMS", "size": 20, "mtime": 1795390505.3278146, "atime": 1795390505.3278146, "inode": 1112000, "sha256": "109fb1db8113baf3224bc8aefe07a12bb1fe46f4e5441c8978e2bb014d71b004"}
+  {"path": "/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/3d/of_inputs_3d.npz", "size": 26, "mtime": 1795390505.330809, "atime": 1795390505.329811, "inode": 1112001, "sha256": "978633105e6e62015711add242f22562c9b1dde86c6e96b9b04334c4b8061839"}
+  {"path": "/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/4d/of_inputs_4d.npz", "size": 26, "mtime": 1795390505.330809, "atime": 1795390505.330809, "inode": 1112002, "sha256": "288b38185cbab1466bae982756f1c6a4d46f81dcae2f5f3c1cb08be90b2f25e4"}
+  {"path": "/pscratch/sd/j/josephrb/ibukt-20261119-d/prep/bank.npz", "size": 18, "mtime": 1795390505.3328054, "atime": 1795390505.3328054, "inode": 1112003, "sha256": "74d75c38a644aabbd57719f0a3efbec874b4a1732e2e0a4981047bd0e4224d8e"}
+  {"matches": []}
+  STOP: no bank.npz at 60416384474d1a3b0644f1e09869cf09371382ecbf3c116b1ed110cd47341e2f under /pscratch/sd/j/josephrb/ibukt-20261119-d
+  msr probe rc=9
+  2026-11-22T23:36:01Z
+== done: 9
