@@ -1,0 +1,31 @@
+KILLED drop NF check
+KILLED drop jobid check
+KILLED loose jobid
+KILLED drop stderr merge
+KILLED prefix not first word
+KILLED prefix regex like rev1
+KILLED add COMPLETING terminal
+KILLED add RUNNING terminal
+KILLED drop TIMEOUT terminal
+KILLED only cov2d
+KILLED unanchored name
+KILLED blank line not skipped
+KILLED ignore sacct rc
+KILLED ignore awk rc
+KILLED ignore date rc
+KILLED no date regex
+KILLED ignore id rc
+KILLED no empty user check
+KILLED 1 day
+KILLED no -E
+KILLED no -u
+KILLED no self delete
+KILLED drop -ef check
+KILLED drop /dev/shm prefix check
+KILLED drop .. rule
+KILLED rev1 cleanup: delete any $1
+KILLED not-removed message dropped
+KILLED cleanup changes exit code
+KILLED squeue added
+KILLED refuse prints CLEAR
+30/30 killed
