@@ -1,0 +1,110 @@
+# HEAD ca2da8ea9d03547b29b29363218dc4dc904ab91b
+# clean clone, Python 3.10.20, numpy 2.2.6, lightgbm 4.6.0, scikit-learn 1.7.2, 2026-11-18T18:31:16Z
+# 439e92262c85a86b4aca6b7e368972d2cc0a12bca3c55eb02e5ec019b927965a  fb_pilot_edges.py
+# b55ea40d3691521248813b1702d7c3442aa7564e9956d1a8d211a1522371cd09  fb_pilot_gates.py
+# c697af661c8263b283fcd8cd47fb67e5e5b0d4a7b2a0bd71416c9b5a4e3f89b4  fb_pilot_probe.py
+# 25d1bd87413585ae12346b73774fdd64398ecba0126e1851eb468b2acb3ea116  fb_pilot_analyze.py
+# 96edd14a2b85b34dc6d7835212490bfa5dde67f20cd3fc53f1e5521d2b3fd20e  sbatch_pfb.sh
+# bcc4758eb3386fa713fd35bceb0278a50419d1779866cbd0ad2c7279813f7b95  pfb_smoke_prep.sh
+# 5aaa4794f873b3623371a5b22fd51e294247ddf4692c9085aa2b6435376ed79f  tests/test_fb_pilot.py
+# f441398c82bfed5f0921a5f10d255115e07be48c1d384e5f2a3a7b490dfa519c  tests/fb_pilot_mutation.py
+# command: python -B nd-unfolding/tests/fb_pilot_mutation.py --jobs 6
+unmutated suite: 55 tests OK, none skipped, in the mirrored tree
+KILLED    signed spacing (no |u|)                      by test_signed_spacing_counterexamples_are_refused
+KILLED    half the envelope                            by test_no_jitter_crosses_an_admissible_edge
+KILLED    a gap that touches is admissible             by test_signed_spacing_counterexamples_are_refused
+KILLED    an edge may sit in the zero band             by test_no_edge_sits_in_the_zero_band
+KILLED    the zero band unchecked                      by test_the_zero_band_and_finiteness_refuse
+KILLED    non-finite values allowed                    by test_the_zero_band_and_finiteness_refuse
+KILLED    K is the decimal 1e-35                       by test_k_is_lightgbms_float32_constant
+KILLED    z from the pool, not the fit column          by test_z_comes_from_the_fit_column
+KILLED    too few gaps not refused                     by test_too_few_gaps_is_infeasible
+KILLED    no walk above the previous edge              by test_ties_collide_and_walk_up
+KILLED    E2 offset ignored                            by test_one_pool_gives_one_edge_set
+KILLED    edges written at 6 digits                    by test_edges_are_written_at_17_digits_and_round_trip
+KILLED    an existing edges dir overwritten            by test_build_edges_writes_twelve_files_and_refuses_an_existing_dir
+KILLED    placement: right end of a plateau (code 1)   by test_placement_takes_the_lowest_gap_on_a_plateau
+KILLED    G0 stops at the first failure                by test_g0_records_every_role_and_feature
+KILLED    the time limit allows an hour                by test_the_slurm_limit_and_the_scripts_cap
+KILLED    no #SBATCH --time                            by test_the_slurm_limit_and_the_scripts_cap
+KILLED    any job name accepted                        by test_the_test_switch_cannot_reach_a_real_job
+KILLED    a stale root accepted                        by test_the_job_preflight_spends_no_root
+KILLED    any root accepted                            by test_the_test_switch_cannot_reach_a_real_job
+KILLED    exits 4 and 5 not distinguished              by test_exits_4_and_5_and_operational_failures_keep_their_place
+KILLED    the smoke runs inside a job                  by test_the_smoke_is_a_login_node_step
+KILLED    G4 skips the inputs                          by test_g4_rechecks_the_inputs_the_deploy_and_the_sigma_copy
+KILLED    G4 skips the deploy                          by test_g4_rechecks_the_inputs_the_deploy_and_the_sigma_copy
+KILLED    G4 skips the sigma copy                      by test_g4_rechecks_the_inputs_the_deploy_and_the_sigma_copy
+KILLED    identity from the first fit only             by test_identity_is_every_fit_with_the_file_digest
+KILLED    identity ignores the file digest             by test_identity_is_every_fit_with_the_file_digest
+KILLED    a sidecar not bound to its product           by test_a_sidecar_is_bound_to_its_product
+KILLED    a sidecar's set/seed unchecked against the meta by test_a_sidecar_is_bound_to_its_product
+KILLED    a sidecar's INDEX unchecked                  by test_a_sidecar_is_bound_to_its_product
+KILLED    a sidecar's code unchecked                   by test_a_sidecar_is_bound_to_its_product
+KILLED    exit 4 not INPUTS CHANGED                    by test_exits_4_and_5_and_operational_failures_keep_their_place
+KILLED    crashed tasks below the gates                by test_exits_4_and_5_and_operational_failures_keep_their_place
+KILLED    S1 INVALID looked up as a band               by test_s1_invalid_reads_invalid_and_non_finite_values_write_as_null
+KILLED    non-finite kept in the record                by test_s1_invalid_reads_invalid_and_non_finite_values_write_as_null
+KILLED    S3 waits for the jitters                     by test_base_only_statistics_survive_a_round1_stop
+KILLED    the status not bound to the job              by test_the_analysis_is_bound_to_one_job
+KILLED    a missing INDEX skips the binding (code 2)   by test_a_sidecar_is_bound_to_its_product
+KILLED    missing deploy code skips the binding (code 2) by test_a_sidecar_is_bound_to_its_product
+KILLED    an edge file not checked against INDEX       by test_a_missing_index_or_an_altered_edge_file_fails_identity
+KILLED    the sidecar's gate bits not the meta's       by test_a_sidecar_is_bound_to_its_product
+KILLED    an unreadable sidecar raises                 by test_a_sidecar_is_bound_to_its_product
+KILLED    products' job unread                         by test_products_of_another_job_are_run_refused
+KILLED    foreign products not RUN REFUSED             by test_products_of_another_job_are_run_refused
+KILLED    the status pin unchecked                     by test_the_analysis_is_bound_to_one_job
+KILLED    the status root unchecked                    by test_the_analysis_is_bound_to_one_job
+KILLED    the status path unchecked                    by test_the_analysis_is_bound_to_one_job
+KILLED    a preflight refusal given an outcome         by test_the_analysis_is_bound_to_one_job
+KILLED    statistics read under INPUTS CHANGED         by test_a_malformed_artifact_keeps_the_named_outcome
+KILLED    products read after a G4 failure             by test_a_malformed_artifact_keeps_the_named_outcome
+KILLED    an unreadable product raises                 by test_a_malformed_artifact_keeps_the_named_outcome
+KILLED    a symlinked stage copy accepted              by test_a_stage_copy_must_be_a_plain_file
+KILLED    a hard-linked stage copy accepted            by test_a_stage_copy_must_be_a_plain_file
+KILLED    S2 suppressed by S1's own INVALID            by test_s2_survives_s1s_own_invalid_and_each_base_has_its_shift
+KILLED    shifts need all three bases                  by test_s2_survives_s1s_own_invalid_and_each_base_has_its_shift
+KILLED    S2's median bar strict                       by test_the_bars_include_equality_and_rows_5_7_name_what_crossed
+KILLED    S2's maximum bar strict                      by test_the_bars_include_equality_and_rows_5_7_name_what_crossed
+KILLED    S3's median bar strict                       by test_the_bars_include_equality_and_rows_5_7_name_what_crossed
+KILLED    row 4 labelled OPTION B                      by test_every_combination_reaches_exactly_one_row
+KILLED    G0 counts dropped on a policy failure        by test_g0_counts_survive_a_policy_failure
+KILLED    prep turns the runner's 4 into 5 (code 2)    by test_the_prep_step_keeps_the_runners_exit_4
+KILLED    PFB_ variables allowed in a job              by test_the_test_switch_cannot_reach_a_real_job
+KILLED    any node count accepted                      by test_the_test_switch_cannot_reach_a_real_job
+KILLED    any stage accepted in a job                  by test_the_test_switch_cannot_reach_a_real_job
+KILLED    no #SBATCH --output under the stage          by test_the_test_switch_cannot_reach_a_real_job
+KILLED    a refusal written before the stage is validated by test_the_test_switch_cannot_reach_a_real_job
+KILLED    a local test may name a cluster path         by test_the_job_preflight_spends_no_root
+KILLED    the job's setup file unpinned                by test_the_job_preflight_spends_no_root
+KILLED    the smoke receipt unchecked                  by test_the_job_preflight_spends_no_root
+KILLED    the smoke writes bytecode                    by test_the_smoke_writes_only_under_its_stage
+KILLED    the smoke refreshes the deploy's git index   by test_the_smoke_writes_only_under_its_stage
+KILLED    the smoke's final hash not fatal             by test_the_smoke_writes_only_under_its_stage
+KILLED    the smoke accepts any stage                  by test_the_smoke_writes_only_under_its_stage
+KILLED    the smoke accepts a relative stage           by test_the_smoke_writes_only_under_its_stage
+KILLED    the smoke's setup file unpinned              by test_the_smoke_writes_only_under_its_stage
+KILLED    G3 (a) reads nothing                         by test_a_middle_edge_removed_changes_the_partition
+KILLED    G3 (b) ignores thresholds                    by test_an_edge_moved_in_a_used_gap_fails_b
+KILLED    G3 (c) ignores missing types                 by test_a_nan_in_a_split_feature_fails_c
+KILLED    ValueToBin read as strict                    by test_intended_index_is_lightgbms_value_to_bin
+KILLED    J compares bases bytewise                    by test_unapplied_wrong_seed_and_edge_moves_are_caught
+KILLED    J2 by value for a jitter                     by test_unapplied_wrong_seed_and_edge_moves_are_caught
+KILLED    J3 counts edge moves as off-edge             by test_unapplied_wrong_seed_and_edge_moves_are_caught
+KILLED    ref from the observed rows only              by test_role_matrices_follow_the_bound_selection
+KILLED    clf1 without the measured rows               by test_role_matrices_follow_the_bound_selection
+KILLED    reg scores the passing rows                  by test_role_matrices_follow_the_bound_selection
+KILLED    J2 rebuild at amplitude 0                    by test_j2_rebuilds_with_the_runs_own_build_inputs
+KILLED    rows 1 and 2 swapped                         by test_every_combination_reaches_exactly_one_row
+KILLED    row 6 lost                                   by test_every_combination_reaches_exactly_one_row
+KILLED    a NaN endpoint read as the band              by test_a_nonfinite_bootstrap_endpoint_is_inconclusive
+KILLED    rows 5/7 name both numbers                   by test_the_bars_include_equality_and_rows_5_7_name_what_crossed
+KILLED    INCOMPLETE before the gates                  by test_gate_precedence_and_a_deliberate_round1_stop
+KILLED    RUN REFUSED before INPUTS CHANGED            by test_gate_precedence_and_a_deliberate_round1_stop
+KILLED    a zero S1 mean allowed                       by test_invalid_branches
+KILLED    a zero base allowed                          by test_invalid_branches
+KILLED    S2 pairs averaged, not maxed                 by test_s2_and_s3_follow_their_definitions
+KILLED    S3 place uses E3                             by test_s2_and_s3_follow_their_definitions
+MUTATION CHECK :: PASS (96 mutations)
+# exit 0

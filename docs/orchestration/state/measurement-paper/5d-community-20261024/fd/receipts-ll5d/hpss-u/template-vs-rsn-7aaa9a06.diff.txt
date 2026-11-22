@@ -1,0 +1,18 @@
+45,47c45,47
+< OUT=/pscratch/sd/j/josephrb/hpss-rsn-20261111
+< H=/home/j/josephrb/mnv-rsn-inputs-20261111
+< W=/dev/shm/josephrb-hpss-rsn
+---
+> OUT=/pscratch/sd/j/josephrb/hpss-ll5d-u-20261116
+> H=/home/j/josephrb/mnv-ll5d-unfolds-r2-20261116
+> W=/dev/shm/josephrb-hpss-ll5d-u
+49,50c49,50
+< GROUPS_IN_ORDER="pvl_prep pvl_products cpl_block"
+< N_ROWS=67
+---
+> GROUPS_IN_ORDER="null_roles toys extras sidecars"
+> N_ROWS=1759
+245c245
+< echo "ARCHIVE PASS: all three groups archived, hash-verified and every member re-read from HPSS"
+---
+> echo "ARCHIVE PASS: all $(set -- $GROUPS_IN_ORDER; echo $#) groups ($GROUPS_IN_ORDER) archived, hash-verified and every member re-read from HPSS"

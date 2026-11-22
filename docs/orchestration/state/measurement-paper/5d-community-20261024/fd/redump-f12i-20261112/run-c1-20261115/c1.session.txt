@@ -1,0 +1,148 @@
+ssh rc=0
+node login27 staged sha256 11e7ef921bcc227255200347277d7b976d927c5fee2824dd613d31896c968827
+detached pid 614165, output /dev/shm/rdxc.613679.sh.out
+node login27 2026-11-15T22:18:54Z step c1 pin ad0535c4a62ac0a20711a4a00f2266ddaf926d7c; connect script sha256 11e7ef921bcc227255200347277d7b976d927c5fee2824dd613d31896c968827
+== the purge-exposed MP-1 inputs (stat only)
+{
+ "files": [
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s0/evloop/base_cv.root",
+   "bytes": 398375089,
+   "mtime": "2026-10-20T06:15:41Z",
+   "atime": "2026-10-20T13:05:40Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1A_zero.root",
+   "bytes": 398375296,
+   "mtime": "2026-10-20T15:11:30Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1B_zero.root",
+   "bytes": 106517598,
+   "mtime": "2026-10-20T14:41:11Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1C_zero.root",
+   "bytes": 204230889,
+   "mtime": "2026-10-20T14:49:14Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1D_zero.root",
+   "bytes": 596287802,
+   "mtime": "2026-10-20T15:49:28Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1E_zero.root",
+   "bytes": 495761736,
+   "mtime": "2026-10-20T15:38:18Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1F_zero.root",
+   "bytes": 689044069,
+   "mtime": "2026-10-20T15:29:27Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1G_zero.root",
+   "bytes": 581501093,
+   "mtime": "2026-10-20T15:47:38Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1L_zero.root",
+   "bytes": 56587445,
+   "mtime": "2026-10-20T14:38:19Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1M_zero.root",
+   "bytes": 862899975,
+   "mtime": "2026-10-20T15:56:42Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1N_zero.root",
+   "bytes": 499729347,
+   "mtime": "2026-10-20T15:38:35Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1O_zero.root",
+   "bytes": 150945068,
+   "mtime": "2026-10-20T14:45:15Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1P_zero.root",
+   "bytes": 199848958,
+   "mtime": "2026-10-20T15:16:09Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_zero.npz",
+   "bytes": 1548311762,
+   "mtime": "2026-10-20T18:31:31Z",
+   "atime": "2026-10-30T08:53:42Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_zero_bkg.npz",
+   "bytes": 28494557,
+   "mtime": "2026-10-20T18:31:33Z",
+   "atime": "2026-10-30T08:53:42Z"
+  }
+ ],
+ "missing": [],
+ "verdict": "PRESENT"
+}
+squeue --me:
+
+{
+ "protected": [
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/ER/xsec.root",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root",
+  "/pscratch/sd/j/josephrb/cov2d-run-20261104",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root",
+  "/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root"
+ ],
+ "never_read": [
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz",
+  "/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz",
+  "/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root",
+  "/pscratch/sd/j/josephrb/cov2d-inputs-20261104",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware",
+  "/pscratch/sd/j/josephrb/fd-f1-20261027/f1b3/prep",
+  "/pscratch/sd/j/josephrb/fd-1b-inv-20261101/i0/in"
+ ],
+ "reads": [
+  "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s0/evloop/base_cv.root",
+  "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1A.root"
+ ],
+ "hits": [],
+ "verdict": "CLEAR"
+}
+{
+ "staged": [
+  {
+   "src": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s0/evloop/base_cv.root",
+   "dst": "/pscratch/sd/j/josephrb/rdx-20261112b/out/stage/base_cv.root",
+   "bytes": 398375089,
+   "sha256": "c76256a495d2deb7c213c2f8203b284bea640d90e697c495f5e11cedc830846b"
+  }
+ ],
+ "verdict": "STAGED"
+}
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+ModuleNotFoundError: No module named 'uproot'
+STOP: the checker python has no uproot
+== rdx connect c1 rc=8 2026-11-15T22:18:56Z
+script rc=8

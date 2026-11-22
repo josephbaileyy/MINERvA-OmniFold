@@ -1,0 +1,6 @@
+4 manifest: 1759 files, atime moved 0 (# files 1759 atime_moved 0)
+1 g18: 227 null-role products, digest c16e9ce045ed255dda49c8031ca6769cf4285d25fd8f5b3fe86d5a2f8d8508a9 == null c16e9ce045ed255dda49c8031ca6769cf4285d25fd8f5b3fe86d5a2f8d8508a9
+1 ar23: 227 null-role products, digest b716657b59b0169d50cf5ea2283c353fb4f7b9228ba041d5b54d2c40af796b43 == null b716657b59b0169d50cf5ea2283c353fb4f7b9228ba041d5b54d2c40af796b43
+2 extras: 13 evidenced, all equal to the manifest: True
+3 groups: {'sidecars': 97, 'null_roles': 454, 'extras': 8, 'toys': 1200}; partition of all 1759 files: True
+MANIFEST-CHECK PASS

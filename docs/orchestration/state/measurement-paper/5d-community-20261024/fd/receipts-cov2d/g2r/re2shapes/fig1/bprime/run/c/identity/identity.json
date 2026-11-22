@@ -1,0 +1,105 @@
+{
+ "arrays": {
+  "path": "tmp/fig_arrays_q.npz",
+  "sha256": "ac5c9f0fefc5863472c142f14c5839573ed70a5a1fe1a4495e6de0a22a158f69"
+ },
+ "values_sha256": "46c9a1000015aea0523247fcbdd197e8ba6b61440a180951d6b3cf76ed1d89c8",
+ "old_make_figs": {
+  "path": "/Users/josephbailey/cov2d-work/bprime-run/old/make_figs.py",
+  "sha256": "4e18c26681fc86dcfef2861c7c0126aa2df4839376d967b18f08a7d77664ee67"
+ },
+ "new_make_figs": {
+  "path": "/Users/josephbailey/cov2d-work/wt-mainref/publication/release/figs/make_figs.py",
+  "sha256": "9a575b36fb332dfe3e85c9eda65e4df3524b497b41de4e96fe6f8f0c9e25c0c1"
+ },
+ "pdf_sha256": {
+  "old": {
+   "fig1_validation.pdf": "71a2ea488ab758a466d40b7d5a7a061ebd95b1cdb90a79427c3da968238b6427",
+   "fig2_joint_localization.pdf": "57f3cc601281950cf9251b04a627efa3e0d803eca6620178839c48f9d4b0782a",
+   "fig3_generator_context.pdf": "e9d1bb01fc79e061b95b6e058a2aa2a03275429db5c4531b5e3d9ec63d65fa93"
+  },
+  "new": {
+   "fig1_validation.pdf": "fee46c1a8b60a09701444373e9dbfbf106bffdd42759928b0979c8eeb57135d1",
+   "fig2_joint_localization.pdf": "57f3cc601281950cf9251b04a627efa3e0d803eca6620178839c48f9d4b0782a",
+   "fig3_generator_context.pdf": "e9d1bb01fc79e061b95b6e058a2aa2a03275429db5c4531b5e3d9ec63d65fa93"
+  }
+ },
+ "boxes_px": {
+  "old": {
+   "panel": [
+    1217.2631578947367,
+    130.20000000000002,
+    2096.6315789473683,
+    799.8
+   ],
+   "cblabel": [
+    1063.8659649122808,
+    213.0,
+    1096.8659649122808,
+    717.0
+   ]
+  },
+  "new": {
+   "panel": [
+    1095.9215237801532,
+    17.608365885416674,
+    2037.0,
+    799.8
+   ],
+   "cbtitle": [
+    942.7926315789473,
+    816.7921875,
+    967.7926315789473,
+    850.1255208333333
+   ]
+  }
+ },
+ "checks": {
+  "F0 both producers ran": {
+   "pass": true,
+   "detail": "rc 0 / 0; figures ['fig1_validation.pdf', 'fig2_joint_localization.pdf', 'fig3_generator_context.pdf']"
+  },
+  "F1 PDF digests as given": {
+   "pass": true,
+   "detail": "old/fig1_validation.pdf 71a2ea48, new/fig1_validation.pdf fee46c1a, old/fig2_joint_localization.pdf 57f3cc60, new/fig2_joint_localization.pdf 57f3cc60, old/fig3_generator_context.pdf e9d1bb01, new/fig3_generator_context.pdf e9d1bb01"
+  },
+  "F2 fig2_joint_localization.pdf unchanged": {
+   "pass": true,
+   "detail": "6 items, PDF 57f3cc601281950c"
+  },
+  "F2 fig3_generator_context.pdf unchanged": {
+   "pass": true,
+   "detail": "20 items, PDF e9d1bb01fc79e061"
+  },
+  "F3a seven axes": {
+   "pass": true,
+   "detail": "7 / 7"
+  },
+  "F3b the six other axes draw the same items": {
+   "pass": true,
+   "detail": "23 items; differing axes []"
+  },
+  "F4 texts equal except the colour bar label": {
+   "pass": true,
+   "detail": "other axes differing []; removed {(7.5, '(OmniFold $-$ published)$/\\\\sigma_{\\\\mathrm{published}}$'): 1}; added {(8.0, '$r_i$'): 1}; colour bar old {'label': '(OmniFold $-$ published)$/\\\\sigma_{\\\\mathrm{published}}$', 'title': ''}, new {'label': '', 'title': '$r_i$'}"
+  },
+  "F5 the panel's histogram is of the 205 r_i": {
+   "pass": true,
+   "detail": "old panel items 0; hist calls 1; values == r_i: True (205); width 0.25..0.25; min |centre| 0; bins -3.125..3.125 cover r_i -2.572..1.910; counts 205; lines 1 (x [0.0, 0.0]); other kinds []"
+  },
+  "F6 printed count, mean and SD": {
+   "pass": true,
+   "detail": "old ('0.060', '0.535', '205'); new ('205', '0.060', '0.535'); from the arrays ('205', '0.060', '0.535')"
+  },
+  "F7 changed pixels inside the panel and the colour bar's label boxes": {
+   "pass": true,
+   "detail": "147169 changed pixels (x 943..2093, y 1019..1839); 0 outside; image 2100x1860"
+  }
+ },
+ "versions": {
+  "python": "3.12.2",
+  "matplotlib": "3.11.2",
+  "numpy": "2.5.4"
+ },
+ "verdict": "PASS"
+}

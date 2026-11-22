@@ -1,0 +1,13 @@
+You are an independent PRD referee and editor, read-only. Judge section titles and headings only, not the physics.
+Paper: a diagnostic methods paper (unbinned five-observable OmniFold on MINERvA open data). Files:
+- outline.txt: section and subsection titles with source line numbers.
+- sec4.tex: Section 4, "Benchmark against the published two-dimensional measurement", with its subsections: 4.1 normalization, per-bin agreement and the covariance-weighted distance (against the published result); 4.2 paired comparisons with other unfoldings (2D, including binned iterative unfolding (IBU) on the same data); 4.3 run periods; 4.4 the five-observable quadrant sums.
+- sec5.4-moving.tex: currently §5.4, "Algorithm dependence on the data": the sixteen-cell five-observable result compared with IBU of the same data. An editorial pass is moving it, word for word, to become a new final §4.5, because it is a comparison on data (§5 is about recovering simulated truth changes) and it uses §4.2's definitions.
+- table1.tex: Table 1 (tab:outcomes). Its block heading "Benchmark against the published measurement" will hold the moved IBU row too.
+- intro.tex and sec7-opening.tex: how the introduction and the conclusions group these findings (the introduction's "First, a benchmark..." finding).
+- paper-full.pdf: an earlier full build, for context (section numbers there predate the move).
+Question: after the move, §4.2–4.5 compare with things other than the published measurement (other unfoldings, run periods, quadrant sums, IBU on the five-observable cells). Should §4's title and Table 1's block heading change?
+1. Recommend: keep, or a specific new title (and block heading). Give two or three candidates ranked, with a one-line reason each, in PRD title style (concise, no colon chains).
+2. Check the fit to the introduction's and the conclusions' framing ("a benchmark against the published double-differential cross section..."). If the title changes, which sentences elsewhere (with source line) would then need a matching word change, if any?
+3. Do any subsection titles in §4 need a change for consistency after the move?
+Be concise.

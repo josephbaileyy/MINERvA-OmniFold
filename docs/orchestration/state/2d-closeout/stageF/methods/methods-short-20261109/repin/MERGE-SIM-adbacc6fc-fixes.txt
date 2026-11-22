@@ -1,0 +1,5 @@
+# merge_sim.sh's tree (#977 adbacc6fc with #981's package from 91f9cb615), with the ruled RP27, RP28 and RP33 applied
+# to build_package.py in that scratch tree only (never committed; the three hunks of MERGE-SIM-a5e3005fd-fixes.txt,
+# applied by matching each removed block exactly once), then dryrun.py adbacc6fc run there on Python 3.12.2.
+#977 head adbacc6fc61353bc7931cfa8fe53c770c867fc08; ruled failures: 44
+DRYRUN PASS (only ruled failures)

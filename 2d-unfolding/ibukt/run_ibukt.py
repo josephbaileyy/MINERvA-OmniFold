@@ -1,0 +1,931 @@
+"""Prepare identity-checked inputs and run the declared IBUKT paired screen.
+
+All input arguments name staged copies. Production inputs are hash checked;
+protected shared reads require O_NOATIME. A separate audited connect/launcher
+binding is required before this code is used on a cluster.
+"""
+
+from __future__ import annotations
+
+import argparse
+import contextlib
+import hashlib
+import json
+import os
+from pathlib import Path
+import sys
+from typing import Any, cast
+from unittest import mock
+
+import numpy as np
+
+import ibukt as core
+
+REPO = Path(__file__).resolve().parents[2]
+
+
+def digest(path: Path) -> str:
+    """Hash a file through an O_NOATIME descriptor on the production platform."""
+    flag = getattr(os, "O_NOATIME", None)
+    if flag is None:
+        raise RuntimeError("production reads require O_NOATIME")
+    result = hashlib.sha256()
+    with os.fdopen(os.open(path, os.O_RDONLY | flag), "rb") as stream:
+        for chunk in iter(lambda: stream.read(1 << 24), b""):
+            result.update(chunk)
+    return result.hexdigest()
+
+
+def read_json(path: Path) -> Any:
+    """Read a protected receipt through an O_NOATIME descriptor."""
+    with os.fdopen(os.open(path, os.O_RDONLY | os.O_NOATIME), "r") as stream:
+        return json.load(stream)
+
+
+def write_json(path: Path, value: Any) -> None:
+    """Write a new receipt, refusing overwrite and nonfinite JSON."""
+    with path.open("x") as stream:
+        json.dump(value, stream, indent=2, allow_nan=False)
+        stream.write("\n")
+
+
+def dependencies() -> tuple[Any, Any, Any]:
+    """Load the production driver and C2 machinery from this checkout."""
+    sys.path.insert(0, str(REPO / "2d-unfolding"))
+    sys.path.insert(0, str(REPO / "2d-unfolding/ref_c2c1"))
+    from importlib import import_module
+
+    comparison = import_module("ref_c2c1")
+
+    driver, helper = comparison.load_driver()
+    return comparison, driver, helper
+
+
+def require_close(
+    actual: np.ndarray[Any, Any],
+    expected: np.ndarray[Any, Any],
+    label: str,
+    tol: float = 1e-8,
+) -> float:
+    """Refuse a nonfinite, misaligned, or relatively different identity operand."""
+    if actual.shape != expected.shape or not all(
+        np.all(np.isfinite(x)) for x in (actual, expected)
+    ):
+        raise ValueError(f"{label}: invalid identity operands")
+    scale = np.maximum(np.abs(expected), np.max(np.abs(expected)) * 1e-12)
+    error = float(np.max(np.abs(actual - expected) / np.maximum(scale, 1e-300)))
+    if error > tol:
+        raise ValueError(f"{label}: {error} > {tol}")
+    return error
+
+
+def truth_controls(
+    truths: dict[str, np.ndarray[Any, Any]],
+    expected_reco: dict[str, np.ndarray[Any, Any]],
+    selected: np.ndarray[Any, Any],
+) -> dict[str, float]:
+    """Require conserved within-bin integrals and nonvacuous detector stresses."""
+    checks = {}
+    for name in ("within_plus", "within_minus"):
+        checks[f"within_integral_{name}"] = require_close(
+            truths[name][selected],
+            truths["nominal"][selected],
+            f"within-bin integral {name}",
+        )
+    nominal = expected_reco["nominal"]
+    scale = float(np.max(np.abs(nominal)))
+    if not np.all(np.isfinite(nominal)) or scale <= 0:
+        raise ValueError("invalid nominal expected reco signal")
+    for name, changed in expected_reco.items():
+        if name == "nominal":
+            continue
+        if changed.shape != nominal.shape or not np.all(np.isfinite(changed)):
+            raise ValueError(f"invalid expected reco signal: {name}")
+        shift = float(np.max(np.abs(changed - nominal)) / scale)
+        if shift <= 1e-8:
+            raise ValueError(f"vacuous expected reco signal deformation: {name}")
+        checks[f"reco_relative_shift_{name}"] = shift
+    return checks
+
+
+def validate_product(
+    values: dict[str, np.ndarray[Any, Any]],
+    bank: dict[str, np.ndarray[Any, Any]],
+    truth: str,
+) -> None:
+    """Require full grid vectors and the reporting mask frozen in the bank."""
+    selected = values["selected"]
+    if (
+        selected.shape != (205,)
+        or not np.issubdtype(selected.dtype, np.integer)
+        or np.any(selected < 0)
+        or np.any(selected >= 224)
+        or np.unique(selected).size != 205
+        or not np.array_equal(selected, bank["selected"])
+    ):
+        raise ValueError("product reporting mask differs from the 205-cell bank mask")
+    for key in ("truth", "prior", "omnifold", "ibu5", "ibu10"):
+        if values[key].shape != (224,) or not np.all(np.isfinite(values[key])):
+            raise ValueError(f"invalid product vector: {key}")
+    for key, expected in (
+        ("truth", bank[f"truth_{truth}"]),
+        ("prior", bank["truth_nominal"]),
+    ):
+        if not np.array_equal(values[key], expected):
+            raise ValueError(f"product {key} differs from bank")
+
+
+def nominal_control(
+    path: Path,
+    bank_pin: str,
+    bank: dict[str, np.ndarray[Any, Any]] | None = None,
+) -> dict[str, float]:
+    """Verify a completed noise-free nominal product before a Poisson fit."""
+    record = read_json(path)
+    if (
+        record["status"],
+        record["truth"],
+        record["sampling"],
+        record["nominal_tolerance"],
+        record["config_sha256"],
+        record["bank_sha256"],
+    ) != (
+        "PASS",
+        "nominal",
+        "noise-free",
+        core.RECOVERY_TOLERANCE,
+        digest(core.CONFIG),
+        bank_pin,
+    ):
+        raise ValueError("noise-free nominal control identity differs")
+    product = path.parent / "pair.npz"
+    if digest(product) != record["product_sha256"]:
+        raise ValueError("noise-free nominal control product changed")
+    values = read_npz(product)
+    if bank is not None:
+        validate_product(values, bank, "nominal")
+    selected = values["selected"]
+    return {
+        method: core.nominal_recovery(
+            values[method][selected],
+            values["truth"][selected],
+            f"noise-free nominal {method}",
+        )
+        for method in ("omnifold", "ibu5")
+    }
+
+
+def ratios(cfg: dict[str, Any]) -> dict[str, np.ndarray[Any, Any]]:
+    """Read the pinned generator-shape stresses and require the exact grid."""
+    result = {}
+    for name, rel in cfg["ratios"].items():
+        path = REPO / rel
+        if digest(path) != cfg["code_sha256"][rel]:
+            raise ValueError("ratio pin differs")
+        obj = json.loads(path.read_text())
+        if obj["schema"] != "pv2d-ratio/1" or any(
+            obj[k] != cfg[k] for k in ("pt_edges", "pz_edges")
+        ):
+            raise ValueError("ratio schema/grid differs")
+        values = np.asarray(obj["r"], float)
+        if (
+            values.shape != (14, 16)
+            or not np.all(np.isfinite(values))
+            or np.any(values <= 0)
+        ):
+            raise ValueError("invalid generator ratio")
+        result[name] = values
+    return result
+
+
+def read_npz(path: Path) -> dict[str, np.ndarray[Any, Any]]:
+    """Load a staged array product without changing its access time."""
+    with os.fdopen(os.open(path, os.O_RDONLY | os.O_NOATIME), "rb") as stream:
+        with np.load(stream, allow_pickle=False) as product:
+            return {key: product[key] for key in product.files}
+
+
+def root_vector(path: Path, name: str, comparison: Any) -> np.ndarray[Any, Any]:
+    """Read one staged ROOT histogram in the driver's pT-major order."""
+    import ROOT
+
+    source = ROOT.TFile.Open(str(path), "READ")
+    if not source or source.IsZombie() or not source.Get(name):
+        raise ValueError(f"missing histogram {name}")
+    try:
+        return cast(
+            np.ndarray[Any, Any], comparison.th2_vector(source.Get(name), 14, 16)
+        )
+    finally:
+        source.Close()
+
+
+def _reporting_cells(path: Path) -> np.ndarray[Any, Any]:
+    import ROOT
+
+    source = ROOT.TFile.Open(str(path), "READ")
+    if not source or source.IsZombie():
+        raise ValueError("cannot open paper ROOT file")
+    try:
+        covariance = source.Get("StatOnlyCovariance")
+        if not covariance or (covariance.GetNrows(), covariance.GetNcols()) != (
+            224,
+            224,
+        ):
+            raise ValueError("paper statistical covariance must be 224 by 224")
+        diagonal = np.fromiter((covariance(i, i) for i in range(224)), dtype=float)
+        selected = np.flatnonzero(diagonal > 0)
+        if selected.size != 205:
+            raise ValueError("reporting mask must contain exactly 205 cells")
+        return selected
+    finally:
+        source.Close()
+
+
+def prepare(args: argparse.Namespace, cfg: dict[str, Any]) -> None:
+    """Capture the unchanged real-data pipeline and verify both recorded centrals.
+
+    The simulation bank is frozen only after identity and full-truth completeness
+    controls pass. No training/sample split is claimed.
+    """
+    comparison, driver, helper = dependencies()
+    for role, pin in cfg["inputs"].items():
+        path = args.stage / pin["filename"]
+        if digest(path) != pin["sha256"]:
+            raise ValueError(f"input identity: {role}")
+    if driver.PT_EDGES != cfg["pt_edges"] or driver.PZ_EDGES != cfg["pz_edges"]:
+        raise ValueError("driver grid changed")
+    import ROOT
+
+    if ROOT.gSystem.Load(str(args.stage / cfg["inputs"]["library"]["filename"])) < 0:
+        raise ValueError("RooUnfold library failed to load")
+    captured: dict[str, Any] = {}
+    original = helper.omnifold
+
+    def observe(
+        gen: Any,
+        reco: Any,
+        measured: Any,
+        pr: Any,
+        pt: Any,
+        pm: Any,
+        iterations: Any,
+        **kw: Any,
+    ) -> Any:
+        captured.update(
+            gen=gen.copy(),
+            reco=reco.copy(),
+            pr=pr.copy(),
+            pt=pt.copy(),
+            wt=kw["MCgen_weights"].copy(),
+            wr=kw["MCreco_weights"].copy(),
+        )
+        problem = comparison.binned_problem(
+            gen,
+            reco,
+            measured,
+            pr,
+            pt,
+            kw["MCgen_weights"],
+            kw["MCreco_weights"],
+            kw["measured_weights"],
+            driver.PT_EDGES,
+            driver.PZ_EDGES,
+        )
+        truth, matrix, target, _ = problem
+        captured.update(ibu_prior=truth, ibu_response=matrix)
+        captured["ibu"] = comparison.roounfold_bayes(
+            matrix, truth, target, [5, 10], str(args.stage / "libRooUnfold.so")
+        )
+        numpy_ibu = comparison.dagostini(matrix, truth, target, [5, 10])
+        for k in (5, 10):
+            require_close(captured["ibu"][k], numpy_ibu[k], "RooUnfold/NumPy", 1e-9)
+        return original(gen, reco, measured, pr, pt, pm, iterations, **kw)
+
+    def record_loader(name: str, key: str) -> Any:
+        function = getattr(driver, name)
+
+        def wrapped(*pos: Any, **kw: Any) -> Any:
+            result = function(*pos, **kw)
+            captured[key] = result
+            return result
+
+        return wrapped
+
+    argv = [
+        "--omnifile",
+        str(args.stage / "cv.root"),
+        "--mcfile",
+        str(args.stage / "flux.root"),
+        *cfg["argv"],
+    ]
+    with contextlib.ExitStack() as stack:
+        stack.enter_context(mock.patch.object(helper, "omnifold", observe))
+        for name, key in (
+            ("fill_bkg_reco_2d", "background"),
+            ("collect_truth_denom_arrays", "den"),
+        ):
+            stack.enter_context(
+                mock.patch.object(driver, name, record_loader(name, key))
+            )
+        capture = comparison.run_driver(
+            driver, helper, argv, args.out / "identity.root", staging=args.stage
+        )
+    extraction, keywords = capture["extract"]
+    unit = driver.make_th2d(
+        "ibukt_unit", "unit counts", driver.PT_EDGES, driver.PZ_EDGES
+    )
+    for ip in range(1, 15):
+        for iz in range(1, 17):
+            unit.SetBinContent(ip, iz, 1)
+    factor = comparison.th2_vector(
+        driver.extract_cross_section_2d(unit, *extraction, **keywords), 14, 16
+    )
+    completeness = comparison.th2_vector(extraction[0], 14, 16)
+    er = root_vector(args.out / "identity.root", "hXSec2D", comparison)
+    er_ref = root_vector(args.stage / "er.root", "hXSec2D", comparison)
+    c2 = read_npz(args.stage / "c2.npz")
+    selected = _reporting_cells(args.stage / "paper.root")
+    checks = {"E_R": require_close(er[selected], er_ref[selected], "E_R")}
+    for k in (5, 10):
+        idx = list(c2["ks"]).index(k)
+        checks[f"C2_K{k}"] = require_close(
+            (captured["ibu"][k] * factor)[selected],
+            c2["xsec"][idx][selected],
+            f"C2 K{k}",
+        )
+    checks["completeness"] = require_close(
+        completeness[selected], np.ones(205), "full truth completeness"
+    )
+    if np.any(captured["pr"] & ~captured["pt"]):
+        raise ValueError(
+            "unexpected signal fakes; declared background contract is post-Phase-18"
+        )
+    den = captured["den"]
+    means = core.moments(den["truth_pt"], den["truth_pz"], den["w_truth"], cfg)
+    gen, wt, pt = captured["gen"], captured["wt"], captured["pt"]
+    rdefs = ratios(cfg)
+    truths = {}
+    full_truths = {}
+    expected_reco = {}
+    keep = captured["pr"] & pt
+    for name in cfg["truths"]:
+        fd = core.truth_factor(
+            name, den["truth_pt"], den["truth_pz"], means, cfg, rdefs
+        )
+        fs = core.truth_factor(name, gen[:, 0], gen[:, 1], means, cfg, rdefs)
+        full = core.histogram(
+            den["truth_pt"], den["truth_pz"], den["w_truth"] * fd, cfg
+        )
+        subset = core.histogram(gen[pt, 0], gen[pt, 1], wt[pt] * fs[pt], cfg)
+        checks[f"truth_{name}"] = require_close(
+            subset[selected], full[selected], f"full truth {name}"
+        )
+        truths[name] = full * factor * completeness
+        full_truths[name] = full
+        expected_reco[name] = core.histogram(
+            captured["reco"][keep, 0],
+            captured["reco"][keep, 1],
+            captured["wr"][keep] * fs[keep],
+            cfg,
+        )
+    checks.update(truth_controls(full_truths, expected_reco, selected))
+    background = captured["background"]
+    bank = {key: captured[key] for key in ("gen", "reco", "pr", "pt", "wt", "wr")}
+    bank.update(
+        bkg=np.column_stack(background[:2]),
+        bw=background[2],
+        means=means,
+        ibu_prior=captured["ibu_prior"],
+        ibu_response=captured["ibu_response"],
+        factor=factor,
+        selected=selected,
+        **{f"truth_{key}": value for key, value in truths.items()},
+    )
+    np.savez(args.out / "bank.npz", **bank)
+    write_json(
+        args.out / "identity.json",
+        {
+            "status": "PASS",
+            "checks": checks,
+            "bank_sha256": digest(args.out / "bank.npz"),
+            "config_sha256": digest(core.CONFIG),
+        },
+    )
+
+
+def checked_bank(
+    args: argparse.Namespace,
+) -> tuple[str, dict[str, np.ndarray[Any, Any]]]:
+    """Load the bank only after verifying the prepare receipt and byte identity."""
+    identity = read_json(args.identity)
+    if identity["status"] != "PASS" or identity["config_sha256"] != digest(core.CONFIG):
+        raise ValueError("identity control not passed for this configuration")
+    bank_pin = digest(args.bank)
+    if bank_pin != identity["bank_sha256"]:
+        raise ValueError("bank differs from identity control")
+    return bank_pin, read_npz(args.bank)
+
+
+def draw_target(
+    bank: dict[str, np.ndarray[Any, Any]],
+    cfg: dict[str, Any],
+    maps: dict[str, np.ndarray[Any, Any]],
+    truth: str,
+    trial: int | None,
+) -> tuple[core.Array, core.Array, core.Array]:
+    """Produce the shared measured rows and their signed binned IBU target."""
+    gen, reco, pt, pr = (bank[key] for key in ("gen", "reco", "pt", "pr"))
+    factors = core.truth_factor(truth, gen[:, 0], gen[:, 1], bank["means"], cfg, maps)
+    keep = pt & pr
+    # The response is untouched; only the positive fake-data signal is reweighted.
+    feat = np.concatenate((reco[keep], bank["bkg"], bank["bkg"]))
+    signed = np.concatenate((bank["wr"][keep] * factors[keep], bank["bw"], -bank["bw"]))
+    if trial is None:
+        # Combine the signed background histograms before adding signal to avoid
+        # losing precision through a large intermediate background.
+        signal_end = int(np.count_nonzero(keep))
+        background_end = signal_end + len(bank["bw"])
+        signal = core.histogram(
+            feat[:signal_end, 0], feat[:signal_end, 1], signed[:signal_end], cfg
+        )
+        positive = core.histogram(
+            feat[signal_end:background_end, 0],
+            feat[signal_end:background_end, 1],
+            signed[signal_end:background_end],
+            cfg,
+        )
+        negative = core.histogram(
+            feat[background_end:, 0],
+            feat[background_end:, 1],
+            signed[background_end:],
+            cfg,
+        )
+        return feat, signed, signal + (positive + negative)
+    measured, signed = core.poisson_target(feat, signed, cfg["seeds"][trial])
+    return measured, signed, core.histogram(measured[:, 0], measured[:, 1], signed, cfg)
+
+
+def target_keys(cfg: dict[str, Any]) -> list[tuple[str, int | None, str]]:
+    """Return the frozen nominal control and complete Poisson ensemble."""
+    return [
+        ("nominal", None, "nominal-control"),
+        *(
+            (name, trial, f"{name}-{trial}")
+            for name in cfg["truths"]
+            for trial in range(len(cfg["seeds"]))
+        ),
+    ]
+
+
+def admissibility(args: argparse.Namespace, cfg: dict[str, Any]) -> None:
+    """Check all signed targets before attempting either estimator on a pair."""
+    bank_pin, bank = checked_bank(args)
+    try:
+        _check_admissibility(args, cfg, bank_pin, bank)
+    except (RuntimeError, ValueError) as exc:
+        stop = args.out / "stop.json"
+        if not stop.exists():
+            write_json(
+                stop,
+                {
+                    "status": "STOP",
+                    "reason": str(exc),
+                    "bank_sha256": bank_pin,
+                    "config_sha256": digest(core.CONFIG),
+                },
+            )
+        raise
+
+
+def _check_admissibility(
+    args: argparse.Namespace,
+    cfg: dict[str, Any],
+    bank_pin: str,
+    bank: dict[str, core.Array],
+) -> None:
+    prior, matrix = bank["ibu_prior"], bank["ibu_response"]
+    rows = matrix.sum(axis=1)
+    selected = bank["selected"]
+    supported_truth = (prior > 0) & (matrix.sum(axis=0) > 0)
+    if not np.all(supported_truth[selected]):
+        raise ValueError("nonpositive prior or efficiency in a reported truth cell")
+    maps = ratios(cfg)
+    targets = {}
+    nominal = None
+    for name, trial, key in target_keys(cfg):
+        try:
+            _, _, target = draw_target(bank, cfg, maps, name, trial)
+        except ValueError as exc:
+            write_json(
+                args.out / "stop.json",
+                {
+                    "status": "STOP",
+                    "reason": str(exc),
+                    "truth": name,
+                    "trial": trial,
+                    "bank_sha256": bank_pin,
+                    "config_sha256": digest(core.CONFIG),
+                },
+            )
+            raise
+        failed = core.signed_target_violations(target, rows)
+        if failed:
+            write_json(
+                args.out / "stop.json",
+                {
+                    "status": "STOP",
+                    "reason": "inadmissible signed target",
+                    "truth": name,
+                    "trial": trial,
+                    "bins": failed,
+                    "bank_sha256": bank_pin,
+                    "config_sha256": digest(core.CONFIG),
+                },
+            )
+            raise ValueError(f"inadmissible signed target: {key}")
+        targets[key] = core.target_digest(target)
+        if trial is None:
+            nominal = target
+    assert nominal is not None
+    support = rows > 0
+    checks = {
+        "row_sum": require_close(
+            nominal[support], rows[support], "signed nominal row sum", 1e-9
+        )
+    }
+    comparison, _, _ = dependencies()
+    ks = [5, 10]
+    roo = comparison.roounfold_bayes(
+        matrix, prior, nominal, ks, str(args.stage / "libRooUnfold.so")
+    )
+    numpy_ibu = comparison.dagostini(matrix, prior, nominal, ks)
+    for k in ks:
+        checks[f"roo_K{k}"] = require_close(
+            roo[k][supported_truth],
+            prior[supported_truth],
+            "signed RooUnfold prior",
+            1e-9,
+        )
+        checks[f"numpy_K{k}"] = require_close(
+            numpy_ibu[k][supported_truth],
+            prior[supported_truth],
+            "signed NumPy prior",
+            1e-9,
+        )
+        checks[f"agreement_K{k}"] = require_close(
+            roo[k][supported_truth],
+            numpy_ibu[k][supported_truth],
+            "signed RooUnfold/NumPy",
+            1e-9,
+        )
+    write_json(
+        args.out / "admissibility.json",
+        {
+            "status": "PASS",
+            "bank_sha256": bank_pin,
+            "config_sha256": digest(core.CONFIG),
+            "target_treatments": cfg["target_treatments"],
+            "targets": targets,
+            "signed_identity": {
+                "checks": checks,
+                "truth_indices": np.flatnonzero(supported_truth).tolist(),
+                "reco_indices": np.flatnonzero(support).tolist(),
+            },
+        },
+    )
+
+
+def checked_admissibility(
+    path: Path, cfg: dict[str, Any], bank_pin: str
+) -> dict[str, Any]:
+    """Refuse a receipt without the signed identity and all 36 target digests."""
+    receipt = cast(dict[str, Any], read_json(path))
+    targets = receipt["targets"]
+    if (
+        receipt["status"] != "PASS"
+        or receipt["bank_sha256"] != bank_pin
+        or receipt["config_sha256"] != digest(core.CONFIG)
+        or receipt["target_treatments"] != cfg["target_treatments"]
+        or set(targets) != {key for _, _, key in target_keys(cfg)}
+        or set(receipt["signed_identity"]["checks"])
+        != {
+            "row_sum",
+            "roo_K5",
+            "roo_K10",
+            "numpy_K5",
+            "numpy_K10",
+            "agreement_K5",
+            "agreement_K10",
+        }
+        or not all(
+            0 <= error <= 1e-9
+            for error in receipt["signed_identity"]["checks"].values()
+        )
+    ):
+        raise ValueError("missing or mismatched signed-target admissibility receipt")
+    return receipt
+
+
+def pair(args: argparse.Namespace, cfg: dict[str, Any]) -> None:
+    """Run the nominal control or one admitted Poisson dataset."""
+    bank_pin, bank = checked_bank(args)
+    admission = checked_admissibility(args.admissibility, cfg, bank_pin)
+    admission_pin = digest(args.admissibility)
+    if args.noise_free:
+        if args.truth != "nominal" or args.trial != 0:
+            raise ValueError("noise-free control must be nominal trial zero")
+        trial = None
+        key = "nominal-control"
+    else:
+        control = read_json(args.control)
+        if (
+            control.get("admissibility_sha256") != admission_pin
+            or control.get("target_treatments") != cfg["target_treatments"]
+            or control.get("signed_target_sha256")
+            != admission["targets"]["nominal-control"]
+        ):
+            raise ValueError(
+                "nominal control does not match signed-target admissibility"
+            )
+        nominal_control(args.control, bank_pin)
+        trial = args.trial
+        key = f"{args.truth}-{trial}"
+    measured, signed, target = draw_target(bank, cfg, ratios(cfg), args.truth, trial)
+    target_pin = core.target_digest(target)
+    if target_pin != admission["targets"][key]:
+        raise ValueError(f"signed target differs from admissibility: {key}")
+    comparison, driver, helper = dependencies()
+    gen, reco, pt, pr = (bank[k] for k in ("gen", "reco", "pt", "pr"))
+    refined, _, clipped = driver.refine_stay_positive(
+        measured,
+        signed,
+        estimator="lgbm",
+        device="cpu",
+        params={"random_state": 45, "n_estimators": 400, "num_leaves": 31},
+    )
+    if refined.sum() <= 0:
+        raise ValueError("empty refined target")
+    ibu = comparison.roounfold_bayes(
+        bank["ibu_response"],
+        bank["ibu_prior"],
+        target,
+        [5, 10],
+        str(args.stage / "libRooUnfold.so"),
+    )
+    _, push = helper.omnifold(
+        gen,
+        reco,
+        measured,
+        pr,
+        pt,
+        np.ones(len(measured), bool),
+        5,
+        MCgen_weights=bank["wt"],
+        MCreco_weights=bank["wr"],
+        measured_weights=refined,
+        classifier1_params={"random_state": 42},
+        classifier2_params={"random_state": 43},
+        regressor_params={"random_state": 44},
+        parameter_format="dict",
+        estimator="lgbm",
+        device="cpu",
+    )
+    unfolded = (
+        core.histogram(gen[pt, 0], gen[pt, 1], bank["wt"][pt] * push, cfg)
+        * bank["factor"]
+    )
+    if not np.all(np.isfinite(unfolded)):
+        raise ValueError("nonfinite unfolded result")
+    np.savez(
+        args.out / "pair.npz",
+        omnifold=unfolded,
+        ibu5=ibu[5] * bank["factor"],
+        ibu10=ibu[10] * bank["factor"],
+        truth=bank[f"truth_{args.truth}"],
+        prior=bank["truth_nominal"],
+        selected=bank["selected"],
+    )
+    control_checks: dict[str, float | None] = {}
+    if args.noise_free:
+        failures = []
+        selected = bank["selected"]
+        for method, values in (
+            ("omnifold", unfolded),
+            ("ibu5", ibu[5] * bank["factor"]),
+        ):
+            label = f"noise-free nominal {method}"
+            try:
+                residual = core.nominal_residual(
+                    values[selected], bank["truth_nominal"][selected], label
+                )
+                control_checks[method] = residual
+                if residual > core.RECOVERY_TOLERANCE:
+                    failures.append(f"{label}: {residual} > {core.RECOVERY_TOLERANCE}")
+            except ValueError as exc:
+                control_checks[method] = None
+                failures.append(str(exc))
+        if failures:
+            write_json(
+                args.out / "stop.json",
+                {
+                    "status": "STOP",
+                    "reason": "C-NOM",
+                    "failures": failures,
+                    "control_checks": control_checks,
+                    "target_treatments": cfg["target_treatments"],
+                    "product_sha256": digest(args.out / "pair.npz"),
+                },
+            )
+            raise ValueError("; ".join(failures))
+    write_json(
+        args.out / "pair.json",
+        {
+            "sampling": "noise-free" if args.noise_free else "poisson",
+            "control_checks": control_checks,
+            "nominal_tolerance": core.RECOVERY_TOLERANCE if args.noise_free else None,
+            "control_sha256": None if args.noise_free else digest(args.control),
+            "truth": args.truth,
+            "trial": args.trial,
+            "seed": None if args.noise_free else cfg["seeds"][args.trial],
+            "bank_sha256": bank_pin,
+            "admissibility_sha256": admission_pin,
+            "target_treatments": cfg["target_treatments"],
+            "signed_target_sha256": target_pin,
+            "config_sha256": digest(core.CONFIG),
+            "product_sha256": digest(args.out / "pair.npz"),
+            "signed_sum": float(signed.sum()),
+            "refined_sum": float(refined.sum()),
+            "clipped_fraction": float(clipped),
+            "status": "PASS",
+        },
+    )
+
+
+def score(args: argparse.Namespace, cfg: dict[str, Any]) -> None:
+    """Read all 35 complete pairs; emit every per-cell reading without selection."""
+    config_pin = digest(core.CONFIG)
+    bank_pin, bank = checked_bank(args)
+    selected = bank["selected"]
+    if (
+        selected.shape != (205,)
+        or not np.issubdtype(selected.dtype, np.integer)
+        or np.any(selected < 0)
+        or np.any(selected >= 224)
+        or np.unique(selected).size != 205
+    ):
+        raise ValueError("bank reporting mask must contain 205 unique valid cells")
+    for name in cfg["truths"]:
+        truth = bank[f"truth_{name}"]
+        if truth.shape != (224,) or not np.all(np.isfinite(truth)):
+            raise ValueError(f"invalid bank truth vector: {name}")
+        if np.any(truth[selected] <= 0):
+            raise ValueError(f"nonpositive reported bank truth: {name}")
+    admission = checked_admissibility(args.admissibility, cfg, bank_pin)
+    admission_pin = digest(args.admissibility)
+    control_pin = digest(args.control)
+    control_checks = nominal_control(args.control, bank_pin, bank)
+    control = read_json(args.control)
+    if (
+        control.get("admissibility_sha256") != admission_pin
+        or control.get("target_treatments") != cfg["target_treatments"]
+        or control.get("signed_target_sha256")
+        != admission["targets"]["nominal-control"]
+    ):
+        raise ValueError("nominal control does not match signed-target admissibility")
+    readout = {}
+    for name in cfg["truths"]:
+        values = []
+        for trial in range(5):
+            directory = args.products / f"{name}-{trial}"
+            record = read_json(directory / "pair.json")
+            if (
+                record["status"],
+                record["truth"],
+                record["trial"],
+                record["seed"],
+                record["sampling"],
+                record["config_sha256"],
+                record["bank_sha256"],
+                record["control_sha256"],
+                record.get("admissibility_sha256"),
+                record.get("target_treatments"),
+                record.get("signed_target_sha256"),
+            ) != (
+                "PASS",
+                name,
+                trial,
+                cfg["seeds"][trial],
+                "poisson",
+                config_pin,
+                bank_pin,
+                control_pin,
+                admission_pin,
+                cfg["target_treatments"],
+                admission["targets"][f"{name}-{trial}"],
+            ):
+                raise ValueError("missing or mismatched pair receipt")
+            if record["product_sha256"] != digest(directory / "pair.npz"):
+                raise ValueError("pair digest differs")
+            product = read_npz(directory / "pair.npz")
+            validate_product(product, bank, name)
+            values.append(product)
+        first = values[0]
+        readout[name] = {
+            method: core.recoveries(
+                np.array([v[method][selected] for v in values]),
+                first["truth"][selected],
+                first["prior"][selected],
+            )
+            for method in ("omnifold", "ibu5", "ibu10")
+        }
+        for method in ("omnifold", "ibu5", "ibu10"):
+            readout[name][method]["role"] = (
+                "secondary" if method == "ibu10" else "primary"
+            )
+        readout[name]["cells"] = selected.tolist()
+    write_json(
+        args.out / "readout.json",
+        {
+            "schema": "ibukt-recovery/3",
+            "admissibility_sha256": admission_pin,
+            "signed_identity": admission["signed_identity"],
+            "target_treatments": cfg["target_treatments"],
+            "bank_sha256": bank_pin,
+            "config_sha256": config_pin,
+            "control_sha256": control_pin,
+            "control_product_sha256": control["product_sha256"],
+            "control_checks": control_checks,
+            "primary_methods": ["omnifold", "ibu5"],
+            "secondary_methods": ["ibu10"],
+            "truths": readout,
+            "license": "conditional finite-simulation per-cell recovery; five draws, no coverage or method adoption",
+        },
+    )
+
+
+def main() -> None:
+    """Execute a single declared stage inside an exclusive scratch output root."""
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("mode", choices=("prepare", "admissibility", "pair", "score"))
+    parser.add_argument("--stage", type=Path, required=True)
+    parser.add_argument("--out", type=Path, required=True)
+    parser.add_argument("--bank", type=Path)
+    parser.add_argument("--identity", type=Path)
+    parser.add_argument("--truth", choices=core.configuration()["truths"])
+    parser.add_argument("--trial", type=int, choices=range(5))
+    parser.add_argument("--products", type=Path)
+    parser.add_argument("--noise-free", action="store_true")
+    parser.add_argument("--control", type=Path)
+    parser.add_argument("--admissibility", type=Path)
+    args = parser.parse_args()
+    if args.mode in ("pair", "score") and args.admissibility is None:
+        parser.error("pair and score require --admissibility")
+    if args.mode == "admissibility" and (args.bank is None or args.identity is None):
+        parser.error("admissibility requires bank and identity")
+    if args.mode == "pair" and any(
+        getattr(args, k) is None for k in ("bank", "identity", "truth", "trial")
+    ):
+        parser.error("pair requires bank, identity, truth and trial")
+    if args.mode == "pair" and not args.noise_free and args.control is None:
+        parser.error("Poisson pair requires --control from the noise-free nominal pair")
+    if args.noise_free and args.mode != "pair":
+        parser.error("--noise-free is only valid for the nominal control pair")
+    if args.mode == "score" and any(
+        getattr(args, key) is None
+        for key in ("products", "bank", "identity", "control")
+    ):
+        parser.error("score requires products, bank, identity and control")
+    for path in (args.out, args.stage):
+        if not path.resolve().is_relative_to(Path("/pscratch")):
+            parser.error("production stage/output must be on pscratch")
+    cfg = core.configuration()
+    for rel, expected in cfg["code_sha256"].items():
+        if digest(REPO / rel) != expected:
+            raise ValueError(f"dependency changed: {rel}")
+    if digest(args.stage / "libRooUnfold.so") != cfg["inputs"]["library"]["sha256"]:
+        raise ValueError("library identity changed")
+    if os.environ.get("OMP_NUM_THREADS") != "64" or any(
+        os.environ.get(key) != "1"
+        for key in ("MKL_NUM_THREADS", "OPENBLAS_NUM_THREADS")
+    ):
+        raise ValueError("requires recorded thread environment 64/1/1")
+    if len(os.sched_getaffinity(0)) != 64:
+        raise ValueError("requires 64 allocated CPUs")
+    args.out.mkdir(parents=True, exist_ok=False)
+    comparison, _, _ = dependencies()
+    with comparison.read_guards(
+        (Path("/pscratch"), Path("/global/cfs")),
+        (REPO, args.stage, args.out),
+        (args.out,),
+    ):
+        {
+            "prepare": prepare,
+            "admissibility": admissibility,
+            "pair": pair,
+            "score": score,
+        }[args.mode](args, cfg)
+
+
+if __name__ == "__main__":
+    main()

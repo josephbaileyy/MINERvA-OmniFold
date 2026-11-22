@@ -1,0 +1,17 @@
+# 2026-11-17 at PKG 110a90e89a94e37fa73e21b11db196cde6b61b0e: bash test_connect_sd.sh connect/connect-sd.sh . <PKG>; rc 0
+PASS clean (rc 0): 2 fences clear; 12 code shas OK; arms before,off,after
+PASS clean: no stray write; SHA256SUMS (33 files) verifies
+PASS clean: check_sd.py on the stand-in's arms: 16 checks PASS
+PASS job-queued (rc 2): STOP a job of josephrb is queued or running (the fence refuses every job)
+PASS squeue-fails (rc 2): STOP squeue failed (rc 1): the fence is not clear
+PASS unended (rc 2): STOP a job of josephrb is unended (the fence refuses every job): 61500000|rdx_s3_a|RUNNING
+PASS fence-arms (rc 2): STOP squeue failed (rc 1): the fence is not clear
+PASS fence-arms: the start fence cleared, the second refused, and no arm ran
+PASS figmark (rc 2): STOP a group C figure connect is running (or left its marker): group C
+PASS w-exists (rc 2): STOP /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T//tcs.TCJmH9/w-exists/p/note-pullsd-20261117 ex
+PASS x-bad (rc 2): STOP E_R is not its pinned digest
+PASS code-bad (rc 2): STOP a code file is not its pinned sha256
+PASS arm-fails (rc 2): STOP arm after rc=3 (see /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T//tcs.TCJmH9/arm-fails/p/no
+PASS stray (rc 2): STOP a stray write (1 file(s))
+PASS unfilled (rc 2): STOP PKG is not filled
+PULLSD CONNECT TEST PASS

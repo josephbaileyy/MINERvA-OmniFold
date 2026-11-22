@@ -1,0 +1,23 @@
+# Fig. 1 version B', run_bprime.sh arm a, 2026-11-16T19:16:10Z, host DN51utov.SUNet
+env: python 3.12.2 matplotlib 3.11.2 numpy 2.5.4 (/Users/josephbailey/cov2d-work/fig1env/env/bin/python)
+commit: 62157934b5e80114aeb8901dd1068b94b981d0d4 clean=yes
+script: 08fad8814f020376e312db449082c90df99ab5c350aa3bf3b3bb21b63f300f01  2d-unfolding/re2/partc/re2c_fig1.py
+argv: python -I re2c_fig1.py --npz in/fig_arrays.npz --reduce /Users/josephbailey/cov2d-work/bprime-run/a/in/reduce.json --make-figs /Users/josephbailey/cov2d-work/wt-mainref/publication/release/figs/make_figs.py --values in/uqmedian.tex --tmp tmp --outdir out --cov in/cov2d_Q_205.npz --s5-npz in/production_cov.npz --playlist-npz in/playlist_term.npz --combination in/combination.json --budget in/budget_Q.json --step-a-sums in/SHA256SUMS --arm refined --pins-json in/pins.json
+inputs:
+7ed733c62433855cfe5943b6d28956f25c21f75230bd95a26c40b8435ec907d8  in/budget_Q.json
+6149cfe67bf6d9f6340b262e9c10db961511c13c1d7b0138ae3258ad7f66a1c3  in/chain.json
+fb9fe35737936549bdf1ab5a0d2b2472353111aa1ba6d912a56eb6883032e8b7  in/combination.json
+ff66b91d6d2c574a1786b057ce7566e8ed7184700a45b989fa41ae0eb8cb0295  in/cov2d_Q_205.npz
+72394a2b4eff9f14b01903ff97525bcb690c2adee58ccaf573a8d95139b415b8  in/fig_arrays.npz
+5f99adb56adb8b5d47cf571e396753bfe5c7287fffe28845b93cb4dd2cede465  in/pins.json
+dbb067aa3c1085b2c40b89c5ace165eadb5721148d72eb1496edc14c3a5a7b1e  in/playlist_term.npz
+1ee45dcd94ccb4e6340a6694bb0ce90c157f0b5c4bb81e18711d51e74a331d1b  in/production_cov.npz
+afe70b0fa21c172171b16c59afbd55d7c594dea77ae84ec9c79a92ba87235662  in/reduce.json
+591eaf4940ac77ca385f3944c67b0b566c2d1ccf824e9d4b8377be6942e11106  in/SHA256SUMS
+536f0aaaac13c6502ec3454407912375234863c6f790298e6a7a9ba6fa6b4eb7  in/uqmedian.tex
+9a575b36fb332dfe3e85c9eda65e4df3524b497b41de4e96fe6f8f0c9e25c0c1  publication/release/figs/make_figs.py
+outputs:
+ef466621b97f7d2a55bb18c335aa5de32be529eb10f2215844ee8fa075886de0  out/fig1_validation.pdf
+57f3cc601281950cf9251b04a627efa3e0d803eca6620178839c48f9d4b0782a  out/fig2_joint_localization.pdf
+e9d1bb01fc79e061b95b6e058a2aa2a03275429db5c4531b5e3d9ec63d65fa93  out/fig3_generator_context.pdf
+28daab09b5a221d02d0f72fa2a595fafa42aa510083322bb25d2b4304c84a726  tmp/fig_arrays_q.npz

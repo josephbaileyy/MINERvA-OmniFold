@@ -207,3 +207,248 @@ These supersede J1's digests for the first three files.
 3. **The s0 go** is given at this addendum.
 
 Nothing is submitted, deposited or tagged.
+
+## Binding 1, addendum J3: the c1 fix after the uproot STOP (director, 2026-11-16)
+
+**Binds** the c1 fix, as merged in PR #1166 at **M_RDXC = `11e36cf1a5643ef6db2d480f3d345364d3247592`**. The
+audited head is `1ce8941b`. The director re-hashed each file at both commits, and each is byte-identical:
+
+| file | sha256 (prefix) |
+|---|---|
+| `nd-unfolding/rdx/rdx_connect.sh` | `eae946894be8ce02` |
+| `nd-unfolding/rdx/rdx_connect_launch.sh` | `602c728a7b4326f2` |
+| `nd-unfolding/rdx/smoke_rdx_stages.sh` | `f02ca57acdfab743` |
+| `nd-unfolding/rdx/sbatch_rdx_evloop.sh` (unchanged from J2) | `7ce210dcab5909fa` |
+| `nd-unfolding/rdx/setup_salloc_env.exports` (unchanged from J2) | `e0d3b70088500bdc` |
+
+These supersede J2's digests for the connect and the launcher. The job deploy stays at M_RDXS `ad0535c4`: the
+checker-path code there equals the PR head, as the audit confirmed.
+
+**Why:** c1 at M_RDXS STOPped on login27 at 22:18:56Z on 2026-11-15 (receipt `run-c1-20261115/`). root_6_28 has PyROOT
+but no uproot, and the smoke's python stub had answered the connect's `import uproot` check itself.
+
+**What the director checked:**
+- **coverage-5b-audit's clearance** at `1ce8941b`, with no blockers or majors:
+  - every checker runs under omnifold_py310 behind `chkenv`, which fails closed (rc 8) without uproot, `omnifile_io`
+    or the interpreter;
+  - the auditor's own py3.10 control: the real align and rows checkers PASS, and give COULD_NOT_CHECK without uproot;
+  - tests 18/18, mutants 36/36 killed, smoke exit 0.
+- **Lows for the follow-up list (not blocking):**
+  - r1, pre-existing: the rerun reuses the staged `base_cv.root` without re-checking its sha. It fails closed
+    through align.
+  - r2: `chkenv` prints the numpy and uproot versions but does not pin them.
+
+**Rulings:**
+1. **Every later RDX connect uses M_RDXC's launcher and connect.** The job deploy stays at M_RDXS. J1's order, cap and
+   fences, and J2's ruling 2, are otherwise unchanged.
+2. **The c1 go** is given at this addendum, for one run:
+   `bash rdx_connect_launch.sh <new empty dir> <loginNN> c1 ad0535c4a62ac0a20711a4a00f2266ddaf926d7c`.
+   - The launcher and connect come from M_RDXC, with their sha256 checked first.
+   - Every fence and other lane's hold is checked before the connect.
+   - Any STOP comes to the director unrepaired.
+
+Nothing is submitted, deposited or tagged.
+
+## Binding 1, addendum J4: the c2 and m pin-read fix (director, 2026-11-17)
+
+**Binds** the c2/m fix, as merged in PR #1195 at **M_RDXD = `9a333f9f6ca9fb339bbb0734767109de217da5d2`**. The audited
+head is `aba25e5f`. The director re-hashed each file at both commits, and each is byte-identical:
+
+| file | sha256 (prefix) |
+|---|---|
+| `nd-unfolding/rdx/rdx_connect.sh` | `52ad6a0edf92b4ed` |
+| `nd-unfolding/rdx/rdx_connect_launch.sh` | `256003a1b997a57d` |
+| `nd-unfolding/rdx/smoke_rdx_stages.sh` | `916473e546c60b13` |
+| `nd-unfolding/rdx/sbatch_rdx_evloop.sh` (unchanged from J2) | `7ce210dcab5909fa` |
+| `nd-unfolding/rdx/setup_salloc_env.exports` (unchanged from J2) | `e0d3b70088500bdc` |
+
+These supersede J3's digests for the connect and the launcher. The job deploy stays at M_RDXS `ad0535c4`. No checker,
+job script or deploy module changes.
+
+**Why:** tier3-design read the c2 packet and found the defect before any c2 connect.
+- c2's ZERO_LOOPS read and m's MP1_ZERO read imported the deploy's `fd_ct_period_inputs.py` under `/usr/bin/python3`.
+  That interpreter is Python 3.6.15 on the login nodes, and the module's `from __future__ import annotations` needs 3.7.
+- A read-only probe on login27 (2026-11-17T01:17:20Z; `code4/probe/`) confirmed it. Under SYSPY the import raises
+  SyntaxError at :37. Under CHKPY it returns the 1A pin `2745e38c…`.
+- c2 would therefore have stopped at its first playlist every time.
+
+**What the director checked:**
+- **coverage-5b-audit's clearance** at `aba25e5f`, with no blockers:
+  - SYSPY runs only `rdx_paths.py` and `rdx_cap.py`, at :66, :70, :74, :116, :149, :198 and :215, never with `-c`;
+  - c2's policy covers its 24 reads;
+  - the PASS-path smoke uses the real `rdx_paths stage`;
+  - each stub past chkenv was checked against the real code;
+  - tests 21/21, mutants 47/47 killed, smoke exit 0;
+  - the auditor's own SYSPY mutant stops in the smoke.
+- **l1:** c2's outputs are `*_<PL>_pl.json`, so c1's records are not overwritten.
+- **l2:** a policy check runs over c2's reads.
+- **Lows for the follow-up list (not blocking):**
+  - p1: the policy list's completeness; the check is lexical.
+  - p2: a 3.6-grammar parse test of `rdx_paths.py` and `rdx_cap.py`.
+  - p3: the smoke's pin module is a stand-in.
+  - p4: the aligns' RSS on a login node is unmeasured. The 3.94 GB in the audit's first note was the walk probe's,
+    not an align's. c1 ran the 1A align on login27 without incident.
+    <!-- absence-ok: a risk note (no record measures the aligns' RSS), per coverage-5b-audit's corrected p4; not a result claim -->
+
+**Rulings:**
+1. **Every later RDX connect uses M_RDXD's launcher and connect.** J1's order, cap and fences, J2's ruling 2 and J3's
+   ruling 1 are otherwise unchanged.
+2. **The c2 go** is given at this addendum, for one run:
+   `bash rdx_connect_launch.sh <new empty dir> <loginNN> c2 ad0535c4a62ac0a20711a4a00f2266ddaf926d7c`.
+   - The launcher and connect come from M_RDXD, with their sha256 checked first.
+   - Every fence and other lane's hold is checked before the connect.
+   - The session log records each align's peak RSS, if the checker prints it.
+   - Any STOP comes to the director unrepaired.
+3. **m** (the merge submit) keeps its own go, after c2's PASS receipt is merged.
+
+Nothing is submitted, deposited or tagged.
+
+## Binding 1, addendum J5: the merge job's limit, and the gmerge and m goes (director, 2026-11-17)
+
+**Under:**
+- c2's PASS receipt (#1197, merged at main `165203c2`): all 12 zero loops staged on their pins, C-ALIGN-PL and C-TRUTHX
+  PASS for all 12, and `out/loops.sha256` written.
+- J4's M_RDXD launcher `256003a1b997a57d` and connect `52ad6a0edf92b4ed`. The deploy stays at `ad0535c4`.
+
+**A departure from the declaration's wording (`RDX-DECLARATION.md`:334), ruled by the director:**
+- **The rule as written.** The declaration sets the merge limit at "1.5 × the vectorized walk's ×12.25 projection".
+  c1's probe projects 175 s for that walk, so the literal limit would be about 0:04:23.
+- **Why it cannot apply literally.** The merge job runs four steps, `sbatch_rdx_merge.sh`:74-79: merge, nndump, dump
+  and k1. 5B's merge step alone took 3:00 (`FD-CT-5B-REPORT.md`:87). A literal limit would TIMEOUT by construction.
+- **What the rule was for.** Binding 1 ruling 3 (low z3) asked that the kept-row walk, unmeasured against the old
+  0:20 limit, should not push the price past the cap. The walk projection is therefore one term of the whole job's
+  limit, not the whole of it.
+  <!-- absence-ok: a scoping statement about a projected wall time (as in ruling 3's own waiver above), not a claim that a result does not exist -->
+- **The limit used: 0:45:00.**
+  - 5B job A's ALL-lane steps, scaled as follows: merge × 1.52, the RDX/base file-size ratio; the loop walk replaced
+    by the vectorized walk, plus a full truthx read for the sidecar.
+  - That gives 1,352 s.
+  - Then the declaration's own event-loop factor (× 1.5) and rounding (next 15 minutes).
+- **Memory:** one exclusive node, 512 GB, against about 36 GiB, which is 5B's per-lane MaxRSS scaled by 1.52.
+- **The cap still binds,** as the declaration requires. `rdx_cap.py` projects these totals, with each later job held
+  at its ceiling:
+  - 1.5809 after m;
+  - 1.9475 after s3a;
+  - 2.3142 after s3b;
+  - 2.3142 is under 2.5, with 0.186 node-h of headroom.
+
+  Any projection above 2.5 STOPs to the director. A merge TIMEOUT bills at most 0.75.
+
+**Rulings:**
+1. **The gmerge go**, one run, 0 node-h:
+   `bash rdx_connect_launch.sh <new empty dir> <loginNN> gmerge ad0535c4a62ac0a20711a4a00f2266ddaf926d7c 0:45:00`.
+   It writes `out/gates/merge.ok` naming the pin and `limit=0:45:00`.
+2. **The m go**, one run, only after gmerge exits rc 0 with merge.ok as described:
+   `bash rdx_connect_launch.sh <new empty dir> <loginNN> m ad0535c4a62ac0a20711a4a00f2266ddaf926d7c 0:45:00`.
+   - Before the connect: cov2d's ack, and every fence and hold checked.
+   - The connect's own checks must all pass, in order:
+     - loops.sha256;
+     - merge.ok;
+     - policy;
+     - chkenv;
+     - the MP1_ZERO pins;
+     - the O_NOATIME staging of the two lat_zero files;
+     - the launcher smoke;
+     - fence;
+     - the cap gate at 1.5809.
+   - After submit, status comes from sacct over the job id, never squeue alone.
+   - Any STOP, or any job failure or TIMEOUT, comes to the director unrepaired. Nothing relaunches.
+3. **cm** gets its own go, after m's receipt is merged.
+
+Nothing is submitted, deposited or tagged.
+
+## Binding 1, addendum J6: code5 and the stage-3 pin; the stage-3 goes (director, 2026-11-17)
+
+**Binds** code5 (#1205) and the five-line input pin (#1204). The stage-3 pin is #1204's merge commit, **P3 =
+`95d1d529dc7c0d677c849e37bf3def06a5f76827`**, which contains both PRs, as coverage-5b-audit required. The director
+re-hashed each file at P3:
+
+| file | sha256 (prefix) |
+|---|---|
+| `nd-unfolding/rdx/rdx_connect.sh` | `1760327b21f21958` |
+| `nd-unfolding/rdx/rdx_connect_launch.sh` | `def31c020870bc66` |
+| `nd-unfolding/rdx/sbatch_rdx_arms.sh` | `f77c89a5dd3f59ce` |
+| `nd-unfolding/rdx/rdx-inputs-SHA256SUMS` (5 lines) | `e5baf9cc20bb1744` |
+
+These supersede J4's digests for the connect and the launcher.
+
+**Why:** tier3-design traced stage 3 before any go and found two defects. A read-only probe on login27
+(`code5/probe/`) confirmed F1.
+- **F1.** The arms read their pins under PATH's python3, which on login27 is /usr/bin/python3.6, Python 3.6.15. The
+  pin module needs 3.7 or later.
+- **F2.** gs3a and gs3b checked a different deploy and pin from s3a and s3b, so no order could pass.
+
+**What the director checked:**
+- **coverage-5b-audit's clearance** of #1205 and #1204, audited together on main `7effa70f`, with no blockers or
+  majors.
+  - Every stage-3 step's interpreter–module pair: SYSPY 3.6 runs only stdlib tools; no Python reads a pin; the job's
+    3.11 import closure is unchanged.
+  - Tests 24/24 under 3.12 and 3.10; mutants 55/55 killed; the smoke exits 0.
+  - The auditor's own kill of SUMS line 5 fails the test.
+- **F1 fix (option (a)):** `rdx-inputs-SHA256SUMS` carries the two lat_zero lines at MP1_ZERO's pins (`6ca02c3d…`,
+  `f09727d0…`), and the arms read all five by awk.
+- **A wording reconciliation:** RDX-DECLARATION:302's input table already names the staged lat_zero copies "at the
+  digests the stage-3 pin commits". The three-dump wording at :346 is reconciled to :302.
+- `lat_RDX_ALL.npz` and `lat_zero.npz` share sha256 `6ca02c3d…` by design (cm README:39).
+- **F2 fix:** gs3a, gs3b, s3a and s3b all use deploy3. gs3a clones it at P3, and the other three STOP if it is
+  absent.
+- **s1:** policy() runs over s3a's and s3b's six reads.
+- **Lows for the follow-up list (not blocking):**
+  - q2: a failed checkout after gs3a's clone leaves deploy3 to be removed by hand. It fails closed.
+  - q3: a 3.6-grammar parse test for the TimeLimit heredoc.
+  - q4: no record shows lightgbm importing in the job env; that closure is unchanged by code5.
+  - m1: cm has no policy check.
+
+**Rulings:**
+1. **The stage-3 goes, in order, each one run, PIN = P3:**
+   - gs3a: `bash rdx_connect_launch.sh <new empty dir> <loginNN> gs3a 95d1d529dc7c0d677c849e37bf3def06a5f76827`.
+     0 node-h.
+   - s3a: the same command with step s3a, only after gs3a exits rc 0 and S3a.ok names P3.
+   - gs3b, then s3b: the same, after s3a's job ends COMPLETED 0:0 and its receipt is merged.
+2. **Before every connect:**
+   - check the launcher and connect against this table, and the arms and SUMS at P3 in deploy3 after gs3a's clone;
+   - every fence and hold, cov2d's ack before each submit and the end message after.
+3. **The cap still binds.** It projects 1.5159 after s3a and at most 1.8825 after s3b, both under 2.5.
+4. **Status** comes from sacct over the job ids, never squeue alone.
+5. **Any STOP**, cap refusal, job failure or TIMEOUT comes to the director unrepaired. Nothing relaunches.
+
+Nothing is submitted, deposited or tagged.
+
+## Binding 1, addendum J7: the reader, and the read route (director, 2026-11-18)
+
+**Binds** the RDX reader as merged in #1216 at **M_RDXR = `9de8ef0d365d7ff0b343a835631032ef5a84340d`**. It is byte-identical to the audited head `ed83c169`. The director re-hashed each file at M_RDXR:
+
+| file | sha256 (prefix) |
+|---|---|
+| `nd-unfolding/rdx/rdx_read.py` | `cc25f176d2aa0152` |
+| `nd-unfolding/rdx/test_rdx_read.py` | `6a5f42a92e3855bf` |
+| `nd-unfolding/rdx/rdx_read_mutation.py` | `13e5501e29cf726b` |
+
+**Why:** RDX-DECLARATION §4 fixes the readings in advance, but no reader existed and no binding covered how they are computed. RDX stage 3 ended COMPLETED 0:0, with both arms' receipts merged (#1208, #1214) at 1.6695 node-h spent.
+
+**What the director checked:** independent reads by Codex and Grok, over six revisions. Reports are kept under `~/codex-reports/rdx-read-audit/`.
+- **Rev 1** (`03e43c91`): Codex FAIL, Grok PASS WITH FIXES. The formulas reproduce §4, but malformed inputs could license: a non-finite σ, unequal truths within a closure family, a non-bitwise NC-X, the stored prior vector, and gaps in the task/log and transfer schemas.
+- **Rev 2** (`8f412dad`): Grok PASS; Codex FAIL on remaining metadata, transfer and shape paths.
+- **Rev 3:** the director's rulings on the reader's open choices, below.
+- **Rev 4** (`9ae12571`): Codex FAIL on cross-record transfer counts and duplicate fields.
+- **Rev 5** (`8a3b9fb4`): Codex FAIL on NPZ member aliases.
+- **Rev 6** (`ed83c169`): **Codex PASS (bind).** The alias blocker is fixed, and no route for malformed input to LICENSED remains. Receipts: tests 36/36 on py3.12 and py3.10, mutation 65/65 killed, and the committed path passes.
+
+**Rulings on the reader's choices that §4 leaves open:**
+1. R1's excess is named only when e > 0.5 σ strictly.
+2. In R4, each closure is read against its own truth, and a change is the difference of two biases.
+3. **The prior's attributable change is the SIGNED residual** [b(X1c) − b(X0c)] − [b(X1pc) − b(X0c)], W-classed and stored exactly as classed. The clipped form is rejected, because it can read W0 where the signed form flags the case. A binding takes the algebra that is conservative against licensing.
+4. At GiBUU and q3, with no declared null, the change is read in full. Both auditors find this decided by §4 and conservative.
+5. **The weight at the prior (X1wc − X1c) is a qualifier beside R2,** per §4's three-truths outcome rule. It is never silent: the readout always prints its class, cells and maximum |change|/σ. When it is W2, the outcome record states that in words beside every outcome.
+6. R3's difference is T-classed, and a cell with no masked rows fails, as in RSN.
+
+**Rulings:**
+1. **The reader is bound as merged at M_RDXR.**
+2. **The read route** is laptop-only, 0 node-h:
+   - a read-only fetch connect copies the 15 products, their inventories and the two job logs to the laptop, reading O_NOATIME;
+   - `rdx_read.py` runs in a clean clone at M_RDXR and writes `rdx_readout.json` and an outcome record.
+3. **The fetch connect** needs a sha-pinned script and the director's go on that sha, the usual fence and holds, sacct only, and no write to CFS.
+4. **The manuscript fence:** the outcome record merges to main as usual. Any note-facing text goes to a side branch and stays off draft/note-round2 until Joseph and Ben agree on the note.
+5. **Any STOP** comes to the director unrepaired.
+
+Nothing is submitted, deposited or tagged.

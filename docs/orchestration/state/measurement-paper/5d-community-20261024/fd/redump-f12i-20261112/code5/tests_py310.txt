@@ -1,0 +1,83 @@
+# HEAD 29481cdc2c9f72bf73b05944befefa7b7bd85448
+# clean clone, serial, nice 19, OMP/MKL/OPENBLAS/NUMEXPR threads 1, a uv venv matching omnifold_py310's measured versions: Python 3.10.20, numpy 2.2.6, uproot 5.6.9, 2026-11-17T10:16:14Z
+# 1760327b21f2195820149329b9f60b10a57a4c0bb550ab9975727c4b20fe6f34  rdx_connect.sh
+# def31c020870bc66d1161ac09b95e904f14433824b4de4fdead3fcb7fe109aba  rdx_connect_launch.sh
+# f77c89a5dd3f59ce06650c568a18878846d60012605bcf666be957a6e163eafd  sbatch_rdx_arms.sh
+# 274ecd02afcdcb23019e23e014b354f13d3976019e74a2a03d4f0cc4e03c8940  smoke_rdx_stages.sh
+# adad784a48d5ea6784dfea45068d2bc0245be72bbc015fc79c5e3d7f80164cae  test_rdx_stages.py
+# d9fe7c2d1473f7ef306ce8afa53fd635275bda0850faef7f099154ebfce92354  rdx_mutation_stages.py
+# command: python -B -m unittest -v nd-unfolding/rdx/test_rdx.py nd-unfolding/rdx/test_rdx_stages.py
+test_equal_with_exactly_c1s_extras_passes (nd-unfolding.rdx.test_rdx.Align) ... ok
+test_the_align_refusals (nd-unfolding.rdx.test_rdx.Align) ... ok
+test_the_argument_refusals (nd-unfolding.rdx.test_rdx.Arguments) ... ok
+test_a_replica_that_differs_from_the_npz_refuses (nd-unfolding.rdx.test_rdx.KeptRows) ... ok
+test_rows_at_the_angle_cut_are_decided_by_the_reference_function (nd-unfolding.rdx.test_rdx.KeptRows) ... ok
+test_the_dump_uses_the_vectorized_walk (nd-unfolding.rdx.test_rdx.KeptRows) ... ok
+test_the_playlist_index_and_its_refusals (nd-unfolding.rdx.test_rdx.KeptRows) ... ok
+test_the_replica_equals_the_collector_row_for_row (nd-unfolding.rdx.test_rdx.KeptRows) ... ok
+test_the_vectorized_walk_equals_the_loop_bitwise (nd-unfolding.rdx.test_rdx.KeptRows) ... ok
+test_packing_and_lookup (nd-unfolding.rdx.test_rdx.Keys) ... ok
+test_an_ungated_fill_is_caught (nd-unfolding.rdx.test_rdx.Patch) ... ok
+test_every_added_line_is_gated_or_a_declared_declaration (nd-unfolding.rdx.test_rdx.Patch) ... ok
+test_the_patch_fills_denom_reco_and_miss_rows_and_refuses_both_gates (nd-unfolding.rdx.test_rdx.Patch) ... ok
+test_the_patch_removes_only_the_explicit_names_line (nd-unfolding.rdx.test_rdx.Patch) ... ok
+test_the_tracked_source_is_s0s_pin_and_the_patch_applies_to_it (nd-unfolding.rdx.test_rdx.Patch) ... ok
+test_the_permutation_is_joint_seeded_and_deterministic (nd-unfolding.rdx.test_rdx.Permutation) ... ok
+test_a_sidecar_for_another_npz_or_with_duplicate_ids_refuses (nd-unfolding.rdx.test_rdx.Pipeline) ... ok
+test_a_weight_or_coordinate_mismatch_fails_the_join (nd-unfolding.rdx.test_rdx.Pipeline) ... ok
+test_mutant_d6a_truthx_offset_by_one_row_fails_the_join (nd-unfolding.rdx.test_rdx.Pipeline) ... ok
+test_mutant_d6b_mask_on_truthx_alone_fails_the_join (nd-unfolding.rdx.test_rdx.Pipeline) ... ok
+test_the_build_refuses_an_npz_the_replica_does_not_reproduce (nd-unfolding.rdx.test_rdx.Pipeline) ... ok
+test_the_build_refuses_to_overwrite_and_refuses_a_non_finite_truthx (nd-unfolding.rdx.test_rdx.Pipeline) ... ok
+test_the_sidecar_joins_back_to_every_playlist_row (nd-unfolding.rdx.test_rdx.Pipeline) ... ok
+test_the_vectorized_build_joins_too (nd-unfolding.rdx.test_rdx.Pipeline) ... ok
+test_a_changed_pin_or_library_or_a_missing_library_fails (nd-unfolding.rdx.test_rdx.Provenance) ... ok
+test_a_matching_build_passes_and_lists_the_synced_difference (nd-unfolding.rdx.test_rdx.Provenance) ... ok
+test_the_declared_pins_are_build_mp1_s0s (nd-unfolding.rdx.test_rdx.Provenance) ... ok
+test_a_good_sidecar_loads (nd-unfolding.rdx.test_rdx.Sidecar) ... ok
+test_the_sidecar_refusals (nd-unfolding.rdx.test_rdx.Sidecar) ... ok
+test_a_zeroed_miss_row_a_partnerless_row_and_a_bad_enu_fail (nd-unfolding.rdx.test_rdx.TruthxRows) ... ok
+test_duplicate_identities_refuse (nd-unfolding.rdx.test_rdx.TruthxRows) ... ok
+test_the_rows_check_passes_and_counts (nd-unfolding.rdx.test_rdx.TruthxRows) ... ok
+test_a_loop_that_predicts_on_other_rows_refuses (nd-unfolding.rdx.test_rdx.WideRegressor) ... ok
+test_a_sidecar_with_the_wrong_row_count_refuses (nd-unfolding.rdx.test_rdx.WideRegressor) ... ok
+test_the_transfer_probe_uses_rdx_mask_and_the_widened_rows (nd-unfolding.rdx.test_rdx.WideRegressor) ... ok
+test_the_weight_composes_with_the_wide_regressor (nd-unfolding.rdx.test_rdx.WideRegressor) ... ok
+test_the_wide_regressor_sees_truthx_aligned_to_the_loops_fit_and_predict_rows (nd-unfolding.rdx.test_rdx.WideRegressor) ... ok
+test_without_truthx_the_wrapper_reproduces_the_plain_loop_and_widening_changes_it (nd-unfolding.rdx.test_rdx.WideRegressor) ... ok
+test_over_the_cap_and_unusable_inputs_refuse (nd-unfolding.rdx.test_rdx_stages.Cap) ... ok
+test_spent_held_unlisted_and_the_wanted_ceiling (nd-unfolding.rdx.test_rdx_stages.Cap) ... ok
+test_the_job_kinds (nd-unfolding.rdx.test_rdx_stages.Cap) ... ok
+test_chkenv_fails_closed_without_uproot_or_the_modules (nd-unfolding.rdx.test_rdx_stages.CheckerEnv) ... ok
+test_every_checker_runs_under_chkpy_behind_chkenv (nd-unfolding.rdx.test_rdx_stages.CheckerEnv) ... ok
+test_k1_passes_only_when_every_key_matches (nd-unfolding.rdx.test_rdx_stages.MergeAndK1) ... [rdx_merge] REFUSE (2): MP-1's lat_zero files are not at their pinned digests
+ok
+test_the_sums_must_list_exactly_the_twelve_loops (nd-unfolding.rdx.test_rdx_stages.MergeAndK1) ... [rdx_merge] REFUSE (2): --sums must list exactly the twelve RDX loops, not ['runEventLoopOmniFold_RDX_1A.root', 'runEventLoopOmniFold_RDX_1B.root', 'runEventLoopOmniFold_RDX_1C.root', 'runEventLoopOmniFold_RDX_1D.root', 'runEventLoopOmniFold_RDX_1E.root', 'runEventLoopOmniFold_RDX_1F.root', 'runEventLoopOmniFold_RDX_1G.root', 'runEventLoopOmniFold_RDX_1L.root', 'runEventLoopOmniFold_RDX_1M.root', 'runEventLoopOmniFold_RDX_1N.root', 'runEventLoopOmniFold_RDX_1O.root']
+[rdx_merge] REFUSE (2): --sums must list exactly the twelve RDX loops, not ['extra.root', 'runEventLoopOmniFold_RDX_1A.root', 'runEventLoopOmniFold_RDX_1B.root', 'runEventLoopOmniFold_RDX_1C.root', 'runEventLoopOmniFold_RDX_1D.root', 'runEventLoopOmniFold_RDX_1E.root', 'runEventLoopOmniFold_RDX_1F.root', 'runEventLoopOmniFold_RDX_1G.root', 'runEventLoopOmniFold_RDX_1L.root', 'runEventLoopOmniFold_RDX_1M.root', 'runEventLoopOmniFold_RDX_1N.root', 'runEventLoopOmniFold_RDX_1O.root', 'runEventLoopOmniFold_RDX_1P.root']
+ok
+test_atime_stage_and_manifest (nd-unfolding.rdx.test_rdx_stages.Paths) ... ok
+test_the_never_read_list_names_the_ll5d_inputs_and_cov2ds_cv (nd-unfolding.rdx.test_rdx_stages.Paths) ... ok
+test_the_policy_check (nd-unfolding.rdx.test_rdx_stages.Paths) ... ok
+test_c2_checks_its_reads_and_never_writes_c1s_records (nd-unfolding.rdx.test_rdx_stages.PinLookup) ... ok
+test_syspy_runs_only_the_36_tools_and_the_pins_are_read_under_chkpy_behind_chkenv (nd-unfolding.rdx.test_rdx_stages.PinLookup) ... ok
+test_the_pin_reads_give_every_committed_pin_and_fail_closed (nd-unfolding.rdx.test_rdx_stages.PinLookup) ... ok
+test_s3_checks_its_reads_and_names_the_arms_paths (nd-unfolding.rdx.test_rdx_stages.Stage3) ... ok
+test_stage3_gates_and_submits_share_deploy3_cloned_by_gs3a (nd-unfolding.rdx.test_rdx_stages.Stage3) ... ok
+test_the_arms_read_every_pin_with_awk_and_no_python_reads_a_pin (nd-unfolding.rdx.test_rdx_stages.Stage3) ... ok
+test_c1_stops_on_the_walk_probe_and_s2_requires_its_pass (nd-unfolding.rdx.test_rdx_stages.Tables) ... ok
+test_every_launcher_fences_the_six_prefixes (nd-unfolding.rdx.test_rdx_stages.Tables) ... ok
+test_every_repo_path_the_launchers_name_exists_at_head (nd-unfolding.rdx.test_rdx_stages.Tables)
+B1's root cause: a hard-coded repo path that does not exist (the smoke stubbed it into its own tiny repo). ... ok
+test_no_launcher_variable_is_one_the_env_setup_exports (nd-unfolding.rdx.test_rdx_stages.Tables)
+The s0 STOP of 2026-11-12: conda's activation (setup_salloc_env.sh) set BUILD, clobbering the connect's. ... ok
+test_the_event_loop_job_allows_the_connects_b (nd-unfolding.rdx.test_rdx_stages.Tables) ... ok
+test_the_event_loop_limits_are_the_declared_rule_everywhere (nd-unfolding.rdx.test_rdx_stages.Tables) ... ok
+test_the_launcher_pins_the_connect_script (nd-unfolding.rdx.test_rdx_stages.Tables) ... ok
+test_the_task_table_is_the_declarations (nd-unfolding.rdx.test_rdx_stages.Tables) ... ok
+
+----------------------------------------------------------------------
+Ran 62 tests in 3.480s
+
+OK
+[INFO] signal: kept=3347 dropped_phase=613 bad_weight=20 excluded_nonfinite_truth_support=20
+# exit 0

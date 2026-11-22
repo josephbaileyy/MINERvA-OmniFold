@@ -1,0 +1,92 @@
+**The answer is clear: keep “Descriptive,” but explain precisely why.** I recommend **(b), as a clarification of the existing rule**, without suggesting that the repair was selected to obtain the observed coverage result.
+
+**Q1. No coverage result was seen; informative diagnostics were seen.**
+
+At the STOP, the visible information included:
+
+- Event matching: every row unmatched; largest unmatched share **1.0 against a 0.05 bound**, in every reporting cell.
+- Passing variance gates, `gate_n`, and the backstop; passing denominator controls D1–D3, positivity, and `first_300_bitwise`.
+
+See [gate-g18-STOP-README.md:22–39](gate-g18-STOP-README.md:22) and [LL5D-AMENDMENT-A1A2.md:9–14](LL5D-AMENDMENT-A1A2.md:9).
+
+**No coverage pseudo-experiment had been unfolded or graded** ([supp-approved.txt:1630–1639](supp-approved.txt:1630)). Nevertheless, these were substantive diagnostics: the gate measured clipping-related variance, and its backstop used the 300 declared draws themselves ([LL5D-DECLARATION.md:365–372](LL5D-DECLARATION.md:365), [424–425](LL5D-DECLARATION.md:424)). The gate’s first 300 draws **were** the coverage toys’ draws, not an independent sample ([250–255](LL5D-DECLARATION.md:250)).
+
+Those readings could plausibly inform whether repairing and continuing looked worthwhile, and they concern features relevant to subsequent coverage. **That establishes possible information dependence, not demonstrated bias.** Conversely, the float32 correction has a compelling implementation-based justification: it reproduces the bank’s stored precision ([LL5D-AMENDMENT-A1A2.md:59–79](LL5D-AMENDMENT-A1A2.md:59)). Nothing supplied shows that it was tuned to improve coverage. Its direct function was to correct the entry check; it changed no coverage rule or cell.
+
+Thus, “we didn’t look at the actual results” is accurate **only if “results” means unfolded coverage outcomes**. State:
+
+> No coverage pseudo-experiment had been unfolded or graded when the repair was chosen; other gate readings were already visible, including checks using the coverage toys’ own draws.
+
+The earlier no-reading precedent expressly depended on **nothing having been read that could inform a choice**, which distinguishes it from this STOP ([LL5D-AMENDMENT-A1A1.md:7–10](LL5D-AMENDMENT-A1A1.md:7)).
+
+**Q2. Changing the designation now matters, even for an adverse finding.**
+
+The November 9 rule explicitly assigns **Descriptive “whatever its readings”** after a repair following a STOP ([DECISION-20261109-joseph-coverage-case-wording.md:38–46](DECISION-20261109-joseph-coverage-case-wording.md:38)). The relaunch authorization did not rescind that reporting rule ([DECISION-20261110-joseph-ll5d-rerun-16-cells.md:19–24](DECISION-20261110-joseph-ll5d-rerun-16-cells.md:19)).
+
+Giving an adverse result greater inferential weight can strengthen a methods paper’s central criticism. Therefore, the direction of the result does not make a later upgrade neutral. A referee retaining access to these records would distinguish:
+
+- Keeping the designation: faithful application of an outcome-independent reporting convention.
+- Clarifying its reason: useful editorial precision.
+- Removing its inferential qualification: a substantive departure chosen after the outcome, requiring explicit disclosure and justification.
+
+This is **not an immutable statistical law**. The wording remained open to review ([November 9 decision:52–53](DECISION-20261109-joseph-coverage-case-wording.md:52)). But openness to revision does not erase the timing of a revision.
+
+**Q3. The options and my recommendation.**
+
+| Option | Referee assessment |
+|---|---|
+| **(a) Keep word and definition** | Defensible and faithful, although readers need the specific reason. |
+| **(b) Keep word; explain this repair precisely** | **Recommended.** Preserves the prospective reporting decision while avoiding an implication of coverage-driven tuning. |
+| **(c) Different status word** | Acceptable only with equivalent inferential qualification. “Under-coverage flagged (repaired after a stop)” risks reading as an ordinary confirmatory grade. “Pre-specified, repaired” inadequately describes the discretionary continuation. |
+| **(d) Treat as a prospective test** | Requires more than disclosure or unchanged thresholds. Establish that the correction implements the uniquely justified intended check, leaves coverage products unchanged, and that continuation after the visible diagnostics does not compromise the claimed calibration. Alternatively, freeze the amendment and assess it on fresh simulations. |
+| **(e) Define descriptive as “influenced by results”** | Reject. Coverage-driven influence is not established here; gate-informed decision-making occurred. The phrase confuses those facts and conflicts with uses for comparisons lacking grading rules. |
+
+The independent read’s final paragraph permits **a new prospective test on fresh simulations under a frozen amendment**; it does not automatically promote this rerun ([independent-read-20261109.txt:23–25](independent-read-20261109.txt:23)). Reused draws alone do not prove invalidity, but independence cannot simply be asserted.
+
+A global “influenced by results” definition would also misdescribe the paper’s ungraded comparisons and χ² summaries ([paper-approved.txt:305–311](paper-approved.txt:305), [338–341](paper-approved.txt:338), [359](paper-approved.txt:359)).
+
+Use these exact texts:
+
+**Table status, for every tune/variant:**
+
+> Descriptive
+
+**Caption addition, scoped to this test:**
+
+> For the second five-observable coverage test, “Descriptive” means that the criteria fixed in advance were applied, but a repair was chosen after an entry-check STOP. No coverage pseudo-experiment had been unfolded or graded; other gate readings were already visible.
+
+**Repair paragraph:**
+
+> At both tunes, an event-matching entry check stopped the earlier run because it compared float64 and float32 weight keys and reported every row unmatched. The repair, chosen after this STOP, keyed both sides at float32 before any coverage pseudo-experiment was unfolded or graded, but after other gate readings were visible. It changed no rule, threshold, bound or reporting cell. Under the rule fixed before the result, the rerun is reported as descriptive (Supplement, §S8.5).
+
+In these builds, the requested locations are **Table 4 and §6.2(b)**, rather than Table 2 and §6.3 ([paper-approved.txt:330–334](paper-approved.txt:330), [1051–1059](paper-approved.txt:1051)).
+
+**Q4. Exact consequential replacements.**
+
+For the abstract, I recommend this complete version, **232 whitespace-counted words**:
+
+> We benchmark an unbinned five-observable OmniFold implementation on MINERvA open data, testing truth recovery, numerical stability and uncertainty calibration. A descriptive two-dimensional benchmark reproduces the published integral within about 1% but shows a shape difference. On our inputs, OmniFold differs from binned iterative unfolding, the publication’s method, beyond paired noise. Under controlled truth changes, the five-observable result retains part of its prior, and some cells move opposite to them. Fake-data studies at a GiBUU hybrid truth and a synthetic momentum-transfer tilt find residual bias beyond uncertainty-based criteria. On noise-free pseudo-data at both truths, binned iterative unfolding overshoots along the prior-to-truth direction. The five-observable estimator fails its stability requirement under rounding-level input changes. The two-observable covariance, rebuilt at two held-out tunes, under-covers at both. The reported five-observable intervals lack validated coverage. At those tunes, where separate tests flag no bias, a five-observable test draws pseudo-data without model, response or run-period variations; its graded covariance includes the model term but omits response and run-period terms. Both variants, without and with the detector’s neutron and proton bands, flag joint under-coverage at both tunes and also flag cell R07 at AR23. Under the pre-specified rule, this test is descriptive: an entry-check repair followed a stop, before any coverage pseudo-experiment was unfolded or graded, with other gate readings visible. On data, the sixteen cells depend on the unfolding algorithm. We present this output only as an illustration.
+
+This retains the referee abstract’s distinction between pseudo-data variations and graded covariance ([paper-referee.txt:23–28](paper-referee.txt:23)).
+
+Replace the **Table 4 principal finding and Supplement Table S11 row-10 Reading** with:
+
+> **Descriptive.** Primary, without the two bands: G18, joint under-coverage flagged, no cell flagged; AR23, joint under-coverage and cell R07 flagged. With the bands: the same flags at each tune. An entry-check repair followed a STOP before any coverage unfold or grade; other gate readings were visible. Some cells over-cover; over-coverage is not a failure.
+
+The numerical evidence remains substantial: joint counts are **12, 14, 1 and 4 against thresholds of 195**, with R07 flagged at AR23 in both variants ([supp-approved.txt:1665–1680](supp-approved.txt:1665)). “Descriptive” should not obscure those crossings.
+
+For **§7**, make three replacements:
+
+- Replace its opening coverage passage ([paper-approved.txt:1029–1033](paper-approved.txt:1029)):
+
+  > Under the rule fixed before its result, the second five-observable coverage test is reported as descriptive because an entry-check repair was chosen after a STOP. Its pre-specified criteria flag joint under-coverage at both tunes in both variants for a covariance without the response and run-period terms (§6.2).
+
+- Replace the parenthesis in the five-check discussion ([1068–1071](paper-approved.txt:1068)):
+
+  > (the second five-observable test also flags joint under-coverage, reported descriptively after an entry-check repair, for a covariance without the response and run-period terms)
+
+- Replace the second-test sentence in limitation 5 ([1124–1128](paper-approved.txt:1124)):
+
+  > The second test applies pre-specified criteria to the procedure’s covariance at two truths and flags joint under-coverage at both in both variants, with the response and run-period terms omitted; it is reported descriptively under the rule for repairs chosen after a STOP.
+
+These changes preserve both facts that matter: **the adverse thresholds were crossed, and the author’s earlier reporting rule applies.**

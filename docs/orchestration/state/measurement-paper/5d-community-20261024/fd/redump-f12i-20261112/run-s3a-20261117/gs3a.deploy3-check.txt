@@ -1,0 +1,11 @@
+2026-11-17T11:12:16Z
+HEAD 95d1d529dc7c0d677c849e37bf3def06a5f76827 porcelain 0
+f77c89a5dd3f59ce06650c568a18878846d60012605bcf666be957a6e163eafd  /pscratch/sd/j/josephrb/rdx-20261112b/deploy3/nd-unfolding/rdx/sbatch_rdx_arms.sh
+e5baf9cc20bb17447b4ea01b471cb6ae810eff0eef52097ffb8b22d14c47f475  /pscratch/sd/j/josephrb/rdx-20261112b/deploy3/nd-unfolding/rdx/rdx-inputs-SHA256SUMS
+1760327b21f2195820149329b9f60b10a57a4c0bb550ab9975727c4b20fe6f34  /pscratch/sd/j/josephrb/rdx-20261112b/deploy3/nd-unfolding/rdx/rdx_connect.sh
+pin=95d1d529dc7c0d677c849e37bf3def06a5f76827
+utc=2026-11-17T11:12:03Z
+ll5d_atime_post.txt
+merge.ok
+s2.ok
+S3a.ok

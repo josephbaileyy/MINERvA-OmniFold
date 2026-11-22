@@ -1,0 +1,67 @@
+# HEAD 29481cdc2c9f72bf73b05944befefa7b7bd85448
+# clean clone, serial, nice 19, OMP/MKL/OPENBLAS/NUMEXPR threads 1, Python 3.12.2, numpy 1.26.4, 2026-11-17T10:16:50Z
+# 1760327b21f2195820149329b9f60b10a57a4c0bb550ab9975727c4b20fe6f34  rdx_connect.sh
+# def31c020870bc66d1161ac09b95e904f14433824b4de4fdead3fcb7fe109aba  rdx_connect_launch.sh
+# f77c89a5dd3f59ce06650c568a18878846d60012605bcf666be957a6e163eafd  sbatch_rdx_arms.sh
+# 274ecd02afcdcb23019e23e014b354f13d3976019e74a2a03d4f0cc4e03c8940  smoke_rdx_stages.sh
+# adad784a48d5ea6784dfea45068d2bc0245be72bbc015fc79c5e3d7f80164cae  test_rdx_stages.py
+# d9fe7c2d1473f7ef306ce8afa53fd635275bda0850faef7f099154ebfce92354  rdx_mutation_stages.py
+# command: python3 -B nd-unfolding/rdx/rdx_mutation_stages.py
+unmutated suite: 24 tests OK, in the mirrored tree
+KILLED    unlisted submissions ignored                     by test_spent_held_unlisted_and_the_wanted_ceiling
+KILLED    shared rate 0.03                                 by test_the_job_kinds
+KILLED    cap 3.0                                          by test_the_job_kinds
+KILLED    rdx_s1 allowed for any playlist                  by test_the_job_kinds
+KILLED    held unfinished jobs ignored                     by test_spent_held_unlisted_and_the_wanted_ceiling
+KILLED    the wanted ceiling not added                     by test_over_the_cap_and_unusable_inputs_refuse
+KILLED    sums set unchecked                               by test_the_sums_must_list_exactly_the_twelve_loops
+KILLED    k1 failures dropped                              by test_k1_passes_only_when_every_key_matches
+KILLED    k1 MP-1 pins unchecked                           by test_k1_passes_only_when_every_key_matches
+KILLED    policy: exact paths only                         by test_the_policy_check
+KILLED    policy: of_inputs_5d dropped                     by test_the_never_read_list_names_the_ll5d_inputs_and_cov2ds_cv
+KILLED    stage pin unchecked                              by test_atime_stage_and_manifest
+KILLED    atime: a missing file passes                     by test_atime_stage_and_manifest
+KILLED    1M limit 5:45                                    by test_the_event_loop_limits_are_the_declared_rule_everywhere
+KILLED    connect 1D limit 3:00                            by test_the_event_loop_limits_are_the_declared_rule_everywhere
+KILLED    event loop fence without rsn_                    by test_every_launcher_fences_the_six_prefixes
+KILLED    arms fence without e96data                       by test_every_launcher_fences_the_six_prefixes
+KILLED    X1p permute seed 20261114                        by test_the_task_table_is_the_declarations
+KILLED    X0t not a transfer                               by test_the_task_table_is_the_declarations
+KILLED    X1g at the q3 tilt                               by test_the_task_table_is_the_declarations
+KILLED    policy path misspelled                           by test_every_repo_path_the_launchers_name_exists_at_head
+KILLED    merge job's flux path misspelled                 by test_every_repo_path_the_launchers_name_exists_at_head
+KILLED    c1 ignores the walk probe                        by test_c1_stops_on_the_walk_probe_and_s2_requires_its_pass
+KILLED    s2 does not require the probe                    by test_c1_stops_on_the_walk_probe_and_s2_requires_its_pass
+KILLED    the build directory named BUILD again            by test_no_launcher_variable_is_one_the_env_setup_exports
+KILLED    a job script assigns CC                          by test_no_launcher_variable_is_one_the_env_setup_exports
+KILLED    the event-loop job still allows the spent B      by test_the_event_loop_job_allows_the_connects_b
+KILLED    the connect changed under its pin                by test_the_launcher_pins_the_connect_script
+KILLED    CHKPY back on root_6_28                          by test_every_checker_runs_under_chkpy_behind_chkenv
+KILLED    c1 align back on $PY                             by test_every_checker_runs_under_chkpy_behind_chkenv
+KILLED    c1 checkers without chkenv                       by test_every_checker_runs_under_chkpy_behind_chkenv
+KILLED    c2 without chkenv                                by test_every_checker_runs_under_chkpy_behind_chkenv
+KILLED    cm without chkenv                                by test_every_checker_runs_under_chkpy_behind_chkenv
+KILLED    chkenv drops the uproot import                   by test_every_checker_runs_under_chkpy_behind_chkenv
+KILLED    chkenv neutered (|| true)                        by test_chkenv_fails_closed_without_uproot_or_the_modules
+KILLED    chkenv runs nothing                              by test_chkenv_fails_closed_without_uproot_or_the_modules
+KILLED    c2 pin read back on SYSPY                        by test_syspy_runs_only_the_36_tools_and_the_pins_are_read_under_chkpy_behind_chkenv
+KILLED    m pin read back on SYSPY                         by test_syspy_runs_only_the_36_tools_and_the_pins_are_read_under_chkpy_behind_chkenv
+KILLED    m without chkenv                                 by test_syspy_runs_only_the_36_tools_and_the_pins_are_read_under_chkpy_behind_chkenv
+KILLED    rdx_paths needs 3.7                              by test_syspy_runs_only_the_36_tools_and_the_pins_are_read_under_chkpy_behind_chkenv
+KILLED    c2 pin not checked as 64 hex                     by test_the_pin_reads_give_every_committed_pin_and_fail_closed
+KILLED    c2 reads 1A's pin for every playlist             by test_the_pin_reads_give_every_committed_pin_and_fail_closed
+KILLED    m reads lat_bkg twice                            by test_the_pin_reads_give_every_committed_pin_and_fail_closed
+KILLED    c2 without the policy check                      by test_c2_checks_its_reads_and_never_writes_c1s_records
+KILLED    c2 policy without the zero loops                 by test_c2_checks_its_reads_and_never_writes_c1s_records
+KILLED    c2 align on c1's names                           by test_c2_checks_its_reads_and_never_writes_c1s_records
+KILLED    c2 rows on c1's names                            by test_c2_checks_its_reads_and_never_writes_c1s_records
+KILLED    gs3a/gs3b back on the old deploy                 by test_stage3_gates_and_submits_share_deploy3_cloned_by_gs3a
+KILLED    s3a clones deploy3 again                         by test_stage3_gates_and_submits_share_deploy3_cloned_by_gs3a
+KILLED    no STOP without deploy3                          by test_stage3_gates_and_submits_share_deploy3_cloned_by_gs3a
+KILLED    s3 without the policy check                      by test_s3_checks_its_reads_and_names_the_arms_paths
+KILLED    s3 policy without the ratio                      by test_s3_checks_its_reads_and_names_the_arms_paths
+KILLED    arms reads lat_bkg with python again             by test_the_arms_read_every_pin_with_awk_and_no_python_reads_a_pin
+KILLED    arms lat_bkg takes lat_zero's sum                by test_the_arms_read_every_pin_with_awk_and_no_python_reads_a_pin
+KILLED    arms sums not checked                            by test_the_arms_read_every_pin_with_awk_and_no_python_reads_a_pin
+MUTATION CHECK :: PASS (55 mutations)
+# exit 0

@@ -1,0 +1,2 @@
+[rdx] NC-X PASS; R1p W0; R1 W1 (excess cells []); R2 W0; R3 X1t T1, X0t T1; R4 prior W0, gibuu W1, q3 W1, weight W0; OUTCOME LICENSED
+rc=0

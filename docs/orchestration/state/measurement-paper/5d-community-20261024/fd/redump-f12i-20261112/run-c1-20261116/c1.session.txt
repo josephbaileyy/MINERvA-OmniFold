@@ -1,0 +1,234 @@
+ssh rc=0
+node login27 staged sha256 eae946894be8ce02354e8bd6aaf038d78bd8f574772a359b90eaeb0d1dfd985d
+detached pid 2257510, output /dev/shm/rdxc.2256919.sh.out
+node login27 2026-11-16T19:35:36Z step c1 pin ad0535c4a62ac0a20711a4a00f2266ddaf926d7c; connect script sha256 eae946894be8ce02354e8bd6aaf038d78bd8f574772a359b90eaeb0d1dfd985d
+== the purge-exposed MP-1 inputs (stat only)
+{
+ "files": [
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s0/evloop/base_cv.root",
+   "bytes": 398375089,
+   "mtime": "2026-10-20T06:15:41Z",
+   "atime": "2026-10-20T13:05:40Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1A_zero.root",
+   "bytes": 398375296,
+   "mtime": "2026-10-20T15:11:30Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1B_zero.root",
+   "bytes": 106517598,
+   "mtime": "2026-10-20T14:41:11Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1C_zero.root",
+   "bytes": 204230889,
+   "mtime": "2026-10-20T14:49:14Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1D_zero.root",
+   "bytes": 596287802,
+   "mtime": "2026-10-20T15:49:28Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1E_zero.root",
+   "bytes": 495761736,
+   "mtime": "2026-10-20T15:38:18Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1F_zero.root",
+   "bytes": 689044069,
+   "mtime": "2026-10-20T15:29:27Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1G_zero.root",
+   "bytes": 581501093,
+   "mtime": "2026-10-20T15:47:38Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1L_zero.root",
+   "bytes": 56587445,
+   "mtime": "2026-10-20T14:38:19Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1M_zero.root",
+   "bytes": 862899975,
+   "mtime": "2026-10-20T15:56:42Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1N_zero.root",
+   "bytes": 499729347,
+   "mtime": "2026-10-20T15:38:35Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1O_zero.root",
+   "bytes": 150945068,
+   "mtime": "2026-10-20T14:45:15Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1P_zero.root",
+   "bytes": 199848958,
+   "mtime": "2026-10-20T15:16:09Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_zero.npz",
+   "bytes": 1548311762,
+   "mtime": "2026-10-20T18:31:31Z",
+   "atime": "2026-10-30T08:53:42Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_zero_bkg.npz",
+   "bytes": 28494557,
+   "mtime": "2026-10-20T18:31:33Z",
+   "atime": "2026-10-30T08:53:42Z"
+  }
+ ],
+ "missing": [],
+ "verdict": "PRESENT"
+}
+squeue --me:
+
+{
+ "protected": [
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/ER/xsec.root",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root",
+  "/pscratch/sd/j/josephrb/cov2d-run-20261104",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root",
+  "/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root"
+ ],
+ "never_read": [
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz",
+  "/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz",
+  "/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root",
+  "/pscratch/sd/j/josephrb/cov2d-inputs-20261104",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware",
+  "/pscratch/sd/j/josephrb/fd-f1-20261027/f1b3/prep",
+  "/pscratch/sd/j/josephrb/fd-1b-inv-20261101/i0/in"
+ ],
+ "reads": [
+  "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s0/evloop/base_cv.root",
+  "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1A.root"
+ ],
+ "hits": [],
+ "verdict": "CLEAR"
+}
+checker python /global/homes/j/josephrb/.conda/envs/omnifold_py310/bin/python 3.10.19: numpy 2.2.6, uproot 5.6.9
+{
+ "mode": "rdx-equal",
+ "trees": {
+  "data": 360123,
+  "mc_background": 52626,
+  "mc_signal_reco": 2682267,
+  "mc_truth_denom": 2682267
+ },
+ "extra_branches": {
+  "data": [],
+  "mc_background": [],
+  "mc_signal_reco": [
+   "truthx_enu",
+   "truthx_evt",
+   "truthx_kep_lead",
+   "truthx_run",
+   "truthx_subrun",
+   "truthx_vtx_x",
+   "truthx_vtx_y",
+   "truthx_vtx_z"
+  ],
+  "mc_truth_denom": [
+   "truthx_enu",
+   "truthx_evt",
+   "truthx_kep_lead",
+   "truthx_run",
+   "truthx_subrun",
+   "truthx_vtx_x",
+   "truthx_vtx_y",
+   "truthx_vtx_z"
+  ]
+ },
+ "nonscalar_branches_not_compared": {},
+ "failures": [],
+ "verdict": "PASS",
+ "reference": "/pscratch/sd/j/josephrb/rdx-20261112b/out/stage/base_cv.root",
+ "patched": "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1A.root",
+ "reader": "omnifile_io.read_latest (highest TTree cycle)",
+ "cycles": {
+  "reference": {
+   "mc_truth_denom;5": 2682267,
+   "mc_truth_denom;4": 2217328,
+   "mc_signal_reco;9": 2682267,
+   "mc_signal_reco;8": 2489136,
+   "mc_background;1": 52626,
+   "data;1": 360123
+  },
+  "patched": {
+   "mc_truth_denom;9": 2682267,
+   "mc_truth_denom;8": 2584872,
+   "mc_signal_reco;13": 2682267,
+   "mc_signal_reco;12": 2680608,
+   "mc_background;1": 52626,
+   "data;1": 360123
+  }
+ }
+}
+{
+ "mode": "rdx-truthx-rows",
+ "counts": {
+  "signal_rows": 2682267,
+  "miss_rows": 945434,
+  "reco_rows": 1736833,
+  "denom_rows": 2682267,
+  "matched_rows": 2682267,
+  "partnerless_rows": 0,
+  "matched_miss_rows": 945434
+ },
+ "failures": [],
+ "verdict": "PASS",
+ "file": "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1A.root"
+}
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+{
+ "omnifile": "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1A.root",
+ "rows": 2682267,
+ "kept": 2682038,
+ "walks_bitwise_equal": true,
+ "read_s": 13.6,
+ "vectorized_s": 0.6,
+ "loop_s": 12.0,
+ "peak_rss_gb_after_read": 0.96,
+ "peak_rss_gb_after_vectorized": 1.27,
+ "peak_rss_gb_after_loop": 3.94,
+ "scale": 12.238805970149254,
+ "projected_merged_vectorized_s": 175.0,
+ "projected_merged_vectorized_rss_gb": 15.6,
+ "verdict": "PASS"
+}
+C-ALIGN-1A rc=0 C-TRUTHX rc=0 walk probe rc=0
+STAGE 1 CHECKS PASS
+== rdx connect c1 rc=0 2026-11-16T19:36:28Z
+script rc=0
+launcher rc=0

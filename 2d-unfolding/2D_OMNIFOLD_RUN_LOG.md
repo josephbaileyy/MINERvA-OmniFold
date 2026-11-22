@@ -30,3 +30,13 @@ Append only committed post-2026-08-20 events here; keep the current-state summar
   corrected the same day.
 - **Compute.** None: zero node-hours, no training, no toys, no product rebuilt.
 - **Route.** [`DELIVERY-20261008-uncertainty-preparation.md`](../docs/orchestration/DELIVERY-20261008-uncertainty-preparation.md).
+
+### 2026-11-19 — IBUKT A2 and recorded-data target sensitivity
+
+- The signed-data check ran as a zero-allocation login-node action and
+  replayed REF-C2C1 before comparing the two targets at K=5 and K=10.
+  [Signed-data outcome](../docs/orchestration/OUTCOME-20261119-ibu-signed-data.md)
+- Run d completed the known-truth ensemble and wrote a scoring PASS before
+  the score allocation timed out. The outcome records the separate worker
+  and allocation states, full charge and per-cell results.
+  [IBUKT A2 outcome](../docs/orchestration/OUTCOME-20261119-ibukt-a2.md)

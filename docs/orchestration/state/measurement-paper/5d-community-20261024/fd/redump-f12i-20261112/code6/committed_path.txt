@@ -1,0 +1,18 @@
+# HEAD d24897fea64dc4608172b57735bccd7b3d361aa6
+# clean clone, serial, Python 3.12.2, numpy 1.26.4, 2026-11-18T08:19:56Z
+# cc25f176d2aa01528389a08e7aca5ffa2e2b9950835c76a55028f28a759e1d44  rdx_read.py
+# 6a5f42a92e3855bf8393e5be5d3e640ce67059a5c359129449aae817c92ac975  test_rdx_read.py
+# 13e5501e29cf726b5ea04ead27a90b683ff6f9797bb6cafdf22ca0e652813470  rdx_read_mutation.py
+# 4dd37197f6aa6c7f013b3ffea5558fd8d8fd1bc124047f761269adafce87e484  ../rsn/rsn_read.py
+# aaa81575b211f50e007fa75d318fd8d4f48bfb98ac5ae62b398dbf33db37d4ca  ../pv-ladder/build_cmodel5d.py
+# the committed-record path, no products: B5.load_definition, rsn_read.rounding_floor, the F1 readout's sigma, rdx_tasks.tsv, the pins
+fine grid: (14, 16, 7, 7, 6) 65856 cells; the definition maps 65856 -> 16 ; main's check PASS
+task table sha256 bound: True
+definition: 16 reporting cells, fine map 65856 entries
+phi_c (%): [0.0779, 0.1084, 0.1763, 0.1957, 0.0549, 0.2523, 0.1752, 0.2252, 0.1571, 0.0945, 0.2041, 0.1546, 0.0849, 0.1122, 0.0684, 0.1108]
+phi_c median/min/max (%): 0.133 0.055 0.252
+sigma_c: [0.07108, 0.07594, 0.1405, 0.12726, 0.04797, 0.08117, 0.06559, 0.08452, 0.06261, 0.06851, 0.08688, 0.13888, 0.06982, 0.11383, 0.0568, 0.08287]
+tasks (bound table, 15 unique rows): ['X0', 'X0_lat', 'X1', 'X1p', 'X1w', 'X1t', 'X0c', 'X1c', 'X1pc', 'X1wc', 'X0t', 'X0g', 'X1g', 'X0q', 'X1q']
+pins: {'lat_RDX_ALL.npz': '6ca02c3d', 'lat_RDX_ALL_bkg.npz': '0e005fb1', 'truthx_RDX_ALL.npz': '641ba34c', 'lat_zero.npz': '6ca02c3d', 'lat_zero_bkg.npz': 'f09727d0'} ratio 13bb1eae
+# exit 0
+# clone status: 0 lines

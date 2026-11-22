@@ -20,7 +20,7 @@ FILES = ("rdx_cap.py", "rdx_merge.py", "rdx_paths.py", "sbatch_rdx_evloop.sh", "
          "rdx_connect.sh", "rdx_connect_launch.sh", "rdx_tasks.tsv", "rdx_common.py", "rdx_dump.py", "test_rdx_stages.py",
          "setup_salloc_env.exports")
 CP, MG, PA, EV, SM, AR, CN, LA, TT = FILES[:9]
-EXPECTED_TESTS = 16
+EXPECTED_TESTS = 24
 MUTATIONS = [
     ("unlisted submissions ignored", CP, '        if kv["id"] not in listed:\n', "        if False:\n",
      "test_spent_held_unlisted_and_the_wanted_ceiling"),
@@ -71,6 +71,54 @@ MUTATIONS = [
      "test_the_event_loop_job_allows_the_connects_b"),
     ("the connect changed under its pin", CN, "# RDX's connect (RDX-DECLARATION.md", "# RDX connect (RDX-DECLARATION.md",
      "test_the_launcher_pins_the_connect_script"),
+    # the c1 STOP of 2026-11-15: the checker python's env check, pinned
+    ("CHKPY back on root_6_28", CN, "CHKPY=/global/homes/j/josephrb/.conda/envs/omnifold_py310/bin/python",
+     "CHKPY=/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3", "test_every_checker_runs_under_chkpy_behind_chkenv"),
+    ("c1 align back on $PY", CN, '  $CHKPY -I -B "$R/rdx_align.py" "$OUT/stage/base_cv.root"',
+     '  $PY -I -B "$R/rdx_align.py" "$OUT/stage/base_cv.root"', "test_every_checker_runs_under_chkpy_behind_chkenv"),
+    ("c1 checkers without chkenv", CN, '  chkenv\n  $CHKPY -I -B "$R/rdx_align.py"', '  $CHKPY -I -B "$R/rdx_align.py"',
+     "test_every_checker_runs_under_chkpy_behind_chkenv"),
+    ("c2 without chkenv", CN, '  chkenv; mkdir -p "$OUT/checks" "$OUT/stage/zero"', '  mkdir -p "$OUT/checks" "$OUT/stage/zero"',
+     "test_every_checker_runs_under_chkpy_behind_chkenv"),
+    ("cm without chkenv", CN, '  chkenv\n  $CHKPY -I -B "$R/rdx_truthx_npz.py"', '  $CHKPY -I -B "$R/rdx_truthx_npz.py"',
+     "test_every_checker_runs_under_chkpy_behind_chkenv"),
+    ("chkenv drops the uproot import", CN, "import numpy, uproot, omnifile_io, compare_omnifiles\n",
+     "import numpy, omnifile_io, compare_omnifiles\n", "test_every_checker_runs_under_chkpy_behind_chkenv"),
+    ("chkenv neutered (|| true)", CN, "<<'EOF' || stop \"the checker python", "<<'EOF' || true \"the checker python",
+     "test_chkenv_fails_closed_without_uproot_or_the_modules"),
+    ("chkenv runs nothing", CN, "  $CHKPY -I -B - \"$DEP\" <<'EOF' || stop", "  true <<'EOF' || stop",
+     "test_chkenv_fails_closed_without_uproot_or_the_modules"),
+    ("c2 pin read back on SYSPY", CN, "    ZSHA=$($CHKPY -I -B -c ", "    ZSHA=$($SYSPY -I -B -c ", "test_syspy_runs_only_the_36_tools_and_the_pins_are_read_under_chkpy_behind_chkenv"),
+    ("m pin read back on SYSPY", CN, "  read -r LZ LB < <($CHKPY -I -B -c ", "  read -r LZ LB < <($SYSPY -I -B -c ", "test_syspy_runs_only_the_36_tools_and_the_pins_are_read_under_chkpy_behind_chkenv"),
+    ("m without chkenv", CN, '"$OUT/evloop"\n  chkenv\n  read -r LZ LB', '"$OUT/evloop"\n  read -r LZ LB', "test_syspy_runs_only_the_36_tools_and_the_pins_are_read_under_chkpy_behind_chkenv"),
+    ("rdx_paths needs 3.7", PA, '"""\nimport argparse\n', '"""\nfrom __future__ import annotations\nimport argparse\n', "test_syspy_runs_only_the_36_tools_and_the_pins_are_read_under_chkpy_behind_chkenv"),
+    ("c2 pin not checked as 64 hex", CN, '      && [[ "$ZSHA" =~ ^[0-9a-f]{64}$ ]] || stop "no zero-loop pin for $pl"\n',
+     '      || stop "no zero-loop pin for $pl"\n', "test_the_pin_reads_give_every_committed_pin_and_fail_closed"),
+    ("c2 reads 1A's pin for every playlist", CN, 'print(C.ZERO_LOOPS[sys.argv[2]])" "$DEP/nd-unfolding" "$pl")',
+     'print(C.ZERO_LOOPS[\'1A\'])" "$DEP/nd-unfolding" "$pl")', "test_the_pin_reads_give_every_committed_pin_and_fail_closed"),
+    ("m reads lat_bkg twice", CN, "print(C.MP1_ZERO['lat_npz'], C.MP1_ZERO['lat_bkg'])",
+     "print(C.MP1_ZERO['lat_bkg'], C.MP1_ZERO['lat_bkg'])", "test_the_pin_reads_give_every_committed_pin_and_fail_closed"),
+    ("c2 without the policy check", CN, '  policy "${READS[@]}"\n', "", "test_c2_checks_its_reads_and_never_writes_c1s_records"),
+    ("c2 policy without the zero loops", CN, 'READS+=("$ZERO/runEventLoopOmniFold_5D_${pl}_zero.root" "$OUT/evloop',
+     'READS+=("$OUT/evloop', "test_c2_checks_its_reads_and_never_writes_c1s_records"),
+    ("c2 align on c1's names", CN, '--out "$OUT/checks/align_${pl}_pl.json"', '--out "$OUT/checks/align_$pl.json"', "test_c2_checks_its_reads_and_never_writes_c1s_records"),
+    ("c2 rows on c1's names", CN, '--out "$OUT/checks/truthx_rows_${pl}_pl.json"', '--out "$OUT/checks/truthx_rows_$pl.json"',
+     "test_c2_checks_its_reads_and_never_writes_c1s_records"),
+    # the stage-3 trace of 2026-11-17 (F1, F2, s1)
+    ("gs3a/gs3b back on the old deploy", CN, 'case "$STEP" in gs3a|gs3b|s3a|s3b) DEP=$D3 ;; esac',
+     'case "$STEP" in s3a|s3b) DEP=$D3 ;; esac', "test_stage3_gates_and_submits_share_deploy3_cloned_by_gs3a"),
+    ("s3a clones deploy3 again", CN, '{ [ "$STEP" = gs3a ] && [ ! -e "$D3" ]; }', '{ [ "$STEP" = s3a ] && [ ! -e "$D3" ]; }',
+     "test_stage3_gates_and_submits_share_deploy3_cloned_by_gs3a"),
+    ("no STOP without deploy3", CN, 'case "$STEP" in gs3b|s3a|s3b) [ -e "$D3" ] || stop "no $D3 (gs3a clones it at the stage-3 pin)" ;; esac\n',
+     "", "test_stage3_gates_and_submits_share_deploy3_cloned_by_gs3a"),
+    ("s3 without the policy check", CN, '  policy "$OUT/dumps/lat_RDX_ALL.npz" "$OUT/dumps/lat_RDX_ALL_bkg.npz" "$OUT/dumps/truthx_RDX_ALL.npz" \\\n'
+     '    "$OUT/stage/lat_zero.npz" "$OUT/stage/lat_zero_bkg.npz" "$PVL_RATIO"\n', "", "test_s3_checks_its_reads_and_names_the_arms_paths"),
+    ("s3 policy without the ratio", CN, '"$OUT/stage/lat_zero_bkg.npz" "$PVL_RATIO"\n', '"$OUT/stage/lat_zero_bkg.npz"\n', "test_s3_checks_its_reads_and_names_the_arms_paths"),
+    ("arms reads lat_bkg with python again", AR, 'S_lat_bkg=$(sum_of lat_zero_bkg.npz)',
+     'S_lat_bkg=$(python3 -B -c "import sys; sys.path.insert(0, sys.argv[1]); import fd_ct_period_inputs as C; print(C.MP1_ZERO[\'lat_bkg\'])" "${D}/nd-unfolding" 2>/dev/null)',
+     "test_the_arms_read_every_pin_with_awk_and_no_python_reads_a_pin"),
+    ("arms lat_bkg takes lat_zero's sum", AR, 'S_lat_bkg=$(sum_of lat_zero_bkg.npz)', 'S_lat_bkg=$(sum_of lat_zero.npz)', "test_the_arms_read_every_pin_with_awk_and_no_python_reads_a_pin"),
+    ("arms sums not checked", AR, '|| { say "refusing: ${SUMS} has no sha256 line for ${sv#S_}"; exit 2; }', '|| true', "test_the_arms_read_every_pin_with_awk_and_no_python_reads_a_pin"),
 ]
 
 def mirror(root: Path) -> Path:

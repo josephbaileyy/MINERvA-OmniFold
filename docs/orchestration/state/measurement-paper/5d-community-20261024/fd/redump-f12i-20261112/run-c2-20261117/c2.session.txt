@@ -1,0 +1,1165 @@
+ssh rc=0
+node login27 staged sha256 52ad6a0edf92b4ed31058d27c2a9793042f425befcfc0268176707593c295cc6
+detached pid 141828, output /dev/shm/rdxc.141328.sh.out
+node login27 2026-11-17T02:02:59Z step c2 pin ad0535c4a62ac0a20711a4a00f2266ddaf926d7c; connect script sha256 52ad6a0edf92b4ed31058d27c2a9793042f425befcfc0268176707593c295cc6
+== the purge-exposed MP-1 inputs (stat only)
+{
+ "files": [
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s0/evloop/base_cv.root",
+   "bytes": 398375089,
+   "mtime": "2026-10-20T06:15:41Z",
+   "atime": "2026-10-20T13:05:40Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1A_zero.root",
+   "bytes": 398375296,
+   "mtime": "2026-10-20T15:11:30Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1B_zero.root",
+   "bytes": 106517598,
+   "mtime": "2026-10-20T14:41:11Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1C_zero.root",
+   "bytes": 204230889,
+   "mtime": "2026-10-20T14:49:14Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1D_zero.root",
+   "bytes": 596287802,
+   "mtime": "2026-10-20T15:49:28Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1E_zero.root",
+   "bytes": 495761736,
+   "mtime": "2026-10-20T15:38:18Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1F_zero.root",
+   "bytes": 689044069,
+   "mtime": "2026-10-20T15:29:27Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1G_zero.root",
+   "bytes": 581501093,
+   "mtime": "2026-10-20T15:47:38Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1L_zero.root",
+   "bytes": 56587445,
+   "mtime": "2026-10-20T14:38:19Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1M_zero.root",
+   "bytes": 862899975,
+   "mtime": "2026-10-20T15:56:42Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1N_zero.root",
+   "bytes": 499729347,
+   "mtime": "2026-10-20T15:38:35Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1O_zero.root",
+   "bytes": 150945068,
+   "mtime": "2026-10-20T14:45:15Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1P_zero.root",
+   "bytes": 199848958,
+   "mtime": "2026-10-20T15:16:09Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_zero.npz",
+   "bytes": 1548311762,
+   "mtime": "2026-10-20T18:31:31Z",
+   "atime": "2026-10-30T08:53:42Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_zero_bkg.npz",
+   "bytes": 28494557,
+   "mtime": "2026-10-20T18:31:33Z",
+   "atime": "2026-10-30T08:53:42Z"
+  }
+ ],
+ "missing": [],
+ "verdict": "PRESENT"
+}
+squeue --me:
+
+checker python /global/homes/j/josephrb/.conda/envs/omnifold_py310/bin/python 3.10.19: numpy 2.2.6, uproot 5.6.9
+{
+ "protected": [
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/ER/xsec.root",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root",
+  "/pscratch/sd/j/josephrb/cov2d-run-20261104",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root",
+  "/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root"
+ ],
+ "never_read": [
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz",
+  "/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz",
+  "/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root",
+  "/pscratch/sd/j/josephrb/cov2d-inputs-20261104",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware",
+  "/pscratch/sd/j/josephrb/fd-f1-20261027/f1b3/prep",
+  "/pscratch/sd/j/josephrb/fd-1b-inv-20261101/i0/in"
+ ],
+ "reads": [
+  "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1A_zero.root",
+  "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1A.root",
+  "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1B_zero.root",
+  "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1B.root",
+  "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1C_zero.root",
+  "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1C.root",
+  "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1D_zero.root",
+  "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1D.root",
+  "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1E_zero.root",
+  "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1E.root",
+  "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1F_zero.root",
+  "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1F.root",
+  "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1G_zero.root",
+  "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1G.root",
+  "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1L_zero.root",
+  "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1L.root",
+  "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1M_zero.root",
+  "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1M.root",
+  "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1N_zero.root",
+  "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1N.root",
+  "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1O_zero.root",
+  "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1O.root",
+  "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1P_zero.root",
+  "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1P.root"
+ ],
+ "hits": [],
+ "verdict": "CLEAR"
+}
+{
+ "staged": [
+  {
+   "src": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1A_zero.root",
+   "dst": "/pscratch/sd/j/josephrb/rdx-20261112b/out/stage/zero/runEventLoopOmniFold_5D_1A_zero.root",
+   "bytes": 398375296,
+   "sha256": "2745e38c45a50fa644e32913c6d8bc9763edc96e21b6d058cde4dbee6714c192"
+  }
+ ],
+ "verdict": "STAGED"
+}
+{
+ "mode": "rdx-equal",
+ "trees": {
+  "data": 360123,
+  "mc_background": 52626,
+  "mc_signal_reco": 2682267,
+  "mc_truth_denom": 2682267
+ },
+ "extra_branches": {
+  "data": [],
+  "mc_background": [],
+  "mc_signal_reco": [
+   "truthx_enu",
+   "truthx_evt",
+   "truthx_kep_lead",
+   "truthx_run",
+   "truthx_subrun",
+   "truthx_vtx_x",
+   "truthx_vtx_y",
+   "truthx_vtx_z"
+  ],
+  "mc_truth_denom": [
+   "truthx_enu",
+   "truthx_evt",
+   "truthx_kep_lead",
+   "truthx_run",
+   "truthx_subrun",
+   "truthx_vtx_x",
+   "truthx_vtx_y",
+   "truthx_vtx_z"
+  ]
+ },
+ "nonscalar_branches_not_compared": {},
+ "failures": [],
+ "verdict": "PASS",
+ "reference": "/pscratch/sd/j/josephrb/rdx-20261112b/out/stage/zero/runEventLoopOmniFold_5D_1A_zero.root",
+ "patched": "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1A.root",
+ "reader": "omnifile_io.read_latest (highest TTree cycle)",
+ "cycles": {
+  "reference": {
+   "mc_truth_denom;5": 2682267,
+   "mc_truth_denom;4": 2217328,
+   "mc_signal_reco;9": 2682267,
+   "mc_signal_reco;8": 2489136,
+   "mc_background;1": 52626,
+   "data;1": 360123
+  },
+  "patched": {
+   "mc_truth_denom;9": 2682267,
+   "mc_truth_denom;8": 2584872,
+   "mc_signal_reco;13": 2682267,
+   "mc_signal_reco;12": 2680608,
+   "mc_background;1": 52626,
+   "data;1": 360123
+  }
+ }
+}
+{
+ "mode": "rdx-truthx-rows",
+ "counts": {
+  "signal_rows": 2682267,
+  "miss_rows": 945434,
+  "reco_rows": 1736833,
+  "denom_rows": 2682267,
+  "matched_rows": 2682267,
+  "partnerless_rows": 0,
+  "matched_miss_rows": 945434
+ },
+ "failures": [],
+ "verdict": "PASS",
+ "file": "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1A.root"
+}
+{
+ "staged": [
+  {
+   "src": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1B_zero.root",
+   "dst": "/pscratch/sd/j/josephrb/rdx-20261112b/out/stage/zero/runEventLoopOmniFold_5D_1B_zero.root",
+   "bytes": 106517598,
+   "sha256": "a2b7e413f8ab727577eb70cf00881c9dedfaf3401c18e37c866f6dc296639948"
+  }
+ ],
+ "verdict": "STAGED"
+}
+{
+ "mode": "rdx-equal",
+ "trees": {
+  "data": 75192,
+  "mc_background": 14182,
+  "mc_signal_reco": 721082,
+  "mc_truth_denom": 721082
+ },
+ "extra_branches": {
+  "data": [],
+  "mc_background": [],
+  "mc_signal_reco": [
+   "truthx_enu",
+   "truthx_evt",
+   "truthx_kep_lead",
+   "truthx_run",
+   "truthx_subrun",
+   "truthx_vtx_x",
+   "truthx_vtx_y",
+   "truthx_vtx_z"
+  ],
+  "mc_truth_denom": [
+   "truthx_enu",
+   "truthx_evt",
+   "truthx_kep_lead",
+   "truthx_run",
+   "truthx_subrun",
+   "truthx_vtx_x",
+   "truthx_vtx_y",
+   "truthx_vtx_z"
+  ]
+ },
+ "nonscalar_branches_not_compared": {},
+ "failures": [],
+ "verdict": "PASS",
+ "reference": "/pscratch/sd/j/josephrb/rdx-20261112b/out/stage/zero/runEventLoopOmniFold_5D_1B_zero.root",
+ "patched": "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1B.root",
+ "reader": "omnifile_io.read_latest (highest TTree cycle)",
+ "cycles": {
+  "reference": {
+   "mc_truth_denom;2": 721082,
+   "mc_truth_denom;1": 554332,
+   "mc_signal_reco;3": 721082,
+   "mc_signal_reco;2": 622284,
+   "mc_background;1": 14182,
+   "data;1": 75192
+  },
+  "patched": {
+   "mc_truth_denom;3": 721082,
+   "mc_truth_denom;2": 646218,
+   "mc_signal_reco;4": 721082,
+   "mc_signal_reco;3": 670152,
+   "mc_background;1": 14182,
+   "data;1": 75192
+  }
+ }
+}
+{
+ "mode": "rdx-truthx-rows",
+ "counts": {
+  "signal_rows": 721082,
+  "miss_rows": 251998,
+  "reco_rows": 469084,
+  "denom_rows": 721082,
+  "matched_rows": 721082,
+  "partnerless_rows": 0,
+  "matched_miss_rows": 251998
+ },
+ "failures": [],
+ "verdict": "PASS",
+ "file": "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1B.root"
+}
+{
+ "staged": [
+  {
+   "src": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1C_zero.root",
+   "dst": "/pscratch/sd/j/josephrb/rdx-20261112b/out/stage/zero/runEventLoopOmniFold_5D_1C_zero.root",
+   "bytes": 204230889,
+   "sha256": "7985c0f1ae44d99be3bf180748c9553672bc8f107b512310c961d728d9c62d34"
+  }
+ ],
+ "verdict": "STAGED"
+}
+{
+ "mode": "rdx-equal",
+ "trees": {
+  "data": 173122,
+  "mc_background": 26898,
+  "mc_signal_reco": 1376832,
+  "mc_truth_denom": 1376832
+ },
+ "extra_branches": {
+  "data": [],
+  "mc_background": [],
+  "mc_signal_reco": [
+   "truthx_enu",
+   "truthx_evt",
+   "truthx_kep_lead",
+   "truthx_run",
+   "truthx_subrun",
+   "truthx_vtx_x",
+   "truthx_vtx_y",
+   "truthx_vtx_z"
+  ],
+  "mc_truth_denom": [
+   "truthx_enu",
+   "truthx_evt",
+   "truthx_kep_lead",
+   "truthx_run",
+   "truthx_subrun",
+   "truthx_vtx_x",
+   "truthx_vtx_y",
+   "truthx_vtx_z"
+  ]
+ },
+ "nonscalar_branches_not_compared": {},
+ "failures": [],
+ "verdict": "PASS",
+ "reference": "/pscratch/sd/j/josephrb/rdx-20261112b/out/stage/zero/runEventLoopOmniFold_5D_1C_zero.root",
+ "patched": "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1C.root",
+ "reader": "omnifile_io.read_latest (highest TTree cycle)",
+ "cycles": {
+  "reference": {
+   "mc_truth_denom;3": 1376832,
+   "mc_truth_denom;2": 1108664,
+   "mc_signal_reco;5": 1376832,
+   "mc_signal_reco;4": 1244568,
+   "mc_background;1": 26898,
+   "data;1": 173122
+  },
+  "patched": {
+   "mc_truth_denom;5": 1376832,
+   "mc_truth_denom;4": 1292436,
+   "mc_signal_reco;7": 1376832,
+   "mc_signal_reco;6": 1340304,
+   "mc_background;1": 26898,
+   "data;1": 173122
+  }
+ }
+}
+{
+ "mode": "rdx-truthx-rows",
+ "counts": {
+  "signal_rows": 1376832,
+  "miss_rows": 482805,
+  "reco_rows": 894027,
+  "denom_rows": 1376832,
+  "matched_rows": 1376832,
+  "partnerless_rows": 0,
+  "matched_miss_rows": 482805
+ },
+ "failures": [],
+ "verdict": "PASS",
+ "file": "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1C.root"
+}
+{
+ "staged": [
+  {
+   "src": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1D_zero.root",
+   "dst": "/pscratch/sd/j/josephrb/rdx-20261112b/out/stage/zero/runEventLoopOmniFold_5D_1D_zero.root",
+   "bytes": 596287802,
+   "sha256": "52da8f2245be7f4529d6c24960fa56f3063db5368bf33e7640604d716742797d"
+  }
+ ],
+ "verdict": "STAGED"
+}
+{
+ "mode": "rdx-equal",
+ "trees": {
+  "data": 580834,
+  "mc_background": 78987,
+  "mc_signal_reco": 4003632,
+  "mc_truth_denom": 4003632
+ },
+ "extra_branches": {
+  "data": [],
+  "mc_background": [],
+  "mc_signal_reco": [
+   "truthx_enu",
+   "truthx_evt",
+   "truthx_kep_lead",
+   "truthx_run",
+   "truthx_subrun",
+   "truthx_vtx_x",
+   "truthx_vtx_y",
+   "truthx_vtx_z"
+  ],
+  "mc_truth_denom": [
+   "truthx_enu",
+   "truthx_evt",
+   "truthx_kep_lead",
+   "truthx_run",
+   "truthx_subrun",
+   "truthx_vtx_x",
+   "truthx_vtx_y",
+   "truthx_vtx_z"
+  ]
+ },
+ "nonscalar_branches_not_compared": {},
+ "failures": [],
+ "verdict": "PASS",
+ "reference": "/pscratch/sd/j/josephrb/rdx-20261112b/out/stage/zero/runEventLoopOmniFold_5D_1D_zero.root",
+ "patched": "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1D.root",
+ "reader": "omnifile_io.read_latest (highest TTree cycle)",
+ "cycles": {
+  "reference": {
+   "mc_truth_denom;8": 4003632,
+   "mc_truth_denom;7": 3880324,
+   "mc_signal_reco;13": 4003632,
+   "mc_signal_reco;12": 3733704,
+   "mc_background;1": 78987,
+   "data;1": 580834
+  },
+  "patched": {
+   "mc_truth_denom;13": 4003632,
+   "mc_truth_denom;12": 3877308,
+   "mc_signal_reco;18": 4003632,
+   "mc_signal_reco;17": 3797528,
+   "mc_background;1": 78987,
+   "data;1": 580834
+  }
+ }
+}
+{
+ "mode": "rdx-truthx-rows",
+ "counts": {
+  "signal_rows": 4003632,
+  "miss_rows": 1408544,
+  "reco_rows": 2595088,
+  "denom_rows": 4003632,
+  "matched_rows": 4003632,
+  "partnerless_rows": 0,
+  "matched_miss_rows": 1408544
+ },
+ "failures": [],
+ "verdict": "PASS",
+ "file": "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1D.root"
+}
+{
+ "staged": [
+  {
+   "src": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1E_zero.root",
+   "dst": "/pscratch/sd/j/josephrb/rdx-20261112b/out/stage/zero/runEventLoopOmniFold_5D_1E_zero.root",
+   "bytes": 495761736,
+   "sha256": "7f9293a6ce7a0aee7e9549b93d86b4d201bb0db9da088bace988403a7a0faea5"
+  }
+ ],
+ "verdict": "STAGED"
+}
+{
+ "mode": "rdx-equal",
+ "trees": {
+  "data": 408075,
+  "mc_background": 66077,
+  "mc_signal_reco": 3350021,
+  "mc_truth_denom": 3350021
+ },
+ "extra_branches": {
+  "data": [],
+  "mc_background": [],
+  "mc_signal_reco": [
+   "truthx_enu",
+   "truthx_evt",
+   "truthx_kep_lead",
+   "truthx_run",
+   "truthx_subrun",
+   "truthx_vtx_x",
+   "truthx_vtx_y",
+   "truthx_vtx_z"
+  ],
+  "mc_truth_denom": [
+   "truthx_enu",
+   "truthx_evt",
+   "truthx_kep_lead",
+   "truthx_run",
+   "truthx_subrun",
+   "truthx_vtx_x",
+   "truthx_vtx_y",
+   "truthx_vtx_z"
+  ]
+ },
+ "nonscalar_branches_not_compared": {},
+ "failures": [],
+ "verdict": "PASS",
+ "reference": "/pscratch/sd/j/josephrb/rdx-20261112b/out/stage/zero/runEventLoopOmniFold_5D_1E_zero.root",
+ "patched": "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1E.root",
+ "reader": "omnifile_io.read_latest (highest TTree cycle)",
+ "cycles": {
+  "reference": {
+   "mc_truth_denom;7": 3350021,
+   "mc_truth_denom;6": 3325992,
+   "mc_signal_reco;11": 3350021,
+   "mc_signal_reco;10": 3111420,
+   "mc_background;1": 66077,
+   "data;1": 408075
+  },
+  "patched": {
+   "mc_truth_denom;11": 3350021,
+   "mc_truth_denom;10": 3231090,
+   "mc_signal_reco;15": 3350021,
+   "mc_signal_reco;14": 3127376,
+   "mc_background;1": 66077,
+   "data;1": 408075
+  }
+ }
+}
+{
+ "mode": "rdx-truthx-rows",
+ "counts": {
+  "signal_rows": 3350021,
+  "miss_rows": 1184467,
+  "reco_rows": 2165554,
+  "denom_rows": 3350021,
+  "matched_rows": 3350021,
+  "partnerless_rows": 0,
+  "matched_miss_rows": 1184467
+ },
+ "failures": [],
+ "verdict": "PASS",
+ "file": "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1E.root"
+}
+{
+ "staged": [
+  {
+   "src": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1F_zero.root",
+   "dst": "/pscratch/sd/j/josephrb/rdx-20261112b/out/stage/zero/runEventLoopOmniFold_5D_1F_zero.root",
+   "bytes": 689044069,
+   "sha256": "7481c94751a5df774e1c18cd453e92322d789d5568785ed8c026f6ef15778b4e"
+  }
+ ],
+ "verdict": "STAGED"
+}
+{
+ "mode": "rdx-equal",
+ "trees": {
+  "data": 642737,
+  "mc_background": 92219,
+  "mc_signal_reco": 4660210,
+  "mc_truth_denom": 4660210
+ },
+ "extra_branches": {
+  "data": [],
+  "mc_background": [],
+  "mc_signal_reco": [
+   "truthx_enu",
+   "truthx_evt",
+   "truthx_kep_lead",
+   "truthx_run",
+   "truthx_subrun",
+   "truthx_vtx_x",
+   "truthx_vtx_y",
+   "truthx_vtx_z"
+  ],
+  "mc_truth_denom": [
+   "truthx_enu",
+   "truthx_evt",
+   "truthx_kep_lead",
+   "truthx_run",
+   "truthx_subrun",
+   "truthx_vtx_x",
+   "truthx_vtx_y",
+   "truthx_vtx_z"
+  ]
+ },
+ "nonscalar_branches_not_compared": {},
+ "failures": [],
+ "verdict": "PASS",
+ "reference": "/pscratch/sd/j/josephrb/rdx-20261112b/out/stage/zero/runEventLoopOmniFold_5D_1F_zero.root",
+ "patched": "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1F.root",
+ "reader": "omnifile_io.read_latest (highest TTree cycle)",
+ "cycles": {
+  "reference": {
+   "mc_truth_denom;9": 4660210,
+   "mc_truth_denom;8": 4434656,
+   "mc_signal_reco;15": 4660210,
+   "mc_signal_reco;14": 4410728,
+   "mc_background;1": 92219,
+   "data;1": 642737
+  },
+  "patched": {
+   "mc_truth_denom;15": 4660210,
+   "mc_truth_denom;14": 4523526,
+   "mc_signal_reco;21": 4660210,
+   "mc_signal_reco;20": 4467680,
+   "mc_background;1": 92219,
+   "data;1": 642737
+  }
+ }
+}
+{
+ "mode": "rdx-truthx-rows",
+ "counts": {
+  "signal_rows": 4660210,
+  "miss_rows": 1740511,
+  "reco_rows": 2919699,
+  "denom_rows": 4660210,
+  "matched_rows": 4660210,
+  "partnerless_rows": 0,
+  "matched_miss_rows": 1740511
+ },
+ "failures": [],
+ "verdict": "PASS",
+ "file": "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1F.root"
+}
+{
+ "staged": [
+  {
+   "src": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1G_zero.root",
+   "dst": "/pscratch/sd/j/josephrb/rdx-20261112b/out/stage/zero/runEventLoopOmniFold_5D_1G_zero.root",
+   "bytes": 581501093,
+   "sha256": "259aa1952e7586eb2f301ec7960f3003d4b995f7f59b36b32a68b47a31ca2821"
+  }
+ ],
+ "verdict": "STAGED"
+}
+{
+ "mode": "rdx-equal",
+ "trees": {
+  "data": 538406,
+  "mc_background": 76742,
+  "mc_signal_reco": 3922748,
+  "mc_truth_denom": 3922748
+ },
+ "extra_branches": {
+  "data": [],
+  "mc_background": [],
+  "mc_signal_reco": [
+   "truthx_enu",
+   "truthx_evt",
+   "truthx_kep_lead",
+   "truthx_run",
+   "truthx_subrun",
+   "truthx_vtx_x",
+   "truthx_vtx_y",
+   "truthx_vtx_z"
+  ],
+  "mc_truth_denom": [
+   "truthx_enu",
+   "truthx_evt",
+   "truthx_kep_lead",
+   "truthx_run",
+   "truthx_subrun",
+   "truthx_vtx_x",
+   "truthx_vtx_y",
+   "truthx_vtx_z"
+  ]
+ },
+ "nonscalar_branches_not_compared": {},
+ "failures": [],
+ "verdict": "PASS",
+ "reference": "/pscratch/sd/j/josephrb/rdx-20261112b/out/stage/zero/runEventLoopOmniFold_5D_1G_zero.root",
+ "patched": "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1G.root",
+ "reader": "omnifile_io.read_latest (highest TTree cycle)",
+ "cycles": {
+  "reference": {
+   "mc_truth_denom;8": 3922748,
+   "mc_truth_denom;7": 3854340,
+   "mc_signal_reco;13": 3922748,
+   "mc_signal_reco;12": 3733704,
+   "mc_background;1": 76742,
+   "data;1": 538406
+  },
+  "patched": {
+   "mc_truth_denom;13": 3922748,
+   "mc_truth_denom;12": 3877308,
+   "mc_signal_reco;18": 3922748,
+   "mc_signal_reco;17": 3797528,
+   "mc_background;1": 76742,
+   "data;1": 538406
+  }
+ }
+}
+{
+ "mode": "rdx-truthx-rows",
+ "counts": {
+  "signal_rows": 3922748,
+  "miss_rows": 1438551,
+  "reco_rows": 2484197,
+  "denom_rows": 3922748,
+  "matched_rows": 3922748,
+  "partnerless_rows": 0,
+  "matched_miss_rows": 1438551
+ },
+ "failures": [],
+ "verdict": "PASS",
+ "file": "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1G.root"
+}
+{
+ "staged": [
+  {
+   "src": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1L_zero.root",
+   "dst": "/pscratch/sd/j/josephrb/rdx-20261112b/out/stage/zero/runEventLoopOmniFold_5D_1L_zero.root",
+   "bytes": 56587445,
+   "sha256": "d2b4dafc61d1756554d1c7ff3085410faaa2266cd14a260175bc0e533fe2030c"
+  }
+ ],
+ "verdict": "STAGED"
+}
+{
+ "mode": "rdx-equal",
+ "trees": {
+  "data": 49872,
+  "mc_background": 7820,
+  "mc_signal_reco": 383848,
+  "mc_truth_denom": 383848
+ },
+ "extra_branches": {
+  "data": [],
+  "mc_background": [],
+  "mc_signal_reco": [
+   "truthx_enu",
+   "truthx_evt",
+   "truthx_kep_lead",
+   "truthx_run",
+   "truthx_subrun",
+   "truthx_vtx_x",
+   "truthx_vtx_y",
+   "truthx_vtx_z"
+  ],
+  "mc_truth_denom": [
+   "truthx_enu",
+   "truthx_evt",
+   "truthx_kep_lead",
+   "truthx_run",
+   "truthx_subrun",
+   "truthx_vtx_x",
+   "truthx_vtx_y",
+   "truthx_vtx_z"
+  ]
+ },
+ "nonscalar_branches_not_compared": {},
+ "failures": [],
+ "verdict": "PASS",
+ "reference": "/pscratch/sd/j/josephrb/rdx-20261112b/out/stage/zero/runEventLoopOmniFold_5D_1L_zero.root",
+ "patched": "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1L.root",
+ "reader": "omnifile_io.read_latest (highest TTree cycle)",
+ "cycles": {
+  "reference": {
+   "mc_signal_reco;2": 383848,
+   "mc_signal_reco;1": 335076,
+   "mc_truth_denom;1": 383848,
+   "mc_background;1": 7820,
+   "data;1": 49872
+  },
+  "patched": {
+   "mc_truth_denom;2": 383848,
+   "mc_truth_denom;1": 323109,
+   "mc_signal_reco;2": 383848,
+   "mc_signal_reco;1": 223384,
+   "mc_background;1": 7820,
+   "data;1": 49872
+  }
+ }
+}
+{
+ "mode": "rdx-truthx-rows",
+ "counts": {
+  "signal_rows": 383848,
+  "miss_rows": 151725,
+  "reco_rows": 232123,
+  "denom_rows": 383848,
+  "matched_rows": 383848,
+  "partnerless_rows": 0,
+  "matched_miss_rows": 151725
+ },
+ "failures": [],
+ "verdict": "PASS",
+ "file": "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1L.root"
+}
+{
+ "staged": [
+  {
+   "src": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1M_zero.root",
+   "dst": "/pscratch/sd/j/josephrb/rdx-20261112b/out/stage/zero/runEventLoopOmniFold_5D_1M_zero.root",
+   "bytes": 862899975,
+   "sha256": "f80bb016e78701dde9faf5faf53d0d906430525abaafa753c1a051e2f860cb45"
+  }
+ ],
+ "verdict": "STAGED"
+}
+{
+ "mode": "rdx-equal",
+ "trees": {
+  "data": 591031,
+  "mc_background": 120642,
+  "mc_signal_reco": 5917406,
+  "mc_truth_denom": 5917406
+ },
+ "extra_branches": {
+  "data": [],
+  "mc_background": [],
+  "mc_signal_reco": [
+   "truthx_enu",
+   "truthx_evt",
+   "truthx_kep_lead",
+   "truthx_run",
+   "truthx_subrun",
+   "truthx_vtx_x",
+   "truthx_vtx_y",
+   "truthx_vtx_z"
+  ],
+  "mc_truth_denom": [
+   "truthx_enu",
+   "truthx_evt",
+   "truthx_kep_lead",
+   "truthx_run",
+   "truthx_subrun",
+   "truthx_vtx_x",
+   "truthx_vtx_y",
+   "truthx_vtx_z"
+  ]
+ },
+ "nonscalar_branches_not_compared": {},
+ "failures": [],
+ "verdict": "PASS",
+ "reference": "/pscratch/sd/j/josephrb/rdx-20261112b/out/stage/zero/runEventLoopOmniFold_5D_1M_zero.root",
+ "patched": "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1M.root",
+ "reader": "omnifile_io.read_latest (highest TTree cycle)",
+ "cycles": {
+  "reference": {
+   "mc_truth_denom;11": 5917406,
+   "mc_truth_denom;10": 5506200,
+   "mc_signal_reco;19": 5917406,
+   "mc_signal_reco;18": 5672358,
+   "mc_background;1": 120642,
+   "data;1": 591031
+  },
+  "patched": {
+   "mc_truth_denom;19": 5917406,
+   "mc_truth_denom;18": 5815962,
+   "mc_signal_reco;27": 5917406,
+   "mc_signal_reco;26": 5807984,
+   "mc_background;1": 120642,
+   "data;1": 591031
+  }
+ }
+}
+{
+ "mode": "rdx-truthx-rows",
+ "counts": {
+  "signal_rows": 5917406,
+  "miss_rows": 2333600,
+  "reco_rows": 3583806,
+  "denom_rows": 5917406,
+  "matched_rows": 5917406,
+  "partnerless_rows": 0,
+  "matched_miss_rows": 2333600
+ },
+ "failures": [],
+ "verdict": "PASS",
+ "file": "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1M.root"
+}
+{
+ "staged": [
+  {
+   "src": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1N_zero.root",
+   "dst": "/pscratch/sd/j/josephrb/rdx-20261112b/out/stage/zero/runEventLoopOmniFold_5D_1N_zero.root",
+   "bytes": 499729347,
+   "sha256": "9e9875ec37cd3354650d0c27a042389d86408f0ded08389f1c2ff38ca49e219c"
+  }
+ ],
+ "verdict": "STAGED"
+}
+{
+ "mode": "rdx-equal",
+ "trees": {
+  "data": 415928,
+  "mc_background": 70774,
+  "mc_signal_reco": 3416266,
+  "mc_truth_denom": 3416266
+ },
+ "extra_branches": {
+  "data": [],
+  "mc_background": [],
+  "mc_signal_reco": [
+   "truthx_enu",
+   "truthx_evt",
+   "truthx_kep_lead",
+   "truthx_run",
+   "truthx_subrun",
+   "truthx_vtx_x",
+   "truthx_vtx_y",
+   "truthx_vtx_z"
+  ],
+  "mc_truth_denom": [
+   "truthx_enu",
+   "truthx_evt",
+   "truthx_kep_lead",
+   "truthx_run",
+   "truthx_subrun",
+   "truthx_vtx_x",
+   "truthx_vtx_y",
+   "truthx_vtx_z"
+  ]
+ },
+ "nonscalar_branches_not_compared": {},
+ "failures": [],
+ "verdict": "PASS",
+ "reference": "/pscratch/sd/j/josephrb/rdx-20261112b/out/stage/zero/runEventLoopOmniFold_5D_1N_zero.root",
+ "patched": "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1N.root",
+ "reader": "omnifile_io.read_latest (highest TTree cycle)",
+ "cycles": {
+  "reference": {
+   "mc_truth_denom;7": 3416266,
+   "mc_truth_denom;6": 3325992,
+   "mc_signal_reco;11": 3416266,
+   "mc_signal_reco;10": 3151310,
+   "mc_background;1": 70774,
+   "data;1": 415928
+  },
+  "patched": {
+   "mc_truth_denom;11": 3416266,
+   "mc_truth_denom;10": 3231090,
+   "mc_signal_reco;16": 3416266,
+   "mc_signal_reco;15": 3350760,
+   "mc_background;1": 70774,
+   "data;1": 415928
+  }
+ }
+}
+{
+ "mode": "rdx-truthx-rows",
+ "counts": {
+  "signal_rows": 3416266,
+  "miss_rows": 1374033,
+  "reco_rows": 2042233,
+  "denom_rows": 3416266,
+  "matched_rows": 3416266,
+  "partnerless_rows": 0,
+  "matched_miss_rows": 1374033
+ },
+ "failures": [],
+ "verdict": "PASS",
+ "file": "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1N.root"
+}
+{
+ "staged": [
+  {
+   "src": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1O_zero.root",
+   "dst": "/pscratch/sd/j/josephrb/rdx-20261112b/out/stage/zero/runEventLoopOmniFold_5D_1O_zero.root",
+   "bytes": 150945068,
+   "sha256": "22064448cb42b960e8066882ce6a3dc0fc8a5650eb1fb70f82626222708e6237"
+  }
+ ],
+ "verdict": "STAGED"
+}
+{
+ "mode": "rdx-equal",
+ "trees": {
+  "data": 110836,
+  "mc_background": 22038,
+  "mc_signal_reco": 1042088,
+  "mc_truth_denom": 1042088
+ },
+ "extra_branches": {
+  "data": [],
+  "mc_background": [],
+  "mc_signal_reco": [
+   "truthx_enu",
+   "truthx_evt",
+   "truthx_kep_lead",
+   "truthx_run",
+   "truthx_subrun",
+   "truthx_vtx_x",
+   "truthx_vtx_y",
+   "truthx_vtx_z"
+  ],
+  "mc_truth_denom": [
+   "truthx_enu",
+   "truthx_evt",
+   "truthx_kep_lead",
+   "truthx_run",
+   "truthx_subrun",
+   "truthx_vtx_x",
+   "truthx_vtx_y",
+   "truthx_vtx_z"
+  ]
+ },
+ "nonscalar_branches_not_compared": {},
+ "failures": [],
+ "verdict": "PASS",
+ "reference": "/pscratch/sd/j/josephrb/rdx-20261112b/out/stage/zero/runEventLoopOmniFold_5D_1O_zero.root",
+ "patched": "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1O.root",
+ "reader": "omnifile_io.read_latest (highest TTree cycle)",
+ "cycles": {
+  "reference": {
+   "mc_truth_denom;2": 1042088,
+   "mc_truth_denom;1": 554332,
+   "mc_signal_reco;4": 1042088,
+   "mc_signal_reco;3": 945393,
+   "mc_background;1": 22038,
+   "data;1": 110836
+  },
+  "patched": {
+   "mc_truth_denom;4": 1042088,
+   "mc_truth_denom;3": 969327,
+   "mc_signal_reco;5": 1042088,
+   "mc_signal_reco;4": 909264,
+   "mc_background;1": 22038,
+   "data;1": 110836
+  }
+ }
+}
+{
+ "mode": "rdx-truthx-rows",
+ "counts": {
+  "signal_rows": 1042088,
+  "miss_rows": 448729,
+  "reco_rows": 593359,
+  "denom_rows": 1042088,
+  "matched_rows": 1042088,
+  "partnerless_rows": 0,
+  "matched_miss_rows": 448729
+ },
+ "failures": [],
+ "verdict": "PASS",
+ "file": "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1O.root"
+}
+{
+ "staged": [
+  {
+   "src": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1P_zero.root",
+   "dst": "/pscratch/sd/j/josephrb/rdx-20261112b/out/stage/zero/runEventLoopOmniFold_5D_1P_zero.root",
+   "bytes": 199848958,
+   "sha256": "5efe83f95e9822ff0dbf0780668e187d4857fd97aade631ae6ba19bf917123a1"
+  }
+ ],
+ "verdict": "STAGED"
+}
+{
+ "mode": "rdx-equal",
+ "trees": {
+  "data": 173641,
+  "mc_background": 29222,
+  "mc_signal_reco": 1372703,
+  "mc_truth_denom": 1372703
+ },
+ "extra_branches": {
+  "data": [],
+  "mc_background": [],
+  "mc_signal_reco": [
+   "truthx_enu",
+   "truthx_evt",
+   "truthx_kep_lead",
+   "truthx_run",
+   "truthx_subrun",
+   "truthx_vtx_x",
+   "truthx_vtx_y",
+   "truthx_vtx_z"
+  ],
+  "mc_truth_denom": [
+   "truthx_enu",
+   "truthx_evt",
+   "truthx_kep_lead",
+   "truthx_run",
+   "truthx_subrun",
+   "truthx_vtx_x",
+   "truthx_vtx_y",
+   "truthx_vtx_z"
+  ]
+ },
+ "nonscalar_branches_not_compared": {},
+ "failures": [],
+ "verdict": "PASS",
+ "reference": "/pscratch/sd/j/josephrb/rdx-20261112b/out/stage/zero/runEventLoopOmniFold_5D_1P_zero.root",
+ "patched": "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1P.root",
+ "reader": "omnifile_io.read_latest (highest TTree cycle)",
+ "cycles": {
+  "reference": {
+   "mc_truth_denom;3": 1372703,
+   "mc_truth_denom;2": 1108664,
+   "mc_signal_reco;5": 1372703,
+   "mc_signal_reco;4": 1260524,
+   "mc_background;1": 29222,
+   "data;1": 173641
+  },
+  "patched": {
+   "mc_truth_denom;5": 1372703,
+   "mc_truth_denom;4": 1292436,
+   "mc_signal_reco;7": 1372703,
+   "mc_signal_reco;6": 1363896,
+   "mc_background;1": 29222,
+   "data;1": 173641
+  }
+ }
+}
+{
+ "mode": "rdx-truthx-rows",
+ "counts": {
+  "signal_rows": 1372703,
+  "miss_rows": 590693,
+  "reco_rows": 782010,
+  "denom_rows": 1372703,
+  "matched_rows": 1372703,
+  "partnerless_rows": 0,
+  "matched_miss_rows": 590693
+ },
+ "failures": [],
+ "verdict": "PASS",
+ "file": "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1P.root"
+}
+e042d19173305ea0dcbaf28bcd08077937439e7d9458877d3b6141e4223594ee  runEventLoopOmniFold_RDX_1A.root
+37b48412e62382c8e856db02778e7f85665bccd2223486b177cb71c86c5b78fa  runEventLoopOmniFold_RDX_1B.root
+6f847510a5019e16c4670d04405c6e2bc03cf50436a5fd39e63bfda48953347f  runEventLoopOmniFold_RDX_1C.root
+918b8a15b876f181c5b94b42ab9a04b3346ead63a0a2e5535cd00b0fdf48cd98  runEventLoopOmniFold_RDX_1D.root
+4e9fc2327d19b6aeb0c3a040610721b1ea7bab80d5bb5c21aed3f488a0842ad2  runEventLoopOmniFold_RDX_1E.root
+844cb5e542a539248182e21666f3d6aa388b9ca5f66f52431a76900d3cfefa0e  runEventLoopOmniFold_RDX_1F.root
+a9337e7b213b9b2fa0a33009d54162a0e5b0983411325a02849871f7d1eb995d  runEventLoopOmniFold_RDX_1G.root
+7baadf1017498ed5885d825390017a0f1e8bb9716d09dd09da6942bc07dfa5bf  runEventLoopOmniFold_RDX_1L.root
+ef1cb741122edea6ce26d8d85e902fee2cf73725708fc10c871a573a161ceae2  runEventLoopOmniFold_RDX_1M.root
+7a5c3853eaf7db5feae24b245143603449f9e208ebec8f8feb86bb2d15d9a020  runEventLoopOmniFold_RDX_1N.root
+9562f0eb27447c079359f3c45df0dc7c709acf1605b68be147f7648ed505b94a  runEventLoopOmniFold_RDX_1O.root
+f6b6a137e2000b4e4e25ea52e9c4950deb271de76bad1f6fe8718d4c39dfd464  runEventLoopOmniFold_RDX_1P.root
+STAGE 2 CHECKS PASS
+== rdx connect c2 rc=0 2026-11-17T02:06:41Z
+script rc=0
+launcher rc=0

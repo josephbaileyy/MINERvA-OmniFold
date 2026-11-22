@@ -1,0 +1,86 @@
+# Bulk HPSS copy of LL5D's $U (package; DRAFT for the director and coverage-5b-audit)
+
+$U is `/pscratch/sd/j/josephrb/ll5d-unfolds-r2`: 1759 files, 503,722,891 bytes. The director's rulings of 2026-11-16:
+- (a) the pins of record are proposals 1-4 below;
+- (b) the 97 atime sidecars are included;
+- (c) it is one archive in four groups.
+The kit is RSN's reviewed one (fd/referee-sensitivity-20261111/hpss/, kit rev 2; its run-20261112 printed `ARCHIVE
+PASS`). Only its list and target change:
+- `hpss_ll5d_u.template.sh` is `hpss_rsn.template.sh` (7aaa9a06) with five lines changed: OUT, H, W, GROUPS_IN_ORDER
+  and N_ROWS (`template-vs-rsn-7aaa9a06.diff.txt`). Its header comments still describe RSN's run; the code is
+  unchanged. (After the run, a sixth line changed: see "Follow-up" below.)
+- `hpss_ll5d_u_launch.sh` is `hpss_rsn_launch.sh` (cd826dbd) with four lines changed: OUT, H, the list with its
+  sha256, and the archive script with its sha256 (`launch-vs-rsn-cd826dbd.diff.txt`).
+- `make_hpss_script.py` is byte-identical (d2f2a43a). `hpss_ll5d_u.sh` is the template with the list embedded; the
+  list it extracts with its own sed equals `hpss_ll5d_u_list.tsv` byte for byte.
+
+**The pins (`hpss_ll5d_u_list.tsv`, 1759 rows, sha256 980bb95e…).** `u_manifest.py` is a read-only manifest of $U,
+run on login02 on 2026-11-16. It read every file by O_NOATIME and printed each file's sha256, size and atime before and
+after (`u_manifest.raw.tsv.txt`): 1759 files, atime moved 0. `check_manifest.py` (`check_manifest.out.txt`, PASS)
+then ties the manifest to the rulings before it becomes the list:
+1. **null_roles (454):** each truth's products digest, made from the manifest exactly as ll5d_b.products_digest makes
+   it, equals the null record's products_sha256: g18 c16e9ce0…, ar23 b716657b….
+2. **extras (8):** the clipmean and data_control products. All 13 of the pilot's extras evidenced in
+   bulk/evidence/extras-vs-pilot-r2.out.txt (these 8, plus 3 null-role and 2 toy products) equal the manifest.
+3. **toys (1200)** and **4. sidecars (97):** the manifest is their pin of record. Each readout record watched 832 paths,
+   its truth's 227 products and 600 toys among them, and none moved (receipts-ll5d/readout/README.md). The readout's
+   1146-path atime-post covered the protected inputs, not $U's products (`products 1654 (in atime-pre: 0)`). Nothing
+   has written $U since the bulk, and the manifest pass moved no atime.
+The four groups partition all 1759 files. At run time the kit stages each file by O_NOATIME copy, and the bytes must
+equal its pin, so for the toys and the sidecars two independent O_NOATIME reads must agree.
+
+**What runs** (the director's go, on a login node via the launcher's survey, probe and archive modes): per group, the
+O_NOATIME stage into /dev/shm (2 x the group's bytes + 256 MiB of headroom), then htar -Hcrc -Hverify=1, hsi
+hashcreate and hashverify, then every member retrieved and re-hashed. The target is
+`/home/j/josephrb/mnv-ll5d-unfolds-r2-20261116/` and must not exist beforehand. The output goes to
+`/pscratch/sd/j/josephrb/hpss-ll5d-u-20261116/`. HPSS has about 51.7 GiB free (hpssquota, 2026-11-16) for about
+0.5 GB. Nothing is deleted on pscratch or HPSS.
+
+**CANNOT AUTHORIZE:** any removal of $U. That stays Joseph's, after this archive is verified.
+
+## Run of 2026-11-16 (the director's go): `ARCHIVE PASS`
+
+The launcher ran three modes in order. `run/session/` holds each mode's stdout and stderr (stderr is the NERSC login
+banner), and `fetch.archive.log.txt` is the archive log as fetched.
+1. **survey** ran on login02 at 13:49:07Z. It printed tools, quotas and /dev/shm.
+2. **probe** ran on login14 at 13:49:37Z. The HPSS home exists. The target printed `HPSS_ENOENT` (rc 64), and `ls` of the output
+   dir printed "No such file or directory". O_NOATIME was True, and two stat passes printed 1759 ok.
+3. **archive** ran on login14 from 13:50:58Z to 13:51:34Z. The staged script's sha256 was 2f330bc9…, equal to
+   `hpss_ll5d_u.sh` as run (commit 8fcdd4bb). The launcher printed rc 0.
+
+`run/cluster/` is the fetched output tree (`post.tar.gz`, sha256 9e775e05…, recorded in the fetched log's last line).
+It holds `logs/` (each `.log` stored as `.log.txt`, since the repository ignores `*.log`) and `manifests/`. Two files were left out because they are byte-identical to committed ones: the run's
+script copy (sha256 2f330bc9…, equal to `hpss_ll5d_u.sh` at 8fcdd4bb) and its `archive_list.tsv` (980bb95e…, equal to
+`hpss_ll5d_u_list.tsv`). `logs/archive.log.txt` printed `PREFLIGHT OK` and then these lines for each group:
+
+| group | staged files | bytes | manifest sha256 | htar | hashverify | retrieve |
+|---|---|---|---|---|---|---|
+| null_roles | 454 | 76,233,291 | 929202da… | rc 0, 0 verify errors | (md5) OK | 454 re-read, equal to pin |
+| toys | 1200 | 421,937,891 | 00d13797… | rc 0, 0 verify errors | (md5) OK | 1200 re-read, equal to pin |
+| extras | 8 | 1,135,872 | 964de49f… | rc 0, 0 verify errors | (md5) OK | 8 re-read, equal to pin |
+| sidecars | 97 | 4,415,837 | 710759e9… | rc 0, 0 verify errors | (md5) OK | 97 re-read, equal to pin |
+
+Each `manifests/SHA256SUMS.<group>` hashes to the sha256 above. On HPSS, `hsi ls` (`logs/hsi-ls-after.txt`) lists
+extras.tar 1,145,344, null_roles.tar 76,614,656, sidecars.tar 4,505,600 and toys.tar 423,021,056 bytes, each with its
+.idx. hpssquota printed 460.25 GiB of 512 GiB both before and after. The log ends with `ARCHIVE PASS` and
+`hpss archive rc=0`. The staging dir /dev/shm/josephrb-hpss-ll5d-u was removed ("present after: no"). Nothing was
+deleted on pscratch or HPSS.
+
+The final line reads "all three groups". That wording is left over from RSN's kit, and this run has four groups; all
+four printed `PASS`.
+
+**Follow-up (2026-11-16, the director's order): the final line prints the group count.** The template's last echo now
+reads `all $(set -- $GROUPS_IN_ORDER; echo $#) groups ($GROUPS_IN_ORDER)`, which prints `all 4 groups (null_roles toys
+extras sidecars)` here. This is the template's sixth line changed against RSN's (`template-vs-rsn-7aaa9a06.diff.txt`,
+regenerated). `hpss_ll5d_u.sh` was rebuilt with `make_hpss_script.py`, and its embedded list still equals
+`hpss_ll5d_u_list.tsv`. The launcher's script pin moved with it (`launch-vs-rsn-cd826dbd.diff.txt`, regenerated).
+
+| file | as run (8fcdd4bb) | now |
+|---|---|---|
+| `hpss_ll5d_u.template.sh` | 59a51895… | c525be7a… |
+| `hpss_ll5d_u.sh` | 2f330bc9… | a620d482… |
+| `hpss_ll5d_u_launch.sh` | 371d05bf… | 32fc13bf… |
+
+The run records above are unchanged, since they are what ran. A rerun of the changed kit would refuse: the template refuses when $OUT or $H exists (`hpss_ll5d_u.template.sh:58` and `:66`), and both do.
+
+$U still sits on pscratch. Removing it remains Joseph's decision.

@@ -1,0 +1,319 @@
+# DECISION 2026-11-16 — Joseph: the batch of paper, Supplement and note decisions (A–F); "Descriptive" kept and explained; Fig. 1's histogram panel; a shorter abstract; §4 "Comparisons on data"
+
+**Recorded by** the paper-tighten lane, as director.
+
+## What led to it
+
+The director put a batch of decisions to Joseph (`~/director-tools/BATCH-joseph-20261116.md`, not tracked). Each item
+gave the director's recommendation and, where one existed, a codex-school referee's:
+- **A, the five-observable (LL5D) coverage result:**
+  - A1, the label;
+  - A2, the §6.3 repair sentence;
+  - A3, the abstract;
+  - A4, the table words;
+  - A5, §7;
+  - A6, the GEANT4 bound sentence.
+- **B:** the §5.3 prior-retention sentence.
+- **C3 and C4:** the AI-use statements.
+- **E2:** the note's sentences that rest on unreleased records.
+- **F1–F6:** items from an independent referee read.
+
+## Joseph's answer, verbatim
+
+> A1. Keep A2. I feel like we didn't look at the actual results right? So we don't need to call it descriptive. Maybe we should redefine descriptive to mean the something along the lines of influenced by results, which is less strong of a description but maybe more honest? Can you ask a referee A3 & A4 this probably needs to be reevaluated based on A2. A5 I like the recommendation A6. yes looks good B. Looks good C3. no for now but I will look into it C4. agree E2. agree F1. looks good F2. qualify but add this as an open item right? F3. agree F4. can we just see what it looks like? F5. agree F6. agree
+
+sha256 of the text plus a final newline begins `9c5c7fb1afab1163`.
+
+## What is decided
+
+1. **A1, A2, A3 and A4 are open.**
+   - Joseph questions whether the "Descriptive" status applies, since no coverage result had been seen when the repair
+     was chosen, and asks for a referee's view.
+     <!-- absence-ok: reports Joseph's premise, which the referee read tests; not a claim of this record -->
+   - A codex-school referee is reading the question against these records:
+     - `DECISION-20261109-joseph-coverage-case-wording.md` item 2;
+     - `LL5D-DECLARATION.md`, the STOP rule and §3.6;
+     - the gate STOP receipt;
+     - amendment A1a.2.
+   - The abstract (A3) and the table words (A4) are re-read under the answer. Joseph decides all four after the read.
+   - Until then, the "Descriptive" status and its caption stand as `DECISION-20261109-joseph-coverage-case-wording.md`
+     item 2 fixed them.
+2. **A5.** §7 is accepted, with this sentence added: "Whether the joint failure persists with the response and
+   run-period terms included remains untested."
+   <!-- absence-ok: quoted paper wording approved by Joseph; its support is the LL5D readout, not this record -->
+3. **A6.** The §6.3 sentence on the GEANT4 bands' covariance block is approved as the batch gives it: "Removing the two
+   bands' block from the covariance graded with them raises the chi-square of any fixed set of residuals by at most a
+   factor of 1.071 at G18 and 1.095 at AR23, a bound set by the largest fraction of that covariance, in any direction,
+   that the block carries. The bound applies to the block's place in the covariance only, not to the bands'
+   pseudo-data draws, and what separates the bands' pseudo-experiment and simulation-side blocks remains
+   unclassified."
+4. **B.** §5.3 takes the alternative with the clause: "Reducing the iteration count from five to two increased ρ beyond
+   the threshold at the q3 tilt. Reducing capacity to 25 trees and four leaves, or restricting all three learners to
+   (pT, p∥), increased ρ beyond the threshold at both flagged truths. These settings also newly flagged 3, 3 and 6 of
+   the other ten graded truths, respectively, in the noise-free study. Dropping W alone, or W and q3, changed ρ by less
+   than 0.03."
+5. **C3.** The delegation sentence stays in both AI-use statements as `DECISION-20261114-joseph-ai-use-statement.md`
+   gives them. **No Methods paragraph for now.** Joseph will look into APS's expectation, which stays an open item.
+6. **C4.** The cross-developer review sentence stays in the note only, as "Reviews included models from multiple
+   developers". It is dropped from the paper.
+7. **E2.** The note's sentences resting on unreleased records are handled selectively:
+   - the support for the current results, plus a compact timestamped decisions record, goes into the deposit;
+   - the superseded history is shortened, not deposited;
+   - the release-status narration is replaced by the deposit identifier and checksums, filled at the freeze;
+   - "a priori" becomes "No hyperparameter search was performed on data."
+8. **F1.** The Data availability sentence becomes: "Playlist 1A is from an earlier production of that release; the
+   other playlists match the current release."
+9. **F2.** Finite-replica covariance noise is qualified, with no new study. The text says:
+   - the false-flag rates are conditional on a fixed-covariance null;
+   - covariance estimation can inflate spread in weak eigenmodes;
+   - the verdicts stand.
+
+   It is also an **open item**: a row in the limitations register, status open.
+10. **F3.** The 2D shape difference is not attributed to the unfolding method.
+11. **F4.** Joseph asks to see Fig. 1 with a pull histogram in place of its text panel before deciding. The director
+    makes a mock-up outside the repository. The pinned figure is unchanged until Joseph decides.
+12. **F5.** One bounded editorial pass on §7 and §5.4 only, after the prep branches are merged into the draft.
+13. **F6.** The note's executive summary is aligned with the paper's framing: the sixteen-cell output is an
+    illustration of the method, not "the principal result".
+
+## Joseph's second answer, after the two referee reads, verbatim
+
+> I like the recommendation for A1-A4. for fig 1, lets do B' and change RMS. For the section 4 title, can we get a referee read on this too?
+
+sha256 of the text plus a final newline begins `fa9b15589e6dabe5`.
+
+The two reads are in `stageF/methods/secondary-results/referee-descriptive-fig1-20261116/`, each with its prompt and its answer verbatim:
+- `descriptive/` covers A1–A4;
+- `fig1/` covers F4.
+
+**This supersedes item 1 and item 11 above:**
+
+14. **A1–A4: the referee's option (b).** "Descriptive" is kept and explained precisely. It is not redefined as
+    "influenced by results".
+    - Every tune and variant keeps the status **Descriptive**.
+    - **The caption adds:** "For the second five-observable coverage test, 'Descriptive' means that the criteria fixed in
+      advance were applied, but a repair was chosen after an entry-check STOP. No coverage pseudo-experiment had been
+      unfolded or graded; other gate readings were already visible."
+    - **The repair paragraph (§6.3):** "At both tunes, an event-matching entry check stopped the earlier run because it
+      compared float64 and float32 weight keys and reported every row unmatched. The repair, chosen after this STOP,
+      keyed both sides at float32 before any coverage pseudo-experiment was unfolded or graded, but after other gate
+      readings were visible. It changed no rule, threshold, bound or reporting cell. Under the rule fixed before the
+      result, the rerun is reported as descriptive (Supplement, §S8.5)." The Supplement pointer is checked against
+      its target.
+    - **The abstract.** Only its coverage and repair sentences take the referee's form. Every other sentence keeps its
+      current wording. The abstract stays at or under 250 words, and the diff goes to Joseph.
+    - **The Table 2 entry and Supplement row 10** take the referee's text. It opens with "Descriptive.", gives the flags
+      per tune and variant, then the repair clause and the over-coverage qualifier.
+    - **§7:** the referee's three replacements are applied:
+      - the opening coverage passage;
+      - the five-check parenthesis;
+      - limitation 5's second-test sentence.
+    - Each changed sentence gets a meaning read, and its numbers are keyed.
+15. **F4: Fig. 1 takes version B′.**
+    - The bottom-right text panel becomes a histogram of the 205 standardized bin differences r_i:
+      - full range and no clipping;
+      - zero centred in a bin;
+      - no Gaussian or other reference curve;
+      - "205 bins, mean, SD" printed in the panel;
+      - the colour bar labelled r_i.
+    - The two median relative uncertainties move into the caption.
+    - The caption describes the distribution as descriptive: the results share data and systematic uncertainties,
+      their cross-covariance is unavailable, and the distribution is no compatibility test.
+    - The producer (`publication/release/figs/make_figs.py`) changes, so its pins and the figure's records are
+      re-pinned under the usual identity rule. The drawn data are unchanged.
+16. **"RMS" becomes "standard deviation".** The printed 0.535 (`\pullRMS`) is `numpy.std`, the spread about the mean.
+    The root mean square is 0.539. Every printed "RMS" of this quantity is relabelled "standard deviation", in the
+    paper, the figure and the note. The value is unchanged.
+17. **§4's title** is open, pending a referee read. The question arises because §5.4, the sixteen-cell comparison with
+    binned iterative unfolding on data, moves to §4.5 under F5. Until Joseph rules, the title and Table 1's block
+    heading stay as they are.
+
+## Joseph's third and fourth answers, verbatim
+
+> For the abstract: Isn't the abstract supposed to be abstract and isn't it too specific to mention specific cells in it? what does the referee think? This is partially why a short abstract is nice. Maybe this occurs in the abstract with things other than the coverage too right? For section for, lets do your recommendation. we can keep the data preservation paragraph for now, since we will be editing it more as we start uploading the files
+
+sha256 of the text plus a final newline begins `842cce3b935a7e6d`. Then, after the abstract read:
+
+> yes I like the new abstract and we can use the lowercase stop
+
+sha256 begins `8ab070873e258359`. The two reads are in
+`stageF/methods/secondary-results/referee-abstract-s4title-20261116/`.
+
+**These supersede item 14's abstract bullet and item 17:**
+
+18. **The abstract is replaced whole** by the referee's 198-word form (`abstract/answer.txt` §3). It names no cells,
+    tunes or band variants, and keeps the descriptive disclosure.
+    - Each sentence gets a meaning read against the paper and its summary table before it prints, and is keyed.
+    - Where the read shows a sentence is not true as written, the sentence is narrowed to what is true, and Joseph sees
+      the final text and its diff before the push.
+    - The introduction's findings paragraph gains what leaves the abstract (`abstract/answer.txt` §4):
+      - the two flagged truths, and binned unfolding's directional overshoot;
+      - the averaging trade-off;
+      - both estimators' under-coverage, with the tests' restricted scope and the second five-observable test's
+        descriptive status;
+      - the run-period inconsistency.
+19. **§4's title** becomes "Comparisons on data", the director's recommendation after the referee read. Table 1's
+    block heading changes to match. §4.2 becomes "Paired comparisons of two-dimensional unfoldings", and the new §4.5
+    becomes "Algorithm dependence of the sixteen-cell result". The referee's optional edits to the introduction and to
+    §7 are not made.
+20. **The data-preservation paragraph** stays as it now reads on draft/note-round2-20261108 (`721fe926a`), including
+    E2's one-sentence change. It will be edited further as the deposit's files are uploaded.
+21. **"STOP" becomes "stop"** in every printed site of the paper and the Supplement.
+
+## Joseph's fifth answer, verbatim
+
+The meaning read of item 18's abstract found that one sentence overstated, and three smaller points. The director put
+four recommendations to Joseph.
+
+> I like your recommendations for all 4 decisions
+
+sha256 of the text plus a final newline begins `5126ab22378d993b`.
+
+22. **The overshoot sentence** reads "At the two flagged truths, binned unfolding at five iterations overshoots along
+    the prior-to-truth direction." Its readout's ρ is positive at one and two iterations and turns negative only from
+    three, so the unqualified form overstated.
+23. **The settings sentence** reads "Tested settings change prior retention but remove neither bias flag." Every tested
+    OmniFold level leaves both truths flagged, so "do not remove both" understated.
+24. **"Descriptive" in the body.**
+    - Table 1's caption defines the status for both uses: the second five-observable coverage test, and the per-cell
+      bias-half diagnostic.
+    - The Supplement's "the bias-half rule, is graded" becomes "is applied descriptively", or the nearest accurate
+      wording after a meaning read.
+    - Both go in the F5 editorial pass.
+25. **The release appendix's plotting-code sentence** (RL-25) reads "with RC7's plotting code extended to draw this
+    analysis's band and the distribution of standardized bin differences". The director took the first of the two
+    options offered: update it now.
+
+## Joseph's sixth answer, verbatim
+
+After the final paper referee read (minor revision, 7.0/10) and an independent Fable 5.2 read of the note, the director
+put Joseph seven paper wording items and seven note decisions, each with a recommendation.
+
+> I agree with your recommendations except I think we can do the cutdown because Ben probably won't ever read the whole note. I can have fable do it if you want, just give me the prompt
+
+sha256 of the text plus a final newline begins `7f8edd6d7a76d5bf`.
+
+**The paper.**
+
+26. **The abstract:**
+    - "Tested settings of the five-observable estimator change prior retention but remove neither bias flag."
+    - The coverage scope: "The coverage tests exclude the run-period term from the tested covariance, and the
+      five-observable test also excludes the response term. They find joint under-coverage for both estimators at both
+      held-out truths in all completed coverage variants."
+    - "A descriptive local screen also finds bias exceeding half the truth's departure from the prior in some regions."
+    - The abstract is not restructured, and no numbers are added.
+27. **The release appendix's RL-25 sentence:** "…extended to draw this analysis's band and, in place of RC7's text
+    panel, the distribution of standardized bin differences".
+28. **§7:** "Whether bias in the hadronic distributions, correlated with the muon kinematics, contributes to the
+    two-dimensional shape difference is open."
+
+**The note.**
+
+29. **Framing:** a methods study. This decides OI-205 (`docs/OPEN_ITEMS.md`), whose closure the limitations lane
+    records.
+30. **Generator predictions:** the carbon predictions are primary, as in the paper. The CH-corrected predictions are a
+    secondary table with their caveat.
+31. **The five-axis covariance (C_Z):** the executive summary's status sentence is narrowed to what holds. C_Z is not
+    supported as an uncertainty product; §9 uses it only as a descriptive scale for configuration-(a) bias comparisons.
+32. **The abstract and the executive summary** add that the two-observable covariance under-covers at both held-out
+    tunes, and that no reported interval has validated coverage.
+33. **§12 (extended fiducial)** is reduced to one paragraph, with its caveat.
+34. **The note is cut down now**, not after Ben's read: the methods-study target of about 45,900 words, under the
+    2026-11-13 history rule. A Fable session makes the cuts on its own branch, from the prompt at
+    `~/codex-reports/PROMPT-fable-note-cutdown.txt`, which is not tracked. It starts after the note's corrections branch
+    is merged. The director reviews and merges.
+35. **The paper and Supplement go to Ben first.** The note follows when its corrections and cutdown land.
+
+## Joseph's seventh answer, verbatim
+
+The meaning read of items 26 and 28 found that item 28's §7 sentence was not true in the paper's own terms: the 2D
+estimator's inputs are the muon variables only, and "bias" means unfolded minus true. It also found that item 26's
+"both estimators" could be read as OmniFold and binned unfolding, whose coverage was never tested. The director put two
+replacements to Joseph.
+<!-- absence-ok: reports the meaning read's scoping finding (no coverage test of binned unfolding is in the paper), recorded in helper-3's read; not a new claim -->
+
+> okay yes to boht
+
+sha256 of the text plus a final newline begins `e28f96ed986afb80`.
+
+**These supersede the two sentences in items 26 and 28:**
+
+36. **§7:** "Whether a difference between the data's and the simulation's hadronic distributions at fixed muon kinematics
+    contributes to the two-dimensional shape difference is open."
+37. **The abstract:** "They find joint under-coverage for the two- and five-observable estimators at both held-out
+    truths in all completed coverage variants."
+
+## Joseph's eighth and ninth answers, verbatim: the record inventory and the readability batch
+
+Joseph asked for the paper to be made as easy to read as possible, in journal prose, before Ben's read. He named four
+problems:
+- the abstract tries to say too much, is too technical, and leaves the contribution unclear;
+- the introduction is clear but not compelling;
+- some passages are hard to read on a first pass;
+- the Supplement is hard to navigate.
+
+He supplied an online LLM's review he largely agreed with. Three codex reviewers drafted proposals:
+- r1 (codex-school): the abstract and introduction;
+- r2 (codex-school2): the 20 hardest passages;
+- r3 (codex-school): Supplement navigation.
+
+The director proposed a grouped abstract. Helper-3 listed the paper's three printed holds.
+
+> 1. (the inventory) I like your recommendation.
+
+sha256 of the text plus a final newline begins `fcf42ff8c36306a1`. Then, on the readability proposals:
+
+> this misses the fact that the published measurement is a binned unfolding. In general I like this rewrited version more though. 2. and 3. , lets adopt these 4. yes lets do that, can we add the heatmap to a list of things to look at while I give Ben the papers to review? 5. lets do it
+
+sha256 of the text plus a final newline (as pasted, with its leading space) begins `1f1b8af11e3c6807`.
+
+38. **The §7 record inventory leaves the paper.**
+    - It moves, unchanged apart from the corrected first-test row, to a tracked draft-only cover sheet beside the draft
+      that carries the same gates. §7 prints nothing in its place.
+    - The corrected row cites FD-1B-DIAG-REPORT.md, FD-1B-INV-I2-REPORT.md, OUTCOME-20261108-1b-precheck-part1.md and
+      OUTCOME-20261106-1b-stage1-receipt-stop.md, and adds the note pointers.
+    - This supersedes the 2026-11-11 placement of the inventory in §7.
+    - The funding and deposit holds stay in the paper until Joseph supplies the text and authorizes the release.
+39. **The abstract is replaced whole** by the director's grouped form. It carries Joseph's correction: the published
+    measurement is named as a binned unfolding. This supersedes items 18, 22, 23, 26 and 37's abstract sentences.
+
+    > Unbinned machine-learning unfolding can pass conventional closure tests and still fail more demanding ones. We show this for one OmniFold implementation that unfolds five observables simultaneously in MINERvA open data. A descriptive benchmark against the published two-observable measurement, made with binned iterative unfolding, agrees in normalization but differs in shape. On the same inputs, OmniFold also differs from binned iterative unfolding. When the simulated truth is changed, the five-observable estimator retains part of its prior. Some regions move opposite to the change, and fake-data tests flag bias at two truths that no tested estimator setting removes. Rounding-level changes of the inputs violate its stability requirement, although its training is reproducible. Coverage tests of both estimators' covariances, which omit the run-period and, for five observables, the response terms, find joint under-coverage at both held-out truths. The five-observable coverage result is descriptive because its repair was chosen after an earlier run stopped. No reported interval has validated coverage, and the five-observable output is presented only as an illustration. From these studies we give five checks to make before the intervals of an unbinned unfolding are interpreted.
+
+    Five findings leave the abstract for the introduction's findings paragraphs:
+    - the descriptive bias-half screen;
+    - event migration in some regions;
+    - binned unfolding's overshoot at five iterations;
+    - the averaging trade-off;
+    - the run-period inconsistency.
+40. **The introduction:** r1's rewrite.
+    - The opening asks a motivating question, then says why MINERvA open data are a good test case.
+    - The findings paragraphs lead with a plain sentence. They carry the five items that leave the abstract.
+    - A closing contribution sentence states the study's bounds.
+    - The roadmap sentences are cut.
+41. **The 20 hardest passages:** r2's rewrites, in result, interpretation, qualification order, plus its items (a)–(c).
+    - (a) The two screens' pass counts are side by side.
+    - (b) The ensemble's bias deterioration is given with its size.
+    - (c) Fig. 4 gets a pointer.
+    - Rewrite #3 moves item 3's GEANT4 bound sentence from §6.2 to Supplement S8.5, verbatim.
+42. **A schematic figure at §3.3:** closure → changed-truth recovery → stability → coverage, drawn without data, with
+    r2's caption.
+43. **Supplement navigation:** r3's proposals.
+    - A one-page definitions table at the front.
+    - A road map.
+    - One-sentence redirects in place of trips to the note.
+    - Repetition merged behind pointers.
+    - Table-layout fixes.
+44. **A follow-up list for Ben's review period** (`methods-short-20261109/FOLLOW-UP-DURING-BEN-REVIEW.md`). Its first
+    item is a heatmap of Fig. 3's recovery over (E_avail, W).
+
+Every edit gets a meaning read; nothing is dropped and no claim changes.
+
+## CITABLE FOR / NOT CITABLE FOR
+
+- **Citable for:** the wording choices above as Joseph's; A1–A4 as open.
+- **Not citable for:**
+  - any coverage, bias or covariance result;
+  - a referee's view as a finding;
+  - a locked wording. Every sentence stays open to the remaining referee reads and to Joseph.
+
+Nothing is submitted, deposited or tagged.

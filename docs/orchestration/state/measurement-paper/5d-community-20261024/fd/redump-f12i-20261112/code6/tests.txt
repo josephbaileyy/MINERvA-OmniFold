@@ -1,0 +1,50 @@
+# HEAD d24897fea64dc4608172b57735bccd7b3d361aa6
+# clean clone, serial, Python 3.12.2, numpy 1.26.4, 2026-11-18T08:19:21Z
+# cc25f176d2aa01528389a08e7aca5ffa2e2b9950835c76a55028f28a759e1d44  rdx_read.py
+# 6a5f42a92e3855bf8393e5be5d3e640ce67059a5c359129449aae817c92ac975  test_rdx_read.py
+# 13e5501e29cf726b5ea04ead27a90b683ff6f9797bb6cafdf22ca0e652813470  rdx_read_mutation.py
+# 4dd37197f6aa6c7f013b3ffea5558fd8d8fd1bc124047f761269adafce87e484  ../rsn/rsn_read.py
+# aaa81575b211f50e007fa75d318fd8d4f48bfb98ac5ae62b398dbf33db37d4ca  ../pv-ladder/build_cmodel5d.py
+# command: python3 -B -m unittest -v nd-unfolding/rdx/test_rdx_read.py
+test_a_cell_integral_must_be_sixteen_finite_values (nd-unfolding.rdx.test_rdx_read.Guards.test_a_cell_integral_must_be_sixteen_finite_values) ... ok
+test_a_clean_set_is_checked_and_read (nd-unfolding.rdx.test_rdx_read.Guards.test_a_clean_set_is_checked_and_read) ... ok
+test_a_closure_familys_truths_must_agree (nd-unfolding.rdx.test_rdx_read.Guards.test_a_closure_familys_truths_must_agree) ... ok
+test_a_malformed_product_line_refuses_and_chatter_does_not (nd-unfolding.rdx.test_rdx_read.Guards.test_a_malformed_product_line_refuses_and_chatter_does_not) ... ok
+test_a_product_that_is_not_its_declared_task_refuses (nd-unfolding.rdx.test_rdx_read.Guards.test_a_product_that_is_not_its_declared_task_refuses) ... ok
+test_a_repeated_archive_member_or_json_key_refuses (nd-unfolding.rdx.test_rdx_read.Guards.test_a_repeated_archive_member_or_json_key_refuses) ... ok
+test_a_sha_that_is_not_the_jobs_refuses (nd-unfolding.rdx.test_rdx_read.Guards.test_a_sha_that_is_not_the_jobs_refuses) ... ok
+test_a_transfer_cell_bias_read_must_be_sixteen_values (nd-unfolding.rdx.test_rdx_read.Guards.test_a_transfer_cell_bias_read_must_be_sixteen_values) ... ok
+test_nc_x_is_bitwise_on_xsec_flat_and_shape (nd-unfolding.rdx.test_rdx_read.Guards.test_nc_x_is_bitwise_on_xsec_flat_and_shape) ... ok
+test_parameters_must_be_present_and_x0s (nd-unfolding.rdx.test_rdx_read.Guards.test_parameters_must_be_present_and_x0s) ... ok
+test_parameters_outside_the_producers_domain_refuse (nd-unfolding.rdx.test_rdx_read.Guards.test_parameters_outside_the_producers_domain_refuse) ... ok
+test_phi_and_sigma_are_committed_finite_and_positive (nd-unfolding.rdx.test_rdx_read.Guards.test_phi_and_sigma_are_committed_finite_and_positive) ... ok
+test_product_arrays_must_be_the_fine_grids (nd-unfolding.rdx.test_rdx_read.Guards.test_product_arrays_must_be_the_fine_grids) ... ok
+test_scalars_have_the_producers_json_types (nd-unfolding.rdx.test_rdx_read.Guards.test_scalars_have_the_producers_json_types) ... ok
+test_the_directory_must_hold_exactly_the_fifteen (nd-unfolding.rdx.test_rdx_read.Guards.test_the_directory_must_hold_exactly_the_fifteen) ... ok
+test_the_licensed_and_outcome_sentences_are_section_4s_characters (nd-unfolding.rdx.test_rdx_read.Guards.test_the_licensed_and_outcome_sentences_are_section_4s_characters) ... ok
+test_the_logs_print_each_task_once_in_its_own_jobs_log (nd-unfolding.rdx.test_rdx_read.Guards.test_the_logs_print_each_task_once_in_its_own_jobs_log) ... ok
+test_the_producers_committed_parameters_pass (nd-unfolding.rdx.test_rdx_read.Guards.test_the_producers_committed_parameters_pass) ... ok
+test_the_task_table_and_manifests_are_bound_and_unique (nd-unfolding.rdx.test_rdx_read.Guards.test_the_task_table_and_manifests_are_bound_and_unique) ... ok
+test_the_transfer_counts_are_consistent (nd-unfolding.rdx.test_rdx_read.Guards.test_the_transfer_counts_are_consistent) ... ok
+test_the_transfer_records_are_the_producers (nd-unfolding.rdx.test_rdx_read.Guards.test_the_transfer_records_are_the_producers) ... ok
+test_a_nonpositive_reference_refuses (nd-unfolding.rdx.test_rdx_read.Readings.test_a_nonpositive_reference_refuses) ... ok
+test_an_excess_beyond_half_sigma_is_a_named_sensitivity (nd-unfolding.rdx.test_rdx_read.Readings.test_an_excess_beyond_half_sigma_is_a_named_sensitivity) ... ok
+test_an_excess_exactly_at_half_sigma_is_licensed (nd-unfolding.rdx.test_rdx_read.Readings.test_an_excess_exactly_at_half_sigma_is_licensed) ... ok
+test_r2_classes_x1w_against_x1_and_only_qualifies (nd-unfolding.rdx.test_rdx_read.Readings.test_r2_classes_x1w_against_x1_and_only_qualifies) ... ok
+test_r3_reads_the_last_iteration_and_the_difference (nd-unfolding.rdx.test_rdx_read.Readings.test_r3_reads_the_last_iteration_and_the_difference) ... ok
+test_r3_reports_bitwise_whether_the_probe_left_the_loop_untouched (nd-unfolding.rdx.test_rdx_read.Readings.test_r3_reports_bitwise_whether_the_probe_left_the_loop_untouched) ... ok
+test_r4_at_the_prior_subtracts_the_refit_null (nd-unfolding.rdx.test_rdx_read.Readings.test_r4_at_the_prior_subtracts_the_refit_null) ... ok
+test_r4_in_w1_still_licenses (nd-unfolding.rdx.test_rdx_read.Readings.test_r4_in_w1_still_licenses) ... ok
+test_r4_prior_is_the_signed_residual_and_a_larger_null_flags (nd-unfolding.rdx.test_rdx_read.Readings.test_r4_prior_is_the_signed_residual_and_a_larger_null_flags) ... ok
+test_r4_q3_and_the_weight_at_the_prior (nd-unfolding.rdx.test_rdx_read.Readings.test_r4_q3_and_the_weight_at_the_prior) ... ok
+test_r4_reads_each_closure_against_its_familys_truth (nd-unfolding.rdx.test_rdx_read.Readings.test_r4_reads_each_closure_against_its_familys_truth) ... ok
+test_the_excess_is_beyond_the_null (nd-unfolding.rdx.test_rdx_read.Readings.test_the_excess_is_beyond_the_null) ... ok
+test_the_refit_null_at_w2_makes_r1_unattributable (nd-unfolding.rdx.test_rdx_read.Readings.test_the_refit_null_at_w2_makes_r1_unattributable) ... ok
+test_the_refit_null_takes_precedence_over_a_sensitivity (nd-unfolding.rdx.test_rdx_read.Readings.test_the_refit_null_takes_precedence_over_a_sensitivity) ... ok
+test_the_weight_at_the_prior_is_never_silent (nd-unfolding.rdx.test_rdx_read.Readings.test_the_weight_at_the_prior_is_never_silent) ... ok
+
+----------------------------------------------------------------------
+Ran 36 tests in 0.678s
+
+OK
+# exit 0

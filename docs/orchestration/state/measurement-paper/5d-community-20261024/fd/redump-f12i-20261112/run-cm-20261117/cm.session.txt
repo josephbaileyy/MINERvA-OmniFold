@@ -1,0 +1,292 @@
+ssh rc=0
+node login27 staged sha256 52ad6a0edf92b4ed31058d27c2a9793042f425befcfc0268176707593c295cc6
+detached pid 1224361, output /dev/shm/rdxc.1223935.sh.out
+node login27 2026-11-17T05:06:59Z step cm pin ad0535c4a62ac0a20711a4a00f2266ddaf926d7c; connect script sha256 52ad6a0edf92b4ed31058d27c2a9793042f425befcfc0268176707593c295cc6
+== the purge-exposed MP-1 inputs (stat only)
+{
+ "files": [
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s0/evloop/base_cv.root",
+   "bytes": 398375089,
+   "mtime": "2026-10-20T06:15:41Z",
+   "atime": "2026-10-20T13:05:40Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1A_zero.root",
+   "bytes": 398375296,
+   "mtime": "2026-10-20T15:11:30Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1B_zero.root",
+   "bytes": 106517598,
+   "mtime": "2026-10-20T14:41:11Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1C_zero.root",
+   "bytes": 204230889,
+   "mtime": "2026-10-20T14:49:14Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1D_zero.root",
+   "bytes": 596287802,
+   "mtime": "2026-10-20T15:49:28Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1E_zero.root",
+   "bytes": 495761736,
+   "mtime": "2026-10-20T15:38:18Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1F_zero.root",
+   "bytes": 689044069,
+   "mtime": "2026-10-20T15:29:27Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1G_zero.root",
+   "bytes": 581501093,
+   "mtime": "2026-10-20T15:47:38Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1L_zero.root",
+   "bytes": 56587445,
+   "mtime": "2026-10-20T14:38:19Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1M_zero.root",
+   "bytes": 862899975,
+   "mtime": "2026-10-20T15:56:42Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1N_zero.root",
+   "bytes": 499729347,
+   "mtime": "2026-10-20T15:38:35Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1O_zero.root",
+   "bytes": 150945068,
+   "mtime": "2026-10-20T14:45:15Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1P_zero.root",
+   "bytes": 199848958,
+   "mtime": "2026-10-20T15:16:09Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_zero.npz",
+   "bytes": 1548311762,
+   "mtime": "2026-10-20T18:31:31Z",
+   "atime": "2026-10-30T08:53:42Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_zero_bkg.npz",
+   "bytes": 28494557,
+   "mtime": "2026-10-20T18:31:33Z",
+   "atime": "2026-10-30T08:53:42Z"
+  }
+ ],
+ "missing": [],
+ "verdict": "PRESENT"
+}
+squeue --me:
+
+checker python /global/homes/j/josephrb/.conda/envs/omnifold_py310/bin/python 3.10.19: numpy 2.2.6, uproot 5.6.9
+{
+ "mode": "rdx-truthx-npz",
+ "rows": 32846302,
+ "per_playlist": {
+  "1A": {
+   "rows": 2682038,
+   "joined": 2682038,
+   "differing": {
+    "MC": 0,
+    "MC_pz": 0,
+    "w_truth": 0,
+    "truthx_enu": 0,
+    "truthx_vtx_x": 0,
+    "truthx_vtx_y": 0,
+    "truthx_vtx_z": 0,
+    "truthx_kep_lead": 0
+   }
+  },
+  "1B": {
+   "rows": 721015,
+   "joined": 721015,
+   "differing": {
+    "MC": 0,
+    "MC_pz": 0,
+    "w_truth": 0,
+    "truthx_enu": 0,
+    "truthx_vtx_x": 0,
+    "truthx_vtx_y": 0,
+    "truthx_vtx_z": 0,
+    "truthx_kep_lead": 0
+   }
+  },
+  "1C": {
+   "rows": 1376711,
+   "joined": 1376711,
+   "differing": {
+    "MC": 0,
+    "MC_pz": 0,
+    "w_truth": 0,
+    "truthx_enu": 0,
+    "truthx_vtx_x": 0,
+    "truthx_vtx_y": 0,
+    "truthx_vtx_z": 0,
+    "truthx_kep_lead": 0
+   }
+  },
+  "1D": {
+   "rows": 4003313,
+   "joined": 4003313,
+   "differing": {
+    "MC": 0,
+    "MC_pz": 0,
+    "w_truth": 0,
+    "truthx_enu": 0,
+    "truthx_vtx_x": 0,
+    "truthx_vtx_y": 0,
+    "truthx_vtx_z": 0,
+    "truthx_kep_lead": 0
+   }
+  },
+  "1E": {
+   "rows": 3349741,
+   "joined": 3349741,
+   "differing": {
+    "MC": 0,
+    "MC_pz": 0,
+    "w_truth": 0,
+    "truthx_enu": 0,
+    "truthx_vtx_x": 0,
+    "truthx_vtx_y": 0,
+    "truthx_vtx_z": 0,
+    "truthx_kep_lead": 0
+   }
+  },
+  "1F": {
+   "rows": 4659798,
+   "joined": 4659798,
+   "differing": {
+    "MC": 0,
+    "MC_pz": 0,
+    "w_truth": 0,
+    "truthx_enu": 0,
+    "truthx_vtx_x": 0,
+    "truthx_vtx_y": 0,
+    "truthx_vtx_z": 0,
+    "truthx_kep_lead": 0
+   }
+  },
+  "1G": {
+   "rows": 3922426,
+   "joined": 3922426,
+   "differing": {
+    "MC": 0,
+    "MC_pz": 0,
+    "w_truth": 0,
+    "truthx_enu": 0,
+    "truthx_vtx_x": 0,
+    "truthx_vtx_y": 0,
+    "truthx_vtx_z": 0,
+    "truthx_kep_lead": 0
+   }
+  },
+  "1L": {
+   "rows": 383815,
+   "joined": 383815,
+   "differing": {
+    "MC": 0,
+    "MC_pz": 0,
+    "w_truth": 0,
+    "truthx_enu": 0,
+    "truthx_vtx_x": 0,
+    "truthx_vtx_y": 0,
+    "truthx_vtx_z": 0,
+    "truthx_kep_lead": 0
+   }
+  },
+  "1M": {
+   "rows": 5916895,
+   "joined": 5916895,
+   "differing": {
+    "MC": 0,
+    "MC_pz": 0,
+    "w_truth": 0,
+    "truthx_enu": 0,
+    "truthx_vtx_x": 0,
+    "truthx_vtx_y": 0,
+    "truthx_vtx_z": 0,
+    "truthx_kep_lead": 0
+   }
+  },
+  "1N": {
+   "rows": 3415958,
+   "joined": 3415958,
+   "differing": {
+    "MC": 0,
+    "MC_pz": 0,
+    "w_truth": 0,
+    "truthx_enu": 0,
+    "truthx_vtx_x": 0,
+    "truthx_vtx_y": 0,
+    "truthx_vtx_z": 0,
+    "truthx_kep_lead": 0
+   }
+  },
+  "1O": {
+   "rows": 1041993,
+   "joined": 1041993,
+   "differing": {
+    "MC": 0,
+    "MC_pz": 0,
+    "w_truth": 0,
+    "truthx_enu": 0,
+    "truthx_vtx_x": 0,
+    "truthx_vtx_y": 0,
+    "truthx_vtx_z": 0,
+    "truthx_kep_lead": 0
+   }
+  },
+  "1P": {
+   "rows": 1372599,
+   "joined": 1372599,
+   "differing": {
+    "MC": 0,
+    "MC_pz": 0,
+    "w_truth": 0,
+    "truthx_enu": 0,
+    "truthx_vtx_x": 0,
+    "truthx_vtx_y": 0,
+    "truthx_vtx_z": 0,
+    "truthx_kep_lead": 0
+   }
+  }
+ },
+ "pot_scale": 0.21240500334472884,
+ "failures": [],
+ "verdict": "PASS",
+ "npz": "/pscratch/sd/j/josephrb/rdx-20261112b/out/dumps/lat_RDX_ALL.npz",
+ "sidecar": "/pscratch/sd/j/josephrb/rdx-20261112b/out/dumps/truthx_RDX_ALL.npz",
+ "npz_sha256": "6ca02c3d8b09dfd168b5184c03d433a7bd65749f5f6fc4cefecdbed7b6ce052f",
+ "sidecar_sha256": "641ba34c5ebde6d1881c705b862fab144a6fbb8a58ef3d84e59f1c8ba030a79e"
+}
+6ca02c3d8b09dfd168b5184c03d433a7bd65749f5f6fc4cefecdbed7b6ce052f  ./lat_RDX_ALL.npz
+0e005fb11ccb9addf00a3b88096ada1084fc6ecab3db57c47cf6abec2b195ce3  ./lat_RDX_ALL_bkg.npz
+641ba34c5ebde6d1881c705b862fab144a6fbb8a58ef3d84e59f1c8ba030a79e  ./truthx_RDX_ALL.npz
+MERGE CHECKS PASS
+== rdx connect cm rc=0 2026-11-17T05:08:48Z
+script rc=0
+launcher rc=0

@@ -189,9 +189,10 @@ install_receipt_fig() {  # install_receipt_fig <source under $RB> <figure basena
 # Fig. 1 is no longer installed from the rebuild (82665808..., drawn from E_U and Q): RE-2 integration installs the
 # refined redraw below.
 
-# The short paper's Fig. 1 (figures/paper_fig1_validation.pdf, #1168's route-A redraw fig1_validation.pdf 1ead58a2...)
-# was installed here until the short paper was retired on 2026-11-21 (docs/POST_PUBLICATION_REORG_PLAN.md, family
-# "short paper"); no remaining build includes it.
+# The short paper's Fig. 1 (figures/paper_fig1_validation.pdf) was installed here until the short paper was retired on
+# 2026-11-21 (docs/POST_PUBLICATION_REORG_PLAN.md, family "short paper"): on the rewrite branch #1168's route-A redraw
+# fig1_validation.pdf 1ead58a2..., on main RE-2 part C amendment 3's redraw fig1_validation.pdf 71a2ea48.... No
+# remaining build includes it.
 
 echo
 echo "== 2D figures from RE-2 part C (E_R and Q_R; digest-checked copy) =="
@@ -258,6 +259,15 @@ install_restyle_fig() {  # install_restyle_fig <basename under $RSG and in $FIGD
 # install_restyle_fig tension_mode_maps.pdf                 7ea2d004150d1633b7e92b655d9664f7d183444a46fd48830b43f7592cfc2c71   (font-only pass, 2026-11-14: installed below)
 # install_restyle_fig model_comp_projections.pdf            44f2a7b7800b5c59821e0bda87e12c137237f1bed89fe9fae87a2a4aa15294c0   (font-only pass, 2026-11-14: installed below)
 # install_restyle_fig model_comp_ratio_maps.pdf             838e5fc4669cf4d58b20f81dbda29f5131c1a57a9d34202948b9830ab51648bd   (font-only pass, 2026-11-14: installed below)
+# main's 2026-11-17 relabel install (#1207, c228493b3), superseded by the 2026-11-21 redraw (note-figround3-20261121,
+# 434fc800b; installed sha256 9335a3e3...), which has no statistics box; relabel intent carried by the caption
+# ("standard deviation"). Kept as a comment; the pull-sd-relabel-20261117 records stay in the tree:
+# # 2026-11-17: MEFHC_5iter_pull_full.pdf prints the spread of its standardized differences as "SD", their standard
+# # deviation (numpy.std), not "rms" (DECISION-20261116-joseph-paper-batch.md item 16; pull-sd-relabel-20261117/
+# # README.md). It is installed from that package's figs/, the "after" arm of its login-node run (run/SHA256SUMS),
+# # whose data artists are run-a2's bit for bit (check_sd.py K3); its fig-restyle line above stays as a comment.
+# RSG="$REPO/docs/orchestration/state/2d-closeout/stageF/methods/pull-sd-relabel-20261117/figs"
+# install_restyle_fig MEFHC_5iter_pull_full.pdf             b01c1b6c9a0b0cfdc811e21d180ec8aaafc5a8f055ea0834844ae6905e27a029
 
 echo
 echo "== 3D/4D configuration-(e) figures from RE-1 run 2 F2 (digest-checked copy) =="

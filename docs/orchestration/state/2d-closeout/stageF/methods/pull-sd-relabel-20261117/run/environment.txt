@@ -1,0 +1,5 @@
+python 3.11.14
+ROOT 6.28/12
+matplotlib 3.10.8
+numpy 1.26.4
+login02

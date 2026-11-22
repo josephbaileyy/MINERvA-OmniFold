@@ -1,0 +1,12 @@
+You are an independent PRD referee and figure editor, read-only. Judge presentation and what the figure lets a reader conclude correctly; don't re-judge the physics.
+Files:
+- A-current.pdf/.png: the paper's Fig. 1 as printed. Bottom right is a text panel: median relative uncertainties (this work 6.46%, published 6.85%) and the published-sigma standardized residuals' mean and RMS over 205 bins.
+- B-pullhist.pdf/.png: a mock-up that replaces that text panel with a histogram of the same 205 standardized residuals, with the mean, RMS and both medians printed in its corner. make_figs.diff is the exact code change. A unit-Gaussian overlay was deliberately left out, because both results unfold the same data and share flux, detector and generator systematics, so these residuals are not expected to follow N(0,1) (the paper says the cross-covariance is unavailable and the significance of the difference cannot be calibrated).
+- paper-context.tex: the caption and the surrounding text that cites the figure (the RMS is printed in the text as \pullRMS). paper-full.pdf is the whole paper, for context (Fig. 1 is on the page with "FIG. 1. Comparison with the published result").
+An earlier independent referee suggested a pull histogram. Other referees didn't raise the panel.
+Questions:
+1. Which is better for this paper: A, B, or a third option (for example, B with the median-uncertainty numbers moved to the caption, or a different design)? Give a clear recommendation and a one-paragraph reason.
+2. Does B risk a misreading (readers comparing it with N(0,1), or reading it as a compatibility test)? Does the 2D map already carry the same information? Is anything lost or gained?
+3. If B or a variant: list concrete fixes (axis labels, duplicated x-label with the colour bar, binning, clipped tails, annotation placement, font sizes at PRD two-column full width) and the exact caption text for the bottom-right panel.
+4. Any other presentation problem in Fig. 1 worth fixing before submission, ranked by importance (state if it's cosmetic).
+Be concise and concrete.

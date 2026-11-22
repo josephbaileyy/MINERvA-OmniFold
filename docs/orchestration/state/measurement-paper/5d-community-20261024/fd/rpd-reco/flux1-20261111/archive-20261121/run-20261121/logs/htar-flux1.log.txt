@@ -1,0 +1,33 @@
+HTAR: a   SHA256SUMS.flux1
+HTAR: a   pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run/flux-factors-1A.npz
+HTAR: a   pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run/flux-factors-1B.npz
+HTAR: a   pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run/flux-factors-1C.npz
+HTAR: a   pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run/flux-factors-1D.npz
+HTAR: a   pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run/flux-factors-1E.npz
+HTAR: a   pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run/flux-factors-1F.npz
+HTAR: a   pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run/flux-factors-1G.npz
+HTAR: a   pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run/flux-factors-1L.npz
+HTAR: a   pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run/flux-factors-1M.npz
+HTAR: a   pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run/flux-factors-1N.npz
+HTAR: a   pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run/flux-factors-1O.npz
+HTAR: a   pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run/flux-factors-1P.npz
+HTAR: a   pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run/flux-extract.json
+HTAR: a   /tmp/HTAR_CF_CHK_790869_1795257421
+HTAR Create complete for /home/j/josephrb/mnv-rpd-reco-flux1-20261121/flux1.tar. 591716864 bytes written for 14 member files, max threads: 4 Transfer time: 3.450 seconds (171.521 MB/s) wallclock/user/sys: 3.531 4.780 1.174 seconds
+HTAR: v SHA256SUMS.flux1, 1779 bytes, 5 media blocks
+HTAR: v pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run/flux-factors-1A.npz, 48277710 bytes, 94294 media blocks
+HTAR: v pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run/flux-factors-1B.npz, 12979296 bytes, 25352 media blocks
+HTAR: v pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run/flux-factors-1C.npz, 24781824 bytes, 48403 media blocks
+HTAR: v pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run/flux-factors-1D.npz, 72060660 bytes, 140745 media blocks
+HTAR: v pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run/flux-factors-1E.npz, 60296364 bytes, 117768 media blocks
+HTAR: v pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run/flux-factors-1F.npz, 83877390 bytes, 163825 media blocks
+HTAR: v pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run/flux-factors-1G.npz, 70604694 bytes, 137901 media blocks
+HTAR: v pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run/flux-factors-1L.npz, 6909696 bytes, 13497 media blocks
+HTAR: v pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run/flux-factors-1M.npz, 106505136 bytes, 208019 media blocks
+HTAR: v pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run/flux-factors-1N.npz, 61488270 bytes, 120096 media blocks
+HTAR: v pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run/flux-factors-1O.npz, 18756900 bytes, 36636 media blocks
+HTAR: v pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run/flux-factors-1P.npz, 24707808 bytes, 48259 media blocks
+HTAR: v pscratch/sd/j/josephrb/rpd-reco-flux-20261111/run/flux-extract.json, 456334 bytes, 893 media blocks
+HTAR: v /tmp/HTAR_CF_CHK_790869_1795257421, 256 bytes, 2 media blocks
+HTAR: Verify complete. 0 total errors, 15 total objects (15 Files,0 Dirs,0 Hard Links,0 symlinks) wallclock/user/sys: 3.525 3.484 0.268 seconds
+HTAR: HTAR SUCCESSFUL

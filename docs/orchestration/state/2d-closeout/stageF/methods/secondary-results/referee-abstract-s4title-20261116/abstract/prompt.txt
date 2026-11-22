@@ -1,0 +1,15 @@
+You are an independent PRD referee and editor, read-only. The paper is a diagnostic methods paper (unbinned five-observable OmniFold on MINERvA open data). Files: paper-current.pdf/.txt (the current draft; its abstract is the paragraph under the author lines), proposed-coverage-sentences.txt (the abstract's current coverage sentences and an earlier referee's proposed replacement).
+
+The author asks: "Isn't the abstract supposed to be abstract, and isn't it too specific to mention specific cells in it? This is partially why a short abstract is nice. Maybe this occurs in the abstract with things other than the coverage too."
+
+Constraints the author has already fixed (keep them):
+- The abstract keeps a disclosure that the second five-observable coverage test is descriptive because it ran with a repair chosen after an earlier run stopped (the full explanation is in §6 and the Supplement).
+- Failures are reported, not softened: every negative finding the paper's Table 1 and §7 treat as a principal finding must be recoverable from the abstract at the level of "what failed", not necessarily "where" or "by how much".
+- The five-observable output is presented only as an illustration.
+
+Tasks:
+1. Judge the current abstract sentence by sentence: for each, keep / generalize / cut / move to the introduction, with a one-line reason. Flag every place it is more specific than a PRD abstract needs (named cells, tunes, variants, test mechanics, which covariance terms, method names), and every place it is so compressed that a reader can't parse it.
+2. Judge the proposed replacement coverage sentences against the same standard.
+3. Write a complete replacement abstract, target 150-200 words, in plain PRD style (short declarative sentences, no semicolons, no named cells), that keeps every principal finding and the three constraints above. Count its words. Then list, for each sentence of the current abstract, where its content went (your abstract, the introduction, or the body only), so the author can check nothing a reader needs was lost.
+4. Say what, if anything, the introduction's findings paragraph would need to gain if detail leaves the abstract.
+Be concise.

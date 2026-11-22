@@ -1,0 +1,4 @@
+
+/home/j/josephrb/mnv-rpd-reco-flux1-20261121:
+-rw-r-----    1 josephrb  josephrb   591716864 Nov 21 02:37 flux1.tar
+-rw-r-----    1 josephrb  josephrb        8488 Nov 21 02:37 flux1.tar.idx

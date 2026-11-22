@@ -1,0 +1,23 @@
+HTAR: a   SHA256SUMS.extras
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_ar23_clipmean_all.npz
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_ar23_clipmean_minus2.npz
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_data_control_Flux_0.npz
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_data_control_GEANT_Pion_0.npz
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_data_control_MaRES_0.npz
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_data_control_setA_b1.npz
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_clipmean_all.npz
+HTAR: a   pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_clipmean_minus2.npz
+HTAR: a   /tmp/HTAR_CF_CHK_1377822_1794837087
+HTAR Create complete for /home/j/josephrb/mnv-ll5d-unfolds-r2-20261116/extras.tar. 1145344 bytes written for 9 member files, max threads: 10 Transfer time: 0.019 seconds (61.847 MB/s) wallclock/user/sys: 0.275 0.002 0.018 seconds
+HTAR: v SHA256SUMS.extras, 1084 bytes, 4 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_ar23_clipmean_all.npz, 188724 bytes, 370 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_ar23_clipmean_minus2.npz, 188730 bytes, 370 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_data_control_Flux_0.npz, 95591 bytes, 188 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_data_control_GEANT_Pion_0.npz, 95619 bytes, 188 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_data_control_MaRES_0.npz, 95619 bytes, 188 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_data_control_setA_b1.npz, 94117 bytes, 185 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_clipmean_all.npz, 188732 bytes, 370 media blocks
+HTAR: v pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_clipmean_minus2.npz, 188740 bytes, 370 media blocks
+HTAR: v /tmp/HTAR_CF_CHK_1377822_1794837087, 256 bytes, 2 media blocks
+HTAR: Verify complete. 0 total errors, 10 total objects (10 Files,0 Dirs,0 Hard Links,0 symlinks) wallclock/user/sys: 0.266 0.008 0.000 seconds
+HTAR: HTAR SUCCESSFUL

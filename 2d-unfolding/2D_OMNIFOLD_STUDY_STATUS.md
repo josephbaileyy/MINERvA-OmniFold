@@ -34,6 +34,15 @@ ours-only rank-deficiency + open questions for collaborators).
 
 ---
 
+## IBU target and recovery diagnostics
+
+The recorded-data check compares signed and refined IBU at two fixed
+iterations. Run d separately compares the signed-target IBU and
+refined-target OmniFold workflows on the declared known-truth screen.
+Their declarations govern the use of these diagnostic readings.
+[Signed-data outcome](../docs/orchestration/OUTCOME-20261119-ibu-signed-data.md) ·
+[IBUKT A2 outcome](../docs/orchestration/OUTCOME-20261119-ibukt-a2.md)
+
 ## Goal
 
 Reproduce arXiv:2106.16210 (Ruterbories et al., Phys. Rev. D 106, 032001)

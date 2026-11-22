@@ -1,0 +1,167 @@
+ssh rc=0
+node login27 staged sha256 52ad6a0edf92b4ed31058d27c2a9793042f425befcfc0268176707593c295cc6
+detached pid 383350, output /dev/shm/rdxc.382418.sh.out
+node login27 2026-11-17T02:38:24Z step m pin ad0535c4a62ac0a20711a4a00f2266ddaf926d7c; connect script sha256 52ad6a0edf92b4ed31058d27c2a9793042f425befcfc0268176707593c295cc6
+== the purge-exposed MP-1 inputs (stat only)
+{
+ "files": [
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s0/evloop/base_cv.root",
+   "bytes": 398375089,
+   "mtime": "2026-10-20T06:15:41Z",
+   "atime": "2026-10-20T13:05:40Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1A_zero.root",
+   "bytes": 398375296,
+   "mtime": "2026-10-20T15:11:30Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1B_zero.root",
+   "bytes": 106517598,
+   "mtime": "2026-10-20T14:41:11Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1C_zero.root",
+   "bytes": 204230889,
+   "mtime": "2026-10-20T14:49:14Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1D_zero.root",
+   "bytes": 596287802,
+   "mtime": "2026-10-20T15:49:28Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1E_zero.root",
+   "bytes": 495761736,
+   "mtime": "2026-10-20T15:38:18Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1F_zero.root",
+   "bytes": 689044069,
+   "mtime": "2026-10-20T15:29:27Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1G_zero.root",
+   "bytes": 581501093,
+   "mtime": "2026-10-20T15:47:38Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1L_zero.root",
+   "bytes": 56587445,
+   "mtime": "2026-10-20T14:38:19Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1M_zero.root",
+   "bytes": 862899975,
+   "mtime": "2026-10-20T15:56:42Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1N_zero.root",
+   "bytes": 499729347,
+   "mtime": "2026-10-20T15:38:35Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1O_zero.root",
+   "bytes": 150945068,
+   "mtime": "2026-10-20T14:45:15Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1P_zero.root",
+   "bytes": 199848958,
+   "mtime": "2026-10-20T15:16:09Z",
+   "atime": "2026-10-30T08:36:16Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_zero.npz",
+   "bytes": 1548311762,
+   "mtime": "2026-10-20T18:31:31Z",
+   "atime": "2026-10-30T08:53:42Z"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_zero_bkg.npz",
+   "bytes": 28494557,
+   "mtime": "2026-10-20T18:31:33Z",
+   "atime": "2026-10-30T08:53:42Z"
+  }
+ ],
+ "missing": [],
+ "verdict": "PRESENT"
+}
+squeue --me:
+
+{
+ "protected": [
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/ER/xsec.root",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root",
+  "/pscratch/sd/j/josephrb/cov2d-run-20261104",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root",
+  "/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root"
+ ],
+ "never_read": [
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz",
+  "/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz",
+  "/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root",
+  "/pscratch/sd/j/josephrb/cov2d-inputs-20261104",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware",
+  "/pscratch/sd/j/josephrb/fd-f1-20261027/f1b3/prep",
+  "/pscratch/sd/j/josephrb/fd-1b-inv-20261101/i0/in"
+ ],
+ "reads": [
+  "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_zero.npz",
+  "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_zero_bkg.npz",
+  "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop"
+ ],
+ "hits": [],
+ "verdict": "CLEAR"
+}
+checker python /global/homes/j/josephrb/.conda/envs/omnifold_py310/bin/python 3.10.19: numpy 2.2.6, uproot 5.6.9
+{
+ "staged": [
+  {
+   "src": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_zero.npz",
+   "dst": "/pscratch/sd/j/josephrb/rdx-20261112b/out/stage/lat_zero.npz",
+   "bytes": 1548311762,
+   "sha256": "6ca02c3d8b09dfd168b5184c03d433a7bd65749f5f6fc4cefecdbed7b6ce052f"
+  }
+ ],
+ "verdict": "STAGED"
+}
+{
+ "staged": [
+  {
+   "src": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_zero_bkg.npz",
+   "dst": "/pscratch/sd/j/josephrb/rdx-20261112b/out/stage/lat_zero_bkg.npz",
+   "bytes": 28494557,
+   "sha256": "f09727d04521f77ba101a51eb77f6182305baaad8a342dc59b7a3d86cf37ea66"
+  }
+ ],
+ "verdict": "STAGED"
+}
+STEP merge python /pscratch/sd/j/josephrb/rdx-20261112b/deploy/nd-unfolding/rdx/rdx_merge.py merge --loops-dir /pscratch/sd/j/josephrb/rdx-20261112b/out/evloop --sums /pscratch/sd/j/josephrb/rdx-20261112b/out/loops.sha256 --flux /pscratch/sd/j/josephrb/rdx-20261112b/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/5b/flux/runEventLoopMC_ALL.root --out /pscratch/sd/j/josephrb/rdx-20261112b/out/merged/runEventLoopOmniFold_RDX_ALL.root
+STEP nndump python /pscratch/sd/j/josephrb/rdx-20261112b/deploy/nd-unfolding/nn_dump_inputs.py --omnifile /pscratch/sd/j/josephrb/rdx-20261112b/out/merged/runEventLoopOmniFold_RDX_ALL.root --mcfile /pscratch/sd/j/josephrb/rdx-20261112b/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/5b/flux/runEventLoopMC_ALL.root --axes eavail,q3,W --out /pscratch/sd/j/josephrb/rdx-20261112b/out/dumps/nn_RDX_ALL.npz
+STEP dump python /pscratch/sd/j/josephrb/rdx-20261112b/deploy/nd-unfolding/rdx/rdx_dump.py --playlists 1A=/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1A.root,1B=/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1B.root,1C=/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1C.root,1D=/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1D.root,1E=/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1E.root,1F=/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1F.root,1G=/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1G.root,1L=/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1L.root,1M=/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1M.root,1N=/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1N.root,1O=/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1O.root,1P=/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1P.root --sidecar /pscratch/sd/j/josephrb/rdx-20261112b/out/dumps/truthx_RDX_ALL.npz --omnifile /pscratch/sd/j/josephrb/rdx-20261112b/out/merged/runEventLoopOmniFold_RDX_ALL.root --cv-npz /pscratch/sd/j/josephrb/rdx-20261112b/out/dumps/nn_RDX_ALL.npz --mcfile /pscratch/sd/j/josephrb/rdx-20261112b/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/5b/flux/runEventLoopMC_ALL.root --out /pscratch/sd/j/josephrb/rdx-20261112b/out/dumps/lat_RDX_ALL.npz --out-bkg /pscratch/sd/j/josephrb/rdx-20261112b/out/dumps/lat_RDX_ALL_bkg.npz
+STEP k1 python /pscratch/sd/j/josephrb/rdx-20261112b/deploy/nd-unfolding/rdx/rdx_merge.py k1 --lat-npz /pscratch/sd/j/josephrb/rdx-20261112b/out/dumps/lat_RDX_ALL.npz --lat-bkg /pscratch/sd/j/josephrb/rdx-20261112b/out/dumps/lat_RDX_ALL_bkg.npz --mp1-lat-npz /pscratch/sd/j/josephrb/rdx-20261112b/out/stage/lat_zero.npz --mp1-lat-bkg /pscratch/sd/j/josephrb/rdx-20261112b/out/stage/lat_zero_bkg.npz --out /pscratch/sd/j/josephrb/rdx-20261112b/out/checks/k1.json
+[rdx-merge] smoke: checks passed, 4 steps
+{"spent": 0.8308749999999999, "held": 0.0, "unlisted_ids": [], "want": "rdx_s2_merge", "want_ceiling": 0.75, "total": 1.5808749999999998, "cap": 2.5, "pass": true}
+SUBMIT id=61443055 name=rdx_s2_merge limit=0:45:00 utc=2026-11-17T02:38:36Z
+JOBID|NAME|STATE|TIME_LIMIT|QOS
+61443055|rdx_s2_merge|PENDING|45:00|regular_1
+== rdx connect m rc=0 2026-11-17T02:38:36Z
+script rc=0
+launcher rc=0

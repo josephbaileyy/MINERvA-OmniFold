@@ -11,9 +11,11 @@
 #   sbatch --job-name=rdx_s3_<a|b> --time=0:22:00 --output=<B>/out/logs/%x_%j.out sbatch_rdx_arms.sh <deploy> <pin> <B> <S3a|S3b>
 # Refuses before any step unless: the deploy is clean at <pin>; the job's name is rdx_s3_a or rdx_s3_b and its Slurm
 # TimeLimit is at most 0:22:00; no fenced job is queued or running; <B>/out/gates/<job>.ok names <pin>; the stage-2
-# checks recorded PASS (<B>/out/checks/k1.json, truthx_npz.json); RDX's npz, background dump and sidecar match the
-# deploy's committed nd-unfolding/rdx/rdx-inputs-SHA256SUMS; the staged copies of MP-1's lat_zero files match their pins; the frozen tune_v1
-# reweight matches pv-ladder's prep-SHA256SUMS; and no product exists. With RDX_SMOKE set it stops after the checks.
+# checks recorded PASS (<B>/out/checks/k1.json, truthx_npz.json); RDX's npz, background dump and sidecar, and the
+# staged copies of MP-1's lat_zero files, match the deploy's committed nd-unfolding/rdx/rdx-inputs-SHA256SUMS; the
+# frozen tune_v1 reweight matches pv-ladder's prep-SHA256SUMS; and no product exists. With RDX_SMOKE set it stops after
+# the checks. Every pin is read with awk from a committed sums file: no python reads a pin (PATH's python3 is 3.6.15 on
+# the login nodes, and fd_ct_period_inputs.py needs 3.7+ and numpy: the probe of 2026-11-17).
 set -o pipefail   # NOT set -u (the environment's activation aborts under it)
 D="${1:?deploy}"; PIN="${2:?pin}"; B="${3:?B}"; JOB="${4:?job}"
 OUT="${B}/out"
@@ -68,9 +70,12 @@ P_rdx_npz="${OUT}/dumps/lat_RDX_ALL.npz"; S_rdx_npz=$(sum_of lat_RDX_ALL.npz)
 P_rdx_bkg="${OUT}/dumps/lat_RDX_ALL_bkg.npz"; S_rdx_bkg=$(sum_of lat_RDX_ALL_bkg.npz)
 P_sidecar="${OUT}/dumps/truthx_RDX_ALL.npz"; S_sidecar=$(sum_of truthx_RDX_ALL.npz)
 MP1="${RDX_MP1_LATERAL:-${OUT}/stage}"   # the connect's O_NOATIME copies of MP-1's lat_zero files (step m), never the originals
-P_lat_npz="${MP1}/lat_zero.npz"; P_lat_bkg="${MP1}/lat_zero_bkg.npz"
-read -r S_lat_npz S_lat_bkg < <(python3 -B -c "import sys; sys.path.insert(0, sys.argv[1]); import fd_ct_period_inputs as C; print(C.MP1_ZERO['lat_npz'], C.MP1_ZERO['lat_bkg'])" "${D}/nd-unfolding" 2>/dev/null)
-[[ "${S_lat_npz}" =~ ^[0-9a-f]{64}$ && "${S_lat_bkg}" =~ ^[0-9a-f]{64}$ ]] || { say "refusing: could not read MP-1's lat_zero pins"; exit 2; }
+# MP-1's lat_zero pins are committed in the same sums file; a test requires they equal fd_ct_period_inputs.MP1_ZERO
+P_lat_npz="${MP1}/lat_zero.npz"; S_lat_npz=$(sum_of lat_zero.npz)
+P_lat_bkg="${MP1}/lat_zero_bkg.npz"; S_lat_bkg=$(sum_of lat_zero_bkg.npz)
+for sv in S_rdx_npz S_rdx_bkg S_sidecar S_lat_npz S_lat_bkg; do
+  [[ "${!sv}" =~ ^[0-9a-f]{64}$ ]] || { say "refusing: ${SUMS} has no sha256 line for ${sv#S_}"; exit 2; }
+done
 P_ratio="${PVL_PREP}/ratios/L-5D-PV/tune_v1.json"
 S_ratio=$(awk '$2 == "./ratios/L-5D-PV/tune_v1.json" {print $1}' "${D}/nd-unfolding/pv-ladder/prep-SHA256SUMS")
 for k in rdx_npz rdx_bkg sidecar lat_npz lat_bkg ratio; do

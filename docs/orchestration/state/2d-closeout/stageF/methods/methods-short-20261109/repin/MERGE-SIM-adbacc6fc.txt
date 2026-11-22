@@ -1,0 +1,3 @@
+merge simulation: tree adbacc6fc with docs/orchestration/state/2d-closeout/stageF/methods/result-package-20261109 from 91f9cb615
+#977 head adbacc6fc61353bc7931cfa8fe53c770c867fc08; ruled failures: 55
+DRYRUN PASS (only ruled failures)

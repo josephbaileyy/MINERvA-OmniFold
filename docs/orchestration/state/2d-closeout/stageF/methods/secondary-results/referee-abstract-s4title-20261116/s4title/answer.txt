@@ -1,0 +1,18 @@
+**Change both headings.** The published measurement remains the benchmark in §4.1, but it no longer describes the whole section.
+
+1. **Comparisons on data** — preferred for both §4 and the Table 1 block; concise, neutral, and covers all five subsections while distinguishing §4 from the simulated-truth tests.
+2. **Benchmark and diagnostics on data** — preserves the introduction’s “benchmark” framing while accommodating the other comparisons; slightly less specific.
+
+The introduction and conclusions still fit. A section heading describes its scope; the introduction’s first finding need not enumerate every supporting comparison.
+
+- **intro.tex:16:** no required change. “A benchmark against the published double-differential cross section” accurately names that particular comparison. Optionally change “a comparison detects” to **“a two-dimensional comparison detects”**, distinguishing it from the new §4.5.
+- **sec7-opening.tex:6:** no change; it already includes the quadrant agreement and algorithm dependence.
+- **sec7-opening.tex:21:** optionally replace both instances of **“The benchmark”** with **“The comparison with the published result”**. That keeps their referent explicit under the broader heading.
+- **intro.tex:22:** no change to the roadmap is needed.
+
+For subsection consistency, I recommend two small scope clarifications:
+
+- **§4.2, sec4.tex:33:** **Paired comparisons of two-dimensional unfoldings** — distinguishes these comparisons from the new sixteen-cell comparison.
+- **New §4.5, sec5.4-moving.tex:1:** **Algorithm dependence of the sixteen-cell result** — identifies which result is tested; “on the data” becomes redundant under the section heading.
+
+Keep §4.1, §4.3 and §4.4 as they are. No sentence changes are strictly required by the title change; the wording adjustments above are optional clarifications.

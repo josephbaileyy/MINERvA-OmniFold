@@ -1,0 +1,11 @@
+You are rechecking a read-only connect script for a Perlmutter login node, after your own earlier review (inputs/grok-read-rev0.txt) gave VERDICT: FIX on two points. Read everything in inputs/. Do not run anything on a cluster; you may run local shell checks (bash -n, small GNU/BSD experiments) if useful.
+
+Files: inputs/t3p_read_connect.sh (rev 1, the one to judge), inputs/t3p_read_connect.rev0.sh (rev 0, what you reviewed), inputs/t3p_read_connect-rev0-to-rev1.diff.txt, inputs/t3p_read_launch.sh (rev 1; pins the connect's sha256), inputs/README.md (what changed and the checks), inputs/standin.sh and inputs/standin-*.log.txt (a Debian container stand-in of the shell flow, eight variants), inputs/prr_read.sh (the reviewed script it derives from), inputs/t3p_launch.sh and inputs/t3p_submit.sh (the lane's reviewed submit pair), inputs/sbatch_t3p.sh (the bound job script; line ~128 writes each job's SHA256SUMS of every product under runs/ at its end).
+
+Questions:
+1. Is point 1 closed? The sums gate: exact line counts per job (dry 6, q3 12, floor 36), an exact count of well-formed lines, and sha256sum --strict -c. Are the expected counts right given sbatch_t3p.sh (each job hashes every .npz under runs/ at its end; dry ran first with 6 tasks, then q3 with 6, then floor with 24)? Can a malformed, empty or truncated SUMS file still pass?
+2. Is point 2 closed? set -o pipefail; git status, the runs count and the records list each gate on their own status; the copy loop. Does pipefail introduce any new false STOP or BAIL on a pipeline whose left side can legitimately exit nonzero (e.g. grep -c with zero matches, head closing a pipe, sacct)? Check every pipeline in the file.
+3. Any new blocking or major issue introduced by rev 1 (writes outside $OUT, a CFS write, squeue, a plain read where noatime was intended, a reading leaking into the log, a pin that fails open, a launcher check that fails open)?
+4. Do the stand-in logs show what the README claims for each variant?
+
+Write your report to REPORT.md in the current directory: each point CLOSED or OPEN with file:line evidence, then any new issues, then a final line exactly "VERDICT: GO" or "VERDICT: FIX <one line>".

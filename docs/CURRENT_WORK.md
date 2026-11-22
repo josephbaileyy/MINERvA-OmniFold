@@ -11,7 +11,6 @@ never derived from OI state prose; terminal and deferred records never enter thi
 
 | item | queue | accountable owner | basis | next action | evidence route |
 |---|---|---|---|---|---|
-| OI-205 | WAITING-JOSEPH | Joseph | publication/P1 | Joseph rules the framing, measurement or methods-study, once the 2D and 5D coverage campaigns (OI-200, OI-201) and the run-period follow-ups (OI-204) report. Next gate: those reports. | docs/OPEN_ITEMS.md (`OI-205`) |
 | OI-200 | NOW | cov2d lane (2D method coverage, campaign (c)) | publication/P1 | cov2d: A2's sequence at M cf533377 (COV2D-BINDING-2.md, A2 ruling 3): the cluster-environment test run, then the AR23 pseudo-data rerun into pseudo/AR23-a2; each connect to the director. Next gate: the test run's result. | docs/OPEN_ITEMS.md (`OI-200`) |
 | OI-201 | NOW | coverage-5b lane (5D 1B staged method coverage) | publication/P1 | coverage-5b: amendment 2 (#717, head fea7946a) takes the 2026-11-04 large-sample gate (items 1-7), then coverage-5b-audit's audit and the director's binding 3. Next gate: the audit of the revised amendment. | docs/OPEN_ITEMS.md (`OI-201`) |
 | OI-202 | NOW | limitation-resolver lane (cluster connects; RPD-RECO) | publication/P1 | Bound at M' 0bb9a1bf (#814): limitation-resolver's sequence, connect 1 (stat, gibu1 re-run, bars), the merge of bars.json and its receipt, connect 2 (the read). Next gate: connect 1's PASS record. | docs/OPEN_ITEMS.md (`OI-202`) |

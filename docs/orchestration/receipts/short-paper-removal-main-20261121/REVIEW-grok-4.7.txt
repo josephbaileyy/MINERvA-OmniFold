@@ -1,0 +1,100 @@
+I'll review this commit read-only against the removal plan and the surviving files, and print the report only.
+
+The package is in place. I'll read the removal plan, the commit stat, and the mention lists first.
+
+The mention list is large. I'll separate live readers from comments, then compare the rebound checks with the old paper sentences.
+
+The RE-2 value spec still names the paper. Next I’ll compare the rebound checks with the old sentences and read the decision record.
+
+The record discloses the RE-2 spec. I'll compare each rebound sentence with the paper's old wording and check whether any gate got looser.
+
+The review is almost done. I am re-reading the lines that decide the verdict so every quote and line number comes from the files, then I will print the report.
+
+VERDICT: BLOCK
+
+1. BLOCKING. `2d-unfolding/re2/partc/re2c_values_spec.tsv:202–210`, `:248`, `:250`, `:251`, read by `2d-unfolding/re2/partc/re2c_values.py:151` (called at `:189`). Twelve spec rows still name removed files, and `anchor()` opens those paths on every spec run. `test_re2c.py:182` and `:186–188` run that path against the real repository. This is a supported runtime and two tests losing a dependency. The decision record discloses the rows and then misstates the failure.
+
+The rows, from `inputs/mentions-after-outside-frozen.txt`:
+
+```
+re2c_values_spec.tsv:202:pap-findings-integral	N/paper_body.tex:93
+re2c_values_spec.tsv:203:pap-findings-3d	N/paper_body.tex:95
+re2c_values_spec.tsv:204:pap-rank-paperV	N/paper_body.tex:364
+re2c_values_spec.tsv:205:pap-cond-paperV	N/paper_body.tex:364
+re2c_values_spec.tsv:206:pap-max-band-share	N/paper_body.tex:367
+re2c_values_spec.tsv:207:pap-pl-step	N/paper_body.tex:430
+re2c_values_spec.tsv:208:pap-cpl-integral	N/paper_body.tex:435
+re2c_values_spec.tsv:209:pap-s1-median	N/paper_body.tex:445
+re2c_values_spec.tsv:210:pap-closure-3d	N/paper_body.tex:475
+re2c_values_spec.tsv:248:mainpap-integral	N/main_paper.tex:76
+re2c_values_spec.tsv:250:lit-learner-median-pb373	N/paper_body.tex:373
+re2c_values_spec.tsv:251:lit-learner-max-pb374	N/paper_body.tex:374
+```
+
+The reader:
+
+```
+151:    lines = (Path(repo) / f.replace("N/", N + "/", 1)).read_text().splitlines()
+```
+
+```
+189:        rec["anchor_ok"], rec["anchor"] = anchor(repo, r["where"], r["printed"], macros)
+190:        new_product = not r["where"]
+191:        try:
+...
+199:        except (KeyError, ValueError, OSError, IndexError) as e:
+```
+
+`read_text()` runs before that `try`. A missing `paper_body.tex` or `main_paper.tex` raises `FileNotFoundError` out of `main()`. `main()` therefore never reaches `return 3 if bad else 0` (`re2c_values.py:237`) and never writes the JSON that `unresolved()` reads next (`test_re2c.py:170–174`). The first paper row is spec line 202, so both tests die there. The mutation test never gets to `s2-bkg-share`.
+
+The record says the opposite (`docs/POST_PUBLICATION_REORG_PLAN.md:677–679`):
+
+```
+2d-unfolding/re2/partc/re2c_values.py` resolves the `N/` rows of the sha256-pinned RE-2 part C spec, so the spec
+is not retargeted. On `main` its two spec-resolution tests in `test_re2c.py` already fail before the removal (the
+schema run returns rc 3), and the same two fail after it.
+```
+
+`test_re2c.py:181–188` still expects a returned code, not an exception:
+
+```
+def test_every_row_resolves_against_the_real_refined_schema(self):
+    self.assertEqual(unresolved(HERE / "re2c_values_spec.tsv"), (0, []))
+def test_mutation_restoring_the_s2_row_fails(self):
+    ...
+    self.assertEqual((rc, bad), (3, ["s2-bkg-share"]))
+```
+
+Neither `re2c_values.py` nor `test_re2c.py` was in commit `f07cdb80b`. The sibling pins in `test_re2c.py:34–39` hash `re2c_analyze_periods.py` and `re2c_periods.py`. This package has no sha256 pin of `re2c_values_spec.tsv`, so "sha256-pinned" is unsupported here. The "already returns rc 3" claim is not in the diff or the inputs. The "same two fail after" claim does not match the code after the files are gone.
+
+No other mention in the two mention lists is a runtime open, build, test, hash pin, or install of one of the five removed paths. The rest are comments, prose, provenance strings, frozen records, or a different file that only shares a basename (`fd_g_fig_ratio` under campaign or temp directories). `check_dead_containment.py:530` is a fixture label; the text it matches is `"\\dead%c\n{9.87654}"`. `oi130_quoted_value_inventory.py` appears once, as a name in the mention list; its body is not in this package, so this review does not count it as an open. `re2c_values_unmatched.tsv:19` is an unmatched-site ledger line, not a reader.
+
+2. Check 2 found no dropped check and no looser tolerance. The five `check_sec4_receipts.py` checks (`:163–164`, `:181–182`, `:183–184`, `:185–186`, and `VERBAL` at `:188–189`) still use `stat_median`, `regularization_max`, `tilt_coverage68_min`, `shapes_range`, and `half_of_cells`, mode `round` or the same verbal band 0.40–0.60. Printed values match: `0.676` and 300 (`sec_results.tex:113`; paper `paper_body.tex:128`), `74` (`sec_validation.tex:108`; paper `paper_body.tex:149`), `0.060` (`sec_5d.tex:216`; paper printed `0.06` at `paper_body.tex:152`, so the new half-unit is tighter), and `\SIrange{16}{31}` (`primer_body.tex:239`; paper `paper_body.tex:149`). The primer's verbal phrase is "smaller than the quoted uncertainty"; the paper's was "within the quoted total uncertainty". The receipt function and the 0.40–0.60 band are unchanged. `make_values_fived16.py` drops the ratio-figure pin and the paper's five listed-truth sentences, which removal-list §2 requires, and says so at `:141` and `:175–177`. Five paper-side plants move onto `sec_fived16.tex` and `main_note.tex`; the ctotal plant is dropped with the only sentence of that kind. The registry re-cite is `sec_joint.tex:43`, digest `dd51cdc382e8b520`, and both quotes are substrings of that line. The capacity pattern adds `has` and still requires 400 trees and 31 leaves. `records_estimators.tex` carries the same two citation cells (diff at the old `paper_body.tex:56` rows).
+
+3. Check 3 found nothing wrong. `test_build_all.py:41` is `TARGETS = ("main_note", "main_primer", "pet_note", "main_records")`. The fresh-count asserts are 4 (`:780`) and 3 (`:805`). The stale-product and strike cases now use `main_primer` and still require a failure. `test_check_sec4_receipts.py:37–46` perturbs the rebound `0.676` and `16`/`31` sites under the same labels. Registry fixtures no longer open `main_paper.tex` or `paper_body.tex`.
+
+4. SHOULD-FIX. `docs/POST_PUBLICATION_REORG_PLAN.md:685–690` asserts gate facts this package cannot support, and it omits removal-list steps 8 and 10. The record's own steps stop at 6.
+
+```
+4. Evidence tag and recovery. The tag evidence/short-paper-retired-45402896 (tag object d047d5b37663…, on
+   commit 45402896173d7c6f42f211840712b931c9809aed) was pushed before the removal commit.
+   - Each of the five paths is blob-identical at the tag and at the parent, and restores to the same sha256: Fig. 1
+     71a2ea48…, fd_g_fig_ratio.pdf 6214ed78….
+   - From a git archive of the tag, main_note and then main_paper build with rc 0, 0 errors, 0 undefined
+     references, 0 multiply defined labels and 13 pages.
+```
+
+The commit message also says the five paths are blob-identical at the tag. The two quoted prefixes match the pins the commit deletes (`71a2ea48…` for Fig. 1, `6214ed78…` for the ratio figure). The tag object id, the push-before-deletion, blob identity of the other three paths, and the archive build (rc 0, 13 pages) are not in the diff or the inputs. The same is true of "SEC4-RECEIPTS stays at 17/17" and "`--check` passes with 5 sentences, and `--self-test` passes" (`:662`, `:670`) as run results. The code has 17 rows and 5 remaining `LISTED_CLAIMS`; that is a count, not a logged run. The commit message's "Checks: 24 passed" does not say which checks. Removal-list step 8 (note PDF text unchanged) and step 10 (tracked-file, Markdown-file, and Markdown-line counts) do not appear in the record. Step 7 is only the partial pass claims above.
+
+`docs/analysis-note/README.md:12–16` matches the plan's discovery form: tag `evidence/short-paper-retired-45402896`, `git show` of `main_paper.tex`, likewise `paper_body.tex` and the three figures, branch `origin/draft/methods-short-20261109`, and this record section. The authorization quote in the record matches removal-list §5, including the conditions and the kept branch.
+
+5. SHOULD-FIX. `README.md:408–410` still gives the old containment rule, and the record's "remaining mentions are historical" (`POST_PUBLICATION_REORG_PLAN.md:692`) does not cover it or the spec rows.
+
+```
+then runs `check_dead_containment.py`, which enforces that retracted (struck)
+values reach the **note** build only and never the primer or paper.
+```
+
+The README diff retargets the workstream row and the deliverables row. It does not change this paragraph. `docs/analysis-note/README.md:24–25` now says struck values reach only the records document and the PET note. The root sentence still names a paper build and assigns strikes to the note build. `AGENTS.md:136` and `README.md:399` name `main_paper.tex` only as retired, with the tag and the note README. That part of "no longer route to `main_paper.tex`" holds.
+
+NIT. The dependency-scan bullets omit `docs/analysis-note/records_estimators.tex`, which this commit does change: the description and capacity cells move from `paper_body.tex:56` to `sec_joint.tex:43` (family.diff, the `records_estimators.tex` hunk). The new citations match the registry rows.

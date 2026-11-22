@@ -1,0 +1,114 @@
+VERDICT: BLOCK
+
+---
+
+### Finding 1: Surviving runtime dependency causes uncaught `FileNotFoundError` in `test_re2c.py`
+- **Severity:** BLOCKING
+- **File:Line:** `2d-unfolding/re2/partc/re2c_values.py:151` (driven by `2d-unfolding/re2/partc/re2c_values_spec.tsv:202-210, 248, 250, 251` and invoked by `2d-unfolding/re2/partc/test_re2c.py:182, 186`)
+- **What is wrong:** 
+  The repository rule forbids pre-freeze material from leaving the tree when supported runtimes, tests, or active gates lose a dependency. `2d-unfolding/re2/partc/re2c_values.py:151` contains an active runtime file read:
+  `lines = (Path(repo) / f.replace("N/", N + "/", 1)).read_text().splitlines()`
+  where `N = "docs/analysis-note"`.
+  `2d-unfolding/re2/partc/re2c_values_spec.tsv` still contains 12 active entries specifying `N/paper_body.tex` (lines 202–210, 250, 251) and `N/main_paper.tex` (line 248).
+  When `2d-unfolding/re2/partc/test_re2c.py` runs `test_every_row_resolves_against_the_real_refined_schema` (line 182) or `test_mutation_restoring_the_s2_row_fails` (line 186), `unresolved()` calls `re2c_values.main()`, which invokes `anchor()` on each row without exception handling. Because `docs/analysis-note/paper_body.tex` was deleted, `(Path(repo) / ...).read_text()` immediately raises an unhandled `FileNotFoundError: [Errno 2] No such file or directory: '.../docs/analysis-note/paper_body.tex'`. This crashes `test_re2c.py` with an unhandled exception rather than completing test execution.
+- **Evidence:**
+  `2d-unfolding/re2/partc/re2c_values.py:151`:
+  ```python
+  lines = (Path(repo) / f.replace("N/", N + "/", 1)).read_text().splitlines()
+  ```
+  `2d-unfolding/re2/partc/re2c_values.py:189`:
+  ```python
+  rec["anchor_ok"], rec["anchor"] = anchor(repo, r["where"], r["printed"], macros)
+  ```
+  `2d-unfolding/re2/partc/test_re2c.py:181-182`:
+  ```python
+  def test_every_row_resolves_against_the_real_refined_schema(self):
+      self.assertEqual(unresolved(HERE / "re2c_values_spec.tsv"), (0, []))
+  ```
+  `2d-unfolding/re2/partc/re2c_values_spec.tsv:202`:
+  ```tsv
+  pap-findings-integral	N/paper_body.tex:93	1	agreement	headline_totals_oi130.values.ratio_integrals_reported	100*(v-1)	.0f	published_comparison	'within about 1%' (1.12 %); a single-character printed string, weak substring test	
+  ```
+  `2d-unfolding/re2/partc/re2c_values_spec.tsv:248`:
+  ```tsv
+  mainpap-integral	N/main_paper.tex:76	1	agreement	headline_totals_oi130.values.ratio_integrals_reported	100*(v-1)	.0f	published_comparison	abstract 'integral within about 1\%'; single-character printed string, weak substring test	
+  ```
+
+---
+
+### Finding 2: False factual assertion in the decision record regarding `test_re2c.py` failure mode
+- **Severity:** BLOCKING
+- **File:Line:** `docs/POST_PUBLICATION_REORG_PLAN.md:678-679`
+- **What is wrong:**
+  The decision record asserts: *"On `main` its two spec-resolution tests in `test_re2c.py` already fail before the removal (the schema run returns rc 3), and the same two fail after it."*
+  This statement is factually false. Before the removal, `re2c_values.py` read the existing `paper_body.tex`, evaluated `anchor()` without exception, and returned exit code 3 (`rc 3`) due to validation mismatches (`bad != 0`). After the removal, `re2c_values.py:151` crashes with an uncaught `FileNotFoundError` as soon as it attempts to read the missing file in `anchor()`. Consequently, `unresolved()` never completes and never returns `rc 3`; `test_re2c.py` crashes with an unhandled exception (`ERROR`).
+- **Evidence:**
+  `docs/POST_PUBLICATION_REORG_PLAN.md:677-679`:
+  ```markdown
+  - `2d-unfolding/re2/partc/re2c_values.py` resolves the `N/` rows of the sha256-pinned RE-2 part C spec, so the spec
+    is not retargeted. On `main` its two spec-resolution tests in `test_re2c.py` already fail before the removal (the
+    schema run returns rc 3), and the same two fail after it.
+  ```
+
+---
+
+### Finding 3: Missing gate steps 7, 8, 9, and 10 in the decision record
+- **Severity:** SHOULD-FIX
+- **File:Line:** `docs/POST_PUBLICATION_REORG_PLAN.md:698`
+- **What is wrong:**
+  The section *"Family short paper, 2026-11-21 (main)"* terminates abruptly at Step 6 (`6. **Discovery route.**`). The plan's ten-step family gate (`docs/POST_PUBLICATION_REORG_PLAN.md` Lane A §2 and `SHORT-PAPER-REMOVAL-LIST-20261121.md` "Remaining gate steps when it runs") explicitly requires recording:
+  - Step 7: Lint, tests (`test_build_all`, `test_check_sec4_receipts`, registry tests), and builds from a clean checkout;
+  - Step 8: Verification that note PDF text is unchanged (`pdftotext` invariance check);
+  - Step 9: Independent review record;
+  - Step 10: Before and after counts of tracked files, Markdown files, and Markdown lines.
+  Compare with previous removal records (such as *Family A3 executed, 2026-10-07*, lines 425–460), which document each of steps 7 through 10 in full.
+- **Evidence:**
+  `docs/POST_PUBLICATION_REORG_PLAN.md:693-698`:
+  ```markdown
+  6. **Discovery route.**
+     - `git show evidence/short-paper-retired-45402896:<old-path>`;
+     - this section;
+     - `docs/analysis-note/README.md`, *Retired: the short paper*;
+     - `docs/orchestration/CATALOG.md` § Frozen pre-compaction evidence, *Family short paper*;
+     - the kept branch `origin/draft/methods-short-20261109`.
+  ```
+  `inputs/SHORT-PAPER-REMOVAL-LIST-20261121.md:101-107`:
+  ```markdown
+  ## Remaining gate steps when it runs (for whoever executes)
+
+  - **Step 7.** Lint, tests (test_build_all, test_check_sec4_receipts, the registry tests) and all builds from a clean
+    checkout: build_all's targets become main_note, main_primer, pet_note and main_records.
+  - **Step 8.** The note's PDF text is unchanged; removing the paper must not alter the note.
+  - **Step 9.** A read-only independent review of the family diff.
+  - **Step 10.** Before and after tracked-file, Markdown-file and Markdown-line counts.
+  ```
+
+---
+
+### Finding 4: Stale build count in root README repository tree layout
+- **Severity:** NIT
+- **File:Line:** `README.md:233`
+- **What is wrong:**
+  The ASCII tree comment in `README.md` still describes `docs/analysis-note/` as holding sources for "all three builds", even though `main_paper.tex` has been retired and the table at `README.md:395-400` was updated.
+- **Evidence:**
+  `README.md:232-233`:
+  ```markdown
+  ├── docs/                                  # deliverables + governance
+  │   ├── analysis-note/                     #   LaTeX sources for all three builds (see Deliverables)
+  ```
+
+---
+
+### Check Summaries
+
+1. **Surviving dependencies:** Found 1 runtime dependency (`2d-unfolding/re2/partc/re2c_values.py:151` via `re2c_values_spec.tsv:202-210, 248, 250, 251`), reported in Finding 1.
+2. **Rebinding of checks:** Check finds nothing:
+   - `check_sec4_receipts.py`: All 5 paper checks are cleanly rebound to surviving locations in `sec_results.tex:113` (`stat_median`), `sec_validation.tex:108` (`regularization_max`), `sec_5d.tex:216` (`tilt_coverage68_min`), and `primer_body.tex:239` (`shapes_range`, `half_of_cells`), testing the identical quantities from the same receipts with identical or stricter tolerances (coverage is 3 decimal places vs 2). All 17 checks and 21 self-test perturbations are preserved.
+   - `make_values_fived16.py`: The 4 surviving note/primer sentences cover the listed claims; the dropped "ctotal" sentence was unique to the paper and its drop is explicitly stated and justified; all surviving self-test plants pass.
+   - Registry rows: `ALIASES.tsv:38, 47`, `ATTRIBUTION.tsv:18`, and `records_estimators.tex:63, 72` are cleanly rebound from `paper_body.tex:56` to `sec_joint.tex:43` with matching line digest `dd51cdc382e8b520`.
+3. **Tests:** Check finds nothing:
+   - In `test_build_all.py`, stale-product and struck-value tests are retargeted from the paper to the primer and test the exact same failure mechanisms; target lists and fresh-build counts are properly decremented.
+   - In `test_check_sec4_receipts.py`, the two mutated checks (`sec_results.tex` and `primer_body.tex`) exist and verify receipt integrity.
+   - In `tools/registry/check_registry.py` and `results_index.py`, driver lists and test fixtures are updated cleanly (`conflict_fixture.tex` replaces the former malformed citation of `paper_body.tex`).
+4. **The decision record:** Found 1 false factual claim regarding `test_re2c.py` (Finding 2), missing gate steps 7–10 (Finding 3), and 1 stale comment in root `README.md` (Finding 4).
+5. **Anything else making removal unsafe or incomplete:** Addressed in Findings 1 and 2 (uncaught `FileNotFoundError` breaks `2d-unfolding/re2/partc/test_re2c.py`).
