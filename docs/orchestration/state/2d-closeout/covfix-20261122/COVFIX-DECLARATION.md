@@ -1,4 +1,4 @@
-# COVFIX declaration, DRAFT rev 0: the 2D covariance fix (2026-11-22)
+# COVFIX declaration, DRAFT rev 1: the 2D covariance fix (2026-11-22)
 <!-- absence-ok: a draft declaration of studies not yet run; every existing study is routed to INVENTORY.md -->
 
 <!-- absence-ok: scoping statement about studies not yet run or not run as scoped, each routed to its record -->
@@ -16,6 +16,15 @@ the director, after an outside review of the note asked for its "Fix 1". The inv
 - a cause of the under-coverage;
 - coverage at the data's own point, or for generators outside the validation family (§4.3);
 - a p-value.
+
+**Rev 1** answers the director's seven items on rev 0 (`0a3e90dc`):
+1. the PV toy model, §3.4;
+2. ST1 against KI 85, §3.3, with the re-price in §3;
+3. K_A when ST1 does not fire, §5.1 and §7;
+4. in-sample disclosure for K_B and the B3 floor, §7;
+5. the multiplicity logic, §6.4;
+6. PG's generating session and copies, §4.2;
+7. the tune descriptions, now checked against GENIE's tunes page, §4.1.
 
 **Rules are fixed before computation.** Every reading, bar, candidate rule and stop rule below is fixed before the
 first toy. A change after any phase's output exists needs a numbered amendment that names the output already seen.
@@ -67,14 +76,19 @@ The inventory settles four points before any design choice:
 |---|---|---|---|
 | **P0** | re-analysis of committed records (§3.1) | 0 (local) | 0 |
 | **PG** | generate and seal the validation truths (§4) | 2.0–2.5 | 3.0 |
-| **P1** | construction measurements: the matrix cells at nominal and at the build truths (§3.2) | 200 (+76 if N5 runs) | 320 |
+| **P1** | construction measurements: the matrix cells at nominal and at the build truths (§3.2) | 276 (200 if N5 is skipped) | 320 |
 | **P2** | build and freeze the candidates (§5) | 0 (local) | 0 |
-| **PV** | validation toys at the sealed truths, then the readout (§6) | 171 | 200 |
+| **PV** | validation toys at the sealed truths, then the readout (§3.4, §6) | 171 | 200 |
 
-- **Totals:** 373 without N5 and 449 with it, against the balance of 725.6 node-h.
+- **Totals:** 449, or 373 if N5 is skipped, against the balance of 725.6 node-h.
+- **N5 is now priced as expected to run.** Under rev 1's ST1 (§3.3), an "over" reading at N1 or N2 cannot be called a
+  construction error without N5. KI 85's diagnostic makes "over" likely: same-event toys scatter at a corrected median
+  σ_T/σ_realboot of 0.661, which is a variance ratio near 0.44 in data-dominated cells. N5 is skipped only if N1 and N2
+  both read "covers" or "under" in R1.
 - **The half-balance rule.** Every phase is below half the balance (362.8). P1's cap of 320 is under it, but the total is
   not. The director brings Joseph the total before any compute.
-- **A lean option,** for Joseph to choose instead: two validation truths (PV 114) and no N5 gives a total of about 316.
+- **A lean option,** for Joseph to choose instead: two validation truths (PV 114). Its total is about 393, or 316 if N5
+  is skipped.
 - **The toy price** is the director's planning figure of 0.19 node-h per toy, from COV2D's 112.74 node-h over 27
   attempts. That figure includes pilots and retries, so it is conservative per toy. Each phase's gate re-prices from
   sacct before submission, as COV2D's did.
@@ -102,10 +116,11 @@ seeds, disjoint from every committed ensemble. Every cell's reading is §6.1's, 
 | **N3** estimator seed C08 | nominal | one fixed N1 pseudo-dataset; estimator seed varied over 50 seeds disjoint from C08's | 50 | C_seed (C08) | 10 |
 | **N4** coherent nuisances | nominal | N2, plus all 38 systematic bands drawn per toy by COV2D's `cov2d.draw` at r_T ≡ 1 | 200 | S1 + C_syst + C_seed | 38 |
 | **A1** alternative truth, fixed response | genie_mec, nuwro, gibuu, tune_v1 (the PV2D maps, C_model's members) | N1 only, response nominal | 4 × 100 | S1's data stream (spread); C_model (bias) | 76 |
-| **N5** held-out simulation (KI 84/85) | nominal, MC half A | pseudo-data from half A, unfolded with half B's response, plus 200 half-B bootstrap replicas for that configuration's own S1 | 200 + 200 | the half-B S1 | 76, conditional |
+| **N5** held-out simulation (KI 84/85) | nominal, MC half A | pseudo-data from half A, unfolded with half B's response, plus 200 half-B bootstrap replicas for that configuration's own S1 | 200 + 200 | the half-B S1 | 76, expected |
 | **existing** alternative truth, perturbed response | G18, AR23 | COV2D's toys (data Poisson + 38 bands) | 300 + 300 | C_T, Q_R (P0) | 0 |
 
-- **N5 runs only if** N1 or N2 reads "under" or "over" in R1 (§6.1). It separates KI 85's explanations: (a) the
+- **N5 runs unless** N1 and N2 both read "covers" or "under" in R1 (§6.1). It is mandatory before ST1 can treat an
+  "over" as a construction error (§3.3). It separates KI 85's explanations: (a) the
   bootstrap over-scatters, or (b) same-event pseudo-data under-scatter.
 - **Without N5,** N1 and N2 carry KI 85's caveat. Same-event pseudo-data may under-scatter, so a ratio below 1 there is a
   bound, not a measurement.
@@ -117,6 +132,13 @@ seeds, disjoint from every committed ensemble. Every cell's reading is §6.1's, 
 - **ST1, construction error.**
   - Trigger: N1, N2, N3 or N4 reads "under" or "over" in R1 against its own reference block, at nominal truth, where
     nothing but the drawn sources acts.
+  - **"Under" stands without N5.** Same-event pseudo-data can only under-scatter (KI 85 (b)), so they can hide
+    under-coverage but not create it.
+  - **"Over" needs N5.** An "over" at N1 or N2 is a construction error only if N5, the held-out-simulation arm, also reads
+    "over" in R1 against its own half-B S1. If N5 reads "covers", the "over" is recorded as KI 85's same-event effect.
+    ST1 does not fire, and the cell's reading carries that caveat.
+  - N3 (seed) and N4 (nuisances) "over" readings need N5 only for their data-stream share. If N5 removes the data-stream
+    excess, the remainder is read against the cell's other blocks.
   - Action: P2 and PV wait. The cell that first moves the reading localizes the block. A fix goes to the director as an
     amendment before any further compute; this is outcome A's path, §7.
   - R2 and R3 readings at nominal are recorded but do not trigger ST1, since those modes are poorly determined by
@@ -133,6 +155,30 @@ seeds, disjoint from every committed ensemble. Every cell's reading is §6.1's, 
 - **ST5, guard refusals are terminal** for their phase, as in every lane connect: the fence, atime, provenance and A0
   controls.
 
+### 3.4 What a PV toy draws
+
+PV uses COV2D's model (COV2D-DECLARATION.md §4), with one conditional addition below, at a sealed truth u in place of
+G18 or AR23, so that PV's
+readings are comparable with COV2D's at G18 and AR23 and with K0's expected "under".
+
+- **The truth deformation.** r_u is u's own bridged ratio from PG's seal, applied per row by
+  `s5e_deform.ratio_weight(gen, FINE, w_truth, ratio, 1.0)`, computed once with the CV `w_truth` and its rescale constant
+  from `mc_truth_denom`'s rows (COV2D §4.1). The same per-row factor applies to every `mc_signal_reco` row. Rows outside
+  the 5D grid and background rows get r = 1.
+- **The natures.** One toy is one nature, drawn by `cov2d.draw`: Flux first, then the other 37 bands sorted. Each band
+  contributes the composite a_D = a_{u₁} + Σ_{j≥2}(a_{u_j} − a_CV) to each of `w_reco`, `w_truth` and `w_bkg`
+  (COV2D §4.2). The bands are therefore carried through the response, on reco and truth alike.
+- **The pseudo-data.** Poisson at λ⁺ = max(w_reco,D × r_u × s, 0) on signal rows and max(w_bkg,D × s, 0) on background
+  rows, on a count stream separate from the draw stream.
+- **The graded truth.** Each toy's own clipped composite truth, normalized with the drawn Flux universe's integral and
+  completeness ≡ 1 (COV2D §4.2).
+- **The estimator seed** is fixed at 42, as in production. C_seed is in every candidate.
+- **Simulation statistics.** These are added to PV's toys by N2's three-stream redraw only if N2's R1 spread F_R1
+  exceeds N1's by more than the two guards combined (h(F_R1,N2) + h(F_R1,N1)). This rule is fixed now and read at P1's
+  end, before P2. If it fires, the redraw also enters K_B's fluctuation part through N4, which contains N2.
+- **Count and price.** 300 toys per sealed truth, with seeds disjoint from every committed and P1 ensemble: 900 toys at
+  0.19 node-h is 171 (lean: 600, 114).
+
 ## 4. The validation truths
 
 ### 4.1 Which, and how many
@@ -141,28 +187,48 @@ seeds, disjoint from every committed ensemble. Every cell's reading is §6.1's, 
 - **They are chosen by rule, before anything is generated,** from the tune qualifiers the genie_xsec `v3_04_00` product
   on Perlmutter actually provides, which F1's source is (FD-F1-DECLARATION.md:76). The order of preference, fixed now,
   is:
-  1. `G21_11b_00_000` (SuSAv2 quasielastic and 2p2h: a family outside C_model and outside G18/AR23);
-  2. `G18_10b_02_11b` (G18's model with hN intranuclear cascade, where G18_10a uses hA);
-  3. `G18_02b_02_11b` (the empirical-MEC "GENIE 2-like" configuration with hN);
-  4. `G18_02a_02_11b`, as a fallback only. It is closest to C_model's GENIE 2.12 member, and its use is disclosed.
+  1. `G21_11b_00_000`;
+  2. `G18_10b_02_11b`;
+  3. `G18_02b_02_11b`;
+  4. `G18_02a_02_11b`, as a fallback only, and its use is disclosed.
+- **What the names mean,** from GENIE's "Global Fits and Physics Tunes" page (https://genie-mc.github.io/tunes.html,
+  read 2026-11-22). The page covers GENIE v3.0.0–v3.2.0, not v3_04_00. PG's probe confirms each chosen qualifier in the
+  v3_04_00 product, and nothing here is bound from memory.
+  - The final letter selects the intranuclear transport: a = INTRANUKE/hA, b = INTRANUKE/hN, c = Liège/INCL,
+    d = Geant4 Bertini.
+  - G21_11* "start from G18_02* and install an improved and consistent model of interactions around the quasi-elastic
+    peak" and "uses the SuSAv2 QE and 2p2h model". Neither C_model's members nor G18/AR23 use it.
+  - G18_10* adds to G18_02* "a consistent theory-based model of interactions around the quasi-elastic peak (NAV QE and
+    NSV 2p2h model)". G18_10b differs from the spent G18_10a_02_11b in its intranuclear model only. It tests
+    sensitivity to FSI at a seen quasielastic model and is disclosed as close to G18.
+  - G18_02* is "similar to G18_01* CMCs, but upgrade[s] the resonance and coherent pion production models (RS → BS)".
+    G18_01* are "adiabatic evolutions of the historic model". The page does not name G18_02's QE or 2p2h models.
+    Because G18_02a is the hA variant of that historic lineage, it is the fallback: it is nearest C_model's GENIE 2.12
+    member.
+  - "_02_11b" is GENIE's "final 2020 free-nucleon x-section retune" (status Production on that page).
 - The first three present are used. The check is a stat-only login probe that lists the qualifiers, and it reads no
   spline content.
 - **If fewer than two are present,** PG stops and goes to the director.
 
 ### 4.2 Custody: generated and sealed before any candidate exists
 
-- **Who generates.** PG is run by a session other than cov2d (proposed: tier3-design or limitation-resolver, whichever
-  the director names), with F1's bound pipeline unchanged except for the tune names and fresh seeds. F1 is
+- **Who generates.** PG is run by a session that is **not cov2d** and that **does not read the sealed content**,
+  beyond the pass/fail and count outputs of its own pipeline checks. The director names it at binding. The candidates
+  are tier3-design (after its measurability build connect), limitation-resolver (after e1), or a fresh session Joseph
+  opens, which is the cleanest for blindness. It runs F1's bound pipeline unchanged except for the tune names and fresh
+  seeds. F1 is
   `gen5d_v3.py`, `run_gevgen_v3.sh`, the pv-ladder ratios and the bridge, and it costs about 0.66 node-h per tune.
 - **What is sealed.**
   - Each tune's products are the reduced splines, gst, gen5d and the bridged 5D ratio, plus its 2D map.
   - Their sha256 list is committed as `PG-SEAL.sha256` **before P1's first connect**.
-  - The products stay on pscratch and HPSS. The ratio files are not committed to the repo until PV's readout is
-    committed.
+  - The products stay on pscratch until PV, and the ratio files are not committed to the repo until PV's readout is.
+  - **An HPSS copy at seal time is proposed**, against pscratch purge, with an htar from a login node and a hashverify.
+    It is not yet required.
 - **Who may read them.** No one reads a sealed product's content until PV. That includes cov2d and the generating
   session beyond its own sampled-spectrum and header checks, whose outputs are pass/fail and counts only.
-- **Seen versus touched.** The seal is checked by sha256 at PV's connect. Atime on the sealed set is recorded at seal
-  time and checked unmoved at PV, with O_NOATIME reads, as the COV2D connects did. A moved atime is a guard refusal.
+- **Seen versus touched.** The seal is checked by sha256 at PV's connect. Atime on the sealed set's **pscratch copies**
+  is recorded at seal time and checked unmoved at PV, with O_NOATIME reads, as the COV2D connects did. A moved atime is a
+  guard refusal. If the HPSS copy is made, its member listing (not content) is recorded at seal time.
 - **Which code reads them.** PV's bulk and readout read the sealed truths only at the bound, frozen candidate shas of §5.
 
 ### 4.3 What the validation family can and cannot show
@@ -175,7 +241,10 @@ truth would need a generator sample this project does not have; that is disclose
 
 **The build set** is N1–N5, A1's four truths, and COV2D's G18 and AR23 toys. Nothing in PG's seal is read.
 
-### 5.1 K0, the control
+### 5.1 K0, the control, and K_A
+
+**K_A** is Q_R with an ST1 fix applied. **If ST1 does not fire, K_A = K0, and K_A is not read separately.** Outcome A
+is then unavailable (§7).
 
 K0 is the current Q_R, unchanged. Its expected reading at the unseen truths is "under", as at G18 and AR23. **If K0 reads
 "covers" at all three, the validation family is too close to nominal to test anything.** That makes PV inconclusive,
@@ -183,7 +252,7 @@ and §7 licenses nothing.
 
 ### 5.2 K_B: fluctuation fixed, bias added (one candidate, chosen at P2 by rule)
 
-**Fluctuation part V_F.** Start from Q_R with any ST1 fix applied (K_A). Then, in V's eigenbasis, set each mode's
+**Fluctuation part V_F.** Start from K_A (that is, Q_R itself when ST1 does not fire). Then, in V's eigenbasis, set each mode's
 fluctuation variance to max(λ_i, ŝ_i), with ŝ_i = u_iᵀ Ŝ u_i from N4's toys (all drawable sources at nominal).
 - This is measured at nominal truth from fluctuation sources only. It is not tuned to any tune's pass.
 - It is per-mode, not a uniform scale; the review rejects a uniform scale.
@@ -276,20 +345,52 @@ For K_C, every reading is taken on P_k with ndf = k.
 | **INFLATED** | P-1 reads "over", or P-3 flags "over", at any truth, with no "under" |
 | **UNRESOLVED** | otherwise |
 
+### 6.4 Multiplicity: false PASS and false FAIL
+
+- **False PASS is controlled by requiring everything.** VALIDATED needs P-1 to P-4 at every sealed truth. A candidate
+  whose true mean ratio is materially above the tolerance (M_true > 1.25 + 3·SE) reads "under" or "unresolved" at P-1
+  with probability near 1 at each truth: at ndf ≈ 204 and N = 300, SE(M) = √(2/(N·ndf)) ≈ 0.006. The result takes the
+  first VALIDATED of at most three candidates, so the familywise chance that such a candidate is VALIDATED is at most the
+  sum of the per-candidate chances, each negligible. A candidate inside the tolerance (M_true ≤ 1.25) can pass by
+  design; the tolerance is the stated model class's precision, not an error.
+- **False FAIL for a correctly covering V.** This is Gaussian toys with covariance V and zero bias.
+  - P-1 essentially never fails. h(M) ≈ 0.011 at ndf 204; for K_C at k = 5, SE ≈ 0.037 and h ≈ 0.072, so leaving
+    [0.8, 1.25] needs about a 5σ excursion.
+  - P-2 essentially never fails. A 66-mode band mean has SE ≈ 0.01 against a bar of 1.5.
+  - P-4's expected false flags are at most 0.025 per truth.
+  - P-3 is the only real source: at most 0.025 per truth for a false "under" and at most 0.025 for a false "over"
+    (binomial, discrete, so at or below nominal).
+  - So per truth, P(not PASS) ≤ about 0.05 and P(FAILS) ≤ about 0.025. Over three independent truths,
+    P(not VALIDATED) ≤ 1 − 0.95³ ≈ 0.14 and P(FAILS) ≤ 1 − 0.975³ ≈ 0.07. The lean option gives ≈ 0.10 and ≈ 0.05.
+    Both are below the 20 % mark the director set.
+- **Real toys are not Gaussian.** Clipping and a non-linear estimator can change P-3's size. The readout's tests
+  therefore measure the false-FAIL rate on two synthetic correctly-covering ensembles: Gaussian with V, and COV2D-like
+  resampled errors whitened and recoloured to V. That rate is reported before binding. If it exceeds 0.20 at three
+  truths, P-3's level is lowered by amendment before any PV toy runs, and never after.
+
 ## 7. What each outcome licenses (b1 style; adoption and wording remain Joseph's and the director's)
 
-The candidates are read in the fixed order K_A, K_B, K_C. The first VALIDATED is the result. The others are reported
-descriptively, and the multiplicity of three candidates is disclosed.
+The candidates are read in the fixed order K_A (only if ST1 fired; otherwise K_A = K0 and is not read), K_B, K_C. The
+first VALIDATED is the result. The others are reported descriptively, and the multiplicity is disclosed (§6.4).
+
+**In-sample disclosure.** Every K_B variant is built in-sample on the family F, which includes the spent tunes G18 and
+AR23, and every licensed sentence for B says so: "built in-sample on <F>; validated out of sample on <the sealed tunes>".
 
 <!-- absence-ok: scoping statement about studies not yet run or not run as scoped, each routed to its record -->
 | outcome | condition | licensed sentence (substance, not wording) | not licensed |
 |---|---|---|---|
 | **A** | ST1 fired, the fix was amended in, and K_A is VALIDATED | "The 2D covariance had a construction error in <block>, located at nominal truth by cell <N>; corrected, it covers three held-out GENIE v3 tunes at the stated level." | a claim about non-GENIE truths; coverage at the data |
 | **A, partial** | ST1 fired and was fixed, but K_A is not VALIDATED | "A construction error in <block> was found and corrected; the corrected covariance still does not cover held-out tunes." Then B or C is read next. | "fixed" in the coverage sense |
-| **B** | K_B is VALIDATED | "With a truth-model bias term built from <F> and the fluctuation part measured at nominal, the covariance covers three held-out GENIE v3 tunes; the bias term is reported as a separate block." | coverage outside the GENIE v3 family; a cause of the bias |
+| **B** (K_B = B1 or B2) | K_B is VALIDATED | "With a truth-model bias term built in-sample from <F> and the fluctuation part measured at nominal, the covariance covers three held-out GENIE v3 tunes, out of sample; the bias term is reported as a separate block." | coverage outside the GENIE v3 family; a cause of the bias |
+| **B, floor** (K_B = B3) | K_B is VALIDATED | "With an eigenvalue floor beyond rank 73, chosen in-sample on <F>, and the fluctuation part measured at nominal, the covariance covers three held-out GENIE v3 tunes, out of sample." The sentence must say "floor", not "measured bias", and gives φ. | any sentence calling the floor a measured truth-model bias; coverage outside the family |
 | **C** | K_B is not VALIDATED and K_C is VALIDATED | "Uncertainties are reported for the k combinations P_k, which cover the held-out tunes; finer combinations carry no validated uncertainty." | any statement about directions outside P_k |
 | **none** | nothing VALIDATED, or ST2 | Nothing new. The note's "coverage remains unvalidated" stands, with P1's matrix readings as description. | any covariance change |
 | **inconclusive** | K0 reads "covers" at all validation truths | Nothing. The validation family did not test the covariance. | — |
+
+<!-- absence-ok: a reading rule for a future verdict, not a claim about an existing result -->
+**A FAILS from P-3 alone** (P-1 reads "covers" at every truth and only the joint binomial flags "under" at one truth) is
+reported as "FAILS (P-3 only, at <u>)". The candidate is not VALIDATED, and ST4 forbids a re-read; but the sentence beside
+it gives §6.4's false-FAIL bound, so a reader can weigh it.
 
 **UNRESOLVED** at any truth means more toys could resolve it. That needs an amendment and a price, never a re-read.
 
@@ -313,13 +414,13 @@ descriptively, and the multiplicity of three candidates is disclosed.
 
 ## 9. Open items for the director's read
 
-1. **Who runs PG** (§4.2), and whether the sealed products may sit only on pscratch plus HPSS until PV.
+1. **Who runs PG:** the director names it at binding (§4.2). Is the HPSS copy at seal time required or optional?
 2. **The bars:** 0.8 / 1.25 for M, 1.5 for a band, ≤ 2 flagged modes. These are proposals for the reads to challenge.
 3. **Full or lean:** three validation truths and N5 conditional (up to 449 node-h), or the lean option (about 316).
 4. **N2's simulation streams.** Is S1's three-stream code the right model for the response's simulation statistics,
    given that C_stat's MC part is that code's output? It measures how well the bootstrap predicts the estimator's
    scatter under fresh redraws. It is not circular in the KI 85 sense, because the toys' seeds are disjoint from S1's.
-5. **The tune descriptions in §4.1** (SuSAv2, hN against hA, empirical MEC) are from memory of GENIE's tune list. They
-   must be checked against GENIE's documentation before binding; the choice rule uses only the names.
-6. **Whether the measurability study's directions** (tier3-design) should be K_C's only subspace, or one of two frozen
-   options.
+5. **The tune descriptions in §4.1** are now quoted from GENIE's tunes page, which covers v3.0.0–v3.2.0. PG's
+   stat-only probe confirms the qualifiers in v3_04_00 before generation.
+6. **K_C's subspace:** settled by the director. It is the measurability study's directions if they are committed
+   before the freeze, otherwise K_B's top-k (§5.3).
