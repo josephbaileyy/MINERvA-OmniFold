@@ -1,0 +1,22 @@
+fixture built at /pscratch/sd/j/josephrb/t3p-20261121
+   6 log-dry/SHA256SUMS
+  36 log-floor/SHA256SUMS
+  12 log-q3/SHA256SUMS
+  54 total
+== variant bail_running; npz 36
+BAIL fence (sacct) not clear
+== script rc=9; self copy left: ls: cannot access '/dev/shm/t3pr.1.sh': No such file or directory
+== the connect log
+cat: /pscratch/sd/j/josephrb/t3p-20261121/logs/connect-read.log: No such file or directory
+== done: cat: /pscratch/sd/j/josephrb/t3p-20261121/logs/connect-read.done: No such file or directory
+== OUT top level
+fence.txt
+log-dry
+log-floor
+log-q3
+logs
+manifest.json
+queues
+runs
+stage
+stage.json

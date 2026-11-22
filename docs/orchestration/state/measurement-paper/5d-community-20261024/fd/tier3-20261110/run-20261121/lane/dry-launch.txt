@@ -1,0 +1,4 @@
+ssh rc=0
+node login38 staged sha256 745074a9480c3dcbcaa08f1c449534455e194cc3436cc6465906f1f68c4910be
+detached pid 211735, output /dev/shm/t3pc.210917.sh.out
+script rc=8
