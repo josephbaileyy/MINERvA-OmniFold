@@ -1,0 +1,251 @@
+{
+  "all_killed": true,
+  "harness_sha256": "d63523d8b848e14aa235fc1ba48a9d6f7ecbba6b5c683fd5fe0a64694e984447",
+  "killed": 30,
+  "module_sha256": "bf7c9b6f5fe7b06ec9be30c49c8e5d3d12f013bed1ae2649238c5f504fa281d5",
+  "required": 30,
+  "results": [
+    {
+      "mutated_sha256": "379341a6e7893b3a951b04573371eae1228fda79e01fc9af04494b0bc27881c5",
+      "name": "lattice-index-side",
+      "outcome": "KILLED",
+      "returncode": 1,
+      "seconds": 1.4,
+      "suite_last_line": "1 failed in 0.61s"
+    },
+    {
+      "mutated_sha256": "21b44c3715587a5b9299426be324f45be023bcbda3b9fd146a0272d9db297339",
+      "name": "lattice-overflow",
+      "outcome": "KILLED",
+      "returncode": 1,
+      "seconds": 1.1,
+      "suite_last_line": "1 failed in 0.52s"
+    },
+    {
+      "mutated_sha256": "8e052727119a76e09698336fb6c9eb36f1a1dd148c5800d5b5152e467b45da94",
+      "name": "chi2-no-profile",
+      "outcome": "KILLED",
+      "returncode": 1,
+      "seconds": 1.1,
+      "suite_last_line": "1 failed, 13 passed in 0.61s"
+    },
+    {
+      "mutated_sha256": "433af4f49b53cc1b0ebe76531e82bfe9aeffc71d10442e7486e078333be82f54",
+      "name": "parabola-convexity",
+      "outcome": "KILLED",
+      "returncode": 1,
+      "seconds": 1.1,
+      "suite_last_line": "1 failed, 15 passed in 0.61s"
+    },
+    {
+      "mutated_sha256": "98d131b8f90f34ba2da328b7d5ffe3b21fe26d648f750d1f11e31e65d55798fd",
+      "name": "coarse-stride",
+      "outcome": "KILLED",
+      "returncode": 1,
+      "seconds": 1.1,
+      "suite_last_line": "1 failed, 16 passed in 0.62s"
+    },
+    {
+      "mutated_sha256": "e18411b5fa916ebabe186fb9ce6d19483c2f7062b9ad1fda8b4b5e65aca25e84",
+      "name": "fine-window",
+      "outcome": "KILLED",
+      "returncode": 1,
+      "seconds": 1.1,
+      "suite_last_line": "1 failed, 16 passed in 0.60s"
+    },
+    {
+      "mutated_sha256": "1ff00f95d03c0e3367b6d5151b9ea64c7c1d097b00ab4d997111d58931388ead",
+      "name": "scan-edge-strict",
+      "outcome": "KILLED",
+      "returncode": 1,
+      "seconds": 1.2,
+      "suite_last_line": "1 failed, 19 passed in 0.61s"
+    },
+    {
+      "mutated_sha256": "c06ec4904a324242095735f7c044026a580ca022f1e050e2a4cf841a20181473",
+      "name": "not-a-scale-inclusive",
+      "outcome": "KILLED",
+      "returncode": 1,
+      "seconds": 1.2,
+      "suite_last_line": "1 failed, 26 passed in 0.68s"
+    },
+    {
+      "mutated_sha256": "1c2ef1c17b70d7bd6e2176c771b65adc379c0bb5c89b8ddb359f0c2ef194b7fe",
+      "name": "beyond-inclusive",
+      "outcome": "KILLED",
+      "returncode": 1,
+      "seconds": 1.3,
+      "suite_last_line": "1 failed, 28 passed in 0.60s"
+    },
+    {
+      "mutated_sha256": "6f75e48c4d55c2752464402969bc4972691dd339c14f7908d3d207bbf16a6413",
+      "name": "within-strict",
+      "outcome": "KILLED",
+      "returncode": 1,
+      "seconds": 1.1,
+      "suite_last_line": "1 failed, 29 passed in 0.61s"
+    },
+    {
+      "mutated_sha256": "444d2a0574d32a0729811f53583cb4aaf6d9c01e427b979b175b42e53bce663e",
+      "name": "band-sigmas",
+      "outcome": "KILLED",
+      "returncode": 1,
+      "seconds": 1.3,
+      "suite_last_line": "1 failed, 28 passed in 0.63s"
+    },
+    {
+      "mutated_sha256": "2f4c0b68f686e09391770b2923513c019e0101b528320641800b1a3e4d6b6093",
+      "name": "no-step-reading",
+      "outcome": "KILLED",
+      "returncode": 1,
+      "seconds": 1.1,
+      "suite_last_line": "1 failed, 22 passed in 0.62s"
+    },
+    {
+      "mutated_sha256": "36097cefc9e08b17019c6760599215b3a6bc6604df104bf20be016fe2dde924f",
+      "name": "used-bins-or",
+      "outcome": "KILLED",
+      "returncode": 1,
+      "seconds": 11.8,
+      "suite_last_line": "1 failed, 36 passed in 11.22s"
+    },
+    {
+      "mutated_sha256": "df7d55c28cd4c9e17905fa0aa2571ad5751346d189067c96132176ed8b09cf15",
+      "name": "ndf-minus-one",
+      "outcome": "KILLED",
+      "returncode": 1,
+      "seconds": 12.5,
+      "suite_last_line": "1 failed, 34 passed in 11.72s"
+    },
+    {
+      "mutated_sha256": "ff0d5437a1fdd5befbae5e8905bb212fdefea1f1242dc1af5791a9c33e182e21",
+      "name": "refit-subset",
+      "outcome": "KILLED",
+      "returncode": 1,
+      "seconds": 13.1,
+      "suite_last_line": "1 failed, 37 passed in 12.36s"
+    },
+    {
+      "mutated_sha256": "57baac1cba9b23b62e85e584959bc8506fa83c3f7e5ce98f113ef3ff67fe3562",
+      "name": "seed-word",
+      "outcome": "KILLED",
+      "returncode": 1,
+      "seconds": 87.7,
+      "suite_last_line": "1 failed, 38 passed in 86.69s (0:01:26)"
+    },
+    {
+      "mutated_sha256": "90717ef60ddd48bab13fa265a9a2f3d9aca9ec26590fba1ba134664a91454da2",
+      "name": "histogram-equality-skipped",
+      "outcome": "KILLED",
+      "returncode": 1,
+      "seconds": 290.2,
+      "suite_last_line": "1 failed, 43 passed in 289.35s (0:04:49)"
+    },
+    {
+      "mutated_sha256": "a213b074d3bd311d587e3e273117ddbf4473f6f15498fc56525f9a6eeb6878a7",
+      "name": "reproduction-tolerance",
+      "outcome": "KILLED",
+      "returncode": 1,
+      "seconds": 293.5,
+      "suite_last_line": "1 failed, 44 passed in 292.29s (0:04:52)"
+    },
+    {
+      "mutated_sha256": "90e93f3a2ddd15e0a28df4a1eaed6d75c11f4daee484be66416e8f6358b7e59b",
+      "name": "plant-tolerance",
+      "outcome": "KILLED",
+      "returncode": 1,
+      "seconds": 297.8,
+      "suite_last_line": "1 failed, 45 passed in 296.84s (0:04:56)"
+    },
+    {
+      "mutated_sha256": "6b305b235062cb45b1fa9a6ff0e357d9f600f2542dd3eaee62c9f097b59b71ac",
+      "name": "plant-direction",
+      "outcome": "KILLED",
+      "returncode": 1,
+      "seconds": 273.0,
+      "suite_last_line": "1 failed, 39 passed in 271.79s (0:04:31)"
+    },
+    {
+      "mutated_sha256": "e48d5122ae8e5295022d586eb7ee2f04d07229cc4002bc51772508dfa62edc66",
+      "name": "direct-direction",
+      "outcome": "KILLED",
+      "returncode": 1,
+      "seconds": 1.5,
+      "suite_last_line": "1 failed, 1 passed in 0.63s"
+    },
+    {
+      "mutated_sha256": "7194f23fb0ae0b8cebe05db0e5577dbcc1e69b0dd3a2294323fb0551b16fbb78",
+      "name": "unit-test-c0-accepted",
+      "outcome": "KILLED",
+      "returncode": 1,
+      "seconds": 289.5,
+      "suite_last_line": "1 failed, 42 passed in 288.64s (0:04:48)"
+    },
+    {
+      "mutated_sha256": "914fef76f7c559f4a5f737050ce0fde54716d5b4fac93f29b2a6324787d2bb08",
+      "name": "chain-digest-skipped",
+      "outcome": "KILLED",
+      "returncode": 1,
+      "seconds": 285.1,
+      "suite_last_line": "1 failed, 41 passed in 283.77s (0:04:43)"
+    },
+    {
+      "mutated_sha256": "1f5a1694238f623bc4ee29e4762ecf8e444126327a13534424bf873860c7ebcf",
+      "name": "environment-skipped",
+      "outcome": "KILLED",
+      "returncode": 1,
+      "seconds": 304.0,
+      "suite_last_line": "1 failed, 46 passed in 302.70s (0:05:02)"
+    },
+    {
+      "mutated_sha256": "d278c6845c9d34737f59ba2bddee6bf27e7bf10b4987d14a7b999597cc13c203",
+      "name": "wall-skipped",
+      "outcome": "KILLED",
+      "returncode": 1,
+      "seconds": 89.3,
+      "suite_last_line": "1 failed, 38 passed in 88.00s (0:01:28)"
+    },
+    {
+      "mutated_sha256": "40bc3f64bb5eb782d24d626628f55b980ada63c63ff67ee2444435d3762dd941",
+      "name": "fits-on-no-step",
+      "outcome": "KILLED",
+      "returncode": 1,
+      "seconds": 296.7,
+      "suite_last_line": "1 failed, 40 passed in 295.40s (0:04:55)"
+    },
+    {
+      "mutated_sha256": "82e9e798410b5859af4e3fa6e2f1fe2101cb4c0aa6dc03bf9390e33080b851f0",
+      "name": "step-regions",
+      "outcome": "KILLED",
+      "returncode": 1,
+      "seconds": 1.8,
+      "suite_last_line": "1 failed, 33 passed in 0.79s"
+    },
+    {
+      "mutated_sha256": "b4b1c1aa2d513eed09122ac2ecce5d11d4cb884a9bcc80091c6804c8acf9ba26",
+      "name": "threads-skipped",
+      "outcome": "KILLED",
+      "returncode": 1,
+      "seconds": 294.4,
+      "suite_last_line": "1 failed, 47 passed in 293.57s (0:04:53)"
+    },
+    {
+      "mutated_sha256": "d1888546a054e2042bd51bc4f652e933103f3427d23968b601ab6ee464cde9c8",
+      "name": "nice-skipped",
+      "outcome": "KILLED",
+      "returncode": 1,
+      "seconds": 297.4,
+      "suite_last_line": "1 failed, 47 passed in 296.35s (0:04:56)"
+    },
+    {
+      "mutated_sha256": "77bf9fe85b12678775c11850c578114a617891b2832495ba2f352ccde915ee24",
+      "name": "output-exists-skipped",
+      "outcome": "KILLED",
+      "returncode": 1,
+      "seconds": 297.8,
+      "suite_last_line": "1 failed, 47 passed in 296.69s (0:04:56)"
+    }
+  ],
+  "schema": "rpl-scale-fit-mutation/1",
+  "suite_sha256": "94e9443b3e5fe2341320040b47cece8d89ce085e11948886f72ac13353f5fe78"
+}
