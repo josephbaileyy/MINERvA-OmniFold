@@ -1014,6 +1014,10 @@ docs/orchestration/state/2d-closeout/c04-repair/review/VERIFICATION.md	tracked	M
 docs/orchestration/state/2d-closeout/c04-repair/scripts/build_repair.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/c04-repair/scripts/make_sigma_json.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/c04-repair/scripts/run_repair.sh	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/cov2d-fence-20261122/README.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/cov2d-fence-20261122/cov2d_fence.sh	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/cov2d-fence-20261122/mutants.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/cov2d-fence-20261122/test_cov2d_fence.sh	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/ibukt-a2/PASS.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/ibukt-a2/cell-readings.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/ibukt-a2/readout.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
