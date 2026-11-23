@@ -7271,6 +7271,8 @@ docs/orchestration/state/measurability-20261122/connect/standin/standin-rev3-ok.
 docs/orchestration/state/measurability-20261122/connect/standin/standin-window.log.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
 docs/orchestration/state/measurability-20261122/connect/standin/standin.sh	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
 docs/orchestration/state/measurability-20261122/connect/test_msr_build.out.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
+docs/orchestration/state/measurability-20261122/reads/connectB-agy-gemini-3.8-flash-high.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
+docs/orchestration/state/measurability-20261122/reads/connectB-prompt.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
 docs/orchestration/state/measurability-20261122/reads/connectP-agy.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
 docs/orchestration/state/measurability-20261122/reads/connectP-confirm-grok.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
 docs/orchestration/state/measurability-20261122/reads/connectP-confirm-prompt.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
