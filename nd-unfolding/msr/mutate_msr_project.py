@@ -56,6 +56,12 @@ MUTANTS = [
     ("r route off", "                route_worst[0] = float(\"inf\") if (v is None) != (vi is None) else max(",
      "                route_worst[0] = 0.0 if True else max("),
     ("C-L id range off", "and int(ids.max()) < 224", "and True"),
+    ("C-DID strict rule restored", "    ctl(rec, \"C-DID\", len(common) > 0 and len(common) == C_DID_COMMON_EXPECTED",
+     "    ctl(rec, \"C-DID\", len(common) > 0 and len(common) == len(j5[\"t1_names\"])"),
+    ("C-DID expected size off", "len(common) > 0 and len(common) == C_DID_COMMON_EXPECTED", "len(common) > 0"),
+    ("C-2D exact M restored", "    m_ok = rel_ok(z2[\"d2_full__M\"], z2[\"d2__bank_ibu_response\"])",
+     "    m_ok = bool(np.array_equal(z2[\"d2_full__M\"], z2[\"d2__bank_ibu_response\"]))"),
+    ("C-D primary only restored", "    with_d = list(F0B_PRIMARY) + [t for t in F0B_SECONDARY_WITH_D]", "    with_d = list(F0B_PRIMARY)"),
 ]
 
 RUNNER = r'''

@@ -48,6 +48,8 @@ F0B_PRIMARY = ("nominal", "W1", "W2", "W3", "q3", "stage0c_gibuu", "A7_mnvtune",
                "A7_nuwro", "A7_gibuu")
 A2_PRIMARY = ("nominal", "genie_mec", "nuwro")
 A2_SECONDARY = ("bump", "tilt", "within_plus", "within_minus")
+F0B_SECONDARY_WITH_D = ("closure_nuwro",)   # Amendment C: the secondary F0b truth converted with d (its FD-PRR entry exists)
+C_DID_COMMON_EXPECTED = 151     # Amendment C: the size of the shared functional set for these inputs (a recorded expectation)
 
 OPERANDS = {  # section 2
     "fdprr": (S / "measurement-paper/5d-community-20261024/fd/receipts-prr/read/cluster/readout.json",
@@ -536,16 +538,20 @@ def controls(prod: Path) -> tuple[dict, dict]:
     names185 = [str(x) for x in tb["names"]]
     did_names = [names185[i] for i in tb["f183"]]
     pos = {n: i for i, n in enumerate(did_names)}
-    common = [(i, pos[n]) for i, n in enumerate(j5["t1_names"]) if n in pos]
+    common = [(i, pos[n]) for i, n in enumerate(j5["t1_names"]) if n in pos]   # section 6: "the functionals both name"
+    ibu1_only = [n for n in j5["t1_names"] if n not in pos]
+    did_only = [n for n in did_names if n not in set(j5["t1_names"])]
     a_s = np.array([srel[i] for i, _ in common])
     b_s = np.asarray(tb["T1/nominal/widths_nom/sigma_rel"], float)[[k for _, k in common]]
     a_n = np.array([nul[i] for i, _ in common])
     b_n = np.asarray(tb["T1/nominal/widths_nom/null_fraction"], float)[[k for _, k in common]]
     both = np.isfinite(a_s) & np.isfinite(b_s)
     dr = float(np.max(np.abs(a_s[both] - b_s[both]) / np.abs(b_s[both]))) if both.any() else float("nan")
-    ctl(rec, "C-DID", len(common) == len(j5["t1_names"]) and bool(np.array_equal(np.isfinite(a_s), np.isfinite(b_s)))
-        and dr <= 1e-6 and float(np.nanmax(np.abs(a_n - b_n))) <= 1e-6,
-        functionals_compared=len(common), sigma_rel_max_rel=dr, null_fraction_max_abs=float(np.nanmax(np.abs(a_n - b_n))))
+    nmax = float(np.nanmax(np.abs(a_n - b_n))) if len(common) else float("nan")
+    ctl(rec, "C-DID", len(common) > 0 and len(common) == C_DID_COMMON_EXPECTED
+        and bool(np.array_equal(np.isfinite(a_s), np.isfinite(b_s))) and dr <= 1e-6 and nmax <= 1e-6,
+        functionals_compared=len(common), expected_common=C_DID_COMMON_EXPECTED, sigma_rel_max_rel=dr,
+        null_fraction_max_abs=nmax, ibu1_only=ibu1_only, did_only=did_only)
     # C-L (STOP)
     U, M16 = np.asarray(z5["gw_U"], float), np.asarray(z3["M16"], float)
     cells2 = [np.asarray(a2["truths"][t]["cells"], int) for t in A2_PRIMARY]
@@ -570,8 +576,10 @@ def controls(prod: Path) -> tuple[dict, dict]:
     fb = {t["name"]: t for t in f0b["truths"]}
     fc = {t["name"]: t for t in f0c["truths"]}
     ctl(rec, "C-F0B", all(fb[k]["bias"] == fc[k]["bias"] for k in fb) and set(fb) == set(fc))
+    with_d = list(F0B_PRIMARY) + [t for t in F0B_SECONDARY_WITH_D]   # Amendment C: every truth converted with d
     ctl(rec, "C-D", all(f"B0/{t}/s991000" in fd["table"] and len(fd["table"][f"B0/{t}/s991000"]["d"]) == 16
-                        for t in F0B_PRIMARY))
+                        for t in with_d), truths_checked=with_d,
+        printed_without_d=[t["name"] for t in f0b["truths"] if t["name"] not in with_d])
     # C-A2 (STOP)
     worst = 0.0
     for t in A2_PRIMARY + A2_SECONDARY:
@@ -580,10 +588,13 @@ def controls(prod: Path) -> tuple[dict, dict]:
     ctl(rec, "C-A2", worst <= 1e-15 and a2["bank_sha256"] == BANK_SHA, max_abs=worst)
     # C-2D (STOP)
     c2 = j2["C-2D"]
-    bk = all(np.array_equal(np.asarray(z2[f"d2_{h}__b_known"], float), np.asarray(z2[f"d2_{h}__b_known_ibukt"], float))
-             for h in ("full", "halfA", "halfB"))
+    def rel_ok(a, b):   # section 6's bar for C-2D: relative <= 1e-12 (cell by cell, against the larger magnitude)
+        a, b = np.asarray(a, float), np.asarray(b, float)
+        return float(np.max(np.abs(a - b))) <= 1e-12 * max(1.0, float(np.max(np.abs(b))), float(np.max(np.abs(a))))
+    bk = all(rel_ok(z2[f"d2_{h}__b_known"], z2[f"d2_{h}__b_known_ibukt"]) for h in ("full", "halfA", "halfB"))
     bb = float(np.max(np.abs(np.asarray(z2["d2__b_bkg"]) - np.asarray(z2["d2__b_bkg_globalindex"]))))
-    ctl(rec, "C-2D", c2["M_vs_bank_ibu_response_max_abs"] == 0.0 and c2["T_vs_bank_ibu_prior_max_rel"] <= 1e-12 and bk
+    m_ok = rel_ok(z2["d2_full__M"], z2["d2__bank_ibu_response"])
+    ctl(rec, "C-2D", m_ok and c2["T_vs_bank_ibu_prior_max_rel"] <= 1e-12 and bk
         and bb <= 1e-12 * max(1.0, float(np.max(np.abs(z2["d2__b_bkg"])))), **c2, b_known_equal=bk, b_bkg_max_abs=bb)
     # C-MARG (STOP): product grid by construction (the World's shape); sums conserved; the dropped axes by name
     shape, axes = j5["world_shape"], j5["axes"]
@@ -771,7 +782,7 @@ def readings(L: dict, probs5: dict, probs2: dict, decs: dict, did, cells: np.nda
         if t["name"] in F0B_PRIMARY:
             continue
         key = f"B0/{t['name']}/s991000"
-        if key in table:
+        if t["name"] in F0B_SECONDARY_WITH_D:
             d = np.asarray(table[key]["d"], float)
             k = (1.0 + d) * np.asarray(z3["t3__P__s991000"], float) / f0
             sec.setdefault("5D-F0b secondary", {})[t["name"]] = assess("5d", np.asarray(t["bias"], float) * k, "single")

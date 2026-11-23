@@ -365,22 +365,24 @@ def make_fixture(root: Path, seed: int = 11) -> tuple[Path, dict]:
     put("h2_rid", Rf, t0)
     R1, t1 = resp(nf, nT1), rng.uniform(1e3, 2e3, nT1)
     put("t1_did", R1, t1, bx=np.zeros(nf))
-    maps = rng.uniform(0, 1, (6, nT1))
+    ibu_names = names + ["IBU1ONLY"]                 # a functional IBU-1 names and D-ID does not (Amendment C)
+    maps = rng.uniform(0, 1, (len(ibu_names), nT1))
     z5["t1_did__maps"] = maps
     np.savez(prod / "r5d.npz", **z5)
     F1 = P.fisher_c(did, R1, t1, z5["t1_did__b_known"])
     lam, V = np.linalg.eigh(F1)
     sig, nul = did.widths_from_eig(lam, V, maps)
     srel = sig / np.abs(maps @ t1)
-    all_names = names + [f"X{i}" for i in range(179)]
+    all_names = names + ["DIDONLY"] + [f"X{i}" for i in range(178)]   # and one D-ID names and IBU-1 does not
     sr183, nf183 = np.full(183, np.nan), np.full(183, np.nan)
-    sr183[:6], nf183[:6] = srel, nul
+    sr183[:6], nf183[:6] = srel[:6], nul[:6]
+    sr183[6], nf183[6] = 0.5, 0.0
     np.savez(root / "tables.npz", names=np.array(all_names), f183=np.arange(183),
              **{"T1/nominal/widths_nom/sigma_rel": sr183, "T1/nominal/widths_nom/null_fraction": nf183})
     rid = {"label": "x", "sigma_rel": list(rng.uniform(0.01, 0.2, 16)), "null_fraction": [0.0] * 16, "n_null_modes": 0,
            "n_cells_grid": nH}
     (prod / "r5d.json").write_text(json.dumps({"world_shape": shape, "axes": ["pt", "pz", "eavail", "q3", "W"],
-                                               "C-L_linearity_rel": 0.0, "R-ID_rebuilt": rid, "t1_names": names,
+                                               "C-L_linearity_rel": 0.0, "R-ID_rebuilt": rid, "t1_names": ibu_names,
                                                "n_cells": {"h2": nH, "t1": nT1, "h2_rid": nH, "h2_nonempty_coarse": nH}}))
     # 2D
     T = rng.uniform(50, 100, 224)
@@ -440,6 +442,12 @@ def make_fixture(root: Path, seed: int = 11) -> tuple[Path, dict]:
     return prod, ops
 
 
+class Pins(unittest.TestCase):
+    def test_the_recorded_c_did_expectation(self):
+        self.assertEqual(P.C_DID_COMMON_EXPECTED, 151)
+        self.assertEqual(P.F0B_SECONDARY_WITH_D, ("closure_nuwro",))
+
+
 class Problems(unittest.TestCase):
     def test_5d_gradient_is_the_count_space_one(self):
         """Section 3.3: J = diag(1/f0) L (count space, the gradient widths_from_eig uses), f0 = L t0."""
@@ -467,7 +475,64 @@ class Problems(unittest.TestCase):
             self.assertEqual(np.count_nonzero(p["J"][r]), 1)
 
 
+FIXTURE_COMMON = 6   # the fixture's shared functional set (the real inputs' is pinned at 151)
+
+
 class EndToEnd(unittest.TestCase):
+    def setUp(self):
+        p = mock.patch.object(P, "C_DID_COMMON_EXPECTED", FIXTURE_COMMON)
+        p.start()
+        self.addCleanup(p.stop)
+
+    def test_c_did_reads_the_declared_intersection(self):
+        with tempfile.TemporaryDirectory() as d:
+            prod, ops = make_fixture(Path(d))
+            with mock.patch.dict(P.OPERANDS, ops):
+                rc = P.run(prod, Path(d) / "out")
+            rec = json.loads((Path(d) / "out/readout.json").read_text())
+        self.assertEqual(rc, 0, rec.get("stops"))
+        c = rec["controls"]["C-DID"]
+        self.assertEqual((c["functionals_compared"], c["ibu1_only"]), (6, ["IBU1ONLY"]))
+        self.assertIn("DIDONLY", c["did_only"])
+
+    def test_c_did_stops_when_the_intersection_is_not_the_expected_size(self):
+        with tempfile.TemporaryDirectory() as d:
+            prod, ops = make_fixture(Path(d))
+            with mock.patch.dict(P.OPERANDS, ops), mock.patch.object(P, "C_DID_COMMON_EXPECTED", 7):
+                rc = P.run(prod, Path(d) / "out")
+            rec = json.loads((Path(d) / "out/readout.json").read_text())
+        self.assertEqual(rc, 3)
+        self.assertEqual(rec["stops"], ["C-DID"])
+
+    def test_c_2d_takes_the_declared_relative_bar(self):
+        for scale, want in ((1e-14, 0), (1e-9, 3)):
+            with tempfile.TemporaryDirectory() as d:
+                prod, ops = make_fixture(Path(d))
+                z2 = dict(np.load(prod / "r2d.npz"))
+                z2["d2_full__M"] = z2["d2_full__M"] * (1 + scale)
+                np.savez(prod / "r2d.npz", **z2)
+                sums = "\n".join(f"{P.sha256(prod / f)}  {f}" for f in ("r5d.npz", "r5d.json", "r2d.npz", "r2d.json", "t3.npz", "t3.json"))
+                (prod / "SHA256SUMS").write_text(sums + "\n")
+                with mock.patch.dict(P.OPERANDS, ops):
+                    rc = P.run(prod, Path(d) / "out")
+                rec = json.loads((Path(d) / "out/readout.json").read_text())
+            self.assertEqual(rc, want, (scale, rec.get("stops")))
+            if want:
+                self.assertIn("C-2D", rec["stops"])
+
+    def test_c_d_covers_the_secondary_truth_converted_with_d(self):
+        with tempfile.TemporaryDirectory() as d:
+            prod, ops = make_fixture(Path(d))
+            fd = json.loads(ops["fdprr"][0].read_text())
+            del fd["table"]["B0/closure_nuwro/s991000"]
+            ops["fdprr"][0].write_text(json.dumps(fd))
+            ops["fdprr"] = (ops["fdprr"][0], P.sha256(ops["fdprr"][0]))
+            with mock.patch.dict(P.OPERANDS, ops):
+                rc = P.run(prod, Path(d) / "out")
+            rec = json.loads((Path(d) / "out/readout.json").read_text())
+        self.assertEqual(rc, 3)
+        self.assertIn("C-D", rec["stops"])
+        self.assertEqual(rec["controls"]["C-D"]["printed_without_d"], ["P1r"])
     def test_controls_pass_and_the_readout_is_written(self):
         with tempfile.TemporaryDirectory() as d:
             prod, ops = make_fixture(Path(d))
