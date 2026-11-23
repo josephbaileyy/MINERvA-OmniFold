@@ -1,0 +1,45 @@
+# bkg (2026-11-23T15:42:05Z): run_arms.sh <wt> bkg; worktree HEAD ca639f8b9; env: python 3.12.2 matplotlib 3.10.1 numpy 1.26.4
+== arm0: capture_palette.py <capture> <wt>/docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/tools/layout_run.py <wt>/docs/analysis-note/figures/methods_m3/fig_m3_background.py --repo <wt> --outdir <wt>/docs/orchestration/state/2d-closeout/stageF/methods/note-figredraw-20261123/runs/round2/bkg/arm0/out  (LAYOUT_PALETTE=1)
+   | 'created' timestamp seems very low; regarding as unix timestamp
+   | 'modified' timestamp seems very low; regarding as unix timestamp
+   | 'created' timestamp seems very low; regarding as unix timestamp
+   | 'modified' timestamp seems very low; regarding as unix timestamp
+   | 'created' timestamp seems very low; regarding as unix timestamp
+   | 'modified' timestamp seems very low; regarding as unix timestamp
+   | [OK] purity: max |residual| over the 7 highest-W (E_avail,W) cells (paper 'up to 4%'), %: 4.111
+   | [OK] purity: max |residual| over all 153 functionals is in the highest-W column (EW29), %: EW29
+   | [OK] refined: max |residual| over the 7 highest-W cells < 0.3% (paper 'below 0.3%'), %: 0.241
+   | [OK] refined: max |residual| over the 109 J cells (paper 'up to 1% in some joint cells'), %: (1.004, 'J93')
+   | [OK] data: max |refined - purity| (paper 'at most 1.4%'; not plotted), %: 1.419
+== arm1: capture_palette.py <capture> <wt>/docs/orchestration/state/2d-closeout/stageF/methods/note-figredraw-20261123/tools/fig_m3_background.py --repo <wt> --outdir <wt>/docs/orchestration/state/2d-closeout/stageF/methods/note-figredraw-20261123/runs/round2/bkg/arm1/out  (LAYOUT_PALETTE=1)
+   | 'created' timestamp seems very low; regarding as unix timestamp
+   | 'modified' timestamp seems very low; regarding as unix timestamp
+   | 'created' timestamp seems very low; regarding as unix timestamp
+   | 'modified' timestamp seems very low; regarding as unix timestamp
+   | 'created' timestamp seems very low; regarding as unix timestamp
+   | 'modified' timestamp seems very low; regarding as unix timestamp
+   | [OK] purity: max |residual| over the 7 highest-W (E_avail,W) cells (paper 'up to 4%'), %: 4.111
+   | [OK] purity: max |residual| over all 153 functionals is in the highest-W column (EW29), %: EW29
+   | [OK] refined: max |residual| over the 7 highest-W cells < 0.3% (paper 'below 0.3%'), %: 0.241
+   | [OK] refined: max |residual| over the 109 J cells (paper 'up to 1% in some joint cells'), %: (1.004, 'J93')
+   | [OK] data: max |refined - purity| (paper 'at most 1.4%'; not plotted), %: 1.419
+   | [OK] refined: |t| > t_crit plotted (panel a + panel b) + unplotted equals the receipt's grid.C3_nominal.n_abs_t_gt_crit: {'panel_a_EW': [29, 42], 'panel_b_J_and_total': [60, 110], 'unplotted': {'EW_all_ones': False}, 'receipt_n_abs_t_gt_crit': 89}
+== arm 0 against the installed docs/analysis-note/figures/paper_fig_bkg_residual.pdf (sha256 1c6732728aecb539…)
+EQUAL paper_fig_bkg_residual.pdf
+raster 300 dpi: RASTER :: EQUAL :: 1 page(s), 0 differing pixel(s) (rc 0)
+== arm 1 data against arm 0's captured artists (check_data.py bkg)
+arm 0 against the receipts (100 x mean_rel, y -+ 100 x se_rel): 304/304 bit-equal
+bkg: 304 (series, name) points; y, bar ends bit-equal in both arms: True
+arm 1 dump against arm 1's artists: 304/304 bit-equal
+filled = |t| > 3.6: all 152 refined points agree: True; filled in panel (a) 29/42, panel (b) 60/110; unplotted ['EW_all_ones'] with |t| > t_crit: 0; total 89 = receipt n_abs_t_gt_crit 89: True
+plotted functionals: 152 (42 EW, 109 J, total); not plotted in either arm: ['EW_all_ones']
+bkg: decoration artists (not data points): arm 0 9, arm 1 19
+   arm 0 only: ['axes1:line:::None:n=2']
+   arm 1 only: ['axes0:line:None:[(-1, -0.5), (1, 0.5)]:n=2', 'axes1:line:-:None:n=2', 'axes1:line:-:None:n=2', 'axes1:line:-:None:n=2', 'axes1:line:-:None:n=2', 'axes1:line:-:None:n=2', 'axes1:line:None:[(-1, -0.5), (1, 0.5)]:n=2', 'axes2:line:-:None:n=2', 'axes2:line:-:None:n=2', 'axes2:line:-:None:n=2', 'axes2:line:-:None:n=2']
+CHECK-DATA bkg :: PASS
+== text sizes and overlaps per arm (capture_palette.py .texts; overlaps are capture_any.py's box measure)
+  arm0 m3_fig1_background.pdf: canvas 6.50 x 4.40 in; 90 texts, font size min 7.00, median 7.00 pt; under 7 pt: 0; text overlaps 1
+  arm1 m3_fig1_background.pdf: canvas 6.50 x 5.55 in; 86 texts, font size min 7.00, median 7.00 pt; under 7 pt: 0; text overlaps 1 [['low-capacity negative-weight refinement (60 pseudo-experiments)', '$|t|>3.6$']]
+== install arm 1 into figs/ (PDF, PNG at 150 dpi by pdftoppm)
+  figs/paper_fig_bkg_residual.pdf sha256 a44a856203899aa668495626a5fa9fa63a9cb81f011a648f2d909296db90e989; figs/paper_fig_bkg_residual.png
+RUN-ARMS bkg :: PASS

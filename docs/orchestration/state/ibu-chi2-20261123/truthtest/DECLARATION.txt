@@ -1,0 +1,42 @@
+# Truth-level test: does our MC truth equal the shipped MINERvA Tune v1 prediction? (declared before computing)
+
+Question: the IBU-vs-published chi2/205 = 1.03 is response-side (K-scan). Separate
+  #1 response built from DIFFERENT MC events (sample/statistics) from
+  #2 different reco-level treatment of the SAME events (selection, processing).
+Same truth events+weights => shipped model == round3(ours) cell by cell => #1 out.
+
+Inputs (read-only): ~/cov2d-work/figfetch/er-anc/xsec.root (sha a5c13fc3...), its hTruth2D (Sumw2),
+hXSec2D, hUnfold2D; cov_ptpl_minerva_inclusive_6GeV.root (sha 6c6dce72...): pt_pl_cross_section,
+TotalCovariance; repo 2d-unfolding/minerva_paper_anc/model_ptpl_..._MINERvA_Tune_v1.txt.
+Loaders and chi2 (pinv over positive-diagonal cells) from 2d-unfolding/compare_to_paper_fullcov.py.
+
+Our prediction m_i = hTruth2D_i * (hXSec2D_i / hUnfold2D_i)  (same flux/POT/nucleon/area factor as E_R);
+sigma_i = hTruth2D error_i * same factor (MC stat; cells uncorrelated).
+
+Controls (all must pass, else STOP, no reading):
+ C-SHA  both ROOT digests as above.
+ C-PUB  chi2(E_R hXSec2D - published, TotalCov) = 465.4152721915331, rel <= 1e-6.
+ C-FAC  hXSec2D/hUnfold2D * area_i constant over the 205 cells, rel spread <= 1e-9.
+ C-FMT  every shipped model value is written with exactly 3 significant figures.
+ C-CELLS shipped nonzero cells == published reported cells (205).
+ C-POW  the test can tell A from B1: q99(M_B1) < M_A and q99(chi2_A) < q01(chi2_B1); else UNINFORMATIVE.
+
+Statistics on the 205 cells:
+ M(s) = # cells with round3(s*m_i) == shipped_i; M* = max over s in [0.990,1.010] step 1e-5.
+ X = chi2(shipped - m, TotalCov)/205.
+Nulls (2000 toys each, seed 20261123):
+ A  same events+weights: shipped = round3(t), t = m exactly -> M* = 205; X_A from rounding draws
+    u_i ~ U(-h_i/2, h_i/2), h_i = 3rd-sig-fig step of m_i.
+ B1 their truth = m + N(0, sigma^2)  (their MC much larger, or a superset)
+ B2 their truth = m + N(0, 2 sigma^2) (independent sample of our size)
+ toys are rounded to 3 sig figs and scored with the same M* and X.
+
+Readings (exactly one):
+ SAME-MC    M*_obs > q99(M*_B1)  and  X_obs <= q99(X_A).            -> #1 out; points to #2.
+ DIFF-MC    q01(M*_B2) <= M*_obs <= q99(M*_B1) and q01(X_B1) <= X_obs <= q99(X_B2). -> #1 live.
+ SYSTEMATIC X_obs > q99(X_B2).                                        -> real truth-level difference (#3/#5 reopen).
+ UNRESOLVED anything else (report where it sits).
+Descriptive, read by no rule: total ratio, normalization/shape split, residual by p|| row and pT column.
+
+Not citable for: a cause of the IBU or OmniFold difference; anything about reco-level identity;
+any note/paper wording. Scratch only; nothing committed.

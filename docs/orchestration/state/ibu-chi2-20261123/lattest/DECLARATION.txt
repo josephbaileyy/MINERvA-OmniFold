@@ -1,0 +1,43 @@
+# Lateral-response test: does a muon-momentum or beam-angle shift of our response close the fold-test misfit? (declared before computing)
+
+Question: the published result folded through our response misses our data at reco p|| 40-60 (data high) and reco
+pT 0-0.07 (data low). Do the standard lateral shifts of our response move or close those gaps?
+
+Compute: one Slurm job, account m3246, CPU, qos interactive, 1 node, limit 60 min (Joseph's go "use whatever you need").
+Inputs (read-only; atimes move): CV = the verified copy oflow-split-20261123/cv.root (43f8cc16...); laterals =
+cov2d-inputs-20261104/laterals/runEventLoopOmniFold_5D_MEFHC_active_<BAND>_<0|1>.root for BAND in Muon_Energy_MINOS,
+Muon_Energy_MINERvA, MuonResolution, BeamAngleX, BeamAngleY. Index 0/1 are the two 1-sigma laterals (sign not assumed).
+
+Builder (each file; driver conventions): mc_signal_reco rows with finite w_truth,w_reco in [0,1e4), times dataPOT/mcPOT;
+pass_truth = rectangle (0<=pT<=4.5, 1.5<=p||<=60, edges inclusive) and atan2(pT,p||) < 20 deg; pass_reco = sim_pass and
+reco in the rectangle. T = sum w_truth over pass_truth in the 14x16 grid (TH1 bins, upper edge out); M[reco,truth] =
+sum w_reco over pass_truth & pass_reco, both in grid. B = mc_background, sim_background_pass, finite, 0<=w_bkg<1e6,
+weight w_bkg*POT scale, binned at reco.
+Controls (STOP if any fails):
+ C-CV    CV build: M and T equal signed_data.npz (7a35b7e2...) to max|diff|/max <= 1e-9; B equals hBkgReco2D, rel <= 1e-9.
+ C-TRUTH every lateral's T equals the CV T, rel <= 1e-9 (same events, truth unshifted).
+Per file L: R_L = M_L/T, y_L = N - B_L (N = local hDataReco2D), fold f_L = R_L t_pub (t_pub as in foldtest).
+Region statistic: weighted mean of y_L/f_L - 1 with the CV fold's combined-error weights (fixed across L), on
+ COL = reco p|| 40-60 cells, ROW = reco pT 0-0.07 cells (data > 0).
+Per band: points (s=-1?, 0, +1?) = (idx0, CV, idx1); quadratic through the three; sigma* = root nearest 0 in [-3,3].
+Readings per band x region:
+ CLOSES-2   a root with |sigma*| <= 2
+ CLOSES-3   a root only with 2 < |sigma*| <= 3
+ MOVES      no root, but a 1-sigma point reduces |stat| by >= 30% of the CV value
+ NO-EFFECT  otherwise
+Primary: COL with Muon_Energy_MINOS and MuonResolution; ROW with BeamAngleX and BeamAngleY. Others reported, secondary.
+Descriptive: IBU K=10 (signed target, prior T, R_L) chi2/205 vs published for each L (CV 0.961); fold G per L.
+Not citable for a cause; nothing committed.
+
+## Amendment 2 (Joseph's go 2026-11-23, after the C-TRUTH STOP; region readings never computed)
+Cause of the STOP: Muon_Energy_MINOS laterals change w_truth by design (flux-coupled universe with its own flux
+denominator). C-TRUTH was mis-specified for that band. Not blind: the D10 descriptives were printed beside the STOP and
+seen by the analyst (not by Joseph). Blind: every region statistic below.
+Changes:
+ C-TRUTH  applies to the 8 bands other than Muon_Energy_MINOS (rel <= 1e-9). Muon_Energy_MINOS uses its own T_L in R_L.
+ Flux     hFlux_pt is one constant over pT, so a universe flux integral is a global factor on t_pub. To remove it, the
+          region statistic becomes shape-only: S_reg(L) = wmean_reg(r_L) - wmean_all(r_L), same fixed CV weights, all =
+          every reco cell with data > 0. Readings use S with the unchanged rules (CLOSES-2 / CLOSES-3 / MOVES / NO-EFFECT;
+          a root means the region becomes like the rest). Primary assignments unchanged.
+ D10      reported for the 8 non-flux bands only (non-blind, descriptive); not computed for Muon_Energy_MINOS.
+Inputs: the 11 fetched lat/*.npz (SHA256SUMS verified, zip CRC ok), unchanged.

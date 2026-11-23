@@ -1,0 +1,56 @@
+[
+ {
+  "claim": "purity: max |residual| over the 7 highest-W (E_avail,W) cells (paper 'up to 4%'), %",
+  "value": 4.111
+ },
+ {
+  "claim": "purity: max |residual| over all 153 functionals is in the highest-W column (EW29), %",
+  "value": "EW29"
+ },
+ {
+  "claim": "refined: max |residual| over the 7 highest-W cells < 0.3% (paper 'below 0.3%'), %",
+  "value": 0.241
+ },
+ {
+  "claim": "refined: max |residual| over the 109 J cells (paper 'up to 1% in some joint cells'), %",
+  "value": [
+   1.004,
+   "J93"
+  ]
+ },
+ {
+  "claim": "data: max |refined - purity| (paper 'at most 1.4%'; not plotted), %",
+  "value": 1.419
+ },
+ {
+  "claim": "refined: max |residual| over all 42 (E_avail,W) cells (outside the highest-W column), %",
+  "value": [
+   0.387,
+   "EW36"
+  ]
+ },
+ {
+  "claim": "refined: |t| > t_crit plotted (panel a + panel b) + unplotted equals the receipt's grid.C3_nominal.n_abs_t_gt_crit",
+  "value": {
+   "panel_a_EW": [
+    29,
+    42
+   ],
+   "panel_b_J_and_total": [
+    60,
+    110
+   ],
+   "unplotted": {
+    "EW_all_ones": false
+   },
+   "receipt_n_abs_t_gt_crit": 89
+  }
+ },
+ {
+  "claim": "round 3: largest |t| (receipt max_abs_t) and its functional",
+  "value": [
+   14.421456021984215,
+   "J88"
+  ]
+ }
+]

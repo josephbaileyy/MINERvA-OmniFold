@@ -1,0 +1,48 @@
+# f16 (2026-11-23T09:04:08Z): run_arms.sh <wt> f16; worktree HEAD ca639f8b9; env: python 3.12.2 matplotlib 3.10.1 numpy 1.26.4
+== arm0: capture_palette.py <capture> <wt>/docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/tools/make_fig_fived16_headline.py --out <wt>/docs/orchestration/state/2d-closeout/stageF/methods/note-figredraw-20261123/runs/f16/arm0/out  (LAYOUT_PALETTE=1)
+   | 'created' timestamp seems very low; regarding as unix timestamp
+   | 'modified' timestamp seems very low; regarding as unix timestamp
+   | 'created' timestamp seems very low; regarding as unix timestamp
+   | 'modified' timestamp seems very low; regarding as unix timestamp
+   | 'created' timestamp seems very low; regarding as unix timestamp
+   | 'modified' timestamp seems very low; regarding as unix timestamp
+   | wrote <wt>/docs/orchestration/state/2d-closeout/stageF/methods/note-figredraw-20261123/runs/f16/arm0/out/fived16_headline.pdf ; record d6752d2c
+== arm1: capture_palette.py <capture> <wt>/docs/orchestration/state/2d-closeout/stageF/methods/note-figredraw-20261123/tools/make_fig_fived16_headline.py --out <wt>/docs/orchestration/state/2d-closeout/stageF/methods/note-figredraw-20261123/runs/f16/arm1/out  (LAYOUT_PALETTE=1)
+   | 'created' timestamp seems very low; regarding as unix timestamp
+   | 'modified' timestamp seems very low; regarding as unix timestamp
+   | 'created' timestamp seems very low; regarding as unix timestamp
+   | 'modified' timestamp seems very low; regarding as unix timestamp
+   | 'created' timestamp seems very low; regarding as unix timestamp
+   | 'modified' timestamp seems very low; regarding as unix timestamp
+   | 'created' timestamp seems very low; regarding as unix timestamp
+   | 'modified' timestamp seems very low; regarding as unix timestamp
+   | 'created' timestamp seems very low; regarding as unix timestamp
+   | 'modified' timestamp seems very low; regarding as unix timestamp
+   | 'created' timestamp seems very low; regarding as unix timestamp
+   | 'modified' timestamp seems very low; regarding as unix timestamp
+   | wrote <wt>/docs/orchestration/state/2d-closeout/stageF/methods/note-figredraw-20261123/runs/f16/arm1/out/fived16_headline_A.pdf <wt>/docs/orchestration/state/2d-closeout/stageF/methods/note-figredraw-20261123/runs/f16/arm1/out/fived16_headline_B.pdf ; record d6752d2c
+== arm 0 against the installed docs/analysis-note/figures/fived16_headline.pdf (sha256 97766f5c52470b8b…)
+EQUAL fived16_headline.pdf
+raster 300 dpi: RASTER :: EQUAL :: 1 page(s), 0 differing pixel(s) (rc 0)
+== arm 1 data against arm 0's captured artists (check_data.py f16)
+arm 0 against the record (f bit-equal; half bar = sqrt(diag) to 1e-12, the producer's own tolerance; caps at the bar ends): 16/16
+f16 variant A: 16 (series, name) points; y, bar ends, caps bit-equal in both arms: True
+variant A dump against its artists: 16/16
+f16 variant A: decoration artists (not data points): arm 0 0, arm 1 19
+   arm 0 only: []
+   arm 1 only: ['axes0:line:--:None:n=2', 'axes0:line:--:None:n=2', 'axes0:line:--:None:n=2', 'axes0:line:--:None:n=2', 'axes0:line:--:None:n=2', 'axes0:line:--:None:n=2', 'axes0:line:--:None:n=2', 'axes0:line:--:None:n=2', 'axes0:line:--:None:n=2', 'axes0:line:--:None:n=2', 'axes0:line:--:None:n=2', 'axes0:line:--:None:n=2', 'axes0:line:--:None:n=2', 'axes0:line:--:None:n=2', 'axes0:line:--:None:n=2', 'axes0:line:--:None:n=2', 'axes0:line:-:None:n=2', 'axes0:line:-:None:n=2', 'axes0:line:-:None:n=2']
+f16 variant B: 16 (series, name) points; y, bar ends, caps bit-equal in both arms: True
+variant B dump against its artists: 16/16
+variant B markers: R00 o/solid, R01 ^/tint, R02 v/open, R03 ^/open, R04 o/solid, R05 ^/tint, R06 v/open, R07 ^/open, R08 v/solid, R09 ^/tint, R10 v/open, R11 v/open, R12 o/solid, R13 v/tint, R14 ^/tint, R15 o/open
+f16 variant B: decoration artists (not data points): arm 0 0, arm 1 0
+   arm 0 only: []
+   arm 1 only: []
+CHECK-DATA f16 :: PASS
+== text sizes and overlaps per arm (capture_palette.py .texts; overlaps are capture_any.py's box measure)
+  arm0 fived16_headline.pdf: canvas 6.50 x 3.25 in; 78 texts, font size min 7.40, median 7.40 pt; under 7 pt: 0; text overlaps 0
+  arm1 fived16_headline_A.pdf: canvas 6.50 x 3.95 in; 78 texts, font size min 7.00, median 7.00 pt; under 7 pt: 0; text overlaps 0
+  arm1 fived16_headline_B.pdf: canvas 6.50 x 3.60 in; 52 texts, font size min 7.00, median 7.60 pt; under 7 pt: 0; text overlaps 4 [['marker shape: $W$ (GeV)', '$>$1.8'], ['marker shape: $W$ (GeV)', '$<$1.8'], ['marker fill: $E_{\\mathrm{avail}}$ (GeV)', '$<$0.8'], ['marker fill: $E_{\\mathrm{avail}}$ (GeV)', '$>$0.8']]
+== install arm 1 into figs/ (PDF, PNG at 150 dpi by pdftoppm)
+  figs/fived16_headline_A.pdf sha256 e405b248b51e3718c6402577c9a269735ff50f133c233ee78f526d53f73673e0; figs/fived16_headline_A.png
+  figs/fived16_headline_B.pdf sha256 1f66d2fe38f556b55f5e65ed358df63904f475e2a0b7243d76fe59c9e89a098f; figs/fived16_headline_B.png
+RUN-ARMS f16 :: PASS

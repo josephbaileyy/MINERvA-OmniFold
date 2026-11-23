@@ -1,0 +1,115 @@
+{
+ "controls": {
+  "C-CV-M": 1.1190976895051293e-14,
+  "C-CV-T": 4.174259627184547e-14,
+  "C-CV-B": 0.0,
+  "C-TRUTH": 4.9305372537570104e-14
+ },
+ "controls_pass": true,
+ "readings": {
+  "COL:Muon_Energy_MINOS (primary)": {
+   "idx0_pct": 16.150466998343926,
+   "cv_pct": 9.999327311933476,
+   "idx1_pct": 4.626208166560032,
+   "sigma_star": 2.0074013834044337,
+   "best_1sig_reduction": 0.5373480613001851,
+   "reading": "CLOSES-3"
+  },
+  "COL:MuonResolution (primary)": {
+   "idx0_pct": 10.03235484369855,
+   "cv_pct": 9.999327311933476,
+   "idx1_pct": 9.977127354734932,
+   "sigma_star": null,
+   "best_1sig_reduction": 0.002220145066363477,
+   "reading": "NO-EFFECT"
+  },
+  "COL:Muon_Energy_MINERvA": {
+   "idx0_pct": 10.400292917908228,
+   "cv_pct": 9.999327311933476,
+   "idx1_pct": 9.562489473145796,
+   "sigma_star": null,
+   "best_1sig_reduction": 0.04368672263246598,
+   "reading": "NO-EFFECT"
+  },
+  "COL:BeamAngleX": {
+   "idx0_pct": 10.074993131727897,
+   "cv_pct": 9.999327311933476,
+   "idx1_pct": 9.993980237030247,
+   "sigma_star": null,
+   "best_1sig_reduction": 0.0005347434618775404,
+   "reading": "NO-EFFECT"
+  },
+  "COL:BeamAngleY": {
+   "idx0_pct": 10.054178188992172,
+   "cv_pct": 9.999327311933476,
+   "idx1_pct": 9.987362129620156,
+   "sigma_star": null,
+   "best_1sig_reduction": 0.0011965987251002508,
+   "reading": "NO-EFFECT"
+  },
+  "ROW:Muon_Energy_MINOS": {
+   "idx0_pct": -7.847212735994949,
+   "cv_pct": -6.383945577957379,
+   "idx1_pct": -4.907276017429201,
+   "sigma_star": null,
+   "best_1sig_reduction": 0.23130986041404455,
+   "reading": "NO-EFFECT"
+  },
+  "ROW:MuonResolution": {
+   "idx0_pct": -6.452684834708947,
+   "cv_pct": -6.383945577957379,
+   "idx1_pct": -6.3201407292336516,
+   "sigma_star": null,
+   "best_1sig_reduction": 0.009994579049049768,
+   "reading": "NO-EFFECT"
+  },
+  "ROW:Muon_Energy_MINERvA": {
+   "idx0_pct": -7.535944815553454,
+   "cv_pct": -6.383945577957379,
+   "idx1_pct": -5.070464210550846,
+   "sigma_star": null,
+   "best_1sig_reduction": 0.20574758217578615,
+   "reading": "NO-EFFECT"
+  },
+  "ROW:BeamAngleX (primary)": {
+   "idx0_pct": -6.3378519197851215,
+   "cv_pct": -6.383945577957379,
+   "idx1_pct": -6.42130703371125,
+   "sigma_star": null,
+   "best_1sig_reduction": 0.007220246101628747,
+   "reading": "NO-EFFECT"
+  },
+  "ROW:BeamAngleY (primary)": {
+   "idx0_pct": -6.384117377651929,
+   "cv_pct": -6.383945577957379,
+   "idx1_pct": -6.197208960676448,
+   "sigma_star": null,
+   "best_1sig_reduction": 0.029250972615696758,
+   "reading": "NO-EFFECT"
+  }
+ },
+ "D10_signed_nonblind": {
+  "BeamAngleX_0": 0.9954,
+  "BeamAngleX_1": 1.0074,
+  "BeamAngleY_0": 1.0509,
+  "BeamAngleY_1": 1.0043,
+  "CV": 0.9614,
+  "MuonResolution_0": 0.9702,
+  "MuonResolution_1": 0.9494,
+  "Muon_Energy_MINERvA_0": 1.2223,
+  "Muon_Energy_MINERvA_1": 0.9141
+ },
+ "global_r_pct": {
+  "BeamAngleX_0": 0.91,
+  "BeamAngleX_1": 0.92,
+  "BeamAngleY_0": 0.91,
+  "BeamAngleY_1": 0.92,
+  "CV": 0.91,
+  "MuonResolution_0": 0.92,
+  "MuonResolution_1": 0.91,
+  "Muon_Energy_MINERvA_0": 1.0,
+  "Muon_Energy_MINERvA_1": 0.92,
+  "Muon_Energy_MINOS_0": 0.98,
+  "Muon_Energy_MINOS_1": 0.97
+ }
+}

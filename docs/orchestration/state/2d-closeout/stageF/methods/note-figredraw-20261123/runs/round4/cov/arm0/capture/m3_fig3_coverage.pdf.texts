@@ -1,0 +1,136 @@
+{
+ "size_in": [
+  6.5,
+  2.8
+ ],
+ "texts": [
+  [
+   7.0,
+   "$(E_{\\rm avail},W)$ cells 0\u201341 and their sum"
+  ],
+  [
+   7.0,
+   "109 coarse joint cells, by index in the $3^5$ grid"
+  ],
+  [
+   7.0,
+   "total"
+  ],
+  [
+   8.5,
+   "cell index (projection cell, or coarse joint cell in the $3^5$ grid), then the total"
+  ],
+  [
+   7.0,
+   "0"
+  ],
+  [
+   7.0,
+   "10"
+  ],
+  [
+   7.0,
+   "20"
+  ],
+  [
+   7.0,
+   "30"
+  ],
+  [
+   7.0,
+   "41"
+  ],
+  [
+   7.0,
+   "13"
+  ],
+  [
+   7.0,
+   "52"
+  ],
+  [
+   7.0,
+   "90"
+  ],
+  [
+   7.0,
+   "118"
+  ],
+  [
+   7.0,
+   "148"
+  ],
+  [
+   7.0,
+   "193"
+  ],
+  [
+   7.0,
+   "222"
+  ],
+  [
+   7.0,
+   "total"
+  ],
+  [
+   8.5,
+   "empirical coverage"
+  ],
+  [
+   7.5,
+   "0.0"
+  ],
+  [
+   7.5,
+   "0.2"
+  ],
+  [
+   7.5,
+   "0.4"
+  ],
+  [
+   7.5,
+   "0.6"
+  ],
+  [
+   7.5,
+   "0.8"
+  ],
+  [
+   7.5,
+   "1.0"
+  ],
+  [
+   7.4,
+   "signal rate lowered by about 10%, weak $E_{\\rm avail}$ slope: upper bound below threshold for 51 (68%) and 42 (95%) of 153"
+  ],
+  [
+   7.0,
+   "68% interval, upper bound $\\geq$ 0.66"
+  ],
+  [
+   7.0,
+   "68% interval, upper bound < 0.66"
+  ],
+  [
+   7.0,
+   "95% interval, upper bound $\\geq$ 0.94"
+  ],
+  [
+   7.0,
+   "95% interval, upper bound < 0.94"
+  ]
+ ],
+ "text_overlaps": [
+  [
+   "68% interval, upper bound $\\geq$ 0.66",
+   "95% interval, upper bound $\\geq$ 0.94",
+   273.7
+  ],
+  [
+   "68% interval, upper bound < 0.66",
+   "95% interval, upper bound < 0.94",
+   149.6
+  ]
+ ]
+}
