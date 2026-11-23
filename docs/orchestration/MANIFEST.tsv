@@ -8653,6 +8653,12 @@ docs/orchestration/state/measurability-20261122/run-b/lane/records-check.txt	tra
 docs/orchestration/state/measurability-20261122/run-b/lane/session.err.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
 docs/orchestration/state/measurability-20261122/run-b/lane/session.out.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
 docs/orchestration/state/measurability-20261122/run-b/lane/wend.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
+docs/orchestration/state/measurability-20261122/run-local/REPORT.md	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
+docs/orchestration/state/measurability-20261122/run-local/readout.json	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
+docs/orchestration/state/measurability-20261122/run-local/readout.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
+docs/orchestration/state/measurability-20261122/run-local/run-env.json	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
+docs/orchestration/state/measurability-20261122/run-local/run.stderr.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
+docs/orchestration/state/measurability-20261122/run-local/run.stdout.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
 docs/orchestration/state/measurability-20261122/run-p1/README.md	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
 docs/orchestration/state/measurability-20261122/run-p1/acks.tsv	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
 docs/orchestration/state/measurability-20261122/run-p1/launcher.out.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
