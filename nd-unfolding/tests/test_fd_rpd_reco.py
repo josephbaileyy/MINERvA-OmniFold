@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import ast
 import hashlib
 import importlib.util
 import json
@@ -2141,44 +2142,255 @@ def test_custody_trace_directions() -> None:
             custody.classify_trace(lines + [line], policy)
 
 
-def test_cov2d_fence_both_directions(monkeypatch: pytest.MonkeyPatch) -> None:
-    custody = _custody_module()
-    responses = []
+_FENCE_NAMED_OK = "60909280|cov2d-AR23_Tb|COMPLETED\n60911676|cov2d-AR23_Tc|FAILED\n"
+_FENCE_FAMILY_OK = "61806073|rpd_flux2|RUNNING\n"
 
-    def run(command: list[str], **_kwargs: Any) -> Any:
-        responses.append(command[0])
+
+def _fence_run(
+    monkeypatch: pytest.MonkeyPatch,
+    custody: Any,
+    named: str = _FENCE_NAMED_OK,
+    family: str = _FENCE_FAMILY_OK,
+    named_code: int = 0,
+    family_code: int = 0,
+) -> list[tuple[list[str], dict[str, Any]]]:
+    """Stub subprocess.run: only sacct may be called; every call is recorded.
+
+    The read with -j gets the named output, the other read the family output.
+    """
+    calls: list[tuple[list[str], dict[str, Any]]] = []
+
+    def run(command: list[str], **kwargs: Any) -> Any:
+        calls.append((list(command), kwargs))
+        assert command[0] == "sacct", f"the COV2D fence ran {command[0]!r}"
+        is_named = "-j" in command
         return SimpleNamespace(
-            returncode=0,
-            stdout=(
-                ""
-                if command[0] == "squeue"
-                else "60909280|COMPLETED|\n60911676|FAILED|\n"
-            ),
-            stderr="",
+            returncode=named_code if is_named else family_code,
+            stdout=named if is_named else family,
+            stderr=None,
         )
 
     monkeypatch.setattr(custody.subprocess, "run", run)
-    assert custody.cov2d_fence()["exit_code"] == 0
-    assert responses == ["squeue", "sacct"]
-    for queue, accounting, code in (
-        ("60909280|cov2d-test|RUNNING|0|2h\n", "", 0),
-        ("", "60909280|COMPLETED|\n60911676|RUNNING|\n", 0),
-        ("", "60909280|COMPLETED|\n", 0),
-        ("", "", 1),
+    return calls
+
+
+def test_cov2d_fence_both_directions(monkeypatch: pytest.MonkeyPatch) -> None:
+    custody = _custody_module()
+    family = (
+        "61806073|rpd_flux2|RUNNING\n"
+        "61300100|cov2d-x|CANCELLED by 112498\n"
+        "61300200_3|t2a_arr|TIMEOUT\n"
+        "61300201+0|cov2d_het|COMPLETED\n"
+        "\n"
+    )
+    monkeypatch.setattr(custody.time, "time", lambda: 1795400000.0)
+    calls = _fence_run(monkeypatch, custody, family=family)
+    result = custody.cov2d_fence()
+    assert result["status"] == "PASS" and result["exit_code"] == 0
+    assert result["terminal_states"] == {"60909280": "COMPLETED", "60911676": "FAILED"}
+    assert result["family_rows"] == 4 and result["cov2d_t2a_rows"] == 3
+    assert result["sacct_named"]["output"] == _FENCE_NAMED_OK
+    assert result["sacct_family"]["output"] == family
+    assert [command for command, _ in calls] == [
+        [
+            "sacct",
+            "-X",
+            "-n",
+            "-P",
+            "-j",
+            "60909280,60911676",
+            "-S",
+            "2026-11-05T00:00:00",
+            "-E",
+            "2026-11-08T00:00:00",
+            "-o",
+            "JobIDRaw,JobName,State",
+        ],
+        [
+            "sacct",
+            "-X",
+            "-n",
+            "-P",
+            "-u",
+            "josephrb",
+            "-S",
+            custody.cov2d_family_start(1795400000.0),
+            "-E",
+            "now",
+            "-o",
+            "JobIDRaw,JobName,State",
+        ],
+    ]
+    for _, kwargs in calls:
+        assert kwargs.get("stderr") is custody.subprocess.STDOUT
+        assert kwargs.get("stdout") is custody.subprocess.PIPE
+    start = custody.time.strptime(
+        custody.cov2d_family_start(1795400000.0), "%Y-%m-%dT%H:%M:%S"
+    )
+    assert abs(custody.time.mktime(start) - (1795400000.0 - 14 * 86400)) < 2
+    for named, named_code in (
+        ("60909280|cov2d-AR23_Tb|RUNNING\n60911676|cov2d-AR23_Tc|COMPLETED\n", 0),
+        ("60909280|cov2d-AR23_Tb|COMPLETED\n", 0),
+        ("", 1),
     ):
-        monkeypatch.setattr(
-            custody.subprocess,
-            "run",
-            lambda command, **kw: SimpleNamespace(
-                returncode=code,
-                stdout=queue if command[0] == "squeue" else accounting,
-                stderr="",
-            ),
-        )
+        _fence_run(monkeypatch, custody, named=named, named_code=named_code)
         with pytest.raises(custody.CustodyRefused) as caught:
             custody.cov2d_fence()
         assert caught.value.details["exit_code"] == 3
-        assert caught.value.details["queue_stdout"] == queue
+        assert caught.value.details["sacct_named"]["output"] == named
+
+
+@pytest.mark.parametrize(
+    ("label", "named", "family", "codes", "message"),
+    [
+        ("named read fails", None, None, (1, 0), "sacct failed (sacct_named)"),
+        ("family read fails", None, None, (0, 1), "sacct failed (sacct_family)"),
+        (
+            "stderr error with rc 0",
+            None,
+            "sacct: error: Too wide of a date range in query\n",
+            (0, 0),
+            "malformed",
+        ),
+        ("2-field row", None, "61300300|cov2d-q\n", (0, 0), "malformed"),
+        ("4-field row", None, "61300301|cov2d-q|COMPLETED|x\n", (0, 0), "malformed"),
+        ("non-numeric JobID", None, "JobID|cov2d-q|COMPLETED\n", (0, 0), "malformed"),
+        (
+            "JobID with a digit",
+            None,
+            "x61300302|other|COMPLETED\n",
+            (0, 0),
+            "malformed",
+        ),
+        ("step id", None, "61300303.batch|batch|COMPLETED\n", (0, 0), "malformed"),
+        ("whitespace line", None, "   \n", (0, 0), "malformed"),
+        (
+            "named read malformed",
+            _FENCE_NAMED_OK + "junk\n",
+            None,
+            (0, 0),
+            "malformed sacct line (sacct_named)",
+        ),
+        ("cov2d RUNNING", None, "61300304|cov2d-r|RUNNING\n", (0, 0), "unended"),
+        ("t2a PENDING", None, "61300305|t2a_p|PENDING\n", (0, 0), "unended"),
+        ("cov2d COMPLETING", None, "61300306|cov2d-c|COMPLETING\n", (0, 0), "unended"),
+        ("t2a REVOKED", None, "61300307|t2a_v|REVOKED\n", (0, 0), "unended"),
+        ("cov2d empty state", None, "61300308|cov2d-e|\n", (0, 0), "unended"),
+        (
+            "padded job name",
+            None,
+            "61300311| cov2d-active|RUNNING\n",
+            (0, 0),
+            "malformed",
+        ),
+        ("empty job name", None, "61300312||\n", (0, 0), "malformed"),
+        (
+            "uppercase family name",
+            None,
+            "61300313|COV2D-UPPER|RUNNING\n",
+            (0, 0),
+            "unended",
+        ),
+        (
+            "named job RUNNING",
+            "60909280|cov2d-AR23_Tb|COMPLETED\n60911676|ops|RUNNING\n",
+            None,
+            (0, 0),
+            "named job",
+        ),
+        (
+            "named job repeated",
+            _FENCE_NAMED_OK + "60909280|cov2d-AR23_Tb|COMPLETED\n",
+            None,
+            (0, 0),
+            "named job",
+        ),
+        (
+            "extra job in named read",
+            _FENCE_NAMED_OK + "61300309|other|COMPLETED\n",
+            None,
+            (0, 0),
+            "named job",
+        ),
+        (
+            "another job in place of a named one",
+            "60909280|cov2d-AR23_Tb|COMPLETED\n61300310|other|COMPLETED\n",
+            None,
+            (0, 0),
+            "named job",
+        ),
+    ],
+)
+def test_cov2d_fence_refuses(
+    monkeypatch: pytest.MonkeyPatch,
+    label: str,
+    named: str | None,
+    family: str | None,
+    codes: tuple[int, int],
+    message: str,
+) -> None:
+    custody = _custody_module()
+    named = _FENCE_NAMED_OK if named is None else named
+    family = _FENCE_FAMILY_OK if family is None else _FENCE_FAMILY_OK + family
+    _fence_run(monkeypatch, custody, named, family, *codes)
+    with pytest.raises(custody.CustodyRefused) as caught:
+        custody.cov2d_fence()
+    assert caught.value.details["exit_code"] == 3, label
+    assert caught.value.details["status"] == "STOP", label
+    assert message in caught.value.details["message"], label
+
+
+def test_cov2d_fence_launch_error_keeps_the_first_read(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    custody = _custody_module()
+    for error in (
+        OSError(2, "No such file or directory: 'sacct'"),
+        UnicodeDecodeError("utf-8", b"\xff", 0, 1, "invalid start byte"),
+    ):
+        calls = []
+
+        def run(command: list[str], **_kwargs: Any) -> Any:
+            calls.append(command)
+            if "-j" in command:
+                return SimpleNamespace(
+                    returncode=0, stdout=_FENCE_NAMED_OK, stderr=None
+                )
+            raise error
+
+        monkeypatch.setattr(custody.subprocess, "run", run)
+        with pytest.raises(custody.CustodyRefused) as caught:
+            custody.cov2d_fence()
+        details = caught.value.details
+        assert details["exit_code"] == 3 and details["status"] == "STOP"
+        assert "could not be read (sacct_family)" in details["message"]
+        assert details["sacct_named"]["output"] == _FENCE_NAMED_OK
+        assert details["sacct_family"]["command"] == calls[1]
+        assert type(error).__name__ in details["sacct_family"]["error"]
+
+
+def test_cov2d_fence_module_has_no_squeue_literal() -> None:
+    """No string literal in the custody module names squeue as a command word.
+
+    A literal fails if any whitespace-separated word in it is "squeue" or ends in
+    "/squeue" (an absolute path, or a longer command string). This static check
+    does not catch a name built at run time. The invocation check is _fence_run,
+    which the PASS and refusal tests use: it lets subprocess.run run only sacct,
+    and the PASS test requires exactly two calls. The launch-error test has its
+    own stub, which raises on the family read.
+    """
+    custody = _custody_module()
+    tree = ast.parse(Path(custody.__file__).read_text())
+    found = [
+        node.value
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Constant)
+        and isinstance(node.value, str)
+        and any(
+            word == "squeue" or word.endswith("/squeue") for word in node.value.split()
+        )
+    ]
+    assert found == [], f"squeue named in the custody module: {found!r}"
 
 
 def test_staged_prefix_restore_and_missing(
