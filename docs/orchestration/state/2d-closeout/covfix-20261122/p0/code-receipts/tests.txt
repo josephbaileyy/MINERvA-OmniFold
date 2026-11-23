@@ -1,0 +1,75 @@
+# command: python3 -B -m unittest -v test_covfix_core.py test_covfix_p0.py
+# python: 3.12.2 numpy 1.26.4 scipy 1.15.2  host: Darwin arm64  OMP_NUM_THREADS=1
+# f8b43685daac75b592c5d2f03f8f75e12b5259210b5d3b8ce366e4ed433c1de9  covfix_core.py
+# 560bffcdedcd1e3272fabb6773ab022a820a0e68e6fe3affe6cb3991ad49b905  covfix_p0.py
+# c14c44ffad6e053c81370035bf75308280a0f446fc76cbd5f15c7d1069dd0792  test_covfix_core.py
+# 84f25f825c63faab1c8abae7927068cfbc15e9857600dabb0de43abebe2917c4  test_covfix_p0.py
+# 7712d03fcf3a43915de42a6087c0618bd23c6ad91ba32b8b58ee555ba63fe684  covfix_mutation.py
+# start: 2026-11-23T16:28:35Z
+test_band_of_exactly_ten_is_used (test_covfix_core.Bands.test_band_of_exactly_ten_is_used) ... ok
+test_bands_used (test_covfix_core.Bands.test_bands_used) ... ok
+test_cluster_straddling_edges_goes_low (test_covfix_core.Bands.test_cluster_straddling_edges_goes_low) ... ok
+test_gap_above_tie_not_clustered (test_covfix_core.Bands.test_gap_above_tie_not_clustered) ... ok
+test_kept_mask_is_strict (test_covfix_core.Bands.test_kept_mask_is_strict) ... ok
+test_ranks (test_covfix_core.Bands.test_ranks) ... ok
+test_absolute (test_covfix_core.Carry.test_absolute) ... ok
+test_factor_and_product (test_covfix_core.Carry.test_factor_and_product) ... ok
+test_identity_at_equal_x (test_covfix_core.Carry.test_identity_at_equal_x) ... ok
+test_refusals (test_covfix_core.Carry.test_refusals) ... ok
+test_canonical_tied_refuses_when_not_spanned (test_covfix_core.EigBasis.test_canonical_tied_refuses_when_not_spanned) ... ok
+test_canonical_tied_skips_null_projection (test_covfix_core.EigBasis.test_canonical_tied_skips_null_projection) ... ok
+test_descending_reconstructs_and_signs (test_covfix_core.EigBasis.test_descending_reconstructs_and_signs) ... ok
+test_identity_is_canonical_axes (test_covfix_core.EigBasis.test_identity_is_canonical_axes) ... ok
+test_sign_fix_flips_negative_leader (test_covfix_core.EigBasis.test_sign_fix_flips_negative_leader) ... ok
+test_tied_branch_used_in_eig_basis (test_covfix_core.EigBasis.test_tied_branch_used_in_eig_basis) ... ok
+test_tied_subspace_does_not_depend_on_rotation (test_covfix_core.EigBasis.test_tied_subspace_does_not_depend_on_rotation) ... ok
+test_guard_refuses (test_covfix_core.GuardLabel.test_guard_refuses) ... ok
+test_guard_values (test_covfix_core.GuardLabel.test_guard_values) ... ok
+test_labels (test_covfix_core.GuardLabel.test_labels) ... ok
+test_band_guard_is_band_chi2_over_n (test_covfix_core.ModeReadings.test_band_guard_is_band_chi2_over_n) ... ok
+test_cut_referenced_to_fluctuation_block (test_covfix_core.ModeReadings.test_cut_referenced_to_fluctuation_block) ... ok
+test_evr_agreement (test_covfix_core.ModeReadings.test_evr_agreement) ... ok
+test_evr_count_mismatch_is_noted (test_covfix_core.ModeReadings.test_evr_count_mismatch_is_noted) ... ok
+test_gaussian_reads_about_one_and_identities (test_covfix_core.ModeReadings.test_gaussian_reads_about_one_and_identities) ... ok
+test_asymmetry_is_printed_not_barred (test_covfix_core.PSD.test_asymmetry_is_printed_not_barred) ... ok
+test_bar (test_covfix_core.PSD.test_bar) ... ok
+test_zero_matrix_passes (test_covfix_core.PSD.test_zero_matrix_passes) ... ok
+test_angles (test_covfix_core.Residual.test_angles) ... ok
+test_bar_is_strict (test_covfix_core.Residual.test_bar_is_strict) ... ok
+test_cut_diagnostic (test_covfix_core.Residual.test_cut_diagnostic) ... ok
+test_directed_extra_span_passes (test_covfix_core.Residual.test_directed_extra_span_passes) ... ok
+test_dropped_tail_direction_does_not_fire (test_covfix_core.Residual.test_dropped_tail_direction_does_not_fire) ... ok
+test_dropped_well_direction_fires (test_covfix_core.Residual.test_dropped_well_direction_fires) ... ok
+test_rotation_angle (test_covfix_core.Residual.test_rotation_angle) ... ok
+test_same_matrix (test_covfix_core.Residual.test_same_matrix) ... ok
+test_spectral_not_frobenius (test_covfix_core.Residual.test_spectral_not_frobenius) ... ok
+test_well_cut_uses_reference_fluctuation (test_covfix_core.Residual.test_well_cut_uses_reference_fluctuation) ... ok
+test_well_cut_value (test_covfix_core.Residual.test_well_cut_value) ... ok
+test_exit_codes (test_covfix_p0.Main.test_exit_codes) ... refusing: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp7wp826n7/p0.json exists
+ok
+test_json_default (test_covfix_p0.Main.test_json_default) ... ok
+test_real_pins_are_the_declared_ones (test_covfix_p0.Main.test_real_pins_are_the_declared_ones) ... ok
+test_c2_carried_directions (test_covfix_p0.Run.test_c2_carried_directions) ... ok
+test_c2_shares_sum_at_most_one (test_covfix_p0.Run.test_c2_shares_sum_at_most_one) ... ok
+test_carry_matches_formula (test_covfix_p0.Run.test_carry_matches_formula) ... ok
+test_cmodel_sha (test_covfix_p0.Run.test_cmodel_sha) ... ok
+test_done_and_sections (test_covfix_p0.Run.test_done_and_sections) ... ok
+test_g2r_pin (test_covfix_p0.Run.test_g2r_pin) ... ok
+test_ibukt_m_is_projection (test_covfix_p0.Run.test_ibukt_m_is_projection) ... ok
+test_pin_mismatch_stops (test_covfix_p0.Run.test_pin_mismatch_stops) ... ok
+test_q_pin (test_covfix_p0.Run.test_q_pin) ... ok
+test_residual_fire_at_cut_scale_is_the_declared_pair (test_covfix_p0.Run.test_residual_fire_at_cut_scale_is_the_declared_pair) ... ok
+test_residual_rule_fire_stops_to_director (test_covfix_p0.Run.test_residual_rule_fire_stops_to_director) ... ok
+test_residual_rule_pair_is_regrade (test_covfix_p0.Run.test_residual_rule_pair_is_regrade) ... ok
+test_stops (test_covfix_p0.Run.test_stops) ... /Users/josephbailey/local-research/wt-covfix/2d-unfolding/covfix/test_covfix_p0.py:62: RuntimeWarning: covariance is not symmetric positive-semidefinite.
+  E = np.random.default_rng(20 + k).multivariate_normal(np.full(n, 0.05), 2.0 * C_T, size=N_TOY)
+ok
+test_xhat_round_used (test_covfix_p0.Run.test_xhat_round_used) ... ok
+
+----------------------------------------------------------------------
+Ran 56 tests in 0.363s
+
+OK
+{"status": "done"}
+{"status": "STOP", "stop": "Stop: C-PIN: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp7wp826n7/Q.npz is 7af26e00dff207efec94b35237dd260001b4e53f2424c5e063a232972d366812, pinned 3333333333333333333333333333333333333333333333333333333333333333"}
+# rc: 0

@@ -1,0 +1,57 @@
+# command: python3 -B covfix_mutation.py
+# python: 3.12.2 numpy 1.26.4 scipy 1.15.2  host: Darwin arm64  OMP_NUM_THREADS=1
+# f8b43685daac75b592c5d2f03f8f75e12b5259210b5d3b8ce366e4ed433c1de9  covfix_core.py
+# 560bffcdedcd1e3272fabb6773ab022a820a0e68e6fe3affe6cb3991ad49b905  covfix_p0.py
+# c14c44ffad6e053c81370035bf75308280a0f446fc76cbd5f15c7d1069dd0792  test_covfix_core.py
+# 84f25f825c63faab1c8abae7927068cfbc15e9857600dabb0de43abebe2917c4  test_covfix_p0.py
+# 7712d03fcf3a43915de42a6087c0618bd23c6ad91ba32b8b58ee555ba63fe684  covfix_mutation.py
+# start: 2026-11-23T16:28:39Z
+baseline rc 0
+rank-cut: killed (rc 1)
+well-cut: killed (rc 1)
+near-tie: killed (rc 1)
+psd-tol: killed (rc 1)
+residual-bar: killed (rc 1)
+label-lo: killed (rc 1)
+label-hi: killed (rc 1)
+band-min: killed (rc 1)
+carry-zero-allowed: killed (rc 1)
+carry-one-sided: killed (rc 1)
+psd-zero-bar: killed (rc 1)
+no-sign-fix: killed (rc 1)
+ascending: killed (rc 1)
+no-tie-canon: killed (rc 1)
+gs-null-skip: killed (rc 1)
+kept-nonstrict: killed (rc 1)
+band-edge-73: killed (rc 1)
+band-edge-139: killed (rc 1)
+cluster-goes-high: killed (rc 1)
+guard-ddof0: killed (rc 1)
+guard-t95: killed (rc 1)
+guard-zero-se-ok: killed (rc 1)
+label-lo-strict: killed (rc 1)
+label-over-nonstrict: killed (rc 1)
+v-ddof1: killed (rc 1)
+cut-on-V: killed (rc 1)
+band-psi-ndf: killed (rc 1)
+well-on-V: killed (rc 1)
+frobenius: killed (rc 1)
+undirected: killed (rc 1)
+q-id-no-cpl: killed (rc 1)
+a0-loose: killed (rc 1)
+a0-no-ndf: killed (rc 1)
+psd-no-stop: killed (rc 1)
+g2r-map-dropped: killed (rc 1)
+vf-uncarried: killed (rc 1)
+pair-no-crun: killed (rc 1)
+pair-fnew-no-crun: killed (rc 1)
+fire-not-stop: killed (rc 1)
+ibukt-no-xR: killed (rc 1)
+ibukt-cells-unchecked: killed (rc 1)
+c2-uncarried: killed (rc 1)
+g2r-unpinned: killed (rc 1)
+rc-stop-0: killed (rc 1)
+out-overwrite: killed (rc 1)
+xhat-ignored: killed (rc 1)
+46/46 killed; survived or not applied: []
+# rc: 0
