@@ -1,4 +1,4 @@
-# COVFIX declaration, DRAFT rev 11.1: the 2D covariance fix (2026-11-23)
+# COVFIX declaration, DRAFT rev 11.2: the 2D covariance fix (2026-11-23)
 <!-- absence-ok: a draft declaration of studies not yet run; every existing study is routed to INVENTORY.md -->
 
 <!-- absence-ok: status line of an unrun draft -->
@@ -278,6 +278,8 @@ its "Fix 1". The inventory is `INVENTORY.md` in this directory, read at origin/m
   - the readout selects accepted records before the chain checks (§3.4);
   - the whitening sentence uses W V₊ Wᵀ (§6.1).
   - The price and the ceiling are unchanged.
+- **Rev 11.2:** one §3 edit. The binding ceiling is 411.22 node-h, by Joseph's answer "Raise to 411.22 (Recommended)"
+  (2026-11-23, via the director; sha256 prefix `8fb26c62f91e7b20`). Earlier entries that mention 409.22 are history.
 
 <!-- absence-ok: rule statement -->
 **Rules are fixed before computation.** Every reading, bar, candidate rule, seed and stop rule below is fixed at
@@ -406,8 +408,8 @@ V(t) = D_t V D_t, with D_t = diag(x̂_t / x_R).
 
 - **Totals:** full 410.55–411.22; lean 328.85–329.52, including the synthetic test's 2.0 added in rev 10, at PG's priced
   range of 1.33–2.00.
-  - At F1's measured PG figure of 1.33 the full total is 410.55, 1.33 above the 409.22 ceiling. ST6 enforces the
-    ceiling either way (below).
+  - At F1's measured PG figure of 1.33 the full total is 410.55, inside the 411.22 ceiling (below), which ST6
+    enforces.
   - The ranges come from PG's range only. The printed range starts at 1.33, above F1's measured 1.3275 node-h for two
     tunes.
   - Without N5 (§9.1): full 334.55–335.22; lean 271.85–272.52.
@@ -431,14 +433,15 @@ V(t) = D_t V D_t, with D_t = diag(x̂_t / x_R).
     time (0.19 node-h is a mean), so a slow job is not killed, and a stalled one cannot charge more than its ceiling.
   - A phase is submitted in chunks small enough that ended charges plus unended ceilings stay within its cap (ST3).
   - The admission check is ST3/ST6's reservation ledger (§3.3), not a prefix poll of sacct.
-  - **The ceiling is pinned in the binding at 409.22 node-h,** Joseph's approved top
-    (`DECISION-20261123-joseph-covfix-ki85-size-reader.md`), by the director's ruling on rev 10.
-    - The synthetic-seal test's 2.0 node-h reservation is kept inside it.
-    - **The arithmetic, stated exactly.** PG is priced at its 2.0 top, against F1's measured 1.33. That margin of 0.67
-      covers part of the test's 2.0. The other 1.33 must come from the toy phases' actual spend falling below their
-      priced 0.19 node-h per unfold, which itself includes COV2D's pilots and retries (0.188). The expected full total
-      at PG = 1.33 is 410.55, 1.33 above the ceiling, before any such saving.
-    - **ST6 is the hard stop:** the ledger's atomic gate (§3.3) at 409.22 node-h. A submission it refuses stops the run,
+  - **The ceiling is pinned in the binding at 411.22 node-h,** the full total's top including the synthetic-seal test.
+    - Joseph raised it from the approved 409.22 (`DECISION-20261123-joseph-covfix-ki85-size-reader.md`) on 2026-11-23,
+      through the director. His answer, verbatim: "Raise to 411.22 (Recommended)" (the sha256 of the text plus a newline
+      begins `8fb26c62f91e7b20`).
+    - The option read: "+2 node-h (0.5%). Avoids the risk of the spend check stopping the campaign during its final
+      validation phase."
+    - The director records it in the binding document.
+    - Without N5, the top is unchanged at 335.22.
+    - **ST6 is the hard stop:** the ledger's atomic gate (§3.3) at 411.22 node-h. A submission it refuses stops the run,
       and that goes to the director, not to Joseph as a re-approval. The price table above is an estimate, not a
       trigger; PX keeps its own repricing rule.
     - The ceiling is separate from the expected price and from the 468 sum of caps.
@@ -1176,8 +1179,8 @@ stands alone, and each candidate's PV verdict is reported descriptively.
    - When N5 is bound, KI 85's row in `KNOWN_ISSUES.md` is updated to point to that decision. Until then the row is
      left unchanged.
 2. **Size: decided.** Full, as designed (`DECISION-20261123-joseph-covfix-ki85-size-reader.md`, Joseph's governing re-confirmation): two sealed tunes, full P1 toy
-   counts, and N5 always, at about 409 node-h at most. The current estimate is in §3; the binding ceiling is 409.22
-   node-h, enforced by ST6. That is above half the balance, and Joseph approved it. Each phase is still capped from
+   counts, and N5 always, at about 409 node-h at most. Joseph later raised the ceiling to 411.22 node-h to include the
+   synthetic-seal test (§3). The current estimate is in §3, and ST6 enforces the ceiling. That is above half the balance, and Joseph approved it. Each phase is still capped from
    sacct. The second reader is
    codex-school2, alongside agy, by the same decision.
 3. **Binding prerequisites:**
