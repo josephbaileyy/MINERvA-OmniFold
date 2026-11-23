@@ -2,6 +2,7 @@
 # roots: docs/orchestration/state/, docs/orchestration/receipts/, docs/orchestration/runs/. One row per INCLUDED receipt; `results_index.py --population` lists the excluded ones.
 path	class	rows	note
 docs/orchestration/receipts/2d-lgbm42-20261011/receipt_model_chi2_2d_lgbm42.json	included	9	
+docs/orchestration/state/2d-closeout/covfix-20261122/p0/run/p0.json	included	428	
 docs/orchestration/state/2d-closeout/period-unfold-20261014/outputs/supplement_bias_dr.json	included	6	
 docs/orchestration/state/2d-closeout/playlist-spread-20261014/coverage/outputs/coverage.json	included	164	
 docs/orchestration/state/2d-closeout/playlist-spread-20261014/coverage/outputs/reco_universes.json	included	94	
