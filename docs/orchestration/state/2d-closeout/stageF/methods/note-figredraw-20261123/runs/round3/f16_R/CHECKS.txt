@@ -1,0 +1,39 @@
+# f16 variant R (2026-11-23T16:18:26Z): run_arms.sh <wt> f16 R; worktree HEAD 2c0a2a261; env: python 3.12.2 matplotlib 3.10.1 numpy 1.26.4
+== arm0: capture_palette.py <capture> <wt>/docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/tools/make_fig_fived16_headline.py --out <wt>/docs/orchestration/state/2d-closeout/stageF/methods/note-figredraw-20261123/runs/round3/f16_R/arm0/out  (LAYOUT_PALETTE=1)
+   | 'created' timestamp seems very low; regarding as unix timestamp
+   | 'modified' timestamp seems very low; regarding as unix timestamp
+   | 'created' timestamp seems very low; regarding as unix timestamp
+   | 'modified' timestamp seems very low; regarding as unix timestamp
+   | 'created' timestamp seems very low; regarding as unix timestamp
+   | 'modified' timestamp seems very low; regarding as unix timestamp
+   | wrote <wt>/docs/orchestration/state/2d-closeout/stageF/methods/note-figredraw-20261123/runs/round3/f16_R/arm0/out/fived16_headline.pdf ; record d6752d2c
+== arm1: capture_palette.py <capture> <wt>/docs/orchestration/state/2d-closeout/stageF/methods/note-figredraw-20261123/tools/make_fig_fived16_headline.py --variant R --out <wt>/docs/orchestration/state/2d-closeout/stageF/methods/note-figredraw-20261123/runs/round3/f16_R/arm1/out  (LAYOUT_PALETTE=1)
+   | 'created' timestamp seems very low; regarding as unix timestamp
+   | 'modified' timestamp seems very low; regarding as unix timestamp
+   | 'created' timestamp seems very low; regarding as unix timestamp
+   | 'modified' timestamp seems very low; regarding as unix timestamp
+   | 'created' timestamp seems very low; regarding as unix timestamp
+   | 'modified' timestamp seems very low; regarding as unix timestamp
+   | wrote <wt>/docs/orchestration/state/2d-closeout/stageF/methods/note-figredraw-20261123/runs/round3/f16_R/arm1/out/fived16_headline.pdf ; record d6752d2c
+== arm 0 against the installed docs/analysis-note/figures/fived16_headline.pdf (sha256 97766f5c52470b8b…)
+EQUAL fived16_headline.pdf
+raster 300 dpi: RASTER :: EQUAL :: 1 page(s), 0 differing pixel(s) (rc 0)
+== arm 1 data against arm 0's captured artists (check_data.py f16 <run> R)
+arm 0 against the record (f bit-equal; half bar = sqrt(diag) to 1e-12, the producer's own tolerance; caps at the bar ends): 16/16
+f16 variant R: 16 (series, name) points; y, bar ends, caps bit-equal in both arms: True
+variant R dump against its artists: 16/16
+value label R04: printed '49.0', 3 s.f. of arm 0's y 48.99572263040665: '49.0'; drawn once: True
+value label R14: printed '49.6', 3 s.f. of arm 0's y 49.63286357273214: '49.6'; drawn once: True
+f16 variant R: decoration artists (not data points): arm 0 0, arm 1 3
+   arm 0 only: []
+   arm 1 only: ['axes0:line:-:None:n=2', 'axes0:line:-:None:n=2', 'axes0:line:-:None:n=2']
+CHECK-DATA f16 R :: PASS
+== text sizes and overlaps per arm (capture_palette.py .texts; overlaps are capture_any.py's box measure)
+  arm0 fived16_headline.pdf: canvas 6.50 x 3.25 in; 78 texts, font size min 7.40, median 7.40 pt; under 7 pt: 0; text overlaps 0
+  arm1 fived16_headline.pdf: canvas 6.50 x 4.21 in; 79 texts, font size min 7.00, median 7.00 pt; under 7 pt: 0; text overlaps 0
+== text overlaps and off-canvas text on one drawn canvas (tools/overlaps.py; round 3), per arm
+  arm0: 74 texts at 100 dpi; overlaps 0; off canvas 0
+  arm1: 79 texts at 100 dpi; overlaps 0; off canvas 0
+== install arm 1 into figs/variants/ (PDF, PNG at 150 dpi by pdftoppm)
+  figs/variants/fived16_headline_R.pdf sha256 24c19a060a30b55c0c99b7ec0b5b1d61dad018835302a028a9d9fdd91e890d24; figs/variants/fived16_headline_R.png
+RUN-ARMS f16 R :: PASS
