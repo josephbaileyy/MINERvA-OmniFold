@@ -296,7 +296,9 @@ its "Fix 1". The inventory is `INVENTORY.md` in this directory, read at origin/m
   - outcome A is reachable for every single-block firing; only a W1 exception plus `universe` is unfunded, by design;
   - binding needs an iris receipt of at least 541.50 node-h;
   - the wrapper's stdin framing and the seed range are written into §4.2;
-  - the expected no-firing price is unchanged.
+  - the expected no-firing price is unchanged;
+  - a citation fix accepted by the director without a read (2026-11-23): the seed range now cites F1's amendment 2 (7
+    tasks per tune, one wave), with the task index still capped at 63. No rule changes.
 
 <!-- absence-ok: rule statement -->
 **Rules are fixed before computation.** Every reading, bar, candidate rule, seed and stop rule below is fixed at
@@ -833,9 +835,11 @@ tune names and the seeds.
     encoding is the seed base in ASCII decimal, one ':', then the salt as 64 lowercase hex characters (32 random bytes),
     with no newline.
   - Tune u's task seed = base + 10_000·u + task index.
-  - **Range:** the seed base is uniform in [1e9, 2e9), and F1's pipeline runs 64 tasks per tune (FD-F1-DECLARATION.md
-    §F1b), so the task index is 0–63, below 10,000. The largest task seed is 2,000,010,062, below 2³¹ − 1, as
-    `run_gevgen_v3.sh` passes it to both `--seed` and `-r`. PG's binary refuses a computed seed at or above 2³¹ − 1.
+  - **Range:** the seed base is uniform in [1e9, 2e9), and F1's pipeline as run takes 7 tasks per tune in a single wave
+    (FD-F1-DECLARATION-AMENDMENT-2.md, superseding FD-F1-DECLARATION.md §F1b's 64). The task index is capped at a
+    ceiling of 63, below 10,000, so the seed bound holds a fortiori. The largest task seed is 2,000,010,062, below
+    2³¹ − 1, as `run_gevgen_v3.sh` passes it to both `--seed` and `-r`. PG's binary refuses a computed seed at or above
+    2³¹ − 1.
   - F1's generator takes the seed in its command arguments. PG's job scripts and logs therefore stay in the PG
     session's directory and are captured into the encrypted sealed set, under the cooperative assumption below.
 - **Roles.** The PG session prepares and tests its run directory. The **director's wrapper invokes the bound PG
