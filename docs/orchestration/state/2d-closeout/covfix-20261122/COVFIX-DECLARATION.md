@@ -290,8 +290,8 @@ its "Fix 1". The inventory is `INVENTORY.md` in this directory, read at origin/m
   - the PG roles are stated: the PG session prepares and tests, and the director's wrapper invokes the bound connect
     (§4.2).
 - **Rev 11.4:**
-  - the ceiling is 541.50 node-h, from Joseph's "Raise to about 540" (sha256 prefix `2edd5a1690819494`) with the exact
-    figure pinned by the director;
+  - the ceiling is 541.50 node-h, from Joseph's "Raise to about 540" (sha256 prefix `2edd5a1690819494`) and his direct
+    confirmation of the exact figure, "541.5 is perfectly fine" (`adc1262352d73d91`);
   - §3 prints each ST1 branch's priced worst case, with the N5 method now including `stat`;
   - outcome A is reachable for every single-block firing; only a W1 exception plus `universe` is unfunded, by design;
   - binding needs an iris receipt of at least 541.50 node-h;
@@ -452,8 +452,10 @@ V(t) = D_t V D_t, with D_t = diag(x̂_t / x_R).
     - **The headroom.** He then raised it again for PX headroom: "Raise to about 540" (the sha256 of the text plus a
       newline begins `2edd5a1690819494`). That option read: "Also funds the systematic-universe rebuild. Close to the
       whole remaining balance in the worst case."
-    - **The exact figure.** The director pinned 541.50 as the exact value: inside "about 540" (+0.3 %), and funding
-      every single-block branch, including `universe` with laterals rebuilt (541.37).
+    - **The exact figure.** The director proposed 541.50: inside "about 540" (+0.3 %), and funding every single-block
+      branch, including `universe` with laterals rebuilt (541.37). Joseph confirmed it directly: "541.5 is perfectly
+      fine" (the sha256 of the text plus a newline begins `adc1262352d73d91`). 541.50 is therefore Joseph's approved
+      ceiling.
     - The director records all three in the binding document (`DECISION-20261123-joseph-covfix-ki85-size-reader.md`
       holds the first decisions).
     - **The expected no-firing price is unchanged** at 410.55–411.22 (334.55–335.22 without N5). The ceiling beyond it
@@ -1233,8 +1235,7 @@ stands alone, and each candidate's PV verdict is reported descriptively.
      left unchanged.
 2. **Size: decided.** Full, as designed (`DECISION-20261123-joseph-covfix-ki85-size-reader.md`, Joseph's governing re-confirmation): two sealed tunes, full P1 toy
    counts, and N5 always, at an expected no-firing price of 410.55–411.22 node-h. Joseph later raised the ceiling,
-   first to 411.22 for the synthetic test and then to "about 540" for PX headroom, pinned by the director at 541.50
-   (§3). ST6 enforces the ceiling. That is above half the balance, and Joseph approved it. Each phase is still capped from
+   first to 411.22 for the synthetic test, then to "about 540" for PX headroom, and confirmed the exact 541.50 (§3). ST6 enforces the ceiling. That is above half the balance, and Joseph approved it. Each phase is still capped from
    sacct. The second reader is
    codex-school2, alongside agy, by the same decision.
 3. **Outcome A's reach** (§7, Part 1). Within the 541.50 ceiling it is reachable for every single-block firing, including
