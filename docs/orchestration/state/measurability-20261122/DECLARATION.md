@@ -82,7 +82,9 @@ computed before this declaration, its reads and the director's GO.
     four C-DID-CONS hashes are taken before anything is printed; a reco DIFFERS is checked for the upper-edge convention.
   - **The director's ruling on the IBUKT root (2026-11-22):** the bank is read at its one recorded path, with no search
     and stat before and after (§2, §8).
-- **rev 4** will record C-DID-CONS's branch from connect P's log, before connect B.
+- **rev 4** (2026-11-23, after connect P attempt 2, `run-p2/`): **C-DID-CONS is EQUAL on both lists.** The J-cell
+  memberships match (134, sha256 bd1434b0…), and so do the occupied reco cells (10,499, sha256 8b82482b…). So C-DID is a
+  **STOP control** in connect B (§1, §6). Nothing else changes.
 
 **Rulings folded in (the director, 2026-11-22):** Q1, a cluster build (login node if light, otherwise one shared-QOS job of
 at most 0.1 node-h); Q2, T3's B0, MO and OP as operands; Q3, H2 truth cells, with the 16-cell biases taken through the
