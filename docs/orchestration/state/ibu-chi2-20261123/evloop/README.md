@@ -47,6 +47,13 @@ MAT, MAT-MINERvA and UnfoldUtils, read-only.
 
 **Fix after the smoke, before `ibuchi_ana` ran.** The smoke showed that `mc_signal_reco` keeps `sim_pass` set on truth-only miss rows, whose `mu_*` fields are -9999. In the MAD variant, -9999 MeV at a -9999 rad angle could land inside the grid, so `ana.py` now requires `mu_mad_p > 0` on all three trees for MAD. BASE and SEL were already safe, because `sim` is itself -9999 on those rows and `mu_trk_quality` is -9999. The agy read did not catch this. The fix was committed before `ibuchi_ana` was submitted. The event-loop array (job 61885471) does not run `ana.py`.
 
+**agy confirm on that diff** (director's condition; [`agy-confirm/`](agy-confirm/); Gemini 3.8 Flash (High), sandboxed, hashed copies unchanged afterwards): **VERDICT: GO**.
+- The guard is correct and complete.
+- No other variant, tree or control admits a sentinel: BASE needs `sim >= 0`; SEL's quality cut fails on -9999; the scans are data-only; the controls require `mu_p_total > 0`.
+- The diff changes only that line.
+
+One point is noted against agy's Q1 claim that "no valid reco muon is excluded". In the older 1A processing, `MasterAnaDev_muon_P` is -9999 on some real reco events (`stageD-inputs/q2-opendata-20261014/REPORT.md` §3). The MAD variant therefore drops those rows, in data and in MC. The MAD readout reports MAD's total counts beside BASE's, so the size of that selection change is visible.
+
 ## The checks before running
 
 - **agy read** (Gemini 3.8 Flash (High), sandboxed, on hashed copies; [`agy-read/`](agy-read/)): **VERDICT: GO**, no
