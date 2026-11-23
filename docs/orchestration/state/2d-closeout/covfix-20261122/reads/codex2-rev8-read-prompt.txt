@@ -1,0 +1,9 @@
+Read-only review. Do not modify any file. Your final message is the report.
+You read rev 7 of inputs/COVFIX-DECLARATION.md (now rev 8) and returned NO-GO (inputs/codex2-rev7-REPORT.md).
+inputs/rev7-to-rev8.diff is the complete change.
+The director ruled the rev 8 scope after the rev 7 reads: (1) if PX has no funded path, the ST1 branch ends at the construction finding and K_A is omitted; (2) one Gaussian reference law N(0, V_drawn) with controls, no band bank, remainder or fallback; (3) the testability veto and every rate claim removed, the surrogate runs descriptive only, PASS resting only on the fixed affirmative bars applied to the real toys, and K0 reported as observed; (4) K_C and outcome C dropped; (5) codex item 4, agy majors and minors, and outcome rows for PV-never-ran and no-challenge fixed as written; (6) custody in codex simpler form (one durable spend record, one authenticated writer manifest with chained unfold outputs, ciphertext hashes only published, pinned GPG flags, a terminal rule, the cooperative assumption stated), nothing heavier. Do not re-raise any item the ruling removed; judge rev 8 as scoped.
+1. For each of your rev 7 items that survives the ruling: CLOSED, PARTLY CLOSED, or OPEN in rev 8, with the line.
+2. New defects introduced by rev 8.
+3. Setting aside binding prerequisites (iris receipt, PG session, passphrase), is rev 8 ready to bind? If not, list the
+   minimum changes; prefer removal over new machinery where removal keeps the readings valid.
+Severity (BLOCKING, MAJOR, MINOR) and a concrete fix for each. First line: GO or NO-GO.
