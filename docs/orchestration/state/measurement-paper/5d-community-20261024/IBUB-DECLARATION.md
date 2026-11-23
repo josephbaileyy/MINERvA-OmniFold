@@ -1,6 +1,11 @@
 # DECLARATION IBUB: binned IBU's method bias at the two held-out tunes, beside OmniFold's, on COV2D's 600 toys (2026-11-23)
 
-**By** `director-helper-3`, for the director's review, an agy read, then the director's binding. Nothing has run.
+**By** `director-helper-3`, for the director's binding. Nothing has run.
+
+**Revision 3.**
+- Revision 1 (`0e7449c1`) went to the director, whose rulings are in §11.
+- Revision 2 applied those rulings and went to an agy read.
+- This revision applies every finding of that read (§12).
 
 **Under:** the director's work order of 2026-11-23 to this session (Joseph via the director). It passes on Ben's request (a):
 IBU's method bias at the two held-out GENIE v3 tunes, computed the same way as OmniFold's, so that the two methods can
@@ -55,7 +60,9 @@ is cited at main `2f37c18a9` unless a sha is given.
 - **The graded truth** of toy t is COV2D's: `truth_xsec.npz` in the same `b/` directory, the row whose seed is t. It is
   pinned by the null records' inventory: G18 `8bf3f0c8…ba2cd7`, AR23 `b3895fbb…54dca1`
   (`R/readout/<T>/null_<T>.json`, `inventory.truth_xsec_npz`). It is method-independent (`cov2d_pseudo_write.py:282`):
-  the nature's clipped composite truth through the driver's own extraction with the nature's flux.
+  the nature's clipped composite truth through the driver's own extraction with the nature's flux. Its `xsec` holds
+  each nature on the full 14 × 16 grid. The 205 cells are taken with E_R's `rep`, as `cov2d_readout.phase_score`
+  does.
 - **The cells** are E_R's 205 reported cells (`hXSec2D > 0`), read with `re2c_rollup.Cells`. Both tunes' blocks
   records have the same `rep`.
 
@@ -71,6 +78,9 @@ The comparison is made **before** COV2D's post-unfold surrogates, as the work or
   run them.
 - **So, per toy t and cell c:** e^m_tc = x̂^m_tc − x_true,tc, for m ∈ {OF, IBU}. Here x̂^OF is `hXSec2D` of
   `$O/out/T_<T>_<t>/xsec.root`, with no surrogate applied, and x̂^IBU is the IBU unit's `hXSec2D` at K = 10 (§3).
+  For K = 5, x̂^IBU is the unit's `xsec` row at K = 5 from `<unit>.npz`, on the full grid, masked with the same `rep`.
+  The driver writes `hXSec2D` only at the primary K. The readout asserts that the npz row at K = 10, masked the same
+  way, equals `Cells.vec` of `<unit>.root` to 1e-9, C-FILL's tolerance.
 
 ## 3. The IBU toy unit (code to come, §9)
 
@@ -78,14 +88,26 @@ The comparison is made **before** COV2D's post-unfold surrogates, as the work or
   `2d-unfolding/ref_c2c1/ref_c2c1.py` and uses that file unchanged: `run_driver`, `roounfold_bayes`, `dagostini`,
   `xsec_at_every_k`, `own_hxsec`, the read guards and `copy_noatime`. No byte of `ref_c2c1.py` or its `config.json`
   changes.
+  - `ref_c2c1`'s own `parse_units`, `resolve_argv`, `run_unit`, `check_code` and `main` are **not** used. They know
+    only REF-C2C1's units, and `check_code` pins the old driver blob.
+  - `ibub_unit.py` has its own unit parser and argv resolver, its own CPU and thread gate, and its own `check_code`
+    against its `config.json`.
 - **Its units:**
   - `toy:<T>:<seed>`, one per toy. This is E_R's argv (`ref_c2c1/config.json` `e_r.argv`, which equals COV2D's toy argv
     `cov2d_jobs.argv("toy", …)` minus `--data-file`), plus `--data-file <the toy's staged copy>`.
   - `central`, once, with no `--data-file`. It is control C-REP (§5).
+  - `central_df`, once. This is E_R's argv plus `--data-file <a staged copy of $K2A>`, where `$K2A` =
+    `/pscratch/sd/j/josephrb/cov2d-2a/writer_control.root`, sha256 `7eb39088…9b9db` (`cov2d_jobs.PINS`).
+    - `$K2A` is COV2D's control-(2a) file: `$CV`'s own data tree, written through `cov2d_writer` and shown bitwise
+      equal to it (`R/control2a/`).
+    - COV2D's pilot used it to reproduce E_R through the same hook, to 4.55e-15 (`R/pilot/README.md`, (2b)).
+    - So `central_df` must equal `central` and REF-C2C1's `c2_central`. It is control C-REP-D (§5), which runs the
+      `--data-file` path end to end on real data.
 - **Like for like with COV2D's toys:**
   - 64 CPUs per unit, with OMP/MKL/OPENBLAS/NUMEXPR at 64/1/1/1. These are COV2D's toy lanes (`cov2d_jobs.pack`, 4 ×
-    64) and REF-C2C1's c2 units.
-  - The unit refuses any other affinity or thread environment, as `ref_c2c1.run_unit` does.
+    64; `cov2d_env.sh` sets all four) and REF-C2C1's c2 units.
+  - The unit refuses any other affinity, or any other value of the four variables. `ref_c2c1.run_unit` checks only
+    the first three; IBUB adds NUMEXPR, as COV2D set it.
 - **Per toy, before the driver opens anything:**
   1. The unit copies `data_<seed>.root` once, through `O_NOATIME`, into `$N/stage/data/`, under the staging root.
      `ref_c2c1`'s TFile guard lets the driver read only under that root.
@@ -96,30 +118,55 @@ The comparison is made **before** COV2D's post-unfold surrogates, as the work or
   - `<unit>.npz`, holding `xsec` at every K of the scan, the unfolded vectors, T, y, and meta. The meta records the
     argv, the code and input digests, the data copy's sha256, the CPU count, the thread environment and the seconds;
   - a done-marker with its control verdict and both products' sha256.
-- **The driver blob.** COV2D's toys and REF-C2C1's units ran `re2_driver.py` blob sha256 `938c53c5…8b5a3b`. Main
-  now has `e226daf3…09971dd67`. The difference is COV2D-G2R's amendment 1 (`0f57c22a`, `62864b16`): 79 lines added
-  and 2 changed. Every added line falls into one of these:
+- **The driver blob: the two methods run different blobs of `re2_driver.py`.**
+  - The toys' OmniFold ran blob sha256 `938c53c5…8b5a3b`. COV2D's score records give it as `code.driverSha256`, after
+    §9.9 read every toy's provenance with `problems: []` (300 per tune; `R/readout/<T>/score_<T>.json`). REF-C2C1's units ran the same blob, and its `config.json` pins it.
+  - **IBUB's IBU runs main's blob, `e226daf3…09971dd67`** (route (A), the director's ruling of 2026-11-23). The unit's
+    `config.json` pins it by sha256.
+- **The diff between them is COV2D-G2R amendment 1** (`0f57c22a`, `62864b16`): 79 lines added and 2 changed. Every
+  added line falls into one of these:
   - a line tagged `# G2R`;
   - a docstring or help-text line;
-  - the body of the new function `g2r_miss_override`, which is called only when `--miss-map` is given. The flag
-    defaults to off.
+  - the body of the new function `g2r_miss_override`.
 
-  The two changed lines add the keyword `miss_weight_override=None` and pass `**g2r_kw`, which is empty without the
-  flag. Without the flag, the loader's production path is unchanged.
-  - **Declared route (A):** the unit runs main's blob, pinned in its config by sha256. C-REP (§5) must then reproduce
-    REF-C2C1's c2_central, which was produced with the old blob.
-  - **Alternative (B), for the director:** vendor the `938c53c5` blob and run that instead.
-  - §11 asks which to use.
+  The gate and the entry points, quoted from `git diff a6054769 2f37c18a9 -- 2d-unfolding/re2/re2_driver.py`:
+
+  ```
+  +    ap.add_argument("--miss-map", default=None, metavar="NPZ",  # G2R
+  +    g2r_kw, g2r_prov = {}, None  # G2R
+  +    if args.miss_map is not None:  # G2R
+  -                      alt_universe_branch=alt_universe_branch, **loader_select)
+  +                      alt_universe_branch=alt_universe_branch, **g2r_kw, **loader_select)
+  -                              alt_universe_branch=None):
+  +                              alt_universe_branch=None,
+  +                              miss_weight_override=None):  # G2R
+  ```
+
+  `--miss-map` is the amendment's only new option. **Without it, `g2r_kw` is empty, `g2r_miss_override` is never
+  called, `miss_weight_override` stays `None`, and every `# G2R` branch in the loader is skipped.** So the amendment
+  is inert, and the loader's production path is the old blob's.
+- **Two guards make that hold:**
+  - **C-G2R:** before each driver call, the unit asserts that its argv contains no `--miss-map` and no other option
+    the amendment added. The amendment adds no other option, and a test checks that set against the driver's
+    argparse. A violation refuses the unit.
+  - **C-REP (§5)** is the proof: on the real data, main's blob through the new unit must reproduce REF-C2C1's
+    `c2_central`, made with the old blob, to 1e-8.
 
 ## 4. The readings (fixed before any IBU output exists)
 
 The readout runs on a login node at 0 node-h, per tune T, with n = 300 toys.
 
-**Per cell c, and per band:**
+**Per cell c, and per band.** Both are reported:
+- **each method's own bias, with its own SE**, for every cell and band (Ben asked about each method's bias within its
+  uncertainty);
+- **the difference between the methods.**
+
+The quantities:
 - **Mean bias per method:** b̄^m_c = (1/n) Σ_t e^m_tc. It is reported in three ways:
   - absolute;
   - relative to the toys' mean truth x̄_true,c = (1/n) Σ_t x_true,tc, in %;
-  - in σ_c = √diag(C_T), from the committed blocks record, for comparison with COV2D's own `readouts.bias`.
+  - in σ_c = √diag(C_T), from the committed blocks record, for comparison with COV2D's own `readouts.bias`. For a
+    band, σ_band = √(aᵀ C_T a), with a the band's area vector (A_c on its cells, 0 elsewhere).
 - **Its uncertainty:**
   - SE_boot(b̄^m_c), from a toy bootstrap: B = 10,000 resamples of the 300 toy indices with replacement, from
     `numpy.random.default_rng([5_760_000, k])` at tune index k (G18 0, AR23 1);
@@ -131,7 +178,8 @@ The readout runs on a login node at 0 node-h, per tune T, with n = 300 toys.
   - z_c = d̄_c / SE_boot(d̄_c).
   - The unpaired form, |b̄^IBU − b̄^OF| / √(SE_IBU² + SE_OF²), which ignores the shared toys, is printed and read by
     nothing.
-- **The bands** are area-weighted integrals over the reported cells, Σ_c x_c ΔpT_c Δp∥_c, using `Cells.area`. They are
+- **The bands are kinematic regions,** as Ben's "bins/regions" are (the director's ruling of 2026-11-23). They are not
+  COV2D's systematic bands. Each is an area-weighted integral over the reported cells, Σ_c x_c ΔpT_c Δp∥_c, using `Cells.area`. They are
   never bare sums. Their errors are e_t,band = Σ_{c ∈ band} A_c e_tc, with the same statistics as the cells. There are
   three families:
   - the 14 p_T bands (each p_T bin over its reported p∥ cells: 16, 16, 16, 16, 16, 16, 16, 16, 16, 15, 14, 13, 11,
@@ -161,6 +209,9 @@ tune, each two-sided, Bonferroni at familywise α = 0.05: z* = Φ⁻¹(1 − 0.0
   the paired differences, and the reference is F(205, 95) after the usual scaling. It is printed with S's condition
   number and read by nothing, because S comes from 300 toys in 205 dimensions.
 - **K = 5** gets the same table, reported beside K = 10 and never chosen between.
+- **On z\*.** The ratio uses a bootstrap SE from n = 300, so its tail is close to t₂₉₉'s, whose quantile here is about
+  3.75 against z\* = 3.7044. z\* is kept as declared, and the report prints both quantiles. The union bound over the
+  31 bands, which are positively correlated with the cells, is conservative by more than that difference.
 - **The two tunes** are read separately. With two truths there is no rate, as COV2D §1 says.
 
 ## 5. Controls (each must pass at T, or T reads INVALID, unrepaired)
@@ -174,20 +225,40 @@ tune, each two-sided, Bonferroni at familywise α = 0.05: z* = Φ⁻¹(1 − 0.0
     `bdb7a57d…5994`);
   - Δ_b(T) and C_T, from `R/readout/<T>/blocks_<T>.npz` (`7eb657b8…0ea3d` / `abaebaea…15ee`).
 
-  Then `cov2d_readouts.bias(E, σ)` and `spread_alone(...)["pull_mean"]` must equal the committed score record's
-  `readouts.bias` and `readouts.spread_alone.pull_mean` to 1e-12 absolute (in σ_c units), cell by cell. The score
-  records are `score_G18.json` `84976694…9088ec` and `score_AR23.json` `fe5263e9…4f5ce1`. This ties the
-  pre-surrogate x̂^OF used here to the errors COV2D graded.
+  Then `cov2d_readouts.bias(E, σ)` and all three fields of `cov2d_readouts.spread_alone(E, C_T, C_model_abs)` must
+  equal the committed score record's `readouts.bias` and `readouts.spread_alone`, cell by cell. Those fields are
+  `p_hat`, `pull_mean` and `pull_sd`. The bias and the two pull fields must agree to 1e-12 absolute (in σ units).
+  `p_hat` is a count over the toys and must agree exactly. The score records are `score_G18.json` `84976694…9088ec`
+  and `score_AR23.json` `fe5263e9…4f5ce1`. This ties the pre-surrogate x̂^OF used here to the errors COV2D graded.
+  - **Why `p_hat` and `pull_sd`, not only the means.** The bias and `pull_mean` are means over the toys, so a
+    permutation of the toy-to-truth pairing leaves them unchanged. `pull_sd` and `p_hat` depend on each toy's own
+    error, so a mispairing, a toy file swap or a cell reorder moves them (the agy read, finding 1).
 - **C-TRUTH:** the order checks of `cov2d_readout.phase_score`, carried over:
   - `truth_xsec.npz`'s seeds are `pseudo_a.json`'s natures in order;
   - the toys are `cov2d.TOY_SEEDS[T]` in order;
-  - the 205 cells equal the blocks record's `rep`.
+  - the 205 cells equal the blocks record's `rep`;
+  - **the pairing, per toy index k**, for both methods: the OmniFold product's label is `T_<T>_<TOY_SEEDS[T][k]>`.
+    The IBU unit's done-marker and meta name the same seed. The IBU unit's recorded `dataFileSha256` equals
+    `pseudo_b.json`'s line for that seed. The truth row is the one whose seed is that seed. Any mismatch refuses
+    the readout.
 - **C-REP, the IBU unit against REF-C2C1.** The `central` unit, on the real data with no `--data-file`, must reproduce
   REF-C2C1's `c2_central.npz` (sha256 `929d0e78…43b76f4`, in `/pscratch/sd/j/josephrb/ref-c2c1-20261106/units/`, read
   through `O_NOATIME`). The bar is 1e-8 relative (RE-2's rule, as REF-C2C1's C-REF uses it), on the 205 cells, for
   `xsec` at every K of the scan, and for `y` and T. This covers the driver blob (§3, route A) and the new unit's wiring.
-  - If the reference is gone or its digest differs, C-REP is UNAVAILABLE. The run stops before any toy unit, and the
-    question goes to the director.
+  - **The reference is on pscratch only.** The repository holds its done-marker, which carries its sha256
+    (`receipts-ref-c2c1/step2/units-centrals/c2_central.done`), but not the npz.
+  - If the npz is gone or its digest differs, the run **STOPs** before any toy unit, and the director rules. No
+    fallback is declared (the director's ruling of 2026-11-23).
+- **C-REP-D, the `--data-file` path on real data.** The `central_df` unit (§3) must reproduce REF-C2C1's
+  `c2_central.npz` to the same 1e-8, on the same quantities. It must also reproduce IBUB's own `central`, reported
+  beside it.
+  - Unlike C-REP, it runs every step the toys run: staging a data file under the staging root, the TFile guard on it,
+    its digest check, the driver's `--data-file` reader and the recorded `dataFileSha256`.
+  - So a wiring defect that appears only with `--data-file` fails it (the agy read, finding 2).
+  - `$K2A`'s sha256 is checked by `O_NOATIME` before the copy. If the file is gone or its digest differs, the run
+    STOPs before any toy unit, as for C-REP.
+- **C-G2R, per unit** (§3): the argv carries no option added by G2R amendment 1. If it does, the unit refuses before
+  the driver is imported.
 - **C-DATA, per toy unit:**
   - the staged copy's sha256 equals `pseudo_b.json`'s line for the seed before the driver opens it;
   - the driver's recorded `dataFileSha256` equals the same digest;
@@ -201,8 +272,9 @@ tune, each two-sided, Bonferroni at familywise α = 0.05: z* = Φ⁻¹(1 − 0.0
   - A missing or failed unit is reported by seed. It is never silently dropped.
   - The readings need all 300. A tune with fewer reads INCOMPLETE, and is reported with no reading unless the
     director rules otherwise.
-- **C-CELLS:** IBU's `hXSec2D` at K = 10 is finite on all 205 cells, in every toy. Any non-finite value is counted and
-  reported, and T is INVALID.
+- **C-CELLS:** IBU's cross section is finite on all 205 cells, in every toy, at both reported K: `hXSec2D` at K = 10,
+  and the npz row at K = 5. Any non-finite value is counted and reported, and T is INVALID. Negative values are
+  counted and printed. They are not a failure.
 
 ## 6. Descriptive readouts (no reading)
 
@@ -243,13 +315,24 @@ tune, each two-sided, Bonferroni at familywise α = 0.05: z* = Φ⁻¹(1 − 0.0
 - **Unit time:** REF-C2C1 measured c2_central at 186.3 s and projected c2 replicas at 217 s, at 4 units per node
   (`receipts-ref-c2c1/step2/units-centrals/README.txt`). A toy unit is a central-shaped c2 unit with a different data
   file, so it is priced at 217 s, plus the data copy (one file, read once).
-- **The job:** one exclusive CPU node, regular QOS, 4 lanes × 64 CPUs. The `central` unit runs first on lane 1. The
-  600 toy units are dealt round-robin, 150 per lane. The longest lane is 151 × 217 = 32,767 s, plus a 300 s preflight.
+- **The job:** one exclusive CPU node, regular QOS, 4 lanes × 64 CPUs.
+  - **The reference phase:** `central` runs on lane 1 and `central_df` on lane 2, at the same time. Lanes 3 and 4 wait.
+  - **A barrier.** No toy unit starts on any lane until both references have finished, C-REP and C-REP-D have
+    passed, and the re-price check below has passed. If any of these fails, the job ends before any toy (the agy
+    read, finding 6).
+  - **The toy phase:** the 600 toy units are dealt round-robin, 150 per lane.
+  - The longest lane is 217 + 150 × 217 = 32,767 s, plus a 300 s preflight.
   - The limit is ceil-to-the-minute of 1.25 × 33,067 s: **11:29:00**.
   - The charge is about **9.2 node-h**.
   - **The cap is 11.5 node-h** (1.25 × 9.2). Nothing reruns without the director.
-- **The re-price trigger:** if the `central` unit's wall is above 1.25 × 217 s, the job's lanes stop before the toys,
-  and the question goes to the director.
+- **The re-price trigger:** if either reference unit's wall is above 1.25 × 217 s, the job ends at the barrier, and
+  the question goes to the director.
+- **A preflight in the connect (login node, before submission):**
+  - the stat and `O_NOATIME` sha256 of C-REP's reference `c2_central.npz` and of `$K2A`;
+  - the existence of all 600 toy data files, by stat.
+
+  If either reference is missing or off its digest, the connect submits nothing and reports a STOP (the agy read,
+  note 9).
 - **Staging (login node, 0 node-h, before the job):** `$CV` (`43f8cc16…`) and `$MC` (`d40aea69…`) are copied from
   their CFS originals (`ref_c2c1/config.json` `inputs.CV_source`, `MC_source`). `libRooUnfold.so` (`0b34e1e3…`) is
   copied from the shared checkout. Each copy:
@@ -289,7 +372,9 @@ tune, each two-sided, Bonferroni at familywise α = 0.05: z* = Φ⁻¹(1 − 0.0
   Every pscratch read goes through `O_NOATIME`, under `cov2d_blocks`' open audit, as COV2D's readout does.
 - **Tests** cover both modules:
   - a fixture driver run of both unit kinds;
-  - C-OF on a synthetic ensemble, with a perturbed surrogate that must fail it;
+  - C-OF on a synthetic ensemble. A perturbed surrogate must fail it, and so must a swap of two truth rows (which the
+    means alone would pass);
+  - the barrier: a failing reference unit must leave every toy unit unstarted;
   - the bootstrap on a known case;
   - the rule's threshold;
   - each control's refusal.
@@ -305,13 +390,33 @@ tune, each two-sided, Bonferroni at familywise α = 0.05: z* = Φ⁻¹(1 − 0.0
 4. Staging, the job, then the readout on a login node.
 5. A records PR holding the results and receipts, before they go to the director.
 
-## 11. For the director
+## 11. The director's rulings (2026-11-23, by message, on revision 1 at `0e7449c1`)
 
-1. **The driver blob:** route (A), main's `e226daf3` with C-REP, or route (B), the vendored `938c53c5`? I recommend
-   (A). The diff is inert without its flag, and C-REP tests that directly.
-2. **"Per band":** I read it as kinematic bands (p_T, p∥ and the total, area-weighted), not COV2D's systematic bands.
-   If systematic bands were meant, that changes §4.
-3. **The rule:** one Bonferroni family of 236 two-sided tests per tune, with a paired bootstrap SE. Is that
-   acceptable, or should the bands be a separate family?
-4. **C-REP's reference** is on pscratch, with no HPSS copy. If it has been purged, does the run stop (as declared), or
-   is C-REP replaced by an `er`-style check?
+1. **The driver:** route (A), main's `e226daf3`, with two additions: the C-G2R assertion, and C-REP at 1e-8 as the
+   proof. The two blobs and the diff are recorded in §3.
+2. **The bands** are kinematic: 14 p_T bands, 16 p∥ bands and the total (§4).
+3. **One family of 236 tests per tune** is accepted. It is conservative for DIFFER, and the printed resolution covers
+   the rest. Each method's own per-cell and per-band bias is printed with its SE, beside the difference (§4).
+4. **C-REP's reference** is not committed, so it is read from pscratch. If it has been purged, the run STOPs and the
+   director rules. No fallback (§5).
+
+## 12. The agy read of revision 2 (2026-11-23)
+
+- **The reader:** agy `gemini-3.8-flash-high`, given the revision-2 text (sha256 `92185843…98ca`), COV2D §4–§6,
+  REF-C2C1 §1.1, `ref_c2c1.py` and config, and the COV2D code. It answered **VERDICT: REVISE**.
+- **The second reader did not run.** agy `claude-opus-4-6-thinking` was refused with RESOURCE_EXHAUSTED (429). Its
+  quota resets about 29 h after the run.
+- **Every finding was taken as a fix in this revision:**
+  1. MAJOR, C-OF was blind to a toy-to-truth mispairing, because the bias and `pull_mean` are means: fixed by adding
+     `p_hat` and `pull_sd`, and the per-toy pairing check in C-TRUTH (§5).
+  2. MAJOR, C-REP never runs `--data-file`: fixed by the `central_df` unit and C-REP-D (§3, §5).
+  3. MAJOR, C-CELLS checked only K = 10: fixed to K ∈ {5, 10} (§5).
+  4. MINOR, σ for bands was undefined: σ_band = √(aᵀ C_T a) (§4).
+  5. MINOR, K = 5's extraction from the npz was unstated: the `rep` mask, and K = 10's npz row checked against
+     `hXSec2D` (§2).
+  6. MINOR, the re-price stop could race the toys on lanes 2–4: the barrier (§8).
+  7. MINOR, `ref_c2c1`'s unit parser cannot take IBUB's units: IBUB's own parser and gates are stated (§3).
+  8. NOTE, z\* against t₂₉₉: both quantiles are printed, and z\* is kept (§4).
+  9. NOTE, a purged reference would waste a node: the connect's preflight (§8).
+- **The reader's two fidelity notes are also fixed:** the 224-to-205 masking of `truth_xsec.npz` (§1), and NUMEXPR,
+  which `ref_c2c1` does not check (§3).
