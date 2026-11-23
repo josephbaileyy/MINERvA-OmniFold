@@ -1021,6 +1021,8 @@ docs/orchestration/state/2d-closeout/cov2d-fence-20261122/test_cov2d_fence.sh	tr
 docs/orchestration/state/2d-closeout/covfix-20261122/COVFIX-DECLARATION.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/covfix-20261122/INVENTORY.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/covfix-20261122/reads/agy-rev1-REPORT.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/covfix-20261122/reads/agy-rev10-REPORT.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/covfix-20261122/reads/agy-rev10-read-prompt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/covfix-20261122/reads/agy-rev2-REPORT.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/covfix-20261122/reads/agy-rev3-REPORT.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/covfix-20261122/reads/agy-rev4-REPORT.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
@@ -1035,6 +1037,8 @@ docs/orchestration/state/2d-closeout/covfix-20261122/reads/agy-rev8-REPORT.md	tr
 docs/orchestration/state/2d-closeout/covfix-20261122/reads/agy-rev8-read-prompt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/covfix-20261122/reads/agy-rev9-REPORT.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/covfix-20261122/reads/agy-rev9-read-prompt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/covfix-20261122/reads/codex2-rev10-REPORT.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/covfix-20261122/reads/codex2-rev10-read-prompt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/covfix-20261122/reads/codex2-rev4.1-REPORT.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/covfix-20261122/reads/codex2-rev4.1-read-prompt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/covfix-20261122/reads/codex2-rev6-REPORT.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
