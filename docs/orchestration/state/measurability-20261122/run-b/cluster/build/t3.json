@@ -1,0 +1,100 @@
+{
+ "schema": "msr-build-part/1",
+ "part": "t3",
+ "code_pins": {
+  "docs/orchestration/state/next-preparation-20261009/d-id/did.py": "d918c816080a292eecaa0cc182a73906b868bb75189056862cf88d7152c4bbbd",
+  "nd-unfolding/prior_retention/prr_ibu.py": "fa91394507c0e6a32486af25fa52f7e162135cf6483519ccf15510e1c9473cb0",
+  "nd-unfolding/prior_retention/prr_read.py": "d7c7c2c0d6cbe4a13d445a779335699de3d5275c4bcd3efc9f4e84a166868fbe",
+  "nd-unfolding/ibu1/ibu1.py": "f862a953425c006f6c73f2190bd65172eb9295f0f6c181d3d2247d4de881cf12",
+  "nd-unfolding/ref_g1/ref_g1.py": "8e34c48552857f5eec55e1067f70f4d26b2a6de0eaae46c57983fd91fbc6e7b1",
+  "nd-unfolding/s1_assemble.py": "b157250af21a2ef74e4164db6009a40ac596e225f33ac655475798ef49f613f7",
+  "nd-unfolding/tier3/t3p_read.py": "f4c221dda95fbbdf2318f7fcdde57b9e1b7fb265e85b13e1dea15341cf069295",
+  "2d-unfolding/ref_c2c1/ref_c2c1.py": "285dd138363d090a4ce5dea3361be81fada8680bd782b918e9d95198d1b5d6ea",
+  "2d-unfolding/ibukt/ibukt.py": "ef8590cf6d6d025b6db1fb8fdd100f76114390ac78eded62274b2c077c290789",
+  "2d-unfolding/ibukt/run_ibukt.py": "f2b4c017e1a2e84c2cb30b43a8824b95c3f7e022f5fca23b0ceac2a750c33683",
+  "2d-unfolding/ibukt/config.json": "60d6c4d747596137423a869ac315c484ef65ad69f3ec209d6fd73d6e573c716c"
+ },
+ "products": {
+  "runs/B0/A7_gibuu/t3p_B0_A7_gibuu_s991000.npz": {
+   "sha256": "613f9cdf3ef422c0434693419ca0d845b0eac3bcd7d2fa67e407730ee112f546",
+   "iterations": 50
+  },
+  "runs/MO/A7_gibuu/t3p_MO_A7_gibuu_s991000.npz": {
+   "sha256": "a25136f00a0a6e1452716a91674201dafbf9c46ca4e7aa6de3926c95af5bea5d",
+   "iterations": 50
+  },
+  "runs/OP/A7_gibuu/t3p_OP_A7_gibuu_s991000.npz": {
+   "sha256": "419b04e2d8ef4c6cae19e306e788bdf3b7caa81f78e1f751be8f61b4672d2468",
+   "iterations": 2
+  },
+  "runs/B0/A7_gibuu/t3p_B0_A7_gibuu_s994001.npz": {
+   "sha256": "2ba4a9114f507010063fd82728c15ab6b54aae78971a4d3f61fa6e5689b606b8",
+   "iterations": 50
+  },
+  "runs/MO/A7_gibuu/t3p_MO_A7_gibuu_s994001.npz": {
+   "sha256": "64280a4957c21ab9221c6c790969845b5493fb182aad2c93590ea2a7c85192db",
+   "iterations": 50
+  },
+  "runs/OP/A7_gibuu/t3p_OP_A7_gibuu_s994001.npz": {
+   "sha256": "e05e83732f27186b57ef487c77cf217c2197dad67482766f86091780de724aa9",
+   "iterations": 2
+  },
+  "runs/B0/A7_gibuu/t3p_B0_A7_gibuu_s994002.npz": {
+   "sha256": "e908794a6c92f4bc6cda590296d1116dde0889764e13c399320ef24c705861d7",
+   "iterations": 50
+  },
+  "runs/MO/A7_gibuu/t3p_MO_A7_gibuu_s994002.npz": {
+   "sha256": "31298de219fa144e524ad67e3593f5d486d6ac39700f60e9f28d55284f4da139",
+   "iterations": 50
+  },
+  "runs/OP/A7_gibuu/t3p_OP_A7_gibuu_s994002.npz": {
+   "sha256": "ffb9d3d25c9d43178b6bf62cb5b4d54eb7bf853bc13fa77453eb019a6682c02d",
+   "iterations": 2
+  },
+  "runs/B0/A7_gibuu/t3p_B0_A7_gibuu_s994003.npz": {
+   "sha256": "1cfc5284c39549a97821e6fa9dc6c21492c2da528bc777013d49778cd8fe0d31",
+   "iterations": 50
+  },
+  "runs/MO/A7_gibuu/t3p_MO_A7_gibuu_s994003.npz": {
+   "sha256": "8c37bc67153f5127a17a578d90aac1e7fdde035b1b549d8c9c849cb802b05dba",
+   "iterations": 50
+  },
+  "runs/OP/A7_gibuu/t3p_OP_A7_gibuu_s994003.npz": {
+   "sha256": "132dbaa51c119349e8310c48294c3c6b29f2ecb49d13196f7a494cbc9a6a4a55",
+   "iterations": 2
+  },
+  "runs/B0/A7_gibuu/t3p_B0_A7_gibuu_s994004.npz": {
+   "sha256": "182f176e2b49c4d880b23851bf17684350cd21c260f56d9bc31f69213c123413",
+   "iterations": 50
+  },
+  "runs/MO/A7_gibuu/t3p_MO_A7_gibuu_s994004.npz": {
+   "sha256": "14abcc37f8c4e04a90fc96166d7406b63a8ef77abeeabe9e43157c4afb0c6976",
+   "iterations": 50
+  },
+  "runs/OP/A7_gibuu/t3p_OP_A7_gibuu_s994004.npz": {
+   "sha256": "caf166532fb2b8024bc2aea5955ec7d6404b21f2e360cbebc1cb87ec6edefb1a",
+   "iterations": 2
+  },
+  "runs/B0/q3/t3p_B0_q3_s991000.npz": {
+   "sha256": "c4177b9f26d8984a9d2168b5f3f207feef11d5646a63ccbe46d7f262f6ac51dd",
+   "iterations": 50
+  },
+  "runs/MO/q3/t3p_MO_q3_s991000.npz": {
+   "sha256": "b7d1622ee98803169516df145ef465aefaf3a1f264584f2fde1398624f0c1a41",
+   "iterations": 50
+  },
+  "runs/OP/q3/t3p_OP_q3_s991000.npz": {
+   "sha256": "1a47105e4d4ee75c1b7fbcb67f6447ead4b92df18947888cb82b3ebed6ac51b3",
+   "iterations": 2
+  }
+ },
+ "seconds": 0.8,
+ "peak_rss_bytes": 52428800,
+ "rss_cap_bytes": 8000000000.0,
+ "environment": {
+  "OMP_NUM_THREADS": "2",
+  "OPENBLAS_NUM_THREADS": "2",
+  "MKL_NUM_THREADS": "2"
+ },
+ "sha256": "5eaca6fadf4b6eefe5814c279db0cc11a8a23fa8c4146fea0b7247262c2ca7db"
+}
