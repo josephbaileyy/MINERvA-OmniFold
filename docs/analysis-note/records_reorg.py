@@ -4,7 +4,7 @@
 usage:
   records_reorg.py inventory [--note-dir D] [--rev SHA] [--out FILE]
   records_reorg.py assemble  [--note-dir D] [--rev SHA] [--out-dir DIR]
-  records_reorg.py check     --base SHA [--note-dir D] [--reflowed-from SHA]
+  records_reorg.py check     --base SHA [--note-dir D] [--reflowed-from SHA [--since SHA [--template FILE]]]
   records_reorg.py dropped   --base SHA [--out FILE]
   records_reorg.py rekey     [--note-dir D] [--write]
   records_reorg.py --self-test
@@ -32,6 +32,8 @@ The data (all in records-reorg/):
   keep-leadin.tsv  row_id: register rows whose re-anchor lies inside a lead-in quote; those lead-ins stay printed.
   comment-fixes.tsv  old, new, reason: a base comment line corrected in place (2026-11-22); the old line may be lost
                only under its row, and the new line must be a comment line of the new records.
+  Rows of adds.tsv, drops.tsv and comment-fixes.tsv whose phase cell is P are POST-REFLOW declarations (--since): the
+               reorganization gate never reads them, and the post-reflow gate reads only them.
 
 Option B (Joseph, 2026-11-21, via the director): every lead-in line "In the paragraph as the note printed it, this text
 followed: ``...''\\par" is demoted to a % comment, except the lead-ins that hold a register row's re-anchor.
@@ -133,12 +135,16 @@ def strip_headings(line: str) -> str:
     return re.sub(r"\\label\{[^}]*\}", "", line)
 
 
-def printed_lines(text: str) -> list[str]:
+def printed_lines(text: str, keep_heads: bool = False) -> list[str]:
+    """Printed lines, comments and \\label removed. Heading commands go too, unless keep_heads (the post-reflow gate,
+    where a heading's title is printed text like any other)."""
     out = []
     for line in text.split("\n"):
         if line.lstrip().startswith("%"):
             continue
-        t = re.sub(r"\s+", " ", strip_headings(COMMENT.sub("", line))).strip()
+        code = COMMENT.sub("", line)
+        code = re.sub(r"\\label\{[^}]*\}", "", code) if keep_heads else strip_headings(code)
+        t = re.sub(r"\s+", " ", code).strip()
         if t and not STRUCT.match(t):
             out.append(t)
     return out
@@ -231,6 +237,7 @@ def read_tsv(path: Path, ncols: int) -> list[list[str]]:
 
 
 PHASES = "BCD"
+POST = "P"          # the phase cell of a post-reflow declaration (check --since)
 
 
 class Config:
@@ -241,7 +248,10 @@ class Config:
     def __init__(self, note_dir: Path, phase: str = "D"):
         d = note_dir / DATA
         self.phase = phase
-        on = lambda row, col, default: PHASES.index((row[col] if len(row) > col and row[col] else default)) <= PHASES.index(phase)
+        cell = lambda row, col, default: (row[col].strip() if len(row) > col and row[col].strip() else default)
+        on = lambda row, col, default: (cell(row, col, default) != POST
+                                        and PHASES.index(cell(row, col, default)) <= PHASES.index(phase))
+        post = lambda row, col: cell(row, col, "") == POST
         self.toc = read_tsv(d / "toc.tsv", 5)
         self.rules = [(r[0], r[1], re.compile(r[2])) for r in read_tsv(d / "rules.tsv", 3)]
         self.titles = {r[0]: r for r in read_tsv(d / "titles.tsv", 2)} if self.merging else {}
@@ -260,7 +270,14 @@ class Config:
         # 2026-11-22 (the director: a stale source comment is corrected through this data, so the gate covers it):
         # comment-fixes.tsv: old comment line, new comment line, reason. A base comment line may be lost only when a
         # row declares it, and the row's new line must then be a comment line of the new records.
-        self.comment_fixes = [r for r in read_tsv(d / "comment-fixes.tsv", 3)]
+        self.comment_fixes = [r for r in read_tsv(d / "comment-fixes.tsv", 3) if not post(r, 3)]
+        # Post-reflow declarations (2026-11-23, check --since): rows whose phase cell is P. They are cumulative: each
+        # declares one change from the reflowed records at --reflowed-from to the working tree, and every one must
+        # be used. adds.tsv: text, reason, P; drops.tsv: line|comment, exact text, reason, P; comment-fixes.tsv:
+        # old, new, reason, P.
+        self.post_adds = [r for r in read_tsv(d / "adds.tsv", 2) if post(r, 2)]
+        self.post_drops = [r for r in read_tsv(d / "drops.tsv", 3) if post(r, 3)]
+        self.post_comment_fixes = [r for r in read_tsv(d / "comment-fixes.tsv", 3) if post(r, 3)]
         # Option B' (Joseph, 2026-11-21): a lead-in stays printed when the sentence after it would dangle.
         self.keep_context = {(r[0], r[1]) for r in read_tsv(d / "keep-leadin-context.tsv", 2)}
         self.splits: dict[str, list[str]] = collections.defaultdict(list)
@@ -637,22 +654,157 @@ def reflow_identity(pre: Tree, new: Tree) -> list[str]:
     `pre` to `new` changed only line breaks: every file of the records closure (GENERATED left out) of `new` equals the
     fixed point of reflow_text applied to the same file of `pre`, with comments kept in place exactly where
     reflow_tex.py keeps them (KEEP_IN_PLACE). The typeset text is proved unchanged separately (pdftotext)."""
-    sys.path.insert(0, str(Path(__file__).resolve().parent))
-    import reflow_tex  # noqa: E402
     fails = []
     a = {f: t for f, t in pre.closure().items() if f not in GENERATED}
     b = {f: t for f, t in new.closure().items() if f not in GENERATED}
     for f in sorted(set(a) ^ set(b)):
         fails.append(f"REFLOW-IDENTITY: {f} is in only one of the two records closures")
     for f in sorted(set(a) & set(b)):
-        t = a[f]
-        for _ in range(0 if f in reflow_tex.GENERATED else 4):   # reflow_tex.py never reflows its generated files                          # reflow_tex.py --note can need a second pass; take the fixed point
-            u, _m = reflow_tex.reflow_text(t, f not in reflow_tex.KEEP_IN_PLACE)
-            if u == t:
-                break
-            t = u
-        if t != b[f]:
+        if reflowed(f, a[f]) != b[f]:
             fails.append(f"REFLOW-IDENTITY: {f} is not the reflow of its text at {pre.rev[:12]}")
+    return fails
+
+
+def reflowed(name: str, text: str) -> str:
+    """reflow_tex.py's reflow of one file, at its fixed point (--note can need a second pass); reflow_tex.py never
+    reflows its own generated files (values_fived16.tex among them), so those are returned unchanged."""
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import reflow_tex  # noqa: E402
+    for _ in range(0 if name in reflow_tex.GENERATED else 4):
+        new, _moved = reflow_tex.reflow_text(text, name not in reflow_tex.KEEP_IN_PLACE)
+        if new == text:
+            break
+        text = new
+    return text
+
+
+def _ws(text: str) -> str:
+    return re.sub(r"\s+", " ", text).strip()
+
+
+class PostRows:
+    """The P rows of adds/drops/comment-fixes, with how often each text was used across the post-reflow gates."""
+
+    def __init__(self, cfg: "Config"):
+        self.fails: list[str] = []
+        self.adds = collections.Counter()
+        self.drops = collections.Counter()
+        self.comment_drops = collections.Counter()
+        self.fixes = collections.Counter()
+        self.fix_new: dict[str, str] = {}
+        for r in cfg.post_adds:
+            if self._reason(r[1], "adds.tsv", r[0]):
+                self.adds[_ws(r[0])] += 1
+        for r in cfg.post_drops:
+            if r[0] not in ("line", "comment"):
+                self.fails.append(f"drops.tsv: a P row must be kind line or comment, not {r[0]!r}: {r[1][:60]!r}")
+            elif self._reason(r[2], "drops.tsv", r[1]):
+                (self.drops if r[0] == "line" else self.comment_drops)[_ws(r[1]) if r[0] == "line" else r[1].strip()] += 1
+        for r in cfg.post_comment_fixes:
+            if self._reason(r[2], "comment-fixes.tsv", r[0]):
+                self.fixes[r[0].strip()] += 1
+                self.fix_new[r[0].strip()] = r[1].strip()
+        self.used = {name: collections.Counter() for name in ("adds", "drops", "comment_drops", "fixes")}
+
+    def _reason(self, reason: str, where: str, text: str) -> bool:
+        if not reason.strip() or reason.strip().startswith("<"):
+            self.fails.append(f"{where}: a P row has no reason: {text[:60]!r}")
+            return False
+        return True
+
+    def take(self, name: str, text: str, n: int) -> int:
+        """Use up to n declarations of text; return how many of the n are NOT declared."""
+        have = getattr(self, name)[text] - self.used[name][text]
+        k = min(n, max(have, 0))
+        self.used[name][text] += k
+        return n - k
+
+    def unused(self) -> list[str]:
+        out = []
+        for name, label in (("adds", "adds.tsv"), ("drops", "drops.tsv line"), ("comment_drops", "drops.tsv comment"),
+                            ("fixes", "comment-fixes.tsv")):
+            for text, n in getattr(self, name).items():
+                if n > self.used[name][text]:
+                    out.append(f"POST-REFLOW: {label} P row declared but used by no change "
+                               f"({n - self.used[name][text]}x): {text[:120]!r}")
+        return out
+
+
+def post_gate(old: dict[str, str], new: dict[str, str], rows: PostRows, label: str, register: list[tuple[str, str]],
+              template: list[tuple[str, str]]) -> list[str]:
+    """The post-reflow gate (check --since): both sides are compared as REFLOWED paragraphs (each paragraph one
+    printed line, whatever its wrapping), over the records closure without GENERATED. Every paragraph or generated
+    value line that stops printing needs a P drops.tsv line row, every one that newly prints a P adds.tsv row, every
+    comment line that goes a P comment-fixes.tsv row (whose new line must be a comment now) or a P drops.tsv comment
+    row; every register re-anchor that printed must still print. A one-word edit is one lost and one new paragraph."""
+    fails = []
+    a = {f: reflowed(f, t) for f, t in old.items() if f not in GENERATED}
+    b = {f: reflowed(f, t) for f, t in new.items() if f not in GENERATED}
+    old_p = collections.Counter(l for t in a.values() for l in printed_lines(t, keep_heads=True))
+    new_p = collections.Counter(l for t in b.values() for l in printed_lines(t, keep_heads=True))
+    old_k = collections.Counter(l for t in a.values() for l in comment_lines(t))
+    new_k = collections.Counter(l for t in b.values() for l in comment_lines(t))
+    changes = 0
+    for line, n in sorted((old_p - new_p).items()):
+        changes += n
+        miss = rows.take("drops", line, n)
+        if miss:
+            fails.append(f"{label}: LOST paragraph not declared ({miss}x): {line[:160]!r}")
+            template.append(("drops.tsv", f"line\t{line}\t<reason>\t{POST}"))
+    for line, n in sorted((new_p - old_p).items()):
+        changes += n
+        miss = rows.take("adds", line, n)
+        if miss:
+            fails.append(f"{label}: NEW paragraph not declared ({miss}x): {line[:160]!r}")
+            template.append(("adds.tsv", f"{line}\t<reason>\t{POST}"))
+    for line, n in sorted((old_k - new_k).items()):
+        changes += n
+        k = n
+        while k and rows.fixes[line] - rows.used["fixes"][line] > 0:
+            if not new_k[rows.fix_new[line]]:
+                fails.append(f"{label}: comment-fixes.tsv P row: the new line is no comment line now: "
+                             f"{rows.fix_new[line][:100]!r}")
+            rows.take("fixes", line, 1)
+            k -= 1
+        miss = rows.take("comment_drops", line, k)
+        if miss:
+            fails.append(f"{label}: LOST comment line not declared ({miss}x): {line[:160]!r}")
+            template.append(("comment-fixes.tsv", f"{line}\t<new comment line, or move the row to drops.tsv as "
+                                                   f"comment>\t<reason>\t{POST}"))
+
+    def uncommented(c: dict[str, str]) -> str:
+        return "\n".join("\n".join(l for l in t.split("\n") if not l.lstrip().startswith("%")) for t in c.values())
+    old_text, new_text = _ws(uncommented(a)), _ws(uncommented(b))
+    for rid, q in register:
+        if _ws(q) in old_text and _ws(q) not in new_text:
+            fails.append(f"{label}: register row {rid}: its re-anchor printed and does not print now")
+    print(f"RECORDS-REORG post-reflow gate {label} :: {sum(old_p.values())} -> {sum(new_p.values())} printed "
+          f"paragraphs, {sum(old_k.values())} -> {sum(new_k.values())} comment lines; {changes} changed line(s)",
+          file=sys.stderr)
+    return fails
+
+
+def check_since(reflowed_from: Tree, since: Tree, new: Tree, cfg: "Config",
+                template_out: Path | None = None) -> list[str]:
+    """check --since S (2026-11-23): records edits after the one-line-per-paragraph reflow. Two post-reflow gates,
+    with the same cumulative P rows: CHAIN, from the reflow of --reflowed-from to S (so S itself is reached by
+    declared changes only, and a plain reflow of it passes with no row), and SINCE, from S to the working tree.
+    Every P row must be used by one of the two."""
+    rows = PostRows(cfg)
+    template: list[tuple[str, str]] = []
+    register = register_rows(new)
+    fails = list(rows.fails)
+    fails += post_gate(reflowed_from.closure(), since.closure(), rows, f"CHAIN {reflowed_from.rev[:12]}->{since.rev[:12]}",
+                       register, template)
+    fails += post_gate(since.closure(), new.closure(), rows, f"SINCE {since.rev[:12]}->working tree", register, template)
+    fails += rows.unused()
+    if template_out is not None:
+        out = ["# undeclared post-reflow changes: append each row to the file named above it and write its reason\n"]
+        for name in ("adds.tsv", "drops.tsv", "comment-fixes.tsv"):
+            got = [row for f, row in template if f == name]
+            if got:
+                out.append(f"## {name}\n" + "".join(row + "\n" for row in got))
+        template_out.write_text("".join(out))
     return fails
 
 
@@ -959,6 +1111,18 @@ def self_test() -> int:
             subprocess.run(["git", "checkout", "-q", "--", "."], cwd=d, check=True)
             for f in d.glob("records_r*.tex"):
                 f.unlink()
+            (d / DATA / "adds.tsv").unlink(missing_ok=True)
+            (d / DATA / "comment-fixes.tsv").unlink(missing_ok=True)
+
+        def fix_as_post_row():
+            (d / "records_r7_stat.tex").write_text((d / "records_r7_stat.tex").read_text().replace(
+                "% From app_statmethods.tex:9 @abc\n", "% From app_statmethods.tex:9 @abd\n"))
+            (d / DATA / "comment-fixes.tsv").write_text("% From app_statmethods.tex:9 @abc\t"
+                                                        "% From app_statmethods.tex:9 @abd\ta post-reflow fix\tP\n")
+
+        def add_as_post_row():
+            (d / "records_r7_stat.tex").write_text((d / "records_r7_stat.tex").read_text() + "An invented sentence.\n")
+            (d / DATA / "adds.tsv").write_text("text\treason\tphase\nAn invented sentence.\ta post-reflow edit\tP\n")
 
         cases = [
             ("clean reorganization passes", None, False),
@@ -974,6 +1138,8 @@ def self_test() -> int:
                 (d / "records_r2_method.tex").read_text().replace(
                     "In the paragraph as the note printed it, this text followed: ``Kept",
                     LEADIN_PREFIX + "In the paragraph as the note printed it, this text followed: ``Kept")), True),
+            ("a post-reflow (P) adds row does not declare a reorganization line", add_as_post_row, True),
+            ("a post-reflow (P) comment fix does not declare a reorganization comment", fix_as_post_row, True),
         ]
         for name, mutate, want_fail in cases:
             reset()
@@ -987,10 +1153,123 @@ def self_test() -> int:
             fails.append("the ordinary lead-in was not demoted")
         if "\nIn the paragraph as the note printed it, this text followed: ``Kept lead-in" not in r2:
             fails.append("the register lead-in did not stay printed")
+    n_since = self_test_since(fails)
     for f in fails:
         print("  FAIL " + f)
-    print(f"RECORDS-REORG self-test :: {'FAIL' if fails else 'PASS'} ({len(cases)} planted cases)")
+    print(f"RECORDS-REORG self-test :: {'FAIL' if fails else 'PASS'} ({len(cases)} reorganization and {n_since} "
+          "post-reflow planted cases)")
     return 1 if fails else 0
+
+
+def self_test_since(fails: list[str]) -> int:
+    """check --since: plant a reflowed records tree and make the post-reflow gate fire on each undeclared change."""
+    with tempfile.TemporaryDirectory() as td:
+        d = Path(td)
+        (d / DATA).mkdir()
+        git = lambda *a: subprocess.run(["git", *a], cwd=d, check=True, capture_output=True, text=True).stdout.strip()
+        files = {
+            "main_records.tex": "\\begin{document}\n\\input{records_r01_x}\n\\input{values_fived16}\n\\end{document}\n",
+            "records_r01_x.tex": ("\\subsection{A heading}\\label{rec:x}\n% From sec_x.tex:3 @abc\n"
+                                  "The first paragraph has\ntwo lines.\n\n"
+                                  "\\paragraph{Run-in.} A second paragraph with ROW TEXT in it.\n"),
+            "values_fived16.tex": "\\@namedef{fv@a-one}{1.0}\n",
+            "limitations-export.tsv": "row_id\tfile\tquote\treanchor_file\treanchor_quote\tnote\n"
+                                      "r1\tx.tex\tq\trecords_r01_x.tex\tROW TEXT\tn\n",
+        }
+        for f, t in files.items():
+            (d / f).write_text(t)
+        git("init", "-q")
+        ident = ["-c", "user.name=t", "-c", "user.email=t@t"]
+        git("add", "-A")
+        git(*ident, "commit", "-qm", "R")
+        pre = git("rev-parse", "HEAD")
+        for f in files:
+            if f.endswith(".tex"):
+                (d / f).write_text(reflowed(f, (d / f).read_text()))
+        git(*ident, "commit", "-qam", "S, the reflow")
+        since = git("rev-parse", "HEAD")
+        if "The first paragraph has two lines." not in (d / "records_r01_x.tex").read_text():
+            fails.append("post-reflow self-test: the planted paragraph did not reflow to one line")
+        p1, p1x = "The first paragraph has two lines.", "The first paragraph has three lines."
+        r = lambda f: (d / f).read_text()
+        w = lambda f, t: (d / f).write_text(t)
+
+        def edit(f, old, new):
+            w(f, r(f).replace(old, new))
+
+        def data(adds="", drops="", fixes=""):
+            (d / DATA).mkdir(exist_ok=True)
+            w(f"{DATA}/adds.tsv", "text\treason\tphase\n" + adds)
+            w(f"{DATA}/drops.tsv", "kind\tkey\treason\tphase\n" + drops)
+            w(f"{DATA}/comment-fixes.tsv", "# old, new, reason, phase\n" + fixes)
+
+        one_word = lambda: edit("records_r01_x.tex", p1, p1x)
+        declared = f"line\t{p1}\tthe Fig. 7 claim\tP\n", f"{p1x}\tthe Fig. 7 claim\tP\n"
+        cases = [
+            ("no change passes", lambda: None, False),
+            ("a re-wrapped paragraph passes", lambda: edit("records_r01_x.tex", p1, "The first\nparagraph has two lines."),
+             False),
+            ("a one-word undeclared change fails", one_word, True),
+            ("a changed heading title fails", lambda: edit("records_r01_x.tex", "{A heading}", "{A header}"), True),
+            ("a changed run-in title fails", lambda: edit("records_r01_x.tex", "{Run-in.}", "{Run in.}"), True),
+            ("a changed label alone passes", lambda: edit("records_r01_x.tex", "rec:x", "rec:y"), False),
+            ("the same change declared passes", lambda: (one_word(), data(adds=declared[1], drops=declared[0])), False),
+            ("a reorganization (non-P) adds row does not declare a post-reflow paragraph", lambda: (one_word(), data(
+                adds=declared[1].replace("\tP\n", "\tD\n"), drops=declared[0])), True),
+            ("a reorganization (non-P) drops row does not declare a post-reflow loss", lambda: (one_word(), data(
+                adds=declared[1], drops=declared[0].replace("\tP\n", "\tD\n"))), True),
+            ("a declaration without a reason fails", lambda: (one_word(), data(
+                adds=declared[1].replace("the Fig. 7 claim", "<reason>"), drops=declared[0])), True),
+            ("an unused declaration fails", lambda: data(adds="Never printed.\tx\tP\n"), True),
+            ("a P drops row of kind block fails", lambda: data(drops="block\tk\tx\tP\n"), True),
+            ("an undeclared generated value fails", lambda: w("values_fived16.tex", r("values_fived16.tex")
+                                                              + "\\@namedef{fv@b4-x}{4.22}\n"), True),
+            ("a declared generated value passes", lambda: (w("values_fived16.tex", r("values_fived16.tex")
+                                                             + "\\@namedef{fv@b4-x}{4.22}\n"),
+                                                           data(adds="\\@namedef{fv@b4-x}{4.22}\tB4 key\tP\n")), False),
+            ("a changed generated value undeclared fails", lambda: edit("values_fived16.tex", "{1.0}", "{1.1}"), True),
+            ("a lost comment fails", lambda: edit("records_r01_x.tex", "% From sec_x.tex:3 @abc\n", ""), True),
+            ("a comment fix declared passes", lambda: (edit("records_r01_x.tex", "@abc", "@def"), data(
+                fixes="% From sec_x.tex:3 @abc\t% From sec_x.tex:3 @def\tthe commit\tP\n")), False),
+            ("a comment fix whose new line is absent fails", lambda: (edit("records_r01_x.tex", "@abc", "@xyz"), data(
+                fixes="% From sec_x.tex:3 @abc\t% From sec_x.tex:3 @def\tthe commit\tP\n")), True),
+            ("a comment deleted and declared passes", lambda: (edit("records_r01_x.tex", "% From sec_x.tex:3 @abc\n", ""),
+                                                               data(drops="comment\t% From sec_x.tex:3 @abc\tgone\tP\n")),
+             False),
+            ("a register re-anchor lost, though declared, fails", lambda: (
+                edit("records_r01_x.tex", "ROW TEXT in it.", "row text in it."),
+                data(drops="line\t\\paragraph{Run-in.} A second paragraph with ROW TEXT in it.\tx\tP\n",
+                     adds="\\paragraph{Run-in.} A second paragraph with row text in it.\tx\tP\n")), True),
+        ]
+        for name, mutate, want_fail in cases:
+            git("checkout", "-q", "--", ".")
+            git("clean", "-qfd", DATA)
+            data()
+            mutate()
+            got = check_since(Tree(d, pre), Tree(d, since), Tree(d), Config(d))
+            if bool(got) != want_fail:
+                fails.append(f"post-reflow: {name}: expected {'FAIL' if want_fail else 'PASS'}, got {got or 'PASS'}")
+        # CHAIN: a commit S2 with an undeclared change after the reflow fails even when the working tree is S2.
+        git("checkout", "-q", "--", ".")
+        data()
+        one_word()
+        git(*ident, "commit", "-qm", "S2", "--", "records_r01_x.tex")
+        s2 = git("rev-parse", "HEAD")
+        if not check_since(Tree(d, pre), Tree(d, s2), Tree(d), Config(d)):
+            fails.append("post-reflow: an undeclared change inside the chain passed")
+        data(adds=declared[1], drops=declared[0])
+        got = check_since(Tree(d, pre), Tree(d, s2), Tree(d), Config(d))
+        if got:
+            fails.append(f"post-reflow: a declared change inside the chain failed: {got}")
+        tpl = d / "template.tsv"
+        data()
+        edit("records_r01_x.tex", p1x, "The first paragraph has four lines.")
+        check_since(Tree(d, pre), Tree(d, s2), Tree(d), Config(d), tpl)
+        t = tpl.read_text()
+        if not ("## adds.tsv\n" in t and "\nThe first paragraph has four lines.\t<reason>\tP\n" in t
+                and t.index("## adds.tsv") < t.index("four lines") < t.index("## drops.tsv")):
+            fails.append(f"post-reflow: the template does not list the undeclared paragraph: {tpl.read_text()!r}")
+        return len(cases) + 3
 
 
 def main(argv=None) -> int:
@@ -1001,6 +1280,10 @@ def main(argv=None) -> int:
     ap.add_argument("--base")
     ap.add_argument("--reflowed-from", help="check: run the gate against this commit (the reflow's parent) and prove the "
                                              "working tree's records sources are exactly its reflow (reflow_identity)")
+    ap.add_argument("--since", help="check, with --reflowed-from: records edits after the reflow; every changed "
+                                     "paragraph from the reflow to this commit and from it to the working tree must "
+                                     "be declared by a P row (check_since)")
+    ap.add_argument("--template", type=Path, help="check --since: write the undeclared changes as TSV row templates")
     ap.add_argument("--out", type=Path)
     ap.add_argument("--out-dir", type=Path)
     ap.add_argument("--write", action="store_true")
@@ -1017,7 +1300,13 @@ def main(argv=None) -> int:
     if a.cmd == "check":
         if not a.base:
             ap.error("check needs --base SHA")
-        if a.reflowed_from:
+        if a.since and not a.reflowed_from:
+            ap.error("--since needs --reflowed-from")
+        if a.since:
+            fails = (check(Tree(a.note_dir, a.base), Tree(a.note_dir, a.reflowed_from), cfg)
+                     + check_since(Tree(a.note_dir, a.reflowed_from), Tree(a.note_dir, a.since), Tree(a.note_dir), cfg,
+                                   a.template))
+        elif a.reflowed_from:
             fails = (check(Tree(a.note_dir, a.base), Tree(a.note_dir, a.reflowed_from), cfg)
                      + reflow_identity(Tree(a.note_dir, a.reflowed_from), Tree(a.note_dir)))
         else:
