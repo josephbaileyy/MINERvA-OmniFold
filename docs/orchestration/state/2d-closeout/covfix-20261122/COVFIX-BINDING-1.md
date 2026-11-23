@@ -9,8 +9,10 @@ real PV seal (ST4).
 
 ## Authority
 
-- **Joseph's go for the design**, via the director, 2026-11-22. That followed an outside review's "Fix 1"; see
-  `DECISION-20261122…` and memory.
+- **Joseph's go for the design**, to the director on 2026-11-22, verbatim: "yes can we do the measurability study.
+  should we start working on the review's fix 1 too?". The director recommended starting with design, and Joseph
+  agreed. That followed an outside review's "Fix 1". No separate DECISION file was written for it; this binding records
+  it.
 - **`DECISION-20261123-joseph-covfix-ki85-size-reader.md`:**
   - KI 85's two sentences are superseded for COVFIX;
   - full size as designed: two sealed tunes, full P1 counts, and N5 unconditional;
