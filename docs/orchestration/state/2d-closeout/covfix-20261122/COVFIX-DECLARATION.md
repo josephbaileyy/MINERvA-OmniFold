@@ -1,4 +1,4 @@
-# COVFIX declaration, DRAFT rev 10: the 2D covariance fix (2026-11-23)
+# COVFIX declaration, DRAFT rev 11: the 2D covariance fix (2026-11-23)
 <!-- absence-ok: a draft declaration of studies not yet run; every existing study is routed to INVENTORY.md -->
 
 <!-- absence-ok: status line of an unrun draft -->
@@ -258,6 +258,19 @@ its "Fix 1". The inventory is `INVENTORY.md` in this directory, read at origin/m
   - **The price includes the synthetic test's 2.0 node-h:** full 410.55–411.22 at PG's priced range (334.55–335.22
     without N5). PV is 117.38, inside its cap of 135. By the director's ruling the ceiling stays 409.22, with ST6 as the
     hard stop (§3).
+- **Rev 11** makes the rev 10 reads' fixes (`reads/*-rev10-REPORT.md`; agy NO-GO on 1 MAJOR and 3 MINOR, all textual;
+  codex-school2 NO-GO with 2 BLOCKING):
+  - **K_B's construction refusal is explicit:** every ensemble in a fitted band needs a carry, a PSD projection to V₊
+    and a positive F_exp,R, or K_B is omitted (§5.2).
+  - **The secret-bearing readout ends at publication of the grades.** The stress runs are a separate, seal-free job
+    whose failure cannot touch the published grades (§3.4).
+  - **Majors:**
+    - chain records keyed by allocation job ID, with the checks on accepted records;
+    - basis rotation only for exact ties, with the 1e-9 convention for band assignment only;
+    - ST6 is the ledger's gate at 409.22 alone;
+    - §9's stale price is replaced by a pointer to §3.
+  - **Minors:** the undefined u and u_R removed; a uses V₊; a grammar fix.
+  - The price and the ceiling are unchanged.
 
 <!-- absence-ok: rule statement -->
 **Rules are fixed before computation.** Every reading, bar, candidate rule, seed and stop rule below is fixed at
@@ -418,8 +431,9 @@ V(t) = D_t V D_t, with D_t = diag(x̂_t / x_R).
       covers part of the test's 2.0. The other 1.33 must come from the toy phases' actual spend falling below their
       priced 0.19 node-h per unfold, which itself includes COV2D's pilots and retries (0.188). The expected full total
       at PG = 1.33 is 410.55, 1.33 above the ceiling, before any such saving.
-    - ST6 is the hard stop. If the sacct-measured spend ever puts the remaining phases above 409.22, ST6 stops the run,
-      and it goes to the director. It does not go to Joseph as a re-approval.
+    - **ST6 is the hard stop:** the ledger's atomic gate (§3.3) at 409.22 node-h. A submission it refuses stops the run,
+      and that goes to the director, not to Joseph as a re-approval. The price table above is an estimate, not a
+      trigger; PX keeps its own repricing rule.
     - The ceiling is separate from the expected price and from the 468 sum of caps.
 
 ### 3.1 P0: what the committed records give (0 node-h, local, descriptive)
@@ -682,11 +696,13 @@ director's wrapper. The wrapper acquires ST4's consumption record, verifies ever
 4. The compute jobs unfold the pseudo-data only.
    - **The chain:** each job hashes the **actual input file it unfolds**, its **complete output**, and the **invocation
      it actually launched**: the executable's sha256 and the resolved argument vector. It appends a chain record of
-     (expected truth and toy ID, input sha256, output sha256, invocation sha256), all as computed.
+     (allocation job ID from the ledger, expected truth and toy ID, input sha256, output sha256, invocation sha256), all
+     as computed.
    - **The readout** compares every record with the authenticated manifest and with the freeze's expected invocation
      for that ID. It rehashes each output it consumes.
-   - **Only accepted attempts count.** The ledger marks a failed attempt's records as excluded, and exactly one verified
-     product per expected ID must come from an accepted attempt.
+   - **Only accepted attempts count.** Records are keyed by allocation job ID; the ledger marks a failed attempt's job
+     ID as excluded. The missing, extra and mismatch checks apply to the accepted records, and exactly one verified
+     product per expected ID must come from them.
    - A missing, extra or mismatched record is a break, and terminal.
    - The same applies to the two central unfolds that determine D_u.
    - The original PG seal is pinned at PG's close, and the freeze at P2's, so both are in PV's binding.
@@ -694,10 +710,11 @@ director's wrapper. The wrapper acquires ST4's consumption record, verifies ever
    - the writer's manifest;
    - the frozen code and arrays against `P2-FREEZE.sha256`.
    - the chain from the writer's manifest to every unfold output.
-   It then decrypts the graded truths in-process, runs §6.2's controls, grades, and persists the verified grades. Only
-   then does it run the descriptive stress runs, whose failed scenarios are reported as omitted. Its summary is
-   published only after the authentication checks and the scans succeed. Cleanup and scans cover enumerated
-   campaign-owned paths only.
+   It then decrypts the graded truths in-process, runs §6.2's controls, grades, persists the verified grades, cleans up,
+   scans, and publishes the grades. Then it ends. Cleanup and scans cover enumerated campaign-owned paths only.
+6. **The descriptive stress runs** are a separate job, after publication, with no seal access. They need only V₊, the
+   candidates and D_u, none of which is secret. Their failure, timeout or crash leaves the published grades untouched,
+   and failed scenarios are reported as omitted.
 
 <!-- absence-ok: reading rule, scoping statement or verbatim review text about studies not yet run -->
 **The wrapper is tested** before PV on a synthetic seal: a dummy truth, encrypted and sealed the same way, run end to
@@ -817,8 +834,8 @@ need a sample this project does not have; that is disclosed, not tested.
 
 ## 5. Candidate constructions, built from P0 and P1, frozen at P2
 
-**The build data** are N1–N5, A1f and A1p. COV2D's G18 and AR23 toys are descriptive only. **The selection data**, which any P2 bar,
-choice reads, are N4 and A1p only. G18 and AR23 never enter a bar or a choice; their readings under each candidate
+**The build data** are N1–N5, A1f and A1p. COV2D's G18 and AR23 toys are descriptive only. **The selection data**, the
+only data any P2 bar or choice reads, are N4 and A1p. G18 and AR23 never enter a bar or a choice; their readings under each candidate
 are printed descriptively. Nothing in PG's seal is read.
 
 ### 5.1 K0, the control, and K_A
@@ -850,6 +867,9 @@ F_A is absolute at x_R, and it is the reference throughout §5.2.
     over alternative banks is not claimed.
   - The 3·SE trigger is a construction rule, with no stated error-rate guarantee.
 - **Edge cases, fixed:**
+  - **construction inputs:** every ensemble that enters a fitted band needs a successful carry, a successful PSD
+    projection of F_A − U (with L = I) to its V₊, and a finite, positive F_exp,R. If any of those fails for an
+    ensemble the band needs, K_B is omitted, and that is reported;
   - an ensemble whose carried band holds fewer than 10 kept modes is left out of that band's mean, and the equal
     weights go to the rest;
   - if none remain, the band's factor is 1;
@@ -859,9 +879,10 @@ F_A is absolute at x_R, and it is the reference throughout §5.2.
     grading alike.
   - **A deterministic basis:** numpy `eigh`, with each eigenvector's sign fixed so its largest-magnitude component is
     positive.
-  - **For a tied eigenspace** (a degenerate cluster), the basis is canonical: the ordered cell axes e_1, e_2, … are
-    projected into the eigenspace and orthonormalized in that order by Gram–Schmidt, skipping null projections. The
-    per-mode flags then do not depend on the solver.
+  - **For an exactly tied eigenspace** (equal eigenvalues to floating-point equality, in a grading eigensystem), the
+    basis is canonical: the ordered cell axes e_1, e_2, … are projected into the eigenspace and orthonormalized in that
+    order by Gram–Schmidt, skipping null projections. The per-mode flags then do not depend on the solver.
+  - The 1e-9 near-tie convention above is used **only** for band assignment, never for basis rotation.
 - **One decomposition, through the spectral map L,** on the full space. With P_R the projector onto F_A's band-R kept
   eigenspace at x_R (degenerate clusters assigned whole, as above):
   - L = I + Σ_{R active} (√φ_R − 1) P_R;
@@ -872,7 +893,7 @@ F_A is absolute at x_R, and it is the reference throughout §5.2.
   - Every constituent block is mapped the same way: L·universe·Lᵀ, L·stat·Lᵀ, L·c08·Lᵀ and L·C_PL·Lᵀ. So the undrawn part
     is U = L(C_PL + c08)Lᵀ, and the drawn part is V_F − U.
   - Both are carried by the same formula.
-  - §6.1's u, u_R and F_exp, and §6.2's law, all use this U and this drawn part.
+  - §6.1's F_exp and §6.2's law use this drawn part, through its PSD-handled form V₊.
 - **The post-carry fit** of V_F is reported per ensemble truth and per band.
 - f̂_R is a rank-band summary transferred across bases. It is not a mode-matched estimate, and that is disclosed.
 - **Why this is not the rejected scaling:**
@@ -951,7 +972,7 @@ bound by the director before PV's first connect.
   - The same formulas give §5.2's fit denominators.
   - A denominator at or below zero refuses the readings that need it: F̃ or that band's F̃_R. In the fit, it refuses
     K_B's construction.
-- **What is labelled** is F̃ = F^F / F_exp, and per band F̃_R = F_R^F / F_exp,R. u, u_R and F_exp are printed.
+- **What is labelled** is F̃ = F^F / F_exp, and per band F̃_R = F_R^F / F_exp,R. F_exp and each F_exp,R are printed.
 
 **Total readings,** against V = V_F + V_b:
 - M and its bands;
@@ -1009,7 +1030,7 @@ scenario (seed 9_994_000) are graded by §6.3's rule, and the pass fractions are
 - zero bias;
 - b = ±√κ_j w_j for each eigenpair of the candidate's own bias block, with eigenvalues above 1e-12 × the largest and each
   sign fixed so the largest-magnitude component is positive;
-- three deficit scenarios, with φ the drawn fluctuation and a = tr(V⁺V_drawn)/ndf:
+- three deficit scenarios, with φ the drawn fluctuation and a = tr(V⁺V₊)/ndf:
   - **D1:** at zero bias, φ scaled by √(1.25/a), if a > 0;
   - **D2:** for each total band R with at least 10 modes, with P_R = Σ_{i∈R} u_i u_iᵀ in V's basis,
     φ → (I − P_R)φ + √(1.25/a_R) P_R φ at zero bias, where a_R = (1/ndf_R) Σ_{i∈R} u_iᵀ V₊ u_i / λ_i; defined if
@@ -1120,8 +1141,8 @@ stands alone, and each candidate's PV verdict is reported descriptively.
   - the §2 carry;
   - the §3.3 ST1 readings;
   - the §5 builders and the residual stop;
-  - the §6 readout, summary-only, with §2's analytic guards, §6.2's Gaussian reference law and its controls, and the
-    descriptive stress runs;
+  - the §6 readout, summary-only, with §2's analytic guards and §6.2's Gaussian reference law and its controls;
+  - the descriptive stress runs, as a separate job with no seal access (§3.4);
   - PG's probe (with the novelty test), capture wrapper, authenticated encryption, seal checker and content scans;
   - PV's exclusive-compute-node writer (§3.4) with encrypted graded truths;
   - the director's wrapper, with ST4's consumption record, manifest verification before decrypt, and the synthetic-seal
@@ -1145,8 +1166,9 @@ stands alone, and each candidate's PV verdict is reported descriptively.
    - When N5 is bound, KI 85's row in `KNOWN_ISSUES.md` is updated to point to that decision. Until then the row is
      left unchanged.
 2. **Size: decided.** Full, as designed (`DECISION-20261123-joseph-covfix-ki85-size-reader.md`, Joseph's governing re-confirmation): two sealed tunes, full P1 toy
-   counts, and N5 always, at about 409 node-h at most (408.6–409.2). That is above half the balance, and Joseph
-   approved it. Each phase is still capped from sacct, and ST6 holds the approved total. The second reader is
+   counts, and N5 always, at about 409 node-h at most. The current estimate is in §3; the binding ceiling is 409.22
+   node-h, enforced by ST6. That is above half the balance, and Joseph approved it. Each phase is still capped from
+   sacct. The second reader is
    codex-school2, alongside agy, by the same decision.
 3. **Binding prerequisites:**
    - a committed iris receipt;
