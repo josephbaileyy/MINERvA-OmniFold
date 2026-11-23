@@ -54,13 +54,19 @@ MAT, MAT-MINERvA and UnfoldUtils, read-only.
 
 One point is noted against agy's Q1 claim that "no valid reco muon is excluded". In the older 1A processing, `MasterAnaDev_muon_P` is -9999 on some real reco events (`stageD-inputs/q2-opendata-20261014/REPORT.md` §3). The MAD variant therefore drops those rows, in data and in MC. The MAD readout reports MAD's total counts beside BASE's, so the size of that selection change is visible.
 
-**Local scorer** `score_evloop.py` (sha256 `a1a4a0461bbc28f565fed06f9ff4ed141ef0d7ce4057ac9856f76b1bf2e730a1`). It was committed before any product existed. It implements C-REPRO, the C-KIN and C-ANG thresholds, and the declared readings. **One interpretation is fixed here, before any number was read.** The declaration's CURV/RANGE "PARTIAL if reduction >= 30 % within \|d\| <= 3 %" is evaluated at the fitted d̂, not at the best d in the range, so that no point is picked after the fact. The best reduction over the whole range is printed as a descriptive number, read by no rule.
+**Local scorer** `score_evloop.py` (sha256 `72d3f89cd95e5d2964a0058bd2652089474498c8be1e2f6f3757cb3573d87c5d`). It was committed before any product existed. It implements C-REPRO, the C-KIN and C-ANG thresholds, and the declared readings. **One interpretation is fixed here, before any number was read.** The declaration's CURV/RANGE "PARTIAL if reduction >= 30 % within \|d\| <= 3 %" is evaluated at the fitted d̂, not at the best d in the range, so that no point is picked after the fact. The best reduction over the whole range is printed as a descriptive number, read by no rule.
 
 **agy read of the scorer** (the director's request; [`agy-score/`](agy-score/); Gemini 3.8 Flash (High), sandboxed, hashed copies unchanged afterwards), against `DECLARATION.txt`: **VERDICT: GO**.
 - Every control and reading is implemented as declared.
 - The weights and cell sets are fixed from BASE.
 - No path picks a variant, a d, a (dx, dy), a region or a weight after seeing data, beyond the declared fits.
 - On the PARTIAL clause it names two other readings the text allows: "any d in range" and "within the fitted interval". It judges the fitted-d̂ choice the more conservative one.
+
+**Scorer v2** (`72d3f89cd95e5d2964a0058bd2652089474498c8be1e2f6f3757cb3573d87c5d`, replacing v1 `a1a4a0461bbc28f565fed06f9ff4ed141ef0d7ce4057ac9856f76b1bf2e730a1`), at the director's request, before any product exists. It adds, DESCRIPTIVE ONLY, the two other readings of the PARTIAL clause, each with a "would meet 30 %" flag:
+- the best reduction of \|S_COL\| over the whole d range;
+- the best reduction over the d values inside the fitted Δχ² ≤ 1 interval.
+
+The declared classification at d̂ is unchanged. The agy confirm on the diff ([`agy-score2/`](agy-score2/)) gives **VERDICT: GO**: no change to the classification, the controls or any existing output value, and the two numbers are computed correctly.
 
 ## The checks before running
 

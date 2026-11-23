@@ -1,0 +1,37 @@
+### Q1. Does the diff change the declared classification, the controls, or any other output value?
+
+**No.** 
+
+* **Controls (lines 14–18)**: Untouched by the diff.
+* **Declared Classification**: The logic for `c` remains evaluated at the fitted $\hat{d}$ (`i0 = np.argmin(chi)`) using the unchanged reduction `red`:
+```python
+53:     red = 1 - abs(Sd["COL"]) / abs(S0["COL"])
+...
+59:     c = ("EXPLAINS" if (abs(dh) <= 0.03 and abs(Sd["COL"]) <= abs(S0["COL"]) / 3 and colmove <= 0.01) else "PARTIAL" if red >= 0.3 else "NONE")
+```
+* **Existing Output Values**: All pre-existing fields (`d_hat`, `interval`, `at_edge`, `S`, `colmove_lt20`, `COL`, `ROW`, `D10`, and `best_COL_reduction_any_d`) retain identical values. `best_any` evaluates the exact same reduction formula as before:
+```python
+54:     reds = np.array([1 - abs(stats(MB, H[i], BB)["COL"]) / abs(S0["COL"]) for i in range(len(d))])
+55:     best_any = float(reds.max())
+...
+60:     return dict(d_hat=dh, interval=[float(inside.min()), float(inside.max())], at_edge=bool(i0 in (0, len(d) - 1)), S=Sd, colmove_lt20=colmove,
+61:                 COL=c, ROW=cls(S0["ROW"], Sd["ROW"]), D10=dag(MB, H[i0], BB), best_COL_reduction_any_d=best_any, DESCRIPTIVE_alternative_PARTIAL_readings=alt)
+```
+The only modification to the output is the addition of the new key `DESCRIPTIVE_alternative_PARTIAL_readings`.
+
+---
+
+### Q2. Are the two descriptive numbers computed correctly (the interval mask `chi <= chi[i0] + 1` and the max)?
+
+**Yes.**
+
+* `chi` is a 1D NumPy array of $\chi^2$ values, and `i0 = int(np.argmin(chi))` is the minimum $\chi^2$ index.
+* `chi <= chi[i0] + 1` produces the exact boolean mask for $\Delta \chi^2 \le 1$.
+* `reds` contains the reduction values $1 - |S_{\text{COL}}(d)| / |S_{\text{COL}}(0)|$ across all $d$.
+* `float(reds.max())` correctly computes the maximum reduction over the entire $d$ range.
+* `float(reds[chi <= chi[i0] + 1].max())` correctly indexes the reductions within the $\Delta \chi^2 \le 1$ interval and takes their maximum.
+* `would_meet_30pct` correctly evaluates `... >= 0.3` for both cases.
+
+---
+
+VERDICT: GO
