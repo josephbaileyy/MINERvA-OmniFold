@@ -1,4 +1,4 @@
-# COVFIX declaration, DRAFT rev 5: the 2D covariance fix (2026-11-23)
+# COVFIX declaration, DRAFT rev 6: the 2D covariance fix (2026-11-23)
 <!-- absence-ok: a draft declaration of studies not yet run; every existing study is routed to INVENTORY.md -->
 
 <!-- absence-ok: status line of an unrun draft -->
@@ -138,6 +138,13 @@ its "Fix 1". The inventory is `INVENTORY.md` in this directory, read at origin/m
     - the novelty test (§4.1).
   - **Fidelity:** the 142-eigenvector wording; F1's 1.3275 context; the RE-2 part C citation; PV vs COV2D differences;
     A0's tolerance origin.
+- **Rev 6** answers agy's delta read of rev 5 (`reads/agy-rev5-REPORT.md`; NO-GO):
+  - the bias grid uses each candidate's own bias block, so it is defined for K0 and K_A (BLOCKING 1);
+  - the 20,000-replicate budget, seed and b = 0 setting for q̂ and p̂_i are restored (BLOCKING 2);
+  - F_exp is per band (u_R) and defined for K_C (MAJOR 3);
+  - the k ≥ 25 SE formula is the normalized one (MAJOR 4);
+  - the simulation's inner bootstrap is cut to 200 resamples, with its cost and place stated (MAJOR 5);
+  - the stale "inconclusive" in §5.1 and "Grok" in §8 are fixed, and the seed block is named c08 throughout (MINOR).
 
 <!-- absence-ok: rule statement -->
 **Rules are fixed before computation.** Every reading, bar, candidate rule, seed and stop rule below is fixed at
@@ -200,7 +207,7 @@ V(t) = D_t V D_t, with D_t = diag(x̂_t / x_R).
 - **Rounding check:** the per-reco-cell relative change from rounding, |Σ round(λ⁺) − Σ λ⁺| / Σ λ⁺, is reported. A cell
   above 1e-3 is a refusal.
 - **D_t must be finite and nonzero** on all 205 aligned cells, or the carry refuses at that truth.
-- The formula has the shape REGRADE §2 used for C_run and COV2D §4.4 used for C08. Its reference vector is §2's x̂_t,
+- The formula has the shape REGRADE §2 used for C_run and COV2D §4.4 used for the seed block c08. Its reference vector is §2's x̂_t,
   not REGRADE's x_T or COV2D's realization-based x̂_T.
 - **The carry is not COV2D's remake.** COV2D remade the blocks at each tune with 486 unfolds per truth. COVFIX tests the
   reported covariance carried in relative form, which is the object a user applies. P0 measures the difference at
@@ -307,7 +314,7 @@ These validate nothing.
 ### 3.2 P1: the construction measurements
 
 Each cell is a toy ensemble unfolded by the production procedure (re2_driver.py, E_R's argv). The seeds are
-pre-committed and disjoint from every committed ensemble; a test checks them against COV2D's, C08's and S1's seed lists.
+pre-committed and disjoint from every committed ensemble; a test checks them against COV2D's, c08's and S1's seed lists.
 
 **The full source list** is "data Poisson + bands + lateral + norm + sim", where:
 - the bands are COV2D's 38: Flux (one of 100 universes, constraint-weighted), 2p2h (1 of 3), and the 36 others (one
@@ -443,7 +450,7 @@ PV draws the full source list of §3.2, the same as N4 and A1p, at a sealed trut
 - **The pseudo-data** are Poisson at λ⁺ = max(·, 0), on a count stream separate from the draw stream.
 - **The graded truth** is each toy's own clipped composite truth, normalized with the drawn Flux universe's integral and
   completeness ≡ 1 (COV2D §4.2).
-- **The estimator seed** is fixed at 42, and C_seed is in every candidate.
+- **The estimator seed** is fixed at 42, and the seed block c08 is in every candidate.
 - **Count:** 300 toys per sealed truth, seed base 9_800_000 + 10_000·u (u = 0, 1), plus one central unfold per truth.
 
 **Who runs it, and where, in order.** cov2d writes and tests the bound PV code; it does not run the secret-bearing
@@ -576,8 +583,8 @@ are printed descriptively. Nothing in PG's seal is read.
 ### 5.1 K0, the control, and K_A
 
 - **K0** = Q_rep + C_model_abs(x_R), carried (§2): fluctuation block Q_rep, model block C_model_abs. Its expected PV
-  reading is "under". **If K0 passes at both sealed truths (§6.2),** the validation family did not test the covariance,
-  and PV is inconclusive (§7).
+  reading is "under". **If K0 is VALIDATED at both sealed truths (§6.4),** the comparison showed no need for a change
+  at those truths, and the outcome is "no challenge" (§7).
 - **K_A** is Q_rep with ST1's firing block regenerated (ST1's named exception), plus C_model_abs. **If ST1 does not fire,
   K_A = K0, and K_A is not read separately.** Outcome A is then unavailable.
 
@@ -693,11 +700,14 @@ therefore cannot change §5.
 
 <!-- absence-ok: reading rules for future measurements -->
 **Fluctuation readings,** against V_F in V_F's carried basis.
-- **The expected spread.** Two components of V_F are not drawn: C_PL, and C08 (the seed is fixed at 42). For a correct
-  V_F, the expected 1/N spread ratio is therefore F_exp = ((N − 1)/N)·(1 − u), with u = tr(V_F⁺ [C_PL(t) + c08(t)])/ndf_F,
-  using the carried unscaled blocks.
-- **What is labelled** is the normalized ratio F̃ = F^F / F_exp, and the same per band. u and F_exp are printed. Where
-  f̂_R scaled V_F, u is an approximation, and that is disclosed.
+- **The expected spread.** Two components of V_F are not drawn: C_PL, and the seed block c08, since the seed is fixed
+  at 42. For a correct V_F:
+  - the total's expected 1/N spread ratio is F_exp = ((N − 1)/N)·(1 − u), with u = tr(V_F⁺ [C_PL(t) + c08(t)])/ndf_F;
+  - a band R's is F_exp,R = ((N − 1)/N)·(1 − u_R), with u_R = Σ_{i∈R} u_iᵀ[C_PL(t) + c08(t)]u_i / λ_i^F / ndf_R;
+  - both use the carried, unscaled blocks.
+- **What is labelled** is F̃ = F^F / F_exp, and per band F̃_R = F_R^F / F_exp,R. u, u_R and F_exp are printed. Where f̂_R
+  scaled V_F, u and u_R are approximations, and that is disclosed.
+- **For K_C,** the same definitions apply on P_k, with Cᵀ(·)C in place of each block.
 
 **Total readings,** against V = V_F + V_b:
 - M and its bands;
@@ -723,9 +733,10 @@ They enter §7's sentences, and decide nothing.
   - if no k satisfies a cutoff, its sentinel is −1 (or N + 1 for "over"), which never flags.
 - **The probabilities are taken conservatively.**
   - Under the Gaussian fallback they are analytic: q = p_i = 0.6827.
-  - Where they are estimated from the calibration law's replicates, the under-cutoffs use the lower end of the 95 %
-    Clopper–Pearson interval and the over-cutoffs the upper end, so each flag's size stays at or below its nominal
-    level, up to the calibration law's own fidelity.
+  - Where they are estimated: 20,000 single-error replicates are drawn under §6.2's law with b = 0, at seed 9_992_000,
+    per candidate and truth. They give q̂ and each p̂_i.
+  - The under-cutoffs use the lower end of each 95 % Clopper–Pearson interval, and the over-cutoffs the upper end, so
+    each flag's size stays at or below its nominal level, up to the law's own fidelity.
 
 ### 6.2 The calibration law and the testability check
 
@@ -737,11 +748,14 @@ simulated error is e = δ + g + b:
   replaces this one.
 - **g:** g ~ N(0, G(t)), with G(t) = V_F,drawn(t) − C_δ(t), where V_F,drawn(t) = V_F(t) − [C_PL(t) + c08(t)] and C_δ(t) is
   δ's exact covariance. This is the centred fluctuation law of the drawn components only. It does not randomize the
-  bias allowance, C_PL or the seed term.
+  bias allowance, C_PL or the seed block c08.
 - **b,** a fixed bias, one per grid point:
   - b = 0;
-  - b = ±√κ_j w_j for each eigenpair (κ_j, w_j) of C_b carried to t. That is the bias at one allowance-σ along each
-    fitted direction, at most 9 grid points.
+  - b = ±√κ_j w_j for each nonzero eigenpair (κ_j, w_j) of the **candidate's own bias block** V_b, carried to t:
+    - for K0 and K_A, V_b = C_model_abs (rank 3, so 6 points);
+    - for K_B, V_b = C_b (rank at most 4, so at most 8 points);
+    - for K_C, the projected CᵀV_bC.
+    That is the bias at one allowance-σ along each of the block's directions, at most 9 grid points.
 
 **What the law does not model:** weight-space composition beyond first order, clipping, and passage through the
 non-linear unfold. The P0 control rebuilds G2R's `C_univ_new` from the `band__` arrays to 1e-10 relative; that checks the
@@ -751,7 +765,16 @@ and the candidates.
 
 **The testability simulation.**
 - **What it is.** For each candidate and truth, and each grid point b, 200 simulated ensembles of N errors are graded
-  by the **entire** §6.3 rule, including the 2,000-resample bootstrap guards, at seed 9_994_000.
+  by the entire §6.3 rule at seed 9_994_000.
+  - **One disclosed approximation:** inside the simulation, each ensemble's guards use 200 bootstrap resamples
+    (seed 9_995_000) instead of the readout's 2,000. That keeps the work to about 26,400 ensembles at P2 and about
+    17,600 at PV.
+  - **Where it runs and what it costs:**
+    - at P2, on this laptop: unpriced in node-h, with its wall time recorded;
+    - at PV, on the readout's exclusive node, inside the readout allocation that the synthetic-seal test times and
+      re-prices (§3.4).
+  - If the P2 run cannot complete on the laptop, it moves to a login-node or exclusive-node run that the director
+    prices and approves before P2 continues.
 - **False FAIL.** The fractions of ensembles reading "not PASS" and "FAILS" are recorded, each with its 95 %
   Clopper–Pearson upper bound. The maximum over b of the not-PASS upper bound is the false-FAIL figure.
 - **False PASS.** The same simulation runs at deficit alternatives: g's covariance is scaled by s, chosen so that the
@@ -805,8 +828,9 @@ allowance". It is not INFLATED.
   - P-1 and P-2 add whatever the simulation measures. At ndf ≈ 204 and N = 300 the Gaussian illustration puts them far
     from their edges, and at K_C's floor k = 25 still at several SE.
   - The binding figure is §6.2's simulated false-FAIL, gated at 0.20 per candidate and truth.
-- **K_C's floor k ≥ 25** is a reporting floor. The SE of the 1/N spread mean is √(2(N − 1)/(N²k)). With F̃'s
-  normalization, the low and high "covers" edges sit at about 5.1 and 6.8 SE at N = 100, and 10.3 and 13.3 SE at N = 300.
+- **K_C's floor k ≥ 25** is a reporting floor. For independent Gaussian modes, the SE of the normalized spread ratio
+  F̃ is √(2/((N − 1)k)). The low and high "covers" edges then sit at about 5.1 and 6.8 SE at N = 100, and 10.3 and 13.3 SE
+  at N = 300.
   These are illustrations; the simulation is the calibration.
 
 ## 7. What each outcome licenses (adoption and wording remain Joseph's and the director's)
@@ -857,7 +881,7 @@ same toys with a changed rule.
     end-to-end test;
   - the ST3/ST6 reservation ledger;
   - ST1's reproducing-test harness for the named exception.
-- **Each needs** unit tests, a line trace of every new line, hand mutants (all killed), a Grok and an agy read, the
+- **Each needs** unit tests, a line trace of every new line, hand mutants (all killed), a codex-school2 and an agy read (`DECISION-20261123-joseph-covfix-ki85-size-reader.md`), the
   director's binding, and per-connect fences.
 - **A0-type controls in every readout:**
   - the readout reproduces COV2D's committed mean χ² at G18 and AR23 from E_<T>.npz against C_T, to the κ-scaled
