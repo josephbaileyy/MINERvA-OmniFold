@@ -1,0 +1,102 @@
+{
+ "all_killed": true,
+ "harness_sha256": "82f1f623391be19f48fc80728ef7c01d8650e2c43d7cb44cfe88528f294a4f3f",
+ "killed": 18,
+ "module_sha256": "6af4cd792de98fa5a43120c038fa904c80ced0cb16403f4e2410f84ae41343f5",
+ "outcomes": [
+  {
+   "name": "stderr-not-merged",
+   "pytest_rc": 1,
+   "status": "KILLED"
+  },
+  {
+   "name": "rc-ignored",
+   "pytest_rc": 1,
+   "status": "KILLED"
+  },
+  {
+   "name": "user-dropped",
+   "pytest_rc": 1,
+   "status": "KILLED"
+  },
+  {
+   "name": "start-dropped",
+   "pytest_rc": 1,
+   "status": "KILLED"
+  },
+  {
+   "name": "end-dropped",
+   "pytest_rc": 1,
+   "status": "KILLED"
+  },
+  {
+   "name": "blank-skip-broadened",
+   "pytest_rc": 1,
+   "status": "KILLED"
+  },
+  {
+   "name": "field-count-unchecked",
+   "pytest_rc": 1,
+   "status": "KILLED"
+  },
+  {
+   "name": "jobid-unchecked",
+   "pytest_rc": 1,
+   "status": "KILLED"
+  },
+  {
+   "name": "jobid-unanchored",
+   "pytest_rc": 1,
+   "status": "KILLED"
+  },
+  {
+   "name": "state-whole-field",
+   "pytest_rc": 1,
+   "status": "KILLED"
+  },
+  {
+   "name": "family-drops-t2a",
+   "pytest_rc": 1,
+   "status": "KILLED"
+  },
+  {
+   "name": "family-check-skipped",
+   "pytest_rc": 1,
+   "status": "KILLED"
+  },
+  {
+   "name": "terminal-adds-pending",
+   "pytest_rc": 1,
+   "status": "KILLED"
+  },
+  {
+   "name": "terminal-adds-revoked",
+   "pytest_rc": 1,
+   "status": "KILLED"
+  },
+  {
+   "name": "terminal-drops-timeout",
+   "pytest_rc": 1,
+   "status": "KILLED"
+  },
+  {
+   "name": "named-presence-skipped",
+   "pytest_rc": 1,
+   "status": "KILLED"
+  },
+  {
+   "name": "named-terminal-skipped",
+   "pytest_rc": 1,
+   "status": "KILLED"
+  },
+  {
+   "name": "squeue-restored",
+   "pytest_rc": 1,
+   "status": "KILLED"
+  }
+ ],
+ "required": 18,
+ "schema": "rpd-reco-fence-mutation/1",
+ "selector": "cov2d_fence",
+ "suite_sha256": "bd7bd0388117b3a102f419d902ada4cad965296174721209f1eaba773f6d32f0"
+}

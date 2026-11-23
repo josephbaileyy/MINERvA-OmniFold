@@ -1,0 +1,21 @@
+CONTROL   unmodified copy rc=0
+KILLED    stderr-not-merged (pytest rc 1)
+KILLED    rc-ignored (pytest rc 1)
+KILLED    user-dropped (pytest rc 1)
+KILLED    start-dropped (pytest rc 1)
+KILLED    end-dropped (pytest rc 1)
+KILLED    blank-skip-broadened (pytest rc 1)
+KILLED    field-count-unchecked (pytest rc 1)
+KILLED    jobid-unchecked (pytest rc 1)
+KILLED    jobid-unanchored (pytest rc 1)
+KILLED    state-whole-field (pytest rc 1)
+KILLED    family-drops-t2a (pytest rc 1)
+KILLED    family-check-skipped (pytest rc 1)
+KILLED    terminal-adds-pending (pytest rc 1)
+KILLED    terminal-adds-revoked (pytest rc 1)
+KILLED    terminal-drops-timeout (pytest rc 1)
+KILLED    named-presence-skipped (pytest rc 1)
+KILLED    named-terminal-skipped (pytest rc 1)
+KILLED    squeue-restored (pytest rc 1)
+FENCE-MUTATION :: 18/18 killed
+rc=0

@@ -398,22 +398,68 @@ def noatime_digest(r: Any, path: Path) -> str:
     return checksum.hexdigest()
 
 
-def cov2d_fence() -> Json:
-    """Require an empty cov2d queue and both named jobs in a terminal state.
+# The COV2D fence reads sacct only (Joseph's standing rule: sacct, never squeue), fail-closed in the pattern of
+# cov2d_fence.sh rev 2 (3fbc9cbd, merged 7d5a98361). The two named jobs were submitted on 2026-11-06, so the explicit
+# start (read by sacct in the cluster's local time) holds them for as long as the fence runs. If accounting ever purges
+# them, the named-job check refuses (fail closed).
+COV2D_FENCE_START = "2026-11-01T00:00:00"
+COV2D_NAMED_JOBS = frozenset({"60909280", "60911676"})
+COV2D_FAMILIES = ("cov2d", "t2a")
+COV2D_TERMINAL = frozenset(
+    {
+        "BOOT_FAIL",
+        "CANCELLED",
+        "COMPLETED",
+        "DEADLINE",
+        "FAILED",
+        "NODE_FAIL",
+        "OUT_OF_MEMORY",
+        "PREEMPTED",
+        "TIMEOUT",
+    }
+)
+COV2D_JOB_ID = re.compile(r"[0-9]+([_+].*)?")
 
-    This is run locally on the run lane's cluster login, never over an implicit
-    SSH connection. The connect records output and exit status before staging.
+
+def cov2d_fence() -> Json:
+    """Require every cov2d or t2a job ended and both named jobs in a terminal state.
+
+    One sacct read, stdout and stderr together. Every non-empty line must be a
+    JobIDRaw|JobName|State row with a numeric JobID; a cov2d* or t2a* row refuses
+    unless the first word of its State is in the closed terminal set (so
+    "CANCELLED by N" counts and any other state refuses). Known gap, sacct-only by
+    rule: sacct returns a job whose start, end or eligible time meets the window, so
+    a family job still running since before the start, a job pending since before
+    it, one with no EligibleTime (held), or one slurmdbd has not yet recorded can be
+    omitted; a connect that relies on this fence also takes cov2d's fresh ack.
+    This is run locally on the run lane's cluster node, never over an implicit SSH
+    connection. The connect records output and exit status before staging.
     """
-    queue = subprocess.run(
-        ["squeue", "-u", "josephrb", "-h", "-o", "%i|%j|%T|%M|%l"],
+    command = [
+        "sacct",
+        "-X",
+        "-n",
+        "-P",
+        "-u",
+        "josephrb",
+        "-S",
+        COV2D_FENCE_START,
+        "-E",
+        "now",
+        "-o",
+        "JobIDRaw,JobName,State",
+    ]
+    accounting = subprocess.run(
+        command,
         text=True,
-        capture_output=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
         check=False,
     )
     record: Json = {
-        "queue_exit_code": queue.returncode,
-        "queue_stdout": queue.stdout,
-        "queue_stderr": queue.stderr,
+        "sacct_command": command,
+        "sacct_exit_code": accounting.returncode,
+        "sacct_output": accounting.stdout,
     }
 
     def check(condition: bool, message: str) -> None:
@@ -423,58 +469,44 @@ def cov2d_fence() -> Json:
                 {**record, "status": "STOP", "exit_code": 3, "message": message},
             )
 
-    check(queue.returncode == 0, "COV2D fence: squeue failed; treat as RUNNING")
-    hits = [
-        line
-        for line in queue.stdout.splitlines()
-        if len(line.split("|")) > 1 and line.split("|")[1].startswith("cov2d-")
-    ]
-    check(not hits, "COV2D fence: cov2d jobs queued or running: " + repr(hits))
-    accounting = subprocess.run(
-        [
-            "sacct",
-            "-X",
-            "-n",
-            "-P",
-            "-j",
-            "60909280,60911676",
-            "--format=JobIDRaw,State",
-        ],
-        text=True,
-        capture_output=True,
-        check=False,
-    )
-    record.update(
-        {
-            "sacct_exit_code": accounting.returncode,
-            "sacct_stdout": accounting.stdout,
-            "sacct_stderr": accounting.stderr,
-        }
-    )
     check(accounting.returncode == 0, "COV2D fence: sacct failed")
-    states = {}
+    states: dict[str, str] = {}
+    rows = 0
+    family_rows = 0
     for line in accounting.stdout.splitlines():
+        if not line:
+            continue
+        rows += 1
         fields = line.split("|")
-        if len(fields) >= 2 and fields[0] in {"60909280", "60911676"}:
-            states[fields[0]] = fields[1].split()[0]
-    terminal = {
-        "COMPLETED",
-        "FAILED",
-        "CANCELLED",
-        "TIMEOUT",
-        "OUT_OF_MEMORY",
-        "NODE_FAIL",
-        "PREEMPTED",
-        "BOOT_FAIL",
-        "DEADLINE",
-        "REVOKED",
-    }
+        check(
+            len(fields) == 3 and COV2D_JOB_ID.fullmatch(fields[0]) is not None,
+            "COV2D fence: malformed sacct line: " + repr(line),
+        )
+        job, name, state = fields
+        words = state.split()
+        first = words[0] if words else ""
+        if job in COV2D_NAMED_JOBS:
+            states[job] = first
+        if name.startswith(COV2D_FAMILIES):
+            family_rows += 1
+            check(
+                first in COV2D_TERMINAL,
+                "COV2D fence: cov2d or t2a job unended or unclassifiable: "
+                + repr(line),
+            )
     check(
-        set(states) == {"60909280", "60911676"}
-        and all(s in terminal for s in states.values()),
+        set(states) == COV2D_NAMED_JOBS
+        and all(s in COV2D_TERMINAL for s in states.values()),
         "COV2D fence: missing or nonterminal named job",
     )
-    return {**record, "status": "PASS", "exit_code": 0, "terminal_states": states}
+    return {
+        **record,
+        "status": "PASS",
+        "exit_code": 0,
+        "rows": rows,
+        "cov2d_t2a_rows": family_rows,
+        "terminal_states": states,
+    }
 
 
 def closed_mat_inventory() -> set[tuple[str, str]]:

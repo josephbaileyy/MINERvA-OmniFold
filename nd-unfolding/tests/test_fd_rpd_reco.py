@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import ast
 import hashlib
 import importlib.util
 import json
@@ -2141,44 +2142,131 @@ def test_custody_trace_directions() -> None:
             custody.classify_trace(lines + [line], policy)
 
 
-def test_cov2d_fence_both_directions(monkeypatch: pytest.MonkeyPatch) -> None:
-    custody = _custody_module()
-    responses = []
+_FENCE_NAMED_OK = "60909280|cov2d-AR23_Tb|COMPLETED\n60911676|cov2d-AR23_Tc|FAILED\n"
 
-    def run(command: list[str], **_kwargs: Any) -> Any:
-        responses.append(command[0])
-        return SimpleNamespace(
-            returncode=0,
-            stdout=(
-                ""
-                if command[0] == "squeue"
-                else "60909280|COMPLETED|\n60911676|FAILED|\n"
-            ),
-            stderr="",
-        )
+
+def _fence_run(
+    monkeypatch: pytest.MonkeyPatch, custody: Any, output: str, code: int = 0
+) -> list[tuple[list[str], dict[str, Any]]]:
+    """Stub subprocess.run: only sacct may be called; every call is recorded."""
+    calls: list[tuple[list[str], dict[str, Any]]] = []
+
+    def run(command: list[str], **kwargs: Any) -> Any:
+        calls.append((list(command), kwargs))
+        assert command[0] == "sacct", f"the COV2D fence ran {command[0]!r}"
+        return SimpleNamespace(returncode=code, stdout=output, stderr=None)
 
     monkeypatch.setattr(custody.subprocess, "run", run)
-    assert custody.cov2d_fence()["exit_code"] == 0
-    assert responses == ["squeue", "sacct"]
-    for queue, accounting, code in (
-        ("60909280|cov2d-test|RUNNING|0|2h\n", "", 0),
-        ("", "60909280|COMPLETED|\n60911676|RUNNING|\n", 0),
-        ("", "60909280|COMPLETED|\n", 0),
-        ("", "", 1),
+    return calls
+
+
+def test_cov2d_fence_both_directions(monkeypatch: pytest.MonkeyPatch) -> None:
+    custody = _custody_module()
+    output = (
+        _FENCE_NAMED_OK
+        + "61806073|rpd_flux2|RUNNING\n"
+        + "61300100|cov2d-x|CANCELLED by 112498\n"
+        + "61300200_3|t2a_arr|TIMEOUT\n"
+        + "61300201+0|cov2d_het|COMPLETED\n"
+        + "\n"
+    )
+    calls = _fence_run(monkeypatch, custody, output)
+    result = custody.cov2d_fence()
+    assert result["status"] == "PASS" and result["exit_code"] == 0
+    assert result["terminal_states"] == {"60909280": "COMPLETED", "60911676": "FAILED"}
+    assert result["rows"] == 6 and result["cov2d_t2a_rows"] == 5
+    assert result["sacct_output"] == output
+    assert len(calls) == 1
+    command, kwargs = calls[0]
+    assert command == [
+        "sacct",
+        "-X",
+        "-n",
+        "-P",
+        "-u",
+        "josephrb",
+        "-S",
+        "2026-11-01T00:00:00",
+        "-E",
+        "now",
+        "-o",
+        "JobIDRaw,JobName,State",
+    ]
+    assert kwargs.get("stderr") is custody.subprocess.STDOUT
+    assert kwargs.get("stdout") is custody.subprocess.PIPE
+    for output, code in (
+        ("60909280|cov2d-AR23_Tb|RUNNING\n60911676|cov2d-AR23_Tc|COMPLETED\n", 0),
+        ("60909280|cov2d-AR23_Tb|COMPLETED\n", 0),
+        ("", 1),
     ):
-        monkeypatch.setattr(
-            custody.subprocess,
-            "run",
-            lambda command, **kw: SimpleNamespace(
-                returncode=code,
-                stdout=queue if command[0] == "squeue" else accounting,
-                stderr="",
-            ),
-        )
+        _fence_run(monkeypatch, custody, output, code)
         with pytest.raises(custody.CustodyRefused) as caught:
             custody.cov2d_fence()
         assert caught.value.details["exit_code"] == 3
-        assert caught.value.details["queue_stdout"] == queue
+        assert caught.value.details["sacct_output"] == output
+
+
+@pytest.mark.parametrize(
+    ("label", "extra", "code", "message"),
+    [
+        ("sacct fails", "", 1, "sacct failed"),
+        (
+            "stderr error with rc 0",
+            "sacct: error: slurmdbd: Connection refused\n",
+            0,
+            "malformed",
+        ),
+        ("2-field row", "61300300|cov2d-q\n", 0, "malformed"),
+        ("4-field row", "61300301|cov2d-q|COMPLETED|x\n", 0, "malformed"),
+        ("non-numeric JobID", "JobID|cov2d-q|COMPLETED\n", 0, "malformed"),
+        ("JobID with a digit", "x61300302|other|COMPLETED\n", 0, "malformed"),
+        ("step id", "61300303.batch|batch|COMPLETED\n", 0, "malformed"),
+        ("whitespace line", "   \n", 0, "malformed"),
+        ("cov2d RUNNING", "61300304|cov2d-r|RUNNING\n", 0, "unended"),
+        ("t2a PENDING", "61300305|t2a_p|PENDING\n", 0, "unended"),
+        ("cov2d COMPLETING", "61300306|cov2d-c|COMPLETING\n", 0, "unended"),
+        ("t2a REVOKED", "61300307|t2a_v|REVOKED\n", 0, "unended"),
+        ("cov2d empty state", "61300308|cov2d-e|\n", 0, "unended"),
+        ("named job RUNNING", None, 0, "named job"),
+    ],
+)
+def test_cov2d_fence_refuses(
+    monkeypatch: pytest.MonkeyPatch,
+    label: str,
+    extra: str | None,
+    code: int,
+    message: str,
+) -> None:
+    custody = _custody_module()
+    output = (
+        "60909280|cov2d-AR23_Tb|COMPLETED\n60911676|ops|RUNNING\n"
+        if extra is None
+        else _FENCE_NAMED_OK + extra
+    )
+    _fence_run(monkeypatch, custody, output, code)
+    with pytest.raises(custody.CustodyRefused) as caught:
+        custody.cov2d_fence()
+    assert caught.value.details["exit_code"] == 3, label
+    assert caught.value.details["status"] == "STOP", label
+    assert message in caught.value.details["message"], label
+    assert caught.value.details["sacct_output"] == output, label
+
+
+def test_cov2d_fence_never_invokes_squeue() -> None:
+    """No string literal in the custody module is exactly "squeue".
+
+    This is the static half. The invocation half is _fence_run, which every fence
+    test uses: it lets subprocess.run run only sacct, and the PASS test requires
+    exactly one call.
+    """
+    custody = _custody_module()
+    tree = ast.parse(Path(custody.__file__).read_text())
+    called = [
+        node
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Constant) and node.value == "squeue"
+    ]
+    assert called == [], "a 'squeue' string literal is in the custody module"
 
 
 def test_staged_prefix_restore_and_missing(
