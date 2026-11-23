@@ -1,4 +1,4 @@
-# COVFIX declaration, DRAFT rev 4: the 2D covariance fix (2026-11-22)
+# COVFIX declaration, DRAFT rev 4.1: the 2D covariance fix (2026-11-22)
 <!-- absence-ok: a draft declaration of studies not yet run; every existing study is routed to INVENTORY.md -->
 
 <!-- absence-ok: status line of an unrun draft -->
@@ -87,6 +87,13 @@ its "Fix 1". The inventory is `INVENTORY.md` in this directory, read at origin/m
     - the C_PL τ_F clause (N3-13);
     - a fixed bootstrap basis, and the glosses as v3.2.0 descriptions (N3-14);
     - agy Defects 3 and 5.
+- **Rev 4.1** answers agy's read of rev 4 (`reads/agy-rev4-REPORT.md`). Grok could not read rev 4: its usage balance was
+  exhausted (HTTP 402, `reads/grok-rev4-ERROR.txt`). agy closed every rev 3 BLOCKING and MAJOR finding and raised five:
+  - §8 now names the exclusive-node writer (Defect 1);
+  - §6.4 separates the far and near false-PASS boundaries and states the near one's 0.07 (Defect 2);
+  - the per-mode binomial parameter is renamed p_i (Defect 3);
+  - row "A, partial" carries the KI 85 condition (Defect 4);
+  - P-3's count K_J is written (Defect 5).
 
 <!-- absence-ok: rule statement -->
 **Rules are fixed before computation.** Every reading, bar, candidate rule, seed and stop rule below is fixed at
@@ -567,14 +574,17 @@ therefore cannot change §5.
   - **Not modelled:** clipping. That is disclosed.
 - **Thresholds.** 20,000 null replicates at seed 9_992_000 give q, the in-region probability, and k_J and k_J⁺: the
   largest k with P(Bin(N, q) ≤ k) < 0.025, and the smallest with P(Bin(N, q) ≥ k) < 0.025.
+- **The joint reading** is the count K_J = #{s : χ²_s ≤ F⁻¹_{χ²(ndf)}(0.6827)}. It flags "under" if K_J ≤ k_J, and "over"
+  if K_J ≥ k_J⁺.
 - **Where it runs.**
   - At PV, inside the readout binary, after decryption and before any residual is formed, with every candidate frozen.
     The same replicates also give the false-FAIL rate for §6.2's rule. A candidate whose rate exceeds 0.20 is labelled
     NOT TESTABLE at u before its residuals are formed, and is not VALIDATED.
   - At P1 and P2, for N4 and A1p, at the ensemble's own truth.
   - N1, N2, N3 and N5 draw fluctuation only, so they use the Gaussian N(0, ·) null, labelled as such.
-- **Per-mode coverage:** the count #{s : |z_{s,i}| ≤ 1}, flagged "under" at ≤ k_c, the largest k with
-  P(Bin(N, q_i) ≤ k) < 0.025/ndf (q_i from the same null), and "over" symmetrically. The flags are reported per band.
+- **Per-mode coverage:** the count #{s : |z_{s,i}| ≤ 1}. It is flagged "under" at ≤ k_c, the largest k with
+  P(Bin(N, p_i) ≤ k) < 0.025/ndf, and "over" symmetrically. Here p_i = P_null(|z_{s,i}| ≤ 1), simulated from the same
+  null replicates. p_i is not §2's q_i. The flags are reported per band.
 - **Joint "over" and per-mode "over"** are reported. They refuse only through the fluctuation reading (§6.2), because
   the bias block over-covers by design.
 
@@ -606,10 +616,17 @@ is not INFLATED.
 - **False PASS.** VALIDATED needs every check at both truths.
   - "Not under" fails when M − h > 1.25, so the critical value is 1.25 + h.
   - At ndf 204 and N 300, SE(M) = √(2/(N·ndf)) ≈ 0.0057 and h ≈ 0.011.
-  - A candidate with M_true ≥ 1.25 + h + 3·SE (about 1.279) fails "not under" with probability at least Φ(3) ≈ 0.9987
-    per truth, so it is VALIDATED with probability at most about 1.7e-6 over both truths.
-  - Just above the critical value, the probability is lower: at 1.25 + 3·SE (1.267) it is about 0.85 per truth. The result takes the first VALIDATED of at most three candidates (K_A, K_B, K_C), so
-  the familywise chance that such a candidate is VALIDATED is at most the sum of three negligible terms.
+  - **Far from the critical value.** A candidate with M_true ≥ 1.25 + h + 3·SE (about 1.279) fails "not under" with
+    probability at least Φ(3) ≈ 0.9987 per truth.
+    - The two truths' toys are independent draws, so it passes both with probability at most (0.00135)² ≈ 1.8e-6.
+    - Over the at most three candidates (K_A, K_B, K_C), the familywise chance is at most about 5.4e-6.
+  - **Near the critical value, false PASS is not negligible.** At M_true = 1.25 + 3·SE (1.267), which is about 1·SE above
+    the critical value 1.25 + h:
+    - "not under" fails with probability about 0.85 per truth, so a pass has probability about 0.15 per truth;
+    - it passes both truths with probability about 0.023;
+    - the familywise bound over three candidates is about 0.07.
+    That is the stated tolerance's precision. A VALIDATED candidate's true total ratio may be up to a few SE above 1.25,
+    and every licensed sentence carries M with its guard.
   - A candidate inside tolerance can pass by design; the tolerance is the stated model class's precision.
   - A candidate whose bias block is wide passes the total bar by design. It must still match the fluctuation two-sided
     (P-1), and its bias block is fixed by §5.2's rule, never tuned.
@@ -641,7 +658,7 @@ reported one carried in relative form (§2)".
 | outcome | condition | licensed sentence (substance, not wording) | not licensed |
 |---|---|---|---|
 | **A** | ST1 fired, KI 85 was superseded (§9.1), its named exception was bound, and K_A is VALIDATED | "The 2D covariance's <block> had a construction error, located at nominal truth by <ST1 row>. Regenerated, its fluctuation block matches the held-out scatter at two GENIE v3 tunes (two-sided), and the total does not under-cover there (one-sided)." | a claim about non-GENIE truths; coverage at the data; that the total is tight |
-| **A, partial** | ST1 fired and was fixed, but K_A is not VALIDATED | "A construction error in <block> was found and corrected; the corrected covariance still does not cover held-out tunes." Then B and C are read. | "fixed" in the coverage sense |
+| **A, partial** | ST1 fired, KI 85 was superseded (§9.1), and its named exception was bound and applied, but K_A is not VALIDATED | "A construction error in <block> was found and corrected; the corrected covariance still does not cover held-out tunes." Then B and C are read. | "fixed" in the coverage sense |
 | **B** | K_B is VALIDATED | "The fluctuation block, measured on nominal and alternative-truth ensembles, matches the held-out scatter at two GENIE v3 tunes (two-sided). With a truth-model bias block built in-sample from nominal and the three C_model vertices and reported separately, the total does not under-cover there (one-sided). The held-out biases against that block are β_uᵀC_b⁺β_u = <value>, with <fraction> outside its span." The band factors f̂_R and C_b's rank and trace are printed with it. | "covers" for the total; coverage outside the GENIE v3 family; a cause of the bias; that the bias block is tight |
 | **C** | K_B is not VALIDATED and K_C is VALIDATED | "Uncertainties are reported for the k combinations P_k. On them, the fluctuation block matches the held-out scatter (two-sided) and the total does not under-cover (one-sided) at two GENIE v3 tunes. Finer combinations carry no validated uncertainty." | any statement about directions outside P_k; "covers" for the total |
 | **none** | nothing VALIDATED, or ST2 | Nothing new. The note's "coverage remains unvalidated" stands, with P1's matrix readings as description. | any covariance change |
@@ -672,7 +689,7 @@ with a changed rule.
   - the §5 builders and the residual stop;
   - the §6 readout, single-invocation and summary-only, with the in-binary null and the 0.20 check;
   - PG's probe, capture wrapper, piped encryption, seal checker and plaintext scan;
-  - PV's login-node writer with encrypted graded truths;
+  - PV's exclusive-compute-node writer (§3.4) with encrypted graded truths;
   - the ST6 gate.
 - **Each needs** unit tests, a line trace of every new line, hand mutants (all killed), a Grok and an agy read, the
   director's binding, and per-connect fences.
