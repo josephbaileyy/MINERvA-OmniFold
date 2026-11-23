@@ -75,3 +75,16 @@ The diagnostic's output is committed as a diagnostic record (`route-diag2/diag.j
 stderr), and then sent to the director. Any fix that follows means a new sha of msr_project.py, and that sha goes to
 the director before anything runs.
 <!-- absence-ok: a pre-declared rule for an unrun diagnostic; "never writes" states the script's own output contract -->
+
+## The run and the branch the rule printed (2026-11-23, after the run)
+
+- **The run:** once, under the director's GO, from a clean detached checkout of `fe420565` (0 porcelain lines with
+  `--ignored` before; after, only the ignored `__pycache__/` directories), on `run-b/cluster/build`.
+  - It ran from 2026-11-23T20:41:16Z to 21:56:08Z (75 minutes; the 50-digit reference took far longer than the
+    fixture smoke run suggested).
+  - rc 0, stderr empty. stdout: `{"rows": 24, "branch": "c-formation"}` (`run.stdout.txt`).
+  - The environment is in `run-env.json`, and the rows in `diag.json` (only the fields above).
+- **The printed branch is `c-formation`** (rule 2). It is reported here as printed; the director confirms it before
+  any fix.
+- **Files** (sha256): `diag.json` 6a176f2e…, `run-env.json` 9e43a720…, `run.stdout.txt` 344e1954…,
+  `run.stderr.txt` e3b0c442… (empty).
