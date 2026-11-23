@@ -10,8 +10,8 @@ real PV seal (ST4).
 ## Authority
 
 - **Joseph's go for the design**, to the director on 2026-11-22, verbatim: "yes can we do the measurability study.
-  should we start working on the review's fix 1 too?". The director recommended starting with design, and Joseph
-  agreed. That followed an outside review's "Fix 1". No separate DECISION file was written for it; this binding records
+  should we start working on the review's fix 1 too?". On that, the director started a design-only phase, and
+  Joseph's later answers below approved its scope and price. That followed an outside review's "Fix 1". No separate DECISION file was written for it; this binding records
   it.
 - **`DECISION-20261123-joseph-covfix-ki85-size-reader.md`:**
   - KI 85's two sentences are superseded for COVFIX;
