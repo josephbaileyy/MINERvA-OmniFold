@@ -1,0 +1,2 @@
+opus rc=3
+gemini rc=0
