@@ -1,4 +1,4 @@
-# COVFIX declaration, DRAFT rev 11: the 2D covariance fix (2026-11-23)
+# COVFIX declaration, DRAFT rev 11.1: the 2D covariance fix (2026-11-23)
 <!-- absence-ok: a draft declaration of studies not yet run; every existing study is routed to INVENTORY.md -->
 
 <!-- absence-ok: status line of an unrun draft -->
@@ -270,6 +270,13 @@ its "Fix 1". The inventory is `INVENTORY.md` in this directory, read at origin/m
     - ST6 is the ledger's gate at 409.22 alone;
     - §9's stale price is replaced by a pointer to §3.
   - **Minors:** the undefined u and u_R removed; a uses V₊; a grammar fix.
+  - The price and the ceiling are unchanged.
+- **Rev 11.1.** Both reads of rev 11 were **GO**, with no blocking change (`reads/*-rev11-REPORT.md`). This folds in their
+  non-blocking items only:
+  - the stress job runs locally at 0 node-h, with its inputs (D_u and V₊) reconstructed from verified central outputs
+    and frozen arrays, and pinned in the published grade record (§3.4);
+  - the readout selects accepted records before the chain checks (§3.4);
+  - the whitening sentence uses W V₊ Wᵀ (§6.1).
   - The price and the ceiling are unchanged.
 
 <!-- absence-ok: rule statement -->
@@ -698,11 +705,10 @@ director's wrapper. The wrapper acquires ST4's consumption record, verifies ever
      it actually launched**: the executable's sha256 and the resolved argument vector. It appends a chain record of
      (allocation job ID from the ledger, expected truth and toy ID, input sha256, output sha256, invocation sha256), all
      as computed.
-   - **The readout** compares every record with the authenticated manifest and with the freeze's expected invocation
-     for that ID. It rehashes each output it consumes.
-   - **Only accepted attempts count.** Records are keyed by allocation job ID; the ledger marks a failed attempt's job
-     ID as excluded. The missing, extra and mismatch checks apply to the accepted records, and exactly one verified
-     product per expected ID must come from them.
+   - **The readout** first selects the accepted records by ledger allocation ID; the ledger marks a failed attempt's job
+     ID as excluded. On that set it compares each record with the authenticated manifest and with the freeze's expected
+     invocation for that ID, rehashes each output it consumes, and runs the missing, extra and mismatch checks. Exactly
+     one verified product per expected ID must come from the accepted set.
    - A missing, extra or mismatched record is a break, and terminal.
    - The same applies to the two central unfolds that determine D_u.
    - The original PG seal is pinned at PG's close, and the freeze at P2's, so both are in PV's binding.
@@ -712,9 +718,13 @@ director's wrapper. The wrapper acquires ST4's consumption record, verifies ever
    - the chain from the writer's manifest to every unfold output.
    It then decrypts the graded truths in-process, runs §6.2's controls, grades, persists the verified grades, cleans up,
    scans, and publishes the grades. Then it ends. Cleanup and scans cover enumerated campaign-owned paths only.
-6. **The descriptive stress runs** are a separate job, after publication, with no seal access. They need only V₊, the
-   candidates and D_u, none of which is secret. Their failure, timeout or crash leaves the published grades untouched,
-   and failed scenarios are reported as omitted.
+6. **The descriptive stress runs** are a separate job, after publication, with no seal access. They run on this laptop,
+   at 0 node-h, outside the ledger.
+   - **Inputs:** they reconstruct D_u from the verified central-unfold outputs and V₊ from the frozen candidate arrays.
+     Both are pinned by sha256 in the published grade record.
+   - A scenario whose inputs are unavailable is reported as omitted.
+   - Their failure, timeout or crash leaves the published grades untouched, and failed scenarios are reported as
+     omitted.
 
 <!-- absence-ok: reading rule, scoping statement or verbatim review text about studies not yet run -->
 **The wrapper is tested** before PV on a synthetic seal: a dummy truth, encrypted and sealed the same way, run end to
@@ -995,7 +1005,7 @@ bound by the director before PV's first connect.
   content target.
 - **The per-mode reading** is #{s : |z_{s,i}| ≤ 1}.
 - **The reference probabilities** q (joint) and p_i (per mode) are estimated from 20,000 draws of §6.2's Gaussian law at
-  zero bias, at seed 9_992_000, per candidate and truth. The whitened covariance W V_drawn Wᵀ is not the identity, so no
+  zero bias, at seed 9_992_000, per candidate and truth. The whitened covariance W V₊ Wᵀ is not the identity, so no
   analytic 0.6827 is assumed.
 - **The cutoffs:**
   - "under" at a count ≤ k_J, the largest k with P(Bin(N, q) ≤ k) < 0.025; per mode, the largest k with
