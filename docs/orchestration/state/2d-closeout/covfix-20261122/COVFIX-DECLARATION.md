@@ -295,6 +295,7 @@ its "Fix 1". The inventory is `INVENTORY.md` in this directory, read at origin/m
   - §3 prints each ST1 branch's priced worst case, with the N5 method now including `stat`;
   - outcome A is reachable for every single-block firing; only a W1 exception plus `universe` is unfunded, by design;
   - binding needs an iris receipt of at least 541.50 node-h;
+  - the wrapper's stdin framing and the seed range are written into §4.2;
   - the expected no-firing price is unchanged.
 
 <!-- absence-ok: rule statement -->
@@ -832,6 +833,9 @@ tune names and the seeds.
     encoding is the seed base in ASCII decimal, one ':', then the salt as 64 lowercase hex characters (32 random bytes),
     with no newline.
   - Tune u's task seed = base + 10_000·u + task index.
+  - **Range:** the seed base is uniform in [1e9, 2e9), and F1's pipeline runs 64 tasks per tune (FD-F1-DECLARATION.md
+    §F1b), so the task index is 0–63, below 10,000. The largest task seed is 2,000,010,062, below 2³¹ − 1, as
+    `run_gevgen_v3.sh` passes it to both `--seed` and `-r`. PG's binary refuses a computed seed at or above 2³¹ − 1.
   - F1's generator takes the seed in its command arguments. PG's job scripts and logs therefore stay in the PG
     session's directory and are captured into the encrypted sealed set, under the cooperative assumption below.
 - **Roles.** The PG session prepares and tests its run directory. The **director's wrapper invokes the bound PG
@@ -851,6 +855,11 @@ So:
 - **Reading.** The wrapper alone reads them back, through `security find-generic-password -s covfix-<item> -a director
   -w`, piped straight into the bound binary's stdin (over ssh, into `srun`'s forwarded stdin).
 - They are never in a file, an argument or the environment, so they never enter shell history or the Slurm spool.
+- **The stdin framing,** fixed:
+  - PG's binary reads `<passphrase as 64 hex>\n<seed base in decimal>\n`, then EOF;
+  - the PV writer and the PV readout read `<passphrase>\n` only;
+  - the salt never leaves the laptop, because the commitment is computed and revealed there;
+  - each binary refuses any other framing.
 - **A secret-free README** in ~/director-tools/covfix/ (mode 700) names the Keychain service names and states the
   procedure, so that a later director session can continue PV. It holds no secret.
 
