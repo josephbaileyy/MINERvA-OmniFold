@@ -56,6 +56,12 @@ One point is noted against agy's Q1 claim that "no valid reco muon is excluded".
 
 **Local scorer** `score_evloop.py` (sha256 `a1a4a0461bbc28f565fed06f9ff4ed141ef0d7ce4057ac9856f76b1bf2e730a1`). It was committed before any product existed. It implements C-REPRO, the C-KIN and C-ANG thresholds, and the declared readings. **One interpretation is fixed here, before any number was read.** The declaration's CURV/RANGE "PARTIAL if reduction >= 30 % within \|d\| <= 3 %" is evaluated at the fitted d̂, not at the best d in the range, so that no point is picked after the fact. The best reduction over the whole range is printed as a descriptive number, read by no rule.
 
+**agy read of the scorer** (the director's request; [`agy-score/`](agy-score/); Gemini 3.8 Flash (High), sandboxed, hashed copies unchanged afterwards), against `DECLARATION.txt`: **VERDICT: GO**.
+- Every control and reading is implemented as declared.
+- The weights and cell sets are fixed from BASE.
+- No path picks a variant, a d, a (dx, dy), a region or a weight after seeing data, beyond the declared fits.
+- On the PARTIAL clause it names two other readings the text allows: "any d in range" and "within the fitted interval". It judges the fitted-d̂ choice the more conservative one.
+
 ## The checks before running
 
 - **agy read** (Gemini 3.8 Flash (High), sandboxed, on hashed copies; [`agy-read/`](agy-read/)): **VERDICT: GO**, no

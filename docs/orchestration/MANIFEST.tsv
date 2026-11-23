@@ -8565,6 +8565,9 @@ docs/orchestration/state/ibu-chi2-20261123/evloop/agy-confirm/report.txt	tracked
 docs/orchestration/state/ibu-chi2-20261123/evloop/agy-read/files.sha256	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
 docs/orchestration/state/ibu-chi2-20261123/evloop/agy-read/prompt.txt	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
 docs/orchestration/state/ibu-chi2-20261123/evloop/agy-read/report.txt	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
+docs/orchestration/state/ibu-chi2-20261123/evloop/agy-score/files.sha256	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
+docs/orchestration/state/ibu-chi2-20261123/evloop/agy-score/prompt.txt	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
+docs/orchestration/state/ibu-chi2-20261123/evloop/agy-score/report.txt	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
 docs/orchestration/state/ibu-chi2-20261123/evloop/ana.py	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
 docs/orchestration/state/ibu-chi2-20261123/evloop/ana.sbatch	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
 docs/orchestration/state/ibu-chi2-20261123/evloop/build.sh	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
