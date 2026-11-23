@@ -61,7 +61,19 @@ OPERANDS = {  # section 2
     "a2": (S / "2d-closeout/ibukt-a2/readout.json", "dfae50f595ac37b5179722a6a9d264f758cce91c163ca6cc1ab3b03462da8da6"),
     "did_tables": (DID_DIR / "outputs/tables.npz", "2aab22703747bfbc33247fe015213c5d9d0a65dcfc0074f0e3c53a1de29327a4"),
 }
-CODE_PINS = {"did.py": (DID_DIR / "did.py", "d918c816080a292eecaa0cc182a73906b868bb75189056862cf88d7152c4bbbd")}
+CODE_PINS = {  # section 2, "code reused unchanged", every file checked by C-OPS
+    "did.py": (DID_DIR / "did.py", "d918c816080a292eecaa0cc182a73906b868bb75189056862cf88d7152c4bbbd"),
+    "prr_ibu.py": (REPO / "nd-unfolding/prior_retention/prr_ibu.py", "fa91394507c0e6a32486af25fa52f7e162135cf6483519ccf15510e1c9473cb0"),
+    "prr_read.py": (REPO / "nd-unfolding/prior_retention/prr_read.py", "d7c7c2c0d6cbe4a13d445a779335699de3d5275c4bcd3efc9f4e84a166868fbe"),
+    "ibu1.py": (REPO / "nd-unfolding/ibu1/ibu1.py", "f862a953425c006f6c73f2190bd65172eb9295f0f6c181d3d2247d4de881cf12"),
+    "ref_g1.py": (REPO / "nd-unfolding/ref_g1/ref_g1.py", "8e34c48552857f5eec55e1067f70f4d26b2a6de0eaae46c57983fd91fbc6e7b1"),
+    "s1_assemble.py": (REPO / "nd-unfolding/s1_assemble.py", "b157250af21a2ef74e4164db6009a40ac596e225f33ac655475798ef49f613f7"),
+    "t3p_read.py": (REPO / "nd-unfolding/tier3/t3p_read.py", "f4c221dda95fbbdf2318f7fcdde57b9e1b7fb265e85b13e1dea15341cf069295"),
+    "ref_c2c1.py": (REPO / "2d-unfolding/ref_c2c1/ref_c2c1.py", "285dd138363d090a4ce5dea3361be81fada8680bd782b918e9d95198d1b5d6ea"),
+    "ibukt.py": (REPO / "2d-unfolding/ibukt/ibukt.py", "ef8590cf6d6d025b6db1fb8fdd100f76114390ac78eded62274b2c077c290789"),
+    "run_ibukt.py": (REPO / "2d-unfolding/ibukt/run_ibukt.py", "f2b4c017e1a2e84c2cb30b43a8824b95c3f7e022f5fca23b0ceac2a750c33683"),
+    "ibukt config.json": (REPO / "2d-unfolding/ibukt/config.json", "60d6c4d747596137423a869ac315c484ef65ad69f3ec209d6fd73d6e573c716c"),
+}
 BANK_SHA = "60416384474d1a3b0644f1e09869cf09371382ecbf3c116b1ed110cd47341e2f"
 PRODUCTS = ("r5d", "r2d", "t3")
 
@@ -162,6 +174,21 @@ def r_pair(dec: dict, b_arm: np.ndarray, b_b0: np.ndarray) -> dict:
     return out
 
 
+def r_independent(dec: dict, b_arm: np.ndarray, b_b0: np.ndarray) -> dict:
+    """C-ROUTE for r: P_well from a pivoted QR of the well-constrained block (no eigen projector), the same floors."""
+    n = dec["PW"].shape[0]
+    if dec["n_well"]:
+        q, _, _ = sla.qr(dec["w"][:, dec["well"]], mode="economic", pivoting=True)
+        PW = q @ q.T
+    else:
+        PW = np.zeros((n, n))
+    out = {}
+    for name, P_ in (("r_poor", np.eye(n) - PW), ("r_well", PW)):
+        den = float(np.linalg.norm(P_ @ b_b0))
+        out[name] = None if den <= R_FLOOR else 1.0 - float(np.linalg.norm(P_ @ b_arm)) / den
+    return out
+
+
 def route_independent(dec: dict, beta: np.ndarray) -> tuple[float, float | None]:
     """C-ROUTE: W by a pivoted QR of the well-constrained block, chi^2 by solving with the full C."""
     if dec["n_well"] == 0:
@@ -217,7 +244,7 @@ def label_z(lo, hi, z_noise) -> str:
             return "resolvable"
         if hi <= z_noise:
             return "within the noise maximum"
-        return "unresolved across within the noise maximum, resolvable"
+        return "unresolved across within-the-noise-maximum and resolvable"
     return label(lo, hi, band_z, Z_BANDS)
 
 
@@ -329,7 +356,7 @@ def evaluate_r(dec: dict, arm_mean, b0_mean, arm_splits, b0_splits) -> dict:
             continue
         vals = [p[name] for p in per]
         if any(v is None for v in vals):
-            out[name] = {"value": main[name], "label": "unresolved across bands (a split fails the floor)"}
+            out[name] = {"value": main[name], "label": "unresolved across bands", "why": "a split fails its 0.005 floor"}
             continue
         lo, hi = interval_splits(main[name], vals)
         out[name] = {"value": main[name], "interval": [lo, hi], "label": label(lo, hi, band_r, R_BANDS)}
@@ -381,9 +408,17 @@ def problem_2d(z2, half: str, cells: np.ndarray) -> dict:
 
 
 # ---------------------------------------------------------------------------------------------- MC resolution
+def keeps_equal(decs: dict) -> bool:
+    """Section 5.3: the same phi-space first (the f0 = 0 drop identical at full, A and B)."""
+    ks = [np.asarray(decs[h].get("keep", np.ones(decs[h]["n"], bool))) for h in ("full", "A", "B")]
+    return all(k.shape == ks[0].shape and np.array_equal(k, ks[0]) for k in ks)
+
+
 def mc_partition_ok(decs: dict) -> tuple[bool, dict]:
     """Section 5.3: n_well and dim U-infinity equal at full, A and B, and the projector distances <= 0.2."""
     f, a, b = decs["full"], decs["A"], decs["B"]
+    if not keeps_equal(decs):
+        return False, {"dropped_cells_differ": True}
     same = f["n_well"] == a["n_well"] == b["n_well"] and f["dim_inf"] == a["dim_inf"] == b["dim_inf"]
     d_ab = float(np.linalg.norm(a["PW"] - b["PW"], 2))
     d_fa = float(np.linalg.norm(f["PW"] - a["PW"], 2))
@@ -397,6 +432,9 @@ def matched_counts(decs: dict) -> dict:
     """Section 5.3: a constrained combination counts only if matched one-to-one (Hungarian, |overlap| >= 0.9) between
     the halves and against the full build, with its widths on the same side of the cut at full, A and B."""
     f, a, b = decs["full"], decs["A"], decs["B"]
+    if not keeps_equal(decs):
+        return {"n_well_resolved": None, "n_mid_resolved": None, "dim_inf": None, "unmatched_or_crossing": None,
+                "MC-unresolved": "the dropped-cell sets differ"}
 
     def match(x, y):
         if x["w"].shape[1] == 0 or y["w"].shape[1] == 0:
@@ -513,7 +551,8 @@ def controls(prod: Path) -> tuple[dict, dict]:
     cells2 = [np.asarray(a2["truths"][t]["cells"], int) for t in A2_PRIMARY]
     ids = np.asarray(z2["d2__selected_ids"], int)
     ok_l = j5["C-L_linearity_rel"] <= 1e-12 and np.array_equal(U, M16) and all(len(c) == 205 for c in cells2) \
-        and all(np.array_equal(c, cells2[0]) for c in cells2) and np.array_equal(cells2[0], ids)
+        and all(np.array_equal(c, cells2[0]) for c in cells2) and np.array_equal(cells2[0], ids) \
+        and ids.size == 205 and np.unique(ids).size == 205 and int(ids.min()) >= 0 and int(ids.max()) < 224
     ctl(rec, "C-L", ok_l, linearity_rel=j5["C-L_linearity_rel"], U_equals_M16=bool(np.array_equal(U, M16)),
         cells_equal_selected=bool(np.array_equal(cells2[0], ids)))
     # C-GRID (STOP)
@@ -562,6 +601,13 @@ def run(prod: Path, out: Path) -> int:
     import did
     out.mkdir(parents=True, exist_ok=False)
     rec, L = controls(prod)
+    early = sorted(k for k, v in rec.items() if not v["pass"])
+    if early:   # stop before any problem is built from inputs a control has refused
+        (out / "readout.json").write_text(json.dumps({"schema": "msr-readout/1", "controls": rec, "stops": early},
+                                                     indent=1, default=float) + "\n")
+        (out / "readout.txt").write_text(f"STOP: {', '.join(early)} failed; no reading computed.\n")
+        print(json.dumps({"stops": early}))
+        return 3
     # the controls that need the decompositions but no bias vector: C-RANK, C-RHO (STOP)
     z5, z2 = L["z5"], L["z2"]
     cells = np.asarray(L["a2"]["truths"]["nominal"]["cells"], int)
@@ -573,6 +619,7 @@ def run(prod: Path, out: Path) -> int:
         for h, p in probs.items():
             for drv in ("numpy", "evr"):
                 d = decompose(p["F"], p["J"], drv)
+                d["keep"] = p["keep"]
                 decs[(dim, h, drv)] = d
                 rank_ok = rank_ok and d["rank_ok"]
                 mine, ref = rho_coordinate(d, p["J"])
@@ -668,13 +715,22 @@ def readings(L: dict, probs5: dict, probs2: dict, decs: dict, did, cells: np.nda
     b0k5 = [conv5(z3[f"t3__b__B0__A7_gibuu__s{s}__k5"], s) for s in SPLITS]
     for arm, k in (("MO", 5), ("OP", 2)):
         arms = [conv5(z3[f"t3__b__{arm}__A7_gibuu__s{s}__k{k}"], s) for s in SPLITS]
-        r = {}
-        for h in ("full", "A", "B"):
-            r[h] = evaluate_r(decs[("5d", h, "numpy")], np.mean(arms, axis=0), np.mean(b0k5, axis=0), arms, b0k5)
+        am, bm = np.mean(arms, axis=0), np.mean(b0k5, axis=0)
+        r = {h: evaluate_r(decs[("5d", h, "numpy")], am, bm, arms, b0k5) for h in ("full", "A", "B")}
+        r_evr = evaluate_r(decs[("5d", "full", "evr")], am, bm, arms, b0k5)
+        ri = r_independent(decs[("5d", "full", "numpy")], am, bm)
         res = dict(r["full"], k=k, b0_k=5)
         part_ok, _ = mc_partition_ok({h: decs[("5d", h, "numpy")] for h in ("full", "A", "B")})
+        same_part = (decs[("5d", "full", "numpy")]["n_well"], decs[("5d", "full", "numpy")]["dim_inf"]) == \
+            (decs[("5d", "full", "evr")]["n_well"], decs[("5d", "full", "evr")]["dim_inf"])
         for name in ("r_poor", "r_well"):
-            if not (part_ok and r["A"][name]["label"] == r["full"][name]["label"] == r["B"][name]["label"]):
+            v, ve, vi = r["full"][name]["value"], r_evr[name]["value"], ri[name]
+            if (v is None) != (vi is None) or (v is not None and abs(vi - v) > 1e-10 + 1e-8 * abs(v)):
+                route_worst[0] = float("inf") if (v is None) != (vi is None) else max(
+                    route_worst[0], abs(vi - v) - (1e-10 + 1e-8 * abs(v)))
+            if not same_part or (v is None) != (ve is None) or (v is not None and abs(v - ve) > PREC_R):
+                res[name] = dict(res[name], label="numerically unresolved")
+            elif not (part_ok and r["A"][name]["label"] == r["full"][name]["label"] == r["B"][name]["label"]):
                 res[name] = dict(res[name], label="MC-unresolved")
         R["M2"][arm] = res
     # M3 (5D feature sets) and M4 (2D)
@@ -689,6 +745,7 @@ def readings(L: dict, probs5: dict, probs2: dict, decs: dict, did, cells: np.nda
             else:
                 F = p["F"]
             dd[h] = decompose(F, p["J"], "numpy")
+            dd[h]["keep"] = p["keep"]
         M3[name] = {**matched_counts(dd), "raw": {h: [dd[h]["n_well"], dd[h]["n_mid"], dd[h]["dim_inf"]] for h in dd},
                     "spectrum_full_printed": dd["full"]["s"].tolist()}
         M3[name]["_W"] = dd["full"]["w"][:, dd["full"]["well"]]
@@ -708,6 +765,8 @@ def readings(L: dict, probs5: dict, probs2: dict, decs: dict, did, cells: np.nda
     sec["5D k=50, secondary; not M2"] = {
         arm: assess("5d", np.mean([conv5(z3[f"t3__b__{arm}__A7_gibuu__s{s}__k50"], s) for s in SPLITS], axis=0),
                     "splits", [conv5(z3[f"t3__b__{arm}__A7_gibuu__s{s}__k50"], s) for s in SPLITS]) for arm in ("B0", "MO")}
+    sec["5D k=50, secondary; not M2"].update({
+        f"{arm} at q3": assess("5d", conv5(z3[f"t3__b__{arm}__q3__s991000__k50"], 991000), "single") for arm in ("B0", "MO")})
     for t in f0b["truths"]:
         if t["name"] in F0B_PRIMARY:
             continue
@@ -727,6 +786,8 @@ def readings(L: dict, probs5: dict, probs2: dict, decs: dict, did, cells: np.nda
             beta, sd = a2_vec(t, m)
             sec.setdefault(f"2D {m} (printed)", {})[t] = assess("2d", beta, "noisy", sd=sd)
     P = R["printed"]
+    P["dropped_cells_f0_zero"] = {f"{dim} {h}": int((~p["keep"]).sum()) for dim, probs in (("5d", probs5), ("2d", probs2))
+                                  for h, p in probs.items()}
     P["P_over_f0_5D"] = (np.asarray(z3["t3__P__s991000"], float) / f0).tolist()
     for dim in ("5d", "2d"):
         d = decs[(dim, "full", "numpy")]
@@ -776,6 +837,20 @@ SENT_C = {"points at a resolvable component": "a combination the binned inputs c
           "bias's location among combinations is not tested."}
 
 
+def m2_sentences(arm: str, v: dict) -> list[str]:
+    """Section 5.2's licensed M2 sentences (and nothing else)."""
+    rp, rw = v["r_poor"]["label"], v["r_well"]["label"]
+    out = []
+    what = "the true missed-event weights" if arm == "MO" else "the oracle pull, the bound on what step 2 can reach (T3 section 3.3),"
+    if rp == "removes most" and rw in ("no change", "no well-constrained component to remove"):
+        out.append(f"  At k = {v['k']}, {what} remove mainly the poorly constrained part of B0's bias (B0 at k = {v['b0_k']}).")
+    elif rw == "removes most" and rp in ("no change", "no poorly constrained component to remove"):
+        out.append(f"  At k = {v['k']}, {what} remove mainly the well-constrained part of B0's bias (B0 at k = {v['b0_k']}).")
+    if arm == "OP":
+        out.append(f"  OP is read at its only iterate, k = {v['k']}, as the bound on what step 2 can reach.")
+    return out
+
+
 def render(rec: dict) -> str:
     lines = ["MSR readout (declaration rev 4). Labels and sentences are the declaration's section 5.1; nothing is chosen",
              "after a statistic. NOT CITABLE FOR: a cause beyond 'consistent with', an estimator change, coverage, any data",
@@ -794,6 +869,7 @@ def render(rec: dict) -> str:
     for arm, v in rec["M2"].items():
         lines.append(f"M2 {arm} (k = {v['k']}) against B0 (k = {v['b0_k']}): r_poor {v['r_poor']['label']}; "
                      f"r_well {v['r_well']['label']}")
+        lines += m2_sentences(arm, v)
     for name in ("5D", "4D", "3D"):
         m = rec["M3"][name]
         lines.append(f"M3 {name}: with the {name} reco feature set, {m['n_well_resolved']} combinations of the 16 reported "

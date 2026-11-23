@@ -58,8 +58,8 @@ class Bands(unittest.TestCase):
     def test_noise_maximum_rule_three_cases(self):
         self.assertEqual(P.label_z(2.5, 3.0, 2.4), "resolvable")
         self.assertEqual(P.label_z(2.1, 2.4, 2.4), "within the noise maximum")       # f_hi = Z_noise
-        self.assertEqual(P.label_z(2.1, 2.6, 2.4), "unresolved across within the noise maximum, resolvable")
-        self.assertEqual(P.label_z(2.4, 2.6, 2.4), "unresolved across within the noise maximum, resolvable")
+        self.assertEqual(P.label_z(2.1, 2.6, 2.4), "unresolved across within-the-noise-maximum and resolvable")
+        self.assertEqual(P.label_z(2.4, 2.6, 2.4), "unresolved across within-the-noise-maximum and resolvable")
         self.assertEqual(P.label_z(1.5, 2.6, 2.4), "unresolved across intermediate, resolvable")   # plain rule below 2
         self.assertEqual(P.label_z(None, None, None), "no well-constrained combination")
 
@@ -210,7 +210,7 @@ class Branches(unittest.TestCase):
         b0 = 0.1 * Q[:, 0] + 0.1 * Q[:, 1]
         splits_b0 = [b0] * 4 + [0.001 * Q[:, 0] + 0.1 * Q[:, 1]]
         r = P.evaluate_r(d, b0, b0, [b0] * 5, splits_b0)
-        self.assertEqual(r["r_well"]["label"], "unresolved across bands (a split fails the floor)")
+        self.assertEqual(r["r_well"]["label"], "unresolved across bands")
 
     def test_matching_with_an_empty_basis(self):
         F, J, _ = planted(np.array([0.02, 0.3]), seed=1)
@@ -218,6 +218,33 @@ class Branches(unittest.TestCase):
         e = dict(f, w=np.zeros((2, 0)), s=np.zeros(0))
         c = P.matched_counts({"full": f, "A": e, "B": f})
         self.assertEqual((c["n_well_resolved"], c["n_mid_resolved"]), (0, 0))
+
+    def test_dropped_cells_differ_is_mc_unresolved(self):
+        F, J, _ = planted(np.array([0.02, 0.3]), seed=1)
+        f = dict(P.decompose(F, J), keep=np.array([True, True, True]))
+        g = dict(f, keep=np.array([True, False, True]))
+        ok, rec = P.mc_partition_ok({"full": f, "A": f, "B": g})
+        self.assertFalse(ok)
+        self.assertTrue(rec["dropped_cells_differ"])
+        self.assertIsNone(P.matched_counts({"full": f, "A": f, "B": g})["n_well_resolved"])
+
+    def test_r_independent_route_and_m2_sentences(self):
+        F, J, Q = planted(np.array([0.05, 0.5]), seed=2)
+        d = P.decompose(F, J)
+        b0, arm = 0.1 * Q[:, 0] + 0.1 * Q[:, 1], 0.1 * Q[:, 0] + 0.02 * Q[:, 1]
+        a, b = P.r_pair(d, arm, b0), P.r_independent(d, arm, b0)
+        self.assertAlmostEqual(a["r_poor"], b["r_poor"], places=12)
+        self.assertAlmostEqual(a["r_well"], b["r_well"], places=12)
+        none = P.decompose(*planted(np.array([0.3, 0.6]))[:2])
+        self.assertIsNone(P.r_independent(none, arm, b0)["r_well"])
+        v = {"k": 5, "b0_k": 5, "r_poor": {"label": "removes most"}, "r_well": {"label": "no change"}}
+        self.assertIn("remove mainly the poorly constrained part", P.m2_sentences("MO", v)[0])
+        v2 = {"k": 2, "b0_k": 5, "r_poor": {"label": "no change"}, "r_well": {"label": "removes most"}}
+        out = P.m2_sentences("OP", v2)
+        self.assertIn("remove mainly the well-constrained part", out[0])
+        self.assertIn("k = 2", out[1])
+        self.assertEqual(P.m2_sentences("MO", {"k": 5, "b0_k": 5, "r_poor": {"label": "removes part"},
+                                                "r_well": {"label": "no change"}}), [])
 
     def test_nprec_failure_branches(self):
         F, J, Q = planted(np.array([0.03, 0.2, 0.5]), seed=7)
@@ -464,6 +491,65 @@ class EndToEnd(unittest.TestCase):
             fd = json.loads(ops2["fdprr"][0].read_text())
             want = np.mean([np.asarray(fd["table"][f"B0/A7_gibuu/s{s}"]["b"]) * z3[f"t3__P__s{s}"] / f0 for s in P.SPLITS], axis=0)
         self.assertAlmostEqual(rec["M1"]["5D-B0"]["A7_gibuu"]["norm"], float(np.linalg.norm(want)), places=12)
+
+    def test_m2_r_numerically_unresolved_and_route_mismatch(self):
+        with tempfile.TemporaryDirectory() as d:
+            prod, ops = make_fixture(Path(d))
+            real = P.evaluate_r
+
+            def drift(dec, *a):
+                out = real(dec, *a)
+                if dec.get("_tag") == "evr":
+                    for k in out:
+                        if out[k]["value"] is not None:
+                            out[k] = dict(out[k], value=out[k]["value"] + 0.05)
+                return out
+            real_dec = P.decompose
+
+            def tagged(F, J, driver="numpy", cut=P.CUT):
+                return dict(real_dec(F, J, driver, cut), _tag=driver)
+            with mock.patch.dict(P.OPERANDS, ops), mock.patch.object(P, "evaluate_r", drift), \
+                    mock.patch.object(P, "decompose", tagged):
+                P.run(prod, Path(d) / "o1")
+            r1 = json.loads((Path(d) / "o1/readout.json").read_text())
+            with mock.patch.dict(P.OPERANDS, ops), mock.patch.object(P, "r_independent", lambda dec, a, b: {"r_poor": -9.0, "r_well": -9.0}):
+                rc = P.run(prod, Path(d) / "o2")
+            r2 = json.loads((Path(d) / "o2/readout.json").read_text())
+        labels = [r1["M2"][a][n]["label"] for a in ("MO", "OP") for n in ("r_poor", "r_well")]
+        self.assertIn("numerically unresolved", labels)
+        self.assertEqual(rc, 3)
+        self.assertEqual(r2["stops"], ["C-ROUTE"])
+
+    def test_c_l_rejects_out_of_range_ids(self):
+        with tempfile.TemporaryDirectory() as d:
+            prod, ops = make_fixture(Path(d))
+            z2 = dict(np.load(prod / "r2d.npz"))
+            z2["d2__selected_ids"] = z2["d2__selected_ids"].copy()
+            z2["d2__selected_ids"][-1] = 300
+            np.savez(prod / "r2d.npz", **z2)
+            a2 = json.loads(ops["a2"][0].read_text())
+            for t in a2["truths"].values():
+                t["cells"] = z2["d2__selected_ids"].tolist()
+            ops["a2"][0].write_text(json.dumps(a2))
+            ops["a2"] = (ops["a2"][0], P.sha256(ops["a2"][0]))
+            sums = "\n".join(f"{P.sha256(prod / f)}  {f}" for f in ("r5d.npz", "r5d.json", "r2d.npz", "r2d.json", "t3.npz", "t3.json"))
+            (prod / "SHA256SUMS").write_text(sums + "\n")
+            with mock.patch.dict(P.OPERANDS, ops):
+                rc = P.run(prod, Path(d) / "out")
+            rec = json.loads((Path(d) / "out/readout.json").read_text())
+        self.assertEqual(rc, 3)
+        self.assertIn("C-L", rec["stops"])
+
+    def test_a_c_rho_failure_stops_after_the_decompositions(self):
+        with tempfile.TemporaryDirectory() as d:
+            prod, ops = make_fixture(Path(d))
+            with mock.patch.dict(P.OPERANDS, ops), \
+                    mock.patch.object(P, "rho_coordinate", lambda dec, J: (np.zeros(J.shape[0]), np.ones(J.shape[0]))):
+                rc = P.run(prod, Path(d) / "out")
+            rec = json.loads((Path(d) / "out/readout.json").read_text())
+        self.assertEqual(rc, 3)
+        self.assertEqual(rec["stops"], ["C-RHO"])
+        self.assertNotIn("M1", rec)
 
     def test_a_t3_mismatch_fails_c_t3(self):
         with tempfile.TemporaryDirectory() as d:

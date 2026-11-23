@@ -22,4 +22,9 @@ killed    conversion drops P
 killed    stop ignored
 killed    C-ROUTE ignored
 killed    count space -> theta space J
-mutants 24; killed 24; not killed 0
+killed    dropped-cell check off
+killed    early stop off
+killed    r N-PREC off
+killed    r route off
+killed    C-L id range off
+mutants 29; killed 29; not killed 0

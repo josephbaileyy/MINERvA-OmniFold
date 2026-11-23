@@ -1,0 +1,62 @@
+VERDICT: FIX
+
+### Findings
+
+1. **Severity: FIX**
+   - **Line:** [msr_project.py:384-394](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/msr-read-proj/inputs/nd-unfolding/msr/msr_project.py#L384-L394), [627-635](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/msr-read-proj/inputs/nd-unfolding/msr/msr_project.py#L627-L635), [675-679](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/msr-read-proj/inputs/nd-unfolding/msr/msr_project.py#L675-L679)
+   - **Declaration Section:** §5.3 (also §3.1)
+   - **Problem:** §5.3 explicitly requires: *"The same φ-space first: the set of cells dropped for f0 = 0 must be equal at full, A and B. Otherwise every reading of that dimension reads 'MC-unresolved'."* Neither `mc_partition_ok()` nor `assess()` checks that the dropped-cell sets (`keep` masks) match across full, A, and B. If a cell has $f_0 = 0$ in one split half but not full, `PW` projection matrices have mismatched shapes, causing an unhandled NumPy broadcasting crash in `a["PW"] - b["PW"]` instead of setting the reading to `MC-unresolved`. Additionally, §3.1 requires: *"A cell with f0 = 0 is dropped from φ, and its count is printed"*, but the dropped count is not recorded or printed.
+   - **Concrete Fix:** In `mc_partition_ok` (or before projector differences in `assess`), verify `np.array_equal(decs["full"]["keep"], decs["A"]["keep"]) and np.array_equal(decs["full"]["keep"], decs["B"]["keep"])`, returning `False` (setting label to `"MC-unresolved"`) if they differ. Store and print `int((~keep).sum())` per dimension.
+
+2. **Severity: FIX**
+   - **Line:** [msr_project.py:672-679](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/msr-read-proj/inputs/nd-unfolding/msr/msr_project.py#L672-L679), [423-434](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/msr-read-proj/inputs/nd-unfolding/msr/msr_project.py#L423-L434), [44](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/msr-read-proj/inputs/nd-unfolding/msr/msr_project.py#L44)
+   - **Declaration Section:** §6 (N-PREC)
+   - **Problem:** §6 requires N-PREC on every reading: *"numerically unresolved if the partition differs, if S_poor or an r differs by > 0.01, or if |Z_numpy − Z_evr| > max(0.01, 0.01·Z)"*. Constant `PREC_R = 0.01` is defined at line 44 but is dead code (never referenced). In M2, `evaluate_r` is only executed with `decs[("5d", h, "numpy")]`; the `"evr"` driver is never evaluated for M2, and N-PREC is never tested on $r_\text{poor}$ or $r_\text{well}$.
+   - **Concrete Fix:** In M2, evaluate `evaluate_r` under both `"numpy"` and `"evr"` for each half. Compare drivers: if partition differs or `abs(r_np[name]["value"] - r_evr[name]["value"]) > PREC_R` (when both are non-None), set `res[name]["label"] = "numerically unresolved"`.
+
+3. **Severity: FIX**
+   - **Line:** [msr_project.py:165-176](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/msr-read-proj/inputs/nd-unfolding/msr/msr_project.py#L165-L176), [619-626](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/msr-read-proj/inputs/nd-unfolding/msr/msr_project.py#L619-L626), [672-679](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/msr-read-proj/inputs/nd-unfolding/msr/msr_project.py#L672-L679)
+   - **Declaration Section:** §6 (C-ROUTE)
+   - **Problem:** §6 C-ROUTE specifies: *"S_poor and Z_well (and each r) by the eigen route (§3.3) equal those by an independent route (W from a pivoted QR of the well-constrained block; χ²_well by solving rather than by eigenvalues). Bar: |ΔS| ≤ 1e-10 + 1e-8·|S|; |ΔZ| ≤ 1e-10 + 1e-8·|Z|; |Δr| ≤ 1e-10 + 1e-8·|r|. STOP"*. `route_independent` only computes $S_\text{poor}$ and $Z_\text{well}$. $r_\text{poor}$ and $r_\text{well}$ are never computed using the independent QR projector $P_{W,\text{ind}} = Q Q^T$ or verified against the $|Δr| \le 10^{-10} + 10^{-8}|r|$ bar.
+   - **Concrete Fix:** Extend `route_independent` (or add `r_independent`) to compute $r_\text{poor}$ and $r_\text{well}$ using $P_{W,\text{ind}} = Q Q^T$ and $P_{P,\text{ind}} = I - P_{W,\text{ind}}$ for M2's arm pairs, checking $|r_\text{ind} - r_\text{eigen}| \le 10^{-10} + 10^{-8}|r_\text{eigen}|$, and accumulating any violation into `route_worst[0]`.
+
+4. **Severity: FIX**
+   - **Line:** [msr_project.py:708-710](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/msr-read-proj/inputs/nd-unfolding/msr/msr_project.py#L708-L710)
+   - **Declaration Section:** §4
+   - **Problem:** §4 defines secondary vectors: *"5D-ARMS at k = 50: T3 B0 and MO at A7 GiBUU (five splits) and q3, at k = 50, the k at which the note prints T3's values. OP has no k = 50: printed secondary, under §5.2's pairing rule"*. Lines 708-710 evaluate B0 and MO at $k = 50$ for `A7_gibuu`, but omit B0 and MO at $q3$ for $k = 50$ (built in `t3.npz` as `t3__b__{arm}__q3__s991000__k50`).
+   - **Concrete Fix:** Add the single-split $q3$ evaluations to `sec["5D k=50, secondary; not M2"]`:
+     ```python
+     sec["5D k=50, secondary; not M2"].update({
+         f"{arm}_q3": assess("5d", conv5(z3[f"t3__b__{arm}__q3__s991000__k50"], 991000), "single")
+         for arm in ("B0", "MO")
+     })
+     ```
+
+5. **Severity: FIX**
+   - **Line:** [msr_project.py:794-796](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/msr-read-proj/inputs/nd-unfolding/msr/msr_project.py#L794-L796)
+   - **Declaration Section:** §5.2
+   - **Problem:** §5.2 prescribes specific licensed sentences for M2:
+     - MO: *"At k = 5, the true missed-event weights remove mainly the poorly constrained part of B0's bias."* (requires $r_\text{poor}$ "removes most" and $r_\text{well}$ "no change" or well sentinel) and its mirror sentence.
+     - OP: *"OP is the bound on what step 2 can reach (T3 §3.3), at its only iterate k = 2. It is read by the same bands and stated as that bound, and every OP sentence names 'k = 2'."*
+     In `render()`, neither licensed sentence is implemented or printed; only raw label strings are formatted.
+   - **Concrete Fix:** In `render()`, check the M2 MO outcome against the §5.2 rule and append the licensed MO/mirror sentence; and for OP, append the licensed step-2 bound statement naming $k = 2$.
+
+6. **Severity: FIX**
+   - **Line:** [msr_project.py:64](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/msr-read-proj/inputs/nd-unfolding/msr/msr_project.py#L64), [470-475](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/msr-read-proj/inputs/nd-unfolding/msr/msr_project.py#L470-L475)
+   - **Declaration Section:** §2, §6 (C-OPS)
+   - **Problem:** §2 lists 11 code files under *"Code reused unchanged, each checked at this sha256 by C-OPS"*, and §6 C-OPS requires: *"every operand and code file at its full sha256 (§2). Bar: exact. STOP"*. In `msr_project.py`, `CODE_PINS` only defines `did.py`. The other 10 code files are omitted, so modified repo files would pass C-OPS locally.
+   - **Concrete Fix:** Include all 11 code paths and SHA-256 digests in `CODE_PINS` matching §2 (and `msr_build.PINS`).
+
+7. **Severity: NOTE**
+   - **Line:** [msr_project.py:332](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/msr-read-proj/inputs/nd-unfolding/msr/msr_project.py#L332), [220](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/msr-read-proj/inputs/nd-unfolding/msr/msr_project.py#L220)
+   - **Declaration Section:** §3.6, §5.1
+   - **Problem:** Text wording discrepancies from declaration:
+     1. Line 332 returns `"unresolved across bands (a split fails the floor)"`, whereas §3.6 states: *"if any split fails its 0.005 floor, the r reads 'unresolved across bands'"*.
+     2. Line 220 returns `"unresolved across within the noise maximum, resolvable"`, whereas §5.1 line 393 specifies `"unresolved across within-the-noise-maximum and resolvable"`.
+   - **Concrete Fix:** Update strings to match the exact hyphenation and wording declared in §3.6 and §5.1.
+
+8. **Severity: NOTE**
+   - **Line:** [msr_project.py:515-518](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/msr-read-proj/inputs/nd-unfolding/msr/msr_project.py#L515-L518)
+   - **Declaration Section:** §6 (C-L)
+   - **Problem:** §6 C-L stipulates: *"equals the bank's selected ids (205 distinct integers in 0..223)"*. `msr_project.py` checks `len(c) == 205` and `np.array_equal(c, ids)`, but does not explicitly check `len(np.unique(ids)) == 205` and `0 <= ids.min()` and `ids.max() < 224`.
+   - **Concrete Fix:** Add `len(np.unique(ids)) == 205 and int(ids.min()) >= 0 and int(ids.max()) < 224` to `ok_l`.

@@ -36,7 +36,7 @@ MUTANTS = [
         return "points at a resolvable component"'''),
     ("noise max lo>=", "        if lo > z_noise:", "        if lo >= z_noise:"),
     ("ddof 0", "np.std(np.asarray(f_splits, float), ddof=1)", "np.std(np.asarray(f_splits, float), ddof=0)"),
-    ("r floor off", "        out[name] = None if den <= R_FLOOR else", "        out[name] = None if den < 0 else"),
+    ("r floor off", "P @ b_b0))\n        out[name] = None if den <= R_FLOOR else", "P @ b_b0))\n        out[name] = None if den < 0 else"),
     ("MC projector check off", "    ok = bool(same and d_ab <= MC_PROJ and d_fa <= MC_PROJ and d_fb <= MC_PROJ)", "    ok = bool(same)"),
     ("match bar off", "if ov[i, j] >= MC_MATCH}", "if ov[i, j] >= 0.0}"),
     ("s_poor complement", "    return 1.0 - float(beta @ dec[\"PW\"] @ beta) / nb if nb > 0", "    return float(beta @ dec[\"PW\"] @ beta) / nb if nb > 0"),
@@ -48,6 +48,14 @@ MUTANTS = [
     ("stop ignored", "    if stops:\n        (out / \"readout.json\")", "    if False:\n        (out / \"readout.json\")"),
     ("C-ROUTE ignored", '    ctl(rec, "C-ROUTE", route <= 0.0, max_excess=route)', '    ctl(rec, "C-ROUTE", True, max_excess=route)'),
     ("count space -> theta space J", "    J = (L[keep] / f0[keep, None])", "    J = (L[keep] / f0[keep, None]) * t0[None, :]"),
+    ("dropped-cell check off", "    if not keeps_equal(decs):\n        return False, {\"dropped_cells_differ\": True}",
+     "    if False:\n        return False, {\"dropped_cells_differ\": True}"),
+    ("early stop off", "    if early:   # stop before", "    if False:   # stop before"),
+    ("r N-PREC off", "            if not same_part or (v is None) != (ve is None) or (v is not None and abs(v - ve) > PREC_R):",
+     "            if False:"),
+    ("r route off", "                route_worst[0] = float(\"inf\") if (v is None) != (vi is None) else max(",
+     "                route_worst[0] = 0.0 if True else max("),
+    ("C-L id range off", "and int(ids.max()) < 224", "and True"),
 ]
 
 RUNNER = r'''
