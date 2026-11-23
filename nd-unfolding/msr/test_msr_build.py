@@ -97,14 +97,18 @@ class TwoD(unittest.TestCase):
         bw = rng.uniform(0.1, 1.0, 500)
         T, M, _, _ = ref_c2c1.binned_problem(gen, reco, bkg, pr, pt, wt, wr, bw, cfg["pt_edges"], cfg["pz_edges"])
         p = d / "bank.npz"
+        sel_ids = np.sort(rng.choice(224, 205, replace=False))  # as run_ibukt.py:402 stores it: 205 integer cell ids
         np.savez(p, gen=gen, reco=reco, pr=pr, pt=pt, wt=wt, wr=wr, bkg=bkg, bw=bw, ibu_response=M, ibu_prior=T,
-                 factor=np.ones(224), selected=np.ones(224, bool))
+                 factor=np.ones(224), selected=sel_ids)
         return p
 
     def test_build_2d_reproduces_the_bank(self):
         with tempfile.TemporaryDirectory() as d:
             arrays, rec = B.build_2d(self.bank(Path(d)))
         self.assertEqual(rec["C-2D"]["M_vs_bank_ibu_response_max_abs"], 0.0)
+        self.assertEqual(len(rec["selected_ids"]), 205)
+        self.assertEqual(int(arrays["d2__selected_mask"].sum()), 205)
+        np.testing.assert_array_equal(np.flatnonzero(arrays["d2__selected_mask"]), np.sort(arrays["d2__selected_ids"]))
         self.assertEqual(rec["C-2D"]["T_vs_bank_ibu_prior_max_rel"], 0.0)
         self.assertAlmostEqual(rec["C-2D"]["sum_b_bkg"], rec["C-2D"]["sum_bw_in_window"], places=9)
         for k in ("full", "halfA", "halfB"):
@@ -114,6 +118,12 @@ class TwoD(unittest.TestCase):
         for k in ("full", "halfA", "halfB"):
             np.testing.assert_allclose(arrays[f"d2_{k}__b_known"], arrays[f"d2_{k}__b_known_ibukt"], rtol=1e-12, atol=0)
         self.assertGreater(float(arrays["d2_full__b_known"].sum()), 0.0)  # the fixture has truth outside the grid
+
+    def test_probe_times_the_halves_too(self):
+        with tempfile.TemporaryDirectory() as d:
+            arrays, rec = B.build_2d(self.bank(Path(d)), probe=True)
+        self.assertIn("d2_halfA__M", arrays)
+        self.assertNotIn("C-2D", rec)
 
     def test_a_signal_fake_is_refused(self):
         with tempfile.TemporaryDirectory() as d:

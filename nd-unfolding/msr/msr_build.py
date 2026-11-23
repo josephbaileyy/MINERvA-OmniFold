@@ -8,7 +8,6 @@ where ``ibu1.unfold_ibu`` calls ``did.ibu``; the 2D one bins IBUKT's bank with `
 measured array (its y is discarded).
 
     msr_build.py stat PATH...                      stat (size, mtime, atime, inode) and O_NOATIME sha256, one JSON per line
-    msr_build.py find-bank ROOT SHA256             every bank.npz under ROOT, O_NOATIME-hashed; prints the one that matches
     msr_build.py did-cons --side {did,ibu1} --npz F --bkg F --out DIR
                                                    C-DID-CONS: the J-cell definitions and occupied reco cells by one side
     msr_build.py probe --npz F --bkg F --bank F --out DIR --fraction 0.02
@@ -315,8 +314,14 @@ def build_2d(bank_path: Path, probe: bool = False) -> tuple[dict, dict]:
     b_bkg = core.histogram(bkg[:, 0], bkg[:, 1], bw, cfg)
     gi = ref_c2c1.global_index(bkg[:, 0], bkg[:, 1], pt_e, pz_e)
     b_bkg_2 = np.bincount(gi[gi >= 0], weights=bw[gi >= 0], minlength=b_bkg.size)
+    # the bank's `selected` is the 205 paper cell ids (run_ibukt.py:237-239, :402), an integer index array
+    ids = np.asarray(bank["selected"], np.int64).ravel()
+    if ids.size != 205 or ids.min() < 0 or ids.max() >= b_bkg.size or np.unique(ids).size != ids.size:
+        raise Refused(f"C-L: the bank's selected is not 205 distinct cell ids in 0..{b_bkg.size - 1}")
+    mask = np.zeros(b_bkg.size, bool)
+    mask[ids] = True
     arrays, rec = {}, {"pt_edges": pt_e, "pz_edges": pz_e, "factor": np.asarray(bank["factor"]).tolist(),
-                       "selected": np.flatnonzero(bank["selected"]).tolist()}
+                       "selected_ids": ids.tolist()}
 
     def one(name, idx, scale):
         T, M, _y, t = ref_c2c1.binned_problem(gen[idx], reco[idx], bkg, pr[idx], pt[idx], scale * wt[idx],
@@ -333,15 +338,16 @@ def build_2d(bank_path: Path, probe: bool = False) -> tuple[dict, dict]:
                        f"d2_{name}__b_known_ibukt": b_known_2})
 
     one("full", sel, 1.0)
+    is_b = s5c_pseudo.half_mask(n, SPLIT2D_KEY)
+    one("halfA", np.flatnonzero(~is_b), 2.0)   # also on the probe, so its timing covers the halves
+    one("halfB", np.flatnonzero(is_b), 2.0)
     arrays["d2__b_bkg"] = b_bkg
     arrays["d2__b_bkg_globalindex"] = b_bkg_2
     arrays["d2__truth_nominal"] = np.asarray(bank["truth_nominal"], float) if "truth_nominal" in bank else np.full(224, np.nan)
     arrays["d2__factor"] = np.asarray(bank["factor"], float) * np.ones(224)
-    arrays["d2__selected"] = np.asarray(bank["selected"], bool)
-    if not probe:
-        is_b = s5c_pseudo.half_mask(n, SPLIT2D_KEY)
-        one("halfA", np.flatnonzero(~is_b), 2.0)
-        one("halfB", np.flatnonzero(is_b), 2.0)
+    arrays["d2__selected_ids"] = ids
+    arrays["d2__selected_mask"] = mask
+    if not probe:  # a subsample's M cannot match the full bank, so C-2D runs on the full build only
         R = np.divide(arrays["d2_full__M"], arrays["d2_full__T"][None, :],
                       out=np.zeros_like(arrays["d2_full__M"]), where=arrays["d2_full__T"][None, :] > 0)
         bank_R = np.asarray(bank["ibu_response"], float)
@@ -483,9 +489,6 @@ def main(argv=None) -> int:
     sub = ap.add_subparsers(dest="cmd", required=True)
     s = sub.add_parser("stat")
     s.add_argument("paths", nargs="+", type=Path)
-    f = sub.add_parser("find-bank")
-    f.add_argument("root", type=Path)
-    f.add_argument("sha256")
     ss = sub.add_parser("subsample")
     ss.add_argument("--part", choices=("5d", "2d"), required=True)
     ss.add_argument("--src", type=Path, required=True)
@@ -514,14 +517,6 @@ def main(argv=None) -> int:
         for p in a.paths:
             print(json.dumps(stat_line(p)))
         return 0
-    if a.cmd == "find-bank":
-        hits = []
-        for p in sorted(a.root.rglob("bank.npz")):
-            line = stat_line(p)
-            print(json.dumps(line))
-            hits += [p] if line["sha256"] == a.sha256 else []
-        print(json.dumps({"matches": [str(h) for h in hits]}))
-        return 0 if len(hits) >= 1 else 3
     check_pins()
     if a.cmd == "subsample":
         print(json.dumps(subsample(a.part, a.src, a.fraction, a.out)))

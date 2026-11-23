@@ -2,7 +2,7 @@
 # MSR connect P, the probe (DECLARATION.md rev 2 section 8). On a Perlmutter login node, from a /dev/shm copy of itself
 # whose path is $1; it deletes that copy at exit. Derived from T3's reviewed read connect (t3p_read_connect.sh rev 1,
 # 9c4b604c), with cov2d's fence rev 2 (cov2d_fence.sh 3fbc9cbd, embedded below as base64 and checked) and this lane's
-# sacct fence for the other prefixes.
+# sacct fence for the other prefixes. Job states come from sacct only.
 #   usage: msr_probe_connect.sh <self> <window_end_epoch> <fence prefixes, comma-separated>
 # In order, each failure a final stop:
 #   the window (the epoch the launcher computed from date, never typed); cov2d_fence.sh rev 2 CLEAR (exit 0); no job of
@@ -11,7 +11,7 @@
 #   $OUT absent; a fresh clone at M into $OUT/deploy, clean, msr_build.py and msr_overlap.py at their sha256;
 #   msr_overlap.py CLEAR against cov2d's and rpd's sets.
 # Then, all reads O_NOATIME (msr_build stat, find-bank, dd iflag=noatime): stat and sha256 of every declared input and
-# of re1's 3D/4D npz (the inventory); the IBUKT bank located by sha256; dd copies of of_inputs_5d.npz, bkg_dump.npz and
+# of re1's 3D/4D npz (the inventory); the IBUKT bank at its one recorded path, sha-checked, stat before and after; dd copies of of_inputs_5d.npz, bkg_dump.npz and
 # bank.npz into $OUT/stage, each at its pinned sha256 (every later plain read is of these copies); the timed probe at
 # row fractions 0.02 and 0.10 for 5D and 2D (msr_build probe: seconds and in-process peak RSS), the two-point linear
 # extrapolation to the full build, and the hard gate (every part <= 1800 s and <= 8e9 B; the probe reads a subsample a
@@ -63,7 +63,7 @@ fence_sacct() {
       term = (st ~ /^(COMPLETED|FAILED|CANCELLED|TIMEOUT|OUT_OF_MEMORY|NODE_FAIL|PREEMPTED|BOOT_FAIL|DEADLINE)$/)
       if (term) next
       for (i = 1; i <= n; i++) if (P[i] != "" && index($2, P[i]) == 1) { print; break }
-    }')
+    }') || { echo "fence awk failed"; return 2; }
   [ -z "$bad" ] || { echo "fenced or msr_ jobs not terminal: $bad"; return 1; }
   return 0
 }
@@ -136,12 +136,15 @@ RUN nd-unfolding/msr/msr_build.py stat "$T3/stage/of_inputs_5d.npz" "$T3/stage/b
   "$T3/log-floor/SHA256SUMS" "$RE1/3d/of_inputs_3d.npz" "$RE1/4d/of_inputs_4d.npz" > "$OUT/logs/stat.jsonl" \
   || { echo "STOP: stat"; finish 9; }
 cat "$OUT/logs/stat.jsonl"
-RUN nd-unfolding/msr/msr_build.py find-bank "$IBUKT" "$BANK_SHA" > "$OUT/logs/find-bank.jsonl"; brc=$?
-cat "$OUT/logs/find-bank.jsonl"
-[ "$brc" -eq 0 ] || { echo "STOP: no bank.npz at $BANK_SHA under $IBUKT"; finish 9; }
-BANK=$("$PY" -I -c 'import json,sys; print(json.loads(open(sys.argv[1]).read().splitlines()[-1])["matches"][0])' "$OUT/logs/find-bank.jsonl") \
-  || { echo "STOP: bank path"; finish 9; }
-echo "bank $BANK"
+# the IBUKT bank (the director's ruling, 2026-11-22): the one file at IBUKT's own path (2d-unfolding/ibukt/connect.py:563),
+# no search; stat of the root and the file before and after; its O_NOATIME sha256 must be A2's bank_sha256, else STOP
+BANK=$IBUKT/prepare/out/bank.npz
+RUN nd-unfolding/msr/msr_build.py stat "$IBUKT" "$BANK" > "$OUT/logs/ibukt-stat-before.jsonl" || { echo "STOP: stat of the IBUKT root or bank"; finish 9; }
+cat "$OUT/logs/ibukt-stat-before.jsonl"
+bsha=$("$PY" -I -c 'import json,sys; print(json.loads(open(sys.argv[1]).read().splitlines()[1])["sha256"])' "$OUT/logs/ibukt-stat-before.jsonl") \
+  || { echo "STOP: the bank's sha256 line"; finish 9; }
+echo "bank $BANK sha256 $bsha (A2's bank_sha256 $BANK_SHA)"
+[ "$bsha" = "$BANK_SHA" ] || { echo "STOP: the bank is not A2's bank (no other copy is searched for)"; finish 9; }
 
 echo "== stage: dd iflag=noatime copies, each at its pin"
 mkdir "$ST" || { echo "STOP: mkdir $ST"; finish 9; }
@@ -152,21 +155,25 @@ for spec in "$T3/stage/of_inputs_5d.npz:of_inputs_5d.npz:$NPZ_SHA" "$T3/stage/bk
   echo "$name sha256 $got (pin $pin)"
   [ "$got" = "$pin" ] || { echo "STOP: $name is not at its pin"; finish 9; }
 done
+RUN nd-unfolding/msr/msr_build.py stat "$IBUKT" "$BANK" > "$OUT/logs/ibukt-stat-after.jsonl" || { echo "STOP: stat of the IBUKT root or bank (after)"; finish 9; }
+cat "$OUT/logs/ibukt-stat-after.jsonl"
 
 echo "== probe (msr_build probe on a row subsample written by a separate process; in-process seconds and peak RSS)"
-gate=1
+gate=1; pok=1   # a failed probe part sets login_ok false and the run goes on to C-DID-CONS (Grok, confirming read, note 6)
 for part in 5d 2d; do
   for frac in 0.02 0.10; do
     src=$ST/of_inputs_5d.npz; [ "$part" = 2d ] && src=$ST/bank.npz
     sub=$OUT/probe-$part-$frac/inputs/sub.npz
     RUN nd-unfolding/msr/msr_build.py subsample --part "$part" --src "$src" --fraction "$frac" --out "$sub" \
-      > "$OUT/logs/subsample-$part-$frac.json" || { echo "STOP: subsample $part $frac"; finish 5; }
+      > "$OUT/logs/subsample-$part-$frac.json" 2> "$OUT/logs/subsample-$part-$frac.err" \
+      || { echo "subsample $part $frac failed: no extrapolation for $part; login_ok false"; tail -5 "$OUT/logs/subsample-$part-$frac.err"; pok=0; break; }
     cat "$OUT/logs/subsample-$part-$frac.json"
     RUN nd-unfolding/msr/msr_build.py probe --part "$part" --fraction "$frac" --npz "$sub" --bkg "$ST/bkg_dump.npz" \
-      --bank "$sub" --out "$OUT/probe-$part-$frac/run" > "$OUT/logs/probe-$part-$frac.json" \
-      || { echo "STOP: probe $part $frac"; finish 5; }
+      --bank "$sub" --out "$OUT/probe-$part-$frac/run" > "$OUT/logs/probe-$part-$frac.json" 2> "$OUT/logs/probe-$part-$frac.err" \
+      || { echo "probe $part $frac failed: no extrapolation for $part; login_ok false"; tail -5 "$OUT/logs/probe-$part-$frac.err"; pok=0; break; }
     cat "$OUT/logs/probe-$part-$frac.json"
   done
+  [ "$pok" -eq 1 ] || { gate=0; pok=1; continue; }
   ext=$("$PY" -I - "$OUT/logs/probe-$part-0.02.json" "$OUT/logs/probe-$part-0.10.json" <<'PYX'
 import json, sys
 a, b = (json.loads(open(p).read().splitlines()[-1]) for p in sys.argv[1:3])
@@ -191,17 +198,20 @@ for side in did ibu1; do
   echo "did-cons $side rc=$c"; cat "$OUT/logs/didcons-$side.json"
   [ "$c" -eq 0 ] || { echo "did-cons $side did not complete (rc $c; 124 = timeout); stderr tail:"; tail -20 "$OUT/logs/didcons-$side.err"; cdid=6; }
 done
-if [ "$cdid" -eq 0 ]; then
+if [ "$cdid" -eq 0 ]; then  # hash all four first; print EQUAL or DIFFERS only if every hash succeeded
+  declare -A H
   for name in j_cells reco_cells; do
-    fa=$OUT/didcons-did/did_$name.txt; fb=$OUT/didcons-ibu1/ibu1_$name.txt
-    if [ -s "$fa" ] && [ -s "$fb" ]; then
-      a=$(sha256sum "$fa" | cut -d' ' -f1) || { echo "hash failed: $fa"; cdid=6; continue; }
-      b=$(sha256sum "$fb" | cut -d' ' -f1) || { echo "hash failed: $fb"; cdid=6; continue; }
-      if [ "$a" = "$b" ]; then echo "C-DID-CONS $name EQUAL $a"; else echo "C-DID-CONS $name DIFFERS (did $a, ibu1 $b)"; fi
-    else
-      echo "C-DID-CONS $name: an output is missing or empty"; cdid=6
-    fi
+    for side in did ibu1; do
+      f=$OUT/didcons-$side/${side}_$name.txt
+      if [ -s "$f" ] && h=$(sha256sum "$f" | cut -d' ' -f1) && [ -n "$h" ]; then H[$side.$name]=$h; else echo "C-DID-CONS: $f missing, empty or unhashable"; cdid=6; fi
+    done
   done
+  if [ "$cdid" -eq 0 ]; then
+    for name in j_cells reco_cells; do
+      if [ "${H[did.$name]}" = "${H[ibu1.$name]}" ]; then echo "C-DID-CONS $name EQUAL ${H[did.$name]}"
+      else echo "C-DID-CONS $name DIFFERS (did ${H[did.$name]}, ibu1 ${H[ibu1.$name]}); the lists are in the records (an upper-edge reco convention can cause it)"; fi
+    done
+  fi
 fi
 [ "$cdid" -eq 0 ] || echo "C-DID-CONS INCOMPLETE: no EQUAL or DIFFERS is recorded for an incomplete side"
 gs=$(git -C "$D" status --porcelain --ignored) || { echo "STOP: git status failed (after)"; finish 9; }

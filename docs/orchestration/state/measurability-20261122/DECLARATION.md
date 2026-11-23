@@ -76,6 +76,12 @@ computed before this declaration, its reads and the director's GO.
       records INCOMPLETE, never EQUAL or DIFFERS (§1, §8);
     - every stop after `$OUT` exists writes the records first;
     - connect B reads T3's originals only through O_NOATIME copies (§8).
+  - **From Grok's confirming read of the fixed connect code** (`reads/connectP-confirm-grok.txt`): the bank's `selected`
+    is 205 integer ids, not a mask (§3.1, C-L); the 2D probe also times the halves; the launcher's `/dev/shm/msrp.*`
+    staging copies are in the overlap; a failed probe part sets login_ok false and the run still reaches C-DID-CONS; the
+    four C-DID-CONS hashes are taken before anything is printed; a reco DIFFERS is checked for the upper-edge convention.
+  - **The director's ruling on the IBUKT root (2026-11-22):** the bank is read at its one recorded path, with no search
+    and stat before and after (§2, §8).
 - **rev 4** will record C-DID-CONS's branch from connect P's log, before connect B.
 
 **Rulings folded in (the director, 2026-11-22):** Q1, a cluster build (login node if light, otherwise one shared-QOS job of
@@ -149,7 +155,7 @@ weighting="nom")`). Whether C-DID gates is decided by a scripted test, not a jud
 |---|---|---|
 | 5D events | `of_inputs_5d.npz` sha256 `07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f`, read from `/pscratch/sd/j/josephrb/t3p-20261121/stage/of_inputs_5d.npz` (T3's stage, this lane's) | R, t0, halves (§3.1) |
 | 5D background | the background dump T3's stage holds beside it, at the digest `t3p-20261121/stage.json` records | the full background template (§3.2) |
-| 2D bank | IBUKT's `bank.npz`, sha256 `60416384474d1a3b0644f1e09869cf09371382ecbf3c116b1ed110cd47341e2f` (A2's `bank_sha256`), located under `/pscratch/sd/j/josephrb/ibukt-20261119-d/` by connect P (by sha256) | 2D R, t0, b, halves (§3.1) |
+| 2D bank | IBUKT's `bank.npz`, sha256 `60416384474d1a3b0644f1e09869cf09371382ecbf3c116b1ed110cd47341e2f` (A2's `bank_sha256`), at IBUKT's own path `/pscratch/sd/j/josephrb/ibukt-20261119-d/prepare/out/bank.npz` (`2d-unfolding/ibukt/connect.py:563`). Per the director's ruling of 2026-11-22: no search; that one file is read only through an O_NOATIME sha check and a dd iflag=noatime copy; nothing is written, renamed or opened plainly under the root; the root's and the file's stat (incl. atime) are recorded before and after; a sha other than A2's is a STOP | 2D R, t0, b, halves (§3.1) |
 | T3 products | `t3p-20261121/runs/*.npz` for arms B0, MO, OP at A7 GiBUU (splits 991000, 994001–994004) and q3 (991000), at the sha256 in `run-20261121/cluster/log-floor/SHA256SUMS` | MO and OP bias vectors; P and X for C-L (§4, §6) |
 | FD-PRR readout | `fd/receipts-prr/read/cluster/readout.json` sha256 `9238f22bfe29685e33c1d5bb46da3938a3ebfdc93a54575a4fe99de3a7af9ead` | B0 bias and departure vectors (`table`); R-ID (control only, §5.2) |
 | F0b readout | `fd/readout/fd_f0b_readout.json` `b9db935a3187646ba2accaf3865cf4aa26ad72676063c58e7f5e6220224ef17b`; the with-C_PL copy `fd/with-cpl/readout/fd_f0b_readout.json` `5f542830561731b567f2b97d78e5e9677a9802a35ef9c21855828bf184e6f3d6` (C-F0B only) | F0b bias vectors (§4) |
@@ -208,7 +214,8 @@ writes one band function per statistic of §5.1, with b1's form of "read only if
     y and t are discarded.
   - **R = M / T** columnwise. A column with T = 0 is set to 0. t0 = T.
   - The truth grid is `driver.PT_EDGES × PZ_EDGES`, with 224 reco bins.
-  - L selects A2's 205 reported cells: the readout's `cells`, which is the bank's `selected` mask, in that order. These
+  - L selects A2's 205 reported cells: the readout's `cells`, which are the bank's `selected` (205 integer cell ids,
+    `run_ibukt.py:237-239`, `:402`), in that order. These
     are the cells A2's `mean`, `residuals` and `departure` refer to, and they are not `signed_identity.truth_indices`.
     The other truth bins are parameters and are marginalized.
   - At 2D each reported cell is one truth bin, so a per-cell scale (extraction, completeness) cancels in relative units.
@@ -471,9 +478,9 @@ No band, cut, set, truth, k or exposure is changed after any statistic is comput
 |---|---|---|---|
 | C-OPS | every operand and code file at its full sha256 (§2) | exact | STOP |
 | C-RID | under R-ID's settings (half A at ×2 of FD-PRR's primary split, the nominal fold unfold's prior and b, `did.fisher`, `widths_from_eig`, prr_ibu's `maps`), the 5D construction reproduces FD-PRR's committed R-ID: `sigma_rel[16]` and `null_fraction[16]` (∞ matches ∞), `n_null_modes` and `n_cells_grid` | finite sigma_rel relative ≤ 1e-6; null_fraction absolute ≤ 1e-6; counts exact | STOP |
-| C-DID-CONS | connect P: IBU-1's J-world and D-ID's T1 J-cell definitions and occupied reco cells, as four sorted lists compared by sha256 (§1) | exact | decides whether C-DID gates; recorded in rev 3 |
+| C-DID-CONS | connect P: IBU-1's J-world and D-ID's T1 J-cell definitions and occupied reco cells, as four sorted lists compared by sha256 (§1). The lists are fetched, so a reco DIFFERS is checked for the upper-edge convention (IBU-1's window excludes the last edge, D-ID's `flat_index` keeps it) before it is read as a different grid | exact | decides whether C-DID gates; recorded in rev 4 |
 | C-DID | the J world at T1 under D-ID's settings (full MC, same sample, b = b_known, nominal weights) reproduces `tables.npz` `T1/nominal/widths_nom/{sigma_rel,null_fraction}` on the functionals both name | as C-RID | STOP if C-DID-CONS is equal; otherwise printed |
-| C-L | 5D: L is linear and equals the extraction: L t = `ibu1.extract(share · t)` for t0 and for two positive random t, and the reported map equals T3's M16 (`h2_definition`). The P that converts FD-PRR's b to φ-units is `t3p_read.priors`' P (FD-PRR's nominal product at the same split), with the ratio P/f0 printed per cell (P is half B's nominal truth, f0 the full MC's, so they are not equal by construction). 2D: the readout's `cells` has 205 entries, is equal for every primary truth and equals the bank's `selected` mask | relative ≤ 1e-12; exact | STOP |
+| C-L | 5D: L is linear and equals the extraction: L t = `ibu1.extract(share · t)` for t0 and for two positive random t, and the reported map equals T3's M16 (`h2_definition`). The P that converts FD-PRR's b to φ-units is `t3p_read.priors`' P (FD-PRR's nominal product at the same split), with the ratio P/f0 printed per cell (P is half B's nominal truth, f0 the full MC's, so they are not equal by construction). 2D: the readout's `cells` has 205 entries, is equal for every primary truth, and equals the bank's `selected` ids (205 distinct integers in 0..223) | relative ≤ 1e-12; exact | STOP |
 | C-GRID | the 5D reading capture and the R-ID capture report the same grid `n_cells`, equal to the number of non-empty H2 coarse cells under the g world's `coarse_of`, and to the committed R-ID's `n_cells_grid` | exact | STOP |
 | C-RHO | ρ(e_c) (§3.3) equals `widths_from_eig`'s null fraction for e_cᵀJ, at every reported cell, for each build | absolute ≤ 1e-9 | STOP |
 | C-RANK | G has full row rank after the f0 = 0 drop (K positive definite) | smallest eigenvalue of K > 1e-12·largest | STOP |
@@ -527,8 +534,8 @@ No band, cut, set, truth, k or exposure is changed after any statistic is comput
   - The fence: cov2d rev 2, `cov2d_fence.sh` sha256 `3fbc9cbd6c08d4c86c71aeeccf28b0b3d8a77393121ef23787c1d421b682171e`,
     plus an overlap check of this study's input set (§2) against the cov2d and rpd protected paths and
     limitation-resolver's flux2 input set, on fresh acks.
-  - stat and sha256, with O_NOATIME, of every §2 input, including locating the 2D bank by sha256 and the 3D/4D inputs for
-    the inventory.
+  - stat and sha256, with O_NOATIME, of every §2 input and of the 3D/4D inputs for the inventory. The 2D bank is the one
+    file at IBUKT's recorded path, with the stat of the root and of the file before and after the copy (§2).
   - C-DID-CONS, always, whatever the gate reads. Both sides' exit codes are checked, and an incomplete side records
     INCOMPLETE (rc 6), not EQUAL or DIFFERS.
   - A timed build at row fractions 0.02 and 0.10 of each response. Each subsample is written by a separate process, so

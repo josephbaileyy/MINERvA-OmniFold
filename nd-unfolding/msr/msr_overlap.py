@@ -30,7 +30,7 @@ T3 = f"{U}/t3p-20261121"
 READS = [
     f"{T3}/stage/of_inputs_5d.npz", f"{T3}/stage/bkg_dump.npz", f"{T3}/stage/fd-prr/runs/B0/nominal",
     f"{T3}/runs", f"{T3}/log-floor/SHA256SUMS", f"{T3}/stage.json",
-    f"{U}/ibukt-20261119-d",
+    f"{U}/ibukt-20261119-d/prepare/out/bank.npz",   # and a stat (no open) of the root itself
     f"{U}/methods-paper/re1-20261022/out/3d/of_inputs_3d.npz", f"{U}/methods-paper/re1-20261022/out/4d/of_inputs_4d.npz",
 ]
 INTERPRETER = "/global/homes/j/josephrb/.conda/envs/root_6_28"   # connect P's python (read-only)
@@ -58,11 +58,14 @@ def load_rpd_tool(clone: Path):
     return mod
 
 
+PREFIXES = ("/dev/shm/rpd-flux2-", "/dev/shm/msrp.")  # staging copies named <prefix><pid>.sh (and .sh.out)
+
+
 def overlaps_prefix(rpd, a: str, b: str) -> bool:
-    """rpd's rule, and for a staging-copy prefix (/dev/shm/rpd-flux2-connect.<pid>.sh) a plain string prefix."""
+    """rpd's rule, and for a staging-copy prefix (either side's) a plain string prefix in both directions."""
     if rpd.overlaps(a, b):
         return True
-    return b.startswith("/dev/shm/rpd-flux2-") and a.startswith(b)
+    return (b.startswith(PREFIXES) and a.startswith(b)) or (a.startswith(PREFIXES) and b.startswith(a))
 
 
 def main(argv=None) -> int:
@@ -75,7 +78,7 @@ def main(argv=None) -> int:
     if not out_root.startswith(f"{U}/msr-"):
         print(f"OVERLAP REFUSED: OUT_ROOT {out_root} is not a fresh {U}/msr-* root")
         return 2
-    writes = [out_root, "/dev/shm/msr-connect", "/dev/shm/msrp.<pid>.sh"]  # the last: the launcher's staging copy
+    writes = [out_root, "/dev/shm/msr-connect", "/dev/shm/msrp."]  # the last: a prefix, the launcher's staging copy and .out
     rpd = load_rpd_tool(clone)
     config = json.loads((clone / FLUX2 / "production-config.ready.json").read_text())
     theirs: list[tuple[str, str]] = []
