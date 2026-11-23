@@ -1,0 +1,8 @@
+Read-only review. Never write anywhere except the single report file /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/agy-covfix6/report.md.
+inputs/COVFIX-DECLARATION.md is rev 6. Your own delta read of rev 5 (inputs/agy-rev5-REPORT.md) found 2 BLOCKING, 3 MAJOR
+and 3 MINOR defects (Findings 1-8). inputs/rev5-to-rev6.diff is the complete change from rev 5 to rev 6.
+1. For each of Findings 1-8: CLOSED or OPEN, with the rev 6 line.
+2. Any new defect in the diff (check 26,400 and 17,600 ensembles, the u_R formula, the normalized SE formula, the
+   per-candidate bias grids)? Anything elsewhere that still contradicts the changed text?
+3. Setting aside the binding prerequisites, is rev 6 ready to bind?
+Severity and fix for each finding. First line: GO or NO-GO.

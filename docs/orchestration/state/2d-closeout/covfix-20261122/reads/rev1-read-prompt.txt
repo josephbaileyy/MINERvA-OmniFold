@@ -1,0 +1,30 @@
+Read-only review. Never write anywhere except the single report file /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/grok-covfix/report.md.
+
+inputs/COVFIX-DECLARATION.md is a DRAFT (rev 1) pre-registration for fixing a 2D cross-section covariance that
+under-covers at two held-out generator tunes (G18, AR23). inputs/INVENTORY.md lists what already exists. The other
+files in inputs/ are the records it cites (COV2D design and outcome, T2A reading, REGRADE declaration and its two 2D
+result JSONs, the 10-05 coverage outcome, KNOWN_ISSUES rows 84-85, IBUKT A2 outcome, F1 report and declaration, G2R
+readout, the methods scoping). An outside review asked for "Fix 1": separate bias from fluctuation
+(E[(sigma_hat - sigma)(sigma_hat - sigma)^T] = C_fluct + b b^T), test a matrix of cases (nominal truth with data Poisson
+only; data and MC fluctuations; coherent nuisances; alternative truth with fixed response; alternative truth with
+perturbed response), compare empirical to reported covariance along V's eigenmodes, and accept (A) a construction error
+found and fixed, (B) coverage for a stated model class with truth-model bias quantified separately, or (C) uncertainties
+only for coarser or selected combinations. It rejects scaling the covariance until the two tunes pass.
+
+Answer with line numbers from COVFIX-DECLARATION.md:
+1. Fidelity: check every number and claim in COVFIX-DECLARATION.md and INVENTORY.md against the input records. List any
+   that are wrong, unsupported, or misquoted.
+2. Blindness: can any candidate construction be tuned, even indirectly, on the validation truths before they are read?
+   Is the custody in section 4.2 sufficient? Is "validation is spent once" enforceable as written?
+3. Design soundness: does the plan actually separate bias from fluctuation, and test each never-drawn source? Do the
+   candidates in section 5 risk passing by inflation, and do the bars catch that (INFLATED, the over-coverage flags)?
+   Is the K_B fluctuation rule (per-mode max(lambda_i, s_i) from 200 nominal toys, Ledoit-Wolf) sound for 205 cells?
+   Is B3 a disguised scaling that the review rejects?
+4. ST1 and KI 85: is the rule "over needs N5, under stands without it" correct given KI 85's finding?
+5. Statistics: check the false-FAIL and false-PASS arithmetic in section 6.4 (SE(M), guards, binomial joint rule,
+   per-mode Bonferroni, the 0.14 / 0.07 bounds). Is anything wrong or missing (e.g. dependence between modes, ndf
+   after the cut, small k for K_C)?
+6. Prices and stop rules: are the node-h numbers consistent (0.19 per toy; P1 276; PV 171; totals 449 / 373 / lean
+   393 / 316; caps; half of 725.6 is 362.8)? Is any phase able to overrun silently?
+7. Anything that should block binding, and anything that is merely minor.
+Give each finding a severity: BLOCKING, MAJOR, or MINOR, and a concrete fix. First line of the report: GO or NO-GO.

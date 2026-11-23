@@ -1,0 +1,20 @@
+Read-only review. Never write anywhere except the single report file /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/agy-covfix4/report.md.
+
+inputs/COVFIX-DECLARATION.md is DRAFT rev 4 of a pre-registration to fix a 2D cross-section covariance that under-covers
+at two held-out generator tunes. Rev 3 got NO-GO from two readers (inputs/grok-rev3-REPORT.md, inputs/agy-rev3-REPORT.md);
+rev 4's header ("Rev 4 answers ...") lists how each finding is answered. Other inputs: the records cited (as before),
+plus inputs/data_g2r-keys.txt listing the keys of the G2R file the written null reads.
+
+The outside review's Fix 1: separate bias from fluctuation; test the matrix of cases along V's eigenmodes; accept (A)
+construction error found and fixed, (B) coverage for a stated model class with truth-model bias quantified separately,
+or (C) uncertainties only for coarser or selected combinations; no scaling the covariance until the two tunes pass.
+
+Answer with line numbers from COVFIX-DECLARATION.md:
+1. For every BLOCKING and MAJOR finding in both rev-3 reports: CLOSED, PARTLY CLOSED, or OPEN in rev 4, with the line.
+2. New defects in rev 4 only (fidelity, logic, statistics incl. every number in sections 5.3 and 6.4, prices and totals,
+   the written null in 6.1, the residual rule, custody, the ST1 exception and the KI 85 gate). Do not re-raise items
+   already listed as binding prerequisites in section 9 unless the text mishandles them.
+3. With G18 and AR23 out of C_b, does outcome B now certify something meaningful, and does its licensed sentence match
+   its bars exactly?
+4. Is the draft ready to bind once the section 9 prerequisites are met? If not, list exactly what must change.
+Give each finding a severity (BLOCKING, MAJOR, MINOR) and a concrete fix. First line of the report: GO or NO-GO.

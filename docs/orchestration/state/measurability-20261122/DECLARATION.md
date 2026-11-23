@@ -95,6 +95,27 @@ computed before this declaration, its reads and the director's GO.
   - all of B's outputs go under a fresh `$OUT` (`msr-b-20261123`), never into the probe's. The probe's `$OUT` stays as
     is until B's records merge, and its removal is Joseph's call (it is listed for him);
   - every C-* control, including C-DID and C-RID, is applied locally to the fetched products, before any reading.
+- **Amendment C (2026-11-23, after the local run STOPped at C-DID, `run-local/`; the director's ruling):** an executability
+  fix that changes no number, bar or set of any reading. It makes three controls implement §6's text as written.
+  - **C-DID** compares "on the functionals both name", as §6 says.
+    - Rule: the intersection must be non-empty, and its size must equal **151** for these inputs. That value is a
+      recorded expectation, pinned, not a tolerance.
+    - The one-sided names are recorded and printed: IBU-1 only `EW_all_ones` and `total_integrated`, plus D-ID's 32
+      names that IBU-1 lacks.
+    - Values are checked on the intersection at the declared bars. The code had also required every IBU-1 name to be
+      among D-ID's, which is stricter than §6 and caused the STOP.
+  - **C-2D** takes §6's bar, relative ≤ 1e-12 cell by cell. The code had required M and b_known to match exactly.
+  - **C-D** checks each F0b truth whose bias is converted with d: the 11 primary truths and the secondary
+    `closure_nuwro`.
+    - The six P-sets (ungraded, §4 printed secondary) have no FD-PRR entry, so they are printed only in truth-relative
+      units (P/f0), and C-D records them as "printed without d".
+    - The code had checked the primaries only. A literal "each F0b truth used" would have stopped on the P-sets, which
+      §4 prints without d.
+  - **C-RID, C-T3 and C-F0B** were audited against §6 and need no change:
+    - C-T3 matches §6.
+    - C-F0B's equal-name-set condition is implied by "bias equal in the two readouts".
+    - C-RID's NaN-pattern condition on null_fraction is no stricter than the declared absolute bar for these inputs,
+      which hold no NaN.
 
 **Rulings folded in (the director, 2026-11-22):** Q1, a cluster build (login node if light, otherwise one shared-QOS job of
 at most 0.1 node-h); Q2, T3's B0, MO and OP as operands; Q3, H2 truth cells, with the 16-cell biases taken through the

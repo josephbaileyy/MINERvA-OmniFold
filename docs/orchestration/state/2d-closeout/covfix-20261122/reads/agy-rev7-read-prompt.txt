@@ -1,0 +1,12 @@
+Read-only review. Never write anywhere except the single report file /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/agy-covfix7/report.md.
+inputs/COVFIX-DECLARATION.md is rev 7 of a draft pre-registration. The second reader returned NO-GO on rev 6 with 11
+bind-readiness fixes plus one minor (inputs/codex2-rev6-REPORT.md). inputs/rev6-to-rev7.diff is the complete change; the
+header's "Rev 7" entry maps each fix to sections.
+1. For each of codex2's fixes 1-12: CLOSED, PARTLY CLOSED, or OPEN in rev 7, with the line.
+2. New defects in the diff: the analytic delta-method guards (are the influence functions right for M, a spread F, and
+   F~?), the spectral map L, the 20k bank, the 400-ensemble gates (29/400 and 12/400 as one-sided 95% Clopper-Pearson
+   bounds at 0.10 and 0.05), the deficit scenarios D1-D3 (their formulas and when each is defined), the custody text,
+   the ST1 sequences (202.35 and 420.09 node-h), the three-part outcome table. Does anything elsewhere still contradict
+   the changed text?
+3. Setting aside binding prerequisites (iris receipt, PG session, passphrase), is rev 7 ready to bind?
+Severity (BLOCKING, MAJOR, MINOR) and a fix for each. First line: GO or NO-GO.

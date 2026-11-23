@@ -1,0 +1,91 @@
+{
+ "schema": "msr-readout/1",
+ "controls": {
+  "C-OPS": {
+   "pass": true,
+   "mismatched": [],
+   "products_ok": true
+  },
+  "C-RID": {
+   "pass": true,
+   "sigma_rel_max_rel": 0.0,
+   "null_fraction_max_abs": 0.0,
+   "inf_match": true,
+   "nan_match": true,
+   "n_null_modes": [
+    1,
+    1
+   ],
+   "n_cells_grid": [
+    29,
+    29
+   ]
+  },
+  "C-DID": {
+   "pass": false,
+   "functionals_compared": 151,
+   "sigma_rel_max_rel": 7.094008813157951e-13,
+   "null_fraction_max_abs": 1.396582544372142e-16
+  },
+  "C-L": {
+   "pass": true,
+   "linearity_rel": 3.4986249085388037e-16,
+   "U_equals_M16": true,
+   "cells_equal_selected": true
+  },
+  "C-GRID": {
+   "pass": true,
+   "n_cells": {
+    "h2": 29,
+    "t1": 134,
+    "h2_rid": 29,
+    "h2_nonempty_coarse": 29
+   }
+  },
+  "C-T3": {
+   "pass": true,
+   "max_abs": 0.0,
+   "t3_verdict": "COMPLETE"
+  },
+  "C-F0B": {
+   "pass": true
+  },
+  "C-D": {
+   "pass": true
+  },
+  "C-A2": {
+   "pass": true,
+   "max_abs": 0.0
+  },
+  "C-2D": {
+   "pass": true,
+   "M_vs_bank_ibu_response_max_abs": 0.0,
+   "R_vs_bank_ibu_response_max_abs": 53963.153672716326,
+   "T_vs_bank_ibu_prior_max_rel": 0.0,
+   "sum_b_bkg": 119132.36881367955,
+   "sum_bw_in_window": 119132.3688136796,
+   "b_known_equal": true,
+   "b_bkg_max_abs": 0.0
+  },
+  "C-MARG": {
+   "pass": true,
+   "world_shape": [
+    14,
+    16,
+    7,
+    7,
+    6
+   ],
+   "axes": [
+    "pt",
+    "pz",
+    "eavail",
+    "q3",
+    "W"
+   ]
+  }
+ },
+ "stops": [
+  "C-DID"
+ ]
+}

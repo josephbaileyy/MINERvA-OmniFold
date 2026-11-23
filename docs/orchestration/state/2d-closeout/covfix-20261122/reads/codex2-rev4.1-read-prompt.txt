@@ -1,0 +1,29 @@
+Read-only review. Do not modify any file. Your final message is the report.
+
+You are the independent second reader of inputs/COVFIX-DECLARATION.md, DRAFT rev 4.1 of a pre-registration to fix a 2D
+neutrino cross-section covariance (205 cells) that under-covers at two held-out generator tunes (G18, AR23).
+inputs/INVENTORY.md lists what already exists; the other inputs are the cited records (COV2D design and outcome, T2A
+reading, REGRADE and its amendment, the 2D regrade JSONs, the G2R adoption decision, RE-2 part C report, KNOWN_ISSUES
+rows 84-85, F1 report and declaration, IBUKT A2, b1, PV2D code excerpts, the Q file identity check and key listings) and
+the earlier read reports from two other readers (grok-rev*, agy-rev*), which shaped revs 1-4.1. Read them only after
+forming your own view.
+
+The outside review's "Fix 1": separate bias from fluctuation, E[(s_hat - s)(s_hat - s)^T] = C_fluct + b b^T; test a
+matrix of cases (nominal truth, data Poisson only; data and MC fluctuations; coherent nuisances; alternative truth, fixed
+response; alternative truth, perturbed response) along V's eigenmodes; accept (A) a construction error found and fixed,
+(B) coverage for a stated model class with truth-model bias quantified separately, or (C) uncertainties only for coarser
+or selected combinations; no scaling the covariance until the two tunes pass.
+
+Decisions since rev 4.1 (do not raise as defects): Joseph superseded KI 85's two sentences for COVFIX, chose full size,
+and named you as second reader; the director will hold the seal passphrase and keep the relative carry.
+
+Report, with line numbers from COVFIX-DECLARATION.md:
+1. Does the design answer Fix 1? What does each outcome (A, B, C, none) actually certify, and is any licensed sentence
+   stronger than its bars?
+2. Statistics: check every number and rule in sections 2, 5 and 6 (guards, labels, f_R and its SE, C_b in the reference
+   frame and its PSD projection, the residual rule, the written null, K_J, p_i, the k >= 25 floor, the false-PASS and
+   false-FAIL bounds).
+3. Blindness and custody: can any choice be tuned on the sealed truths before PV? Is spent-once enforceable as written?
+4. Prices (every n x 0.19 product and total) and stop rules (ST1-ST6, the named exception, the KI 85 gate).
+5. Fidelity: any claim not supported by the inputs.
+Give each finding a severity (BLOCKING, MAJOR, MINOR) and a concrete fix. First line: GO or NO-GO.

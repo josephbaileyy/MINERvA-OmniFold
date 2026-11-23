@@ -1,0 +1,9 @@
+Read-only review. Never write anywhere except the single report file /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/agy-covfix8/report.md.
+inputs/COVFIX-DECLARATION.md is rev 8 of a draft pre-registration. inputs/rev7-to-rev8.diff is the complete change from
+rev 7. The rev 7 reads are inputs/agy-rev7-REPORT.md and inputs/codex2-rev7-REPORT.md.
+The director ruled the rev 8 scope after the rev 7 reads: (1) if PX has no funded path, the ST1 branch ends at the construction finding and K_A is omitted; (2) one Gaussian reference law N(0, V_drawn) with controls, no band bank, remainder or fallback; (3) the testability veto and every rate claim removed, the surrogate runs descriptive only, PASS resting only on the fixed affirmative bars applied to the real toys, and K0 reported as observed; (4) K_C and outcome C dropped; (5) codex item 4, agy majors and minors, and outcome rows for PV-never-ran and no-challenge fixed as written; (6) custody in codex simpler form (one durable spend record, one authenticated writer manifest with chained unfold outputs, ciphertext hashes only published, pinned GPG flags, a terminal rule, the cooperative assumption stated), nothing heavier. Do not re-raise any item the ruling removed; judge rev 8 as scoped.
+1. For each finding in both rev 7 reports that survives the ruling: CLOSED, PARTLY CLOSED, or OPEN in rev 8, with the line.
+2. New defects in the diff (logic, statistics in sections 6.1-6.5, the band-level influence guards in 3.3, the reference
+   law controls, custody text and gpg flags, the outcome table, consistency of every cross-reference after K_C's removal).
+3. Setting aside binding prerequisites (iris receipt, PG session, passphrase), is rev 8 ready to bind?
+Severity (BLOCKING, MAJOR, MINOR) and a fix for each. First line: GO or NO-GO.
