@@ -232,9 +232,9 @@ including those that take their truth shapes from other generators.
 
 In signal-only purity unfoldings, the injected features leave a residual of
 $1.84\%$ in the 3D $E_{\mathrm{avail}}$ marginal and at most $1.1\%$ in the
-4D $q_3$ marginal; these two readings are descriptive. The five-axis $W$
-marginal meets its prespecified recovery criterion, but the joint
-$(E_{\mathrm{avail}},W)$ cells in the same peak interval are $2.2\%$ to $9.4\%$
+4D $q_3$ marginal; these two readings are descriptive. The injected $W$
+feature is recovered within its criterion in the five-axis $W$ marginal, but the joint
+$(E_{\mathrm{avail}},W)$ cells in the same peak interval remain $2.2\%$ to $9.4\%$
 below their targets, and some injected strength appears in adjacent mass bins
 (\hyperlink{validation-nd-bumps}{marginal bump} and
 \hyperlink{validation-nd-w-bump}{$W$ bump} rows of
@@ -308,7 +308,8 @@ include these residuals.
 The sixteen-cell result depends on the starting distribution and on the
 unfolding procedure.
 The sixteen-cell estimator exceeds the prespecified bias criteria at
-\fvval{f0b-nlisted} of the \fvval{f0b-all-truths} simulated truths. The test
+\fvval{f0b-nlisted} of the \fvval{f0b-all-truths} simulated truths, the GiBUU
+hybrid and a synthetic $q_3$ tilt, and so remains biased at both. The test
 compares the mean unfolded vector with the known truth using $C_{\mathrm{rep}}$,
 with the corresponding $C_{\mathrm{model}}$ contribution removed for each
 truth derived from one of its generators. A truth is flagged if
@@ -373,13 +374,13 @@ normalization variations through both estimates, but not the model, lateral,
 response, or run-period terms.
 
 \label{sec:3d-classifier}
-The two classifier families give similar projections for the 3D
-purity baseline. With a multilayer perceptron in place of gradient-boosted
-trees and the same five iterations, the integral changes by a factor of
-1.0078 and the median differences in the one-dimensional projections are
-$0.7\%$ to $1.4\%$. Larger excursions occur in sparsely populated outer
-muon bins. The comparison is descriptive because it had no prespecified
-agreement criterion.
+Replacing the gradient-boosted trees with a multilayer perceptron, with the
+same five iterations, changes the integral of the 3D purity baseline by a factor
+of 1.0078, and the median differences in the one-dimensional projections are
+$0.7\%$ to $1.4\%$. Larger excursions occur in sparsely populated outer muon
+bins. The two classifier families therefore give similar projections in this
+configuration, although the comparison had no agreement criterion set in advance
+and does not establish their statistical equivalence.
 
 \label{sec:gbdt-model-dependence}
 Coarsening the reporting grid leaves substantial dependence on the
@@ -404,9 +405,9 @@ values shift under rounding-level perturbations.
 The sixteen-cell estimator shows joint undercoverage at both held-out GENIE
 v3 tunes with $C_{\mathrm{total}}$. Across the tested variants,
 \fvval{ll5d-njoint-min} to \fvval{ll5d-njoint-max} of \fvval{ll5d-ntoys}
-pseudo-experiments lie inside the joint region. This is a descriptive study
-because part of the procedure was fixed after an early stop
-(Appendix~\ref{app:choices-after-results}). Regrading the same
+pseudo-experiments lie inside the joint region. Because part of the procedure
+was fixed after an early stop (Appendix~\ref{app:choices-after-results}),
+these counts describe the under-coverage but are not a calibrated coverage test. Regrading the same
 pseudo-experiments against $C_{\mathrm{rep}}$, which adds response and
 run-period terms that the pseudo-experiments do not vary, lowers the mean
 $\chi^2/\mathrm{ndf}$ from \fvval{rg-16-orig-min}--\fvval{rg-16-orig-max} to
