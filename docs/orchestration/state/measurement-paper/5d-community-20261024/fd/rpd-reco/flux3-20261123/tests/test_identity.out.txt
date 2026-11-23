@@ -1,0 +1,9 @@
+ok   the 12 expected sha256s equal run-61806073's records
+ok   the fetch exits 15 on a difference
+ok   exit 15 comes before the success exit
+ok   all equal: 12/12; one changed and one missing: 11/12, DIFFERS, idbad 1
+IDENTITY-TESTS :: PASS
+KILLED   count-dropped (2 cases)
+KILLED   compare-inverted (3 cases)
+KILLED   total-hardcoded (1 cases)
+IDENTITY-MUTANTS :: 3/3 killed
