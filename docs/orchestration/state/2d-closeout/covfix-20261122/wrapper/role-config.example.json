@@ -1,9 +1,14 @@
 {
- "_comment": "SHAPE ONLY. The director writes the real config at binding and pins its sha256; every path, host and sha here is a placeholder.",
+ "_comment": "SHAPE ONLY. The director writes the real config at binding and pins its sha256; every path, host, digest and sha here is a placeholder.",
  "record_dir": "~/director-tools/covfix",
  "keychain_prefix": "covfix-",
- "ssh": ["/usr/bin/ssh", "-T", "-o", "BatchMode=yes"],
+ "ssh": ["/usr/bin/ssh", "-o", "BatchMode=yes"],
  "host": "<login node>",
+ "binding": {
+  "commitment": "<64 hex: the published commitment>",
+  "seal_digest": "<64 hex: sha256 of the committed PG-SEAL.sha256 (PV binding)>",
+  "freeze_digest": "<64 hex: sha256 of the committed P2-FREEZE.sha256 (PV binding)>"
+ },
  "seal_file": "<repo path of the committed PG-SEAL.sha256>",
  "seal_root": "<cluster directory the PG-SEAL paths are relative to>",
  "freeze_file": "<repo path of the committed P2-FREEZE.sha256>",
@@ -12,12 +17,12 @@
   "worktree": "<a dedicated worktree, checked out on the branch below>",
   "path": "docs/orchestration/state/2d-closeout/covfix-20261122/consumption/RECORD.jsonl",
   "remote": "origin",
-  "branch": "<a dedicated consumption-record branch>",
+  "branch": "<a dedicated, protected consumption-record branch>",
   "run_hooks": false
  },
  "roles": {
-  "pg-connect": {"command": "<the bound PG connect>", "binary": "<cluster path>", "binary_sha256": "<64 hex>"},
-  "pv-writer": {"command": "salloc --exclusive -N 1 <...> srun --exclusive -N 1 <writer> <args>", "binary": "<cluster path>", "binary_sha256": "<64 hex>"},
-  "pv-readout": {"command": "salloc --exclusive -N 1 <...> srun --exclusive -N 1 <readout> <args>", "binary": "<cluster path>", "binary_sha256": "<64 hex>"}
+  "pg-connect": {"launcher": ["<the bound PG connect's launcher, if any>"], "binary": "<absolute cluster path>", "binary_sha256": "<64 hex>", "args": []},
+  "pv-writer": {"launcher": ["salloc", "--exclusive", "-N", "1", "<...>", "srun", "--exclusive", "-N", "1"], "binary": "<absolute cluster path>", "binary_sha256": "<64 hex>", "args": []},
+  "pv-readout": {"launcher": ["salloc", "--exclusive", "-N", "1", "<...>", "srun", "--exclusive", "-N", "1"], "binary": "<absolute cluster path>", "binary_sha256": "<64 hex>", "args": []}
  }
 }

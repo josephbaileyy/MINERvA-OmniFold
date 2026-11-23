@@ -3,10 +3,11 @@
 
 It is NOT PG or PV code. It shows what cov2d's binaries must do with the frame:
   1. read stdin to EOF and require exactly the role's frame (covfix_wrapper.py's docstring);
-  2. hand the passphrase to gpg on fd 3 through an internal pipe, with the pinned decrypt flags, and stream the
-     ciphertext on gpg's stdin and the plaintext on gpg's stdout;
+  2. hand the passphrase to gpg on fd 3 through an internal pipe, with the pinned decrypt flags, in a fresh empty
+     GNUPGHOME, and stream the ciphertext on gpg's stdin and the plaintext on gpg's stdout;
   3. use no decrypted byte before gpg has exited 0 (an MDC failure is a refusal);
-  4. keep plaintext in memory only, and print no secret.
+  4. keep plaintext in memory only, and print no secret;
+  5. exit covfix_wrapper.BREAK_RC (66) on a confirmed integrity break, so the wrapper stops the whole seal.
 
   reference_role.py --role pv-writer --sealed DIR [--fail-after-decrypt]
   reference_role.py --role pg-connect
@@ -53,7 +54,8 @@ def main(argv=None) -> int:
         with open(os.path.join(a.sealed, name + ".gpg"), "rb") as f:
             plain = cw.gpg_run(cw.GPG_DECRYPT, passphrase, f.read())
         if hashlib.sha256(plain).hexdigest() != want:
-            raise SystemExit(f"reference-role: {name} does not reproduce its plaintext sha256")
+            print(f"reference-role: {name} does not reproduce its plaintext sha256", file=sys.stderr)
+            return cw.BREAK_RC          # a confirmed integrity break, typed for the wrapper
         del plain
         n += 1
     if a.fail_after_decrypt:
