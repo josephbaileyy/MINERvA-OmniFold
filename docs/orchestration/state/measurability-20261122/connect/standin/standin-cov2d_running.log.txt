@@ -1,5 +1,6 @@
-fence host=a91ba87023be utc=2026-11-23T00:05:11Z
-sacct -X -n -P -u root -S 2026-09-24T00:05:11 -E now -o JobID,JobName,State 2>&1
+/connect/standin.sh: line 31: /pscratch/sd/j/josephrb/ibukt-20261119-d/prepare/out/bank.npz: No such file or directory
+fence host=7ac022d6c17f utc=2026-11-23T02:56:03Z
+sacct -X -n -P -u root -S 2026-09-24T02:56:03 -E now -o JobID,JobName,State 2>&1
 sacct unended: 61000001|cov2d_g2r|RUNNING
 sacct matching rows: 2
 FENCE REFUSED: an unended, unclassifiable or malformed sacct row

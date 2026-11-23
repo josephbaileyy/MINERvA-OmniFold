@@ -1,19 +1,19 @@
 == script rc=9; self copy left: ls: cannot access '/dev/shm/msrp.1.sh': No such file or directory; shm dir: ls: cannot access '/dev/shm/msr-connect': No such file or directory
 == the connect log
-  node 4acf4c0fffe9 nproc=4 loadavg 0.16 0.03 0.03
-  2026-11-23T00:04:15Z
-  window_end_epoch 1795393155 (now 1795392255); fence prefixes cov2d,ll5d_,ibukt,prr_,e96,ens1_,t3p_
-  connect script sha256 30c3ba38a4603da0c483a4faabceb867b740aba490c45a2d3bea8a9857ed336b
+  node ff1e6a4e11a1 nproc=4 loadavg 1.02 0.39 0.14
+  2026-11-23T02:56:16Z
+  window_end_epoch 1795403476 (now 1795402576); fence prefixes cov2d,ll5d_,ibukt,prr_,e96,ens1_,t3p_
+  connect script sha256 44f8ad7a4b8395bbd19d45f32d107bebb106a11c78c9c05083e68cde087ffbdd
   == cov2d fence rev 2 (3fbc9cbd6c08d4c86c71aeeccf28b0b3d8a77393121ef23787c1d421b682171e)
-  fence host=4acf4c0fffe9 utc=2026-11-23T00:04:15Z
-  sacct -X -n -P -u root -S 2026-09-24T00:04:15 -E now -o JobID,JobName,State 2>&1
+  fence host=ff1e6a4e11a1 utc=2026-11-23T02:56:16Z
+  sacct -X -n -P -u root -S 2026-09-24T02:56:16 -E now -o JobID,JobName,State 2>&1
   sacct matching rows: 2
   FENCE CLEAR
   == fence (sacct)
   fence clear
   == rpd_ rows (printed; limitation-resolver's flux2 may coexist with these login reads)
   61800000|rpd_flux2|RUNNING
-  HEAD f4b0ba6570559ba17bac0a9f024cb1a647f09c68; porcelain --ignored lines before: 0
+  HEAD 83d7aee50a47d9513f5c66b044f7a20dc8ce90f2; porcelain --ignored lines before: 0
   msr_build.py: OK
   msr_overlap.py: OK
   threads 2; nice 19; ionice idle; python 3.11.18
@@ -22,19 +22,20 @@
   OVERLAP ALLOWED (both read-only interpreter): ours read (interpreter) /global/homes/j/josephrb/.conda/envs/root_6_28  ~  theirs rpd flux2 read (interpreter) /global/homes/j/josephrb/.conda/envs/root_6_28
   OVERLAP: CLEAR (pairs checked 1482, hits 0)
   == inventory: stat (incl. atime) and O_NOATIME sha256
-  {"path": "/pscratch/sd/j/josephrb/t3p-20261121/stage/of_inputs_5d.npz", "size": 26, "mtime": 1795392255.5199118, "atime": 1795392255.517912, "inode": 1111997, "sha256": "e260202e982614976d770658b8f83754cc6fcede6fe60d5c1e2e9d3f0b69fe30"}
-  {"path": "/pscratch/sd/j/josephrb/t3p-20261121/stage/bkg_dump.npz", "size": 22, "mtime": 1795392255.5239112, "atime": 1795392255.5239112, "inode": 1111998, "sha256": "b2c958c26f12a54e615a75f0d42bf1d223231761d750ca550fbc95fc07447d53"}
-  {"path": "/pscratch/sd/j/josephrb/t3p-20261121/stage.json", "size": 20, "mtime": 1795392255.5289109, "atime": 1795392255.5289109, "inode": 1111999, "sha256": "891b19d7eb857c59620e12543c519a0dc24175c063c747f29fb6861d2ca07cd5"}
-  {"path": "/pscratch/sd/j/josephrb/t3p-20261121/log-floor/SHA256SUMS", "size": 20, "mtime": 1795392255.5339103, "atime": 1795392255.5339103, "inode": 1112000, "sha256": "109fb1db8113baf3224bc8aefe07a12bb1fe46f4e5441c8978e2bb014d71b004"}
-  {"path": "/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/3d/of_inputs_3d.npz", "size": 26, "mtime": 1795392255.5429094, "atime": 1795392255.5409095, "inode": 1112001, "sha256": "978633105e6e62015711add242f22562c9b1dde86c6e96b9b04334c4b8061839"}
-  {"path": "/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/4d/of_inputs_4d.npz", "size": 26, "mtime": 1795392255.5479088, "atime": 1795392255.5479088, "inode": 1112002, "sha256": "288b38185cbab1466bae982756f1c6a4d46f81dcae2f5f3c1cb08be90b2f25e4"}
-  {"path": "/pscratch/sd/j/josephrb/ibukt-20261119-d/prep/bank.npz", "size": 18, "mtime": 1795392255.556908, "atime": 1795392255.556908, "inode": 1112003, "sha256": "74d75c38a644aabbd57719f0a3efbec874b4a1732e2e0a4981047bd0e4224d8e"}
-  {"matches": []}
-  STOP: no bank.npz at 60416384474d1a3b0644f1e09869cf09371382ecbf3c116b1ed110cd47341e2f under /pscratch/sd/j/josephrb/ibukt-20261119-d
+  {"path": "/pscratch/sd/j/josephrb/t3p-20261121/stage/of_inputs_5d.npz", "size": 26, "mtime": 1795402576.9443858, "atime": 1795402576.9443858, "inode": 1111998, "sha256": "e260202e982614976d770658b8f83754cc6fcede6fe60d5c1e2e9d3f0b69fe30"}
+  {"path": "/pscratch/sd/j/josephrb/t3p-20261121/stage/bkg_dump.npz", "size": 22, "mtime": 1795402576.9453897, "atime": 1795402576.9453897, "inode": 1111999, "sha256": "b2c958c26f12a54e615a75f0d42bf1d223231761d750ca550fbc95fc07447d53"}
+  {"path": "/pscratch/sd/j/josephrb/t3p-20261121/stage.json", "size": 20, "mtime": 1795402576.9473982, "atime": 1795402576.9473982, "inode": 1112000, "sha256": "891b19d7eb857c59620e12543c519a0dc24175c063c747f29fb6861d2ca07cd5"}
+  {"path": "/pscratch/sd/j/josephrb/t3p-20261121/log-floor/SHA256SUMS", "size": 20, "mtime": 1795402576.9484024, "atime": 1795402576.9484024, "inode": 1112001, "sha256": "109fb1db8113baf3224bc8aefe07a12bb1fe46f4e5441c8978e2bb014d71b004"}
+  {"path": "/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/3d/of_inputs_3d.npz", "size": 26, "mtime": 1795402576.9494066, "atime": 1795402576.9494066, "inode": 1112002, "sha256": "978633105e6e62015711add242f22562c9b1dde86c6e96b9b04334c4b8061839"}
+  {"path": "/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/4d/of_inputs_4d.npz", "size": 26, "mtime": 1795402576.9504108, "atime": 1795402576.9504108, "inode": 1112003, "sha256": "288b38185cbab1466bae982756f1c6a4d46f81dcae2f5f3c1cb08be90b2f25e4"}
+  {"path": "/pscratch/sd/j/josephrb/ibukt-20261119-d", "size": 4096, "mtime": 1795402576.9433815, "atime": 1795402576.9423773, "inode": 1111990, "sha256": null}
+  {"path": "/pscratch/sd/j/josephrb/ibukt-20261119-d/prepare/out/bank.npz", "size": 18, "mtime": 1795402576.951415, "atime": 1795402576.951415, "inode": 1112004, "sha256": "74d75c38a644aabbd57719f0a3efbec874b4a1732e2e0a4981047bd0e4224d8e"}
+  bank /pscratch/sd/j/josephrb/ibukt-20261119-d/prepare/out/bank.npz sha256 74d75c38a644aabbd57719f0a3efbec874b4a1732e2e0a4981047bd0e4224d8e (A2's bank_sha256 60416384474d1a3b0644f1e09869cf09371382ecbf3c116b1ed110cd47341e2f)
+  STOP: the bank is not A2's bank (no other copy is searched for)
   == records
-  2026-11-23T00:05:06Z
-  records copied: 4 files, 19840 bytes
-  fetch-probe.tar sha256 f0ea9a6fae2551b384188aadc1ee616abf00dcef394b9fc3f669fe77699dbfb2 bytes 30720
+  2026-11-23T02:57:10Z
+  records copied: 4 files, 21367 bytes
+  fetch-probe.tar sha256 4af43c98f9d52d76f7337b4d5fb88805c7bd1d156d3421b148bd5caa37e08de1 bytes 30720
   msr probe rc=9
-  2026-11-23T00:05:06Z
+  2026-11-23T02:57:11Z
 == done: 9

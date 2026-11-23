@@ -7249,6 +7249,7 @@ docs/orchestration/state/measurability-20261122/connect/msr_probe_connect.templa
 docs/orchestration/state/measurability-20261122/connect/msr_probe_launch.sh	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
 docs/orchestration/state/measurability-20261122/connect/overlap-local.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
 docs/orchestration/state/measurability-20261122/connect/standin/Dockerfile.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
+docs/orchestration/state/measurability-20261122/connect/standin/standin-bank_missing.log.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
 docs/orchestration/state/measurability-20261122/connect/standin/standin-cov2d_running.log.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
 docs/orchestration/state/measurability-20261122/connect/standin/standin-msr_running.log.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
 docs/orchestration/state/measurability-20261122/connect/standin/standin-ok.log.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
