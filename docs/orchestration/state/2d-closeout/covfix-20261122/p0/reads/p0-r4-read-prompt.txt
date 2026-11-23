@@ -1,0 +1,15 @@
+You are an independent reviewer of analysis code for COVFIX phase P0 (a particle-physics covariance study), round 4. Read-only: do not run anything on real data, do not modify files. All files are in the current directory.
+
+Authority: COVFIX-DECLARATION.md (rev 11.4, bound); P0 is its section 3.1, using sections 2, 5.2 and 8. Code: covfix_core.py (shared math) and covfix_p0.py (the P0 driver). Tests: test_covfix_core.py and test_covfix_p0.py (synthetic only) and test_covfix_p0_pins.py (production pin audit). Receipts: tests.txt, line-trace.txt, mutation.txt (via covfix_mutation.py). regrade_crep.py is context only (REGRADE's carry_frac of C_PL and its A0 tolerance form).
+
+Round 3: codex2-p0-r3-REPORT.md (NO-GO, 5 blocking) and agy-p0-r3-REPORT.md (GO). The author's response, item by item, is p0-r3-dispositions.md.
+
+Do two things.
+A. For EVERY round 3 item (codex blocking 1-5, codex non-blocking 1-5, agy non-blocking 1-3), state RESOLVED, ACCEPTABLY KEPT (the stated reason holds), or NOT RESOLVED, with file:line evidence.
+B. Re-review the whole code fresh against the declaration (sections 2, 3.1, 5.2, 8): any line whose behaviour differs from the declaration, any declared P0 reading missing, any undeclared stop, any test gap, and anything the round 4 changes broke. In particular check: the per-tune carry refusal scoping and REGRADE's C_run formula; the relative null test in the tied-space Gram-Schmidt; lambda_1 from np.linalg.eigh; A0's positivity check before the grader and its zero-reference handling; single-read hashing (read_pinned) and parsing from the same bytes; the IBUKT arm shape check. This is round 4: report as BLOCKING only what would make P0's record on the real committed inputs wrong or violate the declaration; adversarial floating-point constructions that cannot arise from the declared inputs, and matters of taste, go under NON-BLOCKING with that stated.
+
+Output format:
+A. ROUND 3 ITEMS: one line each.
+B. BLOCKING (would make P0's record wrong, or violates the declaration): numbered, each with file:line, the declaration section and a concrete fix.
+NON-BLOCKING: numbered, same format.
+Last line exactly: "VERDICT: GO" or "VERDICT: NO-GO".
