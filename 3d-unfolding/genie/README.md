@@ -114,6 +114,7 @@ source `setup_genie.sh` once to export it, or pass `--graphs`.)
   (both ~10 % low); on **Eavail** the tune acts at low recoil (RPA suppresses the
   QE peak) yet still underpredicts the data at the lowest Eavail — model
   discrimination the 3D axis enables. (`model_tune_xsec3d.py`.)
+  > **Correction 2026-11-23 (the bullet above is kept as written).** "MC-stat-limited" does not hold. Re-measured on the current 2D CV MC (`43f8cc16…`, through E_R's `xsec.root` `a5c13fc3…`), χ²(shipped − ours)/205 = 1.572 on the published TotalCovariance, so the 1.57 reproduces. Rounding the shipped file to three significant figures gives about 0.008, and our MC statistics give at most 0.43 (99th percentile, independent-sample null). The difference is systematic: shipped/ours rises with p‖ to +16–20 % at 40–60 GeV/c and is +6–9 % in the lowest pT row. The normalisation statement was made on the older 3D omnifile and was not re-tested. Record: [`docs/orchestration/state/ibu-chi2-20261123/`](../../docs/orchestration/state/ibu-chi2-20261123/README.md) (`truthtest/`).
 - **NuWro 21.09: DONE** (2026-05-31) — first genuinely independent generator
   (not a GENIE tune). From CVMFS (`nuwro v21_09_1`), same UPS `-H` SL7 trick +
   compat shim (+ `libxxhash` from conda). Three NuWro-specific gotchas, all

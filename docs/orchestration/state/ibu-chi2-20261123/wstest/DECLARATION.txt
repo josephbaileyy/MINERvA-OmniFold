@@ -1,0 +1,44 @@
+# Weights vs scale/selection: tests W and S (declared before computing), 2026-11-23, Joseph's go
+
+Context: the published result folded through our response misses our data at reco p|| 40-60 (shape stat S_COL = +10.0%)
+and reco pT 0-0.07 (S_ROW = -6.38%) [lattest Amendment 2 values, CV]. Shape stat S_reg = wmean_reg(r) - wmean_all(r),
+r = y/f - 1, fixed CV combined-error weights, y = N - B (signed), t_pub as in foldtest.
+
+## Test W: do MINERvA's weights, applied event by event, explain it?
+Job: Slurm, account m3246, CPU, qos interactive, -N 1 -n 1, <= 30 min. Reco from the verified CV copy
+(oflow-split-20261123/cv.root, 43f8cc16...); truth q3, W from laterals/..._active_BeamAngleX_0.root (truth unshifted).
+ C-ROW  MC, MC_pz, w_truth equal row by row between the two files (exact). Else STOP.
+ C-CV   sum over (a,b) of the split T and M equals signed_data.npz T and M, max|diff|/max <= 1e-9. Else STOP.
+Per event: E_mu = sqrt(pT^2+p||^2+0.105658^2); q0 = sqrt(W^2+q3^2) - 0.938272; E_nu = E_mu + q0; Q2 = q3^2 - q0^2.
+Bins: E_nu edges 0,3,4,5,6,7,8,10,12,15,20,30,50,80,inf (14); Q2 edges 0,0.05,0.1,0.2,0.3,0.5,0.8,1.2,2,4,inf (10);
+non-finite E_nu or Q2 go to one extra bin with weight fixed at 1. Job writes T split A[t,ab] and M split M4[r,t,ab].
+Fit (local): weights w_ab in [0.2, 5] minimizing sum_j (T'_j F_j / s_j - 1)^2 over the 205 reported cells
+(s = shipped Tune v1 model) + 1e-4 * sum_ab (w_ab - 1)^2. T' = A w, M' = M4 w.
+ C-FIT  after the fit, shipped/ours' - 1 has median |.| <= 1%, and its pT-row-0 mean and p||-40-60-column mean are
+        each within +-2%. If C-FIT fails: reading WEIGHT-MODEL-INADEQUATE (test inconclusive), still report numbers.
+Reading per region (COL, ROW), S' from the fold with R' = M'/T' (background unchanged, CV):
+ EXPLAINS |S'| <= |S_CV|/3;  PARTIAL reduction of |S| >= 30%;  NONE otherwise;  WRONG-WAY |S'| > 1.3 |S_CV|.
+Secondary: IBU K=10 with prior T', response M', signed y, chi2/205 vs published (CV 0.961): MAIN f>=0.5, PARTIAL
+0.2<=f<0.5, MINOR |f|<0.2, AWAY f<=-0.2, f = (0.961 - D')/0.961.
+
+## Test S: does one MINOS momentum scale fit the whole p|| profile (calibration), or only the top (threshold-like)?
+Local, lattest/lat/*.npz. sigma = +1 for Muon_Energy_MINOS_1 (raises MC reco momentum), -1 for _0. M(sigma), T(sigma),
+B(sigma) by elementwise quadratic through sigma = -1, 0, +1 (an assumption beyond |sigma| = 1). Fold f = c R(sigma) t_pub
+with free global c. Fit (sigma, c) by minimizing the reco chi2 with CV combined errors over:
+ lo = reco cells with p|| < 20 (columns 0-13), hi = columns 14-15; sigma in [-4, 4]. Errors from Delta chi2 = 1.
+Readings:
+ CONSISTENT-SCALE  sigma_lo and sigma_hi both >= 1 and |sigma_lo - sigma_hi| <= 1  -> one scale fits the profile;
+                   favours a momentum-calibration difference over a high-momentum selection.
+ TOP-ONLY          sigma_hi >= 1 and |sigma_lo| < 0.5  -> only the top wants it: a curvature-only calibration or a
+                   high-momentum selection (not separable here).
+ OTHER             anything else (report the values).
+Descriptive: sigma_all (all cells), per-column S at sigma_all.
+Not citable for a cause; nothing committed.
+
+## Amendment 1 to test W (after the C-ROW STOP; no W number was computed or seen)
+C-ROW failed (job 2026-11-23: the CV copy and the BeamAngleX_0 lateral do not align row by row; aggregate T agreed at
+1e-14, so most likely a different row order; no event key exists to join on). Source changed to ONE file that carries
+CV reco and truth q3, W together: nd-unfolding/runEventLoopOmniFold_5D_MEFHC_universes_full_bkgaware.root
+(mc_signal_reco: sim, sim_pz, sim_pass, w_reco, MC, MC_pz, w_truth, MC_q3, MC_W). C-ROW is dropped; C-CV (the split T
+and M from this file sum to signed_data.npz T and M at <= 1e-9) is the guard that this file's CV equals the pinned CV.
+Everything else in test W is unchanged.

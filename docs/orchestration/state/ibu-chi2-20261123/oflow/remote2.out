@@ -1,0 +1,5 @@
+copy_sha 43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df
+python rc=1
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:16.88
+	Maximum resident set size (kbytes): 218664
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  /pscratch/sd/j/josephrb/oflow-split-20261123/split.json
