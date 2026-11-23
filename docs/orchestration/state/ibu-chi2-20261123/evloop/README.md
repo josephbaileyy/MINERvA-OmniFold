@@ -54,6 +54,8 @@ MAT, MAT-MINERvA and UnfoldUtils, read-only.
 
 One point is noted against agy's Q1 claim that "no valid reco muon is excluded". In the older 1A processing, `MasterAnaDev_muon_P` is -9999 on some real reco events (`stageD-inputs/q2-opendata-20261014/REPORT.md` §3). The MAD variant therefore drops those rows, in data and in MC. The MAD readout reports MAD's total counts beside BASE's, so the size of that selection change is visible.
 
+**Local scorer** `score_evloop.py` (sha256 `a1a4a0461bbc28f565fed06f9ff4ed141ef0d7ce4057ac9856f76b1bf2e730a1`). It was committed before any product existed. It implements C-REPRO, the C-KIN and C-ANG thresholds, and the declared readings. **One interpretation is fixed here, before any number was read.** The declaration's CURV/RANGE "PARTIAL if reduction >= 30 % within \|d\| <= 3 %" is evaluated at the fitted d̂, not at the best d in the range, so that no point is picked after the fact. The best reduction over the whole range is printed as a descriptive number, read by no rule.
+
 ## The checks before running
 
 - **agy read** (Gemini 3.8 Flash (High), sandboxed, on hashed copies; [`agy-read/`](agy-read/)): **VERDICT: GO**, no
