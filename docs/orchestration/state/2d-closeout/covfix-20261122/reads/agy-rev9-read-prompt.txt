@@ -1,0 +1,7 @@
+Read-only review. Never write anywhere except the single report file /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/agy-covfix9/report.md.
+inputs/COVFIX-DECLARATION.md is rev 9 of a draft pre-registration. inputs/rev8-to-rev9.diff is the complete change from
+rev 8. The rev 8 reads are inputs/agy-rev8-REPORT.md and inputs/codex2-rev8-REPORT.md. Scope is fixed by the director: K_C and outcome C are dropped; the testability veto and all rate claims are removed (stress runs are descriptive only); one Gaussian reference law; custody in the simpler form (durable spend record, one authenticated writer manifest with chained unfold outputs, ciphertext hashes only, pinned gpg flags, terminal rules, cooperative assumption). Do not re-raise items those cuts removed; judge rev 9 as scoped. Prefer fixes that remove rather than add machinery.
+1. For each finding in both rev 8 reports: CLOSED, PARTLY CLOSED, or OPEN in rev 9, with the line.
+2. New defects introduced by the diff, and any remaining internal contradiction anywhere in the declaration.
+3. Setting aside binding prerequisites (iris receipt, PG session, passphrase), is rev 9 ready to bind?
+Severity (BLOCKING, MAJOR, MINOR) and a fix for each. First line: GO or NO-GO.

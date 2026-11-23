@@ -1,0 +1,12 @@
+Read-only review. Do not modify any file. Your final message is the report.
+You read rev 4.1 of inputs/COVFIX-DECLARATION.md (now rev 6) and returned NO-GO (inputs/codex2-rev4.1-REPORT.md).
+inputs/rev4.1-to-rev6.diff is the complete change; the header's "Rev 5" and "Rev 6" entries map your findings to
+sections. inputs/agy-rev5-REPORT.md is the other reader's delta read of rev 5, answered in rev 6.
+inputs/DECISION-20261123.md is Joseph's decision (KI 85 superseded for COVFIX; full size as designed; you as reader).
+1. For each BLOCKING and MAJOR finding in your rev 4.1 report: CLOSED, PARTLY CLOSED, or OPEN in rev 6, with the line.
+2. New defects introduced by revs 5-6 (statistics in sections 6.1-6.5 especially: F~ and u_R, the calibration law and
+   per-candidate bias grids, the whole-rule simulation with a 200-resample inner bootstrap, conservative cutoffs, the
+   affirmative total bar and its stated false-PASS rates; custody and spent-once; the exception phase PX).
+3. Setting aside binding prerequisites (iris receipt, PG session, passphrase), is rev 6 ready to bind? If not, list
+   exactly what must change.
+Severity (BLOCKING, MAJOR, MINOR) and a concrete fix for each. First line: GO or NO-GO.
