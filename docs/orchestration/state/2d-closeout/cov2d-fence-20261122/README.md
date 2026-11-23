@@ -1,8 +1,21 @@
-# cov2d_fence.sh rev 2: the COV2D fence, sacct only (2026-11-22)
+# cov2d_fence.sh rev 3: the COV2D fence, sacct only (2026-11-23)
 
 **By** the `cov2d` session, at the director's request. Rev 1 (sha256 `16a2a5cd…`) called `squeue` at line 9, which the
 standing rule forbids (sacct, never squeue). The four committed copies of rev 1 are left in place: each records a connect
-that already ran with it. Nothing uses rev 2 until the director has its sha.
+that already ran with it.
+
+**Rev 3 (2026-11-23).** Rev 2 (sha256 `3fbc9cbd…`, merged at 7d5a98361) failed closed in production. At tier3-design's MSR
+connect P (login38, 2026-11-23T03:14:13Z), Perlmutter refused its query `-S <60 days ago>` with
+`sacct: error: Too wide of a date range in query`, so the fence printed FENCE REFUSED and exited 3 (records:
+tier3-design's branch at 2b06909b, `docs/orchestration/state/measurability-20261122/run-p1/`).
+- **The only code change:** -S is now 14 days back, the window rev 1 and the T3 and flux2 sacct fences ran successfully
+  with. It covers the 48 h MaxWall with margin.
+- **The header comment is corrected.** Its "60 days is far past the required 48 h" premise is gone.
+- **Two tests are added:** a stub case in which sacct prints "Too wide of a date range" with rc 1, which the fence must
+  REFUSE; and checks that the logged -S is at most 14 days back and that the script's only `date -d` window is
+  '14 days ago'.
+- **Kept from rev 2:** everything else, including the self-delete guard and its `..` rule.
+- Nothing uses rev 3 until the director has its sha.
 
 **Files**
 <!-- absence-ok: describes this test's own stubs and cases, not a claim that a result does not exist -->
@@ -11,12 +24,12 @@ that already ran with it. Nothing uses rev 2 until the director has its sha.
   It has 30 sacct/env cases. Each checks the exit code and the verdict line.
   It also checks the sacct argv (-S at least 172800 s back, -X -n -P -u -E now -o, no -s/--state), and that squeue
   never runs. It has 5 self-copy cases, each run on both CLEAR and REFUSED; see "Self-copy cleanup" below.
-  `bash test_cov2d_fence.sh` exits 0 with ALL PASS (49 ok lines) on this Mac: bash 3.2.57, /usr/bin/awk.
-- `mutants.txt`: 30 hand mutants of the fence, each run against the test: 30/30 killed. They include dropping the `-ef`
+  `bash test_cov2d_fence.sh` exits 0 with ALL PASS (52 ok lines) on this Mac: bash 3.2.57, /usr/bin/awk.
+- `mutants.txt`: 32 hand mutants of the fence, each run against the test: 32/32 killed (rev 3 adds the 60-day and 15-day windows). They include dropping the `-ef`
   check, dropping the `/dev/shm/` prefix check, dropping the `..` rule, and rev 1's delete-any-`$1` cleanup.
 
 **What the fence does**
-- It reads `sacct -X -n -P -u <user> -S <60 days ago, local> -E now -o JobID,JobName,State 2>&1`.
+- It reads `sacct -X -n -P -u <user> -S <14 days ago, local> -E now -o JobID,JobName,State 2>&1`.
 - It refuses if `date` or `id` fails or gives a malformed value, or if sacct exits non-zero.
 - It refuses on any line (stdout or stderr) that is not a 3-field row with a numeric JobID. An error sacct prints while exiting 0 therefore refuses.
 - It refuses if a row named `cov2d*` or `t2a*` has a State whose first word is outside the closed terminal set
@@ -29,7 +42,7 @@ that already ran with it. Nothing uses rev 2 until the director has its sha.
 - Fixed: sacct exiting 0 with an error on stderr printed CLEAR. stderr is now merged into the classified stream, and the JobID must be numeric.
 - Tests added for the untested branches it named: stderr cases, id/date failures, a blank line mid-listing, bare
   `CANCELLED`, `CANCELLED+`, array/het JobIDs, the full argv, verdict text, and the self-copy exit code.
-- The window went from 14 to 60 days. Grok noted that a pending job whose EligibleTime is before `-S` can fall outside a sacct window; 60 days reaches back before the cov2d campaign began (2026-11-02).
+- Rev 2 widened the window from 14 to 60 days, after Grok noted that a pending job whose EligibleTime is before `-S` can fall outside a sacct window. Perlmutter refused the 60-day range (rev 3 above), so rev 3 returns to 14 days. The held-pending gap is covered by the fresh cov2d ack.
 - agy (gemini-3.8-flash-high) read the version before the cleanup fix (fence `46092049…`, test `7a90157e…`) and returned
   PASS. It noted that a benign sacct stderr line would refuse, and judged that unlikely on a healthy node and acceptable
   under fail closed.
