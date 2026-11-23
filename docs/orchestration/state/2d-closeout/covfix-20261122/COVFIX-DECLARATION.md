@@ -255,8 +255,9 @@ its "Fix 1". The inventory is `INVENTORY.md` in this directory, read at origin/m
     - a canonical Gram–Schmidt basis for tied eigenspaces;
     - every terminal stop before complete grades routes to "ungraded", in the row now named "none, PV ungraded";
     - stale wording removed.
-  - **The price rises by the synthetic test's 2.0 node-h:** full 410.55–411.22 (334.55–335.22 without N5). PV is 117.38,
-    inside its cap of 135. The ceiling to pin (409.22 or 411.22) goes to the director (§3).
+  - **The price includes the synthetic test's 2.0 node-h:** full 410.55–411.22 at PG's priced range (334.55–335.22
+    without N5). PV is 117.38, inside its cap of 135. By the director's ruling the ceiling stays 409.22, with ST6 as the
+    hard stop (§3).
 
 <!-- absence-ok: rule statement -->
 **Rules are fixed before computation.** Every reading, bar, candidate rule, seed and stop rule below is fixed at
@@ -383,7 +384,10 @@ V(t) = D_t V D_t, with D_t = diag(x̂_t / x_R).
 | **P2** | build and freeze the candidates (§5) | 0 (local) | 0 | 0 |
 | **PV** | 600 validation toys, 2 central unfolds, the synthetic-seal test (a fixed 2.0 reservation, §3.3), and the exclusive-node writer and readout (about 1.0, an unmeasured estimate) (§3.4, §6) | 117.38 | 117.38 | 135 |
 
-- **Totals:** full 410.55–411.22; lean 328.85–329.52 (including the synthetic test's 2.0, added in rev 10).
+- **Totals:** full 410.55–411.22; lean 328.85–329.52, including the synthetic test's 2.0 added in rev 10, at PG's priced
+  range of 1.33–2.00.
+  - At F1's measured PG figure of 1.33 the full total is 410.55, 1.33 above the 409.22 ceiling. ST6 enforces the
+    ceiling either way (below).
   - The ranges come from PG's range only. The printed range starts at 1.33, above F1's measured 1.3275 node-h for two
     tunes.
   - Without N5 (§9.1): full 334.55–335.22; lean 271.85–272.52.
@@ -407,11 +411,16 @@ V(t) = D_t V D_t, with D_t = diag(x̂_t / x_R).
     time (0.19 node-h is a mean), so a slow job is not killed, and a stalled one cannot charge more than its ceiling.
   - A phase is submitted in chunks small enough that ended charges plus unended ceilings stay within its cap (ST3).
   - The admission check is ST3/ST6's reservation ledger (§3.3), not a prefix poll of sacct.
-  - **The ceiling is pinned in the binding.** Joseph approved about 409 node-h
-    (`DECISION-20261123-joseph-covfix-ki85-size-reader.md`), whose top is 409.22. Rev 10's 2.0 node-h synthetic test
-    raises the full total's top to 411.22. Whether the binding pins 409.22 (with the test absorbed in the margin, since
-    PG is priced at its top) or 411.22 is the director's ruling. The ceiling is separate from the expected price and from
-    the 468 sum of caps.
+  - **The ceiling is pinned in the binding at 409.22 node-h,** Joseph's approved top
+    (`DECISION-20261123-joseph-covfix-ki85-size-reader.md`), by the director's ruling on rev 10.
+    - The synthetic-seal test's 2.0 node-h reservation is kept inside it.
+    - **The arithmetic, stated exactly.** PG is priced at its 2.0 top, against F1's measured 1.33. That margin of 0.67
+      covers part of the test's 2.0. The other 1.33 must come from the toy phases' actual spend falling below their
+      priced 0.19 node-h per unfold, which itself includes COV2D's pilots and retries (0.188). The expected full total
+      at PG = 1.33 is 410.55, 1.33 above the ceiling, before any such saving.
+    - ST6 is the hard stop. If the sacct-measured spend ever puts the remaining phases above 409.22, ST6 stops the run,
+      and it goes to the director. It does not go to Joseph as a re-approval.
+    - The ceiling is separate from the expected price and from the 468 sum of caps.
 
 ### 3.1 P0: what the committed records give (0 node-h, local, descriptive)
 
