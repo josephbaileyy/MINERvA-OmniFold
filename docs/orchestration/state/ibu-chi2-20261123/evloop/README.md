@@ -25,6 +25,7 @@ It is not a statement about MINERvA's code or calibration, a cause, or note word
 | `evl.sbatch` | `df799fef2a6dc88abd72640033688b4625139f9b3904437d38309afc9be32ce0` | the `ibuchi_evl` array, 12 playlists |
 | `ana.sbatch` | `90e1dbfc6f32135a458bc982e05949d669db7c4e55da1f0272c3830a273a3b19` | `ibuchi_ana`: hadd, then `ana.py` |
 | `ana.py` | `8c078cd62c2113037c8cc4e85e46ad1f412b58665325e8c29eca00149607116d` | binned products per variant, plus C-KIN and C-ANG |
+| `smoke.sh` | `8918dd15e7dcd7c5ee947d20f29ed11063884a46b95a899ad8b49e429d5d2760` | login-node smoke on 1A (2 MC + 8 data files), functional checks |
 | `staged.sha256` | | everything staged on Perlmutter (5 uploads, 24 manifests) |
 
 The canonical diff is `MINERvA101/MINERvA-101-Cross-Section/runEventLoopOmniFold.cpp`, sha256 `57792e42…`. The receipt
