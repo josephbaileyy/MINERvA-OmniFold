@@ -100,7 +100,7 @@ the named block itself changes; `assemble` stops on any key it cannot find.
 The rewiring this README defers ("to be rewired at the end of the check stage") is done, under the director's ruling
 (option A) on the rewrite-into-main integration. `check_note_records.py probe` now runs against
 `records-inventory-base-20261122.json`, frozen with `inventory --post-move` from the journal-voice note at
-`2b06d7f28936f2d73e11d7d64be00d4617cfade3`, with the ledger `records-move-ledger-20261122.md` and THIN_BASE at the same
+`1ce680617792fd70345e38e2fc111a04a27b05fc`, with the ledger `records-move-ledger-20261122.md` and THIN_BASE at the same
 commit (`check_note_records.py`, THE RE-BASE). `records-inventory-base.json`, `records-move-ledger.md` and THIN_BASE
 `563715b8` are the frozen 10-21/10-22 move record, kept and labelled. At the new base the probe passes (27 labels,
 32 tags, 97 struck bodies, 31 paths, 104 record paragraphs, 6 App. G pointers), and its self-test passes with 43 of 43

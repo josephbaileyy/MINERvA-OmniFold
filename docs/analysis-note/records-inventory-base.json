@@ -1,5 +1,5 @@
 {
- "_frozen": "frozen 10-21/10-22 move record; superseded as the probe base on 2026-11-22 by records-inventory-base-20261122.json at 2b06d7f28936f2d73e11d7d64be00d4617cfade3, because the journal-voice rewrite replaced the note files (records-reorg/README.md)",
+ "_frozen": "frozen 10-21/10-22 move record; superseded as the probe base on 2026-11-22 by records-inventory-base-20261122.json at 1ce680617792fd70345e38e2fc111a04a27b05fc, because the journal-voice rewrite replaced the note files (records-reorg/README.md)",
  "_base_sha": "4ba0dd2f731c84b1fa4192639d94f87cc28a3508",
  "_derived_by": "docs/analysis-note/check_note_records.py inventory",
  "labels": [

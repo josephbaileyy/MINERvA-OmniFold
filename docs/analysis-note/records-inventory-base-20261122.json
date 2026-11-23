@@ -1,7 +1,7 @@
 {
- "_base_sha": "2b06d7f28936f2d73e11d7d64be00d4617cfade3",
+ "_base_sha": "1ce680617792fd70345e38e2fc111a04a27b05fc",
  "_derived_by": "docs/analysis-note/check_note_records.py inventory . <out> --post-move --sha <base>",
- "_note": "The probe base since 2026-11-22: frozen from the journal-voice note at _base_sha (the rewrite-into-main integration branch). Supersedes records-inventory-base.json (the frozen 10-21 move record) as the probe base; see check_note_records.py, THE RE-BASE, and records-reorg/README.md.",
+ "_note": "The probe base since 2026-11-22: frozen from the journal-voice note at _base_sha (the rewrite-into-main integration branch, Phase 2 head after the reflow; first frozen at 2b06d7f28 in Phase 1, content identical). Supersedes records-inventory-base.json (the frozen 10-21 move record) as the probe base; see check_note_records.py, THE RE-BASE, and records-reorg/README.md.",
  "labels": [
   "app:history",
   "app:history-5dcandidates",

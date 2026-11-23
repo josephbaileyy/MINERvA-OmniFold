@@ -1,7 +1,7 @@
 # Records move ledger, 2026-11-22 base (check_note_records.py, THE RE-BASE)
 
 The probe's ledger since the re-base of 2026-11-22: its base is the journal-voice note at
-`2b06d7f28936f2d73e11d7d64be00d4617cfade3` (`records-inventory-base-20261122.json`, which is also THIN_BASE). It
+`1ce680617792fd70345e38e2fc111a04a27b05fc` (`records-inventory-base-20261122.json`, which is also THIN_BASE). It
 supersedes `records-move-ledger.md`, the frozen 10-21/10-22 move record, whose rows describe edits of note files the
 journal-voice rewrite replaced. Rows follow that ledger's format and probes:
 
