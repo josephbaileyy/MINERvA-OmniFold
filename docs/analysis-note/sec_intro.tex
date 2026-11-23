@@ -4,90 +4,22 @@
 
 \subsection{Motivation and previous measurements}
 
-Accelerator-based neutrino oscillation experiments infer oscillation parameters from the
-energy dependence of event rates. Both the probability that a neutrino interacts and the
-relation between its energy and the observed final state depend on neutrino--nucleus
-scattering. At energies of a few GeV, quasielastic scattering, resonance production, and
-deep-inelastic scattering populate overlapping regions of observed phase space. Nuclear
-effects further modify the particles available for energy reconstruction. Uncertainties
-in these processes affect the interpretation of data from T2K, NOvA, Hyper-Kamiokande,
-and DUNE~\cite{T2K:2023osc,NOvA:2021nfi,HyperK:2018design,DUNE:2020jqi}. Differential
-cross sections constrain the interaction models used to predict these rates and
-reconstruct neutrino energies.
+Accelerator-based neutrino oscillation experiments infer oscillation parameters from the energy dependence of event rates. Both the probability that a neutrino interacts and the relation between its energy and the observed final state depend on neutrino--nucleus scattering. At energies of a few GeV, quasielastic scattering, resonance production, and deep-inelastic scattering populate overlapping regions of observed phase space. Nuclear effects further modify the particles available for energy reconstruction. Uncertainties in these processes affect the interpretation of data from T2K, NOvA, Hyper-Kamiokande, and DUNE~\cite{T2K:2023osc,NOvA:2021nfi,HyperK:2018design,DUNE:2020jqi}. Differential cross sections constrain the interaction models used to predict these rates and reconstruct neutrino energies.
 
-MINERvA measured neutrino--nucleus scattering on several targets in the low- and
-medium-energy configurations of Fermilab's NuMI
-beam~\cite{MINERvA:2013zvz,MINERvA:2016iqn}. Using the medium-energy neutrino exposure,
-with a mean neutrino energy of about $6\,\mathrm{GeV}$, Ruterbories \emph{et al.}
-reported the inclusive charged-current (CC) $\nu_\mu$ cross section on hydrocarbon,
-differential in the muon momentum transverse ($p_T$) and longitudinal ($p_\parallel$) to
-the beam~\cite{MINERvA:2021owq}. That measurement used D'Agostini iterative Bayesian
-unfolding (IBU) with a binned detector-response matrix~\cite{DAgostini:1994fjx}.
+MINERvA measured neutrino--nucleus scattering on several targets in the low- and medium-energy configurations of Fermilab's NuMI beam~\cite{MINERvA:2013zvz,MINERvA:2016iqn}. Using the medium-energy neutrino exposure, with a mean neutrino energy of about $6\,\mathrm{GeV}$, Ruterbories \emph{et al.} reported the inclusive charged-current (CC) $\nu_\mu$ cross section on hydrocarbon, differential in the muon momentum transverse ($p_T$) and longitudinal ($p_\parallel$) to the beam~\cite{MINERvA:2021owq}. That measurement used D'Agostini iterative Bayesian unfolding (IBU) with a binned detector-response matrix~\cite{DAgostini:1994fjx}.
 
-Binned implementations of IBU, singular-value decomposition, and TUnfold require a
-response defined on a grid whose size grows with the number of
-observables~\cite{Adye:2011gm,Hocker:1995kb,Schmitt:2012kp}. Machine-learning approaches
-to unbinned unfolding use individual events~\cite{Arratia:2021otl,Huetsch:2024quz,Canelli:2025guide},
-either by reweighting a reference simulation or by generating unfolded
-samples~\cite{Datta:2018mwd,Bellagente:2019uyp,Bellagente:2020piv,Backes:2022vmn}.
-OmniFold iteratively reweights simulated events using likelihood ratios estimated by
-classifiers~\cite{Andreassen:2019cjw,Andreassen:2021zzk,Chan:2023tbf}. Additional
-observables enter as classifier inputs, and the resulting event weights can be used to
-form different projections or reporting bins without repeating the unfolding.
+Binned implementations of IBU, singular-value decomposition, and TUnfold require a response defined on a grid whose size grows with the number of observables~\cite{Adye:2011gm,Hocker:1995kb,Schmitt:2012kp}. Machine-learning approaches to unbinned unfolding use individual events~\cite{Arratia:2021otl,Huetsch:2024quz,Canelli:2025guide}, either by reweighting a reference simulation or by generating unfolded samples~\cite{Datta:2018mwd,Bellagente:2019uyp,Bellagente:2020piv,Backes:2022vmn}. OmniFold iteratively reweights simulated events using likelihood ratios estimated by classifiers~\cite{Andreassen:2019cjw,Andreassen:2021zzk,Chan:2023tbf}. Additional observables enter as classifier inputs, and the resulting event weights can be used to form different projections or reporting bins without repeating the unfolding.
 
-H1 published the first applications to collider data, unfolding eight-dimensional
-lepton--jet correlations and later jet substructure at high $Q^2$ in deep-inelastic
-scattering~\cite{H1:2021wkz,H1:2023fzk}. LHCb measured identified-hadron distributions
-in $Z$-tagged jets~\cite{LHCb:2022rky}, and ATLAS unfolded 24 $Z$+jets observables
-simultaneously and subsequently reported a measurement of the full charged-particle
-phase space~\cite{ATLAS:2024jets,ATLAS:2026fullps}. Recent work has also addressed
-background treatment in reweighting and generative
-approaches~\cite{Falcao:2025backgrounds,Butter:2025genfold}.
+H1 published the first applications to collider data, unfolding eight-dimensional lepton--jet correlations and later jet substructure at high $Q^2$ in deep-inelastic scattering~\cite{H1:2021wkz,H1:2023fzk}. LHCb measured identified-hadron distributions in $Z$-tagged jets~\cite{LHCb:2022rky}, and ATLAS unfolded 24 $Z$+jets observables simultaneously and subsequently reported a measurement of the full charged-particle phase space~\cite{ATLAS:2024jets,ATLAS:2026fullps}. Recent work has also addressed background treatment in reweighting and generative approaches~\cite{Falcao:2025backgrounds,Butter:2025genfold}.
 
-Huang \emph{et al.} gave the first neutrino cross-section application of OmniFold,
-comparing an unfolding of muon kinematics in simulated T2K near-detector data with
-traditional binned methods~\cite{Huang:2025omnifold}.
+Huang \emph{et al.} gave the first neutrino cross-section application of OmniFold, comparing an unfolding of muon kinematics in simulated T2K near-detector data with traditional binned methods~\cite{Huang:2025omnifold}.
 
 \subsection{Objectives and scope}
 
-Here we apply OmniFold to MINERvA's public data with two objectives.
-The first is to benchmark OmniFold against MINERvA's published
-double-differential cross section $d^2\sigma/(dp_T\,dp_\parallel)$ in the same signal
-phase space, comparing the integrated normalization and the differential
-shape. The two estimates share data and sources of systematic uncertainty, and their
-cross-covariance is unavailable. Two analysis choices were made after the comparison
-with the publication was known. The comparison is therefore descriptive and is not a
-blind validation. The second objective
-is to test the extension to five observables by adding, in sequence, the available
-hadronic energy $E_{\mathrm{avail}}$, the magnitude of the three-momentum transfer
-$q_3$, and the hadronic invariant mass $W$. The extension tests whether an estimator can
-recover correlations among the observables and support uncertainties on the resulting
-joint distribution.
+Here we apply OmniFold to MINERvA's public data with two objectives. The first is to benchmark OmniFold against MINERvA's published double-differential cross section $d^2\sigma/(dp_T\,dp_\parallel)$ in the same signal phase space, comparing the integrated normalization and the differential shape. The two estimates share data and sources of systematic uncertainty, and their cross-covariance is unavailable. Two analysis choices were made after the comparison with the publication was known. The comparison is therefore descriptive and is not a blind validation. The second objective is to test the extension to five observables by adding, in sequence, the available hadronic energy $E_{\mathrm{avail}}$, the magnitude of the three-momentum transfer $q_3$, and the hadronic invariant mass $W$. The extension tests whether an estimator can recover correlations among the observables and support uncertainties on the resulting joint distribution.
 
-In brief, the two-dimensional result reproduces the published integrated cross
-section within about $1\%$, with a correlated shape difference of unidentified
-origin, and its covariance procedure under-covers at both held-out simulation
-tunes. Adding $E_{\mathrm{avail}}$, $q_3$, and $W$ preserves the normalization and
-the tested projections; the three- and four-dimensional central values are
-reported without covariances. Residual bias, numerical instability, and interval
-under-coverage at held-out simulation tunes limit the five-dimensional outputs to
-illustrative use, and calibrated tests of generator predictions find no
-disagreement beyond what matched coarse projections already show. The following
-sections show where each limit arises.
+In brief, the two-dimensional result reproduces the published integrated cross section within about $1\%$, with a correlated shape difference of unidentified origin, and its covariance procedure under-covers at both held-out simulation tunes. Adding $E_{\mathrm{avail}}$, $q_3$, and $W$ preserves the normalization and the tested projections; the three- and four-dimensional central values are reported without covariances. Residual bias, numerical instability, and interval under-coverage at held-out simulation tunes limit the five-dimensional outputs to illustrative use, and calibrated tests of generator predictions find no disagreement beyond what matched coarse projections already show. The following sections show where each limit arises.
 
-Section~\ref{sec:part-method} describes the data, observables, and unfolding
-procedure. Section~\ref{sec:part-2d} asks whether OmniFold reproduces the published
-measurement. Section~\ref{sec:part-higher-dimensional} asks what adding observables
-gives and whether the added joint information can be recovered with calibrated
-uncertainties. Section~\ref{sec:part-illustrative-multidimensional} shows what a
-five-observable result looks like in practice, what it can be used for, and what
-the generator comparisons add. Section~\ref{sec:discussion-and-conclusions} states
-what is established and what it implies for future multidimensional measurements;
-its validity table (Sec.~\ref{sec:result-validity}, Table~\ref{tab:validity})
-summarizes the supported uses and principal limitations of each result.
+Section~\ref{sec:part-method} describes the data, observables, and unfolding procedure. Section~\ref{sec:part-2d} asks whether OmniFold reproduces the published measurement. Section~\ref{sec:part-higher-dimensional} asks what adding observables gives and whether the added joint information can be recovered with calibrated uncertainties. Section~\ref{sec:part-illustrative-multidimensional} shows what a five-observable result looks like in practice, what it can be used for, and what the generator comparisons add. Section~\ref{sec:discussion-and-conclusions} states what is established and what it implies for future multidimensional measurements; its validity table (Sec.~\ref{sec:result-validity}, Table~\ref{tab:validity}) summarizes the supported uses and principal limitations of each result.
 
-% PASS2:
-% Retained literal values: 6 GeV is printed as \SI{6}{GeV} in the source's
-% data section. The source introduction spells out twenty-four and one percent.
-% Unresolved numbers, labels, or references: none.
-% The source introduction has no figure or table environments to restore.
+% PASS2: Retained literal values: 6 GeV is printed as \SI{6}{GeV} in the source's data section. The source introduction spells out twenty-four and one percent. Unresolved numbers, labels, or references: none. The source introduction has no figure or table environments to restore.

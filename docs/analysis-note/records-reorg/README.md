@@ -110,3 +110,13 @@ The invariance gate against this README's base, `check --phase D --base ab0596ac
 each a generated value key of `values_fived16.tex` (which `main_records.tex` inputs) added after the base: the six
 `rg-*` keys of the coverage regrade and the six `t3-*` keys of the Tier 3 paragraph. They are declared in `adds.tsv`,
 and the gate passes.
+
+## After the one-line-per-paragraph reflow (2026-11-22)
+
+`check` compares printed lines, and `reflow_tex.py --note` joins each paragraph's lines into one, so since the reflow
+commit the gate is run as `check --phase D --base ab0596ac3 --reflowed-from 666d71fdd`: the line comparison against the
+reflow's parent (666d71fdd, the integration branch before the reflow), plus a proof that every records source of the
+working tree is exactly the fixed point of `reflow_tex.reflow_text` applied to the same file at 666d71fdd (its
+generated files unchanged). It passes; a one-word change to a reflowed records file fails it (REFLOW-IDENTITY). The
+typeset text of the four PDFs is unchanged across the reflow (pdftotext byte-identical).
+

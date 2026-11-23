@@ -40,8 +40,7 @@ The construction of $V$ from its pilot, including its nearly degenerate correlat
 \subsubsection{Calibration within the implemented simulation model}
 \label{sec:joint5d-calibration}
 
-The null distribution of each statistic is obtained from pseudo-experiments that run the full analysis chain at the null truth, using the joint-test estimator (\S\ref{sec:val-departure}).
-The Monte Carlo $p$ value of a test is $(k+1)/(B+1)$, where $k$ of $B$ null pseudo-experiments reach the observed statistic. This $p$ value is never zero. The $p$ value on which each decision rests, the \emph{claim} $p$ value, is the largest over the specified \emph{claim variants}, which shift the null. What each pseudo-experiment draws, and how the claim variants shift the null, are in the records document.
+The null distribution of each statistic is obtained from pseudo-experiments that run the full analysis chain at the null truth, using the joint-test estimator (\S\ref{sec:val-departure}). The Monte Carlo $p$ value of a test is $(k+1)/(B+1)$, where $k$ of $B$ null pseudo-experiments reach the observed statistic. This $p$ value is never zero. The $p$ value on which each decision rests, the \emph{claim} $p$ value, is the largest over the specified \emph{claim variants}, which shift the null. What each pseudo-experiment draws, and how the claim variants shift the null, are in the records document.
 
 % Methods-paper shortening pass (2026-10-21, DECISION-20261020-joseph-refined-estimator-shorten-delta.md item 2): the article's generative model (its former Sec. VIII B and Table VIII), moved verbatim with its sources. Code (at 19b46af9, byte-identical to the frozen 4f5a613f, M2-ARCHIVE-CHECKS.md:26): M2-AUDIT.md:10-33 (Q1). Split per seed, s5c_pseudo.py:278-281, s5p_nullexp.py:318-321; pseudo-data Poisson on half B, s5n_pseudo.py:133-134; half A at CV weights with the Tune v1 prior, :146-151; flux one PPFX universe of 100, s5p_nullexp.py:206-209; 34 bands at one universe each, :79-87, :130, signal renormalized per fine truth cell, :158-174, :215; clipping of LowQ2_1 and HighQ2_1, :103-115, :149-154; four detector bands at +-1 sigma with probability 1/2, :216-220; additive terms s5p_joint.py:115-121, :158-159. Truth equals G on populated fine cells: M2-ARCHIVE-CHECKS.md:6, :64-69. REVIEW-1 finding 3: the deficit is about 4% of the null SD (m2-archive/m2_archive_results.json check1.xtrue_mean_minus_G_in_null_SD max_abs 0.035 Tune v1, 0.026 GENIE CV; M2-ARCHIVE-CHECKS.md:60, 0.039 NuWro); the 1.4% is the spread ratio. M2-AUDIT.md:17-23 (one RNG keyed by the seed, each band at one universe, product of weight ratios); s5p_nullexp.py:127-132, :206-215. X5 G8: the conditioning on data-derived inputs (M2-AUDIT.md:182-184, Q4d; s5p_joint.py:108, :118).
 App.~\ref{app:joint5d-genmodel} gives the generative model of one pseudo-experiment (Table~\ref{tab:joint5d-genmodel}).
@@ -73,8 +72,7 @@ The hypotheses, statistics, variants, multiplicity rule, stopping rule and every
 % Methods-paper shortening pass (2026-10-21, DECISION-20261020-joseph-refined-estimator-shorten-delta.md item 2): the article's post hoc paragraph (its Sec. VIII C).
 Three studies followed the decisions: the scan of the shift multiplier (\S\ref{sec:joint5d-kappa}), the rerun of the lost pseudo-experiments (\S\ref{sec:joint5d-lost}), and the matched coarse-projection comparison (\S\ref{sec:joint5d-projections}). They are for reporting only, outside the decision rule. The projection comparison was specified after the five-dimensional outcomes were known.
 
-% Move pair H3-023 (director-helper-3, the structural rewrite, 2026-11-18): the subsection "Six conditions attached to the ten rejections" (sec_joint.tex:136-180 @ 9ed7db71b), with its label sec:joint5d-conditions, comments and Search lines, moved verbatim to section 12 (sec:limitations-joint); sec:joint5d-results opens with its first sentence as the scope label.
-% [History: in the compression (G2a, 2026-11-19) the subsection came back here from sec_limitations.tex, verbatim; see the subsection "Six conditions attached to the ten rejections" below and move-manifest-je JE-11.]
+% Move pair H3-023 (director-helper-3, the structural rewrite, 2026-11-18): the subsection "Six conditions attached to the ten rejections" (sec_joint.tex:136-180 @ 9ed7db71b), with its label sec:joint5d-conditions, comments and Search lines, moved verbatim to section 12 (sec:limitations-joint); sec:joint5d-results opens with its first sentence as the scope label. [History: in the compression (G2a, 2026-11-19) the subsection came back here from sec_limitations.tex, verbatim; see the subsection "Six conditions attached to the ten rejections" below and move-manifest-je JE-11.]
 
 \subsubsection{Decisions on the ten hypotheses}
 \label{sec:joint5d-results}
@@ -128,14 +126,9 @@ The multiplier $\kappa$ scales the last measured refinement change $\delta_{\mat
 \label{sec:joint5d-conditions}
 
 
-% Deposit pass / r22 Step 2 (B10): the six conditions of RECORD-20261005-s5p-joint-5d-inference-result.md sec. 3
-% (amendment 7 claims.conditions_stated_with_every_claim), formerly quoted verbatim here, are restated in prose; the
-% verbatim text is in that record (app_provenance.tex, joint-5d). Content substitutions kept from the quoted version:
+% Deposit pass / r22 Step 2 (B10): the six conditions of RECORD-20261005-s5p-joint-5d-inference-result.md sec. 3 (amendment 7 claims.conditions_stated_with_every_claim), formerly quoted verbatim here, are restated in prose; the verbatim text is in that record (app_provenance.tex, joint-5d). Content substitutions kept from the quoted version:
 % (i) the null truth's below-grid description as implemented (M8 correction, M2-AUDIT.md Q1; sec:joint5d-design);
-% (ii) "(app_statmethods.tex)" -> App. A; (iii) the clipping's effect measured on the pilot
-% (EXCEPTION-20260927-s5p-pilot-negative-rate-resubmission.md, "Quantified effect": 0.35% of the band's shift in
-% whitened norm at fine reco resolution); (iv) "~0.05 null SD" superseded by the frozen-V prefreeze measurement, max
-% 0.068 (CLAIM-TABLE row J12); (v) "KNOWN_ISSUES 82" -> the GiBUU sample's energy limit, sec:eavailw-band.
+% (ii) "(app_statmethods.tex)" -> App. A; (iii) the clipping's effect measured on the pilot (EXCEPTION-20260927-s5p-pilot-negative-rate-resubmission.md, "Quantified effect": 0.35% of the band's shift in whitened norm at fine reco resolution); (iv) "~0.05 null SD" superseded by the frozen-V prefreeze measurement, max 0.068 (CLAIM-TABLE row J12); (v) "KNOWN_ISSUES 82" -> the GiBUU sample's energy limit, sec:eavailw-band.
 
 \paragraph{Numerical convergence.} Condition~(i) concerns the null truth below the fine grid. The fine-grid convergence check has not shown convergence.
 % Search: below the fine grid; fine-grid convergence; delta_fine; per halving @ ddf16f10
@@ -170,8 +163,7 @@ Every pseudo-experiment resamples the same simulated events, so the null distrib
 % M2-AUDIT.md Q4d, :183-184.
 % Search: recoil-energy-scale band; calorimetric response band; linear surrogate; endpoint symmetry @ ddf16f10
 
-% Pointer entry 6 (the director's ruling (a), via director-helper-3): sec_summary.tex:39, kept there.
-% Moved verbatim from sec_limitations.tex (§12) in the compression (G2a; move-manifest-je JE-11); the heading is a \subsubsection here.
+% Pointer entry 6 (the director's ruling (a), via director-helper-3): sec_summary.tex:39, kept there. Moved verbatim from sec_limitations.tex (§12) in the compression (G2a; move-manifest-je JE-11); the heading is a \subsubsection here.
 
 \subsubsection{Lost pseudo-experiments and their recovery}
 \label{sec:joint5d-lost}

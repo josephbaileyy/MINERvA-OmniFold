@@ -5,19 +5,7 @@
 \label{app:result-package}
 \label{app:release}
 
-The replay package~\cite{ReleaseCandidate2026} in the Zenodo
-deposit~\cite{ZenodoDeposit2026} contains approximately \SI{20}{MB} of
-derived inputs, a README, SHA-256 checksums, and a verifier. It recomputes
-the joint generator tests reported in this article (statistics, exceedance
-counts, $p$ values, decisions, and robustness and power summaries), with and
-without the recovered pseudo-experiments, together with the matched
-coarse-projection comparison and the fine-grid refinement ratios. It
-regenerates the $(E_{\mathrm{avail}},W)$ excess map
-(Fig.~\ref{fig:eavailWexcess}) exactly and checks the quoted
-$(E_{\mathrm{avail}},W)$ generator ratios against the arrays plotted in
-Fig.~\ref{fig:eavailWband}. It also recomputes the two-dimensional benchmark
-numbers of Sec.~\ref{sec:part-2d} for the \estTwoD{}, from the deposited central
-values and covariance and the published values and covariance.
+The replay package~\cite{ReleaseCandidate2026} in the Zenodo deposit~\cite{ZenodoDeposit2026} contains approximately \SI{20}{MB} of derived inputs, a README, SHA-256 checksums, and a verifier. It recomputes the joint generator tests reported in this article (statistics, exceedance counts, $p$ values, decisions, and robustness and power summaries), with and without the recovered pseudo-experiments, together with the matched coarse-projection comparison and the fine-grid refinement ratios. It regenerates the $(E_{\mathrm{avail}},W)$ excess map (Fig.~\ref{fig:eavailWexcess}) exactly and checks the quoted $(E_{\mathrm{avail}},W)$ generator ratios against the arrays plotted in Fig.~\ref{fig:eavailWband}. It also recomputes the two-dimensional benchmark numbers of Sec.~\ref{sec:part-2d} for the \estTwoD{}, from the deposited central values and covariance and the published values and covariance. The replay package's README gives its file inventory, the figures it regenerates, and the verification tolerances.
 % 2026-11-21 (Joseph's GO for option A, via the rewrite helper and the director): the replay is RC9 (sha256 c06dab21...),
 % whose code/twod_numbers.py checks 18 printed 2D values against values.tex with the producers' definitions
 % (compare_to_paper_fullcov.py: pinv chi2/ndf over the 205 reported bins; the pull spread is numpy's std, which settles
@@ -28,40 +16,10 @@ values and covariance and the published values and covariance.
 % fig:eavailWband's operands exactly; "fine-grid refinement ratios" is RC8's m1_f2_norm_ratio.py check (verifier line
 % "condition (i) L2 ratios 0.504-0.857"). The earlier 2D sentence ("generated from the central values and covariance")
 % is folded into the last clause.
-The replay package's README gives its file inventory, the figures it
-regenerates, and the verification tolerances.
 
-\phantomsection\label{app:release-scope}
-The deposit also archives the \lrval{q-ncells}-cell 2D refined central values
-with $Q_R$ and its systematic, statistical, training-seed and run-period blocks,
-and the 2D prior-shape term $C_{\mathrm{model}}$, which $Q_R$ excludes; the
-sixteen refined cell integrals with $C_{\mathrm{rep}}$ and its components, with
-$C_{\mathrm{model}}$ listed separately; the generator predictions compared in
-this article on the sixteen cells and on the $(E_{\mathrm{avail}},W)$ grid; and
-the exploratory five-axis central values, support masks and projection matrix
-$P$, with the projected covariance $C_{EW}$. Apart from the replay package, it contains no code that
-regenerates this article's tables or figures.
-The deposit starts from derived inputs. Rebuilding the closure, bias, or
-covariance-validation results, or extracting statistics from the archived
-pseudo-experiment products, requires additional inputs. Covariances of other
-projections of the five-axis fine grid require the full five-axis covariance
-$C_Z$, which is not deposited. An event-level rerun
-requires the MINERvA AnaTuples and generator samples, plus the event-loop
-products or the inputs to regenerate them. The deposit identifies the 2,374 input
-files by SHA-256, including 2,307 AnaTuples and 67 flux, reweighting, and
-parameter files~\cite{AnaTuplePreservation2026}. The preserved inputs are
-outside the public deposit. The ancillary files of the published MINERvA
-measurement supply its reference values, bin mapping, and covariance for the
-2D comparison~\cite{MINERvA:2021owq}.
+\phantomsection\label{app:release-scope} The deposit also archives the \lrval{q-ncells}-cell 2D refined central values with $Q_R$ and its systematic, statistical, training-seed and run-period blocks, and the 2D prior-shape term $C_{\mathrm{model}}$, which $Q_R$ excludes; the sixteen refined cell integrals with $C_{\mathrm{rep}}$ and its components, with $C_{\mathrm{model}}$ listed separately; the generator predictions compared in this article on the sixteen cells and on the $(E_{\mathrm{avail}},W)$ grid; and the exploratory five-axis central values, support masks and projection matrix $P$, with the projected covariance $C_{EW}$. Apart from the replay package, it contains no code that regenerates this article's tables or figures. The deposit starts from derived inputs. Rebuilding the closure, bias, or covariance-validation results, or extracting statistics from the archived pseudo-experiment products, requires additional inputs. Covariances of other projections of the five-axis fine grid require the full five-axis covariance $C_Z$, which is not deposited. An event-level rerun requires the MINERvA AnaTuples and generator samples, plus the event-loop products or the inputs to regenerate them. The deposit identifies the 2,374 input files by SHA-256, including 2,307 AnaTuples and 67 flux, reweighting, and parameter files~\cite{AnaTuplePreservation2026}. The preserved inputs are outside the public deposit. The ancillary files of the published MINERvA measurement supply its reference values, bin mapping, and covariance for the 2D comparison~\cite{MINERvA:2021owq}.
 
-\phantomsection\label{app:release-edges}
-Table~\ref{tab:reproducibility-bin-edges} gives the fine-grid edges. The
-published muon grid reports \lrval{q-ncells} of its 224 cells, using the
-published bin mapping. The last intervals in $E_{\mathrm{avail}}$, $q_3$, and $W$ collect the
-tails up to 100 in their respective units. The sixteen reporting regions and
-the coarser joint-test grid are specified in
-Table~\ref{tab:five-dimensional-regions} and
-Appendix~\ref{app:joint-generator-tests}, respectively.
+\phantomsection\label{app:release-edges} Table~\ref{tab:reproducibility-bin-edges} gives the fine-grid edges. The published muon grid reports \lrval{q-ncells} of its 224 cells, using the published bin mapping. The last intervals in $E_{\mathrm{avail}}$, $q_3$, and $W$ collect the tails up to 100 in their respective units. The sixteen reporting regions and the coarser joint-test grid are specified in Table~\ref{tab:five-dimensional-regions} and Appendix~\ref{app:joint-generator-tests}, respectively.
 
 \begin{table}[tbp]
   \centering
@@ -88,28 +46,11 @@ Appendix~\ref{app:joint-generator-tests}, respectively.
 \label{app:analysis-code}
 \label{app:codebase}
 
-The analysis code is available in the
-\href{https://github.com/josephbaileyy/MINERvA-OmniFold}{MINERvA OmniFold repository}.
-The MINERvA 101 event loop (\path{runEventLoopOmniFold.cpp}) writes
-per-run-period ROOT trees for data, simulated backgrounds, reconstructed
-signal, and fiducial true signal. These trees carry event and universe
-weights and are accompanied by the exposure and flux inputs. The 2D and 3D
-drivers (\path{unfold_2d_omnifold_unbinned.py} and
-\path{unfold_3d_omnifold_unbinned.py}) configure the features, selections,
-and normalization for their samples. The scalar 4D and 5D production code is
-under \path{nd-unfolding/}. The iterative reweighting is implemented in
-\path{unbinned_unfolding/python/omnifold.py}. The repository documents the
-upstream dependencies. The deposit links the release of the repository from
-which it was made, and its manifests record the digests of the replay
-package's and the five-axis products' inputs.
+The analysis code is available in the \href{https://github.com/josephbaileyy/MINERvA-OmniFold}{MINERvA OmniFold repository}. The MINERvA 101 event loop (\path{runEventLoopOmniFold.cpp}) writes per-run-period ROOT trees for data, simulated backgrounds, reconstructed signal, and fiducial true signal. These trees carry event and universe weights and are accompanied by the exposure and flux inputs. The 2D and 3D drivers (\path{unfold_2d_omnifold_unbinned.py} and \path{unfold_3d_omnifold_unbinned.py}) configure the features, selections, and normalization for their samples. The scalar 4D and 5D production code is under \path{nd-unfolding/}. The iterative reweighting is implemented in \path{unbinned_unfolding/python/omnifold.py}. The repository documents the upstream dependencies. The deposit links the release of the repository from which it was made, and its manifests record the digests of the replay package's and the five-axis products' inputs.
 % Cite the repository tag or commit once it exists.
 
 \begin{sloppypar}
-To replay the archived results, unpack the replay package from the deposit
-and run its verifier, \texttt{code/\allowbreak verify\_rc.py}
-(\texttt{publication/\allowbreak release/\allowbreak verify\_rc.py} in the
-repository), from its top directory with the pinned NumPy, SciPy, and
-Matplotlib requirements. A successful replay prints \verb|VERIFY: PASS|.
+To replay the archived results, unpack the replay package from the deposit and run its verifier, \texttt{code/\allowbreak verify\_rc.py} (\texttt{publication/\allowbreak release/\allowbreak verify\_rc.py} in the repository), from its top directory with the pinned NumPy, SciPy, and Matplotlib requirements. A successful replay prints \verb|VERIFY: PASS|.
 \end{sloppypar}
 
 \subsection{Terminology and estimator definitions}
@@ -120,38 +61,9 @@ Matplotlib requirements. A successful replay prints \verb|VERIFY: PASS|.
 \label{app:devhistory-5d}
 \label{app:devhistory-recovery-seeds}
 
-Table~\ref{tab:estimators} identifies the result associated with each
-estimator. The configurations use five OmniFold iterations, with 100 trees,
-at most eight leaves, and learning rate 0.1 in the nominal boosted-tree
-learners. The \estTwoD{} uses seeded LightGBM (central seed 42),
-as does the \estPurity{} in two dimensions. The \estMultiD{}
-and the two deterministic controls construct LightGBM histograms
-from all training rows. Both reported refined estimators use a 400-tree,
-31-leaf classifier for negative-weight refinement, while the low-capacity
-control uses 100 trees and eight leaves for that step. The \estExact{}
-uses scikit-learn gradient-boosted trees with exact splits and
-binned purity weights. Appendix~\ref{app:joint-generator-tests} specifies
-the variant used for the joint generator tests. The low-capacity recovery
-test and the refined-estimator tests at three withheld truth shapes reuse seed
-sets from estimator development.
+Table~\ref{tab:estimators} identifies the result associated with each estimator. The configurations use five OmniFold iterations, with 100 trees, at most eight leaves, and learning rate 0.1 in the nominal boosted-tree learners. The \estTwoD{} uses seeded LightGBM (central seed 42), as does the \estPurity{} in two dimensions. The \estMultiD{} and the two deterministic controls construct LightGBM histograms from all training rows. Both reported refined estimators use a 400-tree, 31-leaf classifier for negative-weight refinement, while the low-capacity control uses 100 trees and eight leaves for that step. The \estExact{} uses scikit-learn gradient-boosted trees with exact splits and binned purity weights. Appendix~\ref{app:joint-generator-tests} specifies the variant used for the joint generator tests. The low-capacity recovery test and the refined-estimator tests at three withheld truth shapes reuse seed sets from estimator development.
 
-The matrices $Q_R$, $C_Z$, and $C_{\mathrm{rep}}$ refer, respectively, to the
-\lrval{q-ncells}-bin muon result, the exploratory five-axis purity result, and the
-sixteen refined cell integrals. Their constructions are given in
-Appendixes~\ref{app:covariance-construction} and
-\ref{app:multidimensional-statistics}. For the exploratory
-$(E_{\mathrm{avail}},W)$ density projection, the matrix $P$ sums over the
-three dropped axes with their bin widths. The covariance of the projected
-densities $y=Px$ is $C_{EW}=PC_ZP^{\mathsf T}$, with relative standard
-deviation $\sqrt{(C_{EW})_{rr}}/y_r$ in cell $r$. The deposit archives
-$C_{EW}$ and $P$, not $C_Z$. The spectrum of $C_{EW}$ extends to the
-double-precision noise floor, making inversion sensitive to regularization.
-To obtain cell integrals, each density is multiplied by its own
-$\Delta E_{\mathrm{avail}}\Delta W$, including the full width of each tail
-bin. The projection applies the
-fine-grid mask and uses no additional acceptance factor at the destination
-binning; whether one is needed has not been decided. The deposit's README gives the array ordering and a worked projection
-check.
+The matrices $Q_R$, $C_Z$, and $C_{\mathrm{rep}}$ refer, respectively, to the \lrval{q-ncells}-bin muon result, the exploratory five-axis purity result, and the sixteen refined cell integrals. Their constructions are given in Appendixes~\ref{app:covariance-construction} and \ref{app:multidimensional-statistics}. For the exploratory $(E_{\mathrm{avail}},W)$ density projection, the matrix $P$ sums over the three dropped axes with their bin widths. The covariance of the projected densities $y=Px$ is $C_{EW}=PC_ZP^{\mathsf T}$, with relative standard deviation $\sqrt{(C_{EW})_{rr}}/y_r$ in cell $r$. The deposit archives $C_{EW}$ and $P$, not $C_Z$. The spectrum of $C_{EW}$ extends to the double-precision noise floor, making inversion sensitive to regularization. To obtain cell integrals, each density is multiplied by its own $\Delta E_{\mathrm{avail}}\Delta W$, including the full width of each tail bin. The projection applies the fine-grid mask and uses no additional acceptance factor at the destination binning; whether one is needed has not been decided. The deposit's README gives the array ordering and a worked projection check.
 
 \clearpage
 \subsection{Choices made after results were seen}
@@ -169,133 +81,64 @@ check.
 \label{app:devhistory-joint}
 \label{app:devhistory-lost}
 
-A criterion is prespecified if it was recorded before the outcome it grades
-was read. Table~\ref{tab:choices-after-results} identifies the information
-available when each choice was made and the status of the associated test.
+A criterion is prespecified if it was recorded before the outcome it grades was read. Table~\ref{tab:choices-after-results} identifies the information available when each choice was made and the status of the associated test.
 
-\begingroup
-\small
+\begingroup \small
 \setlength{\LTcapwidth}{\textwidth}
 \setlength{\LTpre}{4pt}
 \setlength{\LTpost}{0pt}
 \begin{xltabular}{\textwidth}{@{}>{\raggedright\arraybackslash\hsize=1.42\hsize}X
-                               >{\raggedright\arraybackslash\hsize=0.60\hsize}X
-                               >{\raggedright\arraybackslash\hsize=0.98\hsize}X@{}}
+                               >{\raggedright\arraybackslash\hsize=0.60\hsize}X >{\raggedright\arraybackslash\hsize=0.98\hsize}X@{}}
   \caption{Analysis choices informed by earlier results.}
   \label{tab:choices-after-results}
   \label{tab:devhistory}\\
-  \toprule
-  Choice & Result affected & Test status \\
-  \midrule
-  \endfirsthead
-  \multicolumn{3}{@{}l}{\tablename~\thetable\ (continued)} \\
-  \toprule
-  Choice & Result affected & Test status \\
-  \midrule
-  \endhead
-  \bottomrule
-  \endlastfoot
-  Switch to LightGBM to match the 2D covariance estimator after comparing
-  both tree implementations with the publication.
+  \toprule Choice & Result affected & Test status \\
+  \midrule \endfirsthead \multicolumn{3}{@{}l}{\tablename~\thetable\ (continued)} \\
+  \toprule Choice & Result affected & Test status \\
+  \midrule \endhead \bottomrule \endlastfoot Switch to LightGBM to match the 2D covariance estimator after comparing both tree implementations with the publication.
   & 2D benchmark & Descriptive publication comparison. \\
-  \addlinespace[2pt]
-  Rebuild the 2D result with refined subtraction after observing purity bias
-  in closure. Adopt the rebuild after reading its distance from the publication.
+  \addlinespace[2pt] Rebuild the 2D result with refined subtraction after observing purity bias in closure. Adopt the rebuild after reading its distance from the publication.
   & 2D central value and $Q_R$ & Descriptive closure comparison and
   publication benchmark. \\
-  \addlinespace[2pt]
-  Retain the fine-grid purity result and $C_Z$ after the purity bias was
-  identified. Use the refined estimator for the sixteen cells.
+  \addlinespace[2pt] Retain the fine-grid purity result and $C_Z$ after the purity bias was identified. Use the refined estimator for the sixteen cells.
   & Exploratory five-axis and sixteen-cell results & Descriptive
   background-inclusive closure comparison. \\
-  \addlinespace[2pt]
-  Add an attribution analysis after reading pilot pulls. After the interim
-  test found two-standard-deviation undercoverage with nominal
-  one-standard-deviation coverage, remove the completeness division and rescore the same
-  pseudo-experiments.
+  \addlinespace[2pt] Add an attribution analysis after reading pilot pulls. After the interim test found two-standard-deviation undercoverage with nominal one-standard-deviation coverage, remove the completeness division and rescore the same pseudo-experiments.
   & Earlier 2D statistical bands & Prespecified primary coverage test of
-  the divided band. Descriptive attribution. The rescoring is post hoc and
-  partly circular, because the band's simulation-statistical part reuses the
-  pseudo-experiments' resampling mechanism. \\
-  % D1 (check stage, director's ruling 2026-11-21): the qualifier restored from sec_validation.tex:102 and
-  % app_devhistory.tex:161 @ e89694209 ("post hoc and partly circular, because the band's MC part reuses the toys'
-  % resampling mechanism"), in the note's terms.
-  \addlinespace[2pt]
-  Adopt universe-specific missed-event weights after reading the systematic
-  rebuild, under a rule fixed before readout. Rescore held-out-tune coverage.
+  the divided band. Descriptive attribution. The rescoring is post hoc and partly circular, because the band's simulation-statistical part reuses the pseudo-experiments' resampling mechanism. \\
+  % D1 (check stage, director's ruling 2026-11-21): the qualifier restored from sec_validation.tex:102 and app_devhistory.tex:161 @ e89694209 ("post hoc and partly circular, because the band's MC part reuses the toys' resampling mechanism"), in the note's terms.
+  \addlinespace[2pt] Adopt universe-specific missed-event weights after reading the systematic rebuild, under a rule fixed before readout. Rescore held-out-tune coverage.
   & $Q_R$ and held-out-tune coverage & Prespecified rebuild rule and
   containment criteria. \\
-  \addlinespace[2pt]
-  Construct run-period terms from the observed differences. Set the
-  sixteen-cell omission criteria after seeing the term's size and before
-  evaluating the criteria.
+  \addlinespace[2pt] Construct run-period terms from the observed differences. Set the sixteen-cell omission criteria after seeing the term's size and before evaluating the criteria.
   & $Q_R$ and $C_{\mathrm{rep}}$ & Descriptive containment by construction. \\
-  \addlinespace[2pt]
-  Identify cells near prior-reweighting ratio steps after seeing the unfolded
-  shifts. Keep their contributions in the sum.
+  \addlinespace[2pt] Identify cells near prior-reweighting ratio steps after seeing the unfolded shifts. Keep their contributions in the sum.
   & 2D prior-shape term $C_{\mathrm{model}}$ & Descriptive cell diagnostic. \\
-  \addlinespace[2pt]
-  Adopt the unscaled prior-shape term after the calibration studies failed
-  their initial checks.
+  \addlinespace[2pt] Adopt the unscaled prior-shape term after the calibration studies failed their initial checks.
   & Sixteen-cell $C_{\mathrm{model}}$ & Descriptive model sensitivity. \\
-  \addlinespace[2pt]
-  Match event weight keys at single precision after an entry-check stop.
-  Other check results were visible. The repair preceded all coverage
-  unfolds and scoring in this test.
+  \addlinespace[2pt] Match event weight keys at single precision after an entry-check stop. Other check results were visible. The repair preceded all coverage unfolds and scoring in this test.
   & Sixteen-cell coverage at two held-out tunes & Descriptive rerun with
   prespecified scoring criteria. \\
-  \addlinespace[2pt]
-  Correct GENIE and NuWro predictions for a generation flux that omitted
-  hadron-production weights, stopped at \SI{50}{GeV}, and sampled
-  densities as bin contents. Keep the original GiBUU-to-GENIE ratio for
-  the fixed truth deformation.
+  \addlinespace[2pt] Correct GENIE and NuWro predictions for a generation flux that omitted hadron-production weights, stopped at \SI{50}{GeV}, and sampled densities as bin contents. Keep the original GiBUU-to-GENIE ratio for the fixed truth deformation.
   & Generator projections and recovery of a generator-sized change &
-  Descriptive generator comparisons. The prespecified recovery criterion
-  applies to the fixed deformation. \\
-  \addlinespace[2pt]
-  Keep the \SI{135}{MeV} charged-pion offset after checking the effect
-  of substituting the charged-pion mass.
+  Descriptive generator comparisons. The prespecified recovery criterion applies to the fixed deformation. \\
+  \addlinespace[2pt] Keep the \SI{135}{MeV} charged-pion offset after checking the effect of substituting the charged-pion mass.
   & Results using true $E_{\mathrm{avail}}$ & Descriptive definition check. \\
-  \addlinespace[2pt]
-  Keep the single fit after averaging improved rounding stability on
-  pseudo-data and worsened GiBUU available-energy closure.
+  \addlinespace[2pt] Keep the single fit after averaging improved rounding stability on pseudo-data and worsened GiBUU available-energy closure.
   & Sixteen-cell estimator & Prespecified rounding tolerances.
   Descriptive comparison of the closure trade-off. \\
-  \addlinespace[2pt]
-  Fix the joint-test design after reviewers saw per-cell data residuals.
-  Extend the budget within a bound with observed $p$ values visible,
-  allowing the sequential rule to set the stop.
+  \addlinespace[2pt] Fix the joint-test design after reviewers saw per-cell data residuals. Extend the budget within a bound with observed $p$ values visible, allowing the sequential rule to set the stop.
   & Ten joint generator tests & Prespecified hypotheses and decision rule
   with data-informed design and budget choices. \\
-  \addlinespace[2pt]
-  Set the criterion for additional discrimination after reading the joint
-  decisions and before running the matched coarse projections.
+  \addlinespace[2pt] Set the criterion for additional discrimination after reading the joint decisions and before running the matched coarse projections.
   & Joint versus projected generator tests & Descriptive comparison. \\
-  \addlinespace[2pt]
-  Adopt common $W$ and muon-angle definitions after the initial comparison.
-  Convert carbon predictions to hydrocarbon for secondary comparisons,
-  holding the joint-test calibration fixed.
+  \addlinespace[2pt] Adopt common $W$ and muon-angle definitions after the initial comparison. Convert carbon predictions to hydrocarbon for secondary comparisons, holding the joint-test calibration fixed.
   & Sixteen-cell distances and joint target sensitivity & Descriptive
   comparison and sensitivity check. \\
-  \addlinespace[2pt]
-  Scan shifts and recover missing draws after reading the joint decisions.
-  Fix the recovery procedure before the missing outcomes are known~\cite{JointTestRecovery2026}.
+  \addlinespace[2pt] Scan shifts and recover missing draws after reading the joint decisions. Fix the recovery procedure before the missing outcomes are known~\cite{JointTestRecovery2026}.
   & Robustness of joint decisions & Descriptive checks outside the original
   decision rule. \\
 \end{xltabular}
 \endgroup
 
-% PASS2:
-% Numeric exceptions: 224 is the full 14-by-16 muon grid, derived from the
-% literal source grid sizes. The supplied macros have no full-grid count.
-% The 100-tree, eight-leaf, 0.1 learning-rate settings appear in the original
-% note text. Their LaTeX is outside the supplied source excerpts, and no
-% matching settings macros were found. The 42 seed and 400-tree, 31-leaf
-% refinement are literal in the supplied source, as are the bin edges.
-% All references used in this section resolve against the rewritten labels.
-% The original tab:definitions and tab:fived16-gen-stageg tables and the
-% app:devhistory-5d-widths passage have no standalone counterpart here.
-% The bin-edge table replaces a source list. There are no figure crops here.
-% The author review confirms carbon for NuWro and GiBUU in
-% fig:sixteen-cell-generator-residuals, outside this appendix. The suggestion has
-% been corrected. The Zenodo DOI is reserved; only the code snapshot is pending.
+% PASS2: Numeric exceptions: 224 is the full 14-by-16 muon grid, derived from the literal source grid sizes. The supplied macros have no full-grid count. The 100-tree, eight-leaf, 0.1 learning-rate settings appear in the original note text. Their LaTeX is outside the supplied source excerpts, and no matching settings macros were found. The 42 seed and 400-tree, 31-leaf refinement are literal in the supplied source, as are the bin edges. All references used in this section resolve against the rewritten labels. The original tab:definitions and tab:fived16-gen-stageg tables and the app:devhistory-5d-widths passage have no standalone counterpart here. The bin-edge table replaces a source list. There are no figure crops here. The author review confirms carbon for NuWro and GiBUU in fig:sixteen-cell-generator-residuals, outside this appendix. The suggestion has been corrected. The Zenodo DOI is reserved; only the code snapshot is pending.

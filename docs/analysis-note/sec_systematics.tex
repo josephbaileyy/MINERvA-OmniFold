@@ -125,11 +125,9 @@ No block contains the dependence on the learner (\S\ref{sec:uq-2d-scope}; the re
 
 \subsubsection{Training noise in the universe block}
 \label{sec:uq-2d-construction}
-% Deep restructure (DECISION-20261118; history-cuts/move-manifest-cv-20261118.tsv): the July-sweep reproduction sentence and its comments moved to
-% app:devhistory-2dchecks (CV-A01).
+% Deep restructure (DECISION-20261118; history-cuts/move-manifest-cv-20261118.tsv): the July-sweep reproduction sentence and its comments moved to app:devhistory-2dchecks (CV-A01).
 
-% D11 (the EtaNCEL/NormNCRES training-noise diagnostic) is removed from the note on the referee's recommendation
-% (DECISION-20261120b item 4); its text is in the records document (records_compression_h3_p3c.tex).
+% D11 (the EtaNCEL/NormNCRES training-noise diagnostic) is removed from the note on the referee's recommendation (DECISION-20261120b item 4); its text is in the records document (records_compression_h3_p3c.tex).
 Each lateral band of the quoted universe block uses a single unfold at the central training seed, so it includes that seed's training noise. The checks of the block's construction are in App.~\ref{app:devhistory-2dchecks}.
 % Deep restructure (DECISION-20261118; history-cuts/move-manifest-cv-20261118.tsv): sentences 2-3 moved within this file to the end of the
 % flux paragraph (CV-M01, CV-M02); records-move-ledger.md L-thin-C64 pins the flux-index citation to this file.
@@ -149,12 +147,7 @@ The nominal covariance is the block sum $C = C_{\mathrm{syst}} + C_{\mathrm{stat
 % Search: two-dimensional comparison of a joint throw; joint throw with the block sum; stored mean-shift norm is not quoted @ 1b45ca66
 % Implementation: nd-unfolding/unified_throw_cov.py
 
-% H3-A.02 (2026-11-19, the director's Part 3 ruling (a)): the C_Z decomposition sentence moved verbatim to App. A with the
-% unified-throw description (limitation-resolver, app_statmethods.tex sec:universes).
-% Note register batch b5 (2026-10-22): this paragraph followed the run-period block; it concerns the unified throw
-% and now follows it. Review S5: the base wording (the decomposition used only once the joint-throw validation passes;
-% the block sum not the default construction) read as covering the 2D block sum, which no joint throw has tested in
-% this note; it is limited to the five-axis covariance (sec_5d.tex eq:zassembly, eq:zinflation). Old text in git.
+% H3-A.02 (2026-11-19, the director's Part 3 ruling (a)): the C_Z decomposition sentence moved verbatim to App. A with the unified-throw description (limitation-resolver, app_statmethods.tex sec:universes). Note register batch b5 (2026-10-22): this paragraph followed the run-period block; it concerns the unified throw and now follows it. Review S5: the base wording (the decomposition used only once the joint-throw validation passes; the block sum not the default construction) read as covering the 2D block sum, which no joint throw has tested in this note; it is limited to the five-axis covariance (sec_5d.tex eq:zassembly, eq:zinflation). Old text in git.
 
 The run-period block $C_{\mathrm{PL}}$ is an uncertainty assigned for an observed inconsistency between run periods whose cause is unknown. The block does not measure a systematic uncertainty from an identified source. Data taken in different run periods are not mutually consistent within the other uncertainties. After unfolding, the double ratio (data over simulated truth) of the data-taking periods (playlists) 1G--1M to the earliest periods, 1A--1F, has a $\pPar$ step of $(+6.89\pm0.46)\%$ at \SI{8}{GeV/c}. The step is already present in the reconstructed data, at $+\fvval{rp-pb-reco}\,\%$ relative to 1A--1F (data minus background over each period's signal simulation, scaled to its exposure; Fig.~\ref{fig:runperiod-steps}(a)). It therefore survives unfolding at about its reconstruction-level size. These data cannot establish which period, if any, is correct. The records document gives the 1N--1P group's step, the dilution figures, the block's construction and its sensitivity values.
 % U15 (currency check of 2fe070fec): the run-period figure's values, docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/lrows-g/g4-runperiod/runperiod_values.json (f63074b1; commit 92f6c7283), by currency_values() in make_values_fived16.py, which asserts its unfolded 1G--1M step equals this paragraph's typed (+6.89 +- 0.46) %; wording as the paper's section 4.3 at 5bbb9d269.
@@ -235,31 +228,11 @@ $C_{\mathrm{model}}$ measures generator-shape model dependence; it is not a cali
 \paragraph{Missed events in the universe unfolds.} In the systematic-universe unfolds of the adopted covariance, each simulated signal event that fails reconstruction carries that universe's own truth weight.
 % Deep restructure (DECISION-20261118; history-cuts/move-manifest-cv-20261118.tsv): sentences 2-3 moved to app:devhistory-2dchecks (CV-A04..CV-A06).
 
-% Deep restructure (DECISION-20261118; history-cuts/move-manifest-cv-20261118.tsv): the limitation paragraphs on the inputs carried without
-% confirmation and the playlist pooling (CV-B21..CV-B30), on the seed-related terms (CV-B15..CV-B20), and the
-% cell-set check (CV-A07) moved; the pointer sentence of "Other limitations" is superseded (CV-X01).
+% Deep restructure (DECISION-20261118; history-cuts/move-manifest-cv-20261118.tsv): the limitation paragraphs on the inputs carried without confirmation and the playlist pooling (CV-B21..CV-B30), on the seed-related terms (CV-B15..CV-B20), and the cell-set check (CV-A07) moved; the pointer sentence of "Other limitations" is superseded (CV-X01).
 
-% COMBINED-PLAN sec. 4 item 8: the current construction first; the three defects and their diagnostics moved verbatim to App. I (move manifest H3-010).
-% Deep restructure (DECISION-20261118; history-cuts/move-manifest-cv-20261118.tsv): the sentence "The values printed for the earlier budget were not changed by these findings."
-% is stated in App. I (app_devhistory.tex:101), where it moved with H3-010 (CV-D03).
-% Note register round n1, batch n1-B (2026-10-25), director ruling on the earlier-budget defects: the seven statements
-% that sec:uq-2d-construction printed about the earlier 2D budget (the review's finding; the May sweep's truth-input
-% mismatch; its consequence; the Rvn1pi/Rvp1pi double count; its size; the unpropagated background-template statistics;
-% the earlier printed budget left unchanged) are gathered here, each fact kept, framed as what the quoted budget
-% corrects (ledger-nB.md rows SY-D1 to SY-D7). The opening states what the saved products and code show, not who
-% reviewed them (R-N6). No count is printed: the review (TwoDFollowup2026,
-% REPORT.md sec. A4) also lists items this paragraph does not, and "the following" scopes the correction claim to the
-% three named here.
-% Sources, moved with the text: the review is Ref. TwoDFollowup2026; the earlier 2D budget is VL175 (printed identifier
-% removed by the plain-language pass). Rvn1pi/Rvp1pi: KNOWN_ISSUES.md 92 (printed pointer moved to a comment by the
-% plain-language pass; J3/J4 provisional, DECISION-20261018, packet W3: D10 KI-92); Rvn1pi median 0.0883 %:
-% rebuild/outputs/outA/budget_Q.json.gz bands.Rvn1pi.median_pct. Background stream and laterals: J3/J4 provisional
-% (DECISION-20261018, packet W3: D8 and KI-94 in sec:uq-boot; D10 KI-91); stageC/production/DESIGN.md §3.4 (three
-% streams), §S5 universe row, §12 (laterals); stageC/production/REPORT.md §12. July sweep: stageC/production/DESIGN.md
-% §S5 universe row (D10 KI-93).
+% COMBINED-PLAN sec. 4 item 8: the current construction first; the three defects and their diagnostics moved verbatim to App. I (move manifest H3-010). Deep restructure (DECISION-20261118; history-cuts/move-manifest-cv-20261118.tsv): the sentence "The values printed for the earlier budget were not changed by these findings." is stated in App. I (app_devhistory.tex:101), where it moved with H3-010 (CV-D03). Note register round n1, batch n1-B (2026-10-25), director ruling on the earlier-budget defects: the seven statements that sec:uq-2d-construction printed about the earlier 2D budget (the review's finding; the May sweep's truth-input mismatch; its consequence; the Rvn1pi/Rvp1pi double count; its size; the unpropagated background-template statistics; the earlier printed budget left unchanged) are gathered here, each fact kept, framed as what the quoted budget corrects (ledger-nB.md rows SY-D1 to SY-D7). The opening states what the saved products and code show, not who reviewed them (R-N6). No count is printed: the review (TwoDFollowup2026, REPORT.md sec. A4) also lists items this paragraph does not, and "the following" scopes the correction claim to the three named here. Sources, moved with the text: the review is Ref. TwoDFollowup2026; the earlier 2D budget is VL175 (printed identifier removed by the plain-language pass). Rvn1pi/Rvp1pi: KNOWN_ISSUES.md 92 (printed pointer moved to a comment by the plain-language pass; J3/J4 provisional, DECISION-20261018, packet W3: D10 KI-92); Rvn1pi median 0.0883 %: rebuild/outputs/outA/budget_Q.json.gz bands.Rvn1pi.median_pct. Background stream and laterals: J3/J4 provisional (DECISION-20261018, packet W3: D8 and KI-94 in sec:uq-boot; D10 KI-91); stageC/production/DESIGN.md §3.4 (three streams), §S5 universe row, §12 (laterals); stageC/production/REPORT.md §12. July sweep: stageC/production/DESIGN.md §S5 universe row (D10 KI-93).
 % Search: May sweep; May input; truth-input mismatch; background-template statistics; Rvp1pi @ ddf16f10
 
-% H3-UQ.01 (2026-11-19, the director's Part 3 order): \subsubsection{Which uncertainty pieces exist in three to five dimensions}
-% (sec:uq-higherdim) moved verbatim to Part 4, sec_fived16.tex (limitation-resolver, 9112dbf24).
+% H3-UQ.01 (2026-11-19, the director's Part 3 order): \subsubsection{Which uncertainty pieces exist in three to five dimensions} (sec:uq-higherdim) moved verbatim to Part 4, sec_fived16.tex (limitation-resolver, 9112dbf24).
 
 % The chi^2 caveat formerly here moved to sec_results.tex (\S\ref{sec:results-compare}).

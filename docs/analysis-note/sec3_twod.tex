@@ -2,161 +2,61 @@
 \label{sec:part-2d}
 \label{sec:results}
 
-Unbinned OmniFold reproduces the published MINERvA integral to about
-$\fpeval{round(100*(\ratioTot-1),0)}\%$. A correlated shape difference of
-undetermined origin remains (Sec.~\ref{sec:muon-cross-section-comparison}), and
-the covariance procedure under-covers at both held-out simulation tunes
-(Sec.~\ref{sec:muon-cross-section-validation}). The unfolding recovers specified
-features in simulation, but the joint shape and the interval coverage lack
-independent validation.
+Unbinned OmniFold reproduces the published MINERvA integral to about $\fpeval{round(100*(\ratioTot-1),0)}\%$. A correlated shape difference of undetermined origin remains (Sec.~\ref{sec:muon-cross-section-comparison}), and the covariance procedure under-covers at both held-out simulation tunes (Sec.~\ref{sec:muon-cross-section-validation}). The unfolding recovers specified features in simulation, but the joint shape and the interval coverage lack independent validation.
 
 \subsection{Unfolded cross section and comparison with MINERvA}
 \label{sec:muon-cross-section-comparison}
 \label{sec:results-xsec}
 
-We use the two-dimensional refined OmniFold estimator of
-Sec.~\ref{sec:estimators-and-extraction} to extract the flux-averaged inclusive
-charged-current $\nu_\mu$ cross section per nucleon on hydrocarbon,
-$d^2\sigma/(dp_T\,dp_\parallel)$. The 205 reported bins match the published
-MINERvA phase space and binning~\cite{MINERvA:2021owq}. Figure~\ref{fig:muon-projections}
-shows the two momentum projections, obtained by integrating the unfolded result
-over the other momentum component. In every $p_T$ slice and every
-$p_\parallel$ slice, the unfolded spectrum is closer to the published cross section
-than to the prior. \phantomsection\label{sec:results-model}The published GENIE
-2.12.6 prediction with MINERvA Tune v1 gives about $\fpeval{100*0.91}\%$ of the
-published integrated cross section, with the deficit
-concentrated near the peak of the $p_T$ spectrum. The two unfolded results show
-the same excess over that prediction in the peak region. Per bin, the
-OmniFold projections agree with the published result to within $2\%$, except at
-the edges of the phase space: the ratio rises from 0.97 in the lowest $p_T$ bin
-to 1.04 in the highest, and is 1.06 and 0.93 in the two highest $p_\parallel$
-bins.
+We use the two-dimensional refined OmniFold estimator of Sec.~\ref{sec:estimators-and-extraction} to extract the flux-averaged inclusive charged-current $\nu_\mu$ cross section per nucleon on hydrocarbon, $d^2\sigma/(dp_T\,dp_\parallel)$. The 205 reported bins match the published MINERvA phase space and binning~\cite{MINERvA:2021owq}. Figure~\ref{fig:muon-projections} shows the two momentum projections, obtained by integrating the unfolded result over the other momentum component. In every $p_T$ slice and every $p_\parallel$ slice, the unfolded spectrum is closer to the published cross section than to the prior. \phantomsection\label{sec:results-model}The published GENIE 2.12.6 prediction with MINERvA Tune v1 gives about $\fpeval{100*0.91}\%$ of the published integrated cross section, with the deficit concentrated near the peak of the $p_T$ spectrum. The two unfolded results show the same excess over that prediction in the peak region. Per bin, the OmniFold projections agree with the published result to within $2\%$, except at the edges of the phase space: the ratio rises from 0.97 in the lowest $p_T$ bin to 1.04 in the highest, and is 1.06 and 0.93 in the two highest $p_\parallel$ bins.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.49\textwidth]{MEFHC_5iter_xsec_proj_pt}
   \includegraphics[width=0.49\textwidth]{MEFHC_5iter_xsec_proj_pz}
-  \caption{Both muon momentum projections of the unfolded cross section follow the
-  published MINERvA result~\cite{MINERvA:2021owq} through the peak and the
-  falling tails. The upper panels show the transverse (left) and longitudinal
-  (right) spectra. The solid and dashed histograms show GENIE
-  2.12.6 with MINERvA Tune v1 for the unfolding prior and the published
-  prediction, respectively, which nearly coincide. The lower panels give the ratio of the OmniFold
-  result to the published result. Horizontal bars span the bins. The vertical bars on
-  the OmniFold points show finite weighted-sample statistics only.}
+  \caption{Both muon momentum projections of the unfolded cross section follow the published MINERvA result~\cite{MINERvA:2021owq} through the peak and the falling tails. The upper panels show the transverse (left) and longitudinal (right) spectra. The solid and dashed histograms show GENIE 2.12.6 with MINERvA Tune v1 for the unfolding prior and the published prediction, respectively, which nearly coincide. The lower panels give the ratio of the OmniFold result to the published result. Horizontal bars span the bins. The vertical bars on the OmniFold points show finite weighted-sample statistics only.}
   \label{fig:muon-projections}
   \label{fig:xsec}
 \end{figure}
 
-Integrating over the reported bins gives $\num{\sigTwoD}\,\mathrm{cm}^2$
-per nucleon, compared with $\num{\sigTwoDpaper}\,\mathrm{cm}^2$ per nucleon
-for MINERvA, a ratio of \ratioTot. This integration weights the differential
-cross section in each bin by its area. The fractional uncertainty from the
-covariance of the OmniFold result is $\uqIntegral\%$ on the integral, and the
-corresponding published uncertainty is $\uqPaperIntegral\%$. Agreement of the integrals
-does not test the shape, because excesses and deficits in different regions
-can cancel.
+Integrating over the reported bins gives $\num{\sigTwoD}\,\mathrm{cm}^2$ per nucleon, compared with $\num{\sigTwoDpaper}\,\mathrm{cm}^2$ per nucleon for MINERvA, a ratio of \ratioTot. This integration weights the differential cross section in each bin by its area. The fractional uncertainty from the covariance of the OmniFold result is $\uqIntegral\%$ on the integral, and the corresponding published uncertainty is $\uqPaperIntegral\%$. Agreement of the integrals does not test the shape, because excesses and deficits in different regions can cancel.
 
-\phantomsection\label{sec:results-compare}
-The median binwise ratio to MINERvA is \medianBinRatio, and $\binsFive\%$, $\binsTen\%$, and
-$\binsTwenty\%$ of the bins agree within $5\%$, $10\%$, and $20\%$, respectively.
-Figure~\ref{fig:muon-standardized-differences} shows the differences in units
-of the published bin uncertainties. The distribution has a mean of \pullMean{} and a
-standard deviation of \pullRMS. Let $\Delta$ be the vector of differences between
-the differential cross sections and $V_{\mathrm{pub}}$ the published covariance.
-Using only the diagonal of $V_{\mathrm{pub}}$ gives a quadratic distance per
-bin of 0.29. Using the full matrix gives
-$\Delta^{\mathsf T}V_{\mathrm{pub}}^{+}\Delta/205=\chiPaper$, where the superscript
-$+$ denotes the pseudoinverse. Thus the covariance correlations give
-substantially greater weight to the observed pattern of differences than the
-diagonal comparison suggests. The published uncertainty of a linear
-combination of bins can be small even when the uncertainties of its
-constituent bins are comparatively large. This makes the quadratic distance
-sensitive to differences that are small on the scale of the individual bins.
+\phantomsection\label{sec:results-compare} The median binwise ratio to MINERvA is \medianBinRatio, and $\binsFive\%$, $\binsTen\%$, and $\binsTwenty\%$ of the bins agree within $5\%$, $10\%$, and $20\%$, respectively. Figure~\ref{fig:muon-standardized-differences} shows the differences in units of the published bin uncertainties. The distribution has a mean of \pullMean{} and a standard deviation of \pullRMS. Let $\Delta$ be the vector of differences between the differential cross sections and $V_{\mathrm{pub}}$ the published covariance. Using only the diagonal of $V_{\mathrm{pub}}$ gives a quadratic distance per bin of 0.29. Using the full matrix gives $\Delta^{\mathsf T}V_{\mathrm{pub}}^{+}\Delta/205=\chiPaper$, where the superscript $+$ denotes the pseudoinverse. Thus the covariance correlations give substantially greater weight to the observed pattern of differences than the diagonal comparison suggests. The published uncertainty of a linear combination of bins can be small even when the uncertainties of its constituent bins are comparatively large. This makes the quadratic distance sensitive to differences that are small on the scale of the individual bins.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{MEFHC_5iter_pull_full}
-  \caption{The differences between the OmniFold and published cross sections, in units
-  of the published standard deviation of each reported bin, have a mean of
-  \pullMean{} and a standard deviation of \pullRMS{}. The left panel shows the
-  differences on the muon momentum grid, and the right panel shows their
-  distribution. The map and histogram use the diagonal uncertainties.}
+  \caption{The differences between the OmniFold and published cross sections, in units of the published standard deviation of each reported bin, have a mean of \pullMean{} and a standard deviation of \pullRMS{}. The left panel shows the differences on the muon momentum grid, and the right panel shows their distribution. The map and histogram use the diagonal uncertainties.}
   \label{fig:muon-standardized-differences}
   \label{fig:pull}
 \end{figure}
 
-\phantomsection\label{sec:results-tension}
-The distance is dominated by shape. Using the published covariance, the
-normalization difference gives $\chi^2_{\mathrm{norm}}=0.04$, whereas comparison
-of the unit-area shapes with the propagated covariance gives
-$\chi^2_{\mathrm{shape}}\simeq465$. The shape difference contributes across many
-covariance eigenmodes, including both small- and moderate-variance directions.
-A comparison of separate run-period unfolds finds that the observed run-period
-step cannot account for the distance in the best-determined covariance
-directions at the sensitivity of that test.
-Appendix~\ref{app:comparison-closure-coverage} defines the comparison statistics, and
-Appendix~\ref{app:additional-2d-comparisons} gives the
-additional comparisons.
+\phantomsection\label{sec:results-tension} The distance is dominated by shape. Using the published covariance, the normalization difference gives $\chi^2_{\mathrm{norm}}=0.04$, whereas comparison of the unit-area shapes with the propagated covariance gives $\chi^2_{\mathrm{shape}}\simeq465$. The shape difference contributes across many covariance eigenmodes, including both small- and moderate-variance directions. A comparison of separate run-period unfolds finds that the observed run-period step cannot account for the distance in the best-determined covariance directions at the sensitivity of that test. Appendix~\ref{app:comparison-closure-coverage} defines the comparison statistics, and Appendix~\ref{app:additional-2d-comparisons} gives the additional comparisons.
 
-\phantomsection\label{sec:results-benchmarks}
-A binned IBU of the same inputs at ten iterations, the setting of the published
-measurement~\cite{MINERvA:2021owq}, differs from the two-dimensional OmniFold
-result beyond paired-replica fluctuations ($T=\fvval{c2c1-T}$, compared with a null
-95th percentile of \fvval{c2c1-q95}). Relative to the published result and using its
-covariance, ten-iteration IBU and OmniFold give descriptive $\chi^2$ per bin of
-\fvval{c2c1-dibu} and \fvval{c2c1-der}, respectively. The origin of the correlated shape difference
-remains undetermined.
+\phantomsection\label{sec:results-benchmarks} A binned IBU of the same inputs at ten iterations, the setting of the published measurement~\cite{MINERvA:2021owq}, differs from the two-dimensional OmniFold result beyond paired-replica fluctuations ($T=\fvval{c2c1-T}$, compared with a null 95th percentile of \fvval{c2c1-q95}). Relative to the published result and using its covariance, ten-iteration IBU and OmniFold give descriptive $\chi^2$ per bin of \fvval{c2c1-dibu} and \fvval{c2c1-der}, respectively. The origin of the correlated shape difference remains undetermined.
 
-The comparison with the publication is descriptive. The two results share data
-and flux, detector, and interaction-model uncertainties, and their
-cross-covariance is unavailable. With $K$ the cross-covariance between the
-OmniFold and published results, the covariance of their difference is
+The comparison with the publication is descriptive. The two results share data and flux, detector, and interaction-model uncertainties, and their cross-covariance is unavailable. With $K$ the cross-covariance between the OmniFold and published results, the covariance of their difference is
 \begin{equation}
   \operatorname{Cov}(\Delta)=Q_R+V_{\mathrm{pub}}-K-K^{\mathsf T} .
   \label{eq:muon-difference-covariance}
 \end{equation}
-Using the simple sum $Q_R+V_{\mathrm{pub}}$ gives a distance per bin of \chiCombined.
-This sum omits the cross terms and counts shared uncertainty contributions
-twice. The published covariance is also ill-conditioned, because the variance differs
-by many orders of magnitude across its eigenmodes. These distances therefore
-carry no goodness-of-fit probability. The tree implementation and the
-refined background subtraction were adopted with the published comparison
-available (Appendix~\ref{app:choices-after-results}). Together these conditions make the publication
-comparison a benchmark of the central values with shared inputs.
+Using the simple sum $Q_R+V_{\mathrm{pub}}$ gives a distance per bin of \chiCombined. This sum omits the cross terms and counts shared uncertainty contributions twice. The published covariance is also ill-conditioned, because the variance differs by many orders of magnitude across its eigenmodes. These distances therefore carry no goodness-of-fit probability. The tree implementation and the refined background subtraction were adopted with the published comparison available (Appendix~\ref{app:choices-after-results}). Together these conditions make the publication comparison a benchmark of the central values with shared inputs.
 
 \subsection{Uncertainty and covariance}
 \label{sec:muon-cross-section-covariance}
 \label{sec:systematics}
 \label{sec:uq-combine}
 
-The OmniFold covariance gives a smaller median bin uncertainty than the
-published covariance, $\uqMedian\%$ compared with $\uqPaper\%$, but a larger
-fractional uncertainty on the integral, $\uqIntegral\%$ compared with
-$\uqPaperIntegral\%$. The reported $205\times205$ covariance $Q_R$ describes the differential cross
-section obtained with the same estimator as the central value. It is the sum
-of the systematic, statistical, training-seed, and run-period contributions,
+The OmniFold covariance gives a smaller median bin uncertainty than the published covariance, $\uqMedian\%$ compared with $\uqPaper\%$, but a larger fractional uncertainty on the integral, $\uqIntegral\%$ compared with $\uqPaperIntegral\%$. The reported $205\times205$ covariance $Q_R$ describes the differential cross section obtained with the same estimator as the central value. It is the sum of the systematic, statistical, training-seed, and run-period contributions,
 \begin{equation}
   Q_R=C_{\mathrm{syst}}+C_{\mathrm{stat}}+C_{\mathrm{seed}}+C_{\mathrm{run}} .
   \label{eq:muon-covariance-block-sum}
 \end{equation}
-The sum assumes zero cross-covariances between blocks and a linear response to
-simultaneous perturbations. The common data and unfolding can couple the effects
-of different sources of variation. For example, changes in the training sample
-can affect the dependence of the result on the training seed. The reported sum
-has no separate block for interactions of seed variation with the bootstrap or
-systematic perturbations. Appendix~\ref{app:covariance-construction} gives the construction of the
-ensembles, the treatment of the flux normalization,
-and the assumptions used to combine their covariances.
+The sum assumes zero cross-covariances between blocks and a linear response to simultaneous perturbations. The common data and unfolding can couple the effects of different sources of variation. For example, changes in the training sample can affect the dependence of the result on the training seed. The reported sum has no separate block for interactions of seed variation with the bootstrap or systematic perturbations. Appendix~\ref{app:covariance-construction} gives the construction of the ensembles, the treatment of the flux normalization, and the assumptions used to combine their covariances.
 
 \phantomsection\label{sec:results-uq}
 \begin{table}[H]
-  \caption{Uncertainty budget for the 205 reported muon bins. For each
-  covariance, the percentage is the median of the binwise fractional standard
-  deviations. The square-root trace gives the diagonal uncertainties in
-  quadrature, in units of $10^{-39}\,\mathrm{cm}^2$ per nucleon per
-  $(\mathrm{GeV}/c)^2$. The published entry uses the published central values
-  and covariance~\cite{MINERvA:2021owq}.}
+  \caption{Uncertainty budget for the 205 reported muon bins. For each covariance, the percentage is the median of the binwise fractional standard deviations. The square-root trace gives the diagonal uncertainties in quadrature, in units of $10^{-39}\,\mathrm{cm}^2$ per nucleon per $(\mathrm{GeV}/c)^2$. The published entry uses the published central values and covariance~\cite{MINERvA:2021owq}.}
   \label{tab:muon-uncertainty-budget}
   \label{tab:uq}
   \centering
@@ -176,174 +76,36 @@ and the assumptions used to combine their covariances.
   \end{tabular}
 \end{table}
 
-\phantomsection\label{sec:uq-universes}
-The systematic block in Table~\ref{tab:muon-uncertainty-budget} includes
-43 bands of simulated flux,
-detector, and interaction-model variations and a fully correlated $1.4\%$
-term for the target-nucleon normalization. The band sum omits a duplicate
-nonresonant-pion variation.
-The flux is the largest individual band, with a median fractional standard
-deviation of $\fluxBand\%$, compared with $4.01\%$ in the publication. The next
-largest are the MINOS muon energy scale ($2.36\%$), the MINOS muon-match
-efficiency ($1.50\%$), and the MINERvA muon energy scale ($1.44\%$).
-The flux prediction affects both the distribution of simulated events and the
-conversion from unfolded yields to cross sections. The MINOS energy-scale
-variations already incorporate correlated flux effects through their
-normalization, as discussed in Appendix~\ref{app:covariance-construction}.
-Under the MINERvA Analysis Toolkit (MAT) convention, each systematic band is
-mean-centered and uses population normalization ($1/N$ for equal weights),
-with constraint weights for the flux universes, so the band excludes the
-offset of its mean from the central value.
-In the systematic re-unfoldings, each missed signal event carries the truth
-weight of the corresponding universe.
+\phantomsection\label{sec:uq-universes} The systematic block in Table~\ref{tab:muon-uncertainty-budget} includes 43 bands of simulated flux, detector, and interaction-model variations and a fully correlated $1.4\%$ term for the target-nucleon normalization. The band sum omits a duplicate nonresonant-pion variation. The flux is the largest individual band, with a median fractional standard deviation of $\fluxBand\%$, compared with $4.01\%$ in the publication. The next largest are the MINOS muon energy scale ($2.36\%$), the MINOS muon-match efficiency ($1.50\%$), and the MINERvA muon energy scale ($1.44\%$). The flux prediction affects both the distribution of simulated events and the conversion from unfolded yields to cross sections. The MINOS energy-scale variations already incorporate correlated flux effects through their normalization, as discussed in Appendix~\ref{app:covariance-construction}. Under the MINERvA Analysis Toolkit (MAT) convention, each systematic band is mean-centered and uses population normalization ($1/N$ for equal weights), with constraint weights for the flux universes, so the band excludes the offset of its mean from the central value. In the systematic re-unfoldings, each missed signal event carries the truth weight of the corresponding universe.
 
-\phantomsection\label{sec:uq-boot}
-The statistical block propagates finite data and simulation statistics through
-the full unfolding using 300 Poisson bootstrap replicas at the central training
-seed. Its square-root trace is 0.407 times that of the published statistical
-covariance, and the median ratio of the binwise statistical standard deviations
-is 0.425. The bootstrap covariance omits the replica mean's offset from the
-central value, a median of 0.25 statistical standard deviations across bins
-that leaves the bias relative to truth undetermined.
+\phantomsection\label{sec:uq-boot} The statistical block propagates finite data and simulation statistics through the full unfolding using 300 Poisson bootstrap replicas at the central training seed. Its square-root trace is 0.407 times that of the published statistical covariance, and the median ratio of the binwise statistical standard deviations is 0.425. The bootstrap covariance omits the replica mean's offset from the central value, a median of 0.25 statistical standard deviations across bins that leaves the bias relative to truth undetermined.
 
-\phantomsection\label{sec:uq-ml}
-The training-seed block measures the variation attributable to
-randomized training on matched resamples and has the smallest median
-contribution. It is estimated from five seed settings, which limits the
-precision of the estimated variance.
+\phantomsection\label{sec:uq-ml} The training-seed block measures the variation attributable to randomized training on matched resamples and has the smallest median contribution. It is estimated from five seed settings, which limits the precision of the estimated variance.
 
-The rank-two run-period block represents the spread of three period groups,
-including an unexplained $(\fvval{rp-pb-unf}\pm\fvval{rp-pb-unf-se})\%$ step at $p_\parallel=8\,\mathrm{GeV}/c$
-in the double ratio of unfolded to simulated cross sections for the middle and
-earliest groups, and raises the uncertainty on the integral by $9.9\%$.
+The rank-two run-period block represents the spread of three period groups, including an unexplained $(\fvval{rp-pb-unf}\pm\fvval{rp-pb-unf-se})\%$ step at $p_\parallel=8\,\mathrm{GeV}/c$ in the double ratio of unfolded to simulated cross sections for the middle and earliest groups, and raises the uncertainty on the integral by $9.9\%$.
 
-For the projections, the covariance is $P Q_R P^{\mathsf T}$, where $P$
-integrates over the removed momentum component in each projected bin. The
-variance of the integral is $a^{\mathsf T}Q_R a$, where $a$ is the vector of bin
-areas. These quantities use the full covariance, including correlations between
-bins that enter the same sum. A fully correlated normalization term, for example,
-retains its fractional size on both projections and on the integral. The smaller
-median bin uncertainty compared with MINERvA can therefore coexist with a larger
-fractional uncertainty on the integral.
+For the projections, the covariance is $P Q_R P^{\mathsf T}$, where $P$ integrates over the removed momentum component in each projected bin. The variance of the integral is $a^{\mathsf T}Q_R a$, where $a$ is the vector of bin areas. These quantities use the full covariance, including correlations between bins that enter the same sum. A fully correlated normalization term, for example, retains its fractional size on both projections and on the integral. The smaller median bin uncertainty compared with MINERvA can therefore coexist with a larger fractional uncertainty on the integral.
 
 Appendix~\ref{app:covariance-inversion} discusses how small eigenvalues affect the inversion of $Q_R$.
 
-\phantomsection\label{sec:uq-2d-scope}
-We report the prior-shape dependence separately as $C_{\mathrm{model}}$, the
-sum of outer products of shifts obtained by reweighting the prior to three
-alternative generator shapes and repeating the unfolding. Its fractional standard
-deviation varies across the grid, with a median of $\cmodelMedian\%$, an 84th percentile
-of $7.10\%$, and a maximum of $21.10\%$. The median for
-$Q_R+C_{\mathrm{model}}$ is $\qrCmodelMedian\%$. Steps in the reweighting ratios affect
-the size of this term, with about $\fpeval{round(59.4,0)}\%$ of its trace coming from 52 bins
-adjacent to such steps. Its effect on the integral is $\cmodelIntegral\%$. The
-reweightings vary only the shape of the prior and leave its normalization
-dependence untested. The term measures sensitivity to the chosen shapes,
-with no calibrated bound on estimator bias.
+\phantomsection\label{sec:uq-2d-scope} We report the prior-shape dependence separately as $C_{\mathrm{model}}$, the sum of outer products of shifts obtained by reweighting the prior to three alternative generator shapes and repeating the unfolding. Its fractional standard deviation varies across the grid, with a median of $\cmodelMedian\%$, an 84th percentile of $7.10\%$, and a maximum of $21.10\%$. The median for $Q_R+C_{\mathrm{model}}$ is $\qrCmodelMedian\%$. Steps in the reweighting ratios affect the size of this term, with about $\fpeval{round(59.4,0)}\%$ of its trace coming from 52 bins adjacent to such steps. Its effect on the integral is $\cmodelIntegral\%$. The reweightings vary only the shape of the prior and leave its normalization dependence untested. The term measures sensitivity to the chosen shapes, with no calibrated bound on estimator bias.
 % Search: C_model normalization; cmodel normalization; prior normalization dependence; normalization of the prior; shape-only reweighting; C_model rate (no record tests the prior's normalization; C_model is the generator-shape term, DECISION-20261024-joseph-2d-model-dependence-component.md:7,21,43) @ caae27166e85
 
-$Q_R$ is conditional on the chosen learner, regularization, and parametrized
-detector response. It omits variation across learner families and
-regularization choices, response discrepancies outside that parametrization,
-and possible bias from pooling inconsistent run periods. The construction
-propagates the specified sources of variation with their correlations across
-bins. The coverage studies in Sec.~\ref{sec:muon-cross-section-validation}
-leave uncertainties for the reported bins, projections, and integral without
-validated coverage.
+$Q_R$ is conditional on the chosen learner, regularization, and parametrized detector response. It omits variation across learner families and regularization choices, response discrepancies outside that parametrization, and possible bias from pooling inconsistent run periods. The construction propagates the specified sources of variation with their correlations across bins. The coverage studies in Sec.~\ref{sec:muon-cross-section-validation} leave uncertainties for the reported bins, projections, and integral without validated coverage.
 
 \subsection{Closure tests and uncertainty validation}
 \label{sec:muon-cross-section-validation}
 \label{sec:validation}
 
-\phantomsection\label{sec:coverage-tunes}
-The signal-only closure tests recover the injected truth features, but the
-covariance procedure under-covers at both held-out simulation tunes.
-The rebuilt 2D covariance gave joint
-regions that contained the true cross section in \lrval{cov2d-ar23-joint} of
-\lrval{cov2d-ntoys} pseudo-experiments at the first tune and
-\lrval{cov2d-g18-joint} of \lrval{cov2d-ntoys} at the second. Each rebuild
-included the prior-shape term and omitted the run-period block. Regrading the
-same pseudo-experiments with the run-period block added leaves the mean
-$\chi^2/\mathrm{ndf}$ at \fvval{rg-2d-ar23-full} at the first tune and
-\fvval{rg-2d-g18-full} at the second, far above the value of about 1 expected
-if the covariance described their deviations from the truth
-(\hyperlink{validation-2d-joint-coverage}{held-out-tune coverage row};
-per-bin and joint diagnostics in Appendix~\ref{app:comparison-closure-coverage}).
-The intervals
-on data use $Q_R$ as defined in Eq.~\eqref{eq:muon-covariance-block-sum}.
+\phantomsection\label{sec:coverage-tunes} The signal-only closure tests recover the injected truth features, but the covariance procedure under-covers at both held-out simulation tunes. The rebuilt 2D covariance gave joint regions that contained the true cross section in \lrval{cov2d-ar23-joint} of \lrval{cov2d-ntoys} pseudo-experiments at the first tune and \lrval{cov2d-g18-joint} of \lrval{cov2d-ntoys} at the second. Each rebuild included the prior-shape term and omitted the run-period block. Regrading the same pseudo-experiments with the run-period block added leaves the mean $\chi^2/\mathrm{ndf}$ at \fvval{rg-2d-ar23-full} at the first tune and \fvval{rg-2d-g18-full} at the second, far above the value of about 1 expected if the covariance described their deviations from the truth (\hyperlink{validation-2d-joint-coverage}{held-out-tune coverage row}; per-bin and joint diagnostics in Appendix~\ref{app:comparison-closure-coverage}). The intervals on data use $Q_R$ as defined in Eq.~\eqref{eq:muon-covariance-block-sum}.
 
-\phantomsection\label{sec:coverage}
-The quoted statistical block has had no coverage test. A test of an earlier
-variant of the band is described in App.~\ref{app:choices-after-results}.
+\phantomsection\label{sec:coverage} The quoted statistical block has had no coverage test. A test of an earlier variant of the band is described in App.~\ref{app:choices-after-results}.
 % Search: coverage test of the quoted 2D statistical block (Q_R block, S1); held-out-MC re-test; KNOWN_ISSUES 85; statband-retest; coverage_fixed_truth/n2; COV2D; REGRADE (the primer's search at 0d919b1a, rerun; REGRADE-DECLARATION.md grades the COV2D toys against C_T + C_run(T), the full covariance, not the statistical block) @ caae27166e85
 
-The signal-only closure tests recover the injected $p_T$ and $p_\parallel$
-features to median absolute fractional residuals of $0.046\%$ and
-$0.013\%$, respectively, within the descriptive $1.5\%$ criterion
-(\hyperlink{validation-2d-closure}{closure rows} of
-Table~\ref{tab:validation-inventory}). These tests use five-iteration OmniFold with the
-purity baseline in Table~\ref{tab:estimators} and simulation from one run period.
-Scored with the feature-recovery test of
-Ref.~\cite{Canelli:2025guide}, a $17.2\%$ Gaussian truth feature leaves a
-$1.69\%$ residual, a ratio of 0.098 that meets the guide's criterion. Reweighting the pseudo-data by a
-quasielastic axial-mass variation or a flux variation gives residuals of
-$0.068\%$ and $0.376\%$, respectively, within the $2\%$ criterion, against
-references extrapolated from the accepted signal. These references probe shape changes conditional on the
-simulated acceptance.
+The signal-only closure tests recover the injected $p_T$ and $p_\parallel$ features to median absolute fractional residuals of $0.046\%$ and $0.013\%$, respectively, within the descriptive $1.5\%$ criterion (\hyperlink{validation-2d-closure}{closure rows} of Table~\ref{tab:validation-inventory}). These tests use five-iteration OmniFold with the purity baseline in Table~\ref{tab:estimators} and simulation from one run period. Scored with the feature-recovery test of Ref.~\cite{Canelli:2025guide}, a $17.2\%$ Gaussian truth feature leaves a $1.69\%$ residual, a ratio of 0.098 that meets the guide's criterion. Reweighting the pseudo-data by a quasielastic axial-mass variation or a flux variation gives residuals of $0.068\%$ and $0.376\%$, respectively, within the $2\%$ criterion, against references extrapolated from the accepted signal. These references probe shape changes conditional on the simulated acceptance.
 
-A separate check of the effective response finds an approximately linear
-rise in the median signed fractional residual, from $0.57\%$ to $1.14\%$
-and $3.43\%$ across the tested amplitudes. The largest amplitude exceeds
-the descriptive threshold in the
-\hyperlink{validation-2d-response}{hidden-resolution row} of the inventory.
-The check reweights reconstructed events as a function of the resolution
-variable $\Delta p_T=p_T^{\mathrm{reco}}-p_T^{\mathrm{true}}$ at fixed truth.
-The two momenta are classifier inputs at their respective levels, and their
-eventwise difference is outside the feature set. All of the closure tests
-use the same detector simulation, and the conclusions apply to the specific
-injected shapes and amplitudes. We assign no additional uncertainty from
-these closure residuals.
+A separate check of the effective response finds an approximately linear rise in the median signed fractional residual, from $0.57\%$ to $1.14\%$ and $3.43\%$ across the tested amplitudes. The largest amplitude exceeds the descriptive threshold in the \hyperlink{validation-2d-response}{hidden-resolution row} of the inventory. The check reweights reconstructed events as a function of the resolution variable $\Delta p_T=p_T^{\mathrm{reco}}-p_T^{\mathrm{true}}$ at fixed truth. The two momenta are classifier inputs at their respective levels, and their eventwise difference is outside the feature set. All of the closure tests use the same detector simulation, and the conclusions apply to the specific injected shapes and amplitudes. We assign no additional uncertainty from these closure residuals.
 
-The background treatment is tested separately with 20 pseudo-experiments at
-nominal truth, each unfolded with both treatments. The two results differ in
-the mean by more than one statistical standard deviation in 14 of the 205
-bins. In those bins, the purity-based estimate deviates from the truth by as
-much as 5.9 statistical standard deviations, while the refined estimate is
-within 0.44, using the purity-based statistical block as a common scale
-(Appendix~\ref{app:negative-weight-background}).
+The background treatment is tested separately with 20 pseudo-experiments at nominal truth, each unfolded with both treatments. The two results differ in the mean by more than one statistical standard deviation in 14 of the 205 bins. In those bins, the purity-based estimate deviates from the truth by as much as 5.9 statistical standard deviations, while the refined estimate is within 0.44, using the purity-based statistical block as a common scale (Appendix~\ref{app:negative-weight-background}).
 
-% PASS2:
-% Source literals retained in 3.1: GENIE 2.12.6, Tune v1, 205 bins,
-% the Tune v1 rate (0.91 as 91%), the 5%, 10%, and 20% windows, 0.29,
-% the shape distances 0.04 and 465, and the null 95th percentile designation.
-% Source literals retained in 3.2: the six square-root traces (rescaled to
-% the draft's units), the 5.926 and 2.087 medians (rounded as in the draft),
-% the 0.676 and 0.048 medians, 43 bands, 1.4%, 4.01%, 2.36%, 1.50%, 1.44%,
-% 300 bootstrap replicas, 0.407, 0.425 (app_statmethods.tex), 0.25, the
-% step location 8 GeV/c, its 9.9% effect on the integral, and the prior-shape
-% values 84th, 7.10%, 21.10%, 59.4% (rounded to 59%), and 52.
-% Source literals retained in 3.3: 0.046%, 0.013%, 1.5%, 17.2%, 1.69%, 0.098,
-% 0.068%, 0.376%, and 2% (part5_validation.tex); hidden-variable amplitudes
-% 0.05, 0.10, 0.30, residuals 0.57%, 1.14%, 3.43%, and threshold 3%;
-% 20 pseudo-experiments (app_negweight.tex), 14 of 205, 5.9, and 0.44
-% (sec_summary.tex), GENIE v3, and the conclusion's approximately 1%.
-% The explicitly spelled-out count in the truncated test is also spelled
-% out in sec_validation.tex. Other numeric notation is mathematical or units.
-% No unresolved references in this section. Original floats without a
-% retained counterpart here: tab:compare, tab:pl-added,
-% tab:validation-questions, tab:coverage-bands, tab:coverage-tunes,
-% fig:modelmaps, fig:uqbands, fig:bootstrap, fig:eff. The slices and tension
-% figures have Appendix C.1 destinations in new-labels.md. The omitted
-% diagnostic subsections have no local anchors for sec:uq-2d-construction
-% or sec:val-other.
-% Feature-recovery stage check: closure_truth_reweight.py's default
-% gauss_pt output is the same file bottom_line_test.py reads for the 2D
-% recovery score. The 17.2% feature and 1.69% residual describe the
-% feature bins under that score, while 0.046% is the all-bin median residual.
-% IBU placement check: C.1 preserves 19g's descriptive fixed-setting
-% comparison and published metric. DECISION-20261120a item 1 released
-% the sentence count only and kept the earlier placement; the later
-% author-approved move in inputs2/notes.md supplies the C.1 placement.
-% D.4 check: the staged appendix preserves the closure-before-comparison
-% sequence. The fixed-truth numbers are omitted here per the move and are
-% still absent from the staged D.4 checked during this pass.
+% PASS2: Source literals retained in 3.1: GENIE 2.12.6, Tune v1, 205 bins, the Tune v1 rate (0.91 as 91%), the 5%, 10%, and 20% windows, 0.29, the shape distances 0.04 and 465, and the null 95th percentile designation. Source literals retained in 3.2: the six square-root traces (rescaled to the draft's units), the 5.926 and 2.087 medians (rounded as in the draft), the 0.676 and 0.048 medians, 43 bands, 1.4%, 4.01%, 2.36%, 1.50%, 1.44%, 300 bootstrap replicas, 0.407, 0.425 (app_statmethods.tex), 0.25, the step location 8 GeV/c, its 9.9% effect on the integral, and the prior-shape values 84th, 7.10%, 21.10%, 59.4% (rounded to 59%), and 52. Source literals retained in 3.3: 0.046%, 0.013%, 1.5%, 17.2%, 1.69%, 0.098, 0.068%, 0.376%, and 2% (part5_validation.tex); hidden-variable amplitudes 0.05, 0.10, 0.30, residuals 0.57%, 1.14%, 3.43%, and threshold 3%; 20 pseudo-experiments (app_negweight.tex), 14 of 205, 5.9, and 0.44 (sec_summary.tex), GENIE v3, and the conclusion's approximately 1%. The explicitly spelled-out count in the truncated test is also spelled out in sec_validation.tex. Other numeric notation is mathematical or units. No unresolved references in this section. Original floats without a retained counterpart here: tab:compare, tab:pl-added, tab:validation-questions, tab:coverage-bands, tab:coverage-tunes, fig:modelmaps, fig:uqbands, fig:bootstrap, fig:eff. The slices and tension figures have Appendix C.1 destinations in new-labels.md. The omitted diagnostic subsections have no local anchors for sec:uq-2d-construction or sec:val-other. Feature-recovery stage check: closure_truth_reweight.py's default gauss_pt output is the same file bottom_line_test.py reads for the 2D recovery score. The 17.2% feature and 1.69% residual describe the feature bins under that score, while 0.046% is the all-bin median residual. IBU placement check: C.1 preserves 19g's descriptive fixed-setting comparison and published metric. DECISION-20261120a item 1 released the sentence count only and kept the earlier placement; the later author-approved move in inputs2/notes.md supplies the C.1 placement. D.4 check: the staged appendix preserves the closure-before-comparison sequence. The fixed-truth numbers are omitted here per the move and are still absent from the staged D.4 checked during this pass.

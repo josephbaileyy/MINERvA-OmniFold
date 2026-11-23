@@ -4,7 +4,7 @@
 usage:
   records_reorg.py inventory [--note-dir D] [--rev SHA] [--out FILE]
   records_reorg.py assemble  [--note-dir D] [--rev SHA] [--out-dir DIR]
-  records_reorg.py check     --base SHA [--note-dir D]
+  records_reorg.py check     --base SHA [--note-dir D] [--reflowed-from SHA]
   records_reorg.py dropped   --base SHA [--out FILE]
   records_reorg.py rekey     [--note-dir D] [--write]
   records_reorg.py --self-test
@@ -629,6 +629,33 @@ def cmd_assemble(tree: Tree, cfg: Config, out_dir: Path) -> int:
 GENERATED = ("records_entry_numbers.tex", "records_results_index.tex", "records_estimators.tex", "records_earlier_labels.tex")
 
 
+def reflow_identity(pre: Tree, new: Tree) -> list[str]:
+    """--reflowed-from (2026-11-22): the records sources of `new` are exactly reflow_tex.py's reflow of `pre`'s.
+
+    The invariance gate compares printed LINES, and reflow_tex.py --note joins a paragraph's lines into one, so after the
+    one-line-per-paragraph reflow the gate is run against the reflow's parent (`pre`) and this proves the step from
+    `pre` to `new` changed only line breaks: every file of the records closure (GENERATED left out) of `new` equals the
+    fixed point of reflow_text applied to the same file of `pre`, with comments kept in place exactly where
+    reflow_tex.py keeps them (KEEP_IN_PLACE). The typeset text is proved unchanged separately (pdftotext)."""
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import reflow_tex  # noqa: E402
+    fails = []
+    a = {f: t for f, t in pre.closure().items() if f not in GENERATED}
+    b = {f: t for f, t in new.closure().items() if f not in GENERATED}
+    for f in sorted(set(a) ^ set(b)):
+        fails.append(f"REFLOW-IDENTITY: {f} is in only one of the two records closures")
+    for f in sorted(set(a) & set(b)):
+        t = a[f]
+        for _ in range(0 if f in reflow_tex.GENERATED else 4):   # reflow_tex.py never reflows its generated files                          # reflow_tex.py --note can need a second pass; take the fixed point
+            u, _m = reflow_tex.reflow_text(t, f not in reflow_tex.KEEP_IN_PLACE)
+            if u == t:
+                break
+            t = u
+        if t != b[f]:
+            fails.append(f"REFLOW-IDENTITY: {f} is not the reflow of its text at {pre.rev[:12]}")
+    return fails
+
+
 def check(base: Tree, new: Tree, cfg: Config) -> list[str]:
     """The invariance gate (module docstring). Generated files (GENERATED) are left out: they are regenerated, never
     edited, and records_entry_numbers.tex changes by design when the provenance section's number does."""
@@ -972,6 +999,8 @@ def main(argv=None) -> int:
     ap.add_argument("--note-dir", type=Path, default=HERE)
     ap.add_argument("--rev")
     ap.add_argument("--base")
+    ap.add_argument("--reflowed-from", help="check: run the gate against this commit (the reflow's parent) and prove the "
+                                             "working tree's records sources are exactly its reflow (reflow_identity)")
     ap.add_argument("--out", type=Path)
     ap.add_argument("--out-dir", type=Path)
     ap.add_argument("--write", action="store_true")
@@ -988,7 +1017,11 @@ def main(argv=None) -> int:
     if a.cmd == "check":
         if not a.base:
             ap.error("check needs --base SHA")
-        fails = check(Tree(a.note_dir, a.base), Tree(a.note_dir), cfg)
+        if a.reflowed_from:
+            fails = (check(Tree(a.note_dir, a.base), Tree(a.note_dir, a.reflowed_from), cfg)
+                     + reflow_identity(Tree(a.note_dir, a.reflowed_from), Tree(a.note_dir)))
+        else:
+            fails = check(Tree(a.note_dir, a.base), Tree(a.note_dir), cfg)
         for f in fails[:80]:
             print("  FAIL " + f)
         print(f"RECORDS-REORG check :: {'FAIL' if fails else 'PASS'} ({len(fails)} failures)")
