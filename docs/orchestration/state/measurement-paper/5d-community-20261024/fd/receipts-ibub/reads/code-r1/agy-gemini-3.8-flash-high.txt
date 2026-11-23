@@ -1,0 +1,128 @@
+# Independent Adversarial Code Review: IBUB Lane (revision 3)
+
+**Scope & Reference Documents:**
+- Design: [IBUB-DECLARATION.md](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/IBUB-DECLARATION.md) (revision 3, accepted)
+- Implementation: [ibub_unit.py](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/ibub_unit.py), [config.json](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/config.json), [ibub_readout.py](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/ibub_readout.py)
+- Tests & Mutants: [test_ibub_unit.py](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/test_ibub_unit.py), [test_ibub_readout.py](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/test_ibub_readout.py), [mutants.py](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/mutants.py)
+- Upstream Libraries: `ref_c2c1.py`, `cov2d_readout.py`, `cov2d_readouts.py`, `cov2d_score.py`, `cov2d_blocks_open_audit_excerpt.py`
+
+---
+
+### Assessment 1: Correctness
+- **Indexing & Cell Flattening**: Verified correct. Grid is $14 \times 16 = 224$ cells. GlobalID index is $p_T \times 16 + p_\parallel$ matching `ref_c2c1.global_index` ([ref_c2c1.py:241](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/ref_c2c1.py#L241)). Masking with `rep` correctly restricts to 205 cells ([ibub_readout.py:257-261](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/ibub_readout.py#L257-L261)). The band integrals properly partition into 14 $p_T$ bands (`flat // 16`), 16 $p_\parallel$ bands (`flat % 16`), and 1 total band ([ibub_readout.py:65-74](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/ibub_readout.py#L65-L74)).
+- **Pairing**: Verified correct. OmniFold products, IBU units, and graded truths are paired toy-by-toy strictly by seed matching `cov2d.TOY_SEEDS[truth]` ([ibub_readout.py:264-279](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/ibub_readout.py#L264-L279)).
+- **Bootstrap & Error Propagation**: The $B = 10,000$ bootstrap resamples share seeds `[5760000, 0]` (G18) and `[5760000, 1]` (AR23) across both methods, maintaining pairing for difference statistics ([ibub_readout.py:81-86, 307-308](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/ibub_readout.py#L81-L86)).
+- **Band Integrals**: The band projection matrix $W$ weights cells by $A_c = \Delta p_T \Delta p_\parallel$ from `cells.area`, producing $\sum_{c \in \text{band}} A_c e_{tc}$, not unweighted sums ([ibub_readout.py:67-73](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/ibub_readout.py#L67-L73)).
+- **Threshold $z^*$ & Rule**: $z^* = \Phi^{-1}(1 - 0.025 / 236) = 3.7044$ ([ibub_readout.py:77-78](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/ibub_readout.py#L77-L78)). Flags trigger `DIFFER`, otherwise `NOT RESOLVED APART`. Any failed §5 control invalidates the run without reading ([ibub_readout.py:155, 302-303](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/ibub_readout.py#L155)).
+- **Barrier (`refcheck`)**: Checks both reference units for `PASS`, enforces the $1.25 \times 217\,\text{s} = 271.25\,\text{s}$ wall-time limit, and tests $c2\_central$ vs $central\_df$ to $10^{-8}$ ([ibub_unit.py:364-390](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/ibub_unit.py#L364-L390)).
+- **Defects Found**: Critical bugs exist in C-G2R gating ([ibub_unit.py:146](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/ibub_unit.py#L146)), exception handling during data staging ([ibub_unit.py:185-188](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/ibub_unit.py#L185-L188)), unhandled exceptions in `ibu_products` ([ibub_readout.py:203, 218](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/ibub_readout.py#L203)), and code-hash pinning ([config.json:5-9](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/config.json#L5-L9)). Detailed below.
+
+---
+
+### Assessment 2: Fidelity to the Declaration
+- Controls C-OF, C-TRUTH, C-REP, C-REP-D, C-DATA, C-FILL, C-ROO, C-SIM, C-COMPLETE, C-CELLS, and C-K10 are implemented.
+- Descriptives (surrogates' realized mean, Hotelling $T^2$, flagged cells comparison, bootstrap-over-analytic SE ratio, clipping-weakened cells) are implemented in [ibub_readout.py:310-323](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/ibub_readout.py#L310-L323).
+- **Discrepancy (Declared vs Code)**: [IBUB-DECLARATION.md §9:361-365](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/IBUB-DECLARATION.md#L361-L365) explicitly mandates pinning `s5c_unfold.py` and `compare_to_paper_fullcov.py` in `config.json` (`code_sha256`). They are missing from [config.json:5-9](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/config.json#L5-L9) and omitted by `check_code(cfg)` ([ibub_unit.py:61-66](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/ibub_unit.py#L61-L66)).
+- **Discrepancy (Declared vs Code)**: [IBUB-DECLARATION.md §5:270-271](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/IBUB-DECLARATION.md#L270-L271) binds C-COMPLETE to "each from the bound job at the bound deploy". The readout checks seed numbers and local sha256 sums, but never verifies that the unit provenance or metadata names the bound Slurm job ID or git commit deploy SHA.
+
+---
+
+### Assessment 3: Guards
+- **Reads under `/pscratch` and `/global/cfs`**: All Python reads in `ibub_unit.py` and `ibub_readout.py` use `O_NOATIME` (`copy_noatime`, `open_noatime`, `sha256_noatime`, or `read_noatime`).
+- **ROOT TFile Protection**: During driver execution, `run_driver` installs `tfile_guard((staging,), (Path(out_root).resolve().parent,), ...)` ([ref_c2c1.py:407-408](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/ref_c2c1.py#L407-L408)). ROOT is strictly barred from opening files outside the staging root for reading or outside `out_root.parent` for writing.
+- **Readout Open Audit**: `ibub_readout.py` installs `cov2d_readout.Run`, wrapping builtins, `os.open`, and `ROOT.TFile.Open` with `OpenAudit` ([cov2d_readout.py:346](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/cov2d_readout.py#L346)). Any plain open under `/global/cfs` or `/pscratch` raises `c.Refusal`.
+- **Readout Destination Guard**: [ibub_readout.py:244-247](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/ibub_readout.py#L244-L247) tests `os.path.realpath(out)` against `cb.GUARDED` and refuses if `--out` lies under a guarded tree. Output products are never written to `/pscratch` or `/global/cfs`.
+
+---
+
+### Assessment 4: Tests & Surviving Mutants
+- **Mutant Test Corruption**: The workspace files in `inputs/` reflect an interrupted mutation run. In [ibub_unit.py:146](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/ibub_unit.py#L146), `bad = []` is the exact substitution of Mutant 1 from [mutants.py:27](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/mutants.py#L27), left un-restored. Running `test_ibub_unit.Pure.test_c_g2r_refuses_the_amendments_option_in_either_spelling` fails on the present codebase.
+- **Asymmetric Test Coverage**: `test_ibub_readout.py` exclusively tests tune G18 ([test_ibub_readout.py:48](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/test_ibub_readout.py#L48)). Not a single test in `test_ibub_readout.py` invokes `readout("AR23", ...)`. Any defect specific to AR23 (directory resolution `pseudo/AR23-a2/b`, tune index `1` in bootstrap generator, flagged cell 56) completely evades testing.
+- **Concrete Surviving Mutant 1 (Vacuous Control Validation)**:
+  In [ibub_readout.py:214](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/ibub_readout.py#L214):
+  `all(v.get("pass") for v in meta.get("controls", {}).values())`
+  In fact, `test_ibub_readout.py`'s own fixture Tree creates unit metadata with only `controls: {"C-FILL": {"pass": True}}` ([test_ibub_readout.py:185](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/test_ibub_readout.py#L185)). An IBU unit that completely omits `C-G2R`, `C-ROO`, or `C-DATA` passes all tests.
+- **Concrete Surviving Mutant 2 (Untested Descriptives)**:
+  Mutate [ibub_readout.py:143-144](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/ibub_readout.py#L143-L144) to `d["unpaired_ratio"] = np.zeros(tests)`, or mutate [ibub_readout.py:152](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/ibub_readout.py#L152) to `summary["cells_ibu_smaller_abs_bias"] = 0`, or mutate [ibub_readout.py:229](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/ibub_readout.py#L229) to `negative={"K10": 0, "K5": 0}`. All 60 unit tests pass without error.
+
+---
+
+### Assessment 5: Referee Requirements Before 600 Real Toys
+1. Restore clean codebase: fix `g2r_check` in `ibub_unit.py` and ensure the SHA256 matches pre-mutant state.
+2. Complete `config.json` code pins for `s5c_unfold.py` and `compare_to_paper_fullcov.py`.
+3. Add full end-to-end unit tests for AR23 in `test_ibub_readout.py`.
+4. Handle copy exceptions in `stage_data` so failed staging attempts do not orphan files and block retries with `FileExistsError`.
+5. Fix `ibu_products` exception and failure branches to report `INVALID` or `INCOMPLETE` cleanly instead of throwing uncaught `c.Refusal` or `KeyError`.
+
+---
+
+## Numbered Findings
+
+### 1. BLOCKER: `g2r_check` in `ibub_unit.py` is hardcoded to a no-op, completely disabling C-G2R
+- **Citation**: [ibub_unit.py:144-149](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/ibub_unit.py#L144-L149)
+- **Detail**: In [ibub_unit.py:146](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/ibub_unit.py#L146), `bad = []` is hardcoded. It never checks `argv` against `cfg["g2r_forbidden_options"]`. Combined with [ibub_unit.py:269](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/ibub_unit.py#L269) which sets `"pass": True`, control C-G2R is entirely bypassed. Any invocation passing `--miss-map` or other forbidden options will silently pass into the driver.
+- **Fix**: Replace line 146 with:
+  ```python
+  bad = sorted({a.split("=", 1)[0] for a in argv} & set(cfg["g2r_forbidden_options"]))
+  ```
+
+### 2. MAJOR: `stage_data` in `ibub_unit.py` leaves orphaned staged files upon copy failure, blocking retries
+- **Citation**: [ibub_unit.py:179-189, 305-307](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/ibub_unit.py#L179-L189)
+- **Detail**: In `stage_data`, `rc.copy_noatime(src, dest)` opens `dest` with mode `"xb"`. If `copy_noatime` detects a digest mismatch or I/O error ([ref_c2c1.py:102](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/ref_c2c1.py#L102)), it raises `GateFailure` before `stage_data` returns `dest`. Consequently, in `run_unit`, `data_copy` remains `None`, so `run_unit`'s `finally:` block does not unlink `dest`. An incomplete or corrupt `dest` remains in `$N/stage/data/`, and any retry will crash with `FileExistsError`.
+- **Fix**: In [ibub_unit.py:185](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/ibub_unit.py#L185), wrap `copy_noatime` in a try/except:
+  ```python
+  try:
+      got = rc.copy_noatime(src, dest)
+  except Exception:
+      if dest.exists():
+          dest.unlink()
+      raise
+  if got != want:
+      dest.unlink()
+      raise GateFailure(f"C-DATA: {src} sha256 {got[:12]} != {want[:12]}")
+  ```
+
+### 3. MAJOR: `ibub_readout.py` crashes with an unhandled `KeyError` if unit 0 has an invalid K-scan
+- **Citation**: [ibub_readout.py:216-227, 296](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/ibub_readout.py#L216-L227)
+- **Detail**: In `ibu_products`, if `list(z["ks"]) != ks_want`, line 218 calls `continue` without appending `s` to `missing`. If the first unit fails this check, `missing` is empty while `x10` remains empty (`[]`). Line 225 (`if not missing and x10:`) evaluates to `False`, so `ibu_products` returns without setting `"k10_vs_root_max_rel"`. Subsequently, line 296 (`rec["C-K10"] = {"max_rel": ibu["k10_vs_root_max_rel"], ...}`) crashes with an uncaught `KeyError` instead of cleanly marking the tune `INVALID`.
+- **Fix**: In [ibub_readout.py:216-218](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/ibub_readout.py#L216-L218), append `s` to `missing` when the K-scan differs, and at line 290 return immediately if `ibu["problems"]`:
+  ```python
+  if list(z["ks"]) != ks_want:
+      missing.append(s)
+      problems.append(f"{name}: K scan {list(z['ks'])}")
+      continue
+  ```
+
+### 4. MAJOR: `ibu_products` in `ibub_readout.py` crashes with uncaught `c.Refusal` on corrupted products
+- **Citation**: [ibub_readout.py:203-204](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/ibub_readout.py#L203-L204)
+- **Detail**: Lines 203-204 execute `run.copy(units / f"{name}.npz", marker["sha256"], ...)` without exception handling. If a done marker exists with verdict `PASS`, but the corresponding `.npz` or `.root` file is missing, unreadable, or has an altered sha256, `read_pinned` raises `c.Refusal` ([cov2d_readout.py:96](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/cov2d_readout.py#L96)). This unhandled exception crashes `readout` rather than recording the missing/corrupt unit in `C-COMPLETE` and marking the tune `INCOMPLETE` / `INVALID` as declared in §5.
+- **Fix**: Wrap `run.copy` calls in lines 203-204 with `try...except (c.Refusal, OSError) as e:`, appending `s` to `missing` and the error to `problems`.
+
+### 5. MAJOR: `config.json` omits mandatory code pins declared in §9
+- **Citation**: [config.json:5-9](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/config.json#L5-L9) vs [IBUB-DECLARATION.md §9:361-365](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/IBUB-DECLARATION.md#L361-L365)
+- **Detail**: Section 9 binds the code to pin: (1) driver blob, (2) `ref_c2c1.py`, (3) OmniFold helper `omnifold.py`, (4) `s5c_unfold.py`, and (5) `compare_to_paper_fullcov.py`. In `config.json`, `code_sha256` only lists the first three. As a result, `check_code(cfg)` ([ibub_unit.py:61-66](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/ibub_unit.py#L61-L66)) does not verify `s5c_unfold.py` or `compare_to_paper_fullcov.py`.
+- **Fix**: Add `nd-unfolding/s5c_unfold.py` and `2d-unfolding/compare_to_paper_fullcov.py` with their canonical sha256 hashes to `config.json["code_sha256"]`.
+
+### 6. MINOR: `ibub_readout.py` allows incomplete control dictionaries in unit metadata
+- **Citation**: [ibub_readout.py:214-215](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/ibub_readout.py#L214-L215)
+- **Detail**: `ibu_products` verifies that `all(v.get("pass") for v in meta.get("controls", {}).values())`, but never asserts that the required controls exist. If a unit's `controls` dict contains only `{"C-FILL": {"pass": True}}` (or is empty), it silently passes.
+- **Fix**: Explicitly check that `set(meta.get("controls", {}).keys()) >= {"C-G2R", "C-FILL", "C-ROO", "C-DATA"}` for toy units before checking their truth values.
+
+### 7. MINOR: `C-COMPLETE` does not verify the bound Slurm job ID or deploy commit
+- **Citation**: [ibub_readout.py:207-215](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/ibub_readout.py#L207-L215) vs [IBUB-DECLARATION.md §5:270-271](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/IBUB-DECLARATION.md#L270-L271)
+- **Detail**: Declaration §5 requires each unit to be "from the bound job at the bound deploy". The unit records `slurm_job` and `runner_sha256` in its metadata, but `ibu_products` never checks that all units share the bound Slurm Job ID or bound runner digest.
+- **Fix**: Check `meta.get("runner_sha256") == own["unit_sha256"]` and verify that all 300 units share a non-null `slurm_job`.
+
+### 8. MINOR: `test_ibub_readout.py` lacks end-to-end integration tests for AR23
+- **Citation**: [test_ibub_readout.py:48, 394-592](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/test_ibub_readout.py#L48)
+- **Detail**: In `test_ibub_readout.py`, the `EndToEnd` test class hardcodes `T = "G18"`. `readout("AR23", ...)` is never executed. Consequently, AR23's directory mapping (`pseudo/AR23-a2/b`), AR23's bootstrap seed index (`[5760000, 1]`), and AR23's flagged cells (cells 29 and 56) are never verified end-to-end.
+- **Fix**: Parameterize `EndToEnd` or add a dedicated test running AR23 through `readout`.
+
+### 9. NOTE: Several declared descriptive statistics are unasserted by unit tests
+- **Citation**: [ibub_readout.py:143-144, 150-152, 229](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs/ibub_readout.py#L143-L144)
+- **Detail**: `unpaired_ratio`, `cells_ibu_smaller_abs_bias`, `rms_rel_pct`, `median_abs_rel_pct`, and `negative` cell counts are computed but never asserted in `test_ibub_readout.py`. Mutants modifying these fields survive without failing any test.
+- **Fix**: Add explicit assertions on these fields in `test_ibub_readout.Pure.test_equal_methods_are_not_resolved_apart_and_never_differ`.
+
+---
+
+VERDICT: REVISE

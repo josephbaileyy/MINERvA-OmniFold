@@ -1,0 +1,588 @@
+#!/usr/bin/env python3
+"""Tests for ``ibub_unit.py`` (IBUB-DECLARATION.md sections 3, 5 and 8). Each mechanism fires on its defect and stays
+silent on the clean case.
+
+**Config (pure, against the real config.json):**
+- E_R's argv equals REF-C2C1's and COV2D's toy argv;
+- the thread environment equals cov2d_env.sh's four variables;
+- every pin equals the record it is taken from: the declaration, the code, the reference marker, `$K2A`,
+  pseudo_b and the blocks;
+- C-G2R's forbidden set is exactly the set of options G2R amendment 1 added. It is read from both blobs, the toys' blob
+  being checked by its sha256 first.
+
+**Pure:**
+- the unit parser;
+- C-G2R in both spellings;
+- the comparison behind C-REP;
+- `stage` and `preflight` on temporary inputs;
+- `refcheck`, the barrier, on synthetic markers.
+
+**The driver:** E_R's real driver, in-process, on RE-2's own synthetic omnifile (`test_re2_driver.write_fixture`),
+with two OmniFold iterations, as `test_ref_c2c1` runs it:
+- `central`, `central_df` (whose data file holds the omnifile's own data tree, as `$K2A` holds `$CV`'s) and a toy
+  (other data) all pass every control;
+- `central_df` equals `central`, and the toy differs from it;
+- the data copy is deleted;
+- a data file off its pin is refused with no products;
+- a perturbed reference fails C-REP;
+- `--miss-map` is refused before the driver runs;
+- another CPU count or NUMEXPR value is refused.
+
+Needs PyROOT, numpy, LightGBM and scikit-learn. IBU runs through `ref_c2c1.dagostini` here; RooUnfold's equality to it
+is REF-C2C1's C-ROO test. Run it pinned, as RE-2's suite says.
+    cd 2d-unfolding/ibub && python -B -m unittest -v test_ibub_unit
+"""
+from __future__ import annotations
+
+import copy
+import hashlib
+import json
+import os
+import re
+import shutil
+import stat
+import subprocess
+import sys
+import tempfile
+import unittest
+from pathlib import Path
+from unittest import mock
+
+import numpy as np
+
+HERE = Path(__file__).resolve().parent
+REPO = HERE.parents[1]
+sys.path.insert(0, str(HERE))
+sys.path.insert(0, str(REPO / "2d-unfolding" / "re2" / "tests"))
+sys.path.insert(0, str(REPO / "2d-unfolding" / "cov2d" / "jobs"))
+import ibub_unit as iu  # noqa: E402
+rc, c = iu.rc, iu.c
+
+try:
+    import lightgbm  # noqa: F401
+    import ROOT  # noqa: F401
+    HAVE_DRIVER = True
+except Exception:  # pragma: no cover
+    HAVE_DRIVER = False
+
+# macOS has no O_NOATIME; substitute an inert flag, as test_ref_c2c1 does (the code refuses where it is absent)
+NOATIME_SUB = mock.patch.object(os, "O_NOATIME", os.O_NONBLOCK, create=True)
+NOATIME_SUB.start()
+REAL = iu.load_config()
+TOY_BLOB_SHA256 = "938c53c5a018d20f5b148f6bdc2949e987a60085c5d0b7913ccdd5bb438b5a3b"   # score records' code.driverSha256
+COV2D_M = "a60547692df5f963e428cdfe4661fc51ab785b7b"   # COV2D's bulk deploy (receipts-cov2d/a2/bulk/README.md)
+
+
+def sha(b: bytes) -> str:
+    return hashlib.sha256(b).hexdigest()
+
+
+def options(src: str) -> set:
+    return set(re.findall(r"add_argument\(\s*\"(--[a-z0-9-]+)\"", src))
+
+
+class Config(unittest.TestCase):
+    def test_argv_is_e_rs_and_cov2ds_toy_argv(self):
+        ref = json.loads((REPO / "2d-unfolding/ref_c2c1/config.json").read_text())
+        self.assertEqual(REAL["e_r"]["argv"], ref["e_r"]["argv"])
+        import cov2d_jobs
+        toy = cov2d_jobs.argv("toy", "DATA")
+        self.assertEqual(toy[-2:], ["--data-file", "DATA"])
+        self.assertEqual(REAL["e_r"]["argv"], toy[:-2])
+        self.assertEqual(REAL["e_r"]["cpus"], 64)
+
+    def test_thread_environment_is_cov2d_envs(self):
+        text = (REPO / "2d-unfolding/cov2d/jobs/cov2d_env.sh").read_text()
+        line = next(ln for ln in text.splitlines() if "OMP_NUM_THREADS=" in ln and ln.strip().startswith("export"))
+        env = dict(t.split("=", 1) for t in line.split("#")[0].split()[1:])
+        self.assertEqual(REAL["e_r"]["thread_env"], env)
+
+    def test_every_pin_equals_its_record(self):
+        iu.check_code(REAL)
+        self.assertEqual(REAL["declaration_sha256"], rc.sha256(REPO / REAL["declaration"]))
+        marker = json.loads((REPO / "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/"
+                             "receipts-ref-c2c1/step2/units-centrals/c2_central.done").read_text())
+        self.assertEqual(REAL["refs"]["c2_central"]["sha256"], marker["sha256"])
+        import cov2d_jobs
+        self.assertEqual(REAL["refs"]["k2a"]["sha256"], cov2d_jobs.PINS["$K2A"])
+        self.assertEqual(REAL["refs"]["k2a"]["path"], "/pscratch/sd/j/josephrb/cov2d-2a/writer_control.root")
+        ref = json.loads((REPO / "2d-unfolding/ref_c2c1/config.json").read_text())["inputs"]
+        self.assertEqual({k: REAL["inputs"][k] for k in ("CV_source", "CV_sha256", "MC_source", "MC_sha256")},
+                         {k: ref[k] for k in ("CV_source", "CV_sha256", "MC_source", "MC_sha256")})
+        self.assertEqual((REAL["inputs"]["lib_source"], REAL["inputs"]["lib_sha256"]),
+                         (ref["roounfold_lib"], ref["roounfold_lib_sha256"]))
+        for t in ("G18", "AR23"):
+            self.assertEqual(len(iu.toy_shas(REAL, t)), 300)
+            r = REAL["cov2d_records"][t]
+            self.assertEqual(r["blocks_sha256"], rc.sha256(REPO / r["blocks"]))
+            self.assertEqual(r["score_sha256"], rc.sha256(REPO / r["score"]))
+            null = json.loads((REPO / r["blocks"]).with_name(f"null_{t}.json").read_text())
+            self.assertEqual(r["truth_xsec_sha256"], null["inventory"]["truth_xsec_npz"]["sha256"])
+            score = json.loads((REPO / r["score"]).read_text())
+            self.assertEqual(score["code"]["driverSha256"], TOY_BLOB_SHA256)   # the toys' OmniFold blob (section 3)
+        self.assertEqual(int(iu.reported_cells(REAL).sum()), 205)
+        self.assertEqual(REAL["toys"]["AR23"]["dir"], "/pscratch/sd/j/josephrb/cov2d-run-20261104/pseudo/AR23-a2/b")
+
+    def test_g2r_forbidden_set_is_exactly_the_amendments_new_options(self):
+        try:
+            old = subprocess.run(["git", "-C", str(REPO), "show", f"{COV2D_M}:2d-unfolding/re2/re2_driver.py"],
+                                 capture_output=True, check=True).stdout
+        except (OSError, subprocess.CalledProcessError):
+            self.skipTest("no git checkout with COV2D's deploy commit")
+        self.assertEqual(sha(old), TOY_BLOB_SHA256)          # the blob the toys ran
+        new = (REPO / "2d-unfolding/re2/re2_driver.py").read_text()
+        self.assertEqual(sha(new.encode()), REAL["code_sha256"]["2d-unfolding/re2/re2_driver.py"])
+        self.assertEqual(options(new) - options(old.decode()), set(REAL["g2r_forbidden_options"]))
+        self.assertEqual(options(old.decode()) - options(new), set())
+
+
+class Pure(unittest.TestCase):
+    def test_parse_unit(self):
+        self.assertEqual(iu.parse_unit("central")["name"], "central")
+        self.assertEqual(iu.parse_unit("central_df")["kind"], "central_df")
+        self.assertEqual(iu.parse_unit("toy:G18:5720299"),
+                         {"kind": "toy", "name": "toy_G18_5720299", "tune": "G18", "seed": 5720299})
+        for bad in ("toy:G18:5720300", "toy:AR23:5720000", "toy:X:1", "er", "c2_central", "toy:G18"):
+            with self.subTest(bad=bad), self.assertRaises(ValueError):
+                iu.parse_unit(bad)
+
+    def test_c_g2r_refuses_the_amendments_option_in_either_spelling(self):
+        cfg = copy.deepcopy(REAL)
+        iu.resolve_argv(cfg, None)
+        self.assertEqual(iu.resolve_argv(cfg, Path("/x/d.root"))[-2:], ["--data-file", "/x/d.root"])
+        for extra in (["--miss-map", "m.npz"], ["--miss-map=m.npz"]):
+            bad = copy.deepcopy(cfg)
+            bad["e_r"]["argv"] = cfg["e_r"]["argv"] + extra
+            with self.subTest(extra=extra), self.assertRaises(iu.GateFailure):
+                iu.resolve_argv(bad, None)
+
+    def test_compare_is_on_the_205_cells_and_every_k(self):
+        rep = iu.reported_cells(REAL)
+        rng = np.random.default_rng(2)
+        a = {"ks": np.array([5, 10]), "xsec": rng.uniform(1, 2, (2, 224)), "T": rng.uniform(1, 2, 224),
+             "y": rng.uniform(1, 2, 224)}
+        self.assertTrue(iu.compare(a, copy.deepcopy(a), rep, 1e-8)["pass"])
+        for key, idx in (("xsec", (0, int(np.flatnonzero(rep)[0]))), ("T", 3), ("y", 7)):
+            b = copy.deepcopy(a)
+            b[key][idx] *= 1 + 1e-6
+            with self.subTest(key=key):
+                self.assertFalse(iu.compare(a, b, rep, 1e-8)["pass"])
+        b = copy.deepcopy(a)
+        b["xsec"][1, int(np.flatnonzero(~rep)[0])] *= 2          # an unreported cell is not compared
+        self.assertTrue(iu.compare(a, b, rep, 1e-8)["pass"])
+        b = copy.deepcopy(a)
+        b["ks"] = np.array([5, 20])
+        self.assertFalse(iu.compare(a, b, rep, 1e-8)["pass"])
+        self.assertEqual(iu.max_rel(np.array([1.0, 0.0]), np.array([1.0, 0.0])), 0.0)
+        self.assertEqual(iu.max_rel(np.array([1.0, 1e-30]), np.array([1.0, 0.0])), float("inf"))
+
+    def tmp(self) -> Path:
+        d = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, d, True)
+        return d
+
+    def test_stage_copies_checks_and_makes_read_only(self):
+        d = self.tmp()
+        cfg = copy.deepcopy(REAL)
+        cfg["staging"]["root"] = str(d / "stage")
+        for k in ("CV", "MC", "lib"):
+            (d / f"src_{k}").write_bytes(f"bytes of {k}".encode())
+            cfg["inputs"][f"{k}_source"] = str(d / f"src_{k}")
+            cfg["inputs"][f"{k}_sha256"] = sha(f"bytes of {k}".encode())
+        self.assertEqual(iu.stage(cfg), 0)
+        for k, p in iu.staged(cfg).items():
+            self.assertEqual(p.read_bytes(), f"bytes of {k}".encode())
+            self.assertFalse(os.stat(p).st_mode & (stat.S_IWUSR | stat.S_IWGRP | stat.S_IWOTH))
+        self.assertEqual(json.loads((d / "stage" / "stage.json").read_text())["verdict"], "PASS")
+        self.assertEqual(iu.check_inputs(cfg), {k: cfg["inputs"][f"{k}_sha256"] for k in ("CV", "MC", "lib")})
+        bad = copy.deepcopy(cfg)
+        bad["staging"]["root"] = str(d / "stage2")
+        bad["inputs"]["MC_sha256"] = "0" * 64
+        self.assertEqual(iu.stage(bad), iu.RC_GATE)
+        self.assertFalse(iu.staged(bad)["MC"].exists())        # a copy off its pin is deleted
+        with self.assertRaises((iu.GateFailure, OSError)):     # main() refuses either, with RC_GATE
+            iu.check_inputs(bad)
+
+    def preflight_tree(self):
+        d = self.tmp()
+        cfg = copy.deepcopy(REAL)
+        for k in ("c2_central", "k2a"):
+            (d / k).write_bytes(k.encode())
+            cfg["refs"][k].update(path=str(d / k), sha256=sha(k.encode()))
+        for t in ("G18", "AR23"):
+            files = [{"seed": s, "role": "toy", "sha256": "0" * 64, "path": str(d / t / f"data_{s}.root")}
+                     for s in c.TOY_SEEDS[t]]
+            (d / t).mkdir()
+            for f in files:
+                Path(f["path"]).write_bytes(b"x")
+            raw = json.dumps({"verdict": "PASS", "files": files}).encode()
+            (d / f"pb_{t}.json").write_bytes(raw)
+            cfg["toys"][t].update(dir=str(d / t), pseudo_b=str(d / f"pb_{t}.json"), pseudo_b_sha256=sha(raw))
+        return d, cfg
+
+    def test_preflight_checks_both_references_and_the_600_files(self):
+        d, cfg = self.preflight_tree()
+        self.assertEqual(iu.preflight(cfg), 0)
+        (d / "AR23" / "data_5730123.root").unlink()
+        self.assertEqual(iu.preflight(cfg), iu.RC_STOP)
+        d, cfg = self.preflight_tree()
+        (d / "k2a").write_bytes(b"other")
+        self.assertEqual(iu.preflight(cfg), iu.RC_STOP)
+        d, cfg = self.preflight_tree()
+        (d / "c2_central").unlink()
+        self.assertEqual(iu.preflight(cfg), iu.RC_STOP)
+
+    def test_toy_shas_refuses_a_record_off_its_pin_or_short_of_a_seed(self):
+        d, cfg = self.preflight_tree()
+        self.assertEqual(len(iu.toy_shas(cfg, "G18")), 300)
+        bad = copy.deepcopy(cfg)
+        bad["toys"]["G18"]["pseudo_b_sha256"] = "0" * 64
+        with self.assertRaises(iu.GateFailure):
+            iu.toy_shas(bad, "G18")
+        rec = json.loads((d / "pb_G18.json").read_text())
+        rec["files"] = rec["files"][:-1]
+        raw = json.dumps(rec).encode()
+        (d / "pb_G18.json").write_bytes(raw)
+        cfg["toys"]["G18"]["pseudo_b_sha256"] = sha(raw)
+        with self.assertRaises(iu.GateFailure):
+            iu.toy_shas(cfg, "G18")
+
+    def refs(self, d: Path, *, df_verdict="PASS", seconds=(200.0, 210.0), df_scale=1.0):
+        rep = iu.reported_cells(REAL)
+        rng = np.random.default_rng(5)
+        base = {"ks": np.array([5, 10]), "xsec": rng.uniform(1, 2, (2, 224)), "T": rng.uniform(1, 2, 224),
+                "y": rng.uniform(1, 2, 224)}
+        for u, v, s, scale in (("central", "PASS", seconds[0], 1.0), ("central_df", df_verdict, seconds[1], df_scale)):
+            arr = dict(base, xsec=base["xsec"] * scale)
+            np.savez(d / f"{u}.npz", **arr)
+            (d / f"{u}.done").write_text(json.dumps({"verdict": v, "seconds": s, "sha256": rc.sha256(d / f"{u}.npz")}))
+        return rep
+
+    def test_refcheck_is_the_barrier(self):
+        d = self.tmp()
+        rep = self.refs(d)
+        self.assertEqual(iu.refcheck(REAL, d, rep), 0)
+        self.assertEqual(json.loads((d / "refcheck.json").read_text())["verdict"], "PASS")
+        cases = {"df_failed": dict(df_verdict="FAIL"), "slow": dict(seconds=(200.0, 1.25 * 217 + 1)),
+                 "df_differs": dict(df_scale=1 + 1e-6)}
+        for tag, kw in cases.items():
+            d = self.tmp()
+            rep = self.refs(d, **kw)
+            with self.subTest(case=tag):
+                self.assertEqual(iu.refcheck(REAL, d, rep), iu.RC_STOP)
+        d = self.tmp()
+        rep = self.refs(d)
+        np.savez(d / "central.npz", ks=np.array([5, 10]))        # bytes off the marker's digest
+        self.assertEqual(iu.refcheck(REAL, d, rep), iu.RC_STOP)
+        d = self.tmp()
+        rep = self.refs(d)
+        (d / "central_df.done").unlink()
+        self.assertEqual(iu.refcheck(REAL, d, rep), iu.RC_STOP)
+
+
+class Refusals(unittest.TestCase):
+    """Each refusal of the gates fires on its defect (the line trace's uncovered branches)."""
+
+    def tmp(self) -> Path:
+        d = Path(tempfile.mkdtemp()).resolve()
+        self.addCleanup(shutil.rmtree, d, True)
+        return d
+
+    def test_check_code_refuses_a_changed_file(self):
+        cfg = copy.deepcopy(REAL)
+        cfg["code_sha256"]["2d-unfolding/ref_c2c1/ref_c2c1.py"] = "0" * 64
+        with self.assertRaises(iu.GateFailure):
+            iu.check_code(cfg)
+
+    def test_check_inputs_refuses_outside_the_root_and_off_its_pin(self):
+        d = self.tmp()
+        cfg = copy.deepcopy(REAL)
+        cfg["staging"]["root"] = str(d / "stage")
+        (d / "stage").mkdir()
+        (d / "elsewhere").write_bytes(b"x")
+        for k in ("CV", "MC", "lib"):
+            (d / "stage" / k).write_bytes(k.encode())
+            cfg["staging"][k] = k
+            cfg["inputs"][f"{k}_sha256"] = sha(k.encode())
+        self.assertEqual(set(iu.check_inputs(cfg)), {"CV", "MC", "lib"})
+        out = copy.deepcopy(cfg)
+        out["staging"]["MC"] = "../elsewhere"
+        with self.assertRaises(iu.GateFailure):
+            iu.check_inputs(out)
+        pin = copy.deepcopy(cfg)
+        pin["inputs"]["lib_sha256"] = "0" * 64
+        with self.assertRaises(iu.GateFailure):
+            iu.check_inputs(pin)
+
+    def pb(self, d: Path, rec: dict) -> dict:
+        raw = json.dumps(rec).encode()
+        (d / "pb.json").write_bytes(raw)
+        cfg = copy.deepcopy(REAL)
+        cfg["toys"]["G18"].update(dir=str(d), pseudo_b=str(d / "pb.json"), pseudo_b_sha256=sha(raw))
+        return cfg
+
+    def test_toy_shas_refuses_a_failed_record_and_a_file_outside_its_directory(self):
+        d = self.tmp()
+        files = [{"seed": s, "role": "toy", "sha256": "0" * 64, "path": str(d / f"data_{s}.root")}
+                 for s in c.TOY_SEEDS["G18"]]
+        self.assertEqual(len(iu.toy_shas(self.pb(d, {"verdict": "PASS", "files": files}), "G18")), 300)
+        with self.assertRaises(iu.GateFailure):
+            iu.toy_shas(self.pb(d, {"verdict": "STOP", "files": files}), "G18")
+        moved = copy.deepcopy(files)
+        moved[10]["path"] = str(d / "other" / Path(moved[10]["path"]).name)
+        with self.assertRaises(iu.GateFailure):
+            iu.toy_shas(self.pb(d, {"verdict": "PASS", "files": moved}), "G18")
+
+    def test_reported_cells_refuses_a_record_off_its_pin_or_of_another_shape(self):
+        d = self.tmp()
+        cfg = copy.deepcopy(REAL)
+        cfg["cells"]["blocks_sha256"] = "0" * 64
+        with self.assertRaises(iu.GateFailure):
+            iu.reported_cells(cfg)
+        np.savez(d / "b.npz", rep=np.ones(224, bool))
+        cfg["cells"].update(blocks=str(d / "b.npz"), blocks_sha256=rc.sha256(d / "b.npz"))
+        with self.assertRaises(iu.GateFailure):
+            iu.reported_cells(cfg)
+
+    def test_a_failed_data_copy_leaves_nothing_behind(self):
+        d = self.tmp()
+        cfg = copy.deepcopy(REAL)
+        cfg["staging"]["root"] = str(d / "stage")
+        cfg["refs"]["k2a"].update(path=str(d / "k2a.root"), sha256=sha(b"k2a"))
+        (d / "k2a.root").write_bytes(b"k2a")
+
+        def partial(src, dest):          # writes part of the copy, then fails, as an I/O error would
+            Path(dest).write_bytes(b"k2")
+            raise OSError("disk full")
+        with mock.patch.object(rc, "copy_noatime", partial), self.assertRaises(OSError):
+            iu.stage_data(cfg, iu.parse_unit("central_df"), {})
+        self.assertEqual(list(iu.data_dir(cfg).glob("*")), [])
+        dest, got = iu.stage_data(cfg, iu.parse_unit("central_df"), {})     # and a rerun is not blocked
+        self.assertEqual(got, sha(b"k2a"))
+        dest.unlink()
+
+    def test_resolve_argv_refuses_an_unresolved_variable(self):
+        cfg = copy.deepcopy(REAL)
+        cfg["e_r"]["argv"] = cfg["e_r"]["argv"] + ["--flux-universe-file", "$FLUXU"]
+        with self.assertRaises(iu.GateFailure):
+            iu.resolve_argv(cfg, None)
+
+    def test_read_reference_reads_its_pin_and_refuses_another(self):
+        d = self.tmp()
+        np.savez(d / "ref.npz", ks=np.array([5, 10]), xsec=np.ones((2, 224)), T=np.ones(224), y=np.ones(224))
+        cfg = copy.deepcopy(REAL)
+        cfg["refs"]["c2_central"].update(path=str(d / "ref.npz"), sha256=rc.sha256(d / "ref.npz"))
+        got = iu.read_reference(cfg)
+        self.assertEqual(sorted(got), ["T", "ks", "xsec", "y"])
+        cfg["refs"]["c2_central"]["sha256"] = "0" * 64
+        with self.assertRaises(iu.GateFailure):
+            iu.read_reference(cfg)
+
+    def test_max_rel_of_two_shapes_is_infinite(self):
+        self.assertEqual(iu.max_rel(np.ones(3), np.ones(4)), float("inf"))
+
+    def test_preflight_stops_on_an_empty_toy_file(self):
+        d, cfg = Pure.preflight_tree(self)
+        (d / "G18" / "data_5720007.root").write_bytes(b"")
+        self.assertEqual(iu.preflight(cfg), iu.RC_STOP)
+
+    def test_main_dispatches_and_refuses(self):
+        d, cfg = Pure.preflight_tree(self)
+        with mock.patch.object(iu, "load_config", lambda path=None: cfg):
+            self.assertEqual(iu.main(["preflight"]), 0)
+            self.assertEqual(iu.main(["run", "--unit", "er", "--out", str(d / "u")]), iu.RC_GATE)
+            self.assertEqual(iu.main(["run", "--unit", "central", "--unit", "central", "--out", str(d / "u")]),
+                             iu.RC_GATE)
+            self.assertEqual(iu.main(["refcheck", "--out", str(d)]), iu.RC_STOP)   # no reference units there
+            stage_cfg = copy.deepcopy(cfg)
+            stage_cfg["staging"]["root"] = str(d / "stage")
+            for k in ("CV", "MC", "lib"):
+                (d / f"s_{k}").write_bytes(k.encode())
+                stage_cfg["inputs"].update({f"{k}_source": str(d / f"s_{k}"), f"{k}_sha256": sha(k.encode())})
+        with mock.patch.object(iu, "load_config", lambda path=None: stage_cfg):
+            self.assertEqual(iu.main(["stage"]), 0)
+            # a run whose staged inputs pass reaches the driver loader; a missing reference is refused there
+            stage_cfg["refs"]["c2_central"]["path"] = str(d / "absent.npz")
+            self.assertEqual(iu.main(["run", "--unit", "central", "--out", str(d / "u")]), iu.RC_GATE)
+        self.assertFalse((d / "u").exists())
+
+
+@unittest.skipUnless(HAVE_DRIVER, "needs PyROOT and LightGBM")
+class Driver(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        import ROOT
+        import test_re2_driver as T2
+        import test_re2_data_file as DF
+        cls.td = Path(tempfile.mkdtemp()).resolve()
+        stage = cls.td / "stage"
+        stage.mkdir()
+        omni, flux = stage / "fx.root", stage / "flux.root"
+        T2.write_fixture(omni, flux)
+        f = ROOT.TFile.Open(str(omni))
+        pot = float(f.Get("dataPOTUsed").GetVal())
+        f.Close()
+        own = DF.read_data(omni)
+        cls.k2a = cls.td / "k2a.root"                    # the omnifile's own data tree, as $K2A holds $CV's
+        DF.write_data(cls.k2a, own, pot)
+        toys = cls.td / "toys"
+        toys.mkdir()
+        rng = np.random.default_rng(8)
+        keep = rng.uniform(size=own["measured"].size) < 0.8
+        cls.seed = c.TOY_SEEDS["G18"][3]
+        cls.toy = toys / f"data_{cls.seed}.root"
+        DF.write_data(cls.toy, {k: v[keep] for k, v in own.items()}, pot)
+        files = [{"seed": s, "role": "toy", "sha256": rc.sha256(cls.toy) if s == cls.seed else "0" * 64,
+                  "path": str(toys / f"data_{s}.root")} for s in c.TOY_SEEDS["G18"]]
+        raw = json.dumps({"verdict": "PASS", "files": files}).encode()
+        (cls.td / "pb.json").write_bytes(raw)
+        cfg = copy.deepcopy(REAL)
+        cfg["staging"].update(root=str(stage), CV=omni.name, MC=flux.name)
+        cfg["e_r"]["argv"] = [("2" if x == "5" else x) for x in REAL["e_r"]["argv"]]     # --iters 2, as test_ref_c2c1
+        cfg["e_r"]["cpus"] = rc.cpu_count()
+        cfg["e_r"]["thread_env"] = {k: os.environ.get(k) for k in REAL["e_r"]["thread_env"]}
+        cfg["toys"]["G18"].update(dir=str(toys), pseudo_b=str(cls.td / "pb.json"), pseudo_b_sha256=sha(raw))
+        cfg["refs"]["k2a"].update(path=str(cls.k2a), sha256=rc.sha256(cls.k2a))
+        cls.cfg = cfg
+        cls.shas = {"G18": iu.toy_shas(cfg, "G18")}
+        cls.rep = iu.reported_cells(REAL)
+        cls.driver, cls.ohf = rc.load_driver()
+        first = cls.td / "first"                          # the reference: an earlier central run (C-REP needs one)
+        assert iu.run_unit(cls.driver, cls.ohf, cfg, iu.parse_unit("central"), first, shas=cls.shas, rep=cls.rep,
+                           ref=None, unfolder=rc.dagostini) == iu.RC_CONTROL     # no reference: C-REP fails
+        z = np.load(first / "central.npz")
+        cls.ref = {k: z[k] for k in ("ks", "xsec", "T", "y")}
+        cls.out = cls.td / "units"
+        cls.rcs = {u: cls.unit(u, cls.out) for u in ("central", "central_df", f"toy:G18:{cls.seed}")}
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.td, True)
+
+    @classmethod
+    def unit(cls, spec, out, cfg=None, ref=None):
+        return iu.run_unit(cls.driver, cls.ohf, cfg or cls.cfg, iu.parse_unit(spec), out, shas=cls.shas, rep=cls.rep,
+                           ref=cls.ref if ref is None else ref, unfolder=rc.dagostini)
+
+    def meta(self, name, out=None):
+        return json.loads(str(np.load((out or self.out) / f"{name}.npz")["meta"]))
+
+    def test_every_unit_passes_every_control(self):
+        self.assertEqual(self.rcs, {"central": 0, "central_df": 0, f"toy:G18:{self.seed}": 0})
+        want = {"central": {"C-G2R", "C-FILL", "C-ROO", "C-SIM", "C-DATA", "C-REP"},
+                "central_df": {"C-G2R", "C-FILL", "C-ROO", "C-DATA", "C-REP-D"},
+                f"toy_G18_{self.seed}": {"C-G2R", "C-FILL", "C-ROO", "C-DATA"}}
+        for name, keys in want.items():
+            m = self.meta(name)
+            self.assertEqual(set(m["controls"]), keys)
+            self.assertTrue(all(v["pass"] for v in m["controls"].values()), m["controls"])
+            self.assertEqual(json.loads((self.out / f"{name}.done").read_text())["verdict"], "PASS")
+
+    def test_central_df_equals_central_and_the_toy_differs(self):
+        a, b, t = (np.load(self.out / f"{n}.npz") for n in ("central", "central_df", f"toy_G18_{self.seed}"))
+        self.assertTrue(iu.compare(a, b, self.rep, 1e-8)["pass"])
+        self.assertFalse(iu.compare(a, t, self.rep, 1e-8)["pass"])
+        self.assertEqual(self.meta("central_df")["data_sha256"], rc.sha256(self.k2a))
+        self.assertEqual(self.meta(f"toy_G18_{self.seed}")["data_sha256"], self.shas["G18"][self.seed])
+        self.assertIsNone(self.meta("central")["data_sha256"])
+        self.assertEqual(self.meta(f"toy_G18_{self.seed}")["argv"][-2:],
+                         ["--data-file", str(iu.data_dir(self.cfg) / f"toy_G18_{self.seed}.root")])
+
+    def test_the_data_copies_are_deleted(self):
+        self.assertEqual(list(iu.data_dir(self.cfg).glob("*.root")), [])
+
+    def test_a_data_file_off_its_pin_is_refused_with_no_products(self):
+        shas = {"G18": {**self.shas["G18"], self.seed: "0" * 64}}
+        out = self.td / "offpin"
+        rc_ = iu.run_unit(self.driver, self.ohf, self.cfg, iu.parse_unit(f"toy:G18:{self.seed}"), out, shas=shas,
+                          rep=self.rep, ref=self.ref, unfolder=rc.dagostini)
+        self.assertEqual(rc_, iu.RC_GATE)
+        self.assertEqual(list(out.glob("*")), [])
+        self.assertEqual(list(iu.data_dir(self.cfg).glob("*.root")), [])
+
+    def test_a_perturbed_reference_fails_c_rep(self):
+        ref = dict(self.ref, xsec=self.ref["xsec"] * (1 + 1e-6))
+        out = self.td / "badref"
+        self.assertEqual(self.unit("central_df", out, ref=ref), iu.RC_CONTROL)
+        self.assertFalse(self.meta("central_df", out)["controls"]["C-REP-D"]["pass"])
+        self.assertEqual(json.loads((out / "central_df.done").read_text())["verdict"], "FAIL")
+
+    def test_an_unfolder_off_the_numpy_update_fails_c_roo(self):
+        off = lambda M, T, y, ks: {k: v * (1 + 1e-6) for k, v in rc.dagostini(M, T, y, ks).items()}  # noqa: E731
+        out = self.td / "croo"
+        rc_ = iu.run_unit(self.driver, self.ohf, self.cfg, iu.parse_unit(f"toy:G18:{self.seed}"), out, shas=self.shas,
+                          rep=self.rep, ref=self.ref, unfolder=off)
+        self.assertEqual(rc_, iu.RC_CONTROL)
+        self.assertFalse(self.meta(f"toy_G18_{self.seed}", out)["controls"]["C-ROO"]["pass"])
+
+    def test_a_recorded_data_digest_other_than_the_staged_copys_fails_c_data(self):
+        """The driver records the data file's digest itself (dataFileSha256); C-DATA compares it with the staged copy's.
+        Here the driver records another digest for the data file only (the helper's and its own are untouched)."""
+        real = self.driver.file_sha256
+        data_dir = str(iu.data_dir(self.cfg))
+        wrong = lambda p: "0" * 64 if str(p).startswith(data_dir) else real(p)   # noqa: E731
+        out = self.td / "cdata"
+        with mock.patch.object(self.driver, "file_sha256", wrong):
+            self.assertEqual(self.unit(f"toy:G18:{self.seed}", out), iu.RC_CONTROL)
+        c_data = self.meta(f"toy_G18_{self.seed}", out)["controls"]["C-DATA"]
+        self.assertFalse(c_data["pass"])
+        self.assertEqual(c_data["dataFileSha256"], "0" * 64)
+
+    def test_a_unit_whose_controls_are_not_the_declared_set_writes_no_marker(self):
+        out = self.td / "ctlset"
+        with mock.patch.dict(iu.CONTROLS, {"toy": iu.CONTROLS["toy"] | {"C-EXTRA"}}):
+            self.assertEqual(self.unit(f"toy:G18:{self.seed}", out), iu.RC_GATE)
+        self.assertFalse((out / f"toy_G18_{self.seed}.done").exists())
+        self.assertEqual(list(iu.data_dir(self.cfg).glob("*.root")), [])
+
+    def test_miss_map_is_refused_before_the_driver(self):
+        cfg = copy.deepcopy(self.cfg)
+        cfg["e_r"]["argv"] = cfg["e_r"]["argv"] + ["--miss-map", "m.npz"]
+        out = self.td / "g2r"
+        with mock.patch.object(rc, "run_driver", side_effect=AssertionError("the driver ran")):
+            self.assertEqual(self.unit("central", out, cfg=cfg), iu.RC_GATE)
+        self.assertFalse((out / "central.npz").exists())
+
+    def test_another_cpu_count_or_numexpr_is_refused(self):
+        for tag, change in (("cpus", lambda c_: c_["e_r"].update(cpus=rc.cpu_count() + 1)),
+                            ("numexpr", lambda c_: c_["e_r"]["thread_env"].update(NUMEXPR_NUM_THREADS="999"))):
+            cfg = copy.deepcopy(self.cfg)
+            change(cfg)
+            out = self.td / f"gate_{tag}"
+            with self.subTest(gate=tag):
+                self.assertEqual(self.unit("central", out, cfg=cfg), iu.RC_GATE)
+                self.assertFalse(out.exists())
+
+    def test_main_runs_a_lane_of_units_with_roounfold_as_the_unfolder(self):
+        """main(): pins, staged inputs and reference read once, then each unit; RooUnfold is replaced by the numpy
+        update it equals (C-ROO compares the two; REF-C2C1 proved the equality)."""
+        cfg = copy.deepcopy(self.cfg)
+        for k in ("CV", "MC"):
+            cfg["inputs"][f"{k}_sha256"] = rc.sha256(iu.staged(cfg)[k])
+        lib = iu.staged(cfg)["lib"]
+        lib.write_bytes(b"not a library")
+        self.addCleanup(lib.unlink)
+        cfg["inputs"]["lib_sha256"] = rc.sha256(lib)
+        np.savez(self.td / "ref.npz", **self.ref)
+        cfg["refs"]["c2_central"].update(path=str(self.td / "ref.npz"), sha256=rc.sha256(self.td / "ref.npz"))
+        out = self.td / "main"
+        with mock.patch.object(iu, "load_config", lambda path=None: cfg), \
+                mock.patch.object(rc, "load_driver", lambda: (self.driver, self.ohf)), \
+                mock.patch.object(rc, "roounfold_bayes", lambda M, T, y, ks, lib_: rc.dagostini(M, T, y, ks)):
+            self.assertEqual(iu.main(["run", "--unit", "central", "--unit", f"toy:G18:{self.seed}", "--out", str(out)]), 0)
+            self.assertEqual(iu.main(["run", "--unit", "central_df", "--out", str(out)]), 0)
+            self.assertEqual(iu.main(["refcheck", "--out", str(out)]), 0)
+        self.assertEqual(json.loads((out / "refcheck.json").read_text())["verdict"], "PASS")
+        self.assertEqual(self.meta(f"toy_G18_{self.seed}", out)["inputs_sha256"],
+                         {k: cfg["inputs"][f"{k}_sha256"] for k in ("CV", "MC", "lib")})
+
+    def test_a_pass_unit_is_skipped_and_a_failed_one_is_not_overwritten(self):
+        self.assertEqual(self.unit("central", self.out), 0)
+        out = self.td / "badref"
+        if not (out / "central_df.done").exists():
+            self.unit("central_df", out, ref=dict(self.ref, xsec=self.ref["xsec"] * 2))
+        self.assertEqual(self.unit("central_df", out), iu.RC_CONTROL)
+
+
+if __name__ == "__main__":
+    unittest.main()
