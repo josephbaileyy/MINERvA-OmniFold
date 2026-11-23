@@ -1,0 +1,5 @@
+srun rc=3
+{"C_ROW": false, "n": 32849103}
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:26.17
+	Maximum resident set size (kbytes): 8003528
+sha256sum: wsplit.npz: No such file or directory
