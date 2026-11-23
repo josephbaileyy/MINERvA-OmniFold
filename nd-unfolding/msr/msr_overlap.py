@@ -31,6 +31,7 @@ READS = [
     f"{T3}/stage/of_inputs_5d.npz", f"{T3}/stage/bkg_dump.npz", f"{T3}/stage/fd-prr/runs/B0/nominal",
     f"{T3}/runs", f"{T3}/log-floor/SHA256SUMS", f"{T3}/stage.json",
     f"{U}/ibukt-20261119-d/prepare/out/bank.npz",   # and a stat (no open) of the root itself
+    f"{U}/msr-p-20261122/stage",   # connect B: the probe's staged copies (this lane's own), sha re-checked O_NOATIME
     f"{U}/methods-paper/re1-20261022/out/3d/of_inputs_3d.npz", f"{U}/methods-paper/re1-20261022/out/4d/of_inputs_4d.npz",
 ]
 INTERPRETER = "/global/homes/j/josephrb/.conda/envs/root_6_28"   # connect P's python (read-only)

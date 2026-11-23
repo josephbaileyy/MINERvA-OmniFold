@@ -173,6 +173,38 @@ class Loader(unittest.TestCase):
                 B.subsample("5d", p, 0.1, out)
 
 
+class BuildPart(unittest.TestCase):
+    """build --part: one product per process, its record carries the peak RSS, and a peak above the cap is refused
+    with no product written (the director's rulings for connect B)."""
+
+    def run_r2d(self, d: Path, cap=None):
+        from unittest import mock
+        bank = TwoD().bank(d)
+        dummy = d / "dummy"
+        dummy.write_text("x")
+        argv = ["build", "--part", "r2d", "--npz", str(dummy), "--bkg", str(dummy), "--bank", str(bank),
+                "--t3-run", str(d), "--t3-stage-json", str(dummy), "--out", str(d / "out")]
+        with mock.patch.object(B, "BANK_SHA", B.plain_sha256(bank)), mock.patch.object(B, "RSS_CAP", cap or B.RSS_CAP):
+            return B.main(argv)
+
+    def test_one_part_writes_its_product_and_record(self):
+        with tempfile.TemporaryDirectory() as d:
+            self.assertEqual(self.run_r2d(Path(d)), 0)
+            rec = json.loads((Path(d) / "out/r2d.json").read_text())
+            self.assertEqual(rec["part"], "r2d")
+            self.assertGreater(rec["peak_rss_bytes"], 0)
+            self.assertEqual(rec["sha256"], B.plain_sha256(Path(d) / "out/r2d.npz"))
+            with self.assertRaises(B.Refused):  # never overwritten
+                self.run_r2d(Path(d))
+
+    def test_a_peak_above_the_cap_is_refused_without_a_product(self):
+        with tempfile.TemporaryDirectory() as d:
+            with self.assertRaises(B.Refused):
+                self.run_r2d(Path(d), cap=1.0)
+            self.assertFalse((Path(d) / "out/r2d.npz").exists())
+            self.assertIn("refused", json.loads((Path(d) / "out/r2d.json").read_text()))
+
+
 class T3K(unittest.TestCase):
     def test_op_is_read_at_its_two_iterations_only(self):
         self.assertEqual(B.T3_KS["OP"], (2,))

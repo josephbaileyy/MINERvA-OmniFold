@@ -85,6 +85,16 @@ computed before this declaration, its reads and the director's GO.
 - **rev 4** (2026-11-23, after connect P attempt 2, `run-p2/`): **C-DID-CONS is EQUAL on both lists.** The J-cell
   memberships match (134, sha256 bd1434b0…), and so do the occupied reco cells (10,499, sha256 8b82482b…). So C-DID is a
   **STOP control** in connect B (§1, §6). Nothing else changes.
+- **Amendment B (2026-11-23, the director's rulings for connect B; it changes how the build runs, not what it
+  computes):**
+  - connect B runs `msr_build.py build --part` once per part, in its own process, in order r5d, r2d, t3;
+  - each part's peak RSS is recorded in `<part>.json`, and a peak above 8e9 B refuses that part (rc 9, no product
+    written, a STOP);
+  - the probe's three staged copies (`msr-p-20261122/stage`) are reused only after an O_NOATIME sha256 re-check against
+    their pins at connect start, and a mismatch is a STOP;
+  - all of B's outputs go under a fresh `$OUT` (`msr-b-20261123`), never into the probe's. The probe's `$OUT` stays as
+    is until B's records merge, and its removal is Joseph's call (it is listed for him);
+  - every C-* control, including C-DID and C-RID, is applied locally to the fetched products, before any reading.
 
 **Rulings folded in (the director, 2026-11-22):** Q1, a cluster build (login node if light, otherwise one shared-QOS job of
 at most 0.1 node-h); Q2, T3's B0, MO and OP as operands; Q3, H2 truth cells, with the 16-cell biases taken through the
