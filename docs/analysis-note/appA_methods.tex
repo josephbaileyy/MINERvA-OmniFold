@@ -534,7 +534,7 @@ coefficient propagates the $1.4\%$ normalization. Rounding and generator
 finite-sample fluctuations are added as Gaussian residuals in each cell.
 The variance for the latter is the sum of squared generator weights in that
 cell, in cross-section units. The six conditions on interpreting the tests
-are given in Sec.~\ref{sec:sixteen-cell-generator-comparison}. The available
+are listed at the end of this subsection. The available
 check of the lateral surrogate addresses the symmetry of its endpoints.
 
 \paragraph{Tail probabilities and multiplicity.}
@@ -619,6 +619,23 @@ threshold of 0.005 and is rejected at the new, last position with threshold
 0.05. With the descriptive $\kappa=\jtMoneKappaRobust$ shifts it has $p=0.075$ and is not
 rejected. The evaluation holds fixed the null distributions calibrated for
 the original targets, so it is descriptive for the hydrocarbon predictions.
+
+\paragraph{Conditions on the decisions.}
+% Moved from sec5_multidim.tex (Sec. 5.3, narrative pass 2026-11-22, review item 3); the six items are verbatim and
+% the label moved with the list. Sec. 5.3 keeps the familywise rejection, the hybrid scope, the no-uncertainty
+% statement and a summary naming the calibration and detector-response conditions.
+Each of the ten decisions in Sec.~\ref{sec:sixteen-cell-generator-comparison}
+holds under the following six conditions.
+\phantomsection
+\label{sec:joint5d-conditions}
+\begin{enumerate}
+  \item \emph{Subcell composition.} Replacing the below-grid Tune v1 composition with the generator's must shift the result by at most twice the last measured refinement change along that direction.
+  \item \emph{Detector response.} The specified detector variations must be adequate despite the absence of a dedicated calorimetric recoil-energy-scale variation.
+  \item \emph{Interaction model.} The \jtModelBands{} bands must describe within-cell composition and its effects on efficiency and migration.
+  \item \emph{Calibration.} Tail probabilities from half-sample pseudo-experiments must apply to the full-sample data unfolding, conditional on the available simulation, with independent exceedances. No rejection rate has been measured for null pseudo-data processed like the data, and the lost pseudo-experiments have not been shown to be lost independently of their outcomes.
+  \item \emph{Neutrino-energy range.} The samples must describe migrations into the test domain, including for GiBUU with $E_\nu<\fvval{cmodel-gibuu-enu}~\mathrm{GeV}$.
+  \item \emph{Finite generator samples.} Independent Gaussian residuals must adequately describe finite-sample errors in the predictions.
+\end{enumerate}
 
 \clearpage
 \subsection{Validation-test inventory}

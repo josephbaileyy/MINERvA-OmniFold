@@ -305,6 +305,8 @@ docs/orchestration/DECISION-20261121a-joseph-retire-register-rows-n01-n03-n67.md
 docs/orchestration/DECISION-20261121b-joseph-drop-records-pointers.md	tracked	LIVE	document		20261121	open		route-only	no
 docs/orchestration/DECISION-20261121c-joseph-ai-disclosure-model-list.md	tracked	LIVE	document		20261121	open		route-only	no
 docs/orchestration/DECISION-20261122-joseph-t3-note-wording.md	tracked	LIVE	document		20261122	open		route-only	no
+docs/orchestration/DECISION-20261122b-joseph-readability-pass.md	tracked	LIVE	document		20261122	open		route-only	no
+docs/orchestration/DECISION-20261122c-joseph-readability-pass-2.md	tracked	LIVE	document		20261122	open		route-only	no
 docs/orchestration/DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md	tracked	LIVE	document		20260911	open		route-only	no
 docs/orchestration/DECISION-PACKET-20260918-scalar5d-publication-blockers.md	tracked	LIVE	document		20260918	open		route-only	no
 docs/orchestration/DECISION-PACKET-20261029-oi53-clm-row-ownership.md	tracked	ARCHIVAL	document	fe-fps-campaign	20261029	terminal		exact-path-only	yes
