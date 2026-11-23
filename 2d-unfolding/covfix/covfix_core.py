@@ -98,26 +98,42 @@ def _sign_fix(U: np.ndarray) -> np.ndarray:
     return U * s
 
 
+GS_NULL = 100.0 * EPS      # a tied-space Gram-Schmidt residual at or below this (unit scale) is a null projection
+
+
 def _canonical_tied(U: np.ndarray) -> np.ndarray:
-    """The ordered cell axes e_1, e_2, ... projected into span(U) and orthonormalised in that order (two Gram-Schmidt
-    passes), skipping null projections, until span(U) is spanned (section 5.2). A projection is null when its norm
-    after orthogonalisation is at or below 10 n eps, the roundoff scale of unit vectors in n dimensions."""
+    """The ordered cell axes e_1, e_2, ... projected into span(U) and orthonormalised in that order, skipping null
+    projections, until span(U) is spanned (section 5.2). Done in span(U)'s own coordinates: P e_j = U c_j with
+    c_j = U[j, :], so every accepted vector is U times an orthonormal k-vector and cannot leave span(U). Two
+    orthogonalisation passes; a residual of norm at or below GS_NULL = 100 eps (unit scale) is null."""
     n, k = U.shape
-    tol = 10.0 * n * EPS
-    out = []
+    B = []
     for j in range(n):
-        v = U @ U[j, :]                       # projection of e_j into span(U)
+        c = np.array(U[j, :], dtype=np.float64)
         for _ in range(2):
-            for w in out:
-                v = v - (w @ v) * w
-        nv = float(np.linalg.norm(v))
-        if nv > tol:
-            out.append(v / nv)
-            if len(out) == k:
+            for b in B:
+                c = c - (b @ c) * b
+        nc = float(np.linalg.norm(c))
+        if nc > GS_NULL:
+            B.append(c / nc)
+            if len(B) == k:
                 break
-    if len(out) != k:
-        raise Refusal(f"tied eigenspace: Gram-Schmidt spanned {len(out)} of {k} dimensions")
-    return np.column_stack(out)
+    if len(B) != k:
+        raise Refusal(f"tied eigenspace: Gram-Schmidt spanned {len(B)} of {k} dimensions")
+    return U @ np.column_stack(B)
+
+
+def tie_groups(lam: np.ndarray) -> list:
+    """[(i, j), ...]: the index ranges [i, j) of descending eigenvalues that are exactly equal, length >= 2."""
+    out, i = [], 0
+    while i < lam.size:
+        j = i + 1
+        while j < lam.size and lam[j] == lam[i]:
+            j += 1
+        if j - i > 1:
+            out.append((i, j))
+        i = j
+    return out
 
 
 def eig_basis(V: np.ndarray, driver: str = "numpy") -> tuple[np.ndarray, np.ndarray]:
@@ -132,14 +148,8 @@ def eig_basis(V: np.ndarray, driver: str = "numpy") -> tuple[np.ndarray, np.ndar
         raise ValueError(driver)
     order = np.argsort(lam, kind="stable")[::-1]
     lam, U = lam[order], U[:, order]
-    i = 0
-    while i < lam.size:
-        j = i + 1
-        while j < lam.size and lam[j] == lam[i]:
-            j += 1
-        if j - i > 1:
-            U[:, i:j] = _canonical_tied(U[:, i:j])
-        i = j
+    for i, j in tie_groups(lam):
+        U[:, i:j] = _canonical_tied(U[:, i:j])
     return lam, _sign_fix(U)
 
 
@@ -176,17 +186,23 @@ def bands_used(band: np.ndarray) -> dict:
 
 
 # ---------------------------------------------------------------------------------------- guard and labels
-def guard(psi: np.ndarray) -> dict:
-    """X = mean(psi), SE = sd(psi, ddof 1) / sqrt(N), h = t_{0.975, N-1} SE. A zero or non-finite SE refuses."""
+def guard(psi: np.ndarray, X: float | None = None, labelled: bool = True) -> dict:
+    """h = t_{0.975, N-1} SE with SE = sd(psi, ddof 1) / sqrt(N), psi the per-toy influence term (section 2). X is
+    mean(psi) for M and the total band means; for a spread, X is the spread itself and psi its delta-method
+    influence term (mean zero), with ``labelled`` False because only a normalised spread (F~) carries a label.
+    A zero or non-finite SE refuses. The interval is approximate for quadratic toy scores (section 2)."""
     psi = np.asarray(psi, np.float64)
     n = psi.size
-    X = float(psi.mean())
+    X = float(psi.mean()) if X is None else float(X)
     se = float(psi.std(ddof=1) / math.sqrt(n)) if n > 1 else float("nan")
     if not (math.isfinite(se) and se > 0):
         return {"X": X if math.isfinite(X) else None, "SE": se if math.isfinite(se) else None, "h": None,
                 "refused": "zero or non-finite SE"}
     h = float(stats.t.ppf(0.975, n - 1) * se)
-    return {"X": X, "SE": se, "h": h, "label": label(X, h), "upper": X + h}
+    out = {"X": X, "SE": se, "h": h, "upper": X + h}
+    if labelled:
+        out["label"] = label(X, h)
+    return out
 
 
 def label(X: float, h: float) -> str:
@@ -222,17 +238,21 @@ def mode_readings(E: np.ndarray, V: np.ndarray, V_F: np.ndarray, driver: str = "
     q = (Z ** 2).mean(axis=0)
     band = band_of(lk)
     chi2 = np.sum(Z * Z, axis=1)
+    infl = (Z - m) ** 2 - v                                   # the spread's per-toy influence terms
     out = {"N": N, "ndf": ndf, "lambda_F1": lamF1, "lambda_kept": lk, "m": m, "v": v, "q": q, "band": band,
+           "exact_tie_groups_kept": len(tie_groups(lk)),
            "identity_q_m2_v_max_abs": float(np.max(np.abs(q - m * m - v))),
            "M": guard(chi2 / ndf), "M_split": {"mean_part": float(np.sum(m * m) / ndf), "spread_part": float(np.sum(v) / ndf)},
-           "bands": {}}
+           "F": guard(infl.sum(axis=1) / ndf, X=float(v.mean()), labelled=False), "bands": {}}
     for b, (name, _, _) in enumerate(BAND_EDGES):
         sel = band == b
         nb = int(sel.sum())
         if nb >= BAND_MIN:
             out["bands"][name] = {"n": nb, "used": True, "Q_R": float(q[sel].mean()), "F_R": float(v[sel].mean()),
                                   "B_R": float((m[sel] ** 2).mean()),
-                                  "guard": guard(np.sum(Z[:, sel] ** 2, axis=1) / nb)}
+                                  "guard": guard(np.sum(Z[:, sel] ** 2, axis=1) / nb),
+                                  "guard_F_R": guard(infl[:, sel].sum(axis=1) / nb, X=float(v[sel].mean()),
+                                                     labelled=False)}
         else:
             out["bands"][name] = {"n": nb, "used": False, "dropped": f"{name} holds {nb} kept modes, fewer than {BAND_MIN}"}
     out["_Z"], out["_U"] = Z, Uk
@@ -242,19 +262,31 @@ def mode_readings(E: np.ndarray, V: np.ndarray, V_F: np.ndarray, driver: str = "
 def evr_agreement(E: np.ndarray, V: np.ndarray, V_F: np.ndarray, rd: dict, unresolved: float = 0.01) -> dict:
     """Section 8 / T2A's descriptive precision readout: the same readings with scipy's 'evr' driver, post-processed by
     the same canonical basis rule; per rank d_k = max(|b_k - b_k'|, |f_k - f_k'|) / (b_k + f_k), b = m^2, f = v.
-    A rank with b_k + f_k = 0 has no d_k and is counted."""
-    r2 = mode_readings(E, V, V_F, driver="evr")
-    rec = {"ndf_numpy": rd["ndf"], "ndf_evr": r2["ndf"]}
+    Ranks are compared only where the two drivers' exact-tie partitions agree: a rank in a tie group that the other
+    driver does not reproduce exactly is listed as partition-differs (its individual mode is not matched). A rank
+    with b_k + f_k = 0 has no d_k and is counted. A refused evr reading is a diagnostic here, not a stop."""
+    rec = {"ndf_numpy": rd["ndf"]}
+    try:
+        r2 = mode_readings(E, V, V_F, driver="evr")
+    except Refusal as e:
+        rec |= {"ndf_evr": 0, "note": f"the evr reading is refused ({e}); no per-rank comparison is made"}
+        return rec
+    rec["ndf_evr"] = r2["ndf"]
     if r2["ndf"] != rd["ndf"]:
         rec["note"] = "the two drivers keep different counts; no per-rank comparison is made"
         return rec
+    g1, g2 = set(tie_groups(rd["lambda_kept"])), set(tie_groups(r2["lambda_kept"]))
+    differs = np.zeros(rd["ndf"], bool)
+    for i, j in g1 ^ g2:
+        differs[i:j] = True
     b1, f1, b2, f2 = rd["m"] ** 2, rd["v"], r2["m"] ** 2, r2["v"]
     den = b1 + f1
-    ok = den > 0
+    ok = (den > 0) & ~differs
     d = np.maximum(np.abs(b1 - b2), np.abs(f1 - f2))[ok] / den[ok]
     ranks = np.flatnonzero(ok) + 1
     rec.update(max_d=float(d.max()) if d.size else None, unresolved_ranks=[int(r) for r in ranks[d > unresolved]],
-               ranks_without_d=int((~ok).sum()), unresolved_threshold=unresolved,
+               ranks_without_d=int(((den <= 0) & ~differs).sum()),
+               partition_differs_ranks=[int(r) for r in np.flatnonzero(differs) + 1], unresolved_threshold=unresolved,
                lambda_rel_diff_max=float(np.max(np.abs(r2["lambda_kept"] / rd["lambda_kept"] - 1))))
     return rec
 
@@ -265,32 +297,42 @@ def _kept_basis(V: np.ndarray, V_F: np.ndarray) -> tuple[np.ndarray, np.ndarray,
     return lam, U, kept_mask(lam, lambda_1(V_F))
 
 
-def _modes(rank_mask: np.ndarray, lam: np.ndarray, res: np.ndarray) -> list:
-    return [{"rank": int(i + 1), "lambda": float(lam[i]), "residual": float(r)}
-            for i, r in zip(np.flatnonzero(rank_mask), res)]
+def _modes(rank_mask: np.ndarray, lam: np.ndarray, res: np.ndarray, **flags) -> list:
+    idx = np.flatnonzero(rank_mask)
+    return [{"rank": int(i + 1), "lambda": float(lam[i]), "residual": float(r),
+             **{k: bool(f[i]) for k, f in flags.items()}} for i, r in zip(idx, res)]
 
 
 def residual_rule(V_ref: np.ndarray, F_ref: np.ndarray, V_new: np.ndarray, F_new: np.ndarray) -> dict:
-    """Directed residual of the reference's well-determined modes (lambda_i >= 1e-6 lambda_1(F_ref)) outside the new
-    matrix's kept span; fires iff it exceeds 0.1. The maximum principal angle is arcsin of the residual. The ndf
-    difference and the tail modes (kept by the reference, below the well-determined cut) are printed, not barred."""
+    """Section 5.2's rule. The trigger is the directed residual ||(I - P_new,kept) U_ref,well||_2 of the reference's
+    well-determined modes (lambda_i >= 1e-6 lambda_1(F_ref)) outside the new matrix's kept span: it fires iff it
+    exceeds 0.1. Printed, not barred:
+      directed_angle_deg      arcsin(residual): reference well-determined span -> new kept span
+      well_spans_max_angle_deg  the maximum principal angle between the two well-determined spans (the new one under
+                              1e-6 lambda_1(F_new)), as section 3.1 prints it
+      the ndf difference, and every reference mode below the well-determined cut with its rank, lambda, residual
+      outside the new kept span, and whether the reference keeps it."""
     lam_r, U_r = eig_basis(V_ref)
     lamF1 = lambda_1(F_ref)
     well = lam_r >= WELL_CUT * lamF1
     kept_r = kept_mask(lam_r, lamF1)
-    _, U_n, kept_n = _kept_basis(V_new, F_new)
+    lam_n, U_n = eig_basis(V_new)
+    lamF1n = lambda_1(F_new)
+    kept_n = kept_mask(lam_n, lamF1n)
+    well_n = lam_n >= WELL_CUT * lamF1n
     Uk = U_n[:, kept_n]
     Uw = U_r[:, well]
     R = Uw - Uk @ (Uk.T @ Uw)
     resid = float(np.linalg.norm(R, 2)) if Uw.shape[1] else 0.0
-    tail = kept_r & ~well
+    tail = ~well
     Rt = np.linalg.norm(U_r[:, tail] - Uk @ (Uk.T @ U_r[:, tail]), axis=0)
-    return {"n_well": int(well.sum()), "ndf_ref": int(kept_r.sum()), "ndf_new": int(kept_n.sum()),
-            "ndf_difference": int(kept_n.sum() - kept_r.sum()), "residual": resid,
-            "max_principal_angle_deg": float(np.degrees(np.arcsin(min(resid, 1.0)))),
-            "fires": bool(resid > RESIDUAL_MAX), "bar": RESIDUAL_MAX,
-            "tail_modes": _modes(tail, lam_r, Rt),
-            "tail_max_residual": float(Rt.max()) if Rt.size else None}
+    ww = (float(principal_angles_deg(Uw, U_n[:, well_n]).max()) if Uw.shape[1] and well_n.any() else None)
+    return {"n_well": int(well.sum()), "n_well_new": int(well_n.sum()), "ndf_ref": int(kept_r.sum()),
+            "ndf_new": int(kept_n.sum()), "ndf_difference": int(kept_n.sum() - kept_r.sum()), "residual": resid,
+            "directed_angle_deg": float(np.degrees(np.arcsin(min(resid, 1.0)))),
+            "well_spans_max_angle_deg": ww, "fires": bool(resid > RESIDUAL_MAX), "bar": RESIDUAL_MAX,
+            "below_well_modes": _modes(tail, lam_r, Rt, ref_kept=kept_r),
+            "below_well_max_residual": float(Rt.max()) if Rt.size else None}
 
 
 def cut_diagnostic(V_ref: np.ndarray, F_ref: np.ndarray, V_new: np.ndarray, F_new: np.ndarray) -> dict:

@@ -8,19 +8,21 @@ readings that need it are completed after W1 by a step whose input contract (the
 section 2's rounding check) is written with the W1 code. Until then the record says "pending W1".
 
 Stages, in order; each control stage STOPS P0 before any reading:
-  1 inputs        every input pinned by sha256 (a missing or changed input is a C-PIN STOP)
+  1 inputs        every input pinned by sha256 (a missing or changed input is a C-PIN STOP), IBUKT's cell order
   2 controls      Q_rep's two block identities (exact numerical equality, summed in the declared order); C_model's
-                  matrix sha256; the cell and frame map across files; the A0-type control (COV2D's committed mean chi2
-                  at G18 and AR23 from E_<T> against C_T, to max(1e-9, 10 kappa_2 eps)); C-PSD on every block P0 uses
-                  or forms (lambda_min >= -1e-12 lambda_max; A FAILURE STOPS AT P0)
+                  matrix sha256; the cell map the readings depend on; C-PSD on every block P0 uses or forms
+                  (lambda_min >= -1e-12 lambda_max; A FAILURE STOPS AT P0); then the A0-type control (COV2D's
+                  committed mean chi2 at G18 and AR23 from E_<T> against C_T, to max(1e-9, 10 kappa_2 eps); ST5)
   3 residual      per tune: section 5.2's rule on the regrade pair (old C_T, fluctuation reference C_T - C_model_abs(T);
                   new C_T + C_run(T), reference F_T + C_run(T); C_run = diag(x_T/x_R) C_PL diag(x_T/x_R), REGRADE's
                   carry). IF IT FIRES AT EITHER TUNE, P0 STOPS HERE AND GOES TO THE DIRECTOR
   4 readings      carry_check (K0 carried with COV2D's x_hat_T against C_T: E_<T> under each, the eigenvalue ratio per
                   band, principal angles between kept spans); profiles (m_i, v_i, q_i under carried K0, C_T, G2R's
-                  C_T'); ibukt_a2 (m_i only); c2 (T2A's mean error on C_PL's two directions, carried to the tune)
+                  C_T'); ibukt_a2 (m_i only); c2 (T2A's mean error on C_PL's two directions, carried to the tune).
+                  A declared refusal inside one carry comparison or profile is recorded for that reading only.
 
-Exit 0 when the pre-W1 part ran, 3 on a STOP (the record is still written), 2 if --out exists.
+Exit 0 when the pre-W1 part ran, 3 on a STOP (the record is still written), 2 if --out exists (the record is
+written by exclusive creation, so an existing file is never overwritten).
 MEASURES: the section 3.1 readings. CANNOT AUTHORIZE: any reading as validation, any bar, any wording.
 """
 from __future__ import annotations
@@ -129,8 +131,12 @@ def psd_all(blocks: dict) -> list:
 
 
 def a0_tol(C: np.ndarray) -> dict:
-    """max(1e-9, 10 kappa_2 eps), kappa_2 on C's non-null subspace (REGRADE amendment 1's form of COV2D A5)."""
-    lam = np.linalg.eigvalsh(np.asarray(C, np.float64))
+    """max(1e-9, 10 kappa_2 eps), kappa_2 on C's non-null subspace (REGRADE amendment 1's form of COV2D A5), from the
+    same np.linalg.eigh spectrum fd_1b_null.chi2_nonnull grades with, so the kept set is the grader's. A matrix with no
+    positive eigenvalue is a STOP (REGRADE's refusal)."""
+    lam = np.linalg.eigh(np.asarray(C, np.float64))[0]
+    if not lam.max() > 0:
+        raise Stop(f"A0: C has no positive eigenvalue (lambda_max {lam.max():.3e})")
     keep = lam > fn.RANK_REL * lam.max()
     kappa = float(lam.max() / lam[keep].min())
     return {"kappa2": kappa, "tol": max(1e-9, 10 * kappa * cc.EPS)}
@@ -151,15 +157,17 @@ def a0_control(E: np.ndarray, C_T: np.ndarray, committed: dict) -> dict:
 
 
 def cell_map(Z: dict, B: dict, G: dict) -> dict:
-    """Every P0 reading pairs cells across Q_rep, COV2D's blocks and G2R's blocks, and carries by x_T / x_R: the cell
-    order (Q's cells = rep's reported cells, G2R's rep = COV2D's rep) and the frame vectors must be the same."""
+    """The conditions a P0 reading depends on are STOPs: the cell order (Q's cells = COV2D's reported cells, G2R's rep =
+    COV2D's rep), since every reading pairs cells across the files, and Q's x = COV2D's x_R, since the carry divides
+    COV2D's x_T by Q's x_R. G2R's own frame vectors enter no reading (its profile uses C_T' and its C_model_abs only),
+    so their equality with COV2D's is printed, not barred."""
     rec = {"Q cells = blocks rep": bool(np.array_equal(Z["cells"], np.flatnonzero(B["rep"]))),
            "G2R rep = blocks rep": bool(np.array_equal(G["rep"], B["rep"])),
-           "Q x = blocks x_R": bool(np.array_equal(Z["x"], B["x_R"])),
-           "G2R x_R = blocks x_R": bool(np.array_equal(G["x_R"], B["x_R"])),
-           "G2R x_T = blocks x_T": bool(np.array_equal(G["x_T"], B["x_T"]))}
+           "Q x = blocks x_R": bool(np.array_equal(Z["x"], B["x_R"]))}
     if not all(rec.values()):
         raise Stop(f"C-MAP: {rec}")
+    rec["printed, not barred"] = {"G2R x_R = blocks x_R": bool(np.array_equal(G["x_R"], B["x_R"])),
+                                  "G2R x_T = blocks x_T": bool(np.array_equal(G["x_T"], B["x_T"]))}
     return rec
 
 
@@ -192,6 +200,14 @@ def angles(A: np.ndarray, B: np.ndarray) -> dict:
             "n_above_1deg": int(np.sum(th > 1.0)), "n_above_10deg": int(np.sum(th > 10.0)), "deg": th}
 
 
+def scoped(fun, *args) -> dict:
+    """A declared refusal inside one descriptive reading is recorded for that reading only (section 6.2's scoping)."""
+    try:
+        return fun(*args)
+    except cc.Refusal as e:
+        return {"refused": str(e)}
+
+
 def carry_compare(E, K0_T, Q_T, C_T, F_T) -> dict:
     rk, rt = cc.mode_readings(E, K0_T, Q_T), cc.mode_readings(E, C_T, F_T)
     return {"K0_carried": summary(rk), "C_T": summary(rt),
@@ -199,8 +215,16 @@ def carry_compare(E, K0_T, Q_T, C_T, F_T) -> dict:
             "principal_angles_kept_spans": angles(rk["_U"], rt["_U"])}
 
 
-def ibukt(K0: np.ndarray, Q: np.ndarray, x_R: np.ndarray, cells: np.ndarray) -> dict:
+def ibukt_load(cells: np.ndarray) -> dict:
+    """Preflight: IBUKT A2's readout, pinned, with every truth's cell order equal to Q_rep's and E_R's arm present."""
     R = json.loads(pinned(*PINS["ibukt_readout"]).read_text())
+    for t, rec in R["truths"].items():
+        if [int(c) for c in rec["cells"]] != [int(c) for c in cells] or len(rec[E_R_METHOD]["mean"]) != len(cells):
+            raise Stop(f"C-MAP: IBUKT {t} cells differ from Q_rep's")
+    return R
+
+
+def ibukt(R: dict, K0: np.ndarray, Q: np.ndarray, x_R: np.ndarray) -> dict:
     lam, U = cc.eig_basis(K0)
     keep = cc.kept_mask(lam, cc.lambda_1(Q))
     lk, Uk = lam[keep], U[:, keep]
@@ -210,11 +234,14 @@ def ibukt(K0: np.ndarray, Q: np.ndarray, x_R: np.ndarray, cells: np.ndarray) -> 
                          "equal to the absolute error only where x_R equals the truth; m_i = u_i^T b / sqrt(lambda_i) "
                          "in K0's basis at x_R, kept under Q_rep's lambda_1; m_i only (five draws)", "truths": {}}
     for t, rec in R["truths"].items():
-        if [int(c) for c in rec["cells"]] != [int(c) for c in cells]:
-            raise Stop(f"C-MAP: IBUKT {t} cells differ from Q_rep's")
         b = np.asarray(rec[E_R_METHOD]["mean"], np.float64) * x_R
         out["truths"][t] = {"m": (Uk.T @ b) / np.sqrt(lk)}
     return out
+
+
+def profile(E, V, VF) -> dict:
+    rd = cc.mode_readings(E, V, VF)
+    return summary(rd) | {"evr": cc.evr_agreement(E, V, VF, rd)}
 
 
 def c2(E: np.ndarray, C_PL: np.ndarray, d: np.ndarray) -> dict:
@@ -236,7 +263,7 @@ def c2(E: np.ndarray, C_PL: np.ndarray, d: np.ndarray) -> dict:
 
 # ----------------------------------------------------------------------------------------------------- run
 def run(q_rep: Path, g2r_dir: Path) -> dict:
-    out = {"schema": "covfix/p0/2", "part": "pre-W1", "validates": "nothing (declaration section 3.1)",
+    out = {"schema": "covfix/p0/3", "part": "pre-W1", "validates": "nothing (declaration section 3.1)",
            "status": "running", "inputs": {}, "controls": {}}
     try:
         # 1 inputs
@@ -251,8 +278,9 @@ def run(q_rep: Path, g2r_dir: Path) -> dict:
                        "G": load_npz(pinned(gp, G2R_SHA[T])),
                        "score": json.loads(pinned(*PINS[f"score_{T}"]).read_text())["grade"]}
             out["inputs"][f"G2R_{T}"] = {"path": str(gp), "sha256": G2R_SHA[T]}
+        R_ib = ibukt_load(Z["cells"])
         out["inputs"]["committed"] = {k: {"path": str(p), "sha256": s} for k, (p, s) in PINS.items()}
-        # 2 controls
+        # 2 controls: identities, map, C-PSD on every block, then A0
         out["controls"]["Q_identities"] = q_identities(Z)
         out["controls"]["C_model"] = rec_cm
         x_R = np.asarray(Z["x"], np.float64)
@@ -264,19 +292,22 @@ def run(q_rep: Path, g2r_dir: Path) -> dict:
         for T, t in T_in.items():
             B, G = t["B"], t["G"]
             out["controls"][f"map_{T}"] = cell_map(Z, B, G)
-            out["controls"][f"A0_{T}"] = a0_control(t["E"], B["C_T"], t["score"])
-            out["controls"][f"C_model_abs_blocks_vs_rebuilt_{T}"] = float(
-                np.max(np.abs(B["C_model_abs"] - cc.absolute(C_model, B["x_T"]))) / np.max(np.abs(B["C_model_abs"])))
             d = cc.carry_factor(B["x_T"], x_R)
             dv = {"d": d, "F_T": B["C_T"] - B["C_model_abs"], "K0_T": cc.carry(K0, d), "Q_T": cc.carry(Z["Q"], d),
-                  "C_run": cc.carry(Z["C_PL"], d), "F_G": G["C_T"] - G["C_model_abs"]}
+                  "C_run": cc.carry(Z["C_PL"], d), "F_G": G["C_T"] - G["C_model_abs"],
+                  "Cm_T_rebuilt": cc.absolute(C_model, B["x_T"])}
             derived[T] = dv
             blocks |= {f"C_T({T})": B["C_T"], f"C_model_abs({T})": B["C_model_abs"], f"F_T({T})": dv["F_T"],
+                       f"C_model_abs rebuilt({T})": dv["Cm_T_rebuilt"],
                        f"C_T_prime({T})": G["C_T"], f"C_model_abs_G2R({T})": G["C_model_abs"],
                        f"F_T_prime({T})": dv["F_G"], f"K0 carried({T})": dv["K0_T"], f"Q carried({T})": dv["Q_T"],
                        f"C_run({T})": dv["C_run"], f"C_T + C_run({T})": B["C_T"] + dv["C_run"],
                        f"F_T + C_run({T})": dv["F_T"] + dv["C_run"]}
         out["controls"]["C_PSD"] = psd_all(blocks)
+        for T, t in T_in.items():
+            Cb, Cr = cc.sym(t["B"]["C_model_abs"]), cc.sym(derived[T]["Cm_T_rebuilt"])
+            out["controls"][f"C_model_abs_blocks_vs_rebuilt_{T}"] = float(np.max(np.abs(Cb - Cr)) / np.max(np.abs(Cb)))
+            out["controls"][f"A0_{T}"] = a0_control(t["E"], t["B"]["C_T"], t["score"])
         # 3 the residual rule's go/no-go control
         out["residual_rule"] = {}
         for T, t in T_in.items():
@@ -288,23 +319,22 @@ def run(q_rep: Path, g2r_dir: Path) -> dict:
         fired = [T for T, rr in out["residual_rule"].items() if rr["fires"]]
         if fired:
             raise Stop(f"the residual rule fires on the regrade pair at {fired} "
-                       f"({[round(out['residual_rule'][T]['residual'], 6) for T in fired]} > 0.1); P0 stops before "
+                       f"({[repr(out['residual_rule'][T]['residual']) for T in fired]} > 0.1); P0 stops before "
                        f"its readings and goes to the director (section 3.1)")
         # 4 readings
         out |= {"carry_check": {}, "profiles": {}, "c2": {}}
         for T, t in T_in.items():
             E, B, G, dv = t["E"], t["B"], t["G"], derived[T]
             out["carry_check"][T] = {
-                "xhat_committed": carry_compare(E, dv["K0_T"], dv["Q_T"], B["C_T"], dv["F_T"]),
+                "xhat_committed": scoped(carry_compare, E, dv["K0_T"], dv["Q_T"], B["C_T"], dv["F_T"]),
                 "xhat_round": "pending W1 (section 3.1: the round(lambda+) vector's unfolds run in W1)"}
             prof = {}
             for name, V, VF in (("K0_carried", dv["K0_T"], dv["Q_T"]), ("C_T", B["C_T"], dv["F_T"]),
                                 ("C_T_prime_G2R", G["C_T"], dv["F_G"])):
-                rd = cc.mode_readings(E, V, VF)
-                prof[name] = summary(rd) | {"evr": cc.evr_agreement(E, V, VF, rd)}
+                prof[name] = scoped(profile, E, V, VF)
             out["profiles"][T] = prof
             out["c2"][T] = c2(E, Z["C_PL"], dv["d"])
-        out["ibukt_a2"] = ibukt(K0, Z["Q"], x_R, Z["cells"])
+        out["ibukt_a2"] = ibukt(R_ib, K0, Z["Q"], x_R)
         out["status"] = "done (pre-W1 part)"
     except (Stop, cc.Refusal) as e:
         out["status"], out["stop"] = "STOP", f"{type(e).__name__}: {e}"
@@ -317,12 +347,15 @@ def main(argv=None) -> int:
     ap.add_argument("--g2r-dir", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)
     a = ap.parse_args(argv)
-    if a.out.exists():
-        print(f"refusing: {a.out} exists", file=sys.stderr)
-        return 2
     rec = run(a.q_rep, a.g2r_dir)
     rec["code_sha256"] = {"covfix_p0.py": sha256(Path(__file__)), "covfix_core.py": sha256(HERE / "covfix_core.py")}
-    a.out.write_text(json.dumps(cc.jsonable(rec), indent=1, allow_nan=False) + "\n")
+    text = json.dumps(cc.jsonable(rec), indent=1, allow_nan=False) + "\n"
+    try:
+        with open(a.out, "x") as f:                    # exclusive creation: a concurrent writer cannot overwrite
+            f.write(text)
+    except FileExistsError:
+        print(f"refusing: {a.out} exists", file=sys.stderr)
+        return 2
     print(json.dumps({"status": rec["status"], **({"stop": rec["stop"]} if "stop" in rec else {})}))
     return 0 if rec["status"] == "done (pre-W1 part)" else 3
 

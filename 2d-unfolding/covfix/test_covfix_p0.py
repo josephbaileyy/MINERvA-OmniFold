@@ -10,6 +10,7 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 import numpy as np
 
@@ -30,7 +31,7 @@ def psd(n, seed, rank=None, scale=1.0):
 
 def build(tmp: Path, *, cpl_scale=1e-3, cpl_small_second=False, break_q=False, break_s5=False, nonpsd=False,
           a0_off=False, ndf_off=False, zero_xT=False, ibukt_cells_off=False, map_off=False, g2r_map_off=False,
-          g2r_rep_off=False, g2r_nonpsd=False, ft_nonpsd=False) -> dict:
+          g2r_rep_off=False, g2r_nonpsd=False, ft_nonpsd=False, g2r_zero=False) -> dict:
     """Write a synthetic world under tmp; return its pins and paths."""
     n = N_CELL
     x = np.linspace(1.0, 3.0, n)
@@ -82,10 +83,13 @@ def build(tmp: Path, *, cpl_scale=1e-3, cpl_small_second=False, break_q=False, b
         CTp = C_T + psd(n, 30 + k, scale=0.01)
         if g2r_nonpsd:
             CTp = CTp - 2.0 * np.eye(n) * np.linalg.eigvalsh(CTp).max()
+        Cm_G = Cm_T
+        if g2r_zero:
+            CTp, Cm_G = np.zeros((n, n)), np.zeros((n, n))
         grep = rep.copy()
         if g2r_rep_off:
             grep[n - 1], grep[n] = False, True
-        np.savez(gp, C_T=CTp, C_model_abs=Cm_T, x_T=xT * (1.0001 if g2r_map_off else 1.0), x_R=x, rep=grep)
+        np.savez(gp, C_T=CTp, C_model_abs=Cm_G, x_T=xT * (1.0001 if g2r_map_off else 1.0), x_R=x, rep=grep)
         g2r_sha[T] = p0.sha256(gp)
         pins |= {f"blocks_{T}": (bp, p0.sha256(bp)), f"E_{T}": (ep, p0.sha256(ep)), f"score_{T}": (sp, p0.sha256(sp))}
     cells = list(range(n))
@@ -145,7 +149,9 @@ class Run(Base):
             self.assertLess(rec["controls"][f"C_model_abs_blocks_vs_rebuilt_{T}"], 1e-15)
             self.assertIn("G2R_" + T, rec["inputs"])
         self.assertTrue(all(r["pass"] for r in rec["controls"]["C_PSD"]))
-        self.assertEqual(len(rec["controls"]["C_PSD"]), 9 + 2 * 11)       # reference blocks + every per-tune block
+        self.assertEqual(len(rec["controls"]["C_PSD"]), 9 + 2 * 12)       # reference blocks + every per-tune block
+        self.assertIn("C_model_abs rebuilt(G18)", [r["name"] for r in rec["controls"]["C_PSD"]])
+        self.assertEqual(list(rec["controls"])[-1], "A0_AR23")             # A0 after C-PSD
         self.assertEqual(set(rec["ibukt_a2"]["truths"]), {"nominal", "genie_mec", "nuwro"})
 
     def test_carry_matches_formula(self):
@@ -228,7 +234,7 @@ class Run(Base):
     def test_stops(self):
         cases = {"break_q": "C-ID", "break_s5": "C-ID", "nonpsd": "C-PSD", "g2r_nonpsd": "C-PSD",
                  "ft_nonpsd": "C-PSD", "a0_off": "A0", "ndf_off": "A0", "zero_xT": "carry",
-                 "ibukt_cells_off": "IBUKT", "map_off": "C-MAP", "g2r_map_off": "C-MAP", "g2r_rep_off": "C-MAP"}
+                 "ibukt_cells_off": "IBUKT", "map_off": "C-MAP", "g2r_rep_off": "C-MAP"}
         for k, word in cases.items():
             with self.subTest(k):
                 with tempfile.TemporaryDirectory() as td:
@@ -237,6 +243,28 @@ class Run(Base):
                         rec = p0.run(w["q"], w["g2r"])
                 self.assertEqual(rec["status"], "STOP", k)
                 self.assertIn(word, rec["stop"], k)
+
+    def test_ibukt_checked_in_preflight(self):
+        rec, _ = self.go(ibukt_cells_off=True)
+        self.assertIn("IBUKT", rec["stop"])
+        self.assertNotIn("C_PSD", rec["controls"])
+
+    def test_psd_reported_before_a0(self):
+        rec, _ = self.go(nonpsd=True, a0_off=True)
+        self.assertIn("C-PSD", rec["stop"])
+
+    def test_g2r_frame_vectors_printed_not_barred(self):
+        rec, _ = self.go(g2r_map_off=True)
+        self.assertEqual(rec["status"], DONE, rec.get("stop"))
+        self.assertFalse(rec["controls"]["map_G18"]["printed, not barred"]["G2R x_T = blocks x_T"])
+
+    def test_empty_reading_is_scoped(self):
+        rec, _ = self.go(g2r_zero=True)
+        self.assertEqual(rec["status"], DONE, rec.get("stop"))
+        self.assertIn("refused", rec["profiles"]["G18"]["C_T_prime_G2R"])
+        self.assertIn("M", rec["profiles"]["G18"]["C_T"])
+        with mock.patch.object(p0, "carry_compare", side_effect=cc.Refusal("x")):
+            self.assertEqual(p0.scoped(p0.carry_compare, 1), {"refused": "x"})
 
     def test_psd_stop_names_block(self):
         rec, _ = self.go(g2r_nonpsd=True)
@@ -268,6 +296,42 @@ class Run(Base):
                 self.assertIn("C-MODEL" if what == "cmodel" else "C-PIN", rec["stop"])
 
 
+class A0(unittest.TestCase):
+    def test_tolerance_branches(self):
+        self.assertEqual(p0.a0_tol(np.diag([1.0, 0.5, 0.1]))["tol"], 1e-9)            # floor
+        t = p0.a0_tol(np.diag([1.0, 1e-9]))                                          # kappa 1e9
+        self.assertAlmostEqual(t["kappa2"], 1e9, delta=1.0)
+        self.assertAlmostEqual(t["tol"], 10 * 1e9 * cc.EPS, delta=1e-12)
+        self.assertEqual(p0.a0_tol(np.diag([1.0, 1e-13]))["kappa2"], 1.0)           # under the cut: not in kappa
+
+    def test_no_positive_eigenvalue_stops(self):
+        with self.assertRaises(p0.Stop):
+            p0.a0_tol(np.zeros((2, 2)))
+
+    def test_inside_and_outside(self):
+        C = np.diag([1.0, 1e-9])
+        E = np.random.default_rng(3).normal(size=(10, 2)) * np.sqrt(np.diag(C))
+        chi2, ndf = fn.chi2_nonnull(E, C)
+        got = float(chi2.mean() / ndf)
+        tol = p0.a0_tol(C)["tol"]
+        self.assertTrue(p0.a0_control(E, C, {"chi2_mean_over_ndf": got * (1 + 0.5 * tol), "ndf": 2})["pass"])
+        with self.assertRaises(p0.Stop):
+            p0.a0_control(E, C, {"chi2_mean_over_ndf": got * (1 + 2.0 * tol), "ndf": 2})
+
+
+class Ratio(unittest.TestCase):
+    def test_nine_and_ten_common_ranks(self):
+        b = np.geomspace(1, 1e-3, 83)
+        self.assertEqual(p0.eig_ratio_by_band(2 * b, b)["R2"], {"n": 10, "mean": 2.0, "min": 2.0, "max": 2.0})
+        self.assertIn("dropped", p0.eig_ratio_by_band(2 * b[:82], b)["R2"])         # 82 common ranks: R2 holds 9
+
+    def test_straddling_tie(self):
+        b = np.geomspace(1, 1e-3, 90)
+        b[73] = b[72] * (1 - 0.5e-9)
+        r = p0.eig_ratio_by_band(b, b)
+        self.assertEqual((r["R1"]["n"], r["R2"]["n"]), (74, 16))
+
+
 class Main(unittest.TestCase):
     def test_exit_codes_and_strict_json(self):
         with tempfile.TemporaryDirectory() as td:
@@ -286,6 +350,21 @@ class Main(unittest.TestCase):
             with patched(w):
                 self.assertEqual(p0.main(argv[:-1] + [str(out2)]), 3)
             self.assertEqual(json.loads(out2.read_text())["status"], "STOP")
+
+    def test_exclusive_creation(self):
+        with tempfile.TemporaryDirectory() as td:
+            tmp = Path(td)
+            w = build(tmp)
+            out = tmp / "race.json"
+            real = p0.run
+
+            def racing(*a):
+                rec = real(*a)
+                out.write_text("{}")                         # another writer lands first
+                return rec
+            with patched(w), mock.patch.object(p0, "run", racing):
+                rc = p0.main(["--q-rep", str(w["q"]), "--g2r-dir", str(w["g2r"]), "--out", str(out)])
+            self.assertEqual((rc, out.read_text()), (2, "{}"))
 
 
 if __name__ == "__main__":

@@ -7,6 +7,7 @@ from __future__ import annotations
 import json
 import math
 import unittest
+from unittest import mock
 
 import numpy as np
 from scipy import stats
@@ -129,6 +130,29 @@ class EigBasis(unittest.TestCase):
         np.testing.assert_allclose(A[:, 0], w, atol=1e-12)
         np.testing.assert_allclose(A[:, 1], [0.0, 1.0, 0.0], atol=1e-12)
 
+    def test_tiny_genuine_projection_in_205_cells(self):
+        n = 205
+        w = np.zeros(n)
+        w[0], w[5] = 1e-13, 1.0
+        w /= np.linalg.norm(w)
+        e3 = np.zeros(n)
+        e3[2] = 1.0
+        A = cc._canonical_tied(np.column_stack([e3, w]))
+        np.testing.assert_allclose(A[:, 0], w, atol=1e-15)          # e_1's 1e-13 projection is genuine: first
+
+    def test_nearly_dependent_projections_stay_in_span(self):
+        rng = np.random.default_rng(31)
+        U = np.linalg.qr(rng.normal(size=(40, 3)))[0]
+        U[1, :] = U[0, :] + 1e-9 * rng.normal(size=3)                 # rows 0 and 1 nearly dependent
+        U = np.linalg.qr(U)[0]
+        A = cc._canonical_tied(U)
+        np.testing.assert_allclose(A.T @ A, np.eye(3), atol=1e-12)
+        np.testing.assert_allclose(U @ (U.T @ A), A, atol=1e-13)      # inside span(U)
+
+    def test_tie_groups(self):
+        self.assertEqual(cc.tie_groups(np.array([3.0, 2.0, 2.0, 1.0, 1.0, 1.0, 0.5])), [(1, 3), (3, 6)])
+        self.assertEqual(cc.tie_groups(np.array([1.0])), [])
+
     def test_canonical_tied_refuses_when_not_spanned(self):
         U = np.array([[1.0, 1.0], [0.0, 0.0], [0.0, 0.0]])  # rank 1, two columns
         with self.assertRaises(cc.Refusal):
@@ -221,6 +245,17 @@ class ModeReadings(unittest.TestCase):
         self.assertAlmostEqual(r["M"]["X"], (1.25 + 4.0) / 2)
         self.assertAlmostEqual(r["M_split"]["mean_part"], 0.5)
         self.assertAlmostEqual(r["M_split"]["spread_part"], 2.125)
+        np.testing.assert_allclose(r["_Z"], [[0.5, 2.0], [1.5, -2.0]])
+        infl = (r["_Z"] - r["m"]) ** 2 - r["v"]
+        psi = infl.sum(axis=1) / 2
+        self.assertEqual(r["F"]["X"], float(r["v"].mean()))
+        self.assertAlmostEqual(r["F"]["SE"], float(psi.std(ddof=1) / math.sqrt(2)))
+        self.assertNotIn("label", r["F"])
+
+    def test_spread_guard_refuses_at_zero_se(self):
+        E = np.array([[1.0, 1.0], [-1.0, -1.0], [1.0, 1.0], [-1.0, -1.0]])   # (z - m)^2 = v for every toy
+        r = cc.mode_readings(E, np.eye(2), np.eye(2))
+        self.assertIn("refused", r["F"])
 
     def test_gaussian_reads_about_one_and_identities(self):
         n = 30
@@ -258,6 +293,10 @@ class ModeReadings(unittest.TestCase):
         self.assertAlmostEqual(r["bands"]["R1"]["guard"]["X"], float(psi.mean()), places=12)
         self.assertAlmostEqual(r["bands"]["R1"]["Q_R"], float(r["q"][band == 0].mean()), places=12)
         self.assertEqual(set(r["bands"]["R2"]), {"n", "used", "dropped"})   # 7 modes: no statistics
+        infl = (Z - r["m"]) ** 2 - r["v"]
+        g = r["bands"]["R1"]["guard_F_R"]
+        self.assertEqual(g["X"], r["bands"]["R1"]["F_R"])
+        self.assertAlmostEqual(g["SE"], float((infl[:, band == 0].sum(axis=1) / 73).std(ddof=1) / math.sqrt(300)))
 
     def test_evr_agreement(self):
         n = 20
@@ -275,6 +314,30 @@ class ModeReadings(unittest.TestCase):
         a = cc.evr_agreement(E, V, V, cc.mode_readings(E, V, V))
         self.assertLess(a["max_d"], 1e-12)
         self.assertEqual(a["ranks_without_d"], 1)
+
+    def test_evr_partition_differs_is_not_compared(self):
+        V = np.diag([3.0, 2.0, 1.5, 1.0])
+        E = np.random.default_rng(16).normal(size=(100, 4))
+        rd = cc.mode_readings(E, V, V)
+        lk = rd["lambda_kept"].copy()
+        lk[2] = lk[1]                                         # numpy's record now claims an exact tie at ranks 2-3
+        a = cc.evr_agreement(E, V, V, dict(rd, lambda_kept=lk))
+        self.assertEqual(a["partition_differs_ranks"], [2, 3])
+
+    def test_evr_refusal_is_a_diagnostic(self):
+        V = np.eye(3)
+        E = np.ones((4, 3))
+        rd = cc.mode_readings(E, V, V)
+        real = cc.mode_readings
+
+        def fake(E_, V_, VF_, driver="numpy"):
+            if driver == "evr":
+                raise cc.Refusal("readings: no kept mode")
+            return real(E_, V_, VF_, driver)
+        with mock.patch.object(cc, "mode_readings", fake):
+            a = cc.evr_agreement(E, V, V, rd)
+        self.assertEqual(a["ndf_evr"], 0)
+        self.assertIn("refused", a["note"])
 
     def test_evr_count_mismatch_is_noted(self):
         V = np.eye(5)
@@ -303,7 +366,7 @@ class Residual(unittest.TestCase):
     def test_same_matrix(self):
         r = cc.residual_rule(self.V, self.V, self.V, self.V)
         self.assertEqual(r["n_well"], 6)
-        self.assertEqual([t["rank"] for t in r["tail_modes"]], [7, 8])
+        self.assertEqual([(t["rank"], t["ref_kept"]) for t in r["below_well_modes"]], [(7, True), (8, True)])
         self.assertLess(r["residual"], 1e-12)
         self.assertFalse(r["fires"])
 
@@ -314,7 +377,7 @@ class Residual(unittest.TestCase):
         r = cc.residual_rule(self.V, self.V, Vn, Vn)
         self.assertAlmostEqual(r["residual"], 1.0, places=8)
         self.assertTrue(r["fires"])
-        self.assertAlmostEqual(r["max_principal_angle_deg"], 90.0, places=4)
+        self.assertAlmostEqual(r["directed_angle_deg"], 90.0, places=4)
 
     def test_dropped_tail_direction_does_not_fire(self):
         lam = self.lam.copy()
@@ -322,9 +385,31 @@ class Residual(unittest.TestCase):
         Vn = self.mat(lam)
         r = cc.residual_rule(self.V, self.V, Vn, Vn)
         self.assertFalse(r["fires"])
-        self.assertAlmostEqual(r["tail_max_residual"], 1.0, places=6)
-        self.assertAlmostEqual(r["tail_modes"][0]["residual"], 1.0, places=6)
-        self.assertEqual(r["tail_modes"][0]["rank"], 7)
+        self.assertAlmostEqual(r["below_well_max_residual"], 1.0, places=6)
+        self.assertAlmostEqual(r["below_well_modes"][0]["residual"], 1.0, places=6)
+        self.assertEqual(r["below_well_modes"][0]["rank"], 7)
+
+    def test_below_well_lists_modes_the_reference_drops(self):
+        lam = self.lam.copy()
+        lam[7] = 1e-14                                          # below the reference's own 1e-12 cut
+        V = self.mat(lam)
+        r = cc.residual_rule(V, V, V, V)
+        self.assertEqual([(t["rank"], t["ref_kept"]) for t in r["below_well_modes"]], [(7, True), (8, False)])
+
+    def test_well_spans_angle_is_printed_beside_the_trigger(self):
+        C = np.diag([1.0, 1e-7])                                # the codex-school2 example
+        Cr = np.diag([0.0, 1e8])
+        r = cc.residual_rule(C, C, C + Cr, C + Cr)
+        self.assertLess(r["directed_angle_deg"], 1e-6)          # e_1 lies in the new kept span: the rule does not fire
+        self.assertFalse(r["fires"])
+        self.assertAlmostEqual(r["well_spans_max_angle_deg"], 90.0)   # but the well-determined spans are orthogonal
+
+    def test_exact_bar_does_not_fire(self):
+        u = np.array([math.sqrt(0.99), 0.1])
+        Vn = np.outer(u, u)
+        r = cc.residual_rule(np.diag([1.0, 0.0]), np.diag([1.0, 0.0]), Vn, Vn)
+        self.assertEqual(r["residual"], 0.1)
+        self.assertFalse(r["fires"])
 
     def test_directed_extra_span_passes(self):
         lam = self.lam.copy()

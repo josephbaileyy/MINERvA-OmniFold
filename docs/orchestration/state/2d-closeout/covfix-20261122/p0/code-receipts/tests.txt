@@ -1,12 +1,12 @@
 # command: python3 -B -m unittest -v test_covfix_core.py test_covfix_p0.py test_covfix_p0_pins.py
 # python: 3.12.2 numpy 1.26.4 scipy 1.15.2  host: Darwin arm64  OMP_NUM_THREADS=1
-# 1e8ca2acf5e42b7eb7f674bbc7e4fd715e3e1329d52614f8f1cc9ab78185dcad  covfix_core.py
-# 6ed6280ed353e7d91fea33fd4be16dc6e4cea57922c6364e6cb3bec38d5e489b  covfix_p0.py
-# f3c125f653efb0a03981cad519762de679c03966c78fda37017c00b2baa4cdbc  test_covfix_core.py
-# d84ffdd15b29f5159405988657c9ed44fef7ace127a9fb2ce08c8de88c50938e  test_covfix_p0.py
+# 45823a1adbd556f56236c1e4ab2af615f79d1a194a090ef33465f42b37e656c0  covfix_core.py
+# d5d3491aad502824cb4381971d6efd353b381a85537925230647f53b5168d6bc  covfix_p0.py
+# 27597964d8bbfcf2bb0f447dc0cf8fbddf7a216d655945696dd88e7c1c277229  test_covfix_core.py
+# c0d325f5e860936d9bc237a27c1051e6f1c7125e89468c2021dd69f8c9d89bcc  test_covfix_p0.py
 # d0d16f36f0527fc30c00f8659b3a54ac2e6d7e4774ed7e248d5daedd19cab6ca  test_covfix_p0_pins.py
-# c85a5ba6804a5e4fb48a27fabb67202ebb93f4bafe9a42d261c03d39cfd5e67d  covfix_mutation.py
-# start: 2026-11-23T16:44:19Z
+# 0fffa6cbe07a2dd5f8a0bab887cb981c32474de5afc06c5e02492897c0b5db9a  covfix_mutation.py
+# start: 2026-11-23T20:20:14Z
 test_band_of_exactly_ten_is_used (test_covfix_core.Bands.test_band_of_exactly_ten_is_used) ... ok
 test_bands_used (test_covfix_core.Bands.test_bands_used) ... ok
 test_chained_cluster (test_covfix_core.Bands.test_chained_cluster) ... ok
@@ -23,10 +23,13 @@ test_canonical_tied_skips_null_projection (test_covfix_core.EigBasis.test_canoni
 test_descending_reconstructs_and_signs (test_covfix_core.EigBasis.test_descending_reconstructs_and_signs) ... ok
 test_evr_driver_same_basis (test_covfix_core.EigBasis.test_evr_driver_same_basis) ... ok
 test_identity_is_canonical_axes (test_covfix_core.EigBasis.test_identity_is_canonical_axes) ... ok
+test_nearly_dependent_projections_stay_in_span (test_covfix_core.EigBasis.test_nearly_dependent_projections_stay_in_span) ... ok
 test_sign_fix_flips_negative_leader (test_covfix_core.EigBasis.test_sign_fix_flips_negative_leader) ... ok
 test_small_genuine_projection_is_kept_in_order (test_covfix_core.EigBasis.test_small_genuine_projection_is_kept_in_order) ... ok
+test_tie_groups (test_covfix_core.EigBasis.test_tie_groups) ... ok
 test_tied_branch_used_in_eig_basis (test_covfix_core.EigBasis.test_tied_branch_used_in_eig_basis) ... ok
 test_tied_subspace_does_not_depend_on_rotation (test_covfix_core.EigBasis.test_tied_subspace_does_not_depend_on_rotation) ... ok
+test_tiny_genuine_projection_in_205_cells (test_covfix_core.EigBasis.test_tiny_genuine_projection_in_205_cells) ... ok
 test_guard_refuses (test_covfix_core.GuardLabel.test_guard_refuses) ... ok
 test_guard_values (test_covfix_core.GuardLabel.test_guard_values) ... ok
 test_labels (test_covfix_core.GuardLabel.test_labels) ... ok
@@ -35,47 +38,64 @@ test_band_guard_and_dropped_band (test_covfix_core.ModeReadings.test_band_guard_
 test_cut_referenced_to_fluctuation_block (test_covfix_core.ModeReadings.test_cut_referenced_to_fluctuation_block) ... ok
 test_evr_agreement (test_covfix_core.ModeReadings.test_evr_agreement) ... ok
 test_evr_count_mismatch_is_noted (test_covfix_core.ModeReadings.test_evr_count_mismatch_is_noted) ... ok
+test_evr_partition_differs_is_not_compared (test_covfix_core.ModeReadings.test_evr_partition_differs_is_not_compared) ... ok
+test_evr_refusal_is_a_diagnostic (test_covfix_core.ModeReadings.test_evr_refusal_is_a_diagnostic) ... ok
 test_evr_tied_space_agrees_and_zero_energy_counted (test_covfix_core.ModeReadings.test_evr_tied_space_agrees_and_zero_energy_counted) ... ok
 test_gaussian_reads_about_one_and_identities (test_covfix_core.ModeReadings.test_gaussian_reads_about_one_and_identities) ... ok
 test_hand_oracle (test_covfix_core.ModeReadings.test_hand_oracle) ... ok
 test_no_kept_mode_refuses (test_covfix_core.ModeReadings.test_no_kept_mode_refuses) ... ok
+test_spread_guard_refuses_at_zero_se (test_covfix_core.ModeReadings.test_spread_guard_refuses_at_zero_se) ... ok
 test_asymmetry_is_printed_not_barred (test_covfix_core.PSD.test_asymmetry_is_printed_not_barred) ... ok
 test_bar (test_covfix_core.PSD.test_bar) ... ok
 test_one_representation (test_covfix_core.PSD.test_one_representation) ... ok
 test_zero_matrix_passes (test_covfix_core.PSD.test_zero_matrix_passes) ... ok
 test_angles (test_covfix_core.Residual.test_angles) ... ok
 test_bar_is_strict (test_covfix_core.Residual.test_bar_is_strict) ... ok
+test_below_well_lists_modes_the_reference_drops (test_covfix_core.Residual.test_below_well_lists_modes_the_reference_drops) ... ok
 test_cut_diagnostic (test_covfix_core.Residual.test_cut_diagnostic) ... ok
 test_directed_extra_span_passes (test_covfix_core.Residual.test_directed_extra_span_passes) ... ok
 test_dropped_tail_direction_does_not_fire (test_covfix_core.Residual.test_dropped_tail_direction_does_not_fire) ... ok
 test_dropped_well_direction_fires (test_covfix_core.Residual.test_dropped_well_direction_fires) ... ok
+test_exact_bar_does_not_fire (test_covfix_core.Residual.test_exact_bar_does_not_fire) ... ok
 test_rotation_angle (test_covfix_core.Residual.test_rotation_angle) ... ok
 test_same_matrix (test_covfix_core.Residual.test_same_matrix) ... ok
 test_spectral_not_frobenius (test_covfix_core.Residual.test_spectral_not_frobenius) ... ok
 test_well_cut_uses_reference_fluctuation (test_covfix_core.Residual.test_well_cut_uses_reference_fluctuation) ... ok
 test_well_cut_value_and_equality (test_covfix_core.Residual.test_well_cut_value_and_equality) ... ok
-test_exit_codes_and_strict_json (test_covfix_p0.Main.test_exit_codes_and_strict_json) ... refusing: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpom0_va32/p0.json exists
+test_well_spans_angle_is_printed_beside_the_trigger (test_covfix_core.Residual.test_well_spans_angle_is_printed_beside_the_trigger) ... ok
+test_inside_and_outside (test_covfix_p0.A0.test_inside_and_outside) ... ok
+test_no_positive_eigenvalue_stops (test_covfix_p0.A0.test_no_positive_eigenvalue_stops) ... ok
+test_tolerance_branches (test_covfix_p0.A0.test_tolerance_branches) ... ok
+test_exclusive_creation (test_covfix_p0.Main.test_exclusive_creation) ... refusing: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp51lpe2ty/race.json exists
 ok
+test_exit_codes_and_strict_json (test_covfix_p0.Main.test_exit_codes_and_strict_json) ... refusing: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpt_hxnm5n/p0.json exists
+ok
+test_nine_and_ten_common_ranks (test_covfix_p0.Ratio.test_nine_and_ten_common_ranks) ... ok
+test_straddling_tie (test_covfix_p0.Ratio.test_straddling_tie) ... ok
 test_c2_carried_directions (test_covfix_p0.Run.test_c2_carried_directions) ... ok
 test_c2_small_second_direction_kept (test_covfix_p0.Run.test_c2_small_second_direction_kept) ... ok
 test_c2_zero_mean_share_undefined (test_covfix_p0.Run.test_c2_zero_mean_share_undefined) ... ok
 test_carry_matches_formula (test_covfix_p0.Run.test_carry_matches_formula) ... ok
 test_done_and_sections (test_covfix_p0.Run.test_done_and_sections) ... ok
+test_empty_reading_is_scoped (test_covfix_p0.Run.test_empty_reading_is_scoped) ... ok
+test_g2r_frame_vectors_printed_not_barred (test_covfix_p0.Run.test_g2r_frame_vectors_printed_not_barred) ... ok
+test_ibukt_checked_in_preflight (test_covfix_p0.Run.test_ibukt_checked_in_preflight) ... ok
 test_ibukt_m_only_and_is_projection (test_covfix_p0.Run.test_ibukt_m_only_and_is_projection) ... ok
 test_pin_failures (test_covfix_p0.Run.test_pin_failures) ... ok
+test_psd_reported_before_a0 (test_covfix_p0.Run.test_psd_reported_before_a0) ... /Users/josephbailey/local-research/wt-covfix/2d-unfolding/covfix/test_covfix_p0.py:72: RuntimeWarning: covariance is not symmetric positive-semidefinite.
+  E = np.random.default_rng(20 + k).multivariate_normal(np.full(n, 0.05), 2.0 * C_T, size=N_TOY)
+ok
 test_psd_stop_names_block (test_covfix_p0.Run.test_psd_stop_names_block) ... ok
 test_residual_fire_stops_before_readings (test_covfix_p0.Run.test_residual_fire_stops_before_readings) ... ok
 test_residual_rule_pair_is_regrade (test_covfix_p0.Run.test_residual_rule_pair_is_regrade) ... ok
-test_stops (test_covfix_p0.Run.test_stops) ... /Users/josephbailey/local-research/wt-covfix/2d-unfolding/covfix/test_covfix_p0.py:71: RuntimeWarning: covariance is not symmetric positive-semidefinite.
-  E = np.random.default_rng(20 + k).multivariate_normal(np.full(n, 0.05), 2.0 * C_T, size=N_TOY)
-ok
+test_stops (test_covfix_p0.Run.test_stops) ... ok
 test_committed_inputs_match (test_covfix_p0_pins.Pins.test_committed_inputs_match) ... ok
 test_declared_shas (test_covfix_p0_pins.Pins.test_declared_shas) ... ok
 
 ----------------------------------------------------------------------
-Ran 61 tests in 0.391s
+Ran 80 tests in 0.560s
 
 OK
 {"status": "done (pre-W1 part)"}
-{"status": "STOP", "stop": "Stop: C-PIN: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpom0_va32/Q.npz is 7af26e00dff207efec94b35237dd260001b4e53f2424c5e063a232972d366812, pinned 3333333333333333333333333333333333333333333333333333333333333333"}
+{"status": "STOP", "stop": "Stop: C-PIN: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpt_hxnm5n/Q.npz is 7af26e00dff207efec94b35237dd260001b4e53f2424c5e063a232972d366812, pinned 3333333333333333333333333333333333333333333333333333333333333333"}
 # rc: 0

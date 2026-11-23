@@ -36,8 +36,8 @@ MUTANTS = [
     ("no-sign-fix", C, "    return U * s\n", "    return U\n"),
     ("ascending", C, 'order = np.argsort(lam, kind="stable")[::-1]', 'order = np.argsort(lam, kind="stable")'),
     ("no-tie-canon", C, "        if j - i > 1:\n", "        if j - i > 99:\n"),
-    ("gs-null-skip", C, "        if nv > tol:\n", "        if nv >= 0:\n"),
-    ("gs-tol-fixed", C, "tol = 10.0 * n * EPS", "tol = 1e-10"),
+    ("gs-null-skip", C, "        if nc > GS_NULL:\n", "        if nc >= 0:\n"),
+    ("gs-tol-fixed", C, "GS_NULL = 100.0 * EPS ", "GS_NULL = 1e-10 "),
     ("evr-raw", C, '        lam, U = sl.eigh(S, driver="evr")\n',
      '        lam, U = sl.eigh(S, driver="evr")\n        return lam[::-1], U[:, ::-1]\n'),
     ("kept-nonstrict", C, "return np.asarray(lam) > RANK_CUT * float(lam1_F)",
@@ -54,9 +54,9 @@ MUTANTS = [
     ("v-ddof1", C, "v = ((Z - m) ** 2).mean(axis=0)", "v = ((Z - m) ** 2).sum(axis=0) / (N - 1)"),
     ("cut-on-V", C, "    lamF1 = lambda_1(V_F)\n    keep = kept_mask(lam, lamF1)\n",
      "    lamF1 = lambda_1(V)\n    keep = kept_mask(lam, lamF1)\n"),
-    ("band-psi-ndf", C, '"guard": guard(np.sum(Z[:, sel] ** 2, axis=1) / nb)}', '"guard": guard(np.sum(Z[:, sel] ** 2, axis=1) / ndf)}'),
+    ("band-psi-ndf", C, '"guard": guard(np.sum(Z[:, sel] ** 2, axis=1) / nb),', '"guard": guard(np.sum(Z[:, sel] ** 2, axis=1) / ndf),'),
     ("band-stats-for-dropped", C, "        if nb >= BAND_MIN:\n", "        if nb >= 0:\n"),
-    ("evr-zero-den", C, "    ok = den > 0\n", "    ok = den >= 0\n"),
+    ("evr-zero-den", C, "    ok = (den > 0) & ~differs\n", "    ok = (den >= 0) & ~differs\n"),
     ("well-on-V", C, "    lamF1 = lambda_1(F_ref)\n    well", "    lamF1 = lambda_1(V_ref)\n    well"),
     ("frobenius", C, "resid = float(np.linalg.norm(R, 2)) if", "resid = float(np.linalg.norm(R)) if"),
     ("undirected", C, "    Uw = U_r[:, well]\n    R = Uw - Uk @ (Uk.T @ Uw)\n",
@@ -78,14 +78,26 @@ MUTANTS = [
     ("fire-not-stop", P, "        if fired:\n", "        if False:\n"),
     ("ibukt-no-xR", P, 'b = np.asarray(rec[E_R_METHOD]["mean"], np.float64) * x_R',
      'b = np.asarray(rec[E_R_METHOD]["mean"], np.float64)'),
-    ("ibukt-cells-unchecked", P, 'if [int(c) for c in rec["cells"]] != [int(c) for c in cells]:', "if False:"),
+    ("ibukt-preflight-no-check", P, 'if [int(c) for c in rec["cells"]] != [int(c) for c in cells] or', "if False and"),
+    ("residual-bar-nonstrict", C, '"fires": bool(resid > RESIDUAL_MAX)', '"fires": bool(resid >= RESIDUAL_MAX)'),
+    ("well-angle-to-kept", C, "principal_angles_deg(Uw, U_n[:, well_n])", "principal_angles_deg(Uw, Uk)"),
+    ("below-well-kept-only", C, "    tail = ~well\n", "    tail = kept_r & ~well\n"),
+    ("evr-partition-ignored", C, "    for i, j in g1 ^ g2:\n", "    for i, j in set():\n"),
+    ("spread-guard-mean-psi", C, "guard(infl.sum(axis=1) / ndf, X=float(v.mean()), labelled=False)",
+     "guard(infl.sum(axis=1) / ndf, labelled=False)"),
+    ("gs-null-n-scaled", C, "GS_NULL = 100.0 * EPS ", "GS_NULL = 10.0 * 205 * EPS "),
+    ("gs-out-of-coords", C, "    return U @ np.column_stack(B)\n", "    return U @ np.column_stack(B) + 1e-9\n"),
+    ("evr-refusal-raises", C, "    except Refusal as e:\n        rec |= {", "    except KeyError as e:\n        rec |= {"),
+    ("a0-no-positive-ok", P, "    if not lam.max() > 0:\n        raise Stop(", "    if False:\n        raise Stop("),
+    ("scoped-raises", P, "    except cc.Refusal as e:\n        return {\"refused\"", "    except KeyError as e:\n        return {\"refused\""),
+    ("psd-no-rebuilt", P, '                       f"C_model_abs rebuilt({T})": dv["Cm_T_rebuilt"],\n', ""),
+    ("out-not-exclusive", P, 'with open(a.out, "x") as f:', 'with open(a.out, "w") as f:'),
     ("c2-uncarried", P, '(("carried_to_tune", cc.carry(C_PL, d)),', '(("carried_to_tune", C_PL),'),
     ("c2-cut-drops-second", P, "zip(lam[:2], U[:, :2].T)", "zip(lam[lam > 1e-12 * lam[0]], U[:, lam > 1e-12 * lam[0]].T)"),
     ("c2-share-zero", P, '"share_of_ebar2": p * p / n2 if n2 > 0 else None', '"share_of_ebar2": p * p / n2 if n2 >= 0 else None'),
     ("g2r-unpinned", P, '"G": load_npz(pinned(gp, G2R_SHA[T])),', '"G": load_npz(gp),'),
     ("pin-oserror", P, '        raise Stop(f"C-PIN: {path} cannot be read ({e})") from e\n', "        raise\n"),
     ("rc-stop-0", P, 'return 0 if rec["status"] == "done (pre-W1 part)" else 3', "return 0"),
-    ("out-overwrite", P, "    if a.out.exists():\n", "    if False:\n"),
 ]
 
 
@@ -107,7 +119,9 @@ def run_tests(d: Path) -> tuple[int, str]:
                        env=env, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, stdin=subprocess.DEVNULL,
                        timeout=600, text=True)
     lines = r.stderr.splitlines()
-    named = [ln for ln in lines if ln.startswith(("FAIL: ", "ERROR: "))]
+    named = [ln for ln in lines if ln.startswith(("FAIL: ", "ERROR: ")) and "_FailedTest" not in ln]
+    if r.returncode != 0 and not named:                   # an import, discovery or crash failure, not a detection
+        return -1, "HARNESS: " + (lines[-1] if lines else "no stderr")
     return r.returncode, (named[0] if named else (lines[-1] if lines else ""))
 
 
@@ -128,8 +142,8 @@ def main() -> int:
                 continue
             (d / f).write_text(src.replace(old, new))
             rc, why = run_tests(d)
-        status = "killed" if rc != 0 else "SURVIVED"
-        if rc == 0:
+        status = "killed" if rc > 0 else ("HARNESS FAILURE" if rc < 0 else "SURVIVED")
+        if rc <= 0:
             survived.append(mid)
         print(f"{mid}: {status} (rc {rc}) {why}")
     print(f"{len(MUTANTS) - len(survived)}/{len(MUTANTS)} killed; survived or not applied: {survived}")
