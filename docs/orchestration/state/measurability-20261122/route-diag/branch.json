@@ -1,0 +1,45 @@
+{
+ "rows": 98,
+ "failing": 21,
+ "failing_stats": [
+  "Z_well"
+ ],
+ "failing_vector_ids": [
+  "2d#013",
+  "2d#014",
+  "2d#015",
+  "2d#030",
+  "2d#031",
+  "2d#032",
+  "2d#033",
+  "2d#034",
+  "2d#035",
+  "2d#036",
+  "2d#037",
+  "2d#038",
+  "2d#039",
+  "2d#040",
+  "2d#041",
+  "2d#042",
+  "2d#043",
+  "2d#044",
+  "2d#045",
+  "2d#046",
+  "2d#047"
+ ],
+ "failing_builds": [
+  "full/numpy"
+ ],
+ "failing_kappa2_values": [
+  539.4162103163642
+ ],
+ "failing_rel_diff_min_max": [
+  0.0027851718578868682,
+  0.05981010935333604
+ ],
+ "ratio_rel_diff_over_ten_kappa_eps_min_max": [
+  2325347051.395716,
+  49935612064.512184
+ ],
+ "branch_selected_by_the_README_rule": "route bug (branch 2)"
+}

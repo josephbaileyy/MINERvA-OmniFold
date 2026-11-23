@@ -8848,6 +8848,13 @@ docs/orchestration/state/measurability-20261122/reads/rev1-grok.txt	tracked	MACH
 docs/orchestration/state/measurability-20261122/reads/rev1-prompt.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
 docs/orchestration/state/measurability-20261122/reads/rev2-grok.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
 docs/orchestration/state/measurability-20261122/reads/rev2-prompt.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
+docs/orchestration/state/measurability-20261122/route-diag/README.md	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
+docs/orchestration/state/measurability-20261122/route-diag/branch.json	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
+docs/orchestration/state/measurability-20261122/route-diag/diag.json	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
+docs/orchestration/state/measurability-20261122/route-diag/run-env.json	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
+docs/orchestration/state/measurability-20261122/route-diag/run.stderr.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
+docs/orchestration/state/measurability-20261122/route-diag/run.stdout.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
+docs/orchestration/state/measurability-20261122/route-diag/test_msr_route_diag.out.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
 docs/orchestration/state/measurability-20261122/run-b/README.md	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
 docs/orchestration/state/measurability-20261122/run-b/RENAMES.tsv	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
 docs/orchestration/state/measurability-20261122/run-b/cluster/RECORDS.SHA256SUMS	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
