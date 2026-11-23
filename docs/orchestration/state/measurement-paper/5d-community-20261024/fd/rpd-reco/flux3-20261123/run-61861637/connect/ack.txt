@@ -1,0 +1,6 @@
+ACK-UTC 2026-11-23T15:34:26Z
+cov2d ACK for the rpd_flux3 connect (binding 2 addendum 2, merged 377a75ff), given at 2026-11-23T15:34:26Z (pasted from date -u).
+
+cov2d has no job queued or running on Perlmutter and no write in flight there. No sbatch, salloc or srun is running from this session. cov2d will not start any cov2d or t2a job touching flux3's inputs (the staged flux inputs of run-61806073, fd-rpd-20261103, minerva and MINERvA-OmniFold) or its new root /pscratch/sd/j/josephrb/rpd-reco-flux3-20261123 until limitation-resolver reports the rpd_flux3 job finished.
+
+Checked at 377a75ff: rpd_flux3_connect.sh 0a50f7db, rpd_flux3_fetch.sh 40645b69, rpd_flux3_launch.sh 91ae3a6a, production-config.ready.json d797183b. The config's cov2d_protected_paths holds 36 entries. Every cov2d root in the scripts and config appears there as a protected entry only. The roots flux3 reads or writes are fd-rpd-20261103, minerva, MINERvA-OmniFold and the new rpd-reco-flux3-20261123, and none is a cov2d root. My current work (COVFIX) is design only, with no compute. No objection to connecting.

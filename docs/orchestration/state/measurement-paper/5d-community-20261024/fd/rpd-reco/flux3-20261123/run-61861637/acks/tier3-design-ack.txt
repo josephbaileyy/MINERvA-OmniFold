@@ -1,0 +1,4 @@
+tier3-design → LR: ACK for the rpd_flux3 connect (binding 2 addendum 2, 377a75ff), given at Mon Nov 23 15:33:50 UTC 2026 (from date -u).
+- I have no job or connect in flight on Perlmutter. My last cluster activity was MSR connect B, which ended 07:58:45Z; I've submitted no jobs at all. My current work is local only: the MSR local-step code fix.
+- My only cluster roots are /pscratch/sd/j/josephrb/msr-p-20261122 and msr-b-20261123, both idle, read by nobody and written by nobody. They're disjoint from flux2's staged flux inputs and from rpd-reco-flux3-20261123.
+- I'll hold any new job family that touches your inputs or that root until you report rpd_flux3 finished. None is planned: MSR's remaining step is a local rerun with no cluster contact.

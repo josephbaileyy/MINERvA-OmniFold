@@ -1,0 +1,17 @@
+You are an independent, adversarial reviewer of a pre-registration ("declaration") for a particle-physics analysis study. READ-ONLY task: do not modify, create or delete any file anywhere except your single report, which you print to stdout. Never write to any git checkout.
+
+All inputs are in this directory: /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-decl-r1/inputs
+- IBUB-DECLARATION.md: the declaration under review (revision 2). It plans to run binned D'Agostini IBU (K=10) on 600 pseudo-experiments ("toys") that an earlier campaign (COV2D) generated and already unfolded with OmniFold, and to compare the two methods' mean bias per cell and band.
+- COV2D-DECLARATION.md: the earlier campaign. Its §4 defines the truths, the toy law, the pseudo-data, the post-unfold surrogates; §5-6 the grading and its bias readout.
+- REF-C2C1-DECLARATION.md (§1.1 the frozen IBU estimator), ref_c2c1.py and ref_c2c1_config.json: the existing IBU-in-the-driver code that IBUB will import unchanged.
+- cov2d_score.py, cov2d_readouts.py, cov2d_readout.py (phase_score), cov2d_pseudo_write.py (writes truth_xsec.npz), cov2d_jobs.py and cov2d_job.sbatch (how the OmniFold toys were run): the COV2D code.
+- re2_driver_g2r.diff: the driver diff between the blob the OmniFold toys ran and the blob IBUB will run.
+
+Assess, citing file:line for every point:
+1. FIDELITY: does the declaration describe COV2D's toys, truths, cells, surrogates and OmniFold outputs, and REF-C2C1's IBU estimator, correctly? List every factual misstatement or unsupported claim.
+2. "THE SAME WAY": Ben (the advisor) asked for IBU's method bias at the held-out tunes "computed the same way as OmniFold's". Does IBUB's IBU see exactly the same inputs as COV2D's OmniFold toys did (data files, argv, response MC, background treatment, refinement, CPU/thread config, extraction, cells, truth), so that the comparison is like for like? Name any difference, including the pre-surrogate choice, and whether it biases the comparison.
+3. CONTROLS' POWER: for each control (C-OF, C-TRUTH, C-REP, C-G2R, C-DATA, C-FILL/C-ROO, C-SIM, C-COMPLETE, C-CELLS), say what defect it would catch and, concretely, what plausible defect would pass it undetected. Is C-OF able to detect a wrong cell order, a wrong toy-to-truth pairing, or a toy file mix-up? Is C-REP able to detect a wiring error that only appears with --data-file?
+4. STATISTICS: is the reading rule (paired bootstrap SE, 236-test Bonferroni family, DIFFER / NOT RESOLVED APART / INVALID) well defined and correct? Any error in the bootstrap design, the band integrals, the Hotelling description, or in what the result can and cannot say (§7)?
+5. Anything missing that a referee would demand before this runs.
+
+Output: a numbered list of findings, each labelled BLOCKER, MAJOR, MINOR or NOTE, with a concrete fix. End with one line: VERDICT: GO (no BLOCKER or MAJOR) or VERDICT: REVISE.

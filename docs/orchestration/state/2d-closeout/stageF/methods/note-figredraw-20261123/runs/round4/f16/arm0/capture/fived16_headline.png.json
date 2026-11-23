@@ -1,0 +1,114 @@
+[
+ {
+  "i": 0,
+  "kind": "line",
+  "axes": 0,
+  "label": "_nolegend_",
+  "hash": "19dd4ad8acc2339a9aee35727f42a938c27c5eb1a4eb492f37ca6bb32ca8a71b",
+  "dhash": "02c73d8c30a9950bde1bda2f70092eb87ee4b97f7228c0737cf9da874c9e9ff6",
+  "xhash": "08beca03ab7a47ce5b787952721ba0f8bb0becdd99b2fce2fb695461c2b399ca",
+  "colours": {
+   "color": [
+    "#C0392BFF"
+   ],
+   "mfc": [
+    "#C0392BFF"
+   ],
+   "mec": [
+    "#C0392BFF"
+   ]
+  },
+  "style": {
+   "linestyle": "None",
+   "marker": "o",
+   "drawstyle": "default"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "log"
+  ]
+ },
+ {
+  "i": 1,
+  "kind": "LineCollection",
+  "axes": 0,
+  "label": "_nolegend_",
+  "hash": "8980468b49f27f74bdf8a42e69d5ed464dbc15823cdd41aefe441d3cc7bb081e",
+  "dhash": "3ba9415ddb7c99a6014c980ca2c72d4a7c94ba10cb5af21dbd15d99cf5fde1a6",
+  "xhash": "3ba9415ddb7c99a6014c980ca2c72d4a7c94ba10cb5af21dbd15d99cf5fde1a6",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#C0392BFF"
+   ],
+   "cmap": "viridis"
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "linear",
+   "log"
+  ]
+ },
+ {
+  "i": 2,
+  "kind": "line",
+  "axes": 0,
+  "label": "_nolegend_",
+  "hash": "21abc0b569f0c59914b39a46600f46ce9824b8280b2e772dc6f4d5cbd4ede810",
+  "dhash": "2b4cd15ba2ccff72c5442f7cb123ec01acbd2fc67783d278172cccd85960c73e",
+  "xhash": "d27005ab42fc78043e28295314034e53bca8866a756ed6ccecfdd302915693c2",
+  "colours": {
+   "color": [
+    "#C0392BFF"
+   ],
+   "mfc": [
+    "#C0392BFF"
+   ],
+   "mec": [
+    "#C0392BFF"
+   ]
+  },
+  "style": {
+   "linestyle": "None",
+   "marker": "_",
+   "drawstyle": "default"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "log"
+  ]
+ },
+ {
+  "i": 3,
+  "kind": "line",
+  "axes": 0,
+  "label": "_nolegend_",
+  "hash": "29249159c5a8f205535f41900789c2b0edc3f8c15bb3d8c346bd19b64e906831",
+  "dhash": "0925e95aee6c5e5876f4022a41a5104df24811ccc936911f068a794f5ecc9aef",
+  "xhash": "193d0beff3197e2f0b8f0e3f1b9ca37c09a2691156cf463c86c4813701a988a3",
+  "colours": {
+   "color": [
+    "#C0392BFF"
+   ],
+   "mfc": [
+    "#C0392BFF"
+   ],
+   "mec": [
+    "#C0392BFF"
+   ]
+  },
+  "style": {
+   "linestyle": "None",
+   "marker": "_",
+   "drawstyle": "default"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "log"
+  ]
+ }
+]

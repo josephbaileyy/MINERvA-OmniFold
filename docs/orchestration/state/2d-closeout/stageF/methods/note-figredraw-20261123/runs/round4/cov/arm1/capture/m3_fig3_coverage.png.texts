@@ -1,0 +1,270 @@
+{
+ "size_in": [
+  6.5,
+  4.62
+ ],
+ "texts": [
+  [
+   7.0,
+   "42 $(E_{\\rm avail},W)$ projection cells"
+  ],
+  [
+   8.0,
+   "(a) 68% intervals: 51/153 failures (upper bound below 0.66)"
+  ],
+  [
+   7.0,
+   "1"
+  ],
+  [
+   7.0,
+   "10"
+  ],
+  [
+   7.0,
+   "20"
+  ],
+  [
+   7.0,
+   "30"
+  ],
+  [
+   7.0,
+   "40"
+  ],
+  [
+   8.5,
+   "empirical coverage"
+  ],
+  [
+   7.5,
+   "0.0"
+  ],
+  [
+   7.5,
+   "0.2"
+  ],
+  [
+   7.5,
+   "0.4"
+  ],
+  [
+   7.5,
+   "0.6"
+  ],
+  [
+   7.5,
+   "0.8"
+  ],
+  [
+   7.5,
+   "1.0"
+  ],
+  [
+   7.0,
+   "109 joint cells"
+  ],
+  [
+   7.0,
+   "test cutoff 0.66"
+  ],
+  [
+   7.0,
+   "1"
+  ],
+  [
+   7.0,
+   "20"
+  ],
+  [
+   7.0,
+   "40"
+  ],
+  [
+   7.0,
+   "60"
+  ],
+  [
+   7.0,
+   "80"
+  ],
+  [
+   7.0,
+   "100"
+  ],
+  [
+   7.0,
+   "sum, total"
+  ],
+  [
+   7.0,
+   "sum"
+  ],
+  [
+   7.0,
+   "total"
+  ],
+  [
+   7.0,
+   "42 $(E_{\\rm avail},W)$ projection cells"
+  ],
+  [
+   8.0,
+   "(b) 95% intervals: 42/153 failures (upper bound below 0.94)"
+  ],
+  [
+   7.0,
+   "1"
+  ],
+  [
+   7.0,
+   "10"
+  ],
+  [
+   7.0,
+   "20"
+  ],
+  [
+   7.0,
+   "30"
+  ],
+  [
+   7.0,
+   "40"
+  ],
+  [
+   8.5,
+   "empirical coverage"
+  ],
+  [
+   7.5,
+   "0.0"
+  ],
+  [
+   7.5,
+   "0.2"
+  ],
+  [
+   7.5,
+   "0.4"
+  ],
+  [
+   7.5,
+   "0.6"
+  ],
+  [
+   7.5,
+   "0.8"
+  ],
+  [
+   7.5,
+   "1.0"
+  ],
+  [
+   7.0,
+   "109 joint cells"
+  ],
+  [
+   7.0,
+   "test cutoff 0.94"
+  ],
+  [
+   7.0,
+   "1"
+  ],
+  [
+   7.0,
+   "20"
+  ],
+  [
+   7.0,
+   "40"
+  ],
+  [
+   7.0,
+   "60"
+  ],
+  [
+   7.0,
+   "80"
+  ],
+  [
+   7.0,
+   "100"
+  ],
+  [
+   7.0,
+   "sum, total"
+  ],
+  [
+   7.0,
+   "sum"
+  ],
+  [
+   7.0,
+   "total"
+  ],
+  [
+   7.5,
+   "rank within the section: cells ordered by the upper confidence bound used by the test (1 = lowest)"
+  ],
+  [
+   7.0,
+   "upper bound below the cutoff (fails)"
+  ],
+  [
+   7.0,
+   "not below"
+  ],
+  [
+   7.0,
+   "lower to upper confidence bound"
+  ],
+  [
+   7.0,
+   "test cutoff"
+  ]
+ ],
+ "text_overlaps": [
+  [
+   "empirical coverage",
+   "0.2",
+   111.0
+  ],
+  [
+   "empirical coverage",
+   "0.4",
+   111.0
+  ],
+  [
+   "empirical coverage",
+   "0.6",
+   111.0
+  ],
+  [
+   "empirical coverage",
+   "0.8",
+   111.0
+  ],
+  [
+   "empirical coverage",
+   "0.2",
+   111.0
+  ],
+  [
+   "empirical coverage",
+   "0.4",
+   111.0
+  ],
+  [
+   "empirical coverage",
+   "0.6",
+   111.0
+  ],
+  [
+   "empirical coverage",
+   "0.8",
+   111.0
+  ]
+ ]
+}
