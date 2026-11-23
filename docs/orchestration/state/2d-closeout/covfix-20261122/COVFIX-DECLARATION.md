@@ -1,4 +1,4 @@
-# COVFIX declaration, DRAFT rev 11.2: the 2D covariance fix (2026-11-23)
+# COVFIX declaration, DRAFT rev 11.3: the 2D covariance fix (2026-11-23)
 <!-- absence-ok: a draft declaration of studies not yet run; every existing study is routed to INVENTORY.md -->
 
 <!-- absence-ok: status line of an unrun draft -->
@@ -280,6 +280,15 @@ its "Fix 1". The inventory is `INVENTORY.md` in this directory, read at origin/m
   - The price and the ceiling are unchanged.
 - **Rev 11.2:** one §3 edit. The binding ceiling is 411.22 node-h, by Joseph's answer "Raise to 411.22 (Recommended)"
   (2026-11-23, via the director; sha256 prefix `8fb26c62f91e7b20`). Earlier entries that mention 409.22 are history.
+- **Rev 11.3** answers the director's full read, text only:
+  - the passphrase, seed base and salt are kept durably in the director's macOS login Keychain, read only by the wrapper
+    into stdin;
+  - the consumption record and a secret-free README live in ~/director-tools/covfix/, not a scratchpad (§3.3, §4.2);
+  - the stale "about 409" ceiling sentence in §3 is fixed;
+  - outcome A's reach within the ceiling is stated: unavailable for `universe`, and for the W1 blocks only if measured
+    spend leaves room for PX (§7, §9);
+  - the PG roles are stated: the PG session prepares and tests, and the director's wrapper invokes the bound connect
+    (§4.2).
 
 <!-- absence-ok: rule statement -->
 **Rules are fixed before computation.** Every reading, bar, candidate rule, seed and stop rule below is fixed at
@@ -424,9 +433,8 @@ V(t) = D_t V D_t, with D_t = diag(x̂_t / x_R).
   - every phase price and every phase cap is below 362.8;
   - the caps' sums (full 468, lean 378) are not, and neither is the full total with N5;
   - the lean total, and either total without N5, is below it;
-  - **Joseph chose full** (`DECISION-20261123-joseph-covfix-ki85-size-reader.md`, his governing re-confirmation: "Full, as designed"), with N5, at about 409 node-h
-    at most. ST6 keeps the campaign inside that approved total. The lean columns are kept as the record of the
-    alternative he did not choose.
+  - **Joseph chose full** (`DECISION-20261123-joseph-covfix-ki85-size-reader.md`, his governing re-confirmation: "Full, as designed"), with N5, under an approved ceiling of 411.22 node-h (raised by Joseph; below). ST6 keeps the campaign inside that
+    ceiling. The lean columns are kept as the record of the alternative he did not choose.
 - **ST6, the cumulative ceiling** (§3.3).
   - Joseph's approved total is pinned in every connect.
   - Each submission's charge ceiling is its nodes × its `--time`. Each toy job's `--time` is 1.5 × its priced per-toy
@@ -635,8 +643,8 @@ and regenerate nothing, and N5 would not run. That gate is kept for the record.
   within both the phase cap and the pinned ceiling (§3).
 
 **ST4, validation is spent once.**
-- **The consumption record** is controlled by the director: append-only, in the director's scratchpad, mirrored in a
-  commit, and keyed by **seal digest and role** (PV writer, PV readout).
+- **The consumption record** is controlled by the director: append-only, in **~/director-tools/covfix/** (mode 700, not
+  a scratchpad), mirrored in a commit, and keyed by **seal digest and role** (PV writer, PV readout).
 - **The freeze digest is bound** to the seal at its first acquisition. A later freeze digest never resets consumption.
 - **The spend is durable before any plaintext exists.** Under one lock, the wrapper appends "spent" for the original
   seal and role, fsyncs the record, and commits its mirror. Only then does it start decryption.
@@ -796,16 +804,25 @@ tune names and the seeds.
   - Tune u's task seed = base + 10_000·u + task index.
   - F1's generator takes the seed in its command arguments. PG's job scripts and logs therefore stay in the PG
     session's directory and are captured into the encrypted sealed set, under the cooperative assumption below.
-- The director runs PG's connect through the director's wrapper, with the PG session's working directories private to
-  that session by convention. That privacy rests on the one-account limit below.
+- **Roles.** The PG session prepares and tests its run directory. The **director's wrapper invokes the bound PG
+  connect**, with the passphrase piped in, so the PG session never holds the passphrase. The PG session's working
+  directories are private to it by convention, and that privacy rests on the one-account limit below.
 
 **What it sees.** Its connect captures every stdout, stderr, log and meta file into the sealed set. The session sees
 only a final summary of booleans (each step's pass/fail) and file counts. Physics outputs, such as f_MEC, process
 fractions, CC counts and the ratio normalization k, are in the sealed meta only.
 
-**The passphrase** is generated and held by the director. It reaches a connect only on a pipe from the director's
-wrapper into the bound binary's stdin. It is never an argument, an environment variable or a file, so it never enters
-shell history or the Slurm spool.
+**The director-held secrets, and their durability.** PV comes weeks after PG, and a scratchpad does not survive that
+long: it is wiped by a crash, and macOS cleans /private/tmp after about 3 days. Losing the passphrase would make the
+ciphertext unrecoverable, with no regeneration allowed. Losing the seed base or salt would break the commitment reveal.
+So:
+- **Storage.** The passphrase, the seed base and the salt are stored in the director's macOS login Keychain, as
+  `security add-generic-password -s covfix-<item> -a director -w`, with the items passphrase, seed-base and salt.
+- **Reading.** The wrapper alone reads them back, through `security find-generic-password -s covfix-<item> -a director
+  -w`, piped straight into the bound binary's stdin (over ssh, into `srun`'s forwarded stdin).
+- They are never in a file, an argument or the environment, so they never enter shell history or the Slurm spool.
+- **A secret-free README** in ~/director-tools/covfix/ (mode 700) names the Keychain service names and states the
+  procedure, so that a later director session can continue PV. It holds no secret.
 
 **Seal and encryption.**
 1. The plaintext sha256 of every product is computed with O_NOATIME reads. **The plaintext hashes are never
@@ -1107,6 +1124,20 @@ The result has three independent parts, each reported.
   correction and its acceptance check did not run, and K_A was omitted for this run."
 - "A defect in <block>'s builder was found; the correction did not resolve the discrepancy."
 
+**Outcome A within the 411.22 ceiling.** The ceiling is the full priced total's top, so on the priced figures no PX fits
+it:
+- `c08` on W1 adds 15.20, to 426.42;
+- the N5 data-stream method on W1 adds 38.00, to 449.22;
+- `stat` on W1 adds 57.00, to 468.22;
+- `universe` after W2 puts P1 + PX at 420.09 before PG and PV.
+
+So:
+- **For `universe`, outcome A is unavailable within the approved ceiling.** A firing there ends at the construction
+  finding.
+- **For `stat`, `c08` or the N5 method fired on W1,** outcome A is reachable only if the sacct-measured spend at the time
+  of the ST1 ruling leaves room for PX's priced cost under ST6. Otherwise it too ends at the construction finding, as
+  the unfunded case above.
+
 Any covariance change from Part 1 enters the journal paper or a later Zenodo version, not the first release
 (`DECISION-20261123-joseph-covfix-ki85-size-reader.md`).
 
@@ -1183,20 +1214,23 @@ stands alone, and each candidate's PV verdict is reported descriptively.
    synthetic-seal test (§3). The current estimate is in §3, and ST6 enforces the ceiling. That is above half the balance, and Joseph approved it. Each phase is still capped from
    sacct. The second reader is
    codex-school2, alongside agy, by the same decision.
-3. **Binding prerequisites:**
+3. **Outcome A is mostly out of reach within the 411.22 ceiling** (§7, Part 1). It is unavailable for `universe`. For
+   `stat`, `c08` or the N5 method fired on W1, it is reachable only if measured spend leaves room for PX's priced cost.
+   Otherwise a firing ends at the construction finding.
+4. **Binding prerequisites:**
    - a committed iris receipt;
    - the fresh PG session named;
    - the director's passphrase generated, with the director's piping wrapper, and never shown to cov2d.
-4. **The bars:**
+5. **The bars:**
    - the fluctuation affirmative and two-sided (F̃ and every band "covers");
    - the total affirmative (M + h ≤ 1.25);
    - no under-flag;
    - §6.2's sampled-covariance check at 0.05;
    - the residual rule at 0.1 on modes with λ ≥ 1e-6·λ₁.
    These are policy choices, open to challenge.
-5. **Truth-dependent spread.** If A1p's band ratios differ strongly between truths, pooling makes V_F over-cover at some
+6. **Truth-dependent spread.** If A1p's band ratios differ strongly between truths, pooling makes V_F over-cover at some
    truths and under-cover at others. §5.3's two-sided fluctuation bar will then refuse K_B, and "none" follows. That is
    intended.
-6. **The carry.** COVFIX tests the reported covariance carried in relative form, not remade at each truth. P0 measures
+7. **The carry.** COVFIX tests the reported covariance carried in relative form, not remade at each truth. P0 measures
    the difference at G18 and AR23. If the director wants the remade object instead, that is 486 unfolds per truth (about
    92 node-h each), and it changes the price.
