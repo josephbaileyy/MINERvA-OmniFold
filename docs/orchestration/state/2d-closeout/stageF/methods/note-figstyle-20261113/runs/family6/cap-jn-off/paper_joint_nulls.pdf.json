@@ -1,0 +1,466 @@
+{
+ "artists_py_sha256": "feb486fefd363c0d80174fc034c82f53874558de718736af2c34c6b5344de041",
+ "size_in": [
+  7.0,
+  3.1
+ ],
+ "items": [
+  {
+   "kind": "patch",
+   "axes": 0,
+   "label": "None",
+   "hash": "edf011a179bd4570a4afd9b410899e9b9098fdd2a6ab2346b2657aa02014af09",
+   "dhash": "c3b388689e9851f1357f9c5eef00ba4afb55c85291092ee5194e9bfd4098a386",
+   "xhash": "c3b388689e9851f1357f9c5eef00ba4afb55c85291092ee5194e9bfd4098a386"
+  },
+  {
+   "kind": "line",
+   "axes": 0,
+   "label": "_child1",
+   "hash": "d3b16289f242555748ef58b55ba6c768fd650e44015d177bd2bf43f93cec3cd2",
+   "dhash": "f795702f40d2f95e5fa7861bfc8686ffe0dcef1234099fde58a5f9b7cd7e93f6",
+   "xhash": "247183338ab950426ef40673f35c919d0fc69ebb2cd88cb91859eb7c49920c6d"
+  },
+  {
+   "kind": "patch",
+   "axes": 1,
+   "label": "None",
+   "hash": "c75c2622ce5c593c756e92453712cb65c2cfb508b398cfff5816575f7c5ad7ac",
+   "dhash": "85a6797a8a7394443e3c3f7d0dacb29d754c4e3585d66fff4902c79fe9483fce",
+   "xhash": "85a6797a8a7394443e3c3f7d0dacb29d754c4e3585d66fff4902c79fe9483fce"
+  },
+  {
+   "kind": "line",
+   "axes": 1,
+   "label": "_child1",
+   "hash": "2e89b5a2e570435a09c07c84f773e0c241309ada8c688ed65bcb9b8786ba20f6",
+   "dhash": "ef9f26504781df1903f9c64e089326c99e04ec8f8f8978293f94d1f6629655fa",
+   "xhash": "78802e9c33450171fbbbf7e6e954ce5f77102388ab762ae4a7202d54a8beb0bc"
+  },
+  {
+   "kind": "patch",
+   "axes": 2,
+   "label": "None",
+   "hash": "44f0aca2daa87efe4ac8a464f4540f5d56540a4eb677048f430735591e4c6840",
+   "dhash": "ea671cfd95de8b1dba301131fc27238d34d8bdee89f056e270f26559929a1cc0",
+   "xhash": "ea671cfd95de8b1dba301131fc27238d34d8bdee89f056e270f26559929a1cc0"
+  },
+  {
+   "kind": "line",
+   "axes": 2,
+   "label": "_child1",
+   "hash": "77af1c329258f3d5d0ee4dff24953dd239ff18d0d513bf9b1e8ef54fdea884db",
+   "dhash": "281d03ffab4311ef9a172b01e97aa67e2bf70aca976c135c28e13ccad3ac99e6",
+   "xhash": "fb13f9ba0d5e2bd9f392ac8298990d692e765825cc5586ba0edad231ca138582"
+  },
+  {
+   "kind": "patch",
+   "axes": 3,
+   "label": "None",
+   "hash": "93edd596251236c681704952d143c50069d4926b8e6e432036cda7e6dff4da73",
+   "dhash": "de1107190df3a0b2c9960954ceca20385f2029994ee0583fd6654ca64e840a9a",
+   "xhash": "de1107190df3a0b2c9960954ceca20385f2029994ee0583fd6654ca64e840a9a"
+  },
+  {
+   "kind": "line",
+   "axes": 3,
+   "label": "_child1",
+   "hash": "1c02af861f03ce7683127a3657d4d656b399c2d3b2ecc760924548f6457d9b09",
+   "dhash": "9abf368cd7443220ed00448ede42218d743256c0d7fee1997d58db4f740eabf6",
+   "xhash": "2e1e39a9005021848f10e141e78f05a111e06c482761a0114ed22fca04fb5502"
+  },
+  {
+   "kind": "patch",
+   "axes": 4,
+   "label": "None",
+   "hash": "0a59f838a35393196b8dfcf75fe57c66fc1acc52dff41feb1d0cbf311adcd107",
+   "dhash": "da66a27da72a326b2624608c4af7c2af84a541a797d69af704715f7bdd063239",
+   "xhash": "da66a27da72a326b2624608c4af7c2af84a541a797d69af704715f7bdd063239"
+  },
+  {
+   "kind": "line",
+   "axes": 4,
+   "label": "_child1",
+   "hash": "a2ec6fd573ca174593d30ae98e56dbc635bbe3538478629ad53a01ad8a6edb32",
+   "dhash": "0e2a360d352c402589c31b02ee23b3e97cd160f2e0520ecd7d73a96c147d4f4a",
+   "xhash": "24195d9944eab4703278c5f71dba6962d6bf1ce79d4d937d4e7a555cb8dcc7a8"
+  },
+  {
+   "kind": "patch",
+   "axes": 5,
+   "label": "None",
+   "hash": "06450157d4755540e85b2a8aa2b147802f70d929efb30b6990a1fba382b722b6",
+   "dhash": "ffcd0de9a46f32e026d49198eb7277cded844f9514d9db73aec4ccd6371e0897",
+   "xhash": "ffcd0de9a46f32e026d49198eb7277cded844f9514d9db73aec4ccd6371e0897"
+  },
+  {
+   "kind": "line",
+   "axes": 5,
+   "label": "_child1",
+   "hash": "5d0b9585ab7c69e6fee743a715009e83364cdf5a6db8a707c87f09007fa8e2d8",
+   "dhash": "c3356364933b4a2190ae2083d34696e7280fb3d18e20b86e2f79bc923abc095c",
+   "xhash": "c8380a8960f6a416a57d1fabab4d50cf70d2f309b7f85976331777647a1d992a"
+  },
+  {
+   "kind": "patch",
+   "axes": 6,
+   "label": "None",
+   "hash": "61541653fadc7e0ec733ad5f99907dc96812a08ee1d9382eb7533566a9820e64",
+   "dhash": "2a8292008064153a2a3ba22dc60e82ac1fb9efc69a44e417139b6f91dd6ce718",
+   "xhash": "2a8292008064153a2a3ba22dc60e82ac1fb9efc69a44e417139b6f91dd6ce718"
+  },
+  {
+   "kind": "line",
+   "axes": 6,
+   "label": "_child1",
+   "hash": "2cfa8b45a1eeeb19c5884b68d553a500233cba2d553ca830cb5c6e3f43e643fd",
+   "dhash": "8990f2a580814733222c72ca13675ae19aaff03850315c7fd93ccfe37cb3de14",
+   "xhash": "28f342931ce47b809913e713d8ddf2a0ef00ffc4c18d2c6a8da908a08733f1a8"
+  },
+  {
+   "kind": "patch",
+   "axes": 7,
+   "label": "None",
+   "hash": "21f723f0894f58b2f5b02ec94eb770524c5de1109cb0bbf8bd4aec3cf7b87925",
+   "dhash": "fe2c9200a602eeb624144380787c0a4a428ebd4cf1caed9dbfda5fd467a87054",
+   "xhash": "fe2c9200a602eeb624144380787c0a4a428ebd4cf1caed9dbfda5fd467a87054"
+  },
+  {
+   "kind": "line",
+   "axes": 7,
+   "label": "_child1",
+   "hash": "fb782f1128e5f6c7dc5191d43eed644c4008cf4d7ea9b9a4bed5ffaf9f4ead79",
+   "dhash": "6cd07ccaf08955243bf0606a53b4ee42a753dec9bc4c917ab41e7db3694fe4f0",
+   "xhash": "8439d13f50ebd045c2ca47203b1f5d3a2a6c4cb03a8ec1daf6f59565c1a79172"
+  },
+  {
+   "kind": "patch",
+   "axes": 8,
+   "label": "None",
+   "hash": "de4e61879e08fb51c9ec5c789a45b1742223f1807f74ec77fc90efa498e2b1f0",
+   "dhash": "60cd28723d9890345cd38eb889b52d254ab26e72cdb57ec6c01c194595d49ce4",
+   "xhash": "60cd28723d9890345cd38eb889b52d254ab26e72cdb57ec6c01c194595d49ce4"
+  },
+  {
+   "kind": "line",
+   "axes": 8,
+   "label": "_child1",
+   "hash": "cabdfe80ae1708152670763adcfb4458a123ac8c75e4a28ece1916f8402d9eb3",
+   "dhash": "d7f399b039f388ebdc3c45a2c3331e327f80d4eb834b2f276a6c0cc5e08c7e96",
+   "xhash": "b9976209090e76a814d581337571a792486970136794e979d5532e2ca1ead648"
+  },
+  {
+   "kind": "patch",
+   "axes": 9,
+   "label": "None",
+   "hash": "301b537121bddbd186d1979e8c6223448575afe5670feb80f25b9298a2029379",
+   "dhash": "72ed590a249702ce79742a536d3c191334a5ea6ef971d4f502c376cfa70c4e71",
+   "xhash": "72ed590a249702ce79742a536d3c191334a5ea6ef971d4f502c376cfa70c4e71"
+  },
+  {
+   "kind": "line",
+   "axes": 9,
+   "label": "_child1",
+   "hash": "f4f830a63ee7958a7c7a35f06a31b499ccfbf4b3e5c38fe750ac091651502d4a",
+   "dhash": "5a4a2d6aeb7ca155deff2671ab3b9fe9cf9663ec3e330ea71d070cd077a0b035",
+   "xhash": "baf8c5551a9568bcdcccb313b7e66377a38cfe52986e9e2867370dcea4d619a0"
+  }
+ ],
+ "texts": [
+  [
+   7.0,
+   "k/B = 0/1365"
+  ],
+  [
+   7.0,
+   "$T_{\\mathrm{tot}}$"
+  ],
+  [
+   7.0,
+   "1"
+  ],
+  [
+   7.0,
+   "10"
+  ],
+  [
+   7.0,
+   "100"
+  ],
+  [
+   7.0,
+   "1000"
+  ],
+  [
+   7.0,
+   "10000"
+  ],
+  [
+   7.0,
+   "100000"
+  ],
+  [
+   7.0,
+   "total"
+  ],
+  [
+   7.0,
+   "MINERvA Tune v1"
+  ],
+  [
+   7.0,
+   "k/B = 0/1366"
+  ],
+  [
+   7.0,
+   "$T_{\\mathrm{tot}}$"
+  ],
+  [
+   7.0,
+   "0"
+  ],
+  [
+   7.0,
+   "1000"
+  ],
+  [
+   7.0,
+   "2000"
+  ],
+  [
+   7.0,
+   "3000"
+  ],
+  [
+   7.0,
+   "GENIE 2.12.10 CV"
+  ],
+  [
+   7.0,
+   "k/B = 0/1343"
+  ],
+  [
+   7.0,
+   "$T_{\\mathrm{tot}}$"
+  ],
+  [
+   7.0,
+   "0"
+  ],
+  [
+   7.0,
+   "1000"
+  ],
+  [
+   7.0,
+   "2000"
+  ],
+  [
+   7.0,
+   "3000"
+  ],
+  [
+   7.0,
+   "GENIE 2.12.10 + MEC"
+  ],
+  [
+   7.0,
+   "k/B = 0/1751"
+  ],
+  [
+   7.0,
+   "$T_{\\mathrm{tot}}$"
+  ],
+  [
+   7.0,
+   "4000"
+  ],
+  [
+   7.0,
+   "6000"
+  ],
+  [
+   7.0,
+   "8000"
+  ],
+  [
+   7.0,
+   "10000"
+  ],
+  [
+   7.0,
+   "NuWro 21.09"
+  ],
+  [
+   7.0,
+   "k/B = 0/1351"
+  ],
+  [
+   7.0,
+   "$T_{\\mathrm{tot}}$"
+  ],
+  [
+   7.0,
+   "1000"
+  ],
+  [
+   7.0,
+   "2000"
+  ],
+  [
+   7.0,
+   "3000"
+  ],
+  [
+   7.0,
+   "4000"
+  ],
+  [
+   7.0,
+   "GiBUU 2019"
+  ],
+  [
+   7.0,
+   "k/B = 0/1365"
+  ],
+  [
+   7.0,
+   "$T_{\\mathrm{sh}}$"
+  ],
+  [
+   7.0,
+   "1"
+  ],
+  [
+   7.0,
+   "10"
+  ],
+  [
+   7.0,
+   "100"
+  ],
+  [
+   7.0,
+   "1000"
+  ],
+  [
+   7.0,
+   "10000"
+  ],
+  [
+   7.0,
+   "shape"
+  ],
+  [
+   7.0,
+   "k/B = 0/1366"
+  ],
+  [
+   7.0,
+   "$T_{\\mathrm{sh}}$"
+  ],
+  [
+   7.0,
+   "0"
+  ],
+  [
+   7.0,
+   "500"
+  ],
+  [
+   7.0,
+   "1000"
+  ],
+  [
+   7.0,
+   "1500"
+  ],
+  [
+   7.0,
+   "k/B = 0/1343"
+  ],
+  [
+   7.0,
+   "$T_{\\mathrm{sh}}$"
+  ],
+  [
+   7.0,
+   "0"
+  ],
+  [
+   7.0,
+   "500"
+  ],
+  [
+   7.0,
+   "1000"
+  ],
+  [
+   7.0,
+   "1500"
+  ],
+  [
+   7.0,
+   "k/B = 1/1751"
+  ],
+  [
+   7.0,
+   "$T_{\\mathrm{sh}}$"
+  ],
+  [
+   7.0,
+   "0"
+  ],
+  [
+   7.0,
+   "5000"
+  ],
+  [
+   7.0,
+   "10000"
+  ],
+  [
+   7.0,
+   "15000"
+  ],
+  [
+   7.0,
+   "k/B = 0/1351"
+  ],
+  [
+   7.0,
+   "$T_{\\mathrm{sh}}$"
+  ],
+  [
+   7.0,
+   "0"
+  ],
+  [
+   7.0,
+   "2000"
+  ],
+  [
+   7.0,
+   "4000"
+  ],
+  [
+   7.0,
+   "6000"
+  ],
+  [
+   6.5,
+   "null pseudo-experiments (shifted null with the largest median)"
+  ],
+  [
+   6.5,
+   "data"
+  ]
+ ],
+ "text_overlaps": [
+  [
+   "null pseudo-experiments (shifted null with the largest median)",
+   "data",
+   183.4
+  ]
+ ]
+}

@@ -1,0 +1,11 @@
+# Fig. 3 round (2026-11-21T06:00:01Z): compose_fig3_round.py sha256 fa18f5b96901cb690aa983f615a870500d7a693e895d60a9a8429a30d0de36f4
+# arm 0: note-fig23-20261121/tools/compose_fig3_inset.py on the palette chain (the installed recipe); arm 1: compose_fig3_round.py on the same chain
+== arm 0 against the installed file at HEAD
+EQUAL-BUT-DATE MEFHC_5iter_pull_full.pdf: /CreationDate (D:20261120212913-07'00') vs /CreationDate (D:20261120220004-07'00')
+== arm 1 against arm 0: data items equal except the bar edges (style only), the map's colour limits and the colour bar
+  ok MEFHC_5iter_pull_full.pdf: 35 items, same order True; differing items {('image', 0): 1, ('patch', 1): 31, ('QuadMesh', 2): 1}; bar geometry equal True; map array equal True; other data changes []; words removed ['MINERvA ME FHC, $1.06\\times10^{21}$ POT', 'mean=0.06 SD = 0.54 descriptive distance per bin = 2.27']; words added []; tick labels changed 22; sizes (figure pt) [5.54, 5.95]; canvas [4.55, 2.3]; overlaps 0 -> 0
+  ok MEFHC_5iter_pull_full.png: 35 items, same order True; differing items {('image', 0): 1, ('patch', 1): 31, ('QuadMesh', 2): 1}; bar geometry equal True; map array equal True; other data changes []; words removed ['MINERvA ME FHC, $1.06\\times10^{21}$ POT', 'mean=0.06 SD = 0.54 descriptive distance per bin = 2.27']; words added []; tick labels changed 22; sizes (figure pt) [5.54, 5.95]; canvas [4.55, 2.3]; overlaps 6 -> 6
+FIG3-ROUND-CAPTURES :: PASS
+page size: Page size: 327.6 x 165.6 pts (make_figures.sh asserts 327.6 x 165.6); printed scale 468/327.6 = 1.4286
+installed MEFHC_5iter_pull_full.pdf sha256 56f4d3ef182e3ca48dea195a0e51019b77f06a0aee20cec042df6a5570378722
+RUN-FIG3-ROUND :: PASS

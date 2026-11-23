@@ -1,0 +1,59 @@
+I'll compare each redrawn figure with its previous version and the caption that now stands in the note, and report only mismatches.
+
+The captions and both versions of each figure are in place. Next I will read the printed text off the images so the comparison is not just a visual impression.
+
+OCR shows the baked-in titles were removed. I am checking axis wording, where each curve ends, and whether any plotted number changed.
+
+The four redrawn figures were checked against the previous versions and the captions now in the note. Curve and point positions match. The mismatches are in captions and in text that the redraw took off the figure.
+
+## gbdt_recovery
+
+**1. Caption versus the new figure.** None. The new axes still read "Median absolute residual (%)" (top) and "Historical recovery proxy" (bottom), with "Iteration (available ranges only)". The caption's bottom name is "residual proxy"; that is the same panel, and the dotted line is at 0.25 in J, H2, and EW. Solid curves end at iteration 40 (D1, W1), 30 (q3), and 200 (W3); the dashed curves end near 10. The q3 curve is on the EW top panel and absent from the EW bottom panel, which is what "The q3 stress has no eligible EW departure" says. Panel headers are unchanged: "J: 109 supported joint cells", "H2: 27 supported joint cells", "EW: 39 supported projected cells". Legend is still "D1 historical", "q3 stress", "W1 historical", "W3 historical", solid and dashed.
+
+**2. Text lost from the old figure.** These two title lines are gone:
+- "Noise-free development traces: solid 100 trees / 8 leaves; dashed 400 / 31" — the caption carries this as "Noise-free 5D recovery" and "Solid/dashed OmniFold curves: 100 trees/8 leaves and 400/31". The word "development" is not in the caption.
+- "No repeat-variance axis; historical truth ratios, fixed detector response" — the caption carries this as "These traces measure no repeat variance" and "historical truths, fixed simulated response".
+
+**3. Anything new.** No new label, number, or quantity. The same four curves occupy the same places (grid overlap about 0.88–0.95 after allowing for the resize).
+
+## gbdt_bias_spread
+
+**1. Caption versus the new figure.** None. Panels are "nominal: n = 40", "W2: n = 20", "W3: n = 20". The legend is "J" and "H2". Axes are "Mean signed relative residual (%)" and "Repeat SD of relative residual (%)", with horizontal and vertical bars. That matches "40 nominal experiments, 20 each for W2 and W3" and "Each supported J or H2 cell gives the mean and SD of (fhat−f_true)/f_true".
+
+**2. Text lost from the old figure.** These two title lines are gone:
+- "One setting: R, five iterations; different cells estimate different quantities" — "Estimator R at five iterations" carries the estimator and the iteration count. "different cells estimate different quantities" is not in the caption.
+- "95% pointwise t / normal-model SD intervals; development reuse" — the interval half is carried by "Bars give pointwise 95% Student-t intervals for means and normal-model intervals for SDs". "development reuse" is not in the caption.
+
+**3. Anything new.** No new label, number, or quantity. Matched points sit on top of the old ones (median shift under 1% of an axis).
+
+## gbdt_coverage
+
+**1. Caption versus the new figure.** Two statements do not match the figure.
+- "Right: EW7 … and EW41 …" The EW7/EW41 plot is the lower panel, full width, under the heatmap. It is not a right-hand panel. The legend in that panel reads "EW7" and "EW41", and the y-axis reads "Coverage with 95% pointwise exact bounds".
+- "Zero of 20 intervals contain truth, with upper 95% bound 16.8%." The rows are labelled "D1 historical (n=20)", "q3 stress (n=20)", "W1 historical (n=20)", "W2 historical (n=20)", and "W3 historical (n=20)". For EW7 and EW41, the D1, q3, W1, and W3 points sit at 0 with error bars ending at about 0.168, which is the 16.8% bound. The W2 points, also n=20, are near 0.40 (EW7) and 0.37 (EW41), with error bars from about 0.19 to 0.64 and 0.16 to 0.59. Nominal (n=40) is near 0.83 and 0.38.
+
+The dotted line is at about 0.683, which matches "Dotted: nominal Gaussian 68.27%." The x-axis reads "EW cell index (all 42 historical functionals)", which matches "42 EW functionals". The colorbar reads "Fraction in fixed ±σ interval".
+
+**2. Text lost from the old figure.** These two title lines are gone:
+- "Historical R statistical intervals: σ from 100 replicas of nominal seed 700000" — the caption says "nominal-bootstrap σ" and does not carry "100 replicas" or "nominal seed 700000".
+- "Reused assessment samples; no per-experiment or total-coverage claim" — "Reused assessment samples" and "no per-experiment … claim" are not in the caption. "This does not imply zero population coverage" carries only the total-coverage part.
+
+**3. Anything new.** No new label, number, or quantity. Heatmap cell values agree to within 0.008. The same six row labels and the same EW7/EW41 markers are present.
+
+## gbdt_prior_response
+
+**1. Caption versus the new figure.** None. The x-axis reads "Minus noise-free W3 residual (%)" and the y-axis reads "Data shift under W3 prior (%)". A dotted diagonal runs from low–low to high–high, which is the equality line in "The diagonal marks equality." The annotations are unchanged: "J: r = 0.92; |shift| ≥ |bias|: 71%", "H2: r = 0.74; |shift| ≥ |bias|: 52%", "EW: r = 0.92; |shift| ≥ |bias|: 54%".
+
+**2. Text lost from the old figure.** The title "Historical W3 at five iterations: correlation is not a per-cell bias bound" is gone. The caption carries it as "Historical W3 at five iterations" and "Strong correlation supplies no per-cell bound".
+
+**3. Anything new.** No new label, number, or quantity. The same r values and percentages are printed, and the points match.
+
+## Verdicts
+
+gbdt_recovery: OK
+gbdt_bias_spread: FLAG - title caveats "different cells estimate different quantities" and "development reuse" are not in the caption
+gbdt_coverage: FLAG - caption says "Right:" for the lower EW7/EW41 panel; "Zero of 20 intervals contain truth" is false for the W2 (n=20) points; "100 replicas", "nominal seed 700000", and "Reused assessment samples" are not in the caption
+gbdt_prior_response: OK
+shift| ≥ |bias|: 52%”, “EW: r = 0.92; |shift| ≥ |bias|: 54%”.
+
+3. No new label or changed number. Those three r values and three percentages are the same as on the old figure.

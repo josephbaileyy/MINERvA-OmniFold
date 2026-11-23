@@ -1,0 +1,76 @@
+### Figure Review: Batch "Figs. 11, 12, 21 (rerun with the full captions)"
+
+---
+
+#### 1. `inputs/fig_tension`: `tension_spectrum`, `tension_chi2_map` (`fig:tension`)
+
+* **Caption (`caption.txt`):**
+  > "The published-covariance $\chi^{2}$ is spread over many eigenmodes. Shown: the eigenmode decomposition of the published-covariance $\chi^{2}$: eigenvalue spectrum with cumulative $\chi^{2}$ (left) and the per-bin $\chi^{2}$-contribution map (right)."
+
+1. **Does the caption still describe the NEW figure correctly?**
+   * None. (The caption accurately describes the two panels: the left figure `new_tension_spectrum.png` displays the eigenvalue spectrum $\lambda/\lambda_{\max}$ in the top panel and cumulative $\chi^2$ fraction in the bottom panel; the right figure `new_tension_chi2_map.png` displays the per-bin $\chi^2$-contribution map across $(p_T, p_\parallel)$ bins.)
+
+2. **Was any text or caveat that was printed in the OLD figure lost in the NEW figure, and if so is it carried by the caption?**
+   * None. All textual elements are preserved verbatim:
+     * `tension_spectrum`: upper panel y-axis `"$\lambda/\lambda_{\max}$"`, upper panel x-axis `"Mode, by eigenvalue $\lambda$ (largest first)"`, lower panel y-axis `"Cumulative $\chi^2$ fraction"`, lower panel x-axis `"Modes, by $\chi^2$ contribution"`, and legend `"--- 90% of $\chi^2$"`.
+     * `tension_chi2_map`: x-axis `"$p_T$ bin"`, y-axis `"$p_\parallel$ bin"`, and colorbar label `"$\chi^2$ contribution"`.
+     * All tick labels and numerical markings are preserved.
+
+3. **Does the NEW figure show anything the old one did not?**
+   * Minor sub-pixel rendering shifts: a 1-pixel horizontal coordinate offset in the heatmap axis box boundary and subtle anti-aliasing differences.
+   * No new labels, changed numbers, or different physical quantities are shown.
+
+---
+
+#### 2. `inputs/fig_tensionmodes`: `tension_mode_maps` (`fig:tensionmodes`)
+
+* **Caption (`caption.txt`):**
+  > "Three of the six leading $\chi^{2}$-carrying eigenmodes of the published covariance, all smallest-$\lambda$ directions, concentrate in the highest-$\pPar$ bins; the other three, moderate-$\lambda$ modes, lie below them. Shown in bin space, for the LightGBM central value."
+
+1. **Does the caption still describe the NEW figure correctly?**
+   * None. (The caption accurately describes the six leading eigenmode panels in bin space across the highest-$p_\parallel$ and moderate-$p_\parallel$ regions.)
+
+2. **Was any text or caveat that was printed in the OLD figure lost in the NEW figure, and if so is it carried by the caption?**
+   * None. All textual elements are preserved verbatim:
+     * Subpanel identifiers: `(a)`, `(b)`, `(c)`, `(d)`, `(e)`, and `(f)`.
+     * Subpanel axes labels: `"$p_T$ bin"` and `"$p_\parallel$ bin"`.
+     * All axis ticks (`0`–`14` on x, `0`–`16` on y) and colorbar ranges/ticks (`[-0.50, 0.50]`, `[-0.75, 0.75]`, `[-0.4, 0.4]`, `[-0.5, 0.5]`).
+     * No caveats were lost.
+
+3. **Does the NEW figure show anything the old one did not?**
+   * Minor sub-pixel rendering shifts: 1-pixel vertical position adjustment of colorbar tick annotations and floating-point roundoff differences across environments in eigenvector heatmap cells ($< 3\times 10^{-6}$ relative tolerance, with identical signs, bounds, and layout).
+   * No new labels, changed numbers, or different physical quantities are shown.
+
+---
+
+#### 3. `inputs/fig_mec`: `compare_mec_eavail_central` (`fig:mec`)
+
+* **Caption (`caption.txt`):**
+  > "GENIE regenerated with Valencia 2p2h (orange, stacked on the no-2p2h CV in pale pink; both flux-repaired) closes about half the low-$\Eavail$ data$-$CV gap in central values (\SI{52}{\percent}). No uncertainty drawn: no 3D covariance is quoted (\S\ref{sec:3d}). The remainder occupies the region the MINERvA tune's empirical enhancement is built to absorb."
+
+1. **Does the caption still describe the NEW figure correctly?**
+   * None. (The caption accurately describes `"+ Valencia MEC (2p2h)"` as orange, stacked on `"GENIE-CV (no 2p2h)"` in pale pink, with no uncertainty drawn on either the data points or the model predictions.)
+
+2. **Was any text or caveat that was printed in the OLD figure lost in the NEW figure, and if so is it carried by the caption?**
+   * Standalone axis multiplier offset: The string `"1e-38"` printed above the top-left of the y-axis in the old figure was moved directly into the y-axis label as `"(10^{-38} cm^2/nucleon/GeV)"`. The standalone string `"1e-38"` is lost from above the axis and is not carried by the caption.
+   * Coordinate subscript notation update: The subscript in the variable name was changed from math-italic `$E_{avail}$` to roman subscript `$E_{\rm avail}$` in both the y-axis label (`$d\sigma/dE_{\rm avail}$`) and the x-axis label (`$E_{\rm avail}\text{ (GeV)}$`).
+   * All other text elements (title `"MINERvA ME FHC, 1.06 \times 10^{21} POT"`, legend labels `"GENIE-CV (no 2p2h)"`, `"+ Valencia MEC (2p2h)"`, `"unfolded data"`, and tick values `0.0`–`3.0` on x and `0.0`–`2.0` on y) are preserved verbatim. No caveats were lost.
+
+3. **Does the NEW figure show anything the old one did not?**
+   * Axis label incorporates the power of ten: `"(10^{-38} cm^2/nucleon/GeV)"`.
+   * Roman subscript notation: `$E_{\rm avail}$` replaces `$E_{avail}$` on both axes.
+   * Colour palette and styling changes:
+     * `"GENIE-CV (no 2p2h)"`: light blue fill with dark blue outline $\to$ pale pink fill (`#F0D4E4`) with magenta outline.
+     * `"+ Valencia MEC (2p2h)"`: red fill $\to$ orange fill (`#F08D66`).
+     * `"unfolded data"`: black markers (`#000000`) $\to$ dark red markers (`#C0392B`).
+     * Legend box frame removed (transparent background / borderless).
+     * Plot area expands slightly upward into the space vacated by the removed `"1e-38"` top offset.
+   * No new labels, changed numerical values, or different physical quantities are shown.
+
+---
+
+### One-line Verdicts
+
+* `fig:tension: OK`
+* `fig:tensionmodes: OK`
+* `fig:mec: OK`

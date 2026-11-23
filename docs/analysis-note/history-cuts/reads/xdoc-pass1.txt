@@ -1,0 +1,14 @@
+# Cross-document corrections XDOC-1 and XDOC-2, meaning read pass 1: reader codex-school gpt-6.1-sol, high, read-only; prompt xdoc-prompt.txt, records xdoc-records.txt
+Correction 1: **PASS**
+
+1. Yes: `"q3sq_minus_pt2_negative_wfrac": 0.0008646336152056916` equals 0.086463…%, which rounds to the printed 0.086% for weighted events with no real solution.
+2. The new sentence explicitly adds “(weighted)” to the no-real-solution clause, clarifying its population without changing any other meaning or losing a qualifier.
+3. Yes: 0.086% agrees with the Supplement’s reported printing of `m4w-noreal-pct`.
+
+Correction 2: **PASS**
+
+1. Yes: `"abs_z": 4.746664876937429` rounds directly to 4.7 at the printed precision for the cited largest standardized eigenmode-component magnitude.
+2. No: “paper-covariance-standardized component of magnitude” and all surrounding qualifications remain unchanged.
+3. Yes: 4.7 agrees with the Supplement’s reported printing of `pp-mode-max`.
+
+OVERALL: PASS — Failures: none.

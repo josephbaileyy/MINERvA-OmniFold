@@ -1,0 +1,8 @@
+# G2R wording meaning read, pass 2: codex-school gpt-6.1-sol, high, read-only; prompt pass2-prompt.txt, texts pass2-texts.txt, records pass2-records.txt
+**N1: PASS.** The five-definition recomputation is correctly attributed to the earlier rebuild Q; its alternative definitions and numbers are preserved. R1 supports “have no independent recomputation” for the quoted run-2 values. The revised checks sentence includes both cell identity and projection equality with the budget, as R2–R3 require, without implying an independent χ² recomputation. No necessary qualifier or content was removed.
+
+**H1: PASS.** R4 supports the adoption, construction correction and updating of dependent results. R5 supports the numerical changes. The ledger sentence is supported by **R6**, rather than R4–R5 alone.
+
+Every displayed historical entry matches the existing table’s Q_R column, and every new entry matches R5, including **6.463% (6.46%)** and **3.723% (3.72%)**. The changed-row claim is correct: the omitted rows remain **4.76%**, and **0.676%, 1.886 × 10⁻⁴⁰**. Each included row has at least one changed entry. The labels introduce no additional printing locations.
+
+OVERALL: PASS — FAILs: none.

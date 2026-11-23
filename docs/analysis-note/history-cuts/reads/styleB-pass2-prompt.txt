@@ -1,0 +1,17 @@
+You are checking an editorial style pass over four sections of a HEP technical note, for MEANING only (not style, not the physics). Files here:
+- old_<section>.tex and new_<section>.tex for sec_systematics, sec_method, sec_5d and sec_fived16: each section before and after the edit (LaTeX; lines starting with % are source comments, not printed). Each section has exactly one changed line or paragraph.
+- cutlog.md: the edit log: rows S6 (sec_systematics), C8 (sec_method), F4 (sec_5d) and T8 (sec_fived16), each with the old text, the new text or "cut", and where the old text is kept; then, for context, two earlier proposals on the same passages (S4 and C1-C5) that an earlier read failed, with its reasons.
+- app_devhistory.tex: the note's Development-history appendix (App. I). No row is added in this pass.
+- records.txt: excerpts of the records the rows cite (R1-R2 for T8; R3-R5 for F4) and the two earlier reads (R6, R7).
+
+The rule adopted by the author, verbatim: "History stays in the note only if removing it would change a reader's understanding of the reported object, its reproducibility, its evidential independence or its limitations. Everything else goes to the ledger. Each 'fixed before' names its object: before generating the pseudo-experiments, before seeing pilot pulls, before grading, or before seeing observed statistics. 'Declared' alone is replaced."
+
+Answer two separate questions.
+
+QUESTION 1 (remaining text). For every sentence that remains but was changed (rows S6, C8, F4 and T8): does it change meaning beyond what the attached records support? A strengthened, weakened or widened claim, a lost qualifier, a wrong referent, or any new or changed number is a FAIL. For T8, judge the new timing clause ("fixed before any of the measurements that decide them was computed") against R1 and R2. For F4, judge the revised "This note uses them with the restrictions stated in this section" against R3-R5; pass 1 of this read (at the end of cutlog.md) failed the earlier wording that pointed to Table 1. Give each row PASS or FAIL with one sentence; quote the text when you object.
+
+QUESTION 2 (removed or shortened items). Classify each removed or shortened item against the rule as NEEDED (removing it would change a reader's understanding of the reported object, its reproducibility, its evidential independence or its limitations; a lost limitation is NEEDED) or LEDGER (it fails the rule and may leave the note, with the pointer in the cut log). Items include at least: in S6, "(the May sweep)", the EtaNCEL demonstration (with "all 205 truth-input cells"), "so neglecting them everywhere is unsupported", the lateral-bands clause; in C8, the tolerances 9e-12, 7e-12 and 1.4e-11 and "equals" becoming "agrees with"; in F4, "so it cannot meet that requirement" and "nevertheless"; in T8, the audit's four-item agenda (overlap, noise treatment, the 5A/5B cell-pattern difference with sizes agreeing, rank-two stability) and "The addition therefore followed the data" (now joined to the first sentence). A LEDGER item leaving is not a failure; a NEEDED item leaving the printed text without being kept in the section, elsewhere in the note (say where), or in App. I is a FAIL. Give each item NEEDED or LEDGER with one sentence, and say whether any NEEDED item was lost.
+
+Also: did any disclosure of a choice made after results were seen disappear from the printed text?
+
+End with one line: "OVERALL: PASS" or "OVERALL: FAIL", followed by the list of FAILs (rows from question 1, lost NEEDED items from question 2).

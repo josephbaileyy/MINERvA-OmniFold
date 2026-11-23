@@ -1,0 +1,41 @@
+# tier 2 xsec_proj (2026-11-18T02:29:11Z): ROOT 6.40.04, matplotlib 3.10.8, numpy 1.26.4; inputs xsec.root a5c13fc3 and cov_ptpl_minerva_inclusive_6GeV.root 6c6dce72 (the fetch of 2026-11-17); 
+== xsec_proj: arm 0 against the cluster capture (xsec_proj): colour-free data and texts
+-- MEFHC_5iter_xsec_eff_heatmap.png.json
+data: 3 cluster items, 3 local; colour-free hash multisets equal
+texts: 26 cluster, 26 local; equal
+DATA-IDENTITY :: PASS
+-- MEFHC_5iter_xsec_proj_pt.png.json
+data: 16 cluster items, 16 local; colour-free hash multisets equal
+texts: 31 cluster, 31 local; equal
+DATA-IDENTITY :: PASS
+-- MEFHC_5iter_xsec_proj_pz.png.json
+data: 16 cluster items, 16 local; colour-free hash multisets equal
+texts: 27 cluster, 27 local; equal
+DATA-IDENTITY :: PASS
+-- MEFHC_5iter_xsec_pt_slices.png.json
+data: 112 cluster items, 112 local; colour-free hash multisets equal
+texts: 227 cluster, 227 local; equal
+DATA-IDENTITY :: PASS
+-- MEFHC_5iter_xsec_pz_slices.png.json
+data: 128 cluster items, 128 local; colour-free hash multisets equal
+texts: 235 cluster, 235 local; equal
+DATA-IDENTITY :: PASS
+== xsec_proj: arm 1 against arm 0
+captures: MEFHC_5iter_xsec_eff_heatmap.pdf.json MEFHC_5iter_xsec_eff_heatmap.png.json MEFHC_5iter_xsec_proj_pt.pdf.json MEFHC_5iter_xsec_proj_pt.png.json MEFHC_5iter_xsec_proj_pz.pdf.json MEFHC_5iter_xsec_proj_pz.png.json MEFHC_5iter_xsec_pt_slices.pdf.json MEFHC_5iter_xsec_pt_slices.png.json MEFHC_5iter_xsec_pz_slices.pdf.json MEFHC_5iter_xsec_pz_slices.png.json 
+  equal  xsec_proj/MEFHC_5iter_xsec_eff_heatmap.pdf.json: 3 data artists, colours as the palette maps them, line styles as declared
+  equal  xsec_proj/MEFHC_5iter_xsec_eff_heatmap.png.json: 3 data artists, colours as the palette maps them, line styles as declared
+  equal  xsec_proj/MEFHC_5iter_xsec_proj_pt.pdf.json: 16 data artists, colours as the palette maps them, line styles as declared
+  equal  xsec_proj/MEFHC_5iter_xsec_proj_pt.png.json: 16 data artists, colours as the palette maps them, line styles as declared
+  equal  xsec_proj/MEFHC_5iter_xsec_proj_pz.pdf.json: 16 data artists, colours as the palette maps them, line styles as declared
+  equal  xsec_proj/MEFHC_5iter_xsec_proj_pz.png.json: 16 data artists, colours as the palette maps them, line styles as declared
+  equal  xsec_proj/MEFHC_5iter_xsec_pt_slices.pdf.json: 112 data artists, colours as the palette maps them, line styles as declared
+  equal  xsec_proj/MEFHC_5iter_xsec_pt_slices.png.json: 112 data artists, colours as the palette maps them, line styles as declared
+  equal  xsec_proj/MEFHC_5iter_xsec_pz_slices.pdf.json: 128 data artists, colours as the palette maps them, line styles as declared
+  equal  xsec_proj/MEFHC_5iter_xsec_pz_slices.png.json: 128 data artists, colours as the palette maps them, line styles as declared
+COMPARE :: PASS
+text overlaps MEFHC_5iter_xsec_eff_heatmap: 0 -> 0
+text overlaps MEFHC_5iter_xsec_proj_pt: 0 -> 0
+text overlaps MEFHC_5iter_xsec_proj_pz: 0 -> 0
+text overlaps MEFHC_5iter_xsec_pt_slices: 1 -> 1 [['GENIE 2.12.6 + MnvTune v1', '$\\mathdefault{2}$']]
+text overlaps MEFHC_5iter_xsec_pz_slices: 0 -> 1 [['This work (OmniFold)', '$\\mathdefault{0.2}$']]
+ARMS xsec_proj :: PASS

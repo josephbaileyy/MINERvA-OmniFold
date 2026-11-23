@@ -1,0 +1,15 @@
+# bkg5d (2026-11-19T04:33:43Z): ARM0=palette INSTALLED_FROM=docs/analysis-note/figures/paper_fig_bkg_residual.pdf bash tools/arms_layout.sh <wt> bkg5d miniconda3 (matplotlib 3.10.1, numpy 1.26.4) c3b4e8842 m3_fig1_background - docs/analysis-note/figures/methods_m3/fig_m3_background.py --repo <wt> --outdir @OUT@
+== bkg5d (m3_fig1_background): arm 0 against docs/analysis-note/figures/paper_fig_bkg_residual.pdf at c3b4e8842
+EQUAL tmp.w7SrpDwvvC
+raster: RASTER :: EQUAL :: 1 page(s), 0 differing pixel(s)
+== bkg5d: arm 1 against arm 0
+captures: m3_fig1_background.pdf.json m3_fig1_background.png.json 
+  equal  bkg5d/m3_fig1_background.pdf.json: 17 data artists
+  equal  bkg5d/m3_fig1_background.png.json: 17 data artists
+COMPARE :: PASS
+strings m3_fig1_background: equal (90 drawn strings)
+  arm 0: canvas 7.000 x 4.200 in; font size min 5.50, median 6.00 pt; text overlaps 1
+  arm 1: canvas 6.500 x 4.400 in; font size min 7.00, median 7.00 pt; text overlaps 1 [['purity-based subtraction (9 experiments)', 'unbinned negative-weight refinement (60 experiments)']]
+ARMS-LAYOUT bkg5d :: PASS
+== the installed copy (figs/paper_fig_bkg_residual.pdf) against this arm 1
+EQUAL paper_fig_bkg_residual.pdf

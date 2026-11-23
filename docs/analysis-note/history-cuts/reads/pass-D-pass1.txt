@@ -1,0 +1,28 @@
+# item D meaning read, pass1: codex-school gpt-6.1-sol, high, read-only; prompt pass-D-pass1-prompt.txt, records pass-D-pass1-records.txt
+For Question 1:
+
+- **Q1 — PASS:** B2 contains the weak-response-information diagnostic identified in B1, including the 144 eligible residuals and 121 weakly constrained quantities, so the new pointer reaches the relevant evidence.
+- **Q2 — PASS:** B4 supports both named sweeps and their distinct pointers.
+- **Q3 — PASS:** Removing the orphaned description of the earlier MAT check changes no surviving reported method or result.
+- **Q4 — PASS:** All three replacements point directly to the same-ensemble pull diagnostic in B5 without changing its interpretation.
+- **Q5 — PASS:** “The end-to-end test” correctly identifies the object that failed its futility criterion.
+- **Q6a — PASS:** “Specified before it ran” preserves the project meaning of “declared” for the same coverage test.
+- **Q6b — FAIL:** “As specified for each cross-check” loses the before-run timing carried by “as declared for each cross-check” under your explicit definition, despite the cutlog calling this a method use.
+- **Q6c — FAIL:** “Specified sample population” likewise removes the before-run timing conveyed by “Declared sample population.”
+- **Q6d — PASS:** The benchmark and its explicit before-run timing are unchanged.
+- **Q7 — PASS:** B3 explicitly supports setting the data-stability criterion before running that test for the same configuration-(e) candidate.
+- **Q8 — PASS:** B6 lists eight distinct control identifiers, and replacing those identifiers with their count preserves the reader-facing result and the failed offset check’s consequence.
+- **Q9 — FAIL:** “That world’s denominator is the first drawn universe’s denominator plus each later universe’s departure” is not established by R1’s per-row composition rules, and R2 does not establish the restriction “in a cell that is positive at the central value,” although the counts, first-stage stop, unknown cause and absence of any coverage conclusion are preserved.
+
+The Q9 support gaps also occur in the old wording; the rewording does not newly introduce them.
+
+For Question 2, distinguishing necessary information from its replaceable wording:
+
+- **Q3’s clause — LEDGER:** It concerns an earlier check whose account has left the note.
+- **Q8’s control numbers — LEDGER:** They are internal identifiers; the count, failure identity and consequence remain.
+- **Q9’s “fail-closed” — LEDGER:** The label is dispensable because the operational stopping behavior remains explicit.
+- **Q9’s “specified draw” — NEEDED:** The identity of the test’s draw population matters; the replacement retains that connection through the pseudo-experiment description and counts, without implying before-run timing from “specified.”
+- **Q9’s “natures’ composite denominator” — NEEDED:** The denominator’s identity and construction matter and are explicitly reworded, but the asserted formula lacks support in the supplied records.
+- **Q9’s “specified composition of the natures” — NEEDED:** The stop’s scope matters and remains expressed as “how the drawn universes were combined,” with both coverage and causation limitations retained.
+
+OVERALL: FAIL — Q6b, Q6c, Q9.

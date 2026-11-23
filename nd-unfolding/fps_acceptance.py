@@ -12,6 +12,10 @@ the tracker fiducial, NO muon kinematic cuts) and reports, on the extended
   - the dead region (eff below threshold) and its truth-rate share.
 
   python fps_acceptance.py --omnifile runEventLoopOmniFold_5D_FPS_1A.root
+
+Opt-in (note figure style, group C family 5): --dump-arrays FILE.npz writes every drawn value after the read;
+--print-style draws in the note's print style (note_print_style, at the printed width); --from-arrays FILE.npz draws from such a dump (no RDataFrame; the module still imports unfold_2d_omnifold_unbinned for
+the grid, which imports ROOT). With neither, the figure is drawn as before.
 """
 
 import sys as _sys, pathlib as _pathlib
@@ -42,17 +46,23 @@ PZ_EXT = [0.0, 0.75] + list(u2d.PZ_EDGES) + [120.0]
 TAN20 = math.tan(math.radians(20.0))
 
 
-def main():
+def _print_style(depth):
+    """note_print_style from the repository root, applied (the paper's rcParams); returned for its figsize()."""
+    import sys as _s
+    from pathlib import Path as _P
+    _r = _P(__file__).resolve().parents[depth]
+    if str(_r) not in _s.path:
+        _s.path.insert(0, str(_r))
+    import note_print_style as _nps
+    _nps.apply()
+    return _nps
+
+
+def fill(args):
+    """The truth and reco maps from the FPS omnifile, and the efficiency and dead region: everything the figure draws."""
     import ROOT
     ROOT.gErrorIgnoreLevel = ROOT.kError
     ROOT.EnableImplicitMT(8)
-
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--omnifile", default="runEventLoopOmniFold_5D_FPS_1A.root")
-    ap.add_argument("--out-png", default="products/5d/fps_acceptance_1A.png")
-    ap.add_argument("--eff-floor", type=float, default=0.02,
-                    help="cells below this efficiency count as 'dead'")
-    args = ap.parse_args()
 
     pt_e = np.asarray(PT_EXT, float)
     pz_e = np.asarray(PZ_EXT, float)
@@ -95,17 +105,23 @@ def main():
           f"populated; truth-rate share {100*dead_rate/T:.2f}%")
     new = HT.sum() - n_in.GetValue()
     print(f"[acc] new rate outside published PS: {100*new/T:.2f}% of total")
+    return {"HT": HT, "eff": eff, "dead": dead, "pt_e": pt_e, "pz_e": pz_e, "eff_floor": np.float64(args.eff_floor)}
 
+
+def draw(arr, out_png, print_style=False):
+    HT, eff, dead, pt_e, pz_e = (arr[k] for k in ("HT", "eff", "dead", "pt_e", "pz_e"))
+    nps = _print_style(1) if print_style else None
+    eff_floor = float(arr["eff_floor"])
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
-    fig, axs = plt.subplots(1, 3, figsize=(19, 5))
+    fig, axs = plt.subplots(1, 3, figsize=nps.figsize(0.99, 0.37) if print_style else (19, 5))
     X, Y = np.arange(len(pt_e)), np.arange(len(pz_e))
     im0 = axs[0].pcolormesh(X, Y, np.log10(np.maximum(HT, 1e-1)).T, cmap="viridis")
     im1 = axs[1].pcolormesh(X, Y, eff.T, cmap="viridis", vmin=0, vmax=0.7)
     im2 = axs[2].pcolormesh(X, Y, dead.astype(float).T, cmap="viridis", vmin=0, vmax=1)
     labels = [r"(a) truth rate (log$_{10}$)", "(b) reco efficiency",
-              rf"(c) dead region (eff$<${args.eff_floor})"]
+              rf"(c) dead region (eff$<${eff_floor})"]
     for A, im, lab in zip(axs, [im0, im1, im2], labels):
         # mark the published phase-space boundary in bin coordinates
         ipt45 = np.searchsorted(pt_e, 4.5)
@@ -118,9 +134,35 @@ def main():
         fig.colorbar(im, ax=A, fraction=0.046, pad=0.04)
         technote_style.panel_label(A, lab)
     fig.subplots_adjust(wspace=0.55)  # keep each colorbar clear of the next panel's y-label
-    os.makedirs(os.path.dirname(args.out_png), exist_ok=True)
-    fig.savefig(args.out_png, dpi=140, bbox_inches="tight")
-    print(f"[acc] wrote {args.out_png}")
+    if print_style:  # at the printed width: panel tags at the body size, and room for each colorbar's ticks
+        for A in axs:
+            for t in A.texts:
+                if t.get_bbox_patch() is not None:
+                    t.set_fontsize(8.5)
+        fig.subplots_adjust(left=0.07, right=0.97, bottom=0.17, top=0.95, wspace=0.85)
+    os.makedirs(os.path.dirname(out_png), exist_ok=True)
+    fig.savefig(out_png, dpi=140, bbox_inches="tight")
+    print(f"[acc] wrote {out_png}")
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--omnifile", default="runEventLoopOmniFold_5D_FPS_1A.root")
+    ap.add_argument("--out-png", default="products/5d/fps_acceptance_1A.png")
+    ap.add_argument("--eff-floor", type=float, default=0.02,
+                    help="cells below this efficiency count as 'dead'")
+    ap.add_argument("--dump-arrays", default=None, help="write every drawn value to this .npz after the read")
+    ap.add_argument("--from-arrays", default=None, help="draw from this .npz (no RDataFrame)")
+    ap.add_argument("--print-style", action="store_true", help="draw in the note's print style")
+    args = ap.parse_args()
+    if args.from_arrays:
+        with np.load(args.from_arrays) as z:
+            arr = {k: z[k] for k in z.files}
+    else:
+        arr = fill(args)
+        if args.dump_arrays:
+            np.savez(args.dump_arrays, **arr)
+    draw(arr, args.out_png, args.print_style)
 
 
 if __name__ == "__main__":

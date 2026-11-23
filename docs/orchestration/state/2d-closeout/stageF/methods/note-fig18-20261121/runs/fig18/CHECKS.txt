@@ -1,0 +1,27 @@
+# Fig. 18 (2026-11-21T10:30:02Z): bash tools/run_fig18.sh <wt> 0deadb6a6; compose_fig18.py sha256 e7e96e80168777971a5e53da14ebf2b97b4494b476f7fae75892f96c223206b0
+# arm 0: fix_family4.py sha256 89442923c8672214457e6670425ec10e81845e4d73c818e54633576887418481, then strip_stamp.py sha256 58321e9e63f125de3bae82e375e125831a30a5cd963c1e33ca9e76170b4e2f12
+[fig18] wrote /Users/josephbailey/cov2d-work/figrun/fig18/arm1/o/generators_vs_unfolded_band_central.pdf; 57 drawn texts: no overlap, all on the canvas, the legend covers no axes
+[fig18] panel 0: 13 bins drawn, omitted [[2.5, 4.5]], multiplier $\times\mathdefault{10^{−38}}\mathdefault{}$
+[fig18] panel 1: 16 bins drawn, omitted [], multiplier $\times\mathdefault{10^{−39}}\mathdefault{}$
+[fig18] panel 2: 6 bins drawn, omitted [], multiplier $\times\mathdefault{10^{−38}}\mathdefault{}$
+[fig18] shared ratio range -0.0753 .. 1.5822
+== arm 0 against the installed file at 0deadb6a6 (fix_family4.py's output against note-figpass-20261119/figs, then stamp-stripped against docs/analysis-note/figures)
+EQUAL-BUT-DATE figpass/generators_vs_unfolded_band_central.pdf: /CreationDate (D:20261118211035-07'00') vs /CreationDate (D:20261121023004-07'00')
+installed at 0deadb6a6: sha256 7ea16ffd1e5da2c7c7ab6690746425b976885f0889a438d8ed0b5148dfd39744
+(1) strip_stamp(figpass/generators_vs_unfolded_band_central.pdf as committed) = installed/generators_vs_unfolded_band_central.pdf: byte-identical
+(2) stripped arm 0 against installed: 67 differing bytes, 0 outside /CreationDate and /ID
+== data unchanged, read from the two captures (independent of the tool's own readback): every arm-1 step height equals
+   arm 0's value for that generator and bin, every data point equals arm 0's, every ratio step equals arm 0's generator / data
+  panel 0: 13 of 14 bins drawn (left off: x = [3.5]); 4 generators, their ratios and the data equal arm 0's bitwise
+  panel 1: 16 of 16 bins drawn (left off: x = []); 4 generators, their ratios and the data equal arm 0's bitwise
+  panel 2: 6 of 6 bins drawn (left off: x = []); 4 generators, their ratios and the data equal arm 0's bitwise
+FIG18-DATA :: PASS
+== drawn strings: arm 1's, and no stamp
+  arm 0 only (words): ['$d\\sigma/dE_{\\rm avail}$ ($10^{-38}$ cm$^2$/GeV/nucleon)', '$d\\sigma/dp_T$ ($10^{-38}$ cm$^2$/(GeV/c)/nucleon)', '$d\\sigma/dp_\\parallel$ ($10^{-39}$ cm$^2$/(GeV/c)/nucleon)', 'MINERvA ME FHC, $1.06\\times10^{21}$ POT']
+  arm 1 only (words): ['$\\times\\mathdefault{10^{−38}}\\mathdefault{}$', '$\\times\\mathdefault{10^{−39}}\\mathdefault{}$', '$d\\sigma/dE_{\\rm avail}$ (cm$^2$/GeV/nucleon)', '$d\\sigma/dp_T$ (cm$^2$/(GeV/c)/nucleon)', '$d\\sigma/dp_\\parallel$ (cm$^2$/(GeV/c)/nucleon)', 'gen. / data']
+  stamp in arm 1: []; capture overlaps (reported, not a gate; README) pdf 2 -> 3
+== no overlapping words in the PDF itself (pdftotext -bbox; a pair counts only if it overlaps by more than 0.05 pt both ways)
+  87 words; overlapping pairs []; touching only (a subscript at its base glyph): [('p', 'T'), ('d¾=dE', 'avail'), ('d¾=dp', 'T'), ('E', 'avail')]
+page: Page size: 468 x 290.16 pts; printed at \textwidth = 468 pt, scale 1.0 (fonts print at note_print_style's 8.3/8.5/9.3 pt)
+installed generators_vs_unfolded_band_central.pdf sha256 d030980eeba9ce29dfa40c03baf426e41b9fb489cdb559651202cce94788e62c
+RUN-FIG18 :: PASS

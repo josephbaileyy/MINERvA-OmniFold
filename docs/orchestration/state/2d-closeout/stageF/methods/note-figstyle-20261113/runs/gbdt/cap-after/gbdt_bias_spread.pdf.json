@@ -1,0 +1,308 @@
+{
+ "artists_py_sha256": "feb486fefd363c0d80174fc034c82f53874558de718736af2c34c6b5344de041",
+ "size_in": [
+  6.5,
+  3.3
+ ],
+ "items": [
+  {
+   "kind": "line",
+   "axes": 0,
+   "label": "_nolegend_",
+   "hash": "c1f9668adae355231d18cdc287cd4636de86c3307d80d5de3a4a5f4c24d412ea",
+   "dhash": "9eea6c16bd14d7317c23156a85791b062c7a939e3a1b70c32e78b54fba0a1a6a",
+   "xhash": "71bafe77c4654ce4ffb7e7024c467cded7cd3ab28db847aaa5ac2765f49e9b84"
+  },
+  {
+   "kind": "LineCollection",
+   "axes": 0,
+   "label": "_nolegend_",
+   "hash": "7c54ec681adad55e6a341a08b30c86e5a621ca1df1918dfe4beb76129597090a",
+   "dhash": "8321b84d2491916c24f0fd890dbf24d7e83958c7f2a112c108d78c05836217ac",
+   "xhash": "8321b84d2491916c24f0fd890dbf24d7e83958c7f2a112c108d78c05836217ac"
+  },
+  {
+   "kind": "LineCollection",
+   "axes": 0,
+   "label": "_nolegend_",
+   "hash": "0a8b37240f995a2d3c378132e100e2285e3cbc0c4cdfc459fc72e82518cc9105",
+   "dhash": "1435a8cf62133c87ea66644bc0278150f019349db0524b679585efe0d607d4f8",
+   "xhash": "1435a8cf62133c87ea66644bc0278150f019349db0524b679585efe0d607d4f8"
+  },
+  {
+   "kind": "line",
+   "axes": 0,
+   "label": "_nolegend_",
+   "hash": "da20a09de1a28459334bb8727d485a5c5d75eefaa5b987b6a931509d205c7dfe",
+   "dhash": "c1b70d4274b4e7995a0f9614241fb50f3c2ad672aeeac0f7ea8ae9996bb1bd0a",
+   "xhash": "881b70cb17b59278a7e691c4bb5fe2bfbd9a3fba12c942f7e802aa1330d12cf1"
+  },
+  {
+   "kind": "LineCollection",
+   "axes": 0,
+   "label": "_nolegend_",
+   "hash": "5b709ff4c78142634faeefa02d21440cf345eb8b069192acb24f90a589a5c78a",
+   "dhash": "c6ad20492215304a8443398f5a93f3a0302940f592a157cbbe2cb2ca8c4f5bf5",
+   "xhash": "c6ad20492215304a8443398f5a93f3a0302940f592a157cbbe2cb2ca8c4f5bf5"
+  },
+  {
+   "kind": "LineCollection",
+   "axes": 0,
+   "label": "_nolegend_",
+   "hash": "ee55eac3e05dcea27e0378098f71afcf7d83bcb995db98fcf20bbdb7402fc20e",
+   "dhash": "b775d0fe25cd93b69d8cce1bd5dfd31823023a1faea2d21282018f29da9583eb",
+   "xhash": "b775d0fe25cd93b69d8cce1bd5dfd31823023a1faea2d21282018f29da9583eb"
+  },
+  {
+   "kind": "line",
+   "axes": 1,
+   "label": "_nolegend_",
+   "hash": "8a643c393c5cf2b79c2813cf74d19bba4637867a8ed28b8d59024f5c6ed51a1a",
+   "dhash": "ce38cd9249ed5511a05e2fd47d7fd61ec5441af7681fedce007632f1609cff36",
+   "xhash": "948d226e489f98c558fd9423805b751197e5d2b37769bd1d236a9b9feb7f9c1a"
+  },
+  {
+   "kind": "LineCollection",
+   "axes": 1,
+   "label": "_nolegend_",
+   "hash": "45d882f966e53ac5e2d5ea7c0a92f0bb35213a471e10dad05eeba52f291bbeea",
+   "dhash": "51f4da608b586d0b3b5162c63c35c6e565ecd9d7dc0aab201766edea85ba0c4a",
+   "xhash": "51f4da608b586d0b3b5162c63c35c6e565ecd9d7dc0aab201766edea85ba0c4a"
+  },
+  {
+   "kind": "LineCollection",
+   "axes": 1,
+   "label": "_nolegend_",
+   "hash": "6b1aab9901fae9d07fbabf2d3d29fb8afef38f1a563280a37eeb0d792daf1939",
+   "dhash": "7394ec15e6a581032da0e80c0e9ce7015cd5c51d7ac99a5fc01f540d4e705c86",
+   "xhash": "7394ec15e6a581032da0e80c0e9ce7015cd5c51d7ac99a5fc01f540d4e705c86"
+  },
+  {
+   "kind": "line",
+   "axes": 1,
+   "label": "_nolegend_",
+   "hash": "73bf135810b051e2da28423c2d08bf4a9dd13f18e625ac018bcbb1944e1fc534",
+   "dhash": "6ddfc4729f1b02e42d479d877e5571411bf23a2dff2527942757b8d96264f629",
+   "xhash": "3082fb146ff91a54e5d8a5f7a4c4f43b31c8761a2f5c1aa0449e58f0811dbf9d"
+  },
+  {
+   "kind": "LineCollection",
+   "axes": 1,
+   "label": "_nolegend_",
+   "hash": "b538fe4a24dd155ba1a99634eb805fe24c4ca1fe23267557feb28747d06f11b5",
+   "dhash": "6cd00065b3298fa1e72c1d53a02185570ef212175746086661da929adfb1b7e2",
+   "xhash": "6cd00065b3298fa1e72c1d53a02185570ef212175746086661da929adfb1b7e2"
+  },
+  {
+   "kind": "LineCollection",
+   "axes": 1,
+   "label": "_nolegend_",
+   "hash": "dd03ea301d6a67578d551548846a5e2c348a869a4295e0fc7ec38035e0a46e7b",
+   "dhash": "4ba9a693f493930c876db30abcb35fc4a8d785daebb38fd5c549a3af243ed260",
+   "xhash": "4ba9a693f493930c876db30abcb35fc4a8d785daebb38fd5c549a3af243ed260"
+  },
+  {
+   "kind": "line",
+   "axes": 2,
+   "label": "_nolegend_",
+   "hash": "3d400dec45942f3b2259b8ad7521efdad3f187ddd68b2618fd8b003ee7573d04",
+   "dhash": "863c1515f329ad8e9eabbe1d088e2d88acaa7b3e0f3368d1d99de9f5b3a790a3",
+   "xhash": "0e27646dd38bb7880736a22d5f1a7fab6d3844c0ece1a0feb11a186e9203362f"
+  },
+  {
+   "kind": "LineCollection",
+   "axes": 2,
+   "label": "_nolegend_",
+   "hash": "91b697d7546cdb4fd2a06c5373342bc0b3096d224d014e0d240ca75a77858825",
+   "dhash": "282847d1418012752c9fac26a4c74ffd54ff51ad64572701b5bb496950702a25",
+   "xhash": "282847d1418012752c9fac26a4c74ffd54ff51ad64572701b5bb496950702a25"
+  },
+  {
+   "kind": "LineCollection",
+   "axes": 2,
+   "label": "_nolegend_",
+   "hash": "391ba3fb7a0e07d58fc8b3c89ab104d123f5a03bbfae060f07caeb1972f38d94",
+   "dhash": "1c3ebaeccde5ca545b5c0893aaff96ce2e6dd74b0a4bc2d78f961aa909f43439",
+   "xhash": "1c3ebaeccde5ca545b5c0893aaff96ce2e6dd74b0a4bc2d78f961aa909f43439"
+  },
+  {
+   "kind": "line",
+   "axes": 2,
+   "label": "_nolegend_",
+   "hash": "94f430ed942124ba16ae54d58101f995e6b8a81f9f0e033dde3da5b9ca8bcef2",
+   "dhash": "1380efef5cdd03026afbc701880064dedde1a6a0d943a0f7251bb38aea01848e",
+   "xhash": "3bfbdc9534e2d2b321e2382c82feb23ecd80b8aba7c995c003f191558096ff0a"
+  },
+  {
+   "kind": "LineCollection",
+   "axes": 2,
+   "label": "_nolegend_",
+   "hash": "6f85a9a3ae51bc4c506061b10781582267eb5d273736771c0732543faeef77c0",
+   "dhash": "7778cc725f1b257a802054bd5b1188cebc1d214e20f4df149a84cb0fbb9b1241",
+   "xhash": "7778cc725f1b257a802054bd5b1188cebc1d214e20f4df149a84cb0fbb9b1241"
+  },
+  {
+   "kind": "LineCollection",
+   "axes": 2,
+   "label": "_nolegend_",
+   "hash": "9eb770b8d240a2ecbb58cc2dc71b5b9f1c3227d3b0aa833d80c37d7046145488",
+   "dhash": "289657a02ff035347317549a3ac3bd6ddc9deb1328eba89e94c18c7b203fe647",
+   "xhash": "289657a02ff035347317549a3ac3bd6ddc9deb1328eba89e94c18c7b203fe647"
+  }
+ ],
+ "texts": [
+  [
+   8.3,
+   "\u22120.2"
+  ],
+  [
+   8.3,
+   "\u22120.1"
+  ],
+  [
+   8.3,
+   "0.0"
+  ],
+  [
+   8.3,
+   "0.1"
+  ],
+  [
+   8.3,
+   "0.2"
+  ],
+  [
+   8.3,
+   "0.3"
+  ],
+  [
+   9.3,
+   "Repeat SD of relative residual (%)"
+  ],
+  [
+   8.3,
+   "$\\mathdefault{10^{-2}}$"
+  ],
+  [
+   8.3,
+   "$\\mathdefault{10^{-1}}$"
+  ],
+  [
+   8.3,
+   "$\\mathdefault{10^{0}}$"
+  ],
+  [
+   8.3,
+   "$\\mathdefault{2\\times10^{-2}}$"
+  ],
+  [
+   8.3,
+   "$\\mathdefault{2\\times10^{-1}}$"
+  ],
+  [
+   8.5,
+   "nominal: n = 40"
+  ],
+  [
+   8.5,
+   "J"
+  ],
+  [
+   8.5,
+   "H2"
+  ],
+  [
+   8.3,
+   "\u221210"
+  ],
+  [
+   8.3,
+   "\u22125"
+  ],
+  [
+   8.3,
+   "0"
+  ],
+  [
+   8.3,
+   "5"
+  ],
+  [
+   8.3,
+   "10"
+  ],
+  [
+   8.3,
+   "$\\mathdefault{10^{-2}}$"
+  ],
+  [
+   8.3,
+   "$\\mathdefault{10^{-1}}$"
+  ],
+  [
+   8.3,
+   "$\\mathdefault{10^{0}}$"
+  ],
+  [
+   8.3,
+   "$\\mathdefault{10^{1}}$"
+  ],
+  [
+   8.5,
+   "W2: n = 20"
+  ],
+  [
+   8.3,
+   "\u221240"
+  ],
+  [
+   8.3,
+   "\u221220"
+  ],
+  [
+   8.3,
+   "0"
+  ],
+  [
+   8.3,
+   "20"
+  ],
+  [
+   8.3,
+   "40"
+  ],
+  [
+   8.3,
+   "$\\mathdefault{10^{-1}}$"
+  ],
+  [
+   8.3,
+   "$\\mathdefault{10^{0}}$"
+  ],
+  [
+   8.3,
+   "$\\mathdefault{10^{1}}$"
+  ],
+  [
+   8.3,
+   "$\\mathdefault{2\\times10^{-1}}$"
+  ],
+  [
+   8.3,
+   "$\\mathdefault{2\\times10^{0}}$"
+  ],
+  [
+   8.5,
+   "W3: n = 20"
+  ],
+  [
+   9.3,
+   "Mean signed relative residual (%)"
+  ],
+  [
+   9.3,
+   "One setting: R, five iterations; different cells estimate different quantities 95% pointwise t / normal-model SD intervals; development reuse"
+  ]
+ ],
+ "text_overlaps": []
+}

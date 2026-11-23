@@ -1,0 +1,29 @@
+# recovery test, 2026-11-21T15:50:13Z
+21a9b0cf60f0a6d1a62f1223a9255ba448ee21c7	refs/tags/evidence/short-paper-retired-a54f255e
+remote tag peels to a54f255e92cb2232fe038b497870de23b40f0e58
+ok   docs/analysis-note/main_paper.tex blob 17136999ace403fbf9887cd094b50c6779a01782
+     sha256 restored 6fd8e80a73bc9649da12b258623806751298186b5d3bd352c964743a87f0dc2d  parent 6fd8e80a73bc9649da12b258623806751298186b5d3bd352c964743a87f0dc2d
+ok   docs/analysis-note/paper_body.tex blob 892d56628100c191476aee8acaa7a34eafe259be
+     sha256 restored d925b1c75e7b836e70674ab16a5a8871bd959832726559030302690cccea6ae0  parent d925b1c75e7b836e70674ab16a5a8871bd959832726559030302690cccea6ae0
+ok   docs/analysis-note/figures/paper_fig1_validation.pdf blob c0096d456b3a34b69b04f09af0a8c0db0f5b070f
+     sha256 restored 1ead58a2223ecf88f3de505d7cbcca76ab306af49814ea7c9d50ec0f2c373e0c  parent 1ead58a2223ecf88f3de505d7cbcca76ab306af49814ea7c9d50ec0f2c373e0c
+ok   docs/analysis-note/figures/fd_g_fig_ratio.pdf blob 0e4eba713c2188fdef5f32f6fe51725d026f4f26
+     sha256 restored 6214ed7800e9a6d0454dc376d3f100306969fa11dff83f703f134ef4d36fb0c7  parent 6214ed7800e9a6d0454dc376d3f100306969fa11dff83f703f134ef4d36fb0c7
+ok   docs/analysis-note/figures/paper_fig_deformation.pdf blob 3603cfac6b5eb0593e55e0baf6b6fef495272f2c
+     sha256 restored 92544d1f0900715b8d3beeb24b37195260010c29fd26b824776883e30a7a14fc  parent 92544d1f0900715b8d3beeb24b37195260010c29fd26b824776883e30a7a14fc
+blob check: PASS
+# archive build from the tag, 2026-11-21T15:50:29Z
+latexmk rc=0
+errors (^!): 0
+undefined: 57
+multiply defined: 0
+pages: 13
+pdf sha256: 7dd1b237563bd8f40585a998330b89b164a92462730d4b19cbfd4c3c969beba5
+# rebuilt in build_all's order (main_note first, for the paper's xr-hyper N- references), 2026-11-21T15:51:23Z
+main_note latexmk rc=0; main_paper latexmk rc=0
+errors (^!): 0
+undefined: 2
+multiply defined: 0
+pages: 13
+pdf sha256: ad69a53e06ee013e6dbceb6d482ff28b0f8ccb8929cb13425694c7a8aa3fbbf9
+remaining undefined (both N- labels the journal-voice rewrite removed from the note; the paper was not updated after 2026-11-16): N-sec:eavailw-generators, N-app:response-mismatch

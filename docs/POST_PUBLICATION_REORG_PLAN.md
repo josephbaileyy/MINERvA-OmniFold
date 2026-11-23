@@ -626,6 +626,145 @@ records.
 - A prospective guard would be the same refusal as `uq/final_rollup_full.sh`'s. It is listed in that
   report's backlog.
 
+## Family short paper, 2026-11-21
+
+**Decision (Joseph, 2026-11-21, verbatim):** "yes I also authorize the short paper removal". Typed to the director
+session and relayed from it; received by 2026-11-21T15:39:05Z. It answers the authorization text of
+`SHORT-PAPER-REMOVAL-LIST-20261121.md` §5 (journal-editor's removal list, kept outside the repository), which reads:
+
+> I authorize the removal family "short paper (main_paper.tex)" from `main` and from the note's working branches:
+> `docs/analysis-note/main_paper.tex`, `docs/analysis-note/paper_body.tex`, and the figures
+> `docs/analysis-note/figures/paper_fig1_validation.pdf`, `docs/analysis-note/figures/fd_g_fig_ratio.pdf` and
+> `docs/analysis-note/figures/paper_fig_deformation.pdf`, together with the dependent edits listed in
+> SHORT-PAPER-REMOVAL-LIST-20261121.md §2. This is conditional on: the evidence tag
+> `evidence/short-paper-retired-<sha8>` being pushed first; the recovery test of §4 passing; all builds and the note's
+> gates passing from a clean checkout after the removal; and a read-only independent review of the family's diff. The
+> branch `origin/draft/methods-short-20261109` is kept as the paper's archive and is not deleted. The short paper will
+> not be submitted.
+
+This admits a new evidence epoch, the tag below, as this family's removal boundary on the rewrite branch
+`rewrite/journal-voice-20261121`. On `main` the family's `paper_fig1_validation.pdf` is a different blob (`8da728fd66`
+against `c0096d456b` here), so a removal there needs its own tag on `main`'s parent.
+
+1. **Enumeration.** The family is the five paths above: the files that the `\input` and `\includegraphics` closure of
+   `main_paper.tex` reaches and that no other driver (`main_note`, `main_primer`, `main_records`, `pet_note`) reaches,
+   measured at `a54f255e9`. Outside the family: the bibliography (`technote.bib`, `publication.bib`), the shared
+   `values*.tex`, `figures/methods_m3/fig_m3_deformation.py` (a numbers source of the records), the archived
+   `archive/2026-08-23-pre-restructure/main_paper.pdf`, `main_primer.tex`, and the three paper-named crops that
+   `make_figures.sh` still writes (`paper_validation_residual.pdf`, `paper_eavailW_generators.pdf`,
+   `paper_joint_localization.pdf`).
+2. **Dependency scan.** `git grep -a` over every tracked file at `a54f255e9` for the five basenames. Runtime readers,
+   tests and pins, each changed in the removal commit:
+   - `build_all.sh`: the target list and the pending-placeholder loop.
+   - `test_build_all.py`: its target list and fixtures. The stale-product and strike cases that used the paper now
+     use the primer, another outward build.
+   - `check_dead_containment.py`: `BUILDS`, which must equal the drivers on disk.
+   - `check_sec4_receipts.py` and its test: five checks read printed values from `paper_body.tex`. Each now binds the
+     same receipt value where it still prints:
+     - the statistical block median in the note's Table `tab:uq` (`sec3_twod.tex`);
+     - the high-$W$ regularization bias and the earlier estimator's lowest 68% coverage in `sec4_higherdim.tex`;
+     - the withheld-shape range and "about half of the cells" in `primer_body.tex`.
+     
+     SEC4-RECEIPTS stays at 17/17, and its self-test rejects 21 perturbations.
+   - `make_figures.sh`: the install of the paper's Fig. 1.
+   - `make_values_fived16.py`:
+     - the `fd_g_fig_ratio.pdf` pin;
+     - the paper's five listed-truth sentences (four in `paper_body.tex` and its abstract's in `main_paper.tex`);
+     - five self-test plants on those sentences: four now plant in the note's `sec_q3_fived16.tex`, and the plant on
+       the paper's only "ctotal" sentence is dropped with it. The note prints no sentence of that kind.
+
+     The note's abstract sentence of the same check had already been removed by the journal-voice rewrite
+     (`4b784728d`), so `--check` failed at `a54f255e9` independently of this family. The entry was removed here and,
+     independently, on the rewrite branch at `78aa1a5e2`; the merge keeps one removal.
+   - `tools/registry/check_registry.py`: `DRIVERS`, `POSTED_DRIVERS` and two self-test fixtures. The conflict fixture
+     had cited an empty line of `paper_body.tex`, so that case fired on a malformed citation. It now cites a
+     one-line fixture and fires on the conflict itself.
+   - `tools/registry/results_index.py`: `POSTED` and a fixture.
+   - `docs/orchestration/registry/ALIASES.tsv` (two rows) and `ATTRIBUTION.tsv` (one row): re-cited from
+     `paper_body.tex:56` to `records_r07_statistics.tex:467`. That line names the joint-test estimator, its
+     deterministic LightGBM training and its 400-tree, 31-leaf refinement. `records_estimators.tex` is regenerated.
+   
+   Everything else that names the paper is prose or a frozen record, with two exceptions.
+   - `2d-unfolding/re2/partc/re2c_values.py` resolves the `N/` rows of `re2c_values_spec.tsv`, several of which
+     name `paper_body.tex` and `main_paper.tex`. That spec is the input of the completed RE-2 part C run, pinned by
+     sha256 (`51319f67…`) in its preflight record `…/re2/run/partc_a3/a3_30.sha256`, so it is not retargeted.
+     Its two spec-resolution tests in `test_re2c.py` already failed at the parent, on `sec_execsummary.tex`
+     (deleted in `8e1fc41a5`), and fail the same way after the removal.
+   - `docs/orchestration/oi130_quoted_value_inventory.py` lists `main_paper.tex` among its builds. It runs with rc 0
+     before and after, and no gate invokes it.
+   Unchanged: about 60 comment mentions in the note's sources, `docs/ben-research-presentation/*.json`,
+   `docs/sep-09-presentation/…/commit_inventory.json`, receipts such as `receipts/2d-c04-adopt-20261012/RUN.txt`,
+   the state tools and ledgers under `docs/orchestration/state/`, `publication/release/figs/*.py` comments,
+   `2d-unfolding/re2/re2_inventory.py` (which reads `build_all.sh`'s target list) and the KNOWN_ISSUES rows.
+3. **Internal references.** `main_paper.tex` inputs `paper_body.tex`, and `paper_body.tex` includes the three figures.
+4. **Evidence tag and recovery.** The tag **`evidence/short-paper-retired-a54f255e`** was pushed before the removal
+   commit. It is tag object `21a9b0cf60f0a6d1…`, on commit `a54f255e92cb2232fe038b497870de23b40f0e58`. Each of the five
+   paths is blob-identical at the tag and at the parent, and restores by `git show` to the same sha256. The
+   restored figures match the digests the tooling pinned: Fig. 1 `1ead58a2…` and `fd_g_fig_ratio.pdf` `6214ed78…`.
+   From a `git archive` of the tag, `main_note` and then `main_paper` (build_all's order) build with rc 0, 0 errors,
+   0 multiply defined and 13 pages. Two references stay undefined: `N-sec:eavailw-generators` and
+   `N-app:response-mismatch`. They are note labels that the journal-voice rewrite removed; the paper was not updated
+   after 2026-11-16, and these are its state at the parent, not an effect of the removal. The branch then merged the
+   rewrite head `d4b3a32a8`, at which the five blobs are still identical to the tag's. The logs are in
+   `orchestration/receipts/short-paper-removal-20261121/` (`RECOVERY.txt`, `BLOBS-AT-d4b3a32a8.txt`).
+5. **Surviving references resolve.** The note's `README.md` names the tag, the old paths and the development branch.
+   The remaining mentions are historical, as the plan allows, and stay as written.
+6. **Discovery route.**
+   - `git show evidence/short-paper-retired-a54f255e:<old-path>`;
+   - this section;
+   - `docs/analysis-note/README.md`, *Retired: the short paper*;
+   - `docs/orchestration/CATALOG.md` § Frozen pre-compaction evidence, *Family short paper*;
+   - the paper's development branch `origin/draft/methods-short-20261109` (`5bbb9d269` by `git rev-parse` when this was written; the removal list's `5c7589bb5` is an ancestor), which is
+     kept.
+7. **Checks, from clean checkouts** of the merged parent `d4b3a32a8` and of the removal head `0f114c8e5`.
+   - Identical at both heads, all PASS or rc 0: pre-commit (21 checks), `verify_hash_bindings.py`,
+     `control_plane_lint.py`, `live_doc_indexed.py --check --unrowed`, `check_registry.py`, `results_index.py --check`,
+     SEC4-RECEIPTS 17/17 and its self-test (21 perturbations), `make_values_fived16.py --check` and `--self-test`, and
+     the containment self-test.
+   - Failing identically at both heads: `generate_manifest.py --check` is OUT OF DATE.
+   - The test failure sets are the same before and after:
+     - `test_build_all.py`, `test_check_sec4_receipts.py` and `tools/registry`: 2 of 131;
+     - the `nd-unfolding` hash-binding and `fd_g` figure tests: 2 of 171;
+     - `test_re2c.py`: 2 of 25 (step 2);
+     - `docs/orchestration`: pytest's collection fails with INTERNALERROR at both heads.
+   
+   `build_all.sh` stops at both heads at RECORDS-MOVE (`check_note_records.py` P8, unlisted citation drops), before
+   any LaTeX. Its four targets were therefore built directly with latexmk. Logs: `orchestration/receipts/short-paper-removal-20261121/` (`GATES-*.txt`,
+   `TESTS.txt`).
+8. **Products unchanged.** `main_note` (62 pages), `main_primer` (16) and `pet_note` (26) build with 0 errors,
+   0 undefined and 0 multiply defined references at both heads, and their `pdftotext` digests are identical.
+   `main_records` (144 pages, 0/0/0) differs only in the two estimator-registry citation cells
+   (`paper_body.tex:56` to `records_r07_statistics.tex:467`) and the table reflow they cause (`BUILDS.txt`).
+9. **Independent review**, read-only, of the branch diff against `d4b3a32a8`: Grok 4.7 and Gemini 3.8 Flash
+   (`REVIEW-*.txt`).
+   - Both verdicts: **APPROVE WITH CHANGES**.
+   - Neither found a weakened gate or a wrong test. Both confirmed that the rebound checks read the same receipt
+     quantities at the same or a stricter tolerance.
+   - Grok asked that the RE-2 spec rows and the OI-130 inventory be shown not to read the removed files. One of them
+     does: `re2c_values.py`. Its tests already failed at the parent, and the two exceptions are now in step 2.
+   - An earlier Gemini read of `9fe7bae0a` asked for the CATALOG router and a wider capacity-alias pattern, both done
+     in `0f114c8e5`.
+   - The changes were applied in this record's commit:
+     - the two exceptions in step 2;
+     - the recovery logs in the repository;
+     - steps 7–10;
+     - the branch-tip wording;
+     - the stale routers in the root `README.md`, in `AGENTS.md` and in a `build_all.sh` comment.
+   - Declined:
+     - Gemini's reading that `5c7589bb5` is the branch tip (it is an ancestor);
+     - Grok's NIT that the primer sentence now bound by the withheld-shape checks drops the paper's qualifiers. The
+       checks bind the same numbers and band, and the primer's wording is its own.
+10. **Counts** (`COUNTS.txt`):
+
+| | tracked files | Markdown files | Markdown lines |
+|---|---:|---:|---:|
+| before, merged parent `d4b3a32a8` | 28,142 | 2,286 | 433,936 |
+| after, removal head `0f114c8e5` | 28,137 | 2,286 | 434,032 |
+
+The removal is −5 files: two `.tex` files and three PDFs, none of them Markdown. The Markdown lines added are this
+section, the CATALOG entry and the README paragraph. The record's own commit adds the 9 files of
+`orchestration/receipts/short-paper-removal-20261121/`.
+
 ## Family short paper, 2026-11-21 (main)
 
 **Decision (Joseph, 2026-11-21, verbatim):** "yes I also authorize the short paper removal". Typed to the director

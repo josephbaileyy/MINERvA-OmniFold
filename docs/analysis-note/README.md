@@ -10,10 +10,12 @@ This directory builds three audience-specific documents, and one internal record
 | Records document (internal, never posted) | `main_records.tex` | The analysis note's records since 2026-10-21: provenance of the records it cites, fixed identities and audit record, test-suite discipline, superseded values and withdrawn results. The note cites it as `NoteRecords2026` (`technote.bib`), by tag or heading |
 
 **Retired: the short paper.** `main_paper.tex` (the short paper), retired 2026-11-21:
-`git show evidence/short-paper-retired-45402896:docs/analysis-note/main_paper.tex` (likewise `paper_body.tex` and the
-figures `paper_fig1_validation.pdf`, `fd_g_fig_ratio.pdf`, `paper_fig_deformation.pdf` under `figures/`); development
-branch `origin/draft/methods-short-20261109`. The removal record is in `docs/POST_PUBLICATION_REORG_PLAN.md`, *Family
-short paper, 2026-11-21 (main)*. Mentions of the paper elsewhere in this directory are historical.
+`git show evidence/short-paper-retired-45402896:docs/analysis-note/main_paper.tex` (`main`'s tag; likewise
+`paper_body.tex` and the figures `paper_fig1_validation.pdf`, `fd_g_fig_ratio.pdf`, `paper_fig_deformation.pdf` under
+`figures/`). The rewrite branch's tag `evidence/short-paper-retired-a54f255e` holds the same five paths, with a
+different `paper_fig1_validation.pdf` blob. Development branch `origin/draft/methods-short-20261109`. The removal
+records are in `docs/POST_PUBLICATION_REORG_PLAN.md`, *Family short paper, 2026-11-21* (the rewrite branch) and
+*Family short paper, 2026-11-21 (main)*. Mentions of the paper elsewhere in this directory are historical.
 
 Build and containment checks run together:
 

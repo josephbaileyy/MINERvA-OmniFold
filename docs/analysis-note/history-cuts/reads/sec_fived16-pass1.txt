@@ -1,0 +1,36 @@
+# sec_fived16 meaning read, pass 1: codex-school gpt-6.1-sol, high, read-only; prompt sec_fived16-prompt.txt, records sec_fived16-records.txt
+**Question 1**
+
+| Row | Verdict | Reason |
+|---|---|---|
+| T1 | PASS | The declaration and binding precede the comparison report and specify the same agreement rule. |
+| T2 | PASS | F0 specifies the descriptive treatment before grading, and F0b explicitly carries that treatment forward. |
+| T3 | FAIL | “Specified before any of its stages ran” overstates the evidence: the records establish a pre-toy protocol “declared and bound in stages,” with the stage-2 declaration following the stage-1 report. |
+| T4 | PASS | The recorded stop rule precedes the receipt run that triggered it, supporting timing specifically for that stage. |
+| T5 | PASS | The comparison’s declaration and binding precede its outcome, supporting “specified before it ran.” |
+| T6 | PASS | The cell-by-cell comparison rule appears in the declaration and binding before the comparison report. |
+| T7 | PASS | The replacement preserves the distinction between the specified cell-comparison test and the probe-chunk diagnostic outside that rule. |
+| M1 | PASS | “Specified swap” preserves the method’s meaning without adding timing. |
+| M2 | PASS | All three replacements preserve the specified draws and composition without changing their meaning. |
+| M3 | PASS | “Specified grid” preserves the grid reference without adding timing. |
+| D11 | PASS | The summary preserves the failed Stage-0 first part, the incomplete reconstruction-information study, subsequent unscaled adoption, and absence of validated coverage. |
+| D12 | FAIL | “The ratio of each cell’s reproduced uncertainty … lay outside the gate’s window” widens the failure to every cell, losing the original qualification restricting it to a subset of the sixteen cells. |
+
+The section’s numerical literals and value macros are unchanged.
+
+**Question 2**
+
+No substantive passage was removed or shortened in `new.tex`; the section changes are wording substitutions, and no item leaves for the ledger.
+
+For the shortened appendix restatements:
+
+| Item | Classification | Reason |
+|---|---|---|
+| D11: earlier calibrated-model-term route | NEEDED | Its unsuccessful tests explain the reported model term’s limitation, and the full account remains in the section alongside the appendix summary. |
+| D12: coverage test without the run-period block | NEEDED | Its stop and absence of a coverage result limit what the reported covariance establishes, and the full account remains in the section despite the appendix’s inaccurate summary. |
+
+**No NEEDED item was lost.**
+
+No disclosure of a choice made after results were seen disappeared: the section still explicitly states that the run-period block was chosen after the period differences were seen, and retains the generator bias check’s “added post hoc” disclosure.
+
+OVERALL: FAIL — T3, D12; no lost NEEDED items.

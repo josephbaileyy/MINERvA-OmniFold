@@ -1,0 +1,64 @@
+[
+ {
+  "i": 0,
+  "kind": "image",
+  "axes": 0,
+  "label": "_child0",
+  "hash": "74e8aeec07e03db43e4eed8c9d3d93ba5114d76abad8d0e7b6f2412436c2c1ec",
+  "dhash": "da9639aa8a459c21fe567be3f467f40fdc2cbb2777bbe5b13ec0c04d085e80bf",
+  "xhash": "da9639aa8a459c21fe567be3f467f40fdc2cbb2777bbe5b13ec0c04d085e80bf",
+  "colours": {
+   "cmap": "RdBu_r"
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 1,
+  "kind": "LineCollection",
+  "axes": 1,
+  "label": "_child0",
+  "hash": "c78f26eeb0efecdcc1a13ce55d6ce9d339e615e455c8f4efbfa1316d7269473f",
+  "dhash": "2062b477c651b3fc38ee2bc7849247c25be032f05a382689d12fc1abf3db4447",
+  "xhash": "2062b477c651b3fc38ee2bc7849247c25be032f05a382689d12fc1abf3db4447",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#000000FF"
+   ],
+   "cmap": "viridis"
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 2,
+  "kind": "QuadMesh",
+  "axes": 1,
+  "label": "_child1",
+  "hash": "f4b74583fc1c5f838c171e9d07472784b90733a0f5923db6dce96e2e2e9f7ccf",
+  "dhash": "f1f43aae937d69c1ed947587cc0636f0db336f28096131ebd55217ace2262b4e",
+  "xhash": "f1f43aae937d69c1ed947587cc0636f0db336f28096131ebd55217ace2262b4e",
+  "colours": {
+   "face": [
+    "#C44E52FF"
+   ],
+   "edge": [],
+   "cmap": "RdBu_r"
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ }
+]

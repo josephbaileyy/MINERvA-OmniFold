@@ -1,0 +1,521 @@
+{
+ "artists_py_sha256": "feb486fefd363c0d80174fc034c82f53874558de718736af2c34c6b5344de041",
+ "size_in": [
+  15.0,
+  4.4
+ ],
+ "items": [
+  {
+   "kind": "line",
+   "axes": 0,
+   "label": "_nolegend_",
+   "hash": "5a6e2778fe87be3290e47674a6d426fd21de78e349b3cb6d659b7687e90bb9d2",
+   "dhash": "162c89a7508fdb24308b18f06f23dd7fae01b7ec25ed9a3b5531978061b48603",
+   "xhash": "e269eece6b69c72201255bb5b3edbdfaf11998c4d66165d1eb3ce03b9faffaa5"
+  },
+  {
+   "kind": "patch",
+   "axes": 0,
+   "label": "",
+   "hash": "b29c9faf3de70e297ec0bfd5f9ea6c59c457a2b9fe6ee23759b4961443324e6d",
+   "dhash": "720ae0768cf555aa917523adc3190c10af98100046ca05c18a1513716a8f6ac0",
+   "xhash": "720ae0768cf555aa917523adc3190c10af98100046ca05c18a1513716a8f6ac0"
+  },
+  {
+   "kind": "line",
+   "axes": 0,
+   "label": "GENIE-CV",
+   "hash": "e109325335a7c56b9b4ba76ab0681812b8e5fa504680d6cf4ab664edb82c7f86",
+   "dhash": "2446491fafb0e5cab6df3e7fe0610c9eb183bfe49d26868ffc07925606114d85",
+   "xhash": "ef5e485cbacf62f26c106a2b2f21f993ea898a8bb22d52349f35cfd8217bc2a8"
+  },
+  {
+   "kind": "patch",
+   "axes": 0,
+   "label": "",
+   "hash": "a76d7c236a9a444eaf8a1c3d35e91dfc59cddea302da143ce9de1d7693b3cadb",
+   "dhash": "ddecf263b2c970330134107b41f5e5b894ee62db6d7a0473d80330b904ea4513",
+   "xhash": "ddecf263b2c970330134107b41f5e5b894ee62db6d7a0473d80330b904ea4513"
+  },
+  {
+   "kind": "line",
+   "axes": 0,
+   "label": "Tune-v1",
+   "hash": "164e426cdbbd0ced3f189bfb6576b37e1ef1e137293afce0748440d9e6b8f8a2",
+   "dhash": "bbd02790a2259e4a6f6a9481dd80617b90c397d6a52854e56b3e746904071187",
+   "xhash": "729f26a1295ea19c76c6dc36b17107d6b529d174fd5b339ca69b36dd82bcc4e7"
+  },
+  {
+   "kind": "patch",
+   "axes": 0,
+   "label": "",
+   "hash": "0954db9d68cc63d86f934e4aca57dc9139028c8f176d974b6a2f1da269bf68f7",
+   "dhash": "f31a6306eafdf3b5919f2bac32d27ecf88fc3e2e9e9ef8e373e0c9c71a133d69",
+   "xhash": "f31a6306eafdf3b5919f2bac32d27ecf88fc3e2e9e9ef8e373e0c9c71a133d69"
+  },
+  {
+   "kind": "line",
+   "axes": 0,
+   "label": "NuWro",
+   "hash": "8ee40a85088c82ea618f403cb0a49b159fd6024c3adf0abfe2d47effdd1d1065",
+   "dhash": "23f17b64f0f2f439eeacc38c6698d9241ff9a5c1509756acc7422f7cd95a2278",
+   "xhash": "fad4f702cef8519cebb3595e7c53cc8c0447e706bef80f2b87a0f53ddca9ba75"
+  },
+  {
+   "kind": "patch",
+   "axes": 0,
+   "label": "",
+   "hash": "29669b3064580349103250da775a47edb5ce24cc06456012a9a4f14127223cfa",
+   "dhash": "8067500bf505f1a088726ecff7ae60ec4fd2f7d43ddf8b7c1223578fb6f3a398",
+   "xhash": "8067500bf505f1a088726ecff7ae60ec4fd2f7d43ddf8b7c1223578fb6f3a398"
+  },
+  {
+   "kind": "line",
+   "axes": 0,
+   "label": "GiBUU",
+   "hash": "2b691b702c15b8f22ded8789b4b027b3f5372401c921f3605fe8d44314029055",
+   "dhash": "20a930246cecb56d605f38ac151d94af3d982a509831d509f2b49c8a2b5a04de",
+   "xhash": "a1485a57f3c8f7428a1bbe855798bc72e74b3b81cee43e259c99a9daa6b53865"
+  },
+  {
+   "kind": "line",
+   "axes": 1,
+   "label": "_nolegend_",
+   "hash": "b1020af05b35de339de686e4d742b7db302d4d4ed0a2d40e1d075edc98adfa9a",
+   "dhash": "1dbf032374c87be7d42e2cef6d361f308a635a93190e96b5bad02c1330534985",
+   "xhash": "157145e8e9f84326f355b64a4f4783b0050a66d1b16af7b374a0ecc7df16647f"
+  },
+  {
+   "kind": "patch",
+   "axes": 1,
+   "label": "",
+   "hash": "0efe8aa8a985e38975673aeee5d998a0112573fd1caa066f6ae0d28f80ac2c9d",
+   "dhash": "96dbdf9e064afebc0db0410752f38196ac3332a019aad5e840b34c3c291a7673",
+   "xhash": "96dbdf9e064afebc0db0410752f38196ac3332a019aad5e840b34c3c291a7673"
+  },
+  {
+   "kind": "line",
+   "axes": 1,
+   "label": "GENIE-CV",
+   "hash": "860765cba274fc219beddc8a9244e198804f904fc8108e6e48216fdb7e6bc1dc",
+   "dhash": "0a3774171b992960e8fd5702e002ec71858496d34b4e8d550e2deef9bbd2a9c8",
+   "xhash": "ae92a2a72df11c4f28975db123cce50a1868723b38583f07f5eaabefbb7092c0"
+  },
+  {
+   "kind": "patch",
+   "axes": 1,
+   "label": "",
+   "hash": "838361a499f03b8a1479d9bc838ee2fae42e5b11d61798684f7f03ef883df2d9",
+   "dhash": "8daec452473068b659d32e9d7cd7571251b9912687bd50449179e5896de8e086",
+   "xhash": "8daec452473068b659d32e9d7cd7571251b9912687bd50449179e5896de8e086"
+  },
+  {
+   "kind": "line",
+   "axes": 1,
+   "label": "Tune-v1",
+   "hash": "ae2e20c518d43143c29e496a60791c468a1a7aa477035a71e50651783a9c3d17",
+   "dhash": "d364f4bcee81b4bfb4c1c3e522ebc7d9e028909ad23dc35c92584f16364d2581",
+   "xhash": "773903436f60d926d1f5fbaad0e19167d97aeee14227696c637d0173287a884e"
+  },
+  {
+   "kind": "patch",
+   "axes": 1,
+   "label": "",
+   "hash": "d43ddcb973c4b7be078f7534527167650b5892225ea2eb03b9341268a55d8937",
+   "dhash": "a982988b9ae37ec74bf3002093b22e1df514628f9607afb9a999f4ff0b865c4d",
+   "xhash": "a982988b9ae37ec74bf3002093b22e1df514628f9607afb9a999f4ff0b865c4d"
+  },
+  {
+   "kind": "line",
+   "axes": 1,
+   "label": "NuWro",
+   "hash": "e0d20b6b793996aa0e741244e15c78449b40d349c50d9da64cc631e474819238",
+   "dhash": "51ee274a3ea30b3b3f876c70fb0cb5c1fe8920b062a6da0044f08948aa6d8da5",
+   "xhash": "5696573fae7dd8585318fd581d737873e6547d42c52478c9eec86815cbb917ec"
+  },
+  {
+   "kind": "patch",
+   "axes": 1,
+   "label": "",
+   "hash": "d1c13e71e0483da821c6ac07f6bef884ef47876819b581b8ec46793a36638edd",
+   "dhash": "b84e8d7099a282bfb5106796851cda9da7039d077f169de6af8bb28a3d5bb737",
+   "xhash": "b84e8d7099a282bfb5106796851cda9da7039d077f169de6af8bb28a3d5bb737"
+  },
+  {
+   "kind": "line",
+   "axes": 1,
+   "label": "GiBUU",
+   "hash": "b66b7250815d61a3f356797d27c7181761545acf3ce29523695ab3b725ca9590",
+   "dhash": "d4edb845752f0c51001963d7d3d9e098b103f5d93419c5ad54f42f2874308327",
+   "xhash": "dd474b604cdcd9dd058689ef5ec328e001dcd3e3e838b71547269cac50eb47ef"
+  },
+  {
+   "kind": "line",
+   "axes": 2,
+   "label": "_nolegend_",
+   "hash": "9fc9ba1cce3e69287c217937c26e8e718f413cdbff4d2cd1307a2daae8671ec4",
+   "dhash": "68f413a5b6db2dba7464b25590664adbb2e0d3f72ebd850a12592262d184bb55",
+   "xhash": "ab14886da402ffab93a100413334c276b08aee4546a0de82853606f38cf552b5"
+  },
+  {
+   "kind": "patch",
+   "axes": 2,
+   "label": "",
+   "hash": "cde8cd1601c09a4769311601e909f26fcab0f04212891b82750b9d105929756b",
+   "dhash": "09ccd3b1a8f99397cc9f17922d8b5f1a077f078597b9ae1258e74149d1c82e06",
+   "xhash": "09ccd3b1a8f99397cc9f17922d8b5f1a077f078597b9ae1258e74149d1c82e06"
+  },
+  {
+   "kind": "line",
+   "axes": 2,
+   "label": "GENIE-CV",
+   "hash": "0b79fc2fa10a26c38e86ba5910d9d019da1633fbb21176f624ad99a8f76160b4",
+   "dhash": "09cf210c8c76e570b1836344a289db87c620858049294273b6bb5a0b6639f7f0",
+   "xhash": "f63716a4a38cc274e5dbb997d5c5e3f74d73d7979c3f13059df379de5d1aa91f"
+  },
+  {
+   "kind": "patch",
+   "axes": 2,
+   "label": "",
+   "hash": "088af7a3c8c2baece7cf43f906a4d5398cd19a03585f7031a8ebffa670a24ba6",
+   "dhash": "65362754e08405fae1c2cb057fac5b3bb3720d24d7968060a35334f1ae8a7db0",
+   "xhash": "65362754e08405fae1c2cb057fac5b3bb3720d24d7968060a35334f1ae8a7db0"
+  },
+  {
+   "kind": "line",
+   "axes": 2,
+   "label": "Tune-v1",
+   "hash": "e3aa09c12477c41f62b104c8240bc4aed69ae4c8f389c4694c5afe2f228dad9a",
+   "dhash": "53f57e89389fbef89746f50da49b55d258378f8e993e1a9f5c3015dcd5b06a48",
+   "xhash": "cac02472eaeab8af810b30e9f5cb4a66cbe80699fe590976c52f95cd44c5a592"
+  },
+  {
+   "kind": "patch",
+   "axes": 2,
+   "label": "",
+   "hash": "c09ab9a74439147c17a81ee757f4096a39c35f8608d684d710d9c07954d5b66b",
+   "dhash": "44b3c861b1d5773126a40b70f198c135963e823ef4b19b108e0746e58487570e",
+   "xhash": "44b3c861b1d5773126a40b70f198c135963e823ef4b19b108e0746e58487570e"
+  },
+  {
+   "kind": "line",
+   "axes": 2,
+   "label": "NuWro",
+   "hash": "0bfb8d49a7cb61ba7ed3d67fdb7e5e225a535655d979e0e3f3226d4696fe9c76",
+   "dhash": "4bfccc5bdfcb9d00ed7f0c7cce44b0e2bcfe7153b4c339e1ea028a2a6569bb2b",
+   "xhash": "d0f1ccf8b8a4c3871f7bdb9b0b52e3e766fc9005909703fa0377232a4d947fb4"
+  },
+  {
+   "kind": "patch",
+   "axes": 2,
+   "label": "",
+   "hash": "f2d8f66db92636a4e7fd63391c7195ca7d7a3c7f36da85d9f35eb366064a08e0",
+   "dhash": "395f9c0f623587be9704d9f9768e2a8a639d15863864071d160b3e0648bab695",
+   "xhash": "395f9c0f623587be9704d9f9768e2a8a639d15863864071d160b3e0648bab695"
+  },
+  {
+   "kind": "line",
+   "axes": 2,
+   "label": "GiBUU",
+   "hash": "edf903f179dbbd29e3e7f5c51c7ade4902a8b1257f8677f3b8375d10a9bd456a",
+   "dhash": "43833142b366e999ebfbc5991a7c5e793348d95bb55c569516e35e4113b77f09",
+   "xhash": "4e45f2693925d1ae012df14afbebe49de0303987e4a997b954117376441ba547"
+  }
+ ],
+ "texts": [
+  [
+   10.0,
+   "$p_T$ (GeV/c)"
+  ],
+  [
+   10.0,
+   "\u22121"
+  ],
+  [
+   10.0,
+   "0"
+  ],
+  [
+   10.0,
+   "1"
+  ],
+  [
+   10.0,
+   "2"
+  ],
+  [
+   10.0,
+   "3"
+  ],
+  [
+   10.0,
+   "4"
+  ],
+  [
+   10.0,
+   "5"
+  ],
+  [
+   10.0,
+   "$d\\sigma/dp_T$ (cm$^2$/.../nucleon)"
+  ],
+  [
+   10.0,
+   "1e\u221238"
+  ],
+  [
+   10.0,
+   "0.0"
+  ],
+  [
+   10.0,
+   "0.5"
+  ],
+  [
+   10.0,
+   "1.0"
+  ],
+  [
+   10.0,
+   "1.5"
+  ],
+  [
+   10.0,
+   "2.0"
+  ],
+  [
+   10.0,
+   "2.5"
+  ],
+  [
+   10.0,
+   "3.0"
+  ],
+  [
+   10.0,
+   "3.5"
+  ],
+  [
+   10.0,
+   "4.0"
+  ],
+  [
+   10.0,
+   "$p_\\parallel$ (GeV/c)"
+  ],
+  [
+   10.0,
+   "\u221210"
+  ],
+  [
+   10.0,
+   "0"
+  ],
+  [
+   10.0,
+   "10"
+  ],
+  [
+   10.0,
+   "20"
+  ],
+  [
+   10.0,
+   "30"
+  ],
+  [
+   10.0,
+   "40"
+  ],
+  [
+   10.0,
+   "50"
+  ],
+  [
+   10.0,
+   "60"
+  ],
+  [
+   10.0,
+   "70"
+  ],
+  [
+   10.0,
+   "$d\\sigma/dp_\\parallel$ (cm$^2$/.../nucleon)"
+  ],
+  [
+   10.0,
+   "1e\u221239"
+  ],
+  [
+   10.0,
+   "0"
+  ],
+  [
+   10.0,
+   "1"
+  ],
+  [
+   10.0,
+   "2"
+  ],
+  [
+   10.0,
+   "3"
+  ],
+  [
+   10.0,
+   "4"
+  ],
+  [
+   10.0,
+   "5"
+  ],
+  [
+   10.0,
+   "6"
+  ],
+  [
+   10.0,
+   "7"
+  ],
+  [
+   10.0,
+   "$E_{\\rm avail}$ (GeV)"
+  ],
+  [
+   10.0,
+   "\u22120.5"
+  ],
+  [
+   10.0,
+   "0.0"
+  ],
+  [
+   10.0,
+   "0.5"
+  ],
+  [
+   10.0,
+   "1.0"
+  ],
+  [
+   10.0,
+   "1.5"
+  ],
+  [
+   10.0,
+   "2.0"
+  ],
+  [
+   10.0,
+   "2.5"
+  ],
+  [
+   10.0,
+   "3.0"
+  ],
+  [
+   10.0,
+   "3.5"
+  ],
+  [
+   10.0,
+   "$d\\sigma/dE_{\\rm avail}$ (cm$^2$/.../nucleon)"
+  ],
+  [
+   10.0,
+   "1e\u221238"
+  ],
+  [
+   10.0,
+   "0.0"
+  ],
+  [
+   10.0,
+   "0.5"
+  ],
+  [
+   10.0,
+   "1.0"
+  ],
+  [
+   10.0,
+   "1.5"
+  ],
+  [
+   10.0,
+   "2.0"
+  ],
+  [
+   10.0,
+   "2.5"
+  ],
+  [
+   8.0,
+   "GENIE-CV"
+  ],
+  [
+   8.0,
+   "Tune-v1"
+  ],
+  [
+   8.0,
+   "NuWro"
+  ],
+  [
+   8.0,
+   "GiBUU"
+  ],
+  [
+   8.0,
+   "unfolded (this work)"
+  ],
+  [
+   8.0,
+   "MINERvA ME FHC, $1.06\\times10^{21}$ POT"
+  ]
+ ],
+ "text_overlaps": [
+  [
+   "$p_T$ (GeV/c)",
+   "2",
+   76.7
+  ],
+  [
+   "$d\\sigma/dp_T$ (cm$^2$/.../nucleon)",
+   "1.0",
+   99.1
+  ],
+  [
+   "$d\\sigma/dp_T$ (cm$^2$/.../nucleon)",
+   "1.5",
+   122.6
+  ],
+  [
+   "$d\\sigma/dp_T$ (cm$^2$/.../nucleon)",
+   "2.0",
+   120.9
+  ],
+  [
+   "$d\\sigma/dp_T$ (cm$^2$/.../nucleon)",
+   "2.5",
+   120.9
+  ],
+  [
+   "$d\\sigma/dp_T$ (cm$^2$/.../nucleon)",
+   "3.0",
+   16.7
+  ],
+  [
+   "$p_\\parallel$ (GeV/c)",
+   "30",
+   153.4
+  ],
+  [
+   "$E_{\\rm avail}$ (GeV)",
+   "1.5",
+   192.8
+  ]
+ ]
+}

@@ -1,0 +1,141 @@
+{
+ "artists_py_sha256": "feb486fefd363c0d80174fc034c82f53874558de718736af2c34c6b5344de041",
+ "size_in": [
+  6.6,
+  4.6
+ ],
+ "items": [
+  {
+   "kind": "patch",
+   "axes": 0,
+   "label": "unfolded data",
+   "hash": "f694a7969f6392d8a0da7d69a7625e1ac12486adb89d428036a11585f6bbd3b2",
+   "dhash": "fcf8b4192835e56a267d303446fc302a303183a81969990dec25efebce64236c",
+   "xhash": "fcf8b4192835e56a267d303446fc302a303183a81969990dec25efebce64236c"
+  },
+  {
+   "kind": "LineCollection",
+   "axes": 0,
+   "label": "_nolegend_",
+   "hash": "38e458b9947ea36f9cc0543f701e701ea39f29e7783b7074a15eebb0f5ffef67",
+   "dhash": "169fcddec36cc51fd09a29937359e40e889ebe3dc599a1bcf6f0f8186acdfdff",
+   "xhash": "169fcddec36cc51fd09a29937359e40e889ebe3dc599a1bcf6f0f8186acdfdff"
+  },
+  {
+   "kind": "line",
+   "axes": 0,
+   "label": "_nolegend_",
+   "hash": "60aab3536e909545f46a6d375e6a19f85f4f7e46f1e6dc464b66c44d46b5a04d",
+   "dhash": "454cd1ed5f4deeedc4722766a512c8cb48b6f0e44f2c5a5c7f8197ea8276f200",
+   "xhash": "ab14886da402ffab93a100413334c276b08aee4546a0de82853606f38cf552b5"
+  },
+  {
+   "kind": "line",
+   "axes": 0,
+   "label": "_nolegend_",
+   "hash": "60aab3536e909545f46a6d375e6a19f85f4f7e46f1e6dc464b66c44d46b5a04d",
+   "dhash": "454cd1ed5f4deeedc4722766a512c8cb48b6f0e44f2c5a5c7f8197ea8276f200",
+   "xhash": "ab14886da402ffab93a100413334c276b08aee4546a0de82853606f38cf552b5"
+  }
+ ],
+ "texts": [
+  [
+   8.0,
+   "catch bin $[3,100]$ GeV: 6.74e-41"
+  ],
+  [
+   10.0,
+   "$E_{\\mathrm{avail}}$ (GeV)"
+  ],
+  [
+   10.0,
+   "0.0"
+  ],
+  [
+   10.0,
+   "0.5"
+  ],
+  [
+   10.0,
+   "1.0"
+  ],
+  [
+   10.0,
+   "1.5"
+  ],
+  [
+   10.0,
+   "2.0"
+  ],
+  [
+   10.0,
+   "2.5"
+  ],
+  [
+   10.0,
+   "3.0"
+  ],
+  [
+   10.0,
+   "$d\\sigma/dE_{\\mathrm{avail}}$ (cm$^2$/nucleon/GeV)"
+  ],
+  [
+   10.0,
+   "1e\u221238"
+  ],
+  [
+   10.0,
+   "0.0"
+  ],
+  [
+   10.0,
+   "0.5"
+  ],
+  [
+   10.0,
+   "1.0"
+  ],
+  [
+   10.0,
+   "1.5"
+  ],
+  [
+   10.0,
+   "2.0"
+  ],
+  [
+   10.0,
+   "2.5"
+  ],
+  [
+   9.0,
+   "unfolded data"
+  ],
+  [
+   8.0,
+   "MINERvA ME FHC, $1.06\\times10^{21}$ POT"
+  ]
+ ],
+ "text_overlaps": [
+  [
+   "$E_{\\mathrm{avail}}$ (GeV)",
+   "1.5",
+   96.0
+  ],
+  [
+   "$d\\sigma/dE_{\\mathrm{avail}}$ (cm$^2$/nucleon/GeV)",
+   "0.5",
+   42.7
+  ],
+  [
+   "$d\\sigma/dE_{\\mathrm{avail}}$ (cm$^2$/nucleon/GeV)",
+   "1.0",
+   73.1
+  ],
+  [
+   "$d\\sigma/dE_{\\mathrm{avail}}$ (cm$^2$/nucleon/GeV)",
+   "1.5",
+   73.1
+  ]
+ ]
+}

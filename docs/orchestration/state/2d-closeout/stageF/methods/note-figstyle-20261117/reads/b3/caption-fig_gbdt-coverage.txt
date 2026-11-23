@@ -1,0 +1,2 @@
+fig:gbdt-coverage (sec_5d.tex)
+Development assessment of $R$: truth containment in $\hat f\pm\sigma$ for 42 EW functionals, with nominal-bootstrap $\sigma$ and historical truth deformations. Right: EW7 ($\Eavail\in[0.1,0.2)$, $W\in[1.1,1.4)$ GeV) and EW41 (both above 3 GeV), pointwise 95\% Clopper--Pearson bounds. Dotted: nominal Gaussian 68.27\%. Zero of 20 intervals contain truth, with upper 95\% bound 16.8\%. This does not imply zero population coverage. Neither total uncertainty nor a newly validated interval is shown.

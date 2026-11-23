@@ -1,0 +1,8 @@
+key	reason	phase
+ba38397f83	Lane preamble of records_compression_lr ("This section holds the procedure and supporting detail that the compressed note no longer prints"): describes the old lane grouping, not the new section	C
+1f5e92235f	Lane preamble of records_compression_lr_p4: describes the old lane grouping	C
+9011dd07b2	Lane preamble of records_compression_h3 (introduction): describes the old lane grouping	C
+64341dd735	Lane preamble of the Part 3 reproduction group: describes the old lane grouping	C
+9dbbb7da72	Lane preamble of the Part 6 limitations group: says the note points here from Table tab:validity and sec:limitations, which the pointer drop (DECISION-20261121b) removes	C
+61680f9275	Lane preamble of records_compression_h3_p3c: describes the old grouping and the italic lead-in convention that Option B demotes	C
+628be9d6c4	Lane preamble of records_compression_cv (validation): describes the old lane grouping	C

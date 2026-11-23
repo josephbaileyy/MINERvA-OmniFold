@@ -1,0 +1,37 @@
+# style pass B meaning read, pass 1: codex-school gpt-6.1-sol, high, read-only; prompt styleB-prompt.txt, records styleB-records.txt
+**Question 1 — remaining changed text**
+
+| Row | Verdict | Reason |
+|---|---|---|
+| S6 | PASS | The defects, corrections, first-order cancellation, unavailable-input/code limitation, band-size referent and reconstructed-space qualifier remain unchanged in meaning. |
+| C8 | PASS | Numerical reproduction and agreement remain supported, and recording a configuration is still distinguished from reproducing a result from that record. |
+| F4 | FAIL | “For the purposes, and within the limits, stated in Table~\ref{tab:result-status}” imports R3’s estimator-seed-only scope without accounting for the projected-uncertainty scaling and per-source attribution uses documented in R4–R5. |
+| T8 | PASS | R1 explicitly records that no audit quantity had been computed when the conditions were frozen, and R2 confirms their subsequent evaluation; the narrower timing clause and “in the median replica” are supported despite earlier reported numbers already having been read. |
+
+**Question 2 — removed or shortened items**
+
+| Item | Classification and disposition |
+|---|---|
+| S6: “(the May sweep)” | **LEDGER** — The internal name adds nothing necessary once the earlier budget and its mismatch remain identified. |
+| S6: EtaNCEL demonstration, including “all 205 truth-input cells” | **LEDGER** — This illustrates the retained mismatch without adding a separate applicability or reproducibility limitation. |
+| S6: “so neglecting them everywhere is unsupported” | **LEDGER** — The retained construction defect, 60-of-205 diagnostic and reconstructed-space qualification preserve its substantive basis. |
+| S6: lateral-bands clause | **NEEDED, retained** — Re-unfolding re-selected universes defines the quoted construction and remains explicitly in §4.1, at new_sec_systematics.tex:12. |
+| S6: “May” becoming “earlier” | **NEEDED, retained** — The unavailable input and code revision remain tied to the earlier sweep, preserving the reproducibility limitation. |
+| S6: “the two bands” becoming “the bands” | **LEDGER** — Both bands remain named, so removing the explicit count changes no substantive information. |
+| C8: \(9\times10^{-12}\) | **LEDGER** — The precise residual is corroborative detail; numerical repeatability remains stated. |
+| C8: \(7\times10^{-12}\) | **LEDGER** — The exact agreement residual may leave while the identity comparison with the refined unfold remains. |
+| C8: \(1.4\times10^{-11}\) | **LEDGER** — Both reproductions and their distinct provenance remain, while the controlled seed-attribution comparison retains its separate tolerance. |
+| C8: “equals” becoming “agrees with” | **LEDGER** — Equality qualified by a finite numerical tolerance already denotes numerical agreement, so this wording removes no independent identity claim. |
+| F4: “so it cannot meet that requirement” | **NEEDED, retained** — The unmet preproduction requirement remains explicit in the statement that the required null bound was not fixed before production. |
+| F4: “nevertheless” | **NEEDED, retained in substance** — Use despite non-passing, not-to-be-used metadata remains disclosed by the adjacent use and status statements, subject to the separate F4 scope failure above. |
+| T8: overlap agenda | **LEDGER** — The historical agenda duplicates the retained overlap condition and the explicit warning that its outcome does not establish absence of overlap. |
+| T8: noise-treatment agenda | **LEDGER** — Replica-based noise treatment remains represented by the retained replica-spread condition and the section’s printed noise limitations. |
+| T8: differing 5A/5B cell patterns despite agreeing sizes | **LEDGER** — This records an audit question rather than a finding used to justify the reported covariance or establish its validation. |
+| T8: rank-two-stability agenda | **LEDGER** — The retained replica-plane condition preserves the relevant stability check, while the block’s rank remains printed in the section. |
+| T8: “The addition therefore followed the data” | **NEEDED, retained** — The first sentence still explicitly states both the post-observation choice and its consequence for the addition. |
+
+No NEEDED item was lost from the printed text; App. I supplies no additional rescue needed for these deletions.
+
+No disclosure of a choice made after results were seen disappeared: T8 retains that disclosure explicitly, and the other printed post-results disclosures are unchanged.
+
+OVERALL: FAIL — Question 1: F4; Question 2: no lost NEEDED items.

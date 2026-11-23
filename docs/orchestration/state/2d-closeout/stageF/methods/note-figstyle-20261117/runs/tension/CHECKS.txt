@@ -1,0 +1,36 @@
+# tier 2 tension (2026-11-18T02:28:18Z): ROOT 6.40.04, matplotlib 3.10.8, numpy 1.26.4; inputs xsec.root a5c13fc3 and cov_ptpl_minerva_inclusive_6GeV.root 6c6dce72 (the fetch of 2026-11-17); 
+== tension: arm 0 against the cluster capture (tension): colour-free data and texts
+-- tension_chi2_map.png.json (numeric against tension, rtol 1e-5)
+items: 3 reference, 3 local
+arrays compared: 8; largest relative difference 8.86e-08 (rtol 1e-05); sign-flipped arrays 0
+NUMERIC-IDENTITY :: PASS
+data: not judged here
+texts: 27 cluster, 27 local; equal
+DATA-IDENTITY :: PASS
+-- tension_mode_maps.png.json (numeric against tension, rtol 1e-5)
+items: 18 reference, 18 local
+arrays compared: 48; largest relative difference 2.93e-06 (rtol 1e-05); sign-flipped arrays 0
+NUMERIC-IDENTITY :: PASS
+data: not judged here
+texts: 162 cluster, 162 local; equal
+DATA-IDENTITY :: PASS
+-- tension_spectrum.png.json (numeric against tension, rtol 1e-5)
+items: 3 reference, 3 local
+arrays compared: 3; largest relative difference 6.39e-10 (rtol 1e-05); sign-flipped arrays 0
+NUMERIC-IDENTITY :: PASS
+data: not judged here
+texts: 41 cluster, 41 local; equal
+DATA-IDENTITY :: PASS
+== tension: arm 1 against arm 0
+captures: tension_chi2_map.pdf.json tension_chi2_map.png.json tension_mode_maps.pdf.json tension_mode_maps.png.json tension_spectrum.pdf.json tension_spectrum.png.json 
+  equal  tension/tension_chi2_map.pdf.json: 3 data artists, colours as the palette maps them, line styles as declared
+  equal  tension/tension_chi2_map.png.json: 3 data artists, colours as the palette maps them, line styles as declared
+  equal  tension/tension_mode_maps.pdf.json: 18 data artists, colours as the palette maps them, line styles as declared
+  equal  tension/tension_mode_maps.png.json: 18 data artists, colours as the palette maps them, line styles as declared
+  equal  tension/tension_spectrum.pdf.json: 3 data artists, colours as the palette maps them, line styles as declared
+  equal  tension/tension_spectrum.png.json: 3 data artists, colours as the palette maps them, line styles as declared
+COMPARE :: PASS
+text overlaps tension_chi2_map: 0 -> 0
+text overlaps tension_mode_maps: 0 -> 0
+text overlaps tension_spectrum: 1 -> 1 [['125', '90% of $\\chi^2$']]
+ARMS tension :: PASS

@@ -1,0 +1,35 @@
+Excerpts of the records the cut log cites. Brackets give the first commit.
+
+=== docs/orchestration/PREREG-20261012-5d-injected-w-closure.md:1-16 and :64-70 [b11ff40d0, 2026-10-12 15:28:41 -0700]
+# Pre-registration: corrected 5D injected-W-shape closure (2026-10-12)
+
+**Status: PRE-REGISTERED, committed and pushed before submission.** §3–§5 do not change after the
+job starts. Any deviation is recorded in the outcome record as a deviation, not edited in here.
+
+Authorization: Joseph, 2026-10-12 ("just do the injected shape closure"), also within his standing
+approval for single jobs under 12 h (`standing-compute-approval-12h`). One CPU job on `m3246`,
+`shared` QOS, walltime cap 6 h; expected well under one node-hour.
+
+## 1. Why this test, and what an answer cannot license
+
+The 2026-06-07 5D "injected-W closure" (job `54062313`, run log commit `aecd0d22`) used the driver's
+default bump centre `--closure-center 0.3` with sigma 0.15 GeV. Physical W is above about 0.94 GeV,
+so the bump's weight change was below 1e-8 (the run printed `injected mean factor=1.0000`). It was a
+null self-closure, recorded as a pass because no threshold was fixed in advance and nothing checked
+that the injection was nonzero (note Sec. 5.1, Table 4; PR #102, #103). No 5D injected-shape
+   `bottom_line_ratio()` so that the 5D score calls the same code as the 2D and 3D recoveries:
+   `RMS((unf−ref)/ref) / RMS((ref−nom)/nom)` over the feature bins, those whose
+   `|ref/nom − 1|` exceeds the all-bin injected RMS. It is applied to the W-marginal projections
+   (driver's `project_axis`) of the injected arm's unfolded `hXSecND` and reference
+   `hClosureRefND`, and of arm N's `hClosureRefND`. **PASS iff ratio < 0.20**, the instrument's
+   default tolerance (residual at least 5× smaller than the feature). One deviation from the 3D
+   operand: 3D's `nom` was the data-unfolded 3D projection; here `nom` is the nominal MC truth,
+
+=== git log: e885a20f9 2026-10-13 02:51:52 -0700 [5d] Record the corrected 5D injected-W closure: PASS, narrow (VL176)
+
+=== docs/analysis-note/sec_validation.tex:125 and :133 (source comments) at 4a997b89d
+% Methods-paper sync fix round: aligned with paper_body.tex sec:validation (no record of a threshold for the 3D and 4D closures).
+% Sources: 2D rows sec_validation.tex "Closure" and "Injected-feature recovery"; 3D sec_3d.tex sec:3d-closure; 4D git show 798f0c89 (job 53925395, ratios 1.007/0.989/1.005/1.000..., mean factor 1.0142); 5D W bump (corrected, 2026-10-12) job 59719296 at b11ff40d, PREREG-20261012-5d-injected-w-closure.md, docs/orchestration/state/wclosure-5d-20261012/closure_5d_w_bottom_line.json (VL176): mean factor 1.0529, W-marginal feature bin [1.1,1.4] injected 0.2310 residual 0.0416 ratio 0.1799, W ratios 1.031/0.958/1.027/0.998/1.000/1.000, 5D median 1.0070 std 0.0371 max|dev| 0.1515, joint (Eavail,W) med
+
+=== docs/analysis-note/sec_3d.tex:105 (Search line) at 4a997b89d
+% Search: 3D closure threshold; E_avail bump threshold; threshold set in advance for the 3D closure (3d-unfolding/3D_OMNIFOLD_STATUS.md has no threshold; sec_validation.tex tab:closure-map prints "no predeclared threshold" for the 3D bump) @ 1a015eef

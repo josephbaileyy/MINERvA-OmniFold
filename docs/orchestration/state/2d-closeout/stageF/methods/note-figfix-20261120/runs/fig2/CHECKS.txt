@@ -1,0 +1,18 @@
+# fig2 edges (Fig. 2 = fig:xsec; the director's item (b), 2026-11-20), 2026-11-21T01:14:45Z: capture_palette.py <capture> note-figstyle-20261117/tools/remap_anc.py <anc> <tool> <xsec.root> <anc> <out>; figenv/rootmpl3108 (ROOT 6.40.04 matplotlib 3.10.8 numpy 1.26.4), BLAS threads 1; inputs xsec.root a5c13fc3 and cov_ptpl_minerva_inclusive_6GeV.root 6c6dce72 (the read-only fetch of 2026-11-17); base draft 9e116f555
+== arm 0: note-figpass-20261119/tools/compose_tier2.py, unchanged (sha256 856a8d01aac7)
+[compose_tier2] wrote 4 figures; mosaic panels matched 30 of 30
+== arm 1: tools/compose_fig2_edges.py (sha256 415048e364ac)
+[compose_tier2] wrote 4 figures; mosaic panels matched 30 of 30
+[compose_fig2_edges] redrew the published prediction on the projection edges in 2 figures; edge check: failed before on that line only, passes after on both axes
+MEFHC_5iter_xsec_proj_pt: edge check before the fix {'top': ["line 'Tune v1: published prediction': steps-mid steps change or end off the bin edges"], 'ratio': []}; after {'top': [], 'ratio': []}
+MEFHC_5iter_xsec_proj_pz: edge check before the fix {'top': ["line 'Tune v1: published prediction': steps-mid steps change or end off the bin edges"], 'ratio': []}; after {'top': [], 'ratio': []}
+== arm 0 PDFs against the installed files at the base (bytes_but_date.py)
+EQUAL-BUT-DATE MEFHC_5iter_xsec_proj_pt.pdf: /CreationDate (D:20261118204147-07'00') vs /CreationDate (D:20261120171038-07'00')
+EQUAL-BUT-DATE MEFHC_5iter_xsec_proj_pz.pdf: /CreationDate (D:20261118204147-07'00') vs /CreationDate (D:20261120171039-07'00')
+== tools/check_fig2_edges.py (sha256 619a326104d7): committed capture runs/markers/capture/arm1, arm 0 capture, arm 1 capture
+MEFHC_5iter_xsec_proj_pt: arm 0 = committed capture (18 items) True; arm 1 same items and order True; 17 equal, 1 differ, the published-prediction line only and only its drawing True (x 14 centres -> 15 edges, y equal on the bins); strings equal True: ok
+MEFHC_5iter_xsec_proj_pz: arm 0 = committed capture (18 items) True; arm 1 same items and order True; 17 equal, 1 differ, the published-prediction line only and only its drawing True (x 16 centres -> 17 edges, y equal on the bins); strings equal True: ok
+CHECK-FIG2-EDGES :: PASS
+== installed copies (docs/analysis-note/figures) = arm 1's outputs:
+  MEFHC_5iter_xsec_proj_pt.pdf: yes 9cfa6330e3a4
+  MEFHC_5iter_xsec_proj_pz.pdf: yes e83da772e8fd

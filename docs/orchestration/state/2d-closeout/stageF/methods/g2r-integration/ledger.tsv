@@ -1,0 +1,50 @@
+# G2R fact ledger, built by g2r_ledger.py build from ANCHORS.tsv; columns: V id file old new new-context old-context source key
+V	g2r-tabvs-univ-median	app_statmethods.tex	5.935	5.926	median $5.926\%$; Table~\ref{tab:band	median $5.935\%$; Table~\ref{tab:band	values_table.tsv	tabvs-univ-median
+V	g2r-tabvs-q-median	app_statmethods.tex	6.414	6.463	median $6.463\%$; Table~\ref{tab:comb	median $6.414\%$; Table~\ref{tab:comb	values_table.tsv	tabvs-q-median
+V	g2r-band-flux	app_statmethods.tex	3.712	3.723	constraint-weighted) & $3.723\%$ \\	constraint-weighted) & $3.712\%$ \\	values_table.tsv	band-flux
+V	g2r-band-mares	app_statmethods.tex	0.627	0.507	MaRES & $0.507\%$ \\	MaRES & $0.627\%$ \\	values_table.tsv	band-mares
+V	g2r-band-mvres	app_statmethods.tex	0.362	0.404	MvRES & $0.404\%$ \\	MvRES & $0.362\%$ \\	values_table.tsv	band-mvres
+V	g2r-band-maccqe	app_statmethods.tex	0.336	0.328	MaCCQE & $0.328\%$ \\	MaCCQE & $0.336\%$ \\	values_table.tsv	band-maccqe
+V	g2r-band-univ-median	app_statmethods.tex	5.935	5.926	\shortstack[l]{$\boxed{5.926\%}$ (median)\\$\sqrt{\T	\shortstack[l]{$\boxed{5.935\%}$ (median)\\$\sqrt{\T	values_table.tsv	band-univ-median
+V	g2r-band-univ-trace	app_statmethods.tex	2.689	2.686	\\$\sqrt{\Tr\mathbf{C}}=2.686\times10^{-39}$} \\	\\$\sqrt{\Tr\mathbf{C}}=2.689\times10^{-39}$} \\	values_table.tsv	band-univ-trace
+V	g2r-grp-models	app_statmethods.tex	1.401	1.428	tion $3.437\%$, Models $1.428\%$, Flux	tion $3.437\%$, Models $1.401\%$, Flux	values_table.tsv	grp-models
+V	g2r-grp-flux	app_statmethods.tex	3.712	3.723	$3.723\%$, Hadronic response $	$3.712\%$, Hadronic response $	values_table.tsv	grp-flux
+V	g2r-grp-hadronic	app_statmethods.tex	0.743	0.752	\%$, Hadronic response $0.752\%$, Statistical $0.676\	\%$, Hadronic response $0.743\%$, Statistical $0.676\	values_table.tsv	grp-hadronic
+V	g2r-tabcomb-univ-median	app_statmethods.tex	5.935	5.926	2.686\times10^{-39}$ & $5.926\%$ \\	2.689\times10^{-39}$ & $5.935\%$ \\	values_table.tsv	tabcomb-univ-median
+V	g2r-tabcomb-q-trace	app_statmethods.tex	2.821	2.818	ombined (block sum)} & $2.818\times10^{-39}$ & $\boxe	ombined (block sum)} & $2.821\times10^{-39}$ & $\boxe	values_table.tsv	tabcomb-q-trace
+V	g2r-tabcomb-q-median	app_statmethods.tex	6.414	6.463	imes10^{-39}$ & $\boxed{6.463\%}$ \\	imes10^{-39}$ & $\boxed{6.414\%}$ \\	values_table.tsv	tabcomb-q-median
+V	g2r-comb-q-median-prose	app_statmethods.tex	6.414	6.463	es. The per-bin median $6.463\%$ is not the quadratur	es. The per-bin median $6.414\%$ is not the quadratur	values_table.tsv	comb-q-median-prose
+V	g2r-comb-q-vs-ec	app_statmethods.tex	6.462	6.468	\SI{6.468}{\percent}. The univers	\SI{6.462}{\percent}. The univers	values_table.tsv	comb-q-vs-ec
+V	g2r-comb-univ-plus-stat	app_statmethods.tex	5.982	5.976	l blocks together give $5.976\%$, again evaluated on	l blocks together give $5.982\%$, again evaluated on	values_table.tsv	comb-univ-plus-stat
+V	g2r-worked-q-median	app_statmethods.tex	6.414	6.463	igma$ & $\uqPaper\%$ & $6.463\%$ \\	igma$ & $\uqPaper\%$ & $6.414\%$ \\	values_table.tsv	worked-q-median
+V	g2r-floor-oo-univstat	app_statmethods.tex	22.29	22.38	$\chi^{2}/\mathrm{ndf}=22.38$ (\S\ref{sec:rank}).	$\chi^{2}/\mathrm{ndf}=22.29$ (\S\ref{sec:rank}).	values_table.tsv	floor-oo-univstat
+V	g2r-pull-comb-rms	app_statmethods.tex	0.388	0.389	offset, and standard deviation $\boxed{0.389}$. For the exact-split	offset, and RMS $\boxed{0.388}$. For the exact-split	values_table.tsv	pull-comb-rms
+V	g2r-cond-univ-1e12	app_statmethods.tex	9.78	7.45	}(\mathbf{C}^{\syst}) = 7.45\times10^{11},	}(\mathbf{C}^{\syst}) = 9.78\times10^{11},	values_table.tsv	cond-univ-1e12
+V	g2r-rank-univ-1e10	app_statmethods.tex	124	123	($123$ and $7.54\times10^{9}$	($124$ and $9.45\times10^{9}$	values_table.tsv	rank-univ-1e10
+V	g2r-cond-univ-1e10	app_statmethods.tex	9.45	7.54	($123$ and $7.54\times10^{9}$ above $10^	($124$ and $9.45\times10^{9}$ above $10^	values_table.tsv	cond-univ-1e10
+V	g2r-cond-univstat-1e12	app_statmethods.tex	7.91	7.95	{\max}$; $\mathrm{cond}=7.95\times10^{11}$ by the de	{\max}$; $\mathrm{cond}=7.91\times10^{11}$ by the de	values_table.tsv	cond-univstat-1e12
+V	g2r-oo-q	app_statmethods.tex	21.77	21.96	($21.96$ for all four blocks) f	($21.77$ for all four blocks) f	values_table.tsv	oo-q
+V	g2r-rank-q-1e10	app_statmethods.tex	197	198	ed covariance has rank $198$ above	ed covariance has rank $197$ above	values_table.tsv	rank-q-1e10
+V	g2r-audit-pull-rms	app_statmethods.tex	0.388	0.389	nd pull mean/standard deviation $0.034/0.389$.	nd pull mean/RMS $0.034/0.388$.	values_table.tsv	audit-pull-rms
+V	g2r-audit-pull-rms-b	app_statmethods.tex	0.388	0.389	Pull standard deviation $= 0.389$ & \S\ref{sec:pull} &	Pull RMS $= 0.388$ & \S\ref{sec:pull} &	values_table.tsv	audit-pull-rms-b
+V	g2r-audit-q-median	app_statmethods.tex	6.414	6.463	ombined median rel.\ $= 6.463\%$ & \S\ref{sec:combine	ombined median rel.\ $= 6.414\%$ & \S\ref{sec:combine	values_table.tsv	audit-q-median
+V	g2r-tabcomb-univ-trace	app_statmethods.tex	2.689	2.686	Systematic (universe sweep $+$ norm) & $2.686	Systematic (universe sweep $+$ norm) & $2.689	values_table.tsv	tabcomb-univ-trace
+V	g2r-oo-univstat	app_statmethods.tex	22.29	22.38	\mathbf{C}^{\boot}$ gives $\chi^{2}/\mathrm{ndf}=22.38	\mathbf{C}^{\boot}$ gives $\chi^{2}/\mathrm{ndf}=22.29	values_table.tsv	oo-univstat
+V	g2r-res-q-vs-ec	sec_results.tex	6.462	6.468	a per-bin median of \SI{6.468}{\percent}.	a per-bin median of \SI{6.462}{\percent}.	values_table.tsv	res-q-vs-ec
+V	g2r-tabuq-univ-median	sec_results.tex	5.935	5.926	& \num{2.69e-39} & \SI{5.926}{\percent} \\	& \num{2.69e-39} & \SI{5.935}{\percent} \\	values_table.tsv	tabuq-univ-median
+V	g2r-tabuq-q-median	sec_results.tex	6.414	6.463	& \num{2.82e-39} & \SI{6.463}{\percent} \\	& \num{2.82e-39} & \SI{6.414}{\percent} \\	values_table.tsv	tabuq-q-median
+V	g2r-tabuq-caption-q-median	sec_results.tex	6.414	6.463	uncertainty (\SI{6.463}{\percent}) is below th	uncertainty (\SI{6.414}{\percent}) is below th	values_table.tsv	tabuq-caption-q-median
+V	g2r-cpl-raw-vs-s5	sec_systematics.tex	34.8	33.8	33.8 against the other block	34.8 against the other block	values_table.tsv	cpl-raw-vs-s5
+V	g2r-cpl-effect-max	sec_systematics.tex	39.1	38.3	Per bin, maximum & \SI{38.3}	Per bin, maximum & \SI{39.1}	values_table.tsv	cpl-effect-max
+V	g2r-cpl-share-cell	sec_systematics.tex	10.6	10.7	\SI{5.8}{\percent} & \SI{10.7}	\SI{5.8}{\percent} & \SI{10.6}	values_table.tsv	cpl-share-cell
+V	g2r-cpl-raw-vs-q	sec_systematics.tex	2.59	2.60	alone and 2.60 with the block added	alone and 2.59 with the block added	values_table.tsv	cpl-raw-vs-q
+V	g2r-centring-min-rel	sec_systematics.tex	0.10	0.12	is \SIrange{0.12}	is \SIrange{0.10}	values_table.tsv	centring-min-rel
+V	g2r-centring-max-rel	sec_systematics.tex	0.55	0.57	{0.57}{\percent} of the central value	{0.55}{\percent} of the central value	values_table.tsv	centring-max-rel
+V	g2r-qr-cmodel-p84	sec_systematics.tex	12.32	12.26	(84th percentile \SI{12.26}	(84th percentile \SI{12.32}	values_table.tsv	new-QR-plus-Cmodel-p84
+V	g2r-qr-cmodel-max	sec_systematics.tex	24.49	24.60	maximum \SI{24.60	maximum \SI{24.49	cmodel/cmodel_R.json	cell_rel_sigma.Q_R_plus_C_model.max
+V	g2r-m-chiCombined	values.tex	0.929	0.943	\newcommand{\chiCombined}{0.943}	\newcommand{\chiCombined}{0.929}	values_table.tsv	m-chiCombined
+V	g2r-m-chiCombinedLog	values.tex	0.945	0.959	\newcommand{\chiCombinedLog}{0.959}	\newcommand{\chiCombinedLog}{0.945}	values_table.tsv	m-chiCombinedLog
+V	g2r-m-chiCombinedSubStat	values.tex	6.72	6.95	\newcommand{\chiCombinedSubStat}{6.95}	\newcommand{\chiCombinedSubStat}{6.72}	values_table.tsv	m-chiCombinedSubStat
+V	g2r-m-uqMedian	values.tex	6.41	6.46	\newcommand{\uqMedian}{6.46}	\newcommand{\uqMedian}{6.41}	values_table.tsv	m-uqMedian
+V	g2r-m-fluxBand	values.tex	3.71	3.72	\newcommand{\fluxBand}{3.72}	\newcommand{\fluxBand}{3.71}	values_table.tsv	m-fluxBand
+V	g2r-qr-cmodel-median	values.tex	7.90	7.93	\newcommand{\qrCmodelMedian}{7.93}	\newcommand{\qrCmodelMedian}{7.90}	values_table.tsv	new-QR-plus-Cmodel-median

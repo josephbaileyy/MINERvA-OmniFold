@@ -1,0 +1,29 @@
+ssh rc=0
+node login34 staged sha256 4e713548e6c54f694ae272c4e439ea739e4a35bfd78bc378be3c9c54d6a4c933
+detached pid 1852834, output /dev/shm/figc-family1b.1852379.sh.out
+figc family1b host=login34 utc=2026-11-14T10:36:24Z sha256=4e713548e6c54f694ae272c4e439ea739e4a35bfd78bc378be3c9c54d6a4c933
+== fence (our jobs; STOP on ll5d_|rsn_|e96data|rdx_|t2a)
+FENCE: pass
+== overlap (1164 guard paths)
+OVERLAP: none; IN /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_MEFHC.root size 4825716683 dev:inode 3592384858:882725212074833886
+== deploy (fresh clone at M)
+HEAD 7d7b85522cd46fceb017c9cec61b03f06c214192; porcelain --ignored lines: 0
+env: python 3.11.14 matplotlib 3.10.8 numpy 1.26.4
+== extended arm (one RDataFrame pass)
+ctrl-ext rc=0 wall=0:26.13 cpu_s=86.15
+== from-arrays arm (no ROOT)
+ctrl-ext-from rc=0 wall=0:05.43 cpu_s=12.9
+deploy porcelain --ignored after: 0
+== products
+815e6c0a2bfcdbf95ca5c5b53c344f1f53410043164675eee92639125fc9dee2  ext/control_plots_ext_arrays.npz
+afeab12f687809d1fca6b0a04d83b4e2ac46b0bb0637a022acd3bf32b120aa1f  ext/control_plots.pdf
+0a0ea5d1861b01ea6b610ca8045a6140aeba3ab5ec2ba5c331c56fb2e54cea03  ext/control_plots.png
+4711b29664b493b2a11fac82d0edc01afcbf6626061dd4f4b2a51f9826b7d7b4  ext-from/control_plots.pdf
+0a0ea5d1861b01ea6b610ca8045a6140aeba3ab5ec2ba5c331c56fb2e54cea03  ext-from/control_plots.png
+aa5137c9c78f06c015ebc585f8b8bed818d6a1a138c38f0fbebf551fc7b47a50  ext-from/migration_resolution.pdf
+a6109427d32cb5d85140d672f19dd7acd286186e264a5a63d8db91526e31be0f  ext-from/migration_resolution.png
+3a194590880ec406cc5a1a098ab3c1bb71eaaccb169fe9d3f50ea308e2e2af60  ext/migration_resolution.pdf
+a6109427d32cb5d85140d672f19dd7acd286186e264a5a63d8db91526e31be0f  ext/migration_resolution.png
+16e048483b43f368c1dc6e2d9835985c540b29a1e8f1ccc5174b43e8fc30c24b  /pscratch/sd/j/josephrb/note-figstyle-20261114/f1b/post-f1b.tar.gz
+figc family1b rc=0 utc=2026-11-14T10:38:01Z
+script rc=0

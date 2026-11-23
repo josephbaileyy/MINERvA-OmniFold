@@ -7,7 +7,7 @@ Several statements in this note rest on records in the analysis repository rathe
 
 \textbf{This appendix is provenance, not evidence.} Nothing here is a result, and no statement in the body becomes stronger because its record is listed. Where a claim depends on a record whose own limitations matter---most importantly the adopted covariance's four measurements (\S\ref{sec:eavailw-adopted})---those limitations are stated at the claim, not delegated here.
 
-The tags are stable. Rows are ordered by the section that cites them. Table~\ref{tab:prov-paths} lists records with a repository path; Table~\ref{tab:prov-trackers} lists tracker rows and code identifiers that have no document of their own. Records cited only by the point-cloud (PET) studies moved with them to the companion PET note on 2026-10-12 (App.~\ref{sec:pet}).
+The tags are stable. Rows are ordered by the section that cites them. Table~\ref{tab:prov-paths} lists records with a repository path; Table~\ref{tab:prov-trackers} lists tracker rows and code identifiers that have no document of their own. Records cited only by the point-cloud (PET) studies moved with them to the companion PET note on 2026-10-12 (the earlier note's appendix pointing to the companion PET note).
 
 {\small
 \begin{longtable}{@{}llp{0.50\textwidth}@{}}
@@ -31,7 +31,7 @@ Tag & Cited at & Record \\
   published data release's bin-mapping file~\cite{MINERvA:2021owq}, with its \texttt{README} \\
 \texttt{coverage-fixed-truth} & \S\ref{sec:uq-boot}, \S\ref{sec:coverage} &
   see below \\
-\texttt{coverage-toys} & \S\ref{sec:val-other} &
+\texttt{coverage-toys} & \S\ref{sec:pull-diagnostic} &
   see below \\
 \texttt{flux-repair} & \shortstack[l]{\S\ref{sec:3d-models}, \S\ref{sec:eavailw-band},\\
   App.~\ref{app:release-schema}, App.~\ref{app:history}} &
@@ -45,13 +45,13 @@ Tag & Cited at & Record \\
 \texttt{response-diagnostic} & \S\ref{sec:val-departure} &
   \repopath{docs/orchestration/state/next-preparation-20261009/d-id/REPORT.md} at commit
   \texttt{7d173bd0} \\
-\texttt{z-cv-record} & \S\ref{sec:eavailw-construction}, App.~\ref{app:release-audit} &
+\texttt{z-cv-record} & App.~\ref{app:multidimensional-statistics}, App.~\ref{app:release-audit} &
   see below \\
-\texttt{joint-5d} & \S\ref{sec:joint5d}, Table~\ref{tab:joint5d} &
+\texttt{joint-5d} & \S\ref{sec:joint5d}, \S\ref{sec:joint5d-results} &
   see below \\
 \texttt{retracted-values} & App.~\ref{app:history} &
   \repopath{docs/orchestration/INDEX-retracted-and-superseded-values.md} \\
-\texttt{variance-sources} & Table~\ref{tab:variance-sources} (\S\ref{sec:variance}) &
+\texttt{variance-sources} & App.~\ref{app:covariance-construction} (\S\ref{sec:variance}) &
   see below \\
 \texttt{rank-inversion} & \S\ref{sec:nd-declarations} &
   \repopath{docs/orchestration/RANK-AND-INVERSION-20260810.md}; the predeclared rank cut itself is
@@ -78,7 +78,7 @@ Tag & Cited at & Record \\
   see below \\
 \texttt{z-assembly} & App.~\ref{app:release-audit} &
   \texttt{nd-unfolding/}\allowbreak\texttt{z\_assembly.py} (implements
-  Eqs.~\eqref{eq:zassembly}--\eqref{eq:zinflation}); the same algebra is asserted independently
+  the construction of App.~\ref{app:multidimensional-statistics} and Eq.~\eqref{eq:zinflation}); the same algebra is asserted independently
   of the producer \\
 \texttt{z-conditioning} & App.~\ref{app:release-audit} &
   see below \\
@@ -94,7 +94,7 @@ Tag & Cited at & Record \\
   \item[\texttt{flux-repair}.] \texttt{KNOWN\_ISSUES.md} rows 82 (GiBUU sample stops at $E_\nu\approx\SI{20}{GeV}$) and 83 (GENIE/NuWro flux mis-sampling); repair and rebuild of 2026-09-27, \texttt{VALIDATION\_LEDGER.md} rows \texttt{VL156}--\texttt{VL160} (\texttt{VL159}: 3D integrated-rate shares; \texttt{VL160}: Valencia-2p2h fill), superseding \texttt{VL35}--\texttt{VL38}; receipt \repopath{docs/orchestration/state/s5p/stage7/generator-context/generator-context-receipt.json}.
   \item[\texttt{z-cv-record}.] The adoption itself at \repopath{docs/orchestration/DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md}; the seed measurements at \repopath{docs/orchestration/EVIDENCE-20260920-sproj-resolution-floor-and-seed-effect.md} and \repopath{docs/orchestration/state/SEED-EFFECT-20260920.json}; and the withdrawal of the lower-bound reading at \repopath{docs/orchestration/CORRECTION-20260920-lower-bound-inference-withdrawn.md}. Adoption recorded 2026-09-20; the predeclared magnitude criterion is \emph{cause~3}'s $M(\mathrm{ii})$ in the internal dependency register, computed by the 2026-09-20 campaign for the two companion products only.
   \item[\texttt{joint-5d}.] The frozen design is amendment~7 at commit \texttt{4f5a613f}; the result, with its six conditions verbatim, at \repopath{docs/orchestration/RECORD-20261005-s5p-joint-5d-inference-result.md}; the evaluated outputs at \repopath{docs/orchestration/state/s5p/stage7/joint/joint-evaluate.json} (sha256 \texttt{b9604502}) and \texttt{robust-labels.json}; the independent recomputation (verdict AGREE, 1379 of 1379 rows) on branch \texttt{s5p-parallel-recompute-20260928} at \texttt{466b427b} (\texttt{REPORT-20261005-s5p-recompute-final-verification.md} \S8); the lost-draw recovery at \repopath{docs/orchestration/RECORD-20261006-s5p-lost-seed-recovery-resolution.md}, with its independent cross-check (856 of 856 quantities; frozen-shift reading only, on branch \texttt{s5p-parallel-recompute-20260928} at \texttt{00009056}); the owner's disposition at \repopath{docs/orchestration/DECISION-20261005-s5p-recompute-extension-and-lost-seed-recovery.md} \S5; and the fresh-checkout replay in \texttt{reproduction/s5p/} (tier~D). Open item \texttt{OI-193}.
-  \item[\texttt{variance-sources}.] Code pointers, one per row of Table~\ref{tab:variance-sources}. Training-seed variation and Poisson bootstrap: the three-stream driver copy \texttt{driver\_p1.py} of \repopath{docs/orchestration/state/2d-closeout/stageC/pilot/p1/} (\texttt{-{}-seed}, \texttt{-{}-bootstrap-seed}, \texttt{-{}-bootstrap-streams three}), run and rolled up (\texttt{s5\_rollup.py}) under \repopath{docs/orchestration/state/2d-closeout/stageC/production/}. Universes: \texttt{runEventLoopOmniFold.cpp} (\texttt{MNV101\_DUMP\_UNIVERSES}); \texttt{unfold\_2d\_omnifold\_unbinned.py -{}-universe BAND:IDX}; the universe block of \texttt{s5\_rollup.py}, which sums the bands as \texttt{uq/analyze\_universes.py} does; its five lateral bands are the S3 re-unfolds of the active-universe files (\texttt{active\_universe\_5d\_standard\_merged}, production \texttt{DESIGN.md} \S3.2). Run period: \texttt{playlist\_term.py} in \repopath{docs/orchestration/state/2d-closeout/playlist-term/}. MAT reference: the \texttt{mat\_universe\_block\_le\_1e-12} check of \texttt{s5\_rollup.py}; the earlier unweighted check is \texttt{uq/verify\_matcorr\_vs\_mnvh1d.py}. Block sum: \texttt{build\_q\_products.py} in \repopath{docs/orchestration/state/2d-closeout/stageF/rebuild/} (the quoted covariance \texttt{uq\_adopted\_covariance.root}, histogram \texttt{hCov\_Q}, with its receipts in \texttt{outputs/}); \texttt{compare\_to\_paper\_fullcov.py} (\texttt{-{}-omnifold-cov}). The adoption is \repopath{docs/orchestration/DECISION-20261017-joseph-2d-adopt-s5-plus-playlist.md}.
+  \item[\texttt{variance-sources}.] Code pointers, one per row of App.~\ref{app:covariance-construction}. Training-seed variation and Poisson bootstrap: the three-stream driver copy \texttt{driver\_p1.py} of \repopath{docs/orchestration/state/2d-closeout/stageC/pilot/p1/} (\texttt{-{}-seed}, \texttt{-{}-bootstrap-seed}, \texttt{-{}-bootstrap-streams three}), run and rolled up (\texttt{s5\_rollup.py}) under \repopath{docs/orchestration/state/2d-closeout/stageC/production/}. Universes: \texttt{runEventLoopOmniFold.cpp} (\texttt{MNV101\_DUMP\_UNIVERSES}); \texttt{unfold\_2d\_omnifold\_unbinned.py -{}-universe BAND:IDX}; the universe block of \texttt{s5\_rollup.py}, which sums the bands as \texttt{uq/analyze\_universes.py} does; its five lateral bands are the S3 re-unfolds of the active-universe files (\texttt{active\_universe\_5d\_standard\_merged}, production \texttt{DESIGN.md} \S3.2). Run period: \texttt{playlist\_term.py} in \repopath{docs/orchestration/state/2d-closeout/playlist-term/}. MAT reference: the \texttt{mat\_universe\_block\_le\_1e-12} check of \texttt{s5\_rollup.py}; the earlier unweighted check is \texttt{uq/verify\_matcorr\_vs\_mnvh1d.py}. Block sum: \texttt{build\_q\_products.py} in \repopath{docs/orchestration/state/2d-closeout/stageF/rebuild/} (the quoted covariance \texttt{uq\_adopted\_covariance.root}, histogram \texttt{hCov\_Q}, with its receipts in \texttt{outputs/}); \texttt{compare\_to\_paper\_fullcov.py} (\texttt{-{}-omnifold-cov}). The adoption is \repopath{docs/orchestration/DECISION-20261017-joseph-2d-adopt-s5-plus-playlist.md}.
     % 2026-10-18 (Q): the earlier pointers (seedscan/analyze_seedscan.py, uq/seedscan_lgbm_ml/uq_covariance_ml.root, uq/bootstrap_MEFHC_300/uq_covariance_boot300.root, uq/analyze_uq.py) are the VL162/VL175-era products.
   \item[\texttt{negweight-hpss}.] \repopath{docs/orchestration/RECEIPT-20260821-negweight-hpss-durability.md}. The real-data products behind the twelve production values are archived and were restored end to end from tape under a tested recovery route; the synthetic-toy values come from a committed, fully deterministic script that reproduces all four on re-run (\texttt{negweight-toy}). Two provenance limits travel with the production numbers: the driver was uncommitted when those outputs were written, so the executing revision is corroborated by a version-distinct log string rather than pinned by a digest, and no output carries a producing job identifier, which no later run can supply.
   \item[\texttt{oi6-oi8-oi126}.] \repopath{docs/orchestration/DECISION-20260815-joseph-oi6-oi8-oi126.md}. The purity footing of the standard chain was raised as a question --- whether the locked instruction that $N$-D production runs \texttt{negweight-refined} reaches the standard-phase-space chain, or only its extended-fiducial form --- and answered in favour of purity on 2026-08-07 (\texttt{gbdt-closeout}) and again, after the alternative was costed, on 2026-08-15.
@@ -135,7 +135,7 @@ Tag & Cited at & Record & Content \\
 \texttt{rvp1pi} & \S\ref{sec:uq-universes}, \S\ref{sec:uq-2d-scope} &
   \texttt{KNOWN\_ISSUES.md} row 92 &
   the Rvn1pi and Rvp1pi bands encode one shift; the quoted universe block counts it once \\
-\texttt{flux-index} & \S\ref{sec:uq-2d-construction} &
+\texttt{flux-index} & \S\ref{sec:uq-universes} &
   \texttt{KNOWN\_ISSUES.md} row 91 &
   the flux-universe index identity behind the $1/\Phi_{u}$ rescale and its exact test \\
 \texttt{statband-retest} & \S\ref{sec:uq-boot}, \S\ref{sec:coverage} &
@@ -152,5 +152,5 @@ Tag & Cited at & Record & Content \\
 \end{longtable}
 }
 
-\paragraph{The identity of the five-axis covariance.} Until the deposit pass the body printed the file name and digest of the five-axis covariance in use (\S\ref{sec:eavailw-adopted}); they now stand in the identities table of App.~\ref{app:release-identities}, with the digests of its projection, projection matrix, row index and paired central values. They remain the identity of the object every quoted five-dimensional uncertainty is computed from, checkable by anyone holding the file, and the pairing between the covariance and the central values is established \emph{by} those digests rather than by numerical agreement (\S\ref{sec:eavailw-construction}).
+\paragraph{The identity of the five-axis covariance.} Until the deposit pass the body printed the file name and digest of the five-axis covariance in use (\S\ref{sec:eavailw-adopted}); they now stand in the identities table of App.~\ref{app:release-identities}, with the digests of its projection, projection matrix, row index and paired central values. They remain the identity of the object every quoted five-dimensional uncertainty is computed from, checkable by anyone holding the file, and the pairing between the covariance and the central values is established \emph{by} those digests rather than by numerical agreement (App.~\ref{app:multidimensional-statistics}).
 % Deposit pass (DECISION-20261020-joseph-refined-estimator-shorten-delta.md item 2: no internal-only pointers in printed body text). This paragraph earlier explained why the digest stayed in the body; it now records the move to App. H's identities table, which reverses that earlier choice and is flagged for Joseph (old text in git history).

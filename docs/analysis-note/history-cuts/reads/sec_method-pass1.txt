@@ -1,0 +1,33 @@
+# sec_method meaning read, pass 1: codex-school gpt-6.1-sol, reasoning high, sandbox read-only; files: old/new sec_method.tex, cutlog.md, app_devhistory.tex at that pass
+## prompt
+You are checking an editorial compression of one section of a HEP technical note, for MEANING only (not style, not the physics). Files here:
+- old_sec_method.tex: the section before the edit (LaTeX; lines starting with % are source comments, not printed).
+- new_sec_method.tex: the section after the edit.
+- cutlog.md: the edit log, rows C1-C6, each with old text, new text or "cut", and where the old text is kept.
+- app_devhistory.tex: a new appendix whose rows D1-D3 restate what the section says.
+
+The rule the edit follows: history may leave the note only if removing it does not change a reader's understanding of the reported object, its reproducibility, its evidential independence or its limitations. Disclosures of choices made after results were seen must stay.
+
+For EACH row C1-C6 and D1-D3, answer: (a) does the new text (or the cut) preserve every fact a reader needs on those four grounds? (b) does the new text add or alter any claim (including any new or changed number)? (c) verdict PASS or FAIL, with one sentence of reason. Then: did any disclosure of a choice made after results were seen disappear from the printed text? Are rows D1-D3 each supported by the section's own text? Finish with one line: "OVERALL: PASS" or "OVERALL: FAIL", and list each FAIL. Be concrete and brief; quote text when you object.
+## answer
+I treated `%` source comments as unprinted and assessed meaning only.
+
+| Row | (a) Needed facts preserved? | (b) Claim added or altered? | Verdict and reason |
+|---|---|---|---|
+| C1 | No. | Removes the explicit controls and reproduction tolerance; adds no number. | **FAIL:** “Matched reruns” does not explicitly preserve “one driver and one input and differing only in the seed” or reproduction to \(\lesssim2\times10^{-11}\), which establish the attribution’s reproducibility. |
+| C2 | Yes, but with stronger provenance claims. | “From its recorded run configuration” and “from a recorded run configuration” strengthen the old wording; numbers are unchanged. | **FAIL:** Recording a run’s configuration and reproducing its output do not themselves establish that the reproduction was performed **from** that record. |
+| C3 | No. | Removes the bounded comparison and the specific operation being costed. | **FAIL:** “The cheaper way” omits that only **two costed ways** were compared and that the cheaper operation was building the statistical band at seed 42. |
+| C4 | No. | Deletes the claim that the matching medians are coincidental; adds nothing. | **FAIL:** Both 0.18% medians remain printed, but removing “the agreement is coincidental” loses an explicit limitation on interpreting their agreement as corroboration. |
+| C5 | No. | Narrows the surviving timing claim’s subject. | **FAIL:** The deleted “It was selected” refers to the joint-test estimator, whereas the surviving sentence says only “Its refinement classifier … was selected” before the design was fixed. |
+| C6 | Yes. | Removes the date 2026-10-11 and recasts non-recomputation as non-repetition for the quoted estimator. | **PASS:** The earlier central value’s identity and the studies’ limited applicability remain clear; the calendar date is unnecessary on the four stated grounds. |
+| D1 | Yes. | No substantive addition or changed number. | **PASS:** The section supports the replacement, missing matched covariance, unrepeated studies and knowledge of both publication comparisons before choosing LightGBM. |
+| D2 | Not fully. | Adds the exclusive retention claim “Kept only for the purity-subtracted comparisons.” | **FAIL:** The section identifies purity-subtracted comparisons but does not establish this exclusive disposition of the earlier **central value and covariance**, particularly the covariance. |
+| D3 | Yes. | No substantive addition, reading “Not rebuilt” as not replaced by the refined configuration. | **PASS:** The section retains configuration (a) for this result, dates its production before the bias discovery and refinement, and separately assigns the sixteen-cell result to (e). |
+
+**Did a disclosure of a choice made after results were seen disappear?** No. Both remain printed: LightGBM was chosen “after both comparisons with the publication were known,” and the rebuilt result was adopted “after that distance was known.”
+
+**Are D1–D3 supported by the section’s own printed text?** D1: yes. D2: only partially—the exclusive retention claim is unsupported. D3: yes, as a statement of configuration and chronology, rather than a causal explanation for retaining the older result.
+
+Failures: C1, C2, C3, C4, C5, D2.
+
+OVERALL: FAIL

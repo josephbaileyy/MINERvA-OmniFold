@@ -1,0 +1,20 @@
+# AI-use statement accuracy read (main_note.tex), pass 1: reader codex-school gpt-6.1-sol, high, read-only; prompt ai-statement-prompt.txt; inputs: the old and new paragraphs, DECISION-20261114-joseph-ai-use-statement.md at 19ee2a831, and ai-statement-census.txt
+1. **Exact wording: PASS.** Excluding LaTeX comments and line breaks, the new paragraph exactly matches “The note’s full statement” in decision.md; there is no difference to quote.
+
+2. **Sentence checks.** Approval establishes the intended wording, but does not independently verify every factual assertion: decision.md explicitly limits its citation scope to Joseph’s wording, excluding results and a complete census. The FLAGS below identify missing support, not contradictions.
+
+| Sentence | Assessment |
+|---|---|
+| 1. “The analysis code … xAI Grok 4.7.” | **FLAG:** All named versions have the stated provenance—Opus 4.7/4.8/5/5.5 and Fable 5/5.1 in trailers; GPT-5.5, GPT-5.6 Sol/Luna, GPT-6 Astra/Sol, GPT-6.1 Sol and Gemini 3.1 Pro/3.8 Flash in records; Sonnet 5 or 5.5 from Joseph’s best knowledge and Grok 4.7 from Joseph rather than recorded versions—but the full scope of substantial assistance and every model-to-agent attribution require activity records beyond these counts. |
+| 2. “The first author set …” | **FLAG:** Joseph explicitly selects “the first author,” provisionally until Ben reads the work, but establishing that he set the questions and approved **every** claim and its wording requires specifications and approval records. |
+| 3. “Each study was specified …” | **FLAG:** The decision supports making an exception for descriptive studies, but verifying the universal timing and labelling claim requires dated specifications, results-access chronology and study labels. |
+| 4. “Routine operational decisions …” | **FLAG:** The decision independently acknowledges delegation, but the listed duties, written rules, author-set budgets and recording of **each** decision require the operational rules and decision logs. |
+| 5. “Results were accepted only …” | **FLAG:** Neither the census nor the decision’s supporting narrative establishes the acceptance procedure, the named independent recomputations, read-only reviews or cross-developer reviewer relationships; these require acceptance records, separate implementations and reviews identifying their models and targets. |
+| 6. “AI tools were also used …” | **FLAG:** Methodological discussion is asserted in the approved wording but needs discussion records or an explicit factual attestation beyond approval of that wording. |
+| 7. “The figures were drawn …” | **FLAG:** Plotting provenance and the absence of generative-image creation or editing require figure-generation records and an asset audit or explicit factual attestation. |
+| 8. “AI tools are not authors.” | **PASS:** This is an authorship declaration expressly included in the approved wording. |
+| 9. “The authors take responsibility …” | **PASS:** This is a responsibility declaration expressly included in the approved wording. |
+
+3. **Omissions: none.** No still-true information necessary to readers is uniquely lost. The old unconditional “before each study” claim is qualified because the decision explicitly identifies descriptive studies as counterexamples; delegation and the additional model disclosures are added.
+
+OVERALL: PASS — wording matches; FLAGS 1–7 concern missing corroboration, with none contradicted by the supplied records.

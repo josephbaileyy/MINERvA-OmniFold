@@ -1,0 +1,37 @@
+=== C1, main_note.tex lines 129-142, OLD
+The analysis code, statistical procedures, computing campaigns, independent recomputations and reviews, figures, and
+manuscript drafts were produced with substantial assistance from AI language-model tools: Anthropic Claude (Opus 4.7,
+4.8, 5 and 5.5; Fable 5 and 5.1; Sonnet 5 or 5.5) through the Claude Code agent; OpenAI GPT models (GPT-5.5, GPT-5.6
+Sol and Luna, GPT-6 Astra, GPT-6 Sol and GPT-6.1 Sol) through the OpenAI Codex agent; Google Gemini (3.1 Pro and 3.8
+Flash) through the Antigravity agent; and xAI Grok 4.7. The first author set the scientific questions and approved
+every claim and its wording. Each study was specified in writing before its results were read, unless it is labelled
+descriptive. Routine operational decisions (reviewing code and job packages, approving computing jobs within budgets
+the authors set, and merging records) were delegated to a coordinating AI agent under written rules, and each
+decision is recorded in the analysis repository. Results were accepted only after verification against committed
+evidence: criteria specified in advance, independent recomputation by separately written code (for example, the
+joint-test evaluation and the lost-seed recovery), and independent read-only reviews, including reviews by models
+from developers other than the one whose model wrote the work under review. AI tools were also used for
+methodological discussion. The figures were drawn by plotting code from the analysis outputs; no image was generated
+or edited by a generative-AI image tool. AI tools are not authors. The authors take responsibility for the content.
+
+=== C1, NEW
+The analysis code, statistical procedures, computing campaigns, independent recomputations and reviews, figures, and
+manuscript drafts were produced with substantial assistance from AI language-model tools: Anthropic Claude (Opus 4.7,
+4.8, 5 and 5.5; Fable 5 and 5.1; Sonnet 5 or 5.5) through the Claude Code agent; OpenAI GPT models (GPT-5.5, GPT-5.6
+Sol and Luna, GPT-6 Astra, GPT-6 Sol and GPT-6.1 Sol) through the OpenAI Codex agent; Google Gemini (3.1 Pro and 3.8
+Flash) through the Antigravity agent; and xAI Grok 4.7. The first author set the scientific questions and approved
+the claims and their final wording. Each study was specified in writing before its results were read, unless it is labelled
+descriptive. Routine operational decisions (reviewing code and job packages, approving computing jobs within budgets
+the authors set, and merging records) were delegated to a coordinating AI agent under written rules, and each
+decision is recorded in the analysis repository. Results were accepted only after verification against committed
+evidence: criteria specified in advance, independent recomputation by separately written code (for example, the
+joint-test evaluation and the lost-seed recovery), and independent read-only reviews, including reviews by models
+from developers other than the one whose model wrote the work under review. AI tools were also used for
+methodological discussion. The figures were drawn by plotting code from the analysis outputs; no image was generated
+or edited by a generative-AI image tool. AI tools are not authors. The authors take responsibility for the content.
+
+=== AUD-N4, app_release.tex:44, OLD
+\paragraph{Planned Zenodo reproduction package (provisional).} The planned package will contain archived result products, code to regenerate tables and figures from those products, and selected diagnostics. It will be deposited on Zenodo before the methods paper is submitted. Its DOI is \textbf{[Zenodo DOI pending deposit]}. It will not support a complete event-level rerun of the analysis. This description is provisional until the methods package (\href{https://github.com/josephbaileyy/MINERvA-OmniFold/pull/981}{PR~981}) is re-pinned.
+
+=== AUD-N4, NEW
+\paragraph{Planned Zenodo reproduction package (provisional).} The planned package will contain archived result products, code to regenerate tables and figures from those products, and selected diagnostics. It will be deposited on Zenodo before the methods paper is submitted. Its DOI is \textbf{[Zenodo DOI pending deposit]}. It will not support a complete event-level rerun of the analysis. This description is provisional until the package's contents are finalized.

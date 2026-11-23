@@ -144,7 +144,9 @@ def fig_generators(g, outdir):
             ax.plot(cen[sl], gv[key][2][sl],
                     marker=technote_style.gen_marker(lab), linestyle="None",
                     ms=5, color=col, label=lab, zorder=6)
-        ax.set_xlabel(xlab); ax.set_ylabel(ylab + r" (cm$^2$/.../nucleon)")
+        # the differential units (the figure pass, 2026-11-19: it printed a "/.../" placeholder)
+        unit = {"pt": r"cm$^2$/(GeV/c)/nucleon", "pz": r"cm$^2$/(GeV/c)/nucleon", "eavail": r"cm$^2$/GeV/nucleon"}[key]
+        ax.set_xlabel(xlab); ax.set_ylabel(ylab + f" ({unit})")
         ax.grid(alpha=0.3)
         if key == "eavail":
             ax.legend(fontsize=8)

@@ -1,0 +1,15 @@
+# q3 (2026-11-19T04:06:11Z): bash tools/arms_layout.sh <wt> q3 figenv/mpl3108 c3b4e884288b5e37e304d77f392e14c066fcd0b5 q3_excess_projection note-figstyle-20261113/tools/fakeroot5 nd-unfolding/q3_excess_projection.py --from-arrays note-figstyle-20261113/runs/family5/dumps/q3_arrays.npz --out @OUT@/q3_excess_projection.png --print-style
+== q3 (q3_excess_projection): arm 0 against docs/analysis-note/figures/q3_excess_projection.pdf at c3b4e8842
+EQUAL-BUT-DATE tmp.VEOUdQaN1h: /CreationDate (D:20261117134620-07'00') vs /CreationDate (D:20261118200613-07'00')
+raster: RASTER :: EQUAL :: 1 page(s), 0 differing pixel(s)
+== q3: arm 1 against arm 0
+captures: q3_excess_projection.pdf.json q3_excess_projection.png.json 
+  equal  q3/q3_excess_projection.pdf.json: 7 data artists
+  equal  q3/q3_excess_projection.png.json: 7 data artists
+COMPARE :: PASS
+strings q3_excess_projection: equal (87 drawn strings)
+  arm 0: canvas 6.435 x 2.703 in; font size min 5.50, median 7.00 pt; text overlaps 29
+  arm 1: canvas 6.500 x 5.000 in; font size min 7.00, median 7.00 pt; text overlaps 0
+ARMS-LAYOUT q3 :: PASS
+== the installed copy (figs/) against this arm 1
+EQUAL-BUT-DATE q3_excess_projection.pdf: /CreationDate (D:20261118200034-07'00') vs /CreationDate (D:20261118200614-07'00')

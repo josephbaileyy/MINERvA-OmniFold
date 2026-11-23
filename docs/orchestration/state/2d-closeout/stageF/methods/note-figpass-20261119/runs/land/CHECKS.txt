@@ -1,0 +1,14 @@
+# land (Fig. 15's label off the star, chunk C), 2026-11-19T05:10:28Z: ARM0=plain bash tools/arms_layout.sh <wt> land figenv/mpl3108 c3b4e8842 minerva_unfolding_landscape - 3d-unfolding/plot_minerva_landscape.py --print-style
+== land (minerva_unfolding_landscape): arm 0 against docs/analysis-note/figures/minerva_unfolding_landscape.pdf at c3b4e8842
+EQUAL-BUT-DATE tmp.mnXS8Pta5I: /CreationDate (D:20261113084640-07'00') vs /CreationDate (D:20261118211029-07'00')
+raster: RASTER :: EQUAL :: 1 page(s), 0 differing pixel(s)
+== land: arm 1 against arm 0
+captures: minerva_unfolding_landscape.pdf.json minerva_unfolding_landscape.png.json 
+  equal  land/minerva_unfolding_landscape.pdf.json: 31 data artists
+  equal  land/minerva_unfolding_landscape.png.json: 31 data artists
+COMPARE :: PASS
+strings minerva_unfolding_landscape: equal (28 drawn strings)
+  arm 0: canvas 6.305 x 4.413 in; font size min 7.00, median 8.30 pt; text overlaps 1
+  arm 1: canvas 6.305 x 4.413 in; font size min 7.00, median 8.30 pt; text overlaps 1 [['Pion production (CC & coherent)', '$\\nu_e$']]
+ARMS-LAYOUT land :: PASS
+== installed figs/minerva_unfolding_landscape.pdf = this run's arm 1: yes

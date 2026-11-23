@@ -1,0 +1,42 @@
+# figure width (in)	3.185
+6.5	Mode, by eigenvalue $\lambda$ (largest first)
+5.5	−25
+5.5	0
+5.5	25
+5.5	50
+5.5	75
+5.5	100
+5.5	125
+5.5	150
+5.5	175
+5.5	200
+5.5	225
+6.5	$\lambda/\lambda_{\max}$
+5.5	$\mathdefault{10^{-16}}$
+5.5	$\mathdefault{10^{-13}}$
+5.5	$\mathdefault{10^{-10}}$
+5.5	$\mathdefault{10^{-7}}$
+5.5	$\mathdefault{10^{-4}}$
+5.5	$\mathdefault{10^{-1}}$
+5.5	$\mathdefault{10^{2}}$
+5.5	$\mathdefault{10^{5}}$
+6.5	Modes, by $\chi^2$ contribution
+5.5	−25
+5.5	0
+5.5	25
+5.5	50
+5.5	75
+5.5	100
+5.5	125
+5.5	150
+5.5	175
+5.5	200
+5.5	225
+6.5	Cumulative $\chi^2$ fraction
+5.5	0.00
+5.5	0.25
+5.5	0.50
+5.5	0.75
+5.5	1.00
+5.5	1.25
+5.5	90% of $\chi^2$

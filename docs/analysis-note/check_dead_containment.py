@@ -269,13 +269,21 @@ UNIT_REQUIRED = {"0.564": "%", "1.008": "%", "0.563": "%", "2.26": "%", "3.65": 
 # A struck literal whose bare form also prints as a different, live quantity in ONE outward build, in ONE declared
 # context, and cannot be told apart by a unit. Added 2026-10-21 with main_note's move to outward-facing
 # (DECISION-20261021-joseph-da-and-note-records.md item 2), each verified at the source:
-#     1.014 -> app_history.tex strikes the bare 2D combined log-normal chi2/ndf `1.014`; the posted note's closure
-#              table prints the live injected-q3-bump mean weight "(mean weight 1.014)" (sec_validation.tex).
+#     1.014 -> RETIRED 2026-11-22 (rewrite into main): app_history.tex still strikes the bare 2D combined log-normal
+#              chi2/ndf `1.014`, but the live "(mean weight 1.014)" context it exempted no longer prints: the
+#              journal-voice rewrite's Part 5 (part5_validation.tex inputs sec5_multidim.tex) has no closure-table row
+#              for the injected q3 bump, and main_note.pdf prints no 1.014. main() refused the entry as STALE. Without
+#              it, any 1.014 in the posted note is a hit again.
 #     0.912 -> app_history_pet.tex strikes \petRatio, the legacy PET/GBDT total ratio 0.912; the posted note prints
-#              the live fixed-truth coverage fraction "C2 = 0.912" (\covTwoDCTwo, values.tex) four times. The paper
-#              avoids the same collision by printing 91.2 % (values.tex, \covTwoDCTwoPctOne).
+#              the live fixed-truth coverage fraction \covTwoDCTwo (values.tex). Until the journal-voice rewrite it
+#              printed as "C2 = 0.912"; since then (appA_methods.tex, re-pointed 2026-11-22, each context checked by
+#              eye in main_note.pdf) as "the two-standard-deviation score is 0.912" and, in the validation table,
+#              "Coverage is 0.679 and 0.912, respectively". Only those two contexts are removed.
 # Each entry is (build, literal): (regex of the declared context in that build's PDF text, source file, the source
-# text that prints it). Only the declared context is removed before the search, and only in the named build; the
+# text that prints it); source and text may instead be equal-length tuples, each pair required to hold (0.912: the
+# live macro's definition and each source sentence that prints it). An entry in CONTEXT_MACRO is also capped by its
+# source: the PDF may show the context no more often than the build's closure prints the live macro, so a struck
+# literal typed into a new sentence of the same wording still fails. Only the declared context is removed before the search, and only in the named build; the
 # literal anywhere else in that PDF, or anywhere in another outward PDF, is still a hit.
 # main() itself refuses a stale entry (review F8): the build FAILS if an entry's build is not outward-facing, if its
 # source text no longer occurs in its source file, or if its literal is no longer struck in any strike-carrying build.
@@ -289,16 +297,40 @@ UNIT_REQUIRED = {"0.564": "%", "1.008": "%", "0.563": "%", "2.26": "%", "3.65": 
 #              distance +4.99 sigma" (GENCMP amendment E's with-arm fd_g_fig_modes.json plotted.panels, sigma
 #              0.0685528; the figure the note prints since the E round, 2026-11-01); struck as `6.86\%` (the
 #              superseded 2D per-bin median relative sigma). Only the figure's "= 6.86%, distance" context is removed.
+# Added 2026-11-17 (the note's currency batch A, limitation-resolver), verified at the source:
+#     0.377 -> the live retained fraction of IBU at 200 iterations at the q3 tilt, printed negative as "-0.377" in
+#              sec_fived16.tex's prior-retention paragraph (values_fived16.tex prr-rho-ibu200-q3, the FD-PRR readout
+#              9238f22b); struck as `0.377\%` (the superseded per-bin median of MaCCQE, app_history.tex:56). Only a
+#              0.377 preceded by a minus sign and not followed by a digit, a point or a percent sign is removed, and
+#              only in main_note.
+# Added 2026-11-19 (DECISION-20261119g, the director's ruling; director-helper-3), verified at the source:
+#     3.066 -> the live descriptive chi2/ndf between the recorded OmniFold E_R and IBU on the signed target at ten
+#              iterations, printed in sec_results.tex sec:results-benchmarks as "from 3.120 to 3.066 at ten
+#              iterations" (values_fived16.tex ibusd-k10-sig, the signed-data readout a4ec72c1; OUTCOME-20261119-
+#              ibu-signed-data.md row 20); struck as \SI{3.066e-38}{} (app_history_pet.tex:28, the retracted GBDT
+#              absolute total), which prints with its "x 10^-38". A digit coincidence: only the 19g sentence's
+#              context "from 1.623 to 1.621 at five iterations and from 3.120 to 3.066" is removed, and only in
+#              main_note; a 3.066 anywhere else, the struck total included, is still a hit.
 CONTEXT_EXEMPT = {
-    ("main_note", "1.014"): (r"mean\s+weight\s+1\.014(?!\d|\.\d)", "sec_validation.tex", "(mean weight 1.014)"),
-    ("main_note", "0.912"): (r"C\s*2\s*=\s*0\.912(?!\d|\.\d)", "values.tex", r"\newcommand{\covTwoDCTwo}{0.912}"),
+    ("main_note", "0.912"): (r"(?:two-\s*standard-\s*deviation\s+score\s+is|Coverage\s+is\s+[0-9.]+\s+and)\s+0\.912(?!\d|\.\d)",
+                             ("values.tex", "appA_methods.tex", "appA_methods.tex"),
+                             (r"\newcommand{\covTwoDCTwo}{0.912}",
+                              r"the two-standard-deviation score is \covTwoDCTwo{}",
+                              r"Coverage is \covTwoDCOne{} and \covTwoDCTwo{}, respectively")),
     ("main_note", "1.65"): (r"(?<![\d.])1\.65(?![\d.])(?!\s*\u00d7)", "values_fived16.tex", r"\@namedef{fv@g-tune-pull-R15}{1.65}"),
+    ("main_note", "0.377"): (r"[\u2212-]\s*0\.377(?![\d.%])", "values_fived16.tex", r"\@namedef{fv@prr-rho-ibu200-q3}{-0.377}"),
     ("main_note", "6.86"): (r"=\s*6\.86%,\s*distance",
                             "../orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/figures/fd_g_fig_modes.json",
                             '"sigma": 0.06855283880067227'),
+    ("main_note", "3.066"): (r"from\s+1\.623\s+to\s+1\.621\s+at\s+five\s+iterations\s+and\s+from\s+3\.120\s+to\s+3\.066(?![\d.])",
+                             "values_fived16.tex", r"\@namedef{fv@ibusd-k10-sig}{3.066}"),
 }
+# The live macro that alone may print an exempt context (see above): (build, literal) -> macro name.
+CONTEXT_MACRO = {("main_note", "0.912"): "covTwoDCTwo"}
 # How an exempt context renders when its source is not the printed text (a figure's sidecar), for the tests.
-CONTEXT_RENDERED = {("main_note", "6.86"): "\u03c3 = 6.86%, distance +4.99\u03c3"}
+CONTEXT_RENDERED = {("main_note", "0.912"): "the two-standard-deviation score is 0.912",
+                    ("main_note", "6.86"): "\u03c3 = 6.86%, distance +4.99\u03c3",
+                    ("main_note", "3.066"): "from 1.623 to 1.621 at five iterations and from 3.120 to 3.066 at ten iterations"}
 
 
 def exempt_text(driver: str, text: str) -> str:
@@ -678,23 +710,25 @@ def main() -> int:
     # the guard reports SKIP with its reason, as the other repository-dependent checks do. The canonical build enforces it.
     all_struck = set().union(*struck_by_note.values())
     canonical = canonical_layout(note_dir)
-    for (build, value), (_pattern, source, printed) in CONTEXT_EXEMPT.items():
+    for (build, value), (_pattern, sources, texts) in CONTEXT_EXEMPT.items():
         where = f"CONTEXT_EXEMPT[({build!r}, {value!r})]"
-        src = note_dir / source
         if build not in BUILDS or build in STRUCK_ALLOWED:
             failures.append(f"{where} names {build}, which is not an outward build; the exemption has no object")
-        if not src.is_file() and not canonical and not src.resolve().is_relative_to(note_dir):
-            notes.append(f"{where} SKIP: its source {source} lies outside the note tree, which is not "
-                         f"<repo>/docs/analysis-note here (the standalone note repository or a copy); enforced by the "
-                         f"canonical build")
-        elif not src.is_file() or printed not in src.read_text(encoding="utf-8", errors="replace"):
-            failures.append(f"{where} is STALE: {source} no longer contains {printed!r}, so the context it exempts "
-                            "no longer prints from it. Delete the entry rather than keep a blind spot.")
-        elif value not in all_struck:
-            failures.append(f"{where} is STALE: {value} is no longer struck in any strike-carrying build, so a "
-                            "printed one is no coincidence to exempt. Delete the entry.")
-        else:
-            notes.append(f"{where} holds: {source} prints {printed!r} and {value} is still struck")
+        pairs = list(zip(sources, texts)) if isinstance(sources, tuple) else [(sources, texts)]
+        for source, printed in pairs:
+            src = note_dir / source
+            if not src.is_file() and not canonical and not src.resolve().is_relative_to(note_dir):
+                notes.append(f"{where} SKIP: its source {source} lies outside the note tree, which is not "
+                             f"<repo>/docs/analysis-note here (the standalone note repository or a copy); enforced by "
+                             f"the canonical build")
+            elif not src.is_file() or printed not in src.read_text(encoding="utf-8", errors="replace"):
+                failures.append(f"{where} is STALE: {source} no longer contains {printed!r}, so the context it "
+                                "exempts no longer prints from it. Delete the entry rather than keep a blind spot.")
+            elif value not in all_struck:
+                failures.append(f"{where} is STALE: {value} is no longer struck in any strike-carrying build, so a "
+                                "printed one is no coincidence to exempt. Delete the entry.")
+            else:
+                notes.append(f"{where} holds: {source} prints {printed!r} and {value} is still struck")
 
     # THE CROSS-FILE GATE CHECK. Scoped to the USAGES, not to one file.
     gated_live, gated_struck = gated_macro_usages(note_dir)
@@ -793,6 +827,19 @@ def main() -> int:
                              f"NOT PDF-checked, and this is an outward-facing build the "
                              f"whole check exists to protect")
                     continue
+                for (build, value), macro in CONTEXT_MACRO.items():
+                    if build != driver:
+                        continue
+                    shown = len(re.findall(CONTEXT_EXEMPT[(build, value)][0], txt))
+                    uses = sum(len(re.findall(r"(?<!\\newcommand\{)\\" + macro + r"(?![A-Za-z])", strip_comments(f.read_text(
+                        encoding="utf-8", errors="replace")))) for f in resolve_closure(note_dir / f"{driver}.tex"))
+                    if shown > uses:
+                        failures.append(f"{driver}.pdf shows the exempt context of {value} {shown} time(s), but its "
+                                        f"closure prints \\{macro} only {uses} time(s): a struck {value} in a "
+                                        f"sentence of the same wording is not exempt")
+                    else:
+                        notes.append(f"CONTEXT_MACRO[({build!r}, {value!r})]: {driver}.pdf shows the context "
+                                     f"{shown} time(s), its closure prints \\{macro} {uses} time(s)")
                 searched = exempt_text(driver, txt)
                 hits = sorted(v for v in seen_in_note if outward_hit(v, searched))
                 if hits:

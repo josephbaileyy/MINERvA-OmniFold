@@ -1,0 +1,182 @@
+[
+ {
+  "i": 0,
+  "kind": "line",
+  "axes": 0,
+  "label": "Published (PRD 104, 092007)",
+  "hash": "37939d731a5457163e2eaf6535fa2d7da1adb227b488c36d122fcafa9700d15f",
+  "dhash": "ae80aa05def21d6994b7ade881035af6dd7d4ddafe291e1131efa0ff75daa153",
+  "xhash": "9c1e92c4ef405d28b4ded57f00efa7ecdfb9f1ad6183dc2a9583ef67be38fdbc",
+  "colours": {
+   "color": [
+    "#000000FF"
+   ],
+   "mfc": [
+    "#000000FF"
+   ],
+   "mec": [
+    "#000000FF"
+   ]
+  },
+  "style": {
+   "linestyle": "None",
+   "marker": "s",
+   "drawstyle": "steps-mid"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 1,
+  "kind": "line",
+  "axes": 0,
+  "label": "This work (OmniFold)",
+  "hash": "b3a31fc459a3fe51d46ac8aa9ea9711aaf60dd307b7580f3612d3329170cf346",
+  "dhash": "da3057ed67b8c879eacd1b33eb95873a658b8bda325ca95f1dac6d3d61ff3a54",
+  "xhash": "ae76a8e30b6e36a1a9552782b39604cc4e06a1d30f59aac53d613b697fbf5cb9",
+  "colours": {
+   "color": [
+    "#FF0000FF"
+   ],
+   "mfc": [
+    "#FF0000FF"
+   ],
+   "mec": [
+    "#FF0000FF"
+   ]
+  },
+  "style": {
+   "linestyle": "None",
+   "marker": "o",
+   "drawstyle": "steps-mid"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 2,
+  "kind": "line",
+  "axes": 0,
+  "label": "GENIE 2.12.6 + MINERvA Tune v1",
+  "hash": "552efe90f41c9ca09fb112d7647a8c961477a76a7cfa32131967f291a4d0c8b2",
+  "dhash": "73e73cac19c384b11590911606c5571e3e13eb7b866eb0460138318053ab30ae",
+  "xhash": "5f46f87814237e4e8b4c54a3b2368f5fc11a37209acc4ae132951f5a5c8db419",
+  "colours": {
+   "color": [
+    "#4C72B0FF"
+   ],
+   "mfc": [
+    "#4C72B0FF"
+   ],
+   "mec": [
+    "#4C72B0FF"
+   ]
+  },
+  "style": {
+   "linestyle": "-",
+   "marker": "None",
+   "drawstyle": "steps-mid"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 3,
+  "kind": "line",
+  "axes": 1,
+  "label": "Published (PRD 104, 092007)",
+  "hash": "eee656942d167dcc0897e56d85dfa3a0909d8f218dc93d19ac69e2328824195d",
+  "dhash": "deccfc993abe4abb09458e5708037c58bdcaff7ae2a0ca3f4dd9fac2fe1b29b2",
+  "xhash": "569a5e583f4c32564d06d6311df3685199a1deb83cd56993971367b41f1c9aa5",
+  "colours": {
+   "color": [
+    "#000000FF"
+   ],
+   "mfc": [
+    "#000000FF"
+   ],
+   "mec": [
+    "#000000FF"
+   ]
+  },
+  "style": {
+   "linestyle": "None",
+   "marker": "s",
+   "drawstyle": "steps-mid"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 4,
+  "kind": "line",
+  "axes": 1,
+  "label": "This work (OmniFold)",
+  "hash": "0793fe7e2787249b5ea1d0f0b253b9b1aed62e48e75bbffb56d83ace1ee08f66",
+  "dhash": "c52e6faffb979933d84927683fe8c730a91bcca51c305095ae1b573686b9c90a",
+  "xhash": "66563ea6e2e90bc164a6d95c7d282bc05b7b9b6df13d9d4be3c17f8857f68219",
+  "colours": {
+   "color": [
+    "#FF0000FF"
+   ],
+   "mfc": [
+    "#FF0000FF"
+   ],
+   "mec": [
+    "#FF0000FF"
+   ]
+  },
+  "style": {
+   "linestyle": "None",
+   "marker": "o",
+   "drawstyle": "steps-mid"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 5,
+  "kind": "line",
+  "axes": 1,
+  "label": "GENIE 2.12.6 + MINERvA Tune v1",
+  "hash": "882ebd98021bcd47e3bc2893b3cd61e903c77f5f11849f132502f30b186e9bbf",
+  "dhash": "988fcfb67f4f113b978de5c73d1d74247d8fe4f0adccd8379e647fd24e184951",
+  "xhash": "d893a555790d4007ecad74eccfc724caf3d72d405dcd6926f94af8a9a03d698b",
+  "colours": {
+   "color": [
+    "#4C72B0FF"
+   ],
+   "mfc": [
+    "#4C72B0FF"
+   ],
+   "mec": [
+    "#4C72B0FF"
+   ]
+  },
+  "style": {
+   "linestyle": "-",
+   "marker": "None",
+   "drawstyle": "steps-mid"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ }
+]

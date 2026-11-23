@@ -1,0 +1,5 @@
+1. text: 109 vs 109 words; differing multiset entries 0 -> PASS
+2. values: 10 colour groups, 571 vs 571 paths; max vertex delta 0.0000 pt (tol 0.02); mismatches 0 -> PASS
+3. catch: 4 vs 4 '100' labels, positions equal True; vertices near the catch bins: max delta 0.0000 pt, mismatches 0 -> PASS
+4. visual: 1353x884 px at 100 dpi; differing pixels 0 -> PASS
+ALL PASS

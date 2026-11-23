@@ -1,0 +1,29 @@
+=== A1 OLD (sec_experiment.tex:8)
+The twelve ME FHC playlists (ME1A--ME1G, ME1L--ME1P) contain $1.057\times10^{21}$ protons on target, the same exposure as Ref.~\cite{MINERvA:2021owq}. The selection below leaves $4\,119\,797$ reconstructed data events.
+
+=== A1 NEW
+The twelve ME FHC playlists (ME1A--ME1G, ME1L--ME1P) contain $1.057\times10^{21}$ protons on target, summed over the analysed files; Ref.~\cite{MINERvA:2021owq} quotes $10.61\times10^{20}$, \SI{0.34}{\percent} more. The selection below leaves $4\,119\,797$ reconstructed data events. % A1 (the director, 2026-11-16, from a referee read): stageA/REPORT.md:129-133 (dataPOT 1.057394261158926e21, the sum of the 12 playlists' POTUsed; the paper's 10.61e20 is 0.34 % above, a known difference of production); docs/publication/corrections-20261008/RECORD-20261008-release-audit-corrections.md row D02.
+
+=== N4 OLD (app_statmethods.tex:513)
+\paragraph{The paradox.} The central values agree well ($\sigma_{\tot}^{\ours}/\sigma_{\tot}^{\paper} = 1.011$, median bin ratio $1.006$), and the per-bin pull RMS against the paper covariance is only $0.598$ for the exact-split cross-check (\S\ref{sec:pull} gives $\pullRMS$ for the quoted value). A diagonal-only $\chi^{2}$, ignoring all off-diagonal correlations, is therefore
+
+=== N4 NEW
+\paragraph{The paradox.} The central values agree well. For the exact-split cross-check, $\sigma_{\tot}^{\ours}/\sigma_{\tot}^{\paper} = 1.011$, the median bin ratio is $1.006$ and the per-bin pull RMS against the paper covariance is only $0.598$; for the quoted value they are $\ratioTot$, $\medianBinRatio$ and $\pullRMS$ (\S\ref{sec:pull}). A diagonal-only $\chi^{2}$, ignoring all off-diagonal correlations, is therefore % N4 (the director, 2026-11-16): the three exact-split values are values.tex's comments' (integral ratio 1.0113, median 1.0064, pull RMS 0.598); the quoted value's are \ratioTot, \medianBinRatio and \pullRMS (values.tex:10, :14, :19).
+
+=== the paragraphs around N4 (lines 505-520, comments kept)
+\paragraph{What is reported.} The combined $\chi^{2}/\mathrm{ndf}=\chiCombined$ is the descriptive distance of \S\ref{sec:chisq}, not a quoted result or validation statistic, with the limits stated there (Eq.~\eqref{eq:diffcov}). The per-band sum is MAT-conformant, with the Flux band weighted as MAT weights it (\S\ref{sec:minerva}) and the $1.4\%$ normalization as a rank-1 band. The truncated-spectral $\chi^{2}_{\ours}$ uses $\mathbf{C}^{\mathrm{ours}}$, which for the quoted covariance has rank 
+% rebuild/outputs/outA/budget_Q.json.gz ranks.Q.rank_1e-10 (197; 205 at 1e-12).
+
+\subsection{Anatomy of the paper-covariance tension}
+\label{sec:tension}
+
+This derivation supports \S\ref{sec:results-tension}. Its numbers are for the exact-split cross-check, the quoted 2D central value when the derivation was made (\S\ref{sec:method-config}). For the quoted LightGBM central value, \S\ref{sec:results-tension} gives the same decomposition from the same code: a smaller distance ($\chiPaper$), an $8\times$ rather than $10\times$ off-diagonal inflation, \SI{9.6}{\percent} rather than \SI{3}{\percent} in the ten smallest-$\lambda$ modes, and its leading 
+
+\paragraph{The paradox.} The central values agree well. For the exact-split cross-check, $\sigma_{\tot}^{\ours}/\sigma_{\tot}^{\paper} = 1.011$, the median bin ratio is $1.006$ and the per-bin pull RMS against the paper covariance is only $0.598$; for the quoted value they are $\ratioTot$, $\medianBinRatio$ and $\pullRMS$ (\S\ref{sec:pull}). A diagonal-only $\chi^{2}$, ignoring all off-diagonal correlations, is therefore % N4 (the director, 2026-11-16): the three exact-split values are values.te
+\begin{equation}
+\chi^{2}_{\diag}/\mathrm{ndf}
+= \frac{1}{n}\sum_{i}\frac{\Delta_{i}^{2}}{C_{ii}}
+= \mathrm{RMS}(\mathrm{pull})^{2} + \mathrm{mean}(\mathrm{pull})^{2}
+\approx 0.366,
+\end{equation}
+versus full-covariance $\chi^{2}/\mathrm{ndf}=3.661$. The $10\times$ inflation comes entirely from published \texttt{TotalCov}'s off-diagonal and small-eigenvalue structure.

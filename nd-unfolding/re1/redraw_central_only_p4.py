@@ -144,7 +144,9 @@ def fig_generators(g, outdir):
             ax.plot(cen[sl], gv[key][2][sl],
                     marker=technote_style.gen_marker(lab), linestyle="None",
                     ms=5, color=col, label=lab, zorder=6)
-        ax.set_xlabel(xlab); ax.set_ylabel(ylab + r" (cm$^2$/.../nucleon)")
+        # the differential units (the figure pass, 2026-11-19: it printed a "/.../" placeholder)
+        unit = {"pt": r"cm$^2$/(GeV/c)/nucleon", "pz": r"cm$^2$/(GeV/c)/nucleon", "eavail": r"cm$^2$/GeV/nucleon"}[key]
+        ax.set_xlabel(xlab); ax.set_ylabel(ylab + f" ({unit})")
         ax.grid(alpha=0.3)
         if key == "eavail":
             ax.legend(fontsize=8)
@@ -380,11 +382,13 @@ def fig_ascencio(a, outdir):
                    yerr=[np.sqrt(Cs_a[s, s]) for s in idx],
                    fmt="rs", mfc="none", label="Ascencio et al.")
         A.set_xlabel(r"$E_{\rm avail}$ (GeV)")
+        # each panel names its q3 interval and carries the y label (the figure pass, 2026-11-19)
+        A.text(0.5, 1.02, rf"$q_3\in[{qlo:g},{qhi:g})$ GeV", transform=A.transAxes, ha="center", va="bottom")
+        A.set_ylabel(r"$d^2\sigma/(dE_{\rm avail}\,dq_3)$ (cm$^2$/GeV$^2$/nucleon)")
         # without our bars the autoscale puts our point on the top edge and "best" moves the
         # legend onto the published bar; headroom keeps the legend where it was, upper right
         A.margins(y=0.3)
         if c == 0:
-            A.set_ylabel(r"$d^2\sigma/(dE_{\rm avail}\,dq_3)$ (cm$^2$/GeV$^2$/nucleon)")
             A.legend(fontsize=8, loc="upper right")
     fig.tight_layout(rect=(0, 0, 1, 0.95))
     technote_style.minerva_tag(axs[0])

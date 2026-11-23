@@ -1,10 +1,15 @@
 \documentclass[11pt]{article}
 \usepackage{authblk}
 \input{preamble}
+% Table 1 (tab:result-status, sec_execsummary.tex) is an xltabular with ragged-right X columns, so that it breaks across pages instead of running past the bottom margin (director, 2026-11-13; layout only). Loaded here, not in preamble.tex, so the other targets that share the preamble are unchanged.
+\usepackage{xltabular}
+\usepackage{ragged2e}
 \NOTEtrue
 \input{values}
 \input{values_inference}
 \input{values_fived16}
+\input{values_landed}
+\input{estimator_names}
 \addbibresource{publication.bib}
 
 \usepackage{hyperref}
@@ -30,8 +35,9 @@ Unbinned OmniFold analysis of MINERvA charged-current inclusive data}
 
 
 % Deposit pass (DECISION-20261020-joseph-refined-estimator-shorten-delta.md item 2): a fixed version and date instead of \today, set once here; the deposit snapshot identifier and the funding statement are holds that print visibly until they are supplied; depositing the note is Joseph's act.
-\newcommand{\noteversion}{Version 1.0 (review)}
-\newcommand{\notedate}{20 October 2026}
+\newcommand{\noteversion}{Version 1.1 (draft for co-author)}
+% DECISION-20261117b item 5 (A2): the version line for the copy sent on 2026-11-19.
+\newcommand{\notedate}{19 November 2026}
 \newcommand{\depositsnapshot}{\textbf{[snapshot identifier pending deposit]}}
 \newcommand{\fundingpending}{\textbf{[funding statement pending]}}
 \date{\noteversion, \notedate\\[4pt]\small Code and file references: \repolink}
@@ -40,59 +46,38 @@ Unbinned OmniFold analysis of MINERvA charged-current inclusive data}
 \maketitle
 
 \begin{abstract}
-% DECISION-20261031-joseph-abstracts-astra-without-exclusions-line.md (#632): the astra consult's abstract (secondary-results/astra-consult-abstracts-coverage-20261031/answer.txt section 2) without its exclusions sentence, which stays in the body (paper_body.tex sec:limits; the note's own exclusion wording is sec_joint.tex's). Sources: the median, the run-period block and its timing, paper_body.tex sec:cov16 and values_fived16.tex (sigmed-reported); the chi2 range, ndf, GiBUU's value and cells, values_fived16.tex (g-ext-chi2int-*, g-gcv-total-ndf, g-gibuu-total-chi2int, g-gibuu-ncells-word); the thresholds predeclared: FD-DIRECTOR-RULINGS.md section 2 (bound 2026-10-25, 092702292) before F0 landed (28c4870f4), reused unchanged by F0b and the with-block chain; the listed truths, make_values_fived16.py LISTED_CLAIMS; the two held-out truths below the reported uncertainty, sec_fived16.tex (f1-bsig-ceil); coverage not validated, sec_fived16.tex sec:fived16-fd.
-% PRD read round 3 (director, 2026-10-27; prd-read/REPORT.md "Round 3"): the limitation sentence split into its three sentences, one per limitation, so that the 1A and 3D readouts can each replace one; the wording is otherwise unchanged. Both sol2 forms of this abstract were not applied (the truth column gives why). Measurement framing (DECISION-20261027-joseph-measurement-framing-and-limitation-scoping.md item 1; director 2026-10-27): led by the sixteen-cell result; the three limitations stated once each; no configuration label; every number through \fvval (values_fived16.tex). Draft for the PRD read and Joseph.
-% Register pass b8 (2026-10-22): one claim per sentence, each with its scope; every number, limitation and
-% disclosure kept (ledger.md, rows AB*). The source comments of the earlier passes below are kept.
-% Methods-paper sync (M8, narrowed: "including its spectrum" contradicted the paper's correlated shape difference;
-% main_paper.tex abstract; values.tex:10, :46).
-% FACT (2026-10-18): the "different tree-learning implementation" clause was stale since 2026-10-11 (DECISION-20261011);
-% the universe and statistical blocks of Q are at the central value's seed (stageC/production/DESIGN.md §3.4), the
-% training-seed block spans five seed settings (§3.5). Review M1.
-% J3/J4 provisional (DECISION-20261018, packet C1 and C8: kept; W3: D10 KI-88 in sec:uq-boot).
-% plain-language pass (DECISION-20261018-joseph-plain-language-pass)
-% Register pass b8: the earlier not-measured clause restated as the body's status
-% (sec_systematics.tex "Status of the 2D result": intervals, bias and covariance not independently validated).
-% plain-language pass, review fix M2, director ruling on base defect note M2 (DECISION-20261018-joseph-plain-language-pass)
-% Fix round (review MINOR 9, 12): the paper's caveats (paper_body.tex sec:central); grammar.
-% Methods-paper sync (M8, removed: the multinucleon attribution of the low-recoil discrepancy; paper_body.tex
-% sec:central).
-% RE-2 integration W7 (approved, DECISION-20261024-joseph-approve-integration-wording-s1-compute-preserve.md): DECISION-20261024-joseph-adopt-re2-2d-refined.md item 1 (E_R, Q_R adopted). "the revisit
-% ... is in progress" is dropped, not replaced: DECISION-20261023 (second) item 2 (record the revisit as carried out)
-% is read so: Joseph approved this wording, which states the 2D and 5D facts only; the 5D measurement route has moved to configuration (e), refined negative weights (DECISION-20261024-joseph-5d-community-standard-route.md item 5).
-% Fix round (review MINOR 13): paper_body.tex sec:conclusions.
-% Register pass b8: the earlier generator-tests-only scope was incomplete: Table tab:estimators-matrix, configurations
-% (d) and (e), give studies of sec:val-negweight--sec:gbdt-model-dependence (sec:coverage-5d uses (c), purity);
-% the open revisit and the missing full 5D comparison: app_negweight.tex sec:negweight-footing and "Limits of the
-% five-dimensional evidence" (review round 1: S1, the bias belongs to the central values only; B2; S3).
-% plain-language pass, review fix N2 (DECISION-20261018-joseph-plain-language-pass)
-% Methods-paper sync (M8: residual bias interpreted as regularization bias; miscoverage at the tested truths; the
-% 10% criterion wording; hybrid nulls; familywise statement; DECISION-20261020-joseph-nuwro-ch-claim.md, provisional).
-% plain-language pass, review fix m6 (DECISION-20261018-joseph-plain-language-pass)
-% Search: coverage of the sixteen-cell intervals; validated intervals of the sixteen-cell result; coverage at held-out truths (nd-unfolding/pv-ladder/readouts/cmodel_5d.json labels.coverage: "coverage at held-out truths was not validated"; FD-F0b-REPORT.md NOT CITABLE FOR coverage); the two-dimensional covariance not independently validated (paper sec:uq2d); fine-grid convergence (paper sec:conditions) @ 1f7f93da
-We present a simultaneous measurement of the inclusive muon-neutrino charged-current cross section in muon transverse and longitudinal momenta, available hadronic energy, three-momentum transfer and hadronic invariant mass. The measurement uses OmniFold to unfold MINERvA medium-energy open data without binning and reports cross sections and their covariance in sixteen cells. The median relative uncertainty per cell is \fvval{sigmed-reported}\%, including a run-period contribution estimated after differences between periods were observed. Three external generator predictions give $\chi^{2}$ values of \fvval{g-ext-chi2int-min16}--\fvval{g-ext-chi2int-max16} for \fvval{g-gcv-total-ndf} degrees of freedom; GiBUU gives \fvval{g-gibuu-total-chi2int} on its \fvval{g-gibuu-ncells-word} supported cells. Bias tests at two held-out GENIE~v3 truths find residuals below the reported uncertainty in every cell. At a GiBUU-like truth and a synthetic momentum-transfer tilt, residual bias exceeds predeclared uncertainty-based thresholds. The coverage of the reported uncertainty intervals has not been validated.
+We use unbinned OmniFold unfolding of MINERvA's public neutrino data, at a
+mean neutrino energy of about $6\,\mathrm{GeV}$, to measure the flux-averaged
+inclusive charged-current $\nu_\mu$ cross section on hydrocarbon, differential
+in the muon's transverse and longitudinal momentum. The integrated cross
+section agrees with the published MINERvA result within about $1\%$. Adding the
+available hadronic energy, the three-momentum transfer and the hadronic invariant
+mass gives three-, four- and five-dimensional central values that preserve the
+normalization and agree with the lower-dimensional results in the tested
+projections. Calibrated generator tests on a separate coarse joint grid find no
+disagreement beyond what two-dimensional projections show. The two-dimensional
+result has a correlated shape difference of undetermined origin, and its
+covariance procedure under-covers at both held-out simulation tunes. Residual
+bias, algorithm and rounding dependence, an unexplained run-period difference,
+and under-coverage at held-out simulation tunes limit the sixteen-cell
+five-dimensional result to illustrative use. Agreement in normalization and projections therefore does
+not by itself demonstrate recovery of a higher-dimensional cross section, which
+remains to be established.
 \end{abstract}
 
-\input{sec_execsummary}
 \clearpage
 
 % Sections and subsections only; the Appendix A subsubsections are not listed.
 \setcounter{tocdepth}{2}
 \tableofcontents
+% COMBINED-PLAN sec. 3(d), navigation aids: lists of figures and tables after the contents.
 
-\input{sec_intro}
-\input{sec_experiment}
-\input{sec_method}
-\input{sec_systematics}
-\input{sec_validation}
-\input{sec_results}
-\input{sec_3d}
-\input{sec_eavailw}
-\input{sec_5d}
-\input{sec_fived16}
-\input{sec_joint}
-\input{sec_fps}
-\input{sec_summary}
+\input{part1_intro}
+\input{part2_method}
+\input{part3_reproduction}
+\input{part4_fivedim}
+\input{part5_validation}
+\input{part6_validity}
 
 \section*{Acknowledgments}
 \fundingpending
@@ -109,39 +94,52 @@ We thank Callum Wilkinson for connecting us with this dataset and for many helpf
 We thank Kevin McFarland for suggesting a detector-response-mismatch closure
 targeting correlations among the reconstructed hadronic observables.
 
+% 2026-11-21 (journal-editor; Joseph via the rewrite helper and the director, who waived the statement's verbatim status
+% for these changes only): the AI statement moves out of the Acknowledgments into its own section, as the APS policy
+% asks (https://journals.aps.org/authors/appropriate-use-ai-tools, fetched 2026-11-21: "under the heading 'AI Use
+% Disclosure' below the Conflicts of Interest statement"); its wording is unchanged except the figure sentence.
+\section*{AI Use Disclosure}
 % Aligned with the article's statement (main_paper.tex acknowledgments), 2026-10-11.
 % 2026-10-21: the article now gives a condensed statement and points here; this is the full statement, with the
 % tool versions. Do not shorten it to match the article.
-The analysis code, statistical procedures, computing campaigns, independent
-recomputations and reviews, figures, and manuscript drafts were produced with
-substantial assistance from AI language-model tools, used through the Claude
-Code and OpenAI Codex command-line agents: Anthropic Claude (Opus 4.7, 4.8, 5,
-and 5.5; Fable 5 and 5.1) and OpenAI GPT models (GPT-5.5, GPT-5.6 Sol and Luna,
-GPT-6 Astra, and GPT-6.1), including those used for independent review. The
-authors directed this work through written specifications fixed before each
-study. Results were accepted only after verification against committed
-evidence: predeclared criteria, independent recomputation by separately written
-code (for example, the joint-test evaluation and the lost-seed recovery), and
-independent read-only reviews. AI tools were also used for methodological
-discussion. The figures were drawn by plotting code
-from the analysis outputs; no image was generated or edited by a generative-AI
-image tool. AI tools are not authors. The authors take responsibility for the
-content.
+% 2026-11-14: replaced by Joseph's revised statement, byte for byte: DECISION-20261114-joseph-ai-use-statement.md,
+% "The note's full statement" (PR #1152, at 19ee2a831).
+% 2026-11-16: C4, the cross-developer sentence in its neutral form, "Reviews included models from multiple developers"
+% (DECISION-20261116-joseph-paper-batch.md item 6, PR #1181).
+% 2026-11-21: the model list reconciled with the session records (pre-submission checklist item 1;
+% DECISION-20261121c-joseph-ai-disclosure-model-list.md; table state/ai-disclosure-reconciliation-20261121/). GPT-5.5 and
+% Gemini 3.1 Pro removed (no record of use); Fable 5.2, Opus 4.6 (Thinking) through Antigravity, GPT-5.3-codex, GPT-5.4,
+% GPT-5.6 Terra and the tools' auxiliary models added.
+The analysis code, statistical procedures, computing campaigns, independent recomputations and reviews, figures, and
+manuscript drafts were produced with substantial assistance from AI language-model tools: Anthropic Claude (Opus 4.7,
+4.8, 5 and 5.5; Fable 5, 5.1 and 5.2; Sonnet 5.5) through the Claude Code agent; OpenAI GPT models (GPT-5.3-codex,
+GPT-5.4, GPT-5.6 Sol, Luna and Terra, GPT-6 Astra, GPT-6 Sol, GPT-6.1 Sol and GPT-6.2 Sol) through the OpenAI Codex
+agent; Google Gemini 3.8 Flash and Anthropic Claude Opus 4.6 (Thinking) through the Antigravity agent; xAI Grok 4.7;
+and auxiliary models that these tools invoke themselves (Claude Haiku 4.5 and 5.5, Gemini 3.5 Flash Lite, and the
+Codex automatic review model, whose underlying model is not recorded). The first author set the scientific questions and approved
+the claims and their final wording. Each study was specified in writing before its results were read, unless it is labeled
+descriptive. Routine operational decisions (reviewing code and job packages, approving computing jobs within budgets
+the authors set, and merging records) were delegated to a coordinating AI agent under written rules, and each
+decision is recorded in the analysis repository. Results were accepted only after verification against committed
+evidence: criteria specified in advance, independent recomputation by separately written code (for example, the
+joint-test evaluation and the lost-seed recovery), and independent read-only reviews. Reviews included models from
+multiple developers. For the scope and limits of result replay, see Appendix D.1. AI tools were also used for
+methodological discussion. The figures were drawn from the analysis outputs by plotting code written with AI assistance;
+no image was generated or edited by a generative-AI image tool. AI tools are not authors. The authors take responsibility for the content.
 
 \appendix
-\input{app_guide}
-\input{app_statmethods}
-\input{app_statmethods_nd}
-\input{app_negweight}
-\input{app_response_mismatch}
-\input{app_landscape}
-\input{app_pet_pointer}
+\input{appA_methods}
+\input{appB_negweight}
+\input{appC_supplementary}
 % The record appendices (provenance; superseded values and withdrawn results) and the record parts of the release
 % and codebase appendices left this posted build on 2026-10-21 (DECISION-20261021-joseph-da-and-note-records.md item 2)
 % for the internal records document main_records.tex, which build_all.sh builds and the gates check; the note cites it
 % as NoteRecords2026. check_note_records.py proves the move lost nothing.
-\input{app_release}
-\input{app_codebase}
+\input{appD_reproducibility}
+% The development-history appendix (history restructure, 2026-11-13), after the others so that no earlier appendix letter moves.
+% DECISION-20261117b item 3 (COMBINED-PLAN sec. 2): the extended-fiducial study, moved from the body, is the last appendix (App. J); A-I keep their letters.
+% The verification appendix (journal-editor, 2026-11-18) was removed from the posted note on 2026-11-20 (Joseph; DECISION-20261120c,
+% on the codex2 referee's recommendation): app_verification.tex prints verbatim in the records document (main_records.tex).
 
 \printbibliography
 

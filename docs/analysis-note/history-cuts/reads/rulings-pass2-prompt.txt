@@ -1,0 +1,12 @@
+You are checking four small edits to a HEP technical note for MEANING only (not style, not the physics). Files here:
+- old_<file>.tex and new_<file>.tex for sec_execsummary (Table 1 and the executive summary), app_guide, sec_fived16 and app_devhistory (App. I): each changes one or two sentences or cells (LaTeX; % lines are source comments).
+- cutlog.md: the rows E3, E4, T9, I10 and I11, each with the old text, new text and source.
+- records.txt: the record and body passages each row cites (R1-R5).
+
+The adopted rule, verbatim: "History stays in the note only if removing it would change a reader's understanding of the reported object, its reproducibility, its evidential independence or its limitations. Everything else goes to the ledger."
+
+QUESTION 1. For each row (E3, E4, T9, I10, I11): does the new text say anything the cited passages do not support, or change meaning (strengthened, weakened or widened claim, lost qualifier, wrong referent or pointer, new or changed number)? In particular: E3 (revised after pass 1, whose answer ends cutlog.md), is "Used only for" each listed use supported by R3-R4, is "whose seed-sensitivity measurements use two companion covariances" supported by R4, and does any use the body makes of this covariance fall outside the list? T9 and I10, are "set after the block's reported numbers had been read" and "the second and third were not expected to fire" supported by R1 and R1b, with "second and third" referring to the right conditions in the new sec_fived16 sentence? E4 and I11, do they describe App. I as it now stands (R5 and new_app_devhistory.tex)? Give each row PASS or FAIL with one sentence; quote the text when you object.
+
+QUESTION 2. Was anything removed that the rule keeps (NEEDED)? Classify each removed or replaced phrase NEEDED or LEDGER.
+
+End with one line: "OVERALL: PASS" or "OVERALL: FAIL", followed by the list of FAILs.

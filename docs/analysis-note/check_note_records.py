@@ -7,7 +7,7 @@ the release and codebase appendices) leave the posted build for the separately b
 main_records.tex. This script proves that the move lost nothing and left nothing behind.
 
 usage:
-  check_note_records.py inventory <base-note-dir> <out.json> [--sha SHA]   # freeze the base inventory
+  check_note_records.py inventory <base-note-dir> <out.json> [--sha SHA] [--post-move]   # freeze the base inventory
   check_note_records.py probe <base-note-dir | inventory.json> <new-note-dir> [--ledger LEDGER.md]
   check_note_records.py --self-test <base-note-dir | inventory.json> <new-note-dir> [--ledger LEDGER.md]
   check_note_records.py pin [note-dir]          # the NoteRecords2026 pin (build_all.sh runs this)
@@ -17,7 +17,17 @@ usage:
                                                  # records_entry_numbers.tex; --check-aux compares main_records.aux
   check_note_records.py --self-test-entry-numbers  # stale file and aux mismatch fail; generator = label hook
 
-The base is docs/analysis-note at the commit before the move (or the inventory frozen from it); the new tree is the
+THE RE-BASE (2026-11-22). The probe's base is records-inventory-base-20261122.json, frozen with `inventory --post-move`
+from the journal-voice note at BASE_20261122, with the ledger records-move-ledger-20261122.md and THIN_BASE =
+BASE_20261122 (build_all.sh and record-checks.yml run it so). The first base (records-inventory-base.json, the ledger
+records-move-ledger.md and THIN_BASE 563715b8) is the frozen 10-21/10-22 move record, kept in git and labelled: the
+journal-voice rewrite replaced the note files it describes (records-reorg/README.md), so every probe failed on files
+that no longer exist. A post-move inventory takes the records from the record files themselves (no READER paragraphs).
+The base prints no records citation (DECISION-20261121b), so P8 also fails an unlisted ADDITION: a citation beyond
+THIN_BASE's count must be listed as an A:<file>::<key> probe, whose target P7 checks as it checks a drop's. The
+self-test's plants were re-anchored to the journal-voice files (in temporary copies only).
+
+The first base was docs/analysis-note at the commit before the move (or the inventory frozen from it); the new tree is the
 same directory after it. The new tree carries main_records.tex, whose \\input closure is the records document, and
 main_note.tex, whose closure is the posted note. Everything is derived from the sources; the only hand-entered facts
 are the line ranges of the record parts of the release and codebase appendices (RECORD_RANGES), and the inventory
@@ -45,11 +55,17 @@ Inventory (base):                                    Probes (new):
                                                          X:<file>::<text> no longer prints there,
                                                          R:<file>::<text> prints in the records closure's <file>,
                                                          D:<file>::<key> names a dropped citation whose target
-                                                         still exists in the records (see THE THINNING)
+                                                         still exists in the records (see THE THINNING),
+                                                         A:<file>::<key> names an added citation (2026-11-22),
+                                                         whose target must exist likewise,
+                                                         M:<from>><to>::<key> names a citation that moved with
+                                                         its passage from one note file to another; <to> must
+                                                         print it (2026-11-19, the Part 3 group: H3-UQ.01)
                                                      P8 (THE THINNING) every NoteRecords2026 citation of the
                                                          posted note at THIN_BASE is still printed, or is a DROP
                                                          the ledger lists, and the ledger lists no drop of a
-                                                         citation that is still printed
+                                                         citation that is still printed; since the re-base, every
+                                                         citation beyond THIN_BASE's is a listed ADDITION (A:)
                                                      P9 every App. G table row parses into cells; every tag
                                                          the posted note cites has a full-width entry
                                                          (\\item[\\texttt{<tag>}.], which the records number);
@@ -102,7 +118,8 @@ names one full commit sha. `pin` requires, in the canonical repository:
   Q1 the entry names a full 40-hex commit sha (never a branch such as tree/main);
   Q2 that commit exists in this clone and is an ancestor of HEAD, so it cannot be rebased away from under the note;
   Q3 the records' app_provenance.tex and app_history.tex exist at that commit, and every App. G tag the posted note
-     cites with NoteRecords2026 is a tag of app_provenance.tex there;
+     cites with NoteRecords2026 is a tag of app_provenance.tex there (a note that cites NoteRecords2026 nowhere passes:
+     DECISION-20261121b retired the requirement that it cite the records);
   Q4 every heading the posted note names after the citation (", superseded values: retired material", ", identities
      already fixed", ...) is, part by part, words of a section, subsection or paragraph heading of the records files
      at that commit (app_provenance, app_history, app_release_records, app_codebase_records, main_records).
@@ -153,9 +170,30 @@ RECORD_RANGES = {"app_release": [(122, 173, r"\subsection{Identities already fix
 # A record range that moved keeps its pointers in this file of the records document.
 MOVED_TO = {"app_release_records.tex": "app_release.tex", "app_codebase_records.tex": "app_codebase.tex"}
 CITE = "NoteRecords2026"
-LEDGER = "records-move-ledger.md"
-# origin/main immediately before the records-citation thinning (DECISION-20261022-joseph-note-records-refs-and-stop.md).
-THIN_BASE = "563715b839217e0e4e55993f42e1b223fa2432fb"
+# THE RE-BASE (2026-11-22, the director's ruling on the rewrite-into-main integration, option A). The probe's first base
+# was the note before the 2026-10-21 move: records-inventory-base.json (frozen at 247a98c88's base), the ledger
+# records-move-ledger.md and THIN_BASE 563715b8 (DECISION-20261022). The journal-voice rewrite replaced the note files
+# that inventory, ledger and THIN_BASE describe (records-reorg/README.md: "to be rewired at the end of the check
+# stage"), so every probe failed on files that no longer exist. Those three stay in git, labelled, as the frozen
+# 10-21/10-22 move record; the probe now runs against a base frozen from the journal-voice note itself:
+# records-inventory-base-20261122.json (`inventory --post-move`, at BASE_20261122), the ledger
+# records-move-ledger-20261122.md, and THIN_BASE = BASE_20261122. Every probe keeps guarding forward from that base.
+LEDGER_1021 = "records-move-ledger.md"                                # the frozen 10-21/10-22 move record
+THIN_BASE_1022 = "563715b839217e0e4e55993f42e1b223fa2432fb"           # origin/main before the 10-22 thinning
+BASE_20261122 = "1ce680617792fd70345e38e2fc111a04a27b05fc"            # the integration branch, rewrite into main, Phase 2 (re-frozen from 2b06d7f28)
+INVENTORY = "records-inventory-base-20261122.json"
+LEDGER = "records-move-ledger-20261122.md"
+THIN_BASE = BASE_20261122
+# The compression skeleton (DECISION-20261119c) moved whole subsections verbatim into new files. For the thinning count
+# (P8, citations per file against THIN_BASE) a citation in a new file counts toward the file it was moved from; every
+# new file has exactly one source (skeleton_compression.py; move-manifest rows SK-01..SK-15).
+SKELETON_FILE_MOVES = {
+    "sec_fived16_gen.tex": "sec_fived16.tex", "sec_q3_fived16.tex": "sec_fived16.tex", "sec_q3_3d.tex": "sec_3d.tex",
+    "sec_observables.tex": "sec_eavailw.tex", "sec_q3_closure.tex": "app_statmethods.tex",
+    "sec_tension.tex": "app_statmethods.tex", "app_cov1b_gate.tex": "app_statmethods_nd.tex",
+    "sec_q3_negweight.tex": "app_negweight.tex", "app_terminology.tex": "sec_front.tex",
+    "sec_validity_table.tex": "sec_front.tex",
+}
 
 
 def printed(text: str) -> str:
@@ -250,6 +288,38 @@ def inventory(base: Path) -> dict:
         "reader_paragraphs": rdr,
         "g_pointers": {f"{f}|{t}": n for (f, t), n in sorted(ptr.items())},
     }
+
+
+def inventory_post(base: Path) -> dict:
+    """The base inventory frozen from a tree AFTER the move (2026-11-22 re-base): the records' own files hold what the
+    four appendices held at the first base. RECORD paragraphs, labels and record labels come from the record files
+    (app_provenance, app_history, app_release_records, app_codebase_records: the same records as the first base's four
+    appendix files and record ranges); tags and repository paths from app_provenance; struck bodies over the whole
+    records closure, as P3 counts them; App. G pointers as P6 counts them after a move (records citations in the posted
+    note and \\ref{app:provenance} in the records). There are no READER paragraphs: the release and codebase
+    appendices whose reader parts stayed in the note at the first base are not in the journal-voice note."""
+    files = POST_MOVE_RECORD_FILES
+    src = {n: (base / n).read_text(errors="replace") for n in files}
+    missing = [n for n in files if not (base / n).is_file()]
+    if missing:
+        raise SystemExit(f"FAIL inventory --post-move: {missing} absent in {base}")
+    tags = g_tags(src["app_provenance.tex"])
+    recs, note = closure(base / "main_records.tex"), closure(base / "main_note.tex")
+    after = pointers(note, set(tags), r"\\cite\{" + CITE + r"\}") + pointers(recs, set(tags), r"\\ref\{app:provenance\}")
+    labels = sorted(l for n in files for l in re.findall(r"\\label\{([^}]+)\}", printed(src[n])))
+    return {
+        "labels": labels,
+        "record_labels": labels,
+        "tags": tags,
+        "dead": sorted(b for p in recs for b in dead_bodies(p.read_text(errors="replace"))),
+        "repopaths": sorted(set(re.findall(r"\\repopath\{([^}]+)\}", printed(src["app_provenance.tex"])))),
+        "record_paragraphs": [x for n in files for x in paragraphs(src[n])],
+        "reader_paragraphs": [],
+        "g_pointers": {f"{f}|{t}": n for (f, t), n in sorted(after.items())},
+    }
+
+
+POST_MOVE_RECORD_FILES = ("app_provenance.tex", "app_history.tex", "app_release_records.tex", "app_codebase_records.tex")
 
 
 def load_base(base: Path) -> dict:
@@ -521,12 +591,20 @@ def probe_fails(inv: dict, new: Path, ledger: Path, thin: Counter | None = None,
     # The ledger's listed drops (D: probes), keyed as citation_keys keys them; validated under P7.
     rows = ledger_rows(ledger)
     drops: Counter = Counter()
+    adds: Counter = Counter()                        # A: probes (2026-11-22): a citation listed as added since the base
+    moves: list[tuple[str, str, str, str]] = []      # (row, from file, to file, key): a citation moved between files
     for rid, probes in rows:
         for pr in probes:
             m = re.match(r"D:([\w.]+)::(.+)$", pr, re.S)
             if m:
                 drops[(m.group(1), drop_key(m.group(2)))] += 1
-    info["drops"] = sum(drops.values())
+            m = re.match(r"A:([\w.]+)::(.+)$", pr, re.S)
+            if m:
+                adds[(m.group(1), drop_key(m.group(2)))] += 1
+            m = re.match(r"M:([\w.]+)>([\w.]+)::(.+)$", pr, re.S)
+            if m:
+                moves.append((rid, m.group(1), m.group(2), drop_key(m.group(3))))
+    info["drops"], info["adds"] = sum(drops.values()), sum(adds.values())
     # P6 pointers
     tags = set(inv["tags"])
     after = pointers(note, tags, r"\\cite\{" + CITE + r"\}") + pointers(recs, tags, r"\\ref\{app:provenance\}")
@@ -554,14 +632,16 @@ def probe_fails(inv: dict, new: Path, ledger: Path, thin: Counter | None = None,
         if not probes:
             fails.append(f"P7 ledger row {rid} carries no probe")
         for pr in probes:
-            m = re.match(r"([NXRD]):([\w.]+)::(.+)$", pr, re.S)
+            m = re.match(r"([NXRDA]):([\w.]+)::(.+)$", pr, re.S) or re.match(r"(M):([\w.]+>[\w.]+)::(.+)$", pr, re.S)
             if not m:
                 fails.append(f"P7 ledger row {rid}: malformed probe {pr[:80]!r}")
                 continue
             kind, fname, text = m.groups()
-            if kind == "D":
+            if kind == "M":
+                continue                                  # validated with the thinning, below
+            if kind in ("D", "A"):                       # a listed drop or addition: its target must exist
                 fails += [f"P7 ledger row {rid}: {x}" for x in
-                          drop_target_fails(fname, text, ntext, rec_tags, rec_heads, head_tags, head_heads)]
+                          drop_target_fails(fname, text, ntext, rec_tags, rec_heads, head_tags, head_heads, kind)]
                 continue
             pool = rtext if kind == "R" else ntext
             body = norm(pool.get(fname, ""))
@@ -573,7 +653,21 @@ def probe_fails(inv: dict, new: Path, ledger: Path, thin: Counter | None = None,
     # P8 the thinning: base citations = printed + listed drops, exactly
     info["thin"] = thin is not None
     if thin is not None:
-        now = citation_keys(ntext)
+        now = Counter()
+        for (f, key), n in citation_keys(ntext).items():
+            # the skeleton moves map new files to the 10-22 base's names; the 2026-11-22 base already has its own names
+            now[(SKELETON_FILE_MOVES.get(f, f) if THIN_BASE == THIN_BASE_1022 else f, key)] += n
+        # a citation that moved with its passage (M: probe) counts at its new file: the base count moves with it
+        thin = Counter(thin)
+        for rid, src, dst, key in moves:
+            if dst not in ntext:
+                fails.append(f"P7 ledger row {rid}: M:{src}>{dst}: {dst} is not in the note closure")
+            elif thin[(src, key)] < 1:
+                fails.append(f"P8 ledger row {rid}: M:{src}>{dst} moves {key}, but {src} had no such citation at "
+                             f"THIN_BASE {THIN_BASE[:8]}")
+            else:
+                thin[(src, key)] -= 1
+                thin[(dst, key)] += 1
         info["thin_base"], info["thin_now"] = sum(thin.values()), sum(now.values())
         for k in sorted(set(thin) | set(drops)):
             f, key = k
@@ -584,6 +678,18 @@ def probe_fails(inv: dict, new: Path, ledger: Path, thin: Counter | None = None,
             elif drops[k] > gone:
                 fails.append(f"P8 {f}: the ledger lists {drops[k]} drop(s) of {key}, but only {gone} of the "
                              f"{thin[k]} citation(s) at THIN_BASE {THIN_BASE[:8]} are gone")
+        # 2026-11-22 (the re-base): the base prints no records citation (DECISION-20261121b), so a citation that comes
+        # back is the change to guard. Every citation beyond THIN_BASE's count must be listed as an A: addition, and
+        # every listed addition must be printed.
+        for k in sorted(set(now) | set(adds)):
+            f, key = k
+            new_n = max(now[k] - thin[k], 0)
+            if new_n > adds[k]:
+                fails.append(f"P8 {f}: {now[k]} citation(s) of {key} now, {thin[k]} at THIN_BASE {THIN_BASE[:8]}, and "
+                             f"the ledger lists {adds[k]} addition(s): an unlisted addition")
+            elif adds[k] > new_n:
+                fails.append(f"P8 {f}: the ledger lists {adds[k]} addition(s) of {key}, but only {new_n} citation(s) "
+                             f"beyond the {thin[k]} at THIN_BASE {THIN_BASE[:8]} are printed")
     # P9 the App. G rows parse, every cited tag has a numbered entry, and a repeated record stays its row's
     cited = {k[4:] for (_, k) in citation_keys(ntext) if k.startswith("tag:")}
     # an entry the records-move ledger records as added must keep its label, cited or not (director, n2)
@@ -739,25 +845,25 @@ def drop_key(text: str) -> str:
 
 
 def drop_target_fails(fname: str, text: str, ntext: dict[str, str], rec_tags: set[str], rec_heads: list[str],
-                      head_tags: set[str] | None, head_heads: list[str] | None) -> list[str]:
+                      head_tags: set[str] | None, head_heads: list[str] | None, kind: str = "D") -> list[str]:
     """Why a listed drop D:<fname>::<text> is invalid: its file is not a posted file, or its target is missing from
     the records sources of the new tree or (when known) of HEAD."""
     out = []
     if fname not in ntext:
-        out.append(f"D:{fname}: {fname} is not in the posted note's closure")
+        out.append(f"{kind}:{fname}: {fname} is not in the posted note's closure")
     key = drop_key(text)
     where = [("the new tree", rec_tags, rec_heads)] + ([("HEAD", head_tags, head_heads)] if head_tags is not None else [])
     for label, tags, heads in where:
         if key.startswith("tag:"):
             if key[4:] not in tags:
-                out.append(f"D:{fname}::{text}: tag {key[4:]} is not a tag of app_provenance.tex in {label}, so the "
-                           "dropped citation's record would be unreachable")
+                out.append(f"{kind}:{fname}::{text}: tag {key[4:]} is not a tag of app_provenance.tex in {label}, so the "
+                           "listed citation's record would be unreachable")
         elif key.startswith("head:"):
             for part in key[5:].split(": "):
                 if not part or not any(part in h for h in heads):
-                    out.append(f"D:{fname}::{text}: {part!r} is no heading's words in the records files in {label}")
+                    out.append(f"{kind}:{fname}::{text}: {part!r} is no heading's words in the records files in {label}")
         elif key != "(whole)":
-            out.append(f"D:{fname}::{text}: unreadable target")
+            out.append(f"{kind}:{fname}::{text}: unreadable target")
     return out
 
 
@@ -1002,9 +1108,8 @@ def pin_check(note: Path) -> tuple[str, list[str]]:
             if not any(part in h for h in heads):
                 fails.append(f"Q4 {fname} names {part!r} after NoteRecords2026, which is no heading's words in the "
                              f"records at {ref[:12]}")
-    if not claims:
-        fails.append("Q3 the posted note cites NoteRecords2026 nowhere: there is nothing to pin, or the citation "
-                     "form changed and this check no longer sees it")
+    # DECISION-20261121b (Joseph dropped the note-to-records pointers): a note that cites NoteRecords2026 nowhere is
+    # allowed; the pin then checks only the bib entry (Q1, Q2) and the records files at the pin (Q3 file existence).
     summary = (f"{len(claims)} citations, {n_tags} tag ({n_numbered} by number) and {n_parts} heading references, "
                f"pinned to {ref}, "
                f"{len(tags)} tags, {len(pin_numbers)} numbered entries and {len(heads)} headings at the pin")
@@ -1082,7 +1187,7 @@ def pin_self_test() -> int:
              good_body + "Also (Ref.~\\cite{NoteRecords2026}, \\texttt{tag-c}).\n")
         case("heading the records do not have", "Q4 sec_a.tex names 'retired material'", a,
              good_body + "Also (Ref.~\\cite{NoteRecords2026}, superseded values: retired material).\n")
-        case("no citation at all", "Q3 the posted note cites", a, "No citation.\n")
+        case("no citation at all passes (DECISION-20261121b)", "PASS", a, "No citation.\n")
         # N2-1: tag-b is entry R1.1 at the pin a. A consistent numbers file passes; an entry inserted before it after
         # the pin, with the numbers file regenerated from the working tree, makes the posted number differ.
         (note / "records_entry_numbers.tex").write_text(render_entry_numbers({"tag-b": "R1.1"}))
@@ -1118,7 +1223,7 @@ def pin_self_test() -> int:
     for f in failures:
         print("  FAIL " + f)
     print(f"RECORDS-PIN SELF-TEST :: {'PASS' if not failures else 'FAIL'} ({fired} of 11 cases as expected: a good pin "
-          "passes; a branch, a non-ancestor, an unknown sha, a missing tag, a missing heading and no citation fail; "
+          "passes; a branch, a non-ancestor, an unknown sha, a missing tag and a missing heading fail; a note with no citation passes; "
           "a number cited as at the pin passes and an entry renumbered after the pin fails; "
           "the standalone and no-git layouts skip)")
     return 1 if failures else 0
@@ -1165,80 +1270,74 @@ def _redit_row(inv: dict, new: str, anchor: str = _R_ANCHOR, old_digest: str | N
 
 PLANTS = [
     # (name, probe that must fire, file, old, new[, ledger row appended[, ledger row ids removed]])  -- old=None appends
-    # `new`; a callable edits
-    # the file; a probe of None means the plant must leave the probe SILENT (no failure at all)
+    # `new`; a callable edits the file; a probe of None means the plant must leave the probe SILENT (no failure at all).
+    # Re-anchored 2026-11-22 for the re-base (THE RE-BASE, above): the posted-note plants go into sec_intro.tex, a file
+    # of the journal-voice note's closure, and only in the self-test's temporary copies. Retired with the old base: the
+    # READER-paragraph plant (the new base has no reader paragraphs), the silent listed-drop plants and the
+    # kept-citation-position plant (the new base prints no records citation to drop or keep), the unlisted-drop P6
+    # whole-document plant (no note file carries a whole-appendix pointer), and the citation-move plants that needed a
+    # real move (one M: plant stays, on a move from a file without the citation). The additions plants below take
+    # their place: since the base prints no citation, a citation that comes back is what P8 now guards.
     ("dropped strike", "P3 \\dead multiset", "app_history.tex", r"$\dead{0.406}$", "$0.406$"),
     ("dropped record paragraph", "P5 RECORD paragraph not verbatim", "app_release_records.tex",
      lambda p: _drop_paragraph(p, r"\paragraph{Conditioning.}"), None),
     ("edited record paragraph", "P5 RECORD paragraph not verbatim", "app_codebase_records.tex",
      "as five rules rather than", "as six rules rather than"),
-    ("record paragraph left in the note", "P5 RECORD paragraph still printed", "app_codebase.tex",
+    ("record paragraph left in the note", "P5 RECORD paragraph still printed", "sec_intro.tex",
      lambda p: p.write_text(p.read_text() + "\n" + (p.parent / "app_codebase_records.tex").read_text()), None),
-    # The plant must edit a reader paragraph that still prints verbatim from the base. The release appendix's
-    # archive paragraph, the first anchor, was rewritten by the register pass (batch bhi, director F6, 2026-10-21),
-    # so the plant moved to the codebase appendix's PET paragraph. The note consolidation (DECISION-20261027 item 1,
-    # cost-list R10; records-move-ledger.md L-con-R10) rewrote that one too, so the plant moved to the release
-    # appendix's scope heading: of the 20 base reader paragraphs it is the one still verbatim. app_release.tex was then
-    # a protected file; it was released to the lanes on 2026-10-28 (DECISION-20261028-joseph-protections-n4-release-
-    # retrospective.md item 3). Round r22 Step 2 rewrote that heading too (records-move-ledger.md L-r22-1), so no
-    # base reader paragraph still prints verbatim and a note-side edit has no target. The plant therefore makes the
-    # other half of the same condition false: it drops the heading's REWRITE row hash from the ledger, so a reader
-    # paragraph that is no longer printed verbatim has no REWRITE record and P5 must fire.
-    ("edited reader paragraph", "P5 READER paragraph", LEDGER,
-     "READER 2e4dfdaf3190", "READER (hash removed)"),
     ("renamed tag (every occurrence)", "P2 tag joint-5d", "app_provenance.tex",
      lambda p: p.write_text(p.read_text().replace(r"\texttt{joint-5d}", r"\texttt{joint-5e}")), None),
     # Every copy of one path is lost: since n2 two paths print twice in App. G (a table row and the full-width entry
     # that repeats it, P9), so losing only the first copy would leave the path in the records.
     ("lost repository path", "P4 repository path", "app_provenance.tex", lambda p: p.write_text(
         p.read_text().replace(_first_repopath(p), _first_repopath(p).replace("\\repopath{", "\\texttt{"))), None),
-    ("G label left in the note", "P1 record label tab:prov-paths", "app_guide.tex", None,
+    ("G label left in the note", "P1 record label tab:prov-paths", "sec_intro.tex", None,
      "\n\\label{tab:prov-paths}\n"),
-    ("J label left in the note", "P1 record label app:history-errata", "app_guide.tex", None,
+    ("J label left in the note", "P1 record label app:history-errata", "sec_intro.tex", None,
      "\n\\label{app:history-errata}\n"),
+    ("record label defined twice in the records", "P1 label tab:prov-paths defined 2 times", "app_history.tex", None,
+     "\n\\label{tab:prov-paths}\n"),
     ("struck value in the note", "P3 the posted note's closure still strikes", "sec_intro.tex", None,
      "\nWas $\\dead{9.876}$.\n"),
-    # The thinning dropped sec_joint.tex's only citation (ledger L-thin-C41), so this plant moved to a kept one.
-    ("lost tag pointer", "P6 app_statmethods_nd.tex", "app_statmethods_nd.tex", r"\cite{NoteRecords2026}",
-     r"\cite{AnalysisNote2026}"),
+    # P6: the base's pointers are the records' own \\ref{app:provenance} references (six); losing one fires
+    ("lost records pointer", "P6 app_history.tex: 1 pointer(s) to tag retracted-values", "app_history.tex",
+     r"App.~\ref{app:provenance} (\texttt{retracted-values})", r"App.~\ref{app:history} (\texttt{retracted-values})"),
+    ("lost records pointer (moved file key)", "P6 app_release.tex: 1 pointer(s) to tag z-projection",
+     "app_release_records.tex", r"(App.~\ref{app:provenance}, \texttt{z-projection})", r"(\texttt{z-projection})"),
     ("false ledger probe", "P7 ledger row", LEDGER, None,
      "\n| L99 | planted | - | `N:sec_intro.tex::this sentence is not printed anywhere` | planted |\n"),
-    # The thinning (DECISION-20261022): a drop is accepted only when the ledger lists it and its target exists.
-    ("unlisted tag drop", "P6 sec_systematics.tex: 1 pointer(s) to tag flux-index", "sec_systematics.tex",
-     r" (Ref.~\cite{NoteRecords2026}, \recentry{flux-index})", ""),
-    ("unlisted tag drop, P8", "P8 sec_systematics.tex: 1 citation(s) of tag:flux-index", "sec_systematics.tex",
-     r" (Ref.~\cite{NoteRecords2026}, \recentry{flux-index})", ""),
-    ("listed tag drop (silent)", None, "sec_systematics.tex",
-     r" (Ref.~\cite{NoteRecords2026}, \recentry{flux-index})", "",
-     "| L98 | planted | DROP | R1 | `D:sec_systematics.tex::\\texttt{flux-index}` | planted |", ["L-thin-C64"]),
-    ("unlisted heading drop", "P8 app_statmethods.tex: 1 citation(s) of head:superseded values at",
-     "app_statmethods.tex", " (Ref.~\\cite{NoteRecords2026}, superseded values).", "."),
-    ("listed heading drop (silent)", None, "app_statmethods.tex",
-     " (Ref.~\\cite{NoteRecords2026}, superseded values).", ".",
-     "| L98 | planted | DROP | R4 | `D:app_statmethods.tex::superseded values` | planted |", ["L-thin-C22"]),
-    ("unlisted whole-document drop", "P6 app_guide.tex: carried a whole-appendix pointer", "app_guide.tex",
-     "document, Ref.~\\cite{NoteRecords2026};", "document;"),
-    ("listed drop of a tag the records lack", "P7 ledger row L98: D:sec_validation.tex::\\texttt{coverage-fixed-truths}",
-     "sec_validation.tex", r"(Ref.~\cite{NoteRecords2026}, \recentry{coverage-fixed-truth})", "",
-     "| L98 | planted | DROP | R1 | `D:sec_validation.tex::\\texttt{coverage-fixed-truths}` | planted |"),
-    ("listed drop whose tag left the records", "P7 ledger row L98: D:sec_systematics.tex::\\texttt{flux-index}: tag",
-     "app_provenance.tex", lambda p: (p.write_text(p.read_text().replace(r"\texttt{flux-index}", r"\texttt{flux-idx}")),
-                                      _unlink_cite(p.parent / "sec_systematics.tex", r"\recentry{flux-index}")), None,
-     "| L98 | planted | DROP | R1 | `D:sec_systematics.tex::\\texttt{flux-index}` | planted |"),
-    # n3 (2026-10-27): the sec_systematics ten-seed citation these two plants used left the note (L-thin-C62, director
-    # ruling (e)); they now use citations that still print, in both the base and the delivered App. A and App. B.
-    ("listed drop of a heading the records lack", "P7 ledger row L98: D:app_statmethods.tex::superseded values: "
-     "retired materials", "app_statmethods.tex",
-     r"was in force when the tests were graded (Ref.~\cite{NoteRecords2026}, superseded values: retired material)",
-     "was in force when the tests were graded",
-     "| L98 | planted | DROP | R4 | `D:app_statmethods.tex::superseded values: retired materials` | planted |"),
-    ("kept citation moved within its file (C13)", "P7 ledger row L-thin-C13", "app_statmethods_nd.tex",
-     lambda p: p.write_text(_move_cite(p.read_text(), " (\\recentry{rank-inversion})",
-                                       "The 2D methods and their worked examples are in App.~\\ref{app:statmethods}.")), None),
-    # P9 (n2): a repeated record drifts from its table row
+    # P8 additions (2026-11-22): a records citation that comes back must be listed as an A: addition
+    ("unlisted tag citation added", "P8 sec_intro.tex: 1 citation(s) of tag:flux-index now, 0 at THIN_BASE",
+     "sec_intro.tex", None, "\nSee (Ref.~\\cite{NoteRecords2026}, \\recentry{flux-index}).\n"),
+    ("unlisted heading citation added", "P8 sec_intro.tex: 1 citation(s) of head:superseded values: retired material now",
+     "sec_intro.tex", None, "\nSee (Ref.~\\cite{NoteRecords2026}, superseded values: retired material).\n"),
+    ("unlisted whole-document citation added", "P8 sec_intro.tex: 1 citation(s) of (whole) now", "sec_intro.tex", None,
+     "\nThe records are in a separate document, Ref.~\\cite{NoteRecords2026}.\n"),
+    ("listed tag citation added (silent)", None, "sec_intro.tex", None,
+     "\nSee (Ref.~\\cite{NoteRecords2026}, \\recentry{flux-index}).\n",
+     "| L98 | planted | ADD | R1 | `A:sec_intro.tex::\\texttt{flux-index}` | planted |"),
+    ("listed addition not printed", "P8 sec_intro.tex: the ledger lists 1 addition(s) of tag:flux-index", LEDGER, None,
+     "\n| L98 | planted | ADD | R1 | `A:sec_intro.tex::\\texttt{flux-index}` | planted |\n"),
+    ("listed addition of a tag the records lack", "P7 ledger row L98: A:sec_intro.tex::\\texttt{flux-indexx}: tag",
+     "sec_intro.tex", None, "\nSee (Ref.~\\cite{NoteRecords2026}, \\recentry{flux-indexx}).\n",
+     "| L98 | planted | ADD | R1 | `A:sec_intro.tex::\\texttt{flux-indexx}` | planted |"),
+    # D: drops (the 10-22 mechanism, kept): a listed drop must name a citation printed at THIN_BASE and a live target
+    ("listed drop still printed", "P8 sec_intro.tex: the ledger lists 1 drop(s) of tag:flux-index", LEDGER, None,
+     "\n| L98 | planted | DROP | R1 | `D:sec_intro.tex::\\texttt{flux-index}` | planted |\n"),
+    ("listed drop of a tag the records lack", "P7 ledger row L98: D:sec_intro.tex::\\texttt{coverage-fixed-truths}",
+     LEDGER, None, "\n| L98 | planted | DROP | R1 | `D:sec_intro.tex::\\texttt{coverage-fixed-truths}` | planted |\n"),
+    ("listed drop whose tag left the records", "P7 ledger row L98: D:sec_intro.tex::\\texttt{flux-index}: tag",
+     "app_provenance.tex", lambda p: p.write_text(p.read_text().replace(r"\texttt{flux-index}", r"\texttt{flux-idx}")),
+     None, "| L98 | planted | DROP | R1 | `D:sec_intro.tex::\\texttt{flux-index}` | planted |"),
+    ("listed drop of a heading the records lack", "P7 ledger row L98: D:sec_intro.tex::superseded values: "
+     "retired materials", LEDGER, None,
+     "\n| L98 | planted | DROP | R4 | `D:sec_intro.tex::superseded values: retired materials` | planted |\n"),
+    ("listed move from a file without it", "P8 ledger row L98: M:part1_intro.tex>sec_intro.tex moves tag:flux-index",
+     LEDGER, None, "\n| L98 | planted | MOVE | R1 | `M:part1_intro.tex>sec_intro.tex::\\texttt{flux-index}` | planted |\n"),
+    # P9 (n2): a repeated record drifts from its table row; the entries the ledger records as added keep their labels
     ("repeated record drifts from its row", "P9 App. G entry flux-index does not contain", "app_provenance.tex",
      r"\texttt{KNOWN\_ISSUES.md} row 91: the flux-universe", r"\texttt{KNOWN\_ISSUES.md} row 92: the flux-universe"),
-    ("cited tag's entry deleted", "P9 tag flux-index is cited by the posted note", "app_provenance.tex",
+    ("added entry deleted", "P9 tag flux-index is cited by the posted note", "app_provenance.tex",
      lambda p: p.write_text(re.sub(r"\n  \\item\[\\texttt\{flux-index\}\.\].*?(?=\n  \\item)", "", p.read_text(),
                                    count=1, flags=re.S)), None),
     ("added entry's label renamed", "P9 tag july-sweep is cited by the posted note or recorded as an added entry",
@@ -1250,8 +1349,6 @@ PLANTS = [
     ("table row that no longer parses", "P9 the App. G table row of flux-index did not parse", "app_provenance.tex",
      "the quoted universe block counts it once \\\\\n\\texttt{flux-index} &",
      "the quoted universe block counts it once\n\\texttt{flux-index} &"),
-    ("listed drop still printed", "P8 sec_systematics.tex: the ledger lists 1 drop(s) of tag:flux-index", LEDGER, None,
-     "\n| L98 | planted | DROP | R1 | `D:sec_systematics.tex::\\texttt{flux-index}` | planted |\n"),
     # R-EDIT (director ruling 2026-10-26), all on one record paragraph of app_history.tex. A callable ledger row is
     # built from the inventory, so its digests are those of the real base paragraph.
     ("unrecorded pointer edit", "P5 RECORD paragraph not verbatim", "app_history.tex", _R_ANCHOR, _R_POINTER),
@@ -1318,6 +1415,31 @@ def _unlink_cite(path: Path, tag: str) -> None:
     path.write_text(t.replace(old, ""))
 
 
+def _restore_record_fixture(inv: dict, work: Path, ledger: Path) -> None:
+    """Restore the frozen paragraph only in temporary copies used by the plants."""
+    base_paragraphs = [p for p in inv["record_paragraphs"] if _R_ANCHOR in p]
+    history = work / "app_history.tex"
+    chunks = re.split(r"(\n\s*\n)", history.read_text())
+    positions = [i for i, chunk in enumerate(chunks) if _R_ANCHOR in chunk]
+    if len(base_paragraphs) != 1 or len(positions) != 1:
+        raise SystemExit("self-test fixture: expected one base and one current rank paragraph")
+    chunks[positions[0]] = base_paragraphs[0]
+    history.write_text("".join(chunks))
+    old_digest = digest(base_paragraphs[0])
+    # A real correction's binding is stale when its base text is restored for a plant.
+    rows = []
+    for line in ledger.read_text().splitlines():
+        cells = [cell.strip() for cell in line.split("|")]
+        if (
+            len(cells) > 2
+            and re.fullmatch(r"R-(?:EDIT|FIX)-\d+", cells[1])
+            and cells[2] == old_digest
+        ):
+            continue
+        rows.append(line)
+    ledger.write_text("\n".join(rows) + "\n")
+
+
 def _digest_message_check(inv: dict, new: Path, ledger: Path, thin: Counter | None, head: dict[str, str] | None) -> bool:
     """A recorded pointer edit whose row's new digest is the real one with its last hex digit changed must fail with a
     message that prints both digests in full, and they must differ (12-character prefixes printed them as equal)."""
@@ -1327,13 +1449,15 @@ def _digest_message_check(inv: dict, new: Path, ledger: Path, thin: Counter | No
                                                                  "*.fdb_latexmk", "*.out", "*.toc", "*.run.xml",
                                                                  "*.blg", "figures", "archive", "release-package-*",
                                                                  "__pycache__"))
+        led = Path(d) / "digest-message.ledger.md"
+        shutil.copyfile(ledger, led)
+        _restore_record_fixture(inv, work, led)
         hist = work / "app_history.tex"
         hist.write_text(hist.read_text().replace(_R_ANCHOR, _R_POINTER, 1))
         row = _redit_row(inv, _R_POINTER)
         real = row.split("|")[3].strip()
         wrong = real[:-1] + ("0" if real[-1] != "0" else "1")
-        led = Path(d) / "digest-message.ledger.md"
-        led.write_text(ledger.read_text() + "\n" + row.replace(real, wrong) + "\n")
+        led.write_text(led.read_text() + "\n" + row.replace(real, wrong) + "\n")
         got = [f for f in probe_fails(inv, work, led, thin, head) if "is not the row's new text" in f]
         shown = re.findall(r"[0-9a-f]{64}", got[0]) if got else []
         ok = len(shown) == 2 and shown[0] == real and shown[1] == wrong and shown[0] != shown[1]
@@ -1362,6 +1486,11 @@ def self_test(base: Path, new: Path, ledger: Path) -> int:
             led = work / LEDGER if ledger == new / LEDGER else Path(d) / (work.name + ".ledger.md")
             if led != work / LEDGER:
                 shutil.copyfile(ledger, led)
+            _restore_record_fixture(inv, work, led)
+            if not fired and not silent:
+                fixture_failures = probe_fails(inv, work, led, thin, head)
+                if fixture_failures:
+                    failures.append(f"the restored plant fixture is not silent: {fixture_failures[:3]}")
             target = led if fname == LEDGER else work / fname
             text = target.read_text()
             if callable(old):
@@ -1411,7 +1540,7 @@ def main(argv: list[str]) -> int:
         ledger = Path(args[i + 1])
         del args[i:i + 2]
     if len(args) >= 3 and args[0] == "inventory":
-        inv = inventory(Path(args[1]))
+        inv = inventory_post(Path(args[1])) if "--post-move" in args else inventory(Path(args[1]))
         if "--sha" in args:
             inv = {"_base_sha": args[args.index("--sha") + 1],
                    "_derived_by": "docs/analysis-note/check_note_records.py inventory", **inv}

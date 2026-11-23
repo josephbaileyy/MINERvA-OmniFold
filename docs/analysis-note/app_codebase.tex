@@ -1,53 +1,9 @@
-\section{Codebase layout and terminology}
+\subsection{Code}
 \label{app:codebase}
 
-The analysis chain has four components; the note refers to them by the names in italics below.
+The analysis chain has four components: the event loop, its outputs, the driver and the engine. Table~\ref{tab:definitions} gives the name the note uses for each, with the code identifiers the note cites.
 
-\begin{itemize}[itemsep=2pt]
-  \item \emph{Event loop} (C++): \texttt{runEventLoopOmniFold}, built on the MINERvA Analysis Toolkit (MAT) and the MINERvA-101 framework. It reads production AnaTuples, applies selection and systematic-universe machinery, and writes per-event ROOT trees.
-  \item \emph{Event-loop outputs} (\emph{omnifiles} in the code): per-event records for data, for simulated signal with paired true and reconstructed quantities, for simulated background, and for the truth-level efficiency denominator, together with the exposure in protons on target (POT). The \texttt{\_universes\_full} variants add per-universe weight and shifted-kinematics branches.
-  \item \emph{Driver} (Python): per-analysis orchestration, by a two-dimensional driver and its $N$-dimensional generalization. The driver builds training arrays from the event-loop outputs, subtracts the background by the method an option selects, the purity weight by default (\S\ref{sec:method-algo}), or negative-weight injection with or without the Stay-Positive refinement (App.~\ref{app:negweight}), runs the engine, and extracts the cross section.
-        % Accuracy fix (unscored; director ruling 2026-10-26): the option is --bkg-mode {purity, negweight,
-        % negweight-refined}, default purity (2d-unfolding/unfold_2d_omnifold_unbinned.py:1362-1377 and :1825-1870 @ ddf16f10; nd-unfolding/unfold_nd_omnifold_unbinned.py:619-630 and :900-1030 @ ddf16f10);
-        % the 2D result uses the refined negative-weight mode (sec:negweight-footing).
-  \item \emph{Engine} (Python, \texttt{unbinned\_unfolding/python/omnifold.py}): the OmniFold iteration, implemented independently of the learner backend: LightGBM for the central value and the uncertainty ensembles, scikit-learn's exact-split gradient boosting (\texttt{exact}) for the cross-check, its histogram gradient boosting (\texttt{hist}) as an alternate, and a multilayer perceptron (MLP) for a further cross-check.
-\end{itemize}
-
-Point-cloud (PET) code is under \texttt{nd-unfolding/pet/} (App.~\ref{sec:pet}).
+Point-cloud (PET) code is under \texttt{nd-unfolding/pet/}.
 
 The quoted training-seed block is assembled by the aggregation step of the 2D production, not by the scripts that run the training-seed variation.
 % J3/J4 provisional (DECISION-20261018, packet W3: D11 in sec:uq-2d-scope). C08: stageC/production/DESIGN.md §S5.
-
-\paragraph{Code identifiers cited in the note.}
-\begin{itemize}[itemsep=1pt]
-  \item Event loop (\S\ref{sec:evloop}): \repopath{MINERvA101/MINERvA-101-Cross-Section/runEventLoopOmniFold.cpp}; its four trees are \texttt{mc\_truth\_denom} (efficiency denominator), \texttt{mc\_signal\_reco}, \texttt{mc\_background} and \texttt{data}; the flux histogram is \texttt{pTmu\_reweightedflux\_integrated}.
-  \item Cross-section extraction (\S\ref{sec:method-xsec}): \texttt{extract\_cross\_section\_2d} in the 2D driver, \texttt{2d-unfolding/unfold\_2d\_omnifold\_unbinned.py}, and its N-dimensional generalization \texttt{nd-unfolding/xsec\_nd.py}.
-  \item Figures of \S\ref{sec:results}: \texttt{2d-unfolding/plot\_2d\_paper\_comparison.py} builds the simulated-truth curve of Fig.~\ref{fig:ptslices} from \texttt{hOFTruthDenom2D}; \texttt{2d-unfolding/compare\_to\_models.py} draws Fig.~\ref{fig:modelmaps}.
-\end{itemize}
-
-\section{Supplementary figure: coverage of a purity-subtracted variant}
-\label{app:coverage-fig}
-
-The coverage test of \S\ref{sec:coverage-5d} measures, for each reported integral, the fraction of bias-corrected statistical intervals that contain the true value. Figure~\ref{fig:coverage-5d-paper} shows it integral by integral at the truth with a reduced signal rate.
-
-% Register round r19 (variant B, N3; director's ruling 2026-10-28): the methods paper's Fig. 4 and its caption, moved here when the paper's coverage figure left it (r19/move-pass.md, P5). Placed at the end of the last appendix so that no existing figure number of the note changes; pointed to from sec:coverage-5d. Third truth: OUTCOME-20260925-s5c-tier-s-futility-fail.md sec. 3; nd-unfolding/s5c_pseudo.py:56-60. Source: methods-m3 REPORT, Figure 3 (interim_400.json; evaluator nd-unfolding/s5c_coverage.py:147-174; bounds re-derived with scipy.stats.beta to 2e-16). Reproduced: 51, 0.060 (J224), 42; 2 (EW36, J161), 0.850 (EW36).
-\begin{figure}[tbp]
-\centering
-\includegraphics[width=\linewidth]{paper_fig_coverage}
-\caption{Empirical coverage of statistical intervals for the 153 reported cell and projection integrals, corrected for nominal-truth bias (\S\ref{sec:coverage-5d}). The study uses a deterministic LightGBM estimator with purity-based subtraction and 400 pseudo-experiments at a truth with an approximately \SI{10}{\percent} lower signal rate and a weak $\Eavail$ slope.  At nominal truth (not drawn) none lies below the 0.66 threshold, and two lie below the 0.94 threshold.  Circles: 68\% intervals; squares: 95\% intervals.  Bars are one-sided Clopper--Pearson lower and upper bounds, each at level $0.05/459$, a Bonferroni correction over the 153 integrals and the three truths of the study.  The third truth, a change of the $q_{3}$ dependence at fixed $(\Eavail,W)$, is omitted because its reweighting does not implement the intended change; the test's verdict does not depend on it. Solid lines mark the nominal coverage and dashed lines the acceptance thresholds 0.66 and 0.94; filled markers have an upper bound below the threshold.  The integrals are ordered as the $(\Eavail,W)$ projection (cells 0--41 and their sum), the \jtNcells{} coarse joint cells (labelled by their index in the $3^{5}$ grid), and the total.}
-\label{fig:coverage-5d-paper}
-\end{figure}
-\section{Supplementary figure: closure with backgrounds}
-\label{app:bkg-residual-fig}
-
-The closure of the five-dimensional pseudo-experiments with backgrounds, under purity-based and refined negative-weight subtraction (\S\ref{sec:val-negweight}), is shown cell by cell in Fig.~\ref{fig:bkg-residual-note}.
-
-% Targeted round (DECISION-20261103-joseph-retire-density-gate.md item 3b): the methods paper's Fig. 2 and its caption, verbatim, moved here when the paper's background-closure paragraph (Sec. IV D) moved to the note. Placed after the coverage figure, at the end of the last appendix, as r19 placed that one, so that no existing figure number of the note changes; pointed to from sec:val-negweight. The same figure file the paper printed (figures/paper_fig_bkg_residual.pdf, unchanged).
-\begin{figure}[tbp]
-\centering
-\includegraphics[width=\linewidth]{paper_fig_bkg_residual}
-\caption{Fractional closure residual, (unfolded $-$ truth)/truth, at nominal truth, for pseudo-experiments that include backgrounds. Both from a deterministic LightGBM estimator. Circles: purity-based background subtraction (9 pseudo-experiments). Squares: unbinned negative-weight subtraction with a refinement of 100 trees and 8 leaves (60 pseudo-experiments). The pseudo-experiments are not paired. (a) The 42 $(\Eavail,W)$ projection cells, grouped by $\Eavail$ bin. (b) The \jtNcells{} coarse joint cells, labelled by their index in the $3^{5}$ grid, then the total integrated cross section. Error bars are the standard error of the mean.}
-\label{fig:bkg-residual-note}
-\end{figure}
-% Flush the figure above before the bibliography: r22 Step 3 shortened the note, and the [tbp] float had drifted past \printbibliography onto the first References page (layout only; no printed text changes).
-\clearpage

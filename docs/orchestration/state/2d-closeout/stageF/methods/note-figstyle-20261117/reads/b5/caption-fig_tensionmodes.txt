@@ -1,0 +1,2 @@
+fig:tensionmodes (sec_results.tex)
+Three of the six leading $\chi^{2}$-carrying eigenmodes of the published covariance, all smallest-$\lambda$ directions, concentrate in the highest-$\pPar$ bins; the other three, moderate-$\lambda$ modes, lie below them. Shown in bin space, for the LightGBM central value.

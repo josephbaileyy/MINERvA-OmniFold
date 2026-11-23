@@ -15,6 +15,12 @@ high-Eavail x high-W excess each generator accounts for. Writes a 2-panel PNG.
       --gen GENIE+MEC:genie_mec_xsec_eavailW.root \
       --gen NuWro:nuwro_cv_xsec_eavailW.root \
       --png eavailW_band.png --out eavailW_band.root
+
+Opt-in (note figure style, group C family 5; the director's ruling (b) of 2026-11-15): --dump-arrays FILE.npz writes the
+data and generator (E_avail, W) arrays after the read; --from-arrays FILE.npz takes them from such a dump instead of the
+ROOT files; --print-style draws the same two panels with matplotlib in the paper's style (note_print_style) and writes
+only --png and its .pdf twin, not the ROOT outputs. It is a new rendering, not a restyle of the ROOT canvas. With none
+of them, the figure is drawn by ROOT as before.
 """
 import argparse
 import os
@@ -74,11 +80,20 @@ def main():
                     help="label:file.root (repeatable)")
     ap.add_argument("--png", default="eavailW_band.png")
     ap.add_argument("--out", default="eavailW_band.root")
+    ap.add_argument("--dump-arrays", default=None, help="write the data and generator arrays to this .npz after the read")
+    ap.add_argument("--from-arrays", default=None, help="take the data and generator arrays from this .npz")
+    ap.add_argument("--print-style", action="store_true", help="draw with matplotlib in the paper's style")
     args = ap.parse_args()
 
-    fd = ROOT.TFile.Open(args.data)
-    data2d = th2_to_np(fd.Get("hData2D"))           # (eavail, W) xsec
-    fd.Close()
+    if args.from_arrays:
+        with np.load(args.from_arrays) as z:
+            data2d = z["data2d"]
+            gens_in = dict(zip([str(x) for x in z["labels"]], z["gens"]))
+    else:
+        fd = ROOT.TFile.Open(args.data)
+        data2d = th2_to_np(fd.Get("hData2D"))           # (eavail, W) xsec
+        fd.Close()
+        gens_in = None
     dea = np.diff(EAVAIL_EDGES)[:, None]
     dw = np.diff(W_EDGES)[None, :]
     data_ea = (data2d * dw).sum(axis=1)             # dsigma/dEavail
@@ -92,13 +107,16 @@ def main():
     data_corner = float((data2d * dea * dw)[corner].sum())
 
     gens = {}
-    for spec in args.gen:
+    for spec in (args.gen if gens_in is None else [f"{l}:" for l in gens_in]):
         label, fn = spec.split(":", 1)
-        if not os.path.exists(fn):
-            print(f"[band] MISSING {label}: {fn} (skip)"); continue
-        f = ROOT.TFile.Open(fn)
-        g2d = th2_to_np(f.Get("hXSec_eavailW"))
-        f.Close()
+        if gens_in is not None:
+            g2d = gens_in[label]
+        else:
+            if not os.path.exists(fn):
+                print(f"[band] MISSING {label}: {fn} (skip)"); continue
+            f = ROOT.TFile.Open(fn)
+            g2d = th2_to_np(f.Get("hXSec_eavailW"))
+            f.Close()
         gens[label] = g2d
         g_tot = float((g2d * dea * dw).sum())
         g_corner = float((g2d * dea * dw)[corner].sum())
@@ -116,6 +134,14 @@ def main():
             gw = (gens[l] * dea).sum(axis=0)[j]
             row += f"   {gw:10.3e}"
         print(row)
+
+    if args.dump_arrays:
+        np.savez(args.dump_arrays, data2d=data2d, labels=np.array(list(gens), dtype=str),
+                 gens=np.stack([gens[l] for l in gens]) if gens else np.zeros((0,) + data2d.shape))
+    if args.print_style:
+        draw_print_style(data_ea, data_w, {l: ((g * dw).sum(axis=1), (g * dea).sum(axis=0)) for l, g in gens.items()},
+                         args.png)
+        return
 
     # ROOT + PNG
     fo = ROOT.TFile.Open(args.out, "RECREATE")
@@ -189,6 +215,61 @@ def main():
     c.Write()
     fo.Close()
     print(f"\n[band] wrote {args.png} and {args.out}")
+
+
+# The ROOT palette and markers above, as matplotlib names (technote_style.GEN_MARKERS shapes o/s/^/D).
+MPL_COLOR = [("nuwro", "#2ca02c"), ("gibuu", "#9467bd"), ("mec", "#4C72B0"), ("tune", "#4C72B0"), ("genie", "#C44E52")]
+MPL_MARKER = [("nuwro", "^"), ("gibuu", "D"), ("mec", "s"), ("tune", "s"), ("genie", "o")]
+
+
+def _pick(table, label, default):
+    h = label.lower()
+    return next((v for k, v in table if k in h), default)
+
+
+def draw_print_style(data_ea, data_w, gen_proj, png):
+    """The ROOT canvas's two panels, drawn with matplotlib in the paper's style: dsigma/dE_avail and dsigma/dW on log
+    axes, the catch bins off the axis as in mk_th1, the same y range (max x 8 down to max x 1e-3), data as points and
+    each generator as a step line with its points."""
+    import sys as _sys
+    from pathlib import Path as _Path
+    _root = _Path(__file__).resolve().parents[2]
+    if str(_root) not in _sys.path:
+        _sys.path.insert(0, str(_root))
+    import note_print_style as nps
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    nps.apply()
+    fig, axs = plt.subplots(1, 2, figsize=nps.figsize(0.99, 0.44))
+    panels = [(axs[0], EAVAIL_EDGES, data_ea, 0, r"$E_{\mathrm{avail}}$ (GeV)", r"$d\sigma/dE_{\mathrm{avail}}$"),
+              (axs[1], W_EDGES, data_w, 1, r"$W$ (GeV)", r"$d\sigma/dW$")]
+    for ax, edges, dvals, k, xlab, ylab in panels:
+        e = np.asarray(edges[:-1], float)
+        n = len(e) - 1
+        cen = 0.5 * (e[:-1] + e[1:])
+        ymax = max(dvals.max(), max((v[k].max() for v in gen_proj.values()), default=0))
+        for label, v in gen_proj.items():
+            col, mk = _pick(MPL_COLOR, label, "k"), _pick(MPL_MARKER, label, "o")
+            ax.stairs(v[k][:n], e, color=col, lw=1.0, baseline=None)
+            ax.plot(cen, v[k][:n], marker=mk, linestyle="None", ms=3.5, color=col)
+            ax.plot([], [], marker=mk, linestyle="-", lw=1.0, ms=3.5, color=col, label=label)   # legend: line and marker
+        ax.plot(cen, dvals[:n], marker="o", linestyle="None", ms=4, color="k", label="data (unfolded)", zorder=5)
+        ax.set_yscale("log")
+        ax.set_xlim(e[0], e[-1])
+        ax.set_ylim(ymax * 1e-3, ymax * 8)
+        ax.set_xlabel(xlab)
+        ax.set_ylabel(ylab)
+    h, l = axs[0].get_legend_handles_labels()
+    order = [len(l) - 1] + list(range(len(l) - 1))
+    fig.legend([h[i] for i in order], [l[i] for i in order], loc="upper center", ncol=len(l), frameon=False,
+               bbox_to_anchor=(0.5, 1.0), handlelength=1.8, columnspacing=1.2)
+    fig.text(0.01, 0.845, r"MINERvA ME FHC, $1.06\times10^{21}$ POT", ha="left", va="bottom", color="0.35")
+    fig.tight_layout(rect=(0, 0, 1, 0.84))
+    fig.savefig(png, dpi=200)
+    if png.endswith(".png"):
+        fig.savefig(png[:-4] + ".pdf")
+    print(f"[band] wrote {png} (print style)")
 
 
 if __name__ == "__main__":

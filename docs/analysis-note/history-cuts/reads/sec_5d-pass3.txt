@@ -1,0 +1,25 @@
+# sec_5d meaning read, pass 3 (the director's ruling (A)): codex-school gpt-6.1-sol, high, read-only; prompt sec_5d-pass3-prompt.txt (question 1 read against the attached records), records sec_5d-pass3-records.txt
+**Question 1 — remaining text**
+
+| Row | Verdict and reason |
+|---|---|
+| F1 | **PASS:** The declaration and binding records support specifying the stabilization probe before it ran, and its outcome and scope remain unchanged. |
+| F2 | **PASS:** The mechanism-study declaration says nothing had run and nothing would run before binding, supporting the explicit timing without changing the finding or its single-pseudo-experiment scope. |
+| F3 | **PASS:** The coverage declaration supports specifying the test before execution, and the stop rule was recorded before the stage ran; neither clause claims fixation before pilot results or observed statistics. |
+| M1 | **PASS:** Replacing “declared” with “specified” preserves the statement that no separate destination-binning acceptance weight was specified or applied. |
+| M2 | **PASS:** The replacement preserves the requirement for an explicit regularization and the statement that none is applied implicitly. |
+| M3 | **PASS:** The replacement preserves the limit’s status as a stability tolerance, while its explicit date and timing before production remain intact. |
+| M4 | **PASS:** The replacement preserves the specified offset set and the limitation that additional pairs can only raise the maximum. |
+| D8 | **PASS:** The row accurately restates the stabilization probe’s purpose, failure to find a qualifying variant, and retention of the estimator, with a pointer to the scoped body account. |
+| D9 | **PASS:** The row preserves the deterministic variant’s failed futility test, the invalid deformation, the verdict’s independence from those experiments, and the absence of a frequentist coverage claim. |
+| D10 | **PASS:** The other-section excerpt supports the two-tune covariance-test description, and the timing records support fixing the stop rule before that stage ran. |
+
+No numbers, numerical macros, or LaTeX command sequences changed between the section versions.
+
+**Question 2 — removed or shortened items**
+
+There are **no substantive removed or shortened items** to classify as NEEDED or LEDGER: the section changes only replace wording, and D8–D10 add appendix summaries. No NEEDED item was lost; specifically, F3’s advance specification and stop-rule timing remain explicit in printed text.
+
+**Post-results disclosure:** None disappeared. The printed section still states that the required null bound was not fixed before production and that the note nevertheless uses the covariance, together with its restrictions and limiting measurements.
+
+OVERALL: PASS — FAILs: none.

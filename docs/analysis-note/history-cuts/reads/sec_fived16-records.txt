@@ -1,0 +1,147 @@
+Each excerpt names its file and lines; brackets give the record's first commit (sha, date). Paths under docs/orchestration/state/measurement-paper/5d-community-20261024 unless given.
+
+######## T1 (:72, the quadrant comparison's rule)
+
+=== docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-X-DECLARATION.md:25-28 [a293dc3de, 2026-11-01 22:07:25 -0800]
+2. **C₂D = `Q_R` + C_model,2D, vertex-paired, as primary.** `Q_R` alone is printed beside it, labelled.
+3. **The joint χ²₄ rule.** "Agree" requires the joint χ²₄ of the four d, under their full 4×4 σ_d covariance, to have
+   p ≥ 0.05, and every quadrant to have |z| ≤ 2.50.
+   - A quadrant with |z| > 2.50 is a "differ", and is named. So is a joint p < 0.05 with no single quadrant over.
+
+=== docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-X-DECLARATION.md:256-261 [a293dc3de, 2026-11-01 22:07:25 -0800]
+**The primary reading:** C₂D = `Q_R` + C_model,2D, the C_PL pair constructed, and route B.
+- z_q = d_q/√V_d,qq, and χ²₄ = dᵀ V_d⁻¹ d, with p = e^(−χ²/2)(1 + χ²/2) (exact for 4 degrees of freedom).
+- **"agree"** iff p ≥ 0.05 and every |z_q| ≤ 2.50.
+- **"differ"** otherwise:
+  - each quadrant with |z| > 2.50 is named;
+  - a joint p < 0.05 with no quadrant over is named "joint".
+
+=== docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-X-BINDING.md:1-4 [9c636cb61, 2026-11-01 22:43:26 -0800]
+# BINDING: GENCMP X, the 16-cell–2D cross-covariance and the quadrant test (director, 2026-11-02)
+
+**Binds** [`FD-GENCMP-X-DECLARATION.md`](FD-GENCMP-X-DECLARATION.md) and `fd/xcov/INPUTS.sha256`, as merged in PR
+#666 at **M = `260e299b37e2a82deaeef165b79d0757115e8887`** (PR head `26dd124f88d115875de376f473eb5fb9e628d22b`). It cites
+
+=== docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-X-REPORT.md:1-4 [acd062947, 2026-11-02 09:06:59 -0800]
+# REPORT: GENCMP X — the sixteen-cell quadrant sums against the 2D result, with their covariance (2026-11-02)
+
+**By** the limitation-resolver lane (Claude), for the director and for Joseph.
+
+
+######## T2 (:244, the power alternatives made descriptive when control 7 fails)
+
+=== docs/orchestration/state/measurement-paper/5d-community-20261024/FD-F0-DECLARATION.md:1-3 [7d7dac1d3, 2026-10-25 13:43:38 -0700]
+# DECLARATION F0: re-grade of the existing (e) fake-data products on the 16 H2 cells (2026-10-25)
+
+**By** the measurement session, for the director to bind.
+
+=== docs/orchestration/state/measurement-paper/5d-community-20261024/FD-F0-DECLARATION.md:210-210 [7d7dac1d3, 2026-10-25 13:43:38 -0700]
+| **7** | the offset control of FD-PLAN §3.1: Δ = O_MnvTune − O_GENIE CV; χ²_Δ = Δᵀ(N_O,MnvTune + N_O,GENIE CV)⁻¹Δ, ndf 16; pass if P(χ²_16 > χ²_Δ) ≥ 0.01 | **it does not refuse.** On FAIL, row 6 is printed as "descriptive and ungraded", leaves the trigger counts and denominators, and the failure is reported | `test_a_failed_offset_control_leaves_row_6_ungraded` |
+
+=== docs/orchestration/state/measurement-paper/5d-community-20261024/FD-F0-REPORT.md:1-3 [28c4870f4, 2026-10-25 15:04:14 -0700]
+# REPORT F0: re-grade of the existing (e) fake-data products on the 16 H2 cells (2026-10-25)
+
+**By** the measurement session, for the director.
+
+=== docs/orchestration/state/measurement-paper/5d-community-20261024/FD-F0b-DECLARATION.md:44-45 [885ad0eba, 2026-10-26 02:17:01 -0700]
+- **Control 7 is reported again.** It grades O_MnvTune − O_GENIE CV against their noise alone, with no covariance
+  block, so C_resp cannot enter it. **The expected result is F0's, χ²₁₆ 245.74, FAIL**, and row 6 stays descriptive.
+
+######## T3 (:279, the coverage test at the two tunes)
+
+=== docs/orchestration/state/measurement-paper/5d-community-20261024/FD-1B-DECLARATION.md:1-12 [fcdc1afed, 2026-10-30 09:31:17 -0700]
+# DECLARATION 1B with 4A, stage 1: the coverage protocol, fixed before any toy, and the stages that follow (2026-10-30)
+
+**By** the measurement session `coverage-5b` (ListAgents), for the director to bind.
+
+**Under** [`DECISION-20261030-joseph-fund-1b-with-4a.md`](../../../DECISION-20261030-joseph-fund-1b-with-4a.md)
+(Joseph: "Fund it (Recommended)"): 1B runs with 4A as
+[`LIMITATION-PLAN-ADDENDUM-20261028.md`](LIMITATION-PLAN-ADDENDUM-20261028.md) §1 and §4.2 scope them, "declared and
+bound in stages; the nominal control must pass before the production toys run", about 44.5–145 CPU node-h, every job
+under 12 h, CPU only. Item 3 of
+[`DECISION-20261030-joseph-4b-not-now-5b-audit-then-add.md`](../../../DECISION-20261030-joseph-4b-not-now-5b-audit-then-add.md)
+fixes which matrix 1B tests (§2 below).
+
+
+=== docs/orchestration/state/measurement-paper/5d-community-20261024/FD-1B-STAGE1-REPORT.md:1-3 [c0ce80981, 2026-10-30 16:59:17 -0700]
+# 1B with 4A, stage 1 report: the toy mode, the scorer, their tests and the derivation (2026-10-30)
+
+**By** the measurement session `coverage-5b`, under [`FD-1B-BINDING.md`](FD-1B-BINDING.md) (PR #556), which binds
+
+=== docs/orchestration/state/measurement-paper/5d-community-20261024/FD-1B-STAGE2-DECLARATION.md:1-3 [7173b9508, 2026-10-31 10:44:06 -0700]
+# DECLARATION 1B with 4A, stage 2: the derivation runs, gate D and the nominal control (2026-10-31)
+
+**By** the measurement session `coverage-5b`, for the director to bind.
+
+=== docs/orchestration/state/measurement-paper/5d-community-20261024/FD-1B-STAGE2-REPORT.md:1-3 [1a4815a8a, 2026-10-31 18:38:11 -0700]
+# REPORT 1B with 4A, stage 2: gate D FAIL, a STOP before any coverage toy (2026-11-01)
+
+**By** the measurement session `coverage-5b`, for the director.
+
+######## T4 (:287, the staged test's stage-1 stop rule)
+=== docs/orchestration/state/measurement-paper/5d-community-20261024/FD-1B-STAGED-AMENDMENT-2.md:202-206 at its first commit 2b8859efc [2026-11-03]
+
+**INVALID versus STOP** (the audit's P1, the director's ruling):
+- **STOP** is only N1 (`exact.*.rows_above` > 0) or §2b (`denominator.draws_with_nonpositive_cells` non-empty), on a
+  receipt that completed and wrote `receipt.json`.
+- **INVALID** is anything that stops the receipt from deciding. It writes no `receipt.json`, costs only its job, and
+
+=== docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/b3/receipt-run-60893641/receipt.txt:1-6 at b3f27fab3 (recorded 2026-11-06)
+1B binding 3, stage 3 (v2): the receipt job 60893641. Verdict STOP on §2b (amendment 2 §4: STOP is N1 or §2b, on a
+completed receipt that wrote receipt.json). Under A2.1 §11, a STOP at the receipt ends the sequence and goes to Joseph.
+connect-receipt.sh c457d5dd0e7083167255748db4294449deaf3dfadd7265630d4d346fbf4d15aa, M4 5771ce2043f6d8a8338220b099edde31deedff54,
+login03, 2026-11-06T08:15:11Z..08:16:02Z: every check passed (connect-receipt.log), the move of the INVALID a2 to
+stage1/a2-invalid-60889950 among them; fit: steps=1, cpus 256 of 256, mem 458752M of 487802M.
+Job: COMPLETED 01:18:42 (ElapsedRaw 4722 s, 1.312 node-h), step line0 COMPLETED, MaxRSS 382909276K (365.2 GiB of the
+
+######## T5 (:304, the IBU comparison)
+
+=== docs/orchestration/state/measurement-paper/5d-community-20261024/REF-G1-DECLARATION.md:1-8 [716e86df5, 2026-11-04 15:07:08 -0800]
+# REF-G1 DECLARATION: a binned unfolding head-to-head on the 16 reporting cells (2026-11-04)
+
+**Asked for by** the director, for Joseph. Joseph commissioned g1, "the 16-cell binned head-to-head"
+(`docs/orchestration/DECISION-20261104-joseph-referee-analysis-commission.md`, merged at `1a87d209a`, item 1). The
+commission requires each analysis to be declared, audited and bound before it runs, within the standing CPU grant,
+using the scope report's designs and prices.
+
+**Drafted by** the limitations-catalog lane. Read-only on origin/main `0e1dd76a1`. No jobs, no cluster contact, no
+
+=== docs/orchestration/state/measurement-paper/5d-community-20261024/REF-G1-BINDING-1.md:1-3 [1c3a1bda3, 2026-11-04 22:01:18 -0800]
+# REF-G1 BINDING 1, step one: the 16-cell binned head-to-head's design (director, 2026-11-05)
+
+**Binds** [`REF-G1-DECLARATION.md`](REF-G1-DECLARATION.md), sha256
+
+=== docs/orchestration/OUTCOME-20261106-ref-g1-r1-differ.md:1-3 [ed27964aa, 2026-11-05 21:54:32 -0800]
+# OUTCOME 2026-11-06 — REF-G1, the 16-cell binned head-to-head: R1 reads "differ"
+
+**Recorded by** the paper-tighten lane, as director.
+
+######## T6, T7 (:455, the native CH NuWro comparison and the probe chunk)
+
+=== docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-DECLARATION.md:293-300 [0aa1ab93d, 2026-11-01 10:50:48 -0800]
+## 5. Step D (Q08, second route): native CH generation for NuWro (ruling 4)
+
+**Why it is separate.** For an incoherent target, the CH cross section per nucleon is (12 σ_C + σ_H)/13, so step A's
+combination and a native CH generation predict the same quantity. A native run checks the combination's code and
+normalisation from an independent sample, and it is literally what both referees asked for ("generate CH samples",
+Sonnet M8; "Re-run NuWro and GiBUU on CH target mixtures", Gemini 7).
+
+**Which generators support it.**
+
+=== docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-DECLARATION.md:317-322 [0aa1ab93d, 2026-11-01 10:50:48 -0800]
+**Its control and rule.** Per cell, the native CH integral against step A's CH integral, with z_c = Δ_c / √(var_A +
+var_D) from their sumw2. **Agree:** Σ z_c² over the sixteen cells below the 0.99 quantile of χ²₁₆ (32.0), and no
+|z_c| > 3.5. The same comparison is made in the analysis definitions, against step B's CH combination.
+
+**Which route the paper uses, fixed now (director's ruling 4).** Step A's combination, in every outcome.
+- **If they agree,** the paper adds the clause in §7.
+
+=== docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-BINDING.md:1-3 [90ba8a8ac, 2026-11-01 11:52:34 -0800]
+# BINDING: generator comparisons, CH, the analysis definitions and the lower-dimensional overlap (director, 2026-11-01)
+
+**Binds** [`FD-GENCMP-DECLARATION.md`](FD-GENCMP-DECLARATION.md), with its inputs file `fd/gencmp/INPUTS.sha256`, as
+
+=== docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-REPORT.md:1-3 [e87dbda54, 2026-11-01 13:05:52 -0800]
+# REPORT GENCMP: Q08, Q10 and Q26 of the sixteen-cell paper (2026-11-01)
+
+**By** the limitation-resolver lane (Claude).

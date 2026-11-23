@@ -1,0 +1,16 @@
+1. text: 109 vs 103 words; differing multiset entries 50 -> FAIL
+    {'//': 3, '0': 3, '1': 2, '10': 1, '100': 4, '2': 3, '3': 2, '4': 2, '5': 1, '6': 1, '8': 1, 'at': 1, 'bin': 1, 'compressed': 1, 'right': 1, 'to': 1, '0.0': 3, '0.5': 3, '1.0': 3, '1.5': 3}
+2. values: 8 colour groups, 571 vs 503 paths; max vertex delta 3.5283 pt (tol 0.02); mismatches 27 -> FAIL
+    ((), (0.298, 0.447, 0.69)): vertex count 56 vs 40
+    ((), (0.298, 0.447, 0.69)): vertex count 80 vs 48
+    ((), (0.298, 0.447, 0.69)): vertex count 112 vs 48
+    ((), (0.298, 0.447, 0.69)): vertex count 128 vs 112
+    ((), (0.298, 0.447, 0.69)): max delta 3.5283 pt
+    ((), (0.85, 0.85, 0.85)): vertex count 56 vs 40
+    ((), (0.85, 0.85, 0.85)): vertex count 80 vs 48
+    ((), (0.85, 0.85, 0.85)): vertex count 112 vs 48
+    ((), (0.85, 0.85, 0.85)): vertex count 128 vs 112
+    ((), (0.867, 0.518, 0.322)): vertex count 44 vs 32
+3. catch: 4 vs 0 '100' labels, positions equal False; vertices near the catch bins: max delta 3.5283 pt, mismatches 27 -> FAIL
+4. visual: raster shapes (884, 1353, 3) vs (884, 1349, 3) -> FAIL
+NOT ALL PASS

@@ -1,0 +1,5 @@
+# Series lines whose style this pass changes (figure, before colour, before linestyle, before marker; compare.py --restyle). GENIE CV's points become down-triangles in Fig. 19, so they no longer share this work's filled circle.
+figure	before_rgb	before_linestyle	before_marker	identity
+generators_vs_unfolded_band_central	#C44E52	None	o	genie_cv_points
+eavailW_band	#C44E52	None	o	genie_cv_points
+eavailW_band	#C44E52	-	o	genie_cv_legend

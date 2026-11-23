@@ -1,0 +1,292 @@
+{
+ "artists_py_sha256": "feb486fefd363c0d80174fc034c82f53874558de718736af2c34c6b5344de041",
+ "size_in": [
+  10.2,
+  3.5
+ ],
+ "items": [
+  {
+   "kind": "PathCollection",
+   "axes": 0,
+   "label": "_child0",
+   "hash": "9dac2910e9965896cf4b83bb78c1a8d06dd008ec1aae0793ca6652f7caf01c70",
+   "dhash": "3453454f16b657a0721e9f8bc1a61b5548cb4f0d60d3e0775a5154c30db6002a",
+   "xhash": "3453454f16b657a0721e9f8bc1a61b5548cb4f0d60d3e0775a5154c30db6002a"
+  },
+  {
+   "kind": "line",
+   "axes": 0,
+   "label": "_child1",
+   "hash": "523ee04c6639c3c2817b28326cb50c2fda70c1209dd875154c2fe597dd6456e1",
+   "dhash": "4d5896997d7bb1a40aec97a3d8455f7d70643aaa29ecc8dc9a3bff71ddb672c0",
+   "xhash": "4adb07f6e4d4adb61a58b96d5fdaf06358b5587739a6366d40e85e8aa22b2bf8"
+  },
+  {
+   "kind": "PathCollection",
+   "axes": 1,
+   "label": "_child0",
+   "hash": "0478b5b78d66b651e7bfbbab38bc780761cf14cd1dfc333f77d3552c16b7224c",
+   "dhash": "c61affc90c4d1ba8da615485edea737f4a992993c229e5aa351b7ec0df8a3c6a",
+   "xhash": "c61affc90c4d1ba8da615485edea737f4a992993c229e5aa351b7ec0df8a3c6a"
+  },
+  {
+   "kind": "line",
+   "axes": 1,
+   "label": "_child1",
+   "hash": "1a70011aa8c2e3f7175d8779b241937e824188c7598ad8bcd36a6ba08908b1ee",
+   "dhash": "74a006ca8df4775c80dd77be836ed97f7ba644e60bc458504953072dd0c5e2b9",
+   "xhash": "58bddbccd9e49eaa89da3299a91533c7a227b5e45004909fca271b4075701de9"
+  },
+  {
+   "kind": "PathCollection",
+   "axes": 2,
+   "label": "_child0",
+   "hash": "b54d251c4d49c513b6cc5b2507b74cbe92794e2c9e5db9f88a027ed71caebd56",
+   "dhash": "18fe22a787d815f4d975857d9f08804b7e0b25683ffaab68c9dbc7bbf1f15806",
+   "xhash": "18fe22a787d815f4d975857d9f08804b7e0b25683ffaab68c9dbc7bbf1f15806"
+  },
+  {
+   "kind": "line",
+   "axes": 2,
+   "label": "_child1",
+   "hash": "bf75faef52e2a52996e60e9075121d746cfabfdf4ead0d7596b16a83298dc4a8",
+   "dhash": "108ad01226a02850a8a7cd582080a4c836b5911d69ce80140500c5abdfdc8ca6",
+   "xhash": "a57975079660fd17d2ccf2e32856e73a8805d686e1e3357eede8e01fb1713c90"
+  }
+ ],
+ "texts": [
+  [
+   9.0,
+   "Minus noise-free W3 residual (%)"
+  ],
+  [
+   9.0,
+   "\u221240"
+  ],
+  [
+   9.0,
+   "\u221230"
+  ],
+  [
+   9.0,
+   "\u221220"
+  ],
+  [
+   9.0,
+   "\u221210"
+  ],
+  [
+   9.0,
+   "0"
+  ],
+  [
+   9.0,
+   "10"
+  ],
+  [
+   9.0,
+   "20"
+  ],
+  [
+   9.0,
+   "30"
+  ],
+  [
+   9.0,
+   "40"
+  ],
+  [
+   9.0,
+   "Data shift under W3 prior (%)"
+  ],
+  [
+   9.0,
+   "\u221240"
+  ],
+  [
+   9.0,
+   "\u221230"
+  ],
+  [
+   9.0,
+   "\u221220"
+  ],
+  [
+   9.0,
+   "\u221210"
+  ],
+  [
+   9.0,
+   "0"
+  ],
+  [
+   9.0,
+   "10"
+  ],
+  [
+   9.0,
+   "20"
+  ],
+  [
+   9.0,
+   "30"
+  ],
+  [
+   9.0,
+   "40"
+  ],
+  [
+   10.799999999999999,
+   "J: r = 0.92; |shift| \u2265 |bias|: 71%"
+  ],
+  [
+   9.0,
+   "Minus noise-free W3 residual (%)"
+  ],
+  [
+   9.0,
+   "\u221210"
+  ],
+  [
+   9.0,
+   "\u22125"
+  ],
+  [
+   9.0,
+   "0"
+  ],
+  [
+   9.0,
+   "5"
+  ],
+  [
+   9.0,
+   "10"
+  ],
+  [
+   9.0,
+   "15"
+  ],
+  [
+   9.0,
+   "\u221210.0"
+  ],
+  [
+   9.0,
+   "\u22127.5"
+  ],
+  [
+   9.0,
+   "\u22125.0"
+  ],
+  [
+   9.0,
+   "\u22122.5"
+  ],
+  [
+   9.0,
+   "0.0"
+  ],
+  [
+   9.0,
+   "2.5"
+  ],
+  [
+   9.0,
+   "5.0"
+  ],
+  [
+   9.0,
+   "7.5"
+  ],
+  [
+   9.0,
+   "10.0"
+  ],
+  [
+   9.0,
+   "12.5"
+  ],
+  [
+   10.799999999999999,
+   "H2: r = 0.74; |shift| \u2265 |bias|: 52%"
+  ],
+  [
+   9.0,
+   "Minus noise-free W3 residual (%)"
+  ],
+  [
+   9.0,
+   "\u221230"
+  ],
+  [
+   9.0,
+   "\u221220"
+  ],
+  [
+   9.0,
+   "\u221210"
+  ],
+  [
+   9.0,
+   "0"
+  ],
+  [
+   9.0,
+   "10"
+  ],
+  [
+   9.0,
+   "20"
+  ],
+  [
+   9.0,
+   "30"
+  ],
+  [
+   9.0,
+   "40"
+  ],
+  [
+   9.0,
+   "\u221230"
+  ],
+  [
+   9.0,
+   "\u221220"
+  ],
+  [
+   9.0,
+   "\u221210"
+  ],
+  [
+   9.0,
+   "0"
+  ],
+  [
+   9.0,
+   "10"
+  ],
+  [
+   9.0,
+   "20"
+  ],
+  [
+   9.0,
+   "30"
+  ],
+  [
+   9.0,
+   "40"
+  ],
+  [
+   10.799999999999999,
+   "EW: r = 0.92; |shift| \u2265 |bias|: 54%"
+  ],
+  [
+   11.0,
+   "Historical W3 at five iterations: correlation is not a per-cell bias bound"
+  ]
+ ],
+ "text_overlaps": []
+}

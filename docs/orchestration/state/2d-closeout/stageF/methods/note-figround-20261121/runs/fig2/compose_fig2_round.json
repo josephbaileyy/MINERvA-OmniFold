@@ -1,0 +1,34 @@
+{
+ "MEFHC_5iter_xsec_proj_pt": {
+  "stamp_removed": true,
+  "legend": "removed",
+  "legend_entries": [
+   "This work (OmniFold)",
+   "Published (PRD 104, 092007)",
+   "Tune v1: our simulation (the prior)",
+   "Tune v1: published prediction"
+  ],
+  "page_width_pt_estimate": 238.44100000000003,
+  "printed_scale": 0.9617473504976072,
+  "label_pt_printed": 8.094277780383498,
+  "tick_pt_printed": 7.6181437933021146,
+  "lower_label_split": true,
+  "upper_label_moved_px": 2.754496364322634
+ },
+ "MEFHC_5iter_xsec_proj_pz": {
+  "stamp_removed": true,
+  "legend": "kept (upper right)",
+  "legend_entries": [
+   "This work (OmniFold)",
+   "Published (PRD 104, 092007)",
+   "Tune v1: our simulation (the prior)",
+   "Tune v1: published prediction"
+  ],
+  "page_width_pt_estimate": 243.12100000000007,
+  "printed_scale": 0.9432340275007093,
+  "label_pt_printed": 7.845012874247802,
+  "tick_pt_printed": 7.383541528703814,
+  "lower_label_split": true,
+  "upper_label_moved_px": 0.0
+ }
+}

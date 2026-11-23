@@ -1,0 +1,6 @@
+# blob identity of the five family paths, evidence/short-paper-retired-a54f255e against the merged rewrite head d4b3a32a8
+ok   docs/analysis-note/main_paper.tex
+ok   docs/analysis-note/paper_body.tex
+ok   docs/analysis-note/figures/paper_fig1_validation.pdf
+ok   docs/analysis-note/figures/fd_g_fig_ratio.pdf
+ok   docs/analysis-note/figures/paper_fig_deformation.pdf

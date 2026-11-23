@@ -1,0 +1,7 @@
+You are checking two accuracy edits to a HEP technical note for MEANING only. Files: texts.txt (each sentence old and new, plus N4's surrounding paragraphs), records.txt (R1-R4).
+
+A1: the exposure sentence. Is every statement of the new text supported by R1-R2 (the analysed files' summed exposure; the publication's quoted value; 0.34 %)? Does it imply a difference of data that the records do not support, or drop anything the old text said that is still true?
+
+N4: the "paradox" paragraph's numbers. Using R3 and R4: are 1.011, 1.006 and 0.598 each the exact-split cross-check's value, and are \ratioTot, \medianBinRatio and \pullRMS the quoted value's? Does the new attribution read correctly with the rest of the paragraph (is the paradox argued on the exact-split values)? Does anything change meaning beyond the attribution?
+
+Give A1 and N4 each PASS or FAIL with reasons; quote when you object. End with "OVERALL: PASS" or "OVERALL: FAIL" and the list of FAILs.

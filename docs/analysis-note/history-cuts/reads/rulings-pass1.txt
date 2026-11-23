@@ -1,0 +1,25 @@
+# rulings meaning read, pass 1: codex-school gpt-6.1-sol, high, read-only; prompt rulings-prompt.txt, records rulings-records.txt
+Question 1:
+
+- **E3 — FAIL:** R3 supports per-source attribution, but “as the scale of the seed shifts of central values” wrongly attributes R4’s item 4 to \(C_Z\), while “the estimator-seed sensitivity diagnostic” needs the distinction that items 1–2 concern companion covariances and only item 3 describes this file; R2 does not override that distinction, and the supplied passages show no additional use outside the three listed categories.
+- **E4 — PASS:** The expanded description matches R5 and App. I’s actual rows, and “where the note states it” correctly qualifies the previously unconditional promise of disclosure.
+- **T9 — PASS:** R1 supports both the prior reading of reported numbers and the expectation that N and R would not fire, and R1b confirms that “second and third” correctly identifies those conditions in the new sentence.
+- **I10 — PASS:** The added timing and “two were not expected to fire” accurately summarize R1 and T9 without changing the retained distinction between already reported numbers and subsequently computed deciding measurements.
+- **I11 — PASS:** The description matches R5 and the current appendix, including its consequential choices made after results were seen.
+
+Question 2:
+
+No NEEDED historical information was deleted outright; the replacements retain the historical content, although E3 introduces the support problem above.
+
+| Row | Removed or replaced phrase | Classification |
+|---|---|---|
+| E3 | “Technical diagnostic of estimator-seed sensitivity only.” | **NEEDED:** the supported scope and limitations matter, but require accurate wording; the old exclusivity also fails to accommodate R3’s attribution use. |
+| E4 | “Superseded configurations and changed tests that bear on the released results” | **NEEDED:** identifies relevant history and its location; retained and expanded. |
+| E4 | “with what had been seen when each change was made” | **NEEDED:** bears on evidential independence; retained with R5’s warranted qualification. |
+| T9 | Nothing removed or replaced | No classification required; the added disclosure is **NEEDED** for evidential independence. |
+| I10 | “were fixed before the measurements that decide them were computed, and none occurred” | **NEEDED:** timing and outcome bear on evidential independence and limitations; both remain. |
+| I11 | “with the configurations and tests superseded or changed during the analysis” | **NEEDED:** identifies relevant history and its pointer; retained and expanded. |
+
+No replaced historical content is merely LEDGER material.
+
+OVERALL: FAIL — E3

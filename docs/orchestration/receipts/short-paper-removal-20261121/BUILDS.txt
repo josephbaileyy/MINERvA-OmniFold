@@ -1,0 +1,18 @@
+# build_all's four targets built directly with latexmk (build_all stops before LaTeX at RECORDS-MOVE, failing identically at both heads)
+## d4b3a32a8 (parent)
+main_note rc=0 errors=0 undefined=0 multidef=0 pages=62 text_sha256=755add2b98db78b26930f78900cb5e6ed9291f08535a66be14d3cffd7b273209
+main_primer rc=0 errors=0 undefined=0 multidef=0 pages=16 text_sha256=c3649ddf2b7fe163590d1e2797aa698a3010e912c9fdc09633bceaf72c203ada
+pet_note rc=0 errors=0 undefined=0 multidef=0 pages=26 text_sha256=d43d0d4f38105ef9aa0f7800eca800ecba2b764bd7bcc48cc62c5358ff7058b6
+main_records rc=0 errors=0 undefined=0 multidef=0 pages=144 text_sha256=0202637d37b8bf36a75b91e8d238ae86e1404cd1de26af4636fcc1f5d912d846
+status after:        0 tracked modified
+## 0f114c8e5 (removal)
+main_note rc=0 errors=0 undefined=0 multidef=0 pages=62 text_sha256=755add2b98db78b26930f78900cb5e6ed9291f08535a66be14d3cffd7b273209
+main_primer rc=0 errors=0 undefined=0 multidef=0 pages=16 text_sha256=c3649ddf2b7fe163590d1e2797aa698a3010e912c9fdc09633bceaf72c203ada
+pet_note rc=0 errors=0 undefined=0 multidef=0 pages=26 text_sha256=d43d0d4f38105ef9aa0f7800eca800ecba2b764bd7bcc48cc62c5358ff7058b6
+main_records rc=0 errors=0 undefined=0 multidef=0 pages=144 text_sha256=544c93f35db69380c3e5ae67110e6fa267aa94f2fa12dc0771b89b461323fe6d
+status after:        0 tracked modified
+## main_records text difference: the two registry citation cells paper_body.tex:56 -> records_r07_statistics.tex:467 and the longtable reflow they cause
+< docs/analysis-note/paper_body.tex:56
+< docs/analysis-note/paper_body.tex:56
+> docs/analysis-note/records_r07_statistics.tex:467
+> docs/analysis-note/records_r07_statistics.tex:467

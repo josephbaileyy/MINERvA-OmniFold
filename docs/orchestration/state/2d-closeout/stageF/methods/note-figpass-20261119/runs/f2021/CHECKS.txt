@@ -1,0 +1,5 @@
+# f2021 (Figs. 20 and 21 as one figure), 2026-11-19T04:55:53Z: capture_palette.py <capture> tools/compose_family4.py note-figstyle-20261113/runs/family4/pickles <out>, matplotlib 3.10.8 (figenv/mpl3108)
+== check_compose.py against the palette pass's committed arm-1 captures
+composed: 37 items; Fig. 20: 31; Fig. 21: 13, of which MEC (#EB6834BF): 6, left out: 7 ([('line', 1), ('patch', 6)])
+CHECK-COMPOSE :: PASS
+== installed copy figs/mode_decomp_mec_eavail_central.pdf = this run's output: yes

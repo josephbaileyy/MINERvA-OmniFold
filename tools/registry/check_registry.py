@@ -48,6 +48,8 @@ LABEL_PATTERNS = (
     ("estimator-table-row", re.compile(r"\\pcell\{0\.2[04]\\(?:column|text)width\}\{(\([a-f]\))")),
     # contract names printed as "candidate R", "family N", "family F2", "baseline B0"
     ("contract-name", re.compile(r"\b(?:candidate|family|baseline)\s+(?:estimator\s+)?\\?(?:texttt\{)?([A-Z][A-Z0-9]?)(?![\w-])")),
+    # the estimator-name macros of estimator_names.tex (the director's ruling of 2026-11-19: names replace the letters)
+    ("estimator-name-macro", re.compile(r"(\\[eE]st(?:TwoD|MultiD|Purity|DetPurity|LowCap|Exact))(?![A-Za-z])")),
 )
 
 
@@ -74,7 +76,7 @@ def labels_in(text: str) -> list[tuple[int, str, str]]:
         printed = COMMENT.sub("", line)
         for name, rx in LABEL_PATTERNS:
             for m in rx.finditer(printed):
-                if name == "contract-name":
+                if name in ("contract-name", "estimator-name-macro"):
                     found.append((ln, name, m.group(1)))
                     continue
                 letters = re.findall(r"\(([a-f])\)", m.group(1))
