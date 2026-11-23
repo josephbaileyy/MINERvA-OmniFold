@@ -1,8 +1,9 @@
 #!/bin/bash
-# cov2d_fence.sh rev 2 (2026-11-22): the COV2D fence, run on a Perlmutter login node before another lane's connect.
-# Reads sacct only (no squeue: standing rule). Replaces rev 1 (sha256 16a2a5cd...), which called squeue.
+# cov2d_fence.sh rev 3 (2026-11-23): the COV2D fence, run on a Perlmutter login node before another lane's connect.
+# Reads sacct only (no squeue: standing rule). Replaces rev 2 (sha256 3fbc9cbd...), whose 60-day -S Perlmutter refused
+# ("Too wide of a date range in query", login38 2026-11-23), and rev 1 (16a2a5cd...), which called squeue.
 # CLEAR (exit 0) only if sacct exits 0, every line it writes (stdout and stderr together) is a well-formed
-# JobID|JobName|State row with a numeric JobID, and every row named cov2d* or t2a* (ours, last 60 days) is in a
+# JobID|JobName|State row with a numeric JobID, and every row named cov2d* or t2a* (ours, last 14 days) is in a
 # terminal state. Anything else is exit 3: an unended or unclassifiable matching row, a malformed or stray line
 # (so an error sacct prints on stderr while exiting 0 refuses), sacct failing, or the start time failing.
 # Known gap, sacct-only by rule: sacct's default listing omits a pending job with no EligibleTime (sbatch --hold,
@@ -25,8 +26,9 @@ fin() {
   exit "$1"
 }
 echo "fence host=$(hostname) utc=$(date -u +%FT%TZ)"
-# sacct reads -S in the cluster's local time; 60 days is far past the required 48 h either way.
-start=$(date -d '60 days ago' +%FT%T) || { echo "FENCE REFUSED: start time failed"; fin 3; }
+# sacct reads -S in the cluster's local time. 14 days covers the 48 h MaxWall with margin and is a range Perlmutter's
+# sacct accepts (rev 1 and the T3 and flux2 fences used it); 60 days was refused.
+start=$(date -d '14 days ago' +%FT%T) || { echo "FENCE REFUSED: start time failed"; fin 3; }
 [[ $start =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}$ ]] || { echo "FENCE REFUSED: start time malformed: '$start'"; fin 3; }
 user=$(id -un) || { echo "FENCE REFUSED: id -un failed"; fin 3; }
 [ -n "$user" ] || { echo "FENCE REFUSED: empty user"; fin 3; }

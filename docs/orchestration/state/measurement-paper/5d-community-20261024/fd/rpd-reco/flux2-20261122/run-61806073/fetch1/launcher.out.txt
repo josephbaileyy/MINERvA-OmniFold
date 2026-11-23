@@ -1,0 +1,10 @@
+cert valid to 2026-11-23T22:00:33Z (UTC)
+ssh rc=10
+node login31 staged sha256 d8f780c917b873a888ce2dd55d8f16f813018a5d4fd87211f24e5d23dea750fc
+node login31 2026-11-22T23:39:18Z; fetch script sha256 d8f780c917b873a888ce2dd55d8f16f813018a5d4fd87211f24e5d23dea750fc
+job 61806073; sacct rc=0; state [RUNNING]
+sacct: 61806073|rpd_flux2|RUNNING|0:0|00:02:16|2026-11-22T15:37:02|Unknown|nid004078||10|16G|01:00:00
+== job-host.txt
+jobid=61806073 host=nid004078 start=2026-11-22T23:37:03Z
+NOT FINISHED: no job.rc; sacct state [RUNNING]
+script rc=10

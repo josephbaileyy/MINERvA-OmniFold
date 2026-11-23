@@ -1,0 +1,14 @@
+{
+  "exit_code": 0,
+  "queue_exit_code": 0,
+  "queue_stderr": "",
+  "queue_stdout": "61806073|rpd_flux2|RUNNING|2:04|1:00:00\n",
+  "sacct_exit_code": 0,
+  "sacct_stderr": "",
+  "sacct_stdout": "60909280|COMPLETED\n60911676|COMPLETED\n",
+  "status": "PASS",
+  "terminal_states": {
+    "60909280": "COMPLETED",
+    "60911676": "COMPLETED"
+  }
+}
