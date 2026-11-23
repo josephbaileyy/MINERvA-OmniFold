@@ -1,0 +1,52 @@
+VERDICT: FIX
+
+1. **BLOCKER** — `docs/orchestration/state/measurability-20261122/connect/msr_probe_connect.template.sh:164` (and `msr_probe_connect.sh:220`)  
+   **Problem:** Under `set -o pipefail` (line 22), the deploy verification pipeline `n=$(git -C "$D" status --porcelain --ignored | grep -v '__pycache__' | wc -l)` pipes `git status` into `grep -v '__pycache__'`. Whenever the deploy checkout is completely clean (the mandatory passing condition), `grep -v` finds zero matching lines and exits with return code 1. Because `pipefail` is active, the entire subshell exits with code 1, triggering `|| { echo "STOP: git status failed (after)"; finish 9; }`. The probe unconditionally fails and aborts on every clean run. Furthermore, reading the exit status of a multi-stage pipeline with `||` violates the standing rule: "never pipe a command whose exit status is then read". (The stand-in did not reveal this because it stopped at line 109).  
+   **Fix:** Decouple the git status execution check from line counting:
+   ```bash
+   git_status=$(git -C "$D" status --porcelain --ignored) || { echo "STOP: git status failed (after)"; finish 9; }
+   n=$(printf '%s\n' "$git_status" | awk '!/__pycache__/ && NF { c++ } END { print c + 0 }')
+   ```
+   and regenerate `msr_probe_connect.sh` with `gen_probe_connect.py`, updating the pinned hash in `msr_probe_launch.sh:15`.
+
+2. **BLOCKER** — `nd-unfolding/msr/msr_build.py:357`  
+   **Problem:** In `did_cons` (`side == "did"`), `cell_of_fine, reco = diag.G["T1"].cell_of_fine, diag.reco_cells` accesses `diag.G["T1"]`, but `diag.grids()` was never called (only `diag.load_events()`, `diag.build_rows()`, and `diag.histograms()` were invoked). In `did.py:778`, `self.G` is only populated inside `diag.grids()`. Consequently, `msr_build.py did-cons --side did` crashes unconditionally with `AttributeError: 'Diagnostic' object has no attribute 'G'` and exits with returncode 1.  
+   **Fix:** Call `diag.grids()` inside the `try` block before accessing `diag.G`:
+   ```python
+        try:
+            diag.load_events()
+            diag.build_rows()
+            diag.histograms()
+            diag.grids()
+        except D.AdmissionFailure as exc:
+            return {"side": side, "admission_failure": str(exc), "admission": diag.out.get("admission")}
+        cell_of_fine, reco = diag.G["T1"].cell_of_fine, diag.reco_cells
+   ```
+
+3. **BLOCKER** — `docs/orchestration/state/measurability-20261122/connect/msr_probe_connect.template.sh:153-160` (and `msr_probe_connect.sh:209-216`)  
+   **Problem:** The exit status `c=$?` from `timeout 2400 bash -c ...` in the C-DID-CONS loop is printed but never checked. When `did-cons` crashes or times out (`c != 0`), `did_$name.txt` is never written. In lines 157–158, `a=$(sha256sum "$OUT/didcons-did/did_$name.txt" 2>/dev/null | cut -d' ' -f1)` results in an empty variable `a=""`. The comparison `[ -n "$a" ] && [ "$a" = "$b" ]` evaluates to false, causing the script to print `C-DID-CONS $name DIFFERS (did '', ibu1 '<hash>')` and proceed to exit 0. This silently ignores process failure, treats an empty variable as a valid "DIFFERS" comparison outcome, and leaves a misleading record in the log that C-DID-CONS completed and determined the representations differ (degrading C-DID from a STOP control to a printed comparison in rev 3 per DECLARATION.md §1).  
+   **Fix:** Check `c` immediately after each side finishes, and assert that both output files exist and are non-empty before comparing digests:
+   ```bash
+       [ "$c" -eq 0 ] || { echo "STOP: did-cons $side failed (rc $c)"; cat "$OUT/logs/didcons-$side.err"; finish 5; }
+   ```
+   and in the comparison loop:
+   ```bash
+   for name in j_cells reco_cells; do
+     [ -s "$OUT/didcons-did/did_$name.txt" ] && [ -s "$OUT/didcons-ibu1/ibu1_$name.txt" ] || { echo "STOP: missing C-DID-CONS output for $name"; finish 5; }
+     a=$(sha256sum "$OUT/didcons-did/did_$name.txt" | cut -d' ' -f1)
+     b=$(sha256sum "$OUT/didcons-ibu1/ibu1_$name.txt" | cut -d' ' -f1)
+     if [ "$a" = "$b" ]; then echo "C-DID-CONS $name EQUAL $a"; else echo "C-DID-CONS $name DIFFERS (did '$a', ibu1 '$b')"; fi
+   done
+   ```
+
+4. **FIX** — `nd-unfolding/msr/msr_build.py:306, 309, 320`  
+   **Problem:** In `t3_vectors()`, cluster inputs under `/pscratch/sd/j/josephrb/t3p-20261121/` (`log-floor/SHA256SUMS`, `stage.json`, and `runs/*.npz`) are read with plain Python reads (`.read_text()` and `TR.load(path)`, which calls `np.load(path)`). Because these are original cluster files and not staged copies under `$OUT/stage`, plain reads touch file access times, violating the standing rule: "reads of cluster inputs with O_NOATIME (plain reads only of this connect's own staged copies)".  
+   **Fix:** Read `log-floor/SHA256SUMS` and `stage.json` using an `O_NOATIME` file reader, and stage `runs/*.npz` with `dd iflag=noatime` into `$OUT/stage` (or open the npz file descriptors with `os.O_NOATIME` before handing them to `np.load`).
+
+5. **NOTE** — `docs/orchestration/state/measurability-20261122/connect/msr_probe_launch.sh:24-36`  
+   **Problem:** The remote command string `R` executes `echo "script rc=$r"` as its final statement, causing the SSH command to exit 0 even if the staged connect script exited non-zero (`r != 0`). Lines 24–25 verify that a script return code was printed and that the run did not bail, but do not check if `script rc` is non-zero. If the connect script fails after creating `$OUT`, `fetch-probe.tar` is never generated, causing the fetch loop at line 31 to fail with `dd: ... No such file or directory` and exit 7 (`STOP: a fetch failed`). This masks the actual connect script failure code as a fetch error.  
+   **Fix:** In `msr_probe_launch.sh`, extract `s_rc=$(sed -n 's/^script rc=\([0-9]*\)$/\1/p' "$F/session.out")` and check `[ "$s_rc" -eq 0 ] || { echo "STOP: connect script failed with rc=$s_rc"; exit "$s_rc"; }` prior to attempting the fetch loop.
+
+6. **NOTE** — `nd-unfolding/msr/msr_build.py:423`  
+   **Problem:** In `probe` for 5D, `m = s5c_unfold.load_inputs(a.npz)["MCgen"].shape[0]` loads the entire 1.5 GB `of_inputs_5d.npz` archive solely to inspect its row count `m`. Immediately afterward, `build_5d` calls `setup_5d` -> `ibu1.load_inputs`, unpickling and loading the 1.5 GB file a second time into memory.  
+   **Fix:** Obtain `m` without loading the full archive by using `with np.load(a.npz, mmap_mode="r") as z: m = z["MCgen"].shape[0]`.

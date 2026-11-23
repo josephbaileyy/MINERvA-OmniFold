@@ -1,0 +1,41 @@
+VERDICT: FIX
+
+1. **Severity:** FIX  
+   **Section:** §3.6, §5.1  
+   **Problem:** If $n_{\text{well}} = 0$ (no combination has $s_k \le 0.10$), $Z_{\text{well}} = \max_{k \in \text{well}} |w_k \cdot \beta| / s_k$ evaluates an empty sequence, raising `ValueError` in code. If defaulted to 0, it falls into the "below" band ($< 1$), licensing the misleading statement "In every well-constrained combination, the bias is below one binned Cramér–Rao width..." and triggering a vacuous "consistent with an information limit".  
+   **Fix:** Define that when $n_{\text{well}} = 0$, $Z_{\text{well}}$ is "no well-constrained combinations" (or undefined), is excluded from the "below" band, and the combined statement reports that all combinations are poorly constrained.
+
+2. **Severity:** FIX  
+   **Section:** §5.1 (Table 1, lines 242–243)  
+   **Problem:** For noisy vectors (F0b, A2), if $Z_{\text{well}} \ge 2$ but $\le Z_{\text{noise}}$, the declared label is "intermediate (within the noise maximum)". However, Table 1 defines no licensed sentence for this label. Emitting the "intermediate" sentence falsely asserts bias between 1 and 2 CR widths, while emitting the "resolvable" sentence falsely asserts a resolved component.  
+   **Fix:** Add a dedicated licensed sentence to Table 1 for "intermediate (within the noise maximum)", e.g.: "In at least one well-constrained combination, the bias is at least two binned CR widths but is within the maximum expected from noise alone; no component is resolved."
+
+3. **Severity:** FIX  
+   **Section:** §6 (Table, N-PREC line 334)  
+   **Problem:** N-PREC marks $Z_{\text{well}}$ "numerically unresolved" if two LAPACK drivers differ by $> 1\%$ relatively. When well-constrained bias is negligible ($Z_{\text{well}} \ll 1$), benign roundoff jitter between drivers at $\sim 10^{-8}$ will exceed $1\%$ relatively, falsely flagging a clean near-zero $Z_{\text{well}}$ as unresolved (the exact issue requiring `PREC_ZB_FLOOR` in $b1$ rev 2).  
+   **Fix:** Add an absolute floor to the N-PREC tolerance on $Z_{\text{well}}$ (e.g., mark unresolved only if $|Z_{\text{numpy}} - Z_{\text{evr}}| > \max(0.01, 0.01 \cdot Z_{\text{well}})$).
+
+4. **Severity:** FIX  
+   **Section:** §2 (lines 108–109)  
+   **Problem:** Section 2 claims `b1_projection.py` is imported unchanged for `band_of` and `label`. However, `b1_projection.py` hardcodes $b1$'s five specific bands (`opposite`, `minor`, `partial`, `candidate`, `overshoot`) and cut edges. It cannot be imported directly to classify MSR's three distinct band schemes ($S_{\text{poor}}$, $Z_{\text{well}}$, $r$).  
+   **Fix:** Clarify in §2 that `msr_project.py` implements its own `band_of` and `label` functions adhering to the `b1_projection.py` logic and edge rules, importing only `guard` and the LAPACK driver pattern.
+
+5. **Severity:** FIX  
+   **Section:** §3.4 (line 165)  
+   **Problem:** Line 165 states that "t0 and b are the same for all three sets". Because $b$ is defined on reco cells (§3.2, 10,499 cells at 5D), coarsening reco bins to 4D (summing over $W$) and 3D (summing over $q_3, W$) requires $b$ to be summed over the corresponding dropped reco coordinates. Retaining the 5D $b$ vector causes a dimensional mismatch with $R_{3\text{D}} t_0$.  
+   **Fix:** Clarify line 165 to state that the background source/template is the same, with $b$ summed over the dropped reco coordinates identically to $R$ (as checked by C-MARG).
+
+6. **Severity:** NOTE  
+   **Section:** §5.2 (M3, lines 282–284)  
+   **Problem:** M3's licensed sentence states: "With the ⟨D⟩ reco feature set, n combinations of the 16 reported cells are constrained to 10 % or better at the data exposure, and m are unconstrained." If $16 - n - m > 0$, the combinations constrained to worse than 10 % ($0.10 < s_k < \infty$) are omitted, leaving the partition incomplete.  
+   **Fix:** Amend the sentence to complete the partition: "With the ⟨D⟩ reco feature set, n combinations of the 16 reported cells are constrained to 10 % or better at the data exposure, p are constrained to worse than 10 %, and m are unconstrained."
+
+7. **Severity:** NOTE  
+   **Section:** §3.6 (lines 206–211)  
+   **Problem:** The floor $\|P_{\text{well}} \beta_{B0}\| > 0.005$ is checked on the mean vector. When computing the 5-split guard $h = 2.776 \cdot \operatorname{sd} / \sqrt{5}$, if an individual split draw has $\|P_{\text{well}} \beta_{B0, s}\| \le 0.005$, the draw value $r_{\text{well}, s}$ can diverge or become undefined, distorting the sample SD.  
+   **Fix:** Specify that if any individual split draw fails the 0.005 norm floor, that draw is marked as having no well-constrained component and $r_{\text{well}}$ reads "unresolved across bands".
+
+8. **Severity:** NOTE  
+   **Section:** §4 (Table, line 220)  
+   **Problem:** 5D-B0 is described in the §4 table as "at the five splits", whereas 2D-A2 is listed as "A2 OmniFold mean ... (5 trials)". In §3.6 line 210, 5-split vectors are evaluated on their mean vector with the splits acting as draws for the guard.  
+   **Fix:** Harmonize §4 to describe 5D-B0 as "FD-PRR B0 mean across the five splits, with individual splits providing the guard".

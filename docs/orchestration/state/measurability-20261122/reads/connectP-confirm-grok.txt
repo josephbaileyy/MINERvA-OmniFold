@@ -1,0 +1,49 @@
+I'll read the declaration, the previous connect-P findings, and the current scripts before judging whether each earlier issue is fixed.
+
+Previous reads are in. I’ll check the rev-3 declaration and the current connect scripts against each of those findings.
+
+The earlier blockers look patched in the shell. Next I’ll compare the builder to the pinned constructions and the overlap rules.
+
+I am locking the exact lines for the bank `selected` cast and the 2D probe half-skip, then I will write the verdict to stdout only.
+
+VERDICT: FIX
+
+Prior findings, current code:
+
+connectP-grok.txt
+1. FIXED. `msr_probe_connect.sh:264-267`. `git status` is checked on its own. The count is awk, which exits 0 when no line remains, and `__pycache__` is ignored.
+2. FIXED. `msr_build.py:425-429` calls `diag.grids()` and does not catch `AdmissionFailure`. `msr_probe_connect.sh:247-263` requires rc 0 and both files non-empty before any hash. Otherwise `cdid=6` and `finish` at line 270. No empty hash is printed as DIFFERS.
+3. FIXED. `msr_probe_connect.sh:217-224`. The subsample is a separate process. The timed probe reads only `$OUT/probe-*/inputs/sub.npz`.
+4. FIXED. `msr_build.py:440-446` (`npz_rows`, header only), `:222` (`load_inputs_nodata` skips `DATA_KEYS`), `:460` (subsample uses `MC_KEYS` only).
+5. FIXED. `msr_probe_connect.sh:243` runs C-DID-CONS after the gate print, on both values of `login_ok`. A probe crash still `finish 5` at line 220 or 224, before the comparison.
+6. FIXED. `msr_probe_connect.sh:126`. The first `fence_sacct` text is in the bail message.
+7a. FIXED. `msr_probe_connect.sh:168`. `sacct` for the `rpd_` listing is checked before awk.
+7b. NOT FIXED. `msr_probe_launch.sh:19` still writes `/dev/shm/msrp.<pid>.sh` and `.out`, outside `$OUT` and `/dev/shm/msr-connect`. See new finding 3.
+8a. FIXED. `flux2-20261122/tools/fence_overlap.py:43-48`. `overlaps()` is symmetric (equal, or either path under the other, on the written path and on `realpath`). `connect/overlap-local.txt` is CLEAR: 13 vs 114 (36+12+2+57+7), 1482 pairs, 0 hits, one ALLOWED interpreter hit.
+8b. NOT FIXED. `msr_build.py:249` and `:263`. On the probe, `half_mask` is applied to the subsample's own indices `0..n_kept-1`. The probe prints only `part`, `fraction`, `seconds`, and `peak_rss_bytes` (`msr_build.py:540`) and discards the arrays. Timing proxy only.
+
+connectP-agy.txt
+1. FIXED. Same as grok 1, `msr_probe_connect.sh:264-267`.
+2. FIXED. Same as grok 2, `msr_build.py:428`.
+3. FIXED. Same as grok 2, `msr_probe_connect.sh:247-263`.
+4. FIXED. `msr_build.py:369-389`. `t3_vectors` reads SHA256SUMS and `stage.json` with `noatime_bytes` and copies products with `noatime_copy`. Connect P does not call `t3_vectors`.
+5. FIXED. `msr_probe_launch.sh:24-27` and `:38` and `:49`. The script rc is kept. A failed fetch exits with that rc when it is non-zero. A successful fetch still exits with the script rc.
+6. FIXED for the timed process. `msr_build.py:440-446`. The subsample process still `np.load`s the full MC (`:459`) in order to write the subset. That process is not the one whose RSS is gated.
+
+Checked and left as sound. The decoded fence is refused unless its sha256 equals the declared rev 2 pin (`msr_probe_connect.sh:109`, `FENCE_SHA`). The stand-in printed FENCE CLEAR. `fence_sacct` is sacct only. No `squeue`. Originals go through `stat` / `find-bank` (`O_NOATIME`) and `dd iflag=noatime`. Later plain reads are the staged copies, including the did-cons symlink. `capture_problem` (`msr_build.py:144-171`) stops where `unfold_ibu` calls `did.ibu`: full MC at ×1 with the full template (`:256`), halves A/B at ×2 on that same template (`:262-267`), R-ID as half A ×2 with template D (`rows=~is_c`, `scale=2.0`, `:270-273`), D-ID T1 with `b_extra` all zeros (`:280`). `reported_map` (`:174-182`) is `ibu1.extract`, and `ref_g1.worlds` sets `gw.U` to S1's 16 rows named R00–R15. The 2D `binned_problem` argument order matches the signature. The gate formula (`msr_probe_connect.sh:227-239`) is the two-point line, the comparison is on the floats, and `'"login_ok": true'` matches `json.dumps`. J-cell membership in `did_cons` is like with like. `setsid` without `--fork` does not fork in a non-interactive `bash -c`, so `wait` in the launcher returns the script rc.
+
+New findings:
+
+1. FIX. `nd-unfolding/msr/msr_build.py:319` and `:340`. The IBUKT bank stores `selected` as a length-205 integer cell-id array (`run_ibukt.py:237-239` and `:402`: `flatnonzero` of the paper covariance diagonal, asserted size 205). `np.flatnonzero` of that array returns positions inside the length-205 vector, and `np.asarray(..., bool)` is a length-205 array of Trues, not a length-224 mask with True at those cell ids. Declaration §3.1 says 2D L is that mask in that order, and C-L compares it. `test_msr_build.py:101` uses `selected=np.ones(224, bool)`. The stand-in stops at the bank pin and never loads a bank. The probe does execute these lines (`build_2d` before `if not probe`) and then drops them (`msr_build.py:538-540`), so the probe does not crash and the printed gate does not contain the wrong list. Connect B's `build` writes it. Fix: take `ids = np.asarray(bank["selected"], np.int64).ravel()`, build `mask = np.zeros(b_bkg.size, bool); mask[ids] = True`, store `ids.tolist()` as the cell list and `mask` as `d2__selected`. Add a fixture whose `selected` is a length-205 integer index array.
+
+2. FIX. `nd-unfolding/msr/msr_build.py:341-344`. `if not probe` skips 2D half A and half B. Declaration §8 times each response, and connect B builds full, half-A, and half-B at 2D as well as at 5D. The 5D probe does run its halves (`msr_build.py:264-267`). The 2D probe times `one("full")` only, then the two-point line (`msr_probe_connect.sh:227-239`) extrapolates that smaller job. The real 2D build adds one more pass over the MC plus two more background histograms inside `binned_problem`. RSS is dominated by the event arrays, which are loaded either way. Wall time is the part that can cross 1800 s on a close call. The stand-in never reaches the probe. Fix: in probe mode still call `one("halfA", ...)` and `one("halfB", ...)`. Leave the bank `M`/`T` comparison behind `if not probe`, because a subsample's `M` cannot match the full bank.
+
+3. NOTE. `msr_probe_launch.sh:19` and `nd-unfolding/msr/msr_overlap.py:78`. The launcher writes `/dev/shm/msrp.<pid>.sh` and `/dev/shm/msrp.<pid>.sh.out` (mode 077, removed after `wait`). The overlap write entry is the literal `/dev/shm/msrp.<pid>.sh`. `overlaps()` does not match that literal to `/dev/shm/msrp.12345.sh`, `.out` is not listed, and `overlaps_prefix` (`msr_overlap.py:65`) only prefix-matches `/dev/shm/rpd-flux2-`. Connect P bails if `/dev/shm/msr-connect` already exists (`msr_probe_connect.sh:45`), so the launcher must not pre-create it. Fix: put the prefix `/dev/shm/msrp.` on the write set, handle it in `overlaps_prefix` the same way as the rpd prefix, and include the `.out` file.
+
+4. NOTE. `msr_probe_connect.sh:115-122`. Inside `fence_sacct`, `bad=$(printf | awk)` does not check awk. `pipefail` is on, but without `set -e` a failed assignment does not return. An empty `bad` then returns 0, which is a clear fence. The second call (`:166`) only checks the function's return. The `rpd_` awk at `:169` is display-only, after `sacct` itself was checked. Fix: `bad=$(...) || return 2`.
+
+5. NOTE. `msr_probe_connect.sh:255-263`. If the first C-DID-CONS name prints EQUAL or DIFFERS and the second hash fails, line 263 then says no EQUAL or DIFFERS was recorded. Fix: hash both names first. Print EQUAL or DIFFERS only when both hashes succeeded. Otherwise print only INCOMPLETE and set `cdid=6`.
+
+6. NOTE. `did.py:244-246`, reached from the 5D probe (`msr_build.py:256` and `:280`, no probe skip). `did.response` raises `ValueError` when a pair's fine cell sits in a coarse cell whose truth weight is not positive. A 0.02 draw can do that if some truth weights are zero or negative, while the full sample stays legal. The shell then `finish 5` (`msr_probe_connect.sh:224`) and never reaches the gate or C-DID-CONS. That is a final stop, not a false `login_ok`. The stand-in does not run it. Fix: leave `did.response` unchanged. If a sparse draw should not abort the connect, catch that one `ValueError` in probe mode, omit that part's extrapolation, set `login_ok` false, and still run C-DID-CONS.
+
+7. NOTE. `msr_build.py:412-414` and `:429`. J-cell membership is the same quantity on both sides: `flat_index` membership, nominal weight 1. Occupied reco cells are each side's own. IBU-1's `rflat >= 0` drops the upper edge (`in_window` is `[first, last)`). D-ID's `reco_cells` come from `flat_index`, which keeps `x ==` the last edge. A reco DIFFERS can be a true result of that. The shell already records DIFFERS and still exits 0 when both sides completed (`msr_probe_connect.sh:257`, `finish` at `:270`). Fix: no geometry change. If reco DIFFERS, check that the mismatched ids are upper-edge rows before treating it as a different J grid.
