@@ -1,4 +1,4 @@
-# COVFIX declaration, DRAFT rev 9: the 2D covariance fix (2026-11-23)
+# COVFIX declaration, DRAFT rev 10: the 2D covariance fix (2026-11-23)
 <!-- absence-ok: a draft declaration of studies not yet run; every existing study is routed to INVENTORY.md -->
 
 <!-- absence-ok: status line of an unrun draft -->
@@ -238,6 +238,25 @@ its "Fix 1". The inventory is `INVENTORY.md` in this directory, read at origin/m
   - **The price is unchanged.** By phase: P0 0; PG 1.33–2.00; P1 291.84 (W1 162.07, W2 129.77); P2 0; PV 115.38. Total
     408.55–409.22 node-h, or 332.55–333.22 without N5. PV's 1.0 node-h for the writer and readout is re-priced from the
     synthetic-seal test before PV.
+- **Rev 10** makes the rev 9 reads' targeted fixes (`reads/*-rev9-REPORT.md`; agy NO-GO, 1 MAJOR; codex-school2 NO-GO,
+  4 BLOCKING):
+  - **K_B's reference** is K_ref = F_A + C_model_abs(x_R), the accepted corrected matrix or else K0. The cut diagnostic
+    and residual rule use K_ref, so every branch is executable. Both readers raised this (§5.2).
+  - **V₊ is the sole reference covariance:** the law, F_exp (now Σ u_iᵀV₊u_i/λ_i^F), the fit denominators, the cutoffs
+    and D2. A zero V₊ is handled before any division (§6.1, §6.2).
+  - **The invocation actually launched** (executable sha256 and resolved argv) is hashed and compared with the freeze's
+    expected invocation; only accepted attempts count in the chain (§3.4).
+  - **A refusal reaches only the readings it affects.** A carry failure refuses all readings at that truth; a reference
+    failure refuses F̃, its bands and the flags; an SE or F_exp failure refuses only its own reading. A valid total
+    deficit still triggers FAILS (§6.2, §6.4).
+  - **Majors and minors:**
+    - a fixed 2.0 node-h reservation for the synthetic test, with the production re-price reserved before PV;
+    - grades persisted before the stress runs;
+    - a canonical Gram–Schmidt basis for tied eigenspaces;
+    - every terminal stop before complete grades routes to "ungraded", in the row now named "none, PV ungraded";
+    - stale wording removed.
+  - **The price rises by the synthetic test's 2.0 node-h:** full 410.55–411.22 (334.55–335.22 without N5). PV is 117.38,
+    inside its cap of 135. The ceiling to pin (409.22 or 411.22) goes to the director (§3).
 
 <!-- absence-ok: rule statement -->
 **Rules are fixed before computation.** Every reading, bar, candidate rule, seed and stop rule below is fixed at
@@ -362,12 +381,12 @@ V(t) = D_t V D_t, with D_t = diag(x̂_t / x_R).
 | **P1 W2** | N4, A1f, A1p, plus three A1 central unfolds, after ST1 is read on W1 | 129.77 | 86.07 | — |
 | **P1** | total | 291.84 | 210.14 | 330 / 240 |
 | **P2** | build and freeze the candidates (§5) | 0 (local) | 0 | 0 |
-| **PV** | 600 validation toys, 2 central unfolds, and the exclusive-node writer and readout (about 1.0, an unmeasured estimate) (§3.4, §6) | 115.38 | 115.38 | 135 |
+| **PV** | 600 validation toys, 2 central unfolds, the synthetic-seal test (a fixed 2.0 reservation, §3.3), and the exclusive-node writer and readout (about 1.0, an unmeasured estimate) (§3.4, §6) | 117.38 | 117.38 | 135 |
 
-- **Totals:** full 408.55–409.22; lean 326.85–327.52.
+- **Totals:** full 410.55–411.22; lean 328.85–329.52 (including the synthetic test's 2.0, added in rev 10).
   - The ranges come from PG's range only. The printed range starts at 1.33, above F1's measured 1.3275 node-h for two
     tunes.
-  - Without N5 (§9.1): full 332.55–333.22; lean 269.85–270.52.
+  - Without N5 (§9.1): full 334.55–335.22; lean 271.85–272.52.
 - **Every cell is priced at n × 0.19** node-h per unfold, with no rounding. That is the director's planning figure:
   COV2D's 112.74 node-h over 600 toys is 0.188, including pilots and retries.
 - **Lean** sets N1, N2 and N4 to 150 toys each and N5 to 150 + 150, and drops A1f. Cell 4 then rests on IBUKT A2's
@@ -388,9 +407,11 @@ V(t) = D_t V D_t, with D_t = diag(x̂_t / x_R).
     time (0.19 node-h is a mean), so a slow job is not killed, and a stalled one cannot charge more than its ceiling.
   - A phase is submitted in chunks small enough that ended charges plus unended ceilings stay within its cap (ST3).
   - The admission check is ST3/ST6's reservation ledger (§3.3), not a prefix poll of sacct.
-  - **The ceiling is pinned in the binding:** 409.22 node-h, Joseph's approved total
-    (`DECISION-20261123-joseph-covfix-ki85-size-reader.md`). That is separate from the expected price and from the 468
-    sum of caps.
+  - **The ceiling is pinned in the binding.** Joseph approved about 409 node-h
+    (`DECISION-20261123-joseph-covfix-ki85-size-reader.md`), whose top is 409.22. Rev 10's 2.0 node-h synthetic test
+    raises the full total's top to 411.22. Whether the binding pins 409.22 (with the test absorbed in the margin, since
+    PG is priced at its top) or 411.22 is the director's ruling. The ceiling is separate from the expected price and from
+    the 468 sum of caps.
 
 ### 3.1 P0: what the committed records give (0 node-h, local, descriptive)
 
@@ -517,7 +538,7 @@ N1 is never a construction-error reading. N1/N5 is reported as the same-event fa
    - W2's first-time work is counted once in the remainder, never as part of PX.
    - For scale: rebuilding `universe` (with laterals), `stat` and `c08`, plus the redraw, is 202.35 node-h before
      diagnostics, or 240.35 if the N5 replicas are rebuilt too.
-   - After W2, `universe` alone plus the redraw brings P1 + PX to 420.09, which exceeds the 409.22 ceiling before PG and
+   - After W2, `universe` alone plus the redraw brings P1 + PX to 420.09, which exceeds the ceiling (§3) before PG and
      PV.
 4. **A row fires after the sole exception has been bound.** The campaign stops and goes to the director.
 
@@ -569,15 +590,16 @@ and regenerate nothing, and N5 would not run. That gate is kept for the record.
   submission proceeds.
 - **Uncertainty keeps the reservation open,** whether about acceptance or about the final charge.
 - **Each expected toy ID** in a P1 arm, PX or PV is accepted exactly once, with one verified complete product.
-- **The synthetic-seal test's allocation** and the production-size writer and readout are priced and reserved under the
-  same ledger, from the test's measured time.
+- **The synthetic-seal test** gets a fixed advance reservation of 2.0 node-h under the PV cap.
+- Its measurements, scaled to the 600-toy workload, re-price the production writer and readout. That price is reserved
+  before PV is submitted.
 - A descriptive stress run's failure never blocks a completed grade.
 - **Reservations:** nodes × `--time` (1.5 × the priced per-toy time), including exclusive allocations, with
   allocation-level walltime rounding. Jobs run with `--no-requeue`.
 - **Accounting lag.** A reservation stays open until sacct shows the job terminal, and its charge is then reconciled
   once.
 - **The gate,** atomic under the flock: reconciled charges plus open reservations plus the new reservation must stay
-  within both the phase cap and the pinned 409.22 node-h ceiling.
+  within both the phase cap and the pinned ceiling (§3).
 
 **ST4, validation is spent once.**
 - **The consumption record** is controlled by the director: append-only, in the director's scratchpad, mirrored in a
@@ -649,19 +671,22 @@ director's wrapper. The wrapper acquires ST4's consumption record, verifies ever
    array. A hit stops the study. An exact-hash scan detects exact copies only, not repacked or partial plaintext, and
    that is disclosed.
 4. The compute jobs unfold the pseudo-data only.
-   - **The chain:** each job hashes the **actual input file it unfolds** and its **complete output**. It appends a
-     chain record of (expected truth and toy ID, input sha256 as computed, output sha256 as computed, the bound unfold
-     invocation's sha256).
-   - **The readout** compares every record with the authenticated manifest and the freeze. It rehashes each output it
-     consumes, and requires exactly one complete product per expected ID. A missing, extra or mismatched record is a
-     break, and terminal.
+   - **The chain:** each job hashes the **actual input file it unfolds**, its **complete output**, and the **invocation
+     it actually launched**: the executable's sha256 and the resolved argument vector. It appends a chain record of
+     (expected truth and toy ID, input sha256, output sha256, invocation sha256), all as computed.
+   - **The readout** compares every record with the authenticated manifest and with the freeze's expected invocation
+     for that ID. It rehashes each output it consumes.
+   - **Only accepted attempts count.** The ledger marks a failed attempt's records as excluded, and exactly one verified
+     product per expected ID must come from an accepted attempt.
+   - A missing, extra or mismatched record is a break, and terminal.
    - The same applies to the two central unfolds that determine D_u.
    - The original PG seal is pinned at PG's close, and the freeze at P2's, so both are in PV's binding.
 5. **The readout** runs on its own exclusive node, from a fresh pipe. Before decrypting any graded truth, it verifies:
    - the writer's manifest;
    - the frozen code and arrays against `P2-FREEZE.sha256`.
    - the chain from the writer's manifest to every unfold output.
-   It then decrypts the graded truths in-process, runs §6.2's controls and stress runs, and grades. Its summary is
+   It then decrypts the graded truths in-process, runs §6.2's controls, grades, and persists the verified grades. Only
+   then does it run the descriptive stress runs, whose failed scenarios are reported as omitted. Its summary is
    published only after the authentication checks and the scans succeed. Cleanup and scans cover enumerated
    campaign-owned paths only.
 
@@ -784,7 +809,7 @@ need a sample this project does not have; that is disclosed, not tested.
 ## 5. Candidate constructions, built from P0 and P1, frozen at P2
 
 **The build data** are N1–N5, A1f and A1p. COV2D's G18 and AR23 toys are descriptive only. **The selection data**, which any P2 bar,
-choice or k reads, are N4 and A1p only. G18 and AR23 never enter a bar or a choice; their readings under each candidate
+choice reads, are N4 and A1p only. G18 and AR23 never enter a bar or a choice; their readings under each candidate
 are printed descriptively. Nothing in PG's seal is read.
 
 ### 5.1 K0, the control, and K_A
@@ -824,7 +849,10 @@ F_A is absolute at x_R, and it is the reference throughout §5.2.
     assigned to the lower-rank (higher-variance) band. This one convention applies to construction, admission and
     grading alike.
   - **A deterministic basis:** numpy `eigh`, with each eigenvector's sign fixed so its largest-magnitude component is
-    positive. Per-mode flags inside a degenerate cluster depend on that basis, and that is disclosed.
+    positive.
+  - **For a tied eigenspace** (a degenerate cluster), the basis is canonical: the ordered cell axes e_1, e_2, … are
+    projected into the eigenspace and orthonormalized in that order by Gram–Schmidt, skipping null projections. The
+    per-mode flags then do not depend on the solver.
 - **One decomposition, through the spectral map L,** on the full space. With P_R the projector onto F_A's band-R kept
   eigenspace at x_R (degenerate clusters assigned whole, as above):
   - L = I + Σ_{R active} (√φ_R − 1) P_R;
@@ -863,15 +891,19 @@ non-spent build truths only. Each member is mapped to x_R before the sum:
   - It is not claimed to bound any model class, nor to over-cover every smaller bias.
   - The total is barred by an affirmative upper bound (§6.3). The fluctuation is barred two-sided and separately.
 
-**K_B = V_F + C_b** at x_R, carried by §2's formula. It must pass C-PSD and print its cut diagnostic against K_A's:
-- the kept sets under §2's cut, which is referenced to each candidate's own λ₁(V_F);
-- the kept modes of K_A outside K_B's kept span, and their maximum residual;
-- the smallest kept and the largest dropped eigenvalue.
+**K_B = V_F + C_b** at x_R, carried by §2's formula.
+- **Its reference total** is K_ref = F_A + C_model_abs(x_R), with F_A as defined above: the accepted corrected matrix
+  if one exists, else Q_rep, so K_ref = K0 in that case. K_ref exists on every branch, including the unfunded one, and
+  stays the reference even if an accepted K_A later fails P2.
+- K_B must pass C-PSD and print its cut diagnostic against K_ref's:
+  - the kept sets under §2's cut, each referenced to its own λ₁ of the fluctuation block (F_A for K_ref, V_F for K_B);
+  - K_ref's kept modes outside K_B's kept span, and their maximum residual;
+  - the smallest kept and the largest dropped eigenvalue.
 
-**Residual rule (K_B against K_A only):**
-- Only K_A's well-determined modes are checked, those with λ_i ≥ 1e-6·λ₁(F_A), evaluated at x_R.
-- With U_A,well their orthonormal basis and P_B,kept the orthogonal projector onto K_B's kept span, K_B is not
-  admissible if the directed residual ‖(I − P_B,kept) U_A,well‖₂ exceeds 0.1. It is directed, so a smaller new span
+**Residual rule (K_B against K_ref only):**
+- Only K_ref's well-determined modes are checked, those with λ_i ≥ 1e-6·λ₁(F_A), evaluated at x_R.
+- With U_ref,well their orthonormal basis and P_B,kept the orthogonal projector onto K_B's kept span, K_B is not
+  admissible if the directed residual ‖(I − P_B,kept) U_ref,well‖₂ exceeds 0.1. It is directed, so a smaller new span
   lying inside the old one cannot pass by dropping an old direction.
 - An ndf difference alone is printed, not a stop; tail modes below 1e-6·λ₁(F_A) are printed, not stopped on.
 - P0 calibrates this rule on the committed regrade pair (§3.1).
@@ -904,10 +936,12 @@ bound by the director before PV's first connect.
 **Fluctuation readings,** against V_F in V_F's carried basis (u_i^F, λ_i^F).
 - **The undrawn part** is U = L(C_PL + c08)Lᵀ carried (§5.2). C_PL is not drawn, and c08 is not drawn because the seed
   is fixed at 42.
-- **For a correct V_F,** the expected 1/N spread ratios are:
-  - total: F_exp = ((N − 1)/N)(1 − u), with u = Σ_i u_iᵀU u_i / λ_i^F / ndf_F;
-  - band R: F_exp,R = ((N − 1)/N)(1 − u_R), with the same sum restricted to i ∈ R.
-  - A denominator at or below zero refuses the candidate at that truth.
+- **For a correct V_F,** the expected 1/N spread ratios use V₊, the covariance actually sampled (§6.2):
+  - total: F_exp = ((N − 1)/N) · (1/ndf_F) Σ_i u_iᵀ V₊ u_i / λ_i^F;
+  - band R: F_exp,R = ((N − 1)/N) · (1/ndf_R) Σ_{i∈R} u_iᵀ V₊ u_i / λ_i^F.
+  - The same formulas give §5.2's fit denominators.
+  - A denominator at or below zero refuses the readings that need it: F̃ or that band's F̃_R. In the fit, it refuses
+    K_B's construction.
 - **What is labelled** is F̃ = F^F / F_exp, and per band F̃_R = F_R^F / F_exp,R. u, u_R and F_exp are printed.
 
 **Total readings,** against V = V_F + V_b:
@@ -946,18 +980,20 @@ bound by the director before PV's first connect.
 
 ### 6.2 The reference law and its controls
 
-**The law,** for a candidate V at truth t: e ~ N(0, V_drawn(t)), with V_drawn = V_F − U (§5.2) carried. There is no band
-bank, no remainder and no fallback.
+**The law,** for a candidate V at truth t: e ~ N(0, V₊(t)), where V₊ is V_drawn = V_F − U (§5.2), carried and then
+PSD-handled as below. There is no band bank, no remainder and no fallback. V₊ is the sole reference covariance: for
+F_exp, for §5.2's fit, for the cutoff draws and for the stress runs.
 
 **Controls:**
-- **C-PSD on the full carried V_drawn(t):** λ_min ≥ −1e-12·λ_max over all 205 eigenvalues, or the candidate is refused at
-  that truth. Eigenvalues within ±1e-12·λ_max are set to 0, which gives V₊.
-- **The sampling factor** is A = U₊ diag(√λ₊), and it must reconstruct V₊: ‖AAᵀ − V₊‖_F / ‖V₊‖_F ≤ 1e-10, or the candidate
-  is refused at that truth. V₊ is the covariance actually sampled, and it is the one used for F_exp's drawn part, the
-  cutoff draws and the stress runs.
+- **C-PSD on the full carried V_drawn(t):** λ_min ≥ −1e-12·λ_max over all 205 eigenvalues. Eigenvalues within
+  ±1e-12·λ_max are set to 0, which gives V₊.
+- **A zero V₊** (every eigenvalue set to 0) refuses the readings that need the reference, before any check divides by
+  its norm.
+- **The sampling factor** is A = U₊ diag(√λ₊), and it must reconstruct V₊: ‖AAᵀ − V₊‖_F / ‖V₊‖_F ≤ 1e-10.
 - **The marginal sampling check:** the 20,000 draws' sample covariance Ŝ must satisfy max_i |u_iᵀŜu_i / λ_i − 1| ≤ 0.05
-  over V₊'s nonzero modes. That is five times the per-mode sampling SD √(2/20000) = 0.01. Otherwise the candidate is
-  refused at that truth.
+  over V₊'s nonzero modes. That is five times the per-mode sampling SD √(2/20000) = 0.01.
+- **A failure of any of these controls is a reference failure.** It refuses the readings that need the reference at that
+  truth (§6.4), not the whole candidate.
 
 **Descriptive stress runs,** printed and read by nothing. For each candidate and truth, 400 ensembles of N errors per
 scenario (seed 9_994_000) are graded by §6.3's rule, and the pass fractions are printed:
@@ -967,7 +1003,7 @@ scenario (seed 9_994_000) are graded by §6.3's rule, and the pass fractions are
 - three deficit scenarios, with φ the drawn fluctuation and a = tr(V⁺V_drawn)/ndf:
   - **D1:** at zero bias, φ scaled by √(1.25/a), if a > 0;
   - **D2:** for each total band R with at least 10 modes, with P_R = Σ_{i∈R} u_i u_iᵀ in V's basis,
-    φ → (I − P_R)φ + √(1.25/a_R) P_R φ at zero bias, where a_R = (1/ndf_R) Σ_{i∈R} u_iᵀ V_drawn u_i / λ_i; defined if
+    φ → (I − P_R)φ + √(1.25/a_R) P_R φ at zero bias, where a_R = (1/ndf_R) Σ_{i∈R} u_iᵀ V₊ u_i / λ_i; defined if
     a_R > 0;
   - **D3:** for each bias direction w_j, b = ±β w_j with β² = (1.25 − a)·ndf / (w_jᵀV⁺w_j), if a < 1.25 and w_jᵀV⁺w_j > 0;
   - an undefined scenario is printed as omitted.
@@ -984,10 +1020,15 @@ Every check is affirmative, applied to the real toys:
 
 ### 6.4 The PV verdict per candidate, and precedence
 
-**Per truth first.** At each sealed truth, each reading is either valid or refused.
-- A reading is refused by a candidate-level control: §6.2's checks, a non-positive F_exp, a zero or non-finite SE, or the
-  carry checks (§2).
-- A refused reading is printed as refused, and every valid reading at that truth is still graded.
+**Per truth first.** At each sealed truth, each reading is either valid or refused, and a refusal reaches only the
+readings it affects:
+- **a carry failure** (§2) refuses every reading at that truth, because every reading needs V(t);
+- **a reference failure** (§6.2's checks on V₊) refuses the readings that need the reference: F̃ and its bands, which use
+  F_exp, and the joint and per-mode flags, which use q and p_i. M and the total bands need only V(t), so they stay
+  valid;
+- **a zero or non-finite SE, or a non-positive F_exp,** refuses only its own reading.
+- A refused reading is printed as refused, and every valid reading at that truth is still graded. §6.2's controls are
+  required for VALIDATED, and an independently valid total deficit triggers FAILS and the challenge.
 - **Phase-terminal integrity failures are different:** a seal, manifest or chain break, or a failed scan (ST5). They stop
   PV for every candidate, and the baseline is then ungraded (§7).
 
@@ -1006,7 +1047,7 @@ every refusal is printed beside it.
 
 ### 6.5 No operating rates are claimed
 
-PASS rests on the fixed affirmative bars applied to the real toys. The size statements of §6.1 are conditional on the
+PASS rests on the fixed affirmative bars applied to the real toys. §6.1's cutoffs are a fixed recipe against the
 zero-bias Gaussian reference. §6.2's stress runs are descriptive. COVFIX claims no false-PASS or false-FAIL operating
 rate.
 
@@ -1032,8 +1073,8 @@ Any covariance change from Part 1 enters the journal paper or a later Zenodo ver
 - **no deficit shown:** K0 is VALIDATED at both. "At the two named sealed tunes, the reported covariance showed no
   deficit under these bars."
 - **unchallenged:** K0 is INFLATED, UNRESOLVED or REFUSED;
-- **ungraded:** PV did not run, because ST2 left no eligible candidate or a stop or terminal rule ended the campaign
-  first; or PV started and a phase-terminal integrity failure ended it before complete grades.
+- **ungraded:** PV did not produce complete grades. That covers ST2 leaving no eligible candidate, and every stop or
+  terminal rule before complete grades: integrity failures, and ST5's terminal incompleteness after retries.
 
 **Part 3: the selected candidate:** the first VALIDATED, in the fixed order K_A, K_B, among the eligible candidates.
 **A or B licenses its sentence only with a challenge.** That is policy. Without a challenge, Part 1's finding still
@@ -1046,7 +1087,7 @@ stands alone, and each candidate's PV verdict is reported descriptively.
 | **B** | challenge; K_B selected | "At each of the two named sealed tunes under the declared toy law: the fluctuation block, measured on nominal and alternative-truth ensembles, has mean ratio <F̃ ± h> and every band reads 'covers'; with a fitted bias allowance from nominal and the three named PV2D deformations, reported separately, the total's guarded upper bound is <M + h> ≤ 1.25 (and per band), with no joint or mode under-flag. The held-out biases against the allowance: Q_u = <value ± SE>, outside-span fraction <value ± SE>." The factors f̂_R and C_b's rank and trace are printed with it. | coverage of any model family; "covers" for the total beyond the printed bound; a cause of the bias; that the allowance bounds a model class |
 | **none, with a challenge** | challenge; no candidate VALIDATED | Nothing new. "Coverage remains unvalidated" stands, with P1's readings and every candidate's verdict as description. | any covariance change |
 | **descriptive only** | no deficit shown, or unchallenged | Part 2's sentence, if any, and each candidate's verdict as description. A VALIDATED candidate is reported as such, but licenses no A or B sentence. | any covariance change; an A or B sentence |
-| **none, PV never ran** | ungraded | Part 1's finding, and P1's readings as description. | any statement about the sealed tunes |
+| **none, PV ungraded** | ungraded | Part 1's finding, and P1's readings as description. | any statement about the sealed tunes |
 
 - **In-sample disclosure.** An A sentence states its corrected block. A B sentence states that C_b was fitted from
   nominal and the three named deformations (not G18 or AR23), and that the factors f̂_R came from N4 and A1p. Both name
