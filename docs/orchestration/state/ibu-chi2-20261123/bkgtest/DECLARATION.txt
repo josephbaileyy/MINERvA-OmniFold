@@ -1,0 +1,18 @@
+# Background-scale test: could our background/fake subtraction explain the fold-test excess at reco p|| 40-60? (declared before computing)
+
+Correction to the proposal it replaces: data-bkg is ABOVE the published fold at p|| 40-60, so dropping a subtraction moves
+the wrong way. The background/overflow-fake route can explain the excess only if the subtraction should be LARGER.
+
+Inputs: xsec.root (a5c13fc3...): hDataReco2D N, hBkgReco2D B (all subtracted background, including signal fakes from truth
+outside phase space, so B is an UPPER BOUND on the p||>60 overflow fakes); signed_data.npz (7a35b7e2...) refined_y, M, T;
+priortest/vectors.npz (F, ur10, pub, mask). Fold f = R t_pub exactly as in foldtest (unreported truth cells from ur10).
+
+Required scale of the background to close the gap: K = 1 + sum(y - f) / sum(B), over reco cells with N > 0.
+Primary: reco p|| 40-60 column (ipz = 15). Secondary: reco pT 0-0.07 row (ipt = 0); reported with the same rule.
+Readings (primary):
+ EXCLUDED     K > 3   (even all background, overflow fakes included, would have to more than triple)
+ PLAUSIBLE    1 < K <= 1.5
+ INTERMEDIATE 1.5 < K <= 3 -> the truth-split read of the overflow fakes on Perlmutter is needed
+ WRONG-SIGN   K < 1   (the gap would need LESS subtraction)
+Control C-Y: refined_y sum vs (N - B) sum on the column, reported (the refinement may differ slightly from signed).
+Descriptive: per-cell B/N and required K in the column; same for the pT row. Not citable for a cause; nothing committed.

@@ -1,0 +1,29 @@
+# Prior-route test: does replacing our MC truth prior by MINERvA's shipped Tune v1 shape move the K=10 IBU toward the publication? (declared before computing)
+
+Input: signed_data.npz (sha 7a35b7e2..., fetched O_NOATIME, atime unchanged): response M[reco,truth] 224x224, prior T,
+refined_y, signed_y, cells (205), recorded refined/signed xsec at K=5,10. Published precision ROOT (6c6dce72...),
+TotalCovariance, chi2 via compare_to_paper_fullcov conventions (pinv on positive-diagonal cells).
+IBU = ref_c2c1.dagostini at 853371c6 (no smoothing), copied verbatim.
+Extraction factor F_j = recorded_refined_xsec_K5_j / u_refined_K5_j (my IBU), on the 205 cells.
+
+Scope: a per-truth-cell weight w_j scales column j of M and T alike, so R = M/T and the efficiencies are unchanged.
+This measures ONLY the prior route. Within-cell (e.g. E_nu) reweighting of the response is NOT tested.
+
+Weights: w_j = shipped_j / (T_j F_j) on the 205 reported cells; w = 1 on the 19 unreported cells. Prior T' = w*T.
+
+Controls (all must pass, else STOP):
+ C-SHA   npz and ROOT digests.
+ C-K10   my IBU with prior T, refined_y: F applied at K=10 equals recorded refined K=10 xsec, rel <= 1e-8 (F from K=5).
+ C-SGN   same for signed_y at K=5 and K=10, rel <= 1e-8.
+ C-FAC   F_j * area_j constant over 205 cells, rel spread <= 1e-9.
+ C-D     recorded distances reproduced: refined K=5 0.829947, K=10 1.026575; signed K=5 0.815846, K=10 0.961361 (|diff| <= 1e-5).
+ C-SCAN  refined-target scan K=1,2,3,4,15,20 reproduces REF-C2C1's printed 3.95,1.59,1.08,0.90,1.52,2.16 to 2 decimals
+         (REF-C2C1 used E_R's inputs; if this fails it is reported, not a STOP).
+ C-TRU   T_j F_j equals the truth-test m_j (hTruth2D route) to rel <= 1e-6 on the 205 cells (same MC truth).
+
+Primary reading: refined target, K=10. D = 1.026575, D' = chi2/205 with prior T'. f = (D - D')/D.
+ MAIN     f >= 0.5      PARTIAL  0.2 <= f < 0.5      MINOR  |f| < 0.2      AWAY  f <= -0.2   (0.2 < -f... i.e. D' >= 1.2 D)
+Secondary (same classes, not combined): signed target K=10; refined K=5.
+Descriptive, read by no rule: full scan K=1..20 with T and T'; a ceiling arm with the prior set to the published cross
+section itself (u0 = published/F) at K=10; per-cell change map.
+No noise model: the classes are descriptive, not significances. Not citable for a cause; nothing committed.

@@ -1,0 +1,28 @@
+# Overflow-fake split at reco p|| 40-60 (declared before computing)
+
+Follows bkgtest (K = 2.29 with ALL background, reading INTERMEDIATE). Joseph's go, 2026-11-23.
+Login node only, no Slurm, 0 node-h. Source: /pscratch/.../MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC.root,
+must hash (O_NOATIME) to 43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df, else STOP. Copied O_NOATIME to
+/pscratch/sd/j/josephrb/oflow-split-20261123/cv.root, copy re-hashed; ROOT reads only the copy.
+
+The mc_background tree has no truth muon kinematics. Categories (per event, sim_background_pass != 0, finite, 0<=w<1e6,
+weight w_bkg * dataPOTUsed/mcPOTUsed, filled at reco (sim_background, sim_background_pz) on the 14x16 grid):
+ FAKE_PS   bkg_nuPDG == 14, bkg_current == 1, truth vertex in fiducial (z 5980-8422 mm, hexagon apothem 850 mm):
+           CC numu that failed the phase space on muon kinematics. In reco p|| 40-60 this is essentially truth p|| > 60.
+ FAKE_VTX  bkg_nuPDG == 14, bkg_current == 1, truth vertex outside the fiducial volume.
+ OTHER     everything else (NC, numubar, nue).
+Control C-BKG: FAKE_PS + FAKE_VTX + OTHER equals the local hBkgReco2D (xsec.root a5c13fc3...) on all 224 cells, rel <= 1e-6.
+If C-BKG fails: STOP, no reading.
+
+Primary: reco p|| 40-60. K_PS = 1 + gap / sum(FAKE_PS), gap = sum(y - f) from bkgtest/foldtest (1874.49).
+ EXCLUDED K_PS > 3; INTERMEDIATE 1.5 < K_PS <= 3; PLAUSIBLE 1 < K_PS <= 1.5.
+Secondary, one-scale consistency: K_PS for reco p|| 20-40 computed the same way. SCALE-CONSISTENT if |K_PS(20-40) -
+K_PS(40-60)| <= 0.5, else SCALE-INCONSISTENT (one overflow-fake scale cannot fit both columns).
+Descriptive: category fractions per column; per-cell K_PS. Not citable for a cause; nothing committed.
+
+## Amendment 1 (before any category number was read), 2026-11-23
+The pinned CV file (43f8cc16..., verified) has no truth labels on mc_background. The labels come from
+nd-unfolding/runEventLoopOmniFold_5D_MEFHC_universes_full_bkgaware.root (opened directly with ROOT on Joseph's go; its
+atime moved 2026-09-27 08:25:39 -> 2026-11-23 11:46:33 PST). New control C-SAME: its mc_background sim_background,
+sim_background_pz, sim_background_pass and w_bkg equal the pinned copy's event by event (658,227 entries both), exactly.
+If C-SAME fails: STOP. Categories, C-BKG and readings are unchanged.
