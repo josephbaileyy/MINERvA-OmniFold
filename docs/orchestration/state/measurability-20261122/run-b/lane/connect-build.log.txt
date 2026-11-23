@@ -1,0 +1,43 @@
+node login38 nproc=244 loadavg 15.96 24.09 40.31
+2026-11-23T07:55:40Z
+window_end_epoch 1795421360 (now 1795420539); fence prefixes cov2d,ll5d_,ibukt,prr_,e96,ens1_,t3p_
+connect script sha256 2a5c1c920c79b5e43f70bd967964cfbf896a18e851130024fae71bfc36c126e7
+== cov2d fence rev 3 (7e81a721476da987a0e1262ab2054132bd8440cd49b0dc7a5c4f01d50a310738)
+fence host=login38 utc=2026-11-23T07:55:40Z
+sacct -X -n -P -u josephrb -S 2026-11-08T23:55:40 -E now -o JobID,JobName,State 2>&1
+sacct matching rows: 14
+FENCE CLEAR
+== fence (sacct)
+fence clear
+== rpd_ rows (printed; limitation-resolver's flux2 may coexist with these login reads)
+61806073|rpd_flux2|COMPLETED
+HEAD 68b9f96b917a890fb52d349c645bc4662097322e; porcelain --ignored lines before: 0
+msr_build.py: OK
+msr_overlap.py: OK
+threads 2; nice 19; ionice idle; python 3.11.14
+== overlap (msr_overlap.py)
+OVERLAP ours 14 (reads 10, writes 3); theirs 114 (cov2d config 36, cov2d disclosed 12, rpd write roots 2, rpd staged originals 57, LR extra 7)
+OVERLAP ALLOWED (both read-only interpreter): ours read (interpreter) /global/homes/j/josephrb/.conda/envs/root_6_28  ~  theirs rpd flux2 read (interpreter) /global/homes/j/josephrb/.conda/envs/root_6_28
+OVERLAP: CLEAR (pairs checked 1596, hits 0)
+== the probe's staged copies, re-checked by O_NOATIME sha256 against their pins
+{"path": "/pscratch/sd/j/josephrb/msr-p-20261122/stage/of_inputs_5d.npz", "size": 1548438020, "mtime": 1795414137.0, "atime": 1795414161.0, "inode": 882727743639263405, "sha256": "07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f"}
+{"path": "/pscratch/sd/j/josephrb/msr-p-20261122/stage/bkg_dump.npz", "size": 16017201, "mtime": 1795414146.0, "atime": 1795414363.0, "inode": 882727743639263664, "sha256": "2addac8f26055c5ed69862e7afe29e12ac51dbe23a8d6eeed79d71bec9d82955"}
+{"path": "/pscratch/sd/j/josephrb/msr-p-20261122/stage/bank.npz", "size": 1657798216, "mtime": 1795414149.0, "atime": 1795414207.0, "inode": 882727743639263665, "sha256": "60416384474d1a3b0644f1e09869cf09371382ecbf3c116b1ed110cd47341e2f"}
+staged copies at their pins: True
+== build: one part per process (r5d, r2d, t3)
+{"part": "r5d", "sha256": "b54689e375e68590ccaae2e92ab2cc25567c8c35b71f4ed42c5d74f8ca168d10", "seconds": 41.2, "peak_rss_bytes": 4813246464}
+{"part": "r2d", "sha256": "34275a665cc04ef72c2364d6c5f454ad26d0821c725299b0fb6a56e3c8cd36e4", "seconds": 54.7, "peak_rss_bytes": 5602426880}
+{"part": "t3", "sha256": "5eaca6fadf4b6eefe5814c279db0cc11a8a23fa8c4146fea0b7247262c2ca7db", "seconds": 0.8, "peak_rss_bytes": 52428800}
+b54689e375e68590ccaae2e92ab2cc25567c8c35b71f4ed42c5d74f8ca168d10  r5d.npz
+e99d84ff54c34706198e51bded3cf39d87e14212b77664f7a7a16ef98be46a7b  r5d.json
+34275a665cc04ef72c2364d6c5f454ad26d0821c725299b0fb6a56e3c8cd36e4  r2d.npz
+2d01902e08e3538237a5b6e5b3a341ece84be15ec62925fdbc93f74bb7f7ff5c  r2d.json
+5eaca6fadf4b6eefe5814c279db0cc11a8a23fa8c4146fea0b7247262c2ca7db  t3.npz
+59feb0a6e2126f1b0f5ef69958cba180535b8234f01c26504fc3b9f5b8770331  t3.json
+porcelain --ignored lines after (pycache excluded): 0
+== records
+2026-11-23T07:58:40Z
+records copied: 16 files, 36954687 bytes
+fetch-build.tar sha256 a2e328808c91c96a00986aac11fefe4428d96ca5438a5bbc5ad5eaa339c91aa5 bytes 36986880
+msr build rc=0
+2026-11-23T07:58:45Z
