@@ -1,0 +1,8 @@
+REFUSED: did.py is not at its pin
+usage: msr_project.py [-h] {run} ...
+msr_project.py: error: the following arguments are required: cmd
+----------------------------------------------------------------------
+Ran 41 tests in 93.316s
+
+OK
+executable lines 645; executed 645; not executed 0

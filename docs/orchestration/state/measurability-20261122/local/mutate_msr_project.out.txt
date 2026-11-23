@@ -1,0 +1,25 @@
+killed    band_s poor edge
+killed    band_s well edge
+killed    band_z below edge
+killed    band_z resolvable edge
+killed    band_r most edge
+killed    band_r no-change edge
+killed    floor strict
+killed    Z per axis
+killed    U-infinity threshold
+killed    range cut
+killed    combined order
+killed    noise max lo>=
+killed    ddof 0
+killed    r floor off
+killed    MC projector check off
+killed    match bar off
+killed    s_poor complement
+killed    C-RID tolerance
+killed    info-limit and->or
+killed    C-T3 tolerance
+killed    conversion drops P
+killed    stop ignored
+killed    C-ROUTE ignored
+killed    count space -> theta space J
+mutants 24; killed 24; not killed 0
