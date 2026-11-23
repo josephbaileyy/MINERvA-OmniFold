@@ -8617,6 +8617,8 @@ docs/orchestration/state/measurability-20261122/reads/connectP-prompt.txt	tracke
 docs/orchestration/state/measurability-20261122/reads/connectP-rev3fence-agy-gemini-3.8-flash-high.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
 docs/orchestration/state/measurability-20261122/reads/connectP-rev3fence-prompt.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
 docs/orchestration/state/measurability-20261122/reads/local-agy-gemini-3.8-flash-high.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
+docs/orchestration/state/measurability-20261122/reads/local-confirm-agy-gemini-3.8-flash-high.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
+docs/orchestration/state/measurability-20261122/reads/local-confirm-prompt.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
 docs/orchestration/state/measurability-20261122/reads/local-prompt.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
 docs/orchestration/state/measurability-20261122/reads/rev1-agy-gemini-3.8-flash-high.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
 docs/orchestration/state/measurability-20261122/reads/rev1-grok.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
