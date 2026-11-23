@@ -1,0 +1,66 @@
+[
+ {
+  "claim": "E_avail tilt: functionals with 68% UCB < 0.66 (paper '51 of the 153')",
+  "value": 51
+ },
+ {
+  "claim": "E_avail tilt: lowest 68% coverage (paper 'as low as 0.06')",
+  "value": [
+   0.06,
+   "J224"
+  ]
+ },
+ {
+  "claim": "E_avail tilt: functionals with 95% UCB < 0.94 (paper '42 fail at 95%')",
+  "value": 42
+ },
+ {
+  "claim": "nominal: functionals with 95% UCB < 0.94 (paper 'two fail at 95%')",
+  "value": [
+   2,
+   [
+    "EW36",
+    "J161"
+   ]
+  ]
+ },
+ {
+  "claim": "nominal: lowest 95% coverage (paper 'the lowest at 0.85')",
+  "value": [
+   0.85,
+   "EW36"
+  ]
+ },
+ {
+  "claim": "nominal: functionals with 68% UCB < 0.66 (paper implies none)",
+  "value": 0
+ },
+ {
+  "claim": "nominal: confidently-below counts in group EW (68%, 95%)",
+  "value": [
+   0,
+   1
+  ]
+ },
+ {
+  "claim": "nominal: confidently-below counts in group J (68%, 95%)",
+  "value": [
+   0,
+   1
+  ]
+ },
+ {
+  "claim": "eavail_tilt: confidently-below counts in group EW (68%, 95%)",
+  "value": [
+   18,
+   17
+  ]
+ },
+ {
+  "claim": "eavail_tilt: confidently-below counts in group J (68%, 95%)",
+  "value": [
+   33,
+   25
+  ]
+ }
+]

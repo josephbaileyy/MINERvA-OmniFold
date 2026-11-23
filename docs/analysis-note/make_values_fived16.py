@@ -141,6 +141,9 @@ READOUTS = {
     # b0362c387ec3d8fd48616abe5dcf589407fd007b62214d6297b47418d1a9ecce. A byte-identical copy of main's file, at main's
     # path, because the rewrite branch does not contain #1241; t3_values() below
     "t3": (f"{FD}/fd/tier3-20261110/run-20261121/cluster/read/readout.json", "b0362c38"),
+    # B4, the cross-fitting and regularization probe (OUTCOME-20261105-fd-stab-none-pass.md, verdict NONE_PASS): the
+    # readout, sha256 653356ae56087ea74621e61a60c829d63be9a9f15b0b35941e641b22f0be8ea3; b4_values() below
+    "fdstab": (f"{FD}/fd/receipts-stab-a1r/readout/readout-2/fd_stab.json", "653356ae"),
 }
 # the committed readouts without the run-period block, for the "-nopl" keys
 NOPL_READOUTS = dict(READOUTS, **{
@@ -1701,6 +1704,28 @@ def recov_values(d):
     return v
 
 
+def b4_values(d):
+    """B4 (OUTCOME-20261105-fd-stab-none-pass.md): the pseudo-data rounding-stability shifts of the control, two-fold
+    cross-fitting (B2) and the two tree regularizations (B3a, B3b), and the truths at which cross-fitting worsens the bias.
+    Each shift is the mean over pseudo-experiments of the median or maximum, in statistical standard deviations, printed
+    at two decimals as the ens1 keys beside it (e.g. b4-b2-mmed is 0.528 -> 0.53). None passes the 0.3/1.0 bar, so B2
+    is never an improvement."""
+    x = d["fdstab"]
+    assert x["schema"] == "estimator-stability-analysis/1" and x["verdict"]["verdict"] == "NONE_PASS"
+    assert not x["verdict"]["passers"] and len(x["truths_judged"]) == 17
+    v = {}
+    for arm, tag in (("control", "ctl"), ("B2", "b2"), ("B3a", "b3a"), ("B3b", "b3b")):
+        st = x["stability"][arm]
+        assert not st["passes"] and st["functionals_used"] == 153
+        v[f"b4-{tag}-mmed"], v[f"b4-{tag}-mmax"] = f"{st['mean_median']:.2f}", f"{st['mean_max']:.2f}"
+    assert (v["b4-ctl-mmed"], v["b4-ctl-mmax"], v["b4-b2-mmed"], v["b4-b2-mmax"]) == ("0.76", "6.83", "0.53", "4.22")
+    assert (v["b4-b3a-mmed"], v["b4-b3b-mmed"], v["b4-b3a-mmax"], v["b4-b3b-mmax"]) == ("0.85", "0.86", "6.35", "6.67")
+    worse = sorted(t for t, b in x["bias"]["B2"].items() if b["valid"] and not b["no_worse"])
+    assert worse == ["W3", "closure_nuwro", "stage0c_gibuu"] and not x["bias_no_worse_all"]["B2"]
+    v["b4-b2-nworse-word"] = {3: "three"}[len(worse)]
+    return v
+
+
 def currency_values(d, base):
     """The note's currency UPDATEs (currency check of 2fe070fec; the combined plan section 6): the keys the paper prints
     for the same records, computed by the paper's own producers (ported above from make_values_fived16.py at
@@ -1815,6 +1840,7 @@ def currency_values(d, base):
         assert min(x) > 1, "every 1N-1P bin below 8 GeV/c lies above 1A-1F"
         v[f"rp-pc-lev-{tag}-lo"], v[f"rp-pc-lev-{tag}-hi"] = f"{100 * (min(x) - 1):.1f}", f"{100 * (max(x) - 1):.1f}"
     v.update(recov_values(d))                                   # U6
+    v.update(b4_values(d))                                      # B4 (sec4 cross-fitting sentences)
     # DECISION-20261119g: the descriptive chi2/ndf between the recorded OmniFold E_R and binned IBU on the published
     # covariance, IBU on the refined and on the signed target, at K=5 and K=10 (OUTCOME-20261119-ibu-signed-data.md
     # rows 19-20, whose six-decimal values are asserted here); printed at three decimals, as the referee's sentence

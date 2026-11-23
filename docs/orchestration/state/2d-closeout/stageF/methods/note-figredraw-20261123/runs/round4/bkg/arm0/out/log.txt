@@ -1,0 +1,11 @@
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+[OK] purity: max |residual| over the 7 highest-W (E_avail,W) cells (paper 'up to 4%'), %: 4.111
+[OK] purity: max |residual| over all 153 functionals is in the highest-W column (EW29), %: EW29
+[OK] refined: max |residual| over the 7 highest-W cells < 0.3% (paper 'below 0.3%'), %: 0.241
+[OK] refined: max |residual| over the 109 J cells (paper 'up to 1% in some joint cells'), %: (1.004, 'J93')
+[OK] data: max |refined - purity| (paper 'at most 1.4%'; not plotted), %: 1.419

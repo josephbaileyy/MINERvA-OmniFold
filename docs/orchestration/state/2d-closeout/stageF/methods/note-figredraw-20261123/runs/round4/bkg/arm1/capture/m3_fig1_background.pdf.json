@@ -1,0 +1,707 @@
+[
+ {
+  "i": 0,
+  "kind": "QuadMesh",
+  "axes": 0,
+  "label": "_child0",
+  "hash": "77609abb2b21da211aa57131180246b15d130a07082b85a1620f1e5d52fecc43",
+  "dhash": "e4b6ad2cc6362538d0f43e3c3d5b75b9845c0e290279e6839a37ef0456805d0c",
+  "xhash": "e4b6ad2cc6362538d0f43e3c3d5b75b9845c0e290279e6839a37ef0456805d0c",
+  "colours": {
+   "face": [
+    "#F8F3ECFF",
+    "#F8F4EEFF",
+    "#F8F3ECFF",
+    "#F9F0E4FF",
+    "#FCE7CAFF",
+    "#582E8CFF",
+    "#F8F4EEFF",
+    "#F7F6F3FF",
+    "#F8F5F1FF",
+    "#F9F1E6FF",
+    "#FBE9CFFF",
+    "#3F1268FF",
+    "#F7F6F3FF",
+    "#F7F7F6FF",
+    "#F7F6F3FF",
+    "#F9F2E9FF",
+    "#FBE9CFFF",
+    "#44176FFF",
+    "#F7F7F6FF",
+    "#F7F7F6FF",
+    "#F7F6F3FF",
+    "#F9F2E9FF",
+    "#FBE9CFFF",
+    "#41146AFF",
+    "#F5F5F6FF",
+    "#F6F6F7FF",
+    "#F8F5F1FF",
+    "#F8F3ECFF",
+    "#FCE8CDFF",
+    "#3E1165FF",
+    "#EFF0F4FF",
+    "#F3F3F5FF",
+    "#F7F7F6FF",
+    "#F9F2E9FF",
+    "#FBE9CFFF",
+    "#41146AFF",
+    "#F2F2F5FF",
+    "#F2F2F5FF",
+    "#F7F7F6FF",
+    "#FAEEDFFF",
+    "#FCE6C8FF",
+    "#FDBD6EFF"
+   ],
+   "edge": [
+    "#FFFFFFFF"
+   ],
+   "cmap": "PuOr_r"
+  },
+  "style": {},
+  "gid": "heat:purity",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 1,
+  "kind": "QuadMesh",
+  "axes": 1,
+  "label": "_child0",
+  "hash": "d1b1e59c2da12d6fcdbce7855fecb0a594993607566be89529fd43e622959dde",
+  "dhash": "1b6a99a8d3d1b2c5c3ded0b2d9b16c7a26642054ea7685d01900a2640f616924",
+  "xhash": "1b6a99a8d3d1b2c5c3ded0b2d9b16c7a26642054ea7685d01900a2640f616924",
+  "colours": {
+   "face": [
+    "#F6F6F7FF",
+    "#F8F5F1FF",
+    "#F8F3ECFF",
+    "#F9F1E6FF",
+    "#F9F0E4FF",
+    "#F9F1E6FF",
+    "#F7F7F6FF",
+    "#F8F5F1FF",
+    "#F8F4EEFF",
+    "#F9F2E9FF",
+    "#F9F1E6FF",
+    "#F8F4EEFF",
+    "#F7F7F6FF",
+    "#F7F6F3FF",
+    "#F8F5F1FF",
+    "#F9F2E9FF",
+    "#F9F2E9FF",
+    "#F8F3ECFF",
+    "#F7F7F6FF",
+    "#F7F7F6FF",
+    "#F7F6F3FF",
+    "#F8F3ECFF",
+    "#F9F2E9FF",
+    "#F8F3ECFF",
+    "#F7F7F6FF",
+    "#F7F7F6FF",
+    "#F8F5F1FF",
+    "#F8F4EEFF",
+    "#F8F3ECFF",
+    "#F8F4EEFF",
+    "#F6F6F7FF",
+    "#F7F7F6FF",
+    "#F8F4EEFF",
+    "#F9F2E9FF",
+    "#F8F3ECFF",
+    "#F8F4EEFF",
+    "#E9EAF2FF",
+    "#EAEBF2FF",
+    "#F0F1F4FF",
+    "#F7F6F3FF",
+    "#F9F2E9FF",
+    "#F9F1E6FF"
+   ],
+   "edge": [
+    "#FFFFFFFF"
+   ],
+   "cmap": "PuOr_r"
+  },
+  "style": {},
+  "gid": "heat:refined",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 2,
+  "kind": "LineCollection",
+  "axes": 2,
+  "label": "_child0",
+  "hash": "c78f26eeb0efecdcc1a13ce55d6ce9d339e615e455c8f4efbfa1316d7269473f",
+  "dhash": "2062b477c651b3fc38ee2bc7849247c25be032f05a382689d12fc1abf3db4447",
+  "xhash": "2062b477c651b3fc38ee2bc7849247c25be032f05a382689d12fc1abf3db4447",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#000000FF"
+   ],
+   "cmap": "viridis"
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 3,
+  "kind": "QuadMesh",
+  "axes": 2,
+  "label": "_child1",
+  "hash": "5efc511f61409f0cfa6a958544617a1e3cdf5ed87b8c23330ec93911fe30dda6",
+  "dhash": "cf4f97394c1964cbeba5381ed4ce3b7856b02c4cb3ede0cd33c91706a2c485b3",
+  "xhash": "cf4f97394c1964cbeba5381ed4ce3b7856b02c4cb3ede0cd33c91706a2c485b3",
+  "colours": {
+   "face": [
+    "#2D004BFF",
+    "#2F024DFF",
+    "#300350FF",
+    "#320552FF",
+    "#330655FF",
+    "#350857FF",
+    "#360959FF",
+    "#380B5CFF",
+    "#390C5EFF",
+    "#3B0E61FF",
+    "#3C0F63FF",
+    "#3E1165FF",
+    "#3F1268FF",
+    "#41146AFF",
+    "#42156CFF",
+    "#44176FFF",
+    "#451871FF",
+    "#471A74FF",
+    "#491C76FF",
+    "#4A1D78FF",
+    "#4C1F7BFF",
+    "#4D207DFF",
+    "#4F2280FF",
+    "#502382FF",
+    "#522584FF",
+    "#532687FF",
+    "#552889FF",
+    "#572B8AFF",
+    "#582E8CFF",
+    "#5A318DFF",
+    "#5C348EFF",
+    "#5D3790FF",
+    "#5F3A91FF",
+    "#613D93FF",
+    "#634094FF",
+    "#644395FF",
+    "#664697FF",
+    "#684998FF",
+    "#6A4C9AFF",
+    "#6B4F9BFF",
+    "#6D529CFF",
+    "#6F559EFF",
+    "#70589FFF",
+    "#725BA1FF",
+    "#745EA2FF",
+    "#7661A4FF",
+    "#7764A5FF",
+    "#7967A6FF",
+    "#7B6AA8FF",
+    "#7D6DA9FF",
+    "#7E70ABFF",
+    "#8073ACFF",
+    "#8275ADFF",
+    "#8477AFFF",
+    "#867AB0FF",
+    "#887CB2FF",
+    "#8A7EB3FF",
+    "#8C80B5FF",
+    "#8E82B6FF",
+    "#9085B8FF",
+    "#9287B9FF",
+    "#9489BBFF",
+    "#968BBCFF",
+    "#988DBEFF",
+    "#9990BFFF",
+    "#9B92C1FF",
+    "#9D94C2FF",
+    "#9F96C4FF",
+    "#A198C5FF",
+    "#A39BC7FF",
+    "#A59DC8FF",
+    "#A79FCAFF",
+    "#A9A1CBFF",
+    "#ABA3CDFF",
+    "#ADA6CEFF",
+    "#AFA8D0FF",
+    "#B1AAD1FF",
+    "#B3ACD2FF",
+    "#B4AED3FF",
+    "#B6B0D4FF",
+    "#B7B1D5FF",
+    "#B9B3D6FF",
+    "#BAB5D7FF",
+    "#BCB7D8FF",
+    "#BDB9D9FF",
+    "#BFBBDAFF",
+    "#C0BDDBFF",
+    "#C2BEDCFF",
+    "#C3C0DDFF",
+    "#C5C2DEFF",
+    "#C6C4DFFF",
+    "#C8C6E0FF",
+    "#C9C8E1FF",
+    "#CBC9E2FF",
+    "#CCCBE3FF",
+    "#CECDE4FF",
+    "#CFCFE5FF",
+    "#D1D1E6FF",
+    "#D2D3E7FF",
+    "#D4D4E8FF",
+    "#D5D6E9FF",
+    "#D7D8EAFF",
+    "#D8DAEBFF",
+    "#D9DBEBFF",
+    "#DADCECFF",
+    "#DCDDECFF",
+    "#DDDFEDFF",
+    "#DEE0EDFF",
+    "#DFE1EEFF",
+    "#E1E2EEFF",
+    "#E2E3EFFF",
+    "#E3E4EFFF",
+    "#E4E5F0FF",
+    "#E5E7F0FF",
+    "#E7E8F1FF",
+    "#E8E9F1FF",
+    "#E9EAF2FF",
+    "#EAEBF2FF",
+    "#EBECF3FF",
+    "#EDEDF3FF",
+    "#EEEEF3FF",
+    "#EFF0F4FF",
+    "#F0F1F4FF",
+    "#F2F2F5FF",
+    "#F3F3F5FF",
+    "#F4F4F6FF",
+    "#F5F5F6FF",
+    "#F6F6F7FF",
+    "#F7F7F6FF",
+    "#F7F6F3FF",
+    "#F8F5F1FF",
+    "#F8F4EEFF",
+    "#F8F3ECFF",
+    "#F9F2E9FF",
+    "#F9F1E6FF",
+    "#F9F0E4FF",
+    "#F9EFE1FF",
+    "#FAEEDFFF",
+    "#FAEEDCFF",
+    "#FAEDDAFF",
+    "#FAECD7FF",
+    "#FBEBD5FF",
+    "#FBEAD2FF",
+    "#FBE9CFFF",
+    "#FCE8CDFF",
+    "#FCE7CAFF",
+    "#FCE6C8FF",
+    "#FCE5C5FF",
+    "#FDE5C3FF",
+    "#FDE4C0FF",
+    "#FDE3BEFF",
+    "#FDE2BBFF",
+    "#FEE1B9FF",
+    "#FEE0B6FF",
+    "#FEDEB3FF",
+    "#FEDDAFFF",
+    "#FEDBACFF",
+    "#FEDAA9FF",
+    "#FED8A6FF",
+    "#FED7A2FF",
+    "#FED59FFF",
+    "#FED39CFF",
+    "#FED299FF",
+    "#FED095FF",
+    "#FECF92FF",
+    "#FECD8FFF",
+    "#FDCC8CFF",
+    "#FDCA88FF",
+    "#FDC885FF",
+    "#FDC782FF",
+    "#FDC57FFF",
+    "#FDC47BFF",
+    "#FDC278FF",
+    "#FDC175FF",
+    "#FDBF72FF",
+    "#FDBD6EFF",
+    "#FDBC6BFF",
+    "#FDBA68FF",
+    "#FDB965FF",
+    "#FCB761FF",
+    "#FBB55EFF",
+    "#FAB35BFF",
+    "#F9B158FF",
+    "#F8AE55FF",
+    "#F7AC52FF",
+    "#F6AA4FFF",
+    "#F4A84CFF",
+    "#F3A649FF",
+    "#F2A446FF",
+    "#F1A242FF",
+    "#F0A03FFF",
+    "#EF9E3CFF",
+    "#EE9B39FF",
+    "#ED9936FF",
+    "#EB9733FF",
+    "#EA9530FF",
+    "#E9932DFF",
+    "#E8912AFF",
+    "#E78F27FF",
+    "#E68D23FF",
+    "#E58A20FF",
+    "#E3881DFF",
+    "#E2861AFF",
+    "#E18417FF",
+    "#E08214FF",
+    "#DE8013FF",
+    "#DC7F13FF",
+    "#DB7D12FF",
+    "#D97B12FF",
+    "#D77A11FF",
+    "#D57811FF",
+    "#D47610FF",
+    "#D27510FF",
+    "#D0730FFF",
+    "#CE720FFF",
+    "#CD700EFF",
+    "#CB6E0DFF",
+    "#C96D0DFF",
+    "#C76B0CFF",
+    "#C6690CFF",
+    "#C4680BFF",
+    "#C2660BFF",
+    "#C0640AFF",
+    "#BE630AFF",
+    "#BD6109FF",
+    "#BB5F08FF",
+    "#B95E08FF",
+    "#B75C07FF",
+    "#B65A07FF",
+    "#B45906FF",
+    "#B25706FF",
+    "#B05606FF",
+    "#AE5506FF",
+    "#AC5406FF",
+    "#AA5306FF",
+    "#A85206FF",
+    "#A65107FF",
+    "#A44F07FF",
+    "#A24E07FF",
+    "#A04D07FF",
+    "#9E4C07FF",
+    "#9C4B07FF",
+    "#9A4A07FF",
+    "#974907FF",
+    "#954807FF",
+    "#934607FF",
+    "#914507FF",
+    "#8F4407FF",
+    "#8D4307FF",
+    "#8B4208FF",
+    "#894108FF",
+    "#874008FF",
+    "#853E08FF",
+    "#833D08FF",
+    "#813C08FF",
+    "#7F3B08FF"
+   ],
+   "edge": [],
+   "cmap": "PuOr_r"
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 4,
+  "kind": "line",
+  "axes": 3,
+  "label": "_child6",
+  "hash": "346cc72099dc34e7990ae741877689d80b5ef89c29202efbf3897dcf92ad6017",
+  "dhash": "6efc5ffea671c22876e587c74756a5978b14a353c89beaa3b9ba3586cce8d1bc",
+  "xhash": "aa2d003d3c422db57ca03c70fef4f889a1b73e91f6cb4865055287798f9f75b6",
+  "colours": {
+   "color": [
+    "#737373FF"
+   ],
+   "mfc": [
+    "#737373FF"
+   ],
+   "mec": [
+    "#737373FF"
+   ]
+  },
+  "style": {
+   "linestyle": "-",
+   "marker": "None",
+   "drawstyle": "default"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 5,
+  "kind": "line",
+  "axes": 3,
+  "label": "_child8",
+  "hash": "37ee1371df15490ef61a97905f624e7fa2240e2957f301bde7accb127d1935a0",
+  "dhash": "30c1d1664252f2c7d2b483e12d9ea1a05a862f3d87606f901a2f7438d4c4f33d",
+  "xhash": "fe8e72833d4e725294f891ed7bb23294dd0eb6b55d9f797a44ea71d2b462772c",
+  "colours": {
+   "color": [
+    "#737373FF"
+   ],
+   "mfc": [
+    "#737373FF"
+   ],
+   "mec": [
+    "#737373FF"
+   ]
+  },
+  "style": {
+   "linestyle": "-",
+   "marker": "None",
+   "drawstyle": "default"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 6,
+  "kind": "line",
+  "axes": 3,
+  "label": "_child10",
+  "hash": "9f13dae1d4082e5e7d07edcfcdd571b36642a94f1681e46f8f306f04ae626ec1",
+  "dhash": "d0d098bb2a77da331b0358fc99421b2027d9fb8255b9d52c2254162ff6a06e50",
+  "xhash": "f72e3d3fa7ceb80db31eec87657e0b82cfa8c227456bf7d24a2430379620a85b",
+  "colours": {
+   "color": [
+    "#737373FF"
+   ],
+   "mfc": [
+    "#737373FF"
+   ],
+   "mec": [
+    "#737373FF"
+   ]
+  },
+  "style": {
+   "linestyle": "-",
+   "marker": "None",
+   "drawstyle": "default"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 7,
+  "kind": "line",
+  "axes": 3,
+  "label": "_child11",
+  "hash": "a39c3747048e9f8e56864af4be715b6a2384d3a530e2135cc75ee383d26ebf1e",
+  "dhash": "41c09a002e6ae342bdb18987700e18270df1fa37d85d844735343cd16c08c7e0",
+  "xhash": "3f4aa838b920dce1300fc96ae9439434e9ca44f6e12af772d3f5ec9ad9e129cb",
+  "colours": {
+   "color": [
+    "#000000FF"
+   ],
+   "mfc": [
+    "#000000FF"
+   ],
+   "mec": [
+    "#000000FF"
+   ]
+  },
+  "style": {
+   "linestyle": "-",
+   "marker": "None",
+   "drawstyle": "default"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 8,
+  "kind": "line",
+  "axes": 3,
+  "label": "_nolegend_",
+  "hash": "02668505cc0f6bae52fe789b03b9184b330200a1060aa613c5ac310213f75f6d",
+  "dhash": "9b18864051611075ffbbbc0f74683491ddf0a9c05dc70a77985884131dcb7e45",
+  "xhash": "487f848189a397f3013cb00f23d2aa6d834eb206387d827a578e1b5d739bf579",
+  "colours": {
+   "color": [
+    "#2A78D6FF"
+   ],
+   "mfc": [
+    "#2A78D6FF"
+   ],
+   "mec": [
+    "#2A78D6FF"
+   ]
+  },
+  "style": {
+   "linestyle": "None",
+   "marker": "o",
+   "drawstyle": "default"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 9,
+  "kind": "LineCollection",
+  "axes": 3,
+  "label": "_nolegend_",
+  "hash": "d8eab2f353c1f117be79e62ca71421658e7e8c68808bffac9fcf35ca5be79b2c",
+  "dhash": "b4086e7c251bb820a96eb52cca3af35e8a906db18def6ce09fa0b8f17a34bd9d",
+  "xhash": "b4086e7c251bb820a96eb52cca3af35e8a906db18def6ce09fa0b8f17a34bd9d",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#2A78D6FF"
+   ],
+   "cmap": "viridis"
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 10,
+  "kind": "line",
+  "axes": 3,
+  "label": "_nolegend_",
+  "hash": "3d47f015039dce0e735dcb80365d77e8ed3dcfd6927d6f09868ebd3d9368c632",
+  "dhash": "56f865836c0e849c028329b8ece1300516e2db6fef9a23da8ee5720d7d92b1d9",
+  "xhash": "c8bbc3971ade38b79c4466656cb4b1ceb18f0613e53097f62eb7423e3936ed31",
+  "colours": {
+   "color": [
+    "#C0392BFF"
+   ],
+   "mfc": [
+    "#C0392BFF"
+   ],
+   "mec": [
+    "#C0392BFF"
+   ]
+  },
+  "style": {
+   "linestyle": "None",
+   "marker": "s",
+   "drawstyle": "default"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 11,
+  "kind": "LineCollection",
+  "axes": 3,
+  "label": "_nolegend_",
+  "hash": "5f69b011463ecfd62c96c98616883cd5c76122500a43157acf958dbec7a6995d",
+  "dhash": "b5d51529a6f14bfea192ddb866084be86f0192e3b19671103fdd347205e6bbf3",
+  "xhash": "b5d51529a6f14bfea192ddb866084be86f0192e3b19671103fdd347205e6bbf3",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#C0392BFF"
+   ],
+   "cmap": "viridis"
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 12,
+  "kind": "line",
+  "axes": 3,
+  "label": "_nolegend_",
+  "hash": "46b30a48a4ab5131da79bf16dbbd80633ab8afac5983b91771ea94528d394b14",
+  "dhash": "2f5892884566b2792722c78c1bf1f67b48733a0d34227b1e4603ff30ddb590ef",
+  "xhash": "0638887b5556860ee787f008966f06818580e95469bd4825719a174b77e9dd2f",
+  "colours": {
+   "color": [
+    "#C0392BFF"
+   ],
+   "mfc": [
+    "#FFFFFFFF"
+   ],
+   "mec": [
+    "#C0392BFF"
+   ]
+  },
+  "style": {
+   "linestyle": "None",
+   "marker": "s",
+   "drawstyle": "default"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 13,
+  "kind": "LineCollection",
+  "axes": 3,
+  "label": "_nolegend_",
+  "hash": "58f16b9dcea6b7330e05789828d922a2ba3559b9f4547a263efa68f991dd2d74",
+  "dhash": "91324828cad65ab7b6fd6d247365452e9e120dcaedaba880a730ba13bbdd73b6",
+  "xhash": "91324828cad65ab7b6fd6d247365452e9e120dcaedaba880a730ba13bbdd73b6",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#C0392BFF"
+   ],
+   "cmap": "viridis"
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ }
+]

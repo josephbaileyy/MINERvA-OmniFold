@@ -1,0 +1,12 @@
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+[OK] E_avail tilt: functionals with 68% UCB < 0.66 (paper '51 of the 153'): 51
+[OK] E_avail tilt: lowest 68% coverage (paper 'as low as 0.06'): (0.06, 'J224')
+[OK] E_avail tilt: functionals with 95% UCB < 0.94 (paper '42 fail at 95%'): 42
+[OK] nominal: functionals with 95% UCB < 0.94 (paper 'two fail at 95%'): (2, ['EW36', 'J161'])
+[OK] nominal: lowest 95% coverage (paper 'the lowest at 0.85'): (0.85, 'EW36')
+[OK] nominal: functionals with 68% UCB < 0.66 (paper implies none): 0

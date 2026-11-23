@@ -1,0 +1,54 @@
+# cov variant P (2026-11-23T16:46:03Z): run_arms.sh <wt> cov P; worktree HEAD dc01e1464; env: python 3.12.2 matplotlib 3.10.1 numpy 1.26.4
+== arm0: capture_palette.py <capture> <wt>/docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/tools/layout_run.py <wt>/docs/analysis-note/figures/methods_m3/fig_m3_coverage.py --repo <wt> --outdir <wt>/docs/orchestration/state/2d-closeout/stageF/methods/note-figredraw-20261123/runs/round4/cov/arm0/out  (LAYOUT_PALETTE=0)
+   | 'created' timestamp seems very low; regarding as unix timestamp
+   | 'modified' timestamp seems very low; regarding as unix timestamp
+   | 'created' timestamp seems very low; regarding as unix timestamp
+   | 'modified' timestamp seems very low; regarding as unix timestamp
+   | 'created' timestamp seems very low; regarding as unix timestamp
+   | 'modified' timestamp seems very low; regarding as unix timestamp
+   | [OK] E_avail tilt: functionals with 68% UCB < 0.66 (paper '51 of the 153'): 51
+   | [OK] E_avail tilt: lowest 68% coverage (paper 'as low as 0.06'): (0.06, 'J224')
+   | [OK] E_avail tilt: functionals with 95% UCB < 0.94 (paper '42 fail at 95%'): 42
+   | [OK] nominal: functionals with 95% UCB < 0.94 (paper 'two fail at 95%'): (2, ['EW36', 'J161'])
+   | [OK] nominal: lowest 95% coverage (paper 'the lowest at 0.85'): (0.85, 'EW36')
+   | [OK] nominal: functionals with 68% UCB < 0.66 (paper implies none): 0
+== arm1: capture_palette.py <capture> <wt>/docs/orchestration/state/2d-closeout/stageF/methods/note-figredraw-20261123/tools/fig_m3_coverage.py --variant P --repo <wt> --outdir <wt>/docs/orchestration/state/2d-closeout/stageF/methods/note-figredraw-20261123/runs/round4/cov/arm1/out  (LAYOUT_PALETTE=0)
+   | 'created' timestamp seems very low; regarding as unix timestamp
+   | 'modified' timestamp seems very low; regarding as unix timestamp
+   | 'created' timestamp seems very low; regarding as unix timestamp
+   | 'modified' timestamp seems very low; regarding as unix timestamp
+   | [OK] E_avail tilt: functionals with 68% UCB < 0.66 (paper '51 of the 153'): 51
+   | [OK] E_avail tilt: lowest 68% coverage (paper 'as low as 0.06'): (0.06, 'J224')
+   | [OK] E_avail tilt: functionals with 95% UCB < 0.94 (paper '42 fail at 95%'): 42
+   | [OK] nominal: functionals with 95% UCB < 0.94 (paper 'two fail at 95%'): (2, ['EW36', 'J161'])
+   | [OK] nominal: lowest 95% coverage (paper 'the lowest at 0.85'): (0.85, 'EW36')
+   | [OK] nominal: functionals with 68% UCB < 0.66 (paper implies none): 0
+== arm 0 against the installed docs/analysis-note/figures/paper_fig_coverage.pdf (sha256 e1c3a18072270c99…)
+EQUAL paper_fig_coverage.pdf
+raster 300 dpi: RASTER :: EQUAL :: 1 page(s), 0 differing pixel(s) (rc 0)
+== arm 1 data against arm 0's captured artists (check_data.py cov <run> P)
+arm 0 against the receipt (hits/400, lcb, ucb, filled = ucb < threshold): 306/306 equal
+cov P: 306 (series, name) points; y, bar ends bit-equal in both arms: True
+filled/open state equal in both arms for all 306 points: True; filled (68%, 95%): [51, 42]
+arm 1 dump against arm 1's artists: 306/306 equal
+printed failure count (68%): receipt 51/153; drawn: ['(a) 68% intervals: 51/153 failures (upper bound below 0.66)']
+printed failure count (95%): receipt 42/153; drawn: ['(b) 95% intervals: 42/153 failures (upper bound below 0.94)']
+  D order 68% proj: 42 points, ucb non-decreasing along x (receipt values): True; first EW17 ucb 0.1257, last EW30 ucb 0.8717
+  D order 68% joint: 109 points, ucb non-decreasing along x (receipt values): True; first J224 ucb 0.1160, last J178 ucb 0.9560
+  D order 95% proj: 42 points, ucb non-decreasing along x (receipt values): True; first EW17 ucb 0.3768, last EW7 ucb 0.9994
+  D order 95% joint: 109 points, ucb non-decreasing along x (receipt values): True; first J224 ucb 0.3979, last J0 ucb 1.0000
+plotted functionals: 153 of 153
+cov P: decoration artists (not data points): arm 0 6, arm 1 8
+   arm 0 only: ['axes0:line:--:None:n=2', 'axes0:line:-:None:n=2', 'axes0:line:-:None:n=2', 'axes0:line:::None:n=2', 'axes0:line:::None:n=2']
+   arm 1 only: ['axes1:line:--:None:n=2', 'axes2:line:--:None:n=2', 'axes2:line:None:o:n=0', 'axes3:line:--:None:n=2', 'axes4:line:--:None:n=2', 'axes5:line:--:None:n=2', 'axes5:line:None:s:n=0']
+CHECK-DATA cov P :: PASS
+== text sizes and overlaps per arm (capture_palette.py .texts; overlaps are capture_any.py's box measure)
+  arm0 m3_fig3_coverage.pdf: canvas 6.50 x 2.80 in; 29 texts, font size min 7.00, median 7.00 pt; under 7 pt: 0; text overlaps 2
+  arm1 m3_fig3_coverage.pdf: canvas 6.50 x 4.62 in; 55 texts, font size min 7.00, median 7.00 pt; under 7 pt: 0; text overlaps 2 [['upper bound below the cutoff (fails)', 'not below'], ['lower to upper confidence bound', 'test cutoff']]
+== text overlaps and off-canvas text on one drawn canvas (tools/overlaps.py; round 3), per arm
+  arm0: 29 texts at 100 dpi; overlaps 0; off canvas 1
+     OFF CANVAS [47.0, 218.3, 651.5, 232.3]: 'signal rate lowered by about 10%, weak $E_{\\rm avail}$ slope: upper bound below threshold '
+  arm1: 55 texts at 100 dpi; overlaps 0; off canvas 0
+== install arm 1 into figs/variants/ (PDF, PNG at 150 dpi by pdftoppm)
+  figs/variants/paper_fig_coverage_P.pdf sha256 3d035311565d1e08f9226bf13d7553574cb178d7d6eb34be54ff0bf6f3ea826f; figs/variants/paper_fig_coverage_P.png
+RUN-ARMS cov P :: PASS
