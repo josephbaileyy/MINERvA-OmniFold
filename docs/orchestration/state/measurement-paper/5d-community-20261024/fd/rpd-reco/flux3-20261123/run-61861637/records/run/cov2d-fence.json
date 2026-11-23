@@ -1,0 +1,46 @@
+{
+  "cov2d_t2a_rows": 14,
+  "exit_code": 0,
+  "family_rows": 71,
+  "sacct_family": {
+    "command": [
+      "sacct",
+      "-X",
+      "-n",
+      "-P",
+      "-u",
+      "josephrb",
+      "-S",
+      "2026-11-09T08:16:31",
+      "-E",
+      "now",
+      "-o",
+      "JobIDRaw,JobName,State"
+    ],
+    "exit_code": 0,
+    "output": "61040163|ll5d_gate_G18|FAILED\n61040235|ll5d_gate_AR23|FAILED\n61043652|prr_ibu|FAILED\n61057142|prr_ibu|COMPLETED\n61075015|ll5d_vicheck|COMPLETED\n61075496|ll5d_calib|COMPLETED\n61078463|ll5d_gate_G18|COMPLETED\n61078506|ll5d_gate_AR23|COMPLETED\n61082774|ess_e|COMPLETED\n61137569|e96data_dry|COMPLETED\n61168780|rsn_J1|COMPLETED\n61170759|rsn_J2|COMPLETED\n61170761|rsn_J3|COMPLETED\n61171790|e96data_dry|COMPLETED\n61181899|ll5d_pilot|FAILED\n61184880|ll5d_pilot|COMPLETED\n61202343|e96data_full|COMPLETED\n61206960|rpd_flux1|COMPLETED\n61214597|ll5d_bulk_01|FAILED\n61214601|ll5d_bulk_02|FAILED\n61214604|ll5d_bulk_03|FAILED\n61214605|ll5d_bulk_04|FAILED\n61214607|ll5d_bulk_05|FAILED\n61214609|ll5d_bulk_06|FAILED\n61214610|ll5d_bulk_07|FAILED\n61214612|ll5d_bulk_08|FAILED\n61214614|ll5d_bulk_09|FAILED\n61214615|ll5d_bulk_10|COMPLETED\n61220039|cov2dg2r-envtest|COMPLETED\n61223390|cov2dg2r-prepare|COMPLETED\n61225732|cov2dg2r-D_Ua|COMPLETED\n61226353|cov2dg2r-D_Ub|COMPLETED\n61226525|cov2dg2r-D_Uc|COMPLETED\n61226543|cov2dg2r-D_Ud|COMPLETED\n61226562|cov2dg2r-G18_Ua|COMPLETED\n61226579|cov2dg2r-G18_Ub|COMPLETED\n61226663|cov2dg2r-G18_Uc|COMPLETED\n61226699|cov2dg2r-G18_Ud|COMPLETED\n61226719|cov2dg2r-AR23_Ua|COMPLETED\n61226757|cov2dg2r-AR23_Ub|COMPLETED\n61226781|cov2dg2r-AR23_Uc|COMPLETED\n61226797|cov2dg2r-AR23_Ud|COMPLETED\n61255888|ll5d_rerun129_01|COMPLETED\n61271235|ll5d_null_01|COMPLETED\n61272425|ll5d_readout_01|COMPLETED\n61315648|rdx_s1_1A|COMPLETED\n61423404|rdx_s2_1B|COMPLETED\n61423406|rdx_s2_1C|COMPLETED\n61423408|rdx_s2_1D|COMPLETED\n61423410|rdx_s2_1E|COMPLETED\n61423414|rdx_s2_1F|COMPLETED\n61423417|rdx_s2_1G|COMPLETED\n61423421|rdx_s2_1L|COMPLETED\n61423451|rdx_s2_1M|COMPLETED\n61423454|rdx_s2_1N|COMPLETED\n61423456|rdx_s2_1O|COMPLETED\n61423459|rdx_s2_1P|COMPLETED\n61443055|rdx_s2_merge|COMPLETED\n61478320|rdx_s3_a|COMPLETED\n61481240|rdx_s3_b|COMPLETED\n61556304|ibukt-prepare|FAILED\n61559122|ibukt-prepare|COMPLETED\n61567091|ibukt-screen|FAILED\n61575832|ibukt-prepare|COMPLETED\n61576631|ibukt-screen|COMPLETED\n61589874|ibukt-score|TIMEOUT\n61726250|t3p_dry|COMPLETED\n61728686|t3p_q3|COMPLETED\n61731751|t3p_floor|COMPLETED\n61806073|rpd_flux2|COMPLETED\n61861637|rpd_flux3|RUNNING\n"
+  },
+  "sacct_named": {
+    "command": [
+      "sacct",
+      "-X",
+      "-n",
+      "-P",
+      "-j",
+      "60909280,60911676",
+      "-S",
+      "2026-11-05T00:00:00",
+      "-E",
+      "2026-11-08T00:00:00",
+      "-o",
+      "JobIDRaw,JobName,State"
+    ],
+    "exit_code": 0,
+    "output": "60909280|cov2d-AR23_Tb|COMPLETED\n60911676|cov2d-AR23_Tc|COMPLETED\n"
+  },
+  "status": "PASS",
+  "terminal_states": {
+    "60909280": "COMPLETED",
+    "60911676": "COMPLETED"
+  }
+}
