@@ -1,4 +1,4 @@
-BAIL fence (sacct) not clear
+BAIL fence (sacct) not clear: fenced or msr_ jobs not terminal: 61800001|msr_build|PENDING
 == script rc=9; self copy left: ls: cannot access '/dev/shm/msrp.1.sh': No such file or directory; shm dir: ls: cannot access '/dev/shm/msr-connect': No such file or directory
 == the connect log
   cat: /pscratch/sd/j/josephrb/msr-p-20261122/logs/connect-probe.log: No such file or directory

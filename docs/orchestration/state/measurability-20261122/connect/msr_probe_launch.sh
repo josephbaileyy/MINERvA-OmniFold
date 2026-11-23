@@ -12,7 +12,7 @@ case "$NODE" in login[0-9][0-9]) ;; *) echo "STOP: '$NODE' is not a login node n
 [[ "$WEND" =~ ^[0-9]{10}$ ]] || { echo "STOP: window end '$WEND'"; exit 9; }
 [ "$(date +%s)" -le "$WEND" ] || { echo "STOP: the window has ended"; exit 9; }
 [[ "$FENCE" =~ ^[A-Za-z0-9_.-]+(,[A-Za-z0-9_.-]+)*$ ]] || { echo "STOP: fence '$FENCE'"; exit 9; }
-S="$HERE/msr_probe_connect.sh"; SHA=b622141fde5894917be2dd198af8a9ec688612149e7c09360a7c9a89ea09480d
+S="$HERE/msr_probe_connect.sh"; SHA=30c3ba38a4603da0c483a4faabceb867b740aba490c45a2d3bea8a9857ed336b
 [ "$(shasum -a 256 "$S" | cut -d' ' -f1)" = "$SHA" ] || { echo "STOP: the local connect script is not the approved one"; exit 8; }
 SSH=(-o ControlPath=none -o BatchMode=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=8)
 HOP=(-o BatchMode=yes -o ConnectTimeout=10 -o ServerAliveInterval=15 -o ServerAliveCountMax=8 -o StrictHostKeyChecking=yes -o UpdateHostKeys=no)

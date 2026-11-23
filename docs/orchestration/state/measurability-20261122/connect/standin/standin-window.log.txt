@@ -1,4 +1,4 @@
-BAIL the window ended (now 1795390564 > 1795390554)
+BAIL the window ended (now 1795392310 > 1795392300)
 == script rc=9; self copy left: ls: cannot access '/dev/shm/msrp.1.sh': No such file or directory; shm dir: ls: cannot access '/dev/shm/msr-connect': No such file or directory
 == the connect log
   cat: /pscratch/sd/j/josephrb/msr-p-20261122/logs/connect-probe.log: No such file or directory
