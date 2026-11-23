@@ -1,0 +1,3 @@
+# old comment line, new comment line, reason (records_reorg.py reads every non-# row)
+% The file is input whole and unchanged; the note's pointer is sec6_conclusions.tex ("Related exploratory studies, of an	% The file is input whole and unchanged. The note no longer points to it: the sec6_conclusions.tex sentence that did	the note's sec6 pointer to sec_fps was cut (6ae1c1207, merged at b5d9b3f7d); stale source comment, no PDF effect (the director, 2026-11-22)
+% extended fiducial region, ... are documented in the analysis records").	% ("Related exploratory studies, of an extended fiducial region, ... are documented in the analysis records") was cut	the same comment's second line

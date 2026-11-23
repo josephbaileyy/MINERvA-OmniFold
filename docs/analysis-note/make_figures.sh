@@ -217,7 +217,9 @@ install_re2_fig() {  # install_re2_fig <basename under $RE2G and in $FIGDIR> <sh
 }
 # install_re2_fig MEFHC_fig6_7_uncertainty_pt.pdf        6055be9534cfaa1e149d59ec54cde0be7bc28272cbe584bafb5aab9751b97cd3   # G2R (2026-11-15): replaced by the print-style install below, drawn from RE-2-shapes run 2
 # install_re2_fig MEFHC_fig6_7_uncertainty_pz.pdf        ef0de3504fcbfb49d83073f0cf59ef7af5abf00ce1bda22fe5943a49bb0e6f62   # G2R (2026-11-15): replaced by the print-style install below, drawn from RE-2-shapes run 2
+# layered (2026-11-22): overridden later in this run by install_printstyle_fig uq_spread_2d.pdf (41347061d6064aaa...), the committed figure; the RE-2 record's install; its ledger G row is retired, so no row requires it
 install_re2_fig uq_spread_2d.pdf                       a51bc4ee186a2c3bba942f6de6cd4bed74b8de7508e763e0b0bc698a0a78e9de
+# layered (2026-11-22): overridden later in this run by install_printstyle_fig uq_corr_2d.pdf (f202c729700676096...), the committed figure; the RE-2 record's install; its ledger G row is retired, so no row requires it
 install_re2_fig uq_corr_2d.pdf                         fea063cc6eeba9925bef2ac7c096118fdd23a7f443aea8afde4392de214c75b1
 # install_re2_fig MEFHC_5iter_fig13.pdf                  4924917e903b5e4ee6133f5e37b91aa11f301d7ea7242561680ea1ba10a4fb3b
 # install_re2_fig MEFHC_5iter_pull_full.pdf              3d108335117afd57b14f4bf1661ac8e06ffdbfdfb1ceb17903fa00724b40396f
@@ -286,9 +288,12 @@ install_re1_fig() {  # install_re1_fig <basename under $RE1F and in $FIGDIR> <sh
   fi
   echo "  installed $1 ($want)"
 }
+# layered (2026-11-22): overridden later in this run by install_palette_fig eavail_spectrum.pdf (457fa20edec3de65...), the committed figure; RE-1's ledger row F01 requires this line
 install_re1_fig eavail_spectrum.pdf                     d2ae66c4149c8f33a7cc5e3635cc86e4e839e20045c3752c8bf87ff4e3aadf49
 # install_re1_fig generators_vs_unfolded_band_central.pdf 48210da26e8e84bd8cae0d83df1de85a5996c005d78f2a959225efd24e44e3b1   (figure pass, 2026-11-19: installed below)
+# layered (2026-11-22): overridden later in this run by install_palette_fig mode_decomp_eavail_central.pdf (270237928effabf3...), the committed figure; RE-1's ledger row F03 requires this line
 install_re1_fig mode_decomp_eavail_central.pdf          009a26be4dc3b1a8ec7bfc51ee1e038c74b6a62e6490e027ece08b63f4febc12
+# layered (2026-11-22): overridden later in this run by install_palette_fig compare_mec_eavail_central.pdf (2e81a44506e958fd...), the committed figure; RE-1's ledger row F04 requires this line
 install_re1_fig compare_mec_eavail_central.pdf          09e2b824cfa10671f3bbab33764778424493011081e40ea507073e3307fd63f4
 # install_re1_fig ascencio_fullcov_compare_central.pdf    9bd4316e8bd94ecd6b0681ef955579fbf0e867847a6f43274fda64349584d2a5   (figure pass, 2026-11-19: installed below)
 

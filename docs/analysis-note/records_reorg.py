@@ -30,6 +30,8 @@ The data (all in records-reorg/):
   adds.tsv     text, reason: printed lines the reorganization adds (a sentence carried over from a dropped copy, the
                driver's new opening). Every other printed line must already exist at the base.
   keep-leadin.tsv  row_id: register rows whose re-anchor lies inside a lead-in quote; those lead-ins stay printed.
+  comment-fixes.tsv  old, new, reason: a base comment line corrected in place (2026-11-22); the old line may be lost
+               only under its row, and the new line must be a comment line of the new records.
 
 Option B (Joseph, 2026-11-21, via the director): every lead-in line "In the paragraph as the note printed it, this text
 followed: ``...''\\par" is demoted to a % comment, except the lead-ins that hold a register row's re-anchor.
@@ -255,6 +257,10 @@ class Config:
         self.demote_leadin = [r for r in read_tsv(d / "demote-leadin.tsv", 3)] if phase == "D" else []
         self.inserts = [r for r in read_tsv(d / "inserts.tsv", 4)] if phase == "D" else []
         self.keep_leadin = {r[0] for r in read_tsv(d / "keep-leadin.tsv", 1)}
+        # 2026-11-22 (the director: a stale source comment is corrected through this data, so the gate covers it):
+        # comment-fixes.tsv: old comment line, new comment line, reason. A base comment line may be lost only when a
+        # row declares it, and the row's new line must then be a comment line of the new records.
+        self.comment_fixes = [r for r in read_tsv(d / "comment-fixes.tsv", 3)]
         # Option B' (Joseph, 2026-11-21): a lead-in stays printed when the sentence after it would dangle.
         self.keep_context = {(r[0], r[1]) for r in read_tsv(d / "keep-leadin-context.tsv", 2)}
         self.splits: dict[str, list[str]] = collections.defaultdict(list)
@@ -709,8 +715,20 @@ def check(base: Tree, new: Tree, cfg: Config) -> list[str]:
     for line, n in added.items():
         if n > allowed[line]:
             fails.append(f"NEW printed line not declared ({n - allowed[line]}x): {line[:160]!r}")
+    fixed = collections.Counter()
+    for old_l, new_l, reason in [r[:3] for r in cfg.comment_fixes]:
+        old_l, new_l = old_l.strip(), new_l.strip()
+        if not old_k[old_l]:
+            fails.append(f"comment-fixes.tsv: the old line is no base comment line: {old_l[:100]!r}")
+        elif not new_k[new_l]:
+            fails.append(f"comment-fixes.tsv: the new line is no comment line of the new records: {new_l[:100]!r}")
+        elif not reason.strip():
+            fails.append(f"comment-fixes.tsv: no reason for {old_l[:60]!r}")
+        else:
+            fixed[old_l] += 1
     for line, n in (old_k - new_k).items():
-        fails.append(f"LOST comment line ({n}x): {line[:160]!r}")
+        if n - fixed[line] > 0:
+            fails.append(f"LOST comment line ({n - fixed[line]}x): {line[:160]!r}")
 
     def uncommented(c: dict[str, str]) -> str:
         return "\n".join("\n".join(l for l in t.split("\n") if not l.lstrip().startswith("%")) for t in c.values())
