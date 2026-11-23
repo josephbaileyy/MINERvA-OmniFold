@@ -27,4 +27,8 @@ killed    early stop off
 killed    r N-PREC off
 killed    r route off
 killed    C-L id range off
-mutants 29; killed 29; not killed 0
+killed    C-DID strict rule restored
+killed    C-DID expected size off
+killed    C-2D exact M restored
+killed    C-D primary only restored
+mutants 33; killed 33; not killed 0
