@@ -1,17 +1,17 @@
 \section{Illustrative multidimensional results}
 \label{sec:part-illustrative-multidimensional}
 
-The \resSixteen{} is the worked example of the limits found in
-Sec.~\ref{sec:part-higher-dimensional}. It gives coarse five-observable cell
-integrals whose sums over the hadronic coordinates pass the agreement rule
-against the 2D result (Sec.~\ref{sec:sixteen-cell-projections}). The result cannot be
-read at face value: the estimator exceeds the bias criteria at \fvval{f0b-nlisted} simulated
-truths, fails the rounding-stability test, and differs from binned IBU on the same
-inputs, and the reported intervals lack validated coverage
-(Sec.~\ref{sec:part-higher-dimensional}). We therefore present it as an
-illustration. The comparison with generator predictions adds one finding:
-calibrated joint tests find no discrepancy that a matched coarse projection does
-not already show (Sec.~\ref{sec:sixteen-cell-generator-comparison}).
+The validation studies in Sec.~\ref{sec:part-higher-dimensional} show that the
+five-observable unfolding does not yet support a calibrated differential
+measurement, because of residual bias, algorithm and rounding dependence, and
+intervals without validated coverage
+(Secs.~\ref{sec:higher-dimensional-prior} and~\ref{sec:higher-dimensional-calibration}).
+We therefore present the \resSixteen{} as an illustration of the accessible
+multidimensional structure. Its sums over the hadronic coordinates pass the
+agreement rule against the 2D result (Sec.~\ref{sec:sixteen-cell-projections}),
+and the generator comparisons test whether the joint representation reveals
+information beyond coarse projections; calibrated joint tests find none
+(Sec.~\ref{sec:sixteen-cell-generator-comparison}).
 
 \subsection{Sixteen-cell cross section and uncertainty budget}
 \label{sec:sixteen-cell-results}
@@ -111,8 +111,9 @@ tested one-parameter family of cross-covariances (Appendix~\ref{app:higher-dimen
 
 The sixteen-cell quadrant sums are $\fvval{g3d-pct-lo}\%$ to $\fvval{g3d-pct-hi}\%$ below the corresponding
 3D central values. The largest difference is $\fvval{g3d-zmax}$ times the reported
-sixteen-cell standard deviation of the relevant sum. This comparison is
-descriptive because the 3D result has no reported covariance. Changes
+sixteen-cell standard deviation of the relevant sum. Because the 3D result
+has no reported covariance, this comparison cannot quantify their statistical
+agreement. Changes
 that redistribute cross section between hadronic cells within a muon
 quadrant cancel in these sums.
 
@@ -285,8 +286,9 @@ include no dedicated calorimetric recoil-energy-scale variation.
 The projection comparison repeats the calibration on $3\times3$ projections
 of the same joint cells onto $(p_T,p_\parallel)$ and $(E_{\mathrm{avail}},W)$.
 Its criterion was set
-after the joint outcomes were known but before the comparison was run, so the comparison is descriptive
-(Appendix~\ref{app:choices-after-results}). For every rejected hypothesis, at least one of
+after the joint outcomes were known but before the comparison was run, so it is a
+post hoc sensitivity check rather than an independent test of the discrimination
+added by five observables (Appendix~\ref{app:choices-after-results}). For every rejected hypothesis, at least one of
 the two projections also gives a single-test $p<0.05$, whether the joint null shifts
 are held fixed or recomputed after projection.
 For example, GENIE without Valencia MEC gives projected $p$ values of
