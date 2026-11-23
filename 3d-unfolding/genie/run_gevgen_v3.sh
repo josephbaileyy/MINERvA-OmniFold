@@ -22,6 +22,9 @@ case "$MODE" in
     case "$TUNE" in
       G18_10a_02_11b)  Q=G1810a0211b-k250-e1000 ;;
       AR23_20i_00_000) Q=AR2320i00000-k250-e1000 ;;
+      G21_11b_00_000)  Q=G2111b00000-k250-e1000 ;;   # COVFIX PG (COVFIX-DECLARATION.md section 4.1)
+      G18_02b_02_11b)  Q=G1802b0211b-k250-e1000 ;;
+      G18_02a_02_11b)  Q=G1802a0211b-k250-e1000 ;;
       *) echo "unknown tune $TUNE" >&2; exit 2 ;;
     esac
     SRC=/cvmfs/larsoft.opensciencegrid.org/products/genie_xsec/v3_04_00/NULL/$Q/data/gxspl-NUsmall.xml

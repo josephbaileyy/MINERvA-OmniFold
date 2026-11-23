@@ -2,7 +2,8 @@
 # setup_genie_v3.sh TUNE -- set up GENIE v3_04_00 from CVMFS for the F1 truth samples
 # (state/measurement-paper/5d-community-20261024/FD-F1-DECLARATION.md). SOURCE this (do not execute).
 #
-# TUNE is G18_10a_02_11b or AR23_20i_00_000. As setup_genie.sh does for v2, this scrubs the analysis
+# TUNE is G18_10a_02_11b or AR23_20i_00_000 (F1), or COVFIX PG's G21_11b_00_000, G18_02b_02_11b or
+# G18_02a_02_11b. As setup_genie.sh does for v2, this scrubs the analysis
 # conda env, forces the SL7 UPS flavour with -H (glibc forward-compat runs the binaries on SLES15) and puts
 # the compat-lib shim first on LD_LIBRARY_PATH. Unlike setup_genie.sh it WRITES NOTHING: the shim directory
 # must already hold libssl.so.10 and libcrypto.so.10 (setup_genie.sh made it), and the reduced CH spline file
@@ -26,6 +27,9 @@ export GENIE_XSEC_VER=v3_04_00
 case "$_V3_TUNE" in
   G18_10a_02_11b)  export GENIE_XSEC_QUAL=G1810a0211b:k250:e1000 ;;
   AR23_20i_00_000) export GENIE_XSEC_QUAL=AR2320i00000:k250:e1000 ;;
+  G21_11b_00_000)  export GENIE_XSEC_QUAL=G2111b00000:k250:e1000 ;;   # COVFIX PG (COVFIX-DECLARATION.md 4.1)
+  G18_02b_02_11b)  export GENIE_XSEC_QUAL=G1802b0211b:k250:e1000 ;;
+  G18_02a_02_11b)  export GENIE_XSEC_QUAL=G1802a0211b:k250:e1000 ;;
   *) echo "[setup_genie_v3] ERROR: unknown tune $_V3_TUNE" >&2; return 1 2>/dev/null || exit 1 ;;
 esac
 export GENIE_V3_TUNE="$_V3_TUNE"

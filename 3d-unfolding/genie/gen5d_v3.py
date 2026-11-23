@@ -47,7 +47,11 @@ if str(_HERE) not in sys.path:
 
 TUNES = {"G18_10a_02_11b": "GENIE v3.04.00 G18_10a_02_11b (genie_xsec v3_04_00 G1810a0211b-k250-e1000, whose README "
                             "says the splines were made by v3_02_00)",
-         "AR23_20i_00_000": "GENIE v3.04.00 AR23_20i_00_000 (genie_xsec v3_04_00 AR2320i00000-k250-e1000)"}
+         "AR23_20i_00_000": "GENIE v3.04.00 AR23_20i_00_000 (genie_xsec v3_04_00 AR2320i00000-k250-e1000)",
+         # COVFIX PG's validation tunes (state/2d-closeout/covfix-20261122/COVFIX-DECLARATION.md section 4.1)
+         "G21_11b_00_000": "GENIE v3.04.00 G21_11b_00_000 (genie_xsec v3_04_00 G2111b00000-k250-e1000)",
+         "G18_02b_02_11b": "GENIE v3.04.00 G18_02b_02_11b (genie_xsec v3_04_00 G1802b0211b-k250-e1000)",
+         "G18_02a_02_11b": "GENIE v3.04.00 G18_02a_02_11b (genie_xsec v3_04_00 G1802a0211b-k250-e1000)"}
 # (gxspl-NUsmall.xml sha256, README sha256, the README's version line), measured on login25 2026-10-27
 SPLINE_PINS = {
     "G18_10a_02_11b": ("1b4b0b37fc8c11acbf00884a94d0a3bda519d9c458f2c916573ef3d673a3ee35",
@@ -56,6 +60,9 @@ SPLINE_PINS = {
     "AR23_20i_00_000": ("185d7d8a4674b5df445fcadea3d17232804390c8421d563aa402c6ee743a0bbb",
                         "744cba18f82cc5fe4805cd8be120e5f7e5f7b36f657f4cc9f2118e69c803bcb2",
                         "version v3_04_00 qualifier AR2320i00000:k250:e1000")}
+# The same for COVFIX PG's tunes, from PG's stat-only probe of the product on Perlmutter
+# (state/2d-closeout/covfix-20261122/pg/probe/pg-probe.out). Kept apart from F1's bound pins.
+PG_SPLINE_PINS = {}
 E_LO, E_HI = 0.0, 100.0
 PHI_T_SHA256 = "bbcbade310d90e1ae487dde9d982e85cfe16fae35bba09dbde7db2dc99274ec5"   # gen5d_fluxfix/phi_t.npz
 HFLUXCV = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/flux_integral_universes_MEFHC.root"
@@ -179,7 +186,10 @@ def cmd_spline_check(a):
         bad.append("the reduced file's splines are not exactly the source's C12 and H1 splines")
     if len(version) != 1:
         bad.append(f"the README has {len(version)} version lines")
-    pin = SPLINE_PINS[a.tune]
+    pin = {**SPLINE_PINS, **PG_SPLINE_PINS}.get(a.tune)
+    if pin is None:
+        bad.append(f"no pinned spline file, README or version line for {a.tune}")
+        pin = ("", "", "")
     if len(version) == 1 and version[0] != pin[2]:
         bad.append(f"the README's version line {version[0]!r} is not the pinned {pin[2]!r}")
     if hashlib.sha256(Path(a.source).read_bytes()).hexdigest() != pin[0]:
