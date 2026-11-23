@@ -41,3 +41,26 @@ Here a *failing comparison* is a row with `passes_current_bar = false`.
 The diagnostic's output is committed as a diagnostic record (`route-diag/diag.json`, with its run-env) and then sent to
 the director.
 <!-- absence-ok: a pre-declared rule for an unrun diagnostic; "never writes" states the script's own output contract -->
+
+## The run and the branch the rule selects (2026-11-23, after the run)
+
+- **The run:** once, under the director's GO, from a clean detached checkout of `9dff3b58` with 0 porcelain lines, on
+  `run-b/cluster/build`. rc 0. stdout: `{"comparisons": 98, "failing_current_bar": 21}` (`run.stdout.txt`; stderr empty).
+  The environment is in `run-env.json`, and the rows in `diag.json` (only the seven fields).
+- **The rule, applied as written** (`branch.json`):
+  - 21 rows fail the current bar. All are `Z_well`, at the 21 2D vector ids `2d#013–015` and `2d#030–047`, on the
+    full numpy build.
+  - No 5D row and no S_poor or r row fails.
+  - On every failing row, κ₂(Wᵀ C W) = 539.4 and 10·κ₂·ε = 1.2e-12. The relative differences run from 2.8e-3 to
+    6.0e-2, which is 2.3e9 to 5.0e10 times 10·κ₂·ε.
+  - **The rule therefore selects branch 2, route bug** (rel_diff ≥ 10 · ten_kappa_eps on a failing row).
+- **A note for the director's confirmation**, from the record's structure, not from any reading:
+  - κ₂(Wᵀ C W) is small (539), so this block's conditioning cannot produce percent-level differences. In exact
+    arithmetic Wᵀ C W = diag(s²).
+  - One candidate mechanism: both routes take the well-constrained block out of C = J F⁺ Jᵀ. C's scale is set by the
+    largest widths, including directions just above the 1e-12 eigenvalue cut. Rounding at ε·‖C‖ could then be
+    percent-level against the well-constrained s², in both routes.
+  - If so, the "bug" is a numerical-design weakness, not a coding slip, and the eigen route's 2D Z_well may carry
+    comparable error. The record does not test this; it would need κ₂(C) and κ₂(C_Q), which are not among its
+    fields.
+<!-- absence-ok: an untested mechanism stated as such, and what the diagnostic record does not contain -->
