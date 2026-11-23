@@ -1,0 +1,13 @@
+You are a confirming code reader. READ-ONLY: write nothing except your report to stdout; never touch any git checkout.
+
+A declared study's local step (inputs/nd-unfolding/msr/msr_project.py) STOPped at its control C-DID (inputs/stop-REPORT.md, inputs/stop-readout.json): the values agreed but the code also required every IBU-1 functional name to be among D-ID's, which is stricter than the declaration's section 6 ("on the functionals both name"). The fix is inputs/msr_project-b770570a-to-fix.diff, recorded as "Amendment C" in inputs/docs/orchestration/state/measurability-20261122/DECLARATION.md (search "Amendment C").
+
+Confirm, by your own reading:
+1. C-DID now compares on the intersection of names; requires it non-empty and of size C_DID_COMMON_EXPECTED = 151 (a pinned expectation, not a tolerance); records and prints the IBU-1-only and D-ID-only names; checks values on the intersection at the declared bars (finite sigma_rel relative <= 1e-6, null_fraction absolute <= 1e-6, finite pattern equal).
+2. C-2D now uses section 6's bar (relative <= 1e-12 cell by cell) for M against the bank's ibu_response and for b_known's two constructions (previously exact).
+3. C-D now checks every F0b truth converted with d (11 primary + closure_nuwro), records the P-sets as printed without d; the readings convert closure_nuwro with d and print the P-sets in truth-relative units only. Does this match the amendment and section 4?
+4. Nothing else in msr_project.py changed (the diff is the whole change), and no number, bar or reading set changed.
+5. test_msr.py: the fixture now holds an IBU-1-only name and a D-ID-only name; tests exist for the intersection pass, a wrong intersection size STOP, the pinned 151, C-2D's relative bar (1e-14 passes, 1e-9 stops), and C-D's secondary truth. local/ shows the tracer 721/721 and mutants 33/33 including "C-DID strict rule restored", "C-DID expected size off", "C-2D exact M restored", "C-D primary only restored".
+6. The amendment's audit of C-RID, C-T3, C-F0B (no change needed): agree or not, with the line.
+
+First line "VERDICT: GO" or "VERDICT: FIX". Then numbered confirmations or findings (severity, file:line, problem, fix). Be brief.
