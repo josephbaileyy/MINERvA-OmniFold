@@ -24,7 +24,7 @@ It is not a statement about MINERvA's code or calibration, a cause, or note word
 | `build.sh` | `4a6362b3f7f4774c710b7d9748fa79cb35b4e2514c50587b0f375ac5dcbd1117` | login-node build into the run root |
 | `evl.sbatch` | `df799fef2a6dc88abd72640033688b4625139f9b3904437d38309afc9be32ce0` | the `ibuchi_evl` array, 12 playlists |
 | `ana.sbatch` | `90e1dbfc6f32135a458bc982e05949d669db7c4e55da1f0272c3830a273a3b19` | `ibuchi_ana`: hadd, then `ana.py` |
-| `ana.py` | `8c078cd62c2113037c8cc4e85e46ad1f412b58665325e8c29eca00149607116d` | binned products per variant, plus C-KIN and C-ANG |
+| `ana.py` | `7f9417dc3410ce039dba66c17c7a3a1554517205b5bbcd3bb176d40b5e803048` | binned products per variant, plus C-KIN and C-ANG |
 | `smoke.sh` | `8918dd15e7dcd7c5ee947d20f29ed11063884a46b95a899ad8b49e429d5d2760` | login-node smoke on 1A (2 MC + 8 data files), functional checks |
 | `staged.sha256` | | everything staged on Perlmutter (5 uploads, 24 manifests) |
 
@@ -44,6 +44,8 @@ MAT, MAT-MINERvA and UnfoldUtils, read-only.
 - The build log had no warning or error lines.
 - `MAT/PlotUtils/BaseUniverse.h:66` declares `GetAnaToolName()` public, so the receipt copy may call it from outside
   the class.
+
+**Fix after the smoke, before `ibuchi_ana` ran.** The smoke showed that `mc_signal_reco` keeps `sim_pass` set on truth-only miss rows, whose `mu_*` fields are -9999. In the MAD variant, -9999 MeV at a -9999 rad angle could land inside the grid, so `ana.py` now requires `mu_mad_p > 0` on all three trees for MAD. BASE and SEL were already safe, because `sim` is itself -9999 on those rows and `mu_trk_quality` is -9999. The agy read did not catch this. The fix was committed before `ibuchi_ana` was submitted. The event-loop array (job 61885471) does not run `ana.py`.
 
 ## The checks before running
 
