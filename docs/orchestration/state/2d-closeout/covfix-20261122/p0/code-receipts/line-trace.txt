@@ -1,17 +1,18 @@
-# command: coverage run --branch (unittest both files) + coverage run -a covfix_p0.py --out <existing> (the __main__ line); coverage report -m
+# command: coverage run --branch (unittest test_covfix_core.py test_covfix_p0.py) + coverage run -a covfix_p0.py --out <existing> (the __main__ line); coverage report -m
 # python: 3.12.2 numpy 1.26.4 scipy 1.15.2  host: Darwin arm64  OMP_NUM_THREADS=1
-# f8b43685daac75b592c5d2f03f8f75e12b5259210b5d3b8ce366e4ed433c1de9  covfix_core.py
-# 560bffcdedcd1e3272fabb6773ab022a820a0e68e6fe3affe6cb3991ad49b905  covfix_p0.py
-# c14c44ffad6e053c81370035bf75308280a0f446fc76cbd5f15c7d1069dd0792  test_covfix_core.py
-# 84f25f825c63faab1c8abae7927068cfbc15e9857600dabb0de43abebe2917c4  test_covfix_p0.py
-# 7712d03fcf3a43915de42a6087c0618bd23c6ad91ba32b8b58ee555ba63fe684  covfix_mutation.py
-# start: 2026-11-23T16:28:37Z
+# 1e8ca2acf5e42b7eb7f674bbc7e4fd715e3e1329d52614f8f1cc9ab78185dcad  covfix_core.py
+# 6ed6280ed353e7d91fea33fd4be16dc6e4cea57922c6364e6cb3bec38d5e489b  covfix_p0.py
+# f3c125f653efb0a03981cad519762de679c03966c78fda37017c00b2baa4cdbc  test_covfix_core.py
+# d84ffdd15b29f5159405988657c9ed44fef7ace127a9fb2ce08c8de88c50938e  test_covfix_p0.py
+# d0d16f36f0527fc30c00f8659b3a54ac2e6d7e4774ed7e248d5daedd19cab6ca  test_covfix_p0_pins.py
+# c85a5ba6804a5e4fb48a27fabb67202ebb93f4bafe9a42d261c03d39cfd5e67d  covfix_mutation.py
+# start: 2026-11-23T16:44:21Z
 # unittest rc: 0
 refusing: /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/covfix-p0-trace/exists.json exists
 # script rc: 2 (2 = refused, --out exists)
 Name             Stmts   Miss Branch BrPart  Cover   Missing
 ------------------------------------------------------------
-covfix_core.py     175      0     40      0   100%
-covfix_p0.py       203      0     54      0   100%
+covfix_core.py     203      0     60      0   100%
+covfix_p0.py       192      0     44      0   100%
 ------------------------------------------------------------
-TOTAL              378      0     94      0   100%
+TOTAL              395      0    104      0   100%

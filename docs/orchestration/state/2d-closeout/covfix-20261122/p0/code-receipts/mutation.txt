@@ -1,57 +1,70 @@
 # command: python3 -B covfix_mutation.py
 # python: 3.12.2 numpy 1.26.4 scipy 1.15.2  host: Darwin arm64  OMP_NUM_THREADS=1
-# f8b43685daac75b592c5d2f03f8f75e12b5259210b5d3b8ce366e4ed433c1de9  covfix_core.py
-# 560bffcdedcd1e3272fabb6773ab022a820a0e68e6fe3affe6cb3991ad49b905  covfix_p0.py
-# c14c44ffad6e053c81370035bf75308280a0f446fc76cbd5f15c7d1069dd0792  test_covfix_core.py
-# 84f25f825c63faab1c8abae7927068cfbc15e9857600dabb0de43abebe2917c4  test_covfix_p0.py
-# 7712d03fcf3a43915de42a6087c0618bd23c6ad91ba32b8b58ee555ba63fe684  covfix_mutation.py
-# start: 2026-11-23T16:28:39Z
-baseline rc 0
-rank-cut: killed (rc 1)
-well-cut: killed (rc 1)
-near-tie: killed (rc 1)
-psd-tol: killed (rc 1)
-residual-bar: killed (rc 1)
-label-lo: killed (rc 1)
-label-hi: killed (rc 1)
-band-min: killed (rc 1)
-carry-zero-allowed: killed (rc 1)
-carry-one-sided: killed (rc 1)
-psd-zero-bar: killed (rc 1)
-no-sign-fix: killed (rc 1)
-ascending: killed (rc 1)
-no-tie-canon: killed (rc 1)
-gs-null-skip: killed (rc 1)
-kept-nonstrict: killed (rc 1)
-band-edge-73: killed (rc 1)
-band-edge-139: killed (rc 1)
-cluster-goes-high: killed (rc 1)
-guard-ddof0: killed (rc 1)
-guard-t95: killed (rc 1)
-guard-zero-se-ok: killed (rc 1)
-label-lo-strict: killed (rc 1)
-label-over-nonstrict: killed (rc 1)
-v-ddof1: killed (rc 1)
-cut-on-V: killed (rc 1)
-band-psi-ndf: killed (rc 1)
-well-on-V: killed (rc 1)
-frobenius: killed (rc 1)
-undirected: killed (rc 1)
-q-id-no-cpl: killed (rc 1)
-a0-loose: killed (rc 1)
-a0-no-ndf: killed (rc 1)
-psd-no-stop: killed (rc 1)
-g2r-map-dropped: killed (rc 1)
-vf-uncarried: killed (rc 1)
-pair-no-crun: killed (rc 1)
-pair-fnew-no-crun: killed (rc 1)
-fire-not-stop: killed (rc 1)
-ibukt-no-xR: killed (rc 1)
-ibukt-cells-unchecked: killed (rc 1)
-c2-uncarried: killed (rc 1)
-g2r-unpinned: killed (rc 1)
-rc-stop-0: killed (rc 1)
-out-overwrite: killed (rc 1)
-xhat-ignored: killed (rc 1)
-46/46 killed; survived or not applied: []
+# 1e8ca2acf5e42b7eb7f674bbc7e4fd715e3e1329d52614f8f1cc9ab78185dcad  covfix_core.py
+# 6ed6280ed353e7d91fea33fd4be16dc6e4cea57922c6364e6cb3bec38d5e489b  covfix_p0.py
+# f3c125f653efb0a03981cad519762de679c03966c78fda37017c00b2baa4cdbc  test_covfix_core.py
+# d84ffdd15b29f5159405988657c9ed44fef7ace127a9fb2ce08c8de88c50938e  test_covfix_p0.py
+# d0d16f36f0527fc30c00f8659b3a54ac2e6d7e4774ed7e248d5daedd19cab6ca  test_covfix_p0_pins.py
+# c85a5ba6804a5e4fb48a27fabb67202ebb93f4bafe9a42d261c03d39cfd5e67d  covfix_mutation.py
+# start: 2026-11-23T16:44:25Z
+baseline rc 0 OK
+rank-cut: killed (rc 1) FAIL: test_kept_mask_is_strict (test_covfix_core.Bands.test_kept_mask_is_strict)
+well-cut: killed (rc 1) FAIL: test_well_cut_value_and_equality (test_covfix_core.Residual.test_well_cut_value_and_equality)
+near-tie: killed (rc 1) FAIL: test_gap_above_tie_not_clustered (test_covfix_core.Bands.test_gap_above_tie_not_clustered)
+psd-tol: killed (rc 1) FAIL: test_bar (test_covfix_core.PSD.test_bar)
+residual-bar: killed (rc 1) FAIL: test_bar_is_strict (test_covfix_core.Residual.test_bar_is_strict)
+label-lo: killed (rc 1) FAIL: test_labels (test_covfix_core.GuardLabel.test_labels)
+label-hi: killed (rc 1) FAIL: test_labels (test_covfix_core.GuardLabel.test_labels)
+band-min: killed (rc 1) FAIL: test_band_of_exactly_ten_is_used (test_covfix_core.Bands.test_band_of_exactly_ten_is_used)
+sym-dropped: killed (rc 1) FAIL: test_one_representation (test_covfix_core.PSD.test_one_representation)
+carry-zero-allowed: killed (rc 1) FAIL: test_refusals (test_covfix_core.Carry.test_refusals)
+carry-one-sided: killed (rc 1) ERROR: test_c2_carried_directions (test_covfix_p0.Run.test_c2_carried_directions)
+psd-zero-bar: killed (rc 1) ERROR: test_c2_carried_directions (test_covfix_p0.Run.test_c2_carried_directions)
+no-sign-fix: killed (rc 1) FAIL: test_descending_reconstructs_and_signs (test_covfix_core.EigBasis.test_descending_reconstructs_and_signs)
+ascending: killed (rc 1) FAIL: test_descending_reconstructs_and_signs (test_covfix_core.EigBasis.test_descending_reconstructs_and_signs)
+no-tie-canon: killed (rc 1) FAIL: test_identity_is_canonical_axes (test_covfix_core.EigBasis.test_identity_is_canonical_axes)
+gs-null-skip: killed (rc 1) ERROR: test_tied_branch_used_in_eig_basis (test_covfix_core.EigBasis.test_tied_branch_used_in_eig_basis)
+gs-tol-fixed: killed (rc 1) FAIL: test_small_genuine_projection_is_kept_in_order (test_covfix_core.EigBasis.test_small_genuine_projection_is_kept_in_order)
+evr-raw: killed (rc 1) FAIL: test_evr_driver_same_basis (test_covfix_core.EigBasis.test_evr_driver_same_basis)
+kept-nonstrict: killed (rc 1) FAIL: test_kept_mask_is_strict (test_covfix_core.Bands.test_kept_mask_is_strict)
+band-edge-73: killed (rc 1) FAIL: test_band_of_exactly_ten_is_used (test_covfix_core.Bands.test_band_of_exactly_ten_is_used)
+band-edge-139: killed (rc 1) FAIL: test_ranks (test_covfix_core.Bands.test_ranks)
+cluster-goes-high: killed (rc 1) FAIL: test_chained_cluster (test_covfix_core.Bands.test_chained_cluster)
+guard-ddof0: killed (rc 1) FAIL: test_guard_values (test_covfix_core.GuardLabel.test_guard_values)
+guard-t95: killed (rc 1) FAIL: test_guard_values (test_covfix_core.GuardLabel.test_guard_values)
+guard-zero-se-ok: killed (rc 1) FAIL: test_guard_refuses (test_covfix_core.GuardLabel.test_guard_refuses)
+label-lo-strict: killed (rc 1) FAIL: test_labels (test_covfix_core.GuardLabel.test_labels)
+label-over-nonstrict: killed (rc 1) FAIL: test_labels (test_covfix_core.GuardLabel.test_labels)
+no-kept-allowed: killed (rc 1) ERROR: test_no_kept_mode_refuses (test_covfix_core.ModeReadings.test_no_kept_mode_refuses)
+v-ddof1: killed (rc 1) FAIL: test_gaussian_reads_about_one_and_identities (test_covfix_core.ModeReadings.test_gaussian_reads_about_one_and_identities)
+cut-on-V: killed (rc 1) FAIL: test_cut_referenced_to_fluctuation_block (test_covfix_core.ModeReadings.test_cut_referenced_to_fluctuation_block)
+band-psi-ndf: killed (rc 1) FAIL: test_band_guard_and_dropped_band (test_covfix_core.ModeReadings.test_band_guard_and_dropped_band)
+band-stats-for-dropped: killed (rc 1) FAIL: test_band_guard_and_dropped_band (test_covfix_core.ModeReadings.test_band_guard_and_dropped_band)
+evr-zero-den: killed (rc 1) FAIL: test_evr_tied_space_agrees_and_zero_energy_counted (test_covfix_core.ModeReadings.test_evr_tied_space_agrees_and_zero_energy_counted)
+well-on-V: killed (rc 1) FAIL: test_well_cut_uses_reference_fluctuation (test_covfix_core.Residual.test_well_cut_uses_reference_fluctuation)
+frobenius: killed (rc 1) FAIL: test_spectral_not_frobenius (test_covfix_core.Residual.test_spectral_not_frobenius)
+undirected: killed (rc 1) FAIL: test_bar_is_strict (test_covfix_core.Residual.test_bar_is_strict)
+jsonable-nan: killed (rc 1) ERROR: test_jsonable (test_covfix_core.Json.test_jsonable)
+q-id-no-cpl: killed (rc 1) ERROR: test_c2_carried_directions (test_covfix_p0.Run.test_c2_carried_directions)
+s5-id-dropped: killed (rc 1) FAIL: test_stops (test_covfix_p0.Run.test_stops) [break_s5]
+a0-loose: killed (rc 1) FAIL: test_stops (test_covfix_p0.Run.test_stops) [a0_off]
+a0-no-ndf: killed (rc 1) FAIL: test_stops (test_covfix_p0.Run.test_stops) [ndf_off]
+psd-no-stop: killed (rc 1) FAIL: test_psd_stop_names_block (test_covfix_p0.Run.test_psd_stop_names_block)
+psd-reference-only: killed (rc 1) FAIL: test_done_and_sections (test_covfix_p0.Run.test_done_and_sections)
+g2r-map-dropped: killed (rc 1) FAIL: test_stops (test_covfix_p0.Run.test_stops) [g2r_map_off]
+g2r-rep-dropped: killed (rc 1) FAIL: test_stops (test_covfix_p0.Run.test_stops) [g2r_rep_off]
+vf-uncarried: killed (rc 1) FAIL: test_carry_matches_formula (test_covfix_p0.Run.test_carry_matches_formula)
+pair-no-crun: killed (rc 1) FAIL: test_residual_fire_stops_before_readings (test_covfix_p0.Run.test_residual_fire_stops_before_readings)
+pair-fnew-no-crun: killed (rc 1) FAIL: test_residual_fire_stops_before_readings (test_covfix_p0.Run.test_residual_fire_stops_before_readings)
+fire-not-stop: killed (rc 1) FAIL: test_residual_fire_stops_before_readings (test_covfix_p0.Run.test_residual_fire_stops_before_readings)
+ibukt-no-xR: killed (rc 1) FAIL: test_ibukt_m_only_and_is_projection (test_covfix_p0.Run.test_ibukt_m_only_and_is_projection)
+ibukt-cells-unchecked: killed (rc 1) FAIL: test_stops (test_covfix_p0.Run.test_stops) [ibukt_cells_off]
+c2-uncarried: killed (rc 1) FAIL: test_c2_carried_directions (test_covfix_p0.Run.test_c2_carried_directions)
+c2-cut-drops-second: killed (rc 1) FAIL: test_c2_small_second_direction_kept (test_covfix_p0.Run.test_c2_small_second_direction_kept)
+c2-share-zero: killed (rc 1) ERROR: test_c2_zero_mean_share_undefined (test_covfix_p0.Run.test_c2_zero_mean_share_undefined)
+g2r-unpinned: killed (rc 1) ERROR: test_pin_failures (test_covfix_p0.Run.test_pin_failures) [g2r_missing]
+pin-oserror: killed (rc 1) ERROR: test_pin_failures (test_covfix_p0.Run.test_pin_failures) [g2r_missing]
+rc-stop-0: killed (rc 1) FAIL: test_exit_codes_and_strict_json (test_covfix_p0.Main.test_exit_codes_and_strict_json)
+out-overwrite: killed (rc 1) FAIL: test_exit_codes_and_strict_json (test_covfix_p0.Main.test_exit_codes_and_strict_json)
+58/58 killed; survived or not applied: []
 # rc: 0
