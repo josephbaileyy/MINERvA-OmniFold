@@ -1,4 +1,4 @@
-# COVFIX declaration, DRAFT rev 11.3: the 2D covariance fix (2026-11-23)
+# COVFIX declaration, DRAFT rev 11.4: the 2D covariance fix (2026-11-23)
 <!-- absence-ok: a draft declaration of studies not yet run; every existing study is routed to INVENTORY.md -->
 
 <!-- absence-ok: status line of an unrun draft -->
@@ -289,6 +289,13 @@ its "Fix 1". The inventory is `INVENTORY.md` in this directory, read at origin/m
     spend leaves room for PX (§7, §9);
   - the PG roles are stated: the PG session prepares and tests, and the director's wrapper invokes the bound connect
     (§4.2).
+- **Rev 11.4:**
+  - the ceiling is 541.50 node-h, from Joseph's "Raise to about 540" (sha256 prefix `2edd5a1690819494`) with the exact
+    figure pinned by the director;
+  - §3 prints each ST1 branch's priced worst case, with the N5 method now including `stat`;
+  - outcome A is reachable for every single-block firing; only a W1 exception plus `universe` is unfunded, by design;
+  - binding needs an iris receipt of at least 541.50 node-h;
+  - the expected no-firing price is unchanged.
 
 <!-- absence-ok: rule statement -->
 **Rules are fixed before computation.** Every reading, bar, candidate rule, seed and stop rule below is fixed at
@@ -417,8 +424,7 @@ V(t) = D_t V D_t, with D_t = diag(x̂_t / x_R).
 
 - **Totals:** full 410.55–411.22; lean 328.85–329.52, including the synthetic test's 2.0 added in rev 10, at PG's priced
   range of 1.33–2.00.
-  - At F1's measured PG figure of 1.33 the full total is 410.55, inside the 411.22 ceiling (below), which ST6
-    enforces.
+  - These are the expected no-firing prices. The 541.50 ceiling below is headroom for PX only.
   - The ranges come from PG's range only. The printed range starts at 1.33, above F1's measured 1.3275 node-h for two
     tunes.
   - Without N5 (§9.1): full 334.55–335.22; lean 271.85–272.52.
@@ -433,26 +439,50 @@ V(t) = D_t V D_t, with D_t = diag(x̂_t / x_R).
   - every phase price and every phase cap is below 362.8;
   - the caps' sums (full 468, lean 378) are not, and neither is the full total with N5;
   - the lean total, and either total without N5, is below it;
-  - **Joseph chose full** (`DECISION-20261123-joseph-covfix-ki85-size-reader.md`, his governing re-confirmation: "Full, as designed"), with N5, under an approved ceiling of 411.22 node-h (raised by Joseph; below). ST6 keeps the campaign inside that
-    ceiling. The lean columns are kept as the record of the alternative he did not choose.
+  - **Joseph chose full** (`DECISION-20261123-joseph-covfix-ki85-size-reader.md`, his governing re-confirmation: "Full, as designed"), with N5, under a ceiling of 541.50 node-h (below). ST6 keeps the campaign inside that ceiling. The lean columns are kept as the record of the alternative he did not choose.
 - **ST6, the cumulative ceiling** (§3.3).
   - Joseph's approved total is pinned in every connect.
   - Each submission's charge ceiling is its nodes × its `--time`. Each toy job's `--time` is 1.5 × its priced per-toy
     time (0.19 node-h is a mean), so a slow job is not killed, and a stalled one cannot charge more than its ceiling.
   - A phase is submitted in chunks small enough that ended charges plus unended ceilings stay within its cap (ST3).
   - The admission check is ST3/ST6's reservation ledger (§3.3), not a prefix poll of sacct.
-  - **The ceiling is pinned in the binding at 411.22 node-h,** the full total's top including the synthetic-seal test.
-    - Joseph raised it from the approved 409.22 (`DECISION-20261123-joseph-covfix-ki85-size-reader.md`) on 2026-11-23,
-      through the director. His answer, verbatim: "Raise to 411.22 (Recommended)" (the sha256 of the text plus a newline
-      begins `8fb26c62f91e7b20`).
-    - The option read: "+2 node-h (0.5%). Avoids the risk of the spend check stopping the campaign during its final
-      validation phase."
-    - The director records it in the binding document.
-    - Without N5, the top is unchanged at 335.22.
-    - **ST6 is the hard stop:** the ledger's atomic gate (§3.3) at 411.22 node-h. A submission it refuses stops the run,
+  - **The ceiling is pinned in the binding at 541.50 node-h.**
+    - **History.** Joseph approved about 409, then raised it to 411.22 for the synthetic test ("Raise to 411.22
+      (Recommended)", sha256 prefix `8fb26c62f91e7b20`).
+    - **The headroom.** He then raised it again for PX headroom: "Raise to about 540" (the sha256 of the text plus a
+      newline begins `2edd5a1690819494`). That option read: "Also funds the systematic-universe rebuild. Close to the
+      whole remaining balance in the worst case."
+    - **The exact figure.** The director pinned 541.50 as the exact value: inside "about 540" (+0.3 %), and funding
+      every single-block branch, including `universe` with laterals rebuilt (541.37).
+    - The director records all three in the binding document (`DECISION-20261123-joseph-covfix-ki85-size-reader.md`
+      holds the first decisions).
+    - **The expected no-firing price is unchanged** at 410.55–411.22 (334.55–335.22 without N5). The ceiling beyond it
+      is headroom for PX only.
+    - **ST6 is the hard stop:** the ledger's atomic gate (§3.3) at 541.50 node-h. A submission it refuses stops the run,
       and that goes to the director, not to Joseph as a re-approval. The price table above is an estimate, not a
       trigger; PX keeps its own repricing rule.
+    - **Balance:** binding needs the committed iris receipt to show at least 541.50 node-h remaining. If it does not,
+      the binding goes back to Joseph.
     - The ceiling is separate from the expected price and from the 468 sum of caps.
+  - **The priced worst case for each ST1 branch,** with PG at its 2.0 top, on the no-firing base
+    2.00 + 162.07 + 129.77 + 117.38 = 411.22:
+
+    | ST1 branch | PX | total | at 541.50 |
+    |---|---|---|---|
+    | none | 0 | 411.22 | fits |
+    | `c08` (W1) | 15.20 | 426.42 | fits |
+    | `stat` (W1) | 57.00 | 468.22 | fits |
+    | N5 data-stream method (W1), which also regenerates `stat` | 95.00 | 506.22 | fits |
+    | `c08` + `stat` (W1) | 72.20 | 483.42 | fits |
+    | `c08` + N5 method + `stat` (W1) | 110.20 | 521.42 | fits |
+    | `universe` after W2, laterals reused | 128.25 | 539.47 | fits |
+    | `universe` after W2, laterals rebuilt (+10 unfolds) | 130.15 | 541.37 | fits |
+    | any W1 exception + `universe` | ≥ 145.35 | ≥ 556.57 | **unfunded by design** |
+
+    - The last row is unfunded whatever the ceiling: under §3.3's sole-exception rule, a row firing after the exception
+      has been bound stops the campaign.
+    - PX for `universe` includes its redraw of N4 and A1p (95.00). PX for the N5 method includes 200 replicas (38.00)
+      and `stat` (57.00).
 
 ### 3.1 P0: what the committed records give (0 node-h, local, descriptive)
 
@@ -577,10 +607,8 @@ N1 is never a construction-error reading. N1/N5 is reported as the same-event fa
    - If it does not, PX has **no funded path**, and the ST1 branch ends at the construction finding, reported as a
      finding (§7, Part 1). K_A is omitted for this run, and the campaign continues with K0 and K_B.
    - W2's first-time work is counted once in the remainder, never as part of PX.
-   - For scale: rebuilding `universe` (with laterals), `stat` and `c08`, plus the redraw, is 202.35 node-h before
-     diagnostics, or 240.35 if the N5 replicas are rebuilt too.
-   - After W2, `universe` alone plus the redraw brings P1 + PX to 420.09, which exceeds the ceiling (§3) before PG and
-     PV.
+   - Every single-block branch fits the 541.50 ceiling on the priced figures (§3's table), and so does every W1
+     combination. A W1 exception followed by a `universe` firing is unfunded by design (item 4).
 4. **A row fires after the sole exception has been bound.** The campaign stops and goes to the director.
 
 **ST1's named exception, the only post-binding amendment to §5–§7.**
@@ -604,7 +632,7 @@ N1 is never a construction-error reading. N1/N5 is reported as the same-event fa
   - `universe`: 175 unfolds (33.25), plus 10 lateral (1.90) if laterals are rebuilt;
   - `stat`: 300 replicas (57.00);
   - `c08`: 80 unfolds (15.20);
-  - the N5 replicas: 200 (38.00) if the data-stream method is corrected.
+  - if the data-stream method is corrected: the N5 replicas, 200 (38.00), and `stat`, which that method builds (57.00).
   The amendment states which constituents are reused. PX is outside P1's cap and inside the ledger.
 - K_A is Q_rep with the corrected blocks, plus C_model_abs.
 
@@ -1124,19 +1152,13 @@ The result has three independent parts, each reported.
   correction and its acceptance check did not run, and K_A was omitted for this run."
 - "A defect in <block>'s builder was found; the correction did not resolve the discrepancy."
 
-**Outcome A within the 411.22 ceiling.** The ceiling is the full priced total's top, so on the priced figures no PX fits
-it:
-- `c08` on W1 adds 15.20, to 426.42;
-- the N5 data-stream method on W1 adds 38.00, to 449.22;
-- `stat` on W1 adds 57.00, to 468.22;
-- `universe` after W2 puts P1 + PX at 420.09 before PG and PV.
-
-So:
-- **For `universe`, outcome A is unavailable within the approved ceiling.** A firing there ends at the construction
-  finding.
-- **For `stat`, `c08` or the N5 method fired on W1,** outcome A is reachable only if the sacct-measured spend at the time
-  of the ST1 ruling leaves room for PX's priced cost under ST6. Otherwise it too ends at the construction finding, as
-  the unfunded case above.
+**Outcome A within the 541.50 ceiling** (§3's table):
+- Outcome A is reachable for **every single-block firing**: `c08`, `stat` or the N5 data-stream method on W1, or
+  `universe` after W2, laterals included.
+- It is also reachable for every combination of W1 blocks.
+- **Unfunded:** a W1 exception followed by a `universe` firing. That stops the campaign under §3.3's sole-exception rule,
+  and the result is the construction finding for the W1 blocks.
+- ST6 still enforces the ceiling against measured spend at the time of each submission.
 
 Any covariance change from Part 1 enters the journal paper or a later Zenodo version, not the first release
 (`DECISION-20261123-joseph-covfix-ki85-size-reader.md`).
@@ -1210,15 +1232,16 @@ stands alone, and each candidate's PV verdict is reported descriptively.
    - When N5 is bound, KI 85's row in `KNOWN_ISSUES.md` is updated to point to that decision. Until then the row is
      left unchanged.
 2. **Size: decided.** Full, as designed (`DECISION-20261123-joseph-covfix-ki85-size-reader.md`, Joseph's governing re-confirmation): two sealed tunes, full P1 toy
-   counts, and N5 always, at about 409 node-h at most. Joseph later raised the ceiling to 411.22 node-h to include the
-   synthetic-seal test (§3). The current estimate is in §3, and ST6 enforces the ceiling. That is above half the balance, and Joseph approved it. Each phase is still capped from
+   counts, and N5 always, at an expected no-firing price of 410.55–411.22 node-h. Joseph later raised the ceiling,
+   first to 411.22 for the synthetic test and then to "about 540" for PX headroom, pinned by the director at 541.50
+   (§3). ST6 enforces the ceiling. That is above half the balance, and Joseph approved it. Each phase is still capped from
    sacct. The second reader is
    codex-school2, alongside agy, by the same decision.
-3. **Outcome A is mostly out of reach within the 411.22 ceiling** (§7, Part 1). It is unavailable for `universe`. For
-   `stat`, `c08` or the N5 method fired on W1, it is reachable only if measured spend leaves room for PX's priced cost.
-   Otherwise a firing ends at the construction finding.
+3. **Outcome A's reach** (§7, Part 1). Within the 541.50 ceiling it is reachable for every single-block firing, including
+   `universe` with laterals rebuilt (541.37), and for every W1 combination. Only a W1 exception followed by a `universe`
+   firing is unfunded, by the sole-exception rule.
 4. **Binding prerequisites:**
-   - a committed iris receipt;
+   - a committed iris receipt showing at least 541.50 node-h remaining, or the binding goes back to Joseph;
    - the fresh PG session named;
    - the director's passphrase generated, with the director's piping wrapper, and never shown to cov2d.
 5. **The bars:**
