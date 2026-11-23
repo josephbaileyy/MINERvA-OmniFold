@@ -1,11 +1,11 @@
 #!/bin/bash
 # MSR connect P, the probe (DECLARATION.md rev 2 section 8). On a Perlmutter login node, from a /dev/shm copy of itself
 # whose path is $1; it deletes that copy at exit. Derived from T3's reviewed read connect (t3p_read_connect.sh rev 1,
-# 9c4b604c), with cov2d's fence rev 2 (cov2d_fence.sh 3fbc9cbd, embedded below as base64 and checked) and this lane's
+# 9c4b604c), with cov2d's fence rev 3 (cov2d_fence.sh 7e81a721, embedded below as base64 and checked) and this lane's
 # sacct fence for the other prefixes. Job states come from sacct only.
 #   usage: msr_probe_connect.sh <self> <window_end_epoch> <fence prefixes, comma-separated>
 # In order, each failure a final stop:
-#   the window (the epoch the launcher computed from date, never typed); cov2d_fence.sh rev 2 CLEAR (exit 0); no job of
+#   the window (the epoch the launcher computed from date, never typed); cov2d_fence.sh rev 3 CLEAR (exit 0); no job of
 #   this user whose name starts with a fenced prefix or msr_ is in a non-terminal state, by sacct (rpd_ rows, which
 #   limitation-resolver's flux2 run may hold and which may coexist with these login reads, are printed, not fenced);
 #   $OUT absent; a fresh clone at M into $OUT/deploy, clean, msr_build.py and msr_overlap.py at their sha256;
@@ -36,7 +36,7 @@ RE1=/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out
 NPZ_SHA=07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f
 BKG_SHA=2addac8f26055c5ed69862e7afe29e12ac51dbe23a8d6eeed79d71bec9d82955
 BANK_SHA=60416384474d1a3b0644f1e09869cf09371382ecbf3c116b1ed110cd47341e2f
-FENCE_SHA=3fbc9cbd6c08d4c86c71aeeccf28b0b3d8a77393121ef23787c1d421b682171e
+FENCE_SHA=7e81a721476da987a0e1262ab2054132bd8440cd49b0dc7a5c4f01d50a310738
 bail() { echo "BAIL $*"; rm -rf -- "$SHM"; rm -f -- "$SELF"; exit 9; }   # a precondition failed: nothing in $OUT
 [[ "$WEND" =~ ^[0-9]{10}$ ]] || bail "window end '$WEND'"
 now=$(date +%s); [ "$now" -le "$WEND" ] || bail "the window ended (now $now > $WEND)"
@@ -45,70 +45,74 @@ now=$(date +%s); [ "$now" -le "$WEND" ] || bail "the window ended (now $now > $W
 [ ! -e "$SHM" ] || bail "$SHM exists"
 [ -x "$PY" ] || bail "no $PY"
 
-# ---- cov2d's fence, rev 2, exactly (embedded, sha-checked), then this lane's sacct fence for the other prefixes
+# ---- cov2d's fence, rev 3, exactly (embedded, sha-checked), then this lane's sacct fence for the other prefixes
 mkdir -m 700 "$SHM" || bail "mkdir $SHM"
 base64 -d > "$SHM/cov2d_fence.sh" <<'B64' || bail "fence decode"
-IyEvYmluL2Jhc2gKIyBjb3YyZF9mZW5jZS5zaCByZXYgMiAoMjAyNi0xMS0yMik6IHRoZSBDT1Yy
+IyEvYmluL2Jhc2gKIyBjb3YyZF9mZW5jZS5zaCByZXYgMyAoMjAyNi0xMS0yMyk6IHRoZSBDT1Yy
 RCBmZW5jZSwgcnVuIG9uIGEgUGVybG11dHRlciBsb2dpbiBub2RlIGJlZm9yZSBhbm90aGVyIGxh
 bmUncyBjb25uZWN0LgojIFJlYWRzIHNhY2N0IG9ubHkgKG5vIHNxdWV1ZTogc3RhbmRpbmcgcnVs
-ZSkuIFJlcGxhY2VzIHJldiAxIChzaGEyNTYgMTZhMmE1Y2QuLi4pLCB3aGljaCBjYWxsZWQgc3F1
-ZXVlLgojIENMRUFSIChleGl0IDApIG9ubHkgaWYgc2FjY3QgZXhpdHMgMCwgZXZlcnkgbGluZSBp
-dCB3cml0ZXMgKHN0ZG91dCBhbmQgc3RkZXJyIHRvZ2V0aGVyKSBpcyBhIHdlbGwtZm9ybWVkCiMg
-Sm9iSUR8Sm9iTmFtZXxTdGF0ZSByb3cgd2l0aCBhIG51bWVyaWMgSm9iSUQsIGFuZCBldmVyeSBy
-b3cgbmFtZWQgY292MmQqIG9yIHQyYSogKG91cnMsIGxhc3QgNjAgZGF5cykgaXMgaW4gYQojIHRl
-cm1pbmFsIHN0YXRlLiBBbnl0aGluZyBlbHNlIGlzIGV4aXQgMzogYW4gdW5lbmRlZCBvciB1bmNs
-YXNzaWZpYWJsZSBtYXRjaGluZyByb3csIGEgbWFsZm9ybWVkIG9yIHN0cmF5IGxpbmUKIyAoc28g
-YW4gZXJyb3Igc2FjY3QgcHJpbnRzIG9uIHN0ZGVyciB3aGlsZSBleGl0aW5nIDAgcmVmdXNlcyks
-IHNhY2N0IGZhaWxpbmcsIG9yIHRoZSBzdGFydCB0aW1lIGZhaWxpbmcuCiMgS25vd24gZ2FwLCBz
-YWNjdC1vbmx5IGJ5IHJ1bGU6IHNhY2N0J3MgZGVmYXVsdCBsaXN0aW5nIG9taXRzIGEgcGVuZGlu
-ZyBqb2Igd2l0aCBubyBFbGlnaWJsZVRpbWUgKHNiYXRjaCAtLWhvbGQsCiMgc2NvbnRyb2wgaG9s
-ZCwgYXJyYXkgdGFza3MgaGVsZCBieSBhICVsaW1pdCkgYW5kIGNhbiBsYWcgc2x1cm1kYmQgYnJp
-ZWZseS4KIyBBIGNvbm5lY3QgdGhhdCByZWxpZXMgb24gdGhpcyBmZW5jZSBhbHNvIHRha2VzIGEg
-ZnJlc2ggYWNrIGZyb20gdGhlIGNvdjJkIHNlc3Npb24sIHdoaWNoIGNvdmVycyB0aGF0IGdhcC4K
-IyBTdGF0ZSBpcyBjbGFzc2lmaWVkIGhlcmUgYWdhaW5zdCBhIGNsb3NlZCB0ZXJtaW5hbCBzZXQg
-KGZpcnN0IHdvcmQgb2YgU3RhdGUsIHNvICJDQU5DRUxMRUQgYnkgTiIgY291bnRzKTsKIyBhbnkg
-b3RoZXIgc3RhdGUsIGluY2x1ZGluZyBvbmVzIHRoaXMgZmlsZSBkb2VzIG5vdCBuYW1lLCByZWZ1
-c2VzLiBzYWNjdCAtcyBpcyBub3QgdXNlZCAoUGVybG11dHRlciByZWplY3RzIENGKS4KIyBXcml0
-ZXMgbm90aGluZy4gTWF5IGJlIGxhdW5jaGVkIGZyb20gYSAvZGV2L3NobSBjb3B5IG9mIGl0c2Vs
-ZiB3aG9zZSBwYXRoIGlzICQxLiBBdCBleGl0IGl0IGRlbGV0ZXMgJDEgb25seSBpZiAkMQojIGlz
-IHVuZGVyIC9kZXYvc2htLywgaGFzIG5vIC4uIGNvbXBvbmVudCwgYW5kIGlzIHRoZSBydW5uaW5n
-IHNjcmlwdCBpdHNlbGYgKFsgIiQxIiAtZWYgIiQwIiBdKTsgYW55IG90aGVyICQxIGlzCiMga2Vw
-dCBhbmQgbmFtZWQuIChXaXRob3V0IHRoZSAuLiBydWxlLCAvZGV2L3NobS8uLi88cmVwbz4vY292
-MmRfZmVuY2Uuc2ggcnVuIGZyb20gdGhlIHJlcG8gd291bGQgZGVsZXRlIHRoZSByZXBvIGZpbGUu
-KQpTRUxGPSQxCmZpbigpIHsKICBpZiBbIC1uICIkU0VMRiIgXTsgdGhlbgogICAgY2FzZSAkU0VM
-RiBpbgogICAgICAqLy4uLyp8Ki8uLikgZWNobyAic2VsZi1jb3B5IG5vdCByZW1vdmVkOiAkU0VM
-RiIgOzsKICAgICAgL2Rldi9zaG0vKikgaWYgWyAiJFNFTEYiIC1lZiAiJDAiIF07IHRoZW4gcm0g
-LWYgLS0gIiRTRUxGIjsgZWxzZSBlY2hvICJzZWxmLWNvcHkgbm90IHJlbW92ZWQ6ICRTRUxGIjsg
-ZmkgOzsKICAgICAgKikgZWNobyAic2VsZi1jb3B5IG5vdCByZW1vdmVkOiAkU0VMRiIgOzsKICAg
-IGVzYWMKICBmaQogIGV4aXQgIiQxIgp9CmVjaG8gImZlbmNlIGhvc3Q9JChob3N0bmFtZSkgdXRj
-PSQoZGF0ZSAtdSArJUZUJVRaKSIKIyBzYWNjdCByZWFkcyAtUyBpbiB0aGUgY2x1c3RlcidzIGxv
-Y2FsIHRpbWU7IDYwIGRheXMgaXMgZmFyIHBhc3QgdGhlIHJlcXVpcmVkIDQ4IGggZWl0aGVyIHdh
-eS4Kc3RhcnQ9JChkYXRlIC1kICc2MCBkYXlzIGFnbycgKyVGVCVUKSB8fCB7IGVjaG8gIkZFTkNF
-IFJFRlVTRUQ6IHN0YXJ0IHRpbWUgZmFpbGVkIjsgZmluIDM7IH0KW1sgJHN0YXJ0ID1+IF5bMC05
-XXs0fS1bMC05XXsyfS1bMC05XXsyfVRbMC05XXsyfTpbMC05XXsyfTpbMC05XXsyfSQgXV0gfHwg
-eyBlY2hvICJGRU5DRSBSRUZVU0VEOiBzdGFydCB0aW1lIG1hbGZvcm1lZDogJyRzdGFydCciOyBm
-aW4gMzsgfQp1c2VyPSQoaWQgLXVuKSB8fCB7IGVjaG8gIkZFTkNFIFJFRlVTRUQ6IGlkIC11biBm
-YWlsZWQiOyBmaW4gMzsgfQpbIC1uICIkdXNlciIgXSB8fCB7IGVjaG8gIkZFTkNFIFJFRlVTRUQ6
-IGVtcHR5IHVzZXIiOyBmaW4gMzsgfQplY2hvICJzYWNjdCAtWCAtbiAtUCAtdSAkdXNlciAtUyAk
-c3RhcnQgLUUgbm93IC1vIEpvYklELEpvYk5hbWUsU3RhdGUgMj4mMSIKcz0kKHNhY2N0IC1YIC1u
-IC1QIC11ICIkdXNlciIgLVMgIiRzdGFydCIgLUUgbm93IC1vIEpvYklELEpvYk5hbWUsU3RhdGUg
-Mj4mMSkgfHwgeyBlY2hvICJGRU5DRSBSRUZVU0VEOiBzYWNjdCBmYWlsZWQiOyBwcmludGYgJyVz
-XG4nICIkcyIgfCBzZWQgJ3MvXi9zYWNjdDogLyc7IGZpbiAzOyB9CnY9JChwcmludGYgJyVzXG4n
-ICIkcyIgfCBhd2sgLUYnfCcgJwogIEJFR0lOIHsgc3BsaXQoIkJPT1RfRkFJTCBDQU5DRUxMRUQg
-Q09NUExFVEVEIERFQURMSU5FIEZBSUxFRCBOT0RFX0ZBSUwgT1VUX09GX01FTU9SWSBQUkVFTVBU
-RUQgVElNRU9VVCIsIHQsICIgIikKICAgICAgICAgIGZvciAoaSBpbiB0KSB0ZXJtW3RbaV1dID0g
-MSB9CiAgL14kLyB7IG5leHQgfQogIE5GICE9IDMgfHwgJDEgIX4gL15bMC05XSsoW18rXS4qKT8k
-LyB7IHByaW50ICJtYWxmb3JtZWQ6ICIgJDA7IGJhZCA9IDE7IG5leHQgfQogICQyIH4gL14oY292
-MmR8dDJhKS8geyBuKys7IHNwbGl0KCQzLCB3LCAiICIpOyBpZiAoISh3WzFdIGluIHRlcm0pKSB7
-IHByaW50ICJ1bmVuZGVkOiAiICQwOyBiYWQgPSAxIH0gfQogIEVORCB7IHByaW50ICJtYXRjaGlu
-ZyByb3dzOiAiIG4gKyAwOyBleGl0IGJhZCB9JykKcmM9JD8KcHJpbnRmICclc1xuJyAiJHYiIHwg
-c2VkICdzL14vc2FjY3QgLycKWyAiJHJjIiAtZXEgMCBdIHx8IHsgZWNobyAiRkVOQ0UgUkVGVVNF
-RDogYW4gdW5lbmRlZCwgdW5jbGFzc2lmaWFibGUgb3IgbWFsZm9ybWVkIHNhY2N0IHJvdyI7IGZp
-biAzOyB9CmVjaG8gIkZFTkNFIENMRUFSIgpmaW4gMAo=
+ZSkuIFJlcGxhY2VzIHJldiAyIChzaGEyNTYgM2ZiYzljYmQuLi4pLCB3aG9zZSA2MC1kYXkgLVMg
+UGVybG11dHRlciByZWZ1c2VkCiMgKCJUb28gd2lkZSBvZiBhIGRhdGUgcmFuZ2UgaW4gcXVlcnki
+LCBsb2dpbjM4IDIwMjYtMTEtMjMpLCBhbmQgcmV2IDEgKDE2YTJhNWNkLi4uKSwgd2hpY2ggY2Fs
+bGVkIHNxdWV1ZS4KIyBDTEVBUiAoZXhpdCAwKSBvbmx5IGlmIHNhY2N0IGV4aXRzIDAsIGV2ZXJ5
+IGxpbmUgaXQgd3JpdGVzIChzdGRvdXQgYW5kIHN0ZGVyciB0b2dldGhlcikgaXMgYSB3ZWxsLWZv
+cm1lZAojIEpvYklEfEpvYk5hbWV8U3RhdGUgcm93IHdpdGggYSBudW1lcmljIEpvYklELCBhbmQg
+ZXZlcnkgcm93IG5hbWVkIGNvdjJkKiBvciB0MmEqIChvdXJzLCBsYXN0IDE0IGRheXMpIGlzIGlu
+IGEKIyB0ZXJtaW5hbCBzdGF0ZS4gQW55dGhpbmcgZWxzZSBpcyBleGl0IDM6IGFuIHVuZW5kZWQg
+b3IgdW5jbGFzc2lmaWFibGUgbWF0Y2hpbmcgcm93LCBhIG1hbGZvcm1lZCBvciBzdHJheSBsaW5l
+CiMgKHNvIGFuIGVycm9yIHNhY2N0IHByaW50cyBvbiBzdGRlcnIgd2hpbGUgZXhpdGluZyAwIHJl
+ZnVzZXMpLCBzYWNjdCBmYWlsaW5nLCBvciB0aGUgc3RhcnQgdGltZSBmYWlsaW5nLgojIEtub3du
+IGdhcCwgc2FjY3Qtb25seSBieSBydWxlOiBzYWNjdCdzIGRlZmF1bHQgbGlzdGluZyBvbWl0cyBh
+IHBlbmRpbmcgam9iIHdpdGggbm8gRWxpZ2libGVUaW1lIChzYmF0Y2ggLS1ob2xkLAojIHNjb250
+cm9sIGhvbGQsIGFycmF5IHRhc2tzIGhlbGQgYnkgYSAlbGltaXQpIGFuZCBjYW4gbGFnIHNsdXJt
+ZGJkIGJyaWVmbHkuCiMgQSBjb25uZWN0IHRoYXQgcmVsaWVzIG9uIHRoaXMgZmVuY2UgYWxzbyB0
+YWtlcyBhIGZyZXNoIGFjayBmcm9tIHRoZSBjb3YyZCBzZXNzaW9uLCB3aGljaCBjb3ZlcnMgdGhh
+dCBnYXAuCiMgU3RhdGUgaXMgY2xhc3NpZmllZCBoZXJlIGFnYWluc3QgYSBjbG9zZWQgdGVybWlu
+YWwgc2V0IChmaXJzdCB3b3JkIG9mIFN0YXRlLCBzbyAiQ0FOQ0VMTEVEIGJ5IE4iIGNvdW50cyk7
+CiMgYW55IG90aGVyIHN0YXRlLCBpbmNsdWRpbmcgb25lcyB0aGlzIGZpbGUgZG9lcyBub3QgbmFt
+ZSwgcmVmdXNlcy4gc2FjY3QgLXMgaXMgbm90IHVzZWQgKFBlcmxtdXR0ZXIgcmVqZWN0cyBDRiku
+CiMgV3JpdGVzIG5vdGhpbmcuIE1heSBiZSBsYXVuY2hlZCBmcm9tIGEgL2Rldi9zaG0gY29weSBv
+ZiBpdHNlbGYgd2hvc2UgcGF0aCBpcyAkMS4gQXQgZXhpdCBpdCBkZWxldGVzICQxIG9ubHkgaWYg
+JDEKIyBpcyB1bmRlciAvZGV2L3NobS8sIGhhcyBubyAuLiBjb21wb25lbnQsIGFuZCBpcyB0aGUg
+cnVubmluZyBzY3JpcHQgaXRzZWxmIChbICIkMSIgLWVmICIkMCIgXSk7IGFueSBvdGhlciAkMSBp
+cwojIGtlcHQgYW5kIG5hbWVkLiAoV2l0aG91dCB0aGUgLi4gcnVsZSwgL2Rldi9zaG0vLi4vPHJl
+cG8+L2NvdjJkX2ZlbmNlLnNoIHJ1biBmcm9tIHRoZSByZXBvIHdvdWxkIGRlbGV0ZSB0aGUgcmVw
+byBmaWxlLikKU0VMRj0kMQpmaW4oKSB7CiAgaWYgWyAtbiAiJFNFTEYiIF07IHRoZW4KICAgIGNh
+c2UgJFNFTEYgaW4KICAgICAgKi8uLi8qfCovLi4pIGVjaG8gInNlbGYtY29weSBub3QgcmVtb3Zl
+ZDogJFNFTEYiIDs7CiAgICAgIC9kZXYvc2htLyopIGlmIFsgIiRTRUxGIiAtZWYgIiQwIiBdOyB0
+aGVuIHJtIC1mIC0tICIkU0VMRiI7IGVsc2UgZWNobyAic2VsZi1jb3B5IG5vdCByZW1vdmVkOiAk
+U0VMRiI7IGZpIDs7CiAgICAgICopIGVjaG8gInNlbGYtY29weSBub3QgcmVtb3ZlZDogJFNFTEYi
+IDs7CiAgICBlc2FjCiAgZmkKICBleGl0ICIkMSIKfQplY2hvICJmZW5jZSBob3N0PSQoaG9zdG5h
+bWUpIHV0Yz0kKGRhdGUgLXUgKyVGVCVUWikiCiMgc2FjY3QgcmVhZHMgLVMgaW4gdGhlIGNsdXN0
+ZXIncyBsb2NhbCB0aW1lLiAxNCBkYXlzIGNvdmVycyB0aGUgNDggaCBNYXhXYWxsIHdpdGggbWFy
+Z2luIGFuZCBpcyBhIHJhbmdlIFBlcmxtdXR0ZXIncwojIHNhY2N0IGFjY2VwdHMgKHJldiAxIGFu
+ZCB0aGUgVDMgYW5kIGZsdXgyIGZlbmNlcyB1c2VkIGl0KTsgNjAgZGF5cyB3YXMgcmVmdXNlZC4K
+c3RhcnQ9JChkYXRlIC1kICcxNCBkYXlzIGFnbycgKyVGVCVUKSB8fCB7IGVjaG8gIkZFTkNFIFJF
+RlVTRUQ6IHN0YXJ0IHRpbWUgZmFpbGVkIjsgZmluIDM7IH0KW1sgJHN0YXJ0ID1+IF5bMC05XXs0
+fS1bMC05XXsyfS1bMC05XXsyfVRbMC05XXsyfTpbMC05XXsyfTpbMC05XXsyfSQgXV0gfHwgeyBl
+Y2hvICJGRU5DRSBSRUZVU0VEOiBzdGFydCB0aW1lIG1hbGZvcm1lZDogJyRzdGFydCciOyBmaW4g
+MzsgfQp1c2VyPSQoaWQgLXVuKSB8fCB7IGVjaG8gIkZFTkNFIFJFRlVTRUQ6IGlkIC11biBmYWls
+ZWQiOyBmaW4gMzsgfQpbIC1uICIkdXNlciIgXSB8fCB7IGVjaG8gIkZFTkNFIFJFRlVTRUQ6IGVt
+cHR5IHVzZXIiOyBmaW4gMzsgfQplY2hvICJzYWNjdCAtWCAtbiAtUCAtdSAkdXNlciAtUyAkc3Rh
+cnQgLUUgbm93IC1vIEpvYklELEpvYk5hbWUsU3RhdGUgMj4mMSIKcz0kKHNhY2N0IC1YIC1uIC1Q
+IC11ICIkdXNlciIgLVMgIiRzdGFydCIgLUUgbm93IC1vIEpvYklELEpvYk5hbWUsU3RhdGUgMj4m
+MSkgfHwgeyBlY2hvICJGRU5DRSBSRUZVU0VEOiBzYWNjdCBmYWlsZWQiOyBwcmludGYgJyVzXG4n
+ICIkcyIgfCBzZWQgJ3MvXi9zYWNjdDogLyc7IGZpbiAzOyB9CnY9JChwcmludGYgJyVzXG4nICIk
+cyIgfCBhd2sgLUYnfCcgJwogIEJFR0lOIHsgc3BsaXQoIkJPT1RfRkFJTCBDQU5DRUxMRUQgQ09N
+UExFVEVEIERFQURMSU5FIEZBSUxFRCBOT0RFX0ZBSUwgT1VUX09GX01FTU9SWSBQUkVFTVBURUQg
+VElNRU9VVCIsIHQsICIgIikKICAgICAgICAgIGZvciAoaSBpbiB0KSB0ZXJtW3RbaV1dID0gMSB9
+CiAgL14kLyB7IG5leHQgfQogIE5GICE9IDMgfHwgJDEgIX4gL15bMC05XSsoW18rXS4qKT8kLyB7
+IHByaW50ICJtYWxmb3JtZWQ6ICIgJDA7IGJhZCA9IDE7IG5leHQgfQogICQyIH4gL14oY292MmR8
+dDJhKS8geyBuKys7IHNwbGl0KCQzLCB3LCAiICIpOyBpZiAoISh3WzFdIGluIHRlcm0pKSB7IHBy
+aW50ICJ1bmVuZGVkOiAiICQwOyBiYWQgPSAxIH0gfQogIEVORCB7IHByaW50ICJtYXRjaGluZyBy
+b3dzOiAiIG4gKyAwOyBleGl0IGJhZCB9JykKcmM9JD8KcHJpbnRmICclc1xuJyAiJHYiIHwgc2Vk
+ICdzL14vc2FjY3QgLycKWyAiJHJjIiAtZXEgMCBdIHx8IHsgZWNobyAiRkVOQ0UgUkVGVVNFRDog
+YW4gdW5lbmRlZCwgdW5jbGFzc2lmaWFibGUgb3IgbWFsZm9ybWVkIHNhY2N0IHJvdyI7IGZpbiAz
+OyB9CmVjaG8gIkZFTkNFIENMRUFSIgpmaW4gMAo=
 B64
-[ "$(sha256sum "$SHM/cov2d_fence.sh" | cut -d' ' -f1)" = "$FENCE_SHA" ] || bail "cov2d_fence.sh is not rev 2"
+[ "$(sha256sum "$SHM/cov2d_fence.sh" | cut -d' ' -f1)" = "$FENCE_SHA" ] || bail "cov2d_fence.sh is not rev 3"
 fence_out=$(bash "$SHM/cov2d_fence.sh" 2>&1); frc=$?
-[ "$frc" -eq 0 ] || { printf '%s\n' "$fence_out"; bail "cov2d fence rev 2 not clear (rc $frc)"; }
+[ "$frc" -eq 0 ] || { printf '%s\n' "$fence_out"; bail "cov2d fence rev 3 not clear (rc $frc)"; }
 fence_sacct() {
   local rows bad
   rows=$(sacct -X -n -P -S now-14days -o JobID,JobName,State 2>&1) || { echo "sacct failed: $rows"; return 2; }
@@ -162,7 +166,7 @@ echo "node $(hostname) nproc=$(nproc) loadavg $(cut -d' ' -f1-3 /proc/loadavg)"
 date -u +%FT%TZ; echo "window_end_epoch $WEND (now $now); fence prefixes $FENCE"
 echo "connect script sha256 $(sha256sum "$SELF" | cut -d' ' -f1)"
 cp "$SELF" "$OUT/logs/msr_${TAG}.sh"
-echo "== cov2d fence rev 2 ($FENCE_SHA)"; printf '%s\n' "$fence_out"
+echo "== cov2d fence rev 3 ($FENCE_SHA)"; printf '%s\n' "$fence_out"
 echo "== fence (sacct)"; fence_sacct || { echo "STOP: fence"; finish 9; }; echo "fence clear"
 echo "== rpd_ rows (printed; limitation-resolver's flux2 may coexist with these login reads)"
 rows=$(sacct -X -n -P -S now-2days -o JobID,JobName,State 2>&1) || { echo "STOP: sacct for rpd_ rows failed: $rows"; finish 9; }

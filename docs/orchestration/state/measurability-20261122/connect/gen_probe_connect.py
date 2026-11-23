@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Writes msr_probe_connect.sh from the template below, embedding cov2d_fence.sh rev 2 (sha256 3fbc9cbd...) as base64 so
+"""Writes msr_probe_connect.sh from the template below, embedding cov2d_fence.sh rev 3 (sha256 7e81a721...) as base64 so
 the node runs those exact bytes before anything else is written. Run from the repository root; prints the sha256."""
 import base64
 import hashlib
@@ -7,7 +7,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[5]
 FENCE = ROOT / "docs/orchestration/state/2d-closeout/cov2d-fence-20261122/cov2d_fence.sh"
-FENCE_SHA = "3fbc9cbd6c08d4c86c71aeeccf28b0b3d8a77393121ef23787c1d421b682171e"
+FENCE_SHA = "7e81a721476da987a0e1262ab2054132bd8440cd49b0dc7a5c4f01d50a310738"
 OUT = Path(__file__).resolve().parent / "msr_probe_connect.sh"
 
 fence = FENCE.read_bytes()

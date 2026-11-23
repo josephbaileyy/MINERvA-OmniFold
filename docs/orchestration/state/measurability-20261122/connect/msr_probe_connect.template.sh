@@ -1,11 +1,11 @@
 #!/bin/bash
 # MSR connect P, the probe (DECLARATION.md rev 2 section 8). On a Perlmutter login node, from a /dev/shm copy of itself
 # whose path is $1; it deletes that copy at exit. Derived from T3's reviewed read connect (t3p_read_connect.sh rev 1,
-# 9c4b604c), with cov2d's fence rev 2 (cov2d_fence.sh 3fbc9cbd, embedded below as base64 and checked) and this lane's
+# 9c4b604c), with cov2d's fence rev 3 (cov2d_fence.sh 7e81a721, embedded below as base64 and checked) and this lane's
 # sacct fence for the other prefixes. Job states come from sacct only.
 #   usage: msr_probe_connect.sh <self> <window_end_epoch> <fence prefixes, comma-separated>
 # In order, each failure a final stop:
-#   the window (the epoch the launcher computed from date, never typed); cov2d_fence.sh rev 2 CLEAR (exit 0); no job of
+#   the window (the epoch the launcher computed from date, never typed); cov2d_fence.sh rev 3 CLEAR (exit 0); no job of
 #   this user whose name starts with a fenced prefix or msr_ is in a non-terminal state, by sacct (rpd_ rows, which
 #   limitation-resolver's flux2 run may hold and which may coexist with these login reads, are printed, not fenced);
 #   $OUT absent; a fresh clone at M into $OUT/deploy, clean, msr_build.py and msr_overlap.py at their sha256;
@@ -36,7 +36,7 @@ RE1=/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out
 NPZ_SHA=07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f
 BKG_SHA=2addac8f26055c5ed69862e7afe29e12ac51dbe23a8d6eeed79d71bec9d82955
 BANK_SHA=60416384474d1a3b0644f1e09869cf09371382ecbf3c116b1ed110cd47341e2f
-FENCE_SHA=3fbc9cbd6c08d4c86c71aeeccf28b0b3d8a77393121ef23787c1d421b682171e
+FENCE_SHA=7e81a721476da987a0e1262ab2054132bd8440cd49b0dc7a5c4f01d50a310738
 bail() { echo "BAIL $*"; rm -rf -- "$SHM"; rm -f -- "$SELF"; exit 9; }   # a precondition failed: nothing in $OUT
 [[ "$WEND" =~ ^[0-9]{10}$ ]] || bail "window end '$WEND'"
 now=$(date +%s); [ "$now" -le "$WEND" ] || bail "the window ended (now $now > $WEND)"
@@ -45,14 +45,14 @@ now=$(date +%s); [ "$now" -le "$WEND" ] || bail "the window ended (now $now > $W
 [ ! -e "$SHM" ] || bail "$SHM exists"
 [ -x "$PY" ] || bail "no $PY"
 
-# ---- cov2d's fence, rev 2, exactly (embedded, sha-checked), then this lane's sacct fence for the other prefixes
+# ---- cov2d's fence, rev 3, exactly (embedded, sha-checked), then this lane's sacct fence for the other prefixes
 mkdir -m 700 "$SHM" || bail "mkdir $SHM"
 base64 -d > "$SHM/cov2d_fence.sh" <<'B64' || bail "fence decode"
 @@FENCE_B64@@
 B64
-[ "$(sha256sum "$SHM/cov2d_fence.sh" | cut -d' ' -f1)" = "$FENCE_SHA" ] || bail "cov2d_fence.sh is not rev 2"
+[ "$(sha256sum "$SHM/cov2d_fence.sh" | cut -d' ' -f1)" = "$FENCE_SHA" ] || bail "cov2d_fence.sh is not rev 3"
 fence_out=$(bash "$SHM/cov2d_fence.sh" 2>&1); frc=$?
-[ "$frc" -eq 0 ] || { printf '%s\n' "$fence_out"; bail "cov2d fence rev 2 not clear (rc $frc)"; }
+[ "$frc" -eq 0 ] || { printf '%s\n' "$fence_out"; bail "cov2d fence rev 3 not clear (rc $frc)"; }
 fence_sacct() {
   local rows bad
   rows=$(sacct -X -n -P -S now-14days -o JobID,JobName,State 2>&1) || { echo "sacct failed: $rows"; return 2; }
@@ -106,7 +106,7 @@ echo "node $(hostname) nproc=$(nproc) loadavg $(cut -d' ' -f1-3 /proc/loadavg)"
 date -u +%FT%TZ; echo "window_end_epoch $WEND (now $now); fence prefixes $FENCE"
 echo "connect script sha256 $(sha256sum "$SELF" | cut -d' ' -f1)"
 cp "$SELF" "$OUT/logs/msr_${TAG}.sh"
-echo "== cov2d fence rev 2 ($FENCE_SHA)"; printf '%s\n' "$fence_out"
+echo "== cov2d fence rev 3 ($FENCE_SHA)"; printf '%s\n' "$fence_out"
 echo "== fence (sacct)"; fence_sacct || { echo "STOP: fence"; finish 9; }; echo "fence clear"
 echo "== rpd_ rows (printed; limitation-resolver's flux2 may coexist with these login reads)"
 rows=$(sacct -X -n -P -S now-2days -o JobID,JobName,State 2>&1) || { echo "STOP: sacct for rpd_ rows failed: $rows"; finish 9; }
