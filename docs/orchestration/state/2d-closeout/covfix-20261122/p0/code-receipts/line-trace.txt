@@ -1,0 +1,18 @@
+# command: coverage run --branch (unittest test_covfix_core.py test_covfix_p0.py) + coverage run -a covfix_p0.py with a missing input and an existing --out (the __main__ line); coverage report -m
+# python: 3.12.2 numpy 1.26.4 scipy 1.15.2  host: Darwin arm64  OMP_NUM_THREADS=1
+# 851dca65542f3f01ddbb4c9df2f1c39118e9c74e54ccf0a7e588361a1cc176f2  covfix_core.py
+# 307a510de70b6c19b9cd6bf3b0c996a63654131233089623ba4f4d0c41ea7104  covfix_p0.py
+# 8286703536d10cbf62ea2c5706c99117b916f28c0fea12d93cf5e7cc4bdd7a48  test_covfix_core.py
+# 4cb2780161a825288661d904eb59e47931f3f8a8acce05cf7a64f6dbd732ce46  test_covfix_p0.py
+# d0d16f36f0527fc30c00f8659b3a54ac2e6d7e4774ed7e248d5daedd19cab6ca  test_covfix_p0_pins.py
+# ff8a008c421c93fdd84aefb67ace6470f4b9ead90924ae3661dc7af7904d513f  covfix_mutation.py
+# start: 2026-11-23T20:50:08Z
+# unittest rc: 0
+refusing: /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/covfix-p0-trace/exists.json exists
+# script rc: 2 (2 = refused, --out exists)
+Name             Stmts   Miss Branch BrPart  Cover   Missing
+------------------------------------------------------------
+covfix_core.py     228      0     68      0   100%
+covfix_p0.py       234      0     54      0   100%
+------------------------------------------------------------
+TOTAL              462      0    122      0   100%
