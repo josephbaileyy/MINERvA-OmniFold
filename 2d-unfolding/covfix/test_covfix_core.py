@@ -149,6 +149,48 @@ class EigBasis(unittest.TestCase):
         np.testing.assert_allclose(A.T @ A, np.eye(3), atol=1e-12)
         np.testing.assert_allclose(U @ (U.T @ A), A, atol=1e-13)      # inside span(U)
 
+    def test_tie_through_eig_basis_keeps_ordered_axis(self):
+        V = np.diag([2.0, 1.0, 1.0])
+        V[0, 2] = V[2, 0] = 1e-15                            # the codex-school2 fixture
+        lam, U = cc.eig_basis(V)
+        if lam[1] == lam[2]:                                 # an exact floating tie: the canonical rule applies
+            P = U[:, 1:3] @ U[:, 1:3].T
+            e1 = P[:, 0] / np.linalg.norm(P[:, 0])
+            np.testing.assert_allclose(np.abs(U[:, 1] @ e1), 1.0, atol=1e-9)   # e_1's projection comes first
+
+    def test_null_threshold_orders_a_three_dimensional_tie(self):
+        c = np.array([[0.5, 0.0, 0.0], [0.5, 5e-14, 0.0], [0.0, 0.0, 0.5]])   # c_1 differs from c_0 by 1e-13 relative
+        S = c.T @ c
+        lam, Q = np.linalg.eigh(np.eye(3) - S)
+        M = (Q * np.sqrt(np.clip(lam, 0, None))) @ Q.T
+        U = np.vstack([c, M])                                # 6 x 3, orthonormal columns
+        np.testing.assert_allclose(U.T @ U, np.eye(3), atol=1e-14)
+        A = cc._canonical_tied(U)
+        B = U.T @ A                                          # the k-coordinates of the canonical vectors
+        np.testing.assert_allclose(np.abs(B[:, 1]), [0.0, 1.0, 0.0], atol=1e-6)   # e_2's 1e-13 residual is genuine
+
+    def test_repeated_row_is_null(self):
+        a = 1.0 / np.sqrt(3.0)
+        U = np.array([[a, 0.0], [a, 0.0], [a, 0.0], [0.0, 1.0]])   # e_2's projection repeats e_1's exactly
+        A = cc._canonical_tied(U)
+        self.assertTrue(np.all(np.isfinite(A)))
+        np.testing.assert_allclose(A.T @ A, np.eye(2), atol=1e-14)
+        np.testing.assert_allclose(A[:, 1], [0.0, 0.0, 0.0, 1.0], atol=1e-15)
+
+    def test_relative_null_test(self):
+        U = np.array([[1e-15, 0.0], [0.0, 1.0], [1.0, 0.0]])  # e_1's projection is tiny but genuine
+        A = cc._canonical_tied(U)
+        np.testing.assert_allclose(A[:, 0], [1e-15, 0.0, 1.0], atol=1e-15)
+
+    def test_lambda_1_is_the_grading_spectrum(self):
+        B = np.array([[12.0, 1.0, 3.0], [1.0, 12.0, 3.0], [3.0, 3.0, 10.0]])
+        V = np.zeros((4, 4))
+        V[:3, :3] = B
+        V[3, 3] = 1.6e-11                                   # at the cut 1e-12 * 16
+        lam, _ = cc.eig_basis(V)
+        self.assertEqual(cc.lambda_1(V), lam[0])
+        self.assertEqual(cc.mode_readings(np.ones((3, 4)), V, V)["ndf"], int(np.sum(lam > 1e-12 * lam[0])))
+
     def test_tie_groups(self):
         self.assertEqual(cc.tie_groups(np.array([3.0, 2.0, 2.0, 1.0, 1.0, 1.0, 0.5])), [(1, 3), (3, 6)])
         self.assertEqual(cc.tie_groups(np.array([1.0])), [])
@@ -252,6 +294,15 @@ class ModeReadings(unittest.TestCase):
         self.assertAlmostEqual(r["F"]["SE"], float(psi.std(ddof=1) / math.sqrt(2)))
         self.assertNotIn("label", r["F"])
 
+    def test_three_toy_spread_oracle(self):
+        E = np.array([[1.0], [2.0], [6.0]])                 # V = 1: z = E, m = 3, v = 14/3
+        r = cc.mode_readings(E, np.eye(1), np.eye(1))
+        infl = (np.array([1.0, 2.0, 6.0]) - 3.0) ** 2 - 14.0 / 3.0
+        self.assertAlmostEqual(r["F"]["X"], 14.0 / 3.0)
+        self.assertAlmostEqual(r["F"]["SE"], float(infl.std(ddof=1) / math.sqrt(3)))
+        self.assertGreater(r["F"]["SE"], 0)
+        self.assertIn("approximate", r["F"]["coverage"])
+
     def test_spread_guard_refuses_at_zero_se(self):
         E = np.array([[1.0, 1.0], [-1.0, -1.0], [1.0, 1.0], [-1.0, -1.0]])   # (z - m)^2 = v for every toy
         r = cc.mode_readings(E, np.eye(2), np.eye(2))
@@ -323,6 +374,9 @@ class ModeReadings(unittest.TestCase):
         lk[2] = lk[1]                                         # numpy's record now claims an exact tie at ranks 2-3
         a = cc.evr_agreement(E, V, V, dict(rd, lambda_kept=lk))
         self.assertEqual(a["partition_differs_ranks"], [2, 3])
+        rd2 = dict(rd, lambda_kept=lk, v=rd["v"].copy())
+        rd2["v"][1:3] *= 50.0                                 # garbage on the excluded ranks
+        self.assertEqual(cc.evr_agreement(E, V, V, rd2)["max_d"], a["max_d"])
 
     def test_evr_refusal_is_a_diagnostic(self):
         V = np.eye(3)

@@ -98,23 +98,28 @@ def _sign_fix(U: np.ndarray) -> np.ndarray:
     return U * s
 
 
-GS_NULL = 100.0 * EPS      # a tied-space Gram-Schmidt residual at or below this (unit scale) is a null projection
+GS_NULL = 100.0 * EPS      # a tied-space Gram-Schmidt residual at or below this fraction of its own projection is null
 
 
 def _canonical_tied(U: np.ndarray) -> np.ndarray:
     """The ordered cell axes e_1, e_2, ... projected into span(U) and orthonormalised in that order, skipping null
     projections, until span(U) is spanned (section 5.2). Done in span(U)'s own coordinates: P e_j = U c_j with
     c_j = U[j, :], so every accepted vector is U times an orthonormal k-vector and cannot leave span(U). Two
-    orthogonalisation passes; a residual of norm at or below GS_NULL = 100 eps (unit scale) is null."""
+    orthogonalisation passes. The null test is relative to the projection itself: e_j is skipped when its projection is
+    exactly zero, or when orthogonalisation leaves at most GS_NULL = 100 eps of its own norm (it lies in the span already
+    built, to roundoff). A small but genuine projection is therefore kept in its order."""
     n, k = U.shape
     B = []
     for j in range(n):
         c = np.array(U[j, :], dtype=np.float64)
+        n0 = float(np.linalg.norm(c))
+        if n0 == 0.0:
+            continue
         for _ in range(2):
             for b in B:
                 c = c - (b @ c) * b
         nc = float(np.linalg.norm(c))
-        if nc > GS_NULL:
+        if nc > GS_NULL * n0:
             B.append(c / nc)
             if len(B) == k:
                 break
@@ -154,7 +159,9 @@ def eig_basis(V: np.ndarray, driver: str = "numpy") -> tuple[np.ndarray, np.ndar
 
 
 def lambda_1(V: np.ndarray) -> float:
-    return float(np.linalg.eigvalsh(sym(V))[-1])
+    """The largest eigenvalue from the grading solver's own routine (np.linalg.eigh), so a cut referenced to it uses the
+    same spectrum the readings use: when V is V_F, lambda_1(V_F) is exactly the graded lambda_1."""
+    return float(np.linalg.eigh(sym(V))[0][-1])
 
 
 def kept_mask(lam: np.ndarray, lam1_F: float) -> np.ndarray:
@@ -199,7 +206,7 @@ def guard(psi: np.ndarray, X: float | None = None, labelled: bool = True) -> dic
         return {"X": X if math.isfinite(X) else None, "SE": se if math.isfinite(se) else None, "h": None,
                 "refused": "zero or non-finite SE"}
     h = float(stats.t.ppf(0.975, n - 1) * se)
-    out = {"X": X, "SE": se, "h": h, "upper": X + h}
+    out = {"X": X, "SE": se, "h": h, "upper": X + h, "coverage": "approximate for quadratic toy scores (section 2)"}
     if labelled:
         out["label"] = label(X, h)
     return out
@@ -344,7 +351,7 @@ def cut_diagnostic(V_ref: np.ndarray, F_ref: np.ndarray, V_new: np.ndarray, F_ne
     outside = res > OUTSIDE_SPAN
     out_mask = np.zeros_like(kr)
     out_mask[np.flatnonzero(kr)[outside]] = True
-    return {"ndf_ref": int(kr.sum()), "ndf_new": int(kn.sum()),
+    return {"ndf_ref": int(kr.sum()), "ndf_new": int(kn.sum()), "outside_span_threshold": OUTSIDE_SPAN,
             "kept_ref_lambda": lam_r[kr], "kept_new_lambda": lam_n[kn],
             "ref_kept_outside_new_kept_span": _modes(out_mask, lam_r, res[outside]),
             "n_ref_kept_outside_new_kept_span": int(outside.sum()),

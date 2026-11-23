@@ -31,10 +31,12 @@ def psd(n, seed, rank=None, scale=1.0):
 
 def build(tmp: Path, *, cpl_scale=1e-3, cpl_small_second=False, break_q=False, break_s5=False, nonpsd=False,
           a0_off=False, ndf_off=False, zero_xT=False, ibukt_cells_off=False, map_off=False, g2r_map_off=False,
-          g2r_rep_off=False, g2r_nonpsd=False, ft_nonpsd=False, g2r_zero=False) -> dict:
+          g2r_rep_off=False, g2r_nonpsd=False, ft_nonpsd=False, g2r_zero=False, xR_zero=False) -> dict:
     """Write a synthetic world under tmp; return its pins and paths."""
     n = N_CELL
     x = np.linspace(1.0, 3.0, n)
+    if xR_zero:
+        x[5] = 0.0
     universe, stat, c08 = psd(n, 1), psd(n, 2, scale=0.3), psd(n, 3, scale=0.05)
     if nonpsd:
         c08 = c08 - 2.0 * np.eye(n) * np.linalg.eigvalsh(c08).max()
@@ -66,7 +68,7 @@ def build(tmp: Path, *, cpl_scale=1e-3, cpl_small_second=False, break_q=False, b
         xT = x * (1.0 + 0.1 * np.sin(np.arange(n) + k))
         if zero_xT and T == "AR23":
             xT[3] = 0.0
-        d = cc.carry_factor(np.where(xT == 0, 1.0, xT), x)
+        d = cc.carry_factor(np.where(xT == 0, 1.0, xT), np.where(x == 0, 1.0, x))
         Cm_T = cc.absolute(C_model, xT)
         C_T = cc.carry(s5, d) + Cm_T + psd(n, 10 + k, scale=0.01)
         E = np.random.default_rng(20 + k).multivariate_normal(np.full(n, 0.05), 2.0 * C_T, size=N_TOY)
@@ -129,7 +131,7 @@ class Base(unittest.TestCase):
             return p0.run(w["q"], w["g2r"]), w
 
     def world(self, w):
-        Z = p0.load_npz(w["q"])
+        Z = p0.load_npz(w["q"].read_bytes())
         S = json.loads(w["pins"]["cmodel_json"][0].read_text())["S"]
         K0 = Z["Q"] + cc.absolute(bcm.cmodel(np.asarray(S)), Z["x"])
         return Z, K0
@@ -157,8 +159,8 @@ class Run(Base):
     def test_carry_matches_formula(self):
         rec, w = self.go()
         Z, K0 = self.world(w)
-        B = p0.load_npz(w["pins"]["blocks_G18"][0])
-        E = p0.load_npz(w["pins"]["E_G18"][0])["E"]
+        B = p0.load_npz(w["pins"]["blocks_G18"][0].read_bytes())
+        E = p0.load_npz(w["pins"]["E_G18"][0].read_bytes())["E"]
         d = B["x_T"] / Z["x"]
         r = cc.mode_readings(E, d[:, None] * K0 * d[None, :], d[:, None] * Z["Q"] * d[None, :])
         got = rec["carry_check"]["G18"]["xhat_committed"]["K0_carried"]
@@ -185,8 +187,8 @@ class Run(Base):
     def test_c2_carried_directions(self):
         rec, w = self.go()
         Z, _ = self.world(w)
-        B = p0.load_npz(w["pins"]["blocks_AR23"][0])
-        E = p0.load_npz(w["pins"]["E_AR23"][0])["E"]
+        B = p0.load_npz(w["pins"]["blocks_AR23"][0].read_bytes())
+        E = p0.load_npz(w["pins"]["E_AR23"][0].read_bytes())["E"]
         lam, U = cc.eig_basis(cc.carry(Z["C_PL"], B["x_T"] / Z["x"]))
         got = rec["c2"]["AR23"]["carried_to_tune"]["directions"]
         self.assertEqual([g["mu"] for g in got], [float(v) for v in lam[:2]])
@@ -207,7 +209,7 @@ class Run(Base):
     def test_residual_rule_pair_is_regrade(self):
         rec, w = self.go()
         Z, _ = self.world(w)
-        B = p0.load_npz(w["pins"]["blocks_G18"][0])
+        B = p0.load_npz(w["pins"]["blocks_G18"][0].read_bytes())
         F = B["C_T"] - B["C_model_abs"]
         Cr = cc.carry(Z["C_PL"], B["x_T"] / Z["x"])
         want = cc.residual_rule(B["C_T"], F, B["C_T"] + Cr, F + Cr)
@@ -218,7 +220,7 @@ class Run(Base):
     def test_residual_fire_stops_before_readings(self):
         rec, w = self.go(cpl_scale=1e12)            # lambda_1(F_new) moves the new cut; no precision loss
         Z, _ = self.world(w)
-        B = p0.load_npz(w["pins"]["blocks_G18"][0])
+        B = p0.load_npz(w["pins"]["blocks_G18"][0].read_bytes())
         F = B["C_T"] - B["C_model_abs"]
         Cr = cc.carry(Z["C_PL"], B["x_T"] / Z["x"])
         want = cc.residual_rule(B["C_T"], F, B["C_T"] + Cr, F + Cr)
@@ -233,7 +235,7 @@ class Run(Base):
 
     def test_stops(self):
         cases = {"break_q": "C-ID", "break_s5": "C-ID", "nonpsd": "C-PSD", "g2r_nonpsd": "C-PSD",
-                 "ft_nonpsd": "C-PSD", "a0_off": "A0", "ndf_off": "A0", "zero_xT": "carry",
+                 "ft_nonpsd": "C-PSD", "a0_off": "A0", "ndf_off": "A0",
                  "ibukt_cells_off": "IBUKT", "map_off": "C-MAP", "g2r_rep_off": "C-MAP"}
         for k, word in cases.items():
             with self.subTest(k):
@@ -243,6 +245,69 @@ class Run(Base):
                         rec = p0.run(w["q"], w["g2r"])
                 self.assertEqual(rec["status"], "STOP", k)
                 self.assertIn(word, rec["stop"], k)
+
+    def test_carry_refusal_is_scoped_to_its_tune(self):
+        rec, _ = self.go(zero_xT=True)                       # AR23's x_T has a zero cell
+        self.assertEqual(rec["status"], DONE, rec.get("stop"))
+        self.assertIn("refused", rec["controls"]["carry_AR23"])
+        self.assertNotIn("carry_G18", rec["controls"])
+        self.assertIn("refused", rec["carry_check"]["AR23"]["xhat_committed"])
+        self.assertIn("refused", rec["profiles"]["AR23"]["K0_carried"])
+        self.assertIn("M", rec["profiles"]["AR23"]["C_T"])
+        self.assertIn("residual", rec["residual_rule"]["AR23"])      # REGRADE's carry forms C_run with a zero cell
+        self.assertIn("M", rec["carry_check"]["G18"]["xhat_committed"]["K0_carried"])
+        names = [r["name"] for r in rec["controls"]["C_PSD"]]
+        self.assertNotIn("K0 carried(AR23)", names)
+        self.assertIn("K0 carried(G18)", names)
+
+    def test_regrade_pair_unavailable_at_a_zero_x_R(self):
+        rec, _ = self.go(xR_zero=True)
+        self.assertEqual(rec["status"], DONE, rec.get("stop"))
+        for T in p0.TUNES:
+            self.assertIn("unavailable", rec["residual_rule"][T])
+            self.assertIn("unavailable", rec["c2"][T])
+            self.assertIn("refused", rec["controls"]["carry_" + T])
+
+    def test_regrade_c_run_unavailable(self):
+        self.assertIsNone(p0.regrade_c_run(np.eye(2), np.ones(2), np.array([1.0, 0.0])))
+        np.testing.assert_array_equal(p0.regrade_c_run(np.eye(2), np.array([0.0, 2.0]), np.ones(2)),
+                                      np.diag([0.0, 4.0]))
+
+    def test_inputs_parsed_from_the_hashed_bytes(self):
+        w = build(self.tmp)
+        real = p0.read_pinned
+        seen = []
+
+        def spy(path, want):
+            data = real(path, want)
+            seen.append(Path(path))
+            Path(path).write_bytes(b"replaced")             # a swap after the check cannot be read
+            return data
+        with patched(w), mock.patch.object(p0, "read_pinned", spy):
+            rec = p0.run(w["q"], w["g2r"])
+        self.assertEqual(rec["status"], DONE, rec.get("stop"))
+        self.assertEqual(len(seen), len(set(seen)))          # each input read exactly once
+
+    def test_ibukt_arm_shape_and_missing(self):
+        for bad in ("column", "missing"):
+            with self.subTest(bad), tempfile.TemporaryDirectory() as td:
+                w = build(Path(td))
+                ib = w["pins"]["ibukt_readout"][0]
+                R = json.loads(ib.read_text())
+                if bad == "column":
+                    R["truths"]["nuwro"]["omnifold"]["mean"] = [[v] for v in R["truths"]["nuwro"]["omnifold"]["mean"]]
+                else:
+                    del R["truths"]["nuwro"]["omnifold"]
+                ib.write_text(json.dumps(R))
+                w["pins"]["ibukt_readout"] = (ib, p0.sha256(ib))
+                with patched(w):
+                    rec = p0.run(w["q"], w["g2r"])
+                self.assertEqual(rec["status"], "STOP")
+                self.assertIn("IBUKT", rec["stop"])
+
+    def test_ibukt_empty_basis(self):
+        out = p0.ibukt({"truths": {}}, np.zeros((3, 3)), np.eye(3), np.ones(3))
+        self.assertIn("refused", out)
 
     def test_ibukt_checked_in_preflight(self):
         rec, _ = self.go(ibukt_cells_off=True)
@@ -307,6 +372,26 @@ class A0(unittest.TestCase):
     def test_no_positive_eigenvalue_stops(self):
         with self.assertRaises(p0.Stop):
             p0.a0_tol(np.zeros((2, 2)))
+        with self.assertRaises(p0.Stop):                                             # before any scoring
+            p0.a0_control(np.ones((3, 2)), np.zeros((2, 2)), {"chi2_mean_over_ndf": 1.0, "ndf": 2})
+
+    def test_positivity_checked_before_the_grader(self):
+        with mock.patch.object(p0.fn, "chi2_nonnull", side_effect=RuntimeError("grader refused")):
+            with self.assertRaises(p0.Stop):
+                p0.a0_control(np.ones((3, 2)), np.zeros((2, 2)), {"chi2_mean_over_ndf": 1.0, "ndf": 2})
+
+    def test_zero_reference(self):
+        C = np.eye(2)
+        self.assertTrue(p0.a0_control(np.zeros((3, 2)), C, {"chi2_mean_over_ndf": 0.0, "ndf": 2})["pass"])
+        with self.assertRaises(p0.Stop):
+            p0.a0_control(np.ones((3, 2)), C, {"chi2_mean_over_ndf": 0.0, "ndf": 2})
+
+    def test_literal_scores(self):
+        C = np.diag([4.0, 1.0])                              # E rows (2, 1) and (0, 1): chi2 = 2 and 1, mean/ndf = 0.75
+        E = np.array([[2.0, 1.0], [0.0, 1.0]])
+        self.assertTrue(p0.a0_control(E, C, {"chi2_mean_over_ndf": 0.75 * (1 + 5e-10), "ndf": 2})["pass"])
+        with self.assertRaises(p0.Stop):
+            p0.a0_control(E, C, {"chi2_mean_over_ndf": 0.75 * (1 + 2e-9), "ndf": 2})
 
     def test_inside_and_outside(self):
         C = np.diag([1.0, 1e-9])

@@ -29,6 +29,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import io
 import json
 import math
 import sys
@@ -86,18 +87,21 @@ def sha256(path: Path) -> str:
     return h.hexdigest()
 
 
-def pinned(path: Path, want: str) -> Path:
+def read_pinned(path: Path, want: str) -> bytes:
+    """The file's bytes, read once, with their sha256 checked: every loader parses these same bytes, so the digest in
+    the record is the digest of what was consumed (a replacement after the check cannot be read)."""
     try:
-        got = sha256(path)
+        data = Path(path).read_bytes()
     except OSError as e:
         raise Stop(f"C-PIN: {path} cannot be read ({e})") from e
+    got = hashlib.sha256(data).hexdigest()
     if got != want:
         raise Stop(f"C-PIN: {path} is {got}, pinned {want}")
-    return path
+    return data
 
 
-def load_npz(path: Path) -> dict:
-    with np.load(path, allow_pickle=False) as z:
+def load_npz(data: bytes) -> dict:
+    with np.load(io.BytesIO(data), allow_pickle=False) as z:
         return {k: np.asarray(z[k]) for k in z.files}
 
 
@@ -114,7 +118,7 @@ def q_identities(Z: dict) -> dict:
 
 
 def c_model() -> tuple[np.ndarray, dict]:
-    M = json.loads(pinned(*PINS["cmodel_json"]).read_text())
+    M = json.loads(read_pinned(*PINS["cmodel_json"]))
     C = bcm.cmodel(np.asarray(M["S"], np.float64))
     got = bcm.matrix_sha256(C)
     if got != C_MODEL_SHA:
@@ -143,11 +147,13 @@ def a0_tol(C: np.ndarray) -> dict:
 
 
 def a0_control(E: np.ndarray, C_T: np.ndarray, committed: dict) -> dict:
-    """COV2D's legacy grading path (fd_1b_null.chi2_nonnull on the raw C_T), as COV2D and REGRADE graded."""
+    """COV2D's legacy grading path (fd_1b_null.chi2_nonnull on the raw C_T), as COV2D and REGRADE graded. The positive
+    grading spectrum is established first (a0_tol's STOP); a committed value of exactly zero is matched only by zero."""
+    t = a0_tol(C_T)
     chi2, ndf = fn.chi2_nonnull(E, C_T)
     got = float(chi2.mean() / ndf)
-    t = a0_tol(C_T)
-    rel = abs(got / committed["chi2_mean_over_ndf"] - 1.0)
+    ref = committed["chi2_mean_over_ndf"]
+    rel = (0.0 if got == 0.0 else math.inf) if ref == 0 else abs(got / ref - 1.0)
     rec = {"ndf": ndf, "ndf_committed": committed["ndf"], "chi2_mean_over_ndf": got,
            "committed": committed["chi2_mean_over_ndf"], "rel": rel, **t}
     rec["pass"] = bool(ndf == committed["ndf"] and rel <= t["tol"])
@@ -217,10 +223,11 @@ def carry_compare(E, K0_T, Q_T, C_T, F_T) -> dict:
 
 def ibukt_load(cells: np.ndarray) -> dict:
     """Preflight: IBUKT A2's readout, pinned, with every truth's cell order equal to Q_rep's and E_R's arm present."""
-    R = json.loads(pinned(*PINS["ibukt_readout"]).read_text())
+    R = json.loads(read_pinned(*PINS["ibukt_readout"]))
     for t, rec in R["truths"].items():
-        if [int(c) for c in rec["cells"]] != [int(c) for c in cells] or len(rec[E_R_METHOD]["mean"]) != len(cells):
-            raise Stop(f"C-MAP: IBUKT {t} cells differ from Q_rep's")
+        arm = np.asarray(rec.get(E_R_METHOD, {}).get("mean", []), dtype=np.float64)
+        if [int(c) for c in rec["cells"]] != [int(c) for c in cells] or arm.shape != (len(cells),):
+            raise Stop(f"C-MAP: IBUKT {t}'s cells or its {E_R_METHOD} mean vector do not align with Q_rep's cells")
     return R
 
 
@@ -228,6 +235,8 @@ def ibukt(R: dict, K0: np.ndarray, Q: np.ndarray, x_R: np.ndarray) -> dict:
     lam, U = cc.eig_basis(K0)
     keep = cc.kept_mask(lam, cc.lambda_1(Q))
     lk, Uk = lam[keep], U[:, keep]
+    if not keep.any():
+        return {"method": E_R_METHOD, "refused": "no kept mode in K0's basis"}
     out = {"method": E_R_METHOD, "ndf": int(keep.sum()),
            "convention": "an E_R-scaled residual: IBUKT's residual is estimate / truth - 1 per cell "
                          "(2d-unfolding/ibukt/ibukt.py:182); b = mean residual x x_R (E_R's reported spectrum), "
@@ -237,6 +246,14 @@ def ibukt(R: dict, K0: np.ndarray, Q: np.ndarray, x_R: np.ndarray) -> dict:
         b = np.asarray(rec[E_R_METHOD]["mean"], np.float64) * x_R
         out["truths"][t] = {"m": (Uk.T @ b) / np.sqrt(lk)}
     return out
+
+
+def regrade_c_run(C_PL: np.ndarray, x_T: np.ndarray, x_R: np.ndarray) -> np.ndarray | None:
+    """C_run(T) exactly as REGRADE carried it (regrade_crep.carry_frac: diag(x_T / x_R) C_PL diag(x_T / x_R)), with no
+    COVFIX refusal on a zero numerator; None if the ratio is not finite (the pair cannot be formed)."""
+    with np.errstate(divide="ignore", invalid="ignore"):
+        r = np.asarray(x_T, np.float64) / np.asarray(x_R, np.float64)
+    return cc.carry(C_PL, r) if np.all(np.isfinite(r)) else None
 
 
 def profile(E, V, VF) -> dict:
@@ -267,16 +284,16 @@ def run(q_rep: Path, g2r_dir: Path) -> dict:
            "status": "running", "inputs": {}, "controls": {}}
     try:
         # 1 inputs
-        Z = load_npz(pinned(q_rep, Q_REP_SHA))
+        Z = load_npz(read_pinned(q_rep, Q_REP_SHA))
         out["inputs"]["Q_rep"] = {"path": str(q_rep), "sha256": Q_REP_SHA}
         C_model, rec_cm = c_model()
         T_in = {}
         for T in TUNES:
             gp = g2r_dir / T / f"blocks_g2r_{T}.npz"
-            T_in[T] = {"E": load_npz(pinned(*PINS[f"E_{T}"]))["E"].astype(np.float64),
-                       "B": load_npz(pinned(*PINS[f"blocks_{T}"])),
-                       "G": load_npz(pinned(gp, G2R_SHA[T])),
-                       "score": json.loads(pinned(*PINS[f"score_{T}"]).read_text())["grade"]}
+            T_in[T] = {"E": load_npz(read_pinned(*PINS[f"E_{T}"]))["E"].astype(np.float64),
+                       "B": load_npz(read_pinned(*PINS[f"blocks_{T}"])),
+                       "G": load_npz(read_pinned(gp, G2R_SHA[T])),
+                       "score": json.loads(read_pinned(*PINS[f"score_{T}"]))["grade"]}
             out["inputs"][f"G2R_{T}"] = {"path": str(gp), "sha256": G2R_SHA[T]}
         R_ib = ibukt_load(Z["cells"])
         out["inputs"]["committed"] = {k: {"path": str(p), "sha256": s} for k, (p, s) in PINS.items()}
@@ -292,17 +309,24 @@ def run(q_rep: Path, g2r_dir: Path) -> dict:
         for T, t in T_in.items():
             B, G = t["B"], t["G"]
             out["controls"][f"map_{T}"] = cell_map(Z, B, G)
-            d = cc.carry_factor(B["x_T"], x_R)
-            dv = {"d": d, "F_T": B["C_T"] - B["C_model_abs"], "K0_T": cc.carry(K0, d), "Q_T": cc.carry(Z["Q"], d),
-                  "C_run": cc.carry(Z["C_PL"], d), "F_G": G["C_T"] - G["C_model_abs"],
-                  "Cm_T_rebuilt": cc.absolute(C_model, B["x_T"])}
-            derived[T] = dv
+            dv = {"F_T": B["C_T"] - B["C_model_abs"], "F_G": G["C_T"] - G["C_model_abs"],
+                  "Cm_T_rebuilt": cc.absolute(C_model, B["x_T"]), "C_run": regrade_c_run(Z["C_PL"], B["x_T"], x_R)}
             blocks |= {f"C_T({T})": B["C_T"], f"C_model_abs({T})": B["C_model_abs"], f"F_T({T})": dv["F_T"],
                        f"C_model_abs rebuilt({T})": dv["Cm_T_rebuilt"],
                        f"C_T_prime({T})": G["C_T"], f"C_model_abs_G2R({T})": G["C_model_abs"],
-                       f"F_T_prime({T})": dv["F_G"], f"K0 carried({T})": dv["K0_T"], f"Q carried({T})": dv["Q_T"],
-                       f"C_run({T})": dv["C_run"], f"C_T + C_run({T})": B["C_T"] + dv["C_run"],
-                       f"F_T + C_run({T})": dv["F_T"] + dv["C_run"]}
+                       f"F_T_prime({T})": dv["F_G"]}
+            try:                                             # section 2: the carry refuses at this truth only
+                d = cc.carry_factor(B["x_T"], x_R)
+                dv |= {"K0_T": cc.carry(K0, d), "Q_T": cc.carry(Z["Q"], d)}
+                blocks |= {f"K0 carried({T})": dv["K0_T"], f"Q carried({T})": dv["Q_T"]}
+            except cc.Refusal as e:
+                dv["carry_refused"] = str(e)
+                out["controls"][f"carry_{T}"] = {"refused": str(e)}
+            if dv["C_run"] is not None:
+                dv |= {"CT_run": B["C_T"] + dv["C_run"], "FT_run": dv["F_T"] + dv["C_run"]}
+                blocks |= {f"C_run({T})": dv["C_run"], f"C_T + C_run({T})": dv["CT_run"],
+                           f"F_T + C_run({T})": dv["FT_run"]}
+            derived[T] = dv
         out["controls"]["C_PSD"] = psd_all(blocks)
         for T, t in T_in.items():
             Cb, Cr = cc.sym(t["B"]["C_model_abs"]), cc.sym(derived[T]["Cm_T_rebuilt"])
@@ -312,11 +336,14 @@ def run(q_rep: Path, g2r_dir: Path) -> dict:
         out["residual_rule"] = {}
         for T, t in T_in.items():
             B, dv = t["B"], derived[T]
-            args = (B["C_T"], dv["F_T"], B["C_T"] + dv["C_run"], dv["F_T"] + dv["C_run"])
+            if dv["C_run"] is None:
+                out["residual_rule"][T] = {"unavailable": "x_T / x_R is not finite: the regrade pair cannot be formed"}
+                continue
+            args = (B["C_T"], dv["F_T"], dv["CT_run"], dv["FT_run"])     # the arrays C-PSD checked
             rr = cc.residual_rule(*args)
             rr["cut_diagnostic"] = cc.cut_diagnostic(*args)
             out["residual_rule"][T] = rr
-        fired = [T for T, rr in out["residual_rule"].items() if rr["fires"]]
+        fired = [T for T, rr in out["residual_rule"].items() if rr.get("fires")]
         if fired:
             raise Stop(f"the residual rule fires on the regrade pair at {fired} "
                        f"({[repr(out['residual_rule'][T]['residual']) for T in fired]} > 0.1); P0 stops before "
@@ -325,15 +352,16 @@ def run(q_rep: Path, g2r_dir: Path) -> dict:
         out |= {"carry_check": {}, "profiles": {}, "c2": {}}
         for T, t in T_in.items():
             E, B, G, dv = t["E"], t["B"], t["G"], derived[T]
+            refused = {"refused": dv["carry_refused"]} if "carry_refused" in dv else None
             out["carry_check"][T] = {
-                "xhat_committed": scoped(carry_compare, E, dv["K0_T"], dv["Q_T"], B["C_T"], dv["F_T"]),
+                "xhat_committed": refused or scoped(carry_compare, E, dv["K0_T"], dv["Q_T"], B["C_T"], dv["F_T"]),
                 "xhat_round": "pending W1 (section 3.1: the round(lambda+) vector's unfolds run in W1)"}
-            prof = {}
-            for name, V, VF in (("K0_carried", dv["K0_T"], dv["Q_T"]), ("C_T", B["C_T"], dv["F_T"]),
-                                ("C_T_prime_G2R", G["C_T"], dv["F_G"])):
+            prof = {"K0_carried": refused or scoped(profile, E, dv["K0_T"], dv["Q_T"])}
+            for name, V, VF in (("C_T", B["C_T"], dv["F_T"]), ("C_T_prime_G2R", G["C_T"], dv["F_G"])):
                 prof[name] = scoped(profile, E, V, VF)
             out["profiles"][T] = prof
-            out["c2"][T] = c2(E, Z["C_PL"], dv["d"])
+            out["c2"][T] = (c2(E, Z["C_PL"], B["x_T"] / x_R) if dv["C_run"] is not None
+                            else {"unavailable": "x_T / x_R is not finite"})
         out["ibukt_a2"] = ibukt(R_ib, K0, Z["Q"], x_R)
         out["status"] = "done (pre-W1 part)"
     except (Stop, cc.Refusal) as e:

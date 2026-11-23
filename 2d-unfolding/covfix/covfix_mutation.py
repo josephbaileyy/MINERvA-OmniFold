@@ -36,7 +36,7 @@ MUTANTS = [
     ("no-sign-fix", C, "    return U * s\n", "    return U\n"),
     ("ascending", C, 'order = np.argsort(lam, kind="stable")[::-1]', 'order = np.argsort(lam, kind="stable")'),
     ("no-tie-canon", C, "        if j - i > 1:\n", "        if j - i > 99:\n"),
-    ("gs-null-skip", C, "        if nc > GS_NULL:\n", "        if nc >= 0:\n"),
+    ("gs-null-skip", C, "        if nc > GS_NULL * n0:\n", "        if nc >= 0:\n"),
     ("gs-tol-fixed", C, "GS_NULL = 100.0 * EPS ", "GS_NULL = 1e-10 "),
     ("evr-raw", C, '        lam, U = sl.eigh(S, driver="evr")\n',
      '        lam, U = sl.eigh(S, driver="evr")\n        return lam[::-1], U[:, ::-1]\n'),
@@ -70,11 +70,11 @@ MUTANTS = [
     ("psd-reference-only", P, '            blocks |= {f"C_T({T})": B["C_T"],', '            blocks |= {} and {f"C_T({T})": B["C_T"],'),
     ("g2r-map-dropped", P, '"G2R x_T = blocks x_T": bool(np.array_equal(G["x_T"], B["x_T"]))', '"G2R x_T = blocks x_T": True'),
     ("g2r-rep-dropped", P, '"G2R rep = blocks rep": bool(np.array_equal(G["rep"], B["rep"])),', '"G2R rep = blocks rep": True,'),
-    ("vf-uncarried", P, '"Q_T": cc.carry(Z["Q"], d),', '"Q_T": Z["Q"],'),
-    ("pair-no-crun", P, 'args = (B["C_T"], dv["F_T"], B["C_T"] + dv["C_run"], dv["F_T"] + dv["C_run"])',
-     'args = (B["C_T"], dv["F_T"], B["C_T"], dv["F_T"] + dv["C_run"])'),
-    ("pair-fnew-no-crun", P, 'args = (B["C_T"], dv["F_T"], B["C_T"] + dv["C_run"], dv["F_T"] + dv["C_run"])',
-     'args = (B["C_T"], dv["F_T"], B["C_T"] + dv["C_run"], dv["F_T"])'),
+    ("vf-uncarried", P, '"Q_T": cc.carry(Z["Q"], d)}', '"Q_T": Z["Q"]}'),
+    ("pair-no-crun", P, 'dv |= {"CT_run": B["C_T"] + dv["C_run"], "FT_run": dv["F_T"] + dv["C_run"]}',
+     'dv |= {"CT_run": B["C_T"], "FT_run": dv["F_T"] + dv["C_run"]}'),
+    ("pair-fnew-no-crun", P, 'dv |= {"CT_run": B["C_T"] + dv["C_run"], "FT_run": dv["F_T"] + dv["C_run"]}',
+     'dv |= {"CT_run": B["C_T"] + dv["C_run"], "FT_run": dv["F_T"]}'),
     ("fire-not-stop", P, "        if fired:\n", "        if False:\n"),
     ("ibukt-no-xR", P, 'b = np.asarray(rec[E_R_METHOD]["mean"], np.float64) * x_R',
      'b = np.asarray(rec[E_R_METHOD]["mean"], np.float64)'),
@@ -95,8 +95,17 @@ MUTANTS = [
     ("c2-uncarried", P, '(("carried_to_tune", cc.carry(C_PL, d)),', '(("carried_to_tune", C_PL),'),
     ("c2-cut-drops-second", P, "zip(lam[:2], U[:, :2].T)", "zip(lam[lam > 1e-12 * lam[0]], U[:, lam > 1e-12 * lam[0]].T)"),
     ("c2-share-zero", P, '"share_of_ebar2": p * p / n2 if n2 > 0 else None', '"share_of_ebar2": p * p / n2 if n2 >= 0 else None'),
-    ("g2r-unpinned", P, '"G": load_npz(pinned(gp, G2R_SHA[T])),', '"G": load_npz(gp),'),
+    ("g2r-unpinned", P, '"G": load_npz(read_pinned(gp, G2R_SHA[T])),', '"G": load_npz(Path(gp).read_bytes()),'),
     ("pin-oserror", P, '        raise Stop(f"C-PIN: {path} cannot be read ({e})") from e\n', "        raise\n"),
+    ('gs-null-absolute', C, '        if nc > GS_NULL * n0:\n', '        if nc > GS_NULL:\n'),
+    ('lambda1-eigvalsh', C, '    return float(np.linalg.eigh(sym(V))[0][-1])\n', '    return float(np.linalg.eigvalsh(sym(V))[-1])\n'),
+    ('a0-score-first', P, '    t = a0_tol(C_T)\n    chi2, ndf = fn.chi2_nonnull(E, C_T)\n', '    chi2, ndf = fn.chi2_nonnull(E, C_T)\n    got0 = float(chi2.mean() / ndf)\n    t = a0_tol(C_T)\n'),
+    ('a0-zero-ref-divides', P, 'rel = (0.0 if got == 0.0 else math.inf) if ref == 0 else abs(got / ref - 1.0)', 'rel = abs(got / ref - 1.0) if ref != 0 else 0.0'),
+    ('carry-refusal-global', P, '                dv["carry_refused"] = str(e)\n', '                raise\n'),
+    ('c-run-covfix-carry', P, '    return cc.carry(C_PL, r) if np.all(np.isfinite(r)) else None', '    return cc.carry(C_PL, cc.carry_factor(x_T, x_R))'),
+    ('ibukt-arm-shape', P, 'arm.shape != (len(cells),)', 'arm.size != len(cells)'),
+    ('ibukt-empty-ok', P, '    if not keep.any():\n        return {"method": E_R_METHOD, "refused"', '    if False:\n        return {"method": E_R_METHOD, "refused"'),
+    ('pin-reread', P, '        Z = load_npz(read_pinned(q_rep, Q_REP_SHA))', '        Z = (read_pinned(q_rep, Q_REP_SHA), load_npz(Path(q_rep).read_bytes()))[1]'),
     ("rc-stop-0", P, 'return 0 if rec["status"] == "done (pre-W1 part)" else 3', "return 0"),
 ]
 
@@ -119,9 +128,9 @@ def run_tests(d: Path) -> tuple[int, str]:
                        env=env, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, stdin=subprocess.DEVNULL,
                        timeout=600, text=True)
     lines = r.stderr.splitlines()
-    named = [ln for ln in lines if ln.startswith(("FAIL: ", "ERROR: ")) and "_FailedTest" not in ln]
-    if r.returncode != 0 and not named:                   # an import, discovery or crash failure, not a detection
-        return -1, "HARNESS: " + (lines[-1] if lines else "no stderr")
+    named = [ln for ln in lines if ln.startswith(("FAIL: ", "ERROR: "))]
+    if r.returncode != 0 and (not named or any("_FailedTest" in ln for ln in named)):
+        return -1, "HARNESS: " + (lines[-1] if lines else "no stderr")   # import, discovery or crash, not detection
     return r.returncode, (named[0] if named else (lines[-1] if lines else ""))
 
 
