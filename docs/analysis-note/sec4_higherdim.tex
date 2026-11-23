@@ -2,10 +2,34 @@
 \label{sec:part-higher-dimensional}
 \label{sec:part-q3}
 
+Adding $E_{\mathrm{avail}}$, $q_3$, and $W$ preserves the normalization, and the
+higher-dimensional central values agree with the lower-dimensional results in
+the tested projections (Sec.~\ref{sec:higher-dimensional-extension}).
+Recovering the joint distribution and calibrating its intervals at the reported
+resolution is not yet achieved. In simulation, joint cells and generator-sized
+changes are recovered only in part (Sec.~\ref{sec:higher-dimensional-closure}).
+The sixteen-cell estimator retains part of the prior at the truths flagged by
+its bias test and differs from binned IBU on the same inputs
+(Sec.~\ref{sec:higher-dimensional-prior}). Its intervals under-cover at both
+held-out simulation tunes, and its central values are sensitive to
+rounding-level changes in the inputs
+(Sec.~\ref{sec:higher-dimensional-calibration}). A study that replaces one part
+of the procedure at a time finds the retention consistent with a limit set by
+the weights of events that fail the selection at the GiBUU hybrid and with a
+limit set by the representation of the truth-level step at the $q_3$ tilt
+(Sec.~\ref{sec:fived16-prr}). Table~\ref{tab:higher-dimensional-validation}
+lists the tests and marks each as prespecified, with its criterion recorded
+before its outcome was read, or descriptive.
+
 \subsection{Extension to \texorpdfstring{$E_{\mathrm{avail}}$, $q_3$, and $W$}{available energy, momentum transfer, and hadronic mass}}
 \label{sec:higher-dimensional-extension}
 \label{sec:3d}
 \label{sec:uq-higherdim}
+
+The added observables change the normalization and the tested projections
+only slightly. At low recoil the unfolded cross section exceeds the GENIE 2.12.10
+and Tune v1 predictions, and in the \resFiveAxis{} the excess is concentrated at
+$W<1.1~\mathrm{GeV}$.
 
 Adding available hadronic energy and three-momentum transfer to the muon
 momenta gives the three- and four-dimensional (3D and 4D) central values.
@@ -207,25 +231,28 @@ cell integrals and uncertainty budget.
 \label{sec:val-fiveaxis}
 
 \label{sec:3d-closure}
+In simulation, a marginal distribution can meet its recovery criterion while
+the joint cells miss their targets, and generator-sized changes are recovered
+only in part. The closure tests reweight simulated truth events and their
+reconstructed partners, unfold the reconstructed sample, and compare with the
+reweighted truth. All tests use the simulated MINERvA detector response,
+including those that take their truth shapes from other generators.
+
 In signal-only purity unfoldings, the injected features leave a residual of
 $1.84\%$ in the 3D $E_{\mathrm{avail}}$ marginal and at most $1.1\%$ in the
-4D $q_3$ marginal. The five-axis $W$ marginal meets its prespecified recovery
-criterion. The joint $(E_{\mathrm{avail}},W)$ cells in the same peak
-interval are $2.2\%$ to $9.4\%$ below their targets, and some injected
-strength appears in adjacent mass bins. The
-\hyperlink{validation-nd-bumps}{marginal bump} and
+4D $q_3$ marginal; these two readings are descriptive. The five-axis $W$
+marginal meets its prespecified recovery criterion, but the joint
+$(E_{\mathrm{avail}},W)$ cells in the same peak interval are $2.2\%$ to $9.4\%$
+below their targets, and some injected strength appears in adjacent mass bins
+(\hyperlink{validation-nd-bumps}{marginal bump} and
 \hyperlink{validation-nd-w-bump}{$W$ bump} rows of
-Table~\ref{tab:validation-inventory} give each test's criterion or descriptive status.
+Table~\ref{tab:validation-inventory}).
 Appendix~\ref{app:comparison-closure-coverage} gives the injected shapes.
 
-These closure tests reweight simulated truth events and their reconstructed
-partners, unfold the reconstructed sample, and compare with the reweighted
-truth. All tests use the simulated MINERvA detector response, including
-those that take their truth shapes from other generators.
-
 \label{sec:val-negweight}
-We compare three background-subtraction configurations at nominal truth.
-With the deterministic purity control, the highest-$W$ column of the
+At nominal truth, the negative-weight refinement removes most of the bias that
+purity subtraction leaves at high $W$. We compare three
+background-subtraction configurations. With the deterministic purity control, the highest-$W$ column of the
 $E_{\mathrm{avail}}$--$W$ plane is $3.5\%$ to $4.1\%$ low, except for the
 highest-energy corner, which is $1.7\%$ high. The low-capacity negative-weight
 refinement reduces the absolute residuals to $0.11\%$--$0.24\%$ in that column
@@ -234,9 +261,8 @@ remain up to $1.0\%$ high, up to 14 standard errors, and fail the nominal
 closure criterion (Fig.~\ref{fig:bkg-residual-note}). The sixteen-cell
 estimator passes the nominal closure criterion in 40 fresh pseudo-experiments,
 with a largest deviation of 2.7 standard errors, and has a pooled statistical
-pull width of 1.02. The
-comparison is descriptive because no common acceptance criterion was
-set in advance for the three configurations.
+pull width of 1.02. No common criterion was set in advance for the three
+configurations, so the comparison is descriptive.
 
 \begin{figure}[tbp]
   \centering
@@ -263,8 +289,8 @@ unbinned learner resolves background variation within the bin
 tested integrals by a median of $0.36\%$ and at most $1.4\%$.
 
 \label{sec:val-departure}
-The low-capacity refinement fails the prespecified recovery criterion
-for a generator-sized truth change. The test uses a generator-sized deformation, a GiBUU-to-GENIE
+The low-capacity refinement fails its recovery criterion
+for a generator-sized truth change, a GiBUU-to-GENIE
 $E_{\mathrm{avail}}$ shape ratio with weights from 0.70 to 1.33 at
 fixed total rate (Appendix~\ref{app:bias-prior-stability}). The median absolute residual in the
 $(E_{\mathrm{avail}},W)$ plane is $9.7\%$ and reaches $74\%$ in the
@@ -287,15 +313,17 @@ include these residuals.
 \label{sec:higher-dimensional-prior}
 \label{sec:fived16-fd}
 
+The sixteen-cell result depends on the starting distribution and on the
+unfolding procedure.
 The sixteen-cell estimator exceeds the prespecified bias criteria at
 \fvval{f0b-nlisted} of the \fvval{f0b-all-truths} simulated truths. The test
 compares the mean unfolded vector with the known truth using $C_{\mathrm{rep}}$,
 with the corresponding $C_{\mathrm{model}}$ contribution removed for each
 truth derived from one of its generators. A truth is flagged if
 $p<\fvval{trig-p}$ or any cell has an absolute standardized residual
-$|z|>\fvval{trig-z}$. The
-\hyperlink{validation-sixteen-bias}{fake-data bias row} of
-Table~\ref{tab:validation-inventory} gives the scoring thresholds.
+$|z|>\fvval{trig-z}$
+(\hyperlink{validation-sixteen-bias}{fake-data bias row} of
+Table~\ref{tab:validation-inventory}).
 
 The GiBUU hybrid, which uses GiBUU bin integrals and the MINERvA
 simulation within each fine bin, gives $\chi^2=\fvval{f0b-A7_gibuu-chi2}$ and
@@ -364,8 +392,7 @@ agreement criterion.
 \label{sec:gbdt-model-dependence}
 Coarsening the reporting grid leaves substantial dependence on the
 starting model. In a precision study with generator-sized departures,
-all three grids miss the prespecified $5\%$ model-component and $75\%$
-recovery targets, including the \fvval{h2-nsupported} supported joint boxes used to define
+all three grids miss the $5\%$ model-component and $75\%$ recovery targets, including the \fvval{h2-nsupported} supported joint boxes used to define
 the sixteen cells (Appendix~\ref{app:bias-prior-stability}). On the sixteen cells, $C_{\mathrm{model}}$
 summarizes shifts on data when the prior is reweighted toward GENIE with
 meson-exchange currents, NuWro, or GiBUU. These shifts measure sensitivity
@@ -374,6 +401,13 @@ to the chosen priors and carry no calibrated bound on the bias.
 \subsection{Uncertainty calibration and numerical stability}
 \label{sec:higher-dimensional-calibration}
 \label{sec:5d}
+
+The tested higher-dimensional intervals under-cover in simulation, and the
+sixteen-cell central values are sensitive to rounding-level changes in the
+inputs. The bias tests in Sec.~\ref{sec:higher-dimensional-prior} measure the
+mean residual at fixed truth. Coverage tests ask how often an interval or joint
+region contains the truth. The stability test measures how much the central
+values shift under rounding-level perturbations.
 
 The sixteen-cell estimator shows joint undercoverage at both held-out GENIE
 v3 tunes with $C_{\mathrm{total}}$. Across the tested variants,
@@ -389,11 +423,6 @@ too small for their deviations from the truth. The
 \hyperlink{validation-sixteen-coverage}{sixteen-cell coverage row} of
 Table~\ref{tab:validation-inventory} gives the minimum count.
 
-The bias tests in Sec.~\ref{sec:higher-dimensional-prior} measure the mean
-residual at fixed truth. Coverage tests ask how often an interval or joint
-region contains the truth. The stability test measures how much the central
-values shift under rounding-level perturbations.
-
 \label{sec:coverage-5d}
 The deterministic purity control fails the prespecified five-dimensional
 coverage test at nominal truth and under an approximately $10\%$ reduction
@@ -402,10 +431,10 @@ in signal rate with a weak $E_{\mathrm{avail}}$ slope. At the reduced rate,
 integrals fail for the $68\%$ intervals, and 42 fail for the $95\%$
 intervals (Fig.~\ref{fig:coverage-5d-paper}). The lowest empirical
 coverage for the $68\%$ intervals is 0.060. At nominal truth, two
-integrals fail for the $95\%$ intervals, with lowest coverage 0.850. The test uses statistical
-intervals corrected for nominal-truth bias. The
-\hyperlink{validation-purity-coverage}{end-to-end statistical coverage row}
-gives the thresholds, which are applied with multiplicity accounted for.
+integrals fail for the $95\%$ intervals, with lowest coverage 0.850. The test
+uses statistical intervals corrected for nominal-truth bias, and its thresholds
+are applied with multiplicity accounted for
+(\hyperlink{validation-purity-coverage}{end-to-end statistical coverage row}).
 
 \begin{figure}[tbp]
   \centering
@@ -423,10 +452,10 @@ gives the thresholds, which are applied with multiplicity accounted for.
 The sixteen-cell estimator fails the prespecified rounding-stability
 test on data, with shifts of 0.8 at the median and up to \lrval{stab-max}
 statistical standard deviations, against tolerances of \fvval{ens1-bar-median}
-and \fvval{ens1-bar-max}. The shifts are measured over the joint-cell
-integrals, the $E_{\mathrm{avail}}$--$W$ integrals and their sum, and the
-total rate. The \hyperlink{validation-sixteen-rounding}{rounding-level stability row}
-gives the tolerances. The test perturbs each stored input by up to half a
+and \fvval{ens1-bar-max}
+(\hyperlink{validation-sixteen-rounding}{rounding-level stability row}). The
+shifts are measured over the joint-cell integrals, the
+$E_{\mathrm{avail}}$--$W$ integrals and their sum, and the total rate. The test perturbs each stored input by up to half a
 single-precision unit in the last place and holds fine-grid bin membership
 fixed. The \estLowCap{} gives a median of 0.8 and a maximum of 2.5
 (Appendix~\ref{app:bias-prior-stability}). An
