@@ -1,0 +1,18 @@
+You are an independent code reader for a cluster connect. READ-ONLY: never modify, create or delete any file except your single report, and never touch any git checkout. Write your report ONLY to stdout.
+
+This is a CONFIRMING read. Under inputs/ is a declared study (docs/orchestration/state/measurability-20261122/DECLARATION.md, rev 3) and the code for its first cluster step, "connect P" (a login-node probe, 0 node-h):
+- docs/orchestration/state/measurability-20261122/connect/msr_probe_connect.sh (the script run on the node; generated from msr_probe_connect.template.sh by gen_probe_connect.py, which embeds cov2d_fence.sh rev 2 as base64)
+- .../connect/msr_probe_launch.sh (run locally: ssh to the node, stage the script in /dev/shm with a sha check, then fetch records)
+- nd-unfolding/msr/msr_build.py (subcommands stat, find-bank, did-cons, probe, build), nd-unfolding/msr/msr_overlap.py, nd-unfolding/msr/test_msr_build.py
+- .../connect/standin/ (a Debian stand-in run of the connect; it stops at the bank pin by design because inputs are fake)
+They derive from the reviewed T3 scripts t3p_read_connect.sh / t3p_read_launch.sh (included for diff). Reused code: ibu1.py, ref_g1.py, prr_ibu.py, did.py, ref_c2c1.py, t3p_read.py.
+
+Standing rules the code must honour: reads of cluster inputs with O_NOATIME (plain reads only of this connect's own staged copies); sacct only, never squeue; no writes outside $OUT=/pscratch/sd/j/josephrb/msr-p-20261122 and /dev/shm/msr-connect; nothing to CFS; never pipe a command whose exit status is then read; every failure is a final stop; no unfold, no data; the captured constructions are the committed ones, called unchanged.
+
+The previous reads of this code are in inputs/docs/orchestration/state/measurability-20261122/reads/connectP-grok.txt and connectP-agy.txt. First list every finding there as FIXED or NOT FIXED in the current code, with file:line. Then check adversarially:
+1. Shell: any path where a failure is silently ignored (unchecked status, a pipe hiding status, an empty variable treated as success), a write outside the declared roots, a read of an original input that is not O_NOATIME, or a stop that leaves misleading records. Does the embedded fence run exactly rev 2 and gate correctly? Does the hard gate (<= 1800 s, <= 8e9 B by two-point extrapolation) and the C-DID-CONS comparison behave as declared (section 1, section 8)?
+2. msr_build.py: does capture_problem really reproduce ibu1.unfold_ibu's construction for the full MC at x1, the halves at x2, R-ID's settings (half A x2 with template D x2) and D-ID's T1 settings (b = known term only)? Is reported_map's L exactly the 16 cross-section functionals? Does did_cons compare like with like (J-cell memberships and occupied reco cells from each side's own code)? Any plain read of an original input?
+3. msr_overlap.py: is the overlap rule and the set (ours vs cov2d 36+12 and rpd write roots + 57 staged originals) complete and correctly applied in both directions?
+4. Anything in the probe that could not run on the real inputs (shape assumptions, memory blow-ups, wrong argument order) that the stand-in could not reveal.
+
+Output format: first line "VERDICT: GO" or "VERDICT: FIX". Then numbered findings, each with: severity (BLOCKER / FIX / NOTE), file:line, the problem, and a concrete fix. Be specific and brief.

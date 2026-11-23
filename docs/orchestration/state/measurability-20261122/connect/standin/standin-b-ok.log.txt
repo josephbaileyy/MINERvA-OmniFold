@@ -1,0 +1,40 @@
+== script rc=9
+== the connect log
+  node cb2f46bb955c nproc=4 loadavg 0.09 0.04 0.04
+  2026-11-23T06:22:04Z
+  window_end_epoch 1795415824 (now 1795414924); fence prefixes cov2d,ll5d_,ibukt,prr_,e96,ens1_,t3p_
+  connect script sha256 2a5c1c920c79b5e43f70bd967964cfbf896a18e851130024fae71bfc36c126e7
+  == cov2d fence rev 3 (7e81a721476da987a0e1262ab2054132bd8440cd49b0dc7a5c4f01d50a310738)
+  fence host=cb2f46bb955c utc=2026-11-23T06:22:04Z
+  sacct -X -n -P -u root -S 2026-11-09T06:22:04 -E now -o JobID,JobName,State 2>&1
+  sacct matching rows: 1
+  FENCE CLEAR
+  == fence (sacct)
+  fence clear
+  == rpd_ rows (printed; limitation-resolver's flux2 may coexist with these login reads)
+  61806073|rpd_flux2|COMPLETED
+  HEAD 68b9f96b917a890fb52d349c645bc4662097322e; porcelain --ignored lines before: 0
+  msr_build.py: OK
+  msr_overlap.py: OK
+  threads 2; nice 19; ionice idle; python 3.11.18
+  == overlap (msr_overlap.py)
+  OVERLAP ours 14 (reads 10, writes 3); theirs 114 (cov2d config 36, cov2d disclosed 12, rpd write roots 2, rpd staged originals 57, LR extra 7)
+  OVERLAP ALLOWED (both read-only interpreter): ours read (interpreter) /global/homes/j/josephrb/.conda/envs/root_6_28  ~  theirs rpd flux2 read (interpreter) /global/homes/j/josephrb/.conda/envs/root_6_28
+  OVERLAP: CLEAR (pairs checked 1596, hits 0)
+  == the probe's staged copies, re-checked by O_NOATIME sha256 against their pins
+  {"path": "/pscratch/sd/j/josephrb/msr-p-20261122/stage/of_inputs_5d.npz", "size": 26, "mtime": 1795414924.659135, "atime": 1795414924.659135, "inode": 1111990, "sha256": "e260202e982614976d770658b8f83754cc6fcede6fe60d5c1e2e9d3f0b69fe30"}
+  {"path": "/pscratch/sd/j/josephrb/msr-p-20261122/stage/bkg_dump.npz", "size": 22, "mtime": 1795414924.659135, "atime": 1795414924.659135, "inode": 1111991, "sha256": "b2c958c26f12a54e615a75f0d42bf1d223231761d750ca550fbc95fc07447d53"}
+  {"path": "/pscratch/sd/j/josephrb/msr-p-20261122/stage/bank.npz", "size": 18, "mtime": 1795414924.659135, "atime": 1795414924.659135, "inode": 1111992, "sha256": "74d75c38a644aabbd57719f0a3efbec874b4a1732e2e0a4981047bd0e4224d8e"}
+  staged copies at their pins: False
+  STOP: a staged copy is not at its pin
+  == records
+  2026-11-23T06:22:54Z
+  records copied: 3 files, 15295 bytes
+  fetch-build.tar sha256 b8a303f8d9a62c6222e977271fa8f4e0f0221aef516848183ff4f97a4dd7548b bytes 20480
+  msr build rc=9
+  2026-11-23T06:22:54Z
+== done: 9
+deploy
+fetch-build
+fetch-build.tar
+logs

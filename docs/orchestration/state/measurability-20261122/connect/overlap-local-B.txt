@@ -1,0 +1,3 @@
+OVERLAP ours 14 (reads 10, writes 3); theirs 114 (cov2d config 36, cov2d disclosed 12, rpd write roots 2, rpd staged originals 57, LR extra 7)
+OVERLAP ALLOWED (both read-only interpreter): ours read (interpreter) /global/homes/j/josephrb/.conda/envs/root_6_28  ~  theirs rpd flux2 read (interpreter) /global/homes/j/josephrb/.conda/envs/root_6_28
+OVERLAP: CLEAR (pairs checked 1596, hits 0)

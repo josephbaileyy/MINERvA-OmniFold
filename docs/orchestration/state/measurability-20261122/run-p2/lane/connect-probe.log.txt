@@ -1,0 +1,63 @@
+node login38 nproc=244 loadavg 48.74 49.91 46.91
+2026-11-23T06:07:15Z
+window_end_epoch 1795414872 (now 1795414035); fence prefixes cov2d,ll5d_,ibukt,prr_,e96,ens1_,t3p_
+connect script sha256 fd7957fabde3d71720b29fb23b6fb72b867010f9bc0ecc3dc5784222af0edd23
+== cov2d fence rev 3 (7e81a721476da987a0e1262ab2054132bd8440cd49b0dc7a5c4f01d50a310738)
+fence host=login38 utc=2026-11-23T06:07:15Z
+sacct -X -n -P -u josephrb -S 2026-11-08T22:07:15 -E now -o JobID,JobName,State 2>&1
+sacct matching rows: 14
+FENCE CLEAR
+== fence (sacct)
+fence clear
+== rpd_ rows (printed; limitation-resolver's flux2 may coexist with these login reads)
+61806073|rpd_flux2|COMPLETED
+HEAD 83d7aee50a47d9513f5c66b044f7a20dc8ce90f2; porcelain --ignored lines before: 0
+msr_build.py: OK
+msr_overlap.py: OK
+threads 2; nice 19; ionice idle; python 3.11.14
+== overlap (msr_overlap.py)
+OVERLAP ours 13 (reads 9, writes 3); theirs 114 (cov2d config 36, cov2d disclosed 12, rpd write roots 2, rpd staged originals 57, LR extra 7)
+OVERLAP ALLOWED (both read-only interpreter): ours read (interpreter) /global/homes/j/josephrb/.conda/envs/root_6_28  ~  theirs rpd flux2 read (interpreter) /global/homes/j/josephrb/.conda/envs/root_6_28
+OVERLAP: CLEAR (pairs checked 1482, hits 0)
+== inventory: stat (incl. atime) and O_NOATIME sha256
+{"path": "/pscratch/sd/j/josephrb/t3p-20261121/stage/of_inputs_5d.npz", "size": 1548438020, "mtime": 1795257767.0, "atime": 1795282828.0, "inode": 882727628379783201, "sha256": "07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f"}
+{"path": "/pscratch/sd/j/josephrb/t3p-20261121/stage/bkg_dump.npz", "size": 16017201, "mtime": 1795257768.0, "atime": 1795282828.0, "inode": 882727628379783202, "sha256": "2addac8f26055c5ed69862e7afe29e12ac51dbe23a8d6eeed79d71bec9d82955"}
+{"path": "/pscratch/sd/j/josephrb/t3p-20261121/stage.json", "size": 17729, "mtime": 1795257774.0, "atime": 1795286961.0, "inode": 882727628379783248, "sha256": "0e58519f0691900810d75881e308abcb39c6de9e42ccadfa590b04313ec73dfd"}
+{"path": "/pscratch/sd/j/josephrb/t3p-20261121/log-floor/SHA256SUMS", "size": 3924, "mtime": 1795282825.0, "atime": 1795286959.0, "inode": 882727666816386322, "sha256": "9870304d98d8f5b51ac5bc19bee0e4250a39848b6e50e7961651ac694da60064"}
+{"path": "/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/3d/of_inputs_3d.npz", "size": 1131573395, "mtime": 1792713504.0, "atime": 1792844053.0, "inode": 882727014182682785, "sha256": "ecbff9f888ab19b5b9f7575ab41a27f83ab094f80efd4463790978c0145c318d"}
+{"path": "/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/4d/of_inputs_4d.npz", "size": 1341266457, "mtime": 1792713547.0, "atime": 1792844083.0, "inode": 882727014182682788, "sha256": "a15cc6905f1273365f0116a973b0cbb28034b49a4d455da338ff9e5d8462b166"}
+{"path": "/pscratch/sd/j/josephrb/ibukt-20261119-d", "size": 4096, "mtime": 1795114005.0, "atime": 1795113716.0, "inode": 882727658176138770, "sha256": null}
+{"path": "/pscratch/sd/j/josephrb/ibukt-20261119-d/prepare/out/bank.npz", "size": 1657798216, "mtime": 1795096826.0, "atime": 1795096824.0, "inode": 882727646817944064, "sha256": "60416384474d1a3b0644f1e09869cf09371382ecbf3c116b1ed110cd47341e2f"}
+bank /pscratch/sd/j/josephrb/ibukt-20261119-d/prepare/out/bank.npz sha256 60416384474d1a3b0644f1e09869cf09371382ecbf3c116b1ed110cd47341e2f (A2's bank_sha256 60416384474d1a3b0644f1e09869cf09371382ecbf3c116b1ed110cd47341e2f)
+== stage: dd iflag=noatime copies, each at its pin
+of_inputs_5d.npz sha256 07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f (pin 07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f)
+bkg_dump.npz sha256 2addac8f26055c5ed69862e7afe29e12ac51dbe23a8d6eeed79d71bec9d82955 (pin 2addac8f26055c5ed69862e7afe29e12ac51dbe23a8d6eeed79d71bec9d82955)
+bank.npz sha256 60416384474d1a3b0644f1e09869cf09371382ecbf3c116b1ed110cd47341e2f (pin 60416384474d1a3b0644f1e09869cf09371382ecbf3c116b1ed110cd47341e2f)
+{"path": "/pscratch/sd/j/josephrb/ibukt-20261119-d", "size": 4096, "mtime": 1795114005.0, "atime": 1795113716.0, "inode": 882727658176138770, "sha256": null}
+{"path": "/pscratch/sd/j/josephrb/ibukt-20261119-d/prepare/out/bank.npz", "size": 1657798216, "mtime": 1795096826.0, "atime": 1795096824.0, "inode": 882727646817944064, "sha256": "60416384474d1a3b0644f1e09869cf09371382ecbf3c116b1ed110cd47341e2f"}
+== probe (msr_build probe on a row subsample written by a separate process; in-process seconds and peak RSS)
+{"part": "5d", "rows": 32849103, "kept": 655901, "fraction": 0.02}
+{"part": "5d", "fraction": 0.02, "seconds": 3.4, "peak_rss_bytes": 284635136}
+{"part": "5d", "rows": 32849103, "kept": 3282398, "fraction": 0.1}
+{"part": "5d", "fraction": 0.1, "seconds": 4.7, "peak_rss_bytes": 672575488}
+extrapolation {"part": "5d", "seconds_full_est": 19.3, "peak_rss_full_est": 5036904448, "login_ok": true}
+{"part": "2d", "rows": 32849103, "kept": 655901, "fraction": 0.02}
+{"part": "2d", "fraction": 0.02, "seconds": 1.4, "peak_rss_bytes": 177926144}
+{"part": "2d", "rows": 32849103, "kept": 3282398, "fraction": 0.1}
+{"part": "2d", "fraction": 0.1, "seconds": 5.9, "peak_rss_bytes": 604733440}
+extrapolation {"part": "2d", "seconds_full_est": 56.5, "peak_rss_full_est": 5406315520, "login_ok": true}
+GATE login_ok=1 (every part <= 1800 s and <= 8e9 B, two-point linear extrapolation)
+== C-DID-CONS (always run in connect P; each side its own process, timeout 2400 s)
+did-cons did rc=0
+{"side": "did", "j_cells": {"sha256": "bd1434b0f50ef146bc5517029ebd2e20c38155e07c6a25e7d6fc164504b76d7b", "n": 134}, "reco_cells": {"sha256": "8b82482b6ab04704340b92467ceda2efd5e32bddbe5df91cb9a993ec1b3a96d4", "n": 10499}}
+did-cons ibu1 rc=0
+{"side": "ibu1", "j_cells": {"sha256": "bd1434b0f50ef146bc5517029ebd2e20c38155e07c6a25e7d6fc164504b76d7b", "n": 134}, "reco_cells": {"sha256": "8b82482b6ab04704340b92467ceda2efd5e32bddbe5df91cb9a993ec1b3a96d4", "n": 10499}}
+C-DID-CONS j_cells EQUAL bd1434b0f50ef146bc5517029ebd2e20c38155e07c6a25e7d6fc164504b76d7b
+C-DID-CONS reco_cells EQUAL 8b82482b6ab04704340b92467ceda2efd5e32bddbe5df91cb9a993ec1b3a96d4
+porcelain --ignored lines after (pycache excluded): 0
+== records
+2026-11-23T06:13:04Z
+records copied: 29 files, 516310 bytes
+fetch-probe.tar sha256 da286042ef0a4302ed7f10682d6123eb38560add95d3acd96d0a6917a3bcba20 bytes 563200
+msr probe rc=0
+2026-11-23T06:13:05Z

@@ -1,0 +1,12 @@
+ssh rc=0
+node login38 staged sha256 fd7957fabde3d71720b29fb23b6fb72b867010f9bc0ecc3dc5784222af0edd23
+detached pid 2323358, output /dev/shm/msrp.2322934.sh.out
+script rc=0
+connect script rc=0 (every stop after $OUT exists writes the records tar first)
+fetch logs/connect-probe.log rc=0 bytes 6309
+fetch logs/connect-probe.done rc=0 bytes 2
+fetch fetch-probe.tar rc=0 bytes 563200
+fetch-probe.tar sha256 da286042ef0a4302ed7f10682d6123eb38560add95d3acd96d0a6917a3bcba20 (the log's: da286042ef0a4302ed7f10682d6123eb38560add95d3acd96d0a6917a3bcba20)
+RECORDS.SHA256SUMS check rc=0 (29 files)
+connect done file: 0
+launcher rc=0

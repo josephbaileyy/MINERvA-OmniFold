@@ -1,0 +1,11 @@
+ssh rc=0
+node login38 staged sha256 44f8ad7a4b8395bbd19d45f32d107bebb106a11c78c9c05083e68cde087ffbdd
+detached pid 1322629, output /dev/shm/msrp.1322119.sh.out
+fence host=login38 utc=2026-11-23T03:14:13Z
+sacct -X -n -P -u josephrb -S 2026-09-23T20:14:13 -E now -o JobID,JobName,State 2>&1
+FENCE REFUSED: sacct failed
+sacct: sacct: error: Too wide of a date range in query
+BAIL cov2d fence rev 2 not clear (rc 3)
+script rc=9
+STOP: the connect bailed before writing anything; no fetch
+launcher rc=9

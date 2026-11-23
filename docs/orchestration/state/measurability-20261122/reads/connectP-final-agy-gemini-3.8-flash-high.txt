@@ -1,0 +1,66 @@
+VERDICT: GO
+
+### Prior findings from connectP-confirm-grok.txt (Current Code Status)
+
+- **7b / New Finding 3**: **FIXED** — `nd-unfolding/msr/msr_overlap.py:61, 68, 81`, `docs/orchestration/state/measurability-20261122/DECLARATION.md:80-81`. Prefix `/dev/shm/msrp.` was added to `PREFIXES` and `writes`, and handled symmetrically in `overlaps_prefix` in both directions (covering `.sh` and `.sh.out`). DECLARATION.md §8 explicitly incorporates the launcher's `/dev/shm/msrp.*` staging copies into the declared write set.
+- **8b**: **NOT FIXED (by design / timing proxy only)** — `nd-unfolding/msr/msr_build.py:248, 262`. On the probe, `half_mask` splits the subsample's $n_{\text{kept}}$ rows directly. This functions solely as a compute/memory timing proxy; the generated arrays are discarded (`msr_build.py:534-536`) and only wall time and peak RSS are reported.
+- **New Finding 1 (FIX)**: **FIXED** — `nd-unfolding/msr/msr_build.py:318-322, 348-349` and `nd-unfolding/msr/test_msr_build.py:100-111`. Bank `selected` is loaded as an integer array of length 205, validated against bounds ($0 \le \text{id} < b_{\text{bkg}}.\text{size}$ with no duplicates), and converted into a 224-length boolean mask `d2__selected_mask`. Fixture and unit tests enforce this representation.
+- **New Finding 2 (FIX)**: **FIXED** — `nd-unfolding/msr/msr_build.py:341-343` and `nd-unfolding/msr/test_msr_build.py:122-126`. 2D probe mode now calls `one("halfA", ...)` and `one("halfB", ...)` alongside `one("full", ...)`, ensuring the two-point linear extrapolation incorporates wall time for the 2D halves. The full-bank comparison is skipped on probe (`if not probe:`).
+- **New Finding 4 (NOTE)**: **FIXED** — `docs/orchestration/state/measurability-20261122/connect/msr_probe_connect.sh:122`. Inside `fence_sacct`, the pipeline assignment explicitly checks awk status via `|| { echo "fence awk failed"; return 2; }`, preventing an awk failure from silently returning 0.
+- **New Finding 5 (NOTE)**: **FIXED** — `docs/orchestration/state/measurability-20261122/connect/msr_probe_connect.sh:258-273`. All four output files are hashed first into associative array `H[$side.$name]`. `EQUAL` or `DIFFERS` is only printed if all four files exist, are non-empty, and hash successfully (`cdid=0`). If any side fails or is missing, `cdid=6` and `C-DID-CONS INCOMPLETE` is printed.
+- **New Finding 6 (NOTE)**: **FIXED** — `docs/orchestration/state/measurability-20261122/connect/msr_probe_connect.sh:226, 230, 233`. If `subsample` or `probe` fails (such as `did.response` raising `ValueError` on sparse truth bins), `pok=0; break;` skips to line 233, where `gate=0; pok=1; continue;` sets `login_ok` false without stopping the script (`finish 5` removed). The script continues directly to C-DID-CONS as declared in §8.
+- **New Finding 7 (NOTE)**: **RESOLVED** — `docs/orchestration/state/measurability-20261122/connect/msr_probe_connect.sh:269` and `docs/orchestration/state/measurability-20261122/DECLARATION.md:82`. The script prints that an upper-edge reco convention can cause `DIFFERS` (IBU-1 drops the upper edge, D-ID retains it). Per DECLARATION.md §1 & §8, both sorted lists are packaged in the fetch records and evaluated before Connect B (recorded in rev 4).
+
+---
+
+### Findings
+
+1. **NOTE** — `inputs/nd-unfolding/msr/msr_build.py:248, 262`  
+   **Problem:** In probe mode, `half_mask` splits the subsample's rows ($n_{\text{kept}}$) rather than partitioning the original full index space.  
+   **Fix:** None required for Connect P. The probe serves strictly as a timing and RSS benchmark; arrays are discarded at `msr_build.py:534-536`.
+
+2. **NOTE** — `inputs/docs/orchestration/state/measurability-20261122/connect/msr_probe_connect.sh:269`  
+   **Problem:** Geometric upper-edge boundary differences between IBU-1 (`in_window` $[first, last)$) and D-ID (`flat_index` $[first, last]$) may produce a nominal `reco_cells DIFFERS`.  
+   **Fix:** As declared in DECLARATION.md §1 & §8, both list files are captured in the fetch records, and any upper-edge discrepancy will be verified before branching in rev 4.
+
+---
+
+### Adversarial Verification
+
+#### 1. Shell (`msr_probe_connect.sh`, `msr_probe_launch.sh`)
+- **Error Handling & Pipelines:** `pipefail` is active. Every command, pipeline, `sacct` invocation, and python tool exit code is checked (`|| bail` or `|| finish`).
+- **Write Roots:** All connect writes on cluster storage are strictly contained within `$OUT=/pscratch/sd/j/josephrb/msr-p-20261122` and `$SHM=/dev/shm/msr-connect` (cleared at exit). Launcher staging writes to `/dev/shm/msrp.$$.sh` (umask 077, cleaned up after execution) and are declared in the overlap write set. Nothing is written to CFS.
+- **Reads:** All cluster inputs are accessed with `O_NOATIME` (`msr_build.py stat` via `os.O_NOATIME`, staging via `dd iflag=noatime`). Subsequent execution reads only this connect's own staged copies under `$OUT/stage` and `$OUT/probe-*`.
+- **Fence:** `cov2d_fence.sh` embedded in base64 matches SHA256 `3fbc9cbd6c08d4c86c71aeeccf28b0b3d8a77393121ef23787c1d421b682171e` (rev 2) bit-for-bit. Execution uses `sacct` only (no `squeue`).
+- **Hard Gate & Extrapolation:** Two-point linear extrapolation on fractions 0.02 and 0.10 evaluates $y(1.0) = y_a + \frac{y_b - y_a}{f_b - f_a}(1.0 - f_a)$ for wall time ($s \le 1800\text{ s}$) and RSS ($r \le 8\times 10^9\text{ B}$).
+- **Records on Failure:** Any termination after `$OUT` exists triggers `finish()`, creating `fetch-probe.tar` via `dd iflag=noatime` and updating `connect-probe.done` before exit.
+
+#### 2. Python Builder (`msr_build.py`)
+- **Capture Fidelity:** `capture_problem` intercepts `did.ibu` and captures `R`, `b`, and `prior` directly from `ibu1.unfold_ibu`:
+  - Full MC at $\times 1$ with full template.
+  - Halves A/B at $\times 2$ with full template.
+  - R-ID: half A at $\times 2$ with background template D (`rows=~is_c`) at $\times 2$.
+  - D-ID T1: J world with full MC at $\times 1$, known term only (`b_extra = 0`), and D-ID functional maps.
+- **Reported Map $L$:** `reported_map` evaluates `ibu1.extract(world, ...)` over all columns of `share_matrix`, yielding the exact 16 cross-section functionals ($R00$–$R15$) on the H2 grid.
+- **C-DID-CONS:** Compares J-cell fine memberships and occupied reco cells independently generated from each side's committed codebase (`did.make_grid` + `jw.rflat` vs `diag.grids` + `diag.reco_cells`).
+- **Input Purity:** `load_inputs_nodata` omits `measured` and `measured_weights`. Zero plain reads of original cluster inputs.
+
+#### 3. Overlap Check (`msr_overlap.py`)
+- **Completeness & Symmetry:** Symmetrically compares 13 study paths (9 reads, 1 interpreter, 3 writes) against 114 external paths (36 cov2d protected, 12 cov2d disclosed, 2 rpd write roots, 57 staged originals, 7 LR extra) across 1,482 pairs.
+- **Prefix Handling:** `overlaps_prefix` correctly applies bidirectional prefix matching for staging paths `/dev/shm/rpd-flux2-` and `/dev/shm/msrp.`.
+- **Result:** Result is CLEAR (0 hits, 1 allowed read-only conda interpreter match).
+
+#### 4. Real Input Feasibility
+- **Dimensions & Typing:** Subsample generation correctly handles `.npy` header parsing without materializing full arrays. 2D bank fields (`selected` length 205, integer cell IDs) match `run_ibukt.py:402`.
+- **Argument Order:** `ref_c2c1.binned_problem` argument sequence in `msr_build.py:327` strictly matches definition order.
+- **Memory Footprint:** Probe uses separate processes for subsampling and timed runs, preventing RSS watermarks from persisting.
+
+---
+
+### Director's IBUKT Ruling Verification
+
+- **Target Path:** Exactly `/pscratch/sd/j/josephrb/ibukt-20261119-d/prepare/out/bank.npz`.
+- **No Search / Traversal:** No `find`, `ls`, or glob is run under `/pscratch/sd/j/josephrb/ibukt-20261119-d`.
+- **Access Method:** Inspected exclusively via `msr_build.py stat` (with `os.O_NOATIME`) and copied via `dd if="$BANK" of="$ST/bank.npz" iflag=noatime bs=16M status=none`.
+- **Integrity & Auditing:** Stat (including inode, size, mtime, atime) of both directory root and file is recorded before and after copy (`ibukt-stat-before.jsonl`, `ibukt-stat-after.jsonl`).
+- **Pin Enforcement:** Explicit check `[ "$bsha" = "$BANK_SHA" ]` enforces SHA256 `60416384474d1a3b0644f1e09869cf09371382ecbf3c116b1ed110cd47341e2f`, halting with `STOP` (exit 9) if mismatched.

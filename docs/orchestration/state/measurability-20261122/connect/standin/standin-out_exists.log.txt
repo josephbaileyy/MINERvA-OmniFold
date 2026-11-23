@@ -1,0 +1,6 @@
+/connect/standin.sh: line 31: /pscratch/sd/j/josephrb/ibukt-20261119-d/prepare/out/bank.npz: No such file or directory
+BAIL /pscratch/sd/j/josephrb/msr-p-20261122 exists
+== script rc=9; self copy left: ls: cannot access '/dev/shm/msrp.1.sh': No such file or directory; shm dir: ls: cannot access '/dev/shm/msr-connect': No such file or directory
+== the connect log
+  cat: /pscratch/sd/j/josephrb/msr-p-20261122/logs/connect-probe.log: No such file or directory
+== done: cat: /pscratch/sd/j/josephrb/msr-p-20261122/logs/connect-probe.done: No such file or directory

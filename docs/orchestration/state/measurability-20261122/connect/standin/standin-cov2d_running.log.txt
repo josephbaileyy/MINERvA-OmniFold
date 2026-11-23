@@ -1,0 +1,11 @@
+/connect/standin.sh: line 31: /pscratch/sd/j/josephrb/ibukt-20261119-d/prepare/out/bank.npz: No such file or directory
+fence host=7ac022d6c17f utc=2026-11-23T02:56:03Z
+sacct -X -n -P -u root -S 2026-09-24T02:56:03 -E now -o JobID,JobName,State 2>&1
+sacct unended: 61000001|cov2d_g2r|RUNNING
+sacct matching rows: 2
+FENCE REFUSED: an unended, unclassifiable or malformed sacct row
+BAIL cov2d fence rev 2 not clear (rc 3)
+== script rc=9; self copy left: ls: cannot access '/dev/shm/msrp.1.sh': No such file or directory; shm dir: ls: cannot access '/dev/shm/msr-connect': No such file or directory
+== the connect log
+  cat: /pscratch/sd/j/josephrb/msr-p-20261122/logs/connect-probe.log: No such file or directory
+== done: cat: /pscratch/sd/j/josephrb/msr-p-20261122/logs/connect-probe.done: No such file or directory
