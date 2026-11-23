@@ -21,19 +21,21 @@ ssh "${SSH[@]}" saul.nersc.gov "ssh ${HOP[*]} $NODE $(printf '%q' "$R")" < "$S" 
 rc=$?
 echo "ssh rc=$rc"
 cat "$F/session.out"
-grep -q '^script rc=' "$F/session.out" || { echo "STOP: the session did not report a script rc; no fetch"; exit 9; }
+src=$(sed -n 's/^script rc=\([0-9][0-9]*\)$/\1/p' "$F/session.out" | tail -1)
+[ -n "$src" ] || { echo "STOP: the session did not report a script rc; no fetch"; exit 9; }
 grep -q '^BAIL ' "$F/session.out" && { echo "STOP: the connect bailed before writing anything; no fetch"; exit 9; }
+echo "connect script rc=$src (every stop after \$OUT exists writes the records tar first)"
 
 # ---- the fetch, after the session (the connect has finished writing; nothing below writes on the cluster)
 O=/pscratch/sd/j/josephrb/msr-p-20261122
 frc=0
-for rel in fetch-probe.tar logs/connect-probe.log logs/connect-probe.done; do
+for rel in logs/connect-probe.log logs/connect-probe.done fetch-probe.tar; do
   ssh "${SSH[@]}" saul.nersc.gov "ssh ${HOP[*]} $NODE $(printf '%q' "dd if=$O/$rel iflag=noatime status=none")" \
     > "$F/$(basename "$rel")" 2>> "$F/fetch.err"
   r=$?; echo "fetch $rel rc=$r bytes $(wc -c < "$F/$(basename "$rel")" | tr -d ' ')"
   [ "$r" -eq 0 ] || frc=1
 done
-[ "$frc" -eq 0 ] || { echo "STOP: a fetch failed (fetch.err)"; exit 7; }
+[ "$frc" -eq 0 ] || { echo "STOP: a fetch failed (fetch.err); connect script rc was $src"; [ "$src" -ne 0 ] && exit "$src"; exit 7; }
 want=$(sed -n 's/^fetch-probe\.tar sha256 \([0-9a-f]\{64\}\) bytes .*/\1/p' "$F/connect-probe.log")
 got=$(shasum -a 256 "$F/fetch-probe.tar" | cut -d' ' -f1)
 echo "fetch-probe.tar sha256 $got (the log's: $want)"
@@ -44,4 +46,5 @@ crc=$?
 echo "RECORDS.SHA256SUMS check rc=$crc ($(grep -c . "$F/records/fetch-probe/RECORDS.SHA256SUMS") files)"
 [ "$crc" -eq 0 ] || { echo "STOP: a record differs from its sum"; cat "$F/records-check.txt"; exit 7; }
 echo "connect done file: $(cat "$F/connect-probe.done")"
+[ "$src" -eq 0 ] || { echo "STOP: the connect script ended rc $src (records fetched and checked above)"; exit "$src"; }
 exit $rc

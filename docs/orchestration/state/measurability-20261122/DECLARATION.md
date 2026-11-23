@@ -1,4 +1,4 @@
-# MSR DECLARATION: which combinations of the reported cells do the detector-level inputs constrain, and where do the known biases sit? (rev 2, 2026-11-22)
+# MSR DECLARATION: which combinations of the reported cells do the detector-level inputs constrain, and where do the known biases sit? (rev 3, 2026-11-22)
 
 **By** tier3-design, for the director. **Authority:** Joseph via the director, 2026-11-22 ("yes can we do the measurability study"),
 from an outside review of the note (Fix 2). **Base:** origin/main `7d5a98361`. **Compute:** the projections are local, at 0 node-h.
@@ -44,7 +44,39 @@ computed before this declaration, its reads and the director's GO.
     `bank_sha256`), numpy only, in place of a ROOT read of the CFS omnifile. The bank holds the very event arrays, background
     and `ibu_response` that A2's IBU used. No PyROOT read is made, so the MAT-dictionary test is not needed. That is
     stated, not skipped (§2, §8).
-- **rev 3** will record C-DID-CONS's branch from connect P's log, before connect B.
+- **rev 3** (this file): every finding of Grok's confirming read of rev 2 `a3f35ed5` (`reads/rev2-grok.txt`), taken as a fix:
+  - **1, the null fraction.** U∞ and F⁺ are now taken in count space on `did.fisher(R, t0, b)` with the count-space
+    gradient, exactly as `widths_from_eig` does. A synthetic case at a t0 ratio of 10⁷ is added, and ρ must match
+    `widths_from_eig`'s null fraction on the 16 coordinate directions (§3.3, §6).
+  - **2, OP's iterations.** T3's OP arm runs 2 iterations (`t3p_arms.ITERS["OP"] = 2`), so OP is read at k = 2 only.
+    B0 and MO are read at k = 5 (and k = 50 printed) (§4, §5.2).
+  - **3, the 2D map.** It indexes the readout's `cells` (the bank's `selected` mask), not `signed_identity.truth_indices`
+    (§3.1, §6 C-L).
+  - **4, the 2D construction.** `binned_problem` returns (T, M, y, t). R's columns with T = 0 are set to 0. C-2D checks
+    b_bkg and b_known cell by cell between two constructions (§3.1, §6).
+  - **5, the Z_well sentences.** They speak of the span W of the well-constrained eigen-combinations, which is what Z_well
+    bounds (§5.1).
+  - **6, the noise-max endpoint.** "Contains Z_noise" means f_lo < Z_noise < f_hi (§5.1).
+  - **7, sd and the empty well-constrained set.** sd is the sample SD with divisor 4. With n_well = 0, Z_noise and Z's
+    numeric N-PREC test are skipped (§3.6, §6).
+  - **8, C-ROUTE's bars.** They are written per statistic (§6).
+  - **9, the dropped cells.** The dropped-cell sets must be equal across full, A and B before any projector comparison
+    (§5.3).
+  - **10, the H2 grid.** The capture's grid identity is checked against H2 (§3.1, §6 C-GRID).
+  - **Also found while writing the builder:** FD-PRR's P is the nominal truth's cross section from half B at the same
+    split (`prr_read.py:19`, `t3p_read.priors`), so rev 2's C-L (L t0 = P) cannot hold by construction. C-L now checks
+    that L is the extraction, linear, and equal to T3's M16. The ratio P/f0 converts FD-PRR's b to φ-units, and it is
+    printed (§3.1, §3.5, §6). At 2D the corresponding ratio is computed from the bank, not assumed.
+  - **From the Grok and agy reads of the connect-P code** (`reads/connectP-grok.txt`, `reads/connectP-agy.txt`), the
+    parts this declaration describes:
+    - the 5D inputs are loaded without the two data keys (`measured`, `measured_weights`), under `ibu1.load_inputs`' own
+      digest checks. test_msr_build checks every array equal to the pinned loader's (§0, §2);
+    - the probe times a row subsample written by a separate process, so its peak RSS is its own (§8);
+    - C-DID-CONS always runs in connect P, whatever the gate reads, with both sides' exit codes checked. An incomplete side
+      records INCOMPLETE, never EQUAL or DIFFERS (§1, §8);
+    - every stop after `$OUT` exists writes the records first;
+    - connect B reads T3's originals only through O_NOATIME copies (§8).
+- **rev 4** will record C-DID-CONS's branch from connect P's log, before connect B.
 
 **Rulings folded in (the director, 2026-11-22):** Q1, a cluster build (login node if light, otherwise one shared-QOS job of
 at most 0.1 node-h); Q2, T3's B0, MO and OP as operands; Q3, H2 truth cells, with the 16-cell biases taken through the
@@ -69,8 +101,8 @@ four rev-1 items.
   estimators that use prior information (D-ID §5);
 - that any estimator change would fix a bias, or which one. Nothing is adopted;
 - coverage or the validity of any interval;
-- anything about the data. No data count, data unfold or data residual is read. The data enter only through the exposure
-  scale of V_r (§3.2);
+- anything about the data. No data count, data unfold or data residual is read; the data arrays of `of_inputs_5d.npz` are
+  never loaded (§2). The data enter only through the exposure scale of V_r (§3.2);
 - note wording. Results go to the director first.
 
 **NOT CITABLE FOR:** a cause beyond "consistent with", an estimator change, coverage, any data quantity, or note wording.
@@ -155,6 +187,10 @@ writes one band function per statistic of §5.1, with b1's form of "read only if
   - **The reco cells:** the occupied 5D reco cells of the World.
   - **R** is built by `ibu1.unfold_ibu`'s own construction, captured where it calls `did.ibu` (as `prr_ibu.capture_ibu`
     does), with no IBU iteration run and no data or pseudo-data in the call.
+    - It is called on REF-G1's **g world**, whose coarse map is H2 (`ref_g1.worlds`: `gw.coarse_of` =
+      `s1.coarse_map(H2_EDGES)`). `ref_g1.unfold_experiment` calls the same `ibu1.unfold_ibu` on that world.
+      `unfold_ibu` names its grid "J" as a literal, but the cells are H2's. The J world is used only for C-DID.
+    - C-GRID checks the H2 identity (§6).
     - **For the reading:** a `Half` holding every row at weight ×1 (`ref_g1.full_half`).
     - **For C-RID:** half A at ×2 of FD-PRR's primary split, with that experiment's template.
   - R_ij is the expected reco count in cell i per unit truth count in H2 cell j, at the half's within-cell truth shape.
@@ -164,14 +200,17 @@ writes one band function per statistic of §5.1, with b1's form of "read only if
   - L_{·j} = the reported functionals (`gw.functionals`) of the cross section that `ibu1.extract` returns for H2 cell j's
     unit count spread over its fine cells by the prior shape (`did.share_matrix`);
   - the extraction is linear in the counts at fixed completeness, so L is exact;
-  - P = L t0 must equal FD-PRR's prior 16-vector (control C-L).
+  - FD-PRR's P (the nominal truth's cross section at the same split, from half B; `prr_read` §4.1, `t3p_read.priors`)
+    is not L t0 (the full MC's prior) by construction. The ratio P/f0 converts FD-PRR's b to φ-units (§3.5) and is
+    printed per cell (control C-L).
 - **2D.**
-  - From the bank's event arrays (`gen`, `reco`, `pr`, `pt`, `wt`, `wr`), `ref_c2c1.binned_problem` gives (T, M, y).
-  - **R = M / T** columnwise (T > 0). t0 = T.
-  - y is not used.
+  - From the bank's event arrays (`gen`, `reco`, `pr`, `pt`, `wt`, `wr`), `ref_c2c1.binned_problem` gives (T, M, y, t).
+    y and t are discarded.
+  - **R = M / T** columnwise. A column with T = 0 is set to 0. t0 = T.
   - The truth grid is `driver.PT_EDGES × PZ_EDGES`, with 224 reco bins.
-  - L selects A2's 205 reported cells (`signed_identity.truth_indices`). The other truth bins are parameters and are
-    marginalized.
+  - L selects A2's 205 reported cells: the readout's `cells`, which is the bank's `selected` mask, in that order. These
+    are the cells A2's `mean`, `residuals` and `departure` refer to, and they are not `signed_identity.truth_indices`.
+    The other truth bins are parameters and are marginalized.
   - At 2D each reported cell is one truth bin, so a per-cell scale (extraction, completeness) cancels in relative units.
 - **Relative coordinates.** θ_j = t_j / t0_j, and φ_c = f_c / f0_c with f = L t and f0 = L t0. The Jacobian is
   G = diag(1/f0) · L · diag(t0). A cell with f0 = 0 is dropped from φ, and its count is printed.
@@ -197,21 +236,30 @@ writes one band function per statistic of §5.1, with b1's form of "read only if
 
 ### 3.3 Information, widths and combinations
 
-- **The Fisher matrix.** A = V_r^{-1/2} R diag(t0), and F = AᵀA = diag(t0) · `did.fisher(R, t0, b)` · diag(t0).
-- **The numerical range.** F's eigenpairs (λ, v), with D-ID's cut: λ > 1e-12·λ_max is the range, and the rest spans the
-  null space N (basis V_N). F⁺ is the pseudo-inverse **on that same cut** (eigenvalues at or below it are not inverted).
+- **The Fisher matrix, in count space** (D-ID's): F_c = `did.fisher(R, t0, b)` = Rᵀ V_r⁻¹ R over reco cells with μ > 0.
+  (A = V_r^{-1/2} R diag(t0) and F = AᵀA = diag(t0) F_c diag(t0) are the same information in θ-space. Only F_c and the
+  count-space gradient are used below, so the null space and the cut are D-ID's exactly.)
+- **The count-space gradient of φ:** J = diag(1/f0) · L, of size n_cells × n_params.
+- **The numerical range.** F_c's eigenpairs (λ, v), with D-ID's cut: λ > 1e-12·λ_max is the range, and the rest spans
+  the null space N (basis V_N). F_c⁺ is the pseudo-inverse **on that same cut** (eigenvalues at or below it are not
+  inverted).
 - **U∞, per direction** (D-ID's rule, `widths_from_eig`: a functional is unconstrained if its null fraction exceeds
   1e-6).
-  - The null fraction of a combination w (unit vector in φ-space) is ρ(w) = ‖V_Nᵀ Gᵀ w‖ / ‖Gᵀ w‖.
-  - With M = G V_N V_Nᵀ Gᵀ and K = G Gᵀ, the generalized eigenproblem M u = ρ² K u gives directions u_i.
+  - The null fraction of a combination w (unit vector in φ-space) is ρ(w) = ‖V_Nᵀ Jᵀ w‖ / ‖Jᵀ w‖, `widths_from_eig`'s
+    null fraction for the functional wᵀJ.
+  - With M = J V_N V_Nᵀ Jᵀ and K = J Jᵀ, the generalized eigenproblem M u = ρ² K u gives directions u_i.
   - **U∞** = span{u_i : ρ_i > 1e-6}. **Q** = span{u_i : ρ_i ≤ 1e-6}, orthonormalized in φ-space with basis B_Q.
-  - K must be positive definite, so G has full row rank after the f0 = 0 drop. Otherwise STOP (C-RANK).
-- **The constrained widths.** C_Q = B_Qᵀ G F⁺ Gᵀ B_Q has eigenpairs (s_k², c_k), and w_k = B_Q c_k. Each w_k is a unit
+  - K must be positive definite, so J has full row rank after the f0 = 0 drop. Otherwise STOP (C-RANK).
+  - On each coordinate direction e_c, ρ(e_c) must equal `widths_from_eig`'s null fraction for the functional e_cᵀJ (C-RHO,
+    §6).
+- **The constrained widths.** C_Q = B_Qᵀ J F_c⁺ Jᵀ B_Q has eigenpairs (s_k², c_k), and w_k = B_Q c_k. Each w_k is a unit
   combination of reported cells with binned Cramér–Rao width s_k in relative units.
 - **The cut.** w_k is **well-constrained** if s_k ≤ 0.10. W = span of the well-constrained w_k, and n_well = dim W.
   - **P_well** = the orthogonal projector onto W, and **P_poor** = I − P_well. "Poorly constrained" is everything outside W:
     the w_k with s_k > 0.10, and U∞.
-  - Every unit vector in W has width ≤ 0.10, because C_Q restricted to W is diagonal with entries ≤ 0.01.
+  - Every unit vector in W has width ≤ 0.10, because C_Q restricted to W is diagonal with entries ≤ 0.01. The converse
+    does not hold: a unit combination outside W can also have width ≤ 0.10 (a mixture weighted to a well-constrained
+    axis). The readings speak of W only (§5.1).
 - **Basis of the cut.** It is D-ID's 10 % CR-width criterion, the same number, applied to a unit-norm combination of
   reported cells instead of to a single functional.
   - Relation to D-ID: a single cell c has width² = Σ_k (w_k·e_c)² s_k², and is infinite if e_c has a component in U∞. So a
@@ -233,12 +281,15 @@ writes one band function per statistic of §5.1, with b1's form of "read only if
 
 ### 3.5 The bias vectors (relative to the prior, on reported cells)
 
-- **δφ_c = (X̂_c − X_c) / P_c**, FD-PRR's b_c (§4.1 there), with P the prior's functionals (= f0, control C-L) and X the
-  known truth's.
-- A bias given relative to the truth, e_c = X̂_c / X_c − 1 (F0b's `rel`; A2's e), is converted as δφ_c = e_c (1 + d_c),
-  with d_c = X_c / P_c − 1:
+- **FD-PRR's b_c = (X̂_c − X_c) / P_c** (§4.1 there), with P the nominal truth's functionals at the same split and X
+  the known truth's. In φ-units the bias is **δφ_c = b_c · P_c / f0_c**, with f0 = L t0 (C-L prints the ratio).
+- A bias given relative to the truth, e_c = X̂_c / X_c − 1 (F0b's `rel`; A2's e), is converted as
+  δφ_c = e_c (1 + d_c) · P_c / f0_c, with d_c = X_c / P_c − 1:
   - for F0b, d is from FD-PRR's table entry of the same truth name at split 991000 (the same truth files; control C-D);
-  - for A2, d is from A2's own `departure` (`ibukt.py:197`, truth/prior − 1).
+  - for A2, d is from A2's own `departure` (`ibukt.py:197`, truth/prior − 1). A2's prior is the bank's `truth_nominal`,
+    in cross-section units, and t0 = T is in counts. At 2D each reported cell is one truth bin, so P/f0 is the per-cell
+    ratio `truth_nominal` / (`factor` · T). It is computed from the bank, printed, and used as is. It is expected constant
+    in relative units, and its spread is printed beside it.
 
 ### 3.6 The statistics
 
@@ -256,8 +307,8 @@ For a bias vector β = δφ:
     well-constrained component to remove".
 - **Intervals.** Every statistic f gets an interval [f_lo, f_hi]:
   - **5-split means** (FD-PRR and T3 at A7 GiBUU): f is computed on the mean vector of the five splits, and on each split's
-    vector f_s. The interval is f ± h, with h = 2.7764451051977987 · sd(f_s) / √5 (b1's guard form; descriptive, since the
-    statistics are not linear).
+    vector f_s. The interval is f ± h, with h = 2.7764451051977987 · sd(f_s) / √5, where sd is the sample standard
+    deviation with divisor 4 (ddof = 1, as b1). This is b1's guard form, descriptive, since the statistics are not linear.
     - For r_poor and r_well: if any split fails its 0.005 floor, the r reads "unresolved across bands".
   - **Noisy vectors** (F0b, A2): 2,000 Gaussian perturbations of β with independent per-cell SD, RNG seed 20261122:
     - F0b's SD is `noise_sigma`, a declared approximation, since F0b's covariance is not committed;
@@ -272,7 +323,9 @@ For a bias vector β = δφ:
   - **S_poor is read** only if the interval lies above 0.01.
   - **Basis:** 0.01 is a 1 % relative norm over the reported cells, twice the 0.005 floor on the r. Fixed here.
 - **The noise maximum for Z_well (noisy vectors only).** The same 2,000 perturbations, applied to a **zero** vector, give
-  Z_noise = the 97.5 % point of Z_well under noise alone, printed beside Z_well. FD-PRR and T3 vectors are noise-free
+  Z_noise = the 97.5 % point of Z_well under noise alone, printed beside Z_well. With n_well = 0, Z_noise is not computed
+  and Z_well keeps its sentinel.
+  <!-- absence-ok: a declared computation rule of this study (what is skipped when n_well = 0), not a claim that a result does not exist --> FD-PRR and T3 vectors are noise-free
   constructions at fixed splits; their split spread enters through h, and they have no Z_noise.
 
 ## 4. The tested bias vectors
@@ -280,10 +333,10 @@ For a bias vector β = δφ:
 | set | vectors | role |
 |---|---|---|
 | **5D-B0** | FD-PRR's B0 b at A7 GiBUU: the mean over the five splits (991000, 994001–994004), with the individual splits giving the interval (§3.6). FD-PRR's B0 equals T3's (T3's C-PAIR, rechecked by C-T3) | **primary** |
-| **5D-ARMS** | T3 MO and OP at A7 GiBUU, k = 5 (configuration (e)'s iteration count): the five-split mean, with the splits giving the interval | **primary** (M2) |
-| 5D-ARMS at k = 50 | T3 B0, MO and OP at A7 GiBUU (five splits) and q3, at k = 50, the k at which the note prints T3's values | **printed secondary**, under §5.2's pairing rule |
+| **5D-ARMS** | T3 MO at A7 GiBUU at k = 5 (configuration (e)'s iteration count), and OP at k = 2, its only and final iterate (`t3p_arms.ITERS["OP"] = 2`, the step-2 bound T3 reads as ρ_OP(2)): the five-split mean, with the splits giving the interval | **primary** (M2) |
+| 5D-ARMS at k = 50 | T3 B0 and MO at A7 GiBUU (five splits) and q3, at k = 50, the k at which the note prints T3's values. OP has no k = 50 | **printed secondary**, under §5.2's pairing rule |
 | **5D-F0b** | F0b's graded truths with n_experiments ≥ 16: nominal, W1, W2, W3, q3, stage0c_gibuu, A7_mnvtune, A7_genie_cv, A7_genie_mec, A7_nuwro, A7_gibuu | **primary** |
-| 5D secondary | FD-PRR B0 and T3 B0/MO/OP at q3 (one split, k = 5); F0b closure_nuwro (N = 0); F0b P-sets (ungraded) | printed, marked secondary |
+| 5D secondary | FD-PRR B0 and T3 B0/MO at q3 (one split, k = 5), and T3 OP at q3 (k = 2); F0b closure_nuwro (N = 0); F0b P-sets (ungraded) | printed, marked secondary |
 | **2D-A2** | A2 OmniFold mean at nominal, genie_mec, nuwro (5 trials) | **primary** |
 | 2D secondary | A2 OmniFold at bump, tilt, within_plus, within_minus; IBU K=5 and K=10 at every truth | printed, marked secondary |
 
@@ -301,10 +354,10 @@ No vector, truth, split, k or set not listed here is computed for reading.
 | S_poor | **poor-dominated** | S ≥ 0.8 | "At truth t (D), at least four fifths of the bias's sum of squares lies outside the combinations of reported cells that the binned detector-level inputs constrain to 10 % or better at the data exposure." |
 | | **mixed** | 0.2 < S < 0.8 | "…between a fifth and four fifths of the bias's sum of squares lies outside the well-constrained combinations." |
 | | **well-dominated** | S ≤ 0.2 | "…at least four fifths of the bias's sum of squares lies in combinations the binned inputs constrain to 10 % or better." |
-| Z_well | **below** | Z < 1 | "In every combination of reported cells that the binned inputs constrain to 10 % or better, the bias is below one binned Cramér–Rao width at the data exposure." |
-| | **intermediate** | 1 ≤ Z < 2 | "In some well-constrained combination the bias reaches between one and two binned CR widths, and in none does it reach two." |
-| | **resolvable** | Z ≥ 2 (noisy vectors: see below) | "In some combination the binned inputs constrain to 10 % or better, the bias is at least two binned CR widths: a component the binned data could resolve carries it." |
-| | **within the noise maximum** (noisy vectors only) | Z ≥ 2 but not above Z_noise (below) | "In some well-constrained combination the bias reaches two binned CR widths, but no more than noise alone would give across these combinations; no component is resolved." |
+| Z_well | **below** | Z < 1 | "In every combination in the span of the eigen-combinations of reported cells that the binned inputs constrain to 10 % or better, the bias is below one binned Cramér–Rao width at the data exposure." |
+| | **intermediate** | 1 ≤ Z < 2 | "In some combination in that span the bias reaches between one and two binned CR widths, and in none does it reach two." |
+| | **resolvable** | Z ≥ 2 (noisy vectors: see below) | "In some combination in the span of the eigen-combinations the binned inputs constrain to 10 % or better, the bias is at least two binned CR widths: a component the binned data could resolve carries it." |
+| | **within the noise maximum** (noisy vectors only) | Z ≥ 2 but not above Z_noise (below) | "In some combination in that span the bias reaches two binned CR widths, but no more than noise alone would give across it; no component is resolved." |
 | | **no well-constrained combination** | n_well = 0 | "No combination of reported cells is constrained to 10 % or better." |
 | r_poor, r_well | **removes most** | r ≥ 0.5 | "Arm A removes at least half of B0's bias in the poorly (well-) constrained combinations." |
 | | **removes part** | 0.2 ≤ r < 0.5 | "…between a fifth and a half…" |
@@ -318,7 +371,8 @@ No vector, truth, split, k or set not listed here is computed for reading.
 - **For a noisy Z_well:**
   - **resolvable** requires f_lo ≥ 2 **and** f_lo > Z_noise;
   - **within the noise maximum** requires f_lo ≥ 2 and f_hi ≤ Z_noise;
-  - an interval with f_lo ≥ 2 that contains Z_noise reads "unresolved across within-the-noise-maximum and resolvable";
+  - an interval with f_lo ≥ 2 and f_lo < Z_noise < f_hi reads "unresolved across within-the-noise-maximum and
+    resolvable". An interval with f_hi = Z_noise (and f_lo ≥ 2) is "within the noise maximum";
   - an interval reaching below 2 follows the plain rule.
 - A statistic that N-PREC (§6) or the MC control (§5.3) marks reads "numerically unresolved" or "MC-unresolved", with no
   reading.
@@ -329,8 +383,8 @@ No vector, truth, split, k or set not listed here is computed for reading.
    at an estimator effect that the binned data could in principle resolve; it does not show that it is fixable, or how."
 2. **no bias to locate** (or **unresolved at the floor**): the ‖β‖ floor (§3.6).
 3. **consistent with an information limit:** S_poor poor-dominated **and** Z_well below. "At truth t, the bias lies
-   outside the combinations the binned inputs constrain to 10 % or better, and is below one binned CR width everywhere in
-   them. This is consistent with an information limit of the binned inputs; it does not show that no estimator could
+   outside the span of the eigen-combinations the binned inputs constrain to 10 % or better, and is below one binned CR
+   width everywhere in that span. This is consistent with an information limit of the binned inputs; it does not show that no estimator could
    remove it."
 4. **all combinations poorly constrained:** n_well = 0. "No combination of reported cells is constrained to 10 % or
    better; the bias's location among combinations is not tested."
@@ -347,17 +401,21 @@ No vector, truth, split, k or set not listed here is computed for reading.
 ### 5.2 Readings
 
 - **M1 (primary):** S_poor, Z_well and the combined statement for every 5D-B0, 5D-F0b and 2D-A2 vector.
-- **M2 (primary, the oracle arms at k = 5):** r_poor and r_well for MO and OP against B0 at A7 GiBUU, by §5.1's bands.
+- **M2 (primary, the oracle arms):** r_poor and r_well for MO at k = 5 and OP at k = 2, each against B0 at k = 5, at A7
+  GiBUU, by §5.1's bands.
   - **The licensed MO sentence:** "At k = 5, the true missed-event weights remove mainly the poorly constrained part of
     B0's bias." It requires r_poor "removes most" **and** r_well "no change" or the well sentinel. The mirror sentence (r_well
     "removes most" and r_poor "no change" or the poor sentinel) reads "…mainly the well-constrained part…". Every other
     resolved case is reported label by label.
-  - OP is the bound on what step 2 can reach (T3 §3.3). It is read by the same bands and stated as that bound.
+  - OP is the bound on what step 2 can reach (T3 §3.3), at its only iterate k = 2. It is read by the same bands and stated
+    as that bound, and every OP sentence names "k = 2".
   - **The pairing rule.** M2 reads k = 5, the reported estimator's iteration count, while the note prints T3's values at
     k = 50. An M2 sentence at k = 5 is never paired or juxtaposed with the note's k = 50 values, or with this study's
     k = 50 printout, as if they described the same unfold.
     - Every k = 50 line in the readout carries "k = 50, secondary; not M2".
-    - Every M2 sentence names "k = 5".
+    - Every M2 sentence names its k: "k = 5" for B0 and MO, "k = 2" for OP.
+    - The one allowed mix is OP at k = 2 against B0 at k = 5, which is T3's own comparison of the step-2 bound with the
+      reported estimator. Every other mix of iterations is forbidden.
 - **M3 (5D, feature sets):**
   - It reads n_well, n_mid (the constrained combinations with s_k > 0.10) and dim U∞ for the 3D, 4D and 5D reco feature
     sets. Each count is read only if MC-resolved (§5.3).
@@ -391,6 +449,8 @@ No band, cut, set, truth, k or exposure is changed after any statistic is comput
   - 2D uses `s5c_pseudo.half_mask` at key 20261122.
 - b_bkg is the same full-exposure template in the full build and both halves; only the signal MC is halved. b_known comes
   from each half's own rows at ×2.
+- **The same φ-space first:** the set of cells dropped for f0 = 0 must be equal at full, A and B. Otherwise every reading
+  of that dimension reads "MC-unresolved".
 - **A reading is MC-resolved** only if its label is the same at full, half A and half B, and the partition is stable:
   - n_well and dim U∞ are each equal at full, A and B;
   - ‖P_well^A − P_well^B‖₂ ≤ 0.2 and ‖P_well^full − P_well^X‖₂ ≤ 0.2 for X = A, B.
@@ -413,16 +473,18 @@ No band, cut, set, truth, k or exposure is changed after any statistic is comput
 | C-RID | under R-ID's settings (half A at ×2 of FD-PRR's primary split, the nominal fold unfold's prior and b, `did.fisher`, `widths_from_eig`, prr_ibu's `maps`), the 5D construction reproduces FD-PRR's committed R-ID: `sigma_rel[16]` and `null_fraction[16]` (∞ matches ∞), `n_null_modes` and `n_cells_grid` | finite sigma_rel relative ≤ 1e-6; null_fraction absolute ≤ 1e-6; counts exact | STOP |
 | C-DID-CONS | connect P: IBU-1's J-world and D-ID's T1 J-cell definitions and occupied reco cells, as four sorted lists compared by sha256 (§1) | exact | decides whether C-DID gates; recorded in rev 3 |
 | C-DID | the J world at T1 under D-ID's settings (full MC, same sample, b = b_known, nominal weights) reproduces `tables.npz` `T1/nominal/widths_nom/{sigma_rel,null_fraction}` on the functionals both name | as C-RID | STOP if C-DID-CONS is equal; otherwise printed |
-| C-L | L t0 equals FD-PRR's prior 16-vector P, as `t3p_read` / `prr_read` compute it from T3's B0 product at A7 GiBUU s991000; the same at the other splits | relative ≤ 1e-12 | STOP |
+| C-L | 5D: L is linear and equals the extraction: L t = `ibu1.extract(share · t)` for t0 and for two positive random t, and the reported map equals T3's M16 (`h2_definition`). The P that converts FD-PRR's b to φ-units is `t3p_read.priors`' P (FD-PRR's nominal product at the same split), with the ratio P/f0 printed per cell (P is half B's nominal truth, f0 the full MC's, so they are not equal by construction). 2D: the readout's `cells` has 205 entries, is equal for every primary truth and equals the bank's `selected` mask | relative ≤ 1e-12; exact | STOP |
+| C-GRID | the 5D reading capture and the R-ID capture report the same grid `n_cells`, equal to the number of non-empty H2 coarse cells under the g world's `coarse_of`, and to the committed R-ID's `n_cells_grid` | exact | STOP |
+| C-RHO | ρ(e_c) (§3.3) equals `widths_from_eig`'s null fraction for e_cᵀJ, at every reported cell, for each build | absolute ≤ 1e-9 | STOP |
 | C-RANK | G has full row rank after the f0 = 0 drop (K positive definite) | smallest eigenvalue of K > 1e-12·largest | STOP |
 | C-T3 | B0 at A7 GiBUU (five splits) and q3, at k = 5, recomputed from T3's products by `t3p_read`'s b_c, equals FD-PRR's committed `table` b; the T3 readout's verdict is COMPLETE | 1e-12 absolute; exact | STOP |
 | C-F0B | `truths[].bias` equal in the two F0b readouts | exact | STOP |
 | C-D | each F0b truth used has an FD-PRR table entry of the same name at split 991000 with a 16-vector d | exact | STOP |
 | C-A2 | A2's means recomputed from the five residuals equal `mean` (b1's C-A2); the bank's sha256 equals A2's `bank_sha256` | 1e-15; exact | STOP |
-| C-2D | `binned_problem` on the bank's arrays reproduces the bank's `ibu_response` and `ibu_prior`; Σ b_bkg equals the bank's Σ `bw` over in-window reco | relative ≤ 1e-12 | STOP |
+| C-2D | `binned_problem` on the bank's arrays reproduces the bank's `ibu_response` (= M) and `ibu_prior` (= T); b_bkg and b_known each built twice, by `ibukt.histogram` and by `ref_c2c1.global_index` on `config.json`'s edges (no `re2_driver` import), are equal cell by cell | relative ≤ 1e-12 | STOP |
 | C-MARG | the 5D reco cells lie on the World's product grid; the dropped axes are W (4D) and q3, W (3D) by name; the sums conserve Σ R and Σ b | exact map; relative ≤ 1e-12 | STOP |
-| C-ROUTE | S_poor and Z_well by the eigen route (§3.3) equal those by an independent route (W from a pivoted QR of the well-constrained block; χ²_well by solving rather than by eigenvalues) | 1e-10 + 1e-8·\|a\| | STOP |
-| **N-PREC** | every eigen-decomposition with two LAPACK drivers (numpy `eigh`, scipy `eigh(driver="evr")`). For a vector, "numerically unresolved" if the partition differs, if S_poor or an r differs by > 0.01, or if \|Z_numpy − Z_evr\| > max(0.01, 0.01·Z) | as stated | per reading |
+| C-ROUTE | S_poor and Z_well (and each r) by the eigen route (§3.3) equal those by an independent route (W from a pivoted QR of the well-constrained block; χ²_well by solving rather than by eigenvalues) | \|ΔS\| ≤ 1e-10 + 1e-8·\|S\|; \|ΔZ\| ≤ 1e-10 + 1e-8·\|Z\|; \|Δr\| ≤ 1e-10 + 1e-8·\|r\| | STOP |
+| **N-PREC** | every eigen-decomposition with two LAPACK drivers (numpy `eigh`, scipy `eigh(driver="evr")`). For a vector, "numerically unresolved" if the partition differs, if S_poor or an r differs by > 0.01, or if \|Z_numpy − Z_evr\| > max(0.01, 0.01·Z). With n_well = 0 the numeric Z test is skipped (the sentinel is compared as a label) | as stated | per reading |
 
 **Synthetic tests before any real input** (`test_msr.py`):
 - a toy R with a planted spectrum:
@@ -431,6 +493,8 @@ No band, cut, set, truth, k or exposure is changed after any statistic is comput
     above 1;
   - a duplicated column puts its difference combination in U∞;
   - a direction with a tiny null component under a global cut but a null fraction > 1e-6 goes to U∞ (Grok 2's case);
+  - R = [1, 1] with t0 = [1, 1e7]: the difference combination, which `widths_from_eig` marks infinite, lands in U∞ and
+    outside W, and ρ on the coordinate directions matches `widths_from_eig` (rev-2 read, item 1);
 - the C-RID path on a fixture reproduces `prr_ibu.r_id`'s output exactly;
 - the 3D/4D summation on a toy product grid equals direct binning, with F rebuilt;
 - every band edge of §5.1, each sentinel, the floor's three branches, the noise-maximum rule's three cases, and the order
@@ -465,9 +529,11 @@ No band, cut, set, truth, k or exposure is changed after any statistic is comput
     limitation-resolver's flux2 input set, on fresh acks.
   - stat and sha256, with O_NOATIME, of every §2 input, including locating the 2D bank by sha256 and the 3D/4D inputs for
     the inventory.
-  - C-DID-CONS.
-  - A timed build on a 2 % row subsample of each response under `/usr/bin/time -v`, printing wall time and peak RSS, with
-    the full build's extrapolation.
+  - C-DID-CONS, always, whatever the gate reads. Both sides' exit codes are checked, and an incomplete side records
+    INCOMPLETE (rc 6), not EQUAL or DIFFERS.
+  - A timed build at row fractions 0.02 and 0.10 of each response. Each subsample is written by a separate process, so
+    the timed process never holds the full arrays. The connect prints wall time and in-process peak RSS, and the full
+    build's two-point linear extrapolation.
   - No PyROOT read is made anywhere in this study (§2's operand change).
   - It writes only under a fresh `$OUT` on pscratch, and nothing to CFS.
 - **Connect B, the build.**
@@ -476,8 +542,9 @@ No band, cut, set, truth, k or exposure is changed after any statistic is comput
     every fenced lane first.
   - It builds the full, half-A and half-B responses at 5D and 2D, the R-ID-settings and D-ID-settings captures, L, P and
     T3's B0/MO/OP b vectors. All are small npz files under `$OUT` with a SHA256SUMS.
-  - It reads with O_NOATIME, from pinned shas, in a fresh clone at a pinned commit, and writes nothing to CFS. The files are
-    fetched by dd streaming with a sha check.
+  - It reads with O_NOATIME, from pinned shas, in a fresh clone at a pinned commit, and writes nothing to CFS. T3's
+    products, SHA256SUMS, stage.json and the FD-PRR nominal copies are read through O_NOATIME copies into the build's own
+    stage. The files are fetched by dd streaming with a sha check.
 - Everything after the fetch is local.
 
 <!-- absence-ok: a declaration of an unrun study; "nothing is computed" describes its own order of work -->

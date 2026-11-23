@@ -61,7 +61,7 @@ PRIMARY_SEED = 991000          # FD-PRR's primary split (section 5.3, C-RID)
 SPLIT2D_KEY = 20261122         # the 2D halves (section 5.3)
 T3_ARMS = ("B0", "MO", "OP")
 T3_CELLS = (("A7_gibuu", (991000, 994001, 994002, 994003, 994004)), ("q3", (991000,)))
-T3_KS = (5, 50)
+T3_KS = {"B0": (5, 50), "MO": (5, 50), "OP": (2,)}  # OP runs 2 iterations (t3p_arms.ITERS["OP"]); declaration rev 3
 
 
 class Refused(RuntimeError):
@@ -85,6 +85,33 @@ def noatime_sha256(path: Path, chunk: int = 1 << 24) -> str:
     finally:
         os.close(fd)
     return h.hexdigest()
+
+
+def noatime_bytes(path: Path) -> bytes:
+    flag = getattr(os, "O_NOATIME", 0)
+    if not flag:
+        raise Refused("O_NOATIME is not available on this platform")
+    fd = os.open(path, os.O_RDONLY | flag)
+    try:
+        chunks = []
+        while True:
+            b = os.read(fd, 1 << 24)
+            if not b:
+                return b"".join(chunks)
+            chunks.append(b)
+    finally:
+        os.close(fd)
+
+
+def noatime_copy(src: Path, dest: Path, pin: str) -> Path:
+    """Copy an original with O_NOATIME into this build's own stage; refuse unless the copy is at ``pin``."""
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    if dest.exists():
+        raise Refused(f"{dest} exists")
+    dest.write_bytes(noatime_bytes(src))
+    if plain_sha256(dest) != pin:
+        raise Refused(f"C-OPS: the copy of {src} is not at {pin}")
+    return dest
 
 
 def plain_sha256(path: Path) -> str:
@@ -176,28 +203,48 @@ def problem_arrays(prefix: str, cap: dict, L: np.ndarray | None) -> dict:
     return out
 
 
-def setup_5d(npz: Path, bkg_path: Path, rows: np.ndarray | None = None):
+MC_KEYS = ("MCgen", "MCreco", "pass_reco", "pass_truth", "w_truth", "w_reco")
+DATA_KEYS = ("measured", "measured_weights")  # never loaded (declaration section 0; D-ID's REAL_DATA_KEYS likewise)
+OTHER_KEYS = ("denom_nd", "flux", "data_pot", "n_nucleons", "nedges")
+
+
+def load_inputs_nodata(npz: Path, bkg_path: Path, pins: dict | None) -> tuple[dict, dict]:
+    """``ibu1.load_inputs`` with its own digest checks (when ``pins`` is given) and the same keys as
+    ``s5c_unfold.load_inputs``, except the two data keys, which are never read. test_msr_build checks that every
+    returned array equals the pinned loader's."""
     import ibu1
+    if pins is not None:
+        if ibu1.sha256(npz) != pins["of_inputs_5d_sha256"]:
+            raise Refused("of_inputs_5d.npz digest differs from IBU-1's config.json")
+        if ibu1.sha256(bkg_path) != pins["bkg_dump_sha256"]:
+            raise Refused("bkg_dump.npz digest differs from IBU-1's config.json")
+    d = np.load(npz, allow_pickle=True)
+    inputs = {k: d[k] for k in MC_KEYS + OTHER_KEYS}
+    inputs["edges"] = [np.asarray(d[f"edges_{i}"], float) for i in range(int(d["nedges"]))]
+    bz = np.load(bkg_path, allow_pickle=True)
+    if pins is not None and json.loads(str(bz["meta"]))["npz_sha256"] != pins["of_inputs_5d_sha256"]:
+        raise Refused("background dump was made against a different npz")
+    return inputs, {"bkg_reco": bz["bkg_reco"], "bkg_w": bz["bkg_w"], "bkg_nd": bz["bkg_nd"]}
+
+
+def setup_5d(npz: Path, bkg_path: Path, probe: bool = False):
     import ref_g1
     import s5n_pseudo
     cfg = json.loads(ref_g1.CONFIG.read_text())
     lib = ref_g1.Lib(cfg)
     icfg = lib.ibu1_cfg
     contract = json.loads((REPO / icfg["contract"]["path"]).read_text())
-    inputs, bkg = ibu1.load_inputs(lib.prod, icfg, npz, bkg_path)
-    if rows is not None:  # probe only: a row subsample, timing only
-        inputs = dict(inputs)
-        for k in ("MCgen", "MCreco", "pass_reco", "pass_truth", "w_truth", "w_reco"):
-            inputs[k] = inputs[k][rows]
+    # the probe reads a row subsample written by `subsample` (timing only), so it carries no pins
+    inputs, bkg = load_inputs_nodata(npz, bkg_path, None if probe else icfg["inputs"])
     jw, gw = ref_g1.worlds(lib, cfg, inputs, contract)
     return lib, inputs, bkg, jw, gw, s5n_pseudo
 
 
-def build_5d(npz: Path, bkg_path: Path, rows: np.ndarray | None = None) -> tuple[dict, dict]:
+def build_5d(npz: Path, bkg_path: Path, probe: bool = False) -> tuple[dict, dict]:
     import ibu1
     import ref_g1
     import s5c_pseudo
-    lib, inputs, bkg, jw, gw, s5n = setup_5d(npz, bkg_path, rows)
+    lib, inputs, bkg, jw, gw, s5n = setup_5d(npz, bkg_path, probe)
     did = lib.prod.did
     n = inputs["MCgen"].shape[0]
     wt, wr = np.asarray(inputs["w_truth"], float), np.asarray(inputs["w_reco"], float)
@@ -243,12 +290,14 @@ def build_5d(npz: Path, bkg_path: Path, rows: np.ndarray | None = None) -> tuple
     arrays.update(problem_arrays("t1_did", cap_t1, None))
     arrays["t1_did__maps"] = np.asarray(maps_t1)
     rec["t1_names"] = list(jw.names)
-    rec["n_cells"] = {"h2": int(cap["grid"].n_cells), "t1": int(cap_t1["grid"].n_cells)}
+    rec["n_cells"] = {"h2": int(cap["grid"].n_cells), "t1": int(cap_t1["grid"].n_cells),
+                      "h2_rid": int(cap_r["grid"].n_cells),
+                      "h2_nonempty_coarse": int(np.unique(np.asarray(gw.coarse_of)[cap["u_fine"] > 0]).size)}
     return arrays, rec
 
 
 # ------------------------------------------------------------------------------------------- 2D
-def build_2d(bank_path: Path, rows_frac: float | None = None) -> tuple[dict, dict]:
+def build_2d(bank_path: Path, probe: bool = False) -> tuple[dict, dict]:
     import ibukt as core
     import ref_c2c1
     import s5c_pseudo
@@ -261,9 +310,11 @@ def build_2d(bank_path: Path, rows_frac: float | None = None) -> tuple[dict, dic
     if np.any(pr & ~pt):
         raise Refused("C-2D: a signal fake (pr and not pt), as run_ibukt.py:360 refuses")
     n = gen.shape[0]
-    sel = np.arange(n) if rows_frac is None else np.flatnonzero(np.random.default_rng(7).random(n) < rows_frac)
+    sel = np.arange(n)
     bkg, bw = bank["bkg"], bank["bw"].astype(float)
     b_bkg = core.histogram(bkg[:, 0], bkg[:, 1], bw, cfg)
+    gi = ref_c2c1.global_index(bkg[:, 0], bkg[:, 1], pt_e, pz_e)
+    b_bkg_2 = np.bincount(gi[gi >= 0], weights=bw[gi >= 0], minlength=b_bkg.size)
     arrays, rec = {}, {"pt_edges": pt_e, "pz_edges": pz_e, "factor": np.asarray(bank["factor"]).tolist(),
                        "selected": np.flatnonzero(bank["selected"]).tolist()}
 
@@ -273,11 +324,21 @@ def build_2d(bank_path: Path, rows_frac: float | None = None) -> tuple[dict, dic
         r = ref_c2c1.global_index(reco[idx][:, 0], reco[idx][:, 1], pt_e, pz_e)
         kn = pt[idx] & pr[idx] & (t < 0) & (r >= 0)
         b_known = np.bincount(r[kn], weights=scale * wr[idx][kn], minlength=T.size)
-        arrays.update({f"d2_{name}__T": T, f"d2_{name}__M": M, f"d2_{name}__b_known": b_known})
+        # the second construction (C-2D): IBUKT's own cell map on the truth and reco coordinates
+        tc = core.cells(gen[idx][:, 0], gen[idx][:, 1], cfg)
+        rc = core.cells(reco[idx][:, 0], reco[idx][:, 1], cfg)
+        kn2 = pt[idx] & pr[idx] & (tc < 0) & (rc >= 0)
+        b_known_2 = np.bincount(rc[kn2], weights=scale * wr[idx][kn2], minlength=T.size)
+        arrays.update({f"d2_{name}__T": T, f"d2_{name}__M": M, f"d2_{name}__b_known": b_known,
+                       f"d2_{name}__b_known_ibukt": b_known_2})
 
     one("full", sel, 1.0)
     arrays["d2__b_bkg"] = b_bkg
-    if rows_frac is None:
+    arrays["d2__b_bkg_globalindex"] = b_bkg_2
+    arrays["d2__truth_nominal"] = np.asarray(bank["truth_nominal"], float) if "truth_nominal" in bank else np.full(224, np.nan)
+    arrays["d2__factor"] = np.asarray(bank["factor"], float) * np.ones(224)
+    arrays["d2__selected"] = np.asarray(bank["selected"], bool)
+    if not probe:
         is_b = s5c_pseudo.half_mask(n, SPLIT2D_KEY)
         one("halfA", np.flatnonzero(~is_b), 2.0)
         one("halfB", np.flatnonzero(is_b), 2.0)
@@ -296,17 +357,26 @@ def build_2d(bank_path: Path, rows_frac: float | None = None) -> tuple[dict, dic
 
 
 # ------------------------------------------------------------------------------------------- T3 bias vectors
-def t3_vectors(run: Path, stage_json: Path) -> tuple[dict, dict]:
-    """b_c = (X_hat_k - X)/P at k in T3_KS, exactly as ``t3p_read.quantities`` forms it, for B0, MO and OP."""
+def t3_vectors(run: Path, stage_json: Path, stage: Path) -> tuple[dict, dict]:
+    """b_c = (X_hat_k - X)/P at k in T3_KS, exactly as ``t3p_read.quantities`` forms it, for B0, MO and OP. Every
+    original under T3's run root is read with O_NOATIME: SHA256SUMS and stage.json directly, and each product and each
+    FD-PRR nominal copy through ``noatime_copy`` into ``stage`` (this build's own), which is all that is then loaded."""
     import estimator_stability_analyze as an
     import t3p_probe as T
     import t3p_read as TR
     M16 = an.cell_matrix(str(REPO / "nd-unfolding/pv-ladder/readouts/h2_definition.json"))
     sums = {}
-    for line in (run / "log-floor/SHA256SUMS").read_text().splitlines():
+    for line in noatime_bytes(run / "log-floor/SHA256SUMS").decode().splitlines():
         h, p = line.split("  ", 1)
         sums[p] = h
-    Pr = TR.priors(json.loads(stage_json.read_text()), M16)
+    stage_rec = json.loads(noatime_bytes(stage_json).decode())
+    want = {f"prr_B0_{T.PRIOR}_s{s}" for s in (T.PRIMARY_SEED, *T.FLOOR_SEEDS)}
+    files = []
+    for e in stage_rec["files"]:
+        if e["role"] in want:
+            e = dict(e, copy=str(noatime_copy(Path(e["copy"]), stage / "fd-prr" / Path(e["copy"]).name, e["sha256"])))
+        files.append(e)
+    Pr = TR.priors(dict(stage_rec, files=files), M16)
     arrays, rec = {"M16": np.asarray(M16, float)}, {"products": {}}
     for truth, seeds in T3_CELLS:
         for s in seeds:
@@ -314,14 +384,16 @@ def t3_vectors(run: Path, stage_json: Path) -> tuple[dict, dict]:
             for arm in T3_ARMS:
                 path = T.product_path(run / "runs", arm, truth, s)
                 rel = str(path.relative_to(run))
-                got = noatime_sha256(path)
-                if sums.get(rel) != got:
-                    raise Refused(f"C-OPS: {rel} is not at log-floor/SHA256SUMS's sha256")
-                a, _meta = TR.load(path)
+                if rel not in sums:
+                    raise Refused(f"C-OPS: {rel} is not in log-floor/SHA256SUMS")
+                copy = noatime_copy(path, stage / "t3" / rel, sums[rel])
+                got = sums[rel]
+                a, _meta = TR.load(copy)
                 X = M16 @ a["xtrue_flat"].astype(float)
-                for k in T3_KS:
-                    kk = min(k, a["X16_push"].shape[0])
-                    arrays[f"t3__b__{arm}__{truth}__s{s}__k{k}"] = (a["X16_push"][kk - 1] - X) / Pr[s]
+                for k in T3_KS[arm]:
+                    if k > a["X16_push"].shape[0]:
+                        raise Refused(f"{rel}: k = {k} beyond its {a['X16_push'].shape[0]} iterations")
+                    arrays[f"t3__b__{arm}__{truth}__s{s}__k{k}"] = (a["X16_push"][k - 1] - X) / Pr[s]
                 arrays[f"t3__X__{arm}__{truth}__s{s}"] = X
                 rec["products"][rel] = {"sha256": got, "iterations": int(a["X16_push"].shape[0])}
     return arrays, rec
@@ -348,12 +420,12 @@ def did_cons(side: str, npz: Path, bkg_path: Path, out: Path) -> dict:
         os.symlink(npz, idir / "of_inputs_5d.npz")
         diag = D.Diagnostic(cfg, out / "inputs", out / "did-out", D.Budget(1e9),
                             D.load_comparator(cfg["code"]["comparator.py"]), D.load_committed(cfg["code"]["nd-unfolding"]))
-        try:
-            diag.load_events()
-            diag.build_rows()
-            diag.histograms()
-        except D.AdmissionFailure as exc:  # recorded, not repaired: C-DID-CONS then reads "differs"
-            return {"side": side, "admission_failure": str(exc), "admission": diag.out.get("admission")}
+        # D-ID's own stage-1 steps that build the event geometry and the grids (stage1 without the comparators,
+        # whose committed products this connect does not read); an admission failure propagates (non-zero exit)
+        diag.load_events()
+        diag.build_rows()
+        diag.histograms()
+        diag.grids()
         cell_of_fine, reco = diag.G["T1"].cell_of_fine, diag.reco_cells
     members = [" ".join(map(str, np.flatnonzero(cell_of_fine == c))) for c in range(int(cell_of_fine.max()) + 1)]
     lists = {"j_cells": "\n".join(sorted(members)) + "\n", "reco_cells": "\n".join(map(str, sorted(reco.tolist()))) + "\n"}
@@ -362,6 +434,40 @@ def did_cons(side: str, npz: Path, bkg_path: Path, out: Path) -> dict:
         (out / f"{side}_{name}.txt").write_text(text)
         rec[name] = {"sha256": hashlib.sha256(text.encode()).hexdigest(), "n": text.count("\n")}
     return rec
+
+
+# ------------------------------------------------------------------------------------------- probe inputs
+def npz_rows(path: Path, key: str) -> int:
+    """The row count of one array in an npz, from its .npy header only (no array is read)."""
+    import zipfile
+    with zipfile.ZipFile(path) as z, z.open(f"{key}.npy") as f:
+        version = np.lib.format.read_magic(f)
+        shape, _, _ = np.lib.format._read_array_header(f, version)
+    return int(shape[0])
+
+
+def subsample(part: str, src: Path, fraction: float, out: Path) -> dict:
+    """Write a row subsample of the 5D inputs (MC keys only; the data keys are not read) or of the 2D bank, for the
+    probe's timing. Run in its own process, so the probe process never holds the full arrays (Grok's read, item 3)."""
+    if out.exists():
+        raise Refused(f"{out} exists")
+    out.parent.mkdir(parents=True, exist_ok=False)
+    rng = np.random.default_rng(7)
+    if part == "5d":
+        n = npz_rows(src, "MCgen")
+        keep = np.flatnonzero(rng.random(n) < fraction)
+        d = np.load(src, allow_pickle=True)
+        arrays = {k: d[k][keep] for k in MC_KEYS}
+        arrays.update({k: d[k] for k in OTHER_KEYS})
+        arrays.update({f"edges_{i}": d[f"edges_{i}"] for i in range(int(d["nedges"]))})
+    else:
+        with np.load(src, allow_pickle=False) as z:
+            bank = {k: z[k] for k in z.files}
+        n = bank["gen"].shape[0]
+        keep = np.flatnonzero(rng.random(n) < fraction)
+        arrays = {k: (v[keep] if k in ("gen", "reco", "pr", "pt", "wt", "wr") else v) for k, v in bank.items()}
+    np.savez(out, **arrays)
+    return {"part": part, "rows": int(n), "kept": int(keep.size), "fraction": fraction}
 
 
 # ------------------------------------------------------------------------------------------- write
@@ -380,6 +486,11 @@ def main(argv=None) -> int:
     f = sub.add_parser("find-bank")
     f.add_argument("root", type=Path)
     f.add_argument("sha256")
+    ss = sub.add_parser("subsample")
+    ss.add_argument("--part", choices=("5d", "2d"), required=True)
+    ss.add_argument("--src", type=Path, required=True)
+    ss.add_argument("--fraction", type=float, required=True)
+    ss.add_argument("--out", type=Path, required=True)
     c = sub.add_parser("did-cons")
     c.add_argument("--side", choices=("did", "ibu1"), required=True)
     for p in (c,):
@@ -393,7 +504,7 @@ def main(argv=None) -> int:
         p.add_argument("--bank", type=Path, required=True)
         p.add_argument("--out", type=Path, required=True)
         if name == "probe":
-            p.add_argument("--fraction", type=float, default=0.02)
+            p.add_argument("--fraction", type=float, required=True)
             p.add_argument("--part", choices=("5d", "2d"), required=True)
         else:
             p.add_argument("--t3-run", type=Path, required=True)
@@ -412,19 +523,19 @@ def main(argv=None) -> int:
         print(json.dumps({"matches": [str(h) for h in hits]}))
         return 0 if len(hits) >= 1 else 3
     check_pins()
+    if a.cmd == "subsample":
+        print(json.dumps(subsample(a.part, a.src, a.fraction, a.out)))
+        return 0
     if a.cmd == "did-cons":
         print(json.dumps(did_cons(a.side, a.npz, a.bkg, a.out)))
         return 0
     a.out.mkdir(parents=True, exist_ok=False)
     t0 = time.time()
-    if a.cmd == "probe":
+    if a.cmd == "probe":  # --npz / --bank are the subsample files `subsample` wrote
         if a.part == "5d":
-            import s5c_unfold
-            m = s5c_unfold.load_inputs(a.npz)["MCgen"].shape[0]
-            rows = np.flatnonzero(np.random.default_rng(7).random(m) < a.fraction)
-            arrays, rec = build_5d(a.npz, a.bkg, rows=rows)
+            arrays, rec = build_5d(a.npz, a.bkg, probe=True)
         else:
-            arrays, rec = build_2d(a.bank, rows_frac=a.fraction)
+            arrays, rec = build_2d(a.bank, probe=True)
         rec.update(part=a.part, fraction=a.fraction, seconds=round(time.time() - t0, 1), peak_rss_bytes=peak_rss_bytes())
         print(json.dumps({k: rec[k] for k in ("part", "fraction", "seconds", "peak_rss_bytes")}))
         return 0
@@ -432,7 +543,7 @@ def main(argv=None) -> int:
         raise Refused("C-OPS: an input is not at its declared sha256")
     sums, record = [], {"schema": "msr-build/1", "code_pins": PINS}
     for name, fn in (("r5d", lambda: build_5d(a.npz, a.bkg)), ("r2d", lambda: build_2d(a.bank)),
-                     ("t3", lambda: t3_vectors(a.t3_run, a.t3_stage_json))):
+                     ("t3", lambda: t3_vectors(a.t3_run, a.t3_stage_json, a.out / "stage-t3"))):
         ts = time.time()
         arrays, rec = fn()
         h = write_npz(a.out / f"{name}.npz", arrays)

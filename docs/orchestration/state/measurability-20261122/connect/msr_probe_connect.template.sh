@@ -14,9 +14,11 @@
 # of re1's 3D/4D npz (the inventory); the IBUKT bank located by sha256; dd copies of of_inputs_5d.npz, bkg_dump.npz and
 # bank.npz into $OUT/stage, each at its pinned sha256 (every later plain read is of these copies); the timed probe at
 # row fractions 0.02 and 0.10 for 5D and 2D (msr_build probe: seconds and in-process peak RSS), the two-point linear
-# extrapolation to the full build, and the hard gate (every part <= 1800 s and <= 8e9 B); if the gate passes,
-# C-DID-CONS (msr_build did-cons, the D-ID side and the IBU-1 side, each its own process under timeout 2400), with the
-# four lists' sha256 compared. Then the records, as T3's: dd iflag=noatime copies into $OUT/fetch-probe/, checked, one tar.
+# extrapolation to the full build, and the hard gate (every part <= 1800 s and <= 8e9 B; the probe reads a subsample a
+# separate process wrote, so its peak RSS is its own); C-DID-CONS, always (msr_build did-cons, the D-ID side and the
+# IBU-1 side, each its own process under timeout 2400, each rc checked; EQUAL or DIFFERS only when both sides completed;
+# otherwise rc 6, INCOMPLETE). Every stop after $OUT exists writes the records first (finish -> records, as T3's: dd
+# iflag=noatime copies into $OUT/fetch-probe/, checked, one tar).
 # Writes only $OUT and /dev/shm/msr-connect (removed at exit). Nothing to CFS. No set -u. Any stop is final.
 SELF=$1; WEND=$2; FENCE=$3
 set -o pipefail
@@ -65,12 +67,41 @@ fence_sacct() {
   [ -z "$bad" ] || { echo "fenced or msr_ jobs not terminal: $bad"; return 1; }
   return 0
 }
-fence_sacct > /dev/null 2>&1 || bail "fence (sacct) not clear"
+fo=$(fence_sacct 2>&1) || bail "fence (sacct) not clear: $fo"
 
 mkdir -m 700 "$OUT" "$OUT/logs" || bail "mkdir $OUT"
 LOG=$OUT/logs/connect-$TAG.log
 exec > "$LOG" 2>&1
-finish() { echo "msr $TAG rc=$1"; date -u +%FT%TZ; echo "$1" > "$OUT/logs/connect-$TAG.done"; rm -rf -- "$SHM"; rm -f -- "$SELF"; exit "$1"; }
+# every stop after $OUT exists still writes the records tar, so the fetch carries the log of what happened
+RECORDED=0
+finish() {
+  local rc=$1
+  if [ "$RECORDED" -eq 0 ]; then RECORDED=1; records || { [ "$rc" -eq 0 ] && rc=4; }; fi
+  echo "msr $TAG rc=$rc"; date -u +%FT%TZ; echo "$rc" > "$OUT/logs/connect-$TAG.done"; rm -rf -- "$SHM"; rm -f -- "$SELF"; exit "$rc"
+}
+records() {
+  echo "== records"; date -u +%FT%TZ
+  mkdir "$FR" || { echo "records: mkdir $FR failed"; return 1; }
+  local roots=(logs) d rel src a b fail=0 nf=0
+  for d in "$OUT"/didcons-*; do [ -d "$d" ] && roots+=("$(basename "$d")"); done
+  ( cd "$OUT" && find "${roots[@]}" -type f ! -name '*.npz' ! -name "connect-$TAG.log" ! -path '*/inputs/*' -print0 | sort -z ) > "$FR.list" \
+    || { echo "records: the list failed (find)"; return 1; }
+  while IFS= read -r -d '' rel; do
+    src="$OUT/$rel"
+    mkdir -p "$FR/$(dirname "$rel")" || { echo "mkdir failed: $rel"; fail=1; continue; }
+    dd if="$src" of="$FR/$rel" iflag=noatime status=none || { echo "copy failed: $rel"; fail=1; continue; }
+    a=$(dd if="$src" iflag=noatime status=none | sha256sum | cut -d' ' -f1) || { echo "re-read failed: $rel"; fail=1; continue; }
+    b=$(sha256sum "$FR/$rel" | cut -d' ' -f1) || { echo "hash failed: $rel"; fail=1; continue; }
+    [ "$a" = "$b" ] || { echo "copy differs: $rel"; fail=1; }
+    echo "$b  $rel" >> "$FR.sums"; nf=$((nf + 1))
+  done < "$FR.list"
+  [ "$fail" -eq 0 ] && [ "$nf" -gt 0 ] || { echo "records: a copy failed or differs, or none ($nf)"; return 1; }
+  rm -f -- "$FR.list"
+  mv "$FR.sums" "$FR/RECORDS.SHA256SUMS" || return 1
+  echo "records copied: $nf files, $(du -sb "$FR" | cut -f1) bytes"
+  tar -C "$OUT" -cf "$FR.tar" "fetch-$TAG" || { echo "records: tar failed"; return 1; }
+  echo "fetch-$TAG.tar sha256 $(sha256sum "$FR.tar" | cut -d' ' -f1) bytes $(stat -c %s "$FR.tar")"
+}
 echo "node $(hostname) nproc=$(nproc) loadavg $(cut -d' ' -f1-3 /proc/loadavg)"
 date -u +%FT%TZ; echo "window_end_epoch $WEND (now $now); fence prefixes $FENCE"
 echo "connect script sha256 $(sha256sum "$SELF" | cut -d' ' -f1)"
@@ -78,7 +109,8 @@ cp "$SELF" "$OUT/logs/msr_${TAG}.sh"
 echo "== cov2d fence rev 2 ($FENCE_SHA)"; printf '%s\n' "$fence_out"
 echo "== fence (sacct)"; fence_sacct || { echo "STOP: fence"; finish 9; }; echo "fence clear"
 echo "== rpd_ rows (printed; limitation-resolver's flux2 may coexist with these login reads)"
-sacct -X -n -P -S now-2days -o JobID,JobName,State 2>&1 | awk -F'|' 'index($2, "rpd_") == 1'
+rows=$(sacct -X -n -P -S now-2days -o JobID,JobName,State 2>&1) || { echo "STOP: sacct for rpd_ rows failed: $rows"; finish 9; }
+printf '%s\n' "$rows" | awk -F'|' 'index($2, "rpd_") == 1'
 
 # ---- the deploy: a fresh clone at M, clean, the msr files at their sha256
 git clone -q https://github.com/josephbaileyy/MINERvA-OmniFold.git "$D" > "$OUT/logs/clone.log" 2>&1 || { echo "STOP: clone"; finish 3; }
@@ -121,12 +153,17 @@ for spec in "$T3/stage/of_inputs_5d.npz:of_inputs_5d.npz:$NPZ_SHA" "$T3/stage/bk
   [ "$got" = "$pin" ] || { echo "STOP: $name is not at its pin"; finish 9; }
 done
 
-echo "== probe (msr_build probe; in-process seconds and peak RSS)"
+echo "== probe (msr_build probe on a row subsample written by a separate process; in-process seconds and peak RSS)"
 gate=1
 for part in 5d 2d; do
   for frac in 0.02 0.10; do
-    RUN nd-unfolding/msr/msr_build.py probe --part "$part" --fraction "$frac" --npz "$ST/of_inputs_5d.npz" \
-      --bkg "$ST/bkg_dump.npz" --bank "$ST/bank.npz" --out "$OUT/probe-$part-$frac" > "$OUT/logs/probe-$part-$frac.json" \
+    src=$ST/of_inputs_5d.npz; [ "$part" = 2d ] && src=$ST/bank.npz
+    sub=$OUT/probe-$part-$frac/inputs/sub.npz
+    RUN nd-unfolding/msr/msr_build.py subsample --part "$part" --src "$src" --fraction "$frac" --out "$sub" \
+      > "$OUT/logs/subsample-$part-$frac.json" || { echo "STOP: subsample $part $frac"; finish 5; }
+    cat "$OUT/logs/subsample-$part-$frac.json"
+    RUN nd-unfolding/msr/msr_build.py probe --part "$part" --fraction "$frac" --npz "$sub" --bkg "$ST/bkg_dump.npz" \
+      --bank "$sub" --out "$OUT/probe-$part-$frac/run" > "$OUT/logs/probe-$part-$frac.json" \
       || { echo "STOP: probe $part $frac"; finish 5; }
     cat "$OUT/logs/probe-$part-$frac.json"
   done
@@ -146,46 +183,31 @@ PYX
 done
 echo "GATE login_ok=$gate (every part <= 1800 s and <= 8e9 B, two-point linear extrapolation)"
 
-if [ "$gate" -eq 1 ]; then
-  echo "== C-DID-CONS (each side its own process, timeout 2400 s)"
-  for side in did ibu1; do
-    timeout 2400 bash -c "cd '$D' && nice -n 19 ionice -c3 env -u PYTHONPATH '$PY' -I -B nd-unfolding/msr/msr_build.py did-cons --side $side --npz '$ST/of_inputs_5d.npz' --bkg '$ST/bkg_dump.npz' --out '$OUT/didcons-$side'" \
-      > "$OUT/logs/didcons-$side.json" 2> "$OUT/logs/didcons-$side.err"; c=$?
-    echo "did-cons $side rc=$c"; cat "$OUT/logs/didcons-$side.json"
-  done
+echo "== C-DID-CONS (always run in connect P; each side its own process, timeout 2400 s)"
+cdid=0
+for side in did ibu1; do
+  timeout 2400 bash -c "cd '$D' && nice -n 19 ionice -c3 env -u PYTHONPATH '$PY' -I -B nd-unfolding/msr/msr_build.py did-cons --side $side --npz '$ST/of_inputs_5d.npz' --bkg '$ST/bkg_dump.npz' --out '$OUT/didcons-$side'" \
+    > "$OUT/logs/didcons-$side.json" 2> "$OUT/logs/didcons-$side.err"; c=$?
+  echo "did-cons $side rc=$c"; cat "$OUT/logs/didcons-$side.json"
+  [ "$c" -eq 0 ] || { echo "did-cons $side did not complete (rc $c; 124 = timeout); stderr tail:"; tail -20 "$OUT/logs/didcons-$side.err"; cdid=6; }
+done
+if [ "$cdid" -eq 0 ]; then
   for name in j_cells reco_cells; do
-    a=$(sha256sum "$OUT/didcons-did/did_$name.txt" 2>/dev/null | cut -d' ' -f1)
-    b=$(sha256sum "$OUT/didcons-ibu1/ibu1_$name.txt" 2>/dev/null | cut -d' ' -f1)
-    if [ -n "$a" ] && [ "$a" = "$b" ]; then echo "C-DID-CONS $name EQUAL $a"; else echo "C-DID-CONS $name DIFFERS (did '$a', ibu1 '$b')"; fi
+    fa=$OUT/didcons-did/did_$name.txt; fb=$OUT/didcons-ibu1/ibu1_$name.txt
+    if [ -s "$fa" ] && [ -s "$fb" ]; then
+      a=$(sha256sum "$fa" | cut -d' ' -f1) || { echo "hash failed: $fa"; cdid=6; continue; }
+      b=$(sha256sum "$fb" | cut -d' ' -f1) || { echo "hash failed: $fb"; cdid=6; continue; }
+      if [ "$a" = "$b" ]; then echo "C-DID-CONS $name EQUAL $a"; else echo "C-DID-CONS $name DIFFERS (did $a, ibu1 $b)"; fi
+    else
+      echo "C-DID-CONS $name: an output is missing or empty"; cdid=6
+    fi
   done
-else
-  echo "C-DID-CONS deferred to connect B (the gate sends the build to a job)"
 fi
-n=$(git -C "$D" status --porcelain --ignored | grep -v '__pycache__' | wc -l) || { echo "STOP: git status failed (after)"; finish 9; }
+[ "$cdid" -eq 0 ] || echo "C-DID-CONS INCOMPLETE: no EQUAL or DIFFERS is recorded for an incomplete side"
+gs=$(git -C "$D" status --porcelain --ignored) || { echo "STOP: git status failed (after)"; finish 9; }
+n=$(printf '%s\n' "$gs" | awk 'NF && index($0, "__pycache__") == 0 { c++ } END { print c + 0 }')
 echo "porcelain --ignored lines after (pycache excluded): $n"
 [ "$n" -eq 0 ] || { echo "STOP: the deploy changed"; finish 9; }
 
-# ---- the records for the fetch: dd iflag=noatime copies, each checked, then one tar (T3's pattern)
-echo "== records"
-date -u +%FT%TZ
-mkdir "$FR" || { echo "STOP: mkdir $FR"; finish 9; }
-roots=(logs); for d in "$OUT"/didcons-*; do [ -d "$d" ] && roots+=("$(basename "$d")"); done
-( cd "$OUT" && find "${roots[@]}" -type f ! -name '*.npz' ! -name "connect-$TAG.log" ! -path '*/inputs/*' -print0 | sort -z ) > "$FR.list" \
-  || { echo "STOP: the records list failed (find)"; finish 4; }
-fail=0; nf=0
-while IFS= read -r -d '' rel; do
-  src="$OUT/$rel"
-  mkdir -p "$FR/$(dirname "$rel")" || { echo "mkdir failed: $rel"; fail=1; continue; }
-  dd if="$src" of="$FR/$rel" iflag=noatime status=none || { echo "copy failed: $rel"; fail=1; continue; }
-  a=$(dd if="$src" iflag=noatime status=none | sha256sum | cut -d' ' -f1) || { echo "re-read failed: $rel"; fail=1; continue; }
-  b=$(sha256sum "$FR/$rel" | cut -d' ' -f1) || { echo "hash failed: $rel"; fail=1; continue; }
-  [ "$a" = "$b" ] || { echo "copy differs: $rel"; fail=1; }
-  echo "$b  $rel" >> "$FR.sums"; nf=$((nf + 1))
-done < "$FR.list"
-[ "$fail" -eq 0 ] && [ "$nf" -gt 0 ] || { echo "STOP: a record copy failed or differs, or no records ($nf)"; finish 4; }
-rm -f -- "$FR.list"
-mv "$FR.sums" "$FR/RECORDS.SHA256SUMS" || finish 4
-echo "records copied: $nf files, $(du -sb "$FR" | cut -f1) bytes"
-tar -C "$OUT" -cf "$FR.tar" "fetch-$TAG" || { echo "STOP: tar"; finish 4; }
-echo "fetch-$TAG.tar sha256 $(sha256sum "$FR.tar" | cut -d' ' -f1) bytes $(stat -c %s "$FR.tar")"
-finish 0
+# ---- the records (written by finish, T3's pattern: dd iflag=noatime copies, each checked, then one tar)
+finish "$cdid"

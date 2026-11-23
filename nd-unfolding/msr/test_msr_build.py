@@ -110,11 +110,64 @@ class TwoD(unittest.TestCase):
         for k in ("full", "halfA", "halfB"):
             self.assertEqual(arrays[f"d2_{k}__M"].shape, (224, 224))
         np.testing.assert_allclose(arrays["d2_halfA__T"] + arrays["d2_halfB__T"], 2 * arrays["d2_full__T"], rtol=1e-12)
+        np.testing.assert_allclose(arrays["d2__b_bkg"], arrays["d2__b_bkg_globalindex"], rtol=1e-12, atol=0)
+        for k in ("full", "halfA", "halfB"):
+            np.testing.assert_allclose(arrays[f"d2_{k}__b_known"], arrays[f"d2_{k}__b_known_ibukt"], rtol=1e-12, atol=0)
+        self.assertGreater(float(arrays["d2_full__b_known"].sum()), 0.0)  # the fixture has truth outside the grid
 
     def test_a_signal_fake_is_refused(self):
         with tempfile.TemporaryDirectory() as d:
             with self.assertRaises(B.Refused):
                 B.build_2d(self.bank(Path(d), fake=True))
+
+
+def fixture_npz(d: Path) -> Path:
+    """IBU-1's synthetic inputs written in of_inputs_5d.npz's key layout, with stand-in data keys."""
+    arr = {k: INPUTS[k] for k in B.MC_KEYS}
+    arr.update({k: INPUTS[k] for k in ("denom_nd", "flux", "data_pot", "n_nucleons")})
+    arr["nedges"] = np.array(len(INPUTS["edges"]))
+    arr.update({f"edges_{i}": np.asarray(e) for i, e in enumerate(INPUTS["edges"])})
+    arr["measured"] = INPUTS["MCreco"][:100]
+    arr["measured_weights"] = np.ones(100)
+    p = d / "of_inputs_5d.npz"
+    np.savez(p, **arr)
+    return p
+
+
+class Loader(unittest.TestCase):
+    def test_nodata_loader_equals_the_pinned_loader_without_data_keys(self):
+        import s5c_unfold
+        with tempfile.TemporaryDirectory() as d:
+            p = fixture_npz(Path(d))
+            bk = Path(d) / "bkg.npz"
+            np.savez(bk, bkg_reco=BKG["bkg_reco"], bkg_w=BKG["bkg_w"], bkg_nd=BKG["bkg_nd"], meta=json.dumps({"npz_sha256": "x"}))
+            mine, _ = B.load_inputs_nodata(p, bk, None)
+            ref = s5c_unfold.load_inputs(p)
+        self.assertTrue(set(B.DATA_KEYS).isdisjoint(mine))
+        for k in B.MC_KEYS + ("denom_nd", "flux", "data_pot", "n_nucleons", "nedges"):
+            np.testing.assert_array_equal(mine[k], ref[k])
+        for a, b in zip(mine["edges"], ref["edges"]):
+            np.testing.assert_array_equal(a, b)
+
+    def test_subsample_5d_keeps_layout_and_drops_data(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = fixture_npz(Path(d))
+            self.assertEqual(B.npz_rows(p, "MCgen"), INPUTS["MCgen"].shape[0])
+            out = Path(d) / "sub" / "sub.npz"
+            rec = B.subsample("5d", p, 0.1, out)
+            z = np.load(out, allow_pickle=True)
+            self.assertNotIn("measured", z.files)
+            self.assertEqual(z["MCgen"].shape[0], rec["kept"])
+            self.assertTrue(0.05 < rec["kept"] / rec["rows"] < 0.15)
+            with self.assertRaises(B.Refused):
+                B.subsample("5d", p, 0.1, out)
+
+
+class T3K(unittest.TestCase):
+    def test_op_is_read_at_its_two_iterations_only(self):
+        self.assertEqual(B.T3_KS["OP"], (2,))
+        self.assertEqual(B.T3_KS["B0"], (5, 50))
+        self.assertEqual(B.T3_KS["MO"], (5, 50))
 
 
 class Reads(unittest.TestCase):

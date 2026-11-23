@@ -7256,9 +7256,14 @@ docs/orchestration/state/measurability-20261122/connect/standin/standin-out_exis
 docs/orchestration/state/measurability-20261122/connect/standin/standin-window.log.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
 docs/orchestration/state/measurability-20261122/connect/standin/standin.sh	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
 docs/orchestration/state/measurability-20261122/connect/test_msr_build.out.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
+docs/orchestration/state/measurability-20261122/reads/connectP-agy.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
+docs/orchestration/state/measurability-20261122/reads/connectP-grok.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
+docs/orchestration/state/measurability-20261122/reads/connectP-prompt.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
 docs/orchestration/state/measurability-20261122/reads/rev1-agy-gemini-3.8-flash-high.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
 docs/orchestration/state/measurability-20261122/reads/rev1-grok.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
 docs/orchestration/state/measurability-20261122/reads/rev1-prompt.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
+docs/orchestration/state/measurability-20261122/reads/rev2-grok.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
+docs/orchestration/state/measurability-20261122/reads/rev2-prompt.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/COV2D-ADDENDUM-A2.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/COV2D-ADDENDUM-A4.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/COV2D-AMENDMENT-1.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no

@@ -1,0 +1,59 @@
+I'll read the rev-2 declaration and the rev-1 findings first, then check each claimed fix against the cited code.
+
+Rev-2 claims a fix for every rev-1 finding. I’ll check those claims against the Fisher, width, and projection code they cite.
+
+The null-fraction check disagrees with `widths_from_eig` once prior counts differ. I’ll confirm that against the b1 guard and the T3 arm definitions.
+
+VERDICT: FIX
+
+Rev-1: Grok 1, 3, 4, 6, 7, 8, 10 fixed. Grok 2 not fixed (the false well-constrained direction remains). Grok 5 not fixed on the 2D prior. Grok 9 not fixed on C-2D. Agy 1–8 fixed.
+
+1. **Severity:** BLOCKER
+   **Section:** §3.3 (Grok 2)
+   **Problem:** ρ(w) = ‖V_Nᵀ Gᵀ w‖ / ‖Gᵀ w‖ is the Euclidean null fraction of the θ-gradient on the θ-Fisher. `widths_from_eig` uses the count-space gradient on `did.fisher`. Those disagree when prior counts differ. For R = [1, 1], t₀ = [1, 10⁷] and m ∝ [1, −1], `widths_from_eig` has null fraction 1 and an infinite width, while the declared ρ is 2×10⁻⁷, so the direction is placed in Q with pseudoinverse width 3.2×10⁻⁴ and the 10% cut calls it well-constrained. The §6 toy (a global cut versus a θ-space fraction above 10⁻⁶) passes with this bug in place. C-RID calls `widths_from_eig` on its own path and does not compare it to ρ.
+   **Fix:** Let mᵀ = diag(1/f₀) L, the count-space gradient. Take V_N and the 10⁻¹² cut from `did.fisher(R, t₀, b)`, and set ρ(w) = ‖V_Nᵀ mᵀ w‖ / ‖mᵀ w‖. Build the pencil and F⁺ from that range. Add a synthetic case at a t₀ ratio of at least 10⁷ that `widths_from_eig` marks infinite, and require it to land in U∞ and outside W. On the 16 coordinate directions, require this ρ to match `widths_from_eig`'s null fraction.
+
+2. **Severity:** BLOCKER
+   **Section:** §4, §5.2
+   **Problem:** M2 and the q3 secondary read OP at k = 5, and the k = 50 lines include OP. `t3p_arms.ITERS["OP"]` is 2, `X16_push` has length 2, and T3's step-2 bound is ρ_OP(2). There is no k = 5 or k = 50 OP vector in the products. MO at k = 5 is present.
+   **Fix:** Read OP only at k = 2. State k = 2 in every OP sentence. Drop OP from the k = 50 list and from the q3 k = 5 secondary. Keep MO and B0 at k = 5. Allow that one pair in the pairing rule, and keep every other mix of iterations forbidden.
+
+3. **Severity:** BLOCKER
+   **Section:** §3.1, §3.5 (Grok 5, 2D leg)
+   **Problem:** `signed_identity.truth_indices` is `flatnonzero((prior > 0) & (column sum > 0))`. A2's bias is indexed by `bank["selected"]` / the readout's `cells`: the 205 paper bins, and the code only checks that those bins are supported. L on `truth_indices` is a different set from the 205-vector that `mean`, `residuals` and `departure` (`ibukt.py:197`) refer to.
+   **Fix:** Take L's rows from the readout's `cells` (the bank mask), in that order. STOP unless that list has length 205 and equals every primary truth's `cells`. Apply C-L's relative check to the prior on those cells against A2's prior.
+
+4. **Severity:** FIX
+   **Section:** §3.1, §6 C-2D (Grok 9)
+   **Problem:** `binned_problem` returns `(T, M, y, t)` (`ref_c2c1.py:259`). The declaration says `(T, M, y)`. A three-way unpack raises. C-2D checks Σ b_bkg against Σ `bw` over in-window reco. Any permutation of reco bins has the same sum, and b_known is unchecked. The bank's `ibu_response` is M, which C-2D does compare; R = M/T is a further step.
+   **Fix:** Unpack `(T, M, y, t)` and discard `t`. Set a T = 0 column of R to 0. Build b_bkg with `bin_index` on the pinned `config.json` edges, and require C-2D to match that histogram cell by cell, plus the same match for b_known. Do not import `re2_driver` to get the edges.
+
+5. **Severity:** FIX
+   **Section:** §3.3, §5.1, §5.2
+   **Problem:** Z < 1 bounds |a·β| / width(a) on the eigen-span W. It does not bound every unit combination whose own width is ≤ 0.10. Outside W, s = 0.05 and s = 0.20, β along the second mode, and a = √0.99 w₁ + √0.01 w₂ has width 0.054 and ratio 1.87, while Z_well = 0 and S_poor = 1. The "below" sentence and the information-limit sentence say every combination constrained to 10% is inside one width.
+   **Fix:** Either restrict those sentences to the span of the eigen-combinations with s_k ≤ 0.10, or redefine Z_well as the maximum of |a·β| / width(a) over unit a in Q with width(a) ≤ 0.10, and base S_poor on that same set.
+
+6. **Severity:** FIX
+   **Section:** §5.1
+   **Problem:** For a noisy Z, f_hi = Z_noise with f_lo ≥ 2 meets both "within the noise maximum" (f_hi ≤ Z_noise) and "contains Z_noise" (unresolved across). The endpoint has two labels.
+   **Fix:** Let "contains" mean f_lo < Z_noise < f_hi. Assign f_hi = Z_noise, with f_lo ≥ 2, only to "within the noise maximum".
+
+7. **Severity:** FIX
+   **Section:** §3.6
+   **Problem:** The five-split h uses `sd(f_s)` with the divisor unspecified. Divisor 5 versus 4 changes h by √(5/4). b1 uses `ddof=1`. When n_well = 0 the sentinel is not a number, but Z_noise and the N-PREC difference are still written as numeric.
+   **Fix:** Set sd to the unbiased sample standard deviation, divisor 4. When n_well = 0, skip Z_noise and the numeric N-PREC test on Z, and keep the sentinel.
+
+8. **Severity:** FIX
+   **Section:** §6 C-ROUTE
+   **Problem:** The bar is `1e-10 + 1e-8·|a|`, and a is undefined, so the control has no fixed pass rule.
+   **Fix:** Write the bar as 1e-10 + 1e-8·|S| for S_poor and 1e-10 + 1e-8·|Z| for Z_well, and the same form for each r.
+
+9. **Severity:** FIX
+   **Section:** §5.3
+   **Problem:** Half A, half B and the full build can drop different f₀ = 0 cells. Then n_well and dim U∞ can still match while P_well is a projector on a different φ-space, and ‖P^A − P^B‖₂ is undefined.
+   **Fix:** Require the same dropped-cell set on full, A and B before any projector or match. Otherwise the reading is MC-unresolved.
+
+10. **Severity:** FIX
+    **Section:** §3.1
+    **Problem:** The reading response is "ibu1.unfold_ibu's own construction". `unfold_ibu` calls `make_grid("J", …)` on the J partition. R-ID and the H2 claim come from `ref_g1.unfold_experiment`. C-L checks L t₀ = P, which does not identify the grid. A J reading response can pass C-L while a separate H2 capture passes C-RID.
+    **Fix:** Build both captures with `ref_g1.unfold_experiment` on REF-G1's H2 grid. State that `unfold_ibu`'s J grid is not used. STOP unless the two captures report the same grid name and the same `n_cells`.
