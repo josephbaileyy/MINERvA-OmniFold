@@ -1,4 +1,4 @@
-# COVFIX declaration, DRAFT rev 4.1: the 2D covariance fix (2026-11-22)
+# COVFIX declaration, DRAFT rev 5: the 2D covariance fix (2026-11-23)
 <!-- absence-ok: a draft declaration of studies not yet run; every existing study is routed to INVENTORY.md -->
 
 <!-- absence-ok: status line of an unrun draft -->
@@ -94,6 +94,50 @@ its "Fix 1". The inventory is `INVENTORY.md` in this directory, read at origin/m
   - the per-mode binomial parameter is renamed p_i (Defect 3);
   - row "A, partial" carries the KI 85 condition (Defect 4);
   - P-3's count K_J is written (Defect 5).
+- **Rev 5** answers codex-school2's read of rev 4.1 (`reads/codex2-rev4.1-REPORT.md`; NO-GO). codex-school2 is the
+  second reader named in `DECISION-20261123-joseph-covfix-ki85-size-reader.md`, which is now cited in §3, §3.3, §7 and
+  §9.
+  - **Outcome licences** (its BLOCKINGs on A and B, and MAJORs on C and none):
+    - A needs code-level evidence;
+    - "A, partial" reports the actual verdict;
+    - B and C license only the observed affirmative readings at the two named tunes under the declared toy law, not a
+      model class;
+    - a baseline challenge (K0 FAILS somewhere) is required for B and C;
+    - "inconclusive" becomes "no challenge". §7.
+  - **Affirmative bars.**
+    - The total is barred by its upper guarded bound, M + h ≤ 1.25.
+    - The fluctuation is barred by F̃ "covers", with every band affirmative.
+    - P2 uses PV's bars exactly.
+    - False PASS is about 0.025 at the boundary, at either truth, by construction, and calibrated. §6.3–§6.5.
+  - **The null** (BLOCKING): a written calibration law with fixed bias alternatives and centred drawn-only
+    fluctuation; a whole-rule ensemble simulation (200 ensembles × grid, bootstraps included) with Clopper–Pearson
+    bounds; conservative cutoffs; analytic Gaussian fallback; sentinels. §6.1–§6.2.
+  - **F̃ normalizes** the spread by its expected (N − 1)/N and its undrawn share (C_PL, C08). §6.1.
+  - **Custody and spent-once** (BLOCKING):
+    - director-run writer, readout and PG, through the wrapper;
+    - director-held seeds, committed by digest;
+    - authenticated encryption only, with manifests verified before decrypt;
+    - scans after both roles, with trap cleanup;
+    - a director-controlled atomic consumption record, with crash semantics;
+    - a synthetic-seal wrapper test;
+    - the cooperative assumption stated. §3.3, §3.4, §4.2.
+  - **ST1 and the exception** (BLOCKING): ST1 is a diagnostic trigger; the exception needs code-level evidence; one
+    exception only; its branch stops as its own priced phase PX outside P1's cap. §3.3.
+  - **Majors:**
+    - where each source acts (§3.2);
+    - ST2 eligibility and precedence (§3.3, §6.4);
+    - the reservation ledger (§3.3);
+    - missing toys (§3.3);
+    - the C-PSD fallback scope (§6.2);
+    - C_b as a fitted allowance, with the held-out quadratic and outside-span metric (§5.2, §6.1);
+    - f̂_R edge cases (§5.2);
+    - K_C's fixed combinations and rank check, and measurability eligibility frozen before the seal (§5.3);
+    - a span-level residual rule (§5.2);
+    - the carry's finiteness and rounding checks (§2);
+    - P0's go/no-go control matrices (§3.1);
+    - the novelty test (§4.1).
+  - **Fidelity:** the 142-eigenvector wording; F1's 1.3275 context; the RE-2 part C citation; PV vs COV2D differences;
+    A0's tolerance origin.
 
 <!-- absence-ok: rule statement -->
 **Rules are fixed before computation.** Every reading, bar, candidate rule, seed and stop rule below is fixed at
@@ -117,11 +161,14 @@ The inventory settles four points:
    spread per component is 1.6 / 3.0 / 4.4 (AR23) and 1.5 / 3.6 / 4.7 (G18) over ranks 1–73 / 74–139 / ≥ 140. So every
    candidate has a fluctuation part, and P1 measures whether that excess exists at nominal (N4) and at other truths
    (A1p).
-2. **C_run's trace is small in 2D:** τ = 0.0098 per ndf at both tunes (REGRADE 2D). The G18 regrade still moved C_T's
-   kept subspace (142 kept modes outside the new span), so every candidate prints the cut diagnostic.
+2. **C_run's trace is small in 2D:** τ = 0.0098 per ndf at both tunes (REGRADE 2D). In the G18 regrade, 142 of C_T's kept
+   eigenvectors still had a component outside the new kept span, with maximum residual near 1, while the dimension went
+   from 205 to 204. Directions were not lost, but the eigenbasis moved. So every candidate prints the cut diagnostic.
 3. **G18 and AR23 are spent.** COVFIX uses them only to calibrate (P0) and to describe. They enter no candidate block,
    no bar and no choice.
-4. **Never-read truths are cheap.** F1 generated both GENIE v3 tunes for 1.3275 node-h in total.
+4. **Never-read truths are cheap.** F1's whole recorded charge was 1.3275 node-h for both GENIE v3 tunes. That
+   includes failed attempts and 0.609167 node-h of downstream closure and pseudo-experiment jobs, so it is historical
+   context for PG's estimate, not its price.
 
 ## 2. The covariances, the carry, and notation
 
@@ -132,7 +179,9 @@ The inventory settles four points:
   (`fd/receipts-cov2d/g2r/re2shapes/run2/NODE-SHA256.txt:222`). cov2d holds a sha-verified laptop copy.
 - **Its blocks:** `Q` = `s5_total` + `C_PL`, and `s5_total` = `universe` + `stat` + `c08`. Both identities were
   measured exact (maximum relative difference 0) on that copy on 2026-11-22. P0 re-checks them as a control.
-- **C_model** is RE-2 part C's relative matrix, sha256 `11fe6818…3470` (RE2/RE2-PARTC-REPORT.md:250), reported beside
+- **C_model** is RE-2 part C's relative matrix: "C_model = sum_k s_k s_k^T (M2), kappa = 1, fractional", sha256
+  `11fe68188bd31a35103f5eb4708bd6a7cdab8965164680caa6671c509dcd3470`
+  (`state/2d-closeout/stageF/methods/re2/RE2-PARTC-REPORT.md` §7; `cmodel_R.json`), reported beside
   Q_rep. Absolute at a central value x: C_model_abs(x) = diag(x) C_model diag(x).
 
 **K0, the matrix under test.** COV2D graded C_T = (remade S5 blocks) + C_model_abs at each tune, without C_PL. COVFIX's
@@ -147,6 +196,10 @@ V(t) = D_t V D_t, with D_t = diag(x̂_t / x_R).
 - x̂_t is the central unfold, with E_R's argv, of t's expected pseudo-data rounded to integers: round(λ⁺) on every
   signal and background row, with λ⁺ as in §3.4 and round-half-to-even. The data tree holds integer counts only, so a
   fractional Asimov file is not constructible. This costs one unfold per truth.
+- x̂_t uses t's CV nature: no band draw and no sim, with r_t applied.
+- **Rounding check:** the per-reco-cell relative change from rounding, |Σ round(λ⁺) − Σ λ⁺| / Σ λ⁺, is reported. A cell
+  above 1e-3 is a refusal.
+- **D_t must be finite and nonzero** on all 205 aligned cells, or the carry refuses at that truth.
 - The formula has the shape REGRADE §2 used for C_run and COV2D §4.4 used for C08. Its reference vector is §2's x̂_t,
   not REGRADE's x_T or COV2D's realization-based x̂_T.
 - **The carry is not COV2D's remake.** COV2D remade the blocks at each tune with 486 unfolds per truth. COVFIX tests the
@@ -186,7 +239,7 @@ V(t) = D_t V D_t, with D_t = diag(x̂_t / x_R).
 
   A label is read only if [X − h, X + h] lies inside one label's interval. Otherwise the reading is "unresolved across
   <labels>". Bands use the same rule and edges.
-- **"Not under"** means X − h ≤ 1.25.
+- **The total's affirmative bar** is X + h ≤ 1.25: the upper guarded bound lies at or below the tolerance.
 
 ## 3. Phases, in order
 
@@ -216,7 +269,9 @@ V(t) = D_t V D_t, with D_t = diag(x̂_t / x_R).
   - every phase price and every phase cap is below 362.8;
   - the caps' sums (full 468, lean 378) are not, and neither is the full total with N5;
   - the lean total, and either total without N5, is below it;
-  - Joseph chooses full or lean before any compute, and ST6 keeps the campaign inside his approved total.
+  - **Joseph chose full** (`DECISION-20261123-joseph-covfix-ki85-size-reader.md`, his governing re-confirmation: "Full, as designed"), with N5, at about 409 node-h
+    at most. ST6 keeps the campaign inside that approved total. The lean columns are kept as the record of the
+    alternative he did not choose.
 - **ST6, the cumulative ceiling** (§3.3).
   - Joseph's approved total is pinned in every connect.
   - Each submission's charge ceiling is its nodes × its `--time`. Each toy job's `--time` is 1.5 × its priced per-toy
@@ -235,9 +290,13 @@ V(t) = D_t V D_t, with D_t = diag(x̂_t / x_R).
   - The readings are COV2D's committed errors `E_<T>.npz` under each, the eigenvalue ratio per band, and the principal
     angles between the kept spans.
   - This is descriptive. It states the size of the carry approximation and of the difference between the two vectors.
-- **The residual rule's calibration.** §5.2's residual rule is applied to the committed regrade case, C_T against
-  C_T + C_run(T) at G18 and AR23 (REGRADE run2d and run2d-g18). If the rule fires there, P0 stops and goes to the
-  director: a rule that rejects that pair would reject K_B for no reason.
+- **The residual rule's go/no-go control on spent data.** §5.2's residual rule is applied to the committed regrade
+  pair at G18 and AR23:
+  - "old" is COV2D's C_T from `blocks_<T>.npz`, with its fluctuation reference C_T − C_model_abs(T);
+  - "new" is C_T + C_run(T), with C_run carried from Q_rep's `C_PL` exactly as REGRADE carried it;
+  - both are evaluated at the tune's frame, with C_T's own x̂_T.
+  The rule's maximum principal angle between the well-determined spans is printed. If the rule fires there, P0 stops
+  and goes to the director: a rule that rejects that pair would reject K_B for no reason.
 - The per-mode profiles (m_i, v_i, q_i) of COV2D's committed errors under the carried K0, under C_T, and under G2R's
   C_T′.
 - IBUKT A2's mean residuals (`state/2d-closeout/ibukt-a2/readout.json`), times E_R, in K0's modes: m_i only.
@@ -256,6 +315,19 @@ pre-committed and disjoint from every committed ensemble; a test checks them aga
 - lateral is COV2D's surrogate over 5 bands;
 - norm is x̂ × (1 + 0.014 z);
 - sim is S1's signal and background simulation-weight Poisson redraws at fresh seeds.
+
+**Where each source acts.** COV2D's `--data-file` replaces the data tree and leaves the unfolding simulation in
+`--omnifile`.
+- **Data Poisson** acts on the pseudo-data only.
+- **The bands, lateral, norm and the truth deformation r_t** act on the toy's nature: its pseudo-data and its graded
+  truth, as COV2D §4.2 composes them. The unfolding uses the CV simulation, so a band draw makes the nature differ from
+  the unfolding model. That is the sense of "perturbed response" here; the unfolding response itself is not redrawn by
+  a band.
+- **Sim** acts on the unfolding side only. It redraws the simulation weights the unfold uses, as S1's three-stream
+  bootstrap does, multiplying the CV simulation weights, independently of the nature's band draws. It changes neither
+  the pseudo-data nor the graded truth.
+- **N4 − N2** is the incremental change in scatter from the nature-side sources. It is read as additive only under the
+  blocks' own additive model, which is disclosed, not verified.
 
 | cell | truth | what each toy draws | toys full / lean | seed base | node-h full / lean |
 |---|---|---|---|---|---|
@@ -276,56 +348,87 @@ pre-committed and disjoint from every committed ensemble; a test checks them aga
 
 ### 3.3 Stop rules
 
-**ST1, construction error.** It is read on W1 (N2, N3, N5) before W2 is submitted, and on W2 for N4.
-- Each reading uses the spread only (v_i in the block's own carried eigenbasis at x̂_MC), never q, because nominal
-  closure bias (IBUKT A2: up to 1.708 % noise-free) would otherwise enter.
-- Nominal bias is reported separately (m_i, B_R).
-- Every band with at least 10 modes can fire, under the same guard.
+**ST1, a diagnostic trigger for a construction-defect investigation.** It is read on W1 (N2, N3, N5) before W2 is
+submitted, and on W2 for N4. A firing row flags a discrepancy; it does not by itself identify a defect.
+- Each reading uses the spread only, never q, because nominal closure bias (IBUKT A2: up to 1.708 % noise-free) would
+  otherwise enter. Nominal bias is reported separately (m_i, B_R).
+- **The common basis** is K0's fluctuation block Q_rep, carried to x̂_MC and diagonalized there. Each row's per-mode
+  ratio is ŝ_i over the row's denominator, projected in that basis, with ŝ_i = λ_i v_i.
+- The guard bootstraps the toys, and for N5 also its replicas, jointly.
+- Every band with at least 10 modes can fire.
 
-| block under test (keys of Q_rep's file) | reading: band mean of the per-mode ratio, guarded | ST1 fires if any band reads |
+| block | reading (band mean of the per-mode ratio, guarded) | ST1 fires if any band reads |
 |---|---|---|
-| `stat`'s data-stream part, through the bootstrap method that builds it | N5: v_i against u_iᵀ S1_B u_i (S1_B from N5's own replicas) | "under" or "over" |
-| `stat`, all three streams | N2: v_i against u_iᵀ stat u_i | "under" only. Same-event pseudo-data under-scatter (KI 85), so an N2 "over" is recorded and does not fire. |
-| `c08` | N3: v_i against u_iᵀ c08 u_i | "under" or "over" |
-| `universe` (universe, lateral and normalization; `s5_total` = `universe` + `stat` + `c08`) | (ŝ_i^{N4} − ŝ_i^{N2}) / u_iᵀ universe u_i, with ŝ_i = λ_i v_i | "under" or "over" |
+| `stat`'s data-stream part, through its bootstrap method | N5: ŝ_i / u_iᵀ S1_B u_i, with S1_B from N5's own 200 replicas (the half-B configuration's estimated block) | "under" or "over" |
+| `stat` (three streams) | N2: ŝ_i / u_iᵀ stat u_i | "under" only. An N2 "over" is recorded and does not fire, because KI 85's earlier-band finding allows same-event under-scatter; that is a possibility, not a guarantee of direction. |
+| `c08` | N3: ŝ_i / u_iᵀ c08 u_i. One pseudo-dataset with the seed varied, against the production seed block. | "under" or "over" |
+| `universe` (universe, lateral and normalization) | (ŝ_i^{N4} − ŝ_i^{N2}) / u_iᵀ universe u_i. This includes interactions between draws, clipping and the response, disclosed. | "under" or "over" |
 
-<!-- absence-ok: reading rule, scoping statement or verbatim review text about studies not yet run -->
-- N1 is never a construction-error reading. Its spread is recorded, and N1/N5 is reported as the same-event factor.
-- The N4 − N2 difference assumes the added sources are independent of the base ones, so variances add. That is the
-  blocks' own additive model, and it is disclosed.
-- **When ST1 fires,** P2 and PV wait, and the firing rows name the blocks.
-- **ST1's named exception, the only post-binding amendment to §5–§7.**
-  - It may change only the code that generates the block or blocks that fired, never a substituted matrix, and it names
-    the bug it corrects.
-  - It may not change any bar, seed, the validation family, the §5.2 factor rule, C_b's rule, the k rule, or the order
-    in §7.
-  - It is bound before any ensemble that enters f̂_R or C_b is drawn: if W1 fires, before W2; if N4 fires, N4 and A1p
-    are redrawn under the amended code.
-  - It prices the regeneration at 0.19 node-h per unfold (`universe` 175 unfolds, `stat` 300 replicas, `c08` 80) and
-    the redraw of the affected cells. That price must fit Joseph's approved total under ST6, or it goes to Joseph.
-  - K_A is Q_rep with those blocks regenerated, plus C_model_abs.
-- **KI 85 governs whether any block may be regenerated.** Unless Joseph supersedes **both** of KI 85's sentences (§9.1),
-  ST1 records every row it can read and regenerates nothing, and §7 does not license outcome A. Without that decision
-  N5 is not run either, so the data-stream row is not read.
+- N1 is never a construction-error reading. N1/N5 is reported as the same-event factor.
+- **When ST1 fires,** every later wave waits. cov2d investigates the firing blocks' builders and reports to the director.
 
-**ST2, no admissible candidate.** If at P2 neither K_B nor K_C meets §5.4, PV does not run. The result is "none" (§7).
+**ST1's named exception, the only post-binding amendment to §5–§7.**
+- **It needs code-level evidence of a defect:**
+  - a reproducing unit test that fails on the old builder and passes on the corrected one;
+  - the named bug;
+  - a post-fix diagnostic, which is the firing cell's reading recomputed under the corrected builder.
+  Without that evidence there is no exception, and ST1's firing is reported as an unexplained discrepancy.
+- **It may change** only the code that generates the firing block or blocks, never a substituted matrix. It may not
+  change any bar, seed, the validation family, the §5.2 factor rule, C_b's rule, the k rule, or §7's order.
+- **One exception covers every row that fired by then.** A row that fires after an exception has been bound stops the
+  campaign and goes to the director; there is no second exception.
+- **The exception branch stops for repricing.** It becomes its own phase, PX, with its own price and cap, covering:
+  - the regeneration: `universe` 175 unfolds, plus 10 lateral if laterals are rebuilt (33.25 + 1.90); `stat` 300
+    replicas (57.00); `c08` 80 unfolds (15.20). The amendment states which constituents are reused;
+  - the redraw of every ensemble that entered f̂_R or C_b (N4 and A1p, 95.00);
+  - the post-fix diagnostic;
+  - any test reruns that need unfolds.
+  PX must fit Joseph's approved total under ST6, or it goes to Joseph. **PX is not inside P1's cap.**
+- K_A is Q_rep with the corrected blocks, plus C_model_abs.
 
-**ST3, caps.** Every submission is gated against its phase cap from sacct, as COV2D's gate did.
+**KI 85.** Joseph superseded **both** of KI 85's sentences for COVFIX
+(`DECISION-20261123-joseph-covfix-ki85-size-reader.md`). So N5 runs, and outcome A may change the 2D covariance; a change
+enters the journal paper or a later Zenodo version, not the first release. Had he not superseded them, ST1 would record
+and regenerate nothing, and N5 would not run. That gate is kept in the text for the record.
+
+**ST2, eligibility for PV.** The eligible candidates are K_A (if the exception was applied), K_B and K_C, each only if it
+meets §5.4's admission bars at P2. K0 always runs as the baseline. If no candidate is eligible, PV does not run, and the
+result is "none" (§7).
+
+**ST3 and ST6, caps and the cumulative ceiling, through one reservation ledger.**
+- Every connect appends to a serialized ledger, under flock in the campaign directory, keyed by allocation job ID.
+- **What a submission reserves:** nodes × `--time` (1.5 × the priced per-toy time), including exclusive allocations,
+  with allocation-level walltime rounding. Jobs run with `--no-requeue`.
+- **The gate,** atomic under the flock: it admits a submission only if reconciled terminal charges (from sacct, once
+  per job) plus open reservations plus the new reservation stay within both the phase cap and Joseph's approved
+  cumulative ceiling.
+- **That ceiling** is stated separately from the expected price (about 409) and from the 468 sum of caps.
+- A job killed at its walltime is a failure (ST5's toy rule), not a silent overrun.
 
 **ST4, validation is spent once.**
-- PV's readout is one invocation of one bound binary at the frozen shas. It writes one JSON of summary statistics:
-  every §6 reading, its guard, and the counts. Per-toy residuals and z arrays stay inside the process.
-- A second invocation on the same seal is a guard refusal: the binary refuses if its output record, or a lock file
-  written at its start, exists.
-- §5–§7 cannot be amended after binding, except by ST1's named exception, or by an executability fix (a crash or a
-  typo) that changes no number, bar, family, seed or choice rule, under the director's ruling.
-- **The limit of the rule:** a published PV result may inform a later construction. That construction needs new
-  sealed truths, and the GENIE v3_04_00 catalog may not supply a third distinct family (§4.1).
+- **The consumption record** is controlled by the director. It is an append-only record in the director's scratchpad,
+  mirrored in a commit, keyed by the seal digest and the frozen-candidate digest.
+- **The wrapper acquires it atomically** (mkdir lock) before the first decrypt of each secret-bearing role: the PV
+  writer and the PV readout.
+- **A role is spent** at its first decrypt.
+- **Crashes:**
+  - a writer crash before any toy file is complete may be rerun once, with the same seeds, under the director's ruling;
+    the output is deterministic, and no graded truth is readable;
+  - a readout crash before its JSON is written may be rerun once; nothing was exposed;
+  - after the JSON is written, the seal is spent;
+  - an executability fix never permits a second grading of exposed toys.
+- PV's readout writes one JSON of summary statistics; per-toy residuals and z arrays stay inside the process.
+- §5–§7 cannot be amended after binding, except by ST1's exception or an executability fix that changes no number,
+  bar, family, seed or choice rule, under the director's ruling.
+- **The limit:** a later construction needs new sealed truths, and the catalog may not supply a third distinct family.
 
-**ST5, guard refusals are terminal** for their phase: fences, atime, provenance, the A0 controls, the seal, decryption
-and plaintext-scan checks, and C-PSD.
-
-**ST6, the cumulative ceiling,** as in §3.
+**ST5, guard refusals are terminal** for their phase: fences, atime, provenance, the A0 controls, the seal and
+decryption checks, the plaintext scans, and C-PSD on the input blocks and candidates (not on §6.2's surrogate remainder,
+which falls back).
+- **Missing toys.** A toy job that ends other than COMPLETED may be resubmitted with identical seeds, at most twice,
+  decided before any readout. The graded truths are encrypted, so no outcome can steer a retry.
+- If more than 6 toys (2 %) per truth are still missing, PV is incomplete and terminal: UNRESOLVED (incomplete).
+  Otherwise PV grades the completed set and records N.
 
 ### 3.4 What a PV toy draws, and where
 
@@ -343,29 +446,39 @@ PV draws the full source list of §3.2, the same as N4 and A1p, at a sealed trut
 - **The estimator seed** is fixed at 42, and C_seed is in every candidate.
 - **Count:** 300 toys per sealed truth, seed base 9_800_000 + 10_000·u (u = 0, 1), plus one central unfold per truth.
 
-**Where, in order:**
-1. **The writer** runs on an exclusive compute node, not a shared login node. The bound PV connect takes an exclusive
-   allocation (`salloc --exclusive -N 1`), and the director's wrapper pipes the passphrase into
-   `srun --exclusive -N 1 <writer>` (srun forwards stdin to the task). The decrypted r_u lives only in that node's private
-   /dev/shm.
-2. In that one process the writer produces, for all 600 toys, the pseudo-data files (reco-level counts, which the
-   compute jobs need) and the graded truths, plus the two round(λ⁺) files for D_u. The graded truths are encrypted under
-   the same passphrase before they touch disk.
-3. Before exiting, it wipes /dev/shm and /tmp on that node and scans them and the campaign directory **by content**:
-   every file's sha256 is compared against the sealed plaintext hashes, and every file is checked for an unencrypted
-   graded-truth array. A hit stops the study.
+**Who runs it, and where, in order.** cov2d writes and tests the bound PV code; it does not run the secret-bearing
+roles. The **writer** and the **readout** are run by the director, or a session the director controls, through the
+director's wrapper. The wrapper acquires ST4's consumption record, verifies every ciphertext's sha256 against
+`PG-SEAL.sha256` before decrypting, and pipes the passphrase on stdin.
+1. **The writer** runs on an exclusive compute node (`salloc --exclusive -N 1`, then `srun --exclusive -N 1 <writer>`,
+   which forwards stdin to the task). The decrypted r_u lives only in that node's /dev/shm.
+2. In that one process it writes, for all 600 toys, the pseudo-data files (reco-level counts, which the compute jobs
+   need) and the graded truths, plus the two round(λ⁺) files for D_u. The graded truths are encrypted (§4.2) before they
+   touch disk.
+3. Before exiting, and through a trap on failure, it wipes /dev/shm and /tmp on that node. It then scans them and the
+   campaign-owned paths **by content**: every file's sha256 is compared against the sealed plaintext hashes, and every
+   file is checked for an unencrypted graded-truth array. A hit stops the study. An exact-hash scan detects exact copies
+   only, not repacked or partial plaintext, and that is disclosed.
 4. The compute jobs unfold the pseudo-data only.
-5. **The readout** is its own bound connect, on its own exclusive node. It receives a fresh pipe from the director's
-   wrapper and decrypts the graded truths in-process.
+5. **The readout** runs on its own exclusive node, from a fresh pipe. It decrypts the graded truths in-process, runs
+   §6.2's calibration, then grades. Afterwards, the same scan and the same cleanup on failure.
 
-**After the freeze, custody's job is spent-once.** The unfolded outputs alone are not graded errors, and nothing they
-reveal can change a frozen candidate (ST4).
+<!-- absence-ok: reading rule, scoping statement or verbatim review text about studies not yet run -->
+**The wrapper is tested** before PV on a synthetic seal: a dummy truth, encrypted and sealed the same way, run end to
+end. That test also measures the writer and readout allocation time, which replaces PV's unmeasured 1.0 node-h estimate
+in a re-price before PV is submitted.
 
-**A limit, stated.** The account owner can delete the readout's lock file. "Spent once" is therefore the binary's
-refusal plus the committed record. It is not an access control.
+**After the freeze,** the unfolded outputs alone are not graded errors, and nothing they reveal can change a frozen
+candidate (ST4).
 
-**One difference from COV2D is disclosed:** PV adds sim, so PV is comparable with COV2D's G18 and AR23 toys up to sim's
-share, which N2 measures.
+**PV differs from COV2D's G18 and AR23 toys in more than sim:**
+- different tunes;
+- a different grading matrix (the carried K0 or a candidate, not COV2D's remade C_T);
+- a different central-vector convention (round(λ⁺) and its unfold, not one Poisson realization);
+- a different null (§6.2) and decision rule (§6.3).
+
+The shared toy ingredients are the nature draws (`cov2d.draw`), the Poisson pseudo-data, the graded-truth construction
+and the estimator. N2 probes sim's increment at nominal truth; it cannot establish sim's share at the alternative truths.
 
 ## 4. The validation truths
 
@@ -394,8 +507,12 @@ share, which N2 measures.
   - it prints, for each chosen tune, the CCQE and 2p2h model class names from GENIE's own tune configuration (public
     configuration, not generated content);
   - it confirms an encryption tool (§4.2).
-- **The exclusion rule,** applied to the probe's output: a chosen tune that uses **both** the CCQE and the 2p2h class of
-  one spent tune is excluded, and PG stops. Partial overlaps are recorded and disclosed in §4.3.
+- **The novelty test,** applied to the probe's output: a chosen tune qualifies only if at least one of its CCQE class
+  and its 2p2h class is used by **neither** spent tune. A tune whose two classes both appear among the spent tunes'
+  classes is excluded, even in a new pairing. An exclusion of a first choice moves to its fallback; if no qualifying
+  tune remains for a slot, PG stops.
+- The probe's output, the fallback taken and the overlap record are committed before generation. Partial overlaps are
+  disclosed in §4.3.
 - FD-F1-DECLARATION.md:76 is cited only for the product, path and qualifier convention.
 
 ### 4.2 Custody
@@ -403,7 +520,12 @@ share, which N2 measures.
 **Who generates.** A session that is not cov2d and has read none of COV2D, T2A, G2R, REGRADE or this declaration's
 §5–§7: a fresh session Joseph opens, which the director names at binding. **Binding requires it.** That session runs
 F1's bound pipeline (`gen5d_v3.py`, `run_gevgen_v3.sh`, the pv-ladder ratios and the bridge), unchanged except for the
-tune names and the pre-committed seeds: tune u's task seed = 8_310_000 + 10_000·u + task index.
+tune names and the seeds.
+- **The seeds are director-held,** so a builder cannot regenerate the truths from public tune names and public seeds.
+  The director draws PG's seed base, commits only its sha256 before PG, and reveals it after PV's readout. Tune u's
+  task seed = base + 10_000·u + task index.
+- The director runs PG's connect through the director's wrapper, with the PG session's working directories private to
+  that session by convention. That privacy rests on the one-account limit below.
 
 **What it sees.** Its connect captures every stdout, stderr, log and meta file into the sealed set. The session sees
 only a final summary of booleans (each step's pass/fail) and file counts. Physics outputs, such as f_MEC, process
@@ -415,11 +537,14 @@ shell history or the Slurm spool.
 
 **Seal and encryption.**
 1. The plaintext sha256 of every product is computed with O_NOATIME reads.
-2. Each product is encrypted with `gpg --batch --passphrase-fd 0 --symmetric --cipher-algo AES256`, or
-   `openssl enc -aes-256-cbc -pbkdf2 -pass stdin` if the probe finds no gpg.
+2. Each product is encrypted with authenticated encryption: `gpg --batch --passphrase-fd 0 --symmetric
+   --cipher-algo AES256` (OpenPGP with integrity protection; a modification-detection failure is a refusal), or
+   `age --passphrase` if the probe finds no gpg. If neither is present, PG stops. There is no unauthenticated
+   (openssl CBC) fallback.
 3. A decrypt-and-hash round trip must reproduce each plaintext sha256.
 4. The plaintext is deleted.
-5. A plaintext scan of the PG directories and /dev/shm must come back empty.
+5. A content scan (sha256 against the plaintext list) of the PG directories, /dev/shm and /tmp must come back empty,
+   with cleanup through a trap on failure.
 6. `PG-SEAL.sha256` (plaintext and ciphertext sha256 per product) is committed **before P1's first connect**.
 
 **Copies.** The ciphertext sits on pscratch and, **required**, on HPSS (htar from a login node, then hashverify). The
@@ -427,9 +552,12 @@ ratio files are not committed to the repo until PV's readout is. A missing or al
 is no regeneration.
 
 **Limits, disclosed.**
-- All sessions share one Unix account.
-- Before PV, the barrier against cov2d is the director's key, not file permissions. Atime does not detect O_NOATIME
-  reads, so it is housekeeping only.
+- All sessions share one Unix account. An exclusive node limits scheduling; it does not isolate a shared identity,
+  filesystem, logs or process access.
+- Before PV, the barriers against cov2d are the director's key and the director-held seeds, not file permissions.
+  Beyond those, the design rests on a cooperative assumption: no builder reads another session's private directories
+  or processes. That assumption is stated, not enforced.
+- Atime does not detect O_NOATIME reads, so it is housekeeping only.
 - The generating session saw the plaintext and is retired after PG.
 
 ### 4.3 What the validation family can and cannot show
@@ -466,8 +594,19 @@ x_R.
 
   The factor N/(N − 1) removes the 1/N divisor's bias, so each term is unbiased for the band's mean variance ratio.
 - **SE(f̂_R)** is the standard deviation of f̂_R over 2,000 joint bootstrap replicates, each resampling every ensemble
-  inside itself at seed 9_991_000, with every eigenbasis held fixed at its full-sample matrix. No independence between
-  modes is assumed. Ensemble independence holds by construction, since the seeds are disjoint.
+  inside itself at seed 9_991_000, with every eigenbasis held fixed at its full-sample matrix.
+  - No independence between modes is assumed.
+  - The disjoint seeds give independent random streams **conditional on the one shared simulation bank**; independence
+    over alternative banks is not claimed.
+  - The 3·SE trigger is a construction rule, with no stated error-rate guarantee.
+- **Edge cases, fixed:**
+  - an ensemble whose carried band holds fewer than 10 kept modes is left out of that band's mean, and the equal
+    weights go to the rest;
+  - if none remain, the band's factor is 1;
+  - ranks are by eigenvalue with a stable sort, and only kept modes count.
+- **The scaling covers all of F_A,** including its undrawn C_PL and c08 parts. §6.1's expected spread F_exp accounts for
+  the undrawn share.
+- **The post-carry fit** of V_F is reported per ensemble truth and per band.
 - **Applied.** F_A is diagonalized at x_R. Its eigenvalues in ranks 1–73, 74–139 and ≥ 140 are multiplied by the
   corresponding f̂_R, but only where f̂_R − 1 > 3·SE(f̂_R); they are never lowered. The result is V_F at x_R, which is
   then carried. f̂_R is a rank-band summary transferred across bases. It is not a mode-matched estimate, and that is
@@ -478,7 +617,7 @@ x_R.
   - it is one pre-registered factor per band, never searched until a bar passes.
   This is disclosed beside any result.
 
-**Bias block, in the reference frame.** F_bias = {nominal (N4's mean), genie_mec, nuwro, gibuu (A1p means)}: the
+**The fitted bias allowance C_b, in the reference frame.** F_bias = {nominal (N4's mean), genie_mec, nuwro, gibuu (A1p means)}: the
 non-spent build truths only. Each member is mapped to x_R before the sum:
 
 β_t = D_t⁻¹ b̂_t, Σ_t = D_t⁻¹ S_t D_t⁻¹, and C_b = [ Σ_{t ∈ F_bias} (β_t β_tᵀ − Σ_t/(N_t − 1)) ]₊
@@ -490,8 +629,10 @@ non-spent build truths only. Each member is mapped to x_R before the sum:
   ndf. In the sum they would set the bias block's width in exactly the directions a GENIE tune's bias is expected to
   lie, and the one-sided total bar would then pass by their size. Their mapped biases β_G18 and β_AR23 are printed
   against C_b descriptively: β ᵀC_b⁺β, the fraction outside C_b's span, and M under K_B.
-- **The price is disclosed:** C_b over-covers truths whose bias is smaller than the family's. That is why the total is
-  barred one-sided (§5.4, §6.2).
+- **What C_b is, and is not.** C_b is a fitted bias allowance.
+  - The positive-part projection changes its expectation, and it can lose the undebiased sum's member-wise bound.
+  - It is not claimed to bound any model class, nor to over-cover every smaller bias.
+  - The total is barred by an affirmative upper bound (§6.3). The fluctuation is barred two-sided and separately.
 
 **K_B = V_F + C_b** at x_R, carried by §2's formula. It must pass C-PSD and print its cut diagnostic against K_A's:
 - the kept sets under §2's cut, which is referenced to each candidate's own λ₁(V_F);
@@ -500,38 +641,38 @@ non-spent build truths only. Each member is mapped to x_R before the sum:
 
 **Residual rule (K_B against K_A only):**
 - Only K_A's well-determined modes are checked: those with λ_i ≥ 1e-6·λ₁(F_A).
-- If any such mode has a component outside K_B's kept span of norm above 0.1, K_B is not admissible.
+- If the largest principal-angle sine between the span of those modes and K_B's kept span exceeds 0.1, K_B is not
+  admissible. Being span-level, this protects every combination of well-determined modes, not only each mode.
 - An ndf difference alone is printed, not a stop; tail modes below 1e-6·λ₁(F_A) are printed, not stopped on.
 - P0 calibrates this rule on the committed regrade pair (§3.1).
 - It does not apply to K_C.
 
 ### 5.3 K_C: reduced reporting (outcome C)
 
-- **The subspace P_k:**
-  - the measurability study's well-constrained directions, if its result is committed before P2's freeze, with k from
-    that study's own rule;
-  - otherwise K_B's top-k eigen-directions at x_R.
+- **The subspace P_k** is k fixed absolute linear combinations, the columns c_j of a 205 × k matrix C, defined at x_R:
+  - the measurability study's well-constrained directions, eligible **only** if that study's selection rule (how its
+    directions and k are chosen) is committed before `PG-SEAL.sha256`, and its result is committed before P2's freeze;
+  - otherwise K_B's top-k eigenvectors at x_R.
+- **At a truth t,** the k-vector Cᵀe_s is graded against Cᵀ V(t) C, with V(t) the carried candidate. Both projected
+  matrices, the fluctuation and the total, must keep rank k (smallest eigenvalue > 1e-12 × largest), or K_C is NOT
+  TESTABLE at t. Then ndf = k.
 - **The choice of k** (top-k case) is the largest k ≥ 25 such that §5.4's bars hold, projected onto P_k, at N4 and at
   each A1p truth.
 - **The measurability case** must have k ≥ 25 and meet the same bars, or K_C is not admissible.
-- **The floor k ≥ 25** keeps the guarded "covers" edges at least 5σ from 1 at the smallest admission ensemble (A1p,
-  N = 100): SE = √(2/(100·25)) ≈ 0.028 and h ≈ 0.056, so the low edge 0.8 + h is 5.1σ below 1 and the high edge
-  1.25 − h is 6.9σ above. At PV (N = 300), SE ≈ 0.016 and h ≈ 0.032, giving 10.3σ and 13.3σ.
-  - These use the χ²-mean SE; the operational guard is the bootstrap SE, which they approximate.
-  - The bands of P_k are its own ranks 1–k, with R1 = 1…min(k, 73). R2 and R3 are used only if they hold at least
-    10 modes.
-- **What K_C reports:** K_B restricted to P_k, plus the combinations' definitions. No uncertainty is reported outside
-  P_k.
+- **The floor k ≥ 25** is a reporting floor. §6.5 gives its illustration, and §6.2's simulation is its calibration. The
+  bands of P_k are its own ranks 1–k, with R1 = 1…min(k, 73); R2 and R3 are used only if they hold at least 10 modes.
+- **What K_C reports:** the coefficient vectors C, the projected covariances Cᵀ V(t) C, their effective rank, and every
+  §6 reading on P_k. No uncertainty is reported outside P_k.
 
 ### 5.4 Admission bars (P2, on the selection data only)
 
-A candidate V = V_F + V_b is admissible only if, at N4 and at each A1p truth:
-- **Fluctuation, two-sided:** F^F (spread against V_F, in V_F's carried basis) reads "covers", and no band of it reads
-  "under" or "over";
-- **Total, one-sided:** M against V reads "not under";
-- the joint rule of §6.1 does not flag "under";
-- no mode is flagged "under";
-- C-PSD passes, and for K_B, §5.2's residual rule.
+A candidate V = V_F + V_b is admissible only if, at N4 and at each A1p truth, it passes **the same bars as PV** (§6.3,
+P-1 to P-4):
+- F̃ and every band with at least 10 modes read "covers";
+- M + h ≤ 1.25, and the same for every total band;
+- no joint or per-mode under-flag;
+- §6.2's testability check passes at that truth.
+It must also pass C-PSD, and, for K_B, §5.2's residual rule.
 
 These bars are in-sample, so they admit a candidate; they never pass one. G18's and AR23's readings under every
 candidate are printed and decide nothing.
@@ -542,144 +683,166 @@ At P2's end, the code and arrays defining K0, K_A (if any), K_B and K_C are comm
 `P2-FREEZE.sha256`, and bound by the director before PV's first connect.
 
 <!-- absence-ok: reading rule, scoping statement or verbatim review text about studies not yet run -->
-The draw-matched null depends on r_u, so it is not computed at P2. It is computed inside the PV readout binary, after
-decryption and before any residual is formed, with every candidate already frozen (§6.1). Its false-FAIL check
+The calibration law at a sealed truth depends on r_u and D_u, so it is not computed at P2. It runs inside the PV readout
+binary, after decryption and before any residual is formed, with every candidate frozen (§6.2). Its testability check
 therefore cannot change §5.
 
 ## 6. Readings and bars, fixed now
 
 ### 6.1 Per ensemble and per truth
 
-<!-- absence-ok: reading rule, scoping statement or verbatim review text about studies not yet run -->
-- **Fluctuation readings,** against V_F in V_F's carried basis: F^F and its bands, with guard and labels.
-  - C_PL is in V_F and is not drawn, so a correct V_F's expected F^F is the drawn share, slightly below 1.
-  - τ_F = tr(V_F⁺ C_PL(t))/ndf_F is printed beside F^F. (REGRADE's analogue was 0.0098.)
-- **Total readings,** against V = V_F + V_b: M and its bands, with guard and labels; the split M = (1/ndf)Σm_i² + (1/ndf)Σv_i,
-  exact under §2's divisor; and the cut diagnostic of §5.2.
-- **The held-out bias comparison:** with β_u = D_u⁻¹ b̂_u, the debiased β_uᵀ C_b⁺ β_u and the fraction of β_u's V_F-norm
-  outside C_b's span. It enters §7's B sentence, and decides nothing.
-- **The joint region** is χ²_s ≤ F⁻¹_{χ²(ndf)}(0.6827) against V(t).
-- **The null law,** written here, not cited. For a candidate V at truth t, with the ensemble's frozen draw law:
-  - **The band part δ.** The 38 bands' universe shift vectors are taken at the data's point from G2R's `data_g2r.npz`
-    (keys `band__<BAND>`; sha256 `3b8cc7ceaef97c3dc6bbcd2c5cfdf853442c347e37e23f64eca54898d0e9eb4b`; on pscratch and as
-    cov2d's sha-verified laptop copy). They are centred as re2c_rollup centres them, carried by D_t, and composed per
-    null replicate exactly as `cov2d.draw` composes them: Flux by constraint weight, 2p2h 1 of 3, the 36 others one
-    endpoint each.
-  - **The Gaussian part.** g ~ N(0, G(t)), with G(t) = V(t) − C_δ(t), where C_δ(t) is δ's exact covariance under that law.
-    G(t) carries lateral, norm, stat, seed, C_PL and the bias block.
-  - **Its controls:**
-    - P0 rebuilds G2R's `C_univ_new` from the `band__` arrays by re2c_rollup's formulas, to 1e-10 relative. If that
-      fails, every joint null is the Gaussian N(0, V(t)) (q = 0.6827), labelled as such.
-    - If G(t) fails C-PSD at a given t, that null falls back the same way, labelled as such.
-  - **Not modelled:** clipping. That is disclosed.
-- **Thresholds.** 20,000 null replicates at seed 9_992_000 give q, the in-region probability, and k_J and k_J⁺: the
-  largest k with P(Bin(N, q) ≤ k) < 0.025, and the smallest with P(Bin(N, q) ≥ k) < 0.025.
-- **The joint reading** is the count K_J = #{s : χ²_s ≤ F⁻¹_{χ²(ndf)}(0.6827)}. It flags "under" if K_J ≤ k_J, and "over"
-  if K_J ≥ k_J⁺.
+<!-- absence-ok: reading rules for future measurements -->
+**Fluctuation readings,** against V_F in V_F's carried basis.
+- **The expected spread.** Two components of V_F are not drawn: C_PL, and C08 (the seed is fixed at 42). For a correct
+  V_F, the expected 1/N spread ratio is therefore F_exp = ((N − 1)/N)·(1 − u), with u = tr(V_F⁺ [C_PL(t) + c08(t)])/ndf_F,
+  using the carried unscaled blocks.
+- **What is labelled** is the normalized ratio F̃ = F^F / F_exp, and the same per band. u and F_exp are printed. Where
+  f̂_R scaled V_F, u is an approximation, and that is disclosed.
+
+**Total readings,** against V = V_F + V_b:
+- M and its bands;
+- the split M = (1/ndf)Σm_i² + (1/ndf)Σv_i, exact under §2's divisor. The m_i² part includes the noise of the
+  estimated mean;
+- §5.2's cut diagnostic.
+
+**The held-out bias against the fitted allowance** (descriptive). With β̂_u = D_u⁻¹ b̂_u and Σ_u = D_u⁻¹ S_u D_u⁻¹:
+- the debiased quadratic Q_u = β̂_uᵀ C_b⁺ β̂_u − tr(C_b⁺ Σ_u)/(N_u − 1). C_b⁺ is the pseudoinverse with cutoff
+  1e-12 × C_b's largest eigenvalue;
+- the outside-span fraction ‖(I − P_b) β̂_u‖² / ‖β̂_u‖², both norms in V_F⁻¹'s metric, with P_b the V_F⁻¹-orthogonal
+  projector onto C_b's range. A zero denominator is reported as undefined;
+- both with toy-bootstrap SEs (seed 9_993_000).
+They enter §7's sentences, and decide nothing.
+
+**Joint and per-mode coverage.**
+- The joint reading is the count K_J = #{s : χ²_s ≤ F⁻¹_{χ²(ndf)}(0.6827)} against V(t).
+- The per-mode reading is #{s : |z_{s,i}| ≤ 1}.
+- Each is compared with binomial cutoffs at probabilities q (joint) and p_i (per mode) from §6.2's calibration law:
+  - "under" at a count ≤ k_J, the largest k with P(Bin(N, q) ≤ k) < 0.025; per mode, the largest k with
+    P(Bin(N, p_i) ≤ k) < 0.025/ndf;
+  - "over" symmetrically, with k_J⁺;
+  - if no k satisfies a cutoff, its sentinel is −1 (or N + 1 for "over"), which never flags.
+- **The probabilities are taken conservatively.**
+  - Under the Gaussian fallback they are analytic: q = p_i = 0.6827.
+  - Where they are estimated from the calibration law's replicates, the under-cutoffs use the lower end of the 95 %
+    Clopper–Pearson interval and the over-cutoffs the upper end, so each flag's size stays at or below its nominal
+    level, up to the calibration law's own fidelity.
+
+### 6.2 The calibration law and the testability check
+
+**The law,** for a candidate V at truth t, which is a surrogate for the toys and not the toy process itself. Each
+simulated error is e = δ + g + b:
+- **δ:** the 38 bands' universe shifts at the data's point from G2R's `data_g2r.npz` (keys `band__<BAND>`; sha256
+  `3b8cc7ceaef97c3dc6bbcd2c5cfdf853442c347e37e23f64eca54898d0e9eb4b`), centred as re2c_rollup centres them, carried by D_t,
+  and composed exactly as `cov2d.draw` composes them. If ST1's exception regenerated `universe`, the regenerated bank
+  replaces this one.
+- **g:** g ~ N(0, G(t)), with G(t) = V_F,drawn(t) − C_δ(t), where V_F,drawn(t) = V_F(t) − [C_PL(t) + c08(t)] and C_δ(t) is
+  δ's exact covariance. This is the centred fluctuation law of the drawn components only. It does not randomize the
+  bias allowance, C_PL or the seed term.
+- **b,** a fixed bias, one per grid point:
+  - b = 0;
+  - b = ±√κ_j w_j for each eigenpair (κ_j, w_j) of C_b carried to t. That is the bias at one allowance-σ along each
+    fitted direction, at most 9 grid points.
+
+**What the law does not model:** weight-space composition beyond first order, clipping, and passage through the
+non-linear unfold. The P0 control rebuilds G2R's `C_univ_new` from the `band__` arrays to 1e-10 relative; that checks the
+bank arithmetic only. If that control fails, or G(t) fails C-PSD, the law falls back to g ~ N(0, V_F,drawn(t)) with δ = 0,
+labelled as such. A G(t) C-PSD failure is a fallback, not an ST5 refusal; ST5's C-PSD refusals apply to the input blocks
+and the candidates.
+
+**The testability simulation.**
+- **What it is.** For each candidate and truth, and each grid point b, 200 simulated ensembles of N errors are graded
+  by the **entire** §6.3 rule, including the 2,000-resample bootstrap guards, at seed 9_994_000.
+- **False FAIL.** The fractions of ensembles reading "not PASS" and "FAILS" are recorded, each with its 95 %
+  Clopper–Pearson upper bound. The maximum over b of the not-PASS upper bound is the false-FAIL figure.
+- **False PASS.** The same simulation runs at deficit alternatives: g's covariance is scaled by s, chosen so that the
+  total's expected M is exactly 1.25, separately with b = 0 and at the grid point that maximizes the pass rate. The pass
+  fraction and its upper bound are recorded.
+- **The check.** A candidate is NOT TESTABLE at t if its false-FAIL figure exceeds 0.20, or its deficit pass-rate upper
+  bound exceeds 0.10.
 - **Where it runs.**
-  - At PV, inside the readout binary, after decryption and before any residual is formed, with every candidate frozen.
-    The same replicates also give the false-FAIL rate for §6.2's rule. A candidate whose rate exceeds 0.20 is labelled
-    NOT TESTABLE at u before its residuals are formed, and is not VALIDATED.
-  - At P1 and P2, for N4 and A1p, at the ensemble's own truth.
-  - N1, N2, N3 and N5 draw fluctuation only, so they use the Gaussian N(0, ·) null, labelled as such.
-- **Per-mode coverage:** the count #{s : |z_{s,i}| ≤ 1}. It is flagged "under" at ≤ k_c, the largest k with
-  P(Bin(N, p_i) ≤ k) < 0.025/ndf, and "over" symmetrically. Here p_i = P_null(|z_{s,i}| ≤ 1), simulated from the same
-  null replicates. p_i is not §2's q_i. The flags are reported per band.
-- **Joint "over" and per-mode "over"** are reported. They refuse only through the fluctuation reading (§6.2), because
-  the bias block over-covers by design.
+  - At PV, inside the readout binary, after decryption and after the central unfold at u exists, and before any
+    residual is formed, with every candidate frozen.
+  - At P2, the same simulation runs at N4 and the A1p truths, for admission.
 
-### 6.2 PASS at a sealed truth (PV)
+### 6.3 PASS at a sealed truth (PV)
 
-A candidate passes at truth u if all of the following hold:
-- **P-1, fluctuation:** F^F against V_F reads "covers", and no band of it reads "under" or "over";
-- **P-2, total:** M against V reads "not under", and no band of the total reads "under";
-- **P-3:** the draw-matched joint rule does not flag "under";
+Every check below is affirmative: its guarded interval must lie on the right side of the bar.
+- **P-1, fluctuation:** F̃ reads "covers", and every band of F̃ with at least 10 modes reads "covers". The interval
+  [X − h, X + h] lies inside [0.8, 1.25], so an unresolved band fails.
+- **P-2, total:** the upper guarded bound M + h is at most 1.25, and so is the bound of every total band with at least
+  10 modes.
+- **P-3:** the joint rule does not flag "under".
 - **P-4:** no mode is flagged "under".
 
-For K_C, every reading is taken on P_k with ndf = k.
+For K_C, every reading is on its k fixed combinations (§5.3), with ndf = k.
 
-### 6.3 The PV verdict per candidate
+### 6.4 The PV verdict per candidate, and precedence
+
+Read in this order; the first condition that holds is the verdict:
 
 | verdict | condition |
 |---|---|
-| **VALIDATED** | PASS at both sealed truths |
-| **FAILS** | P-2 reads "under" (total or a band), P-3 flags "under", P-4 flags a mode, or P-1 reads "under" (fluctuation or a band), at either truth |
-| **INFLATED** | no failure above, and P-1 reads "over" (fluctuation or a band) at either truth |
-| **NOT TESTABLE** | the null's false-FAIL rate exceeds 0.20 at either truth (§6.1) |
-| **UNRESOLVED** | otherwise |
+| **NOT TESTABLE** | §6.2's check fails at either truth (decided before residuals are formed) |
+| **FAILS** | at either truth: M − h > 1.25 or a total band does so; P-3 flags "under"; P-4 flags a mode; or F̃ or a band reads "under" |
+| **INFLATED** | no FAILS, and F̃ or a band reads "over" at either truth |
+| **VALIDATED** | P-1 to P-4 hold at both truths |
+| **UNRESOLVED** | otherwise, for example a band unresolved across labels, or M + h > 1.25 with M − h ≤ 1.25 |
 
-A total reading "over" with the fluctuation reading "covers" is reported as "conservative through the bias block". It
-is not INFLATED.
+A total whose upper bound is well below 1.25 while the fluctuation passes is reported as "conservative through the bias
+allowance". It is not INFLATED.
 
-### 6.4 Multiplicity: false PASS and false FAIL
+### 6.5 Error rates, as stated and as calibrated
 
-- **False PASS.** VALIDATED needs every check at both truths.
-  - "Not under" fails when M − h > 1.25, so the critical value is 1.25 + h.
-  - At ndf 204 and N 300, SE(M) = √(2/(N·ndf)) ≈ 0.0057 and h ≈ 0.011.
-  - **Far from the critical value.** A candidate with M_true ≥ 1.25 + h + 3·SE (about 1.279) fails "not under" with
-    probability at least Φ(3) ≈ 0.9987 per truth.
-    - The two truths' toys are independent draws, so it passes both with probability at most (0.00135)² ≈ 1.8e-6.
-    - Over the at most three candidates (K_A, K_B, K_C), the familywise chance is at most about 5.4e-6.
-  - **Near the critical value, false PASS is not negligible.** At M_true = 1.25 + 3·SE (1.267), which is about 1·SE above
-    the critical value 1.25 + h:
-    - "not under" fails with probability about 0.85 per truth, so a pass has probability about 0.15 per truth;
-    - it passes both truths with probability about 0.023;
-    - the familywise bound over three candidates is about 0.07.
-    That is the stated tolerance's precision. A VALIDATED candidate's true total ratio may be up to a few SE above 1.25,
-    and every licensed sentence carries M with its guard.
-  - A candidate inside tolerance can pass by design; the tolerance is the stated model class's precision.
-  - A candidate whose bias block is wide passes the total bar by design. It must still match the fluctuation two-sided
-    (P-1), and its bias block is fixed by §5.2's rule, never tuned.
-- **False FAIL for a correctly covering V,** under the draw-matched null.
-  - P-3 contributes at most 0.025 (binomial, discrete, at or below nominal).
-  - P-4 contributes at most 0.025: the expected number of false under-flags is at most 0.025 by linearity, whatever the
-    dependence between modes.
-  - P-1 and P-2 are negligible at ndf ≈ 204.
-    - P-1, the two-sided fluctuation "covers" label, at K_C's floor k = 25 and N = 300: losing it needs a reading above
-      1.25 − h or below 0.8 + h, with h ≈ 0.032. That is 13.3σ on the high side and 10.3σ on the low side.
-    - P-2, "not under", fails only above 1.25 + h.
-  - So per truth, P(not PASS) ≤ about 0.05 and P(FAILS) ≤ about 0.05. **By the union bound over two truths** (no
-    independence assumed), P(not VALIDATED) ≤ 0.10 and P(FAILS) ≤ 0.10. Both are below the director's 20 % mark
-    (`reads/director-rev0-items.md`, item 5).
-- **Real toys are not Gaussian.** These bounds hold under the draw-matched null's law. The PV binary simulates that law's
-  false-FAIL rate per candidate and truth before forming residuals (§6.1), and the 0.20 rule applies there.
+- **False PASS.** P-2 is a one-sided upper-bound test.
+  - A candidate whose true total ratio is at least 1.25 at **either** truth passes there with probability at most about
+    0.025, up to the guard's calibration. So it is VALIDATED with probability at most about 0.025.
+  - Over the at most three candidates, the union bound is about 0.075.
+  - §6.2's deficit simulation measures the actual rate for each candidate, and the 0.10 check enforces it. The fixed-SE
+    Gaussian figures are illustrations only.
+- **False FAIL** for a correctly covering V:
+  - P-3 contributes at most 0.025 and P-4 at most 0.025, by their binomial cutoffs and by linearity whatever the mode
+    dependence, under the calibration law.
+  - P-1 and P-2 add whatever the simulation measures. At ndf ≈ 204 and N = 300 the Gaussian illustration puts them far
+    from their edges, and at K_C's floor k = 25 still at several SE.
+  - The binding figure is §6.2's simulated false-FAIL, gated at 0.20 per candidate and truth.
+- **K_C's floor k ≥ 25** is a reporting floor. The SE of the 1/N spread mean is √(2(N − 1)/(N²k)). With F̃'s
+  normalization, the low and high "covers" edges sit at about 5.1 and 6.8 SE at N = 100, and 10.3 and 13.3 SE at N = 300.
+  These are illustrations; the simulation is the calibration.
 
 ## 7. What each outcome licenses (adoption and wording remain Joseph's and the director's)
 
-The candidates are read in the fixed order K_A (only if ST1 fired), K_B, K_C. The first VALIDATED is the result. The
-others are reported descriptively, with §6.4's multiplicity.
+**A baseline challenge is required.** B and C license their sentences only if K0 FAILS at one sealed truth at least
+(§6.4), so that the sealed truths challenged the baseline. If K0 is VALIDATED at both, the comparison showed no need for
+a change at those truths. If K0 is INFLATED, UNRESOLVED or NOT TESTABLE, there was no challenge, and the readings are
+descriptive.
 
-**In-sample disclosure.** K_B's bias block uses nominal and the three C_model vertices, not G18 or AR23. Its fluctuation
-factors use N4 and A1p. Every licensed B or C sentence says so: "built in-sample on <F_bias> and <the P1
-ensembles>; validated out of sample on <the two sealed tunes>, with <the overlaps of §4.3>; the covariance is the
-reported one carried in relative form (§2)".
+The candidates are read in the fixed order K_A (only if ST1's exception was applied), K_B, K_C. The first VALIDATED is
+the result. The others are reported descriptively.
+
+**In-sample disclosure.** C_b is a fitted bias allowance from nominal and the three C_model vertices, not G18 or AR23.
+The fluctuation factors use N4 and A1p. Every B or C sentence says so, names the two sealed tunes and their overlaps
+(§4.3), and says that the covariance is the reported one carried in relative form (§2).
 
 <!-- absence-ok: outcome licensing table for a future result -->
 | outcome | condition | licensed sentence (substance, not wording) | not licensed |
 |---|---|---|---|
-| **A** | ST1 fired, KI 85 was superseded (§9.1), its named exception was bound, and K_A is VALIDATED | "The 2D covariance's <block> had a construction error, located at nominal truth by <ST1 row>. Regenerated, its fluctuation block matches the held-out scatter at two GENIE v3 tunes (two-sided), and the total does not under-cover there (one-sided)." | a claim about non-GENIE truths; coverage at the data; that the total is tight |
-| **A, partial** | ST1 fired, KI 85 was superseded (§9.1), and its named exception was bound and applied, but K_A is not VALIDATED | "A construction error in <block> was found and corrected; the corrected covariance still does not cover held-out tunes." Then B and C are read. | "fixed" in the coverage sense |
-| **B** | K_B is VALIDATED | "The fluctuation block, measured on nominal and alternative-truth ensembles, matches the held-out scatter at two GENIE v3 tunes (two-sided). With a truth-model bias block built in-sample from nominal and the three C_model vertices and reported separately, the total does not under-cover there (one-sided). The held-out biases against that block are β_uᵀC_b⁺β_u = <value>, with <fraction> outside its span." The band factors f̂_R and C_b's rank and trace are printed with it. | "covers" for the total; coverage outside the GENIE v3 family; a cause of the bias; that the bias block is tight |
-| **C** | K_B is not VALIDATED and K_C is VALIDATED | "Uncertainties are reported for the k combinations P_k. On them, the fluctuation block matches the held-out scatter (two-sided) and the total does not under-cover (one-sided) at two GENIE v3 tunes. Finer combinations carry no validated uncertainty." | any statement about directions outside P_k; "covers" for the total |
-| **none** | nothing VALIDATED, or ST2 | Nothing new. The note's "coverage remains unvalidated" stands, with P1's matrix readings as description. | any covariance change |
-| **inconclusive** | K0 passes at both sealed truths | Nothing. The validation family did not test the covariance. | — |
+| **A** | ST1 fired; KI 85 superseded (`DECISION-20261123-joseph-covfix-ki85-size-reader.md`); the exception's code-level evidence holds (§3.3); K_A is VALIDATED | "A construction defect in <block>'s builder was found, with a reproducing test that fails on the old builder and passes on the corrected one. With the corrected block, at the two sealed tunes under the declared toy law, the fluctuation block's mean ratio and every band read 'covers', and the total's guarded upper bound is ≤ 1.25 with no joint or mode under-flag." | a model-class claim; coverage at the data; that the total is tight |
+| **A, partial** | as A, but K_A is not VALIDATED, or PV did not run | "A construction defect in <block>'s builder was found and corrected (reproducing test as above)." Then K_A's actual PV verdict (FAILS, INFLATED, UNRESOLVED or NOT TESTABLE), or "PV did not run". | "still does not cover" unless the verdict is FAILS |
+| **B** | baseline challenge; K_B is VALIDATED | "At the two named sealed tunes under the declared toy law: the fluctuation block, measured on nominal and alternative-truth ensembles, has mean ratio <F̃ ± h> and every band reads 'covers'; with a fitted bias allowance from nominal and the three C_model vertices, reported separately, the total's guarded upper bound is <M + h> ≤ 1.25, with no joint or mode under-flag. The held-out biases against the allowance: Q_u = <value ± SE>, outside-span fraction <value ± SE>." The factors f̂_R, and C_b's rank and trace, are printed with it. | coverage of a GENIE v3 model class; "covers" for the total beyond the bound printed; a cause of the bias; that the allowance bounds any model class |
+| **C** | baseline challenge; K_B is not VALIDATED; K_C is VALIDATED | "On the k frozen combinations (coefficient vectors, projected covariances and effective rank published), the same affirmative readings hold at the two named tunes." | anything about directions outside P_k; that every finer combination fails |
+| **none** | nothing VALIDATED, or ST2 | Nothing new. "Coverage remains unvalidated" stands, with P1's readings as description. | any covariance change |
+| **no challenge** | K0 VALIDATED at both truths | "At the two sealed tunes, the reported covariance showed no deficit under these bars." | that the covariance covers in general |
 
 <!-- absence-ok: reading rules for future verdicts -->
-**A FAILS from P-3 or P-4 alone,** with P-1 and P-2 passing at both truths, is reported as "FAILS (P-3/P-4 only, at
-<u>)", with §6.4's false-FAIL bound beside it. The candidate is not VALIDATED, and ST4 forbids a re-read.
-
-<!-- absence-ok: reading rule, scoping statement or verbatim review text about studies not yet run -->
-**INFLATED** is reported as "the fluctuation block is wider than the held-out scatter by <F^F, bands>". It is not
-VALIDATED.
-
-**UNRESOLVED** means more toys could resolve it. That needs an amendment and a price, never a re-read of the same toys
-with a changed rule.
+**INFLATED** is reported as "the fluctuation block is wider than the held-out scatter by <F̃, bands>". It is not
+VALIDATED. **UNRESOLVED** means more toys could resolve it. That needs an amendment and a price, never a re-read of the
+same toys with a changed rule.
 
 ## 8. Code, tests and audit before any compute
 
 - **Reused unchanged where possible:** re2_driver.py `--data-file`, cov2d_writer, `cov2d.draw` (with r ≡ 1 for N4),
   S1's three-stream bootstrap code (for sim, and with `--bootstrap-streams data` for N5's replicas), F1's pipeline (PG),
-  and `cov2d.draw`'s composition law for §6.1's null (whose band part reads G2R's `data_g2r.npz`).
+  and `cov2d.draw`'s composition law for §6.2's calibration law (whose band part reads G2R's `data_g2r.npz`).
 - **New code:**
   - the N-cell and A1 toy writers, with a fixed-response mode and the 2D-map truth deformation;
   - the N3 seed arm;
@@ -687,33 +850,45 @@ with a changed rule.
   - the §2 carry;
   - the §3.3 ST1 readings;
   - the §5 builders and the residual stop;
-  - the §6 readout, single-invocation and summary-only, with the in-binary null and the 0.20 check;
-  - PG's probe, capture wrapper, piped encryption, seal checker and plaintext scan;
+  - the §6 readout, summary-only, with the in-binary calibration law and §6.2's whole-rule testability simulation;
+  - PG's probe (with the novelty test), capture wrapper, authenticated encryption, seal checker and content scans;
   - PV's exclusive-compute-node writer (§3.4) with encrypted graded truths;
-  - the ST6 gate.
+  - the director's wrapper, with ST4's consumption record, manifest verification before decrypt, and the synthetic-seal
+    end-to-end test;
+  - the ST3/ST6 reservation ledger;
+  - ST1's reproducing-test harness for the named exception.
 - **Each needs** unit tests, a line trace of every new line, hand mutants (all killed), a Grok and an agy read, the
   director's binding, and per-connect fences.
 - **A0-type controls in every readout:**
   - the readout reproduces COV2D's committed mean χ² at G18 and AR23 from E_<T>.npz against C_T, to the κ-scaled
-    tolerance max(1e-9, 10 κ₂ ε) (REGRADE-AMENDMENT-1, which adopts T2-BINDING-1 addendum 1's form);
+    tolerance max(1e-9, 10 κ₂ ε), with κ₂ on the actual non-null grading subspace and ε = float64 epsilon. The
+    tolerance's origin is COV2D addendum A5; REGRADE-AMENDMENT-1 is its retained-subspace variant;
   - numpy against scipy `evr` mode agreement, as in T2A.
 
 ## 9. Open items, for the director, and for Joseph where marked
 
-1. **Joseph: KI 85.** KI 85 defers the held-out-MC re-test until after the publication package, says it is not
-   pre-registered, and says no outcome changes a quoted band or printed number before publication. N5 is that re-test,
-   and outcome A would change a covariance. Binding N5 and outcome A needs Joseph's decision superseding **both**
-   sentences. Without it, N5 is dropped (saving 76 / 57 node-h), the data-stream ST1 row is not read, and outcome A
-   cannot change a quoted band before publication.
-2. **Joseph: full or lean:** about 409.2 or 327.5 node-h at PG's top with N5, or 333.2 or 270.5 without it. Only full
-   with N5 is above half the balance.
+1. **KI 85: decided.** Joseph superseded both of KI 85's sentences for COVFIX (`DECISION-20261123-joseph-covfix-ki85-size-reader.md`).
+   - N5 is bound and runs unconditionally.
+   - Outcome A may change the 2D covariance. Any change enters the journal paper or a later Zenodo version, not the
+     first release. Adoption and wording remain Joseph's.
+   - When N5 is bound, KI 85's row in `KNOWN_ISSUES.md` is updated to point to that decision. Until then the row is
+     left unchanged.
+2. **Size: decided.** Full, as designed (`DECISION-20261123-joseph-covfix-ki85-size-reader.md`, Joseph's governing re-confirmation): two sealed tunes, full P1 toy
+   counts, and N5 always, at about 409 node-h at most (408.6–409.2). That is above half the balance, and Joseph
+   approved it. Each phase is still capped from sacct, and ST6 holds the approved total. The second reader is
+   codex-school2, alongside agy, by the same decision.
 3. **Binding prerequisites:**
    - a committed iris receipt;
    - the fresh PG session named;
    - the director's passphrase generated, with the director's piping wrapper, and never shown to cov2d.
-4. **The bars:** 0.8 / 1.25 with the guard; the fluctuation two-sided and the total one-sided; no under-flagged mode;
-   the residual rule at 0.1 on modes with λ ≥ 1e-6·λ₁; K_C's floor k ≥ 25. These are proposals for the reads to
-   challenge.
+4. **The bars:**
+   - the fluctuation affirmative and two-sided (F̃ and every band "covers");
+   - the total affirmative (M + h ≤ 1.25);
+   - no under-flag;
+   - testability at 0.20 false-FAIL and 0.10 deficit pass;
+   - the residual rule at 0.1 on modes with λ ≥ 1e-6·λ₁;
+   - K_C's reporting floor k ≥ 25.
+   These are policy choices, open to challenge.
 5. **Truth-dependent spread.** If A1p's band ratios differ strongly between truths, pooling makes V_F over-cover at some
    truths and under-cover at others. §5.4's two-sided fluctuation bar will then refuse K_B, and outcome C or none
    follows. That is intended.
