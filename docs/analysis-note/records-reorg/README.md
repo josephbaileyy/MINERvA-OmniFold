@@ -94,3 +94,19 @@ titles are new text by design.
 
 Block keys are content hashes (file, heading line, first printed line), so the data survives a change of base unless
 the named block itself changes; `assemble` stops on any key it cannot find.
+
+## The probe re-base (2026-11-22)
+
+The rewiring this README defers ("to be rewired at the end of the check stage") is done, under the director's ruling
+(option A) on the rewrite-into-main integration. `check_note_records.py probe` now runs against
+`records-inventory-base-20261122.json`, frozen with `inventory --post-move` from the journal-voice note at
+`2b06d7f28936f2d73e11d7d64be00d4617cfade3`, with the ledger `records-move-ledger-20261122.md` and THIN_BASE at the same
+commit (`check_note_records.py`, THE RE-BASE). `records-inventory-base.json`, `records-move-ledger.md` and THIN_BASE
+`563715b8` are the frozen 10-21/10-22 move record, kept and labelled. At the new base the probe passes (27 labels,
+32 tags, 97 struck bodies, 31 paths, 104 record paragraphs, 6 App. G pointers), and its self-test passes with 43 of 43
+planted defects firing (each of P1-P9 has at least one) and 3 silent controls.
+
+The invariance gate against this README's base, `check --phase D --base ab0596ac3`, flagged only 12 printed lines,
+each a generated value key of `values_fived16.tex` (which `main_records.tex` inputs) added after the base: the six
+`rg-*` keys of the coverage regrade and the six `t3-*` keys of the Tier 3 paragraph. They are declared in `adds.tsv`,
+and the gate passes.

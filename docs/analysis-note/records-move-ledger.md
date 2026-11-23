@@ -1,5 +1,7 @@
 # Records move ledger (DECISION-20261021-joseph-da-and-note-records.md item 2)
 
+> **Frozen 10-21/10-22 move record.** Superseded as the probe base on 2026-11-22 by `records-move-ledger-20261122.md` at `2b06d7f28936f2d73e11d7d64be00d4617cfade3`, because the journal-voice rewrite replaced the note files (`records-reorg/README.md`). Its rows are kept as written; `check_note_records.py` no longer reads them.
+
 One row per non-mechanical edit of the posted note made by the move of the records into `main_records.tex`, and one
 row per file for the mechanical pointer rewrites. `check_note_records.py probe` runs every probe (P7) and reads the
 READER paragraph hashes from this file (P5): a reader paragraph of the release or codebase appendix that no longer

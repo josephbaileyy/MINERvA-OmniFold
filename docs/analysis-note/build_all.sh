@@ -141,7 +141,7 @@ python3 check_note_records.py pin
 # record and reader paragraph, App. G pointer, ledger probe (N:/X:/R:/D:/M:) and thinning count still holds. Source and
 # git only; outside a git checkout P8 cannot run and the verdict is SKIP, which this gate does not fail.
 echo "=== records move (every record, pointer and ledger probe holds) ==="
-python3 check_note_records.py probe records-inventory-base.json .
+python3 check_note_records.py probe records-inventory-base-20261122.json .
 
 # (9) N2-1 (note register round n2, director rulings 2026-10-26): the posted note cites records entries by number
 # through \recentry{<tag>}; the numbers are generated from app_provenance.tex into records_entry_numbers.tex, which
