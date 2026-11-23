@@ -91,3 +91,15 @@ The declared classification at d̂ is unchanged. The agy confirm on the diff ([`
     `minerva_large_files/MATFluxAndReweightFiles/flux`, which MAT's FluxReweighter reads.
 - **Atimes:** these reads will move the AnaTuple and flux-file atimes.
 - **Protected roots:** none of the roots the director listed as protected for the other lanes is opened.
+
+## The run
+
+- **Smoke**, login02: 1:09 wall, 1.3 GB RSS.
+  - Tree counts `mc_truth_denom`/`mc_signal_reco`/`mc_background`/`data` = 131,346/131,346/2,616/15,055, equal to the W2a base smoke.
+  - All 14 `mu_*` branches filled on every reco row.
+  - C-KIN 0.0 and C-ANG ≤ 3e-13.
+  - Output `runEventLoopOmniFold.root` sha256 `c4f0c564712235a47fbb5bc30914eef7bfcdbadbd60bf4e68d9754d76a5f6817`.
+- **`ibuchi_evl`** is array job 61885471, submitted 2026-11-23. Binary `10bf7fd9…` and `evl.sbatch` `df799fef…` were re-hashed at submission.
+  - At 21:52–21:56Z, `sacct` showed tasks 0 and 1 RUNNING and `[4-11]` PENDING, with **no row for tasks 2 and 3**, even with an explicit `-S`. Neither had a log file, so neither had started.
+  - A read-only `scontrol show job` (the director allowed this one check) at 21:57:07Z showed both PENDING, `Reason=None`, `StartTime=Unknown`, split into their own records `JobId=61886864` (task 2) and `JobId=61886865` (task 3).
+  - So `sacct` does not list a split-off pending array task until it starts. Absence from `sacct` was not failure here, and in general it must not be read as either success or failure.
